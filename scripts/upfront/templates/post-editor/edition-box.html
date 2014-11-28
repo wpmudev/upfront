@@ -14,47 +14,7 @@
                     <div class="ueditor-box-content">
                         <div class="misc-pub-section misc-pub-post-status"></div>
                         <div class="misc-pub-section misc-pub-visibility"></div>
-
-                        <div class="misc-pub-section curtime misc-pub-curtime">
-                            <span id="timestamp">
-                                <label id="publication-time" class="ueditor-icon-label">Publish:</label>
-                                <b class="ueditor-previous-data">immediately</b>
-                            </span>
-                            <a href="#edit_timestamp" class="edit-timestamp ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
-                            <div class="ueditor-togglable">
-                                <div class="timestamp-wrap">
-                                    <label for="mm" class="screen-reader-text">Month</label>
-                                    <select id="mm" name="mm">
-                                        <option value="01">01-Jan</option>
-                                        <option value="02">02-Feb</option>
-                                        <option value="03">03-Mar</option>
-                                        <option value="04">04-Apr</option>
-                                        <option value="05">05-May</option>
-                                        <option value="06">06-Jun</option>
-                                        <option value="07">07-Jul</option>
-                                        <option value="08">08-Aug</option>
-                                        <option value="09">09-Sep</option>
-                                        <option value="10">10-Oct</option>
-                                        <option value="11" selected="selected">11-Nov</option>
-                                        <option value="12">12-Dec</option>
-                                    </select>
-                                <label for="jj" class="screen-reader-text">Day</label>
-                                    <input type="text" id="jj" name="jj" value="25" size="2" maxlength="2" autocomplete="off">,
-                                    <label for="aa" class="screen-reader-text">Year</label>
-                                    <input type="text" id="aa" name="aa" value="2014" size="4" maxlength="4" autocomplete="off">
-                                    @
-                                    <label class="screen-reader-text">Hour</label>
-                                    <input type="text"  name="hh" value="{{currentHour}}" size="2" maxlength="2" autocomplete="off">
-                                    : <label class="screen-reader-text">Minute</label>
-                                    <input type="text"  name="mn" value="{{currentMinute}}" size="2" maxlength="2" autocomplete="off">
-                                </div>
-
-                                <p>
-                                    <a href="#edit_timestamp" class="save-timestamp  ueditor-button-ok-small">{{Upfront.Settings.l10n.global.content.ok}}</a>
-                                    <a href="#edit_timestamp" class="cancel-timestamp  ueditor-button-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</a>
-                                </p>
-                            </div>
-                        </div>
+                        <div class="misc-pub-section  misc-pub-schedule"></div>
                     </div>
                     <div class="ueditor-box-bottom-buttons">
                         <a href="#" class="ueditor-action-trash ueditor-box-icon ueditor-box-icon-text" title="{{Upfront.Settings.l10n.global.content.trash}}">{{Upfront.Settings.l10n.global.content.trash}}</a>
@@ -195,7 +155,7 @@
         <br>
         <span id="sticky-span" class="ueditor-togglable-child ueditor-togglable-child-public" {[ if( status.value == "public" ) { ]} style="display:block" {[ } ]}>
             <input name="sticky" type="checkbox" value="sticky">
-            <label for="sticky">Stick this post to the front page</label>
+            <label>Stick this post to the front page</label>
             <br>
         </span>
         <input type="radio" name="visibility" id="visibility-radio-password" value="password" {[ if( status.value == "password" ) { ]} checked="checked" {[ } ]}>
@@ -216,5 +176,36 @@
     </div>
 </script>
 
+<script type="text/template" id="post-schedule-tpl">
+    <span>
+        <label id="publication-time" class="ueditor-icon-label">{{schedule.key}}:</label>
+        <b class="ueditor-previous-data">{{schedule.text}}</b>
+    </span>
+    <a href="#" class="edit-timestamp ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
+    <div class="ueditor-togglable ueditor-togglable-post-schedule-date">
+        <div class="timestamp-wrap">
+            <label class="screen-reader-text">Month</label>
+            <select name="mm">
+                {[ _.each(_.sortBy(Upfront.Settings.l10n.global.views.month_names), function(month, idx){ ]}
+                <option value="{{idx}}" {[ if( idx == currentMonth ) { ]} selected="selected" {[ } ]}>{{month}}</option>
+                {[ }); ]}
+            </select>
+            <label class="screen-reader-text">Day</label>
+            <input type="text" name="jj" value="{{currentDay}}" size="2" maxlength="2" autocomplete="off">,
+            <label class="screen-reader-text">Year</label>
+            <input type="text" name="yy" value="{{currentYear}}" size="4" maxlength="4" autocomplete="off">
+            @
+            <label class="screen-reader-text">Hour</label>
+            <input type="text"  name="hh" value="{{currentHour}}" size="2" maxlength="2" autocomplete="off">
+            : <label class="screen-reader-text">Minute</label>
+            <input type="text"  name="mn" value="{{currentMinute}}" size="2" maxlength="2" autocomplete="off">
+        </div>
+
+        <p>
+            <a href="#" class="ueditor-save-post-date  ueditor-button-ok-small">{{Upfront.Settings.l10n.global.content.ok}}</a>
+            <a href="#" class="ueditor-cancel-timestamp  ueditor-button-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</a>
+        </p>
+    </div>
+</script>
 
 <div>

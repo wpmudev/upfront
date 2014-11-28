@@ -959,19 +959,10 @@ var EditionBox = Backbone.View.extend({
             'click .ueditor-action-publish': 'publish',
             'click .ueditor-action-draft': 'saveDraft',
             'click .ueditor-action-trash': 'trash',
-            'click .ueditor-action-url': 'editUrl',
             'click .ueditor-action-tags': 'editTaxonomies',
-            'click .ueditor-select-value': 'editSelect',
-            'click .ueditor-pass-ok': 'changePass',
             'click .ueditor-action-schedule': 'openDatepicker',
-            'click .ueditor-bar-show_advanced': 'toggleAdvanced',
             'click .ueditor-action-pickercancel': 'close_date_picker',
             'click .ueditor-action-pickerok': 'save_date_picker',
-            'change .ueditor-hours-select': 'set_time',
-            'change .ueditor-minutes-select': 'set_time',
-            'click .ueditor-btn-edit': 'toggleEditor',
-            'click .ueditor-button-cancel': 'cancelEdit',
-            'change input[type="radio"][name="visibility"]': 'visibility_radio_change',
             'click .ueditor-box-title': 'toggle_section',
             'click .ueditor-save-post-data': 'save_post_data'
         },
@@ -983,6 +974,7 @@ var EditionBox = Backbone.View.extend({
 
             this.statusSection = new PostStatusView({post: this.post});
             this.visibilitySection = new PostVisibilityView({post: this.post});
+            this.scheduleSection = new PostScheduleView({post: this.post});
 
             this.tpl = _.template($(editionBox_tpl).find("#ueditor-box-main").html());
             this.datepickerTpl = _.template($(Upfront.data.tpls.popup).find('#datepicker-tpl').html());
@@ -1013,10 +1005,8 @@ var EditionBox = Backbone.View.extend({
 
             extraData.rootUrl = base ? base.replace(/\?.*$/, '') : window.location.origin + '/';
             postData.permalink = this.permalink = extraData.rootUrl + this.post.get("post_name");
-            //postData.visibility = this.visibilityOptions[this.postVisibility];
 
-
-            postData.schedule = this.getSchedule();
+            //postData.schedule = this.getSchedule();
 
             postData.buttonText = this.getButtonText();
             postData.draftButton = ['publish', 'future'].indexOf(this.initialStatus) == -1;
@@ -1093,44 +1083,7 @@ var EditionBox = Backbone.View.extend({
         populateSections: function(){
             this.$('.misc-pub-post-status').html(this.statusSection.$el);
             this.$('.misc-pub-visibility').html(this.visibilitySection.$el);
-        },
-
-
-
-        getSchedule: function(){
-            var now = new Date(),
-                date = this.initialDate,
-                formatDate = Upfront.Util.format_date
-                ;
-            if(!date && !this.initialDate)
-                return {
-                    key: Upfront.Settings.l10n.global.content.publish,
-                    text: Upfront.Settings.l10n.global.content.immediately
-                };
-
-            if(date.getTime() == this.initialDate){
-                if(date.getTime() < now.getTime())
-                    return {
-                        key: Upfront.Settings.l10n.global.content.published,
-                        text: formatDate(date, true)
-                    };
-                else
-                    return {
-                        key: Upfront.Settings.l10n.global.content.scheduled,
-                        text: formatDate(date, true)
-                    };
-            }
-
-            if(date.getTime() < now.getTime())
-                return {
-                    key: Upfront.Settings.l10n.global.content.publish_on,
-                    text: formatDate(date, true)
-                };
-            else
-                return {
-                    key: Upfront.Settings.l10n.global.content.schedule,
-                    text: formatDate(date, true)
-                };
+            this.$('.misc-pub-schedule').html(this.scheduleSection.$el);
         },
 
         openDatepicker: function(e){
@@ -1159,9 +1112,6 @@ var EditionBox = Backbone.View.extend({
             this.toggleAdvanced();
         },
 
-        set_time : function( event ){
-            this.updateBarDate(this.getDatepickerDate());
-        },
 
         updateBarDate: function(date){
             this.$('.ueditor-action-schedule').html(Upfront.Util.format_date(date, true));
@@ -1260,7 +1210,7 @@ var EditionBox = Backbone.View.extend({
             e.preventDefault();
             //this.destroy();
 
-            //this.post.trigger('editor:publish');
+            this.post.trigger('editor:publish');
             this.trigger('publish');
             Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
         },
@@ -1282,49 +1232,6 @@ var EditionBox = Backbone.View.extend({
                 this.trigger('trash');
                 Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
             }
-        },
-
-        editUrl: function(e){
-            e.preventDefault();
-            var me = this,
-                $popup = {},
-                popup = Upfront.Popup.open(function (data, $top, $bottom) {
-                    var $me = $(this);
-                    $me.empty()
-                        .append('<p class="upfront-popup-placeholder">' + Upfront.Settings.l10n.global.content.popup_loading + '</p>')
-                    ;
-                    $popup = {
-                        "top": $top,
-                        "content": $me,
-                        "bottom": $bottom
-                    };
-                }),
-                update = function(slug){
-                    me.post.set('post_name', slug);
-                    Upfront.Popup.close();
-                },
-                tpl = _.template($(Upfront.data.tpls.popup).find('#upfront-slug-tpl').html())
-                ;
-
-            var base = me.post.get("guid");
-            base = base ? base.replace(/\?.*$/, '') : window.location.origin + '/';
-            $popup.content.html(tpl({
-                rootURL: base,
-                slug: me.post.get('post_name')
-            }));
-
-            $popup.content.off('click', '#upfront-post_slug-send')
-                .on('click', '#upfront-post_slug-send', function(){
-                    update($('#upfront-post_slug').val());
-                })
-                .off('keydown', '#upfront-post_slug')
-                .on('keydown', '#upfront-post_slug', function(e){
-                    if(e.which == 13){
-                        e.preventDefault();
-                        update($('#upfront-post_slug').attr('disabled', true).val());
-                    }
-                })
-            ;
         },
 
         editTaxonomies: function(e, taxName){
@@ -1416,95 +1323,8 @@ var EditionBox = Backbone.View.extend({
             });
         },
 
-        editSelect: function(e){
-            e.preventDefault();
-            var type = $(e.target).data('id');
-            this[type + 'Select'].open();
-        },
-
-        showPassEditor: function(parent){
-            var op = this.visibilityOptions.password,
-                me = this
-                ;
-
-            parent.find('.ueditor-select-value')
-                .data('id', op.value)
-                .text(op.name)
-            ;
-
-            parent.find('.ueditor-select-options').hide();
-
-            parent.find('.ueditor-pass-editor').show()
-                .find('input').val(this.postPassword || '')
-                .one('blur', function(e){
-                    setTimeout(function(){
-                        me.render();
-                    }, 300);
-                })
-                .off('keydown')
-                .on('keydown', function(e){
-                    if(e.which == 13){
-                        me.changePass(e);
-                    }
-                })
-                .focus()
-            ;
-        },
-
-        changePass: function(e){
-            var pass = $(e.target).parent().find('input').val();
-            if(pass){
-                this.trigger('visibility:change', 'password', pass);
-                // this.post.setVisibility('password');
-                // this.post.set('post_password', pass);
-                this.postVisibility = 'password';
-                this.postPassword = pass;
-                this.render();
-                this.toggleAdvanced();
-            }
-        },
-
-        toggleAdvanced: function(e){
-            if(e)
-                e.preventDefault();
-            this.$('.ueditor-bar').toggleClass('show-advanced');
-        },
-
         refreshTaxonomies: function(){
             this.trigger('tax:refresh');
-        },
-        toggleEditor: function(e){
-            e.preventDefault();
-            var $button = $(e.target),
-                $this_togglable = $button.siblings(".ueditor-togglable"),
-                $this_prev_data_toggle = $button.closest(".misc-pub-section").find(".ueditor-previous-data-toggle")
-                ;
-            $(".ueditor-box-content-wrap .ueditor-togglable").not($this_togglable).slideUp();
-            $(".ueditor-box-content-wrap .ueditor-btn-edit").show();
-            $(".ueditor-previous-data-toggle").not( $this_prev_data_toggle ).show();
-
-            $this_prev_data_toggle.hide();
-            $button.hide();
-            $this_togglable.slideDown(100);
-        },
-        cancelEdit: function(e){
-            e.preventDefault();
-            var $button = $(e.target),
-                $this_prev_data_toggle = $button.closest(".misc-pub-section").find(".ueditor-previous-data-toggle")
-                ;
-            $this_prev_data_toggle.show();
-            $button.closest(".ueditor-togglable").slideUp(100, function(){
-                $button.closest(".ueditor-togglable").siblings(".ueditor-btn-edit").show();
-            });
-
-        },
-        visibility_radio_change: function(e){
-            var $this = $(e.target),
-                val = $this.val(),
-                $this_togglable = $(".ueditor-togglable-child-" + val)
-            ;
-            $this.closest(".ueditor-togglable").find(".ueditor-togglable-child").not($this_togglable).hide();
-            $this_togglable.show();
         },
         toggle_section: function(e){
             e.preventDefault();
@@ -1521,15 +1341,54 @@ var EditionBox = Backbone.View.extend({
         }
     });
 
+var PostSectionView = Backbone.View.extend({
+    events:{
+        'click .ueditor-btn-edit': 'toggleEditor',
+        'click .ueditor-button-cancel': 'cancelEdit',
+        "click .ueditor-button-ok-small" : "update",
+        'change input[type="radio"][name="visibility"]': 'visibility_radio_change',
+        "change input[name='visibility']" : "set_visibility"
+    },
+    toggleEditor: function(e){
+        e.preventDefault();
+        var $button = $(e.target),
+            $this_togglable = $button.siblings(".ueditor-togglable"),
+            $this_prev_data_toggle = $button.closest(".misc-pub-section").find(".ueditor-previous-data-toggle")
+            ;
+        $(".ueditor-box-content-wrap .ueditor-togglable").not($this_togglable).slideUp();
+        $(".ueditor-box-content-wrap .ueditor-btn-edit").show();
+        $(".ueditor-previous-data-toggle").not( $this_prev_data_toggle ).show();
 
-var PostUrlEditor = Backbone.View.extend({
+        $this_prev_data_toggle.hide();
+        $button.hide();
+        $this_togglable.slideDown(100);
+    },
+    cancelEdit: function(e){
+        e.preventDefault();
+        var $button = $(e.target),
+            $this_prev_data_toggle = $button.closest(".misc-pub-section").find(".ueditor-previous-data-toggle")
+            ;
+        $this_prev_data_toggle.show();
+        $button.closest(".ueditor-togglable").slideUp(100, function(){
+            $button.closest(".ueditor-togglable").siblings(".ueditor-btn-edit").show();
+        });
+
+    },
+    visibility_radio_change: function(e){
+        var $this = $(e.target),
+            val = $this.val(),
+            $this_togglable = $(".ueditor-togglable-child-" + val)
+            ;
+        $this.closest(".ueditor-togglable").find(".ueditor-togglable-child").not($this_togglable).hide();
+        $this_togglable.show();
+    }
+});
+
+var PostUrlEditor = PostSectionView.extend({
     className: "upfront-slug_editor-url",
     tpl : _.template($(editionBox_tpl).find("#post-url-editor").html()),
     initialize: function(opts){
         this.post = opts.post;
-    },
-    events: {
-        "click .ueditor-button-save": "save"
     },
     render: function(){
         var self = this,
@@ -1550,7 +1409,7 @@ var PostUrlEditor = Backbone.View.extend({
     }
 });
 
-var PostStatusView = Backbone.View.extend({
+var PostStatusView = PostSectionView.extend({
     statusOptions: {
         future: {value:'future', name: Upfront.Settings.l10n.global.content.scheduled},
         publish: {value: 'publish', name: Upfront.Settings.l10n.global.content.published},
@@ -1562,13 +1421,16 @@ var PostStatusView = Backbone.View.extend({
     },
     initialStatus: false,
     tpl: _.template($(editionBox_tpl).find('#post-status-tpl').html()),
-    className: 'upfront-ui',
-    events: {
-        'click .save-post-status': 'update'
-    },
     initialize: function(options){
         this.post = options.post;
         this.render();
+    },
+    render: function(){
+        this.initialStatus = this.currentStatus = this.post.get("post_status");
+        this.status = this.getStatus();
+        this.options = this.getStatusOptions();
+        this.$el.html( this.tpl(_.extend( this.post, {status: this.status}, {options: this.options} )) );
+        return this;
     },
     getStatusOptions: function(postata){
         var ops = [],
@@ -1596,12 +1458,6 @@ var PostStatusView = Backbone.View.extend({
             return this.statusOptions[current];
         return this.statusOptions[this.initialStatus];
     },
-    render: function(){
-        this.initialStatus = this.currentStatus = this.post.get("post_status");
-        this.status = this.getStatus();
-        this.options = this.getStatusOptions();
-        this.$el.html( this.tpl(_.extend( this.post, {status: this.status}, {options: this.options} )) );
-    },
     update: function(e){
         e.preventDefault();
         var status = this.$("select").val();
@@ -1614,7 +1470,7 @@ var PostStatusView = Backbone.View.extend({
 
 });
 
-var PostVisibilityView = Backbone.View.extend({
+var PostVisibilityView = PostSectionView.extend({
     tpl: _.template($(editionBox_tpl).find('#post-visibility-tpl').html()),
     post_password: "",
     postVisibility: false,
@@ -1628,17 +1484,14 @@ var PostVisibilityView = Backbone.View.extend({
         this.post = opts.post;
         this.render();
     },
-    events: {
-        "click .save-post-visibility" : "update",
-        "change input[name='visibility']" : "set_visibility"
-    },
     render: function(){
         this.postVisibility = !this.postVisibility ? this.post.getVisibility() : this.postVisibility;
         this.status = this.visibilityOptions[ this.postVisibility ];
         if(this.postVisibility == 'password')
             this.post_password = this.post.get('post_password');
 
-        this.$el.html( this.tpl(_.extend(this.post, {status : this.status, post_password: this.post_password} ) ) );
+        this.$el.html( this.tpl(_.extend({}, this.post, {status : this.status, post_password: this.post_password} ) ) );
+        return this;
     },
     getVisibilityOptions: function(){
         var now = this.post.getVisibility(),
@@ -1671,7 +1524,7 @@ var PostVisibilityView = Backbone.View.extend({
                     $pass.css("border", "1px solid #a3bfd9");
                     this.post.setVisibility(this.postVisibility);
                     this.post.set("post_password", pass);
-                    this.trigger("visibility:change", this.postVisibility, pass);
+                    this.trigger("visibility:change", "password", pass);
                 }else{
                     $pass.css("border", "1px solid red");
                     return;
@@ -1687,6 +1540,79 @@ var PostVisibilityView = Backbone.View.extend({
         this.render();
     }
 });
+
+var PostScheduleView = PostSectionView.extend({
+    tpl: _.template($(editionBox_tpl).find('#post-schedule-tpl').html()),
+    initialize: function(options){
+        this.post = options.post;
+        this.render();
+    },
+    render: function(){
+        var date = new Object();
+        this.initialDate = this.post.get("post_date");
+        date.currentMonth = this.initialDate.getMonth();
+        date.currentYear = this.initialDate.getFullYear();
+        date.currentDay = this.initialDate.getDate();
+        date.currentHour = this.initialDate.getHours();
+        date.currentMinute = this.initialDate.getMinutes();
+        this.schedule = this.getSchedule();
+        this.$el.html( this.tpl(_.extend( {}, this.post, date, {schedule: this.schedule }) ) );
+        return this;
+    },
+    getSchedule: function(){
+        var now = new Date(),
+            date = this.initialDate,
+            formatDate = Upfront.Util.format_date
+            ;
+        if(!date && !this.initialDate)
+            return {
+                key: Upfront.Settings.l10n.global.content.publish,
+                text: Upfront.Settings.l10n.global.content.immediately
+            };
+
+        if(date.getTime() == this.initialDate){
+            if(date.getTime() < now.getTime())
+                return {
+                    key: Upfront.Settings.l10n.global.content.published,
+                    text: formatDate(date, true)
+                };
+            else
+                return {
+                    key: Upfront.Settings.l10n.global.content.scheduled,
+                    text: formatDate(date, true)
+                };
+        }
+
+        if(date.getTime() < now.getTime())
+            return {
+                key: Upfront.Settings.l10n.global.content.publish_on,
+                text: formatDate(date, true)
+            };
+        else
+            return {
+                key: Upfront.Settings.l10n.global.content.scheduled_for,
+                text: formatDate(date, true)
+            };
+    },
+    update: function(){
+        var date = new Date(),
+            year = this.$("input[name='yy']").val(),
+            month = this.$("select[name='mm']").val(),
+            day = this.$("input[name='jj']").val(),
+            hour = this.$("input[name='hh']").val(),
+            minute = this.$("input[name='mn']").val()
+        ;
+        date.setFullYear(year);
+        date.setMonth(month);
+        date.setDate(day);
+        date.setHours(hour);
+        date.setMinutes(minute);
+        this.post.set("post_date", date);
+        this.render();
+    }
+
+});
+
 return {
 	PostContentEditor: PostContentEditor,
 	getMarkupper: function getMarkupper(){return markupper;}

@@ -104,7 +104,7 @@
   width: 25px;
   height: 25px;
   content: "";
-  margin: 0 10px -10px 0;
+  margin: 0 0 -10px 0;
 }
 .ueditor-box-wrapper label#post-status-display-label:before{
   background-position: -564px -385px;
@@ -209,4 +209,17 @@ a.ueditor-action-trash:hover {
 .ueditor-post-url-text{
   width: 110px !important;
   display: inline;
+}
+.ueditor-button-ok-small{
+  background: #1fcd8f;
+  color: #fff;
+  height: 26px;
+  width: 38px;
+  display: inline-block;
+  text-align: center;
+  line-height: 26px;
+  color: #fff;
+}
+.ueditor-togglable-post-schedule-date{
+  font-size: 14px;
 }

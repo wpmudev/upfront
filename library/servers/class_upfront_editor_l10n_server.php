@@ -122,6 +122,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'publish' => __('Publish', 'upfront'),
 				'immediately' => __('Immediately', 'upfront'),
 				'publish_on' => __('Publish on', 'upfront'),
+				'scheduled_for' => __('Scheduled for', 'upfront'),
 				'schedule' => __('Schedule', 'upfront'),
 				'edit_pwd' => __('Edit password...', 'upfront'),
 				'update' => __('Update', 'upfront'),
@@ -507,6 +508,20 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'click_hilite_shade' => __('Click either Highlight or Shade swatch to choose it. Hover for original color.', 'upfront'),
 				'define_swatch_hovers' => __('Define <span class="hovers">:hovers</span> for your swatches ?', 'upfront'),
 				'hilite' => __('Highlight', 'upfront'),
+				'month_names' => array(
+					1 => __("01-Jan"),
+                    2 => __("02-Feb"),
+					3 => __("03-Mar"),
+                    4 => __("04-Apr"),
+					5 => __("05-May"),
+                    6 => __("06-Jun"),
+                    7 => __("07-Jul"),
+                    8 => __("08-Aug"),
+                    9 => __("09-Sep"),
+                    10 => __("10-Oct"),
+                    11 => __("11-Nov"),
+                    12 => __("12-Dec")
+				)
 			),
 		);
 		return !empty($key)
