@@ -947,16 +947,6 @@ var EditionBox = Backbone.View.extend({
 
         onScrollFunction: false,
 
-        statusOptions: {
-            future: {value:'future', name: Upfront.Settings.l10n.global.content.scheduled},
-            publish: {value: 'publish', name: Upfront.Settings.l10n.global.content.published},
-            pending: {value: 'pending', name: Upfront.Settings.l10n.global.content.pending_review},
-            draft: {value: 'draft', name: Upfront.Settings.l10n.global.content.draft},
-            'private': {value: 'private', name: Upfront.Settings.l10n.global.content.private_post},
-            'auto-draft': {value: 'auto-draft', name: Upfront.Settings.l10n.global.content.new_post},
-            'trash': {value: 'trash', name: Upfront.Settings.l10n.global.content.deleted_post}
-        },
-
         visibilityOptions: {
             'public': {value: 'public', name:Upfront.Settings.l10n.global.content.public_post},
             'sticky': {value: 'sticky', name:Upfront.Settings.l10n.global.content.sticky},
@@ -967,9 +957,10 @@ var EditionBox = Backbone.View.extend({
         statusSelect: false,
         visibilitySelect: false,
 
-        initialStatus: false,
+
 
         events: {
+            'click .ueditor-action-preview': 'navigate_to_preview',
             'click .ueditor-action-cancel': 'cancel',
             'click .ueditor-action-publish': 'publish',
             'click .ueditor-action-draft': 'saveDraft',
@@ -987,18 +978,13 @@ var EditionBox = Backbone.View.extend({
             'click .ueditor-btn-edit': 'toggleEditor',
             'click .ueditor-button-cancel': 'cancelEdit',
             'change input[type="radio"][name="visibility"]': 'visibility_radio_change',
-            'click .ueditor-box-title': 'show_section',
+            'click .ueditor-box-title': 'toggle_section',
             'click .ueditor-save-post-data': 'save_post_data'
         },
 
         initialize: function(options){
             var me = this;
             this.post = options.post;
-
-            // Store the initial and current status and upfront-content.js
-            // will store it in the post on saving/publishing.
-            this.initialStatus = this.post.get('post_status');
-            this.currentStatus = this.initialStatus;
 
             this.postVisibility = this.post.getVisibility();
             if(this.postVisibility == 'password')
@@ -1034,7 +1020,7 @@ var EditionBox = Backbone.View.extend({
 
 
             extraData.rootUrl = base ? base.replace(/\?.*$/, '') : window.location.origin + '/';
-            postData.status = this.getBarStatus();
+            postData.permalink = this.permalink = extraData.rootUrl + this.post.get("post_name");
             postData.visibility = this.visibilityOptions[this.postVisibility];
 
             postData.schedule = this.getSchedule();
@@ -1081,10 +1067,15 @@ var EditionBox = Backbone.View.extend({
                 }
             });
 
+
             this.prepareSelectBoxes();
 
             //if($('#' + this.cid).length)
             //    this.stick();
+        },
+        navigate_to_preview: function(e){
+            e.preventDefault();
+            window.open(this.permalink, '_blank');
         },
         renderUrlEditor: function(){
             var urlEditor = new PostUrlEditor( { post: this.post } );
@@ -1108,15 +1099,15 @@ var EditionBox = Backbone.View.extend({
         },
         prepareSelectBoxes: function(){
             var me = this;
-            this.statusSelect = new MicroSelect({options: this.getStatusOptions()});
+            this.statusSelect = new PostStatusView({post: this.post});
             this.visibilitySelect = new MicroSelect({options: this.getVisibilityOptions()});
 
-            this.statusSelect.on('select', function(status){
-                me.currentStatus = status;
-                me.trigger('status:change', status);
-                me.render();
-                me.toggleAdvanced();
-            });
+            //this.statusSelect.on('select', function(status){
+            //    me.currentStatus = status;
+            //    me.trigger('status:change', status);
+            //    me.render();
+            //    me.toggleAdvanced();
+            //});
 
             this.visibilitySelect.on('select', function(visibility){
                 if(visibility == 'password')
@@ -1131,15 +1122,10 @@ var EditionBox = Backbone.View.extend({
             });
 
             this.$('.ueditor-select-visibility').append(this.visibilitySelect.$el);
-            this.$('.ueditor-select-status').append(this.statusSelect.$el);
+            this.$('.misc-pub-post-status').html(this.statusSelect.$el);
         },
 
-        getBarStatus: function(){
-            var current = this.currentStatus;
-            if(['auto-draft', 'draft', 'pending'].indexOf(current) != -1)
-                return this.statusOptions[current];
-            return this.statusOptions[this.initialStatus];
-        },
+
 
         getSchedule: function(){
             var now = new Date(),
@@ -1222,26 +1208,7 @@ var EditionBox = Backbone.View.extend({
             return chosen_date;
         },
 
-        getStatusOptions: function(postata){
-            var ops = [],
-                status = this.initialStatus
-                ;
 
-            if(status == 'publish'){
-                ops.push(this.statusOptions.publish);
-            }
-            else if(status == 'future'){
-                ops.push(this.statusOptions.future);
-            }
-            ops.push(this.statusOptions.pending);
-            ops.push(this.statusOptions.draft);
-
-            if(status == 'private'){
-                ops = [ this.statusOptions.private ];
-            }
-
-            return ops;
-        },
 
         getVisibilityOptions: function(){
             var now = this.post.getVisibility(),
@@ -1655,18 +1622,18 @@ var EditionBox = Backbone.View.extend({
             $this.closest(".ueditor-togglable").find(".ueditor-togglable-child").not($this_togglable).hide();
             $this_togglable.show();
         },
-        show_section: function(e){
+        toggle_section: function(e){
             e.preventDefault();
             var $this = $(e.target),
                 $this_section = $this.closest(".ueditor-box-section"),
                 $this_wrap = $this_section.find(".ueditor-box-content-wrap")
             ;
+            //
+            //$(".ueditor-box-section").not( $this_section).removeClass("active");
+            //$(".ueditor-box-content-wrap").not( $this_wrap ).slideUp();
 
-            $(".ueditor-box-section").not( $this_section).removeClass("active");
-            $(".ueditor-box-content-wrap").not( $this_wrap ).slideUp();
-
-            $this_section.addClass("active");
-            $this_wrap.slideDown();
+            $this_section.toggleClass("active");
+            $this_wrap.slideToggle();
         },
         save_post_data: function(e){
 
@@ -1700,7 +1667,68 @@ var PostUrlEditor = Backbone.View.extend({
         }
     }
 });
+var PostStatusView = Backbone.View.extend({
+    statusOptions: {
+        future: {value:'future', name: Upfront.Settings.l10n.global.content.scheduled},
+        publish: {value: 'publish', name: Upfront.Settings.l10n.global.content.published},
+        pending: {value: 'pending', name: Upfront.Settings.l10n.global.content.pending_review},
+        draft: {value: 'draft', name: Upfront.Settings.l10n.global.content.draft},
+        'private': {value: 'private', name: Upfront.Settings.l10n.global.content.private_post},
+        'auto-draft': {value: 'auto-draft', name: Upfront.Settings.l10n.global.content.new_post},
+        'trash': {value: 'trash', name: Upfront.Settings.l10n.global.content.deleted_post}
+    },
+    initialStatus: false,
+    tpl: _.template($(editionBox_tpl).find('#post-status-tpl').html()),
+    className: 'upfront-ui',
+    events: {
+        'click .save-post-status': 'update'
+    },
+    initialize: function(options){
+        this.post = options.post;
+        this.render();
+    },
+    getStatusOptions: function(postata){
+        var ops = [],
+            status = this.initialStatus
+            ;
 
+        if(status == 'publish'){
+            ops.push(this.statusOptions.publish);
+        }
+        else if(status == 'future'){
+            ops.push(this.statusOptions.future);
+        }
+        ops.push(this.statusOptions.pending);
+        ops.push(this.statusOptions.draft);
+
+        if(status == 'private'){
+            ops = [ this.statusOptions.private ];
+        }
+
+        return ops;
+    },
+    getStatus: function(){
+        var current = this.post.get("post_status");
+        if(['auto-draft', 'draft', 'pending'].indexOf(current) != -1)
+            return this.statusOptions[current];
+        return this.statusOptions[this.initialStatus];
+    },
+    render: function(){
+        this.initialStatus = this.currentStatus = this.post.get("post_status");
+        this.status = this.getStatus();
+        this.options = this.getStatusOptions();
+        this.$el.html( this.tpl(_.extend( this.post, {status: this.status}, {options: this.options} )) );
+    },
+    update: function(e){
+        e.preventDefault();
+        var status = this.$("select").val();
+        if(!_.isEmpty( status ) && status !== this.initialStatus ){
+            this.post.set("post_status", status);
+            this.render();
+        }
+    }
+
+});
 return {
 	PostContentEditor: PostContentEditor,
 	getMarkupper: function getMarkupper(){return markupper;}

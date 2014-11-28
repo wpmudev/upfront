@@ -1190,6 +1190,7 @@ var _alpha = "alpha",
 
 				if(model['meta'])
 					this.meta = new Upfront.Collections.MetaList(model['meta'], {objectId: this.id, metaType: 'post'});
+
 			}
 		},
 

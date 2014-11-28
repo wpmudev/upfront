@@ -106,6 +106,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'trigger_edit_featured_image' => __('Click to edit the post\'s featured image', 'upfront'),
 				'starting_img_editor' => __('Starting image editor ...', 'upfront'),
 				'swap_image' => __('Swap Image', 'upfront'),
+				'status' => __('Status', 'upfront'),
 				'scheduled' => __('Scheduled', 'upfront'),
 				'preview' => __('Preview', 'upfront'),
 				'published' => __('Published', 'upfront'),

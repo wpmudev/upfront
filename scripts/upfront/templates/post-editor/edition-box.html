@@ -9,22 +9,10 @@
                         {[ if(draftButton){ ]}
                         <a class="ueditor-action ueditor-action-draft" href="#">{{Upfront.Settings.l10n.global.content.save_draft}}</a>
                         {[ } ]}
-                        <a class="ueditor-action ueditor-action-preview" href="#">{{Upfront.Settings.l10n.global.content.preview}}</a>
+                        <a class="ueditor-action ueditor-action-preview" target="_blank" href="{{permalink}}">{{Upfront.Settings.l10n.global.content.preview}}</a>
                     </div>
                     <div class="ueditor-box-content">
                         <div class="misc-pub-section misc-pub-post-status">
-                            <label id="post-status-display-label" class="ueditor-icon-label">Status:</label>
-                            <span id="post-status-display" class="ueditor-previous-data">{{status.name}}</span>
-                            <a href="#post_status" class="edit-post-status ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</span>
-                            </a>
-                            <div id="post-status-select" class="ueditor-togglable">
-                                <select name="post_status" id="post_status">
-                                    <option value="pending">Pending Review</option>
-                                    <option selected="selected" value="draft">Draft</option>
-                                </select>
-                                <a href="#post_status" class="save-post-status  button">{{Upfront.Settings.l10n.global.content.ok}}</a>
-                                <a href="#post_status" class="cancel-post-status  ueditor-button-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</a>
-                            </div>
 
                         </div>
                         <div class="misc-pub-section misc-pub-visibility" id="visibility">
@@ -206,6 +194,24 @@
         <i class="icon-plus"></i>
         <i class="icon-remove-circle"></i>
         {{ term.get('name') }}
+    </div>
+</script>
+
+<script type="text/template" id="post-status-tpl">
+    <label id="post-status-display-label" class="ueditor-icon-label">{{Upfront.Settings.l10n.global.content.status}}</label>
+    <span id="post-status-display" class="ueditor-previous-data">{{status.name}}</span>
+    <a href="#post_status" class="edit-post-status ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</span>
+    </a>
+    <div id="post-status-select" class="ueditor-togglable">
+        <div class="ueditor-select-status"></div>
+        <select class="ueditor-select-options">
+            {[ _.each(options, function(option){ ]}
+            <option class="ueditor-select-option ueditor-action-status" value="{{option.value}}" {[ if( status.value == option.value ) { ]} selected="selected"  {[ } ]} >{{option.name}}</option>
+            {[ }); ]}
+        </select>
+        <br/>
+        <a href="" class="save-post-status  button">{{Upfront.Settings.l10n.global.content.ok}}</a>
+        <a href="" class="cancel-post-status  ueditor-button-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</a>
     </div>
 </script>
 <div>

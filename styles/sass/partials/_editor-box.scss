@@ -149,9 +149,7 @@ a.ueditor-action-publish {
   width: 120px;
   line-height: 23px;
 }
-.ueditor-action-draft{
-  float: left;
-}
+
 a.ueditor-action-publish:hover {
   text-decoration: none;
   background: #3ea;
@@ -165,10 +163,15 @@ a.ueditor-action:link{
   font-size: 15px;
   height: 36px;
   display: inline-block;
-  float: right;
   width: 98px;
   text-align: center;
   color:#3d527d;
+}
+a.ueditor-action{
+  float: right;
+}
+a.ueditor-action-draft{
+  float: left;
 }
 a.ueditor-action:hover{
   border: 2px solid #25394d;
