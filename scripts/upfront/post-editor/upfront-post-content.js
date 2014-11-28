@@ -610,7 +610,7 @@ var PostContentEditor = Backbone.View.extend({
 		this.bindBarEvents();
 		this.bar.render();
         this.$el.append(this.bar.$el);
-        self.bar.stick();
+        self.bar.setPosition();
 
 		return;
 	},
@@ -644,11 +644,12 @@ var PostContentEditor = Backbone.View.extend({
 			});
 		});
 
+
 		this
 			.listenTo(me.bar, 'date:updated', me.updateDateFromBar)
 			.listenTo(me.bar, 'date:cancel', me.editDateCancel)
-			.listenTo(me.bar, 'status:change', me.updateStatus)
-			.listenTo(me.bar, 'visibility:change', me.updateVisibility)
+			.listenTo(me.bar.statusSection, 'status:change', me.updateStatus)
+			.listenTo(me.bar.visibilitySection , 'visibility:change', me.updateVisibility)
 			.listenTo(me.bar, 'tax:refresh', me.refreshTaxonomies)
 		;
 	},
@@ -947,13 +948,6 @@ var EditionBox = Backbone.View.extend({
 
         onScrollFunction: false,
 
-        visibilityOptions: {
-            'public': {value: 'public', name:Upfront.Settings.l10n.global.content.public_post},
-            'sticky': {value: 'sticky', name:Upfront.Settings.l10n.global.content.sticky},
-            'password': {value: 'password', name: Upfront.Settings.l10n.global.content.protected_post},
-            'private': {value: 'private', name: Upfront.Settings.l10n.global.content.is_private}
-        },
-
         statusSelect: false,
         visibilitySelect: false,
 
@@ -986,12 +980,10 @@ var EditionBox = Backbone.View.extend({
             var me = this;
             this.post = options.post;
 
-            this.postVisibility = this.post.getVisibility();
-            if(this.postVisibility == 'password')
-                this.postPassword = this.post.get('post_password');
 
-            // The same for the date, Bar mustn't update the post.
-            this.initialDate = this.post.get('post_date');
+            this.statusSection = new PostStatusView({post: this.post});
+            this.visibilitySection = new PostVisibilityView({post: this.post});
+
             this.tpl = _.template($(editionBox_tpl).find("#ueditor-box-main").html());
             this.datepickerTpl = _.template($(Upfront.data.tpls.popup).find('#datepicker-tpl').html());
             Upfront.Events.trigger('upfront:element:edit:start', 'write', this.post);
@@ -1012,7 +1004,7 @@ var EditionBox = Backbone.View.extend({
             if (!Upfront.Settings.Application.MODE.ALLOW.match(Upfront.Settings.Application.MODE.CONTENT)) return false; // Drop the entire bar rendering if we're unable to deal with it
             var me = this,
                 postData = this.post.toJSON(),
-                date = this.initialDate,
+                date = this.post.get('post_date'),
                 datepickerData = {},
                 extraData = {},
                 base = me.post.get("guid")
@@ -1021,7 +1013,8 @@ var EditionBox = Backbone.View.extend({
 
             extraData.rootUrl = base ? base.replace(/\?.*$/, '') : window.location.origin + '/';
             postData.permalink = this.permalink = extraData.rootUrl + this.post.get("post_name");
-            postData.visibility = this.visibilityOptions[this.postVisibility];
+            //postData.visibility = this.visibilityOptions[this.postVisibility];
+
 
             postData.schedule = this.getSchedule();
 
@@ -1068,7 +1061,7 @@ var EditionBox = Backbone.View.extend({
             });
 
 
-            this.prepareSelectBoxes();
+            this.populateSections();
 
             //if($('#' + this.cid).length)
             //    this.stick();
@@ -1097,32 +1090,9 @@ var EditionBox = Backbone.View.extend({
             });
 
         },
-        prepareSelectBoxes: function(){
-            var me = this;
-            this.statusSelect = new PostStatusView({post: this.post});
-            this.visibilitySelect = new MicroSelect({options: this.getVisibilityOptions()});
-
-            //this.statusSelect.on('select', function(status){
-            //    me.currentStatus = status;
-            //    me.trigger('status:change', status);
-            //    me.render();
-            //    me.toggleAdvanced();
-            //});
-
-            this.visibilitySelect.on('select', function(visibility){
-                if(visibility == 'password')
-                    me.showPassEditor(me.$('.ueditor-select-visibility'));
-                else{
-                    me.trigger('visibility:change', visibility);
-                    me.postVisibility = visibility;
-                    //me.post.setVisibility(visibility);
-                    me.render();
-                    me.toggleAdvanced();
-                }
-            });
-
-            this.$('.ueditor-select-visibility').append(this.visibilitySelect.$el);
-            this.$('.misc-pub-post-status').html(this.statusSelect.$el);
+        populateSections: function(){
+            this.$('.misc-pub-post-status').html(this.statusSection.$el);
+            this.$('.misc-pub-visibility').html(this.visibilitySection.$el);
         },
 
 
@@ -1207,24 +1177,6 @@ var EditionBox = Backbone.View.extend({
 
             return chosen_date;
         },
-
-
-
-        getVisibilityOptions: function(){
-            var now = this.post.getVisibility(),
-                ops = this.visibilityOptions
-                ;
-            if(now == 'password')
-                return [
-                    {value: 'password', name: Upfront.Settings.l10n.global.content.edit_pwd},
-                    ops.public,
-                    ops.sticky,
-                    ops.private
-                ]
-                    ;
-            return _.values(ops);
-        },
-
         getButtonText: function(){
             var initial = this.initialStatus,
                 date = this.post.get('post_date'),
@@ -1261,93 +1213,25 @@ var EditionBox = Backbone.View.extend({
             this.position = {
                 min: 100,
                 max: height
-            }
+            };
 
             this.offset ={
                 min: this.position.min + offset,
                 max: this.position.max + offset + 2 * this.$el.height()
-            }
-
-            //this.onScroll(null, this.$('.ueditor-bar'));
+            };
         },
 
-        //onScroll: function(e, bar){
-        //    var me = this,
-        //        now = $(window).scrollTop() + $(window).height(),
-        //        position = bar.css('position')
-        //        ;
-        //    if(position == 'fixed'){
-        //        if (now <= me.offset.min){
-        //            bar.css({
-        //                position: 'absolute',
-        //                bottom: 'auto',
-        //                top: me.position.min + 'px',
-        //                left:0,
-        //                width: '100%',
-        //                opacity: 1
-        //            })
-        //                .removeClass('floating')
-        //            ;
-        //            me.calculateLimits();
-        //        }
-        //        else if( now >= me.offset.max){
-        //            bar.css({
-        //                position: 'absolute',
-        //                bottom: 'auto',
-        //                top: '100%',
-        //                left:0,
-        //                width: '100%',
-        //                opacity: 1
-        //            })
-        //                .removeClass('floating')
-        //            ;
-        //            me.calculateLimits();
-        //        }
-        //    }
-        //    else if(position == 'absolute'){
-        //        if(now < me.offset.max && now > me.offset.min){
-        //            bar.css({
-        //                position: 'fixed',
-        //                bottom: '0px',
-        //                left: bar.offset().left + 'px',
-        //                top: 'auto',
-        //                width: bar.outerWidth() + 'px',
-        //                opacity: 0.4
-        //            })
-        //                .addClass('floating')
-        //                .removeClass('show-advanced')
-        //            ;
-        //            me.calculateLimits();
-        //        }
-        //    }
-        //
-        //},
-
-        stick: function(){
+        setPosition: function(){
             var $container = this.$el.closest(".upfront-output-this_post"),
                 $content_part = $(".upfront-postpart-contents"),
                 right_space = $("body").width() - ( $container.width() + $container.offset().left ),
                 right = right_space > this.$el.width() ? right_space - this.$el.width() :  10
                 ;
-            //ph.height(bar.height());
-
-            //container.css('position', 'relative');
 
             this.$el.css({
                 right: right + 10
             });
 
-            //this.calculateLimits();
-
-            //this.onScrollFunction = function(e){
-            //    me.onScroll(e, bar);
-            //};
-
-            //$(window)
-            //    .on('scroll', this.onScrollFunction)
-            //    .on('resize', this.onScrollFunction)
-            //;
-            //this.onScroll(null, bar);
         },
 
         destroy: function(){
@@ -1374,9 +1258,9 @@ var EditionBox = Backbone.View.extend({
              */
 
             e.preventDefault();
-            this.destroy();
+            //this.destroy();
 
-            this.post.trigger('editor:publish');
+            //this.post.trigger('editor:publish');
             this.trigger('publish');
             Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
         },
@@ -1634,12 +1518,10 @@ var EditionBox = Backbone.View.extend({
 
             $this_section.toggleClass("active");
             $this_wrap.slideToggle();
-        },
-        save_post_data: function(e){
-
-
         }
     });
+
+
 var PostUrlEditor = Backbone.View.extend({
     className: "upfront-slug_editor-url",
     tpl : _.template($(editionBox_tpl).find("#post-url-editor").html()),
@@ -1667,6 +1549,7 @@ var PostUrlEditor = Backbone.View.extend({
         }
     }
 });
+
 var PostStatusView = Backbone.View.extend({
     statusOptions: {
         future: {value:'future', name: Upfront.Settings.l10n.global.content.scheduled},
@@ -1724,10 +1607,85 @@ var PostStatusView = Backbone.View.extend({
         var status = this.$("select").val();
         if(!_.isEmpty( status ) && status !== this.initialStatus ){
             this.post.set("post_status", status);
+            this.trigger("status:change", status);
             this.render();
         }
     }
 
+});
+
+var PostVisibilityView = Backbone.View.extend({
+    tpl: _.template($(editionBox_tpl).find('#post-visibility-tpl').html()),
+    post_password: "",
+    postVisibility: false,
+    visibilityOptions: {
+        'public': {value: 'public', name:Upfront.Settings.l10n.global.content.public_post},
+        'sticky': {value: 'sticky', name:Upfront.Settings.l10n.global.content.sticky},
+        'password': {value: 'password', name: Upfront.Settings.l10n.global.content.protected_post},
+        'private': {value: 'private', name: Upfront.Settings.l10n.global.content.is_private}
+    },
+    initialize: function(opts){
+        this.post = opts.post;
+        this.render();
+    },
+    events: {
+        "click .save-post-visibility" : "update",
+        "change input[name='visibility']" : "set_visibility"
+    },
+    render: function(){
+        this.postVisibility = !this.postVisibility ? this.post.getVisibility() : this.postVisibility;
+        this.status = this.visibilityOptions[ this.postVisibility ];
+        if(this.postVisibility == 'password')
+            this.post_password = this.post.get('post_password');
+
+        this.$el.html( this.tpl(_.extend(this.post, {status : this.status, post_password: this.post_password} ) ) );
+    },
+    getVisibilityOptions: function(){
+        var now = this.post.getVisibility(),
+            ops = this.visibilityOptions
+            ;
+        if(now == 'password')
+            return [
+                {value: 'password', name: Upfront.Settings.l10n.global.content.edit_pwd},
+                ops.public,
+                ops.sticky,
+                ops.private
+            ]
+                ;
+        return _.values(ops);
+    },
+    set_visibility: function(e){
+        var visibility_status = $(e.target).val();
+        this.postVisibility = visibility_status;
+    },
+    update: function(){
+        var $pass = this.$(".ueditor-post-pass"),
+            pass = $pass.val();
+        this.postVisibility = this.$("input[name='sticky']").is(":checked") ? this.postVisibility = "sticky" : this.postVisibility;
+
+        if( !this.visibilityOptions.hasOwnProperty( this.postVisibility ) ) return;
+
+        switch ( this.postVisibility ){
+            case "password":
+                if( pass !== ""  ){
+                    $pass.css("border", "1px solid #a3bfd9");
+                    this.post.setVisibility(this.postVisibility);
+                    this.post.set("post_password", pass);
+                    this.trigger("visibility:change", this.postVisibility, pass);
+                }else{
+                    $pass.css("border", "1px solid red");
+                    return;
+                }
+                break;
+            default:
+                this.post.setVisibility(this.postVisibility);
+
+                this.trigger("visibility:change", this.postVisibility, "");
+            break;
+        }
+
+        this.render();
+    }
 });
 return {
 	PostContentEditor: PostContentEditor,

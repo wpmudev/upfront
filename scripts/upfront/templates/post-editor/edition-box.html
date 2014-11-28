@@ -12,42 +12,9 @@
                         <a class="ueditor-action ueditor-action-preview" target="_blank" href="{{permalink}}">{{Upfront.Settings.l10n.global.content.preview}}</a>
                     </div>
                     <div class="ueditor-box-content">
-                        <div class="misc-pub-section misc-pub-post-status">
+                        <div class="misc-pub-section misc-pub-post-status"></div>
+                        <div class="misc-pub-section misc-pub-visibility"></div>
 
-                        </div>
-                        <div class="misc-pub-section misc-pub-visibility" id="visibility">
-                            <label id="post-visibility-display" class="ueditor-icon-label">Visibility:</label>
-                            <span class="ueditor-previous-data">Public</span>
-                            <a href="#visibility" class="edit-visibility ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</span>
-                            </a>
-
-                            <div id="post-visibility-select" class="ueditor-togglable">
-                                <input type="checkbox" style="display:none" name="hidden_post_sticky" id="hidden-post-sticky" value="sticky">
-                                <input type="radio" name="visibility" id="visibility-radio-public" value="public" checked="checked">
-                                <label for="visibility-radio-public">Public</label>
-                                <br>
-                                <span id="sticky-span" class="ueditor-togglable-child ueditor-togglable-child-public">
-                                    <input id="sticky" name="sticky" type="checkbox" value="sticky">
-                                    <label for="sticky" class="selectit">Stick this post to the front page</label>
-                                    <br>
-                                </span>
-                                <input type="radio" name="visibility" id="visibility-radio-password" value="password">
-                                <label for="visibility-radio-password">Password protected</label>
-                                <br>
-                                <span id="password-span" class="ueditor-togglable-child ueditor-togglable-child-password">
-                                    <label>{{Upfront.Settings.l10n.global.content.password}}:</label>
-                                    <input type="password" class="upfront-field-text ueditor-pass" value="{{post_password}}">
-                                    <br>
-                                </span>
-                                <input type="radio" name="visibility" id="visibility-radio-private" value="private">
-                                <label for="visibility-radio-private" class="selectit">Private</label>
-                                <br>
-                                <p>
-                                    <a href="#visibility" class="save-post-visibility  button ueditor-small-button">{{Upfront.Settings.l10n.global.content.ok}}</a>
-                                    <a href="#visibility" class="cancel-post-visibility  ueditor-button-cancel ueditor-small-button">{{Upfront.Settings.l10n.global.content.cancel}}</a>
-                                </p>
-                            </div>
-                        </div>
                         <div class="misc-pub-section curtime misc-pub-curtime">
                             <span id="timestamp">
                                 <label id="publication-time" class="ueditor-icon-label">Publish:</label>
@@ -83,7 +50,7 @@
                                 </div>
 
                                 <p>
-                                    <a href="#edit_timestamp" class="save-timestamp  button">{{Upfront.Settings.l10n.global.content.ok}}</a>
+                                    <a href="#edit_timestamp" class="save-timestamp  ueditor-button-ok-small">{{Upfront.Settings.l10n.global.content.ok}}</a>
                                     <a href="#edit_timestamp" class="cancel-timestamp  ueditor-button-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</a>
                                 </p>
                             </div>
@@ -130,7 +97,7 @@
         <span class="ueditor-post-url-root">{{rootUrl}}</span>
         <input type="text" class="upfront-field-text ueditor-post-url-text" value="{{slug}}">
         <p>
-            <a href="#" class="ueditor-save-post-data  ueditor-button-save">{{Upfront.Settings.l10n.global.content.ok}}</a>
+            <a href="#" class="ueditor-save-post-data  ueditor-button-save ueditor-button-ok-small">{{Upfront.Settings.l10n.global.content.ok}}</a>
             <a href="#" class="cancel-post-url  ueditor-button-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</a>
         </p>
     </div>
@@ -200,8 +167,8 @@
 <script type="text/template" id="post-status-tpl">
     <label id="post-status-display-label" class="ueditor-icon-label">{{Upfront.Settings.l10n.global.content.status}}</label>
     <span id="post-status-display" class="ueditor-previous-data">{{status.name}}</span>
-    <a href="#post_status" class="edit-post-status ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</span>
-    </a>
+    <a class="edit-post-status ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
+
     <div id="post-status-select" class="ueditor-togglable">
         <div class="ueditor-select-status"></div>
         <select class="ueditor-select-options">
@@ -210,8 +177,44 @@
             {[ }); ]}
         </select>
         <br/>
-        <a href="" class="save-post-status  button">{{Upfront.Settings.l10n.global.content.ok}}</a>
+        <a href="" class="save-post-status  ueditor-button-ok-small">{{Upfront.Settings.l10n.global.content.ok}}</a>
         <a href="" class="cancel-post-status  ueditor-button-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</a>
     </div>
 </script>
+
+<script type="text/template" id="post-visibility-tpl">
+    <label id="post-visibility-display" class="ueditor-icon-label">Visibility:</label>
+    <span class="ueditor-previous-data">{{status.name}}</span>
+    <a href="#visibility" class="edit-visibility ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</span>
+    </a>
+
+    <div id="post-visibility-select" class="ueditor-togglable">
+        <input type="checkbox" style="display:none" name="hidden_post_sticky" id="hidden-post-sticky" value="sticky">
+        <input type="radio" name="visibility" id="visibility-radio-public" value="public" {[ if( status.value == "public" ) { ]} checked="checked" {[ } ]} >
+        <label for="visibility-radio-public">Public</label>
+        <br>
+        <span id="sticky-span" class="ueditor-togglable-child ueditor-togglable-child-public" {[ if( status.value == "public" ) { ]} style="display:block" {[ } ]}>
+            <input name="sticky" type="checkbox" value="sticky">
+            <label for="sticky">Stick this post to the front page</label>
+            <br>
+        </span>
+        <input type="radio" name="visibility" id="visibility-radio-password" value="password" {[ if( status.value == "password" ) { ]} checked="checked" {[ } ]}>
+        <label for="visibility-radio-password">Password protected</label>
+        <br>
+        <span id="password-span" class="ueditor-togglable-child ueditor-togglable-child-password" {[ if( status.value == "password" ) { ]} style="display:block" {[ } ]}>
+            <label>{{Upfront.Settings.l10n.global.content.password}}:</label>
+            <input type="password" class="upfront-field-text ueditor-post-pass" value="{{post_password}}">
+            <br>
+        </span>
+        <input type="radio" name="visibility" id="visibility-radio-private" value="private" {[ if( status.value == "private" ) { ]} checked="checked" {[ } ]}>
+        <label for="visibility-radio-private">Private</label>
+        <br>
+        <p>
+            <a href="#visibility" class="save-post-visibility ueditor-small-button  ueditor-button-ok-small">{{Upfront.Settings.l10n.global.content.ok}}</a>
+            <a href="#visibility" class="cancel-post-visibility  ueditor-button-cancel ueditor-small-button">{{Upfront.Settings.l10n.global.content.cancel}}</a>
+        </p>
+    </div>
+</script>
+
+
 <div>

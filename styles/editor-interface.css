@@ -13351,6 +13351,17 @@ div.upfront-regions a#no_region_add_one {
   overflow: hidden;
   clear: both; }
 
+/* line 121, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/ueditor */
+.ueditor-button-ok-small {
+  background: #1fcd8f;
+  color: #fff;
+  height: 26px;
+  width: 38px;
+  display: inline-block;
+  text-align: center;
+  line-height: 26px;
+  color: #fff; }
+
 /* --- New embed inserts --- */
 /* line 3, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/embed-inserts */
 .upfront-inserts-markup-editor {
