@@ -911,6 +911,7 @@ define([
 				this.listenTo(Upfront.Events, 'upfront:element:edit:start', this.on_element_edit_start);
 				this.listenTo(Upfront.Events, 'upfront:element:edit:stop', this.on_element_edit_stop);
 				this.listenTo(Upfront.Events, 'layout:after_render', this.on_after_layout_render);
+				this.listenTo(Upfront.Events, 'layout:after_render', this.checkUiOffset);
 
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 
@@ -971,9 +972,10 @@ define([
 				//if (this.$el.is(".upfront-active_entity")) this.$el.trigger("upfront-editable_entity-selected", [this.model, this]);
 				if ( this.on_render ) this.on_render();
 
-				setTimeout(function() {
-					me.checkUiOffset();
-				}, 300);
+				// Run checkUiOffset on after layout render instead (see initialize)
+				//setTimeout(function() {
+				//	me.checkUiOffset();
+				//}, 300);
 
 				// Put this here because initialize gets overriden by child classes
 				this.ensure_breakpoint_change_is_listened();
