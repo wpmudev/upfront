@@ -103,6 +103,7 @@ var CustomSelectorField =  Upfront.Views.Editor.Field.Hidden.extend({
 		if (values) {
 			field += '<ol>';
 			_.each(values, function (value) {
+				if (!value) return false;
 				field += '<li>' + value.permalink + '<a href="#rmv" data-id="' + value.id + '"><i>&times;</i></a></li>';
 			});
 			field += '</ol>';
