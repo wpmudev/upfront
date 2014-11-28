@@ -27,16 +27,15 @@
                 <div class="ueditor-box-content-wrap">
                     <div class="ueditor-box-content">
                         <div class="misc-pub-section misc-pub-post-category">
-                            <label id="post-categories-display-label">{{Upfront.Settings.l10n.global.content.categories}}:</label>
-                            <a href="#edit_categories" class="ueditor-edit-categories ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
-                            <br/>
-                            <span id="post-category-display" class="ueditor-previous-data ueditor-previous-data-toggle ueditor-previous-data-small">Prev cats, cat2, cat3</span>
+
                         </div>
+                        <br/>
                         <div class="misc-pub-section misc-pub-post-tags">
                             <label id="post-tags-display-label">{{Upfront.Settings.l10n.global.content.tags}}:</label>
                             <a href="#edit_tags" class="ueditor-edit-tags ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
                             <br/>
                             <span id="post-tags-display" class="ueditor-previous-data ueditor-previous-data-toggle ueditor-previous-data-small">Tag1, tag2, tag2</span>
+                            <div class="ueditor-subview"></div>
                         </div>
                         <div class="misc-pub-section misc-pub-post-url">
 
@@ -65,20 +64,30 @@
 
 
 <script type="text/template" id="upfront-term-list-tpl">
-    <div id="upfront-taxonomy-list" class="upfront-scroll-panel">
-        {[ _.each(allTerms.where({'parent': '0'}), function(term, idx){ ]}
-        {{ termTemplate({term: term, termTemplate: termTemplate, termId: term.get('term_id'), postTerms: postTerms}) }}
-        {[ }); ]}
-    </div>
-    <div id="upfront-taxonomy-add">
-        <input type="text" id="upfront-new_term" placeholder="Enter {{ labels.singular_name}}" />
-        <select id="upfront-taxonomy-parents">
-            <option value="0">-- {{Upfront.Settings.l10n.global.content.parent_category}} --</option>
-            {[ allTerms.each(function(term, idx) { ]}
-            <option value="{{ term.get('term_id') }}">{{ term.get('name') }}</option>
-            {[ }) ]}
-        </select>
-        <button id="upfront-add_term"><i class="icon-plus"></i> Add {{ labels.singular_name }}</button>
+    <label id="post-categories-display-label">{{Upfront.Settings.l10n.global.content.categories}}:</label>
+    <a class="ueditor-edit-categories ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
+    <p id="post-category-display" class="ueditor-previous-data ueditor-previous-data-toggle ueditor-previous-data-small">
+    {[ _.each(postTerms.toJSON(), function(term, idx){ ]}
+        {{term.name}},
+    {[ }); ]}
+    </p>
+    <div class="ueditor-togglable">
+        <div id="upfront-taxonomy-list" class="upfront-scroll-panel">
+            {[ _.each(allTerms.where({'parent': '0'}), function(term, idx){ ]}
+            {{ termTemplate({term: term, termTemplate: termTemplate, termId: term.get('term_id'), postTerms: postTerms}) }}
+            {[ }); ]}
+        </div>
+        <a href="#" id="add-new-taxonomies-btn">+ Add new {{ labels.singular_name }}</a>
+        <div id="upfront-taxonomy-add" class="ueditor-togglable-child">
+            <input type="text" id="upfront-new_term" placeholder="Enter {{ labels.singular_name}}" />
+            <select id="upfront-taxonomy-parents">
+                <option value="0">-- {{Upfront.Settings.l10n.global.content.parent_category}} --</option>
+                {[ allTerms.each(function(term, idx) { ]}
+                <option value="{{ term.get('term_id') }}">{{ term.get('name') }}</option>
+                {[ }) ]}
+            </select>
+            <button id="upfront-add_term" class="ueditor-button-ok-small"> Add new {{ labels.singular_name }}</button>
+        </div>
     </div>
 </script>
 
@@ -112,7 +121,7 @@
     </div>
     <div id="upfront-taxonomy-add">
         <input type="text" id="upfront-new_term" placeholder="Enter {{ labels.singular_name}}" />
-        <button id="upfront-add_term"><i class="icon-plus"></i> Add {{ labels.singular_name }}</button>
+        <button id="upfront-add_term"><i class="icon-plus"></i> Add new {{ labels.singular_name }}</button>
     </div>
 </script>
 
