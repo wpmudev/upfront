@@ -80,10 +80,16 @@ class Upfront_Posts extends Upfront_Server {
 		upfront_add_ajax('upfront_posts-load', array($this, "load_posts"));
 		upfront_add_ajax('upfront_posts-data', array($this, "load_data"));
 		upfront_add_ajax('upfront_posts-terms', array($this, "load_terms"));
+		
+		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
+			add_action('wp_footer', array($this, 'pickle_query'), 99);
+		}
 	}
 
 	public function load_posts () {
-		$data = !empty($_POST['data']) ? $this->to_data_array(stripslashes_deep($_POST['data'])) : array();
+		$request = !empty($_POST['data']) ? stripslashes_deep($_POST['data']) : array();
+		$data = !empty($request['props']) ? $this->to_data_array($request['props']) : array();
+		if (!empty($request['query'])) $data['query'] = $request['query'];
 
 		$this->_out(new Upfront_JsonResponse_Success(array(
 			'posts' => Upfront_Posts_PostsView::get_posts_markup($data),
@@ -133,6 +139,20 @@ class Upfront_Posts extends Upfront_Server {
 			$result[$item['name']] = !empty($item['value']) ? $item['value'] : false;
 		}
 		return $result;
+	}
+
+	public function pickle_query () {
+		global $wp_query;
+		$request = clone($wp_query);
+		unset($request->post);
+		unset($request->posts);
+		unset($request->request);
+		if (!empty($request->queried_object)) {
+			unset($request->queried_object->post_title);
+			unset($request->queried_object->post_excerpt);
+			unset($request->queried_object->post_content);
+		}
+		echo '<script>window._upfront_get_current_query=window._upfront_get_current_query||function () {return' . json_encode($request) . ';};</script>';
 	}
 
 }
