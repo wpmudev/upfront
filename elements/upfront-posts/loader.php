@@ -84,6 +84,19 @@ class Upfront_Posts extends Upfront_Server {
 		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
 			add_action('wp_footer', array($this, 'pickle_query'), 99);
 		}
+
+		// Handle legacy element parsing
+		add_filter('upfront-virtual_region-object_defaults-fallback', array($this, 'handle_legacy_data'), 10, 2);
+		add_filter('upfront-output-get_markup-fallback', array($this, 'handle_legacy_output'), 10, 2);
+	}
+
+	public function handle_legacy_data ($data, $type) {
+		if ('Uposts' !== $type) return $data;
+		return Upfront_Posts_PostsData::get_defaults();
+	}
+	public function handle_legacy_output ($msg, $view_class) {
+		if ('Upfront_UpostsView' !== $view_class) return $msg;
+		return '';
 	}
 
 	public function load_posts () {
