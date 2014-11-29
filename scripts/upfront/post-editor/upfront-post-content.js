@@ -613,12 +613,12 @@ var PostContentEditor = Backbone.View.extend({
 
 	bindBarEvents: function(){
 		var me = this,
-			events = ['cancel', 'publish', 'draft', 'trash']
+			events = ['cancel', 'publish', 'draft', 'trash', 'auto-draft']
 		;
 		_.each(events, function(e){
 			me.listenTo(me.bar, e, function(){
 				var results = {};
-				if(e=='publish' || e=='draft'){
+				if(e=='publish' || e=='draft' || e=='auto-draft'){
 					//if(me.parts.titles) results.title = $.trim(me.parts.titles.html());
 					if(me.parts.titles) results.title = $.trim(me.parts.titles.text());
 					if(me.currentContent){
@@ -790,7 +790,7 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
             ;
 
 		this.$el.html(
-			this.termListingTpl(_.extend(this.defaults, {
+			this.termListingTpl(_.extend({}, this.defaults, {
                 allTerms: this.allTerms.where({'parent': '0'}),
 				postTerms: this.collection,
 				termTemplate: this.termSingleTpl,
@@ -1061,6 +1061,7 @@ var EditionBox = Backbone.View.extend({
 
             extraData.rootUrl = base ? base.replace(/\?.*$/, '') : window.location.origin + '/';
             postData.permalink = this.permalink = extraData.rootUrl + this.post.get("post_name");
+            postData.previewLink = this.post.get("guid") + "&preview=true";
 
             postData.buttonText = this.getButtonText();
             postData.draftButton = ['publish', 'future'].indexOf(this.initialStatus) == -1;
@@ -1068,7 +1069,7 @@ var EditionBox = Backbone.View.extend({
 
             postData.cid = this.cid;
 
-            this.$el.html(this.tpl(_.extend(postData, extraData) ));
+            this.$el.html(this.tpl(_.extend({}, postData, extraData) ));
 
             this.populateSections();
 
@@ -1076,11 +1077,13 @@ var EditionBox = Backbone.View.extend({
         },
         navigate_to_preview: function(e){
             e.preventDefault();
-            if( this.post.is_new ){
-                this.post.trigger('editor:draft');
-                this.trigger('draft');
+
+            if( this.post.get("post_status") === "auto-draft" ){
+                this.post.trigger('editor:auto-draft');
+                this.trigger('auto-draft');
             }
-            window.open(this.permalink, '_blank');
+
+            window.open(this.post.get("guid") + "&preview=true", '_blank');
         },
         renderTaxonomyEditor: function($el, tax){
             var self = this,
@@ -1345,7 +1348,7 @@ var PostStatusView = PostSectionView.extend({
         this.initialStatus = this.currentStatus = this.post.get("post_status");
         this.status = this.getStatus();
         this.options = this.getStatusOptions();
-        this.$el.html( this.tpl(_.extend( this.post, {status: this.status}, {options: this.options} )) );
+        this.$el.html( this.tpl(_.extend({}, this.post, {status: this.status}, {options: this.options} )) );
         return this;
     },
     getStatusOptions: function(postata){
