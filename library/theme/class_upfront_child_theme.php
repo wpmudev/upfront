@@ -178,13 +178,23 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		$element_types = is_dir($styles_root)
 			? array_diff(scandir($styles_root), Upfront::$Excluded_Files)
 			: array()
-			;
+		;
+
+		$alternate_layout_id = false;
+		if (!empty($layout['item']) && 'single-page' == $layout['item'] && !empty($layout['specificity'])) {
+			$page_id = preg_replace('/.*-([0-9]+)$/', '$1', $layout['specificity']);
+			if (is_numeric($page_id)) foreach ($this->get_required_pages() as $page) {
+				if ((int)$page->get_id() !== (int)$page_id) continue;
+				$alternate_layout_id = $page->get_layout_name();
+				break;
+			}
+		}
 
 		foreach($element_types as $type) {
 			$style_files = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), Upfront::$Excluded_Files);
 			foreach ($style_files as $style) {
 				// If region CSS, only load the one saved matched the layout_id
-				$style_rx = '/^(' . preg_quote("{$layout_id}", '/') . '|' . preg_quote("{$type}", '/') . ')/';
+				$style_rx = '/^(' . preg_quote("{$layout_id}", '/') . '|' . preg_quote("{$type}", '/') . (!empty($alternate_layout_id) ? '|' . preg_quote($alternate_layout_id, '/') : '') . ')/';
 				if ( preg_match('/^region(-container|)$/', $type) && !preg_match($style_rx, $style) )
 					continue;
 				$style_content = file_get_contents($styles_root . DIRECTORY_SEPARATOR . $type . DIRECTORY_SEPARATOR . $style);
