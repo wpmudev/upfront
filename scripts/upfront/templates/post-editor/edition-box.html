@@ -56,7 +56,7 @@
         <span class="ueditor-post-url-root">{{rootUrl}}</span>
         <input type="text" class="upfront-field-text ueditor-post-url-text" value="{{slug}}">
         <p>
-            <a href="#" class="ueditor-save-post-data  ueditor-button-save ueditor-button-ok-small">{{Upfront.Settings.l10n.global.content.ok}}</a>
+            <a href="#" class="ueditor-save-post-data  ueditor-button-save ueditor-button-small-ok">{{Upfront.Settings.l10n.global.content.ok}}</a>
             <a href="#" class="cancel-post-url  ueditor-button-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</a>
         </p>
     </div>
@@ -79,26 +79,32 @@
         </div>
         <a href="#" id="add-new-taxonomies-btn">+ Add new {{ labels.singular_name }}</a>
         <div id="upfront-taxonomy-add" class="ueditor-togglable-child">
-            <input type="text" id="upfront-new_term" placeholder="Enter {{ labels.singular_name}}" />
+            <input type="text" class="upfront-tax-new_term" placeholder="Enter {{ labels.singular_name}}" />
             <select id="upfront-taxonomy-parents">
                 <option value="0">-- {{Upfront.Settings.l10n.global.content.parent_category}} --</option>
                 {[ _(allTerms).each(function(term, idx) { ]}
                 <option value="{{ term.get('term_id') }}">{{ term.get('name') }}</option>
                 {[ }) ]}
             </select>
-            <button id="upfront-add_term" class="ueditor-button-ok-small"> Add new {{ labels.singular_name }}</button>
+            <button id="upfront-tax-add_term" class="ueditor-button-small"> Add new {{ labels.singular_name }}</button>
         </div>
+        <p>
+            <a href="#" class="ueditor-save-post-hie-tax  ueditor-button-small-ok">{{Upfront.Settings.l10n.global.content.ok}}</a>
+            <a href="#" class="ueditor-cancel-hie-tax  ueditor-button-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</a>
+        </p>
     </div>
 </script>
 
 <script type="text/template" id="upfront-term-single-tpl">
     <div class="upfront-taxonomy_item" id="upfront-term_item-{{ termId }}">
         <label for="upfront-taxonomy-{{ term.taxonomy }}-{{ termId }}">
-            <input type="checkbox" id="upfront-taxonomy-{{ term.taxonomy }}-{{ termId }}" value="{{ termId }}" {{ postTerms.get(termId) ? 'checked="checked"' : '' }} /> {{ term.get('name') }}
+            <input type="checkbox" id="upfront-taxonomy-{{ term.taxonomy }}-{{ termId }}" value="{{ termId }}" {{ postTerms.get(termId) || typeof selected !== "undefined" ? 'checked="checked"' : '' }} /> {{ term.get('name') }}
         </label>
-        {[ term.children.each(function(child, idx){ ]}
-        {{ termTemplate({term: child, termTemplate: termTemplate, termId: child.get('term_id'), postTerms: postTerms}) }}
-        {[ }) ]}
+        {[ if( term.children ) { ]}
+            {[ term.children.each(function(child, idx){ ]}
+                {{ termTemplate({term: child, termTemplate: termTemplate, termId: child.get('term_id'), postTerms: postTerms}) }}
+            {[ }) ]}
+        {[ } ]}
     </div>
 </script>
 
@@ -146,7 +152,7 @@
             {[ }); ]}
         </select>
         <br/>
-        <a href="" class="save-post-status  ueditor-button-ok-small">{{Upfront.Settings.l10n.global.content.ok}}</a>
+        <a href="" class="save-post-status  ueditor-button-small-ok">{{Upfront.Settings.l10n.global.content.ok}}</a>
         <a href="" class="cancel-post-status  ueditor-button-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</a>
     </div>
 </script>
@@ -179,7 +185,7 @@
         <label for="visibility-radio-private">Private</label>
         <br>
         <p>
-            <a href="#visibility" class="save-post-visibility ueditor-small-button  ueditor-button-ok-small">{{Upfront.Settings.l10n.global.content.ok}}</a>
+            <a href="#visibility" class="save-post-visibility ueditor-small-button  ueditor-button-small-ok">{{Upfront.Settings.l10n.global.content.ok}}</a>
             <a href="#visibility" class="cancel-post-visibility  ueditor-button-cancel ueditor-small-button">{{Upfront.Settings.l10n.global.content.cancel}}</a>
         </p>
     </div>
@@ -211,7 +217,7 @@
         </div>
 
         <p>
-            <a href="#" class="ueditor-save-post-date  ueditor-button-ok-small">{{Upfront.Settings.l10n.global.content.ok}}</a>
+            <a href="#" class="ueditor-save-post-date  ueditor-button-small-ok">{{Upfront.Settings.l10n.global.content.ok}}</a>
             <a href="#" class="ueditor-cancel-timestamp  ueditor-button-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</a>
         </p>
     </div>

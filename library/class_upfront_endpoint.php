@@ -509,7 +509,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			$term = wp_update_term($data['term_id'], $data['taxonomy'], $data);
 		}
 
-		if($data['postId'])
+		if(isset( $data['postId'] ))
 			wp_set_object_terms($data['postId'], $term['term_id'], $data['taxonomy']);
 
 		if(is_wp_error($term))

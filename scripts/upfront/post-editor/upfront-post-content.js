@@ -725,7 +725,7 @@ var PostSectionView = Backbone.View.extend({
     events:{
         'click .ueditor-btn-edit': 'toggleEditor',
         'click .ueditor-button-cancel': 'cancelEdit',
-        "click .ueditor-button-ok-small" : "update",
+        "click .ueditor-button-small-ok" : "update",
         'change input[type="radio"][name="visibility"]': 'visibility_radio_change',
         "change input[name='visibility']" : "set_visibility"
     },
@@ -765,18 +765,19 @@ var PostSectionView = Backbone.View.extend({
 });
 
 var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
-    termListTpl : _.template($(editionBox_tpl).find('#upfront-term-list-tpl').html()),
+    termListingTpl : _.template($(editionBox_tpl).find('#upfront-term-list-tpl').html()),
     termSingleTpl : _.template($(editionBox_tpl).find('#upfront-term-single-tpl').html()),
     defaults: {
         title: "Categories"
     },
 	className: "upfront-taxonomy-hierarchical",
 	events: _.extend({},PostSectionView.prototype.events, this.events, {
-        "click #upfront-add_term": "handle_new_term",
+        "click #upfront-tax-add_term": "handle_new_term",
         "click #add-new-taxonomies-btn": "toggle_add_new",
         "keydown #upfront-add_term": "handle_enter_new_term",
         "change .upfront-taxonomy_item": "handle_terms_update",
-        'keydown #upfront-new_term': 'handle_enter_new_term'
+        'keydown #upfront-new_term': 'handle_enter_new_term',
+        'click .ueditor-save-post-hie-tax': 'update'
     }),
 	updateTimer: false,
 	allTerms: false,
@@ -793,22 +794,24 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
             ;
 
 		this.$el.html(
-			this.termListTpl(_.extend(this.defaults, {
+			this.termListingTpl(_.extend(this.defaults, {
                 allTerms: this.allTerms.where({'parent': '0'}),
 				postTerms: this.collection,
 				termTemplate: this.termSingleTpl,
 				labels: this.collection.taxonomyObject.labels
 			}))
 			);
+
 	},
 
 	handle_new_term: function() {
 		var me = this,
-		termId = this.$el.find("#upfront-new_term").val(),
+		$term_name = this.$(".upfront-tax-new_term"),
+		term_name = $term_name.val(),
 		parentId, term
 		;
 
-		if(!termId)
+		if(!term_name)
 			return false;
 
 		if ($("#upfront-taxonomy-parents").length)
@@ -816,15 +819,19 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
 
 		term = new Upfront.Models.Term({
 			taxonomy: this.collection.taxonomy,
-			name: termId,
+			name: term_name,
 			parent: parentId
 		});
 
 		term.save().done(function(response){
 			me.allTerms.add(term);
-			me.collection.add(term).save();
-			me.render();
+			me.collection.add(term);
 		});
+
+        var new_term_html = this.termSingleTpl( {term: term, termTemplate: me.termSingleTpl, termId: term.get('term_id'), postTerms: me.collection, selected: true} );
+        this.$("#upfront-taxonomy-list").prepend(new_term_html);
+        this.$("#upfront-taxonomy-list").scrollTop(0);
+        $term_name.val("");
 	},
 
 	handle_terms_update: function(e){
@@ -839,11 +846,6 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
 		else
 			this.collection.add(this.allTerms.get(termId));
 
-		//Delay the current update to let the user add/remove more terms
-		clearTimeout(this.updateTimer);
-		this.updateTimer = setTimeout(function(){
-			me.collection.save();
-		}, 2000);
 	},
 
 	handle_enter_new_term: function (e) {
@@ -851,6 +853,10 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
 			this.handle_new_term(e);
 		}
 	},
+    update: function(e){
+        this.collection.save();
+        this.render();
+    },
     toggle_add_new: function(){
         this.$(".ueditor-togglable-child").slideToggle();
     }
