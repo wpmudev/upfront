@@ -213,12 +213,13 @@ a.ueditor-action-trash:hover {
 .ueditor-button-ok-small{
   background: #1fcd8f;
   color: #fff;
-  height: 26px;
-  width: 38px;
+  height: 25px;
+  min-width: 40px;
   display: inline-block;
   text-align: center;
-  line-height: 26px;
+  line-height: 25px;
   color: #fff;
+  padding: 0 10px;
 }
 .ueditor-togglable-post-schedule-date{
   font-size: 14px;

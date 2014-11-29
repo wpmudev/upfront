@@ -73,7 +73,7 @@
     </p>
     <div class="ueditor-togglable">
         <div id="upfront-taxonomy-list" class="upfront-scroll-panel">
-            {[ _.each(allTerms.where({'parent': '0'}), function(term, idx){ ]}
+            {[ _.each( allTerms, function(term, idx){ ]}
             {{ termTemplate({term: term, termTemplate: termTemplate, termId: term.get('term_id'), postTerms: postTerms}) }}
             {[ }); ]}
         </div>
@@ -82,7 +82,7 @@
             <input type="text" id="upfront-new_term" placeholder="Enter {{ labels.singular_name}}" />
             <select id="upfront-taxonomy-parents">
                 <option value="0">-- {{Upfront.Settings.l10n.global.content.parent_category}} --</option>
-                {[ allTerms.each(function(term, idx) { ]}
+                {[ _(allTerms).each(function(term, idx) { ]}
                 <option value="{{ term.get('term_id') }}">{{ term.get('name') }}</option>
                 {[ }) ]}
             </select>

@@ -785,9 +785,16 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
 	},
 
 	render: function() {
+        var self = this,
+            selected_term_ids = self.collection.pluck("term_id"),
+            all_terms =  this.allTerms.sortBy(function(term, indx) {
+                return selected_term_ids.indexOf( term.get("term_id") ) !== -1;
+            })
+            ;
+
 		this.$el.html(
 			this.termListTpl(_.extend(this.defaults, {
-				allTerms: this.allTerms,
+                allTerms: this.allTerms.where({'parent': '0'}),
 				postTerms: this.collection,
 				termTemplate: this.termSingleTpl,
 				labels: this.collection.taxonomyObject.labels

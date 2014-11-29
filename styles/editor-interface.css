@@ -9749,14 +9749,15 @@ a.ueditor-action-trash:hover {
 .ueditor-button-ok-small {
   background: #1fcd8f;
   color: #fff;
-  height: 26px;
-  width: 38px;
+  height: 25px;
+  min-width: 40px;
   display: inline-block;
   text-align: center;
-  line-height: 26px;
-  color: #fff; }
+  line-height: 25px;
+  color: #fff;
+  padding: 0 10px; }
 
-/* line 223, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/editor-box */
+/* line 224, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/editor-box */
 .ueditor-togglable-post-schedule-date {
   font-size: 14px; }
 

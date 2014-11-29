@@ -524,9 +524,9 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			$this->_out(new Upfront_JsonResponse_Error("Invalid taxonomy."));
 		$response = array();
 		if($data['postId']){
-			$response['results'] = array_values(get_the_terms($data['postId'], $data['taxonomy']));
+			$response['results'] = array_values((array) get_the_terms($data['postId'], $data['taxonomy']));
 			if($data['allTerms']){
-				$response['allTerms'] = array_values(get_terms($data['taxonomy'], array('hide_empty' => false)));
+				$response['allTerms'] = array_values((array)get_terms($data['taxonomy'], array('hide_empty' => false)));
 			}
 		}
 		else{
