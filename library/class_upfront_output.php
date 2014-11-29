@@ -984,7 +984,7 @@ class Upfront_Object extends Upfront_Entity {
 	public function get_markup () {
 		$view_class = 'Upfront_' . $this->_get_property("view_class");
 		if(!class_exists($view_class))
-			return $view_class . ' class not found';
+			return apply_filters('upfront-output-get_markup-fallback', "{$view_class} class not found", $view_class);
 
 		$view = new $view_class($this->_data);
 
