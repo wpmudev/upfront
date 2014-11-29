@@ -596,16 +596,12 @@ var PostContentEditor = Backbone.View.extend({
 				$(this).redactor('set', contents, false);
 		});
 
-		this.bar.calculateLimits();
 		this.currentContent = e.currentTarget;
 	},
 
 	prepareBar: function(){
         var self = this;
-		if(this.bar){
-			this.bar.calculateLimits();
-			return;
-		}
+		if(this.bar) return;
 		this.bar = new EditionBox({post: this.post});
 		this.bindBarEvents();
 		this.bar.render();
@@ -862,20 +858,21 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
     }
 });
 
-var ContentEditorTaxonomy_Flat = Backbone.View.extend({
+var ContentEditorTaxonomy_Flat = PostSectionView.extend({
 	"className": "upfront-taxonomy-flat",
 	termListTpl: _.template($(editionBox_tpl).find('#upfront-flat-term-list-tpl').html()),
 	termSingleTpl: _.template($(editionBox_tpl).find('#upfront-term-flat-single-tpl').html()),
 	changed: false,
 	updateTimer: false,
-	events: {
-		"click #upfront-add_term": "handle_new_term",
-		'click .upfront-taxonomy_item-flat': 'handle_term_click',
-		'keydown #upfront-add_term': 'handle_enter_new_term',
-		'keydown #upfront-new_term': 'handle_enter_new_term'
-	},
+	events: _.extend({}, PostSectionView.prototype.events, {
+        "click .ueditor-button-small-flat-tax-add": "handle_new_term",
+        'click .upfront-taxonomy_item-flat': 'handle_term_click',
+        'keydown #upfront-flat-tax-add_term': 'handle_enter_new_term',
+        'keydown .upfront-flat-tax-new_term': 'handle_enter_new_term',
+        'click .upfront-taxonomy-list-choose-from-prev': 'toggle_prev_used_tax'
+    }),
 	initialize: function(options){
-		this.collection.on('add remove', this.render, this);
+		this.collection.on('add remove', this.update, this);
 	},
 	render: function () {
 		var	me = this,
@@ -903,45 +900,50 @@ var ContentEditorTaxonomy_Flat = Backbone.View.extend({
 		$target = $(e.currentTarget),
 		termId = $target.attr('data-term_id');
 
-		if($target.parent().attr('id') == 'upfront-taxonomy-list-current')
-			this.collection.remove(termId);
-		else
-			this.collection.add(this.allTerms.get(termId));
+        if($target.parent().attr('id') == 'upfront-taxonomy-list-current')
+            this.collection.remove(termId);
+        else
+            this.collection.add(this.allTerms.get(termId));
 
-	//Delay the current update to let the user add/remove more terms
-	clearTimeout(this.updateTimer);
-	this.updateTimer = setTimeout(function(){
-		me.collection.save();
-	}, 2000);
-},
 
-handle_new_term: function (e) {
-	var me = this,
-	termId = this.$el.find("#upfront-new_term").val(),
-	term
-	;
 
-	e.preventDefault();
+    },
 
-	if(! termId)
-		return false;
+    handle_new_term: function (e) {
+        e.preventDefault();
 
-	term = new Upfront.Models.Term({
-		taxonomy: this.collection.taxonomy,
-		name: termId
-	});
+        var me = this,
+        term_name = this.$(".upfront-flat-tax-new_term").val(),
+        term
+        ;
 
-	term.save().done(function(response){
-		me.allTerms.add(term);
-		me.collection.add(term).save();
-	});
-},
+        if(! term_name)
+            return false;
 
-handle_enter_new_term: function (e) {
-	if(e.which == 13){
-		this.handle_new_term(e);
-	}
-}
+        term = new Upfront.Models.Term({
+            taxonomy: this.collection.taxonomy,
+            name: term_name
+        });
+
+        term.save().done(function(response){
+            me.allTerms.add(term);
+            me.collection.add(term).save();
+        });
+    },
+
+    handle_enter_new_term: function (e) {
+        if(e.which == 13){
+            this.handle_new_term(e);
+        }
+    },
+    toggle_prev_used_tax: function(e){
+        e.preventDefault();
+        this.$(".ueditor-togglable-child").slideToggle();
+    },
+    update: function(e){
+        this.collection.save();
+        this.render();
+    }
 });
 
 var MicroSelect = Backbone.View.extend({
@@ -1019,9 +1021,6 @@ var EditionBox = Backbone.View.extend({
             'click .ueditor-action-draft': 'saveDraft',
             'click .ueditor-action-trash': 'trash',
             'click .ueditor-action-tags': 'editTaxonomies',
-            'click .ueditor-action-schedule': 'openDatepicker',
-            'click .ueditor-action-pickercancel': 'close_date_picker',
-            'click .ueditor-action-pickerok': 'save_date_picker',
             'click .ueditor-box-title': 'toggle_section',
             'click .ueditor-save-post-data': 'save_post_data'
         },
@@ -1056,17 +1055,12 @@ var EditionBox = Backbone.View.extend({
             if (!Upfront.Settings.Application.MODE.ALLOW.match(Upfront.Settings.Application.MODE.CONTENT)) return false; // Drop the entire bar rendering if we're unable to deal with it
             var me = this,
                 postData = this.post.toJSON(),
-                date = this.post.get('post_date'),
-                datepickerData = {},
                 extraData = {},
                 base = me.post.get("guid")
                 ;
 
-
             extraData.rootUrl = base ? base.replace(/\?.*$/, '') : window.location.origin + '/';
             postData.permalink = this.permalink = extraData.rootUrl + this.post.get("post_name");
-
-            //postData.schedule = this.getSchedule();
 
             postData.buttonText = this.getButtonText();
             postData.draftButton = ['publish', 'future'].indexOf(this.initialStatus) == -1;
@@ -1074,49 +1068,18 @@ var EditionBox = Backbone.View.extend({
 
             postData.cid = this.cid;
 
-            datepickerData.minutes = _.range(0,60);
-            datepickerData.hours = _.range(0,24);
-
-            datepickerData.currentHour = date.getHours();
-            datepickerData.currentMinute = date.getHours();
-
-            postData.datepicker = this.datepickerTpl(datepickerData);
-
-
-            this.$el.html(this.tpl(_.extend(postData, datepickerData, extraData) ));
-
-            this.renderTaxonomyEditor( this.$(".misc-pub-post-category"), "category");
-            this.renderTaxonomyEditor( this.$(".misc-pub-post-tags .ueditor-subview"), "post_tag");
-
-            this.$('.upfront-bar-datepicker').datepicker({
-                changeMonth: true,
-                changeYear: true,
-                dateFormat: 'yy/mm/dd',
-                onChangeMonthYear: function(year, month){
-                    var picker = me.$('.upfront-bar-datepicker'),
-                        day = picker.datepicker('getDate').getDate();
-                    ;
-                    var prev_date = new Date(  me.$('.ueditor-action-schedule').text()  ),
-                        d = new Date ( year, month - 1, day, prev_date.getHours(), prev_date.getMinutes() )
-                        ;
-
-                    me.$('.ueditor-action-schedule').html(Upfront.Util.format_date( d, true));
-                    me.post.set("post_date", d);
-                    picker.datepicker("setDate", d);
-                },
-                onSelect: function(textDate){
-                    me.updateBarDate(me.getDatepickerDate());
-                }
-            });
-
+            this.$el.html(this.tpl(_.extend(postData, extraData) ));
 
             this.populateSections();
 
-            //if($('#' + this.cid).length)
-            //    this.stick();
+
         },
         navigate_to_preview: function(e){
             e.preventDefault();
+            if( this.post.is_new ){
+                this.post.trigger('editor:draft');
+                this.trigger('draft');
+            }
             window.open(this.permalink, '_blank');
         },
         renderTaxonomyEditor: function($el, tax){
@@ -1139,51 +1102,12 @@ var EditionBox = Backbone.View.extend({
             this.$('.misc-pub-visibility').html(this.visibilitySection.$el);
             this.$('.misc-pub-schedule').html(this.scheduleSection.$el);
 
-
             this.$(".misc-pub-section.misc-pub-post-url").html( this.urlEditor.$el  );
+
+            this.renderTaxonomyEditor( this.$(".misc-pub-post-category"), "category");
+            this.renderTaxonomyEditor( this.$(".misc-pub-post-tags"), "post_tag");
         },
 
-        openDatepicker: function(e){
-            var date = this.initialDate;
-
-            this.$('.upfront-date_picker').toggle();
-
-            if(date)
-                this.$('.ueditor-action-schedule').html(Upfront.Util.format_date(date, true));
-        },
-
-        close_date_picker : function(){
-            this.trigger('date:cancel');
-            this.updateBarDate(this.initialDate);
-            this.$('.upfront-date_picker').hide();
-        },
-
-        save_date_picker : function(){
-            var date = this.getDatepickerDate();
-
-            this.initialDate = date;
-
-            this.trigger('date:updated', date);
-            this.$('.upfront-date_picker').hide();
-            this.render();
-            this.toggleAdvanced();
-        },
-
-
-        updateBarDate: function(date){
-            this.$('.ueditor-action-schedule').html(Upfront.Util.format_date(date, true));
-        },
-
-        getDatepickerDate: function(){
-            var chosen_date = this.$('.upfront-bar-datepicker').datepicker('getDate'),
-                hours = this.$(".ueditor-hours-select").val(),
-                minutes = this.$(".ueditor-minutes-select").val()
-                ;
-            chosen_date.setHours( hours );
-            chosen_date.setMinutes( minutes );
-
-            return chosen_date;
-        },
         getButtonText: function(){
             var initial = this.initialStatus,
                 date = this.post.get('post_date'),
@@ -1203,29 +1127,6 @@ var EditionBox = Backbone.View.extend({
                     return Upfront.Settings.l10n.global.content.update;
                 return Upfront.Settings.l10n.global.content.publish;
             }
-        },
-
-        calculateLimits: function(){
-            var ph = this.$('.ueditor-bar-ph'),
-                container = this.$el.parent()
-                ;
-            if (!container.length) return false;
-
-            var height = container.height();
-            if(height == this.containerHeight)
-                return;
-
-            var offset = container.offset().top;
-
-            this.position = {
-                min: 100,
-                max: height
-            };
-
-            this.offset ={
-                min: this.position.min + offset,
-                max: this.position.max + offset + 2 * this.$el.height()
-            };
         },
 
         setPosition: function(){
@@ -1270,6 +1171,7 @@ var EditionBox = Backbone.View.extend({
             this.post.trigger('editor:publish');
             this.trigger('publish');
             Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
+            Upfront.Application.sidebar.toggleSidebar();
         },
 
         saveDraft: function(e){
@@ -1389,11 +1291,8 @@ var EditionBox = Backbone.View.extend({
                 $this_section = $this.closest(".ueditor-box-section"),
                 $this_wrap = $this_section.find(".ueditor-box-content-wrap")
             ;
-            //
-            //$(".ueditor-box-section").not( $this_section).removeClass("active");
-            //$(".ueditor-box-content-wrap").not( $this_wrap ).slideUp();
 
-            $this_section.toggleClass("active");
+            $this_section.toggleClass("show");
             $this_wrap.slideToggle();
         }
     });
@@ -1416,7 +1315,7 @@ var PostUrlEditor = PostSectionView.extend({
             slug: self.post.get('post_name')
         }));
     },
-    save: function(e){
+    update: function(e){
         e.preventDefault();
         var val = this.$(".ueditor-post-url-text").val();
         if( val.length > 1 ){

@@ -22,7 +22,12 @@
   position: relative;
   cursor: pointer;
 }
-
+.ueditor-box-section .ueditor-box-content-wrap{
+  display: none;
+}
+.ueditor-box-section.active .ueditor-box-content-wrap{
+  display: block;
+}
 .ueditor-box-section .ueditor-box-title:after{
   border-right: none;
   border-left: 4px solid #85aacc;
@@ -38,7 +43,7 @@
   position: absolute;
 }
 
-.ueditor-box-section.active .ueditor-box-title:after{
+.ueditor-box-section.show .ueditor-box-title:after{
   border-right: none;
   border-top: 4px solid #85aacc;
   border-right: 5px solid transparent;
@@ -75,11 +80,16 @@
 .ueditor-togglable,
 .ueditor-togglable-child{
   display: none;
-  padding-left: 12px;
 }
 .misc-pub-section{
   line-height: 40px;
   padding: 0 15px;
+  overflow: hidden;
+  clear: both;
+  border-bottom: 1px solid #d5e4f3;
+}
+.misc-pub-section:last-child{
+  border: none;
 }
 .ueditor-previous-data{
   color:#3d5266;
@@ -89,6 +99,10 @@
 .ueditor-previous-data-small{
   font-size: 13px;
   font-weight: normal;
+  display: inline;
+  float: left;
+  line-height: 21px;
+  margin-bottom: 10px;
 }
 .ueditor-box-wrapper label{
   color:#3d5276;
@@ -121,6 +135,7 @@ a.ueditor-btn-edit{
   text-decoration: underline;
   font-size: 14px;
   display: inline;
+  cursor: pointer;
 }
 .ueditor-bix-top-buttons{
   height: 60px;
