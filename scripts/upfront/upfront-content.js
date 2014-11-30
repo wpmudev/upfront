@@ -327,7 +327,7 @@ define("content", deps, function(postTpl, ContentTools) {
             if( !is_auto_draft ){
                 loading.render();
                 this.$el.append(loading.$el);
-                this.contentEditor.bar.$el.hide();
+                this.contentEditor.box.$el.hide();
             }else{
                 status = "draft";
             }
