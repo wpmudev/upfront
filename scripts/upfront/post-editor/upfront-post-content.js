@@ -876,15 +876,15 @@ var ContentEditorTaxonomy_Flat = PostSectionView.extend({
 	},
 	render: function () {
 		var	me = this,
-		currentTerms = [],
-		otherTerms = []
+		currentTerms = new Upfront.Collections.TermList(),
+		otherTerms = new Upfront.Collections.TermList()
 		;
 		this.allTerms.each(function (term, idx) {
 			term.children = [];
 			if(me.collection.get(term.get('term_id')))
-				currentTerms.push(term);
+				currentTerms.add(term);
 			else
-				otherTerms.push(term);
+				otherTerms.add(term);
 		});
 
 		this.$el.html(this.termListTpl({

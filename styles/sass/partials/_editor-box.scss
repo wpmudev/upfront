@@ -91,7 +91,7 @@
 #ueditor-box-cats-tags .misc-pub-section{
   border-bottom: 1px solid #d5e4f3;
 }
-.misc-pub-section:last-child{
+#ueditor-box-cats-tags .misc-pub-section:last-child{
   border: none;
 }
 .ueditor-previous-data{
@@ -102,10 +102,9 @@
 .ueditor-previous-data-small{
   font-size: 13px;
   font-weight: normal;
-  display: inline;
-  float: left;
   line-height: 21px;
   margin-bottom: 10px;
+  clear: both;
 }
 .ueditor-box-wrapper label{
   color:#3d5276;
