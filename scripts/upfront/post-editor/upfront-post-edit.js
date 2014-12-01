@@ -168,8 +168,11 @@ var Box = Backbone.View.extend({
 
         this.post.trigger('editor:publish');
         this.trigger('publish');
+
         Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
+        Upfront.Events.trigger('upfront:post:edit:stop', 'write', this.post.toJSON());
         Upfront.Application.sidebar.toggleSidebar();
+
     },
 
     saveDraft: function(e){

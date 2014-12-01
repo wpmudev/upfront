@@ -606,7 +606,7 @@ var PostContentEditor = Backbone.View.extend({
 		this.bindBarEvents();
 		this.box.render();
         this.$el.append(this.box.$el);
-        _.delay(  _.bind(this.box.setPosition, this.box), 5 );
+        _.delay(  _.bind(this.box.setPosition, this.box), 10 );
 		return this;
 	},
 

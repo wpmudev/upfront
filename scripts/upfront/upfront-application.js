@@ -1393,6 +1393,11 @@ var Application = new (Backbone.Router.extend({
 			this.current_subapplication.stop();
 		}
 
+        
+        Upfront.Events.once('upfront:post:edit:stop', function(action, post){
+            me.navigate('/edit/' + post.post_type + '/' + post.ID + location.search, {trigger: false, replace: true});
+        });
+
 		//Set some listener for the new post view
 		Upfront.Events.once('post:initialized', function(postView){
 			postView
