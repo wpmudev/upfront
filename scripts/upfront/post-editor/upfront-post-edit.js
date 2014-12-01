@@ -77,9 +77,11 @@ var Box = Backbone.View.extend({
         if( this.post.get("post_status") === "auto-draft" ){
             this.post.trigger('editor:auto-draft');
             this.trigger('auto-draft');
+            window.open(this.post.get("guid") + "&preview=true", '_blank');
+            return;
         }
 
-        window.open(this.post.get("guid") + "&preview=true", '_blank');
+        window.open(this.post.get("guid"), '_blank');
     },
     renderTaxonomyEditor: function($el, tax){
         var self = this,
