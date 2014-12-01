@@ -370,8 +370,12 @@ define([
 						me.modal._data[key] = field.get_value();
 					});
 					if (!me.modal._fields.permalink.has_been_edited()) {
-						var title = me.modal._data.title || me._default_label,
-							permalink = title.replace(/[^-_0-9a-z]/gi, '-').toLowerCase()
+						var title = $.trim(me.modal._data.title || me._default_label),
+							permalink = title
+								.replace(/^[^a-z0-9]+/gi, '') // Trim non-alnum off of start
+								.replace(/[^a-z0-9]+$/gi, '') // Trim non-alnum off of end
+								.replace(/[^-_0-9a-z]/gi, '-')
+								.toLowerCase()
 						;
 						me.modal._fields.permalink.set_value(permalink);
 					}
