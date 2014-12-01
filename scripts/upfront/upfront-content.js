@@ -363,10 +363,12 @@ define("content", deps, function(postTpl, ContentTools) {
 			}
 
 			this.post.set('post_status', status);
-			this.post.save().done(function(data){
+			this.post.save().done(function(result){
                 if( me.post.is_new && post_name.length){
                     me.post.set("post_name", post_name).save();
                 }
+                me.post.set("post_name", result.data.post_name);
+                me.post.permalink = result.data.permalink;
 				if(metaUpdated){
                     if( !is_auto_draft ) {
                         loading.done();
@@ -402,6 +404,8 @@ define("content", deps, function(postTpl, ContentTools) {
 			}
 			else
 				metaUpdated
+
+            this.post.is_new = false;
 		},
 
 		capitalize: function(str){
