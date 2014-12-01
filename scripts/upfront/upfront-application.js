@@ -1413,6 +1413,7 @@ var Application = new (Backbone.Router.extend({
 		this.load_layout(layoutOps, {new_post: post_type}).done(function(response){
 			Upfront.Settings.LayoutEditor.newpostType = post_type;
 			postData = response.data.post;
+            Upfront.data.posts[postData.ID].is_new = true;
 			deferred.resolve(Upfront.data.posts[postData.ID]);
 			loading.done();
 		});

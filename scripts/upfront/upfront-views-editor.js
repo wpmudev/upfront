@@ -265,32 +265,7 @@ define([
 			if(Upfront.Settings.LayoutEditor.newpostType == this.postType)
 				return Upfront.Views.Editor.notify(l10n.already_creating_post.replace(/%s/, this.postType), 'warning');
 
-			return Upfront.Application.navigate('/create_new/post', {trigger: true});
-
-			//window.location = Upfront.Settings.Content.create.post;
-			var me = this,
-				loading = new Upfront.Views.Editor.Loading({
-					loading: l10n.preparing_new_post.replace(/%s/, this.postType),
-					done: l10n.preparing_done,
-					fixed: true
-				})
-			;
-
-			loading.render();
-			$('body').append(loading.$el);
-
-			if(Upfront.Settings.LayoutEditor.newpostType == this.postType)
-				return Upfront.Views.Editor.notify(l10n.already_creating_post.replace(/%s/, this.postType), 'warning');
-
-			if (this.setMode !== false && Upfront.Application.mode.current != this.setMode)
-				Upfront.Application.set_current(Upfront.Settings.Application.MODE.CONTENT);
-			Upfront.Application.new_post(this.postType)
-				.done(function(post){
-					loading.done();
-					loading = false;
-				})
-			;
-
+			return Upfront.Application.navigate('/create_new/post' + location.search, {trigger: true});
 		},
 		on_post_loaded: function(view) {
 			if(!this.postView){

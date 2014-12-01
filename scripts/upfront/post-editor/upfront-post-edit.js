@@ -66,10 +66,8 @@ var Box = Backbone.View.extend({
         postData.cid = this.cid;
 
         this.$el.html(this.tpl(_.extend({}, postData, extraData) ));
-
         this.populateSections();
-
-
+        return this;
     },
     navigate_to_preview: function(e){
         e.preventDefault();
@@ -132,8 +130,7 @@ var Box = Backbone.View.extend({
 
     setPosition: function(){
         var $container = $(".upfront-output-this_post"),
-            $content_part = $(".upfront-postpart-contents"),
-            right_space = $("body").width() - ( $container.width() + $container.offset().left ),
+            right_space = $("body").width() - ( $container.width() + ( _.isUndefined( $container.offset() ) ? 0 : $container.offset().left ) ),
             right = right_space > this.$el.width() ? right_space - this.$el.width() :  10
             ;
 

@@ -97,7 +97,7 @@ var PostContentEditor = Backbone.View.extend({
 			cancel = draggable.draggable('disable');
 
 		this.prepareEditableRegions();
-		this.prepareBar();
+		this.prepareBox();
 	},
 
 	prepareEditableRegions: function(){
@@ -599,16 +599,15 @@ var PostContentEditor = Backbone.View.extend({
 		this.currentContent = e.currentTarget;
 	},
 
-	prepareBar: function(){
+	prepareBox: function(){
         var self = this;
 		if(this.box) return;
 		this.box = new Edit.Box({post: this.post});
 		this.bindBarEvents();
 		this.box.render();
         this.$el.append(this.box.$el);
-        self.box.setPosition();
-
-		return;
+        _.delay(  _.bind(this.box.setPosition, this.box), 5 );
+		return this;
 	},
 
 	bindBarEvents: function(){

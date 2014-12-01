@@ -316,6 +316,7 @@ define("content", deps, function(postTpl, ContentTools) {
 				updateMeta = true,
 				metaUpdated = !updateMeta,
                 is_auto_draft = status === "auto-draft",
+                post_name = this.post.get("post_name"),
                 loading = new Upfront.Views.Editor.Loading({
 					loading: loadingMsg,
 					done: Upfront.Settings.l10n.global.content.here_we_are,
@@ -363,6 +364,9 @@ define("content", deps, function(postTpl, ContentTools) {
 
 			this.post.set('post_status', status);
 			this.post.save().done(function(data){
+                if( me.post.is_new && post_name.length){
+                    me.post.set("post_name", post_name).save();
+                }
 				if(metaUpdated){
                     if( !is_auto_draft ) {
                         loading.done();
@@ -381,7 +385,7 @@ define("content", deps, function(postTpl, ContentTools) {
 
 			if(updateMeta){
 				me.post.meta.save().done(function(){
-					if(postUpdated){
+                    if(postUpdated){
                         if( !is_auto_draft ) {
                             loading.done();
                             Upfront.Views.Editor.notify(successMsg);
