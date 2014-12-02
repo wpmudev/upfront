@@ -840,6 +840,9 @@ RedactorPlugins.upfrontLink = function() {
                     var menuitem = this.redactor.$element.closest('li').data('backboneview');
                     menuitem.model['being-edited'] = false;
                 }
+
+                this.redactor.code.sync();
+
             },
 
             bindEvents: function () {
