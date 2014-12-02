@@ -1009,10 +1009,10 @@ define([
 				}
 				var containerOffset = $parentRegionEl.closest('.upfront-region-container').offset(),
 					offset = this.$el.offset(),
-					topOffsetTooClose = containerOffset.top - offset.top < 50,
+					topOffsetTooClose = containerOffset && containerOffset.top - offset.top < 50,
 					// $.offset does not have right side so calculate it
 					rightOffset = offset.left + this.$el.width(),
-					containerRightOffset = containerOffset.left + $parentRegionEl.closest('.upfront-region-container').width(),
+					containerRightOffset = (containerOffset || {left: 0}).left + $parentRegionEl.closest('.upfront-region-container').width(),
 					rightOffsetTooClose = containerRightOffset - rightOffset < 30;
 
 				if (topOffsetTooClose && rightOffsetTooClose) {
