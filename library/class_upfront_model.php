@@ -618,14 +618,14 @@ class Upfront_Layout extends Upfront_JsonModel {
 				'post_status' => 'publish'
 			));
 			$query->parse_query();
-			$post = $query->next_post();
+			$post = $query->post_count > 0 ?  $query->next_post() : false;
 
 			if ( $post_type->name == 'post' )
 				$list['single'] = array(
 					'layout' => array(
 						'type' => 'single'
 					),
-					'latest_post' => $post->ID
+					'latest_post' => is_object( $post ) ?  $post->ID : null
 				);
 			else
 				$list['single-' . $post_type->name] = array(
