@@ -330,10 +330,10 @@ var ContentSettings = PostPartSettings.extend({
 		 */
 		if( ( current_width - _left - _right ) < ( 10 * col_size ) ){
 			if( input.name === "padding_left" ){
-				input.value = _.isUndefined( $el.css("padding-left") ) ? 0 : parseInt( $el.css("padding-left").replace("px", "") ) / col_size;
+				input.value = _.isUndefined( $el.css("padding-left") ) ? 15 : parseInt( $el.css("padding-left").replace("px", "") ) / col_size;
 			}
 			if( input.name === "padding_right" ){
-				input.value = _.isUndefined( $el.css("padding-right") ) ? 0 : parseInt( $el.css("padding-right").replace("px", "") ) / col_size;
+				input.value = _.isUndefined( $el.css("padding-right") ) ? 15 : parseInt( $el.css("padding-right").replace("px", "") ) / col_size;
 			}
 			return false;
 		}
@@ -391,8 +391,8 @@ var ContentView = PostPartView.extend({
 	refreshPaddings: function(left, right){
 		var ge = Upfront.Behaviors.GridEditor,
 			colSize = ge.col_size,
-			rightPadding = right * colSize,
-			leftPadding = left * colSize,
+			rightPadding = right > 0 ? right * colSize : 15,
+			leftPadding = left > 0 ?  left * colSize : 15,
 			styles = $('.upfront-region-postlayouteditor').find('.upfront-post-padding'),
 			rules = '.upfront-region-postlayouteditor .upfront-output-PostPart_contents {',
 			$el = $(".upfront-region-postlayouteditor .upfront-output-PostPart_contents")
