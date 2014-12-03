@@ -1193,20 +1193,29 @@ var LayoutEditor = {
 				styleExists.push(styleName);
 		});
 		
-		_.each(elementTypes, function(elementType){
-			_.each(Upfront.data.styles[elementType.id], function(styleName){
-				if ( ! _.contains(styleExists, styleName) && styleName.match(new RegExp('^' + layout_id)) )
-					deleteDatas.push({
-						elementType: elementType.id,
-						styleName: styleName
+		me._get_saved_layout().done(function(saved){
+			_.each(elementTypes, function(elementType){
+				_.each(Upfront.data.styles[elementType.id], function(styleName){
+					var onOtherLayout = false;
+					_.each(saved, function(obj, id){
+						if ( id == layout_id )
+							return;
+						if ( styleName.match(new RegExp('^' + id)) )
+							onOtherLayout = true;
 					});
+					if ( ! _.contains(styleExists, styleName) && styleName.match(new RegExp('^' + layout_id)) && !onOtherLayout )
+						deleteDatas.push({
+							elementType: elementType.id,
+							styleName: styleName
+						});
+				});
 			});
+			if ( deleteDatas.length > 0 ) {
+				Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.behaviors.cleaning_region_css)
+				deleteFunc(0); // Start deleting
+			}
 		});
 		
-		if ( deleteDatas.length > 0 ) {
-			Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.behaviors.cleaning_region_css)
-			deleteFunc(0); // Start deleting
-		}
 		return deferred.promise();
 	},
 
