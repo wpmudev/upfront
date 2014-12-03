@@ -516,8 +516,8 @@ Ueditor.prototype = {
 		UeditorEvents.trigger("ueditor:method:" + method, this.$el.redactor);
 		return result;
 	},
-	startPlaceholder: function(){
-		console.log('this happend here');
+	startPlaceholder: function() {
+
 		var placeholder = this.options.placeholder;
 		if (this.$el.attr('placeholder')) placeholder = this.$el.attr('placeholder');
 		if (placeholder === '') placeholder = false;
@@ -549,7 +549,7 @@ Ueditor.prototype = {
 			this.options.placeholder = placeholder;
 			var me = this;
 
-			setTimeout(function() { console.log(me.$el.parent().html());}, 200);
+			//setTimeout(function() { console.log(me.$el.parent().html());}, 200);
 		}
 	},
 	stopPlaceholder: function() {

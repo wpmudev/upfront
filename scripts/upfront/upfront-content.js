@@ -260,6 +260,7 @@ define("content", deps, function(postTpl, ContentTools) {
 			this.listenTo(this.contentEditor, 'cancel', this.cancelChanges);
 			this.listenTo(this.contentEditor, 'publish', this.publish);
 			this.listenTo(this.contentEditor, 'draft', this.saveDraft);
+			this.listenTo(this.contentEditor, 'auto-draft', this.saveDraft);
 			this.listenTo(this.contentEditor, 'trash', this.trash);
 
 			// So let's focus on title
@@ -285,7 +286,9 @@ define("content", deps, function(postTpl, ContentTools) {
 		saveDraft:function(results){
 			this.save(results, 'draft', Upfront.Settings.l10n.global.content.saving.replace(/%s/, this.post.get('post_type')), Upfront.Settings.l10n.global.content.drafted.replace(/%s/, this.capitalize(this.post.get('post_type'))));
 		},
-
+        saveDraft:function(results){
+            this.save(results, 'auto-draft');
+        },
 		trash: function(){
 			var me = this,
 				postType = this.post.get('post_type'),
@@ -312,7 +315,9 @@ define("content", deps, function(postTpl, ContentTools) {
 				changed = this.changed,
 				updateMeta = true,
 				metaUpdated = !updateMeta,
-				loading = new Upfront.Views.Editor.Loading({
+                is_auto_draft = status === "auto-draft",
+                post_name = this.post.get("post_name"),
+                loading = new Upfront.Views.Editor.Loading({
 					loading: loadingMsg,
 					done: Upfront.Settings.l10n.global.content.here_we_are,
 					fixed: false
@@ -320,9 +325,15 @@ define("content", deps, function(postTpl, ContentTools) {
 				postUpdated = false
 			;
 
-			loading.render();
-			this.$el.append(loading.$el);
-			this.contentEditor.bar.$el.hide();
+            if( !is_auto_draft ){
+                loading.render();
+                this.$el.append(loading.$el);
+                this.contentEditor.box.$el.hide();
+            }else{
+                status = "draft";
+            }
+
+
 			
 			if(results.title)
 				this.post.set('post_title', results.title);
@@ -352,13 +363,22 @@ define("content", deps, function(postTpl, ContentTools) {
 			}
 
 			this.post.set('post_status', status);
-			this.post.save().done(function(data){
+			this.post.save().done(function(result){
+                if( me.post.is_new && post_name.length){
+                    me.post.set("post_name", post_name).save();
+                }
+                me.post.set("post_name", result.data.post_name);
+                me.post.permalink = result.data.permalink;
 				if(metaUpdated){
-					loading.done();
-					Upfront.Views.Editor.notify(successMsg);
+                    if( !is_auto_draft ) {
+                        loading.done();
+                        Upfront.Views.Editor.notify(successMsg);
+                    }
 					me.fetchPostLayout().then(function(){
-						me.stopEditContents();
-						me.render();
+                        if( !is_auto_draft ) {
+                            me.stopEditContents();
+                            me.render();
+                        }
 					});
 				}
 
@@ -367,12 +387,16 @@ define("content", deps, function(postTpl, ContentTools) {
 
 			if(updateMeta){
 				me.post.meta.save().done(function(){
-					if(postUpdated){
-						loading.done();
-						Upfront.Views.Editor.notify(successMsg);
+                    if(postUpdated){
+                        if( !is_auto_draft ) {
+                            loading.done();
+                            Upfront.Views.Editor.notify(successMsg);
+                        }
 						me.fetchPostLayout().then(function(){
-							me.stopEditContents();
-							me.render();
+                            if( !is_auto_draft ) {
+                                me.stopEditContents();
+                                me.render();
+                            }
 						});
 					}
 					metaUpdated = true;
@@ -380,6 +404,8 @@ define("content", deps, function(postTpl, ContentTools) {
 			}
 			else
 				metaUpdated
+
+            this.post.is_new = false;
 		},
 
 		capitalize: function(str){

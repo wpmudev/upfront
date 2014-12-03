@@ -8,9 +8,9 @@
 }
  */
 .ueditor-bar-wrapper{
-	position:absolute;
-	top:100%;
-	width: 100%;
+//	position:absolute;
+//	top:100%;
+//	width: 100%;
 }
 
 .ueditor-bar {
@@ -111,22 +111,6 @@ a.ueditor-bar-icon-only:before {
 	margin-left: 5px;
 }
 
-a.ueditor-action-publish {
-	text-align: center;
-	color: #fff !important;
-	padding: 7px 20px;
-	background: #1fcd8f;
-	margin: 0 auto;
-}
-
-a.ueditor-action-publish:before {
-	background-position: -650px -425px;
-	padding: 2px 6px;
-}
-a.ueditor-action-publish:hover {
-	text-decoration: none;
-	background: #3ea;
-}
 
 a.ueditor-action-cancel {
 	color: #A3B9CC !important;
@@ -161,10 +145,6 @@ a.ueditor-action-cancel:hover:before {
 
 .ueditor-action-url:before{
 	background-position: -559px -425px;
-}
-
-.ueditor-action-trash:before{
-	background-position: -601px -425px;
 }
 
 .ueditor-select-status a:before {
@@ -242,11 +222,6 @@ div.ueditor_deleted_post a.ueditor_restore {
 }
 div.ueditor_deleted_post a.ueditor_restore:hover {
 	text-decoration: underline;
-}
-
-.ueditor-bar div a.ueditor-action-trash:hover {
-	color: #E5575A;
-	text-decoration: none;
 }
 
 .ueditor-select-wrapper {
@@ -330,4 +305,3 @@ a.ueditor-select-option:hover {
 .ueditor-action-status, .ueditor-action-visibility {
 	width: 140px;
 }
-

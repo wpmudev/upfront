@@ -910,8 +910,9 @@ var PostContentEditor = new (Subapplication.extend({
 	},
 
 	boot: function () {
-		Upfront.Util.log("Preparing post content mode for execution")
-	},
+		Upfront.Util.log("Preparing post content mode for execution");
+        Upfront.Events.trigger('upfront:post:edit:booted', this);
+    },
 
 	start: function () {
 		Upfront.Util.log("Starting post the content edit mode");
@@ -1392,6 +1393,11 @@ var Application = new (Backbone.Router.extend({
 			this.current_subapplication.stop();
 		}
 
+        
+        Upfront.Events.once('upfront:post:edit:stop', function(action, post){
+            me.navigate('/edit/' + post.post_type + '/' + post.ID + location.search, {trigger: false, replace: true});
+        });
+
 		//Set some listener for the new post view
 		Upfront.Events.once('post:initialized', function(postView){
 			postView
@@ -1412,6 +1418,7 @@ var Application = new (Backbone.Router.extend({
 		this.load_layout(layoutOps, {new_post: post_type}).done(function(response){
 			Upfront.Settings.LayoutEditor.newpostType = post_type;
 			postData = response.data.post;
+            Upfront.data.posts[postData.ID].is_new = true;
 			deferred.resolve(Upfront.data.posts[postData.ID]);
 			loading.done();
 		});
@@ -1477,6 +1484,8 @@ var Application = new (Backbone.Router.extend({
 		} else if(mode && this.MODE.POSTCONTENT == mode) {
 			this.mode.current = this.MODE.POSTCONTENT;
 			this.current_subapplication = this.PostContentEditor;
+            if ( this.sidebar.visible && this.is_editor())
+                this.sidebar.toggleSidebar();
 		} else if(mode && this.MODE.RESPONSIVE == mode) {
 			this.mode.current = this.MODE.RESPONSIVE;
 			this.current_subapplication = this.ResponsiveEditor;

@@ -265,32 +265,7 @@ define([
 			if(Upfront.Settings.LayoutEditor.newpostType == this.postType)
 				return Upfront.Views.Editor.notify(l10n.already_creating_post.replace(/%s/, this.postType), 'warning');
 
-			return Upfront.Application.navigate('/create_new/post', {trigger: true});
-
-			//window.location = Upfront.Settings.Content.create.post;
-			var me = this,
-				loading = new Upfront.Views.Editor.Loading({
-					loading: l10n.preparing_new_post.replace(/%s/, this.postType),
-					done: l10n.preparing_done,
-					fixed: true
-				})
-			;
-
-			loading.render();
-			$('body').append(loading.$el);
-
-			if(Upfront.Settings.LayoutEditor.newpostType == this.postType)
-				return Upfront.Views.Editor.notify(l10n.already_creating_post.replace(/%s/, this.postType), 'warning');
-
-			if (this.setMode !== false && Upfront.Application.mode.current != this.setMode)
-				Upfront.Application.set_current(Upfront.Settings.Application.MODE.CONTENT);
-			Upfront.Application.new_post(this.postType)
-				.done(function(post){
-					loading.done();
-					loading = false;
-				})
-			;
-
+			return Upfront.Application.navigate('/create_new/post' + location.search, {trigger: true});
 		},
 		on_post_loaded: function(view) {
 			if(!this.postView){
@@ -370,8 +345,12 @@ define([
 						me.modal._data[key] = field.get_value();
 					});
 					if (!me.modal._fields.permalink.has_been_edited()) {
-						var title = me.modal._data.title || me._default_label,
-							permalink = title.replace(/[^-_0-9a-z]/gi, '-').toLowerCase()
+						var title = $.trim(me.modal._data.title || me._default_label),
+							permalink = title
+								.replace(/^[^a-z0-9]+/gi, '') // Trim non-alnum off of start
+								.replace(/[^a-z0-9]+$/gi, '') // Trim non-alnum off of end
+								.replace(/[^-_0-9a-z]/gi, '-')
+								.toLowerCase()
 						;
 						me.modal._fields.permalink.set_value(permalink);
 					}
@@ -2931,166 +2910,6 @@ define([
 
 			if(prevPage !== false)
 				this.handle_pagination_request(e, prevPage);
-		}
-	});
-
-	var ContentEditorTaxonomy_Hierarchical = Backbone.View.extend({
-		className: "upfront-taxonomy-hierarchical",
-		events: {
-			"click #upfront-add_term": "handle_new_term",
-			"keydown #upfront-add_term": "handle_enter_new_term",
-			"change .upfront-taxonomy_item": "handle_terms_update",
-			'keydown #upfront-new_term': 'handle_enter_new_term'
-		},
-		termListTpl: _.template($(_Upfront_Templates.popup).find('#upfront-term-list-tpl').html()),
-		termSingleTpl: _.template($(_Upfront_Templates.popup).find('#upfront-term-single-tpl').html()),
-		updateTimer: false,
-		allTerms: false,
-		initialize: function(options){
-			//this.collection.on('add remove', this.render, this);
-		},
-
-		render: function() {
-			this.$el.html(
-				this.termListTpl({
-					allTerms: this.allTerms,
-					postTerms: this.collection,
-					termTemplate: this.termSingleTpl,
-					labels: this.collection.taxonomyObject.labels,
-				})
-			);
-		},
-
-		handle_new_term: function() {
-			var me = this,
-				termId = this.$el.find("#upfront-new_term").val(),
-				parentId, term
-			;
-
-			if(!termId)
-				return false;
-
-			if ($("#upfront-taxonomy-parents").length)
-				parentId = $("#upfront-taxonomy-parents").val();
-
-			term = new Upfront.Models.Term({
-				taxonomy: this.collection.taxonomy,
-				name: termId,
-				parent: parentId
-			});
-
-			term.save().done(function(response){
-				me.allTerms.add(term);
-				me.collection.add(term).save();
-				me.render();
-			});
-		},
-
-		handle_terms_update: function(e){
-			var me = this,
-				$target = $(e.target),
-				termId = $target.val()
-			;
-
-			if(!$target.is(':checked')){
-				this.collection.remove(this.allTerms.get(termId));
-			}
-			else
-				this.collection.add(this.allTerms.get(termId));
-
-			//Delay the current update to let the user add/remove more terms
-			clearTimeout(this.updateTimer);
-			this.updateTimer = setTimeout(function(){
-				me.collection.save();
-			}, 2000);
-		},
-
-		handle_enter_new_term: function (e) {
-			if(e.which == 13){
-				this.handle_new_term(e);
-			}
-		}
-	});
-
-	var ContentEditorTaxonomy_Flat = Backbone.View.extend({
-		"className": "upfront-taxonomy-flat",
-		termListTpl: _.template($(_Upfront_Templates.popup).find('#upfront-flat-term-list-tpl').html()),
-		termSingleTpl: _.template($(_Upfront_Templates.popup).find('#upfront-term-flat-single-tpl').html()),
-		changed: false,
-		updateTimer: false,
-		events: {
-			"click #upfront-add_term": "handle_new_term",
-			'click .upfront-taxonomy_item-flat': 'handle_term_click',
-			'keydown #upfront-add_term': 'handle_enter_new_term',
-			'keydown #upfront-new_term': 'handle_enter_new_term'
-		},
-		initialize: function(options){
-			this.collection.on('add remove', this.render, this);
-		},
-		render: function () {
-			var	me = this,
-				currentTerms = [],
-				otherTerms = []
-			;
-			this.allTerms.each(function (term, idx) {
-				term.children = [];
-				if(me.collection.get(term.get('term_id')))
-					currentTerms.push(term);
-				else
-					otherTerms.push(term);
-			});
-
-			this.$el.html(this.termListTpl({
-				currentTerms: currentTerms,
-				otherTerms: otherTerms,
-				termTemplate: this.termSingleTpl,
-				labels: this.collection.taxonomyObject.labels
-			}));
-		},
-
-		handle_term_click: function(e){
-			var me = this,
-				$target = $(e.currentTarget),
-				termId = $target.attr('data-term_id');
-
-			if($target.parent().attr('id') == 'upfront-taxonomy-list-current')
-				this.collection.remove(termId);
-			else
-				this.collection.add(this.allTerms.get(termId));
-
-			//Delay the current update to let the user add/remove more terms
-			clearTimeout(this.updateTimer);
-			this.updateTimer = setTimeout(function(){
-				me.collection.save();
-			}, 2000);
-		},
-
-		handle_new_term: function (e) {
-			var me = this,
-				termId = this.$el.find("#upfront-new_term").val(),
-				term
-			;
-
-			e.preventDefault();
-
-			if(! termId)
-				return false;
-
-			term = new Upfront.Models.Term({
-				taxonomy: this.collection.taxonomy,
-				name: termId
-			});
-
-			term.save().done(function(response){
-				me.allTerms.add(term);
-				me.collection.add(term).save();
-			});
-		},
-
-		handle_enter_new_term: function (e) {
-			if(e.which == 13){
-				this.handle_new_term(e);
-			}
 		}
 	});
 

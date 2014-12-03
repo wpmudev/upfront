@@ -110,6 +110,17 @@ class Upfront {
 				'meta' => array( 'class' => 'upfront-edit_layout upfront-editable_trigger' )
 			) );
 		}
+
+		// Change the existing nodes
+		$nodes = $wp_admin_bar->get_nodes();
+		if (empty($nodes) || !is_array($nodes)) return false;
+
+		foreach ($nodes as $node) {
+			if (!empty($node->href) && preg_match('/customize\.php/', $node->href)) {
+				$node->href = home_url('?editmode=true');
+			}
+			$wp_admin_bar->add_node($node);
+		}
 	}
 
 	function filter_wp_title ( $title, $sep ) {

@@ -1,0 +1,244 @@
+.ueditor-box-wrapper{
+  position: fixed;
+  top: 40px;
+  display: block;
+  width: 280px;
+  background: #f2f9ff;
+  border: 1px solid #b8d0e6;
+  z-index: 9999;
+  right:0;
+}
+
+.ueditor-box-title{
+  height: 40px;
+  text-align: left;
+  color: #3d5266;
+  padding-left: 10px;
+  border-bottom: 1px solid #b8d0e6;
+  line-height: 40px;
+  font-size: 17px;
+  font-weight: bold;
+  background: #e5f3ff;
+  position: relative;
+  cursor: pointer;
+}
+.ueditor-box-section .ueditor-box-content-wrap{
+  display: none;
+}
+.ueditor-box-section.active .ueditor-box-content-wrap{
+  display: block;
+}
+.ueditor-box-section .ueditor-box-title:after{
+  border-right: none;
+  border-left: 4px solid #85aacc;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  top: 17px;
+  right: 14px;
+  content: " ";
+  display: block;
+  width: 0;
+  height: 0;
+  z-index: 5;
+  position: absolute;
+}
+
+.ueditor-box-section.show .ueditor-box-title:after{
+  border-right: none;
+  border-top: 4px solid #85aacc;
+  border-right: 5px solid transparent;
+  border-left: 5px solid transparent;
+  top: 17px;
+  right: 14px;
+  content: " ";
+  display: block;
+  width: 0;
+  height: 0;
+  z-index: 5;
+  position: absolute;
+}
+.ueditor-box-content-wrap{
+//  display: none;
+}
+.ueditor-box-content-wrap:first-child{
+  display: block;
+}
+.ueditor-box-content{
+  min-height: 160px;
+  padding: 15px 0;
+}
+.screen-reader-text {
+  position: absolute;
+  margin: -1px;
+  padding: 0;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  border: 0;
+}
+.ueditor-togglable,
+.ueditor-togglable-child{
+  display: none;
+}
+.misc-pub-section{
+  line-height: 40px;
+  padding: 0 15px;
+  overflow: hidden;
+  clear: both;
+
+}
+#ueditor-box-cats-tags .misc-pub-section{
+  border-bottom: 1px solid #d5e4f3;
+}
+#ueditor-box-cats-tags .misc-pub-section:last-child{
+  border: none;
+}
+.ueditor-previous-data{
+  color:#3d5266;
+  font-size: 15px;
+  font-weight: bold;
+}
+.ueditor-previous-data-small{
+  font-size: 13px;
+  font-weight: normal;
+  line-height: 21px;
+  margin-bottom: 10px;
+  clear: both;
+}
+.ueditor-box-wrapper label{
+  color:#3d5276;
+  font-size: 15px;
+  font-weight: normal;
+}
+#ueditor-box-cats-tags .ueditor-box-wrapper label{
+  font-weight: bold;
+}
+.ueditor-box-wrapper label.ueditor-icon-label:before{
+  background: transparent url(../img/uf-ui-sprite.svg);
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  content: "";
+  margin: 0 0 -10px 0;
+}
+.ueditor-box-wrapper label#post-status-display-label:before{
+  background-position: -564px -385px;
+}
+.ueditor-box-wrapper label#post-visibility-display:before{
+  background-position: -604px -385px;
+}
+.ueditor-box-wrapper label#publication-time:before{
+  background-position: -644px -385px;
+}
+
+a.ueditor-btn-edit{
+  color: #00ce97;
+  text-decoration: underline;
+  font-size: 14px;
+  display: inline;
+  cursor: pointer;
+}
+.ueditor-bix-top-buttons{
+  height: 60px;
+  padding: 9px 11px;
+  border-bottom:1px solid #b8d0e6;
+}
+
+.ueditor-box-bottom-buttons{
+  height: 54px;
+  padding: 9px 11px;
+  display: block;
+  border-top: 1px solid #b8d0e6;
+  border-bottom: 1px solid #b8d0e6;
+  overflow: hidden;
+}
+
+a.ueditor-action-publish {
+  text-align: center;
+  color: #fff !important;
+  padding: 7px 20px;
+  background: #1fcd8f;
+  float: right;
+  display: block;
+  height: 36px;
+  width: 120px;
+  line-height: 23px;
+}
+
+a.ueditor-action-publish:hover {
+  text-decoration: none;
+  background: #3ea;
+}
+a.ueditor-action,
+a.ueditor-action:visited,
+a.ueditor-action:link{
+  line-height: 34px;
+  padding: 0;
+  border: 2px solid #8fafcc;
+  font-size: 15px;
+  height: 36px;
+  display: inline-block;
+  width: 98px;
+  text-align: center;
+  color:#3d527d;
+}
+a.ueditor-action{
+  float: right;
+}
+a.ueditor-action-draft{
+  float: left;
+}
+a.ueditor-action:hover{
+  border: 2px solid #25394d;
+  color:#25394d;
+}
+a.ueditor-action-preview{
+  float: right;
+}
+a.ueditor-action-trash{
+  float: left;
+  background-position: -605px -422px;
+  color: #e75757;
+  padding-top: 5px;
+}
+
+a.ueditor-action-trash:hover {
+  color: #E5575A;
+  text-decoration: none;
+}
+.ueditor-box-icon {
+  background: transparent url(../img/uf-ui-sprite.svg);
+  padding: 3px 12px;
+  margin-right: 5px;
+  display: block;
+  height: 36px;
+  width: 30px;
+  font-size: 13px;
+}
+.ueditor-box-icon-text{
+  padding-left: 20px;
+}
+.ueditor-post-url-root{
+  display: inline;
+  font-size: 11px;
+}
+.ueditor-post-url-text{
+  width: 110px !important;
+  display: inline;
+}
+.ueditor-button-small-ok,
+.ueditor-button-small{
+  background: #1fcd8f;
+  color: #fff;
+  height: 25px;
+  min-width: 40px;
+  display: inline-block;
+  text-align: center;
+  line-height: 25px;
+  color: #fff;
+  padding: 0 10px;
+}
+.ueditor-togglable-post-schedule-date{
+  font-size: 14px;
+}

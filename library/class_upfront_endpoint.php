@@ -509,7 +509,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			$term = wp_update_term($data['term_id'], $data['taxonomy'], $data);
 		}
 
-		if($data['postId'])
+		if(isset( $data['postId'] ))
 			wp_set_object_terms($data['postId'], $term['term_id'], $data['taxonomy']);
 
 		if(is_wp_error($term))
@@ -524,9 +524,9 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			$this->_out(new Upfront_JsonResponse_Error("Invalid taxonomy."));
 		$response = array();
 		if($data['postId']){
-			$response['results'] = array_values(get_the_terms($data['postId'], $data['taxonomy']));
+			$response['results'] = array_values((array) get_the_terms($data['postId'], $data['taxonomy']));
 			if($data['allTerms']){
-				$response['allTerms'] = array_values(get_terms($data['taxonomy'], array('hide_empty' => false)));
+				$response['allTerms'] = array_values((array)get_terms($data['taxonomy'], array('hide_empty' => false)));
 			}
 		}
 		else{
