@@ -71,3 +71,26 @@
 	float: left;
 	margin-left: 8px;
 }
+
+/* --- Icons --- */
+.upfront-field-icon.upfront-posts-display_type {
+	background-image: url(../../../img/uf-core-el-sprite.png);
+	background-repeat: no-repeat;
+	height: 18px;
+	width: 22px;
+}
+.upfront-field-icon.upfront-posts-display_type.upfront-posts-display_type-upfront-posts-single {
+	background-position: -480px -490px;
+}
+.upfront-field-icon.upfront-posts-display_type.upfront-posts-display_type-upfront-posts-list {
+	background-position: -570px -490px;
+}
+
+.upfront-posts-custom-add_post {
+	background-image: url(../../../img/uf-ui-sprite.png);
+	background-repeat: no-repeat;
+	background-position: -728px -74px;
+	height: 14px;
+	width: 18px;
+	display: inline-block;
+}
