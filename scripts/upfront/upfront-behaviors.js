@@ -964,7 +964,8 @@ var LayoutEditor = {
 	},
 
 	export_single_layout: function(loading, theme_name) {
-		var app = Upfront.Application,
+		var self = this,
+            app = Upfront.Application,
 			ed = Upfront.Behaviors.LayoutEditor;
 
 		var layout_id = _upfront_post_data.layout.specificity || _upfront_post_data.layout.item || _upfront_post_data.layout.type; // Also make sure to include specificity first
@@ -1134,6 +1135,7 @@ var LayoutEditor = {
 	clean_region_css: function () {
 		var me = this,
 			cssEditor = Upfront.Application.cssEditor,
+            ed = Upfront.Behaviors.LayoutEditor,
 			elementTypes = [cssEditor.elementTypes.RegionContainer, cssEditor.elementTypes.Region],
 			layout_id = _upfront_post_data.layout.specificity || _upfront_post_data.layout.item || _upfront_post_data.layout.type,
 			regions = Upfront.Application.layout.get('regions'),
@@ -1192,8 +1194,8 @@ var LayoutEditor = {
 			if ( _.isArray(Upfront.data.styles[elementType]) && Upfront.data.styles[elementType].indexOf(styleName) != -1 )
 				styleExists.push(styleName);
 		});
-		
-		me._get_saved_layout().done(function(saved){
+
+        ed._get_saved_layout().done(function(saved){
 			_.each(elementTypes, function(elementType){
 				_.each(Upfront.data.styles[elementType.id], function(styleName){
 					var onOtherLayout = false;
