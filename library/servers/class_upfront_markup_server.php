@@ -44,7 +44,7 @@ class Upfront_Server_MarkupServer extends Upfront_Server {
 			$origin = $this->find_callback_origin($callback);
 			$origin = !empty($origin) ? $origin :  $this->_get_l10n(self::ORIGIN_INTERNAL);
 			
-			$by_origin[$origin] = is_array($by_origin[$origin]) ? $by_origin[$origin] : array();
+			$by_origin[$origin] = !empty($by_origin[$origin]) && is_array($by_origin[$origin]) ? $by_origin[$origin] : array();
 			$by_origin[$origin][] = $code;
 		}
 		return $by_origin;
