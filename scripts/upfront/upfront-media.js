@@ -1063,18 +1063,7 @@ define(function() {
 				
 			}
 		});
-/*
-		var Control_MediaDate = Media_FilterSelection_Uniqueselection.extend({
-			allowed_values: ['date_asc', 'date_desc'],
-			initialize: function () {
-				this.filter_name = l10n.date;
-				this.filter_type = "order";
-				this.initialize_model();
-				Upfront.Events.on("media_manager:media:filters_updated", this.update_selection, this);
-				Upfront.Events.on("media_manager:media:filters_reset", this.initialize_model, this);
-			}
-		});
-*/
+
 		var Control_MediaFileName = Media_FilterSelection_Uniqueselection.extend({
 			allowed_values: ['title_desc', 'title_asc'],
 			initialize: function () {
@@ -1085,17 +1074,7 @@ define(function() {
 				Upfront.Events.on("media_manager:media:filters_reset", this.initialize_model, this);
 			}
 		});
-/*
-		var Control_MediaRecent = Media_FilterSelection_Uniqueselection.extend({
-			initialize: function () {
-				this.filter_name = l10n.recent;
-				this.filter_type = "recent";
-				this.initialize_model();
-				Upfront.Events.on("media_manager:media:filters_updated", this.update_selection, this);
-				Upfront.Events.on("media_manager:media:filters_reset", this.initialize_model, this);
-			}
-		});
-*/
+
 		var Control_MediaLabels = Media_FilterSelection_AdditiveMultiselection.extend({
 			initialize: function () {
 				this.filter_name = l10n.labels;
@@ -1118,7 +1097,7 @@ define(function() {
 	var MediaManager_Switcher = Backbone.View.extend({
 		events: {
 			"click .library": "switch_to_library",
-			"click .embed": "switch_to_embed",
+			//"click .embed": "switch_to_embed",
 			"click .upload": "switch_to_upload",
 			"click .shortcode": "switch_to_shortcode",
 			"click .markup": "switch_to_markup",
@@ -1133,15 +1112,6 @@ define(function() {
 			this.$el.empty().append(
 				this.template({})
 			);
-/*
-// Comes into play later on
-			if (this.is_in_editing_mode()) {
-				this.$el.find("ul")
-					.append('<li class="shortcode">Shortcode</li>')
-					.append('<li class="markup">Markup</li>')
-				;
-			}
-*/
 			this.$el.addClass('clearfix');
 			this.switch_to_library();
 		},
@@ -1160,6 +1130,7 @@ define(function() {
 			this.trigger("media_manager:switcher:to_library", data);
 		},
 		switch_to_embed: function (e) {
+			return false;
 			e.preventDefault();
 			e.stopPropagation();
 			this.$el
@@ -1229,7 +1200,7 @@ define(function() {
 
 			this.command_view = new MediaManager_BottomCommand({el: this.popup_data.$bottom, button_text: button_text, ck_insert: data.ck_insert});
 			this.library_view = new MediaManager_PostImage_View(data.collection);
-			this.embed_view = new MediaManager_EmbedMedia({});
+			//this.embed_view = new MediaManager_EmbedMedia({});
 
 			this.library_view.multiple_selection = multiple_selection;
 
@@ -1247,11 +1218,9 @@ define(function() {
         },
 		render_library: function () {
 			this.load();
-			this.embed_view.model.clear({silent:true});
+			//this.embed_view.model.clear({silent:true});
 			this.library_view.render();
-			// this.library_view.$el.css({
-			// 	'height': this.popup_data.height - 88
-			// });
+
 			this.$el.empty().append(this.library_view.$el);
 			if (arguments.length) {
 				var sel = arguments[0], me = this;
@@ -1265,6 +1234,8 @@ define(function() {
 
 		},
 		render_embed: function () {
+			return false;
+			/*
 			this.embed_view.model.clear({silent:true});
 			this.embed_view.render();
 			this.embed_view.$el.css({
@@ -1272,6 +1243,7 @@ define(function() {
 				'overflow-y': 'scroll'
 			});
 			this.$el.empty().append(this.embed_view.$el);
+			*/
 		},
 		render_upload: function (e) {
 			if (!this.library_view.$el.is(":visible")) this.render_library();
