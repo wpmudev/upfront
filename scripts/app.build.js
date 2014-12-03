@@ -34,7 +34,7 @@
         "unewnavigation": "../elements/upfront-newnavigation/js/unewnavigation",
         "utext": "../elements/upfront-text/js/utext",
         "ubutton": "../elements/upfront-button/js/ubutton",
-        "uposts": "../elements/upfront-posts/js/uposts",
+        "uposts": "../elements/upfront-posts/js/posts-list",
         "usearch": "../elements/upfront-search/js/usearch",
         "upfront-social_media": "../elements/upfront-social-media/js/upfront-social-media",
         "utabs": "../elements/upfront-tabs/js/utabs",

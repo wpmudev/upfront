@@ -396,8 +396,10 @@ class Upfront_Virtual_Region {
 			$object_defaults = array('view_class' => 'PlainTxtView', 'id_slug' => 'plaintxt');
 		else if(class_exists($view_class))
 			$object_defaults =  call_user_func($view_class . '::default_properties');
-		else
-			return 'Unknown element type: ' . $type;
+		else {
+			$object_defaults = apply_filters('upfront-virtual_region-object_defaults-fallback', $object_defaults, $type);
+			if (empty($object_defaults)) return 'Unknown element type: ' . $type;
+		}
 
 		$slug = isset($options['id']) ? $options['id'] : (isset($object_defaults['id_slug']) ? $object_defaults['id_slug'] : '');
 
