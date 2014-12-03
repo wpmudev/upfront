@@ -37,9 +37,10 @@ Panels.General = Upfront.Views.Editor.Settings.Panel.extend({
 				property: 'display_type',
 				label: l10n.display_type_label,
 				layout: 'horizontal-inline',
+				icon_class: 'upfront-posts-display_type',
 				values: [
-					{label: l10n.single_post, value: 'single'},
-					{label: l10n.post_list, value: 'list'}
+					{label: l10n.single_post, value: 'single', icon: 'upfront-posts-single'},
+					{label: l10n.post_list, value: 'list', icon: 'upfront-posts-list'}
 				]
 			}),
 			list_type = new Upfront.Views.Editor.Field.Radios({
@@ -99,7 +100,7 @@ var CustomSelectorField =  Upfront.Views.Editor.Field.Hidden.extend({
 			string = l10n.select_custom_post;
 			if (values) values = [_(values).first()];
 		}
-		field += '<a href="#add">' + string + '</a>';
+		field += '<i class="upfront-posts-custom-add_post"></i> <a href="#add">' + string + '</a>';
 		if (values) {
 			field += '<ol>';
 			_.each(values, function (value) {

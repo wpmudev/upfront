@@ -23,9 +23,10 @@ var Views = {
 				property: 'display_type',
 				label: l10n.display_type_label_initial,
 				layout: 'horizontal-inline',
+				icon_class: 'upfront-posts-display_type',
 				values: [
-					{label: l10n.single_post, value: 'single'},
-					{label: l10n.post_list, value: 'list'}
+					{label: l10n.single_post, value: 'single', icon: 'upfront-posts-single'},
+					{label: l10n.post_list, value: 'list', icon: 'upfront-posts-list'}
 				]
 			});
 			opts.on("changed", function (value) {
