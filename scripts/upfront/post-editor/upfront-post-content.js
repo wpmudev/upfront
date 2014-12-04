@@ -644,8 +644,9 @@ var PostContentEditor = Backbone.View.extend({
 			//.listenTo(me.box.scheduleSection, 'date:cancel', me.editDateCancel)
 			.listenTo(me.box.statusSection, 'status:change', me.updateStatus)
 			.listenTo(me.box.visibilitySection , 'visibility:change', me.updateVisibility)
-			.listenTo(me.box, 'tax:refresh', me.refreshTaxonomies)
 		;
+
+        Upfront.Events.on("editor:post:tax:updated", _.bind(me.refreshTaxonomies, me));
 	},
 
 	refreshTaxonomies: function(){

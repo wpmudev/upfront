@@ -9,7 +9,7 @@ var Box = Backbone.View.extend({
     onScrollFunction: false,
     statusSelect: false,
     visibilitySelect: false,
-
+    taxSections : [],
     events: {
         'click .ueditor-action-preview': 'navigate_to_preview',
         'click .ueditor-action-cancel': 'cancel',
@@ -87,7 +87,7 @@ var Box = Backbone.View.extend({
             termsList = new Upfront.Collections.TermList([], {postId: this.post.id, taxonomy: tax});
         termsList.fetch({allTerms: true}).done(function(response){
             var tax_view_constructor = response.data.taxonomy.hierarchical ? ContentEditorTaxonomy_Hierarchical : ContentEditorTaxonomy_Flat,
-                tax_view = new tax_view_constructor({collection: termsList})
+                tax_view = self.taxSections[tax] = new tax_view_constructor({collection: termsList, tax: tax})
                 ;
 
             tax_view.allTerms = new Upfront.Collections.TermList(response.data.allTerms);
@@ -359,6 +359,7 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
     updateTimer: false,
     allTerms: false,
     initialize: function(options){
+        this.tax = options.tax;
         //this.collection.on('add remove', this.render, this);
     },
 
@@ -432,7 +433,9 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
     },
     update: function(e){
         this.collection.save();
+        Upfront.Events.trigger("editor:post:tax:updated", this.collection, this.tax);
         this.render();
+
     },
     toggle_add_new: function(){
         this.$(".ueditor-togglable-child").slideToggle();
@@ -454,6 +457,7 @@ var ContentEditorTaxonomy_Flat = PostSectionView.extend({
     }),
     initialize: function(options){
         this.collection.on('add remove', this.update, this);
+        this.tax = options.tax;
     },
     render: function () {
         var	me = this,
@@ -523,6 +527,7 @@ var ContentEditorTaxonomy_Flat = PostSectionView.extend({
     },
     update: function(e){
         this.collection.save();
+        Upfront.Events.trigger("editor:post:tax:updated", this.collection, this.tax);
         this.render();
     }
 });
