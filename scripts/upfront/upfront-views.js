@@ -1000,8 +1000,8 @@ define([
 					return;
 				}
 				// This is not so important visually so throttle to 1 second
-				var lazyCheckUiOffsett = _.throttle(me.checkUiOffset, 1000);
-				$(window).on('resize', $.proxy(lazyCheckUiOffsett, me));
+				this.lazyCheckUiOffset = _.throttle(this.checkUiOffset, 1000);
+				$(window).on('resize', $.proxy(this.lazyCheckUiOffset, me));
 				this.window_resize_offset_check_set = true;
 			},
 			checkUiOffset: function() {
@@ -1126,7 +1126,7 @@ define([
 
 			remove: function(){
 				this.cleanup();
-				$(window).off('resize', this.checkUiOffset);
+				$(window).off('resize', this.lazyCheckUiOffset);
 				this.parent_view = false;
 				this.parent_module_view = false;
 				Backbone.View.prototype.remove.call(this);

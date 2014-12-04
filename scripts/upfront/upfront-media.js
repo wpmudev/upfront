@@ -304,9 +304,9 @@ define(function() {
 			var me = this; setTimeout(function () { me.render_filters(); }, 1); // Fixes the initial inability to toggle filters
 		},
 		render_filters: function () {
-			var control = this.is_search_active ? new MediaManager_SearchFiltersControl() : new MediaManager_FiltersControl();
-			control.render();
-			this.$el.empty().append(control.$el);
+			this.control = this.is_search_active ? new MediaManager_SearchFiltersControl() : new MediaManager_FiltersControl();
+			this.control.render();
+			this.$el.empty().append(this.control.$el);
 			if ( this.is_search_active ) this.$el.removeClass('upfront-media-controls-search-selected').addClass('upfront-media-controls-search');
 			else this.$el.removeClass('upfront-media-controls-search');
 		},
@@ -315,9 +315,9 @@ define(function() {
 			item_control.render();
 			this.$el.empty();
 			if (this.is_search_active) {
-				var control = new MediaManager_SearchFiltersControl();
-				control.render();
-				this.$el.append(control.$el);
+				this.control = new MediaManager_SearchFiltersControl();
+				this.control.render();
+				this.$el.append(this.control.$el);
 				this.$el.removeClass('upfront-media-controls-search').addClass('upfront-media-controls-search-selected');
 			}
 			else
@@ -332,6 +332,11 @@ define(function() {
 		switch_to_search: function (search) {
 			this.is_search_active = search && search.get("state");
 			this.render_filters();
+		},
+		remove: function() {
+			this.control.remove();
+			Upfront.Events.off("media:item:selection_changed", this.switch_controls);
+			Upfront.Events.off("media:search:requested", this.switch_to_search);
 		}
 	});
 
@@ -360,6 +365,9 @@ define(function() {
 			var positive = media_collection.where({selected: true});
 			if (positive.length) this.render_delete(positive);
 			else this.render_selection();
+		},
+		remove: function() {
+			Upfront.Events.off("media:item:selection_changed", this.switch_controls);
 		}
 	});
 
@@ -711,7 +719,7 @@ define(function() {
 				"click": "stop_prop"
 			},
 			stop_prop: function (e) {
-				e.stopPropagation(); 
+				e.stopPropagation();
 				if (this.filter_selection) this.filter_selection.trigger("filters:outside_click")
 			},
 			initialize: function () {
@@ -729,6 +737,9 @@ define(function() {
 			toggle_titles: function (e) {
 				e.stopPropagation();
 				Upfront.Events.trigger("media_manager:media:toggle_titles");
+			},
+			remove: function() {
+				this.filters_selected.remove();
 			}
 		});
 
@@ -748,7 +759,7 @@ define(function() {
 					_to_render = _([]),
 					tpl = _.template(' <a href="#" class="filter upfront-icon upfront-icon-media-label-delete" data-type="{{type}}" data-filter="{{filter}}">{{filter}}</a>')
 				;
-				
+
 				_list.each(function (filters, type) {
 					_(filters).each(function (filter) {
 						_to_render.push({filter: filter, type: type});
@@ -793,6 +804,10 @@ define(function() {
 				e.preventDefault();
 				e.stopPropagation();
 				Upfront.Events.trigger("media_manager:media:filters_updated", false, false);
+			},
+			remove: function() {
+				Upfront.Events.off("media_manager:media:list", this.set_filters);
+				console.log('removed set filters');
 			}
 		});
 
@@ -900,12 +915,12 @@ define(function() {
 				click: "stop_prop",
 				"keyup :text.filter": "show_matching_labels"
 			},
-			stop_prop: function (e) { 
-				e.stopPropagation(); 
+			stop_prop: function (e) {
+				e.stopPropagation();
 				this.$el.addClass("active");
 			},
 			update_state: function (e) {
-				this.$el.removeClass("active");	
+				this.$el.removeClass("active");
 			},
 			render: function () {
 				var me = this,
@@ -1060,7 +1075,7 @@ define(function() {
 				} else if (other.get("state")) other.set({state: false}, {silent: true});
 
 				Media_FilterSelection_Multiselection.prototype.apply_changes.call(this);
-				
+
 			}
 		});
 
@@ -1211,11 +1226,17 @@ define(function() {
 
 			Upfront.Events.on("media_manager:media:list", this.switch_media_type, this);
 		},
+		remove: function() {
+			console.log('removing library view');
+			this.library_view.remove();
+			this.library_view = new MediaManager_PostImage_View(this.collection);
+			Upfront.Events.off("media_manager:media:list", this.switch_media_type, this);
+		},
 		render: function () {
-            this.switcher_view.render();
-            this.command_view.render();
-            this.render_library();
-        },
+			this.switcher_view.render();
+			this.command_view.render();
+			this.render_library();
+		},
 		render_library: function () {
 			this.load();
 			//this.embed_view.model.clear({silent:true});
@@ -1231,7 +1252,6 @@ define(function() {
 					});
 				}
 			}
-
 		},
 		render_embed: function () {
 			return false;
@@ -1654,7 +1674,7 @@ define(function() {
 				this.preview_view = new MediaManager_Embed_Preview({model: this.model});
 				this.labels_view = new MediaItem_Labels({model: this.model});
 				this.on("embed:media:imported", this.update_media_preview, this);
-				
+
 				this.preview_view.render();
 				//this.labels_view.render();
 				this.$el.empty()
@@ -1714,7 +1734,6 @@ define(function() {
 			controls: false
 		},
 		initialize: function (collection) {
-
 			var data = data || {};
 			if(collection.models)
 				collection = new MediaCollection_Model(collection);
@@ -1723,7 +1742,6 @@ define(function() {
 			this.media_collection = collection;
 		},
 		render: function () {
-
 			if (!this._subviews.media) {
 				this._subviews.media = new MediaCollection_View({model: this.media_collection});
 			}
@@ -1736,7 +1754,7 @@ define(function() {
 				this._subviews.controls = new MediaManager_Controls_View({model: this.media_collection});
 			}
 			var controls = this._subviews.controls;
-			
+
 			media.multiple_selection = this.multiple_selection;
 
 			controls.render();
@@ -1758,6 +1776,11 @@ define(function() {
 				me.media_view.render();
 			});
 		},
+		remove: function() {
+			_.each(this._subviews, function(subview) {
+				subview.remove();
+			});
+		}
 	});
 
 	var MediaCollection_View = Backbone.View.extend({
@@ -1770,6 +1793,7 @@ define(function() {
 			this.model.on("change:selected", this.propagate_selection, this);
 		},
 		render: function () {
+			this.subviews = [];
 			var me = this;
 			this.$el.empty();
 			if (!this.model.length) {
@@ -1777,6 +1801,7 @@ define(function() {
 			} else {
 				this.model.each(function (model) {
 					var view = new MediaItem_View({model: model});
+					me.subviews.push(view);
 					view.parent_view = me;
 					view.render();
 					me.$el.append(view.$el);
@@ -1815,6 +1840,11 @@ define(function() {
 				model.trigger("appearance:update");
 			}
 			Upfront.Events.trigger("media:item:selection_changed", this.model);
+		},
+		remove: function() {
+			_.each(this.subviews, function(subview) {
+				subview.remove();
+			});
 		}
 	});
 		var MediaItem_View = Backbone.View.extend({
@@ -1884,6 +1914,9 @@ define(function() {
 				this.$el.find('.upfront-media-progress-bar').remove();
 				this.model.set({selected: true});
 				Upfront.Events.trigger("media:item:selection_changed", this.model.collection);
+			},
+			remove: function() {
+				Upfront.Events.off("media_manager:media:toggle_titles", this.toggle_title);
 			}
 		});
 
@@ -2161,7 +2194,7 @@ define(function() {
 			}, {width: 800}, 'media-manager');
 
 			popup.always(this.cleanup_active_filters);
-			popup.progress(this.clean_up);
+			popup.progress($.proxy(this.clean_up, this));
 
 			Upfront.Events.trigger('upfront:element:edit:start', 'media-upload');
 
@@ -2171,25 +2204,28 @@ define(function() {
 		 * Ensure everything is off when popup is closed.
 		 */
 		clean_up: function(flag) {
-			if (flag === 'before_close') Upfront.Events.trigger('upfront:element:edit:stop', 'media-upload');
+			if (flag === 'before_close') {
+				Upfront.Events.trigger('upfront:element:edit:stop', 'media-upload');
+				this.media_manager.remove();
+			}
 		},
 		cleanup_active_filters: function () {
 			ActiveFilters.allowed_media_types = [];
 		},
 		load: function (options) {
-            if( _.isUndefined( this.media_manage_options ) ){
+			if( _.isUndefined( this.media_manage_options ) ){
 				this.media_manage_options = _.extend({
-                    el: this.out,
-                    data: this.popup_data
-                }, options);
-                this.media_manager = new MediaManager_View( this.media_manage_options );
-            }else if( !_.isEqual( this.media_manage_options,  _.extend({ el: this.out, data: this.popup_data }, options)) ){
+					el: this.out,
+					data: this.popup_data
+				}, options);
+				this.media_manager = new MediaManager_View( this.media_manage_options );
+			}else if( !_.isEqual( this.media_manage_options,  _.extend({ el: this.out, data: this.popup_data }, options)) ){
 				this.media_manage_options = _.extend({
-                    el: this.out,
-                    data: this.popup_data
-                }, options);
-                this.media_manager = new MediaManager_View( this.media_manage_options );
-            }
+					el: this.out,
+					data: this.popup_data
+				}, options);
+				this.media_manager = new MediaManager_View( this.media_manage_options );
+			}
 			this.media_manager.render();
 			return false;
 		},
