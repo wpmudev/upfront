@@ -20,17 +20,6 @@ define([
 	var LoginView = Upfront.Views.ObjectView.extend({
 		markup: false,
 
-		cssSelectors: {
-			'.upfront_login-form p': {label: l10n.css.containers, info: l10n.css.containers_info},
-			'.upfront_login-form form label': {label: l10n.css.labels, info: l10n.css.labels_info},
-			'.upfront_login-form form input:not([type=submit]):not([type=checkbox])': {label: l10n.css.inputs, info: l10n.css.inputs_info},
-			'.upfront_login-form form  input[type=submit]': {label: l10n.css.button, info: l10n.css.button_info},
-			'.upfront_login-form form  input[type=checkbox]': {label: l10n.css.remember, info: l10n.css.remember_info},
-			'.login-lostpassword': {label: l10n.css.pwd_wrap, info: l10n.css.pwd_wrap_info},
-			'.upfront_login-form p .login-lostpassword-link': {label: l10n.css.pwd_link, info: l10n.css.pwd_link_info},
-			'.upfront_login-trigger': {label: l10n.css.close, info: l10n.css.close_info}
-		},
-
 		initialize: function () {
 			if(! (this.model instanceof LoginModel)){
 				this.model = new LoginModel({properties: this.model.get('properties')});
@@ -51,7 +40,7 @@ define([
 				var me = this,
 					options = Upfront.Util.model_to_json(this.model)
 				;
-				
+
 				Upfront.Util.post({
 					"action": "upfront-login_element-get_markup",
 					properties: options.properties
@@ -64,7 +53,7 @@ define([
 			Upfront.Views.ObjectView.prototype.render.call(this);
 		},
 		get_content_markup: function () {
-			
+
 			return !!this.markup ? this.markup : l10n.hold_on;
 		}
 	});
@@ -184,7 +173,7 @@ define([
 								className: "upfront_login-logout_style upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios",
 								model: this.model,
 								property: "logout_style",
-								
+
 								values: [
 									{label: 'Nothing', value: "nothing"},
 									{label: 'Log Out Link', value: "link"}
@@ -202,7 +191,7 @@ define([
 									this.property.set({'value': this.get_value()}, {'silent': false});
 								}
 							}),
-							
+
 						]
 
 					})
@@ -257,7 +246,7 @@ define([
 						.find(".upfront-settings-item-content").addClass("clearfix").end()
 						.hide()
 					;
-				
+
 				},
 				get_title: function () {
 					return "Show Drop-Down Form on:";
@@ -294,7 +283,7 @@ define([
 						new Upfront.Views.Editor.Field.Radios({
 							model: this.model,
 							property: "style",
-							
+
 							values: styles,
 							change: function() { me.register_change(me) }
 						}),
@@ -314,7 +303,7 @@ define([
 					return l10n.appearance;
 				},
 				register_change: function () {
-					
+
 					this.fields.each(function (field) {
 						field.property.set({'value': field.get_value()}, {'silent': false});
 					});
@@ -390,7 +379,18 @@ define([
 		"Model": LoginModel,
 		"View": LoginView,
 		"Element": LoginElement,
-		"Settings": LoginSettings
+		"Settings": LoginSettings,
+		cssSelectors: {
+			'.upfront_login-form p': {label: l10n.css.containers, info: l10n.css.containers_info},
+			'.upfront_login-form form label': {label: l10n.css.labels, info: l10n.css.labels_info},
+			'.upfront_login-form form input:not([type=submit]):not([type=checkbox])': {label: l10n.css.inputs, info: l10n.css.inputs_info},
+			'.upfront_login-form form  input[type=submit]': {label: l10n.css.button, info: l10n.css.button_info},
+			'.upfront_login-form form  input[type=checkbox]': {label: l10n.css.remember, info: l10n.css.remember_info},
+			'.login-lostpassword': {label: l10n.css.pwd_wrap, info: l10n.css.pwd_wrap_info},
+			'.upfront_login-form p .login-lostpassword-link': {label: l10n.css.pwd_link, info: l10n.css.pwd_link_info},
+			'.upfront_login-trigger': {label: l10n.css.close, info: l10n.css.close_info}
+		},
+		cssSelectorsId: Upfront.data.upfront_login.defaults.type
 	});
 	Upfront.Models.LoginModel = LoginModel;
 	Upfront.Views.LoginView = LoginView;

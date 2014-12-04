@@ -12,17 +12,6 @@ define([
 		currenttabid: false,
 		tabsTpl: Upfront.Util.template(tabsTpl),
 		elementSize: {width: 0, height: 0},
-		cssSelectors: {
-			'.upfront-object-content': {label: l10n.css.container_label, info: l10n.css.container_info},
-			'.upfront-tabs-container .tabs-menu-wrapper': {label: l10n.css.menu_label, info: l10n.css.menu_info},
-			'.upfront-tabs-container .tabs-tab .inner-box': {label: l10n.css.tabs_label, info: l10n.css.tabs_info},
-			'.upfront-tabs-container .tabs-tab-active .inner-box' : {label: l10n.css.active_tab_label, info: l10n.css.active_tab_info},
-			'.upfront-tabs-container .tabs-content': {label: l10n.css.tab_content_label, info: l10n.css.tab_content_info},
-			'.upfront-tabs-container .tabs-content p': {label: l10n.css.tab_p_label, info: l10n.css.tab_p_info},
-			'.upfront-tabs-container .tab-content-active': {label: l10n.css.active_content_label, info: l10n.css.active_content_info},
-			'.upfront-tabs-container .tab-content-active p': {label: l10n.css.active_p_label, info: l10n.css.active_p_info}
-		},
-
 		initialize: function(){
 			if(! (this.model instanceof UtabsModel)){
 				this.model = new UtabsModel({properties: this.model.get('properties')});
@@ -315,7 +304,18 @@ define([
 		'Settings': TabsSettings,
 		'anchor': {
 			is_target: false
-		}
+		},
+		cssSelectors: {
+			'.upfront-object-content': {label: l10n.css.container_label, info: l10n.css.container_info},
+			'.upfront-tabs-container .tabs-menu-wrapper': {label: l10n.css.menu_label, info: l10n.css.menu_info},
+			'.upfront-tabs-container .tabs-tab .inner-box': {label: l10n.css.tabs_label, info: l10n.css.tabs_info},
+			'.upfront-tabs-container .tabs-tab-active .inner-box' : {label: l10n.css.active_tab_label, info: l10n.css.active_tab_info},
+			'.upfront-tabs-container .tabs-content': {label: l10n.css.tab_content_label, info: l10n.css.tab_content_info},
+			'.upfront-tabs-container .tabs-content p': {label: l10n.css.tab_p_label, info: l10n.css.tab_p_info},
+			'.upfront-tabs-container .tab-content-active': {label: l10n.css.active_content_label, info: l10n.css.active_content_info},
+			'.upfront-tabs-container .tab-content-active p': {label: l10n.css.active_p_label, info: l10n.css.active_p_info}
+		},
+		cssSelectorsId: Upfront.data.utabs.defaults.type
 	});
 
 	Upfront.Models.UtabsModel = UtabsModel;

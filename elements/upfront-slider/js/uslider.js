@@ -45,18 +45,6 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	tpl: Upfront.Util.template(sliderTpl),
 	startingTpl: _.template($(editorTpl).find('#startingTpl').html()),
 
-	cssSelectors: {
-		'.uslide-image img': {label: l10n.css.images_label, info: l10n.css.images_info},
-		'.uslide-image': {label: l10n.css.img_containers_label, info: l10n.css.img_containers_info},
-		'.uslide-caption': {label: l10n.css.captions_label, info: l10n.css.captions_info},
-		'.wp-caption': {label: l10n.css.caption_label, info: l10n.css.caption_info},
-		'.upfront-default-slider-nav': {label: l10n.css.dots_wrapper_label, info: l10n.css.dots_wrapper_info},
-		'.upfront-default-slider-nav-item': {label: l10n.css.dots_label, info: l10n.css.dots_info},
-		'.uslider-dotnav-current': {label: l10n.css.dot_current_label, info: l10n.css.dot_current_info},
-		'.upfront-default-slider-nav-prev': {label: l10n.css.prev_label, info: l10n.css.prev_info},
-		'.upfront-default-slider-nav-next': {label: l10n.css.next_label, info: l10n.css.next_info},
-	},
-
 	initialize: function(options){
 		var me = this;
 		if(! (this.model instanceof USliderModel)){
@@ -1460,7 +1448,19 @@ Upfront.Application.LayoutEditor.add_object("USlider", {
 	"Model": USliderModel,
 	"View": USliderView,
 	"Element": USliderElement,
-	"Settings": USliderSettings
+	"Settings": USliderSettings,
+	cssSelectors: {
+		'.uslide-image img': {label: l10n.css.images_label, info: l10n.css.images_info},
+		'.uslide-image': {label: l10n.css.img_containers_label, info: l10n.css.img_containers_info},
+		'.uslide-caption': {label: l10n.css.captions_label, info: l10n.css.captions_info},
+		'.wp-caption': {label: l10n.css.caption_label, info: l10n.css.caption_info},
+		'.upfront-default-slider-nav': {label: l10n.css.dots_wrapper_label, info: l10n.css.dots_wrapper_info},
+		'.upfront-default-slider-nav-item': {label: l10n.css.dots_label, info: l10n.css.dots_info},
+		'.uslider-dotnav-current': {label: l10n.css.dot_current_label, info: l10n.css.dot_current_info},
+		'.upfront-default-slider-nav-prev': {label: l10n.css.prev_label, info: l10n.css.prev_info},
+		'.upfront-default-slider-nav-next': {label: l10n.css.next_label, info: l10n.css.next_info},
+	},
+	cssSelectorsId: Upfront.data.uslider.defaults.type
 });
 Upfront.Models.USliderModel = USliderModel;
 Upfront.Views.USliderView = USliderView;

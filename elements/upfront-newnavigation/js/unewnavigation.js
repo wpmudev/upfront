@@ -65,16 +65,16 @@ var MenuItemView = Backbone.View.extend({
 									region = regions ? regions.get_by_name(me.getUrlanchor(me.model['menu-item-url'])) : false;
 									if(region){
 										return 'Open Lightbox';
-										
+
 									}
 								} else {
 									return 'Scroll to Anchor';
-									
+
 								}
 							} else
 								return 'Visit Link';
 							*/
-						
+
 
 
 
@@ -207,7 +207,7 @@ var MenuItemView = Backbone.View.extend({
 		$(this.el).data('backboneview', me).addClass('menu-item');
 		if(me.newitem) $(this.el).addClass('new_menu_item');
 
-		
+
 
 		return this;
 	},
@@ -428,7 +428,7 @@ var MenuItemView = Backbone.View.extend({
 		if(typeof this.model['menu-item-db-id'] != 'undefined'){
 			postdata['menu-item-id'] = me.model['menu-item-db-id'];
 		}
-		
+
 		this.updateLinkType();
 
 		Upfront.Util.post(postdata)
@@ -521,22 +521,6 @@ var singleclickcount = 0;
 var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	elementSize: {width: 0, height: 0},
 	roll_responsive_settings: true,
-	cssSelectors: {
-		"div[data-style='horizontal'] ul.menu, div[data-style='vertical'] ul.menu": {label: l10n.css.bar_label, info: l10n.css.bar_info},
-		"div[data-style='horizontal'] ul.menu > li.menu-item > a, div[data-style='vertical'] ul.menu > li.menu-item > a": {label: l10n.css.item_label, info: l10n.css.item_info},
-		"div[data-style='horizontal'] ul.menu > li.menu-item:hover > a, div[data-style='vertical'] ul.menu > li.menu-item:hover > a": {label: l10n.css.hover_label, info: l10n.css.hover_info},
-		"div[data-style='horizontal'] ul.sub-menu > li.menu-item > a, div[data-style='vertical'] ul.sub-menu > li.menu-item > a": {label: l10n.css.subitem_label, info: l10n.css.subitem_info},
-		"div[data-style='horizontal'] ul.sub-menu > li.menu-item:hover > a, div[data-style='vertical'] ul.sub-menu > li.menu-item:hover > a": {label: l10n.css.subitem_hover_label, info: l10n.css.subitem_hover_info},
-
-
-		"div[data-style='burger'] ul.menu": {label: l10n.css.responsive_bar_label, info: l10n.css.bar_info},
-		"div.responsive_nav_toggler": {label: l10n.css.responsive_trigger, info: l10n.css.hover_info},
-		"div.responsive_nav_toggler > div": {label: l10n.css.responsive_trigger_bars, info: l10n.css.hover_info},
-		" div[data-style='burger'] ul.menu > li.menu-item > a": {label: l10n.css.responsive_item_label, info: l10n.css.item_info},
-		"div[data-style='burger'] ul.menu > li.menu-item:hover > a": {label: l10n.css.responsive_hover_label, info: l10n.css.hover_info},
-		"div[data-style='burger'] ul.sub-menu > li.menu-item > a": {label: l10n.css.responsive_subitem_label, info: l10n.css.subitem_info},
-		"div[data-style='burger'] ul.sub-menu > li.menu-item:hover > a": {label: l10n.css.responsive_subitem_hover_label, info: l10n.css.subitem_hover_info}
-	},
 
 	initialize: function(options){
 		var me = this;
@@ -684,7 +668,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			return;
 		}
 		if(typeof e.target != 'undefined') {
-			e.preventDefault();		
+			e.preventDefault();
 			e.stopPropagation();
 		}
 		if(target.hasClass('ueditor-placeholder'))
@@ -695,7 +679,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		var ueditor = target.data('ueditor');
 		ueditor = null;
 		target.data('ueditor', '');
-		
+
 		if(!target.data('ueditor')) {
 			console.log('initializing a new editor');
 			target.ueditor({
@@ -743,14 +727,14 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				if(target.text().trim() != '') target.removeClass('menu_item_placeholder');
 				else target.addClass('menu_item_placeholder');
 			}).on('blur', function(e) {
-				
+
 					var being_edited = false;
 					if(target.closest('li').data('backboneview').model['being-edited'])
 						being_edited = target.closest('li').data('backboneview').model['being-edited'];
 
 					if($(e.relatedTarget).closest('.redactor_toolbar').length > 0 || being_edited)
 						return;
-					
+
 					target.data('ueditor').stop();
 
 					target.closest('li').removeClass('edit_mode');
@@ -762,7 +746,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			}).on('stop', function() {
 				//target.data('ueditor', false);
 				me.editModeOff();
-				
+
 			});
 
 			target.data('ueditor').start();
@@ -772,7 +756,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			target.data('ueditor').start();
 			target.focus();
 		}
-		
+
 
 
 
@@ -1049,7 +1033,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		if(this.$el.find('a.newnavigation-add-item').length < 1) {
 			$('<b class="upfront-entity_meta newnavigation_add add_item upfront-ui"><a href="#" class="upfront-icon-button newnavigation-add-item add-item"></a></b>').insertBefore($upfrontObjectContent);
 		}
-		
+
 		if(me.roll_responsive_settings) {
 			//me.roll_responsive_settings = false;
 			setTimeout(function() {
@@ -1080,7 +1064,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					} else width = breakpoint.width;
 					// To roll responsive nav settings into action
 //console.log($upfrontObjectContent);
-					
+
 					me.activate_responsive_nav($upfrontObjectContent, width);
 					/*$.event.trigger({
 						type: "changed_breakpoint",
@@ -1118,15 +1102,15 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		var bparray = new Array();
 
 		var currentwidth = (typeof(bpwidth) != 'undefined') ? parseInt(bpwidth):$(window).width();
-		
+
 		for (var key in breakpoints) {
 			bparray.push(breakpoints[key])
 		}
-		
+
 		bparray.sort(function(a, b) {
 			return a.width - b.width;
 		});
-		
+
 		var regions_off = $('div.upfront-regions').offset(),
 			regions_width = $('div.upfront-regions').outerWidth(),
 			win_width = $(window).width(),
@@ -1135,24 +1119,24 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		for (var key in bparray) {
 			if(parseInt(currentwidth) >= parseInt(bparray[key]['width'])) {
-				
+
 				if(bparray[key]['burger_menu'] == 'yes') {
-					
+
 					selector.attr('data-style', 'burger')
 					selector.attr('data-burger_alignment', bparray[key]['burger_alignment']);
 					selector.attr('data-burger_over', bparray[key]['burger_over']);
-					
+
 					// Add responsive nav toggler
 					if(!selector.find('div.responsive_nav_toggler').length)
 						selector.prepend($('<div class="responsive_nav_toggler"><div></div><div></div><div></div></div>'));
-					
+
 					// clone sub-menu's parent's link (if any) on top of the sub-menu's items, and make the parent clickable to toggle the appearance of sub-menu. Only on front end.
 					selector.find('li.menu-item-has-children').each(function() {
 						if(selector.children('a').length && selector.children('a').attr('href')) {
 							var itemclone = selector.clone().removeClass('menu-item-has-children').addClass('active-clone').removeAttr('id');
 							itemclone.children('ul').remove();
 							selector.children('ul').prepend(itemclone);
-							selector.children('a').removeAttr('href');	
+							selector.children('a').removeAttr('href');
 						}
 					});
 
@@ -1161,30 +1145,30 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					//	selector.find('ul.menu').css('margin-top', $('div#wpadminbar').outerHeight());
 						//selector.find('div.responsive_nav_toggler').css('margin-top', $('div#wpadminbar').outerHeight());
 					//}
-					
+
 					if(selector.hasClass('upfront-output-unewnavigation')) {
-						
+
 						$('head').find('style#responsive_nav_sidebar_offset').remove();
 						var responsive_css = 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"] ul.menu, div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] ul.menu {left:'+parseInt(regions_off.left)+'px !important; right:'+parseInt((win_width-currentwidth-sidebar_width) / 2)+'px !important; } ';
-						
+
 						responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="left"] ul.menu {left:'+parseInt(regions_off.left)+'px !important; right:inherit !important; width:'+parseInt(30/100*regions_width)+'px !important;} ';
-						
+
 						responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="right"] ul.menu {left:inherit !important; right:'+parseInt((win_width-currentwidth-sidebar_width) / 2)+'px !important; width:'+parseInt(30/100*regions_width)+'px !important; } ';
 						responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"] ul.menu {top:'+parseInt(topbar_height)+'px !important; } ';
-						
+
 						$('head').append($('<style id="responsive_nav_sidebar_offset">'+responsive_css+'</style>'));
 					}
 					//Z-index the container module to always be on top, in the layout edit mode
 					selector.closest('div.upfront-newnavigation_module').css('z-index', 3);
-					
-					
+
+
 					selector.find('ul.menu').hide();
 				}
 				else {
 					selector.attr('data-style', selector.data('stylebk'))
 					selector.removeAttr('data-burger_alignment','');
 					selector.removeAttr('data-burger_over', '');
-					
+
 					// Remove responsive nav toggler
 					selector.find('div.responsive_nav_toggler').remove();
 					selector.find('ul.menu').show();
@@ -1194,25 +1178,25 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 						selector.parent().parent().children('a').attr('href', selector.children('a').attr('href'));
 						selector.remove();
 					});
-					
+
 					//remove any display:block|none specifications from the sub-menus
 					selector.find('ul.menu, ul.sub-menu').each(function() {
 						selector.css('display', '');
 					});
-					
+
 					// remove any adjustments done because of the sidebar or the adminbar
 					if($('div#wpadminbar').length) {
 						selector.find('ul.menu').css('margin-top', '');
 					}
 
-					
+
 					//remove the z-index from the container module
 					selector.closest('div.upfront-newnavigation_module').css('z-index', '');
 				}
-				
+
 			}
-		}			
-		
+		}
+
 	},
 	toggle_responsive_nav: function(e) {
 		if($(this).parent().find('ul.menu').css('display') == 'none') {
@@ -1259,7 +1243,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			}
 		}
 		this.makeSortable();
-		
+
 	},
 	makeSortable: function() {
 		var me = this;
@@ -1352,13 +1336,13 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		};
 	},
 	addPrimaryMenuItem : function(e) {
-		
+
 		e.preventDefault();
 		if(this.$el.find('ul.menu > li > i.navigation-add-item').length > 0) {
-			
+
 			this.$el.find('ul.menu > li > i.navigation-add-item').trigger('click');
 		}
-		else { 
+		else {
 		//	this.$el.find('ul.menu').append(this.renderMenuItem(this.menuItemTemplate(), true));
 			this.addMenuItem(e);
 		}
@@ -1496,7 +1480,7 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
 					});
 				}
 				this.model.set_property('breakpoint', model_breakpoint);
-				
+
 				return this.constructor.__super__.on_save.call(this);
 			},
 		});
@@ -1743,7 +1727,24 @@ Upfront.Application.LayoutEditor.add_object("Unewnavigation", {
 	"Model": UnewnavigationModel,
 	"View": UnewnavigationView,
 	"Element": UnewnavigationElement,
-	"Settings": NavigationSettings
+	"Settings": NavigationSettings,
+	cssSelectors: {
+		"div[data-style='horizontal'] ul.menu, div[data-style='vertical'] ul.menu": {label: l10n.css.bar_label, info: l10n.css.bar_info},
+		"div[data-style='horizontal'] ul.menu > li.menu-item > a, div[data-style='vertical'] ul.menu > li.menu-item > a": {label: l10n.css.item_label, info: l10n.css.item_info},
+		"div[data-style='horizontal'] ul.menu > li.menu-item:hover > a, div[data-style='vertical'] ul.menu > li.menu-item:hover > a": {label: l10n.css.hover_label, info: l10n.css.hover_info},
+		"div[data-style='horizontal'] ul.sub-menu > li.menu-item > a, div[data-style='vertical'] ul.sub-menu > li.menu-item > a": {label: l10n.css.subitem_label, info: l10n.css.subitem_info},
+		"div[data-style='horizontal'] ul.sub-menu > li.menu-item:hover > a, div[data-style='vertical'] ul.sub-menu > li.menu-item:hover > a": {label: l10n.css.subitem_hover_label, info: l10n.css.subitem_hover_info},
+
+
+		"div[data-style='burger'] ul.menu": {label: l10n.css.responsive_bar_label, info: l10n.css.bar_info},
+		"div.responsive_nav_toggler": {label: l10n.css.responsive_trigger, info: l10n.css.hover_info},
+		"div.responsive_nav_toggler > div": {label: l10n.css.responsive_trigger_bars, info: l10n.css.hover_info},
+		" div[data-style='burger'] ul.menu > li.menu-item > a": {label: l10n.css.responsive_item_label, info: l10n.css.item_info},
+		"div[data-style='burger'] ul.menu > li.menu-item:hover > a": {label: l10n.css.responsive_hover_label, info: l10n.css.hover_info},
+		"div[data-style='burger'] ul.sub-menu > li.menu-item > a": {label: l10n.css.responsive_subitem_label, info: l10n.css.subitem_info},
+		"div[data-style='burger'] ul.sub-menu > li.menu-item:hover > a": {label: l10n.css.responsive_subitem_hover_label, info: l10n.css.subitem_hover_info}
+	},
+	cssSelectorsId: Upfront.data.unewnavigation.defaults.type
 });
 Upfront.Models.UnewnavigationModel = UnewnavigationModel;
 Upfront.Views.UnewnavigationView = UnewnavigationView;

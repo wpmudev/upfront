@@ -21,12 +21,6 @@ define([
 		sizehintTpl: _.template($(editorTpl).find('#sizehint-tpl').html()),
 		cropTimeAfterResize: 1,// making this longer makes image resize not save
 
-		cssSelectors: {
-			'.upfront-image': {label: l10n.css.image_label, info: l10n.css.image_info},
-			'.wp-caption': {label: l10n.css.caption_label, info: l10n.css.caption_info},
-			'.upfront-image-container': {label: l10n.css.wrapper_label, info: l10n.css.wrapper_info}
-		},
-
 		initialize: function() {
 			var me = this;
 			this.setDefaults();
@@ -1246,7 +1240,13 @@ define([
 		'View': UimageView,
 		'Element': ImageElement,
 		'Settings': ImageSettings,
-		'ContextMenu': ImageContextMenu
+		'ContextMenu': ImageContextMenu,
+		cssSelectors: {
+			'.upfront-image': {label: l10n.css.image_label, info: l10n.css.image_info},
+			'.wp-caption': {label: l10n.css.caption_label, info: l10n.css.caption_info},
+			'.upfront-image-container': {label: l10n.css.wrapper_label, info: l10n.css.wrapper_info}
+		},
+		cssSelectorsId: Upfront.data.uimage.defaults.type
 	});
 
 	Upfront.Views.Editor.ImageEditor = new ImageEditor();

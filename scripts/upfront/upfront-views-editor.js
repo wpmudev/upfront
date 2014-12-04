@@ -6450,13 +6450,7 @@ var CSSEditor = Backbone.View.extend({
 		;
 
 		_.each(objects, function(object){
-			var model = new object.Model(),
-				view = new object.View({model: model}),
-				id = model.get_property_value_by_name('type')
-			;
-
-			selectors[id] = view.cssSelectors || {};
-			view.remove();
+			selectors[object.cssSelectorsId] = object.cssSelectors || {};
 		});
 		me.elementSelectors = selectors;
 	},
