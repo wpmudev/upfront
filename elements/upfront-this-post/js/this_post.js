@@ -38,11 +38,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			_.extend(this.events, {
 				'click .upfront-post-layout-trigger': 'editPostLayout'
 			});
-		}else{
-            _.extend(this.events, {
-                'click .upfront-post-content-trigger': 'editPostContent'
-            });
-        }
+		}
 		this.delegateEvents();
 
 		this.postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
@@ -149,7 +145,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
     get_extra_buttons: function(){
         return Upfront.Application.mode.current === Upfront.Application.MODE.THEME
         	? '<a href="#" title="Edit post layout" class="upfront-icon-button upfront-icon-button-nav upfront-post-layout-trigger"></a>'
-        	: '<a href="#" title="Edit post content" class="upfront-icon-button upfront-icon-button-nav upfront-post-content-trigger"></a>'
+        	: ''
         ;
     },
 	on_edit: function (e) {
