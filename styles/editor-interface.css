@@ -9688,7 +9688,8 @@ a.ueditor-btn-edit {
 
 /* line 148, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/editor-box */
 .ueditor-box-bottom-buttons {
-  height: 90px;
+  min-height: 54px;
+  max-height: 90px;
   padding: 9px 11px;
   display: block;
   border-top: 1px solid #b8d0e6;

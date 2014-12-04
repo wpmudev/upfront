@@ -99,7 +99,12 @@ var PostContentEditor = Backbone.View.extend({
 		this.prepareEditableRegions();
 		this.prepareBox();
 	},
-
+    title_blurred: function(){
+        if( this.post.is_new && !this.box.urlEditor.hasDefinedSlug && !_.isEmpty(this.parts.titles.html()) ){
+            this.post.set("post_name",  this.parts.titles.html().toLowerCase().replace(/\ /g,'-'));
+            this.box.urlEditor.render();
+        }
+    },
 	prepareEditableRegions: function(){
 		var me = this;
 		//Title
@@ -114,6 +119,8 @@ var PostContentEditor = Backbone.View.extend({
 
 			this.parts.titles
 				.attr('contenteditable', true)
+                .off("blur")
+                .on("blur", _.bind(me.title_blurred, me) )
 				/*.on('keyup', this.onTitleEdited)
 				.on('keydown', function(e){
 					if(e.which != 9) //TAB

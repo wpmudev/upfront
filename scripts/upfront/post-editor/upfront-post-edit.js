@@ -443,10 +443,12 @@ var ContentEditorTaxonomy_Flat = PostSectionView.extend({
 
 
 var PostUrlEditor = PostSectionView.extend({
+    hasDefinedSlug : false,
     className: "upfront-slug_editor-url",
     tpl : _.template($(editionBox_tpl).find("#post-url-editor").html()),
     initialize: function(opts){
         this.post = opts.post;
+        this.hasDefinedSlug = _.isEmpty( this.post.get("post_name") ) ? false : true;
         this.render();
     },
     render: function(){
@@ -463,6 +465,7 @@ var PostUrlEditor = PostSectionView.extend({
         var val = this.$(".ueditor-post-url-text").val();
         if( val.length > 1 ){
             this.post.set( "post_name", val );
+            this.hasDefinedSlug = true;
             this.render();
         }
     }
