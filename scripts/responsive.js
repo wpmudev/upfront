@@ -9,17 +9,17 @@
 				max_height = normalize_size($(this).attr('data-max-height')),
 				styles = $(this).html(),
 				applied_styles = {},
-				lazyApplyBindingAll = _.debounce(function(sel) {
-					var $sel = _.isString(sel) ? $(sel) :  $('body');
-					return apply_binding($sel);
-				}, 1000);
-			$(window).on('load', apply_binding_all);
-			$(window).on('resize', function(e){
+				lazyApplyBinding;
+
+			lazyApplyBinding = _.throttle(function(e){
 				if ( e.target == this )
 					apply_binding_all();
 				else
 					apply_binding($(e.target), true);
-			});
+			}, 100);
+
+			$(window).on('load', apply_binding_all);
+			$(window).on('resize', lazyApplyBinding);
 			$(document).on('upfront-load', function(){
 				if ( typeof Upfront.Events != 'undefined' ){
 					Upfront.Events.on("layout:after_render", function(){
@@ -38,7 +38,8 @@
 				}
 			});
 			function apply_binding_all (sel) {
-				lazyApplyBindingAll(sel);
+				var $sel = _.isString(sel) ? $(sel) :  $('body');
+				return apply_binding($sel);
 			}
 			function apply_binding_view (view) {
 				return apply_binding(view.$el.parent());

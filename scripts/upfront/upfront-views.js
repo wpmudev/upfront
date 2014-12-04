@@ -999,7 +999,8 @@ define([
 				if (this.window_resize_offset_check_set) {
 					return;
 				}
-				var lazyCheckUiOffsett = _.debounce(me.checkUiOffset, 1000);
+				// This is not so important visually so throttle to 1 second
+				var lazyCheckUiOffsett = _.throttle(me.checkUiOffset, 1000);
 				$(window).on('resize', $.proxy(lazyCheckUiOffsett, me));
 				this.window_resize_offset_check_set = true;
 			},
@@ -3932,7 +3933,7 @@ define([
 				});
 			},
 			on_change_breakpoint: function (breakpoint) {
-				
+
 			},
 			remove: function(){
 				var me = this;
@@ -4234,4 +4235,3 @@ define([
 });
 
 })(jQuery);
-

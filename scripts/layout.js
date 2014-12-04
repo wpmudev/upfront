@@ -1,4 +1,6 @@
 jQuery(document).ready(function($){
+	var throttle = function(a,b,c){var d,e,f,g=null,h=0;c||(c={});var i=function(){h=c.leading===!1?0:_.now(),g=null,f=a.apply(d,e),g||(d=e=null)};return function(){var j=_.now();h||c.leading!==!1||(h=j);var k=b-(j-h);return d=this,e=arguments,0>=k||k>b?(clearTimeout(g),g=null,h=j,f=a.apply(d,e),g||(d=e=null)):g||c.trailing===!1||(g=setTimeout(i,k)),f}};
+
 	function css_support( property )
 	{
 		var div = document.createElement('div'),
@@ -17,7 +19,17 @@ jQuery(document).ready(function($){
 
 
 	/* Responsive background */
+	var windowWidth = $(window).width();
+	var initialUpdateBackgroundDone = false;
 	function update_background () {
+		var newWindowWidth = $(window).width();
+		// Update background only on width change, do initial update always
+		if (initialUpdateBackgroundDone && windowWidth === newWindowWidth) {
+			return;
+		}
+		initialUpdateBackgroundDone = true;
+		windowWidth = newWindowWidth;
+
 		var breakpoint = get_breakpoint();
 		breakpoint = !breakpoint ? 'desktop' : breakpoint;
 		$('[data-bg-type-'+breakpoint+']').each(function(){
@@ -54,7 +66,7 @@ jQuery(document).ready(function($){
 		});
 	}
 	update_background();
-	var lazyUpdateBackground = _.debounce(update_background, 1000);
+	var lazyUpdateBackground = throttle(update_background, 300);
 	$(window).on('resize', lazyUpdateBackground);
 
 	// Making sure sidebar region height is fixed
@@ -134,16 +146,18 @@ jQuery(document).ready(function($){
 			}
 		});
 	}
+	var lazySetFullScreen = throttle(set_full_screen, 100);
+	var lazyFixRegionHeight = throttle(fix_region_height, 100);
 	if ( css_support('flex') ){
 		$('html').addClass('flexbox-support');
 		set_full_screen();
 		$(window).on('load', set_full_screen);
-		$(window).on('resize', set_full_screen);
+		$(window).on('resize', lazySetFullScreen);
 	}
 	else {
 		fix_region_height();
 		$(window).on('load', fix_region_height);
-		$(window).on('resize', fix_region_height);
+		$(window).on('resize', lazyFixRegionHeight);
 	}
 
 	// Full width image and video background
@@ -255,7 +269,8 @@ jQuery(document).ready(function($){
 		});
 	}
 	fix_full_bg();
-	$(window).on('resize', fix_full_bg);
+	var lazyFixFullBg = throttle(fix_full_bg, 500);
+	$(window).on('resize', lazyFixFullBg);
 
 	// Regions behavior on scroll
 	function regions_scroll_update () {
@@ -416,7 +431,8 @@ jQuery(document).ready(function($){
 	}
 	regions_scroll_update();
 	$(window).on('load', regions_scroll_update);
-	$(window).on('scroll', regions_scroll_update);
+	var lazyScrollUpdate = throttle(regions_scroll_update, 100);
+	$(window).on('scroll', lazyScrollUpdate);
 
 	/* Lightbox front end logic */
 	var overlay = $('<div class="upfront-lightbox-bg"></div>'),
@@ -702,9 +718,10 @@ jQuery(document).ready(function($){
 	}
 
 	// Initialize appropriate behavior
-	$(window).on('resize', image_lazy_load); // Okay, so this should keep on happening on resizes
+	var lazyImageLazyLoad = throttle(image_lazy_load, 100);
+	$(window).on('resize', lazyImageLazyLoad); // Okay, so this should keep on happening on resizes
 	if ( image_lazy_scroll ) {
-		$(window).on('scroll', image_lazy_load);
+		$(window).on('scroll', lazyImageLazyLoad);
 		image_lazy_load();
 	} else {
 		$(image_lazy_load_bg); // Do background load instead
@@ -730,7 +747,8 @@ jQuery(document).ready(function($){
 		});
 	}
 	update_theme_styles();
-	$(window).on('resize', update_theme_styles);
+	var lazyUpdateThemeStyles = throttle(update_theme_styles, 100);
+	$(window).on('resize', lazyUpdateThemeStyles);
 
 	/* Apply responsive class */
 	function update_responsive_class () {
@@ -747,7 +765,8 @@ jQuery(document).ready(function($){
 		$('html').removeClass('uf-responsive');
 	}
 	update_responsive_class();
-	$(window).on('resize', update_responsive_class);
+	var lazyUpdateResponsiveClass = throttle(update_responsive_class, 100);
+	$(window).on('resize', lazyUpdateResponsiveClass);
 	$(document).on('upfront-load', function(){ Upfront.Events.on("layout:render", remove_responsive_class); });
 
 });
