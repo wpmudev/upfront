@@ -1036,16 +1036,16 @@
 // The definitions part is over.
 // Now, to tie it all up and expose to the Subapplication.
 
-    Upfront.Application.LayoutEditor.add_object("SocialMedia", {
-        "Model": SocialMediaModel,
-        "View": SocialMediaView,
-        "Element": SocialMediaElement,
-        "Settings": SocialSettings
-		/*,
-        'anchor': {
-          is_target: false
-        }*/
-    });
+    //Upfront.Application.LayoutEditor.add_object("SocialMedia", { Removing social element for now
+    //    "Model": SocialMediaModel,
+    //    "View": SocialMediaView,
+    //    "Element": SocialMediaElement,
+    //    "Settings": SocialSettings
+		///*,
+    //    'anchor': {
+    //      is_target: false
+    //    }*/
+    //});
 
     Upfront.Models.SocialMediaModel = SocialMediaModel;
     Upfront.Views.SocialMediaView = SocialMediaView;
