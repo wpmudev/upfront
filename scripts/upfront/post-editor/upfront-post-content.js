@@ -62,8 +62,8 @@ var PostContentEditor = Backbone.View.extend({
 		'click .upfront-content-marker-author' : 'editAuthor',
 		'click .upfront-content-marker-date' : 'editDate',
 		'click .upost_thumbnail_changer': 'editThumb',
-		'click .upfront-postpart-tags': 'editTags',
-		'click .upfront-postpart-categories': 'editCategories',
+		//'click .upfront-postpart-tags': 'editTags',
+		//'click .upfront-postpart-categories': 'editCategories',
 		'click .ueditor-action-pickercancel': 'editDateCancel',
 		'click .ueditor-action-pickerok': 'editDateOk'
 	},
@@ -454,7 +454,6 @@ var PostContentEditor = Backbone.View.extend({
 	editDate: function(e) {
 		e.preventDefault();
 		var $target = $(e.target);
-        console.log("editDate");
 		if(this.datepicker.is(':visible')){
 			// just update datepicker position
 			this.datepicker.offset({
