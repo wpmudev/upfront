@@ -12,11 +12,10 @@ var Box = Backbone.View.extend({
     taxSections : [],
     events: {
         'click .ueditor-action-preview': 'navigate_to_preview',
-        'click .ueditor-action-cancel': 'cancel',
+        'click .ueditor-button-cancel-edit': 'cancel',
         'click .ueditor-action-publish': 'publish',
         'click .ueditor-action-draft': 'saveDraft',
         'click .ueditor-action-trash': 'trash',
-        'click .ueditor-action-tags': 'editTaxonomies',
         'click .ueditor-box-title': 'toggle_section',
         'click .ueditor-save-post-data': 'save_post_data'
     },
@@ -154,6 +153,7 @@ var Box = Backbone.View.extend({
             this.destroy();
             this.post.trigger('editor:cancel');
             this.trigger('cancel');
+            Upfront.Application.sidebar.toggleSidebar();
             Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
         }
     },
@@ -194,98 +194,6 @@ var Box = Backbone.View.extend({
         }
     },
 
-    editTaxonomies: function(e, taxName){
-        if(e)
-            e.preventDefault();
-
-        var me = this,
-            tmp = $('body').append('<div id="upfront-post_taxonomies" style="display:none" />'),
-            $tax = $("#upfront-post_taxonomies"),
-            $popup = {},
-            views = {category: false, post_tag: false},
-            currentView = taxName || 'category',
-            terms = {},
-            popup = Upfront.Popup.open(function (data, $top, $bottom) {
-                var $me = $(this);
-                $me.empty()
-                    .append('<p class="upfront-popup-placeholder">' + Upfront.Settings.l10n.global.content.popup_loading + '</p>')
-                    .append($tax)
-                ;
-                $popup = {
-                    "top": $top,
-                    "content": $me,
-                    "bottom": $bottom
-                };
-            }),
-            dispatch_taxonomy_call = function (el) {
-                var $el = $(el),
-                    tax = $el.attr("data-type"),
-                    type = $el.attr('rel'),
-                    termsList = terms[tax] ? terms[tax] : false
-                    ;
-                $popup.top.find('.upfront-tabs li').removeClass('active');
-                $el.addClass('active');
-
-                currentView = tax;
-
-                if(views[tax])
-                    return render_panel(views[tax]);
-
-                if(!termsList){
-                    termsList = new Upfront.Collections.TermList([], {postId: me.post.id, taxonomy: tax});
-                    terms[tax] = termsList;
-                }
-
-                $popup.content.html('<p class="upfront-popup-placeholder">' + Upfront.Settings.l10n.global.content.popup_loading + '</p>');
-
-                termsList.fetch({allTerms: true}).done(function(response){
-                    var tax_view_constructor = response.data.taxonomy.hierarchical ? ContentEditorTaxonomy_Hierarchical : ContentEditorTaxonomy_Flat,
-                        tax_view = new tax_view_constructor({collection: termsList})
-                        ;
-
-                    tax_view.allTerms = new Upfront.Collections.TermList(response.data.allTerms);
-
-                    views[tax] = tax_view;
-                    render_panel();
-                });
-
-                me.listenToOnce(Upfront.Events, 'popup:closed', me.refreshTaxonomies);
-
-                return false;
-            },
-            render_panel = function(view){
-                var v = views[currentView];
-                v.render();
-                $popup.content.html(v.$el);
-                v.setElement(v.$el);
-            }
-            ;
-
-        $(".upfront-popup-placeholder").remove();
-        $popup.top.html(
-            '<ul class="upfront-tabs">' +
-            '<li data-type="category" class="tax-category">' + Upfront.Settings.l10n.global.content.categories + '</li>' +
-            '<li data-type="post_tag" class="tax-post_tag">' + Upfront.Settings.l10n.global.content.tags + '</li>' +
-            '</ul>' +
-            $popup.top.html()
-        );
-
-        $popup.top.find('.upfront-tabs li').on("click", function () {
-            dispatch_taxonomy_call(this);
-        });
-
-        $tax.show();
-
-        dispatch_taxonomy_call($popup.top.find('.tax-' + currentView));
-
-        Upfront.Events.on("upfront:post:taxonomy_changed", function () {
-            dispatch_taxonomy_call($popup.top.find('.upfront-tabs li.active'));
-        });
-    },
-
-    refreshTaxonomies: function(){
-        this.trigger('tax:refresh');
-    },
     toggle_section: function(e){
         e.preventDefault();
         var $this = $(e.target),

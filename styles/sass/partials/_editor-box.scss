@@ -146,14 +146,20 @@ a.ueditor-btn-edit{
 }
 
 .ueditor-box-bottom-buttons{
-  height: 54px;
+//  height: 54px;
+  height: 90px;
   padding: 9px 11px;
   display: block;
   border-top: 1px solid #b8d0e6;
   border-bottom: 1px solid #b8d0e6;
   overflow: hidden;
 }
-
+a.ueditor-button-cancel-edit{
+  float: right;
+  clear: right;
+  margin-right: 38px;
+  margin-top: 10px;
+}
 a.ueditor-action-publish {
   text-align: center;
   color: #fff !important;
