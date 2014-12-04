@@ -3,12 +3,14 @@
 	height: 38px;
 }
 .upfront-popup-meta .upfront-tabs {
-	display: none;
 	list-style: none;
 	position: absolute;
 	top: 0;
 	left: 0;
 	margin: 0; padding: 0;
+}
+.upfront-popup-meta .upfront-tabs.upfront-media_manager-tabs {
+	display: none;
 }
 .upfront-popup-meta .upfront-tabs li {
 	display: inline-block;
