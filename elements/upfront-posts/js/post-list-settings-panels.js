@@ -255,6 +255,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 				]
 			}));
 		}
+		this.once("rendered", this.update_terms, this);
 	},
 
 	update_terms: function () {
