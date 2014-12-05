@@ -27,4 +27,8 @@ class Upfront_PostsView extends Upfront_Object {
 		}
 		return $out;
 	}
+
+	public static function default_properties () {
+		return Upfront_Posts_PostsData::get_defaults();
+	}
 }
