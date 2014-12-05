@@ -264,6 +264,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 		var me = this, taxonomy;
 
 		this.fields.each(function (field) {
+			if ("term" === field.property_name) return true;
 			field.property.set({'value': field.get_value()}, {'silent': false});
 		});
 
@@ -289,12 +290,13 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 	},
 
 	_spawn_terms_element: function (terms) {
-		this.fields._wrapped[2] = new Upfront.Views.Editor.Field.Select({
+		var field = new Upfront.Views.Editor.Field.Select({
 			model: this.model,
 			label: l10n.term,
 			property: "term",
 			values: terms
 		});
+		this.fields._wrapped[2] = field;
 		this.$el.empty();
 		this.render();
 	}
