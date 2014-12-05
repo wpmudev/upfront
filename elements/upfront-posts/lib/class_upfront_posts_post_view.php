@@ -238,7 +238,7 @@ class Upfront_Posts_PostView {
 	 * @return string Wrapped final post markup.
 	 */
 	protected function _wrap_post ($post) {
-		return "<li><article>{$post}</article></li>";
+		return "<li class='uf-post'><article>{$post}</article></li>";
 	}
 
 	/**
