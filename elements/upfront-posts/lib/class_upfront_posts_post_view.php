@@ -120,6 +120,7 @@ class Upfront_Posts_PostView {
 		if (empty($this->_post->ID)) return '';
 
 		$thumbnail = get_the_post_thumbnail($this->_post->ID);
+		if (empty($thumbnail)) return '';
 
 		$out = $this->_get_template('thumbnail');
 		
