@@ -95,7 +95,7 @@ class Upfront_Posts_Model_Generic extends Upfront_Posts_Model {
 		}
 		$args['post_status'] = 'publish'; // double-ensure for AJAX requests
 
-		return WP_Query($args);
+		return new WP_Query($args);
 	}
 
 	public static function get_posts ($data) {
