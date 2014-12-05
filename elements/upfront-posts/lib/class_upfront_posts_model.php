@@ -146,8 +146,11 @@ class Upfront_Posts_Model_Taxonomy extends Upfront_Posts_Model {
 		if (!empty($offset)) $args['offset'] = $offset;
 		
 		$args['tax_query'] = array();
-		if (!empty($data['taxonomy'])) $args['tax_query']['taxonomy'] = $data['taxonomy'];
-		if (!empty($data['term'])) $args['tax_query']['term'] = $data['term'];
+		$tax_query = array();
+		if (!empty($data['taxonomy'])) $tax_query['taxonomy'] = $data['taxonomy'];
+		if (!empty($data['term'])) $tax_query['terms'] = array($data['term']);
+
+		if (!empty($tax_query)) $args['tax_query'][] = $tax_query;
 		$args['post_status'] = 'publish'; // double-ensure for AJAX requests
 
 		return new WP_Query($args);
