@@ -3,3 +3,6 @@
 	margin: 0 !important;
 	padding: 0 !important;
 }
+.upfront-output-posts li.uf-post .thumbnail img {
+   height: auto;
+}
