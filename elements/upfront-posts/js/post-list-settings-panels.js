@@ -274,7 +274,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 			_(terms.data).each(function (label, id) {
 				term_values.push({label: label, value: id});
 			});
-			me.fields._wrapped[1] = new Upfront.Views.Editor.Field.Select({
+			me.fields._wrapped[2] = new Upfront.Views.Editor.Field.Select({
 				model: me.model,
 				label: l10n.term,
 				property: "term",
