@@ -39,6 +39,12 @@ define([], function () {
 					width += item.width;
 					height = item.height > height ? item.height : height;
 				}
+
+                if( typeof item.active  === "function" && item.active() == 1 ){
+                    item.$el.addClass("active");
+                }else if(typeof item.active  === "function" && item.active() == 0){
+                    item.$el.removeClass("active");
+                }
 			}, this);
 
 			this.$el.addClass(this.className + ' ' + classes.join(' '));
@@ -51,6 +57,8 @@ define([], function () {
 				width: width,
 				height: height
 			});
+
+
 		},
 
 		remove: function() {

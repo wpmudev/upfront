@@ -197,6 +197,7 @@ var UeditorInsert = Backbone.View.extend({
 				control.tooltip = controlData.tooltip;
 				control.id = controlData.id;
 				control.label = controlData.label;
+				control.active = controlData.active;
 				items.push(control);
 			}
 		});
@@ -300,6 +301,7 @@ var ImageInsert = UeditorInsert.extend({
 	resizable: false,
 	defaultData: {
         caption: "Default caption",
+        show_caption: 1,
 		imageFull: {src:'', width:100, height: 100},
 		imageThumb: {src:'', width:100, height: 100},
 		linkType: 'do_nothing',
@@ -313,12 +315,16 @@ var ImageInsert = UeditorInsert.extend({
 	init: function(){
 		this.controlsData = [
             {id: 'style', type: 'dialog', icon: 'style', tooltip: 'Style', view: this.getStyleView()},
-            {id: 'link', type: 'dialog', icon: 'link', tooltip: 'Link image', view: this.getLinkView()}
+            {id: 'link', type: 'dialog', icon: 'link', tooltip: 'Link image', view: this.getLinkView()},
+            {id: 'toggle_caption', type: 'simple', icon: 'caption', tooltip: 'Toggle Caption', active: _.bind( this.get_caption_state, this ) }
 		];
 		this.createControls();
 	},
     events:{
         "click .ueditor-insert-remove": "click_remove"
+    },
+    get_caption_state: function(){
+        return 1 - parseInt( this.data.get("show_caption"), 10 );
     },
     click_remove: function( e ){
         e.preventDefault();
@@ -352,12 +358,17 @@ var ImageInsert = UeditorInsert.extend({
 	},
 	// Insert editor UI
 	render: function(){
+        this.data.set("show_caption", parseInt(this.data.get("show_caption"), 10));
+
+
 		var me = this,
 			data = this.data.toJSON(),
 			style_variant = this.data.get("style"),
 			wrapperSize = this.data.get('imageThumb'),
 			grid = Upfront.Settings.LayoutEditor.Grid;
-        
+
+
+
         if( !style_variant ) return;
 
         data.style.label_id = data.style.label && data.style.label.trim() !== "" ? "ueditor-image-style-" +  data.style.label.toLowerCase().trim().replace(" ", "-") : data.style.vid;
@@ -366,6 +377,10 @@ var ImageInsert = UeditorInsert.extend({
 		this.apply_classes( data.style.group );
 		this.apply_classes( data.style.image );
 		this.apply_classes( data.style.caption );
+
+        if( this.data.get("show_caption") == 0 ){
+            data.style.image.width_cls = Upfront.Settings.LayoutEditor.Grid.class + 24;
+        }
         var $group = this.$el.find(".ueditor-insert-variant-group"),
             ge = Upfront.Behaviors.GridEditor,
             $parent = $('.upfront-content-marker-contents'),
@@ -552,6 +567,12 @@ var ImageInsert = UeditorInsert.extend({
             control.close();
         });
 
+        /**
+         * Toggle Caption
+         */
+        this.listenTo(this.controls, 'control:click:toggle_caption', function(control){
+            this.data.set("show_caption", 1 - parseInt( this.data.get("show_caption"), 10 ) );
+        });
 	},
 
 	updateControlsPosition: function(){

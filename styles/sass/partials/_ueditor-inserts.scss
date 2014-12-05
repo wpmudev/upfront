@@ -138,6 +138,16 @@ i.upfront-icon.upfront-icon-region-remove:before{
   content:"x";
   color:red;
 }
+
+.upfront-inline-panel-item i.upfront-icon.upfront-icon-region-caption:before{
+  background-position: -700px -454px;
+}
+
+.upfront-inline-panel-item.active i.upfront-icon.upfront-icon-region-caption:before,
+.upfront-inline-panel-item i.upfront-icon.upfront-icon-region-caption:hover:before{
+  background-position: -808px -454px;
+}
+
 .ueditor-insert .upfront-icon-region-alignleft,
 .ueditor-insert .upfront-icon-region-alignment {
 	background-position: -510px -80px;
