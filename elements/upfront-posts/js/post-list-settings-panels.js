@@ -160,6 +160,8 @@ var CustomSelectorField =  Upfront.Views.Editor.Field.Hidden.extend({
 });
 
 var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
+	_terms_cache: {},
+
 	events: function () {
 		return _.extend({},
 			Upfront.Views.Editor.Settings.Item.prototype.events,
@@ -267,6 +269,12 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 
 		taxonomy = this.model.get_property_value_by_name("taxonomy");
 		if (!taxonomy) return false;
+
+		if (this._terms_cache[taxonomy]) {
+			var terms = this._terms_cache[taxonomy];
+			return this._spawn_terms_element(terms);
+		}
+
 		Upfront.Util.post({
 			"action": "upfront_posts-terms",
 			"taxonomy": taxonomy}
@@ -275,16 +283,21 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 			_(terms.data).each(function (label, id) {
 				term_values.push({label: label, value: id});
 			});
-			me.fields._wrapped[2] = new Upfront.Views.Editor.Field.Select({
-				model: me.model,
-				label: l10n.term,
-				property: "term",
-				values: term_values
-			});
-			me.$el.empty();
-			me.render();
+			me._terms_cache[taxonomy] = term_values;
+			me._spawn_terms_element(term_values);
 		});
 	},
+
+	_spawn_terms_element: function (terms) {
+		this.fields._wrapped[2] = new Upfront.Views.Editor.Field.Select({
+			model: this.model,
+			label: l10n.term,
+			property: "term",
+			values: terms
+		});
+		this.$el.empty();
+		this.render();
+	}
 
 });
 
