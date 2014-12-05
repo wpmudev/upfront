@@ -70,6 +70,7 @@ var Views = {
 						});
 						me.$el.empty().append(me.tpl.main({
 							posts: posts,
+							pagination: response.data.pagination,
 							l10n: l10n
 						}));
 					}

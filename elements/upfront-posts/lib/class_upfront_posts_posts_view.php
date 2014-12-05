@@ -33,10 +33,63 @@ class Upfront_Posts_PostsView {
 	public static function get_markup ($data) {
 		$posts = self::get_posts_markup($data);
 
-		return !empty($posts)
-			? '<ul>' . join('', $posts) . '</ul>'
+		if (!empty($posts)) {
+			return '' .
+				'<ul>' . join('', $posts) . '</ul>' .
+				self::get_pagination($data) . 
+			'';
+
+		}
+
+		return '';
+	}
+
+	public static function get_pagination ($data) {
+		if ('list' !== $data['display_type']) return '';
+		if (empty($data['pagination'])) return '';
+
+		$pagination = '';
+		$pagination_type = sanitize_html_class($data['pagination']);
+		if ('numeric' === $pagination_type) $pagination = self::_get_numeric_pagination($data);
+		if ('arrows' === $pagination_type) $pagination = self::_get_arrow_pagination($data);
+
+		return !empty($pagination)
+			? "<div class='uf-pagination {$pagination_type}'>{$pagination}</div>"
 			: ''
 		;
 	}
+
+	private static function _get_numeric_pagination ($data) {
+		global $wp_query;
+
+		$old_query = clone($wp_query);
+		$query = Upfront_Posts_Model::spawn_query($data);
+		$wp_query = $query;
+
+		$big = 999999999999999999;
+		$pagination = paginate_links(array(
+			'base' => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
+			'format' => '?paged=%#%',
+			'current' => max( 1, get_query_var('paged') ),
+			'total' => $wp_query->max_num_pages
+		));
+		$wp_query = $old_query;
+		
+		return $pagination;
+	}
+
+	private static function _get_arrow_pagination ($data) {
+		global $wp_query;
+
+		$old_query = clone($wp_query);
+		$query = Upfront_Posts_Model::spawn_query($data);
+		$wp_query = $query;
+
+		$pagination = get_posts_nav_link();
+		$wp_query = $old_query;
+		
+		return $pagination;
+	}
+
 
 }

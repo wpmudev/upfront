@@ -106,6 +106,7 @@ class Upfront_Posts extends Upfront_Server {
 
 		$this->_out(new Upfront_JsonResponse_Success(array(
 			'posts' => Upfront_Posts_PostsView::get_posts_markup($data),
+			'pagination' => Upfront_Posts_PostsView::get_pagination($data),
 		)));
 	}
 
