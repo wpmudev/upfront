@@ -5,11 +5,20 @@ class Upfront_Posts_Model {
 	const DEFAULT_LIST_TYPE = 'taxonomy';
 
 	public static function get_posts ($data) {
+		$class_name = self::_get_model_class($data);
+		return $class_name::get_posts($data);
+	}
+
+	public static function spawn_query ($data) {
+		$class_name = self::_get_model_class($data);
+		return $class_name::spawn_query($data);
+	}
+
+	private static function _get_model_class ($data) {
 		$list_type = !empty($data['list_type']) ? $data['list_type'] : self::DEFAULT_LIST_TYPE;
 		$class_name = get_class() . '_' . ucfirst($list_type);
 		if (!class_exists($class_name)) $class_name = get_class() . '_' . ucfirst(self::DEFAULT_LIST_TYPE);
-		
-		return $class_name::get_posts($data);
+		return $class_name;
 	}
 	
 	/**
@@ -57,7 +66,8 @@ class Upfront_Posts_Model {
 
 
 class Upfront_Posts_Model_Generic extends Upfront_Posts_Model {
-	public static function get_posts ($data) {
+	
+	public static function spawn_query ($data) {
 		$query = array();
 		if (empty($data['query'])) {
 			global $wp_query;
@@ -85,14 +95,18 @@ class Upfront_Posts_Model_Generic extends Upfront_Posts_Model {
 		}
 		$args['post_status'] = 'publish'; // double-ensure for AJAX requests
 
-		$query = new WP_Query($args);
+		return WP_Query($args);
+	}
+
+	public static function get_posts ($data) {
+		$query = self::spawn_query($data);
 		return $query->posts;
 	}
 }
 
 
 class Upfront_Posts_Model_Custom extends Upfront_Posts_Model {
-	public static function get_posts ($data) {
+	public static function spawn_query ($data) {
 		$raw_list = !empty($data['posts_list']) ? rawurldecode($data['posts_list']) : false;
 		if (empty($raw_list)) return array();
 
@@ -114,14 +128,17 @@ class Upfront_Posts_Model_Custom extends Upfront_Posts_Model {
 		if (self::is_single($data)) {
 			$args['posts_per_page'] = 1;
 		}
-		$query = new WP_Query($args);
+		return new WP_Query($args);
+	}
+	public static function get_posts ($data) {
+		$query = self::spawn_query($data);
 		return $query->posts;
 	}
 }
 
 
 class Upfront_Posts_Model_Taxonomy extends Upfront_Posts_Model {
-	public static function get_posts ($data) {
+	public static function spawn_query ($data) {
 		$args = array();
 		
 		$args['posts_per_page'] = self::get_limit($data);
@@ -133,7 +150,10 @@ class Upfront_Posts_Model_Taxonomy extends Upfront_Posts_Model {
 		if (!empty($data['term'])) $args['tax_query']['term'] = $data['term'];
 		$args['post_status'] = 'publish'; // double-ensure for AJAX requests
 
-		$query = new WP_Query($args);
+		return new WP_Query($args);
+	}
+	public static function get_posts ($data) {
+		$query = self::spawn_query($data);
 		return $query->posts;
 	}
 }
