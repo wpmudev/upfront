@@ -122,7 +122,7 @@ class Upfront_Posts_PostView {
 		$thumbnail = get_the_post_thumbnail($this->_post->ID);
 		if (empty($thumbnail)) return '';
         
-        $resize_featured = $this->_data['resize_featured'] ? $this->_data['resize_featured'] : 0;
+        $resize_featured = !empty($this->_data['resize_featured']) ? $this->_data['resize_featured'] : 0;
 
 		$out = $this->_get_template('thumbnail');
 		
