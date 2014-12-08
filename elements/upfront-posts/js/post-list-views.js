@@ -19,22 +19,25 @@ var Views = {
 		},
 		render: function () {
 			var opts = new Upfront.Views.Editor.Field.Radios({
-				model: this.model,
-				property: 'display_type',
-				label: l10n.display_type_label_initial,
-				layout: 'horizontal-inline',
-				icon_class: 'upfront-posts-display_type',
-				values: [
-					{label: l10n.single_post, value: 'single', icon: 'upfront-posts-single'},
-					{label: l10n.post_list, value: 'list', icon: 'upfront-posts-list'}
-				]
-			});
+					model: this.model,
+					property: 'display_type',
+					label: l10n.display_type_label_initial,
+					layout: 'horizontal-inline',
+					icon_class: 'upfront-posts-display_type',
+					values: [
+						{label: l10n.single_post, value: 'single', icon: 'upfront-posts-single'},
+						{label: l10n.post_list, value: 'list', icon: 'upfront-posts-list'}
+					]
+				}),
+				row = this.element.parent_module_view.model.get_property_value_by_name('row'),
+				height = row ? row * Upfront.Settings.LayoutEditor.Grid.baseline : 0;
 			opts.on("changed", function (value) {
 				this.model.set_property(this.options.property, value, true);
 			}, opts);
 			opts.render();
 
 			this.$el.empty().append(this.tpl({l10n: l10n}));
+			this.$el.css('min-height', ( height > 150 ? height : 150 ));
 			this.$el.find(".options").empty().append(opts.$el);
 		},
 		dispatch: function (e) {

@@ -101,11 +101,11 @@ var CustomSelectorField =  Upfront.Views.Editor.Field.Hidden.extend({
 			if (values) values = [_(values).first()];
 		}
 		field += '<i class="upfront-posts-custom-add_post"></i> <a href="#add">' + string + '</a>';
-		if (values) {
+		if (_.isArray(values) && values.length > 0) {
 			field += '<ol>';
 			_.each(values, function (value) {
 				if (!value) return false;
-				field += '<li>' + value.permalink + '<a href="#rmv" data-id="' + value.id + '"><i>&times;</i></a></li>';
+				field += '<li><span class="permalink">' + value.permalink + '</span><a href="#rmv" data-id="' + value.id + '"><i>&times;</i></a></li>';
 			});
 			field += '</ol>';
 		}
@@ -160,6 +160,7 @@ var CustomSelectorField =  Upfront.Views.Editor.Field.Hidden.extend({
 });
 
 var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
+	group: false,
 	_terms_cache: {},
 
 	events: function () {
@@ -339,7 +340,7 @@ Panels.PostParts = Upfront.Views.Editor.Settings.Panel.extend({
 		;
 		post_parts.on("changed", autorefresh, post_parts);
 		this.settings = _([
-			new Upfront.Views.Editor.Settings.Item({
+			new PostPartsPickerSettings({
 				model: this.model,
 				title: l10n.post_parts_picker,
 				fields: [post_parts]
@@ -347,6 +348,7 @@ Panels.PostParts = Upfront.Views.Editor.Settings.Panel.extend({
 			sorter,
 			new Upfront.Views.Editor.Settings.Item({
 				model: this.model,
+				group: false,
 				fields: [resize_featured]
 			})
 		]);
@@ -361,7 +363,12 @@ Panels.PostParts = Upfront.Views.Editor.Settings.Panel.extend({
 	}
 });
 
+var PostPartsPickerSettings = Upfront.Views.Editor.Settings.Item.extend({
+	className: 'uposts-parts-picker-setting'
+});
+
 var SortSettings = Upfront.Views.Editor.Settings.Item.extend({
+	group: false,
 	initialize: function (opts) {
 		this.options = opts;
 		this.fields = _([
