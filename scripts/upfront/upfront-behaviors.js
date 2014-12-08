@@ -3820,13 +3820,14 @@ var GridEditor = {
 	/**
 	 * Call this to adapt module to the breakpoint
 	 */
-	adapt_to_breakpoint: function (modules, wrappers, breakpoint_id, parent_col) {
+	adapt_to_breakpoint: function (modules, wrappers, breakpoint_id, parent_col, silent) {
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.GridEditor,
 			line_col = 0,
 			line = -1;
 			lines = [],
-			modules_data = [];
+			modules_data = [],
+			silent = ( silent === true ) ? true : false;
 		modules.each(function(module){
 			var data = module.get_property_value_by_name('breakpoint'),
 				module_class = module.get_property_value_by_name('class'),
@@ -3878,14 +3879,14 @@ var GridEditor = {
 					}
 					data.breakpoint[breakpoint_id].left = new_left;
 					data.breakpoint[breakpoint_id].col = new_col;
-					data.module.set_property('breakpoint', data.breakpoint);
+					data.module.set_property('breakpoint', data.breakpoint, silent);
 				}
 				else {
 					new_col = typeof data.breakpoint[breakpoint_id].col == 'number' ? data.breakpoint[breakpoint_id].col : data.col;
 					new_left = typeof data.breakpoint[breakpoint_id].left == 'number' ? data.breakpoint[breakpoint_id].left : data.left;
 				}
 				data.wrapper_breakpoint[breakpoint_id].col = new_col+new_left;
-				data.wrapper.set_property('breakpoint', data.wrapper_breakpoint);
+				data.wrapper.set_property('breakpoint', data.wrapper_breakpoint, silent);
 			});
 		});
 	},
@@ -3893,11 +3894,12 @@ var GridEditor = {
 	/**
 	 * Call this to adapt region to the breakpoint
 	 */
-	adapt_region_to_breakpoint: function (regions, breakpoint_id, col) {
+	adapt_region_to_breakpoint: function (regions, breakpoint_id, col, silent) {
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.GridEditor,
 			default_breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_default().toJSON();
-			line_col = 0;
+			line_col = 0,
+			silent = ( silent === true ) ? true : false;
 		regions.each(function(region){
 			var data = Upfront.Util.clone( region.get_property_value_by_name('breakpoint') || {} ),
 				sub = region.get('sub');
@@ -3911,7 +3913,7 @@ var GridEditor = {
 					}
 				}
 			}
-			region.set_property('breakpoint', data);
+			region.set_property('breakpoint', data, silent);
 		});
 	},
 

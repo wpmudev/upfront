@@ -1623,7 +1623,8 @@ define([
 						module.add_to(region_modules, index+i);
 					});
 				}
-				this.remove();
+				this.region.get('modules').remove(this.model);
+				//this.remove();
 				ed.update_position_data();
 				ed.update_wrappers(region);
 				Upfront.Events.trigger("entity:module_group:ungroup", modules_arr, region);
@@ -1683,11 +1684,20 @@ define([
 			remove: function(){
 				if(this._modules_view)
 					this._modules_view.remove();
-				this.region.get('modules').remove(this.model, {silent: true});
+				var wrappers = this.model.get('wrappers');
+				if(wrappers)
+					wrappers.each(function(wrapper){
+						var wrapperView = Upfront.data.wrapper_views[wrapper.cid];
+						if(wrapperView){
+							wrapperView.remove();
+							delete Upfront.data.wrapper_views[wrapper.cid];
+						}
+					});
 				this.region_view = false;
 				this.region = false;
-				this.group_view = false;
 				Backbone.View.prototype.remove.call(this);
+				this.model.get('wrappers').reset([], {silent:true});
+				this.model = false;
 			}
 		}),
 
@@ -1705,7 +1715,9 @@ define([
 				this.listenTo(this.model, 'remove', this.on_remove);
 				this.listenTo(this.model, 'reset', this.on_reset);
 				this.listenTo(Upfront.Events, "entity:drag_stop", this.apply_flexbox_clear);
+				this.listenTo(Upfront.Events, "entity:drag_stop", this.apply_adapt_to_breakpoints);
 				this.listenTo(Upfront.Events, "entity:resized", this.apply_flexbox_clear);
+				this.listenTo(Upfront.Events, "entity:resized", this.apply_adapt_to_breakpoints);
 				this.listenTo(Upfront.Events, "entity:wrappers:update", this.apply_flexbox_clear);
 				this.listenTo(Upfront.Events, "layout:render", this.on_after_layout_render);
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
@@ -1833,9 +1845,14 @@ define([
 				this.current_wrapper_id = this.current_wrapper_el = null;
 				this.render_module(model, options);
 				this.apply_flexbox_clear();
+				this.apply_adapt_to_breakpoints();
 				Upfront.Events.trigger("entity:added:after");
 			},
 			on_remove: function (model) {
+				this.remove_model(model);
+				this.apply_adapt_to_breakpoints();
+			},
+			remove_model: function (model) {
 				var view = Upfront.data.module_views[model.cid];
 				if ( !view )
 					return;
@@ -1851,32 +1868,50 @@ define([
 						me.render_module(module, {index: index});
 					});
 					this.fix_flexbox_clear(this.$el);
+					this.apply_adapt_to_breakpoints();
 				}
 			},
 			on_after_layout_render: function () {
 				this.apply_flexbox_clear();
+				this.apply_adapt_to_breakpoints();
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.apply_flexbox_clear);
 			},
 			apply_flexbox_clear: function () {
 				this.fix_flexbox_clear(this.$el);
 			},
+			apply_adapt_to_breakpoints: function () {
+				var current_breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
+				if ( current_breakpoint && !current_breakpoint.default )
+					return;
+				// Don't do anything on shadow region
+				if ( this.region_view && this.region_view.model.get('name') == 'shadow' )
+					return;
+				var me = this,
+					ed = Upfront.Behaviors.GridEditor,
+					is_group = ( typeof this.group_view != 'undefined' ),
+					wrappers = ( is_group ? this.group_view : this.region_view ).model.get('wrappers'),
+					breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled();
+				_.each(breakpoints, function(each){
+					var breakpoint = each.toJSON();
+					if ( breakpoint.default )
+						return;
+					var group_col = is_group ? ed.get_class_num(me.group_view.$el, ed.grid.class) : breakpoint.columns,
+						col = is_group ? group_col : breakpoint.columns;
+					ed.adapt_to_breakpoint(me.model, wrappers, breakpoint.id, col, true);
+				});
+			},
 			on_change_breakpoint: function (breakpoint) {
 				var me = this;
-				if ( !breakpoint.default ){
-					var ed = Upfront.Behaviors.GridEditor,
-						is_group = ( typeof this.group_view != 'undefined' ),
-						wrappers = ( is_group ? this.group_view : this.region_view ).model.get('wrappers'),
-						col = Math.round( ( is_group ? this.group_view.$el : this.region_view.$el ).width() / ed.grid.column_width );
-					ed.adapt_to_breakpoint(this.model, wrappers, breakpoint.id, col);
-				}
 				// Make sure clearing flexbox is applied, set a timeout to let other positioning finish
 				setTimeout(function(){ me.apply_flexbox_clear(); }, 1000);
 			},
 			remove: function() {
 				var me = this;
 				this.model.each(function(model){
-					me.on_remove(model);
+					me.remove_model(model);
 				});
+				this.region_view = false;
+				this.group_view = false;
 				Backbone.View.prototype.remove.call(this);
 				this.model.reset([], {silent:true});
 				this.model = false;
@@ -3663,6 +3698,7 @@ define([
 				this.model.each(function (region, index) {
 					me.render_region(region);
 				});
+				this.apply_adapt_region_to_breakpoints();
 			},
 			render_container: function (region, index) {
 				var container = region.get("container"),
@@ -3823,6 +3859,7 @@ define([
 				else {
 					region_view = this.render_region(model, sub);
 				}
+				this.apply_adapt_region_to_breakpoints();
 				Upfront.Events.trigger("entity:region:added", region_view, region_view.model);
 			},
 			on_remove: function (model) {
@@ -3877,10 +3914,22 @@ define([
 				}
 				Upfront.Events.trigger("entity:region:removed", view, model);
 			},
+			apply_adapt_region_to_breakpoints: function () {
+				var current_breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
+				if ( current_breakpoint && !current_breakpoint.default )
+					return;
+				var me = this,
+					ed = Upfront.Behaviors.GridEditor,
+					breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled();
+				_.each(breakpoints, function(each){
+					var breakpoint = each.toJSON();
+					if ( breakpoint.default )
+						return;
+					ed.adapt_region_to_breakpoint(me.model, breakpoint.id, breakpoint.columns, true);
+				});
+			},
 			on_change_breakpoint: function (breakpoint) {
-				var ed = Upfront.Behaviors.GridEditor;
-				if ( !breakpoint.default )
-					ed.adapt_region_to_breakpoint(this.model, breakpoint.id, breakpoint.columns);
+				
 			},
 			remove: function(){
 				var me = this;
