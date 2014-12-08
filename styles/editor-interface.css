@@ -1616,24 +1616,24 @@ input.upfront-field-text:hover, .upfront-field-text:focus {
 .upfront-field-checkbox, .upfront-field-radio {
   width: 12px;
   height: 12px;
-  border: 2px solid #263a4d;
+  border: 2px solid #9dacba;
   margin: 0 10px 0 0;
   cursor: pointer;
   float: none; }
 
 /* line 243, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-radio {
-  border-radius: 6px;
-  border: 3px solid #97aec6; }
+  border-radius: 6px; }
 
-/* line 247, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 246, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-radio:focus {
   border-width: 3px;
   outline: none; }
 
-/* line 251, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 250, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-radio:checked {
-  border: 3px solid #fff;
+  border-width: 3px;
+  border-color: #263a4d;
   background: #1fcd8f; }
 
 /* line 255, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/fields */
@@ -2350,45 +2350,53 @@ div.uinsert-selector a:hover {
 .uimage-control-panel-content label {
   color: #fff; }
 
-/* line 232, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/ueditor-inserts */
+/* line 231, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/ueditor-inserts */
+.uimage-control-panel-content .upfront-field-radio {
+  border-color: #97aec6; }
+
+/* line 234, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/ueditor-inserts */
+.uimage-control-panel-content .upfront-field-radio:checked {
+  border-color: #fff; }
+
+/* line 238, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/ueditor-inserts */
 .ueditor-insert:hover .upfront-resize-handle-e, .ueditor-insert:hover .upfront-resize-handle-w {
   display: block !important; }
 
-/* line 236, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/ueditor-inserts */
+/* line 242, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/ueditor-inserts */
 .ueditor-insert .upfront-resize-handle-e {
   right: 0; }
 
-/* line 239, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/ueditor-inserts */
+/* line 245, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/ueditor-inserts */
 .ueditor-insert .upfront-resize-handle-w {
   left: 0;
   background: #f2b530; }
 
-/* line 244, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/ueditor-inserts */
+/* line 250, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/ueditor-inserts */
 .upfront-control-dialog-open .inline-panel-control-dialog {
   display: block; }
 
-/* line 247, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/ueditor-inserts */
+/* line 253, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/ueditor-inserts */
 .ueditor-insert-variant-group .ueditor-insert-remove {
   position: absolute;
   right: 5px;
   top: 5px;
   display: none; }
 
-/* line 253, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/ueditor-inserts */
+/* line 259, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/ueditor-inserts */
 .ueditor-insert-variant-group:hover .ueditor-insert-remove {
   display: block; }
 
 /* Responsive fix */
-/* line 259, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/ueditor-inserts */
+/* line 265, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/ueditor-inserts */
 #page.responsive-breakpoint .upfront-content-marker-contents > * {
   padding-left: 0;
   padding-right: 0; }
 
-/* line 263, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/ueditor-inserts */
+/* line 269, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/ueditor-inserts */
 #page.responsive-breakpoint .upfront-inserted_image-wrapper {
   text-align: center; }
 
-/* line 266, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/ueditor-inserts */
+/* line 272, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/ueditor-inserts */
 #page.responsive-breakpoint .ueditor-insert-variant-group {
   margin-left: 0 !important;
   margin-right: 0 !important;
@@ -2398,7 +2406,7 @@ div.uinsert-selector a:hover {
   width: auto;
   text-align: center; }
 
-/* line 276, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/ueditor-inserts */
+/* line 282, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/ueditor-inserts */
 #page.responsive-breakpoint .upfront-inserted_image-wrapper .wp-caption-text, #page.responsive-breakpoint .upfront-inserted_image-wrapper .uinsert-image-wrapper {
   min-height: 0 !important;
   margin-top: 0;
