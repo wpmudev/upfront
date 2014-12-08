@@ -1082,6 +1082,8 @@ RedactorPlugins.upfrontColor = function() {
                     current = self.redactor.selection.getText(),
                     bg_cleanup = "color",
                     font_cleanup = "color",
+                    change_color = false,
+                    change_bgcolor = false,
                     class_set = function( cls ){
                         self.redactor.inline.format('div', 'class', cls);
                     },
@@ -1095,16 +1097,12 @@ RedactorPlugins.upfrontColor = function() {
                     };
 
 
-                //if( $( current).hasClass( 'upfront_theme_colors' ) || $( current).parent().is( '.upfront_theme_colors' ) ){
-                //    $( current ).contents().unwrap();
-                //}
-
                 /**
                  * Background color
                  */
                 if (self.current_bg && typeof(self.current_bg) == 'object') {
 
-
+                    change_bgcolor = true;
                     var bg_class = Upfront.Views.Theme_Colors.colors.get_css_class(self.current_bg.toHexString(), true);
                     color_remove( 'background-color' );
                     if (bg_class) {
@@ -1120,6 +1118,7 @@ RedactorPlugins.upfrontColor = function() {
                  * Font color
                  */
                 if (self.current_color && typeof(self.current_color) == 'object') {
+                    change_color = true;
                     var theme_color_classname = Upfront.Views.Theme_Colors.colors.get_css_class(self.current_color.toHexString());
                     color_remove( 'color' );
                     if (theme_color_classname) {
@@ -1129,26 +1128,73 @@ RedactorPlugins.upfrontColor = function() {
                     }
                 }
 
+                /**
+                 * Clean up
+                 */
+                if( change_color && !change_bgcolor){
+                    var replacees = [];
+                    $(this.redactor.selection.getCurrent()).parents("[data-redactor-style^='color']").each( function(){
+                        var $this = $(this);
+                        if( $this.text() === self.redactor.selection.getText() ){
+                            replacees.push( this );
+                        }
+                    } );
+
+                    var current = this.redactor.selection.getCurrent(),
+                        $last_el = $( _.last( replacees ) ),
+                        $bg_children = $last_el.children("[data-redactor-style^='background-color'], [ style^='background-color']");
+
+
+                    $bg_children = $bg_children.length === 0 &&  $last_el.is("[data-redactor-style^='background-color'], [ style^='background-color']") ? $last_el : $bg_children;
+
+                    if( $bg_children.length > 0 ){
+                        var bg_color = $( _.first( $bg_children )).css("background-color");
+                        current = $( current).css( { backgroundColor: bg_color } );
+                    }
+
+                    $( $last_el ).replaceWith( current );
+                }
+
+                if( change_bgcolor && !change_color){
+                    var replacees = [];
+                    $(this.redactor.selection.getCurrent()).parents("[data-redactor-style^='background-color']").each( function(){
+                        var $this = $(this);
+                        if( $this.text() === self.redactor.selection.getText() ){
+                            replacees.push( this );
+                        }
+                    } );
+
+                    var current = this.redactor.selection.getCurrent(),
+                        $last_el = $( _.last( replacees ) ),
+                        $color_children = $last_el.children("[data-redactor-style^='color'], [ style^='color']");
+
+                    $color_children = $color_children.length === 0 &&  $last_el.is("[data-redactor-style^='color'], [ style^='color']") ? $last_el : $color_children;
+
+                    if( $color_children.length > 0 ){
+                        var color = $( _.first( $bg_children )).css("color");
+                        current = $( current ).css( { color: color } );
+                    }
+
+                    $( $last_el ).replaceWith( current );
+                }
+
+                if( change_bgcolor && change_color){
+                    var replacees = [];
+                    $(this.redactor.selection.getCurrent()).parents("[data-redactor-style^='color'], [data-redactor-style^='background-color']").each( function(){
+                        var $this = $(this);
+                        if( $this.text() === self.redactor.selection.getText() ){
+                            replacees.push( this );
+                        }
+                    } );
+
+                    $( _.last( replacees ) ).replaceWith( $( this.redactor.selection.getCurrent()).css( {
+                        backgroundColor:  self.current_bg.toRgbString()
+                    } ) );
+                }
 
                 /**
-                 * Cleanup
+                 * End of clean up
                  */
-                var $editor = this.redactor.$editor;
-                // Theme bg colors
-
-                    $($editor.find("[class^='upfront_theme_bg_color_']")).parents("[class^='upfront_theme_bg_color_']").each( function( ) {
-                        var $this = $(this);
-                        $this.contents().unwrap();
-                    });
-
-                // Theme font colors
-
-                $($editor.find("[class^='upfront_theme_color_']")).parents("[class^='upfront_theme_color_']").each( function( ) {
-                    var $this = $(this);
-                        $this.contents().unwrap();
-                });
-
-
 
                 self.updateIcon();
                 self.redactor.selection.restore();
