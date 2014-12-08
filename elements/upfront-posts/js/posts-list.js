@@ -59,9 +59,11 @@ var PostsView = Upfront.Views.ObjectView.extend({
 		view.element = this;
 		view.render();
 		this.$el.find(".upfront-object-content").empty().append(view.$el);
-		view._posts_load.success(function(){
-			me.adjust_featured_images();
-		});
+		if ( view._posts_load ){
+			view._posts_load.success(function(){
+				me.adjust_featured_images();
+			});
+		}
 	},
 	
 	on_csseditor_open: function (id) {
