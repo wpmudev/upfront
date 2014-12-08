@@ -41,6 +41,9 @@
 .upfront-region-container-active .upfront-grid-layout {
 	z-index: 11;
 }
+.upfront-region-container-editing-post .upfront-grid-layout {
+  z-index: 20;
+}
 
 .upfront-grid-layout-gutter {
 	position: absolute;

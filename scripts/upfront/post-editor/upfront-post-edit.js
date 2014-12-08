@@ -138,6 +138,10 @@ var Box = Backbone.View.extend({
         });
 
     },
+    
+    toggleRegionClass: function (show) {
+        this.$el.closest('.upfront-region-container').toggleClass('upfront-region-container-editing-post', show);
+    },
 
     destroy: function(){
         //$(window)
@@ -155,6 +159,7 @@ var Box = Backbone.View.extend({
             this.trigger('cancel');
             Upfront.Application.sidebar.toggleSidebar();
             Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
+            this.toggleRegionClass(false);
         }
     },
 
@@ -172,6 +177,7 @@ var Box = Backbone.View.extend({
         Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
         Upfront.Events.trigger('upfront:post:edit:stop', 'write', this.post.toJSON());
         Upfront.Application.sidebar.toggleSidebar();
+        this.toggleRegionClass(false);
 
     },
 

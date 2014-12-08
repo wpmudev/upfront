@@ -223,10 +223,12 @@
   margin-bottom: 0;
 }
 
-#page div.upfront-object.upfront-this_post,
-#page div.upfront-object.uposts-object {
+#page div.upfront-object.upfront-this_post {
 	padding-left: 0;
 	padding-right: 0;
+}
+#page div.upfront-object.uposts-object {
+  padding: 0;
 }
 
 .upfront-content-marker {

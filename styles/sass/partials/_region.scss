@@ -2,9 +2,7 @@
 	position: relative;
 	/*z-index: 0;*/ /* Don't use z-index on region-container for compatibility with floated region */
 }
-.upfront-region-container-header{
-  z-index: 1;
-}
+
 .upfront-region-container-hidden .upfront-grid-layout:before,
 .upfront-region-container-hidden .upfront-grid-layout:after {
 	content: none;

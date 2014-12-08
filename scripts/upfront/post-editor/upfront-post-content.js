@@ -613,6 +613,7 @@ var PostContentEditor = Backbone.View.extend({
 		this.box.render();
         this.$el.append(this.box.$el);
         _.delay(  _.bind(this.box.setPosition, this.box), 10 );
+        this.box.toggleRegionClass(true);
 		return this;
 	},
 
