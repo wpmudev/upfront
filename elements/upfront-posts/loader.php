@@ -111,20 +111,22 @@ class Upfront_Posts extends Upfront_Server {
 	}
 
 	public function load_data () {
-		$raw_post_types = get_post_types(array(
+		$raw_post_types = apply_filters('upfront_posts-list-post_types', get_post_types(array(
 			'public' => true,
-		), 'objects');
-		$raw_taxonomies = get_taxonomies(array(
+		), 'objects'));
+		$raw_taxonomies = apply_filters('upfront_posts-list-taxonomies', get_taxonomies(array(
 			'public' => true,
-		), 'objects');
+		), 'objects'));
 		$data = array(
 			"post_types" => array('' => __('Please, select one', 'upfront')),
 			"taxonomies" => array('' => __('Please, select one', 'upfront')),
 		);
 		foreach ($raw_post_types as $type => $obj) {
+			if (apply_filters('upfront_posts-list-skip_post_type-' . $type, false, $obj)) continue;
 			$data["post_types"][$type] = $obj->labels->name;
 		}
 		foreach ($raw_taxonomies as $tax => $obj) {
+			if (apply_filters('upfront_posts-list-skip_taxonomy-' . $tax, false, $obj)) continue;
 			$data['taxonomies'][$tax] = $obj->labels->name;
 		}
 		$this->_out(new Upfront_JsonResponse_Success($data));
