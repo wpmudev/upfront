@@ -538,6 +538,7 @@ define(function() {
 		initialize: function (opts) {
 			this.options = opts;
 			this.has_tabs = false;
+            this.has_settings = false;
 			this.panels = _([
 				new UpostsQuerySettingsPanel({model: this.model})
 			]);

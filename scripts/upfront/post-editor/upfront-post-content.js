@@ -96,6 +96,8 @@ var PostContentEditor = Backbone.View.extend({
 		if(draggable.length)
 			cancel = draggable.draggable('disable');
 
+        this.$el.closest(".upfront-module-view").append("<div class='editing-overlay'></div>");
+        this.$el.closest(".upfront-module").addClass("editing-content");
 		this.prepareEditableRegions();
 		this.prepareBox();
 	},
