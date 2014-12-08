@@ -11,6 +11,9 @@ class Upfront_MediaServer extends Upfront_Server {
 		$this->augment_attachments();
 
 		add_filter('upfront_l10n', array($this, 'add_l10n_strings'));
+		
+		// Do not show media labels in posts taxonomy selection list
+		add_filter('upfront_posts-list-skip_taxonomy-media_label', '__return_true');
 
 		upfront_add_ajax('upfront-media-list_media', array($this, "list_media"));
 		upfront_add_ajax('upfront-media-get_item', array($this, "get_item"));
