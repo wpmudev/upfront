@@ -1,3 +1,3 @@
-<div class="content">
+<div class="uposts-part content">
 	{{content}}
 </div>

@@ -1,9 +1,20 @@
 .upfront_posts-list > ul, .upfront_posts-list > ul li, 
 .upfront_posts-single > ul, .upfront_posts-single > ul li
 {
-	list-style: none !important;
-	margin: 0 !important;
-	padding: 0 !important;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.upfront_posts-list > ul li,
+.upfront_posts-single > ul li {
+    padding: 15px;
+}
+
+.upfront_posts-list *,
+.upfront_posts-single * {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
 }
 
 /* --- Initial screen --- */

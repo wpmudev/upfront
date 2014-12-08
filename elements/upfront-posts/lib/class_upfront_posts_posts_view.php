@@ -35,7 +35,7 @@ class Upfront_Posts_PostsView {
 
 		if (!empty($posts)) {
 			return '' .
-				'<ul>' . join('', $posts) . '</ul>' .
+				'<ul class="uf-posts">' . join('', $posts) . '</ul>' .
 				self::get_pagination($data) . 
 			'';
 

@@ -24,8 +24,9 @@ var PostsModel = Upfront.Models.ObjectModel.extend({
 var PostsView = Upfront.Views.ObjectView.extend({
 
 	cssSelectors: {
-		'.uposts-object ul': {label: l10n.css.container_label, info: l10n.css.container_info},
+		'.uposts-object ul.uf-posts': {label: l10n.css.container_label, info: l10n.css.container_info},
 		'.uposts-object li.uf-post': {label: l10n.css.post_label, info: l10n.css.post_info},
+		'.uposts-object li.uf-post .uposts-part': {label: l10n.css.post_part_label, info: l10n.css.post_part_info},
 		'.uposts-object li.uf-post .date_posted': {label: l10n.css.date_label, info: l10n.css.date_info},
 		'.uposts-object li.uf-post .author': {label: l10n.css.author_label, info: l10n.css.author_info},
 		'.uposts-object li.uf-post .post_categories': {label: l10n.css.categories_label, info: l10n.css.categories_info},
@@ -37,6 +38,11 @@ var PostsView = Upfront.Views.ObjectView.extend({
 		'.uposts-object li.uf-post .thumbnail': {label: l10n.css.thumbnail_label, info: l10n.css.thumbnail_info},
 		'.uposts-object li.uf-post .title': {label: l10n.css.title_label, info: l10n.css.title_info},
 	},
+	
+	init: function () {
+		this.listenTo(Upfront.Events, 'csseditor:open', this.on_csseditor_open);
+		this.listenTo(Upfront.Events, 'csseditor:closed', this.on_csseditor_closed);
+	},
 
 	on_render: function () {
 		var type = this.model.get_property_value_by_name("display_type");
@@ -45,13 +51,53 @@ var PostsView = Upfront.Views.ObjectView.extend({
 
 	render_type_view: function (type) {
 		type = type || Views.DEFAULT;
-		var view = Views[type] 
+		var me = this,
+			view = Views[type] 
 			? new Views[type]({model: this.model}) 
 			: new Views[Views.DEFAULT]({model: this.model})
 		;
 		view.element = this;
 		view.render();
 		this.$el.find(".upfront-object-content").empty().append(view.$el);
+		view._posts_load.success(function(){
+			me.adjust_featured_images();
+		});
+	},
+	
+	on_csseditor_open: function (id) {
+		if ( id != this.model.get_element_id() )
+			return;
+		this.listenTo(Upfront.Application.cssEditor, 'updateStyles', this.adjust_featured_images);
+	},
+	
+	on_csseditor_closed: function (id) {
+		if ( id != this.model.get_element_id() )
+			return;
+		this.stopListening(Upfront.Application.cssEditor, 'updateStyles');
+	},
+	
+	adjust_featured_images: function () {
+		console.log('adjust featured images...')
+		this.$el.find('.thumbnail').each(function(){
+			var height = $(this).height(),
+				width = $(this).width(),
+				$img = $(this).find('img'),
+				img_h, img_w;
+			if ( $(this).attr('data-resize') == "1" ) {
+				$img.css({ height: "", width: "" });
+				img_h = $img.height();
+				img_w = $img.width();
+				if ( height/width > img_h/img_w )
+					$img.css({ height: '100%', width: 'auto', marginLeft: (width-Math.round(height/img_h*img_w))/2, marginTop: "" });
+				else
+					$img.css({ height: 'auto', width: '100%', marginLeft: "", marginTop: (height-Math.round(width/img_w*img_h))/2 });
+			}
+			else {
+				img_h = $img.height();
+				if ( height != img_h )
+					$img.css('margin-top', (height-img_h)/2);
+			}
+		});
 	}
 });
 

@@ -82,12 +82,15 @@ class Upfront_Posts_PostsData {
 			'post_parts_sorter' => __('Drag to re-order Post Parts', 'upfront'),
 			'select_custom_post' => __('Select custom post', 'upfront'),
 			'add_custom_post' => __('Add a custom post', 'upfront'),
+            'resize_featured' => __('Re-size featured image to fit container', 'upfront'),
 
 			'css' => array(
 				'container_label' => __('Element container', 'upfront'),
 				'container_info' => __('The container for all posts', 'upfront'),
 				'post_label' => __('Individual post', 'upfront'),
 				'post_info' => __('The container for each individual post', 'upfront'),
+				'post_part_label' => __('Post part', 'upfront'),
+				'post_part_info' => __('General post part selector', 'upfront'),
 				'date_label' => __('Date posted', 'upfront'),
 				'date_info' => __('Date posted part', 'upfront'),
 				'author_label' => __('Author', 'upfront'),

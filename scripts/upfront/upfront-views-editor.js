@@ -6111,6 +6111,7 @@ var CSSEditor = Backbone.View.extend({
 				contents, (this.is_default_style ? '' : this.get_css_selector())
 			)
 		);
+		this.trigger('updateStyles', this.element_id);
 	},
 
 	stylesAddSelector: function(contents, selector) {

@@ -1,3 +1,3 @@
-<div class="post_categories">
+<div class="uposts-part post_categories">
 	{{categories}}
 </div>

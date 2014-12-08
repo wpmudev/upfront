@@ -1,3 +1,3 @@
-<div class="comment_count">
+<div class="uposts-part comment_count">
 	{{comment_count}}
 </div>

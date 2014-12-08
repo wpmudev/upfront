@@ -328,6 +328,13 @@ Panels.PostParts = Upfront.Views.Editor.Settings.Panel.extend({
 				property: 'enabled_post_parts',
 				layout: 'horizontal-inline',
 				values: parts
+			}),
+			resize_featured = new Upfront.Views.Editor.Field.Checkboxes({
+				model: this.model,
+				property: 'resize_featured',
+				layout: 'horizontal-inline',
+				values: [{label: l10n.resize_featured, value: '1'}],
+				multiple: false
 			})
 		;
 		post_parts.on("changed", autorefresh, post_parts);
@@ -337,7 +344,11 @@ Panels.PostParts = Upfront.Views.Editor.Settings.Panel.extend({
 				title: l10n.post_parts_picker,
 				fields: [post_parts]
 			}),
-			sorter
+			sorter,
+			new Upfront.Views.Editor.Settings.Item({
+				model: this.model,
+				fields: [resize_featured]
+			})
 		]);
 	},
 
