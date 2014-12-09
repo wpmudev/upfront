@@ -348,6 +348,7 @@ var ImageInsert = UeditorInsert.extend({
 		return promise;
 	},
 	apply_classes: function (d) {
+		if (!d) return false;
 		var grid = Upfront.Settings.LayoutEditor.Grid;
 		d.height = d.row * grid.baseline;
 		d.width_cls = grid.class + d.col;
@@ -395,18 +396,20 @@ var ImageInsert = UeditorInsert.extend({
         padding_left = padding_left ? parseInt(padding_left) : 0;
         padding_right = padding_right ? parseInt(padding_right) : 0;
 
-        if ( style_variant.group.float == 'left' && padding_left > 0 ){
-            data.style.group.marginLeft = ( padding_left - Math.abs(style_variant.group.margin_left) ) * col_size;
-            data.style.group.marginRight = 0;
-        }
-        else if ( style_variant.group.float == 'right' && padding_right > 0 ){
-            data.style.group.marginRight = ( padding_right - Math.abs(style_variant.group.margin_right) ) * col_size;
-            data.style.group.marginLeft = 0;
-        }
-        else if ( style_variant.group.float == 'none' && padding_left > 0 ){
-            data.style.group.marginLeft = ( padding_left - Math.abs(style_variant.group.margin_left) + Math.abs(style_variant.group.left) ) * col_size;
-            data.style.group.marginRight = 0;
-        }
+        if (style_variant && style_variant.group && style_variant.group.float) {
+	        if ( style_variant.group.float == 'left' && padding_left > 0 ){
+	            data.style.group.marginLeft = ( padding_left - Math.abs(style_variant.group.margin_left) ) * col_size;
+	            data.style.group.marginRight = 0;
+	        }
+	        else if ( style_variant.group.float == 'right' && padding_right > 0 ){
+	            data.style.group.marginRight = ( padding_right - Math.abs(style_variant.group.margin_right) ) * col_size;
+	            data.style.group.marginLeft = 0;
+	        }
+	        else if ( style_variant.group.float == 'none' && padding_left > 0 ){
+	            data.style.group.marginLeft = ( padding_left - Math.abs(style_variant.group.margin_left) + Math.abs(style_variant.group.left) ) * col_size;
+	            data.style.group.marginRight = 0;
+	        }
+	    }
 
 
 		this.$el
@@ -622,7 +625,7 @@ var ImageInsert = UeditorInsert.extend({
         };
 
         if( data.imageThumb ){
-            if( data.style && (data.style.image.col * grid.column_width) <= data.imageThumb.width ){
+            if( data.style && data.style.image && data.style.image.col && (data.style.image.col * grid.column_width) <= data.imageThumb.width ){
                 image = data.imageThumb;
             }
         }
