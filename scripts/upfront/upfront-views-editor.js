@@ -2930,13 +2930,14 @@ define([
 		paginationTpl: _.template($(_Upfront_Templates.popup).find('#upfront-pagination-tpl').html()),
 		events: {
 			"click #upfront-list-meta .upfront-list_item-component": "handle_sort_request",
-			"click .editaction.edit": "handle_post_reveal",
+			"click .editaction.edit": "handle_post_edit",
 			"click #upfront-list-page-path a.upfront-path-back": "handle_return_to_posts"
 		},
 		initialize: function(options){
 			this.collection.on('change reset', this.render, this);
 		},
 		render: function () {
+			console.log(this.collection.getPage(this.collection.pagination.currentPage));
 			this.$el.empty().append(
 				this.postListTpl({
 					posts: this.collection.getPage(this.collection.pagination.currentPage),
@@ -2957,7 +2958,7 @@ define([
 				this.collection.reSort(sortby, order);
 			}
 		},
-
+/*
 		handle_post_reveal: function (e) {
 			var me = this,
 				postId = $(e.currentTarget).closest('.upfront-list_item-post').attr('data-post_id');
@@ -2966,6 +2967,12 @@ define([
 
 			me.$('#upfront-list').after(me.postSingleTpl({post: me.collection.get(postId)}));
 			me.expand_post(me.collection.get(postId));
+		},
+*/
+		handle_post_edit: function (e) {
+
+			var postId = $(e.currentTarget).closest('.upfront-list_item-post').attr('data-post_id');
+			Upfront.Application.navigate('/edit/post/' + postId, {trigger: true});
 		},
 
 		expand_post: function(post){
