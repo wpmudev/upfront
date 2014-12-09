@@ -178,6 +178,7 @@ var Box = Backbone.View.extend({
 
         Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
         Upfront.Events.trigger('upfront:post:edit:stop', 'write', this.post.toJSON());
+        $(".editing-overlay").remove();
         Upfront.Application.sidebar.toggleSidebar();
         this.toggleRegionClass(false);
 
