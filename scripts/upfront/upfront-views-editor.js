@@ -265,7 +265,16 @@ define([
 			if(Upfront.Settings.LayoutEditor.newpostType == this.postType)
 				return Upfront.Views.Editor.notify(l10n.already_creating_post.replace(/%s/, this.postType), 'warning');
 
-			return Upfront.Application.navigate('/create_new/post' + location.search, {trigger: true});
+			//return Upfront.Application.navigate('/create_new/post' + location.search, {trigger: true}); // DROP THIS INSANITY
+			Upfront.Util
+				.post({
+					action: "upfront-create-post_type",
+					data: _.extend({post_type: this.postType}, {})
+				}).done(function (resp) {
+					//Upfront.Util.log(resp.data);
+					Upfront.Application.navigate('/edit/post/' + resp.data.post_id, {trigger: true});
+				})
+			;
 		},
 		on_post_loaded: function(view) {
 			if(!this.postView){
@@ -317,7 +326,7 @@ define([
 					action: "upfront-create-post_type",
 					data: _.extend({post_type: me.postType}, me.modal._data)
 				}).done(function (resp) {
-					Upfront.Util.log(resp.data);
+					//Upfront.Util.log(resp.data);
 					Upfront.Application.navigate('/edit/page/' + resp.data.post_id, {trigger: true});
 
 				});
