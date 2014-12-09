@@ -2759,11 +2759,11 @@ define([
 			if(panel == 'posts'){
 				collection = new Upfront.Collections.PostList([], {postType: 'post'});
 				collection.orderby = 'post_date';
-				fetchOptions = {filterContent: true, withAuthor: true}
+				fetchOptions = {filterContent: true, withAuthor: true, limit: 15}
 			}
 			else if(panel == 'pages'){
 				collection = new Upfront.Collections.PostList([], {postType: 'page'});
-				fetchOptions = {limit: -1}
+				fetchOptions = {limit: 15}
 			}
 			else{
 				var post_id = Upfront.data.currentPost && Upfront.data.currentPost.id
@@ -2789,7 +2789,8 @@ define([
 						collection.on('reset sort', me.render_panel, me);
 						views = {
 							view: new ContentEditorPages({collection: collection, $popup: me.$popup}),
-							search: new ContentEditorSearch({collection: collection})
+							search: new ContentEditorSearch({collection: collection}),
+							pagination: new ContentEditorPagination({collection: collection})
 						}
 						me.views.pages = views;
 						break;
@@ -2920,7 +2921,7 @@ define([
 		paginationTpl: _.template($(_Upfront_Templates.popup).find('#upfront-pagination-tpl').html()),
 		events: {
 			"click #upfront-list-meta .upfront-list_item-component": "handle_sort_request",
-			"click .upfront-list_item-post": "handle_post_reveal",
+			"click .editaction.edit": "handle_post_reveal",
 			"click #upfront-list-page-path a.upfront-path-back": "handle_return_to_posts"
 		},
 		initialize: function(options){
@@ -2950,7 +2951,7 @@ define([
 
 		handle_post_reveal: function (e) {
 			var me = this,
-				postId = $(e.currentTarget).attr('data-post_id');
+				postId = $(e.currentTarget).closest('.upfront-list_item-post').attr('data-post_id');
 
 			e.preventDefault();
 
@@ -3018,12 +3019,14 @@ define([
 		pagePreviewTpl: _.template($(_Upfront_Templates.popup).find('#upfront-page-preview-tpl').html()),
 		allTemplates: [],
 		render: function () {
-			var pages = this.collection.where({'post_parent': 0});
+			var pages = this.collection.getPage(this.collection.pagination.currentPage);//this.collection.where({'post_parent': 0});
 			// Render
 			this.$el.html(
 				this.pageListTpl({
 					pages: pages,
-					pageItemTemplate: this.pageListItemTpl
+					pageItemTemplate: this.pageListItemTpl,
+					orderby: this.collection.orderby,
+					order: this.collection.order
 				})
 			);
 		},

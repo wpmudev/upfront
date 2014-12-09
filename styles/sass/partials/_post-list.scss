@@ -4,6 +4,7 @@
 #upfront-list {
 	width: 100%;
 	color: #99b3cc;
+	font-size:13px;
 }
 #upfront-list .upfront-list_item {
 	background: #f2f9ff;
@@ -25,11 +26,11 @@
 }
 
 #upfront-list .upfront-list_item .upfront-list_item-component {
-	padding: 10px 15px;
+	padding: 4px 15px;
 	float:left;
 }
 #upfront-list .upfront-list_item .upfront-list_item-component:first-child {
-	padding-left: 30px;
+	padding-left: 40px;
 }
 #upfront-list .upfront-list_item .upfront-list_item-component.upfront-title {
 	color:#395269;
@@ -39,12 +40,12 @@
 	background: #e8f4fe;
 }
 #upfront-list .upfront-list-items .upfront-list_item:hover{
-	border-top: 1px solid #a4b9cb;
-	border-bottom: 1px solid #a4b9cb;
-	color: #99b3cc;
+	/*border-top: 1px solid #a4b9cb;
+	border-bottom: 1px solid #a4b9cb;*/
 	cursor: pointer;
+	background-color:#c7dbee;
 }
-#upfront-list .upfront-list_item:hover .upfront-list_item-component.upfront-title {
+#upfront-list .upfront-list_item {
 	color:#32475c;
 }
 
@@ -64,7 +65,15 @@
 #upfront-list #upfront-list-meta.upfront-list_item .upfront-list_item-component {
 	border-bottom: 1px solid #CAD9E4;
 	cursor:pointer;
-	padding-bottom: 5px;
+	padding-bottom: 4px;
+}
+
+#upfront-list #upfront-list-meta.upfront-list_item .upfront-list_item-component.active {
+	padding-bottom: 3px;
+}
+
+#upfront-list #upfront-list-meta.upfront-list_item.upfront-comments.upfront-header .upfront-list_item-component.active {
+	padding-bottom: 3px;
 }
 
 #upfront-list #upfront-list-meta.upfront-list_item .icon-caret-down,
@@ -106,16 +115,102 @@
 
 /* Posts list */
 .upfront-list_item-component.upfront-date {
-	width: 15%;
+	width: 30%;
 	vertical-align: middle;
 }
 .upfront-list_item-component.upfront-title {
-	width: 60%;
+	width: 45%;
 }
 .upfront-list_item-component.upfront-author {
-	width: 25%;
+	width: 15%;
+}
+.upfront-list_item-component.upfront-comments {
+	width: 10%;
 }
 
+.upfront-list_item-component.upfront-editactions {
+	width: 25%;
+	display: none;
+}
+.upfront-list_item-component.upfront-date {
+	position: relative;
+
+}
+.upfront-list_item-component.upfront-date:not(.upfront-header):before {
+	content: '';
+	position: absolute;
+	left:15px;
+	top:0;
+	display: block;
+	width:15px;
+	height:100%;
+	background-image: url(../img/uf-ui-sprite.svg);
+}
+
+.upfront-list_item-component.upfront-date.post-status-publish:before {
+	background-position: -1231px -224px;
+}
+
+.upfront-list_item:hover .upfront-list_item-component.upfront-date.post-status-publish:before {
+	background-position: -1231px -260px;
+}
+
+.upfront-list_item-component.upfront-date.post-status-draft:before {
+	background-position: -1336px -224px;
+}
+
+.upfront-list_item:hover .upfront-list_item-component.upfront-date.post-status-draft:before {
+	background-position: -1336px -260px;
+}
+
+.upfront-list_item-component.upfront-date.post-status-future:before {
+	background-position: -1441px -224px;
+}
+
+.upfront-list_item:hover .upfront-list_item-component.upfront-date.post-status-future:before {
+	background-position: -1441px -260px;
+}
+
+
+
+.upfront-list_item-component.upfront-editactions a.editaction {
+	display: inline-block;
+	border-radius: 3px;
+	padding: 0 8px;
+	
+}
+
+a.editaction.edit, a.editaction.view {
+	background-color: #3C5267;
+	color:#02CE8D;
+	margin-right: 6px;
+}
+
+a.editaction.trash {
+	background-color:#D53321;
+	color:#fff;
+	margin-right:0;
+}
+
+.upfront-list_item-component.upfront-comments.upfront-header i.icon-post-comments {
+	display: inline-block !important;
+	height: 14px;
+	width: 14px;
+	padding: 4px;
+	color: #a4b9cb;
+	background-image: url(../img/uf-ui-sprite.svg);
+	background-position: -912px -171px;
+	vertical-align:middle;
+}
+
+.upfront-list_item-post.upfront-list_item:hover .upfront-list_item-component.upfront-author,
+.upfront-list_item-post.upfront-list_item:hover .upfront-list_item-component.upfront-comments {
+	display:none;
+}
+.upfront-list_item-post.upfront-list_item:hover .upfront-list_item-component.upfront-editactions {
+	display:block;
+	padding-right:0 !important;
+}
 /* Pages list */
 #upfront-list-page {
 	clear: both;
