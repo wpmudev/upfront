@@ -252,6 +252,6 @@ class Upfront_Posts_PostView {
 	 */	
 	private function _get_template ($slug) {
 		$slug = preg_replace('/[^-_a-z0-9]/i', '', $slug);
-		return upfront_get_template($slug, $this->_data, dirname(dirname(__FILE__)) . '/tpl/parts/' . $slug . '.php');
+		return upfront_get_template("posts-{$slug}", $this->_data, dirname(dirname(__FILE__)) . '/tpl/parts/posts-' . $slug . '.php');
 	}
 }
