@@ -78,8 +78,9 @@ class Upfront_Posts_Model_Generic extends Upfront_Posts_Model {
 		$args['posts_per_page'] = self::get_limit($data);
 		
 		if (empty($data['pagination'])) {
-			$offset = self::get_offset($data);
-			if (!empty($offset)) $args['offset'] = $offset;
+			// Generic queries don't do offset setting - just fetch the paged value
+			//$offset = self::get_offset($data);
+			//if (!empty($offset)) $args['offset'] = $offset;
 		} else {
 			if (!empty($query['query_vars']['paged'])) $args['paged'] = $query['query_vars']['paged'];
 		}
