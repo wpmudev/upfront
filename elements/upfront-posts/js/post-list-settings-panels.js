@@ -177,9 +177,11 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 
 	dispatch_settings: function () {
 		var type = this.model.get_property_value_by_name('list_type');
+		this.fields = _([]); // Pre-initialize the fields
+		
 		if ('custom' === type) this.populate_custom_items();
 		else if ('taxonomy' === type) this.populate_tax_items();
-		else this.fields = _([]);
+		else this.populate_shared_tax_generic_items();
 	},
 
 	populate_custom_items: function () {
@@ -226,6 +228,12 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 			property: "term",
 			values: [{label:l10n.select_tax, value:"", disabled: true}]
 		}));
+		this.populate_shared_tax_generic_items();
+		this.once("rendered", this.update_terms, this);
+	},
+
+	populate_shared_tax_generic_items: function () {
+		var display_type = this.model.get_property_value_by_name("display_type");
 		if ("list" === display_type) {
 			this.fields.push(new Upfront.Views.Editor.Field.Number({
 				model: this.model,
@@ -258,7 +266,6 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 				]
 			}));
 		}
-		this.once("rendered", this.update_terms, this);
 	},
 
 	update_terms: function () {
