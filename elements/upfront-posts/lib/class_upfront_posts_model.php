@@ -6,12 +6,12 @@ class Upfront_Posts_Model {
 
 	public static function get_posts ($data) {
 		$class_name = self::_get_model_class($data);
-		return $class_name::get_posts($data);
+		return call_user_func(array($class_name, 'get_posts'), $data); //$class_name::get_posts($data);
 	}
 
 	public static function spawn_query ($data) {
 		$class_name = self::_get_model_class($data);
-		return $class_name::spawn_query($data);
+		return call_user_func(array($class_name, 'spawn_query'), $data); //$class_name::spawn_query($data);
 	}
 
 	private static function _get_model_class ($data) {
