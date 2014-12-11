@@ -30,6 +30,16 @@ class Upfront_Posts_PostsData {
 			
 			// These are the default ones
 			'default_parts' => Upfront_Posts_PostView::get_default_parts(),
+			// Part options
+			'date_posted_format' => get_option('date_format') . ' ' . get_option('time_format'),
+			'categories_limit' => 3,
+			'tags_limit' => 3,
+			'comment_count_hide' => 0,
+			'content_length' => 120,
+			'resize_featured' => '1',
+			'gravatar_size' => 200,
+
+			// Parts markup goes here
 		);
 	}
 
