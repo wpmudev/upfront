@@ -14,6 +14,7 @@ a.feature_image_selector {
 }
 a.feature_image_selector.change_feature_image {
 	display: none;
+    z-index: 10;
 }
 a.feature_image_selector:after {
   content:'Add feature image';
@@ -32,7 +33,7 @@ div.upfront-region-container:hover > a.feature_image_selector {
 	display:block;
 }
 div.upfront-region-container-active > a.feature_image_selector {
-	display: none !important;
+//	display: none !important;
 }
 
 
