@@ -66,11 +66,18 @@ class Upfront_Posts_PostView {
 		
 		$time = strtotime($this->_post->post_date);
 		if (empty($time)) return '';
+		$format = explode(' ', $date_format, 2);
 		
 		$out = $this->_get_template('date_posted');
 
 		$out = preg_replace($this->_get_regex('date'), date(get_option('date_format'), $time), $out);
 		$out = preg_replace($this->_get_regex('time'), date(get_option('time_format'), $time), $out);
+		$part = 1;
+		foreach ($format as $fmt) {
+			$out = preg_replace($this->_get_regex('date_' . $part), date($fmt, $time), $out);
+			$part++;
+		}
+		$out = preg_replace($this->_get_regex('datetime'), date($date_format, $time), $out);
 		$out = preg_replace($this->_get_regex('timestamp'), $time, $out);
 		
 		return $out;
