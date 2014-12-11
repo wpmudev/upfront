@@ -66,12 +66,15 @@ class Upfront_Posts_PostView {
 		
 		$time = strtotime($this->_post->post_date);
 		if (empty($time)) return '';
+
+		$date_format = !empty($this->_data['date_posted_format'])
+			? $this->_data['date_posted_format']
+			: Upfront_Posts_PostsData::get_default('date_posted_format')
+		;
 		$format = explode(' ', $date_format, 2);
 		
 		$out = $this->_get_template('date_posted');
 
-		$out = preg_replace($this->_get_regex('date'), date(get_option('date_format'), $time), $out);
-		$out = preg_replace($this->_get_regex('time'), date(get_option('time_format'), $time), $out);
 		$part = 1;
 		foreach ($format as $fmt) {
 			$out = preg_replace($this->_get_regex('date_' . $part), date($fmt, $time), $out);
@@ -101,9 +104,14 @@ class Upfront_Posts_PostView {
 	public function expand_gravatar_template () {
 		if (empty($this->_post->post_author)) return '';
 
+		$gravatar_size = !empty($this->_data['gravatar_size'])
+			? $this->_data['gravatar_size']
+			: Upfront_Posts_PostsData::get_default('gravatar_size')
+		;
+
 		$author = $this->_post->post_author;
 		$name = get_the_author_meta('display_name', $author);
-		$gravatar = get_avatar($author, 32, null, $name);
+		$gravatar = get_avatar($author, $gravatar_size, null, $name);
 
 		$out = $this->_get_template('gravatar');
 		
@@ -114,7 +122,12 @@ class Upfront_Posts_PostView {
 	}
 
 	public function expand_comment_count_template () {
-		if (empty($this->_post->comment_count)) return '';
+		$hide_empty = isset($this->_data['comment_count_hide'])
+			? (int)$this->_data['comment_count_hide']
+			: (int)Upfront_Posts_PostsData::get_default('comment_count_hide')
+		;
+
+		if ($hide_empty && empty($this->_post->comment_count)) return '';
 
 		$out = $this->_get_template('comment_count');
 
@@ -129,7 +142,10 @@ class Upfront_Posts_PostView {
 		$thumbnail = get_the_post_thumbnail($this->_post->ID);
 		if (empty($thumbnail)) return '';
         
-        $resize_featured = !empty($this->_data['resize_featured']) ? $this->_data['resize_featured'] : 0;
+        $resize_featured = isset($this->_data['resize_featured'])
+        	? (int)$this->_data['resize_featured'] 
+        	: (int)Upfront_Posts_PostsData::get_default('resize_featured')
+        ;
 
 		$out = $this->_get_template('thumbnail');
 		
@@ -154,7 +170,11 @@ class Upfront_Posts_PostView {
 	}
 
 	public function expand_content_template () {
-		$content = $this->_get_content_value();
+		$length = isset($this->_data['content_length'])
+        	? (int)$this->_data['content_length'] 
+        	: (int)Upfront_Posts_PostsData::get_default('content_length')
+        ;
+		$content = $this->_get_content_value($length);
 
 		$out = $this->_get_template('content');
 
@@ -169,6 +189,17 @@ class Upfront_Posts_PostView {
 		$tags = get_the_tag_list('', ', ', '', $this->_post->ID);
 		if (empty($tags)) return '';
 
+		$length = isset($this->_data['tags_limit'])
+        	? (int)$this->_data['tags_limit'] 
+        	: (int)Upfront_Posts_PostsData::get_default('tags_limit')
+        ;
+
+        if ($length) {
+			$list = array_map('trim', explode(',', $tags));
+			$tags = join(', ', array_slice($list, 0, $length));
+		}
+
+
 		$out = $this->_get_template('tags');
 
 		$out = preg_replace($this->_get_regex('tags'), $tags, $out);
@@ -181,6 +212,16 @@ class Upfront_Posts_PostView {
 		
 		$categories = get_the_category_list(', ', '', $this->_post->ID);
 		if (empty($categories)) return '';
+
+		$length = isset($this->_data['categories_limit'])
+        	? (int)$this->_data['categories_limit'] 
+        	: (int)Upfront_Posts_PostsData::get_default('categories_limit')
+        ;
+
+        if ($length) {
+			$list = array_map('trim', explode(',', $categories));
+			$categories = join(', ', array_slice($list, 0, $length));
+		}
 
 		$out = $this->_get_template('categories');
 
@@ -215,10 +256,10 @@ class Upfront_Posts_PostView {
 	 * Return either full content or excerpt, based on data state.
 	 * @return string Content or excerpt
 	 */
-	private function _get_content_value () {
+	private function _get_content_value ($length) {
 		return !empty($this->_data['content']) && 'content' === $this->_data['content']
 			? $this->_get_content()
-			: $this->_get_excerpt()
+			: $this->_get_excerpt($length)
 		;
 	}
 
@@ -233,14 +274,21 @@ class Upfront_Posts_PostView {
 	/**
 	 * Returns post excerpt.
 	 * If a post doesn't have one, generates it with preset limit.
+	 * @param int $length Length in words
 	 * @return string Post excerpt
 	 */
-	private function _get_excerpt () {
+	private function _get_excerpt ($length) {
 		if (!empty($this->_post->post_excerpt)) return wpautop($this->_post->post_excerpt);
 		
 		$excerpt = str_replace(array("\n", "\r"), '', strip_shortcodes(wp_strip_all_tags($this->_post->post_content)));
+
+		$length = (int)$length;
+		if (!empty($length)) {
+			$words = explode(' ', $excerpt, $length+1);
+			$excerpt = join(' ', array_slice($words, 0, $length));
+		}
 		// Just first 128 chars
-		return wpautop(preg_replace('/^(.{128}).*$/mu', '\1', $excerpt));
+		return wpautop($excerpt);
 	}
 
 	/**
