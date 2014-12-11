@@ -1,7 +1,8 @@
 (function ($) {
 define([
-	'text!elements/upfront-posts/tpl/views.html'
-], function(tpl) {
+	'text!elements/upfront-posts/tpl/views.html',
+	'elements/upfront-posts/js/post-list-settings-parts'
+], function(tpl, Parts) {
 
 var l10n = Upfront.Settings.l10n.posts_element;
 var $template = $(tpl);
@@ -377,21 +378,18 @@ var SortSettings = Upfront.Views.Editor.Settings.Item.extend({
 });
 
 var SortSettings_Sorter = Upfront.Views.Editor.Field.Hidden.extend({
-	get_field_html: function () {
-		var label = this.get_label_html(),
-			field = '',
-			parts = this.model.get_property_value_by_name("enabled_post_parts")
-		;
-		_.each(parts, function (part, idx) {
-			field += '<li data-part="' + part + '"><span>' + l10n['part_' + part] + '</span></li>'
-		});
-		return '<ul class="post_parts">' + field + '</ul>';
-	},
 	render: function () {
 		Upfront.Views.Editor.Field.Hidden.prototype.render.apply(this);
+		this.$el.append('<ul class="post_parts"></ul>');
 		var me = this,
+			parts = this.model.get_property_value_by_name("enabled_post_parts"),
 			$sortable = this.$el.find("ul")
 		;
+		_.each(parts, function (part, idx) {
+			var pt = Parts.get_part(part, me.model);
+			pt.render();
+			$sortable.append(pt.$el);
+		});
 		$sortable.sortable({
 			stop: function (e, ui) {
 				var parts = $sortable.sortable('toArray', {attribute: 'data-part'});
