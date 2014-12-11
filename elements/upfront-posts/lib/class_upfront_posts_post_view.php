@@ -258,7 +258,6 @@ class Upfront_Posts_PostView {
 	 * @return string Loaded template
 	 */	
 	private function _get_template ($slug) {
-		$slug = preg_replace('/[^-_a-z0-9]/i', '', $slug);
-		return upfront_get_template("posts-{$slug}", $this->_data, dirname(dirname(__FILE__)) . '/tpl/parts/posts-' . $slug . '.php');
+		return Upfront_Posts_PostsData::get_template($slug, $this->_data);
 	}
 }

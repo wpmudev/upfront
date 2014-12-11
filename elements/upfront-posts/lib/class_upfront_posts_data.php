@@ -41,6 +41,12 @@ class Upfront_Posts_PostsData {
 
 			// Parts markup goes here
 		);
+	public static function get_default ($key, $fallback=false) {
+		$defaults = self::get_defaults();
+		return isset($defaults[$key])
+			? $defaults[$key]
+			: $fallback
+		;
 	}
 
 	public static function add_js_defaults ($data) {
