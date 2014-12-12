@@ -1589,6 +1589,7 @@ define([
 								me.fields.line_height.set_value( me.line_heights[value] || '1.1' );
 							}
 							me.fields.color.set_value( me.colors[value] );
+							me.fields.color.update_input_border_color(me.colors[value]);
 						}
 					}),
 					typeface: new Field_Chosen_Select({
@@ -3852,7 +3853,7 @@ var Field_ToggleableText = Field_Text.extend({
 						'border-top-color': rgb,
 						'border-right-color': rgb
 					});
-					me.update_input_border_color( rgb );
+					me.update_input_border_color( color.toRgbString() );
 					me.update_input_val( rgb );
 					me.rgba = _.extend(me.rgba, color.toRgb());
 					me.render_sidebar_rgba(me.rgba);
@@ -3866,7 +3867,7 @@ var Field_ToggleableText = Field_Text.extend({
 				if( !_.isEmpty( color ) ){
 					var rgb = color.toHexString();
 					me.rgba = _.extend(me.rgba, color.toRgb());
-					me.update_input_border_color( rgb );
+					me.update_input_border_color( color.toRgbString() );
 					me.render_sidebar_rgba(me.rgba);
 					me.update_input_val( rgb );
 				}

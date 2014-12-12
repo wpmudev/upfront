@@ -131,7 +131,9 @@
     padding: 2px;
 }
 #sidebar-ui .colors-panel-section .sp-replacer:before {
-    display: none;
+    width: 19px;
+    height: 19px;
+    border-color: #fff;
 }
 .theme_color_swatch .sp-replacer {
 	height: auto;

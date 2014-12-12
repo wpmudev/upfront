@@ -393,9 +393,33 @@ div.sp-replacer:before {
   position: absolute;
   left:2px;
   top: 2px;
-  background-color:#fff;
+  
   border: 1px #000 solid;
+background-color: #D3DDEB;
+      background-image: -webkit-linear-gradient(45deg, #F2F9FF 25%, transparent 25%, transparent 75%, #F2F9FF 75%, #F2F9FF), -webkit-linear-gradient(45deg, #F2F9FF 25%, transparent 25%, transparent 75%, #F2F9FF 75%, #F2F9FF);
+      background-image: -moz-linear-gradient(45deg, #F2F9FF 25%, transparent 25%, transparent 75%, #F2F9FF 75%, #F2F9FF), -webkit-linear-gradient(45deg, #F2F9FF 25%, transparent 25%, transparent 75%, #F2F9FF 75%, #F2F9FF);
+      background-image: -ms-linear-gradient(45deg, #F2F9FF 25%, transparent 25%, transparent 75%, #F2F9FF 75%, #F2F9FF), -webkit-linear-gradient(45deg, #F2F9FF 25%, transparent 25%, transparent 75%, #F2F9FF 75%, #F2F9FF);
+      background-image: -o-linear-gradient(45deg, #F2F9FF 25%, transparent 25%, transparent 75%, #F2F9FF 75%, #F2F9FF), -webkit-linear-gradient(45deg, #F2F9FF 25%, transparent 25%, transparent 75%, #F2F9FF 75%, #F2F9FF);
+      background-image: linear-gradient(45deg, #F2F9FF 25%, transparent 25%, transparent 75%, #F2F9FF 75%, #F2F9FF), -webkit-linear-gradient(45deg, #F2F9FF 25%, transparent 25%, transparent 75%, #F2F9FF 75%, #F2F9FF);
+      -webkit-background-size: 16px 16px;
+      -moz-background-size: 16px 16px;
+      -ms-background-size: 16px 16px;
+      -o-background-size: 16px 16px;
+      background-size: 16px 16px;
+      -webkit-background-size: 16px 16px;
+      -moz-background-size: 16px 16px;
+      -ms-background-size: 16px 16px;
+      -o-background-size: 16px 16px;
+      background-size: 16px 16px;
+      -webkit-background-size: 16px 16px;
+      -moz-background-size: 16px 16px;
+      -ms-background-size: 16px 16px;
+      -o-background-size: 16px 16px;
+      background-size: 16px 16px;
+      background-position: 8px 8px, 0px 0px;
 }
+
+
 .sp-replacer:hover, .sp-replacer.sp-active {
     border-color: #F0C49B;
     color: #111;
