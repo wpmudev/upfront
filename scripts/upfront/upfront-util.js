@@ -97,6 +97,16 @@ define(function() {
 		},
 
 		format_date: function(date, show_time, show_seconds){
+				if (!date || !date.getFullYear) {
+					if (date && date.length) {
+						// Attempt to convert to proper object
+						var old_date = date;
+						date = new Date(Date.parse(date));
+						if (!date) return old_date;
+					}
+					// If we're still here, and still have no date... bad luck
+					if (!date|| !date.getFullYear) return date;
+				}
 				var output = date.getFullYear() + '/',
 					day = date.getDate(),
 					month = (date.getMonth()+1)
