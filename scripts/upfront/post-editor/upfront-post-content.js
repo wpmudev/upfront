@@ -98,6 +98,8 @@ var PostContentEditor = Backbone.View.extend({
 
         this.$el.closest(".upfront-module-view").append("<div class='editing-overlay'></div>");
         this.$el.closest(".upfront-module").addClass("editing-content");
+        $(".upfront-module").not(".editing-content").addClass("fadedOut").fadeTo( "slow" , 0.3 );
+        $(".change_feature_image").addClass("ueditor-display-block");
 		this.prepareEditableRegions();
 		this.prepareBox();
 	},

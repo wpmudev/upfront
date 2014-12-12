@@ -122,15 +122,24 @@
 .editing-overlay{
   height: 100%;
   width: 1000%;
-  background: rgba(0, 0, 0, 0.2);
+  background: transparent;
   position: fixed;
-  z-index: 99;
+  z-index: 5;
   bottom: 0;
   top: 0;
   left: 0;
   right: 0;
 }
-.upfront-module.editing-content{
-  background: #fff;
+.upfront-module.editing-content,
+.upfront-module.editing-content:hover{
+//  background: #fff;
   z-index: 9999;
+  border: none;
+}
+.upfront-module.editing-content .upfront-entity_meta,
+.upfront-module.editing-content:hover .upfront-entity_meta{
+  display: none;
+}
+.ueditor-display-block{
+  display: block !important;
 }

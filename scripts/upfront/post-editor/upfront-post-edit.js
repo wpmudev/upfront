@@ -162,6 +162,8 @@ var Box = Backbone.View.extend({
             this.toggleRegionClass(false);
             $(".editing-overlay").remove();
             $(".upfront-module").removeClass("editing-content");
+            $(".upfront-module.fadedOut").fadeTo( "slow" , 1).removeClass("fadedOut");
+            $(".ueditor-display-block").removeClass("ueditor-display-block");
         }
     },
 
