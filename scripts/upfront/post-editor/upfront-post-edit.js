@@ -151,6 +151,13 @@ var Box = Backbone.View.extend({
         //this.onScrollFunction = false;
     },
 
+    _stop_overlay: function () {
+        $(".editing-overlay").remove();
+        $(".upfront-module").removeClass("editing-content");
+        $(".upfront-module.fadedOut").fadeTo( "slow" , 1).removeClass("fadedOut");
+        $(".ueditor-display-block").removeClass("ueditor-display-block");
+    },
+
     cancel: function(e){
         e.preventDefault();
         if(confirm(Upfront.Settings.l10n.global.content.discard_changes.replace(/%s/, this.post.get('post_title')))){
@@ -160,10 +167,14 @@ var Box = Backbone.View.extend({
             Upfront.Application.sidebar.toggleSidebar();
             Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
             this.toggleRegionClass(false);
+
+            this._stop_overlay();
+            /*
             $(".editing-overlay").remove();
             $(".upfront-module").removeClass("editing-content");
             $(".upfront-module.fadedOut").fadeTo( "slow" , 1).removeClass("fadedOut");
             $(".ueditor-display-block").removeClass("ueditor-display-block");
+            */
         }
     },
 
@@ -180,7 +191,10 @@ var Box = Backbone.View.extend({
 
         Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
         Upfront.Events.trigger('upfront:post:edit:stop', 'write', this.post.toJSON());
-        $(".editing-overlay").remove();
+        
+        this._stop_overlay();
+        //$(".editing-overlay").remove();
+        
         Upfront.Application.sidebar.toggleSidebar();
         this.toggleRegionClass(false);
 
@@ -379,7 +393,7 @@ var ContentEditorTaxonomy_Flat = PostSectionView.extend({
         this.tax = options.tax;
     },
     render: function () {
-        var	me = this,
+        var me = this,
             currentTerms = new Upfront.Collections.TermList(),
             otherTerms = new Upfront.Collections.TermList()
             ;
