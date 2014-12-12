@@ -2723,11 +2723,23 @@ define([
 					};
 				})
 			;
+			var has_comments = false,
+				current_post_id = Upfront.data.currentPost && Upfront.data.currentPost.id
+					? Upfront.data.currentPost.id
+					: _upfront_post_data.post_id
+			;
+			has_comments = !!current_post_id;
+			if (current_post_id && Upfront.data.posts && Upfront.data.posts.length) {
+				has_comments = Upfront.data.posts[current_post_id] && Upfront.data.posts[current_post_id].get
+					? !!(parseInt(Upfront.data.posts[current_post_id].get("comment_count"), 10))
+					: false
+				;
+			}
 			me.$popup.top.html(
 				'<ul class="upfront-tabs">' +
 					'<li data-type="posts" class="active">' + l10n.posts + '</li>' +
 					'<li data-type="pages">' + l10n.pages + '</li>' +
-					'<li data-type="comments">' + l10n.comments + '</li>' +
+					(has_comments ? '<li data-type="comments">' + l10n.comments + '</li>' : '') +
 				'</ul>' +
 				me.$popup.top.html()
 			).find('.upfront-tabs li').on("click", function () {
