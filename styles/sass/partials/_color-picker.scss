@@ -380,6 +380,21 @@ License: MIT
     *zoom: 1;
     *display: inline;
     vertical-align: middle;
+    padding: 3px;
+    border-radius: 3px;
+    border: 1px #A8C4DE solid;
+    position: relative;
+}
+div.sp-replacer:before {
+  content: '';
+  display: block;
+  height: 22px;
+  width: 22px;
+  position: absolute;
+  left:2px;
+  top: 2px;
+  background-color:#fff;
+  border: 1px #000 solid;
 }
 .sp-replacer:hover, .sp-replacer.sp-active {
     border-color: #F0C49B;
@@ -391,12 +406,17 @@ License: MIT
     color: silver;
 }
 .sp-dd {
-    padding: 2px 0;
-    height: 16px;
-    line-height: 16px;
-    float:left;
-    font-size:10px;
-    display: none;
+    position: absolute;
+    display: block;
+    top: -1px;
+    right: -1px;
+    font-size: 6px;
+    background-color: #F2F9FF;
+    padding: 0 3px;
+    line-height: 11px;
+    height: 13px;
+    width: 14px;
+    border: 1px #A8C4DE solid;
 }
 
 

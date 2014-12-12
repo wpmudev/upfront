@@ -122,10 +122,16 @@
 	margin: 14px 0 13px 28px;
 }
 #sidebar-ui .colors-panel-section .sp-preview {
-	width: 18px !important;
-	height: 18px !important;
+	width: 19px !important;
+	height: 19px !important;
 	border-radius: 0;
 	-webkit-border-radius: 0px;
+}
+#sidebar-ui .colors-panel-section .sp-replacer {
+    padding: 2px;
+}
+#sidebar-ui .colors-panel-section .sp-replacer:before {
+    display: none;
 }
 .theme_color_swatch .sp-replacer {
 	height: auto;
