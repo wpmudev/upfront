@@ -10,11 +10,11 @@ a.feature_image_selector {
   margin-left: -28px;
   margin-top: -36px;
   background-color: transparent;
-	z-index: 10;
+	z-index: 30;
 }
 a.feature_image_selector.change_feature_image {
 	display: none;
-    z-index: 10;
+    z-index: 30;
 }
 a.feature_image_selector:after {
   content:'Add feature image';
