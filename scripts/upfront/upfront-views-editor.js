@@ -2937,7 +2937,6 @@ define([
 			this.collection.on('change reset', this.render, this);
 		},
 		render: function () {
-			console.log(this.collection.getPage(this.collection.pagination.currentPage));
 			this.$el.empty().append(
 				this.postListTpl({
 					posts: this.collection.getPage(this.collection.pagination.currentPage),
@@ -3882,10 +3881,11 @@ var Field_ToggleableText = Field_Text.extend({
 				me.$('input[name=' + me.get_field_name() + ']').spectrum(spectrumOptions);
 				me.$spectrum = me.$('input[name=' + me.get_field_name() + ']');
 				me.$(".sp-container").append("<div class='color_picker_rgb_container'></div>");
-
+				me.update_input_border_color(me.get_saved_value());
 			});
 
 		},
+
 		is_hex : function(color_code){
 			return color_code.indexOf( "#" ) === -1 ? false : true;
 		},
@@ -3902,6 +3902,10 @@ var Field_ToggleableText = Field_Text.extend({
 		update_input_border_color : function(rgb){
 			$(".sp-input").css({
 				borderColor : rgb
+			});
+
+			this.$el.find(".sp-preview").css({
+				backgroundColor:rgb
 			});
 		},
 		update_input_val : function(hex){

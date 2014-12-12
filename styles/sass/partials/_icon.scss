@@ -22,7 +22,6 @@
 .upfront-field-checkbox:checked,
 .upfront-field-select-single .upfront-field-select-option-selected label:before,
 .upfront-ui .upfront-region-field-icon:before,
-.sp-preview,
 #upfront-popup-top.upfront-popup-meta .upload:before,
 .upfront-icon-button-hide:before,
 .upfront-entity-hide_trigger:before {
@@ -34,9 +33,9 @@
 }
 .sp-preview{
 	background-position: -817px -105px;
-	width: 27px !important;
-	height: 24px !important;
-	background-color:#e5f3ff;
+	width: 20px !important;
+	height: 20px !important;
+	/*background-color:#e5f3ff;*/
 	border: 1px #a3bfd9 solid;
 	border-radius: 3px;
     position:relative;

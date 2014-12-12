@@ -1158,6 +1158,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				this.borderWidth.set_value(preset.borderwidth);
 
 				this.borderColor.set_value(preset.bordercolor);
+				this.borderColor.update_input_border_color(preset.bordercolor);
 
 				this.borderRadiusLock.set_value(preset.borderradiuslock);
 
@@ -1170,13 +1171,15 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				this.borderRadius3.set_value(preset.borderradius3);
 
 				this.bgColor.set_value(preset.bgcolor);
+				this.bgColor.update_input_border_color(preset.bgcolor);
 
 				this.fontSize.set_value(preset.fontsize);
 
 				this.fontFace.set_value(preset.fontface);
 
 				this.color.set_value(preset.color);
-
+				this.color.update_input_border_color(preset.color);
+				
 				this.hov_duration.set_value(preset.hov_duration);
 
 				this.hov_transition.set_value(preset.hov_transition);
@@ -1201,10 +1204,14 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				if(preset.hov_bordercolor) {
 
 					this.hov_borderColor.set_value(preset.hov_bordercolor);
+					this.hov_borderColor.update_input_border_color(preset.hov_bordercolor);
+
 					this.hov_borderColor.$el.addClass('touched');
 				}
-				else
+				else {
 					this.hov_borderColor.set_value(preset.bordercolor);
+					this.hov_borderColor.update_input_border_color(preset.bordercolor);
+				}
 
 
 				if(preset.hov_borderradiuslock) {
@@ -1246,10 +1253,14 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 
 				if(preset.hov_bgcolor) {
 					this.hov_bgColor.set_value(preset.hov_bgcolor);
+					this.hov_bgColor.update_input_border_color(preset.hov_bgcolor);
+
 					this.hov_bgColor.$el.addClass('touched');
 				}
-				else
+				else {
 					this.hov_bgColor.set_value(preset.bgcolor);
+					this.hov_bgColor.update_input_border_color(preset.bgcolor);
+				}
 
 				if(preset.hov_fontsize) {
 					this.hov_fontSize.set_value(preset.hov_fontsize);
@@ -1267,10 +1278,14 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 
 				if(preset.hov_color) {
 					this.hov_color.set_value(preset.hov_color);
+					this.hov_color.update_input_border_color(preset.hov_color);
+
 					this.hov_color.$el.addClass('touched');
 				}
-				else
+				else {
 					this.hov_color.set_value(preset.color);
+					this.hov_color.update_input_border_color(preset.color);
+				}
 
 				this.$el.find('div.upfront-settings-css input[value="'+preset.theme_style+'"]').trigger('click');
 			}

@@ -567,9 +567,10 @@ input.upfront-field-text:hover,
 	display: inline-block;
 	width:25px;
 	height:20px;
-	border:1px solid #a2c5e4;
+	border:1px solid #fff;
 	vertical-align: bottom;
-  margin-left: 5px;
+  	margin: 0;
+  	border-radius: 0;
 }
 
 .upfront-field-wrap-color .sp-replacer {
