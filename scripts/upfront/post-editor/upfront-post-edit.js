@@ -167,17 +167,15 @@ var Box = Backbone.View.extend({
             Upfront.Application.sidebar.toggleSidebar();
             Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
             this.toggleRegionClass(false);
-
-            this._stop_overlay();
-            /*
-            $(".editing-overlay").remove();
-            $(".upfront-module").removeClass("editing-content");
-            $(".upfront-module.fadedOut").fadeTo( "slow" , 1).removeClass("fadedOut");
-            $(".ueditor-display-block").removeClass("ueditor-display-block");
-            */
+            this.fadeout_other_elements();
         }
     },
-
+    fadeout_other_elements: function(){
+            $(".editing-overlay").remove();
+            $(".upfront-module").removeClass("editing-content");
+        $(".upfront-module.fadedOut").fadeTo( "fast" , 1).removeClass("fadedOut");
+            $(".ueditor-display-block").removeClass("ueditor-display-block");
+    },
     publish: function(e){
         /*
          if(this.currentStatus == 'draft') return this.saveDraft(e); // Why? This is just asking for problems...
@@ -191,12 +189,13 @@ var Box = Backbone.View.extend({
 
         Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
         Upfront.Events.trigger('upfront:post:edit:stop', 'write', this.post.toJSON());
-        
+        this.fadeout_other_elements();
         this._stop_overlay();
         //$(".editing-overlay").remove();
         
         Upfront.Application.sidebar.toggleSidebar();
         this.toggleRegionClass(false);
+
 
     },
 
