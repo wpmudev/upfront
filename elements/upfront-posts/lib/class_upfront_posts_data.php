@@ -3,7 +3,10 @@
 class Upfront_Posts_PostsData {
 	
 	public static function get_defaults () {
-		return array(
+		static $defaults;
+		if (!empty($defaults)) return $defaults;
+		
+		$defaults = array(
 			'type' => 'PostsModel',
 			'view_class' => 'PostsView',
 			'has_settings' => 1,
@@ -30,7 +33,47 @@ class Upfront_Posts_PostsData {
 			
 			// These are the default ones
 			'default_parts' => Upfront_Posts_PostView::get_default_parts(),
+
+			// Part options
+			'date_posted_format' => get_option('date_format') . ' ' . get_option('time_format'),
+			'categories_limit' => 3,
+			'tags_limit' => 3,
+			'comment_count_hide' => 0,
+			'content_length' => 120,
+			'resize_featured' => '1',
+			'gravatar_size' => 200,
+
+			// Parts markup goes here
 		);
+
+		foreach (Upfront_Posts_PostView::get_default_parts() as $part) {
+			$key = self::_slug_to_part_key($part);
+			$defaults[$key] = self::get_template($part);
+		}
+
+		return $defaults;
+	}
+
+	private static function _slug_to_part_key ($slug) {
+		$slug = preg_replace('/[^-_a-z0-9]/i', '', $slug);
+		return "post-part-{$slug}";
+	}
+
+	public static function get_template ($slug, $data=array()) {
+		$slug = preg_replace('/[^-_a-z0-9]/i', '', $slug);
+		
+		$data_key = "post-part-{$slug}";
+		if (!empty($data) && isset($data[$data_key])) return $data[$data_key];
+
+		return upfront_get_template("posts-{$slug}", $data, dirname(dirname(__FILE__)) . '/tpl/parts/posts-' . $slug . '.php');
+	}
+
+	public static function get_default ($key, $fallback=false) {
+		$defaults = self::get_defaults();
+		return isset($defaults[$key])
+			? $defaults[$key]
+			: $fallback
+		;
 	}
 
 	public static function add_js_defaults ($data) {
@@ -123,6 +166,16 @@ class Upfront_Posts_PostsData {
 			'part_read_more' => __('Read More', 'upfront'),
 			'part_tags' => __('Tags', 'upfront'),
 			'part_categories' => __('Categories', 'upfront'),
+
+			'edit' => __('Edit', 'upfront'),
+			'edit_html' => __('Edit HTML', 'upfront'),
+			'format' => __('Format', 'upfront'),
+			'max_categories' => __('max. categories', 'upfront'),
+			'max_tags' => __('max. tags', 'upfront'),
+			'hide_comments' => __('Hide if no comments', 'upfront'),
+			'limit_words' => __('Limit words', 'upfront'),
+			'resize_to_fit' => __('Re-size to fit container', 'upfront'),
+			'size_px' => __('Size in px', 'upfront'),
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)

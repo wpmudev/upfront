@@ -1,7 +1,8 @@
 (function ($) {
 define([
-	'text!elements/upfront-posts/tpl/views.html'
-], function(tpl) {
+	'text!elements/upfront-posts/tpl/views.html',
+	'elements/upfront-posts/js/post-list-settings-parts'
+], function(tpl, Parts) {
 
 var l10n = Upfront.Settings.l10n.posts_element;
 var $template = $(tpl);
@@ -177,9 +178,11 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 
 	dispatch_settings: function () {
 		var type = this.model.get_property_value_by_name('list_type');
+		this.fields = _([]); // Pre-initialize the fields
+		
 		if ('custom' === type) this.populate_custom_items();
 		else if ('taxonomy' === type) this.populate_tax_items();
-		else this.fields = _([]);
+		else this.populate_shared_tax_generic_items();
 	},
 
 	populate_custom_items: function () {
@@ -226,6 +229,12 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 			property: "term",
 			values: [{label:l10n.select_tax, value:"", disabled: true}]
 		}));
+		this.populate_shared_tax_generic_items();
+		this.once("rendered", this.update_terms, this);
+	},
+
+	populate_shared_tax_generic_items: function () {
+		var display_type = this.model.get_property_value_by_name("display_type");
 		if ("list" === display_type) {
 			this.fields.push(new Upfront.Views.Editor.Field.Number({
 				model: this.model,
@@ -258,7 +267,6 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 				]
 			}));
 		}
-		this.once("rendered", this.update_terms, this);
 	},
 
 	update_terms: function () {
@@ -329,13 +337,6 @@ Panels.PostParts = Upfront.Views.Editor.Settings.Panel.extend({
 				property: 'enabled_post_parts',
 				layout: 'horizontal-inline',
 				values: parts
-			}),
-			resize_featured = new Upfront.Views.Editor.Field.Checkboxes({
-				model: this.model,
-				property: 'resize_featured',
-				layout: 'horizontal-inline',
-				values: [{label: l10n.resize_featured, value: '1'}],
-				multiple: false
 			})
 		;
 		post_parts.on("changed", autorefresh, post_parts);
@@ -345,12 +346,7 @@ Panels.PostParts = Upfront.Views.Editor.Settings.Panel.extend({
 				title: l10n.post_parts_picker,
 				fields: [post_parts]
 			}),
-			sorter,
-			new Upfront.Views.Editor.Settings.Item({
-				model: this.model,
-				group: false,
-				fields: [resize_featured]
-			})
+			sorter
 		]);
 	},
 
@@ -382,21 +378,18 @@ var SortSettings = Upfront.Views.Editor.Settings.Item.extend({
 });
 
 var SortSettings_Sorter = Upfront.Views.Editor.Field.Hidden.extend({
-	get_field_html: function () {
-		var label = this.get_label_html(),
-			field = '',
-			parts = this.model.get_property_value_by_name("enabled_post_parts")
-		;
-		_.each(parts, function (part, idx) {
-			field += '<li data-part="' + part + '"><span>' + l10n['part_' + part] + '</span></li>'
-		});
-		return '<ul class="post_parts">' + field + '</ul>';
-	},
 	render: function () {
 		Upfront.Views.Editor.Field.Hidden.prototype.render.apply(this);
+		this.$el.append('<ul class="post_parts"></ul>');
 		var me = this,
+			parts = this.model.get_property_value_by_name("enabled_post_parts"),
 			$sortable = this.$el.find("ul")
 		;
+		_.each(parts, function (part, idx) {
+			var pt = Parts.get_part(part, me.model);
+			pt.render();
+			$sortable.append(pt.$el);
+		});
 		$sortable.sortable({
 			stop: function (e, ui) {
 				var parts = $sortable.sortable('toArray', {attribute: 'data-part'});
