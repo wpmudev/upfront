@@ -65,7 +65,7 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 			.addClass('upfront-plain_txt')
 			.ueditor({
 				linebreaks: false,
-                //airButtons : ["upfrontFormatting"],
+				//airButtons : ["upfrontFormatting"],
 				inserts: {},
 				autostart: false
 			})
@@ -85,6 +85,7 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 				try { text = ed.getValue(true); } catch (e) { text = ''; }
 				if (text) me.model.set_content(text, {silent: true}); // Something in inserts is destroying the sidebar
 				Upfront.Events.trigger('upfront:element:edit:stop');
+				ed.redactor.events.trigger('cleanUpListeners');
 				me.render();
 			})
 			.on('syncAfter', function(){

@@ -58,8 +58,8 @@ var hackRedactor = function(){
 		var self = this,
             hideHandler = $.proxy(function(doc) {
 			$(doc).on('mouseup.redactor', $.proxy(function (e) {
-				if ($(e.target).closest(this.$toolbar).length === 0 
-					&& $(e.target).parents("#upfront-popup.upfront-postselector-popup").length === 0) 
+				if ($(e.target).closest(this.$toolbar).length === 0
+					&& $(e.target).parents("#upfront-popup.upfront-postselector-popup").length === 0)
 				{
 					if (!self.selection.getText()) {
 
@@ -311,15 +311,16 @@ Ueditor.prototype = {
 		if(!this.options.autostart)
 			this.listenToOuterClick();
 
-		$(document).on("keyup", function(e){
-			if(e.keyCode === 27 && !( $(".upfront-content-marker-contents").length && $(".upfront-content-marker-contents").data("ueditor") ) ){
-				self.stop();
-			}
-		});
+		$(document).on("keyup", $.proxy(this.stopOnEscape, this));
 
         this.active = true;
 
 
+	},
+	stopOnEscape: function(e) {
+			if(e.keyCode === 27 && !( $(".upfront-content-marker-contents").length && $(".upfront-content-marker-contents").data("ueditor") ) ){
+				this.stop();
+			}
 	},
 	stop: function(){
 		if(this.redactor){
@@ -334,6 +335,7 @@ Ueditor.prototype = {
 		if ("undefined" !== typeof Upfront.data.Ueditor) delete Upfront.data.Ueditor.instances[this.id];
 		this.startPlaceholder();
 		$("html").off('click', this.stopOnOutsideClick);
+		$(document).off('keyup', this.stopOnEscape);
         this.active = false;
 	},
 
@@ -414,7 +416,7 @@ Ueditor.prototype = {
 			window.open(url);
 	},
 	guessLinkType: function(url){
-		
+
 		if(!$.trim(url) || $.trim(url) == '#')
 			return 'unlink';
 		if(url.length && url[0] == '#')
@@ -471,9 +473,23 @@ Ueditor.prototype = {
 			var selection = me.redactor.selection.get();
 			me.redactor.buffer.set();
 		});
+		this.manager = manager;
+		this.redactorEvents = redactorEvents;
 		manager.on('insert:added insert:removed', function(){
 			me.redactor.events.trigger("ueditor:insert:media");
 		});
+		UeditorEvents.on( 'cleanUpListeners', $.proxy(this.cleanUpListeners, this));
+	},
+	cleanUpListeners: function() {
+		this.redactorEvents.off("ueditor:init");
+		this.redactorEvents.off("ueditor:enter");
+		this.redactorEvents.off("ueditor:insert:media");
+		this.redactorEvents.off("ueditor:sync:after");
+		this.manager.off('insert:prechange');
+		this.manager.off('insert:added insert:removed');
+		$("html").off('click', this.stopOnOutsideClick);
+		this.redactorEvents.off('cleanUpListeners');
+		$(document).off('click.redactor-image-delete');
 	},
 
 	listenToOuterClick: function(){
@@ -506,7 +522,7 @@ Ueditor.prototype = {
                 || $(e.target).parents().hasClass("use_selection_container") // Todo Sam:, make this more general
                 || $(e.target).parents().is("#upfront-popup")
 				|| $(e.target).parents().hasClass("redactor-dropdown"))
-			&& $(e.target).parents("#upfront-popup.upfront-postselector-popup").length === 0) 
+			&& $(e.target).parents("#upfront-popup.upfront-postselector-popup").length === 0)
 		{
 			e.data.ueditor.stop();
 		}
@@ -629,6 +645,10 @@ var InsertManagerInserts = Backbone.View.extend({
         this.redactor = options.redactor;
         this.onRemoveInsert = options.onRemoveInsert;
         this.listenTo( UeditorEvents, "ueditor:insert:relocate", this.insert_relocate );
+				var me = this;
+				this.listenTo( UeditorEvents, 'cleanUpListeners', function() {
+					me.stopListening();
+				});
     },
     events:{
         "click .uinsert-selector-option": "on_insert_click",
@@ -696,13 +716,17 @@ var InsertManager = Backbone.View.extend({
 		this.bindTriggerEvents();
 		this.refreshTimeout = false;
 		this.sortableInserts();
-        this.render_tooltips();
+		this.render_tooltips();
 
-        if( opts.ueditor.options.inserts ){
-            this.listenTo( UeditorEvents, "ueditor:click", this.position_tooltips );
-            this.listenTo( UeditorEvents, "ueditor:key:up", this.position_tooltips );
-        }
-    },
+		if( opts.ueditor.options.inserts ){
+			this.listenTo( UeditorEvents, "ueditor:click", this.position_tooltips );
+			this.listenTo( UeditorEvents, "ueditor:key:up", this.position_tooltips );
+		}
+		var me = this;
+		this.listenTo( UeditorEvents, 'cleanUpListeners', function() {
+			me.stopListening();
+		});
+	},
     render_tooltips: function(){
         var self = this,
             tooltips = new InsertManagerInserts({
@@ -769,11 +793,14 @@ var InsertManager = Backbone.View.extend({
 			}
 		;
 		var ed = this.$el.data("ueditor");
-		if (ed && ed.redactor) {
-			ed.redactor.events.on("ueditor:stop", function () {
-				//me.currentBlock = me.lastBlock = false;
-			});
-		}
+		// Since callback was commented out, I [Ivan] ditched this whole if statement.
+		// If it's ever re-enabled than it needs to clean up after itself i.e.
+		// remove 'on' listener for 'ueditor:stop', otherwise it causes Redactor node leak
+		// if (ed && ed.redactor) {
+			// ed.redactor.events.on("ueditor:stop", function () {
+				// //me.currentBlock = me.lastBlock = false;
+			// });
+		// }
 
 		this.ticking = false;
 
