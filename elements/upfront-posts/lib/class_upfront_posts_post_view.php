@@ -50,7 +50,7 @@ class Upfront_Posts_PostView {
 			else $out .= apply_filters('upfront_posts-' . $method, $post);
 		}
 
-		return $this->_wrap_post($out);
+		return $this->_wrap_post($out, $post);
 	}
 
 	/**
@@ -293,11 +293,14 @@ class Upfront_Posts_PostView {
 
 	/**
 	 * Wraps post in appropriate markup.
-	 * @param string $post Generated post markup.
+	 * @param $out Generated post markup.
+	 * @param WP_Post $post
+	 *
 	 * @return string Wrapped final post markup.
 	 */
-	protected function _wrap_post ($post) {
-		return "<li class='uf-post'><article>{$post}</article></li>";
+	protected function _wrap_post ($out, WP_Post $post) {
+		$class = is_sticky( $post->ID ) ? "uf-post uf-post-sticky" : "uf-post";
+		return "<li class='{$class}'><article>{$out}</article></li>";
 	}
 
 	/**
