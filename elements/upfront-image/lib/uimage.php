@@ -276,7 +276,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 			}
 
 			$image = get_post($imageData['id']);
-			if($image->post_mime_type == 'image/gif'){ //Gif are not really resized/croped to preserve animations
+			if( $image instanceof WP_Post && $image->post_mime_type == 'image/gif'){ //Gif are not really resized/croped to preserve animations
 				$imageAttrs = wp_get_attachment_image_src( $imageData['id'], 'full' );
 				$images[$imageData['id']] = $this->get_resized_gif_data($imageData, $imageAttrs);
 			}
