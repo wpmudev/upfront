@@ -2943,8 +2943,10 @@ define([
 		paginationTpl: _.template($(_Upfront_Templates.popup).find('#upfront-pagination-tpl').html()),
 		events: {
 			"click #upfront-list-meta .upfront-list_item-component": "handle_sort_request",
-			"click .editaction.edit": "handle_post_edit",
-			"click #upfront-list-page-path a.upfront-path-back": "handle_return_to_posts"
+			//"click .editaction.edit": "handle_post_edit",
+			"click .editaction.view": "handle_post_view",
+			"click #upfront-list-page-path a.upfront-path-back": "handle_return_to_posts",
+			"click .editaction.trash": "trash_post",
 		},
 		initialize: function(options){
 			this.collection.on('change reset', this.render, this);
@@ -2981,12 +2983,27 @@ define([
 			me.expand_post(me.collection.get(postId));
 		},
 */
-		handle_post_edit: function (e) {
-
+		/*handle_post_edit: function (e) {
+			e.preventDefault();
 			var postId = $(e.currentTarget).closest('.upfront-list_item-post').attr('data-post_id');
 			Upfront.Application.navigate('/edit/post/' + postId, {trigger: true});
+		},*/
+		handle_post_view: function (e) {
+			e.preventDefault();
+			var postId = $(e.currentTarget).closest('.upfront-list_item-post').attr('data-post_id');
+			window.location.href = this.collection.get(postId).get('permalink');
 		},
+		trash_post: function (e) {
+			var me = this;
+			var postelement = $(e.currentTarget).closest('.upfront-list_item-post.upfront-list_item');
+			var postId = postelement.attr('data-post_id');
+			if(confirm( Upfront.Settings.l10n.global.content.delete_confirm.replace(/%s/, this.collection.get(postId).get('post_type')))) {
+				this.collection.get(postId).set('post_status', 'trash').save().done(function(){	
+					me.collection.remove(me.collection.get(postId));
 
+				});
+			}
+		},
 		expand_post: function(post){
 			var me = this;
 			if(!post.featuredImage){
@@ -3039,7 +3056,9 @@ define([
 		events: {
 			"click .upfront-list-page_item": "handle_page_activate",
 			"click .upfront-page-path-item": "handle_page_activate",
-			"change #upfront-page_template-select": "template_change"
+			"change #upfront-page_template-select": "template_change",
+			"click .editaction.trash": "trash_page",
+			"click .editaction.view": "handle_post_view",
 		},
 		currentPage: false,
 		pageListTpl: _.template($(_Upfront_Templates.popup).find('#upfront-page-list-tpl').html()),
@@ -3076,7 +3095,11 @@ define([
 				Upfront.Application.navigate(path, {trigger: true});
 			});
 		},
-
+		handle_post_view: function (e) {
+			e.preventDefault();
+			var postId = $(e.currentTarget).closest('.upfront-list_item-post').attr('data-post_id');
+			window.location.href = this.collection.get(postId).get('permalink');
+		},
 		handle_page_activate: function (e) {
 			var page = this.collection.get($(e.target).attr("data-post_id"));
 			e.preventDefault();
@@ -3090,7 +3113,18 @@ define([
 
 			this.currentPage = page;
 		},
-
+		trash_page: function (e) {
+			var me = this;
+			var postelement = $(e.currentTarget).closest('.upfront-list_item-post.upfront-list_item');
+			var postId = postelement.attr('data-post_id');
+			if(confirm( Upfront.Settings.l10n.global.content.delete_confirm.replace(/%s/, this.collection.get(postId).get('post_type')))) {
+				this.collection.get(postId).set('post_status', 'trash').save().done(function(){	
+					
+					me.collection.remove(me.collection.get(postId));
+					postelement.remove();
+				});
+			}
+		},
 		update_path: function (page) {
 			var current = page,
 				fragments = [{id: page.get('ID'), title: page.get('post_title')}],

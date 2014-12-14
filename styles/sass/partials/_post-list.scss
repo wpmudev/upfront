@@ -171,6 +171,9 @@
 	background-position: -1441px -260px;
 }
 
+.upfront-list_item-component.upfront-date.post-status-trash:before {
+	background-position: -1231px -224px;
+}
 
 
 .upfront-list_item-component.upfront-editactions a.editaction {
@@ -204,7 +207,8 @@ a.editaction.trash {
 }
 
 .upfront-list_item-post.upfront-list_item:hover .upfront-list_item-component.upfront-author,
-.upfront-list_item-post.upfront-list_item:hover .upfront-list_item-component.upfront-comments {
+.upfront-list_item-post.upfront-list_item:hover .upfront-list_item-component.upfront-comments,
+.upfront-list_item-post.status-trash {
 	display:none;
 }
 .upfront-list_item-post.upfront-list_item:hover .upfront-list_item-component.upfront-editactions {

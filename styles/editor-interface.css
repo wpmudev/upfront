@@ -6874,25 +6874,29 @@ i.upfront-field-icon-burger-trigger {
 .upfront-list_item:hover .upfront-list_item-component.upfront-date.post-status-future:before {
   background-position: -1441px -260px; }
 
-/* line 176, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 174, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+.upfront-list_item-component.upfront-date.post-status-trash:before {
+  background-position: -1231px -224px; }
+
+/* line 179, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-list_item-component.upfront-editactions a.editaction {
   display: inline-block;
   border-radius: 3px;
   padding: 0 8px; }
 
-/* line 183, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 186, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 a.editaction.edit, a.editaction.view {
   background-color: #3C5267;
   color: #02CE8D;
   margin-right: 6px; }
 
-/* line 189, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 192, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 a.editaction.trash {
   background-color: #D53321;
   color: #fff;
   margin-right: 0; }
 
-/* line 195, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 198, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-list_item-component.upfront-comments.upfront-header i.icon-post-comments {
   display: inline-block !important;
   height: 14px;
@@ -6903,22 +6907,22 @@ a.editaction.trash {
   background-position: -912px -171px;
   vertical-align: middle; }
 
-/* line 207, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
-.upfront-list_item-post.upfront-list_item:hover .upfront-list_item-component.upfront-author, .upfront-list_item-post.upfront-list_item:hover .upfront-list_item-component.upfront-comments {
+/* line 211, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+.upfront-list_item-post.upfront-list_item:hover .upfront-list_item-component.upfront-author, .upfront-list_item-post.upfront-list_item:hover .upfront-list_item-component.upfront-comments, .upfront-list_item-post.status-trash {
   display: none; }
 
-/* line 210, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 214, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-list_item-post.upfront-list_item:hover .upfront-list_item-component.upfront-editactions {
   display: block;
   padding-right: 0 !important; }
 
 /* Pages list */
-/* line 215, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 219, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-list-page {
   clear: both;
   background: #cfdbe5; }
 
-/* line 220, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 224, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-list-page-path {
   height: 50px;
   line-height: 50px;
@@ -6927,17 +6931,17 @@ a.editaction.trash {
   padding-left: 30px;
   font-size: 16px; }
 
-/* line 228, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 232, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-list-page-path a {
   color: #2ecc90;
   text-decoration: none; }
 
-/* line 232, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 236, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-list-page-path .last {
   color: #273a4c;
   font-weight: bold; }
 
-/* line 237, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 241, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-list-page-preview {
   float: left;
   width: 250px;
@@ -6947,7 +6951,7 @@ a.editaction.trash {
   max-height: 350px;
   position: relative; }
 
-/* line 247, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 251, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-list-page-preview h4 {
   text-transform: uppercase;
   font-size: 14px;
@@ -6955,27 +6959,27 @@ a.editaction.trash {
   margin: 0 0 10px;
   font-weight: normal; }
 
-/* line 256, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 260, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-page_preview-wrapper {
   padding: 20px 30px;
   max-height: 350px; }
 
-/* line 261, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 265, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-page_preview-item {
   margin-bottom: 20px; }
 
-/* line 265, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 269, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-page_preview-featured_image {
   position: relative; }
 
-/* line 268, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 272, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-page_preview-featured_image img {
   width: 100%;
   display: block;
   margin: 0 auto;
   border: 3px solid #A4BFD8; }
 
-/* line 274, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 278, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-thumbnailinfo {
   margin: 0 auto;
   border: 3px solid #A4BFD8;
@@ -6983,7 +6987,7 @@ a.editaction.trash {
   line-height: 95px;
   text-align: center; }
 
-/* line 281, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 285, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-page_preview-featured_image .upfront-page_preview-edit_feature {
   position: absolute;
   bottom: 3px;
@@ -6992,19 +6996,19 @@ a.editaction.trash {
   background: rgba(59, 77, 91, 0.8);
   padding: 5px 10px; }
 
-/* line 289, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 293, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-page_preview-featured_image .upfront-page_preview-edit_feature a {
   color: #1fcd8f; }
 
-/* line 292, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 296, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-page_preview-featured_image .upfront-page_preview-edit_feature a:hover {
   text-decoration: underline; }
 
-/* line 296, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 300, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-page_preview-template select {
   width: 100%; }
 
-/* line 300, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 304, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-list-page-tree {
   background: #f2f9ff;
   max-height: 350px;
@@ -7012,7 +7016,7 @@ a.editaction.trash {
   overflow-y: scroll;
   width: 380px; }
 
-/* line 307, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 311, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-list-page-tree .upfront-list-page_item {
   padding-left: 40px;
   font-weight: normal;
@@ -7022,64 +7026,64 @@ a.editaction.trash {
   position: relative;
   cursor: pointer; }
 
-/* line 316, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 320, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-list-page-tree .upfront-list-page_item i {
   width: 15px;
   margin-top: 9px;
   display: block;
   float: left; }
 
-/* line 322, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 326, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-list-page-tree .upfront-list-page_item i.icon-caret-right {
   display: none; }
 
-/* line 325, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 329, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-list-page-tree .upfront-list-page_item.closed i.icon-caret-down {
   display: none; }
 
-/* line 328, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 332, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-list-page-tree .upfront-list-page_item.closed i.icon-caret-right {
   display: block; }
 
-/* line 331, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 335, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-list-page-tree .upfront-list-page_item.closed .upfront-list-page_item {
   display: none; }
 
-/* line 334, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 338, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-list-page-tree .upfront-list-page_item.has_children {
   font-weight: bold;
   padding-left: 25px; }
 
-/* line 338, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 342, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-list-page-tree .upfront-list-page_item.active {
   background: #33475b;
   color: #2ecc90; }
 
-/* line 343, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 347, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-list-page-tree .upfront-list-page_item.active .upfront-list-page_item {
   background: #F2F9FF; }
 
-/* line 347, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 351, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-list-page-tree > .has_children > .upfront-list-page_item {
   margin-left: -40px;
   padding-left: 80px; }
 
-/* line 351, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 355, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-list-page-tree > .has_children > .has_children > .upfront-list-page_item {
   margin-left: -80px;
   padding-left: 120px; }
 
-/* line 355, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 359, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-list-page-tree > .has_children > .has_children > .has_children > .upfront-list-page_item {
   margin-left: -120px;
   padding-left: 160px; }
 
-/* line 360, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 364, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-no-results {
   padding: 15px 20px; }
 
 /* Comments-specific additions to Entities list */
-/* line 366, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 370, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-comment-approved {
   display: block;
   width: 40px;
@@ -7089,54 +7093,54 @@ a.editaction.trash {
   top: 0;
   left: -40px; }
 
-/* line 376, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 380, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-list-comments .upfront-list-items {
   width: 670px;
   margin-left: -40px;
   border-bottom: 0; }
 
-/* line 382, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 386, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-comment-approved {
   width: 40px;
   color: #fff;
   opacity: 0.8;
   text-align: center; }
 
-/* line 389, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 393, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-comment-approved:hover {
   opacity: 1; }
 
-/* line 393, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 397, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-list-comments .upfront-comment_author {
   width: 200px; }
 
-/* line 396, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 400, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-list-comments .upfront-date {
   width: 120px; }
 
-/* line 399, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 403, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-list-comments .upfront-comment_content {
   width: 310px; }
 
-/* line 403, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 407, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-list-comments .expanded .upfront-comment_content {
   width: 310px; }
 
-/* line 406, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 410, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-list .upfront-comment_author {
   color: #2ecc90;
   vertical-align: top; }
 
-/* line 411, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 415, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-list #upfront-list-meta .upfront-comment_author {
   color: #263a4d;
   vertical-align: top; }
 
-/* line 416, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 420, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-list .upfront-comment_author img {
   margin: -7px 5px 0 0; }
 
-/* line 420, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 424, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-list-comments .upfront-list-comment-items .upfront-list_item {
   width: 800px;
   margin-left: 40px;
@@ -7144,39 +7148,39 @@ a.editaction.trash {
   height: 40px;
   clear: both; }
 
-/* line 429, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 433, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-list .upfront-list-comment-items .upfront-list_item-component {
   line-height: 1.2em;
   float: left;
   padding: 10px 15px 0;
   min-height: 38px; }
 
-/* line 436, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 440, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-list .upfront-list-comment-items textarea {
   max-height: 150px;
   margin-bottom: 10px;
   padding: 10px;
   width: 100%; }
 
-/* line 443, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 447, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-list button {
   width: 100px;
   float: right;
   margin: 0 0 10px 10px; }
 
-/* line 450, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 454, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-list-comments #upfront-list-meta {
   margin-left: 0; }
 
-/* line 454, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 458, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-list-comments #upfront-list-meta .upfront-header {
   float: left; }
 
-/* line 461, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 465, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-list-comments .upfront-list_item .upfront-comment_content-full {
   max-height: 185px; }
 
-/* line 464, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 468, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-list-comments .upfront-list_item .upfront-comment_actions-wrapper {
   position: absolute;
   left: 0;
@@ -7186,7 +7190,7 @@ a.editaction.trash {
   overflow: hidden;
   display: none; }
 
-/* line 473, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 477, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-list-comments .upfront-list_item .upfront-comment_actions-wrapper a {
   display: block;
   float: left;
@@ -7200,11 +7204,11 @@ a.editaction.trash {
   font-size: 10px;
   opacity: 0.8; }
 
-/* line 486, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 490, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-list-comments .upfront-list_item .upfront-comment_actions-wrapper a:hover {
   opacity: 1; }
 
-/* line 489, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 493, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-list-comments .upfront-list_item .upfront-comment_actions-wrapper a i {
   display: block;
   font-size: 12px;
@@ -7213,50 +7217,50 @@ a.editaction.trash {
   color: #a4b9cb;
   background-image: url(../img/uf-ui-sprite.svg); }
 
-/* line 498, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 502, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-list-comments .icon-reply {
   background-position: -1226px -122px; }
 
-/* line 502, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 506, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-list-comments .icon-pencil {
   background-position: -1335px -158px; }
 
-/* line 506, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 510, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-list-comments .icon-circle-blank {
   background-position: -1321px -193px; }
 
-/* line 510, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 514, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-list-comments .icon-ban-circle {
   background-position: -1332px -123px; }
 
-/* line 514, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 518, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-list-comments .icon-ok {
   background-position: -1432px -123px; }
 
-/* line 518, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 522, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-list-comments .icon-remove {
   background-position: -1332px -157px; }
 
-/* line 522, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 526, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-comment-approved .icon-circle-blank {
   width: 30px;
   height: 30px;
   display: block;
   background: transparent url(../img/uf-ui-sprite.svg) no-repeat -1430px -75px; }
 
-/* line 529, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 533, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-list-comments .upfront-list_item .upfront-comment_actions-wrapper a:hover i {
   color: #2ecc90; }
 
-/* line 535, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 539, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-comment_edit, .upfront-comment_reply, .upfront-comment_content-full-wrapper {
   display: none; }
 
-/* line 539, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 543, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-comment_reply textarea {
   margin-top: 10px; }
 
-/* line 543, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 547, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-list .upfront-list-items .expanded {
   width: 808px;
   margin-left: 36px;
@@ -7265,19 +7269,19 @@ a.editaction.trash {
   min-height: 96px;
   opacity: 1; }
 
-/* line 552, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 556, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 #upfront-list .upfront-list-items .expanded .upfront-comment_actions-wrapper {
   display: block; }
 
-/* line 556, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 560, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-list-comments .expanded .upfront-comment_excerpt {
   display: none; }
 
-/* line 560, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 564, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-list-comments .expanded .upfront-comment_content-full-wrapper {
   display: block; }
 
-/* line 564, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
+/* line 568, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/post-list */
 .upfront-list_item-comment textarea {
   width: 98%; }
 
