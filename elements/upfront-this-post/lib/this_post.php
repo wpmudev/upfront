@@ -98,32 +98,13 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 			case self::$PARTNAMES['DATE']:
 				$format = isset($options['format']) ? $options['format'] : 'd M Y';
-
-				/**
-				 * label each part
-				 */
-				$date = "";
-				if( !empty( $format ) ){
-					$split = str_split( $format );
-					$f = 0;
-					foreach( $split as $part ){
-						if( str_word_count($part) === 0 ){ // if this part is a free space
-							$date .= $part;
-						}else{
-							$date .= sprintf("<span class='date_part_%s'>%s</span>", $f , get_the_date( $part ) );
-							$f ++;
-						}
-					}
-				}
-
-
-				$replacements['%date%'] = $date;
+				$replacements['%date%'] = self::_format_post_date( $format );
 				$replacements['%date_iso%'] = get_the_date('c');
 				break;
 
             case self::$PARTNAMES['UPDATE']:
-                $format = isset($options['format']) ? $options['format'] : '';
-                $replacements['%update%'] = get_the_modified_date($format);
+                $format = isset($options['format']) ? $options['format'] : 'd M Y';
+                $replacements['%update%'] = self::_format_post_date( $format, "update" );
                 $replacements['%date_iso%'] = get_the_modified_date('c');
                 break;
 
@@ -162,10 +143,31 @@ class Upfront_ThisPostView extends Upfront_Object {
 		return $out;
 	}
 
-    protected static  function excerpt( $limit ) {
+	private static function _format_post_date( $format, $type = "date" ){
+		$func = $type === "update" ?  "get_the_modified_date" : "get_the_date";
+		/**
+		 * label each part
+		 */
+		$date = "";
+		if( !empty( $format ) ){
+			$split = str_split( $format );
+			$f = 0;
+			foreach( $split as $part ){
+				if( str_word_count($part) === 0 ){ // if this part is a free space
+					$date .= $part;
+				}else{
+					$date .= sprintf("<span class='%s_part_%s'>%s</span>", $type, $f , $func($part) );
+					$f ++;
+				}
+			}
+		}
+
+		return $date;
+	}
+	protected static  function excerpt( $limit ) {
         $excerpt = explode(' ', get_the_excerpt(), $limit);
         if (count($excerpt)>=$limit) {
-            array_pop($excerpt);
+	        array_pop($excerpt);
             $excerpt = implode(" ",$excerpt).'...';
         } else {
             $excerpt = implode(" ",$excerpt);
