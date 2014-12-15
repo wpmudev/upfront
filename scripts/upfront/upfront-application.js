@@ -683,6 +683,25 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 			})
 		;
 
+        var id = me.postView.editor.post.get('post_type'),
+            element = me.postView.property('type');
+
+        Upfront.Util.post({
+            action: 'upfront_save_postparttemplate',
+            part: postPart,
+            tpl: tpl,
+            type: element,
+            id: id
+        })
+            .done(function(response){
+                me.postView.partTemplates[postPart] = tpl;
+                me.postView.model.trigger('template:' + postPart);
+                me.templateEditor.close();
+                //saveDialog.close();
+                Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.application.saved_template.replace(/%s/, postPart));
+            })
+        ;
+        return;
 		saveDialog
 			.render()
 			.on('closed', function(){
