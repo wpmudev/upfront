@@ -4699,9 +4699,9 @@ var Field_ToggleableText = Field_Text.extend({
 			var panel = this.$el.find('.upfront-settings-common_panel');
 			panel.toggleClass('open');
 			if(panel.is('.open')) {
-				this.$el.find('.upfront-settings-common_panel .upfront-settings-item-title span').first().text(l10n.element_css_styles);
+				this.$el.find('.upfront-settings-common_panel .upfront-settings-item-title span').first().html(l10n.element_css_styles);
 			} else {
-				this.$el.find('.upfront-settings-common_panel .upfront-settings-item-title span').first().text(
+				this.$el.find('.upfront-settings-common_panel .upfront-settings-item-title span').first().html(
 					(false === me.hide_common_anchors ? l10n.css_and_anchor : l10n.css_styles)
 				);
 			}
