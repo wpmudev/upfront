@@ -72,10 +72,16 @@ class Upfront_ThisPostView extends Upfront_Object {
 			case self::$PARTNAMES['CONTENTS']:
                 $limit = isset($options['limit']) ? $options['limit'] : 1000;
 
-				ob_start();
-				the_content();
-				$replacements['%contents%'] = ob_get_clean();
-				$replacements['%excerpt%'] = self::excerpt( $limit );
+                if (!empty($post->ID) && is_numeric($post->ID)) {
+					ob_start();
+					the_content();
+					$replacements['%contents%'] = ob_get_clean();
+					$replacements['%excerpt%'] = self::excerpt( $limit );
+                } else {
+                	$post = apply_filters('upfront-this_post-unknown_post', $post, $options);
+					$replacements['%contents%'] = apply_filters('the_content', $post->post_content);
+					$replacements['%excerpt%'] = self::excerpt( $limit );
+                }
 
 				if(!empty($options['excerpt']))
 					$replacements['%contents%'] = $replacements['%excerpt%'];
