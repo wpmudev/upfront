@@ -499,7 +499,7 @@ RedactorPlugins.upfrontPlaceholder = function() {
                 this.$editor.off('focus.redactor_placeholder');
 
                 this.$placeholder = this.$editor.clone(false);
-                
+
                 this.$placeholder.attr('contenteditable', false).removeClass('ueditable redactor_editor').addClass('ueditor-placeholder').html( placeholder);//this.opts.linebreaks ? placeholder : placeholder );
                 this.$editor.after(this.$placeholder);
                 if ( this.$editor.css('position') == 'static' )
@@ -516,7 +516,7 @@ RedactorPlugins.upfrontPlaceholder = function() {
                 this.opts.placeholder = placeholder;
                 function placeholderUpdate() {
                     me.code.sync(); // sync first before get
-                    
+
                     var html = me.$editor.text().trim();//$source.val();//this.get();
 
                     if ( html == '' || html == '&nbsp;' )
@@ -525,7 +525,12 @@ RedactorPlugins.upfrontPlaceholder = function() {
                         me.$placeholder.hide();
                     }
                 }
-                this.$editor.on('keyup', $.proxy(placeholderUpdate, this));
+								var proxyPlaceholderUpdate = $.proxy(placeholderUpdate, this);
+                this.$editor.on('keyup', proxyPlaceholderUpdate);
+								this.events.on('cleanUpListeners', function() {
+									me.$editor.off('keyup', proxyPlaceholderUpdate);
+									me.events.off('cleanUpListeners');
+								});
                 placeholderUpdate();
         },
        /* placeholderUpdate: function () {
@@ -894,6 +899,10 @@ RedactorPlugins.upfrontColor = function() {
             },
             init: function(){
               this.listenTo( UeditorEvents, "ueditor:air:show", this.on_air_show );
+							var me = this;
+							this.listenTo( UeditorEvents, 'cleanUpListeners', function() {
+								me.stopListening();
+							});
             },
             on_air_show: function(e){
                 this.redactor.selection.save();

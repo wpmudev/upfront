@@ -23,22 +23,6 @@ var PostsModel = Upfront.Models.ObjectModel.extend({
 
 var PostsView = Upfront.Views.ObjectView.extend({
 
-	cssSelectors: {
-		'.uposts-object ul.uf-posts': {label: l10n.css.container_label, info: l10n.css.container_info},
-		'.uposts-object li.uf-post': {label: l10n.css.post_label, info: l10n.css.post_info},
-		'.uposts-object li.uf-post .uposts-part': {label: l10n.css.post_part_label, info: l10n.css.post_part_info},
-		'.uposts-object li.uf-post .date_posted': {label: l10n.css.date_label, info: l10n.css.date_info},
-		'.uposts-object li.uf-post .author': {label: l10n.css.author_label, info: l10n.css.author_info},
-		'.uposts-object li.uf-post .post_categories': {label: l10n.css.categories_label, info: l10n.css.categories_info},
-		'.uposts-object li.uf-post .comment_count': {label: l10n.css.comment_count_label, info: l10n.css.comment_count_info},
-		'.uposts-object li.uf-post .content': {label: l10n.css.content_label, info: l10n.css.content_info},
-		'.uposts-object li.uf-post .gravatar': {label: l10n.css.gravatar_label, info: l10n.css.gravatar_info},
-		'.uposts-object li.uf-post .read_more': {label: l10n.css.read_more_label, info: l10n.css.read_more_info},
-		'.uposts-object li.uf-post .post_tags': {label: l10n.css.post_tags_label, info: l10n.css.post_tags_info},
-		'.uposts-object li.uf-post .thumbnail': {label: l10n.css.thumbnail_label, info: l10n.css.thumbnail_info},
-		'.uposts-object li.uf-post .title': {label: l10n.css.title_label, info: l10n.css.title_info},
-	},
-	
 	init: function () {
 		this.listenTo(Upfront.Events, 'csseditor:open', this.on_csseditor_open);
 		this.listenTo(Upfront.Events, 'csseditor:closed', this.on_csseditor_closed);
@@ -52,8 +36,8 @@ var PostsView = Upfront.Views.ObjectView.extend({
 	render_type_view: function (type) {
 		type = type || Views.DEFAULT;
 		var me = this,
-			view = Views[type] 
-			? new Views[type]({model: this.model}) 
+			view = Views[type]
+			? new Views[type]({model: this.model})
 			: new Views[Views.DEFAULT]({model: this.model})
 		;
 		view.element = this;
@@ -65,19 +49,19 @@ var PostsView = Upfront.Views.ObjectView.extend({
 			});
 		}
 	},
-	
+
 	on_csseditor_open: function (id) {
 		if ( id != this.model.get_element_id() )
 			return;
 		this.listenTo(Upfront.Application.cssEditor, 'updateStyles', this.adjust_featured_images);
 	},
-	
+
 	on_csseditor_closed: function (id) {
 		if ( id != this.model.get_element_id() )
 			return;
 		this.stopListening(Upfront.Application.cssEditor, 'updateStyles');
 	},
-	
+
 	adjust_featured_images: function () {
 		console.log('adjust featured images...')
 		this.$el.find('.thumbnail').each(function(){
@@ -134,7 +118,22 @@ Upfront.Application.LayoutEditor.add_object("Uposts", {
 	"Model": PostsModel,
 	"View": PostsView,
 	"Element": PostsElement,
-	"Settings": PostsSettings
+	"Settings": PostsSettings,
+	cssSelectors: {
+		'.uposts-object ul': {label: l10n.css.container_label, info: l10n.css.container_info},
+		'.uposts-object li': {label: l10n.css.post_label, info: l10n.css.post_info},
+		'.uposts-object li .date_posted': {label: l10n.css.date_label, info: l10n.css.date_info},
+		'.uposts-object li .author': {label: l10n.css.author_label, info: l10n.css.author_info},
+		'.uposts-object li .post_categories': {label: l10n.css.categories_label, info: l10n.css.categories_info},
+		'.uposts-object li .comment_count': {label: l10n.css.comment_count_label, info: l10n.css.comment_count_info},
+		'.uposts-object li .content': {label: l10n.css.content_label, info: l10n.css.content_info},
+		'.uposts-object li .gravatar': {label: l10n.css.gravatar_label, info: l10n.css.gravatar_info},
+		'.uposts-object li .read_more': {label: l10n.css.read_more_label, info: l10n.css.read_more_info},
+		'.uposts-object li .post_tags': {label: l10n.css.post_tags_label, info: l10n.css.post_tags_info},
+		'.uposts-object li .thumbnail': {label: l10n.css.thumbnail_label, info: l10n.css.thumbnail_info},
+		'.uposts-object li .title': {label: l10n.css.title_label, info: l10n.css.title_info},
+	},
+	cssSelectorsId: Upfront.data.upfront_posts.type
 });
 Upfront.Models.PostsModel = PostsModel;
 Upfront.Views.PostsView = PostsView;

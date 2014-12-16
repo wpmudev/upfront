@@ -1,4 +1,5 @@
 (function($){
+	var throttle = function(a,b,c){var d,e,f,g=null,h=0;c||(c={});var i=function(){h=c.leading===!1?0:new Date().getTime(),g=null,f=a.apply(d,e),g||(d=e=null)};return function(){var j=new Date().getTime();h||c.leading!==!1||(h=j);var k=b-(j-h);return d=this,e=arguments,0>=k||k>b?(clearTimeout(g),g=null,h=j,f=a.apply(d,e),g||(d=e=null)):g||c.trailing===!1||(g=setTimeout(i,k)),f}};
 
 	function init_map ($el) {
 		if ( $el.data('map') )
@@ -43,11 +44,13 @@
 
 	$(document).on('upfront-google_maps-loaded', upfront_bg_map_init);
 
+	var lazyUpfrontBgMapInit = throttle(upfront_bg_map_init, 100);
+
 	if (!window.upfront_maps_loaded) {
 		window.upfront_maps_loaded = window.upfront_maps_loaded || function () {
 			$(document).trigger("upfront-google_maps-loaded");
 			$(document).data("upfront-google_maps-loading", false);
-			$(window).on('resize', upfront_bg_map_init);
+			$(window).on('resize', lazyUpfrontBgMapInit);
 		};
 		$(load_google_maps);
 	}

@@ -251,16 +251,6 @@
     var SocialMediaView = Upfront.Views.ObjectView.extend({
         settings: false,
         counts: false,
-        cssSelectors: {
-            '.upfront-object-content': {label: l10n.css.container_label, info: l10n.css.container_info},
-            '.upfront-social-icon ': {label: l10n.css.box_label, info: l10n.box_info},
-            '.upfront-linked-in-link-box': {label: l10n.css.linked_label, info: l10n.css.linked_info},
-            '.upfront-twitter-link-box, .ufront-twitter-count-box, .upfront-social-icon-twitter': {label: l10n.css.twitter_label, info: l10n.css.twitter_info},
-            '.upfront-google-link-box, .ufront-google-count-box, .upfront-social-icon-google': {label: l10n.css.google_label, info: l10n.css.google_info},
-            '.upfront-facebook-link-box, .ufront-facebook-count-box, .upfront-social-icon-facebook': {label: l10n.css.fb_label, info: l10n.css.fb_info},
-            '.upfront-pinterest-link-box': {label: l10n.css.pin_label, info: l10n.css.pin_info},
-            '.upfront-youtube-link-box': {label: l10n.css.yt_label, info: l10n.css.yt_info},
-        },
         initialize: function(){
             if(! (this.model instanceof SocialMediaModel)){
                 this.model = new SocialMediaModel({properties: this.model.get('properties')});
@@ -1040,7 +1030,18 @@
     //    "Model": SocialMediaModel,
     //    "View": SocialMediaView,
     //    "Element": SocialMediaElement,
-    //    "Settings": SocialSettings
+    //    "Settings": SocialSettings,
+	// cssSelectors: {
+			// '.upfront-object-content': {label: l10n.css.container_label, info: l10n.css.container_info},
+			// '.upfront-social-icon ': {label: l10n.css.box_label, info: l10n.box_info},
+			// '.upfront-linked-in-link-box': {label: l10n.css.linked_label, info: l10n.css.linked_info},
+			// '.upfront-twitter-link-box, .ufront-twitter-count-box, .upfront-social-icon-twitter': {label: l10n.css.twitter_label, info: l10n.css.twitter_info},
+			// '.upfront-google-link-box, .ufront-google-count-box, .upfront-social-icon-google': {label: l10n.css.google_label, info: l10n.css.google_info},
+			// '.upfront-facebook-link-box, .ufront-facebook-count-box, .upfront-social-icon-facebook': {label: l10n.css.fb_label, info: l10n.css.fb_info},
+			// '.upfront-pinterest-link-box': {label: l10n.css.pin_label, info: l10n.css.pin_info},
+			// '.upfront-youtube-link-box': {label: l10n.css.yt_label, info: l10n.css.yt_info},
+	// },
+		// cssSelectorsId: Upfront.data.usocial.defaults.type
 		///*,
     //    'anchor': {
     //      is_target: false

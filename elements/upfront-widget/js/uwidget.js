@@ -14,10 +14,6 @@ var UwidgetModel = Upfront.Models.ObjectModel.extend({
 var UwidgetView = Upfront.Views.ObjectView.extend({
 
 	loading: null,
-	cssSelectors: {
-		'.widget': {label: l10n.css.container_label, info: l10n.css.container_info},
-		'.widget a': {label: l10n.css.links_label, info: l10n.css.links_info}
-	},
 	content_loaded: false,
 	initialize: function(options){
 		if(! (this.model instanceof UwidgetModel)){
@@ -297,7 +293,12 @@ Upfront.Application.LayoutEditor.add_object("Uwidget", {
 	"Model": UwidgetModel,
 	"View": UwidgetView,
 	"Element": UwidgetElement,
-	"Settings": UwidgetSettings
+	"Settings": UwidgetSettings,
+	cssSelectors: {
+		'.widget': {label: l10n.css.container_label, info: l10n.css.container_info},
+		'.widget a': {label: l10n.css.links_label, info: l10n.css.links_info}
+	},
+	cssSelectorsId: Upfront.data.uwidget.defaults.type
 });
 Upfront.Models.UwidgetModel = UwidgetModel;
 Upfront.Views.UwidgetView = UwidgetView;

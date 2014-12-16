@@ -1,7 +1,7 @@
 (function($) {
 
 // Require the Upfront data, so the template resolution can work minified too
-define(['upfront-data'], function (upfront_data) { 
+define(['upfront-data'], function (upfront_data) {
 var template = upfront_data.data && upfront_data.data.ucontact && upfront_data.data.ucontact.template
 	? upfront_data.data.ucontact.template
 	: 'elements/upfront-contact-form/templates/ucontact.html'
@@ -33,14 +33,6 @@ var UcontactModel = Upfront.Models.ObjectModel.extend({
  */
 var UcontactView = Upfront.Views.ObjectView.extend({
 	tpl: Upfront.Util.template(tpl),
-
-	cssSelectors: {
-		'label': {label: l10n.css.labels_label, info: l10n.css.labels_info},
-		'.ucontact-input': {label: l10n.css.fields_label, info: l10n.css.fields_info},
-		'.textarea-field' : {label: l10n.css.msg_label, info: l10n.css.msg_info},
-		'.ucontact-field-error': {label: l10n.css.err_label, info: l10n.css.err_info},
-		'.submit-field': {label: l10n.css.send_label, info: l10n.css.send_info}
-	},
 
 	initialize: function(options){
 		if(! (this.model instanceof UcontactModel)){
@@ -389,7 +381,15 @@ Upfront.Application.LayoutEditor.add_object("Ucontact", {
 	"Model": UcontactModel,
 	"View": UcontactView,
 	"Element": UcontactElement,
-	"Settings": UcontactSettings
+	"Settings": UcontactSettings,
+	cssSelectors: {
+		'label': {label: l10n.css.labels_label, info: l10n.css.labels_info},
+		'.ucontact-input': {label: l10n.css.fields_label, info: l10n.css.fields_info},
+		'.textarea-field' : {label: l10n.css.msg_label, info: l10n.css.msg_info},
+		'.ucontact-field-error': {label: l10n.css.err_label, info: l10n.css.err_info},
+		'.submit-field': {label: l10n.css.send_label, info: l10n.css.send_info}
+	},
+	cssSelectorsId: Upfront.data.ucontact.defaults.type
 });
 
 Upfront.Models.UcontactModel = UcontactModel;

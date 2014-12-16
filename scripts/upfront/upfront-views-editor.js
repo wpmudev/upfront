@@ -4086,9 +4086,6 @@ var Field_ToggleableText = Field_Text.extend({
 				this.$el.on('mouseup', '.upfront-field-select', function(e){
 					e.stopPropagation();
 				});
-				$('body').on('mouseup', function(){
-					me.$el.find('.upfront-field-select').removeClass('upfront-field-select-expanded');
-				});
 			//}
 			this.$el.on('change', '.upfront-field-select-option input', function() {
 				me.update_select_display_value();
@@ -6453,13 +6450,7 @@ var CSSEditor = Backbone.View.extend({
 		;
 
 		_.each(objects, function(object){
-			var model = new object.Model(),
-				view = new object.View({model: model}),
-				id = model.get_property_value_by_name('type')
-			;
-
-			selectors[id] = view.cssSelectors || {};
-			view.remove();
+			selectors[object.cssSelectorsId] = object.cssSelectors || {};
 		});
 		me.elementSelectors = selectors;
 	},
@@ -10175,6 +10166,13 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		setCurrentClass: function(type) {
 			this.$el.attr('class', 'ulinkpanel ulinkpanel-' + this.theme + ' ulinkpanel-selected-' + type);
 		}
+	});
+
+	/**
+	 * Global event handlers
+	 */
+	$('body').on('mouseup', function() {
+		$('.upfront-field-select').removeClass('upfront-field-select-expanded');
 	});
 
 	return {

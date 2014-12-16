@@ -128,10 +128,6 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 	var UmapView = Upfront.Views.ObjectView.extend({
 		map: false,
 
-		cssSelectors: {
-			'.ufm-gmap-container': {label: l10n.css.label, info: l10n.css.info}
-		},
-		
 		init: function () {
 			this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.refresh_map);
 		},
@@ -201,7 +197,7 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 				$el.html("<p class='upfront-util-icon'>" + l10n.connectivity_warning + "</p>");
 			}
 		},
-		
+
 		refresh_map: function () {
 			var $el = this.$el.find('.ufm-gmap-container:first'),
 				height = (this.model.get_breakpoint_property_value("row", true) ? this.model.get_breakpoint_property_value("row", true) : this.parent_module_view.model.get_breakpoint_property_value("row", true));
@@ -713,7 +709,11 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 		"Model": MapModel,
 		"View": UmapView,
 		"Element": MapElement,
-		"Settings": MapSettings
+		"Settings": MapSettings,
+		cssSelectors: {
+			'.ufm-gmap-container': {label: l10n.css.label, info: l10n.css.info}
+		},
+		cssSelectorsId: Upfront.data.umaps.defaults.type
 	});
 	Upfront.Models.MapModel = MapModel;
 	Upfront.Views.UmapView = UmapView;

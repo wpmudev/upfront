@@ -1,4 +1,6 @@
 (function( $ ) {
+	var throttle = function(a,b,c){var d,e,f,g=null,h=0;c||(c={});var i=function(){h=c.leading===!1?0:new Date().getTime(),g=null,f=a.apply(d,e),g||(d=e=null)};return function(){var j=new Date().getTime();h||c.leading!==!1||(h=j);var k=b-(j-h);return d=this,e=arguments,0>=k||k>b?(clearTimeout(g),g=null,h=j,f=a.apply(d,e),g||(d=e=null)):g||c.trailing===!1||(g=setTimeout(i,k)),f}};
+
 	$.fn.upfront_default_slider = function (args) {
 		var isMethod = typeof args === 'string',
 			result
@@ -348,10 +350,11 @@
 		$(window).on('load', function(){
 			$('.upfront-inline_post-slider, .upfront-bg-slider').trigger('refresh');
 		});
-		$(window).on('resize', function(){
+		var lazyInitBgSlider = throttle(function(){
 			init_bg_slider();
 			$('.upfront-inline_post-slider, .upfront-bg-slider').trigger('refresh');
-		});
+		}, 100);
+		$(window).on('resize', lazyInitBgSlider);
 
 		// Integration with Upfront editor
 		$(document).on('upfront-load', function(){

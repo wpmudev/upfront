@@ -999,7 +999,9 @@ define([
 				if (this.window_resize_offset_check_set) {
 					return;
 				}
-				$(window).on('resize', $.proxy(me.checkUiOffset, me));
+				// This is not so important visually so throttle to 1 second
+				this.lazyCheckUiOffset = _.throttle(this.checkUiOffset, 1000);
+				$(window).on('resize', $.proxy(this.lazyCheckUiOffset, me));
 				this.window_resize_offset_check_set = true;
 			},
 			checkUiOffset: function() {
@@ -1124,7 +1126,7 @@ define([
 
 			remove: function(){
 				this.cleanup();
-				$(window).off('resize', this.checkUiOffset);
+				$(window).off('resize', this.lazyCheckUiOffset);
 				this.parent_view = false;
 				this.parent_module_view = false;
 				Backbone.View.prototype.remove.call(this);
@@ -2131,6 +2133,8 @@ define([
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 
 				this.listenTo(Upfront.Events, "entity:contextmenu:deactivate", this.remove_context_menu);
+
+				this.lazyFixHeight = _.debounce(this.fix_height, 1000);
 			},
 			render: function () {
 				var grid = Upfront.Settings.LayoutEditor.Grid,
@@ -2355,7 +2359,7 @@ define([
 				if ( e.target != window || !e.data.model)
 					return;
 				var me = e.data;
-				me.fix_height();
+				me.lazyFixHeight();
 			},
 			fix_height: function () {
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
@@ -3929,7 +3933,7 @@ define([
 				});
 			},
 			on_change_breakpoint: function (breakpoint) {
-				
+
 			},
 			remove: function(){
 				var me = this;
@@ -4231,4 +4235,3 @@ define([
 });
 
 })(jQuery);
-

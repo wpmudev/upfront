@@ -34,15 +34,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	lastThumbnailSize: false,
 	imageLabels: {},
 
-	cssSelectors: {
-		'.ugallery': {label: l10n.css.container_label, info: l10n.css.container_info},
-		'.ugallery_item': {label: l10n.css.elements_label, info: l10n.css.elements_info},
-		'img.ugallery-image': {label: l10n.css.images_label, info: l10n.css.images_info},
-		'.ugallery-thumb-title': {label: l10n.css.captions_label, info: l10n.css.captions_info},
-		'.ugallery_labels': {label: l10n.css.lblcnt_label, info: l10n.css.lblcnt_info},
-		'.ugallery_label_filter': {label: l10n.css.labels_label, info: l10n.css.labels_info}
-	},
-
 	reopenSettings: false,
 
 	initialize: function(options){
@@ -1265,7 +1256,16 @@ Upfront.Application.LayoutEditor.add_object('Ugallery', {
 	'Model': UgalleryModel,
 	'View': UgalleryView,
 	'Element': UgalleryElement,
-	'Settings': UgallerySettings
+	'Settings': UgallerySettings,
+	cssSelectors: {
+		'.ugallery': {label: l10n.css.container_label, info: l10n.css.container_info},
+		'.ugallery_item': {label: l10n.css.elements_label, info: l10n.css.elements_info},
+		'img.ugallery-image': {label: l10n.css.images_label, info: l10n.css.images_info},
+		'.ugallery-thumb-title': {label: l10n.css.captions_label, info: l10n.css.captions_info},
+		'.ugallery_labels': {label: l10n.css.lblcnt_label, info: l10n.css.lblcnt_info},
+		'.ugallery_label_filter': {label: l10n.css.labels_label, info: l10n.css.labels_info}
+	},
+	cssSelectorsId: Upfront.data.ugallery.defaults.type
 });
 
 Upfront.Models.UgalleryModel = UgalleryModel;

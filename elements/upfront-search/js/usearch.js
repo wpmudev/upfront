@@ -26,12 +26,6 @@ var UsearchModel = Upfront.Models.ObjectModel.extend({
 var UsearchView = Upfront.Views.ObjectView.extend({
 
 	tpl: Upfront.Util.template(tplSource),
-	cssSelectors: {
-		'.upfront-search': {label: l10n.css.container_label, info: l10n.css.container_info},
-		'input.search-field': {label: l10n.css.field_label, info: l10n.css.field_info},
-		'button.search-button': {label: l10n.css.button_label, info: l10n.css.button_info}
-	},
-
 	initialize: function(options){
 		if(! (this.model instanceof UsearchModel)){
 			this.model = new UsearchModel({properties: this.model.get('properties')});
@@ -263,7 +257,13 @@ Upfront.Application.LayoutEditor.add_object("Usearch", {
 	"Model": UsearchModel,
 	"View": UsearchView,
 	"Element": UsearchElement,
-	"Settings": UsearchSettings
+	"Settings": UsearchSettings,
+	cssSelectors: {
+		'.upfront-search': {label: l10n.css.container_label, info: l10n.css.container_info},
+		'input.search-field': {label: l10n.css.field_label, info: l10n.css.field_info},
+		'button.search-button': {label: l10n.css.button_label, info: l10n.css.button_info}
+	},
+	cssSelectorsId: Upfront.data.usearch.defaults.type
 });
 Upfront.Models.UsearchModel = UsearchModel;
 Upfront.Views.UsearchView = UsearchView;

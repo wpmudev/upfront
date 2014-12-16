@@ -17,10 +17,6 @@ var PlainTxtModel = Upfront.Models.ObjectModel.extend({
 
 var PlainTxtView = Upfront.Views.ObjectView.extend({
 	className: 'upfront-plain_txt',
-	cssSelectors: {
-		'.upfront-plain_txt': {label: l10n.css.container_label, info: l10n.css.container_info},
-		'.upfront-plain_txt p': {label: l10n.css.p_label, info: l10n.css.p_info},
-	},
 	initialize: function() {
 		this.constructor.__super__.initialize.apply(this, arguments);
 
@@ -69,7 +65,7 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 			.addClass('upfront-plain_txt')
 			.ueditor({
 				linebreaks: false,
-                //airButtons : ["upfrontFormatting"],
+				//airButtons : ["upfrontFormatting"],
 				inserts: {},
 				autostart: false
 			})
@@ -85,10 +81,11 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 				var ed = me.$el.find('.upfront-object-content').data("ueditor"),
 					text = ''
 				;
-				
+
 				try { text = ed.getValue(true); } catch (e) { text = ''; }
 				if (text) me.model.set_content(text, {silent: true}); // Something in inserts is destroying the sidebar
 				Upfront.Events.trigger('upfront:element:edit:stop');
+				ed.redactor.events.trigger('cleanUpListeners');
 				me.render();
 			})
 			.on('syncAfter', function(){
@@ -326,7 +323,12 @@ Upfront.Application.LayoutEditor.add_object("PlainTxt", {
 	"View": PlainTxtView,
 	"Element": PlainTxtElement,
 	"Settings": PlainTxtSettings,
-	"ContextMenu": PlainTxtMenu
+	"ContextMenu": PlainTxtMenu,
+	cssSelectors: {
+		'.upfront-plain_txt': {label: l10n.css.container_label, info: l10n.css.container_info},
+		'.upfront-plain_txt p': {label: l10n.css.p_label, info: l10n.css.p_info},
+	},
+	cssSelectorsId: 'PlainTxtModel'
 });
 Upfront.Models.PlainTxtModel = PlainTxtModel;
 Upfront.Views.PlainTxtView = PlainTxtView;

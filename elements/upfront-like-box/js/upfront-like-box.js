@@ -29,10 +29,6 @@
         model: LikeBoxModel,
         elementSize: {width: 0, height: 0},
 
-        cssSelectors: {
-        	'iframe': {label: l10n.container_label, info: l10n.container_info}
-        },
-
         initialize: function(options){
             if(! (this.model instanceof LikeBoxModel)){
                 this.model = new LikeBoxModel({properties: this.model.get('properties')});
@@ -291,10 +287,14 @@
 // Now, to tie it all up and expose to the Subapplication.
 
     Upfront.Application.LayoutEditor.add_object("LikeBox", {
-        "Model": LikeBoxModel,
-        "View": LikeBoxView,
-        "Element": LikeBoxElement,
-        "Settings": LikeBoxSettings
+			"Model": LikeBoxModel,
+			"View": LikeBoxView,
+			"Element": LikeBoxElement,
+			"Settings": LikeBoxSettings,
+			cssSelectors: {
+				'iframe': {label: l10n.container_label, info: l10n.container_info}
+			},
+			cssSelectorsId: Upfront.data.ulikebox.defaults.type
     });
 
     Upfront.Models.LikeBoxModel = LikeBoxModel;

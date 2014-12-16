@@ -35,16 +35,23 @@ define([
 				this.$el.append(panel);
 				panel.find('.uimage-control-panel-content').html('').append(this.view.$el);
 				this.panel = panel;
-				$(document).click(function(e){
-					var	target = $(e.target);
-
-					if(target.closest('#page').length && target[0] !== me.el && !target.closest(me.el).length && me.isopen) {
-						me.close();
-					}
-				});
+				$(document).on('click', me.onDocumentClick);
 			}
 
 			return this;
+		},
+
+		remove: function() {
+			console.log('removing document click');
+			$(document).off('click', this.onDocumentClick);
+		},
+
+		onDocumentClick: function(e) {
+			var	target = $(e.target);
+
+			if(target.closest('#page').length && target[0] !== this.el && !target.closest(this.el).length && this.isopen) {
+				this.close();
+			}
 		},
 
 		onClickControl: function(e){

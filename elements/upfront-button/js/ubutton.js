@@ -17,9 +17,6 @@ var ButtonModel = Upfront.Models.ObjectModel.extend({
 var singleclickcount = 0;
 var ButtonView = Upfront.Views.ObjectView.extend({
 	className: 'upfront-button',
-	cssSelectors: {
-		'.upfront-button': {label: l10n.css.container_label, info: l10n.css.container_info}
-	},
 	initialize: function() {
 		var me = this;
 		this.constructor.__super__.initialize.apply(this, arguments);
@@ -1496,7 +1493,11 @@ Upfront.Application.LayoutEditor.add_object("Button", {
 	"View": ButtonView,
 	"Element": ButtonElement,
 	"Settings": ButtonSettings,
-	"ContextMenu": ButtonMenu
+	"ContextMenu": ButtonMenu,
+	cssSelectors: {
+		'.upfront-button': {label: l10n.css.container_label, info: l10n.css.container_info}
+	},
+	cssSelectorsId: 'ButtonModel'
 });
 Upfront.Models.ButtonModel = ButtonModel;
 Upfront.Views.ButtonView = ButtonView;
