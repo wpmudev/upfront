@@ -377,11 +377,11 @@
 /* Toggleable text field */
 .uimage-small .uimage-resize-hint.sizehint-top,
 .uimage-small .uimage-resize-hint {
-	top: -25px;
+	top: 0;
 	font-size: 9px;
 	line-height: 10px;
 	width: 55px;
-	left: 0;
+	left: -55px;
 }
 .uimage-small .stuck-to-top .uimage-resize-hint.sizehint-top,
 .uimage-small .stuck-to-top .uimage-resize-hint {

@@ -411,7 +411,7 @@ define([
 			if (resizingData.data && resizingData.data.elementSize) {
 				elementSize = resizingData.data.elementSize;
 			}
-			return elementSize.width < 100 || elementSize.height < 100;
+			return elementSize.width < 100 || elementSize.height < 50;
 		},
 
 		disableCaption: function() {
