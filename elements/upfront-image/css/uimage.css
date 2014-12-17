@@ -958,7 +958,7 @@ div.uimage-controls i.upfront-icon:before {
 	padding:2px 5px;
 	font:normal 11px/13px Verdana, sans-serif;
 	color: #DCEBF8;
-    height: 16px !important;
+  min-height: 16px;
 }
 
 .upfront-ui.uimage-resize-hint b {
