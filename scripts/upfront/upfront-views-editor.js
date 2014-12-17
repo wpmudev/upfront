@@ -5865,6 +5865,7 @@ var CSSEditor = Backbone.View.extend({
 
 		// Don't render the editor, only makes the API available
 		this.no_render = ( options.no_render === true );
+		this.no_stylename_fallback = ( options.no_stylename_fallback === true );
 
 		this.model = options.model;
 		this.sidebar = ( options.sidebar !== false );
@@ -5928,11 +5929,23 @@ var CSSEditor = Backbone.View.extend({
 
 		// Check for regions
 		if (this.is_region_style()) {
-			var layout_id = _upfront_post_data.layout.specificity || _upfront_post_data.layout.item || _upfront_post_data.layout.type;
-			// @TODO support for old stylename, but will be deprecated soon to use one with layout_id instead
-			this.stylename = this.elementType.id + '-' + this.model.get('name') + '-style'; // old one, use if exists
-			if (_.isArray(Upfront.data.styles[this.elementType.id]) && Upfront.data.styles[this.elementType.id].indexOf(this.stylename) == -1)
-				this.stylename = layout_id + '-' + this.model.get('name') + '-style'; // new one
+			var layout_id = _upfront_post_data.layout.specificity || _upfront_post_data.layout.item || _upfront_post_data.layout.type,
+				is_global = ( this.model.get('scope') == 'global' ),
+				default_stylename = this.elementType.id + '-' + this.model.get('name') + '-style',
+				layout_stylename = layout_id + '-' + this.model.get('name') + '-style';
+			if (is_global){
+				this.stylename = default_stylename;
+			}
+			else {
+				this.stylename = layout_stylename;
+				if (
+					_.isArray(Upfront.data.styles[this.elementType.id]) 
+					&& Upfront.data.styles[this.elementType.id].indexOf(default_stylename) !== -1 
+					&& Upfront.data.styles[this.elementType.id].indexOf(layout_stylename) === -1 
+					&& !this.no_stylename_fallback
+				)
+					this.stylename = default_stylename;
+			}
 		}
 
 
@@ -7482,7 +7495,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 							prev_name = this.model.get('name'),
 							title = $.trim(this.get_value().replace(/[^A-Za-z0-9\s_-]/g, '')), // strict filtering to prevent unwanted character
 							name = title.toLowerCase().replace(/\s/g, '-'),
-							new_title, sub_regions, styles, prev_selector, selector;
+							new_title, sub_regions, region_css;
 						if ( prev_title != title ) {
 							// Check if the region name exists
 							if ( collection.get_by_name(name) ) {
@@ -7492,14 +7505,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 							}
 
 							// Let's keep old CSS content
-							Upfront.Application.cssEditor.init({
-								model: this.model,
-								type: this.model.is_main() ? "RegionContainer" : "Region",
-								element_id: this.model.is_main() ? "region-container-" + prev_name : "region-" + prev_name,
-								no_render: true
-							});
-							styles = $.trim(Upfront.Application.cssEditor.get_style_element().html());
-							prev_selector = Upfront.Application.cssEditor.get_css_selector();
+							region_css = me.get_region_css_styles(this.model);
 
 							// Also update the container attribute on sub regions
 							if ( this.model.is_main() ) {
@@ -7516,20 +7522,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 								this.model.set({title: title, name: name}, {silent: true});
 							}
 							$region_name.find('.upfront-region-name-edit-value').text(title);
-
-							// Save the region CSS to the new name, if styles is not empty
-							if ( styles ) {
-								Upfront.Application.cssEditor.init({
-									model: this.model,
-									type: this.model.is_main() ? "RegionContainer" : "Region",
-									element_id: this.model.is_main() ? "region-container-" + name : "region-" + name,
-									no_render: true
-								});
-								selector = Upfront.Application.cssEditor.get_css_selector();
-								styles = styles.replace(new RegExp(prev_selector.replace(/^\./, '\.'), 'g'), selector);
-								Upfront.Application.cssEditor.get_style_element().html(styles);
-								Upfront.Application.cssEditor.saveCall(false);
-							}
+							
+							// Save to the new CSS
+							me.set_region_css_styles(this.model, region_css.styles, region_css.selector);
 
 							this.model.get('properties').trigger('change');
 						}
@@ -7604,7 +7599,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 								name = ( is_top ? 'header' : ( is_bottom ? 'footer' : '' ) );
 								if ( title && name ){
 									related_region = this.model.collection.get_by_name(name);
-									if ( related_region ){ // make sure to rename other region with the same name and change the scope to local
+									if ( related_region && related_region != this.model ){ // make sure to rename other region with the same name and change the scope to local
 										new_title = this.model.collection.get_new_title("Region ", total_container);
 										me.apply_region_scope(related_region, 'local', new_title.name, new_title.title);
 									}
@@ -7914,10 +7909,12 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			Upfront.Views.Editor.notify(l10n.bg_updated);
 		},
 		apply_region_scope: function (model, scope, name, title) {
-			var sub_regions = model.get_sub_regions(),
+			var me = this,
+				sub_regions = model.get_sub_regions(),
 				prev_title = model.get('title'),
 				prev_name = model.get('name'),
 				set_sub = function (region) {
+					var css = me.get_region_css_styles(region);
 					region.set({scope: scope}, {silent: true});
 					if ( name && prev_name != name ){
 						var title_rx = new RegExp('^' + prev_title, 'i'),
@@ -7930,14 +7927,17 @@ var Field_Compact_Label_Select = Field_Select.extend({
 							name: sub_name
 						}, {silent: true});
 					}
+					me.set_region_css_styles(region, css.styles, css.selector);
 					region.get('properties').trigger('change');
-				};
+				},
+				region_css;
 			_.each(sub_regions, function(sub){
 				if ( _.isArray(sub) )
 					_.each(sub, function(each){ set_sub(each); })
 				else if ( sub )
 					set_sub(sub);
 			});
+			region_css = me.get_region_css_styles(model);
 			model.set({ scope: scope }, {silent: true});
 			if ( name && prev_name != name ){
 				model.set({
@@ -7946,7 +7946,36 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					container: name
 				}, {silent: true});
 			}
+			me.set_region_css_styles(model, region_css.styles, region_css.selector);
 			model.get('properties').trigger('change');
+		},
+		get_region_css_styles: function (model) {
+			Upfront.Application.cssEditor.init({
+				model: model,
+				type: model.is_main() ? "RegionContainer" : "Region",
+				element_id: model.is_main() ? "region-container-" + model.get('name') : "region-" + model.get('name'),
+				no_render: true
+			});
+			return {
+				styles: $.trim(Upfront.Application.cssEditor.get_style_element().html()),
+				selector: Upfront.Application.cssEditor.get_css_selector()
+			};
+		},
+		set_region_css_styles: function (model, styles, prev_selector) {
+			if ( styles ) {
+				Upfront.Application.cssEditor.init({
+					model: model,
+					type: model.is_main() ? "RegionContainer" : "Region",
+					element_id: model.is_main() ? "region-container-" + model.get('name') : "region-" + model.get('name'),
+					no_stylename_fallback: true,
+					no_render: true
+				});
+				selector = Upfront.Application.cssEditor.get_css_selector();
+				if ( prev_selector != selector )
+					styles = styles.replace(new RegExp(prev_selector.replace(/^\./, '\.'), 'g'), selector);
+				Upfront.Application.cssEditor.get_style_element().html(styles);
+				Upfront.Application.cssEditor.saveCall(false);
+			}
 		},
 		render_fixed_settings: function ($content) {
 			var me = this,
