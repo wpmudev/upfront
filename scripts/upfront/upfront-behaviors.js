@@ -1137,7 +1137,8 @@ var LayoutEditor = {
 			cssEditor = Upfront.Application.cssEditor,
             ed = Upfront.Behaviors.LayoutEditor,
 			elementTypes = [cssEditor.elementTypes.RegionContainer, cssEditor.elementTypes.Region],
-			layout_id = _upfront_post_data.layout.specificity || _upfront_post_data.layout.item || _upfront_post_data.layout.type,
+			layout = _upfront_post_data.layout,
+			layout_id = layout.specificity || layout.item || layout.type,
 			regions = Upfront.Application.layout.get('regions'),
 			styleExists = [],
 			deleteDatas = [],
@@ -1186,10 +1187,11 @@ var LayoutEditor = {
 		
 		regions.each(function(region){
 			var elementType = region.is_main() ? cssEditor.elementTypes.RegionContainer.id : cssEditor.elementTypes.Region.id,
-				styleName = layout_id + '-' + region.get('name') + '-style';
+				styleName = layout_id + '-' + region.get('name') + '-style',
+				isGlobal = ( region.get('scope') == 'global' );
 			if ( _.isArray(Upfront.data.styles[elementType]) && Upfront.data.styles[elementType].indexOf(styleName) != -1 )
 				styleExists.push(styleName);
-			// @TODO keep support for old name, but will deprecate soon
+			// global stylename
 			styleName = elementType + '-' + region.get('name') + '-style';
 			if ( _.isArray(Upfront.data.styles[elementType]) && Upfront.data.styles[elementType].indexOf(styleName) != -1 )
 				styleExists.push(styleName);
@@ -1202,7 +1204,8 @@ var LayoutEditor = {
 					_.each(saved, function(obj, id){
 						if ( id == layout_id )
 							return;
-						if ( styleName.match(new RegExp('^' + id)) )
+						var is_parent_layout = ( layout_id.match(new RegExp('^' + id + '-')) );
+						if ( styleName.match(new RegExp('^' + id)) && ( !is_parent_layout || ( is_parent_layout && !styleName.match(new RegExp('^' + layout_id)) ) ) )
 							onOtherLayout = true;
 					});
 					if ( ! _.contains(styleExists, styleName) && styleName.match(new RegExp('^' + layout_id)) && !onOtherLayout )
