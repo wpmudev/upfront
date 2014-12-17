@@ -126,6 +126,8 @@
 	height: 19px !important;
 	border-radius: 0;
 	-webkit-border-radius: 0px;
+    border: 1px solid #2E4760;
+    box-shadow: inset -1px -1px 0 #FFF,inset 1px 1px 0 #FFF;
 }
 #sidebar-ui .colors-panel-section .sp-replacer {
     padding: 2px;
