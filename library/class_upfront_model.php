@@ -987,8 +987,9 @@ class Upfront_LayoutRevisions {
 		$args = wp_parse_args($args, array(
 			'posts_per_page' => 10,
 			'post_type' => self::REVISION_TYPE,
+			'post_status' => self::REVISION_STATUS,
 		));
-		$args["post_title"] = self::to_string($cascade);
+		$args["post_title"] = self::to_string($entity_cascade);
 		$query = new WP_Query($args);
 		return $query->posts;
 	}
