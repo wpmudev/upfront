@@ -199,6 +199,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 			),
 			'views' => array(
 				'unsaved_changes_nag' => __('You have unsaved changes you\'re about to lose by navigating off this page.', 'upfront'),
+				'already_edited_nag' => __('Someone is already working on this: %s', 'upfront'),
 				'save' => __('Save', 'upfront'),
 				'undo' => __('Undo', 'upfront'),
 				'hide_grid' => __('Hide Grid', 'upfront'),
