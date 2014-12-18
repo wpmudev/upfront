@@ -168,11 +168,30 @@ class Upfront_Server_LayoutRevisions extends Upfront_Server {
 		$layout = Upfront_Layout::from_json($data);
 		$layout_id_key = $this->_data->save_revision($layout);
 
+		// Check concurrent edits from other users
+		$current_user_id = get_current_user_id();
+		$current_others_revisions = $this->_data->get_entity_revisions($layout->get_cascade(), array(
+			'date_query' => array(array(
+				'after' => "-15 minutes", // 15 minutes cutoff time
+			)),
+			'author__not_in' => array($current_user_id), // not current guy
+		));
+		$concurrent_users = array();
+		if (!empty($current_others_revisions)) foreach ($current_others_revisions as $rvsn) {
+			if (empty($rvsn->post_author)) continue;
+			
+			$user = get_user_by('id', $rvsn->post_author);
+			if (empty($user) || empty($user->ID)) continue;
+
+			$concurrent_users[$user->ID] = $user->display_name;
+		}
+
 		$preview_url = add_query_arg(array(
 			self::HOOK => $layout_id_key,
 		), $current_url);
 		$this->_out(new Upfront_JsonResponse_Success(array(
 			'html' => $preview_url,
+			'concurrent_users' => $concurrent_users,
 		)));
 	}
 
