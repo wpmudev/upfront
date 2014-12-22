@@ -1223,11 +1223,8 @@ define(function() {
 				ActiveFilters.themeImages = true;
 				this.library_view.multiple_selection = false;
 			}
-
-			Upfront.Events.on("media_manager:media:list", this.switch_media_type, this);
 		},
 		remove: function() {
-			console.log('removing library view');
 			this.library_view.remove();
 			this.library_view = new MediaManager_PostImage_View(this.collection);
 			Upfront.Events.off("media_manager:media:list", this.switch_media_type, this);
@@ -1236,6 +1233,10 @@ define(function() {
 			this.switcher_view.render();
 			this.command_view.render();
 			this.render_library();
+			Upfront.Events
+				.off("media_manager:media:list", this.switch_media_type)
+				.on("media_manager:media:list", this.switch_media_type, this)
+			;
 		},
 		render_library: function () {
 			this.load();
