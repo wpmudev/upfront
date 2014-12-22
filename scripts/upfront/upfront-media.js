@@ -1271,7 +1271,7 @@ define(function() {
 			var me = this,
 				uploaded = 0, progressing = 0, done =0,
 				new_media = [],
-				uploadUrl = ActiveFilters.themeImages ? _upfront_media_upload + '-theme-image' : _upfront_media_upload
+				uploadUrl = ActiveFilters.themeImages ? _upfront_media_upload.theme : _upfront_media_upload.normal
 			;
 
             this.$("#fileupload").remove();
@@ -1600,10 +1600,10 @@ define(function() {
 		embed_updated: function () {
 			this.preview_pane.render_progress();
 			var me = this;
-			Upfront.Util.post({
+			Upfront.Util.post(_.extend({
 				action: "upfront-media-embed",
 				media: this.model.get("original_url")
-			}).done(function (response) {
+			}, _upfront_media_upload.embed_ref)).done(function (response) {
 				me.model.set(response.data, {silent:true});
 				me.preview_pane.trigger("embed:media:imported");
 				me.embed_pane.clear_updating_flag();

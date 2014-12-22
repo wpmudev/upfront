@@ -288,7 +288,8 @@ class Upfront_MediaServer extends Upfront_Server {
 	}
 
 	public function embed_media () {
-		if (!Upfront_Permissions::current(Upfront_Permissions::EMBED)) $this->_out(new Upfront_JsonResponse_Error("Nope, bye"));
+		//if (!Upfront_Permissions::current(Upfront_Permissions::EMBED)) $this->_out(new Upfront_JsonResponse_Error("Nope, bye"));
+		if (!$this->_check_valid_request_level(Upfront_Permissions::EMBED)) $this->_out(new Upfront_JsonResponse_Error("Nope, bye"));
 		$data = stripslashes_deep($_POST);
 		$media = !empty($data['media']) ? $data['media'] : false;
 		if (!$media) $this->_out(new Upfront_JsonResponse_Error("Invalid media"));
@@ -386,7 +387,7 @@ class Upfront_MediaServer extends Upfront_Server {
 	}
 
 	public function upload_theme_image () {
-		if (!Upfront_Permissions::current(Upfront_Permissions::UPLOAD)) $this->_out(new Upfront_JsonResponse_Error("Nope, bye"));
+		if (!$this->_check_valid_request_level(Upfront_Permissions::UPLOAD)) $this->_out(new Upfront_JsonResponse_Error("Nope, bye"));
 		if(!isset($_FILES['media']))
 			$this->_out(new Upfront_JsonResponse_Error("No file to upload"));
 
@@ -462,7 +463,7 @@ class Upfront_MediaServer extends Upfront_Server {
 	}
 
 	public function upload_media () {
-		if (!Upfront_Permissions::current(Upfront_Permissions::UPLOAD)) $this->_out(new Upfront_JsonResponse_Error("Nope, bye"));
+		if (!$this->_check_valid_request_level(Upfront_Permissions::UPLOAD)) $this->_out(new Upfront_JsonResponse_Error("Nope, bye"));
 		$upload = new Upfront_UploadHandler;
 		$result = $upload->handle();
 		if (empty($result['media'])) $this->_out(new Upfront_JsonResponse_Error("Error uploading the media item"));
@@ -493,6 +494,14 @@ class Upfront_MediaServer extends Upfront_Server {
 		}
 		$this->_out(new Upfront_JsonResponse_Success($new_ids));
 	}
+
+	private function _check_valid_request_level ($level) {
+		if (!Upfront_Permissions::current($level)) return false;
+
+		$ref = !empty($_REQUEST[Upfront_UploadHandler::REF]) ? $_REQUEST[Upfront_UploadHandler::REF] : false;
+
+		return Upfront_Permissions::is_nonce($level, $ref);
+	}
 }
 //Upfront_MediaServer::serve();
 add_action('init', array('Upfront_MediaServer', 'serve'));
@@ -502,7 +511,11 @@ function upfront_media_file_upload () {
 	$base_url = Upfront::get_root_url();
 	wp_enqueue_script('fileupload', "{$base_url}/scripts/file_upload/jquery.fileupload.js", array('jquery'));
 	wp_enqueue_script('fileupload-iframe', "{$base_url}/scripts/file_upload/jquery.iframe-transport.js", array('fileupload'));
-	echo '<script>var _upfront_media_upload="' . admin_url('admin-ajax.php?action=upfront-media-upload') . '";</script>';
+	echo '<script>var _upfront_media_upload=' . json_encode(array(
+		'normal' => Upfront_UploadHandler::get_action_url('upfront-media-upload'),
+		'theme' => Upfront_UploadHandler::get_action_url('upfront-media-upload-theme-image'),
+		'embed_ref' => Upfront_UploadHandler::get_ref(Upfront_Permissions::EMBED),
+	)) . ';</script>';
 }
 add_action('wp_head', 'upfront_media_file_upload', 99);
 
