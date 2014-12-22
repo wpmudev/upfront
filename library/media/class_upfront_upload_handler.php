@@ -1,5 +1,7 @@
 <?php
 
+if (!class_exists('UploadHandler')) require_once('class_upload_handler.php');
+
 class Upfront_UploadHandler extends UploadHandler {
 
 	public function __construct () {

@@ -19,5 +19,4 @@ require_once('media/class_upfront_oembed.php');
 require_once('media/class_upfront_media_collection.php');
 require_once('media/class_upfront_media_item.php');
 require_once('media/class_upfront_media_server.php');
-require_once('media/class_upload_handler.php');
 require_once('media/class_upfront_upload_handler.php');
