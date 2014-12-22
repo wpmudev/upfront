@@ -1333,7 +1333,7 @@ define(function() {
 					});
 				},
 				fail: function (e, data) {
-					Upfront.Views.Editor.notify(data.jqXHR.responseJSON.error, 'error');
+					if (data.jqXHR.responseJSON && data.jqXHR.responseJSON.error) Upfront.Views.Editor.notify(data.jqXHR.responseJSON.error, 'error');
 					Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
 				}
 			}).trigger("click");
