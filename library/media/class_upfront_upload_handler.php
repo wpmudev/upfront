@@ -4,10 +4,12 @@ if (!class_exists('UploadHandler')) require_once('class_upload_handler.php');
 
 class Upfront_UploadHandler extends UploadHandler {
 
+	const REF = '_ref';
+
 	public function __construct () {
 		$uploads = wp_upload_dir();
 		parent::__construct(array(
-			'script_url' => admin_url('admin-ajax.php?action=upfront-media-upload'),
+			'script_url' => self::get_action_url('upfront-media-upload'),
 			'upload_dir' => trailingslashit($uploads['path']),
 			'upload_url' => trailingslashit($uploads['url']),
 			'param_name' => 'media',
@@ -40,5 +42,21 @@ class Upfront_UploadHandler extends UploadHandler {
 
 	protected function generate_response ($content, $out=false) {
 		return $content;
+	}
+
+	public static function get_action_url ($action) {
+		return add_query_arg(
+			array(
+				'action' => $action,
+				self::REF => Upfront_Permissions::nonce(Upfront_Permissions::UPLOAD),
+			), 
+			admin_url('admin-ajax.php')
+		);
+	}
+
+	public static function get_ref ($level) {
+		return array(
+			self::REF => Upfront_Permissions::nonce($level),
+		);
 	}
 }

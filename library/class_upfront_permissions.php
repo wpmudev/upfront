@@ -28,6 +28,37 @@ class Upfront_Permissions {
 		return self::$_me->_current_user_can($level);
 	}
 
+	public static function nonces () {
+		static $nonces = array();
+		if (!empty($nonces)) return $nonces;
+
+		$keys = self::_get_nonce_keys();
+		foreach ($keys as $key) {
+			$nonces[$key] = wp_create_nonce(self::_to_nonce_key($key));
+		}
+		return $nonces;
+	}
+
+	public static function nonce ($level) {
+		$nonces = self::nonces();
+		if (!self::current($level) && !empty($nonces[self::ANONYMOUS])) return $nonces[self::ANONYMOUS];
+		
+		if (!empty($nonces[$level])) return $nonces[$level];
+		
+		return !empty($nonces[self::ANONYMOUS])
+			? $nonces[self::ANONYMOUS]
+			: false
+		;
+	}
+
+	public static function is_nonce ($level, $value) {
+		$keys = self::_get_nonce_keys();
+		if (!in_array($level, $keys)) return false;
+
+		$result = wp_verify_nonce($value, self::_to_nonce_key($level));
+		return (bool)$result;
+	}
+
 
 	private function __construct () {
 		$this->_levels_map = apply_filters('upfront-access-permissions_map', array(
@@ -68,5 +99,22 @@ class Upfront_Permissions {
 			? current_user_can($level, $arg)
 			: current_user_can($level)
 		;
+	}
+
+	private static function _get_nonce_keys () {
+		return array(
+			self::BOOT,
+			self::EDIT,
+			self::EMBED,
+			self::UPLOAD,
+			self::RESIZE,
+			self::SAVE,
+
+			self::ANONYMOUS,
+		);
+	}
+
+	private static function _to_nonce_key ($key) {
+		return "upfront-{$key}";
 	}
 }
