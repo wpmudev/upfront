@@ -1223,11 +1223,8 @@ define(function() {
 				ActiveFilters.themeImages = true;
 				this.library_view.multiple_selection = false;
 			}
-
-			Upfront.Events.on("media_manager:media:list", this.switch_media_type, this);
 		},
 		remove: function() {
-			console.log('removing library view');
 			this.library_view.remove();
 			this.library_view = new MediaManager_PostImage_View(this.collection);
 			Upfront.Events.off("media_manager:media:list", this.switch_media_type, this);
@@ -1236,6 +1233,10 @@ define(function() {
 			this.switcher_view.render();
 			this.command_view.render();
 			this.render_library();
+			Upfront.Events
+				.off("media_manager:media:list", this.switch_media_type)
+				.on("media_manager:media:list", this.switch_media_type, this)
+			;
 		},
 		render_library: function () {
 			this.load();
@@ -1270,7 +1271,7 @@ define(function() {
 			var me = this,
 				uploaded = 0, progressing = 0, done =0,
 				new_media = [],
-				uploadUrl = ActiveFilters.themeImages ? _upfront_media_upload + '-theme-image' : _upfront_media_upload
+				uploadUrl = ActiveFilters.themeImages ? _upfront_media_upload.theme : _upfront_media_upload.normal
 			;
 
             this.$("#fileupload").remove();
@@ -1333,7 +1334,7 @@ define(function() {
 					});
 				},
 				fail: function (e, data) {
-					Upfront.Views.Editor.notify(data.jqXHR.responseJSON.error, 'error');
+					if (data.jqXHR.responseJSON && data.jqXHR.responseJSON.error) Upfront.Views.Editor.notify(data.jqXHR.responseJSON.error, 'error');
 					Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
 				}
 			}).trigger("click");
@@ -1599,10 +1600,10 @@ define(function() {
 		embed_updated: function () {
 			this.preview_pane.render_progress();
 			var me = this;
-			Upfront.Util.post({
+			Upfront.Util.post(_.extend({
 				action: "upfront-media-embed",
 				media: this.model.get("original_url")
-			}).done(function (response) {
+			}, _upfront_media_upload.embed_ref)).done(function (response) {
 				me.model.set(response.data, {silent:true});
 				me.preview_pane.trigger("embed:media:imported");
 				me.embed_pane.clear_updating_flag();
