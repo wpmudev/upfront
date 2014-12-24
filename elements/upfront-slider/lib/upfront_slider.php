@@ -190,7 +190,7 @@ class Upfront_UsliderView extends Upfront_Object {
 			'slides' => __('Slides', 'upfront'),
 			'add_slide' => __('Add Slide', 'upfront'),
 			'choose_type' => __('Please choose the type of slider', 'upfront'),
-			'can_change' => __('This can later be cahanged via the settings panel', 'upfront'),
+			'can_change' => __('This can later be changed via the settings panel', 'upfront'),
 			'img_only' => __('img only', 'upfront'),
 			'txt_over_img' => __('txt over img', 'upfront'),
 			'txt_below_img' => __('txt below img', 'upfront'),
