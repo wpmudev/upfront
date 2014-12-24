@@ -1,5 +1,11 @@
 @import url('http://fonts.googleapis.com/css?family=Source+Sans+Pro:200');
 
+
+
+div.contact_label_position > span {
+	margin-right: 6px !important;
+}
+
 /* Border-box layout for everything inside the contact form */
 .upfront-contact-form * { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
 .upfront-contact-form label {
@@ -9,13 +15,21 @@
 .upfront-field-container, .ucontact-message-container {
 	margin-bottom: 0.5em;
 }
-
+.upfront-field-container > label {
+	cursor: pointer;
+}
 .ucontact-label-above label {
 	display:block;
 }
 
+.ucontact-label-over {
+	position: relative;
+}
 .ucontact-label-over label {
-	display:none;
+	position: absolute;
+	left: 4px;
+	top: 1px;
+	color: #ccc;
 }
 
 .ucontact-label-above input,

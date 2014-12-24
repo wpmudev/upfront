@@ -41,6 +41,89 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 
 		this.constructor.__super__.initialize.call(this, [options]);
 		Upfront.Events.on('command:layout:save_success', this.checkDeleteElement, this);
+
+		this.events = _.extend({}, this.events, {
+			'click button.submit-field' : 'handleButtonclick',
+			'dblclick button.submit-field' : 'editButtontext'
+		});
+		
+	},
+	on_render: function() {
+		console.log('on rendered');
+		var me = this;
+		$button = this.$el.find('button.submit-field > span');
+
+		$button.ueditor({
+			linebreaks: true,
+			disableLineBreak: true,
+			//focus: true,
+
+			airButtons: ['upfrontLink', 'stateAlignCTA', 'upfrontIcons'],
+			autostart: false
+		})
+		.on('stop', function() {
+
+			var ed = $button.data("ueditor"),
+					text = ''
+				;
+
+			try { text = ed.getValue(true); } catch (e) { text = ''; }
+
+			if (text) me.model.set_property('form_button_text', text, true); 
+		})
+		;
+
+		$labels = this.$el.find('.upfront-field-container > label');
+
+		$labels.each(function() {
+			$label = $(this);
+			$label.ueditor({
+				linebreaks: true,
+				disableLineBreak: true,
+				//focus: true,
+
+				airButtons: ['upfrontIcons'],
+				autostart: false
+			})
+			.on('stop', function(e) {
+				$label = $(this);
+				var ed = $label.data("ueditor"),
+						text = ''
+					;
+
+				try { text = ed.getValue(true); } catch (e) { text = ''; }
+
+				var targetproperty = false;
+
+				if($label.attr('for') == 'sendername')
+					targetproperty = 'form_name_label';
+				else if($label.attr('for') == 'senderemail')
+					targetproperty = 'form_email_label';
+				else if($label.attr('for') == 'sendermessage')
+					targetproperty = 'form_message_label';
+				else if($label.attr('for') == 'subject')
+					targetproperty = 'form_subject_label';
+				
+				if (text && targetproperty) me.model.set_property(targetproperty, text, true); 
+			})
+			;
+		});
+
+
+	},
+	handleButtonclick: function(e) {
+		e.preventDefault();
+	},
+	editButtontext: function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		
+		$button = this.$el.find('button.submit-field > span');
+		var ueditor = $button.data('ueditor');
+
+		ueditor.start();
+
+
 	},
 	checkDeleteElement: function() {
 	},
@@ -50,12 +133,12 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 			field_classes: this.getFieldStyleClass(),
 			validate: '',
 			entity_id: '',
-			placeholders: {
-				name: this.getPlaceholder('form_name_label'),
+			placeholders: { },
+			/*	name: this.getPlaceholder('form_name_label'),
 				email: this.getPlaceholder('form_email_label'),
 				subject: this.getPlaceholder('form_subject_label'),
 				message: this.getPlaceholder('form_message_label')
-			},
+			},*/
 			values: {}
 		});
 
@@ -185,6 +268,7 @@ var UcontactSettings = Upfront.Views.Editor.Settings.Settings.extend({
 	 * panels array with the panel instances we'll be showing (Form data and appearance).
 	 */
 	initialize: function(opts) {
+		this.has_tabs = false;
 		this.options = opts;
 		var Panel = Upfront.Views.Editor.Settings.Panel,
 			SettingsItem =  Upfront.Views.Editor.Settings.Item,
@@ -192,8 +276,8 @@ var UcontactSettings = Upfront.Views.Editor.Settings.Settings.extend({
 		;
 		this.panels = _([
 			this.get_general_panel(Panel, SettingsItem, Fields),
-			this.get_fields_panel(Panel, SettingsItem, Fields),
-			this.get_appearance_panel(Panel, SettingsItem, Fields)
+			//this.get_fields_panel(Panel, SettingsItem, Fields),
+			//this.get_appearance_panel(Panel, SettingsItem, Fields)
 		]);
 	},
 
@@ -211,6 +295,37 @@ var UcontactSettings = Upfront.Views.Editor.Settings.Settings.extend({
 							property: 'form_email_to',
 							label: l10n.general.send_to
 						}),
+						new OptionalField({
+							model: this.model,
+							property: 'show_subject',
+							relatedField: 'form_subject_label',
+							values: [
+								{
+									label: l10n.fields.show_subject,
+									value: 'true'
+								}
+							],
+							/*onChange: function(){
+								var check = this.$('input'),
+									related = this.panel.$('input[name=' + this.options.relatedField + ']').closest('.upfront-field-wrap'),
+									defaultSubject = this.panel.$('input[name=form_default_subject]').closest('.upfront-field-wrap')
+								;
+								if(check.is(':checked')){
+									related.show();
+									defaultSubject.hide();
+								}
+								else{
+									related.hide();
+									defaultSubject.show();
+								}
+								console.log(related);
+							}*/
+						}),
+						/*new Fields.Text({
+							model: this.model,
+							property: 'form_subject_label',
+							label: l10n.fields.subject
+						}),
 						new Fields.Text({
 							model: this.model,
 							property: 'form_button_text',
@@ -226,7 +341,7 @@ var UcontactSettings = Upfront.Views.Editor.Settings.Settings.extend({
 									value: 'true'
 								}
 							]
-						}),
+						}),*/
 						new Fields.Text({
 							model: this.model,
 							property: 'form_title',
@@ -239,6 +354,7 @@ var UcontactSettings = Upfront.Views.Editor.Settings.Settings.extend({
 					model: this.model,
 					fields: [
 						new Fields.Radios({
+							className: 'inline-radios plaintext-settings',
 							model: this.model,
 							property: 'form_validate_when',
 							values: [
@@ -249,6 +365,37 @@ var UcontactSettings = Upfront.Views.Editor.Settings.Settings.extend({
 								{
 									label: l10n.validation.on_submit,
 									value: 'submit'
+								}
+							]
+						})
+					]
+				}),
+				new SettingsItem({
+					title: 'Field label position',
+					fields: [
+						new Fields.Radios({
+							className: 'contact_label_position',
+							model: this.model,
+							layout: "vertical",
+							change : function(e){
+								this.model.set_property("form_label_position", this.get_value());
+							},
+							property: 'form_label_position',
+							values: [
+								{
+									label: l10n.apr.above,
+									value: 'above',
+									icon: 'contact-above-field'
+								},
+								{
+									label: l10n.apr.over,
+									value: 'over',
+									icon: 'contact-over-field'
+								},
+								{
+									label: l10n.apr.inline,
+									value: 'inline',
+									icon: 'contact-inline-field'
 								}
 							]
 						})
@@ -283,37 +430,7 @@ var UcontactSettings = Upfront.Views.Editor.Settings.Settings.extend({
 							property: 'form_message_label',
 							label: l10n.fields.msg
 						}),
-						new OptionalField({
-							model: this.model,
-							property: 'show_subject',
-							relatedField: 'form_subject_label',
-							values: [
-								{
-									label: l10n.fields.show_subject,
-									value: 'true'
-								}
-							],
-							onChange: function(){
-								var check = this.$('input'),
-									related = this.panel.$('input[name=' + this.options.relatedField + ']').closest('.upfront-field-wrap'),
-									defaultSubject = this.panel.$('input[name=form_default_subject]').closest('.upfront-field-wrap')
-								;
-								if(check.is(':checked')){
-									related.show();
-									defaultSubject.hide();
-								}
-								else{
-									related.hide();
-									defaultSubject.show();
-								}
-								console.log(related);
-							}
-						}),
-						new Fields.Text({
-							model: this.model,
-							property: 'form_subject_label',
-							label: l10n.fields.subject
-						}),
+						
 						new Fields.Text({
 							model: this.model,
 							property: 'form_default_subject',

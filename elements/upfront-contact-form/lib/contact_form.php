@@ -16,6 +16,7 @@ class Upfront_UcontactView extends Upfront_Object {
 			'message' => isset($this->msg) ? $this->msg : false,
 			'message_class' => isset($this->msg_class) ? $this->msg_class : 'error',
 			'entity_id' => $this->get_entity_ids_value(),
+			'form_button_text' => 'Send',
 			'placeholders' => array(
 				'name' => $this->get_placeholder($this->_get_property('form_name_label')),
 				'email' => $this->get_placeholder($this->_get_property('form_email_label')),
@@ -308,11 +309,11 @@ class Upfront_UcontactView extends Upfront_Object {
 		$l10n = array(
 			'element_name' => __('Contact', 'upfront'),
 			'contact_form' => __('Contact form', 'upfront'),
-			'name_label' => __('Your name:', 'upfront'),
-			'email_label' => __('Your email:', 'upfront'),
-			'subject_label' => __('Your subject:', 'upfront'),
+			'name_label' => __('Name:', 'upfront'),
+			'email_label' => __('Email:', 'upfront'),
+			'subject_label' => __('Subject:', 'upfront'),
 			'default_subject' => __('Sent from the website', 'upfront'),
-			'message_label' => __('Your message:', 'upfront'),
+			'message_label' => __('Message:', 'upfront'),
 			'button_text' => __('Send', 'upfront'),
 			'unknown_form' => __('Unknown contact form.', 'upfront'),
 			'invalid_data' => __('The contact form data is not valid.', 'upfront'),
@@ -345,8 +346,8 @@ class Upfront_UcontactView extends Upfront_Object {
 			),
 			'validation' => array(
 				'label' => __('Form validation', 'upfront'),
-				'on_field' => __('Each field is filled out', 'upfront'),
-				'on_submit' => __('Once send field button is clicked', 'upfront'),
+				'on_field' => __('Inline validation', 'upfront'),
+				'on_submit' => __('On button click', 'upfront'),
 			),
 			'fields' => array(
 				'label' => __('Form Fields', 'upfront'),

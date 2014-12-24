@@ -1412,7 +1412,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 
 	},
 	property: function(name, value, silent) {
-		if(typeof value != "undefined"){
+		if(typeof value != "undefined") {
 		  if(typeof silent == "undefined")
 			silent = true;
 		  return this.model.set_property(name, value, silent);
