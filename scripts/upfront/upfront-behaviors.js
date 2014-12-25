@@ -2544,7 +2544,7 @@ var GridEditor = {
 					marginTop: margin.original.top*ed.baseline,
 					width: ((me.col/(me.col+margin.original.left))*100) + '%',
 					height: ui.originalSize.height
-				}).insertBefore($me);
+				});
 				$resize = $('<div class="upfront-resize" style="height:'+me.height+'px;"></div>');
 				$resize.css({
 					height: me.height,
@@ -2585,6 +2585,7 @@ var GridEditor = {
 				$me.css({
 					marginLeft: 0,
 					marginTop: 0,
+					position: 'absolute',
 					left: rsz_pos.left,
 					top: rsz_pos.top,
 					minHeight: ''
@@ -2595,6 +2596,7 @@ var GridEditor = {
 					left: rsz_pos.left,
 					top: rsz_pos.top
 				});
+				$resize_placeholder.insertBefore($me);
 				Upfront.Events.trigger("entity:resize_start", view, view.model);
 			},
 			resize: function(e, ui){

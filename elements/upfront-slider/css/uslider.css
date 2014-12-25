@@ -47,7 +47,7 @@ div.uslide-text-current {
 .upfront-default-slider-nav,
 .upfront-default-slider-nav-prev,
 .upfront-default-slider-nav-next {
-	z-index: 3;
+	/*z-index: 3;*/
 }
 
 .upfront-editing .upfront-default-slider-nav,
