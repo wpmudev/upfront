@@ -481,12 +481,27 @@ VRT;
 	public function load_page_regions($data, $ids/*, $cascade*/){
 		//if (!is_singular()) return $data;
 		$layoutId = $this->_get_page_default_layout($ids);
+
+		if (empty($layoutId) && !empty($ids['specificity'])) {
+			$page_id = preg_replace('/.*-([0-9]+)$/', '$1', $ids['specificity']);
+			$tpl = false;
+			if (!empty($page_id) && is_numeric($page_id)) $tpl = get_post_meta((int)$page_id, '_wp_page_template', true);
+			if (!empty($tpl)) {
+				$theme = Upfront_ChildTheme::get_instance();
+				$tpl = preg_replace('/page_tpl-(.*)\.php$/', '\1', $tpl);
+				$required_pages = $theme->themeSettings->get('required_pages');
+
+				if (!empty($required_pages)) $required_pages = json_decode($required_pages, true);
+				$layoutId = !empty($required_pages[$tpl]['layout']) ? $required_pages[$tpl]['layout'] : $layoutId;
+			}
+		}
+
 		if($layoutId){
 			$theme = Upfront_Theme::get_instance();
 			$ids['theme_defined'] = $layoutId;
 			$data['regions'] = $theme->get_default_layout($ids, $layoutId);
 			//$data['regions'] = $theme->get_default_layout(array(), $layoutId);
-		}
+		} 
 		//return apply_filters('upfront_augment_theme_layout', $data); // So, this doesn't work anymore either. Yay.
 		return $data;
 	}
