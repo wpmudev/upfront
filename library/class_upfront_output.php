@@ -660,7 +660,7 @@ class Upfront_Region extends Upfront_Container {
 	protected $_child_view_class = 'Upfront_Module';
 
 	protected function _is_background () {
-		return ( $this->get_container() != $this->get_name() && ( !$this->_data['sub'] || ( $this->_data['sub'] != 'top' && $this->_data['sub'] != 'bottom' ) ) );
+		return ( $this->get_container() != $this->get_name() && ( empty($this->_data['sub']) || ( $this->_data['sub'] != 'top' && $this->_data['sub'] != 'bottom' ) ) );
 	}
 
 	public function wrap ($out) {

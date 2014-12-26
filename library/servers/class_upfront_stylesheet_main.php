@@ -133,7 +133,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 	}
 
 	function load_theme_styles_unless_in_builder() {
-		if (strpos($_SERVER['HTTP_REFERER'], 'create_new') !== false) {
+		if (!empty($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'create_new') !== false) {
 			return '';
 		}
 
