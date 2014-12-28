@@ -2902,12 +2902,15 @@ define([
 		events: {
 			"click .upfront-pagination_page-item": "handle_pagination_request",
 			"click .upfront-pagination_item-next": "handle_next",
-			"click .upfront-pagination_item-prev": "handle_prev"
+			"click .upfront-pagination_item-prev": "handle_prev",
+			"click .upfront-pagination_page-item": "set_page",
+			"keypress .upfront-pagination_page-current": "set_page_keypress",
 		},
 		initialize: function(opts){
 			this.options = opts;
 		},
 		render: function () {
+			
 			this.$el.html(this.paginationTpl(this.collection.pagination));
 		},
 		handle_pagination_request: function (e, page) {
@@ -2933,6 +2936,35 @@ define([
 
 			if(prevPage !== false)
 				this.handle_pagination_request(e, prevPage);
+		},
+		set_page: function (e) {
+			e.preventDefault();
+			e.stopPropagation();
+			var me = this;
+			this.collection.fetchPage($(e.target).data("idx")-1).
+				done(function(response){
+					me.collection.trigger('reset');
+				});
+		},
+		set_page_keypress: function (e) {
+			var me = this;
+			e.stopPropagation();
+			//e.preventDefault();
+			var string = String.fromCharCode(e.which),
+				num = parseInt(string, 10)
+			;
+			if (13 !== e.which) return true;
+			var string = $.trim($(e.target).val()),
+				num = parseInt(string, 10)
+			;
+			if (!num) return false;
+			if (num > this.collection.pagination.pages) num = this.collection.pagination.pages;
+	
+			this.collection.fetchPage(num-1).
+				done(function(response){
+					me.collection.trigger('reset');
+				});
+			
 		}
 	});
 

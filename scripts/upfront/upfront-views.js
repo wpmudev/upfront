@@ -842,6 +842,7 @@ define([
 				this.menulists = _([]);
 			},
 			render: function () {
+
 				var me = this;
 
 				this.$el
@@ -865,7 +866,8 @@ define([
 				this.$el
 				.css({
 					"position": "absolute",
-					"z-index": 10000000
+					"z-index": 10000000,
+					"display": "block"
 				})
 				.offset({
 					"top":me.for_view.event.pageY,
@@ -1977,18 +1979,20 @@ define([
 				e.preventDefault();
 				this.event = e;
 				//Upfront.Events.trigger("entity:contextmenu:activate", this);
-				if(this.context_menu_view)
+				if(this.context_menu_view) {
 					return this.context_menu_view.render();
+				}
 
 				var context_menu_view = new this.ContextMenu({
-						model: this.model,
-						el: $(Upfront.Settings.LayoutEditor.Selectors.contextmenu)
-					})
-				;
+					model: this.model,
+					el: $(Upfront.Settings.LayoutEditor.Selectors.contextmenu)
+				});
 
 				context_menu_view.for_view = this;
 				this.context_menu_view = context_menu_view;
-				context_menu_view.render();
+				
+				return this.context_menu_view.render();
+
 			},
 			init: function () {
 				var me = this;
