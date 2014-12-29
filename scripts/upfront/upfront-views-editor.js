@@ -2785,7 +2785,7 @@ define([
 			}
 			else if(panel == 'pages'){
 				collection = new Upfront.Collections.PostList([], {postType: 'page'});
-				fetchOptions = {limit: 3}
+				fetchOptions = {limit: 15}
 			}
 			else{
 				var post_id = Upfront.data.currentPost && Upfront.data.currentPost.id
