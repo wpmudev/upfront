@@ -2293,7 +2293,8 @@ Upfront.Media = {
 			});
 			return content;
 		}
-	}
+	},
+	Ref: _upfront_media_upload.image_ref
 };
 
 });
