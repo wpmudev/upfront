@@ -515,6 +515,7 @@ function upfront_media_file_upload () {
 		'normal' => Upfront_UploadHandler::get_action_url('upfront-media-upload'),
 		'theme' => Upfront_UploadHandler::get_action_url('upfront-media-upload-theme-image'),
 		'embed_ref' => Upfront_UploadHandler::get_ref(Upfront_Permissions::EMBED),
+		'image_ref' => Upfront_UploadHandler::get_ref(Upfront_Permissions::UPLOAD),
 	)) . ';</script>';
 }
 add_action('wp_head', 'upfront_media_file_upload', 99);
