@@ -3481,7 +3481,7 @@ define([
 			},
 			$bg: $('<div class="upfront-lightbox-bg"></div>'),
 			$close: $('<div class="upfront-ui close_lightbox"></div>'),
-			$close_icon: $('<div class="upfront-icon upfront-icon-popup-close"></div>'),
+			$close_icon: $('<div class="upfront-icon-popup-close">&times;</div>'),
 			events: {
 				//"mouseup": "on_mouse_up", // Bound on mouseup because "click" prevents bubbling (for module/object activation)
 				"mouseover": "on_mouse_over",

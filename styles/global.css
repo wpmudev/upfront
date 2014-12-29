@@ -381,10 +381,14 @@ div.upfront-region-lightbox, div.upfront-region-side-lightbox,
 }
 div.upfront-region-lightbox .upfront-icon-popup-close, div.upfront-region-side-lightbox .upfront-icon-popup-close {
 	position: absolute;
-	top: 12px;
-	right: 12px;
+	top: 10px;
+	right: 0px;
 	cursor: pointer;	
+  font-family: Helvetica Neue, Helvetica,Arial, sans-serif;
+  color:#fff;
+  font-size:28px;
 }
+/*
 .upfront-ui .upfront-icon-popup-close:before {
 	content: " ";
 	background-image: url('../img/uf-ui-sprite.svg?v=20131127');
@@ -395,6 +399,7 @@ div.upfront-region-lightbox .upfront-icon-popup-close, div.upfront-region-side-l
 	height: 17px;
 	background-position: -1080px -85px;
 }
+*/
 
 /* resets to match the editor exp */
 * {
