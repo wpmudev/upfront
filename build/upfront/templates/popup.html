@@ -218,8 +218,22 @@
 	</p>
 </div>
 </script>
-
 <script type="text/template" id="upfront-pagination-tpl">
+	<div id="upfront-entity_list-pagination">
+		<a class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-prev"></a>
+
+					
+		<div class="upfront-pagination_navigation">
+			<input type="text" class="upfront-pagination_page-current" value="{{currentPage+1}}" /> of <a class="upfront-pagination_page-item" data-idx="{{pages}}">{{pages}}</a>
+		</div>
+
+		<a class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-next"></a>
+		
+		<small>{{totalElements}} items</small>
+		</div>
+</script>
+
+<script type="text/template" id="upfront-pagination-tpl-old">
 <div id="upfront-entity_list-pagination" data-total="{{ pages }}" data-page_size="{{pageSize}}">
 	{[ if(pages > 1) { ]}
 	<div class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-prev">
