@@ -131,7 +131,7 @@ div.preset-manager-panel div.preset_specific div.transition label {
 	display: inline;
 	vertical-align: top;
 }
-div.preset-manager-panel div.preset_specific div.transition label {
+div.preset-manager-panel div.preset_specific div.transition > label {
 	margin-left:-30px;
 	margin-right: 10px;
 }

@@ -14172,7 +14172,7 @@ div.preset-manager-panel div.preset_specific div.font_face > label, div.preset-m
   vertical-align: top; }
 
 /* line 134, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
-div.preset-manager-panel div.preset_specific div.transition label {
+div.preset-manager-panel div.preset_specific div.transition > label {
   margin-left: -30px;
   margin-right: 10px; }
 
