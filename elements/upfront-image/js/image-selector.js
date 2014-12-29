@@ -30,7 +30,7 @@ define([
 				if (!!form.fileupload) {
 					form.fileupload({
 							sequentialUploads: true,
-							formData: {action: 'upfront-media-upload'},
+							formData: _.extend({action: 'upfront-media-upload'}, Upfront.Media.Ref),
 							fileInput: null, // disable change listener, we handle it below
 							paramName: 'media[]' // due to previous options we have to set this manually
 						})
