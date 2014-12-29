@@ -29,3 +29,6 @@
     height: auto;
     margin: 0 auto;
 }
+.uposts-part.thumbnail[data-resize="1"] img {
+    max-width: none;
+}
