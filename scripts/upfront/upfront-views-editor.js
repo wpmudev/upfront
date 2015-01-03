@@ -7109,7 +7109,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			title: l10n.select_content_to_link,
 			postTypes: [
 				{name: 'post', label: l10n.posts},
-				{name: 'pages', label: l10n.pages}
+				{name: 'page', label: l10n.pages}
 			]
 		},
 		events: {
