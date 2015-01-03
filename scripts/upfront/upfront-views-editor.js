@@ -2910,7 +2910,7 @@ define([
 			this.options = opts;
 		},
 		render: function () {
-			
+
 			this.$el.html(this.paginationTpl(this.collection.pagination));
 		},
 		handle_pagination_request: function (e, page) {
@@ -2940,31 +2940,33 @@ define([
 		set_page: function (e) {
 			e.preventDefault();
 			e.stopPropagation();
+			/*
 			var me = this;
 			this.collection.fetchPage($(e.target).data("idx")-1).
 				done(function(response){
 					me.collection.trigger('reset');
 				});
+			*/
+			var page = this.collection.pagination.pages - 1;
+			this.handle_pagination_request(e, page);
 		},
 		set_page_keypress: function (e) {
-			var me = this;
+			//var me = this;
 			e.stopPropagation();
-			//e.preventDefault();
-			var string = String.fromCharCode(e.which),
-				num = parseInt(string, 10)
-			;
 			if (13 !== e.which) return true;
+
 			var string = $.trim($(e.target).val()),
 				num = parseInt(string, 10)
 			;
-			if (!num) return false;
+			if (!num || num < 1) return false;
 			if (num > this.collection.pagination.pages) num = this.collection.pagination.pages;
-	
+/*
 			this.collection.fetchPage(num-1).
 				done(function(response){
 					me.collection.trigger('reset');
 				});
-			
+*/
+			this.handle_pagination_request(e, num-1);
 		}
 	});
 
