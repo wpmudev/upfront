@@ -44,33 +44,24 @@ class Upfront_Uwidget {
 		$fields = array();
 
 		foreach($nodes as $node) {
-			if(strtolower($node->nodeName) == 'label') {
-				if(isset($fields[$node->getAttribute('for')]))
-					$fields[$node->getAttribute('for')]['label'] = $node->nodeValue;
-				else
-					$fields[$node->getAttribute('for')] = array('label' => $node->nodeValue);
-			}
-			else {
-
+			if ('label' === strtolower($node->nodeName)) {
+				if (isset($fields[$node->getAttribute('for')])) $fields[$node->getAttribute('for')]['label'] = $node->nodeValue;
+				else $fields[$node->getAttribute('for')] = array('label' => $node->nodeValue);
+			} else {
 				$exp_name = explode('[', $node->getAttribute('name'));
 				$fieldname = str_replace(']', '', array_pop($exp_name));
-				if(isset($fields[$node->getAttribute('id')]))
-					$fields[$node->getAttribute('id')]['name'] = $fieldname;
-				else
-					$fields[$node->getAttribute('id')] = array('name' =>$fieldname);
-
-				if(strtolower($node->nodeName) == 'select') {
+				if (isset($fields[$node->getAttribute('id')])) $fields[$node->getAttribute('id')]['name'] = $fieldname;
+				else $fields[$node->getAttribute('id')] = array('name' =>$fieldname);
+				if (strtolower($node->nodeName) == 'select') {
 					$fields[$node->getAttribute('id')]['type'] = $node->nodeName;
 					$fields[$node->getAttribute('id')]['options'] = array();
 					foreach($xpath->query('./option', $node) as $option) {
 						$fields[$node->getAttribute('id')]['options'][$option->getAttribute('value')] = $option->nodeValue;
 					}
-				}
-				elseif(strtolower($node->nodeName) == 'textarea') {
+				} elseif('textarea' === strtolower($node->nodeName)) {
 					$fields[$node->getAttribute('id')]['type'] = $node->nodeName;
 					$fields[$node->getAttribute('id')]['value'] = $node->nodeValue;
-				}
-				elseif(strtolower($node->nodeName) == 'input') {
+				} elseif('input' === strtolower($node->nodeName)) {
 					$fields[$node->getAttribute('id')]['type'] = $node->getAttribute('type');
 					$fields[$node->getAttribute('id')]['value'] = $node->getAttribute('value');
 
@@ -197,4 +188,3 @@ function upfront_widget_data ($data) {
 	return $data;
 }
 add_filter('upfront_data', 'upfront_widget_data');
-
