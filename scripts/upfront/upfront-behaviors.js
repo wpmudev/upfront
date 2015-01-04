@@ -282,7 +282,7 @@ var LayoutEditor = {
 					group_wrapper_col = col + margin_left;
 					wrapper_index = 0;
 					current_wrapper_id = false;
-					
+
 					_.each(modules, function(module, index){
 						var wrapper_id = module.wrapper_id,
 							new_classes = [];
@@ -604,26 +604,49 @@ var LayoutEditor = {
 		var me = {};
 		var textFontsManager = new Upfront.Views.Editor.Fonts.Text_Fonts_Manager({ collection: Upfront.Views.Editor.Fonts.theme_fonts_collection });
 		textFontsManager.render();
-		var popup = Upfront.Popup.open(function (data, $top, $bottom) {
-			var $me = $(this);
-			$me.empty()
-			.append('<p class="upfront-popup-placeholder">' + Upfront.Settings.l10n.global.behaviors.loading_content + '</p>')
-			;
-			me.$popup = {
-				"top": $top,
-				"content": $me,
-				"bottom": $bottom
-			};
-		}, {
-			width: 750
-		},
-		'font-manager-popup');
+		var iconFontsManager = new Upfront.Views.Editor.Fonts.Icon_Fonts_Manager({ collection: Upfront.Views.Editor.Fonts.icon_fonts_collection });
+		iconFontsManager.render();
+
+		var popup = Upfront.Popup.open(
+			function (data, $top, $bottom) {
+				var $me = $(this);
+				$me.empty()
+					.append('<p class="upfront-popup-placeholder">' + Upfront.Settings.l10n.global.behaviors.loading_content + '</p>');
+
+				me.$popup = {
+					"top": $top,
+					"content": $me,
+					"bottom": $bottom
+				};
+			},
+			{
+				width: 750
+			},
+			'font-manager-popup'
+		);
+
 		me.$popup.top.html(
 			'<ul class="upfront-tabs">' +
-				'<li data-type="posts" class="active">' + Upfront.Settings.l10n.global.behaviors.theme_text_fonts + '</li>' +
-				'</ul>' +
-				me.$popup.top.html()
+				'<li id="theme-text-fonts-tab" class="active">' + Upfront.Settings.l10n.global.behaviors.theme_text_fonts + '</li>' +
+				'<li id="theme-icon-fonts-tab">' + Upfront.Settings.l10n.global.behaviors.theme_icon_fonts + '</li>' +
+			'</ul>' +
+			me.$popup.top.html()
 		);
+
+		me.$popup.top.on('click', '#theme-text-fonts-tab', function(event) {
+			me.$popup.content.html(textFontsManager.el);
+			$('#theme-icon-fonts-tab').removeClass('active');
+			$('#theme-text-fonts-tab').addClass('active');
+			$('.theme-fonts-ok-button').css('margin-top', '30px');
+		});
+
+		me.$popup.top.on('click', '#theme-icon-fonts-tab', function() {
+			me.$popup.content.html(iconFontsManager.el);
+			$('#theme-text-fonts-tab').removeClass('active');
+			$('#theme-icon-fonts-tab').addClass('active');
+			$('.theme-fonts-ok-button').css('margin-top', 0);
+		});
+
 		me.$popup.bottom.append('<a class="theme-fonts-ok-button">' + Upfront.Settings.l10n.global.behaviors.ok + '</a>');
 		me.$popup.content.html(textFontsManager.el);
 		textFontsManager.set_ok_button(me.$popup.bottom.find('.theme-fonts-ok-button'));
@@ -729,13 +752,13 @@ var LayoutEditor = {
 			);
 			$select_wrap.append(fields.layout.el);
 			$content.append($select_wrap);
-			
+
 			$page_name_wrap.hide();
 			$page_name_wrap.append(fields.page_name.el);
 			$page_name_wrap.append(fields.inherit.el);
 			$page_name_wrap.append(fields.existing.el);
 			$content.append($page_name_wrap);
-			
+
 			$content.append($button);
 			$button.on('click', function(){
 				ed.layout_modal.close(true);
@@ -970,7 +993,7 @@ var LayoutEditor = {
 
 		var layout_id = _upfront_post_data.layout.specificity || _upfront_post_data.layout.item || _upfront_post_data.layout.type; // Also make sure to include specificity first
 		loading.update_loading_text(Upfront.Settings.l10n.global.behaviors.exporting_layout + layout_id);
-		
+
 		return ed._export_layout({ theme: theme_name }).done(function() {
 			loading.done(function() {
 				if (ed.export_modal) ed.export_modal.close(true);
@@ -1130,7 +1153,7 @@ var LayoutEditor = {
 		});
 		return deferred.promise();
 	},
-	
+
 	/* Cleanup region CSS, running on save/export */
 	clean_region_css: function () {
 		var me = this,
@@ -1169,14 +1192,14 @@ var LayoutEditor = {
 				Upfront.Util.post(data)
 					.done(function(){
 						var styleIndex = Upfront.data.styles[elementType].indexOf(styleName);
-		
+
 						//Remove the styles from the available styles
 						if(styleIndex != -1)
 							Upfront.data.styles[elementType].splice(styleIndex, 1);
-		
+
 						//Remove the styles from the dom
 						$('#upfront-style-' + styleName).remove();
-						
+
 						//Continue deleting
 						deleteFunc(index+1);
 					});
@@ -1184,7 +1207,7 @@ var LayoutEditor = {
 			},
 			deferred = new $.Deferred()
 		;
-		
+
 		regions.each(function(region){
 			var elementType = region.is_main() ? cssEditor.elementTypes.RegionContainer.id : cssEditor.elementTypes.Region.id,
 				styleName = layout_id + '-' + region.get('name') + '-style',
@@ -1220,7 +1243,7 @@ var LayoutEditor = {
 				deleteFunc(0); // Start deleting
 			}
 		});
-		
+
 		return deferred.promise();
 	},
 
@@ -1849,7 +1872,7 @@ var GridEditor = {
 							last_model = ed.get_el_model(last_wrap_el.$el),
 							last_index = collection.indexOf(last_model),
 							margin_top = wrap_el.grid.top - bottom_wrap.outer_grid.bottom;
-						
+
 						margin.current.top = margin_top;
 						margin.current.left = wrap_el.grid.left-region.grid.left;
 						ed.update_model_margin_classes(wrap_el.$el);
@@ -1913,11 +1936,11 @@ var GridEditor = {
 				wrap.outer_grid.left = wrap_left;
 				wrap.$el.data('clear', 'clear');
 			}
-			
+
 			// Don't allow separating wrapper on responsive or inside group
 			if ( is_responsive || is_parent_group )
 				return;
-			
+
 			// Separate wrapper if more than one element in the wrapper, provided that the wrapper is not conflicting anything
 			if ( $wrap_els.size() > 1 ){
 				$wrap_els.each(function(){
@@ -2752,12 +2775,12 @@ var GridEditor = {
 						});
 					}
 				}
-				
+
 				if ( is_parent_group )
 					ed.update_wrappers(view.group_view.model, view.group_view.$el);
 				else
 					ed.update_wrappers(region, $region);
-					
+
 				// Let's normalize
 				ed.update_position_data();
 				ed.normalize(ed.els, ed.wraps);
@@ -3275,7 +3298,7 @@ var GridEditor = {
 							col = original_col;
 					}
 					drop_col = drop_col <= col ? drop_col : col;
-					
+
 					//adjust_bottom = false;
 					adjust_bottom = true;
 
@@ -3402,14 +3425,14 @@ var GridEditor = {
 						drop_bottom = rel_drop_top+drop_top+me.row-1,
 						bottom_els = aff_els.bottom.length > 0 ? _.filter(ed.els, function(each){
 							return ( each.region == me.region && each._id != me._id && each.grid.bottom < aff_els.bottom[0].outer_grid.top );
-						}) : [], 
+						}) : [],
 						bottom_el = bottom_els.length > 0 ? _.max(bottom_els, function(each){ return each.grid.bottom; }) : false,
 						bottom_limit = 0,
 						recalc_margin_x = false;
 
 					if ( breakpoint && !breakpoint.default )
 						adjust_bottom = false;
-						
+
 					// normalize clear
 					_.each(ed.wraps, function(each){
 						var breakpoint_clear = ( !breakpoint || breakpoint.default ) ? each.$el.hasClass('clr') : each.$el.data('breakpoint_clear');
@@ -3451,7 +3474,7 @@ var GridEditor = {
 							ed.adjust_affected_right(wrap, aff_els.right, [me], wrap.grid.left-1);
 					//	else
 					//		ed.adjust_els_right(aff_els.right, me.grid.left-1);
-					
+
 						if ( wrap && aff_els.bottom.length > 0 ) {
 							if ( !bottom_el || me.grid.bottom > bottom_el.grid.bottom ) {
 								if ( ( me.grid.bottom == rel_drop_top-1 ) && ( ed.drop.type == 'side-before' || ed.drop.type == 'side-after' || ed.drop.type == 'inside' ) )
@@ -3675,7 +3698,7 @@ var GridEditor = {
 							each_model.set_property('breakpoint', model_breakpoint);
 						});
 					}
-					
+
 					// Let's normalize
 					ed.update_position_data();
 					ed.normalize(ed.els, ed.wraps);

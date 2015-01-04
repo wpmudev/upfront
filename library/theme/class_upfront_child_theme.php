@@ -28,6 +28,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		add_filter('upfront_override_layout_data', array($this, 'load_page_regions'), 10, 2); // This goes in instead of the above ^
 		add_filter('upfront_get_layout_properties', array($this, 'getLayoutProperties'));
 		add_filter('upfront_get_theme_fonts', array($this, 'getThemeFonts'), 10, 2);
+		add_filter('upfront_get_icon_fonts', array($this, 'getIconFonts'), 10, 2);
 		add_filter('upfront_get_theme_colors', array($this, 'getThemeColors'), 10, 2);
 		add_filter('upfront_get_post_image_variants', array($this, 'getPostImageVariants'), 10, 2);
 		add_filter('upfront_get_button_presets', array($this, 'getButtonPresets'), 10, 2);
@@ -202,7 +203,60 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			}
 		}
 
+		// Add icon font style if there is active icon font other than UpFont
+		$font = $this->getActiveIconFont();
+		if ($font) {
+			$out .= "\nin font \n";
+			$longSrc = '';
+			foreach($font['files'] as $type=>$file) {
+				$longSrc .= "url('" . get_stylesheet_directory_uri() . '/icon-fonts/' . $file . "') format('";
+				switch($type) {
+					case 'eot':
+						$longSrc .= 'embedded-opentype';
+						break;
+					case 'woff':
+						$longSrc .= 'woff';
+						break;
+					case 'ttf':
+						$longSrc .= 'truetype';
+						break;
+					case 'svg':
+						$longSrc .= 'svg';
+						break;
+				}
+				$longSrc .= "'),";
+			};
+
+			$icon_font_style = "@font-face {" .
+				"	font-family: '" . $font['family'] . "';";
+			if (isset($font['files']['eot'])) {
+				$icon_font_style .= "src: url('" . get_stylesheet_directory_uri() . '/icon-fonts/' . $font['files']['eot'] . "');";
+			}
+			$icon_font_style .= "src:" . substr($longSrc, 0, -1) . ';';
+
+			$icon_font_style .=
+				"	font-weight: normal;" .
+				"	font-style: normal;" .
+				"}" .
+				".uf_font_icon {" .
+				"	font-family: '" . $font['family'] . "'!important;" .
+				"}";
+			$out .= $icon_font_style . "\n";
+		}
+
 		return $out;
+	}
+
+	private function getActiveIconFont() {
+		$fonts = json_decode($this->themeSettings->get('icon_fonts'), true);
+		$active_font = false;
+		foreach($fonts as $font) {
+			if ($font['active'] === true) {
+				$active_font = $font;
+				break;
+			}
+		}
+		return $active_font;
 	}
 
 	/**
@@ -366,6 +420,31 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		return is_array( $theme_fonts ) ? $theme_fonts : json_decode($theme_fonts);
 	}
 
+	public function getIconFonts($icon_fonts, $args) {
+		if (empty($icon_fonts) === false && $icon_fonts !== '[]') return $icon_fonts;
+
+		$icon_fonts = $this->themeSettings->get('icon_fonts');
+		// Always add icomoon which is always available from Upfront theme
+		$icon_fonts_array = is_array( $icon_fonts ) ? $icon_fonts : json_decode($icon_fonts);
+		$icon_fonts_array = is_array( $icon_fonts_array ) ? $icon_fonts_array : array(); // doublecheck we have something useful
+
+		array_unshift($icon_fonts_array, array(
+			'name' => 'UpFont',
+			'family' => 'icomoon',
+			'files' => array(
+				'woff' => 'fonts/icomoon.woff',
+				'svg' => 'fonts/icomoon.svg',
+				'ttf' => 'fonts/icomoon.ttf',
+				'eot' => 'fonts/icomoon.eot'
+			),
+			'active' => false,
+			'type' => 'default'
+		));
+		if (isset($args['json']) && $args['json']) return json_encode($icon_fonts_array);
+
+		return $icon_fonts_array();
+	}
+
 	public function getAdditionalFonts() {
 		$additional_fonts = $this->themeSettings->get('additional_fonts');
 		return empty($additional_fonts) ? '[]' : $additional_fonts;
@@ -501,7 +580,7 @@ VRT;
 			$ids['theme_defined'] = $layoutId;
 			$data['regions'] = $theme->get_default_layout($ids, $layoutId);
 			//$data['regions'] = $theme->get_default_layout(array(), $layoutId);
-		} 
+		}
 		//return apply_filters('upfront_augment_theme_layout', $data); // So, this doesn't work anymore either. Yay.
 		return $data;
 	}

@@ -1,7 +1,7 @@
 <?php
 
 class Upfront_EditorL10n_Server implements IUpfront_Server {
-	
+
 	public static function serve () {
 		$me = new self;
 		$me->_add_hooks();
@@ -45,6 +45,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'this_post_only' => __('Do you wish to save layout just for this post or apply it to all posts?', 'upfront'),
 				'loading_content' => __('Loading content...', 'upfront'),
 				'theme_text_fonts' => __('Theme Text Fonts', 'upfront'),
+				'theme_icon_fonts' => __('Theme Icon Fonts', 'upfront'),
 				'ok' => __('OK', 'upfront'),
 				'loading' => __('Loading...', 'upfront'),
 				'page_layout_name' => __('Page name (leave empty for single-page.php)', 'upfront'),
@@ -166,6 +167,8 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'typeface_info_text' => __('(If just want to stick to defaults like Arial and Times, click \'Ok\'.<br>You can always come back and add Google Fonts later.)', 'upfront'),
 				'theme_font_styles' => __('Theme Font Styles:', 'upfront'),
 				'no_fonts_added' => __('You haven\'t added any font styles to theme yet.', 'upfront'),
+				'choose_icon_fonts' => __('Choose Icon Font to use:', 'upfront'),
+				'icon_font_icons_preview' => __('Icons Preview:', 'upfront'),
 				'links_to' => __('Links to:', 'upfront'),
 				'no_link' => __('No link', 'upfront'),
 				'url' => __('URL', 'upfront'),
@@ -271,7 +274,8 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'edit_grid' => __('Edit Grid', 'upfront'),
 				'edit_global_bg' => __('Edit Global Background', 'upfront'),
 				'add_custom_css_rules' => __('add custom css rules', 'upfront'),
-				'theme_font_manager' => __('Theme Font Manager', 'upfront'),
+				'theme_font_manager' => __('Theme Fonts Manager', 'upfront'),
+				'icon_font_manager' => __('Icon Fonts Manager', 'upfront'),
 				'go_to_preview_page' => __('Go to Type Preview Page', 'upfront'),
 				'export_str' => __('Export', 'upfront'),
 				'create_responsive_layouts' => __('Create Responsive Layouts', 'upfront'),

@@ -17,7 +17,7 @@
 	{[ } else { ]}
 	{[ _.each(posts, function (post, idx){ ]}
 		<div class="upfront-list_item-post upfront-list_item clearfix status-{{ post.get("post_status") }}" data-post_id="{{ post.get("ID") }}">
-			<div class="upfront-list_item-component upfront-date post-status-{{ post.get("post_status") }}" title="{[ if(post.get("post_status") == "publish") { ]}Published{[ } else if(post.get("post_status") == "future") { ]}Scheduled{[ } else { ]}Draft{[ } ]}">{[ if(post.get("post_status") == "future") { ]}sched. for{[ } ]} 
+			<div class="upfront-list_item-component upfront-date post-status-{{ post.get("post_status") }}" title="{[ if(post.get("post_status") == "publish") { ]}Published{[ } else if(post.get("post_status") == "future") { ]}Scheduled{[ } else { ]}Draft{[ } ]}">{[ if(post.get("post_status") == "future") { ]}sched. for{[ } ]}
 			{{ Upfront.Util.format_date(post.get("post_date")) }}</div>
 			<div class="upfront-list_item-component upfront-title upfront-list_item-main">{{ post.get("post_title") }}</div>
 			<div class="upfront-list_item-component upfront-author">{{ post.author.get('data').display_name }}</div>
@@ -103,7 +103,7 @@
 	{[ } else { ]}
 	{[ _.each(pages, function (post){ ]}
 		<div class="upfront-list_item-post upfront-list_item clearfix status-{{ post.get("post_status") }}" data-post_id="{{ post.get("ID") }}">
-			<div class="upfront-list_item-component upfront-date post-status-{{ post.get("post_status") }}" title="{[ if(post.get("post_status") == "publish") { ]}Published{[ } else if(post.get("post_status") == "future") { ]}Scheduled{[ } else { ]}Draft{[ } ]}">{[ if(post.get("post_status") == "future") { ]}sched. for{[ } ]} 
+			<div class="upfront-list_item-component upfront-date post-status-{{ post.get("post_status") }}" title="{[ if(post.get("post_status") == "publish") { ]}Published{[ } else if(post.get("post_status") == "future") { ]}Scheduled{[ } else { ]}Draft{[ } ]}">{[ if(post.get("post_status") == "future") { ]}sched. for{[ } ]}
 			{{ Upfront.Util.format_date(post.get("post_date")) }}</div>
 			<div class="upfront-list_item-component upfront-title upfront-list_item-main">{{ post.get("post_title") }}</div>
 			<div class="upfront-list_item-component upfront-author">{{ post.author.get('data').display_name }}</div>
@@ -222,13 +222,13 @@
 	<div id="upfront-entity_list-pagination">
 		<a class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-prev"></a>
 
-					
+
 		<div class="upfront-pagination_navigation">
 			<input type="text" class="upfront-pagination_page-current" value="{{currentPage+1}}" /> of <a class="upfront-pagination_page-item" data-idx="{{pages}}">{{pages}}</a>
 		</div>
 
 		<a class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-next"></a>
-		
+
 		<small>{{totalElements}} items</small>
 		</div>
 </script>
@@ -375,6 +375,88 @@
           			<button class="upfront-css-save-ok">{{Upfront.Settings.l10n.global.content.save}}</button>
 				</div>
 			</div>
+		</div>
+	</div>
+</script>
+
+<script id="icon-fonts-manager-tpl" type="text/template">
+	<div class="manage-icon-fonts">
+		<div class="fonts-manager-panel-title">
+			{{Upfront.Settings.l10n.global.content.choose_icon_fonts}}
+		</div>
+		<div class="icon-fonts-list">
+			{[ _.each(fonts, function(font) { ]}
+			<div data-family="{{ font.get('family') }}" class="icon-fonts-list-item {[ if (font.get('active')) { ]}icon-fonts-list-item-active{[ } ]}">
+				{{ font.get('name') }}{[ if (font.getUploadStatus() !== true) { ]} <span class="icon-font-upload-status" title="{{ font.getUploadStatus() }}">*</span>{[ } ]}
+			</div>
+			{[ }); ]}
+		</div>
+		{[ if(Upfront.themeExporter) { ]}
+		<div class="upload-icon-font">Upload Icon Font</div>
+		<form style="display: none" id="upfront-upload-icon-font" name="upfront-upload-icon-font" enctype="multipart/form-data" method="post" action="{{url}}" data-url="{{url}}?action=upfront-upload-icon-font">
+			<input type="file" name="media" id="upfront-icon-font-input">
+			<input type="hidden" name="action" value="upfront-upload-icon-font">
+			<input type="submit" value="Upload">
+		</form>
+		{[ } ]}
+	</div>
+	<div class="preview-icon-fonts">
+		<div class="fonts-manager-panel-title">
+			{{Upfront.Settings.l10n.global.content.icon_font_icons_preview}}
+		</div>
+		<div class="icon-font-icons-preview">
+			<div class="icon-font-icon-preview uf_font_icon" title="A">A</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="B">B</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="C">C</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="D">D</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="E">E</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="F">F</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="G">G</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="H">H</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="I">I</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="J">J</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="K">K</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="L">L</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="M">M</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="N">N</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="O">O</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="P">P</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="Q">Q</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="R">R</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="S">S</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="T">T</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="U">U</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="V">V</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="W">W</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="X">X</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="Y">Y</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="Z">Z</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="a">a</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="b">b</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="c">c</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="d">d</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="e">e</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="f">f</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="g">g</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="h">h</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="i">i</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="j">j</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="k">k</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="l">l</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="m">m</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="n">n</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="o">o</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="p">p</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="q">q</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="r">r</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="s">s</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="t">t</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="u">u</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="v">v</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="w">w</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="x">x</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="y">y</div>
+			<div class="icon-font-icon-preview uf_font_icon" title="z">z</div>
 		</div>
 	</div>
 </script>
