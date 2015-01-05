@@ -485,6 +485,38 @@ define(function() {
 				}
 				return jqueryui_format;
 			}
+		},
+		colors: {
+			get_ufc: function(color){
+				if(_.isEmpty(color)) return false;
+				color = tinycolor(color);
+				var	theme_colors = _(Upfront.mainData.themeColors.colors).pluck("color"),
+					this_ufc;
+
+				for(var _i in theme_colors){
+					if( theme_colors[_i].replace("#", "") === color.toHex() ){
+						this_ufc = "ufc" + _i;
+					}
+				}
+				return this_ufc;
+			},
+
+			get_color: function(ufc){
+				if(_.isEmpty(ufc)) return false;
+
+				var	theme_colors = _(Upfront.mainData.themeColors.colors).pluck("color");
+
+				return theme_colors[ parseInt(ufc.replace("ufc", ""), 10) ];
+			},
+
+			convert_string_ufc_to_color: function( string ){
+				var	theme_colors = _(Upfront.mainData.themeColors.colors).pluck("color");
+				for(var _i in theme_colors){
+					var pattern = new RegExp("#ufc" + _i,"g");
+					string.replace(pattern, theme_colors[_i]);
+				}
+				return string;
+			}
 		}
 	};
 

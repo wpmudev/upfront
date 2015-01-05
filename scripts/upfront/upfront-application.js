@@ -1723,7 +1723,7 @@ var Application = new (Backbone.Router.extend({
 		this.listenTo(Upfront.Events, 'upfront:layout_size:change_breakpoint', function(newMode, previousMode){
 			me.responsiveMode = newMode.id;
 		});
-	}
+	},
 
 }))();
 

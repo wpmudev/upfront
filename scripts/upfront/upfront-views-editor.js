@@ -6220,6 +6220,7 @@ var CSSEditor = Backbone.View.extend({
 	updateStyles: function(contents){
 		var $el = this.get_style_element();
 		Upfront.Util.Transient.push('css-' + this.element_id, $el.html());
+		contents = Upfront.Util.colors.convert_string_ufc_to_color( contents );
 		$el.html(
 			this.stylesAddSelector(
 				contents, (this.is_default_style ? '' : this.get_css_selector())

@@ -63,7 +63,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$style .= Upfront_Tab_Presets_Server::get_instance()->get_presets_styles();
 		// Add accordion presets styles
 		$style .= Upfront_Accordion_Presets_Server::get_instance()->get_presets_styles();
-
+		$style = Upfront_UFC::init()->process_colors($style);
 	  $this->_out(new Upfront_CssResponse_Success($style));
 	}
 
