@@ -206,6 +206,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'show_grid' => __('Show Grid', 'upfront'),
 				'ungroup' => __('Ungroup', 'upfront'),
 				'reorder' => __('Reorder', 'upfront'),
+                'edit_elements' => __('Edit Elements', 'upfront'),
 				'done' => __('Done', 'upfront'),
 				'region_container_label' => __('Region container', 'upfront'),
 				'region_container_info' => __('The layer that contains all the regions.', 'upfront'),
