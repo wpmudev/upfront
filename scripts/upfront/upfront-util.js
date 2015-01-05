@@ -508,12 +508,17 @@ define(function() {
 
 				return theme_colors[ parseInt(ufc.replace("ufc", ""), 10) ];
 			},
-
-			convert_string_ufc_to_color: function( string ){
+			/**
+			 * Looks for ufc instances in a string and replaces them with actual color
+			 *
+			 * */
+			convert_string_ufc_to_color: function( string, include_ufc_as_comment ){
+				include_ufc_as_comment = typeof include_ufc_as_comment === "undefined" ? true : include_ufc_as_comment;
 				var	theme_colors = _(Upfront.mainData.themeColors.colors).pluck("color");
 				for(var _i in theme_colors){
-					var pattern = new RegExp("#ufc" + _i,"g");
-					string.replace(pattern, theme_colors[_i]);
+					var pattern = new RegExp("#ufc" + _i,"g"),
+						theme_color = include_ufc_as_comment ? "/*" + "#ufc" + _i + "*/" + theme_colors[_i]:  theme_colors[_i];
+					string = string.replace(pattern, theme_color );
 				}
 				return string;
 			}
