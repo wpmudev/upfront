@@ -9,6 +9,69 @@ class Upfront_Posts_Model {
 		return call_user_func(array($class_name, 'get_posts'), $data); //$class_name::get_posts($data);
 	}
 
+
+	/**
+	 * Returs a hash of meta fields (in key=>value format) for a post.
+	 *
+	 * @param int $post_id The ID of the post to search
+	 * @return array A hash of meta fields.
+	*/
+	public static function get_all_post_meta_fields ($post_id=false) {
+		if (empty($post_id) || !is_numeric($post_id)) return array();
+		global $wpdb;
+		$fields = $wpdb->get_results(
+			$wpdb->prepare("SELECT DISTINCT meta_key, meta_value FROM {$wpdb->postmeta} WHERE post_id=%d", $post_id),
+			ARRAY_A
+		);
+		return $fields;
+	}
+
+	/**
+	 * Returns a hash of requested key/value pairs for a post.
+	 *
+	 * @param int $post_id The ID of the post to search
+	 * @param array $fields A list of fields to search for
+	 * @return array
+	*/
+	public static function get_post_meta_fields ($post_id=false, $fields=array()) {
+		if (empty($post_id) || !is_numeric($post_id)) return array();
+		if (empty($fields) || !is_array($fields)) return array();
+
+		$safe_fields = array();
+		foreach ($fields as $field) {
+			$field = trim(preg_replace('/[^-_a-z.0-9]/i', '', $field));
+			if (!in_array($field, $safe_fields)) $safe_fields[] = $field;
+		}
+		if (empty($safe_fields)) return array();
+		$in = join("','", $safe_fields);
+
+		global $wpdb;
+		$fields = $wpdb->get_results(
+			$wpdb->prepare("SELECT DISTINCT meta_key, meta_value FROM {$wpdb->postmeta} WHERE post_id=%d AND meta_key IN('{$in}')", $post_id),
+			ARRAY_A
+		);
+		return $fields;
+	}
+
+	public static function get_meta_fields ($data) {
+		$posts = self::get_posts($data);
+		if (empty($posts)) return array();
+
+		$post_ids = array();
+		foreach ($posts as $post) {
+			if (empty($post->ID)) continue;
+			$post_ids[] = $post->ID;
+		}
+		if (empty($post_ids)) return array();
+
+		global $wpdb;
+		$in = join("', '", $post_ids);
+		$fields = $wpdb->get_col(
+			"SELECT DISTINCT meta_key FROM {$wpdb->postmeta} WHERE post_id IN('{$in}')"
+		);
+		return $fields;
+	}
+
 	public static function spawn_query ($data) {
 		$class_name = self::_get_model_class($data);
 		return call_user_func(array($class_name, 'spawn_query'), $data); //$class_name::spawn_query($data);
@@ -20,7 +83,7 @@ class Upfront_Posts_Model {
 		if (!class_exists($class_name)) $class_name = get_class() . '_' . ucfirst(self::DEFAULT_LIST_TYPE);
 		return $class_name;
 	}
-	
+
 	/**
 	 * Are we to show one post (single)? Or multiple ones (list)?
 	 * @param array $data The properties data array
@@ -66,7 +129,7 @@ class Upfront_Posts_Model {
 
 
 class Upfront_Posts_Model_Generic extends Upfront_Posts_Model {
-	
+
 	public static function spawn_query ($data) {
 		$query = array();
 		if (empty($data['query'])) {
@@ -76,7 +139,7 @@ class Upfront_Posts_Model_Generic extends Upfront_Posts_Model {
 
 		$args = array();
 		$args['posts_per_page'] = self::get_limit($data);
-		
+
 		if (empty($data['pagination'])) {
 			// Generic queries don't do offset setting - just fetch the paged value
 			//$offset = self::get_offset($data);
@@ -89,7 +152,7 @@ class Upfront_Posts_Model_Generic extends Upfront_Posts_Model {
 		foreach (array('year', 'monthnum', 'w', 'day', 's') as $q) {
 			if (!empty($query['query_vars'][$q])) $args[$q] = $query['query_vars'][$q];
 		}
-		
+
 		// Tax queries
 		if (!empty($query['tax_query']['queries'])) {
 			$args['tax_query'] = $query['tax_query']['queries'];
@@ -133,6 +196,7 @@ class Upfront_Posts_Model_Custom extends Upfront_Posts_Model {
 	}
 	public static function get_posts ($data) {
 		$query = self::spawn_query($data);
+		if (empty($query)) return array();
 		return $query->posts;
 	}
 }
@@ -141,11 +205,11 @@ class Upfront_Posts_Model_Custom extends Upfront_Posts_Model {
 class Upfront_Posts_Model_Taxonomy extends Upfront_Posts_Model {
 	public static function spawn_query ($data) {
 		$args = array();
-		
+
 		$args['posts_per_page'] = self::get_limit($data);
 		$offset = self::get_offset($data);
 		if (!empty($offset)) $args['offset'] = $offset;
-		
+
 		$args['tax_query'] = array();
 		$tax_query = array();
 		if (!empty($data['taxonomy'])) $tax_query['taxonomy'] = $data['taxonomy'];

@@ -22,6 +22,7 @@ class Upfront_Posts_PostView {
 		7 => 'read_more',
 		8 => 'tags',
 		9 => 'categories',
+		10 => 'meta',
 	);
 
 	public function __construct ($data=array()) {
@@ -61,9 +62,9 @@ class Upfront_Posts_PostView {
 		return self::$_parts;
 	}
 
-	public function expand_date_posted_template () { 
+	public function expand_date_posted_template () {
 		if (empty($this->_post->post_date)) return '';
-		
+
 		$time = strtotime($this->_post->post_date);
 		if (empty($time)) return '';
 
@@ -72,7 +73,7 @@ class Upfront_Posts_PostView {
 			: Upfront_Posts_PostsData::get_default('date_posted_format')
 		;
 		$format = explode(' ', $date_format, 2);
-		
+
 		$out = $this->_get_template('date_posted');
 
 		$part = 1;
@@ -82,9 +83,9 @@ class Upfront_Posts_PostView {
 		}
 		$out = preg_replace($this->_get_regex('datetime'), date($date_format, $time), $out);
 		$out = preg_replace($this->_get_regex('timestamp'), $time, $out);
-		
+
 		return $out;
-	}	
+	}
 
 	public function expand_author_template () {
 		if (empty($this->_post->post_author)) return '';
@@ -94,7 +95,7 @@ class Upfront_Posts_PostView {
 		$url = get_author_posts_url($author);
 
 		$out = $this->_get_template('author');
-		
+
 		$out = preg_replace($this->_get_regex('name'), esc_html($name), $out);
 		$out = preg_replace($this->_get_regex('url'), esc_url($url), $out);
 
@@ -114,7 +115,7 @@ class Upfront_Posts_PostView {
 		$gravatar = get_avatar($author, $gravatar_size, null, $name);
 
 		$out = $this->_get_template('gravatar');
-		
+
 		$out = preg_replace($this->_get_regex('name'), esc_html($name), $out);
 		$out = preg_replace($this->_get_regex('gravatar'), $gravatar, $out);
 
@@ -132,7 +133,7 @@ class Upfront_Posts_PostView {
 		$out = $this->_get_template('comment_count');
 
 		$out = preg_replace($this->_get_regex('comment_count'), (int)($this->_post->comment_count), $out);
-		
+
 		return $out;
 	}
 
@@ -141,14 +142,14 @@ class Upfront_Posts_PostView {
 
 		$thumbnail = get_the_post_thumbnail($this->_post->ID);
 		if (empty($thumbnail)) return '';
-        
+
         $resize_featured = isset($this->_data['resize_featured'])
-        	? (int)$this->_data['resize_featured'] 
+        	? (int)$this->_data['resize_featured']
         	: (int)Upfront_Posts_PostsData::get_default('resize_featured')
         ;
 
 		$out = $this->_get_template('thumbnail');
-		
+
 		$out = preg_replace($this->_get_regex('thumbnail'), $thumbnail, $out);
         $out = preg_replace($this->_get_regex('resize'), $resize_featured, $out);
 
@@ -162,7 +163,7 @@ class Upfront_Posts_PostView {
 		$permalink = get_permalink($this->_post->ID);
 
 		$out = $this->_get_template('title');
-		
+
 		$out = preg_replace($this->_get_regex('permalink'), $permalink, $out);
 		$out = preg_replace($this->_get_regex('title'), $title, $out);
 
@@ -171,7 +172,7 @@ class Upfront_Posts_PostView {
 
 	public function expand_content_template () {
 		$length = isset($this->_data['content_length'])
-        	? (int)$this->_data['content_length'] 
+        	? (int)$this->_data['content_length']
         	: (int)Upfront_Posts_PostsData::get_default('content_length')
         ;
 		$content = $this->_get_content_value($length);
@@ -185,12 +186,12 @@ class Upfront_Posts_PostView {
 
 	public function expand_tags_template () {
 		if (empty($this->_post->ID)) return '';
-		
+
 		$tags = get_the_tag_list('', ', ', '', $this->_post->ID);
 		if (empty($tags)) return '';
 
 		$length = isset($this->_data['tags_limit'])
-        	? (int)$this->_data['tags_limit'] 
+        	? (int)$this->_data['tags_limit']
         	: (int)Upfront_Posts_PostsData::get_default('tags_limit')
         ;
 
@@ -209,12 +210,12 @@ class Upfront_Posts_PostView {
 
 	public function expand_categories_template () {
 		if (empty($this->_post->ID)) return '';
-		
+
 		$categories = get_the_category_list(', ', '', $this->_post->ID);
 		if (empty($categories)) return '';
 
 		$length = isset($this->_data['categories_limit'])
-        	? (int)$this->_data['categories_limit'] 
+        	? (int)$this->_data['categories_limit']
         	: (int)Upfront_Posts_PostsData::get_default('categories_limit')
         ;
 
@@ -237,8 +238,48 @@ class Upfront_Posts_PostView {
 		$permalink = get_permalink($this->_post->ID);
 
 		$out = $this->_get_template('read_more');
-		
+
 		$out = preg_replace($this->_get_regex('permalink'), $permalink, $out);
+
+		return $out;
+	}
+
+	/**
+	 * Expands post meta values.
+	 *
+	 * @return string Compiled expression
+	 */
+	public function expand_meta_template () {
+		if (empty($this->_post->ID)) return '';
+
+		//$metadata = $this->_get_all_post_meta_fields($this->_post->ID);
+		$out = $this->_get_template('meta');
+
+		$tags = $matches = $metadata = array();
+		preg_match_all('/' . preg_quote('{{', '/') . '(.*)' . preg_quote('}}', '/') . '/', $out, $matches);
+		if (!empty($matches[1])) $tags = $matches[1];
+
+		if (empty($tags)) return $out;
+
+		$metadata = Upfront_Posts_Model::get_post_meta_fields($this->_post->ID, $tags);
+
+		foreach ($metadata as $item) {
+			if (empty($item['meta_key'])) continue;
+			$key = $item['meta_key'];
+			$value = isset($item['meta_value']) ? $item['meta_value'] : '';
+
+			$value = apply_filters('upfront_posts-meta-value',
+				apply_filters("upfront_posts-meta-{$key}-value", $value, $this->_post->ID, $this),
+				$value, $this->_post->ID, $key, $this
+			);
+
+			$out = preg_replace($this->_get_regex($key), $value, $out);
+		}
+
+		// Re-iterate through tags and null out empty replacement macros.
+		foreach ($tags as $tag) {
+			$out = preg_replace($this->_get_regex($tag), '', $out);
+		}
 
 		return $out;
 	}
@@ -279,7 +320,7 @@ class Upfront_Posts_PostView {
 	 */
 	private function _get_excerpt ($length) {
 		if (!empty($this->_post->post_excerpt)) return wpautop($this->_post->post_excerpt);
-		
+
 		$excerpt = str_replace(array("\n", "\r"), '', strip_shortcodes(wp_strip_all_tags($this->_post->post_content)));
 
 		$length = (int)$length;
@@ -307,7 +348,7 @@ class Upfront_Posts_PostView {
 	 * Loads post part template from a file.
 	 * @param string $slug Post part template slug
 	 * @return string Loaded template
-	 */	
+	 */
 	private function _get_template ($slug) {
 		return Upfront_Posts_PostsData::get_template($slug, $this->_data);
 	}

@@ -36,7 +36,7 @@ class Upfront_Posts_PostsView {
 		if (!empty($posts)) {
 			return '' .
 				'<ul class="uf-posts">' . join('', $posts) . '</ul>' .
-				self::get_pagination($data) . 
+				self::get_pagination($data) .
 			'';
 
 		}
@@ -64,6 +64,8 @@ class Upfront_Posts_PostsView {
 
 		$old_query = clone($wp_query);
 		$query = Upfront_Posts_Model::spawn_query($data);
+		if (empty($query)) return '';
+
 		$wp_query = $query;
 
 		$big = 999999999999999999;
@@ -74,7 +76,7 @@ class Upfront_Posts_PostsView {
 			'total' => $wp_query->max_num_pages
 		));
 		$wp_query = $old_query;
-		
+
 		return $pagination;
 	}
 
@@ -83,11 +85,13 @@ class Upfront_Posts_PostsView {
 
 		$old_query = clone($wp_query);
 		$query = Upfront_Posts_Model::spawn_query($data);
+		if (empty($query)) return '';
+
 		$wp_query = $query;
 
 		$pagination = get_posts_nav_link();
 		$wp_query = $old_query;
-		
+
 		return $pagination;
 	}
 
