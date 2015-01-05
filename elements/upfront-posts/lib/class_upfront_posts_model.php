@@ -218,6 +218,10 @@ class Upfront_Posts_Model_Taxonomy extends Upfront_Posts_Model {
 		if (!empty($tax_query)) $args['tax_query'][] = $tax_query;
 		$args['post_status'] = 'publish'; // double-ensure for AJAX requests
 
+		if (!empty($data['post_type'])) $args['post_type'] = $data['post_type'];
+
+		if (!empty($data['post_type']) && empty($data['term'])) unset($args['tax_query']);
+
 		return new WP_Query($args);
 	}
 	public static function get_posts ($data) {
