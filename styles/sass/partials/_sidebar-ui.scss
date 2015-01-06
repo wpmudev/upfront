@@ -1107,10 +1107,13 @@ span.draggable-post-element.element-dragging
 
 @media screen and ( max-height: 650px ){
 	#sidebar-ui .sidebar-panel.expanded .sidebar-panel-content {
-		height: 129px;
+		height: 193px;
+	}
+	#sidebar-ui .sidebar-commands-control .command-save {
+		top: 508px;
 	}
 	#sidebar-ui .sidebar-commands-control .command-save,
 	#sidebar-ui .sidebar-commands-control .command-start-responsive {
-		top: 434px;
+		top:510px;
 	}
 }
