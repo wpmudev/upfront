@@ -504,10 +504,10 @@
 }
 
 #sidebar-ui .sidebar-panel.expanded .sidebar-panel-content {
-	height: 277px;
+	height: 257px;
 	padding: 0;
 	border-top: 1px solid #accae6;
-	border-bottom: 1px solid #accae6;
+	/* border-bottom: 1px solid #accae6; */
 	opacity: 1;
 }
 
@@ -1102,3 +1102,17 @@ span.draggable-post-element.element-dragging
     display: none;
 }
 
+/* Height Media Queries Fixes
+	 ========================== */
+
+@media screen and ( max-height: 650px ){
+	#sidebar-ui .sidebar-panel.expanded .sidebar-panel-content {
+		height: 193px;
+	}
+	#sidebar-ui .sidebar-commands-control .command-save {
+		top: 508px;
+	}
+	#sidebar-ui .sidebar-commands-control .command-start-responsive {
+		top:510px;
+	}
+}
