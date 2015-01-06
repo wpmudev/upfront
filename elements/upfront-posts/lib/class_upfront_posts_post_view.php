@@ -82,9 +82,12 @@ class Upfront_Posts_PostView {
 		}
 		$out = preg_replace($this->_get_regex('datetime'), date($date_format, $time), $out);
 		$out = preg_replace($this->_get_regex('timestamp'), $time, $out);
-		
+
+		$out = preg_replace($this->_get_regex('date'), date(get_option('date_format'), $time), $out);
+		$out = preg_replace($this->_get_regex('time'), date(get_option('time_format'), $time), $out);
+
 		return $out;
-	}	
+	}
 
 	public function expand_author_template () {
 		if (empty($this->_post->post_author)) return '';
