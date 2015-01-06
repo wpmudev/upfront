@@ -20,7 +20,7 @@ class Upfront_Posts_Model {
 		if (!class_exists($class_name)) $class_name = get_class() . '_' . ucfirst(self::DEFAULT_LIST_TYPE);
 		return $class_name;
 	}
-	
+
 	/**
 	 * Are we to show one post (single)? Or multiple ones (list)?
 	 * @param array $data The properties data array
@@ -59,14 +59,14 @@ class Upfront_Posts_Model {
 		;
 		return !empty($data['pagination'])
 			? 0
-			: $offset
+			: ($offset > 0 ? $offset-1 : $offset)
 		;
 	}
 }
 
 
 class Upfront_Posts_Model_Generic extends Upfront_Posts_Model {
-	
+
 	public static function spawn_query ($data) {
 		$query = array();
 		if (empty($data['query'])) {
@@ -76,7 +76,7 @@ class Upfront_Posts_Model_Generic extends Upfront_Posts_Model {
 
 		$args = array();
 		$args['posts_per_page'] = self::get_limit($data);
-		
+
 		if (empty($data['pagination'])) {
 			// Generic queries don't do offset setting - just fetch the paged value
 			//$offset = self::get_offset($data);
@@ -89,7 +89,7 @@ class Upfront_Posts_Model_Generic extends Upfront_Posts_Model {
 		foreach (array('year', 'monthnum', 'w', 'day', 's') as $q) {
 			if (!empty($query['query_vars'][$q])) $args[$q] = $query['query_vars'][$q];
 		}
-		
+
 		// Tax queries
 		if (!empty($query['tax_query']['queries'])) {
 			$args['tax_query'] = $query['tax_query']['queries'];
@@ -141,11 +141,11 @@ class Upfront_Posts_Model_Custom extends Upfront_Posts_Model {
 class Upfront_Posts_Model_Taxonomy extends Upfront_Posts_Model {
 	public static function spawn_query ($data) {
 		$args = array();
-		
+
 		$args['posts_per_page'] = self::get_limit($data);
 		$offset = self::get_offset($data);
 		if (!empty($offset)) $args['offset'] = $offset;
-		
+
 		$args['tax_query'] = array();
 		$tax_query = array();
 		if (!empty($data['taxonomy'])) $tax_query['taxonomy'] = $data['taxonomy'];
