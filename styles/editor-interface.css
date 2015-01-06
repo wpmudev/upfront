@@ -1350,15 +1350,11 @@ span.draggable-post-element:hover, span.draggable-post-element.element-dragging 
 @media screen and (max-height: 650px) {
   /* line 1109, /Users/victor/Sites/Upfront/wp-content/themes/upfront/styles/sass/partials/sidebar-ui */
   #sidebar-ui .sidebar-panel.expanded .sidebar-panel-content {
-    height: 193px; }
+    height: 129px; }
 
-  /* line 1112, /Users/victor/Sites/Upfront/wp-content/themes/upfront/styles/sass/partials/sidebar-ui */
-  #sidebar-ui .sidebar-commands-control .command-save {
-    top: 508px; }
-
-  /* line 1115, /Users/victor/Sites/Upfront/wp-content/themes/upfront/styles/sass/partials/sidebar-ui */
-  #sidebar-ui .sidebar-commands-control .command-start-responsive {
-    top: 510px; }
+  /* line 1113, /Users/victor/Sites/Upfront/wp-content/themes/upfront/styles/sass/partials/sidebar-ui */
+  #sidebar-ui .sidebar-commands-control .command-save, #sidebar-ui .sidebar-commands-control .command-start-responsive {
+    top: 434px; }
  }
 
 /* Fields */
