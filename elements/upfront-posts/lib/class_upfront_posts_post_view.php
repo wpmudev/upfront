@@ -47,7 +47,7 @@ class Upfront_Posts_PostView {
 			if (!in_array($part, $enabled_post_parts)) continue;
 			$method = "expand_{$part}_template";
 			if (method_exists($this, $method)) $out .= $this->$method();
-			else $out .= apply_filters('upfront_posts-' . $method, $post);
+			else $out .= apply_filters('upfront_posts-' . $method, '', $post);
 		}
 
 		return $this->_wrap_post($out, $post);
