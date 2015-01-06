@@ -71,8 +71,8 @@ class Upfront_Posts_PostView {
 			? $this->_data['date_posted_format']
 			: Upfront_Posts_PostsData::get_default('date_posted_format')
 		;
-		$format = explode(' ', $date_format, 2);
-		
+		$format = explode(' ', $date_format);
+
 		$out = $this->_get_template('date_posted');
 
 		$part = 1;
