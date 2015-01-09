@@ -1987,6 +1987,10 @@ define([
             });
             $("#upfront_theme_colors_dom_styles").remove();
             $("<style id='upfront_theme_colors_dom_styles' type='text/css'>" + this.styles + "</style>").appendTo("body");
+
+
+			Upfront.Events.trigger("theme_colors:update");
+
         },
         on_render : function(){
             var self = this;

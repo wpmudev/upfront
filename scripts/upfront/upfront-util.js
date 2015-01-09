@@ -521,6 +521,14 @@ define(function() {
 					string = string.replace(pattern, theme_color );
 				}
 				return string;
+			},
+			update_styles: function(){
+				var $styles = $("style");
+
+				$styles.each(function(){
+					var $this = $(this);
+
+				});
 			}
 		}
 	};
