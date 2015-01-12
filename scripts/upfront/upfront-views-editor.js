@@ -1943,7 +1943,7 @@ define([
         initialize : function(){
             var self = this;
             this.template = _.template(_Upfront_Templates.sidebar_settings_theme_colors);
-            this.bottomTemplate = _.template( $(_Upfront_Templates.sidebar_settings_theme_colors).find(".panel-setting-theme-colors-bottom").html() );
+            //this.bottomTemplate = _.template( $(_Upfront_Templates.sidebar_settings_theme_colors).find(".panel-setting-theme-colors-bottom").html() );
             Upfront.Events.on("command:layout:save", this.on_save, this);
             Upfront.Events.on("command:layout:save_as", this.on_save, this);
             this.update_styles();
@@ -2013,7 +2013,7 @@ define([
                 range  :  Theme_Colors.range
             } ) );
 
-            if( this.theme_colors.colors.length < 5 ){
+            if( this.theme_colors.colors.length < 10 ){
                 this.add_empty_picker();
             }
             this.add_previous_pickers();
@@ -2101,7 +2101,7 @@ define([
             });
             this.$(".theme_colors_empty_picker").before(new_color_picker.$el);
 
-            if ( Theme_Colors.colors.length === 5 ) {
+            if ( Theme_Colors.colors.length === 10 ) {
                 this.$(".theme_colors_empty_picker").remove();
             }
             this.$("#theme-colors-no-color-notice").parent().hide();
