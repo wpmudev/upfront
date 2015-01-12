@@ -66,7 +66,8 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			"jquery-df" => 'scripts/jquery/jquery-dateFormat.min',
 			"jquery-simulate" => 'scripts/jquery/jquery.simulate',
 			"ueditor" => 'scripts/redactor/ueditor',
-			"chosen" => "scripts/chosen/chosen.jquery.min"
+			"chosen" => "scripts/chosen/chosen.jquery.min",
+			"findandreplace" => "scripts/findandreplace/findAndReplaceDOMText"
 		);
 		$paths = apply_filters('upfront-settings-requirement_paths', $paths + $registered);
 
@@ -74,10 +75,10 @@ class Upfront_JavascriptMain extends Upfront_Server {
       'underscore' => array('exports' => '_'),
       'redactor' => array('redactor_plugins'),
       'jquery-df' => array('jquery'),
-			'chosen' => array(
-				'deps' => array('jquery'),
-				'exports' => 'jQuery.fn.chosen'
-			),
+	   'chosen' => array(
+			'deps' => array('jquery'),
+			'exports' => 'jQuery.fn.chosen'
+	   ),
     );
 
 		$require_config = array(

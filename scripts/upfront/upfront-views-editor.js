@@ -1865,6 +1865,7 @@ define([
     var Theme_Color = Backbone.Model.extend({
         defaults : {
             color : "",
+            prev : "",
             highlight : "",
             shade : "",
             selected : "",
@@ -1984,12 +1985,23 @@ define([
                 self.styles += " .upfront_theme_bg_color_" + index +"{ background-color: " + item.get("color") + ";}";
                 self.styles += " a .upfront_theme_bg_color_" + index +":hover{ background-color: " + item.get_hover_color() + ";}";
                 self.styles += " button .upfront_theme_bg_color_" + index +":hover{ background-color: " + item.get_hover_color() + ";}";
+
+				var str = '/\\*#ufc' + index +'\\*/' + item.get("prev"),
+					regex = new RegExp(str , 'gi'),
+					container = document.getElementsByTagName("html")[0];
+				findAndReplaceDOMText(container , {
+					find:  regex,
+					replace: function(portion, match){
+						return "/*#ufc" + index +"*/" + item.get("color");
+					}
+				} );
             });
             $("#upfront_theme_colors_dom_styles").remove();
             $("<style id='upfront_theme_colors_dom_styles' type='text/css'>" + this.styles + "</style>").appendTo("body");
 
 
 			Upfront.Events.trigger("theme_colors:update");
+
 
         },
         on_render : function(){
@@ -2025,7 +2037,7 @@ define([
         add_previous_pickers : function(){
             var self = this;
             this.$(".theme-colors-color-picker").each(function(index){
-                var picker = this;
+                var picker = this,
                     $this = $(this),
                     color = $this.data("color"),
                     picker = new Field_Color({
@@ -2051,11 +2063,12 @@ define([
             });
         },
         add_new_color : function( color ){
-                percentage = parseInt( Theme_Colors.range, 10) / 100 || 0;
+                var percentage = parseInt( Theme_Colors.range, 10) / 100 || 0;
 
                 var self = this,
                     model = this.theme_colors.colors.add({
                         color : color.toHexString(),
+                        prev : color.toHexString(),
                         highlight : self.color_luminance( color.toHex(), percentage ),
                         shade : self.color_luminance( color.toHex(), (percentage * -1) )
                     }),
@@ -2174,6 +2187,7 @@ define([
             if( model ){
                 model.set({
                     color : color.toHexString(),
+                    prev : model.get("color"),
                     highlight : this.color_luminance( color.toHex(), percentage ),
                     shade : this.color_luminance( color.toHex(), (percentage * -1) )
                 });
@@ -6224,7 +6238,7 @@ var CSSEditor = Backbone.View.extend({
 	updateStyles: function(contents){
 		var $el = this.get_style_element();
 		Upfront.Util.Transient.push('css-' + this.element_id, $el.html());
-		contents = Upfront.Util.colors.convert_string_ufc_to_color( contents );
+		contents = Upfront.Util.colors.convert_string_ufc_to_color( contents);
 		$el.html(
 			this.stylesAddSelector(
 				contents, (this.is_default_style ? '' : this.get_css_selector())
