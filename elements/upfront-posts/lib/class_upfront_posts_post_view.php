@@ -78,11 +78,11 @@ class Upfront_Posts_PostView {
 
 		$part = 1;
 		foreach ($format as $fmt) {
-			$out = preg_replace($this->_get_regex('date_' . $part), date($fmt, $time), $out);
+			$out = Upfront_MacroCodec::expand($out, "date_{$part}", date($fmt, $time));
 			$part++;
 		}
-		$out = preg_replace($this->_get_regex('datetime'), date($date_format, $time), $out);
-		$out = preg_replace($this->_get_regex('timestamp'), $time, $out);
+		$out = Upfront_MacroCodec::expand($out, "datetime", date($date_format, $time));
+		$out = Upfront_MacroCodec::expand($out, "timestamp", $time);
 
 		return $out;
 	}
@@ -96,8 +96,8 @@ class Upfront_Posts_PostView {
 
 		$out = $this->_get_template('author');
 
-		$out = preg_replace($this->_get_regex('name'), esc_html($name), $out);
-		$out = preg_replace($this->_get_regex('url'), esc_url($url), $out);
+		$out = Upfront_MacroCodec::expand($out, "name", esc_html($name));
+		$out = Upfront_MacroCodec::expand($out, "url", esc_url($url));
 
 		return $out;
 	}
@@ -116,8 +116,8 @@ class Upfront_Posts_PostView {
 
 		$out = $this->_get_template('gravatar');
 
-		$out = preg_replace($this->_get_regex('name'), esc_html($name), $out);
-		$out = preg_replace($this->_get_regex('gravatar'), $gravatar, $out);
+		$out = Upfront_MacroCodec::expand($out, "name", esc_html($name));
+		$out = Upfront_MacroCodec::expand($out, "gravatar", $gravatar);
 
 		return $out;
 	}
@@ -132,7 +132,7 @@ class Upfront_Posts_PostView {
 
 		$out = $this->_get_template('comment_count');
 
-		$out = preg_replace($this->_get_regex('comment_count'), (int)($this->_post->comment_count), $out);
+		$out = Upfront_MacroCodec::expand($out, "comment_count", (int)($this->_post->comment_count));
 
 		return $out;
 	}
@@ -150,8 +150,8 @@ class Upfront_Posts_PostView {
 
 		$out = $this->_get_template('thumbnail');
 
-		$out = preg_replace($this->_get_regex('thumbnail'), $thumbnail, $out);
-        $out = preg_replace($this->_get_regex('resize'), $resize_featured, $out);
+		$out = Upfront_MacroCodec::expand($out, "thumbnail", $thumbnail);
+		$out = Upfront_MacroCodec::expand($out, "resize", $resize_featured);
 
 		return $out;
 	}
@@ -164,8 +164,8 @@ class Upfront_Posts_PostView {
 
 		$out = $this->_get_template('title');
 
-		$out = preg_replace($this->_get_regex('permalink'), $permalink, $out);
-		$out = preg_replace($this->_get_regex('title'), $title, $out);
+		$out = Upfront_MacroCodec::expand($out, "permalink", $permalink);
+		$out = Upfront_MacroCodec::expand($out, "title", $title);
 
 		return $out;
 	}
@@ -179,7 +179,7 @@ class Upfront_Posts_PostView {
 
 		$out = $this->_get_template('content');
 
-		$out = preg_replace($this->_get_regex('content'), $content, $out);
+		$out = Upfront_MacroCodec::expand($out, "content", $content);
 
 		return $out;
 	}
@@ -203,7 +203,7 @@ class Upfront_Posts_PostView {
 
 		$out = $this->_get_template('tags');
 
-		$out = preg_replace($this->_get_regex('tags'), $tags, $out);
+		$out = Upfront_MacroCodec::expand($out, "tags", $tags);
 
 		return $out;
 	}
@@ -226,7 +226,7 @@ class Upfront_Posts_PostView {
 
 		$out = $this->_get_template('categories');
 
-		$out = preg_replace($this->_get_regex('categories'), $categories, $out);
+		$out = Upfront_MacroCodec::expand($out, "categories", $categories);
 
 		return $out;
 	}
@@ -239,7 +239,7 @@ class Upfront_Posts_PostView {
 
 		$out = $this->_get_template('read_more');
 
-		$out = preg_replace($this->_get_regex('permalink'), $permalink, $out);
+		$out = Upfront_MacroCodec::expand($out, "permalink", $permalink);
 
 		return $out;
 	}
@@ -252,45 +252,10 @@ class Upfront_Posts_PostView {
 	public function expand_meta_template () {
 		if (empty($this->_post->ID)) return '';
 
-		//$metadata = $this->_get_all_post_meta_fields($this->_post->ID);
 		$out = $this->_get_template('meta');
+		if (empty($out)) return $out;
 
-		$tags = $matches = $metadata = array();
-		preg_match_all('/' . preg_quote('{{', '/') . '(.*)' . preg_quote('}}', '/') . '/', $out, $matches);
-		if (!empty($matches[1])) $tags = $matches[1];
-
-		if (empty($tags)) return $out;
-
-		$metadata = Upfront_Posts_Model::get_post_meta_fields($this->_post->ID, $tags);
-
-		foreach ($metadata as $item) {
-			if (empty($item['meta_key'])) continue;
-			$key = $item['meta_key'];
-			$value = isset($item['meta_value']) ? $item['meta_value'] : '';
-
-			$value = apply_filters('upfront_posts-meta-value',
-				apply_filters("upfront_posts-meta-{$key}-value", $value, $this->_post->ID, $this),
-				$value, $this->_post->ID, $key, $this
-			);
-
-			$out = preg_replace($this->_get_regex($key), $value, $out);
-		}
-
-		// Re-iterate through tags and null out empty replacement macros.
-		foreach ($tags as $tag) {
-			$out = preg_replace($this->_get_regex($tag), '', $out);
-		}
-
-		return $out;
-	}
-
-	/**
-	 * Create an uniform expansion regex.
-	 * @param string $part Expansion macro without delimiters
-	 * @return string Final regex
-	 */
-	private function _get_regex ($part) {
-		return '/' . preg_quote('{{' . $part . '}}', '/') . '/';
+		return Upfront_MacroCodec_Postmeta::expand_all($out, $this->_post);
 	}
 
 	/**
@@ -351,5 +316,132 @@ class Upfront_Posts_PostView {
 	 */
 	private function _get_template ($slug) {
 		return Upfront_Posts_PostsData::get_template($slug, $this->_data);
+	}
+}
+
+
+/**
+ * Standardized macro expansion hub.
+ */
+abstract class Upfront_MacroCodec {
+	const OPEN = '{{';
+	const CLOSE = '}}';
+
+	protected static $_open;
+	protected static $_close;
+
+	/**
+	 * Returns opening macro delimiter, unescaped.
+	 * @return string Opening macro delimiter
+	 */
+	public static function open () {
+		return !empty(self::$_open)
+			? self::$_open
+			: self::OPEN
+		;
+	}
+
+	/**
+	 * Returns closing macro delimiter, unescaped.
+	 * @return string Closing macro delimiter
+	 */
+	public static function close () {
+		return !empty(self::$_close)
+			? self::$_close
+			: self::CLOSE
+		;
+	}
+
+	/**
+	 * Returns compiled, preg_escape'd macro regex
+	 * @param  string $part String part of the macro (macro name)
+	 * @return string Final macro regex
+	 */
+	public static function get_regex ($part) {
+		return '/' . preg_quote(self::open() . $part . self::close(), '/') . '/';
+	}
+
+	/**
+	 * Extract all the macro tags from a string
+	 * @param  string $content String to check
+	 * @return array Collected macro tags
+	 */
+	public static function get_tags ($content) {
+		$tags = $matches = array();
+		if (empty($content)) return $tags;
+
+		preg_match_all('/' . preg_quote(self::open(), '/') . '(.*)' . preg_quote(self::close(), '/') . '/', $content, $matches);
+		if (!empty($matches[1])) $tags = $matches[1];
+
+		return $tags;
+	}
+
+	/**
+	 * Generic single macro expansion method
+	 * @param  string $content Content to act on
+	 * @param  string $tag Raw macro tag (name) to work with
+	 * @param  string $value Value to replace macro with
+	 * @return string Compiled content
+	 */
+	public static function expand ($content, $tag, $value) {
+		if (empty($content)) return $content;
+		if (empty($tag)) return $content;
+
+		$macro = self::get_regex($tag);
+		return preg_replace($macro, $value, $content);
+	}
+}
+
+/**
+ * Postmeta codec implementation.
+ */
+class Upfront_MacroCodec_Postmeta extends Upfront_MacroCodec {
+
+	/**
+	 * Expand known postmeta macros in the content
+	 *
+	 * Very literal, it will treat all the macros as postmeta macros.
+	 *
+	 * @param  string $content Content to expand macros in
+	 * @param  mixed $post Post to fetch metas for
+	 * @return string Expanded content
+	 */
+	public static function expand_all ($content, $post) {
+		if (empty($content)) return $content;
+		if (empty($post)) return $content;
+
+		$tags = self::get_tags($content);
+		if (empty($tags)) return $content;
+
+		$post_id = false;
+		if (!is_object($post) && is_numeric($post)) {
+			$post_id = $post;
+			$post = get_post($post_id);
+		} else {
+			$post_id = !empty($post->ID) ? $post->ID : false;
+		}
+
+		$metadata = Upfront_PostmetaModel::get_post_meta_fields($post_id, $tags);
+
+		foreach ($metadata as $item) {
+			if (empty($item['meta_key'])) continue;
+
+			$key = $item['meta_key'];
+			$value = isset($item['meta_value']) ? $item['meta_value'] : '';
+
+			$value = apply_filters('upfront-postmeta-value',
+				apply_filters("upfront-postmeta-{$key}-value", $value, $post_id),
+				$value, $post_id, $key
+			);
+
+			$content = preg_replace(self::get_regex($key), $value, $content);
+		}
+
+		// Re-iterate through tags and null out empty replacement macros.
+		foreach ($tags as $tag) {
+			$content = preg_replace(self::get_regex($tag), '', $content);
+		}
+
+		return $content;
 	}
 }
