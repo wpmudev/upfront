@@ -48,7 +48,7 @@ class Upfront_Posts_PostView {
 			if (!in_array($part, $enabled_post_parts)) continue;
 			$method = "expand_{$part}_template";
 			if (method_exists($this, $method)) $out .= $this->$method();
-			else $out .= apply_filters('upfront_posts-' . $method, $post);
+			else $out .= apply_filters('upfront_posts-' . $method, '', $post);
 		}
 
 		return $this->_wrap_post($out, $post);
@@ -72,7 +72,7 @@ class Upfront_Posts_PostView {
 			? $this->_data['date_posted_format']
 			: Upfront_Posts_PostsData::get_default('date_posted_format')
 		;
-		$format = explode(' ', $date_format, 2);
+		$format = explode(' ', $date_format);
 
 		$out = $this->_get_template('date_posted');
 
