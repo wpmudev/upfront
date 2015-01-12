@@ -522,13 +522,23 @@ define(function() {
 				}
 				return string;
 			},
-			update_styles: function(){
-				var $styles = $("style");
-
-				$styles.each(function(){
-					var $this = $(this);
-
-				});
+			remove_ufcs: function( string ){
+				var	theme_colors = _(Upfront.mainData.themeColors.colors).pluck("color");
+				for(var _i in theme_colors){
+					var pattern = new RegExp( "/\\*#ufc" + _i + "\\*/" + theme_colors[_i],"g"),
+						theme_color = theme_colors[_i];
+					string = string.replace(pattern, theme_color );
+				}
+				return string;
+			},
+			convert_string_color_to_ufc: function( string ){
+				var	theme_colors = _(Upfront.mainData.themeColors.colors).pluck("color");
+				for(var _i in theme_colors){
+					var pattern = new RegExp("/\\*#ufc" + _i + "\\*/" + theme_colors[_i],"g"),
+						ufc = "#ufc" + _i;
+					string = string.replace(pattern, ufc );
+				}
+				return string;
 			}
 		}
 	};

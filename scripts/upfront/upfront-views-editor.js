@@ -6116,7 +6116,7 @@ var CSSEditor = Backbone.View.extend({
 			me.trigger('change', editor);
 		});
 
-		styles = this.get_style_element().html();
+		styles = Upfront.Util.colors.convert_string_color_to_ufc(this.get_style_element().html());
 		if (this.is_global_stylesheet === false) {
 			scope = new RegExp(this.get_css_selector() + '\\s*', 'g');
 			styles = styles.replace(scope, '');
