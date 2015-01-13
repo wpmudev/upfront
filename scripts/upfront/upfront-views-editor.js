@@ -1886,7 +1886,7 @@ define([
         },
         is_theme_color : function(color){
             color = this.color_to_hex( color );
-            return _.indexOf(this.get_colors(), color) !== -1
+            return _.indexOf(this.get_colors(), color) !== -1 ? _.indexOf(this.get_colors(), color) : false;
         },
         get_css_class : function(color, bg){
             color = this.color_to_hex( color );
@@ -1985,16 +1985,7 @@ define([
                 self.styles += " .upfront_theme_bg_color_" + index +"{ background-color: " + item.get("color") + ";}";
                 self.styles += " a .upfront_theme_bg_color_" + index +":hover{ background-color: " + item.get_hover_color() + ";}";
                 self.styles += " button .upfront_theme_bg_color_" + index +":hover{ background-color: " + item.get_hover_color() + ";}";
-
-				var str = '/\\*#ufc' + index +'\\*/' + item.get("prev"),
-					regex = new RegExp(str , 'gi'),
-					container = document.getElementsByTagName("html")[0];
-				findAndReplaceDOMText(container , {
-					find:  regex,
-					replace: function(portion, match){
-						return "/*#ufc" + index +"*/" + item.get("color");
-					}
-				} );
+				Upfront.Util.colors.update_colors_in_dom(item.get("prev"), item.get("color"), index);
             });
             $("#upfront_theme_colors_dom_styles").remove();
             $("<style id='upfront_theme_colors_dom_styles' type='text/css'>" + this.styles + "</style>").appendTo("body");
@@ -3933,8 +3924,16 @@ var Field_ToggleableText = Field_Text.extend({
 				a : 0
 			};
 			this.spectrumOptions = spectrumOptions;
-			spectrumOptions.move = function(color){
+			spectrumOptions.move = function(color, e){
 				if( !_.isEmpty( color ) ){
+					var theme_color_index = Upfront.Views.Theme_Colors.colors.is_theme_color(color);
+					if( theme_color_index !== false ){
+						color.is_theme_color = true;
+						color.theme_color = "#ufc" + theme_color_index;
+						color.theme_color_code = Upfront.Util.colors.convert_string_ufc_to_color(color.theme_color);
+					}else{
+						color.is_theme_color = false;
+					}
 					var rgb = color.toHexString();
 					$('.sp-dragger').css({
 						'border-top-color': rgb,
@@ -3952,6 +3951,7 @@ var Field_ToggleableText = Field_Text.extend({
 
 			spectrumOptions.show = function(color){
 				if( !_.isEmpty( color ) ){
+
 					var rgb = color.toHexString();
 					me.rgba = _.extend(me.rgba, color.toRgb());
 					me.update_input_border_color( color.toRgbString() );

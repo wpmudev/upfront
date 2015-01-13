@@ -51,7 +51,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			Upfront.Events.trigger("command:layout:save_success");
 			return false;
 		}
-
+		data = Upfront.Util.colors.update_colors_to_match_ufc(data);
 		Upfront.Util.post({"action": Upfront.Application.actions.save, "data": data, "storage_key": storage_key})
 			.success(function () {
 				Upfront.Util.log("layout saved");

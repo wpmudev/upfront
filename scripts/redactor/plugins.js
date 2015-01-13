@@ -1087,6 +1087,24 @@ RedactorPlugins.upfrontColor = function() {
             updateColors: function () {
                 this.redactor.buffer.set();
                 this.redactor.selection.save();
+                var theme_color_index = Upfront.Views.Theme_Colors.colors.is_theme_color(this.current_color);
+                if( theme_color_index !== false ){
+                    this.current_color.is_theme_color = true;
+                    this.current_color.theme_color = "#ufc" + theme_color_index;
+                    this.current_color.theme_color_code = Upfront.Util.colors.convert_string_ufc_to_color( this.current_color.theme_color);
+                }else{
+                    this.current_color.is_theme_color = false;
+                }
+
+                theme_color_index = Upfront.Views.Theme_Colors.colors.is_theme_color(this.current_bg);
+                if( theme_color_index !== false ){
+                    this.current_bg.is_theme_color = true;
+                    this.current_bg.theme_color = "#ufc" + theme_color_index;
+                    this.current_bg.theme_color_code = Upfront.Util.colors.convert_string_ufc_to_color(this.current_bg.theme_color);
+                }else{
+                    this.current_bg.is_theme_color = false;
+                }
+
                 var self = this,
                     current = self.redactor.selection.getText(),
                     bg_cleanup = "color",
@@ -1096,13 +1114,21 @@ RedactorPlugins.upfrontColor = function() {
                     class_set = function( cls ){
                         self.redactor.inline.format('div', 'class', cls);
                     },
-                    color_set = function(rule, type)
+                    color_set = function(rule, value)
                     {
-                        self.redactor.inline.format('div', 'style', rule + ': ' + type + ';');
+
+                        var wrapper = document.createElement("span");
+                        wrapper.appendChild(self.redactor.range.extractContents());
+                        self.redactor.range.insertNode(wrapper);
+                        $(wrapper).attr("style", rule + ":" + value);
+                        //self.redactor.selection.wrap("span");
+                        //self.redactor.inline.format('div', 'style', rule + ': ' + type + ';');
+                        self.redactor.selection.restore();
+                        self.redactor.code.sync();
                     },
                     color_remove = function(rule)
                     {
-                        self.redactor.inline.removeStyleRule(rule);
+                        //self.redactor.inline.removeStyleRule(rule);
                     };
 
 
@@ -1113,14 +1139,14 @@ RedactorPlugins.upfrontColor = function() {
 
                     change_bgcolor = true;
                     var bg_class = Upfront.Views.Theme_Colors.colors.get_css_class(self.current_bg.toHexString(), true);
-                    color_remove( 'background-color' );
-                    if (bg_class) {
-                        class_set( bg_class );
-                        bg_cleanup = "theme_color";
-                    } else {
-                        color_set( 'background-color',  self.current_bg.toRgbString() );
-                    }
-
+                    //color_remove( 'background-color' );
+                    //if (bg_class) {
+                    //    class_set( bg_class );
+                    //    bg_cleanup = "theme_color";
+                    //} else {
+                    //
+                    //}
+                    color_set( 'background-color', self.current_bg.is_theme_color ? self.current_bg.theme_color_code : self.current_bg.toRgbString() );
                 }
 
                 /**
@@ -1130,11 +1156,12 @@ RedactorPlugins.upfrontColor = function() {
                     change_color = true;
                     var theme_color_classname = Upfront.Views.Theme_Colors.colors.get_css_class(self.current_color.toHexString());
                     color_remove( 'color' );
-                    if (theme_color_classname) {
-                        class_set( theme_color_classname );
-                    }else{
-                        color_set( 'color',  self.current_color.toRgbString() );
-                    }
+                    //if (theme_color_classname) {
+                    //    class_set( theme_color_classname );
+                    //}else{
+                    //    color_set( 'color',  self.current_color.toRgbString() );
+                    //}
+                    color_set( 'color', self.current_color.is_theme_color ? self.current_color.theme_color_code :  self.current_color.toRgbString() );
                 }
 
                 /**
@@ -1197,7 +1224,7 @@ RedactorPlugins.upfrontColor = function() {
                     } );
 
                     $( _.last( replacees ) ).replaceWith( $( this.redactor.selection.getCurrent()).css( {
-                        backgroundColor:  self.current_bg.toRgbString()
+                        backgroundColor: self.current_bg.is_theme_color ? self.current_bg.theme_color_code : self.current_bg.toHexString()
                     } ) );
                 }
 
@@ -1206,7 +1233,6 @@ RedactorPlugins.upfrontColor = function() {
                  */
 
                 self.updateIcon();
-                self.redactor.selection.restore();
             }
         })
     }
