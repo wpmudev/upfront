@@ -33,12 +33,37 @@ abstract class Upfront_MacroCodec {
 	}
 
 	/**
+	 * Get full, yet unescaped macro form.
+	 * @param  string $part String part of the macro (macro name)
+	 * @return string Final macro
+	 */
+	public static function get_macro ($part) {
+		return self::open() . $part . self::close();
+	}
+
+	/**
 	 * Returns compiled, preg_escape'd macro regex
 	 * @param  string $part String part of the macro (macro name)
 	 * @return string Final macro regex
 	 */
 	public static function get_regex ($part) {
-		return '/' . preg_quote(self::open() . $part . self::close(), '/') . '/';
+		return '/' . preg_quote(self::get_macro($part), '/') . '/';
+	}
+
+	/**
+	 * Catch-all macro regex building
+	 * @param  bool $capturing Optional argument for including macro name parens in regex, defaults to true
+	 * @return string Final regex
+	 */
+	public static function get_catchall_regex ($capturing=true) {
+		$rx = '.*';
+		if (!empty($capturing)) $rx = "({$rx})";
+
+		return '/' .
+			preg_quote(self::open(), '/') .
+			$rx .
+			preg_quote(self::close(), '/') .
+		'/';
 	}
 
 	/**
@@ -50,7 +75,7 @@ abstract class Upfront_MacroCodec {
 		$tags = $matches = array();
 		if (empty($content)) return $tags;
 
-		preg_match_all('/' . preg_quote(self::open(), '/') . '(.*)' . preg_quote(self::close(), '/') . '/', $content, $matches);
+		preg_match_all(self::get_catchall_regex(), $content, $matches);
 		if (!empty($matches[1])) $tags = $matches[1];
 
 		return $tags;
@@ -69,6 +94,19 @@ abstract class Upfront_MacroCodec {
 
 		$macro = self::get_regex($tag);
 		return preg_replace($macro, $value, $content);
+	}
+
+	/**
+	 * Clear all macros from a piece of string
+	 * @param  string $content String to clear
+	 * @param  string $clear Optional clearing replacement string, defaults to empty string
+	 * @return string Cleared content
+	 */
+	public static function clear_all ($content, $clear='') {
+		if (empty($content)) return $content;
+
+		$rx = self::get_catchall_regex(false); // Force non-capturing version
+		return preg_replace($rx, $clear, $content);
 	}
 }
 
@@ -107,12 +145,7 @@ class Upfront_MacroCodec_Postmeta extends Upfront_MacroCodec {
 			if (empty($item['meta_key'])) continue;
 
 			$key = $item['meta_key'];
-			$value = isset($item['meta_value']) ? $item['meta_value'] : '';
-
-			$value = apply_filters('upfront-postmeta-value',
-				apply_filters("upfront-postmeta-{$key}-value", $value, $post_id),
-				$value, $post_id, $key
-			);
+			$value = self::get_extracted_value($item, $post_id);
 
 			$content = preg_replace(self::get_regex($key), $value, $content);
 		}
@@ -123,5 +156,21 @@ class Upfront_MacroCodec_Postmeta extends Upfront_MacroCodec {
 		}
 
 		return $content;
+	}
+
+	/**
+	 * Extract and filter value part separately
+	 * @param  array $item Meta entry hash
+	 * @param  int $post_id Post ID, used for filtering
+	 * @return string Extracted and filtered value
+	 */
+	public static function get_extracted_value ($item, $post_id) {
+		$key = $item['meta_key'];
+		$value = isset($item['meta_value']) ? $item['meta_value'] : '';
+		$value = apply_filters('upfront-postmeta-value',
+			apply_filters("upfront-postmeta-{$key}-value", $value, $post_id),
+			$value, $post_id, $key
+		);
+		return $value;
 	}
 }
