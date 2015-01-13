@@ -13,6 +13,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 		'IMAGE' => 'featured_image',
 		'TAGS' => 'tags',
 		'TITLE' => 'title',
+		'META' => 'meta',
 	);
 	protected $parts;
 
@@ -130,6 +131,15 @@ class Upfront_ThisPostView extends Upfront_Object {
 				foreach($avatar as $size){
 					$_size = str_replace( array("{", "}"), "", $size );
 					$replacements['%avatar_' . $size . '%'] = get_avatar($post->post_author, $_size);
+				}
+				break;
+
+			case self::$PARTNAMES['META']:
+				$metas = Upfront_PostmetaModel::get_all_post_meta_fields(get_the_ID());
+				foreach ($metas as $meta) {
+					if (empty($meta['meta_key'])) continue;
+					$rpl = Upfront_MacroCodec::open() . $meta['meta_key'] . Upfront_MacroCodec::close();
+					$replacements[$rpl] = !empty($meta['meta_value']) ? $meta['meta_value'] : '';
 				}
 				break;
 		}
@@ -440,7 +450,8 @@ class Upfront_ThisPostView extends Upfront_Object {
 					array('classes' => 'c6', 'objects'=> array(array('slug' => 'date', 'classes' => ' post-part c24'))),
 					array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'featured_image', 'classes' => 'post-part c24'))),
 					array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'title', 'classes' => 'post-part c24'))),
-					array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'contents', 'classes' => ' post-part c24')))
+					array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'contents', 'classes' => ' post-part c24'))),
+					//array('classes' => 'c24 clr', 'objects'=> array(array('slug' => 'meta', 'classes' => ' post-part c24')))
 				),
 				'partOptions' => array(
 					'featured_image' => array('height' => 150),
@@ -693,7 +704,7 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 			? get_post($post_id)
 			:  apply_filters('upfront-this_post-unknown_post', (object)array(), array('post_id' => $post_id));
 		;
-		
+
 
 		$tpls = array();
 		$replacements = array();
@@ -769,7 +780,7 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 
 			if($post->post_status == 'trash')
 				$content = '<div class="ueditor_deleted_post ueditable upfront-ui">' .
-					sprintf(Upfront_ThisPostView::_get_l10n('thrashed_post'), $post->post_type, $post->post_type) . 
+					sprintf(Upfront_ThisPostView::_get_l10n('thrashed_post'), $post->post_type, $post->post_type) .
 				'</div>';
 			else
 				$content = Upfront_ThisPostView::get_post_markup($data['post_id'], null, $data['properties']);
