@@ -151,6 +151,11 @@ class Upfront_ThisPostView extends Upfront_Object {
 			'tpl' => self::replace($tpl, $replacements)
 		);
 
+		// Cleanup unused meta
+		if ($type === self::$PARTNAMES['META'] && !empty($out['tpl'])) {
+			$out['tpl'] = Upfront_MacroCodec_Postmeta::clear_all($out['tpl']);
+		}
+
 		return $out;
 	}
 
