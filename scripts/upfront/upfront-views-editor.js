@@ -2109,6 +2109,7 @@ define([
 						this.on_save();
         },
         render_bottom : function(){
+			return;
             this.$(".panel-setting-theme-colors-bottom").html(
                 this.bottomTemplate( {
                     colors : Theme_Colors.colors.toJSON(),
