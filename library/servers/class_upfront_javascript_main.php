@@ -26,12 +26,14 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		$ajax = admin_url('admin-ajax.php');
 		$site = site_url();
 		$includes_url = includes_url();
+		$current_theme_url = get_stylesheet_directory_uri();
 
 		if (empty($is_ssl) && is_ssl()) {
 			$root = preg_replace('/^https:/', 'http:', $root);
 			$includes_url = preg_replace('/^https:/', 'http:', $includes_url);
 			$ajax = preg_replace('/^https:/', 'http:', $ajax);
 			$site = preg_replace('/^https:/', 'http:', $site);
+			$current_theme_url = preg_replace('/^https:/', 'http:', $current_theme_url);
 		}
 		
 		$admin = admin_url();
@@ -45,7 +47,6 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		$paths = array(
       "backbone" => $includes_url . "js/backbone.min",
       "underscore" => $includes_url . "js/underscore.min",
-      //"jquery" => includes_url() . "js/jquery/jquery",
       "upfront-data" => $upfront_data_url,
       "text" => 'scripts/text',
       "async" => "scripts/async",
@@ -180,6 +181,16 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		);
     if (empty($theme_fonts)) $theme_fonts = json_encode(array());
 
+		$icon_fonts = get_option('upfront_' . get_stylesheet() . '_icon_fonts');
+		$icon_fonts = apply_filters(
+			'upfront_get_icon_fonts',
+			$icon_fonts,
+			array(
+				'json' => true
+			)
+		);
+    if (empty($icon_fonts)) $icon_fonts = json_encode(array());
+
 		$additional_fonts = $child_instance ? $child_instance->getAdditionalFonts() : json_encode(array());
 
 		$current_user = wp_get_current_user();
@@ -300,6 +311,7 @@ var Upfront = window.Upfront || {};
 Upfront.mainData = {
   requireConfig: $require_config,
   root: '{$root}',
+	currentThemeUrl: '{$current_theme_url}',
   ajax: '{$ajax}',
   admin: '{$admin}',
   site: '{$site}',
@@ -311,6 +323,7 @@ Upfront.mainData = {
   gridInfo: {$grid_info},
   themeInfo: {$theme_info},
   themeFonts: {$theme_fonts},
+  iconFonts: {$icon_fonts},
 	additionalFonts: {$additional_fonts},
   userDoneFontsIntro: {$user_done_font_intro},
   buttonPresets: {$button_presets},

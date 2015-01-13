@@ -11,7 +11,7 @@ class Upfront_MediaServer extends Upfront_Server {
 		$this->augment_attachments();
 
 		add_filter('upfront_l10n', array($this, 'add_l10n_strings'));
-		
+
 		// Do not show media labels in posts taxonomy selection list
 		add_filter('upfront_posts-list-skip_taxonomy-media_label', '__return_true');
 
@@ -25,6 +25,8 @@ class Upfront_MediaServer extends Upfront_Server {
 			upfront_add_ajax('upfront-media-remove_item', array($this, "remove_item"));
 			upfront_add_ajax('upfront-media-update_media_item', array($this, "update_media_item"));
 			upfront_add_ajax('upfront-media-upload', array($this, "upload_media"));
+			upfront_add_ajax('upfront-upload-icon-font', array($this, "upload_icon_font"));
+			upfront_add_ajax('upfront_update_active_icon_font', array($this, "update_active_icon_font"));
 
 			upfront_add_ajax('upfront-media-list_theme_images', array($this, "list_theme_images"));
 			upfront_add_ajax('upfront-media-upload-theme-image', array($this, "upload_theme_image"));
@@ -460,6 +462,21 @@ class Upfront_MediaServer extends Upfront_Server {
 		$updated = wp_update_post($data);
 		if (!empty($updated)) $this->_out(new Upfront_JsonResponse_Success($updated));
 		else $this->_out(new Upfront_JsonResponse_Error("Error updating the media item"));
+	}
+
+	public function upload_icon_font() {
+		do_action('upfront_upload_icon_font');
+
+		if (has_action('upfront_upload_icon_font')) {
+			return;// already handled
+		}
+		// Intended behavior is to not have uploads enabled outside of theme builder
+		// in future we may add here upload handling when builder is not running i.e.
+		// allow end user to upload more icon fonts
+	}
+
+	public function update_active_icon_font() {
+		do_action('upfront_update_active_icon_font');
 	}
 
 	public function upload_media () {
