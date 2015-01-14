@@ -50,7 +50,8 @@
         "jquery-simulate": 'jquery/jquery.simulate',
         "upfront_code": "../elements/upfront-code/js/upfront_code",
         "upfront_slider": "../elements/upfront-slider/js/uslider",
-				"chosen": "chosen/chosen.jquery.min"
+        "chosen": "chosen/chosen.jquery.min",
+        "findandreplace": "findandreplace/findAndReplaceDOMText"
     },
     shim: {
       'underscore': {
