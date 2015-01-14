@@ -78,7 +78,9 @@ define([
 					index = presetIndex;
 				}
 			});
-			Upfront.mainData[this.mainDataCollection].splice(index, 1);
+			if (_.isUndefined(index) === false) {
+				Upfront.mainData[this.mainDataCollection].splice(index, 1);
+			}
 			Upfront.mainData[this.mainDataCollection].push(properties);
 		},
 
