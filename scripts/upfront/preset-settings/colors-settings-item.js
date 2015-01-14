@@ -21,12 +21,12 @@ define(function() {
 					label_style: 'inline',
 					label: color.label,
 					spectrum: {
-						preferredFormat: 'hex',
+						preferredFormat: 'rgb',
 						change: function(value) {
-							me.model.set(color.name, value.toHex());
+							me.model.set(color.name, value.toRgbString());
 						},
 						move: function(value) {
-							me.model.set(color.name, value.toHex());
+							me.model.set(color.name, value.toRgbString());
 						}
 					}
 				});

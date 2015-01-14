@@ -41,12 +41,12 @@ define(function() {
 					label_style: 'inline',
 					label: '',
 					spectrum: {
-						preferredFormat: 'hex',
+						preferredFormat: 'rgb',
 						change: function(value) {
-							me.model.set(state + '-font-color', value.toHex());
+							me.model.set(state + '-font-color', value.toRgbString());
 						},
 						move: function(value) {
-							me.model.set(state + '-font-color', value.toHex());
+							me.model.set(state + '-font-color', value.toRgbString());
 						}
 					}
 				})
