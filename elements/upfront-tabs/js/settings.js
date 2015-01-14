@@ -14,15 +14,15 @@ define([
 		presetDefaults: {
 			'active-font-size': 14,
 			'active-font-family': 'Arial',
-			'active-font-color': '808080',
+			'active-font-color': 'rgb(128, 128, 128)',
 			'hover-font-size': 14,
 			'hover-font-family': 'Arial',
-			'hover-font-color': '000000',
+			'hover-font-color': 'rgb(0, 0, 0)',
 			'hover-transition-duration': 0.3,
 			'hover-transition-easing': 'ease-in-out',
 			'static-font-size': 14,
 			'static-font-family': 'Arial',
-			'static-font-color': '606060'
+			'static-font-color': 'rgb(0, 0, 0)'
 		},
 		styleTpl: styleTpl,
 		stateFields: {

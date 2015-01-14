@@ -897,7 +897,7 @@ define([
                 "click .upfront-object > .upfront-entity_meta > a.upfront-entity-delete_trigger": "on_delete_click",
 				"click .upfront-object > .upfront-entity_meta": "on_meta_click",
 				"click": "on_click",
-				"dblclick": "on_edit",
+				//"dblclick": "on_edit",
 				"contextmenu": "on_context_menu"
 			},
 			initialize: function () {
@@ -2268,6 +2268,7 @@ define([
 					$main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 				if ( $main.hasClass('upfront-region-editing') )
 					this.close_edit();
+
 				$main.addClass('upfront-region-lightbox-editing');
 				this.trigger('activate_region', this);
 				Upfront.Events.trigger("command:region:fixed_edit_toggle", true);
@@ -3149,8 +3150,18 @@ define([
 				});
 				var $settings_trigger = this.$el.find('> .upfront-entity_meta > a.upfront-entity-settings_trigger');
 
-				this.bg_setting.top = $settings_trigger.offset().top - this.$el.offset().top;
-				this.bg_setting.right = ( this.$el.offset().left + this.$el.width() - $settings_trigger.offset().left ) + 10;
+				
+
+				if(this.model.get('type') == 'lightbox') {
+					console.log($settings_trigger.offset());
+					//this.bg_setting.left =  $settings_trigger.offset().left - this.$el.width() ;
+					this.bg_setting.right =  80;
+					this.bg_setting.top = $settings_trigger.offset().top;
+				}
+				else {
+					this.bg_setting.right = ( this.$el.offset().left + this.$el.width() - $settings_trigger.offset().left ) + 10;
+					this.bg_setting.top = $settings_trigger.offset().top - this.$el.offset().top;
+				}
 
 				container_view.$el.addClass('upfront-region-bg-setting-open');
 				this.bg_setting.open().always(function(){
