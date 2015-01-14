@@ -137,6 +137,7 @@ window.findAndReplaceDOMText = (function() {
 
 			if (regex.global) {
 				while (match = regex.exec(text)) {
+					console.log(match);
 					matches.push(this.prepMatch(match, matchIndex++));
 				}
 			} else {

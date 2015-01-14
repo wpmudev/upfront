@@ -555,11 +555,10 @@ define(function() {
 			 * @var color_index theme color index
 			 * */
 			update_colors_in_dom: function(prev_color, color, color_index){
-				var str = '/\\*#ufc' + color_index +'\\*/' + prev_color,
-					regex = new RegExp(str , 'gi'),
+				var regex = new RegExp("/\\*#ufc" + color_index + "\\*/#(?:[0-9a-fA-F]{3}){1,2}","gi"),
 					container = document.getElementsByTagName("html")[0],
-					replacement = "/*#ufc" + color_index +"*/" + color;
-				var finder = findAndReplaceDOMText(container , {
+					replacement = "/*#ufc" + color_index +"*/" + color,
+				finder = findAndReplaceDOMText(container , {
 					find:  regex,
 					replace: function(portion, match){
 						return replacement;
