@@ -12,7 +12,7 @@
                 {[ _.each(colors, function (color, idx){ ]}
 								<span class="theme-colors-color-picker color-{{idx}}" data-index="{{idx}}" data-color="{{color.color}}"></span>
                 {[ }); ]}
-                {[ if (colors.length < 5){ ]}
+                {[ if (colors.length < 10){ ]}
                  <span class="theme_colors_empty_picker"></span>
                 {[ } ]}
             </div>
@@ -22,34 +22,34 @@
         <span class="theme_colors_empty_picker"></span>
         {[ } ]}
     </div>
-    <div class="panel-setting-theme-colors-bottom">
-        <div class="panel-setting-theme-colors-shades-wrap">
-            {[ if( colors.length ){ ]}
-						{{Upfront.Settings.l10n.global.views.define_swatch_hovers}}
-            <label id="panel-setting-theme-colors-shades-label"  for="panel-setting-theme-colors-shades-range">
-							Color change value (<span class="panel-setting-theme-colors-shades-range-number">{{range}}</span>)
-						</label>
-						<div class="upfront-field upfront-field-slider panel-setting-theme-colors-shades-range"></div>
-						<ul class="panel-setting-theme-colors-shades-range-labels">
-								<li>0</li>
-								<li>50</li>
-						</ul>
-            <div class="panel-setting-theme-colors-meta">
-                {{Upfront.Settings.l10n.global.views.click_hilite_shade}}
-								<p class="swatch-title">{{Upfront.Settings.l10n.global.views.hilite}}:</p>
-                <div class="panel-setting-theme-colors-highlights">
-                    {[ _.each(colors, function (color, idx){ ]}
-										<span class="theme-colors-color-box theme-colors-highlight{[ if(color.selected === 'highlight') { ]} theme-colors-color-box-selected{[ } ]} {{color.luminance}} color-{{idx}}" style="background-color: {{color.highlight}}" data-color="{{color.highlight}}" data-index="{{idx}}" data-type="highlight"></span>
-                    {[ }); ]}
-                </div>
-                <p class="swatch-title">Shade:</p>
-                <div class="panel-setting-theme-colors-shades">
-                    {[ _.each(colors, function (color, idx){ ]}
-										<span class="theme-colors-color-box theme-colors-shade{[ if(color.selected === 'shade') { ]} theme-colors-color-box-selected{[ } ]} {{color.luminance}} color-{{idx}}"  style="background-color: {{color.shade}}" data-index="{{idx}}" data-color="{{color.shade}}" data-type="shade"></span>
-                    {[ }); ]}
-                </div>
-            </div>
-            {[ } ]}
-        </div>
-    </div>
+    <!--<div class="panel-setting-theme-colors-bottom">-->
+        <!--<div class="panel-setting-theme-colors-shades-wrap">-->
+            <!--{[ if( colors.length ){ ]}-->
+						<!--{{Upfront.Settings.l10n.global.views.define_swatch_hovers}}-->
+            <!--<label id="panel-setting-theme-colors-shades-label"  for="panel-setting-theme-colors-shades-range">-->
+							<!--Color change value (<span class="panel-setting-theme-colors-shades-range-number">{{range}}</span>)-->
+						<!--</label>-->
+						<!--<div class="upfront-field upfront-field-slider panel-setting-theme-colors-shades-range"></div>-->
+						<!--<ul class="panel-setting-theme-colors-shades-range-labels">-->
+								<!--<li>0</li>-->
+								<!--<li>50</li>-->
+						<!--</ul>-->
+            <!--<div class="panel-setting-theme-colors-meta">-->
+                <!--{{Upfront.Settings.l10n.global.views.click_hilite_shade}}-->
+								<!--<p class="swatch-title">{{Upfront.Settings.l10n.global.views.hilite}}:</p>-->
+                <!--<div class="panel-setting-theme-colors-highlights">-->
+                    <!--{[ _.each(colors, function (color, idx){ ]}-->
+										<!--<span class="theme-colors-color-box theme-colors-highlight{[ if(color.selected === 'highlight') { ]} theme-colors-color-box-selected{[ } ]} {{color.luminance}} color-{{idx}}" style="background-color: {{color.highlight}}" data-color="{{color.highlight}}" data-index="{{idx}}" data-type="highlight"></span>-->
+                    <!--{[ }); ]}-->
+                <!--</div>-->
+                <!--<p class="swatch-title">Shade:</p>-->
+                <!--<div class="panel-setting-theme-colors-shades">-->
+                    <!--{[ _.each(colors, function (color, idx){ ]}-->
+										<!--<span class="theme-colors-color-box theme-colors-shade{[ if(color.selected === 'shade') { ]} theme-colors-color-box-selected{[ } ]} {{color.luminance}} color-{{idx}}"  style="background-color: {{color.shade}}" data-index="{{idx}}" data-color="{{color.shade}}" data-type="shade"></span>-->
+                    <!--{[ }); ]}-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--{[ } ]}-->
+        <!--</div>-->
+    <!--</div>-->
 </div>

@@ -17,7 +17,7 @@ class Upfront_PlainTxtView extends Upfront_Object {
 
 		$style = array();
 		if ($this->_get_property('background_color') && '' != $this->_get_property('background_color')) {
-			$style[] = 'background-color: '.$this->_get_property('background_color');
+			$style[] = 'background-color: '. Upfront_UFC::init()->process_colors($this->_get_property('background_color'));
 		}
 
 		if ($this->_get_property('border') && '' != $this->_get_property('border')) {
