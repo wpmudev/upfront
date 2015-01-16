@@ -45,12 +45,12 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		$child_instance = Upfront_ChildTheme::get_instance();
 
 		$paths = array(
-			"backbone" => $includes_url . "js/backbone.min",
-			"underscore" => $includes_url . "js/underscore.min",
-			"upfront-data" => $upfront_data_url,
-			"text" => 'scripts/text',
-			"async" => "scripts/async",
-			"upfront" => "scripts/upfront",
+      "backbone" => $includes_url . "js/backbone.min",
+      "underscore" => $includes_url . "js/underscore.min",
+      "upfront-data" => $upfront_data_url,
+      "text" => 'scripts/text',
+      "async" => "scripts/async",
+      "upfront" => "scripts/upfront",
 			"models" => "scripts/upfront/upfront-models",
 			"views" => "scripts/upfront/upfront-views",
 			"editor_views" => "scripts/upfront/upfront-views-editor",
@@ -67,19 +67,20 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			"jquery-df" => 'scripts/jquery/jquery-dateFormat.min',
 			"jquery-simulate" => 'scripts/jquery/jquery.simulate',
 			"ueditor" => 'scripts/redactor/ueditor',
-			"chosen" => "scripts/chosen/chosen.jquery.min"
+			"chosen" => "scripts/chosen/chosen.jquery.min",
+			"findandreplace" => "scripts/findandreplace/findAndReplaceDOMText"
 		);
 		$paths = apply_filters('upfront-settings-requirement_paths', $paths + $registered);
 
-		$shim = array(
-			'underscore' => array('exports' => '_'),
-			'redactor' => array('redactor_plugins'),
-			'jquery-df' => array('jquery'),
-			'chosen' => array(
-				'deps' => array('jquery'),
-				'exports' => 'jQuery.fn.chosen'
-			),
-		);
+    $shim = array(
+      'underscore' => array('exports' => '_'),
+      'redactor' => array('redactor_plugins'),
+      'jquery-df' => array('jquery'),
+	   'chosen' => array(
+			'deps' => array('jquery'),
+			'exports' => 'jQuery.fn.chosen'
+	   ),
+    );
 
 		$require_config = array(
 			'baseUrl' => "{$root}",

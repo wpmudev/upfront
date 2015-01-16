@@ -485,6 +485,108 @@ define(function() {
 				}
 				return jqueryui_format;
 			}
+		},
+		colors: {
+			get_ufc: function(color){
+				if(_.isEmpty(color)) return false;
+				color = tinycolor(color);
+				var	theme_colors = Upfront.Views.Theme_Colors.colors.pluck("color"),
+					this_ufc;
+
+				for(var _i in theme_colors){
+					if( theme_colors[_i].replace("#", "") === color.toHex() ){
+						this_ufc = "ufc" + _i;
+					}
+				}
+				return this_ufc;
+			},
+
+			get_color: function(ufc){
+				if(_.isEmpty(ufc)) return false;
+
+				var	theme_colors = _(Upfront.mainData.themeColors.colors).pluck("color");
+
+				return theme_colors[ parseInt(ufc.replace("ufc", ""), 10) ];
+			},
+			/**
+			 * Looks for ufc instances in a string and replaces them with actual color
+			 *
+			 * */
+			convert_string_ufc_to_color: function( string, include_ufc_as_comment ){
+				if(_.isEmpty(string)) return string;
+				include_ufc_as_comment = typeof include_ufc_as_comment === "undefined" ? true : include_ufc_as_comment;
+				var	theme_colors = Upfront.Views.Theme_Colors.colors.pluck("color");
+				for(var _i in theme_colors){
+					var pattern = new RegExp("#ufc" + _i,"g"),
+						theme_color = include_ufc_as_comment ? "/*" + "#ufc" + _i + "*/" + theme_colors[_i]:  theme_colors[_i];
+					string = string.replace(pattern, theme_color );
+				}
+				return string;
+			},
+			/**
+			 * Removes #ufc{x} from given string
+			 * */
+			remove_ufcs: function( string ){
+				var	theme_colors = Upfront.Views.Theme_Colors.colors.pluck("color");
+				for(var _i in theme_colors){
+					var pattern = new RegExp( "/\\*#ufc" + _i + "\\*/" + theme_colors[_i],"g"),
+						theme_color = theme_colors[_i];
+					string = string.replace(pattern, theme_color );
+				}
+				return string;
+			},
+			/**
+			 * Converts all theme color codes to ufc in the given string
+			 * */
+			convert_string_color_to_ufc: function( string ){
+				var	theme_colors = Upfront.Views.Theme_Colors.colors.pluck("color");
+				for(var _i in theme_colors){
+					var pattern = new RegExp("/\\*#ufc" + _i + "\\*/" + theme_colors[_i],"gi"),
+						ufc = "#ufc" + _i;
+					string = string.replace(pattern, ufc );
+				}
+				return string;
+			},
+			/**
+			 * Updates all the theme colors in the DOM according to the given color and color_index
+			 *
+			 * @var prev_color string color hex
+			 * @var color string color hex
+			 * @var color_index theme color index
+			 * */
+			update_colors_in_dom: function(prev_color, color, color_index){
+				var regex = new RegExp("/\\*#ufc" + color_index + "\\*/#(?:[0-9a-fA-F]{3}){1,2}","gi"),
+					container = document.getElementsByTagName("html")[0],
+					replacement = "/*#ufc" + color_index +"*/" + color,
+				finder = findAndReplaceDOMText(container , {
+					find:  regex,
+					replace: function(portion, match){
+						return replacement;
+					}
+				} );
+				$(".upfront-plain_txt").each(function(){
+					var $this = $(this),
+						html = $this.html();
+					$this.html(  html.replace( regex,  replacement) );
+				});
+				return finder;
+			},
+			/**
+			 * Updates wrong combinations of ufc and hex color so that the ufc and hex match
+			 *
+			 * It may be times where ufc is correct but the hex value is expired, this function updates the string
+			 * so that these two match
+			 *
+			 * */
+			update_colors_to_match_ufc: function(color_string){
+				var	theme_colors = Upfront.Views.Theme_Colors.colors.pluck("color");
+				for(var _i in theme_colors){
+					var pattern = new RegExp("/\\*#ufc" + _i + "\\*/#(?:[0-9a-fA-F]{3}){1,2}","gi"),
+						theme_color = "/*" + "#ufc" + _i + "*/" + theme_colors[_i];
+					color_string = color_string.replace(pattern, theme_color );
+				}
+				return color_string;
+			}
 		}
 	};
 

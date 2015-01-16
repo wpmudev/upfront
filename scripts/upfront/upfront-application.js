@@ -1,6 +1,6 @@
 (function ($) {
 
-define(['models', 'views', 'editor_views', 'behaviors', 'upfront-data', 'jquery-df', 'jquery-simulate', 'scripts/backbone-query-parameters/backbone-query-parameters', 'responsive'], function (models, views, editor, behaviors, data) {
+define(['models', 'views', 'editor_views', 'behaviors', 'upfront-data', 'jquery-df', 'jquery-simulate', 'scripts/backbone-query-parameters/backbone-query-parameters', 'responsive', 'findandreplace'], function (models, views, editor, behaviors, data, findandreplace) {
   _.extend(Upfront, data);
   Upfront.Events.trigger('data:ready');
   _.extend(Upfront, models);
@@ -51,7 +51,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			Upfront.Events.trigger("command:layout:save_success");
 			return false;
 		}
-
+		data = Upfront.Util.colors.update_colors_to_match_ufc(data);
 		Upfront.Util.post({"action": Upfront.Application.actions.save, "data": data, "storage_key": storage_key})
 			.success(function () {
 				Upfront.Util.log("layout saved");
@@ -1534,8 +1534,10 @@ var Application = new (Backbone.Router.extend({
 		cssEditor.fetchThemeStyles(true).done(function(styles){
 			Upfront.data.styles = {};
 			_.each(styles, function(elementStyles, elementType){
+
 				Upfront.data.styles[elementType] = [];
 				_.each(elementStyles, function(style, name){
+					style = Upfront.Util.colors.convert_string_ufc_to_color(style);
 					Upfront.data.styles[elementType].push(name);
 					var styleNode = $(name);
 					if(!styleNode.length){
@@ -1766,7 +1768,7 @@ var Application = new (Backbone.Router.extend({
 		this.listenTo(Upfront.Events, 'upfront:layout_size:change_breakpoint', function(newMode, previousMode){
 			me.responsiveMode = newMode.id;
 		});
-	}
+	},
 
 }))();
 

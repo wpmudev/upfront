@@ -1513,6 +1513,7 @@ define([
 				me.render();
 			});
 			this.listenTo(Upfront.Events, 'upfront:render_typography_sidebar', this.render);
+			this.listenTo(Upfront.Events, 'entity:object:after_render', this.update_typography_elements);
 		},
 		on_render: function () {
 			var me = this,
@@ -1738,7 +1739,8 @@ define([
 					selector = false,
 					$this_el = $('.upfront-object-content ' + element ),
 					font_family,
-					style_base;
+					style_base,
+					theme_color_class;
 
 				style_base = Font_Model.parse_variant(me.styles[element] || 'regular');
 				weight = style_base.weight;
@@ -1775,10 +1777,8 @@ define([
 					rules.push('line-height: ' + me.line_heights[element] + 'em');
 				}
 
-				Upfront.Views.Theme_Colors.colors.remove_theme_color_classes( $this_el );
 				if( !_.isEmpty(me.colors[element]) && Upfront.Views.Theme_Colors.colors.is_theme_color( me.colors[element] ) ){
-					 var theme_color_class = Upfront.Views.Theme_Colors.colors.get_css_class( me.colors[element]);
-					 $this_el.addClass(theme_color_class);
+					 theme_color_class = Upfront.Views.Theme_Colors.colors.get_css_class( me.colors[element]);
 				} else {
 					rules.push('color: ' + me.colors[element]);
 				}
@@ -1801,11 +1801,24 @@ define([
 					theme_color_class : theme_color_class
 				};
 			});
+			this.update_typography_elements();
 			this.model.set_property('typography', options);
 			if ( $('head').find('#upfront-default-typography-inline').length )
 				$('head').find('#upfront-default-typography-inline').html( css.join("\n") );
 			else
 				$('<style id="upfront-default-typography-inline">' +css.join("\n") + '</style>').insertAfter($('head').find('link[rel="stylesheet"]').first());
+		},
+		update_typography_elements: function (view) {
+			var me = this;
+			
+			_.each(this.elements, function(element) {
+				var $this_el = view && view.$el ? view.$el.find('.upfront-object-content ' + element) : $('.upfront-object-content ' + element );
+				Upfront.Views.Theme_Colors.colors.remove_theme_color_classes( $this_el );
+				if( !_.isEmpty(me.colors[element]) && Upfront.Views.Theme_Colors.colors.is_theme_color( me.colors[element] ) ){
+					 var theme_color_class = Upfront.Views.Theme_Colors.colors.get_css_class( me.colors[element]);
+					 $this_el.addClass(theme_color_class);
+				}
+			});
 		}
 	});
 
@@ -1865,6 +1878,7 @@ define([
     var Theme_Color = Backbone.Model.extend({
         defaults : {
             color : "",
+            prev : "",
             highlight : "",
             shade : "",
             selected : "",
@@ -1885,7 +1899,7 @@ define([
         },
         is_theme_color : function(color){
             color = this.color_to_hex( color );
-            return _.indexOf(this.get_colors(), color) !== -1
+            return _.indexOf(this.get_colors(), color) !== -1 ? _.indexOf(this.get_colors(), color) : false;
         },
         get_css_class : function(color, bg){
             color = this.color_to_hex( color );
@@ -1942,7 +1956,7 @@ define([
         initialize : function(){
             var self = this;
             this.template = _.template(_Upfront_Templates.sidebar_settings_theme_colors);
-            this.bottomTemplate = _.template( $(_Upfront_Templates.sidebar_settings_theme_colors).find(".panel-setting-theme-colors-bottom").html() );
+            //this.bottomTemplate = _.template( $(_Upfront_Templates.sidebar_settings_theme_colors).find(".panel-setting-theme-colors-bottom").html() );
             Upfront.Events.on("command:layout:save", this.on_save, this);
             Upfront.Events.on("command:layout:save_as", this.on_save, this);
             this.update_styles();
@@ -1984,9 +1998,15 @@ define([
                 self.styles += " .upfront_theme_bg_color_" + index +"{ background-color: " + item.get("color") + ";}";
                 self.styles += " a .upfront_theme_bg_color_" + index +":hover{ background-color: " + item.get_hover_color() + ";}";
                 self.styles += " button .upfront_theme_bg_color_" + index +":hover{ background-color: " + item.get_hover_color() + ";}";
+				Upfront.Util.colors.update_colors_in_dom(item.get("prev"), item.get("color"), index);
             });
             $("#upfront_theme_colors_dom_styles").remove();
             $("<style id='upfront_theme_colors_dom_styles' type='text/css'>" + this.styles + "</style>").appendTo("body");
+
+
+			Upfront.Events.trigger("theme_colors:update");
+
+
         },
         on_render : function(){
             var self = this;
@@ -1997,7 +2017,7 @@ define([
                 range  :  Theme_Colors.range
             } ) );
 
-            if( this.theme_colors.colors.length < 5 ){
+            if( this.theme_colors.colors.length < 10 ){
                 this.add_empty_picker();
             }
             this.add_previous_pickers();
@@ -2021,7 +2041,7 @@ define([
         add_previous_pickers : function(){
             var self = this;
             this.$(".theme-colors-color-picker").each(function(index){
-                var picker = this;
+                var picker = this,
                     $this = $(this),
                     color = $this.data("color"),
                     picker = new Field_Color({
@@ -2047,11 +2067,12 @@ define([
             });
         },
         add_new_color : function( color ){
-                percentage = parseInt( Theme_Colors.range, 10) / 100 || 0;
+                var percentage = parseInt( Theme_Colors.range, 10) / 100 || 0;
 
                 var self = this,
                     model = this.theme_colors.colors.add({
                         color : color.toHexString(),
+                        prev : color.toHexString(),
                         highlight : self.color_luminance( color.toHex(), percentage ),
                         shade : self.color_luminance( color.toHex(), (percentage * -1) )
                     }),
@@ -2084,7 +2105,7 @@ define([
             });
             this.$(".theme_colors_empty_picker").before(new_color_picker.$el);
 
-            if ( Theme_Colors.colors.length === 5 ) {
+            if ( Theme_Colors.colors.length === 10 ) {
                 this.$(".theme_colors_empty_picker").remove();
             }
             this.$("#theme-colors-no-color-notice").parent().hide();
@@ -2092,6 +2113,7 @@ define([
 						this.on_save();
         },
         render_bottom : function(){
+			return;
             this.$(".panel-setting-theme-colors-bottom").html(
                 this.bottomTemplate( {
                     colors : Theme_Colors.colors.toJSON(),
@@ -2170,6 +2192,7 @@ define([
             if( model ){
                 model.set({
                     color : color.toHexString(),
+                    prev : model.get("color"),
                     highlight : this.color_luminance( color.toHex(), percentage ),
                     shade : this.color_luminance( color.toHex(), (percentage * -1) )
                 });
@@ -3914,8 +3937,16 @@ var Field_ToggleableText = Field_Text.extend({
 				a : 0
 			};
 			this.spectrumOptions = spectrumOptions;
-			spectrumOptions.move = function(color){
+			spectrumOptions.move = function(color, e){
 				if( !_.isEmpty( color ) ){
+					var theme_color_index = Upfront.Views.Theme_Colors.colors.is_theme_color(color);
+					if( theme_color_index !== false ){
+						color.is_theme_color = true;
+						color.theme_color = "#ufc" + theme_color_index;
+						color.theme_color_code = Upfront.Util.colors.convert_string_ufc_to_color(color.theme_color);
+					}else{
+						color.is_theme_color = false;
+					}
 					var rgb = color.toHexString();
 					$('.sp-dragger').css({
 						'border-top-color': rgb,
@@ -3933,6 +3964,7 @@ var Field_ToggleableText = Field_Text.extend({
 
 			spectrumOptions.show = function(color){
 				if( !_.isEmpty( color ) ){
+
 					var rgb = color.toHexString();
 					me.rgba = _.extend(me.rgba, color.toRgb());
 					me.update_input_border_color( color.toRgbString() );
@@ -6249,7 +6281,7 @@ var CSSEditor = Backbone.View.extend({
 			me.trigger('change', editor);
 		});
 
-		styles = this.get_style_element().html();
+		styles = Upfront.Util.colors.convert_string_color_to_ufc(this.get_style_element().html());
 		if (this.is_global_stylesheet === false) {
 			scope = new RegExp(this.get_css_selector() + '\\s*', 'g');
 			styles = styles.replace(scope, '');
@@ -6371,6 +6403,7 @@ var CSSEditor = Backbone.View.extend({
 	updateStyles: function(contents){
 		var $el = this.get_style_element();
 		Upfront.Util.Transient.push('css-' + this.element_id, $el.html());
+		contents = Upfront.Util.colors.convert_string_ufc_to_color( contents);
 		$el.html(
 			this.stylesAddSelector(
 				contents, (this.is_default_style ? '' : this.get_css_selector())
