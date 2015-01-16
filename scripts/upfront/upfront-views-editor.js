@@ -2910,7 +2910,7 @@ define([
 			this.options = opts;
 		},
 		render: function () {
-			
+
 			this.$el.html(this.paginationTpl(this.collection.pagination));
 		},
 		handle_pagination_request: function (e, page) {
@@ -2940,31 +2940,33 @@ define([
 		set_page: function (e) {
 			e.preventDefault();
 			e.stopPropagation();
+			/*
 			var me = this;
 			this.collection.fetchPage($(e.target).data("idx")-1).
 				done(function(response){
 					me.collection.trigger('reset');
 				});
+			*/
+			var page = this.collection.pagination.pages - 1;
+			this.handle_pagination_request(e, page);
 		},
 		set_page_keypress: function (e) {
-			var me = this;
+			//var me = this;
 			e.stopPropagation();
-			//e.preventDefault();
-			var string = String.fromCharCode(e.which),
-				num = parseInt(string, 10)
-			;
 			if (13 !== e.which) return true;
+
 			var string = $.trim($(e.target).val()),
 				num = parseInt(string, 10)
 			;
-			if (!num) return false;
+			if (!num || num < 1) return false;
 			if (num > this.collection.pagination.pages) num = this.collection.pagination.pages;
-	
+/*
 			this.collection.fetchPage(num-1).
 				done(function(response){
 					me.collection.trigger('reset');
 				});
-			
+*/
+			this.handle_pagination_request(e, num-1);
 		}
 	});
 
@@ -3030,7 +3032,7 @@ define([
 			var postelement = $(e.currentTarget).closest('.upfront-list_item-post.upfront-list_item');
 			var postId = postelement.attr('data-post_id');
 			if(confirm( Upfront.Settings.l10n.global.content.delete_confirm.replace(/%s/, this.collection.get(postId).get('post_type')))) {
-				this.collection.get(postId).set('post_status', 'trash').save().done(function(){	
+				this.collection.get(postId).set('post_status', 'trash').save().done(function(){
 					me.collection.remove(me.collection.get(postId));
 
 				});
@@ -3150,8 +3152,8 @@ define([
 			var postelement = $(e.currentTarget).closest('.upfront-list_item-post.upfront-list_item');
 			var postId = postelement.attr('data-post_id');
 			if(confirm( Upfront.Settings.l10n.global.content.delete_confirm.replace(/%s/, this.collection.get(postId).get('post_type')))) {
-				this.collection.get(postId).set('post_status', 'trash').save().done(function(){	
-					
+				this.collection.get(postId).set('post_status', 'trash').save().done(function(){
+
 					me.collection.remove(me.collection.get(postId));
 					postelement.remove();
 				});
@@ -5403,6 +5405,25 @@ var ThemeFontsCollection = Backbone.Collection.extend({
 
 var theme_fonts_collection = new ThemeFontsCollection(Upfront.mainData.themeFonts);
 
+var IconFont = Backbone.Model.extend({
+	getUploadStatus: function() {
+		if (_.keys(this.get('files')).length === 4) {
+			return true;
+		}
+		var text = 'Please upload:';
+		_.each(['eot', 'woff', 'svg', 'ttf'], function(type) {
+			if (_.isUndefined(this.get('files')[type])) {
+				text += ' ' + type + ',';
+			}
+		}, this);
+		return text.substring(0, text.length - 1) + ' file(s).';
+	}
+});
+var IconFontCollection = Backbone.Collection.extend({
+	model: IconFont
+});
+var icon_fonts_collection = new IconFontCollection(Upfront.mainData.iconFonts);
+
 var Theme_Fonts_Storage = function(stored_fonts) {
 	var theme_fonts;
 
@@ -5539,6 +5560,138 @@ var Font_Variants_Preview = Backbone.View.extend({
 			if (model.get('selected')) selected.push(model.get('variant'));
 		});
 		return selected;
+	}
+});
+
+var Icon_Fonts_Manager = Backbone.View.extend({
+	id: 'icon-fonts-manager',
+	className: 'clearfix',
+	template: _.template($(_Upfront_Templates.popup).find('#icon-fonts-manager-tpl').html()),
+
+	events: {
+		'click .upload-icon-font': 'triggerFileChooser',
+		'click .icon-font-upload-status': 'triggerFileChooser',
+		'click .icon-fonts-list-item': 'makeFontActive'
+	},
+
+	triggerFileChooser: function() {
+		this.$el.find('#upfront-icon-font-input').click();
+	},
+
+	render: function() {
+		this.$el.html(this.template({
+			url: Upfront.mainData.ajax,
+			show_no_fonts_notice: false,
+			fonts: this.collection.models
+		}));
+
+		if (_.isUndefined(this.collection.findWhere({active: true}))) {
+			this.$el.find('[data-family="icomoon"]').addClass('icon-fonts-list-item-active');
+		}
+
+		if (!this.fileUploadInitialized) {
+			this.fileUploadInitialized = true;
+			this.initializeFileUpload();
+		}
+
+		return this;
+	},
+
+	initializeFileUpload: function() {
+		var me = this;
+		this.$el.find('#upfront-upload-icon-font').fileupload({
+			dataType: 'json',
+			done: function (e, data) {
+				var font = data.result.data.font;
+				var fontObject;
+
+				if (_.keys(font.files).length === 1) {
+					me.$el.find('.icon-fonts-list').append('<div data-family="' + font.family + '" class="icon-fonts-list-item">' + font.name + '</div>');
+					me.collection.add(font);
+				} else {
+					fontObject = me.collection.findWhere({'family': font.family});
+					fontObject.set({files: font.files});
+					if (fontObject.get('active') === true) {
+						me.updateActiveFontStyle(font.family);
+					}
+				}
+
+				fontObject = me.collection.findWhere({'family': font.family});
+				var listItem = me.$el.find('[data-family=' + font.family + ']');
+				listItem.find('.icon-font-upload-status').remove();
+				if (fontObject.getUploadStatus() !== true) {
+					listItem.append('<span class="icon-font-upload-status" title="' + fontObject.getUploadStatus() + '">*</span>');
+				}
+			}
+		});
+	},
+
+	makeFontActive: function(event) {
+		var fontItem = $(event.currentTarget);
+		fontItem.siblings().removeClass('icon-fonts-list-item-active');
+		fontItem.addClass('icon-fonts-list-item-active');
+
+		var postData = {
+			action: 'upfront_update_active_icon_font',
+			family: fontItem.data('family')
+		};
+
+
+		Upfront.Util.post(postData)
+			.error(function(){
+				return notifier.addMessage('Could not update active icon font');
+			});
+
+		$('#active-icon-font').remove();
+		_.each(this.collection.models, function(model) {
+			model.set({'active': false});
+		});
+
+		if (fontItem.data('family') === 'icomoon') {
+			return; // this is default font, no need to add style for it
+		}
+
+		this.collection.findWhere({family: fontItem.data('family')}).set({active: true});
+		this.updateActiveFontStyle(fontItem.data('family'));
+	},
+
+	updateActiveFontStyle: function(family) {
+		var font = this.collection.findWhere({family: family});
+		var longSrc = '';
+		_.each(font.get('files'), function(file, type) {
+			longSrc += "url('" + Upfront.mainData.currentThemeUrl + '/icon-fonts/' + file + "') format('";
+			switch(type) {
+				case 'eot':
+					longSrc += 'embedded-opentype';
+					break;
+				case 'woff':
+					longSrc += 'woff';
+					break;
+				case 'ttf':
+					longSrc += 'truetype';
+					break;
+				case 'svg':
+					longSrc += 'svg';
+					break;
+			}
+			longSrc += "'),";
+		});
+		var icon_font_style = "@font-face {" +
+			"	font-family: '" + font.get('family') + "';";
+		if (font.get('files').eot) {
+			icon_font_style += "src: url('" + Upfront.mainData.currentThemeUrl + '/icon-fonts/' + font.get('files').eot + "');";
+		}
+		icon_font_style += "	src:" + longSrc.substring(0, longSrc.length - 1) + ';';
+
+		icon_font_style +=
+			"	font-weight: normal;" +
+			"	font-style: normal;" +
+			"}" +
+			".uf_font_icon {" +
+			"	font-family: '" + font.get('family') + "'!important;" +
+			"}";
+
+		$('body').append('<style id="active-icon-font">' + icon_font_style + '</style>');
 	}
 });
 
@@ -5971,9 +6124,9 @@ var CSSEditor = Backbone.View.extend({
 			else {
 				this.stylename = layout_stylename;
 				if (
-					_.isArray(Upfront.data.styles[this.elementType.id]) 
-					&& Upfront.data.styles[this.elementType.id].indexOf(default_stylename) !== -1 
-					&& Upfront.data.styles[this.elementType.id].indexOf(layout_stylename) === -1 
+					_.isArray(Upfront.data.styles[this.elementType.id])
+					&& Upfront.data.styles[this.elementType.id].indexOf(default_stylename) !== -1
+					&& Upfront.data.styles[this.elementType.id].indexOf(layout_stylename) === -1
 					&& !this.no_stylename_fallback
 				)
 					this.stylename = default_stylename;
@@ -7107,7 +7260,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			title: l10n.select_content_to_link,
 			postTypes: [
 				{name: 'post', label: l10n.posts},
-				{name: 'pages', label: l10n.pages}
+				{name: 'page', label: l10n.pages}
 			]
 		},
 		events: {
@@ -7554,7 +7707,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 								this.model.set({title: title, name: name}, {silent: true});
 							}
 							$region_name.find('.upfront-region-name-edit-value').text(title);
-							
+
 							// Save to the new CSS
 							me.set_region_css_styles(this.model, region_css.styles, region_css.selector);
 
@@ -10269,7 +10422,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				"System": system_fonts_storage,
 				"Google": google_fonts_storage,
 				Text_Fonts_Manager: Text_Fonts_Manager,
-				theme_fonts_collection: theme_fonts_collection
+				Icon_Fonts_Manager: Icon_Fonts_Manager,
+				theme_fonts_collection: theme_fonts_collection,
+				icon_fonts_collection: icon_fonts_collection
 			},
 			"Field": {
 				"Field": Field,

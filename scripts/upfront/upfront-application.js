@@ -1412,7 +1412,7 @@ var Application = new (Backbone.Router.extend({
 			this.current_subapplication.stop();
 		}
 
-        
+
         Upfront.Events.once('upfront:post:edit:stop', function(action, post){
             me.navigate('/edit/' + post.post_type + '/' + post.ID + location.search, {trigger: false, replace: true});
         });
@@ -1527,7 +1527,9 @@ var Application = new (Backbone.Router.extend({
 
 	create_cssEditor: function(){
 		var me = this,
-			cssEditor = new Upfront.Views.Editor.CSSEditor();
+			cssEditor = new Upfront.Views.Editor.CSSEditor(),
+			icon_font_style,
+			longSrc = '';
 
 		cssEditor.fetchThemeStyles(true).done(function(styles){
 			Upfront.data.styles = {};
@@ -1541,6 +1543,47 @@ var Application = new (Backbone.Router.extend({
 						$('body').append(styleNode);
 					}
 				});
+			});
+
+			// Good place to add active icon font style
+			_.each(Upfront.mainData.iconFonts, function(font) {
+				if (font.active === true) {
+					_.each(font.files, function(file, type) {
+						longSrc += "url('" + Upfront.mainData.currentThemeUrl + '/icon-fonts/' + file + "') format('";
+						switch(type) {
+							case 'eot':
+								longSrc += 'embedded-opentype';
+								break;
+							case 'woff':
+								longSrc += 'woff';
+								break;
+							case 'ttf':
+								longSrc += 'truetype';
+								break;
+							case 'svg':
+								longSrc += 'svg';
+								break;
+						}
+						longSrc += "'),";
+					});
+
+					icon_font_style = "@font-face {" +
+						"font-family: '" + font.family + "';";
+					if (font.files.eot) {
+						icon_font_style += "src: url('" + Upfront.mainData.currentThemeUrl + '/icon-fonts/' + font.files.eot + "');";
+					}
+					icon_font_style += "	src:" + longSrc.substring(0, longSrc.length - 1) + ';';
+
+					icon_font_style +=
+						"	font-weight: normal;" +
+						"	font-style: normal;" +
+						"}" +
+						".uf_font_icon {" +
+						"	font-family: '" + font.family + "'!important;" +
+						"}";
+
+					$('body').append('<style id="active-icon-font">' + icon_font_style + '</style>');
+				}
 			});
 
 			if (_upfront_post_data.layout) me.apply_region_css();

@@ -84,6 +84,9 @@ class Upfront_Posts_PostView {
 		$out = Upfront_MacroCodec::expand($out, "datetime", date($date_format, $time));
 		$out = Upfront_MacroCodec::expand($out, "timestamp", $time);
 
+		$out = Upfront_MacroCodec::expand($out, "date", date(get_option('date_format'), $time));
+		$out = Upfront_MacroCodec::expand($out, "time", date(get_option('time_format'), $time));
+
 		return $out;
 	}
 

@@ -496,7 +496,7 @@
 	opacity: 0;
 	padding: 0 10px;
 	overflow-x: hidden;
-	overflow-y: scroll;
+	overflow-y: auto;
 }
 
 #sidebar-ui .sidebar-panel-elements .sidebar-panel-content {
@@ -509,6 +509,12 @@
 	border-top: 1px solid #accae6;
 	/* border-bottom: 1px solid #accae6; */
 	opacity: 1;
+}
+#sidebar-ui .sidebar-panel-elements.expanded .sidebar-panel-content {
+  height: 262px;
+}
+#sidebar-ui .sidebar-panel-elements.expanded + .sidebar-panel {
+  margin-top: -5px;
 }
 
 #sidebar-ui-toggler{

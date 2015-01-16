@@ -26,14 +26,16 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		$ajax = admin_url('admin-ajax.php');
 		$site = site_url();
 		$includes_url = includes_url();
+		$current_theme_url = get_stylesheet_directory_uri();
 
 		if (empty($is_ssl) && is_ssl()) {
 			$root = preg_replace('/^https:/', 'http:', $root);
 			$includes_url = preg_replace('/^https:/', 'http:', $includes_url);
 			$ajax = preg_replace('/^https:/', 'http:', $ajax);
 			$site = preg_replace('/^https:/', 'http:', $site);
+			$current_theme_url = preg_replace('/^https:/', 'http:', $current_theme_url);
 		}
-		
+
 		$admin = admin_url();
 		$upfront_data_url = $ajax . '?action=upfront_data';
 
@@ -43,13 +45,12 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		$child_instance = Upfront_ChildTheme::get_instance();
 
 		$paths = array(
-      "backbone" => $includes_url . "js/backbone.min",
-      "underscore" => $includes_url . "js/underscore.min",
-      //"jquery" => includes_url() . "js/jquery/jquery",
-      "upfront-data" => $upfront_data_url,
-      "text" => 'scripts/text',
-      "async" => "scripts/async",
-      "upfront" => "scripts/upfront",
+			"backbone" => $includes_url . "js/backbone.min",
+			"underscore" => $includes_url . "js/underscore.min",
+			"upfront-data" => $upfront_data_url,
+			"text" => 'scripts/text',
+			"async" => "scripts/async",
+			"upfront" => "scripts/upfront",
 			"models" => "scripts/upfront/upfront-models",
 			"views" => "scripts/upfront/upfront-views",
 			"editor_views" => "scripts/upfront/upfront-views-editor",
@@ -70,15 +71,15 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		);
 		$paths = apply_filters('upfront-settings-requirement_paths', $paths + $registered);
 
-    $shim = array(
-      'underscore' => array('exports' => '_'),
-      'redactor' => array('redactor_plugins'),
-      'jquery-df' => array('jquery'),
+		$shim = array(
+			'underscore' => array('exports' => '_'),
+			'redactor' => array('redactor_plugins'),
+			'jquery-df' => array('jquery'),
 			'chosen' => array(
 				'deps' => array('jquery'),
 				'exports' => 'jQuery.fn.chosen'
 			),
-    );
+		);
 
 		$require_config = array(
 			'baseUrl' => "{$root}",
@@ -178,6 +179,16 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			)
 		);
     if (empty($theme_fonts)) $theme_fonts = json_encode(array());
+
+		$icon_fonts = get_option('upfront_' . get_stylesheet() . '_icon_fonts');
+		$icon_fonts = apply_filters(
+			'upfront_get_icon_fonts',
+			$icon_fonts,
+			array(
+				'json' => true
+			)
+		);
+    if (empty($icon_fonts)) $icon_fonts = json_encode(array());
 
 		$additional_fonts = $child_instance ? $child_instance->getAdditionalFonts() : json_encode(array());
 
@@ -299,6 +310,7 @@ var Upfront = window.Upfront || {};
 Upfront.mainData = {
   requireConfig: $require_config,
   root: '{$root}',
+	currentThemeUrl: '{$current_theme_url}',
   ajax: '{$ajax}',
   admin: '{$admin}',
   site: '{$site}',
@@ -310,6 +322,7 @@ Upfront.mainData = {
   gridInfo: {$grid_info},
   themeInfo: {$theme_info},
   themeFonts: {$theme_fonts},
+  iconFonts: {$icon_fonts},
 	additionalFonts: {$additional_fonts},
   userDoneFontsIntro: {$user_done_font_intro},
   buttonPresets: {$button_presets},

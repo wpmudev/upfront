@@ -1168,6 +1168,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				this.borderRadius3.set_value(preset.borderradius3);
 
 				this.bgColor.set_value(preset.bgcolor);
+				
 				this.bgColor.update_input_border_color(preset.bgcolor);
 
 				this.fontSize.set_value(preset.fontsize);

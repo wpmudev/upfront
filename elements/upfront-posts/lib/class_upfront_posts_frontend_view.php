@@ -6,12 +6,6 @@
 class Upfront_PostsView extends Upfront_Object {
 
 	public function get_markup () {
-		/*
-		$data = wp_parse_args(
-			$this->_properties_to_array(),
-			Upfront_Posts::get_defaults()
-		);
-		*/
 		$data = $this->_properties_to_array();
 		if (empty($data)) $data = Upfront_Posts_PostsData::get_defaults();
 

@@ -44,12 +44,13 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 
 		this.events = _.extend({}, this.events, {
 			'click button.submit-field' : 'handleButtonclick',
-			'dblclick button.submit-field' : 'editButtontext'
+			'dblclick button.submit-field' : 'editButtontext',
+			'dblclick .upfront-field-container > label' : 'editLabeltext'
 		});
 		
 	},
 	on_render: function() {
-		console.log('on rendered');
+		
 		var me = this;
 		$button = this.$el.find('button.submit-field > span');
 
@@ -76,7 +77,9 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 		$labels = this.$el.find('.upfront-field-container > label');
 
 		$labels.each(function() {
-			$label = $(this);
+			//var content = $(this).html();
+			//$(this).html('').append($('<div>').html(content));
+			$label = $(this);//.children('div');
 			$label.ueditor({
 				linebreaks: true,
 				disableLineBreak: true,
@@ -120,6 +123,17 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 		
 		$button = this.$el.find('button.submit-field > span');
 		var ueditor = $button.data('ueditor');
+
+		ueditor.start();
+
+
+	},
+	editLabeltext: function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		
+		$label = $(e.target);
+		var ueditor = $label.data('ueditor');
 
 		ueditor.start();
 

@@ -16,15 +16,18 @@ define([
 		presetDefaults: {
 			'active-font-size': 14,
 			'active-font-family': 'Arial',
-			'active-font-color': '808080',
-			'active-header-background': '000000',
-			'active-content-background': '000000',
-			'active-triangle-icon-color': 'ffffff',
+			'active-font-color': 'rgb(128, 128, 128)',
+			'active-header-background': 'rgb(0, 0, 0)',
+			'active-header-bg-color': 'rgb(0, 0, 0)',
+			'active-content-background': 'rgb(0, 0, 0)',
+			'active-content-bg-color': 'rgb(0, 0, 0)',
+			'active-triangle-icon-color': 'rgb(255, 255, 255)',
 			'static-font-size': 14,
 			'static-font-family': 'Arial',
-			'static-font-color': '606060',
-			'static-header-background': '000000',
-			'static-triangle-icon-color': 'ffffff'
+			'static-font-color': 'rgb(96, 96, 96)',
+			'static-header-background': 'rgb(0, 0, 0)',
+			'static-header-bg-color': 'rgb(0, 0, 0)',
+			'static-triangle-icon-color': 'rgb(255, 255, 255)'
 		},
 		stateFields: {
 			Active: [

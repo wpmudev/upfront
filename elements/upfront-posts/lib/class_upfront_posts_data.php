@@ -2,6 +2,10 @@
 
 class Upfront_Posts_PostsData {
 
+	/**
+	 * Fetch all default values for properties.
+	 * @return array Default element properties
+	 */
 	public static function get_defaults () {
 		static $defaults;
 		if (!empty($defaults)) return $defaults;
@@ -54,20 +58,49 @@ class Upfront_Posts_PostsData {
 		return $defaults;
 	}
 
-	private static function _slug_to_part_key ($slug) {
+	/**
+	 * Slug sanitization utility method
+	 * @param  string $slug Raw slug
+	 * @return string Normalized slug
+	 */
+	private static function _get_normalized_slug ($slug) {
 		$slug = preg_replace('/[^-_a-z0-9]/i', '', $slug);
+		return $slug;
+	}
+
+	/**
+	 * Part key creation utility method
+	 * @param  string $slug Raw slug
+	 * @return string Finished part name
+	 */
+	private static function _slug_to_part_key ($slug) {
+		$slug = self::_get_normalized_slug($slug);
 		return "post-part-{$slug}";
 	}
 
+	/**
+	 * Template fetching method.
+	 * The appropriate element template property is checked first and used if present.
+	 * Otherwise, we load up stuff from theme template if present, or fall back to default.
+	 * @param  string $slug Raw slug for template resolution
+	 * @param  array  $data Raw data (element properties)
+	 * @return string Template contents
+	 */
 	public static function get_template ($slug, $data=array()) {
-		$slug = preg_replace('/[^-_a-z0-9]/i', '', $slug);
+		$slug = self::_get_normalized_slug($slug);
 
-		$data_key = "post-part-{$slug}";
+		$data_key = self::_slug_to_part_key($slug);
 		if (!empty($data) && isset($data[$data_key])) return $data[$data_key];
 
 		return upfront_get_template("posts-{$slug}", $data, dirname(dirname(__FILE__)) . '/tpl/parts/posts-' . $slug . '.php');
 	}
 
+	/**
+	 * Fetch one of the default values.
+	 * @param  string $key Property key to look for
+	 * @param  mixed $fallback Fallback value if the key hasn't been found. Defaults to (bool)false
+	 * @return mixed Found value or $fallback
+	 */
 	public static function get_default ($key, $fallback=false) {
 		$defaults = self::get_defaults();
 		return isset($defaults[$key])

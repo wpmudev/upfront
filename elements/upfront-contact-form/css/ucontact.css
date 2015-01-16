@@ -31,7 +31,9 @@ div.contact_label_position > span {
 	top: 1px;
 	color: #ccc;
 }
-
+.upfront-output-object .ucontact-label-over label {
+	display: none;
+}
 .ucontact-label-above input,
 .ucontact-label-above textarea,
 .ucontact-label-over input,

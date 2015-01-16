@@ -16,7 +16,7 @@ class Upfront_UcontactView extends Upfront_Object {
 			'message' => isset($this->msg) ? $this->msg : false,
 			'message_class' => isset($this->msg_class) ? $this->msg_class : 'error',
 			'entity_id' => $this->get_entity_ids_value(),
-			'form_button_text' => 'Send',
+			'form_button_text' => $this->_get_property('form_button_text'),
 			'placeholders' => array(
 				'name' => $this->get_placeholder($this->_get_property('form_name_label')),
 				'email' => $this->get_placeholder($this->_get_property('form_email_label')),

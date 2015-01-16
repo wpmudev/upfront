@@ -897,7 +897,7 @@ define([
                 "click .upfront-object > .upfront-entity_meta > a.upfront-entity-delete_trigger": "on_delete_click",
 				"click .upfront-object > .upfront-entity_meta": "on_meta_click",
 				"click": "on_click",
-				"dblclick": "on_edit",
+				//"dblclick": "on_edit",
 				"contextmenu": "on_context_menu"
 			},
 			initialize: function () {
@@ -1436,6 +1436,7 @@ define([
 			events: {
 				"click > .upfront-module-group-toggle-container > .upfront-module-group-ungroup": "on_ungroup",
 				"click > .upfront-module-group-toggle-container > .upfront-module-group-reorder": "on_reorder",
+				"click > .upfront-module-group-toggle-container > .upfront-module-group-edit": "on_edit",
 				"click > .upfront-module-group-finish-edit": "on_finish"
 			},
 			initialize: function () {
@@ -1449,7 +1450,7 @@ define([
 				this.listenTo(Upfront.Events, "command:module_group:finish_edit", this.on_finish);
 			},
 			render: function () {
-				var $ungroup = $('<div class="upfront-module-group-toggle-container upfront-module-group-toggle-ungroup-container"><div class="upfront-module-group-toggle upfront-module-group-ungroup">' + l10n.ungroup + '</div></div>'),
+				var $edit = $('<div class="upfront-module-group-toggle-container upfront-module-group-toggle-edit-container"><div class="upfront-module-group-toggle upfront-module-group-ungroup">' + l10n.ungroup + '</div><div class="upfront-module-group-toggle upfront-module-group-edit">' + l10n.edit_elements + '</div></div>'),
 					$reorder = $('<div class="upfront-module-group-toggle-container upfront-module-group-toggle-reorder-container"><div class="upfront-module-group-toggle upfront-module-group-reorder">' + l10n.reorder + '</div></div>'),
 					$finish = $('<div class="upfront-module-group-finish-edit upfront-ui"><i class="upfront-field-icon upfront-field-icon-tick"></i> ' + l10n.done + '</div>'),
 					$border = $('<div class="upfront-selected-border"></div>');
@@ -1457,7 +1458,7 @@ define([
 				Upfront.Events.trigger("entity:module_group:before_render", this, this.model);
 
 				this.$el.append($border);
-				this.$el.append($ungroup);
+				this.$el.append($edit);
 				this.$el.append($reorder);
 				this.$el.append($finish);
 				this.update();
@@ -1639,7 +1640,16 @@ define([
 				$main.addClass('upfront-module-group-editing');
 				this.$el.addClass('upfront-module-group-on-edit');
 				this.disable_interaction(false, false);
-				this.toggle_modules_interaction(true);
+				this.toggle_modules_interaction(true, false);
+				Upfront.Events.trigger('entity:module_group:edit', this, this.model);
+			},
+			on_edit: function () {
+				Upfront.Events.trigger("command:module_group:finish_edit"); // close other reorder first
+				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
+				$main.addClass('upfront-module-group-editing');
+				this.$el.addClass('upfront-module-group-on-edit');
+				this.disable_interaction(false, false);
+				this.toggle_modules_interaction(true, true);
 				Upfront.Events.trigger('entity:module_group:edit', this, this.model);
 			},
 			on_finish: function () {
@@ -1662,13 +1672,14 @@ define([
 				if ( this.$el.data('ui-draggable') )
 					this.$el.draggable('option', 'disabled', false);
 			},
-			toggle_modules_interaction: function (enable) {
+			toggle_modules_interaction: function (enable, can_edit) {
+				var can_edit = can_edit === true ? true : false;
 				this.model.get('modules').each(function(module){
 					var module_view = Upfront.data.module_views ? Upfront.data.module_views[module.cid] : false;
 					if ( module_view ) {
 						if ( enable ) {
 							module_view.enable_interaction(true);
-							module_view.disable_interaction(true, false, true, true, true);
+							module_view.disable_interaction(!can_edit, false, true, true, !can_edit);
 						}
 						else {
 							module_view.disable_interaction(true, false, false, false, true);
@@ -1678,10 +1689,10 @@ define([
 			},
 			on_change_breakpoint: function (breakpoint) {
 				if ( !breakpoint.default ){
-					this.$el.addClass('upfront-module-group-edit-mode');
+					this.$el.addClass('upfront-module-group-reorder-mode');
 				}
 				else {
-					this.$el.removeClass('upfront-module-group-edit-mode');
+					this.$el.removeClass('upfront-module-group-reorder-mode');
 				}
 				this.update_position();
 			},
@@ -2114,7 +2125,7 @@ define([
 				this.listenTo(Upfront.Events, "entity:region:activated", this.update_pos);
 				this.listenTo(Upfront.Events, "entity:region:activated", this.update_overlay);
 				this.listenTo(Upfront.Events, "entity:region:deactivated", this.close_edit);
-				this.listenTo(Upfront.Events, "layout:render", this.fix_height);
+				this.listenTo(Upfront.Events, "layout:after_render", this.fix_height);
 				this.listenTo(Upfront.Events, "entity:resize_stop", this.fix_height);
 				this.listenTo(Upfront.Events, "entity:region:resize_stop", this.fix_height);
 				this.listenTo(Upfront.Events, "entity:region_container:resize_stop", this.fix_height);
@@ -2257,6 +2268,7 @@ define([
 					$main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 				if ( $main.hasClass('upfront-region-editing') )
 					this.close_edit();
+
 				$main.addClass('upfront-region-lightbox-editing');
 				this.trigger('activate_region', this);
 				Upfront.Events.trigger("command:region:fixed_edit_toggle", true);
@@ -2396,7 +2408,7 @@ define([
 			},
 			set_full_screen: function () {
 				var $region = this.$layout.find('.upfront-region-center'),
-					$sub = this.$layout.find('.upfront-region-side-top, .upfront-region-side-bottom'),
+					$sub = this.$bg.find('.upfront-region-side-top, .upfront-region-side-bottom'),
 					row = this.model.get_breakpoint_property_value('row', true),
 					min_height = row ? row * Upfront.Settings.LayoutEditor.Grid.baseline : 0,
 					height = $(window).height();
@@ -3138,8 +3150,18 @@ define([
 				});
 				var $settings_trigger = this.$el.find('> .upfront-entity_meta > a.upfront-entity-settings_trigger');
 
-				this.bg_setting.top = $settings_trigger.offset().top - this.$el.offset().top;
-				this.bg_setting.right = ( this.$el.offset().left + this.$el.width() - $settings_trigger.offset().left ) + 10;
+				
+
+				if(this.model.get('type') == 'lightbox') {
+					console.log($settings_trigger.offset());
+					//this.bg_setting.left =  $settings_trigger.offset().left - this.$el.width() ;
+					this.bg_setting.right =  80;
+					this.bg_setting.top = $settings_trigger.offset().top;
+				}
+				else {
+					this.bg_setting.right = ( this.$el.offset().left + this.$el.width() - $settings_trigger.offset().left ) + 10;
+					this.bg_setting.top = $settings_trigger.offset().top - this.$el.offset().top;
+				}
 
 				container_view.$el.addClass('upfront-region-bg-setting-open');
 				this.bg_setting.open().always(function(){
