@@ -2,6 +2,7 @@
 module.exports = function(grunt) {
 	require('load-grunt-tasks')(grunt);
 	grunt.loadNpmTasks('grunt-contrib-watch');
+	grunt.loadNpmTasks( 'grunt-wp-i18n' );
 
 	grunt.initConfig({
 		sass: {
@@ -22,6 +23,14 @@ module.exports = function(grunt) {
 				tasks: ['sass'],
 				options: {
 					spawn: false
+				}
+			}
+		},
+		makepot: {
+			target: {
+				options: {
+					domainPath: 'languages/',
+					type: 'wp-theme'
 				}
 			}
 		}
