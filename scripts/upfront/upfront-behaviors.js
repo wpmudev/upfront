@@ -2162,7 +2162,7 @@ var GridEditor = {
 				},
 				first_cb = function ($w, $ws) {
 					var w = ed.get_wrap($w);
-					return ( w.outer_grid.left == area.outer_grid.left );
+					return ( w.outer_grid.left == area.grid.left );
 				};
 			$wraps.each(function(index){
 				var $wrap = $(this),

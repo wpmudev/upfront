@@ -1513,6 +1513,7 @@ define([
 				me.render();
 			});
 			this.listenTo(Upfront.Events, 'upfront:render_typography_sidebar', this.render);
+			this.listenTo(Upfront.Events, 'entity:object:after_render', this.update_typography_elements);
 		},
 		on_render: function () {
 			var me = this,
@@ -1738,7 +1739,8 @@ define([
 					selector = false,
 					$this_el = $('.upfront-object-content ' + element ),
 					font_family,
-					style_base;
+					style_base,
+					theme_color_class;
 
 				style_base = Font_Model.parse_variant(me.styles[element] || 'regular');
 				weight = style_base.weight;
@@ -1775,10 +1777,8 @@ define([
 					rules.push('line-height: ' + me.line_heights[element] + 'em');
 				}
 
-				Upfront.Views.Theme_Colors.colors.remove_theme_color_classes( $this_el );
 				if( !_.isEmpty(me.colors[element]) && Upfront.Views.Theme_Colors.colors.is_theme_color( me.colors[element] ) ){
-					 var theme_color_class = Upfront.Views.Theme_Colors.colors.get_css_class( me.colors[element]);
-					 $this_el.addClass(theme_color_class);
+					 theme_color_class = Upfront.Views.Theme_Colors.colors.get_css_class( me.colors[element]);
 				} else {
 					rules.push('color: ' + me.colors[element]);
 				}
@@ -1801,11 +1801,24 @@ define([
 					theme_color_class : theme_color_class
 				};
 			});
+			this.update_typography_elements();
 			this.model.set_property('typography', options);
 			if ( $('head').find('#upfront-default-typography-inline').length )
 				$('head').find('#upfront-default-typography-inline').html( css.join("\n") );
 			else
 				$('<style id="upfront-default-typography-inline">' +css.join("\n") + '</style>').insertAfter($('head').find('link[rel="stylesheet"]').first());
+		},
+		update_typography_elements: function (view) {
+			var me = this;
+			
+			_.each(this.elements, function(element) {
+				var $this_el = view && view.$el ? view.$el.find('.upfront-object-content ' + element) : $('.upfront-object-content ' + element );
+				Upfront.Views.Theme_Colors.colors.remove_theme_color_classes( $this_el );
+				if( !_.isEmpty(me.colors[element]) && Upfront.Views.Theme_Colors.colors.is_theme_color( me.colors[element] ) ){
+					 var theme_color_class = Upfront.Views.Theme_Colors.colors.get_css_class( me.colors[element]);
+					 $this_el.addClass(theme_color_class);
+				}
+			});
 		}
 	});
 

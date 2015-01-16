@@ -441,7 +441,26 @@ class Upfront_Layout extends Upfront_JsonModel {
 		$new_data = apply_filters('upfront_override_layout_data', $data, $cascade);
 		if ((empty($new_data) && empty($data)) || json_encode($new_data) == json_encode($data)) {
 			$data['regions'] = self::get_regions_data();
-		} else $data = $new_data;
+		} else {
+		    $data = $new_data;
+            // We need to apply global regions that saved in db
+            $regions = array();
+            $regions_added = array();
+            foreach ( $data['regions'] as $region ) {
+                if ( $region['scope'] != 'local' ){
+                    $applied_scope = self::_apply_scoped_region($region);
+                    foreach ( $applied_scope as $applied_data ) {
+                        if ( !in_array($applied_data['name'], $regions_added) ){
+                            $regions[] = $applied_data;
+                            $regions_added[] = $applied_data['name'];
+                        }
+                    }
+                    continue;
+                }
+                $regions[] = $region;
+            }
+            $data['regions'] = $regions;
+        }
 		$data['properties'] = self::get_layout_properties();
 		$data['layout'] = self::$cascade;
 
