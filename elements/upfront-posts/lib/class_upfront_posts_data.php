@@ -1,11 +1,15 @@
 <?php
 
 class Upfront_Posts_PostsData {
-	
+
+	/**
+	 * Fetch all default values for properties.
+	 * @return array Default element properties
+	 */
 	public static function get_defaults () {
 		static $defaults;
 		if (!empty($defaults)) return $defaults;
-		
+
 		$defaults = array(
 			'type' => 'PostsModel',
 			'view_class' => 'PostsView',
@@ -30,7 +34,7 @@ class Upfront_Posts_PostsData {
 			// Post parts
 			'post_parts' => Upfront_Posts_PostView::get_default_parts(),
 			'enabled_post_parts' => Upfront_Posts_PostView::get_default_parts(),
-			
+
 			// These are the default ones
 			'default_parts' => Upfront_Posts_PostView::get_default_parts(),
 
@@ -54,20 +58,49 @@ class Upfront_Posts_PostsData {
 		return $defaults;
 	}
 
-	private static function _slug_to_part_key ($slug) {
+	/**
+	 * Slug sanitization utility method
+	 * @param  string $slug Raw slug
+	 * @return string Normalized slug
+	 */
+	private static function _get_normalized_slug ($slug) {
 		$slug = preg_replace('/[^-_a-z0-9]/i', '', $slug);
+		return $slug;
+	}
+
+	/**
+	 * Part key creation utility method
+	 * @param  string $slug Raw slug
+	 * @return string Finished part name
+	 */
+	private static function _slug_to_part_key ($slug) {
+		$slug = self::_get_normalized_slug($slug);
 		return "post-part-{$slug}";
 	}
 
+	/**
+	 * Template fetching method.
+	 * The appropriate element template property is checked first and used if present.
+	 * Otherwise, we load up stuff from theme template if present, or fall back to default.
+	 * @param  string $slug Raw slug for template resolution
+	 * @param  array  $data Raw data (element properties)
+	 * @return string Template contents
+	 */
 	public static function get_template ($slug, $data=array()) {
-		$slug = preg_replace('/[^-_a-z0-9]/i', '', $slug);
-		
-		$data_key = "post-part-{$slug}";
+		$slug = self::_get_normalized_slug($slug);
+
+		$data_key = self::_slug_to_part_key($slug);
 		if (!empty($data) && isset($data[$data_key])) return $data[$data_key];
 
 		return upfront_get_template("posts-{$slug}", $data, dirname(dirname(__FILE__)) . '/tpl/parts/posts-' . $slug . '.php');
 	}
 
+	/**
+	 * Fetch one of the default values.
+	 * @param  string $key Property key to look for
+	 * @param  mixed $fallback Fallback value if the key hasn't been found. Defaults to (bool)false
+	 * @return mixed Found value or $fallback
+	 */
 	public static function get_default ($key, $fallback=false) {
 		$defaults = self::get_defaults();
 		return isset($defaults[$key])
@@ -155,7 +188,7 @@ class Upfront_Posts_PostsData {
 				'title_label' => __('Title', 'upfront'),
 				'title_info' => __('Post title part', 'upfront'),
 			),
-			
+
 			'part_date_posted' => __('Date posted', 'upfront'),
 			'part_author' => __('Author', 'upfront'),
 			'part_gravatar' => __('Gravatar', 'upfront'),
@@ -166,6 +199,7 @@ class Upfront_Posts_PostsData {
 			'part_read_more' => __('Read More', 'upfront'),
 			'part_tags' => __('Tags', 'upfront'),
 			'part_categories' => __('Categories', 'upfront'),
+			'part_meta' => __('Meta', 'upfront'),
 
 			'edit' => __('Edit', 'upfront'),
 			'edit_html' => __('Edit HTML', 'upfront'),
@@ -176,6 +210,10 @@ class Upfront_Posts_PostsData {
 			'limit_words' => __('Limit words', 'upfront'),
 			'resize_to_fit' => __('Re-size to fit container', 'upfront'),
 			'size_px' => __('Size in px', 'upfront'),
+
+			'meta_insert' => __('Insert meta field', 'upfront'),
+			'meta_toggle' => __('Hide hidden fields', 'upfront'),
+			'meta_fields' => __('Available meta fields', 'upfront'),
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)

@@ -35,7 +35,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			$site = preg_replace('/^https:/', 'http:', $site);
 			$current_theme_url = preg_replace('/^https:/', 'http:', $current_theme_url);
 		}
-		
+
 		$admin = admin_url();
 		$upfront_data_url = $ajax . '?action=upfront_data';
 

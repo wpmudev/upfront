@@ -22,6 +22,7 @@ class Upfront_Posts_PostView {
 		7 => 'read_more',
 		8 => 'tags',
 		9 => 'categories',
+		10 => 'meta',
 	);
 
 	public function __construct ($data=array()) {
@@ -77,14 +78,14 @@ class Upfront_Posts_PostView {
 
 		$part = 1;
 		foreach ($format as $fmt) {
-			$out = preg_replace($this->_get_regex('date_' . $part), date($fmt, $time), $out);
+			$out = Upfront_MacroCodec::expand($out, "date_{$part}", date($fmt, $time));
 			$part++;
 		}
-		$out = preg_replace($this->_get_regex('datetime'), date($date_format, $time), $out);
-		$out = preg_replace($this->_get_regex('timestamp'), $time, $out);
+		$out = Upfront_MacroCodec::expand($out, "datetime", date($date_format, $time));
+		$out = Upfront_MacroCodec::expand($out, "timestamp", $time);
 
-		$out = preg_replace($this->_get_regex('date'), date(get_option('date_format'), $time), $out);
-		$out = preg_replace($this->_get_regex('time'), date(get_option('time_format'), $time), $out);
+		$out = Upfront_MacroCodec::expand($out, "date", date(get_option('date_format'), $time));
+		$out = Upfront_MacroCodec::expand($out, "time", date(get_option('time_format'), $time));
 
 		return $out;
 	}
@@ -98,8 +99,8 @@ class Upfront_Posts_PostView {
 
 		$out = $this->_get_template('author');
 
-		$out = preg_replace($this->_get_regex('name'), esc_html($name), $out);
-		$out = preg_replace($this->_get_regex('url'), esc_url($url), $out);
+		$out = Upfront_MacroCodec::expand($out, "name", esc_html($name));
+		$out = Upfront_MacroCodec::expand($out, "url", esc_url($url));
 
 		return $out;
 	}
@@ -118,8 +119,8 @@ class Upfront_Posts_PostView {
 
 		$out = $this->_get_template('gravatar');
 
-		$out = preg_replace($this->_get_regex('name'), esc_html($name), $out);
-		$out = preg_replace($this->_get_regex('gravatar'), $gravatar, $out);
+		$out = Upfront_MacroCodec::expand($out, "name", esc_html($name));
+		$out = Upfront_MacroCodec::expand($out, "gravatar", $gravatar);
 
 		return $out;
 	}
@@ -134,7 +135,7 @@ class Upfront_Posts_PostView {
 
 		$out = $this->_get_template('comment_count');
 
-		$out = preg_replace($this->_get_regex('comment_count'), (int)($this->_post->comment_count), $out);
+		$out = Upfront_MacroCodec::expand($out, "comment_count", (int)($this->_post->comment_count));
 
 		return $out;
 	}
@@ -152,8 +153,8 @@ class Upfront_Posts_PostView {
 
 		$out = $this->_get_template('thumbnail');
 
-		$out = preg_replace($this->_get_regex('thumbnail'), $thumbnail, $out);
-        $out = preg_replace($this->_get_regex('resize'), $resize_featured, $out);
+		$out = Upfront_MacroCodec::expand($out, "thumbnail", $thumbnail);
+		$out = Upfront_MacroCodec::expand($out, "resize", $resize_featured);
 
 		return $out;
 	}
@@ -166,8 +167,8 @@ class Upfront_Posts_PostView {
 
 		$out = $this->_get_template('title');
 
-		$out = preg_replace($this->_get_regex('permalink'), $permalink, $out);
-		$out = preg_replace($this->_get_regex('title'), $title, $out);
+		$out = Upfront_MacroCodec::expand($out, "permalink", $permalink);
+		$out = Upfront_MacroCodec::expand($out, "title", $title);
 
 		return $out;
 	}
@@ -181,7 +182,7 @@ class Upfront_Posts_PostView {
 
 		$out = $this->_get_template('content');
 
-		$out = preg_replace($this->_get_regex('content'), $content, $out);
+		$out = Upfront_MacroCodec::expand($out, "content", $content);
 
 		return $out;
 	}
@@ -205,7 +206,7 @@ class Upfront_Posts_PostView {
 
 		$out = $this->_get_template('tags');
 
-		$out = preg_replace($this->_get_regex('tags'), $tags, $out);
+		$out = Upfront_MacroCodec::expand($out, "tags", $tags);
 
 		return $out;
 	}
@@ -228,7 +229,7 @@ class Upfront_Posts_PostView {
 
 		$out = $this->_get_template('categories');
 
-		$out = preg_replace($this->_get_regex('categories'), $categories, $out);
+		$out = Upfront_MacroCodec::expand($out, "categories", $categories);
 
 		return $out;
 	}
@@ -241,18 +242,23 @@ class Upfront_Posts_PostView {
 
 		$out = $this->_get_template('read_more');
 
-		$out = preg_replace($this->_get_regex('permalink'), $permalink, $out);
+		$out = Upfront_MacroCodec::expand($out, "permalink", $permalink);
 
 		return $out;
 	}
 
 	/**
-	 * Create an uniform expansion regex.
-	 * @param string $part Expansion macro without delimiters
-	 * @return string Final regex
+	 * Expands post meta values.
+	 *
+	 * @return string Compiled expression
 	 */
-	private function _get_regex ($part) {
-		return '/' . preg_quote('{{' . $part . '}}', '/') . '/';
+	public function expand_meta_template () {
+		if (empty($this->_post->ID)) return '';
+
+		$out = $this->_get_template('meta');
+		if (empty($out)) return $out;
+
+		return Upfront_MacroCodec_Postmeta::expand_all($out, $this->_post);
 	}
 
 	/**

@@ -59,6 +59,11 @@ ob_clean();
 $templates['title'] = ob_get_contents();
 ob_clean();
 
+//*** META
+?><div class="post_meta"></div><?php
+$templates['meta'] = ob_get_contents();
+ob_clean();
+
 
 ob_end_clean();
 return $templates;

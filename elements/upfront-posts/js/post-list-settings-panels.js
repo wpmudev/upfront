@@ -92,7 +92,7 @@ var CustomSelectorField =  Upfront.Views.Editor.Field.Hidden.extend({
 		);
 	},
 	get_field_html: function () {
-		var field = Upfront.Views.Editor.Field.Hidden.prototype.get_field_html.apply(this), 
+		var field = Upfront.Views.Editor.Field.Hidden.prototype.get_field_html.apply(this),
 			values = this.get_decoded_values(this.options.property),
 			is_single = 'single' === this.model.get_property_value_by_name('display_type'),
 			string = values.length ? l10n.add_custom_post : l10n.select_custom_post
@@ -179,7 +179,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 	dispatch_settings: function () {
 		var type = this.model.get_property_value_by_name('list_type');
 		this.fields = _([]); // Pre-initialize the fields
-		
+
 		if ('custom' === type) this.populate_custom_items();
 		else if ('taxonomy' === type) this.populate_tax_items();
 		else this.populate_shared_tax_generic_items();
@@ -200,10 +200,13 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 	},
 
 	populate_tax_items: function () {
-		var taxs = [];
+		var taxs = [], types = [];
 		var display_type = this.model.get_property_value_by_name("display_type");
 		_(Panels._initial.taxonomies).each(function (label, type) {
 			taxs.push({label: label, value: type});
+		});
+		_(Panels._initial.post_types).each(function (label, type) {
+			types.push({label: label, value: type});
 		});
 
 		this.fields = _([]);
@@ -217,6 +220,12 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 				max: 20
 			}));
 		}
+		this.fields.push(new Upfront.Views.Editor.Field.Select({
+			model: this.model,
+			label: 'Post type',
+			property: "post_type",
+			values: types
+		}));
 		this.fields.push(new Upfront.Views.Editor.Field.Select({
 			model: this.model,
 			label: l10n.taxonomy,
@@ -305,7 +314,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 			property: "term",
 			values: terms
 		});
-		this.fields._wrapped[2] = field;
+		this.fields._wrapped[3] = field;
 		this.$el.empty();
 		this.render();
 	}

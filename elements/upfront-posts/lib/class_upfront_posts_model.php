@@ -1,19 +1,49 @@
 <?php
 
+/**
+ * Posts model factory class.
+ */
 class Upfront_Posts_Model {
 
 	const DEFAULT_LIST_TYPE = 'taxonomy';
 
+	/**
+	 * Fetch a list of post instances, according to parameters in data.
+	 * Will delegate to appropriate model implementation.
+	 * @param  array $data Raw data (element properties)
+	 * @return array List of posts
+	 */
 	public static function get_posts ($data) {
 		$class_name = self::_get_model_class($data);
 		return call_user_func(array($class_name, 'get_posts'), $data); //$class_name::get_posts($data);
 	}
 
+	/**
+	 * Fetch a list of available meta fields
+	 * Will delegate to post list fetching, which is then inspected for common meta fields.
+	 * @param  array $data Raw data (element properties)
+	 * @return array List of meta fields
+	 */
+	public static function get_meta_fields ($data) {
+		$posts = self::get_posts($data);
+		return Upfront_PostmetaModel::get_meta_fields($posts);
+	}
+
+	/**
+	 * Spawns a new WP_Query instance, according to parameters in data.
+	 * @param  array $data Raw data (element properties)
+	 * @return object A new WP_Query instance
+	 */
 	public static function spawn_query ($data) {
 		$class_name = self::_get_model_class($data);
 		return call_user_func(array($class_name, 'spawn_query'), $data); //$class_name::spawn_query($data);
 	}
 
+	/**
+	 * Utility method for selecting the appropriate posts model implementation class from raw data.
+	 * @param  array $data Raw data (element properties)
+	 * @return string Final model class name.
+	 */
 	private static function _get_model_class ($data) {
 		$list_type = !empty($data['list_type']) ? $data['list_type'] : self::DEFAULT_LIST_TYPE;
 		$class_name = get_class() . '_' . ucfirst($list_type);
@@ -64,7 +94,11 @@ class Upfront_Posts_Model {
 	}
 }
 
-
+/**
+ * Generic list type posts model
+ * This list type will inherit most of its query parameters from current query.
+ * Useful for things such as generic archives, searches and such.
+ */
 class Upfront_Posts_Model_Generic extends Upfront_Posts_Model {
 
 	public static function spawn_query ($data) {
@@ -105,7 +139,10 @@ class Upfront_Posts_Model_Generic extends Upfront_Posts_Model {
 	}
 }
 
-
+/**
+ * Custom (hand-picked) posts list type.
+ * This list type will show a hand-picked list of posts.
+ */
 class Upfront_Posts_Model_Custom extends Upfront_Posts_Model {
 	public static function spawn_query ($data) {
 		$raw_list = !empty($data['posts_list']) ? rawurldecode($data['posts_list']) : false;
@@ -133,11 +170,17 @@ class Upfront_Posts_Model_Custom extends Upfront_Posts_Model {
 	}
 	public static function get_posts ($data) {
 		$query = self::spawn_query($data);
+		if (empty($query)) return array();
 		return $query->posts;
 	}
 }
 
-
+/**
+ * Taxonomy list type (default)
+ * This list type is the most complex one, it will spawn a query
+ * according to the data stored in element properties.
+ * In common WP, this will create a "custom loop"
+ */
 class Upfront_Posts_Model_Taxonomy extends Upfront_Posts_Model {
 	public static function spawn_query ($data) {
 		$args = array();
@@ -153,6 +196,10 @@ class Upfront_Posts_Model_Taxonomy extends Upfront_Posts_Model {
 
 		if (!empty($tax_query)) $args['tax_query'][] = $tax_query;
 		$args['post_status'] = 'publish'; // double-ensure for AJAX requests
+
+		if (!empty($data['post_type'])) $args['post_type'] = $data['post_type'];
+
+		if (!empty($data['post_type']) && empty($data['term'])) unset($args['tax_query']);
 
 		return new WP_Query($args);
 	}

@@ -1,8 +1,9 @@
 (function ($) {
 define([
 	'text!elements/upfront-posts/tpl/views.html',
-	'scripts/redactor/ueditor-inserts'
-], function(tpl, Inserts) {
+	'scripts/redactor/ueditor-inserts',
+	'elements/upfront-posts/js/post-list-meta-views'
+], function(tpl, Inserts, Meta) {
 
 var l10n = Upfront.Settings.l10n.posts_element;
 var $template = $(tpl);
@@ -50,7 +51,7 @@ var Parts = {
 				$action = this.$el.find(".part_action a"),
 				me = this
 			;
-			
+
 			// Render field (if any)
 			if (this.field) {
 				this.field.render();
@@ -86,7 +87,9 @@ var Parts = {
 			var me = this,
 				tpl_name = 'post-part-' + this.options.part,
 				template = this.model.get_property_value_by_name(tpl_name),
-				editor = new Inserts.inserts.embed({data: {code: template}})
+				embed_object = ('meta' === this.options.part ? Meta.Embed : Inserts.inserts.embed),
+				//editor = new Inserts.inserts.embed({data: {code: template}})
+				editor = new embed_object({data: {code: template}, model: this.model})
 			;
 			editor
 				.start()

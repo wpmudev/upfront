@@ -1147,6 +1147,9 @@ var EmbedInsert = UeditorInsert.extend({
 			manager.remove();
 			deferred.resolve(this, embed);
 		});
+		manager.on("render", function (main, bar, ok) {
+			me.trigger("manager:rendered", manager, main, bar, ok);
+		});
 		Upfront.Events.on("upfront:element:edit:stop", function () {
 			manager.remove();
 			deferred.resolve();
@@ -1238,6 +1241,7 @@ var EmbedManager = Backbone.View.extend({
 			var value = main.get_value();
 			me.trigger("done", value);
 		});
+		this.trigger("render", main, bar, ok);
 	}
 });
 
@@ -1247,8 +1251,8 @@ var EmbedViews = {
 	OK: Backbone.View.extend({
 		className: 'upfront-inserts-markup-apply',
 		events: { click: 'propagate_apply' },
-		propagate_apply: function (e) { 
-			e.stopPropagation(); 
+		propagate_apply: function (e) {
+			e.stopPropagation();
 			this.trigger("done");
 		},
 		render: function () {
@@ -1260,7 +1264,7 @@ var EmbedViews = {
 
 	Bar: Backbone.View.extend({
 		className: 'upfront-inserts-markup-bar',
-		events: { 
+		events: {
 			click: 'stop_prop',
 			'click .inserts-shortcode': 'request_shortcode',
 			'click .inserts-image': 'request_image',
@@ -1421,8 +1425,8 @@ var EmbedViews = {
 		initialize: function (opts) {
 			this.code = opts.code;
 		},
-		send_shortcode: function (e) { 
-			e.stopPropagation(); 
+		send_shortcode: function (e) {
+			e.stopPropagation();
 			e.preventDefault();
 			if (!this.code) return false;
 			this.trigger("done", '[' + this.code + ']');

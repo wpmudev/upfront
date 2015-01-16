@@ -67,20 +67,22 @@ class Upfront_Posts extends Upfront_Server {
 		require_once (dirname(__FILE__) . '/lib/class_upfront_posts_posts_view.php');
 		require_once (dirname(__FILE__) . '/lib/class_upfront_posts_post_view.php');
 		require_once (dirname(__FILE__) . '/lib/class_upfront_posts_frontend_view.php');
-		
+
 		upfront_add_layout_editor_entity('uposts', upfront_relative_element_url('js/posts-list', __FILE__));
 		upfront_add_element_style('upfront-posts', array('css/public.css', __FILE__));
 		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
 			upfront_add_element_style('upfront-posts-editor', array('css/editor.css', __FILE__));
 		}
-		
+
 		add_filter('upfront_data', array('Upfront_Posts_PostsData', 'add_js_defaults'));
 		add_filter('upfront_l10n', array('Upfront_Posts_PostsData', 'add_l10n_strings'));
 
 		upfront_add_ajax('upfront_posts-load', array($this, "load_posts"));
 		upfront_add_ajax('upfront_posts-data', array($this, "load_data"));
 		upfront_add_ajax('upfront_posts-terms', array($this, "load_terms"));
-		
+
+		upfront_add_ajax('upfront_posts-list_meta', array($this, "load_meta"));
+
 		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
 			add_action('wp_footer', array($this, 'pickle_query'), 99);
 		}
@@ -107,6 +109,17 @@ class Upfront_Posts extends Upfront_Server {
 		$this->_out(new Upfront_JsonResponse_Success(array(
 			'posts' => Upfront_Posts_PostsView::get_posts_markup($data),
 			'pagination' => Upfront_Posts_PostsView::get_pagination($data),
+		)));
+	}
+
+	public function load_meta () {
+		$request = !empty($_POST['data']) ? stripslashes_deep($_POST['data']) : array();
+		$data = !empty($request['props']) ? $this->to_data_array($request['props']) : array();
+		if (!empty($request['query'])) $data['query'] = $request['query'];
+
+		$fields = Upfront_Posts_Model::get_meta_fields($data);
+		$this->_out(new Upfront_JsonResponse_Success(array(
+			'fields' => $fields,
 		)));
 	}
 
