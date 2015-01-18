@@ -3968,7 +3968,6 @@ var Field_ToggleableText = Field_Text.extend({
 			
 			spectrumOptions.move = function(color, e){
 				if( !_.isEmpty( color ) ){
-					$.extend(color, tinycolor.prototype);
 					var rgb = color.toHexString();
 					$('.sp-dragger').css({
 						'border-top-color': rgb,
@@ -3986,7 +3985,6 @@ var Field_ToggleableText = Field_Text.extend({
 
 			spectrumOptions.show = function(color){
 				if( !_.isEmpty( color ) ){
-					$.extend(color, tinycolor.prototype);
 					var rgb = color.toHexString();
 					me.rgba = _.extend(me.rgba, color.toRgb());
 					me.update_input_border_color( color.toRgbString() );
