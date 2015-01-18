@@ -1161,6 +1161,17 @@
                 getAlpha: function() {
                     return a;
                 },
+                get_is_theme_color : function(){ //Todo Sam: remove this function from here and place it in a relevant place
+                    var theme_color_index = Upfront.Views.Theme_Colors.colors.is_theme_color(this);
+                    if( theme_color_index !== false ){
+                        this.is_theme_color = true;
+                        this.theme_color = "#ufc" + theme_color_index;
+                        this.theme_color_code = Upfront.Util.colors.convert_string_ufc_to_color(this.theme_color);
+                    }else{
+                        this.is_theme_color = false;
+                    }
+                    return theme_color_index;
+                },
                 setAlpha: function(value) {
                     a = boundAlpha(value);
                     roundA = mathRound(100*a) / 100;
@@ -1653,7 +1664,7 @@
 
             return ret;
         };
-
+        
 
         // Readability Functions
         // ---------------------

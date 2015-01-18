@@ -1,5 +1,33 @@
 (function ($) {
 
+  $.cssHooks[ "backgroundColor" ] = {
+
+    set: function( elem, value ) {
+    	if( value.indexOf("ufc") === -1 ) {
+    		elem.style.backgroundColor = value;
+    		return;
+    	}
+
+    	elem.style.backgroundColor = Upfront.Util.colors.get_color(value);
+    	$(elem).data("ufc", value);  
+    	$(elem).data("ufc_rule", "backgroundColor"); 	
+    }
+  };
+
+  $.cssHooks[ "color" ] = {
+
+    set: function( elem, value ) {
+    	if( value.indexOf("ufc") === -1 ) {
+    		elem.style.color = value;
+    		return;
+    	}
+
+    	elem.style.color = Upfront.Util.colors.get_color(value);
+    	$(elem).data("ufc", value); 
+    	$(elem).data("ufc_rule", "color");  	
+    }
+  };
+
 var l10n = Upfront.Settings && Upfront.Settings.l10n
 	? Upfront.Settings.l10n.global.views
 	: Upfront.mainData.l10n.global.views
@@ -18,7 +46,7 @@ define([
 	"text!upfront/templates/popup.html",
 	"text!upfront/templates/region_edit_panel.html",
 	"text!upfront/templates/sidebar_settings_theme_colors.html",
-	"text!upfront/templates/color_picker.html"
+	"text!upfront/templates/color_picker.html",
 ], function (chosen, InlinePanelsLoader) {
 	var _template_files = [
 		"text!upfront/templates/property.html",
@@ -3937,16 +3965,10 @@ var Field_ToggleableText = Field_Text.extend({
 				a : 0
 			};
 			this.spectrumOptions = spectrumOptions;
+			
 			spectrumOptions.move = function(color, e){
 				if( !_.isEmpty( color ) ){
-					var theme_color_index = Upfront.Views.Theme_Colors.colors.is_theme_color(color);
-					if( theme_color_index !== false ){
-						color.is_theme_color = true;
-						color.theme_color = "#ufc" + theme_color_index;
-						color.theme_color_code = Upfront.Util.colors.convert_string_ufc_to_color(color.theme_color);
-					}else{
-						color.is_theme_color = false;
-					}
+					$.extend(color, tinycolor.prototype);
 					var rgb = color.toHexString();
 					$('.sp-dragger').css({
 						'border-top-color': rgb,
@@ -3964,7 +3986,7 @@ var Field_ToggleableText = Field_Text.extend({
 
 			spectrumOptions.show = function(color){
 				if( !_.isEmpty( color ) ){
-
+					$.extend(color, tinycolor.prototype);
 					var rgb = color.toHexString();
 					me.rgba = _.extend(me.rgba, color.toRgb());
 					me.update_input_border_color( color.toRgbString() );
@@ -3979,9 +4001,13 @@ var Field_ToggleableText = Field_Text.extend({
 
 				if(me.options.spectrum && me.options.spectrum.show)
 					me.options.spectrum.show(color);
+
 			};
 
 			spectrumOptions.beforeShow = function(color){
+				if( color instanceof Object ){
+					$.extend(color, tinycolor.prototype);
+				}
 				me.options.palette = Theme_Colors.colors.pluck("color").length ? Theme_Colors.colors.pluck("color") : ['fff', '000', '0f0'];
 				me.$('input[name=' + me.get_field_name() + ']').spectrum("option", "palette", me.options.palette);
 				if(me.options.spectrum && me.options.spectrum.beforeShow)
@@ -3996,6 +4022,7 @@ var Field_ToggleableText = Field_Text.extend({
 				me.$(".sp-container").append("<div class='color_picker_rgb_container'></div>");
 				me.update_input_border_color(me.get_saved_value());
 			});
+
 
 		},
 
@@ -8496,6 +8523,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		preview_color: function (color) {
 			var rgb = color.toRgb(),
 				rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')';
+			
+			rgba_string = color.get_is_theme_color() ?  color.theme_color : rgba_string;
 			this.model.set_breakpoint_property('background_color', rgba_string);
 		},
 		update_color: function (color) {

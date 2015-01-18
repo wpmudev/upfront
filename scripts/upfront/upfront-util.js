@@ -10,7 +10,9 @@ var rAFPollyfill = function(callback){
 		;
 		lastTime = currTime + timeToCall;
 		return id;
-}
+};
+
+
 
 define(function() {
 	var Util = {
@@ -504,9 +506,9 @@ define(function() {
 			get_color: function(ufc){
 				if(_.isEmpty(ufc)) return false;
 
-				var	theme_colors = _(Upfront.mainData.themeColors.colors).pluck("color");
+				var	theme_colors = Upfront.Views.Theme_Colors.colors.pluck("color");
 
-				return theme_colors[ parseInt(ufc.replace("ufc", ""), 10) ];
+				return theme_colors[ parseInt(ufc.replace("ufc", "").replace("#", ""), 10) ];
 			},
 			/**
 			 * Looks for ufc instances in a string and replaces them with actual color
@@ -568,6 +570,18 @@ define(function() {
 					var $this = $(this),
 						html = $this.html();
 					$this.html(  html.replace( regex,  replacement) );
+				});
+
+				var elements_with_ufc_data = $("*").filter(function(){
+					return $(this).data("ufc");
+				});
+
+				$(elements_with_ufc_data).each(function(){
+					var $this = $(this),
+						ufc = $this.data("ufc"),
+						ufc_rule = $this.data("ufc_rule");
+						$this.css(ufc_rule, ufc);
+
 				});
 				return finder;
 			},
