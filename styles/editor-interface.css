@@ -802,11 +802,11 @@ em {
 
 /* line 560, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/sidebar-ui */
 #sidebar-ui-toggler-handle.sidebar-ui-show:before {
-  content: '▸'; }
+  content: 'â–¸'; }
 
 /* line 563, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/sidebar-ui */
 #sidebar-ui-toggler-handle.sidebar-ui-hide:before {
-  content: '◂'; }
+  content: 'â—‚'; }
 
 /* line 567, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/sidebar-ui */
 #sidebar-ui:hover #sidebar-ui-toggler-handle {
