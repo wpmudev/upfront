@@ -94,6 +94,12 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 			})
 		;
 
+		if( this.$el.find(".plaintxt_padding").length && this.$el.find(".plaintxt_padding").attr("style").split("#ufc").length > 1){
+			var splits = this.$el.find(".plaintxt_padding").attr("style").split("#ufc"),
+				theme_color_index = splits[1].split(";")[0];
+			this.$el.find(".plaintxt_padding").css("backgroundColor", "#ufc" + theme_color_index);
+		}
+
 	}
 });
 
@@ -192,7 +198,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 						spectrum: {
 							preferredFormat: "hex",
 							change: this.onBgColor,
-							move: this.onBgColor,
+							move: this.onBgColor
 						}
 					})
 				]
@@ -207,7 +213,8 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 		});
 	},
 	onBgColor: function(color) {
-		this.property('bg_color', color.toRgbString(), false);
+		var c = color.get_is_theme_color() ? color.theme_color : color.toRgbString();
+		this.property('bg_color', c, false);
 		this.processBg();
 	},
 	onBorderWidth: function(event) {

@@ -566,7 +566,7 @@ define(function() {
 						return replacement;
 					}
 				} );
-				$(".upfront-plain_txt").each(function(){
+				$(".upfront-plain_txt > p").each(function(){
 					var $this = $(this),
 						html = $this.html();
 					$this.html(  html.replace( regex,  replacement) );
