@@ -1645,6 +1645,7 @@ define([
 									var rgb = color.toRgb(),
 										rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')',
 										element = me.current_element;
+										rgba_string = color.get_is_theme_color() ? color.theme_color: rgba_string;
 									if ( me.colors[element] != rgba_string ){
 										me.colors[element] = rgba_string;
 										me.update_typography(color);
@@ -1842,9 +1843,9 @@ define([
 			_.each(this.elements, function(element) {
 				var $this_el = view && view.$el ? view.$el.find('.upfront-object-content ' + element) : $('.upfront-object-content ' + element );
 				Upfront.Views.Theme_Colors.colors.remove_theme_color_classes( $this_el );
-				if( !_.isEmpty(me.colors[element]) && Upfront.Views.Theme_Colors.colors.is_theme_color( me.colors[element] ) ){
-					 var theme_color_class = Upfront.Views.Theme_Colors.colors.get_css_class( me.colors[element]);
-					 $this_el.addClass(theme_color_class);
+				if( !_.isEmpty(me.colors[element]) && me.colors[element].indexOf("ufc") !== -1 ){
+					 //var theme_color_class = Upfront.Views.Theme_Colors.colors.get_css_class( me.colors[element]);
+					 $this_el.css("color", me.colors[element]);
 				}
 			});
 		}
