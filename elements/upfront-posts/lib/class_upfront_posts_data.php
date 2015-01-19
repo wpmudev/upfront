@@ -61,7 +61,7 @@ class Upfront_Posts_PostsData {
 			// Parts markup goes here
 		);
 
-		foreach (Upfront_Posts_PostView::get_default_parts() as $part) {
+		foreach ($default_parts as $part) {
 			$key = self::_slug_to_part_key($part);
 			$defaults[$key] = self::get_template($part);
 		}
@@ -124,7 +124,6 @@ class Upfront_Posts_PostsData {
 		if (!empty($data['upfront_posts'])) return $data;
 
 		$data['upfront_posts'] = self::get_defaults();
-		$data['upfront_posts']['post_parts'] = $data['upfront_posts']['default_parts']; // Load all up
 
 		return $data;
 	}
