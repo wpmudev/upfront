@@ -305,34 +305,51 @@ class Upfront_JavascriptMain extends Upfront_Server {
 
 		$l10n = json_encode($this->_get_l10n_strings());
 
+		$content_settings = array();
+		if (Upfront_Permissions::current(Upfront_Permissions::CONTENT_MODE)) {
+			$raw_post_types = get_post_types(array(
+				'public' => true,
+			), 'objects');
+			$content_settings["post_types"] = array();
+			foreach ($raw_post_types as $type => $obj) {
+				if (empty($obj->labels->name)) continue;
+				$content_settings["post_types"][] = array(
+					"name" => $type,
+					"label" => $obj->labels->name,
+				);
+			}
+		}
+		$content_settings = json_encode($content_settings);
+
 		$main = <<<EOMainJs
 // Set up the global namespace
 var Upfront = window.Upfront || {};
 Upfront.mainData = {
-  requireConfig: $require_config,
-  root: '{$root}',
+	requireConfig: $require_config,
+	root: '{$root}',
 	currentThemeUrl: '{$current_theme_url}',
-  ajax: '{$ajax}',
-  admin: '{$admin}',
-  site: '{$site}',
-  debug: {$debug},
-  layoutEditorRequirements: {$layout_editor_requirements},
-  applicationModes: {$application_modes},
-  readOnly: {$read_only},
-  specificity: {$specificity},
-  gridInfo: {$grid_info},
-  themeInfo: {$theme_info},
-  themeFonts: {$theme_fonts},
-  iconFonts: {$icon_fonts},
+	ajax: '{$ajax}',
+	admin: '{$admin}',
+	site: '{$site}',
+	debug: {$debug},
+	layoutEditorRequirements: {$layout_editor_requirements},
+	applicationModes: {$application_modes},
+	readOnly: {$read_only},
+	specificity: {$specificity},
+	gridInfo: {$grid_info},
+	themeInfo: {$theme_info},
+	themeFonts: {$theme_fonts},
+	iconFonts: {$icon_fonts},
 	additionalFonts: {$additional_fonts},
-  userDoneFontsIntro: {$user_done_font_intro},
-  buttonPresets: {$button_presets},
-  tabPresets: {$tab_presets},
-  accordionPresets: {$accordion_presets},
-  themeColors: {$theme_colors},
-  postImageVariants: {$post_image_variants},
-  content: {$content},
-  l10n: {$l10n}
+	userDoneFontsIntro: {$user_done_font_intro},
+	buttonPresets: {$button_presets},
+	tabPresets: {$tab_presets},
+	accordionPresets: {$accordion_presets},
+	themeColors: {$theme_colors},
+	postImageVariants: {$post_image_variants},
+	content: {$content},
+	content_settings: {$content_settings},
+	l10n: {$l10n}
 };
 EOMainJs;
 		$this->_out(new Upfront_JavascriptResponse_Success($main));
