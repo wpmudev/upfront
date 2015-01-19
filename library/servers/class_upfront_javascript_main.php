@@ -45,12 +45,12 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		$child_instance = Upfront_ChildTheme::get_instance();
 
 		$paths = array(
-      "backbone" => $includes_url . "js/backbone.min",
-      "underscore" => $includes_url . "js/underscore.min",
-      "upfront-data" => $upfront_data_url,
-      "text" => 'scripts/text',
-      "async" => "scripts/async",
-      "upfront" => "scripts/upfront",
+			"backbone" => $includes_url . "js/backbone.min",
+			"underscore" => $includes_url . "js/underscore.min",
+			"upfront-data" => $upfront_data_url,
+			"text" => 'scripts/text',
+			"async" => "scripts/async",
+			"upfront" => "scripts/upfront",
 			"models" => "scripts/upfront/upfront-models",
 			"views" => "scripts/upfront/upfront-views",
 			"editor_views" => "scripts/upfront/upfront-views-editor",
@@ -72,15 +72,15 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		);
 		$paths = apply_filters('upfront-settings-requirement_paths', $paths + $registered);
 
-    $shim = array(
-      'underscore' => array('exports' => '_'),
-      'redactor' => array('redactor_plugins'),
-      'jquery-df' => array('jquery'),
-	   'chosen' => array(
-			'deps' => array('jquery'),
-			'exports' => 'jQuery.fn.chosen'
-	   ),
-    );
+	    $shim = array(
+	      'underscore' => array('exports' => '_'),
+	      'redactor' => array('redactor_plugins'),
+	      'jquery-df' => array('jquery'),
+		   'chosen' => array(
+				'deps' => array('jquery'),
+				'exports' => 'jQuery.fn.chosen'
+		   ),
+	    );
 
 		$require_config = array(
 			'baseUrl' => "{$root}",
@@ -160,16 +160,16 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			apply_filters('upfront-settings-grid_info', $grid_info)
 		);
 
-    $theme_info = get_option('upfront_' . get_stylesheet() . '_responsive_settings');
+	    $theme_info = get_option('upfront_' . get_stylesheet() . '_responsive_settings');
 		$theme_info = apply_filters('upfront_get_responsive_settings', $theme_info);
 		if (is_array($theme_info)) {
 			$theme_info = json_encode($theme_info);
 		}
-    if (empty($theme_info) || $theme_info === '[]') {
-      // Add defaults
+	    if (empty($theme_info) || $theme_info === '[]') {
+	    	// Add defaults
 			$defaults = Upfront_Grid::get_grid()->get_default_breakpoints();
-      $theme_info = json_encode(array('breakpoints' => $defaults));
-    }
+	    	$theme_info = json_encode(array('breakpoints' => $defaults));
+	    }
 
 		$theme_fonts = get_option('upfront_' . get_stylesheet() . '_theme_fonts');
 		$theme_fonts = apply_filters(
@@ -179,7 +179,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 				'json' => true
 			)
 		);
-    if (empty($theme_fonts)) $theme_fonts = json_encode(array());
+    	if (empty($theme_fonts)) $theme_fonts = json_encode(array());
 
 		$icon_fonts = get_option('upfront_' . get_stylesheet() . '_icon_fonts');
 		$icon_fonts = apply_filters(
@@ -189,7 +189,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 				'json' => true
 			)
 		);
-    if (empty($icon_fonts)) $icon_fonts = json_encode(array());
+    	if (empty($icon_fonts)) $icon_fonts = json_encode(array());
 
 		$additional_fonts = $child_instance ? $child_instance->getAdditionalFonts() : json_encode(array());
 
@@ -207,18 +207,18 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			)
 		);
 
-    if (empty($theme_colors)) $theme_colors = json_encode(array());
+    	if (empty($theme_colors)) $theme_colors = json_encode(array());
 
-	  $post_image_variants = get_option('upfront_' . get_stylesheet() . '_post_image_variants');
-	  $post_image_variants = apply_filters(
-		  'upfront_get_post_image_variants',
-		  $post_image_variants,
-		  array(
-			  'json' => true
-		  )
-	  );
+		$post_image_variants = get_option('upfront_' . get_stylesheet() . '_post_image_variants');
+		$post_image_variants = apply_filters(
+			'upfront_get_post_image_variants',
+			$post_image_variants,
+			array(
+				'json' => true
+			)
+		);
 
-	  if (empty($post_image_variants)) $post_image_variants = json_encode(array());
+		if (empty($post_image_variants)) $post_image_variants = json_encode(array());
 
 		$button_presets = get_option('upfront_' . get_stylesheet() . '_button_presets');
 		$button_presets = apply_filters(
