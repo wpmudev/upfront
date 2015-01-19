@@ -9,8 +9,8 @@
     	}
 
     	elem.style.backgroundColor = Upfront.Util.colors.get_color(value);
-    	$(elem).data("ufc", value);  
-    	$(elem).data("ufc_rule", "backgroundColor"); 	
+    	$(elem).data("ufc", value);
+    	$(elem).data("ufc_rule", "backgroundColor");
     }
   };
 
@@ -23,8 +23,8 @@
     	}
 
     	elem.style.color = Upfront.Util.colors.get_color(value);
-    	$(elem).data("ufc", value); 
-    	$(elem).data("ufc_rule", "color");  	
+    	$(elem).data("ufc", value);
+    	$(elem).data("ufc_rule", "color");
     }
   };
 
@@ -1838,7 +1838,7 @@ define([
 		},
 		update_typography_elements: function (view) {
 			var me = this;
-			
+
 			_.each(this.elements, function(element) {
 				var $this_el = view && view.$el ? view.$el.find('.upfront-object-content ' + element) : $('.upfront-object-content ' + element );
 				Upfront.Views.Theme_Colors.colors.remove_theme_color_classes( $this_el );
@@ -3965,7 +3965,7 @@ var Field_ToggleableText = Field_Text.extend({
 				a : 0
 			};
 			this.spectrumOptions = spectrumOptions;
-			
+
 			spectrumOptions.move = function(color, e){
 				if( !_.isEmpty( color ) ){
 					var rgb = color.toHexString();
@@ -8526,7 +8526,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		preview_color: function (color) {
 			var rgb = color.toRgb(),
 				rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')';
-			
+
 			rgba_string = color.get_is_theme_color() ?  color.theme_color : rgba_string;
 			this.model.set_breakpoint_property('background_color', rgba_string);
 		},
@@ -10540,4 +10540,3 @@ var Field_Compact_Label_Select = Field_Select.extend({
 	};
 });
 })(jQuery);
-
