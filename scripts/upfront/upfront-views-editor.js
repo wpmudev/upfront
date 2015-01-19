@@ -7329,6 +7329,11 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			'click #upfront-search_action': 'search',
 			'keyup .search_container>input': 'inputSearch'
 		},
+        initialize: function () {
+            if ((Upfront.mainData.content_settings || {post_types: []}).post_types.length) {
+                this.defaultOptions.postTypes = Upfront.mainData.content_settings.post_types;
+            }
+        },
 		open: function(options){
 			var me = this
 				bindEvents = false
