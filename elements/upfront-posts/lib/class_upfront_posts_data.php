@@ -32,11 +32,11 @@ class Upfront_Posts_PostsData {
 			'posts_list' => '', // JSON map of id/permalink pairs
 
 			// Post parts
-			'post_parts' => Upfront_Posts_PostView::get_default_parts(),
-			'enabled_post_parts' => Upfront_Posts_PostView::get_default_parts(),
+			'post_parts' => $enabled_parts,
+			'enabled_post_parts' => $enabled_parts,
 
 			// These are the default ones
-			'default_parts' => Upfront_Posts_PostView::get_default_parts(),
+			'default_parts' => $default_parts,
 
 			// Part options
 			'date_posted_format' => get_option('date_format') . ' ' . get_option('time_format'),
