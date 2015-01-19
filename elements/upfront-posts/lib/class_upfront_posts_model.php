@@ -160,12 +160,14 @@ class Upfront_Posts_Model_Custom extends Upfront_Posts_Model {
 
 		$args = array(
 			'post__in' => $posts,
-			'ignore_sticky_posts' => true
+			'ignore_sticky_posts' => true,
+			'post_type' => get_post_types(array('public' => true)),
 		);
 		$args['post_status'] = 'publish'; // double-ensure for AJAX requests
 		if (self::is_single($data)) {
 			$args['posts_per_page'] = 1;
 		}
+
 		return new WP_Query($args);
 	}
 	public static function get_posts ($data) {
