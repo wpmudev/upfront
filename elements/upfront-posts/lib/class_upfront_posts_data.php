@@ -10,6 +10,17 @@ class Upfront_Posts_PostsData {
 		static $defaults;
 		if (!empty($defaults)) return $defaults;
 
+		$default_parts = Upfront_Posts_PostView::get_default_parts();
+		$default_parts = apply_filters('upfront_posts-defaults-default_parts', $default_parts);
+
+		// Enabled parts are a subset of default ones
+		$enabled_parts = $default_parts;
+		$meta = array_search('meta', $enabled_parts);
+		if (false !== $meta) {
+			unset($enabled_parts[$meta]);
+		}
+		$enabled_parts = apply_filters('upfront_posts-defaults-enabled_parts', $enabled_parts);
+
 		$defaults = array(
 			'type' => 'PostsModel',
 			'view_class' => 'PostsView',
