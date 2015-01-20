@@ -7,10 +7,10 @@ var l10n = Upfront.Settings.l10n.posts_element;
 var $template = $(tpl);
 
 var Views = {
-	
+
 	DEFAULT: "initial",
 
-	
+
 	initial: Backbone.View.extend({
 		className: 'upfront_posts-initial',
 		tpl: _.template($template.filter("#initial").html()),
@@ -76,6 +76,15 @@ var Views = {
 							pagination: response.data.pagination,
 							l10n: l10n
 						}));
+						// Unbind pagination clicks
+						me.$el.find(".uf-pagination a")
+							.off("click")
+							.on("click", function (e) {
+								e.preventDefault();
+								e.stopPropagation();
+								return false;
+							})
+						;
 					}
 					else me.$el.empty().append(me.tpl.error({l10n: l10n}));
 				})
