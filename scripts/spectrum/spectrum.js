@@ -1162,6 +1162,7 @@
                     return a;
                 },
                 get_is_theme_color : function(){ //Todo Sam: remove this function from here and place it in a relevant place
+                    return false; // Let's not deal with this right now...
                     var theme_color_index = Upfront.Views.Theme_Colors.colors.is_theme_color(this);
                     if( theme_color_index !== false ){
                         this.is_theme_color = true;
@@ -1664,7 +1665,7 @@
 
             return ret;
         };
-        
+
 
         // Readability Functions
         // ---------------------
