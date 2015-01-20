@@ -107,6 +107,15 @@ define([
 		},
 
 		open: function(options){
+			// When image element is bigger than image it contains mask will be smaller than element.
+			// If than user uploads bigger image in that image element mask should expand to element
+			// size so that new image will not be cut off in image element.
+			if (options.maskSize.height < options.editElement.elementSize.height &&
+					options.editElement.elementSize.height < options.fullSize.height) {
+				options.maskSize.width = options.editElement.elementSize.width + 2;
+				options.maskSize.height = options.editElement.elementSize.height;
+			}
+
 			this.resetDefaults();
 			this.options = options;
 			this.src = options.src;
@@ -852,6 +861,7 @@ define([
 			this.fitImageButton = false;
 
 		},
+
 		//TODO: remove this. This method is deprecated, since the fit mask button is not used anymore
 		fitMask: function(){
 			var canvas = $('#uimage-canvas'),
