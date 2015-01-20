@@ -34,3 +34,9 @@
 .mfp-counter {
 	white-space: nowrap;
 }
+
+/* Temporary fix for lightbox shifting page to right when opened */
+html {
+	padding-right: 0 !important;
+	overflow: auto !important;
+}
