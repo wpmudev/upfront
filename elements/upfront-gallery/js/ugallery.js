@@ -206,9 +206,11 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	updateShowFilters: function() {
 		if (this.property('labelFilters')[0] === 'true') {
 			this.$el.find('.ugallery_labels').show();
+			this.$el.find('.ugallery-magnific-labels').parents('.upfront-inline-panel-item').show();
 			Upfront.frontFunctions.galleryBindShuffle();
 		} else {
 			this.$el.find('.ugallery_labels').hide();
+			this.$el.find('.ugallery-magnific-labels').parents('.upfront-inline-panel-item').hide();
 		}
 
 	},
@@ -233,9 +235,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			this.createLinkControl(image)
 		]);
 
-		if (this.property('labelFilters')[0] === 'true') {
-			panel.items.push(this.createLabelControl(image));
-		}
+		panel.items.push(this.createLabelControl(image));
 
 		if (image.get('urlType') === 'image') {
 			panel.items.push(this.createControl('fullscreen', l10n.ctrl.show_image, 'openLightbox'));
@@ -536,6 +536,12 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 				}
 				image.controls = controls;
 			});
+			if (me.property('labelFilters')[0] === 'true') {
+				me.$el.find('.ugallery-magnific-labels').parents('.upfront-inline-panel-item').show();
+			} else {
+				me.$el.find('.ugallery-magnific-labels').parents('.upfront-inline-panel-item').hide();
+			}
+
 		}, 300);
 
 		if (this.isSortingActive === true) {
