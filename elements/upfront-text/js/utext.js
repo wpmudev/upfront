@@ -213,7 +213,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 		});
 	},
 	onBgColor: function(color) {
-		var c = color.get_is_theme_color() ? color.theme_color : color.toRgbString();
+		var c = color.get_is_theme_color() !== false ? color.theme_color : color.toRgbString();
 		this.property('bg_color', c, false);
 		this.processBg();
 	},

@@ -1645,7 +1645,7 @@ define([
 									var rgb = color.toRgb(),
 										rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')',
 										element = me.current_element;
-										rgba_string = color.get_is_theme_color() ? color.theme_color: rgba_string;
+										rgba_string = color.get_is_theme_color() !== false ? color.theme_color: rgba_string;
 									if ( me.colors[element] != rgba_string ){
 										me.colors[element] = rgba_string;
 										me.update_typography(color);
@@ -8528,7 +8528,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			var rgb = color.toRgb(),
 				rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')';
 
-			rgba_string = color.get_is_theme_color() ?  color.theme_color : rgba_string;
+			rgba_string = color.get_is_theme_color() !== false ?  color.theme_color : rgba_string;
 			this.model.set_breakpoint_property('background_color', rgba_string);
 		},
 		update_color: function (color) {
