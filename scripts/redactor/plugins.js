@@ -1117,6 +1117,8 @@ RedactorPlugins.upfrontColor = function() {
                     color_set = function(rule, value)
                     {
 
+                        self.redactor.inline.format('div', 'style', rule + ': ' + value + ';');
+                        return;
                         var wrapper = document.createElement("span");
                         wrapper.appendChild(self.redactor.range.extractContents());
                         self.redactor.range.insertNode(wrapper);
@@ -1146,7 +1148,11 @@ RedactorPlugins.upfrontColor = function() {
                     //} else {
                     //
                     //}
-                    color_set( 'background-color', self.current_bg.is_theme_color ? self.current_bg.theme_color_code : self.current_bg.toRgbString() );
+                    if(self.current_bg.reset === true){
+                        self.reset_bg_color();
+                    }else{
+                        color_set( 'background-color', self.current_bg.is_theme_color ? self.current_bg.theme_color_code : self.current_bg.toRgbString() );
+                    }
                 }
 
                 /**
@@ -1161,7 +1167,11 @@ RedactorPlugins.upfrontColor = function() {
                     //}else{
                     //    color_set( 'color',  self.current_color.toRgbString() );
                     //}
-                    color_set( 'color', self.current_color.is_theme_color ? self.current_color.theme_color_code :  self.current_color.toRgbString() );
+                    if( self.current_color.reset === true ){
+                        this.reset_color();
+                    }else{
+                        color_set( 'color', self.current_color.is_theme_color ? self.current_color.theme_color_code :  self.current_color.toRgbString() );
+                    }
                 }
 
                 /**
@@ -1233,6 +1243,33 @@ RedactorPlugins.upfrontColor = function() {
                  */
 
                 self.updateIcon();
+            },
+            reset_bg_color: function(){
+                this.redactor.inline.removeFormat("backgroundColor");
+                return;
+            },
+            reset_color: function(){
+                this.redactor.selection.removeMarkers();
+                var current = this.redactor.selection.getCurrent(),
+                    current_html = $(current).html(),
+                    html = this.redactor.selection.getHtml();
+
+                //if( html.replace(/(\r\n|\n|\r)/gm,"").trim() === $(current).html().replace(/(\r\n|\n|\r)/gm,"").trim() && !_.isEmpty( current.style.color ) ){
+                    this.redactor.inline.removeFormat("color");
+                //}else{
+                //    console.log("here");
+                //}
+                $(this.redactor.selection.getCurrent()).find("font").each(function(){
+                   var $this = $(this),
+                        color = $this.attr("color"),
+                        html = $this.html(),
+                        span = document.createElement("span");
+                    span.style.color = color;
+                    span.innerHTML = html;
+                    $this.replaceWith( span );
+                });
+
+                return;
             }
         })
     }

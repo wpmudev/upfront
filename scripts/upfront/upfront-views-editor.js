@@ -4097,6 +4097,7 @@ var Field_ToggleableText = Field_Text.extend({
 		set_to_blank : function(){
 			var blank_color = 'rgba(0, 0, 0, ' + this.options.blank_alpha + ')',
 				color = tinycolor(blank_color);
+			color.reset = true;
 			this.rgba = {r: 0, g: 0, b:0, a: 0};
 			this.$spectrum.spectrum("set", color.toRgbString() );
 			this.update_input_border_color( blank_color );
