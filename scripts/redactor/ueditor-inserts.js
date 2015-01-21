@@ -639,6 +639,7 @@ var ImageInsert = UeditorInsert.extend({
 
 
 		data.image = this.get_proper_image();
+		if (!data.image) return false;
 
 		this.data.set('width', this.$el.width(), {silent: true});
 		this.data.trigger('update');
