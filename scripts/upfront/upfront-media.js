@@ -2207,7 +2207,6 @@ define(function() {
 		clean_up: function(flag) {
 			if (flag === 'before_close') {
 				Upfront.Events.trigger('upfront:element:edit:stop', 'media-upload');
-				this.media_manager.remove();
 			}
 		},
 		cleanup_active_filters: function () {
