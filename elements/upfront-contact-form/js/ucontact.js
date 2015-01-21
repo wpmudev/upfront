@@ -90,13 +90,27 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 			})
 			.on('stop', function(e) {
 				$label = $(this);
+
+				
+
 				var ed = $label.data("ueditor"),
 						text = ''
 					;
 
-				try { text = ed.getValue(true); } catch (e) { text = ''; }
+				if(me.model.get_property_value_by_name('form_label_position') == 'over') {
+					$label.find('span').remove();
+					text = $label.text();
+				}
+				else {
 
+					try { text = ed.getValue(true); } catch (e) { text = ''; }
+				}
+				
+				
 				var targetproperty = false;
+
+				
+
 
 				if($label.attr('for') == 'sendername')
 					targetproperty = 'form_name_label';

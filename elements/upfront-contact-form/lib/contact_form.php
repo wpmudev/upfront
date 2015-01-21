@@ -295,7 +295,7 @@ class Upfront_UcontactView extends Upfront_Object {
 
 	public function get_placeholder($label){
 		if($this->_get_property('form_label_position') == 'over')
-			return 'placeholder="' . $label . '"';
+			return 'placeholder="' . preg_replace('/<span[^<]+<\/span>/i', '', $label) . '"';
 		return '';
 	}
 

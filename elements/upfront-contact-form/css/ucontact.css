@@ -42,10 +42,15 @@ div.contact_label_position > span {
 	width: 95%;
 }
 
-.upfront-submit-container input[type="submit"] {
+.upfront-contact-form button[type="submit"] {
 	width: auto;
-	display: inline;
+	display: inline-block;
+	padding: 10px 16px;
+	background-color: #ccc;
+	float: right;
+	margin-top: 20px;
 }
+
 
 /*clearfix for inline fields*/
 .ucontact-label-inline:before,
