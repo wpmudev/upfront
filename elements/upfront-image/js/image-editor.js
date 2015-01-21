@@ -110,7 +110,8 @@ define([
 			// When image element is bigger than image it contains mask will be smaller than element.
 			// If than user uploads bigger image in that image element mask should expand to element
 			// size so that new image will not be cut off in image element.
-			if (options.maskSize.height < options.editElement.elementSize.height &&
+			if (options.maskSize && options.editElement && options.editElement.elementSize && // safe guards
+					options.maskSize.height < options.editElement.elementSize.height &&
 					options.editElement.elementSize.height < options.fullSize.height) {
 				options.maskSize.width = options.editElement.elementSize.width + 2;
 				options.maskSize.height = options.editElement.elementSize.height;
