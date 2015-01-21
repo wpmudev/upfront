@@ -40,3 +40,6 @@ html {
 	padding-right: 0 !important;
 	overflow: auto !important;
 }
+
+/* Temporarily drop the custom break points creation link */
+#new-custom-breakpoint { display: none !important; }
