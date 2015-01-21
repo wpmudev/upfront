@@ -222,7 +222,7 @@ var Ueditor = function($el, options) {
             linkTooltip: false,
             cleanOnPaste: false,
             replaceDivs: false,
-            //pastePlainText: false,
+             //pastePlainText: false,
             //cleanStyleOnEnter: false,
             //removeDataAttr: false,
             removeEmpty: false
@@ -334,7 +334,7 @@ Ueditor.prototype = {
 		}
 		if ("undefined" !== typeof Upfront.data.Ueditor) delete Upfront.data.Ueditor.instances[this.id];
 		this.startPlaceholder();
-		$("html").off('click', this.stopOnOutsideClick);
+		$("html").off('mousedown', this.stopOnOutsideClick);
 		$(document).off('keyup', this.stopOnEscape);
         this.active = false;
 	},
@@ -487,7 +487,7 @@ Ueditor.prototype = {
 		this.redactorEvents.off("ueditor:sync:after");
 		this.manager.off('insert:prechange');
 		this.manager.off('insert:added insert:removed');
-		$("html").off('click', this.stopOnOutsideClick);
+		$("html").off('mousedown', this.stopOnOutsideClick);
 		this.redactorEvents.off('cleanUpListeners');
 		$(document).off('click.redactor-image-delete');
 	},
@@ -512,7 +512,7 @@ Ueditor.prototype = {
 				}
 			};
 		}
-		$("html").on('click', {ueditor : me}, this.stopOnOutsideClick);
+		$("html").on('mousedown', {ueditor : me}, this.stopOnOutsideClick);
 	},
 	stopOnOutsideClick: function(e){
 		if( !( $(e.target).hasClass("redactor_box")

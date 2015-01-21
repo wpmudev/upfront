@@ -24,10 +24,13 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 			this.model = new PlainTxtModel({properties: this.model.get('properties')});
 		}
 
-		this.on('deactivated', function() {
-			console.log('deactivating the text element editor');
-			Upfront.Events.trigger('upfront:element:edit:stop');
-		}, this);
+		/**
+		 * Commenting the following because it caused the ueditor to restore draggablity while it was still editable
+		 */
+		//this.on('deactivated', function() {
+		//	console.log('deactivating the text element editor');
+		//	Upfront.Events.trigger('upfront:element:edit:stop');
+		//}, this);
 	},
 	get_content_markup: function () {
 		var content = this.model.get_content(),
