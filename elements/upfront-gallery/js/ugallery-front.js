@@ -132,7 +132,7 @@ jQuery(function($){
 			gallery = false;
 			magOptions = ugalleries[galleryId].magnific;
 			if (magOptions){
-				gallery = $('#' + galleryId).find('.ugallery_item');
+				gallery = $('#' + galleryId).find('.ugallery_item_image');
 				if (ugalleries[galleryId].useLightbox) {
 					magOptions.image = {
 						titleSrc: titleSrc
