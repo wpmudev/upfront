@@ -30,7 +30,7 @@ class Upfront_UFC {
 			'upfront_get_theme_colors',
 			self::$_theme_colors,
 			array(
-				'json' => false
+				'json' => true
 			)
 		);
 
