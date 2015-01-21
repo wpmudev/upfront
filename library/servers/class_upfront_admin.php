@@ -19,6 +19,15 @@ class Upfront_Server_Admin implements IUpfront_Server {
 		// Deal with the themes list and overall customizer requests
 		add_filter('wp_prepare_themes_for_js', array($this, 'prepare_themes_list'));
 		add_action('admin_menu', array($this, 'prepare_menu'));
+		
+		$this->dashboard_notice();
+	}
+	
+	public function dashboard_notice () {
+		$path = wp_normalize_path(Upfront::get_root_dir() . '/library/external/dashboard-notice/wpmudev-dash-notification.php');
+		if (!file_exists($path)) return false;
+
+		require_once($path);
 	}
 
 	/**
