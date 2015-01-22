@@ -6358,19 +6358,15 @@ var CSSEditor = Backbone.View.extend({
 				chooseText: "Ok",
 				showInput: true,
 				allowEmpty:true,
+				autohide: false,
 				spectrum: {
 					show: function(){
-						spectrum = $('.sp-container:visible');
+						//spectrum = $('.sp-container:visible');
 					},
-					change: function(color) {
+					choose: function(color) {
 						var colorString = color.alpha < 1 ? color.toRgbString() : color.toHexString();
 						me.editor.insert(colorString);
 						me.editor.focus();
-					},
-					move: function(color) {
-						var rgba = color.toRgbString();
-						spectrum.find('.sp-dragger').css('border-top-color', rgba);
-						spectrum.parent().find('.sp-dragger').css('border-right-color', rgba);
 					}
 				}
 			})
