@@ -14,6 +14,20 @@ define([
 			'click button': 'onClickOk'
 		},
 
+		initialize: function(options) {
+			var me = this;
+			this.options = options || {};
+
+			// Allow only one control to be open at a time
+			this.listenTo(Upfront.Events, 'dialog-control:open', function(dialogControl) {
+				if (me === dialogControl) {
+					return;
+				}
+
+				me.close();
+			});
+		},
+
 		render: function(){
 			Control.prototype.render.call(this, arguments);
 			var me = this,
@@ -42,7 +56,6 @@ define([
 		},
 
 		remove: function() {
-			console.log('removing document click');
 			$(document).off('click', this.onDocumentClick);
 		},
 
@@ -84,6 +97,7 @@ define([
 			this.isopen = true;
 			this.$el.addClass('upfront-control-dialog-open');
 			this.trigger('panel:open');
+			Upfront.Events.trigger('dialog-control:open', this);
 			return this;
 		},
 		close: function() {

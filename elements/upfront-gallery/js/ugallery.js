@@ -524,7 +524,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 					controls = me.createControls(image),
 					title = $item.find('.ugallery-thumb-title');
 
-
 				controls.setWidth($item.width());
 				controls.render();
 				$item.append($('<div class="ugallery-controls upfront-ui"></div>').append(controls.$el));
