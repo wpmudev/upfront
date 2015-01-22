@@ -920,29 +920,38 @@ div.uimage-controls i.upfront-icon:before {
 
 .uimage-fill_middle .uimage-caption-cover,
 .uimage-fill_middle .redactor_box,
+.uimage-fill_middle .redactor-box,
 .uimage-fill .uimage-caption-cover,
-.uimage-fill .redactor_box {
+.uimage-fill .redactor_box,
+.uimage-fill .redactor-box {
 	width: 100%;
 }
 
+.uimage-fill .redactor-box,
+.uimage-fill_middle .redactor-box,
+.uimage-fill_bottom .redactor-box,
 .uimage-fill .redactor_box,
 .uimage-fill_middle .redactor_box,
 .uimage-fill_bottom .redactor_box{
 	display: inline-block;
 }
-.uimage-fill .redactor_box {
+.uimage-fill .redactor_box,
+.uimage-fill .redactor-box {
 	vertical-align: top;
 }
-.uimage-fill_middle .redactor_box{
+.uimage-fill_middle .redactor_box,
+.uimage-fill_middle .redactor-box{
 	vertical-align: middle;
 	position: static;
 }
-.uimage-fill_bottom .redactor_box{
+.uimage-fill_bottom .redactor_box,
+.uimage-fill_bottom .redactor-box{
 	vertical-align: bottom;
 	position: static;
 }
 
-.uimage-caption-over_image-bottom .redactor_box {
+.uimage-caption-over_image-bottom .redactor_box,
+.uimage-caption-over_image-bottom .redactor-box {
 	bottom: 0;
 	width: 100%;
 }
@@ -1103,6 +1112,7 @@ div.uimage-controls i.upfront-icon:before {
 
 /* fixes */
 .uimage-fill_middle .redactor_box,
+.uimage-fill_middle .redactor-box,
 .uimage-fill_middle .uimage-caption-cover {
 	display: table;
 	margin: auto;
@@ -1114,7 +1124,8 @@ div.uimage-controls i.upfront-icon:before {
 	padding: 0 15px; /* to center vertically middle caption is positioned absolutely so it will not be affected by parent padding */
 }
 
-.uimage-fill_middle .redactor_box .uimage-caption-cover {
+.uimage-fill_middle .redactor_box .uimage-caption-cover,
+.uimage-fill_middle .redactor-box .uimage-caption-cover {
 	display: inline-block;
 	bottom: auto;
 	position: relative;
@@ -1123,13 +1134,15 @@ div.uimage-controls i.upfront-icon:before {
 }
 
 .uimage-fill_bottom .redactor_box,
+.uimage-fill_bottom .redactor-box,
 .uimage-fill_bottom .uimage-caption-cover {
 	position: absolute;
 	right: 15px;
 	left: 15px;
 	bottom: 10px;
 }
-.uimage-fill_bottom .redactor_box .uimage-caption-cover {
+.uimage-fill_bottom .redactor_box .uimage-caption-cover,
+.uimage-fill_bottom .redactor-box .uimage-caption-cover {
 	position: relative;
 	right: auto;
 	left: auto;
@@ -1138,6 +1151,7 @@ div.uimage-controls i.upfront-icon:before {
 }
 
 .upfront-image-container + .redactor_box,
+.upfront-image-container + .redactor-box,
 .upfront-image-container + .wp-caption {
 	box-sizing: border-box;
 	line-height: initial;
