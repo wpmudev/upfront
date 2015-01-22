@@ -298,10 +298,10 @@ Ueditor.prototype = {
 
         // Open air when selecting text with keyboard
 		this.$el.on('keyup', function(e){
-            if(self.redactor && self.redactor.selection.getText() &&  [37, 38, 39, 40, 91].indexOf( e.keyCode ) !== -1 || (e.keCode === 65 && e.ctrlKey) ){
-                    self.redactor.airShow(e);
-            }
-        });
+			if(self.redactor && self.redactor.selection.getText() &&  [37, 38, 39, 40, 91].indexOf( e.keyCode ) !== -1 || (e.keyCode === 65 && e.ctrlKey) ){
+				self.redactor.airShow(e);
+			}
+		});
 
 		if(this.options.inserts){
 			this.insertsSetUp();
