@@ -21,7 +21,7 @@ class Upfront_LikeBoxView extends Upfront_Object {
 		}
 		if($url) {
 			$parts = parse_url($url);
-			$fbname = end(explode('/', $parts['path']));
+			$fbname = end(explode('/', trim($parts['path'], '/')));
 
 			return $this->wrap(
 				"<iframe src='//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2F{$fbname}&amp;width={$element_size['width']}&amp;height={$element_size['height']}&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;show_border=true&amp;header=false' scrolling='no' frameborder='0' style='border:none; overflow:hidden; height:{$element_size['height']}px;' allowTransparency='true'></iframe>"
