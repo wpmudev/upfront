@@ -188,22 +188,25 @@ class Upfront_UcontactView extends Upfront_Object {
 				)
 			);
 
-			$emailto = $this->_get_property('form_email_to');
+			$emailto = trim($this->_get_property('form_email_to'));
+			if (empty($emailto)) $emailto = get_option('admin_email');
+			if (!is_email($emailto)) $emailto = false;
 
 
 			$headers = array('Reply-To: ' . $email);
 
 			$this->msg = $this->check_fields($name, $email, $subject, $message);
 
-			if ($this->msg)
+			if ($this->msg) {
 				$this->msg_class = 'error';
-
-			else if(! wp_mail($emailto, $subject, $message, $headers)){
-				$this->msg = self::_get_l10n('error_sending');
-				$this->msg_class = 'error';
-			}
-			else
+			} else if (!empty($emailto)) {
+				if (!wp_mail($emailto, $subject, $message, $headers)) {
+					$this->msg = self::_get_l10n('error_sending');
+					$this->msg_class = 'error';
+				}
+			} else {
 				$this->msg = self::_get_l10n('mail_sent');
+			}
 		}
 	}
 
