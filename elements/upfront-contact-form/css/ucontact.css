@@ -27,9 +27,9 @@ div.contact_label_position > span {
 }
 .ucontact-label-over label {
 	position: absolute;
-	left: 4px;
-	top: 1px;
-	color: #ccc;
+	left: 4px !important;
+	top: 1px !important;
+	color: #ccc !important;
 }
 .upfront-output-object .ucontact-label-over label {
 	display: none;
@@ -49,6 +49,25 @@ div.contact_label_position > span {
 	background-color: #ccc;
 	float: right;
 	margin-top: 20px;
+}
+
+
+
+
+.upfront-contact-form ::-webkit-input-placeholder {
+   color: inherit;
+}
+
+.upfront-contact-form :-moz-placeholder { /* Firefox 18- */
+   color: inherit;  
+}
+
+.upfront-contact-form ::-moz-placeholder {  /* Firefox 19+ */
+   color: inherit;  
+}
+
+.upfront-contact-form :-ms-input-placeholder {  
+   color: inherit;  
 }
 
 

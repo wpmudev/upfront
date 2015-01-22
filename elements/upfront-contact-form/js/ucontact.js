@@ -88,10 +88,13 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 				airButtons: ['upfrontIcons'],
 				autostart: false
 			})
+			.on('start', function(e) {
+				$(e.target).closest('.upfront-field-container').children('input, textarea').attr('placeholder', '');
+				$(e.target).css('opacity', 1);
+				
+			})
 			.on('stop', function(e) {
 				$label = $(this);
-
-				
 
 				var ed = $label.data("ueditor"),
 						text = ''
@@ -100,6 +103,10 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 				if(me.model.get_property_value_by_name('form_label_position') == 'over') {
 					$label.find('span').remove();
 					text = $label.text();
+
+					$(e.target).closest('.upfront-field-container').children('input, textarea').attr('placeholder', text);
+				
+					$(e.target).css('opacity', 0 );
 				}
 				else {
 
@@ -124,6 +131,11 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 				if (text && targetproperty) me.model.set_property(targetproperty, text, true); 
 			})
 			;
+
+			if(me.model.get_property_value_by_name('form_label_position') == 'over') {
+				$label.css('opacity', 0 );
+				$label.siblings('input, textarea').attr('placeholder', $label.text());
+			}
 		});
 
 
@@ -147,6 +159,7 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 		e.stopPropagation();
 		
 		$label = $(e.target);
+		$label.css('opacity', 1);
 		var ueditor = $label.data('ueditor');
 
 		ueditor.start();
