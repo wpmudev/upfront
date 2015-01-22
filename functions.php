@@ -105,12 +105,24 @@ class Upfront {
 		}
 
 		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
-			$wp_admin_bar->add_menu( array(
+			$item = array(
 				'id' => 'upfront-edit_layout',
 				'title' => __('Upfront', 'upfront'),
 				'href' => (is_admin() ? home_url('/?editmode=true') : '#'),
-				'meta' => array( 'class' => 'upfront-edit_layout upfront-editable_trigger' )
-			) );
+				'meta' => array(
+					'class' => 'upfront-edit_layout upfront-editable_trigger'
+				),
+			);
+			if (!get_option('permalink_structure')) {
+				// We're checking WP priv directly because we need an admin for this
+				if (current_user_can('manage_options')) {
+					$item['href'] = admin_url('/options-permalink.php');
+					unset($item['meta']);
+				} else {
+					$item = array(); // No such thing for non-admins
+				}
+			}
+			if (!empty($item)) $wp_admin_bar->add_menu($item);
 		}
 
 		// Change the existing nodes
