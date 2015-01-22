@@ -185,10 +185,10 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 						model: this.model,
 						property: 'border_color',
 						label: l10n.color,
+						autoHide: false,
 						spectrum: {
 							preferredFormat: "hex",
-							change: this.onBorderColor,
-							move: this.onBorderColor
+							choose: this.onBorderColor
 						}
 					}),
 					new Upfront.Views.Editor.Field.Color({
@@ -198,10 +198,10 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 						property: 'bg_color',
 						label_style: 'inline',
 						label: l10n.bg_color,
+						autoHide: false,
 						spectrum: {
 							preferredFormat: "hex",
-							change: this.onBgColor,
-							move: this.onBgColor
+							choose: this.onBgColor
 						}
 					})
 				]
@@ -214,6 +214,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 		this.$el.on('change', 'input[name=border_width]', function(e){
 		  me.onBorderWidth(e);
 		});
+
 	},
 	onBgColor: function(color) {
 		var c = color.get_is_theme_color() !== false ? color.theme_color : color.toRgbString();
@@ -225,6 +226,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 		this.processBorder();
 	},
 	onBorderColor: function(color) {
+		if( !color ) return;
 		this.property('border_color',  color.toRgbString(), false);
 		this.processBorder();
 	},
@@ -272,6 +274,11 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			// Remove panel tabs
 			this.$el.find('.upfront-settings_label').remove();
 			this.$el.find('.upfront-settings_panel').css('left', 0);
+
+		  //this.$(".sp-choose").on("click", function ( e ) {
+			//  me.onBgColor(me.bgColor);
+			//  me.onBorderColor(me.borderColor);
+		  //});
 	  }
 });
 

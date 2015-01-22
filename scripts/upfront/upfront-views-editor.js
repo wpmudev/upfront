@@ -1640,8 +1640,9 @@ define([
 					color: new Upfront.Views.Editor.Field.Color({
 							label: l10n.color,
 							default_value: me.colors['h1'],
-							spectrum: {
-								move: function (color) {
+							autoHide: true,
+						spectrum: {
+								choose: function (color) {
 									var rgb = color.toRgb(),
 										rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')',
 										element = me.current_element;
@@ -3931,7 +3932,8 @@ var Field_ToggleableText = Field_Text.extend({
 	var Field_Color = Field_Text.extend({
 		className: 'upfront-field-wrap upfront-field-wrap-color sp-cf',
 		defaults : {
-			blank_alpha : 1
+			blank_alpha : 1,
+			autoHide: true
 		},
 		spectrumDefaults: {
 			clickoutFiresChange: false,
@@ -3969,6 +3971,7 @@ var Field_ToggleableText = Field_Text.extend({
 
 			spectrumOptions.move = function(color, e){
 				if( !_.isEmpty( color ) ){
+					me.color = color;
 					var rgb = color.toHexString();
 					$('.sp-dragger').css({
 						'border-top-color': rgb,
@@ -3986,6 +3989,7 @@ var Field_ToggleableText = Field_Text.extend({
 
 			spectrumOptions.show = function(color){
 				if( !_.isEmpty( color ) ){
+					this.color = color;
 					var rgb = color.toHexString();
 					me.rgba = _.extend(me.rgba, color.toRgb());
 					me.update_input_border_color( color.toRgbString() );
@@ -4007,11 +4011,20 @@ var Field_ToggleableText = Field_Text.extend({
 				if( color instanceof Object ){
 					$.extend(color, tinycolor.prototype);
 				}
-				me.options.palette = Theme_Colors.colors.pluck("color").length ? Theme_Colors.colors.pluck("color") : ['fff', '000', '0f0'];
+				me.color = color;
 				me.$('input[name=' + me.get_field_name() + ']').spectrum("option", "palette", me.options.palette);
 				if(me.options.spectrum && me.options.spectrum.beforeShow)
 					me.options.spectrum.beforeShow(color);
 			};
+
+			if( !spectrumOptions.autoHide  ){
+				spectrumOptions.hide = function(color){
+					me.color = color;
+					me.$(".sp-replacer").addClass("sp-active");
+					me.$(".sp-container").removeClass("sp-hidden");
+				};
+			}
+
 
 			Field_Color.__super__.initialize.apply(this, arguments);
 
@@ -4020,6 +4033,17 @@ var Field_ToggleableText = Field_Text.extend({
 				me.$spectrum = me.$('input[name=' + me.get_field_name() + ']');
 				me.$(".sp-container").append("<div class='color_picker_rgb_container'></div>");
 				me.update_input_border_color(me.get_saved_value());
+
+
+				me.$(".sp-container").find(".sp-choose").on("click.spectrum", function(e){
+					if(me.options.spectrum && me.options.spectrum.choose && me.color)
+						me.options.spectrum.choose(me.color);
+
+					if( me.autoHide !== true ){
+						me.$(".sp-replacer").removeClass("sp-active");
+						me.$(".sp-container").addClass("sp-hidden");
+					}
+				});
 			});
 
 
