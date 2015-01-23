@@ -7352,7 +7352,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			'keyup .search_container>input': 'inputSearch'
 		},
         initialize: function () {
-            if ((Upfront.mainData.content_settings || {post_types: []}).post_types.length) {
+            if (("post_types" in Upfront.mainData.content_settings ? Upfront.mainData.content_settings : {post_types: []}).post_types.length) {
                 this.defaultOptions.postTypes = Upfront.mainData.content_settings.post_types;
             }
         },

@@ -2293,7 +2293,7 @@ Upfront.Media = {
 			return content;
 		}
 	},
-	Ref: _upfront_media_upload.image_ref
+	Ref: (window._upfront_media_upload || {image_ref: ''}).image_ref
 };
 
 });
