@@ -1551,9 +1551,13 @@ define([
 				typography = this.model.get_property_value_by_name('typography');
 
 			// Check for theme fonts if no theme fonts just return string
-			if (Upfront.mainData.userDoneFontsIntro) {
-				var chooseButton = new Command_OpenFontManager();
-			} else {
+			var currentMode = Upfront.Application.get_current();
+			var builderMode = Upfront.Settings.Application.MODE.THEME;
+			var doneIntro = Upfront.mainData.userDoneFontsIntro;
+			var showChooseFontsButton = (currentMode === builderMode && !doneIntro) ||
+				(currentMode !== builderMode && theme_fonts_collection.length === 0 && !doneIntro);
+
+			if (showChooseFontsButton) {
 				var chooseButton = new Field_Button({
 					label: l10n.select_fonts_to_use,
 					compact: true,
@@ -1563,7 +1567,10 @@ define([
 						Upfront.Events.trigger('command:themefontsmanager:open');
 					}
 				});
+			} else {
+				var chooseButton = new Command_OpenFontManager();
 			}
+
 			if (theme_fonts_collection.length === 0 && Upfront.mainData.userDoneFontsIntro === false) {
 				this.$el.html('<p class="sidebar-info-notice upfront-icon">' + l10n.no_defined_fonts + '</p>');
 				chooseButton.render();
