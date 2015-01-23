@@ -75,6 +75,7 @@ var hackRedactor = function(){
 					}
 				}
 			}, this)).on('keydown.redactor', $.proxy(function (e) {
+				if(e.keyCode === 91) return;
 				if (e.which === this.keyCode.ESC) {
 					//self.getSelection().collapseToStart();
 				}
