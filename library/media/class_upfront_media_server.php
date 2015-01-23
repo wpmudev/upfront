@@ -100,6 +100,7 @@ class Upfront_MediaServer extends Upfront_Server {
 			),
 			'media_labels' => __('Media Labels', 'upfront'),
 			'media_label' => __('Media Label', 'upfront'),
+			'disabled' => __('This functionality has been disabled', 'upfront'),
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)

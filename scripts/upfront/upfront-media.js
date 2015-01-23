@@ -1268,6 +1268,13 @@ define(function() {
 		},
 		render_upload: function (e) {
 			if (!this.library_view.$el.is(":visible")) this.render_library();
+			
+			// Check if we're actually allowing uploads
+			if (!(window._upfront_media_upload && _upfront_media_upload.image_ref)) {
+				alert(l10n.disabled);
+				return false;
+			}
+			
 			var me = this,
 				uploaded = 0, progressing = 0, done =0,
 				new_media = [],
