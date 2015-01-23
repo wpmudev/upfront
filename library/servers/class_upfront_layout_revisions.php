@@ -54,6 +54,13 @@ class Upfront_Server_LayoutRevisions extends Upfront_Server {
 			"has_archive" => false,
 			"rewrite" => false,
 		));
+		
+		register_post_status(Upfront_LayoutRevisions::REVISION_STATUS, array(
+			'public' => Upfront_Permissions::current(Upfront_Permissions::BOOT),
+			'exclude_from_search' => true,
+			'show_in_admin_all_list' => false,
+			'show_in_admin_status_list' => false,
+		));
 		$this->_data = new Upfront_LayoutRevisions;
 	}
 

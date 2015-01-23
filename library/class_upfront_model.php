@@ -1006,7 +1006,7 @@ class Upfront_PostmetaModel {
 class Upfront_LayoutRevisions {
 
 	const REVISION_TYPE = 'upfront_layout_rvsn';
-	const REVISION_STATUS = 'draft';
+	const REVISION_STATUS = 'rvsn';
 
 	public function __construct () {}
 
