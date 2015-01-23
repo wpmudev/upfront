@@ -104,6 +104,9 @@ div.contact_label_position > span {
 	position:absolute;
 	width:100%;
 	height:100%;
+	margin-left: -15px;
+	margin-top: -15px;
+	z-index: 1;
 }
 .ucontact-message-container.ucontact-success-response div {
 	display:table;
@@ -117,4 +120,14 @@ div.contact_label_position > span {
 	font-size:20px;
 	font-family:sans-serif;
 	text-align:center;
+}
+
+.ucontact-success-response:after {
+  content: 'X';
+  position: absolute;
+  right:10px;
+  top:10px;
+  font-size:1.5em;
+  color:#fff;
+  cursor: pointer;
 }

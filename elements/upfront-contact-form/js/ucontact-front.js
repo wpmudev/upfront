@@ -102,6 +102,11 @@ jQuery(function($){
 					if (!err) {
 						$form.find(".ucontact-message-container").addClass("ucontact-success-response")
 						//$form.find("input,button,textarea").attr("disabled", true);
+
+						$form.find(".ucontact-message-container").bind('click', function() {
+							$(this).removeClass("ucontact-success-response").html("");
+							$(this).unbind('click')
+						});
 					}
 				},
 				error: function(error){
