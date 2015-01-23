@@ -90,7 +90,10 @@ class Upfront_Permissions {
 			: $this->_levels_map[self::DEFAULT_LEVEL]
 		;
 		if (empty($level)) return false;
-		if (!is_user_logged_in()) return false;
+		if (
+			!is_user_logged_in() &&
+			!(defined('UPFRONT_ALLOW_ANONYMOUS_BOOT') && UPFRONT_ALLOW_ANONYMOUS_BOOT)
+		) return false;
 
 		// Allow anonymous boot
 		if (defined('UPFRONT_ALLOW_ANONYMOUS_BOOT') && UPFRONT_ALLOW_ANONYMOUS_BOOT && self::ANONYMOUS === $level) return true;
