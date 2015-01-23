@@ -42,7 +42,12 @@ var Box = Backbone.View.extend({
             Upfront.Application.mode.current === Upfront.Application.MODE.POSTCONTENT
             &&
             Upfront.Application.current_subapplication.contentEditor
-        ) $('.upfront-module').draggable('disable').resizable('disable');
+        ) $('.upfront-module').each(function(){
+        	if ( $(this).is('.ui-draggable') ) 
+				$(this).draggable('disable');
+			if ( $(this).is('.ui-resizable') )
+				$(this).resizable('disable');
+        });
     },
 
     render: function(){
@@ -161,12 +166,12 @@ var Box = Backbone.View.extend({
     cancel: function(e){
         e.preventDefault();
         if(confirm(Upfront.Settings.l10n.global.content.discard_changes.replace(/%s/, this.post.get('post_title')))){
+            this.toggleRegionClass(false);
             this.destroy();
             this.post.trigger('editor:cancel');
             this.trigger('cancel');
-            Upfront.Application.sidebar.toggleSidebar();
             Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
-            this.toggleRegionClass(false);
+            Upfront.Application.sidebar.toggleSidebar();
             this.fadein_other_elements();
         }
     },

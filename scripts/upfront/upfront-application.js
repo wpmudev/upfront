@@ -791,10 +791,19 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 			.not('.upfront-region-shadow')
 			.addClass('upfront-region-locked')
 			//Stop interaction with the rest of the page
-			.find('.upfront-module').filter('.ui-draggable').draggable('disable').resizable('disable')
+			.find('.upfront-module').each(function(){
+				if ( $(this).is('.ui-draggable') ) 
+					$(this).draggable('disable');
+				if ( $(this).is('.ui-resizable') )
+					$(this).resizable('disable');
+			})
 		;
-		$('#page').find('.upfront-region-postlayouteditor').find('.upfront-module')
-			.draggable('enable').resizable('enable');
+		$('#page').find('.upfront-region-postlayouteditor').find('.upfront-module').each(function(){
+			if ( $(this).is('.ui-draggable') ) 
+				$(this).draggable('enable');
+			if ( $(this).is('.ui-resizable') )
+				$(this).resizable('enable');
+		});
 	},
 
 	restoreViews: function(){
@@ -823,7 +832,12 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 		this.postView = false;
 
 		$('#page').find('.upfront-region-locked').removeClass('upfront-region-locked')
-			.find('.upfront-module').filter('.ui-draggable').draggable('enable').resizable('enable')
+			.find('.upfront-module').each(function(){
+				if ( $(this).is('.ui-draggable') ) 
+					$(this).draggable('enable');
+				if ( $(this).is('.ui-resizable') )
+					$(this).resizable('enable');
+			})
 		;
 	},
 
@@ -940,7 +954,12 @@ var PostContentEditor = new (Subapplication.extend({
 	stop: function () {
 		var $page = $('#page');
 		Upfront.Util.log("Stopping post the content edit mode");
-		$page.find('.upfront-module').draggable('enable').resizable('enable');
+		$page.find('.upfront-module').each(function(){
+			if ( $(this).is('.ui-draggable') ) 
+				$(this).draggable('enable');
+			if ( $(this).is('.ui-resizable') )
+				$(this).resizable('enable');
+		});
 		Upfront.Events.trigger('upfront:element:edit:stop');
 		$page.find('.upfront-region-edit-trigger').show();
 		this.contentEditor = false;
@@ -956,7 +975,12 @@ var PostContentEditor = new (Subapplication.extend({
 
 		//There is no need of start the application, just set the current one
 		Application.set_current(Application.MODE.POSTCONTENT);
-		$page.find('.upfront-module').draggable('disable').resizable('disable');
+		$page.find('.upfront-module').each(function(){
+			if ( $(this).is('.ui-draggable') ) 
+				$(this).draggable('disable');
+			if ( $(this).is('.ui-resizable') )
+				$(this).resizable('disable');
+		});
 		Upfront.Events.trigger('upfront:element:edit:start', 'write', contentEditor.post);
 		$page.find('.upfront-region-edit-trigger').hide();
 

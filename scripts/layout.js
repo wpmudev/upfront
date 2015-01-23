@@ -431,8 +431,9 @@ jQuery(document).ready(function($){
 	}
 	regions_scroll_update();
 	$(window).on('load', regions_scroll_update);
-	var lazyScrollUpdate = throttle(regions_scroll_update, 100);
-	$(window).on('scroll', lazyScrollUpdate);
+	//var lazyScrollUpdate = throttle(regions_scroll_update, 100);
+	//$(window).on('scroll', lazyScrollUpdate);
+	$(window).on('scroll', regions_scroll_update);
 
 	/* Lightbox front end logic */
 	var overlay = $('<div class="upfront-lightbox-bg"></div>'),

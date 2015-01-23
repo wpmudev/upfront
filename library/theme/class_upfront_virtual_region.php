@@ -434,6 +434,10 @@ class Upfront_Virtual_Region {
 			'element_id' => $module['module_id'],
 			'sticky' => $module['sticky']
 		);
+        if ( isset($module['disable_resize']) )
+            $opts['module']['disable_resize'] = $module['disable_resize'];
+        if ( isset($module['disable_drag']) )
+            $opts['module']['disable_drag'] = $module['disable_drag'];
 		$breakpoint = !empty($options['breakpoint']) ? $options['breakpoint'] : false;
 		if (!empty($breakpoint)) $opts['module']['breakpoint'] = $breakpoint;
 

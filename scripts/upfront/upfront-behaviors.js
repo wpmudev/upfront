@@ -2535,7 +2535,7 @@ var GridEditor = {
 			$resize, $resize_placeholder,
 			axis
 		;
-		if ( model.get_property_value_by_name('disable_resize') === 1 )
+		if ( Upfront.Application.mode.current !== Upfront.Application.MODE.THEME && model.get_property_value_by_name('disable_resize') )
 			return false;
 		if ( $me.data('ui-resizable') ){
 			$me.resizable('option', 'disabled', false);
@@ -2926,7 +2926,7 @@ var GridEditor = {
 			adjust_bottom = false
 		;
 
-		if ( model.get_property_value_by_name('disable_drag') === 1 )
+		if ( Upfront.Application.mode.current !== Upfront.Application.MODE.THEME && model.get_property_value_by_name('disable_drag') )
 			return false;
 		if ( $me.data('ui-draggable') ){
 			if ( is_group || !is_parent_group )
