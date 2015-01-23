@@ -154,7 +154,11 @@ class Upfront_Server_LayoutRevisions extends Upfront_Server {
 	 * Builds preview layout model and dispatches save.
 	 */
 	public function build_preview () {
-		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
+		if (
+			!Upfront_Permissions::current(Upfront_Permissions::SAVE)
+			&&
+			!Upfront_Permissions::current(Upfront_Permissions::SAVE_REVISION)
+		) $this->_reject();
 
 		global $post;
 

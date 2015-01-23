@@ -8,6 +8,7 @@ class Upfront_Permissions {
 	const UPLOAD = 'upload_stuff';
 	const RESIZE = 'resize_media';
 	const SAVE = 'save_changes';
+	const SAVE_REVISION = 'save_changes';
 
 	const DEFAULT_LEVEL = 'save_changes';
 
