@@ -1035,7 +1035,7 @@ class Upfront_LayoutRevisions {
 		if (!empty($existing_revision)) return $layout_id_key;
 
 		$post_id = wp_insert_post(array(
-			"post_content" => serialize($store),
+			"post_content" => base64_encode(serialize($store)),
 			"post_title" => self::to_string($cascade),
 			"post_name" => $layout_id_key,
 			"post_type" => self::REVISION_TYPE,
@@ -1058,9 +1058,11 @@ class Upfront_LayoutRevisions {
 			"name" => $layout_id_key,
 			"post_type" => self::REVISION_TYPE,
 			"posts_per_page" => 1,
+			'suppress_filters' => true,
+			
 		));
 		return !empty($query->posts[0]) && !empty($query->posts[0]->post_content)
-			? unserialize($query->posts[0]->post_content)
+			? unserialize(base64_decode($query->posts[0]->post_content))
 			: false
 		;
 	}
