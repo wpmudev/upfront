@@ -860,6 +860,10 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 
 		if(!$post_type || !$type || !$id || !$post_id)
 			$this->_out(new Upfront_JsonResponse_Error('No post_type, type or id sent.'));
+			
+		if (!empty($post_id)) {
+			$post_type = get_post_type($post_id);
+		}
 
 		$layout_data = Upfront_ThisPostView::find_postlayout($type, $post_type, $id);
 
