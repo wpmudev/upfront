@@ -390,14 +390,15 @@ class Upfront_ThisPostView extends Upfront_Object {
 		$base_filename = $layouts_path . DIRECTORY_SEPARATOR . $type . '-';
 
 		$cascade = array($base_filename . $id . '.php', $base_filename . $post_type . '.php');
-	  $cascade = apply_filters('upfront_theme_layout_cascade', $cascade, $base_filename);
+		$cascade = apply_filters('upfront_theme_layout_cascade', $cascade, $base_filename);
 
-	  $found = false;
+		$found = false;
 		$i = 0;
 
 		while(!$found && $i < sizeof($cascade)){
-			if(file_exists($cascade[$i]))
+			if(file_exists($cascade[$i])) {
 				$found = require $cascade[$i];
+			}
 			$i++;
 		}
 		return $found;
