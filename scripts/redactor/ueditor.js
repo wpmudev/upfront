@@ -75,7 +75,7 @@ var hackRedactor = function(){
 					}
 				}
 			}, this)).on('keydown.redactor', $.proxy(function (e) {
-				if(e.keyCode === 91) return;
+				if(e.keyCode === 91 && e.metaKey) return;
 				if (e.which === this.keyCode.ESC) {
 					//self.getSelection().collapseToStart();
 				}
@@ -221,9 +221,9 @@ var Ueditor = function($el, options) {
 			formattingTags: ['h1', 'h2', 'h3', 'h4', 'p', 'pre'],
 			inserts: false,
             linkTooltip: false,
-            cleanOnPaste: false,
+            cleanOnPaste: true, // font icons copy and paste wont work without this
             replaceDivs: false,
-             //pastePlainText: false,
+            pastePlainText: false,
             //cleanStyleOnEnter: false,
             //removeDataAttr: false,
             removeEmpty: false
@@ -235,8 +235,8 @@ var Ueditor = function($el, options) {
 	this.options.initCallback = function () { UeditorEvents.trigger("ueditor:init", this); };
 	this.options.enterCallback = function (e) {  UeditorEvents.trigger("ueditor:enter", this, e); };
 	this.options.changeCallback = function (e) { UeditorEvents.trigger("ueditor:change", this, e); };
-	this.options.pasteBeforeCallback = function () { UeditorEvents.trigger("ueditor:paste:before", this); };
-	this.options.pasteCallback = function () { UeditorEvents.trigger("ueditor:paste:after", this); };
+	//this.options.pasteBeforeCallback = function (html) { UeditorEvents.trigger("ueditor:paste:before", this, html); }; //events can return anything so it's useless
+	//this.options.pasteCallback = function (html) { UeditorEvents.trigger("ueditor:paste:after", this, html); }; //events can return anything so it's useless
 	this.options.focusCallback = function () { UeditorEvents.trigger("ueditor:focus", this); };
 	this.options.blurCallback = function () { UeditorEvents.trigger("ueditor:blur", this); };
 	this.options.keyupCallback = function (e) { UeditorEvents.trigger("ueditor:key:up", this); };
@@ -267,7 +267,18 @@ var Ueditor = function($el, options) {
 	}
 
 	//this.startPlaceholder();
+	this.options.pasteCallback = function (html) {
+		/**
+		 * If a font icon is copied to clipboard, paste it
+		 */
+		if( self.font_icon !== false){
+			return self.font_icon.outerHTML;
+		}
+		return html;
+	};
+
 };
+
 
 Ueditor.prototype = {
 	disableStop: false,
@@ -297,9 +308,28 @@ Ueditor.prototype = {
 		this.mouseupListener = $.proxy(this.listenForMouseUp, this);
 		this.$el.on('mousedown', this.mouseupListener);
 
+		this.$el.on('keydown', function(e){
+			self.cmdKeyA = false;
+			self.cmdKey = false;
+			setTimeout(function(){
+				if(e.keyCode === 65 && e.metaKey ){
+					self.cmdKeyA = true;
+				}
+
+				if(e.keyCode === 91 && e.metaKey ){
+					self.cmdKey = true;
+				}
+
+				if(e.keyCode === 67 && e.metaKey ){
+					self.onCopy(e);
+				}
+			});
+		});
+
+
         // Open air when selecting text with keyboard
 		this.$el.on('keyup', function(e){
-			if(self.redactor && self.redactor.selection.getText() &&  [37, 38, 39, 40, 91].indexOf( e.keyCode ) !== -1 || (e.keyCode === 65 && e.ctrlKey) ){
+			if(self.redactor && self.redactor.selection.getText() &&  [37, 38, 39, 40].indexOf( e.keyCode ) !== -1 || (e.keyCode === 65 && e.ctrlKey) || (self.cmdKeyA)  ){
 				self.redactor.airShow(e);
 			}
 		});
@@ -314,8 +344,7 @@ Ueditor.prototype = {
 
 		$(document).on("keyup", $.proxy(this.stopOnEscape, this));
 
-        this.active = true;
-
+		this.active = true;
 
 	},
 	stopOnEscape: function(e) {
@@ -633,6 +662,33 @@ Ueditor.prototype = {
 		});
 
 		return insertsData;
+	},
+	onCopy: function(e){
+		var sel = window.getSelection(),
+			self = this;
+		self.font_icon = false;
+		if(!_.isUndefined(  sel.anchorNode ) && sel.anchorNode.className === "uf_font_icon" ){
+			var icon = document.createElement("span");
+			icon.className = "uf_font_icon";
+			icon.style.cssText = sel.anchorNode.style.cssText;
+			var html = $.trim(sel.toString());
+			html = html.replace(/\$/g, '&#36;');
+			html = html.replace(/”/g, '"');
+			html = html.replace(/“/g, '"');
+			html = html.replace(/‘/g, '\'');
+			html = html.replace(/’/g, '\'');
+
+			icon.innerHTML = html;
+
+			setTimeout( function(){
+				if( self.redactor.$pasteBox === false ){
+					self.redactor.paste.createPasteBox();
+				}
+				self.redactor.$pasteBox.html(icon);
+				self.font_icon = icon;
+			}, 1 );
+
+		}
 	}
 };
 
