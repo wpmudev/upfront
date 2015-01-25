@@ -272,7 +272,7 @@ var Ueditor = function($el, options) {
 		 * If a font icon is copied to clipboard, paste it
 		 */
 		if( self.font_icon !== false){
-			return self.font_icon.outerHTML;
+			return self.font_icon;
 		}
 		return html;
 	};
@@ -685,7 +685,7 @@ Ueditor.prototype = {
 					self.redactor.paste.createPasteBox();
 				}
 				self.redactor.$pasteBox.html(icon);
-				self.font_icon = icon;
+				self.font_icon = icon.outerHTML;
 			}, 1 );
 
 		}
