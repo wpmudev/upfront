@@ -2475,12 +2475,12 @@ define([
 		render: function () {
 			var user = Upfront.data.currentUser;
 			if ( !user ) return;
-			var data = user.get('data'),
+			var data = user.get('data') || {},
 				roles = user.get('roles');
 			this.$el.html(_.template(
 				'<div class="sidebar-profile-avatar"><img src="http://www.gravatar.com/avatar/{{gravatar}}?s=26" /></div>' +
 				'<div class="sidebar-profile-detail"><span class="sidebar-profile-name">{{name}}</span><span class="sidebar-profile-role">{{role}}</span></div>' +
-				'<div class="sidebar-profile-edit"><a class="upfront-icon upfront-icon-edit" data-bypass="true" href="{{edit_url}}">' + l10n.edit_profile + '</a></div>',
+				(roles.length ? '<div class="sidebar-profile-edit"><a class="upfront-icon upfront-icon-edit" data-bypass="true" href="{{edit_url}}">' + l10n.edit_profile + '</a></div>' : ''),
 				{
 					gravatar: data.gravatar,
 					name: data.display_name || l10n.anonymous,
