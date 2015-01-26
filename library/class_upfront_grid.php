@@ -190,6 +190,13 @@ class Upfront_Grid {
 							}
 						}
 					}
+                    // additional check, making sure next wrapper order is > current order
+                    if ( ! $breakpoint->is_default() && !empty($next_wrapper_data) ) {
+                        $wrapper_order = $this->_get_breakpoint_order($wrapper_data);
+                        $next_wrapper_order = $this->_get_breakpoint_order($next_wrapper_data);
+                        if ( intval($next_wrapper_order) < intval($wrapper_order) )
+                            $next_wrapper_data = false;
+                    }
                     if ( !$module_hide )
     					$line_col -= $wrapper_col;
 					$next_clear = $this->_get_property_clear($next_wrapper_data);

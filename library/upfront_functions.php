@@ -34,7 +34,7 @@ function upfront_get_breakpoint_property_value ($prop, $data, $breakpoint, $retu
 		return $breakpoint_data[$prop];
 	if ( $return_default )
 		return upfront_get_property_value($prop, $data);
-	return;
+	return false;
 }
 
 function upfront_get_class_num ($classname, $classes) {
