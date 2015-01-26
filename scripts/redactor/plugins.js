@@ -685,7 +685,7 @@ RedactorPlugins.upfrontIcons = function() {
                     "font-size": fontSize + "px",
                     "top": top + "px"
                 });
-                this.redactor.insert.html($icon[0].outerHTML, true);
+                this.redactor.insert.node($icon[0], true);
                 this.redactor.code.sync();
                 this.redactor.selection.restore();
                 this.closeToolbar();
@@ -1317,7 +1317,7 @@ RedactorPlugins.upfrontFormatting = function() {
                 }
             },
             set_previously_selected_tag: function(){
-                var tag = $(redactor.selection.getBlock()).length ? $(redactor.selection.getBlock())[0].tagName : false;
+                var tag = $(this.redactor.selection.getBlock()).length ? $(this.redactor.selection.getBlock())[0].tagName : false;
                 if (tag) {
                     tag = tag.toLowerCase();
                     this.$(".tags-list li a").removeClass("dropact");
@@ -1326,7 +1326,7 @@ RedactorPlugins.upfrontFormatting = function() {
             },
             set_previously_selected_class: function(){
                 var self = this,
-                    selected_class = $(redactor.selection.getBlock()).length ? $(redactor.selection.getBlock())[0].className : false;
+                    selected_class = $(this.redactor.selection.getBlock()).length ? $(this.redactor.selection.getBlock())[0].className : false;
                 if( selected_class ){
                     this.selected_class = selected_class.split(" ").filter( function(cls){
                         return self.custom_classes.indexOf( cls ) !== -1;
