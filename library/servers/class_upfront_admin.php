@@ -19,6 +19,7 @@ class Upfront_Server_Admin implements IUpfront_Server {
 		// Deal with the themes list and overall customizer requests
 		add_filter('wp_prepare_themes_for_js', array($this, 'prepare_themes_list'));
 		add_action('admin_menu', array($this, 'prepare_menu'));
+		add_action('admin_footer-themes.php', array($this, 'nasty_hack_themes_page')); // Bah!
 		
 		$this->dashboard_notice();
 	}
@@ -43,6 +44,14 @@ class Upfront_Server_Admin implements IUpfront_Server {
 		}
 	}
 
+	/**
+	 * Deal with doubled up customize links for active theme in themes.php popup (@WPv4.1)
+	 * Is this nasty? Why, yes, yes it is. The way the action links are built in core is worse though (wp-admin/themes.php, lines 157-200)
+	 */
+	public function nasty_hack_themes_page () {
+		echo '<style>.theme-overlay.active .button[href^="themes.php?page=http"] { display: none !important; } </style>';
+	}
+	
 	/**
 	 * Preparing each of the theme's info for themes list in admin area.
 	 */
