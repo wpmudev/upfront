@@ -292,7 +292,7 @@ class Upfront_MediaServer extends Upfront_Server {
 
 	public function embed_media () {
 		//if (!Upfront_Permissions::current(Upfront_Permissions::EMBED)) $this->_out(new Upfront_JsonResponse_Error("Nope, bye"));
-		if (!$this->_check_valid_request_level(Upfront_Permissions::EMBED)) $this->_out(new Upfront_JsonResponse_Error("Nope, bye"));
+		if (!$this->_check_valid_request_level(Upfront_Permissions::EMBED)) $this->_out(new Upfront_JsonResponse_Error("You can't do this."));
 		$data = stripslashes_deep($_POST);
 		$media = !empty($data['media']) ? $data['media'] : false;
 		if (!$media) $this->_out(new Upfront_JsonResponse_Error("Invalid media"));
@@ -390,7 +390,7 @@ class Upfront_MediaServer extends Upfront_Server {
 	}
 
 	public function upload_theme_image () {
-		if (!$this->_check_valid_request_level(Upfront_Permissions::UPLOAD)) $this->_out(new Upfront_JsonResponse_Error("Nope, bye"));
+		if (!$this->_check_valid_request_level(Upfront_Permissions::UPLOAD)) $this->_out(new Upfront_JsonResponse_Error("You can't do this."));
 		if(!isset($_FILES['media']))
 			$this->_out(new Upfront_JsonResponse_Error("No file to upload"));
 
@@ -481,7 +481,7 @@ class Upfront_MediaServer extends Upfront_Server {
 	}
 
 	public function upload_media () {
-		if (!$this->_check_valid_request_level(Upfront_Permissions::UPLOAD)) $this->_out(new Upfront_JsonResponse_Error("Nope, bye"));
+		if (!$this->_check_valid_request_level(Upfront_Permissions::UPLOAD)) $this->_out(new Upfront_JsonResponse_Error("You can't do this."));
 		$upload = new Upfront_UploadHandler;
 		$result = $upload->handle();
 		if (empty($result['media'])) $this->_out(new Upfront_JsonResponse_Error("Error uploading the media item"));
