@@ -7377,7 +7377,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 
 			this.deferred = $.Deferred();
 
-			this.posts = new Upfront.Collections.PostList([], {postType: options.postTypes[0].name});
+			this.posts = new Upfront.Collections.PostList([], {postType: 'page'});
+			
 			this.posts.pagination.pageSize = 20;
 			this.pagination = new PostSelectorNavigation({
 				collection: this.posts,
@@ -7398,7 +7399,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				.append(this.pagination.$el)
 			;
 			$('#upfront-popup').addClass('upfront-postselector-popup');
-
+			
+			this.$('.upfront-field-select-value').text(l10n.pages);
 			return this.deferred.promise();
 		},
 
