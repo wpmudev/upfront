@@ -147,7 +147,7 @@ var MenuItemView = Backbone.View.extend({
 
 		Upfront.Events.on("entity:contextmenu:deactivate", this.remove_context_menu, this);
 
-		this.createLinkPanel();
+		//this.createLinkPanel();
 	},
 	loadContexts: function(element) {
 		if(this.contextmenuContext.length > 10) return;
@@ -325,7 +325,7 @@ var MenuItemView = Backbone.View.extend({
 
 		this.parent_view.editMenuItem(this.$el.find('a.new_menu_item'));
 	},*/
-	createLinkPanel: function(){
+	/*createLinkPanel: function(){
 		var linkPanel = new Upfront.Views.Editor.LinkPanel({
 			theme: 'light',
 			button: true
@@ -356,7 +356,7 @@ var MenuItemView = Backbone.View.extend({
 		});
 
 		this.linkPanel = linkPanel;
-	},
+	},*/
 
 	getCleanurl: function(url) {
 		//this one removes any existing # anchor postfix from the url
@@ -727,13 +727,18 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				if(target.text().trim() != '') target.removeClass('menu_item_placeholder');
 				else target.addClass('menu_item_placeholder');
 			}).on('blur', function(e) {
-
+				
 					var being_edited = false;
 					if(target.closest('li').data('backboneview').model['being-edited'])
 						being_edited = target.closest('li').data('backboneview').model['being-edited'];
 
-					if($(e.relatedTarget).closest('.redactor_toolbar').length > 0 || being_edited)
+					
+
+
+					if($(e.relatedTarget).closest('.redactor_toolbar').length > 0 || being_edited || ($('#upfront-popup').hasClass('upfront-postselector-popup') && $('#upfront-popup').css('display')== 'block')) {
+						
 						return;
+					}
 
 					target.data('ueditor').stop();
 
@@ -793,7 +798,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			this.$el.find('li.edit_mode').data('backboneview').model['being-edited']= false;
 		this.$el.find('li.edit_mode a.menu_item').blur();
 		this.editModeOff();
-		this.$el.find('.time_being_display').removeClass('time_being_display');
+		if(!$('#upfront-popup').hasClass('upfront-postselector-popup') || !$('#upfront-popup').css('display')== 'block')
+			this.$el.find('.time_being_display').removeClass('time_being_display');
 	},
 	property: function(name, value, silent) {
 		if(typeof value != "undefined") return this.model.set_property(name, value, silent);
