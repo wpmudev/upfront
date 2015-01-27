@@ -729,13 +729,15 @@ define(function() {
 			_is_dirty = false,
 			_preview_url = false,
 			run = function (layout) {
-				if (Upfront.Application.mode.current === Upfront.Application.MODE.THEME) {
-					// Exporter mode
-					rebind_exporter_events();
-				} else {
-					// Normal mode
-					_layout = layout;
-					rebind_events();
+				if (!!Upfront.Settings.Application.ALLOW_REVISIONS) { // Only rebind stuff when revisions listening is enabled.
+					if (Upfront.Application.mode.current === Upfront.Application.MODE.THEME) {
+						// Exporter mode
+						rebind_exporter_events();
+					} else {
+						// Normal mode
+						_layout = layout;
+						rebind_events();
+					}
 				}
 				// Bind beforeunload event listener
 				window.onbeforeunload = warn;
