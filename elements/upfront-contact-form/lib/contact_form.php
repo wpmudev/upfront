@@ -204,6 +204,8 @@ class Upfront_UcontactView extends Upfront_Object {
 					$this->msg = self::_get_l10n('error_sending');
 					$this->msg_class = 'error';
 				}
+				else
+					$this->msg = self::_get_l10n('mail_sent');
 			} else {
 				$this->msg = self::_get_l10n('mail_sent');
 			}
