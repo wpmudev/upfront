@@ -2379,7 +2379,7 @@ define([
 			}
 			if (!Upfront.Settings.Application.NO_SAVE && current_app !== MODE.THEME) {
 				this.commands.push(new Command_SaveLayout({"model": this.model}));
-			} else if (current_app !== MODE.THEME) {
+			} else if (current_app !== MODE.THEME && Upfront.Settings.Application.ALLOW_REVISIONS) {
 				this.commands.push(new Command_PreviewLayout({"model": this.model}));
 			}
 			if (MODE.ALLOW.match(MODE.RESPONSIVE) && current_app !== MODE.THEME) {
