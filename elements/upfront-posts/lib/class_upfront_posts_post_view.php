@@ -309,6 +309,9 @@ class Upfront_Posts_PostView {
 	 */
 	protected function _wrap_post ($out, WP_Post $post) {
 		$class = is_sticky( $post->ID ) ? "uf-post uf-post-sticky" : "uf-post";
+		if (!empty($post->ID) && !has_post_thumbnail($post->ID)) {
+			$class .= " noFeature";
+		}
 		return "<li class='{$class}'><article>{$out}</article></li>";
 	}
 
