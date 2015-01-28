@@ -1276,11 +1276,16 @@ define([
 					grid = Upfront.Settings.LayoutEditor.Grid;
 				if ( ! breakpoint )
 					return;
-				var data = this.model.get_property_value_by_name('breakpoint'),
+				var me = this,
+					data = this.model.get_property_value_by_name('breakpoint'),
 					row = this.model.get_property_value_by_name('row'),
 					breakpoint_data = data[breakpoint.id],
 					$module = this.$el.find('.upfront-module'),
-					$toggle = this.$el.find('.upfront-module-hidden-toggle');
+					$toggle = this.$el.find('.upfront-module-hidden-toggle'),
+					has_sibling = this.$el.siblings('.upfront-module-view').length > 0,
+					width_col = breakpoint_data ? breakpoint_data.left+breakpoint_data.col : 0;
+				if ( has_sibling )
+					width_col = Upfront.Util.width_to_col(this.$el.width());
 				if ( ! breakpoint_data || ! breakpoint_data.hide ){
 					$module.show()
 					$toggle.hide();
@@ -1290,7 +1295,7 @@ define([
 					$toggle.show();
 				}
 				if ( breakpoint_data && typeof breakpoint_data.col == 'number' ){
-					$module.css('width', (breakpoint_data.col/(breakpoint_data.left+breakpoint_data.col)*100) + '%');
+					$module.css('width', (breakpoint_data.col/width_col*100) + '%');
 					$module.data('breakpoint_col', breakpoint_data.col);
 				}
 				else {
@@ -1298,7 +1303,7 @@ define([
 					$module.removeData('breakpoint_col');
 				}
 				if ( breakpoint_data && typeof breakpoint_data.left == 'number' ){
-					$module.css('margin-left', (breakpoint_data.left/(breakpoint_data.left+breakpoint_data.col)*100) + '%');
+					$module.css('margin-left', (breakpoint_data.left/width_col*100) + '%');
 					$module.data('breakpoint_left', breakpoint_data.left);
 				}
 				else {
@@ -1329,6 +1334,12 @@ define([
 				else {
 					this.$el.css('order', '');
 					$module.removeData('breakpoint_order');
+				}
+				// update position again if there's sibling, to call after wrapper updated position
+				if ( has_sibling ){
+					setTimeout(function(){
+						me.update_position();
+					}, 100);
 				}
 			},
 			render_object: function () {
