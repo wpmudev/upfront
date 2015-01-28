@@ -221,7 +221,7 @@ var Ueditor = function($el, options) {
 			formattingTags: ['h1', 'h2', 'h3', 'h4', 'p', 'pre'],
 			inserts: false,
             linkTooltip: false,
-            cleanOnPaste: true, // font icons copy and paste wont work without this
+            cleanOnPaste: false, // font icons copy and paste wont work without this set to true - BUT, with it set to true, paste won't work AT ALL!!!
             replaceDivs: false,
             pastePlainText: false,
             //cleanStyleOnEnter: false,
