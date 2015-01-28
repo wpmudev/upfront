@@ -60,6 +60,13 @@ class Upfront {
 			require_once(dirname(__FILE__) . '/library/servers/class_upfront_admin.php');
 			if (class_exists('Upfront_Server_Admin')) Upfront_Server_Admin::serve();
 		}
+		
+		$this->load_textdomain();
+	}
+	
+	public function load_textdomain () {
+		$path = untrailingslashit(self::get_root_dir()) . '/languages';
+		load_theme_textdomain('upfront', $path);
 	}
 
 	private function _add_supports () {
