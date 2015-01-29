@@ -221,7 +221,7 @@ var Ueditor = function($el, options) {
 			formattingTags: ['h1', 'h2', 'h3', 'h4', 'p', 'pre'],
 			inserts: false,
             linkTooltip: false,
-            cleanOnPaste: false, // font icons copy and paste wont work without this set to true - BUT, with it set to true, paste won't work AT ALL!!!
+            cleanOnPaste: true, // font icons copy and paste wont work without this set to true - BUT, with it set to true, paste won't work AT ALL!!!
             replaceDivs: false,
             pastePlainText: false,
             //cleanStyleOnEnter: false,
@@ -271,7 +271,7 @@ var Ueditor = function($el, options) {
 		/**
 		 * If a font icon is copied to clipboard, paste it
 		 */
-		if( self.font_icon !== false){
+		if( typeof self.font_icon !== "undefined" && self.font_icon !== false){
 			return self.font_icon;
 		}
 		return html;
