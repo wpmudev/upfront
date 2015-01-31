@@ -35,7 +35,7 @@ class Upfront_UFC {
 		);
 
 		self::$_theme_colors = json_decode( self::$_theme_colors );
-		self::$_theme_color_count = count( self::$_theme_colors->colors );
+		self::$_theme_color_count = !empty(self::$_theme_colors->colors) ? count( self::$_theme_colors->colors ) : 0;
 
 		if( strpos( $color, "ufc" ) !== false ){
 			self::$_ufc = $color;
@@ -150,7 +150,7 @@ class Upfront_UFC {
 	}
 
 	public function process_colors( $string ){
-		$theme_colors = self::$_theme_colors->colors;
+		$theme_colors = !empty(self::$_theme_colors->colors) ? self::$_theme_colors->colors : array();
 		for( $i = 0; $i < self::$_theme_color_count ; $i++ ){
 			$string = str_replace("#ufc" . $i, $theme_colors[$i]->color  , $string );
 		}
