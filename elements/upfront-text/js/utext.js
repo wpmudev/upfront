@@ -96,13 +96,35 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 				if (text) me.model.set_content($(text).html(), {silent: true});
 			})
 		;
-
+/*
 		if( this.$el.find(".plaintxt_padding").length && this.$el.find(".plaintxt_padding").attr("style").split("#ufc").length > 1){
 			var splits = this.$el.find(".plaintxt_padding").attr("style").split("#ufc"),
 				theme_color_index = splits[1].split(";")[0];
 			this.$el.find(".plaintxt_padding").css("backgroundColor", "#ufc" + theme_color_index);
 		}
+*/
+		Upfront.Events.on("theme_colors:update", this.update_colors, this);
+		this.update_colors();
+	},
+	update_colors: function () {
+		var bg = this.model.get_property_value_by_name("background_color");
+		if (bg && bg.match(/ufc\d+$/)) {
+			bg = Upfront.Util.colors.get_color(bg);
+			this.$el.find(".plaintxt_padding").css("backgroundColor", bg);
 
+			this.model.set_property("bg_color", bg);
+		}
+
+		var border = this.model.get_property_value_by_name("border"),
+			matches = border ? border.match(/#ufc\d+/) : false
+		;
+		if (border && matches && matches.length) {
+			var color = Upfront.Util.colors.get_color(matches[0]);
+			border = border.replace(new RegExp(matches[0]), color);
+			this.$el.find(".plaintxt_padding").css("border", border);
+
+			this.model.set_property("border_color", color);
+		}
 	}
 });
 
@@ -227,7 +249,9 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 	},
 	onBorderColor: function(color) {
 		if( !color ) return;
-		this.property('border_color',  color.toRgbString(), false);
+		var c = color.get_is_theme_color() !== false ? color.theme_color : color.toRgbString();
+console.log("this is c", c);
+		this.property('border_color',  c, true);
 		this.processBorder();
 	},
 	onBorderStyle: function(event) {
