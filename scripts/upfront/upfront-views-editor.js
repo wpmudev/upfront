@@ -6754,7 +6754,7 @@ var CSSEditor = Backbone.View.extend({
 			if(!result)
 				return;
 
-			var url = result.models[0].get('image').src.replace(document.location.origin, '');
+			var url = result.models[0].get('image').src;//.replace(document.location.origin, '');
 			me.editor.insert('url("' + url + '")');
 			me.editor.focus();
 		});
@@ -6979,7 +6979,7 @@ var GeneralCSSEditor = Backbone.View.extend({
 			if(!result)
 				return;
 
-			var url = result.models[0].get('image').src.replace(document.location.origin, '');
+			var url = result.models[0].get('image').src;//.replace(document.location.origin, '');
 			me.editor.insert('url("' + url + '")');
 			me.editor.focus();
 		});
