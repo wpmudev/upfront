@@ -2,6 +2,8 @@
 
 abstract class Upfront_ChildTheme implements IUpfront_Server {
 
+	const THEME_BASE_URL_MACRO = 'UPFRONT_THEME_BASE';
+
 
 	private $_version = false;
 	private $_required_pages = array();
@@ -199,6 +201,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 				if ( preg_match('/^region(-container|)$/', $type) && !preg_match($style_rx, $style) )
 					continue;
 				$style_content = file_get_contents($styles_root . DIRECTORY_SEPARATOR . $type . DIRECTORY_SEPARATOR . $style);
+				$style_content = $this->_expand_passive_relative_url($style_content);
 				$out .= $style_content;
 			}
 		}
@@ -294,10 +297,20 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			$styles = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), Upfront::$Excluded_Files);
 			foreach ($styles as $style) {
 				$style_content = file_get_contents($styles_root . DIRECTORY_SEPARATOR . $type . DIRECTORY_SEPARATOR . $style);
+				$style_content = $this->_expand_passive_relative_url($style_content);
 				$theme_styles[$type][str_replace('.css', '', $style)] = $style_content;
 			}
 		}
 		return $theme_styles;
+	}
+
+	/**
+	 * This will expand builder-made relative URLs in passive (non-PHP) content
+	 * @param  string $content String to process
+	 * @return string Processed content
+	 */
+	private function _expand_passive_relative_url ($content) {
+		return preg_replace('/' . preg_quote(self::THEME_BASE_URL_MACRO, '/') . '/', get_stylesheet_directory_uri(), $content);
 	}
 
 	public function getGlobalRegions($global_regions = array())  {
