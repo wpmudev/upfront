@@ -2067,7 +2067,7 @@ define([
                 hide_label : true,
                 default_value: '#ffffff',
                 spectrum: {
-                    hide: function (color) {
+                    choose: function (color) {
                         self.add_new_color( color );
                     }
                 }
