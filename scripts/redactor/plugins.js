@@ -1122,11 +1122,12 @@ RedactorPlugins.upfrontColor = function() {
                     class_set = function( cls ){
                         self.redactor.inline.format('div', 'class', cls);
                     },
-                    color_set = function(rule, value)
-                    {
+                    color_set = function(rule, value) {
+                        // OVERLY SIMPLISTIC AND DOESN'T WORK!
+                        //self.redactor.inline.format('div', 'style', rule + ': ' + value + ';');
+                        //return;
 
-                        self.redactor.inline.format('div', 'style', rule + ': ' + value + ';');
-                        return;
+                        // Use this instead:
                         var wrapper = document.createElement("span");
                         wrapper.appendChild(self.redactor.range.extractContents());
                         self.redactor.range.insertNode(wrapper);
