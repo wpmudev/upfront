@@ -792,14 +792,14 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 			.addClass('upfront-region-locked')
 			//Stop interaction with the rest of the page
 			.find('.upfront-module').each(function(){
-				if ( $(this).is('.ui-draggable') ) 
+				if ( $(this).is('.ui-draggable') )
 					$(this).draggable('disable');
 				if ( $(this).is('.ui-resizable') )
 					$(this).resizable('disable');
 			})
 		;
 		$('#page').find('.upfront-region-postlayouteditor').find('.upfront-module').each(function(){
-			if ( $(this).is('.ui-draggable') ) 
+			if ( $(this).is('.ui-draggable') )
 				$(this).draggable('enable');
 			if ( $(this).is('.ui-resizable') )
 				$(this).resizable('enable');
@@ -833,7 +833,7 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 
 		$('#page').find('.upfront-region-locked').removeClass('upfront-region-locked')
 			.find('.upfront-module').each(function(){
-				if ( $(this).is('.ui-draggable') ) 
+				if ( $(this).is('.ui-draggable') )
 					$(this).draggable('enable');
 				if ( $(this).is('.ui-resizable') )
 					$(this).resizable('enable');
@@ -955,7 +955,7 @@ var PostContentEditor = new (Subapplication.extend({
 		var $page = $('#page');
 		Upfront.Util.log("Stopping post the content edit mode");
 		$page.find('.upfront-module').each(function(){
-			if ( $(this).is('.ui-draggable') ) 
+			if ( $(this).is('.ui-draggable') )
 				$(this).draggable('enable');
 			if ( $(this).is('.ui-resizable') )
 				$(this).resizable('enable');
@@ -976,7 +976,7 @@ var PostContentEditor = new (Subapplication.extend({
 		//There is no need of start the application, just set the current one
 		Application.set_current(Application.MODE.POSTCONTENT);
 		$page.find('.upfront-module').each(function(){
-			if ( $(this).is('.ui-draggable') ) 
+			if ( $(this).is('.ui-draggable') )
 				$(this).draggable('disable');
 			if ( $(this).is('.ui-resizable') )
 				$(this).resizable('disable');
@@ -1211,7 +1211,7 @@ var Application = new (Backbone.Router.extend({
 		app.create_sidebar();
 
 		require(
-			["objects", 'media', 'content', 'spectrum', 'responsive', "uaccordion", 'redactor', 'ueditor', 'utext', "ucomment", "ucontact", "ugallery", "uimage", "upfront-like-box", "upfront_login", "upfront_maps", "unewnavigation", "ubutton", "uposts", "usearch", "upfront_slider", "upfront-social_media", "utabs", "this_post", "this_page", "uwidget", "uyoutube", "upfront_code"],
+			["objects", 'media', 'content', 'spectrum', 'responsive', "uaccordion", 'redactor', 'ueditor', 'utext', "ucomment", "ucontact", "ugallery", "uimage", "upfront-like-box", "upfront_login", "upfront_maps", "unewnavigation", "ubutton", "uposts", "usearch", "upfront_slider", "upfront-social_media", "utabs", "this_post", "this_page", "uwidget", "uyoutube", "upfront_code", "template_loader"],
 			function (objects) {
 				app.currentUrl = window.location.pathname + window.location.search;
 				app.saveCache = true;

@@ -19,13 +19,13 @@ class Upfront_ButtonView extends Upfront_Object {
 		if(is_array($presets)) {
 			foreach($presets as $item) {
 				if($item['id'] == $this->_get_property('currentpreset')) {
-					$preset = $item;	
+					$preset = $item;
 					break;
 				}
 			}
 		}
-		
-	
+
+
 		$data['content'] = $this->_get_property('content');
 		$data['href'] = $this->_get_property('href');
 		$data['align'] = $this->_get_property('align');
@@ -40,11 +40,11 @@ class Upfront_ButtonView extends Upfront_Object {
 			if(isset($preset['hov_bordercolor']))
 				$data['style_hover'] = $data['style_hover'].'border-color: '.$preset['hov_bordercolor'].'; ';
 			if(isset($preset['hov_borderradius1']))
-				$data['style_hover'] = $data['style_hover'].'border-top-left-radius: '.$preset['hov_borderradius1'].'px; ';	
+				$data['style_hover'] = $data['style_hover'].'border-top-left-radius: '.$preset['hov_borderradius1'].'px; ';
 			if(isset($preset['hov_borderradius2']))
-				$data['style_hover'] = $data['style_hover'].'border-top-right-radius: '.$preset['hov_borderradius2'].'px; ';	
+				$data['style_hover'] = $data['style_hover'].'border-top-right-radius: '.$preset['hov_borderradius2'].'px; ';
 			if(isset($preset['hov_borderradius3']))
-				$data['style_hover'] = $data['style_hover'].'border-bottom-right-radius: '.$preset['hov_borderradius3'].'px; ';	
+				$data['style_hover'] = $data['style_hover'].'border-bottom-right-radius: '.$preset['hov_borderradius3'].'px; ';
 			if(isset($preset['hov_borderradius4']))
 				$data['style_hover'] = $data['style_hover'].'border-bottom-left-radius: '.$preset['hov_borderradius4'].'px; ';
 			if(isset($preset['hov_bgcolor']))
@@ -60,23 +60,23 @@ class Upfront_ButtonView extends Upfront_Object {
 		/*
 		$data['style_hover'] = "border: ".$preset['hov_borderwidth']."px ".$preset['hov_bordertype']." ".$preset['hov_bordercolor']."; "."border-radius: ".$preset['hov_borderradius1']."px ".$preset['hov_borderradius2']."px ".$preset['hov_borderradius4']."px ".$preset['hov_borderradius3']."px; "."background-color: ".$preset['hov_bgcolor']."; "."font-size: ".$preset['hov_fontsize']."px; "."font-family: ".$preset['hov_fontface']."; "."color: ".$preset['hov_color']."; ";
 		*/
-		
+
 		$markup = upfront_get_template('ubutton', $data, dirname(dirname(__FILE__)) . '/tpl/ubutton.php.html');
 		return $markup;
-		
+
 	}
 
 	//Defaults for properties
 	public static function default_properties(){
 		return array(
-			"content" => "Click here", 
-			"href" => "", 
-			"align" => "center", 
-			"type" => "ButtonModel", 
-			"view_class" => "ButtonView", 
-			"element_id" => "button-object-1410952320306-1435", 
-			"class" => "c24 upfront-button", 
-			"has_settings" => 1, 
+			"content" => "Click here",
+			"href" => "",
+			"align" => "center",
+			"type" => "ButtonModel",
+			"view_class" => "ButtonView",
+			"element_id" => "button-object-1410952320306-1435",
+			"class" => "c24 upfront-button",
+			"has_settings" => 1,
 			"id_slug" => "button"
 		);
 	}

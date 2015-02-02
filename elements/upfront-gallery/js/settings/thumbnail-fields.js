@@ -42,7 +42,7 @@ define(function() {
 					model: this.model,
 					property: 'thumbWidth',
 					min: 100,
-					max: 250,
+					max: 350,
 					step: 5,
 					label: l10n.thumb.size,
 					// info: 'Slide to resize the thumbnails.',

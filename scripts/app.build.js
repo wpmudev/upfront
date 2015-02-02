@@ -49,6 +49,7 @@
         "jquery-df": "jquery/jquery-dateFormat.min",
         "jquery-simulate": 'jquery/jquery.simulate',
         "upfront_code": "../elements/upfront-code/js/upfront_code",
+        "template_loader": "../elements/template-loader/js/template_loader",
         "upfront_slider": "../elements/upfront-slider/js/uslider",
         "chosen": "chosen/chosen.jquery.min",
         "findandreplace": "findandreplace/findAndReplaceDOMText"

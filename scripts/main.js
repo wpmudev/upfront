@@ -26,9 +26,9 @@ require(['backbone'], function (Backbone) {
 			"site_url": Upfront.mainData.site,
 			"Debug": Upfront.mainData.debug,
 			"ContentEditor": {
-			"Requirements": Upfront.mainData.layoutEditorRequirements,
-			"Selectors": {
-				"sidebar": "#sidebar-ui"
+				"Requirements": Upfront.mainData.layoutEditorRequirements,
+				"Selectors": {
+					"sidebar": "#sidebar-ui"
 				}
 			},
 			"Application": {

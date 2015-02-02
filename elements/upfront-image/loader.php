@@ -40,7 +40,7 @@ function uimage_initialize () {
 	add_action('upfront_data', array($uimage, 'add_js_defaults'));
 
 	add_filter('upfront_l10n', array('Upfront_UimageView', 'add_l10n_strings'));
-	
+
 	// Add the public stylesheet
 	add_action('wp_enqueue_scripts', array('Upfront_UimageView', 'add_styles_scripts'));
 }

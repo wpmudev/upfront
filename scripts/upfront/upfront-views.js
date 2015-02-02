@@ -2012,7 +2012,7 @@ define([
 
 				context_menu_view.for_view = this;
 				this.context_menu_view = context_menu_view;
-				
+
 				return this.context_menu_view.render();
 
 			},
@@ -3161,7 +3161,7 @@ define([
 				});
 				var $settings_trigger = this.$el.find('> .upfront-entity_meta > a.upfront-entity-settings_trigger');
 
-				
+
 
 				if(this.model.get('type') == 'lightbox') {
 					console.log($settings_trigger.offset());

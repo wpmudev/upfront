@@ -33,6 +33,37 @@ abstract class Upfront_EntityResolver {
 	public static function get_entity_cascade ($query=false) {
 		$query = self::_get_query($query);
 
+
+		// Check for CoursePress units and other stuff
+		if(preg_match('#^/*courses/.+?/discussion/add_new_discussion/*$#', $_SERVER['REQUEST_URI']) === 1) {
+			return array(
+				'item' => 'add-new-discussion',
+				'type' => 'page',
+				'specificity' => get_the_ID()
+			);
+		}
+		if(preg_match('#^/*courses/.+?/discussion/*$#', $_SERVER['REQUEST_URI']) === 1) {
+			return array(
+				'item' => 'discussion',
+				'type' => 'archive',
+				'specificity' => get_the_ID()
+			);
+		}
+		if (preg_match('#^/*courses/.+?/workbook/*$#', $_SERVER['REQUEST_URI']) === 1) {
+			return array(
+				'item' => 'unit-workbook',
+				'type' => 'archive',
+				'specificity' => get_the_ID()
+			);
+		}
+		if(isset($query->query['post_type']) && $query->query['post_type'] === 'unit') {
+			return array(
+				'item' => 'unit',
+				'type' => !empty($query->meta_query->queries) ? 'archive' : 'single',
+				'specificity' => get_the_ID()
+			);
+		}
+
 		if ($query->post_count <= 1 && !$query->tax_query) return self::resolve_singular_entity($query);
 		else return self::resolve_archive_entity($query);
 	}
