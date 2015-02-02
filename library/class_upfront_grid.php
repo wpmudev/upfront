@@ -24,15 +24,66 @@ class Upfront_Grid {
 		$responsive_settings = json_decode(get_option('upfront_' . get_stylesheet() . '_responsive_settings', "{}"), true);
 		$responsive_settings = apply_filters('upfront_get_responsive_settings', $responsive_settings);
 
-		if ( $responsive_settings && $responsive_settings['breakpoints'] )
+
+		if ( $responsive_settings && $responsive_settings['breakpoints'] ) {
 			$this->_breakpoints = $responsive_settings['breakpoints'];
-		else
-			$this->_breakpoints = $this->get_default_breakpoints();
+		} else {
+			$this->_breakpoints = $this->initialize_default_breakpoints();
+		}
 		foreach ($this->_breakpoints as $data) {
 			$breakpoint = new Upfront_GridBreakpoint($data);
 			if ($breakpoint->get_columns() > $this->_max_columns) $this->_max_columns = $breakpoint->get_columns();
 			$this->_breakpoint_instances[$breakpoint->get_id()] = $breakpoint;
 		}
+	}
+
+	/*
+	 * Create responsive settings from layout_properties->grid if it is set in theme settings.
+	 */
+	private function initialize_default_breakpoints() {
+		if (is_null(Upfront_ChildTheme::get_instance())) {
+			return $this->get_default_breakpoints();
+		}
+		$layout_properties = json_decode(Upfront_ChildTheme::get_instance()->themeSettings->get('layout_properties'), true);
+		if (!is_array($layout_properties)) {
+			return $this->get_default_breakpoints();
+		}
+		foreach($layout_properties as $property) {
+			if ($property['name'] === 'grid') {
+				$grid_settings = $property['value'];
+			}
+		}
+		if (!isset($grid_settings)) {
+			return $this->get_default_breakpoints();
+		}
+
+		// Do the actual merge from here on
+		$defaults = $this->get_default_breakpoints();
+
+		$properties = array(
+			'column_widths' => 'column_width',
+			'column_paddings' => 'column_padding',
+			'baselines' => 'baseline',
+			'type_paddings' => 'type_padding',
+		);
+		foreach($properties as $prop_name=>$prop_translated) {
+			if (isset($grid_settings[$prop_name])) {
+				foreach($grid_settings[$prop_name] as $name=>$value) {
+					switch($name) {
+					case 'desktop':
+						$defaults[0][$prop_translated] = $value;
+						break;
+					case 'tablet':
+						$defaults[1][$prop_translated] = $value;
+						break;
+					case 'mobile':
+						$defaults[2][$prop_translated] = $value;
+						break;
+					}
+				}
+			}
+		}
+		return $defaults;
 	}
 
 	public function get_default_breakpoints () {
@@ -378,6 +429,14 @@ class Upfront_GridBreakpoint {
 			$this->_default = $default;
 		if ( !empty($enabled) )
 			$this->_enabled = $enabled;
+		if ( !empty($column_padding) )
+			$this->_column_padding = $column_padding;
+		if ( !empty($column_width) )
+			$this->_column_width = $column_width;
+		if ( !empty($baseline) )
+			$this->_baseline = $baseline;
+		if ( !empty($type_padding) )
+			$this->_type_padding = $type_padding;
 		$this->_data = $data;
 	}
 
