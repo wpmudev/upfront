@@ -489,6 +489,7 @@ define(function() {
 			}
 		},
 		colors: {
+			/*
 			text_theme_colors_update: function () {
                 console.log("attempting to reset text colors yay");
                 var $body = $("body"),
@@ -511,6 +512,7 @@ define(function() {
                 });
 
             },
+            */
 			get_ufc: function(color){
 				if(_.isEmpty(color)) return false;
 				color = tinycolor(color);
