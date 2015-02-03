@@ -26,7 +26,7 @@ class Upfront_PlainTxtView extends Upfront_Object {
 
 		$content = $this->_decorate_content($content);
 
-		return "<div>".(sizeof($style)>0 ? "<div class='plaintxt_padding' style='".implode(';', $style)."'>": ''). $content .(sizeof($style)>0 ? "</div>": ''). '</div>';
+		return (sizeof($style)>0 ? "<div class='plaintxt_padding' style='".implode(';', $style)."'>": ''). $content .(sizeof($style)>0 ? "</div>": '');
 	}
 
 	protected function _decorate_content ($content) {
