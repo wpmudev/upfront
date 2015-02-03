@@ -898,7 +898,6 @@ RedactorPlugins.upfrontColor = function() {
                 title: 'Color',
                 panel: this.upfrontColor.panel
             };
-            Upfront.Events.on("theme_colors:update",  Upfront.Util.colors.text_theme_colors_update);
         },
         panel: UeditorPanel.extend({
             current_color: false,
@@ -1124,18 +1123,28 @@ RedactorPlugins.upfrontColor = function() {
                         self.redactor.inline.format('div', 'class', cls);
                     },
                     color_set = function(rule, raw_value) {
-                        var value = raw_value.is_theme_color ? raw_value.theme_color_code : raw_value.toRgbString(),
-                            theme_color = raw_value.is_theme_color ? raw_value.theme_color : ''
-                        ;
-                       // self.redactor.inline.format('div', 'style', rule + ': ' + value + '/*' + theme_color + '*/' + ';');
+                        var theme_color = false, cls = false;
+                        if (raw_value.is_theme_color) {
+                            cls = Upfront.Views.Theme_Colors.colors.get_css_class(raw_value, !!rule.match(/background/));
+                            if (!cls) theme_color = raw_value.theme_color;
+                        } else {
+                            theme_color = raw_value.toRgbString();
+                        }
+
+                        //self.redactor.inline.format('div', 'style', rule + ': ' + value + '/*' + theme_color + '*/' + ';');
                         //return;
                         var wrapper = document.createElement("span");
                         wrapper.appendChild(self.redactor.range.extractContents());
                         self.redactor.range.insertNode(wrapper);
-                        $(wrapper)
-                            .attr("style", rule + ":" + value)
-                            .attr("data-ufc-" + rule, theme_color)
-                        ;
+                        if (cls) {
+                            $(wrapper)
+                                .addClass(cls)
+                            ;
+                        } else if (!!theme_color) {
+                            $(wrapper)
+                                .attr("style", rule + ':' + theme_color) // use color otherwise
+                            ;
+                        }
                         //self.redactor.selection.wrap("span");
                         //self.redactor.inline.format('div', 'style', rule + ': ' + type + ';');
                         self.redactor.selection.restore();
