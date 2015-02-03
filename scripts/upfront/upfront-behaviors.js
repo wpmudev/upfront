@@ -2213,7 +2213,7 @@ var GridEditor = {
 						var $el = $(this),
 							el = ed.get_el($el),
 							top = ( el.outer_grid.top == wrap.grid.top ) ? wrap.grid.top : current_el_top,
-							bottom = el.grid_center.y,
+							bottom = Math.ceil(el.grid_center.y),
 							$prev = $els[i-1] ? $els.eq(i-1) : false,
 							prev = $prev ? ed.get_el($prev) : false,
 							prev_me = ( prev && prev._id == me._id );
@@ -2245,7 +2245,7 @@ var GridEditor = {
 					var $last = $els.last(),
 						last = $last.size() > 0 ? ed.get_el($last) : false,
 						last_me = ( last && last._id == me._id ),
-						wrap_bottom = ( breakpoint && !breakpoint.default && next_clr_el_top ) ? next_clr_el_top.grid_center.y : max_row_wrap.grid.bottom;
+						wrap_bottom = ( breakpoint && !breakpoint.default && next_clr_el_top ) ? Math.ceil(next_clr_el_top.grid_center.y) : max_row_wrap.grid.bottom;
 					// Don't add dropping below the most bottom wrap in a row
 					if ( last_me || !max_row_wrap || max_row_wrap != wrap || ( breakpoint && !breakpoint.default ) ){
 						ed.drops.push({
@@ -2280,7 +2280,7 @@ var GridEditor = {
 				if ( wrap_clr && !( is_wrap_me && ( !next_wrap || next_wrap_clr ) ) ){
 					var top = ( wrap.grid.top == area.grid.top ) ? area.grid.top - 5 : current_full_top,
 						el_top = ed.get_wrap_el_min(wrap, false, true),
-						bottom = el_top.grid_center.y,
+						bottom = Math.ceil(el_top.grid_center.y),
 						is_drop_me = ( prev_wrap_clr && is_prev_me && !has_siblings ),
 						me_top = ( is_drop_me ? prev_wrap.grid.top : wrap.grid.top );
 					if ( can_drop(me_top, el_top.grid.top-1) ){
