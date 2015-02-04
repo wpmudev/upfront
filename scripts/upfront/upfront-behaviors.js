@@ -2398,7 +2398,7 @@ var GridEditor = {
 						return each.grid.bottom;
 					}),
 					top = bottom_wrap.grid.bottom;
-				if ( can_drop(top, bottom) ){
+				if ( can_drop(current_full_top, bottom) ){
 					ed.drops.push({
 						_id: ed._new_id(),
 						top: current_full_top,
