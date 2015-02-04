@@ -250,7 +250,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 	onBorderColor: function(color) {
 		if( !color ) return;
 		var c = color.get_is_theme_color() !== false ? color.theme_color : color.toRgbString();
-console.log("this is c", c);
+
 		this.property('border_color',  c, true);
 		this.processBorder();
 	},
