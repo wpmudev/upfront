@@ -937,6 +937,7 @@ RedactorPlugins.upfrontColor = function() {
                 this.updateIcon();
                 this.redactor.selection.save();
                 var self = this,
+                    theme_colors = Upfront.Views.Theme_Colors.colors.pluck("color").length ? Upfront.Views.Theme_Colors.colors.pluck("color") : [],
                     foreground_picker = new Upfront.Views.Editor.Field.Color({
                         spectrum: {
                             flat: true,
@@ -944,6 +945,7 @@ RedactorPlugins.upfrontColor = function() {
                             appendTo: "parent",
                             showPalette: true,
                             localStorageKey: "spectrum.recent_colors",
+                            palette: theme_colors,
                             maxSelectionSize: 10,
                             preferredFormat: "hex",
                             chooseText: "Ok",
@@ -964,6 +966,7 @@ RedactorPlugins.upfrontColor = function() {
                             showAlpha: true,
                             appendTo: "parent",
                             showPalette: true,
+                            palette: theme_colors,
                             localStorageKey: "spectrum.recent_bgs",
                             maxSelectionSize: 10,
                             preferredFormat: "hex",
