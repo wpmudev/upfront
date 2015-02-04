@@ -9557,6 +9557,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				this.add_panel_left = new RegionPanel_Add({model: this.model, to: 'left'});
 				this.add_panel_right = new RegionPanel_Add({model: this.model, to: 'right'});
 			}
+			this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors);
+			this.listenTo(Upfront.Events, "entity:region:after_render", this.update_colors);
 		},
 		panels: function () {
 			var panels = _([]),
@@ -9604,6 +9606,19 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		},
 		on_region_deactive: function () {
 			$(window).off('scroll', this, this.on_scroll);
+		},
+		update_colors: function () {
+			var $region = [],
+				background = this.model.get_property_value_by_name("background_color")
+			;
+
+			if (!background || !background.match(/ufc/)) return false;
+
+			$region = this.$el.closest('.upfront-region-container-bg');
+
+			if (!$region.length) return false;
+
+			$region.css("background-color", Upfront.Util.colors.get_color(background));
 		},
 		update_pos: function () {
 			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
