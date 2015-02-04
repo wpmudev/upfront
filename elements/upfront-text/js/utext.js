@@ -31,6 +31,7 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 		//	console.log('deactivating the text element editor');
 		//	Upfront.Events.trigger('upfront:element:edit:stop');
 		//}, this);
+		this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
 	},
 	get_content_markup: function () {
 		var content = this.model.get_content(),
@@ -103,28 +104,30 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 			this.$el.find(".plaintxt_padding").css("backgroundColor", "#ufc" + theme_color_index);
 		}
 */
-		Upfront.Events.on("theme_colors:update", this.update_colors, this);
 		this.update_colors();
 	},
 	update_colors: function () {
-		var bg = this.model.get_property_value_by_name("background_color");
+		var me = this;
+
+		var bg = me.model.get_property_value_by_name("background_color");
 		if (bg && bg.match(/ufc\d+$/)) {
 			bg = Upfront.Util.colors.get_color(bg);
-			this.$el.find(".plaintxt_padding").css("backgroundColor", bg);
+			me.$el.find(".plaintxt_padding").css("backgroundColor", bg);
 
-			this.model.set_property("bg_color", bg);
+			me.model.set_property("bg_color", bg);
 		}
 
-		var border = this.model.get_property_value_by_name("border"),
+		var border = me.model.get_property_value_by_name("border"),
 			matches = border ? border.match(/#ufc\d+/) : false
 		;
 		if (border && matches && matches.length) {
 			var color = Upfront.Util.colors.get_color(matches[0]);
 			border = border.replace(new RegExp(matches[0]), color);
-			this.$el.find(".plaintxt_padding").css("border", border);
+			me.$el.find(".plaintxt_padding").css("border", border);
 
-			this.model.set_property("border_color", color);
+			me.model.set_property("border_color", color);
 		}
+
 	}
 });
 

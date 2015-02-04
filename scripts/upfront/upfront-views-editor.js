@@ -4054,9 +4054,10 @@ var Field_ToggleableText = Field_Text.extend({
 			});
 
 			// Update spectrum selection on color change
-			this.listenTo(Upfront.Events, "theme_colors:update", function () {
+			var cback = _.debounce(function () {
 				me.$spectrum.spectrum("option", "palette", Theme_Colors.colors.pluck("color").length ? Theme_Colors.colors.pluck("color") : []);
-			});
+			}, 200);
+			this.listenTo(Upfront.Events, "theme_colors:update", cback);
 
 
 		},
