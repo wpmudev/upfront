@@ -1936,7 +1936,7 @@ define([
         },
         is_theme_color : function(color){
             color = this.color_to_hex( color );
-            return _.indexOf(this.get_colors(), color) !== -1 ? _.indexOf(this.get_colors(), color) : false;
+            return _.indexOf(this.get_colors(), color) !== -1 ? _.indexOf(this.get_colors(), color) + 1 /* <== indexOf can easily return 0 :( */ : false; 
         },
         get_css_class : function(color, bg){
             color = this.color_to_hex( color );
