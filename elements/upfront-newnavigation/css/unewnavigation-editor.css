@@ -78,6 +78,7 @@ div.upfront-navigation.upfront-editable_entity ul.menu li i.delete_menu_item {
 	top: -8px;
 	cursor: pointer;
 	overflow: hidden;
+	text-indent: 100px;
 	line-height: 3em;
 }
 /*

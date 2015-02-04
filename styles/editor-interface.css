@@ -4392,10 +4392,10 @@ a.upfront-region-name-edit-trigger:before {
   top: 28px;
   right: 5px; }
 
-/* line 426, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/layout-grid-module-object */
-.offset-ui-from-right-top .upfront-module > .upfront-entity_meta, .offset-ui-from-right-top .upfront-object > .upfront-entity_meta {
-  right: 50px; }
-
+/*.offset-ui-from-right-top .upfront-module > .upfront-entity_meta,
+.offset-ui-from-right-top .upfront-object > .upfront-entity_meta {
+	right: 50px;
+}*/
 /* line 429, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/layout-grid-module-object */
 .upfront-object > .upfront-entity_meta_extra {
   top: 50px;

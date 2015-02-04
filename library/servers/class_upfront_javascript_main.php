@@ -91,7 +91,9 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		if ($this->_debugger->is_active(Upfront_Debug::CACHED_RESPONSE)) {
 			$require_config['urlArgs'] = "nocache=" + microtime(true);
 		}
+
 		$require_config = json_encode(apply_filters('upfront-settings-require_js_config', $require_config));
+
 
 		$layout_editor_requirements = array(
 			"core" => array('models', 'views', 'editor_views', 'behaviors', $upfront_data_url, 'media', 'content', 'spectrum', 'responsive', 'redactor', 'ueditor' ),

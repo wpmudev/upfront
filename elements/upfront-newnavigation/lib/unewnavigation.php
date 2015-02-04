@@ -25,6 +25,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 		$breakpoint_data['desktop']['burger_menu'] = is_array( $burgermenu_desktop ) && isset( $burgermenu_desktop[0] ) ? $burgermenu_desktop[0] : $burgermenu_desktop ;
 		$breakpoint_data['desktop']['burger_alignment'] = $this->_get_property('burger_alignment');
 		$breakpoint_data['desktop']['burger_over'] = $this->_get_property('burger_over');
+		//$breakpoint_data['desktop']['menu_style'] = 'horizontal';
 
 		$breakpoint_data = json_encode($breakpoint_data);
 
@@ -39,10 +40,10 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 
 		$float_class = $is_floating ? 'upfront-navigation-float' : '';
 
-	  //  upfront_add_element_style('unewnavigation', array('css/unewnavigation-style.css', dirname(__FILE__)));
-	//    if (is_user_logged_in()) {
-	  //      upfront_add_element_style('unewnavigation_editor', array('css/unewnavigation-editor.css', dirname(__FILE__)));
-	  //  }
+		//  upfront_add_element_style('unewnavigation', array('css/unewnavigation-style.css', dirname(__FILE__)));
+		//    if (is_user_logged_in()) {
+		//      upfront_add_element_style('unewnavigation_editor', array('css/unewnavigation-editor.css', dirname(__FILE__)));
+		//  }
 		if ($is_floating) {
 			wp_enqueue_script('unewnavigation', upfront_element_url('js/public.js', dirname(__FILE__)));
 		}
@@ -160,11 +161,15 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 				'aligh' => __('Menu Item Alignment', 'upfront'),
 				'left' => __('Left', 'upfront'),
 				'right' => __('Right', 'upfront'),
+				'horiz' => __('Horizontal', 'upfront'),
+				'vert' => __('Vertical', 'upfront'),
+				'right' => __('Right', 'upfront'),
 				'top' => __('Top', 'upfront'),
 				'whole' => __('Whole', 'upfront'),
 				'over' => __('Over Content', 'upfront'),
 				'push' => __('Pushes Content', 'upfront'),
 				'align' => __('Menu Items Alignment', 'upfront'),
+				'style' => __('Menu Style', 'upfront'),
 				'center' => __('Center', 'upfront'),
 				'behavior' => __('Behaviour Settings', 'upfront'),
 				'auto_add' => __('Add new Pages automatically', 'upfront'),
