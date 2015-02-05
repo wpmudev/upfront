@@ -782,7 +782,7 @@ var LayoutEditor = {
 				};
 			}
 
-			data.use_existing = layout === 'single-page' && specific_layout && "existing" === fields.inherit.get_value()
+			data.use_existing = layout.match(/^single-page/) && specific_layout && "existing" === fields.inherit.get_value()
 				? fields.existing.get_value()
 				: false
 			;
