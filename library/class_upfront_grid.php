@@ -253,7 +253,7 @@ class Upfront_Grid {
 					$next_clear = $this->_get_property_clear($next_wrapper_data);
                     $next_wrapper_col = $this->_get_class_col($next_wrapper_data);
                     $next_wrapper_col = $next_wrapper_col > $col ? $col : $next_wrapper_col;
-					$next_fill = $next_clear ? $line_col : 0;
+					$next_fill = $next_clear && $line_col > 0 ? $line_col : 0;
 					$point_css .= $breakpoint->apply($wrapper_data, $this->get_grid_scope(), 'wrapper_id', $col, $next_fill);
 					if ( !$module_hide && ( $next_clear || $line_col < $next_wrapper_col ) )
 						$line_col = $col;

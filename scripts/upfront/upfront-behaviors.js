@@ -1336,7 +1336,9 @@ var GridEditor = {
 			row = Math.ceil(height/ed.baseline),
 			outer_row = Math.ceil(outer_height/ed.baseline),
 			$region = $el.closest('.upfront-region'),
-			region = $region.data('name');
+			region = $region.data('name'),
+			$group = $el.closest('.upfront-module-group'),
+			group = $group.length > 0 ? $group.attr('id') : false;
 		return {
 			$el: $el,
 			_id: ed._new_id(),
@@ -1376,7 +1378,8 @@ var GridEditor = {
 				y: grid.y+(row/2)-1,
 				x: grid.x+(col/2)-1
 			},
-			region: region
+			region: region,
+			group: group
 		};
 	},
 
@@ -1427,6 +1430,8 @@ var GridEditor = {
 			}),
 			function(each){
 				if ( el.region != each.region )
+					return;
+				if ( el.group != each.group )
 					return;
 				if ( ( each.outer_grid.top >= compare.top && each.outer_grid.top < compare.bottom ) ||
 					 ( each.outer_grid.bottom >= compare.top && each.outer_grid.bottom <= compare.bottom ) ||
@@ -3717,9 +3722,21 @@ var GridEditor = {
 
 
 					Upfront.Events.trigger("entity:drag_stop", view, view.model);
-					if(move_region){
+					if ( move_region ){
 						view.region = region;
 						view.region_view = Upfront.data.region_views[region.cid];
+						if ( !_.isUndefined(view._modules_view) ) { // this is grouped modules, also fix the child views
+							view._modules_view.region_view = view.region_view;
+							if ( !_.isUndefined(model.get('modules')) ){
+								model.get('modules').each(function(child_module){
+									var child_view = Upfront.data.module_views[child_module.cid];
+									if ( !child_view )
+										return;
+									child_view.region = view.region;
+									child_view.region_view = view.region_view;
+								});
+							}
+						}
 						view.trigger('region:updated');
 					}
 					view.trigger("entity:drop", {col: drop_col, left: drop_left, top: drop_top}, view, view.model);
@@ -3855,6 +3872,7 @@ var GridEditor = {
 			line = -1;
 			lines = [],
 			modules_data = [],
+			set_wrappers_col = {}, // keep track of set wrappers col
 			silent = ( silent === true ) ? true : false;
 		modules.each(function(module){
 			var data = module.get_property_value_by_name('breakpoint'),
@@ -3891,7 +3909,10 @@ var GridEditor = {
 		_.each(lines, function(line_modules){
 			var line_col = _.map(line_modules, function(data){ return data.col + data.left; }).reduce(function(sum, col){ return sum + col; });
 			_.each(line_modules, function(data, index){
-				var new_left = new_col = 0;
+				var new_left = 0,
+					new_col = 0,
+					wrapper_col = 0,
+					wrapper_index = 0;
 				if ( ! _.isObject(data.breakpoint[breakpoint_id]) )
 					data.breakpoint[breakpoint_id] = { edited: false };
 				if ( !_.isObject(data.wrapper_breakpoint[breakpoint_id]) )
@@ -3907,14 +3928,28 @@ var GridEditor = {
 					}
 					data.breakpoint[breakpoint_id].left = new_left;
 					data.breakpoint[breakpoint_id].col = new_col;
+					data.breakpoint[breakpoint_id].order = index;
 					data.module.set_property('breakpoint', data.breakpoint, silent);
 				}
 				else {
 					new_col = typeof data.breakpoint[breakpoint_id].col == 'number' ? data.breakpoint[breakpoint_id].col : data.col;
 					new_left = typeof data.breakpoint[breakpoint_id].left == 'number' ? data.breakpoint[breakpoint_id].left : data.left;
 				}
-				data.wrapper_breakpoint[breakpoint_id].col = new_col+new_left;
-				data.wrapper.set_property('breakpoint', data.wrapper_breakpoint, silent);
+				if ( !_.isUndefined(set_wrappers_col[data.wrapper.get_wrapper_id()]) ) {
+					wrapper_col = set_wrappers_col[data.wrapper.get_wrapper_id()];
+				}
+				else {
+					wrapper_index++;
+				}
+				if ( wrapper_col < new_col+new_left ) {
+					wrapper_col = new_col+new_left;
+					data.wrapper_breakpoint[breakpoint_id].col = wrapper_col;
+					set_wrappers_col[data.wrapper.get_wrapper_id()] = wrapper_col;
+					if ( !data.wrapper_breakpoint[breakpoint_id].edited ) {
+						data.wrapper_breakpoint[breakpoint_id].order = wrapper_index-1;
+					}
+					data.wrapper.set_property('breakpoint', data.wrapper_breakpoint, silent);
+				}
 			});
 		});
 	},
