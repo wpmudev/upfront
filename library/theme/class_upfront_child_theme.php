@@ -412,7 +412,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		if ($this->themeSettings->get('layout_style')) {
 			$properties[] = array(
 				'name' => 'layout_style',
-				'value' => $this->themeSettings->get('layout_style'),
+				'value' => $this->_expand_passive_relative_url($this->themeSettings->get('layout_style')),
 			);
 		}
 		if ($this->themeSettings->get('global_regions')) {
