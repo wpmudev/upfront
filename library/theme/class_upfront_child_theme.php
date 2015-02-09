@@ -275,7 +275,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		// ALSO!!! Do the theme global styles >.<
 		$global_layout_styles = $this->themeSettings->get('layout_style');
 		if (!empty($global_layout_styles)) {
-			$out .= $global_layout_styles;
+			$out .= $this->_expand_passive_relative_url($global_layout_styles);
 		}
 
 		return $out;
