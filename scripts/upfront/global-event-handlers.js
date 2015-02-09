@@ -7,14 +7,14 @@ define(function() {
 	});
 
   // Allow focus on click for inputs and textareas - draggable hijacks it
-	$('#page').on('mouseover', 'input[type="text"], input[type="email"], input[type="password"], textarea', function(event) {
+	$('body').on('mouseover', '#page input[type="text"], #page input[type="email"], #page input[type="password"], #page textarea', function(event) {
 		try {
 			$(event.target).closest('.ui-draggable').draggable('disable');
 		} catch (event) {
 			// We don't do anything but have to guard here
 		}
 	});
-	$('#page').on('mouseout', 'input[type="text"], input[type="email"], input[type="password"], textarea', function(event) {
+	$('body').on('mouseout', '#page input[type="text"], #page input[type="email"], #page input[type="password"], #page textarea', function(event) {
 		try {
 			$(event.target).closest('.ui-draggable').draggable('enable');
 		} catch (event) {
