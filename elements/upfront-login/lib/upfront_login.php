@@ -10,7 +10,7 @@ class Upfront_LoginView extends Upfront_Object {
 			'label_image' => __('Login', 'upfront'),
 			'label_text' => __('log in', 'upfront'),
 			'logout_link' => __('log out', 'upfront'),
-			'trigger_text' => __('Wassup', 'upfront'),
+			'trigger_text' => __('Log in', 'upfront'),
 			'logged_in_preview' => '',
 			'type' => "LoginModel",
 			'view_class' => "LoginView",
