@@ -32,7 +32,8 @@ define([
 				'click a.upfront-image-select': 'openImageSelector',
 				'click div.upfront-quick-swap': 'openImageSelector',
 				'dblclick .wp-caption': 'editCaption',
-				'click .js-uimage-open-lightbox': 'openLightboxRegion'
+				'click .js-uimage-open-lightbox': 'openLightboxRegion',
+				'click .swap-image-overlay': 'openImageSelector'
 			});
 			this.delegateEvents();
 
@@ -68,7 +69,7 @@ define([
 
 			this.controls = this.createControls();
 
-			if(this.property('image_status') !== 'ok' || this.property('quick_swap')) {
+			if(this.property('image_status') !== 'ok' || this.property('quick_swap') || this.isThemeImage()) {
 				this.property('has_settings', 0);
 			}
 
@@ -149,11 +150,7 @@ define([
 
 			// Do not allow editing of theme images if not in builder
 			if (this.isThemeImage() && !Upfront.themeExporter) {
-				panel.items = _([
-					this.createControl('replace-image', l10n.ctrl.replace_for_edit, 'replaceImage')
-				]);
-
-				return panel;
+				return false;
 			}
 
 			captionControl.sub_items = {
@@ -543,12 +540,16 @@ define([
 				this.$('a').addClass('js-uimage-open-lightbox');
 			}
 
-			var resizeHint = $('<div>').addClass('upfront-ui uimage-resize-hint' + onTop).html(this.sizehintTpl({
-				width: elementSize.width,
-				height: elementSize.height,
-				l10n: l10n.template
-			}));
-			this.$el.append(resizeHint);
+			if (this.isThemeImage()) {
+				this.$el.find('.upfront-image-container').append('<div class="swap-image-overlay"><p class="upfront-icon upfront-icon-swap-image">Click to Swap Image</p></div>');
+			} else {
+				var resizeHint = $('<div>').addClass('upfront-ui uimage-resize-hint' + onTop).html(this.sizehintTpl({
+					width: elementSize.width,
+					height: elementSize.height,
+					l10n: l10n.template
+				}));
+				this.$el.append(resizeHint);
+			}
 
 			if(this.property('image_status') !== 'ok') {
 				var starting = this.$('.upfront-image-starting-select');
@@ -615,6 +616,10 @@ define([
 			var imageControlsTpl = '<div class="uimage-controls image-element-controls upfront-ui"></div>';
 
 			this.controls = this.createControls();
+
+			if (this.controls === false) {
+				return;
+			}
 
 			this.controls.setWidth({
 				width: width,

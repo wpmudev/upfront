@@ -1235,3 +1235,31 @@ div.uimage-controls i.upfront-icon:before {
 	bottom: 15px;
 	left: 15px;
 }
+.swap-image-overlay {
+	background: rgba(35, 49, 64, 0.4);
+	display: none;
+	color: white;
+	text-align: center;
+	height: 100%;
+	position: absolute;
+	width: 100%;
+}
+.upfront-image-container:hover .swap-image-overlay {
+	display: block;
+}
+.swap-image-overlay p {
+	line-height: 50em;
+	position: absolute;
+	top: 50%;
+	margin-top: -25em;
+	width: 100%;
+	font-size: 24px;
+}
+.swap-image-overlay p:before {
+	content: "";
+	background-image: url('../../../img/uf-core-el-sprite.svg');
+	background-position: -807px -329px;
+	display: inline-block;
+	width: 24px;
+	height: 20px;
+}
