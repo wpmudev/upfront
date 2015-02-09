@@ -2,6 +2,13 @@ Change Log
 ============
 
 
+0.1.3 - 2015-02-09
+-------------------------------------------------------------------------------
+- Fix: z-index overlap in case of multiple menus.
+- Fix: navigation resizing bugs.
+- Fix: input fields focus.
+- Fix: drag and drop when there's only one element inside region.
+
 0.1.2 - 2015-02-02
 -------------------------------------------------------------------------------
 - Fix: text copy/paste issues.
