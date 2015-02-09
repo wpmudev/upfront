@@ -573,6 +573,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			})
 			.on('syncAfter', function() {
 				image.set('title', title.html());
+				image.set('caption', title.html());
 			})
 			;
 		}
