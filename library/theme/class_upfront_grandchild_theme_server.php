@@ -15,6 +15,7 @@ class Upfront_GrandchildTheme_Server implements IUpfront_Server {
 	private function _add_hooks () {
 		add_filter('extra_theme_headers', array($this, 'child_relationship_headers'));
 		add_action('after_setup_theme', array($this, 'check_theme_relationship'), 0);
+		wp_get_theme()->cache_delete();
 	}
 
 	public function child_relationship_headers ($headers) {
