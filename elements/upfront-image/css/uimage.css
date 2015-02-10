@@ -1251,6 +1251,9 @@ div.uimage-controls i.upfront-icon:before {
 	top:0;
 	left:0;
 }
+.swap-image-overlay:hover {
+	cursor:pointer;
+}
 .image-from-theme:hover .swap-image-overlay {
 	display: block;
 }
@@ -1264,6 +1267,7 @@ div.uimage-controls i.upfront-icon:before {
 	margin:auto;
 	padding:5px 10px;
 	border-radius:4px;
+	background:rgba(35, 49, 64, 0.9);
 	top:0;bottom:0;left:0;right:0;
 }
 .swap-image-overlay p:before {
@@ -1273,4 +1277,26 @@ div.uimage-controls i.upfront-icon:before {
 	display: inline-block;
 	width: 24px;
 	height: 20px;
+	position: relative;
+	top:4px;
+}
+
+/* conditional size rules for default swapImage overlay */
+.c1 .swap-image-overlay p.upfront-icon-swap-image,
+.c2 .swap-image-overlay p.upfront-icon-swap-image,
+.c3 .swap-image-overlay p.upfront-icon-swap-image, 
+.c4 .swap-image-overlay p.upfront-icon-swap-image,
+.c5 .swap-image-overlay p.upfront-icon-swap-image {
+	font-size:0;
+	width:24px;
+	height:24px;
+	padding:8px;
+	border-radius:50%;
+}
+.c1 .swap-image-overlay p:before,
+.c2 .swap-image-overlay p:before,
+.c3 .swap-image-overlay p:before, 
+.c4 .swap-image-overlay p:before,
+.c5 .swap-image-overlay p:before {
+	top:2px;
 }
