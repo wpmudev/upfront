@@ -1100,7 +1100,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					model_breakpoint[default_breakpoint.attributes.id].burger_menu = ( is_burger_menu instanceof Array ) ? is_burger_menu[0] : is_burger_menu;
 					model_breakpoint[default_breakpoint.attributes.id].burger_alignment = me.property('burger_alignment');
 					model_breakpoint[default_breakpoint.attributes.id].burger_over = me.property('burger_over');
-					//model_breakpoint[default_breakpoint.attributes.id].menu_style = me.property('menu_style');
+					model_breakpoint[default_breakpoint.attributes.id].menu_style = me.property('menu_style');
+					model_breakpoint[default_breakpoint.attributes.id].menu_alignment = me.property('menu_alignment');
 					model_breakpoint[default_breakpoint.attributes.id].width = default_breakpoint.attributes.width;
 
 					$upfrontObjectContent.attr('data-breakpoints',	JSON.stringify(model_breakpoint));
@@ -1209,7 +1210,9 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					selector.find('ul.menu').hide();
 				}
 				else {
-					selector.attr('data-style', selector.data('stylebk'))
+					//selector.attr('data-style', selector.data('stylebk'))
+					selector.attr('data-style', bparray[key]['menu_style'])
+					
 					selector.removeAttr('data-burger_alignment','');
 					selector.removeAttr('data-burger_over', '');
 
@@ -1489,6 +1492,8 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
 				var current_set_value = this.settings._wrapped[0].fields._wrapped[1].$el.find('input:checked').val();
 				var current_set_alignment = this.settings._wrapped[1].fields._wrapped[0].$el.find('input:checked').val();
 				var current_set_over = this.settings._wrapped[1].fields._wrapped[1].$el.find('input:checked').val();
+				var current_set_style = this.settings._wrapped[2].fields._wrapped[0].$el.find('input:checked').val();
+				var current_set_menu_alignment = this.settings._wrapped[3].fields._wrapped[0].$el.find('input:checked').val();
 
 				model_breakpoint = Upfront.Util.clone(this.model.get_property_value_by_name('breakpoint') || {});
 
@@ -1498,6 +1503,8 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
 					breakpoint_data.burger_menu = current_set_value || '';
 					breakpoint_data.burger_alignment = current_set_alignment;
 					breakpoint_data.burger_over = current_set_over;
+					breakpoint_data.menu_style = current_set_style;
+					breakpoint_data.menu_alignment = current_set_menu_alignment;
 
 					if(this.model.get_property_value_by_name('burger_menu') == 'yes') {
 						this.settings._wrapped[0].fields._wrapped[1].$el.find('input').attr("checked", 'checked');
@@ -1507,6 +1514,12 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
 
 					this.settings._wrapped[1].fields._wrapped[0].$el.find('input').removeAttr("checked");
 					this.settings._wrapped[1].fields._wrapped[0].$el.find('input[value="'+this.model.get_property_value_by_name('burger_alignment')+'"]').attr("checked", 'checked');
+
+					this.settings._wrapped[2].fields._wrapped[0].$el.find('input').removeAttr("checked");
+					this.settings._wrapped[2].fields._wrapped[0].$el.find('input[value="'+this.model.get_property_value_by_name('menu_style')+'"]').attr("checked", 'checked');
+
+					this.settings._wrapped[3].fields._wrapped[0].$el.find('input').removeAttr("checked");
+					this.settings._wrapped[3].fields._wrapped[0].$el.find('input[value="'+this.model.get_property_value_by_name('menu_alignment')+'"]').attr("checked", 'checked');
 
 					this.settings._wrapped[1].fields._wrapped[1].$el.find('input').removeAttr("checked");
 					this.settings._wrapped[1].fields._wrapped[1].$el.find('input[value="'+this.model.get_property_value_by_name('burger_over')+'"]').attr("checked", 'checked');
@@ -1527,6 +1540,13 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
 							breakpoint_data.burger_menu = current_set_value;
 							if(!breakpoint_data.burger_alignment)
 								breakpoint_data.burger_alignment = current_set_alignment;
+
+							if(!breakpoint_data.menu_style)
+								breakpoint_data.menu_style = current_set_style;
+
+							if(!breakpoint_data.menu_alignment)
+								breakpoint_data.menu_alignment = current_set_menu_alignment;
+
 							if(!breakpoint_data.burger_over)
 								breakpoint_data.burger_over = current_set_over;
 						}
@@ -1594,6 +1614,16 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
 						if(breakpoint_data.burger_alignment) {
 							this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[0].$el.find('input').removeAttr("checked");
 							this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[0].$el.find('input[value="'+breakpoint_data.burger_alignment+'"]').attr("checked", 'checked');
+						}
+
+						if(breakpoint_data.menu_style) {
+							this.panels._wrapped[0].settings._wrapped[2].fields._wrapped[0].$el.find('input').removeAttr("checked");
+							this.panels._wrapped[0].settings._wrapped[2].fields._wrapped[0].$el.find('input[value="'+breakpoint_data.menu_style+'"]').attr("checked", 'checked');
+						}
+
+						if(breakpoint_data.menu_alignment) {
+							this.panels._wrapped[0].settings._wrapped[3].fields._wrapped[0].$el.find('input').removeAttr("checked");
+							this.panels._wrapped[0].settings._wrapped[3].fields._wrapped[0].$el.find('input[value="'+breakpoint_data.menu_alignment+'"]').attr("checked", 'checked');
 						}
 
 						if(breakpoint_data.burger_over) {
