@@ -339,3 +339,11 @@ div.upfront-navigation div[data-style="burger"] > ul.menu li.menu-item:hover > u
 	top: 5px !important;
 	right: 51px !important;
 }
+
+.upfront-settings-item div.menu_style > span {
+  display: inline-block;
+}
+
+.upfront-settings-item div.menu_style > span:first-child {
+  margin-right:20px;
+}

@@ -1754,13 +1754,13 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
 								fields: [
 									new Upfront.Views.Editor.Field.Radios({
 										model: this.model,
+										className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios menu_style',
 										property: 'menu_style',
 										default_value: 'horizontal',
 										label: "",
-										layout: "vertical",
 										values: [
-											{ label: l10n.mnu.horiz, value: 'horizontal', icon: 'navigation-left' },
-											{ label: l10n.mnu.vert, value: 'vertical', icon: 'navigation-center' }
+											{ label: l10n.mnu.horiz, value: 'horizontal' },
+											{ label: l10n.mnu.vert, value: 'vertical' }
 										]
 									})
 								]
