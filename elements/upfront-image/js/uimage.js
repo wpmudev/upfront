@@ -11,6 +11,7 @@ define([
 ], function(imageTpl, editorTpl, ImageContextMenu, ImageSettings, ImageSelector, ImageEditor, ImageElement, UimageModel) {
 
 	var l10n = Upfront.Settings.l10n.image_element;
+	var breakpointColumnPadding = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().get('column_padding');
 
 	// Variable used to speed resizing up;
 	var resizingData = {};
@@ -783,7 +784,7 @@ define([
 				resizingData.resizer = resizer;
 			}
 
-			data.elementSize = {width: resizer.width() - 30, height: resizer.height() - 30 - captionHeight};
+			data.elementSize = {width: resizer.width() - (2 * breakpointColumnPadding), height: resizer.height() - (2 * breakpointColumnPadding) - captionHeight};
 
 			this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
 					width: data.elementSize.width,
@@ -838,8 +839,8 @@ define([
 
 			if(starting.length){
 				this.elementSize = {
-					height: $('.upfront-resize').height() - 30,
-					width: $('.upfront-resize').width() - 30
+					height: $('.upfront-resize').height() - (2 * breakpointColumnPadding),
+					width: $('.upfront-resize').width() - (2 * breakpointColumnPadding)
 				};
 				this.property('element_size', this.elementSize);
 				return;
@@ -1052,8 +1053,8 @@ define([
 			;
 
 			me.elementSize = {
-				width: resizer.width() - 32,
-				height: resizer.height() - 30
+				width: resizer.width() - (2 * breakpointColumnPadding) + 2,
+				height: resizer.height() - (2 * breakpointColumnPadding)
 			};
 
 			if(this.property('caption_position') === 'below_image') {
