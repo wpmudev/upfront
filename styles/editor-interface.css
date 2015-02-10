@@ -2000,7 +2000,7 @@ input.upfront-field-text:hover, .upfront-field-text:focus {
 /* line 566, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-wrap-color .sp-preview {
   display: inline-block;
-  width: 25px;
+  width: 20px;
   height: 20px;
   border: 1px solid #fff;
   vertical-align: bottom;
@@ -5098,8 +5098,8 @@ a.upfront-region-name-edit-trigger:before {
 /* line 34, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .sp-preview {
   background-position: -817px -105px;
-  width: 20px !important;
-  height: 20px !important;
+  width: 20px;
+  height: 20px;
   /*background-color:#e5f3ff;*/
   border: 1px #a3bfd9 solid;
   border-radius: 3px;
@@ -11741,22 +11741,32 @@ span.upfront-css-color .upfront-field-wrap {
   margin: 4px;
   margin-left: 20px;
   height: 24px;
-  overflow: hidden; }
+  width: 24px;
+  overflow: hidden;
+  padding: 2px; }
 
-/* line 98, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 100, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 .upfront-css-top .sp-preview {
-  border-radius: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 0px;
   margin: 0;
-  border: 1px solid #364859 !important;
   -webkit-background-clip: padding-box;
   -moz-background-clip: padding;
   background-clip: padding-box; }
 
-/* line 108, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 109, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+.upfront-css-top div.sp-replacer:before {
+  top: 1px;
+  left: 1px;
+  width: 20px;
+  height: 20px; }
+
+/* line 117, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 a.upfront-css-image:hover, a.upfront-css-font:hover {
   border-color: #3ea; }
 
-/* line 112, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 121, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 .upfront-css-close {
   background-image: url('../img/uf-ui-sprite.svg');
   background-position: -1230px -155px;
@@ -11768,33 +11778,33 @@ a.upfront-css-image:hover, a.upfront-css-font:hover {
   float: right;
   margin: 5px 2px; }
 
-/* line 123, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 132, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 .upfront-css-close:hover {
   opacity: 1; }
 
-/* line 127, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 136, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 div.ace_content {
   background: #26333F;
   color: #dae6f2; }
 
-/* line 132, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 141, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 .ace_editor div.ace_gutter {
   background: #2E3D4C;
   color: #cbe5ff; }
 
-/* line 136, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 145, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 div.ace_editor div.ace_gutter-active-line {
   background: #26333F; }
 
-/* line 139, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 148, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 div.ace_editor .ace_marker-layer div.ace_active-line {
   background: #1d2d36; }
 
-/* line 142, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 151, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 div.ace_editor .ace_fold {
   background-color: #1fcd8f; }
 
-/* line 146, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 155, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 .upfront-css-save-form {
   padding: 8px 15px 15px;
   background: #465D72;
@@ -11802,22 +11812,22 @@ div.ace_editor .ace_fold {
   bottom: 0;
   width: 100%; }
 
-/* line 153, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 162, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 .upfront-css-no-save-as .upfront-css-save-form {
   padding-top: 15px; }
 
-/* line 157, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 166, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 .upfront-css-sidebar p {
   color: #dae6f2;
   margin: 0; }
 
-/* line 162, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 171, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 .upfront-css-selectors {
   padding: 10px 15px;
   color: #cbe5ff;
   line-height: 20px; }
 
-/* line 168, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 177, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 .upfront-css-selector {
   border: 1px solid #2e3d4c;
   display: inline-block;
@@ -11828,11 +11838,11 @@ div.ace_editor .ace_fold {
   line-height: 14px;
   color: #aabfd2; }
 
-/* line 179, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 188, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 .upfront-css-selector:hover {
   background: #2E3D4C; }
 
-/* line 185, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 194, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 .upfront-css-save-form input.upfront-css-save-name-field, .upfront-css-save-form input.upfront-css-save-name-field:active, .upfront-css-save-form input.upfront-css-save-name-field:focus {
   width: 72%;
   padding: 2px 5px;
@@ -11842,19 +11852,19 @@ div.ace_editor .ace_fold {
   font-size: 14px;
   color: #85a9cb; }
 
-/* line 195, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 204, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 .upfront-css-save-form input.upfront-css-save-name-field:active, .upfront-css-save-form input.upfront-css-save-name-field:focus {
   outline: 1px solid rgba(31, 205, 143, 0.5); }
 
-/* line 198, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 207, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 .upfront-css-save-form input.upfront-css-save-name-field:focus {
   color: #cbe5ff; }
 
-/* line 203, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 212, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 .upfront-css-no-save-as .upfront-css-save-form p, .upfront-css-no-save-as .upfront-css-save-form input.upfront-css-save-name {
   display: none; }
 
-/* line 207, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 216, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 .upfront-css-save-form button {
   width: 22%;
   background: #1fcd8f;
@@ -11868,38 +11878,38 @@ div.ace_editor .ace_fold {
   font-size: 14px;
   border: 0; }
 
-/* line 220, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 229, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 .upfront-css-save-form button:hover {
   background: #3ea; }
 
-/* line 224, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 233, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 .upfront-css-hilite {
   outline: 3px solid #3ea !important; }
 
-/* line 228, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 237, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 .upfront-settings-css .upfront-field-select {
   margin-bottom: 6px; }
 
-/* line 232, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 241, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 .upfront-css-new {
   line-height: 14px;
   margin: 0; }
 
-/* line 237, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 246, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 .upfront-css-new a {
   color: #30475E !important;
   vertical-align: bottom; }
 
-/* line 242, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 251, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 .upfront-css-new a:hover {
   color: #1fcd8f !important; }
 
-/* line 246, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 255, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 span.upfront-css-new-text {
   border-bottom: 1px solid #1fcd8f;
   font-size: 11px; }
 
-/* line 251, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 260, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 .upfront-css-new span.codeicon {
   color: #1fcd8f;
   background: #30475E;
@@ -11908,16 +11918,16 @@ span.upfront-css-new-text {
   padding: 0px 2px 2px;
   border-radius: 2px; }
 
-/* line 260, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 269, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 a.upfront-css-delete {
   color: #dae6f2 !important;
   display: inline-block; }
 
-/* line 264, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 273, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 a.upfront-css-delete:hover {
   color: #F44C4F !important; }
 
-/* line 268, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 277, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 a.upfront-css-delete:before {
   content: '';
   display: inline-block;
@@ -11928,18 +11938,18 @@ a.upfront-css-delete:before {
   background-position: -664px -78px;
   vertical-align: middle; }
 
-/* line 279, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 288, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 a.upfront-css-edit, a.upfront-preset-edit {
   vertical-align: top;
   margin: 4px 0 0 5px;
   display: inline-block;
   opacity: 0.8; }
 
-/* line 286, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 295, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 a.upfront-css-edit:hover, a.upfront-preset-edit:hover, a.upfront-region-name-edit-trigger:hover {
   opacity: 1; }
 
-/* line 290, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
+/* line 299, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/css-editor */
 a.upfront-css-edit:before, a.upfront-preset-edit:before, a.upfront-region-name-edit-trigger:before {
   display: inline-block;
   content: '';
