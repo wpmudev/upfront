@@ -1235,25 +1235,27 @@ div.uimage-controls i.upfront-icon:before {
 	bottom: 15px;
 	left: 15px;
 }
+
+.image-from-theme {
+	position: relative;
+}
 .swap-image-overlay {
 	background: rgba(35, 49, 64, 0.4);
 	display: none;
 	color: white;
 	text-align: center;
-	height: 100%;
-	position: absolute;
-	width: 100%;
+	position: relative;
 }
-.upfront-image-container:hover .swap-image-overlay {
+.image-from-theme:hover .swap-image-overlay {
 	display: block;
 }
+
 .swap-image-overlay p {
-	line-height: 50em;
 	position: absolute;
-	top: 50%;
-	margin-top: -25em;
-	width: 100%;
-	font-size: 24px;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
 }
 .swap-image-overlay p:before {
 	content: "";

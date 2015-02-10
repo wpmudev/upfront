@@ -541,7 +541,8 @@ define([
 			}
 
 			if (this.isThemeImage()) {
-				this.$el.find('.upfront-image-container').append('<div class="swap-image-overlay"><p class="upfront-icon upfront-icon-swap-image">Click to Swap Image</p></div>');
+				this.$el.addClass('image-from-theme');
+				this.$el.append('<div class="swap-image-overlay"><p class="upfront-icon upfront-icon-swap-image">Click to Swap Image</p></div>');
 			} else {
 				var resizeHint = $('<div>').addClass('upfront-ui uimage-resize-hint' + onTop).html(this.sizehintTpl({
 					width: elementSize.width,
