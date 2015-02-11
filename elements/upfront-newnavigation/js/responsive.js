@@ -56,7 +56,6 @@ jQuery(document).ready(function($) {
 		}
 	});
 	function pushContent(nav) {
-		return;
 		var currentwidth = $('div#page').width();
 		var navwidth = nav.find('ul.menu').width();
 		var navheight = nav.find('ul.menu').height();
@@ -70,7 +69,6 @@ jQuery(document).ready(function($) {
 	}
 	
 	function pullContent(nav) {
-		return;
 		$('div#page').css('margin-'+nav.data('burger_alignment'), '');
 		$('div#page').css('width', '');
 		$('div#page').css('minWidth', '');

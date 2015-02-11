@@ -75,10 +75,7 @@ var MenuItemView = Backbone.View.extend({
 								return 'Visit Link';
 							*/
 
-
-
-
-						//	return l10n.visit_url;
+							//	return l10n.visit_url;
 						},
 						action: function() {
 							me.visitLink();
@@ -571,6 +568,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					me.property('menu_style', current_breakpoint_data['menu_style']);
 			}
 			*/
+
 			me.render();
 
 			me.activate_responsive_nav(me.$el.find(".upfront-output-unewnavigation"), current.width);
@@ -583,6 +581,24 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 */
 		});
 		this.listenTo(Upfront.Events, "entity:removed:before", this.on_removal);
+
+		
+
+		var breakpoint_data = me.model.get_property_value_by_name('breakpoint');
+
+		//sanitize breakpoint data
+
+		var new_breakpoint_data = {};
+
+		var breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints();
+		
+
+		for(key in breakpoint_data) {
+			if(typeof(breakpoints.get(key)) != 'undefined')
+				new_breakpoint_data[key] = breakpoint_data[key];
+		}
+
+		this.model.set_property('breakpoint', new_breakpoint_data);
 
 	},
 	on_removal: function() {
@@ -1532,6 +1548,17 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
 
 				if(current_set_value == 'yes') {
 					var enabled_breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled();
+					//re-order enabled_breakpoints according to the width, widest first
+
+					
+
+					enabled_breakpoints.sort(function (a, b) {
+					    if (a.attributes.width < b.attributes.width) return 1;
+					    if (b.attributes.width < a.attributes.width) return -1;
+					    return 0;
+					});
+
+					console.log(enabled_breakpoints);
 					var check = false;
 					_.each(enabled_breakpoints, function(bpoint) {
 						if(check) {
@@ -1638,6 +1665,15 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
 
 				var enabled_breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled();
 				var check = false;
+
+				//sort breakpoints (widest to narrowest)
+
+				enabled_breakpoints.sort(function (a, b) {
+				    if (a.attributes.width < b.attributes.width) return 1;
+				    if (b.attributes.width < a.attributes.width) return -1;
+				    return 0;
+				});
+
 				for(var i = enabled_breakpoints.length-1; i >= 0; i--) {
 					if(check) {
 						console.log(enabled_breakpoints[i].id);
