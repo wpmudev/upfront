@@ -2393,7 +2393,7 @@ define([
 				if (!Upfront.Settings.Application.NO_SAVE && current_app !== MODE.THEME) {
 					this.commands.push(new Command_ResetEverything({"model": this.model}));
 				}
-				if (current_app !== MODE.THEME) this.commands.push(new Command_ToggleMode({"model": this.model}));
+				//if (current_app !== MODE.THEME) this.commands.push(new Command_ToggleMode({"model": this.model}));
 				if (!Upfront.Settings.Application.DEBUG && current_app !== MODE.THEME && !Upfront.Settings.Application.NO_SAVE) {
 					this.commands.push(new Command_PublishLayout({"model": this.model}));
 				}
