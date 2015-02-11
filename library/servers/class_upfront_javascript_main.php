@@ -166,7 +166,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		}
 	    if (empty($theme_info) || $theme_info === '[]') {
 	    	// Add defaults
-			$defaults = Upfront_Grid::get_grid()->get_default_breakpoints();
+			$defaults = Upfront_Grid::get_grid()->get_breakpoints_data();
 	    	$theme_info = json_encode(array('breakpoints' => $defaults));
 	    }
 

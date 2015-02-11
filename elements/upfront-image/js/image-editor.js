@@ -3,6 +3,7 @@ define([
 	'text!elements/upfront-image/tpl/image_editor.html'
 ], function(editorTpl) {
 	var l10n = Upfront.Settings.l10n.image_element;
+	var breakpointColumnPadding = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().get('column_padding');
 
 	/**
 	 * The image editor needs the image to be uploaded as an attachment to WP in order to work.
@@ -282,7 +283,7 @@ define([
 				elementSize = {
 					maxColumns: elementView.get_element_max_columns(),
 					maxRows: elementView.get_element_max_rows(),
-					rowHeight: 15
+					rowHeight: breakpointColumnPadding
 				}
 			;
 
@@ -292,7 +293,7 @@ define([
 
 			elementSize.columnWidth = elementView.get_element_max_columns_px() / elementSize.maxColumns;
 
-			elementSize.rows = Math.round(options.maskSize.height / 15) + 2;
+			elementSize.rows = Math.round(options.maskSize.height / breakpointColumnPadding) + 2;
 			elementSize.columns = Math.ceil(options.maskSize.width / elementSize.columnWidth);
 
 			this.elementSize = elementSize;
@@ -305,7 +306,7 @@ define([
 			var fullGrid = this.getFullWidthImage(options.fullSize).size,
 				current = this.getCurrentImageRowsCols(fullGrid.width, fullGrid.height),
 				maskSize = {
-					width: current.columns * this.elementSize.columnWidth - 30,
+					width: current.columns * this.elementSize.columnWidth - (2 * breakpointColumnPadding),
 					height: (current.rows - 2) * this.elementSize.rowHeight
 				}
 			;
@@ -316,12 +317,12 @@ define([
 
 			if(!stretch){
 				maskSize = {
-					width: Math.min(current.columns, elementSize.columns) * elementSize.columnWidth - 30,
-					height: (Math.min(current.rows, elementSize.rows) - 2) * 15
+					width: Math.min(current.columns, elementSize.columns) * elementSize.columnWidth - (2 * breakpointColumnPadding),
+					height: (Math.min(current.rows, elementSize.rows) - 2) * breakpointColumnPadding
 				};
 			}
 			else if(this.elementSize.maxColumns < current.columns){
-				var maskWidth = this.elementSize.maxColumns * this.elementSize.columnWidth - 30;
+				var maskWidth = this.elementSize.maxColumns * this.elementSize.columnWidth - (2 * breakpointColumnPadding);
 				maskSize = {
 					width:  maskWidth,
 					height: fullGrid.height
@@ -582,7 +583,7 @@ define([
 		},
 
 		addGridLines: function(initialPoint, maskHeight){
-			var step = 15,
+			var step = parseInt(breakpointColumnPadding, 10),
 				height = maskHeight - this.bordersWidth,
 				current = this.bordersWidth / 2
 			;
@@ -706,8 +707,8 @@ define([
 				mask = this.$('#uimage-mask'),
 				initPoint = mask.offset(),
 				limits = {
-					minWidth: 15,
-					minHeight: 15
+					minWidth: breakpointColumnPadding,
+					minHeight: breakpointColumnPadding
 				}
 			;
 			if(this.mode === 'big'){
@@ -771,7 +772,7 @@ define([
 
 			return {
 				rows: Math.ceil(imgHeight / this.elementSize.rowHeight) + 2,
-				columns: Math.ceil((imgWidth + 30)/ this.elementSize.columnWidth)
+				columns: Math.ceil((imgWidth + (2 * breakpointColumnPadding))/ this.elementSize.columnWidth)
 			};
 		},
 
@@ -801,7 +802,7 @@ define([
 			var options = this.options;
 
 			options.maskSize = {
-				width: this.elementSize.columnWidth * columns - 30,
+				width: this.elementSize.columnWidth * columns - (2 * breakpointColumnPadding),
 				height: this.elementSize.rowHeight * (rows - 2)
 			};
 
@@ -867,13 +868,13 @@ define([
 		fitMask: function(){
 			var canvas = $('#uimage-canvas'),
 				mask = $('#uimage-mask'),
-				columnWidth = Math.round((mask.width() + 30) / this.options.fitMaskColumns),
+				columnWidth = Math.round((mask.width() + (2 * breakpointColumnPadding)) / this.options.fitMaskColumns),
 				canvasSize = {width: canvas.width(), height: canvas.height()},
-				rowHeight = 15,
-				elementColumns = Math.ceil((canvasSize.width + 30) / columnWidth),
+				rowHeight = breakpointColumnPadding,
+				elementColumns = Math.ceil((canvasSize.width + (2 * breakpointColumnPadding)) / columnWidth),
 				maskNewSize = {
 					height: Math.ceil(canvasSize.height / rowHeight) * rowHeight,
-					width: elementColumns * columnWidth - 30
+					width: elementColumns * columnWidth - (2 * breakpointColumnPadding)
 				},
 				optionsNew = this.options
 			;
@@ -945,7 +946,7 @@ define([
 
 		getFullWidthImage: function(fullSize) {
 			var grid = $(document.querySelector('.upfront-grid-layout')),
-				gridWidth = grid.width() - 30,
+				gridWidth = grid.width() - (2 * breakpointColumnPadding),
 				size = fullSize || this.fullSize
 			;
 
@@ -956,7 +957,7 @@ define([
 
 			return {
 				size: size,
-				left: grid.offset().left + 15
+				left: grid.offset().left + breakpointColumnPadding
 			};
 		},
 

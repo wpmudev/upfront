@@ -507,6 +507,7 @@ Ueditor.prototype = {
 		this.redactorEvents = redactorEvents;
 		manager.on('insert:added insert:removed', function(){
 			me.redactor.events.trigger("ueditor:insert:media");
+			if (me.redactor.code && me.redactor.code.sync) me.redactor.code.sync();
 		});
 		UeditorEvents.on( 'cleanUpListeners', $.proxy(this.cleanUpListeners, this));
 	},

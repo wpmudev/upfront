@@ -2393,7 +2393,7 @@ define([
 				if (!Upfront.Settings.Application.NO_SAVE && current_app !== MODE.THEME) {
 					this.commands.push(new Command_ResetEverything({"model": this.model}));
 				}
-				if (current_app !== MODE.THEME) this.commands.push(new Command_ToggleMode({"model": this.model}));
+				//if (current_app !== MODE.THEME) this.commands.push(new Command_ToggleMode({"model": this.model}));
 				if (!Upfront.Settings.Application.DEBUG && current_app !== MODE.THEME && !Upfront.Settings.Application.NO_SAVE) {
 					this.commands.push(new Command_PublishLayout({"model": this.model}));
 				}
@@ -2407,8 +2407,8 @@ define([
 			this.commands = _([
 				new Command_Logo({"model": this.model}),
 			]);
-			if ( !Upfront.Settings.Application.NO_SAVE )
-				this.commands.push(new Command_Exit({"model": this.model}));
+			//if ( !Upfront.Settings.Application.NO_SAVE ) this.commands.push(new Command_Exit({"model": this.model}));
+			this.commands.push(new Command_Exit({"model": this.model})); // *Always* show exit
 		}
 	});
 
@@ -2475,9 +2475,10 @@ define([
 		className: "sidebar-profile",
 		render: function () {
 			var user = Upfront.data.currentUser;
-			if ( !user ) return;
+			if ( !user ) user = new Backbone.Model();
 			var data = user.get('data') || {},
-				roles = user.get('roles');
+				roles = user.get('roles') || []
+			;
 			this.$el.html(_.template(
 				'<div class="sidebar-profile-avatar"><img src="http://www.gravatar.com/avatar/{{gravatar}}?s=26" /></div>' +
 				'<div class="sidebar-profile-detail"><span class="sidebar-profile-name">{{name}}</span><span class="sidebar-profile-role">{{role}}</span></div>' +
