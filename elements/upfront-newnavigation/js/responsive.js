@@ -46,6 +46,10 @@ jQuery(document).ready(function($) {
 			$(this).parent().find('ul.sub-menu').show();
 			if($(this).parent().data('burger_over') == 'pushes')
 				pushContent($(this).parent());
+
+			$(this).closest('.upfront-output-region-container').each(function() {
+				$(this).addClass('upfront-region-container-has-nav');
+			});
 		}
 		else {
 			$(this).parent().find('ul.menu').hide();
@@ -53,6 +57,10 @@ jQuery(document).ready(function($) {
 			$(this).closest('div.upfront-output-wrapper').removeClass('on_the_top');
 			if($(this).parent().data('burger_over') == 'pushes')
 				pullContent($(this).parent());
+
+			$(this).closest('.upfront-output-region-container').each(function() {
+				$(this).removeClass('upfront-region-container-has-nav');
+			});
 		}
 	});
 	function pushContent(nav) {

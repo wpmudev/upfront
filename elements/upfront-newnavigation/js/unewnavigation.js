@@ -464,11 +464,11 @@ var MenuItemView = Backbone.View.extend({
 			.addClass(tooltipClass)
 			.show()
 			.on('click', function(e){
-				console.log("click ok");
+				
 				e.stopPropagation();
 			})
 			.on('blur', function(e){
-				console.log(e);
+				
 				//me.closeTooltip();
 			})
 			.on('closed', function(e){
@@ -805,7 +805,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		if(target.hasClass('new_menu_item') ) {
 			if($('div#unewnavigation-tooltip').length <1 || $('div#unewnavigation-tooltip').css('display') == 'none') {
 				_.delay(function(self) {
-					console.log(target);
+					
 					var view = target.closest('li').data('backboneview');
 					if (view && view.editMenuItem) view.editMenuItem(e);
 				}, 30, this);
@@ -1068,7 +1068,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	},
 	*/
 	on_render: function() {
-		console.log('on render');
+		
 		var me = this;
 		//Bind resizing events
 		/*if(typeof(me.parent_module_view) != 'undefined') {
@@ -1210,7 +1210,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					if(selector.hasClass('upfront-output-unewnavigation')) {
 
 						$('head').find('style#responsive_nav_sidebar_offset').remove();
-						var responsive_css = 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"] ul.menu, div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] ul.menu {left:'+parseInt(regions_off.left)+'px !important; right:'+parseInt((win_width-currentwidth-sidebar_width) / 2)+'px !important; } ';
+						var responsive_css = 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"] ul.menu, div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] ul.menu {left:'+parseInt(regions_off.left)+'px !important; right:'+parseInt((win_width-currentwidth-sidebar_width) / 2 -30)+'px !important; } ';
 
 						responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="left"] ul.menu {left:'+parseInt(regions_off.left)+'px !important; right:inherit !important; width:'+parseInt(30/100*regions_width)+'px !important;} ';
 
@@ -1262,11 +1262,16 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 	},
 	toggle_responsive_nav: function(e) {
+		var region_container = $(this).closest('.upfront-region-container');
 		if($(this).parent().find('ul.menu').css('display') == 'none') {
 			$(this).parent().find('ul.menu').show();
+			region_container.addClass('upfront-region-container-has-nav');
 		} else {
 			$(this).parent().find('ul.menu').hide();
 			$(this).parent().find('ul.sub-menu').css('display', '');
+			
+			if($(this).parent().find('ul.sub-menu').length < 1 )
+				region_container.removeClass('upfront-region-container-has-nav');
 		}
 	},
 	generate_menu: function() {
@@ -1292,7 +1297,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		//Work around for having the region container have a higher z-index if it contains the nav, so that the dropdowns, if overlapping to the following regions should not loose "hover" when the mouse travels down to the next region.
 
 		var region_container = this.$el.closest('.upfront-region-container');
-		if(this.$el.find('ul.sub-menu').length > 0) {
+		if(this.$el.find('ul.sub-menu').length > 0 ) {
 			region_container.addClass('upfront-region-container-has-nav');
 		}
 		else {
@@ -1558,7 +1563,7 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
 					    return 0;
 					});
 
-					console.log(enabled_breakpoints);
+					
 					var check = false;
 					_.each(enabled_breakpoints, function(bpoint) {
 						if(check) {
@@ -1676,7 +1681,7 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
 
 				for(var i = enabled_breakpoints.length-1; i >= 0; i--) {
 					if(check) {
-						console.log(enabled_breakpoints[i].id);
+						
 						breakpoint_data = model_breakpoint[enabled_breakpoints[i].id];
 
 						if((enabled_breakpoints[i].id == 'desktop' && this.model.get_property_value_by_name('burger_menu') == 'yes') || (breakpoint_data && breakpoint_data.burger_menu == 'yes')) {
