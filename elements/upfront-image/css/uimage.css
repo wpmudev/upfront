@@ -1261,14 +1261,14 @@ div.uimage-controls i.upfront-icon:before {
 .swap-image-overlay p.upfront-icon-swap-image {
 	position: absolute;
 	display: inline-block;
-	vertical-align:middle;
-	width:180px;
-	height:30px;
-	margin:auto;
-	padding:5px 10px;
-	border-radius:4px;
-	background:rgba(35, 49, 64, 0.9);
+	max-width: 230px;
+	height: 30px;
+	margin: auto;
+	padding: 10px 15px;
+	background: #00CE8D;
 	top:0;bottom:0;left:0;right:0;
+	box-shadow: 0px 1px 0px 0px #009566, inset 0px 1px 0px 0px rgba(255, 255, 255, 0.2);
+	font:200 20px/100% "Open Sans", Helvetica Neue, Helvetica, Arial, Sans-serif;
 }
 .swap-image-overlay p:before {
 	content: "";
