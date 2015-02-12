@@ -1222,7 +1222,9 @@ define([
 		},
 
 		cleanup: function(){
-			this.controls.remove();
+			//the default images on a new theme installation do not have controlls created, so putting a check here.
+			if(this.controls)
+				this.controls.remove();
 			// if(this.bodyEventHandlers){
 			// 	_.each(this.bodyEventHandlers, function(f, ev){
 			// 		$('body').off(ev, f);
