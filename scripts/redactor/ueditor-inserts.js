@@ -307,9 +307,39 @@ var ImageInsert = UeditorInsert.extend({
 		linkType: 'do_nothing',
 		linkUrl: '',
 		isLocal: 1,
-		externalImage: {top: 0, left: 0, width: 0, height: 0},
+		externalImage: {
+			top: 0,
+			left: 0,
+			width: 0,
+			height: 0
+		},
 		variant_id : "",
-        style: new Upfront.Models.ImageVariant()
+        style: {
+			label_id: "",
+			caption: {
+				"order": 0,
+				"height": 0,
+				"width_cls": "",
+				"left_cls": "",
+				"top_cls": "",
+				"show": 1
+			},
+			group: {
+				"float": "",
+				"width_cls": "",
+				"left_cls": "",
+				"height": 0,
+				"marginRight": 0,
+				"marginLeft": 0
+			},
+			image: {
+				"width_cls": "",
+				"left_cls": "",
+				"top_cls": "",
+				"src": "",
+				"height": 0
+			}
+		}
 	},
 	//Called just after initialize
 	init: function(){
@@ -340,8 +370,8 @@ var ImageInsert = UeditorInsert.extend({
 			var imageData = me.getImageData(result);
 			imageData.id = me.data.id;
 			me.data.clear({silent: true});
-			imageData.style =  Upfront.Content.ImageVariants.length ?  Upfront.Content.ImageVariants.first().toJSON() : ( new Upfront.Models.ImageVariant() ).toJSON();
-			me.data.set(imageData);
+			imageData.style =  Upfront.Content.ImageVariants.length ?  Upfront.Content.ImageVariants.first().toJSON() : this.defaultData.style;
+			me.data.set(imageData, {silent: true});
 			me.createControls();
 		});
 
@@ -359,15 +389,9 @@ var ImageInsert = UeditorInsert.extend({
 	},
 	// Insert editor UI
 	render: function(){
-        this.data.set("show_caption", parseInt(this.data.get("show_caption"), 10));
 
-
-		var me = this,
-			data = this.data.toJSON(),
-			style_variant = this.data.get("style"),
-			wrapperSize = this.data.get('imageThumb'),
-			grid = Upfront.Settings.LayoutEditor.Grid;
-
+		var data = $.extend( true, this.defaultData, this.data.toJSON()),
+			style_variant = data.style;
 
         if( !style_variant ) return;
 		//data.style = style_variant && style_variant.toJSON ? style_variant.toJSON() : {}; // Force this to be POJ object
@@ -375,11 +399,11 @@ var ImageInsert = UeditorInsert.extend({
         data.style.label_id = data.style.label && data.style.label.trim() !== "" ? "ueditor-image-style-" +  data.style.label.toLowerCase().trim().replace(" ", "-") : data.style.vid;
 		data.image = this.get_proper_image();
 
-		this.apply_classes( data.style.group );
-		this.apply_classes( data.style.image );
-		this.apply_classes( data.style.caption );
+		//this.apply_classes( data.style.group );
+		//this.apply_classes( data.style.image );
+		//this.apply_classes( data.style.caption );
 
-        if( this.data.get("show_caption") == 0 ){
+        if( data.show_caption == 0 ){
             data.style.image.width_cls = Upfront.Settings.LayoutEditor.Grid.class + 24;
         }
         var $group = this.$el.find(".ueditor-insert-variant-group"),
@@ -411,29 +435,6 @@ var ImageInsert = UeditorInsert.extend({
 	        }
 	    }
 
-		if (!_.keys(data.style).length) data.style = {};
-		if (!data.style.group) data.style.group = {
-			"float": false,
-			height: 0,
-			left_cls: '',
-			marginLeft: 0,
-			marginRight: 0,
-			width_cls: '',
-		};
-		if (!data.style.caption) data.style.caption = {
-		    height: 0,
-		    left_cls: '',
-		    order: 0,
-		    show: false,
-		    top_cls: '',
-		    width_cls: '',
-		};
-		if (!data.style.image) data.style.image = {
-            height: 0,
-            left_cls: '',
-            top_cls: '',
-            width_cls: '',
-        };
 		this.$el
 			.html(this.tpl(data))
 		;
@@ -444,9 +445,6 @@ var ImageInsert = UeditorInsert.extend({
 		this.make_caption_editable();
 		this.updateControlsPosition();
         this.$(".ueditor-insert-variant-group").prepend( '<a href="#" class="upfront-icon-button upfront-icon-button-delete ueditor-insert-remove"></a>' );
-
-		if(!this.data.get('isLocal'))
-			this.data.set({externalImage: style_variant.image.width}, {silent: true});
 	},
 
 	make_caption_editable: function(){
