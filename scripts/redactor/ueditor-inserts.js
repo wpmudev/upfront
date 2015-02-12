@@ -369,8 +369,8 @@ var ImageInsert = UeditorInsert.extend({
 			grid = Upfront.Settings.LayoutEditor.Grid;
 
 
-
         if( !style_variant ) return;
+		//data.style = style_variant && style_variant.toJSON ? style_variant.toJSON() : {}; // Force this to be POJ object
 
         data.style.label_id = data.style.label && data.style.label.trim() !== "" ? "ueditor-image-style-" +  data.style.label.toLowerCase().trim().replace(" ", "-") : data.style.vid;
 		data.image = this.get_proper_image();
@@ -411,7 +411,29 @@ var ImageInsert = UeditorInsert.extend({
 	        }
 	    }
 
-
+		if (!_.keys(data.style).length) data.style = {};
+		if (!data.style.group) data.style.group = {
+			"float": false,
+			height: 0,
+			left_cls: '',
+			marginLeft: 0,
+			marginRight: 0,
+			width_cls: '',
+		};
+		if (!data.style.caption) data.style.caption = {
+		    height: 0,
+		    left_cls: '',
+		    order: 0,
+		    show: false,
+		    top_cls: '',
+		    width_cls: '',
+		};
+		if (!data.style.image) data.style.image = {
+            height: 0,
+            left_cls: '',
+            top_cls: '',
+            width_cls: '',
+        };
 		this.$el
 			.html(this.tpl(data))
 		;
@@ -432,7 +454,7 @@ var ImageInsert = UeditorInsert.extend({
 			data = this.data.get("style")
 		;
 		if (!data) return false;
-		if( !data.caption.show || this.$('.wp-caption-text').length === 0) return;
+		if( !data.caption || !data.caption.show || this.$('.wp-caption-text').length === 0) return;
 
         this.$('.wp-caption-text')
             //.attr('contenteditable', true)
