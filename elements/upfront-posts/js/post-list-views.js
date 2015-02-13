@@ -57,6 +57,7 @@ var Views = {
 				query = {}
 			;
 			if (window._upfront_get_current_query) query = window._upfront_get_current_query();
+			console.log(query);
 			this._posts_load = Upfront.Util
 				.post({
 					action: "upfront_posts-load",
