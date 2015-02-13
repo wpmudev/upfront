@@ -1240,7 +1240,7 @@ div.uimage-controls i.upfront-icon:before {
 	position: relative;
 }
 .swap-image-overlay {
-	background: rgba(35, 49, 64, 0.4);
+	background: rgba(35, 49, 64, 0.35);
 	display: none;
 	color: white;
 	text-align: center;
@@ -1260,43 +1260,28 @@ div.uimage-controls i.upfront-icon:before {
 
 .swap-image-overlay p.upfront-icon-swap-image {
 	position: absolute;
-	display: inline-block;
+	display: block;
 	max-width: 230px;
-	height: 30px;
+	max-height: 20px;
 	margin: auto;
-	padding: 10px 15px;
+	padding: 18px 15px 22px 15px; 
 	background: #00CE8D;
 	top:0;bottom:0;left:0;right:0;
 	box-shadow: 0px 1px 0px 0px #009566, inset 0px 1px 0px 0px rgba(255, 255, 255, 0.2);
 	font:200 20px/100% "Open Sans", Helvetica Neue, Helvetica, Arial, Sans-serif;
 }
+.swap-image-overlay p.upfront-icon-swap-image:hover {
+	background:#00DD97;
+}
 .swap-image-overlay p:before {
 	content: "";
 	background-image: url('../../../img/uf-core-el-sprite.svg');
-	background-position: -807px -329px;
+	background-position: -807px -361px;
 	display: inline-block;
 	width: 24px;
 	height: 20px;
 	position: relative;
-	top:4px;
+	top:3px;
+	margin-right:10px;
 }
 
-/* conditional size rules for default swapImage overlay */
-.c1 .swap-image-overlay p.upfront-icon-swap-image,
-.c2 .swap-image-overlay p.upfront-icon-swap-image,
-.c3 .swap-image-overlay p.upfront-icon-swap-image, 
-.c4 .swap-image-overlay p.upfront-icon-swap-image,
-.c5 .swap-image-overlay p.upfront-icon-swap-image {
-	font-size:0;
-	width:24px;
-	height:24px;
-	padding:8px;
-	border-radius:50%;
-}
-.c1 .swap-image-overlay p:before,
-.c2 .swap-image-overlay p:before,
-.c3 .swap-image-overlay p:before, 
-.c4 .swap-image-overlay p:before,
-.c5 .swap-image-overlay p:before {
-	top:2px;
-}
