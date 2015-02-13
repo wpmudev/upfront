@@ -104,7 +104,10 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 			this.$el.find(".plaintxt_padding").css("backgroundColor", "#ufc" + theme_color_index);
 		}
 */
-		this.update_colors();
+		// Yank this first, before applying
+		setTimeout(function () {
+			me.update_colors();
+		}, 0);
 	},
 	update_colors: function () {
 		var me = this;
