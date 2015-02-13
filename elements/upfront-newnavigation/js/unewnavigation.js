@@ -75,10 +75,7 @@ var MenuItemView = Backbone.View.extend({
 								return 'Visit Link';
 							*/
 
-
-
-
-						//	return l10n.visit_url;
+							//	return l10n.visit_url;
 						},
 						action: function() {
 							me.visitLink();
@@ -467,11 +464,11 @@ var MenuItemView = Backbone.View.extend({
 			.addClass(tooltipClass)
 			.show()
 			.on('click', function(e){
-				console.log("click ok");
+				
 				e.stopPropagation();
 			})
 			.on('blur', function(e){
-				console.log(e);
+				
 				//me.closeTooltip();
 			})
 			.on('closed', function(e){
@@ -571,6 +568,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					me.property('menu_style', current_breakpoint_data['menu_style']);
 			}
 			*/
+
 			me.render();
 
 			me.activate_responsive_nav(me.$el.find(".upfront-output-unewnavigation"), current.width);
@@ -583,6 +581,24 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 */
 		});
 		this.listenTo(Upfront.Events, "entity:removed:before", this.on_removal);
+
+		
+
+		var breakpoint_data = me.model.get_property_value_by_name('breakpoint');
+
+		//sanitize breakpoint data
+
+		var new_breakpoint_data = {};
+
+		var breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints();
+		
+
+		for(key in breakpoint_data) {
+			if(typeof(breakpoints.get(key)) != 'undefined')
+				new_breakpoint_data[key] = breakpoint_data[key];
+		}
+
+		this.model.set_property('breakpoint', new_breakpoint_data);
 
 	},
 	on_removal: function() {
@@ -789,7 +805,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		if(target.hasClass('new_menu_item') ) {
 			if($('div#unewnavigation-tooltip').length <1 || $('div#unewnavigation-tooltip').css('display') == 'none') {
 				_.delay(function(self) {
-					console.log(target);
+					
 					var view = target.closest('li').data('backboneview');
 					if (view && view.editMenuItem) view.editMenuItem(e);
 				}, 30, this);
@@ -1052,7 +1068,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	},
 	*/
 	on_render: function() {
-		console.log('on render');
+		
 		var me = this;
 		//Bind resizing events
 		/*if(typeof(me.parent_module_view) != 'undefined') {
@@ -1100,7 +1116,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					model_breakpoint[default_breakpoint.attributes.id].burger_menu = ( is_burger_menu instanceof Array ) ? is_burger_menu[0] : is_burger_menu;
 					model_breakpoint[default_breakpoint.attributes.id].burger_alignment = me.property('burger_alignment');
 					model_breakpoint[default_breakpoint.attributes.id].burger_over = me.property('burger_over');
-					//model_breakpoint[default_breakpoint.attributes.id].menu_style = me.property('menu_style');
+					model_breakpoint[default_breakpoint.attributes.id].menu_style = me.property('menu_style');
+					model_breakpoint[default_breakpoint.attributes.id].menu_alignment = me.property('menu_alignment');
 					model_breakpoint[default_breakpoint.attributes.id].width = default_breakpoint.attributes.width;
 
 					$upfrontObjectContent.attr('data-breakpoints',	JSON.stringify(model_breakpoint));
@@ -1193,7 +1210,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					if(selector.hasClass('upfront-output-unewnavigation')) {
 
 						$('head').find('style#responsive_nav_sidebar_offset').remove();
-						var responsive_css = 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"] ul.menu, div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] ul.menu {left:'+parseInt(regions_off.left)+'px !important; right:'+parseInt((win_width-currentwidth-sidebar_width) / 2)+'px !important; } ';
+						var responsive_css = 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"] ul.menu, div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] ul.menu {left:'+parseInt(regions_off.left)+'px !important; right:'+parseInt((win_width-currentwidth-sidebar_width) / 2 -30)+'px !important; } ';
 
 						responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="left"] ul.menu {left:'+parseInt(regions_off.left)+'px !important; right:inherit !important; width:'+parseInt(30/100*regions_width)+'px !important;} ';
 
@@ -1209,7 +1226,9 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					selector.find('ul.menu').hide();
 				}
 				else {
-					selector.attr('data-style', selector.data('stylebk'))
+					//selector.attr('data-style', selector.data('stylebk'))
+					selector.attr('data-style', bparray[key]['menu_style'])
+					
 					selector.removeAttr('data-burger_alignment','');
 					selector.removeAttr('data-burger_over', '');
 
@@ -1243,11 +1262,16 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 	},
 	toggle_responsive_nav: function(e) {
+		var region_container = $(this).closest('.upfront-region-container');
 		if($(this).parent().find('ul.menu').css('display') == 'none') {
 			$(this).parent().find('ul.menu').show();
+			region_container.addClass('upfront-region-container-has-nav');
 		} else {
 			$(this).parent().find('ul.menu').hide();
 			$(this).parent().find('ul.sub-menu').css('display', '');
+			
+			if($(this).parent().find('ul.sub-menu').length < 1 )
+				region_container.removeClass('upfront-region-container-has-nav');
 		}
 	},
 	generate_menu: function() {
@@ -1273,7 +1297,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		//Work around for having the region container have a higher z-index if it contains the nav, so that the dropdowns, if overlapping to the following regions should not loose "hover" when the mouse travels down to the next region.
 
 		var region_container = this.$el.closest('.upfront-region-container');
-		if(this.$el.find('ul.sub-menu').length > 0) {
+		if(this.$el.find('ul.sub-menu').length > 0 ) {
 			region_container.addClass('upfront-region-container-has-nav');
 		}
 		else {
@@ -1489,6 +1513,8 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
 				var current_set_value = this.settings._wrapped[0].fields._wrapped[1].$el.find('input:checked').val();
 				var current_set_alignment = this.settings._wrapped[1].fields._wrapped[0].$el.find('input:checked').val();
 				var current_set_over = this.settings._wrapped[1].fields._wrapped[1].$el.find('input:checked').val();
+				var current_set_style = this.settings._wrapped[2].fields._wrapped[0].$el.find('input:checked').val();
+				var current_set_menu_alignment = this.settings._wrapped[3].fields._wrapped[0].$el.find('input:checked').val();
 
 				model_breakpoint = Upfront.Util.clone(this.model.get_property_value_by_name('breakpoint') || {});
 
@@ -1498,6 +1524,8 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
 					breakpoint_data.burger_menu = current_set_value || '';
 					breakpoint_data.burger_alignment = current_set_alignment;
 					breakpoint_data.burger_over = current_set_over;
+					breakpoint_data.menu_style = current_set_style;
+					breakpoint_data.menu_alignment = current_set_menu_alignment;
 
 					if(this.model.get_property_value_by_name('burger_menu') == 'yes') {
 						this.settings._wrapped[0].fields._wrapped[1].$el.find('input').attr("checked", 'checked');
@@ -1507,6 +1535,12 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
 
 					this.settings._wrapped[1].fields._wrapped[0].$el.find('input').removeAttr("checked");
 					this.settings._wrapped[1].fields._wrapped[0].$el.find('input[value="'+this.model.get_property_value_by_name('burger_alignment')+'"]').attr("checked", 'checked');
+
+					this.settings._wrapped[2].fields._wrapped[0].$el.find('input').removeAttr("checked");
+					this.settings._wrapped[2].fields._wrapped[0].$el.find('input[value="'+this.model.get_property_value_by_name('menu_style')+'"]').attr("checked", 'checked');
+
+					this.settings._wrapped[3].fields._wrapped[0].$el.find('input').removeAttr("checked");
+					this.settings._wrapped[3].fields._wrapped[0].$el.find('input[value="'+this.model.get_property_value_by_name('menu_alignment')+'"]').attr("checked", 'checked');
 
 					this.settings._wrapped[1].fields._wrapped[1].$el.find('input').removeAttr("checked");
 					this.settings._wrapped[1].fields._wrapped[1].$el.find('input[value="'+this.model.get_property_value_by_name('burger_over')+'"]').attr("checked", 'checked');
@@ -1519,6 +1553,17 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
 
 				if(current_set_value == 'yes') {
 					var enabled_breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled();
+					//re-order enabled_breakpoints according to the width, widest first
+
+					
+
+					enabled_breakpoints.sort(function (a, b) {
+					    if (a.attributes.width < b.attributes.width) return 1;
+					    if (b.attributes.width < a.attributes.width) return -1;
+					    return 0;
+					});
+
+					
 					var check = false;
 					_.each(enabled_breakpoints, function(bpoint) {
 						if(check) {
@@ -1527,6 +1572,13 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
 							breakpoint_data.burger_menu = current_set_value;
 							if(!breakpoint_data.burger_alignment)
 								breakpoint_data.burger_alignment = current_set_alignment;
+
+							if(!breakpoint_data.menu_style)
+								breakpoint_data.menu_style = current_set_style;
+
+							if(!breakpoint_data.menu_alignment)
+								breakpoint_data.menu_alignment = current_set_menu_alignment;
+
 							if(!breakpoint_data.burger_over)
 								breakpoint_data.burger_over = current_set_over;
 						}
@@ -1596,6 +1648,16 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
 							this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[0].$el.find('input[value="'+breakpoint_data.burger_alignment+'"]').attr("checked", 'checked');
 						}
 
+						if(breakpoint_data.menu_style) {
+							this.panels._wrapped[0].settings._wrapped[2].fields._wrapped[0].$el.find('input').removeAttr("checked");
+							this.panels._wrapped[0].settings._wrapped[2].fields._wrapped[0].$el.find('input[value="'+breakpoint_data.menu_style+'"]').attr("checked", 'checked');
+						}
+
+						if(breakpoint_data.menu_alignment) {
+							this.panels._wrapped[0].settings._wrapped[3].fields._wrapped[0].$el.find('input').removeAttr("checked");
+							this.panels._wrapped[0].settings._wrapped[3].fields._wrapped[0].$el.find('input[value="'+breakpoint_data.menu_alignment+'"]').attr("checked", 'checked');
+						}
+
 						if(breakpoint_data.burger_over) {
 							this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[1].$el.find('input').removeAttr("checked");
 							this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[1].$el.find('input[value="'+breakpoint_data.burger_over+'"]').attr("checked", 'checked');
@@ -1608,9 +1670,18 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
 
 				var enabled_breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled();
 				var check = false;
+
+				//sort breakpoints (widest to narrowest)
+
+				enabled_breakpoints.sort(function (a, b) {
+				    if (a.attributes.width < b.attributes.width) return 1;
+				    if (b.attributes.width < a.attributes.width) return -1;
+				    return 0;
+				});
+
 				for(var i = enabled_breakpoints.length-1; i >= 0; i--) {
 					if(check) {
-						console.log(enabled_breakpoints[i].id);
+						
 						breakpoint_data = model_breakpoint[enabled_breakpoints[i].id];
 
 						if((enabled_breakpoints[i].id == 'desktop' && this.model.get_property_value_by_name('burger_menu') == 'yes') || (breakpoint_data && breakpoint_data.burger_menu == 'yes')) {
@@ -1724,13 +1795,13 @@ var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
 								fields: [
 									new Upfront.Views.Editor.Field.Radios({
 										model: this.model,
+										className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios menu_style',
 										property: 'menu_style',
 										default_value: 'horizontal',
 										label: "",
-										layout: "vertical",
 										values: [
-											{ label: l10n.mnu.horiz, value: 'horizontal', icon: 'navigation-left' },
-											{ label: l10n.mnu.vert, value: 'vertical', icon: 'navigation-center' }
+											{ label: l10n.mnu.horiz, value: 'horizontal' },
+											{ label: l10n.mnu.vert, value: 'vertical' }
 										]
 									})
 								]

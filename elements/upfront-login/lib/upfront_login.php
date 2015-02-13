@@ -43,7 +43,7 @@ class Upfront_LoginView extends Upfront_Object {
 
 		if($show_logout_link == 'link') {
 			$logout_link = !empty($properties['logout_link'])?$properties['logout_link']:__('log out', 'upfront');
-			return '<a href="'.wp_logout_url().'">'.$logout_link.'</a>';
+			return '<a class="logout_link" href="'.wp_logout_url().'">'.$logout_link.'</a>';
 		} 
 		else {
 			return " ";
