@@ -1648,7 +1648,7 @@ define([
 							label: l10n.color,
 							default_value: me.colors['h1'],
 							autoHide: true,
-						spectrum: {
+							spectrum: {
 								choose: function (color) {
 									var rgb = color.toRgb(),
 										rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')',
