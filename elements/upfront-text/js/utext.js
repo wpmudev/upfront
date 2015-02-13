@@ -213,7 +213,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 						autoHide: false,
 						spectrum: {
 							preferredFormat: "hex",
-							choose: this.onBorderColor
+							move: this.onBorderColor
 						}
 					}),
 					new Upfront.Views.Editor.Field.Color({
@@ -226,7 +226,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 						autoHide: false,
 						spectrum: {
 							preferredFormat: "hex",
-							choose: this.onBgColor
+							move: this.onBgColor
 						}
 					})
 				]
