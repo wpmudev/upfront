@@ -224,6 +224,7 @@ var Ueditor = function($el, options) {
             cleanOnPaste: true, // font icons copy and paste wont work without this set to true - BUT, with it set to true, paste won't work AT ALL!!!
             replaceDivs: false,
             pastePlainText: false,
+			imageEditable: false,
             //cleanStyleOnEnter: false,
             //removeDataAttr: false,
             removeEmpty: false

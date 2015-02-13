@@ -389,7 +389,7 @@ var ImageInsert = UeditorInsert.extend({
 	},
 	// Insert editor UI
 	render: function(){
-
+		var tmp = this.data.toJSON();
 		var data = $.extend( true, this.defaultData, this.data.toJSON()),
 			style_variant = data.style;
 
@@ -398,6 +398,7 @@ var ImageInsert = UeditorInsert.extend({
 
         data.style.label_id = data.style.label && data.style.label.trim() !== "" ? "ueditor-image-style-" +  data.style.label.toLowerCase().trim().replace(" ", "-") : data.style.vid;
 		data.image = this.get_proper_image();
+
 
 		//this.apply_classes( data.style.group );
 		//this.apply_classes( data.style.image );
@@ -466,9 +467,11 @@ var ImageInsert = UeditorInsert.extend({
                 linebreaks: true,
                 autostart: true,
                 pastePlainText: true,
-                buttons: []
+                buttons: [],
+				placeholder: self.defaultData.caption
             })
         ;
+
         this.ueditor = this.$('.wp-caption-text').data('ueditor');
         this.ueditor.redactor.events.on('ueditor:focus', function(redactor){
             if(redactor != self.ueditor.redactor || self.caption_active === true)
@@ -831,6 +834,7 @@ var ImageInsert = UeditorInsert.extend({
 		}
 
 		imageData.title = image.attr('title');
+		imageData.caption = image.closest(".ueditor-insert-variant-group").find(".wp-caption-text").html();
 		var insert = new ImageInsert({data: imageData});
 
 		insert.render();
