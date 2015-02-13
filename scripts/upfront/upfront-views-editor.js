@@ -4019,9 +4019,9 @@ var Field_ToggleableText = Field_Text.extend({
 					$.extend(color, tinycolor.prototype);
 				}
 				me.color = color;
+				me.update_palette(); // Make sure we're up to date
 				me.$('input[name=' + me.get_field_name() + ']').spectrum("option", "palette", me.options.palette);
-				if(me.options.spectrum && me.options.spectrum.beforeShow)
-					me.options.spectrum.beforeShow(color);
+				if(me.options.spectrum && me.options.spectrum.beforeShow) me.options.spectrum.beforeShow(color);
 			};
 
 			if( !spectrumOptions.autoHide  ){
