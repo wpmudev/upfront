@@ -4053,13 +4053,18 @@ var Field_ToggleableText = Field_Text.extend({
 				});
 			});
 
-			// Update spectrum selection on color change
-			var cback = _.debounce(function () {
-				me.$spectrum.spectrum("option", "palette", Theme_Colors.colors.pluck("color").length ? Theme_Colors.colors.pluck("color") : []);
-			}, 200);
-			this.listenTo(Upfront.Events, "theme_colors:update", cback);
+		},
 
+		render: function () {
+			Field_Color.__super__.render.apply(this, arguments);
+			// Re-bind debounced listeners for theme color updates
+			this.stopListening(Upfront.Events, "theme_colors:update");
+			var cback = _.debounce(this.update_palette, 200);
+			this.listenTo(Upfront.Events, "theme_colors:update", cback, this);
+		},
 
+		update_palette: function () {
+			this.$spectrum.spectrum("option", "palette", Theme_Colors.colors.pluck("color").length ? Theme_Colors.colors.pluck("color") : []);
 		},
 
 		is_hex : function(color_code){
