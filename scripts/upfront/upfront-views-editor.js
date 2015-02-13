@@ -4064,7 +4064,9 @@ var Field_ToggleableText = Field_Text.extend({
 		},
 
 		update_palette: function () {
-			this.$spectrum.spectrum("option", "palette", Theme_Colors.colors.pluck("color").length ? Theme_Colors.colors.pluck("color") : []);
+			if (this.$spectrum && this.$spectrum.spectrum) {
+				this.$spectrum.spectrum("option", "palette", Theme_Colors.colors.pluck("color").length ? Theme_Colors.colors.pluck("color") : []);
+			}
 		},
 
 		is_hex : function(color_code){
