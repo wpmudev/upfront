@@ -67,6 +67,16 @@ class Upfront {
 	public function load_textdomain () {
 		$path = untrailingslashit(self::get_root_dir()) . '/languages';
 		load_theme_textdomain('upfront', $path);
+		
+		// Now let's try the child theme...
+		$current = wp_get_theme();
+		$parent = $current->parent();
+		if (empty($parent)) return false; // Current theme is not a child theme, carry on...
+		if ('upfront' !== $parent->get_template()) return false; // Not an Upfront child, carry on...
+		$child_domain = $current->get('TextDomain');
+		if (!empty($child_domain) && 'upfront' !== $child_domain) {
+			load_child_theme_textdomain($child_domain, get_stylesheet_directory() . '/languages');
+		}
 	}
 
 	private function _add_supports () {
