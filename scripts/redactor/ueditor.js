@@ -800,8 +800,9 @@ var InsertManager = Backbone.View.extend({
     },
     position_tooltips: function(redactor){
         var $current = $( redactor.selection.getCurrent());
-        if( $current.html() === "<br>" ){
-            var css = _.extend( $current.position(), { marginLeft: $current.css("padding-left") } );
+        if( $current.closest(".ueditor-insert").length === 0 &&  ( $.trim( $current.html() ) === "<br>" || ( $current.closest("p.nosortable").html() &&  $.trim(  ) === "" ) )  ){
+			if( typeof $current[0] === "undefined" || !_.isElement($current[0]) ) return;
+            var css = _.extend( $current.position(), { marginLeft: _.isArray($current) && _.isElement($current[0]) ?   $current.css("padding-left") : 0 } );
             this.$tooltips.css( css );
             this.$tooltips.show();
             UeditorEvents.trigger("ueditor:insert:relocate", $current);

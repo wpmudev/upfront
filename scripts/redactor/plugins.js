@@ -704,7 +704,7 @@ RedactorPlugins.upfrontIcons = function() {
                 if ($input.hasClass("font-icons-top")) {
                     $sel.css("top", val);
                 }
-                self.redactor.code.sync();
+                this.redactor.code.sync();
             },
             set_current_icon: function () {
                 var $sel = $(this.redactor.selection.getCurrent()).last(),
