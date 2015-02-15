@@ -475,24 +475,33 @@ var ImageInsert = UeditorInsert.extend({
         ;
 
         this.ueditor = this.$('.wp-caption-text').data('ueditor');
+
+		/**
+		 * Saves redactor air changes to the caption model
+		 */
+		this.ueditor.redactor.events.on("ueditor:change", function(e){
+			self.data.set('caption', self.ueditor.$el.html(), {silent: true});
+			self.data.trigger('update');
+		});
+
         this.ueditor.redactor.events.on('ueditor:focus', function(redactor){
             if(redactor != self.ueditor.redactor || self.caption_active === true)
                 return;
 
             self.caption_active = true;
 
-            var parentUeditor = self.$el.closest('.redactor-editor').data('ueditor'),
+            var $parent = self.$el.closest('.redactor-editor'),
+				parentUeditor = $parent.data('ueditor'),
                 parentRedactor = parentUeditor ? parentUeditor.redactor : false
                 ;
 
+			$parent.attr("contenteditable", false);
             if(!parentRedactor)
                 return;
 
             parentRedactor.$editor.off('drop.redactor paste.redactor keydown.redactor keyup.redactor focus.redactor blur.redactor');
             parentRedactor.$textarea.on('keydown.redactor-textarea');
 
-            //parentUeditor.stop();
-			//self.ueditor.start();
         });
 
         this.ueditor.redactor.events.on('ueditor:blur', function(redactor){
@@ -501,19 +510,20 @@ var ImageInsert = UeditorInsert.extend({
 
             self.caption_active = false;
 
-            var parentUeditor = self.$el.closest('.redactor-editor').data('ueditor'),
-                parentRedactor = parentUeditor ? parentUeditor.redactor : false
-                ;
+			var $parent = self.$el.closest('.redactor-editor'),
+				parentUeditor = $parent.data('ueditor'),
+				parentRedactor = parentUeditor ? parentUeditor.redactor : false
+				;
 
+			$parent.attr("contenteditable", true);
             if(!parentRedactor)
                 return;
 
             parentRedactor.build.setEvents();
-			//self.ueditor.stop();
 			//parentRedactor.buildBindKeyboard();
 
             //var parentUeditor = me.$el.closest('.ueditable').data('ueditor');
-            //parentUeditor.start();
+
         });
 	},
 	//this function is called automatically by UEditorInsert whenever the controls are created or refreshed
@@ -814,7 +824,7 @@ var ImageInsert = UeditorInsert.extend({
 		imageData.style = {
 			caption: {
 				"order": caption_order,
-				"height": $caption.height(),
+				"height": $caption.css("height") ? $caption.css("height") .replace("px", "") : $caption.height(),
 				"width_cls": Upfront.Util.grid.derive_column_class( caption_classes ),
 				"left_cls": Upfront.Util.grid.derive_marginleft_class( caption_classes ),
 				"top_cls": Upfront.Util.grid.derive_margintop_class( caption_classes ),
