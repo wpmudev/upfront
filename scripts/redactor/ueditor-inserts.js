@@ -318,7 +318,7 @@ var ImageInsert = UeditorInsert.extend({
 			label_id: "",
 			caption: {
 				"order": 0,
-				"height": 0,
+				"height": 50,
 				"width_cls": "",
 				"left_cls": "",
 				"top_cls": "",
@@ -371,8 +371,8 @@ var ImageInsert = UeditorInsert.extend({
 			imageData.id = me.data.id;
 			me.data.clear({silent: true});
 			imageData.style =  Upfront.Content.ImageVariants.length ?  Upfront.Content.ImageVariants.first().toJSON() : this.defaultData.style;
-			me.data.set(imageData, {silent: true});
-			me.createControls();
+			me.data.set(imageData);
+
 		});
 
 		return promise;
@@ -390,7 +390,8 @@ var ImageInsert = UeditorInsert.extend({
 	// Insert editor UI
 	render: function(){
 		var tmp = this.data.toJSON();
-		var data = $.extend( true, this.defaultData, this.data.toJSON()),
+		//var data = $.extend( true, Upfront.Util.clone(this.defaultData), this.data.toJSON()),
+		var data = _.extend( {}, this.defaultData, this.data.toJSON() ),
 			style_variant = data.style;
 
         if( !style_variant ) return;
@@ -439,7 +440,7 @@ var ImageInsert = UeditorInsert.extend({
 		this.$el
 			.html(this.tpl(data))
 		;
-
+		this.createControls();
 		this.controls.render();
 		this.$(".ueditor-insert-variant-group").append(this.controls.$el);
         this.$el.addClass("ueditor-insert-variant");
@@ -468,7 +469,8 @@ var ImageInsert = UeditorInsert.extend({
                 autostart: true,
                 pastePlainText: true,
                 buttons: [],
-				placeholder: self.defaultData.caption
+				placeholder: self.defaultData.caption,
+				focus: false
             })
         ;
 
@@ -479,7 +481,7 @@ var ImageInsert = UeditorInsert.extend({
 
             self.caption_active = true;
 
-            var parentUeditor = self.$el.closest('.upfront-content-marker-contents').data('ueditor'),
+            var parentUeditor = self.$el.closest('.redactor-editor').data('ueditor'),
                 parentRedactor = parentUeditor ? parentUeditor.redactor : false
                 ;
 
@@ -490,6 +492,7 @@ var ImageInsert = UeditorInsert.extend({
             parentRedactor.$textarea.on('keydown.redactor-textarea');
 
             //parentUeditor.stop();
+			//self.ueditor.start();
         });
 
         this.ueditor.redactor.events.on('ueditor:blur', function(redactor){
@@ -498,7 +501,7 @@ var ImageInsert = UeditorInsert.extend({
 
             self.caption_active = false;
 
-            var parentUeditor = self.$el.closest('.upfront-content-marker-contents').data('ueditor'),
+            var parentUeditor = self.$el.closest('.redactor-editor').data('ueditor'),
                 parentRedactor = parentUeditor ? parentUeditor.redactor : false
                 ;
 
@@ -506,52 +509,13 @@ var ImageInsert = UeditorInsert.extend({
                 return;
 
             parentRedactor.build.setEvents();
-            //parentRedactor.buildBindKeyboard();
+			//self.ueditor.stop();
+			//parentRedactor.buildBindKeyboard();
 
             //var parentUeditor = me.$el.closest('.ueditable').data('ueditor');
             //parentUeditor.start();
         });
 	},
-    on_redactor_start: function(){
-        var self = this;
-        this.ueditor = this.$('.wp-caption-text').data('ueditor');
-
-        this.ueditor.redactor.events.on('ueditor:focus', function(redactor){
-            if( ! _.isEqual(redactor,  self.ueditor.redactor ))
-                return;
-
-            var parentUeditor = self.$el.closest('.upfront-content-marker-contents').data('ueditor'),
-                parentRedactor = parentUeditor ? parentUeditor.redactor : false
-                ;
-
-            if(!parentRedactor)
-                return;
-
-            parentRedactor.$editor.off('drop.redactor paste.redactor keydown.redactor keyup.redactor focus.redactor blur.redactor');
-            parentRedactor.$textarea.on('keydown.redactor-textarea');
-            parentUeditor.stop();
-        });
-
-        this.ueditor.redactor.events.on('ueditor:blur', function(redactor){
-            if(redactor != self.ueditor.redactor)
-                return;
-
-            var parentUeditor = self.$el.closest('.upfront-content-marker-contents').data('ueditor'),
-                parentRedactor = parentUeditor ? parentUeditor.redactor : false
-                ;
-
-            if(!parentRedactor)
-                return;
-
-            //if( parentUeditor.active === false ){
-                parentRedactor.build.setEvents();
-                var parentUeditor = self.$el.closest('.ueditable').data('ueditor');
-                parentUeditor.start();
-            //}
-
-
-        });
-    },
 	//this function is called automatically by UEditorInsert whenever the controls are created or refreshed
 	controlEvents: function(){
 		var me = this;
@@ -783,14 +747,22 @@ var ImageInsert = UeditorInsert.extend({
 
 	//Import from any image tag
 	importFromImage: function(image){
-		var imageData = this.defaultData,
+		//var imageData = Upfront.Util.clone(this.defaultData),
+		var imageData = _.extend({}, this.defaultData),
 			imageSpecs = {
 				src: image.attr('src'),
 				width: image.width(),
 				height: image.height()
 			},
 			link = $('<a>').attr('href', imageSpecs.src)[0],
-			realSize = this.calculateRealSize(imageSpecs.src)
+			realSize = this.calculateRealSize(imageSpecs.src),
+			$group = image.closest(".ueditor-insert-variant-group"),
+			group_classes = $group.attr("class"),
+			$caption = $group.find(".wp-caption-text"),
+			caption_classes = $caption.attr("class"),
+			$image_wrapper = $group.find(".uinsert-image-wrapper"),
+			image_wrapper_classes = $image_wrapper.attr("class"),
+			caption_order = 1
 			;
 
 		if(link.origin != window.location.origin)
@@ -805,15 +777,15 @@ var ImageInsert = UeditorInsert.extend({
 			src: imageSpecs.src
 		};
 
-		var align = 'center';
-		if(image.hasClass('aligncenter'))
-			align = 'center';
-		else if(image.hasClass('alignleft'))
-			align = 'left';
-		else if(image.hasClass('alignright'))
-			align = 'right';
-
-		imageData.align = align;
+		//var align = 'center';
+		//if(image.hasClass('aligncenter'))
+		//	align = 'center';
+		//else if(image.hasClass('alignleft'))
+		//	align = 'left';
+		//else if(image.hasClass('alignright'))
+		//	align = 'right';
+        //
+		//imageData.align = align;
 
 		var parent = image.parent();
 
@@ -834,7 +806,37 @@ var ImageInsert = UeditorInsert.extend({
 		}
 
 		imageData.title = image.attr('title');
-		imageData.caption = image.closest(".ueditor-insert-variant-group").find(".wp-caption-text").html();
+		imageData.caption = $caption.html();
+
+
+		caption_order = $caption.prev( $image_wrapper).length ? 1 : 0;
+
+		imageData.style = {
+			caption: {
+				"order": caption_order,
+				"height": $caption.height(),
+				"width_cls": Upfront.Util.grid.derive_column_class( caption_classes ),
+				"left_cls": Upfront.Util.grid.derive_marginleft_class( caption_classes ),
+				"top_cls": Upfront.Util.grid.derive_margintop_class( caption_classes ),
+				"show": $caption.length
+			},
+			group: {
+				"float": $group.css("float"),
+				"width_cls": Upfront.Util.grid.derive_column_class( group_classes ),
+				"left_cls": Upfront.Util.grid.derive_marginleft_class( group_classes ),
+				"height": $group.css("minHeight").replace("px", ""),
+				"marginRight": 0,
+				"marginLeft": 0
+			},
+			image: {
+				"width_cls": Upfront.Util.grid.derive_column_class( image_wrapper_classes ),
+				"left_cls": Upfront.Util.grid.derive_marginleft_class( image_wrapper_classes ),
+				"top_cls": Upfront.Util.grid.derive_margintop_class( image_wrapper_classes ),
+				"src": "",
+				"height": 0
+			}
+		};
+
 		var insert = new ImageInsert({data: imageData});
 
 		insert.render();

@@ -741,7 +741,7 @@ var InsertManagerInserts = Backbone.View.extend({
                 //this.trigger('insert:prechange'); // "this" is the embedded image object
                 //self.trigger('insert:prechange'); // "self" is the view
                 //Create the insert
-                insert.render();
+                //insert.render();
                 self.$block.replaceWith(insert.$el);
                 self.$block.prev("br").remove();
                 //self.trigger('insert:added', insert);

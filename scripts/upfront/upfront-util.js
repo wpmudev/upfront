@@ -189,7 +189,22 @@ define(function() {
             },
             normalize_height: function( height ){
                 return this.height_to_row( height ) * Upfront.Settings.LayoutEditor.Grid.baseline;
-            }
+            },
+			derive_from_classes: function( classes, haystack ){
+				if( !classes || classes.length < 2 || !haystack ) return false;
+				var regex = new RegExp("(" + haystack +"\\d+(d)*)", "g"),
+					res = classes.match(regex);
+				return _.isEmpty(res) ? false : res[0] ;
+			},
+			derive_column_class: function( classes ){
+				return this.derive_from_classes( classes, "c" );
+			},
+			derive_margintop_class: function( classes ){
+				return this.derive_from_classes( classes, "mt" );
+			},
+			derive_marginleft_class: function( classes ){
+				return this.derive_from_classes( classes, "ml" );
+			}
         },
 		width_to_col: function (width) {
 			return this.grid.width_to_col(width);
