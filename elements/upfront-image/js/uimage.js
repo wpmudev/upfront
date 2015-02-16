@@ -13,6 +13,7 @@ define([
 	var l10n = Upfront.Settings.l10n.image_element;
 	var breakpointColumnPadding = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().get('column_padding');
 	breakpointColumnPadding = parseInt(breakpointColumnPadding, 10);
+	breakpointColumnPadding = _.isNaN(breakpointColumnPadding) ? 15 : breakpointColumnPadding;
 
 	// Variable used to speed resizing up;
 	var resizingData = {};
@@ -356,15 +357,14 @@ define([
 				captionHeight = this.property('caption_position') === 'below_image' ? this.$('.wp-caption').outerHeight() : 0
 			;
 
-			if(starting.length){
+			if (starting.length) {
 				maskSize = {
 					width: starting.outerWidth(),
 					height: starting.outerHeight()
 				};
 				maskOffset = starting.offset();
 				position = false;
-			}
-			else {
+			} else {
 				starting = this.$('.uimage');
 				maskSize = {
 					width: starting.width(),
@@ -785,7 +785,6 @@ define([
 				resizer = $('html').find('.upfront-resize');
 				resizingData.resizer = resizer;
 			}
-
 			data.elementSize = {width: resizer.width() - (2 * breakpointColumnPadding), height: resizer.height() - (2 * breakpointColumnPadding) - captionHeight};
 
 			this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({

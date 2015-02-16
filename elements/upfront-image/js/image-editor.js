@@ -5,6 +5,7 @@ define([
 	var l10n = Upfront.Settings.l10n.image_element;
 	var breakpointColumnPadding = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().get('column_padding');
 	breakpointColumnPadding = parseInt(breakpointColumnPadding, 10);
+	breakpointColumnPadding = _.isNaN(breakpointColumnPadding) ? 15 : breakpointColumnPadding;
 
 	/**
 	 * The image editor needs the image to be uploaded as an attachment to WP in order to work.
