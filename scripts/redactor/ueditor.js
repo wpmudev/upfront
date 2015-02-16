@@ -742,11 +742,11 @@ var InsertManagerInserts = Backbone.View.extend({
                 //self.trigger('insert:prechange'); // "self" is the view
                 //Create the insert
                 //insert.render();
-                //if( self.$block.is(':last-child') ){
+                if( self.is_last_p() ){
 					self.$block.before(insert.$el);
-                //}else{
-					//self.$block.replaceWith(insert.$el);
-				//}
+                }else{
+					self.$block.replaceWith(insert.$el);
+				}
 
                 self.$block.prev("br").remove();
                 //self.trigger('insert:added', insert);
@@ -764,7 +764,11 @@ var InsertManagerInserts = Backbone.View.extend({
                 self.listenTo(insert, 'remove', self.onRemoveInsert);
             })
         ;
-    }
+    },
+	is_last_p: function(  ){
+		var $ps = this.redactor.$element.find("p");
+		return _.indexOf( $ps, this.$block[0] ) === ( $ps.length - 1 );
+	}
 
 });
 var InsertManager = Backbone.View.extend({
@@ -805,7 +809,7 @@ var InsertManager = Backbone.View.extend({
     },
     position_tooltips: function(redactor){
         var $current = $( redactor.selection.getCurrent());
-        if( $current.closest(".ueditor-insert").length === 0 &&  ( $.trim( $current.html() ) === "<br>" || ( typeof $current.closest("p.nosortable").html() !== "undefined" &&  $.trim( $current.closest("p.nosortable").html() ) === "" ) )  ){
+        if( this.show_tooltip_in_this_location( redactor ) ){
 			if( typeof $current[0] === "undefined" || !_.isElement($current[0]) ) return;
             var css = _.extend( $current.position(), { marginLeft: _.isArray($current) && _.isElement($current[0]) ?   $current.css("padding-left") : 0 } );
             this.$tooltips.css( css );
@@ -999,6 +1003,25 @@ var InsertManager = Backbone.View.extend({
 				if(ui.item.css('float') != 'none')
 					ui.helper.css({marginTop: e.offsetY});
 			});
+	},
+	show_tooltip_in_this_location: function(redactor){
+		var $block = $( redactor.selection.getCurrent()),
+			$image_insert_wrappers = $(".upfront-inserted_image-wrapper"),
+			block_top = $block.offset().top,
+			show_tooltip = true;
+
+		$image_insert_wrappers.each(function(){
+			var $this = $(this),
+				height = $this.find(".ueditor-insert-variant-group").height(),
+				top = $this.offset().top;
+console.log(block_top, height + top + 20, top - 5);
+			if( block_top <= ( height + top + 20) && block_top >= ( top - 5)  ){
+				show_tooltip = false;
+			}
+		});
+		return 	show_tooltip
+				&& 	$block.closest(".ueditor-insert").length === 0
+				&&  ( $.trim( $block.html() ) === "<br>" || ( typeof $block.closest("p.nosortable").html() !== "undefined" &&  $.trim( $block.closest("p.nosortable").html() ) === "" ) ) ;
 	}
 });
 
