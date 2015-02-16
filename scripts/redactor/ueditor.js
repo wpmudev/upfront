@@ -742,7 +742,12 @@ var InsertManagerInserts = Backbone.View.extend({
                 //self.trigger('insert:prechange'); // "self" is the view
                 //Create the insert
                 //insert.render();
-                self.$block.replaceWith(insert.$el);
+                //if( self.$block.is(':last-child') ){
+					self.$block.before(insert.$el);
+                //}else{
+					//self.$block.replaceWith(insert.$el);
+				//}
+
                 self.$block.prev("br").remove();
                 //self.trigger('insert:added', insert);
                 self.insertsData[insert.data.id] = insert.data.toJSON();
@@ -800,7 +805,7 @@ var InsertManager = Backbone.View.extend({
     },
     position_tooltips: function(redactor){
         var $current = $( redactor.selection.getCurrent());
-        if( $current.closest(".ueditor-insert").length === 0 &&  ( $.trim( $current.html() ) === "<br>" || ( $current.closest("p.nosortable").html() &&  $.trim(  ) === "" ) )  ){
+        if( $current.closest(".ueditor-insert").length === 0 &&  ( $.trim( $current.html() ) === "<br>" || ( typeof $current.closest("p.nosortable").html() !== "undefined" &&  $.trim( $current.closest("p.nosortable").html() ) === "" ) )  ){
 			if( typeof $current[0] === "undefined" || !_.isElement($current[0]) ) return;
             var css = _.extend( $current.position(), { marginLeft: _.isArray($current) && _.isElement($current[0]) ?   $current.css("padding-left") : 0 } );
             this.$tooltips.css( css );

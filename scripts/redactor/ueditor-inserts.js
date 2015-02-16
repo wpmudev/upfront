@@ -296,7 +296,7 @@ var UeditorInsert = Backbone.View.extend({
 var ImageInsert = UeditorInsert.extend({
     caption_active: false,
 	type: 'image',
-	className: 'ueditor-insert upfront-inserted_image-wrapper',
+	className: 'ueditor-insert upfront-inserted_image-wrapper ueditor-insert-variant',
 	tpl: _.template($(tpls).find('#image-insert-tpl').html()),
 	resizable: false,
 	defaultData: {
@@ -443,10 +443,9 @@ var ImageInsert = UeditorInsert.extend({
 		this.createControls();
 		this.controls.render();
 		this.$(".ueditor-insert-variant-group").append(this.controls.$el);
-        this.$el.addClass("ueditor-insert-variant");
 		this.make_caption_editable();
 		this.updateControlsPosition();
-        this.$(".ueditor-insert-variant-group").prepend( '<a href="#" class="upfront-icon-button upfront-icon-button-delete ueditor-insert-remove"></a>' );
+		this.$(".ueditor-insert-variant-group").append('<a href="#" class="upfront-icon-button upfront-icon-button-delete ueditor-insert-remove"></a>');
 	},
 
 	make_caption_editable: function(){

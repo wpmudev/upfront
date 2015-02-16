@@ -11596,10 +11596,6 @@ div.inline-number.plaintext-settings {
 div.inline-number.plaintext-settings input {
   width: 50px; }
 
-/* line 46, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/plaintext */
-.upfront-plain_txt p {
-  clear: both; }
-
 /* Context Menu */
 /* line 2, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/context-menu */
 .uf-context-menu * {
