@@ -113,7 +113,7 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 		var me = this;
 
 		var bg = me.model.get_property_value_by_name("background_color");
-		if (bg && bg.match(/ufc\d+$/)) {
+		if (bg && Upfront.Util.colors.is_theme_color(bg)) {
 			bg = Upfront.Util.colors.get_color(bg);
 			me.$el.find(".plaintxt_padding").css("backgroundColor", bg);
 
