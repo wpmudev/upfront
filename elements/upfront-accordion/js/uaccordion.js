@@ -3,8 +3,10 @@ define([
 	'elements/upfront-accordion/js/model',
 	'elements/upfront-accordion/js/element',
 	'elements/upfront-accordion/js/settings',
-	'text!elements/upfront-accordion/tpl/uaccordion.html'
-], function(UaccordionModel, AccordionElement, AccordionSettings, accordionTpl) {
+	'scripts/upfront/preset-settings/util',
+	'text!elements/upfront-accordion/tpl/uaccordion.html',
+	'text!elements/upfront-accordion/tpl/preset-style.html'
+], function(UaccordionModel, AccordionElement, AccordionSettings, PresetUtil, accordionTpl, settingsStyleTpl) {
 
 	var l10n = Upfront.Settings.l10n.accordion_element;
 
