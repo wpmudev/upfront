@@ -523,8 +523,6 @@ var ImageInsert = UeditorInsert.extend({
             if( redactor != self.caption_ueditor.redactor ||  self.caption_active === false)
                 return;
 
-
-
 			var $parent = self.$el.closest('.redactor-editor'),
 				parentUeditor = $parent.data('ueditor'),
 				parentRedactor = parentUeditor ? parentUeditor.redactor : false
@@ -558,6 +556,19 @@ var ImageInsert = UeditorInsert.extend({
 			$parent.attr("contenteditable", false);
 			self.caption_active = true;
 		});
+
+
+		/**
+		 * Wait for the parent to get rendered
+		 */
+		setTimeout( function(){
+			var $parent = self.$el.closest('.redactor-editor');
+			$parent.on("mouseenter", function(e){
+				$caption.attr("contenteditable", false);
+				$parent.attr("contenteditable", true);
+				self.caption_active = false;
+			});
+		}, 10 );
 
 	},
 	//this function is called automatically by UEditorInsert whenever the controls are created or refreshed
