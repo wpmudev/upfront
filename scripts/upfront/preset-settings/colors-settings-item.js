@@ -12,9 +12,8 @@ define(function() {
 
 			var me = this,
 				fields = [];
-
+// TODO: investigate why theme colors aren't pre-selected??
 			_.each(this.options.abccolors, function(color) {
-
 				var colorField = new Upfront.Views.Editor.Field.Color({
 					blank_alpha : 0,
 					model: this.model,
@@ -24,10 +23,14 @@ define(function() {
 					spectrum: {
 						preferredFormat: 'rgb',
 						change: function(value) {
-							me.model.set(color.name, value.toRgbString());
+							if (!value) return false;
+							var c = value.get_is_theme_color() !== false ? value.theme_color : value.toRgbString();
+							me.model.set(color.name, c);
 						},
 						move: function(value) {
-							me.model.set(color.name, value.toRgbString());
+							if (!value) return false;
+							var c = value.get_is_theme_color() !== false ? value.theme_color : value.toRgbString();
+							me.model.set(color.name, c);
 						}
 					}
 				});
