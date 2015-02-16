@@ -489,30 +489,9 @@ define(function() {
 			}
 		},
 		colors: {
-			/*
-			text_theme_colors_update: function () {
-                console.log("attempting to reset text colors yay");
-                var $body = $("body"),
-                    $colors = $body.find('[data-ufc-color]'),
-                    $backgrounds = $body.find('[data-ufc-background-color]')
-                ;
-                if ($colors.length) $colors.each(function () {
-                    var $color = $(this),
-                        ufc = $color.attr("data-ufc-color"),
-                        color = ufc ? Upfront.Util.colors.get_color(ufc) : false
-                    ;
-                    if (color) $color.css("color", color);
-                });
-                if ($backgrounds.length) $backgrounds.each(function () {
-                    var $color = $(this),
-                        ufc = $color.attr("data-ufc-background-color"),
-                        color = ufc ? Upfront.Util.colors.get_color(ufc) : false
-                    ;
-                    if (color) $color.css("background-color", color);
-                });
-
-            },
-            */
+			is_theme_color: function (str) {
+				return !!str.match(/^#?ufc\d+$/);
+			},
 			get_ufc: function(color){
 				if(_.isEmpty(color)) return false;
 				color = tinycolor(color);
