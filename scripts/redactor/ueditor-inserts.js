@@ -467,7 +467,7 @@ var ImageInsert = UeditorInsert.extend({
                 self.data.trigger('update');
             })
             .ueditor({
-                linebreaks: true,
+                linebreaks: false,
                 autostart: true,
                 pastePlainText: true,
                 buttons: [],
@@ -846,7 +846,7 @@ var ImageInsert = UeditorInsert.extend({
 			imageData.style = {
 				caption: {
 					"order": caption_order,
-					"height": $caption.css("height") ? $caption.css("height").replace("px", "") : $caption.height(),
+					"height": $caption.css("minHeight") ? $caption.css("minHeight").replace("px", "") : $caption.height(),
 					"width_cls": Upfront.Util.grid.derive_column_class( caption_classes ),
 					"left_cls": Upfront.Util.grid.derive_marginleft_class( caption_classes ),
 					"top_cls": Upfront.Util.grid.derive_margintop_class( caption_classes ),
