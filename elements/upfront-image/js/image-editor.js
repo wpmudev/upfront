@@ -4,6 +4,7 @@ define([
 ], function(editorTpl) {
 	var l10n = Upfront.Settings.l10n.image_element;
 	var breakpointColumnPadding = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().get('column_padding');
+	breakpointColumnPadding = parseInt(breakpointColumnPadding, 10);
 
 	/**
 	 * The image editor needs the image to be uploaded as an attachment to WP in order to work.
@@ -583,7 +584,7 @@ define([
 		},
 
 		addGridLines: function(initialPoint, maskHeight){
-			var step = parseInt(breakpointColumnPadding, 10),
+			var step = breakpointColumnPadding,
 				height = maskHeight - this.bordersWidth,
 				current = this.bordersWidth / 2
 			;

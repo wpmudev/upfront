@@ -12,6 +12,7 @@ define([
 
 	var l10n = Upfront.Settings.l10n.image_element;
 	var breakpointColumnPadding = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().get('column_padding');
+	breakpointColumnPadding = parseInt(breakpointColumnPadding, 10);
 
 	// Variable used to speed resizing up;
 	var resizingData = {};
