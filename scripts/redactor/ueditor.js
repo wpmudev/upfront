@@ -1005,8 +1005,11 @@ var InsertManager = Backbone.View.extend({
 			});
 	},
 	show_tooltip_in_this_location: function(redactor){
-		var $block = $( redactor.selection.getCurrent()),
-			$image_insert_wrappers = $(".upfront-inserted_image-wrapper"),
+		var $block = $( redactor.selection.getCurrent());
+
+		if(_.isEmpty( $block ) ) return false;
+
+		var $image_insert_wrappers = $(".upfront-inserted_image-wrapper"),
 			block_top = $block.offset().top,
 			show_tooltip = true;
 
@@ -1014,7 +1017,6 @@ var InsertManager = Backbone.View.extend({
 			var $this = $(this),
 				height = $this.find(".ueditor-insert-variant-group").height(),
 				top = $this.offset().top;
-console.log(block_top, height + top + 20, top - 5);
 			if( block_top <= ( height + top + 20) && block_top >= ( top - 5)  ){
 				show_tooltip = false;
 			}

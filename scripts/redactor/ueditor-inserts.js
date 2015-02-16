@@ -316,6 +316,7 @@ var ImageInsert = UeditorInsert.extend({
 		variant_id : "",
         style: {
 			label_id: "",
+			vid: "",
 			caption: {
 				"order": 0,
 				"height": 50,
@@ -371,6 +372,7 @@ var ImageInsert = UeditorInsert.extend({
 			imageData.id = me.data.id;
 			me.data.clear({silent: true});
 			imageData.style =  Upfront.Content.ImageVariants.length ?  Upfront.Content.ImageVariants.first().toJSON() : this.defaultData.style;
+			imageData.variant_id = imageData.style.vid;
 			me.data.set(imageData);
 
 		});
@@ -389,8 +391,6 @@ var ImageInsert = UeditorInsert.extend({
 	},
 	// Insert editor UI
 	render: function(){
-		var tmp = this.data.toJSON();
-		//var data = $.extend( true, Upfront.Util.clone(this.defaultData), this.data.toJSON()),
 		var data = _.extend( {}, this.defaultData, this.data.toJSON() ),
 			style_variant = data.style;
 
@@ -446,18 +446,21 @@ var ImageInsert = UeditorInsert.extend({
 		this.make_caption_editable();
 		this.updateControlsPosition();
 		this.$(".ueditor-insert-variant-group").append('<a href="#" class="upfront-icon-button upfront-icon-button-delete ueditor-insert-remove"></a>');
+
 	},
 
 	make_caption_editable: function(){
 		var self = this,
-			data = this.data.get("style")
+			data = this.data.get("style"),
+			$caption = this.$('.wp-caption-text')
 		;
+
 		if (!data) return false;
 		if( !data.caption || !data.caption.show || this.$('.wp-caption-text').length === 0) return;
 
-        this.$('.wp-caption-text')
+
             //.attr('contenteditable', true)
-            .off('keyup')
+		$caption.off('keyup')
             .on('keyup', function(e){
                 self.data.set('caption', this.innerHTML, {silent: true});
                 //Update event makes InsertManager update its data without rendering.
@@ -471,52 +474,76 @@ var ImageInsert = UeditorInsert.extend({
 				placeholder: self.defaultData.caption,
 				focus: false
             })
+			.attr('contenteditable', false)
         ;
 
-        this.ueditor = this.$('.wp-caption-text').data('ueditor');
+        this.caption_ueditor = $caption.data('ueditor');
+
+
 
 		/**
 		 * Saves redactor air changes to the caption model
 		 */
-		this.ueditor.redactor.events.on("ueditor:change", function(e){
-			self.data.set('caption', self.ueditor.$el.html(), {silent: true});
+		this.caption_ueditor.redactor.events.on("ueditor:change", function(e){
+			self.data.set('caption', self.caption_ueditor.$el.html(), {silent: true});
 			self.data.trigger('update');
 		});
 
-        this.ueditor.redactor.events.on('ueditor:focus', function(redactor){
-            if(redactor != self.ueditor.redactor || self.caption_active === true)
+        this.caption_ueditor.redactor.events.on('ueditor:focus', function(redactor){
+            if( redactor != self.caption_ueditor.redactor || self.caption_active === true)
                 return;
 
-            self.caption_active = true;
 
             var $parent = self.$el.closest('.redactor-editor'),
 				parentUeditor = $parent.data('ueditor'),
                 parentRedactor = parentUeditor ? parentUeditor.redactor : false
                 ;
 
-			$parent.attr("contenteditable", false);
+
             if(!parentRedactor)
                 return;
+
+			if( redactor.$element.is( $caption ) ){
+				$parent.attr("contenteditable", false);
+				$caption.attr("contenteditable", true);
+				self.caption_active = true;
+			}else{
+				$parent.attr("contenteditable", true);
+				$caption.attr("contenteditable", false);
+				self.caption_active = false;
+			}
+
 
             parentRedactor.$editor.off('drop.redactor paste.redactor keydown.redactor keyup.redactor focus.redactor blur.redactor');
             parentRedactor.$textarea.on('keydown.redactor-textarea');
 
         });
 
-        this.ueditor.redactor.events.on('ueditor:blur', function(redactor){
-            if(redactor != self.ueditor.redactor ||  self.caption_active === false)
+        this.caption_ueditor.redactor.events.on('ueditor:blur', function(redactor){
+            if( redactor != self.caption_ueditor.redactor ||  self.caption_active === false)
                 return;
 
-            self.caption_active = false;
+
 
 			var $parent = self.$el.closest('.redactor-editor'),
 				parentUeditor = $parent.data('ueditor'),
 				parentRedactor = parentUeditor ? parentUeditor.redactor : false
 				;
 
-			$parent.attr("contenteditable", true);
+
             if(!parentRedactor)
                 return;
+
+
+			if( redactor.$element.is( $caption ) ){
+				$parent.attr("contenteditable", true);
+				$caption.attr("contenteditable", false);
+				self.caption_active = false;
+			}else{
+				$parent.attr("contenteditable", false);
+				$caption.attr("contenteditable", true);
+				self.caption_active = true;
+			}
 
             parentRedactor.build.setEvents();
 			//parentRedactor.buildBindKeyboard();
@@ -524,6 +551,14 @@ var ImageInsert = UeditorInsert.extend({
             //var parentUeditor = me.$el.closest('.ueditable').data('ueditor');
 
         });
+
+		$caption.on("hover", function(){
+			var $parent = self.$el.closest('.redactor-editor');
+			$caption.attr("contenteditable", true);
+			$parent.attr("contenteditable", false);
+			self.caption_active = true;
+		});
+
 	},
 	//this function is called automatically by UEditorInsert whenever the controls are created or refreshed
 	controlEvents: function(){
@@ -733,21 +768,6 @@ var ImageInsert = UeditorInsert.extend({
 			insert = new ImageInsert({data: insertsData[id]});
 		} else {
 			insert = this.importFromImage(wrapper.find('img'));
-			align = wrapper.css('float');
-			if(align != 'none')
-				insert.data.set('align', align);
-
-			caption = wrapper.find('.wp-caption-text');
-			//if(caption.length){
-			//	insert.data.set('caption', caption.html());
-			//	if(wrapper.hasClass('uinsert-caption-left'))
-			//		insert.data.set('captionPosition', 'left');
-			//	else if(wrapper.hasClass('uinsert-caption-right'))
-			//		insert.data.set('captionPosition', 'right');
-			//	else
-			//		insert.data.set('captionPosition', 'bottom');
-			//}
-
 		}
 		insert.render();
 		wrapper.replaceWith(insert.$el);
@@ -786,15 +806,6 @@ var ImageInsert = UeditorInsert.extend({
 			src: imageSpecs.src
 		};
 
-		//var align = 'center';
-		//if(image.hasClass('aligncenter'))
-		//	align = 'center';
-		//else if(image.hasClass('alignleft'))
-		//	align = 'left';
-		//else if(image.hasClass('alignright'))
-		//	align = 'right';
-        //
-		//imageData.align = align;
 
 		var parent = image.parent();
 
@@ -820,31 +831,38 @@ var ImageInsert = UeditorInsert.extend({
 
 		caption_order = $caption.prev( $image_wrapper).length ? 1 : 0;
 
-		imageData.style = {
-			caption: {
-				"order": caption_order,
-				"height": $caption.css("height") ? $caption.css("height") .replace("px", "") : $caption.height(),
-				"width_cls": Upfront.Util.grid.derive_column_class( caption_classes ),
-				"left_cls": Upfront.Util.grid.derive_marginleft_class( caption_classes ),
-				"top_cls": Upfront.Util.grid.derive_margintop_class( caption_classes ),
-				"show": $caption.length
-			},
-			group: {
-				"float": $group.css("float"),
-				"width_cls": Upfront.Util.grid.derive_column_class( group_classes ),
-				"left_cls": Upfront.Util.grid.derive_marginleft_class( group_classes ),
-				"height": $group.css("minHeight").replace("px", ""),
-				"marginRight": 0,
-				"marginLeft": 0
-			},
-			image: {
-				"width_cls": Upfront.Util.grid.derive_column_class( image_wrapper_classes ),
-				"left_cls": Upfront.Util.grid.derive_marginleft_class( image_wrapper_classes ),
-				"top_cls": Upfront.Util.grid.derive_margintop_class( image_wrapper_classes ),
-				"src": "",
-				"height": 0
-			}
-		};
+		if(  $group.length ){
+			imageData.style = {
+				caption: {
+					"order": caption_order,
+					"height": $caption.css("height") ? $caption.css("height").replace("px", "") : $caption.height(),
+					"width_cls": Upfront.Util.grid.derive_column_class( caption_classes ),
+					"left_cls": Upfront.Util.grid.derive_marginleft_class( caption_classes ),
+					"top_cls": Upfront.Util.grid.derive_margintop_class( caption_classes ),
+					"show": $caption.length
+				},
+				group: {
+					"float": $group.css("float"),
+					"width_cls": Upfront.Util.grid.derive_column_class( group_classes ),
+					"left_cls": Upfront.Util.grid.derive_marginleft_class( group_classes ),
+					"height": $group && $group.css("minHeight") ? $group.css("minHeight").replace("px", "") : imageSpecs.height + $caption.height(),
+					"marginRight": 0,
+					"marginLeft": 0
+				},
+				image: {
+					"width_cls": Upfront.Util.grid.derive_column_class( image_wrapper_classes ),
+					"left_cls": Upfront.Util.grid.derive_marginleft_class( image_wrapper_classes ),
+					"top_cls": Upfront.Util.grid.derive_margintop_class( image_wrapper_classes ),
+					"src": "",
+					"height": 0
+				}
+			};
+			imageData.variant_id = $group.data("variant");
+		}else{
+			imageData.style = Upfront.Content.ImageVariants.first().toJSON();
+			imageData.variant_id = imageData.style.vid;
+		}
+
 
 		var insert = new ImageInsert({data: imageData});
 
