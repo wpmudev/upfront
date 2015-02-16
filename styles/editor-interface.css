@@ -13258,26 +13258,27 @@ div.upfront-region-container:hover > a.feature_image_selector {
 
 /* line 149, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/theme-fonts-manager */
 .font-variant-preview .font-family {
-  color: #85a9d0; }
+  color: #85a9d0;
+  font: normal 11px/1 Verdana, sans-serif; }
 
-/* line 152, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/theme-fonts-manager */
+/* line 153, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/theme-fonts-manager */
 .font-variant-preivew .font-preview {
   color: #181834; }
 
-/* line 155, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/theme-fonts-manager */
+/* line 156, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/theme-fonts-manager */
 .font-variant-already-added .font-preview {
   color: #a3a3a3; }
 
-/* line 158, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/theme-fonts-manager */
+/* line 159, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/theme-fonts-manager */
 .font-variant-preview:first-child {
   border-top: 0 none; }
 
-/* line 161, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/theme-fonts-manager */
+/* line 162, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/theme-fonts-manager */
 .font-variant-selected {
   background: #e9faf4;
   position: relative; }
 
-/* line 165, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/theme-fonts-manager */
+/* line 166, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/theme-fonts-manager */
 .font-variant-selected:after {
   content: "";
   display: block;
@@ -13289,27 +13290,26 @@ div.upfront-region-container:hover > a.feature_image_selector {
   top: 10px;
   right: 10px; }
 
-/* line 176, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/theme-fonts-manager */
+/* line 177, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/theme-fonts-manager */
 .heading-font-preview {
   font-size: 35px;
   line-height: 41px;
   white-space: nowrap;
   color: #000000; }
 
-/* line 182, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/theme-fonts-manager */
+/* line 183, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/theme-fonts-manager */
 .font-variant-already-added {
   cursor: default; }
 
-/* line 185, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/theme-fonts-manager */
+/* line 186, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/theme-fonts-manager */
 .font-variant-already-added .already-added {
   background-color: #00CE8D;
   color: #fff;
   border-radius: 3px;
   box-shadow: 0 1px 0 #00B47C;
-  padding: 0px 5px;
+  padding: 2px 5px;
   display: inline-block;
-  font-size: 13px;
-  line-height: 15px; }
+  font: normal 11px/1 Verdana, sans-serif; }
 
 /* line 195, /Users/victor/Sites/uf/Upfront/wp-content/themes/upfront/styles/sass/partials/theme-fonts-manager */
 .font-variant-already-added .font-family {

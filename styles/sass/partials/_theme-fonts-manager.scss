@@ -148,6 +148,7 @@
 }
 .font-variant-preview .font-family {
 	color: #85a9d0;
+  font:normal 11px/1 Verdana, sans-serif;
 }
 .font-variant-preivew .font-preview {
 	color: #181834;
@@ -187,10 +188,9 @@
 	color: #fff;
 	border-radius: 3px;
 	box-shadow: 0 1px 0 #00B47C;
-	padding: 0px 5px;
+	padding: 2px 5px;
 	display: inline-block;
-	font-size: 13px;
-	line-height: 15px;
+	font:normal 11px/1 Verdana, sans-serif;
 }
 .font-variant-already-added .font-family {
 	color: #cfdde8;
