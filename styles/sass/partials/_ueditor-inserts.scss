@@ -106,11 +106,12 @@ a.ueditor-action-pickercancel{
 .uinsert-drag-handle {
 	cursor: move;
 }
+
 .ueditor-insert.upfront-inserted_image-wrapper,
 .ueditor-insert.upfront-inserted_image-wrapper:hover{
   outline: none !important;
   background: none !important;
-  margin: 0;
+  margin: 0 -15px;
 }
 .upfront-inserted_image-wrapper .wp-caption-text,
 .uinsert-image-wrapper{
