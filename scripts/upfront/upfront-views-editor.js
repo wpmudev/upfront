@@ -4164,7 +4164,10 @@ var Field_ToggleableText = Field_Text.extend({
 			return this.$el.find(".sp-preview-inner").css('background-color');
 		},
 		set_value : function(rgba) {
-			this.$spectrum.spectrum("set", rgba );
+			if (Upfront.Util.colors.is_theme_color(rgba)) rgba = Upfront.Util.colors.get_color(rgba);
+			var color = tinycolor(rgba);
+			this.color = color;
+			this.$spectrum.spectrum("set", color );
 		}
 
 	});
