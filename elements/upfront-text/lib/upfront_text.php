@@ -45,7 +45,7 @@ class Upfront_PlainTxtView extends Upfront_Object {
 		}
 
 		if ($this->_get_property('border') && '' != $this->_get_property('border')) {
-			$style[] = 'border: '.$this->_get_property('border');
+			$style[] = 'border: '.Upfront_UFC::init()->process_colors($this->_get_property('border'));
 		}
 
 		$content = $this->_decorate_content($content);

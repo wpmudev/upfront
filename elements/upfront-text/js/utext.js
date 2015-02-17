@@ -31,6 +31,7 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 		//	console.log('deactivating the text element editor');
 		//	Upfront.Events.trigger('upfront:element:edit:stop');
 		//}, this);
+		this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
 	},
 	get_content_markup: function () {
 		var content = this.model.get_content(),
@@ -96,11 +97,38 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 				if (text) me.model.set_content($(text).html(), {silent: true});
 			})
 		;
-
+/*
 		if( this.$el.find(".plaintxt_padding").length && this.$el.find(".plaintxt_padding").attr("style").split("#ufc").length > 1){
 			var splits = this.$el.find(".plaintxt_padding").attr("style").split("#ufc"),
 				theme_color_index = splits[1].split(";")[0];
 			this.$el.find(".plaintxt_padding").css("backgroundColor", "#ufc" + theme_color_index);
+		}
+*/
+		// Yank this first, before applying
+		setTimeout(function () {
+			me.update_colors();
+		}, 0);
+	},
+	update_colors: function () {
+		var me = this;
+
+		var bg = me.model.get_property_value_by_name("background_color");
+		if (bg && Upfront.Util.colors.is_theme_color(bg)) {
+			bg = Upfront.Util.colors.get_color(bg);
+			me.$el.find(".plaintxt_padding").css("backgroundColor", bg);
+
+			me.model.set_property("bg_color", bg);
+		}
+
+		var border = me.model.get_property_value_by_name("border"),
+			matches = border ? border.match(/#ufc\d+/) : false
+		;
+		if (border && matches && matches.length) {
+			var color = Upfront.Util.colors.get_color(matches[0]);
+			border = border.replace(new RegExp(matches[0]), color);
+			me.$el.find(".plaintxt_padding").css("border", border);
+
+			me.model.set_property("border_color", color);
 		}
 
 	}
@@ -188,7 +216,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 						autoHide: false,
 						spectrum: {
 							preferredFormat: "hex",
-							choose: this.onBorderColor
+							move: this.onBorderColor
 						}
 					}),
 					new Upfront.Views.Editor.Field.Color({
@@ -201,7 +229,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 						autoHide: false,
 						spectrum: {
 							preferredFormat: "hex",
-							choose: this.onBgColor
+							move: this.onBgColor
 						}
 					})
 				]
@@ -227,7 +255,9 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 	},
 	onBorderColor: function(color) {
 		if( !color ) return;
-		this.property('border_color',  color.toRgbString(), false);
+		var c = color.get_is_theme_color() !== false ? color.theme_color : color.toRgbString();
+
+		this.property('border_color',  c, true);
 		this.processBorder();
 	},
 	onBorderStyle: function(event) {

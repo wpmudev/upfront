@@ -24,12 +24,14 @@ class Upfront_ButtonView extends Upfront_Object {
 				}
 			}
 		}
+
+		$ufc = Upfront_UFC::init();
 		
 	
 		$data['content'] = $this->_get_property('content');
 		$data['href'] = $this->_get_property('href');
 		$data['align'] = $this->_get_property('align');
-		$data['style_static'] = "border: ".$preset['borderwidth']."px ".$preset['bordertype']." ".$preset['bordercolor']."; "."border-radius: ".$preset['borderradius1']."px ".$preset['borderradius2']."px ".$preset['borderradius4']."px ".$preset['borderradius3']."px; "."background-color: ".$preset['bgcolor']."; "."font-size: ".$preset['fontsize']."px; "."font-family: ".$preset['fontface']."; "."color: ".$preset['color']."; "."transition: all ".$preset['hov_duration']."s ".$preset['hov_transition']."; ";
+		$data['style_static'] = "border: ".$preset['borderwidth']."px ".$preset['bordertype']." ".$ufc->process_colors($preset['bordercolor'])."; "."border-radius: ".$preset['borderradius1']."px ".$preset['borderradius2']."px ".$preset['borderradius4']."px ".$preset['borderradius3']."px; "."background-color: ".$ufc->process_colors($preset['bgcolor'])."; "."font-size: ".$preset['fontsize']."px; "."font-family: ".$preset['fontface']."; "."color: ".$ufc->process_colors($preset['color'])."; "."transition: all ".$preset['hov_duration']."s ".$preset['hov_transition']."; ";
 
 
 		$data['style_hover']  =  '';
@@ -38,7 +40,7 @@ class Upfront_ButtonView extends Upfront_Object {
 			if(isset($preset['hov_bordertype']))
 				$data['style_hover'] = $data['style_hover'].'border-style: '.$preset['hov_bordertype'].'; ';
 			if(isset($preset['hov_bordercolor']))
-				$data['style_hover'] = $data['style_hover'].'border-color: '.$preset['hov_bordercolor'].'; ';
+				$data['style_hover'] = $data['style_hover'].'border-color: '.$ufc->process_colors($preset['hov_bordercolor']).'; ';
 			if(isset($preset['hov_borderradius1']))
 				$data['style_hover'] = $data['style_hover'].'border-top-left-radius: '.$preset['hov_borderradius1'].'px; ';	
 			if(isset($preset['hov_borderradius2']))
@@ -48,13 +50,13 @@ class Upfront_ButtonView extends Upfront_Object {
 			if(isset($preset['hov_borderradius4']))
 				$data['style_hover'] = $data['style_hover'].'border-bottom-left-radius: '.$preset['hov_borderradius4'].'px; ';
 			if(isset($preset['hov_bgcolor']))
-				$data['style_hover'] = $data['style_hover'].'background-color: '.$preset['hov_bgcolor'].'; ';
+				$data['style_hover'] = $data['style_hover'].'background-color: '.$ufc->process_colors($preset['hov_bgcolor']).'; ';
 			if(isset($preset['hov_fontsize']))
 				$data['style_hover'] = $data['style_hover'].'font-size: '.$preset['hov_fontsize'].'px; ';
 			if(isset($preset['hov_fontface']))
 				$data['style_hover'] = $data['style_hover'].'font-family: '.$preset['hov_fontsize'].'; ';
 			if(isset($preset['hov_color']))
-				$data['style_hover'] = $data['style_hover'].'color: '.$preset['hov_color'].'; ';
+				$data['style_hover'] = $data['style_hover'].'color: '.$ufc->process_colors($preset['hov_color']).'; ';
 
 
 		/*

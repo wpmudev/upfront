@@ -937,6 +937,7 @@ RedactorPlugins.upfrontColor = function() {
                 this.updateIcon();
                 this.redactor.selection.save();
                 var self = this,
+                    theme_colors = Upfront.Views.Theme_Colors.colors.pluck("color").length ? Upfront.Views.Theme_Colors.colors.pluck("color") : [],
                     foreground_picker = new Upfront.Views.Editor.Field.Color({
                         spectrum: {
                             flat: true,
@@ -944,6 +945,7 @@ RedactorPlugins.upfrontColor = function() {
                             appendTo: "parent",
                             showPalette: true,
                             localStorageKey: "spectrum.recent_colors",
+                            palette: theme_colors,
                             maxSelectionSize: 10,
                             preferredFormat: "hex",
                             chooseText: "Ok",
@@ -964,6 +966,7 @@ RedactorPlugins.upfrontColor = function() {
                             showAlpha: true,
                             appendTo: "parent",
                             showPalette: true,
+                            palette: theme_colors,
                             localStorageKey: "spectrum.recent_bgs",
                             maxSelectionSize: 10,
                             preferredFormat: "hex",
@@ -1123,33 +1126,33 @@ RedactorPlugins.upfrontColor = function() {
                         self.redactor.inline.format('div', 'class', cls);
                     },
                     color_set = function(rule, raw_value) {
-                       var theme_color = false, cls = false;
-                       if (raw_value.is_theme_color) {
-                           cls = Upfront.Views.Theme_Colors.colors.get_css_class(raw_value, !!rule.match(/background/));
-                           if (!cls) theme_color = raw_value.theme_color;
-                       } else {
-                           theme_color = raw_value.toRgbString();
-                       }
+                        var theme_color = false, cls = false;
+                        if (raw_value.is_theme_color) {
+                            cls = Upfront.Views.Theme_Colors.colors.get_css_class(raw_value, !!rule.match(/background/));
+                            if (!cls) theme_color = raw_value.theme_color;
+                        } else {
+                            theme_color = raw_value.toRgbString();
+                        }
 
-                       //self.redactor.inline.format('div', 'style', rule + ': ' + value + '/*' + theme_color + '*/' + ';');
-                       //return;
-                       var wrapper = document.createElement("span");
-                       wrapper.appendChild(self.redactor.range.extractContents());
-                       self.redactor.range.insertNode(wrapper);
-                       if (cls) {
-                           $(wrapper)
-                               .addClass(cls)
-                           ;
-                       } else if (!!theme_color) {
-                           $(wrapper)
-                               .attr("style", rule + ':' + theme_color) // use color otherwise
-                           ;
-                       }
-                       //self.redactor.selection.wrap("span");
-                       //self.redactor.inline.format('div', 'style', rule + ': ' + type + ';');
-                       self.redactor.selection.restore();
-                       self.redactor.code.sync();
-                   },
+                        //self.redactor.inline.format('div', 'style', rule + ': ' + value + '/*' + theme_color + '*/' + ';');
+                        //return;
+                        var wrapper = document.createElement("span");
+                        wrapper.appendChild(self.redactor.range.extractContents());
+                        self.redactor.range.insertNode(wrapper);
+                        if (cls) {
+                            $(wrapper)
+                                .addClass(cls)
+                            ;
+                        } else if (!!theme_color) {
+                            $(wrapper)
+                                .attr("style", rule + ':' + theme_color) // use color otherwise
+                            ;
+                        }
+                        //self.redactor.selection.wrap("span");
+                        //self.redactor.inline.format('div', 'style', rule + ': ' + type + ';');
+                        self.redactor.selection.restore();
+                        self.redactor.code.sync();
+                    },
                     color_remove = function(rule)
                     {
                         //self.redactor.inline.removeStyleRule(rule);
@@ -1173,7 +1176,7 @@ RedactorPlugins.upfrontColor = function() {
                     if(self.current_bg.reset === true){
                         self.reset_bg_color();
                     }else{
-                        color_set( 'background-color', self.current_bg.is_theme_color ? self.current_bg.theme_color_code : self.current_bg.toRgbString() );
+                        color_set( 'background-color', self.current_bg  );
                     }
                 }
 
@@ -1192,7 +1195,7 @@ RedactorPlugins.upfrontColor = function() {
                     if( self.current_color.reset === true ){
                         this.reset_color();
                     }else{
-                        color_set( 'color', self.current_color.is_theme_color ? self.current_color.theme_color_code :  self.current_color.toRgbString() );
+                        color_set( 'color', self.current_color );
                     }
                 }
 

@@ -1162,10 +1162,11 @@
                     return a;
                 },
                 get_is_theme_color : function(){ //Todo Sam: remove this function from here and place it in a relevant place
-                    return false; // Let's not deal with this right now...
+                    //return false; // Let's not deal with this right now...
                     var theme_color_index = Upfront.Views.Theme_Colors.colors.is_theme_color(this);
                     if( theme_color_index !== false ){
                         this.is_theme_color = true;
+                        theme_color_index -= 1; // This is because the method returns result incremented by 1 to get true-ish value
                         this.theme_color = "#ufc" + theme_color_index;
                         this.theme_color_code = Upfront.Util.colors.convert_string_ufc_to_color(this.theme_color);
                     }else{

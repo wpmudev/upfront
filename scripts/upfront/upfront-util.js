@@ -504,6 +504,9 @@ define(function() {
 			}
 		},
 		colors: {
+			is_theme_color: function (str) {
+				return !!str.match(/^#?ufc\d+$/);
+			},
 			get_ufc: function(color){
 				if(_.isEmpty(color)) return false;
 				color = tinycolor(color);
