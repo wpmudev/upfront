@@ -3,6 +3,12 @@
 	data-even-padding="<?php echo $even_padding[0] ?>"
 	data-thumb-padding="<?php echo $thumbPadding ?>",
 	data-thumb-proportions="<?php echo $thumbProportions ?>"
+	data-lightbox-show-close="<?php echo $lightbox_show_close ? 'true' : 'false' ?>"
+	data-lightbox-click-out-close="<?php echo $lightbox_click_out_close ? 'true' : 'false' ?>"
+	data-lightbox-show-image-count="<?php echo $lightbox_show_image_count ? 'true' : 'false' ?>"
+	data-lightbox-active-area-bg="<?php echo $lightbox_active_area_bg ?>"
+	data-lightbox-overlay-bg="<?php echo $lightbox_overlay_bg ?>"
+	data-styles="<?php echo $styles ?>"
 >
 <?php if ($labelFilters['length'] || !empty($in_editor)){ ?>
 <div class="ugallery_labels <?php if($in_editor) { ?>ugallery_labels-enabled-<?php echo $labelFilters['length'] ?><?php } ?>">

@@ -116,6 +116,7 @@ text!elements/upfront-text/tpl/utext.html
 text!elements/upfront-gallery/tpl/ugallery.html
 text!elements/upfront-gallery/tpl/sorting-style.html
 text!elements/upfront-gallery/tpl/ugallery_editor.html
+text!elements/upfront-gallery/tpl/lightbox_settings.html
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/elements/upfront-gallery/js/settings/thumbnail-fields.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/elements/upfront-gallery/js/settings/layout-panel.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/elements/upfront-gallery/js/settings.js

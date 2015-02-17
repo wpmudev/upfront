@@ -786,7 +786,7 @@ define([
 				var columns = grid.size,
 					template = _.template(_Upfront_Templates.overlay_grid, {columns: columns, size_class: grid.class, style: 'simple'});
 				$(this).prepend(template);
-				
+
 				//Adjust grid rulers position
 				Upfront.Application.adjust_grid_padding_settings(this);
 			});
@@ -3095,12 +3095,12 @@ define([
 						}
 						//Check collection total elements
 						var collectionElements = collection.pagination.totalElements;
-						
+
 						//Compare total items, if same return cached panel
 						if(cachedElements == collectionElements) {
 							return me.render_panel(me.views[panel]);
 						}
-						
+
 						collection.on('reset sort', me.render_panel, me);
 						views = {
 							view: new ContentEditorPosts({collection: collection, $popup: me.$popup}),
@@ -3117,12 +3117,12 @@ define([
 						}
 						//Check collection total elements
 						var collectionElements = collection.pagination.totalElements;
-						
+
 						//Compare total items, if same return cached panel
 						if(cachedElements == collectionElements) {
 							return me.render_panel(me.views[panel]);
 						}
-						
+
 						collection.on('reset sort', me.render_panel, me);
 						views = {
 							view: new ContentEditorPages({collection: collection, $popup: me.$popup}),
@@ -6510,6 +6510,7 @@ var CSSEditor = Backbone.View.extend({
 		PlainTxtModel: {label: l10n.text, id:'plain_text'},
 		CodeModel: {label: l10n.code, id: 'upfront-code_element'},
 		Layout: {label: l10n.body, id: 'layout'},
+		GalleryLightbox: {label: l10n.body, id: 'gallery-lightbox'},
 		RegionContainer: {label: l10n.region, id: 'region-container'},
 		Region: {label: l10n.inner_region, id: 'region'},
 		RegionLightbox: {label: l10n.ltbox_region, id: 'region'},
@@ -6739,11 +6740,11 @@ var CSSEditor = Backbone.View.extend({
 				me.updateStyles(editor.getValue());
 			},800);
 			me.trigger('change', editor);
-						
+
 			if(typeof me.editor !== "undefined") {
 				var aceOuterWidth = $(me.editor.container).get(0).scrollWidth;
 				var aceInnerWidth = $(me.editor.container).find('.ace_content').innerWidth();
-				
+
 				if(aceOuterWidth < aceInnerWidth + 40) {
 					if(!scrollerDisplayed) {
 						me.startResizable();
@@ -6765,15 +6766,15 @@ var CSSEditor = Backbone.View.extend({
 		// Set up the proper vscroller width to go along with new change.
 		editor.renderer.scrollBar.width = 5;
 		editor.renderer.scroller.style.right = "5px";
-		
+
 		editor.focus();
 		this.editor = editor;
-		
+
 		if(me.timer) clearTimeout(me.timer);
 		me.timer = setTimeout(function(){
 			me.startResizable();
 		},300);
-		
+
 	},
 	prepareSpectrum: function(){
 		var me = this,
@@ -6939,7 +6940,7 @@ var CSSEditor = Backbone.View.extend({
 					return true;
 			}
 			catch (err) {
-				
+
 			}
 			splitted.pop();
 		}
@@ -7370,6 +7371,13 @@ var GeneralCSSEditor = Backbone.View.extend({
 		var scope = new RegExp('\.' + this.options.page_class + '\s*', 'g'),
 			styles = this.model.get('styles') ? this.model.get('styles').replace(scope, '') : ''
 		;
+		var scope = new RegExp('\.' + this.options.page_class + '\s*', 'g');
+		var styles;
+		if (this.options.type === 'GalleryLightbox') {
+			styles = this.model.get('properties').get('styles').get('value').replace(scope, '');
+		} else {
+			styles = this.model.get('styles').replace(scope, '');
+		}
 		editor.setValue($.trim(styles), -1);
 
 		// Set up the proper vscroller width to go along with new change.
@@ -7657,17 +7665,17 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		this.options = options || {};
 		this.listenTo(this.collection, 'add remove change:name change:width', this.render);
 	},
-	
+
 	render: function () {
 		var me = this;
 		this.$el.html('');
 		this.$el.append(_.template(this.template, this.options));
 		this.$el.addClass(' upfront-field-select-' + ( this.options.multiple ? 'multiple' : 'single' ));
-		
+
 		if (this.options.disabled) {
 			this.$el.addClass('upfront-field-select-disabled');
 		}
-		
+
 		if (this.options.style == 'zebra') {
 			this.$el.addClass('upfront-field-select-zebra');
 		}
@@ -7679,7 +7687,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			this.$el.find('ul').append(option.el);
 		}, this);
 	},
-	
+
 	onOptionClick: function (e) {
 		this.$el.toggleClass('compact-label-select-open');
 		Field_Select.prototype.onOptionClick.call(this, e);
@@ -7974,9 +7982,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		},
 		render: function () {
 			var me = this;
-			
+
 			this.$el.html('<div class="upfront-loading-ani" />');
-			
+
 			if (this.options.fixed) this.$el.addClass('upfront-loading-fixed');
 			if (this.options.loading_type) this.$el.addClass(this.options.loading_type);
 			if (this.options.loading)this.$el.append('<p class="upfront-loading-text">' + this.options.loading + '</p>');
@@ -9203,10 +9211,10 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				type: this.model.is_main() ? "RegionContainer" : (this.model.get('type') == 'lightbox')?"RegionLightbox":"Region",
 				element_id: this.model.is_main() ? "region-container-" + this.model.get('name') : "region-" + this.model.get('name')
 			});
-			
+
 			this.listenTo(Upfront.Application.cssEditor, 'updateStyles', this.adjust_grid_padding);
 		},
-		
+
 		adjust_grid_padding: function() {
 			var togglegrid = new Upfront.Views.Editor.Command_ToggleGrid();
 			togglegrid.update_grid();
@@ -10664,6 +10672,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			"RegionFixedPanels": RegionFixedPanels,
 			"RegionFixedEditPosition" : RegionFixedEditPosition,
 			"CSSEditor": CSSEditor,
+			"GeneralCSSEditor": GeneralCSSEditor,
 			"LinkPanel": LinkPanel
 		},
 		Mixins: {

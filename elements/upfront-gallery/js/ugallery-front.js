@@ -128,13 +128,40 @@ jQuery(function($){
 		};
 
 		/**
-		 * re-Resize Magnific Popup 100ms after MFP open (iPhone issue) 
+		 * re-Resize Magnific Popup 100ms after MFP open (iPhone issue)
 		 */
 		var resizeMFP = function() {
 			if(/i(Pad|Phone|Pod)/g.test(navigator.userAgent))
 				setTimeout(function(){
 					$.magnificPopup.instance.updateSize();
 				}, 500);
+		};
+
+		var setupLightbox = function(galleryId) {
+			var data = $('#' + galleryId).find('.ugallery').data();
+			var containerClass ='gallery-' + galleryId + '-lightbox';
+
+			if (data.lightbox_show_close === true) {
+				$('.mfp-close').show();
+			} else {
+				$('.mfp-close').hide();
+			}
+
+			if (data.lightbox_show_image_count === true) {
+				$('.mfp-counter').show();
+			} else {
+				$('.mfp-counter').hide();
+			}
+
+			$('.mfp-content').css('background', data.lightboxActiveAreaBg);
+			$('.mfp-wrap').css('background', data.lightboxOverlayBg);
+
+			$('.mfp-wrap').addClass(containerClass);
+
+			if ($('style#' + containerClass).length === 0) {
+				$('body').append('<style id="' + containerClass + '"></style>');
+			}
+			$('style#' + containerClass).html(data.styles);
 		};
 
 		var gallery, magOptions;
@@ -153,7 +180,14 @@ jQuery(function($){
 					};
 				}
 
-				magOptions.callbacks = {resize: resizeWithText, afterChange: resizeWithText, open: resizeMFP};
+				magOptions.callbacks = {
+					resize: resizeWithText,
+					afterChange: resizeWithText,
+					open: function() {
+						setupLightbox(galleryId);
+						resizeMFP();
+					}
+				};
 				gallery.magnificPopup(magOptions);
 			} else {
 				gallery = $('#' + galleryId).find('.ugallery_lightbox_link');
@@ -170,7 +204,14 @@ jQuery(function($){
 						titleSrc: 'title',
 						verticalFit: true
 					},
-					callbacks: {resize: resizeWithText, afterChange: resizeWithText, open: resizeMFP}
+					callbacks: {
+						resize: resizeWithText,
+						afterChange: resizeWithText,
+						open: function() {
+							setupLightbox(galleryId);
+							resizeMFP();
+						}
+					}
 				};
 				gallery.magnificPopup(magOptions);
 			}

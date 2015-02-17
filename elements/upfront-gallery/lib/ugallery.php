@@ -22,8 +22,8 @@ class Upfront_UgalleryView extends Upfront_Object {
 		$data['thumbPadding'] = isset($data['thumbPadding']) ? $data['thumbPadding'] : 15;
 
 		if (!empty($data['images'])) {
-			foreach($data['images'] as $image){
-				$images[] = array_merge(self::image_defaults(), $image);
+			foreach($data['images'] as $im){
+				$images[] = array_merge(self::image_defaults(), $im);
 			}
 		}
 
@@ -215,6 +215,8 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'cropSize' => array('width' => 0, 'height' => 0),
 			'cropOffset' => array('top' => 0, 'left' => 0),
 			'rotation' => 0,
+			'link' => 'original',
+			'url' => '',
 			'title' => 'Image caption',
 			'caption' => 'Image description',
 			'alt' => '',
@@ -254,8 +256,13 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'linkTo' => 'image', // 'url' | 'image'
 			'even_padding' => array('false'),
 			'thumbPadding' => 15,
-			'fitThumbCaptions' => false,
-			'thumbCaptionsHeight' => 20
+
+			'lightbox_show_close' => array('true'),
+			'lightbox_show_image_count' => array('true'),
+			'lightbox_click_out_close' => array('true'),
+			'lightbox_active_area_bg' => 'rgba(255,255,255,1)',
+			'lightbox_overlay_bg' => 'rgba(0,0,0,0.2)',
+			'styles' => ''
 		);
 	}
 
@@ -369,6 +376,13 @@ class Upfront_UgalleryView extends Upfront_Object {
 				'add_new_label' => __('Add a new label', 'upfront'),
 				'label_sorting_nag' => __('Turn on \'Label Sorting\' in the settings to display gallery labels.', 'upfront'),
 				'add_label' => __('Add', 'upfront'),
+			),
+			'lightbox' => array(
+				'title' => 'Gallery Lightbox',
+				'edit_css' => 'Edit Lightbox CSS',
+				'show_image_count' => 'Show Image Count',
+				'active_area_bg' => 'Active Area BG',
+				'overlay_bg' => 'Overlay BG'
 			),
 		);
 		return !empty($key)

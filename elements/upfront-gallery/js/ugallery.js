@@ -4,14 +4,18 @@ define([
 	'text!elements/upfront-gallery/tpl/ugallery.html', // Front
 	'text!elements/upfront-gallery/tpl/sorting-style.html',
 	'text!elements/upfront-gallery/tpl/ugallery_editor.html',
+	'text!elements/upfront-gallery/tpl/lightbox_settings.html',
 	'elements/upfront-gallery/js/settings',
 	'elements/upfront-gallery/js/model',
 	'elements/upfront-gallery/js/label-editor',
 	'elements/upfront-gallery/js/element',
 	"scripts/upfront/link-model"
-], function(galleryTpl, sortingStyleTpl, editorTpl, UgallerySettings, UgalleryModel, LabelEditor, UgalleryElement, LinkModel) {
+], function(galleryTpl, sortingStyleTpl, editorTpl, lightboxTpl, UgallerySettings, UgalleryModel, LabelEditor, UgalleryElement, LinkModel) {
 
 var l10n = Upfront.Settings.l10n.gallery_element;
+var globalL10n = Upfront.Settings && Upfront.Settings.l10n
+	? Upfront.Settings.l10n.global.views
+	: Upfront.mainData.l10n.global.views;
 
 var UgalleryImage = Backbone.Model.extend({
 	defaults: Upfront.data.ugallery.imageDefaults
@@ -408,12 +412,16 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			},
 			type: 'image',
 			image: {
-				titleSrc: function(){
+				titleSrc: function() {
 					return image.get('caption');
 				},
 				markup: Upfront.data.ugallery.lightboxTpl
 			},
 			callbacks: {
+				open: function() {
+					me.setupLightbox();
+					me.createLightboxSettings();
+				},
 				imageLoadComplete: function() {
 					var title = $(this.container).find('.mfp-title');
 
@@ -442,6 +450,182 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 				resize: resizeWithText,
 				afterChange: resizeWithText
 			}
+		});
+	},
+
+	setupLightbox: function() {
+		var containerClass ='gallery-' + this.property('element_id') + '-lightbox';
+
+		$('#gallery-lightbox').find('.mfp-counter').html('1 of 2');
+
+		if (this.property('lightbox_show_close')[0] === 'true') {
+			$('#gallery-lightbox').find('.mfp-close').show();
+		} else {
+			$('#gallery-lightbox').find('.mfp-close').hide();
+		}
+
+		if (this.property('lightbox_show_image_count')[0] === 'true') {
+			$('#gallery-lightbox').find('.mfp-counter').show();
+		} else {
+			$('#gallery-lightbox').find('.mfp-counter').hide();
+		}
+
+		$('.mfp-content').css({
+			'background': this.property('lightbox_active_area_bg'),
+			'margin-top': 50,
+			'margin-bottom': 300
+		});
+		$('.mfp-wrap').css('background', this.property('lightbox_overlay_bg'));
+		$('.mfp-wrap').addClass(containerClass);
+
+		if ($('style#' + containerClass).length === 0) {
+			$('body').append('<style id="' + containerClass + '"></style>');
+		}
+		$('style#' + containerClass).html(this.property('styles'));
+	},
+
+	createLightboxSettings: function () {
+		$('.mfp-container').append(_.template(lightboxTpl, {
+			edit_lightbox_css: l10n.lightbox.edit_css,
+			lightbox_title: l10n.lightbox.title
+		}));
+
+		var $lightbox = $('.mfp-container').find('.upfront-region-bg-setting-lightbox-region');
+
+		var me = this,
+			fields;
+
+		fields = {
+			lightbox_click_out_close: new Upfront.Views.Editor.Field.Checkboxes({
+				model: this.model,
+				property: 'lightbox_click_out_close',
+				label: "",
+				values: [
+					{
+						label: globalL10n.click_close_ltbox,
+						value: 'true',
+						checked: this.model.get_property_value_by_name('lightbox_click_out_close')[0] === 'true' ? 'checked' : false
+					}
+				],
+				change: function(value) {
+					me.property('lightbox_click_out_close', value);
+					me.setupLightbox();
+				}
+			}),
+
+			lightbox_show_close: new Upfront.Views.Editor.Field.Checkboxes({
+				model: this.model,
+				className: 'gallery-lb-show_close upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-checkboxes',
+				property: 'lightbox_show_close',
+				label: "",
+				values: [
+					{
+						label: globalL10n.show_close_icon,
+						value: 'true',
+						checked: this.model.get_property_value_by_name('lightbox_show_close')[0] === 'true' ? 'checked' : false
+					}
+				],
+				change: function(value) {
+					me.property('lightbox_show_close', value);
+					me.setupLightbox();
+				}
+			}),
+
+			lightbox_show_image_count: new Upfront.Views.Editor.Field.Checkboxes({
+				model: this.model,
+				className: 'gallery-lb-show_image_count upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-checkboxes',
+				property: 'lightbox_show_image_count',
+				label: "",
+				values: [
+					{
+						label: l10n.lightbox.show_image_count,
+						value: 'true',
+						checked: this.model.get_property_value_by_name('lightbox_show_image_count')[0] === 'true' ? 'checked' : false
+					}
+				],
+				change: function(value) {
+					me.property('lightbox_show_image_count', value);
+					me.setupLightbox();
+				}
+			}),
+		};
+
+		fields.lightbox_active_area_bg = new Upfront.Views.Editor.Field.Color({
+			model: this.model,
+			property: 'lightbox_active_area_bg',
+			className: 'upfront-field-wrap upfront-field-wrap-color sp-cf overlay_color',
+			label: l10n.lightbox.active_area_bg + ":",
+			spectrum: {
+				move: function(color) {
+					me.property('lightbox_active_area_bg', color.toRgbString());
+					me.setupLightbox();
+				},
+				change: function(color) {
+					me.property('lightbox_active_area_bg', color.toRgbString());
+					me.setupLightbox();
+				}
+			}
+		});
+
+		fields.lightbox_overlay_bg = new Upfront.Views.Editor.Field.Color({
+			model: this.model,
+			property: 'lightbox_overlay_bg',
+			label: l10n.lightbox.overlay_bg + ":",
+			change: me.updateProperty,
+			spectrum: {
+				move: function(color) {
+					me.property('lightbox_overlay_bg', color.toRgbString());
+					me.setupLightbox();
+				},
+				change: function(color) {
+					me.property('lightbox_overlay_bg', color.toRgbString());
+					me.setupLightbox();
+				},
+			}
+		});
+
+		_.each(fields, function(field){
+			field.render();
+			field.delegateEvents();
+			$lightbox.append(field.$el);
+		});
+
+		$('#gallery-lb-settings-button').toggle(
+			function() {
+				$('#gallery-lb-settings').show();
+			},
+			function() {
+				$('#gallery-lb-settings').hide();
+			}
+		);
+
+		$('#gallery-lb-settings .upfront-inline-modal-save').click( function() {
+			$('#gallery-lb-settings-button').click();
+			if (me.galleryLightboxCssEditor) {
+				me.galleryLightboxCssEditor.close();
+			}
+		});
+
+		$('#gallery-lb-settings').click( function(event) {
+			event.stopPropagation();
+		});
+
+		$('#gallery-lb-settings').find('.edit-lightbox-css').click( function(event) {
+			me.galleryLightboxCssEditor = new Upfront.Views.Editor.GeneralCSSEditor({
+				model: me.model,
+				page_class: 'gallery-' + me.property('element_id') + '-lightbox',
+				type: "GalleryLightbox",
+				sidebar: false,
+				global: false,
+				change: function(content) {
+					me.property('styles', content);
+					me.setupLightbox();
+				}
+			});
+			_.delay( function() {
+				$('#upfront-general-csseditor').css('width', '100%');
+				$('#upfront-general-csseditor .ace_content').css('width', $('#upfront-general-csseditor').width() - 45);
+			}, 100);
 		});
 	},
 
