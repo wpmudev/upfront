@@ -43,10 +43,14 @@ define(function() {
 					spectrum: {
 						preferredFormat: 'rgb',
 						change: function(value) {
-							me.model.set(state + '-font-color', value.toRgbString());
+							if (!value) return false;
+							var c = value.get_is_theme_color() !== false ? value.theme_color : value.toRgbString();
+							me.model.set(state + '-font-color', c);
 						},
 						move: function(value) {
-							me.model.set(state + '-font-color', value.toRgbString());
+							if (!value) return false;
+							var c = value.get_is_theme_color() !== false ? value.theme_color : value.toRgbString();
+							me.model.set(state + '-font-color', c);
 						}
 					}
 				})

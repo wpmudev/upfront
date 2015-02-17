@@ -1649,7 +1649,7 @@ define([
 							label: l10n.color,
 							default_value: me.colors['h1'],
 							autoHide: true,
-						spectrum: {
+							spectrum: {
 								choose: function (color) {
 									var rgb = color.toRgb(),
 										rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')',
@@ -1937,7 +1937,7 @@ define([
         },
         is_theme_color : function(color){
             color = this.color_to_hex( color );
-            return _.indexOf(this.get_colors(), color) !== -1 ? _.indexOf(this.get_colors(), color) : false;
+            return _.indexOf(this.get_colors(), color) !== -1 ? _.indexOf(this.get_colors(), color) + 1 /* <== indexOf can easily return 0 :( */ : false; 
         },
         get_css_class : function(color, bg){
             color = this.color_to_hex( color );
@@ -2068,7 +2068,7 @@ define([
                 hide_label : true,
                 default_value: '#ffffff',
                 spectrum: {
-                    hide: function (color) {
+                    choose: function (color) {
                         self.add_new_color( color );
                     }
                 }
@@ -4021,9 +4021,9 @@ var Field_ToggleableText = Field_Text.extend({
 					$.extend(color, tinycolor.prototype);
 				}
 				me.color = color;
+				me.update_palette(); // Make sure we're up to date
 				me.$('input[name=' + me.get_field_name() + ']').spectrum("option", "palette", me.options.palette);
-				if(me.options.spectrum && me.options.spectrum.beforeShow)
-					me.options.spectrum.beforeShow(color);
+				if(me.options.spectrum && me.options.spectrum.beforeShow) me.options.spectrum.beforeShow(color);
 			};
 
 			if( !spectrumOptions.autoHide  ){
@@ -4043,7 +4043,6 @@ var Field_ToggleableText = Field_Text.extend({
 				me.$(".sp-container").append("<div class='color_picker_rgb_container'></div>");
 				me.update_input_border_color(me.get_saved_value());
 
-
 				me.$(".sp-container").find(".sp-choose").on("click.spectrum", function(e){
 					if(me.options.spectrum && me.options.spectrum.choose && me.color)
 						me.options.spectrum.choose(me.color);
@@ -4055,7 +4054,20 @@ var Field_ToggleableText = Field_Text.extend({
 				});
 			});
 
+		},
 
+		render: function () {
+			Field_Color.__super__.render.apply(this, arguments);
+			// Re-bind debounced listeners for theme color updates
+			this.stopListening(Upfront.Events, "theme_colors:update");
+			var cback = _.debounce(this.update_palette, 200);
+			this.listenTo(Upfront.Events, "theme_colors:update", cback, this);
+		},
+
+		update_palette: function () {
+			if (this.$spectrum && this.$spectrum.spectrum) {
+				this.$spectrum.spectrum("option", "palette", Theme_Colors.colors.pluck("color").length ? Theme_Colors.colors.pluck("color") : []);
+			}
 		},
 
 		is_hex : function(color_code){
@@ -4151,7 +4163,10 @@ var Field_ToggleableText = Field_Text.extend({
 			return this.$el.find(".sp-preview-inner").css('background-color');
 		},
 		set_value : function(rgba) {
-			this.$spectrum.spectrum("set", rgba );
+			if (Upfront.Util.colors.is_theme_color(rgba)) rgba = Upfront.Util.colors.get_color(rgba);
+			var color = tinycolor(rgba);
+			this.color = color;
+			this.$spectrum.spectrum("set", color );
 		}
 
 	});
@@ -9013,6 +9028,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				this.add_panel_left = new RegionPanel_Add({model: this.model, to: 'left'});
 				this.add_panel_right = new RegionPanel_Add({model: this.model, to: 'right'});
 			}
+			//this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors);
+			//this.listenTo(Upfront.Events, "entity:region:after_render", this.update_colors);
 		},
 		panels: function () {
 			var panels = _([]),
@@ -9061,6 +9078,19 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		on_region_deactive: function () {
 			$(window).off('scroll', this, this.on_scroll);
 		},
+		/*
+		update_colors: function () {
+			var $region = [],
+				background = this.model.get_property_value_by_name("background_color")
+			;
+			if (!background || !background.match(/ufc/)) return false;
+
+			$region = this.$el.closest('.upfront-region-container-bg');
+			if (!$region.length) return false;
+
+			$region.css("background-color", Upfront.Util.colors.get_color(background));
+		},
+		*/
 		update_pos: function () {
 			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
 				$region = this.$el.closest('.upfront-region-container');

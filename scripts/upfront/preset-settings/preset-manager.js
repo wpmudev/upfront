@@ -60,15 +60,16 @@ define([
 
 		updatePreset: function(properties) {
 			var index,
-				css = Util.generateCss(properties, this.styleTpl),
+				//css = Util.generateCss(properties, this.styleTpl),
 				styleElementId;
-
+/* // Note: killed, because we already do this in Util
 			styleElementId = this.styleElementPrefix + '-' + properties.id;
 			if ($('style#' + styleElementId).length === 0) {
 				$('body').append('<style id="' + styleElementId + '"></style>');
 			}
 			$('style#' + styleElementId).text(css);
-
+*/
+			Util.updatePresetStyle(this.styleElementPrefix.replace(/-preset/, ''), properties, this.styleTpl);
 			Upfront.Util.post({
 				action: 'upfront_save_' + this.ajaxActionSlug + '_preset',
 				data: properties
