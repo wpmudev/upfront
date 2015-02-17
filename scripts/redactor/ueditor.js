@@ -93,7 +93,7 @@ var hackRedactor = function(){
 	$.Redactor.prototype.airShow = function (e, keyboard)
     {
     	//TODO Gagan: "I have taken out the condition that checks for contenteditable attribute, as it blocks the air bar on nav items and cta button" <-- u wrote it to me, plz check if u're fine now
-        if( $(e.target).parents().is(".uimage-control-panel") || $(e.target).is(".upfront-icon") || $(e.target).is(".upfront-icon-button") || ( !_.isUndefined(e.target.contentEditable) && e.target.contentEditable === "false" )) return;
+        if( $(e.target).parents().is(".uimage-control-panel") || $(e.target).is(".upfront-icon") || $(e.target).is(".upfront-icon-button") || ( !_.isUndefined(e.target.contentEditable) && e.target.contentEditable === "false" ) || $(e.target).closest(".redactor-editor").attr("contentEditable") === "false" ) return;
         //if( $(e.target).parents().is(".uimage-control-panel") || $(e.target).is(".upfront-icon") || $(e.target).is(".upfront-icon-button")) return;
 
         if (!this.opts.air || !( this.opts.buttons.length || this.opts.airButtons.length ) || !this.$toolbar) return;
@@ -225,6 +225,7 @@ var Ueditor = function($el, options) {
             replaceDivs: false,
             pastePlainText: false,
 			imageEditable: false,
+            replaceDivs: false,
             //cleanStyleOnEnter: false,
             //removeDataAttr: false,
             removeEmpty: false
@@ -248,7 +249,7 @@ var Ueditor = function($el, options) {
 	this.options.autosaveCallback = function () { UeditorEvents.trigger("ueditor:autosave", this); };
 	this.options.execCommandCallback = function (cmd, param) { UeditorEvents.trigger("ueditor:exec:" + cmd, this, param); }; // Do we need this? Yes, restore inserts on undo
 	this.options.destroyCallback = function () { UeditorEvents.trigger("ueditor:destroy", this); };
-	this.options.clickCallback = function () { UeditorEvents.trigger("ueditor:click", this); };
+	this.options.clickCallback = function (e) { UeditorEvents.trigger("ueditor:click", this, e); };
 	// Also available ueditor events (not redactor callbacks:
 		// ueditor:start
 		// ueditor:stop
