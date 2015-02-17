@@ -343,8 +343,6 @@ class Upfront_Virtual_Region {
 		$properties = array();
 		if(isset($options['id']) && !empty($options['id']))
 			$properties['element_id'] = $options['id'];
-		if(isset($options['breakpoint']) && !empty($options['breakpoint']))
-			$properties['breakpoint'] = $options['breakpoint'];
 		if(!isset($options['close_wrapper']))
 			$options['close_wrapper'] = true;
 		if(!isset($options['new_line']))
@@ -367,6 +365,10 @@ class Upfront_Virtual_Region {
 				$wrapper_props['breakpoint'] = $options['wrapper_breakpoint'];
 			$this->start_wrapper($options['wrapper_id'], $options['new_line'], $wrapper_props);
 		}
+        foreach ($options as $option => $value) {
+            if ( !in_array($option, array('id', 'close_wrapper', 'new_line', 'columns', 'margin_left', 'margin_top', 'margin_right', 'margin_bottom', 'wrapper_breakpoint')) )
+               $properties[$option] = $value;
+        }
 
 		$this->start_module_group($position, $properties);
 		$group_id = $this->current_group;

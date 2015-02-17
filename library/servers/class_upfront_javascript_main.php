@@ -60,6 +60,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			"objects" => "scripts/upfront/upfront-objects",
 			"media" => "scripts/upfront/upfront-media",
 			"content" => "scripts/upfront/upfront-content",
+            "bg-settings" => "scripts/upfront/bg-settings/bg-settings",
 			"spectrum" => "scripts/spectrum/spectrum",
 			"responsive" => "scripts/responsive",
 			"redactor_plugins" => 'scripts/redactor/plugins',

@@ -138,6 +138,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		// Set up behavior
 		this.listenTo(Upfront.Events, "entity:module:after_render", Upfront.Behaviors.GridEditor.create_resizable);
 		this.listenTo(Upfront.Events, "entity:module:after_render", Upfront.Behaviors.GridEditor.create_draggable);
+		this.listenTo(Upfront.Events, "entity:module_group:after_render", Upfront.Behaviors.GridEditor.create_resizable);
 		this.listenTo(Upfront.Events, "entity:module_group:after_render", Upfront.Behaviors.GridEditor.create_draggable);
 		// Enable resizables and draggables
 		//Upfront.Behaviors.GridEditor.toggle_resizables(true);
@@ -261,23 +262,26 @@ var LayoutEditorSubapplication = Subapplication.extend({
 
 		//context_menu_view.trigger('closed');
 	},
-	create_settings: function (view) {
+	create_settings: function (view, settings_obj_view) {
 		if (this.settings_view) return this.destroy_settings();
 		if (!parseInt(view.model.get_property_value_by_name("has_settings"), 10)) return false;
-		var current_object = _(this.Objects).reduce(function (obj, current) {
-				if(view instanceof current.View){
-					console.log(obj + ' ' + current);
-					return current;
-				}
-				return obj;
-			}, false),
-			current_object = (current_object && current_object.Settings ? current_object : Upfront.Views.Editor.Settings)
-			settings_view = new current_object.Settings({
+		if ( !settings_obj_view ) {
+			var current_object = _(this.Objects).reduce(function (obj, current) {
+					if(view instanceof current.View){
+						console.log(obj + ' ' + current);
+						return current;
+					}
+					return obj;
+				}, false),
+				current_object = (current_object && current_object.Settings ? current_object : Upfront.Views.Editor.Settings),
+				settings_obj_view = current_object.Settings;
+			;
+		}
+		var settings_view = new settings_obj_view({
 				model: view.model,
-				anchor: current_object.anchor,
+				anchor: ( current_object ? current_object.anchor : false ),
 				el: $(Upfront.Settings.LayoutEditor.Selectors.settings)
 			})
-		;
 		settings_view.for_view = view;
 		settings_view.render();
 		this.settings_view = settings_view;
@@ -1211,7 +1215,7 @@ var Application = new (Backbone.Router.extend({
 		app.create_sidebar();
 
 		require(
-			["objects", 'media', 'content', 'spectrum', 'responsive', "uaccordion", 'redactor', 'ueditor', 'utext', "ucomment", "ucontact", "ugallery", "uimage", "upfront-like-box", "upfront_login", "upfront_maps", "unewnavigation", "ubutton", "uposts", "usearch", "upfront_slider", "upfront-social_media", "utabs", "this_post", "this_page", "uwidget", "uyoutube", "upfront_code"],
+			["objects", 'media', 'content', 'bg-settings', 'spectrum', 'responsive', "uaccordion", 'redactor', 'ueditor', 'utext', "ucomment", "ucontact", "ugallery", "uimage", "upfront-like-box", "upfront_login", "upfront_maps", "unewnavigation", "ubutton", "uposts", "usearch", "upfront_slider", "upfront-social_media", "utabs", "this_post", "this_page", "uwidget", "uyoutube", "upfront_code"],
 			function (objects) {
 				app.currentUrl = window.location.pathname + window.location.search;
 				app.saveCache = true;

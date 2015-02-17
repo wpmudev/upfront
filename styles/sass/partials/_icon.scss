@@ -447,7 +447,7 @@
 .upfront-field-select-single .upfront-field-select-option-selected label:before {
 	width: 11px;
 	height: 8px;
-	margin: 7px 5px 0 0;
+	margin: 7px 12px 0 -5px;
 	background-position: -46px -354px;
 }
 .region-lock-switch:before {
@@ -913,7 +913,7 @@ i.upfront-field-icon-burger-trigger {
 	visibility: hidden;
 	margin: 0 0 4px;
 }
-.upfront-editable_entity:hover .upfront-entity_meta .upfront-icon-button{
+.upfront-editable_entity:hover > .upfront-entity_meta .upfront-icon-button{
     opacity: 1;
 	visibility: visible;
 }

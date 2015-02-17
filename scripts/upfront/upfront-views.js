@@ -8,6 +8,7 @@ var l10n = Upfront.Settings && Upfront.Settings.l10n
 define([
 	"text!upfront/templates/object.html",
 	"text!upfront/templates/module.html",
+	"text!upfront/templates/module_group.html",
 	"text!upfront/templates/region_container.html",
 	"text!upfront/templates/region.html",
 	"text!upfront/templates/layout.html",
@@ -15,6 +16,7 @@ define([
   var _template_files = [
     "text!upfront/templates/object.html",
     "text!upfront/templates/module.html",
+    "text!upfront/templates/module_group.html",
     "text!upfront/templates/region_container.html",
     "text!upfront/templates/region.html",
     "text!upfront/templates/layout.html",
@@ -359,9 +361,11 @@ define([
 							var images = response.data.images;
 							// Rewrite slide images because in builder mode they will be just paths of theme images
 							// and slider needs image objects to work.
-							slide_images = images;
+							//slide_images = images;
 							_.each(slide_images, function(id){
-								var image = _.isObject(id) ? id : images[id],
+								var image = _.isNumber(id) || id.match(/^\d+$/) ? images[id] : _.find(images, function(img){
+										return img.full[0].split(/[\\/]/).pop() == id.split(/[\\/]/).pop();
+									}),
 									$image = $('<div class="upfront-default-slider-item" />');
 								if (image && image.full) $image.append('<img src="' + image.full[0] + '" />');
 								$type.append($image);
@@ -1444,9 +1448,10 @@ define([
 		}),
 
 		ModuleGroup = _Upfront_EditableEntity.extend({
-			className: "upfront-module-group",
+			className: "upfront-editable_entity upfront-module-group",
 			id: function(){ return this.model.get_property_value_by_name('element_id'); },
 			events: {
+				"click > .upfront-entity_meta > a.upfront-entity-settings_trigger": "on_settings_click",
 				"click > .upfront-module-group-toggle-container > .upfront-module-group-ungroup": "on_ungroup",
 				"click > .upfront-module-group-toggle-container > .upfront-module-group-reorder": "on_reorder",
 				"click > .upfront-module-group-toggle-container > .upfront-module-group-edit": "on_edit",
@@ -1458,22 +1463,25 @@ define([
 				this.listenTo(this.model.get("properties"), 'add', callback);
 				this.listenTo(this.model.get("properties"), 'remove', callback);
 				this._prev_class = this.model.get_property_value_by_name('class');
+				
+				this.listenTo(Upfront.Events, 'layout:after_render', this.refresh_background);
 
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 				this.listenTo(Upfront.Events, "command:module_group:finish_edit", this.on_finish);
 			},
 			render: function () {
-				var $edit = $('<div class="upfront-module-group-toggle-container upfront-module-group-toggle-edit-container"><div class="upfront-module-group-toggle upfront-module-group-ungroup">' + l10n.ungroup + '</div><div class="upfront-module-group-toggle upfront-module-group-edit">' + l10n.edit_elements + '</div></div>'),
-					$reorder = $('<div class="upfront-module-group-toggle-container upfront-module-group-toggle-reorder-container"><div class="upfront-module-group-toggle upfront-module-group-reorder">' + l10n.reorder + '</div></div>'),
-					$finish = $('<div class="upfront-module-group-finish-edit upfront-ui"><i class="upfront-field-icon upfront-field-icon-tick"></i> ' + l10n.done + '</div>'),
-					$border = $('<div class="upfront-selected-border"></div>');
+				var props = {},
+					run = this.model.get("properties").each(function (prop) {
+						props[prop.get("name")] = prop.get("value");
+					}),
+					height = ( props.row ) ? props.row * Upfront.Settings.LayoutEditor.Grid.baseline : 0,
+					model = _.extend(this.model.toJSON(), {"properties": props, "height": height}),
+					template = _.template(_Upfront_Templates["module_group"], model);
 
 				Upfront.Events.trigger("entity:module_group:before_render", this, this.model);
 
-				this.$el.append($border);
-				this.$el.append($edit);
-				this.$el.append($reorder);
-				this.$el.append($finish);
+				this.$el.html(template);
+				this.$bg = this.$el.find('.upfront-module-group-bg');
 				this.update();
 				var local_view = this._modules_view || new Modules({"model": this.model.get("modules")});
 				local_view.region_view = this.region_view;
@@ -1489,10 +1497,18 @@ define([
 					this._modules_view.delegateEvents();
 			},
 			update: function () {
-				var prop_class = this.model.get_property_value_by_name('class');
+				var prop_class = this.model.get_property_value_by_name('class'),
+					row = this.model.get_property_value_by_name('row'),
+					use_padding = this.model.get_breakpoint_property_value('use_padding', true),
+					grid = Upfront.Settings.LayoutEditor.Grid;
 				this.$el.removeClass(this._prev_class).addClass(prop_class);
 				this._prev_class = prop_class;
+				this.$el.css('min-height', (row*grid.baseline) + 'px').attr('data-row', row);
+				
+				this.$bg.toggleClass('upfront-module-group-bg-padding', use_padding ? true : false);
+				
 				this.update_position();
+				this.update_background();
 			},
 			update_position: function () {
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
@@ -1544,6 +1560,16 @@ define([
 					this.$el.removeData('breakpoint_row');
 				}
 				Upfront.Events.trigger('entity:module_group:update_position', this, this.model);
+			},
+			on_settings_click: function (e) {
+				if( typeof e !== "undefined" ){
+					e.preventDefault();
+				}
+				var BgSettings = Upfront.Views.Editor.BgSettings.Settings.extend({
+					bg_title: "Elements Group Settings",
+					enable_types: ['color', 'image'/*, 'slider', 'video', 'map'*/]
+				});
+				Upfront.Events.trigger("entity:settings:activate", this, BgSettings);
 			},
 			on_ungroup: function () {
 				var ed = Upfront.Behaviors.GridEditor,
@@ -1709,6 +1735,7 @@ define([
 					this.$el.removeClass('upfront-module-group-reorder-mode');
 				}
 				this.update_position();
+				this.update_background();
 			},
 			remove: function(){
 				if(this._modules_view)
@@ -4250,6 +4277,7 @@ define([
 				styles.push(selector + ' .upfront-object { padding: ' + grid.column_padding + 'px; }');
 				styles.push(selector + ' .upfront-overlay-grid {background-size: 100% ' + grid.baseline + 'px; }');
 				styles.push(selector + ' .plaintxt_padding {padding: ' + grid.type_padding + 'px; }');
+				styles.push(selector + ' .upfront-module-group-bg-padding { margin: ' + grid.column_padding + 'px; }');
 
 				if ( $('#upfront-grid-style-inline').length )
 					$('#upfront-grid-style-inline').html( styles.join("\n") );

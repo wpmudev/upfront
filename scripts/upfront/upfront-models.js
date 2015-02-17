@@ -274,6 +274,8 @@ var _alpha = "alpha",
 				;
 				this.set("properties", args[0]["properties"]);
 			} else this.set("properties", new Properties([]));
+			
+			this.init_property('has_settings', 1);
 			if (this.init) this.init();
 		}
 	}),

@@ -2533,7 +2533,8 @@ var GridEditor = {
 	create_resizable: function(view, model){
 		var app = this,
 			ed = Upfront.Behaviors.GridEditor,
-			$me = view.$el.find('.upfront-editable_entity:first'),
+			is_group = view.$el.hasClass('upfront-module-group'),
+			$me = is_group ? view.$el : view.$el.find('.upfront-editable_entity:first'),
 			is_parent_group = ( typeof view.group_view != 'undefined' ),
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
 			$layout = $main.find('.upfront-layout'),
@@ -2669,8 +2670,8 @@ var GridEditor = {
 				});
 				if(axis == 'nw') {
 					$resize.css({
-						top: me.$el.find('.upfront-resize-handle-nw').offset().top,
-						marginTop: me.$el.find('.upfront-resize-handle-se').offset().top+me.$el.find('.upfront-resize-handle-se').height()-me.$el.find('.upfront-resize-handle-nw').offset().top-rsz_row*ed.baseline
+						top: me.$el.find('>.upfront-resize-handle-nw').offset().top,
+						marginTop: me.$el.find('>.upfront-resize-handle-se').offset().top+me.$el.find('>.upfront-resize-handle-se').height()-me.$el.find('>.upfront-resize-handle-nw').offset().top-rsz_row*ed.baseline
 					});
 				}
 				if ( !expand_lock && axis != 'nw' )
