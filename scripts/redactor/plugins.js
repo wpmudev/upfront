@@ -1122,21 +1122,34 @@ RedactorPlugins.upfrontColor = function() {
                     class_set = function( cls ){
                         self.redactor.inline.format('div', 'class', cls);
                     },
-                    color_set = function(rule, value) {
-                        // OVERLY SIMPLISTIC AND DOESN'T WORK!
-                        //self.redactor.inline.format('div', 'style', rule + ': ' + value + ';');
-                        //return;
+                    color_set = function(rule, raw_value) {
+                       var theme_color = false, cls = false;
+                       if (raw_value.is_theme_color) {
+                           cls = Upfront.Views.Theme_Colors.colors.get_css_class(raw_value, !!rule.match(/background/));
+                           if (!cls) theme_color = raw_value.theme_color;
+                       } else {
+                           theme_color = raw_value.toRgbString();
+                       }
 
-                        // Use this instead:
-                        var wrapper = document.createElement("span");
-                        wrapper.appendChild(self.redactor.range.extractContents());
-                        self.redactor.range.insertNode(wrapper);
-                        $(wrapper).attr("style", rule + ":" + value);
-                        //self.redactor.selection.wrap("span");
-                        //self.redactor.inline.format('div', 'style', rule + ': ' + type + ';');
-                        self.redactor.selection.restore();
-                        self.redactor.code.sync();
-                    },
+                       //self.redactor.inline.format('div', 'style', rule + ': ' + value + '/*' + theme_color + '*/' + ';');
+                       //return;
+                       var wrapper = document.createElement("span");
+                       wrapper.appendChild(self.redactor.range.extractContents());
+                       self.redactor.range.insertNode(wrapper);
+                       if (cls) {
+                           $(wrapper)
+                               .addClass(cls)
+                           ;
+                       } else if (!!theme_color) {
+                           $(wrapper)
+                               .attr("style", rule + ':' + theme_color) // use color otherwise
+                           ;
+                       }
+                       //self.redactor.selection.wrap("span");
+                       //self.redactor.inline.format('div', 'style', rule + ': ' + type + ';');
+                       self.redactor.selection.restore();
+                       self.redactor.code.sync();
+                   },
                     color_remove = function(rule)
                     {
                         //self.redactor.inline.removeStyleRule(rule);
