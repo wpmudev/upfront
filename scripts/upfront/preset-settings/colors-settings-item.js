@@ -49,8 +49,9 @@ define(function() {
 			//console.log(this.model.get('active-header-bg-color'));
 
 			this.fields.each( function (field) {
-				//console.log(field.name);
-                field.update_input_border_color(me.model.get(field.name));
+				var color = me.model.get(field.name);
+				field.set_value(color);
+                field.update_input_border_color(Upfront.Util.colors.to_color_value(color));
             });
 		}
 	});
