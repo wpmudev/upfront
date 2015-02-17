@@ -35,7 +35,8 @@ var l10n = Upfront.Settings && Upfront.Settings.l10n
 
 define([
 	"chosen",
-	"scripts/upfront/inline-panels/inline-panels", // If adding more arguments adjust _.rest in line 35
+	"scripts/upfront/global-event-handlers",
+	"scripts/upfront/inline-panels/inline-panels", // If adding more arguments adjust _.rest in line 67
 	"text!upfront/templates/property.html",
 	"text!upfront/templates/properties.html",
 	"text!upfront/templates/property_edit.html",
@@ -47,7 +48,7 @@ define([
 	"text!upfront/templates/region_edit_panel.html",
 	"text!upfront/templates/sidebar_settings_theme_colors.html",
 	"text!upfront/templates/color_picker.html",
-], function (chosen, InlinePanelsLoader) {
+], function (chosen, globalEventHandlers, InlinePanelsLoader) {
 	var _template_files = [
 		"text!upfront/templates/property.html",
 		"text!upfront/templates/properties.html",
@@ -63,7 +64,7 @@ define([
 	];
 
 	// Auto-assign the template contents to internal variable
-	var _template_args = _.rest(arguments, 2),
+	var _template_args = _.rest(arguments, 3),
 		_Upfront_Templates = {}
 	;
 	_(_template_files).each(function (file, idx) {
@@ -2392,7 +2393,7 @@ define([
 				if (!Upfront.Settings.Application.NO_SAVE && current_app !== MODE.THEME) {
 					this.commands.push(new Command_ResetEverything({"model": this.model}));
 				}
-				if (current_app !== MODE.THEME) this.commands.push(new Command_ToggleMode({"model": this.model}));
+				//if (current_app !== MODE.THEME) this.commands.push(new Command_ToggleMode({"model": this.model}));
 				if (!Upfront.Settings.Application.DEBUG && current_app !== MODE.THEME && !Upfront.Settings.Application.NO_SAVE) {
 					this.commands.push(new Command_PublishLayout({"model": this.model}));
 				}
@@ -2406,8 +2407,8 @@ define([
 			this.commands = _([
 				new Command_Logo({"model": this.model}),
 			]);
-			if ( !Upfront.Settings.Application.NO_SAVE )
-				this.commands.push(new Command_Exit({"model": this.model}));
+			//if ( !Upfront.Settings.Application.NO_SAVE ) this.commands.push(new Command_Exit({"model": this.model}));
+			this.commands.push(new Command_Exit({"model": this.model})); // *Always* show exit
 		}
 	});
 
@@ -2474,9 +2475,10 @@ define([
 		className: "sidebar-profile",
 		render: function () {
 			var user = Upfront.data.currentUser;
-			if ( !user ) return;
+			if ( !user ) user = new Backbone.Model();
 			var data = user.get('data') || {},
-				roles = user.get('roles');
+				roles = user.get('roles') || []
+			;
 			this.$el.html(_.template(
 				'<div class="sidebar-profile-avatar"><img src="http://www.gravatar.com/avatar/{{gravatar}}?s=26" /></div>' +
 				'<div class="sidebar-profile-detail"><span class="sidebar-profile-name">{{name}}</span><span class="sidebar-profile-role">{{role}}</span></div>' +
@@ -7391,7 +7393,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			this.deferred = $.Deferred();
 
 			this.posts = new Upfront.Collections.PostList([], {postType: 'page'});
-			
+
 			this.posts.pagination.pageSize = 20;
 			this.pagination = new PostSelectorNavigation({
 				collection: this.posts,
@@ -7412,7 +7414,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				.append(this.pagination.$el)
 			;
 			$('#upfront-popup').addClass('upfront-postselector-popup');
-			
+
 			this.$('.upfront-field-select-value').text(l10n.pages);
 			return this.deferred.promise();
 		},
@@ -10504,13 +10506,6 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		setCurrentClass: function(type) {
 			this.$el.attr('class', 'ulinkpanel ulinkpanel-' + this.theme + ' ulinkpanel-selected-' + type);
 		}
-	});
-
-	/**
-	 * Global event handlers
-	 */
-	$('body').on('mouseup', function() {
-		$('.upfront-field-select').removeClass('upfront-field-select-expanded');
 	});
 
 	return {

@@ -166,15 +166,33 @@ class Upfront_Ajax extends Upfront_Server {
 			$parsed = true;
 		}
 
-		/*
+		// Start by nulling out the layout
+		$layout = false;
+
+		// Check if we're to inherit a layout from a page template
 		if (!empty($_POST['use_existing'])) {
-			// Resolve existing page template
-			// to a layout
-		} else {
+			// Resolve existing page template to a layout
+			$tpl = preg_replace('/page_tpl-(.*)\.php/', '\1', $_POST['use_existing']);
+			$theme = Upfront_ChildTheme::get_instance();
+			if (!empty($tpl) && !empty($theme->themeSettings)) {
+				$required_pages = $theme->themeSettings->get('required_pages');
+				if (!empty($required_pages)) $required_pages = json_decode($required_pages, true);
+				$specificity = !empty($required_pages[$tpl]['layout']) ? $required_pages[$tpl]['layout'] : false;
+				if (!empty($specificity)) {
+					$template_layout = Upfront_Layout::from_entity_ids(array('specificity' => $specificity));
+					if (!empty($template_layout) && !$template_layout->is_empty()) {
+						$layout = $template_layout;
+						$layout->set('layout', $layout_ids);
+						$layout->set('current_layout', $layout_ids['specificity']);
+					}
+				}
+			}
+		}
+
+		// If we still don't have a template set, make one up
+		if (empty($layout)) {
 			$layout = Upfront_Layout::create_layout($layout_ids, $layout_slug);
 		}
-		*/
-		$layout = Upfront_Layout::create_layout($layout_ids, $layout_slug);
 
 		global $post, $upfront_ajax_query;
 

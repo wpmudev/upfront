@@ -391,7 +391,7 @@
 			</div>
 			{[ }); ]}
 		</div>
-		{[ if(Upfront.themeExporter) { ]}
+		{[ if(Upfront.themeExporter && location.pathname.match(/\/create_new\/theme/) === null) { ]}
 		<div class="upload-icon-font">Upload Icon Font</div>
 		<form style="display: none" id="upfront-upload-icon-font" name="upfront-upload-icon-font" enctype="multipart/form-data" method="post" action="{{url}}" data-url="{{url}}?action=upfront-upload-icon-font">
 			<input type="file" name="media" id="upfront-icon-font-input">

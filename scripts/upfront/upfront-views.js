@@ -1220,6 +1220,7 @@ define([
 				this.on('region:updated', this.on_region_update, this);
 
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
+				this.listenTo(Upfront.Events, "entity:wrapper:update_position", this.on_wrapper_update);
 			},
 			render: function () {
 				var props = {},
@@ -1335,12 +1336,8 @@ define([
 					this.$el.css('order', '');
 					$module.removeData('breakpoint_order');
 				}
-				// update position again if there's sibling, to call after wrapper updated position
-				if ( has_sibling ){
-					setTimeout(function(){
-						me.update_position();
-					}, 100);
-				}
+				Upfront.Events.trigger('entity:module:update_position', this, this.model);
+				
 			},
 			render_object: function () {
 				var objects_view = this._objects_view || new Objects({"model": this.model.get("objects")});
@@ -1406,6 +1403,11 @@ define([
 					this.disable_interaction(true, true, false, false, true);
 				else
 					this.enable_interaction(true);
+			},
+			on_wrapper_update: function (wrapper, wrapper_model) {
+				if ( wrapper_model.get_wrapper_id() != this.model.get_wrapper_id() )
+					return;
+				this.update_position();
 			},
 			on_change_breakpoint: function (breakpoint) {
 				var $delete = this.$el.find('.upfront-module > .upfront-entity_meta > a.upfront-entity-delete_trigger'),
@@ -1541,6 +1543,7 @@ define([
 					this.$el.css('min-height', (row*grid.baseline) + 'px');
 					this.$el.removeData('breakpoint_row');
 				}
+				Upfront.Events.trigger('entity:module_group:update_position', this, this.model);
 			},
 			on_ungroup: function () {
 				var ed = Upfront.Behaviors.GridEditor,
@@ -1744,7 +1747,9 @@ define([
 				this.listenTo(Upfront.Events, "entity:drag_stop", this.apply_adapt_to_breakpoints);
 				this.listenTo(Upfront.Events, "entity:resized", this.apply_flexbox_clear);
 				this.listenTo(Upfront.Events, "entity:resized", this.apply_adapt_to_breakpoints);
-				this.listenTo(Upfront.Events, "entity:wrappers:update", this.apply_flexbox_clear);
+				this.listenTo(Upfront.Events, "entity:wrappers:update", this.on_wrappers_update);
+				this.listenTo(Upfront.Events, "entity:module_group:group", this.reset_breakpoints);
+				this.listenTo(Upfront.Events, "entity:module_group:ungroup", this.reset_breakpoints);
 				this.listenTo(Upfront.Events, "layout:render", this.on_after_layout_render);
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 			},
@@ -1867,6 +1872,17 @@ define([
 				}
 				Upfront.Events.trigger('entity:modules:render_module', local_view, local_view.model, this, this.model);
 			},
+			on_wrappers_update: function (parent_model) {
+				if ( _.isObject(parent_model) && parent_model.get('modules') != this.model )
+					return;
+				this.model.each(function(module){
+					var local_view = Upfront.data.module_views[module.cid];
+					if ( ! local_view )
+						return;
+					local_view.update_position();
+				});
+				this.apply_flexbox_clear();
+			},
 			on_add: function (model, collection, options) {
 				this.current_wrapper_id = this.current_wrapper_el = null;
 				this.render_module(model, options);
@@ -1921,10 +1937,25 @@ define([
 					var breakpoint = each.toJSON();
 					if ( breakpoint.default )
 						return;
-					var group_col = is_group ? ed.get_class_num(me.group_view.$el, ed.grid.class) : breakpoint.columns,
-						col = is_group ? group_col : breakpoint.columns;
+					if ( is_group ) {
+						var group_col = ed.get_class_num(me.group_view.$el, ed.grid.class),
+							breakpoint_data = me.group_view.model.get_property_value_by_name('breakpoint');
+						if ( _.isObject(breakpoint_data) && _.isObject(breakpoint_data[breakpoint.id]) && !_.isUndefined(breakpoint_data[breakpoint.id].col) )
+							group_col = breakpoint_data[breakpoint.id].col;
+					}
+					var col = is_group ? group_col : breakpoint.columns;
 					ed.adapt_to_breakpoint(me.model, wrappers, breakpoint.id, col, true);
 				});
+			},
+			reset_breakpoints: function () {
+				this.model.each(function(module){
+					var breakpoint = Upfront.Util.clone( module.get_property_value_by_name('breakpoint') || {} );
+					_.each(breakpoint, function(data, id){
+						breakpoint[id].edited = false;
+					});
+					module.set_property('breakpoint', breakpoint, true);
+				});
+				this.apply_adapt_to_breakpoints();
 			},
 			on_change_breakpoint: function (breakpoint) {
 				var me = this;
@@ -4052,6 +4083,7 @@ define([
 					this.$el.data('breakpoint_clear', breakpoint_data.clear);
 				else
 					this.$el.removeData('breakpoint_clear');
+				Upfront.Events.trigger('entity:wrapper:update_position', this, this.model);
 
 			},
 			render: function () {

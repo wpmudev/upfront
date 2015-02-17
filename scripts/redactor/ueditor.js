@@ -92,9 +92,9 @@ var hackRedactor = function(){
 	//Change the position of the air toolbar
 	$.Redactor.prototype.airShow = function (e, keyboard)
     {
-    	//TODO Sam: I have taken out the condition that checks for contenteditable attribute, as it blocks the air bar on nav items and cta button
-        //if( $(e.target).parents().is(".uimage-control-panel") || $(e.target).is(".upfront-icon") || $(e.target).is(".upfront-icon-button") || ( !_.isUndefined(e.target.contentEditable) && e.target.contentEditable === "true" )) return;
-        if( $(e.target).parents().is(".uimage-control-panel") || $(e.target).is(".upfront-icon") || $(e.target).is(".upfront-icon-button")) return;
+    	//TODO Gagan: "I have taken out the condition that checks for contenteditable attribute, as it blocks the air bar on nav items and cta button" <-- u wrote it to me, plz check if u're fine now
+        if( $(e.target).parents().is(".uimage-control-panel") || $(e.target).is(".upfront-icon") || $(e.target).is(".upfront-icon-button") || ( !_.isUndefined(e.target.contentEditable) && e.target.contentEditable === "false" )) return;
+        //if( $(e.target).parents().is(".uimage-control-panel") || $(e.target).is(".upfront-icon") || $(e.target).is(".upfront-icon-button")) return;
 
         if (!this.opts.air || !( this.opts.buttons.length || this.opts.airButtons.length ) || !this.$toolbar) return;
 
@@ -224,6 +224,7 @@ var Ueditor = function($el, options) {
             cleanOnPaste: true, // font icons copy and paste wont work without this set to true - BUT, with it set to true, paste won't work AT ALL!!!
             replaceDivs: false,
             pastePlainText: false,
+			imageEditable: false,
             //cleanStyleOnEnter: false,
             //removeDataAttr: false,
             removeEmpty: false
@@ -507,6 +508,7 @@ Ueditor.prototype = {
 		this.redactorEvents = redactorEvents;
 		manager.on('insert:added insert:removed', function(){
 			me.redactor.events.trigger("ueditor:insert:media");
+			if (me.redactor.code && me.redactor.code.sync) me.redactor.code.sync();
 		});
 		UeditorEvents.on( 'cleanUpListeners', $.proxy(this.cleanUpListeners, this));
 	},
@@ -739,8 +741,13 @@ var InsertManagerInserts = Backbone.View.extend({
                 //this.trigger('insert:prechange'); // "this" is the embedded image object
                 //self.trigger('insert:prechange'); // "self" is the view
                 //Create the insert
-                insert.render();
-                self.$block.replaceWith(insert.$el);
+                //insert.render();
+                if( self.is_last_p() ){
+					self.$block.before(insert.$el);
+                }else{
+					self.$block.replaceWith(insert.$el);
+				}
+
                 self.$block.prev("br").remove();
                 //self.trigger('insert:added', insert);
                 self.insertsData[insert.data.id] = insert.data.toJSON();
@@ -757,7 +764,11 @@ var InsertManagerInserts = Backbone.View.extend({
                 self.listenTo(insert, 'remove', self.onRemoveInsert);
             })
         ;
-    }
+    },
+	is_last_p: function(  ){
+		var $ps = this.redactor.$element.find("p");
+		return _.indexOf( $ps, this.$block[0] ) === ( $ps.length - 1 );
+	}
 
 });
 var InsertManager = Backbone.View.extend({
@@ -798,8 +809,9 @@ var InsertManager = Backbone.View.extend({
     },
     position_tooltips: function(redactor){
         var $current = $( redactor.selection.getCurrent());
-        if( $current.html() === "<br>" ){
-            var css = _.extend( $current.position(), { marginLeft: $current.css("padding-left") } );
+        if( this.show_tooltip_in_this_location( redactor ) ){
+			if( typeof $current[0] === "undefined" || !_.isElement($current[0]) ) return;
+            var css = _.extend( $current.position(), { marginLeft: _.isArray($current) && _.isElement($current[0]) ?   $current.css("padding-left") : 0 } );
             this.$tooltips.css( css );
             this.$tooltips.show();
             UeditorEvents.trigger("ueditor:insert:relocate", $current);
@@ -991,6 +1003,27 @@ var InsertManager = Backbone.View.extend({
 				if(ui.item.css('float') != 'none')
 					ui.helper.css({marginTop: e.offsetY});
 			});
+	},
+	show_tooltip_in_this_location: function(redactor){
+		var $block = $( redactor.selection.getCurrent());
+
+		if(_.isEmpty( $block ) ) return false;
+
+		var $image_insert_wrappers = $(".upfront-inserted_image-wrapper"),
+			block_top = $block.offset().top,
+			show_tooltip = true;
+
+		$image_insert_wrappers.each(function(){
+			var $this = $(this),
+				height = $this.find(".ueditor-insert-variant-group").height(),
+				top = $this.offset().top;
+			if( block_top <= ( height + top + 20) && block_top >= ( top - 5)  ){
+				show_tooltip = false;
+			}
+		});
+		return 	show_tooltip
+				&& 	$block.closest(".ueditor-insert").length === 0
+				&&  ( $.trim( $block.html() ) === "<br>" || ( typeof $block.closest("p.nosortable").html() !== "undefined" &&  $.trim( $block.closest("p.nosortable").html() ) === "" ) ) ;
 	}
 });
 

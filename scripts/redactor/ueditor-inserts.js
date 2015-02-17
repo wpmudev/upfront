@@ -296,7 +296,7 @@ var UeditorInsert = Backbone.View.extend({
 var ImageInsert = UeditorInsert.extend({
     caption_active: false,
 	type: 'image',
-	className: 'ueditor-insert upfront-inserted_image-wrapper',
+	className: 'ueditor-insert upfront-inserted_image-wrapper ueditor-insert-variant',
 	tpl: _.template($(tpls).find('#image-insert-tpl').html()),
 	resizable: false,
 	defaultData: {
@@ -307,9 +307,40 @@ var ImageInsert = UeditorInsert.extend({
 		linkType: 'do_nothing',
 		linkUrl: '',
 		isLocal: 1,
-		externalImage: {top: 0, left: 0, width: 0, height: 0},
+		externalImage: {
+			top: 0,
+			left: 0,
+			width: 0,
+			height: 0
+		},
 		variant_id : "",
-        style: new Upfront.Models.ImageVariant()
+        style: {
+			label_id: "",
+			vid: "",
+			caption: {
+				"order": 0,
+				"height": 50,
+				"width_cls": "",
+				"left_cls": "",
+				"top_cls": "",
+				"show": 1
+			},
+			group: {
+				"float": "",
+				"width_cls": "",
+				"left_cls": "",
+				"height": 0,
+				"marginRight": 0,
+				"marginLeft": 0
+			},
+			image: {
+				"width_cls": "",
+				"left_cls": "",
+				"top_cls": "",
+				"src": "",
+				"height": 0
+			}
+		}
 	},
 	//Called just after initialize
 	init: function(){
@@ -340,9 +371,10 @@ var ImageInsert = UeditorInsert.extend({
 			var imageData = me.getImageData(result);
 			imageData.id = me.data.id;
 			me.data.clear({silent: true});
-			imageData.style =  Upfront.Content.ImageVariants.length ?  Upfront.Content.ImageVariants.first().toJSON() : ( new Upfront.Models.ImageVariant() ).toJSON();
+			imageData.style =  Upfront.Content.ImageVariants.length ?  Upfront.Content.ImageVariants.first().toJSON() : this.defaultData.style;
+			imageData.variant_id = imageData.style.vid;
 			me.data.set(imageData);
-			me.createControls();
+
 		});
 
 		return promise;
@@ -359,27 +391,21 @@ var ImageInsert = UeditorInsert.extend({
 	},
 	// Insert editor UI
 	render: function(){
-        this.data.set("show_caption", parseInt(this.data.get("show_caption"), 10));
-
-
-		var me = this,
-			data = this.data.toJSON(),
-			style_variant = this.data.get("style"),
-			wrapperSize = this.data.get('imageThumb'),
-			grid = Upfront.Settings.LayoutEditor.Grid;
-
-
+		var data = _.extend( {}, this.defaultData, this.data.toJSON() ),
+			style_variant = data.style;
 
         if( !style_variant ) return;
+		//data.style = style_variant && style_variant.toJSON ? style_variant.toJSON() : {}; // Force this to be POJ object
 
         data.style.label_id = data.style.label && data.style.label.trim() !== "" ? "ueditor-image-style-" +  data.style.label.toLowerCase().trim().replace(" ", "-") : data.style.vid;
 		data.image = this.get_proper_image();
 
-		this.apply_classes( data.style.group );
-		this.apply_classes( data.style.image );
-		this.apply_classes( data.style.caption );
 
-        if( this.data.get("show_caption") == 0 ){
+		//this.apply_classes( data.style.group );
+		//this.apply_classes( data.style.image );
+		//this.apply_classes( data.style.caption );
+
+        if( data.show_caption == 0 ){
             data.style.image.width_cls = Upfront.Settings.LayoutEditor.Grid.class + 24;
         }
         var $group = this.$el.find(".ueditor-insert-variant-group"),
@@ -411,124 +437,140 @@ var ImageInsert = UeditorInsert.extend({
 	        }
 	    }
 
-
 		this.$el
 			.html(this.tpl(data))
 		;
-
+		this.createControls();
 		this.controls.render();
 		this.$(".ueditor-insert-variant-group").append(this.controls.$el);
-        this.$el.addClass("ueditor-insert-variant");
 		this.make_caption_editable();
 		this.updateControlsPosition();
-        this.$(".ueditor-insert-variant-group").prepend( '<a href="#" class="upfront-icon-button upfront-icon-button-delete ueditor-insert-remove"></a>' );
+		this.$(".ueditor-insert-variant-group").append('<a href="#" class="upfront-icon-button upfront-icon-button-delete ueditor-insert-remove"></a>');
 
-		if(!this.data.get('isLocal'))
-			this.data.set({externalImage: style_variant.image.width}, {silent: true});
 	},
 
 	make_caption_editable: function(){
 		var self = this,
-			data = this.data.get("style")
+			data = this.data.get("style"),
+			$caption = this.$('.wp-caption-text')
 		;
-		if (!data) return false;
-		if( !data.caption.show || this.$('.wp-caption-text').length === 0) return;
 
-        this.$('.wp-caption-text')
+		if (!data) return false;
+		if( !data.caption || !data.caption.show || this.$('.wp-caption-text').length === 0) return;
+
+
             //.attr('contenteditable', true)
-            .off('keyup')
+		$caption.off('keyup')
             .on('keyup', function(e){
                 self.data.set('caption', this.innerHTML, {silent: true});
                 //Update event makes InsertManager update its data without rendering.
                 self.data.trigger('update');
             })
             .ueditor({
-                linebreaks: true,
+                linebreaks: false,
                 autostart: true,
                 pastePlainText: true,
-                buttons: []
+                buttons: [],
+				placeholder: self.defaultData.caption,
+				focus: false
             })
+			.attr('contenteditable', false)
         ;
-        this.ueditor = this.$('.wp-caption-text').data('ueditor');
-        this.ueditor.redactor.events.on('ueditor:focus', function(redactor){
-            if(redactor != self.ueditor.redactor || self.caption_active === true)
+
+        this.caption_ueditor = $caption.data('ueditor');
+
+
+
+		/**
+		 * Saves redactor air changes to the caption model
+		 */
+		this.caption_ueditor.redactor.events.on("ueditor:change", function(e){
+			self.data.set('caption', self.caption_ueditor.$el.html(), {silent: true});
+			self.data.trigger('update');
+		});
+
+        this.caption_ueditor.redactor.events.on('ueditor:focus', function(redactor){
+            if( redactor != self.caption_ueditor.redactor || self.caption_active === true)
                 return;
 
-            self.caption_active = true;
 
-            var parentUeditor = self.$el.closest('.upfront-content-marker-contents').data('ueditor'),
+            var $parent = self.$el.closest('.redactor-editor'),
+				parentUeditor = $parent.data('ueditor'),
                 parentRedactor = parentUeditor ? parentUeditor.redactor : false
                 ;
 
+
             if(!parentRedactor)
                 return;
+
+			if( redactor.$element.is( $caption ) ){
+				$parent.attr("contenteditable", false);
+				$caption.attr("contenteditable", true);
+				self.caption_active = true;
+			}else{
+				$parent.attr("contenteditable", true);
+				$caption.attr("contenteditable", false);
+				self.caption_active = false;
+			}
+
 
             parentRedactor.$editor.off('drop.redactor paste.redactor keydown.redactor keyup.redactor focus.redactor blur.redactor');
             parentRedactor.$textarea.on('keydown.redactor-textarea');
 
-            //parentUeditor.stop();
         });
 
-        this.ueditor.redactor.events.on('ueditor:blur', function(redactor){
-            if(redactor != self.ueditor.redactor ||  self.caption_active === false)
+        this.caption_ueditor.redactor.events.on('ueditor:blur', function(redactor){
+            if( redactor != self.caption_ueditor.redactor ||  self.caption_active === false)
                 return;
 
-            self.caption_active = false;
+			var $parent = self.$el.closest('.redactor-editor'),
+				parentUeditor = $parent.data('ueditor'),
+				parentRedactor = parentUeditor ? parentUeditor.redactor : false
+				;
 
-            var parentUeditor = self.$el.closest('.upfront-content-marker-contents').data('ueditor'),
-                parentRedactor = parentUeditor ? parentUeditor.redactor : false
-                ;
 
             if(!parentRedactor)
                 return;
+
+
+			if( redactor.$element.is( $caption ) ){
+				$parent.attr("contenteditable", true);
+				$caption.attr("contenteditable", false);
+				self.caption_active = false;
+			}else{
+				$parent.attr("contenteditable", false);
+				$caption.attr("contenteditable", true);
+				self.caption_active = true;
+			}
 
             parentRedactor.build.setEvents();
-            //parentRedactor.buildBindKeyboard();
+			//parentRedactor.buildBindKeyboard();
 
             //var parentUeditor = me.$el.closest('.ueditable').data('ueditor');
-            //parentUeditor.start();
+
         });
+
+		$caption.on("hover", function(){
+			var $parent = self.$el.closest('.redactor-editor');
+			$caption.attr("contenteditable", true);
+			$parent.attr("contenteditable", false);
+			self.caption_active = true;
+		});
+
+
+		/**
+		 * Wait for the parent to get rendered
+		 */
+		setTimeout( function(){
+			var $parent = self.$el.closest('.redactor-editor');
+			$parent.on("mouseenter", function(e){
+				$caption.attr("contenteditable", false);
+				$parent.attr("contenteditable", true);
+				self.caption_active = false;
+			});
+		}, 10 );
+
 	},
-    on_redactor_start: function(){
-        var self = this;
-        this.ueditor = this.$('.wp-caption-text').data('ueditor');
-
-        this.ueditor.redactor.events.on('ueditor:focus', function(redactor){
-            if( ! _.isEqual(redactor,  self.ueditor.redactor ))
-                return;
-
-            var parentUeditor = self.$el.closest('.upfront-content-marker-contents').data('ueditor'),
-                parentRedactor = parentUeditor ? parentUeditor.redactor : false
-                ;
-
-            if(!parentRedactor)
-                return;
-
-            parentRedactor.$editor.off('drop.redactor paste.redactor keydown.redactor keyup.redactor focus.redactor blur.redactor');
-            parentRedactor.$textarea.on('keydown.redactor-textarea');
-            parentUeditor.stop();
-        });
-
-        this.ueditor.redactor.events.on('ueditor:blur', function(redactor){
-            if(redactor != self.ueditor.redactor)
-                return;
-
-            var parentUeditor = self.$el.closest('.upfront-content-marker-contents').data('ueditor'),
-                parentRedactor = parentUeditor ? parentUeditor.redactor : false
-                ;
-
-            if(!parentRedactor)
-                return;
-
-            //if( parentUeditor.active === false ){
-                parentRedactor.build.setEvents();
-                var parentUeditor = self.$el.closest('.ueditable').data('ueditor');
-                parentUeditor.start();
-            //}
-
-
-        });
-    },
 	//this function is called automatically by UEditorInsert whenever the controls are created or refreshed
 	controlEvents: function(){
 		var me = this;
@@ -737,21 +779,6 @@ var ImageInsert = UeditorInsert.extend({
 			insert = new ImageInsert({data: insertsData[id]});
 		} else {
 			insert = this.importFromImage(wrapper.find('img'));
-			align = wrapper.css('float');
-			if(align != 'none')
-				insert.data.set('align', align);
-
-			caption = wrapper.find('.wp-caption-text');
-			//if(caption.length){
-			//	insert.data.set('caption', caption.html());
-			//	if(wrapper.hasClass('uinsert-caption-left'))
-			//		insert.data.set('captionPosition', 'left');
-			//	else if(wrapper.hasClass('uinsert-caption-right'))
-			//		insert.data.set('captionPosition', 'right');
-			//	else
-			//		insert.data.set('captionPosition', 'bottom');
-			//}
-
 		}
 		insert.render();
 		wrapper.replaceWith(insert.$el);
@@ -760,14 +787,22 @@ var ImageInsert = UeditorInsert.extend({
 
 	//Import from any image tag
 	importFromImage: function(image){
-		var imageData = this.defaultData,
+		//var imageData = Upfront.Util.clone(this.defaultData),
+		var imageData = _.extend({}, this.defaultData),
 			imageSpecs = {
 				src: image.attr('src'),
 				width: image.width(),
 				height: image.height()
 			},
 			link = $('<a>').attr('href', imageSpecs.src)[0],
-			realSize = this.calculateRealSize(imageSpecs.src)
+			realSize = this.calculateRealSize(imageSpecs.src),
+			$group = image.closest(".ueditor-insert-variant-group"),
+			group_classes = $group.attr("class"),
+			$caption = $group.find(".wp-caption-text"),
+			caption_classes = $caption.attr("class"),
+			$image_wrapper = $group.find(".uinsert-image-wrapper"),
+			image_wrapper_classes = $image_wrapper.attr("class"),
+			caption_order = 1
 			;
 
 		if(link.origin != window.location.origin)
@@ -782,15 +817,6 @@ var ImageInsert = UeditorInsert.extend({
 			src: imageSpecs.src
 		};
 
-		var align = 'center';
-		if(image.hasClass('aligncenter'))
-			align = 'center';
-		else if(image.hasClass('alignleft'))
-			align = 'left';
-		else if(image.hasClass('alignright'))
-			align = 'right';
-
-		imageData.align = align;
 
 		var parent = image.parent();
 
@@ -811,6 +837,44 @@ var ImageInsert = UeditorInsert.extend({
 		}
 
 		imageData.title = image.attr('title');
+		imageData.caption = $caption.html();
+
+
+		caption_order = $caption.prev( $image_wrapper).length ? 1 : 0;
+
+		if(  $group.length ){
+			imageData.style = {
+				caption: {
+					"order": caption_order,
+					"height": $caption.css("minHeight") ? $caption.css("minHeight").replace("px", "") : $caption.height(),
+					"width_cls": Upfront.Util.grid.derive_column_class( caption_classes ),
+					"left_cls": Upfront.Util.grid.derive_marginleft_class( caption_classes ),
+					"top_cls": Upfront.Util.grid.derive_margintop_class( caption_classes ),
+					"show": $caption.length
+				},
+				group: {
+					"float": $group.css("float"),
+					"width_cls": Upfront.Util.grid.derive_column_class( group_classes ),
+					"left_cls": Upfront.Util.grid.derive_marginleft_class( group_classes ),
+					"height": $group && $group.css("minHeight") ? $group.css("minHeight").replace("px", "") : imageSpecs.height + $caption.height(),
+					"marginRight": 0,
+					"marginLeft": 0
+				},
+				image: {
+					"width_cls": Upfront.Util.grid.derive_column_class( image_wrapper_classes ),
+					"left_cls": Upfront.Util.grid.derive_marginleft_class( image_wrapper_classes ),
+					"top_cls": Upfront.Util.grid.derive_margintop_class( image_wrapper_classes ),
+					"src": "",
+					"height": 0
+				}
+			};
+			imageData.variant_id = $group.data("variant");
+		}else{
+			imageData.style = Upfront.Content.ImageVariants.first().toJSON();
+			imageData.variant_id = imageData.style.vid;
+		}
+
+
 		var insert = new ImageInsert({data: imageData});
 
 		insert.render();

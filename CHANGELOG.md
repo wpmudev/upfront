@@ -2,10 +2,19 @@ Change Log
 ============
 
 
-0.1.2 - 
+0.1.3 - 2015-02-09
+-------------------------------------------------------------------------------
+- Fix: z-index overlap in case of multiple menus.
+- Fix: navigation resizing bugs.
+- Fix: input fields focus.
+- Fix: drag and drop when there's only one element inside region.
+
+0.1.2 - 2015-02-02
 -------------------------------------------------------------------------------
 - Fix: text copy/paste issues.
 - Fix: contact form displaying (false) on mail sent
+- Fix: use absolute URLs for theme images.
+- Fix: editor copy/paste and color assignment issues.
 - Added: posts with no featured image get special class in posts element.
 
 0.1.1 - 2015-01-26

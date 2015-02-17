@@ -634,6 +634,7 @@ var PostContentEditor = Backbone.View.extend({
 					if(me.currentContent){
 						var editor = $(me.currentContent).data('ueditor');
 						results.content = $.trim(editor.getValue());
+						results.content = results.content.replace(/(\n)*?<br\s*\/?>\n*/g, "<br/>");
 						results.inserts = editor.getInsertsData();
 						results.author = me.postAuthor;
 					}

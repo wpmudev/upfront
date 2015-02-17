@@ -11,6 +11,9 @@ define([
 ], function(imageTpl, editorTpl, ImageContextMenu, ImageSettings, ImageSelector, ImageEditor, ImageElement, UimageModel) {
 
 	var l10n = Upfront.Settings.l10n.image_element;
+	var breakpointColumnPadding = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().get('column_padding');
+	breakpointColumnPadding = parseInt(breakpointColumnPadding, 10);
+	breakpointColumnPadding = _.isNaN(breakpointColumnPadding) ? 15 : breakpointColumnPadding;
 
 	// Variable used to speed resizing up;
 	var resizingData = {};
@@ -32,7 +35,8 @@ define([
 				'click a.upfront-image-select': 'openImageSelector',
 				'click div.upfront-quick-swap': 'openImageSelector',
 				'dblclick .wp-caption': 'editCaption',
-				'click .js-uimage-open-lightbox': 'openLightboxRegion'
+				'click .js-uimage-open-lightbox': 'openLightboxRegion',
+				'click .swap-image-overlay': 'openImageSelector'
 			});
 			this.delegateEvents();
 
@@ -68,7 +72,7 @@ define([
 
 			this.controls = this.createControls();
 
-			if(this.property('image_status') !== 'ok' || this.property('quick_swap')) {
+			if(this.property('image_status') !== 'ok' || this.property('quick_swap') || this.isThemeImage()) {
 				this.property('has_settings', 0);
 			}
 
@@ -149,11 +153,7 @@ define([
 
 			// Do not allow editing of theme images if not in builder
 			if (this.isThemeImage() && !Upfront.themeExporter) {
-				panel.items = _([
-					this.createControl('replace-image', l10n.ctrl.replace_for_edit, 'replaceImage')
-				]);
-
-				return panel;
+				return false;
 			}
 
 			captionControl.sub_items = {
@@ -357,15 +357,14 @@ define([
 				captionHeight = this.property('caption_position') === 'below_image' ? this.$('.wp-caption').outerHeight() : 0
 			;
 
-			if(starting.length){
+			if (starting.length) {
 				maskSize = {
 					width: starting.outerWidth(),
 					height: starting.outerHeight()
 				};
 				maskOffset = starting.offset();
 				position = false;
-			}
-			else {
+			} else {
 				starting = this.$('.uimage');
 				maskSize = {
 					width: starting.width(),
@@ -543,12 +542,17 @@ define([
 				this.$('a').addClass('js-uimage-open-lightbox');
 			}
 
-			var resizeHint = $('<div>').addClass('upfront-ui uimage-resize-hint' + onTop).html(this.sizehintTpl({
-				width: elementSize.width,
-				height: elementSize.height,
-				l10n: l10n.template
-			}));
-			this.$el.append(resizeHint);
+			if (this.isThemeImage()) {
+				this.$el.addClass('image-from-theme');
+				this.$el.find('b.upfront-entity_meta').after('<div class="swap-image-overlay"><p class="upfront-icon upfront-icon-swap-image"><span>Click to </span>Swap Image</p></div>');
+			} else {
+				var resizeHint = $('<div>').addClass('upfront-ui uimage-resize-hint' + onTop).html(this.sizehintTpl({
+					width: elementSize.width,
+					height: elementSize.height,
+					l10n: l10n.template
+				}));
+				this.$el.append(resizeHint);
+			}
 
 			if(this.property('image_status') !== 'ok') {
 				var starting = this.$('.upfront-image-starting-select');
@@ -615,6 +619,10 @@ define([
 			var imageControlsTpl = '<div class="uimage-controls image-element-controls upfront-ui"></div>';
 
 			this.controls = this.createControls();
+
+			if (this.controls === false) {
+				return;
+			}
 
 			this.controls.setWidth({
 				width: width,
@@ -777,8 +785,7 @@ define([
 				resizer = $('html').find('.upfront-resize');
 				resizingData.resizer = resizer;
 			}
-
-			data.elementSize = {width: resizer.width() - 30, height: resizer.height() - 30 - captionHeight};
+			data.elementSize = {width: resizer.width() - (2 * breakpointColumnPadding), height: resizer.height() - (2 * breakpointColumnPadding) - captionHeight};
 
 			this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
 					width: data.elementSize.width,
@@ -833,8 +840,8 @@ define([
 
 			if(starting.length){
 				this.elementSize = {
-					height: $('.upfront-resize').height() - 30,
-					width: $('.upfront-resize').width() - 30
+					height: $('.upfront-resize').height() - (2 * breakpointColumnPadding),
+					width: $('.upfront-resize').width() - (2 * breakpointColumnPadding)
 				};
 				this.property('element_size', this.elementSize);
 				return;
@@ -1047,8 +1054,8 @@ define([
 			;
 
 			me.elementSize = {
-				width: resizer.width() - 32,
-				height: resizer.height() - 30
+				width: resizer.width() - (2 * breakpointColumnPadding) + 2,
+				height: resizer.height() - (2 * breakpointColumnPadding)
 			};
 
 			if(this.property('caption_position') === 'below_image') {
@@ -1216,7 +1223,9 @@ define([
 		},
 
 		cleanup: function(){
-			this.controls.remove();
+			//the default images on a new theme installation do not have controlls created, so putting a check here.
+			if(this.controls)
+				this.controls.remove();
 			// if(this.bodyEventHandlers){
 			// 	_.each(this.bodyEventHandlers, function(f, ev){
 			// 		$('body').off(ev, f);

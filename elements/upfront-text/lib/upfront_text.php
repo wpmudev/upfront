@@ -10,10 +10,34 @@ class Upfront_PlainTxtView extends Upfront_Object {
 		$content = $this->_get_property('content');
 
 		$matches = array();
-		$regex = '/<div class="plaintxt_padding([^>]*)>(.+?)<\/div>/s';
-		preg_match($regex, $content, $matches);
+		//$regex = '/<div class="plaintxt_padding([^>]*)>(.+?)<\/div>/s';
+		//preg_match($regex, $content, $matches);
 
-		if (sizeof($matches) > 1) $content = $matches[2];
+        //if (sizeof($matches) > 1) $content = $matches[2];
+        
+        if ( preg_match('/<div class="plaintxt_padding([^>]*)>/s', $content) ){
+            $doc = new DOMDocument();
+            $clean_doc = new DOMDocument();
+            $doc->loadHTML($content);
+            $divs = $doc->getElementsByTagName('div');
+            $plaintxt_wrap = false;
+            foreach ( $divs as $div ){
+                if ( !$div->hasAttributes() )
+                    continue;
+                $class = $div->attributes->getNamedItem('class');
+                if ( !is_null($class) && !empty($class->nodeValue) && strpos($class->nodeValue, 'plaintxt_padding') !== false ) {
+                    $plaintxt_wrap = $div;
+                    break;
+                }
+            }
+            if ( $plaintxt_wrap !== false && $plaintxt_wrap->hasChildNodes() ) {
+                foreach ( $plaintxt_wrap->childNodes as $node ){
+                    $import_node = $clean_doc->importNode($node, true);
+                    $clean_doc->appendChild($import_node);
+                }
+            }
+            $content = $clean_doc->saveHTML();
+        }
 
 		$style = array();
 		if ($this->_get_property('background_color') && '' != $this->_get_property('background_color')) {
@@ -26,7 +50,7 @@ class Upfront_PlainTxtView extends Upfront_Object {
 
 		$content = $this->_decorate_content($content);
 
-		return "<div>".(sizeof($style)>0 ? "<div class='plaintxt_padding' style='".implode(';', $style)."'>": ''). $content .(sizeof($style)>0 ? "</div>": ''). '</div>';
+		return (sizeof($style)>0 ? "<div class='plaintxt_padding' style='".implode(';', $style)."'>": ''). $content .(sizeof($style)>0 ? "</div>": '');
 	}
 
 	protected function _decorate_content ($content) {

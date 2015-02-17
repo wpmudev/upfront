@@ -27,7 +27,7 @@
 			<div class="ugallery-thumb-title <?php if($captionType === 'over') { ?>ugallery-caption-on-hover-<?php echo $showCaptionOnHover['length'] ?><?php } ?> ugallery-caption-<?php echo $captionType ?><?php echo $captionUseBackground ? ' ugallery-padded-caption' : '' ?>"><?php echo $images[$i]['title'] ?></div>
 			<?php } ?>
 			<?php if($linkTo == 'image'){ ?>
-			<div class="ugallery_lb_text" rel="<?php echo $images[$i]['id'] ?>"><?php echo $images[$i]['caption'] ?></div>
+			<div class="ugallery_lb_text" rel="<?php echo $images[$i]['id'] ?>"><?php if (!$editing && $images[$i]['caption'] != 'Image description') { ?><?php echo $images[$i]['caption'] ?><?php } ?></div>
 			<?php } ?>
 
 			<?php if ($images[$i]['urlType'] !== 'unlink') { ?>
