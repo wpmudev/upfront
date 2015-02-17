@@ -3,8 +3,10 @@ define([
 	'elements/upfront-tabs/js/model',
 	'elements/upfront-tabs/js/element',
 	'elements/upfront-tabs/js/settings',
-	'text!elements/upfront-tabs/tpl/utabs.html'
-], function(UtabsModel, TabsElement, TabsSettings, tabsTpl) {
+	'scripts/upfront/preset-settings/util',
+	'text!elements/upfront-tabs/tpl/utabs.html',
+	'text!elements/upfront-tabs/tpl/preset-style.html'
+], function(UtabsModel, TabsElement, TabsSettings, PresetUtil, tabsTpl, settingsStyleTpl) {
 	var l10n = Upfront.Settings.l10n.utabs_element;
 
 	var UtabsView = Upfront.Views.ObjectView.extend({
@@ -32,6 +34,20 @@ define([
 			this.model.get('properties').bind('remove', this.render, this);
 
 			Upfront.Events.on('entity:resize_stop', this.onResizeStop, this);
+
+			this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
+		},
+
+		update_colors: function () {
+			var me = this,
+				preset = this.model.get_property_value_by_name("preset"),
+				props = PresetUtil.getPresetProperties('tab', preset) || {}
+			;
+			
+			if (_.size(props) <= 0) return false; // No properties, carry on
+
+			PresetUtil.updatePresetStyle('tab', props, settingsStyleTpl);
+
 		},
 
 		onContentClick: function() {
