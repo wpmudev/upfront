@@ -183,6 +183,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		if(this.model.get_property_value_by_name("currentpreset") && this.model.get_property_value_by_name("currentpreset")!='' && Upfront.Views.Editor.Button.Presets.get(this.model.get_property_value_by_name("currentpreset"))) {
 			
 			var preset = Upfront.Views.Editor.Button.Presets.get(this.model.get_property_value_by_name("currentpreset")).attributes;
+
 			style_static = "border: "+preset.borderwidth+"px "+preset.bordertype+" "+ this.process_color(preset.bordercolor)+"; "+
 					"border-radius: "+preset.borderradius1+"px "+preset.borderradius2+"px "+preset.borderradius4+"px "+preset.borderradius3+"px; "+
 					"background-color: "+this.process_color(preset.bgcolor)+"; "+
@@ -1213,7 +1214,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				this.borderWidth.set_value(preset.borderwidth);
 
 				this.borderColor.set_value(preset.bordercolor);
-				this.borderColor.update_input_border_color(preset.bordercolor);
+				this.borderColor.update_input_border_color(Upfront.Util.colors.to_color_value(preset.bordercolor));
 
 				this.borderRadiusLock.set_value(preset.borderradiuslock);
 
@@ -1226,15 +1227,14 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				this.borderRadius3.set_value(preset.borderradius3);
 
 				this.bgColor.set_value(preset.bgcolor);
-				
-				this.bgColor.update_input_border_color(preset.bgcolor);
+				this.bgColor.update_input_border_color(Upfront.Util.colors.to_color_value(preset.bgcolor));
 
 				this.fontSize.set_value(preset.fontsize);
 
 				this.fontFace.set_value(preset.fontface);
 
 				this.color.set_value(preset.color);
-				this.color.update_input_border_color(preset.color);
+				this.color.update_input_border_color(Upfront.Util.colors.to_color_value(preset.color));
 				
 				this.hov_duration.set_value(preset.hov_duration);
 
@@ -1260,13 +1260,13 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				if(preset.hov_bordercolor) {
 
 					this.hov_borderColor.set_value(preset.hov_bordercolor);
-					this.hov_borderColor.update_input_border_color(preset.hov_bordercolor);
+					this.hov_borderColor.update_input_border_color(Upfront.Util.colors.to_color_value(preset.hov_bordercolor));
 
 					this.hov_borderColor.$el.addClass('touched');
 				}
 				else {
 					this.hov_borderColor.set_value(preset.bordercolor);
-					this.hov_borderColor.update_input_border_color(preset.bordercolor);
+					this.hov_borderColor.update_input_border_color(Upfront.Util.colors.to_color_value(preset.bordercolor));
 				}
 
 
@@ -1309,13 +1309,13 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 
 				if(preset.hov_bgcolor) {
 					this.hov_bgColor.set_value(preset.hov_bgcolor);
-					this.hov_bgColor.update_input_border_color(preset.hov_bgcolor);
+					this.hov_bgColor.update_input_border_color(Upfront.Util.colors.to_color_value(preset.hov_bgcolor));
 
 					this.hov_bgColor.$el.addClass('touched');
 				}
 				else {
 					this.hov_bgColor.set_value(preset.bgcolor);
-					this.hov_bgColor.update_input_border_color(preset.bgcolor);
+					this.hov_bgColor.update_input_border_color(Upfront.Util.colors.to_color_value(preset.bgcolor));
 				}
 
 				if(preset.hov_fontsize) {
@@ -1334,13 +1334,13 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 
 				if(preset.hov_color) {
 					this.hov_color.set_value(preset.hov_color);
-					this.hov_color.update_input_border_color(preset.hov_color);
+					this.hov_color.update_input_border_color(Upfront.Util.colors.to_color_value(preset.hov_color));
 
 					this.hov_color.$el.addClass('touched');
 				}
 				else {
 					this.hov_color.set_value(preset.color);
-					this.hov_color.update_input_border_color(preset.color);
+					this.hov_color.update_input_border_color(Upfront.Util.colors.to_color_value(preset.color));
 				}
 
 				this.$el.find('div.upfront-settings-css input[value="'+preset.theme_style+'"]').trigger('click');
@@ -1351,16 +1351,16 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 		if(preset) {
 			preset.attributes.bordertype = this.borderType.get_value();
 			preset.attributes.borderwidth = this.borderWidth.get_value();
-			preset.attributes.bordercolor = this.borderColor['_color'] || this.borderColor.get_value();
+			preset.attributes.bordercolor = this.get_raw_picker_field_color(this.borderColor);
 			preset.attributes.borderradiuslock = this.borderRadiusLock.get_value();
 			preset.attributes.borderradius1 = this.borderRadius1.get_value();
 			preset.attributes.borderradius2 = this.borderRadius2.get_value();
 			preset.attributes.borderradius4 = this.borderRadius4.get_value();
 			preset.attributes.borderradius3 = this.borderRadius3.get_value();
-			preset.attributes.bgcolor = this.bgColor['_color'] || this.bgColor.get_value();
+			preset.attributes.bgcolor = this.get_raw_picker_field_color(this.bgColor);
 			preset.attributes.fontsize = this.fontSize.get_value();
 			preset.attributes.fontface = this.fontFace.get_value();
-			preset.attributes.color = this.color['_color'] || this.color.get_value();
+			preset.attributes.color = this.get_raw_picker_field_color(this.color);
 			preset.attributes.hov_duration = this.hov_duration.get_value();
 			preset.attributes.hov_transition = this.hov_transition.get_value();
 
@@ -1372,7 +1372,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				preset.attributes.hov_borderwidth = this.hov_borderWidth.get_value();
 
 			if(this.hov_borderColor.$el.hasClass('touched'))
-				preset.attributes.hov_bordercolor = this.hov_borderColor['_color'] || this.hov_borderColor.get_value();
+				preset.attributes.hov_bordercolor = this.get_raw_picker_field_color(this.hov_borderColor);
 
 			if(this.hov_borderRadiusLock.$el.hasClass('touched'))
 				preset.attributes.hov_borderradiuslock = this.hov_borderRadiusLock.get_value();
@@ -1390,7 +1390,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				preset.attributes.hov_borderradius3 = this.hov_borderRadius3.get_value();
 
 			if(this.hov_bgColor.$el.hasClass('touched'))
-				preset.attributes.hov_bgcolor = this.hov_bgColor['_color'] || this.hov_bgColor.get_value();
+				preset.attributes.hov_bgcolor = this.get_raw_picker_field_color(this.hov_bgColor);
 
 			if(this.hov_fontSize.$el.hasClass('touched'))
 				preset.attributes.hov_fontsize = this.hov_fontSize.get_value();
@@ -1399,7 +1399,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				preset.attributes.hov_fontface = this.hov_fontFace.get_value();
 
 			if(this.hov_color.$el.hasClass('touched'))
-				preset.attributes.hov_color = this.hov_color['_color'] || this.hov_color.get_value();
+				preset.attributes.hov_color = this.get_raw_picker_field_color(this.hov_color);
 
 
 			preset.attributes.theme_style = this.$el.find('div.upfront-settings-css li.upfront-field-select-option-selected input').val();
@@ -1411,18 +1411,18 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			newpreset.id = presetname;
 			newpreset.bordertype = this.borderType.get_value();
 			newpreset.borderwidth = this.borderWidth.get_value();
-			newpreset.bordercolor = this.borderColor.get_value();
+			newpreset.bordercolor = this.get_raw_picker_field_color(this.borderColor);
 			newpreset.borderradiuslock = this.borderRadiusLock.get_value();
 			newpreset.borderradius1 = this.borderRadius1.get_value();
 			newpreset.borderradius2 = this.borderRadius2.get_value();
 			newpreset.borderradius4 = this.borderRadius4.get_value();
 			newpreset.borderradius3 = this.borderRadius3.get_value();
-			newpreset.bgcolor = this.bgColor.get_value();
+			newpreset.bgcolor = this.get_raw_picker_field_color(this.bgColor);
 			newpreset.fontsize = this.fontSize.get_value();
 			newpreset.fontface = this.fontFace.get_value();
-			newpreset.color = this.color.get_value();
+			newpreset.color = this.get_raw_picker_field_color(this.color);
 			newpreset.fontface = this.fontFace.get_value();
-			newpreset.color = this.color.get_value();
+			newpreset.color = this.get_raw_picker_field_color(this.color);
 			newpreset.hov_duration = this.hov_duration.get_value();
 			newpreset.hov_transition = this.hov_transition.get_value();
 
@@ -1431,7 +1431,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			if(this.hov_borderWidth.$el.hasClass('touched'))
 				newpreset.hov_borderwidth = this.hov_borderWidth.get_value();
 			if(this.hov_borderColor.$el.hasClass('touched'))
-				newpreset.hov_bordercolor = this.hov_borderColor.get_value();
+				newpreset.hov_bordercolor = this.get_raw_picker_field_color(this.hov_borderColor);
 			if(this.hov_borderRadiusLock.$el.hasClass('touched'))
 				newpreset.hov_borderradiuslock = this.hov_borderRadiusLock.get_value();
 			if(this.hov_borderRadius1.$el.hasClass('touched'))
@@ -1443,13 +1443,13 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			if(this.hov_borderRadius3.$el.hasClass('touched'))
 				newpreset.hov_borderradius3 = this.hov_borderRadius3.get_value();
 			if(this.hov_bgColor.$el.hasClass('touched'))
-				newpreset.hov_bgcolor = this.hov_bgColor.get_value();
+				newpreset.hov_bgcolor = this.get_raw_picker_field_color(this.hov_bgColor);
 			if(this.hov_fontSize.$el.hasClass('touched'))
 				newpreset.hov_fontsize = this.hov_fontSize.get_value();
 			if(this.hov_fontFace.$el.hasClass('touched'))
 				newpreset.hov_fontface = this.hov_fontFace.get_value();
 			if(this.hov_color.$el.hasClass('touched'))
-				newpreset.hov_color = this.hov_color.get_value();
+				newpreset.hov_color = this.get_raw_picker_field_color(this.hov_color);
 
 
 			newpresettheme_style = this.$el.find('div.upfront-settings-css li.upfront-field-select-option-selected input').val();
