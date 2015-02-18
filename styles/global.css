@@ -179,8 +179,8 @@ h2, h3 { page-break-after: avoid; }
   padding-bottom:0;
 }
 .upfront-output-object.upfront-postpart-contents {
-  padding-left:0;
-  padding-right:0;
+  /*padding-left:0;*/
+  /*padding-right:0;*/
 }
 
 /* Post Inserts */
