@@ -1528,7 +1528,7 @@ define([
 	var SidebarPanel_Settings_Item_Typography_Editor = SidebarPanel_Settings_Item.extend({
 		fields: {},
 		current_element: 'h1',
-		elements: ["h1", "h2", "h3", "h4", "h5", "h6", "p", "a", "a:hover", "ul", "ol", "blockquote"],
+		elements: ["h1", "h2", "h3", "h4", "h5", "h6", "p", "a", "a:hover", "ul", "ol", "blockquote", 'blockquote.upfront-quote-alternative'],
 		inline_elements: ["a", "a:hover"],
 		typefaces: {},
 		styles: {},
@@ -1612,6 +1612,7 @@ define([
 							{ label: l10n.ul, value: "ul" },
 							{ label: l10n.ol, value: "ol" },
 							{ label: l10n.bq, value: "blockquote" },
+							{ label: l10n.bqalt, value: "blockquote.upfront-quote-alternative" },
 						],
 						change: function () {
 							var value = this.get_value(),
@@ -1951,7 +1952,7 @@ define([
         },
         is_theme_color : function(color){
             color = this.color_to_hex( color );
-            return _.indexOf(this.get_colors(), color) !== -1 ? _.indexOf(this.get_colors(), color) + 1 /* <== indexOf can easily return 0 :( */ : false; 
+            return _.indexOf(this.get_colors(), color) !== -1 ? _.indexOf(this.get_colors(), color) + 1 /* <== indexOf can easily return 0 :( */ : false;
         },
         get_css_class : function(color, bg){
             color = this.color_to_hex( color );

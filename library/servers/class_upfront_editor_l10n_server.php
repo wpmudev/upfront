@@ -302,6 +302,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'ul' => __('Unordered List (UL)', 'upfront'),
 				'ol' => __('Ordered List (OL)', 'upfront'),
 				'bq' => __('Blockquote (BLOCKQUOTE)', 'upfront'),
+				'bqalt' => __('Blockquote Alternative (BLOCKQUOTE)', 'upfront'),
 				'typeface' => __('Typeface', 'upfront'),
 				'color' => __('Color', 'upfront'),
 				'size' => __('Size', 'upfront'),
