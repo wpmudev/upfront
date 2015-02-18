@@ -1543,6 +1543,7 @@ define([
 			});
 			this.listenTo(Upfront.Events, 'upfront:render_typography_sidebar', this.render);
 			this.listenTo(Upfront.Events, 'entity:object:after_render', this.update_typography_elements);
+			this.listenTo(Upfront.Events, "theme_colors:update", this.update_typography_elements, this);
 		},
 		on_render: function () {
 			var me = this,
@@ -1848,7 +1849,7 @@ define([
 		},
 		update_typography_elements: function (view) {
 			var me = this;
-
+/*
 			_.each(this.elements, function(element) {
 				var $this_el = view && view.$el ? view.$el.find('.upfront-object-content ' + element) : $('.upfront-object-content ' + element );
 				Upfront.Views.Theme_Colors.colors.remove_theme_color_classes( $this_el );
@@ -1857,6 +1858,19 @@ define([
 					 $this_el.css("color", me.colors[element]);
 				}
 			});
+*/
+			var css = [],
+				$style = false
+			;
+			$style = $("style#typography-colors");
+			if (!$style.length) {
+				$("body").append('<style id="typography-colors" />');
+				$style = $("style#typography-colors");
+			}
+			_.each(this.elements, function (element) {
+				if (me.colors[element]) css.push('.upfront-object-content ' + element + '{ color:' + Upfront.Util.colors.to_color_value(me.colors[element]) + '; }');
+			});
+			$style.empty().append(css.join("\n"));
 		}
 	});
 
