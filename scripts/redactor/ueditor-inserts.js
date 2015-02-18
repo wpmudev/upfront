@@ -445,8 +445,8 @@ var ImageInsert = UeditorInsert.extend({
 		this.$(".ueditor-insert-variant-group").append(this.controls.$el);
 		this.make_caption_editable();
 		this.updateControlsPosition();
-		this.$(".ueditor-insert-variant-group").append('<a href="#" class="upfront-icon-button upfront-icon-button-delete ueditor-insert-remove"></a>');
-
+		this.$(".ueditor-insert-variant-group").append('<a href="#" contenteditable="false" class="upfront-icon-button upfront-icon-button-delete ueditor-insert-remove"></a>');
+      
 	},
 
 	make_caption_editable: function(){
@@ -460,7 +460,7 @@ var ImageInsert = UeditorInsert.extend({
 
 
             //.attr('contenteditable', true)
-		$caption.off('keyup')
+		    $caption.off('keyup')
             .on('keyup', function(e){
                 self.data.set('caption', this.innerHTML, {silent: true});
                 //Update event makes InsertManager update its data without rendering.
@@ -550,7 +550,8 @@ var ImageInsert = UeditorInsert.extend({
 
         });
 
-		$caption.on("hover", function(){
+		self.$el.on("hover, click", function(e){
+            e.stopPropagation();
 			var $parent = self.$el.closest('.redactor-editor');
 			$caption.attr("contenteditable", true);
 			$parent.attr("contenteditable", false);
@@ -563,7 +564,7 @@ var ImageInsert = UeditorInsert.extend({
 		 */
 		setTimeout( function(){
 			var $parent = self.$el.closest('.redactor-editor');
-			$parent.on("mouseenter", function(e){
+			$parent.on("mouseenter, click", function(e){
 				$caption.attr("contenteditable", false);
 				$parent.attr("contenteditable", true);
 				self.caption_active = false;
