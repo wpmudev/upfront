@@ -2434,6 +2434,10 @@ div.uinsert-selector a:hover {
   width: auto;
   float: none; }
 
+/* line 289, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/ueditor-inserts */
+.upfront-inserted_image-wrapper .ueditor-image-style-center {
+  margin: 0 auto; }
+
 /* line 1, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/region */
 .upfront-region-container {
   position: relative;
