@@ -196,19 +196,6 @@ class Upfront_UcontactView extends Upfront_Object {
 
 			$this->msg = $this->check_fields($name, $email, $subject, $message);
 
-			ob_start();
-
-			var_dump($emailto);
-			echo "-----------------------------------\n\r";
-			var_dump($subject);
-			echo "-----------------------------------\n\r";
-			var_dump($message);
-			echo "-----------------------------------\n\r";
-			var_dump($headers);
-			echo "-----------------------------------\n\r";
-			file_put_contents('test.txt', ob_get_clean());
-
-
 			if ($this->msg) {
 				$this->msg_class = 'error';
 			} else if (!empty($emailto)) {
