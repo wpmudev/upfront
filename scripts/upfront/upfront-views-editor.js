@@ -2547,6 +2547,7 @@ define([
 				Upfront.Events.on('upfront:element:edit:stop', this.allowUsage, this);
 			}
 			Upfront.Events.on("application:mode:after_switch", this.render, this);
+			Upfront.Events.on("application:user:fetch", this.render, this); // Re-build when we're ready
 		},
 		preventUsage: function(type) {
 			var preventUsageText = l10n.not_available_in_text_edit;
@@ -2683,6 +2684,7 @@ define([
 				user = new Upfront.Models.User();
 				Upfront.data.loading.currentUser = user.fetch().done(function(){
 					Upfront.data.currentUser = user;
+					Upfront.Events.trigger("application:user:fetch");
 				});
 			}
 		},
