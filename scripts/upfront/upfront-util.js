@@ -509,6 +509,7 @@ define(function() {
 				return str;
 			},
 			is_theme_color: function (str) {
+				if (!str || !str.match) return false;
 				return !!str.match(/^#?ufc\d+$/);
 			},
 			get_ufc: function(color){
