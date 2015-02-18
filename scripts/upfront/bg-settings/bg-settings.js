@@ -41,7 +41,7 @@ define([
 					default_value: false,
 					layout: 'horizontal-inline',
 					multiple: false,
-					values: [ { label: "Use theme padding for BG", value: true } ],
+					values: [ { label: l10n.use_theme_padding, value: true } ],
 					change: function () {
 						var value = this.get_value();
 						this.model.set_breakpoint_property(this.property_name, value ? true : false);
@@ -49,7 +49,7 @@ define([
 				}),
 				new Upfront.Views.Editor.Field.Select({
 					model: this.model,
-					label: "Group Background",
+					label: l10n.group_bg,
 					property: 'background_type',
 					use_breakpoint_property: true,
 					default_value: !bg_image ? 'color' : 'image',

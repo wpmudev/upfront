@@ -1566,7 +1566,7 @@ define([
 					e.preventDefault();
 				}
 				var BgSettings = Upfront.Views.Editor.BgSettings.Settings.extend({
-					bg_title: "Elements Group Settings",
+					bg_title: l10n.group_settings,
 					enable_types: ['color', 'image'/*, 'slider', 'video', 'map'*/]
 				});
 				Upfront.Events.trigger("entity:settings:activate", this, BgSettings);
@@ -2453,6 +2453,7 @@ define([
 				if ( ( breakpoint && !breakpoint.default ) || this.$layout.css('display').indexOf('flex') != -1 ){
 					this.set_full_screen();
 					this.refresh_background();
+					this.update_pos();
 					return;
 				}
 				var $regions = this.$el.find('.upfront-region-center, .upfront-region-side-left, .upfront-region-side-right'),
@@ -2474,6 +2475,7 @@ define([
 				});
 				$regions.add($container).css('min-height', height);
 				this.refresh_background();
+				this.update_pos();
 			},
 			set_full_screen: function () {
 				var $region = this.$layout.find('.upfront-region-center'),

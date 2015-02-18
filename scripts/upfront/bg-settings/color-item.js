@@ -17,7 +17,7 @@ define([
 			options.fields = [
 				new Upfront.Views.Editor.Field.Color({
 					model: this.model,
-					label: "BG Color",
+					label: l10n.bg_color_short,
 					property: 'background_color',
 					use_breakpoint_property: true,
 					default_value: '#ffffff',

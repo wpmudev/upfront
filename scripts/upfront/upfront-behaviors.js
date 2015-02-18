@@ -3180,6 +3180,7 @@ var GridEditor = {
 								is_same_container = ( each.$el.closest('.upfront-region-container').get(0) == $last_region_container.get(0) ),
 								region_bottom = ( is_same_container && ( !each.$el.hasClass('upfront-region-side') || each.$el.hasClass('upfront-region-side-left') || each.$el.hasClass('upfront-region-side-right') ) ) ? 999999 : each.grid.bottom, // Make this bottom-less if it's in the last region container,
 								is_active = each.$el.hasClass('upfront-region-drag-active'),
+								is_sub_h = each.$el.hasClass('upfront-region-side-top') || each.$el.hasClass('upfront-region-side-bottom'),
 								area = get_area_compared({
 									top: each.grid.top - 5,
 									bottom: region_bottom + 5,
@@ -3189,6 +3190,8 @@ var GridEditor = {
 								type = each.$el.data('type'),
 								priority = ed.region_type_priority[type];
 							area *= priority;
+							if ( is_sub_h )
+								area *= 2;
 							if ( is_active )
 								area *= 1.5;
 							return {

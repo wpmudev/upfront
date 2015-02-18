@@ -7955,66 +7955,64 @@ var Field_Compact_Label_Select = Field_Select.extend({
 							this.model.get('properties').trigger('change');
 						}
 					}),
-					region_nav = new Field_Radios({
+					// backward compatible with old nav_region property
+					region_nav_value = this.model.get_property_value_by_name('nav_region'),
+					region_nav = new Field_Checkboxes({
 						model: this.model,
-						property: 'nav_region',
-						default_value: '',
+						property: 'sub_regions',
+						default_value: !this.model.get_property_value_by_name('sub_regions') ? [region_nav_value] : [],
 						layout: 'horizontal-inline',
+						multiple: true,
 						values: [
-							{ label: l10n.no, value: '' },
-							{ label: l10n.bottom, value: 'bottom' },
-							{ label: l10n.top, value: 'top' }
+							{ label: l10n.top, value: 'top' },
+							{ label: l10n.bottom, value: 'bottom' }
 						],
 						change: function () {
 							var value = this.get_value(),
 								sub_regions = me.model.get_sub_regions(),
-								add_region = false,
-								copy_data = false,
-								copy_region = false;
+								copy_data = false;
 							index = collection.indexOf(me.model);
-							if ( value == '' ){
-								if ( sub_regions.top )
-									collection.remove(sub_regions.top);
-								else if ( sub_regions.bottom )
-									collection.remove(sub_regions.bottom);
+							
+							if ( !_.contains(value, 'top') && sub_regions.top ) {
+								copy_data = Upfront.Util.model_to_json(sub_regions.top);
+								me._sub_region_top_copy = new Upfront.Models.Region(copy_data);
+								collection.remove(sub_regions.top);
 							}
-							else {
-								if ( value == 'bottom' ){
-									if ( sub_regions.top ){
-										copy_data = Upfront.Util.model_to_json(sub_regions.top);
-										copy_region = new Upfront.Models.Region(copy_data);
-										collection.remove(sub_regions.top);
-										copy_region.set({sub: value}, {silent:true});
-										copy_region.add_to(collection, index, {sub: value});
-									}
-									else if ( !sub_regions.bottom ){
-										add_region = sub_regions.right ? index+2 : index+1;
-									}
+							if ( !_.contains(value, 'bottom') && sub_regions.bottom ) {
+								copy_data = Upfront.Util.model_to_json(sub_regions.bottom);
+								me._sub_region_bottom_copy = new Upfront.Models.Region(copy_data);
+								collection.remove(sub_regions.bottom);
+							}
+								
+							_.each(value, function(sub){
+								if ( sub_regions[sub] )
+									return;
+								var add_region = false,
+									region_model = false;
+								if ( sub == 'bottom' ) {
+									if ( me._sub_region_bottom_copy )
+										region_model = me._sub_region_bottom_copy;
+									add_region = sub_regions.right ? index+2 : index+1;
 								}
-								else {
-									if ( sub_regions.bottom ){
-										copy_data = Upfront.Util.model_to_json(sub_regions.bottom);
-										copy_region = new Upfront.Models.Region(copy_data);
-										collection.remove(sub_regions.bottom);
-										copy_region.set({sub: value}, {silent:true});
-										copy_region.add_to(collection, index, {sub: value});
-									}
-									else if ( !sub_regions.top ){
-										add_region = sub_regions.left ? index-1 : index;
-									}
+								else if ( sub == 'top' ) {
+									if ( me._sub_region_top_copy )
+										region_model = me._sub_region_top_copy;
+									add_region = sub_regions.left ? index-1 : index;
 								}
-								if ( add_region !== false ){
-									var name = me.model.get('name') + '_nav',
-										title = me.model.get('title') + ' Nav',
-										new_region = new Upfront.Models.Region(_.extend(_.clone(Upfront.data.region_default_args), {
+								if ( add_region !== false ) {
+									var name = me.model.get('name') + '_' + sub,
+										title = me.model.get('title') + ' ' + sub;
+									if ( region_model === false ){
+										region_model = new Upfront.Models.Region(_.extend(_.clone(Upfront.data.region_default_args), {
 											"name": name,
 											"title": title,
 											"container": me.model.get('name'),
-											"sub": value
+											"sub": sub
 										}));
-									new_region.add_to(collection, add_region, {sub: value});
+									}
+									region_model.add_to(collection, add_region, {sub: sub});
 								}
-							}
+							});
 							this.property.set({value: value});
 						}
 					}),
