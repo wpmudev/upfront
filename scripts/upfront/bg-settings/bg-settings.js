@@ -38,13 +38,13 @@ define([
 					model: this.model,
 					property: 'use_padding',
 					use_breakpoint_property: true,
-					default_value: false,
+					default_value: 0,
 					layout: 'horizontal-inline',
 					multiple: false,
-					values: [ { label: l10n.use_theme_padding, value: true } ],
+					values: [ { label: l10n.use_theme_padding, value: 1 } ],
 					change: function () {
 						var value = this.get_value();
-						this.model.set_breakpoint_property(this.property_name, value ? true : false);
+						this.model.set_breakpoint_property(this.property_name, value ? 1 : 0);
 					}
 				}),
 				new Upfront.Views.Editor.Field.Select({

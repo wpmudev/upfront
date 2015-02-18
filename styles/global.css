@@ -142,6 +142,17 @@ h2, h3 { page-break-after: avoid; }
 .upfront-output-region-container-sticky {
 	z-index: 30;
 }
+.upfront-output-module-group {
+    position: relative;
+}
+.upfront-output-module-group > .upfront-module-group-bg {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: -1;
+}
 .upfront-output-bg-overlay {
 	position: absolute;
 	top: 0;

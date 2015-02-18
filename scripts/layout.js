@@ -271,6 +271,7 @@ jQuery(document).ready(function($){
 	fix_full_bg();
 	var lazyFixFullBg = throttle(fix_full_bg, 500);
 	$(window).on('resize', lazyFixFullBg);
+	$(window).on('load', lazyFixFullBg);
 
 	// Regions behavior on scroll
 	function regions_scroll_update () {

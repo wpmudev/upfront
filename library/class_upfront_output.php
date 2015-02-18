@@ -895,6 +895,54 @@ class Upfront_Module_Group extends Upfront_Container {
 	public function get_markup () {
 		return parent::get_markup();
 	}
+	
+	public function wrap ($out) {
+        $overlay = '';
+        $bg_attr = '';
+        foreach ( Upfront_Output::$grid->get_breakpoints(true) as $breakpoint ) {
+            $overlay .= $this->_get_background_overlay($breakpoint->get_id());
+            $bg_attr .= $this->_get_background_attr(false, true, $breakpoint->get_id());
+        }
+        $bg_node_start = "<div class='upfront-module-group-bg upfront-image-lazy upfront-image-lazy-bg' {$bg_attr}>";
+        $bg_node_end = "</div>";
+        return parent::wrap( "{$out}\n{$bg_node_start}{$overlay}{$bg_node_end}" );
+    }
+
+    public function get_style_for ($point, $scope) {
+        $css = '';
+        $type = $this->get_background_type($point->get_id());
+        $default_type = $this->get_background_type();
+        $bg_css = $this->_get_background_css(false, true, $point->get_id());
+        $use_padding = $this->_get_breakpoint_property('use_padding', $point->get_id());
+        $column_padding = $point->get_column_padding();
+        if ( !empty($bg_css) ) {
+            if ( $use_padding )
+                $bg_css .= " margin: {$column_padding}px;";
+            $css .= sprintf('%s #%s > %s {%s}',
+                        '.' . ltrim($scope, '. '),
+                        $this->get_id(),
+                        '.upfront-module-group-bg',
+                        $bg_css
+                    ) . "\n";
+        }
+        if ( !$point->is_default() && $default_type && !in_array($default_type, array('image', 'color', 'featured')) ) {
+            $css .= sprintf('%s #%s > %s {%s}',
+                        '.' . ltrim($scope, '. '),
+                        $this->get_id(),
+                        '.upfront-module-group-bg > .upfront-output-bg-overlay',
+                        'display: none;'
+                    ) . "\n";
+        }
+        if ( $type && !in_array($type, array('image', 'color', 'featured')) ) {
+            $css .= sprintf('%s #%s > %s {%s}',
+                        '.' . ltrim($scope, '. '),
+                        $this->get_id(),
+                        '.upfront-module-group-bg > .upfront-output-bg-' . $point->get_id(),
+                        'display: block;'
+                    ) . "\n";
+        }
+        return $css;
+    }
 
 	public function instantiate_child ($child_data, $idx) {
 		$view_class = upfront_get_property_value("view_class", $child_data);
