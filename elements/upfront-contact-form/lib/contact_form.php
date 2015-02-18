@@ -192,10 +192,22 @@ class Upfront_UcontactView extends Upfront_Object {
 			if (empty($emailto)) $emailto = get_option('admin_email');
 			if (!is_email($emailto)) $emailto = false;
 
-			$headers = array('From: ' . 'The Sending Name <'.$email.'>');
-			$headers = array('Reply-To: ' . $email);
+			$headers = array('From: ' . 'The Sending Name <'.$email.'>', 'Reply-To: ' . $email);
 
 			$this->msg = $this->check_fields($name, $email, $subject, $message);
+
+			ob_start();
+
+			var_dump($emailto);
+			echo "-----------------------------------\n\r";
+			var_dump($subject);
+			echo "-----------------------------------\n\r";
+			var_dump($message);
+			echo "-----------------------------------\n\r";
+			var_dump($headers);
+			echo "-----------------------------------\n\r";
+			file_put_contents('test.txt', ob_get_clean());
+
 
 			if ($this->msg) {
 				$this->msg_class = 'error';
