@@ -150,7 +150,7 @@ class Upfront_UcontactView extends Upfront_Object {
 		if(isset($_POST['ucontact']) && $_POST['ucontact'] == 'sent' && $_POST['contactformid'] == $this->_get_property('element_id')){
 			//Get all the needed fields and sanitize them
 			$_POST = stripslashes_deep( $_POST );
-			$name = sanitize_text_field($_POST['sendername']);
+			$name = preg_replace('/\n\r/', ' ', sanitize_text_field($_POST['sendername']));
 			$email = is_email($_POST['senderemail']);
 			$show_subject = $this->_get_property('show_subject');
 
