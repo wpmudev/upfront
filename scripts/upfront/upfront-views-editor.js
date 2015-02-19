@@ -1744,11 +1744,31 @@ define([
 			});
 		},
 		get_styles_field_default_value: function() {
-			if (this.styles[this.current_element]) return this.styles[this.current_element];
+			var availableStyles = this.get_styles();
+			var style;
+			if (this.styles[this.current_element]) {
+				style = this.styles[this.current_element];
+			} else if (this.typefaces[this.current_element]) {
+				style = Font_Model.get_default_variant(this.typefaces[this.current_element]);
+			} else {
+				style = 'regular';
+			}
 
-			if (this.typefaces[this.current_element]) return Font_Model.get_default_variant(this.typefaces[this.current_element]);
+			// Make sure style is in available styles, this is needed because:
+			// - regular is also noted as "400 normal" in system fonts
+			// - italic is also noted as "400 italic" in system fonts
+			if (style === 'regular' && !_.findWhere(availableStyles, { value: 'regular'}) && _.findWhere(availableStyles, { value: '400 normal'})) {
+				style = '400 normal';
+			} else if (style === '400 normal' && !_.findWhere(availableStyles, { value: '400 normal'}) && _.findWhere(availableStyles, { value: 'regular'})) {
+				style = 'regular';
+			}
+			if (style === 'italic' && !_.findWhere(availableStyles, { value: 'italic'}) && _.findWhere(availableStyles, { value: '400 italic'})) {
+				style = '400 italic';
+			} else if (style === '400 italic' && !_.findWhere(availableStyles, { value: '400 italic'}) && _.findWhere(availableStyles, { value: 'italic'})) {
+				style = 'italic';
+			}
 
-			return 'regular';
+			return style;
 		},
 		get_styles: function() {
 			var typography = this.model.get_property_value_by_name('typography'),
