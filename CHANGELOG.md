@@ -2,6 +2,18 @@ Change Log
 ============
 
 
+0.2.0 - 2015-02-19
+-------------------------------------------------------------------------------
+- Fix: menu handling in responsive.
+- Fix: link panels custom URL entry.
+- Fix: handling empty gallery description.
+- Fix: contact element behavior.
+- Fix: redactor breaks and wpautop conflict in text editing.
+- Fix: immediate image inserts publishing.
+- Fix: default gravatar handling.
+- Fix: media (de)selection for single items.
+- Added: editable theme colors support.
+
 0.1.3 - 2015-02-09
 -------------------------------------------------------------------------------
 - Fix: z-index overlap in case of multiple menus.
