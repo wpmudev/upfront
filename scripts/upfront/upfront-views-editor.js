@@ -8938,6 +8938,10 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				var $image = $(this).closest('.upfront-region-bg-slider-image'),
 					image_id = $image.data('image-id'),
 					slide_images = me.model.get_breakpoint_property_value('background_slider_images', true);
+
+				// Let's do some type coercion here, so _.without can work properly...
+				if (_.isString(image_id) && image_id.match(/^[0-9]+$/)) image_id = parseInt(image_id, 10);
+
 				slide_images = _.without(slide_images, image_id);
 				me.model.set_breakpoint_property('background_slider_images', slide_images);
 				$image.remove();
@@ -8955,7 +8959,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					// Rewrite slide images because in builder mode they will be just paths of theme images
 					// and slider needs image objects to work.
 					slide_images = images;
-					_.each(slide_images, function (id) {
+					_.each(slide_images, function (img_data, id) {
 						var image = _.isObject(id) ? id : images[id],
 							$image = $('<div class="upfront-region-bg-slider-image" />');
 						$image.data('image-id', id);
