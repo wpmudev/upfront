@@ -2,6 +2,12 @@ Change Log
 ============
 
 
+0.2.1 - 2015-02-20
+-------------------------------------------------------------------------------
+- Fix: add typography defaults.
+- Fix: background slider image removal.
+- Fix: responsive typography.
+
 0.2.0 - 2015-02-19
 -------------------------------------------------------------------------------
 - Fix: menu handling in responsive.
