@@ -1221,6 +1221,7 @@ var Application = new (Backbone.Router.extend({
 
 				app.create_cssEditor();
 
+                $(document).trigger('Upfront:loaded');
 				Upfront.Events.trigger('Upfront:loaded');
 			}
 		);
