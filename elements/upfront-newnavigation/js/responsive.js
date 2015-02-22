@@ -44,6 +44,12 @@ jQuery(document).ready(function($) {
 			$(this).closest('div.upfront-output-wrapper').addClass('on_the_top');
 			$(this).parent().find('ul.menu').show();
 			$(this).parent().find('ul.sub-menu').show();
+
+			var offset = $(this).parent().find('ul.menu').position();
+
+			$(e.target).closest('.responsive_nav_toggler').css({position: 'fixed', left: offset.left, top: offset.top+(($('div#wpadminbar').length && $('div#wpadminbar').css('display') == 'block')?$('div#wpadminbar').outerHeight():0)});
+			$(this).parent().find('ul.menu').css('padding-top', '60px');
+
 			if($(this).parent().data('burger_over') == 'pushes')
 				pushContent($(this).parent());
 
@@ -54,6 +60,10 @@ jQuery(document).ready(function($) {
 		else {
 			$(this).parent().find('ul.menu').hide();
 			$(this).parent().find('ul.sub-menu').hide();
+			
+			$(e.target).closest('.responsive_nav_toggler').css({position: '', left: '', top: ''});
+			$(this).parent().find('ul.menu').css('padding-top', '');
+
 			$(this).closest('div.upfront-output-wrapper').removeClass('on_the_top');
 			if($(this).parent().data('burger_over') == 'pushes')
 				pullContent($(this).parent());
@@ -168,9 +178,14 @@ jQuery(document).ready(function($) {
 	}
 	roll_responsive_nav(".upfront-output-unewnavigation > .upfront-navigation");
 	
-	$(window).smartresize(function() {roll_responsive_nav(".upfront-output-unewnavigation > .upfront-navigation");});
+	$(window).smartresize(function() {
+		$('.responsive_nav_toggler').css({position: '', left: '', top: ''});
+		$('ul.menu').css('padding-top', '');
+		roll_responsive_nav(".upfront-output-unewnavigation > .upfront-navigation");
+	});
 	console.log('this has been subscribed');
 	$(document).on('changed_breakpoint', function(e) {
-	 roll_responsive_nav( e.selector, e.width);} );
+		roll_responsive_nav( e.selector, e.width);
+	});
 });
 
