@@ -4370,17 +4370,21 @@ var GridEditor = {
 			ed = Upfront.Behaviors.GridEditor,
 			$me = view.$el,
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
+			sub = model.get('sub'),
+			direction = 's',
+			handles = {},
 			$layout = $main.find('.upfront-layout')
 		;
 		if ( $me.data('ui-resizable') )
 			return false;
-		$me.append('<div class="upfront-icon-control-region upfront-icon-control-region-resize upfront-icon-control-region-resize-s upfront-region-resize-handle upfront-region-resize-handle-s ui-resizable-handle ui-resizable-s"></div>');
+		if ( !model.is_main() && sub == 'bottom' )
+			direction = 'n';
+		$me.append('<div class="upfront-icon-control-region upfront-icon-control-region-resize upfront-icon-control-region-resize-' + direction + ' upfront-region-resize-handle upfront-region-resize-handle-' + direction + ' ui-resizable-handle ui-resizable-' + direction + '"></div>');
+		handles[direction] = '.upfront-region-resize-handle-' + direction;
 		$me.resizable({
 			containment: "document",
 			//handles: "n, e, s, w",
-			handles: {
-				s: '.upfront-region-resize-handle-s'
-			},
+			handles: handles,
 			helper: "region-resizable-helper",
 			disabled: true,
 			zIndex: 9999999,
@@ -4535,7 +4539,7 @@ var GridEditor = {
 			if ( $main.hasClass('upfront-region-fixed-editing') )
 				$regions = $('.upfront-region-side-fixed');
 			else
-				$regions = $('.upfront-region-center, .upfront-region-side-left, .upfront-region-side-right, .upfront-region-container-wide, .upfront-region-container-clip');
+				$regions = $('.upfront-region-center, .upfront-region-side-left, .upfront-region-side-right, .upfront-region-container-wide, .upfront-region-container-clip, .upfront-region-sub-container');
 			$regions.each(function(){
 				if ( $(this).data('ui-resizable') )
 					$(this).resizable('option', 'disabled', false);

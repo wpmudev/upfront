@@ -513,6 +513,8 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'bg_type' => __('Background Type', 'upfront'),
 				'change_image' => __('Change Image', 'upfront'),
 				'edit_region_css' => __('Edit region CSS', 'upfront'),
+				'auto_resize' => __('Auto-resize', 'upfront'),
+				'auto_resize_disabled_title' => __('Not applicable for Full Screen Regions', 'upfront'),
 				'pick_color' => __('Pick Color', 'upfront'),
 				'image_variation' => __('Image Variation', 'upfront'),
 				'slider_transition' => __('Slider Transition', 'upfront'),

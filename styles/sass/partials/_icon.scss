@@ -583,7 +583,8 @@
 	-o-transform: scaleX(-1);
 	transform: scaleX(-1);
 }
-.upfront-icon-control-region-resize-s:before {
+.upfront-icon-control-region-resize-s:before,
+.upfront-icon-control-region-resize-n:before {
 	width: 35px;
 	height: 24px;
 	background-position: -282px -712px;

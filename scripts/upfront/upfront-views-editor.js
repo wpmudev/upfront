@@ -8011,6 +8011,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 										}));
 									}
 									region_model.add_to(collection, add_region, {sub: sub});
+									Upfront.Events.trigger('command:region:edit_toggle', true);
 								}
 							});
 							this.property.set({value: value});
@@ -8050,6 +8051,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						multiple: false
 					});
 			}
+			
+			// Preserve background settings element event binding by detaching them before resetting html
+			$content.find('.upfront-region-bg-setting-tab-primary, .upfront-region-bg-setting-tab-secondary').children().detach();
 
 			$content.html(setting);
 			$modal.addClass('upfront-region-modal-bg');
@@ -8177,12 +8181,16 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			});
 
 			if ( is_region && this.model.is_main() ){
-				$content.find('.upfront-region-bg-setting-auto-resize').on('click', function (e) {
+				var $auto_resize = $content.find('.upfront-region-bg-setting-auto-resize');
+				$auto_resize.on('click', function (e) {
 					e.preventDefault();
 					e.stopPropagation();
 					me.trigger_expand_lock($(this));
 				});
-				this.render_expand_lock($content.find('.upfront-region-bg-setting-auto-resize'));
+				this.render_expand_lock($auto_resize);
+				this.listenTo(region_type, 'changed', function(){
+					me.render_expand_lock($auto_resize);
+				});
 				if ( !is_responsive )
 					region_type.trigger('changed');
 			}
@@ -8614,7 +8622,16 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		// Expand lock trigger
 		render_expand_lock: function ($el) {
 			var locked = this.model.get_breakpoint_property_value('expand_lock', true),
+				type = this.model.get('type'),
 				$status = $('<span />');
+			if ( type == 'full' ) {
+				$el.addClass('upfront-region-bg-setting-auto-resize-disabled');
+				$el.attr('title', l10n.auto_resize_disabled_title);
+			}
+			else {
+				$el.removeClass('upfront-region-bg-setting-auto-resize-disabled');
+				$el.removeAttr('title');
+			}
 			if ( locked ){
 				$status.addClass('auto-resize-off');
 			}
@@ -8622,10 +8639,12 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				$status.addClass('auto-resize-on');
 			}
 			$el.html('');
-			$el.append('<span>Auto-resize</span>');
+			$el.append('<span>' + l10n.auto_resize + '</span>');
 			$el.append($status);
 		},
 		trigger_expand_lock: function ($el) {
+			if ( $el.hasClass('upfront-region-bg-setting-auto-resize-disabled') )
+				return;
 			var locked = this.model.get_breakpoint_property_value('expand_lock');
 			this.model.set_breakpoint_property('expand_lock', !locked);
 			this.render_expand_lock($el);
@@ -9091,8 +9110,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		*/
 		update_pos: function () {
 			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
-				$region = this.$el.closest('.upfront-region-container');
-			if ( ( !$main.hasClass('upfront-region-editing') && !$main.hasClass('upfront-region-fixed-editing') ) || !$region.hasClass('upfront-region-container-active') )
+				$container = this.$el.closest('.upfront-region-container'),
+				$region = this.$el.closest('.upfront-region');
+			if ( ( !$main.hasClass('upfront-region-editing') && !$main.hasClass('upfront-region-fixed-editing') ) || !$container.hasClass('upfront-region-container-active') )
 				return;
 			var	offset = $region.offset(),
 				top = offset.top,
@@ -9128,7 +9148,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					var panel_top = scroll_top > top-rel_top ? rel_top : top-scroll_top,
 						panel_bottom = bottom > scroll_bottom ? 0 : scroll_bottom-bottom,
 						panel_left = panel.position_h == 'left' ? panel_offset.left : 'auto',
-						panel_right = panel.position_h == 'right' ? $(window).width()-panel_offset.left : 'auto';
+						panel_right = panel.position_h == 'right' ? $(window).width()-panel_offset.left-panel.$el.width() : 'auto';
 					if ( panel.$el.css('position') != 'fixed' )
 						panel.$el.css({
 							position: 'fixed',

@@ -2662,6 +2662,7 @@ define([
 				this.listenTo(Upfront.Events, 'layout:after_render', this.refresh_background);
 				this.listenTo(Upfront.Events, "entity:resize_stop", this.refresh_background);
 				this.listenTo(Upfront.Events, "entity:region:resize_stop", this.refresh_background);
+				this.listenTo(Upfront.Events, "entity:region_container:resize_stop", this.update_pos);
 				this.listenTo(Upfront.Events, "entity:region_container:resize_stop", this.refresh_background);
 				this.listenTo(Upfront.Events, "entity:drag_stop", this.refresh_background);
 				this.listenTo(Upfront.Events, "entity:drag:drop_change", this.refresh_background);
@@ -2680,9 +2681,11 @@ define([
 					container_view = this.parent_view.get_container_view(this.model),
 					data = _.extend(this.model.toJSON(), {size_class: grid.class, max_col: container_view.max_col, available_col: container_view.available_col}),
 					template = _.template(_Upfront_Templates["region_container"], data);
+				Upfront.Events.trigger("entity:region_sub_container:before_render", this, this.model);
 				this.$el.html(template);
 				this.$layout = this.$el.find('.upfront-grid-layout');
 				this.update();
+				Upfront.Events.trigger("entity:region_sub_container:after_render", this, this.model);
 			},
 			update: function () {
 				var container_view = this.parent_view.get_container_view(this.model);
@@ -2791,6 +2794,11 @@ define([
 
 			},
 			remove: function () {
+				var sub = this.model.get('sub');
+				if ( sub == 'top' )
+					this.$el.closest('.upfront-region-container-bg').css('padding-top', '');
+				else
+					this.$el.closest('.upfront-region-container-bg').css('padding-bottom', '');
 				this.event = false;
 				$(window).off('scroll.region_subcontainer_' + this.model.get('name'));
 				$(window).off('resize.region_subcontainer_' + this.model.get('name'));

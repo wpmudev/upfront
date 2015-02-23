@@ -296,6 +296,11 @@
 	display: block;
 	visibility: hidden;
 }
+.upfront-region-resize-handle-n {
+  top: -14px;
+  bottom: auto;
+  cursor: n-resize;
+}
 .upfront-region-resize-handle-e {
 	top: 0;
 	bottom: 0;
@@ -315,6 +320,7 @@
 .upfront-region-editing .upfront-region-container-active > .upfront-region-resize-handle,
 .upfront-region-editing .upfront-region-container-active .upfront-region-side-left > .upfront-region-resize-handle-e,
 .upfront-region-editing .upfront-region-container-active .upfront-region-side-right > .upfront-region-resize-handle-w,
+.upfront-region-editing .upfront-region-container-active .upfront-region-sub-container > .upfront-region-resize-handle,
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region > .upfront-region-resize-handle-s,
 .upfront-region-fixed-editing .upfront-region-side-fixed .upfront-region-resize-handle {
 	visibility: visible;
@@ -324,7 +330,7 @@
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region-side-left > .upfront-region-resize-handle-e,
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region-side-right > .upfront-region-resize-handle-w,
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region-hidden > .upfront-region-resize-handle-s,
-.upfront-region-editing .upfront-region-container-full .upfront-region-resize-handle,
+.upfront-region-editing .upfront-region-container-full > .upfront-region-resize-handle,
 .upfront-region-editing .upfront-region-bg-setting-open .upfront-region-resize-handle {
 	visibility: hidden;
 }
@@ -383,8 +389,12 @@
 	background: rgba(31, 48, 63, 0.8);
 }
 .upfront-region-editing .upfront-region-container-active .upfront-region-side,
+.upfront-region-editing .upfront-region-container-active .upfront-region-sub-container,
 .upfront-region-fixed-editing .upfront-region-side-fixed {
 	background: rgba(175, 185, 195, 0.5);
+}
+.upfront-region-editing .upfront-region-container-active .upfront-region-sub-container .upfront-region-side {
+  background: none;
 }
 .upfront-region-editing .upfront-region-container-active .upfront-region:after {
 	content: " ";
@@ -1107,6 +1117,10 @@ a.upfront-region-name-edit-trigger:before {
 	font-size: 11px;
 	line-height: 16px;
 	margin: 4px 0 0;
+}
+.upfront-region-bg-setting-auto-resize-disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 .auto-resize-off, .auto-resize-on {
 	display: inline-block;
