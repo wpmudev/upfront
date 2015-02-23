@@ -171,38 +171,55 @@ class Upfront {
 	}
 
 	function inject_global_dependencies () {
+		$deps = Upfront_CoreDependencies_Registry::get_instance();
 		wp_enqueue_script('jquery');
+		
 		//Basic styles for upfront to work are always loaded.
 		wp_enqueue_style('upfront-global', self::get_root_url() . '/styles/global.css', array(), Upfront_ChildTheme::get_version());
+        
         if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
             // Don't queue the front grid if has permission to boot Upfront, queue editor grid instead
     		wp_enqueue_style('upfront-front-grid', admin_url('admin-ajax.php?action=upfront_load_grid'), array(), Upfront_ChildTheme::get_version());
         }
 
-		//if (!is_user_logged_in()) return false; // Do not inject for non-logged in user
-		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) return false; // Do not inject for users that can't use this
-		wp_enqueue_script('jquery-ui');
-		wp_enqueue_script('jquery-effects-core');
-		wp_enqueue_script('jquery-effects-slide');
-		wp_enqueue_script('jquery-ui-draggable');
-		wp_enqueue_script('jquery-ui-droppable');
-		wp_enqueue_script('jquery-ui-resizable');
-		wp_enqueue_script('jquery-ui-selectable');
-		wp_enqueue_script('jquery-ui-slider');
-		wp_enqueue_script('jquery-ui-datepicker');
+		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
+			wp_enqueue_script('jquery-ui');
+			wp_enqueue_script('jquery-effects-core');
+			wp_enqueue_script('jquery-effects-slide');
+			wp_enqueue_script('jquery-ui-draggable');
+			wp_enqueue_script('jquery-ui-droppable');
+			wp_enqueue_script('jquery-ui-resizable');
+			wp_enqueue_script('jquery-ui-selectable');
+			wp_enqueue_script('jquery-ui-slider');
+			wp_enqueue_script('jquery-ui-datepicker');
 
-		wp_enqueue_style('wp-jquery-ui-dialog');
-		wp_enqueue_style('upfront-font-source-sans-pro', 'http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic', array(), Upfront_ChildTheme::get_version());
+			wp_enqueue_style('wp-jquery-ui-dialog');
 
-		// Enqueue needed styles
-		wp_enqueue_style('upfront-editor-grid', admin_url('admin-ajax.php?action=upfront_load_editor_grid'), array(), Upfront_ChildTheme::get_version());
-		wp_enqueue_style('upfront-editor-interface', self::get_root_url() . '/styles/editor-interface.css', array(), Upfront_ChildTheme::get_version());
-		wp_enqueue_style('upfront-chosen-default-style', self::get_root_url() . '/scripts/chosen/chosen.min.css', array(), Upfront_ChildTheme::get_version());
+	/*		
+			wp_enqueue_style('upfront-font-source-sans-pro', 'http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic', array(), Upfront_ChildTheme::get_version());
 
-		// Font icons
-		wp_enqueue_style('upfront-default-font-icons', self::get_root_url() . '/styles/font-icons.css', array(), Upfront_ChildTheme::get_version());
+			// Enqueue needed styles
+			wp_enqueue_style('upfront-editor-grid', admin_url('admin-ajax.php?action=upfront_load_editor_grid'), array(), Upfront_ChildTheme::get_version());
+			wp_enqueue_style('upfront-editor-interface', self::get_root_url() . '/styles/editor-interface.css', array(), Upfront_ChildTheme::get_version());
+			wp_enqueue_style('upfront-chosen-default-style', self::get_root_url() . '/scripts/chosen/chosen.min.css', array(), Upfront_ChildTheme::get_version());
 
-		add_action('wp_footer', array($this, 'add_responsive_css'));
+			// Font icons
+			wp_enqueue_style('upfront-default-font-icons', self::get_root_url() . '/styles/font-icons.css', array(), Upfront_ChildTheme::get_version());
+	*/
+			
+			$link_urls =  array(
+				'http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic',
+				admin_url('admin-ajax.php?action=upfront_load_editor_grid'),
+				self::get_root_url() . '/styles/editor-interface.css',
+				self::get_root_url() . '/scripts/chosen/chosen.min.css',
+				self::get_root_url() . '/styles/font-icons.css',
+			);
+			foreach ($link_urls as $url) {
+				$deps->add_style($url);
+			}
+
+			add_action('wp_footer', array($this, 'add_responsive_css'));
+		}
 	}
 
 	function inject_upfront_dependencies () {
@@ -215,17 +232,27 @@ class Upfront {
 		$storage_key = apply_filters('upfront-data-storage-key', Upfront_Layout::STORAGE_KEY);
 		$save_storage_key = $storage_key;
 		$is_ssl = is_ssl() ? '&ssl=1' : '';
-		if (isset($_GET['dev']) || isset($_GET['debug']) /*|| $this->_debugger->is_active(Upfront_Debug::DEV)*/) {
-		  echo '<script src="' . $url . '/scripts/require.js"></script>';
-		  echo '<script src="' . admin_url('admin-ajax.php?action=upfront_load_main' . $is_ssl) . '"></script>';
-		  echo '<script src="' . $url . '/scripts/main.js"></script>';
-		  if ( isset($_GET['dev']) && current_user_can('switch_themes') && apply_filters('upfront-enable-dev-saving', true) )
-			  $save_storage_key .= '_dev';
-		} else {
-		  echo '<script src="' . $url . '/build/require.js"></script>';
-		  echo '<script src="' . admin_url('admin-ajax.php?action=upfront_load_main' . $is_ssl) . '"></script>';
-		  echo '<script src="' . $url . '/build/main.js"></script>';
+
+		if (isset($_GET['dev']) && current_user_can('switch_themes') && apply_filters('upfront-enable-dev-saving', true)) {
+			$save_storage_key .= '_dev';
 		}
+/*
+		if (isset($_GET['dev']) || isset($_GET['debug'])) {// || $this->_debugger->is_active(Upfront_Debug::DEV)) {			
+			echo '<script src="' . $url . '/build/require.js"></script>';
+			echo '<script src="' . admin_url('admin-ajax.php?action=upfront_load_main' . $is_ssl) . '"></script>';
+			echo '<script src="' . $url . '/build/main.js"></script>';
+		}
+*/
+		$script_urls = array(
+			"{$url}/scripts/require.js",
+			admin_url('admin-ajax.php?action=upfront_load_main' . $is_ssl),
+			"{$url}/scripts/main.js",
+		);
+		$deps = Upfront_CoreDependencies_Registry::get_instance();
+		foreach ($script_urls as $url) {
+			$deps->add_script($url);
+		}
+
 		echo '<script type="text/javascript">
 			var _upfront_post_data=' . json_encode(array(
 				'layout' => Upfront_EntityResolver::get_entity_ids(),
