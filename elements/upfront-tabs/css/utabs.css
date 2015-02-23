@@ -111,15 +111,6 @@
   padding: 2px 3px;
 }
 
-.upfront-tabs-container .tabs-menu-wrapper {
-  height: 38px;
-  overflow: hidden;
-}
-
-.upfront-tabs-container .tabs-menu {
-  height: 36px;
-}
-
 .upfront-tabs-container .tabs-tab span {
   display: block;
   text-overflow: ellipsis;
@@ -211,4 +202,8 @@
 	right: auto !important;
 	position: relative !important;
 	margin-top: -31px;
+}
+
+.tabs-content {
+	clear: both;
 }

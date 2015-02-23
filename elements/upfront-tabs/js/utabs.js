@@ -43,7 +43,7 @@ define([
 				preset = this.model.get_property_value_by_name("preset"),
 				props = PresetUtil.getPresetProperties('tab', preset) || {}
 			;
-			
+
 			if (_.size(props) <= 0) return false; // No properties, carry on
 
 			PresetUtil.updatePresetStyle('tab', props, settingsStyleTpl);
@@ -70,28 +70,6 @@ define([
 			var id = $(tab).data('content-id').split('-').pop();
 			this.property('tabs').splice(id, 1);
 			this.property('tabs_count', this.property('tabs_count') - 1, false);
-		},
-
-		fixTabWidth: function() {
-			// Space for tabs is equal to: whole el width - add tab button - padding
-			var tabSpace = this.$el.width() - 36 - 30;
-			var tabsWidth = 0;
-			var tabWidth = 'auto';
-			var spanWidth;
-			this.$el.find('.tabs-menu .tabs-tab').css('width', 'auto');
-			this.$el.find('.tabs-tab').each(function() {
-				tabsWidth += $(this).outerWidth();
-			});
-
-			if (tabsWidth > tabSpace) {
-				tabWidth = (tabSpace - 10) / this.property('tabs_count');
-				spanWidth = Math.floor(tabWidth) + 'px';
-				this.property('tabs_fixed_width', spanWidth);
-				this.$el.find('.tabs-menu .tabs-tab').css('width', spanWidth);
-			} else {
-				this.property('tabs_fixed_width', 'auto');
-				this.$el.find('.tabs-menu .tabs-tab').css('width', 'auto');
-			}
 		},
 
 		onTabClick: function(event) {
@@ -173,7 +151,6 @@ define([
 				$(event.currentTarget).removeAttr('contenteditable');
 				id = $(event.currentTarget).data('content-id').split('-').pop();
 				this.property('tabs')[id].title = $(event.currentTarget).text();
-				this.fixTabWidth();
 				this.addTooltips();
 				if ($(event.currentTarget).find('i').size() < 1) {
 					$(event.currentTarget).append('<i></i>');
@@ -199,14 +176,9 @@ define([
 			return props;
 		},
 
-		onResizeStop: function() {
-			this.fixTabWidth();
-		},
-
 		on_render: function() {
 			// Tabs won't be rendered in time if no delay.
 			_.delay(function(self) {
-				self.fixTabWidth();
 				self.addTooltips();
 			}, 10, this);
 
