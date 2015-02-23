@@ -1146,7 +1146,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 		var color = value.color || false;
 		if (!color) return value.get_value();
 
-		return color.get_is_theme_color()
+		return false !== color.get_is_theme_color()
 			? color.theme_color
 			: color.toRgbString()
 		;

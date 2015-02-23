@@ -1265,11 +1265,15 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		var region_container = $(this).closest('.upfront-region-container');
 		if($(this).parent().find('ul.menu').css('display') == 'none') {
 			$(this).parent().find('ul.menu').show();
+			var offset = $(this).parent().find('ul.menu').position();
+			$(e.target).closest('.responsive_nav_toggler').css({position: 'fixed', left: offset.left, top: offset.top});
+			$(this).parent().find('ul.menu').css('padding-top', '60px');
 			region_container.addClass('upfront-region-container-has-nav');
 		} else {
 			$(this).parent().find('ul.menu').hide();
+			$(e.target).closest('.responsive_nav_toggler').css({position: '', left: '', top: ''});
+			$(this).parent().find('ul.menu').css('padding-top', '');
 			$(this).parent().find('ul.sub-menu').css('display', '');
-			
 			if($(this).parent().find('ul.sub-menu').length < 1 )
 				region_container.removeClass('upfront-region-container-has-nav');
 		}

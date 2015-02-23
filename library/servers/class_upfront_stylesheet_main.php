@@ -34,7 +34,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$preprocessor = new Upfront_StylePreprocessor($grid, $layout);
 
 		//Add typography styles - rearranging so the imports from Google fonts come first, if needed
-		$style = $this->prepare_typography_styles($layout);
+		$style = $this->prepare_typography_styles($layout, $grid);
 	  $style .= $preprocessor->process();
 
 		// Always load original theme styles into theme unless we're in builder, yay
@@ -169,7 +169,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		return $out;
 	}
 
-	function prepare_typography_styles ($layout) {
+	function prepare_typography_styles ($layout, $grid) {
 		$typography = $layout->get_property_value('typography');
 		if (!$typography)
 			return '';
@@ -204,6 +204,42 @@ class Upfront_StylesheetMain extends Upfront_Server {
 					"}\n";
 		}
 
+		// Responsive/breakpoint typography
+		$breakpoints = $grid->get_breakpoints();
+		foreach ($breakpoints as $breakpoint) {
+		    // Ignore default/desktop breakpoint as we store it separately
+		    if ( $breakpoint->is_default() )
+                continue;
+			$breakpoint_css = '';
+			$typography = $breakpoint->get_typography();;
+			foreach ( $typography as $element=>$properties ){
+				$properties = wp_parse_args($properties, array(
+					'font_face' => 'Arial',
+					'weight' => '400',
+					'style' => 'normal',
+					'size' => '16px',
+					'line_height' => '1.3',
+					'color' => 'black',
+					'font_family' => 'sans-serif'
+				));
+				$faces[] = array(
+					'face' => $properties['font_face'],
+					'weight' => $properties['weight']
+				);
+				$font = $properties['font_face'] ? "{$properties['font_face']}, {$properties['font_family']}" : "inherit";
+				$breakpoint_css .= ".upfront-output-object $element {\n" .
+						"font-family: {$font};\n" .
+						( $properties['weight'] ? "font-weight: {$properties['weight']};\n" : "" ) .
+						( $properties['style'] ? "font-style: {$properties['style']};\n" : "" ) .
+						( $properties['size'] ? "font-size: {$properties['size']}px;\n" : "" ) .
+						( $properties['line_height'] ? "line-height: {$properties['line_height']}em;\n" : "" ) .
+						"color: {$properties['color']};\n" .
+						"}\n";
+			}
+			$out .= $breakpoint->wrap($breakpoint_css, $breakpoints);
+		}
+
+		// Include Google fonts
 		$faces = array_values(array_filter(array_unique($faces, SORT_REGULAR)));
 		$google_fonts = new Upfront_Model_GoogleFonts;
 		$imports = '';

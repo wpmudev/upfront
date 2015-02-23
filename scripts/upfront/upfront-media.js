@@ -1839,12 +1839,14 @@ define(function() {
 		},
 		propagate_selection: function (model) {
 			if (!this.multiple_selection) {
-				var has = this.model.where({selected: true});
+				var has = this.model.where({selected: true}),
+					selected = true === model.get("selected")
+				;
 				if (has.length) _(has).each(function (item) {
 					item.set({selected: false}, {silent: true});
 					item.trigger("appearance:update");
 				});
-				model.set({selected: true}, {silent: true});
+				if (selected) model.set({selected: true}, {silent: true});
 				model.trigger("appearance:update");
 			}
 			Upfront.Events.trigger("media:item:selection_changed", this.model);

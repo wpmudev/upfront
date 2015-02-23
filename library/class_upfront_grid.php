@@ -579,6 +579,10 @@ class Upfront_GridBreakpoint {
 		return $this->_width;
 	}
 
+	public function get_typography() {
+		return isset($this->_data['typography']) ? $this->_data['typography'] : array();
+	}
+
 	public function get_grid_width () {
 		return $this->get_columns() * $this->get_column_width();
 	}

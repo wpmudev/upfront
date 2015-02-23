@@ -1528,7 +1528,7 @@ define([
 	var SidebarPanel_Settings_Item_Typography_Editor = SidebarPanel_Settings_Item.extend({
 		fields: {},
 		current_element: 'h1',
-		elements: ["h1", "h2", "h3", "h4", "h5", "h6", "p", "a", "a:hover", "ul", "ol", "blockquote"],
+		elements: ["h1", "h2", "h3", "h4", "h5", "h6", "p", "a", "a:hover", "ul", "ol", "blockquote", 'blockquote.upfront-quote-alternative'],
 		inline_elements: ["a", "a:hover"],
 		typefaces: {},
 		styles: {},
@@ -1543,6 +1543,7 @@ define([
 			});
 			this.listenTo(Upfront.Events, 'upfront:render_typography_sidebar', this.render);
 			this.listenTo(Upfront.Events, 'entity:object:after_render', this.update_typography_elements);
+			this.listenTo(Upfront.Events, "theme_colors:update", this.update_typography_elements, this);
 		},
 		on_render: function () {
 			var me = this,
@@ -1550,6 +1551,10 @@ define([
 				$wrap_left = $('<div class="upfront-typography-fields-left" />'),
 				$wrap_right = $('<div class="upfront-typography-fields-right" />'),
 				typography = this.model.get_property_value_by_name('typography');
+
+			if (_.isEmpty(typography)) {
+				typography = $.parseJSON('{\"h1\":{\"weight\":\"100\",\"style\":\"normal\",\"size\":\"72\",\"line_height\":\"1\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\",\"color\":\"rgba(0,0,0,1)\"},\"h2\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"50\",\"line_height\":\"1\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h3\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"36\",\"line_height\":\"1.3\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h4\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"30\",\"line_height\":\"1.2\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\"},\"h5\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"25\",\"line_height\":\"1.2\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h6\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"22\",\"line_height\":\"1.3\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"p\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"18\",\"line_height\":\"1.4\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"a\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":false,\"line_height\":false,\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(0,206,141,1)\"},\"a:hover\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":false,\"line_height\":false,\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(0,165,113,1)\"},\"ul\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"16\",\"line_height\":\"1.5\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\",\"color\":\"rgba(0,0,0,1)\"},\"ol\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"16\",\"line_height\":\"1.5\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\"},\"blockquote\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"20\",\"line_height\":\"1.5\",\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(103,103,103,1)\"},\"blockquote.upfront-quote-alternative\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"20\",\"line_height\":\"1.5\",\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(103,103,103,1)\"}}')
+			}
 
 			// Check for theme fonts if no theme fonts just return string
 			var currentMode = Upfront.Application.get_current();
@@ -1611,6 +1616,7 @@ define([
 							{ label: l10n.ul, value: "ul" },
 							{ label: l10n.ol, value: "ol" },
 							{ label: l10n.bq, value: "blockquote" },
+							{ label: l10n.bqalt, value: "blockquote.upfront-quote-alternative" },
 						],
 						change: function () {
 							var value = this.get_value(),
@@ -1738,11 +1744,31 @@ define([
 			});
 		},
 		get_styles_field_default_value: function() {
-			if (this.styles[this.current_element]) return this.styles[this.current_element];
+			var availableStyles = this.get_styles();
+			var style;
+			if (this.styles[this.current_element]) {
+				style = this.styles[this.current_element];
+			} else if (this.typefaces[this.current_element]) {
+				style = Font_Model.get_default_variant(this.typefaces[this.current_element]);
+			} else {
+				style = 'regular';
+			}
 
-			if (this.typefaces[this.current_element]) return Font_Model.get_default_variant(this.typefaces[this.current_element]);
+			// Make sure style is in available styles, this is needed because:
+			// - regular is also noted as "400 normal" in system fonts
+			// - italic is also noted as "400 italic" in system fonts
+			if (style === 'regular' && !_.findWhere(availableStyles, { value: 'regular'}) && _.findWhere(availableStyles, { value: '400 normal'})) {
+				style = '400 normal';
+			} else if (style === '400 normal' && !_.findWhere(availableStyles, { value: '400 normal'}) && _.findWhere(availableStyles, { value: 'regular'})) {
+				style = 'regular';
+			}
+			if (style === 'italic' && !_.findWhere(availableStyles, { value: 'italic'}) && _.findWhere(availableStyles, { value: '400 italic'})) {
+				style = '400 italic';
+			} else if (style === '400 italic' && !_.findWhere(availableStyles, { value: '400 italic'}) && _.findWhere(availableStyles, { value: 'italic'})) {
+				style = 'italic';
+			}
 
-			return 'regular';
+			return style;
 		},
 		get_styles: function() {
 			var typography = this.model.get_property_value_by_name('typography'),
@@ -1848,7 +1874,7 @@ define([
 		},
 		update_typography_elements: function (view) {
 			var me = this;
-
+/*
 			_.each(this.elements, function(element) {
 				var $this_el = view && view.$el ? view.$el.find('.upfront-object-content ' + element) : $('.upfront-object-content ' + element );
 				Upfront.Views.Theme_Colors.colors.remove_theme_color_classes( $this_el );
@@ -1857,6 +1883,19 @@ define([
 					 $this_el.css("color", me.colors[element]);
 				}
 			});
+*/
+			var css = [],
+				$style = false
+			;
+			$style = $("style#typography-colors");
+			if (!$style.length) {
+				$("body").append('<style id="typography-colors" />');
+				$style = $("style#typography-colors");
+			}
+			_.each(this.elements, function (element) {
+				if (me.colors[element]) css.push('.upfront-object-content ' + element + '{ color:' + Upfront.Util.colors.to_color_value(me.colors[element]) + '; }');
+			});
+			$style.empty().append(css.join("\n"));
 		}
 	});
 
@@ -1937,7 +1976,7 @@ define([
         },
         is_theme_color : function(color){
             color = this.color_to_hex( color );
-            return _.indexOf(this.get_colors(), color) !== -1 ? _.indexOf(this.get_colors(), color) + 1 /* <== indexOf can easily return 0 :( */ : false; 
+            return _.indexOf(this.get_colors(), color) !== -1 ? _.indexOf(this.get_colors(), color) + 1 /* <== indexOf can easily return 0 :( */ : false;
         },
         get_css_class : function(color, bg){
             color = this.color_to_hex( color );
@@ -2422,9 +2461,10 @@ define([
 			this.listenTo(this.collection, 'change:active', this.render);
 		},
 		render: function() {
-			var typography_section = new SidebarPanel_Responsive_Settings_Section_Typography({
-				"model": breakpoints_storage.get_breakpoints().get_active()
-			});
+			var breakpoint_model = breakpoints_storage.get_breakpoints().get_active(),
+				typography_section = new SidebarPanel_Responsive_Settings_Section_Typography({
+					"model": breakpoint_model.get('default') ? this.model : breakpoint_model // If default, use layout model instead
+				});
 			typography_section.render();
 
 			this.$el.html(this.template);
@@ -2440,7 +2480,7 @@ define([
 				new Command_BreakpointDropdown(),
 				new Command_AddCustomBreakpoint(),
 				new ResponsiveCommand_BrowseLayout(),
-				new SidebarPanel_ResponsiveSettings()
+				new SidebarPanel_ResponsiveSettings({"model": this.model})
 			];
 		},
 		render: function() {
@@ -2547,6 +2587,7 @@ define([
 				Upfront.Events.on('upfront:element:edit:stop', this.allowUsage, this);
 			}
 			Upfront.Events.on("application:mode:after_switch", this.render, this);
+			Upfront.Events.on("application:user:fetch", this.render, this); // Re-build when we're ready
 		},
 		preventUsage: function(type) {
 			var preventUsageText = l10n.not_available_in_text_edit;
@@ -2606,7 +2647,7 @@ define([
 
 			// Responsive
 			if ( is_responsive_app ) {
-				var responsive_commands = new SidebarCommands_Responsive();
+				var responsive_commands = new SidebarCommands_Responsive({"model": this.model});
 				output.append(responsive_commands.render().el);
 			}
 
@@ -2683,6 +2724,7 @@ define([
 				user = new Upfront.Models.User();
 				Upfront.data.loading.currentUser = user.fetch().done(function(){
 					Upfront.data.currentUser = user;
+					Upfront.Events.trigger("application:user:fetch");
 				});
 			}
 		},
