@@ -280,7 +280,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		//Adapt slider height to the image crop
 		var textHeight = this.property('primaryStyle') == 'below' ? this.$('.uslide[rel=' + currentSlide.id + ']').find('.uslide-caption').outerHeight() : 0;
-		me.$('.uslides').height(wrapper.height() + textHeight);
+		me.$('.uslides').css({ 'padding-top' : wrapper.height() + textHeight});
 	},
 
 	updateControls: function(){
@@ -480,7 +480,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 				if(me.property('primaryStyle') == 'below'){
 					//Adapt the height to take care of the caption
-					me.$('.uslides').height(slide.find('.uslide-image').outerHeight() + slide.find('.uslide-caption').outerHeight());
+					me.$('.uslides').css({ 'padding-top' : slide.find('.uslide-image').outerHeight() + slide.find('.uslide-caption').outerHeight()});
 				}
 			}
 		});
@@ -829,7 +829,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		//newElementSize.width = current.width();
 		imageWrapper.css(wrapperCss)
 			.closest('.uslide').height(newElementSize.height)
-			.closest('.uslides').height(newElementSize.height)
+			.closest('.uslides').css({'padding-top' : newElementSize.height})
 		;
 
 		this.calculateImageResize(wrapperSize, slide);
