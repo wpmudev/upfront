@@ -126,16 +126,24 @@ class Upfront_Output {
 	function add_styles () {
 		wp_enqueue_style('upfront-main', upfront_ajax_url('upfront_load_styles'), array(), Upfront_ChildTheme::get_version(), 'all');
 
+		$deps = Upfront_CoreDependencies_Registry::get_instance();
+
 		// Load theme fonts
 		$theme_fonts = json_decode(get_option('upfront_' . get_stylesheet() . '_theme_fonts'));
 		$theme_fonts = apply_filters('upfront_get_theme_fonts', $theme_fonts, array());
 		if( $theme_fonts ) {
 			foreach($theme_fonts as $theme_font) {
+				/*
 				wp_enqueue_style(
 					strtolower(str_replace(' ', '-', $theme_font->font->family)) . '-' . $theme_font->variant,
 					'//fonts.googleapis.com/css?family=' . str_replace(' ', '+', $theme_font->font->family) . ':' . $theme_font->variant,
 					array(),
 					Upfront_ChildTheme::get_version()
+				);
+				*/
+				// Debounce loading fonts?
+				$deps->add_style(
+					'//fonts.googleapis.com/css?family=' . str_replace(' ', '+', $theme_font->font->family) . ':' . $theme_font->variant
 				);
 			}
 		}
