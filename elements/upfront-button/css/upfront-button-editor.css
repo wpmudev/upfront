@@ -26,3 +26,10 @@ div.upfront-output-button.being_edited i.visit_link {
 div.upfront-output-button:hover i.visit_link {
   opacity: 1;
 }
+a.upfront_cta.ueditor-placeholder{
+  position: relative !important;
+  left: inherit !important;
+  top: inherit !important;
+  right: inherit !important;
+  display: none !important;
+}
