@@ -11,8 +11,14 @@ class Upfront_ElementStyles extends Upfront_Server {
 	}
 
 	private function _add_hooks () {
-		add_action('upfront-layout-applied', array($this, 'load_styles'));
-		add_action('upfront-layout-applied', array($this, 'load_scripts'));
+		if (defined('UPFRONT_EXPERIMENTS_ON') && UPFRONT_EXPERIMENTS_ON) {
+			add_filter('upfront-experiments-styles-debounce_dependency_load', array($this, 'add_style_load_url'));
+			add_filter('upfront-experiments-scripts-debounce_dependency_load', array($this, 'add_script_load_url'));
+		} else {
+			add_action('upfront-layout-applied', array($this, 'load_styles'));
+			add_action('upfront-layout-applied', array($this, 'load_scripts'));
+		}
+		
 
 		upfront_add_ajax('upfront-element-styles', array($this, 'serve_styles'));
 		upfront_add_ajax_nopriv('upfront-element-styles', array($this, 'serve_styles'));
@@ -47,6 +53,35 @@ class Upfront_ElementStyles extends Upfront_Server {
 			'styles',
 			$raw_cache_key
 		))), array(), $this->_get_enqueue_version()); // But let's do pretty instead
+	}
+
+	public function add_style_load_url ($urls) {
+		$hub = Upfront_PublicStylesheets_Registry::get_instance();
+		$styles = $hub->get_all();
+		if (empty($styles)) return $urls;
+
+		$raw_cache_key = $this->_get_raw_cache_key($styles);
+		$cache_key = "css{$raw_cache_key}";
+		$cache = $this->_debugger->is_active() ? false : get_transient($cache_key);
+		if (empty($cache)) {
+			foreach ($styles as $key => $frags) {
+				//$path = upfront_element_dir($frags[0], $frags[1]);
+				//if (file_exists($path)) $cache .= "/* {$key} */\n" . file_get_contents($path) . "\n";
+				if (empty($frags)) continue;
+				$style = $this->_get_style_contents($frags);
+				if (!empty($style))  $cache .= "/* {$key} */\n{$style}\n";
+			}
+			if (!$this->_debugger->is_active(Upfront_Debug::STYLE)) $cache = Upfront_StylePreprocessor::compress($cache);
+			set_transient($cache_key, $cache);
+		}
+
+		$url = Upfront_VirtualPage::get_url(join('/', array(
+			'upfront-dependencies',
+			'styles',
+			$raw_cache_key
+		)));
+		$urls[] = $url;
+		return $urls;
 	}
 
 	/**
@@ -117,6 +152,30 @@ class Upfront_ElementStyles extends Upfront_Server {
 			'scripts',
 			$raw_cache_key
 		))), array('jquery'), $this->_get_enqueue_version(), true); // Scripts go into footer
+	}
+
+	public function add_script_load_url ($urls) {
+		$hub = Upfront_PublicScripts_Registry::get_instance();
+		$scripts = $hub->get_all();
+		if (empty($scripts)) return $urls;
+
+		$raw_cache_key = $this->_get_raw_cache_key($scripts);
+		$cache_key = "js{$raw_cache_key}";
+		$cache = $this->_debugger->is_active() ? false : get_transient($cache_key);
+		if (empty($cache)) {
+			foreach ($scripts as $key => $frags) {
+				$path = upfront_element_dir($frags[0], $frags[1]);
+				if (file_exists($path)) $cache .= "/* {$key} */\n" . file_get_contents($path) . "\n";
+			}
+			set_transient($cache_key, $cache);
+		}
+		$url = Upfront_VirtualPage::get_url(join('/', array(
+			'upfront-dependencies',
+			'scripts',
+			$raw_cache_key
+		)));
+		$urls[] = $url;
+		return $urls;
 	}
 
 	function serve_styles () {
