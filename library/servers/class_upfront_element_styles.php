@@ -144,3 +144,66 @@ class Upfront_ElementStyles extends Upfront_Server {
 		return Upfront_ChildTheme::get_version();
 	}
 }
+
+
+class Upfront_CoreDependencies_Server extends Upfront_Server {
+	public static function serve () {
+		$me = new self;
+		$me->_add_hooks();
+	}
+
+	private function _add_hooks () {
+		add_action('upfront-core-inject_dependencies', array($this, 'dispatch_dependencies_output'));
+	}
+
+	public function dispatch_dependencies_output () {
+		$deps = Upfront_CoreDependencies_Registry::get_instance();
+		if (defined('UPFRONT_EXPERIMENTS_ON') && UPFRONT_EXPERIMENTS_ON) {
+			$this->_output_experimental($deps);
+		} else {
+			$this->_output_normal($deps);
+		}
+	}
+
+	private function _output_normal ($deps) {
+		$styles = $deps->get_styles();
+		$link_tpl = '<link rel="stylesheet"  href="%url%" type="text/css" media="all" />';
+		foreach ($styles as $style) {
+			echo preg_replace('/%url%/', $style, $link_tpl);
+		}
+
+		$scripts = $deps->get_scripts();
+		$script_tpl = '<script type="text/javascript" src="%url%"></script>';
+		foreach ($scripts as $script) {
+			echo preg_replace('/%url%/', $script, $script_tpl);	
+		}
+	}
+
+	private function _output_experimental ($deps) {
+		$link_urls = json_encode(apply_filters('upfront-experiments-styles-debounce_dependency_load', $deps->get_styles()));
+		$link_tpl = json_encode('<link rel="stylesheet"  href="%url%" type="text/css" media="all" />');
+		
+
+		$script_urls = json_encode(apply_filters('upfront-experiments-scripts-debounce_dependency_load', $deps->get_scripts()));
+		$script_tpl = json_encode('<script type="text/javascript" src="%url%"></script>');
+		
+		echo "<script type='text/javascript'>
+			(function ($) {
+				var script_urls = {$script_urls},
+					script_tpl = {$script_tpl},
+					link_urls = {$link_urls},
+					link_tpl = {$link_tpl},
+					head = $('head')
+				;
+				$.each(script_urls, function (idx, url) {
+					head.append(script_tpl.replace(/%url%/, url));
+				});
+				$.each(link_urls, function (idx, url) {
+					head.append(link_tpl.replace(/%url%/, url));
+				});
+			})(jQuery);
+		</script>";
+	}
+
+}
+Upfront_CoreDependencies_Server::serve();
