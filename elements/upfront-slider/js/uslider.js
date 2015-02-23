@@ -35,6 +35,8 @@ var USliderModel = Upfront.Models.ObjectModel.extend({
 	}
 });
 
+var slideCollection;
+
 /**
  * View instance - what the element looks like.
  * @type {Upfront.Views.ObjectView}
@@ -51,8 +53,6 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			this.model = new USliderModel({properties: this.model.get('properties')});
 		}
 
-		console.log('Uslider');
-
 		this.constructor.__super__.initialize.call(this, [options]);
 
 		this.events = _.extend({}, this.events, {
@@ -62,12 +62,9 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			'click .uslider-starting-options': 'checkStartingInputClick'
 		});
 
-		var slides = this.property('slides');
-		this.slides = new Uslider_Slides(slides);
+		slideCollection = new Uslider_Slides(this.property('slides'));
 
-		this.model.slides = this.slides;
-
-		this.listenTo(this.slides, 'add remove reset change', this.slidesChange);
+		this.listenTo(slideCollection, 'add remove reset change', this.onSlidesCollectionChange);
 		this.listenTo(this.model, 'change', this.onModelChange);
 
 		this.listenTo(this.model, 'addRequest', this.openImageSelector);
@@ -76,7 +73,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		this.listenTo(this.model.get('properties'), 'change', this.checkStyles);
 
 		this.listenTo(this.model, 'background', function(rgba){
-			me.slides.each(function(slide){
+			slideCollection.each(function(slide){
 				slide.set('captionBackground', rgba);
 			});
 		});
@@ -91,8 +88,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		this.cropTimeAfterResize =  10000;
 
 		//Current Slide index
-		this.currentSlide =  0;
-
+		this.setCurrentSlide(0);
 	},
 
 	on_edit: function(){
@@ -106,7 +102,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		;
 
 
-		if(!this.slides.length){
+		if(!slideCollection.length){
 			this.startingHeight = this.startingHeight || 225;
 			return this.startingTpl({startingHeight: this.startingHeight, l10n: l10n});
 		}
@@ -117,7 +113,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		props.dots = _.indexOf(['dots', 'both'], props.controls) != -1;
 		props.arrows = _.indexOf(['arrows', 'both'], props.controls) != -1;
 
-		props.slides = this.slides.toJSON();
+		props.slides = slideCollection.toJSON();
 
 		props.slidesLength = props.slides.length;
 
@@ -134,7 +130,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		}
 
 		props.production = false;
-		props.startingSlide = this.currentSlide;
+		props.startingSlide = this.getCurrentSlide();
 
 		props.l10 = l10n;
 
@@ -142,7 +138,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		var $rendered = $('<div></div>').append(rendered);
 
-		this.slides.each(function(slide){
+		slideCollection.each(function(slide){
 			if(!me.imageProps[slide.id]){
 				me.imageProps[slide.id] = {
 					size: slide.get('size'),
@@ -192,7 +188,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			;
 		}
 
-		if(!this.slides.length)
+		if(!slideCollection.length)
 			return;
 
 		if(this.$el.parent().length){
@@ -234,7 +230,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			wrapper = me.$('.uslide-image'),
 			controls = me.createControls(),
 			text = me.$('.uslide-editable-text'),
-			currentSlide = me.slides.at(me.currentSlide)
+			currentSlide = slideCollection.at(this.getCurrentSlide())
 		;
 
 		controls.setWidth(wrapper.width());
@@ -261,7 +257,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				.on('start', function(){
 					var $this = $(this),
 						id = $this.closest('.uslide').attr('rel'),
-						slide = me.slides.get(id)
+						slide = slideCollection.get(id)
 					;
 
 					me.$el.addClass('upfront-editing');
@@ -271,7 +267,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 						})
 						.on('stop', function(){
 							slide.set('text', $this.html());
-							me.property('slides', me.slides.toJSON());
+							me.property('slides', slideCollection.toJSON());
 							me.$el.removeClass('upfront-editing');
 						})
 					;
@@ -293,7 +289,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		var controls = this.createControls();
 		controls.render();
 
-		this.$('.uimage-controls').append(controls.$el).attr('rel', this.slides.at(this.currentSlide).id);
+		this.$('.uimage-controls').append(controls.$el).attr('rel', slideCollection.at(this.getCurrentSlide()).id);
 
 		this.controls = controls;
 	},
@@ -323,7 +319,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		;
 
 		if(primary != this.lastStyle){
-			this.slides.each(function(slide){
+			slideCollection.each(function(slide){
 				var style = slide.get('style');
 				if(primary == 'below' && _.indexOf(['below', 'above'], style) == -1 ||
 					primary == 'over' && _.indexOf(['topOver', 'bottomOver', 'topCover', 'middleCover', 'bottomCover'], style) == -1 ||
@@ -338,7 +334,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			if(primary == 'side' || this.lastStyle == 'side')
 				this.setTimer();
 			this.lastStyle = primary;
-			this.slidesChange();
+			this.onSlidesCollectionChange();
 		}
 
 	},
@@ -372,7 +368,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			elementCols, colWidth,
 			text = current.find('.uslide-caption'),
 			id = current.attr('rel'),
-			slide = this.slides.get(id),
+			slide = slideCollection.get(id),
 			height = false,
 			style = slide.get('style')
 		;
@@ -435,7 +431,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 				$slide.css({width: percentage + '%'});
 
-				me.slides.each(function(slide){
+				slideCollection.each(function(slide){
 					if(slide.get('style') != 'nocaption')
 						me.imageProps[slide.id] = me.calculateImageResize({width: $slide.width(), height: ui.element.height()}, slide);
 				});
@@ -458,18 +454,16 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			me.cropTimer = false;
 		}
 		me.cropTimer = setTimeout(function(){
-			var slide = me.slides.at(me.currentSlide),
+			var slide = slideCollection.at(me.getCurrentSlide()),
 				editor = me.$('.uslide[rel=' + slide.id + ']').find('.uslide-editable-text')
 			;
 			if(editor.length && editor.data('redactor')){
 				editor.on('stop', function(){
 					me.saveTemporaryResizing();
-					console.log('delayedResizingTimer');
 				});
 			}
 			else {
 				me.saveTemporaryResizing();
-				console.log('resizingTimer');
 			}
 		}, me.cropTimeAfterResize);
 	},
@@ -478,7 +472,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		var me = this;
 		this.$('.uslides').on('slidein', function(e, slide, index){
 			if(slide){
-				me.currentSlide = index;
+				me.setCurrentSlide(index);
 				me.updateControls();
 				me.$('.uimage-controls').attr('rel', slide.attr('rel'));
 				if(me.property('primaryStyle') == 'side')
@@ -517,7 +511,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			multiControls = {},
 			captionControl = new Upfront.Views.Editor.InlinePanels.TooltipControl(),
 			panelItems = [],
-			slide = this.slides.at(this.currentSlide)
+			slide = slideCollection.at(this.getCurrentSlide())
 		;
 
 		captionControl.sub_items = {};
@@ -540,7 +534,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			this.listenTo(captionControl, 'select', function(item){
 				var previousStyle = slide.get('style');
 				slide.set('style', item);
-				me.slidesChange();
+				me.onSlidesCollectionChange();
 				if(primaryStyle == 'side' && previousStyle == 'nocaption' || item == 'nocaption'){
 					//give time to the element to render
 					setTimeout(function(){
@@ -652,7 +646,6 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		var data = control.view.getCurrentValue();
 
 		if(!data){
-			console.log('Error updating image link');
 			return;
 		}
 
@@ -686,21 +679,20 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		return found || -1;
 	},
 
-	slidesChange: function(){
-		this.property('slides', this.slides.toJSON(), false);
-		//this.model.trigger('slidesChanged');
+	onSlidesCollectionChange: function(){
+		this.property('slides', slideCollection.toJSON(), false);
 	},
 
-	onModelChange: function(){
-		this.stopListeningTo(this.slides);
-		this.slides = new Uslider_Slides(this.property('slides'));
-		this.listenTo(this.slides, 'add remove reset change', this.slidesChange);
+	onModelChange: function() {
+		this.stopListeningTo(slideCollection);
+		slideCollection = new Uslider_Slides(this.property('slides'));
+		this.listenTo(slideCollection, 'add remove reset change', this.onSlidesCollectionChange);
 		this.render();
 	},
 
 	openImageSelector: function(e, replaceId){
 		var me = this,
-			sizer = this.slides.length ? this.$('.upfront-default-slider-item-current').find('.uslide-image') : this.$('.upfront-object-content'),
+			sizer = slideCollection.length ? this.$('.upfront-default-slider-item-current').find('.uslide-image') : this.$('.upfront-object-content'),
 			selectorOptions = {
 				multiple: true,
 				preparingText: l10n.preparing_img,
@@ -723,7 +715,6 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 	addSlides: function(images, replaceId){
 		var slides = [];
-		console.log(images);
 		_.each(images, function(image, id){
 			var data = {sizes: image, id: id, srcFull: image.full[0], status: 'ok'};
 			if(image.custom && !image.custom.error){
@@ -740,11 +731,11 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		});
 
 		if(replaceId){
-			this.slides.get(replaceId).set(slides[0]);
-			this.slidesChange();
+			slideCollection.get(replaceId).set(slides[0]);
+			this.onSlidesCollectionChange();
 		}
 		else
-			this.slides.add(slides);
+			slideCollection.add(slides);
 	},
 
 	onElementResizeStart: function(e, ui){
@@ -783,7 +774,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		var me = this,
 			mask = this.$('.upfront-default-slider-item-current').find('.uslide-image'),
-			currentSlide = this.slides.at(this.currentSlide),
+			currentSlide = slideCollection.at(this.getCurrentSlide()),
 			style = this.property('primaryStyle'),
 			resizer = $('.upfront-resize'),
 			text = style == 'below' ? this.$('.uslide-caption') : [],
@@ -794,7 +785,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			sideImageWidth = imageColumns * this.calculateColumnWidth()
 		;
 
-		this.slides.each(function(slide){
+		slideCollection.each(function(slide){
 			var imageSize = {height: newElementSize.height};
 			imageSize.width = style == 'side' && slide.get('style') != 'nocaption' ? sideImageWidth : newElementSize.width;
 			me.imageProps[slide.id] = me.calculateImageResize(imageSize, slide);
@@ -823,7 +814,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			textHeight = text.length ? text.outerHeight() : 0,
 			newElementSize = {width: resizer.outerWidth() - 30, height: resizer.outerHeight() - 30 - textHeight},
 			id = current.attr('rel'),
-			slide = this.slides.get(id),
+			slide = slideCollection.get(id),
 			imageWrapper= current.find('.uslide-image'),
 			style = this.property('primaryStyle'),
 			wrapperSize = {width: style == 'side' ? imageWrapper.width() : newElementSize.width, height: newElementSize.height},
@@ -882,7 +873,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			sentData = {},
 			element_id = this.model.get_property_value_by_name("element_id")
 		;
-		this.slides.each(function(slide){
+		slideCollection.each(function(slide){
 			var imageProps =  me.imageProps[slide.id],
 				crop = imageProps.cropOffset,
 				data
@@ -905,9 +896,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		return Upfront.Util.post(editOptions).done(function(response){
 			var images = response.data.images;
-			console.log(images);
 			_.each(images, function(data, id){
-				var slide = me.slides.get(id),
+				var slide = slideCollection.get(id),
 					imageData = sentData[id]
 				;
 				slide.set({
@@ -924,7 +914,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			me.cropTimer = false;
 
 			me.imageProps = {};
-			me.slidesChange();
+			me.onSlidesCollectionChange();
 		});
 	},
 
@@ -937,9 +927,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 					element: JSON.stringify(Upfront.Util.model_to_json(me.model)),
 					action: 'upfront_update_layout_element'
 				};
-				Upfront.Util.post(saveData).done(function(response){
-					console.log('Ok');
-				});
+				Upfront.Util.post(saveData).done();
 			});
 		}
 	},
@@ -947,14 +935,26 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	removeSlide: function(e) {
 		var item = $(e.target).closest('.uimage-controls');
 		this.startingHeight = this.$('.upfront-slider').height();
-		if(confirm('Are you sure to delete this slide?'))
-			this.slides.remove(item.attr('rel'));
+
+		if (confirm('Are you sure to delete this slide?')) {
+			// It's very important that next line goes before removing slide from collection
+			this.setCurrentSlide( this.getCurrentSlide() > 0 ? this.getCurrentSlide() - 1 : 0 );
+			slideCollection.remove(item.attr('rel'));
+		}
+	},
+
+	getCurrentSlide: function() {
+		return this.currentSlide;
+	},
+
+	setCurrentSlide: function(number) {
+		this.currentSlide = number;
 	},
 
 	imageEditMask: function(e) {
 		var me = this,
 			item = $(e.target).closest('.uimage-controls'),
-			slide = this.slides.get(item.attr('rel')),
+			slide = slideCollection.get(item.attr('rel')),
 			editorOpts = this.getEditorOptions(slide)
 		;
 
@@ -967,12 +967,12 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			return Upfront.Views.Editor.ImageSelector.open(selectorOptions).done(function(images, response){
 				me.addSlides(images);
 
-				var index = me.slides.indexOf(slide);
-				me.slides.remove(slide, {silent:true});
+				var index = slideCollection.indexOf(slide);
+				slideCollection.remove(slide, {silent:true});
 
-				var newSlide = me.slides.at(me.slides.length -1);
-				me.slides.remove(newSlide, {silent:true});
-				me.slides.add(newSlide, {at: index});
+				var newSlide = slideCollection.at(slideCollection.length -1);
+				slideCollection.remove(newSlide, {silent:true});
+				slideCollection.add(newSlide, {at: index});
 
 				Upfront.Views.Editor.ImageSelector.close();
 			});
@@ -1078,14 +1078,12 @@ var SlidesField = Upfront.Views.Editor.Field.Field.extend({
 		'click .uslider-add' : 'addSlides',
 	},
 	initialize: function(){
-		this.slides = this.model.slides;
-
-		this.listenTo(this.slides, 'add remove sort reset', this.render);
+		this.listenTo(slideCollection, 'add remove sort reset', this.render);
 	},
 
 	render: function() {
 		var me = this;
-		this.$el.html(this.template({slides: this.slides, l10n: l10n}));
+		this.$el.html(this.template({slides: slideCollection, l10n: l10n}));
 
 		//Make the thumbs sortable
 		this.$('.uslider-slides-setting').sortable({
@@ -1097,12 +1095,12 @@ var SlidesField = Upfront.Views.Editor.Field.Field.extend({
 				// When the drag stops we record the list of IDs into our array for use later.
 				var slideId = ui.item.attr('rel'),
 					newPosition = me.getSlidePosition(slideId),
-					slide = false,
-					slides = me.slides;
-				if(newPosition != -1){
-					slide = slides.get(slideId);
-					slides.remove(slideId, {silent:true});
-					me.slides.add(slide, {at: newPosition});
+					slide = false;
+
+				if(newPosition != -1) {
+					slide = slideCollection.get(slideId);
+					slideCollection.remove(slideId, {silent:true});
+					slideCollection.add(slide, {at: newPosition});
 				}
 			}
 		});
@@ -1134,7 +1132,7 @@ var SlidesField = Upfront.Views.Editor.Field.Field.extend({
 		return 'slides';
 	},
 	get_value: function() {
-		return this.slides.toJSON();
+		return slideCollection.toJSON();
 	}
 });
 
@@ -1342,7 +1340,7 @@ var LayoutPanel =  Upfront.Views.Editor.Settings.Panel.extend({
 							chooseText: l10n.ok,
 							showInput: true,
 						    allowEmpty:true,
-			   				show: function(){
+								show: function(){
 								spectrum = $('.sp-container:visible');
 						    },
 							change: function(color) {
