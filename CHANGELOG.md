@@ -2,6 +2,13 @@ Change Log
 ============
 
 
+0.2.2 - 2015-02-23
+-------------------------------------------------------------------------------
+- Fix: responsive menu positioning.
+- Fix: desktop breakpoint responsive typography.
+- Fix: slider element slide removal.
+- Fix: button element bugs.
+
 0.2.1 - 2015-02-20
 -------------------------------------------------------------------------------
 - Fix: add typography defaults.
