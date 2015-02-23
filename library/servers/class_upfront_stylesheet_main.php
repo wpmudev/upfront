@@ -207,6 +207,9 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		// Responsive/breakpoint typography
 		$breakpoints = $grid->get_breakpoints();
 		foreach ($breakpoints as $breakpoint) {
+		    // Ignore default/desktop breakpoint as we store it separately
+		    if ( $breakpoint->is_default() )
+                continue;
 			$breakpoint_css = '';
 			$typography = $breakpoint->get_typography();;
 			foreach ( $typography as $element=>$properties ){

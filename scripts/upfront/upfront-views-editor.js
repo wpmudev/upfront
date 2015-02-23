@@ -2461,9 +2461,10 @@ define([
 			this.listenTo(this.collection, 'change:active', this.render);
 		},
 		render: function() {
-			var typography_section = new SidebarPanel_Responsive_Settings_Section_Typography({
-				"model": breakpoints_storage.get_breakpoints().get_active()
-			});
+			var breakpoint_model = breakpoints_storage.get_breakpoints().get_active(),
+				typography_section = new SidebarPanel_Responsive_Settings_Section_Typography({
+					"model": breakpoint_model.get('default') ? this.model : breakpoint_model // If default, use layout model instead
+				});
 			typography_section.render();
 
 			this.$el.html(this.template);
@@ -2479,7 +2480,7 @@ define([
 				new Command_BreakpointDropdown(),
 				new Command_AddCustomBreakpoint(),
 				new ResponsiveCommand_BrowseLayout(),
-				new SidebarPanel_ResponsiveSettings()
+				new SidebarPanel_ResponsiveSettings({"model": this.model})
 			];
 		},
 		render: function() {
@@ -2646,7 +2647,7 @@ define([
 
 			// Responsive
 			if ( is_responsive_app ) {
-				var responsive_commands = new SidebarCommands_Responsive();
+				var responsive_commands = new SidebarCommands_Responsive({"model": this.model});
 				output.append(responsive_commands.render().el);
 			}
 
