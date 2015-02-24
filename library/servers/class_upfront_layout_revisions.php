@@ -31,17 +31,15 @@ class Upfront_Server_LayoutRevisions extends Upfront_Server {
 
 		upfront_add_ajax('upfront_list_revisions', array($this, "list_revisions"));
 
-		// Cron request handlers
-		//add_action('upfront_hourly_schedule', array($this, 'clean_up_deprecated_revisions'));
+		// This goes before the `is_admin` check, because it fires in AJAX
+		add_action('upfront-style-base_layout', array($this, 'intercept_style_loading'));
 
 		// Preview listener setup
 		if (is_admin()) return false;
 		if (!self::is_preview()) return false;
 
-		// Apply default regions
-		//add_filter('upfront_regions', array($this, 'intercept_regions_loading'), 999, 2);
-
-		add_filter('upfront_layout_from_id', array($this, 'intercept_layout_loading'), 999, 3);
+		add_filter('upfront_layout_from_id', array($this, 'intercept_layout_loading'), 999, 3);	
+		add_filter('upfront-entity_resolver-entity_ids', array($this, 'intercept_entity_cascade_parsing'));
 	}
 
 	/**
@@ -111,6 +109,9 @@ class Upfront_Server_LayoutRevisions extends Upfront_Server {
 		$key = $_GET[self::HOOK];
 		$raw = $this->_data->get_revision($key);
 		if (!empty($raw)) {
+			if (!empty($raw['layout'])) {
+				$raw['layout']['revision'] = $key;
+			}
 			$new_layout = Upfront_Layout::from_php($raw);
 		}
 
@@ -118,6 +119,50 @@ class Upfront_Server_LayoutRevisions extends Upfront_Server {
 			? $new_layout
 			: $layout
 		;
+	}
+
+	/**
+	 * Intercept cascade parsing and deal with revision data if we're in preview.
+	 * Needed in order to get the styles properly applied.
+	 */
+	public function intercept_entity_cascade_parsing ($ids) {
+		if (!self::is_preview()) return $ids;
+		$key = $_GET[self::HOOK];
+		if (empty($key)) return $ids;
+
+		if (empty($ids) || !is_array($ids)) return $ids;
+		$ids['layout_revision'] = $key;
+
+		return $ids;
+	}
+
+	/**
+	 * This fires in style parsing AJAX request and overrides the used layout.
+	 *
+	 * @param Upfront_Layout $layout Style layout for parsing
+	 * @return Upfront_Layout
+	 */
+	public function intercept_style_loading ($layout) {
+		$key = !empty($_GET['layout']['layout_revision'])
+			? $_GET['layout']['layout_revision']
+			: false
+		;
+		if (empty($key)) return $layout;
+
+		$cascade = $layout->get_cascade();
+		$src_key = !empty($cascade['layout_revision'])
+			? $cascade['layout_revision']
+			: false
+		;
+
+		if ($key != $src_key) return $layout;
+
+		$raw = $this->_data->get_revision($key);
+		if (!empty($raw)) {
+			$layout = Upfront_Layout::from_php($raw);
+		}
+
+		return $layout;
 	}
 
 	/**
