@@ -709,8 +709,9 @@ var PostContentEditor = Backbone.View.extend({
 	},
 
 	stop: function(){
-		// @TODO this off call below removed all events, shouldn't happen
-		//Upfront.Events.off("upfront:element:edit:stop", this.element_stop_prop);
+		if (this.box && this.box.element_stop_prop) { // Let's be sure we don't end up removing all listeners, that's no fun
+			Upfront.Events.off("upfront:element:edit:stop", this.box.element_stop_prop);
+		}
 
 		if(this.onTitleEdited)
 			this.parts.titles.off('change', this.onTitleEdited);
