@@ -2,6 +2,14 @@ Change Log
 ============
 
 
+0.2.3 - 2015-02-24
+-------------------------------------------------------------------------------
+- Fix: ensure slider dots are inside element.
+- Fix: default styling for contact form.
+- Fix: layout saves in new post writing experience and module selector.
+- Fix: anonymous mode AJAX request layout resolution update.
+- Fix: default date formats for posts element.
+
 0.2.2 - 2015-02-23
 -------------------------------------------------------------------------------
 - Fix: responsive menu positioning.
