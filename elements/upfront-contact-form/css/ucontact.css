@@ -1,6 +1,18 @@
-@import url('http://fonts.googleapis.com/css?family=Source+Sans+Pro:200');
+input.ucontact-input {
+  min-height:2em;
+  width: 100%;
+  border: 1px #d7d7d7 solid;
+}
 
+textarea.ucontact-input {
+  min-height: 5em;
+  width: 100%;
+  border: 1px #d7d7d7 solid;
+}
 
+.ucontact-label-above {
+  margin-bottom: 1em;
+}
 
 div.contact_label_position > span {
 	margin-right: 6px !important;
@@ -34,13 +46,7 @@ div.contact_label_position > span {
 .upfront-output-object .ucontact-label-over label {
 	display: none;
 }
-.ucontact-label-above input,
-.ucontact-label-above textarea,
-.ucontact-label-over input,
-.ucontact-label-over textarea {
-	display:block;
-	width: 95%;
-}
+
 
 .upfront-contact-form button[type="submit"] {
 	width: auto;
