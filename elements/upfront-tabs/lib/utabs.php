@@ -20,7 +20,6 @@ class Upfront_UtabsView extends Upfront_Object {
 			'class' =>  'upfront-tabs',
 			'tabs' => array($defaultTab, $secondTab),
 			'tabs_count' => 2,
-			'tabs_fixed_width' => 'auto',
 
 			'id_slug' => 'utabs',
 			'preset' => 'default'

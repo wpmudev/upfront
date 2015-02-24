@@ -36,9 +36,9 @@ $.fn.ueditor = function(options){
 			else {
 				// Initialize editor
 				$el.data('ueditor', new Ueditor($el, options));
-                if( options.autostart ){
-                    $el.data('ueditor').start();
-                }
+				if( options.autostart ){
+					$el.data('ueditor').start();
+				}
 				Ueditor.prototype.redactorInitialized = true;
 			}
 		}
@@ -641,7 +641,7 @@ Ueditor.prototype = {
 			me.redactor = me.$el.data('redactor');
 		if(me.redactor)
 			me.redactor.waitForMouseUp = true;
-		
+
 		$(document).one('mousedown', function(e) {
 			if(!me.clickcount)
 				me.clickcount = 0;
