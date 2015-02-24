@@ -641,11 +641,25 @@ Ueditor.prototype = {
 			me.redactor = me.$el.data('redactor');
 		if(me.redactor)
 			me.redactor.waitForMouseUp = true;
+		
+		$(document).one('mousedown', function(e) {
+			if(!me.clickcount)
+				me.clickcount = 0;
+			me.clickcount = me.clickcount+1;
+			me.lastmousedown = {x: e.pageX, y: e.pageY};
+			if(me.clickcount > 0)
+				setTimeout(function() { me.clickcount = 0 }, 400);
+		});
+
 		$(document).one('mouseup', function(e){
-			if(me.redactor && me.redactor.waitForMouseUp && me.redactor.selection.getText()){
+
+			var is_selection = ((Math.abs(e.pageX-me.lastmousedown.x) + Math.abs(e.pageY-me.lastmousedown.y)) > 2);
+			if((is_selection || me.clickcount > 1) && me.redactor && me.redactor.waitForMouseUp && me.redactor.selection.getText()){
 				me.redactor.airShow(e);
 				me.redactor.$element.trigger('mouseup.redactor');
 			}
+			else
+				$('.redactor_air').hide();
 		});
 	},
 	getValue: function(is_simple_element){
