@@ -48,6 +48,7 @@ define([
 	"text!upfront/templates/region_edit_panel.html",
 	"text!upfront/templates/sidebar_settings_theme_colors.html",
 	"text!upfront/templates/color_picker.html",
+    'spectrum'
 ], function (chosen, globalEventHandlers, InlinePanelsLoader) {
 	var _template_files = [
 		"text!upfront/templates/property.html",
