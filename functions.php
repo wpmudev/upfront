@@ -208,7 +208,6 @@ class Upfront {
 	*/
 			
 			$link_urls =  array(
-				'http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic',
 				admin_url('admin-ajax.php?action=upfront_load_editor_grid'),
 				self::get_root_url() . '/styles/editor-interface.css',
 				self::get_root_url() . '/scripts/chosen/chosen.min.css',
@@ -217,6 +216,14 @@ class Upfront {
 			foreach ($link_urls as $url) {
 				$deps->add_style($url);
 			}
+			$deps->add_font('Source Sans Pro', array(
+				'400',
+				'600',
+				'700',
+				'400italic',
+				'600italic',
+				'700italic',
+			));
 
 			add_action('wp_footer', array($this, 'add_responsive_css'));
 		}
