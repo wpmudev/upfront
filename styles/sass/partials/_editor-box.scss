@@ -236,13 +236,12 @@ a.ueditor-action-trash:hover {
 .ueditor-button-small-ok,
 .ueditor-button-small{
   background: #1fcd8f;
-  color: #fff;
+  color: #fff !important;
   height: 25px;
   min-width: 40px;
   display: inline-block;
   text-align: center;
   line-height: 25px;
-  color: #fff;
   padding: 0 10px;
 }
 .ueditor-togglable-post-schedule-date{
