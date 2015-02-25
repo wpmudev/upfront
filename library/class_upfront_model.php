@@ -22,7 +22,7 @@ abstract class Upfront_EntityResolver {
 			$ids['type'] = $cascade['type'];
 		}
 
-		return $ids;
+		return apply_filters('upfront-entity_resolver-entity_ids', $ids, $cascade);
 	}
 
 	/**

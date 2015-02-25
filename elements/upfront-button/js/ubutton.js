@@ -27,12 +27,13 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 
 
 		this.events = _.extend({}, this.events, {
-			//'click a.upfront_cta' : 'processClick'
+			'click a.upfront_cta.ueditor-placeholder' : 'placeholderClick',
 			'click i.visit_link' : 'visitLink'
+
 		});
 
 		this.on('deactivated', function() {
-			console.log('deactiating');
+			
 			Upfront.Events.trigger('upfront:element:edit:stop');
 		}, this);
 //		Upfront.Events.on("entity:deactivated", this.stopEdit, this);
@@ -89,6 +90,13 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		}
 		//else
 		//	me.editLink(e);
+	},
+	placeholderClick: function(e) {
+		e.stopPropagation();
+		e.preventDefault();
+		this.hidePlaceholder();
+		$(e.target).siblings('a.upfront_cta').trigger('dblclick');
+
 	},
 	visitLink: function() {
 		var me = this;
@@ -174,7 +182,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 	},*/
 	get_content_markup: function () {
 		var content = this.model.get_content(), style_static = '', style_hover = '';
-
+		
 		//Apply Default preset if none is selected for a new item
 		if(!this.model.get_property_value_by_name('currentpreset') && Upfront.Views.Editor.Button.Presets.first())
 			this.model.set_property('currentpreset', Upfront.Views.Editor.Button.Presets.first().id);
@@ -274,13 +282,18 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 				Upfront.Events.trigger('upfront:element:edit:start', 'text');
 			})
 			.on('stop', function(){
+
 				var ed = $target.data("ueditor"),
 					text = ''
 				;
 
 				try { text = ed.getValue(true); } catch (e) { text = ''; }
 
-				if (text) me.model.set_content(text, {silent: true}); // Something in inserts is destroying the sidebar
+				if(text == '');
+					me.showPlaceholder();
+
+				me.model.set_content(text, {silent: true}); // Something in inserts is destroying the sidebar
+				
 				me.property('href', $target.attr('href'), true);
 
 				me.property('align', $target.css('text-align'), true);
@@ -289,6 +302,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 				me.render();
 			})
 			.on('syncAfter', function(){
+
 				var ed = $target.data("ueditor"),
 					text = ''
 				;
@@ -297,6 +311,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 
 				if (text) me.model.set_content(text, {silent: true});
 			})
+
 		/*.ueditor({
 				linebreaks: true,
 				disableLineBreak: true,
@@ -325,7 +340,23 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			*/
 		//this.$el.children('.upfront-object').css('min-height', this.$el.closest('.upfront-module').css('min-height'));
 		this.property('row', this.parent_module_view.model.get('properties').get('row').attributes.value);
+		if(this.property('content') == '')
+			this.showPlaceholder();
 
+		//console.log(this.property('currentpreset'));
+		var preset = Upfront.Views.Editor.Button.Presets.get(this.property('currentpreset'));
+		if(preset.get('theme_style'))
+			this.$el.children('.upfront-object').addClass(preset.get('theme_style'));
+	},
+	showPlaceholder: function() {
+		var $target = this.$el.find('.upfront-object-content a.upfront_cta:not(.ueditor-placeholder)');
+		$target.hide();
+		$target.siblings('a.ueditor-placeholder').attr('style', 'position: relative; display: table-cell !important; opacity: 1; text-align:'+$target.siblings('a.ueditor-placeholder').css('text-align'));
+	},
+	hidePlaceholder: function() {
+		var $target = this.$el.find('.upfront-object-content a.upfront_cta:not(.ueditor-placeholder)');
+		$target.siblings('a.ueditor-placeholder').css({position: 'absolute', 'display': 'none', 'opacity': ''});
+		$target.show();
 	},
 	stopEdit: function() {
 			var $target = this.$el.find('.upfront-object-content a.upfront_cta');

@@ -3369,7 +3369,8 @@ var GridEditor = {
 					region_el = ed.get_region($('.upfront-region-drag-active')),
 					prev_region_el = ed.get_region($me.closest('.upfront-region')),
 					$container = is_parent_group ? view.group_view.$el.find('.upfront-editable_entities_container:first') : region_el.$el.find('.upfront-modules_container > .upfront-editable_entities_container:first'),
-					$prev_container = prev_region_el.$el.find('.upfront-modules_container > .upfront-editable_entities_container:first');
+					$prev_container = prev_region_el.$el.find('.upfront-modules_container > .upfront-editable_entities_container:first'),
+					module_selector = ".upfront-wrapper > .upfront-module-view > .upfront-module, .upfront-wrapper > .upfront-module-group";
 
 				clearTimeout(ed._t); // clear remaining timeout immediately
 
@@ -3585,7 +3586,7 @@ var GridEditor = {
 					$('#upfront-compare-area').remove();
 
 					/*ed.update_class($me, ed.grid.class, drop_col);
-					( is_object ? ed.containment.$el.find('.upfront-object') : $container.find('.upfront-module, .upfront-module-group').not('.ui-draggable-disabled') ).each(function(){
+					( is_object ? ed.containment.$el.find('.upfront-object') : $container.find(module_selector) ).each(function(){
 						ed.update_margin_classes($(this));
 					});*/
 
@@ -3598,7 +3599,7 @@ var GridEditor = {
 					});
 
 					// Update model value
-					ed.update_model_margin_classes( ( is_object ? ed.containment.$el.find('.upfront-object') : $container.find('.upfront-module, .upfront-module-group').not('.ui-draggable-disabled') ).not($me) );
+					ed.update_model_margin_classes( ( is_object ? ed.containment.$el.find('.upfront-object') : $container.find(module_selector) ).not($me) );
 					ed.update_model_margin_classes( $me, [ed.grid.class + drop_col] );
 
 					if ( is_parent_group )
@@ -3607,7 +3608,7 @@ var GridEditor = {
 						ed.update_wrappers(region, region_el.$el);
 
 					if ( move_region ) {
-						ed.update_model_margin_classes( $prev_container.find('.upfront-module, .upfront-module-group').not('.ui-draggable-disabled') );
+						ed.update_model_margin_classes( $prev_container.find(module_selector) );
 						ed.update_wrappers(prev_region, prev_region_el.$el);
 					}
 
@@ -3627,7 +3628,7 @@ var GridEditor = {
 								model.unset('shadow', {silent: true});
 							}
 							$me.removeAttr('data-shadow');
-							$container.find('.upfront-module, .upfront-module-group').not('.ui-draggable-disabled').each(function(){
+							$container.find(module_selector).each(function(){
 								var element_id = $(this).attr('id'),
 									each_model = modules.get_by_element_id(element_id);
 								if ( !each_model && element_id == $me.attr('id') )

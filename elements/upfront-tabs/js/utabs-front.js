@@ -15,13 +15,5 @@
       $('#' + contentId).addClass('tab-content-active')
         .siblings().removeClass('tab-content-active');
     });
-
-    // Add tooltip if tab title is cutoff with ellipsis
-    $('.tabs-tab').each(function() {
-      var span = $(this).find('span')[0];
-      if (span.offsetWidth < span.scrollWidth) {
-        $(this).attr('title', $(span).text().trim());
-      }
-    });
   });
 })(jQuery);

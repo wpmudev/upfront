@@ -29,13 +29,12 @@ class Upfront_StylesheetMain extends Upfront_Server {
 
 	function load_styles () {
 		$grid = Upfront_Grid::get_grid();
-		$layout = Upfront_Layout::get_instance();
-
+		$layout = apply_filters('upfront-style-base_layout', Upfront_Layout::get_instance());
 		$preprocessor = new Upfront_StylePreprocessor($grid, $layout);
 
 		//Add typography styles - rearranging so the imports from Google fonts come first, if needed
 		$style = $this->prepare_typography_styles($layout, $grid);
-	  $style .= $preprocessor->process();
+		$style .= $preprocessor->process();
 
 		// Always load original theme styles into theme unless we're in builder, yay
 		// Reasoning behind it: we want theme users to always have original theme styles loaded
@@ -45,7 +44,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		// we don't want this because user is editing actual theme styles.
 		$style .= $this->load_theme_styles_unless_in_builder();
 
-	  // When loading styles in editor mode don't include element styles and colors since they
+		// When loading styles in editor mode don't include element styles and colors since they
 		// will be loaded separately to the body. If they are included in main style than after
 		// style is edited in editor (e.g. some property is removed) inconsistencies may occur
 		// especially with rules removal since those would still be defined in main style.
@@ -57,14 +56,14 @@ class Upfront_StylesheetMain extends Upfront_Server {
 
 		//Add theme styles
 		$style .= $this->prepare_theme_styles();
-	  // Add theme colors styles
-	  $style .= $this->_get_theme_colors_styles();
+		// Add theme colors styles
+		$style .= $this->_get_theme_colors_styles();
 		// Add tab presets styles
 		$style .= Upfront_Tab_Presets_Server::get_instance()->get_presets_styles();
 		// Add accordion presets styles
 		$style .= Upfront_Accordion_Presets_Server::get_instance()->get_presets_styles();
 		$style = Upfront_UFC::init()->process_colors($style);
-	  $this->_out(new Upfront_CssResponse_Success($style));
+		$this->_out(new Upfront_CssResponse_Success($style));
 	}
 
 	function save_styles(){

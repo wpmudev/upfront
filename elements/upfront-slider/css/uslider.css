@@ -186,3 +186,10 @@ div.uslide-image img {
 .uslide-caption {
 	box-sizing: border-box;
 }
+
+.upfront-default-slider i.upfront-icon.upfront-icon-region-remove:before {
+	content: "";
+}
+.uslider .uimage-controls > .upfront-inline-panel {
+	bottom: 0;
+}

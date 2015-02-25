@@ -113,16 +113,16 @@
 }
 
 .upfront-default-slider-nav {
+	text-align: center;
+}
+.upfront-bg-slider .upfront-default-slider-nav {
 	position: absolute;
 	left: 0;
 	right: 0;
-	text-align: center;
+	bottom: 0;
 }
-.upfront-default-slider-control-outside .upfront-default-slider-nav {
-	bottom: -30px;
-}
-.upfront-default-slider-control-inside .upfront-default-slider-nav {
-	bottom: 30px;
+.upfront-bg-slider .upfront-default-slider-nav-item {
+	z-index: 100;
 }
 .upfront-default-slider-control-hover .upfront-default-slider-nav,
 .upfront-default-slider-control-hover .upfront-default-slider-nav-prev,

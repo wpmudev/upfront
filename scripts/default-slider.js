@@ -172,7 +172,10 @@
 				;
 				max_height = max_height > img_h ? max_height : img_h;
 			});
-			this.$slider.css('height', Math.ceil(max_height/15)*15);
+			this.$slider.css({
+				'padding-top': Math.ceil(max_height/15)*15,
+				'height': 'auto'
+			});
 		},
 
 		adjust_slide_size: function(){
