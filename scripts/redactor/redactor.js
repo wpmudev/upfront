@@ -1446,6 +1446,7 @@
 
                     $button.on('mouseover', function()
                     {
+
                         if ($(this).hasClass('redactor-button-disabled')) return;
 
                         var pos = $button.offset();
@@ -1457,6 +1458,7 @@
                             top: (pos.top + height) + 'px',
                             left: (pos.left + width/2 - $tooltip.innerWidth()/2) + 'px'
                         });
+                        
                     });
 
                     $button.on('mouseout', function()

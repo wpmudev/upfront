@@ -9716,6 +9716,16 @@ a.ueditor-select-option:hover {
 .ueditor-action-status, .ueditor-action-visibility {
   width: 140px; }
 
+/* line 309, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/editor-bar */
+.redactor-toolbar-tooltip {
+  position: absolute;
+  z-index: 1;
+  font-size: 12px;
+  background-color: rgba(26, 39, 51, 0.8);
+  color: #fff;
+  border-radius: 0 0 4px 4px;
+  padding: 4px 6px; }
+
 /* line 1, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/editor-box */
 .ueditor-box-wrapper {
   position: fixed;
