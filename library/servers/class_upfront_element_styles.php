@@ -213,17 +213,42 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 
 	private function _add_hooks () {
 		add_action('upfront-core-inject_dependencies', array($this, 'dispatch_dependencies_output'));
+		add_action('wp_head', array($this, 'dispatch_fonts_loading'));
 	}
 
+	/**
+	 * Dispatch Google fonts loading based on the internal flag state.
+	 */
+	public function dispatch_fonts_loading () {
+		$deps = Upfront_CoreDependencies_Registry::get_instance();
+		$fonts = $deps->get_fonts();
+		if (defined('UPFRONT_EXPERIMENTS_ON') && UPFRONT_EXPERIMENTS_ON) {
+			if (!empty($fonts)) $deps->add_script('//ajax.googleapis.com/ajax/libs/webfont/1.5.10/webfont.js');
+			return false;
+		}
+		$this->_output_normal_fonts($fonts);
+	}
+
+	/**
+	 * Dispatches loading scripts and styles based on internal flag state.
+	 */
 	public function dispatch_dependencies_output () {
 		$deps = Upfront_CoreDependencies_Registry::get_instance();
 		if (defined('UPFRONT_EXPERIMENTS_ON') && UPFRONT_EXPERIMENTS_ON) {
+			$fonts = $deps->get_fonts();
+			if (!empty($fonts)) $this->_output_experimental_fonts($fonts);
+			
 			$this->_output_experimental($deps);
 		} else {
 			$this->_output_normal($deps);
 		}
 	}
 
+	/**
+	 * Output "normal" (non-optimized) script and style dependencies.
+	 *
+	 * @param Upfront_CoreDependencies_Registry $deps Dependencies registry
+	 */
 	private function _output_normal ($deps) {
 		$styles = $deps->get_styles();
 		$link_tpl = '<link rel="stylesheet"  href="%url%" type="text/css" media="all" />';
@@ -238,6 +263,11 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 		}
 	}
 
+	/**
+	 * Output experimental, request-optimized script and style dependencies.
+	 *
+	 * @param Upfront_CoreDependencies_Registry $deps Dependencies registry
+	 */
 	private function _output_experimental ($deps) {
 		$link_urls = json_encode(apply_filters('upfront-experiments-styles-debounce_dependency_load', $deps->get_styles()));
 		$link_tpl = json_encode('<link rel="stylesheet"  href="%url%" type="text/css" media="all" />');
@@ -262,6 +292,76 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 				});
 			})(jQuery);
 		</script>";
+	}
+
+	/**
+	 * Use normal link element to set up fonts in one go.
+	 *
+	 * @param array $fonts Hash map of fonts to include in request.
+	 */
+	private function _output_normal_fonts ($fonts=array()) {
+		if (empty($fonts)) return false;
+		
+		$request = $this->_to_font_request_array($fonts);
+		if (empty($request)) return false;
+		
+		
+		echo '<link rel="stylesheet" type="text/css" media="all" href="//fonts.googleapis.com/css?family=' . esc_attr(join('|', $request)) . '" />';
+	}
+
+	/**
+	 * Output registered fonts in an experimentally optimized way using web fonts loader.
+	 *
+	 * @param array $fonts Hash map of fonts to include in request.
+	 */
+	private function _output_experimental_fonts ($fonts=array()) {
+		if (empty($fonts)) return false;
+		
+		$request = $this->_to_font_request_array($fonts, false);
+		if (empty($request)) return false;
+
+		$request = json_encode($request);
+		$debug = '';
+		if ($this->_debugger->is_active(Upfront_Debug::WEB_FONTS)) {
+			$debug .= ',loading: function () { console.log("Loading web fonts..."); }';
+			$debug .= ',active: function () { console.log("Web fonts loaded."); }';
+			$debug .= ',inactive: function () { console.log("Web fonts loading failed."); }';
+		}
+
+		echo "<script type='text/javascript'>
+			WebFontConfig = {
+				google: {
+					families: {$request}
+				}
+				{$debug}
+			};
+		</script>";
+	}
+
+	/**
+	 * Processes the registered fonts and returns a regular array containing request families
+	 *
+	 * @param array $fonts Registered fonts hash
+	 * @param bool $cleanup_family Whether to escape family names or not
+	 *
+	 * @return mixed Array of requests ready for processing or false if something went wrong.
+	 */
+	private function _to_font_request_array ($fonts, $cleanup_family=true) {
+		if (empty($fonts)) return false;
+		foreach ($fonts as $family => $variants) {
+			if (empty($family)) continue;
+			if ($cleanup_family) $family = preg_replace('/\s/', '+', $family);
+
+			if (!empty($variants)) $variants = ':' . join(',', array_filter(array_unique(array_map('trim', $variants))));
+			else $variants = '';
+			
+			$request[] = $family . $variants;
+		}
+		$request = array_filter(array_unique(array_map('trim', $request)));
+		return empty($request)
+			? false
+			: $request
+		;
 	}
 
 }
