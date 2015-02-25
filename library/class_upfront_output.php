@@ -141,13 +141,10 @@ class Upfront_Output {
 					Upfront_ChildTheme::get_version()
 				);
 				*/
-				// Debounce loading fonts?
-				$deps->add_style(
-					'//fonts.googleapis.com/css?family=' . str_replace(' ', '+', $theme_font->font->family) . ':' . $theme_font->variant
-				);
+				$deps->add_font($theme_font->font->family, $theme_font->variant);
 			}
 		}
-
+		// The dependencies server will manage the fonts.
 	}
 
 	function add_scripts () {
