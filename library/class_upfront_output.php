@@ -691,6 +691,9 @@ class Upfront_Region extends Upfront_Container {
 			$more_classes[] = 'upfront-region-side';
 			$more_classes[] = 'upfront-region-side-' . $this->get_sub();
 		}
+        if ( $this->_is_background() ) {
+            $more_classes[] = 'upfront-image-lazy upfront-image-lazy-bg';
+        }
 		return $classes . ' ' . join(' ', $more_classes);
 	}
 
