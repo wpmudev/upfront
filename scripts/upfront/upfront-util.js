@@ -792,21 +792,35 @@ define(function() {
 				_is_dirty = true;
 			}
 			rebind_events = function(){
-				Upfront.Events.off("entity:region:deactivated", save);
-				Upfront.Events.off("entity:settings:saved", save);
-				Upfront.Events.off("entity:removed:after", save);
-				Upfront.Events.off("entity:resize_start", save);
-				Upfront.Events.off("entity:drag_stop", save);
-				Upfront.Events.off("entity:module:after_render", save);
-				Upfront.Events.off("upfront:element:edit:stop", save);
+				var me = this;
+				Upfront.PreviewUpdate.__deferred_save_callback = Upfront.PreviewUpdate.__deferred_save_callback || _.debounce(save, 200);
+				
+				//Upfront.Events.off("entity:region:deactivated", save);
+				//Upfront.Events.off("entity:settings:saved", save);
+				//Upfront.Events.off("entity:module:after_render", save);
+				
+				//Upfront.Events.on("entity:region:deactivated", save, this);
+				//Upfront.Events.on("entity:settings:saved", save, this);
+				//Upfront.Events.on("entity:module:after_render", save, this);
+				
+				Upfront.Events.off("entity:removed:after", Upfront.PreviewUpdate.__deferred_save_callback);
+				Upfront.Events.off("entity:resize_start", Upfront.PreviewUpdate.__deferred_save_callback);
+				Upfront.Events.off("entity:drag_stop", Upfront.PreviewUpdate.__deferred_save_callback);
+				Upfront.Events.off("upfront:element:edit:stop", Upfront.PreviewUpdate.__deferred_save_callback);
 
-				Upfront.Events.on("entity:region:deactivated", save, this);
-				Upfront.Events.on("entity:settings:saved", save, this);
-				Upfront.Events.on("entity:removed:after", save, this);
-				Upfront.Events.on("entity:resize_start", save, this);
-				Upfront.Events.on("entity:drag_stop", save, this);
-				Upfront.Events.on("entity:module:after_render", save, this);
-				Upfront.Events.on("upfront:element:edit:stop", save, this);
+				Upfront.Events.on("entity:removed:after", Upfront.PreviewUpdate.__deferred_save_callback, this);
+				Upfront.Events.on("entity:resize_start", Upfront.PreviewUpdate.__deferred_save_callback, this);
+				Upfront.Events.on("entity:drag_stop", Upfront.PreviewUpdate.__deferred_save_callback, this);
+				Upfront.Events.on("upfront:element:edit:stop", Upfront.PreviewUpdate.__deferred_save_callback, this);
+
+				Upfront.Events.off("model:property:add", Upfront.PreviewUpdate.__deferred_save_callback);
+				Upfront.Events.off("model:property:set", Upfront.PreviewUpdate.__deferred_save_callback);
+				
+				Upfront.Events.on("model:property:add", Upfront.PreviewUpdate.__deferred_save_callback, this);
+				Upfront.Events.on("model:property:set", Upfront.PreviewUpdate.__deferred_save_callback, this);
+
+				//Upfront.Events.off("model:property:remove", save);
+				//Upfront.Events.on("model:property:remove", save, this);
 
 				Upfront.Events.off("command:layout:save_success", clear);
 				Upfront.Events.on("command:layout:save_success", clear);
