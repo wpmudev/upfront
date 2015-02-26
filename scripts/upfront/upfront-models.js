@@ -66,6 +66,7 @@ var _alpha = "alpha",
 		add_property: function (name, value, silent) {
 			if (!silent) silent = false;
 			this.get("properties").add(new Upfront.Models.Property({"name": name, "value": value}), {"silent": silent});
+			Upfront.Events.trigger("model:property:add", name, value, silent);
 		},
 		set_property: function (name, value, silent) {
 			if (!name) return false;
@@ -73,6 +74,7 @@ var _alpha = "alpha",
 			var prop = this.get_property_by_name(name);
 			if (!prop || !prop.set) return this.add_property(name, value, silent);
 			prop.set({"value": value}, {"silent": silent});
+			Upfront.Events.trigger("model:property:set", name, value, silent);
 		},
 		remove_property: function (name, silent) {
 			if (!name) return false;
@@ -80,6 +82,7 @@ var _alpha = "alpha",
 			var prop = this.get_property_by_name(name);
 			if (!prop || !prop.set) return;
 			this.get("properties").remove(prop, {"silent": silent});
+			Upfront.Events.trigger("model:property:remove", name, silent);
 		},
 		init_property: function (name, value) {
 			if (!this.has_property(name)) this.add_property(name, value);
