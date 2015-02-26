@@ -15,14 +15,23 @@
 	margin-right: 10px;
 }
 
-
-.uslider-rotate-settings{
-}
-
-.uslider_content_slide {
+.upfront-ui .uslider_content_slide {
 	border:2px solid transparent;
 	cursor: pointer;
 	opacity: 0.8;
+	position: relative;
+}
+
+.upfront-ui .uslider_content_slide .remove-slide {
+	display: block;
+	width: 16px;
+	height: 16px;
+	background-position: -483px -171px;
+	background-image: url('../../../img/uf-core-el-sprite.svg');
+	position: absolute;
+	right: -5px;
+	top: -5px;
+	visibility: hidden;
 }
 
 .uslider_content_slide:hover {
@@ -31,12 +40,15 @@
 	background: #DAE7F2;
 }
 
+.upfront-ui .uslider_content_slide:hover .remove-slide {
+	visibility: visible;
+}
+
 .uslider_content_imgslide {
 	width:44%;
 	margin-left:5%;
 	float:left;
 	height: 60px;
-	overflow: hidden;
 	margin-bottom: 10px;
 }
 

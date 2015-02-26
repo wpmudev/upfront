@@ -53,6 +53,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			this.model = new USliderModel({properties: this.model.get('properties')});
 		}
 
+		this.model.view = this;
+
 		this.constructor.__super__.initialize.call(this, [options]);
 
 		this.events = _.extend({}, this.events, {
@@ -551,7 +553,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		if(_.indexOf(['notext', 'onlytext'], primaryStyle) == -1)
 			panelItems.push(captionControl);
-		panelItems.push(this.createControl('remove', l10n.remove_slide, 'removeSlide'));
+		panelItems.push(this.createControl('remove', l10n.remove_slide, 'onRemoveSlide'));
 
 		panel.items = _(panelItems);
 
@@ -932,8 +934,12 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		}
 	},
 
-	removeSlide: function(e) {
+	onRemoveSlide: function(e) {
 		var item = $(e.target).closest('.uimage-controls');
+		this.removeSlide(item);
+	},
+
+	removeSlide: function(item) {
 		this.startingHeight = this.$('.upfront-slider').height();
 
 		if (confirm('Are you sure to delete this slide?')) {
@@ -1076,9 +1082,14 @@ var SlidesField = Upfront.Views.Editor.Field.Field.extend({
 	template: _.template($(editorTpl).find('#slides-setting-tpl').html()),
 	events: {
 		'click .uslider-add' : 'addSlides',
+		'click .remove-slide' : 'onRemoveSlide'
 	},
 	initialize: function(){
 		this.listenTo(slideCollection, 'add remove sort reset', this.render);
+	},
+
+	onRemoveSlide: function(event) {
+		this.model.view.removeSlide($(event.currentTarget).parent());
 	},
 
 	render: function() {
