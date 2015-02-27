@@ -38,6 +38,10 @@ jQuery(document).ready(function($) {
 		}
 	});
 	
+	$('body').on('touchstart click', '.burger_nav_close', null, function() {
+		$('div.responsive_nav_toggler').trigger('click');
+	});
+
 	$('body').on('touchstart click', '.upfront-navigation .upfront-navigation div.responsive_nav_toggler', null, function(e) {
 		e.preventDefault();
 		if($(this).parent().find('ul.menu').css('display') == 'none') {
@@ -47,8 +51,13 @@ jQuery(document).ready(function($) {
 
 			var offset = $(this).parent().find('ul.menu').position();
 
-			$(e.target).closest('.responsive_nav_toggler').css({position: 'fixed', left: offset.left, top: offset.top+(($('div#wpadminbar').length && $('div#wpadminbar').css('display') == 'block')?$('div#wpadminbar').outerHeight():0)});
-			$(this).parent().find('ul.menu').css('padding-top', '60px');
+			//$(e.target).closest('.responsive_nav_toggler').css({position: 'fixed', left: offset.left, top: offset.top+(($('div#wpadminbar').length && $('div#wpadminbar').css('display') == 'block')?$('div#wpadminbar').outerHeight():0)});
+			//$(this).parent().find('ul.menu').css('padding-top', '60px');
+			var close_icon = $('<i class="burger_nav_close">&times;</i>');
+
+			$(this).parent().find('ul.menu').parent().append(close_icon);
+
+			close_icon.css({position: 'fixed', left: offset.left+$(this).parent().find('ul.menu').width()-close_icon.width()-10, top: offset.top+(($('div#wpadminbar').length && $('div#wpadminbar').css('display') == 'block')?$('div#wpadminbar').outerHeight():0) + 10});
 
 			if($(this).parent().data('burger_over') == 'pushes')
 				pushContent($(this).parent());
@@ -61,8 +70,10 @@ jQuery(document).ready(function($) {
 			$(this).parent().find('ul.menu').hide();
 			$(this).parent().find('ul.sub-menu').hide();
 			
-			$(e.target).closest('.responsive_nav_toggler').css({position: '', left: '', top: ''});
-			$(this).parent().find('ul.menu').css('padding-top', '');
+			//$(e.target).closest('.responsive_nav_toggler').css({position: '', left: '', top: ''});
+			//$(this).parent().find('ul.menu').css('padding-top', '');
+
+			$('i.burger_nav_close').remove();
 
 			$(this).closest('div.upfront-output-wrapper').removeClass('on_the_top');
 			if($(this).parent().data('burger_over') == 'pushes')

@@ -1262,17 +1262,27 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 	},
 	toggle_responsive_nav: function(e) {
+		var me = this;
 		var region_container = $(this).closest('.upfront-region-container');
 		if($(this).parent().find('ul.menu').css('display') == 'none') {
 			$(this).parent().find('ul.menu').show();
 			var offset = $(this).parent().find('ul.menu').position();
-			$(e.target).closest('.responsive_nav_toggler').css({position: 'fixed', left: offset.left, top: offset.top});
-			$(this).parent().find('ul.menu').css('padding-top', '60px');
+			//$(e.target).closest('.responsive_nav_toggler').css({position: 'fixed', left: offset.left, top: offset.top});
+			//$(this).parent().find('ul.menu').css('padding-top', '60px');
+			var close_icon = $('<i class="burger_nav_close">&times;</i>');
+			$(this).parent().append(close_icon);
+			close_icon.bind('touchstart click', function() {
+				$(e.target).closest('.responsive_nav_toggler').trigger('click');
+			});
+			close_icon.css({position: 'fixed', left: offset.left+$(this).parent().find('ul.menu').width()-close_icon.width()-10, top: offset.top+10});
 			region_container.addClass('upfront-region-container-has-nav');
 		} else {
 			$(this).parent().find('ul.menu').hide();
-			$(e.target).closest('.responsive_nav_toggler').css({position: '', left: '', top: ''});
-			$(this).parent().find('ul.menu').css('padding-top', '');
+			//$(e.target).closest('.responsive_nav_toggler').css({position: '', left: '', top: ''});
+			//$(this).parent().find('ul.menu').css('padding-top', '');
+
+			$(this).parent().find('i.burger_nav_close').remove();
+
 			$(this).parent().find('ul.sub-menu').css('display', '');
 			if($(this).parent().find('ul.sub-menu').length < 1 )
 				region_container.removeClass('upfront-region-container-has-nav');

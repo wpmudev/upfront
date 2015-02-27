@@ -105,7 +105,7 @@ div.upfront-navigation div[data-style="vertical"] ul.sub-menu > li > ul > li a {
 div.upfront-navigation div[data-style="burger"] ul.menu {
   position:fixed;
   top:0;
-  z-index:1;
+  z-index:2000;
   background-color:#dadee1;
 }
 
@@ -128,19 +128,7 @@ div.upfront-navigation div[data-style="burger"][ data-burger_alignment="right"] 
   height: 100%;
   right:0;
 }
-/*
-div.upfront-navigation div[data-style="burger"] div.responsive_nav_toggler {
-  position:relative;
-  z-index:2000;
-  display:block;
-  float: right;
-  height:26px;
-  width: 40px;
-  border-top: 6px #131313 solid;
-  border-bottom: 6px #131313 solid;
-  cursor:pointer;
-}
-*/
+
 div.upfront-newnavigation_module:hover  div[data-style="burger"] div.responsive_nav_toggler {
 	margin-right:20px;	
 }
@@ -148,8 +136,7 @@ div.upfront-newnavigation_module:hover  div[data-style="burger"] div.responsive_
 .responsive_nav_toggler {
   float:right;
   position:relative;
-  z-index:2000;
-  z-index:2000;
+  z-index: 2000;
   width:40px;
   height:40px;
   border:1px solid #d8d8d8;
@@ -247,4 +234,18 @@ div.upfront-navigation div[data-style="burger"] ul.menu > li > ul > li > ul > li
     position: fixed !important;
     top: 0px !important;
     z-index: 99999999;
+}
+
+i.burger_nav_close {
+  z-index:2001;
+  width:28px;
+  height: 28px;
+  display: block;
+  border:2px #fff solid;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 28px;
+  font-size: 22px;
+  font-style: normal;
+  cursor: pointer;
 }
