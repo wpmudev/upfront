@@ -2037,7 +2037,7 @@ define([
             //this.bottomTemplate = _.template( $(_Upfront_Templates.sidebar_settings_theme_colors).find(".panel-setting-theme-colors-bottom").html() );
             Upfront.Events.on("command:layout:save", this.on_save, this);
             Upfront.Events.on("command:layout:save_as", this.on_save, this);
-            Upfront.Events.on("preview:build:start", this.on_save, this); // Also build colors on preview
+            if (Upfront.Settings.Application.NO_SAVE) Upfront.Events.on("preview:build:start", this.on_save, this); // Also build colors on preview, only in anonymous mode
             this.update_styles();
             Theme_Colors.colors.bind('change reset add', this.update_styles, this);
         },
