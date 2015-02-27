@@ -429,7 +429,7 @@ var Ueditor = function($el, options) {
 			observeLinks: false,
 			observeImages: false,
 			formattingTags: ['h1', 'h2', 'h3', 'h4', 'p', 'pre'],
-			inserts: false,
+			inserts: ["image", "embed"],
             linkTooltip: false,
             cleanOnPaste: true, // font icons copy and paste wont work without this set to true - BUT, with it set to true, paste won't work AT ALL!!!
             replaceDivs: false,
@@ -438,7 +438,7 @@ var Ueditor = function($el, options) {
             replaceDivs: false,
             //cleanStyleOnEnter: false,
             //removeDataAttr: false,
-            removeEmpty: false
+            removeEmpty: false,
 		}, options)
 	;
 	/* --- Redactor allows for single callbacks - let's dispatch events instead --- */
@@ -972,7 +972,7 @@ var InsertManagerInserts = Backbone.View.extend({
         "click .upfront-post-media-trigger": "toggle_inserts"
     },
     render: function(){
-      this.$el.html( this.tpl( { inserts: Inserts.inserts } ) );
+      this.$el.html( this.tpl( { inserts: _.pick(Inserts.inserts, this.insertsData) } ) );
     },
     insert_relocate: function( $current ){
       this.$block = $current;
