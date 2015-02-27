@@ -275,6 +275,7 @@ var EmbedViews = {
 		events: { click: 'propagate_apply' },
 		propagate_apply: function (e) {
 			e.stopPropagation();
+            e.preventDefault();
 			this.trigger("done");
 		},
 		render: function () {
