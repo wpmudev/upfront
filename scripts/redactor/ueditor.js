@@ -772,6 +772,7 @@ Ueditor.prototype = {
                 || $(e.target).parents().hasClass("redactor-toolbar")
                 || $(e.target).parents().hasClass("use_selection_container") // Todo Sam:, make this more general
                 || $(e.target).parents().is("#upfront-popup")
+                || $(e.target).parents().hasClass("upfront-inserts-markup-editor")
 				|| $(e.target).parents().hasClass("redactor-dropdown"))
 			&& $(e.target).parents("#upfront-popup.upfront-postselector-popup").length === 0)
 		{
