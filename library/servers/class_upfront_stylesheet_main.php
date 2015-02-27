@@ -275,6 +275,6 @@ class Upfront_StylesheetMain extends Upfront_Server {
     }
 
     private function _get_theme_colors_styles(){
-        return get_option("upfront_" . get_stylesheet() . "_theme_colors_styles");
+        return apply_filters('upfront-get_theme_colors_styles', get_option("upfront_" . get_stylesheet() . "_theme_colors_styles"));
     }
 }
