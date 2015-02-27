@@ -70,7 +70,6 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 			.ueditor({
 				linebreaks: false,
 				//airButtons : ["upfrontFormatting"],
-				inserts: {},
 				autostart: false
 			})
 			.on('start', function(){
