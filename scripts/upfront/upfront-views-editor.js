@@ -8945,7 +8945,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				// Let's do some type coercion here, so _.without can work properly...
 				if (_.isString(image_id) && image_id.match(/^[0-9]+$/)) image_id = parseInt(image_id, 10);
 
-				slide_images = _.without(slide_images, image_id);
+				slide_images = _.without(slide_images, image_id.toString());
 				me.model.set_breakpoint_property('background_slider_images', slide_images);
 				$image.remove();
 			});
