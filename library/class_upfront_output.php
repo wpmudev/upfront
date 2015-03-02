@@ -924,7 +924,6 @@ class Upfront_Module_Group extends Upfront_Container {
         $theme_style = $this->_get_property('theme_style');
         if($theme_style)
             $theme_style = strtolower($theme_style);
-        $breakpoint = upfront_get_property_value('breakpoint', $child);
         $theme_styles = array( 'default' => $theme_style );
         foreach ( Upfront_Output::$grid->get_breakpoints(true) as $breakpoint ) {
             $theme_styles[$breakpoint->get_id()] = $this->_get_breakpoint_property('theme_style', $breakpoint->get_id());
