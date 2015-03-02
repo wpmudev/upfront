@@ -192,6 +192,7 @@ jQuery(document).ready(function($) {
 	$(window).smartresize(function() {
 		$('.responsive_nav_toggler').css({position: '', left: '', top: ''});
 		$('ul.menu').css('padding-top', '');
+		$('.burger_nav_close').remove();
 		roll_responsive_nav(".upfront-output-unewnavigation > .upfront-navigation");
 	});
 	console.log('this has been subscribed');
