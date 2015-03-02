@@ -8,6 +8,7 @@ var l10n = Upfront.Settings && Upfront.Settings.l10n
 define([
 	"text!upfront/templates/object.html",
 	"text!upfront/templates/module.html",
+	"text!upfront/templates/module_group.html",
 	"text!upfront/templates/region_container.html",
 	"text!upfront/templates/region.html",
 	"text!upfront/templates/layout.html",
@@ -15,6 +16,7 @@ define([
   var _template_files = [
     "text!upfront/templates/object.html",
     "text!upfront/templates/module.html",
+    "text!upfront/templates/module_group.html",
     "text!upfront/templates/region_container.html",
     "text!upfront/templates/region.html",
     "text!upfront/templates/layout.html",
@@ -359,9 +361,11 @@ define([
 							var images = response.data.images;
 							// Rewrite slide images because in builder mode they will be just paths of theme images
 							// and slider needs image objects to work.
-							slide_images = images;
+							//slide_images = images;
 							_.each(slide_images, function(id){
-								var image = _.isObject(id) ? id : images[id],
+								var image = _.isNumber(id) || id.match(/^\d+$/) ? images[id] : _.find(images, function(img){
+										return img.full[0].split(/[\\/]/).pop() == id.split(/[\\/]/).pop();
+									}),
 									$image = $('<div class="upfront-default-slider-item" />');
 								if (image && image.full) $image.append('<img src="' + image.full[0] + '" />');
 								$type.append($image);
@@ -1444,9 +1448,15 @@ define([
 		}),
 
 		ModuleGroup = _Upfront_EditableEntity.extend({
-			className: "upfront-module-group",
+			className: "upfront-editable_entity upfront-module-group",
 			id: function(){ return this.model.get_property_value_by_name('element_id'); },
+			cssSelectors: {
+				'.upfront-module-group': {label: l10n.mg_label, info: l10n.mg_info},
+				'.upfront-module-group-bg': {label: l10n.mgbg_label, info: l10n.mgbg_info},
+				'.upfront-object, .upfront-output-object': {label: l10n.mgel_label, info: l10n.mgel_info}
+			},
 			events: {
+				"click > .upfront-entity_meta > a.upfront-entity-settings_trigger": "on_settings_click",
 				"click > .upfront-module-group-toggle-container > .upfront-module-group-ungroup": "on_ungroup",
 				"click > .upfront-module-group-toggle-container > .upfront-module-group-reorder": "on_reorder",
 				"click > .upfront-module-group-toggle-container > .upfront-module-group-edit": "on_edit",
@@ -1458,22 +1468,37 @@ define([
 				this.listenTo(this.model.get("properties"), 'add', callback);
 				this.listenTo(this.model.get("properties"), 'remove', callback);
 				this._prev_class = this.model.get_property_value_by_name('class');
+				
+				this.listenTo(Upfront.Events, 'layout:after_render', this.refresh_background);
 
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 				this.listenTo(Upfront.Events, "command:module_group:finish_edit", this.on_finish);
 			},
 			render: function () {
-				var $edit = $('<div class="upfront-module-group-toggle-container upfront-module-group-toggle-edit-container"><div class="upfront-module-group-toggle upfront-module-group-ungroup">' + l10n.ungroup + '</div><div class="upfront-module-group-toggle upfront-module-group-edit">' + l10n.edit_elements + '</div></div>'),
-					$reorder = $('<div class="upfront-module-group-toggle-container upfront-module-group-toggle-reorder-container"><div class="upfront-module-group-toggle upfront-module-group-reorder">' + l10n.reorder + '</div></div>'),
-					$finish = $('<div class="upfront-module-group-finish-edit upfront-ui"><i class="upfront-field-icon upfront-field-icon-tick"></i> ' + l10n.done + '</div>'),
-					$border = $('<div class="upfront-selected-border"></div>');
+				var props = {},
+					run = this.model.get("properties").each(function (prop) {
+						props[prop.get("name")] = prop.get("value");
+					}),
+					height = ( props.row ) ? props.row * Upfront.Settings.LayoutEditor.Grid.baseline : 0,
+					model = _.extend(this.model.toJSON(), {"properties": props, "height": height}),
+					template = _.template(_Upfront_Templates["module_group"], model);
 
 				Upfront.Events.trigger("entity:module_group:before_render", this, this.model);
+				
+				
+				// Id the element by anchor, if anchor is defined
+				var the_anchor = this.model.get_property_value_by_name("anchor");
+				if (the_anchor && the_anchor.length)
+					this.el.id = the_anchor;
 
-				this.$el.append($border);
-				this.$el.append($edit);
-				this.$el.append($reorder);
-				this.$el.append($finish);
+				var theme_style = this.model.get_breakpoint_property_value('theme_style', true);
+				if(theme_style){
+					this.$el.addClass( theme_style.toLowerCase() );
+					this._theme_style = theme_style;
+				}
+
+				this.$el.html(template);
+				this.$bg = this.$el.find('.upfront-module-group-bg');
 				this.update();
 				var local_view = this._modules_view || new Modules({"model": this.model.get("modules")});
 				local_view.region_view = this.region_view;
@@ -1489,10 +1514,23 @@ define([
 					this._modules_view.delegateEvents();
 			},
 			update: function () {
-				var prop_class = this.model.get_property_value_by_name('class');
+				var prop_class = this.model.get_property_value_by_name('class'),
+					row = this.model.get_property_value_by_name('row'),
+					use_padding = this.model.get_breakpoint_property_value('use_padding', true),
+					theme_style = this.model.get_breakpoint_property_value('theme_style', true),
+					grid = Upfront.Settings.LayoutEditor.Grid;
 				this.$el.removeClass(this._prev_class).addClass(prop_class);
 				this._prev_class = prop_class;
+				if(theme_style){
+					this.$el.removeClass(this._theme_style).addClass( theme_style.toLowerCase() );
+					this._theme_style = theme_style;
+				}
+				this.$el.css('min-height', (row*grid.baseline) + 'px').attr('data-row', row);
+				
+				this.$bg.toggleClass('upfront-module-group-bg-padding', use_padding ? true : false);
+				
 				this.update_position();
+				this.update_background();
 			},
 			update_position: function () {
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
@@ -1543,7 +1581,24 @@ define([
 					this.$el.css('min-height', (row*grid.baseline) + 'px');
 					this.$el.removeData('breakpoint_row');
 				}
+				var theme_style = this.model.get_breakpoint_property_value('theme_style', true);
+				if ( this._theme_style )
+					this.$el.removeClass(this._theme_style.toLowerCase());
+				if ( theme_style ) {
+					this.$el.addClass(theme_style.toLowerCase());
+					this._theme_style = theme_style;
+				}
 				Upfront.Events.trigger('entity:module_group:update_position', this, this.model);
+			},
+			on_settings_click: function (e) {
+				if( typeof e !== "undefined" ){
+					e.preventDefault();
+				}
+				var BgSettings = Upfront.Views.Editor.BgSettings.Settings.extend({
+					bg_title: l10n.group_settings,
+					enable_types: ['color', 'image'/*, 'slider', 'video', 'map'*/]
+				});
+				Upfront.Events.trigger("entity:settings:activate", this, BgSettings);
 			},
 			on_ungroup: function () {
 				var ed = Upfront.Behaviors.GridEditor,
@@ -1709,6 +1764,7 @@ define([
 					this.$el.removeClass('upfront-module-group-reorder-mode');
 				}
 				this.update_position();
+				this.update_background();
 			},
 			remove: function(){
 				if(this._modules_view)
@@ -2426,6 +2482,7 @@ define([
 				if ( ( breakpoint && !breakpoint.default ) || this.$layout.css('display').indexOf('flex') != -1 ){
 					this.set_full_screen();
 					this.refresh_background();
+					this.update_pos();
 					return;
 				}
 				var $regions = this.$el.find('.upfront-region-center, .upfront-region-side-left, .upfront-region-side-right'),
@@ -2447,6 +2504,7 @@ define([
 				});
 				$regions.add($container).css('min-height', height);
 				this.refresh_background();
+				this.update_pos();
 			},
 			set_full_screen: function () {
 				var $region = this.$layout.find('.upfront-region-center'),
@@ -2633,6 +2691,7 @@ define([
 				this.listenTo(Upfront.Events, 'layout:after_render', this.refresh_background);
 				this.listenTo(Upfront.Events, "entity:resize_stop", this.refresh_background);
 				this.listenTo(Upfront.Events, "entity:region:resize_stop", this.refresh_background);
+				this.listenTo(Upfront.Events, "entity:region_container:resize_stop", this.update_pos);
 				this.listenTo(Upfront.Events, "entity:region_container:resize_stop", this.refresh_background);
 				this.listenTo(Upfront.Events, "entity:drag_stop", this.refresh_background);
 				this.listenTo(Upfront.Events, "entity:drag:drop_change", this.refresh_background);
@@ -2651,9 +2710,11 @@ define([
 					container_view = this.parent_view.get_container_view(this.model),
 					data = _.extend(this.model.toJSON(), {size_class: grid.class, max_col: container_view.max_col, available_col: container_view.available_col}),
 					template = _.template(_Upfront_Templates["region_container"], data);
+				Upfront.Events.trigger("entity:region_sub_container:before_render", this, this.model);
 				this.$el.html(template);
 				this.$layout = this.$el.find('.upfront-grid-layout');
 				this.update();
+				Upfront.Events.trigger("entity:region_sub_container:after_render", this, this.model);
 			},
 			update: function () {
 				var container_view = this.parent_view.get_container_view(this.model);
@@ -2762,6 +2823,11 @@ define([
 
 			},
 			remove: function () {
+				var sub = this.model.get('sub');
+				if ( sub == 'top' )
+					this.$el.closest('.upfront-region-container-bg').css('padding-top', '');
+				else
+					this.$el.closest('.upfront-region-container-bg').css('padding-bottom', '');
 				this.event = false;
 				$(window).off('scroll.region_subcontainer_' + this.model.get('name'));
 				$(window).off('resize.region_subcontainer_' + this.model.get('name'));
@@ -4250,6 +4316,7 @@ define([
 				styles.push(selector + ' .upfront-object { padding: ' + grid.column_padding + 'px; }');
 				styles.push(selector + ' .upfront-overlay-grid {background-size: 100% ' + grid.baseline + 'px; }');
 				styles.push(selector + ' .plaintxt_padding {padding: ' + grid.type_padding + 'px; }');
+				styles.push(selector + ' .upfront-module-group-bg-padding { margin: ' + grid.column_padding + 'px; }');
 
 				if ( $('#upfront-grid-style-inline').length )
 					$('#upfront-grid-style-inline').html( styles.join("\n") );

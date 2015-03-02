@@ -296,6 +296,11 @@
 	display: block;
 	visibility: hidden;
 }
+.upfront-region-resize-handle-n {
+  top: -14px;
+  bottom: auto;
+  cursor: n-resize;
+}
 .upfront-region-resize-handle-e {
 	top: 0;
 	bottom: 0;
@@ -315,6 +320,7 @@
 .upfront-region-editing .upfront-region-container-active > .upfront-region-resize-handle,
 .upfront-region-editing .upfront-region-container-active .upfront-region-side-left > .upfront-region-resize-handle-e,
 .upfront-region-editing .upfront-region-container-active .upfront-region-side-right > .upfront-region-resize-handle-w,
+.upfront-region-editing .upfront-region-container-active .upfront-region-sub-container > .upfront-region-resize-handle,
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region > .upfront-region-resize-handle-s,
 .upfront-region-fixed-editing .upfront-region-side-fixed .upfront-region-resize-handle {
 	visibility: visible;
@@ -324,7 +330,7 @@
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region-side-left > .upfront-region-resize-handle-e,
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region-side-right > .upfront-region-resize-handle-w,
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region-hidden > .upfront-region-resize-handle-s,
-.upfront-region-editing .upfront-region-container-full .upfront-region-resize-handle,
+.upfront-region-editing .upfront-region-container-full > .upfront-region-resize-handle,
 .upfront-region-editing .upfront-region-bg-setting-open .upfront-region-resize-handle {
 	visibility: hidden;
 }
@@ -383,8 +389,12 @@
 	background: rgba(31, 48, 63, 0.8);
 }
 .upfront-region-editing .upfront-region-container-active .upfront-region-side,
+.upfront-region-editing .upfront-region-container-active .upfront-region-sub-container,
 .upfront-region-fixed-editing .upfront-region-side-fixed {
 	background: rgba(175, 185, 195, 0.5);
+}
+.upfront-region-editing .upfront-region-container-active .upfront-region-sub-container .upfront-region-side {
+  background: none;
 }
 .upfront-region-editing .upfront-region-container-active .upfront-region:after {
 	content: " ";
@@ -1065,17 +1075,18 @@ a.upfront-region-name-edit-trigger:before {
 	margin: 0 0 20px;
 }
 .upfront-region-bg-setting-region-nav {
-	width: 50%;
-	float: left;
+	width: 45%;
+	float: right;
 	margin: 0 0 20px;
 }
 .upfront-region-bg-setting-region-behavior {
 	width: 50%;
-	float: right;
+	float: left;
+  margin: 0 0 20px;
 }
 .upfront-region-bg-setting-type {
 	clear: both;
-	width: 50%;
+	width: 38%;
 	float: left;
 }
 .upfront-region-bg-setting-tab .upfront-field-number{
@@ -1106,6 +1117,10 @@ a.upfront-region-name-edit-trigger:before {
 	font-size: 11px;
 	line-height: 16px;
 	margin: 4px 0 0;
+}
+.upfront-region-bg-setting-auto-resize-disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 .auto-resize-off, .auto-resize-on {
 	display: inline-block;
@@ -1177,7 +1192,7 @@ a.upfront-region-name-edit-trigger:before {
 	margin: 4px 0 10px;
 }
 .upfront-region-bg-setting-tab-primary {
-	width: 50%;
+	width: 62%;
 	float: right;
 }
 .upfront-region-bg-setting-tab-secondary {
@@ -1193,136 +1208,13 @@ a.upfront-region-name-edit-trigger:before {
 }
 .upfront-region-bg-setting-label {
 	color: #3f617f;
-	font-size: 17px;
+	font-size: 14px;
+	line-height: 20px;
 }
 .upfront-region-bg-setting-label-alt {
 	color: #2f475d;
 	font-family: "Verdana";
 	font-size: 11px;
-}
-.upfront-region-bg-image-style {
-	float: left;
-}
-.upfront-region-bg-image-tile {
-	clear: both;
-	padding: 5px 0 0;
-}
-.upfront-region-bg-image-fixed {
-}
-.upfront-region-bg-image-fixed-pos {
-	float: left;
-	width: 36%;
-	position: relative;
-}
-.upfront-region-bg-image-fixed-pos-num {
-	float: right;
-	margin: 18px -12px 0 0;
-}
-.upfront-region-bg-image-fixed-pos-num .upfront-field-number {
-
-}
-.upfront-region-bg-image-fixed-pos .upfront-field-slider-value {
-	display: none;
-}
-.upfront-region-bg-image-fixed-color {
-	float: right;
-	width: 50%;
-}
-.upfront-region-bg-map-location .upfront-field-wrap {
-	float: left;
-	width: 90%;
-}
-.upfront-region-modal-map .upfront-field-slider-value {
-	display: none;
-}
-.upfront-refresh-map {
-	float: right;
-	margin: 34px 0 0;
-	cursor: pointer;
-}
-.upfront-region-bg-map-style-control .upfront-field-wrap {
-	width: 50%;
-	float: left;
-}
-.upfront-region-bg-map-style-control .upfront-field-wrap .upfront-field-select {
-	width: 100%;
-}
-.upfront-region-bg-map-style-control .upfront-field-wrap:last-child {
-	width: 40%;
-	float: right;
-}
-.upfront-region-bg-slider-rotate .upfront-field-wrap {
-	display: inline-block;
-}
-.upfront-region-bg-slider-rotate .upfront-field-wrap-number {
-	position: relative;
-	top: -7px;
-}
-.upfront-region-bg-slider-slides .upfront-settings-item-content {
-	position: relative;
-	margin: 0 -7px;
-}
-.upfront-region-bg-slider-image-loading {
-	min-height: 126px;
-}
-.upfront-region-bg-slider-image,
-.upfront-region-bg-slider-add-image {
-	float: left;
-	width: 49px;
-	height: 37px;
-	margin: 0 7px 15px 7px;
-}
-.upfront-region-bg-slider-image {
-	position: relative;
-	cursor: move;
-	border: 1px solid #233d54;
-}
-.upfront-region-bg-slider-image:hover {
-	box-shadow: inset 0 0 0 1px #233d54;
-}
-.upfront-region-bg-slider-add-image {
-	color: #1f2f3e;
-	font-size: 11px;
-	font-family: Verdana, sans-serif;
-	text-align: center;
-	width: 63px;
-	margin: 0 0 15px;
-	cursor: pointer;
-}
-.upfront-region-bg-slider-add-image.upfront-icon:before {
-	float: none !important;
-	display: block;
-	margin: 0 auto;
-}
-.upfront-region-bg-slider-image img {
-	width: 100%;
-	position: absolute;
-	top: 50%;
-	left: 0;
-	-webkit-transform: translateY(-50%);
-	-moz-transform: translateY(-50%);
-	-ms-transform: translateY(-50%);
-	-o-transform: translateY(-50%);
-	transform: translateY(-50%);
-}
-.upfront-region-bg-slider-delete-image {
-	position: absolute;
-	top: -5px;
-	right: -5px;
-	width: 16px;
-	height: 16px;
-	line-height: 16px;
-	border-radius: 8px;
-	background: #233d54;
-	color: #fff;
-	font-size: 10px;
-	font-family: Verdana, sans-serif;
-	text-align: center;
-	cursor: pointer;
-	display: none;
-}
-.upfront-region-bg-slider-image:hover .upfront-region-bg-slider-delete-image {
-	display: block;
 }
 
 .region-resizable-helper {

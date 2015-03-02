@@ -266,6 +266,8 @@ class Upfront_Grid {
 			}
 
 			if ( isset($module['modules']) && is_array($module['modules']) ){ // rendering module group
+                $module_view = new Upfront_Module_Group($module);
+    			$point_css .= $module_view->get_style_for($breakpoint, $this->get_grid_scope());
 				$point_css .= $this->_apply_modules($module, $module_col);
 			}
 			else {
@@ -500,6 +502,7 @@ class Upfront_GridBreakpoint {
 			"#page.upfront-layout-view .upfront-overlay-grid {background-size: 100% {$baseline}px}" . "\n" .
 			( $width_rule != "" ? "#page.upfront-layout-view { {$width_rule} }" . "\n" : "" ) .
 			"#page.upfront-layout-view .upfront-object {padding: {$column_padding}px;}" . "\n" .
+            "#page.upfront-layout-view .upfront-module-group-bg-padding {margin: {$column_padding}px;}" . "\n" .
 			"#page.upfront-layout-view .plaintxt_padding {padding: {$type_padding}px;}" . "\n" .
 			"#page.upfront-layout-view .upfront-region-postlayouteditor {padding: {$column_padding}px 0;}" . "\n" .
 		'';

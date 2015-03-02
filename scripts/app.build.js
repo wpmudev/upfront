@@ -20,6 +20,7 @@
         "post_layout": "upfront/post-editor/upfront-post-layout",
         "post_content": "upfront/post-editor/upfront-post-content",
         "content": "upfront/upfront-content",
+        "bg-settings": "upfront/bg-settings/bg-settings",
         "spectrum": "spectrum/spectrum",
         "responsive": "responsive",
         "uaccordion": "../elements/upfront-accordion/js/uaccordion",
