@@ -249,3 +249,7 @@ i.burger_nav_close {
   font-style: normal;
   cursor: pointer;
 }
+
+i.burger_nav_close:before {
+  content: '\00d7';
+}

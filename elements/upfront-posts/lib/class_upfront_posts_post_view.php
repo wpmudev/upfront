@@ -151,10 +151,11 @@ class Upfront_Posts_PostView {
         	: (int)Upfront_Posts_PostsData::get_default('resize_featured')
         ;
 
-		$out = $this->_get_template('thumbnail');
+		$out = $this->_get_template('featured_image');
 
 		$out = Upfront_MacroCodec::expand($out, "thumbnail", $thumbnail);
 		$out = Upfront_MacroCodec::expand($out, "resize", $resize_featured);
+		$out = Upfront_MacroCodec::expand($out, "permalink", get_permalink($this->_post->ID));
 
 		return $out;
 	}
