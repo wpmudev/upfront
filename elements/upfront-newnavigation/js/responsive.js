@@ -53,7 +53,7 @@ jQuery(document).ready(function($) {
 
 			//$(e.target).closest('.responsive_nav_toggler').css({position: 'fixed', left: offset.left, top: offset.top+(($('div#wpadminbar').length && $('div#wpadminbar').css('display') == 'block')?$('div#wpadminbar').outerHeight():0)});
 			//$(this).parent().find('ul.menu').css('padding-top', '60px');
-			var close_icon = $('<i class="burger_nav_close">&times;</i>');
+			var close_icon = $('<i class="burger_nav_close"></i>');
 
 			$(this).parent().find('ul.menu').parent().append(close_icon);
 
