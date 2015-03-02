@@ -1450,6 +1450,11 @@ define([
 		ModuleGroup = _Upfront_EditableEntity.extend({
 			className: "upfront-editable_entity upfront-module-group",
 			id: function(){ return this.model.get_property_value_by_name('element_id'); },
+			cssSelectors: {
+				'.upfront-module-group': {label: l10n.mg_label, info: l10n.mg_info},
+				'.upfront-module-group-bg': {label: l10n.mgbg_label, info: l10n.mgbg_info},
+				'.upfront-object, .upfront-output-object': {label: l10n.mgel_label, info: l10n.mgel_info}
+			},
 			events: {
 				"click > .upfront-entity_meta > a.upfront-entity-settings_trigger": "on_settings_click",
 				"click > .upfront-module-group-toggle-container > .upfront-module-group-ungroup": "on_ungroup",
@@ -1479,6 +1484,18 @@ define([
 					template = _.template(_Upfront_Templates["module_group"], model);
 
 				Upfront.Events.trigger("entity:module_group:before_render", this, this.model);
+				
+				
+				// Id the element by anchor, if anchor is defined
+				var the_anchor = this.model.get_property_value_by_name("anchor");
+				if (the_anchor && the_anchor.length)
+					this.el.id = the_anchor;
+
+				var theme_style = this.model.get_breakpoint_property_value('theme_style', true);
+				if(theme_style){
+					this.$el.addClass( theme_style.toLowerCase() );
+					this._theme_style = theme_style;
+				}
 
 				this.$el.html(template);
 				this.$bg = this.$el.find('.upfront-module-group-bg');
@@ -1500,9 +1517,14 @@ define([
 				var prop_class = this.model.get_property_value_by_name('class'),
 					row = this.model.get_property_value_by_name('row'),
 					use_padding = this.model.get_breakpoint_property_value('use_padding', true),
+					theme_style = this.model.get_breakpoint_property_value('theme_style', true),
 					grid = Upfront.Settings.LayoutEditor.Grid;
 				this.$el.removeClass(this._prev_class).addClass(prop_class);
 				this._prev_class = prop_class;
+				if(theme_style){
+					this.$el.removeClass(this._theme_style).addClass( theme_style.toLowerCase() );
+					this._theme_style = theme_style;
+				}
 				this.$el.css('min-height', (row*grid.baseline) + 'px').attr('data-row', row);
 				
 				this.$bg.toggleClass('upfront-module-group-bg-padding', use_padding ? true : false);
@@ -1558,6 +1580,13 @@ define([
 				else {
 					this.$el.css('min-height', (row*grid.baseline) + 'px');
 					this.$el.removeData('breakpoint_row');
+				}
+				var theme_style = this.model.get_breakpoint_property_value('theme_style', true);
+				if ( this._theme_style )
+					this.$el.removeClass(this._theme_style.toLowerCase());
+				if ( theme_style ) {
+					this.$el.addClass(theme_style.toLowerCase());
+					this._theme_style = theme_style;
 				}
 				Upfront.Events.trigger('entity:module_group:update_position', this, this.model);
 			},

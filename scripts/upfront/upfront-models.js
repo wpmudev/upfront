@@ -276,6 +276,7 @@ var _alpha = "alpha",
 			} else this.set("properties", new Properties([]));
 			
 			this.init_property('has_settings', 1);
+			this.init_property('type', 'ModuleGroup');
 			if (this.init) this.init();
 		}
 	}),

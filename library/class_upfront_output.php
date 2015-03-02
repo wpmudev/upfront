@@ -907,6 +907,27 @@ class Upfront_Module_Group extends Upfront_Container {
         $bg_node_end = "</div>";
         return parent::wrap( "{$out}\n{$bg_node_start}{$overlay}{$bg_node_end}" );
     }
+    
+    public function get_css_class () {
+        $classes = parent::get_css_class();
+        $classes .= ' upfront-module-group';
+        $theme_style = $this->_get_property('theme_style');
+        if($theme_style)
+            $classes .= ' ' . strtolower($theme_style);
+        return $classes;
+    }
+    
+    public function get_attr () {
+        $theme_style = $this->_get_property('theme_style');
+        if($theme_style)
+            $theme_style = strtolower($theme_style);
+        $breakpoint = upfront_get_property_value('breakpoint', $child);
+        $theme_styles = array( 'default' => $theme_style );
+        foreach ( Upfront_Output::$grid->get_breakpoints(true) as $breakpoint ) {
+            $theme_styles[$breakpoint->get_id()] = $this->_get_breakpoint_property('theme_style', $breakpoint->get_id());
+        }
+        return " data-theme-styles='" . json_encode($theme_styles) . "'";
+    }
 
     public function get_style_for ($point, $scope) {
         $css = '';

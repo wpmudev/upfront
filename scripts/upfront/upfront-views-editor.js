@@ -6176,6 +6176,7 @@ var CSSEditor = Backbone.View.extend({
 		RegionContainer: {label: l10n.region, id: 'region-container'},
 		Region: {label: l10n.inner_region, id: 'region'},
 		RegionLightbox: {label: l10n.ltbox_region, id: 'region'},
+		ModuleGroup: {label: l10n.group, id: 'module-group'},
 		PostPart_titleModel: {label: l10n.postpart_title, id: 'PostPart_title'},
 		PostPart_contentsModel: {label: l10n.postpart_content, id: 'PostPart_contents'},
 		PostPart_excerptModel: {label: l10n.postpart_excerpt, id: 'PostPart_excerpt'},
@@ -6575,6 +6576,9 @@ var CSSEditor = Backbone.View.extend({
 	updateStylename: function() {
 		var new_name =  $.trim(this.$('.upfront-css-save-name-field').val()),
 			old_name = this.stylename;
+		
+		// Strict filtering on stylename
+		new_name = new_name.replace(/\s/g, '-').replace(/[^A-Za-z0-9_-]/gi, '').replace(/-+/g, '-').toLowerCase();
 
 		if (old_name === '_default') {
 			this.$('.upfront-css-save-name-field').val('_default');

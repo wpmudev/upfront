@@ -1622,6 +1622,9 @@ var Application = new (Backbone.Router.extend({
 		});
 
 		cssEditor.createSelectors(Upfront.Application.LayoutEditor.Objects);
+		
+		// Group selectors
+		cssEditor.createSelector(Upfront.Models.ModuleGroup, Upfront.Views.ModuleGroup, 'ModuleGroup');
 
 		// Region selectors
 		cssEditor.createSelector(Upfront.Models.Region, Upfront.Views.RegionContainerView, 'RegionContainer');
