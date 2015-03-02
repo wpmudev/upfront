@@ -155,6 +155,7 @@ class Upfront_Posts_PostView {
 
 		$out = Upfront_MacroCodec::expand($out, "thumbnail", $thumbnail);
 		$out = Upfront_MacroCodec::expand($out, "resize", $resize_featured);
+		$out = Upfront_MacroCodec::expand($out, "permalink", get_permalink($this->_post->ID));
 
 		return $out;
 	}
