@@ -221,6 +221,9 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
         this.listenTo(this.controls, 'control:click:toggle_caption', function(control){
             this.data.set("show_caption", 1 - parseInt( this.data.get("show_caption"), 10 ) );
         });
+
+        if( typeof this.control_events === "function")
+            this.control_events();
     },
 
     updateControlsPosition: function(){
@@ -424,7 +427,6 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
         return src;
     },
 
-
     calculateImageResize: function(wrapperSize, imageSize){
         var pivot = imageSize.width / imageSize.height > wrapperSize.width / wrapperSize.height ? 'height' : 'width',
             factor = imageSize[pivot] / wrapperSize[pivot],
@@ -543,33 +545,8 @@ var ImageProInsert = ImageInsertBase.extend({
 	},
 
 	//this function is called automatically by UEditorInsert whenever the controls are created or refreshed
-	controlEvents: function(){
+	control_events: function(){
 		var me = this;
-		this.stopListening(this.controls);
-
-		this.listenTo(this.controls, 'control:ok:link', function(view, control){
-			var url = view.$('input[type=text]').val(),
-				type = view.$('input[type=radio]:checked').val() || 'do_nothing',
-				linkData = {}
-				;
-			if ("external" === type && !(url.match(/https?:\/\//) || url.match(/\/\/:/))) {
-				// ... check if we want an external URL
-				url = url.match(/^www\./) || url.match(/\./)
-					? 'http://' + url
-					: url
-				;
-			}
-			linkData = {
-				linkType: type,
-				linkUrl: url
-			};
-
-			this.data.set(linkData);
-			view.model.set(linkData);
-			control.close();
-		});
-
-
 		/**
 		* Image style from variants
 		*/
@@ -581,13 +558,6 @@ var ImageProInsert = ImageInsertBase.extend({
                 view.data.set( "selected", view.variant_id   );
             }
             control.close();
-        });
-
-        /**
-         * Toggle Caption
-         */
-        this.listenTo(this.controls, 'control:click:toggle_caption', function(control){
-            this.data.set("show_caption", 1 - parseInt( this.data.get("show_caption"), 10 ) );
         });
 	},
 
@@ -788,32 +758,8 @@ var ImageInsert = ImageInsertBase.extend({
     },
 
     //this function is called automatically by UEditorInsert whenever the controls are created or refreshed
-    controlEvents: function(){
+    control_events: function(){
         var me = this;
-        this.stopListening(this.controls);
-
-        this.listenTo(this.controls, 'control:ok:link', function(view, control){
-            var url = view.$('input[type=text]').val(),
-                type = view.$('input[type=radio]:checked').val() || 'do_nothing',
-                linkData = {}
-                ;
-            if ("external" === type && !(url.match(/https?:\/\//) || url.match(/\/\/:/))) {
-                // ... check if we want an external URL
-                url = url.match(/^www\./) || url.match(/\./)
-                    ? 'http://' + url
-                    : url
-                ;
-            }
-            linkData = {
-                linkType: type,
-                linkUrl: url
-            };
-
-            this.data.set(linkData);
-            view.model.set(linkData);
-            control.close();
-        });
-
 
         /**
          * Image style from variants
@@ -828,12 +774,6 @@ var ImageInsert = ImageInsertBase.extend({
             control.close();
         });
 
-        /**
-         * Toggle Caption
-         */
-        this.listenTo(this.controls, 'control:click:toggle_caption', function(control){
-            this.data.set("show_caption", 1 - parseInt( this.data.get("show_caption"), 10 ) );
-        });
     },
 
     //Import from any image tag
