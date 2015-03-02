@@ -1132,19 +1132,29 @@ RedactorPlugins.upfrontColor = function() {
                         self.redactor.inline.format('div', 'class', cls);
                     },
                     color_set = function(rule, raw_value) {
-                        var theme_color = false, cls = false;
+                        var theme_color = false, cls = false, is_bg = !!rule.match(/background/);
                         if (raw_value.is_theme_color) {
-                            cls = Upfront.Views.Theme_Colors.colors.get_css_class(raw_value, !!rule.match(/background/));
+                            cls = Upfront.Views.Theme_Colors.colors.get_css_class(raw_value, is_bg);
                             if (!cls) theme_color = raw_value.theme_color;
                         } else {
                             theme_color = raw_value.toRgbString();
                         }
 
-                        //self.redactor.inline.format('div', 'style', rule + ': ' + value + '/*' + theme_color + '*/' + ';');
-                        //return;
-                        var wrapper = document.createElement("span");
-                        wrapper.appendChild(self.redactor.range.extractContents());
+                        var wrapper = document.createElement("span"),
+                            contents = self.redactor.range.extractContents(),
+                            range = self.redactor.range,
+                            $range = range.commonAncestorContainer ? $(range.commonAncestorContainer) : false
+                        ;
+
+                        if ($range && $range.length && $range.is("span")) {
+                            range.selectNode(range.commonAncestorContainer);
+                            Upfront.Views.Theme_Colors.colors.remove_theme_color_classes($range, is_bg);
+                            $range.attr("style", "");
+                            wrapper = $range.get(0);
+                        }
+                        wrapper.appendChild(contents);
                         self.redactor.range.insertNode(wrapper);
+
                         if (cls) {
                             $(wrapper)
                                 .addClass(cls)
@@ -1154,8 +1164,8 @@ RedactorPlugins.upfrontColor = function() {
                                 .attr("style", rule + ':' + theme_color) // use color otherwise
                             ;
                         }
-                        //self.redactor.selection.wrap("span");
-                        //self.redactor.inline.format('div', 'style', rule + ': ' + type + ';');
+
+
                         self.redactor.selection.restore();
                         self.redactor.code.sync();
                     },
