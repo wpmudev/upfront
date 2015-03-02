@@ -48,6 +48,7 @@ define([
 	"text!upfront/templates/region_edit_panel.html",
 	"text!upfront/templates/sidebar_settings_theme_colors.html",
 	"text!upfront/templates/color_picker.html",
+    'spectrum'
 ], function (chosen, globalEventHandlers, InlinePanelsLoader) {
 	var _template_files = [
 		"text!upfront/templates/property.html",
@@ -1291,7 +1292,7 @@ define([
 			Upfront.Events.on("command:layout:save", this.on_save, this);
 			Upfront.Events.on("command:layout:save_as", this.on_save, this);
 			Upfront.Events.on("command:layout:publish", this.on_save, this);
-			Upfront.Events.on("command:layout:preview", this.on_preview, this);
+			//Upfront.Events.on("command:layout:preview", this.on_preview, this); // Do NOT drop shadow region from layout on preview build
 			Upfront.Events.on("command:layout:save_success", this.on_save_after, this);
 			Upfront.Events.on("command:layout:save_error", this.on_save_after, this);
 			Upfront.Events.on("entity:drag_stop", this.reset_modules, this);
@@ -2036,6 +2037,7 @@ define([
             //this.bottomTemplate = _.template( $(_Upfront_Templates.sidebar_settings_theme_colors).find(".panel-setting-theme-colors-bottom").html() );
             Upfront.Events.on("command:layout:save", this.on_save, this);
             Upfront.Events.on("command:layout:save_as", this.on_save, this);
+            if (Upfront.Settings.Application.NO_SAVE) Upfront.Events.on("preview:build:start", this.on_save, this); // Also build colors on preview, only in anonymous mode
             this.update_styles();
             Theme_Colors.colors.bind('change reset add', this.update_styles, this);
         },

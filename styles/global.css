@@ -419,7 +419,7 @@ div.upfront-region-lightbox .upfront-icon-popup-close, div.upfront-region-side-l
 /* resets to match the editor exp */
 * {
   font-weight: inherit;
-  font-style: inherit;
+  /*font-style: inherit;*/
   text-transform: inherit;
   text-decoration: inherit;
   border: none;

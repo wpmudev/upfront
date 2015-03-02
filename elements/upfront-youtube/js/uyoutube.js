@@ -32,19 +32,20 @@
         this.model.get("properties").bind("remove", this.render, this);
 
         Upfront.Events.on("entity:resize_stop", this.onResizeStop, this);
-        
+
 		this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.onResizeStop);
 
       },
-      setType: function(e) {
+      setType: function(event) {
+				event.preventDefault();
         var self = this;
         this.property('youtube_status', 'ok');
-        if ($(e.currentTarget).hasClass('single-video')) {
+        if ($(event.currentTarget).hasClass('single-video')) {
           this.property('videoType', 'single', false);
         } else {
           this.property('videoType', 'multiple', false);
         }
-        
+
 				Upfront.Events.trigger("entity:settings:activate", this);
         setTimeout(function(){
           self.$(".upfront-entity-settings_trigger").click();
@@ -67,8 +68,8 @@
           rendered += '<div class="upfront-youtube-starting-select" style="min-height:' + this.elementSize.height + 'px">' +
             '<span class="upfront-youtube-starting-title">Video List or Single Video?</span>'+
             '<div class="upfront-youtube-resizing-icons">' +
-            '<a class="upfront-youtube-select-button button multiple-videos" href="#"><span class="yticon"></span><span class="ytdesc">Multiple Videos</span></a>' +
-            '<a class="upfront-youtube-select-button button single-video" href="#"><span class="yticon"></span><span class="ytdesc">Single Video</span></a>' +
+            '<a class="upfront-youtube-select-button button multiple-videos" href=""><span class="yticon"></span><span class="ytdesc">Multiple Videos</span></a>' +
+            '<a class="upfront-youtube-select-button button single-video" href=""><span class="yticon"></span><span class="ytdesc">Single Video</span></a>' +
             '</div>'+
             '</div>';
         }

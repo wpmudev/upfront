@@ -673,7 +673,7 @@ RedactorPlugins.upfrontIcons = function() {
             close: function () {
                 console.log("closing close panel");
                 if (this.redactor) {
-                    this.redactor.selection.restore();
+                    //this.redactor.selection.restore();
                     this.$sel = false;
                 }
             },
@@ -685,10 +685,16 @@ RedactorPlugins.upfrontIcons = function() {
                     "font-size": fontSize + "px",
                     "top": top + "px"
                 });
-                this.redactor.insert.node($icon[0], true);
+                var inserted = this.redactor.insert.node($icon[0], false); //inserted false instead of true to retain the selected content
                 this.redactor.code.sync();
+                
+                //var offset = this.redactor.caret.getOffset(); //existing caret position
+                
                 this.redactor.selection.restore();
+
                 this.closeToolbar();
+                this.redactor.caret.setAfter($(inserted));
+                //this.redactor.caret.setOffset(100);
             },
             input_change: function(e){
                 var $sel = this.$sel;

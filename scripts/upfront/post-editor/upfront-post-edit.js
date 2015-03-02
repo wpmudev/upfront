@@ -120,6 +120,11 @@ var Box = Backbone.View.extend({
         date = date ? date.getTime() : 0;
         now = now.getTime();
 
+        // Check the initial status value and deal with it appropriately
+        if (!initial && this.post && this.post.get) {
+            initial = this.post.get("post_status")
+        }
+
         if(now < date) {
             if(initial == 'future')
                 return Upfront.Settings.l10n.global.content.update;

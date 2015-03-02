@@ -313,6 +313,8 @@ Ueditor.prototype = {
 		this.$el.on('keydown', function(e){
 			self.cmdKeyA = false;
 			self.cmdKey = false;
+
+
 			setTimeout(function(){
 				if(e.keyCode === 65 && e.metaKey ){
 					self.cmdKeyA = true;
@@ -326,6 +328,18 @@ Ueditor.prototype = {
 					self.onCopy(e);
 				}
 			});
+
+			if(e.keyCode != 37 && e.keyCode != 39) {
+				var current = $(self.redactor.selection.getCurrent());
+				if(current.hasClass('uf_font_icon')) {
+					self.redactor.caret.setAfter(current);
+				}
+				else if(current.parent().hasClass('uf_font_icon')) {
+					self.redactor.caret.setAfter(current.parent());
+				}
+
+			}
+			
 		});
 
 
@@ -660,7 +674,15 @@ Ueditor.prototype = {
 			}
 			else
 				$('.redactor_air').hide();
+
+			if($(e.target).hasClass('uf_font_icon')) {
+				if(e.pageX < ($(e.target).offset().left + $(e.target).width()/2))
+					me.redactor.caret.setBefore($(e.target));
+				else
+					me.redactor.caret.setAfter($(e.target));
+			}
 		});
+
 	},
 	getValue: function(is_simple_element){
 		var html = this.redactor.code.get();

@@ -98,6 +98,17 @@
 	padding-right: 0;
 }
 
+#settings .uyoutube-settings .upfront-settings_panel_scroll {
+	height: 470px;
+	max-height: 470px;
+}
+#settings .uyoutube-settings .field-display_style .upfront-field-multiple {
+	display: inline-block;
+}
+#settings .uyoutube-settings .field-display_style .upfront-field-multiple:first-child {
+	margin-right: 50px;
+}
+
 /* Starting */
 .upfront-youtube-starting-select {
 	box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;
