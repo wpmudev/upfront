@@ -29,7 +29,8 @@ function init_map ($el) {
 			overviewMapControl: raw.controls.indexOf("overview_map") >= 0 || DEFAULTS.controls.overview_map,
 			style_overlay: raw.styles || false,
 			draggable: !!raw.draggable,
-			scrollwheel: !!raw.scrollwheel
+			scrollwheel: !!raw.scrollwheel,
+			hide_markers: !!raw.hide_markers
 		},
 		markers = raw.markers || [],
 		height = $el.closest(".upfront-output-module").height(),
@@ -52,20 +53,22 @@ function init_map ($el) {
 	if (props.style_overlay) {
 		map.setOptions({styles: props.style_overlay});
 	}
-	$.each(markers, function(index, marker) {
-		var mrk = new google.maps.Marker({
-			position: new google.maps.LatLng(marker.lat, marker.lng),
-			draggable: false,
-			icon: marker.icon ? marker.icon : '',
-			map: map
-		});
-		if (marker.is_open && marker.content) {
-			var info = new google.maps.InfoWindow({
-				content: '<div>' + marker.content + '</div>'
+	if (!props.hide_markers) {
+		$.each(markers, function(index, marker) {
+			var mrk = new google.maps.Marker({
+				position: new google.maps.LatLng(marker.lat, marker.lng),
+				draggable: false,
+				icon: marker.icon ? marker.icon : '',
+				map: map
 			});
-			info.open(map, mrk);
-		}
-	});
+			if (marker.is_open && marker.content) {
+				var info = new google.maps.InfoWindow({
+					content: '<div>' + marker.content + '</div>'
+				});
+				info.open(map, mrk);
+			}
+		});
+	}
 	// Re-render the map when needed
 	$(document).on('upfront-lightbox-open', function () {
 		$el.height($el.closest(".upfront-output-module").height()); // This is to ensure the proper height once lightbox pops open

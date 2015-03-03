@@ -368,6 +368,7 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 		},
 
 		add_map_marker: function (marker) {
+			if (!!this.model.get_property_value_by_name("hide_markers")) return false;
 			var me = this,
 				mrk = new google.maps.Marker({
 					position: new google.maps.LatLng(marker.lat, marker.lng),
@@ -696,7 +697,16 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 							values: [{label: l10n.draggable_map, value: 1}],
 							multiple: false,
 							change: function () { this.property.set({value: this.get_value()}); }
-						})
+						}),
+						new Upfront.Views.Editor.Field.Checkboxes({
+							model: this.model,
+							label: l10n.hide_markers,
+							property: "hide_markers",
+							hide_label: true,
+							values: [{label: l10n.hide_markers, value: 1}],
+							multiple: false,
+							change: function () { this.property.set({value: this.get_value()}); }
+						}),
 					]);
 				},
 				get_title: function () {
