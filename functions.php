@@ -195,21 +195,22 @@ class Upfront {
 
 			wp_enqueue_style('wp-jquery-ui-dialog');
 
-	/*		
+
+/*			
 			wp_enqueue_style('upfront-font-source-sans-pro', 'http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic', array(), Upfront_ChildTheme::get_version());
 
 			// Enqueue needed styles
 			wp_enqueue_style('upfront-editor-grid', admin_url('admin-ajax.php?action=upfront_load_editor_grid'), array(), Upfront_ChildTheme::get_version());
-			wp_enqueue_style('upfront-editor-interface', self::get_root_url() . '/styles/editor-interface.css', array(), Upfront_ChildTheme::get_version());
 			wp_enqueue_style('upfront-chosen-default-style', self::get_root_url() . '/scripts/chosen/chosen.min.css', array(), Upfront_ChildTheme::get_version());
 
 			// Font icons
 			wp_enqueue_style('upfront-default-font-icons', self::get_root_url() . '/styles/font-icons.css', array(), Upfront_ChildTheme::get_version());
-	*/
+*/	
+			wp_enqueue_style('upfront-editor-interface', self::get_root_url() . '/styles/editor-interface.css', array(), Upfront_ChildTheme::get_version());
 			
 			$link_urls =  array(
 				admin_url('admin-ajax.php?action=upfront_load_editor_grid'),
-				self::get_root_url() . '/styles/editor-interface.css',
+				//self::get_root_url() . '/styles/editor-interface.css', // Wtf this doesn't work
 				self::get_root_url() . '/scripts/chosen/chosen.min.css',
 				self::get_root_url() . '/styles/font-icons.css',
 			);
