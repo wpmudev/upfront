@@ -990,7 +990,7 @@ var InsertManagerInserts = Backbone.View.extend({
             self = this
             ;
 
-        insert.start()
+        insert.start( this.$el )
             .done(function(popup, results){
                 // if(!results) Let's allow promises without result for now!
                 //	return;
@@ -1173,7 +1173,7 @@ var InsertManager = Backbone.View.extend({
 			insertsData = _.extend({}, me.insertsData, me.deletedInserts)
 		;
 
-		_.each(Inserts.inserts, function(Insert){
+		_.each(_.pick(Inserts.inserts, this.insertsData), function(Insert){
 			_.extend(me.inserts, Insert.prototype.importInserts(me.$el, insertsData));
 		});
 
