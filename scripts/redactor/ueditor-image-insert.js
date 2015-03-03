@@ -9,7 +9,7 @@ define([
 var ImageInsertBase = Insert.UeditorInsert.extend({
     caption_active: false,
     type: 'image',
-    className: 'ueditor-insert upfront-inserted_image-wrapper ueditor-insert-variant',
+    className: 'ueditor-insert upfront-inserted_image-wrapper',
     tpl: _.template($(tpls).find('#image-insert-tpl').html()),
     resizable: false,
     defaultData: {
@@ -17,6 +17,7 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
         show_caption: 1,
         imageFull: {src:'', width:100, height: 100},
         imageThumb: {src:'', width:100, height: 100},
+        selectedImage: {src:'', width:100, height: 100},
         linkType: 'do_nothing',
         linkUrl: '',
         isLocal: 1,
@@ -31,7 +32,7 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
             label_id: "",
             vid: "",
             caption: {
-                "order": 0,
+                "order": 1,
                 "height": 50,
                 "width_cls": "",
                 "left_cls": "",
@@ -39,7 +40,7 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
                 "show": 1
             },
             group: {
-                "float": "",
+                "float": "none",
                 "width_cls": "",
                 "left_cls": "",
                 "height": 0,
@@ -247,7 +248,7 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
             data = this.data.toJSON()
             ;
 
-        data.image = data.imageFull;
+        data.image = this.get_proper_image();
 
         this.data.set('width', this.$el.width(), {silent: true});
         this.data.trigger('update');
@@ -311,10 +312,15 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
                 title: imagePost.post_tite,
                 imageFull: imagePost.image,
                 imageThumb: this.getThumb(imagePost.additional_sizes),
+                selectedImage: _.isUndefined( imagePost.selected_size ) ? imagePost.image : _.filter(imagePost.additional_sizes, function( size ){
+                    var dimensions = imagePost.selected_size.toLowerCase().split("x"),
+                        width = dimensions[0],
+                        height = dimensions[1];
+                    return size.width == width && size.height == height;
+                })[0],
                 linkType: 'do_nothing',
                 linkUrl: '',
-                align: 'center',
-                captionPosition: 'nocaption'
+                align: 'center'
             })
             ;
         return imageData;
@@ -446,7 +452,9 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
 });
 
 
-var ImageProInsert = ImageInsertBase.extend({
+var PostImageInsert = ImageInsertBase.extend({
+    className: 'ueditor-insert upfront-inserted_image-wrapper ueditor-insert-variant ueditor-post-image-insert',
+    tpl: _.template($(tpls).find('#post-image-insert-tpl').html()),
 	//Called just after initialize
 	init: function(){
 		this.controlsData = [
@@ -466,7 +474,7 @@ var ImageProInsert = ImageInsertBase.extend({
 			var imageData = me.getImageData(result);
 			imageData.id = me.data.id;
 			me.data.clear({silent: true});
-			imageData.style =  Upfront.Content.ImageVariants.length ?  Upfront.Content.ImageVariants.first().toJSON() : this.defaultData.style;
+			imageData.style =  Upfront.Content.ImageVariants.length ?  Upfront.Content.ImageVariants.first().toJSON() : me.defaultData.style;
 			imageData.variant_id = imageData.style.vid;
 			me.data.set(imageData);
 
@@ -651,7 +659,7 @@ var ImageProInsert = ImageInsertBase.extend({
 		}
 
 
-		var insert = new ImageProInsert({data: imageData});
+		var insert = new PostImageInsert({data: imageData});
 
 		insert.render();
 		image.replaceWith(insert.$el);
@@ -663,7 +671,7 @@ var ImageInsert = ImageInsertBase.extend({
     //Called just after initialize
     init: function(){
         this.controlsData = [
-            {id: 'style', type: 'dialog', icon: 'style', tooltip: 'Style', view: this.getStyleView()},
+            //{id: 'style', type: 'dialog', icon: 'style', tooltip: 'Style', view: this.getStyleView()},
             {id: 'link', type: 'dialog', icon: 'link', tooltip: 'Link image', view: this.getLinkView()},
             {id: 'toggle_caption', type: 'simple', icon: 'caption', tooltip: 'Toggle Caption', active: _.bind( this.get_caption_state, this ) }
         ];
@@ -679,23 +687,12 @@ var ImageInsert = ImageInsertBase.extend({
             var imageData = me.getImageData(result);
             imageData.id = me.data.id;
             me.data.clear({silent: true});
-            imageData.style =  Upfront.Content.ImageVariants.length ?  Upfront.Content.ImageVariants.first().toJSON() : this.defaultData.style;
-            imageData.variant_id = imageData.style.vid;
+            imageData.style =  me.defaultData.style;
+            imageData.variant_id = "basic-image";
             me.data.set(imageData);
-
         });
 
         return promise;
-    },
-    apply_classes: function (d) {
-        if (!d) return false;
-        var grid = Upfront.Settings.LayoutEditor.Grid;
-        d.height = d.row * grid.baseline;
-        d.width_cls = grid.class + d.col;
-        d.left_cls = grid.left_margin_class + d.left;
-        if ( d.top )
-            d.top_cls = grid.top_margin_class + d.top;
-        d.clear_cls = d.clear ? 'clr' : '';
     },
     // Insert editor UI
     render: function(){
@@ -709,9 +706,6 @@ var ImageInsert = ImageInsertBase.extend({
         data.image = this.get_proper_image();
 
 
-        //this.apply_classes( data.style.group );
-        //this.apply_classes( data.style.image );
-        //this.apply_classes( data.style.caption );
 
         if( data.show_caption == 0 ){
             data.style.image.width_cls = Upfront.Settings.LayoutEditor.Grid.class + 24;
@@ -775,7 +769,22 @@ var ImageInsert = ImageInsertBase.extend({
         });
 
     },
+    get_proper_image: function(){
+        var data = this.data.toJSON(),
+            image = data.imageFull,
+            grid = Upfront.Settings.LayoutEditor.Grid
+            ;
 
+        if(  data.selectedImage ) return  data.selectedImage;
+
+        if( data.imageThumb ){
+            if( data.style && data.style.image && data.style.image.col && (data.style.image.col * grid.column_width) <= data.imageThumb.width ){
+                image = data.imageThumb;
+            }
+        }
+
+        return image;
+    },
     //Import from any image tag
     importFromImage: function(image){
         //var imageData = Upfront.Util.clone(this.defaultData),
@@ -799,7 +808,7 @@ var ImageInsert = ImageInsertBase.extend({
         if(link.origin != window.location.origin)
             imageData.isLocal = 0;
 
-        this.calculateRealSize(imageSpecs.src);
+        //this.calculateRealSize(imageSpecs.src);
 
         imageData.imageThumb = imageSpecs;
         imageData.imageFull = {
@@ -866,7 +875,7 @@ var ImageInsert = ImageInsertBase.extend({
         }
 
 
-        var insert = new ImageProInsert({data: imageData});
+        var insert = new ImageInsert({data: imageData});
 
         insert.render();
         image.replaceWith(insert.$el);
@@ -942,7 +951,7 @@ var ImageStylesView = Backbone.View.extend({
 });
 
 return {
-    ImageProInsert: ImageProInsert,
+    PostImageInsert: PostImageInsert,
     ImageInsert: ImageInsert
 };
 
