@@ -7,6 +7,7 @@ define([
 
 
 var ImageInsertBase = Insert.UeditorInsert.extend({
+    $editor: false,
     caption_active: false,
     type: 'image',
     className: 'ueditor-insert upfront-inserted_image-wrapper',
@@ -363,6 +364,9 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
             images = contentElement.find('img'),
             inserts = {}
             ;
+
+        if( !contentElement.is(".wp-caption-text") ) this.$editor = contentElement;
+
         images.each(function(){
             var $img = $(this),
                 wrapper = $img.closest('.upfront-inserted_image-wrapper'),
@@ -678,10 +682,11 @@ var ImageInsert = ImageInsertBase.extend({
         this.createControls();
     },
     // The user want a new insert. Fetch all the required data to create a new image insert
-    start: function(){
+    start: function( $el ){
         var me = this,
             promise = Upfront.Media.Manager.open({multiple_selection: false})
             ;
+
 
         promise.done(function(popup, result){
             var imageData = me.getImageData(result);
@@ -689,6 +694,7 @@ var ImageInsert = ImageInsertBase.extend({
             me.data.clear({silent: true});
             imageData.style =  me.defaultData.style;
             imageData.variant_id = "basic-image";
+            me.$editor = $el.closest(".redactor-box");
             me.data.set(imageData);
         });
 
@@ -702,10 +708,12 @@ var ImageInsert = ImageInsertBase.extend({
         if( !style_variant ) return;
         //data.style = style_variant && style_variant.toJSON ? style_variant.toJSON() : {}; // Force this to be POJ object
 
-        data.style.label_id = data.style.label && data.style.label.trim() !== "" ? "ueditor-image-style-" +  data.style.label.toLowerCase().trim().replace(" ", "-") : data.style.vid;
+        data.style.label_id = "ueditor-image-style-center";
         data.image = this.get_proper_image();
 
 
+
+        data.style.group.width_cls = this.get_group_width_cls( data.image );
 
         if( data.show_caption == 0 ){
             data.style.image.width_cls = Upfront.Settings.LayoutEditor.Grid.class + 24;
@@ -769,19 +777,29 @@ var ImageInsert = ImageInsertBase.extend({
         });
 
     },
+    get_group_width_cls: function( image ){
+        var image_col = Upfront.Util.grid.width_to_col( image.width),
+            editor_col = Upfront.Util.grid.width_to_col( this.$editor.width() ) ;
+
+        if( ( image_col + 1 ) <= editor_col ){
+            return Upfront.Settings.LayoutEditor.Grid.class + image_col;
+        }else{
+            return Upfront.Settings.LayoutEditor.Grid.class + editor_col;
+        }
+    },
     get_proper_image: function(){
         var data = this.data.toJSON(),
             image = data.imageFull,
             grid = Upfront.Settings.LayoutEditor.Grid
             ;
 
-        if(  data.selectedImage ) return  data.selectedImage;
+        if( !_.isEmpty( data.selectedImage.src  ) ) return  data.selectedImage;
 
-        if( data.imageThumb ){
-            if( data.style && data.style.image && data.style.image.col && (data.style.image.col * grid.column_width) <= data.imageThumb.width ){
-                image = data.imageThumb;
-            }
-        }
+        //if( data.imageThumb ){
+        //    if( data.style && data.style.image && data.style.image.col && (data.style.image.col * grid.column_width) <= data.imageThumb.width ){
+        //        image = data.imageThumb;
+        //    }
+        //}
 
         return image;
     },
