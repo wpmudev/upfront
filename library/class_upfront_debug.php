@@ -11,6 +11,7 @@ abstract class Upfront_Debug {
 	const JS_TRANSIENTS = 'js_transients';
 	const DEV = 'dev';
 	const RESPONSIVE_BREAKPOINTS = 'responsive_breakpoints';
+	const WEB_FONTS = 'web_fonts';
 
 	protected $_levels = array();
 
