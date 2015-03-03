@@ -3,19 +3,25 @@ define(["scripts/redactor/ueditor-insert", "scripts/redactor/ueditor-image-inser
 
 var TYPES = {
 	IMAGE: 'image',
-    IMAGEPRO: 'imagepro',
+    POSTIMAGE: 'postImage',
     EMBED : 'embed'
 };
 
 var insertObjects = {};
-insertObjects[TYPES.IMAGEPRO] = ImageInsert.ImageProInsert;
+var insertNames = {};
+insertObjects[TYPES.POSTIMAGE] = ImageInsert.PostImageInsert;
 insertObjects[TYPES.IMAGE] = ImageInsert.ImageInsert;
 insertObjects[TYPES.EMBED] = EmbedInsert.EmbedInsert;
+
+insertNames[TYPES.POSTIMAGE] = "Image";
+insertNames[TYPES.IMAGE] = "Image";
+insertNames[TYPES.EMBED] = "Embed";
 
 return {
 	UeditorInsert: Insert.UeditorInsert,
 	inserts: insertObjects,
-	TYPES: TYPES
+	TYPES: TYPES,
+	NAMES: insertNames
 };
 
 //End Define

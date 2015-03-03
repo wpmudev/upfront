@@ -956,7 +956,7 @@ var InsertManagerInserts = Backbone.View.extend({
         "click .upfront-post-media-trigger": "toggle_inserts"
     },
     render: function(){
-      this.$el.html( this.tpl( { inserts: _.pick(Inserts.inserts, this.insertsData) } ) );
+      this.$el.html( this.tpl( { inserts: _.pick(Inserts.inserts, this.insertsData), names: Inserts.NAMES } ) );
     },
     insert_relocate: function( $current ){
       this.$block = $current;
