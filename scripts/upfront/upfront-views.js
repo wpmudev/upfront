@@ -314,6 +314,7 @@ define([
 					style = this.model.get_breakpoint_property_value('background_map_style', true),
 					styles = this.model.get_breakpoint_property_value('background_map_styles', true),
 					controls = this.model.get_breakpoint_property_value('background_map_controls', true),
+					show_markers = this.model.get_breakpoint_property_value('background_show_markers', true),
 					options = {
 						center: new google.maps.LatLng(center[0], center[1]),
 						zoom: parseInt(zoom),
@@ -325,17 +326,24 @@ define([
 						streetViewControl: (controls.indexOf("street_view") >= 0),
 						overviewMapControl: (controls.indexOf("overview_map") >= 0),
 						scrollwheel: false,
-            styles: styles
-					};
+						styles: styles
+					}
+				;
 				if ( !this.bg_map ){
 					this.bg_map = new google.maps.Map($type.get(0), options);
-				}
-				else {
+				} else {
 					$type.show();
 					this.bg_map.setOptions(options);
 					setTimeout(function(){
 						me.bg_map.setCenter(options.center);
 					}, 500);
+				}
+				if (!!show_markers) {
+					var mrk = new google.maps.Marker({
+						position: options.center,
+						draggable: false,
+						map: this.bg_map
+					});
 				}
 			},
 			update_background_slider: function ($type, $overlay) {

@@ -530,6 +530,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'click_hilite_shade' => __('Click either Highlight or Shade swatch to choose it. Hover for original color.', 'upfront'),
 				'define_swatch_hovers' => __('Define <span class="hovers">:hovers</span> for your swatches ?', 'upfront'),
 				'hilite' => __('Highlight', 'upfront'),
+				'show_markers' => __('Show Markers', 'upfront'),
 				'month_names' => array(
 					1 => __("01-Jan"),
                     2 => __("02-Feb"),

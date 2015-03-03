@@ -345,7 +345,8 @@ abstract class Upfront_Entity {
 				'zoom' => $this->_get_breakpoint_property('background_map_zoom', $breakpoint_id),
 				'style' => $this->_get_breakpoint_property('background_map_style', $breakpoint_id),
         		'controls' => $this->_get_breakpoint_property('background_map_controls', $breakpoint_id),
-        		'styles' => $this->_get_breakpoint_property('background_map_styles', $breakpoint_id)
+        		'styles' => $this->_get_breakpoint_property('background_map_styles', $breakpoint_id),
+        		'show_markers' => $this->_get_breakpoint_property('background_show_markers', $breakpoint_id),
 			);
 			$attr .= 'data-bg-map="' . esc_attr( json_encode($data) ) . '"';
 		}

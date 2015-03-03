@@ -20,6 +20,13 @@
 			},
 			map = new google.maps.Map($el.get(0), options);
 		$el.data('map', map);
+		if (!!data.show_markers) {
+			var mrk = new google.maps.Marker({
+				position: options.center,
+				draggable: false,
+				map: map
+			});
+		}
 	}
 
 	function load_google_maps () {

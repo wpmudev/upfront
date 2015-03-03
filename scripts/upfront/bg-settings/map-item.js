@@ -24,6 +24,7 @@ define([
 				this.model.init_property('background_map_zoom', 10);
 				this.model.init_property('background_map_style', "ROADMAP");
 				this.model.init_property('background_map_controls', "");
+				this.model.init_property('background_show_markers', "");
 			}
 			
 			var fields = {
@@ -101,7 +102,17 @@ define([
 						rendered: function (){
 							this.$el.addClass('uf-bgsettings-map-controls');
 						}
-					})
+					}),
+					show_markers: new Upfront.Views.Editor.Field.Checkboxes({
+						model: this.model,
+						label: l10n.show_markers,
+						property: "background_show_markers",
+						use_breakpoint_property: true,
+						hide_label: true,
+						values: [{label: l10n.show_markers, value: 1}],
+						multiple: false,
+						change: set_value
+					}),
 				};
 			
 			this.$el.addClass('uf-bgsettings-item uf-bgsettings-mapitem');
