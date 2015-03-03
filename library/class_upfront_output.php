@@ -382,14 +382,16 @@ abstract class Upfront_Entity {
 			$height = $this->_get_breakpoint_property('background_video_height', $breakpoint_id);
 			$style = $this->_get_breakpoint_property('background_video_style', $breakpoint_id);
 			$mute = $this->_get_breakpoint_property('background_video_mute', $breakpoint_id);
+            $autoplay = $this->_get_breakpoint_property('background_video_autoplay', $breakpoint_id);
 			if ( $video && $embed ){
 				$attr = 'data-bg-video-ratio="' . round($height/$width, 2) . '" ';
 				$attr .= 'data-bg-video-style="' . $style . '" ';
+				$autoplay_attr = 'autoplay=' . ( $autoplay === false ? 1 : intval($autoplay) );
 				// hack additional attributes
 				$vid_attrs = array(
-					'.*?vimeo\.' => 'autoplay=1&amp;loop=1',
-					'.*?youtube\.com\/(v|embed)\/(.+?)(\/|\?).*?$' => 'autoplay=1&amp;controls=0&amp;showinfo=0&amp;modestbranding=1&amp;loop=1&amp;playlist=$3',
-					'.*?wistia\.' => 'autoplay=1'
+					'.*?vimeo\.' => $autoplay_attr . '&amp;loop=1',
+					'.*?youtube\.com\/(v|embed)\/(.+?)(\/|\?).*?$' => $autoplay_attr . '&amp;controls=0&amp;showinfo=0&amp;modestbranding=1&amp;loop=1&amp;playlist=$3',
+					'.*?wistia\.' => $autoplay_attr
 				);
 				$vid_attr = '';
 				$embed_attr = '';

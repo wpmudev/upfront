@@ -14,22 +14,38 @@ define([
 		initialize: function (options) {
 			var me = this,
 				fields = {
-					/*mute: new Upfront.Views.Editor.Field.Checkboxes({
+					mute: new Upfront.Views.Editor.Field.Checkboxes({
 						model: this.model,
 						property: 'background_video_mute',
 						use_breakpoint_property: true,
-						default_value: true,
+						default_value: 1,
 						layout: 'horizontal-inline',
 						multiple: false,
-						values: [ { label: l10n.mute_on_play, value: true } ],
+						values: [ { label: l10n.mute_on_play, value: 1 } ],
 						change: function () {
 							var value = this.get_value();
-							this.model.set_breakpoint_property(this.property_name, value ? true : false);
+							this.model.set_breakpoint_property(this.property_name, value ? 1 : 0);
 						},
 						rendered: function (){
 							this.$el.addClass('uf-bgsettings-video-mute');
 						}
-					}),*/
+					}),
+					autoplay: new Upfront.Views.Editor.Field.Checkboxes({
+						model: this.model,
+						property: 'background_video_autoplay',
+						use_breakpoint_property: true,
+						default_value: 1,
+						layout: 'horizontal-inline',
+						multiple: false,
+						values: [ { label: l10n.autoplay, value: 1 } ],
+						change: function () {
+							var value = this.get_value();
+							this.model.set_breakpoint_property(this.property_name, value ? 1 : 0);
+						},
+						rendered: function (){
+							this.$el.addClass('uf-bgsettings-video-autoplay');
+						}
+					}),
 					style: new Upfront.Views.Editor.Field.Radios({
 						model: this.model,
 						property: 'background_video_style',

@@ -11,7 +11,7 @@ function upfront_get_property_value ($prop, $data) {
 	$value = false;
 	foreach ($properties as $property) {
 		if ($prop != $property['name']) continue;
-		$value = !empty($property['value']) ? $property['value'] : false;
+		$value = isset($property['value']) ? $property['value'] : false;
 		break;
 	}
 	return $value;

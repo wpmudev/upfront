@@ -80,6 +80,9 @@ h2, h3 { page-break-after: avoid; }
   margin:0 auto;
   position: relative;
 }
+.upfront-output-region-container .upfront-grid-layout {
+  pointer-events: none;
+}
 
 .c1, .c2, .c3, .c4, .c5, .c6, .c7, .c8, .c9, .c10, .c11, .c12, .c13, .c14, .c15, .c16, .c17, .c18, .c19, .c20, .c21, .c22, .c23, .c24 {
   box-sizing: border-box;
@@ -92,10 +95,14 @@ h2, h3 { page-break-after: avoid; }
 }
 
 .upfront-output-wrapper, .upfront-wrapper { float: left; }
-.upfront-output-module-group { float: left; }
+.upfront-output-module-group {
+  float: left;
+  pointer-events: auto;
+}
 .upfront-output-module {
   position: relative;
   z-index: 1;
+  pointer-events: auto;
 }
 
 .upfront-output-region, .upfront-region-wrapper {
