@@ -249,8 +249,11 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 					});
 				}).end()
 				.find("#upfront_map-location_overlay-location")
-					.off("keypress").on("keypress", function (e) {
-						if (13 === e.which) $location.find("#upfront_map-location_overlay-use_location").click();
+					.off("keydown").on("keydown", function (e) {
+						if (13 === e.which) {
+							$location.find("#upfront_map-location_overlay-use_location").click();
+							Upfront.Events.trigger("upfront:element:edit:stop"); // Trigger this so we can drag maps with enter-submitted locations
+						}
 					})
 					.off("click").on("click", function (e) {
 						$(this).focus();
