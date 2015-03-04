@@ -91,8 +91,7 @@ var hackRedactor = function(){
 
 	//Change the position of the air toolbar
 	$.Redactor.prototype.airShow = function (e, keyboard)
-    {
-    	//TODO Gagan: "I have taken out the condition that checks for contenteditable attribute, as it blocks the air bar on nav items and cta button" <-- u wrote it to me, plz check if u're fine now
+    {    	
         if( $(e.target).parents().is(".uimage-control-panel") || $(e.target).is(".upfront-icon") || $(e.target).is(".upfront-icon-button") || ( !_.isUndefined(e.target.contentEditable) && e.target.contentEditable === "false" ) || $(e.target).closest(".redactor-editor").attr("contentEditable") === "false" ) return;
         //if( $(e.target).parents().is(".uimage-control-panel") || $(e.target).is(".upfront-icon") || $(e.target).is(".upfront-icon-button")) return;
 
@@ -184,6 +183,211 @@ var hackRedactor = function(){
 	$.Redactor.prototype.placeholderStart = function (html) {
 		console.log('do nothing');
 	};
+	$.Redactor.prototype.button = function() {
+		return {
+            build: function(btnName, btnObject)
+            {
+                var $button = $('<a href="#" class="re-icon re-' + btnName + '" rel="' + btnName + '" title="'+btnObject.title+'" />').attr('tabindex', '-1');
+
+                if (btnObject.func || btnObject.command || btnObject.dropdown)
+                {
+                    $button.on('touchstart click', $.proxy(function(e)
+                    {
+                        if ($button.hasClass('redactor-button-disabled')) return false;
+
+                        var type = 'func';
+                        var callback = btnObject.func;
+                        if (btnObject.command)
+                        {
+                            type = 'command';
+                            callback = btnObject.command;
+                        }
+                        else if (btnObject.dropdown)
+                        {
+                            type = 'dropdown';
+                            callback = false;
+                        }
+
+                        this.button.onClick(e, btnName, type, callback);
+
+                    }, this));
+                }
+
+                // dropdown
+                if (btnObject.dropdown)
+                {
+                    var $dropdown = $('<div class="redactor-dropdown redactor-dropdown-box-' + btnName + '" style="display: none;">');
+                    $button.data('dropdown', $dropdown);
+                    this.dropdown.build(btnName, $dropdown, btnObject.dropdown);
+                }
+
+                
+
+                return $button;
+            },
+            
+            onClick: function(e, btnName, type, callback)
+            {
+                this.button.caretOffset = this.caret.getOffset();
+
+                e.preventDefault();
+
+                if (this.utils.browser('msie')) e.returnValue = false;
+
+                if (type == 'command')
+                {
+                    this.inline.format(callback);
+                }
+                else if (type == 'dropdown')
+                {
+                    this.dropdown.show(e, btnName);
+                }
+                else
+                {
+                    var func;
+
+                    if ($.isFunction(callback))
+                    {
+                        callback.call(this, btnName);
+                        this.observe.buttons(e, btnName);
+                    }
+                    else if (callback.search(/\./) != '-1')
+                    {
+                        func = callback.split('.');
+                        if (typeof this[func[0]] != 'undefined')
+                        {
+                            this[func[0]][func[1]](btnName);
+                            this.observe.buttons(e, btnName);
+                        }
+                    }
+                    else
+                    {
+                        this[callback](btnName);
+                        this.observe.buttons(e, btnName);
+                    }
+                }
+            },
+            get: function(key)
+            {
+                return this.$toolbar.find('a.re-' + key);
+            },
+            setActive: function(key)
+            {
+                this.button.get(key).addClass('redactor-act');
+            },
+            setInactive: function(key)
+            {
+                this.button.get(key).removeClass('redactor-act');
+            },
+            setInactiveAll: function(key)
+            {
+                if (typeof key == 'undefined')
+                {
+                    this.$toolbar.find('a.re-icon').removeClass('redactor-act');
+                }
+                else
+                {
+                    this.$toolbar.find('a.re-icon').not('.re-' + key).removeClass('redactor-act');
+                }
+            },
+            setActiveInVisual: function()
+            {
+                this.$toolbar.find('a.re-icon').not('a.re-html').removeClass('redactor-button-disabled');
+            },
+            setInactiveInCode: function()
+            {
+                this.$toolbar.find('a.re-icon').not('a.re-html').addClass('redactor-button-disabled');
+            },
+            changeIcon: function(key, classname)
+            {
+                this.button.get(key).addClass('re-' + classname);
+            },
+            removeIcon: function(key, classname)
+            {
+                this.button.get(key).removeClass('re-' + classname);
+            },
+            setAwesome: function(key, name)
+            {
+                var $button = this.button.get(key);
+                $button.removeClass('redactor-btn-image').addClass('fa-redactor-btn');
+                $button.html('<i class="fa ' + name + '"></i>');
+            },
+            addCallback: function($btn, callback)
+            {
+                var type = (callback == 'dropdown') ? 'dropdown' : 'func';
+                var key = $btn.attr('rel');
+                $btn.on('touchstart click', $.proxy(function(e)
+                {
+                    if ($btn.hasClass('redactor-button-disabled')) return false;
+                    this.button.onClick(e, key, type, callback);
+
+                }, this));
+            },
+            addDropdown: function($btn, dropdown)
+            {
+                var key = $btn.attr('rel');
+                this.button.addCallback($btn, 'dropdown');
+
+                var $dropdown = $('<div class="redactor-dropdown redactor-dropdown-box-' + key + '" style="display: none;">');
+                $btn.data('dropdown', $dropdown);
+
+                if (dropdown)
+                {
+                    this.dropdown.build(key, $dropdown, dropdown);
+                }
+
+                return $dropdown;
+            },
+            add: function(key, title)
+            {
+                if (!this.opts.toolbar) return;
+
+                var btn = this.button.build(key, { title: title });
+                btn.addClass('redactor-btn-image');
+
+                this.$toolbar.append($('<li>').append(btn));
+
+                return btn;
+            },
+            addFirst: function(key, title)
+            {
+                if (!this.opts.toolbar) return;
+
+                var btn = this.button.build(key, { title: title });
+                this.$toolbar.prepend($('<li>').append(btn));
+
+                return btn;
+            },
+            addAfter: function(afterkey, key, title)
+            {
+                if (!this.opts.toolbar) return;
+
+                var btn = this.button.build(key, { title: title });
+                var $btn = this.button.get(afterkey);
+
+                if ($btn.size() !== 0) $btn.parent().after($('<li>').append(btn));
+                else this.$toolbar.append($('<li>').append(btn));
+
+                return btn;
+            },
+            addBefore: function(beforekey, key, title)
+            {
+                if (!this.opts.toolbar) return;
+
+                var btn = this.button.build(key, { title: title });
+                var $btn = this.button.get(beforekey);
+
+                if ($btn.size() !== 0) $btn.parent().before($('<li>').append(btn));
+                else this.$toolbar.append($('<li>').append(btn));
+
+                return btn;
+            },
+            remove: function(key)
+            {
+                this.button.get(key).remove();
+            }
+        };
+	} 
 };
 
 var Ueditor = function($el, options) {
