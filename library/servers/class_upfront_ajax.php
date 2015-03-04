@@ -312,9 +312,11 @@ class Upfront_Ajax extends Upfront_Server {
 		$stylesheet = $data['stylesheet'] ? $data['stylesheet'] : get_stylesheet();
 
 		global $wpdb;
-		$theme_key = $wpdb->esc_like($stylesheet) . '%';
+		$theme_key = $wpdb->esc_like(Upfront_Model::get_storage_key()) . '%';
+		$stylesheet_key = $wpdb->esc_like($stylesheet) . '%';
 		$global_theme_key = 'upfront_' . $wpdb->esc_like($stylesheet) . '%';
-		$sql = $wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s", $theme_key, $global_theme_key);
+
+		$sql = $wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s", $stylesheet_key, $global_theme_key, $theme_key);
 		$wpdb->query($sql);
 		$this->_out(new Upfront_JsonResponse_Success("All is well"));
 	}
