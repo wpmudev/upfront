@@ -277,6 +277,7 @@ abstract class Upfront_Entity {
 			$background_fill = $this->_get_breakpoint_property('background_fill', $breakpoint_id);
 			$background_position = $this->_get_breakpoint_property('background_position', $breakpoint_id);
 			$background_style = $this->_get_breakpoint_property('background_style', $breakpoint_id);
+			
 			if ( $background_color )
 				$css[] = 'background-color: ' . $background_color;
 			if ( $type == 'image' || $type == 'featured' && $background_image ){
@@ -299,9 +300,10 @@ abstract class Upfront_Entity {
 			if ( $background_video_style == 'inside' && $background_color )
 				$css[] = 'background-color: ' . $background_color;
 		}
-		if ( !empty($breakpoint_id) && ( $default_type == 'image' || $default_type == 'featured' ) ) {
+		//TODO: Jeffri, I have commented the following to enable global background image, please see if it causes any issues
+		/*if ( !empty($breakpoint_id) && ( $default_type == 'image' || $default_type == 'featured' ) ) {
 			$css[] = 'background-image: none';
-		}
+		}*/
 		return ( !empty($css) ) ? implode('; ', $css) . '; ' : '';
 	}
 
@@ -555,7 +557,7 @@ class Upfront_Layout_View extends Upfront_Container {
 		$css = '';
 		$type = $this->get_background_type($point->get_id());
 		$default_type = $this->get_background_type();
-		$bg_css = $this->_get_background_css(false, true, $point->get_id());
+		$bg_css = $this->_get_background_css(false, false, $point->get_id()); //TODO: Jeffri, I have disabled lazy loading here in order to let the global bg image load
 		if ( !empty($bg_css) ) {
 			$css .= sprintf('%s %s {%s}',
 						'.' . ltrim($scope, '. '),
