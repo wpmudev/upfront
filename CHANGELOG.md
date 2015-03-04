@@ -2,6 +2,16 @@ Change Log
 ============
 
 
+0.2.4 - 2015-03-01
+-------------------------------------------------------------------------------
+- Fix: YouTube and tabs elements.
+- Fix: occasional spectrum-related nag.
+- Fix: background image lazy loading not loaded in floating region.
+- Fix: post status model inheritance.
+- Added: close button for responsive menu navigation.
+- Added: map markers toggling for map element and region.
+- Added: autoplay option for video background.
+
 0.2.3 - 2015-02-24
 -------------------------------------------------------------------------------
 - Fix: ensure slider dots are inside element.
