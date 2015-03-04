@@ -2278,7 +2278,8 @@ define([
 				Upfront.Events.trigger("entity:region_container:after_render", this, this.model);
 			},
 			update: function () {
-				var grid = Upfront.Settings.LayoutEditor.Grid,
+				var me = this,
+					grid = Upfront.Settings.LayoutEditor.Grid,
 					name = ( this.model.get("container") || this.model.get("name") ).toLowerCase().replace(/\s/g, "-"),
 					previous_name = ( this.model.previous("container") || this.model.previous("name") ).toLowerCase().replace(/\s/g, "-"),
 					expand_lock = this.model.get_property_value_by_name('expand_lock'),
@@ -2294,8 +2295,10 @@ define([
 				if ( previous_type != type ){
 					this.$el.removeClass('upfront-region-container-' + previous_type);
 					this.$el.addClass('upfront-region-container-' + type);
-					this.fix_height();
-					this.update_overlay();
+					_.delay(function(){
+						me.fix_height();
+						me.update_overlay();
+					}, 500)
 				}
 				if ( previous_name != name ){
 					this.$el.removeClass('upfront-region-container-' + previous_name);
@@ -2733,6 +2736,7 @@ define([
 				else{
 					this.$el.hide();
 				}
+				this.update_pos();
 			},
 			on_scroll: function (e) {
 				var me = e.data;
@@ -2758,6 +2762,22 @@ define([
 					sub = this.model.get('sub'),
 					is_sticky = false,
 					css = {};
+				if ( this.$el.css('display') == 'none' ) {
+					this.$el.css({
+						position: '',
+						top: '',
+						left: '',
+						right: '',
+						bottom: ''
+					});
+					this.$el.removeClass('upfront-region-container-sticky');
+					this.$el.removeData('sticky-top');
+					if ( sub == 'top' )
+						this.$el.closest('.upfront-region-container-bg').css('padding-top', '');
+					else
+						this.$el.closest('.upfront-region-container-bg').css('padding-bottom', '');
+					return;
+				}
 				// Normalize scroll top value
 				scroll_top = scroll_top < 0 ? 0 : scroll_top;
 				// @TODO Need to have a proper behavior for responsive view, disable for now

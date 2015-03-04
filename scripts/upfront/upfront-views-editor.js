@@ -8001,6 +8001,10 @@ var Field_Compact_Label_Select = Field_Select.extend({
 								$region_behavior.hide();
 							}
 							this.model.get('properties').trigger('change');
+							me.update_pos();
+							// Re-toggle editing
+							Upfront.Events.trigger('command:region:edit_toggle', false);
+							Upfront.Events.trigger('command:region:edit_toggle', true);
 						}
 					}),
 					// backward compatible with old nav_region property
@@ -9126,6 +9130,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			this._panels = panels;
 			return panels;
 		},
+		on_render: function () {
+			this.update_pos();
+		},
 		on_scroll: function (e) {
 			var me = e.data;
 			me.update_pos();
@@ -9159,15 +9166,20 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		update_pos: function () {
 			var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
 				$container = this.$el.closest('.upfront-region-container'),
-				$region = this.$el.closest('.upfront-region');
+				$region = this.$el.closest('.upfront-region'),
+				$sub_top = $container.find('.upfront-region-side-top'),
+				$sub_bottom = $container.find('.upfront-region-side-bottom');
 			if ( ( !$main.hasClass('upfront-region-editing') && !$main.hasClass('upfront-region-fixed-editing') ) || !$container.hasClass('upfront-region-container-active') )
 				return;
 			var	offset = $region.offset(),
 				top = offset.top,
 				bottom = top + $region.outerHeight(),
+				top_height = $sub_top.length ? $sub_top.outerHeight() : 0,
+				bottom_height = $sub_bottom.length ? $sub_bottom.outerHeight() : 0,
+				win_height = $(window).height(),
 				scroll_top = $(document).scrollTop(),
-				scroll_bottom = scroll_top + $(window).height(),
-				rel_top = $main.offset().top;
+				scroll_bottom = scroll_top + win_height - bottom_height,
+				rel_top = $main.offset().top + top_height;
 			/*this.$el.css({
 				top: scroll_top > top ? scroll_top-top+25 : 0,
 				bottom: bottom > scroll_bottom ? bottom-scroll_bottom : 0
@@ -9187,7 +9199,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					if ( panel.$el.css('position') != 'fixed' )
 						panel.$el.css({
 							position: 'fixed',
-							bottom: 0,
+							bottom: bottom_height,
 							left: panel_offset.left,
 							right: 'auto'
 						});
