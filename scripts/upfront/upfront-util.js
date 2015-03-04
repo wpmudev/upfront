@@ -851,7 +851,7 @@ define(function() {
 						}
 						_saving_flag = false;
 						Upfront.Events.trigger("preview:build:stop");
-						Upfront.Util.log("we're good here");
+						//Upfront.Util.log("we're good here");
 
 						// Notify about concurrent edits 
 						if ("concurrent_users" in data && data.concurrent_users && _.size(data.concurrent_users)) {
