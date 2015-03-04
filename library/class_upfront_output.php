@@ -80,6 +80,14 @@ class Upfront_Output {
 		$region_markups_before = array();
 		$region_markups_after = array();
 		$container_views = array();
+        // Construct container views first
+        foreach ($layout['regions'] as $region) {
+            $container = empty($region['container']) ? $region['name'] : $region['container'];
+            if ( $container == $region['name'] ) {
+                $container_views[$container] = new Upfront_Region_Container($region);
+            }
+        }
+        // Iterate through regions
 		foreach ($layout['regions'] as $region) {
 			$region_view = new Upfront_Region($region);
 			$region_sub = $region_view->get_sub();
@@ -92,6 +100,11 @@ class Upfront_Output {
 			if ( ! isset($region_markups_after[$container]) )
 				$region_markups_after[$container] = '';
 			if ( $region_sub == 'top' || $region_sub == 'bottom' ){
+			    if ( isset($container_views[$container]) ) {
+			        $type = $container_views[$container]->get_entity_type();
+			        if ( $type != 'full' )
+                        continue; // Don't add top/bottom sub container if it's not full
+			    }
 				$sub_container = new Upfront_Region_Sub_Container($region);
 				$markup = $sub_container->wrap( $markup );
 				if ( $region_sub == 'top' )
@@ -104,9 +117,6 @@ class Upfront_Output {
 			}
 			else{
 				$region_markups[$container] .= $markup;
-			}
-			if ( $region_view->get_name() == $container ) {
-				$container_views[$container] = new Upfront_Region_Container($region);
 			}
 		}
 		foreach ($container_views as $container => $container_view) {
