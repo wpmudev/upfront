@@ -56,3 +56,11 @@ div.upfront-like-box_placeholder_guide {
   margin-bottom: 10px;
   font-size: 14px;
 }
+
+.upfront-like-box_overlay {
+  position: absolute;
+  display: block;
+  height:92%;
+  width: 95%;
+  background-color:transparent;
+}
