@@ -143,9 +143,13 @@
 				parent.$el.data('dragHandler', true);
 			}
 
-			this.$el.find('.upfront-like-box_button').on('click', function() {
+			this.$el.find('.upfront-like-box_button').on('click', function(e) {
 				me.property('facebook_url', $(this).parent().find('input.upfront-like-box_url').val());
-				console.log(me.property('facebook_url'));
+			});
+			this.$el.find('.upfront-like-box_url').on('keydown', function(e) {
+				if(e.which == 13) {
+					me.$el.find('.upfront-like-box_button').trigger('click');
+				}
 			});
 		},
 
