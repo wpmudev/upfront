@@ -29,7 +29,7 @@ abstract class Upfront_Server implements IUpfront_Server {
 	}
 
 	protected function _out (Upfront_HttpResponse $out) {
-		if (!$this->_debugger->is_active(Upfront_Debug::RESPONSE) && extension_loaded('zlib') && defined('UPFRONT_COMPRESS_RESPONSE') && UPFRONT_COMPRESS_RESPONSE) {
+		if (!$this->_debugger->is_active(Upfront_Debug::RESPONSE) && extension_loaded('zlib') && Upfront_OutputBehavior::has_compression()) {
 			ob_start('ob_gzhandler');
 		}
 		status_header($out->get_status());
@@ -50,6 +50,7 @@ require_once('servers/class_upfront_ajax.php');
 require_once('servers/class_upfront_javascript_main.php');
 require_once('servers/class_upfront_stylesheet_main.php');
 require_once('servers/class_upfront_stylesheet_editor.php');
+require_once('servers/class_upfront_core_dependencies_server.php');
 require_once('servers/class_upfront_element_styles.php');
 require_once('servers/class_upfront_layout_revisions.php');
 require_once('servers/class_upfront_server_schedule.php');
