@@ -400,24 +400,24 @@ class Upfront_Uimage_Server extends Upfront_Server {
 		if(!$rotate && !$resize && !$crop)
 			return array('error' => true, 'msg' => Upfront_UimageView::_get_l10n('not_modifications'));
 		$image_path = isset($imageData['image_path']) ? $imageData['image_path'] : _load_image_to_edit_path( $imageData['id'] );
-		$img = wp_get_image_editor( $image_path );
+		$image_editor = wp_get_image_editor( $image_path );
 
-			if ( is_wp_error( $img ) )
+			if ( is_wp_error( $image_editor ) )
 			return array('error' => true, 'msg' => Upfront_UimageView::_get_l10n('invalid_id'));
 
 
-		if($rotate && !$img->rotate(-$rotate))
+		if($rotate && !$image_editor->rotate(-$rotate))
 			return array('error' => true, 'msg' => Upfront_UimageView::_get_l10n('edit_error'));
 
-		$full_size = $img->get_size();
+		$full_size = $image_editor->get_size();
 		//Cropping for resizing allows to make the image bigger
-		if($resize && !$img->crop(0, 0, $full_size['width'], $full_size['height'], $resize['width'], $resize['height'], false))
+		if($resize && !$image_editor->crop(0, 0, $full_size['width'], $full_size['height'], $resize['width'], $resize['height'], false))
 			return array('error' => true, 'msg' => Upfront_UimageView::_get_l10n('edit_error'));
 
 		//$cropped = array(round($crop['left']), round($crop['top']), round($crop['width']), round($crop['height']));
 
 		//Don't let the crop be bigger than the size
-		$size = $img->get_size();
+		$size = $image_editor->get_size();
 		$crop = array('top' => round($crop['top']), 'left' => round($crop['left']), 'width' => round($crop['width']), 'height' => round($crop['height']));
 
 		if($crop['top'] < 0){
@@ -435,8 +435,8 @@ class Upfront_Uimage_Server extends Upfront_Server {
 			$crop['width'] = $size['width'];
 
 
-		if($crop && !$img->crop($crop['left'], $crop['top'], $crop['width'], $crop['height'])) {
-		//if($crop && !$img->crop($cropped[0], $cropped[1], $cropped[2], $cropped[3]))
+		if($crop && !$image_editor->crop($crop['left'], $crop['top'], $crop['width'], $crop['height'])) {
+		//if($crop && !$image_editor->crop($cropped[0], $cropped[1], $cropped[2], $cropped[3]))
 			return $this->_out(new Upfront_JsonResponse_Error(Upfront_UimageView::_get_l10n('edit_error')));
 		}
 
@@ -445,16 +445,23 @@ class Upfront_Uimage_Server extends Upfront_Server {
 		$path = $image_path;
 		$path_parts = pathinfo( $path );
 
-		$filename = $path_parts['filename'] . '-' . $img->get_suffix();
+		$filename = $path_parts['filename'] . '-' . $image_editor->get_suffix();
 		if(!isset($imageData['skip_random_filename']))
 			$filename .=  '-' . rand(1000, 9999);
 
 		$imagepath = $path_parts['dirname'] . '/' . $filename . '.' . $path_parts['extension'];
 
-		$img->set_quality(90);
-		$saved = $img->save($imagepath);
+		$image_editor->set_quality(90);
+		error_log('saving image editor -> save ' . $imagepath);
+		$saved = $image_editor->save($imagepath);
 
-		if ( is_wp_error( $img ) || empty($imageData['id']) )
+		if (is_wp_error( $saved )) {
+			return array(
+				'error' => true,
+			 	'msg' => 'If images are moved from standard storage (e.g. via plugin that stores uploads to S3) Upfront does not have access. (' . implode('; ', $saved->get_error_messages()) . ')');
+		}
+
+		if ( is_wp_error( $image_editor ) || empty($imageData['id']) )
 			return array('error' => true, 'msg' => Upfront_UimageView::_get_l10n('error_save'));
 
 		$urlOriginal = wp_get_attachment_image_src($imageData['id'], 'full');
@@ -492,7 +499,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 			'url' => $url,
 			'urlOriginal' => $urlOriginal,
 			'full' => $full_size,
-			'crop' => $img->get_size()
+			'crop' => $image_editor->get_size()
 		);
 	}
 

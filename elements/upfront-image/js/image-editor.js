@@ -368,7 +368,8 @@ define([
 					loading.done();
 
 					if(imageData.error){
-						Upfront.Views.Editor.notify('Image failed to process.', 'error');
+						Upfront.Views.Editor.notify('Image failed to process. ' + imageData.msg, 'error', 15*1000);
+						me.close();
 						return;
 					}
 

@@ -32,7 +32,7 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 		if (Upfront_OutputBehavior::has_experiments()) {
 			$fonts = $deps->get_fonts();
 			if (!empty($fonts)) $this->_output_experimental_fonts($fonts);
-			
+
 			$this->_output_experimental($deps);
 		} else {
 			$this->_output_normal($deps);
@@ -54,7 +54,7 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 		$scripts = $deps->get_scripts();
 		$script_tpl = '<script type="text/javascript" src="%url%"></script>';
 		foreach ($scripts as $script) {
-			echo preg_replace('/%url%/', $script, $script_tpl);	
+			echo preg_replace('/%url%/', $script, $script_tpl);
 		}
 	}
 
@@ -66,7 +66,7 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 	private function _output_experimental ($deps) {
 		$link_urls = json_encode(apply_filters('upfront-experiments-styles-debounce_dependency_load', $deps->get_styles()));
 		$link_tpl = json_encode('<link rel="stylesheet"  href="%url%" type="text/css" media="all" />');
-		
+
 
 		$script_urls = json_encode(apply_filters('upfront-experiments-scripts-debounce_dependency_load', $deps->get_scripts()));
 		$script_tpl = json_encode('<script type="text/javascript" src="%url%"></script>');
@@ -80,7 +80,7 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 			$callback_wrap_start = '$(window).load(function () {';
 			$callback_wrap_end = '});';
 		}
-		
+
 		echo "<script type='text/javascript'>
 			(function ($) {
 			{$callback_wrap_start}
@@ -108,11 +108,11 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 	 */
 	private function _output_normal_fonts ($fonts=array()) {
 		if (empty($fonts)) return false;
-		
+
 		$request = $this->_to_font_request_array($fonts);
 		if (empty($request)) return false;
-		
-		
+
+
 		echo '<link rel="stylesheet" type="text/css" media="all" href="//fonts.googleapis.com/css?family=' . esc_attr(join('|', $request)) . '" />';
 	}
 
@@ -123,7 +123,7 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 	 */
 	private function _output_experimental_fonts ($fonts=array()) {
 		if (empty($fonts)) return false;
-		
+
 		$request = $this->_to_font_request_array($fonts, false);
 		if (empty($request)) return false;
 
@@ -161,7 +161,7 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 
 			if (!empty($variants)) $variants = ':' . join(',', array_filter(array_unique(array_map('trim', $variants))));
 			else $variants = '';
-			
+
 			$request[] = $family . $variants;
 		}
 		$request = array_filter(array_unique(array_map('trim', $request)));
@@ -187,7 +187,7 @@ class Upfront_OutputBehavior {
 
 	private static $_compression;
 	private static $_experiments;
-	
+
 	private function __construct () {}
 	private function __clone () {}
 
@@ -215,11 +215,11 @@ class Upfront_OutputBehavior {
 	 *
 	 * @return bool True if it actually is, false otherwise
 	 */
-	public static function has_compression () { 
+	public static function has_compression () {
 		self::_init();
-		return (bool)self::$_compression; 
+		return (bool)self::$_compression;
 	}
-	
+
 	/**
 	 * Whether or not the load experiments has been enabled at all
 	 *

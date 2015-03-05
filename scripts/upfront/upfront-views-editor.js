@@ -6578,7 +6578,7 @@ var CSSEditor = Backbone.View.extend({
 	updateStylename: function() {
 		var new_name =  $.trim(this.$('.upfront-css-save-name-field').val()),
 			old_name = this.stylename;
-		
+
 		// Strict filtering on stylename
 		new_name = new_name.replace(/\s/g, '-').replace(/[^A-Za-z0-9_-]/gi, '').replace(/-+/g, '-').toLowerCase();
 
@@ -7334,10 +7334,11 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				$('#upfront-notifier').css({top: 28});
 			*/
 		},
-		addMessage: function(message, type){
+		addMessage: function(message, type, duration){
 			var notice = {
 				message: message ? message : l10n.no_message,
-				type: type ? type : 'info'
+				type: type ? type : 'info',
+				duration: duration
 			};
 
 			this.notices.add(notice);
@@ -7350,7 +7351,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			;
 			this.timer = setTimeout(function(){
 				me.notices.remove(notice);
-			}, this.timeoutTime)
+			}, notice.get('duration') || this.timeoutTime)
 		},
 		replace: function(notice) {
 			var me = this;
@@ -8024,7 +8025,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 								sub_regions = me.model.get_sub_regions(),
 								copy_data = false;
 							index = collection.indexOf(me.model);
-							
+
 							if ( !_.contains(value, 'top') && sub_regions.top ) {
 								copy_data = Upfront.Util.model_to_json(sub_regions.top);
 								me._sub_region_top_copy = new Upfront.Models.Region(copy_data);
@@ -8035,7 +8036,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 								me._sub_region_bottom_copy = new Upfront.Models.Region(copy_data);
 								collection.remove(sub_regions.bottom);
 							}
-								
+
 							_.each(value, function(sub){
 								if ( sub_regions[sub] )
 									return;
@@ -8103,7 +8104,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						multiple: false
 					});
 			}
-			
+
 			// Preserve background settings element event binding by detaching them before resetting html
 			$content.find('.upfront-region-bg-setting-tab-primary, .upfront-region-bg-setting-tab-secondary').children().detach();
 
@@ -10109,8 +10110,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			"Topbar": {
 				"Topbar": Topbar
 			},
-			notify : function(message, type){
-				notifier.addMessage(message, type);
+			notify : function(message, type, duration){
+				notifier.addMessage(message, type, duration);
 			},
 			"Loading": Loading,
 			"Modal": Modal,
