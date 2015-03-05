@@ -76,6 +76,9 @@ class Upfront_LikeBoxView extends Upfront_Object {
 			'url_nag' => __('You need to set a Facebook URL in your global social settings.', 'upfront'),
 			'container_label' => __('Container', 'upfront'),
 			'container_info' => __('Facebook box wrapper layer.', 'upfront'),
+			'placeholder_guide' => __('Enter your Facebook Page URL:', 'upfront'),
+			'placeholder' => __('facebook.com/yourPageName', 'upfront'),
+			'ok' => __('Ok', 'upfront'),
 			'you_need_to_set_url' => __('You need to set a Facebook URL in your', 'upfront'),
 			'global_social_settings' => __('global social settings', 'upfront'),
 			'opts' => array(
