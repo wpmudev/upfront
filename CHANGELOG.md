@@ -2,7 +2,7 @@ Change Log
 ============
 
 
-0.2.4 - 2015-03-01
+0.2.4 - 2015-03-04
 -------------------------------------------------------------------------------
 - Fix: YouTube and tabs elements.
 - Fix: occasional spectrum-related nag.
