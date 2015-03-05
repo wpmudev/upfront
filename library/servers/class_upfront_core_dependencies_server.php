@@ -9,6 +9,8 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 	private function _add_hooks () {
 		add_action('upfront-core-inject_dependencies', array($this, 'dispatch_dependencies_output'));
 		add_action('wp_head', array($this, 'dispatch_fonts_loading'));
+
+		upfront_add_ajax('wp_scripts', array($this, 'wp_scripts_load'));
 	}
 
 	/**
@@ -39,6 +41,31 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 		}
 	}
 
+	public function wp_scripts_load () {
+		// Do the enqueueing action
+		do_action('upfront-core-wp_dependencies');
+
+		$deps = Upfront_CoreDependencies_Registry::get_instance();
+		$wps = new WP_Scripts();
+		$scripts = $deps->get_wp_scripts();
+
+		$srcs = array();
+		foreach ($scripts as $script) {
+			if (!empty($wps->registered[$script])) $srcs[] = wp_normalize_path(ABSPATH . $wps->registered[$script]->src);
+		}
+
+		$out = '';
+		foreach ($srcs as $src) {
+			if (file_exists($src)) $out .= file_get_contents($src);
+		}
+
+		$response = empty($out)
+			? new Upfront_JavascriptResponse_Error("Dependencies not found")
+			: new Upfront_JavascriptResponse_Success($out)
+		;
+		$this->_out($response);
+	}
+
 	/**
 	 * Output "normal" (non-optimized) script and style dependencies.
 	 *
@@ -64,12 +91,14 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 	 * @param Upfront_CoreDependencies_Registry $deps Dependencies registry
 	 */
 	private function _output_experimental ($deps) {
+
 		$link_urls = json_encode(apply_filters('upfront-experiments-styles-debounce_dependency_load', $deps->get_styles()));
-		$link_tpl = json_encode('<link rel="stylesheet"  href="%url%" type="text/css" media="all" />');
-		
+		$debug = $this->_debugger->is_active(Upfront_Debug::STYLE) ? 'class="upfront-debounced"' : '';
+		$link_tpl = json_encode('<link rel="stylesheet"  href="%url%" type="text/css" media="all" ' . $debug . ' />');
 
 		$script_urls = json_encode(apply_filters('upfront-experiments-scripts-debounce_dependency_load', $deps->get_scripts()));
-		$script_tpl = json_encode('<script type="text/javascript" src="%url%"></script>');
+		$debug = $this->_debugger->is_active(Upfront_Debug::JS_TRANSIENTS) ? 'class="upfront-debounced"' : '';
+		$script_tpl = json_encode('<script type="text/javascript" src="%url%" ' . $debug . '></script>');
 
 		$callback_wrap_start = $callback_wrap_end = '';
 		if (Upfront_OutputBehavior::has_experiments_level(Upfront_OutputBehavior::LEVEL_DEFAULT)) {
