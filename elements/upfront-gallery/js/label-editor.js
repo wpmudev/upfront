@@ -62,7 +62,11 @@ define([
 		},
 
 		focusNameField: function() {
-				this.$el.find('.ugallery-addlabels').focus();
+			var $addlabels = this.$el.find('.ugallery-addlabels');
+			if ( $addlabels.val() == '' )
+				$addlabels.focus();
+			else
+				this.addLabel($addlabels);
 		},
 
 		fillLabelSuggestionList: function(e) {

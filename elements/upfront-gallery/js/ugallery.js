@@ -1087,6 +1087,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 					label.id = newLabel.id;
 				}
 			});
+			
+			me.render();
 		});
 
 		return deferred.promise();
