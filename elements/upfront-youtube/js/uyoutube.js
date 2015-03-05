@@ -187,7 +187,12 @@
       singleVideo: function(event) {
         var me = this;
         var videoUrl = $(event.currentTarget).val();
-        var videoId = videoUrl.match(/^(https?:\/\/(www\.)?)?youtube\.com\/watch\?v=([0-9a-zA-Z\-_]{11}).*/)[3];
+				var videoId;
+				if (videoUrl.match(/:youtu\.be/)) {
+					videoId = videoUrl.match(/^(https?:\/\/)?youtu.be\/([0-9a-zA-Z\-_]{11})/)[2];
+				} else {
+					videoId = videoUrl.match(/^(https?:\/\/(www\.)?)?youtube\.com\/watch\?v=([0-9a-zA-Z\-_]{11}).*/)[3];
+				}
         //TODO check if input is correct youtube url
         var data = {'video_id': videoId};
         Upfront.Util.post({"action": this.actions.single, "data": data})
