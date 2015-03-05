@@ -124,6 +124,12 @@ class Upfront_UwidgetView extends Upfront_Object {
 		);
 	}
 
+	public static function add_dependencies () {
+		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
+			upfront_add_element_style('upfront_widget', array('css/widget.css', dirname(__FILE__)));
+		}
+	}
+
 	public static function add_l10n_strings ($strings) {
 		if (!empty($strings['widget_element'])) return $strings;
 		$strings['widget_element'] = self::_get_l10n();
