@@ -914,10 +914,12 @@ i.upfront-field-icon-burger-trigger {
 	visibility: hidden;
 	margin: 0 0 4px;
 }
-.upfront-editable_entity:hover > .upfront-entity_meta .upfront-icon-button{
+.upfront-editable_entity:hover > .upfront-entity_meta .upfront-icon-button,
+.upfront-editable_entity:hover > .upfront-objects_container .upfront-entity_meta .upfront-entity-settings_trigger{
     opacity: 1;
 	visibility: visible;
 }
+
 .upfront-region-editing .upfront-region-active > .upfront-entity_meta .upfront-icon-button,
 .upfront-region-fixed-editing .upfront-region-side-fixed:hover > .upfront-entity_meta .upfront-icon-button,
 .upfront-region-lightbox-editing .upfront-region-side-lightbox:hover > .upfront-entity_meta .upfront-icon-button {
