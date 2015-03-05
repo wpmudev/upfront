@@ -2,6 +2,14 @@ Change Log
 ============
 
 
+0.2.5 - 2015-03-05
+-------------------------------------------------------------------------------
+- Fix: gallery labels adding.
+- Fix: compensate for dead element double-click event.
+- Fix: like box fixed misalignment of thumbnails.
+- Fix: like box mapped return key to send action.
+- Fix: too many controlls after element group and chosen nag for sprites.
+
 0.2.4 - 2015-03-04
 -------------------------------------------------------------------------------
 - Fix: YouTube and tabs elements.
