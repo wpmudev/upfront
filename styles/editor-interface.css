@@ -6270,7 +6270,7 @@ i.upfront-field-icon-burger-trigger {
   margin: 0 0 4px; }
 
 /* line 917, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/icon */
-.upfront-editable_entity:hover .upfront-entity_meta .upfront-icon-button {
+.upfront-editable_entity:hover > .upfront-entity_meta .upfront-icon-button {
   opacity: 1;
   visibility: visible; }
 

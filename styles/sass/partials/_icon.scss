@@ -914,7 +914,7 @@ i.upfront-field-icon-burger-trigger {
 	visibility: hidden;
 	margin: 0 0 4px;
 }
-.upfront-editable_entity:hover .upfront-entity_meta .upfront-icon-button{
+.upfront-editable_entity:hover > .upfront-entity_meta .upfront-icon-button{
     opacity: 1;
 	visibility: visible;
 }
