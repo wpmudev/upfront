@@ -52,6 +52,7 @@ class Upfront {
 		add_filter('wp_title', array($this, 'filter_wp_title'), 10, 2);
 		add_action('wp_head', array($this, "inject_global_dependencies"), 1);
 		add_action('wp_footer', array($this, "inject_upfront_dependencies"), 99);
+		add_action('upfront-core-wp_dependencies', array($this, "inject_core_wp_dependencies"), 99);
 
 		add_filter('attachment_fields_to_edit', array($this, 'attachment_fields_to_edit'), 100, 2);
 		add_action('admin_bar_menu', array($this, 'add_edit_menu'), 85);
@@ -170,6 +171,38 @@ class Upfront {
 		return $cls;
 	}
 
+	public function inject_core_wp_dependencies () {
+		$deps = Upfront_CoreDependencies_Registry::get_instance();
+
+		if (Upfront_OutputBehavior::has_experiments()) {
+			if (defined('DOING_AJAX') && DOING_AJAX) {
+				$deps->add_wp_script('jquery-ui-core');
+				$deps->add_wp_script('jquery-effects-core');
+				$deps->add_wp_script('jquery-effects-slide');
+				$deps->add_wp_script('jquery-ui-draggable');
+				$deps->add_wp_script('jquery-ui-droppable');
+				$deps->add_wp_script('jquery-ui-resizable');
+				$deps->add_wp_script('jquery-ui-selectable');
+				$deps->add_wp_script('jquery-ui-slider');
+				$deps->add_wp_script('jquery-ui-datepicker');
+			} else {
+				$deps->add_script(admin_url('admin-ajax.php?action=wp_scripts'));
+			}
+		} else {
+			// Non-experiments load
+			wp_enqueue_script('jquery-ui');
+			wp_enqueue_script('jquery-effects-core');
+			wp_enqueue_script('jquery-effects-slide');
+			wp_enqueue_script('jquery-ui-draggable');
+			wp_enqueue_script('jquery-ui-droppable');
+			wp_enqueue_script('jquery-ui-resizable');
+			wp_enqueue_script('jquery-ui-selectable');
+			wp_enqueue_script('jquery-ui-slider');
+			wp_enqueue_script('jquery-ui-datepicker');
+		}
+
+	}
+
 	function inject_global_dependencies () {
 		$deps = Upfront_CoreDependencies_Registry::get_instance();
 		wp_enqueue_script('jquery');
@@ -183,18 +216,7 @@ class Upfront {
         }
 
 		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
-			wp_enqueue_script('jquery-ui');
-			wp_enqueue_script('jquery-effects-core');
-			wp_enqueue_script('jquery-effects-slide');
-			wp_enqueue_script('jquery-ui-draggable');
-			wp_enqueue_script('jquery-ui-droppable');
-			wp_enqueue_script('jquery-ui-resizable');
-			wp_enqueue_script('jquery-ui-selectable');
-			wp_enqueue_script('jquery-ui-slider');
-			wp_enqueue_script('jquery-ui-datepicker');
-
-			//wp_enqueue_style('wp-jquery-ui-dialog'); // We do not need this anymore
-
+			do_action('upfront-core-wp_dependencies');
 
 /*			
 			wp_enqueue_style('upfront-font-source-sans-pro', 'http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic', array(), Upfront_ChildTheme::get_version());
