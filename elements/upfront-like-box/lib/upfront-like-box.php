@@ -22,9 +22,15 @@ class Upfront_LikeBoxView extends Upfront_Object {
 		if($url) {
 			$parts = parse_url($url);
 			$fbname = end(explode('/', trim($parts['path'], '/')));
+			
+			$wide = intval($element_size['width'])-22;
 
+				if($wide%53 > 0)
+					$wide = intval($wide/53)*53+22;
+				else
+					$wide = $element_size['width'];
 			return $this->wrap(
-				"<iframe src='//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2F{$fbname}&amp;width={$element_size['width']}&amp;height={$element_size['height']}&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;show_border=true&amp;header=false' scrolling='no' frameborder='0' style='border:none; overflow:hidden; height:{$element_size['height']}px;' allowTransparency='true'></iframe>"
+				"<iframe src='//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2F{$fbname}&amp;width={$wide}&amp;height={$element_size['height']}&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;show_border=true&amp;header=false' scrolling='no' frameborder='0' style='border:none; overflow:hidden; width:{$wide}px; height:{$element_size['height']}px;' allowTransparency='true'></iframe>"
 			);
 		}
 		else{
