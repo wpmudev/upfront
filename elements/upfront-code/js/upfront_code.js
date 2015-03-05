@@ -118,6 +118,11 @@ var Views = {
 					var $me = $(this);
 					if ($me.is("img")) me.bootImageEditable($me, idx);
 				});
+
+				// Compensate for dead element double-click event
+				this.$el.off("dblclick").on("dblclick", function () {
+					me.on_edit();
+				});
 			}
 		},
 
@@ -133,6 +138,7 @@ var Views = {
 			}
 
 			this.createEditor($editor);
+
 		},
 
 		on_edit: function(){
