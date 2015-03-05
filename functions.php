@@ -193,7 +193,7 @@ class Upfront {
 			wp_enqueue_script('jquery-ui-slider');
 			wp_enqueue_script('jquery-ui-datepicker');
 
-			wp_enqueue_style('wp-jquery-ui-dialog');
+			//wp_enqueue_style('wp-jquery-ui-dialog'); // We do not need this anymore
 
 
 /*			
