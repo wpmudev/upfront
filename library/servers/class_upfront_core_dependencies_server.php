@@ -90,11 +90,11 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 					link_tpl = {$link_tpl},
 					head = $('head')
 				;
-				$.each(script_urls, function (idx, url) {
-					head.append(script_tpl.replace(/%url%/, url));
-				});
 				$.each(link_urls, function (idx, url) {
 					head.append(link_tpl.replace(/%url%/, url));
+				});
+				$.each(script_urls, function (idx, url) {
+					head.append(script_tpl.replace(/%url%/, url));
 				});
 			{$callback_wrap_end}
 			})(jQuery);
