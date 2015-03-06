@@ -177,12 +177,15 @@ class Upfront {
 		if (Upfront_OutputBehavior::has_experiments()) {
 			if (defined('DOING_AJAX') && DOING_AJAX) {
 				$deps->add_wp_script('jquery-ui-core');
+				$deps->add_wp_script('jquery-ui-widget');
+				$deps->add_wp_script('jquery-ui-mouse');
 				$deps->add_wp_script('jquery-effects-core');
 				$deps->add_wp_script('jquery-effects-slide');
 				$deps->add_wp_script('jquery-ui-draggable');
 				$deps->add_wp_script('jquery-ui-droppable');
 				$deps->add_wp_script('jquery-ui-resizable');
 				$deps->add_wp_script('jquery-ui-selectable');
+				$deps->add_wp_script('jquery-ui-sortable');
 				$deps->add_wp_script('jquery-ui-slider');
 				$deps->add_wp_script('jquery-ui-datepicker');
 			} else {
@@ -190,13 +193,14 @@ class Upfront {
 			}
 		} else {
 			// Non-experiments load
-			wp_enqueue_script('jquery-ui');
+			wp_enqueue_script('jquery-ui-core');
 			wp_enqueue_script('jquery-effects-core');
 			wp_enqueue_script('jquery-effects-slide');
 			wp_enqueue_script('jquery-ui-draggable');
 			wp_enqueue_script('jquery-ui-droppable');
 			wp_enqueue_script('jquery-ui-resizable');
 			wp_enqueue_script('jquery-ui-selectable');
+			wp_enqueue_script('jquery-ui-sortable');
 			wp_enqueue_script('jquery-ui-slider');
 			wp_enqueue_script('jquery-ui-datepicker');
 		}
