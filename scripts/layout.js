@@ -112,36 +112,92 @@ jQuery(document).ready(function($){
 				original_height = parseInt($(this).attr('data-original-height'));
 			if ( behavior == 'keep-ratio' && original_height > 0 ){
 				var $wrappers = $region.find('> .upfront-region-wrapper > .upfront-output-wrapper'),
+					region_off = $region.offset(),
 					modules = [],
+					lines = [],
+					line_index = -1,
+					total_height = 0,
+					ori_bottom_space = 0,
 					pos_top = false,
 					pos_bottom = false,
 					available_space = false,
 					original_space = false,
 					top_ref = 0;
+				
 				$wrappers.each(function(){
-					var $module = $(this).find('> .upfront-output-module, > .upfront-output-module-group').first();
-					$module.css('margin-top', ''); // Reset margin top first
-					var margin_top = parseInt($module.css('margin-top')),
-						pos = $(this).position(),
-						bottom = pos.top + $(this).height();
-					pos_bottom = ( pos_bottom === false || bottom > pos_bottom ) ? bottom : pos_bottom;
-					if ( pos.top != 0 )
-						return;
-					pos_top = ( pos_top === false || margin_top < pos_top ) ? margin_top : pos_top;
-					modules.push($module);
+					var $modules = $(this).find('> .upfront-output-module, > .upfront-output-module-group');
+					$modules.css('margin-top', '');
+					var wrap_off = $(this).offset(),
+						wrap_height = $(this).height();
+					if ( Math.abs(wrap_off.left-region_off.left) < 5 ){
+						line_index++;
+						lines[line_index] = {
+							wrappers: [],
+							height: wrap_height
+						};
+					}
+					else {
+						if ( wrap_height > lines[line_index].height )
+							lines[line_index].height = wrap_height;
+					}
+					var wrap_obj = {
+						$el: $(this),
+						space: 0,
+						fill: 0,
+						modules: []
+					};
+					$modules.each(function(){
+						var margin_top = parseInt($(this).css('margin-top')),
+							height = $(this).height();
+						wrap_obj.space += margin_top;
+						wrap_obj.fill += height;
+						wrap_obj.modules.push({
+							$el: $(this),
+							top: margin_top,
+							height: height
+						});
+					});
+					lines[line_index].wrappers.push(wrap_obj);
 				});
-				available_space = pos_top + ( height > pos_bottom ? height - pos_bottom : 0 );
-				original_space = pos_top + ( original_height > pos_bottom ? original_height - pos_bottom : 0 );
-				if ( available_space == original_space )
-					top_ref = ( original_height > height ) ? pos_top - ( original_height - height ) : pos_top;
-				else
-					top_ref = pos_top/original_space * available_space;
-				top_ref = top_ref < 0 ? 0 : top_ref;
-				$.each(modules, function(i, $module){
-					var margin_top = parseInt($module.css('margin-top'));
-					if ( margin_top <= 0 )
-						return;
-					$module.css('margin-top', ( top_ref + margin_top - pos_top ) + 'px');
+				
+				$.each(lines, function(index, line){
+					total_height += line.height;
+				});
+				ori_bottom_space = original_height > total_height ? original_height-total_height : 0;
+				avail_bottom_space = height - original_height + ori_bottom_space;
+				
+				var count_space = function (from, until) {
+					var total_space = 0,
+						from = typeof from == "number" ? from : 0,
+						until = typeof until == "number" ? until : -1;
+					$.each(lines, function(index, line){
+						if ( index < from || ( until > -1 && index > until ) )
+							return;
+						var space = 0;
+						$.each(line.wrappers, function(w, wrap){
+							space = wrap.space > space ? wrap.space : space;
+						});
+						total_space += space;
+					});
+					return total_space;
+				}
+				
+				$.each(lines, function(index, line){
+					var top_space = 0,
+						bottom_space = 0;
+					if ( index > 0 )
+						top_space = count_space(0, index-1);
+					if ( index < lines.length-1 )
+						bottom_space = count_space(index+1);
+					$.each(line.wrappers, function(w, wrap){
+						var ori_space = top_space + bottom_space + ori_bottom_space + wrap.space,
+							avail_space = top_space + bottom_space + avail_bottom_space + wrap.space;
+						avail_space = avail_space > 0 ? avail_space : 0;
+						$.each(wrap.modules, function(m, module){
+							var margin_top = module.top/ori_space * avail_space;
+							module.$el.css('margin-top', margin_top + 'px');
+						});
+					});
 				});
 			}
 		});
