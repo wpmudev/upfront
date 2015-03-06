@@ -179,6 +179,8 @@ define(function() {
             },
             width_to_col: function (width, ceil) {
                 ceil = typeof  ceil === "undefined" ? false : ceil;
+				width = parseInt( width, 10 );
+				if( width < 0 ) return 0;
                 var column_width = Upfront.Settings.LayoutEditor.Grid.column_width;
                 return Math[ ceil ? "ceil" : "floor" ](width/column_width);
             },

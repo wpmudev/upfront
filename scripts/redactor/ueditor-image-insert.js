@@ -268,6 +268,7 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
             grid = Upfront.Settings.LayoutEditor.Grid
             ;
 
+        
         data.style = data.style || {
             image_col: 0,
             group: '',
@@ -487,16 +488,6 @@ var PostImageInsert = ImageInsertBase.extend({
 
 		return promise;
 	},
-	apply_classes: function (d) {
-		if (!d) return false;
-		var grid = Upfront.Settings.LayoutEditor.Grid;
-		d.height = d.row * grid.baseline;
-		d.width_cls = grid.class + d.col;
-		d.left_cls = grid.left_margin_class + d.left;
-		if ( d.top )
-			d.top_cls = grid.top_margin_class + d.top;
-		d.clear_cls = d.clear ? 'clr' : '';
-	},
 	// Insert editor UI
 	render: function(){
 		var data = _.extend( {}, this.defaultData, this.data.toJSON() ),
@@ -507,11 +498,6 @@ var PostImageInsert = ImageInsertBase.extend({
 
         data.style.label_id = data.style.label && data.style.label.trim() !== "" ? "ueditor-image-style-" +  data.style.label.toLowerCase().trim().replace(" ", "-") : data.style.vid;
 		data.image = this.get_proper_image();
-
-
-		//this.apply_classes( data.style.group );
-		//this.apply_classes( data.style.image );
-		//this.apply_classes( data.style.caption );
 
         if( data.show_caption == 0 ){
             data.style.image.width_cls = Upfront.Settings.LayoutEditor.Grid.class + 24;
@@ -677,6 +663,8 @@ var BasicImageVariants =  _([
             { vid: "left", label: "Left"  },
             { vid: "right", label: "Right"  }
         ]);
+
+
 var ImageInsert = ImageInsertBase.extend({
     className: 'ueditor-insert upfront-inserted_image-wrapper upfront-inserted_image-basic-wrapper',
     //Called just after initialize
@@ -812,16 +800,11 @@ var ImageInsert = ImageInsertBase.extend({
     get_proper_image: function(){
         var data = this.data.toJSON(),
             image = data.imageFull,
-            grid = Upfront.Settings.LayoutEditor.Grid
+            grid = Upfront.Settings.LayoutEditor.Grid,
+            editor_col = Upfront.Util.grid.width_to_col( this.$editor.width() )
             ;
 
         if( !_.isEmpty( data.selectedImage.src  ) ) return  data.selectedImage;
-
-        //if( data.imageThumb ){
-        //    if( data.style && data.style.image && data.style.image.col && (data.style.image.col * grid.column_width) <= data.imageThumb.width ){
-        //        image = data.imageThumb;
-        //    }
-        //}
 
         return image;
     },
@@ -841,14 +824,12 @@ var ImageInsert = ImageInsertBase.extend({
             $caption = $group.find(".wp-caption-text"),
             caption_classes = $caption.attr("class"),
             $image_wrapper = $group.find(".uinsert-image-wrapper"),
-            image_wrapper_classes = $image_wrapper.attr("class"),
-            caption_order = 1
+            image_wrapper_classes = $image_wrapper.attr("class")
             ;
 
         if(link.origin != window.location.origin)
             imageData.isLocal = 0;
 
-        //this.calculateRealSize(imageSpecs.src);
 
         imageData.imageThumb = imageSpecs;
         imageData.imageFull = {
