@@ -191,13 +191,13 @@ class Upfront_OutputBehavior {
 	private function __construct () {}
 	private function __clone () {}
 
-	private function _parse_compression () {
+	private static function _parse_compression () {
 		if (empty(self::$_compression)) {
 			if (defined('UPFRONT_COMPRESS_RESPONSE') && UPFRONT_COMPRESS_RESPONSE) self::$_compression = true;
 		}
 	}
 
-	private function _parse_experiments () {
+	private static function _parse_experiments () {
 		if (empty(self::$_experiments) && defined('UPFRONT_EXPERIMENTS_ON') && UPFRONT_EXPERIMENTS_ON) {
 			$level = UPFRONT_EXPERIMENTS_ON;
 			if (in_array($level, array(1, '1', true), true)) self::$_experiments = self::LEVEL_DEFAULT;
