@@ -957,6 +957,10 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			me.$el.parent().parent().parent().draggable('enable');
 		});
 
+		me.$el.find('div.upfront-object-content > div.existing_menu_list > div').on('click', function() {
+			me.parent_module_view.$el.parent().trigger('mouseup');
+		});
+
 		me.$el.find('div.upfront-object-content > div.new_menu_button > input').on('click', function() {
 			if(me.$el.find('div.upfront-object-content > div.new_menu_name input').val()!='') {
 				me.create_new_menu(me.$el.find('div.upfront-object-content > div.new_menu_name input').val());
