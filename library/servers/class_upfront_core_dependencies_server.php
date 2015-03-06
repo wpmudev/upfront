@@ -101,15 +101,18 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 		$script_tpl = json_encode('<script type="text/javascript" src="%url%" ' . $debug . '></script>');
 
 		$callback_wrap_start = $callback_wrap_end = '';
+		$injection_root = 'head';
 		if (Upfront_OutputBehavior::has_experiments_level(Upfront_OutputBehavior::LEVEL_DEFAULT)) {
 			$callback_wrap_start = '$(function () {';
 			$callback_wrap_end = '});';
 		}
 		if (Upfront_OutputBehavior::has_experiments_level(Upfront_OutputBehavior::LEVEL_AGGRESSIVE)) {
-			$callback_wrap_start = '$(window).load(function () {';
-			$callback_wrap_end = '});';
+			$callback_wrap_start = '$(function () { setTimeout(function () {';
+			$callback_wrap_end = '}, 500);});';
+			$injection_root = 'body';
 		}
 		
+		$injection_root = esc_js($injection_root);
 		echo "<script type='text/javascript'>
 			(function ($) {
 			{$callback_wrap_start}
@@ -117,7 +120,7 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 					script_tpl = {$script_tpl},
 					link_urls = {$link_urls},
 					link_tpl = {$link_tpl},
-					head = $('head')
+					head = $('{$injection_root}')
 				;
 				$.each(link_urls, function (idx, url) {
 					head.append(link_tpl.replace(/%url%/, url));
