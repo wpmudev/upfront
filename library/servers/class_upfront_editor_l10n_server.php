@@ -494,6 +494,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'new_sidebar_region' => __('Insert sidebar region', 'upfront'),
 				'delete_section' => __('Delete this section', 'upfront'),
 				'delete_section_nag' => __('Are you sure you want to delete this section?', 'upfront'),
+                'no_region_add' => __('Click here to add a region', 'upfront'),
 				'breakpoint_save_fail' => __('Breakpoints could not be saved.', 'upfront'),
 				'viewport_width' => __('Viewport Width', 'upfront'),
 				'set_custom_breakpoint' => __('Set-up your custom Breakpoint', 'upfront'),

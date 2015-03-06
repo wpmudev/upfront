@@ -3189,6 +3189,7 @@ define([
 
 
 				if ( confirm(l10n.section_delete_nag) ){
+					var parent_view = this.parent_view; // reserve parent_view before removal as we use it later
 					// if ( this.model.get('container') ){
 						// main = this.model.collection.get_by_name(this.model.get('container'));
 						// main_view = Upfront.data.region_views[main.cid];
@@ -3210,39 +3211,29 @@ define([
 					}
 					this.model.collection.remove(this.model);
 
-					var wide_regions = thecollection.where({ type : 'wide'});
-
-
-					if(wide_regions.length < 1) {
-						//var add_region = new Upfront.Views.Editor.RegionPanelsAddRegion({model: this.model, to: 'top'});
-						//$('div.upfront-regions').append(add_region.$el);
-						if($('div.upfront-regions a#no_region_add_one').length < 1) {
-							$('div.upfront-regions').append($('<a>').attr('id', 'no_region_add_one').html('Click here to add a region').bind('click', function() {
-
+					var total_container = thecollection.total_container(['shadow', 'lightbox']); // don't include shadow and lightbox region
+					if ( total_container == 0 ) {
+						if ( parent_view.$el.find('#no_region_add_one').length < 1 ) {
+							parent_view.$el.append($('<a>').attr('id', 'no_region_add_one').text(l10n.no_region_add).one('click', function() {
+								var new_title = false,
+									name = 'main',
+									title = l10n.main_area;
+								if ( thecollection.get_by_name(name) ) {
+									new_title = thecollection.get_new_title("Main ", 2);
+									title = new_title.title;
+									name = new_title.name;
+								}
 								var new_region = new Upfront.Models.Region(_.extend(_.clone(Upfront.data.region_default_args), {
-									"name": 'main',
-									"container": 'main',
-									"title": l10n.main_area
+									"name": name,
+									"container": name,
+									"title": title
 								}));
 
-
 								var options = {};
-
-
-
-								new_region.set_property('row', Upfront.Util.height_to_row(300)); // default to 300px worth of rows
-
-
-
-
+								new_region.set_property('row', Upfront.Util.height_to_row($(window).height())); // default to screen height worth of row
 								new_region.add_to(thecollection, 0, options);
 
-								var wide_regions = thecollection.where({ type : 'wide'});
-								if(wide_regions.length > 0) {
-									$('div.upfront-regions a#no_region_add_one').unbind('click');
-									$('div.upfront-regions a#no_region_add_one').remove();
-
-								}
+								$(this).remove();
 							}));
 
 						}
