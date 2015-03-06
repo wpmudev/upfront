@@ -119,11 +119,11 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 					link_tpl = {$link_tpl},
 					head = $('head')
 				;
-				$.each(script_urls, function (idx, url) {
-					head.append(script_tpl.replace(/%url%/, url));
-				});
 				$.each(link_urls, function (idx, url) {
 					head.append(link_tpl.replace(/%url%/, url));
+				});
+				$.each(script_urls, function (idx, url) {
+					head.append(script_tpl.replace(/%url%/, url));
 				});
 			{$callback_wrap_end}
 			})(jQuery);
@@ -220,13 +220,13 @@ class Upfront_OutputBehavior {
 	private function __construct () {}
 	private function __clone () {}
 
-	private function _parse_compression () {
+	private static function _parse_compression () {
 		if (empty(self::$_compression)) {
 			if (defined('UPFRONT_COMPRESS_RESPONSE') && UPFRONT_COMPRESS_RESPONSE) self::$_compression = true;
 		}
 	}
 
-	private function _parse_experiments () {
+	private static function _parse_experiments () {
 		if (empty(self::$_experiments) && defined('UPFRONT_EXPERIMENTS_ON') && UPFRONT_EXPERIMENTS_ON) {
 			$level = UPFRONT_EXPERIMENTS_ON;
 			if (in_array($level, array(1, '1', true), true)) self::$_experiments = self::LEVEL_DEFAULT;
