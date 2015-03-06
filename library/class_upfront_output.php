@@ -169,6 +169,8 @@ class Upfront_Output {
 
 
 abstract class Upfront_Entity {
+    
+    protected static $_video_index = 0;
 
 	protected $_data;
 	protected $_tag = 'div';
@@ -395,17 +397,22 @@ abstract class Upfront_Entity {
 			$mute = $this->_get_breakpoint_property('background_video_mute', $breakpoint_id);
             $autoplay = $this->_get_breakpoint_property('background_video_autoplay', $breakpoint_id);
 			if ( $video && $embed ){
+			    self::$_video_index++;
+                $video_id = 'bg_video_' . self::$_video_index;
+			    $mute = $mute === false ? 1 : intval($mute);
+                $autoplay = $autoplay === false ? 1 : intval($autoplay);
 				$attr = 'data-bg-video-ratio="' . round($height/$width, 2) . '" ';
 				$attr .= 'data-bg-video-style="' . $style . '" ';
-				$autoplay_attr = 'autoplay=' . ( $autoplay === false ? 1 : intval($autoplay) );
+				$attr .= 'data-bg-video-mute="' . $mute . '"';
+				$autoplay_attr = '&amp;autoplay=' . $autoplay;
 				// hack additional attributes
 				$vid_attrs = array(
-					'.*?vimeo\.' => $autoplay_attr . '&amp;loop=1',
-					'.*?youtube\.com\/(v|embed)\/(.+?)(\/|\?).*?$' => $autoplay_attr . '&amp;controls=0&amp;showinfo=0&amp;modestbranding=1&amp;loop=1&amp;playlist=$3',
-					'.*?wistia\.' => $autoplay_attr
+					'.*?vimeo\.' => 'loop=1' . $autoplay_attr . ( $mute == 1 ? '&amp;api=1&amp;player_id=' . $video_id : '' ),
+					'.*?youtube\.com\/(v|embed)\/(.+?)(\/|\?).*?$' =>  '&amp;controls=0&amp;showinfo=0&amp;modestbranding=1&amp;loop=1&amp;playlist=$3' . $autoplay_attr . ( $mute == 1 ? '&amp;enablejsapi=1' /*. '&amp;origin=' . site_url()*/ : '' ),
+					'.*?wistia\.' => 'endVideoBehavior=loop' . ( $autoplay == 1 ? '&amp;autoPlay=true' : '' ) . ( $mute == 1 ? '&amp;volume=0' : '' )
 				);
 				$vid_attr = '';
-				$embed_attr = '';
+				$embed_attr = ' id="' . $video_id . '"';
 				if ( preg_match('/(^.*?<iframe.*?src=[\'"])(.*?)([\'"])(.*$)/is', $embed, $match) ){
 					foreach ( $vid_attrs as $vid => $a ){
 						if ( preg_match( '/^(https?:|)\/\/' . $vid . '/i', $match[2], $vid_match ) ){
