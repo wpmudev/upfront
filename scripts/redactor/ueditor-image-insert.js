@@ -22,6 +22,7 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
         linkType: 'do_nothing',
         linkUrl: '',
         isLocal: 1,
+        alignment: { vid: "center", label: "Center" },
         externalImage: {
             top: 0,
             left: 0,
@@ -36,22 +37,22 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
                 "order": 1,
                 "height": 50,
                 "width_cls": "",
-                "left_cls": "",
-                "top_cls": "",
+                "left_cls": "ml0",
+                "top_cls": "mt0",
                 "show": 1
             },
             group: {
                 "float": "none",
                 "width_cls": "",
-                "left_cls": "",
+                "left_cls": "ml0",
                 "height": 0,
                 "marginRight": 0,
                 "marginLeft": 0
             },
             image: {
                 "width_cls": "",
-                "left_cls": "",
-                "top_cls": "",
+                "left_cls": "ml0",
+                "top_cls": "mt0",
                 "src": "",
                 "height": 0
             }
@@ -415,7 +416,7 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
     getStyleView: function(){
         if(this.styleView)
             return this.styleView;
-        var view = new ImageStylesView( this.data );
+        var view = new PostImageStylesView( this.data );
         this.styleView = view;
         return view;
     },
@@ -671,14 +672,23 @@ var PostImageInsert = ImageInsertBase.extend({
 	}
 });
 
+var BasicImageVariants =  _([
+            { vid: "center", label: "Center"  },
+            { vid: "left", label: "Left"  },
+            { vid: "right", label: "Right"  }
+        ]);
 var ImageInsert = ImageInsertBase.extend({
+    className: 'ueditor-insert upfront-inserted_image-wrapper upfront-inserted_image-basic-wrapper',
     //Called just after initialize
-    init: function(){
+    create_controlls: function(group_width_cls){
         this.controlsData = [
-            //{id: 'style', type: 'dialog', icon: 'style', tooltip: 'Style', view: this.getStyleView()},
             {id: 'link', type: 'dialog', icon: 'link', tooltip: 'Link image', view: this.getLinkView()},
             {id: 'toggle_caption', type: 'simple', icon: 'caption', tooltip: 'Toggle Caption', active: _.bind( this.get_caption_state, this ) }
         ];
+
+        if( this.allow_alignment( group_width_cls ) )
+            this.controlsData.unshift( {id: 'style', type: 'dialog', icon: 'style', tooltip: 'Alignment', view: this.getStyleView()} );
+
         this.createControls();
     },
     // The user want a new insert. Fetch all the required data to create a new image insert
@@ -703,12 +713,17 @@ var ImageInsert = ImageInsertBase.extend({
     // Insert editor UI
     render: function(){
         var data = _.extend( {}, this.defaultData, this.data.toJSON() ),
-            style_variant = data.style;
+            style_variant = data.style,
+            alignment = this.data.get("alignment") ;
 
         if( !style_variant ) return;
         //data.style = style_variant && style_variant.toJSON ? style_variant.toJSON() : {}; // Force this to be POJ object
-
         data.style.label_id = "ueditor-image-style-center";
+        if(  alignment  ){
+            data.style.label_id = "ueditor-image-style-" + alignment.vid;
+            data.style.group.float = alignment.vid;
+        }
+
         data.image = this.get_proper_image();
 
 
@@ -750,7 +765,7 @@ var ImageInsert = ImageInsertBase.extend({
         this.$el
             .html(this.tpl(data))
         ;
-        this.createControls();
+        this.create_controlls( data.style.group.width_cls );
         this.controls.render();
         this.$(".ueditor-insert-variant-group").append(this.controls.$el);
         this.make_caption_editable();
@@ -759,6 +774,14 @@ var ImageInsert = ImageInsertBase.extend({
 
     },
 
+    allow_alignment: function( group_width_cls ){
+        if( typeof group_width_cls === "undefined" ) return false;
+
+        var group_width_col = parseInt(group_width_cls.replace("c", ""), 10),
+            editor_col = Upfront.Util.grid.width_to_col( this.$editor.width() ) ;
+
+        return ( group_width_col + 2 ) <= editor_col;
+    },
     //this function is called automatically by UEditorInsert whenever the controls are created or refreshed
     control_events: function(){
         var me = this;
@@ -768,9 +791,8 @@ var ImageInsert = ImageInsertBase.extend({
          */
         this.listenTo(this.controls, 'control:ok:style', function(view, control){
             if( view._style ){
-                var style = view._style.toJSON();
                 this.data.set("variant_id", view.variant_id );
-                this.data.set("style", view._style.toJSON());
+                this.data.set("alignment", view._style );
                 view.data.set( "selected", view.variant_id   );
             }
             control.close();
@@ -887,9 +909,12 @@ var ImageInsert = ImageInsertBase.extend({
                 }
             };
             imageData.variant_id = $group.data("variant");
+            if( imageData.variant_id  ){
+                imageData.alignment = BasicImageVariants.findWhere( { "vid": $group.data("variant") } );
+            }
         }else{
-            imageData.style = Upfront.Content.ImageVariants.first().toJSON();
-            imageData.variant_id = imageData.style.vid;
+            imageData.alignment = BasicImageVariants.first();
+            imageData.variant_id = imageData.alignment.vid;
         }
 
 
@@ -898,6 +923,13 @@ var ImageInsert = ImageInsertBase.extend({
         insert.render();
         image.replaceWith(insert.$el);
         return insert;
+    },
+    getStyleView: function(){
+        if(this.styleView)
+            return this.styleView;
+        var view = new ImageStylesView( this.data );
+        this.styleView = view;
+        return view;
     }
 });
 var LinkView = Backbone.View.extend({
@@ -941,7 +973,7 @@ var LinkView = Backbone.View.extend({
 			return types;
 		}
 	});
-var ImageStylesView = Backbone.View.extend({
+var PostImageStylesView = Backbone.View.extend({
     tpl: _.template($(tpls).find('#image-style-tpl').html()),
     initialize: function( options ){
         this.data = new Backbone.Model();
@@ -968,6 +1000,32 @@ var ImageStylesView = Backbone.View.extend({
     }
 });
 
+var ImageStylesView = Backbone.View.extend({
+    tpl: _.template($(tpls).find('#image-style-tpl').html()),
+    initialize: function( options ){
+        this.data = new Backbone.Model();
+        this.listenTo(this.data, 'change', this.render);
+        this.data.set("variants", BasicImageVariants.toArray() );
+        this.data.set( "selected", options.get('variant_id') ? options.get('variant_id') : "center" );
+
+    },
+    events: {
+        'change input[type=radio]': 'update_data',
+        'click input[type=radio]': 'on_click'
+    },
+    render: function(){
+        this.$el.html(this.tpl( { data: this.data.toJSON() } ));
+        return this;
+    },
+    on_click: function(e){
+        e.stopPropagation();
+    },
+    update_data: function(e){
+        e.stopPropagation();
+        this.variant_id = $(e.target).val();
+        this._style = BasicImageVariants.findWhere({vid : this.variant_id});
+    }
+});
 return {
     PostImageInsert: PostImageInsert,
     ImageInsert: ImageInsert
