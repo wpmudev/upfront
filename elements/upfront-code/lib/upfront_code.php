@@ -22,7 +22,11 @@ class Upfront_CodeView extends Upfront_Object {
 			? $this->_to_scoped_script($properties['script'])
 			: ''
 		;
-		return '<div class="upfront_code-element clearfix">' . $properties['markup'] . $style . $script . "</div>";
+		$markup = !empty($properties['markup'])
+			? $properties['markup']
+			: ''
+		;
+		return '<div class="upfront_code-element clearfix">' . $markup . $style . $script . "</div>";
 	}
 
 	private function _to_scoped_style ($raw, $id) {
