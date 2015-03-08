@@ -37,6 +37,11 @@ class Upfront_CodeView extends Upfront_Object {
 		foreach ($raw as $rule) {
 			$scoped .= "{$id} {$rule} }";
 		}
+
+		if (class_exists('Upfront_UFC')) {
+			$scoped = Upfront_UFC::init()->process_colors($scoped);
+		}
+
 		return !empty($scoped)
 			? "<style>{$scoped}</style>"
 			: ''
