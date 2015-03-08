@@ -890,7 +890,7 @@ Ueditor.prototype = {
 
 	},
 	getValue: function(is_simple_element){
-		var html = this.redactor.code.get();
+		var html = this.redactor.$element.html();
 		if(this.insertManager)
 			html = this.insertManager.insertExport(html, is_simple_element);
 
