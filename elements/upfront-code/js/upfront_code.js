@@ -411,7 +411,10 @@ var Views = {
 					spectrum = $('.sp-container:visible');
 				},
 				change: function(color) {
-					var colorString = color.alpha < 1 ? color.toRgbString() : color.toHexString();
+					var colorString = color.get_is_theme_color()
+						? color.theme_color
+						: (color.alpha < 1 ? color.toRgbString() : color.toHexString())
+					;
 					me.currentEditor.insert(colorString);
 					me.currentEditor.focus();
 				},
