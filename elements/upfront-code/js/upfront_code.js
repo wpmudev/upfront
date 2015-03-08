@@ -89,6 +89,7 @@ var Views = {
 				if (!el.length) return true;
 				style += '#' + element_id + ' .upfront_code-element ' + el + '}';
 			});
+			style = Upfront.Util.colors.convert_string_ufc_to_color(style); // Allow for theme colors.
 
 			return '<div class="upfront_code-element clearfix">' + markup +
 				'<style>' + style + '</style>' +
