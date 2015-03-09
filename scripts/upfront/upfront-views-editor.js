@@ -287,7 +287,7 @@ define([
 		render: function () {
 			Upfront.Events.trigger("command:newpost:start", true);
 			this.$el.addClass('upfront-icon upfront-icon-post');
-			this.$el.html("New Post");
+			this.$el.html(l10n.new_post);
 		},
 		on_click: function (e) {
 			e.preventDefault();
