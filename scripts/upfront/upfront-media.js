@@ -362,7 +362,7 @@ define(function() {
 			this.$el.addClass('upfront-media-aux_controls-has-select');
 		},
 		switch_controls: function (media_collection) {
-			var positive = media_collection.where({selected: true});
+			var positive = media_collection && media_collection.where ? media_collection.where({selected: true}) : [];
 			if (positive.length) this.render_delete(positive);
 			else this.render_selection();
 		},
