@@ -4058,6 +4058,18 @@ var Field_ToggleableText = Field_Text.extend({
 				if(me.options.spectrum && me.options.spectrum.show)
 					me.options.spectrum.show(color);
 
+				/**
+				 * Dont allow more than one top be open
+				 */
+				$(".sp-container").not( me.$(".sp-container")).each(function(){
+					var $this = $(this),
+						options = $this.data("sp-options");
+					if( !options || !options.flat  ){
+						$this.addClass("sp-hidden");
+					}
+
+				});
+				
 			};
 
 			spectrumOptions.beforeShow = function(color){
@@ -4068,6 +4080,9 @@ var Field_ToggleableText = Field_Text.extend({
 				me.update_palette(); // Make sure we're up to date
 				me.$('input[name=' + me.get_field_name() + ']').spectrum("option", "palette", me.options.palette);
 				if(me.options.spectrum && me.options.spectrum.beforeShow) me.options.spectrum.beforeShow(color);
+
+				me.$(".sp-container").data("sp-options", me.options.spectrum );
+				
 			};
 
 			if( !spectrumOptions.autoHide  ){
@@ -4084,6 +4099,7 @@ var Field_ToggleableText = Field_Text.extend({
 			this.on('rendered', function(){
 				me.$('input[name=' + me.get_field_name() + ']').spectrum(spectrumOptions);
 				me.$spectrum = me.$('input[name=' + me.get_field_name() + ']');
+
 				me.$(".sp-container").append("<div class='color_picker_rgb_container'></div>");
 				me.update_input_border_color(me.get_saved_value());
 
