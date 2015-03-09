@@ -92,7 +92,7 @@ var hackRedactor = function(){
 	//Change the position of the air toolbar
 	$.Redactor.prototype.airShow = function (e, keyboard)
     {    	
-        if( $(e.target).parents().is(".uimage-control-panel") || $(e.target).is(".upfront-icon") || $(e.target).is(".upfront-icon-button") || ( !_.isUndefined(e.target.contentEditable) && e.target.contentEditable === "false" ) || $(e.target).closest(".redactor-editor").attr("contentEditable") === "false" ) return;
+        if( typeof e !== "undefined" && ( $(e.target).parents().is(".uimage-control-panel") || $(e.target).is(".upfront-icon") || $(e.target).is(".upfront-icon-button") || ( !_.isUndefined(e.target.contentEditable) && e.target.contentEditable === "false" ) || $(e.target).closest(".redactor-editor").attr("contentEditable") === "false"  ) ) return;
         //if( $(e.target).parents().is(".uimage-control-panel") || $(e.target).is(".upfront-icon") || $(e.target).is(".upfront-icon-button")) return;
 
         if (!this.opts.air || !( this.opts.buttons.length || this.opts.airButtons.length ) || !this.$toolbar) return;
@@ -484,6 +484,16 @@ var Ueditor = function($el, options) {
 	};
 
 };
+
+
+/**
+ * Make sure selection of text show's the air buttons
+ */
+UeditorEvents.on("ueditor:key:up", function(redactor){
+    if( !_.isEmpty( redactor.selection.getCurrent() ) ){
+        redactor.airShow();
+    }
+});
 
 
 Ueditor.prototype = {
