@@ -365,26 +365,36 @@ class Upfront_Layout extends Upfront_JsonModel {
 		self::set_storage_key($storage_key);
 		$storage_key = self::get_storage_key();
 		$order = array('specificity', 'item', 'type');
+		
 		foreach ($order as $o) {
 			if (empty($cascade[$o]))
 				continue;
 
 			$layout = $id = false;
+			
 			// Allow plugins to prevent loading from database
 			$load_from_database = apply_filters('upfront_load_layout_from_database', true);
 			if ($load_from_database) {
 				$id = $storage_key . '-' . $cascade[$o];
 				$layout = self::from_id($id, $storage_key);
+				
 			}
+
 			// Always try to load from theme files if layout is empty
-			if ($layout === false || $layout->is_empty()) {
+			if ($layout === false || $layout->is_empty() && $o != 'specificity') { //(not sure if this is the right way) but it should not load from files for 'specificity' or the layout that was "applied to all posts" does not load
 				$layout = self::from_files(array(), $cascade, $storage_key);
+				
 			}
+
 			if (!$layout->is_empty()) {
+				
 				$layout->set("current_layout", self::id_to_type($id));
+
 				return apply_filters('upfront_layout_from_id', $layout, self::id_to_type($id), self::$cascade);
 			}
 		}
+		
+		
 		return $layout;
 	}
 
@@ -403,7 +413,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 	public static function from_id ($id, $storage_key = '') {
 		$regions_data = self::get_regions_data();
 		$data = json_decode( get_option($id, json_encode(array())), true );
-
+		
 		if ( ! empty($data) ) {
 			$regions = array();
 			$regions_added = array();
@@ -759,6 +769,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 				$scopes[$region['scope']][] = $region;
 			}
 		}
+		
 		foreach ( $scopes as $scope => $data ) {
 			$current_scope = json_decode( get_option(self::_get_scope_id($region['scope']), json_encode(array())), true );
 			$current_scope = apply_filters('upfront_get_global_regions', $current_scope, self::_get_scope_id($region['scope']));
@@ -781,6 +792,14 @@ class Upfront_Layout extends Upfront_JsonModel {
 		if ( $this->_data['properties'] )
 			update_option(self::_get_layout_properties_id(), json_encode($this->_data['properties']));
 		update_option($key, $this->to_json());
+
+		$storage_key = self::get_storage_key();
+
+		//if layout is applied to all posts, it should be saved to the db, even though the current layout is specific to the post
+		if($storage_key . '-' . $this->_data['preferred_layout'] != $key) {
+			update_option($storage_key . '-' . $this->_data['preferred_layout'], $this->to_json());
+		}
+
 		return $key;
 	}
 

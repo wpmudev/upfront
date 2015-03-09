@@ -463,7 +463,6 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 	saveEdition: function(){
 		if(Application.current_subapplication != PostLayoutEditor)
 			return;
-
 		var me = this,
 			saveDialog = new Upfront.Views.Editor.SaveDialog({
 				question: Upfront.Settings.l10n.global.application.save_layout_pop,
