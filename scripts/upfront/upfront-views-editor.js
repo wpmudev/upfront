@@ -4005,7 +4005,8 @@ var Field_ToggleableText = Field_Text.extend({
 		events : {
 			'change .upfront_color_picker_rgba input' : 'rgba_sidebar_changed',
 			'change .sp-input' : 'sp_input_changed',
-			'click .upfront_color_picker_reset' : 'set_to_blank'
+			'click .upfront_color_picker_reset' : 'set_to_blank',
+			'click .sp-alpha-overlay': "click_on_alpha_overlay"
 		},
 		initialize: function(opts){
 			this.options = _.extend({}, this.defaults, opts);
@@ -4245,7 +4246,7 @@ var Field_ToggleableText = Field_Text.extend({
 			if( _.isEmpty( color ) ) return;
 
 			var $alpha = this.$(".sp-alpha");
-
+			
 			if( Upfront.Views.Theme_Colors.colors.is_theme_color( color ) ){
 				
 				$alpha.addClass("sp-alpha-disabled");
@@ -7971,7 +7972,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 
 				var collection = this.model.collection,
 					index = collection.indexOf(this.model),
-					index_container = collection.index_container(this.model, ['shadow', 'lightbox']),
+					index_container = collection.index_container(this.model),
 					total_container = collection.total_container(['shadow', 'lightbox']), // don't include shadow and lightbox region
 					is_top = index_container == 0,
 					is_bottom = index_container == total_container-1,
@@ -9161,7 +9162,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				return panels; // Same as this - "return false" doesn't play well here.
 			}
 			var // Well, all is goog with the collection, so carry on as intended...
-				index_container = collection.index_container(this.model, ['shadow', 'lightbox']),
+				index_container = collection.index_container(this.model),
 				total_container = collection.total_container(['shadow', 'lightbox']), // don't include shadow and lightbox region
 				is_top = index_container == 0,
 				is_bottom = index_container == total_container-1,
