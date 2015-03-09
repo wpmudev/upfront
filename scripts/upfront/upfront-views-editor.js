@@ -4005,8 +4005,7 @@ var Field_ToggleableText = Field_Text.extend({
 		events : {
 			'change .upfront_color_picker_rgba input' : 'rgba_sidebar_changed',
 			'change .sp-input' : 'sp_input_changed',
-			'click .upfront_color_picker_reset' : 'set_to_blank',
-			'click .sp-alpha-overlay': "click_on_alpha_overlay"
+			'click .upfront_color_picker_reset' : 'set_to_blank'
 		},
 		initialize: function(opts){
 			this.options = _.extend({}, this.defaults, opts);
@@ -4246,7 +4245,7 @@ var Field_ToggleableText = Field_Text.extend({
 			if( _.isEmpty( color ) ) return;
 
 			var $alpha = this.$(".sp-alpha");
-			
+
 			if( Upfront.Views.Theme_Colors.colors.is_theme_color( color ) ){
 				
 				$alpha.addClass("sp-alpha-disabled");
