@@ -567,26 +567,9 @@ VRT;
 			}
 		}
 		return '';
-		/*
-		if (!$id) {
-			return !empty($cascade['item']) && 'single-404_page' == $cascade['item']
-				? 'single-404_page'
-				: ''
-			;
-		}
-		if (!empty($cascade['item']) && 'single-page' == $cascade['item']) {
-			foreach ($this->get_required_pages() as $page) {
-				if ($page->get_id() == $id) return $page->get_layout_name();
-			}
-		} else if (!empty($cascade['item']) && 'single-post' == $cascade['item']) {
-			return 'single-post';
-		}
-		return '';
-		*/
 	}
 
-	public function load_page_regions($data, $ids/*, $cascade*/){
-		//if (!is_singular()) return $data;
+	public function load_page_regions($data, $ids){
 		$layoutId = $this->_get_page_default_layout($ids);
 
 		if (empty($layoutId) && !empty($ids['specificity'])) {
@@ -607,9 +590,7 @@ VRT;
 			$theme = Upfront_Theme::get_instance();
 			$ids['theme_defined'] = $layoutId;
 			$data['regions'] = $theme->get_default_layout($ids, $layoutId);
-			//$data['regions'] = $theme->get_default_layout(array(), $layoutId);
 		}
-		//return apply_filters('upfront_augment_theme_layout', $data); // So, this doesn't work anymore either. Yay.
 		return $data;
 	}
 
