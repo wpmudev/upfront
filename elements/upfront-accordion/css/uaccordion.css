@@ -68,16 +68,19 @@
 
 
 .upfront-accordion-container .upfront-entity_meta {
-	top: 62px;
+	top: 52px;
 	right: 5px;
 }
 .upfront-accordion-container {
 	width: 100%;
 }
 .upfront-accordion-container .upfront-icon-button-accordion-add-panel:before {
-background-position: -260px -130px;
+background-position: -261px -132px;
 }
-
+.upfront-editable_entity:hover  .upfront-entity_meta .upfront-icon-button-accordion-add-panel {
+    opacity: 1;
+	visibility: visible;
+}
 .upfront-accordion-container .upfront-icon-button-accordion-add-panel
 {
 	box-shadow: inset 0 0 0 1px #e6ab2e;
