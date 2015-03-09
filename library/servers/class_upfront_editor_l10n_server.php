@@ -243,6 +243,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'preparing_new_post' => __('Preparing new %s...', 'upfront'),
 				'preparing_done' => __('Wow, those are cool!', 'upfront'),
 				'new_page' => __('New Page', 'upfront'),
+				'new_post' => __('New Post', 'upfront'),
 				'add_new_page' => __('Add New Page', 'upfront'),
 				'none' => __('None', 'upfront'),
 				'create_page' => __('Create Page', 'upfront'),
