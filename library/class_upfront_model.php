@@ -381,19 +381,28 @@ class Upfront_Layout extends Upfront_JsonModel {
 			}
 
 			// Always try to load from theme files if layout is empty
-			if ($layout === false || $layout->is_empty() && $o != 'specificity') { //(not sure if this is the right way) but it should not load from files for 'specificity' or the layout that was "applied to all posts" does not load
-				$layout = self::from_files(array(), $cascade, $storage_key);
+			if ($layout === false || $layout->is_empty()) {
+				$layout = self::from_specific_files(array(), $cascade, $storage_key); // Load from *specific* files only, no fallback
 				
 			}
 
-			if (!$layout->is_empty()) {
-				
+			if ($layout && !$layout->is_empty()) {
+			
 				$layout->set("current_layout", self::id_to_type($id));
 
 				return apply_filters('upfront_layout_from_id', $layout, self::id_to_type($id), self::$cascade);
 			}
 		}
-		
+
+		// If we're out of the loop and still empty, we really have to be doing something now...
+		if (!$layout || ($layout && $layout->is_empty())) {
+			$layout = self::from_files(array(), $cascade, $storage_key);
+
+			if (!$layout->is_empty()) {
+				$layout->set("current_layout", self::id_to_type($id));
+				return apply_filters('upfront_layout_from_id', $layout, self::id_to_type($id), self::$cascade);
+			}
+		}	
 		
 		return $layout;
 	}
@@ -474,11 +483,49 @@ class Upfront_Layout extends Upfront_JsonModel {
 		$data['properties'] = self::get_layout_properties();
 		$data['layout'] = self::$cascade;
 
-    // Do not do this is in builder mode since it will duplicate slider images. Alternative
-    // is to fix augment_regions to not re-import images every time page reloads.
-    if (!function_exists('upfront_exporter_is_running') || !upfront_exporter_is_running()) {
-      $data = apply_filters('upfront_augment_theme_layout', $data);
-    }
+	    // Do not do this is in builder mode since it will duplicate slider images. Alternative
+	    // is to fix augment_regions to not re-import images every time page reloads.
+	    if (!function_exists('upfront_exporter_is_running') || !upfront_exporter_is_running()) {
+	      $data = apply_filters('upfront_augment_theme_layout', $data);
+	    }
+
+		return self::from_php($data, $storage_key);
+	}
+
+	/**
+	 * Loads up *specific* theme layout, does NOT include a fallback like `from_files()`
+	 * in order to respect the cascade.
+	 */
+	public static function from_specific_files ($data, $cascade, $storage_key=false) {
+		$new_data = apply_filters('upfront_override_layout_data', $data, $cascade);
+		if (empty($new_data)) return false;
+
+	    $data = $new_data;
+        // We need to apply global regions that saved in db
+        $regions = array();
+        $regions_added = array();
+        foreach ( $data['regions'] as $region ) {
+            if ( $region['scope'] != 'local' ){
+                $applied_scope = self::_apply_scoped_region($region);
+                foreach ( $applied_scope as $applied_data ) {
+                    if ( !in_array($applied_data['name'], $regions_added) ){
+                        $regions[] = $applied_data;
+                        $regions_added[] = $applied_data['name'];
+                    }
+                }
+                continue;
+            }
+            $regions[] = $region;
+        }
+        $data['regions'] = $regions;
+		$data['properties'] = self::get_layout_properties();
+		$data['layout'] = self::$cascade;
+
+	    // Do not do this is in builder mode since it will duplicate slider images. Alternative
+	    // is to fix augment_regions to not re-import images every time page reloads.
+	    if (!function_exists('upfront_exporter_is_running') || !upfront_exporter_is_running()) {
+	      $data = apply_filters('upfront_augment_theme_layout', $data);
+	    }
 
 		return self::from_php($data, $storage_key);
 	}
