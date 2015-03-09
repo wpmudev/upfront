@@ -254,11 +254,11 @@ abstract class Upfront_Model {
 	}
 
 	public function get_id () {
-		if (!empty($this->_data['current_layout'])) {
-			$id = $this->_data['current_layout'];
-		}
-		else if (!empty($this->_data['preferred_layout'])) {
+		if (!empty($this->_data['preferred_layout'])) {
 			$id = $this->_data['preferred_layout'];
+		}
+		else if (!empty($this->_data['current_layout'])) {
+			$id = $this->_data['current_layout'];
 		} else {
 			$id = !empty($this->_data['layout']['item'])
 				? $this->_data['layout']['item']
@@ -789,17 +789,19 @@ class Upfront_Layout extends Upfront_JsonModel {
 			}
 			update_option(self::_get_scope_id($scope), json_encode($scope_data));
 		}
-		if ( $this->_data['properties'] )
+		if ( $this->_data['properties'] ) {
 			update_option(self::_get_layout_properties_id(), json_encode($this->_data['properties']));
-		update_option($key, $this->to_json());
+		}
 
+		update_option($key, $this->to_json());
+/*
 		$storage_key = self::get_storage_key();
 
 		//if layout is applied to all posts, it should be saved to the db, even though the current layout is specific to the post
 		if($storage_key . '-' . $this->_data['preferred_layout'] != $key) {
 			update_option($storage_key . '-' . $this->_data['preferred_layout'], $this->to_json());
 		}
-
+*/
 		return $key;
 	}
 
