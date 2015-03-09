@@ -1568,10 +1568,13 @@ var Application = new (Backbone.Router.extend({
 				_.each(elementStyles, function(style, name){
 					style = Upfront.Util.colors.convert_string_ufc_to_color(style);
 					Upfront.data.styles[elementType].push(name);
-					var styleNode = $(name);
+					var styleNode = $('#'+name);
 					if(!styleNode.length){
 						styleNode = $('<style id="' + name + '">' + style + '</style>');
 						$('body').append(styleNode);
+					}
+					else {
+						styleNode.html(style);
 					}
 				});
 			});
