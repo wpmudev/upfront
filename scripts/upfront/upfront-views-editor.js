@@ -4005,7 +4005,8 @@ var Field_ToggleableText = Field_Text.extend({
 		events : {
 			'change .upfront_color_picker_rgba input' : 'rgba_sidebar_changed',
 			'change .sp-input' : 'sp_input_changed',
-			'click .upfront_color_picker_reset' : 'set_to_blank'
+			'click .upfront_color_picker_reset' : 'set_to_blank',
+			'click .sp-alpha-overlay': "click_on_alpha_overlay"
 		},
 		initialize: function(opts){
 			this.options = _.extend({}, this.defaults, opts);
@@ -4038,9 +4039,14 @@ var Field_ToggleableText = Field_Text.extend({
 
 				if(me.options.spectrum && me.options.spectrum.move)
 					me.options.spectrum.move(color);
+
+				me.toggle_alpha_selector(color, e);
 			};
 
 			spectrumOptions.show = function(color){
+				var $input = $(".sp-input"),
+					input_val = $input.val();
+
 				if( !_.isEmpty( color ) ){
 					this.color = color;
 					var rgb = color.toHexString();
@@ -4049,9 +4055,9 @@ var Field_ToggleableText = Field_Text.extend({
 					me.render_sidebar_rgba(me.rgba);
 					me.update_input_val( rgb );
 				}
-				if( !_.isEmpty( $(".sp-input").val() ) && !me.is_hex( $(".sp-input").val() )){
-					var t_color = tinycolor( $(".sp-input").val() );
-					$(".sp-input").val(t_color.toHexString());
+				if( !_.isEmpty( input_val) && !me.is_hex( input_val )){
+					var t_color = tinycolor( input_val );
+					$input.val(t_color.toHexString());
 				}
 				me.spectrumOptions = spectrumOptions;
 
@@ -4069,7 +4075,12 @@ var Field_ToggleableText = Field_Text.extend({
 					}
 
 				});
-				
+
+				if( !_.isEmpty( input_val ) ){
+					var input_val_color = tinycolor( input_val );
+					me.toggle_alpha_selector( input_val_color );
+				}
+
 			};
 
 			spectrumOptions.beforeShow = function(color){
@@ -4082,6 +4093,7 @@ var Field_ToggleableText = Field_Text.extend({
 				if(me.options.spectrum && me.options.spectrum.beforeShow) me.options.spectrum.beforeShow(color);
 
 				me.$(".sp-container").data("sp-options", me.options.spectrum );
+
 				
 			};
 
@@ -4112,6 +4124,8 @@ var Field_ToggleableText = Field_Text.extend({
 						me.$(".sp-container").addClass("sp-hidden");
 					}
 				});
+
+
 			});
 
 		},
@@ -4227,6 +4241,28 @@ var Field_ToggleableText = Field_Text.extend({
 			var color = tinycolor(rgba);
 			this.color = color;
 			this.$spectrum.spectrum("set", color );
+		},
+		toggle_alpha_selector: function(color){
+			if( _.isEmpty( color ) ) return;
+
+			var $alpha = this.$(".sp-alpha");
+			
+			if( Upfront.Views.Theme_Colors.colors.is_theme_color( color ) ){
+				
+				$alpha.addClass("sp-alpha-disabled");
+				$overlay = $("<span class='sp-alpha-overlay'></span>")
+				.on("click", function(e){
+					e.stopPropagation();
+					e.preventDefault();
+				});
+				if( !this.$(".sp-alpha-overlay").length ){
+					$alpha.before($overlay);
+				}
+				
+			}else{
+				$alpha.removeClass("sp-alpha-disabled");
+				this.$(".sp-alpha-overlay").remove();
+			}
 		}
 
 	});
