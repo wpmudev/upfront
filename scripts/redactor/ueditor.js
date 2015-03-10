@@ -108,8 +108,14 @@ var hackRedactor = function(){
         this.selection.createMarkers();
         var width = this.$air.width(),
             m1 = this.$editor.find('#selection-marker-1').offset(),
-            m2 = this.$editor.find('#selection-marker-2').offset(),
-            bounds = m2.top < m1.top ? {top: m2.top - 55, left: m2.left, right: m1.left, i:2} : {top: m1.top - 55, left: m1.left, right: m2.left, i:1},
+            m2 = this.$editor.find('#selection-marker-2').offset()
+        ;
+        // Make sure we have both dimentions before proceeding
+        if (!m1 || !m2) {
+            return false;
+        }
+        
+        var bounds = m2.top < m1.top ? {top: m2.top - 55, left: m2.left, right: m1.left, i:2} : {top: m1.top - 55, left: m1.left, right: m2.left, i:1},
             atRight = false,
             $win = $(window),
             winRight = $win.width() + $win.scrollLeft(),
