@@ -2,6 +2,18 @@ Change Log
 ============
 
 
+0.2.6 - 2015-03-10
+-------------------------------------------------------------------------------
+- Fix: Fix image blocks UI when S3 plugins move images.
+- Fix: youtube element accept short ahare url format i.e. youtu.be
+- Fix: keep ratio behavior for full screen region
+- Fix: muted video background
+- Fix: theme colors in code element
+- Fix: post layout wont apply to all post types
+- Fix: accordion panel add button not showing
+- Fix: multiple spectrums open
+- Fix: disable alpha slider when theme color is chosen
+
 0.2.5 - 2015-03-05
 -------------------------------------------------------------------------------
 - Fix: gallery labels adding.
