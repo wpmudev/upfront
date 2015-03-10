@@ -62,7 +62,7 @@ define([
 			'click #image-edit-button-reset': 'image100', //'resetImage',
 			'click #image-edit-button-fit': 'fitImage',
 			'click #image-edit-button-align': 'selectAlign',
-			'click .image-edit-rotate': 'rotate',
+			// 'click .image-edit-rotate': 'rotate',
 			'click .image-fit-element-button': 'fitMask',
 			'click #image-edit-button-swap': 'changeImage'
 		},

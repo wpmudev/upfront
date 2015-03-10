@@ -452,7 +452,6 @@ class Upfront_Uimage_Server extends Upfront_Server {
 		$imagepath = $path_parts['dirname'] . '/' . $filename . '.' . $path_parts['extension'];
 
 		$image_editor->set_quality(90);
-		error_log('saving image editor -> save ' . $imagepath);
 		$saved = $image_editor->save($imagepath);
 
 		if (is_wp_error( $saved )) {
