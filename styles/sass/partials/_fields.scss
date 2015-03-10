@@ -107,6 +107,7 @@ input.upfront-field-text:hover,
 	border: 1px solid rgb(163, 191, 217);
 	border-radius: 3px;
 }
+.upfront-object-content div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap ul label,
 .upfront-field-select {
 	display: inline-block;
 	height: 26px;
@@ -217,6 +218,7 @@ input.upfront-field-text:hover,
 .upfront-field-select-zebra .upfront-field-select-option-even {
 	background: rgb(218, 231, 242);
 }
+.upfront-object-content div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap ul .upfront-field-select-option:hover label,
 .upfront-field-select-option:hover {
 	background: rgb(96, 127, 153);
 	color: rgb(238, 247, 255);
