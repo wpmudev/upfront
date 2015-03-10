@@ -2186,7 +2186,8 @@ define(function() {
 				media_type: ["images"],
 				multiple_selection: true,
 				button_text: l10n.ok,
-				ck_insert: false
+				ck_insert: false,
+				hold_editor: false,
 			}, options);
 			var me = this,
 				popup = false,
@@ -2201,7 +2202,7 @@ define(function() {
 				me.popup_data.$top = $top;
 				me.popup_data.$bottom = $bottom;
 				me.load(options);
-			}, {width: 800}, 'media-manager');
+			}, {width: 800, hold_editor: options.hold_editor}, 'media-manager');
 
 			popup.always(this.cleanup_active_filters);
 			popup.progress($.proxy(this.clean_up, this));

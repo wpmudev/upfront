@@ -661,6 +661,7 @@ define(function() {
 
 		open: function (callback, data, classname) {
 				data = data || {};
+				this.data = data;
 				classname = classname || 'default-popup';
 				this.init();
 				var me = this,
@@ -732,7 +733,10 @@ define(function() {
 		},
 
 		close: function (result) {
-			this._deferred.notify('before_close');
+			if(this.data.hold_editor)
+				this._deferred.notify('dont_close');
+			else
+				this._deferred.notify('before_close');
 
 			this.$background.hide();
 			this.$popup.hide().find("#upfront-popup-content").empty();
