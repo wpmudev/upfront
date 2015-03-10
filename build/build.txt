@@ -34,6 +34,8 @@ chosen/chosen.jquery.min.js
 text!scripts/upfront/inline-panels/templates/panel-control-template.html
 /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/inline-panels/dialog-control.js
 /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/inline-panels/inline-panels.js
+text!scripts/upfront/templates/link-panel.html
+/home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/link-panel.js
 text!upfront/templates/property.html
 text!upfront/templates/properties.html
 text!upfront/templates/property_edit.html

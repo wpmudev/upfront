@@ -104,9 +104,6 @@ a.ulinkpanel-entry-url:hover {
 
 .ulinkpanel-new-lightbox,
 .ulinkpanel-lightbox-selector {
-	width: 131px;
-	float: right;
-	margin-left: 9px;
 	margin-top: 5px;
 }
 
@@ -116,7 +113,6 @@ a.ulinkpanel-entry-url:hover {
 
 .ulinkpanel input.ulinkpanel-lightbox-input {
 	height: 21px;
-	width: 110px;
 	background: #fff;
 	margin-right: 2px;
 	vertical-align: top;
@@ -138,7 +134,7 @@ a.ulinkpanel-entry-url:hover {
 	opacity: .9;
 }
 
-.ulinkpanel-dark .upfront-field-wrap{
+div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 	color: #cbe5ff;
 }
 
@@ -169,3 +165,10 @@ a.ulinkpanel-entry-url:hover {
 }
 
 
+.ulinkpanel .anchor-selector {
+	clear: both;
+}
+
+.ulinkpanel .upfront-field-select {
+	width: 230px;
+}

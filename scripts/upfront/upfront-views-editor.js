@@ -36,7 +36,8 @@ var l10n = Upfront.Settings && Upfront.Settings.l10n
 define([
 	"chosen",
 	"scripts/upfront/global-event-handlers",
-	"scripts/upfront/inline-panels/inline-panels", // If adding more arguments adjust _.rest in line 67
+	"scripts/upfront/inline-panels/inline-panels",
+	"scripts/upfront/link-panel", // If adding more arguments adjust _.rest in line 69
 	"text!upfront/templates/property.html",
 	"text!upfront/templates/properties.html",
 	"text!upfront/templates/property_edit.html",
@@ -49,7 +50,7 @@ define([
 	"text!upfront/templates/sidebar_settings_theme_colors.html",
 	"text!upfront/templates/color_picker.html",
     'spectrum'
-], function (chosen, globalEventHandlers, InlinePanelsLoader) {
+], function (chosen, globalEventHandlers, InlinePanelsLoader, LinkPanel) {
 	var _template_files = [
 		"text!upfront/templates/property.html",
 		"text!upfront/templates/properties.html",
@@ -65,7 +66,7 @@ define([
 	];
 
 	// Auto-assign the template contents to internal variable
-	var _template_args = _.rest(arguments, 3),
+	var _template_args = _.rest(arguments, 4),
 		_Upfront_Templates = {}
 	;
 	_(_template_files).each(function (file, idx) {
@@ -4093,7 +4094,7 @@ var Field_ToggleableText = Field_Text.extend({
 
 				me.$(".sp-container").data("sp-options", me.options.spectrum );
 
-				
+
 			};
 
 			if( !spectrumOptions.autoHide  ){
@@ -4247,7 +4248,7 @@ var Field_ToggleableText = Field_Text.extend({
 			var $alpha = this.$(".sp-alpha");
 
 			if( Upfront.Views.Theme_Colors.colors.is_theme_color( color ) ){
-				
+
 				$alpha.addClass("sp-alpha-disabled");
 				$overlay = $("<span class='sp-alpha-overlay'></span>")
 				.on("click", function(e){
@@ -4257,7 +4258,7 @@ var Field_ToggleableText = Field_Text.extend({
 				if( !this.$(".sp-alpha-overlay").length ){
 					$alpha.before($overlay);
 				}
-				
+
 			}else{
 				$alpha.removeClass("sp-alpha-disabled");
 				this.$(".sp-alpha-overlay").remove();
@@ -4288,6 +4289,7 @@ var Field_ToggleableText = Field_Text.extend({
 			this.$el.append(this.get_field_html());
 			//if ( !this.multiple ) {
 				this.$el.on('click', '.upfront-field-select-value', function(e){
+					console.log('clicked on select, should open now');
 					e.stopPropagation();
 					if ( me.options.disabled )
 						return;
@@ -9863,239 +9865,6 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				this.$el.css('left', 0);
 			else
 				this.$el.css('left', '');
-		}
-	});
-
-	var LinkPanel = Backbone.View.extend({
-		tpl: _.template($(_Upfront_Templates.popup).find('#linkpanel-tpl').html()),
-		defaultLinkTypes: {
-			unlink: true,
-			external: true,
-			entry: true,
-			anchor: true,
-			image: false,
-			lightbox: true
-		},
-		events: {
-			'click .js-ulinkpanel-ok': 'linkOk',
-			'change .js-ulinkpanel-type': 'changeType',
-			'click .js-ulinkpanel-input-entry': 'openPostSelector',
-			'click .js-show-lightbox-input': 'showLightboxInput',
-			'click .ulinkpanel-lightbox-cancel': 'hideLightboxInput',
-			'keydown .js-ulinkpanel-lightbox-input': 'checkCreateLightbox'
-		},
-
-		initialize: function(opts) {
-			var types = opts.linkTypes || {};
-			this.linkTypes = _.extend({}, this.defaultLinkTypes, types);
-
-			if(!this.model || this.model.get('type') === false || this.model.get('type') === undefined)
-				this.model = new Backbone.Model({type: 'unlink', url: ''});
-
-			this.theme = opts.theme || 'dark';
-
-			this.button = opts.button || false;
-		},
-
-		render: function() {
-			var tplData = {
-				link: this.model.toJSON(),
-				types: this.linkTypes,
-				theme: this.theme,
-				anchors: this.anchors || this.getAnchors(),
-				checked: 'checked="checked"',
-				lightboxes: this.getLightBoxes(),
-				button: this.button
-			};
-
-			this.setCurrentClass(this.model.get('type'));
-
-			this.$el
-				.html(this.tpl(tplData))
-			;
-
-			this.changeType();
-		},
-
-		linkOk: function(e) {
-			if(e) e.preventDefault();
-
-			var link = this.getCurrentValue();
-
-			//If we are creating a lightbox just call the method.
-			if(link.type == 'lightbox' && this.$('.js-ulinkpanel-new-lightbox').is(':visible'))
-				return this.createLightBox();
-
-			this.model.set(link, {silent: true});
-			this.trigger('link:ok', link);
-		},
-
-		changeType: function(e){
-			var type = this.getCurrentLinkType();
-
-			this.$('.js-ulinkpanel-input-url').hide();
-			if(type)
-				this.$('.js-ulinkpanel-input-' + type).show();
-
-			this.setCurrentClass(type);
-
-			//Is it really an event or is it called by other function?
-			//Check the event object
-			if(e){
-				this.trigger('link:typechange', type);
-				if(type == 'entry')
-					this.openPostSelector();
-			}
-		},
-
-		getCurrentValue: function(){
-			var type = this.getCurrentLinkType(),
-				url = this.getTypeUrl(type)
-			;
-			return {type: type, url: url};
-		},
-
-		getCurrentLinkType: function() {
-			return this.$('.js-ulinkpanel-type:checked').val() || 'unlink';
-		},
-
-		getTypeUrl: function(type){
-			var url;
-			switch(type){
-				case 'unlink':
-					return '';
-				case 'external':
-				case 'entry':
-					// Check if the url is absolute or have a protocol.
-					url = this.$('#ulinkpanel-link-url').val();
-					return url.match(/https?:\/\//) || url.match(/\/\/:/) ? url : 'http://' + url;
-				case 'anchor':
-					return this.$('.ulinkpanel-anchor-selector').val();
-				case 'image':
-					return '#';
-				case 'lightbox':
-					url = this.$('.js-ulinkpanel-lightbox-select').val();
-					return url || '';
-			}
-
-			//Not a type, return current url
-			return this.$('#ulinkpanel-link-url').val();
-		},
-
-		getAnchors: function(){
-			var regions = Upfront.Application.layout.get("regions"),
-				anchors = [],
-				find = function (modules) {
-					modules.each(function(module){
-						if ( module.get("objects") )
-							module.get("objects").each(function (object) {
-								var anchor = object.get_property_value_by_name("anchor");
-								if (anchor && anchor.length)
-									anchors.push({id: '#' + anchor, label: anchor});
-							});
-						else if ( module.get("modules") )
-							find(module.get("modules"));
-					});
-				}
-			;
-			regions.each(function (r) {
-				find(r.get("modules"));
-			});
-
-			this.anchors = anchors;
-			return anchors;
-		},
-
-		openPostSelector: function(e){
-			if(e)
-				e.preventDefault();
-
-			this.trigger('link:postselector');
-
-			var me = this,
-				selectorOptions = {
-					postTypes: this.postTypes()
-				}
-			;
-			Upfront.Views.Editor.PostSelector.open(selectorOptions).done(function(post){
-				var link = {
-					url: post.get('permalink'),
-					type: 'entry'
-				};
-
-				me.model.set(link);
-				me.render();
-
-				me.trigger('link:postselected', link, post);
-			});
-		},
-
-		postTypes: function(){
-			var types = [];
-			_.each(Upfront.data.ugallery.postTypes, function(type){
-				if(type.name != 'attachment')
-					types.push({name: type.name, label: type.label});
-			});
-			return types;
-		},
-
-		showLightboxInput: function(e){
-			var me = this;
-			if(e)
-				e.preventDefault();
-
-			this.$('.js-ulinkpanel-lightbox-select').hide();
-			this.$('.js-ulinkpanel-new-lightbox').show()
-			setTimeout(function() { me.$('#ulinkpanel-new-lightbox').focus(); }, 100);
-		},
-
-		hideLightboxInput: function(e) {
-			if(e)
-				e.preventDefault();
-
-			this.$('.js-ulinkpanel-lightbox-select').show();
-			this.$('.js-ulinkpanel-new-lightbox').hide();
-		},
-
-		getLightBoxes: function(){
-			var lightboxes = [],
-				regions = Upfront.Application.layout.get('regions')
-			;
-
-			_.each(regions.models, function(model) {
-				if(model.attributes.sub == 'lightbox')
-					lightboxes.push({id: '#' + model.get('name'), label: model.get('title')});
-			});
-
-			return lightboxes;
-		},
-
-		checkCreateLightbox: function(e){
-			if(e.which == 13){
-				e.preventDefault();
-				this.createLightBox();
-			}
-		},
-
-		createLightBox: function(){
-			var name = $.trim(this.$('.js-ulinkpanel-lightbox-input').val());
-			if(!name){
-				Upfront.Views.Editor.notify(l10n.ltbox_empty_name_nag, 'error');
-				return false;
-			}
-
-			var safeName = Upfront.Application.LayoutEditor.createLightboxRegion(name),
-				url = '#' + safeName
-			;
-
-			this.model.set({url: url, type: 'lightbox'});
-			this.render();
-
-			this.linkOk();
-		},
-
-		setCurrentClass: function(type) {
-			this.$el.attr('class', 'ulinkpanel ulinkpanel-' + this.theme + ' ulinkpanel-selected-' + type);
 		}
 	});
 
