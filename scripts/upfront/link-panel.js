@@ -58,12 +58,12 @@ define([
 				typeValues.push(this.getLinkTypeValue(type));
 			}, this);
 
-			var typeSelect = new Upfront.Views.Editor.Field.Select({
+			this.typeSelect = new Upfront.Views.Editor.Field.Select({
 				label: '',
 				values: typeValues,
 				default_value: this.model.get('type') || 'unlink',
 				change: function () {
-					me.model.set({'url': ''});// reset url property, we don't want funny results
+					me.model.set({'url': ''});// reset url property, we don't want funny results when changing from one type to another
 					me.model.set({'type': this.get_value()});
 					if (this.get_value() == 'entry') {
 						me.openPostSelector();
@@ -71,9 +71,8 @@ define([
 					me.render();
 				}
 			});
-			typeSelect.render();
-			typeSelect.delegateEvents();
-			this.$el.find('form').prepend(typeSelect.el);
+			this.typeSelect.render();
+			this.$el.find('form').prepend(this.typeSelect.el);
 
 			if (this.model.get('type') == 'anchor') {
 				var anchorValues = [{label: 'Choose Anchor...', value: ''}];
@@ -85,7 +84,7 @@ define([
 				anchorValue = anchorValue ? anchorValue : '';
 				anchorValue = anchorValue.match(/^#/) ? anchorValue : '';
 
-				var anchorSelect = new Upfront.Views.Editor.Field.Select({
+				this.anchorSelect = new Upfront.Views.Editor.Field.Select({
 					label: '',
 					values: anchorValues,
 					default_value: anchorValue,
@@ -93,9 +92,8 @@ define([
 						me.model.set({'url': this.get_value()});
 					}
 				});
-				anchorSelect.render();
-				anchorSelect.delegateEvents();
-				this.$el.find('.anchor-selector').append(anchorSelect.el);
+				this.anchorSelect.render();
+				this.$el.find('.anchor-selector').append(this.anchorSelect.el);
 			}
 			if (this.model.get('type') == 'lightbox' && this.getLightBoxes()) {
 				var lightboxValues = [{label: 'Choose Lightbox...', value: ''}];
@@ -107,7 +105,7 @@ define([
 				lightboxValue = lightboxValue ? lightboxValue : '';
 				lightboxValue = lightboxValue.match(/^#/) ? lightboxValue : '';
 
-				var lightboxSelect = new Upfront.Views.Editor.Field.Select({
+				this.lightboxSelect = new Upfront.Views.Editor.Field.Select({
 					label: '',
 					values: lightboxValues,
 					default_value: lightboxValue,
@@ -115,10 +113,23 @@ define([
 						me.model.set({'url': this.get_value()});
 					}
 				});
-				lightboxSelect.render();
-				lightboxSelect.delegateEvents();
-				this.$el.find('.lightbox-selector').append(lightboxSelect.el);
+				this.lightboxSelect.render();
+				this.$el.find('.lightbox-selector').append(this.lightboxSelect.el);
 			}
+			this.delegateEvents();
+		},
+
+		delegateEvents: function(events) {
+			if (this.typeSelect) {
+				this.typeSelect.delegateEvents();
+			}
+			if (this.anchorSelect) {
+				this.anchorSelect.delegateEvents();
+			}
+			if (this.lightboxSelect) {
+				this.lightboxSelect.delegateEvents();
+			}
+			Backbone.View.prototype.delegateEvents.call(this, events);
 		},
 
 		getLinkTypeValue: function(type) {

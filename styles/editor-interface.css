@@ -9546,6 +9546,10 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap {
 .ulinkpanel .upfront-field-select {
   width: 230px; }
 
+/* line 176, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
+.redactor-toolbar li.upfront-field-select-option {
+  float: none; }
+
 /* ----- New Editor bar ----- */
 /* line 2, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/editor-bar */
 .upfront-postcontent-editor {

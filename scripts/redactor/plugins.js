@@ -687,9 +687,9 @@ RedactorPlugins.upfrontIcons = function() {
                 });
                 var inserted = this.redactor.insert.node($icon[0], false); //inserted false instead of true to retain the selected content
                 this.redactor.code.sync();
-                
+
                 //var offset = this.redactor.caret.getOffset(); //existing caret position
-                
+
                 this.redactor.selection.restore();
 
                 this.closeToolbar();
@@ -753,16 +753,9 @@ RedactorPlugins.upfrontLink = function() {
                 open: 'open'
             },
             initialize: function () {
-                var me = this;
                 this.linkPanel = new Upfront.Views.Editor.LinkPanel({button: true});
                 this.bindEvents();
                 UeditorPanel.prototype.initialize.apply(this, arguments);
-
-               /* this.listenTo(this.linkPanel, 'link:ok', function() {
-                    console.log('now did this ever happen?');
-                    me.redactor.$element.closest('li').find('a.menu_item').trigger('blur');
-                    me.redactor.$element.closest('li').data('backboneview').saveLink(false, true);
-                });*/
             },
             render: function (options) {
                 options = options || {};
@@ -799,7 +792,7 @@ RedactorPlugins.upfrontLink = function() {
             },
             close: function (e, redactor) {
                 redactor.selection.restore();
-                
+
                 if(redactor.$element.hasClass('menu_item')) {
                     var menuitem = redactor.$element.closest('li').data('backboneview');
                     menuitem.model['being-edited'] = false;
