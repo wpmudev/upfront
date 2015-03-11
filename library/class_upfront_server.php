@@ -65,3 +65,4 @@ require_once('servers/class_upfront_accordion_presets_server.php');
 require_once('servers/class_upfront_server_post_image_variants.php');
 require_once('servers/class_upfront_markup_server.php');
 require_once('servers/class_upfront_editor_l10n_server.php');
+require_once('servers/class_upfront_plugin_compat_server.php');
