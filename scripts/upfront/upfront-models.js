@@ -441,9 +441,10 @@ var _alpha = "alpha",
 			});
 		},
 
-		index_container: function (model) {
-			var collection = this.filter(function(m){
-					return m.is_main();
+		index_container: function (model, excludes) {
+			var excludes = _.isArray(excludes) ? excludes : [excludes],
+				collection = this.filter(function(m){
+					return m.is_main() && ! _.contains(excludes, m.get('name'));
 				}),
 				index = collection.indexOf(model);
 			return index;
