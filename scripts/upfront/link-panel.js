@@ -25,31 +25,15 @@ define([
 			var types = opts.linkTypes || {};
 			this.linkTypes = _.extend({}, this.defaultLinkTypes, types);
 
-			if(!this.model || this.model.get('type') === false || this.model.get('type') === undefined)
+			if(!this.model || this.model.get('type') === false || this.model.get('type') === undefined) {
 				this.model = new Backbone.Model({type: 'unlink', url: ''});
+			}
 
 			this.theme = opts.theme || 'dark';
 
 			this.button = opts.button || false;
-		},
 
-		render: function() {
-			var me = this;
-			var anchors = this.anchors || this.getAnchors();
-
-			var tplData = {
-				link: this.model.toJSON(),
-				theme: this.theme,
-				checked: 'checked="checked"',
-				lightboxes: this.getLightBoxes(),
-				button: this.button,
-				type: this.model.get('type')
-			};
-
-			this.setCurrentClass(this.model.get('type'));
-
-			this.$el.html(this.tpl(tplData));
-
+			// Init type select
 			var typeValues = [];
 			_.each(this.linkTypes, function(use, type) {
 				if (!use) {
@@ -71,52 +55,82 @@ define([
 					me.render();
 				}
 			});
+		},
+
+		render: function() {
+			var me = this;
+			var anchors = this.anchors || this.getAnchors();
+
+			var tplData = {
+				link: this.model.toJSON(),
+				theme: this.theme,
+				checked: 'checked="checked"',
+				lightboxes: this.getLightBoxes(),
+				button: this.button,
+				type: this.model.get('type')
+			};
+
+			this.setCurrentClass(this.model.get('type'));
+
+			this.$el.html(this.tpl(tplData));
+
 			this.typeSelect.render();
 			this.$el.find('form').prepend(this.typeSelect.el);
 
 			if (this.model.get('type') == 'anchor') {
-				var anchorValues = [{label: 'Choose Anchor...', value: ''}];
-				_.each(this.getAnchors(), function(anchor) {
-					anchorValues.push({label: anchor.label, value: anchor.id});
-				});
-
-				var anchorValue = this.model.get('url');
-				anchorValue = anchorValue ? anchorValue : '';
-				anchorValue = anchorValue.match(/^#/) ? anchorValue : '';
-
-				this.anchorSelect = new Upfront.Views.Editor.Field.Select({
-					label: '',
-					values: anchorValues,
-					default_value: anchorValue,
-					change: function () {
-						me.model.set({'url': this.get_value()});
-					}
-				});
-				this.anchorSelect.render();
-				this.$el.find('.anchor-selector').append(this.anchorSelect.el);
+				this.renderAnchorSelect();
 			}
 			if (this.model.get('type') == 'lightbox' && this.getLightBoxes()) {
-				var lightboxValues = [{label: 'Choose Lightbox...', value: ''}];
-				_.each(this.getLightBoxes() || [], function(lightbox) {
-					lightboxValues.push({label: lightbox.label, value: lightbox.id});
-				});
-
-				var lightboxValue = this.model.get('url');
-				lightboxValue = lightboxValue ? lightboxValue : '';
-				lightboxValue = lightboxValue.match(/^#/) ? lightboxValue : '';
-
-				this.lightboxSelect = new Upfront.Views.Editor.Field.Select({
-					label: '',
-					values: lightboxValues,
-					default_value: lightboxValue,
-					change: function () {
-						me.model.set({'url': this.get_value()});
-					}
-				});
-				this.lightboxSelect.render();
-				this.$el.find('.lightbox-selector').append(this.lightboxSelect.el);
+				this.renderLightBoxesSelect();
 			}
 			this.delegateEvents();
+		},
+
+		renderAnchorSelect: function() {
+			var model = this.model;
+
+			var anchorValues = [{label: 'Choose Anchor...', value: ''}];
+			_.each(this.getAnchors(), function(anchor) {
+				anchorValues.push({label: anchor.label, value: anchor.id});
+			});
+
+			var anchorValue = this.model.get('url');
+			anchorValue = anchorValue ? anchorValue : '';
+			anchorValue = anchorValue.match(/^#/) ? anchorValue : '';
+
+			this.anchorSelect = new Upfront.Views.Editor.Field.Select({
+				label: '',
+				values: anchorValues,
+				default_value: anchorValue,
+				change: function () {
+					model.set({'url': this.get_value()});
+				}
+			});
+			this.anchorSelect.render();
+			this.$el.find('.anchor-selector').append(this.anchorSelect.el);
+		},
+
+		renderLightBoxesSelect: function() {
+			var model = this.model;
+			var lightboxValues = [{label: 'Choose Lightbox...', value: ''}];
+			_.each(this.getLightBoxes() || [], function(lightbox) {
+				lightboxValues.push({label: lightbox.label, value: lightbox.id});
+			});
+
+			var lightboxValue = this.model.get('url');
+			lightboxValue = lightboxValue ? lightboxValue : '';
+			lightboxValue = lightboxValue.match(/^#/) ? lightboxValue : '';
+
+			this.lightboxSelect = new Upfront.Views.Editor.Field.Select({
+				label: '',
+				values: lightboxValues,
+				default_value: lightboxValue,
+				change: function () {
+					model.set({'url': this.get_value()});
+				}
+			});
+			this.lightboxSelect.render();
+			this.$el.find('.lightbox-selector').append(this.lightboxSelect.el);
 		},
 
 		delegateEvents: function(events) {

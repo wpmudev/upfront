@@ -316,6 +316,7 @@ div.ugallery-label-selector {
 	z-index: 2;
 }
 
+.upfront-control-visible .ugallery-controls,
 .ugallery-controls.upfront-control-visible {
 	display: block;
 }
