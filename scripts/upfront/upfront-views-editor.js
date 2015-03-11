@@ -4287,9 +4287,7 @@ var Field_ToggleableText = Field_Text.extend({
 		},
 
 		onOptionClick: function(e) {
-			console.log('option clicked');
 			if ( !this.multiple ) {
-				console.log('not multiple');
 				e.stopPropagation();
 				if ( $(this).closest('.upfront-field-select-option').hasClass('upfront-field-select-option-disabled') ) {
 					return;
@@ -4332,7 +4330,6 @@ var Field_ToggleableText = Field_Text.extend({
 		},
 
 		onChange: function() {
-			console.log('we changed');
 			this.update_select_display_value();
 			this.trigger('changed', this.get_value());
 		},
