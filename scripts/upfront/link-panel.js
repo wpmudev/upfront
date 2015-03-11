@@ -22,6 +22,7 @@ define([
 		},
 
 		initialize: function(opts) {
+			var me = this;
 			var types = opts.linkTypes || {};
 			this.linkTypes = _.extend({}, this.defaultLinkTypes, types);
 
