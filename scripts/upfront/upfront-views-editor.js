@@ -4279,70 +4279,95 @@ var Field_ToggleableText = Field_Text.extend({
 	}));
 
 	var Field_Select = Field_Multiple.extend(_.extend({}, Upfront_Scroll_Mixin, {
-		selected_state: 'checked',
-		className: 'upfront-field-wrap upfront-field-wrap-select',
-		render: function () {
-			var me = this;
+		events: {
+			'click .upfront-field-select-value': 'openOptions',
+			'mouseup .upfront-field-select': 'onMouseUp',
+			'change .upfront-field-select-option input': 'onChange',
+			'click .upfront-field-select-option label': 'onOptionClick'
+		},
 
-			this.$el.html('');
-			if ( this.label )
-				this.$el.append(this.get_label_html());
-			this.$el.append(this.get_field_html());
-			//if ( !this.multiple ) {
-				this.$el.on('click', '.upfront-field-select-value', function(e){
-					console.log('clicked on select, should open now');
-					e.stopPropagation();
-					if ( me.options.disabled )
-						return;
-					$('.upfront-field-select-expanded').removeClass('upfront-field-select-expanded');
-					me.$el.find('.upfront-field-select').css('min-width', '').css('min-width', me.$el.find('.upfront-field-select').width());
-					me.$el.find('.upfront-field-select').addClass('upfront-field-select-expanded');
-
-					// Make sure all select options are visible in scroll panel i.e. scroll scroll panel as needed
-					_.delay(function() { // Delay because opening animation causes wrong outerHeight results
-						var $scroll_panel,
-							scroll_panel_bottom,
-							$select_options,
-							options_bottom;
-
-						$scroll_panel = me.$el.parents('.upfront-settings_panel_scroll');
-						if ($scroll_panel) {
-							scroll_panel_bottom = ($scroll_panel.offset()?$scroll_panel.offset().top:0) + $scroll_panel.outerHeight();
-							$select_options = me.$el.find('.upfront-field-select-options');
-							options_bottom =  $select_options.offset().top + $select_options.outerHeight();
-							$scroll_panel.scrollTop(options_bottom-$scroll_panel.outerHeight());
-						}
-					}, 500);
-				});
-				if ( !this.multiple ) {
-					this.$el.on('click', '.upfront-field-select-option label', function(e){
-						e.stopPropagation();
-						if ( $(this).closest('.upfront-field-select-option').hasClass('upfront-field-select-option-disabled') )
-							return;
-						me.$el.find('.upfront-field-select').removeClass('upfront-field-select-expanded');
-					});
+		onOptionClick: function(e) {
+			console.log('option clicked');
+			if ( !this.multiple ) {
+				console.log('not multiple');
+				e.stopPropagation();
+				if ( $(this).closest('.upfront-field-select-option').hasClass('upfront-field-select-option-disabled') ) {
+					return;
 				}
-				this.$el.on('mouseup', '.upfront-field-select', function(e){
-					e.stopPropagation();
-				});
-			//}
-			this.$el.on('change', '.upfront-field-select-option input', function() {
-				me.update_select_display_value();
-				me.trigger('changed', me.get_value());
-			});
+				if ( $(e.currentTarget).siblings('input').not(':checked')) {
+					$(e.currentTarget).siblings('input').click();
+				}
+				this.$el.find('.upfront-field-select').removeClass('upfront-field-select-expanded');
+			}
+		},
+
+		openOptions: function(e) {
+			e.stopPropagation();
+			if ( this.options.disabled )
+				return;
+			$('.upfront-field-select-expanded').removeClass('upfront-field-select-expanded');
+			this.$el.find('.upfront-field-select').css('min-width', '').css('min-width', this.$el.find('.upfront-field-select').width());
+			this.$el.find('.upfront-field-select').addClass('upfront-field-select-expanded');
+
+			// Make sure all select options are visible in scroll panel i.e. scroll scroll panel as needed
+			var me = this;
+			_.delay(function() { // Delay because opening animation causes wrong outerHeight results
+				var $scroll_panel,
+					scroll_panel_bottom,
+					$select_options,
+					options_bottom;
+
+				$scroll_panel = me.$el.parents('.upfront-settings_panel_scroll');
+				if ($scroll_panel) {
+					scroll_panel_bottom = ($scroll_panel.offset()?$scroll_panel.offset().top:0) + $scroll_panel.outerHeight();
+					$select_options = me.$el.find('.upfront-field-select-options');
+					options_bottom =  $select_options.offset().top + $select_options.outerHeight();
+					$scroll_panel.scrollTop(options_bottom-$scroll_panel.outerHeight());
+				}
+			}, 500);
+		},
+
+		onMouseUp: function(e){
+			e.stopPropagation();
+		},
+
+		onChange: function() {
+			console.log('we changed');
+			this.update_select_display_value();
+			this.trigger('changed', this.get_value());
+		},
+
+		selected_state: 'checked',
+
+		className: 'upfront-field-wrap upfront-field-wrap-select',
+
+		render: function () {
+			this.$el.html('');
+
+			if ( this.label ) {
+				this.$el.append(this.get_label_html());
+			}
+			this.$el.append(this.get_field_html());
+
 			this.stop_scroll_propagation(this.$el.find('.upfront-field-select-options'));
-			if ( ! this.multiple && ! this.get_saved_value() )
+
+			if ( ! this.multiple && ! this.get_saved_value() ) {
 				this.$el.find('.upfront-field-select-option:eq(0) input').prop('checked', true);
+			}
 
 			this.update_select_display_value();
 
-			if ( this.options.width )
+			if ( this.options.width ) {
 				this.$el.find('.upfront-field-select').css('width', this.options.width);
+			}
 
-			if (this.options.additional_classes) this.$el.addClass(this.options.additional_classes);
+			if (this.options.additional_classes) {
+				this.$el.addClass(this.options.additional_classes);
+			}
 
 			this.trigger('rendered');
 		},
+
 		update_select_display_value: function() {
 			var select_label = ( this.options.select_label ) ? this.options.select_label : ( this.options.placeholder ? this.options.placeholder : '' );
 			var $select_value = this.$el.find('.upfront-field-select-value');
