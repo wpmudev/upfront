@@ -296,9 +296,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 	createLinkControl: function(image){
 		var me = this,
-			control = new Upfront.Views.Editor.InlinePanels.DialogControl();
+			linkControl = new Upfront.Views.Editor.InlinePanels.DialogControl();
 
-		control.view = new Upfront.Views.Editor.LinkPanel({
+		linkControl.view = new Upfront.Views.Editor.LinkPanel({
 			model: new Backbone.Model({
 				type: image.get('urlType'),
 				url: image.get('url')
@@ -306,22 +306,22 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			linkTypes: {image:true}
 		});
 
-		control.image = image;
+		linkControl.image = image;
 
-		me.listenTo(control, 'panel:ok', function() {
+		me.listenTo(linkControl, 'panel:ok', function() {
 			//call the panel linkOk method to let it parse the link,
 			// later the link:ok event will be emitted and we will use it to
 			// save the link.
-			control.view.linkOk();
+			linkControl.view.linkOk();
 		});
 
-		me.listenTo(control.view, 'link:ok', function(){
-			me.updateLink(control);
+		me.listenTo(linkControl.view, 'link:ok', function(){
+			me.updateLink(linkControl);
 		});
 
-		me.listenTo(control, 'panel:open', function(){
-			control.$el
-				.closest('.ugallery-controls')
+		me.listenTo(linkControl, 'panel:open', function(){
+			linkControl.$el
+				.parents('.ugallery_item')
 					.addClass('upfront-control-visible').end()
 				.closest('.ugallery_link')
 					.removeAttr('href') //Deactivate link when the panel is open
@@ -330,36 +330,36 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			me.$el.closest('.ui-draggable').draggable('disable');
 		});
 
-		me.listenTo(control, 'panel:close', function(){
-			control.$el
-				.closest('.ugallery-controls')
+		me.listenTo(linkControl, 'panel:close', function(){
+			linkControl.$el
+				.parents('.ugallery_item')
 					.removeClass('upfront-control-visible').end()
 				.closest('.ugallery_link')
-					.attr('href', control.image.get('url'))
+					.attr('href', linkControl.image.get('url'))
 			;
 
 			me.$el.closest('.ui-draggable').draggable('enable');
 
 			//Roll back the view, ready for reopen.
-			control.view.render();
+			linkControl.view.render();
 		});
 
-		me.listenTo(control.view, 'link:postselected', function(linkData){
-			control.image.set({
+		me.listenTo(linkControl.view, 'link:postselected', function(linkData){
+			linkControl.image.set({
 				urlType: linkData.type,
 				ur: linkData.url
 			});
 
-			control.view.model.set(linkData);
-			control.view.render();
-			control.open();
+			linkControl.view.model.set(linkData);
+			linkControl.view.render();
+			linkControl.open();
 		});
 
-		control.icon = 'link';
-		control.tooltip = l10n.ctrl.image_link;
-		control.id = 'link';
+		linkControl.icon = 'link';
+		linkControl.tooltip = l10n.ctrl.image_link;
+		linkControl.id = 'link';
 
-		return control;
+		return linkControl;
 	},
 
 	updateLink: function(control){
@@ -1087,7 +1087,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 					label.id = newLabel.id;
 				}
 			});
-			
+
 			me.render();
 		});
 

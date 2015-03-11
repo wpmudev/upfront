@@ -4291,9 +4291,12 @@ var Field_ToggleableText = Field_Text.extend({
 				if ( $(this).closest('.upfront-field-select-option').hasClass('upfront-field-select-option-disabled') ) {
 					return;
 				}
+
+				// Make sure that input is clicked (for some reason in redactor toolbar this does not work naturally)
 				if ( $(e.currentTarget).siblings('input').not(':checked')) {
 					$(e.currentTarget).siblings('input').click();
 				}
+
 				this.$el.find('.upfront-field-select').removeClass('upfront-field-select-expanded');
 			}
 		},

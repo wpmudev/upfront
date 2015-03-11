@@ -1496,7 +1496,7 @@ input.upfront-field-text:hover, .upfront-field-text:focus {
 
 /* line 111, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-object-content div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap ul label, .upfront-field-select {
-  display: inline-block;
+  display: block;
   height: 26px;
   max-height: 26px;
   margin: 0;
@@ -9395,71 +9395,79 @@ div.sp-replacer:before {
   float: left; }
 
 /* line 15, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
+.ulinkpanel .ulinkpanel-external-wrap {
+  margin: 0; }
+
+/* line 19, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
+.ulinkpanel .ulinkpanel-external-wrap input {
+  margin: 0 0 3px 0; }
+
+/* line 23, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
 .ulinkpanel-external-wrap {
   width: 100%; }
 
-/* line 20, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
-.ulinkpanel-image-wrap, .ulinkpanel-entry-wrap {
+/* line 27, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
+.ulinkpanel-image-wrap {
   width: 120px; }
 
-/* line 25, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
+/* line 32, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
 .ulinkpanel-anchor-wrap, .ulinkpanel-lightbox-wrap {
   width: 110px; }
 
-/* line 30, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
+/* line 37, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
 .ulinkpanel div.ulinkpanel-image-wrap, .ulinkpanel div.ulinkpanel-lightbox-wrap {
   margin-bottom: 0; }
 
-/* line 35, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
+/* line 42, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
 .ulinkpanel-selected-entry .ulinkpanel-entry-wrap, .ulinkpanel-selected-entry .ulinkpanel-anchor-wrap {
   margin-bottom: 2px; }
 
-/* line 39, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
+/* line 46, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
 .ulinkpanel .upfront-field-radio {
   margin-right: 5px; }
 
-/* line 43, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
+/* line 50, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
 .ulinkpanel-external-wrap label {
   width: 30px;
   display: inline-block; }
 
-/* line 48, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
-.ulinkpanel #ulinkpanel-link-url {
-  width: 170px;
-  padding: 2px 4px;
-  height: 18px; }
-
 /* line 55, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
+.ulinkpanel #ulinkpanel-link-url {
+  width: 230px;
+  padding: 2px 4px;
+  height: 24px; }
+
+/* line 62, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
 a.ulinkpanel-entry-url, a.ulinkpanel-entry-url:link {
   display: block;
   width: 100%;
-  margin-bottom: 12px;
+  margin-bottom: 2px;
   font-size: 13px;
   float: left;
   line-height: 1em;
   color: #7c9dbf; }
 
-/* line 65, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
+/* line 72, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
 a.ulinkpanel-entry-url:hover {
   color: #3ea; }
 
-/* line 69, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
+/* line 76, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
 .ueditor-placeholder {
   opacity: 0.5; }
 
-/* line 73, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
+/* line 80, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
 .ulinkpanel-anchor-selector {
   height: 18px;
   width: 100%; }
 
-/* line 78, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
+/* line 85, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
 #ulinkpanel-lightbox-extra {
   width: 100%;
   clear: both;
   font-size: 13px;
   line-height: 15px; }
 
-/* line 85, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
+/* line 92, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
 #ulinkpanel-create-lightbox {
   color: #7c9dbf;
   border: 1px solid #7c9dbf;
@@ -9470,31 +9478,31 @@ a.ulinkpanel-entry-url:hover {
   float: right;
   margin-top: 5px; }
 
-/* line 96, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
+/* line 103, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
 #ulinkpanel-create-lightbox:hover {
   color: #30475e;
   border: 1px solid #3ea; }
 
-/* line 101, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
+/* line 108, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
 .ulinkpanel-dark #ulinkpanel-create-lightbox:hover {
   color: #cbe5ff; }
 
-/* line 106, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
+/* line 113, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
 .ulinkpanel-new-lightbox, .ulinkpanel-lightbox-selector {
   margin-top: 5px; }
 
-/* line 110, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
+/* line 117, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
 .ulinkpanel-lightbox-selector {
   border: 1px solid #7c9dbf; }
 
-/* line 114, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
+/* line 121, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
 .ulinkpanel input.ulinkpanel-lightbox-input {
   height: 21px;
   background: #fff;
   margin-right: 2px;
   vertical-align: top; }
 
-/* line 121, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
+/* line 128, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
 .ulinkpanel a.ulinkpanel-lightbox-cancel {
   background-image: url('../img/uf-core-el-sprite.png');
   background-image: url('../img/uf-core-el-sprite.svg'), none;
@@ -9504,49 +9512,49 @@ a.ulinkpanel-entry-url:hover {
   height: 18px;
   opacity: 0.7; }
 
-/* line 133, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
+/* line 140, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
 .ulinkpanel a.ulinkpanel-lightbox-cancel:hover {
   opacity: 0.9; }
 
-/* line 137, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
+/* line 144, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
 div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap {
   color: #cbe5ff; }
 
-/* line 141, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
+/* line 148, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
 .ulinkpanel-dark a.ulinkpanel-entry-url, .ulinkpanel-dark a.ulinkpanel-entry-url:link {
   color: #00db8f; }
 
-/* line 145, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
+/* line 152, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
 .ulinkpanel-dark a.ulinkpanel-entry-url:hover {
   color: #3ea; }
 
-/* line 149, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
+/* line 156, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
 .ulinkpanel-dark .upfront-field-radio {
   border-color: #85a9cb; }
 
-/* line 153, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
+/* line 160, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
 .ulinkpanel-dark .upfront-field-radio:checked {
   border-color: #fff;
   background: #00db8f; }
 
-/* line 158, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
+/* line 165, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
 .ulinkpanel-dark .ulinkpanel-title {
   color: #cbe5ff; }
 
-/* line 162, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
+/* line 169, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
 .ulinkpanel-dark .upfront-settings-button_panel {
   bottom: -36px;
   right: 0; }
 
-/* line 168, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
+/* line 175, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
 .ulinkpanel .anchor-selector {
   clear: both; }
 
-/* line 172, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
+/* line 179, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
 .ulinkpanel .upfront-field-select {
   width: 230px; }
 
-/* line 176, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
+/* line 183, /home/spoygg/IncsubProjects/www/wordpress-default/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
 .redactor-toolbar li.upfront-field-select-option {
   float: none; }
 

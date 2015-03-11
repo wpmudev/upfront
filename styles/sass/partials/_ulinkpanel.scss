@@ -12,12 +12,19 @@
 	float: left;
 }
 
+.ulinkpanel .ulinkpanel-external-wrap {
+	margin: 0;
+}
+
+.ulinkpanel .ulinkpanel-external-wrap input {
+	margin: 0 0 3px 0;
+}
+
 .ulinkpanel-external-wrap {
 	width: 100%;
 }
 
-.ulinkpanel-image-wrap,
-.ulinkpanel-entry-wrap {
+.ulinkpanel-image-wrap {
 	width: 120px;
 }
 
@@ -46,16 +53,16 @@
 }
 
 .ulinkpanel #ulinkpanel-link-url {
-	width: 170px;
+	width: 230px;
 	padding: 2px 4px;
-	height: 18px;
+	height: 24px;
 }
 
 a.ulinkpanel-entry-url,
 a.ulinkpanel-entry-url:link {
 	display: block;
 	width: 100%;
-	margin-bottom: 12px;
+	margin-bottom: 2px;
 	font-size: 13px;
 	float: left;
 	line-height: 1em;
