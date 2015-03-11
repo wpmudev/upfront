@@ -7999,7 +7999,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 
 				var collection = this.model.collection,
 					index = collection.indexOf(this.model),
-					index_container = collection.index_container(this.model),
+					index_container = collection.index_container(this.model, ['shadow', 'lightbox']),
 					total_container = collection.total_container(['shadow', 'lightbox']), // don't include shadow and lightbox region
 					is_top = index_container == 0,
 					is_bottom = index_container == total_container-1,
@@ -9189,7 +9189,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				return panels; // Same as this - "return false" doesn't play well here.
 			}
 			var // Well, all is goog with the collection, so carry on as intended...
-				index_container = collection.index_container(this.model),
+				index_container = collection.index_container(this.model, ['shadow', 'lightbox']),
 				total_container = collection.total_container(['shadow', 'lightbox']), // don't include shadow and lightbox region
 				is_top = index_container == 0,
 				is_bottom = index_container == total_container-1,
