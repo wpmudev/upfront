@@ -189,7 +189,7 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 /* dark UI overwrtites */
 
 .ulinkpanel-dark .upfront-field-select,
-.ulinkpanel-dark .upfront-field-select:hover, 
+.ulinkpanel-dark .upfront-field-select:hover,
 .ulinkpanel-dark .upfront-field-select-options,
 .ulinkpanel-dark #ulinkpanel-link-url {
 	border-color:#263A4D;
@@ -197,4 +197,17 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 .ulinkpanel-dark .no-lightboxes-msg {
 	font:normal 11px/13px verdana, sans-serif;
 	color:#FF8787;
+}
+
+.ui-resizable-autohide.upfront-control-visible .uimage-controls {
+	display: block;
+}
+
+.uimage-control-panel-content .ulinkpanel .upfront-field-select label,
+.uimage-control-panel-content .ulinkpanel-dark .upfront-field-select label {
+	color: #606f99;
+}
+.uimage-control-panel-content .ulinkpanel .upfront-field-select li:hover label,
+.uimage-control-panel-content .ulinkpanel-dark .upfront-field-select li:hover label {
+	color: inherit;
 }

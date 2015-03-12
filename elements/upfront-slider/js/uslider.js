@@ -579,21 +579,15 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			control = new Upfront.Views.Editor.InlinePanels.DialogControl()
 		;
 
-		control.view = new Upfront.Views.Editor.LinkPanel({
-			model: new Backbone.Model({
-				type: slide.get('urlType'),
-				url: slide.get('url')
-			}),
-			linkTypes: {image:true}
+		control.view = linkPanel = new Upfront.Views.Editor.LinkPanel({
+			linkType: slide.get('urlType'),
+			linkUrl: slide.get('url'),
+			linkTypes: { image: true },
+			imageUrl: slide.get('srcFull')
 		});
 
-		control.slide = slide;
-
-		me.listenTo(control, 'panel:ok', function(){
-			//call the panel linkOk method to let it parse the link,
-			// later the link:ok event will be emitted and we will use it to
-			// save the link.
-			control.view.linkOk();
+		this.listenTo(control, 'panel:ok', function(){
+			control.close();
 		});
 
 		me.listenTo(control, 'panel:open', function(){
@@ -613,28 +607,17 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				.closest('.uimage-controls')
 					.removeClass('upfront-control-visible').end()
 				.closest('.uslider-link')
-					.attr('href', control.slide.get('url'))
+					.attr('href', slide.get('url'))
 			;
 
 			me.$el.closest('.ui-draggable').draggable('enable');
-
-			//Roll back the view, ready for reopen.
-			control.view.render();
 		});
 
-		me.listenTo(control.view, 'link:postselected', function(linkData){
-			control.slide.set({
-				urlType: linkData.type,
-				ur: linkData.url
-			}, {silent: true});
-
-			control.view.model.set(linkData);
-			control.view.render();
-			control.open();
-		});
-
-		me.listenTo(control.view, 'link:ok', function(){
-			me.updateLink(control);
+		me.listenTo(linkPanel, 'change', function(data) {
+			slide.set({
+				urlType: data.type,
+				url: data.url
+			});
 		});
 
 		control.icon = 'link';
@@ -642,25 +625,6 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		control.id = 'link';
 
 		return control;
-	},
-
-	updateLink: function(control){
-		var data = control.view.getCurrentValue();
-
-		if(!data){
-			return;
-		}
-
-		if(data.type == 'image')
-			data.url = control.slide.get('srcFull');
-
-		control.slide.set({
-			urlType: data.type,
-			url: data.url
-		});
-
-		control.view.model.set(data);
-		control.render().close();
 	},
 
 	getElementColumns: function(){

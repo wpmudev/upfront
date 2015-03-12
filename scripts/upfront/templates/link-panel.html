@@ -2,7 +2,12 @@
 <form>
 {[if(type == 'external') { ]}
 <div class="upfront-field-wrap ulinkpanel-external-wrap">
-	<input type="text" value="{{link.url}}" id="ulinkpanel-link-url" placeholder="Type link URL" class="upfront-field-text js-ulinkpanel-input-url js-ulinkpanel-input-external">
+	<input type="text" value="{{link.url}}" placeholder="Type link URL" class="upfront-field-text js-ulinkpanel-input-url js-ulinkpanel-input-external">
+</div>
+{[ } ]}
+{[if(type == 'email') { ]}
+<div class="upfront-field-wrap ulinkpanel-external-wrap">
+	<input type="text" value="{{link.url}}" placeholder="johnsmith@example.com" class="upfront-field-text js-ulinkpanel-input-url js-ulinkpanel-input-external">
 </div>
 {[ } ]}
 {[if(type == 'entry') { ]}
@@ -15,15 +20,15 @@
 </div>
 {[ } ]}
 {[if(type == 'lightbox') { ]}
-<div id="ulinkpanel-lightbox-extra" class="js-ulinkpanel-input-url js-ulinkpanel-input-lightbox clearfix">
+<div class="js-ulinkpanel-input-url js-ulinkpanel-input-lightbox clearfix">
 	{[ if(lightboxes.length) { ]}
 		<div class="lightbox-selector">
 		</div>
 	{[ } else { ]}
-		<div>No lightboxes found</div>
+		<div class="no-lightboxes-msg">No lightboxes found</div>
 		<div class="js-ulinkpanel-new-lightbox ulinkpanel-new-lightbox">
 			<div class="ulinkpanel-title">Create lightbox</div>
-			<input type="text" name="new_lightbox" id="ulinkpanel-new-lightbox" class="upfront-field upfront-field-text upfront-field-empty ulinkpanel-lightbox-input js-ulinkpanel-lightbox-input" value="" placeholder="{{Upfront.Settings.l10n.global.content.lightbox_name}}" />
+			<input type="text" name="new_lightbox" class="upfront-field upfront-field-text upfront-field-empty ulinkpanel-lightbox-input js-ulinkpanel-lightbox-input" value="" placeholder="{{Upfront.Settings.l10n.global.content.lightbox_name}}" />
 		</div>
 	{[ } ]}
 </div>

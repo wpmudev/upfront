@@ -242,9 +242,9 @@ class Upfront_Server_LayoutRevisions extends Upfront_Server {
 			$concurrent_users[$user->ID] = $user->display_name;
 		}
 
-		$preview_url = remove_query_arg('editmode', add_query_arg(array(
+		$preview_url = add_query_arg(array(
 			self::HOOK => $layout_id_key,
-		), $current_url));
+		), $current_url);
 		$this->_out(new Upfront_JsonResponse_Success(array(
 			'html' => $preview_url,
 			'concurrent_users' => $concurrent_users,

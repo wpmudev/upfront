@@ -345,7 +345,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 
 		//console.log(this.property('currentpreset'));
 		var preset = Upfront.Views.Editor.Button.Presets.get(this.property('currentpreset'));
-		if(preset && preset.get('theme_style'))
+		if(preset.get('theme_style'))
 			this.$el.children('.upfront-object').addClass(preset.get('theme_style'));
 	},
 	showPlaceholder: function() {

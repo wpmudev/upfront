@@ -40,4 +40,21 @@ jQuery(function($){
 			setHeight($(this).find('.uslider-texts'));
 		});
 	}, 300);
+
+	var magOptions = {
+		type: 'image',
+		gallery: {
+			enabled: 'true',
+			tCounter: '<span class="mfp-counter">%curr% / %total%</span>'
+		},
+		titleSrc: 'title',
+		verticalFit: true,
+		image: {
+			titleSrc: 'title',
+			verticalFit: true
+		}
+	};
+	$('.uslider').each( function() {
+		$(this).find('.uslider_lightbox_link').magnificPopup(magOptions);
+	});
 });

@@ -221,73 +221,44 @@ define([
 
 		createLinkControl: function(){
 			var me = this,
-				control = new Upfront.Views.Editor.InlinePanels.DialogControl();
+				control = new Upfront.Views.Editor.InlinePanels.DialogControl(),
+				linkPanel;
 
-			control.view = new Upfront.Views.Editor.LinkPanel({
-				model: new Backbone.Model({
-					type: this.property('when_clicked'),
-					url: this.property('image_link')
-				}),
-				linkTypes: {image:true}
+			control.view = linkPanel = new Upfront.Views.Editor.LinkPanel({
+				linkType: this.property('when_clicked'),
+				linkUrl: this.property('image_link'),
+				linkTypes: { image: true },
+				imageUrl: this.property('srcFull')
 			});
 
-			me.listenTo(control, 'panel:ok', function(){
-				//call the panel linkOk method to let it parse the link,
-				// later the link:ok event will be emitted and we will use it to
-				// save the link.
-				control.view.linkOk();
+			this.listenTo(control, 'panel:ok', function() {
+				control.close();
 			});
-
-			me.listenTo(control.view, 'link:ok', function(data){
-				me.updateLink(data, control.view);
-			});
-
-
-			me.listenTo(control, 'panel:open', function(){
-				me.controls.$el.parent().addClass('upfront-control-visible');
+			this.listenTo(control, 'panel:open', function() {
+				console.log('lskfjslkjfs', me.controls.$el.parent());
 				me.$el.closest('.ui-draggable').draggable('disable');
+				_.delay( function() {
+					me.controls.$el.parent().parent().addClass('upfront-control-visible');
+				}, 1000);
 			});
 
 			me.listenTo(control, 'panel:close', function(){
-				me.controls.$el.parent().removeClass('upfront-control-visible');
+				me.controls.$el.parent().parent().removeClass('upfront-control-visible');
 				me.$el.closest('.ui-draggable').draggable('enable');
-				//Roll back the view, ready for reopen.
-				control.view.render();
 			});
 
-			me.listenTo(control.view, 'link:postselected', function(linkData){
-				me.property('when_clicked', linkData.type);
-				me.property('image_link', linkData.url);
-				control.view.model.set(linkData);
-				control.view.render();
-				control.open();
-			});
-
-			me.listenTo(control.view, 'link:ok', me.updateLink);
+			me.listenTo(linkPanel, 'change', me.updateLink);
 
 			control.icon = 'link';
 			control.tooltip = l10n.ctrl.image_link;
 			control.id = 'link';
 
-			this.linkControl = control;
-
 			return control;
 		},
 
-		updateLink: function(data, view){
-			if(!view) {
-				view = this.linkControl.view;
-			}
+		updateLink: function(data) {
 			this.property('when_clicked', data.type);
-			if(data.type === 'image') {
-				data.url = this.property('srcFull');
-			}
 			this.property('image_link', data.url);
-
-			view.model.set(data);
-			view.render();
-
-			this.linkControl.close();
 
 			this.render();
 		},
