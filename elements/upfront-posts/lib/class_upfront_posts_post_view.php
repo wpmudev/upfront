@@ -26,7 +26,7 @@ class Upfront_Posts_PostView {
 	);
 
 	public function __construct ($data=array()) {
-		$this->_data = $data;
+		$this->_data = apply_filters('upfront_posts-view-data', $data);
 	}
 
 	/**

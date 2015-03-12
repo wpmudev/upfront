@@ -168,6 +168,8 @@ class Upfront_Posts_Model_Custom extends Upfront_Posts_Model {
 			$args['posts_per_page'] = 1;
 		}
 
+		$args = apply_filters('upfront_posts-model-custom-args', $args, $data);
+
 		return new WP_Query($args);
 	}
 	public static function get_posts ($data) {

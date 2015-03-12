@@ -31,6 +31,7 @@ class Upfront_Posts_PostsView {
 	 * @return string Final posts element markup.
 	 */
 	public static function get_markup ($data) {
+		$data = apply_filters('upfront_posts-view-data', $data);
 		$posts = self::get_posts_markup($data);
 
 		if (!empty($posts)) {
