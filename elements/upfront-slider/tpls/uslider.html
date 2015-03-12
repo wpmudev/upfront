@@ -9,7 +9,7 @@
 			rel="<?php echo $slides[$i]['id'] ?>">
 
 			<?php if($slides[$i]['url']){ ?>
-			<a href="<?php echo $slides[$i]['url'] ?>" class="uslider-link uslide-image">
+			<a href="<?php echo $slides[$i]['url'] ?>" class="uslider-link uslide-image <?php echo $slides[$i]['urlType'] == 'image' ? ' uslider_lightbox_link' : '' ?>">
 			<?php } else { ?>
 			<div class="uslide-image">
 			<?php } ?>

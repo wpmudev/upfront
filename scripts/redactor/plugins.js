@@ -760,8 +760,8 @@ RedactorPlugins.upfrontLink = function() {
             render: function (options) {
                 options = options || {};
                 this.linkPanel.model.set({
-                    url: options.url,
-                    type: options.link || this.guessLinkType(options.url)
+                    linkUrl: options.url,
+                    linkType: options.link || this.guessLinkType(options.url)
                 });
 
                 this.linkPanel.render();
@@ -811,7 +811,7 @@ RedactorPlugins.upfrontLink = function() {
                 else {
                     var text = this.redactor.selection.getHtml();
                     this.redactor.selection.restore();
-                    if ($.parseHTML(text).length > 1) {// there is html inside
+                    if (text !== '' && $.parseHTML(text).length > 1) {// there is html inside
                         this.redactor.insert.html(text, true);
                     } else {
                         this.redactor.link.unlink();
@@ -858,7 +858,7 @@ RedactorPlugins.upfrontLink = function() {
             },
 
             bindEvents: function () {
-                this.listenTo(this.linkPanel, 'link:ok', function (data) {
+                this.listenTo(this.linkPanel, 'change', function (data) {
                     if (data.type == 'unlink')
                         this.unlink();
                     else

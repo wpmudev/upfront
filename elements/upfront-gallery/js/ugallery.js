@@ -298,25 +298,22 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		var me = this,
 			linkControl = new Upfront.Views.Editor.InlinePanels.DialogControl();
 
-		linkControl.view = new Upfront.Views.Editor.LinkPanel({
-			model: new Backbone.Model({
-				type: image.get('urlType'),
-				url: image.get('url')
-			}),
-			linkTypes: {image:true}
+		linkControl.view = linkPanel = new Upfront.Views.Editor.LinkPanel({
+			linkType: image.get('urlType'),
+			linkUrl: image.get('url'),
+			linkTypes: { image: true },
+			imageUrl: image.get('srcFull')
 		});
 
-		linkControl.image = image;
-
-		me.listenTo(linkControl, 'panel:ok', function() {
-			//call the panel linkOk method to let it parse the link,
-			// later the link:ok event will be emitted and we will use it to
-			// save the link.
-			linkControl.view.linkOk();
+		me.listenTo(linkPanel, 'change', function(data){
+			image.set({
+				urlType: data.type,
+				url: data.url
+			});
 		});
 
-		me.listenTo(linkControl.view, 'link:ok', function(){
-			me.updateLink(linkControl);
+		this.listenTo(linkControl, 'panel:ok', function(){
+			linkControl.close();
 		});
 
 		me.listenTo(linkControl, 'panel:open', function(){
@@ -335,24 +332,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 				.parents('.ugallery_item')
 					.removeClass('upfront-control-visible').end()
 				.closest('.ugallery_link')
-					.attr('href', linkControl.image.get('url'))
+					.attr('href', image.get('url'))
 			;
 
 			me.$el.closest('.ui-draggable').draggable('enable');
-
-			//Roll back the view, ready for reopen.
-			linkControl.view.render();
-		});
-
-		me.listenTo(linkControl.view, 'link:postselected', function(linkData){
-			linkControl.image.set({
-				urlType: linkData.type,
-				ur: linkData.url
-			});
-
-			linkControl.view.model.set(linkData);
-			linkControl.view.render();
-			linkControl.open();
 		});
 
 		linkControl.icon = 'link';
@@ -360,26 +343,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		linkControl.id = 'link';
 
 		return linkControl;
-	},
-
-	updateLink: function(control){
-		var data = control.view.getCurrentValue();
-
-		if(!data){
-			return;
-		}
-
-		if (data.type === 'image') {
-			data.url = control.image.get('srcFull');
-		}
-
-		control.image.set({
-			urlType: data.type,
-			url: data.url
-		});
-
-		control.view.model.set(data);
-		control.render().close();
 	},
 
 	openLightbox: function(e) {
