@@ -163,7 +163,9 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 }
 
 .ulinkpanel-dark .ulinkpanel-title {
-	color: #cbe5ff;
+	color: #97B8DA;
+	font: normal 13px/16px Verdana, sans-serif;
+	margin-bottom:3px;
 }
 
 .ulinkpanel-dark .upfront-settings-button_panel{
@@ -182,4 +184,17 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 
 .redactor-toolbar li.upfront-field-select-option {
 	float: none;
+}
+
+/* dark UI overwrtites */
+
+.ulinkpanel-dark .upfront-field-select,
+.ulinkpanel-dark .upfront-field-select:hover, 
+.ulinkpanel-dark .upfront-field-select-options,
+.ulinkpanel-dark #ulinkpanel-link-url {
+	border-color:#263A4D;
+}
+.ulinkpanel-dark .no-lightboxes-msg {
+	font:normal 11px/13px verdana, sans-serif;
+	color:#FF8787;
 }
