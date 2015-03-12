@@ -177,6 +177,13 @@ define(function() {
                         $el.addClass( class_name + class_size );
                 }
             },
+            col_to_width: function (col_cls) {
+            	if(!col_cls) return 0;
+
+                 var column_width = Upfront.Settings.LayoutEditor.Grid.column_width,
+                	col_class = Upfront.Settings.LayoutEditor.Grid.class;
+                return parseInt(col_cls.replace(col_class, ""), 10) * column_width;
+            },
             width_to_col: function (width, ceil) {
                 ceil = typeof  ceil === "undefined" ? false : ceil;
 				width = parseInt( width, 10 );
