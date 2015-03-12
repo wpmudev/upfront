@@ -44,6 +44,7 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
         variant_id : "",
         style: {
             label_id: "",
+            label: "",
             vid: "",
             caption: {
 <<<<<<< HEAD
@@ -106,7 +107,7 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
             ;
 
         if (!data) return false;
-        if( !data.caption || !data.caption.show || this.$('.wp-caption-text').length === 0) return;
+        if( !data.caption || !this.data.get("show_caption") || this.$('.wp-caption-text').length === 0) return;
 
 
         //.attr('contenteditable', true)
@@ -121,6 +122,7 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
                 autostart: true,
                 pastePlainText: true,
                 buttons: [],
+                inserst: {},
                 placeholder: self.defaultData.caption,
                 focus: false
             })
@@ -253,7 +255,8 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
          * Toggle Caption
          */
         this.listenTo(this.controls, 'control:click:toggle_caption', function(control){
-            this.data.set("show_caption", 1 - parseInt( this.data.get("show_caption"), 10 ) );
+            me.data.set("show_caption", 1 - parseInt( me.data.get("show_caption"), 10 ) );
+            console.log(me.data.get("show_caption"));
         });
 <<<<<<< HEAD
 
@@ -409,14 +412,15 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
     // Parse the content of the post looking for image insert elements.
     // conentElement: jQuery object representing the post content.
     // insertsData: Insert data stored by the editor.
-    importInserts: function(contentElement, insertsData){
+    importInserts: function(contentElement, insertsData, inserts){
         var me = this,
             images = contentElement.find('img'),
-            inserts = {}
+            _inserts = {}
             ;
 <<<<<<< HEAD
 
-        if( !contentElement.is(".wp-caption-text") ) this.$editor = contentElement;
+        if( !contentElement.is(".wp-caption-text") ) 
+            this.$editor = contentElement;
 
 =======
 >>>>>>> separate inserts into files
@@ -427,25 +431,29 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
                 ;
 
             if(wrapper.length) {
-                insert = me.importFromWrapper(wrapper, insertsData);
+                insert = me.importFromWrapper(wrapper, insertsData, inserts);
             } else {
                 insert = me.importFromImage($img);
             }
-            inserts[insert.data.id] = insert;
+            _inserts[insert.data.id] = insert;
         });
-        return inserts;
+        return _inserts;
     },
 
     //Import from image insert wrapper
-    importFromWrapper: function(wrapper, insertsData){
+    importFromWrapper: function(wrapper, insertsData, inserts){
         var id = wrapper.attr('id'),
             insert = false,
             align = false,
-            caption = false
+            caption = false,
+            child_class = ImageInsert
             ;
 
+        if( _.contains(inserts, "postImage") ){
+            child_class = PostImageInsert;
+        }
         if(insertsData[id]) {
-            insert = new ImageInsert({data: insertsData[id]});
+            insert = new child_class({data: insertsData[id]});
         } else {
             insert = this.importFromImage(wrapper.find('img'));
         }
@@ -740,11 +748,14 @@ var ImageProInsert = ImageInsertBase.extend({
 		}
 
 		imageData.title = image.attr('title');
-		imageData.caption = $caption.html();
-
+        if( !_.isEmpty( $caption.text() ) ){
+            imageData.caption =  $caption.html();
+        }
 
 		caption_order = $caption.prev( $image_wrapper).length ? 1 : 0;
-
+        if( $caption.length === 0){
+            caption_order = 1;
+        }
 		if(  $group.length ){
 			imageData.style = {
 				caption: {
@@ -1103,15 +1114,18 @@ var ImageInsert = ImageInsertBase.extend({
         }
 
         imageData.title = image.attr('title');
-        imageData.caption = $caption.html();
+        if( !_.isEmpty( $caption.text() ) ){
+            imageData.caption =  $caption.html();
+        }
+        
 
 
         caption_order = $caption.prev( $image_wrapper).length ? 1 : 0;
-
+        imageData.show_caption = $caption.length;
         if(  $group.length ){
             imageData.style = {
                 caption: {
-                    "order": caption_order,
+                    "order": 1,
                     "height": $caption.css("minHeight") ? $caption.css("minHeight").replace("px", "") : $caption.height(),
                     "width_cls": Upfront.Util.grid.derive_column_class( caption_classes ),
                     "left_cls": Upfront.Util.grid.derive_marginleft_class( caption_classes ),
