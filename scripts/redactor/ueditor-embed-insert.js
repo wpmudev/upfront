@@ -275,10 +275,7 @@ var EmbedViews = {
 		events: { click: 'propagate_apply' },
 		propagate_apply: function (e) {
 			e.stopPropagation();
-<<<<<<< HEAD
             e.preventDefault();
-=======
->>>>>>> separate inserts into files
 			this.trigger("done");
 		},
 		render: function () {
