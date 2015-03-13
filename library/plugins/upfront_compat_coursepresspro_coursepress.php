@@ -50,6 +50,12 @@ class Upfront_Compat_Coursepresspro_Coursepress implements IUpfront_Server {
 		// Set up specific layout triggering
 	}
 
+	public function override_courses_data ($data) {
+		$data["list_type"] = "generic"; 
+		$data["pagination"] = "numeric";
+		return $data;
+	}
+
 	public function override_course_data ($data) {
 		$course_id = get_queried_object_id();
 		if (empty($course_id)) return $data;
@@ -57,12 +63,19 @@ class Upfront_Compat_Coursepresspro_Coursepress implements IUpfront_Server {
 		$data["content"] = "content"; 
 		$data["list_type"] = "custom"; 
 		$data["display_type"] = "single"; 
-		$data["pagination"] = "none"; 
+		$data["pagination"] = "none";
 		$data["posts_list"] = json_encode(array(array(
 			'id' => $course_id
 		)));
 
 		return $data;
+	}
+
+	public function override_courses_query_args ($args) {
+		$args['post_type'] = 'course';
+		$args['post_status'] = 'publish';
+
+		return $args;
 	}
 
 	public function override_course_query_args ($args) {
