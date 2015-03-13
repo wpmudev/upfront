@@ -7,16 +7,10 @@ define([
 
 
 var ImageInsertBase = Insert.UeditorInsert.extend({
-<<<<<<< HEAD
     $editor: false,
     caption_active: false,
     type: 'image',
     className: 'ueditor-insert upfront-inserted_image-wrapper',
-=======
-    caption_active: false,
-    type: 'image',
-    className: 'ueditor-insert upfront-inserted_image-wrapper ueditor-insert-variant',
->>>>>>> separate inserts into files
     tpl: _.template($(tpls).find('#image-insert-tpl').html()),
     resizable: false,
     defaultData: {
@@ -24,17 +18,11 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
         show_caption: 1,
         imageFull: {src:'', width:100, height: 100},
         imageThumb: {src:'', width:100, height: 100},
-<<<<<<< HEAD
         selectedImage: {src:'', width:100, height: 100},
         linkType: 'do_nothing',
         linkUrl: '',
         isLocal: 1,
         alignment: { vid: "center", label: "Center" },
-=======
-        linkType: 'do_nothing',
-        linkUrl: '',
-        isLocal: 1,
->>>>>>> separate inserts into files
         externalImage: {
             top: 0,
             left: 0,
@@ -44,10 +32,8 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
         variant_id : "",
         style: {
             label_id: "",
-            label: "",
             vid: "",
             caption: {
-<<<<<<< HEAD
                 "order": 1,
                 "height": 50,
                 "width_cls": "",
@@ -59,32 +45,14 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
                 "float": "none",
                 "width_cls": "",
                 "left_cls": "ml0",
-=======
-                "order": 0,
-                "height": 50,
-                "width_cls": "",
-                "left_cls": "",
-                "top_cls": "",
-                "show": 1
-            },
-            group: {
-                "float": "",
-                "width_cls": "",
-                "left_cls": "",
->>>>>>> separate inserts into files
                 "height": 0,
                 "marginRight": 0,
                 "marginLeft": 0
             },
             image: {
                 "width_cls": "",
-<<<<<<< HEAD
                 "left_cls": "ml0",
                 "top_cls": "mt0",
-=======
-                "left_cls": "",
-                "top_cls": "",
->>>>>>> separate inserts into files
                 "src": "",
                 "height": 0
             }
@@ -107,7 +75,7 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
             ;
 
         if (!data) return false;
-        if( !data.caption || !this.data.get("show_caption") || this.$('.wp-caption-text').length === 0) return;
+        if( !data.caption || !data.caption.show || this.$('.wp-caption-text').length === 0) return;
 
 
         //.attr('contenteditable', true)
@@ -122,7 +90,6 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
                 autostart: true,
                 pastePlainText: true,
                 buttons: [],
-                inserst: {},
                 placeholder: self.defaultData.caption,
                 focus: false
             })
@@ -255,15 +222,11 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
          * Toggle Caption
          */
         this.listenTo(this.controls, 'control:click:toggle_caption', function(control){
-            me.data.set("show_caption", 1 - parseInt( me.data.get("show_caption"), 10 ) );
-            console.log(me.data.get("show_caption"));
+            this.data.set("show_caption", 1 - parseInt( this.data.get("show_caption"), 10 ) );
         });
-<<<<<<< HEAD
 
         if( typeof this.control_events === "function")
             this.control_events();
-=======
->>>>>>> separate inserts into files
     },
 
     updateControlsPosition: function(){
@@ -287,11 +250,7 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
             data = this.data.toJSON()
             ;
 
-<<<<<<< HEAD
         data.image = this.get_proper_image();
-=======
-        data.image = data.imageFull;
->>>>>>> separate inserts into files
 
         this.data.set('width', this.$el.width(), {silent: true});
         this.data.trigger('update');
@@ -309,10 +268,7 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
             grid = Upfront.Settings.LayoutEditor.Grid
             ;
 
-<<<<<<< HEAD
         
-=======
->>>>>>> separate inserts into files
         data.style = data.style || {
             image_col: 0,
             group: '',
@@ -359,7 +315,6 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
                 title: imagePost.post_tite,
                 imageFull: imagePost.image,
                 imageThumb: this.getThumb(imagePost.additional_sizes),
-<<<<<<< HEAD
                 selectedImage: _.isUndefined( imagePost.selected_size ) ? imagePost.image : _.filter(imagePost.additional_sizes, function( size ){
                     var dimensions = imagePost.selected_size.toLowerCase().split("x"),
                         width = dimensions[0],
@@ -369,12 +324,6 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
                 linkType: 'do_nothing',
                 linkUrl: '',
                 align: 'center'
-=======
-                linkType: 'do_nothing',
-                linkUrl: '',
-                align: 'center',
-                captionPosition: 'nocaption'
->>>>>>> separate inserts into files
             })
             ;
         return imageData;
@@ -417,13 +366,9 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
             images = contentElement.find('img'),
             _inserts = {}
             ;
-<<<<<<< HEAD
 
-        if( !contentElement.is(".wp-caption-text") ) 
-            this.$editor = contentElement;
+        if( !contentElement.is(".wp-caption-text") ) this.$editor = contentElement;
 
-=======
->>>>>>> separate inserts into files
         images.each(function(){
             var $img = $(this),
                 wrapper = $img.closest('.upfront-inserted_image-wrapper'),
@@ -476,11 +421,7 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
     getStyleView: function(){
         if(this.styleView)
             return this.styleView;
-<<<<<<< HEAD
         var view = new PostImageStylesView( this.data );
-=======
-        var view = new ImageStylesView( this.data );
->>>>>>> separate inserts into files
         this.styleView = view;
         return view;
     },
@@ -502,10 +443,6 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
         return src;
     },
 
-<<<<<<< HEAD
-=======
-
->>>>>>> separate inserts into files
     calculateImageResize: function(wrapperSize, imageSize){
         var pivot = imageSize.width / imageSize.height > wrapperSize.width / wrapperSize.height ? 'height' : 'width',
             factor = imageSize[pivot] / wrapperSize[pivot],
@@ -525,13 +462,10 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
 });
 
 
-<<<<<<< HEAD
 var PostImageInsert = ImageInsertBase.extend({
     className: 'ueditor-insert upfront-inserted_image-wrapper ueditor-insert-variant ueditor-post-image-insert',
     tpl: _.template($(tpls).find('#post-image-insert-tpl').html()),
-=======
-var ImageProInsert = ImageInsertBase.extend({
->>>>>>> separate inserts into files
+
 	//Called just after initialize
 	init: function(){
 		this.controlsData = [
@@ -551,11 +485,6 @@ var ImageProInsert = ImageInsertBase.extend({
 			var imageData = me.getImageData(result);
 			imageData.id = me.data.id;
 			me.data.clear({silent: true});
-<<<<<<< HEAD
-			imageData.style =  Upfront.Content.ImageVariants.length ?  Upfront.Content.ImageVariants.first().toJSON() : me.defaultData.style;
-=======
-			imageData.style =  Upfront.Content.ImageVariants.length ?  Upfront.Content.ImageVariants.first().toJSON() : this.defaultData.style;
->>>>>>> separate inserts into files
 			imageData.variant_id = imageData.style.vid;
 			me.data.set(imageData);
 
@@ -563,19 +492,6 @@ var ImageProInsert = ImageInsertBase.extend({
 
 		return promise;
 	},
-<<<<<<< HEAD
-=======
-	apply_classes: function (d) {
-		if (!d) return false;
-		var grid = Upfront.Settings.LayoutEditor.Grid;
-		d.height = d.row * grid.baseline;
-		d.width_cls = grid.class + d.col;
-		d.left_cls = grid.left_margin_class + d.left;
-		if ( d.top )
-			d.top_cls = grid.top_margin_class + d.top;
-		d.clear_cls = d.clear ? 'clr' : '';
-	},
->>>>>>> separate inserts into files
 	// Insert editor UI
 	render: function(){
 		var data = _.extend( {}, this.defaultData, this.data.toJSON() ),
@@ -587,14 +503,6 @@ var ImageProInsert = ImageInsertBase.extend({
         data.style.label_id = data.style.label && data.style.label.trim() !== "" ? "ueditor-image-style-" +  data.style.label.toLowerCase().trim().replace(" ", "-") : data.style.vid;
 		data.image = this.get_proper_image();
 
-<<<<<<< HEAD
-=======
-
-		//this.apply_classes( data.style.group );
-		//this.apply_classes( data.style.image );
-		//this.apply_classes( data.style.caption );
-
->>>>>>> separate inserts into files
         if( data.show_caption == 0 ){
             data.style.image.width_cls = Upfront.Settings.LayoutEditor.Grid.class + 24;
         }
@@ -640,38 +548,7 @@ var ImageProInsert = ImageInsertBase.extend({
 	},
 
 	//this function is called automatically by UEditorInsert whenever the controls are created or refreshed
-<<<<<<< HEAD
 	control_events: function(){
-		var me = this;
-=======
-	controlEvents: function(){
-		var me = this;
-		this.stopListening(this.controls);
-
-		this.listenTo(this.controls, 'control:ok:link', function(view, control){
-			var url = view.$('input[type=text]').val(),
-				type = view.$('input[type=radio]:checked').val() || 'do_nothing',
-				linkData = {}
-				;
-			if ("external" === type && !(url.match(/https?:\/\//) || url.match(/\/\/:/))) {
-				// ... check if we want an external URL
-				url = url.match(/^www\./) || url.match(/\./)
-					? 'http://' + url
-					: url
-				;
-			}
-			linkData = {
-				linkType: type,
-				linkUrl: url
-			};
-
-			this.data.set(linkData);
-			view.model.set(linkData);
-			control.close();
-		});
-
-
->>>>>>> separate inserts into files
 		/**
 		* Image style from variants
 		*/
@@ -684,16 +561,7 @@ var ImageProInsert = ImageInsertBase.extend({
             }
             control.close();
         });
-<<<<<<< HEAD
-=======
 
-        /**
-         * Toggle Caption
-         */
-        this.listenTo(this.controls, 'control:click:toggle_caption', function(control){
-            this.data.set("show_caption", 1 - parseInt( this.data.get("show_caption"), 10 ) );
-        });
->>>>>>> separate inserts into files
 	},
 
 	//Import from any image tag
@@ -789,11 +657,7 @@ var ImageProInsert = ImageInsertBase.extend({
 		}
 
 
-<<<<<<< HEAD
 		var insert = new PostImageInsert({data: imageData});
-=======
-		var insert = new ImageProInsert({data: imageData});
->>>>>>> separate inserts into files
 
 		insert.render();
 		image.replaceWith(insert.$el);
@@ -801,7 +665,6 @@ var ImageProInsert = ImageInsertBase.extend({
 	}
 });
 
-<<<<<<< HEAD
 var BasicImageVariants =  _([
             { vid: "center", label: "Center"  },
             { vid: "left", label: "Left"  },
@@ -825,48 +688,23 @@ var ImageInsert = ImageInsertBase.extend({
     },
     // The user want a new insert. Fetch all the required data to create a new image insert
     start: function( $el ){
-=======
-var ImageInsert = ImageInsertBase.extend({
-    //Called just after initialize
-    init: function(){
-        this.controlsData = [
-            {id: 'style', type: 'dialog', icon: 'style', tooltip: 'Style', view: this.getStyleView()},
-            {id: 'link', type: 'dialog', icon: 'link', tooltip: 'Link image', view: this.getLinkView()},
-            {id: 'toggle_caption', type: 'simple', icon: 'caption', tooltip: 'Toggle Caption', active: _.bind( this.get_caption_state, this ) }
-        ];
-        this.createControls();
-    },
-    // The user want a new insert. Fetch all the required data to create a new image insert
-    start: function(){
->>>>>>> separate inserts into files
+
         var me = this,
             promise = Upfront.Media.Manager.open({multiple_selection: false})
             ;
 
-<<<<<<< HEAD
-
-=======
->>>>>>> separate inserts into files
         promise.done(function(popup, result){
             var imageData = me.getImageData(result);
             imageData.id = me.data.id;
             me.data.clear({silent: true});
-<<<<<<< HEAD
             imageData.style =  me.defaultData.style;
             imageData.variant_id = "basic-image";
             me.$editor = $el.closest(".redactor-box");
             me.data.set(imageData);
-=======
-            imageData.style =  Upfront.Content.ImageVariants.length ?  Upfront.Content.ImageVariants.first().toJSON() : this.defaultData.style;
-            imageData.variant_id = imageData.style.vid;
-            me.data.set(imageData);
-
->>>>>>> separate inserts into files
         });
 
         return promise;
     },
-<<<<<<< HEAD
     // Insert editor UI
     render: function(){
         var data = _.extend( {}, this.defaultData, this.data.toJSON() ),
@@ -886,33 +724,7 @@ var ImageInsert = ImageInsertBase.extend({
 
 
         data.style.group.width_cls = this.get_group_width_cls( data.image );
-=======
-    apply_classes: function (d) {
-        if (!d) return false;
-        var grid = Upfront.Settings.LayoutEditor.Grid;
-        d.height = d.row * grid.baseline;
-        d.width_cls = grid.class + d.col;
-        d.left_cls = grid.left_margin_class + d.left;
-        if ( d.top )
-            d.top_cls = grid.top_margin_class + d.top;
-        d.clear_cls = d.clear ? 'clr' : '';
-    },
-    // Insert editor UI
-    render: function(){
-        var data = _.extend( {}, this.defaultData, this.data.toJSON() ),
-            style_variant = data.style;
 
-        if( !style_variant ) return;
-        //data.style = style_variant && style_variant.toJSON ? style_variant.toJSON() : {}; // Force this to be POJ object
-
-        data.style.label_id = data.style.label && data.style.label.trim() !== "" ? "ueditor-image-style-" +  data.style.label.toLowerCase().trim().replace(" ", "-") : data.style.vid;
-        data.image = this.get_proper_image();
-
-
-        //this.apply_classes( data.style.group );
-        //this.apply_classes( data.style.image );
-        //this.apply_classes( data.style.caption );
->>>>>>> separate inserts into files
 
         if( data.show_caption == 0 ){
             data.style.image.width_cls = Upfront.Settings.LayoutEditor.Grid.class + 24;
@@ -949,11 +761,8 @@ var ImageInsert = ImageInsertBase.extend({
         this.$el
             .html(this.tpl(data))
         ;
-<<<<<<< HEAD
         this.create_controlls( data.style.group.width_cls );
-=======
-        this.createControls();
->>>>>>> separate inserts into files
+
         this.controls.render();
         this.$(".ueditor-insert-variant-group").append(this.controls.$el);
         this.make_caption_editable();
@@ -962,7 +771,6 @@ var ImageInsert = ImageInsertBase.extend({
 
     },
 
-<<<<<<< HEAD
     allow_alignment: function( group_width_cls ){
         if( typeof group_width_cls === "undefined" ) return false;
 
@@ -974,55 +782,20 @@ var ImageInsert = ImageInsertBase.extend({
     //this function is called automatically by UEditorInsert whenever the controls are created or refreshed
     control_events: function(){
         var me = this;
-=======
-    //this function is called automatically by UEditorInsert whenever the controls are created or refreshed
-    controlEvents: function(){
-        var me = this;
-        this.stopListening(this.controls);
-
-        this.listenTo(this.controls, 'control:ok:link', function(view, control){
-            var url = view.$('input[type=text]').val(),
-                type = view.$('input[type=radio]:checked').val() || 'do_nothing',
-                linkData = {}
-                ;
-            if ("external" === type && !(url.match(/https?:\/\//) || url.match(/\/\/:/))) {
-                // ... check if we want an external URL
-                url = url.match(/^www\./) || url.match(/\./)
-                    ? 'http://' + url
-                    : url
-                ;
-            }
-            linkData = {
-                linkType: type,
-                linkUrl: url
-            };
-
-            this.data.set(linkData);
-            view.model.set(linkData);
-            control.close();
-        });
-
->>>>>>> separate inserts into files
 
         /**
          * Image style from variants
          */
         this.listenTo(this.controls, 'control:ok:style', function(view, control){
             if( view._style ){
-<<<<<<< HEAD
                 this.data.set("variant_id", view.variant_id );
                 this.data.set("alignment", view._style );
-=======
-                var style = view._style.toJSON();
-                this.data.set("variant_id", view.variant_id );
-                this.data.set("style", view._style.toJSON());
->>>>>>> separate inserts into files
+
                 view.data.set( "selected", view.variant_id   );
             }
             control.close();
         });
 
-<<<<<<< HEAD
     },
     get_group_width_cls: function( image ){
         var image_col = Upfront.Util.grid.width_to_col( image.width),
@@ -1045,16 +818,6 @@ var ImageInsert = ImageInsertBase.extend({
 
         return image;
     },
-=======
-        /**
-         * Toggle Caption
-         */
-        this.listenTo(this.controls, 'control:click:toggle_caption', function(control){
-            this.data.set("show_caption", 1 - parseInt( this.data.get("show_caption"), 10 ) );
-        });
-    },
-
->>>>>>> separate inserts into files
     //Import from any image tag
     importFromImage: function(image){
         //var imageData = Upfront.Util.clone(this.defaultData),
@@ -1071,21 +834,14 @@ var ImageInsert = ImageInsertBase.extend({
             $caption = $group.find(".wp-caption-text"),
             caption_classes = $caption.attr("class"),
             $image_wrapper = $group.find(".uinsert-image-wrapper"),
-<<<<<<< HEAD
             image_wrapper_classes = $image_wrapper.attr("class")
-=======
-            image_wrapper_classes = $image_wrapper.attr("class"),
             caption_order = 1
->>>>>>> separate inserts into files
+
             ;
 
         if(link.origin != window.location.origin)
             imageData.isLocal = 0;
 
-<<<<<<< HEAD
-=======
-        this.calculateRealSize(imageSpecs.src);
->>>>>>> separate inserts into files
 
         imageData.imageThumb = imageSpecs;
         imageData.imageFull = {
@@ -1149,7 +905,6 @@ var ImageInsert = ImageInsertBase.extend({
                 }
             };
             imageData.variant_id = $group.data("variant");
-<<<<<<< HEAD
             if( imageData.variant_id  ){
                 imageData.alignment = BasicImageVariants.findWhere( { "vid": $group.data("variant") } );
             }
@@ -1160,20 +915,11 @@ var ImageInsert = ImageInsertBase.extend({
 
 
         var insert = new ImageInsert({data: imageData});
-=======
-        }else{
-            imageData.style = Upfront.Content.ImageVariants.first().toJSON();
-            imageData.variant_id = imageData.style.vid;
-        }
 
-
-        var insert = new ImageProInsert({data: imageData});
->>>>>>> separate inserts into files
 
         insert.render();
         image.replaceWith(insert.$el);
         return insert;
-<<<<<<< HEAD
     },
     getStyleView: function(){
         if(this.styleView)
@@ -1181,8 +927,7 @@ var ImageInsert = ImageInsertBase.extend({
         var view = new ImageStylesView( this.data );
         this.styleView = view;
         return view;
-=======
->>>>>>> separate inserts into files
+
     }
 });
 var LinkView = Backbone.View.extend({
@@ -1226,11 +971,8 @@ var LinkView = Backbone.View.extend({
 			return types;
 		}
 	});
-<<<<<<< HEAD
 var PostImageStylesView = Backbone.View.extend({
-=======
-var ImageStylesView = Backbone.View.extend({
->>>>>>> separate inserts into files
+
     tpl: _.template($(tpls).find('#image-style-tpl').html()),
     initialize: function( options ){
         this.data = new Backbone.Model();
@@ -1257,7 +999,6 @@ var ImageStylesView = Backbone.View.extend({
     }
 });
 
-<<<<<<< HEAD
 var ImageStylesView = Backbone.View.extend({
     tpl: _.template($(tpls).find('#image-style-tpl').html()),
     initialize: function( options ){
@@ -1286,10 +1027,6 @@ var ImageStylesView = Backbone.View.extend({
 });
 return {
     PostImageInsert: PostImageInsert,
-=======
-return {
-    ImageProInsert: ImageProInsert,
->>>>>>> separate inserts into files
     ImageInsert: ImageInsert
 };
 
