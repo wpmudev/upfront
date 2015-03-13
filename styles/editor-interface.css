@@ -2451,6 +2451,10 @@ div.uinsert-selector a:hover {
 .ueditor-insert.upfront-inserted_image-basic-wrapper, .ueditor-insert.upfront-inserted_image-basic-wrapper:hover {
   margin: 0 -15px; }
 
+/* line 295, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/ueditor-inserts */
+.upfront-inserted_image-basic-wrapper .ueditor-insert {
+  margin-top: -15px; }
+
 /* line 1, /Users/samnajian/Sites/upfront.dev/wp-content/themes/upfront/styles/sass/partials/region */
 .upfront-region-container {
   position: relative;
