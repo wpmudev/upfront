@@ -6612,6 +6612,7 @@ var CSSEditor = Backbone.View.extend({
 	},
 
 	stylesAddSelector: function(contents, selector) {
+		if (this.is_global_stylesheet && empty(selector)) return contents;
 		var me = this,
 			rules = contents.split('}'),
 			processed = ''
