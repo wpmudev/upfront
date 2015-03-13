@@ -91,6 +91,7 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
                 pastePlainText: true,
                 buttons: [],
                 placeholder: self.defaultData.caption,
+                inserts:[],
                 focus: false
             })
             .attr('contenteditable', false)
@@ -230,18 +231,13 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
     },
 
     updateControlsPosition: function(){
-        var width = this.data.get('width'),
-            caption = this.data.get('captionPosition'),
-            imageWidth = this.data.get('imageThumb').width,
+        var width = Upfront.Util.grid.col_to_width( this.data.get('style').group.width_cls ),
             controls = this.controls.$el,
             margin = 0
             ;
 
-        if(caption == 'left')
-            margin = Math.min(width - imageWidth + (imageWidth / 2) - (controls.width() / 2), width - controls.width());
-        else
-            margin = Math.max(0, imageWidth / 2 - controls.width() / 2);
-
+        margin =   ( width - controls.width()  )  / 2;
+        
         controls.css('margin-left', margin + 'px');
     },
 
@@ -928,6 +924,12 @@ var ImageInsert = ImageInsertBase.extend({
         this.styleView = view;
         return view;
 
+    },
+    updateControlsPosition: function(){
+        this.controls.$el.css({
+            marginLeft: 15,
+            marginTop:15
+        });
     }
 });
 var LinkView = Backbone.View.extend({
