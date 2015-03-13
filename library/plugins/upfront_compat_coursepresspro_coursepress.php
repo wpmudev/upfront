@@ -31,11 +31,16 @@ class Upfront_Compat_Coursepresspro_Coursepress implements IUpfront_Server {
 
 	public function _dispatch_course_overrides () {
 		$course_id = get_queried_object_id();
-		if (empty($course_id)) return false;
-
-		add_filter('upfront-entity_resolver-entity_ids', create_function('$cascade', '$cascade["type"] = "archive"; return $cascade;'));
-		add_filter('upfront_posts-view-data', array($this, 'override_course_data'));
-		add_filter('upfront_posts-model-custom-args', array($this, 'override_course_query_args'));
+		if (empty($course_id)) {
+			// Archive
+			add_filter('upfront_posts-view-data', array($this, 'override_courses_data'));
+			add_filter('upfront_posts-model-generic-args', array($this, 'override_courses_query_args'));
+		} else {
+			// Single
+			add_filter('upfront-entity_resolver-entity_ids', create_function('$cascade', '$cascade["type"] = "archive"; return $cascade;'));
+			add_filter('upfront_posts-view-data', array($this, 'override_course_data'));
+			add_filter('upfront_posts-model-custom-args', array($this, 'override_course_query_args'));
+		}
 	}
 
 	public function _dispatch_unit_overrides () {
