@@ -62,7 +62,11 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
         "click .ueditor-insert-remove": "click_remove"
     },
     get_caption_state: function(){
-        return 1 - parseInt( this.data.get("show_caption"), 10 );
+       if( this.data.get("show_caption")){
+         return 0
+        }else{
+            return 1;
+        }
     },
     click_remove: function( e ){
         e.preventDefault();
@@ -223,7 +227,11 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
          * Toggle Caption
          */
         this.listenTo(this.controls, 'control:click:toggle_caption', function(control){
-            this.data.set("show_caption", 1 - parseInt( this.data.get("show_caption"), 10 ) );
+            var new_state = 1;
+            if( this.data.get("show_caption") )
+                new_state = 0;
+            
+            this.data.set("show_caption", new_state);
         });
 
         if( typeof this.control_events === "function")

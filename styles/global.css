@@ -439,5 +439,5 @@ div.upfront-region-lightbox .upfront-icon-popup-close, div.upfront-region-side-l
     position: relative;
 }
 .upfront-object-content p{
-  margin-bottom: 15px;
+  margin:0 0 15px 0;
 }
