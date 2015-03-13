@@ -704,7 +704,10 @@ define(function() {
 					.find("#upfront-popup-close").on("click", close_func).end()
 				;
 				if ( classname ) { 
-					this.$popup.addClass( classname );  
+					this.$popup
+						.addClass(classname)
+						.data("classname", classname)
+					;  
 				}
 
 				$('body').addClass('upfront-popup-open');
@@ -752,6 +755,12 @@ define(function() {
 			this.$popup.find("#upfront-popup-bottom").empty();
 
 			$('body').removeClass('upfront-popup-open');
+
+			// Clean up the passed classname
+			var classname = this.$popup.data("classname");
+			if (classname) {
+				this.$popup.removeClass(classname);
+			}
 
 			Upfront.Events.trigger('popup:closed');
 
