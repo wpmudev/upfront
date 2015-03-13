@@ -45,8 +45,8 @@ a.ueditor-action-pickercancel{
 	display: none;
 }
 
-.upfront-module-editing .ueditor-insert:hover .upfront-inline-panel,
-.upfront-module-editing .ueditor-insert .upfront-inline-panel.uinsert-control-visible {
+.redactor-box .ueditor-insert:hover .upfront-inline-panel,
+.redactor-box .ueditor-insert .upfront-inline-panel.uinsert-control-visible {
 	display: block;
 }
 
@@ -256,7 +256,7 @@ div.uinsert-selector a:hover {
   top: 5px;
   display: none;
 }
-.upfront-module-editing .ueditor-insert-variant-group:hover .ueditor-insert-remove{
+.redactor-box .ueditor-insert-variant-group:hover .ueditor-insert-remove{
   display: block;
 }
 
@@ -288,9 +288,14 @@ div.uinsert-selector a:hover {
 .upfront-inserted_image-wrapper .ueditor-image-style-center{
   margin: 0 auto;
 }
-
 .ueditor-insert.upfront-inserted_image-basic-wrapper, .ueditor-insert.upfront-inserted_image-basic-wrapper:hover{
-  margin:0 -15px;
+	margin:0;
+}
+.upfront-inserted_image-basic-wrapper .ueditor-image-style-left{
+	margin-left:-15px;
+}
+.upfront-inserted_image-basic-wrapper .ueditor-image-style-right{
+	margin-right:-15px;
 }
 .upfront-inserted_image-basic-wrapper .ueditor-insert{
 	margin-top:-15px;

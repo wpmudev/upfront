@@ -258,7 +258,7 @@ define([
 			$content.ueditor({
 				linebreaks: false,
 				autostart: false,
-				inserts: {},
+				inserts:["image", "embed"],
 				placeholder: false
 			})
 				.on('start', function () {

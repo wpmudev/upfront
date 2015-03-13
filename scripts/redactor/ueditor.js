@@ -917,7 +917,7 @@ Ueditor.prototype = {
 		if(!this.insertManager)
 			return {};
 
-		_.each(this.insertManager.insertsData, function(insert){
+		_.each(this.insertManager._inserts, function(insert){
 			insertsData[insert.data.id] = insert.data.toJSON();
 		});
 
