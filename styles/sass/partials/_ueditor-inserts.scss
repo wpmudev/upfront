@@ -45,8 +45,8 @@ a.ueditor-action-pickercancel{
 	display: none;
 }
 
-.ueditor-insert:hover .upfront-inline-panel,
-.ueditor-insert .upfront-inline-panel.uinsert-control-visible {
+.upfront-module-editing .ueditor-insert:hover .upfront-inline-panel,
+.upfront-module-editing .ueditor-insert .upfront-inline-panel.uinsert-control-visible {
 	display: block;
 }
 
@@ -256,7 +256,7 @@ div.uinsert-selector a:hover {
   top: 5px;
   display: none;
 }
-.ueditor-insert-variant-group:hover .ueditor-insert-remove{
+.upfront-module-editing .ueditor-insert-variant-group:hover .ueditor-insert-remove{
   display: block;
 }
 
