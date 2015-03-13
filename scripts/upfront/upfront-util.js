@@ -639,7 +639,7 @@ define(function() {
 			if (!$("#upfront-popup").length) {
 				$("#page")
 					.append('<div id="upfront-popup" class="upfront-ui" style="display:none">' +
-						'<div id="upfront-popup-close" class="upfront-icon upfront-icon-popup-close"></div>' +
+						'<div id="upfront-popup-close" class="upfront-icon upfront-icon-popup-close">&times;</div>' +
 						'<div class="upfront-popup-meta" id="upfront-popup-top">' +
 						'</div>' +
 						'<div id="upfront-popup-content"></div>' +
