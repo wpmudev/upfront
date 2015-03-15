@@ -393,7 +393,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 				return apply_filters('upfront_layout_from_id', $layout, self::id_to_type($id), self::$cascade);
 			}
 		}
-
+$id= false;
 		// If we're out of the loop and still empty, we really have to be doing something now...
 		if (!$layout || ($layout && $layout->is_empty())) {
 			$layout = self::from_files(array(), $cascade, $storage_key);
