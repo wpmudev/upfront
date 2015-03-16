@@ -454,8 +454,9 @@ var Views = {
 						ext = urlParts[urlParts.length - 1],
 						size = imageModel.get('selected_size')
 					;
-					if(size != 'full')
+					if (size && size != 'full') {
 						url = url.replace(new RegExp('.' + ext + '$'), '-' + size + '.' + ext);
+					}
 
 					me.currentEditor.insert('<img src="' + url + '" >');
 				}
