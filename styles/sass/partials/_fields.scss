@@ -107,7 +107,6 @@ input.upfront-field-text:hover,
 	border: 1px solid rgb(163, 191, 217);
 	border-radius: 3px;
 }
-.upfront-object-content div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap ul label,
 .upfront-field-select {
 	display: block;
 	height: 26px;
@@ -120,6 +119,13 @@ input.upfront-field-text:hover,
 	position: relative;
 	overflow: hidden;
 	cursor: pointer;
+}
+.upfront-object-content .ulinkpanel-dark ul,
+.upfront-object-content .ulinkpanel ul {
+	color: rgb(96, 127, 153);
+	font-size: 11px;
+	font-family: verdana, sans-serif;
+	line-height: 22px;
 }
 .upfront-field-select-disabled {
 	border-color: rgb(153, 181, 204);
