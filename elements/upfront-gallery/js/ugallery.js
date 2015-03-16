@@ -301,14 +301,16 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		linkControl.view = linkPanel = new Upfront.Views.Editor.LinkPanel({
 			linkType: image.get('urlType'),
 			linkUrl: image.get('url'),
+			linkTarget: image.get('linkTarget'),
 			linkTypes: { image: true },
 			imageUrl: image.get('srcFull')
 		});
 
-		me.listenTo(linkPanel, 'change', function(data){
+		me.listenTo(linkPanel, 'change change:target', function(data){
 			image.set({
 				urlType: data.type,
-				url: data.url
+				url: data.url,
+				linkTarget: data.target
 			});
 		});
 
