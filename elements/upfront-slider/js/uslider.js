@@ -582,6 +582,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		control.view = linkPanel = new Upfront.Views.Editor.LinkPanel({
 			linkType: slide.get('urlType'),
 			linkUrl: slide.get('url'),
+			linkTarget: slide.get('linkTarget'),
 			linkTypes: { image: true },
 			imageUrl: slide.get('srcFull')
 		});
@@ -616,8 +617,15 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		me.listenTo(linkPanel, 'change', function(data) {
 			slide.set({
 				urlType: data.type,
-				url: data.url
+				url: data.url,
+				linkTarget: data.target
 			});
+		});
+
+		me.listenTo(linkPanel, 'change:target', function(data) {
+			slide.set({linkTarget: data.target});
+			me.$el.find('.upfront-default-slider-item-current a')
+				.attr('target', data.target);
 		});
 
 		control.icon = 'link';

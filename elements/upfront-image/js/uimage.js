@@ -227,6 +227,7 @@ define([
 			control.view = linkPanel = new Upfront.Views.Editor.LinkPanel({
 				linkType: this.property('when_clicked'),
 				linkUrl: this.property('image_link'),
+				linkTarget: this.property('link_target'),
 				linkTypes: { image: true },
 				imageUrl: this.property('srcFull')
 			});
@@ -234,8 +235,8 @@ define([
 			this.listenTo(control, 'panel:ok', function() {
 				control.close();
 			});
+
 			this.listenTo(control, 'panel:open', function() {
-				console.log('lskfjslkjfs', me.controls.$el.parent());
 				me.$el.closest('.ui-draggable').draggable('disable');
 				_.delay( function() {
 					me.controls.$el.parent().parent().addClass('upfront-control-visible');
@@ -248,6 +249,10 @@ define([
 			});
 
 			me.listenTo(linkPanel, 'change', me.updateLink);
+			me.listenTo(linkPanel, 'change:target', function(data) {
+				me.property('link_target', data.target);
+				me.$el.find('a').attr('target', data.target);
+			});
 
 			control.icon = 'link';
 			control.tooltip = l10n.ctrl.image_link;
@@ -259,6 +264,7 @@ define([
 		updateLink: function(data) {
 			this.property('when_clicked', data.type);
 			this.property('image_link', data.url);
+			this.property('link_target', data.target);
 
 			this.render();
 		},
@@ -432,6 +438,7 @@ define([
 			props.size = this.temporaryProps.size;
 			props.position = this.temporaryProps.position;
 			props.marginTop = Math.max(0, -props.position.top);
+			props.link_target = props.link_target || '_self';
 
 			props.cover_caption = props.caption_position !== 'below_image';
 

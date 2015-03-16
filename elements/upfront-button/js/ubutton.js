@@ -243,6 +243,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			"content" : content,
 			"href" : this.model.get_property_value_by_name('href'),
 			"linktype" : this.guessLinkType(),
+			"linkTarget": this.property('linkTarget'),
 			"align" : this.model.get_property_value_by_name('align'),
 			"style_static" : style_static,
 			"style_hover" : style_hover,
@@ -310,14 +311,16 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		this.linkPanel = new Upfront.Views.Editor.LinkPanel({
 			linkUrl: this.property('href'),
 			linkType: this.guessLinkType(),
+			linkTarget: this.property('linkTarget'),
 			button: true
 		});
 
 		this.linkPanel.render();
 		this.$el.find('.linkingPanelGoesHere').html(this.linkPanel.el);
 		this.linkPanel.delegateEvents();
-		this.listenTo(this.linkPanel, 'change', function(data) {
+		this.listenTo(this.linkPanel, 'change change:target', function(data) {
 			me.property('href', data.url);
+			me.property('linkTarget', data.target);
 		});
 
 		var $target = this.$el.find('.upfront-object-content a.upfront_cta');

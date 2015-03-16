@@ -83,7 +83,7 @@ define([
 		initialize: function(options) {
 			// Make sure we have large image url if 'image' is one of link types
 			if (options.linkTypes && options.linkTypes.image && options.linkTypes.image === true && _.isUndefined(options.imageUrl)) {
-				throw 'Provide "imageUrl" if linkTypes: { image: true} when initializing LinkPanel.';
+				throw 'Provide "imageUrl" if "linkTypes" option has { image: true } when initializing LinkPanel.';
 			}
 
 			var me = this;
@@ -94,10 +94,14 @@ define([
 
 			this.model = new LinkModel({
 				type: options.linkType || 'unlink',
-				url: options.linkUrl || ''
+				url: options.linkUrl || '',
+				target: options.linkTarget || '_self'
 			});
 			this.listenTo(this.model, 'change:url', function() {
 				me.trigger('change', this.model.toJSON());
+			});
+			this.listenTo(this.model, 'change:target', function() {
+				me.trigger('change:target', this.model.toJSON());
 			});
 			this.listenTo(this.model, 'change:type', this.handleTypeChange);
 		},
@@ -210,7 +214,26 @@ define([
 				type: this.model.get('type')
 			};
 
-			// Init type select
+			this.$el.html(this.tpl(tplData));
+
+			this.renderTypeSelect();
+
+			if (this.model.get('type') == 'anchor') {
+				this.renderAnchorSelect();
+			}
+
+			if (this.model.get('type') == 'lightbox' && getLightBoxes()) {
+				this.renderLightBoxesSelect();
+			}
+
+			this.renderTargetRadio();
+
+			this.delegateEvents();
+		},
+
+		renderTypeSelect: function() {
+			var me = this;
+
 			var typeSelectValues = [];
 			_.each(this.linkTypes, function(use, type) {
 				if (!use) {
@@ -228,18 +251,28 @@ define([
 				}
 			});
 
-			this.$el.html(this.tpl(tplData));
-
 			this.typeSelect.render();
 			this.$el.find('form').prepend(this.typeSelect.el);
+		},
 
-			if (this.model.get('type') == 'anchor') {
-				this.renderAnchorSelect();
-			}
-			if (this.model.get('type') == 'lightbox' && getLightBoxes()) {
-				this.renderLightBoxesSelect();
-			}
-			this.delegateEvents();
+		renderTargetRadio: function() {
+			var me = this;
+
+			this.targetRadio = new Upfront.Views.Editor.Field.Radios({
+				label: 'Target:',
+				default_value: this.model.get('target') || '_self',
+				layout: 'horizontal-inline',
+				values: [
+					{ label: 'blank', value: '_blank' },
+					{ label: 'self', value: '_self' }
+				],
+				change: function () {
+					me.model.set({'target': this.get_value()});
+				}
+			});
+
+			this.targetRadio.render();
+			this.$el.find('form').append(this.targetRadio.el);
 		},
 
 		renderAnchorSelect: function() {
