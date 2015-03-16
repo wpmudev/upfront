@@ -1368,7 +1368,7 @@ var EmbedViews = {
 			Upfront.Media.Manager.open({
 				multiple_selection: false,
 				media_type: ["images"],
-				hold_editor: true
+				hold_editor: true //should not quite editor after image is selected
 			}).done(function (pop, result) {
 				if(!result) return;
 				var imageModel = result.models[0],
