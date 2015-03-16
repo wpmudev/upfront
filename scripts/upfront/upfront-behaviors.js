@@ -1860,6 +1860,15 @@ var GridEditor = {
 				wrap_top = false,
 				wrap_left = false,
 				insert_index = false;
+				
+			// Reset the column size if it's bigger than it allowed to
+			$wrap_els.each(function(index){
+				var wrap_el = ed.get_el($(this)),
+					col = ( !breakpoint || breakpoint.default ) ? ed.get_class_num(wrap_el.$el, ed.grid.class) : wrap_el.$el.data('breakpoint_col');
+				if ( wrap_el.col < col )
+					ed.update_model_margin_classes(wrap_el.$el, [ed.grid.class + wrap_el.col]);
+			});
+			
 			// Clear the wrapper when wrapper is rendered side-by-side, but the elements is not conflicting each other
 			$wrap_els.each(function(index){
 				var wrap_el = ed.get_el($(this)),
@@ -2402,7 +2411,8 @@ var GridEditor = {
 							return 0;
 						return each.grid.bottom;
 					}),
-					top = bottom_wrap.grid.bottom;
+					top = bottom_wrap.grid.bottom,
+					bottom_not_me = ( !me_wrap || ( bottom_wrap && me_wrap && bottom_wrap._id != me_wrap._id ) );
 				if ( can_drop(current_full_top, bottom) ){
 					ed.drops.push({
 						_id: ed._new_id(),
@@ -2411,7 +2421,7 @@ var GridEditor = {
 						left: area.grid.left,
 						right: area.grid.right,
 						priority: {
-							top: ( bottom_wrap && me_wrap && bottom_wrap._id != me_wrap._id && top > current_full_top ? top : current_full_top ),
+							top: ( bottom_not_me && top > current_full_top ? top : current_full_top ),
 							bottom: bottom,
 							left: area.grid.left,
 							right: area.grid.right,
