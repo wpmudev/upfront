@@ -753,16 +753,27 @@ RedactorPlugins.upfrontLink = function() {
                 open: 'open'
             },
             initialize: function () {
-                this.linkPanel = new Upfront.Views.Editor.LinkPanel({button: true});
-                this.bindEvents();
                 UeditorPanel.prototype.initialize.apply(this, arguments);
             },
             render: function (options) {
-                options = options || {};
-                this.linkPanel.model.set({
-                    linkUrl: options.url,
-                    linkType: options.link || this.guessLinkType(options.url)
-                });
+							options = options || {};
+
+							this.linkPanel = new Upfront.Views.Editor.LinkPanel({
+								linkUrl: options.url,
+								linkType: options.link || this.guessLinkType(options.url),
+								linkTarget: options.target || '_self',
+								button: true
+							});
+
+							this.listenTo(this.linkPanel, 'change change:target', function (data) {
+								if (data.type == 'unlink') {
+									this.unlink();
+								} else {
+									this.link(data.url, data.type, data.target);
+								}
+
+								this.closeToolbar();
+							});
 
                 this.linkPanel.render();
                 this.$el.html(this.linkPanel.el);
@@ -775,7 +786,11 @@ RedactorPlugins.upfrontLink = function() {
                 var url = false;
 
                 if (link || url) {
-                    this.render({url: link?$(link).attr('href'):url, link: this.guessLinkType(link?$(link).attr('href'):url)});//this.render({url: $(link).attr('href'), link: $(link).attr('rel') || 'external'});
+                    this.render({
+											url: link ? $(link).attr('href') : url,
+											link: this.guessLinkType(link ? $(link).attr('href') : url),
+											target: $(link).attr('target')
+										});//this.render({url: $(link).attr('href'), link: $(link).attr('rel') || 'external'});
                 } else {
                     this.render();
 								}
@@ -797,13 +812,13 @@ RedactorPlugins.upfrontLink = function() {
 							}
 							this.redactor.$element.focus();
             },
-            link: function (url, type) {
+            link: function (url, type, target) {
 							this.redactor.selection.restore();
 							if (url) {
 									var caption = this.redactor.selection.getHtml();
 									var link = this.redactor.utils.isCurrentOrParent('A');
 									if (link) {
-										$(link).attr('href', url).attr('rel', type);
+										$(link).attr('href', url).attr('rel', type).attr('target', target);
 									} else {
 										this.redactor.link.set(caption, url);
 									}
@@ -815,15 +830,6 @@ RedactorPlugins.upfrontLink = function() {
             },
 
             bindEvents: function () {
-							this.listenTo(this.linkPanel, 'change', function (data) {
-								if (data.type == 'unlink') {
-									this.unlink();
-								} else {
-									this.link(data.url, data.type);
-								}
-
-								this.closeToolbar();
-							});
             },
 
             guessLinkType: function(url){
