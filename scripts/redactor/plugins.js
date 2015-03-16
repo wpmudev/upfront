@@ -771,108 +771,59 @@ RedactorPlugins.upfrontLink = function() {
             open: function (e, redactor) {
                 this.redactor = redactor;
                 redactor.selection.save();
-                var link = false;
+                var link = redactor.utils.isCurrentOrParent('A');
                 var url = false;
-                if (redactor.$element.hasClass('upfront_cta'))
-                    link = redactor.$element;
-                else if(redactor.$element.hasClass('menu_item')) {
-                    var menuitem = redactor.$element.closest('li').data('backboneview');
-                    url = menuitem.model['menu-item-url'];
-                    menuitem.model['being-edited'] = true;
-                }
-                else {
-                    link = redactor.utils.isCurrentOrParent('A');
-                }
 
                 if (link || url) {
                     this.render({url: link?$(link).attr('href'):url, link: this.guessLinkType(link?$(link).attr('href'):url)});//this.render({url: $(link).attr('href'), link: $(link).attr('rel') || 'external'});
-                }
-                else
+                } else {
                     this.render();
+								}
             },
             close: function (e, redactor) {
                 redactor.selection.restore();
-
-                if(redactor.$element.hasClass('menu_item')) {
-                    var menuitem = redactor.$element.closest('li').data('backboneview');
-                    menuitem.model['being-edited'] = false;
-                }
             },
             unlink: function (e) {
-                if (e)
-                    e.preventDefault();
+							if (e) {
+								e.preventDefault();
+							}
 
-                if (this.redactor.$element.hasClass('upfront_cta'))
-                    this.redactor.$element.attr('href', '#');
-                else if(this.redactor.$element.hasClass('menu_item')) {
-                    var menuitem = this.redactor.$element.closest('li').data('backboneview');
-                    menuitem.model['menu-item-url'] = '#';
-                }
-                else {
-                    var text = this.redactor.selection.getHtml();
-                    this.redactor.selection.restore();
-                    if (text !== '' && $.parseHTML(text).length > 1) {// there is html inside
-                        this.redactor.insert.html(text, true);
-                    } else {
-                        this.redactor.link.unlink();
-                    }
-                }
-
-                if(this.redactor.$element.hasClass('menu_item')) {
-                    var menuitem = this.redactor.$element.closest('li').data('backboneview');
-                    menuitem.model['being-edited'] = false;
-                }
-                this.redactor.$element.focus();
-
+							var text = this.redactor.selection.getHtml();
+							this.redactor.selection.restore();
+							if (text !== '' && $.parseHTML(text).length > 1) {// there is html inside
+								this.redactor.insert.html(text, true);
+							} else {
+								this.redactor.link.unlink();
+							}
+							this.redactor.$element.focus();
             },
             link: function (url, type) {
-                this.redactor.selection.restore();
-                if (url) {
-                    if (this.redactor.$element.hasClass('upfront_cta'))
-                        this.redactor.$element.attr('href', url);
-                    else if(this.redactor.$element.hasClass('menu_item')) {
+							this.redactor.selection.restore();
+							if (url) {
+									var caption = this.redactor.selection.getHtml();
+									var link = this.redactor.utils.isCurrentOrParent('A');
+									if (link) {
+										$(link).attr('href', url).attr('rel', type);
+									} else {
+										this.redactor.link.set(caption, url);
+									}
+								// }
+								this.redactor.$element.focus();
+							}
 
-                        var menuitem = this.redactor.$element.closest('li').data('backboneview');
-
-                        menuitem.model['menu-item-url'] = url;
-                    }
-                    else {
-                        var caption = this.redactor.selection.getHtml();
-                        var link = this.redactor.utils.isCurrentOrParent('A');
-                        if (link)
-                            $(link).attr('href', url).attr('rel', type);
-                        else
-                            this.redactor.link.set(caption, url);
-                            //this.redactor.insert.html('<a href="' + url + '" rel="' + type + '">' + caption + '</a>', true);
-                    }
-                    this.redactor.$element.focus();
-                }
-
-                if(this.redactor.$element.hasClass('menu_item')) {
-                    var menuitem = this.redactor.$element.closest('li').data('backboneview');
-                    menuitem.model['being-edited'] = false;
-                }
-
-                this.redactor.code.sync();
-
+							this.redactor.code.sync();
             },
 
             bindEvents: function () {
-                this.listenTo(this.linkPanel, 'change', function (data) {
-                    if (data.type == 'unlink')
-                        this.unlink();
-                    else
-                        this.link(data.url, data.type);
+							this.listenTo(this.linkPanel, 'change', function (data) {
+								if (data.type == 'unlink') {
+									this.unlink();
+								} else {
+									this.link(data.url, data.type);
+								}
 
-                    this.closeToolbar();
-                });
-
-                this.listenTo(this.linkPanel, 'link:postselector', this.disableEditorStop);
-
-                this.listenTo(this.linkPanel, 'link:postselected', function (data) {
-                    this.enableEditorStop();
-                    this.link(data.url, data.type);
-                });
+								this.closeToolbar();
+							});
             },
 
             guessLinkType: function(url){
@@ -882,6 +833,9 @@ RedactorPlugins.upfrontLink = function() {
                     return url.indexOf('#ltb-') > -1 ? 'lightbox' : 'anchor';
                 if(url.substring(0, location.origin.length) == location.origin)
                     return 'entry';
+								if (url.match(/^mailto/)) {
+									return 'email';
+								}
 
                 return 'external';
             }

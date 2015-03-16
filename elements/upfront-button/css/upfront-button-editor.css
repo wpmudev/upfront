@@ -33,3 +33,13 @@ a.upfront_cta.ueditor-placeholder{
   right: inherit !important;
   display: none !important;
 }
+/* Small adjustemnts for linking panel, it uses redactor template */
+.upfront-button .redactor_air {
+	left: 50%;
+	margin-left: -20px;
+	display: none;
+}
+.upfront-button.stayOpen .redactor_air,
+.upfront-button:hover .redactor_air {
+	display: block!important;
+}

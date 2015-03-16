@@ -3,6 +3,16 @@ define(['text!elements/upfront-button/tpl/ubutton.html'], function(template) {
 
 var l10n = Upfront.Settings.l10n.text_element;
 
+var linkPanelTpl = '<div class="redactor_air upfront-ui under">' +
+	'<ul class="redactor-toolbar redactor-toolbar-external" id="redactor-toolbar-0">' +
+	'<div class="redactor-dropdown ueditor_panel redactor-dropdown-box-upfrontLink linkingPanelGoesHere" style="left: 0px; display: none;">' +
+	'</div>' +
+	'<li>' +
+	'<a href="#" class="re-icon re-upfrontLink redactor-btn-image redactor_act dropact" rel="upfrontLink" title="Link" tabindex="-1"></a>' +
+	'</li>' +
+	'</ul>' +
+	'</div>';
+
 var ButtonModel = Upfront.Models.ObjectModel.extend({
 	init: function () {
 		this.init_property("type", "ButtonModel");
@@ -15,6 +25,7 @@ var ButtonModel = Upfront.Models.ObjectModel.extend({
 });
 
 var singleclickcount = 0;
+
 var ButtonView = Upfront.Views.ObjectView.extend({
 	className: 'upfront-button',
 	initialize: function() {
@@ -28,12 +39,13 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 
 		this.events = _.extend({}, this.events, {
 			'click a.upfront_cta.ueditor-placeholder' : 'placeholderClick',
-			'click i.visit_link' : 'visitLink'
-
+			'click i.visit_link' : 'visitLink',
+			'click a.redactor_act': 'onOpenPanelClick',
+			'click .upfront-save_settings': 'onOpenPanelClick'
 		});
 
 		this.on('deactivated', function() {
-			
+
 			Upfront.Events.trigger('upfront:element:edit:stop');
 		}, this);
 //		Upfront.Events.on("entity:deactivated", this.stopEdit, this);
@@ -182,14 +194,14 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 	},*/
 	get_content_markup: function () {
 		var content = this.model.get_content(), style_static = '', style_hover = '';
-		
+
 		//Apply Default preset if none is selected for a new item
 		if(!this.model.get_property_value_by_name('currentpreset') && Upfront.Views.Editor.Button.Presets.first())
 			this.model.set_property('currentpreset', Upfront.Views.Editor.Button.Presets.first().id);
 
 
 		if(this.model.get_property_value_by_name("currentpreset") && this.model.get_property_value_by_name("currentpreset")!='' && Upfront.Views.Editor.Button.Presets.get(this.model.get_property_value_by_name("currentpreset"))) {
-			
+
 			var preset = Upfront.Views.Editor.Button.Presets.get(this.model.get_property_value_by_name("currentpreset")).attributes;
 
 			style_static = "border: "+preset.borderwidth+"px "+preset.bordertype+" "+ this.process_color(preset.bordercolor)+"; "+
@@ -243,35 +255,78 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		return rendered;// + ( !this.is_edited() || $.trim(content) == '' ? '<div class="upfront-quick-swap"><p>' + l10n.dbl_click + '</p></div>' : '');
 
 	},
-	guessLinkType: function(){
+
+	guessLinkType: function() {
 		var url = this.model.get_property_value_by_name('href');
 
-
-		if(!$.trim(url) || $.trim(url) == '#')
+		if(!$.trim(url) || $.trim(url) == '#' || $.trim(url) == '') {
 			return 'unlink';
-		if(url.length && url[0] == '#')
+		}
+		if(url.length && url[0] == '#') {
 			return url.indexOf('#ltb-') > -1 ? 'lightbox' : 'anchor';
-		if(url.substring(0, location.origin.length) == location.origin)
+		}
+		if(url.substring(0, location.origin.length) == location.origin) {
 			return 'entry';
+		}
+		if (url.match(/^mailto/)) {
+			return 'email';
+		}
 
 		return 'external';
-
-
 	},
+
 	is_edited: function () {
 		var is_edited = this.model.get_property_value_by_name('is_edited');
 		return is_edited ? true : false;
 	},
+
+	onOpenPanelClick: function(event) {
+		event.preventDefault();
+		this.toggleLinkPanel();
+	},
+
+	toggleLinkPanel: function() {
+		var me = this;
+		if (this.$el.hasClass('stayOpen')) {
+			this.$el.removeClass('stayOpen');
+			this.$el.find('.linkingPanelGoesHere').hide();
+			// Model linkType won't set on time if this is not delayed
+			setTimeout(function() {
+				me.render();
+			}, 100);
+		} else {
+			this.$el.addClass('stayOpen');
+			this.$el.find('.linkingPanelGoesHere').show();
+		}
+	},
+
 	on_render: function() {
 		var me = this,
-		blurTimeout = false;
+			blurTimeout = false;
+
+		this.$el.find('.upfront-button').append(linkPanelTpl);
+		this.delegateEvents();
+
+		this.linkPanel = new Upfront.Views.Editor.LinkPanel({
+			linkUrl: this.property('href'),
+			linkType: this.guessLinkType(),
+			button: true
+		});
+
+		this.linkPanel.render();
+		this.$el.find('.linkingPanelGoesHere').html(this.linkPanel.el);
+		this.linkPanel.delegateEvents();
+		this.listenTo(this.linkPanel, 'change', function(data) {
+			me.property('href', data.url);
+		});
+
 		var $target = this.$el.find('.upfront-object-content a.upfront_cta');
 		$target.ueditor({
 				linebreaks: true,
 				disableLineBreak: true,
 				//focus: true,
 
-				airButtons: ['upfrontLink', 'stateAlignCTA', 'upfrontIcons'],
+				airButtons: ['stateAlignCTA', 'upfrontIcons'],
 
 				placeholder: 'Click here',
 				autostart: false
@@ -293,8 +348,6 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 					me.showPlaceholder();
 
 				me.model.set_content(text, {silent: true}); // Something in inserts is destroying the sidebar
-				
-				me.property('href', $target.attr('href'), true);
 
 				me.property('align', $target.css('text-align'), true);
 				me.$el.find('div.being_edited').removeClass('being_edited');
@@ -344,7 +397,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			this.showPlaceholder();
 
 		//console.log(this.property('currentpreset'));
-		var preset = Upfront.Views.Editor.Button.Presets.get(this.property('currentpreset'));
+		var preset = Upfront.Views.Editor.Button.Presets.get(this.property('currentpreset')) || new Backbone.Model();
 		if(preset.get('theme_style'))
 			this.$el.children('.upfront-object').addClass(preset.get('theme_style'));
 	},
@@ -651,7 +704,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 					if (!color) return false;
 					me.updatelivecss(me, me.bgColor);
 				},
-				move: function (color) { 
+				move: function (color) {
 					if (!color) return false;
 					me.updatelivecss(me, me.bgColor, true);
 				},
@@ -1266,7 +1319,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 
 				this.color.set_value(preset.color);
 				this.color.update_input_border_color(Upfront.Util.colors.to_color_value(preset.color));
-				
+
 				this.hov_duration.set_value(preset.hov_duration);
 
 				this.hov_transition.set_value(preset.hov_transition);

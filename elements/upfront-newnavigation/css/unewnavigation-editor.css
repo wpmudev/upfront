@@ -39,7 +39,7 @@ div.upfront-navigation.upfront-editable_entity  ul.menu > li > i.navigation-add-
 
 
 .upfront-output-unewnavigation[data-style="vertical"] {
-	padding-right:30px;	
+	padding-right:30px;
 }
 .upfront-output-unewnavigation[data-style="vertical"] ul.sub-menu {
   z-index:9999;
@@ -291,7 +291,7 @@ input#unavigation-link-type-3 {
 
 
 div.upfront-output-unewnavigation .ueditor-placeholder {
-	z-index:1 !important;	
+	z-index:1 !important;
 }
 
 
@@ -347,4 +347,18 @@ div.upfront-navigation div[data-style="burger"] > ul.menu li.menu-item:hover > u
 
 .upfront-settings-item div.menu_style > span:first-child {
   margin-right:20px;
+}
+
+/* Small adjustemnts for linking panel, it uses redactor template */
+div.upfront-navigation li.menu-item .redactor-toolbar a {
+	padding: 0;
+}
+div.upfront-navigation li.menu-item .redactor_air {
+	left: 50%;
+	margin-left: -20px;
+	display: none;
+}
+div.upfront-navigation li.menu-item.stayOpen .redactor_air,
+div.upfront-navigation li.menu-item:hover .redactor_air {
+	display: block!important;
 }
