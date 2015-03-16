@@ -75,7 +75,8 @@ define([
 		events: {
 			'click .js-ulinkpanel-input-entry': 'openPostSelector',
 			'keydown .js-ulinkpanel-lightbox-input': 'onLightboxNameInputChange',
-			'blur .js-ulinkpanel-input-external': 'onUrlInputBlur'
+			'blur .js-ulinkpanel-input-external': 'onUrlInputBlur',
+			'click .js-ulinkpanel-ok': 'onOkClick'
 		},
 
 		className: 'ulinkpanel-dark',
@@ -98,12 +99,16 @@ define([
 				target: options.linkTarget || '_self'
 			});
 			this.listenTo(this.model, 'change:url', function() {
-				me.trigger('change', this.model.toJSON());
+				me.trigger('change', me.model.toJSON());
 			});
 			this.listenTo(this.model, 'change:target', function() {
-				me.trigger('change:target', this.model.toJSON());
+				me.trigger('change:target', me.model.toJSON());
 			});
 			this.listenTo(this.model, 'change:type', this.handleTypeChange);
+		},
+
+		onOkClick: function() {
+			this.trigger('change', this.model.toJSON());
 		},
 
 		handleTypeChange: function() {
