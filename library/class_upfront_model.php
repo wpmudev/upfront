@@ -256,15 +256,17 @@ abstract class Upfront_Model {
 	public function get_id () {
 		if (!empty($this->_data['preferred_layout'])) {
 			$id = $this->_data['preferred_layout'];
-		}
-		else if (!empty($this->_data['current_layout'])) {
+		} else if (!empty($this->_data['current_layout'])) {
 			$id = $this->_data['current_layout'];
+		} else if (!empty($this->_data['layout']['item']) && 'single-page' === $this->_data['layout']['item'] && !empty($this->_data['layout']['specificity'])) {
+			$id = $this->_data['layout']['specificity'];
 		} else {
 			$id = !empty($this->_data['layout']['item'])
 				? $this->_data['layout']['item']
 				: $this->_name_to_id()
 			;
 		}
+
 		$storage_key = self::get_storage_key();
 		return $storage_key . '-' . $id;
 	}
@@ -393,7 +395,8 @@ class Upfront_Layout extends Upfront_JsonModel {
 				return apply_filters('upfront_layout_from_id', $layout, self::id_to_type($id), self::$cascade);
 			}
 		}
-$id= false;
+		
+		$id= false;
 		// If we're out of the loop and still empty, we really have to be doing something now...
 		if (!$layout || ($layout && $layout->is_empty())) {
 			$layout = self::from_files(array(), $cascade, $storage_key);
@@ -808,6 +811,7 @@ $id= false;
 
 	public function save () {
 		$key = $this->get_id();
+
 		$scopes = array();
 		foreach ( $this->_data['regions'] as $region ){
 			if ( $region['scope'] != 'local' ){
