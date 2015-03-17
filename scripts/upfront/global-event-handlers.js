@@ -24,6 +24,9 @@ define(function() {
 		}
 	});
 
+	/**
+	 * Hide color picker when clicked outside of it
+	 */
 	$(document).on("click", function(e){
 		if( $(".sp-container").length === $(".sp-container.sp-hidden").length ) return;
 
