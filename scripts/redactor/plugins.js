@@ -792,7 +792,11 @@ RedactorPlugins.upfrontLink = function() {
 											target: $(link).attr('target')
 										});//this.render({url: $(link).attr('href'), link: $(link).attr('rel') || 'external'});
                 } else {
-                    this.render();
+                    this.render({
+											url: '',
+											link: 'external',
+											target: '_blank'
+										});
 								}
             },
             close: function (e, redactor) {
@@ -818,9 +822,10 @@ RedactorPlugins.upfrontLink = function() {
 									var caption = this.redactor.selection.getHtml();
 									var link = this.redactor.utils.isCurrentOrParent('A');
 									if (link) {
+										console.log('itsalink');
 										$(link).attr('href', url).attr('rel', type).attr('target', target);
 									} else {
-										this.redactor.link.set(caption, url);
+										this.redactor.link.set(caption, url, target);
 									}
 								// }
 								this.redactor.$element.focus();
