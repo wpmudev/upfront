@@ -2,6 +2,11 @@ Change Log
 ============
 
 
+0.2.7.1 - 2015-03-17
+-------------------------------------------------------------------------------
+- Fix: resizing handle hidden when editing elements in group.
+- Fix: hide settings button and resizable handle on group when editing elements.
+
 0.2.7 - 2015-03-17
 -------------------------------------------------------------------------------
 - Fix: custom 404 layout changes saving.
