@@ -2,6 +2,18 @@ Change Log
 ============
 
 
+0.2.7 - 2015-03-17
+-------------------------------------------------------------------------------
+- Fix: custom 404 layout changes saving.
+- Fix: image embed in text/accordion editing.
+- Fix: remove gallery image rotate functionality.
+- Fix: clean up the passed popup classname parameter on close.
+- Fix: image warning popup styles.
+- Fix: skip prefixing the global CSS.
+- Fix: validate the selected image size argument for code element.
+- Fix: posts/pages popup bugging out if no author specified.
+- Fix: drag and drop issue on the last element
+
 0.2.6 - 2015-03-10
 -------------------------------------------------------------------------------
 - Fix: Fix image blocks UI when S3 plugins move images.
