@@ -9,6 +9,8 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 	private function _add_hooks () {
 		add_action('upfront-core-inject_dependencies', array($this, 'dispatch_dependencies_output'));
 		add_action('wp_head', array($this, 'dispatch_fonts_loading'));
+
+		upfront_add_ajax('wp_scripts', array($this, 'wp_scripts_load'));
 	}
 
 	/**
@@ -32,11 +34,36 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 		if (Upfront_OutputBehavior::has_experiments()) {
 			$fonts = $deps->get_fonts();
 			if (!empty($fonts)) $this->_output_experimental_fonts($fonts);
-
+			
 			$this->_output_experimental($deps);
 		} else {
 			$this->_output_normal($deps);
 		}
+	}
+
+	public function wp_scripts_load () {
+		// Do the enqueueing action
+		do_action('upfront-core-wp_dependencies');
+
+		$deps = Upfront_CoreDependencies_Registry::get_instance();
+		$wps = new WP_Scripts();
+		$scripts = $deps->get_wp_scripts();
+
+		$srcs = array();
+		foreach ($scripts as $script) {
+			if (!empty($wps->registered[$script])) $srcs[] = wp_normalize_path(ABSPATH . $wps->registered[$script]->src);
+		}
+
+		$out = '';
+		foreach ($srcs as $src) {
+			if (file_exists($src)) $out .= file_get_contents($src);
+		}
+
+		$response = empty($out)
+			? new Upfront_JavascriptResponse_Error("Dependencies not found")
+			: new Upfront_JavascriptResponse_Success($out)
+		;
+		$this->_out($response);
 	}
 
 	/**
@@ -54,7 +81,7 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 		$scripts = $deps->get_scripts();
 		$script_tpl = '<script type="text/javascript" src="%url%"></script>';
 		foreach ($scripts as $script) {
-			echo preg_replace('/%url%/', $script, $script_tpl);
+			echo preg_replace('/%url%/', $script, $script_tpl);	
 		}
 	}
 
@@ -64,23 +91,28 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 	 * @param Upfront_CoreDependencies_Registry $deps Dependencies registry
 	 */
 	private function _output_experimental ($deps) {
-		$link_urls = json_encode(apply_filters('upfront-experiments-styles-debounce_dependency_load', $deps->get_styles()));
-		$link_tpl = json_encode('<link rel="stylesheet"  href="%url%" type="text/css" media="all" />');
 
+		$link_urls = json_encode(apply_filters('upfront-experiments-styles-debounce_dependency_load', $deps->get_styles()));
+		$debug = $this->_debugger->is_active(Upfront_Debug::STYLE) ? 'class="upfront-debounced"' : '';
+		$link_tpl = json_encode('<link rel="stylesheet"  href="%url%" type="text/css" media="all" ' . $debug . ' />');
 
 		$script_urls = json_encode(apply_filters('upfront-experiments-scripts-debounce_dependency_load', $deps->get_scripts()));
-		$script_tpl = json_encode('<script type="text/javascript" src="%url%"></script>');
+		$debug = $this->_debugger->is_active(Upfront_Debug::JS_TRANSIENTS) ? 'class="upfront-debounced"' : '';
+		$script_tpl = json_encode('<script type="text/javascript" src="%url%" ' . $debug . '></script>');
 
 		$callback_wrap_start = $callback_wrap_end = '';
+		$injection_root = 'head';
 		if (Upfront_OutputBehavior::has_experiments_level(Upfront_OutputBehavior::LEVEL_DEFAULT)) {
 			$callback_wrap_start = '$(function () {';
 			$callback_wrap_end = '});';
 		}
 		if (Upfront_OutputBehavior::has_experiments_level(Upfront_OutputBehavior::LEVEL_AGGRESSIVE)) {
-			$callback_wrap_start = '$(window).load(function () {';
-			$callback_wrap_end = '});';
+			$callback_wrap_start = '$(function () { setTimeout(function () {';
+			$callback_wrap_end = '}, 500);});';
+			$injection_root = 'body';
 		}
-
+		
+		$injection_root = esc_js($injection_root);
 		echo "<script type='text/javascript'>
 			(function ($) {
 			{$callback_wrap_start}
@@ -88,7 +120,7 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 					script_tpl = {$script_tpl},
 					link_urls = {$link_urls},
 					link_tpl = {$link_tpl},
-					head = $('head')
+					head = $('{$injection_root}')
 				;
 				$.each(link_urls, function (idx, url) {
 					head.append(link_tpl.replace(/%url%/, url));
@@ -108,11 +140,11 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 	 */
 	private function _output_normal_fonts ($fonts=array()) {
 		if (empty($fonts)) return false;
-
+		
 		$request = $this->_to_font_request_array($fonts);
 		if (empty($request)) return false;
-
-
+		
+		
 		echo '<link rel="stylesheet" type="text/css" media="all" href="//fonts.googleapis.com/css?family=' . esc_attr(join('|', $request)) . '" />';
 	}
 
@@ -123,7 +155,7 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 	 */
 	private function _output_experimental_fonts ($fonts=array()) {
 		if (empty($fonts)) return false;
-
+		
 		$request = $this->_to_font_request_array($fonts, false);
 		if (empty($request)) return false;
 
@@ -161,7 +193,7 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 
 			if (!empty($variants)) $variants = ':' . join(',', array_filter(array_unique(array_map('trim', $variants))));
 			else $variants = '';
-
+			
 			$request[] = $family . $variants;
 		}
 		$request = array_filter(array_unique(array_map('trim', $request)));
@@ -187,7 +219,7 @@ class Upfront_OutputBehavior {
 
 	private static $_compression;
 	private static $_experiments;
-
+	
 	private function __construct () {}
 	private function __clone () {}
 
@@ -215,11 +247,11 @@ class Upfront_OutputBehavior {
 	 *
 	 * @return bool True if it actually is, false otherwise
 	 */
-	public static function has_compression () {
+	public static function has_compression () { 
 		self::_init();
-		return (bool)self::$_compression;
+		return (bool)self::$_compression; 
 	}
-
+	
 	/**
 	 * Whether or not the load experiments has been enabled at all
 	 *

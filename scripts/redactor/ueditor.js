@@ -496,7 +496,7 @@ var Ueditor = function($el, options) {
  * Make sure selection of text show's the air buttons
  */
 UeditorEvents.on("ueditor:key:up", function(redactor){
-    if( !_.isEmpty( redactor.selection.getCurrent() ) ){
+    if( !_.isEmpty( redactor.selection.getText() ) ){
         redactor.airShow();
     }
 });

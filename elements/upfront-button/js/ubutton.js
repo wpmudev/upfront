@@ -400,8 +400,8 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			this.showPlaceholder();
 
 		//console.log(this.property('currentpreset'));
-		var preset = Upfront.Views.Editor.Button.Presets.get(this.property('currentpreset')) || new Backbone.Model();
-		if(preset.get('theme_style'))
+		var preset = Upfront.Views.Editor.Button.Presets.get(this.property('currentpreset'));
+		if(preset && preset.get('theme_style'))
 			this.$el.children('.upfront-object').addClass(preset.get('theme_style'));
 	},
 	showPlaceholder: function() {
