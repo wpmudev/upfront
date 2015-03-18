@@ -66,35 +66,30 @@ abstract class Upfront_EntityResolver {
 
 		$wp_entity = array();
 
-		if (!empty($query->tax_query) && !empty($query->tax_query->queries)) {
-			// First, let's try tax query
-			$taxonomy = $term = false;
-			foreach ($query->tax_query->queries as $query) {
-				$taxonomy = !empty($query['taxonomy']) ? $query['taxonomy'] : false;
-				$term = !empty($query['terms']) ? $query['terms'] : false;
-			}
-			if ($taxonomy && $term) $wp_entity = self::_to_entity($taxonomy, $term);
-
+		if (!empty($query->is_home) && 'posts' === get_option('show_on_front')) {
+			// (1) Home page (recent posts)
+			$wp_entity = self::_to_entity('home');
+		} else if (is_front_page() && 'posts' !== get_option('show_on_front')) {
+			// (2) Home page (static front-page)
+			return self::resolve_singular_entity($query);
+		} else if (!empty($query->is_search)) {
+			// (3) Search results
+			$wp_entity = self::_to_entity('search', $query->get('s'));
 		} else if (!empty($query->is_archive) && !empty($query->is_date)) {
-			// Next, date queries
+			// (4) Date-Archive
 			$date = $query->get('m');
 			$wp_entity = self::_to_entity('date', $date);
-
-		} else if (!empty($query->is_search)) {
-			// Next, search page
-			$wp_entity = self::_to_entity('search', $query->get('s'));
-
 		} else if (!empty($query->is_archive) && !empty($query->is_author)) {
-			// Next, author archives
+			// (5) Author archives
 			$wp_entity = self::_to_entity('author', $query->get('author'));
-
-		} else if (!empty($query->is_home) && 'posts' === get_option('show_on_front')) {
-			// Home page (posts)
-			$wp_entity = self::_to_entity('home');
-
-		} else if (is_front_page() && 'posts' !== get_option('show_on_front')) {
-			// Lastly, home page (singular page)
-			return self::resolve_singular_entity($query);
+		} else if (!empty($query->tax_query) && !empty($query->tax_query->queries)) {
+			// (6) Tax-Query last, since any other page can contain a tax-query.
+			$taxonomy = $term = false;
+			foreach ($query->tax_query->queries as $tax_query) {
+				$taxonomy = !empty($tax_query['taxonomy']) ? $tax_query['taxonomy'] : false;
+				$term = !empty($tax_query['terms']) ? $tax_query['terms'] : false;
+			}
+			if ($taxonomy && $term) $wp_entity = self::_to_entity($taxonomy, $term);
 		}
 
 		$wp_entity['type'] = 'archive';
