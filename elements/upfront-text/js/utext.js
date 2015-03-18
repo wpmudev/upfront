@@ -71,7 +71,8 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 				linebreaks: false,
 				//airButtons : ["upfrontFormatting"],
 				autostart: false,
-				paragraphize: false
+				paragraphize: false,
+				focus: false
 			})
 			.on('start', function(){
 				var $swap = $(this).find('.upfront-quick-swap');
