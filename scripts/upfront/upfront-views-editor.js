@@ -4114,7 +4114,8 @@ var Field_ToggleableText = Field_Text.extend({
 
 				me.$(".sp-container").append("<div class='color_picker_rgb_container'></div>");
 				me.update_input_border_color(me.get_saved_value());
-
+				me.$(".sp-container").data("field_color", me);
+				me.$(".sp-container").data("$spectrum", me.$spectrum );
 				me.$(".sp-container").find(".sp-choose").on("click.spectrum", function(e){
 					if(me.options.spectrum && me.options.spectrum.choose && me.color)
 						me.options.spectrum.choose(me.color);
@@ -4124,7 +4125,6 @@ var Field_ToggleableText = Field_Text.extend({
 						me.$(".sp-container").addClass("sp-hidden");
 					}
 				});
-
 
 			});
 
@@ -6611,6 +6611,7 @@ var CSSEditor = Backbone.View.extend({
 	},
 
 	stylesAddSelector: function(contents, selector) {
+		if (this.is_global_stylesheet && empty(selector)) return contents;
 		var me = this,
 			rules = contents.split('}'),
 			processed = ''

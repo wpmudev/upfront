@@ -639,7 +639,7 @@ define(function() {
 			if (!$("#upfront-popup").length) {
 				$("#page")
 					.append('<div id="upfront-popup" class="upfront-ui" style="display:none">' +
-						'<div id="upfront-popup-close" class="upfront-icon upfront-icon-popup-close"></div>' +
+						'<div id="upfront-popup-close" class="upfront-icon upfront-icon-popup-close">&times;</div>' +
 						'<div class="upfront-popup-meta" id="upfront-popup-top">' +
 						'</div>' +
 						'<div id="upfront-popup-content"></div>' +
@@ -695,7 +695,10 @@ define(function() {
 					.find("#upfront-popup-close").on("click", close_func).end()
 				;
 				if ( classname ) { 
-					this.$popup.addClass( classname );  
+					this.$popup
+						.addClass(classname)
+						.data("classname", classname)
+					;  
 				}
 
 				$('body').addClass('upfront-popup-open');
@@ -743,6 +746,12 @@ define(function() {
 			this.$popup.find("#upfront-popup-bottom").empty();
 
 			$('body').removeClass('upfront-popup-open');
+
+			// Clean up the passed classname
+			var classname = this.$popup.data("classname");
+			if (classname) {
+				this.$popup.removeClass(classname);
+			}
 
 			Upfront.Events.trigger('popup:closed');
 

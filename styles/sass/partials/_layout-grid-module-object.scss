@@ -419,6 +419,13 @@
 .upfront-module-group .upfront-editable_entities_container .ui-resizable-handle {
   visibility: hidden;
 }
+.upfront-module-group-on-edit > .ui-resizable-handle,
+.upfront-module-group-on-edit > .upfront-entity_meta > .upfront-icon-button {
+  visibility: hidden !important;
+}
+.upfront-module-group-on-edit .upfront-editable_entities_container .upfront-editable_entity:hover > .ui-resizable-handle {
+  visibility: visible;
+}
 
 .upfront-entity_meta {
 	position: absolute;

@@ -24,5 +24,23 @@ define(function() {
 		}
 	});
 
+	$(document).on("click", function(e){
+		if( $(".sp-container").length === $(".sp-container.sp-hidden").length ) return;
+
+		$(".sp-container").not(".sp-hidden").each(function(){
+			var $this = $(this),
+				options = $this.data("sp-options");
+			if( !options || !options.flat  ){
+				var $replacer = $this.parent().find(".sp-replacer");
+				$replacer.removeClass("sp-active");
+				$this.addClass("sp-hidden");
+				setTimeout(function(){
+					$replacer.removeClass("sp-active");
+					$this.addClass("sp-hidden");
+				}, 10);
+			}
+		});
+	});
+
 });
 })(jQuery);

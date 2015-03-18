@@ -81,6 +81,9 @@ class Upfront_CoreDependencies_Registry extends Upfront_Registry {
 	const SCRIPTS = 'scripts';
 	const STYLES = 'styles';
 	const FONTS = 'fonts';
+	
+	const WP_SCRIPTS = 'wp_scripts';
+	const WP_STYLES = 'wp_styles';
 
 	public static function get_instance () {
 		if (!self::$_instance) self::$_instance = new self;
@@ -88,14 +91,14 @@ class Upfront_CoreDependencies_Registry extends Upfront_Registry {
 	}
 
 	public function set ($key, $value) {
-		if (!in_array($key, array(self::SCRIPTS, self::STYLES, self::FONTS))) return false;
+		if (!in_array($key, array(self::SCRIPTS, self::STYLES, self::FONTS, self::WP_STYLES, self::WP_SCRIPTS))) return false;
 		if (empty($this->_data[$key])) $this->_data[$key] = array();
 
 		$this->_data[$key][] = $value;
 	}
 
 	private function _set_all ($key, $values) {
-		if (!in_array($key, array(self::SCRIPTS, self::STYLES, self::FONTS))) return false;
+		if (!in_array($key, array(self::SCRIPTS, self::STYLES, self::FONTS, self::WP_STYLES, self::WP_SCRIPTS))) return false;
 		if (empty($this->_data[$key])) $this->_data[$key] = array();
 
 		$this->_data[$key] = $values;
@@ -108,6 +111,15 @@ class Upfront_CoreDependencies_Registry extends Upfront_Registry {
 	 */
 	public function add_script ($url) {
 		return $this->set(self::SCRIPTS, $url);
+	}
+
+	/**
+	 * Set individual WP script for inclusion.
+	 *
+	 * @param string $handle WP script handle to load
+	 */
+	public function add_wp_script ($handle) {
+		return $this->set(self::WP_SCRIPTS, $handle);
 	}
 
 	/**
@@ -141,7 +153,7 @@ class Upfront_CoreDependencies_Registry extends Upfront_Registry {
 	}
 
 	public function get ($key, $default=false) {
-		if (!in_array($key, array(self::SCRIPTS, self::STYLES))) return $default;
+		if (!in_array($key, array(self::SCRIPTS, self::STYLES, self::WP_STYLES, self::WP_SCRIPTS))) return $default;
 		if (!is_array($this->_data[$key])) return $default;
 		
 		return current($this->_data[$key]);
@@ -156,6 +168,18 @@ class Upfront_CoreDependencies_Registry extends Upfront_Registry {
 		return empty($this->_data[self::SCRIPTS])
 			? array()
 			: $this->_data[self::SCRIPTS]
+		;
+	}
+
+	/**
+	 * Get all WP scripts registered this far.
+	 *
+	 * @return array Ordered list of script handles.
+	 */
+	public function get_wp_scripts () {
+		return empty($this->_data[self::WP_SCRIPTS])
+			? array()
+			: $this->_data[self::WP_SCRIPTS]
 		;
 	}
 

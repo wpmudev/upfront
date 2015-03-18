@@ -35,7 +35,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 
 		$menu_style = $menu_style ? "data-style='{$menu_style}' data-stylebk='{$menu_style}'" : "";
 		$breakpoint_data = $breakpoint_data ? "data-breakpoints='{$breakpoint_data}'" : "";
-		$menu_aliment = $menu_aliment ? "data-aliment='{$menu_aliment}'" : "";
+		$menu_aliment = $menu_aliment ? "data-aliment='{$menu_aliment}' data-alimentbk='{$menu_aliment}'" : "";
 		$sub_navigation = $sub_navigation ? "data-allow-sub-nav='yes'" : "data-allow-sub-nav='no'";
 
 		$float_class = $is_floating ? 'upfront-navigation-float' : '';
@@ -45,10 +45,12 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 		//      upfront_add_element_style('unewnavigation_editor', array('css/unewnavigation-editor.css', dirname(__FILE__)));
 		//  }
 		if ($is_floating) {
-			wp_enqueue_script('unewnavigation', upfront_element_url('js/public.js', dirname(__FILE__)));
+			//wp_enqueue_script('unewnavigation', upfront_element_url('js/public.js', dirname(__FILE__)));
+			upfront_add_element_script('unewnavigation', array('js/public.js', dirname(__FILE__)));
 		}
 
-		wp_enqueue_script('unewnavigation_responsive', upfront_element_url('js/responsive.js', dirname(__FILE__)));
+		//wp_enqueue_script('unewnavigation_responsive', upfront_element_url('js/responsive.js', dirname(__FILE__)));
+		upfront_add_element_script('unewnavigation_responsive', array('js/responsive.js', dirname(__FILE__)));
 
 		if($menu_slug) {
 			$menu = wp_get_nav_menu_object($menu_slug);

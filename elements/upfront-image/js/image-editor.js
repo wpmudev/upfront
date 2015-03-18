@@ -789,7 +789,7 @@ define([
 				return;
 			}
 			var me = this;
-			Upfront.Popup.open(function(){}, {width: 320})
+			Upfront.Popup.open(function(){}, {width: 320}, 'warning_img')
 				.progress(function(progress){
 					if(progress === 'before_close') {
 						me.ignoreFullwidthAlert = $('#upfront-popup-content').find('input:checked').length;
