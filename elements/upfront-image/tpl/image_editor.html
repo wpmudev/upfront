@@ -45,7 +45,7 @@
 
 	<div id="uimage-drag-handle" style="width:{{size.width}}px; height:{{size.height}}px;position:absolute; top:{{offset.top}}px; left:{{offset.left}}px">
 		<div class="image-edit-resize image-edit-control"><i class="ui-resizable-handle ui-resizable-handle-se"></i></div>
-		<div class="image-edit-rotate image-edit-control"><i class=""></i></div>
+		<!-- <div class="image-edit-rotate image-edit-control"><i class=""></i></div> -->
 	</div>
 
 	<div id="image-edit-buttons" style="position: absolute; top:{{maskOffset.top}}px; left: {{maskOffset.left + maskSize.width + 5}}px;">
@@ -61,7 +61,7 @@
 
 <script type="text/template" id="upload-form-tpl">
 <form id="upfront-upload-image" name="upfront-upload-image" enctype="multipart/form-data" method="post" action="{{url}}" data-url="{{url}}?action=upfront-media-upload">
-	<input type="file" name="media" id="upfront-image-file-input" >
+	<input type="file" name="media" id="upfront-image-file-input" multiple >
 	<input type="hidden" name="action" value="upfront-media-upload">
 	<input type="submit" value="Upload">
 </form>

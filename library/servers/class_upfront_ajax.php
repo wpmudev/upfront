@@ -58,6 +58,7 @@ class Upfront_Ajax extends Upfront_Server {
 			$layout_ids = Upfront_EntityResolver::ids_from_url($layout_ids);
 			$parsed = true;
 		}
+
 		$layout = Upfront_Layout::from_entity_ids($layout_ids, $storage_key, $load_dev);
 
 		if ($layout->is_empty()){

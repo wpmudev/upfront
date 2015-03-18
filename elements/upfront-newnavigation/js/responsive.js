@@ -127,7 +127,8 @@ jQuery(document).ready(function($) {
 					
 					if(bparray[key]['burger_menu'] == 'yes') {
 						
-						$(this).attr('data-style', 'burger')
+						$(this).attr('data-style', 'burger');
+						$(this).attr('data-aliment', ( bparray[key]['menu_alignment'] ? bparray[key]['menu_alignment'] : $(this).data('alimentbk') ));
 						$(this).attr('data-burger_alignment', bparray[key]['burger_alignment']);
 						$(this).attr('data-burger_over', bparray[key]['burger_over']);
 						
@@ -160,7 +161,8 @@ jQuery(document).ready(function($) {
 						$(this).find('ul.menu').hide();
 					}
 					else {
-						$(this).attr('data-style', $(this).data('stylebk'))
+						$(this).attr('data-style', ( bparray[key]['menu_style'] ? bparray[key]['menu_style'] : $(this).data('stylebk') ));
+						$(this).attr('data-aliment', ( bparray[key]['menu_alignment'] ? bparray[key]['menu_alignment'] : $(this).data('alimentbk') ));
 						$(this).removeAttr('data-burger_alignment','');
 						$(this).removeAttr('data-burger_over', '');
 						

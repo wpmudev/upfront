@@ -1,6 +1,8 @@
 (function ($) {
 
 window.empty = function (what) { return "undefined" === typeof what ? true : !what; };
+window.count = function (what) { return "undefined" === typeof what ? 0 : (what && what.length ? what.length : 0); };
+
 
 //requestFrameAnimation polyfill
 var rAFPollyfill = function(callback){
@@ -637,7 +639,7 @@ define(function() {
 			if (!$("#upfront-popup").length) {
 				$("#page")
 					.append('<div id="upfront-popup" class="upfront-ui" style="display:none">' +
-						'<div id="upfront-popup-close" class="upfront-icon upfront-icon-popup-close"></div>' +
+						'<div id="upfront-popup-close" class="upfront-icon upfront-icon-popup-close">&times;</div>' +
 						'<div class="upfront-popup-meta" id="upfront-popup-top">' +
 						'</div>' +
 						'<div id="upfront-popup-content"></div>' +
@@ -657,6 +659,7 @@ define(function() {
 
 		open: function (callback, data, classname) {
 				data = data || {};
+				this.data = data;
 				classname = classname || 'default-popup';
 				this.init();
 				var me = this,
@@ -692,7 +695,10 @@ define(function() {
 					.find("#upfront-popup-close").on("click", close_func).end()
 				;
 				if ( classname ) { 
-					this.$popup.addClass( classname );  
+					this.$popup
+						.addClass(classname)
+						.data("classname", classname)
+					;  
 				}
 
 				$('body').addClass('upfront-popup-open');
@@ -728,7 +734,10 @@ define(function() {
 		},
 
 		close: function (result) {
-			this._deferred.notify('before_close');
+			if(this.data.hold_editor)
+				this._deferred.notify('dont_close');
+			else
+				this._deferred.notify('before_close');
 
 			this.$background.hide();
 			this.$popup.hide().find("#upfront-popup-content").empty();
@@ -737,6 +746,12 @@ define(function() {
 			this.$popup.find("#upfront-popup-bottom").empty();
 
 			$('body').removeClass('upfront-popup-open');
+
+			// Clean up the passed classname
+			var classname = this.$popup.data("classname");
+			if (classname) {
+				this.$popup.removeClass(classname);
+			}
 
 			Upfront.Events.trigger('popup:closed');
 

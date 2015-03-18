@@ -66,35 +66,30 @@ abstract class Upfront_EntityResolver {
 
 		$wp_entity = array();
 
-		if (!empty($query->tax_query) && !empty($query->tax_query->queries)) {
-			// First, let's try tax query
-			$taxonomy = $term = false;
-			foreach ($query->tax_query->queries as $query) {
-				$taxonomy = !empty($query['taxonomy']) ? $query['taxonomy'] : false;
-				$term = !empty($query['terms']) ? $query['terms'] : false;
-			}
-			if ($taxonomy && $term) $wp_entity = self::_to_entity($taxonomy, $term);
-
+		if (!empty($query->is_home) && 'posts' === get_option('show_on_front')) {
+			// (1) Home page (recent posts)
+			$wp_entity = self::_to_entity('home');
+		} else if (is_front_page() && 'posts' !== get_option('show_on_front')) {
+			// (2) Home page (static front-page)
+			return self::resolve_singular_entity($query);
+		} else if (!empty($query->is_search)) {
+			// (3) Search results
+			$wp_entity = self::_to_entity('search', $query->get('s'));
 		} else if (!empty($query->is_archive) && !empty($query->is_date)) {
-			// Next, date queries
+			// (4) Date-Archive
 			$date = $query->get('m');
 			$wp_entity = self::_to_entity('date', $date);
-
-		} else if (!empty($query->is_search)) {
-			// Next, search page
-			$wp_entity = self::_to_entity('search', $query->get('s'));
-
 		} else if (!empty($query->is_archive) && !empty($query->is_author)) {
-			// Next, author archives
+			// (5) Author archives
 			$wp_entity = self::_to_entity('author', $query->get('author'));
-
-		} else if (!empty($query->is_home) && 'posts' === get_option('show_on_front')) {
-			// Home page (posts)
-			$wp_entity = self::_to_entity('home');
-
-		} else if (is_front_page() && 'posts' !== get_option('show_on_front')) {
-			// Lastly, home page (singular page)
-			return self::resolve_singular_entity($query);
+		} else if (!empty($query->tax_query) && !empty($query->tax_query->queries)) {
+			// (6) Tax-Query last, since any other page can contain a tax-query.
+			$taxonomy = $term = false;
+			foreach ($query->tax_query->queries as $tax_query) {
+				$taxonomy = !empty($tax_query['taxonomy']) ? $tax_query['taxonomy'] : false;
+				$term = !empty($tax_query['terms']) ? $tax_query['terms'] : false;
+			}
+			if ($taxonomy && $term) $wp_entity = self::_to_entity($taxonomy, $term);
 		}
 
 		$wp_entity['type'] = 'archive';
@@ -254,17 +249,19 @@ abstract class Upfront_Model {
 	}
 
 	public function get_id () {
-		if (!empty($this->_data['current_layout'])) {
-			$id = $this->_data['current_layout'];
-		}
-		else if (!empty($this->_data['preferred_layout'])) {
+		if (!empty($this->_data['preferred_layout'])) {
 			$id = $this->_data['preferred_layout'];
+		} else if (!empty($this->_data['current_layout'])) {
+			$id = $this->_data['current_layout'];
+		} else if (!empty($this->_data['layout']['item']) && 'single-page' === $this->_data['layout']['item'] && !empty($this->_data['layout']['specificity'])) {
+			$id = $this->_data['layout']['specificity'];
 		} else {
 			$id = !empty($this->_data['layout']['item'])
 				? $this->_data['layout']['item']
 				: $this->_name_to_id()
 			;
 		}
+
 		$storage_key = self::get_storage_key();
 		return $storage_key . '-' . $id;
 	}
@@ -365,26 +362,46 @@ class Upfront_Layout extends Upfront_JsonModel {
 		self::set_storage_key($storage_key);
 		$storage_key = self::get_storage_key();
 		$order = array('specificity', 'item', 'type');
+		
 		foreach ($order as $o) {
 			if (empty($cascade[$o]))
 				continue;
 
 			$layout = $id = false;
+			
 			// Allow plugins to prevent loading from database
 			$load_from_database = apply_filters('upfront_load_layout_from_database', true);
 			if ($load_from_database) {
 				$id = $storage_key . '-' . $cascade[$o];
 				$layout = self::from_id($id, $storage_key);
+				
 			}
+
 			// Always try to load from theme files if layout is empty
 			if ($layout === false || $layout->is_empty()) {
-				$layout = self::from_files(array(), $cascade, $storage_key);
+				$layout = self::from_specific_files(array(), $cascade, $storage_key); // Load from *specific* files only, no fallback
+				
 			}
+
+			if ($layout && !$layout->is_empty()) {
+			
+				$layout->set("current_layout", self::id_to_type($id));
+
+				return apply_filters('upfront_layout_from_id', $layout, self::id_to_type($id), self::$cascade);
+			}
+		}
+		
+		$id= false;
+		// If we're out of the loop and still empty, we really have to be doing something now...
+		if (!$layout || ($layout && $layout->is_empty())) {
+			$layout = self::from_files(array(), $cascade, $storage_key);
+
 			if (!$layout->is_empty()) {
 				$layout->set("current_layout", self::id_to_type($id));
 				return apply_filters('upfront_layout_from_id', $layout, self::id_to_type($id), self::$cascade);
 			}
-		}
+		}	
+		
 		return $layout;
 	}
 
@@ -403,7 +420,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 	public static function from_id ($id, $storage_key = '') {
 		$regions_data = self::get_regions_data();
 		$data = json_decode( get_option($id, json_encode(array())), true );
-
+		
 		if ( ! empty($data) ) {
 			$regions = array();
 			$regions_added = array();
@@ -464,11 +481,49 @@ class Upfront_Layout extends Upfront_JsonModel {
 		$data['properties'] = self::get_layout_properties();
 		$data['layout'] = self::$cascade;
 
-    // Do not do this is in builder mode since it will duplicate slider images. Alternative
-    // is to fix augment_regions to not re-import images every time page reloads.
-    if (!function_exists('upfront_exporter_is_running') || !upfront_exporter_is_running()) {
-      $data = apply_filters('upfront_augment_theme_layout', $data);
-    }
+	    // Do not do this is in builder mode since it will duplicate slider images. Alternative
+	    // is to fix augment_regions to not re-import images every time page reloads.
+	    if (!function_exists('upfront_exporter_is_running') || !upfront_exporter_is_running()) {
+	      $data = apply_filters('upfront_augment_theme_layout', $data);
+	    }
+
+		return self::from_php($data, $storage_key);
+	}
+
+	/**
+	 * Loads up *specific* theme layout, does NOT include a fallback like `from_files()`
+	 * in order to respect the cascade.
+	 */
+	public static function from_specific_files ($data, $cascade, $storage_key=false) {
+		$new_data = apply_filters('upfront_override_layout_data', $data, $cascade);
+		if (empty($new_data)) return false;
+
+	    $data = $new_data;
+        // We need to apply global regions that saved in db
+        $regions = array();
+        $regions_added = array();
+        foreach ( $data['regions'] as $region ) {
+            if ( $region['scope'] != 'local' ){
+                $applied_scope = self::_apply_scoped_region($region);
+                foreach ( $applied_scope as $applied_data ) {
+                    if ( !in_array($applied_data['name'], $regions_added) ){
+                        $regions[] = $applied_data;
+                        $regions_added[] = $applied_data['name'];
+                    }
+                }
+                continue;
+            }
+            $regions[] = $region;
+        }
+        $data['regions'] = $regions;
+		$data['properties'] = self::get_layout_properties();
+		$data['layout'] = self::$cascade;
+
+	    // Do not do this is in builder mode since it will duplicate slider images. Alternative
+	    // is to fix augment_regions to not re-import images every time page reloads.
+	    if (!function_exists('upfront_exporter_is_running') || !upfront_exporter_is_running()) {
+	      $data = apply_filters('upfront_augment_theme_layout', $data);
+	    }
 
 		return self::from_php($data, $storage_key);
 	}
@@ -751,6 +806,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 
 	public function save () {
 		$key = $this->get_id();
+
 		$scopes = array();
 		foreach ( $this->_data['regions'] as $region ){
 			if ( $region['scope'] != 'local' ){
@@ -759,6 +815,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 				$scopes[$region['scope']][] = $region;
 			}
 		}
+		
 		foreach ( $scopes as $scope => $data ) {
 			$current_scope = json_decode( get_option(self::_get_scope_id($region['scope']), json_encode(array())), true );
 			$current_scope = apply_filters('upfront_get_global_regions', $current_scope, self::_get_scope_id($region['scope']));
@@ -778,9 +835,19 @@ class Upfront_Layout extends Upfront_JsonModel {
 			}
 			update_option(self::_get_scope_id($scope), json_encode($scope_data));
 		}
-		if ( $this->_data['properties'] )
+		if ( $this->_data['properties'] ) {
 			update_option(self::_get_layout_properties_id(), json_encode($this->_data['properties']));
+		}
+
 		update_option($key, $this->to_json());
+/*
+		$storage_key = self::get_storage_key();
+
+		//if layout is applied to all posts, it should be saved to the db, even though the current layout is specific to the post
+		if($storage_key . '-' . $this->_data['preferred_layout'] != $key) {
+			update_option($storage_key . '-' . $this->_data['preferred_layout'], $this->to_json());
+		}
+*/
 		return $key;
 	}
 

@@ -287,7 +287,7 @@ define([
 		render: function () {
 			Upfront.Events.trigger("command:newpost:start", true);
 			this.$el.addClass('upfront-icon upfront-icon-post');
-			this.$el.html("New Post");
+			this.$el.html(l10n.new_post);
 		},
 		on_click: function (e) {
 			e.preventDefault();
@@ -4038,9 +4038,14 @@ var Field_ToggleableText = Field_Text.extend({
 
 				if(me.options.spectrum && me.options.spectrum.move)
 					me.options.spectrum.move(color);
+
+				me.toggle_alpha_selector(color, e);
 			};
 
 			spectrumOptions.show = function(color){
+				var $input = $(".sp-input"),
+					input_val = $input.val();
+
 				if( !_.isEmpty( color ) ){
 					this.color = color;
 					var rgb = color.toHexString();
@@ -4049,14 +4054,31 @@ var Field_ToggleableText = Field_Text.extend({
 					me.render_sidebar_rgba(me.rgba);
 					me.update_input_val( rgb );
 				}
-				if( !_.isEmpty( $(".sp-input").val() ) && !me.is_hex( $(".sp-input").val() )){
-					var t_color = tinycolor( $(".sp-input").val() );
-					$(".sp-input").val(t_color.toHexString());
+				if( !_.isEmpty( input_val) && !me.is_hex( input_val )){
+					var t_color = tinycolor( input_val );
+					$input.val(t_color.toHexString());
 				}
 				me.spectrumOptions = spectrumOptions;
 
 				if(me.options.spectrum && me.options.spectrum.show)
 					me.options.spectrum.show(color);
+
+				/**
+				 * Dont allow more than one top be open
+				 */
+				$(".sp-container").not( me.$(".sp-container")).each(function(){
+					var $this = $(this),
+						options = $this.data("sp-options");
+					if( !options || !options.flat  ){
+						$this.addClass("sp-hidden");
+					}
+
+				});
+
+				if( !_.isEmpty( input_val ) ){
+					var input_val_color = tinycolor( input_val );
+					me.toggle_alpha_selector( input_val_color );
+				}
 
 			};
 
@@ -4068,6 +4090,10 @@ var Field_ToggleableText = Field_Text.extend({
 				me.update_palette(); // Make sure we're up to date
 				me.$('input[name=' + me.get_field_name() + ']').spectrum("option", "palette", me.options.palette);
 				if(me.options.spectrum && me.options.spectrum.beforeShow) me.options.spectrum.beforeShow(color);
+
+				me.$(".sp-container").data("sp-options", me.options.spectrum );
+
+				
 			};
 
 			if( !spectrumOptions.autoHide  ){
@@ -4084,9 +4110,11 @@ var Field_ToggleableText = Field_Text.extend({
 			this.on('rendered', function(){
 				me.$('input[name=' + me.get_field_name() + ']').spectrum(spectrumOptions);
 				me.$spectrum = me.$('input[name=' + me.get_field_name() + ']');
+
 				me.$(".sp-container").append("<div class='color_picker_rgb_container'></div>");
 				me.update_input_border_color(me.get_saved_value());
-
+				me.$(".sp-container").data("field_color", me);
+				me.$(".sp-container").data("$spectrum", me.$spectrum );
 				me.$(".sp-container").find(".sp-choose").on("click.spectrum", function(e){
 					if(me.options.spectrum && me.options.spectrum.choose && me.color)
 						me.options.spectrum.choose(me.color);
@@ -4096,6 +4124,7 @@ var Field_ToggleableText = Field_Text.extend({
 						me.$(".sp-container").addClass("sp-hidden");
 					}
 				});
+
 			});
 
 		},
@@ -4211,6 +4240,28 @@ var Field_ToggleableText = Field_Text.extend({
 			var color = tinycolor(rgba);
 			this.color = color;
 			this.$spectrum.spectrum("set", color );
+		},
+		toggle_alpha_selector: function(color){
+			if( _.isEmpty( color ) ) return;
+
+			var $alpha = this.$(".sp-alpha");
+
+			if( Upfront.Views.Theme_Colors.colors.is_theme_color( color ) ){
+				
+				$alpha.addClass("sp-alpha-disabled");
+				$overlay = $("<span class='sp-alpha-overlay'></span>")
+				.on("click", function(e){
+					e.stopPropagation();
+					e.preventDefault();
+				});
+				if( !this.$(".sp-alpha-overlay").length ){
+					$alpha.before($overlay);
+				}
+				
+			}else{
+				$alpha.removeClass("sp-alpha-disabled");
+				this.$(".sp-alpha-overlay").remove();
+			}
 		}
 
 	});
@@ -6533,6 +6584,7 @@ var CSSEditor = Backbone.View.extend({
 	},
 
 	stylesAddSelector: function(contents, selector) {
+		if (this.is_global_stylesheet && empty(selector)) return contents;
 		var me = this,
 			rules = contents.split('}'),
 			processed = ''
@@ -6578,7 +6630,7 @@ var CSSEditor = Backbone.View.extend({
 	updateStylename: function() {
 		var new_name =  $.trim(this.$('.upfront-css-save-name-field').val()),
 			old_name = this.stylename;
-		
+
 		// Strict filtering on stylename
 		new_name = new_name.replace(/\s/g, '-').replace(/[^A-Za-z0-9_-]/gi, '').replace(/-+/g, '-').toLowerCase();
 
@@ -7334,10 +7386,11 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				$('#upfront-notifier').css({top: 28});
 			*/
 		},
-		addMessage: function(message, type){
+		addMessage: function(message, type, duration){
 			var notice = {
 				message: message ? message : l10n.no_message,
-				type: type ? type : 'info'
+				type: type ? type : 'info',
+				duration: duration
 			};
 
 			this.notices.add(notice);
@@ -7350,7 +7403,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			;
 			this.timer = setTimeout(function(){
 				me.notices.remove(notice);
-			}, this.timeoutTime)
+			}, notice.get('duration') || this.timeoutTime)
 		},
 		replace: function(notice) {
 			var me = this;
@@ -7919,7 +7972,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 
 				var collection = this.model.collection,
 					index = collection.indexOf(this.model),
-					index_container = collection.index_container(this.model),
+					index_container = collection.index_container(this.model, ['shadow', 'lightbox']),
 					total_container = collection.total_container(['shadow', 'lightbox']), // don't include shadow and lightbox region
 					is_top = index_container == 0,
 					is_bottom = index_container == total_container-1,
@@ -8024,7 +8077,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 								sub_regions = me.model.get_sub_regions(),
 								copy_data = false;
 							index = collection.indexOf(me.model);
-							
+
 							if ( !_.contains(value, 'top') && sub_regions.top ) {
 								copy_data = Upfront.Util.model_to_json(sub_regions.top);
 								me._sub_region_top_copy = new Upfront.Models.Region(copy_data);
@@ -8035,7 +8088,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 								me._sub_region_bottom_copy = new Upfront.Models.Region(copy_data);
 								collection.remove(sub_regions.bottom);
 							}
-								
+
 							_.each(value, function(sub){
 								if ( sub_regions[sub] )
 									return;
@@ -8103,7 +8156,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						multiple: false
 					});
 			}
-			
+
 			// Preserve background settings element event binding by detaching them before resetting html
 			$content.find('.upfront-region-bg-setting-tab-primary, .upfront-region-bg-setting-tab-secondary').children().detach();
 
@@ -9109,7 +9162,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				return panels; // Same as this - "return false" doesn't play well here.
 			}
 			var // Well, all is goog with the collection, so carry on as intended...
-				index_container = collection.index_container(this.model),
+				index_container = collection.index_container(this.model, ['shadow', 'lightbox']),
 				total_container = collection.total_container(['shadow', 'lightbox']), // don't include shadow and lightbox region
 				is_top = index_container == 0,
 				is_bottom = index_container == total_container-1,
@@ -10109,8 +10162,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			"Topbar": {
 				"Topbar": Topbar
 			},
-			notify : function(message, type){
-				notifier.addMessage(message, type);
+			notify : function(message, type, duration){
+				notifier.addMessage(message, type, duration);
 			},
 			"Loading": Loading,
 			"Modal": Modal,

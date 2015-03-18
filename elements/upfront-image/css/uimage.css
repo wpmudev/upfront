@@ -988,15 +988,14 @@ div.uimage-controls i.upfront-icon:before {
 	display: none;
 }
 
-.uimage-sizehint-small {
+.upfront-ui .uimage-sizehint-small {
 	display: none;
 }
 
-.uimage-fullwidth-alert {
+.upfront-ui .uimage-fullwidth-alert {
 	padding: 15px;
 }
-
-.uimage-fullwidth-info {
+.upfront-ui .uimage-fullwidth-info {
 	width: 30%;
 	height: 90px;
 	float: left;
@@ -1004,13 +1003,13 @@ div.uimage-controls i.upfront-icon:before {
 	background-image: url(../../../img/uf-core-el-sprite.svg);
 }
 
-.uimage-fullwidth-info-1{
+.upfront-ui .uimage-fullwidth-info-1{
 	background-position: -560px -40px;
 }
-.uimage-fullwidth-info-2{
+.upfront-ui .uimage-fullwidth-info-2{
 	background-position: -560px -136px;
 }
-.uimage-fullwidth-info-3{
+.upfront-ui .uimage-fullwidth-info-3{
 	background-position: -560px -232px;
 }
 

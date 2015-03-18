@@ -113,8 +113,8 @@
 
 			fbUrl = this.model.get_property_value_by_name('facebook_url');
 
-			if(!fbUrl || fbUrl=='')
-				fbUrl = this.getGlobalFBUrl();
+			//if(!fbUrl || fbUrl=='')
+			//	fbUrl = this.getGlobalFBUrl();
 
 			if(fbUrl){
 				var pageName = _.last(fbUrl.split('/'));
@@ -124,22 +124,34 @@
 				else
 					wide = this.model.get_property_value_by_name('element_size').width;
 
-				console.log(wide);
-
-				return '<iframe src="//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2F'+ (pageName ? pageName : 'wpmudev' )+'&amp;width='+wide+'&amp;height='+this.model.get_property_value_by_name('element_size').height+'&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;show_border=true&amp;header=false" scrolling="no" frameborder="0" style="border:none; overflow:hidden; float:left; width:'+wide+'px; height:'+this.model.get_property_value_by_name('element_size').height+'px;"" allowTransparency="true"></iframe>'+ (!pageName ? '<span class="alert-url">!</span>' : '' );
+				return '<iframe src="//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2F'+ (pageName ? pageName : 'wpmudev' )+'&amp;width='+wide+'&amp;height='+this.model.get_property_value_by_name('element_size').height+'&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;show_border=true&amp;header=false" scrolling="no" frameborder="0" style="border:none; overflow:hidden; float:left; width:'+wide+'px; height:'+this.model.get_property_value_by_name('element_size').height+'px;"" allowTransparency="true"></iframe><div class="upfront-like-box_overlay"></div>'+ (!pageName ? '<span class="alert-url">!</span>' : '' );
 			}else{
-				return '<span class="upfront-general-notice">' + l10n.you_need_to_set_url + ' <a class="back_global_settings" href="#">' + l10n.global_social_settings + '</a>.</span>';
+				this.model.set_property('facebook_url', '', true);
+				return '<div class="upfront-like-box_placeholder">' +
+						'<div class="upfront-like-box_placeholder_guide">'+l10n.placeholder_guide+'</div>' +
+						'<div class="upfront-like-box_url_wrapper"><input type="text" class="upfront-like-box_url" placeholder="' + l10n.placeholder + '" /></div>' +
+						'<button type="button" class="upfront-like-box_button">'+l10n.ok+'</button></div>';
 			}
 		},
 
 		on_render: function(){
-			var parent = this.parent_module_view;
+			var parent = this.parent_module_view, me = this;
 
 			//Prevent iframe hijacking of events when dragging
 			if(!parent.$el.data('dragHandler')){
 				parent.$el.on('dragstart', this.coverIframe);
 				parent.$el.data('dragHandler', true);
 			}
+
+			this.$el.find('.upfront-like-box_button').on('click', function(e) {
+				me.property('facebook_url', $(this).parent().find('input.upfront-like-box_url').val());
+			});
+			this.$el.find('.upfront-like-box_url').on('keydown', function(e) {
+				if(e.which == 13) {
+					me.$el.find('.upfront-like-box_button').click();
+					Upfront.Events.trigger("upfront:element:edit:stop");
+				}
+			});
 		},
 
 		//Prevent iframe hijacking of events when dragging
@@ -236,6 +248,7 @@
 
 		initialize: function (opts) {
 			this.options = opts;
+			this.has_tabs = false;
 			this.panel = new Upfront.Views.Editor.Settings.Panel({
 
 					model: this.model,
@@ -250,28 +263,11 @@
 								new Field_Text({
 									model: this.model,
 									property: 'facebook_url',
-									default_value: this.getGlobalFBUrl(),
 									label: l10n.opts.url_sample,
 									compact: true
 								})
 							]
-						}),
-						new Upfront.Views.Editor.Settings.Item({
-							className: 'upfront-social-back',
-							group: false,
-							fields: [
-								new Field_Button({
-									model: this.model,
-									info: l10n.opts.back_to,
-									label: l10n.opts.global_settings,
-									on_click: function(e){
-										e.preventDefault();
-										Upfront.Events.trigger("entity:settings:deactivate");
-										Upfront.data.social.panel.popupFunc();
-									}
-								})
-							]
-						}),
+						})
 
 					]
 				});

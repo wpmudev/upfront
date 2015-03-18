@@ -66,6 +66,7 @@ License: MIT
 .sp-alpha-enabled .sp-alpha
 {
     display: block;
+    z-index:1;
 }
 
 .sp-alpha-handle
@@ -93,6 +94,7 @@ License: MIT
 }
 .sp-alpha-inner{
     border: solid 1px #a2c5e4;
+    z-index:2;
 }
 
 /* Don't allow text selection */
@@ -318,8 +320,8 @@ License: MIT
     float:left;
     position: relative;
     padding: 10px;
-    padding-bottom: 300px;
-    margin-bottom: -290px;
+/*    padding-bottom: 300px; 
+    margin-bottom: -290px;*/
 }
 .sp-picker-container
 {
@@ -526,4 +528,15 @@ background-color: #D3DDEB;
 {
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAadEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41LjEwMPRyoQAAAMdJREFUOE+tkgsNwzAMRMugEAahEAahEAZhEAqlEAZhEAohEAYh81X2dIm8fKpEspLGvudPOsUYpxE2BIJCroJmEW9qJ+MKaBFhEMNabSy9oIcIPwrB+afvAUFoK4H0tMaQ3XtlrggDhOVVMuT4E5MMG0FBbCEYzjYT7OxLEvIHQLY2zWwQ3D+9luyOQTfKDiFD3iUIfPk8VqrKjgAiSfGFPecrg6HN6m/iBcwiDAo7WiBeawa+Kwh7tZoSCGLMqwlSAzVDhoK+6vH4G0P5wdkAAAAASUVORK5CYII=);
 }
-
+.sp-alpha-overlay{
+  width: 82%;
+  height: 18%;
+  background: #2b3c4b;
+  display: block;
+  z-index: 5;
+  position: absolute;
+  top: 102%;
+  opacity:0;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: alpha(opacity=0);
+}

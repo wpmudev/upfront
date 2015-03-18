@@ -89,6 +89,7 @@ var Views = {
 				if (!el.length) return true;
 				style += '#' + element_id + ' .upfront_code-element ' + el + '}';
 			});
+			style = Upfront.Util.colors.convert_string_ufc_to_color(style); // Allow for theme colors.
 
 			return '<div class="upfront_code-element clearfix">' + markup +
 				'<style>' + style + '</style>' +
@@ -411,7 +412,10 @@ var Views = {
 					spectrum = $('.sp-container:visible');
 				},
 				change: function(color) {
-					var colorString = color.alpha < 1 ? color.toRgbString() : color.toHexString();
+					var colorString = color.get_is_theme_color()
+						? color.theme_color
+						: (color.alpha < 1 ? color.toRgbString() : color.toHexString())
+					;
 					me.currentEditor.insert(colorString);
 					me.currentEditor.focus();
 				},
@@ -450,8 +454,9 @@ var Views = {
 						ext = urlParts[urlParts.length - 1],
 						size = imageModel.get('selected_size')
 					;
-					if(size != 'full')
+					if (size && size != 'full') {
 						url = url.replace(new RegExp('.' + ext + '$'), '-' + size + '.' + ext);
+					}
 
 					me.currentEditor.insert('<img src="' + url + '" >');
 				}

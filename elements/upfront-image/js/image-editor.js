@@ -62,7 +62,7 @@ define([
 			'click #image-edit-button-reset': 'image100', //'resetImage',
 			'click #image-edit-button-fit': 'fitImage',
 			'click #image-edit-button-align': 'selectAlign',
-			'click .image-edit-rotate': 'rotate',
+			// 'click .image-edit-rotate': 'rotate',
 			'click .image-fit-element-button': 'fitMask',
 			'click #image-edit-button-swap': 'changeImage'
 		},
@@ -368,7 +368,8 @@ define([
 					loading.done();
 
 					if(imageData.error){
-						Upfront.Views.Editor.notify('Image failed to process.', 'error');
+						Upfront.Views.Editor.notify('Image failed to process. ' + imageData.msg, 'error', 15*1000);
+						me.close();
 						return;
 					}
 
@@ -788,7 +789,7 @@ define([
 				return;
 			}
 			var me = this;
-			Upfront.Popup.open(function(){}, {width: 320})
+			Upfront.Popup.open(function(){}, {width: 320}, 'warning_img')
 				.progress(function(progress){
 					if(progress === 'before_close') {
 						me.ignoreFullwidthAlert = $('#upfront-popup-content').find('input:checked').length;

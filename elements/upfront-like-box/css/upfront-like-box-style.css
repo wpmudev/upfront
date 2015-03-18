@@ -1,3 +1,66 @@
 .upfront-like-box iframe {
 	width: 100%;
 }
+
+.upfront-like-box_placeholder {
+  background-color:#eeeff0;
+  padding: 15px;
+  border: 1px #dddddd solid;
+}
+
+.upfront-like-box_url_wrapper {
+  background: #cfd3d7;
+  width: auto;
+  border: 1px solid #ccc;
+  padding: 0 10px;
+  margin-bottom: 10px;
+}
+
+input.upfront-like-box_url {
+  font-size: 1em;
+  padding: 10px 0;
+  outline: none;
+  width: 100%;
+  display: block;
+  background-color:transparent;
+  font-size: 14px;
+}
+
+input.upfront-like-box_url::-webkit-input-placeholder {
+   color: #999;
+}
+
+input.upfront-like-box_url:-moz-placeholder { /* Firefox 18- */
+   color: #999;  
+}
+
+input.upfront-like-box_url::-moz-placeholder {  /* Firefox 19+ */
+   color: #999;  
+}
+
+input.upfront-like-box_url:-ms-input-placeholder {  
+   color: #99;  
+}
+
+.upfront-like-box_button {
+  width: 100%;
+  padding: 10px 0;
+  box-sizing: border-box;
+  background-color: #21cf8e;
+  color: #fff;
+  text-align: center;
+  height: 40px;
+}
+
+div.upfront-like-box_placeholder_guide {
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.upfront-like-box_overlay {
+  position: absolute;
+  display: block;
+  height:92%;
+  width: 95%;
+  background-color:transparent;
+}

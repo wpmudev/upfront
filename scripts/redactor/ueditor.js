@@ -92,7 +92,7 @@ var hackRedactor = function(){
 	//Change the position of the air toolbar
 	$.Redactor.prototype.airShow = function (e, keyboard)
     {    	
-        if( $(e.target).parents().is(".uimage-control-panel") || $(e.target).is(".upfront-icon") || $(e.target).is(".upfront-icon-button") || ( !_.isUndefined(e.target.contentEditable) && e.target.contentEditable === "false" ) || $(e.target).closest(".redactor-editor").attr("contentEditable") === "false" ) return;
+        if( typeof e !== "undefined" && ( $(e.target).parents().is(".uimage-control-panel") || $(e.target).is(".upfront-icon") || $(e.target).is(".upfront-icon-button") || ( !_.isUndefined(e.target.contentEditable) && e.target.contentEditable === "false" ) || $(e.target).closest(".redactor-editor").attr("contentEditable") === "false"  ) ) return;
         //if( $(e.target).parents().is(".uimage-control-panel") || $(e.target).is(".upfront-icon") || $(e.target).is(".upfront-icon-button")) return;
 
         if (!this.opts.air || !( this.opts.buttons.length || this.opts.airButtons.length ) || !this.$toolbar) return;
@@ -108,8 +108,14 @@ var hackRedactor = function(){
         this.selection.createMarkers();
         var width = this.$air.width(),
             m1 = this.$editor.find('#selection-marker-1').offset(),
-            m2 = this.$editor.find('#selection-marker-2').offset(),
-            bounds = m2.top < m1.top ? {top: m2.top - 55, left: m2.left, right: m1.left, i:2} : {top: m1.top - 55, left: m1.left, right: m2.left, i:1},
+            m2 = this.$editor.find('#selection-marker-2').offset()
+        ;
+        // Make sure we have both dimentions before proceeding
+        if (!m1 || !m2) {
+            return false;
+        }
+        
+        var bounds = m2.top < m1.top ? {top: m2.top - 55, left: m2.left, right: m1.left, i:2} : {top: m1.top - 55, left: m1.left, right: m2.left, i:1},
             atRight = false,
             $win = $(window),
             winRight = $win.width() + $win.scrollLeft(),
@@ -486,6 +492,16 @@ var Ueditor = function($el, options) {
 };
 
 
+/**
+ * Make sure selection of text show's the air buttons
+ */
+UeditorEvents.on("ueditor:key:up", function(redactor){
+    if( !_.isEmpty( redactor.selection.getText() ) ){
+        redactor.airShow();
+    }
+});
+
+
 Ueditor.prototype = {
 	disableStop: false,
 	mouseupListener: false,
@@ -772,6 +788,7 @@ Ueditor.prototype = {
                 || $(e.target).parents().hasClass("redactor-toolbar")
                 || $(e.target).parents().hasClass("use_selection_container") // Todo Sam:, make this more general
                 || $(e.target).parents().is("#upfront-popup")
+                || $(e.target).parents().hasClass("upfront-inserts-markup-editor")
 				|| $(e.target).parents().hasClass("redactor-dropdown"))
 			&& $(e.target).parents("#upfront-popup.upfront-postselector-popup").length === 0)
 		{
@@ -889,7 +906,7 @@ Ueditor.prototype = {
 
 	},
 	getValue: function(is_simple_element){
-		var html = this.redactor.code.get();
+		var html = this.redactor.$element.html();
 		if(this.insertManager)
 			html = this.insertManager.insertExport(html, is_simple_element);
 
