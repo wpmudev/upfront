@@ -21,7 +21,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 		$data['even_padding'] = isset($data['even_padding']) ? $data['even_padding'] : array('false');
 		$data['thumbPadding'] = isset($data['thumbPadding']) ? $data['thumbPadding'] : 15;
 
-		foreach($data['images'] as $im){
+		if (!empty($data['images'])) foreach($data['images'] as $im){
 			$images[] = array_merge(self::image_defaults(), $im);
 		}
 		$data['images'] = $images;
