@@ -186,6 +186,11 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 	float: none;
 }
 
+.ulinkpanel form > :first-child, 
+.ulinkpanel-dark form > :first-child {
+	margin-top: 0;
+}
+
 /* dark UI overwrtites */
 
 .ulinkpanel-dark .upfront-field-select,
@@ -210,4 +215,12 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 .uimage-control-panel-content .ulinkpanel .upfront-field-select li:hover label,
 .uimage-control-panel-content .ulinkpanel-dark .upfront-field-select li:hover label {
 	color: inherit;
+}
+
+/* Image / Gallery / Slider Panels */
+
+.upfront-image_module .ulinkpanel-dark,
+.upfront-gallery .ulinkpanel-dark,
+.upfront-slider_module .ulinkpanel-dark {
+	min-width:180px;
 }
