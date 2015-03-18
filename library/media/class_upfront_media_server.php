@@ -527,8 +527,15 @@ add_action('init', array('Upfront_MediaServer', 'serve'));
 function upfront_media_file_upload () {
 	if (!Upfront_Permissions::current(Upfront_Permissions::UPLOAD)) return false; // Do not inject for users that can't use this
 	$base_url = Upfront::get_root_url();
+
+/*
 	wp_enqueue_script('fileupload', "{$base_url}/scripts/file_upload/jquery.fileupload.js", array('jquery'));
 	wp_enqueue_script('fileupload-iframe', "{$base_url}/scripts/file_upload/jquery.iframe-transport.js", array('fileupload'));
+*/
+	$deps = Upfront_CoreDependencies_Registry::get_instance();
+	$deps->add_script("{$base_url}/scripts/file_upload/jquery.fileupload.js");
+	$deps->add_script("{$base_url}/scripts/file_upload/jquery.iframe-transport.js");
+	
 	echo '<script>var _upfront_media_upload=' . json_encode(array(
 		'normal' => Upfront_UploadHandler::get_action_url('upfront-media-upload'),
 		'theme' => Upfront_UploadHandler::get_action_url('upfront-media-upload-theme-image'),
