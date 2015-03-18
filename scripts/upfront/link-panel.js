@@ -231,7 +231,9 @@ define([
 				this.renderLightBoxesSelect();
 			}
 
-			this.renderTargetRadio();
+			if (_.contains(['external', 'entry'], this.model.get('type'))) {
+				this.renderTargetRadio();
+			}
 
 			this.delegateEvents();
 		},
