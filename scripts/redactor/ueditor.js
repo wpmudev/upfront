@@ -429,7 +429,7 @@ var Ueditor = function($el, options) {
 			observeLinks: false,
 			observeImages: false,
 			formattingTags: ['h1', 'h2', 'h3', 'h4', 'p', 'pre'],
-			inserts: false,
+            inserts: ["image", "embed"],
             linkTooltip: false,
             cleanOnPaste: true, // font icons copy and paste wont work without this set to true - BUT, with it set to true, paste won't work AT ALL!!!
             replaceDivs: false,
@@ -438,7 +438,7 @@ var Ueditor = function($el, options) {
             replaceDivs: false,
             //cleanStyleOnEnter: false,
             //removeDataAttr: false,
-            removeEmpty: false
+            removeEmpty: false,
 		}, options)
 	;
 	/* --- Redactor allows for single callbacks - let's dispatch events instead --- */
@@ -718,7 +718,7 @@ Ueditor.prototype = {
 	},
 	insertsSetUp: function(){
 		var me = this,
-			manager = new InsertManager({el: this.$el, insertsData: this.options.inserts, ueditor: this}),
+			manager = new InsertManager({el: this.$el, insertsData: this.options.insertsData, inserts: this.options.inserts, ueditor: this}),
 			redactorEvents = this.redactor.events
 		;
 
@@ -917,7 +917,7 @@ Ueditor.prototype = {
 		if(!this.insertManager)
 			return {};
 
-		_.each(this.insertManager.inserts, function(insert){
+		_.each(this.insertManager._inserts, function(insert){
 			insertsData[insert.data.id] = insert.data.toJSON();
 		});
 
@@ -972,7 +972,7 @@ var InsertManagerInserts = Backbone.View.extend({
         "click .upfront-post-media-trigger": "toggle_inserts"
     },
     render: function(){
-      this.$el.html( this.tpl( { inserts: Inserts.inserts } ) );
+      this.$el.html( this.tpl( { inserts: _.pick(Inserts.inserts, this.inserts), names: Inserts.NAMES } ) );
     },
     insert_relocate: function( $current ){
       this.$block = $current;
@@ -990,7 +990,7 @@ var InsertManagerInserts = Backbone.View.extend({
             self = this
             ;
 
-        insert.start()
+        insert.start( this.$el )
             .done(function(popup, results){
                 // if(!results) Let's allow promises without result for now!
                 //	return;
@@ -1032,7 +1032,8 @@ var InsertManagerInserts = Backbone.View.extend({
 var InsertManager = Backbone.View.extend({
     tpl: _.template($(tpl).find('#insert-manager-tpl').html()),
 	initialize: function(opts){
-		this.inserts = {};
+		this.inserts = opts.inserts || {}; 
+        this._inserts = {}; 
         this.ueditor = opts.ueditor;
 		this.onRemoveInsert = _.bind(this.removeInsert, this);
 		this.insertsData = opts.insertsData || {};
@@ -1173,11 +1174,11 @@ var InsertManager = Backbone.View.extend({
 			insertsData = _.extend({}, me.insertsData, me.deletedInserts)
 		;
 
-		_.each(Inserts.inserts, function(Insert){
-			_.extend(me.inserts, Insert.prototype.importInserts(me.$el, insertsData));
+		_.each(_.pick(Inserts.inserts, this.inserts), function(Insert){
+			_.extend(me._inserts, Insert.prototype.importInserts(me.$el, insertsData, me.inserts));
 		});
 
-		_.each(me.inserts, function(insert){
+		_.each(me._inserts, function(insert){
 			me.insertsData[insert.data.id] = insert.data.toJSON();
 
 			// Listen to the inserts model to update the data on any change
@@ -1203,7 +1204,7 @@ var InsertManager = Backbone.View.extend({
 	insertExport: function(html, is_simple_element){
 		var $html = $('<div>').html(html);
 		$html.find('.nosortable').removeClass('nosortable');
-		_.each(this.inserts, function(insert){
+		_.each(this._inserts, function(insert){
 			var elementId = '#' + insert.data.id,
 				out = is_simple_element ? insert.getSimpleOutput() : insert.getOutput()
 			;
@@ -1221,7 +1222,7 @@ var InsertManager = Backbone.View.extend({
 			_.each(me.deletedInserts, function(insert, id){
 				var element = me.$el.find('#' + id);
 				if(element.length){
-					me.inserts[id] = insert;
+					me._inserts[id] = insert;
 					delete me.deletedInserts[id];/*
 
 					//We need to re-create the controls in order to make them work again
@@ -1232,7 +1233,7 @@ var InsertManager = Backbone.View.extend({
 					insert.delegateEvents();*/
 				}
 			});
-			_.each(me.inserts, function(insert, id){
+			_.each(me._inserts, function(insert, id){
 				if(!insert.$el.parent().length){
 					var element = me.$el.find('#' + id);
 					if(element.length){
@@ -1244,7 +1245,7 @@ var InsertManager = Backbone.View.extend({
 					}
 					else{
 						me.deletedInserts[id] = insert;
-						delete me.inserts[id];
+						delete me._inserts[id];
 					}
 				}
 			});

@@ -268,6 +268,7 @@ var PostContentEditor = Backbone.View.extend({
 			autostart: true,
 			focus: false,
 			pastePlainText: true,
+			inserts: [],
 			airButtons: ['bold', 'italic']
 		};
 	},
@@ -278,8 +279,9 @@ var PostContentEditor = Backbone.View.extend({
             replaceDivs: false,
 			autostart: true,
 			focus: false,
-			pastePlainText: false,
-			inserts: this.inserts
+			inserts: ["postImage", "embed"],
+			insertsData: this.inserts,
+			pastePlainText: false
 		};
 	},
 

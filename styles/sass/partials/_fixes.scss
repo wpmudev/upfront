@@ -14,10 +14,15 @@
 	width: 50px;
 }
 
-/* hack to fix empty paragraphs collapsing on each other */
+/* hack to fix empty paragraphs collapsing on each other 
+   note: Commented out since redactor no longer has that bug,
+   so this fix is now redundant...
+
 .upfront-plain_txt p:after {
   content:'\00a0';
 }
+*/
+
 /* fixes the jump when exiting txt editing */
 /** Had to comment the following otherwise it would hide all the breaks inside post editor(Sam)  **/
 .redactor_editor .nosortable br {

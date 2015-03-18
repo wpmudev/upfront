@@ -247,10 +247,14 @@ h2, h3 { page-break-after: avoid; }
 }
 
 
-/* hack to fix empty paragraphs collapsing on each other */
+/* hack to fix empty paragraphs collapsing on each other 
+   note: Commented out since redactor no longer has that bug,
+   so this fix is now redundant...
+
 .upfront-plain_txt p:after {
   content:'\00a0';
 }
+*/
 
 /* post elements need no padding, because their elements have the padding */
 .upfront-output-object.upfront-output-uposts,
@@ -437,4 +441,7 @@ div.upfront-region-lightbox .upfront-icon-popup-close, div.upfront-region-side-l
 }
 .upfront-inserted_image-wrapper{
     position: relative;
+}
+.upfront-object-content p{
+  margin:0 0 15px 0;
 }
