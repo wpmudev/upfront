@@ -43,7 +43,8 @@ class Upfront_PluginCompat implements IUpfront_Server {
 			: 'plugin'
 		;
 
-		$file = end(explode('/', $key));
+		$file_parts = explode('/', $key);
+		$file = end($file_parts);
 		$file = preg_replace('/\.php$/', '', $file);
 		$file = preg_replace('/[^a-z]/', '_', $file);
 		
