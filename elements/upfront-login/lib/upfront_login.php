@@ -30,7 +30,7 @@ class Upfront_LoginView extends Upfront_Object {
 
 		$properties = !empty($this->_data['properties']) ? $this->_data['properties'] : array();
 
-		
+
 		return is_user_logged_in ()
 			? self::fake_upfront_init(self::_normalize_properties($properties))
 			: self::get_element_markup($properties)
@@ -44,11 +44,11 @@ class Upfront_LoginView extends Upfront_Object {
 		if($show_logout_link == 'link') {
 			$logout_link = !empty($properties['logout_link'])?$properties['logout_link']:__('log out', 'upfront');
 			return '<a class="logout_link" href="'.wp_logout_url().'">'.$logout_link.'</a>';
-		} 
+		}
 		else {
 			return " ";
 		}
-		
+
 		/*
 		return !current_user_can('manage_options')
 			? ''
@@ -68,7 +68,7 @@ class Upfront_LoginView extends Upfront_Object {
 		if($logged_in_preview == 'yes') {
 			return self::fake_upfront_init($properties);
 		}
-		
+
 		$block = !empty($properties['style']) && 'form' == $properties['style'];
 		$click = !$block && !empty($properties['behavior']) && "click" == $properties['behavior'];
 		$hover = !$block && !empty($properties['behavior']) && "hover" == $properties['behavior'];
@@ -91,7 +91,7 @@ class Upfront_LoginView extends Upfront_Object {
 		if (!$block) {
 			$icon_class = $icon ? 'upfront_login-trigger-icon' : '';
 			$trigger = '<div class="upfront_login-trigger ' . $icon_class . '"><span class="upfront_login-label">' . esc_html($trigger_label);
-				
+
 			'</span></div>';
 		}
 
@@ -111,10 +111,7 @@ class Upfront_LoginView extends Upfront_Object {
 
 	private static function _normalize_properties ($raw_properties) {
 		$to_map = array('style', 'behavior', 'appearance', 'label_text', 'trigger_text', 'logged_in_preview', 'logout_style', 'logout_link', 'label_image');
-		$properties = array();
-		foreach ($raw_properties as $prop) {
-			if (in_array($prop['name'], $to_map)) $properties[$prop['name']] = $prop['value'];
-		}
+		$properties = upfront_normalize_properties($raw_properties, $to_map);
 		return $properties;
 	}
 

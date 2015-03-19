@@ -27,6 +27,31 @@ function upfront_set_property_value ($prop, $value, $data) {
 	return $data;
 }
 
+/**
+ * Converts an Upfront Property collection to a normal associative array.
+ */
+function upfront_normalize_properties ($formal_properties, $map=null) {
+	$properties = array();
+	foreach ($formal_properties as $prop) {
+		if ( is_array($map) && ! in_array($prop['name'], $map) ) { continue; }
+		$properties[$prop['name']] = $prop['value'];
+	}
+	return $properties;
+}
+
+/**
+ * Reverse of the `upfront_normalize_properties` function: Takes an associtative
+ * array and returns an Upfront Property collection.
+ */
+function upfront_formalize_properties ($normal_properties, $map=null) {
+	$properties = array();
+	foreach ($normal_properties as $name=>$value) {
+		if ( is_array($map) && ! in_array($name, $map) ) { continue; }
+		$properties[] = array( 'name' => $name, 'value' => $value );
+	}
+	return $properties;
+}
+
 function upfront_get_breakpoint_property_value ($prop, $data, $breakpoint, $return_default = false) {
 	$model_breakpoint = upfront_get_property_value('breakpoint', $data);
 	$breakpoint_data = $model_breakpoint && !empty($model_breakpoint[$breakpoint->get_id()]) ? $model_breakpoint[$breakpoint->get_id()] : false;
