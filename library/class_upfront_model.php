@@ -266,7 +266,7 @@ abstract class Upfront_Model {
 			;
 		}
 		$storage_key = self::get_storage_key();
-		return $storage_key . '-' . $id;
+		return apply_filters('upfront-model-get_id', $storage_key . '-' . $id, $this);
 	}
 
 	public static function id_to_type ($id) {
@@ -807,7 +807,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 	}
 
 	public function save () {
-		$key = $this->get_id();
+		$key = apply_filters('upfront-model-save_key', $this->get_id(), $this);
 		$scopes = array();
 		foreach ( $this->_data['regions'] as $region ){
 			if ( $region['scope'] != 'local' ){
