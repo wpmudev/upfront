@@ -30,26 +30,26 @@ function upfront_set_property_value ($prop, $value, $data) {
 /**
  * Converts an Upfront Property collection to a normal associative array.
  */
-function upfront_normalize_properties ($formal_properties, $map=null) {
-	$properties = array();
-	foreach ($formal_properties as $prop) {
+function upfront_properties_to_array ($the_properties, $map=null) {
+	$the_array = array();
+	foreach ($the_properties as $prop) {
 		if ( is_array($map) && ! in_array($prop['name'], $map) ) { continue; }
-		$properties[$prop['name']] = $prop['value'];
+		$the_array[$prop['name']] = $prop['value'];
 	}
-	return $properties;
+	return $the_array;
 }
 
 /**
- * Reverse of the `upfront_normalize_properties` function: Takes an associtative
+ * Reverse of the `upfront_properties_to_array` function: Takes an associtative
  * array and returns an Upfront Property collection.
  */
-function upfront_formalize_properties ($normal_properties, $map=null) {
-	$properties = array();
-	foreach ($normal_properties as $name=>$value) {
+function upfront_array_to_properties ($the_array, $map=null) {
+	$the_properties = array();
+	foreach ($the_array as $name=>$value) {
 		if ( is_array($map) && ! in_array($name, $map) ) { continue; }
-		$properties[] = array( 'name' => $name, 'value' => $value );
+		$the_properties[] = array( 'name' => $name, 'value' => $value );
 	}
-	return $properties;
+	return $the_properties;
 }
 
 function upfront_get_breakpoint_property_value ($prop, $data, $breakpoint, $return_default = false) {

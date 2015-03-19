@@ -111,7 +111,7 @@ class Upfront_LoginView extends Upfront_Object {
 
 	private static function _normalize_properties ($raw_properties) {
 		$to_map = array('style', 'behavior', 'appearance', 'label_text', 'trigger_text', 'logged_in_preview', 'logout_style', 'logout_link', 'label_image');
-		$properties = upfront_normalize_properties($raw_properties, $to_map);
+		$properties = upfront_properties_to_array($raw_properties, $to_map);
 		return $properties;
 	}
 
