@@ -1,0 +1,41 @@
+<div class="ulinkpanel-title">{{Upfront.Settings.l10n.global.content.links_to}}</div>
+<form>
+{[if(type == 'external') { ]}
+<div class="upfront-field-wrap ulinkpanel-external-wrap">
+	<input type="text" value="{{link.url}}" placeholder="Type link URL" class="upfront-field-text js-ulinkpanel-input-url js-ulinkpanel-input-external">
+</div>
+{[ } ]}
+{[if(type == 'email') { ]}
+<div class="upfront-field-wrap ulinkpanel-external-wrap">
+	<input type="text" value="{{link.url}}" placeholder="johnsmith@example.com" class="upfront-field-text js-ulinkpanel-input-url js-ulinkpanel-input-external">
+</div>
+{[ } ]}
+{[if(type == 'entry') { ]}
+<div class="upfront-field-wrap ulinkpanel-entry-wrap">
+	<a title="{{Upfront.Settings.l10n.global.content.change_link}}" class="ulinkpanel-entry-url js-ulinkpanel-input-url js-ulinkpanel-input-entry" href="#">{{(!link.url || link.url=='' || link.url=='http://')?'Select':link.url}}</a>
+</div>
+{[ } ]}
+{[if(type == 'anchor') { ]}
+<div class="anchor-selector">
+</div>
+{[ } ]}
+{[if(type == 'lightbox') { ]}
+<div class="js-ulinkpanel-input-url js-ulinkpanel-input-lightbox clearfix">
+	{[ if(lightboxes.length) { ]}
+		<div class="lightbox-selector">
+		</div>
+	{[ } else { ]}
+		<div class="no-lightboxes-msg">No lightboxes found</div>
+		<div class="js-ulinkpanel-new-lightbox ulinkpanel-new-lightbox">
+			<div class="ulinkpanel-title">Create lightbox</div>
+			<input type="text" name="new_lightbox" class="upfront-field upfront-field-text upfront-field-empty ulinkpanel-lightbox-input js-ulinkpanel-lightbox-input" value="" placeholder="{{Upfront.Settings.l10n.global.content.lightbox_name}}" />
+		</div>
+	{[ } ]}
+</div>
+{[ } ]}
+</form>
+{[if(button) { ]}
+<div class="upfront-settings-button_panel">
+	<button type="button" class="upfront-save_settings js-ulinkpanel-ok"><i class="icon-ok"></i> {{Upfront.Settings.l10n.global.content.ok}}</button>
+</div>
+{[ } ]}
