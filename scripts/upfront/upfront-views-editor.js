@@ -878,6 +878,12 @@ define([
 	var Command_ThemesDropdown = Command.extend({
 		className: 'themes-dropdown',
 		enabled: true,
+		events: {
+			'click .upfront-field-select-value': 'openOptions',
+			'mouseup .upfront-field-select': 'onMouseUp',
+			'change .upfront-field-select-option input': 'onChange',
+			'click .upfront-field-select-option label': 'onOptionClick'
+		},
 		initialize: function() {
 			var themes = _.union([{label: l10n.choose_theme, value: ''}], _.map(Upfront.themeExporter.themes, function(theme) {
 				return {
@@ -897,14 +903,26 @@ define([
 						Upfront.Events.trigger("builder:load_theme", this.get_value());
 					}
 				})
-			]
+			];
 		},
 		render: function () {
 			this.fields[0].render();
 			this.$el.append(this.fields[0].el);
 		},
 		// noop for preventing parent class rendering on click behaviour
-		on_click: function() {}
+		openOptions: function(e) {			
+			this.fields[0].openOptions(e);
+		},
+		onMouseUp: function(e) {
+			this.fields[0].onMouseUp(e);
+		},
+		onChange: function(e) {
+			this.fields[0].onChange(e);
+		},
+		onOptionClick: function(e) {
+			this.fields[0].onOptionClick(e);
+		}
+
 	});
 
 	var Command_NewLayout = Command.extend({
@@ -4303,7 +4321,8 @@ var Field_ToggleableText = Field_Text.extend({
 		},
 
 		openOptions: function(e) {
-			e.stopPropagation();
+			if(e)
+				e.stopPropagation();
 			if ( this.options.disabled )
 				return;
 			$('.upfront-field-select-expanded').removeClass('upfront-field-select-expanded');
