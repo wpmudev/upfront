@@ -204,7 +204,7 @@ var MenuItemView = Backbone.View.extend({
 			me.saveLink()
 		});
 
-		$(this.el).data('backboneview', me).addClass('menu-item');
+		this.$el.data('backboneview', me).addClass('menu-item');
 		if(me.newitem) $(this.el).addClass('new_menu_item');
 
 		return this;
@@ -1337,6 +1337,9 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		var new_menu_order = new Array();
 		this.$el.find('.upfront-object-content ul li').each(function() {
+			var bbview = $(this).data('backboneview');
+			if (!(bbview && bbview.model)) return true;
+
 			if($(this).parent().parent('li').length > 0) {
 				$(this).data('backboneview').model['menu-item-parent-id'] = $(this).parent().parent('li').data('backboneview').model['menu-item-db-id'];
 			} else {
@@ -1367,7 +1370,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		;
 		if(classname=='menu') $dom.addClass('drag_mode');
 		_(list).each(function (model) {
-			var $li = $(me.renderMenuItem(model));
+			var $li = me.renderMenuItem(model);
 			if($li && $li.length && !(typeof model.sub === 'undefined')) {
 				if (model.sub && model.sub.length) $li.addClass('parent').append(me.renderMenu(model.sub, 'sub-menu'));
 			}
@@ -1382,7 +1385,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		if(typeof newitem == 'undefined') newitem = false;
 
 		var view = new MenuItemView({model: model, parent_view: me, newitem: newitem});
-		return view.render().el;
+		return view.render().$el;
 	},
 	menuItemTemplate: function() {
 		return {
