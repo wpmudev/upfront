@@ -47,6 +47,9 @@ class Upfront_UimageView extends Upfront_Object {
 
 		if ($data['caption_position'] === 'below_image') $data['captionBackground'] = false;
 
+		if (!isset($data['link_target'])) $data['link_target'] = false; // Initialize array member to prevent notices
+		// We could really go with wp_parge_args here...
+
 		$markup = '<div>' . upfront_get_template('uimage', $data, dirname(dirname(__FILE__)) . '/tpl/image.html') . '</div>';
 
 		if($data['when_clicked'] == 'image'){
