@@ -1256,7 +1256,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		this.$el.find('.upfront-object-content').html('');
 		if(this.property('menu_items').length > 0) {
-			this.$el.find('.upfront-object-content').append(this.renderMenu(this.property('menu_items'), 'menu'));
+			var menu = this.renderMenu(this.property('menu_items'), 'menu');
+			this.$el.find('.upfront-object-content').append(menu);
 		} else {
 			//	this.$el.find('.upfront-object-content').append(this.renderMenu([me.menuItemTemplate()], 'menu'));
 			//	me.$el.find('ul.menu li.menu-item').addClass('new_menu_item').find('a.menu_item').addClass('new_menu_item').addClass('menu_item_placeholder')
@@ -1267,7 +1268,6 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				me.$el.find('a.newnavigation-add-item').trigger('click');
 			}, 200);
 		}
-
 
 		//Work around for having the region container have a higher z-index if it contains the nav, so that the dropdowns, if overlapping to the following regions should not loose "hover" when the mouse travels down to the next region.
 
@@ -1362,16 +1362,18 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		return new_menu_order;
 	},
 	renderMenu: function(list, classname){
-		var $dom = $('<ul>').addClass(classname);
+		var me = this,
+			$dom = $('<ul>').addClass(classname)
+		;
 		if(classname=='menu') $dom.addClass('drag_mode');
-		list.forEach( function(model){
-			//if(model['menu-item-title'].trim() == '') model['menu-item-title'] = l10n.link_name;
-			$dom.append(this.renderMenuItem(model));
-			if(!(typeof model.sub === 'undefined')) {
-				$dom.find(':last').parent().addClass('parent').append(this.renderMenu(model.sub, 'sub-menu'));
+		_(list).each(function (model) {
+			var $li = $(me.renderMenuItem(model));
+			if($li && $li.length && !(typeof model.sub === 'undefined')) {
+				if (model.sub && model.sub.length) $li.addClass('parent').append(me.renderMenu(model.sub, 'sub-menu'));
 			}
-		}, this);
-		$dom.children('li:last').append('<i class="navigation-add-item"></i>')
+			$dom.append($li);
+		});
+		$dom.find('li:last').append('<i class="navigation-add-item"></i>')
 		return $dom;
 	},
 
