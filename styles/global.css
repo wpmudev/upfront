@@ -131,7 +131,7 @@ h2, h3 { page-break-after: avoid; }
 
 .upfront-output-region:before, .upfront-output-region:after { content: ""; display: table; }
 .upfront-output-region:after { clear: both; }
-.upfront-output-region { zoom: 1; }
+.upfront-output-region { zoom: 1; position: relative; }
 
 .upfront-region-container-bg {
 	position: relative;

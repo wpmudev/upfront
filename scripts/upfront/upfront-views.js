@@ -2997,8 +2997,16 @@ define([
 				this.$el.append(this.region_panels.el);
 			},
 			render_bg_setting: function () {
-				var container_view = this.parent_view.get_container_view(this.model);
-				this.bg_setting = new Upfront.Views.Editor.ModalBgSetting({model: this.model, to: this.$el, width: 420, top: 52, right:43, keep_position: false});
+				var container_view = this.parent_view.get_container_view(this.model),
+					opts = {
+						model: this.model, 
+						to: this.$el, 
+						width: 420, 
+						top: 52, 
+						right:43, 
+						keep_position: false
+					};
+				this.bg_setting = new Upfront.Views.Editor.ModalBgSetting(opts);
 				this.bg_setting.for_view = this;
 				this.bg_setting.render();
 				this.$el.append(this.bg_setting.el);
@@ -3275,19 +3283,28 @@ define([
 					if ( each_view && each_view.bg_setting )
 						each_view.bg_setting.close(false);
 				});
-				var $settings_trigger = this.$el.find('> .upfront-entity_meta > a.upfront-entity-settings_trigger');
+				
+				var $settings_trigger = this.$el.find('> .upfront-entity_meta > a.upfront-entity-settings_trigger'),
+					setting_offset = $settings_trigger.offset(),
+					offset = this.$el.offset(),
+					width = this.$el.width();
 
 				
 
 				if(this.model.get('type') == 'lightbox') {
-					console.log($settings_trigger.offset());
-					//this.bg_setting.left =  $settings_trigger.offset().left - this.$el.width() ;
 					this.bg_setting.right =  80;
-					this.bg_setting.top = $settings_trigger.offset().top;
+					this.bg_setting.top = setting_offset.top;
 				}
 				else {
-					this.bg_setting.right = ( this.$el.offset().left + this.$el.width() - $settings_trigger.offset().left ) + 10;
-					this.bg_setting.top = $settings_trigger.offset().top - this.$el.offset().top;
+					if ( this.bg_setting.width < setting_offset.left - 10 ) {
+						this.bg_setting.right = ( offset.left + width - setting_offset.left ) + 10;
+						this.bg_setting.left = -1;
+					}
+					else {
+						this.bg_setting.right = -1;
+						this.bg_setting.left = width;
+					}
+					this.bg_setting.top = setting_offset.top - offset.top;
 				}
 
 				container_view.$el.addClass('upfront-region-bg-setting-open');
@@ -4017,6 +4034,7 @@ define([
 					region_view = this.render_region(model, sub);
 				}
 				this.apply_adapt_region_to_breakpoints();
+				console.log(model)
 				Upfront.Events.trigger("entity:region:added", region_view, region_view.model);
 			},
 			on_remove: function (model) {

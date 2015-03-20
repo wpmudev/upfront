@@ -1249,6 +1249,137 @@ var LayoutEditor = {
 
 	_build_query: function (data) {
 		return _.map(data, function(value, key){ return key + '=' + value; }).join('&');
+	},
+	
+	clean_global_regions: function () {
+		Upfront.data.global_regions = false;
+	},
+	
+	open_global_region_manager: function () {
+		var ed = Upfront.Behaviors.LayoutEditor;
+		Upfront.Popup.open(
+			function (data, $top, $bottom) {
+				var $me = $(this);
+				$me.html('<p class="upfront-popup-placeholder">' + Upfront.Settings.l10n.global.behaviors.loading_content + '</p>');
+				
+				if ( !Upfront.data.global_regions ){
+					ed._refresh_global_regions().done(function(){
+						ed._render_global_region_manager($me);
+					})
+				}
+				else {
+					ed._render_global_region_manager($me);
+				}
+			},
+			{
+				width: 600
+			},
+			'global-region-manager'
+		);
+	},
+	
+	_refresh_global_regions: function () {
+		return Upfront.Util.post({
+			action: 'upfront_list_scoped_regions',
+			scope: 'global',
+			storage_key: _upfront_save_storage_key
+		}).done(function(data) {
+			Upfront.data.global_regions = data.data;
+		});
+	},
+	
+	_render_global_region_manager: function ($el) {
+		var ed = Upfront.Behaviors.LayoutEditor,
+			collection = Upfront.Application.layout.get("regions"),
+			region_managers = [
+				{
+					title: Upfront.Settings.l10n.global.behaviors.global_regions,
+					classname: 'global',
+					data: _.sortBy(Upfront.data.global_regions, function(region, i, regions){
+						if ( !region.container || region.name == region.container )
+							return i * 3;
+						else
+							return _.indexOf(regions, _.findWhere(regions, {name: region.container})) * 3 + 1;
+					})
+				},
+				{
+					title: Upfront.Settings.l10n.global.behaviors.lightboxes,
+					classname: 'lightbox',
+					data: Upfront.Util.model_to_json( collection.filter(function(model){
+						return model.get('sub') == 'lightbox';
+					}) )
+				}
+			];
+		$el.html('');
+		_.each(region_managers, function(manager){
+			var $wrap = $('<div class="global-region-manager-wrap global-region-manager-' + manager.classname + '"></div>'),
+				$title = $('<h3 class="global-region-manager-title">'+ manager.title +'</h3>'),
+				$content = $('<div class="global-region-manager-content upfront-scroll-panel"></div>');
+			$wrap.append([$title, $content]);
+			ed._render_regions(manager.data, $content);
+			$el.append($wrap);
+			// don't propagate scroll
+			Upfront.Views.Mixins.Upfront_Scroll_Mixin.stop_scroll_propagation($content);
+		});
+		$el.on('click', '.region-list-edit', function(e){
+			e.preventDefault();
+		});
+		$el.on('click', '.region-list-trash', function(e){
+			e.preventDefault();
+			var name = $(this).attr('data-name');
+			if ( $(this).closest('.global-region-manager-wrap').hasClass('global-region-manager-global') ){
+				if ( confirm('Deleting the global regions will remove it from all layouts. Continue?') ) {
+					Upfront.Util.post({
+						action: 'upfront_delete_scoped_regions',
+						scope: 'global',
+						name: name,
+						storage_key: _upfront_save_storage_key
+					}).done(function(data) {
+						// Also remove from current layout
+						if ( data.data ) {
+							_.each(data.data, function(region_name){
+								var model = collection.get_by_name(region_name);
+								collection.remove(model);
+							})
+							ed._refresh_global_regions().done(function(){
+								ed._render_global_region_manager($el);
+							})
+						}
+					});
+				}
+			}
+			else {
+				// lightbox
+			}
+		})
+	},
+	
+	_render_regions: function (regions, $el) {
+		var $lists = $('<ul class="global-region-manager-lists"></ul>');
+		_.each(regions, function(region){
+			var classes = ['global-region-manager-list'],
+				has_main = false;
+			if ( !region.container || region.name == region.container ){
+				classes.push('region-list-main');
+			}
+			else {
+				has_main = _.find(regions, function(reg){ return reg.name == region.container; });
+				classes.push('region-list-sub');
+				classes.push('region-list-sub-' + region.sub);
+				if ( has_main )
+					classes.push('region-list-sub-has-main');
+			}
+			$lists.append(
+				'<li class="' + classes.join(' ') + '">' +
+					'<span class="region-list-name">' + region.title + '</span>' +
+					'<span class="region-list-control">' +
+						//'<a href="#" class="region-list-edit" data-name="' + region.name + '">' + Upfront.Settings.l10n.global.behaviors.edit + '</a>' + 
+						'<a href="#" class="region-list-trash" data-name="' + region.name + '">' + Upfront.Settings.l10n.global.behaviors.trash + '</a>' +
+					'</span>' +
+				'</li>'
+			);
+		});
+		$el.append($lists);
 	}
 };
 

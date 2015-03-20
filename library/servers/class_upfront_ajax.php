@@ -17,6 +17,9 @@ class Upfront_Ajax extends Upfront_Server {
 			upfront_add_ajax('upfront_list_available_layout', array($this, "list_available_layout"));
 			upfront_add_ajax('upfront_list_theme_layouts', array($this, "list_theme_layouts"));
 			upfront_add_ajax('upfront_list_saved_layout', array($this, "list_saved_layout"));
+            upfront_add_ajax('upfront_list_scoped_regions', array($this, "list_scoped_regions"));
+            upfront_add_ajax('upfront_get_scoped_regions', array($this, "get_scoped_regions"));
+            upfront_add_ajax('upfront_delete_scoped_regions', array($this, "delete_scoped_regions"));
 			upfront_add_ajax('upfront_user_done_font_intro', array($this, "user_done_font_intro"));
 		}
 
@@ -279,6 +282,29 @@ class Upfront_Ajax extends Upfront_Server {
 		$layouts = Upfront_Layout::list_saved_layout($storage_key);
 		$this->_out(new Upfront_JsonResponse_Success($layouts));
 	}
+
+    function list_scoped_regions () {
+        $storage_key = $_POST['storage_key'];
+        $scope = $_POST['scope'];
+        $regions = Upfront_Layout::list_scoped_regions($scope, $storage_key);
+        $this->_out(new Upfront_JsonResponse_Success($regions));
+    }
+
+    function get_scoped_regions () {
+        $storage_key = $_POST['storage_key'];
+        $scope = $_POST['scope'];
+        $name = $_POST['name'];
+        $regions = Upfront_Layout::get_scoped_regions($name, $scope, $storage_key);
+        $this->_out(new Upfront_JsonResponse_Success($regions));
+    }
+
+    function delete_scoped_regions () {
+        $storage_key = $_POST['storage_key'];
+        $scope = $_POST['scope'];
+        $name = $_POST['name'];
+        $regions = Upfront_Layout::delete_scoped_regions($name, $scope, $storage_key);
+        $this->_out(new Upfront_JsonResponse_Success($regions));
+    }
 
 	function reset_layout () {
 		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
