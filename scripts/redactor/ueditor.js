@@ -159,8 +159,9 @@ var hackRedactor = function(){
          * If redactor is to high for the user to see it, show it under the selected text
          */
         if( this.$air.offset().top < 0 ){
+            var ey = e && e.clientY ? e.clientY : this.$box.height();
             this.$air.css({
-                top : e.clientY + 14 + this.$box.position().top + "px"
+                top : ey + 14 + this.$box.position().top + "px"
             });
             this.$air.addClass("under");
         }else{
