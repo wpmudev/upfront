@@ -35,7 +35,8 @@ class Upfront_Theme_Settings
 	protected function save() {
 		$fileContents = "<?php\nreturn array(\n";
 		foreach($this->settings as $setting=>$value) {
-			$fileContents .= "\t'$setting' => '$value',\n";
+			$value = addcslashes($value, "'\\");
+			$fileContents .= "\t'$setting' => \"$value\",\n";
 		}
 		$fileContents .= ");";
 
