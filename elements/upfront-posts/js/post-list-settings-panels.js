@@ -391,10 +391,20 @@ var SortSettings_Sorter = Upfront.Views.Editor.Field.Hidden.extend({
 		Upfront.Views.Editor.Field.Hidden.prototype.render.apply(this);
 		this.$el.append('<ul class="post_parts"></ul>');
 		var me = this,
-			parts = this.model.get_property_value_by_name("enabled_post_parts"),
+			enabled_parts = this.model.get_property_value_by_name("enabled_post_parts"),
+			saved_parts = this.model.get_property_value_by_name(this.options.property),
+			parts = [],
 			$sortable = this.$el.find("ul")
 		;
+
+		// If we have something here, do it
+		parts = saved_parts && saved_parts.length
+			? saved_parts
+			: enabled_parts
+		;
+
 		_.each(parts, function (part, idx) {
+			if (enabled_parts.indexOf(part) < 0) return true; // This one is disabled, move on
 			var pt = Parts.get_part(part, me.model);
 			pt.render();
 			$sortable.append(pt.$el);
