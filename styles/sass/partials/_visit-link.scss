@@ -27,6 +27,15 @@ i.visit_link:before {
   background-position: -910px -42px;
 }
 
+i.upfront-icon-region-visit-link-email:before,
+i.upfront-icon-region-visit-link-unlink:before,
+i.upfront-icon-region-visit-link-external:before,
+i.upfront-icon-region-visit-link-anchor:before,
+i.upfront-icon-region-visit-link-lightbox:before,
+i.upfront-icon-region-visit-link-entry:before {
+  background-image: url('../img/uf-ui-sprite.svg')!important;
+}
+
 div.ueditable-inactive a:hover i.visit_link {
   display:block;
 }
@@ -54,36 +63,44 @@ i.visit_link:after {
 i.visit_link.visit_link_unlink {
   display:none !important;
 }
+i.upfront-icon-region-visit-link-email:before {
+	background-position: -910px -234px;
+}
 
 i.visit_link.visit_link_anchor:after {
 	content:'Scroll to Anchor';
 }
+i.upfront-icon-region-visit-link-anchor:before,
 i.visit_link.visit_link_anchor:before {
 	background-position:-910px -42px;
 }
 i.visit_link.visit_link_external:after {
 	content:'Open Ext. Link';
 }
+i.upfront-icon-region-visit-link-external:before,
 i.visit_link.visit_link_external:before {
 	background-position:-910px -74px;
 }
 i.visit_link.visit_link_entry:after {
 	content:'Visit Post/Page';
 }
+i.upfront-icon-region-visit-link-entry:before,
 i.visit_link.visit_link_entry:before {
 	background-position:-910px -106px;
 }
 i.visit_link.visit_link_lightbox:after {
 	content:'Open Lightbox';
 }
+i.upfront-icon-region-visit-link-lightbox:before,
 i.visit_link.visit_link_lightbox:before {
 	background-position:-910px -138px;
 }
 i.visit_link.visit_link_unlink:after {
 	content:'Not Linked';
 }
+i.upfront-icon-region-visit-link-unlink:before,
 i.visit_link.visit_link_unlink:before {
-	background-position:-910px -106px;
+	background-position:-910px -203px;
 }
 i.visit_link:hover:after {
   display:block;

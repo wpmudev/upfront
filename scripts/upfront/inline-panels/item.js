@@ -5,6 +5,11 @@ define([], function () {
 		height: 30,
 		icon_class: 'upfront-icon-region',
 
+		initialize: function(options) {
+			this.options = options || {};
+			this.label = this.options.label;
+		},
+
 		render_icon: function () {
 			var icon = typeof this.icon === 'function' ? this.icon() : this.icon;
 			if ( !icon ) {

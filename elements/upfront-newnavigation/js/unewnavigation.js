@@ -1,14 +1,5 @@
 (function ($) {
 define([], function(){//editorTpl) {
-var linkPanelTpl = '<div class="redactor_air upfront-ui under">' +
-	'<ul class="redactor-toolbar redactor-toolbar-external" id="redactor-toolbar-0">' +
-	'<div class="redactor-dropdown ueditor_panel redactor-dropdown-box-upfrontLink linkingPanelGoesHere" style="left: 0px; display: none;">' +
-	'</div>' +
-	'<li>' +
-	'<a href="#" class="re-icon re-upfrontLink redactor-btn-image redactor_act dropact" rel="upfrontLink" title="Link" tabindex="-1"></a>' +
-	'</li>' +
-	'</ul>' +
-	'</div>';
 var l10n = Upfront.Settings.l10n.newnavigation_element;
 
 //var $editorTpl = $(editorTpl);
@@ -43,7 +34,8 @@ var MenuItemView = Backbone.View.extend({
 		"contextmenu a.menu_item": "on_context_menu",
 		'click i.visit_link': 'visitLink',
 		'click a.redactor_act': 'onOpenPanelClick',
-		'click .upfront-save_settings': 'onOpenPanelClick'
+		'click .upfront-save_settings': 'onOpenPanelClick',
+		'click .open-item-controls': 'onOpenItemControlsClick'
 	},
 	initialize: function(options) {
 		this.parent_view = options.parent_view;
@@ -187,33 +179,130 @@ var MenuItemView = Backbone.View.extend({
 
 		if(me.newitem) content = content + ' new_menu_item menu_item_placeholder';
 
-		content = content+'" >'+this.model['menu-item-title']+'</a><i class="visit_link visit_link_'+ this.guessLinkType() +'"></i><i class="delete_menu_item">x</i>';
-		$(this.el).html(content + linkPanelTpl);
+		content = content+'" >'+this.model['menu-item-title']+'</a><i class="delete_menu_item">x</i><span class="open-item-controls"></span>';
+		$(this.el).html(content);
+		this.createInlineControlPanel();
 
-		this.linkPanel = new Upfront.Views.Editor.LinkPanel({
-			linkUrl: this.model['menu-item-url'],
-			linkType: this.guessLinkType(),
-			button: true
-		});
-
-		this.linkPanel.render();
-		this.$el.find('.linkingPanelGoesHere').html(this.linkPanel.el);
-		this.linkPanel.delegateEvents();
-		this.listenTo(this.linkPanel, 'change', function(data) {
-			me.model['menu-item-url'] = data.url;
-			me.saveLink(false, true);
-		});
-
-		this.$el.data('backboneview', me).addClass('menu-item');
+		$(this.el).data('backboneview', me).addClass('menu-item');
 		if(me.newitem) $(this.el).addClass('new_menu_item');
+
+		if (this.linkPanelOpen) {
+			this.onOpenItemControlsClick();
+			this.$el.find('.upfront-icon-region-link').click();
+		}
 
 		return this;
 	},
+
+	onOpenItemControlsClick: function() {
+		this.$el.toggleClass('controls-visible');
+		if (this.$el.hasClass('controls-visible')) {
+			this.controlsVisible = true;
+			this.$el.siblings().removeClass('controls-visible');
+		} else {
+			this.controlsVisible = false;
+
+		}
+	},
+
+	getTextByLinkType: function(linktype) {
+		switch(linktype) {
+			case 'unlink':
+				return 'Not Linked';
+			case 'lightbox':
+				return 'Open Lightbox';
+			case 'anchor':
+				return 'Scroll to Anchor';
+			case 'entry':
+				return 'Go To Post / Page';
+			case 'external':
+				return 'Open Ext. Link';
+			case 'email':
+					return 'Send Email';
+		};
+	},
+
+	createInlineControlPanel: function() {
+		var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel();
+
+		panel.items = _([
+			this.createLinkControl(),
+			this.createControl('visit-link-' + this.guessLinkType(), this.getTextByLinkType(this.guessLinkType()), 'visitLink'),
+		]);
+
+		var imageControlsTpl = '<div class="uimage-controls image-element-controls upfront-ui"></div>';
+		this.$el.append(imageControlsTpl);
+		panel.render();
+		this.$el.find('.uimage-controls').append(panel.el);
+		panel.delegateEvents();
+	},
+		createControl: function(icon, tooltip, click){
+			var me = this,
+				control = new Upfront.Views.Editor.InlinePanels.Control({
+					label: tooltip
+				});
+			control.icon = icon;
+			control.tooltip = tooltip;
+			if (click) {
+				this.listenTo(control, 'click', function(e){
+					me[click](e);
+				});
+			}
+
+			return control;
+		},
+
+		createLinkControl: function(){
+			var me = this,
+				control = new Upfront.Views.Editor.InlinePanels.DialogControl(),
+				linkPanel;
+
+			control.view = linkPanel = new Upfront.Views.Editor.LinkPanel({
+				linkUrl: this.model['menu-item-url'],
+				linkTarget: this.model['menu-item-target'],
+				linkType: this.guessLinkType(),
+				button: false
+			});
+
+			this.listenTo(control, 'panel:ok', function() {
+				control.close();
+			});
+
+			this.listenTo(control, 'panel:open', function() {
+				me.$el.parents('.menu').sortable('disable');
+				me.linkPanelOpen = true;
+			});
+
+			me.listenTo(control, 'panel:close', function(){
+				if (me.$el.parents('.menu').find('.upfront-control-dialog-open').length === 0) {
+					me.$el.parents('.menu').sortable('enable');
+				}
+				me.linkPanelOpen = false;
+			});
+
+			me.listenTo(linkPanel, 'change', function(data) {
+				me.linkType = data.type;
+				me.model['menu-item-url'] = data.url;
+				me.model['menu-item-target'] = data.target;
+				me.saveLink();
+			});
+
+			control.icon = 'link';
+			control.tooltip = 'link';
+			control.id = 'link';
+
+			return control;
+		},
+
 	updateLinkType: function() {
-		this.$el.find('i.visit_link').attr('class', 'visit_link visit_link_'+ this.guessLinkType());
+		this.$el.find('.upfront-inline-panel-item:nth-child(2) i').attr('class', 'upfront-icon upfront-icon-region-visit-link-'+ this.guessLinkType());
+		this.$el.find('.upfront-inline-panel-item:nth-child(2) span').text(this.getTextByLinkType(this.linkType));
 	},
 	guessLinkType: function(){
 		var url = this.model['menu-item-url'];
+		if (this.linkType) {
+			return this.linkType;
+		}
 
 		if(!$.trim(url) || $.trim(url) == '#' || $.trim(url) == '') {
 			return 'unlink';
