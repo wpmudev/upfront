@@ -518,8 +518,8 @@ class Upfront_GridBreakpoint {
 		return '' .
 			( $this->is_default() ? ".upfront-region-container-clip .upfront-region-container-bg {max-width: {$contained_width}px;}" . "\n" : "" ) .
 			".upfront-grid-layout {width: {$width}px;}" . "\n" .
-			".upfront-output-object {padding: {$column_padding}px;}" . "\n" .
-			".plaintxt_padding {padding: {$type_padding}px;}" . "\n" .
+			( $this->is_default() ? ".upfront-output-object {padding: {$column_padding}px;}" . "\n" : "") .
+			( $this->is_default() ? ".plaintxt_padding {padding: {$type_padding}px;}" . "\n" : "") .
 		'';
 	}
 
