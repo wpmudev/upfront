@@ -4338,6 +4338,7 @@ define([
 				styles.push(selector + ' .upfront-object { padding: ' + grid.column_padding + 'px; }');
 				styles.push(selector + ' .upfront-overlay-grid {background-size: 100% ' + grid.baseline + 'px; }');
 				styles.push(selector + ' .plaintxt_padding {padding: ' + grid.type_padding + 'px; }');
+				styles.push(selector + ' .upfront-inserted_image-wrapper .wp-caption-text, ' + selector + ' .uinsert-image-wrapper { padding: ' + grid.column_padding + 'px; }');
 				styles.push(selector + ' .upfront-module-group-bg-padding { margin: ' + grid.column_padding + 'px; }');
 
 				if ( $('#upfront-grid-style-inline').length )

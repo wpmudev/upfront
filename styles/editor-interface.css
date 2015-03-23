@@ -2281,10 +2281,10 @@ a.ueditor-action-pickercancel {
   background: none !important;
   margin: 0 -15px; }
 
-/* line 117, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/ueditor-inserts */
-.upfront-inserted_image-wrapper .wp-caption-text, .uinsert-image-wrapper {
-  padding: 15px; }
-
+/*.upfront-inserted_image-wrapper .wp-caption-text,
+.uinsert-image-wrapper{
+	padding: 15px;
+}*/
 /* line 120, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/ueditor-inserts */
 .uinsert-image-wrapper img {
   width: 100%;
