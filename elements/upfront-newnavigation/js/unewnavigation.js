@@ -201,7 +201,7 @@ var MenuItemView = Backbone.View.extend({
 		this.linkPanel.delegateEvents();
 		this.listenTo(this.linkPanel, 'change', function(data) {
 			me.model['menu-item-url'] = data.url;
-			me.saveLink()
+			me.saveLink(false, true);
 		});
 
 		this.$el.data('backboneview', me).addClass('menu-item');
@@ -371,10 +371,10 @@ var MenuItemView = Backbone.View.extend({
 
 		if($(this.el).children('div.redactor_box').length > 0) menu_item.blur();
 
-
 		if(me.model['menu-item-title'].trim() == '') {
 			if(typeof(keep) != 'undefined' && keep) {
-				me.model['menu-item-title'] = menu_item.next('a.ueditor-placeholder').text();
+				var title_text = menu_item.next('a.ueditor-placeholder').text() || (menu_item.is("a.menu_item_placeholder") ? menu_item.text() : '');
+				me.model['menu-item-title'] = title_text;
 			}
 			else {
 				me.deleteMenuItem();
