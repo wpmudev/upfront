@@ -198,7 +198,8 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'caption' => 'Image description',
 			'alt' => '',
 			'tags' => array(),
-			'margin' => array('left' => 0, 'top' => 0)
+			'margin' => array('left' => 0, 'top' => 0),
+			'linkTarget' => '',
 		);
 	}
 
