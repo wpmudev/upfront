@@ -1865,8 +1865,9 @@ var GridEditor = {
 			$wrap_els.each(function(index){
 				var wrap_el = ed.get_el($(this)),
 					col = ( !breakpoint || breakpoint.default ) ? ed.get_class_num(wrap_el.$el, ed.grid.class) : wrap_el.$el.data('breakpoint_col');
-				if ( wrap_el.col < col )
+				if ( wrap_el.col < col && Upfront.Application.get_current() !== Upfront.Application.MODE.POST) { // This should *NOT* happen in post layout editing mode (builder). If it does, the parent element ends up having .c0 width for some reason o.0
 					ed.update_model_margin_classes(wrap_el.$el, [ed.grid.class + wrap_el.col]);
+				}
 			});
 			
 			// Clear the wrapper when wrapper is rendered side-by-side, but the elements is not conflicting each other
