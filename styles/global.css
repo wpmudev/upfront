@@ -442,3 +442,6 @@ div.upfront-region-lightbox .upfront-icon-popup-close, div.upfront-region-side-l
 .upfront-object-content p{
   margin:0 0 15px 0;
 }
+/* upfront element output resets – defaults */
+
+.upfront-navigation li { display: inline-block;  list-style:none; }
