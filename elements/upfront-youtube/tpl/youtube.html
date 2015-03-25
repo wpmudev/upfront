@@ -2,10 +2,10 @@
   <?php if ($videoType == 'single') { ?>
     <?php if ($single_video_url) { ?>
       <iframe src="http://www.youtube.com/embed/<?php echo $single_video_id ?>?modestbranding=1" height="<?php echo $player_height ?>" width="<?php echo $player_width ?>"></iframe>
-      <?php if($show_title[0]){ ?>
+      <?php if(!empty($show_title[0])){ ?>
         <h3><?php echo $title ?></h3>
       <?php } ?>
-      <?php if($show_description[0]){ ?>
+      <?php if(!empty($show_description[0])){ ?>
         <p><?php echo $description ?></p>
       <?php } ?>
     <?php } else { ?>
