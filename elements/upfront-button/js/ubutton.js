@@ -400,9 +400,9 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			this.showPlaceholder();
 
 		//console.log(this.property('currentpreset'));
-		var preset = Upfront.Views.Editor.Button.Presets.get(this.property('currentpreset'));
-		if(preset && preset.get('theme_style'))
-			this.$el.children('.upfront-object').addClass(preset.get('theme_style'));
+		//var preset = Upfront.Views.Editor.Button.Presets.get(this.property('currentpreset'));
+
+		
 	},
 	showPlaceholder: function() {
 		var $target = this.$el.find('.upfront-object-content a.upfront_cta:not(.ueditor-placeholder)');
@@ -1107,7 +1107,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			me.$el.find('div.upfront-settings-common_panel').css('display', 'none');
 		}, 100);
 
-		Upfront.Events.on("entity:settings:beforedeactivate", this.on_save, this);
+		Upfront.Events.once("entity:settings:beforedeactivate", this.on_save, this);
 		Upfront.Events.once("entity:settings:deactivate", this.revert_preset, this);
 		me.is_saving = false;
 		me.original_style = $('style#style'+me.property('element_id')).html();
@@ -1228,6 +1228,8 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 
 
 		$('style#style'+me.property('element_id')).html(style);
+
+
 	},
 	get_raw_picker_field_color: function (value) {
 		var color = value.color || false;
@@ -1249,6 +1251,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 
 		this.is_saving = true;
 		var currentpreset = this.property('currentpreset');
+		
 		if(this.buttonpresets.$el.css('display') == 'none')
 			this.save_preset(this.property('currentpreset'));
 		this.is_changed = true;
@@ -1293,6 +1296,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 	},
 
 	load_preset: function(presetname) {
+		var me = this;
 			if(Upfront.Views.Editor.Button.Presets.get(presetname)) {
 				var preset = Upfront.Views.Editor.Button.Presets.get(presetname).attributes;
 
@@ -1431,7 +1435,17 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				}
 
 				this.$el.find('div.upfront-settings-css input[value="'+preset.theme_style+'"]').trigger('click');
+
+				var preset = Upfront.Views.Editor.Button.Presets.get(presetname);
+				if(preset && preset.get('theme_style')) {
+					var for_view = me.parent_view.for_view;
+					_.each(Upfront.Views.Editor.Button.Presets, function(element, index, list) {
+						for_view.$el.children('.upfront-object').removeClass(list.models[index].get('theme_style'));
+					});
+					for_view.$el.children('.upfront-object').addClass(preset.get('theme_style'));
+				}
 			}
+		
 	},
 	save_preset: function(presetname) {
 		var preset = Upfront.Views.Editor.Button.Presets.get(presetname);
@@ -1539,7 +1553,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				newpreset.hov_color = this.get_raw_picker_field_color(this.hov_color);
 
 
-			newpresettheme_style = this.$el.find('div.upfront-settings-css li.upfront-field-select-option-selected input').val();
+			newpreset.theme_style = this.$el.find('div.upfront-settings-css li.upfront-field-select-option-selected input').val();
 
 			Upfront.Views.Editor.Button.Presets.add(newpreset);
 

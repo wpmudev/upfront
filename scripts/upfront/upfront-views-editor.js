@@ -5313,6 +5313,9 @@ var _Settings_CSS = SettingsItem.extend({
 
 	openEditor: function(e){
 		e.preventDefault();
+
+		Upfront.Events.trigger("entity:settings:beforedeactivate");
+
 		var value = this.fields._wrapped[0].get_value(),
 			default_value = this.fields._wrapped[0].default_value
 		;
