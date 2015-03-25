@@ -1863,9 +1863,11 @@ var GridEditor = {
 				
 			// Reset the column size if it's bigger than it allowed to
 			$wrap_els.each(function(index){
+				if ( this.offsetWidth <= 0 ) // Element is not visible
+					return;
 				var wrap_el = ed.get_el($(this)),
 					col = ( !breakpoint || breakpoint.default ) ? ed.get_class_num(wrap_el.$el, ed.grid.class) : wrap_el.$el.data('breakpoint_col');
-				if ( wrap_el.col < col && Upfront.Application.get_current() !== Upfront.Application.MODE.POST) { // This should *NOT* happen in post layout editing mode (builder). If it does, the parent element ends up having .c0 width for some reason o.0
+				if ( wrap_el.col < col && wrap_el.col > 0 ) {
 					ed.update_model_margin_classes(wrap_el.$el, [ed.grid.class + wrap_el.col]);
 				}
 			});
