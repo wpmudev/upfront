@@ -35,7 +35,7 @@ var MenuItemView = Backbone.View.extend({
 		'click i.visit_link': 'visitLink',
 		'click a.redactor_act': 'onOpenPanelClick',
 		'click .upfront-save_settings': 'onOpenPanelClick',
-		'click .open-item-controls': 'onOpenItemControlsClick'
+		'click > .open-item-controls': 'onOpenItemControlsClick'
 	},
 	initialize: function(options) {
 		this.parent_view = options.parent_view;

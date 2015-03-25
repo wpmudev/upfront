@@ -386,10 +386,10 @@ li.menu-item .uimage-controls.image-element-controls {
 li.menu-item .uimage-controls.image-element-controls .upfront-inline-panel {
 	visibility: hidden;
 }
-li.menu-item.controls-visible .uimage-controls.image-element-controls {
+li.menu-item.controls-visible > .uimage-controls.image-element-controls {
 	visibility: visible;
 }
-li.menu-item.controls-visible .uimage-controls.image-element-controls .upfront-inline-panel {
+li.menu-item.controls-visible > .uimage-controls.image-element-controls .upfront-inline-panel {
 	visibility: visible;
 }
 li.menu-item .open-item-controls {
@@ -400,14 +400,15 @@ li.menu-item .open-item-controls {
 	position: absolute;
 	bottom: 0;
 	left: 0;
+	z-index: 10;
 	display: none;
 	cursor: pointer;
   background-image: -moz-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
   background-image: -ms-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
   background-image: linear-gradient(-179deg, #2F445D 0%, #152841 100%);
 }
-li.menu-item:hover .open-item-controls,
-li.menu-item.controls-visible .open-item-controls {
+li.menu-item:hover > .open-item-controls,
+li.menu-item.controls-visible > .open-item-controls {
 	display: block;
 }
 li.menu-item .uimage-controls .upfront-inline-panel {
