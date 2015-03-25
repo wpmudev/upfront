@@ -115,6 +115,9 @@ class Upfront_Output {
 			else if ( $region_sub == 'fixed' ){
 				$region_markups_after[$container] .= $markup;
 			}
+			else if ( $region_sub == 'left' ){
+				$region_markups[$container] = $markup . $region_markups[$container];
+			}
 			else{
 				$region_markups[$container] .= $markup;
 			}
