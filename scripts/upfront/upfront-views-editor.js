@@ -374,6 +374,7 @@ define([
 			;
 			_.each(me.modal._fields, function (field) {
 				field.render();
+				field.delegateEvents();
 				$content.append(field.$el);
 			});
 		},
