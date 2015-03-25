@@ -199,9 +199,12 @@ var MenuItemView = Backbone.View.extend({
 		if (this.$el.hasClass('controls-visible')) {
 			this.controlsVisible = true;
 			this.$el.siblings().removeClass('controls-visible');
+			this.$el.parents('.menu').sortable('disable');
 		} else {
 			this.controlsVisible = false;
-
+			if (this.$el.parents('.menu').find('.controls-visible').length === 0) {
+				this.$el.parents('.menu').sortable('enable');
+			}
 		}
 	},
 
@@ -269,14 +272,10 @@ var MenuItemView = Backbone.View.extend({
 			});
 
 			this.listenTo(control, 'panel:open', function() {
-				me.$el.parents('.menu').sortable('disable');
 				me.linkPanelOpen = true;
 			});
 
-			me.listenTo(control, 'panel:close', function(){
-				if (me.$el.parents('.menu').find('.upfront-control-dialog-open').length === 0) {
-					me.$el.parents('.menu').sortable('enable');
-				}
+			me.listenTo(control, 'panel:close', function() {
 				me.linkPanelOpen = false;
 			});
 
