@@ -520,7 +520,7 @@ define([
 				this.$('a').addClass('js-uimage-open-lightbox');
 			}
 
-			if (this.isThemeImage()) {
+			if (this.isThemeImage() && !Upfront.themeExporter) {
 				this.$el.addClass('image-from-theme');
 				this.$el.find('b.upfront-entity_meta').after('<div class="swap-image-overlay"><p class="upfront-icon upfront-icon-swap-image"><span>Click to </span>Swap Image</p></div>');
 			} else {
@@ -683,8 +683,8 @@ define([
 			this.$el
 				.find('.uimage-resize-hint').hide().end()
 				.find('.uimage').css('min-height', 'none')
-				.find('.upfront-image-caption-container').width('100%').end()
-				.find('.upfront-image-container').width('100%').height('auto').end()
+				.find('.upfront-image-caption-container').css('width', '100%').end()
+				.find('.upfront-image-container').css('width', '100%').css('height', 'auto').end()
 				.find('img')
 					.css({
 						position: 'static',
