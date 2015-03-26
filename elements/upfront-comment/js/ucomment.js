@@ -301,7 +301,8 @@ var DiscussionSettings_Settings_View = DiscussionSettings_ActionView.extend({
 	type: "settings",
 	spawn_checkbox: function (label, prop, value) {
 		value = value || "1";
-		return new CheckboxField({
+		return new Upfront.Views.Editor.Field.Checkboxes({
+			multiple: false,
 			model: this.model,
 			property: prop,
 			values: [

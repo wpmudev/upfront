@@ -186,7 +186,7 @@ class Upfront_Uyoutube_Server extends Upfront_Server {
 
 	private function getVideosFromChannelData($data) {
 		$videos = array();
-		foreach ($data as $video) {
+		if (!empty($data) && is_array($data)) foreach ($data as $video) {
 			$query = array();
 			parse_str(parse_url($video['link'][0]['href'], PHP_URL_QUERY), $query);
 			$description = substr($video['media$group']['media$description']['$t'], 0, 100);

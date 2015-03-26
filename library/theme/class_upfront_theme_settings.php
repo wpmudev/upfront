@@ -28,13 +28,14 @@ class Upfront_Theme_Settings
 	}
 
 	public function set($name, $value) {
-		$this->settings[$name] = addslashes($value);
+		$this->settings[$name] = $value;//addslashes($value);
 		$this->save();
 	}
 
 	protected function save() {
 		$fileContents = "<?php\nreturn array(\n";
 		foreach($this->settings as $setting=>$value) {
+			$value = addcslashes($value, "'\\");
 			$fileContents .= "\t'$setting' => '$value',\n";
 		}
 		$fileContents .= ");";

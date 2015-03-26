@@ -114,7 +114,7 @@ define([
 		handleTypeChange: function() {
 			// First reset url property
 			// We don't want funny results when changing from one type to another.
-			this.model.set({'url': ''});
+			this.model.set({'url': ''}, {silent: true});
 			this.render();
 
 			if (this.model.get('type') === 'entry') {

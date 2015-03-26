@@ -742,12 +742,12 @@ class Upfront_Layout extends Upfront_JsonModel {
 		foreach ( $layouts as $layout ){
 			if ( preg_match("/^{$storage_key}-([^-]+)(-([^-]+)|)(-([^-]+)|)$/", $layout->option_name, $match) ){
 				$ids = array();
-				if ( $match[3] && $match[5] )
+				if ( !empty($match[3]) && !empty($match[5]) )
 					$ids['specificity'] = $match[1] . '-' . $match[3] . '-' . $match[5];
 				if ( $match[3] )
 					$ids['item'] = $match[1] . '-' . $match[3];
 				$ids['type'] = $match[1];
-				$layout_id = ( $ids['specificity'] ? $ids['specificity'] : ( $ids['item'] ? $ids['item'] : $ids['type'] ) );
+				$layout_id = ( !empty($ids['specificity']) ? $ids['specificity'] : ( $ids['item'] ? $ids['item'] : $ids['type'] ) );
 				$return[$layout_id] = array(
 					'layout' => $ids,
 					'label' => Upfront_EntityResolver::layout_to_name($ids)

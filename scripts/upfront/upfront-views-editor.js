@@ -376,6 +376,7 @@ define([
 			;
 			_.each(me.modal._fields, function (field) {
 				field.render();
+				field.delegateEvents();
 				$content.append(field.$el);
 			});
 		},
@@ -5331,6 +5332,9 @@ var _Settings_CSS = SettingsItem.extend({
 
 	openEditor: function(e){
 		e.preventDefault();
+
+		Upfront.Events.trigger("entity:settings:beforedeactivate");
+
 		var value = this.fields._wrapped[0].get_value(),
 			default_value = this.fields._wrapped[0].default_value
 		;
@@ -5362,8 +5366,7 @@ var _Settings_CSS_Field = Field_Select.extend({
 	render: function() {
 		Field_Select.prototype.render.call(this);
 		var html = ['<a href="#" title="Edit style" class="upfront-css-edit"></a>'];
-		html.push('<p class="upfront-css-new"><a href="#"><span class="codeicon">&lt;/&gt;</span>');
-		html.push('<span class="upfront-css-new-text">' + l10n.add_new_style + '</span></a></p>');
+		html.push('<p class="upfront-css-new"><a href="#"><span class="upfront-css-new-text">' + l10n.add_new_style + '</span></a></p>');
 		this.$el.append(html.join(''));
 		return this;
 	},

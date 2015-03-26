@@ -19,11 +19,9 @@ var UeditorPanel = Backbone.View.extend({
         me.panel = options.panel;
 
         this.on('open', function(redactor){
-            console.log('Panel open');
             me.$el.trigger('open', redactor);
         });
         this.on('closed', function(redactor){
-            console.log('Panel closed');
             me.$el.trigger('closed', redactor);
         });
 
@@ -282,7 +280,6 @@ RedactorPlugins.stateAlignmentCTA = {
                 left: {
                     iconClass: 'ueditor-left',
                     isActive: function(redactor){
-                        //console.log('returned left' + (self.$element.length && self.$element.css('text-align') == 'left'));
                         return self.$element.length && self.$element.css('text-align') == 'left';
 
                     },
@@ -296,7 +293,6 @@ RedactorPlugins.stateAlignmentCTA = {
                     iconClass: 'ueditor-center',
                     isActive: function(redactor){
 
-                        //console.log('returned center' + (self.$element.length && self.$element.css('text-align') == 'center'));
                         return self.$element.length && self.$element.css('text-align') == 'center';
 
                     },
@@ -310,7 +306,6 @@ RedactorPlugins.stateAlignmentCTA = {
                     iconClass: 'ueditor-right',
                     isActive: function(redactor){
 
-                        //console.log('returned right' + (self.$element.length && self.$element.css('text-align') == 'right'));
                         return self.$element.length && self.$element.css('text-align') == 'right';
 
                     },
@@ -323,7 +318,6 @@ RedactorPlugins.stateAlignmentCTA = {
                     iconClass: 'ueditor-justify',
                     isActive: function(redactor){
 
-                        //console.log('returned justify' + (self.$element.length && self.$element.css('text-align') == 'justify'));
                         return self.$element.length && self.$element.css('text-align') == 'justify';
 
                     },
@@ -541,7 +535,6 @@ RedactorPlugins.upfrontPlaceholder = function() {
             else
                 this.$placeholder.hide();
 
-            console.log('wtf wtf');
         }*/
     }
 };
@@ -671,7 +664,6 @@ RedactorPlugins.upfrontIcons = function() {
                 });
             },
             close: function () {
-                console.log("closing close panel");
                 if (this.redactor) {
                     //this.redactor.selection.restore();
                     this.$sel = false;
@@ -733,125 +725,131 @@ RedactorPlugins.upfrontIcons = function() {
 /*--------------------
  Upfront link panel button
  -----------------------*/
-
 RedactorPlugins.upfrontLink = function() {
 
-    return {
-        init: function () {
-            this.opts.buttonsCustom.upfrontLink = {
-                title: 'Link',
-                panel: this.upfrontLink.panel
-            };
-        },
-        openPanel: function () {
-            var left = this.button.get("link").position().left;
-            $(".redactor-dropdown-box-upfrontLink").css("left", left + "px").toggle();
-        },
-        panel: UeditorPanel.extend({
-            tpl: _.template($(tpl).find('#link-tpl').html()),
-            events: {
-                open: 'open'
-            },
-            initialize: function () {
-                UeditorPanel.prototype.initialize.apply(this, arguments);
-            },
-            render: function (options) {
-							options = options || {};
+	return {
+		init: function () {
+			this.opts.buttonsCustom.upfrontLink = {
+				title: 'Link',
+				panel: this.upfrontLink.panel
+			};
+		},
+		openPanel: function () {
+			var left = this.button.get("link").position().left;
+			$(".redactor-dropdown-box-upfrontLink").css("left", left + "px").toggle();
+		},
+		panel: UeditorPanel.extend({
+			tpl: _.template($(tpl).find('#link-tpl').html()),
+			events: {
+				open: 'open'
+			},
+			initialize: function () {
+				UeditorPanel.prototype.initialize.apply(this, arguments);
+			},
+			render: function (options) {
+				var linkTypes = {};
+				options = options || {};
 
-							this.linkPanel = new Upfront.Views.Editor.LinkPanel({
-								linkUrl: options.url,
-								linkType: options.link || this.guessLinkType(options.url),
-								linkTarget: options.target || '_self',
-								button: true
-							});
+				if (this.redactor.$element.hasClass('mfp-title')) {
+					linkTypes = {
+						anchor: false,
+						lightbox: false
+					};
+					// Prevent magnific focus handler to mess up everything
+					$(document).off('focusin');
+				}
 
-							this.listenTo(this.linkPanel, 'change change:target', function (data) {
-								if (data.type == 'unlink') {
-									this.unlink();
-								} else {
-									this.link(data.url, data.type, data.target);
-								}
+				this.linkPanel = new Upfront.Views.Editor.LinkPanel({
+					linkUrl: options.url,
+					linkType: options.link || this.guessLinkType(options.url),
+					linkTarget: options.target || '_self',
+					linkTypes: linkTypes,
+					button: true
+				});
 
-								this.closeToolbar();
-							});
+				this.listenTo(this.linkPanel, 'change change:target', function (data) {
+					if (data.type == 'unlink') {
+						this.unlink();
+					} else {
+						this.link(data.url, data.type, data.target);
+					}
 
-                this.linkPanel.render();
-                this.$el.html(this.linkPanel.el);
-                this.linkPanel.delegateEvents();
-            },
-            open: function (e, redactor) {
-                this.redactor = redactor;
-                redactor.selection.save();
-                var link = redactor.utils.isCurrentOrParent('A');
-                var url = false;
+					this.closeToolbar();
+				});
 
-                if (link || url) {
-                    this.render({
-											url: link ? $(link).attr('href') : url,
-											link: this.guessLinkType(link ? $(link).attr('href') : url),
-											target: $(link).attr('target')
-										});//this.render({url: $(link).attr('href'), link: $(link).attr('rel') || 'external'});
-                } else {
-                    this.render({
-											url: '',
-											link: 'external',
-											target: '_blank'
-										});
-								}
-            },
-            close: function (e, redactor) {
-                redactor.selection.restore();
-            },
-            unlink: function (e) {
-							if (e) {
-								e.preventDefault();
-							}
+				this.linkPanel.render();
+				this.$el.html(this.linkPanel.el);
+				this.linkPanel.delegateEvents();
+			},
+			open: function (e, redactor) {
+				this.redactor = redactor;
+				redactor.selection.save();
+				var link = redactor.utils.isCurrentOrParent('A');
+				var url = false;
 
-							var text = this.redactor.selection.getHtml();
-							this.redactor.selection.restore();
-							if (text !== '' && $.parseHTML(text).length > 1) {// there is html inside
-								this.redactor.insert.html(text, true);
-							} else {
-								this.redactor.link.unlink();
-							}
-							this.redactor.$element.focus();
-            },
-            link: function (url, type, target) {
-							this.redactor.selection.restore();
-							if (url) {
-									var caption = this.redactor.selection.getHtml();
-									var link = this.redactor.utils.isCurrentOrParent('A');
-									if (link) {
-										console.log('itsalink');
-										$(link).attr('href', url).attr('rel', type).attr('target', target);
-									} else {
-										this.redactor.link.set(caption, url, target);
-									}
-								// }
-								this.redactor.$element.focus();
-							}
+				if (link || url) {
+					this.render({
+						url: link ? $(link).attr('href') : url,
+						link: this.guessLinkType(link ? $(link).attr('href') : url),
+						target: $(link).attr('target')
+					});//this.render({url: $(link).attr('href'), link: $(link).attr('rel') || 'external'});
+				} else {
+					this.render({
+						url: '',
+						link: 'external',
+						target: '_blank'
+					});
+				}
+			},
+			close: function (e, redactor) {
+				redactor.selection.restore();
+			},
+			unlink: function (e) {
+				if (e) {
+					e.preventDefault();
+				}
 
-							this.redactor.code.sync();
-            },
+				var text = this.redactor.selection.getHtml();
+				this.redactor.selection.restore();
+				if (text !== '' && $.parseHTML(text).length > 1) {// there is html inside
+					this.redactor.insert.html(text, true);
+				} else {
+					this.redactor.link.unlink();
+				}
+				this.redactor.$element.focus();
+			},
+			link: function (url, type, target) {
+				this.redactor.selection.restore();
+				if (url) {
+					var caption = this.redactor.selection.getHtml();
+					var link = this.redactor.utils.isCurrentOrParent('A');
+					if (link) {
+						$(link).attr('href', url).attr('rel', type).attr('target', target);
+					} else {
+						this.redactor.link.set(caption, url, target);
+					}
+					this.redactor.$element.focus();
+				}
 
-            bindEvents: function () {
-            },
+				this.redactor.code.sync();
+			},
+			bindEvents: function () {
+			},
+			guessLinkType: function(url){
+				if(!$.trim(url) || $.trim(url) == '#')
+					return 'unlink';
+				if(url.length && url[0] == '#')
+					return url.indexOf('#ltb-') > -1 ? 'lightbox' : 'anchor';
+				if(url.substring(0, location.origin.length) == location.origin)
+					return 'entry';
+				if (url.match(/^mailto/)) {
+					return 'email';
+				}
 
-            guessLinkType: function(url){
-                if(!$.trim(url) || $.trim(url) == '#')
-                    return 'unlink';
-                if(url.length && url[0] == '#')
-                    return url.indexOf('#ltb-') > -1 ? 'lightbox' : 'anchor';
-                if(url.substring(0, location.origin.length) == location.origin)
-                    return 'entry';
-								if (url.match(/^mailto/)) {
-									return 'email';
-								}
-
-                return 'external';
-            }
-        })
-    }
+				return 'external';
+			}
+		})
+	}
 };
 
 RedactorPlugins.upfrontColor = function() {
@@ -1256,7 +1254,6 @@ RedactorPlugins.upfrontColor = function() {
                 //if( html.replace(/(\r\n|\n|\r)/gm,"").trim() === $(current).html().replace(/(\r\n|\n|\r)/gm,"").trim() && !_.isEmpty( current.style.color ) ){
                     this.redactor.inline.removeFormat("color");
                 //}else{
-                //    console.log("here");
                 //}
                 $(this.redactor.selection.getCurrent()).find("font").each(function(){
                    var $this = $(this),

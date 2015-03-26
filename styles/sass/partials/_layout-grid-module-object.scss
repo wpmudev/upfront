@@ -163,7 +163,7 @@
 	float: left;
 	position: relative;
 }
-.upfront-module-group:after,
+.upfront-layout-view .upfront-module-group:after,
 .upfront-module-group-bg {
 	content: " ";
 	position: absolute;
@@ -443,10 +443,10 @@
 	top: 28px;
 	right: 5px;
 }
-/*.offset-ui-from-right-top .upfront-module > .upfront-entity_meta,
+.offset-ui-from-right-top .upfront-module > .upfront-entity_meta,
 .offset-ui-from-right-top .upfront-object > .upfront-entity_meta {
 	right: 50px;
-}*/
+}
 .upfront-object > .upfront-entity_meta_extra {
 	top: 50px;
 	right:5px;

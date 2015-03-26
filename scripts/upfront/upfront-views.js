@@ -1023,12 +1023,15 @@ define([
 				if (!$parentRegionEl) {
 					return;
 				}
-				var containerOffset = $parentRegionEl.closest('.upfront-region-container').offset(),
+				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+					is_responsive = breakpoint && !breakpoint.default,
+					$container = $parentRegionEl.closest('.upfront-region-container'),
+					containerOffset = is_responsive ? $parentRegionEl.offset() : $container.offset(),
 					offset = this.$el.offset(),
-					topOffsetTooClose = containerOffset && containerOffset.top - offset.top < 50,
+					topOffsetTooClose = containerOffset && offset.top - containerOffset.top < 50,
 					// $.offset does not have right side so calculate it
 					rightOffset = offset.left + this.$el.width(),
-					containerRightOffset = (containerOffset || {left: 0}).left + $parentRegionEl.closest('.upfront-region-container').width(),
+					containerRightOffset = (containerOffset || {left: 0}).left + ( is_responsive ? $parentRegionEl.width() : $container.width() ),
 					rightOffsetTooClose = containerRightOffset - rightOffset < 30;
 
 				if (topOffsetTooClose && rightOffsetTooClose) {
@@ -2688,9 +2691,11 @@ define([
 		RegionSubContainer = _Upfront_SingularEditor.extend({
 			attributes: function () {
 				var name = this.model.get("container") || this.model.get("name"),
+					sub = this.model.get('sub'),
 					classes = [];
 				classes.push('upfront-region-sub-container');
 				classes.push('upfront-region-sub-container-' + name.toLowerCase().replace(/ /, "-"));
+				classes.push('upfront-region-sub-container-' + sub);
 				return {
 					"class": classes.join(' ')
 				};
@@ -3014,7 +3019,8 @@ define([
 				this.listenTo(this.bg_setting, "modal:close", this.on_modal_close);
 			},
 			update: function () {
-				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+				var grid = Upfront.Settings.LayoutEditor.Grid,
+					breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
 					container = this.model.get("container"),
 					name = this.model.get("name").toLowerCase().replace(/\s/g, "-"),
 					previous_name = this.model.previous("name"),
@@ -3050,6 +3056,7 @@ define([
 				}
 				this.update_position();
 				this.update_buttons();
+				this.update_size_hint(this.col * grid.column_width, this.$el.height());
 				this.trigger("region_update", this);
 			},
 			update_position: function () {
@@ -3149,7 +3156,6 @@ define([
 				this.$el.removeClass(grid.class + this.col);
 				this.col = col;
 				this.$el.addClass(grid.class + this.col);
-				this.update_size_hint(this.col * grid.column_width, this.$el.height());
 			},
 			on_module_update: function () {
 				this.trigger("region_changed", this);
@@ -4353,6 +4359,7 @@ define([
 				styles.push(selector + ' .upfront-object { padding: ' + grid.column_padding + 'px; }');
 				styles.push(selector + ' .upfront-overlay-grid {background-size: 100% ' + grid.baseline + 'px; }');
 				styles.push(selector + ' .plaintxt_padding {padding: ' + grid.type_padding + 'px; }');
+				styles.push(selector + ' .upfront-inserted_image-wrapper .wp-caption-text, ' + selector + ' .uinsert-image-wrapper { padding: ' + grid.column_padding + 'px; }');
 				styles.push(selector + ' .upfront-module-group-bg-padding { margin: ' + grid.column_padding + 'px; }');
 
 				if ( $('#upfront-grid-style-inline').length )

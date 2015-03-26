@@ -390,6 +390,7 @@ class Upfront_newMenuSetting extends Upfront_Server {
 	}
 
 	public function change_menu_order($item,$key){
+		if (empty($item['menu-item-db-id'])) return false;
 
 		$current_menu_item = get_post( $item['menu-item-db-id'], 'ARRAY_A' );
 		$current_menu_item['menu_order'] = $key;

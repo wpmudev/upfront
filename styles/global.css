@@ -222,9 +222,6 @@ h2, h3 { page-break-after: avoid; }
   width: 100%;
   height: 100%:
 }
-.upfront-inserted_image-wrapper .wp-caption-text, .uinsert-image-wrapper {
-  padding: 15px;
-}
 
 /* Post paddings */
 .alignleft,
@@ -445,3 +442,6 @@ div.upfront-region-lightbox .upfront-icon-popup-close, div.upfront-region-side-l
 .upfront-object-content p{
   margin:0 0 15px 0;
 }
+/* upfront element output resets – defaults */
+
+.upfront-navigation li { display: inline-block;  list-style:none; }

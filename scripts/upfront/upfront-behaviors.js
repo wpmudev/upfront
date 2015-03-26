@@ -1994,10 +1994,13 @@ var GridEditor = {
 				
 			// Reset the column size if it's bigger than it allowed to
 			$wrap_els.each(function(index){
+				if ( this.offsetWidth <= 0 ) // Element is not visible
+					return;
 				var wrap_el = ed.get_el($(this)),
 					col = ( !breakpoint || breakpoint.default ) ? ed.get_class_num(wrap_el.$el, ed.grid.class) : wrap_el.$el.data('breakpoint_col');
-				if ( wrap_el.col < col )
+				if ( wrap_el.col < col && wrap_el.col > 0 ) {
 					ed.update_model_margin_classes(wrap_el.$el, [ed.grid.class + wrap_el.col]);
+				}
 			});
 			
 			// Clear the wrapper when wrapper is rendered side-by-side, but the elements is not conflicting each other

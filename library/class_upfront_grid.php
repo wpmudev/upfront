@@ -502,6 +502,7 @@ class Upfront_GridBreakpoint {
 			"#page.upfront-layout-view .upfront-overlay-grid {background-size: 100% {$baseline}px}" . "\n" .
 			( $width_rule != "" ? "#page.upfront-layout-view { {$width_rule} }" . "\n" : "" ) .
 			"#page.upfront-layout-view .upfront-object {padding: {$column_padding}px;}" . "\n" .
+			"#page.upfront-layout-view .upfront-inserted_image-wrapper .wp-caption-text, #page.upfront-layout-view .uinsert-image-wrapper {padding: {$column_padding}px;}" . "\n" .
             "#page.upfront-layout-view .upfront-module-group-bg-padding {margin: {$column_padding}px;}" . "\n" .
 			"#page.upfront-layout-view .plaintxt_padding {padding: {$type_padding}px;}" . "\n" .
 			"#page.upfront-layout-view .upfront-region-postlayouteditor {padding: {$column_padding}px 0;}" . "\n" .
@@ -518,8 +519,9 @@ class Upfront_GridBreakpoint {
 		return '' .
 			( $this->is_default() ? ".upfront-region-container-clip .upfront-region-container-bg {max-width: {$contained_width}px;}" . "\n" : "" ) .
 			".upfront-grid-layout {width: {$width}px;}" . "\n" .
-			".upfront-output-object {padding: {$column_padding}px;}" . "\n" .
-			".plaintxt_padding {padding: {$type_padding}px;}" . "\n" .
+			( $this->is_default() ? ".upfront-output-object {padding: {$column_padding}px;}" . "\n" : "") .
+			( $this->is_default() ? ".upfront-inserted_image-wrapper .wp-caption-text, .uinsert-image-wrapper {padding: {$column_padding}px;}" . "\n" : "") .
+			( $this->is_default() ? ".plaintxt_padding {padding: {$type_padding}px;}" . "\n" : "") .
 		'';
 	}
 
