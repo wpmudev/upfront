@@ -163,7 +163,7 @@ class Upfront_Posts_PostView {
 	public function expand_title_template () {
 		if (empty($this->_post->post_title)) return '';
 
-		$title = esc_html(apply_filters('the_title', $this->_post->post_title));
+		$title = esc_html(apply_filters('the_title', $this->_post->post_title, $this->_post->ID));
 		$permalink = get_permalink($this->_post->ID);
 
 		$out = $this->_get_template('title');
