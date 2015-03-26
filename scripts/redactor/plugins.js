@@ -19,11 +19,9 @@ var UeditorPanel = Backbone.View.extend({
         me.panel = options.panel;
 
         this.on('open', function(redactor){
-            console.log('Panel open');
             me.$el.trigger('open', redactor);
         });
         this.on('closed', function(redactor){
-            console.log('Panel closed');
             me.$el.trigger('closed', redactor);
         });
 
@@ -282,7 +280,6 @@ RedactorPlugins.stateAlignmentCTA = {
                 left: {
                     iconClass: 'ueditor-left',
                     isActive: function(redactor){
-                        //console.log('returned left' + (self.$element.length && self.$element.css('text-align') == 'left'));
                         return self.$element.length && self.$element.css('text-align') == 'left';
 
                     },
@@ -296,7 +293,6 @@ RedactorPlugins.stateAlignmentCTA = {
                     iconClass: 'ueditor-center',
                     isActive: function(redactor){
 
-                        //console.log('returned center' + (self.$element.length && self.$element.css('text-align') == 'center'));
                         return self.$element.length && self.$element.css('text-align') == 'center';
 
                     },
@@ -310,7 +306,6 @@ RedactorPlugins.stateAlignmentCTA = {
                     iconClass: 'ueditor-right',
                     isActive: function(redactor){
 
-                        //console.log('returned right' + (self.$element.length && self.$element.css('text-align') == 'right'));
                         return self.$element.length && self.$element.css('text-align') == 'right';
 
                     },
@@ -323,7 +318,6 @@ RedactorPlugins.stateAlignmentCTA = {
                     iconClass: 'ueditor-justify',
                     isActive: function(redactor){
 
-                        //console.log('returned justify' + (self.$element.length && self.$element.css('text-align') == 'justify'));
                         return self.$element.length && self.$element.css('text-align') == 'justify';
 
                     },
@@ -541,7 +535,6 @@ RedactorPlugins.upfrontPlaceholder = function() {
             else
                 this.$placeholder.hide();
 
-            console.log('wtf wtf');
         }*/
     }
 };
@@ -671,7 +664,6 @@ RedactorPlugins.upfrontIcons = function() {
                 });
             },
             close: function () {
-                console.log("closing close panel");
                 if (this.redactor) {
                     //this.redactor.selection.restore();
                     this.$sel = false;
@@ -761,7 +753,6 @@ RedactorPlugins.upfrontLink = function() {
 				if (this.redactor.$element.hasClass('mfp-title')) {
 					linkTypes = {
 						anchor: false,
-						entry: false,
 						lightbox: false,
 						email: false
 					};
@@ -834,7 +825,6 @@ RedactorPlugins.upfrontLink = function() {
 					var caption = this.redactor.selection.getHtml();
 					var link = this.redactor.utils.isCurrentOrParent('A');
 					if (link) {
-						console.log('itsalink');
 						$(link).attr('href', url).attr('rel', type).attr('target', target);
 					} else {
 						this.redactor.link.set(caption, url, target);
@@ -1265,7 +1255,6 @@ RedactorPlugins.upfrontColor = function() {
                 //if( html.replace(/(\r\n|\n|\r)/gm,"").trim() === $(current).html().replace(/(\r\n|\n|\r)/gm,"").trim() && !_.isEmpty( current.style.color ) ){
                     this.redactor.inline.removeFormat("color");
                 //}else{
-                //    console.log("here");
                 //}
                 $(this.redactor.selection.getCurrent()).find("font").each(function(){
                    var $this = $(this),
