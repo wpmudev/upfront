@@ -45,5 +45,54 @@ define(function() {
 		});
 	});
 
+	/**
+	 * Handle navigation
+	 */
+	$(document)
+		.on('click', 'a', function(e){
+			var bypass, href, a, pathname, search;
+
+			if(e.isDefaultPrevented()) return;
+
+			bypass = $(e.currentTarget).data('bypass');
+			if(bypass) return;
+
+			a = e.target;
+			pathname = a.pathname;
+			href = a.getAttribute('href');
+			search = a.search;
+
+			if(href == '#' || a.origin != window.location.origin ||
+				(pathname == window.location.pathname && search == window.location.search)) return;
+
+			//If we are editing text, don't follow the link
+			if($(e.target).closest('.redactor_box').length || $(e.target).parents('.redactor-editor').length) {
+				return;
+			}
+
+			// Prevent crazy double url navigation
+			if (Upfront.mainData.site.indexOf('localhost') > -1
+				&& Upfront.mainData.site + '/' === a.origin + pathname) pathname = '/';
+
+			// Make dev=true remain in arguments
+			if (window.location.search.indexOf('dev=true') > -1
+					&& search.indexOf('dev=true') === -1) {
+						if (search === '') search = '?';
+						search += 'dev=true';
+					}
+
+			e.preventDefault();
+
+			if(!Upfront.PreviewUpdate._is_dirty || confirm(Upfront.Settings.l10n.global.application.navigation_confirm))
+				me.navigate(pathname + search, {trigger: true});
+		})
+		.on('keydown', function(e){
+			//Don't let the backspace go back in history
+			if(e.which == 8){
+				var tag = e.target.tagName.toUpperCase();
+				if(tag != 'INPUT' && tag != 'TEXTAREA' && !$(e.target).closest('.redactor_box').length && !e.target.contentEditable)
+			e.preventDefault();
+			}
+		});
 });
 })(jQuery);
