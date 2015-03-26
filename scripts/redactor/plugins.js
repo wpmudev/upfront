@@ -753,8 +753,7 @@ RedactorPlugins.upfrontLink = function() {
 				if (this.redactor.$element.hasClass('mfp-title')) {
 					linkTypes = {
 						anchor: false,
-						lightbox: false,
-						email: false
+						lightbox: false
 					};
 					// Prevent magnific focus handler to mess up everything
 					$(document).off('focusin');
