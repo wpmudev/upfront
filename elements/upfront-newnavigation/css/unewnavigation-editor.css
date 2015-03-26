@@ -446,3 +446,8 @@ div.upfront-navigation li.menu-item .uimage-controls a {
   font-size: 13px;
   margin-bottom: 2px;
 }
+
+/* style adjustments */
+.upfront-navigation .upfront-field-select {
+	max-width:170px;
+}

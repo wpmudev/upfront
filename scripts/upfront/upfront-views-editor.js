@@ -5347,8 +5347,7 @@ var _Settings_CSS_Field = Field_Select.extend({
 	render: function() {
 		Field_Select.prototype.render.call(this);
 		var html = ['<a href="#" title="Edit style" class="upfront-css-edit"></a>'];
-		html.push('<p class="upfront-css-new"><a href="#"><span class="codeicon">&lt;/&gt;</span>');
-		html.push('<span class="upfront-css-new-text">' + l10n.add_new_style + '</span></a></p>');
+		html.push('<p class="upfront-css-new"><a href="#"><span class="upfront-css-new-text">' + l10n.add_new_style + '</span></a></p>');
 		this.$el.append(html.join(''));
 		return this;
 	},

@@ -61,6 +61,11 @@ input.upfront-field-text:hover,
 	height: 30px;
 	padding: 0 0 0 5px;
   border-radius:2px;
+  opacity:.9;
+}
+.upfront-field-number[type=number]:hover {
+	border: 1px solid rgb(163, 191, 217);
+	opacity:1;
 }
 .upfront-field-number[type=number]:focus {
 	outline:none;
@@ -227,6 +232,14 @@ input.upfront-field-text:hover,
 .upfront-field-select-expanded .upfront-field-select-option {
 	margin: 0 !important;
 }
+.upfront-field-select-expanded .upfront-field-select-option:before,
+.upfront-field-select-expanded .upfront-field-select-option:after {
+	background-color:transparent;
+	content:normal;
+}
+.upfront-field-select-option label {
+	font:normal 11px/2 Verdana, sans-serif;
+}
 .upfront-field-select-single .upfront-field-select-option-selected {
 
 }
@@ -276,6 +289,10 @@ input.upfront-field-text:hover,
 	cursor: pointer;
 	float: none;
 }
+.upfront-ui .upfront-field-checkbox:hover, .upfront-ui .upfront-field-radio:hover {
+	border: 2px solid rgb(157, 172, 186);
+}
+
 .upfront-field-radio {
 	border-radius: 6px;
 }
@@ -283,17 +300,22 @@ input.upfront-field-text:hover,
 	border-width: 3px;
 	outline: none;
 }
-.upfront-field-radio:checked {
+.upfront-field-radio:checked,
+.upfront-field-radio:checked:hover {
   border-width: 3px;
   border-color: rgb(38, 58, 77);
 	background: rgb(31, 205, 143);
 }
+
 .upfront-field-checkbox {
 	border-radius: 2px;
 }
 .upfront-field-checkbox:checked {
 	border-width: 0;
 	background: rgb(38, 58, 77);
+}
+.upfront-field-checkbox:checked:hover {
+	border-width:0;
 }
 .tile-select {
 	width: 16px;
