@@ -312,8 +312,10 @@ define(function() {
 				}
 			}
 			else if(linktype == 'anchor') {
-				var anchors = me.parent_view.get_anchors();
-				$('html,body').animate({scrollTop: $('#'+me.getUrlanchor(me.model['menu-item-url'])).offset().top},'slow');
+				if($('#'+me.getUrlanchor(me.model['menu-item-url'])).length > 0)
+					$('html,body').animate({scrollTop: $('#'+me.getUrlanchor(me.model['menu-item-url'])).offset().top},'slow');
+				else
+					console.log('obselete anchor');
 			}
 			else if(linktype == 'entry')
 				window.location.href = me.model['menu-item-url'].replace('&editmode=true', '').replace('editmode=true', '')+((me.model['menu-item-url'].indexOf('?')>0)?'&editmode=true':'?editmode=true');
@@ -334,7 +336,9 @@ define(function() {
 		},
 
 		deleteMenuItem: function(e) {
+
 			var me = this;
+
 			var parentlist = me.$el.parent('ul');
 			var newitemicon = me.$el.parent('ul').find('i.navigation-add-item');
 			var removeparent = false;
@@ -353,9 +357,11 @@ define(function() {
 			parentlist.children('li:last').append(newitemicon);
 
 			if(typeof me.model['menu-item-db-id'] != 'undefined') {
+				//console.log('ajax call to set delete menu item');
 				Upfront.Util.post({"action": "upfront_new_delete_menu_item", "menu_item_id": me.model['menu-item-db-id'], "new_menu_order" : neworder})
 					.success(function (ret) {
-						parentview.render();
+						if(me.$el.find('ul.sub-menu').length > 0)
+							parentview.render();
 					})
 					.error(function (ret) {
 						Upfront.Util.log("Error Deleting Menu Item");
@@ -458,7 +464,7 @@ define(function() {
 			}
 
 			this.updateLinkType();
-
+			//console.log('ajax call to new update menu item');
 			Upfront.Util.post(postdata)
 				.success(function (ret) {
 					me.model['menu-item-db-id'] = ret.data;

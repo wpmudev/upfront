@@ -1,6 +1,4 @@
-define([
-	//'elements/upfront-newnavigation/js/model'
-], function(/*UnewnavigationModel*/) {
+define([], function() {
 	var l10n = Upfront.Settings.l10n.newnavigation_element;
 
 	var Menu_Panel = Upfront.Views.Editor.Settings.Panel.extend({
@@ -92,39 +90,7 @@ define([
 		},
 	});
 
-/*
-	var Text_Field = Upfront.Views.Editor.Field.Text.extend({
-		renameMenu: function() {
-			var $input = this.$el.find('input');
-			var me = this;
-			// Ajax call for creating menu
-			if($input.val().trim() == '' || $input.val().trim == currentMenuItemData.get('name')) return;
-			var renameMenu = Upfront.Util.post({"action": "upfront_new_rename_menu", "new_menu_name": $input.val(), "menu_id": me.model.get_property_value_by_name('menu_id')})
-				.success(function (ret) {
-					me.getMenus();
-				})
-				.error(function (ret) {
-				})
-			;
-		},
-		getMenus: function(){
-			var me = this;
-			// Ajax call for Menu list
-			Upfront.Util.post({"action": "upfront_new_load_menu_list"})
-				.success(function (ret) {
-					var values = _.map(ret.data, function (each) {
-						return  {label: each.name, value: each.term_id};
-					});
-					currentMenuItemData.set({menuList: values});
-					me.trigger('panel:set');
-				})
-				.error(function (ret) {
-					Upfront.Util.log("Error loading menu list");
-				})
-			;
-		}
-	});
-*/
+
 	var NavigationSettings = Upfront.Views.Editor.Settings.Settings.extend({
 		/**
 		 * Bootstrap the object - populate the internal

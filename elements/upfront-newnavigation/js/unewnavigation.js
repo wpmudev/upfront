@@ -33,9 +33,6 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	initialize: function(options){
 		var me = this;
 
-		this.editmode = false;
-
-		this.property('initialized', false);
 		if(!(this.model instanceof UnewnavigationModel)){
 			this.model = new UnewnavigationModel({properties: this.model.get('properties')});
 		}
@@ -58,21 +55,18 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			this.model.get_property_by_name('allow_new_pages').on('change', this.update_auto_add_pages, this);
 		}
 
-		this.property('menu_items', false);
+		this.property('menu_items', false, true);
 
 		this.on('deactivated', this.onDeactivate, this);
 		this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", function(current, previous) {
-
-			
 
 			me.render();
 
 			me.activate_responsive_nav(me.$el.find(".upfront-output-unewnavigation"), current.width);
 
 		});
-		this.listenTo(Upfront.Events, "entity:removed:before", this.on_removal);
 
-
+		//this.listenTo(Upfront.Events, "entity:removed:before", this.on_removal);
 
 		var breakpoint_data = me.model.get_property_value_by_name('breakpoint');
 
@@ -88,30 +82,16 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				new_breakpoint_data[key] = breakpoint_data[key];
 		}
 
-		this.model.set_property('breakpoint', new_breakpoint_data);
+		this.model.set_property('breakpoint', new_breakpoint_data, true);
 
-	},
+	},/*
 	on_removal: function() {
 		var tooltip = $('#unewnavigation-tooltip');
 		tooltip.hide().trigger('closed');
 		setTimeout(function(){
 			tooltip.remove();
 		}, 100);
-	},
-	get_anchors: function () {
-		var regions = Upfront.Application.layout.get("regions"),
-			anchors = [];
-		;
-		regions.each(function (r) {
-			r.get("modules").each(function (module) {
-				module.get("objects").each(function (object) {
-					var anchor = object.get_property_value_by_name("anchor");
-					if (anchor && anchor.length) anchors[anchor] = object;
-				});
-			});
-		});
-		return anchors;
-	},
+	},*/
 	exitEditMode: function(e) {
 		var me = this;
 		var thelink = $(e.target).closest('li').data('backboneview');
@@ -184,7 +164,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				}
 				else if (e.which == 27) {
 					if(target.hasClass('new_menu_item')) {
-						target.closest('li').data('backboneview').closeTooltip();
+						//target.closest('li').data('backboneview').closeTooltip();
 						target.closest('li').data('backboneview').saveLink(true);
 					}
 				}
@@ -241,7 +221,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			currentcontext.addClass('time_being_display');
 			currentcontext = currentcontext.parent().parent('ul');
 		}
-		if(target.hasClass('new_menu_item') ) {
+		/*if(target.hasClass('new_menu_item') ) {
 			if($('div#unewnavigation-tooltip').length <1 || $('div#unewnavigation-tooltip').css('display') == 'none') {
 				_.delay(function(self) {
 
@@ -249,7 +229,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					if (view && view.editMenuItem) view.editMenuItem(e);
 				}, 30, this);
 			}
-		}
+		}*/
 	},
 	editModeOn: function(e) {
 		this.$el.find('.upfront-object-content ul').each(function() {
@@ -299,7 +279,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		}else{
 			Upfront.data.navigation.auto_add['auto_add'] = nav_menu_option;
 		}
-
+		//console.log('ajax call to set auto add pages');
 		Upfront.Util.post({"action": "upfront_new_update_auto_add_pages", "nav_menu_option": JSON.stringify(Upfront.data.navigation.auto_add)})
 			.error(function(res){
 				Upfront.Util.log("Cannot update auto add pages!");
@@ -332,6 +312,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	getMenus: function(){
 		var me = this;
 		// Ajax call for Menu list
+		//console.log('ajax call to get list of menus');
 		Upfront.Util.post({"action": "upfront_new_load_menu_list"})
 			.success(function (ret) {
 				me.existingMenus = ret.data;
@@ -411,7 +392,6 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		me.$el.find('div.upfront-object-content > div.existing_menu_list input').on('change', function() {
 			me.$el.parent().parent().parent().draggable('enable');
 			if(me.$el.find('div.upfront-object-content > div.existing_menu_list input:checked').val() != 0) {
-				if(!me.property('initialized')) me.property('initialized', true, true);
 				var id = me.$el.find('div.upfront-object-content > div.existing_menu_list input:checked').val();
 				me.property('menu_id', id);
 				me.property('menu_slug', _.findWhere(me.existingMenus, {term_id: id}).slug, true);
@@ -421,6 +401,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	create_new_menu: function(MenuName) {
 		var me = this;
 		// Ajax call for creating menu
+		//console.log('ajax call to create a menu');
 		var newMenu = Upfront.Util.post({"action": "upfront_new_create_menu", "menu_name": MenuName})
 			.success(function (ret) {
 				me.property('menu_slug', ret.data.slug, true);
@@ -443,7 +424,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			if(typeof(menu_slug != 'undefined') && menu_slug != '') this.set_menu_id_from_slug(menu_slug);
 			return "";
 		}
-
+		//console.log('ajax call to load menu data');
 		Upfront.Util.post({"action": "upfront_new_load_menu_array", "data": menu_id})
 			.success(function (ret) {
 				if(!ret.data){
@@ -461,6 +442,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	},
 	set_menu_id_from_slug: function(slug) {
 		var me = this;
+		//console.log('ajax call to set menu from slug');
 		Upfront.Util.post({"action": "upfront_new_menu_from_slug", "data": slug})
 			.success(function (ret) {
 				me.property('menu_id', ret.data);
@@ -740,6 +722,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	},
 	saveMenuOrder: function() {
 		var me = this;
+		//console.log('ajax call to save menu ordering');
 		Upfront.Util.post({"action": "upfront_new_update_menu_order", "menu_items": me.new_menu_order()})
 			.success(function (ret) {
 			})
