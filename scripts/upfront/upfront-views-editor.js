@@ -7912,8 +7912,12 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				region_types.push({ label: l10n.image_slider, value: 'slider', icon: 'slider' });
 				region_types.push({ label: l10n.map, value: 'map', icon: 'map' });
 			}
-			if (_upfront_post_data.post_id) {
-				region_types.push({ label: l10n.featured_image, value: 'featured', icon: 'feat' });
+			if (
+				_upfront_post_data.post_id
+				||
+				(Upfront.Application.get_current() === Upfront.Application.MODE.THEME && 'type' in _upfront_post_data.layout && 'single' === _upfront_post_data.layout.type)
+			) {
+				if (!('item' in _upfront_post_data.layout && _upfront_post_data.layout.item.match(/single-404/))) region_types.push({ label: l10n.featured_image, value: 'featured', icon: 'feat' });
 			}
 
 			var	bg_type = new Field_Select({
