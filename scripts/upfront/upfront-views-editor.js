@@ -8240,7 +8240,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 											"name": name,
 											"title": title,
 											"container": me.model.get('name'),
-											"sub": sub
+											"sub": sub,
+											"scope": me.model.get('scope')
 										}));
 									}
 									region_model.add_to(collection, add_region, {sub: sub});

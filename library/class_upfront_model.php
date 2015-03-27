@@ -770,6 +770,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 		self::set_storage_key($storage_key);
 		$storage_key = self::get_storage_key();
 		$region_scope_data = json_decode( get_option(self::_get_scope_id($scope), json_encode(array())), true );
+		$region_scope_data = apply_filters('upfront_get_global_regions', $region_scope_data, $scope);
 		$return = array();
 		foreach ( $region_scope_data as $region){
 			if ( $region['trashed'] == 1 )
@@ -786,6 +787,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 		self::set_storage_key($storage_key);
 		$storage_key = self::get_storage_key();
 		$region_scope_data = json_decode( get_option(self::_get_scope_id($scope), json_encode(array())), true );
+		$region_scope_data = apply_filters('upfront_get_global_regions', $region_scope_data, $scope);
 		$return = array();
 		foreach ( $region_scope_data as $region){
 			if ( $region['trashed'] == 1 )

@@ -1374,7 +1374,7 @@ var LayoutEditor = {
 					'<span class="region-list-name">' + region.title + '</span>' +
 					'<span class="region-list-control">' +
 						//'<a href="#" class="region-list-edit" data-name="' + region.name + '">' + Upfront.Settings.l10n.global.behaviors.edit + '</a>' + 
-						'<a href="#" class="region-list-trash" data-name="' + region.name + '">' + Upfront.Settings.l10n.global.behaviors.trash + '</a>' +
+						( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.THEME ? '<a href="#" class="region-list-trash" data-name="' + region.name + '">' + Upfront.Settings.l10n.global.behaviors.trash + '</a>' : '' ) + 
 					'</span>' +
 				'</li>'
 			);
