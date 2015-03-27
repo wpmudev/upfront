@@ -1,11 +1,47 @@
 <?php
 
-class Upfront_Compat_Course implements IUpfront_Server {
+abstract class Uf2Cp_Helper implements IUpfront_Server {
+
+	abstract public function get_post_type ();
+
+	public function id_by_slug ($slug) {
+		$res = get_posts(array(
+			'name' => $slug,
+			'posts_per_page' => 1,
+			'post_type' => $this->get_post_type(),
+			'fields' => 'ids'
+		));
+		return !empty($res[0])
+			? $res[0]
+			: false
+		;
+	}
+
+	public function plural_query_args ($args) {
+		$args['post_type'] = $this->get_post_type();
+		$args['post_status'] = 'publish';
+
+		return $args;
+	}
+
+	public function singular_query_args ($args) {
+		$args['post_type'] = $this->get_post_type();
+		$args['post_status'] = 'any';
+
+		return $args;
+	}
+
+}
+
+
+class Uf2Cp_Helper_Course extends Uf2Cp_Helper {
 
 	public static function serve () {
 		$me = new self;
 		$me->_add_hooks();
 	}
+
+	public function get_post_type () { return 'course'; }
 
 	private function _add_hooks () {
 		$course_id = get_queried_object_id();
@@ -42,30 +78,18 @@ class Upfront_Compat_Course implements IUpfront_Server {
 		return $data;
 	}
 
-	public function plural_query_args ($args) {
-		$args['post_type'] = 'course';
-		$args['post_status'] = 'publish';
-
-		return $args;
-	}
-
-	public function singular_query_args ($args) {
-		$args['post_type'] = 'course';
-		$args['post_status'] = 'any';
-
-		return $args;
-	}
-
 
 }
 
 
-class Upfront_Compat_Unit implements IUpfront_Server {
+class Uf2Cp_Helper_Unit extends Uf2Cp_Helper {
 
 	public static function serve () {
 		$me = new self;
 		$me->_add_hooks();
 	}
+
+	public function get_post_type () { return 'unit'; }
 
 	private function _add_hooks () {
 		$unitname = get_query_var('unitname');
@@ -79,23 +103,11 @@ class Upfront_Compat_Unit implements IUpfront_Server {
 		}
 	}
 
-	public function id_by_slug ($slug) {
-		$res = get_posts(array(
-			'name' => $slug,
-			'posts_per_page' => 1,
-			'post_type' => 'unit',
-			'fields' => 'ids'
-		));
-		return !empty($res[0])
-			? $res[0]
-			: false
-		;
-	}
-
 	public function plural_data ($data) {
-		$data["content"] = "content";
+		$data["content"] = "content"; 
 		$data["display_type"] = "single"; 
-		$data["pagination"] = "none"; 
+		$data["list_type"] = "generic"; 
+		$data["pagination"] = "none";
 		return $data;
 	}
 
@@ -116,6 +128,59 @@ class Upfront_Compat_Unit implements IUpfront_Server {
 	}
 
 }
+
+
+
+class Uf2Cp_Helper_Discussions extends Uf2Cp_Helper {
+
+	public static function serve () {
+		$me = new self;
+		$me->_add_hooks();
+	}
+
+	public function get_post_type () { return 'discussions'; }
+
+	private function _add_hooks () {
+		$discussion_name = get_query_var('name');
+		$discussion_id = $this->id_by_slug($discussion_name);
+		add_filter('upfront-entity_resolver-entity_ids', array('Upfront_Compat_Coursepresspro_Coursepress', 'force_archive'));
+		if (empty($discussion_id)) {
+			// Archive
+			add_filter('upfront_posts-view-data', array($this, 'plural_data'));
+			//add_filter('upfront_posts-model-generic-args', array($this, 'plural_query_args'));
+		} else {
+			// Single
+			add_filter('upfront_posts-view-data', array($this, 'singular_data'));
+			add_filter('upfront_posts-model-custom-args', array($this, 'singular_query_args'));
+		}
+	}
+
+	public function plural_data ($data) {
+		$data["content"] = "content";
+		$data["display_type"] = "single"; 
+		$data["pagination"] = "none"; 
+		return $data;
+	}
+
+	public function singular_data ($data) {
+		$discussion_name = get_query_var('name');
+		$discussion_id = $this->id_by_slug($discussion_name);
+		if (empty($discussion_id)) return $data;
+
+		$data["content"] = "content"; 
+		$data["list_type"] = "custom"; 
+		$data["display_type"] = "single"; 
+		$data["pagination"] = "none";
+		$data["posts_list"] = json_encode(array(array(
+			'id' => $discussion_id
+		)));
+
+		return $data;
+	}
+
+}
+
+
 
 class Upfront_Compat_Coursepresspro_Coursepress extends Upfront_Server {
 
@@ -141,6 +206,7 @@ class Upfront_Compat_Coursepresspro_Coursepress extends Upfront_Server {
 	}
 
 	public function detect_virtual_page () {
+//global $wp_query; localhost_dbg($wp_query);
 		$post_type = self::_get_post_type();
 		if (empty($post_type)) return false;
 
@@ -176,32 +242,29 @@ class Upfront_Compat_Coursepresspro_Coursepress extends Upfront_Server {
 			$coursename = get_query_var('coursename');
 			$unitname = get_query_var('unitname');
 			$instructor = get_query_var('instructor_username');
+			$discussion_name = get_query_var('discussion_name');
 			
-			if (empty($coursename) && empty($unitname) && empty($instructor)) return false;
+			if (empty($coursename) && empty($unitname) && empty($instructor) && empty($discussion_name)) return false;
 			
 			if (!empty($unitname)) $post_type = 'unit';
 			if (!empty($instructor)) $post_type = 'instructor';
+			if (!empty($discussion_name)) $post_type = 'discussions';
 		}
 
 		return $post_type;
 	}
 
 	private function _dispatch_course_overrides () {
-		Upfront_Compat_Course::serve();
+		Uf2Cp_Helper_Course::serve();
 	}
-
 	private function _dispatch_unit_overrides () {
-//global $wp_query; localhost_dbg($wp_query);
-		Upfront_Compat_Unit::serve();
-
-		// Set up specific layout triggering
+		Uf2Cp_Helper_Unit::serve();
+	}
+	private function _dispatch_discussions_overrides () {
+		Uf2Cp_Helper_Discussions::serve();
 	}
 	
 	private function _dispatch_notifications_overrides () {
-		add_filter('upfront_posts-view-data', array($this, 'generic_post_list_override'));
-		add_filter('upfront-entity_resolver-entity_ids', array('Upfront_Compat_Coursepresspro_Coursepress', 'force_archive'));
-	}
-	private function _dispatch_discussions_overrides () {
 		add_filter('upfront_posts-view-data', array($this, 'generic_post_list_override'));
 		add_filter('upfront-entity_resolver-entity_ids', array('Upfront_Compat_Coursepresspro_Coursepress', 'force_archive'));
 	}
