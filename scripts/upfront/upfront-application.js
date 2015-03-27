@@ -217,8 +217,10 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		this.listenTo(Upfront.Events, "command:layout:save_success", function(){ stop(true); });
 		this.listenTo(Upfront.Events, "command:layout:save_error", function(){ stop(false); });
 		this.listenTo(Upfront.Events, "command:themefontsmanager:open", Upfront.Behaviors.LayoutEditor.open_theme_fonts_manager);
+		this.listenTo(Upfront.Events, "command:layout:edit_global_regions", Upfront.Behaviors.LayoutEditor.open_global_region_manager);
 
 		this.listenTo(Upfront.Events, "command:layout:save_success", Upfront.Behaviors.LayoutEditor.clean_region_css);
+		this.listenTo(Upfront.Events, "command:layout:save_success", Upfront.Behaviors.LayoutEditor.clean_global_regions);
 	},
 
 	create_properties: function (view, model) {

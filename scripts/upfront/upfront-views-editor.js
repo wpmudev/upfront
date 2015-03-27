@@ -46,6 +46,7 @@ define([
 	"text!upfront/templates/sidebar_settings_lock_area.html",
 	"text!upfront/templates/sidebar_settings_background.html",
 	"text!upfront/templates/popup.html",
+	"text!upfront/templates/region_add_panel.html",
 	"text!upfront/templates/region_edit_panel.html",
 	"text!upfront/templates/sidebar_settings_theme_colors.html",
 	"text!upfront/templates/color_picker.html",
@@ -60,6 +61,7 @@ define([
 		"text!upfront/templates/sidebar_settings_lock_area.html",
 		"text!upfront/templates/sidebar_settings_background.html",
 		"text!upfront/templates/popup.html",
+		"text!upfront/templates/region_add_panel.html",
 		"text!upfront/templates/region_edit_panel.html",
 		"text!upfront/templates/sidebar_settings_theme_colors.html",
 		"text!upfront/templates/color_picker.html"
@@ -966,6 +968,17 @@ define([
 		},
 		on_click: function () {
 			Upfront.Events.trigger("command:layout:edit_background");
+		}
+	});
+
+	var Command_EditGlobalRegions = Command.extend({
+		tagName: 'div',
+		className: "command-link command-edit-global-regions",
+		render: function (){
+			this.$el.text(l10n.edit_global_regions);
+		},
+		on_click: function () {
+			Upfront.Events.trigger("command:layout:edit_global_regions");
 		}
 	});
 
@@ -1930,6 +1943,7 @@ define([
 
 			this.edit_css = new Command_EditCustomCSS({"model": this.model});
 			this.edit_background = new Command_EditLayoutBackground({"model": this.model});
+			this.edit_global_regions = new Command_EditGlobalRegions({"model": this.model});
 			if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.THEME ) {
 				this.edit_structure = new Command_EditStructure({"model": this.model});
 			}
@@ -1953,6 +1967,9 @@ define([
 			this.edit_background.render();
 			this.edit_background.delegateEvents();
 			this.$el.find('.panel-section-content').append(this.edit_background.el);
+			this.edit_global_regions.render();
+			this.edit_global_regions.delegateEvents();
+			this.$el.find('.panel-section-content').append(this.edit_global_regions.el);
 		}
 	});
 
@@ -4318,6 +4335,7 @@ var Field_ToggleableText = Field_Text.extend({
 				}
 
 				this.$el.find('.upfront-field-select').removeClass('upfront-field-select-expanded');
+				this.trigger('blur');
 			}
 		},
 
@@ -4346,6 +4364,7 @@ var Field_ToggleableText = Field_Text.extend({
 					$scroll_panel.scrollTop(options_bottom-$scroll_panel.outerHeight());
 				}
 			}, 500);
+			this.trigger('focus');
 		},
 
 		onMouseUp: function(e){
@@ -7938,65 +7957,124 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				bg_item = new Upfront.Views.Editor.BgSettings.BgItem({
 					model: this.model
 				}),
-				$region_name, $region_global, $region_type, $region_nav, $region_behavior, $region_restrict, $region_sticky, $theme_body;
+				$region_header, $region_name, $region_global, $region_type, $region_nav, $region_behavior, $region_restrict, $region_sticky, $theme_body;
 
 			if ( !is_responsive && is_region ) {
 				var region_name = new Field_Text({
-					model: this.model,
-					name: 'title',
-					placeholder: l10n.region_name_placeholder,
-					change: function () {
-					},
-					blur: function () {
-						var collection = this.model.collection,
-							prev_title = this.model.get('title'),
-							prev_name = this.model.get('name'),
-							title = $.trim(this.get_value().replace(/[^A-Za-z0-9\s_-]/g, '')), // strict filtering to prevent unwanted character
-							name = title.toLowerCase().replace(/\s/g, '-'),
-							new_title, sub_regions, region_css;
-						if ( prev_title != title ) {
-							// Check if the region name exists
-							if ( collection.get_by_name(name) ) {
-								new_title = collection.get_new_title(title + " ", 2);
-								title = new_title.title;
-								name = new_title.name;
+						model: this.model,
+						name: 'title',
+						placeholder: l10n.region_name_placeholder,
+						compact: true,
+						change: function () {
+						},
+						blur: function () {
+							var collection = this.model.collection,
+								prev_title = this.model.get('title'),
+								prev_name = this.model.get('name'),
+								title = $.trim(this.get_value().replace(/[^A-Za-z0-9\s_-]/g, '')), // strict filtering to prevent unwanted character
+								name = title.toLowerCase().replace(/\s/g, '-'),
+								new_title, sub_regions, region_css;
+							if ( prev_title != title ) {
+								// Check if the region name exists
+								if ( collection.get_by_name(name) ) {
+									new_title = collection.get_new_title(title + " ", 2);
+									title = new_title.title;
+									name = new_title.name;
+								}
+	
+								// Let's keep old CSS content
+								region_css = me.get_region_css_styles(this.model);
+	
+								// Also update the container attribute on sub regions
+								if ( this.model.is_main() ) {
+									sub_regions = this.model.get_sub_regions();
+									_.each(sub_regions, function(sub_model, sub){
+										if ( _.isArray(sub_model) )
+											_.each(sub_model, function(sub_model2){ sub_model2.set({container: name}, {silent:true}); });
+										else if ( _.isObject(sub_model) )
+											sub_model.set({container: name}, {silent:true});
+									});
+									this.model.set({title: title, name: name, container: name}, {silent: true});
+								}
+								else {
+									this.model.set({title: title, name: name}, {silent: true});
+								}
+								$region_name.find('.upfront-region-name-edit-value').text(title);
+	
+								// Save to the new CSS
+								me.set_region_css_styles(this.model, region_css.styles, region_css.selector);
+	
+								this.model.get('properties').trigger('change');
 							}
-
-							// Let's keep old CSS content
-							region_css = me.get_region_css_styles(this.model);
-
-							// Also update the container attribute on sub regions
-							if ( this.model.is_main() ) {
-								sub_regions = this.model.get_sub_regions();
-								_.each(sub_regions, function(sub_model, sub){
-									if ( _.isArray(sub_model) )
-										_.each(sub_model, function(sub_model2){ sub_model2.set({container: name}, {silent:true}); });
-									else if ( _.isObject(sub_model) )
-										sub_model.set({container: name}, {silent:true});
-								});
-								this.model.set({title: title, name: name, container: name}, {silent: true});
+						},
+						rendered: function () {
+							var me = this;
+							this.get_field().on('keyup', function(e){
+								if ( e.which === 13 )
+									me.trigger('blur');
+							});
+						}
+					}),
+					make_global = new Field_Checkboxes({
+						model: this.model,
+						name: 'scope',
+						multiple: false,
+						values: [
+							{ label: l10n.make_global, value: 'global' }
+						],
+						change: function(){
+							var value = this.get_value();
+							if ( value == 'global' ){
+								me.apply_region_scope(this.model, 'global');
+								$region_name.find('.upfront-region-bg-setting-is-global').show();
+							}
+							//else {
+							//	me.apply_region_scope(this.model, 'local');
+							//}
+						}
+					}),
+					localize_region = new Field_Button({
+						model: this.model,
+						name: 'localize',
+						label: l10n.localize_region,
+						classname: 'upfront-region-bg-setting-localize',
+						compact: true,
+						on_click: function () {
+							me.apply_region_scope(this.model, 'local');
+							$region_name.find('.upfront-region-bg-setting-name-wrap').show();
+							$region_auto.show();
+							$region_name.find('.upfront-region-bg-setting-name-edit').hide();
+							$region_name.find('.upfront-region-bg-setting-is-global').hide();
+							make_global.$el.find('[value=global]').prop('checked', false);
+							make_global.$el.show();
+							this.$el.hide();
+						},
+						rendered: function () {
+							this.$el.attr('title', l10n.localize_region_info);
+						}
+					}),
+					name_save = new Field_Button({
+						model: this.model,
+						name: 'save',
+						label: l10n.save,
+						compact: true,
+						classname: 'upfront-region-bg-setting-name-save',
+						on_click: function () {
+							//region_name.trigger('blur');
+							$region_name.find('.upfront-region-bg-setting-name-wrap').show();
+							$region_auto.show();
+							$region_name.find('.upfront-region-bg-setting-name-edit').hide();
+							if ( this.model.get('scope') == 'global' ) {
+								make_global.$el.hide();
+								if ( !localize_region._no_display )
+									localize_region.$el.show();
 							}
 							else {
-								this.model.set({title: title, name: name}, {silent: true});
+								make_global.$el.show();
 							}
-							$region_name.find('.upfront-region-name-edit-value').text(title);
-
-							// Save to the new CSS
-							me.set_region_css_styles(this.model, region_css.styles, region_css.selector);
-
-							this.model.get('properties').trigger('change');
 						}
-						$region_name.find('.upfront-region-bg-setting-name-edit').show();
-						this.$el.hide();
-					},
-					rendered: function () {
-						var me = this;
-						this.get_field().on('keyup', function(e){
-							if ( e.which === 13 )
-								me.trigger('blur');
-						});
-					}
-				});
+					})
+				;
 			}
 			if ( is_layout ){
 				var contained_region = new Field_Number({
@@ -8166,7 +8244,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 											"name": name,
 											"title": title,
 											"container": me.model.get('name'),
-											"sub": sub
+											"sub": sub,
+											"scope": me.model.get('scope')
 										}));
 									}
 									region_model.add_to(collection, add_region, {sub: sub});
@@ -8221,6 +8300,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			$lightbox = $content.find('.upfront-region-bg-setting-lightbox-region');
 
 			$lightbox.hide();
+			$region_header = $content.find('.upfront-region-bg-setting-header');
 			$region_name = $content.find('.upfront-region-bg-setting-name');
 			$region_global = $content.find('.upfront-region-bg-setting-region-global');
 			$add_global_region = $content.find('.upfront-region-bg-setting-add-global-region');
@@ -8233,28 +8313,49 @@ var Field_Compact_Label_Select = Field_Select.extend({
 
 			if ( !is_responsive && is_region ) {
 				region_name.render();
-				$region_name.append(region_name.$el);
-				region_name.$el.hide();
+				make_global.render();
+				localize_region.render();
+				name_save.render();
+				$region_name.find('.upfront-region-bg-setting-name-edit').append([region_name.$el, make_global.$el, localize_region.$el, name_save.$el]).hide();
 				$region_name.find('.upfront-region-name-edit-value').text(this.model.get('title'));
-				// Let's not allow name change for header/footer, as the name is reserved for global region
-				if ( this.model.get('name') == 'header' || this.model.get('name') == 'footer' ){
-					$region_name.find('.upfront-region-name-edit-trigger').hide();
+				if ( this.model.get('scope') == 'global' ) {
+					$region_name.find('.upfront-region-bg-setting-is-global').show();
+					make_global.$el.hide()
+					if ( !this.model.is_main() && sub ) {
+						var main_region = this.model.collection.get_by_name(this.model.get('container'));
+						if ( main_region && main_region.get('scope') == 'global' ){
+							localize_region.$el.hide();
+							localize_region._no_display = true;
+						}
+					}
 				}
 				else {
+					$region_name.find('.upfront-region-bg-setting-is-global').hide();
+					localize_region.$el.hide();
+				}
+				// Let's not allow name change for header/footer, as the name is reserved for global region
+				//if ( this.model.get('name') == 'header' || this.model.get('name') == 'footer' ){
+				//	$region_name.find('.upfront-region-name-edit-trigger').hide();
+				//}
+				//else {
 					$region_name.on('click', '.upfront-region-name-edit-trigger', function(e){
 						e.preventDefault();
-						$region_name.find('.upfront-region-bg-setting-name-edit').hide();
-						region_name.$el.show();
-						region_name.get_field().trigger('focus').select();
+						$region_name.find('.upfront-region-bg-setting-name-wrap').hide();
+						$region_auto.hide();
+						$region_name.find('.upfront-region-bg-setting-name-edit').show();
+						if ( me.model.get('scope') != 'global' )
+							region_name.get_field().prop('disabled', false).trigger('focus').select();
+						else
+							region_name.get_field().prop('disabled', true);
 					});
-				}
+				//}
 			}
 			else {
-				$region_name.hide();
+				$region_header.hide();
 			}
 
 			if ( !is_responsive && is_region && this.model.is_main() ) {
-				if ( is_top || is_bottom ){
+				/*if ( is_top || is_bottom ){
 					// This is global header or footer, or there is no global header/footer - show checkbox
 					if (
 						(is_top && ( this.model.get('name') == 'header' || !global_header_defined ))
@@ -8267,7 +8368,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						add_global_region.render();
 						$add_global_region.append(add_global_region.$el);
 					}
-				}
+				}*/
 				region_type.render();
 				$region_type.append(region_type.$el);
 				region_nav.render();
@@ -8399,12 +8500,14 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					region.get('properties').trigger('change');
 				},
 				region_css;
-			_.each(sub_regions, function(sub){
-				if ( _.isArray(sub) )
-					_.each(sub, function(each){ set_sub(each); })
-				else if ( sub )
-					set_sub(sub);
-			});
+			if ( model.is_main() ){
+				_.each(sub_regions, function(sub){
+					if ( _.isArray(sub) )
+						_.each(sub, function(each){ set_sub(each); })
+					else if ( sub )
+						set_sub(sub);
+				});
+			}
 			region_css = me.get_region_css_styles(model);
 			model.set({ scope: scope }, {silent: true});
 			if ( name && prev_name != name ){
@@ -8882,7 +8985,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		width: 24,
 		height: 24,
 		events: {
-			'click': 'add_region'
+			'click': 'add_region_modal'
 		},
 		className: 'upfront-inline-panel-item upfront-region-panel-item-add-region',
 		icon: function () {
@@ -8937,7 +9040,134 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			if ( this.options.height )
 				this.height = this.options.height;
 		},
-		add_region: function (e) {
+		add_region_modal: function (e) {
+			var to = this.options.to,
+				me = this,
+				modal = new Modal({ to: this.panel_view.panels_view.$el, button: true, width: 422 }),
+				disable_global = ( ( to == 'left' || to == 'right' ) && me.model.get('scope') == 'global' );
+				fields = {
+					from: new Field_Radios({
+						name: 'from',
+						default_value: 'new',
+						layout: 'horizontal-inline',
+						values: [
+							{ label: l10n.new_region, value: 'new' },
+							{ label: l10n.choose_global_region, value: 'global', disabled: disable_global }
+						],
+						change: function(){
+							var value = this.get_value();
+							me.from = value;
+						}
+					}),
+					region_title: new Field_Text({
+						name: 'name',
+						placeholder: l10n.region_name_placeholder,
+						focus: function () {
+							fields.from.set_value('new');
+							fields.from.trigger('changed');
+						},
+						change: function () {
+							var value = this.get_value();
+							me.region_title = value;
+						}
+					}),
+					make_global: new Field_Checkboxes({
+						name: 'make_global',
+						multiple: false,
+						values: [{ label: l10n.make_this_region_global, value: 1 }],
+						focus: function () {
+							fields.from.set_value('new');
+							fields.from.trigger('changed');
+						},
+						change: function () {
+							var value = this.get_value();
+							me.make_global = value == 1 ? true : false;
+						}
+					}),
+					from_region: new Field_Select({
+						name: 'from_region',
+						values: [{ label: Upfront.Settings.l10n.global.behaviors.loading, value: "" }],
+						disabled: disable_global,
+						focus: function () {
+							fields.from.set_value('global');
+							fields.from.trigger('changed');
+						},
+						change: function () {
+							var value = this.get_value();
+							me.from_region = value;
+						}
+					})
+				},
+				from_region_values = function () {
+					var values = [],
+						is_main = ( to == 'top' || to == 'bottom' ),
+						is_side = ( to == 'left' || to == 'right' );
+					values.push( { label: l10n.select_global_region, value: '', disabled: true } )
+					_.each(Upfront.data.global_regions, function(region){
+						if ( is_main && region.container && region.name != region.container ) // exclude sub-region if main
+							return;
+						if ( is_side && ( region.sub != 'left' && region.sub != 'right' ) ) // exclude non-side region if it's side region (left/right)
+							return;
+						var collection = me.model.collection,
+							region_exists = collection.get_by_name(region.name);
+						values.push( { label: region.title, value: region.name, disabled: ( region_exists !== false ) } );
+					});
+					return values;
+				};
+			modal.render();
+			this.panel_view.panels_view.$el.append(modal.$el);
+			
+			// Set default
+			this.from = 'new';
+			this.region_title = '';
+			this.make_global = false;
+			this.from_region = '';
+			
+			if ( !Upfront.data.global_regions ){
+				Upfront.Util.post({
+					action: 'upfront_list_scoped_regions',
+					scope: 'global',
+					storage_key: _upfront_save_storage_key
+				}).done(function(data) {
+					Upfront.data.global_regions = data.data;
+					fields.from_region.options.values = from_region_values();
+					fields.from_region.render();
+					fields.from_region.delegateEvents();
+				});
+			}
+			else {
+				fields.from_region.options.values = from_region_values();
+			}
+			
+			modal.open(function($content, $modal){
+				var template = _.template(_Upfront_Templates.region_add_panel, {});
+				_.each(fields, function(field, id) {
+					field.render();
+					field.delegateEvents();
+				});
+				$modal.addClass('upfront-add-region-modal')
+				$content.append(template);
+				$content.find('.upfront-add-region-choice').append(fields.from.$el);
+				$content.find('.upfront-add-region-new').append(fields.region_title.$el);
+				if ( !disable_global )
+					$content.find('.upfront-add-region-new').append(fields.make_global.$el);
+				$content.find('.upfront-add-region-global').append(fields.from_region.$el);
+			}, this)
+			.done(function(modal_view){
+				if ( me.from == 'new' || !me.from_region ) {
+					me.add_region();
+				}
+				else {
+					me.add_region_from_global(me.from_region);
+				}
+			})
+			.always(function(modal_view){
+				modal_view.remove();
+			});
+			
+			e.stopPropagation();
+		},
+		add_region: function () {
 			var to = this.options.to,
 				collection = this.model.collection,
 				total = collection.size()-1, // total minus shadow region
@@ -8946,9 +9176,11 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				sub_model = this.model.get_sub_regions(),
 				is_new_container = ( to == 'top' || to == 'bottom' ),
 				is_before = ( to == 'top' || to == 'left' ),
-				new_title = is_new_container ? collection.get_new_title("Region ", total) : false,
-				title = new_title !== false ? new_title.title : this.model.get('title') + ' ' + to.charAt(0).toUpperCase() + to.slice(1),
-				name = new_title !== false ? new_title.name : this.model.get('name') + '-' + to,
+				region_title = this.region_title ? this.region_title.replace(/[^A-Za-z0-9\s_-]/g, '') : ( is_new_container ? "Region " : this.model.get('title') + ' ' + to.charAt(0).toUpperCase() + to.slice(1) ),
+				region_name = region_title.toLowerCase().replace(/\s/g, '-'),
+				new_title = collection.get_by_name(region_name) || (!this.region_title && is_new_container) ? collection.get_new_title(region_title, 1) : false,
+				title = new_title !== false ? new_title.title : region_title,
+				name = new_title !== false ? new_title.name : region_name,
 				new_region = new Upfront.Models.Region(_.extend(_.clone(Upfront.data.region_default_args), {
 					"name": name,
 					"container": is_new_container ? name : this.model.get('name'),
@@ -8985,7 +9217,10 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					new_region.set_property('background_color', '#aeb8c2');
 					options.sub = 'fixed';
 				}
-				new_region.set({scope: this.model.get('scope')});
+				if ( this.make_global )
+					new_region.set({scope: 'global'});
+				else
+					new_region.set({scope: this.model.get('scope')});
 			}
 			else {
 				new_region.set_property('row', Upfront.Util.height_to_row(300)); // default to 300px worth of rows
@@ -8998,6 +9233,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					else if ( to == 'bottom' )
 						index = _.max(sub_model_index);
 				}
+				if ( this.make_global )
+					new_region.set({scope: 'global'});
 			}
 			if ( new_region.get('clip') || !is_new_container ){
 				Upfront.Events.once('entity:region:before_render', this.before_animation, this);
@@ -9014,8 +9251,94 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				$('div.upfront-regions a#no_region_add_one').remove();
 
 			}
-
-			e.stopPropagation();
+		},
+		add_region_from_global: function (from_region) {
+			var me = this,
+				to = this.options.to,
+				collection = this.model.collection,
+				total = collection.size()-1, // total minus shadow region
+				index = collection.indexOf(this.model),
+				position = this.model.get('position'),
+				sub_model = this.model.get_sub_regions(),
+				is_new_container = ( to == 'top' || to == 'bottom' ),
+				is_before = ( to == 'top' || to == 'left' ),
+				sub_index_func = function(model){
+					if ( !model || !model.cid )
+						return -1;
+					return collection.indexOf(model);
+				};
+			if ( is_new_container ){
+				var sub_model_index = _.filter(_.map(sub_model, sub_index_func), function(i){ return i >= 0; }),
+					sub_model_fixed_index = sub_model.fixed.length > 0 ? _.map(sub_model.fixed, sub_index_func) : [];
+				sub_model_index = _.union(sub_model_index, sub_model_fixed_index, [index]);
+				if ( sub_model_index.length > 0 ){
+					if ( to == 'top' )
+						index = _.min(sub_model_index);
+					else if ( to == 'bottom' )
+						index = _.max(sub_model_index);
+				}
+			}
+			if ( !is_new_container ){
+				Upfront.Events.once('entity:region:before_render', this.before_animation, this);
+				Upfront.Events.once('entity:region:added', this.run_animation, this);
+			}
+			else {
+				Upfront.Events.once('entity:region_container:before_render', this.before_animation, this);
+				Upfront.Events.once('entity:region:added', this.run_animation, this);
+			}
+			Upfront.Util.post({
+				action: 'upfront_get_scoped_regions',
+				scope: 'global',
+				name: from_region,
+				storage_key: _upfront_save_storage_key
+			}).done(function(data) {
+				var regions = data.data,
+					main_add = false,
+					to_add = [],
+					to_add_run = function(){
+						console.log(to_add)
+						_.each(to_add, function(add){
+							console.log(add)
+							add.model.add_to(collection, add.index, add.options);
+						})
+					};
+				_.each(regions, function(region, i){
+					var region_model = new Upfront.Models.Region(region),
+						options = {};
+					if ( ! region_model.is_main() ){
+						if ( to == 'left' || to == 'right' ) {
+							region_model.set('container', me.model.get('name'));
+							region_model.set('sub', is_before ? 'left' : 'right');
+							options.sub = is_before ? 'left' : 'right';
+						}
+						else {
+							options.sub = region_model.get('sub');
+						}
+						to_add.push({
+							model: region_model,
+							index: (is_before ? index : index+1) + i,
+							options: options
+						});
+					}
+					else {
+						main_add = {
+							model: region_model,
+							index: (is_before ? index : index+1),
+							options: options
+						}
+					}
+				});
+				if ( main_add !== false ){
+					console.log(main_add)
+					Upfront.Events.once('entity:region:added', function(){
+						to_add_run();
+					});
+					main_add.model.add_to(collection, main_add.index, main_add.options);
+				}
+				else {
+					to_add_run();
+				}
+			});
 		},
 		before_animation: function (view, model) {
 			// prepare to run animation, disable edit

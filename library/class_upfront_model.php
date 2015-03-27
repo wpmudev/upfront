@@ -569,6 +569,13 @@ class Upfront_Layout extends Upfront_JsonModel {
 			}
 		 	foreach ( self::$scope_data[$region['scope']] as $scope => $data ) {
 				if ( ( $data['name'] == $region['name'] || $data['container'] == $region['name'] ) ){
+					// if marked as trashed, don't include
+					if ( $data['trashed'] == 1 )
+						continue;
+					// don't apply over container and sub, to allow free positioning of global regions
+					$data['container'] = $region['container'];
+					if ( $region['sub'] )
+						$data['sub'] = $region['sub'];
 					$regions[] = $data;
 				}
 			}
@@ -758,6 +765,59 @@ class Upfront_Layout extends Upfront_JsonModel {
 		}
 		return $return;
 	}
+	
+	public static function list_scoped_regions ($scope, $storage_key = '') {
+		self::set_storage_key($storage_key);
+		$storage_key = self::get_storage_key();
+		$region_scope_data = json_decode( get_option(self::_get_scope_id($scope), json_encode(array())), true );
+		$region_scope_data = apply_filters('upfront_get_global_regions', $region_scope_data, $scope);
+		$return = array();
+		foreach ( $region_scope_data as $region){
+			if ( $region['trashed'] == 1 )
+				continue;
+			// Let's unset unused data to tidy up returned response
+			unset($region['modules']);
+			unset($region['wrappers']);
+			$return[] = $region;
+		}
+		return $return;
+	}
+
+	public static function get_scoped_regions ($name, $scope, $storage_key = '') {
+		self::set_storage_key($storage_key);
+		$storage_key = self::get_storage_key();
+		$region_scope_data = json_decode( get_option(self::_get_scope_id($scope), json_encode(array())), true );
+		$region_scope_data = apply_filters('upfront_get_global_regions', $region_scope_data, $scope);
+		$return = array();
+		foreach ( $region_scope_data as $region){
+			if ( $region['trashed'] == 1 )
+				continue;
+			if ( $region['name'] != $name && $region['container'] != $name )
+				continue;
+			$return[] = $region;
+		}
+		return $return;
+	}
+	
+	public static function delete_scoped_regions ($name, $scope, $storage_key = '') {
+		self::set_storage_key($storage_key);
+		$storage_key = self::get_storage_key();
+		$region_scope_data = json_decode( get_option(self::_get_scope_id($scope), json_encode(array())), true );
+		$return = array();
+		foreach ( $region_scope_data as $i => $region){
+			if ( $region['name'] != $name && $region['container'] != $name )
+				continue;
+			$return[] = $region['name'];
+			$region_scope_data[$i] = array(
+				'name' => $region['name'],
+				'container' => $region['container'],
+				'scope' => $scope,
+				'trashed' => 1
+			);
+		}
+		update_option(self::_get_scope_id($scope), json_encode($region_scope_data));
+		return $return;
+	}
 
 	protected static function _get_regions ($add_global_regions = false) {
 		$regions = array();
@@ -823,9 +883,15 @@ class Upfront_Layout extends Upfront_JsonModel {
 			if ( $current_scope ){ // merge with current scope if it's exist
 				foreach ( $current_scope as $current_region ){
 					$found = false;
-					foreach ( $data as $region ){
+					foreach ( $data as $i => $region ){
 						if ( $region['name'] == $current_region['name'] || $region['name'] == $current_region['container'] ){
 							$found = true;
+							// restore the container and sub, so it's possible to position global regions freely on each layout
+							if ( $region['name'] == $current_region['name'] ) {
+								$scope_data[$i]['container'] = $current_region['container'];
+								if ( isset($current_region['sub']) )
+									$scope_data[$i]['sub'] = $current_region['sub'];
+							}
 							break;
 						}
 					}
