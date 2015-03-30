@@ -570,11 +570,11 @@ class Upfront_Layout extends Upfront_JsonModel {
 		 	foreach ( self::$scope_data[$region['scope']] as $scope => $data ) {
 				if ( ( $data['name'] == $region['name'] || $data['container'] == $region['name'] ) ){
 					// if marked as trashed, don't include
-					if ( $data['trashed'] == 1 )
+					if ( isset($data['trashed']) && $data['trashed'] == 1 )
 						continue;
 					// don't apply over container and sub, to allow free positioning of global regions
 					$data['container'] = $region['container'];
-					if ( $region['sub'] )
+					if ( isset($region['sub']) )
 						$data['sub'] = $region['sub'];
 					$regions[] = $data;
 				}
