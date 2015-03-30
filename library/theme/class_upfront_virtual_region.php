@@ -171,6 +171,7 @@ class Upfront_Virtual_Region {
 		$breakpoints = $this->grid->get_breakpoints(true);
 		foreach ( $breakpoints as $breakpoint ){
 			$total_col = 0;
+			$breakpoint_col = $breakpoint->get_columns();
 			if ( !$breakpoint->is_default() ) {
 				$data = !empty($properties['breakpoint'][$breakpoint->get_id()]) && is_array($properties['breakpoint'][$breakpoint->get_id()]) ? $properties['breakpoint'][$breakpoint->get_id()] : array();
 				if ( isset($data['col']) )
@@ -191,6 +192,7 @@ class Upfront_Virtual_Region {
 				if ( in_array($pfx, array('width', 'margin-left', 'margin-right')) )
 					$total_col += $value;
 			}
+			$total_col = $total_col <= $breakpoint_col ? $total_col : $breakpoint_col;
 			if ( $group && $this->modules[$group] ){
 				$wrapper_col = $this->current_group_wrapper_col[$breakpoint->get_id()];
 				$this->current_group_wrapper_col[$breakpoint->get_id()] = ( $total_col > $wrapper_col ) ? $total_col : $wrapper_col;
