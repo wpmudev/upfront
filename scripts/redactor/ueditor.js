@@ -1056,6 +1056,8 @@ var InsertManager = Backbone.View.extend({
 		});
 	},
     render_tooltips: function(){
+        if( !this.ueditor.options.inserts ||  this.ueditor.options.inserts.length === 0 ) return;
+        
         var self = this,
             tooltips = new InsertManagerInserts({
             insertsData: this.insertsData,
@@ -1068,6 +1070,8 @@ var InsertManager = Backbone.View.extend({
         this.$tooltips = tooltips.$el;
     },
     position_tooltips: function(redactor){
+        if( !this.$tooltips ) return;
+
         var $current = $( redactor.selection.getCurrent());
         if( this.show_tooltip_in_this_location( redactor ) ){
 			if( typeof $current[0] === "undefined" || !_.isElement($current[0]) ) return;
