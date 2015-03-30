@@ -18,30 +18,21 @@ $main = upfront_create_region(array(
 ));
 
 
-$main->add_element('ThisPage', array(	
-	'id' => 'default-page-title',
-	'columns' => 24,
-	'rows' => 3,
-	'margin_top' => 3,
-	'options' => array(
-		'display' => 'title',
-		'disable_resize' => false,
-		'disable_drag' => false
+$main->add_element("ThisPost", array(
+	"id" => "default-page",
+	"columns" => 24,
+	"rows" => 20,
+	"margin_top" => 1,
+	"options" => array(
+		"post_data" => array(),
+		"layout" => array(
+			array("classes" => "c24 clr", "objects"=> array(array("slug" => "title", "classes" => "post-part c24"))),
+			array("classes" => "c24 clr", "objects"=> array(array("slug" => "contents", "classes" => " post-part c24")))
+		)
 	),
-	'sticky' => true
-));
-
-$main->add_element('ThisPage', array(	
-	'id' => 'default-page-content',
-	'columns' => 24,
-	'rows' => 20,
-	'margin_top' => 3,
-	'options' => array(
-		'display' => 'content',
-		'disable_resize' => false,
-		'disable_drag' => false
-	),
-	'sticky' => true
+	"sticky" => true,
+    "disable_resize" => true,
+    "disable_drag" => false,
 ));
 
 if ( $extended ){
