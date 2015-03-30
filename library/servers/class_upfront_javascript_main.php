@@ -160,16 +160,17 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			apply_filters('upfront-settings-grid_info', $grid_info)
 		);
 
-	    $theme_info = get_option('upfront_' . get_stylesheet() . '_responsive_settings');
+		$theme_info = get_option('upfront_' . get_stylesheet() . '_responsive_settings');
 		$theme_info = apply_filters('upfront_get_responsive_settings', $theme_info);
 		if (is_array($theme_info)) {
 			$theme_info = json_encode($theme_info);
 		}
-	    if (empty($theme_info) || $theme_info === '[]') {
-	    	// Add defaults
+
+		if (empty($theme_info) || $theme_info === '[]') {
+			// Add defaults
 			$defaults = Upfront_Grid::get_grid()->get_breakpoints_data();
-	    	$theme_info = json_encode(array('breakpoints' => $defaults));
-	    }
+			$theme_info = json_encode(array('breakpoints' => $defaults));
+		}
 
 		$theme_fonts = get_option('upfront_' . get_stylesheet() . '_theme_fonts');
 		$theme_fonts = apply_filters(

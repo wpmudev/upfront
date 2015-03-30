@@ -913,7 +913,7 @@ define([
 			this.$el.append(this.fields[0].el);
 		},
 		// noop for preventing parent class rendering on click behaviour
-		openOptions: function(e) {			
+		openOptions: function(e) {
 			this.fields[0].openOptions(e);
 		},
 		onMouseUp: function(e) {
@@ -1584,10 +1584,41 @@ define([
 				styles_list = [] // this will change with every font family change
 				$wrap_left = $('<div class="upfront-typography-fields-left" />'),
 				$wrap_right = $('<div class="upfront-typography-fields-right" />'),
-				typography = this.model.get_property_value_by_name('typography');
+				typography = this.model.get_property_value_by_name('typography'),
+				layout_typography = _.findWhere(
+					Upfront.Application.current_subapplication.get_layout_data().properties,
+					{ 'name': 'typography' }
+				),
+				default_typography = $.parseJSON('{\"h1\":{\"weight\":\"100\",\"style\":\"normal\",\"size\":\"72\",\"line_height\":\"1\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\",\"color\":\"rgba(0,0,0,1)\"},\"h2\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"50\",\"line_height\":\"1\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h3\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"36\",\"line_height\":\"1.3\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h4\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"30\",\"line_height\":\"1.2\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\"},\"h5\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"25\",\"line_height\":\"1.2\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h6\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"22\",\"line_height\":\"1.3\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"p\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"18\",\"line_height\":\"1.4\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"a\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":false,\"line_height\":false,\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(0,206,141,1)\"},\"a:hover\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":false,\"line_height\":false,\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(0,165,113,1)\"},\"ul\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"16\",\"line_height\":\"1.5\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\",\"color\":\"rgba(0,0,0,1)\"},\"ol\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"16\",\"line_height\":\"1.5\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\"},\"blockquote\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"20\",\"line_height\":\"1.5\",\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(103,103,103,1)\"},\"blockquote.upfront-quote-alternative\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"20\",\"line_height\":\"1.5\",\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(103,103,103,1)\"}}');
 
-			if (_.isEmpty(typography)) {
-				typography = $.parseJSON('{\"h1\":{\"weight\":\"100\",\"style\":\"normal\",\"size\":\"72\",\"line_height\":\"1\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\",\"color\":\"rgba(0,0,0,1)\"},\"h2\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"50\",\"line_height\":\"1\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h3\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"36\",\"line_height\":\"1.3\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h4\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"30\",\"line_height\":\"1.2\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\"},\"h5\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"25\",\"line_height\":\"1.2\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h6\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"22\",\"line_height\":\"1.3\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"p\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"18\",\"line_height\":\"1.4\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"a\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":false,\"line_height\":false,\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(0,206,141,1)\"},\"a:hover\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":false,\"line_height\":false,\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(0,165,113,1)\"},\"ul\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"16\",\"line_height\":\"1.5\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\",\"color\":\"rgba(0,0,0,1)\"},\"ol\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"16\",\"line_height\":\"1.5\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\"},\"blockquote\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"20\",\"line_height\":\"1.5\",\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(103,103,103,1)\"},\"blockquote.upfront-quote-alternative\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"20\",\"line_height\":\"1.5\",\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(103,103,103,1)\"}}')
+			layout_typography = layout_typography ? layout_typography.value : default_typography;
+			var tablet_breakpoint;
+
+			// Breakpoint's typography should initialize like this:
+			// - if there is no typography for current breakpoint it should inherit settings from
+			//   wider one, if wider one is not defined inherit from one above, last one is default
+			//   typography
+			// - in case of widest (tablet for now) it should inherit from default typography
+			if (_.isEmpty(typography) || _.isUndefined(typography.h2)) {
+				if (_.contains(['tablet', 'mobile'], this.model.get('id'))) {
+					switch (this.model.get('id')) {
+						case 'tablet':
+							// We look into the default typography and get those
+							typography = layout_typography;
+							break;
+						case 'mobile':
+							// We look to tablet typography, if it's undefined we take default typography
+							tablet_breakpoint = breakpoints_storage.get_breakpoints().findWhere({id:'tablet'});
+							if (_.isUndefined(tablet_breakpoint) || _.isUndefined(tablet_breakpoint.get('typography')) || _.isUndefined(tablet_breakpoint.get('typography').h2)) {
+								typography = layout_typography;
+							} else {
+								typography = tablet_breakpoint.get('typography');
+							}
+					}
+				} else {
+					// ensures that when theme is created there will be reasonable values for typography
+					typography = layout_typography || default_typography;
+				}
 			}
 
 			// Check for theme fonts if no theme fonts just return string
@@ -1748,7 +1779,7 @@ define([
 			this.$el.append($wrap_left);
 			$wrap_right.append([this.fields.color.el, this.fields.line_height.el]);
 			this.$el.append($wrap_right);
-			this.update_typography();
+			this.update_typography(undefined, true);
 		},
 		/*
 		 * Style field needs some special treatment since options are completely changed
@@ -1821,9 +1852,10 @@ define([
 			});
 			return styles;
 		},
-		update_typography: function (color) {
+		update_typography: function (color, updateSilently) {
 			var me = this,
 				css = [],
+				breakpointCss = [],
 				options = {};
 
 			_.each(this.elements, function(element) {
@@ -1888,6 +1920,11 @@ define([
 					selector = '.upfront-object-content ' + element;
 				}
 				css.push(selector + '{ ' + rules.join("; ") + '; }');
+
+				if (_.contains(['tablet', 'mobile'], me.model.get('id'))) {
+					breakpointCss.push('.' + me.model.get('id') + '-breakpoint ' + selector + '{ ' + rules.join("; ") + '; }');
+				}
+
 				options[element] = {
 					weight: weight,
 					style: style,
@@ -1900,11 +1937,39 @@ define([
 				};
 			});
 			this.update_typography_elements();
-			this.model.set_property('typography', options);
-			if ( $('head').find('#upfront-default-typography-inline').length )
-				$('head').find('#upfront-default-typography-inline').html( css.join("\n") );
-			else
-				$('<style id="upfront-default-typography-inline">' +css.join("\n") + '</style>').insertAfter($('head').find('link[rel="stylesheet"]').first());
+			// Update silently when update_typography is called from on_render, otherwise
+			// though tablet/mobile breakpoints do not have typography defined it will be
+			// written to theme/db with defaults. This happens because for typography sidebar
+			// to show something we have to load defaults (which is explained in initialize method),
+			// so even if breakpoint does not have anything defined we have to load defaults from
+			// next wider breakpoint to show what gets applied to current breakpoint.
+			if (!updateSilently) {
+				this.model.set_property('typography', options);
+			}
+			if (_.contains(['tablet', 'mobile'], this.model.get('id'))) {
+				var styleId = this.model.get('id') + '-breakpoint-style';
+				var cssText = '';
+				switch(this.model.get('id')) {
+					case 'tablet':
+						cssText += '@media only screen and (min-width:570px) and (max-width:1079px) {';
+						break;
+					case 'mobile':
+						cssText += '@media only screen and (max-width:569px) {';
+				}
+				cssText += css.join() + '} ' + breakpointCss.join();
+
+				if ( $('#' + styleId).length ) {
+					$('#' + styleId).html(cssText);
+				} else {
+					$('body').append('<style id="' + styleId + '">' + cssText + '</style>');
+				}
+			} else {
+				if ( $('head').find('#upfront-default-typography-inline').length ) {
+					$('head').find('#upfront-default-typography-inline').html( css.join("\n") );
+				} else {
+					$('<style id="upfront-default-typography-inline">' +css.join("\n") + '</style>').insertAfter($('head').find('link[rel="stylesheet"]').first());
+				}
+			}
 		},
 		update_typography_elements: function (view) {
 			var me = this;
@@ -7981,10 +8046,10 @@ var Field_Compact_Label_Select = Field_Select.extend({
 									title = new_title.title;
 									name = new_title.name;
 								}
-	
+
 								// Let's keep old CSS content
 								region_css = me.get_region_css_styles(this.model);
-	
+
 								// Also update the container attribute on sub regions
 								if ( this.model.is_main() ) {
 									sub_regions = this.model.get_sub_regions();
@@ -8000,10 +8065,10 @@ var Field_Compact_Label_Select = Field_Select.extend({
 									this.model.set({title: title, name: name}, {silent: true});
 								}
 								$region_name.find('.upfront-region-name-edit-value').text(title);
-	
+
 								// Save to the new CSS
 								me.set_region_css_styles(this.model, region_css.styles, region_css.selector);
-	
+
 								this.model.get('properties').trigger('change');
 							}
 						},
@@ -9116,13 +9181,13 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				};
 			modal.render();
 			this.panel_view.panels_view.$el.append(modal.$el);
-			
+
 			// Set default
 			this.from = 'new';
 			this.region_title = '';
 			this.make_global = false;
 			this.from_region = '';
-			
+
 			if ( !Upfront.data.global_regions ){
 				Upfront.Util.post({
 					action: 'upfront_list_scoped_regions',
@@ -9138,7 +9203,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			else {
 				fields.from_region.options.values = from_region_values();
 			}
-			
+
 			modal.open(function($content, $modal){
 				var template = _.template(_Upfront_Templates.region_add_panel, {});
 				_.each(fields, function(field, id) {
@@ -9164,7 +9229,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			.always(function(modal_view){
 				modal_view.remove();
 			});
-			
+
 			e.stopPropagation();
 		},
 		add_region: function () {

@@ -174,7 +174,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 			return '';
 		$out = '';
 		$faces = array();
-		foreach ( $typography as $element=>$properties ){
+		foreach ( $typography as $element=>$properties ) {
 			$properties = wp_parse_args($properties, array(
 				'font_face' => false,
 				'weight' => false,
@@ -205,12 +205,44 @@ class Upfront_StylesheetMain extends Upfront_Server {
 
 		// Responsive/breakpoint typography
 		$breakpoints = $grid->get_breakpoints();
+		$tablet_typography;
 		foreach ($breakpoints as $breakpoint) {
-		    // Ignore default/desktop breakpoint as we store it separately
-		    if ( $breakpoint->is_default() )
-                continue;
+			// Ignore default/desktop breakpoint as we store it separately
+			if ( $breakpoint->is_default() ) {
+				continue;
+			}
+
 			$breakpoint_css = '';
-			$typography = $breakpoint->get_typography();;
+			// Breakpoint's typography should load (inherit) like this:
+			// - if there is no typography for current breakpoint it should inherit settings from
+			//   wider one, if wider one is not defined inherit from one above, last one is default
+			//   typography
+			// - in case of widest (tablet for now) it should inherit from default typography
+			$breakpoint_id = $breakpoint->get_id();
+			$typography = $breakpoint->get_typography();
+
+			if ($breakpoint_id === 'tablet') {
+				$tablet_typography = $typography;// needed for mobile
+			}
+
+			if (empty($typography) || false === isset($typography['h2'])) {
+				switch ($breakpoint_id) {
+				case 'tablet':
+					$layout_properties = Upfront_ChildTheme::get_instance()->getLayoutProperties();
+					$value = upfront_get_property_value('typography', array('properties'=>$layout_properties));
+					$typography = $value;
+					break;
+				case 'mobile':
+					if (empty($tablet_typography)) {
+						$layout_properties = Upfront_ChildTheme::get_instance()->getLayoutProperties();
+						$value = upfront_get_property_value('typography', array('properties'=>$layout_properties));
+						$typography = $value;
+					} else {
+						$typography = $tablet_typography;
+					}
+					break;
+				}
+			}
 			foreach ( $typography as $element=>$properties ){
 				$properties = wp_parse_args($properties, array(
 					'font_face' => 'Arial',

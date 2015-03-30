@@ -397,7 +397,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		return $this->parseElementStyles();
 	}
 
-	public function getLayoutProperties($properties) {
+	public function getLayoutProperties($properties = array()) {
 		if (empty($properties) === false) return $properties;
 
 		if ($this->themeSettings->get('layout_properties')) {
