@@ -370,6 +370,7 @@ div.close_lightbox {
 	top: -45px;
 	position: absolute;
 	right: 0px;
+  pointer-events: auto;
 }
 div.close_lightbox h3 {
 	cursor:pointer;
@@ -402,6 +403,7 @@ div.upfront-region-lightbox, div.upfront-region-side-lightbox,
   left: 0;
   width: 100%;
   height: 100%;
+  pointer-events: auto;
 }
 div.upfront-region-lightbox .upfront-icon-popup-close, div.upfront-region-side-lightbox .upfront-icon-popup-close {
 	position: absolute;
