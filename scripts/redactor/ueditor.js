@@ -1057,7 +1057,7 @@ var InsertManager = Backbone.View.extend({
 	},
     render_tooltips: function(){
         if( !this.ueditor.options.inserts ||  this.ueditor.options.inserts.length === 0 ) return;
-        
+
         var self = this,
             tooltips = new InsertManagerInserts({
             insertsData: this.insertsData,

@@ -214,9 +214,11 @@
 #sidebar-ui .sidebar-commands-primary .command-new-post,
 #sidebar-ui .sidebar-commands-primary .command-new-layout {
 	float: left;
+    width: 102px;
 }
 #sidebar-ui .sidebar-commands-primary .command-new-page {
 	float: right;
+    width: 103px;
 }
 #sidebar-ui .sidebar-commands-primary .command-new-page:hover,
 #sidebar-ui .sidebar-commands-primary .command-new-post:hover,
@@ -250,6 +252,7 @@
 
 #sidebar-ui .sidebar-commands-primary .command-popup-list {
 	width: 170px;
+    height: 34px;
 	font:11px/22px Verdana, sans-serif;
 }
 #sidebar-ui .sidebar-commands-primary .command-open-media-gallery {
@@ -257,6 +260,8 @@
 	margin-bottom: 0;
 	font:11px/22px Verdana, sans-serif;
 	float:right;
+    width: 51px;
+    height: 34px;
 }
 #sidebar-ui .upfront-icon-open-gallery:before {
 	background-position: -196px -176px;
@@ -329,10 +334,14 @@
 	margin-top: 3px;
 }
 #sidebar-ui .sidebar-profile-edit {
-	float: right;
-	margin: 0;
-	padding-top: 19px;
-	margin-left: 0;
+    float: right;
+    margin: 0;
+    padding-top: 14px;
+    margin-left: 0;
+    width: 77px;
+    height: 29px;
+    overflow: hidden;
+    line-height: 15px;
 }
 .upfront-edit-content #sidebar-ui .sidebar-profile-edit {
 	display: none;
@@ -341,7 +350,7 @@
 	margin: 0 0 0 5px;
 }
 #sidebar-ui .sidebar-profile-edit .upfront-icon:before {
-	margin: 0;
+	margin: 2px 0 0 0;
 	padding: 0 0 0 10px;
 }
 #sidebar-ui .sidebar-commands-control {
@@ -361,6 +370,7 @@
 	margin-bottom: 0;
 	font-size: 14px;
 	height: 20px;
+    width: 48px;
 }
 #sidebar-ui .sidebar-commands-control .command-redo {
 	margin-left: 8px;
@@ -377,8 +387,13 @@
 	position: absolute;
 	top: 613px;
 	right: 15px;
-	padding: 8px 20px 0 10px;
-	line-height: 22px;
+	padding: 0 20px 0 10px;
+	line-height: 40px;
+    height:40px;
+    width: 94px;
+}
+#sidebar-ui .sidebar-commands-control .command-save:before{
+  margin-top: 8px;
 }
 #sidebar-ui .sidebar-commands-control .command-start-responsive {
 	position: absolute;
@@ -386,6 +401,8 @@
 	left: 13px;
 	margin: 0;
 	font-size: 13px;
+    width: 122px;
+    line-height: 27px;
 }
 #sidebar-ui .sidebar-commands-control .command-save:hover {
 	border-color: #1fcd8f;
@@ -1111,7 +1128,9 @@ span.draggable-post-element.element-dragging
 .sidebar-tab-content{
     display: none;
 }
-
+#sidebar-ui [class^=command-]{
+  overflow: hidden;
+}
 /* Height Media Queries Fixes
 	 ========================== */
 
