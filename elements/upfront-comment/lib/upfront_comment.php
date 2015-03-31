@@ -11,22 +11,76 @@ class Upfront_UcommentView extends Upfront_Object {
 		"</div>";
 	}
 
+	public static function spawn_random_comments ($post) {
+		$fake_comment = array(
+			'user_id' => get_current_user_id(),
+			'comment_author' => 'Author',
+			'comment_author_IP' => '',
+			'comment_author_url' => '',
+			'comment_author_email' => '',
+			'comment_post_ID' => $post->ID,
+			'comment_type' => '',
+			'comment_date' => current_time('mysql'),
+			'comment_date_gmt' => current_time('mysql', 1),
+			'comment_approved' => 1,
+			'comment_content' => 'test stuff author comment',
+		);
+		$comments = array(
+			array_merge($fake_comment, array(
+				'user_id' => get_current_user_id(),
+				'comment_author' => 'Author',
+				'comment_content' => 'test stuff author comment',
+			)),
+			array_merge($fake_comment, array(
+				'user_id' => 0,
+				'comment_author' => 'Visitor',
+				'comment_content' => 'test stuff visitor comment',
+			)),
+			array_merge($fake_comment, array(
+				'user_id' => 0,
+				'comment_author' => 'Trackback',
+				'comment_type' => 'trackback',
+				'comment_content' => 'test stuff visitor trackback',
+			)),
+			array_merge($fake_comment, array(
+				'user_id' => 0,
+				'comment_author' => 'Pingback',
+				'comment_type' => 'pingback',
+				'comment_content' => 'test stuff visitor pingkback',
+			)),
+		);
+		foreach ($comments as $cid => $comment) {
+			$comment['comment_ID'] = $cid;
+			$comments[$cid] = (object)wp_filter_comment($comment);
+		}
+		return $comments;
+	}
+
 	public static function get_comment_markup ($post_id) {
-		//if (!$post_id || !is_numeric($post_id)) return '';
-		if (!$post_id) return ''; 
-		if (!is_numeric($post_id) && ( 'fake_post' !== $post_id || 'fake_styled_post' !== $post_id )) return '';
+		if (!$post_id) return '';
+		if (!is_numeric($post_id)) {
+			if (!in_array($post_id, array('fake_post', 'fake_styled_post'))) return '';
+		}
 
         $defaults = self::default_properties();
         $prepend_form = (bool) $defaults['prepend_form'];
         $form_args = apply_filters('upfront_comment_form_args', array());
-		//$post = get_post($post_id);
+        
+        $comments = array();
+        $post = false;
 		if (is_numeric($post_id)) {
 			$post = get_post($post_id);
+			$comments = get_comments(array('post_id' => $post->ID));
 		} else {
 			$posts = get_posts(array('orderby' => 'rand', 'posts_per_page' => 1));
-			if (!empty($posts[0])) $post = $posts[0];
+			if (!empty($posts[0])) {
+				$post = $posts[0];
+				$comments = self::spawn_random_comments($post);
+			}
 			else return '';
 		}
+		if (empty($post) || !is_object($post)) return '';
+
 		if (post_password_required($post->ID)) return '';
 		ob_start();
 
