@@ -291,6 +291,7 @@ define([
 			Upfront.Events.trigger("command:newpost:start", true);
 			this.$el.addClass('upfront-icon upfront-icon-post');
 			this.$el.html(l10n.new_post);
+            this.$el.prop("title", l10n.new_post);
 		},
 		on_click: function (e) {
 			e.preventDefault();
@@ -340,7 +341,8 @@ define([
 		render: function () {
 			Upfront.Events.trigger("command:newpage:start", true);
 			this.$el.addClass('upfront-icon upfront-icon-page');
-				this.$el.html(this._default_label);
+			this.$el.html(this._default_label);
+            this.$el.prop("title", this._default_label);
 		},
 		on_click: function(e){
 			e.preventDefault();
@@ -454,6 +456,7 @@ define([
 		render: function () {
 			this.$el.addClass('upfront-icon upfront-icon-save');
 			this.$el.html(l10n.save);
+            this.$el.prop("title", l10n.save);
 		},
 		on_click: function () {
 			if ( _upfront_post_data.layout.specificity && _upfront_post_data.layout.item && !_upfront_post_data.layout.item.match(/-page/) )
@@ -466,6 +469,7 @@ define([
 	var Command_SaveLayoutAs = Command.extend({
 		render: function () {
 			this.$el.html(l10n.save_as);
+            this.$el.prop("title", l10n.save_as);
 		},
 		on_click: function () {
 			Upfront.Events.trigger("command:layout:save_as");
@@ -478,6 +482,7 @@ define([
 		render: function () {
                 this.$el.addClass('upfront-icon upfront-icon-save');
                 this.$el.html(l10n.save_layout);
+                this.$el.prop("title", l10n.save_layout);
 		},
 		on_click: function () {
 			Upfront.Events.trigger("post:layout:save");
@@ -488,6 +493,7 @@ define([
         className: "command-cancel",
 		render: function () {
 			this.$el.html(l10n.cancel);
+            this.$el.prop("title", l10n.cancel);
 		},
 		on_click: function () {
             Upfront.Events.trigger("post:layout:cancel");
@@ -515,14 +521,16 @@ define([
 		},
 		preview_built: function () {
 			this.$el.html(l10n.preview);
+            this.$el.prop("title", l10n.preview);
 			this.can_preview = true;
-		},
+		}
 
 	});
 
 	var Command_LoadLayout = Command.extend({
 		render: function () {
 			this.$el.html(l10n.alternate_layout);
+            this.$el.prop("title", l10n.alternate_layout);
 		},
 		on_click: function () {
 			Upfront.Events.trigger("command:layout:load", 2)
@@ -551,6 +559,7 @@ define([
 		render: function () {
 			this.$el.addClass('upfront-icon upfront-icon-undo');
 			this.$el.html(l10n.undo);
+            this.$el.prop("title", l10n.undo);
 			if (this.model.has_undo_states()) this.activate();
 			else this.deactivate();
 		},
@@ -596,6 +605,7 @@ define([
 		render: function () {
 			this.$el.addClass('upfront-icon upfront-icon-redo');
 			this.$el.html(l10n.redo);
+            this.$el.prop("title", l10n.redo);
 			if (this.model.has_redo_states()) this.activate();
 			else this.deactivate();
 		},
@@ -740,6 +750,7 @@ define([
 		render: function () {
 			this.$el.addClass('upfront-icon upfront-icon-grid');
 			//this.$el.html('Toggle grid');
+            this.$el.prop("title", l10n.toggle_grid);
 			this.listenTo(Upfront.Events, "entity:region:added", this.update_grid);
 			this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.update_grid);
 		},
@@ -943,6 +954,7 @@ define([
 		className: "command-browse-layout upfront-icon upfront-icon-browse-layouts",
 		render: function () {
 			this.$el.html(l10n.layouts);
+            this.$el.prop("title", l10n.layouts);
 		},
 		on_click: function () {
 			Upfront.Events.trigger("command:layout:browse");
@@ -987,6 +999,7 @@ define([
 		className: "command-edit-css upfront-icon upfront-icon-edit-css",
 		render: function (){
 			this.$el.html('<span>' + l10n.add_custom_css_rules + '</span>');
+            this.$el.prop("title", l10n.add_custom_css_rules);
 		},
 		on_click: function () {
 			var editor = Upfront.Application.cssEditor,
@@ -1006,7 +1019,7 @@ define([
 		tagName: 'div',
 		className: "command-open-font-manager upfront-icon upfront-icon-open-font-manager",
 		render: function (){
-			this.$el.html('<span>' + l10n.theme_font_manager + '</span>');
+			this.$el.html('<span title="'+ l10n.theme_font_manager +'">' + l10n.theme_font_manager + '</span>');
 		},
 		on_click: function () {
 			Upfront.Events.trigger('command:themefontsmanager:open');
@@ -1022,7 +1035,7 @@ define([
 			}, 1000);
 		},
 		render: function () {
-			this.$el.html('<span>' + l10n.add_custom_css_rules + '</span>');
+			this.$el.html('<span title="'+ l10n.add_custom_css_rules +'">' + l10n.add_custom_css_rules + '</span>');
 		},
 		on_click: function () {
 			var editor,
@@ -1076,7 +1089,7 @@ define([
 		enabled: true,
 		className: 'command-create-responsive-layouts upfront-icon upfront-icon-start-responsive',
 		render: function () {
-			this.$el.html("<span>" + l10n.create_responsive_layouts + "</span>");
+			this.$el.html("<span title='"+ l10n.create_responsive_layouts +"'>" + l10n.create_responsive_layouts + "</span>");
 		},
 		on_click: function () {
 			Upfront.Application.start(Upfront.Application.MODE.RESPONSIVE);
@@ -1087,7 +1100,7 @@ define([
 		enabled: true,
 		className: 'command-start-responsive upfront-icon upfront-icon-start-responsive',
 		render: function () {
-			this.$el.html("<span>" + l10n.responsive_mode + "</span>");
+			this.$el.html("<span title='"+ l10n.responsive_mode +"'>" + l10n.responsive_mode + "</span>");
 		},
 		on_click: function () {
 			Upfront.Application.start(Upfront.Application.MODE.RESPONSIVE);
@@ -1098,7 +1111,7 @@ define([
 		enabled: true,
 		className: 'exit-responsive',
 		render: function () {
-			this.$el.html("<span>" + l10n.exit_responsive + "</span>");
+			this.$el.html("<span title='"+ l10n.exit_responsive  +"'>" + l10n.exit_responsive + "</span>");
 		},
 		on_click: function () {
 			$('li.desktop-breakpoint-activate').trigger('click');
@@ -1111,6 +1124,7 @@ define([
 		render: function () {
 			this.$el.addClass('upfront-icon upfront-icon-save');
 			this.$el.html(l10n.save);
+            this.$el.prop("title", l10n.save);
 		},
 		on_click: function () {
 			console.log('responsive is saved');
@@ -1195,7 +1209,7 @@ define([
 	var ResponsiveCommand_BrowseLayout = Command.extend({
 		className: "command-browse-layout command-browse-layout-responsive",
 		render: function () {
-			this.$el.html('<span>' + l10n.browse_layouts + '</span>');
+			this.$el.html('<span title="'+ l10n.browse_layouts +'">' + l10n.browse_layouts + '</span>');
 		},
 		on_click: function () {
 			Upfront.Events.trigger("command:layout:browse");
@@ -2398,7 +2412,7 @@ define([
             this.edit_colors.render();
             this.edit_colors.delegateEvents();
             this.$el.find('.panel-section-content').append(this.edit_colors.el);
-						this.$el.addClass('colors-panel-section');
+			this.$el.addClass('colors-panel-section');
         }
     });
 	var SidebarPanel_Settings = SidebarPanel.extend({
@@ -2626,7 +2640,7 @@ define([
 			;
 			tpl = '<div class="sidebar-profile-avatar"><img src="http://www.gravatar.com/avatar/{{ gravatar ? gravatar : "gravatar" }}?s=26" /></div>' +
 				'<div class="sidebar-profile-detail"><span class="sidebar-profile-name">{{name}}</span><span class="sidebar-profile-role">{{role}}</span></div>' +
-				(roles.length ? '<div class="sidebar-profile-edit"><a class="upfront-icon upfront-icon-edit" data-bypass="true" href="{{edit_url}}">' + l10n.edit_profile + '</a></div>' : '');
+				(roles.length ? '<div class="sidebar-profile-edit"><a class="upfront-icon upfront-icon-edit" data-bypass="true" title="'+  l10n.edit_profile +'" href="{{edit_url}}">' + l10n.edit_profile + '</a></div>' : '');
 			this.$el.html(_.template(tpl,
 				{
 					gravatar: data.gravatar,
@@ -2915,9 +2929,9 @@ define([
 		render: function () {
 			this.$el.addClass("upfront-entity_list upfront-icon upfront-icon-browse");
 			if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.LAYOUT )
-				this.$el.html('<a>' + l10n.posts_pages_comments + '</a>');
+				this.$el.html('<a title="'+ l10n.posts_pages_comments +'">' + l10n.posts_pages_comments + '</a>');
 			else
-				this.$el.html('<a>' + l10n.posts_pages + '</a>');
+				this.$el.html('<a title="'+ l10n.posts_pages +'">' + l10n.posts_pages + '</a>');
 		},
 		on_click: function () {
 			var me = this,
@@ -3067,7 +3081,7 @@ define([
 		tagName: 'li',
 		className: 'command-open-media-gallery upfront-icon upfront-icon-open-gallery',
 		render: function () {
-				this.$el.html('<a>' + l10n.media + '</a>');
+				this.$el.html('<a title="'+ l10n.media +'">' + l10n.media + '</a>');
 		},
 		on_click: function () {
 			Upfront.Media.Manager.open({

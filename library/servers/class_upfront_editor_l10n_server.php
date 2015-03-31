@@ -559,7 +559,8 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
                     10 => __("10-Oct"),
                     11 => __("11-Nov"),
                     12 => __("12-Dec")
-				)
+				),
+				'toggle_grid' => __("Toggle grid", 'upfront')
 			),
 		);
 		return !empty($key)

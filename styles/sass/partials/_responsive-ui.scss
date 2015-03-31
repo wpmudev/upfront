@@ -105,6 +105,7 @@
 /* Responsive commands */
 #sidebar-ui .sidebar-commands-responsive li {
   display: block;
+  max-width: 250px;
 }
 
 #sidebar-ui .sidebar-commands-responsive .panel-section {
@@ -124,12 +125,15 @@
   border: 3px solid #263a4d;
   padding: 2px 5px;
   height: 33px;
+  width: 121px;
+  overflow: hidden;
 }
 
 #sidebar-ui .command-browse-layout-responsive {
   overflow: hidden;
   padding: 3px 0 15px 15px;
   cursor: default;
+  height: 42px;
 }
 #sidebar-ui .command-browse-layout-responsive span {
   border: 3px solid #263a4d;
