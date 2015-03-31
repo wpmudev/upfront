@@ -225,7 +225,7 @@ class Upfront_Compat_Coursepresspro_Coursepress extends Upfront_Server {
 			'archive-instructor',
 		))) return false; // Not a known CP layout nanana carry on
 		$this->_out(new Upfront_JsonResponse_Success(array(
-			'posts' => '<div class="upfront-coursepress_compat"><p>CoursePress specific content</p></div>',
+			'posts' => '<div class="upfront-coursepress_compat upfront-plugin_compat"><p>CoursePress specific content</p></div>',
 			'pagination' => '',
 		)));
 	}
@@ -280,28 +280,6 @@ class Upfront_Compat_Coursepresspro_Coursepress extends Upfront_Server {
 		$data["list_type"] = "generic"; 
 		$data["pagination"] = "none";
 		return $data;
-	}
-
-	public function inject_editor_styles () {
-		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) return false;
-		echo <<<EO_CP_STYLES
-<style>
-.upfront-coursepress_compat {
-	position: absolute;
-	top: 50%;
-	transform: translateY(-50%);
-	width: 100%;
-	text-align: center;
-	opacity: .2;
-
-}
-.upfront-coursepress_compat p {
-	text-align: center;
-	width: 100%;
-	font-size: 3em;
-}
-</style>
-EO_CP_STYLES;
 	}
 
 }

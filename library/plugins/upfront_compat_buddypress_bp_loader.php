@@ -31,9 +31,6 @@ class Upfront_Compat_Buddypress_Bp_loader extends Upfront_Server {
 		add_filter('upfront-data-post_id', array($this, 'augment_singular_entity_id'));
 		add_action('wp_ajax_upfront-wp-model', array($this, 'prepare_for_editor_output'), 9);
 		add_action('wp_ajax_this_post-get_markup', array($this, 'prepare_editor_markup'), 9);
-
-		// Shove some styles into footer
-		add_action('wp_footer', array($this, 'inject_editor_styles'));
 	}
 
 	/**
@@ -175,7 +172,7 @@ class Upfront_Compat_Buddypress_Bp_loader extends Upfront_Server {
 		if (!preg_match('/^bp_compat-/', $data['post_id'])) return false;
 
 		$this->_out(new Upfront_JsonResponse_Success(array(
-			"filtered" => '<div class="upfront-buddypress_compat"><p>BuddyPress specific content</p></div>'
+			"filtered" => '<div class="upfront-buddypress_compat upfront-plugin_compat"><p>BuddyPress specific content</p></div>'
 		)));
 	}
 
@@ -188,28 +185,6 @@ class Upfront_Compat_Buddypress_Bp_loader extends Upfront_Server {
 			? 'bp_compat-' . $layout['specificity']
 			: $post_id
 		;
-	}
-
-	public function inject_editor_styles () {
-		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) return false;
-		echo <<<EO_BP_STYLES
-<style>
-.upfront-buddypress_compat {
-	position: absolute;
-	top: 50%;
-	transform: translateY(-50%);
-	width: 100%;
-	text-align: center;
-	opacity: .2;
-
-}
-.upfront-buddypress_compat p {
-	text-align: center;
-	width: 100%;
-	font-size: 3em;
-}
-</style>
-EO_BP_STYLES;
 	}
 }
 Upfront_Compat_Buddypress_Bp_loader::serve();

@@ -18,6 +18,8 @@ class Upfront_PluginCompat implements IUpfront_Server {
 		$all_plugins = get_plugins();
 		if (empty($all_plugins)) return false;
 
+		$loaded = false;
+
 		$root = Upfront::get_root_dir();
 		foreach ($all_plugins as $key => $plug) {
 			if (!is_plugin_active($key)) continue;
@@ -30,7 +32,36 @@ class Upfront_PluginCompat implements IUpfront_Server {
 			if (!file_exists($file_path)) continue;
 
 			require_once($file_path);
+
+			$loaded = true;
 		}
+
+		// If we have a loaded plugin, let's add some generic loaded styles
+		if ($loaded) {
+			add_action('wp_footer', array($this, 'inject_editor_styles'));
+		}
+	}
+
+	public function inject_editor_styles () {
+		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) return false;
+		echo <<<EO_PLUGIN_COMPAT_STYLES
+<style>
+.upfront-plugin_compat {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 100%;
+	text-align: center;
+	opacity: .2;
+
+}
+.upfront-plugin_compat p {
+	text-align: center;
+	width: 100%;
+	font-size: 3em;
+}
+</style>
+EO_PLUGIN_COMPAT_STYLES;
 	}
 
 	private function _to_plugin_id ($key, $plugin) {
