@@ -248,30 +248,32 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 
 		//Enable text editors
-		if(!me.$('.uslide-editable-text').data('ueditor'))
-			me.$('.uslide-editable-text').ueditor({
+		if(!text.data('ueditor'))
+			var id = text.closest('.uslide').attr('rel'),
+				slide = slideCollection.get(id)
+			;
+
+			text.ueditor({
 					autostart: false,
 					upfrontMedia: false,
 					upfrontImages: false,
 					placeholder: 'Slide description'
 				})
 				.on('start', function(){
-					var $this = $(this),
-						id = $this.closest('.uslide').attr('rel'),
-						slide = slideCollection.get(id)
-					;
-
 					me.$el.addClass('upfront-editing');
+					Upfront.Events.trigger('upfront:element:edit:start', 'text');
+				})
+				.on('syncAfter', function(){
+					slide.set('text', $(this).html(), {silent: true});
+				})
+				.on('stop', function(){
+					slide.set('text', $(this).html());
+					me.property('slides', slideCollection.toJSON());
+					me.$el.removeClass('upfront-editing');
 
-					$this.on('syncAfter', function(){
-							slide.set('text', $this.html(), {silent: true});
-						})
-						.on('stop', function(){
-							slide.set('text', $this.html());
-							me.property('slides', slideCollection.toJSON());
-							me.$el.removeClass('upfront-editing');
-						})
-					;
+					Upfront.Events.trigger('upfront:element:edit:stop');
+					text.data('ueditor').redactor.events.trigger('cleanUpListeners');
+					me.render();
 				})
 			;
 
