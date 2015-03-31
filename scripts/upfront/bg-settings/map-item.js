@@ -111,7 +111,10 @@ define([
 						hide_label: true,
 						values: [{label: l10n.show_markers, value: 1}],
 						multiple: false,
-						change: set_value
+						change: set_value,
+						rendered: function () {
+							this.$el.addClass('uf-bgsettings-map-show-marker');
+						}
 					}),
 				};
 			
