@@ -88,7 +88,6 @@ class Upfront_UcommentView extends Upfront_Object {
             comment_form($form_args, $post->ID);
         }
 		// Load comments
-		$comments = get_comments(array('post_id' => $post->ID));
 		if($comments && sizeof($comments)){
 			echo '<ol class="upfront-comments">';
 			wp_list_comments(array('callback' => array('Upfront_UcommentView', 'list_comment'), 'style' => 'ol'), $comments);
@@ -124,7 +123,7 @@ class Upfront_UcommentView extends Upfront_Object {
 			'type' => "UcommentModel",
 			'view_class' => "UcommentView",
 			"class" => "c24 upfront-comment",
-			'has_settings' => 0,
+			'has_settings' => 1,
             "prepend_form" => false
 		);
 	}
@@ -148,6 +147,8 @@ class Upfront_UcommentView extends Upfront_Object {
 			'avatar_settings' => __('Avatar Settings', 'upfront'),
 			'show_avatars' => __('Show avatars', 'upfront'),
 			'max_rating' => __('Maximum rating', 'upfront'),
+			'settings' => __('Settings', 'upfront'),
+			'main_panel' => __('Main', 'upfront'),
 			'rating' => array(
 				'g' => __('Suitable for all audiences', 'upfront'),
 				'pg' => __('Possibly offensive, usually for audiences 13 and above', 'upfront'),
