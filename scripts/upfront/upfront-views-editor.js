@@ -5226,6 +5226,19 @@ var Field_ToggleableText = Field_Text.extend({
 				)
 			;
 
+			/*
+			 * This event is broadcast so that other plugins can register their
+			 * own Upfront element for the CSS Editor before the settings panel
+			 * is displayed.
+			 *
+			 * Example:
+			 * Upfront.Events.on( 'settings:prepare', function() {
+			 *   args = {label: 'My Element', id: 'my_element'};
+			 *   Upfront.Application.cssEditor.elementTypes['ElementModel'] = args;
+			 * });
+			 */
+			Upfront.Events.trigger("settings:prepare");
+
 			me.panels.each(function (panel) {
 				panel.render();
 
