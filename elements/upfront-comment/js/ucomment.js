@@ -511,6 +511,36 @@ var PagedCommentsField = BooleanSubfieldField.extend({
 	}
 });
 
+
+var Settings_MainPanel = Upfront.Views.Editor.Settings.Panel.extend({
+	label: l10n.element_name,
+	initialize: function (opts) {
+		this.options = opts;
+		this.settings = _([]);
+	},
+
+	get_label: function () {
+		return this.label;
+	},
+
+	get_title: function () {
+		return l10n.main_panel;
+	}
+});
+
+var Settings = Upfront.Views.Editor.Settings.Settings.extend({
+	initialize: function (opts) {
+		this.options = opts;
+		this.panels = _([
+			new Settings_MainPanel({model: this.model})
+		]);
+	},
+
+	get_title: function () {
+		return l10n.settings;
+	}
+});
+
 var UcommentElement = Upfront.Views.Editor.Sidebar.Element.extend({
 
 	render: function () {
