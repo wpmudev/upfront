@@ -191,9 +191,7 @@ class Upfront_Compat_Coursepresspro_Coursepress extends Upfront_Server {
 
 	private function _add_hooks () {
 		add_action('wp', array($this, 'detect_virtual_page'));
-		upfront_add_ajax('upfront_posts-load', array($this, "load_posts"), 9); // Bind this early to override the default Posts element action
-		// Shove some styles into footer
-		add_action('wp_footer', array($this, 'inject_editor_styles'));
+		add_action('wp_ajax_upfront_posts-load', array($this, "load_posts"), 9); // Bind this early to override the default Posts element action
 	}
 
 	public static function force_archive ($cascade) {
