@@ -3,16 +3,6 @@ define(['text!elements/upfront-button/tpl/ubutton.html'], function(template) {
 
 var l10n = Upfront.Settings.l10n.text_element;
 
-var linkPanelTpl = '<div class="redactor_air upfront-ui under">' +
-	'<ul class="redactor-toolbar redactor-toolbar-external" id="redactor-toolbar-0">' +
-	'<div class="redactor-dropdown ueditor_panel redactor-dropdown-box-upfrontLink linkingPanelGoesHere" style="left: 0px; display: none;">' +
-	'</div>' +
-	'<li>' +
-	'<a href="#" class="re-icon re-upfrontLink redactor-btn-image redactor_act dropact" rel="upfrontLink" title="Link" tabindex="-1"></a>' +
-	'</li>' +
-	'</ul>' +
-	'</div>';
-
 var ButtonModel = Upfront.Models.ObjectModel.extend({
 	init: function () {
 		this.init_property("type", "ButtonModel");
@@ -39,9 +29,9 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 
 		this.events = _.extend({}, this.events, {
 			'click a.upfront_cta.ueditor-placeholder' : 'placeholderClick',
-			'click i.visit_link' : 'visitLink',
 			'click a.redactor_act': 'onOpenPanelClick',
-			'click .upfront-save_settings': 'onOpenPanelClick'
+			'click .upfront-save_settings': 'onOpenPanelClick',
+			'click .open-item-controls': 'onOpenItemControlsClick'
 		});
 
 		this.on('deactivated', function() {
@@ -251,7 +241,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 
 		var rendered = '';
 
-		rendered = _.template(template, data)+'<i class="visit_link visit_link_'+this.guessLinkType()+'"></i>';
+		rendered = _.template(template, data)+'<span class="open-item-controls"></span>';
 
 		return rendered;// + ( !this.is_edited() || $.trim(content) == '' ? '<div class="upfront-quick-swap"><p>' + l10n.dbl_click + '</p></div>' : '');
 
@@ -286,6 +276,108 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		this.toggleLinkPanel();
 	},
 
+	onOpenItemControlsClick: function() {
+		this.$el.toggleClass('controls-visible');
+		if (this.$el.hasClass('controls-visible')) {
+			this.controlsVisible = true;
+		} else {
+			this.controlsVisible = false;
+		}
+	},
+
+	getTextByLinkType: function(linktype) {
+		switch(linktype) {
+			case 'unlink':
+				return 'Not Linked';
+			case 'lightbox':
+				return 'Open Lightbox';
+			case 'anchor':
+				return 'Scroll to Anchor';
+			case 'entry':
+				return 'Go To Post / Page';
+			case 'external':
+				return 'Open Ext. Link';
+			case 'email':
+					return 'Send Email';
+		};
+	},
+
+	createInlineControlPanel: function() {
+		var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel();
+
+		panel.items = _([
+			this.createLinkControl(),
+			this.createControl('visit-link-' + this.guessLinkType(), this.getTextByLinkType(this.guessLinkType()), 'visitLink'),
+		]);
+
+		var imageControlsTpl = '<div class="uimage-controls image-element-controls upfront-ui"></div>';
+		this.$el.append(imageControlsTpl);
+		panel.render();
+		this.$el.find('.uimage-controls').append(panel.el);
+		panel.delegateEvents();
+	},
+
+	createControl: function(icon, tooltip, click){
+		var me = this,
+		control = new Upfront.Views.Editor.InlinePanels.Control({
+			label: tooltip
+		});
+		control.icon = icon;
+		control.tooltip = tooltip;
+		if (click) {
+			this.listenTo(control, 'click', function(e){
+				me[click](e);
+			});
+		}
+
+		return control;
+	},
+
+	updateLinkType: function() {
+		this.$el.find('.upfront-inline-panel-item:nth-child(2) i').attr('class', 'upfront-icon upfront-icon-region-visit-link-'+ this.guessLinkType());
+		this.$el.find('.upfront-inline-panel-item:nth-child(2) span').text(this.getTextByLinkType(this.linkType));
+	},
+
+	createLinkControl: function(){
+		var me = this,
+		control = new Upfront.Views.Editor.InlinePanels.DialogControl(),
+		linkPanel;
+
+		control.view = linkPanel = new Upfront.Views.Editor.LinkPanel({
+			linkUrl: this.property('href'),
+			linkType: this.guessLinkType(),
+			linkTarget: this.property('linkTarget'),
+			button: false
+		});
+
+		this.listenTo(control, 'panel:ok', function() {
+			control.close();
+		});
+
+		this.listenTo(control, 'panel:open', function() {
+			me.linkPanelOpen = true;
+		});
+
+		this.listenTo(control, 'panel:close', function() {
+			me.linkPanelOpen = false;
+		});
+
+		this.listenTo(linkPanel, 'change change:target', function(data) {
+			me.property('href', data.url);
+			me.property('linkTarget', data.target);
+			this.linkType = data.type;
+			me.updateLinkType();
+		});
+
+
+		control.icon = 'link';
+		control.tooltip = 'link';
+		control.id = 'link';
+
+		return control;
+	},
+
+
 	toggleLinkPanel: function() {
 		var me = this;
 		if (this.$el.hasClass('stayOpen')) {
@@ -305,23 +397,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		var me = this,
 			blurTimeout = false;
 
-		this.$el.find('.upfront-button').append(linkPanelTpl);
 		this.delegateEvents();
-
-		this.linkPanel = new Upfront.Views.Editor.LinkPanel({
-			linkUrl: this.property('href'),
-			linkType: this.guessLinkType(),
-			linkTarget: this.property('linkTarget'),
-			button: true
-		});
-
-		this.linkPanel.render();
-		this.$el.find('.linkingPanelGoesHere').html(this.linkPanel.el);
-		this.linkPanel.delegateEvents();
-		this.listenTo(this.linkPanel, 'change change:target', function(data) {
-			me.property('href', data.url);
-			me.property('linkTarget', data.target);
-		});
 
 		var $target = this.$el.find('.upfront-object-content a.upfront_cta');
 		$target.ueditor({
@@ -368,41 +444,11 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 				if (text) me.model.set_content(text, {silent: true});
 			})
 
-		/*.ueditor({
-				linebreaks: true,
-				disableLineBreak: true,
-				//focus: true,
-
-				airButtons: ['upfrontLinkCTA', 'stateAlignCTA'],
-				placeholder: 'Click here',
-			}).on('start', function(e) {
-				Upfront.Events.trigger('upfront:element:edit:start', 'text');
-				$(this).focus();
-			 }).on("stop", function () {
-				me.property('content', $target.text(), true);
-				me.property('href', $target.attr('href'), true);
-				console.log($target.text());
-				me.property('align', $target.css('text-align'), true);
-				//Upfront.Events.trigger('upfront:element:edit:stop');
-			 }).on("blur", function(){
-				$target.data('ueditor').stop();
-			 });
-
-			$target.data('ueditor').stop();
-			*/
-/*			setTimeout(function() {
-				me.conformSize();
-			}, 100);
-			*/
-		//this.$el.children('.upfront-object').css('min-height', this.$el.closest('.upfront-module').css('min-height'));
 		this.property('row', this.parent_module_view.model.get('properties').get('row').attributes.value);
 		if(this.property('content') == '')
 			this.showPlaceholder();
 
-		//console.log(this.property('currentpreset'));
-		//var preset = Upfront.Views.Editor.Button.Presets.get(this.property('currentpreset'));
-
-		
+		this.createInlineControlPanel();
 	},
 	showPlaceholder: function() {
 		var $target = this.$el.find('.upfront-object-content a.upfront_cta:not(.ueditor-placeholder)');
@@ -1251,7 +1297,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 
 		this.is_saving = true;
 		var currentpreset = this.property('currentpreset');
-		
+
 		if(this.buttonpresets.$el.css('display') == 'none')
 			this.save_preset(this.property('currentpreset'));
 		this.is_changed = true;
@@ -1445,7 +1491,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 					for_view.$el.children('.upfront-object').addClass(preset.get('theme_style'));
 				}
 			}
-		
+
 	},
 	save_preset: function(presetname) {
 		var preset = Upfront.Views.Editor.Button.Presets.get(presetname);
