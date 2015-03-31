@@ -568,13 +568,25 @@ var UcommentElement = Upfront.Views.Editor.Sidebar.Element.extend({
 });
 
 
-if (_upfront_post_data.post_id) {
-	Upfront.Application.LayoutEditor.add_object("Ucomment", {
-		"Model": UcommentModel,
-		"View": UcommentView,
-		"Element": UcommentElement
-	});
+function add_comment () {
+	if (
+		_upfront_post_data.post_id
+		||
+		(Upfront.Application.get_current() === Upfront.Application.MODE.THEME && 'type' in _upfront_post_data.layout && 'single' === _upfront_post_data.layout.type)
+	) {
+		Upfront.Application.LayoutEditor.add_object("Ucomment", {
+			"Model": UcommentModel,
+			"View": UcommentView,
+			"Element": UcommentElement,
+			"Settings": Settings
+		});
+	}
 }
+Upfront.Events.on("application:mode:after_switch", function () {
+	if (Upfront.Application.get_current() !== Upfront.Application.MODE.THEME) return false;
+	add_comment();
+});
+add_comment();
 
 Upfront.Models.UcommentModel = UcommentModel;
 Upfront.Views.UcommentView = UcommentView;
