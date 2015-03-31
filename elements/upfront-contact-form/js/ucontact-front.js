@@ -107,6 +107,11 @@ jQuery(function($){
 							$(this).removeClass("ucontact-success-response").html("");
 							$(this).unbind('click')
 						});
+
+						name.val('');
+						email.val('');
+						subject.val('');
+						message.val('');
 					}
 				},
 				error: function(error){
