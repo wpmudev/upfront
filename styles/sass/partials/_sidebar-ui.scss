@@ -387,7 +387,7 @@
 	position: absolute;
 	top: 613px;
 	right: 15px;
-	padding: 0 20px 0 10px;
+	padding: 0 10px 0 10px;
 	line-height: 40px;
     height:40px;
     width: 94px;
@@ -877,9 +877,13 @@ span.draggable-post-element.element-dragging
 	color: #0F9969;
 	font-family: "Verdana";
 	font-size: 11px;
-  border-bottom: 1px solid #1fcd8f;
-  line-height: 1;
+    border-bottom: 1px solid #1fcd8f;
+    line-height: 20px;
 	cursor: pointer;
+    max-width: 190px;
+    height:17px;
+    margin-top: 2px;
+    overflow: hidden;
 }
 
 #sidebar-ui .command-link {
