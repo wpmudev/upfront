@@ -48,6 +48,7 @@
 	opacity: 0;
 	z-index: -1;
 	-webkit-transition: opacity 1s;
+	transition: opacity 1s;
 }
 .upfront-default-slider-item-current {
 	opacity: 1;
@@ -67,7 +68,7 @@
 	margin: auto;
 }
 
-@-webkit-keyframes "upfront-slide-up" {
+@-webkit-keyframes upfrontSlideUp {
 	0% {
 		-webkit-transform: translateY(100%);
 	}
@@ -75,7 +76,7 @@
 		-webkit-transform: translateY(0);
 	}
 }
-@-webkit-keyframes "upfront-slide-down" {
+@-webkit-keyframes upfrontSlideDown {
 	0% {
 		-webkit-transform: translateY(-100%);
 	}
@@ -83,7 +84,7 @@
 		-webkit-transform: translateY(0);
 	}
 }
-@-webkit-keyframes "upfront-slide-left" {
+@-webkit-keyframes upfrontSlideLeft {
 	0% {
 		-webkit-transform: translateX(100%);
 	}
@@ -91,7 +92,7 @@
 		-webkit-transform: translateX(0);
 	}
 }
-@-webkit-keyframes "upfront-slide-right" {
+@-webkit-keyframes upfrontSlideRight {
 	0% {
 		-webkit-transform: translateX(-100%);
 	}
@@ -99,17 +100,55 @@
 		-webkit-transform: translateX(0);
 	}
 }
+
+@keyframes upfrontSlideUp {
+	0% {
+		transform: translateY(100%);
+	}
+	100% {
+		transform: translateY(0);
+	}
+}
+@keyframes upfrontSlideDown {
+	0% {
+		transform: translateY(-100%);
+	}
+	100% {
+		transform: translateY(0);
+	}
+}
+@keyframes upfrontSlideLeft {
+	0% {
+		transform: translateX(100%);
+	}
+	100% {
+		transform: translateX(0);
+	}
+}
+@keyframes upfrontSlideRight {
+	0% {
+		transform: translateX(-100%);
+	}
+	100% {
+		transform: translateX(0);
+	}
+}
+
 .upfront-default-slider-item-effect-slide-up {
-	-webkit-animation: upfront-slide-up 1s 1;
+	-webkit-animation: upfrontSlideUp 1s 1;
+	animation: upfrontSlideUp 1s 1;
 }
 .upfront-default-slider-item-effect-slide-down {
-	-webkit-animation: upfront-slide-down 1s 1;
+	-webkit-animation: upfrontSlideDown 1s 1;
+	animation: upfrontSlideDown 1s 1;
 }
 .upfront-default-slider-item-effect-slide-left {
-	-webkit-animation: upfront-slide-left 1s 1;
+	-webkit-animation: upfrontSlideLeft 1s 1;
+	animation: upfrontSlideLeft 1s 1;
 }
 .upfront-default-slider-item-effect-slide-right {
-	-webkit-animation: upfront-slide-right 1s 1;
+	-webkit-animation: upfrontSlideRight 1s 1;
+	animation: upfrontSlideRight 1s 1;
 }
 
 .upfront-default-slider-nav {
@@ -129,6 +168,7 @@
 .upfront-default-slider-control-hover .upfront-default-slider-nav-next {
 	opacity: 0;
 	-webkit-transition: opacity .6s;
+	transition: opacity .6s;
 }
 .upfront-default-slider-control-hover:hover .upfront-default-slider-nav,
 .upfront-default-slider-control-hover:hover .upfront-default-slider-nav-prev,
