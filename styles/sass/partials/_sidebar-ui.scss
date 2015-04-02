@@ -214,11 +214,11 @@
 #sidebar-ui .sidebar-commands-primary .command-new-post,
 #sidebar-ui .sidebar-commands-primary .command-new-layout {
 	float: left;
-    width: 102px;
+    max-width: 102px;
 }
 #sidebar-ui .sidebar-commands-primary .command-new-page {
 	float: right;
-    width: 103px;
+    max-width: 103px;
 }
 #sidebar-ui .sidebar-commands-primary .command-new-page:hover,
 #sidebar-ui .sidebar-commands-primary .command-new-post:hover,
@@ -251,7 +251,7 @@
 }
 
 #sidebar-ui .sidebar-commands-primary .command-popup-list {
-	width: 170px;
+	max-width: 170px;
     height: 34px;
 	font:11px/22px Verdana, sans-serif;
 }
@@ -260,7 +260,7 @@
 	margin-bottom: 0;
 	font:11px/22px Verdana, sans-serif;
 	float:right;
-    width: 51px;
+    max-width: 51px;
     height: 34px;
 }
 #sidebar-ui .upfront-icon-open-gallery:before {
@@ -370,7 +370,7 @@
 	margin-bottom: 0;
 	font-size: 14px;
 	height: 20px;
-    width: 48px;
+    max-width: 48px;
 }
 #sidebar-ui .sidebar-commands-control .command-redo {
 	margin-left: 8px;
@@ -401,7 +401,7 @@
 	left: 13px;
 	margin: 0;
 	font-size: 13px;
-    width: 122px;
+    max-width: 122px;
     line-height: 27px;
 }
 #sidebar-ui .sidebar-commands-control .command-save:hover {
@@ -880,10 +880,11 @@ span.draggable-post-element.element-dragging
     border-bottom: 1px solid #1fcd8f;
     line-height: 20px;
 	cursor: pointer;
-    max-width: 190px;
+    max-width: 210px;
     height:17px;
     margin-top: 2px;
     overflow: hidden;
+    white-space: nowrap;
 }
 
 #sidebar-ui .command-link {
@@ -1134,6 +1135,7 @@ span.draggable-post-element.element-dragging
 }
 #sidebar-ui [class^=command-]{
   overflow: hidden;
+  white-space:nowrap;
 }
 /* Height Media Queries Fixes
 	 ========================== */

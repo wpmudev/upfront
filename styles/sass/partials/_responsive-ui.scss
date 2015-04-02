@@ -105,7 +105,6 @@
 /* Responsive commands */
 #sidebar-ui .sidebar-commands-responsive li {
   display: block;
-  max-width: 250px;
 }
 
 #sidebar-ui .sidebar-commands-responsive .panel-section {
@@ -125,8 +124,9 @@
   border: 3px solid #263a4d;
   padding: 2px 5px;
   height: 33px;
-  width: 121px;
+  max-width: 121px;
   overflow: hidden;
+  white-space: nowrap;
 }
 
 #sidebar-ui .command-browse-layout-responsive {
@@ -139,6 +139,10 @@
   border: 3px solid #263a4d;
   padding: 2px 5px;
   cursor: pointer;
+  display: inline-block;
+  overflow: hidden;
+  max-width: 230px;
+  white-space: nowrap;
 }
 #sidebar-ui .sidebar-commands-responsive-control .command-grid {
   margin-left: 66px;
@@ -274,6 +278,7 @@
 li.activate-breakpoints-dropdown {
   margin: 15px 0 10px 15px;
   height: 23px;
+  max-width: 230px;
 }
 .activate-breakpoints-dropdown .upfront-field-select-options {
   max-height: 30px;
