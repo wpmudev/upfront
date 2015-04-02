@@ -168,6 +168,14 @@ class Upfront_UgalleryView extends Upfront_Object {
 			$labels_names[$label->name] = array('id' => $label->term_id, 'text' => $label->name);
 		}
 
+		// Sanitize post type objects array
+		foreach ($post_types as $ptidx => $ptype) {
+			if (empty($ptype->register_meta_box_cb)) continue;
+			$ptype->register_meta_box_cb = false;
+			$post_types[$ptidx] = $ptype;
+		}
+		// Whatever we need in the post types array, I am fairly sure metabox callback is *NOT* one of those things...
+
 		$data['ugallery'] = array(
 			'defaults' => self::default_properties(),
 			'imageDefaults' => self::image_defaults(),
