@@ -2,6 +2,21 @@ Change Log
 ============
 
 
+0.3 - 2015-04-02
+-------------------------------------------------------------------------------
+- Fix: menu rendering improvements.
+- Fix: link behavior in grouped elements.
+- Fix: slider element and region behavior.
+- Fix: image inserts.
+- Fix: first section element hide in responsive.
+- Fix: linking panels update.
+- Fix: accordion panel adding.
+- Fix: gallery elements warnings and plugin conflicts.
+- Fix: discussion settings update.
+- Fix: adding playable video element 
+- Fix: keyframe animations and media queries allowed in global CSS.
+- Add: multiple global regions.
+
 0.2.7.1 - 2015-03-17
 -------------------------------------------------------------------------------
 - Fix: resizing handle hidden when editing elements in group.
