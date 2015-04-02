@@ -944,6 +944,7 @@ define([
 		render: function () {
 			this.$el.addClass('upfront-icon upfront-icon-layout');
 			this.$el.html(l10n.new_layout);
+			this.$el.prop("title", l10n.new_layout);
 		},
 		on_click: function () {
 			Upfront.Events.trigger("command:layout:create");

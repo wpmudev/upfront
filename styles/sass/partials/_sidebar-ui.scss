@@ -1144,6 +1144,7 @@ span.draggable-post-element.element-dragging
 #sidebar-ui [class^=sidebar-command-]{
   overflow: hidden;
   white-space:nowrap;
+  max-width: 230px;
 }
 #sidebar-ui .sidebar-commands li.themes-dropdown{
   float: left;
