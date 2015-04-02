@@ -773,7 +773,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 		$region_scope_data = apply_filters('upfront_get_global_regions', $region_scope_data, $scope);
 		$return = array();
 		foreach ( $region_scope_data as $region){
-			if ( $region['trashed'] == 1 )
+			if ( isset($region['trashed']) && $region['trashed'] == 1 )
 				continue;
 			// Let's unset unused data to tidy up returned response
 			unset($region['modules']);
@@ -790,7 +790,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 		$region_scope_data = apply_filters('upfront_get_global_regions', $region_scope_data, $scope);
 		$return = array();
 		foreach ( $region_scope_data as $region){
-			if ( $region['trashed'] == 1 )
+			if ( isset($region['trashed']) && $region['trashed'] == 1 )
 				continue;
 			if ( $region['name'] != $name && $region['container'] != $name )
 				continue;
