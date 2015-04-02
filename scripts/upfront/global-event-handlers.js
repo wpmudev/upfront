@@ -48,11 +48,12 @@ define(function() {
 	/**
 	 * re-Resize Magnific Popup on window resize (iPhone issue) 
 	 */
-	$(window).on("resize", function(e){
-		setTimeout(function(){
-			$.magnificPopup.instance.updateSize();
-		}, 100);
-	});
+	if(/i(Pad|Phone|Pod)/g.test(navigator.userAgent))
+		$(window).on("resize", function(e){
+			setTimeout(function(){
+				$.magnificPopup.instance.updateSize();
+			}, 500);
+		});
 
 	/**
 	 * Handle navigation

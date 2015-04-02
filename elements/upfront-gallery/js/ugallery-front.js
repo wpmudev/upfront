@@ -131,9 +131,10 @@ jQuery(function($){
 		 * re-Resize Magnific Popup 100ms after MFP open (iPhone issue) 
 		 */
 		var resizeMFP = function() {
-			setTimeout(function(){
-				$.magnificPopup.instance.updateSize();
-			}, 100);
+			if(/i(Pad|Phone|Pod)/g.test(navigator.userAgent))
+				setTimeout(function(){
+					$.magnificPopup.instance.updateSize();
+				}, 500);
 		};
 
 		var gallery, magOptions;
