@@ -1,4 +1,5 @@
 define(function() {
+return (function ($) {
 	var l10n = Upfront.Settings.l10n.newnavigation_element;
 
 	var MenuItemView = Backbone.View.extend({
@@ -529,4 +530,5 @@ define(function() {
 	});
 
 	return MenuItemView;
+})(jQuery);
 });
