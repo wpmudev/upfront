@@ -1129,9 +1129,6 @@ define([
 			this.$el.addClass('upfront-icon upfront-icon-save');
 			this.$el.html(l10n.save);
             this.$el.prop("title", l10n.save);
-		},
-		on_click: function () {
-			console.log('responsive is saved');
 		}
 	});
 
@@ -1434,7 +1431,7 @@ define([
 					zIndex: -1
 				})
 				.one('mousedown', function(e){
-					console.log('Shadow mousing down');
+					// console.log('Shadow mousing down');
 				})
 				.trigger(e)
 				.one('dragstart', function (e, ui) {
@@ -1827,12 +1824,15 @@ define([
 			});
 		},
 		get_styles_field_default_value: function() {
-			var availableStyles = this.get_styles();
-			var style;
-			if (this.styles[this.current_element]) {
-				style = this.styles[this.current_element];
-			} else if (this.typefaces[this.current_element]) {
-				style = Font_Model.get_default_variant(this.typefaces[this.current_element]);
+			var availableStyles = this.get_styles(),
+				elementTypeface = this.typefaces[this.current_element],
+				elementStyle = this.styles[this.current_element],
+				style;
+
+			if (elementStyle) {
+				style = elementStyle;
+			} else if (elementTypeface) {
+				style = Font_Model.get_default_variant(elementTypeface);
 			} else {
 				style = 'regular';
 			}
@@ -1911,15 +1911,23 @@ define([
 					if (!font_family) return true; // Missing typeface family, pretend we're normal
 					// If so, let's do this - load up the font
 					url = '//fonts.googleapis.com/css?family=' + font_family.get('family').replace(/ /g, '+');
-					if (400 != weight) url += ':' + weight; // If not default weight, DO include the info
+					if (400 != weight || 'inherit' !== weight) url += ':' + weight; // If not default weight, DO include the info
 					$("head").append('<link href="' + url + '" rel="stylesheet" type="text/css" />');
 				}
 
 				font_rule_value = '"' + font_family.get('family') + '",' + font_family.get('category');
 
-				if ('inherit' !== font_rule_value) rules.push('font-family: ' + font_rule_value); /* don't include "inherit", as that's the default */
-				rules.push('font-weight: ' + weight);
-				rules.push('font-style: ' + style);
+				 // Don't include "inherit", as that's the default
+				if ('inherit' !== font_rule_value) {
+					rules.push('font-family: ' + font_rule_value);
+				}
+				if ('inherit' !== weight) {
+					rules.push('font-weight: ' + weight);
+				}
+				if ('inherit' !== style) {
+					rules.push('font-style: ' + style);
+				}
+
 				if ( !is_inline ){
 					rules.push('font-size: ' + me.sizes[element] + 'px');
 					rules.push('line-height: ' + me.line_heights[element] + 'em');
@@ -5286,7 +5294,6 @@ var Field_ToggleableText = Field_Text.extend({
 			this.$el.find(".upfront-settings_title").html(title);
 		},
 		toggle_panel: function (panel) {
-			console.log("toggling panel")
 			this.panels.invoke("conceal");
 			panel.$el.find(".upfront-settings_panel").css('height', '');
 			panel.show();
@@ -5527,6 +5534,12 @@ var Font_Model = Backbone.Model.extend({}, {
 		// Regular variant means that both font-weight and font-style are normal or not set.
 		// Always set both style and weight to make everything easier.
 		// Always use numbers for weight to make everything easier.
+		if (variant === 'inherit') {
+			return {
+				weight: 'inherit',
+				style: 'inherit'
+			};
+		}
 
 		// Cover both '100italic' and '100 italic'
 		if (!_.isUndefined( variant ) && variant.match(/^(\d+) *(normal|italic|oblique)$/)) {
@@ -5572,6 +5585,10 @@ var Font_Model = Backbone.Model.extend({}, {
 	 * @return String variant
 	 */
 	get_variant: function(weight, style) {
+		if (weight === 'inherit' || style === 'inherit') {
+			return 'inherit';
+		}
+
 		weight = this.normalize_weight(weight);
 		if (style === '') style = 'normal';
 
@@ -5598,12 +5615,7 @@ var Font_Model = Backbone.Model.extend({}, {
 		return weight;
 	},
 	get_default_variant: function(family) {
-		var google_font = google_fonts_storage.get_fonts().findWhere({ 'family': family });
-		if (_.isUndefined(google_font)) return 'regular'; // default for system fonts
-
-		if (_.indexOf(google_font.get('variants'), 'regular') > -1) return 'regular';
-
-		return google_font.get('variants')[0]; // default to first variant
+		return 'inherit';
 	}
 });
 
@@ -5659,7 +5671,7 @@ var System_Fonts_Storage = function() {
 		var variants;
 
 		// Default variants for system fonts
-		variants = [];
+		variants = ['inherit'];
 		_.each(['normal', 'italic', 'oblique'], function(style) {
 			_.each(_.range(100, 900, 100), function(weight) {
 				variants.push(weight + ' ' + style );
@@ -5719,6 +5731,7 @@ var ThemeFontModel = Backbone.Model.extend({
 		this.set({ displayVariant: Font_Model.normalize_variant(attributes.variant) }, { silent: true });
 	}
 });
+
 var ThemeFontsCollection = Backbone.Collection.extend({
 	model: ThemeFontModel,
 	get_fonts_for_select: function() {
@@ -5741,22 +5754,28 @@ var ThemeFontsCollection = Backbone.Collection.extend({
 
 		return typefaces_list;
 	},
+
 	get_variants: function(font_family) {
 		var variants;
 
-		_.each(system_fonts_storage.get_fonts().models, function(font)	{
+		_.each(system_fonts_storage.get_fonts().models, function(font) {
 			if (font_family === font.get('family')) {
 				variants = font.get('variants');
 			}
 		});
-		if (variants) return variants;
+		if (variants) {
+			return variants;
+		}
 
 		_.each(Upfront.mainData.additionalFonts, function(font) {
 			if (font_family === font.family) {
-				variants = font.variants;
+				variants = ['inherit'].concat(font.variants);
 			}
 		});
-		if (variants) return variants;
+
+		if (variants) {
+			return variants;
+		}
 
 		variants = [];
 		_.each(theme_fonts_collection.models, function(theme_font) {
@@ -5765,8 +5784,10 @@ var ThemeFontsCollection = Backbone.Collection.extend({
 			}
 		});
 
+		variants.unshift('inherit');
 		return variants;
 	},
+
 	get_additional_font: function(font_family) {
 		var font = _.findWhere(Upfront.mainData.additionalFonts, {family: font_family});
 		if (font) return new Backbone.Model(font);
@@ -8874,7 +8895,6 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		update_lightbox_overlay: function(color) {
 			var rgb = color.toRgb(),
 				rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')';
-			console.log(this);
 		},
 		render_modal_tab: function (tab, $tab, $content) {
 			var $change_image = $content.find('.upfront-region-bg-setting-change-image');
@@ -9392,9 +9412,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					main_add = false,
 					to_add = [],
 					to_add_run = function(){
-						console.log(to_add)
 						_.each(to_add, function(add){
-							console.log(add)
 							add.model.add_to(collection, add.index, add.options);
 						})
 					};
@@ -9425,7 +9443,6 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					}
 				});
 				if ( main_add !== false ){
-					console.log(main_add)
 					Upfront.Events.once('entity:region:added', function(){
 						to_add_run();
 					});
@@ -10076,13 +10093,13 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		}
 	});
 
-	// Breakpoint events tests
-	Upfront.Events.on("upfront:layout_size:change_breakpoint", function(breakpoint, prev_breakpoint) {
-		if (prev_breakpoint) console.log(['Breakpoint deactivated', prev_breakpoint.name, prev_breakpoint.width].join(' '));
-	});
-	Upfront.Events.on("upfront:layout_size:viewport_width_change", function(new_width) {
-		console.log(['Viewport width changed:', new_width].join(' '));
-	});
+	// Breakpoint events tests - uncomment if needed
+	// Upfront.Events.on("upfront:layout_size:change_breakpoint", function(breakpoint, prev_breakpoint) {
+		// if (prev_breakpoint) console.log(['Breakpoint deactivated', prev_breakpoint.name, prev_breakpoint.width].join(' '));
+	// });
+	// Upfront.Events.on("upfront:layout_size:viewport_width_change", function(new_width) {
+		// console.log(['Viewport width changed:', new_width].join(' '));
+	// });
 
 	/**
 	 * Wrapper for Breakpoints_Collection since we can't use Backbone.Collection
