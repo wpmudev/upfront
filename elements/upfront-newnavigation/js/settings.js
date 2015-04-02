@@ -201,7 +201,7 @@ define([], function() {
 									model: this.model,
 									property: 'menu_id',
 									label: "",
-									values: currentMenuItemData.get('menuList')
+									values: Upfront.data.unewnavigation.currentMenuItemData.get('menuList')
 								}),
 								new Upfront.Views.Editor.Field.Checkboxes({
 									model: this.model,

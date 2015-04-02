@@ -18,7 +18,7 @@ var CurrentMenuItemData = Backbone.Model.extend({
 		"menuList":    false
 	}
 });
-var currentMenuItemData = new CurrentMenuItemData();
+Upfront.data.unewnavigation.currentMenuItemData = Upfront.data.unewnavigation.currentMenuItemData || new CurrentMenuItemData();
 
 
 /**
@@ -48,7 +48,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		// get all menus
 		this.getMenus();
 		var menu_id = this.model.get_property_value_by_name('menu_id');
-		currentMenuItemData.set({model_true:false, menu_id: menu_id});
+		Upfront.data.unewnavigation.currentMenuItemData.set({model_true:false, menu_id: menu_id});
 
 		// call this function on allow_new_pages change
 		if (!!this.model.get_property_by_name('allow_new_pages')) {
@@ -319,7 +319,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				var values = _.map(ret.data, function (each, index) {
 					return  {label: each.name, value: each.term_id};
 				});
-				currentMenuItemData.set({menuList: values});
+				Upfront.data.unewnavigation.currentMenuItemData.set({menuList: values});
 				if(!me.property('menu_id')) me.display_menu_list();
 			})
 			.error(function (ret) {
@@ -335,7 +335,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			model: me.model,
 			label: "",
 			className: "existing_menu_list",
-			values: [{label:'Choose existing menu', value: 0}].concat(currentMenuItemData.get('menuList'))
+			values: [{label:'Choose existing menu', value: 0}].concat(Upfront.data.unewnavigation.currentMenuItemData.get('menuList'))
 		});
 
 		menuItems.render();
