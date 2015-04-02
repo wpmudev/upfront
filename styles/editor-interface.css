@@ -5357,7 +5357,11 @@ a.upfront-region-name-edit-trigger:before {
 
 /* line 258, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/settings */
 .upfront-settings_panel_scroll .upfront-settings-item-title {
-  line-height: 8px; }
+  line-height: 8px;
+  max-width: 265px;
+  overflow: hidden;
+  white-space: nowrap;
+  height: 10px; }
 
 /* ----- Save As dialog ----- */
 /* line 3, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/save-as-dialog */

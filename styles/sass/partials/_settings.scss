@@ -256,6 +256,10 @@
 }
 
 .upfront-settings_panel_scroll .upfront-settings-item-title{
-	line-height: 8px
+  line-height: 8px;
+  max-width: 265px;
+  overflow: hidden;
+  white-space: nowrap;
+  height: 10px;
 }
 
