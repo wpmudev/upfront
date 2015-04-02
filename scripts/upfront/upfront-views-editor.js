@@ -1607,19 +1607,33 @@ define([
 				default_typography = $.parseJSON('{\"h1\":{\"weight\":\"100\",\"style\":\"normal\",\"size\":\"72\",\"line_height\":\"1\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\",\"color\":\"rgba(0,0,0,1)\"},\"h2\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"50\",\"line_height\":\"1\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h3\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"36\",\"line_height\":\"1.3\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h4\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"30\",\"line_height\":\"1.2\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\"},\"h5\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"25\",\"line_height\":\"1.2\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h6\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"22\",\"line_height\":\"1.3\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"p\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"18\",\"line_height\":\"1.4\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"a\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":false,\"line_height\":false,\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(0,206,141,1)\"},\"a:hover\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":false,\"line_height\":false,\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(0,165,113,1)\"},\"ul\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"16\",\"line_height\":\"1.5\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\",\"color\":\"rgba(0,0,0,1)\"},\"ol\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"16\",\"line_height\":\"1.5\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\"},\"blockquote\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"20\",\"line_height\":\"1.5\",\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(103,103,103,1)\"},\"blockquote.upfront-quote-alternative\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"20\",\"line_height\":\"1.5\",\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(103,103,103,1)\"}}');
 
 			layout_typography = layout_typography ? layout_typography.value : default_typography;
-			var tablet_breakpoint;
+			var big_tablet_breakpoint,
+				tablet_breakpoint,
+				switcheroo;
 
 			// Breakpoint's typography should initialize like this:
 			// - if there is no typography for current breakpoint it should inherit settings from
 			//   wider one, if wider one is not defined inherit from one above, last one is default
 			//   typography
-			// - in case of widest (tablet for now) it should inherit from default typography
+			// - in case of widest (usually tablet for now, big-tablet in some themes) it should
+			//   inherit from default typography
 			if (_.isEmpty(typography) || _.isUndefined(typography.h2)) {
-				if (_.contains(['tablet', 'mobile'], this.model.get('id'))) {
-					switch (this.model.get('id')) {
-						case 'tablet':
+				if (_.contains(['tablet', 'mobile'], this.model.get('id')) || this.model.get('name') === 'big-tablet') {
+					switcheroo = this.model.get('name') === 'big-tablet' ? 'big-tablet' : this.model.get('id');
+
+					switch (switcheroo) {
+						case 'big-tablet':
 							// We look into the default typography and get those
 							typography = layout_typography;
+							break;
+						case 'tablet':
+							// We look to big-tablet typography, if it's undefined we take default typography
+							big_tablet_breakpoint = breakpoints_storage.get_breakpoints().findWhere({name:'big-tablet'});
+							if (_.isUndefined(big_tablet_breakpoint) || _.isUndefined(big_tablet_breakpoint.get('typography')) || _.isUndefined(big_tablet_breakpoint.get('typography').h2)) {
+								typography = layout_typography;
+							} else {
+								typography = big_tablet_breakpoint.get('typography');
+							}
 							break;
 						case 'mobile':
 							// We look to tablet typography, if it's undefined we take default typography
@@ -1635,6 +1649,8 @@ define([
 					typography = layout_typography || default_typography;
 				}
 			}
+
+			this.typography = typography;
 
 			// Check for theme fonts if no theme fonts just return string
 			var currentMode = Upfront.Application.get_current();
@@ -1854,7 +1870,7 @@ define([
 			return style;
 		},
 		get_styles: function() {
-			var typography = this.model.get_property_value_by_name('typography'),
+			var typography = this.typography,
 				element = this.current_element,
 				styles = [],
 				variants;

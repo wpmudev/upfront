@@ -1063,11 +1063,9 @@ var ResponsiveEditor = new (LayoutEditorSubapplication.extend({
 	Objects: {},
 
 	boot: function () {
-		Upfront.Util.log("Preparing responsive mode for execution");
 	},
 
 	start: function () {
-		Upfront.Util.log("Starting responsive mode.");
 		this.stop();
 		this.Objects = Upfront.Application.LayoutEditor.Objects;
 		this.set_up_event_plumbing_before_render();
@@ -1083,7 +1081,6 @@ var ResponsiveEditor = new (LayoutEditorSubapplication.extend({
 	stop: function () {
 		if ( this.topbar )
 		    this.topbar.stop();
-		Upfront.Util.log("Leaving responsive mode.");
 		return this.stopListening(Upfront.Events);
 	}
 
