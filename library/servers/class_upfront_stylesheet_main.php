@@ -31,10 +31,15 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$grid = Upfront_Grid::get_grid();
 		$layout = apply_filters('upfront-style-base_layout', Upfront_Layout::get_instance());
 		$preprocessor = new Upfront_StylePreprocessor($grid, $layout);
+		$base_only = isset($_POST['base_only']) ? filter_var($_POST['base_only'], FILTER_VALIDATE_BOOLEAN) : false;
 
-		//Add typography styles - rearranging so the imports from Google fonts come first, if needed
-		$style = $this->prepare_typography_styles($layout, $grid);
-		$style .= $preprocessor->process();
+		// Add typography styles - rearranging so the imports from Google fonts come first, if needed.
+		// When loading styles in editor mode don't include typography styles since they are generated
+		// by javascript
+		if (false === $base_only) {
+			$style = $this->prepare_typography_styles($layout, $grid);
+			$style .= $preprocessor->process();
+		}
 
 		// Always load original theme styles into theme unless we're in builder, yay
 		// Reasoning behind it: we want theme users to always have original theme styles loaded
@@ -48,7 +53,6 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		// will be loaded separately to the body. If they are included in main style than after
 		// style is edited in editor (e.g. some property is removed) inconsistencies may occur
 		// especially with rules removal since those would still be defined in main style.
-		$base_only = isset($_POST['base_only']) ? filter_var($_POST['base_only'], FILTER_VALIDATE_BOOLEAN) : false;
 		if ($base_only) {
 			$this->_out(new Upfront_JsonResponse_Success(array('styles' => $style)));
 			return;
