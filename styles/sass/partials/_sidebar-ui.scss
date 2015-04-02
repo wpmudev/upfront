@@ -211,10 +211,13 @@
 .upfront-edit-content #sidebar-ui .sidebar-commands-primary .command-new-layout {
 	padding-right: 5px;
 }
-#sidebar-ui .sidebar-commands-primary .command-new-post,
-#sidebar-ui .sidebar-commands-primary .command-new-layout {
+#sidebar-ui .sidebar-commands-primary .command-new-post{
 	float: left;
     max-width: 102px;
+}
+#sidebar-ui .sidebar-commands-primary .command-new-layout {
+  float: left;
+  max-width: 117px;
 }
 #sidebar-ui .sidebar-commands-primary .command-new-page {
 	float: right;
@@ -276,6 +279,7 @@
 	font-size: 15px;
 	height: 40px;
 	float: right;
+    max-width: 110px;
 }
 #sidebar-ui .upfront-icon-browse-layouts:before {
 	background-position: -45px -80px;
@@ -418,6 +422,7 @@
 	left: 10px;
 	margin: 0;
     float: left;
+    max-width: 230px;
 }
 #sidebar-ui .upfront-icon-export:before {
 	background-position: -42px -384px;
@@ -431,6 +436,8 @@
 	padding: 0 10px 0 8px;
 	line-height: 34px;
 	white-space: nowrap;
+    max-width: 230px;
+    overflow: hidden;
 }
 #sidebar-ui .sidebar-commands-control .command-create-responsive-layouts:before {
 	margin-top: 6px;
@@ -980,7 +987,7 @@ span.draggable-post-element.element-dragging
 	padding: 15px;
 }
 #sidebar-ui .create-theme-sidebar .command-edit-bg {
-	text-align: right;
+//	text-align: right;
 }
 /* debug mode */
 #sidebar-ui .sidebar-commands-control .command-toggle-mode,
@@ -1133,9 +1140,15 @@ span.draggable-post-element.element-dragging
 .sidebar-tab-content{
     display: none;
 }
-#sidebar-ui [class^=command-]{
+#sidebar-ui [class^=command-],
+#sidebar-ui [class^=sidebar-command-]{
   overflow: hidden;
   white-space:nowrap;
+}
+#sidebar-ui .sidebar-commands li.themes-dropdown{
+  float: left;
+  margin-bottom: 15px;
+  width: 230px;
 }
 /* Height Media Queries Fixes
 	 ========================== */

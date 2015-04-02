@@ -966,6 +966,7 @@ define([
 		className: "command-link command-edit-structure",
 		render: function (){
 			this.$el.html(l10n.edit_grid);
+			this.$el.prop("title", l10n.edit_grid);
 		},
 		on_click: function () {
 			Upfront.Events.trigger("command:layout:edit_structure");
@@ -977,6 +978,7 @@ define([
 		className: "command-link command-edit-bg",
 		render: function (){
 			this.$el.text(l10n.edit_global_bg);
+			this.$el.prop("title", l10n.edit_global_bg);
 		},
 		on_click: function () {
 			Upfront.Events.trigger("command:layout:edit_background");
@@ -988,6 +990,7 @@ define([
 		className: "command-link command-edit-global-regions",
 		render: function (){
 			this.$el.text(l10n.edit_global_regions);
+			this.$el.prop("title", l10n.edit_global_regions);
 		},
 		on_click: function () {
 			Upfront.Events.trigger("command:layout:edit_global_regions");
