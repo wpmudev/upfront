@@ -46,6 +46,15 @@ define(function() {
 	});
 
 	/**
+	 * re-Resize Magnific Popup on window resize (iPhone issue) 
+	 */
+	$(window).on("resize", function(e){
+		setTimeout(function(){
+			$.magnificPopup.instance.updateSize();
+		}, 100);
+	});
+
+	/**
 	 * Handle navigation
 	 */
 	// Should only run after Upfront instance load

@@ -127,6 +127,15 @@ jQuery(function($){
 			});
 		};
 
+		/**
+		 * re-Resize Magnific Popup 100ms after MFP open (iPhone issue) 
+		 */
+		var resizeMFP = function() {
+			setTimeout(function(){
+				$.magnificPopup.instance.updateSize();
+			}, 100);
+		};
+
 		var gallery, magOptions;
 		for (var galleryId in ugalleries) {
 			gallery = false;
@@ -143,7 +152,7 @@ jQuery(function($){
 					};
 				}
 
-				magOptions.callbacks = {resize: resizeWithText, afterChange: resizeWithText};
+				magOptions.callbacks = {resize: resizeWithText, afterChange: resizeWithText, open: resizeMFP};
 				gallery.magnificPopup(magOptions);
 			} else {
 				gallery = $('#' + galleryId).find('.ugallery_lightbox_link');
@@ -160,7 +169,7 @@ jQuery(function($){
 						titleSrc: 'title',
 						verticalFit: true
 					},
-					callbacks: {resize: resizeWithText, afterChange: resizeWithText}
+					callbacks: {resize: resizeWithText, afterChange: resizeWithText, open: resizeMFP}
 				};
 				gallery.magnificPopup(magOptions);
 			}
