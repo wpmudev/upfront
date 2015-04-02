@@ -128,6 +128,10 @@ text!elements/upfront-login/css/public.css
 D:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-login/js/upfront_login.js
 text!elements/upfront-maps/css/edit.css
 D:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-maps/js/upfront_maps.js
+D:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-newnavigation/js/menuitem.js
+D:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-newnavigation/js/model.js
+D:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-newnavigation/js/element.js
+D:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-newnavigation/js/settings.js
 D:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-newnavigation/js/unewnavigation.js
 text!elements/upfront-button/tpl/ubutton.html
 D:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-button/js/ubutton.js
