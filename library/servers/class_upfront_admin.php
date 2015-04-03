@@ -20,7 +20,9 @@ class Upfront_Server_Admin implements IUpfront_Server {
 		add_filter('wp_prepare_themes_for_js', array($this, 'prepare_themes_list'));
 		add_action('admin_menu', array($this, 'prepare_menu'));
 		add_action('admin_footer-themes.php', array($this, 'nasty_hack_themes_page')); // Bah!
-		
+
+		add_action( 'widgets_init', array($this, 'add_widgets_page') );
+
 		$this->dashboard_notice();
 	}
 	
@@ -75,6 +77,7 @@ class Upfront_Server_Admin implements IUpfront_Server {
 			$this->_notify_about_parent_deletion_attempt(),
 			$this->_permalink_setup_check_notice(),
 			$this->_direct_core_activation_notice(),
+			$this->_widgets_area_notice(),
 		)));
 		if (empty($notices)) return false;
 		echo '<div class="error"><p>' .
@@ -141,4 +144,25 @@ class Upfront_Server_Admin implements IUpfront_Server {
 		return __('Please, activate one of the Upfront child themes.', 'upfront');
 	}
 
+	/**
+	 * Adds widgets page to Upfront themes
+	 */
+	function add_widgets_page() {
+		add_theme_support('widgets');
+	}
+
+	/**
+	 * Renders notice to widgets page
+	 *
+	 * @return string|void
+	 */
+	private function _widgets_area_notice(){
+		global $pagenow;
+		if( !isset($pagenow) || $pagenow !== "widgets.php" ) return;
+
+		return sprintf(
+				__('To make use of your widgets, add Widget element to your layouts. You can do so <a href="%s">here</a>', 'upfront'),
+				get_home_url() . "?editmode=true"
+			);
+	}
 }
