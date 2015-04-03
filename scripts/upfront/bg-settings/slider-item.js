@@ -186,7 +186,7 @@ define([
 				$wrap = this.$el.find('.upfront-settings-item-content');
 			$wrap.html('');
 
-			if ( slide_images ) {
+			if ( slide_images.length > 0 ) {
 				Upfront.Views.Editor.ImageEditor.getImageData(slide_images).done(function(response){
 					var images = response.data.images;
 					// Rewrite slide images because in builder mode they will be just paths of theme images
