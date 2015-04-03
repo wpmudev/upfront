@@ -84,8 +84,8 @@ abstract class Upfront_VirtualPage extends Upfront_Server {
 
 	public static function get_url ($request) {
 		return get_option('permalink_structure')
-			? site_url($request)
-			: site_url() . '?name=' . $request
+			? home_url($request)
+			: home_url() . '?name=' . $request
 		;
 	}
 
