@@ -339,6 +339,7 @@ Panels.PostParts = Upfront.Views.Editor.Settings.Panel.extend({
 			}),
 			autorefresh = function (value) {
 				this.model.set_property(this.options.property, this.get_value());
+				this.model.set_property("post_parts", this.get_value(), false);
 				me.trigger("settings:dispatched");
 			},
 			post_parts = new Upfront.Views.Editor.Field.Checkboxes({
@@ -397,7 +398,6 @@ var SortSettings_Sorter = Upfront.Views.Editor.Field.Hidden.extend({
 			$sortable = this.$el.find("ul")
 		;
 
-		// If we have something here, do it
 		parts = saved_parts && saved_parts.length
 			? saved_parts
 			: enabled_parts

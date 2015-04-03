@@ -104,6 +104,7 @@ var Parts = {
 Parts.Part_Author = Parts.Part.extend({});
 Parts.Part_Title = Parts.Part.extend({});
 Parts.Part_Read_more = Parts.Part.extend({});
+Parts.Part_Meta = Parts.Part.extend({});
 
 Parts.Part_Date_posted = Parts.Part.extend({
 	set_options: function () {
