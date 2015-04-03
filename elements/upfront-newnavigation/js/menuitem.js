@@ -194,7 +194,7 @@ return (function ($) {
 					tooltip: 'link',
 					id: 'link'
 				}),
-				me;
+				me = this;
 
 			this.listenTo(linkPanelControl, 'change', function(data) {
 				me.linkType = data.type;
