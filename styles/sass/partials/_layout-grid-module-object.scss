@@ -426,6 +426,10 @@
 .upfront-module-group-on-edit .upfront-editable_entities_container .upfront-editable_entity:hover > .ui-resizable-handle {
   visibility: visible;
 }
+.upfront-module-group-on-edit > .upfront-editable_entities_container {
+  z-index: 2999999;
+  position: relative;
+}
 
 .upfront-entity_meta {
 	position: absolute;
