@@ -461,33 +461,33 @@ class Upfront_Layout extends Upfront_JsonModel {
 		if ((empty($new_data) && empty($data)) || json_encode($new_data) == json_encode($data)) {
 			$data['regions'] = self::get_regions_data();
 		} else {
-		    $data = $new_data;
-            // We need to apply global regions that saved in db
-            $regions = array();
-            $regions_added = array();
-            foreach ( $data['regions'] as $region ) {
-                if ( $region['scope'] != 'local' ){
-                    $applied_scope = self::_apply_scoped_region($region);
-                    foreach ( $applied_scope as $applied_data ) {
-                        if ( !in_array($applied_data['name'], $regions_added) ){
-                            $regions[] = $applied_data;
-                            $regions_added[] = $applied_data['name'];
-                        }
-                    }
-                    continue;
-                }
-                $regions[] = $region;
-            }
-            $data['regions'] = $regions;
-        }
+			$data = $new_data;
+			// We need to apply global regions that saved in db
+			$regions = array();
+			$regions_added = array();
+			foreach ( $data['regions'] as $region ) {
+				if ( $region['scope'] != 'local' ){
+					$applied_scope = self::_apply_scoped_region($region);
+					foreach ( $applied_scope as $applied_data ) {
+						if ( !in_array($applied_data['name'], $regions_added) ){
+							$regions[] = $applied_data;
+							$regions_added[] = $applied_data['name'];
+						}
+					}
+					continue;
+				}
+				$regions[] = $region;
+			}
+			$data['regions'] = $regions;
+		}
 		$data['properties'] = self::get_layout_properties();
 		$data['layout'] = self::$cascade;
 
-	    // Do not do this is in builder mode since it will duplicate slider images. Alternative
-	    // is to fix augment_regions to not re-import images every time page reloads.
-	    if (!function_exists('upfront_exporter_is_running') || !upfront_exporter_is_running()) {
-	      $data = apply_filters('upfront_augment_theme_layout', $data);
-	    }
+		// Do not do this is in builder mode since it will duplicate slider images. Alternative
+		// is to fix augment_regions to not re-import images every time page reloads.
+		if (!function_exists('upfront_exporter_is_running') || !upfront_exporter_is_running()) {
+		  $data = apply_filters('upfront_augment_theme_layout', $data);
+		}
 
 		return self::from_php($data, $storage_key);
 	}
@@ -500,32 +500,32 @@ class Upfront_Layout extends Upfront_JsonModel {
 		$new_data = apply_filters('upfront_override_layout_data', $data, $cascade);
 		if (empty($new_data)) return false;
 
-	    $data = $new_data;
-        // We need to apply global regions that saved in db
-        $regions = array();
-        $regions_added = array();
-        foreach ( $data['regions'] as $region ) {
-            if ( $region['scope'] != 'local' ){
-                $applied_scope = self::_apply_scoped_region($region);
-                foreach ( $applied_scope as $applied_data ) {
-                    if ( !in_array($applied_data['name'], $regions_added) ){
-                        $regions[] = $applied_data;
-                        $regions_added[] = $applied_data['name'];
-                    }
-                }
-                continue;
-            }
-            $regions[] = $region;
-        }
-        $data['regions'] = $regions;
+		$data = $new_data;
+		// We need to apply global regions that saved in db
+		$regions = array();
+		$regions_added = array();
+		foreach ( $data['regions'] as $region ) {
+			if ( $region['scope'] != 'local' ){
+				$applied_scope = self::_apply_scoped_region($region);
+				foreach ( $applied_scope as $applied_data ) {
+					if ( !in_array($applied_data['name'], $regions_added) ){
+						$regions[] = $applied_data;
+						$regions_added[] = $applied_data['name'];
+					}
+				}
+				continue;
+			}
+			$regions[] = $region;
+		}
+		$data['regions'] = $regions;
 		$data['properties'] = self::get_layout_properties();
 		$data['layout'] = self::$cascade;
 
-	    // Do not do this is in builder mode since it will duplicate slider images. Alternative
-	    // is to fix augment_regions to not re-import images every time page reloads.
-	    if (!function_exists('upfront_exporter_is_running') || !upfront_exporter_is_running()) {
-	      $data = apply_filters('upfront_augment_theme_layout', $data);
-	    }
+		// Do not do this is in builder mode since it will duplicate slider images. Alternative
+		// is to fix augment_regions to not re-import images every time page reloads.
+		if (!function_exists('upfront_exporter_is_running') || !upfront_exporter_is_running()) {
+		  $data = apply_filters('upfront_augment_theme_layout', $data);
+		}
 
 		return self::from_php($data, $storage_key);
 	}
@@ -569,7 +569,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 				$regions[] = $region;
 				return $regions;
 			}
-		 	foreach ( self::$scope_data[$region['scope']] as $scope => $data ) {
+			foreach ( self::$scope_data[$region['scope']] as $scope => $data ) {
 				if ( ( $data['name'] == $region['name'] || $data['container'] == $region['name'] ) ){
 					// if marked as trashed, don't include
 					if ( isset($data['trashed']) && $data['trashed'] == 1 )
