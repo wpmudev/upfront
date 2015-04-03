@@ -49,7 +49,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		//Upfront.Events.on("entity:resize_stop", this.onResizeStop, this);
 
 		Upfront.Events.on("upfront:themestyle:saved", function(theme_style) {
-			var preset = Upfront.Views.Editor.Button.Presets.get(me.model.get_property_value_by_name("currentpreset"));
+			var preset = Upfront.Views.Editor.Button.Presets.get(me.property("currentpreset"));
 			if(preset) {
 				preset.attributes.theme_style = theme_style;
 				Upfront.Views.Editor.Button.Presets.trigger('edit');
@@ -75,56 +75,12 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		this.$el.find('.upfront-output-button').css('height', this.$el.find('.upfront-object.upfront-button').height());
 	},*/
 
-	processClick: function(e) {
-		e.stopPropagation();
-		e.preventDefault();
-		return;
-		var me = this
-		singleclickcount++;
-		if(singleclickcount == 1) {
-			setTimeout(function(){
-				if(singleclickcount == 1) {
-					if(!$(e.target).hasClass('redactor_editor'))
-						me.visitLink(e);
-				}
-			singleclickcount = 0;
-			}, 400);
-		}
-		//else
-		//	me.editLink(e);
-	},
 	placeholderClick: function(e) {
 		e.stopPropagation();
 		e.preventDefault();
 		this.hidePlaceholder();
 		$(e.target).siblings('a.upfront_cta').trigger('dblclick');
 
-	},
-	visitLink: function() {
-		var me = this;
-		var url = this.model.get_property_value_by_name('href');
-		var linktype = me.guessLinkType();
-		if(linktype == 'lightbox') {
-			var regions = Upfront.Application.layout.get('regions');
-			region = regions ? regions.get_by_name(me.getUrlanchor(url)) : false;
-			if(region){
-				//hide other lightboxes
-				_.each(regions.models, function(model) {
-					if(model.attributes.sub == 'lightbox')
-						Upfront.data.region_views[model.cid].hide();
-				});
-				var regionview = Upfront.data.region_views[region.cid];
-				regionview.show();
-			}
-		}
-		else if(linktype == 'anchor') {
-			var anchors = me.get_anchors();
-			$('html,body').animate({scrollTop: $('#'+me.getUrlanchor(url)).offset().top},'slow');
-		}
-		else if(linktype == 'entry')
-			window.location.href = url.replace('&editmode=true', '').replace('editmode=true', '')+((url.indexOf('?')>0)?'&editmode=true':'?editmode=true');
-		else
-			window.open(url);
 	},
 	getCleanurl: function(url) {
 		//this one removes any existing # anchor postfix from the url
@@ -186,13 +142,13 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		var content = this.model.get_content(), style_static = '', style_hover = '';
 
 		//Apply Default preset if none is selected for a new item
-		if(!this.model.get_property_value_by_name('currentpreset') && Upfront.Views.Editor.Button.Presets.first())
+		if(!this.property('currentpreset') && Upfront.Views.Editor.Button.Presets.first())
 			this.model.set_property('currentpreset', Upfront.Views.Editor.Button.Presets.first().id);
 
 
-		if(this.model.get_property_value_by_name("currentpreset") && this.model.get_property_value_by_name("currentpreset")!='' && Upfront.Views.Editor.Button.Presets.get(this.model.get_property_value_by_name("currentpreset"))) {
+		if(this.property("currentpreset") && this.property("currentpreset")!='' && Upfront.Views.Editor.Button.Presets.get(this.property("currentpreset"))) {
 
-			var preset = Upfront.Views.Editor.Button.Presets.get(this.model.get_property_value_by_name("currentpreset")).attributes;
+			var preset = Upfront.Views.Editor.Button.Presets.get(this.property("currentpreset")).attributes;
 
 			style_static = "border: "+preset.borderwidth+"px "+preset.bordertype+" "+ this.process_color(preset.bordercolor)+"; "+
 					"border-radius: "+preset.borderradius1+"px "+preset.borderradius2+"px "+preset.borderradius4+"px "+preset.borderradius3+"px; "+
@@ -229,12 +185,12 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		}
 
 		var data = {
-			"id" : this.model.get_property_value_by_name('element_id'),
+			"id" : this.property('element_id'),
 			"content" : content,
-			"href" : this.model.get_property_value_by_name('href'),
-			"linktype" : this.guessLinkType(),
+			"href" : this.property('href'),
+			"linktype" : Upfront.Util.guessLinkType(this.property('href')),
 			"linkTarget": this.property('linkTarget'),
-			"align" : this.model.get_property_value_by_name('align'),
+			"align" : this.property('align'),
 			"style_static" : style_static,
 			"style_hover" : style_hover,
 		};
@@ -247,27 +203,8 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 
 	},
 
-	guessLinkType: function() {
-		var url = this.model.get_property_value_by_name('href');
-
-		if(!$.trim(url) || $.trim(url) == '#' || $.trim(url) == '') {
-			return 'unlink';
-		}
-		if(url.length && url[0] == '#') {
-			return url.indexOf('#ltb-') > -1 ? 'lightbox' : 'anchor';
-		}
-		if(url.substring(0, location.origin.length) == location.origin) {
-			return 'entry';
-		}
-		if (url.match(/^mailto/)) {
-			return 'email';
-		}
-
-		return 'external';
-	},
-
 	is_edited: function () {
-		var is_edited = this.model.get_property_value_by_name('is_edited');
+		var is_edited = this.property('is_edited');
 		return is_edited ? true : false;
 	},
 
@@ -285,29 +222,17 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		}
 	},
 
-	getTextByLinkType: function(linktype) {
-		switch(linktype) {
-			case 'unlink':
-				return 'Not Linked';
-			case 'lightbox':
-				return 'Open Lightbox';
-			case 'anchor':
-				return 'Scroll to Anchor';
-			case 'entry':
-				return 'Go To Post / Page';
-			case 'external':
-				return 'Open Ext. Link';
-			case 'email':
-					return 'Send Email';
-		};
-	},
-
 	createInlineControlPanel: function() {
-		var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel();
+		var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
+			visitLinkControl = new Upfront.Views.Editor.InlinePanels.Controls.VisitLink({
+				url: this.property('href')
+			});
+
+		this.visitLinkControl = visitLinkControl;
 
 		panel.items = _([
 			this.createLinkControl(),
-			this.createControl('visit-link-' + this.guessLinkType(), this.getTextByLinkType(this.guessLinkType()), 'visitLink'),
+			visitLinkControl
 		]);
 
 		var imageControlsTpl = '<div class="uimage-controls image-element-controls upfront-ui"></div>';
@@ -317,27 +242,6 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		panel.delegateEvents();
 	},
 
-	createControl: function(icon, tooltip, click){
-		var me = this,
-		control = new Upfront.Views.Editor.InlinePanels.Control({
-			label: tooltip
-		});
-		control.icon = icon;
-		control.tooltip = tooltip;
-		if (click) {
-			this.listenTo(control, 'click', function(e){
-				me[click](e);
-			});
-		}
-
-		return control;
-	},
-
-	updateLinkType: function() {
-		this.$el.find('.upfront-inline-panel-item:nth-child(2) i').attr('class', 'upfront-icon upfront-icon-region-visit-link-'+ this.guessLinkType());
-		this.$el.find('.upfront-inline-panel-item:nth-child(2) span').text(this.getTextByLinkType(this.linkType));
-	},
-
 	createLinkControl: function(){
 		var me = this,
 		control = new Upfront.Views.Editor.InlinePanels.DialogControl(),
@@ -345,7 +249,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 
 		control.view = linkPanel = new Upfront.Views.Editor.LinkPanel({
 			linkUrl: this.property('href'),
-			linkType: this.guessLinkType(),
+			linkType: Upfront.Util.guessLinkType(this.property('href')),
 			linkTarget: this.property('linkTarget'),
 			button: false
 		});
@@ -364,9 +268,9 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 
 		this.listenTo(linkPanel, 'change change:target', function(data) {
 			me.property('href', data.url);
+			me.visitLinkControl.setLink(data.url);
 			me.property('linkTarget', data.target);
 			this.linkType = data.type;
-			me.updateLinkType();
 		});
 
 
@@ -1624,24 +1528,24 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 		  return this.model.set_property(name, value, silent);
 		}
 		return this.model.get_property_value_by_name(name);
-	  },
-	  get_label: function () {
+	},
+	get_label: function () {
 		return 'Appearance';
-	  },
-	  render: function() {
-			// Render as usual
-			this.constructor.__super__.render.apply(this, arguments);
-	  // Show border width if needed
-	  if(this.property('border_style') != 'none') {
-		this.$el.find('div.inline-color.plaintext-settings.border-color, div.inline-number.plaintext-settings').css('display', 'inline-block');
-	  }
-	  else {
-		this.$el.find('div.inline-color.plaintext-settings.border-color, div.inline-number.plaintext-settings').css('display', 'none');
-	  }
-			// Remove panel tabs
-			this.$el.find('.upfront-settings_label').remove();
-			this.$el.find('.upfront-settings_panel').css('left', 0);
-	  }
+	},
+	render: function() {
+		// Render as usual
+		this.constructor.__super__.render.apply(this, arguments);
+	// Show border width if needed
+		if(this.property('border_style') != 'none') {
+			this.$el.find('div.inline-color.plaintext-settings.border-color, div.inline-number.plaintext-settings').css('display', 'inline-block');
+		}
+		else {
+			this.$el.find('div.inline-color.plaintext-settings.border-color, div.inline-number.plaintext-settings').css('display', 'none');
+		}
+		// Remove panel tabs
+		this.$el.find('.upfront-settings_label').remove();
+		this.$el.find('.upfront-settings_panel').css('left', 0);
+	}
 });
 
 
@@ -1667,7 +1571,7 @@ var ButtonMenuList = Upfront.Views.ContextMenuList.extend({
 		    new Upfront.Views.ContextMenuItem({
 				get_label: function() {
 
-					var linktype = me.for_view.guessLinkType();
+					var linktype = Upfront.Util.guessLinkType(me.for_view.property('href'));
 					if(linktype == 'lightbox')
 						return 'Open Lightbox';
 					else if(linktype == 'anchor')
@@ -1678,7 +1582,7 @@ var ButtonMenuList = Upfront.Views.ContextMenuList.extend({
 						return 'Visit Link';
 				},
 				action: function() {
-					me.for_view.visitLink();
+					Upfront.Util.visitLink(me.for_view.property('href'));
 				}
 		    })
 		]);

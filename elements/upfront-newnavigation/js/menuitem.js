@@ -10,7 +10,6 @@ return (function ($) {
 			'click i.delete_menu_item' : 'deleteMenuItem',
 			'click i.navigation-add-item': 'addMenuItem',
 			"contextmenu a.menu_item": "on_context_menu",
-			'click i.visit_link': 'visitLink',
 			'click a.redactor_act': 'onOpenPanelClick',
 			'click .upfront-save_settings': 'onOpenPanelClick',
 			'click > .open-item-controls': 'onOpenItemControlsClick'
@@ -28,7 +27,7 @@ return (function ($) {
 					this.menuitems = _([
 						new Upfront.Views.ContextMenuItem({
 							get_label: function() {
-								var linktype = me.guessLinkType();
+								var linktype = Upfront.Util.guessLinkType(me.model['menu-item-url']);
 								if(linktype == 'lightbox')
 									return 'Open Lightbox';
 								else if(linktype == 'anchor')
@@ -39,7 +38,7 @@ return (function ($) {
 									return 'Visit Link';
 							},
 							action: function() {
-								me.visitLink();
+								Upfront.Util.visitLink(me.model['menu-item-url']);
 							}
 						}),
 						new Upfront.Views.ContextMenuItem({
@@ -68,7 +67,7 @@ return (function ($) {
 				initialize: function(opts) {
 					this.options = opts;
 					this.for_view = this.options.for_view;
-					
+
 					this.menulists = _([
 						new ContextMenuList({for_view: this.for_view})
 					]);
@@ -186,29 +185,17 @@ return (function ($) {
 			}
 		},
 
-		getTextByLinkType: function(linktype) {
-			switch(linktype) {
-				case 'unlink':
-					return 'Not Linked';
-				case 'lightbox':
-					return 'Open Lightbox';
-				case 'anchor':
-					return 'Scroll to Anchor';
-				case 'entry':
-					return 'Go To Post / Page';
-				case 'external':
-					return 'Open Ext. Link';
-				case 'email':
-						return 'Send Email';
-			};
-		},
-
 		createInlineControlPanel: function() {
-			var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel();
+			var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
+				visitLinkControl = new Upfront.Views.Editor.InlinePanels.Controls.VisitLink({
+					url: this.model['menu-item-url']
+				});
+
+			this.visitLinkControl = visitLinkControl;
 
 			panel.items = _([
 				this.createLinkControl(),
-				this.createControl('visit-link-' + this.guessLinkType(), this.getTextByLinkType(this.guessLinkType()), 'visitLink'),
+				visitLinkControl
 			]);
 
 			var imageControlsTpl = '<div class="uimage-controls image-element-controls upfront-ui"></div>';
@@ -217,113 +204,46 @@ return (function ($) {
 			this.$el.find('.uimage-controls').append(panel.el);
 			panel.delegateEvents();
 		},
-			createControl: function(icon, tooltip, click){
-				var me = this,
-					control = new Upfront.Views.Editor.InlinePanels.Control({
-						label: tooltip
-					});
-				control.icon = icon;
-				control.tooltip = tooltip;
-				if (click) {
-					this.listenTo(control, 'click', function(e){
-						me[click](e);
-					});
-				}
 
-				return control;
-			},
+		createLinkControl: function(){
+			var me = this,
+			control = new Upfront.Views.Editor.InlinePanels.DialogControl(),
+			linkPanel;
 
-			createLinkControl: function(){
-				var me = this,
-					control = new Upfront.Views.Editor.InlinePanels.DialogControl(),
-					linkPanel;
+			control.view = linkPanel = new Upfront.Views.Editor.LinkPanel({
+				linkUrl: this.model['menu-item-url'],
+				linkTarget: this.model['menu-item-target'],
+				linkType: Upfront.Util.guessLinkType(this.model['menu-item-url']),
+				button: false
+			});
 
-				control.view = linkPanel = new Upfront.Views.Editor.LinkPanel({
-					linkUrl: this.model['menu-item-url'],
-					linkTarget: this.model['menu-item-target'],
-					linkType: this.guessLinkType(),
-					button: false
-				});
+			this.listenTo(control, 'panel:ok', function() {
+				control.close();
+			});
 
-				this.listenTo(control, 'panel:ok', function() {
-					control.close();
-				});
+			this.listenTo(control, 'panel:open', function() {
+				me.linkPanelOpen = true;
+			});
 
-				this.listenTo(control, 'panel:open', function() {
-					me.linkPanelOpen = true;
-				});
+			me.listenTo(control, 'panel:close', function() {
+				me.linkPanelOpen = false;
+			});
 
-				me.listenTo(control, 'panel:close', function() {
-					me.linkPanelOpen = false;
-				});
+			me.listenTo(linkPanel, 'change', function(data) {
+				me.linkType = data.type;
+				me.visitLinkControl.setLink(data.url);
+				me.model['menu-item-url'] = data.url;
+				me.model['menu-item-target'] = data.target;
+				me.saveLink();
+			});
 
-				me.listenTo(linkPanel, 'change', function(data) {
-					me.linkType = data.type;
-					me.model['menu-item-url'] = data.url;
-					me.model['menu-item-target'] = data.target;
-					me.saveLink();
-				});
+			control.icon = 'link';
+			control.tooltip = 'link';
+			control.id = 'link';
 
-				control.icon = 'link';
-				control.tooltip = 'link';
-				control.id = 'link';
-
-				return control;
-			},
-
-		updateLinkType: function() {
-			this.$el.find('.upfront-inline-panel-item:nth-child(2) i').attr('class', 'upfront-icon upfront-icon-region-visit-link-'+ this.guessLinkType());
-			this.$el.find('.upfront-inline-panel-item:nth-child(2) span').text(this.getTextByLinkType(this.linkType));
+			return control;
 		},
-		guessLinkType: function(){
-			var url = this.model['menu-item-url'];
-			if (this.linkType) {
-				return this.linkType;
-			}
 
-			if(!$.trim(url) || $.trim(url) == '#' || $.trim(url) == '') {
-				return 'unlink';
-			}
-			if(url.length && url[0] == '#') {
-				return url.indexOf('#ltb-') > -1 ? 'lightbox' : 'anchor';
-			}
-			if(url.substring(0, location.origin.length) == location.origin) {
-				return 'entry';
-			}
-			if (url.match(/^mailto/)) {
-				return 'email';
-			}
-
-			return 'external';
-		},
-		visitLink: function() {
-			var me = this;
-			var linktype = me.guessLinkType();
-			if(linktype == 'lightbox') {
-				var regions = Upfront.Application.layout.get('regions');
-				region = regions ? regions.get_by_name(me.getUrlanchor(me.model['menu-item-url'])) : false;
-				if(region){
-					//hide other lightboxes
-					_.each(regions.models, function(model) {
-						if(model.attributes.sub == 'lightbox')
-							Upfront.data.region_views[model.cid].hide();
-					});
-					var regionview = Upfront.data.region_views[region.cid];
-					regionview.show();
-				}
-			}
-			else if(linktype == 'anchor') {
-				if($('#'+me.getUrlanchor(me.model['menu-item-url'])).length > 0)
-					$('html,body').animate({scrollTop: $('#'+me.getUrlanchor(me.model['menu-item-url'])).offset().top},'slow');
-				else
-					console.log('obselete anchor');
-			}
-			else if(linktype == 'entry')
-				window.location.href = me.model['menu-item-url'].replace('&editmode=true', '').replace('editmode=true', '')+((me.model['menu-item-url'].indexOf('?')>0)?'&editmode=true':'?editmode=true');
-			else {
-				window.open(me.model['menu-item-url']);
-			}
-		},
 		createDropDown: function(e) {
 			var placeholder = $('<ul>').addClass('sub-menu').addClass('time_being_display');
 			$(e.target).closest('li').append(placeholder);
@@ -412,17 +332,6 @@ return (function ($) {
 				return location.href.replace('?dev=true', '');
 		},
 
-		getUrlanchor: function(url) {
-			// this does almost the opposite of the above function
-
-			if(typeof(url) == 'undefined') var url = $(location).attr('href');
-
-			if(url.indexOf('#') >=0) {
-				var tempurl = url.split('#');
-				return tempurl[1];
-			} else return false;
-		},
-
 		saveLink: function(remove, keep) {
 			var me = this;
 
@@ -464,7 +373,6 @@ return (function ($) {
 				postdata['menu-item-id'] = me.model['menu-item-db-id'];
 			}
 
-			this.updateLinkType();
 			//console.log('ajax call to new update menu item');
 			Upfront.Util.post(postdata)
 				.success(function (ret) {

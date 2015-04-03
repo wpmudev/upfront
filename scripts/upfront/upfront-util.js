@@ -17,6 +17,26 @@ var rAFPollyfill = function(callback){
 
 
 define(function() {
+	var guessLinkType = function(url) {
+		if(!$.trim(url) || $.trim(url) == '#' || $.trim(url) == '') {
+			return 'unlink';
+		}
+
+		if(url.length && url[0] == '#') {
+			return url.indexOf('#ltb-') > -1 ? 'lightbox' : 'anchor';
+		}
+
+		if(url.substring(0, location.origin.length) == location.origin) {
+			return 'entry';
+		}
+
+		if (url.match(/^mailto/)) {
+			return 'email';
+		}
+
+		return 'external';
+	};
+
 	var Util = {
 		model_to_json: function (model) {
 			if (!model) return {};
@@ -257,7 +277,7 @@ define(function() {
 				return -1;
 			return 0;
 		},
-		
+
 		/**
 		 * Callback before sort jQuery element, to store DOM position, pass on $.each
 		 */
@@ -635,6 +655,39 @@ define(function() {
 				}
 				return color_string;
 			}
+		},
+		guessLinkType: guessLinkType,
+		visitLink: function(url) {
+			var linktype = guessLinkType(url),
+				regions,
+				lightbox,
+				regionview;
+
+			if (linktype === 'lightbox') {
+				regions = Upfront.Application.layout.get('regions');
+				lightbox = regions ? regions.get_by_name(url.substring(1)) : false;
+				if (lightbox) {
+					// Hide other lightboxes
+					_.each(regions.models, function(model) {
+						if(model.attributes.sub == 'lightbox')
+						Upfront.data.region_views[model.cid].hide();
+					});
+
+					regionview = Upfront.data.region_views[lightbox.cid];
+					regionview.show();
+				}
+			} else if (linktype == 'anchor') {
+				if ($(url).length > 0) {
+					$('html,body').animate({scrollTop: $(url).offset().top},'slow');
+				} else {
+					console.log('obselete anchor');
+				}
+			}
+			else if (linktype == 'entry') {
+				window.location.href = url.replace('&editmode=true', '').replace('editmode=true', '')+((url.indexOf('?')>0)?'&editmode=true':'?editmode=true');
+			} else {
+				window.open(url);
+			}
 		}
 	};
 
@@ -677,10 +730,10 @@ define(function() {
 						width = data.width || 630,
 						left_pos = ($win.width() - width) / 2 + sidebarWidth / 2,
 						height = ($win.height() / 3) * 2,
-						close_func = function () { 
+						close_func = function () {
 							$("#upfront-popup").attr('class', 'upfront-ui');
-							me.close(); 
-							return false; 
+							me.close();
+							return false;
 						}
 				;
 
@@ -703,15 +756,15 @@ define(function() {
 					.show()
 					.find("#upfront-popup-close").on("click", close_func).end()
 				;
-				if ( classname ) { 
+				if ( classname ) {
 					this.$popup
 						.addClass(classname)
 						.data("classname", classname)
-					;  
+					;
 				}
 
 				$('body').addClass('upfront-popup-open');
-				/* 
+				/*
 				$win.off("resize.upfront-popup").on("resize.upfront-popup", function () {
 						if (me.$background.is(":visible")) {
 							me.$background
@@ -818,15 +871,15 @@ define(function() {
 			rebind_events = function(){
 				var me = this;
 				Upfront.PreviewUpdate.__deferred_save_callback = Upfront.PreviewUpdate.__deferred_save_callback || _.debounce(save, 200);
-				
+
 				//Upfront.Events.off("entity:region:deactivated", save);
 				//Upfront.Events.off("entity:settings:saved", save);
 				//Upfront.Events.off("entity:module:after_render", save);
-				
+
 				//Upfront.Events.on("entity:region:deactivated", save, this);
 				//Upfront.Events.on("entity:settings:saved", save, this);
 				//Upfront.Events.on("entity:module:after_render", save, this);
-				
+
 				Upfront.Events.off("entity:removed:after", Upfront.PreviewUpdate.__deferred_save_callback);
 				Upfront.Events.off("entity:resize_start", Upfront.PreviewUpdate.__deferred_save_callback);
 				Upfront.Events.off("entity:drag_stop", Upfront.PreviewUpdate.__deferred_save_callback);
@@ -839,7 +892,7 @@ define(function() {
 
 				Upfront.Events.off("model:property:add", Upfront.PreviewUpdate.__deferred_save_callback);
 				Upfront.Events.off("model:property:set", Upfront.PreviewUpdate.__deferred_save_callback);
-				
+
 				Upfront.Events.on("model:property:add", Upfront.PreviewUpdate.__deferred_save_callback, this);
 				Upfront.Events.on("model:property:set", Upfront.PreviewUpdate.__deferred_save_callback, this);
 
@@ -877,7 +930,7 @@ define(function() {
 						Upfront.Events.trigger("preview:build:stop");
 						//Upfront.Util.log("we're good here");
 
-						// Notify about concurrent edits 
+						// Notify about concurrent edits
 						if ("concurrent_users" in data && data.concurrent_users && _.size(data.concurrent_users)) {
 							var users = _.values(data.concurrent_users).join(', ');
 							Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.views.already_edited_nag.replace(/%s/, users), 'error');

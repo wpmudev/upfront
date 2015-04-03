@@ -6,6 +6,12 @@ define([
 			'click': 'clicked'
 		},
 
+		initialize: function(options) {
+			this.options = options || {};
+			this.label = this.options.label;
+			this.icon = this.options.icon;
+		},
+
 		clicked: function(e){
 			e.preventDefault();
 			e.stopPropagation();
