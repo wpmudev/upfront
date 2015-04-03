@@ -290,14 +290,27 @@ class Upfront_Posts_PostView {
 	private function _get_excerpt ($length) {
 		if (!empty($this->_post->post_excerpt)) return wpautop($this->_post->post_excerpt);
 
-		$excerpt = str_replace(array("\n", "\r"), '', strip_shortcodes(wp_strip_all_tags($this->_post->post_content)));
+		$content = $this->_post->post_content;
+
+		// Detect `more` tag and act on it
+		if (preg_match('/(<!--more(.*?)?-->)/', $content, $matches)) {
+			$content = reset(explode($matches[0], $content, 2));
+		}
+
+		$excerpt = preg_replace('/\s+/', ' ', // Collapse potential multiple consecutive whitespaces
+			str_replace(array("\n", "\r"), ' ',  // Normalize linebreaks to spaces - no block-level stuff in excerpts
+				strip_shortcodes( // No shortcodes in excerpts
+					wp_strip_all_tags($content) // Also no HTML tags - allowing that together with limit parsing might end up with broken HTML
+				)
+			)
+		);
 
 		$length = (int)$length;
 		if (!empty($length)) {
 			$words = explode(' ', $excerpt, $length+1);
 			$excerpt = join(' ', array_slice($words, 0, $length));
 		}
-		// Just first 128 chars
+
 		return wpautop($excerpt);
 	}
 
