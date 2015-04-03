@@ -33,6 +33,9 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$preprocessor = new Upfront_StylePreprocessor($grid, $layout);
 		$base_only = isset($_POST['base_only']) ? filter_var($_POST['base_only'], FILTER_VALIDATE_BOOLEAN) : false;
 
+		// Alright, so initialize the var first
+		$style = '';
+
 		// Add typography styles - rearranging so the imports from Google fonts come first, if needed.
 		// When loading styles in editor mode don't include typography styles since they are generated
 		// by javascript
