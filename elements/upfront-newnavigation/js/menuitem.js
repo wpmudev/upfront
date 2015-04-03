@@ -163,11 +163,6 @@ return (function ($) {
 			$(this.el).data('backboneview', me).addClass('menu-item');
 			if(me.newitem) $(this.el).addClass('new_menu_item');
 
-			if (this.linkPanelOpen) {
-				this.onOpenItemControlsClick();
-				this.$el.find('.upfront-icon-region-link').click();
-			}
-
 			return this;
 		},
 
@@ -189,12 +184,28 @@ return (function ($) {
 			var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
 				visitLinkControl = new Upfront.Views.Editor.InlinePanels.Controls.VisitLink({
 					url: this.model['menu-item-url']
-				});
+				}),
+				linkPanelControl = new Upfront.Views.Editor.InlinePanels.Controls.LinkPanel({
+					linkUrl: this.model['menu-item-url'],
+					linkTarget: this.model['menu-item-target'],
+					linkType: Upfront.Util.guessLinkType(this.model['menu-item-url']),
+					button: false,
+					icon: 'link',
+					tooltip: 'link',
+					id: 'link'
+				}),
+				me;
 
-			this.visitLinkControl = visitLinkControl;
+			this.listenTo(linkPanelControl, 'change', function(data) {
+				me.linkType = data.type;
+				visitLinkControl.setLink(data.url);
+				me.model['menu-item-url'] = data.url;
+				me.model['menu-item-target'] = data.target;
+				me.saveLink();
+			});
 
 			panel.items = _([
-				this.createLinkControl(),
+				linkPanelControl,
 				visitLinkControl
 			]);
 
@@ -203,45 +214,6 @@ return (function ($) {
 			panel.render();
 			this.$el.find('.uimage-controls').append(panel.el);
 			panel.delegateEvents();
-		},
-
-		createLinkControl: function(){
-			var me = this,
-			control = new Upfront.Views.Editor.InlinePanels.DialogControl(),
-			linkPanel;
-
-			control.view = linkPanel = new Upfront.Views.Editor.LinkPanel({
-				linkUrl: this.model['menu-item-url'],
-				linkTarget: this.model['menu-item-target'],
-				linkType: Upfront.Util.guessLinkType(this.model['menu-item-url']),
-				button: false
-			});
-
-			this.listenTo(control, 'panel:ok', function() {
-				control.close();
-			});
-
-			this.listenTo(control, 'panel:open', function() {
-				me.linkPanelOpen = true;
-			});
-
-			me.listenTo(control, 'panel:close', function() {
-				me.linkPanelOpen = false;
-			});
-
-			me.listenTo(linkPanel, 'change', function(data) {
-				me.linkType = data.type;
-				me.visitLinkControl.setLink(data.url);
-				me.model['menu-item-url'] = data.url;
-				me.model['menu-item-target'] = data.target;
-				me.saveLink();
-			});
-
-			control.icon = 'link';
-			control.tooltip = 'link';
-			control.id = 'link';
-
-			return control;
 		},
 
 		createDropDown: function(e) {

@@ -226,12 +226,26 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
 			visitLinkControl = new Upfront.Views.Editor.InlinePanels.Controls.VisitLink({
 				url: this.property('href')
+			}),
+			linkPanelControl = new Upfront.Views.Editor.InlinePanels.Controls.LinkPanel({
+				linkUrl: this.property('href'),
+				linkType: Upfront.Util.guessLinkType(this.property('href')),
+				linkTarget: this.property('linkTarget'),
+				button: false,
+				icon: 'link',
+				tooltip: 'link',
+				id: 'link'
 			});
+			me = this;
 
-		this.visitLinkControl = visitLinkControl;
+		this.listenTo(linkPanelControl, 'change change:target', function(data) {
+			visitLinkControl.setLink(data.url);
+			me.property('href', data.url);
+			me.property('linkTarget', data.target);
+		});
 
 		panel.items = _([
-			this.createLinkControl(),
+			linkPanelControl,
 			visitLinkControl
 		]);
 
@@ -242,58 +256,13 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		panel.delegateEvents();
 	},
 
-	createLinkControl: function(){
-		var me = this,
-		control = new Upfront.Views.Editor.InlinePanels.DialogControl(),
-		linkPanel;
-
-		control.view = linkPanel = new Upfront.Views.Editor.LinkPanel({
-			linkUrl: this.property('href'),
-			linkType: Upfront.Util.guessLinkType(this.property('href')),
-			linkTarget: this.property('linkTarget'),
-			button: false
-		});
-
-		this.listenTo(control, 'panel:ok', function() {
-			control.close();
-		});
-
-		this.listenTo(control, 'panel:open', function() {
-			me.linkPanelOpen = true;
-		});
-
-		this.listenTo(control, 'panel:close', function() {
-			me.linkPanelOpen = false;
-		});
-
-		this.listenTo(linkPanel, 'change change:target', function(data) {
-			me.property('href', data.url);
-			me.visitLinkControl.setLink(data.url);
-			me.property('linkTarget', data.target);
-			this.linkType = data.type;
-		});
-
-
-		control.icon = 'link';
-		control.tooltip = 'link';
-		control.id = 'link';
-
-		return control;
-	},
-
-
 	toggleLinkPanel: function() {
 		var me = this;
 		if (this.$el.hasClass('stayOpen')) {
 			this.$el.removeClass('stayOpen');
-			this.$el.find('.linkingPanelGoesHere').hide();
-			// Model linkType won't set on time if this is not delayed
-			setTimeout(function() {
-				me.render();
-			}, 100);
+			me.render();
 		} else {
 			this.$el.addClass('stayOpen');
-			this.$el.find('.linkingPanelGoesHere').show();
 		}
 	},
 
