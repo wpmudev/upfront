@@ -6,6 +6,9 @@
  */
 class Upfront_ElementStyles extends Upfront_Server {
 
+	const TYPE_SCRIPT = 'js';
+	const TYPE_STYLE = 'css';
+
 	public static function serve () {
 		$me = new self;
 		$me->_add_hooks();
@@ -34,7 +37,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 		if (empty($styles)) return false;
 
 		$raw_cache_key = $this->_get_raw_cache_key($styles);
-		$cache_key = "css{$raw_cache_key}";
+		$cache_key = $this->_get_key(self::TYPE_STYLE, $raw_cache_key);
 		$cache = $this->_debugger->is_active() ? false : get_transient($cache_key);
 		if (empty($cache)) {
 			foreach ($styles as $key => $frags) {
@@ -62,7 +65,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 		if (empty($styles)) return $urls;
 
 		$raw_cache_key = $this->_get_raw_cache_key($styles);
-		$cache_key = "css{$raw_cache_key}";
+		$cache_key = $this->_get_key(self::TYPE_STYLE, $raw_cache_key);
 		$cache = $this->_debugger->is_active() ? false : get_transient($cache_key);
 		if (empty($cache)) {
 			foreach ($styles as $key => $frags) {
@@ -138,7 +141,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 		if (empty($scripts)) return false;
 
 		$raw_cache_key = $this->_get_raw_cache_key($scripts);
-		$cache_key = "js{$raw_cache_key}";
+		$cache_key = $this->_get_key(self::TYPE_SCRIPT, $raw_cache_key);
 		$cache = $this->_debugger->is_active() ? false : get_transient($cache_key);
 		if (empty($cache)) {
 			foreach ($scripts as $key => $frags) {
@@ -161,7 +164,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 		if (empty($scripts)) return $urls;
 
 		$raw_cache_key = $this->_get_raw_cache_key($scripts);
-		$cache_key = "js{$raw_cache_key}";
+		$cache_key = $this->_get_key(self::TYPE_SCRIPT, $raw_cache_key);
 		$cache = $this->_debugger->is_active() ? false : get_transient($cache_key);
 		if (empty($cache)) {
 			foreach ($scripts as $key => $frags) {
@@ -180,7 +183,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 	}
 
 	function serve_styles () {
-		$key = 'css' . stripslashes($_REQUEST['key']);
+		$key = $this->_get_key(self::TYPE_STYLE, stripslashes($_REQUEST['key']));
 		if (empty($key)) $this->_out(new Upfront_CssResponse_Error());
 
 		$cache = get_transient($key);
@@ -188,16 +191,27 @@ class Upfront_ElementStyles extends Upfront_Server {
 	}
 
 	function serve_scripts () {
-		$key = 'js' . stripslashes($_REQUEST['key']);
+		$key = $this->_get_key(self::TYPE_SCRIPT, stripslashes($_REQUEST['key']));
 		if (empty($key)) $this->_out(new Upfront_JavascriptResponse_Error());
 
 		$cache = get_transient($key);
 		$this->_out(new Upfront_JavascriptResponse_Success($cache));
 	}
 
+	private function _get_key ($type, $hash) {
+		$type = preg_replace('/^[^a-z]$/', '', $type);
+		$hash = preg_replace('/^[a-f0-9]$/', '', $hash);
+
+		return substr("{$type}_uf_{$hash}", 0, 45);
+	}
+
+	private function _get_cache_key ($type, $stuff) {
+		$hash = $this->_get_raw_cache_key($stuff);
+		return $this->_get_key($type, $hash);
+	}
+
 	private function _get_raw_cache_key ($stuff) {
-		return substr(md5(serialize($stuff)), 0, 24); // Forced length for transients API key length limitation
-		//return md5(serialize($stuff));
+		return md5(serialize($stuff)); // Forced length for transients API key length limitation
 	}
 
 	private function _get_enqueue_version () {
