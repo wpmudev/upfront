@@ -5,6 +5,7 @@
  * Serves registered element stylesheets.
  */
 class Upfront_ElementStyles extends Upfront_Server {
+
 	public static function serve () {
 		$me = new self;
 		$me->_add_hooks();
@@ -44,7 +45,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 				if (!empty($style))  $cache .= "/* {$key} */\n{$style}\n";
 			}
 			if (!$this->_debugger->is_active(Upfront_Debug::STYLE)) $cache = Upfront_StylePreprocessor::compress($cache);
-			set_transient($cache_key, $cache);
+			set_transient($cache_key, $cache, $this->_get_expiration());
 		}
 
 		//wp_enqueue_style('upfront-element-styles', admin_url('admin-ajax.php?action=upfront-element-styles&key=' . $cache_key)); // It'll also work as an AJAX request
@@ -72,7 +73,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 				if (!empty($style))  $cache .= "/* {$key} */\n{$style}\n";
 			}
 			if (!$this->_debugger->is_active(Upfront_Debug::STYLE)) $cache = Upfront_StylePreprocessor::compress($cache);
-			set_transient($cache_key, $cache);
+			set_transient($cache_key, $cache, $this->_get_expiration());
 		}
 
 		$url = Upfront_VirtualPage::get_url(join('/', array(
@@ -144,7 +145,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 				$path = upfront_element_dir($frags[0], $frags[1]);
 				if (file_exists($path)) $cache .= "/* {$key} */\n" . file_get_contents($path) . "\n";
 			}
-			set_transient($cache_key, $cache);
+			set_transient($cache_key, $cache, $this->_get_expiration());
 		}
 		//wp_enqueue_script('upfront-element-scripts', admin_url('admin-ajax.php?action=upfront-element-scripts&key=' . $cache_key), array('jquery')); // It'll also work as an AJAX request
 		wp_enqueue_script('upfront-element-scripts', Upfront_VirtualPage::get_url(join('/', array(
@@ -167,7 +168,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 				$path = upfront_element_dir($frags[0], $frags[1]);
 				if (file_exists($path)) $cache .= "/* {$key} */\n" . file_get_contents($path) . "\n";
 			}
-			set_transient($cache_key, $cache);
+			set_transient($cache_key, $cache, $this->_get_expiration());
 		}
 		$url = Upfront_VirtualPage::get_url(join('/', array(
 			'upfront-dependencies',
@@ -201,5 +202,9 @@ class Upfront_ElementStyles extends Upfront_Server {
 
 	private function _get_enqueue_version () {
 		return Upfront_ChildTheme::get_version();
+	}
+
+	private function _get_expiration () {
+		return DAY_IN_SECONDS;
 	}
 }
