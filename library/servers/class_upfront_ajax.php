@@ -26,6 +26,7 @@ class Upfront_Ajax extends Upfront_Server {
 		if (Upfront_Permissions::current(Upfront_Permissions::SAVE)) {
 			upfront_add_ajax('upfront_save_layout', array($this, "save_layout"));
 			upfront_add_ajax('upfront_reset_layout', array($this, "reset_layout"));
+			upfront_add_ajax('upfront_reset_cache', array($this, "reset_cache"));
 			upfront_add_ajax('upfront_reset_all_from_db', array($this, "reset_all_from_db"));
 			upfront_add_ajax('upfront_update_layout_element', array($this, "update_layout_element"));
 
@@ -332,6 +333,18 @@ class Upfront_Ajax extends Upfront_Server {
 		$this->_out(new Upfront_JsonResponse_Success("Layout reset"));
 	}
 
+	function reset_cache () {
+		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
+		$this->_reset_cache();
+		$this->_out(new Upfront_JsonResponse_Success("All is well"));
+	}
+
+	private function _reset_cache () {
+		global $wpdb;
+		$sql = "DELETE FROM {$wpdb->options} WHERE option_name REGEXP '_transient(_timeout)?_(js|css)[a-f0-9]+'";
+		return $wpdb->query($sql);
+	}
+
 	function reset_all_from_db () {
 		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
 
@@ -345,6 +358,9 @@ class Upfront_Ajax extends Upfront_Server {
 
 		$sql = $wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s", $stylesheet_key, $global_theme_key, $theme_key);
 		$wpdb->query($sql);
+
+		$this->_reset_cache(); // When resetting all, also do cache.
+		
 		$this->_out(new Upfront_JsonResponse_Success("All is well"));
 	}
 
