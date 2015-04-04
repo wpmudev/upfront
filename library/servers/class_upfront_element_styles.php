@@ -196,8 +196,8 @@ class Upfront_ElementStyles extends Upfront_Server {
 	}
 
 	private function _get_raw_cache_key ($stuff) {
-		//return substr(md5(serialize($stuff)), 0, 24); // Forced length for transients API key length limitation
-		return md5(serialize($stuff));
+		return substr(md5(serialize($stuff)), 0, 24); // Forced length for transients API key length limitation
+		//return md5(serialize($stuff));
 	}
 
 	private function _get_enqueue_version () {
