@@ -2535,7 +2535,7 @@ var GridEditor = {
 				var last_wrap = ed.get_wrap($wraps.last()),
 					last_wrap_clr = ( last_wrap && last_wrap.grid.left == area.grid.left ),
 					is_drop_me = ( me_wrap && last_wrap_clr && last_wrap._id == me_wrap._id && !has_siblings ),
-					bottom = ( area.grid.bottom-current_full_top > row ? area.grid.bottom + 5 : current_full_top + row ),
+					bottom = ( expand_lock ? area.grid.bottom : ( area.grid.bottom-current_full_top > row ? area.grid.bottom + 5 : current_full_top + row ) ),
 					bottom_wrap = _.max(ed.wraps, function(each){
 						if ( each.region != region_name )
 							return 0;
@@ -2545,9 +2545,10 @@ var GridEditor = {
 							return 0;
 						return each.grid.bottom;
 					}),
-					top = bottom_wrap.grid.bottom,
-					bottom_not_me = ( !me_wrap || ( bottom_wrap && me_wrap && bottom_wrap._id != me_wrap._id ) );
-				if ( can_drop(current_full_top, bottom) ){
+					top = bottom_wrap.grid.bottom+1,
+					bottom_not_me = ( !me_wrap || ( bottom_wrap && me_wrap && bottom_wrap._id != me_wrap._id ) ),
+					priority_top = ( bottom_not_me && top > current_full_top ? top : current_full_top );
+				if ( can_drop(priority_top, bottom) ){
 					ed.drops.push({
 						_id: ed._new_id(),
 						top: current_full_top,
@@ -2555,7 +2556,7 @@ var GridEditor = {
 						left: area.grid.left,
 						right: area.grid.right,
 						priority: {
-							top: ( bottom_not_me && top > current_full_top ? top : current_full_top ),
+							top: priority_top,
 							bottom: bottom,
 							left: area.grid.left,
 							right: area.grid.right,
@@ -2574,7 +2575,7 @@ var GridEditor = {
 				}
 			}
 			else {
-				var bottom = ( area.grid.bottom-area.grid.top > row ? area.grid.bottom : area.grid.top + row );
+				var bottom = ( expand_lock ? area.grid.bottom : ( area.grid.bottom-area.grid.top > row ? area.grid.bottom : area.grid.top + row ) );
 				if ( can_drop(area.grid.top, bottom) ){
 					ed.drops.push({
 						_id: ed._new_id(),
@@ -2785,7 +2786,7 @@ var GridEditor = {
 					max_col = col + ( axis == 'nw' ? me.grid.left-move_limit[0] : move_limit[1]-me.grid.right ),
 
 					top_aff_el = aff_els.bottom.length ? _.min(aff_els.bottom, function(each){ return each.grid.top; }) : false,
-					max_row = top_aff_el ? top_aff_el.grid.top-me.grid.top : region.grid.bottom-me.grid.top,
+					max_row = top_aff_el ? top_aff_el.grid.top-me.grid.top : region.grid.bottom-me.grid.top+1,
 
 					current_col = Math.ceil(ui.size.width/ed.col_size),
 					w = ( current_col > max_col ? Math.round(max_col*ed.col_size) : ui.size.width ),
@@ -3070,6 +3071,7 @@ var GridEditor = {
 			is_group = view.$el.hasClass('upfront-module-group'),
 			$me = is_group ? view.$el : view.$el.find('.upfront-editable_entity:first'),
 			is_parent_group = ( typeof view.group_view != 'undefined' ),
+			is_disabled = ( is_parent_group && !view.group_view.$el.hasClass('upfront-module-group-on-edit') ),
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
 			$layout = $main.find('.upfront-layout'),
 			drop_top, drop_left, drop_col,
@@ -3079,7 +3081,7 @@ var GridEditor = {
 		if ( Upfront.Application.mode.current !== Upfront.Application.MODE.THEME && model.get_property_value_by_name('disable_drag') )
 			return false;
 		if ( $me.data('ui-draggable') ){
-			if ( is_group || !is_parent_group )
+			if ( is_group || !is_disabled )
 				$me.draggable('option', 'disabled', false);
 			return false;
 		}
@@ -3147,7 +3149,7 @@ var GridEditor = {
 			revertDuration: 0,
 			zIndex: 100,
 			helper: 'clone',
-			disabled: is_parent_group,
+			disabled: is_disabled,
 			cancel: '.upfront-entity_meta',
 			delay: 15,
 			appendTo: $main,
@@ -3847,6 +3849,7 @@ var GridEditor = {
 								model_breakpoint[breakpoint.id] = {};
 							model_breakpoint_data = model_breakpoint[breakpoint.id];
 							model_breakpoint_data.order = each_el.order;
+							model_breakpoint_data.edited = true;
 							if ( is_drop_wrapper )
 								model_breakpoint_data.clear = each_el.clear;
 							each_model.set_property('breakpoint', model_breakpoint);
