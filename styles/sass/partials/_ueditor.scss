@@ -19,6 +19,9 @@
 }
 .Postpart_contents:hover .upfront_edit_content_style{
     display: block;
+    height: 46px;
+    overflow: hidden;
+    max-width: 281px;
 }
 .ueditor-insert-variant:hover .upfront_edit_image_insert{
     display: block;
