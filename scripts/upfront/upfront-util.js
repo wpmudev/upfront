@@ -106,9 +106,16 @@ define(function() {
 			return $.post(Upfront.Settings.ajax_url, request, function () {}, data_type ? data_type : "json");
 		},
 
-		reset: function () {
+		reset_layout: function () {
 			var request = {
 				action: "upfront_reset_layout"
+			};
+			return this.post(request);
+		},
+
+		reset_cache: function () {
+			var request = {
+				action: "upfront_reset_cache"
 			};
 			return this.post(request);
 		},

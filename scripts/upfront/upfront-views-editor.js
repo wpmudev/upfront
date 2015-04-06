@@ -9672,10 +9672,10 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				total_container = collection.total_container(['shadow', 'lightbox']), // don't include shadow and lightbox region
 				is_top = index_container == 0,
 				is_bottom = index_container == total_container-1,
-				is_global = this.model.get('scope') == 'global';
+				is_full = this.model.get('type') == 'full';
 			if ( this.model.is_main() ) {
 				var sub_models = this.model.get_sub_regions();
-				if ( !is_top || !is_global )
+				if ( !(is_full && is_top) )
 					panels.push( this.add_panel_top );
 				if ( this.model.get('allow_sidebar') ){
 					if ( sub_models.left === false )
@@ -9683,8 +9683,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					if ( sub_models.right === false )
 						panels.push( this.add_panel_right );
 				}
-				if ( !is_bottom || !is_global )
-					panels.push( this.add_panel_bottom );
+				panels.push( this.add_panel_bottom );
 			}
 			this._panels = panels;
 			return panels;

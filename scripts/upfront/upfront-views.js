@@ -798,8 +798,9 @@ define([
 						action: function(for_view, e) {
 							var module_view = this.for_view.parent_module_view,
 								module = module_view.model,
-								modules = module_view.region.get('modules'),
-								wrappers = module_view.region.get('wrappers'),
+								parent_region_view = module_view.group_view ? module_view.group_view : module_view.region_view,
+								modules = parent_region_view.model.get('modules'),
+								wrappers = parent_region_view.model.get('wrappers'),
 								wrap_model = wrappers.get_by_wrapper_id(module.get_property_value_by_name('wrapper_id')),
 								data = Upfront.Util.model_to_json(module),
 								new_model = new Upfront.Models.Module(data),
@@ -818,25 +819,29 @@ define([
 							});
 							// Add to layout now
 							wrappers.add(new_wrap_model);
-							new_model.add_to(modules, index+1);
+							//new_model.add_to(modules, index+1);
+							modules.add(new_model);
 							// Normalize layout
 							var ed = Upfront.Behaviors.GridEditor,
 								new_module_view =  Upfront.data.module_views[new_model.cid],
 								$new_module_view = new_module_view.$el,
-								h = $new_module_view.outerHeight(),
-								w = $new_module_view.outerWidth();
+								$new_module = $new_module_view.find(".upfront-module"),
+								off = $new_module.offset(),
+								pos = $new_module.position(),
+								h = $new_module.outerHeight(),
+								w = $new_module.outerWidth();
 							ed.start(new_module_view, new_model);
 							ed.normalize(ed.els, ed.wraps);
 
 							// properly possition the new module and show it under the cursor
-							$new_module_view.css({
-								position: "fixed",
-								top: e.clientY - (h /2 ) ,
-								left: e.clientX - ( w / 2 ) ,
+							$new_module.css({
+								position: "absolute",
+								top: ( e.pageY-( off.top-pos.top )-(h/2) ),
+								left: ( e.pageX-( off.left-pos.left )-(w/2) ),
 							});
 
 							// Simulate and mousedown and actually trigger drag
-						    $new_module_view.find(".upfront-module").simulate("mousedown", {
+						    $new_module.simulate("mousedown", {
 						        clientX: e.clientX,
 						        clientY: e.clientY
 						    });
@@ -2250,6 +2255,7 @@ define([
 				this.listenTo(Upfront.Events, "upfront:layout:contained_region_width", this.on_contained_width_change);
 				this.listenTo(Upfront.Events, 'layout:after_render', this.update_pos);
 				this.listenTo(Upfront.Events, "sidebar:toggle:done", this.update_pos);
+				this.listenTo(Upfront.Events, "application:mode:after_switch", this.update_pos);
 				$(window).on('scroll.region_container_' + this.model.get('name'), this, this.on_scroll);
 				$(window).on('resize.region_container_' + this.model.get('name'), this, this.on_window_resize);
 
@@ -2715,6 +2721,7 @@ define([
 				this.listenTo(Upfront.Events, "entity:region:added", this.update_pos);
 				this.listenTo(Upfront.Events, "entity:region:removed", this.update_pos);
 				this.listenTo(Upfront.Events, "sidebar:toggle:done", this.update_pos);
+				this.listenTo(Upfront.Events, "application:mode:after_switch", this.update_pos);
 				$(window).on('scroll.region_subcontainer_' + this.model.get('name'), this, this.on_scroll);
 				$(window).on('resize.region_subcontainer_' + this.model.get('name'), this, this.on_window_resize);
 			},
@@ -2801,7 +2808,7 @@ define([
 					}
 				}
 				// Sub-container behavior to stick when scroll
-				if ( scroll_top >= container_offset.top && scroll_bottom <= container_bottom ){
+				if ( scroll_top+rel_top >= container_offset.top && scroll_bottom <= container_bottom ){
 					css.position = 'fixed';
 					if ( sub == 'top' ) {
 						css.top = rel_top;
@@ -2833,7 +2840,7 @@ define([
 					(
 						!sticky ||
 						( _.isNumber(sticky_top) && scroll_top <= sticky_top ) ||
-						( !_.isNumber(sticky_top) && ( scroll_top < container_offset.top || scroll_bottom > container_bottom ) )
+						( !_.isNumber(sticky_top) && ( scroll_top+rel_top < container_offset.top || scroll_bottom > container_bottom ) )
 					)
 				) {
 					this.$el.css({
@@ -2844,7 +2851,7 @@ define([
 						bottom: ''
 					});
 					if ( sub == 'top' ) {
-						this.$el.css('top', container_height - win_height)
+						this.$el.css('top', container_height - win_height + rel_top)
 					}
 					this.$el.removeClass('upfront-region-container-sticky');
 					this.$el.removeData('sticky-top');
@@ -4214,6 +4221,7 @@ define([
 				"click": "on_click"
 			},
 			initialize: function (opts) {
+				this._has_ruler = false;
 				this.listenTo(this.model.get("properties"), 'change', this.update);
 				this.listenTo(this.model.get("properties"), 'add', this.update);
 				this.listenTo(this.model.get("properties"), 'remove', this.update);
@@ -4221,6 +4229,7 @@ define([
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 				this.listenTo(Upfront.Events, "application:mode:after_switch", this.on_mode_switch);
 				$(window).on('resize.upfront_layout', this, this.on_window_resize);
+				$(window).on('scroll.upfront_layout', this, this.on_window_scroll);
 				this.render();
 			},
 			update: function () {
@@ -4301,7 +4310,7 @@ define([
 				}
 				else {
 					this.$layout.width(breakpoint.width);
-					this.render_ruler(false);
+					this.render_ruler(false, breakpoint.width);
 					this.render_gutter(breakpoint.width);
 					Upfront.Behaviors.LayoutEditor.disable_mergeable();
 				}
@@ -4319,11 +4328,11 @@ define([
 			remove_gutter: function () {
 				this.$el.find('.upfront-layout-gutter').remove();
 			},
-			render_ruler: function (follow_grid) {
+			render_ruler: function (follow_grid, width) {
 				var grid = Upfront.Settings.LayoutEditor.Grid,
-					width = follow_grid ? grid.size*grid.column_width : this.$layout.width(),
+					width = follow_grid ? grid.size*grid.column_width : width,
 					$ruler_container = this.$el.find('.upfront-ruler-container'),
-					$ruler = this.$layout.find('.upfront-ruler'),
+					$ruler = $ruler_container.find('.upfront-ruler'),
 					create_mark = function (at, size, show_num) {
 						return '<div class="upfront-ruler-mark" style="width:' + size + 'px;">' +
 									( show_num ? '<div class="upfront-ruler-mark-num">' +  at + '</div>' : '' ) +
@@ -4334,22 +4343,51 @@ define([
 					$ruler_container = $('<div class="upfront-ruler-container"></div>');
 					$ruler = $('<div class="upfront-ruler upfront-ui"></div>');
 					this.$el.prepend($ruler_container);
-					this.$layout.prepend($ruler);
+					$ruler_container.prepend($ruler);
 				}
 				$ruler.empty();
-				if ( follow_grid )
-					$ruler.css('width', width);
-				else
-					$ruler.css('width', '');
+				$ruler.css('width', width);
 				for ( mark = 0; mark < width; mark+=100 ){
 					$ruler.append( create_mark(mark, 100, (mark+40 > width ? false : true)) );
 				}
-				if ( width > (mark-100)+10 )
+				if ( width > (mark-100) )
 					$ruler.append( create_mark(width, width-(mark-100), true) );
+				this._has_ruler = true;
 			},
 			remove_ruler: function () {
 				this.$el.find('.upfront-ruler-container').remove();
-				this.$layout.find('.upfront-ruler').remove();
+				this._has_ruler = false;
+			},
+			update_ruler: function () {
+				if ( !this._has_ruler )
+					return;
+				var scroll_top = $(window).scrollTop(),
+					$ruler_container = this.$el.find('.upfront-ruler-container'),
+					ruler_position = $ruler_container.css('position');
+				if ( scroll_top > 0 && ruler_position != 'fixed' ){
+					var offset = this.$el.offset(),
+						ruler_container_off = $ruler_container.offset();
+					$ruler_container.css({
+						position: 'fixed',
+						top: offset.top,
+						left: ruler_container_off.left,
+						right: 0,
+						width: 'auto'
+					});
+				}
+				else if ( scroll_top <= 0 && ruler_position == 'fixed' ) {
+					$ruler_container.css({
+						position: '',
+						top: '',
+						left: '',
+						right: '',
+						width: ''
+					});
+				}
+			},
+			on_window_scroll: function (e) {
+				var me = e.data;
+				me.update_ruler();
 			},
 			update_grid_css: function () {
 				var grid = Upfront.Settings.LayoutEditor.Grid,
@@ -4372,6 +4410,7 @@ define([
 					this.local_view.remove();
 				this.local_view = null;
 				$(window).off('resize.upfront_layout');
+				$(window).off('scroll.upfront_layout');
 				if (this.bg_setting)
 					this.bg_setting.remove();
 				this.bg_setting = null;
