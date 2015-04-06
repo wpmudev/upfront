@@ -156,7 +156,8 @@ class Upfront_StylePreprocessor {
 		$buffer = str_replace(array("\r\n", "\r", "\n", "\t", '  ', '    ', '    '), '', $buffer);
 
 		// Remove space after colons
-		$buffer = str_replace(': ', ':', $buffer);
+		//$buffer = str_replace(': ', ':', $buffer); // Actually, let's not >.<
+        // This will wreak havoc on selectors
 
 		return $buffer;
 	}
