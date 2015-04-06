@@ -209,6 +209,10 @@ div.uinsert-selector a {
 	line-height: 30px;
 	padding: 0 5px;
     cursor: pointer;
+    max-width: 100px;
+    overflow: hidden;
+    height: 30px;
+    white-space: nowrap;
 }
 
 div.uinsert-selector a:hover {

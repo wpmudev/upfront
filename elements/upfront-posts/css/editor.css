@@ -144,6 +144,8 @@
 	clear: both; 
 	height: 22px;
 	margin-left: 12px;
+    height: 20px;
+    overflow: hidden;
 }
 .upfront-settings-item-content .post_parts.ui-sortable li .name_action_wrapper span {
 	display: block;
@@ -167,6 +169,10 @@
 	background: #00a167;
 	border-radius: 4px;
 	padding: 0 3px;
+    max-width: 62px;
+    overflow: hidden;
+    height: 16px;
+    white-space: nowrap;
 }
 .upfront-settings-item-content .post_parts.ui-sortable li .options .edit_part a { 
 	color: white;

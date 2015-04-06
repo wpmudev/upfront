@@ -27,6 +27,8 @@
 	font-family: Verdana, Geneva, sans-serif;
 	font-size: 11px;
 	cursor: pointer;
+    overflow: hidden;
+    white-space: nowrap;
 }
 #settings .upfront-settings_label.active {
 	color: rgb(99, 134, 166);
@@ -246,6 +248,8 @@
 	color: rgb(242, 249, 255);
 	border-radius: 0;
 	box-shadow: 3px 3px 0 rgba(99, 134, 166, 0.25);
+    max-width: 286px;
+    overflow: hidden;
 }
 .upfront-save_settings:hover {
 	background: #3ea;
