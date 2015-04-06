@@ -149,11 +149,22 @@ class Upfront_StylePreprocessor {
 	 * @return string Compressed CSS
 	 */
 	public static function compress ($buffer) {
-		/* remove comments */
-		$buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
+        // Let's normalize the non-breaking spaces first
+        $buffer = preg_replace('/\xA0/u', ' ', $buffer);
 
-		/* remove tabs, spaces, newlines, etc. */
-		$buffer = str_replace(array("\r\n", "\r", "\n", "\t", '  ', '    ', '    '), '', $buffer);
+        /* remove comments */
+        $buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
+
+        /* remove tabs, spaces, newlines, etc. */
+        $buffer = str_replace(array("\r\n", "\r", "\n", "\t", '  ', '   ', '    '), ' ', $buffer); // Actually, replace them with single space
+
+        /* Whitespaces cleanup */
+        // We need this because fixing the issue with the previous statement (dropping whitespace that killed selectors too)
+        // leaves way too much whitespace that we know we don't need
+        $buffer = preg_replace('/\s+/', ' ', $buffer); // Collapse spaces
+        $buffer = preg_replace('/\s(\{|\})/', '$1', $buffer); // Drop leading spaces surrounding braces
+        $buffer = preg_replace('/(\{|\})\s/', '$1', $buffer); // Drop trailing spaces surrounding braces
+        $buffer = preg_replace('/(\s;|;\s)/', ';', $buffer); // Drop spaces surrounding semicolons, leading or trailing
 
 		// Remove space after colons
 		//$buffer = str_replace(': ', ':', $buffer); // Actually, let's not >.<
