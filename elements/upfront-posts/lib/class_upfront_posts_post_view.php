@@ -51,6 +51,9 @@ class Upfront_Posts_PostView {
 			else $out .= apply_filters('upfront_posts-' . $method, '', $post);
 		}
 
+		// Also expand postmeta codes outside the meta element
+		$out = Upfront_MacroCodec_Postmeta::expand_all($out, $post);
+
 		return $this->_wrap_post($out, $post);
 	}
 
