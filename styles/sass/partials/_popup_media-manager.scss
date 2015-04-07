@@ -592,3 +592,15 @@
 		max-height: 350px;
 	}
 }
+
+/* --- Discussion Settings --- */
+
+#upfront-popup.discussion-popup {
+	margin-top:100px;
+	max-width: 630px;
+	height:500px;
+}
+#upfront-popup.discussion-popup #upfront-popup-content {
+	max-height: 450px;
+	overflow-y: scroll;
+}

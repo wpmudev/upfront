@@ -108,7 +108,7 @@ var GlobalSettings_View = Backbone.View.extend({
 				me.setup_tabs($top);
 				me.setup_actions($bottom);
 				me.setup_content();
-			})
+			}, {}, "discussion-popup")
 		;
 		this.popup = this;
 	},
@@ -138,10 +138,6 @@ var DiscussionSettings_View = GlobalSettings_View.extend({
 		$el.empty().append(actions.$el);
 	},
 	setup_content: function () {
-		$(this.out).css({
-			height: this.popup_data.height,
-			"overflow-y": "scroll"
-		});
 		this.render_settings_content();
 		this.tabs.activate_tab('settings');
 	},
@@ -228,7 +224,7 @@ var DiscussionSettings_ActionView = Backbone.View.extend({
 		var me = this;
 		this.populate_sections();
 		this.$el.empty();
-    this.$el.addClass('discussion-settings-wrapper');
+		this.$el.addClass('discussion-settings-wrapper');
 
 		this.sections.each(function (section) {
 			if (section.label) me.$el.append(_.template(me.templates.section_label, {label: section.label}));
