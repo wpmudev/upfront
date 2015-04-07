@@ -34,7 +34,7 @@ abstract class Upfront_Debug {
 	}
 
 	public function is_active ($level=false) {
-		if (!$level) return defined('UPFRONT_DEBUG_LEVELS') && UPFRONT_DEBUG_LEVELS;
+		if (!$level) return defined('UPFRONT_DEBUG_LEVELS') && UPFRONT_DEBUG_LEVELS && UPFRONT_DEBUG_LEVELS !== 'none';
 		$all = $this->get_levels();
 		return in_array($level, $all) || in_array(self::ALL, $all);
 	}
