@@ -140,7 +140,7 @@ abstract class Upfront_MacroCodec {
 
 		$macro = self::get_regex($tag);
 		if (empty($value)) {
-			$value = '$2'; // Use fallback in matching
+			$value = '$2'; // Use fallback in replacement if value is empty
 		}
 		return preg_replace($macro, $value, $content);
 	}
