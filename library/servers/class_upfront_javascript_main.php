@@ -24,7 +24,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 
 		$root = Upfront::get_root_url();
 		$ajax = admin_url('admin-ajax.php');
-		$site = site_url();
+		$site = home_url();
 		$includes_url = includes_url();
 		$current_theme_url = get_stylesheet_directory_uri();
 

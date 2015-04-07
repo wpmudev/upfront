@@ -44,8 +44,8 @@ abstract class Upfront_VirtualPage extends Upfront_Server {
 
 	public static function redirect ($request) {
 		$url = get_option('permalink_structure')
-			? site_url($request)
-			: site_url() . '?name=' . $request
+			? home_url($request)
+			: home_url() . '?name=' . $request
 		;
 		wp_safe_redirect($url);
 		die;

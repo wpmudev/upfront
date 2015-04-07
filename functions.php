@@ -117,7 +117,7 @@ class Upfront {
 			$wp_admin_bar->add_menu( array(
 				'id' => 'upfront-create-theme',
 				'title' => __('Create New Theme', 'upfront'),
-				'href' => site_url('/create_new/theme'),
+				'href' => home_url('/create_new/theme'),
 				'meta' => array( 'class' => 'upfront-create_theme' )
 			) );
 		}
