@@ -182,7 +182,10 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 
 		if ('custom' === type) this.populate_custom_items();
 		else if ('taxonomy' === type) this.populate_tax_items();
-		else this.populate_shared_tax_generic_items();
+		else {
+			this.populate_shared_tax_generic_items();
+			this.populate_pagination_items();
+		}
 	},
 
 	populate_custom_items: function () {
@@ -212,6 +215,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 		this.fields = _([]);
 
 		if ("list" === display_type) {
+			this.populate_pagination_items();
 			this.fields.push(new Upfront.Views.Editor.Field.Number({
 				model: this.model,
 				label: l10n.offset,
@@ -240,6 +244,51 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 		}));
 		this.populate_shared_tax_generic_items();
 		this.once("rendered", this.update_terms, this);
+		this.once("rendered", function () {
+			this.toggle_offset_based_on_pagination_value(this.model.get_property_value_by_name("pagination"));
+		}, this);
+	},
+
+	populate_pagination_items: function () {
+		var display_type = this.model.get_property_value_by_name("display_type"),
+			me = this
+		;
+		if ("list" === display_type) {
+			this.fields.push(new Upfront.Views.Editor.Field.Radios({
+				model: this.model,
+				label: l10n.pagination,
+				property: "pagination",
+				layout: "horizontal-inline",
+				values: [
+					{label:l10n.none, value:""},
+					{label:l10n.numeric, value:"numeric"},
+					{label:l10n.prev_next, value:"arrows"}
+				],
+				change: function (value) {
+					me.toggle_offset_based_on_pagination_value(value);
+				}
+			}));
+		}
+	},
+
+	toggle_offset_based_on_pagination_value: function (pagination) {
+		if ("taxonomy" !== this.model.get_property_value_by_name("list_type")) return false;
+		if ("numeric" === pagination || "arrows" === pagination) {
+			this.model.set_property("offset", 1, true); // This is always 1 if we're paginating
+			this.hide_offset_field();
+		} else {
+			this.show_offset_field();
+		}
+	},
+
+	show_offset_field: function () {
+		var $field = this.$el.find('input[name="offset"]').closest(".upfront-field-wrap-number");
+		$field.show();
+	},
+
+	hide_offset_field: function () {
+		var $field = this.$el.find('input[name="offset"]').closest(".upfront-field-wrap-number");
+		$field.hide();
 	},
 
 	populate_shared_tax_generic_items: function () {
@@ -263,19 +312,6 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 				{label:l10n.full_post, value:"content"}
 			]
 		}));
-		if ("list" === display_type) {
-			this.fields.push(new Upfront.Views.Editor.Field.Radios({
-				model: this.model,
-				label: l10n.pagination,
-				property: "pagination",
-				layout: "horizontal-inline",
-				values: [
-					{label:l10n.none, value:""},
-					{label:l10n.numeric, value:"numeric"},
-					{label:l10n.prev_next, value:"arrows"}
-				]
-			}));
-		}
 	},
 
 	update_terms: function () {

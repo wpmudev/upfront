@@ -37,7 +37,7 @@ class Upfront_Posts_PostsData {
 			'term' => '', // term
 			'content' => 'excerpt', // excerpt or content
 			'limit' => 5, // Only applicable if 'display_type' <> 'single'
-			'pagination' => 'numeric', // '' (none), 'numeric', 'arrows' - only applicable if 'display_type' <> 'single'
+			'pagination' => '', // '' (none), 'numeric', 'arrows' - only applicable if 'display_type' <> 'single'
 
 			// list_type===custom settings
 			'posts_list' => '', // JSON map of id/permalink pairs
