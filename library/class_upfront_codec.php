@@ -6,9 +6,11 @@
 abstract class Upfront_MacroCodec {
 	const OPEN = '{{';
 	const CLOSE = '}}';
+	const FALLBACK = '||';
 
 	protected static $_open;
 	protected static $_close;
+	protected static $_fallback;
 
 	/**
 	 * Returns opening macro delimiter, unescaped.
@@ -33,21 +35,59 @@ abstract class Upfront_MacroCodec {
 	}
 
 	/**
-	 * Get full, yet unescaped macro form.
+	 * Returns fallback macro delimiter, unescaped.
+	 * @return string Closing macro delimiter
+	 */
+	public static function fallback () {
+		return !empty(self::$_fallback)
+			? self::$_fallback
+			: self::FALLBACK
+		;
+	}
+
+	/**
+	 * Get full, yet unescaped macro form in its simplest incarnation (just the tag)
 	 * @param  string $part String part of the macro (macro name)
 	 * @return string Final macro
 	 */
-	public static function get_macro ($part) {
+	public static function get_clean_macro ($part) {
 		return self::open() . $part . self::close();
 	}
 
 	/**
-	 * Returns compiled, preg_escape'd macro regex
+	 * Get full, yet unescaped macro form, for whatever reason
+	 * @param  string $part String part of the macro (macro name)
+	 * @return string Final macro
+	 */
+	public static function get_macro ($part) {
+		$fallback = self::fallback() . '(.*)';
+		return self::open() . $part . $fallback . self::close();
+	}
+
+	/**
+	 * Returns compiled, preg_escape'd macro regex in its simplest incarnation (just the tag)
+	 * @param  string $part String part of the macro (macro name)
+	 * @return string Final macro regex
+	 */
+	public static function get_clean_regex ($part) {
+		return '/' . preg_quote(self::get_clean_macro($part), '/') . '/';
+	}
+
+	/**
+	 * Returns compiled, preg_escape'd macro regex in its full incarnation (fallback included)
 	 * @param  string $part String part of the macro (macro name)
 	 * @return string Final macro regex
 	 */
 	public static function get_regex ($part) {
-		return '/' . preg_quote(self::get_macro($part), '/') . '/';
+		return '/' . 
+			preg_quote(self::open(), '/') .
+				preg_quote($part, '/') .
+				'(' .
+					preg_quote(self::fallback(), '/') .
+					'(.*?)' .
+				')?' .
+			preg_quote(self::close(), '/') .
+		'/';
 	}
 
 	/**
@@ -78,6 +118,12 @@ abstract class Upfront_MacroCodec {
 		preg_match_all(self::get_catchall_regex(), $content, $matches);
 		if (!empty($matches[1])) $tags = $matches[1];
 
+		if (!empty($tags)) foreach ($tags as $idx => $tag) {
+			$clean = reset(explode(self::fallback(), $tag));
+			if ($clean === $tag) continue;
+			$tags[$idx] = $clean;
+		}
+
 		return $tags;
 	}
 
@@ -93,6 +139,9 @@ abstract class Upfront_MacroCodec {
 		if (empty($tag)) return $content;
 
 		$macro = self::get_regex($tag);
+		if (empty($value)) {
+			$value = '$2'; // Use fallback in matching
+		}
 		return preg_replace($macro, $value, $content);
 	}
 
@@ -147,12 +196,12 @@ class Upfront_MacroCodec_Postmeta extends Upfront_MacroCodec {
 			$key = $item['meta_key'];
 			$value = self::get_extracted_value($item, $post_id);
 
-			$content = preg_replace(self::get_regex($key), $value, $content);
+			$content = self::expand($content, $key, $value);
 		}
 
 		// Re-iterate through tags and null out empty replacement macros.
 		foreach ($tags as $tag) {
-			$content = preg_replace(self::get_regex($tag), '', $content);
+			$content = self::expand($content, $tag, '');
 		}
 
 		return $content;
