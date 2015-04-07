@@ -226,7 +226,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 		}
 		this.fields.push(new Upfront.Views.Editor.Field.Select({
 			model: this.model,
-			label: 'Post type',
+			label: l10n.post_type,
 			property: "post_type",
 			values: types
 		}));

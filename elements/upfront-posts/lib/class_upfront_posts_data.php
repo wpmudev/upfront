@@ -155,6 +155,7 @@ class Upfront_Posts_PostsData {
 			'post_list_custom' => __('Custom Posts(s)', 'upfront'),
 			'post_list_tax' => __('Post(s) by Taxonomy', 'upfront'),
 			'post_list_generic' => __('Generic', 'upfront'),
+			'post_type' => __('Post type', 'upfront'),
 			'offset' => __('No.', 'upfront'),
 			'result_length' => __('Result Length', 'upfront'),
 			'excerpt' => __('Excerpt', 'upfront'),
