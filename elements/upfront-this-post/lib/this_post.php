@@ -138,7 +138,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 				$metas = Upfront_PostmetaModel::get_all_post_meta_fields(get_the_ID());
 				foreach ($metas as $meta) {
 					if (empty($meta['meta_key'])) continue;
-					$rpl = Upfront_MacroCodec_Postmeta::get_macro($meta['meta_key']);
+					$rpl = Upfront_MacroCodec_Postmeta::get_clean_macro($meta['meta_key']);
 					$value = Upfront_MacroCodec_Postmeta::get_extracted_value($meta, get_the_ID());
 					$replacements[$rpl] = $value;
 				}
