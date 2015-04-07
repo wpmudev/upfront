@@ -4839,6 +4839,7 @@ var Field_ToggleableText = Field_Text.extend({
 			var $content = this.$el.find('.upfront-settings-item-content');
 			this.fields.each(function(field){
 				field.render();
+				field.delegateEvents();
 				$content.append(field.el);
 			});
 
