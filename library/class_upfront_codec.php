@@ -295,3 +295,38 @@ class Upfront_MacroCodec_Postmeta extends Upfront_ScopedExpansionMacroCodec {
 		return $value;
 	}
 }
+
+
+/**
+ * General WP info macros codec
+ * Expands to general info stuff.
+ */
+class Upfront_MacroCodec_Wordpress extends Upfront_SimpleExpansionMacroCodec {
+
+	public function __construct () {
+		$this->_open = self::OPEN . 'wp:';
+	}
+
+	public function expand_all ($content) {
+		$macros = $this->get_macros();
+		if (empty($macros)) return $content;
+
+		foreach ($macros as $tag => $value) {
+			$content = $this->expand($content, $tag, $value);
+		}
+
+		return $content;
+	}
+
+	/**
+	 * Get known WP macros.
+	 *
+	 * @return array Known macros as tag=>value hash
+	 */
+	public function get_macros () {
+		return array(
+			'site_name' => get_bloginfo('name', 'display'),
+			'site_description' => get_bloginfo('description', 'display'),
+		);
+	}
+}

@@ -60,7 +60,7 @@ class Upfront_PlainTxtView extends Upfront_Object {
 			(defined('UPFRONT_DISABLE_LAYOUT_TEXT_SHORTCODES') && UPFRONT_DISABLE_LAYOUT_TEXT_SHORTCODES ? false : true)
 		);
 		if ($do_processing) $content = do_shortcode($content);
-		return $content;
+		return Upfront_Codec::get('wordpress')->expand_all($content);
 	}
 
 	public static function add_l10n_strings ($strings) {
