@@ -1,6 +1,41 @@
 <?php
 
 /**
+ * Codec factory
+ * Used for dispatching proper codec implementation.
+ */
+abstract class Upfront_Codec {
+
+	const FALLBACK = 'general';
+
+	private static $_codecs = array();
+
+	/**
+	 * Factory method.
+	 * Looks for the requested implementation and,
+	 * if needed, instantiates it before returning the object.
+	 *
+	 * @param string $instance Codec instance to reach
+	 *
+	 * @return object Corresponding implementation
+	 */
+	public static function get ($instance=false) {
+		$cname = self::_resolve_class_name($instance);
+		if (!empty(self::$_codecs[$cname])) return self::$_codecs[$cname];
+		
+		$obj = new $cname;
+		self::$_codecs[$cname] = $obj;
+		return $obj;
+	}
+
+	private static function _resolve_class_name ($name) {
+		$cname = 'Upfront_MacroCodec_' . ucfirst(strtolower($name));
+		if (!class_exists($cname)) return self::_resolve_class_name($this->FALLBACK);
+		return $cname;
+	}
+}
+
+/**
  * Standardized macro expansion hub.
  */
 abstract class Upfront_MacroCodec {
@@ -8,17 +43,17 @@ abstract class Upfront_MacroCodec {
 	const CLOSE = '}}';
 	const FALLBACK = '||';
 
-	protected static $_open;
-	protected static $_close;
-	protected static $_fallback;
+	protected $_open;
+	protected $_close;
+	protected $_fallback;
 
 	/**
 	 * Returns opening macro delimiter, unescaped.
 	 * @return string Opening macro delimiter
 	 */
-	public static function open () {
-		return !empty(self::$_open)
-			? self::$_open
+	public function open () {
+		return !empty($this->_open)
+			? $this->_open
 			: self::OPEN
 		;
 	}
@@ -27,9 +62,9 @@ abstract class Upfront_MacroCodec {
 	 * Returns closing macro delimiter, unescaped.
 	 * @return string Closing macro delimiter
 	 */
-	public static function close () {
-		return !empty(self::$_close)
-			? self::$_close
+	public function close () {
+		return !empty($this->_close)
+			? $this->_close
 			: self::CLOSE
 		;
 	}
@@ -38,9 +73,9 @@ abstract class Upfront_MacroCodec {
 	 * Returns fallback macro delimiter, unescaped.
 	 * @return string Closing macro delimiter
 	 */
-	public static function fallback () {
-		return !empty(self::$_fallback)
-			? self::$_fallback
+	public function fallback () {
+		return !empty($this->_fallback)
+			? $this->_fallback
 			: self::FALLBACK
 		;
 	}
@@ -50,8 +85,8 @@ abstract class Upfront_MacroCodec {
 	 * @param  string $part String part of the macro (macro name)
 	 * @return string Final macro
 	 */
-	public static function get_clean_macro ($part) {
-		return self::open() . $part . self::close();
+	public function get_clean_macro ($part) {
+		return $this->open() . $part . $this->close();
 	}
 
 	/**
@@ -59,9 +94,9 @@ abstract class Upfront_MacroCodec {
 	 * @param  string $part String part of the macro (macro name)
 	 * @return string Final macro
 	 */
-	public static function get_macro ($part) {
-		$fallback = self::fallback() . '(.*)';
-		return self::open() . $part . $fallback . self::close();
+	public function get_macro ($part) {
+		$fallback = $this->fallback() . '(.*)';
+		return $this->open() . $part . $fallback . $this->close();
 	}
 
 	/**
@@ -69,8 +104,8 @@ abstract class Upfront_MacroCodec {
 	 * @param  string $part String part of the macro (macro name)
 	 * @return string Final macro regex
 	 */
-	public static function get_clean_regex ($part) {
-		return '/' . preg_quote(self::get_clean_macro($part), '/') . '/';
+	public function get_clean_regex ($part) {
+		return '/' . preg_quote($this->get_clean_macro($part), '/') . '/';
 	}
 
 	/**
@@ -78,15 +113,15 @@ abstract class Upfront_MacroCodec {
 	 * @param  string $part String part of the macro (macro name)
 	 * @return string Final macro regex
 	 */
-	public static function get_regex ($part) {
+	public function get_regex ($part) {
 		return '/' . 
-			preg_quote(self::open(), '/') .
+			preg_quote($this->open(), '/') .
 				preg_quote($part, '/') .
 				'(' .
-					preg_quote(self::fallback(), '/') .
+					preg_quote($this->fallback(), '/') .
 					'(.*?)' .
 				')?' .
-			preg_quote(self::close(), '/') .
+			preg_quote($this->close(), '/') .
 		'/';
 	}
 
@@ -95,14 +130,14 @@ abstract class Upfront_MacroCodec {
 	 * @param  bool $capturing Optional argument for including macro name parens in regex, defaults to true
 	 * @return string Final regex
 	 */
-	public static function get_catchall_regex ($capturing=true) {
+	public function get_catchall_regex ($capturing=true) {
 		$rx = '.*';
 		if (!empty($capturing)) $rx = "({$rx})";
 
 		return '/' .
-			preg_quote(self::open(), '/') .
+			preg_quote($this->open(), '/') .
 			$rx .
-			preg_quote(self::close(), '/') .
+			preg_quote($this->close(), '/') .
 		'/';
 	}
 
@@ -111,15 +146,15 @@ abstract class Upfront_MacroCodec {
 	 * @param  string $content String to check
 	 * @return array Collected macro tags
 	 */
-	public static function get_tags ($content) {
+	public function get_tags ($content) {
 		$tags = $matches = array();
 		if (empty($content)) return $tags;
 
-		preg_match_all(self::get_catchall_regex(), $content, $matches);
+		preg_match_all($this->get_catchall_regex(), $content, $matches);
 		if (!empty($matches[1])) $tags = $matches[1];
 
 		if (!empty($tags)) foreach ($tags as $idx => $tag) {
-			$clean = reset(explode(self::fallback(), $tag));
+			$clean = reset(explode($this->fallback(), $tag));
 			if ($clean === $tag) continue;
 			$tags[$idx] = $clean;
 		}
@@ -134,11 +169,11 @@ abstract class Upfront_MacroCodec {
 	 * @param  string $value Value to replace macro with
 	 * @return string Compiled content
 	 */
-	public static function expand ($content, $tag, $value) {
+	public function expand ($content, $tag, $value) {
 		if (empty($content)) return $content;
 		if (empty($tag)) return $content;
 
-		$macro = self::get_regex($tag);
+		$macro = $this->get_regex($tag);
 		if (empty($value)) {
 			$value = '$2'; // Use fallback in replacement if value is empty
 		}
@@ -151,18 +186,55 @@ abstract class Upfront_MacroCodec {
 	 * @param  string $clear Optional clearing replacement string, defaults to empty string
 	 * @return string Cleared content
 	 */
-	public static function clear_all ($content, $clear='') {
+	public function clear_all ($content, $clear='') {
 		if (empty($content)) return $content;
 
-		$rx = self::get_catchall_regex(false); // Force non-capturing version
+		$rx = $this->get_catchall_regex(false); // Force non-capturing version
 		return preg_replace($rx, $clear, $content);
 	}
 }
 
+
+
+abstract class Upfront_ScopedExpansionMacroCodec extends Upfront_MacroCodec {
+	/**
+	 * Interface for one-run macro expansion.
+	 *
+	 * @param string $content Content to inspect and expand into
+	 * @param mixed $context Implementation-specific context (optional)
+	 *
+	 * @return string Expanded content
+	 */
+	abstract public function expand_all ($content, $context);
+}
+
+
+
+abstract class Upfront_SimpleExpansionMacroCodec extends Upfront_MacroCodec {
+	/**
+	 * Interface for one-run macro expansion.
+	 *
+	 * @param string $content Content to inspect and expand into
+	 *
+	 * @return string Expanded content
+	 */
+	abstract public function expand_all ($content);
+}
+
+
+
+/**
+ * General macro implementation.
+ * Used for known tags simple expansion.
+ */
+class Upfront_MacroCodec_General extends Upfront_MacroCodec {}
+
+
+
 /**
  * Postmeta codec implementation.
  */
-class Upfront_MacroCodec_Postmeta extends Upfront_MacroCodec {
+class Upfront_MacroCodec_Postmeta extends Upfront_ScopedExpansionMacroCodec {
 
 	/**
 	 * Expand known postmeta macros in the content
@@ -173,11 +245,11 @@ class Upfront_MacroCodec_Postmeta extends Upfront_MacroCodec {
 	 * @param  mixed $post Post to fetch metas for
 	 * @return string Expanded content
 	 */
-	public static function expand_all ($content, $post) {
+	public function expand_all ($content, $post) {
 		if (empty($content)) return $content;
 		if (empty($post)) return $content;
 
-		$tags = self::get_tags($content);
+		$tags = $this->get_tags($content);
 		if (empty($tags)) return $content;
 
 		$post_id = false;
@@ -194,14 +266,14 @@ class Upfront_MacroCodec_Postmeta extends Upfront_MacroCodec {
 			if (empty($item['meta_key'])) continue;
 
 			$key = $item['meta_key'];
-			$value = self::get_extracted_value($item, $post_id);
+			$value = $this->get_extracted_value($item, $post_id);
 
-			$content = self::expand($content, $key, $value);
+			$content = $this->expand($content, $key, $value);
 		}
 
 		// Re-iterate through tags and null out empty replacement macros.
 		foreach ($tags as $tag) {
-			$content = self::expand($content, $tag, '');
+			$content = $this->expand($content, $tag, '');
 		}
 
 		return $content;
@@ -213,7 +285,7 @@ class Upfront_MacroCodec_Postmeta extends Upfront_MacroCodec {
 	 * @param  int $post_id Post ID, used for filtering
 	 * @return string Extracted and filtered value
 	 */
-	public static function get_extracted_value ($item, $post_id) {
+	public function get_extracted_value ($item, $post_id) {
 		$key = $item['meta_key'];
 		$value = isset($item['meta_value']) ? $item['meta_value'] : '';
 		$value = apply_filters('upfront-postmeta-value',
