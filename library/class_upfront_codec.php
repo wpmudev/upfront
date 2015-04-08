@@ -28,9 +28,17 @@ abstract class Upfront_Codec {
 		return $obj;
 	}
 
+	/**
+	 * Resolve the requested instance name to a known codec class.
+	 * Falls back to general (Upfront_MacroCodec_General) if the class is unknown.
+	 *
+	 * @param string $name Requested instance suffix
+	 *
+	 * @return string Class name ready for instantiation.
+	 */
 	private static function _resolve_class_name ($name) {
 		$cname = 'Upfront_MacroCodec_' . ucfirst(strtolower($name));
-		if (!class_exists($cname)) return self::_resolve_class_name($this->FALLBACK);
+		if (!class_exists($cname)) return self::_resolve_class_name(self::FALLBACK);
 		return $cname;
 	}
 }
@@ -303,6 +311,10 @@ class Upfront_MacroCodec_Postmeta extends Upfront_ScopedExpansionMacroCodec {
  */
 class Upfront_MacroCodec_Wordpress extends Upfront_SimpleExpansionMacroCodec {
 
+	/**
+	 * Set up specific macro opening tags.
+	 * Example: `{{wp:site_name}}`, `{{wp:site_description}}`
+	 */
 	public function __construct () {
 		$this->_open = self::OPEN . 'wp:';
 	}
