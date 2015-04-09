@@ -637,6 +637,12 @@ Ueditor.prototype = {
 
 			});
 		}
+
+        // Add warning flags to all the lightbox links if the lightbox is missing
+        this.$el.find('a').each(function(){
+            if($(this).attr('href').indexOf('#ltb-') > -1 && !Upfront.Util.checkLightbox($(this).attr('href')))
+                $(this).addClass('missing-lightbox-warning');
+        });
 	},
 	displayLinkFlags: function() {
 		var me = this;

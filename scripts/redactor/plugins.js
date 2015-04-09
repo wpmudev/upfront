@@ -817,6 +817,7 @@ RedactorPlugins.upfrontLink = function() {
 					this.redactor.link.unlink();
 				}
 				this.redactor.$element.focus();
+                this.updateMissingLightboxFlag();
 			},
 			link: function (url, type, target) {
 				this.redactor.selection.restore();
@@ -830,8 +831,9 @@ RedactorPlugins.upfrontLink = function() {
 					}
 					this.redactor.$element.focus();
 				}
-
+                this.updateMissingLightboxFlag();
 				this.redactor.code.sync();
+
 			},
 			bindEvents: function () {
 			},
@@ -847,7 +849,17 @@ RedactorPlugins.upfrontLink = function() {
 				}
 
 				return 'external';
-			}
+			},
+            updateMissingLightboxFlag: function() {
+                var link = this.redactor.utils.isCurrentOrParent('A');
+
+                if(link && $(link).attr('href').indexOf('#ltb-') > -1 ) {
+                    if(!Upfront.Util.checkLightbox($(link).attr('href')))
+                        $(link).addClass('missing-lightbox-warning');
+                    else
+                        $(link).removeClass('missing-lightbox-warning');
+                }
+            }
 		})
 	}
 };

@@ -695,6 +695,15 @@ define(function() {
 			} else {
 				window.open(url);
 			}
+		},
+		checkLightbox: function(url) {
+			regions = Upfront.Application.layout.get('regions');
+				lightbox = regions ? regions.get_by_name(url.substring(1)) : false;
+				if (lightbox) {
+					return true;
+				}
+				else
+					return false;
 		}
 	};
 

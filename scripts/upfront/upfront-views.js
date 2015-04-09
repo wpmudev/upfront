@@ -4047,7 +4047,7 @@ define([
 					region_view = this.render_region(model, sub);
 				}
 				this.apply_adapt_region_to_breakpoints();
-				console.log(model)
+
 				Upfront.Events.trigger("entity:region:added", region_view, region_view.model);
 			},
 			on_remove: function (model) {

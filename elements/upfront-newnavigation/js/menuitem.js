@@ -157,6 +157,10 @@ return (function ($) {
 			if(me.newitem) content = content + ' new_menu_item menu_item_placeholder';
 
 			content = content+'" >'+this.model['menu-item-title']+'</a><i class="delete_menu_item">x</i><span class="open-item-controls"></span>';
+			
+			if(this.model['menu-item-url'].indexOf('#ltb-') > -1 && !Upfront.Util.checkLightbox(this.model['menu-item-url']))
+					content = content + '<span class="missing-lightbox-warning"></span>';
+
 			$(this.el).html(content);
 			this.createInlineControlPanel();
 

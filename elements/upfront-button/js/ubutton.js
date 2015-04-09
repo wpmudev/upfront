@@ -199,6 +199,9 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 
 		rendered = _.template(template, data)+'<span class="open-item-controls"></span>';
 
+		if(this.property('href').indexOf('#ltb-') > -1 && !Upfront.Util.checkLightbox(this.property('href')))
+			rendered = rendered + '<span class="missing-lightbox-warning"></span>';
+
 		return rendered;// + ( !this.is_edited() || $.trim(content) == '' ? '<div class="upfront-quick-swap"><p>' + l10n.dbl_click + '</p></div>' : '');
 
 	},
