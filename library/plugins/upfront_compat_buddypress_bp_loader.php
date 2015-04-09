@@ -31,6 +31,9 @@ class Upfront_Compat_Buddypress_Bp_loader extends Upfront_Server {
 		add_filter('upfront-data-post_id', array($this, 'augment_singular_entity_id'));
 		add_action('wp_ajax_upfront-wp-model', array($this, 'prepare_for_editor_output'), 9);
 		add_action('wp_ajax_this_post-get_markup', array($this, 'prepare_editor_markup'), 9);
+
+		// ... and this is for stuff that forces multiple content filtering
+		add_filter('upfront-this_post-unknown_post', array($this, 'reset_compat'));
 	}
 
 	/**
@@ -38,7 +41,7 @@ class Upfront_Compat_Buddypress_Bp_loader extends Upfront_Server {
 	 */
 	public function cache_query_locally () {
 		global $wp_query;
-		$this->_cached_query = $wp_query;
+		$this->_cached_query = clone($wp_query);
 	}
 
 	/**
@@ -46,7 +49,7 @@ class Upfront_Compat_Buddypress_Bp_loader extends Upfront_Server {
 	 */
 	public function clean_after_bp_because_it_wont () {
 		if (!is_buddypress()) return false;
-
+		
 		wp_reset_query();
 		
 		// The above isn't enough - let's make super-sure we're thoroughly resetting stuffs here.
@@ -176,7 +179,6 @@ class Upfront_Compat_Buddypress_Bp_loader extends Upfront_Server {
 		)));
 	}
 
-
 	public function augment_singular_entity_id ($post_id) {
 		if (!is_buddypress()) return $post_id;
 
@@ -185,6 +187,21 @@ class Upfront_Compat_Buddypress_Bp_loader extends Upfront_Server {
 			? 'bp_compat-' . $layout['specificity']
 			: $post_id
 		;
+	}
+
+	/**
+	 * This is a *filter* callback used to reset the BP theme compat flag.
+	 * We need this just before the render, in case of double-processed content.
+	 * That can happen with things like Yoast SEO active.
+	 *
+	 * @param object $post Post object (insignificant)
+	 *
+	 * @return object Unchanged post object
+	 */
+	public function reset_compat ($post) {
+		if (!is_buddypress()) return false;
+		bp_set_theme_compat_active(true);
+		return $post;
 	}
 }
 Upfront_Compat_Buddypress_Bp_loader::serve();
