@@ -175,7 +175,7 @@ class Upfront_Compat_Buddypress_Bp_loader extends Upfront_Server {
 		if (!preg_match('/^bp_compat-/', $data['post_id'])) return false;
 
 		$this->_out(new Upfront_JsonResponse_Success(array(
-			"filtered" => '<div class="upfront-buddypress_compat upfront-plugin_compat"><p>BuddyPress specific content</p></div>'
+			"filtered" => '<div class="upfront-buddypress_compat upfront-plugin_compat"><p>' . esc_html(__('BuddyPress specific content', 'upfront')) . '</p></div>'
 		)));
 	}
 
