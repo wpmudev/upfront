@@ -199,7 +199,7 @@ class Upfront_Compat_Buddypress_Bp_loader extends Upfront_Server {
 	 * @return object Unchanged post object
 	 */
 	public function reset_compat ($post) {
-		if (!is_buddypress()) return false;
+		if (!is_buddypress()) return $post;
 		bp_set_theme_compat_active(true);
 		return $post;
 	}
