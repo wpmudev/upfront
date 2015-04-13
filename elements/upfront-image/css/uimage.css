@@ -1153,7 +1153,7 @@ div.uimage-controls i.upfront-icon:before {
 .upfront-image-container + .redactor-box,
 .upfront-image-container + .wp-caption {
 	box-sizing: border-box;
-	line-height: initial;
+	line-height: normal;
 }
 
 /* Rules that were in image template */
