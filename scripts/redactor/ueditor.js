@@ -91,7 +91,7 @@ var hackRedactor = function(){
 
 	//Change the position of the air toolbar
 	$.Redactor.prototype.airShow = function (e, keyboard)
-    {    	
+    {
         if( typeof e !== "undefined" && ( $(e.target).parents().is(".uimage-control-panel") || $(e.target).is(".upfront-icon") || $(e.target).is(".upfront-icon-button") || ( !_.isUndefined(e.target.contentEditable) && e.target.contentEditable === "false" ) || $(e.target).closest(".redactor-editor").attr("contentEditable") === "false"  ) ) return;
         //if( $(e.target).parents().is(".uimage-control-panel") || $(e.target).is(".upfront-icon") || $(e.target).is(".upfront-icon-button")) return;
 
@@ -114,7 +114,7 @@ var hackRedactor = function(){
         if (!m1 || !m2) {
             return false;
         }
-        
+
         var bounds = m2.top < m1.top ? {top: m2.top - 55, left: m2.left, right: m1.left, i:2} : {top: m1.top - 55, left: m1.left, right: m2.left, i:1},
             atRight = false,
             $win = $(window),
@@ -228,11 +228,11 @@ var hackRedactor = function(){
                     this.dropdown.build(btnName, $dropdown, btnObject.dropdown);
                 }
 
-                
+
 
                 return $button;
             },
-            
+
             onClick: function(e, btnName, type, callback)
             {
                 this.button.caretOffset = this.caret.getOffset();
@@ -394,7 +394,7 @@ var hackRedactor = function(){
                 this.button.get(key).remove();
             }
         };
-	} 
+	}
 };
 
 var Ueditor = function($el, options) {
@@ -560,7 +560,7 @@ Ueditor.prototype = {
 				}
 
 			}
-			
+
 		});
 
 
@@ -640,7 +640,8 @@ Ueditor.prototype = {
 
         // Add warning flags to all the lightbox links if the lightbox is missing
         this.$el.find('a').each(function(){
-            if($(this).attr('href').indexOf('#ltb-') > -1 && !Upfront.Util.checkLightbox($(this).attr('href')))
+            var href = $(this).attr('href');
+            if(href && href.indexOf('#ltb-') > -1 && !Upfront.Util.checkLightbox(href))
                 $(this).addClass('missing-lightbox-warning');
         });
 	},
@@ -1039,8 +1040,8 @@ var InsertManagerInserts = Backbone.View.extend({
 var InsertManager = Backbone.View.extend({
     tpl: _.template($(tpl).find('#insert-manager-tpl').html()),
 	initialize: function(opts){
-		this.inserts = opts.inserts || {}; 
-        this._inserts = {}; 
+		this.inserts = opts.inserts || {};
+        this._inserts = {};
         this.ueditor = opts.ueditor;
 		this.onRemoveInsert = _.bind(this.removeInsert, this);
 		this.insertsData = opts.insertsData || {};
