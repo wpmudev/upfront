@@ -752,6 +752,11 @@ define(function() {
 							return false;
 						}
 				;
+				
+				$('body').bind( 'keyup', function( event ) {
+					if ( event.keyCode === 27 )
+						me.close();
+				});
 
 				// data.width = width, data.height = height;
 				this.$background
