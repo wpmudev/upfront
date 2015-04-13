@@ -110,23 +110,23 @@ define([], function() {
 
 				if(typeof(breakpoint_data) != 'undefined') {
 					if(breakpoint_data.burger_alignment) {
-						this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[0].$el.find('input').removeAttr("checked");
-						this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[0].$el.find('input[value="'+breakpoint_data.burger_alignment+'"]').attr("checked", 'checked');
+						this.panels._wrapped[0].settings._wrapped[2].fields._wrapped[0].$el.find('input').removeAttr("checked");
+						this.panels._wrapped[0].settings._wrapped[2].fields._wrapped[0].$el.find('input[value="'+breakpoint_data.burger_alignment+'"]').attr("checked", 'checked');
 					}
 
 					if(breakpoint_data.menu_style) {
-						this.panels._wrapped[0].settings._wrapped[2].fields._wrapped[0].$el.find('input').removeAttr("checked");
-						this.panels._wrapped[0].settings._wrapped[2].fields._wrapped[0].$el.find('input[value="'+breakpoint_data.menu_style+'"]').attr("checked", 'checked');
+						this.panels._wrapped[0].settings._wrapped[3].fields._wrapped[0].$el.find('input').removeAttr("checked");
+						this.panels._wrapped[0].settings._wrapped[3].fields._wrapped[0].$el.find('input[value="'+breakpoint_data.menu_style+'"]').attr("checked", 'checked');
 					}
 
 					if(breakpoint_data.menu_alignment) {
-						this.panels._wrapped[0].settings._wrapped[3].fields._wrapped[0].$el.find('input').removeAttr("checked");
-						this.panels._wrapped[0].settings._wrapped[3].fields._wrapped[0].$el.find('input[value="'+breakpoint_data.menu_alignment+'"]').attr("checked", 'checked');
+						this.panels._wrapped[0].settings._wrapped[4].fields._wrapped[0].$el.find('input').removeAttr("checked");
+						this.panels._wrapped[0].settings._wrapped[4].fields._wrapped[0].$el.find('input[value="'+breakpoint_data.menu_alignment+'"]').attr("checked", 'checked');
 					}
 
 					if(breakpoint_data.burger_over) {
-						this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[1].$el.find('input').removeAttr("checked");
-						this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[1].$el.find('input[value="'+breakpoint_data.burger_over+'"]').attr("checked", 'checked');
+						this.panels._wrapped[0].settings._wrapped[2].fields._wrapped[1].$el.find('input').removeAttr("checked");
+						this.panels._wrapped[0].settings._wrapped[2].fields._wrapped[1].$el.find('input[value="'+breakpoint_data.burger_over+'"]').attr("checked", 'checked');
 					}
 				}
 			}
@@ -174,12 +174,12 @@ define([], function() {
 
 			// this is to turn on the display for revealed menu alignment settings in case the option is selected
 			if(this.panels._wrapped[0].settings._wrapped[0].fields._wrapped[1].$el.find('input:checked').length > 0) {
-				this.panels._wrapped[0].settings._wrapped[1].$el.css('display', 'block');
-				this.panels._wrapped[0].settings._wrapped[2].$el.css('display', 'none');
+				this.panels._wrapped[0].settings._wrapped[2].$el.css('display', 'block');
+				this.panels._wrapped[0].settings._wrapped[3].$el.css('display', 'none');
 			}
 			else {
-				this.panels._wrapped[0].settings._wrapped[1].$el.css('display', 'none');
-				this.panels._wrapped[0].settings._wrapped[2].$el.css('display', 'block');
+				this.panels._wrapped[0].settings._wrapped[2].$el.css('display', 'none');
+				this.panels._wrapped[0].settings._wrapped[3].$el.css('display', 'block');
 			}
 		},
 		initialize: function (opts) {
@@ -213,12 +213,35 @@ define([], function() {
 									change: function() {
 										var value = this.get_value();
 										if(value[0] == 'yes') {
-											me.panels._wrapped[0].settings._wrapped[1].$el.css('display', 'block');
-											me.panels._wrapped[0].settings._wrapped[2].$el.css('display', 'none');
+											me.panels._wrapped[0].settings._wrapped[2].$el.css('display', 'block');
+											me.panels._wrapped[0].settings._wrapped[3].$el.css('display', 'none');
 										}
 										else {
-											me.panels._wrapped[0].settings._wrapped[1].$el.css('display', 'none');
-											me.panels._wrapped[0].settings._wrapped[2].$el.css('display', 'block');
+											me.panels._wrapped[0].settings._wrapped[2].$el.css('display', 'none');
+											me.panels._wrapped[0].settings._wrapped[3].$el.css('display', 'block');
+										}
+									}
+								})
+							]
+						}),
+						new Upfront.Views.Editor.Settings.Item({
+							model: this.model,
+							title: l10n.mnu.create,
+							fields: [
+								new Upfront.Views.Editor.Field.Text({
+									model: me.model,
+									label: l10n.new_menu_name,
+									className: "new_menu_name",
+									compact: true
+								}),
+								new Upfront.Views.Editor.Field.Button({
+									model: me.model,
+									label: l10n.create_new,
+									className: "new_menu_button",
+									compact: true,
+									on_click: function() {
+										if(me.$el.find('div.upfront-settings-item-content > div.new_menu_name input').val()!='') {
+											me.for_view.create_new_menu(me.$el.find('div.upfront-settings-item-content > div.new_menu_name input').val());
 										}
 									}
 								})

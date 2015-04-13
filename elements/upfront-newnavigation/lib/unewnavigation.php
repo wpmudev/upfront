@@ -159,6 +159,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 				'label' => __('Menu', 'upfront'),
 				'title' => __('Menu settings', 'upfront'),
 				'load' => __('Load Different Menu', 'upfront'),
+				'create' => __('or Create New', 'upfront'),
 				'use' => __('Use', 'upfront'),
 				'btn' => __('button to open menu', 'upfront'),
 				'appearance' => __('Revealed Menu Appearance', 'upfront'),
