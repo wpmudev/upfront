@@ -104,10 +104,13 @@
 			;
 			$slider.removeClass(data.classname.slider + '-control-' + data.control);
 			$slider.removeClass(data.classname.slider + '-control-' + data.show_control);
-			if ( typeof slider_auto != 'string' )
+
+			if ( typeof slider_auto != 'string' ) {
 				slider_auto = data.auto;
-			else
-				slider_auto = slider_auto == '0' ? false : true;
+      } else {
+				slider_auto == '0' ? false : true;
+      }
+
 			data.auto = slider_auto;
 			data.interval = $slider.attr('data-slider-interval') || data.interval;
 			data.effect = $slider.attr('data-slider-effect') || data.effect;
@@ -140,13 +143,14 @@
 						text = $('<div class="uslide-caption" />');
 						slide.append(text);
 					}
-					if(captionSelector)
+					if(captionSelector) {
 						text.html($(captionSelector).html());
-					else
+          } else {
 						text.html(caption);
-				}
-				else if(text.length)
+          }
+				} else if(text.length) {
 					text.remove();
+        }
 			});
 
 			this.items.addClass(data.classname.item);
@@ -154,7 +158,7 @@
 				this.calc_height();
 				$slider.find('img').one('load', $.proxy(this.calc_height, this));
 			}
-			else if(data.adjust_slide_size){ // Adjust slides to available space
+			else if(data.adjust_slide_size) { // Adjust slides to available space
 				this.adjust_slide_size();
 			}
 		},
@@ -243,13 +247,13 @@
 
 		prev: function(){
 			var data = this.opts,
-				fx = ( 
-					data.effect == 'slide-left' ? 'slide-right' : ( 
-						data.effect == 'slide-right' ? 'slide-left' : ( 
-							data.effect == 'slide-down' ? 'slide-up' : ( 
+				fx = (
+					data.effect == 'slide-left' ? 'slide-right' : (
+						data.effect == 'slide-right' ? 'slide-left' : (
+							data.effect == 'slide-down' ? 'slide-up' : (
 								data.effect == 'slide-up' ? 'slide-down' : 'crossfade'
-							) 
-						) 
+							)
+						)
 					)
 				)
 			;
