@@ -2607,10 +2607,15 @@ define([
 			this.listenTo(this.collection, 'change:active', this.render);
 		},
 		render: function() {
-			var breakpoint_model = breakpoints_storage.get_breakpoints().get_active(),
-				typography_section = new SidebarPanel_Responsive_Settings_Section_Typography({
-					"model": breakpoint_model.get('default') ? this.model : breakpoint_model // If default, use layout model instead
-				});
+			var breakpoint_model = breakpoints_storage.get_breakpoints().get_active();
+				
+			if(breakpoint_model.get('default'))
+				this.model.attributes.id = 'default';
+
+			var typography_section = new SidebarPanel_Responsive_Settings_Section_Typography({
+				"model": breakpoint_model.get('default') ? this.model : breakpoint_model // If default, use layout model instead
+			});
+
 			typography_section.render();
 
 			this.$el.html(this.template);
@@ -7185,7 +7190,8 @@ var GeneralCSSEditor = Backbone.View.extend({
 
 		this.$el.html(this.tpl({
 			selectors: this.selectors,
-			elementType: false
+			elementType: false,
+			show_style_name: false
 		}));
 
 		this.resizeHandler('.');
@@ -7228,7 +7234,7 @@ var GeneralCSSEditor = Backbone.View.extend({
 		});
 
 		var scope = new RegExp('\.' + this.options.page_class + '\s*', 'g'),
-			styles = this.model.get('styles').replace(scope, '')
+			styles = this.model.get('styles') ? this.model.get('styles').replace(scope, '') : ''
 		;
 		editor.setValue($.trim(styles), -1);
 
