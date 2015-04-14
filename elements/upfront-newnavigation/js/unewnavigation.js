@@ -241,7 +241,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			if ($(this).hasClass('redactor-toolbar') || $(this).hasClass('upfront-field-select-options')) {
 				return;
 			}
-			if($(this).hasClass('ui-sortable')) $(this).sortable('enable');
+			if(this.$el.find('li.menu-item.controls-visible').length < 1 )
+				if($(this).hasClass('ui-sortable')) $(this).sortable('enable');
 		});
 	},
 	onDeactivate: function() {
