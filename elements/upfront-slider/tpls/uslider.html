@@ -1,4 +1,17 @@
-<div class=" uslider uslider-<?php echo $controlsWhen ?> uslider-<?php echo $style ?> uslider-<?php echo $transition ?> <?php echo $captionUseBackground == '1' ? 'uslider-caption-background' : '' ?>" id="uslider-<?php echo $element_id ?>">
+<div class=" uslider uslider-<?php echo $controlsWhen ?> uslider-<?php echo $style ?> uslider-<?php echo $transition ?> <?php echo $captionUseBackground == '1' ? 'uslider-caption-background' : '' ?>"
+  id="uslider-<?php echo $element_id ?>"
+  data-item=".uslide"
+  data-auto="<?php echo $rotate ?>"
+  data-auto_height="<?php echo $production ?>"
+  data-adjust_slide_size="<?php echo $production ?>"
+  data-effect="<?php echo $transition ?>"
+  data-interval="<?php echo $rotateTime * 1000 ?>"
+  data-show_control="<?php echo $controlsWhen ?>"
+  data-control_num="<?php echo $dots /* && $production */ ? 1 : 0 ?>"
+  data-control_next_prev="<?php echo $arrows /* && $production */ ? 1 : 0 ?>"
+  data-starting_slide="<?php echo $startingSlide ?>"
+  data-caption_height="<?php echo $primaryStyle == 'below' ? 1 : 0 ?>"
+>
 	<?php if($slidesLength){ ?>
 	<div class="uslides">
 		<?php for($i=0; $i<$slidesLength; $i++) { ?>
@@ -83,33 +96,3 @@
 		background-color:<?php echo $captionUseBackground == '1' ? $captionBackground : 'transparent' ?>;
 	}
 </style>
-
-<script>
-jQuery(function($){
-	var slider = $('#uslider-<?php echo $element_id ?>'),
-		options = {
-			item: '.uslide',
-			auto: <?php echo $rotate ?>,
-			auto_height: <?php echo $production ?>,
-			adjust_slide_size: <?php echo $production ?>,
-			effect: '<?php echo $transition ?>',
-			interval: <?php echo $rotateTime * 1000 ?>,
-			show_control: '<?php echo $controlsWhen ?>',
-			control_num: <?php echo $dots /* && $production */ ? 1 : 0 ?>,
-			control_next_prev: <?php echo $arrows /* && $production */ ? 1 : 0 ?>,
-			starting_slide: <?php echo $startingSlide ?>,
-			caption_height: <?php echo $primaryStyle == 'below' ? 1 : 0 ?>
-		}
-	;
-	slider.find('.uslides').upfront_default_slider(options);
-
-	slider.find('.uslide-above').each(function(){
-		var slide = $(this);
-		slide.find('.uslide-caption').remove().prependTo(slide);
-	});
-	slider.find('.uslide-left').each(function(){
-		var slide = $(this);
-		slide.find('.uslide-caption').remove().prependTo(slide);
-	});
-});
-</script>
