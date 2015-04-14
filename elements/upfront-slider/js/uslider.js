@@ -86,7 +86,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		this.imageProps = {};
 		this.cropHeight =  false;
 		this.cropTimer =  false;
-		this.cropTimeAfterResize =  10000;
+		this.cropTimeAfterResize = 500;
 
 		//Current Slide index
 		this.setCurrentSlide(0);
@@ -122,12 +122,13 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		props.textWidth =  props.primaryStyle == 'side' ? Math.round((props.rightWidth - props.rightImageWidth) / props.rightWidth * 100) + '%' : '100%';
 
 		props.imageHeight = '100%';
-		if(props.slides.length){
+		if (props.slides.length) {
 			var imageProps = me.imageProps[props.slides[0].id];
-			if(imageProps)
-				props.imageHeight = imageProps.size.height;
-			else
-				props.imageHeight = props.slides[0].cropSize.height
+			if (imageProps) {
+				props.imageHeight = imageProps.cropSize.height;
+      } else {
+				props.imageHeight = props.slides[0].cropSize.height;
+      }
 		}
 
 		props.production = false;
@@ -176,6 +177,23 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	on_render: function() {
 		var me = this;
 
+    setTimeout( function() {
+      var slider = me.$el.find('[id^="uslider-"]'),
+        options = slider.find('.uslider').data();
+
+      slider.find('.uslides').upfront_default_slider(options);
+
+      slider.find('.uslide-above').each(function(){
+        var slide = $(this);
+        slide.find('.uslide-caption').remove().prependTo(slide);
+      });
+      slider.find('.uslide-left').each(function(){
+        var slide = $(this);
+        slide.find('.uslide-caption').remove().prependTo(slide);
+      });
+      me.prepareSlider();
+    }, 100);
+
 		if(!me.parent_module_view)
 			return;
 
@@ -192,11 +210,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		if(!slideCollection.length)
 			return;
 
-		if(this.$el.parent().length){
-			me.prepareSlider();
-//			me.hideSliderNavigation();
-		}
-		else{
+		if(!this.$el.parent().length) {
 			setTimeout(function(){
 				me.on_render();
 			}, 100);
@@ -248,14 +262,14 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 
 		//Enable text editors
-		if(!text.data('ueditor'))
+		if (!text.data('ueditor')) {
 			text.ueditor({
 					autostart: false,
 					upfrontMedia: false,
 					upfrontImages: false,
 					placeholder: 'Slide description'
 				})
-				.on('start', function(){
+				.on('start', function() {
 					var id = $(this).closest('.uslide').attr('rel'),
 						slide = slideCollection.get(id)
 					;
@@ -276,8 +290,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 						me.render();
 					});
 				});
-				
-			;
+    }
 
 		if(me.property('primaryStyle') == 'side'){
 			me.setImageResizable();
@@ -373,7 +386,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			elementCols, colWidth,
 			text = current.find('.uslide-caption'),
 			id = current.attr('rel'),
-			slide = slideCollection.get(id),
+			slide = slideCollection.get(id) || slideCollection.at(this.getCurrentSlide()),
 			height = false,
 			style = slide.get('style')
 		;
@@ -458,16 +471,15 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			clearTimeout(me.cropTimer);
 			me.cropTimer = false;
 		}
-		me.cropTimer = setTimeout(function(){
+		me.cropTimer = setTimeout(function() {
 			var slide = slideCollection.at(me.getCurrentSlide()),
-				editor = me.$('.uslide[rel=' + slide.id + ']').find('.uslide-editable-text')
-			;
-			if(editor.length && editor.data('redactor')){
+				editor = me.$('.uslide[rel=' + slide.id + ']').find('.uslide-editable-text');
+
+			if (editor.length && editor.data('redactor')) {
 				editor.on('stop', function(){
 					me.saveTemporaryResizing();
 				});
-			}
-			else {
+			} else {
 				me.saveTemporaryResizing();
 			}
 		}, me.cropTimeAfterResize);
@@ -552,7 +564,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		}
 
 		panelItems.push(this.createControl('crop', l10n.edit_img, 'imageEditMask'));
-		panelItems.push(this.createLinkControl(slide));
+    panelItems.push(this.createLinkControl(slide));
 
 		if(_.indexOf(['notext', 'onlytext'], primaryStyle) == -1)
 			panelItems.push(captionControl);
@@ -577,10 +589,9 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		return item;
 	},
 
-	createLinkControl: function(slide){
+	createLinkControl: function(slide) {
 		var me = this,
-			control = new Upfront.Views.Editor.InlinePanels.DialogControl()
-		;
+			control = new Upfront.Views.Editor.InlinePanels.DialogControl();
 
 		control.view = linkPanel = new Upfront.Views.Editor.LinkPanel({
 			linkType: slide.get('urlType'),
