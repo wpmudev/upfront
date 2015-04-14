@@ -798,7 +798,7 @@
                     else
                     {
 
-                        if (this.opts.linebreaks || tag != 'p' || this.block.blocks[0] === false)
+                        if (this.opts.linebreaks || tag != 'p')
                         {
                             if (tag == 'blockquote')
                             {
