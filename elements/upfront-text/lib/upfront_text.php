@@ -78,6 +78,7 @@ class Upfront_PlainTxtView extends Upfront_Object {
 				'p_label' => __('Text paragragh', 'upfront'),
 				'p_info' => __('The paragragh that contains all the text of the element.', 'upfront'),
 			),
+			'default_content' => __('<p>My awesome stub content goes here</p>', 'upfront'),
 			'dbl_click' => __('Double click to edit text', 'upfront'),
 			'appearance' => __('Textbox Appearance', 'upfront'),
 			'border' => __('Border', 'upfront'),
