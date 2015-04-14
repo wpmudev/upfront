@@ -49,6 +49,9 @@ define([
 						compact: true,
 						classname: 'upfront-field-icon upfront-field-icon-refresh-2 upfront-refresh-map',
 						on_click: function(){
+							var $loc = me.$el.find('input[name="background_map_location"]');
+							if ($loc.length) me._location = $loc.val();
+							me._location_changed = true;
 							me.geocode_location();
 						}
 					}),
@@ -140,7 +143,9 @@ define([
 				return;
 			var me = this,
 				location = this._location,
-				geocoder = new google.maps.Geocoder();
+				geocoder = new google.maps.Geocoder()
+			;
+			if (!location) return;
 			this._geocoding = true;
 			geocoder.geocode({address: location}, function (results, status) {
 				if (status != google.maps.GeocoderStatus.OK) return false;
