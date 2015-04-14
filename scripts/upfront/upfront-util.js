@@ -917,6 +917,9 @@ define(function() {
 				Upfront.Events.on("model:property:add", Upfront.PreviewUpdate.__deferred_save_callback, this);
 				Upfront.Events.on("model:property:set", Upfront.PreviewUpdate.__deferred_save_callback, this);
 
+				Upfront.Events.off("entity:region:deactivated", Upfront.PreviewUpdate.__deferred_save_callback, this);
+				Upfront.Events.on("entity:region:deactivated", Upfront.PreviewUpdate.__deferred_save_callback, this);
+				
 				//Upfront.Events.off("model:property:remove", save);
 				//Upfront.Events.on("model:property:remove", save, this);
 
