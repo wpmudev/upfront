@@ -49,9 +49,19 @@ jQuery(document).ready(function($){
 			});
 		youtube_player_ids = [];
 	}
-	
+
 	function on_mute_youtube_ready (event) {
 		event.target.mute();
+		
+		var time, duration;
+		setInterval(function(){
+			time = event.target.getCurrentTime();
+			duration = event.target.getDuration();
+			if(time > duration - 0.5) {
+				event.target.seekTo(0); 
+				event.target.playVideo();
+			}
+		},200);
 	}
 	
 	/* Vimeo API */

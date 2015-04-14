@@ -188,7 +188,7 @@
         var me = this;
         var videoUrl = $(event.currentTarget).val();
 				var videoId;
-				if (videoUrl.match(/:youtu\.be/)) {
+				if (videoUrl.match(/youtu\.be/)) {
 					videoId = videoUrl.match(/^(https?:\/\/)?youtu.be\/([0-9a-zA-Z\-_]{11})/)[2];
 				} else {
 					videoId = videoUrl.match(/^(https?:\/\/(www\.)?)?youtube\.com\/watch\?v=([0-9a-zA-Z\-_]{11}).*/)[3];
