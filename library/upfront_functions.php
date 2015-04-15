@@ -34,7 +34,7 @@ function upfront_properties_to_array ($the_properties, $map=null) {
 	$the_array = array();
 	foreach ($the_properties as $prop) {
 		if ( is_array($map) && ! in_array($prop['name'], $map) ) { continue; }
-		$the_array[$prop['name']] = $prop['value'];
+		$the_array[$prop['name']] = isset($prop['value']) ? $prop['value'] : false;
 	}
 	return $the_array;
 }

@@ -155,7 +155,7 @@ define([
 					trigger,
 					new Upfront.Views.Editor.Settings.Item({
 						model: this.model,
-						title: 'Logged in Users see',
+						title: l10n.logged_in_preview,
 						fields: [
 							new Upfront.Views.Editor.Field.Checkboxes({
 								//className: "upfront_login-logout_style upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios",
@@ -163,7 +163,7 @@ define([
 								property: 'logged_in_preview',
 								label: "",
 								values: [
-									{ label: "Preview", value: 'yes' }
+									{ label: l10n.preview, value: 'yes' }
 								],
 								change: function() {
 									this.property.set({'value': this.get_value()}, {'silent': false});
@@ -175,8 +175,8 @@ define([
 								property: "logout_style",
 
 								values: [
-									{label: 'Nothing', value: "nothing"},
-									{label: 'Log Out Link', value: "link"}
+									{label: l10n.nothing, value: "nothing"},
+									{label: l10n.log_out_link, value: "link"}
 								],
 								change: function() {
 									this.property.set({'value': this.get_value()}, {'silent': false});
@@ -186,7 +186,7 @@ define([
 								className: "upfront_login-logout_text upfront-field-wrap upfront-field-wrap-text",
 								model: this.model,
 								property: 'logout_link',
-								label: 'Log Out Link:',
+								label: l10n.log_out_label,
 								change: function() {
 									this.property.set({'value': this.get_value()}, {'silent': false});
 								}
@@ -290,7 +290,7 @@ define([
 						new Upfront.Views.Editor.Field.Text({
 							model: this.model,
 							property: 'label_text',
-							label: 'Log In Button:',
+							label: l10n.log_in_button,
 							change: function() { me.register_change(me) }
 						}),
 					]);
@@ -318,7 +318,7 @@ define([
 						new Upfront.Views.Editor.Field.Text({
 							model: this.model,
 							property: 'trigger_text',
-							label: 'Log In Trigger:',
+							label: l10n.log_in_trigger,
 							change: function() { me.register_change(me) }
 						}),
 					]);

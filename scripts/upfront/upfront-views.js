@@ -1630,19 +1630,28 @@ define([
 					region_modules = this.region_view.model.get('modules'),
 					region_wrappers = this.region_view.model.get('wrappers'),
 					index = region_modules.indexOf(this.model),
-					$next_wrap = this.$el.closest('.upfront-wrapper').next('.upfront-wrapper'),
+					$prev_wrap = $wrap.prev('.upfront-wrapper'),
+					$next_wrap = $wrap.next('.upfront-wrapper'),
 					modules_arr = modules.map(function(module){ return module; }),
 					wrappers_arr = wrappers.map(function(wrapper){ return wrapper; }),
 					is_combine_wrap = false,
-					line_col = 0;
+					line_col = 0,
+					current_wrapper_id;
 				ed.start(this, this.model);
-				if ( $wrap.find('>.upfront-module-view, >.upfront-module-group').length > 1 || $next_wrap.length > 0 && !$next_wrap.hasClass('clr') ) {
+				if ( 
+					$wrap.find('>.upfront-module-view, >.upfront-module-group').length > 1 || 
+					( $next_wrap.length > 0 && !$next_wrap.hasClass('clr') ) ||
+					( $prev_wrap.length > 0 && !is_clr )
+				) {
 					is_combine_wrap = true;
 					_.each(modules_arr, function(module, i){
-						var wrapper_id = module.get_wrapper_id(),
-							wrapper = wrappers.get_by_wrapper_id(wrapper_id),
+						var wrapper_id = module.get_wrapper_id();
+						if ( current_wrapper_id == wrapper_id )
+							return;
+						var wrapper = wrappers.get_by_wrapper_id(wrapper_id),
 							wrapper_class = wrapper ? wrapper.get_property_value_by_name('class') : false,
 							wrapper_col = ed.get_class_num(wrapper_class, ed.grid.class);
+						current_wrapper_id = wrapper_id;
 						if ( line_col+wrapper_col <= col ){
 							if ( line_col > 0 )
 								is_combine_wrap = false;
@@ -1670,8 +1679,8 @@ define([
 				}
 				else {
 					var line = 0,
-						wrapper_index = 0,
-						current_wrapper_id;
+						wrapper_index = 0;
+					current_wrapper_id = false;
 					wrappers.remove(wrappers_arr, {silent: true});
 					region_wrappers.add(wrappers_arr, {silent: true});
 					_.each(modules_arr, function(module, i){
