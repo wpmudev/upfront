@@ -39,11 +39,11 @@ class Upfront_LoginView extends Upfront_Object {
 	public static function get_logout_markup ($properties=array()) {
 		if (!(!empty($properties['logout_style']) && 'link' === $properties['logout_style'])) return ' ';
 
-		$logout_link = !empty($properties['logout_link'])
+		$label = !empty($properties['logout_link'])
 			? $properties['logout_link']
 			: self::_get_l10n('log_out')
 		;
-		return '<a class="logout_link" href="' . esc_url(wp_logout_url()) . '">' . esc_html($logout_link) . '</a>';
+		return upfront_get_template("login-logout", array('label' => $label), dirname(dirname(__FILE__)) . "/tpl/logout.php");
 	}
 
 	public static function get_login_markup ($properties=array()) {
