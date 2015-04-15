@@ -881,7 +881,11 @@ figure.gallery-labels-figure img.mfp-img {
 	top: auto !important;
 }
 
-.tablet-breakpoint .ugallery_item,
+.tablet-breakpoint .ugallery_item {
+	width: 116px !important;
+	height: auto;
+}
+
 .tablet-breakpoint .ugallery_item img {
 	width: 116px !important;
 	height: 116px !important;
@@ -902,7 +906,11 @@ figure.gallery-labels-figure img.mfp-img {
 	height: 87px !important;
 }
 
-.mobile-breakpoint .ugallery_item,
+.mobile-breakpoint .ugallery_item {
+	width: 135px !important;
+	height: auto;
+}
+
 .mobile-breakpoint .ugallery_item img {
 	width: 135px !important;
 	height: 135px !important;
