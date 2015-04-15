@@ -30,6 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 function utabs_initialize () {
 	// Include the backend support stuff
 	require_once (dirname(__FILE__) . '/lib/utabs.php');
+	require_once (dirname(__FILE__) . '/lib/class_upfront_tab_presets_server.php');
 
 	// Expose our JavaScript definitions to the Upfront API
 	upfront_add_layout_editor_entity('utabs', upfront_relative_element_url('js/utabs', __FILE__));

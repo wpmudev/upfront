@@ -1,7 +1,7 @@
 <?php
 
-require_once('class_upfront_accordion_presets_server.php');
-require_once('class_upfront_tab_presets_server.php');
+//require_once('class_upfront_accordion_presets_server.php');
+//require_once('class_upfront_tab_presets_server.php');
 
 /**
  * Serves frontend stylesheet.
@@ -65,10 +65,8 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$style .= $this->prepare_theme_styles();
 		// Add theme colors styles
 		$style .= $this->_get_theme_colors_styles();
-		// Add tab presets styles
-		$style .= Upfront_Tab_Presets_Server::get_instance()->get_presets_styles();
-		// Add accordion presets styles
-		$style .= Upfront_Accordion_Presets_Server::get_instance()->get_presets_styles();
+		// Add elements presets styles
+		$style = apply_filters('get_element_preset_styles', $style);
 		$style = Upfront_UFC::init()->process_colors($style);
 		$this->_out(new Upfront_CssResponse_Success($style));
 	}
