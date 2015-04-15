@@ -1986,6 +1986,7 @@ var GridEditor = {
 				region = ed.get_region(wrap.$el.closest('.upfront-region')),
 				$parent_group = wrap.$el.closest('.upfront-module-group'),
 				is_parent_group = ( $parent_group.length > 0 ),
+				group = is_parent_group ? ed.get_el($parent_group) : false,
 				wrap_index = !is_responsive ? wrap.$el.index('.upfront-wrapper') : wrap.$el.data('breakpoint_order'),
 				wrap_cleared = false,
 				wrap_top = false,
@@ -2085,8 +2086,8 @@ var GridEditor = {
 				wrap.$el.data('clear', 'clear');
 			}
 
-			// Don't allow separating wrapper on responsive or inside group
-			if ( is_responsive || is_parent_group )
+			// Don't allow separating wrapper on responsive
+			if ( is_responsive )
 				return;
 
 			// Separate wrapper if more than one element in the wrapper, provided that the wrapper is not conflicting anything
@@ -2098,14 +2099,15 @@ var GridEditor = {
 						// Separate the wrapper
 						var wrap_el_model = ed.get_el_model(wrap_el.$el),
 							wrap_el_view = Upfront.data.module_views[wrap_el_model.cid],
-							region_model = regions.get_by_name( wrap_el.region ),
-							wrappers = region_model.get('wrappers'),
-							wrapper_id = Upfront.Util.get_unique_id("wrapper");
+							parent_view = is_parent_group && wrap_el_view.group_view ? wrap_el_view.group_view : wrap_el_view.region_view,
+							parent_el = is_parent_group && group ? group : region,
+							wrappers = parent_view.model.get('wrappers'),
+							wrapper_id = Upfront.Util.get_unique_id("wrapper"),
 							wrap_model = new Upfront.Models.Wrapper({
 								"name": "",
 								"properties": [
 									{"name": "wrapper_id", "value": wrapper_id},
-									{"name": "class", "value": ed.grid.class+(wrap_el.grid.left+wrap_el.col-1)}
+									{"name": "class", "value": ed.grid.class+(wrap_el.grid.left+wrap_el.col-parent_el.grid.left)}
 								]
 							}),
 							wrap_view = new Upfront.Views.Wrapper({model: wrap_model});
@@ -2115,10 +2117,13 @@ var GridEditor = {
 						wrap_el.$el.closest('.upfront-wrapper').before(wrap_view.$el);
 						wrap_view.$el.append(wrap_el_view.$el);
 						wrap_el_model.set_property('wrapper_id', wrapper_id, true);
-						wrap_el_model.replace_class(ed.grid.left_margin_class+(wrap_el.grid.left-region.grid.left));
+						wrap_el_model.replace_class(ed.grid.left_margin_class+(wrap_el.grid.left-parent_el.grid.left));
 						Upfront.data.wrapper_views[wrap_model.cid] = wrap_view;
 						ed.init_margin(wrap_el);
-						regions_need_update.push(wrap_el.region);
+						if ( is_parent_group )
+							groups_need_update.push($parent_group);
+						else
+							regions_need_update.push(wrap_el.region);
 					}
 				});
 			}
@@ -2344,11 +2349,14 @@ var GridEditor = {
 					min_row_wrap = _.min(row_wraps, function(row_wrap){ return ed.get_wrap_el_min(row_wrap, false, true).grid.top; }),
 					min_row_el = ed.get_wrap_el_min(min_row_wrap, false, true);
 				if (
-					( 	( !breakpoint || breakpoint.default ) &&
-						wrap.col >= min_col && (
-						( next_wrap && !next_wrap_clr && !wrap_me_only && ( $next_wrap.find(module_selector).size() > 1 || !is_next_me ) ) ||
-						( prev_wrap && !wrap_clr && !wrap_me_only && ( $prev_wrap.find(module_selector).size() > 1 || !is_prev_me ) ) ||
-						( next_wrap && prev_wrap && !next_wrap_clr && !wrap_clr ) )
+					( 
+						( !breakpoint || breakpoint.default ) && wrap.col >= min_col && 
+						(
+							( next_wrap && !next_wrap_clr && !wrap_me_only && ( $next_wrap.find(module_selector).size() > 1 || !is_next_me ) ) ||
+							( prev_wrap && !wrap_clr && !wrap_me_only && ( $prev_wrap.find(module_selector).size() > 1 || !is_prev_me ) ) ||
+							( next_wrap && prev_wrap && !next_wrap_clr && !wrap_clr ) ||
+							( !prev_wrap && !next_wrap && is_wrap_me && $wrap.find(module_selector).size() > 1 )
+						)
 					) ||
 					( breakpoint && !breakpoint.default && is_wrap_me && $wrap.find(module_selector).size() > 1 )
 				){
