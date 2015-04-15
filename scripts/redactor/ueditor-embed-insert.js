@@ -185,7 +185,9 @@ var EmbedInsert = Insert.UeditorInsert.extend({
 			$code = $("<div />").append(code)
 		;
 		this.$el.empty();
+
 		if (!code) return;
+		
 		$code.append('<div class="upfront-edit_insert">edit</div>');
 		this.$el.append(
 			$("<div />").append($code).html()

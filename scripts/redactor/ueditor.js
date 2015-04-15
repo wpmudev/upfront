@@ -1011,7 +1011,24 @@ var InsertManagerInserts = Backbone.View.extend({
                 if( self.is_last_p() ){
 					self.$block.before(insert.$el);
                 }else{
-					self.$block.replaceWith(insert.$el);
+
+                    if(self.redactor.$element.find(self.$block).length < 1) {
+/*                        if(self.redactor.$element.hasClass('redactor-placeholder')) {
+                    
+                            var f = jQuery.Event("keydown");
+                            f.which = 65;
+                            f.keyCode = 65;// # Some key code value
+                              
+                            
+                            
+                            self.redactor.$element.trigger(f);
+
+                        }
+*/
+                        self.redactor.$element.append(self.$block);  
+                    }
+
+                    self.$block.replaceWith(insert.$el);
 				}
 
                 self.$block.prev("br").remove();
