@@ -7,10 +7,10 @@ class Upfront_LoginView extends Upfront_Object {
 			'style' => 'form',
 			'behavior' => 'click',
 			'appearance' => 'icon',
-			'label_image' => __('Login', 'upfront'),
-			'label_text' => __('log in', 'upfront'),
-			'logout_link' => __('log out', 'upfront'),
-			'trigger_text' => __('Log in', 'upfront'),
+			'label_image' => self::_get_l10n('login'),
+			'label_text' => self::_get_l10n('log_in'),
+			'logout_link' => self::_get_l10n('log_out'),
+			'trigger_text' => self::_get_l10n('log_in'),
 			'logged_in_preview' => '',
 			'type' => "LoginModel",
 			'view_class' => "LoginView",
@@ -145,8 +145,17 @@ class Upfront_LoginView extends Upfront_Object {
 			'appearance' => __("Display Appearance", 'upfront'),
 			'trigger' => __("Trigger", 'upfront'),
 			'lost_password' => __("Lost Password?", 'upfront'),
+			'login' => __("Login", 'upfront'),
 			'log_in' => __("Log in", 'upfront'),
 			'log_out' => __("Log out", 'upfront'),
+			
+			'logged_in_preview' => __("Logged in Users see", 'upfront'),
+			'preview' => __("Preview", 'upfront'),
+			'nothing' => __("Nothing", 'upfront'),
+			'log_out_link' => __("Log Out Link", 'upfront'),
+			'log_out_label' => __("Log Out Link:", 'upfront'),
+			'log_in_button' => __("Log In Button:", 'upfront'),
+			'log_in_trigger' => __("Log In Trigger:", 'upfront'),
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)
