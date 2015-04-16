@@ -53,6 +53,10 @@
 	#<?php echo $element_id ?> .ugallery-thumb-title {
 		color: <?php echo $captionColor ?>;
 		background: <?php echo  $captionBackground ?>;
+		<?php if($fitThumbCaptions[0] === 'true') { ?>
+			overflow: hidden;
+			height: <?php echo $thumbCaptionsHeight ?>px;
+		<?php } ?>
 	}
 
 </style>

@@ -149,6 +149,14 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			me.updateCaptionType();
 		});
 
+		this.listenTo(this.model, 'change:fitThumbCaptions', function() {
+			me.updateFitThumbCaptions();
+		});
+
+		this.listenTo(this.model, 'change:thumbCaptionsHeight', function() {
+			me.updateThumbCaptionsHeight();
+		});
+
 		if (this.property('status') !== 'ok' || !this.images.length) {
 			this.property('has_settings', 0);
 		}
@@ -187,6 +195,14 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			this.$el.find('.ugallery_item').addClass('ugallery_caption_on_hover_' + suffix);
 			this.$el.find('.ugallery-thumb-title').addClass('ugallery-caption-on-hover-' + suffix);
 		}
+	},
+
+	updateFitThumbCaptions: function() {
+		this.debouncedRender();
+	},
+
+	updateThumbCaptionsHeight: function() {
+		this.debouncedRender();
 	},
 
 	updateShowCaptionOnHover: function() {

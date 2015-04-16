@@ -234,7 +234,9 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'showCaptionOnHover' => array( 'true' ),
 			'linkTo' => 'image', // 'url' | 'image'
 			'even_padding' => array('false'),
-			'thumbPadding' => 15
+			'thumbPadding' => 15,
+			'fitThumbCaptions' => false,
+			'thumbCaptionsHeight' => 20
 		);
 	}
 
@@ -313,6 +315,8 @@ class Upfront_UgalleryView extends Upfront_Object {
 				'caption_bg' => __('Caption Background:', 'upfront'),
 				'ok' => __('Ok', 'upfront'),
 				'adds_sortable' => __('Adds sortable interface based on the labels given to the images.', 'upfront'),
+				'fit_thumb_captions' => __('Fit thumbnail captions.', 'upfront'),
+				'thumb_captions_height' => __('Height of captions (in px).', 'upfront'),
 			),
 			'thumb' => array(
 				'ratio' => __('Thumbnail Ratio', 'upfront'),

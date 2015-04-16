@@ -97,6 +97,32 @@ define([
 									me.parent_view.for_view.$el.find('.ugallery-thumb-title').css('background-color', currentColor);
 								}
 							}
+						}),
+						new fields.Checkboxes({
+							model: this.model,
+							property: 'fitThumbCaptions',
+							values: [
+								{
+									value: 'true',
+									label: l10n.panel.fit_thumb_captions
+								}
+							],
+							change: function(value) {
+								me.updateProperty(this.options.property, value);
+							}
+						}),
+						new fields.Number({
+							model: this.model,
+							property: 'thumbCaptionsHeight',
+							min: 1,
+							label: l10n.panel.thumb_captions_height,
+							default_value: 20,
+							values: [
+								{ label: 'px', value: '1' }
+							],
+							change: function(value) {
+								me.updateProperty(this.options.property, value);
+							}
 						})
 					]
 				})
