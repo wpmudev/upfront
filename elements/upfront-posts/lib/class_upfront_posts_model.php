@@ -129,6 +129,7 @@ class Upfront_Posts_Model_Generic extends Upfront_Posts_Model {
 			$args['tax_query'] = $query['tax_query']['queries'];
 		}
 		$args['post_status'] = 'publish'; // double-ensure for AJAX requests
+		$args['ignore_sticky_posts'] = true; // double-ensure for front-end requests
 
 		return new WP_Query($args);
 	}
@@ -164,6 +165,7 @@ class Upfront_Posts_Model_Custom extends Upfront_Posts_Model {
 			'post_type' => get_post_types(array('public' => true)),
 		);
 		$args['post_status'] = 'publish'; // double-ensure for AJAX requests
+		$args['ignore_sticky_posts'] = true; // double-ensure for front-end requests
 		if (self::is_single($data)) {
 			$args['posts_per_page'] = 1;
 		}
@@ -198,6 +200,7 @@ class Upfront_Posts_Model_Taxonomy extends Upfront_Posts_Model {
 
 		if (!empty($tax_query)) $args['tax_query'][] = $tax_query;
 		$args['post_status'] = 'publish'; // double-ensure for AJAX requests
+		$args['ignore_sticky_posts'] = true; // double-ensure for front-end requests
 
 		if (!empty($data['post_type'])) $args['post_type'] = $data['post_type'];
 
