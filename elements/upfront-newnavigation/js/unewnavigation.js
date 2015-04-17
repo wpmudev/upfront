@@ -237,11 +237,12 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		});
 	},
 	editModeOff: function() {
+		var me = this;
 		this.$el.find('.upfront-object-content ul').each(function() {
 			if ($(this).hasClass('redactor-toolbar') || $(this).hasClass('upfront-field-select-options')) {
 				return;
 			}
-			if(this.$el.find('li.menu-item.controls-visible').length < 1 )
+			if(me.$el.find('li.menu-item.controls-visible').length < 1 )
 				if($(this).hasClass('ui-sortable')) $(this).sortable('enable');
 		});
 	},
