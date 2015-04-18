@@ -1991,14 +1991,16 @@ define([
 			if (_.contains(['tablet', 'mobile'], this.model.get('id'))) {
 				var styleId = this.model.get('id') + '-breakpoint-style';
 				var cssText = '';
-				switch(this.model.get('id')) {
+				// I don't think we need media query here as we only work with editor
+				/*switch(this.model.get('id')) {
 					case 'tablet':
 						cssText += '@media only screen and (min-width:570px) and (max-width:1079px) {';
 						break;
 					case 'mobile':
 						cssText += '@media only screen and (max-width:569px) {';
 				}
-				cssText += css.join() + '} ' + breakpointCss.join();
+				cssText += css.join("\n") + '} ';*/
+				cssText += breakpointCss.join("\n");
 
 				if ( $('#' + styleId).length ) {
 					$('#' + styleId).html(cssText);
