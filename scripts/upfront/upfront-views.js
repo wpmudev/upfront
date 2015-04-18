@@ -1489,6 +1489,8 @@ define([
 
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 				this.listenTo(Upfront.Events, "command:module_group:finish_edit", this.on_finish);
+				
+				this.on('entity:resize', this.on_resize, this);
 			},
 			render: function () {
 				var props = {},
@@ -1755,6 +1757,15 @@ define([
 				this.enable_interaction();
 				this.toggle_modules_interaction(false);
 			},
+			on_resize: function (attr) {
+				var wrappers = this.model.get('wrappers');
+				wrappers.each(function(wrapper){
+					var view = Upfront.data.wrapper_views[wrapper.cid];
+					if ( !view )
+						return;
+					view.update_position();
+				});
+			},
 			disable_interaction: function (prevent_edit, drag) {
 				if ( prevent_edit )
 					this.$el.addClass('upfront-module-group-disabled');
@@ -1829,8 +1840,8 @@ define([
 				this.listenTo(Upfront.Events, "entity:resized", this.apply_flexbox_clear);
 				this.listenTo(Upfront.Events, "entity:resized", this.apply_adapt_to_breakpoints);
 				this.listenTo(Upfront.Events, "entity:wrappers:update", this.on_wrappers_update);
-				this.listenTo(Upfront.Events, "entity:module_group:group", this.reset_breakpoints);
-				this.listenTo(Upfront.Events, "entity:module_group:ungroup", this.reset_breakpoints);
+				this.listenTo(Upfront.Events, "entity:module_group:group", this.on_group);
+				this.listenTo(Upfront.Events, "entity:module_group:ungroup", this.on_ungroup);
 				this.listenTo(Upfront.Events, "layout:render", this.on_after_layout_render);
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 			},
@@ -2028,8 +2039,18 @@ define([
 					ed.adapt_to_breakpoint(me.model, wrappers, breakpoint.id, col, true);
 				});
 			},
-			reset_breakpoints: function () {
-				this.model.each(function(module){
+			on_group: function (group) {
+				if ( typeof this.group_view == 'undefined' || group.cid != this.group_view.model.cid )
+					return;
+				this.reset_breakpoints(this.model.map(function(module){ return module; }));
+			},
+			on_ungroup: function (modules) {
+				if ( modules && modules[0] && !this.model.find(function(module){ return module.cid == modules[0].cid }) )
+					return;
+				this.reset_breakpoints(modules);
+			},
+			reset_breakpoints: function (modules) {
+				_.each(modules, function(module){
 					var breakpoint = Upfront.Util.clone( module.get_property_value_by_name('breakpoint') || {} );
 					_.each(breakpoint, function(data, id){
 						breakpoint[id].edited = false;
@@ -4188,6 +4209,7 @@ define([
 					breakpoint_data = data[breakpoint.id],
 					parent_width = this.$el.parent().width(),
 					parent_col = Math.round(parent_width/grid.column_width);
+				this.$el.css('margin-right', 0);
 				if ( breakpoint_data && typeof breakpoint_data.col == 'number' ){
 					this.$el.css('width', (breakpoint_data.col/parent_col*100) + '%');
 					this.$el.data('breakpoint_col', breakpoint_data.col);
