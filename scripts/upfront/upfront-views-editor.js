@@ -1990,17 +1990,7 @@ define([
 			}
 			if (_.contains(['tablet', 'mobile'], this.model.get('id'))) {
 				var styleId = this.model.get('id') + '-breakpoint-style';
-				var cssText = '';
-				// I don't think we need media query here as we only work with editor
-				/*switch(this.model.get('id')) {
-					case 'tablet':
-						cssText += '@media only screen and (min-width:570px) and (max-width:1079px) {';
-						break;
-					case 'mobile':
-						cssText += '@media only screen and (max-width:569px) {';
-				}
-				cssText += css.join("\n") + '} ';*/
-				cssText += breakpointCss.join("\n");
+				var cssText = breakpointCss.join("\n");
 
 				if ( $('#' + styleId).length ) {
 					$('#' + styleId).html(cssText);
@@ -2017,16 +2007,6 @@ define([
 		},
 		update_typography_elements: function (view) {
 			var me = this;
-/*
-			_.each(this.elements, function(element) {
-				var $this_el = view && view.$el ? view.$el.find('.upfront-object-content ' + element) : $('.upfront-object-content ' + element );
-				Upfront.Views.Theme_Colors.colors.remove_theme_color_classes( $this_el );
-				if( !_.isEmpty(me.colors[element]) && me.colors[element].indexOf("ufc") !== -1 ){
-					 //var theme_color_class = Upfront.Views.Theme_Colors.colors.get_css_class( me.colors[element]);
-					 $this_el.css("color", me.colors[element]);
-				}
-			});
-*/
 			var css = [],
 				$style = false
 			;
@@ -2610,7 +2590,7 @@ define([
 		},
 		render: function() {
 			var breakpoint_model = breakpoints_storage.get_breakpoints().get_active();
-				
+
 			if(breakpoint_model.get('default'))
 				this.model.attributes.id = 'default';
 
