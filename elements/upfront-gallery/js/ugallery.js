@@ -62,7 +62,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			'click .ugallery_item': 'selectItem',
 			'click .upfront-quick-swap': 'openImageSelector',
 			'click': 'preventNavigation',
-			'dblclick .ugallery-thumb-title': 'startCaptionEditor'
+			'dblclick .ugallery-thumb-title': 'startCaptionEditor',
+      'click .ugallery_item_lightbox': 'openLightbox'
 		});
 
 		images = this.property('images');
@@ -273,7 +274,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		panel.items.push(this.createLabelControl(image));
 
 		if (image.get('imageLink').type === 'image' || image.get('imageLink').type === 'lightbox') {
-			panel.items.push(this.createControl('fullscreen', l10n.ctrl.show_image, 'openLightbox'));
+			panel.items.push(this.createControl('fullscreen', l10n.ctrl.show_image, 'openImageLightbox'));
 		}
 
 		return panel;
@@ -381,7 +382,14 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		return linkControl;
 	},
 
-	openLightbox: function(e) {
+  openLightbox: function(event) {
+		var gallery, magOptions;
+			gallery = false;
+			magOptions = ugalleries[galleryId].magnific;
+    console.log('yay');
+  },
+
+	openImageLightbox: function(e) {
 		var me = this,
 			lightboxName,
 			item = $(e.target).closest('.ugallery_item'),
@@ -640,7 +648,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	},
 
 	openLightboxLabels: function(e){
-		this.openLightbox(e, true);
+		this.openImageLightbox(e, true);
 	},
 
 	getPropertiesForTemplate: function() {

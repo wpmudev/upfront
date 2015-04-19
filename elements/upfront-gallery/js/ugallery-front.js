@@ -105,7 +105,7 @@ jQuery(function($){
 	});
 
 	if (typeof ugalleries !== 'undefined') {
-		var titleSrc = function(item){
+		var titleSrc = function(item) {
 			var itemId = item.el.closest('.ugallery_item').attr('rel'),
 				text = gallery.find('.ugallery_lb_text[rel=' + itemId + ']')
 			;
