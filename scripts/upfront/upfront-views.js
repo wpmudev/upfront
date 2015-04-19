@@ -1000,6 +1000,25 @@ define([
 				this.ensure_breakpoint_change_is_listened();
 				this.ensureUiOffsetCalls();
 			},
+			update_position: function () {
+				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+					grid = Upfront.Settings.LayoutEditor.Grid;
+				if ( ! breakpoint )
+					return;
+				var me = this,
+					data = this.model.get_property_value_by_name('breakpoint'),
+					row = this.model.get_property_value_by_name('row'),
+					breakpoint_data = data[breakpoint.id],
+					$object = this.$el.find('.upfront-object');
+				if ( breakpoint_data && typeof breakpoint_data.row == 'number' ){
+					$object.css('min-height', (breakpoint_data.row*grid.baseline) + 'px');
+					$object.data('breakpoint_row', breakpoint_data.row);
+				}
+				else {
+					$object.css('min-height', (row*grid.baseline) + 'px');
+					$object.removeData('breakpoint_row');
+				}
+			},
 			ensure_breakpoint_change_is_listened: function() {
 				if (this.breakpoint_change_is_setup) {
 					return;
@@ -1075,6 +1094,7 @@ define([
 					$obj.addClass(theme_style.toLowerCase());
 					this._theme_style = theme_style;
 				}
+				this.update_position();
 				this.checkUiOffset();
 			},
 
