@@ -9537,43 +9537,43 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		}
 	});
 
-	var RegionPanel = InlinePanels.Panel.extend({
-		className: 'upfront-inline-panel upfront-region-panel upfront-no-select',
-		initialize: function () {
-			this.items = _([]);
-		},
-		render: function() {
-			var me = this,
-				items = typeof this.items == 'function' ? this.items() : this.items,
-				classes = [
-					'upfront-inline-panel-'+this.position_v,
-					'upfront-inline-panel-'+this.position_v+'-'+this.position_h
-				],
-				width = 0,
-				height = 0;
-			this.$el.html('');
-			items.each(function(item){
-				item.panel_view = me;
-				item.render();
-				item.delegateEvents();
-				me.$el.append(item.el);
-				if ( me.position_v == 'center' )
-					height += item.$el.height();
-				else
-					width += item.$el.width();
-			});
-			this.$el.attr('class', this.className + ' ' + classes.join(' '));
-		},
-		remove: function() {
-			var items = typeof this.items == 'function' ? this.items() : this.items;
+	// var RegionPanel = InlinePanels.Panel.extend({
+	// 	className: 'upfront-inline-panel upfront-region-panel upfront-no-select',
+	// 	initialize: function () {
+	// 		this.items = _([]);
+	// 	},
+	// 	render: function() {
+	// 		var me = this,
+	// 			items = typeof this.items == 'function' ? this.items() : this.items,
+	// 			classes = [
+	// 				'upfront-inline-panel-'+this.position_v,
+	// 				'upfront-inline-panel-'+this.position_v+'-'+this.position_h
+	// 			],
+	// 			width = 0,
+	// 			height = 0;
+	// 		this.$el.html('');
+	// 		items.each(function(item){
+	// 			item.panel_view = me;
+	// 			item.render();
+	// 			item.delegateEvents();
+	// 			me.$el.append(item.el);
+	// 			if ( me.position_v == 'center' )
+	// 				height += item.$el.height();
+	// 			else
+	// 				width += item.$el.width();
+	// 		});
+	// 		this.$el.attr('class', this.className + ' ' + classes.join(' '));
+	// 	},
+	// 	remove: function() {
+	// 		var items = typeof this.items == 'function' ? this.items() : this.items;
 
-			if(items)
-				items.each(function(item){
-					item.remove();
-				})
-			Backbone.View.prototype.remove.call(this);
-		}
-	});
+	// 		if(items)
+	// 			items.each(function(item){
+	// 				item.remove();
+	// 			})
+	// 		Backbone.View.prototype.remove.call(this);
+	// 	}
+	// });
 
 	var RegionPanel_Edit = InlinePanels.Panel.extend({
 		initialize: function () {
