@@ -126,8 +126,12 @@ var CustomSelectorField =  Upfront.Views.Editor.Field.Hidden.extend({
 					is_single = 'single' === me.model.get_property_value_by_name('display_type'),
 					values = me.get_decoded_values(me.options.property)
 				;
-				if (is_single) values = [{id: id, permalink: link}];
-				else values.push({id: id, permalink: link});
+				if (is_single) {
+					values = [{id: id, permalink: link}];
+				} else {
+					values.push({id: id, permalink: link}); 
+					me.select_posts(e);
+				}
 				me.model.set_property(me.options.property, me.encode_values(values));
 				me.trigger("post:added");
 			})

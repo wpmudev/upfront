@@ -10,10 +10,10 @@ define([], function() {
 		on_save: function() {
 			var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
 			var current_set_value = this.settings._wrapped[0].fields._wrapped[1].$el.find('input:checked').val();
-			var current_set_alignment = this.settings._wrapped[1].fields._wrapped[0].$el.find('input:checked').val();
-			var current_set_over = this.settings._wrapped[1].fields._wrapped[1].$el.find('input:checked').val();
-			var current_set_style = this.settings._wrapped[2].fields._wrapped[0].$el.find('input:checked').val();
-			var current_set_menu_alignment = this.settings._wrapped[3].fields._wrapped[0].$el.find('input:checked').val();
+			var current_set_alignment = this.settings._wrapped[2].fields._wrapped[0].$el.find('input:checked').val();
+			var current_set_over = this.settings._wrapped[2].fields._wrapped[1].$el.find('input:checked').val();
+			var current_set_style = this.settings._wrapped[3].fields._wrapped[0].$el.find('input:checked').val();
+			var current_set_menu_alignment = this.settings._wrapped[4].fields._wrapped[0].$el.find('input:checked').val();
 
 			model_breakpoint = Upfront.Util.clone(this.model.get_property_value_by_name('breakpoint') || {});
 
@@ -32,17 +32,18 @@ define([], function() {
 					this.settings._wrapped[0].fields._wrapped[1].$el.find('input').removeAttr("checked");
 				}
 
-				this.settings._wrapped[1].fields._wrapped[0].$el.find('input').removeAttr("checked");
-				this.settings._wrapped[1].fields._wrapped[0].$el.find('input[value="'+this.model.get_property_value_by_name('burger_alignment')+'"]').attr("checked", 'checked');
-
 				this.settings._wrapped[2].fields._wrapped[0].$el.find('input').removeAttr("checked");
-				this.settings._wrapped[2].fields._wrapped[0].$el.find('input[value="'+this.model.get_property_value_by_name('menu_style')+'"]').attr("checked", 'checked');
+				this.settings._wrapped[2].fields._wrapped[0].$el.find('input[value="'+this.model.get_property_value_by_name('burger_alignment')+'"]').attr("checked", 'checked');
 
 				this.settings._wrapped[3].fields._wrapped[0].$el.find('input').removeAttr("checked");
-				this.settings._wrapped[3].fields._wrapped[0].$el.find('input[value="'+this.model.get_property_value_by_name('menu_alignment')+'"]').attr("checked", 'checked');
+				this.settings._wrapped[3].fields._wrapped[0].$el.find('input[value="'+this.model.get_property_value_by_name('menu_style')+'"]').attr("checked", 'checked');
 
-				this.settings._wrapped[1].fields._wrapped[1].$el.find('input').removeAttr("checked");
-				this.settings._wrapped[1].fields._wrapped[1].$el.find('input[value="'+this.model.get_property_value_by_name('burger_over')+'"]').attr("checked", 'checked');
+				this.settings._wrapped[4].fields._wrapped[0].$el.find('input').removeAttr("checked");
+				this.settings._wrapped[4].fields._wrapped[0].$el.find('input[value="'+this.model.get_property_value_by_name('menu_alignment')+'"]').attr("checked", 'checked');
+
+				this.settings._wrapped[2].fields._wrapped[1].$el.find('input').removeAttr("checked");
+				this.settings._wrapped[2].fields._wrapped[1].$el.find('input[value="'+this.model.get_property_value_by_name('burger_over')+'"]').attr("checked", 'checked');
+
 			}
 
 			//force breakpoints lower in hierarchy to use burger menu if the level above is using it

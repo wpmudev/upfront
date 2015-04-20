@@ -56,11 +56,53 @@ class Upfront_UcommentView extends Upfront_Object {
 		return $comments;
 	}
 
+	/**
+	 * Check if we have any external comments templates assigned by plugins.
+	 *
+	 * @param int $post_id Current post ID
+	 *
+	 * @return mixed (bool)false if nothing found, (string)finished template otherwise
+	 */
+	private static function _get_external_comments_template ($post_id) {
+		if (!is_numeric($post_id)) return false;
+
+		global $post, $wp_query;
+
+		$overriden_template = false;
+
+		// Sooo... override the post globals
+		$global_post = is_object($post) ? clone($post) : $post;
+		$post = get_post($post_id);
+
+		$global_query = is_object($wp_query) ? clone($wp_query) : $wp_query;
+		$wp_query->is_singular = true;
+		if (!isset($wp_query->comments)) {
+			$wp_query->comments = get_comments("post_id={$post_id}");
+			$wp_query->comment_count = count($wp_query->comments);
+		}
+
+		$wp_tpl = apply_filters('comments_template', false);
+
+		if (!empty($wp_tpl)) {
+			ob_start();
+			require_once($wp_tpl);
+			$overriden_template = ob_get_clean();
+		}
+		
+		$post = is_object($global_post) ? clone($global_post) : $global_post;
+		$wp_query = is_object($global_query) ? clone($global_query) : $global_query;
+
+		return $overriden_template;
+	}
+
 	public static function get_comment_markup ($post_id) {
 		if (!$post_id) return '';
 		if (!is_numeric($post_id)) {
 			if (!in_array($post_id, array('fake_post', 'fake_styled_post'))) return '';
 		}
+
+		$tpl = self::_get_external_comments_template($post_id);
+		if (!empty($tpl)) return $tpl;
 
         $defaults = self::default_properties();
         $prepend_form = (bool) $defaults['prepend_form'];

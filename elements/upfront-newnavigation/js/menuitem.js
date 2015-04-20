@@ -11,6 +11,8 @@ return (function ($) {
 			'click i.navigation-add-item': 'addMenuItem',
 			"contextmenu a.menu_item": "on_context_menu",
 			'click a.redactor_act': 'onOpenPanelClick',
+			'click .sub-menu': 'onOpenPanelSubMenuClick',
+			'click .upfront-save_settings': 'onOpenPanelSubMenuClick',
 			'click .upfront-save_settings': 'onOpenPanelClick',
 			'click > .open-item-controls': 'onOpenItemControlsClick'
 		},
@@ -130,6 +132,22 @@ return (function ($) {
 			event.preventDefault();
 			this.toggleLinkPanel();
 		},
+		
+		onOpenPanelSubMenuClick: function(event) {
+			event.preventDefault();
+			this.onOpenPanelSubMenu();
+		},
+		
+		onOpenPanelSubMenu: function() {
+			var me = this;
+			if (this.$el.hasClass('ui-sortable-handle') && this.$el.children('ul').children('li').hasClass('controls-visible')) {
+				this.$el.children('ul').sortable('disable');
+			} else {
+				this.$el.addClass('ui-sortable-handle');
+				this.$el.children('ul').sortable('enable');
+				this.$el.parent('ul').sortable('enable');
+			}
+		},
 
 		toggleLinkPanel: function() {
 			var me = this;
@@ -144,9 +162,12 @@ return (function ($) {
 				this.$el.parents('.menu').sortable('enable');
 				this.$el.find('.linkingPanelGoesHere').hide();
 				// Model linkType won't set on time if this is not delayed
+				/*
+				// Commented, because hide Sub Navigation items after OK button
 				setTimeout(function() {
 					me.render();
 				}, 100);
+				*/
 			}
 		},
 
