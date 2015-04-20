@@ -106,61 +106,47 @@ class Upfront {
 	}
 
 
-	public function add_edit_menu ( $wp_admin_bar ) {
-		global $post, $tag, $wp_the_query;
-		$current_object = $wp_the_query->get_queried_object();
-		include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+	public function add_edit_menu ($wp_admin_bar) {
+		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) return false;
 
-		if ( is_plugin_active('upfront-theme-exporter/upfront-theme-exporter.php') ) {
-			$wp_admin_bar->add_menu( array(
-				'id' => 'upfront-create-theme',
-				'title' => __('Create New Theme', 'upfront'),
-				'href' => home_url('/create_new/theme'),
-				'meta' => array( 'class' => 'upfront-create_theme' )
-			) );
-		}
-
-		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
-			$item = array(
-				'id' => 'upfront-edit_layout',
-				'title' => __('Upfront', 'upfront'),
-				'href' => (is_admin() ? home_url('/?editmode=true') : '#'),
-				'meta' => array(
-					'class' => 'upfront-edit_layout upfront-editable_trigger'
-				),
-			);
-			if (!get_option('permalink_structure')) {
-				// We're checking WP priv directly because we need an admin for this
-				if (current_user_can('manage_options')) {
-					$item['href'] = admin_url('/options-permalink.php');
-					unset($item['meta']);
-				} else {
-					$item = array(); // No such thing for non-admins
-				}
+		$item = array(
+			'id' => 'upfront-edit_layout',
+			'title' => __('Upfront', 'upfront'),
+			'href' => (is_admin() ? home_url('/?editmode=true') : '#'),
+			'meta' => array(
+				'class' => 'upfront-edit_layout upfront-editable_trigger'
+			),
+		);
+		$permalinks_on = get_option('permalink_structure');
+		
+		if (!$permalinks_on) {
+			// We're checking WP priv directly because we need an admin for this
+			if (current_user_can('manage_options')) {
+				$item['href'] = admin_url('/options-permalink.php');
+				unset($item['meta']);
+			} else {
+				$item = array(); // No such thing for non-admins
 			}
-			if (!empty($item)) $wp_admin_bar->add_menu($item);
+		}
+		
+		if (!empty($item)) {
+			$wp_admin_bar->add_menu($item);
 		}
 
 		// Change the existing nodes
 		$nodes = $wp_admin_bar->get_nodes();
-		if (empty($nodes) || !is_array($nodes)) return false;
-
-		foreach ($nodes as $node) {
-			if (!empty($node->href) && preg_match('/customize\.php/', $node->href)) {
-				$node->href = home_url('?editmode=true');
+		if (!empty($nodes) && is_array($nodes)) {
+			foreach ($nodes as $node) {
+				if (!empty($node->href) && preg_match('/customize\.php/', $node->href)) {
+					$node->href = home_url('?editmode=true');
+				}
+				$wp_admin_bar->add_node($node);
 			}
-			$wp_admin_bar->add_node($node);
 		}
-	}
 
-	function filter_wp_title ( $title, $sep ) {
-		global $paged, $page;
-		if ( is_feed() )
-			return $title;
-		$title .= get_bloginfo('name');
-		if ( $paged >= 2 || $page >= 2 )
-			$title = "$title $sep " . sprintf(__('Page %s'), max($paged, $page));
-		return $title;
+		// Action hook here, so other stuff can add its bar items
+		// (most notably, the exporter)
+		do_action('upfront-admin_bar-process', $wp_admin_bar, $item);
 	}
 
 	function inject_grid_scope_class ($cls) {
