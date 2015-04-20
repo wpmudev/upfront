@@ -183,9 +183,12 @@ define([], function() {
 			}
 		},
 		initialize: function (opts) {
-			var me = this;
+			var me = this,
+				menuList = Upfront.data.unewnavigation.currentMenuItemData.get('menuList')
+			;
 			this.has_tabs = false;
 			this.options= opts;
+			menuList.push({label: l10n.create_new, value: -1});
 			this.panels = _([
 				// Menu
 				new Menu_Panel({
@@ -201,7 +204,18 @@ define([], function() {
 									model: this.model,
 									property: 'menu_id',
 									label: "",
-									values: Upfront.data.unewnavigation.currentMenuItemData.get('menuList')
+									values: menuList,
+									change: function(value) {
+										if(value == -1) {
+											delete menuList[menuList.length-1];
+											Upfront.data.unewnavigation.currentMenuItemData.set({menu_id: false, menu_slug: false});
+											me.model.set_property('menu_slug', false);
+											me.model.set_property('menu_id', false);
+											me.for_view.property('menu_slug', false, true);
+											me.for_view.property('menu_id', false);
+											me.close_panel();
+										}
+									}
 								}),
 								new Upfront.Views.Editor.Field.Checkboxes({
 									model: this.model,
@@ -219,29 +233,6 @@ define([], function() {
 										else {
 											me.panels._wrapped[0].settings._wrapped[2].$el.css('display', 'none');
 											me.panels._wrapped[0].settings._wrapped[3].$el.css('display', 'block');
-										}
-									}
-								})
-							]
-						}),
-						new Upfront.Views.Editor.Settings.Item({
-							model: this.model,
-							title: l10n.mnu.create,
-							fields: [
-								new Upfront.Views.Editor.Field.Text({
-									model: me.model,
-									label: l10n.new_menu_name,
-									className: "new_menu_name",
-									compact: true
-								}),
-								new Upfront.Views.Editor.Field.Button({
-									model: me.model,
-									label: l10n.create_new,
-									className: "new_menu_button",
-									compact: true,
-									on_click: function() {
-										if(me.$el.find('div.upfront-settings-item-content > div.new_menu_name input').val()!='') {
-											me.for_view.create_new_menu(me.$el.find('div.upfront-settings-item-content > div.new_menu_name input').val());
 										}
 									}
 								})
