@@ -290,7 +290,6 @@ define([
 			var model = this.model;
 
 			var anchorValues = [{label: 'Choose Anchor...', value: ''}];
-			console.log('Triggered');
 			_.each(getAnchors(), function(anchor) {
 				anchorValues.push({label: anchor.label, value: anchor.id});
 			});
