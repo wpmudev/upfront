@@ -942,7 +942,10 @@ class Upfront_Module_Group extends Upfront_Container {
 	}
 
 	public function get_markup () {
-		return parent::get_markup();
+		$pre = '';
+		$anchor = upfront_get_property_value('anchor', $this->_data);
+		if (!empty($anchor)) $pre .= '<a id="' . esc_attr($anchor) . '"></a>';
+		return $pre . parent::get_markup();
 	}
 	
 	public function wrap ($out) {
