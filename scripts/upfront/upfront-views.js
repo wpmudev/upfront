@@ -3614,10 +3614,24 @@ define([
 					top = this.model.get_property_value_by_name('top'),
 					is_top = ( typeof top == 'number' ),
 					left = this.model.get_property_value_by_name('left'),
+					right = this.model.get_property_value_by_name('right'),
 					is_left = ( typeof left == 'number' ),
 					bottom = this.model.get_property_value_by_name('bottom'),
 					is_bottom = ( typeof bottom == 'number' ),
 					css = {};
+					
+				if((scroll_bottom < container_view.$el.offset().top || scroll_top > container_view.$el.offset().top + container_view.$el.outerHeight()) !== true) {
+					if(right == 0) {
+						this.$el.find('.upfront-region-edit-trigger').css({
+							right: 30
+						})
+					}
+				} else {
+					this.$el.find('.upfront-region-edit-trigger').css({
+						right: 0
+					})
+				}
+
 				if ( restrict ){
 					if ( scroll_top >= container_offset.top && scroll_bottom <= container_bottom ){
 						css.position = 'fixed';
