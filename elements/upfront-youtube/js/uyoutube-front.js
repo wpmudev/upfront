@@ -8,13 +8,10 @@
 
 	$(window).on('load', function() {
 		$(window).resize(_.debounce(function() {
-			
+			fixVideoheight();	
 		}, 500));
-	});
-
-	$(document).ready(function() {
 		fixVideoheight();
-	}
+	});
 
 	function fixVideoheight() {
 		$('.upfront-youtube-container > iframe').each(function() {
