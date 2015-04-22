@@ -176,3 +176,7 @@
     color: #9097ac;
     font-size: 25px;
 }
+
+.upfront-youtube-container > iframe {
+    width: 100%;
+}

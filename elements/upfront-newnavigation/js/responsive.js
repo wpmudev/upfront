@@ -1,30 +1,4 @@
-;(function($,sr){
-
-  // debouncing function from John Hann
-  // http://unscriptable.com/index.php/2009/03/20/debouncing-javascript-methods/
-  var debounce = function (func, threshold, execAsap) {
-	  var timeout;
-
-	  return function debounced () {
-		  var obj = this, args = arguments;
-		  function delayed () {
-			  if (!execAsap)
-				  func.apply(obj, args);
-			  timeout = null;
-		  };
-
-		  if (timeout)
-			  clearTimeout(timeout);
-		  else if (execAsap)
-			  func.apply(obj, args);
-
-		  timeout = setTimeout(delayed, threshold || 400);
-	  };
-  }
-  // smartresize
-  jQuery.fn[sr] = function(fn){  return fn ? this.bind('resize', debounce(fn)) : this.trigger(sr); };
-
-})(jQuery,'smartresize');
+;
 
 jQuery(document).ready(function($) {
 
@@ -84,6 +58,7 @@ jQuery(document).ready(function($) {
 			});
 		}
 	});
+
 	function pushContent(nav) {
 		var currentwidth = $('div#page').width();
 		var navwidth = nav.find('ul.menu').width();
@@ -190,13 +165,16 @@ jQuery(document).ready(function($) {
 		});
 	}
 	roll_responsive_nav(".upfront-output-unewnavigation > .upfront-navigation");
-
-	$(window).smartresize(function() {
-		$('.responsive_nav_toggler').css({position: '', left: '', top: ''});
-		$('ul.menu').css('padding-top', '');
-		$('.burger_nav_close').remove();
-		roll_responsive_nav(".upfront-output-unewnavigation > .upfront-navigation");
+	
+	$(window).on('load', function() {
+		$(window).resize(_.debounce(function() {
+			$('.responsive_nav_toggler').css({position: '', left: '', top: ''});
+			$('ul.menu').css('padding-top', '');
+			$('.burger_nav_close').remove();
+			roll_responsive_nav(".upfront-output-unewnavigation > .upfront-navigation");
+		}, 500));
 	});
+	
 	$(document).on('changed_breakpoint', function(e) {
 		roll_responsive_nav( e.selector, e.width);
 	});
