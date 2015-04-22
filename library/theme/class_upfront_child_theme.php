@@ -24,8 +24,11 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 	protected function __construct () {
 		$this->_version = wp_get_theme()->version;
-		$this->themeSettings = new Upfront_Theme_Settings(get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'settings.php');
+		
+		$this->set_theme_settings(new Upfront_Theme_Settings(get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'settings.php'));
+		
 		self::$instance = $this;
+		
 		//add_filter('upfront_create_default_layout', array($this, 'load_page_regions'), 10, 3); // Soooo... this no longer works, yay
 		add_filter('upfront_override_layout_data', array($this, 'load_page_regions'), 10, 2); // This goes in instead of the above ^
 		add_filter('upfront_get_layout_properties', array($this, 'getLayoutProperties'));
@@ -51,6 +54,10 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		$this->checkMenusExist();
 		$this->initialize();
+	}
+
+	public function set_theme_settings (Upfront_Theme_Settings $settings) {
+		$this->themeSettings = $settings;
 	}
 
 	/**
