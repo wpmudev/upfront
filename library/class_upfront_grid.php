@@ -44,7 +44,7 @@ class Upfront_Grid {
 		if (is_null(Upfront_ChildTheme::get_instance())) {
 			return $this->get_default_breakpoints();
 		}
-		$layout_properties = json_decode(Upfront_ChildTheme::get_instance()->themeSettings->get('layout_properties'), true);
+		$layout_properties = json_decode(Upfront_ChildTheme::get_settings()->get('layout_properties'), true);
 		if (!is_array($layout_properties)) {
 			return $this->get_default_breakpoints();
 		}
