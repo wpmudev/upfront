@@ -22,6 +22,16 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		return '1.0';
 	}
 
+	/**
+	 * Static wrapper for theme settings getter.
+	 *
+	 * @return mixed Either Upfront_Theme_Settings object instance or false.
+	 */
+	public static function get_settings () {
+		if (!empty(self::$instance)) return self::$instance->get_theme_settings();
+		return false;
+	}
+
 	protected function __construct () {
 		$this->_version = wp_get_theme()->version;
 		
@@ -56,8 +66,25 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		$this->initialize();
 	}
 
+	/**
+	 * Sets the theme settings object
+	 * Not really all that useful in the context of this class, but comes
+	 * really handy when the exporter comes into play.
+	 *
+	 * @param Upfront_Theme_Settings $settings Theme settings object
+	 */
 	public function set_theme_settings (Upfront_Theme_Settings $settings) {
 		$this->themeSettings = $settings;
+	}
+
+	/**
+	 * Theme settings getter.
+	 * Added in preparation for refactoring the theme settings object to private.
+	 *
+	 * @return Upfront_Theme_Settings Current theme settings.
+	 */
+	public function get_theme_settings () {
+		return $this->themeSettings;
 	}
 
 	/**
