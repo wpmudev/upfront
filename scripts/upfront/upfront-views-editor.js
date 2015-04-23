@@ -4986,15 +4986,15 @@ var Field_ToggleableText = Field_Text.extend({
 
 	var SettingsPanel = Backbone.View.extend(_.extend({}, Upfront_Scroll_Mixin, {
 		className: 'upfront-settings_panel_wrap',
-    // For Anchor & Styles settings
-	hide_common_anchors: false,
-    hide_common_fields: false,
+		// For Anchor & Styles settings
+		hide_common_anchors: false,
+		hide_common_fields: false,
 
 		events: {
 			"click .upfront-save_settings": "on_save",
 			"click .upfront-cancel_settings": "on_cancel",
 			"click .upfront-settings_label": "on_toggle",
-      "click .upfront-settings-common_panel .upfront-settings-item-title": "on_toggle_common"
+    		"click .upfront-settings-common_panel .upfront-settings-item-title": "on_toggle_common"
 		},
 
 		get_title: function () {
@@ -9503,21 +9503,21 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		}
 	});
 
-	var RegionPanelItem_DeleteRegion = RegionPanelItem.extend({
-		events: {
-			'click .upfront-icon': 'delete_region'
-		},
-		className: 'upfront-inline-panel-item upfront-region-panel-item-delete-region',
-		icon: 'delete',
-		tooltip: l10n.delete_section,
-		//label: "Delete this section",
-		delete_region: function () {
-			var collection = this.model.collection;
-			if ( confirm(l10n.delete_section_nag) ){
-				collection.remove(this.model);
-			}
-		}
-	});
+	// var RegionPanelItem_DeleteRegion = RegionPanelItem.extend({
+	// 	events: {
+	// 		'click .upfront-icon': 'delete_region'
+	// 	},
+	// 	className: 'upfront-inline-panel-item upfront-region-panel-item-delete-region',
+	// 	icon: 'delete',
+	// 	tooltip: l10n.delete_section,
+	// 	//label: "Delete this section",
+	// 	delete_region: function () {
+	// 		var collection = this.model.collection;
+	// 		if ( confirm(l10n.delete_section_nag) ){
+	// 			collection.remove(this.model);
+	// 		}
+	// 	}
+	// });
 
 	// var RegionPanel = InlinePanels.Panel.extend({
 	// 	className: 'upfront-inline-panel upfront-region-panel upfront-no-select',
@@ -9557,35 +9557,35 @@ var Field_Compact_Label_Select = Field_Select.extend({
 	// 	}
 	// });
 
-	var RegionPanel_Edit = InlinePanels.Panel.extend({
-		initialize: function () {
-			//this.bg = new RegionPanelItem_BgSetting({model: this.model});
-			if ( this.model.is_main() ){
-				//this.expand_lock = new RegionPanelItem_ExpandLock({model: this.model});
-				this.add_region = new RegionPanelItem_AddRegion({model: this.model, to: 'top'});
-			}
-			//this.delete_region = new RegionPanelItem_DeleteRegion({model: this.model});
-		},
-		items: function () {
-			var items = _([]),
-				type = this.model.get_property_value_by_name('background_type'),
-				sub = this.model.get('sub');
-			//items.push(this.bg);
-			//if ( this.expand_lock )
-			//	items.push(this.expand_lock);
-			if ( this.add_region && type != 'full' )
-				items.push(this.add_region);
-			if ( this.model.is_main() ) {
-				// if ( ! this.model.has_side_region() && ! this.model.get('default') && this.model.get('scope') != 'global' )
-					// items.push( this.delete_region );
-			}
-			else {
-				// if ( sub != 'top' && sub != 'bottom' )
-					// items.push( this.delete_region );
-			}
-			return items;
-		}
-	});
+	// var RegionPanel_Edit = InlinePanels.Panel.extend({
+	// 	initialize: function () {
+	// 		//this.bg = new RegionPanelItem_BgSetting({model: this.model});
+	// 		if ( this.model.is_main() ){
+	// 			//this.expand_lock = new RegionPanelItem_ExpandLock({model: this.model});
+	// 			this.add_region = new RegionPanelItem_AddRegion({model: this.model, to: 'top'});
+	// 		}
+	// 		//this.delete_region = new RegionPanelItem_DeleteRegion({model: this.model});
+	// 	},
+	// 	items: function () {
+	// 		var items = _([]),
+	// 			type = this.model.get_property_value_by_name('background_type'),
+	// 			sub = this.model.get('sub');
+	// 		//items.push(this.bg);
+	// 		//if ( this.expand_lock )
+	// 		//	items.push(this.expand_lock);
+	// 		if ( this.add_region && type != 'full' )
+	// 			items.push(this.add_region);
+	// 		if ( this.model.is_main() ) {
+	// 			// if ( ! this.model.has_side_region() && ! this.model.get('default') && this.model.get('scope') != 'global' )
+	// 				// items.push( this.delete_region );
+	// 		}
+	// 		else {
+	// 			// if ( sub != 'top' && sub != 'bottom' )
+	// 				// items.push( this.delete_region );
+	// 		}
+	// 		return items;
+	// 	}
+	// });
 
 	var RegionPanel_Add = InlinePanels.Panel.extend({
 		initialize: function (opts) {
@@ -9617,12 +9617,12 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		}
 	});
 
-	var RegionPanel_Delete = InlinePanels.Panel.extend({
-		position_h: 'right',
-		initialize: function () {
-			this.items = _( [ new RegionPanelItem_DeleteRegion({model: this.model}) ] );
-		}
-	});
+	// var RegionPanel_Delete = InlinePanels.Panel.extend({
+	// 	position_h: 'right',
+	// 	initialize: function () {
+	// 		this.items = _( [ new RegionPanelItem_DeleteRegion({model: this.model}) ] );
+	// 	}
+	// });
 
 	var RegionPanels = InlinePanels.Panels.extend({
 		className: 'upfront-inline-panels upfront-region-panels upfront-ui',
@@ -9727,6 +9727,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				scroll_top = $(document).scrollTop(),
 				scroll_bottom = scroll_top + win_height - bottom_height,
 				rel_top = $main.offset().top + top_height;
+			
+			this.add_responsive_items();
+
 			/*this.$el.css({
 				top: scroll_top > top ? scroll_top-top+25 : 0,
 				bottom: bottom > scroll_bottom ? bottom-scroll_bottom : 0
@@ -9780,6 +9783,54 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					});
 				}
 			});
+		},
+		add_responsive_items: function() {
+			var me = this,
+				$regionEl = me.$el.parents('.upfront-region'),
+				sub_models = me.model.get_sub_regions(),
+				openItemControls = $('<span class="open-responsive-item-controls"></span>'),
+				itemControls = $('<div class="responsive-item-controls"></div>'),
+				responsiveAddRegionTop = $('<div class="responsive-item-control responsive-add-region-top">' + l10n.new_region_below + '</div>'),
+				responsiveAddRegionBottom = $('<div class="responsive-item-control responsive-add-region-bottom">' + l10n.new_region_above + '</div>'),
+				responsiveAddRegionLeft = $('<div class="responsive-item-control responsive-add-region-left">' + l10n.new_left_sidebar_region + '</div>'),
+				responsiveAddRegionRight = $('<div class="responsive-item-control responsive-add-region-right">' + l10n.new_right_sidebar_region + '</div>')
+			;
+
+			openItemControls.click(function() {
+				$regionEl.toggleClass('controls-visible');
+			});
+			me.$el.append(openItemControls);
+
+			responsiveAddRegionTop.click(function() {
+				me.add_panel_top.$el.find('.upfront-icon').trigger('click');
+				$regionEl.toggleClass('controls-visible');
+			});
+			itemControls.append(responsiveAddRegionTop);
+			
+			responsiveAddRegionBottom.click(function() {
+				me.add_panel_bottom.$el.find('.upfront-icon').trigger('click');
+				$regionEl.toggleClass('controls-visible');
+			});
+			itemControls.append(responsiveAddRegionBottom);
+			
+			if ( me.model.is_main() && this.model.get('allow_sidebar') ){
+				if(sub_models.left === false) {
+					responsiveAddRegionLeft.click(function() {
+						me.add_panel_left.$el.find('.upfront-icon').trigger('click');
+						$regionEl.toggleClass('controls-visible');
+					});
+					itemControls.append(responsiveAddRegionLeft);
+				}
+				if(sub_models.right === false) {
+					responsiveAddRegionRight.click(function() {
+						me.add_panel_right.$el.find('.upfront-icon').trigger('click');
+						$regionEl.toggleClass('controls-visible');
+					});
+					itemControls.append(responsiveAddRegionRight);
+				}
+			}
+			$regionEl.find('.responsive-item-controls').remove();
+			$regionEl.append(itemControls);
 		},
 		remove: function() {
 			//this.edit_panel.remove();
