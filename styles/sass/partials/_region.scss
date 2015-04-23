@@ -1292,9 +1292,9 @@ a.upfront-region-name-edit-trigger:before {
   margin-right:40px;
 }
 
-.upfront-region-container .upfront-inline-panels.upfront-region-panels.upfront-ui > .open-responsive-item-controls {
+.upfront-region-container .open-responsive-item-controls {
 	display: none;
-	z-index: 10000;
+	z-index: 1000000;
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -1306,7 +1306,7 @@ a.upfront-region-name-edit-trigger:before {
 	background-image: -ms-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
 	background-image: linear-gradient(-179deg, #2F445D 0%, #152841 100%);
 }
-.upfront-region-container .upfront-inline-panels.upfront-region-panels.upfront-ui > .open-responsive-item-controls:before {
+.upfront-region-container .open-responsive-item-controls:before {
 	background-image: url(../img/uf-core-el-sprite.svg);
 	content: " ";
 	background-repeat: no-repeat;
@@ -1318,7 +1318,7 @@ a.upfront-region-name-edit-trigger:before {
 }
 .upfront-region-container .responsive-item-controls {
 	display: none;
-	z-index: 100003;
+	z-index: 1000001;
 	position: absolute;
 	top: 20px;
 	left: 20px;

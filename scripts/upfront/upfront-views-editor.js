@@ -9796,11 +9796,13 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				responsiveAddRegionRight = $('<div class="responsive-item-control responsive-add-region-right">' + l10n.new_right_sidebar_region + '</div>')
 			;
 
-			openItemControls.click(function() {
-				$regionEl.toggleClass('controls-visible');
-			});
-			me.$el.append(openItemControls);
-
+			if($regionEl.find('.open-responsive-item-controls').length === 0) {
+				openItemControls.click(function() {
+					$regionEl.toggleClass('controls-visible');
+				});
+				$regionEl.append(openItemControls);
+			}
+			
 			responsiveAddRegionTop.click(function() {
 				me.add_panel_top.$el.find('.upfront-icon').trigger('click');
 				$regionEl.toggleClass('controls-visible');
