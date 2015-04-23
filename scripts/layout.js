@@ -412,7 +412,19 @@ jQuery(document).ready(function($){
 	var lazyFixFullBg = throttle(fix_full_bg, 500);
 	$(window).on('resize', lazyFixFullBg);
 	$(window).on('load', lazyFixFullBg);
-
+	
+	//Sticky header adding offest to anchors
+	function sticky_header_anchor_update() {
+		var nav = $('.upfront-output-region-container[data-sticky="1"], .upfront-output-region-sub-container[data-sticky="1"]').first();
+		if(nav.length > 0) {
+			$('a[data-is-anchor="1"]').each(function(){
+				$(this).next().css('marginTop', nav.height() + 30);
+			});
+		}
+	}
+	
+	$(window).on('load', sticky_header_anchor_update);
+	
 	// Regions behavior on scroll
 	function regions_scroll_update () {
 		var breakpoint = get_breakpoint(),

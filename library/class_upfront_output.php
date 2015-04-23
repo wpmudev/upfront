@@ -944,7 +944,7 @@ class Upfront_Module_Group extends Upfront_Container {
 	public function get_markup () {
 		$pre = '';
 		$anchor = upfront_get_property_value('anchor', $this->_data);
-		if (!empty($anchor)) $pre .= '<a id="' . esc_attr($anchor) . '"></a>';
+		if (!empty($anchor)) $pre .= '<a id="' . esc_attr($anchor) . '" data-is-anchor="1"></a>';
 		return $pre . parent::get_markup();
 	}
 	
@@ -1043,7 +1043,7 @@ class Upfront_Module extends Upfront_Container {
 		$pre = '';
 		if (!empty($children)) foreach ($children as $child) {
 			$anchor = upfront_get_property_value('anchor', $child);
-			if (!empty($anchor)) $pre .= '<a id="' . esc_attr($anchor) . '"></a>';
+			if (!empty($anchor)) $pre .= '<a id="' . esc_attr($anchor) . '" data-is-anchor="1"></a>';
 		}
 		return $pre . parent::get_markup();
 	}
