@@ -47,6 +47,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		add_filter('upfront_get_theme_fonts', array($this, 'getThemeFonts'), 10, 2);
 		add_filter('upfront_get_icon_fonts', array($this, 'getIconFonts'), 10, 2);
 		add_filter('upfront_get_theme_colors', array($this, 'getThemeColors'), 10, 2);
+		add_filter('upfront_get_theme_colors_styles', array($this, 'getThemeColorsStyles'), 10, 1);
 		add_filter('upfront_get_post_image_variants', array($this, 'getPostImageVariants'), 10, 2);
 		add_filter('upfront_get_button_presets', array($this, 'getButtonPresets'), 10, 2);
 		add_filter('upfront_get_tab_presets', array($this, 'getTabPresets'), 10, 2);
@@ -515,6 +516,24 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		if (isset($args['json']) && $args['json']) return $theme_colors;
 
 		return json_decode($theme_colors);
+	}
+	
+	public function getThemeColorsStyles($theme_colors_styles) {
+		if (empty($theme_colors_styles) === false) return $theme_colors_styles;
+
+		$theme_colors = json_decode($this->get_theme_settings()->get('theme_colors'), true);
+		$theme_colors_styles = '';
+		
+		foreach($theme_colors['colors'] as $index => $item) {
+			$theme_colors_styles .= " .upfront_theme_color_" . $index ."{ color: " . $item["color"] . ";}";
+            $theme_colors_styles .= " a .upfront_theme_color_" . $index .":hover{ color: " . $item["color"] . ";}";
+            $theme_colors_styles .= " button .upfront_theme_color_" . $index .":hover{ color: " . $item["color"] . ";}";
+            $theme_colors_styles .= " .upfront_theme_bg_color_" . $index ."{ background-color: " . $item["color"] . ";}";
+            $theme_colors_styles .= " a .upfront_theme_bg_color_" . $index .":hover{ background-color: " . $item["color"] . ";}";
+            $theme_colors_styles .= " button .upfront_theme_bg_color_" . $index .":hover{ background-color: " . $item["color"] . ";}";
+		}
+		
+		return $theme_colors_styles;
 	}
 
 	public function getButtonPresets($button_presets, $args) {
