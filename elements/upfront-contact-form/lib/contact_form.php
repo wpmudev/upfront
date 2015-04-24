@@ -21,17 +21,20 @@ class Upfront_UcontactView extends Upfront_Object {
 				'name' => $this->get_placeholder($this->_get_property('form_name_label')),
 				'email' => $this->get_placeholder($this->_get_property('form_email_label')),
 				'subject' => $this->get_placeholder($this->_get_property('form_subject_label')),
+				'captcha' => $this->get_placeholder($this->_get_property('form_captcha_label')),
 				'message' => $this->get_placeholder($this->_get_property('form_message_label'))
 			),
 			'values' => array(
 				'name' => $this->get_post('sendername'),
 				'email' => $this->get_post('senderemail'),
 				'subject' => $this->get_post('subject'),
+				'captcha' => $this->get_post('subject'),
 				'message' => $this->get_post('sendermessage')
 			)
 		));
 
 		$args['show_subject'] = $args['show_subject'] && sizeof($args['show_subject']);
+		$args['show_captcha'] = $args['show_captcha'] && sizeof($args['show_captcha']);
 		$args['form_add_title'] = $args['form_add_title'] && sizeof($args['form_add_title']);
 
 		$markup =  $this->get_template('ucontact', $args);
@@ -66,7 +69,9 @@ class Upfront_UcontactView extends Upfront_Object {
 			'form_email_label' => self::_get_l10n('email_label'),
 			'form_email_to' => get_option('admin_email'),
 			'show_subject' => array(),
+			'show_captcha' => array(),
 			'form_subject_label' => self::_get_l10n('subject_label'),
+			'form_captcha_label' => self::_get_l10n('captcha_label'),
 			'form_default_subject' => self::_get_l10n('default_subject'),
 			'form_message_label' => self::_get_l10n('message_label'),
 			'form_button_text' => self::_get_l10n('button_text'),
@@ -83,6 +88,11 @@ class Upfront_UcontactView extends Upfront_Object {
 	}
 
 	public static function add_styles_scripts () {
+		// CAPTCHA
+		upfront_add_element_style('jquery-realperson', array('/scripts/realperson/jquery.realperson.css', false));
+		upfront_add_element_script('jquery-plugin', array('/scripts/realperson/jquery.plugin.js', false));
+		upfront_add_element_script('jquery-realperson', array('/scripts/realperson/jquery.realperson.js', false));
+
 		upfront_add_element_style('ucontact-style', array('css/ucontact.css', dirname(__FILE__)));
 		upfront_add_element_script('ucontact-front', array('js/ucontact-front.js', dirname(__FILE__)));
 	}
@@ -153,6 +163,7 @@ class Upfront_UcontactView extends Upfront_Object {
 			$name = preg_replace('/\n\r/', ' ', sanitize_text_field($_POST['sendername']));
 			$email = is_email($_POST['senderemail']);
 			$show_subject = $this->_get_property('show_subject');
+			$show_captcha = $this->_get_property('show_captcha');
 
 			if($show_subject && $show_subject != 'false'){
 				$subject = sanitize_text_field($_POST['subject']);
@@ -162,29 +173,40 @@ class Upfront_UcontactView extends Upfront_Object {
 				$subject = $this->_get_property('form_default_subject');
 			}
 
+			if($show_captcha && $show_captcha != 'false'){
+				$real_person = $_POST['realPerson'];
+				$real_person_hash = $_POST['realPersonHash'];
+
+				if (!$real_person || !$real_person_hash || upfront_realperson_hash($real_person) != $real_person_hash) {
+					$this->msg = self::_get_l10n('error_captcha');
+					$this->msg_class = 'error';
+					return;
+				}
+			}
+
 			//Strip unwanted tags from the message
 			$message = wp_kses(
 				$_POST['sendermessage'],
 				array(
-				    'a' => array(
-				        'href' => array (),
-				        'title' => array ()),
-				    'abbr' => array(
-				        'title' => array ()),
-				    'acronym' => array(
-				        'title' => array ()),
-				    'b' => array(),
-				    'blockquote' => array(
-				        'cite' => array ()),
-				    'cite' => array (),
-				    'code' => array(),
-				    'del' => array(
-				        'datetime' => array ()),
-				    'em' => array (), 'i' => array (),
-				    'q' => array(
-				        'cite' => array ()),
-				    'strike' => array(),
-				    'strong' => array(),
+					'a' => array(
+						'href' => array (),
+						'title' => array ()),
+					'abbr' => array(
+						'title' => array ()),
+					'acronym' => array(
+						'title' => array ()),
+					'b' => array(),
+					'blockquote' => array(
+						'cite' => array ()),
+					'cite' => array (),
+					'code' => array(),
+					'del' => array(
+						'datetime' => array ()),
+					'em' => array (), 'i' => array (),
+					'q' => array(
+						'cite' => array ()),
+					'strike' => array(),
+					'strong' => array(),
 				)
 			);
 
@@ -316,6 +338,7 @@ class Upfront_UcontactView extends Upfront_Object {
 			'name_label' => __('Name:', 'upfront'),
 			'email_label' => __('Email:', 'upfront'),
 			'subject_label' => __('Subject:', 'upfront'),
+			'captcha_label' => __('CAPTCHA:', 'upfront'),
 			'default_subject' => __('Sent from the website', 'upfront'),
 			'message_label' => __('Message:', 'upfront'),
 			'button_text' => __('Send', 'upfront'),
@@ -324,6 +347,7 @@ class Upfront_UcontactView extends Upfront_Object {
 			'settings_stored' => __('Contact form settings stored.', 'upfront'),
 			'store_error' => __('There was a problem storing the contact form settings.', 'upfront'),
 			'error_sending' => __('There was an error sending the email.', 'upfront'),
+			'error_captcha' => __('The CAPTCHA field is not valid.', 'upfront'),
 			'mail_sent' => __('The email has been sent successfully.', 'upfront'),
 			'missing_name' => __('You must write your name.', 'upfront'),
 			'invalid_email' => __('Your email address is not valid.', 'upfront'),
@@ -360,6 +384,7 @@ class Upfront_UcontactView extends Upfront_Object {
 				'email' => __('Email Field Text:', 'upfront'),
 				'msg' => __('Message Field Text:', 'upfront'),
 				'show_subject' => __('Show subject field', 'upfront'),
+				'show_captcha' => __('Show CAPTCHA field', 'upfront'),
 				'subject' => __('Subject Field text:', 'upfront'),
 				'default_subject' => __('Default subject:', 'upfront'),
 			),

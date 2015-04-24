@@ -127,6 +127,8 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 					targetproperty = 'form_message_label';
 				else if($label.attr('for') == 'subject')
 					targetproperty = 'form_subject_label';
+				else if($label.attr('for') == 'realPerson')
+					targetproperty = 'form_captcha_label';
 				
 				if (text && targetproperty) me.model.set_property(targetproperty, text, true); 
 			})
@@ -137,8 +139,6 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 				$label.siblings('input, textarea').attr('placeholder', $label.text());
 			}
 		});
-
-
 	},
 	handleButtonclick: function(e) {
 		e.preventDefault();
@@ -184,6 +184,7 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 		});
 
 		args.show_subject = args.show_subject && args.show_subject.length;
+		args.show_captcha = args.show_captcha && args.show_captcha.length;
 		args.form_add_title = args.form_add_title && args.form_add_title.length;
 
 		return this.tpl(args);
@@ -361,6 +362,17 @@ var UcontactSettings = Upfront.Views.Editor.Settings.Settings.extend({
 								}
 								console.log(related);
 							}*/
+						}),
+						new OptionalField({
+							model: this.model,
+							property: 'show_captcha',
+							relatedField: 'form_captcha_label',
+							values: [
+								{
+									label: l10n.fields.show_captcha,
+									value: 'true'
+								}
+							],
 						}),
 						/*new Fields.Text({
 							model: this.model,

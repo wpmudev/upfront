@@ -29,6 +29,12 @@
 			<label for="sendermessage"><?php echo $form_message_label ?></label>
 			<textarea class="textarea-field <?php echo $validate ?> ucontact-input" name="sendermessage" <?php echo $placeholders['message'] ?>><?php echo $values['message'] ?></textarea>
 		</div>
+		<?php if($show_captcha){ ?>
+		<div class="upfront-field-container <?php echo $field_classes ?>">
+			<label for="realPerson"><?php echo $form_captcha_label ?></label>
+			<input type="text" class="text-field <?php echo $validate ?> ucontact-input blabla" name="realPerson" <?php echo $placeholders['captcha'] ?> />
+		</div>
+		<?php } ?>
 		<div class="upfront-field-container upfront-submit-container <?php echo $field_classes ?>">
 			<button type="submit" name="send" class="button submit-field"><span><?php echo $form_button_text ?></span></button>
 		</div>
