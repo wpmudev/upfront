@@ -505,6 +505,8 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'new_region_below' => __('Insert new region below', 'upfront'),
 				'new_region_above' => __('Insert new region above', 'upfront'),
 				'new_sidebar_region' => __('Insert sidebar region', 'upfront'),
+				'new_left_sidebar_region' => __('Insert left sidebar region', 'upfront'),
+				'new_right_sidebar_region' => __('Insert right sidebar region', 'upfront'),
 				'delete_section' => __('Delete this section', 'upfront'),
 				'delete_section_nag' => __('Are you sure you want to delete this section?', 'upfront'),
                 'no_region_add' => __('Click here to add a region', 'upfront'),

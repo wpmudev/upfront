@@ -677,6 +677,10 @@ jQuery(document).ready(function($){
 						lightbox.hide();
 					}
 				}
+				else {
+					//It is an anchor
+					$('html,body').animate({scrollTop: $(url).offset().top},'slow');
+				}
 			}
 		});
 
