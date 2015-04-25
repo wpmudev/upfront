@@ -524,7 +524,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		$theme_colors = json_decode($this->get_theme_settings()->get('theme_colors'), true);
 		$theme_colors_styles = '';
 		
-		foreach($theme_colors['colors'] as $index => $item) {
+		if (!empty($theme_colors['colors'])) foreach($theme_colors['colors'] as $index => $item) {
 			$theme_colors_styles .= " .upfront_theme_color_" . $index ."{ color: " . $item["color"] . ";}";
             $theme_colors_styles .= " a .upfront_theme_color_" . $index .":hover{ color: " . $item["color"] . ";}";
             $theme_colors_styles .= " button .upfront_theme_color_" . $index .":hover{ color: " . $item["color"] . ";}";
