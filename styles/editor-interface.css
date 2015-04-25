@@ -7433,7 +7433,7 @@ License: MIT
   display: inline-block;
   *display: inline;
   *zoom: 1;
-  z-index: 99;
+  z-index: 199;
   overflow: hidden; }
 
 .sp-container.sp-flat {
