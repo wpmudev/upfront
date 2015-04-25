@@ -1496,6 +1496,9 @@ define([
 				"click > .upfront-module-group-toggle-container > .upfront-module-group-ungroup": "on_ungroup",
 				"click > .upfront-module-group-toggle-container > .upfront-module-group-reorder": "on_reorder",
 				"click > .upfront-module-group-toggle-container > .upfront-module-group-edit": "on_edit",
+				"click a.redactor_act": "onOpenPanelClick",
+				"click .upfront-save_settings": "onOpenPanelClick",
+				"click .open-item-controls": "onOpenItemControlsClick",
 				"click > .upfront-module-group-finish-edit": "on_finish"
 			},
 			initialize: function () {
@@ -1512,13 +1515,77 @@ define([
 				
 				this.on('entity:resize', this.on_resize, this);
 			},
+			onOpenPanelClick: function(event) {
+				event.preventDefault();
+				this.toggleLinkPanel();
+			},
+
+			onOpenItemControlsClick: function() {
+				this.$el.toggleClass('controls-visible');
+				if (this.$el.hasClass('controls-visible')) {
+					this.controlsVisible = true;
+				} else {
+					this.controlsVisible = false;
+				}
+			},
+			
+			createInlineControlPanel: function() {
+				var property_url = this.model.get_property_value_by_name('href');
+				
+				if(!property_url) {
+					property_url = "";
+				}
+
+				var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
+					visitLinkControl = new Upfront.Views.Editor.InlinePanels.Controls.VisitLink({
+						url: property_url
+					}),
+					linkPanelControl = new Upfront.Views.Editor.InlinePanels.Controls.LinkPanel({
+						linkUrl: property_url,
+						linkType: Upfront.Util.guessLinkType(property_url),
+						linkTarget: this.model.get_property_value_by_name("linkTarget"),
+						button: false,
+						icon: 'link',
+						tooltip: 'link',
+						id: 'link'
+					});
+
+				me = this;				
+				
+				this.listenTo(linkPanelControl, 'change change:target', function(data) {
+					visitLinkControl.setLink(data.url);
+					this.model.set_property('href', data.url);
+					this.model.set_property('linkTarget', data.target);
+				});
+
+				panel.items = _([
+					linkPanelControl,
+					visitLinkControl
+				]);
+
+				var imageControlsTpl = '<div class="uimage-controls image-element-controls upfront-ui"></div>';
+				this.$el.append(imageControlsTpl);
+				panel.render();
+				this.$el.find('.uimage-controls').append(panel.el);
+				panel.delegateEvents();
+			},
+
+			toggleLinkPanel: function() {
+				var me = this;
+				if (this.$el.hasClass('stayOpen')) {
+					this.$el.removeClass('stayOpen');
+					me.render();
+				} else {
+					this.$el.addClass('stayOpen');
+				}
+			},
 			render: function () {
 				var props = {},
 					run = this.model.get("properties").each(function (prop) {
 						props[prop.get("name")] = prop.get("value");
 					}),
 					height = ( props.row ) ? props.row * Upfront.Settings.LayoutEditor.Grid.baseline : 0,
-					model = _.extend(this.model.toJSON(), {"properties": props, "height": height}),
+					model = _.extend(this.model.toJSON(), {"properties": props, "height": height, "href": ""}),
 					template = _.template(_Upfront_Templates["module_group"], model);
 
 				Upfront.Events.trigger("entity:module_group:before_render", this, this.model);
@@ -1535,7 +1602,7 @@ define([
 					this._theme_style = theme_style;
 				}
 
-				this.$el.html(template);
+				this.$el.html(template + '<span class="open-item-controls"></span>');
 				this.$bg = this.$el.find('.upfront-module-group-bg');
 				this.update();
 				var local_view = this._modules_view || new Modules({"model": this.model.get("modules")});
@@ -1550,6 +1617,8 @@ define([
 					this._modules_view = local_view;
 				else
 					this._modules_view.delegateEvents();
+				
+				this.createInlineControlPanel();
 			},
 			update: function () {
 				var prop_class = this.model.get_property_value_by_name('class'),

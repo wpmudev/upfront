@@ -593,6 +593,13 @@ jQuery(document).ready(function($){
 		close= $('<div class="upfront-ui close_lightbox"></div>'),
 		close_icon= $('<div class="upfront-icon upfront-icon-popup-close"></div>');
 
+	$( "[data-group-link]" ).each( function() {
+		$(this).css({'cursor': 'pointer'});
+		$(this).live( "click", function () {
+			window.open($(this).data("groupLink"), $(this).data("groupTarget"));
+		});
+	});
+	
 	$(document).on('click', 'a', function(e) {
 		//If we are in the editor the lightbox is open using the region.
 		//if(typeof(Upfront) != 'undefined' && Upfront.Views)

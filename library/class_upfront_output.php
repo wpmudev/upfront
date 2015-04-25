@@ -971,13 +971,24 @@ class Upfront_Module_Group extends Upfront_Container {
     
     public function get_attr () {
         $theme_style = $this->_get_property('theme_style');
+        $link = $this->_get_property('href');
+        $linkTarget = $this->_get_property('linkTarget');
         if($theme_style)
             $theme_style = strtolower($theme_style);
         $theme_styles = array( 'default' => $theme_style );
         foreach ( Upfront_Output::$grid->get_breakpoints(true) as $breakpoint ) {
             $theme_styles[$breakpoint->get_id()] = $this->_get_breakpoint_property('theme_style', $breakpoint->get_id());
         }
-        return " data-theme-styles='" . json_encode($theme_styles) . "'";
+				
+        $link_attributes = '';
+        if(!empty($link)) {
+        	$link_attributes = "data-group-link='".$link."'";
+        	if(!empty($linkTarget)) {
+        		$link_attributes .= "data-group-target='".$linkTarget."'";
+        	}
+        }
+
+        return " data-theme-styles='" . json_encode($theme_styles) . "' ".$link_attributes;
     }
 
     public function get_style_for ($point, $scope) {
