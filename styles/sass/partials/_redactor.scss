@@ -551,8 +551,8 @@ a.ueditor-format-pre{
 	text-align: center;
 }
 .redactor-toolbar  li a.re-upfrontFormatting:after{
-	content : "¶";
-	/*content : "\00b6";*/
+	/*content : "¶";*/
+	content : "\00b6";
 }
 /* MODAL */
 /* 300 lines deleted here, not using modals */

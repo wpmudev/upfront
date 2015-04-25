@@ -8077,8 +8077,7 @@ div.sp-replacer:before {
 #upfront-inline-slider-nav {
   position: absolute;
   right: auto;
-  z-index: 9999;
-  /*  ≠  */ }
+  z-index: 9999; }
 
 .ulinkpanel {
   width: 230px; }
@@ -9527,8 +9526,8 @@ a.ueditor-format-pre {
   text-align: center; }
 
 .redactor-toolbar li a.re-upfrontFormatting:after {
-  content: "¶";
-  /*content : "\00b6";*/ }
+  /*content : "¶";*/
+  content: "\00b6"; }
 
 /* MODAL */
 /* 300 lines deleted here, not using modals */
