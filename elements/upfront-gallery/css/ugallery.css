@@ -715,8 +715,8 @@ figure.gallery-labels-figure img.mfp-img {
 }
 
 .ugallery-controls {
-	bottom: 0;
-	left: 0;
+	top:0;
+	bottom: auto;
 	width: auto;
 }
 .ugallery-controls > .upfront-inline-panel {
