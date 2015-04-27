@@ -76,7 +76,7 @@ class Upfront_LoginView extends Upfront_Object {
 		$allow_registration = !is_user_logged_in() && get_option('users_can_register');
 		// Allow override for in-editor form previews
 		if (defined('DOING_AJAX') && DOING_AJAX && Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
-			$allow_registration = true;
+			$allow_registration = get_option('users_can_register');
 		}
 
 		$data = array(

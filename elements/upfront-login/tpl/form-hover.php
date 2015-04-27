@@ -12,7 +12,7 @@
 				<small>
 					<?php echo esc_html($lost_password); ?>
 					<br />
-					<a class="login-lostpassword-link" href="<?php echo wp_lostpassword_url(); ?>">
+					<a class="login-lostpassword-link" href="<?php echo esc_url(wp_lostpassword_url()); ?>">
 						<?php echo esc_html($click_here); ?>
 					</a>
 				</small>
