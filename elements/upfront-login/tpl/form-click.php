@@ -17,6 +17,11 @@
 					</a>
 				</small>
 			</p>
+			<?php if ($allow_registration) { ?>
+				<p>
+					<a href="<?php echo esc_url(wp_registration_url()); ?>"><?php echo esc_html($register); ?></a>
+				</p>
+			<?php } ?>
 		</div>
 	</div>
 </div>

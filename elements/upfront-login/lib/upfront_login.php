@@ -73,11 +73,19 @@ class Upfront_LoginView extends Upfront_Object {
 			: ''
 		;
 
+		$allow_registration = !is_user_logged_in() && get_option('users_can_register');
+		// Allow override for in-editor form previews
+		if (defined('DOING_AJAX') && DOING_AJAX && Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
+			$allow_registration = true;
+		}
+
 		$data = array(
 			'trigger' => $trigger,
 			'label' => $label,
+			'allow_registration' => $allow_registration,
 			'lost_password' => self::_get_l10n('lost_password'),
 			'click_here' => self::_get_l10n('click_here'),
+			'register' => self::_get_l10n('register'),
 		);
 		$tpl = 'block'; // default
 		if (!$block && !empty($properties['behavior'])) {
@@ -156,6 +164,7 @@ class Upfront_LoginView extends Upfront_Object {
 			'log_out_label' => __("Log Out Link:", 'upfront'),
 			'log_in_button' => __("Log In Button:", 'upfront'),
 			'log_in_trigger' => __("Log In Trigger:", 'upfront'),
+			'register' => __("Register", 'upfront'),
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)
