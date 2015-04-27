@@ -117,6 +117,7 @@ class Upfront_Posts_Model_Generic extends Upfront_Posts_Model {
 			//if (!empty($offset)) $args['offset'] = $offset;
 		} else {
 			if (!empty($query['query_vars']['paged'])) $args['paged'] = $query['query_vars']['paged'];
+			if (!empty($query['query_vars']['page'])) $args['paged'] = $query['query_vars']['page'];
 		}
 
 		// Misc queries: time, search...
