@@ -1714,7 +1714,8 @@ var Application = new (Backbone.Router.extend({
 		;
 
 		site_url.href = Upfront.Settings.site_url;
-		Backbone.history.start({pushState: true, root: site_url.pathname, silent:true});
+		//pushState set to false because it is removing # in the url causing 404
+		Backbone.history.start({pushState: false, root: site_url.pathname, silent:true});
 	},
 
 	set_loading: function(message, done){
