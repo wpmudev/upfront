@@ -29,4 +29,4 @@ class Upfront_Accordion_Presets_Server extends Upfront_Presets_Server {
 	}
 }
 
-add_action('init', array('Upfront_Accordion_Presets_Server', 'serve'));
+Upfront_Accordion_Presets_Server::serve();
