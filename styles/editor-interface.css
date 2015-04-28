@@ -8513,7 +8513,10 @@ a.ueditor-select-option:hover {
   background: #f2f9ff;
   border: 1px solid #b8d0e6;
   z-index: 9999;
-  right: 0; }
+  right: 0; 
+  overflow-y: auto;
+  max-height: 90%;
+}
 
 .ueditor-box-title {
   height: 40px;
