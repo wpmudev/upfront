@@ -53,6 +53,16 @@ class Upfront_Entity_Registry extends Upfront_Registry {
 	}
 }
 
+class Upfront_PresetServer_Registry extends Upfront_Registry {
+
+	private static $_instance;
+
+	public static function get_instance () {
+		if (!self::$_instance) self::$_instance = new self;
+		return self::$_instance;
+	}
+}
+
 class Upfront_PublicStylesheets_Registry extends Upfront_Registry {
 
 	private static $_instance;
