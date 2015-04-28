@@ -167,12 +167,22 @@ jQuery(document).ready(function($) {
 	roll_responsive_nav(".upfront-output-unewnavigation > .upfront-navigation");
 	
 	$(window).on('load', function() {
-		$(window).resize(_.debounce(function() {
-			$('.responsive_nav_toggler').css({position: '', left: '', top: ''});
-			$('ul.menu').css('padding-top', '');
-			$('.burger_nav_close').remove();
-			roll_responsive_nav(".upfront-output-unewnavigation > .upfront-navigation");
-		}, 500));
+		if( $("html").hasClass("ie8") ) {
+			$(window).resize(function() {
+				$('.responsive_nav_toggler').css({position: '', left: '', top: ''});
+				$('ul.menu').css('padding-top', '');
+				$('.burger_nav_close').remove();
+				roll_responsive_nav(".upfront-output-unewnavigation > .upfront-navigation");
+			});
+		} else {
+			$(window).resize(_.debounce(function() {
+				$('.responsive_nav_toggler').css({position: '', left: '', top: ''});
+				$('ul.menu').css('padding-top', '');
+				$('.burger_nav_close').remove();
+				roll_responsive_nav(".upfront-output-unewnavigation > .upfront-navigation");
+			}, 500));
+		}
+		
 	});
 	
 	$(document).on('changed_breakpoint', function(e) {

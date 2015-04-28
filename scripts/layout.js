@@ -13,8 +13,26 @@ jQuery(document).ready(function($){
 	}
 
 	function get_breakpoint(){
+		if (!window.getComputedStyle) {
+				window.getComputedStyle = function(el, pseudo) {
+				this.el = el;
+				this.getPropertyValue = function(prop) {
+					var re = /(\-([a-z]){1})/g;
+					if (prop == 'float') prop = 'styleFloat';
+					if (re.test(prop)) {
+						prop = prop.replace(re, function () {
+							return arguments[2].toUpperCase();
+						});
+					}
+					return el.currentStyle[prop] ? el.currentStyle[prop] : null;
+				}
+				return this;
+			}
+		}
 		var breakpoint = window.getComputedStyle(document.body,':after').getPropertyValue('content');
-		return breakpoint.replace(/['"]/g, '');
+		if(breakpoint) {
+			return breakpoint.replace(/['"]/g, '');
+		}
 	}
 	
 	/* Youtube API */
@@ -899,16 +917,17 @@ jQuery(document).ready(function($){
 		$('[data-theme-styles]').each(function(){
 			var theme_styles = $(this).attr('data-theme-styles'),
 				classes = [];
+			theme_styles = theme_styles.replace("\"default\":", "\"defaults\":");
 			if ( theme_styles )
 				theme_styles = JSON.parse(theme_styles);
 			$.each(theme_styles, function(id, style_class){
 				classes.push(style_class);
 			});
 			$(this).removeClass(classes.join(' '));
-			if ( !breakpoint && theme_styles.default )
-				$(this).addClass( theme_styles.default );
-			else if ( breakpoint && ( theme_styles[breakpoint] || theme_styles.default ) )
-				$(this).addClass( theme_styles[breakpoint] ? theme_styles[breakpoint] : theme_styles.default );
+			if ( !breakpoint && theme_styles.defaults )
+				$(this).addClass( theme_styles.defaults );
+			else if ( breakpoint && ( theme_styles[breakpoint] || theme_styles.defaults ) )
+				$(this).addClass( theme_styles[breakpoint] ? theme_styles[breakpoint] : theme_styles.defaults );
 		});
 	}
 	update_theme_styles();
