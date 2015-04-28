@@ -6,6 +6,9 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		parent::__construct();
 		$this->elementName = $this->get_element_name();
 		$this->db_key = 'upfront_' . get_stylesheet() . '_' . $this->elementName . '_presets';
+
+		$registry = Upfront_PresetServer_Registry::get_instance();
+		$registry->set($this->elementName, $this);
 	}
 
 	public abstract function get_element_name();
