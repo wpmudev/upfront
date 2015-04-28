@@ -32,11 +32,10 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			return;
 		}
 
-		do_action('upfront_delete_' . $this->elementName . '_preset', $properties);
+		$properties = stripslashes_deep($_POST['data']);
+		do_action('upfront_delete_' . $this->elementName . '_preset', $properties, $this->elementName);
 
 		if (!has_action('upfront_delete_' . $this->elementName . '_preset')) {
-			$properties = $_POST['data'];
-
 			$presets = $this->get_presets();
 
 			$result = array();
@@ -88,7 +87,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 		$properties = $_POST['data'];
 
-		do_action('upfront_save_' . $this->elementName . '_preset', $properties);
+		do_action('upfront_save_' . $this->elementName . '_preset', $properties, $this->elementName);
 
 		if (!has_action('upfront_save_' . $this->elementName . '_preset')) {
 			$presets = $this->get_presets();
