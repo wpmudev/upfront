@@ -106,7 +106,10 @@ class Upfront_UcommentView extends Upfront_Object {
 
         $defaults = self::default_properties();
         $prepend_form = (bool) $defaults['prepend_form'];
-        $form_args = apply_filters('upfront_comment_form_args', array());
+        $form_args = array(
+        	'comment_field' => self::_get_comment_form_field(),
+        );
+        $form_args = apply_filters('upfront_comment_form_args', array_filter($form_args));
         
         $comments = array();
         $post = false;
@@ -140,6 +143,21 @@ class Upfront_UcommentView extends Upfront_Object {
             comment_form($form_args, $post->ID);
         }
 		return ob_get_clean();
+	}
+
+	/**
+	 * Get the actual input form field markup.
+	 * Yanked directly from wp-includes/comment-template.php
+	 * because that's where it's hardcoded. Yay for hardcoding stuff.
+	 *
+	 * @return string
+	 */
+	private static function _get_comment_form_field () {
+		return '<p class="comment-form-comment">' .
+			'<label for="comment">' . _x( 'Comment', 'noun' ) . '</label>' .
+			' ' .
+			'<textarea placeholder="' . esc_attr(__('Leave a Reply')) . '" id="comment" name="comment" cols="45" rows="8" aria-describedby="form-allowed-tags" aria-required="true" required="required"></textarea>' .
+		'</p>';
 	}
 
 	public static function list_comment ( $comment, $args, $depth ) {
