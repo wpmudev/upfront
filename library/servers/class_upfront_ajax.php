@@ -52,6 +52,14 @@ class Upfront_Ajax extends Upfront_Server {
 		$load_dev = $_POST['load_dev'] == 1 ? true : false;
 		$post_type = isset($_POST['new_post']) ? $_POST['new_post'] : false;
 		$parsed = false;
+		
+		//Check if assigned WP template and delete DB layout
+		if(isset($_POST['post_id']) && !empty($_POST['post_id']) && isset($_POST['data']['specificity']) && !empty($_POST['data']['specificity']) && !empty($stylesheet)) {
+			$template = get_post_meta((int)$_POST['post_id'], '_wp_page_template', true);
+			if(!empty($template)) {
+				delete_option($stylesheet.'-'.$_POST['data']['specificity']);
+			}
+		}
 
 		if (empty($layout_ids))
 			$this->_out(new Upfront_JsonResponse_Error("No such layout"));
