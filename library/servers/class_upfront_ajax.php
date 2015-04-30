@@ -54,10 +54,12 @@ class Upfront_Ajax extends Upfront_Server {
 		$parsed = false;
 		
 		//Check if assigned WP template and delete DB layout
-		if(isset($_POST['post_id']) && !empty($_POST['post_id']) && isset($_POST['data']['specificity']) && !empty($_POST['data']['specificity']) && !empty($stylesheet)) {
+		if(isset($_POST['post_id']) && !empty($_POST['post_id']) && isset($_POST['data']['specificity']) && !empty($_POST['data']['specificity'])) {
 			$template = get_post_meta((int)$_POST['post_id'], '_wp_page_template', true);
+			$theme = Upfront_ChildTheme::get_instance();
+			$prefix = $theme->get_prefix();
 			if(!empty($template)) {
-				delete_option($stylesheet.'-'.$_POST['data']['specificity']);
+				delete_option($prefix.'-'.$_POST['data']['specificity']);
 			}
 		}
 
