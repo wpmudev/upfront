@@ -132,7 +132,7 @@ class Upfront_Ajax extends Upfront_Server {
 				// Deal with page templates
 				$template = get_post_meta((int)$_POST['post_id'], '_wp_page_template', true);
 				$theme = Upfront_ChildTheme::get_instance();
-				$settings = $theme->get_theme_settings();
+				$settings = $theme instanceof Upfront_ChildTheme ? $theme->get_theme_settings() : false;
 				if (!empty($template) && !empty($settings)) {
 					$tpl = preg_replace('/page-(.*)\.php$/', '\1', $template);
 					$required_pages = $settings->get('required_pages');
