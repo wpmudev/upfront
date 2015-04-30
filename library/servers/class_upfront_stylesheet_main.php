@@ -140,8 +140,12 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		if (!empty($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'create_new') !== false) {
 			return '';
 		}
+		$child = Upfront_ChildTheme::get_instance();
 
-		return Upfront_ChildTheme::get_instance()->getThemeStylesAsCss();
+		return $child instanceof Upfront_ChildTheme
+			? $child->getThemeStylesAsCss()
+			: ''
+		;
 	}
 
 	function prepare_theme_styles() {
