@@ -441,7 +441,8 @@ div.upfront-region-lightbox .upfront-icon-popup-close, div.upfront-region-side-l
 .upfront-inserted_image-wrapper{
     position: relative;
 }
-.upfront-object-content p{
+.upfront-object-content p,
+.upfront-output-object p{
   margin:0 0 15px 0;
 }
 /* upfront element output resets – defaults */
