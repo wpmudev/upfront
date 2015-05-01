@@ -253,6 +253,12 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		this.editModeOff();
 		if(!$('#upfront-popup').hasClass('upfront-postselector-popup') || !$('#upfront-popup').css('display')== 'block')
 			this.$el.find('.time_being_display').removeClass('time_being_display');
+
+		var currentControlsItem = this.$el.find('li.controls-visible');
+		if(currentControlsItem.length > 0) {
+			currentControlsItem.removeClass('controls-visible');
+			currentControlsItem.data('backboneview').setItemControlsState();
+		}
 	},
 	property: function(name, value, silent) {
 		if(typeof value != "undefined") return this.model.set_property(name, value, silent);

@@ -112,6 +112,7 @@ define([
 		},
 
 		onOkClick: function() {
+			console.log(me.model);
 			this.trigger('change', this.model.toJSON());
 		},
 

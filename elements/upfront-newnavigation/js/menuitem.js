@@ -13,7 +13,7 @@ return (function ($) {
 			'click a.redactor_act': 'onOpenPanelClick',
 			'click .sub-menu': 'onOpenPanelSubMenuClick',
 			'click .upfront-save_settings': 'onOpenPanelSubMenuClick',
-			'click .upfront-save_settings': 'onOpenPanelClick',
+			'click .upfront-save_settings': 'processPanelsonsave',
 			'click > .open-item-controls': 'onOpenItemControlsClick'
 		},
 		initialize: function(options) {
@@ -148,7 +148,11 @@ return (function ($) {
 				this.$el.parent('ul').sortable('enable');
 			}
 		},
-
+		processPanelsonsave: function() {
+			this.toggleLinkPanel();
+			this.$el.removeClass('controls-visible');
+			this.setItemControlsState();
+		},
 		toggleLinkPanel: function() {
 			var me = this;
 			if (this.$el.hasClass('ui-sortable-handle')) {
@@ -193,6 +197,11 @@ return (function ($) {
 
 		onOpenItemControlsClick: function() {
 			this.$el.toggleClass('controls-visible');
+			this.setItemControlsState();
+		},
+
+		setItemControlsState: function() {
+
 			if (this.$el.hasClass('controls-visible')) {
 				this.controlsVisible = true;
 				this.$el.siblings().removeClass('controls-visible');
