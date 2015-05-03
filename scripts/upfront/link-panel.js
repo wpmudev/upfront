@@ -80,7 +80,8 @@ define([
 			'click .js-ulinkpanel-input-entry': 'openPostSelector',
 			'keydown .js-ulinkpanel-lightbox-input': 'onLightboxNameInputChange',
 			'blur .js-ulinkpanel-input-external': 'onUrlInputBlur',
-			'click .js-ulinkpanel-ok': 'onOkClick'
+			//'click .js-ulinkpanel-ok': 'onOkClick',
+			'click .upfront-save_settings': 'onOkClick'
 		},
 
 		className: 'ulinkpanel-dark',
@@ -112,7 +113,6 @@ define([
 		},
 
 		onOkClick: function() {
-			console.log(me.model);
 			this.trigger('change', this.model.toJSON());
 		},
 
