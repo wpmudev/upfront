@@ -487,7 +487,12 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		$button_presets = $this->themeSettings->get('button_presets');
 		if (isset($args['json']) && $args['json']) return $button_presets;
 
-		return json_decode($button_presets);
+		$as_array = false;
+		if (isset($args['as_array']) && $args['as_array']) {
+			$as_array = true;
+		}
+		
+		return json_decode($button_presets, $as_array);
 	}
 
 	public function getTabPresets($presets, $args) {
