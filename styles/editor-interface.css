@@ -6879,11 +6879,11 @@ a.upfront-post-layout-trigger:before {
 /* DEFAULT POPUP STYLING
 
 	 This styling will be applied if user does not pass
-	 'classname' parameter when calling
+	 'classname' argument when calling
 	 Upfront.Popup.open( callback, data, classname )
 */
 #upfront-popup.default-popup {
-  margin-top: 5px;
+  margin-top: 100px;
   max-width: 630px;
   height: 500px; }
 
@@ -6897,13 +6897,6 @@ a.upfront-post-layout-trigger:before {
   position: relative;
   min-height: 670px;
   overflow: none; }
-
-@media screen and (max-height: 880px) {
-  #upfront-popup.media-manager {
-    margin-top: 50px;
-    height: 550px; }
-  .upfront-media_manager {
-    min-height: 460px; } }
 
 .upfront-media_manager ul, .upfront-media_manager li {
   list-style: none; }
@@ -7405,6 +7398,14 @@ a.upfront-post-layout-trigger:before {
 .upfront-field-complex_field input[type="number"], .upfront-field-labeled_counter_field input[type="number"] {
   width: 4em; }
 
+/* Media Queries for smaller height screens */
+@media screen and (max-height: 880px) {
+  #upfront-popup.media-manager, #upfront-popup.default-popup {
+    margin-top: 50px;
+    height: 550px; }
+  .upfront-media_manager {
+    min-height: 460px; } }
+
 @media screen and (max-height: 768px) {
   .upfront-scroll-panel {
     max-height: 350px; } }
@@ -7433,7 +7434,7 @@ License: MIT
   display: inline-block;
   *display: inline;
   *zoom: 1;
-  z-index: 199;
+  z-index: 99;
   overflow: hidden; }
 
 .sp-container.sp-flat {
@@ -8513,10 +8514,7 @@ a.ueditor-select-option:hover {
   background: #f2f9ff;
   border: 1px solid #b8d0e6;
   z-index: 9999;
-  right: 0; 
-  overflow-y: auto;
-  max-height: 90%;
-}
+  right: 0; }
 
 .ueditor-box-title {
   height: 40px;
