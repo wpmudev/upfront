@@ -1714,7 +1714,7 @@ var Application = new (Backbone.Router.extend({
 		;
 
 		site_url.href = Upfront.Settings.site_url;
-		Backbone.history.start({pushState: true, root: site_url.pathname, silent:true});
+		Backbone.history.start({pushState: true, root: site_url.pathname, silent:true, hashChange: false});
 	},
 
 	set_loading: function(message, done){
