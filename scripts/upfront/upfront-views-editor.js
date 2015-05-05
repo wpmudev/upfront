@@ -9792,11 +9792,11 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				$regionEl = me.$el.parents('.upfront-region'),
 				sub_models = me.model.get_sub_regions(),
 				openItemControls = $('<span class="open-responsive-item-controls"></span>'),
-				itemControls = $('<div class="responsive-item-controls"></div>'),
-				responsiveAddRegionTop = $('<div class="responsive-item-control responsive-add-region-top">' + l10n.new_region_above + '</div>'),
-				responsiveAddRegionBottom = $('<div class="responsive-item-control responsive-add-region-bottom">' + l10n.new_region_below + '</div>'),
-				responsiveAddRegionLeft = $('<div class="responsive-item-control responsive-add-region-left">' + l10n.new_left_sidebar_region + '</div>'),
-				responsiveAddRegionRight = $('<div class="responsive-item-control responsive-add-region-right">' + l10n.new_right_sidebar_region + '</div>')
+				itemControls = $('<div class="responsive-item-controls">' + l10n.add_region + '</div>'),
+				responsiveAddRegionTop = $('<div class="responsive-item-control responsive-add-region-top">' + l10n.above + '</div>'),
+				responsiveAddRegionBottom = $('<div class="responsive-item-control responsive-add-region-bottom">' + l10n.below + '</div>'),
+				responsiveAddRegionLeft = $('<div class="responsive-item-control responsive-add-region-left">' + l10n.left_sidebar + '</div>'),
+				responsiveAddRegionRight = $('<div class="responsive-item-control responsive-add-region-right">' + l10n.right_sidebar + '</div>')
 			;
 
 			if($regionEl.find('.open-responsive-item-controls').length === 0) {

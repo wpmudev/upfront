@@ -3513,20 +3513,27 @@ a.upfront-region-name-edit-trigger:before {
   display: none;
   z-index: 1000001;
   position: absolute;
-  top: 20px;
-  left: 20px;
+  top: 10px;
+  left: 0px;
   padding: 10px;
   background: #2F445D;
   background-image: -moz-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
   background-image: -ms-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
   background-image: linear-gradient(-179deg, #2F445D 0%, #152841 100%);
   color: #90B0D2;
-  border-radius: 4px;
-  border: 1px solid #fff; }
+  font-family: Verdana;
+  font-size: 11px; }
 
 .upfront-region-container .responsive-item-controls > .responsive-item-control {
   cursor: pointer;
-  border-radius: 4px; }
+  border-radius: 4px;
+  padding: 4px;
+  background: #eeeeee;
+  margin-top: 4px;
+  color: #2F445D; }
+
+.upfront-region-container .responsive-item-controls > .responsive-item-control:first-child {
+  margin-top: 10px; }
 
 .upfront-region-container .responsive-item-controls > .responsive-item-control:hover {
   background: #90B0D2;
@@ -4360,7 +4367,8 @@ a.upfront-region-name-edit-trigger:before {
 
 .upfront-dragging .upfront-editable_entity .upfront-entity_meta,
 .ui-resizable-resizing .upfront-entity_meta,
-.ui-resizable-resizing .open-responsive-item-controls {
+.ui-resizable-resizing .open-responsive-item-controls,
+.ui-resizable-resizing .responsive-item-controls {
   display: none !important; }
 
 .upfront-module.ui-resizable-autohide {
