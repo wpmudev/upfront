@@ -331,7 +331,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'not_all_added' => __('Not all images could be added.', 'upfront'),
 			'thumbnail_clicked' => __('When a gallery thumbnail is clicked', 'upfront'),
 			'show_larger' => __('show larger image', 'upfront'),
-			'go_to_linked' => __('go to linked page', 'upfront'),
+			'go_to_linked' => __('assign links', 'upfront'),
 			'regenerating' => __('Regenerating images...', 'upfront'),
 			'regenerating_done' => __('Wow, those are cool!', 'upfront'),
 			'settings' => __('Gallery settings', 'upfront'),

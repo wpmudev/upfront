@@ -909,6 +909,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			me.property('status', 'ok');
 			me.property('has_settings', 1);
 			me.images.reset(models);
+			me.selectType = true;
 		} else if (replaceId) {
 			var item = me.images.get(replaceId),
 				idx = me.images.indexOf(item);
@@ -920,6 +921,37 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		}
 
 		me.render();
+		if (me.selectType === true) {
+			this.showSelectType();
+		}
+	},
+
+	showSelectType: function() {
+		var me = this,
+			selector = $('<div class="upfront-ui ugallery-onclick"><div class="ugallery-onclick-dialog"><span>' + l10n.thumbnail_clicked +
+				'</span><div class="ugallery-onclick-options"><a href="#" class="ugallery-lager_image" rel="image">' + l10n.show_larger +
+				'</a><a href="#" class="ugallery-linked_page" rel="external">' + l10n.go_to_linked + '</a></div></div></div>');
+
+		selector.on('click', 'a', function(e){
+			e.preventDefault();
+			var value = $(e.target).attr('rel');
+			me.property('linkTo', value, false);
+			_.each(me.images.models, function(image) {
+				image.set({'urlType': value}, {silent:true});
+			});
+			me.property('images', me.images.toJSON());
+
+
+			setTimeout(function(){
+				selector.fadeOut('fast', function(){
+					selector.remove();
+					me.render();
+				});
+			}, 100);
+		});
+
+		this.$('.ugallery').append(selector.hide());
+		selector.fadeIn();
 	},
 
 	getNewLabels: function(ids){
