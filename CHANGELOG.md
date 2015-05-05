@@ -2,6 +2,29 @@ Change Log
 ============
 
 
+0.3.1 - 2015-05-05
+-------------------------------------------------------------------------------
+- Fix: responsive menu issues.
+- Fix: background slider full-screen scroll issue.
+- Fix: changing page templates with layouts in storage.
+- Fix: changing menu links to pages.
+- Fix: categories selection in new post creation.
+- Fix: pagination in posts element.
+- Fix: removing floating region restricted to header.
+- Fix: listing all anchors in the menu.
+- Fix: custom posts addition in posts element.
+- Fix: gallery caption alignments.
+- Fix: background video delayed loop.
+- Fix: cloning within elements group.
+- Fix: responsive elements positioning/ordering.
+- Fix: accordion panel adding.
+- Fix: discussion settings popup height.
+- Fix: posts element taxonomy selection.
+- Add: theme testing plugins widgets support.
+- Add: posts element "Read more" tag support.
+- Add: login element registration link support.
+- Add: forms overrides support.
+
 0.3 - 2015-04-02
 -------------------------------------------------------------------------------
 - Fix: menu rendering improvements.

@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Upfront 0.3\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/support/theme/style\n"
-"POT-Creation-Date: 2015-04-02 06:49:34+00:00\n"
+"POT-Creation-Date: 2015-05-05 05:06:43+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -181,19 +181,30 @@ msgid "Accordion settings"
 msgstr ""
 
 #: elements/upfront-accordion/lib/uaccordion.php:128
-#: elements/upfront-contact-form/lib/contact_form.php:367
-msgid "Appearance"
+msgid "Panel"
 msgstr ""
 
 #: elements/upfront-accordion/lib/uaccordion.php:129
-msgid "Section Background:"
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:189
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:209
+#: elements/upfront-tabs/lib/utabs.php:110
+msgid "Content"
 msgstr ""
 
 #: elements/upfront-accordion/lib/uaccordion.php:130
-msgid "Header Background:"
+#: elements/upfront-contact-form/lib/contact_form.php:392
+msgid "Appearance"
 msgstr ""
 
 #: elements/upfront-accordion/lib/uaccordion.php:131
+msgid "Section Background:"
+msgstr ""
+
+#: elements/upfront-accordion/lib/uaccordion.php:132
+msgid "Header Background:"
+msgstr ""
+
+#: elements/upfront-accordion/lib/uaccordion.php:133
 msgid "Header Border:"
 msgstr ""
 
@@ -227,61 +238,61 @@ msgid "Click here"
 msgstr ""
 
 #: elements/upfront-button/lib/upfront_button.php:108
-#: elements/upfront-text/lib/upfront_text.php:82
+#: elements/upfront-text/lib/upfront_text.php:83
 msgid "Textbox Appearance"
 msgstr ""
 
 #: elements/upfront-button/lib/upfront_button.php:109
-#: elements/upfront-text/lib/upfront_text.php:83
+#: elements/upfront-text/lib/upfront_text.php:84
 msgid "Border"
 msgstr ""
 
 #: elements/upfront-button/lib/upfront_button.php:110
 #: elements/upfront-image/lib/uimage.php:197
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:164
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:165
 #: elements/upfront-posts/lib/upfront_posts.php:245
 #: elements/upfront-slider/lib/upfront_slider.php:174
-#: elements/upfront-text/lib/upfront_text.php:84
+#: elements/upfront-text/lib/upfront_text.php:85
 #: library/media/class_upfront_media_server.php:55
 #: library/servers/class_upfront_editor_l10n_server.php:251
 msgid "None"
 msgstr ""
 
 #: elements/upfront-button/lib/upfront_button.php:111
-#: elements/upfront-text/lib/upfront_text.php:85
+#: elements/upfront-text/lib/upfront_text.php:86
 msgid "Solid"
 msgstr ""
 
 #: elements/upfront-button/lib/upfront_button.php:112
-#: elements/upfront-text/lib/upfront_text.php:86
+#: elements/upfront-text/lib/upfront_text.php:87
 msgid "Dashed"
 msgstr ""
 
 #: elements/upfront-button/lib/upfront_button.php:113
-#: elements/upfront-text/lib/upfront_text.php:87
+#: elements/upfront-text/lib/upfront_text.php:88
 msgid "Dotted"
 msgstr ""
 
 #: elements/upfront-button/lib/upfront_button.php:114
-#: elements/upfront-text/lib/upfront_text.php:88
+#: elements/upfront-text/lib/upfront_text.php:89
 #: library/servers/class_upfront_editor_l10n_server.php:437
 msgid "Width"
 msgstr ""
 
 #: elements/upfront-button/lib/upfront_button.php:115
-#: elements/upfront-text/lib/upfront_text.php:89
+#: elements/upfront-text/lib/upfront_text.php:90
 #: library/servers/class_upfront_editor_l10n_server.php:312
 msgid "Color"
 msgstr ""
 
 #: elements/upfront-button/lib/upfront_button.php:116
-#: elements/upfront-text/lib/upfront_text.php:90
+#: elements/upfront-text/lib/upfront_text.php:91
 #: library/servers/class_upfront_editor_l10n_server.php:460
 msgid "Background Color"
 msgstr ""
 
 #: elements/upfront-button/lib/upfront_button.php:117
-#: elements/upfront-text/lib/upfront_text.php:91
+#: elements/upfront-text/lib/upfront_text.php:92
 msgid "Edit Text"
 msgstr ""
 
@@ -319,7 +330,7 @@ msgid "JS error:"
 msgstr ""
 
 #: elements/upfront-code/lib/upfront_code.php:100
-#: elements/upfront-comment/lib/upfront_comment.php:145
+#: elements/upfront-comment/lib/upfront_comment.php:205
 #: elements/upfront-social-media/lib/upfront-social-media.php:201
 #: library/media/class_upfront_media_server.php:80
 #: library/servers/class_upfront_editor_l10n_server.php:49
@@ -362,16 +373,20 @@ msgstr ""
 msgid "Paste your embed code below"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:139
+#: elements/upfront-comment/lib/upfront_comment.php:159
+msgid "Leave a Reply"
+msgstr ""
+
+#: elements/upfront-comment/lib/upfront_comment.php:199
 #: library/servers/class_upfront_editor_l10n_server.php:150
 msgid "Comment"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:140
+#: elements/upfront-comment/lib/upfront_comment.php:200
 msgid "You can not do this"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:141
+#: elements/upfront-comment/lib/upfront_comment.php:201
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:140
 #: elements/upfront-posts/lib/upfront_posts.php:222
 #: library/servers/class_upfront_editor_l10n_server.php:102
@@ -379,217 +394,217 @@ msgstr ""
 msgid "Loading"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:142
+#: elements/upfront-comment/lib/upfront_comment.php:202
 msgid "Error loading comment"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:143
+#: elements/upfront-comment/lib/upfront_comment.php:203
 msgid "Discussion Settings"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:144
+#: elements/upfront-comment/lib/upfront_comment.php:204
 msgid "Avatars"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:146
+#: elements/upfront-comment/lib/upfront_comment.php:206
 #: library/servers/class_upfront_markup_server.php:129
 msgid "Please, wait"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:147
+#: elements/upfront-comment/lib/upfront_comment.php:207
 msgid "Avatar Settings"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:148
+#: elements/upfront-comment/lib/upfront_comment.php:208
 msgid "Show avatars"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:149
+#: elements/upfront-comment/lib/upfront_comment.php:209
 msgid "Maximum rating"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:150
+#: elements/upfront-comment/lib/upfront_comment.php:210
 #: elements/upfront-slider/lib/upfront_slider.php:150
 #: library/servers/class_upfront_editor_l10n_server.php:339
 msgid "Settings"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:151
+#: elements/upfront-comment/lib/upfront_comment.php:211
 msgid "Main"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:153
+#: elements/upfront-comment/lib/upfront_comment.php:213
 msgid "Suitable for all audiences"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:154
+#: elements/upfront-comment/lib/upfront_comment.php:214
 msgid "Possibly offensive, usually for audiences 13 and above"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:155
+#: elements/upfront-comment/lib/upfront_comment.php:215
 msgid "Intended for adult audiences above 17"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:156
+#: elements/upfront-comment/lib/upfront_comment.php:216
 msgid "Even more mature than R"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:158
+#: elements/upfront-comment/lib/upfront_comment.php:218
 msgid "Default Avatar"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:160
+#: elements/upfront-comment/lib/upfront_comment.php:220
 msgid "Default Article Settings"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:161
+#: elements/upfront-comment/lib/upfront_comment.php:221
 msgid "Attempt to notify any blogs linked to from the article"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:162
+#: elements/upfront-comment/lib/upfront_comment.php:222
 msgid "Allow link notifications from other blogs (pingbacks and trackbacks)"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:163
+#: elements/upfront-comment/lib/upfront_comment.php:223
 msgid ""
 "Allow people to post comments on new articles<br />(These settings may be "
 "overridden for individual articles.)"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:164
+#: elements/upfront-comment/lib/upfront_comment.php:224
 msgid "Allow attachments in comments"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:165
+#: elements/upfront-comment/lib/upfront_comment.php:225
 msgid "Show email subscription field"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:168
+#: elements/upfront-comment/lib/upfront_comment.php:228
 msgid "Other Comment Settings"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:169
+#: elements/upfront-comment/lib/upfront_comment.php:229
 msgid "Comment author must fill out name and e-mail"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:170
+#: elements/upfront-comment/lib/upfront_comment.php:230
 msgid "Users must be registered and logged in to comment"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:171
+#: elements/upfront-comment/lib/upfront_comment.php:231
 msgid "Automatically close comments on articles older than {{subfield}} days"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:172
+#: elements/upfront-comment/lib/upfront_comment.php:232
 msgid "Enable threaded (nested) comments {{subfield}} levels deep"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:173
+#: elements/upfront-comment/lib/upfront_comment.php:233
 msgid ""
 "Paginate comments after {{depth}} top level comments and display {{page}} "
 "page by default"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:174
+#: elements/upfront-comment/lib/upfront_comment.php:234
 msgid "last"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:175
+#: elements/upfront-comment/lib/upfront_comment.php:235
 msgid "first"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:176
+#: elements/upfront-comment/lib/upfront_comment.php:236
 msgid "Comments should be displayed with the these comments at the top of each page"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:177
+#: elements/upfront-comment/lib/upfront_comment.php:237
 msgid "older"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:178
+#: elements/upfront-comment/lib/upfront_comment.php:238
 msgid "newer"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:179
+#: elements/upfront-comment/lib/upfront_comment.php:239
 msgid "E-mail me whenever"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:180
+#: elements/upfront-comment/lib/upfront_comment.php:240
 msgid "Anyone posts a comment"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:181
+#: elements/upfront-comment/lib/upfront_comment.php:241
 msgid "A comment is held for moderation"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:182
+#: elements/upfront-comment/lib/upfront_comment.php:242
 msgid "Before a comment appears"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:183
+#: elements/upfront-comment/lib/upfront_comment.php:243
 msgid "An administrator must always approve the comment"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:184
+#: elements/upfront-comment/lib/upfront_comment.php:244
 msgid "Comment author must have a previously approved comment"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:185
+#: elements/upfront-comment/lib/upfront_comment.php:245
 msgid "Comment Moderation"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:186
+#: elements/upfront-comment/lib/upfront_comment.php:246
 msgid ""
 "Hold a comment in the queue if it contains {{field}} or more links. (A "
 "common characteristic of comment spam is a large number of hyperlinks.)"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:187
+#: elements/upfront-comment/lib/upfront_comment.php:247
 msgid ""
 "When a comment contains any of these words in its content, name, URL, "
 "e-mail, or IP, it will be held in the moderation queue. One word or IP per "
 "line. It will match inside words, so “press” will match “WordPress”."
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:188
+#: elements/upfront-comment/lib/upfront_comment.php:248
 msgid ""
 "When a comment contains any of these words in its content, name, URL, "
 "e-mail, or IP, it will be marked as spam. One word or IP per line. It will "
 "match inside words, so “press” will match “WordPress”."
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:361
-#: elements/upfront-comment/lib/upfront_comment.php:383
+#: elements/upfront-comment/lib/upfront_comment.php:421
+#: elements/upfront-comment/lib/upfront_comment.php:443
 msgid "Mystery Man"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:362
-#: elements/upfront-comment/lib/upfront_comment.php:384
+#: elements/upfront-comment/lib/upfront_comment.php:422
+#: elements/upfront-comment/lib/upfront_comment.php:444
 msgid "Blank"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:363
-#: elements/upfront-comment/lib/upfront_comment.php:385
+#: elements/upfront-comment/lib/upfront_comment.php:423
+#: elements/upfront-comment/lib/upfront_comment.php:445
 msgid "Gravatar Logo"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:364
-#: elements/upfront-comment/lib/upfront_comment.php:386
+#: elements/upfront-comment/lib/upfront_comment.php:424
+#: elements/upfront-comment/lib/upfront_comment.php:446
 msgid "Identicon (Generated)"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:365
-#: elements/upfront-comment/lib/upfront_comment.php:387
+#: elements/upfront-comment/lib/upfront_comment.php:425
+#: elements/upfront-comment/lib/upfront_comment.php:447
 msgid "Wavatar (Generated)"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:366
-#: elements/upfront-comment/lib/upfront_comment.php:388
+#: elements/upfront-comment/lib/upfront_comment.php:426
+#: elements/upfront-comment/lib/upfront_comment.php:448
 msgid "MonsterID (Generated)"
 msgstr ""
 
-#: elements/upfront-comment/lib/upfront_comment.php:367
-#: elements/upfront-comment/lib/upfront_comment.php:389
+#: elements/upfront-comment/lib/upfront_comment.php:427
+#: elements/upfront-comment/lib/upfront_comment.php:449
 msgid "Retro (Generated)"
 msgstr ""
 
@@ -598,10 +613,10 @@ msgid "Your comment is awaiting moderation."
 msgstr ""
 
 #: elements/upfront-comment/templates/upfront-comment-list.php:31
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:214
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:215
 #: library/servers/class_upfront_editor_l10n_server.php:57
 #: library/servers/class_upfront_editor_l10n_server.php:140
-#: library/servers/class_upfront_editor_l10n_server.php:519
+#: library/servers/class_upfront_editor_l10n_server.php:521
 msgid "Edit"
 msgstr ""
 
@@ -610,120 +625,128 @@ msgstr ""
 msgid "Reply"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:314
+#: elements/upfront-contact-form/lib/contact_form.php:336
 msgid "Contact"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:315
+#: elements/upfront-contact-form/lib/contact_form.php:337
 msgid "Contact form"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:316
+#: elements/upfront-contact-form/lib/contact_form.php:338
 msgid "Name:"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:317
+#: elements/upfront-contact-form/lib/contact_form.php:339
 msgid "Email:"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:318
+#: elements/upfront-contact-form/lib/contact_form.php:340
 msgid "Subject:"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:319
-msgid "Sent from the website"
-msgstr ""
-
-#: elements/upfront-contact-form/lib/contact_form.php:320
-msgid "Message:"
-msgstr ""
-
-#: elements/upfront-contact-form/lib/contact_form.php:321
-msgid "Send"
-msgstr ""
-
-#: elements/upfront-contact-form/lib/contact_form.php:322
-msgid "Unknown contact form."
-msgstr ""
-
-#: elements/upfront-contact-form/lib/contact_form.php:323
-msgid "The contact form data is not valid."
-msgstr ""
-
-#: elements/upfront-contact-form/lib/contact_form.php:324
-msgid "Contact form settings stored."
-msgstr ""
-
-#: elements/upfront-contact-form/lib/contact_form.php:325
-msgid "There was a problem storing the contact form settings."
-msgstr ""
-
-#: elements/upfront-contact-form/lib/contact_form.php:326
-msgid "There was an error sending the email."
-msgstr ""
-
-#: elements/upfront-contact-form/lib/contact_form.php:327
-msgid "The email has been sent successfully."
-msgstr ""
-
-#: elements/upfront-contact-form/lib/contact_form.php:328
-msgid "You must write your name."
-msgstr ""
-
-#: elements/upfront-contact-form/lib/contact_form.php:329
-msgid "Your email address is not valid."
-msgstr ""
-
-#: elements/upfront-contact-form/lib/contact_form.php:330
-msgid "You must write a subject for the message."
-msgstr ""
-
-#: elements/upfront-contact-form/lib/contact_form.php:331
-msgid "You forgot to write the message."
-msgstr ""
-
-#: elements/upfront-contact-form/lib/contact_form.php:333
-#: elements/upfront-login/lib/upfront_login.php:131
-msgid "Field labels"
-msgstr ""
-
-#: elements/upfront-contact-form/lib/contact_form.php:334
-msgid "Text info for every field"
-msgstr ""
-
-#: elements/upfront-contact-form/lib/contact_form.php:335
-msgid "Fields"
-msgstr ""
-
-#: elements/upfront-contact-form/lib/contact_form.php:336
-msgid "Field inputs"
-msgstr ""
-
-#: elements/upfront-contact-form/lib/contact_form.php:337
-msgid "Mesage Field"
-msgstr ""
-
-#: elements/upfront-contact-form/lib/contact_form.php:338
-msgid "Mesasge field"
-msgstr ""
-
-#: elements/upfront-contact-form/lib/contact_form.php:339
-msgid "Error fields"
-msgstr ""
-
-#: elements/upfront-contact-form/lib/contact_form.php:340
-msgid "Fields with errors."
-msgstr ""
-
 #: elements/upfront-contact-form/lib/contact_form.php:341
-msgid "Submit button"
+msgid "CAPTCHA:"
 msgstr ""
 
 #: elements/upfront-contact-form/lib/contact_form.php:342
-msgid "Form's submit button"
+msgid "Sent from the website"
+msgstr ""
+
+#: elements/upfront-contact-form/lib/contact_form.php:343
+msgid "Message:"
+msgstr ""
+
+#: elements/upfront-contact-form/lib/contact_form.php:344
+msgid "Send"
 msgstr ""
 
 #: elements/upfront-contact-form/lib/contact_form.php:345
+msgid "Unknown contact form."
+msgstr ""
+
+#: elements/upfront-contact-form/lib/contact_form.php:346
+msgid "The contact form data is not valid."
+msgstr ""
+
+#: elements/upfront-contact-form/lib/contact_form.php:347
+msgid "Contact form settings stored."
+msgstr ""
+
+#: elements/upfront-contact-form/lib/contact_form.php:348
+msgid "There was a problem storing the contact form settings."
+msgstr ""
+
+#: elements/upfront-contact-form/lib/contact_form.php:349
+msgid "There was an error sending the email."
+msgstr ""
+
+#: elements/upfront-contact-form/lib/contact_form.php:350
+msgid "The CAPTCHA field is not valid."
+msgstr ""
+
+#: elements/upfront-contact-form/lib/contact_form.php:351
+msgid "The email has been sent successfully."
+msgstr ""
+
+#: elements/upfront-contact-form/lib/contact_form.php:352
+msgid "You must write your name."
+msgstr ""
+
+#: elements/upfront-contact-form/lib/contact_form.php:353
+msgid "Your email address is not valid."
+msgstr ""
+
+#: elements/upfront-contact-form/lib/contact_form.php:354
+msgid "You must write a subject for the message."
+msgstr ""
+
+#: elements/upfront-contact-form/lib/contact_form.php:355
+msgid "You forgot to write the message."
+msgstr ""
+
+#: elements/upfront-contact-form/lib/contact_form.php:357
+#: elements/upfront-login/lib/upfront_login.php:129
+msgid "Field labels"
+msgstr ""
+
+#: elements/upfront-contact-form/lib/contact_form.php:358
+msgid "Text info for every field"
+msgstr ""
+
+#: elements/upfront-contact-form/lib/contact_form.php:359
+msgid "Fields"
+msgstr ""
+
+#: elements/upfront-contact-form/lib/contact_form.php:360
+msgid "Field inputs"
+msgstr ""
+
+#: elements/upfront-contact-form/lib/contact_form.php:361
+msgid "Mesage Field"
+msgstr ""
+
+#: elements/upfront-contact-form/lib/contact_form.php:362
+msgid "Mesasge field"
+msgstr ""
+
+#: elements/upfront-contact-form/lib/contact_form.php:363
+msgid "Error fields"
+msgstr ""
+
+#: elements/upfront-contact-form/lib/contact_form.php:364
+msgid "Fields with errors."
+msgstr ""
+
+#: elements/upfront-contact-form/lib/contact_form.php:365
+msgid "Submit button"
+msgstr ""
+
+#: elements/upfront-contact-form/lib/contact_form.php:366
+msgid "Form's submit button"
+msgstr ""
+
+#: elements/upfront-contact-form/lib/contact_form.php:369
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:149
 #: elements/upfront-slider/lib/upfront_slider.php:151
 #: elements/upfront-social-media/lib/upfront-social-media.php:232
@@ -731,268 +754,272 @@ msgstr ""
 msgid "General"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:346
+#: elements/upfront-contact-form/lib/contact_form.php:370
 msgid "Send results to:"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:347
+#: elements/upfront-contact-form/lib/contact_form.php:371
 msgid "Contact form submit button text:"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:348
+#: elements/upfront-contact-form/lib/contact_form.php:372
 msgid "Use form title"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:349
+#: elements/upfront-contact-form/lib/contact_form.php:373
 msgid "Contact form title:"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:352
+#: elements/upfront-contact-form/lib/contact_form.php:376
 msgid "Form validation"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:353
+#: elements/upfront-contact-form/lib/contact_form.php:377
 msgid "Inline validation"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:354
+#: elements/upfront-contact-form/lib/contact_form.php:378
 msgid "On button click"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:357
+#: elements/upfront-contact-form/lib/contact_form.php:381
 msgid "Form Fields"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:358
+#: elements/upfront-contact-form/lib/contact_form.php:382
 msgid "Contact Form Fields"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:359
+#: elements/upfront-contact-form/lib/contact_form.php:383
 msgid "Name Field Text:"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:360
+#: elements/upfront-contact-form/lib/contact_form.php:384
 msgid "Email Field Text:"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:361
+#: elements/upfront-contact-form/lib/contact_form.php:385
 msgid "Message Field Text:"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:362
+#: elements/upfront-contact-form/lib/contact_form.php:386
 msgid "Show subject field"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:363
+#: elements/upfront-contact-form/lib/contact_form.php:387
+msgid "Show CAPTCHA field"
+msgstr ""
+
+#: elements/upfront-contact-form/lib/contact_form.php:388
 msgid "Subject Field text:"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:364
+#: elements/upfront-contact-form/lib/contact_form.php:389
 msgid "Default subject:"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:368
+#: elements/upfront-contact-form/lib/contact_form.php:393
 msgid "Above the field"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:369
+#: elements/upfront-contact-form/lib/contact_form.php:394
 msgid "Over the field"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:370
+#: elements/upfront-contact-form/lib/contact_form.php:395
 msgid "Inline with field"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:372
+#: elements/upfront-contact-form/lib/contact_form.php:397
 msgid "Contact form settings"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:267
+#: elements/upfront-gallery/lib/ugallery.php:269
 #: library/servers/class_upfront_editor_l10n_server.php:358
 msgid "Gallery"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:269
+#: elements/upfront-gallery/lib/ugallery.php:271
 msgid "Gallery container"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:270
+#: elements/upfront-gallery/lib/ugallery.php:272
 msgid "The whole gallery"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:271
+#: elements/upfront-gallery/lib/ugallery.php:273
 msgid "Gallery elements"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:272
+#: elements/upfront-gallery/lib/ugallery.php:274
 msgid "The container of every gallery element."
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:273
+#: elements/upfront-gallery/lib/ugallery.php:275
 msgid "Gallery images"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:274
+#: elements/upfront-gallery/lib/ugallery.php:276
 msgid "Every image in the gallery."
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:275
+#: elements/upfront-gallery/lib/ugallery.php:277
 msgid "Image captions"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:276
+#: elements/upfront-gallery/lib/ugallery.php:278
 msgid ""
 "Every caption of the gallery. Captions may not be available if they are "
 "deactivated using the options."
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:277
+#: elements/upfront-gallery/lib/ugallery.php:279
 msgid "Labels container"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:278
+#: elements/upfront-gallery/lib/ugallery.php:280
 msgid "The wrapper of the image labels."
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:279
-#: elements/upfront-gallery/lib/ugallery.php:344
+#: elements/upfront-gallery/lib/ugallery.php:281
+#: elements/upfront-gallery/lib/ugallery.php:348
 #: library/media/class_upfront_media_server.php:72
 msgid "Labels"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:280
+#: elements/upfront-gallery/lib/ugallery.php:282
 msgid "Labels for gallery items filtering."
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:283
+#: elements/upfront-gallery/lib/ugallery.php:285
 msgid "Show image"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:284
+#: elements/upfront-gallery/lib/ugallery.php:286
 #: elements/upfront-image/lib/uimage.php:178
 #: elements/upfront-slider/lib/upfront_slider.php:163
 msgid "Edit image"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:285
+#: elements/upfront-gallery/lib/ugallery.php:287
 msgid "Remove image"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:286
+#: elements/upfront-gallery/lib/ugallery.php:288
 #: elements/upfront-image/lib/uimage.php:179
 #: elements/upfront-slider/lib/upfront_slider.php:165
 msgid "Image link"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:287
+#: elements/upfront-gallery/lib/ugallery.php:289
 msgid "Edit labels"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:289
+#: elements/upfront-gallery/lib/ugallery.php:291
 msgid "Image description has been successfully updated."
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:290
+#: elements/upfront-gallery/lib/ugallery.php:292
 #: elements/upfront-widget/lib/upfront_widget.php:142
 #: library/servers/class_upfront_editor_l10n_server.php:36
 #: library/servers/class_upfront_editor_l10n_server.php:50
 msgid "Loading..."
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:291
+#: elements/upfront-gallery/lib/ugallery.php:293
 msgid "Click to personalize this gallery"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:292
+#: elements/upfront-gallery/lib/ugallery.php:294
 msgid "This image has no labels"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:293
+#: elements/upfront-gallery/lib/ugallery.php:295
 #: elements/upfront-slider/lib/upfront_slider.php:166
 msgid "Preparing images"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:294
+#: elements/upfront-gallery/lib/ugallery.php:296
 msgid "Not all images could be added."
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:295
+#: elements/upfront-gallery/lib/ugallery.php:297
 msgid "When a gallery thumbnail is clicked"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:296
+#: elements/upfront-gallery/lib/ugallery.php:298
 msgid "show larger image"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:297
+#: elements/upfront-gallery/lib/ugallery.php:299
 msgid "go to linked page"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:298
+#: elements/upfront-gallery/lib/ugallery.php:300
 msgid "Regenerating images..."
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:299
+#: elements/upfront-gallery/lib/ugallery.php:301
 #: library/servers/class_upfront_editor_l10n_server.php:244
 #: library/servers/class_upfront_editor_l10n_server.php:247
 msgid "Wow, those are cool!"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:300
+#: elements/upfront-gallery/lib/ugallery.php:302
 msgid "Gallery settings"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:302
+#: elements/upfront-gallery/lib/ugallery.php:304
 msgid "Enable label sorting"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:303
+#: elements/upfront-gallery/lib/ugallery.php:305
 msgid "Even padding"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:304
+#: elements/upfront-gallery/lib/ugallery.php:306
 #: elements/upfront-image/lib/uimage.php:193
 msgid "Show Caption:"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:305
+#: elements/upfront-gallery/lib/ugallery.php:307
 msgid "never"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:306
+#: elements/upfront-gallery/lib/ugallery.php:308
 msgid "on hover"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:307
+#: elements/upfront-gallery/lib/ugallery.php:309
 msgid "always"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:308
+#: elements/upfront-gallery/lib/ugallery.php:310
 msgid "Caption Style"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:309
+#: elements/upfront-gallery/lib/ugallery.php:311
 msgid "none"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:310
+#: elements/upfront-gallery/lib/ugallery.php:312
 msgid "over img"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:311
+#: elements/upfront-gallery/lib/ugallery.php:313
 msgid "under img"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:312
+#: elements/upfront-gallery/lib/ugallery.php:314
 msgid "Show caption on hover"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:313
+#: elements/upfront-gallery/lib/ugallery.php:315
 msgid "Caption Background:"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:314
-#: elements/upfront-gallery/lib/ugallery.php:343
+#: elements/upfront-gallery/lib/ugallery.php:316
+#: elements/upfront-gallery/lib/ugallery.php:347
 #: elements/upfront-image/lib/uimage.php:199
 #: elements/upfront-image/lib/uimage.php:206
 #: elements/upfront-image/lib/uimage.php:232
@@ -1001,121 +1028,129 @@ msgstr ""
 msgid "Ok"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:315
+#: elements/upfront-gallery/lib/ugallery.php:317
 msgid "Adds sortable interface based on the labels given to the images."
 msgstr ""
 
 #: elements/upfront-gallery/lib/ugallery.php:318
-msgid "Thumbnail Ratio"
+msgid "Fit thumbnail captions."
 msgstr ""
 
 #: elements/upfront-gallery/lib/ugallery.php:319
-msgid "Theme"
-msgstr ""
-
-#: elements/upfront-gallery/lib/ugallery.php:320
-msgid "Thumbnail Size"
-msgstr ""
-
-#: elements/upfront-gallery/lib/ugallery.php:321
-msgid "Thumbnails Settings"
+msgid "Height of captions (in px)."
 msgstr ""
 
 #: elements/upfront-gallery/lib/ugallery.php:322
-msgid "Thumbnails Padding"
+msgid "Thumbnail Ratio"
+msgstr ""
+
+#: elements/upfront-gallery/lib/ugallery.php:323
+msgid "Theme"
+msgstr ""
+
+#: elements/upfront-gallery/lib/ugallery.php:324
+msgid "Thumbnail Size"
 msgstr ""
 
 #: elements/upfront-gallery/lib/ugallery.php:325
-msgid "Add more"
+msgid "Thumbnails Settings"
 msgstr ""
 
 #: elements/upfront-gallery/lib/ugallery.php:326
-msgid "Add new images to the Gallery"
-msgstr ""
-
-#: elements/upfront-gallery/lib/ugallery.php:327
-msgid "No images in this gallery"
-msgstr ""
-
-#: elements/upfront-gallery/lib/ugallery.php:328
-msgid "Add Images"
+msgid "Thumbnails Padding"
 msgstr ""
 
 #: elements/upfront-gallery/lib/ugallery.php:329
-msgid "Add Images to the Gallery"
+msgid "Add more"
 msgstr ""
 
 #: elements/upfront-gallery/lib/ugallery.php:330
-msgid "Drop images here"
+msgid "Add new images to the Gallery"
 msgstr ""
 
 #: elements/upfront-gallery/lib/ugallery.php:331
-msgid "Select images"
+msgid "No images in this gallery"
 msgstr ""
 
 #: elements/upfront-gallery/lib/ugallery.php:332
+msgid "Add Images"
+msgstr ""
+
+#: elements/upfront-gallery/lib/ugallery.php:333
+msgid "Add Images to the Gallery"
+msgstr ""
+
+#: elements/upfront-gallery/lib/ugallery.php:334
+msgid "Drop images here"
+msgstr ""
+
+#: elements/upfront-gallery/lib/ugallery.php:335
+msgid "Select images"
+msgstr ""
+
+#: elements/upfront-gallery/lib/ugallery.php:336
 #: elements/upfront-image/lib/uimage.php:223
 msgid "Maximum upload file size: 32MB"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:333
+#: elements/upfront-gallery/lib/ugallery.php:337
 #: elements/upfront-image/lib/uimage.php:224
 msgid "or browse your"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:334
+#: elements/upfront-gallery/lib/ugallery.php:338
 msgid "media gallery"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:335
+#: elements/upfront-gallery/lib/ugallery.php:339
 #: elements/upfront-image/lib/uimage.php:226
 msgid "Uploading..."
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:336
+#: elements/upfront-gallery/lib/ugallery.php:340
 msgid "I like that"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:337
+#: elements/upfront-gallery/lib/ugallery.php:341
 msgid "upload a different image"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:338
+#: elements/upfront-gallery/lib/ugallery.php:342
 msgid "Upload"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:339
+#: elements/upfront-gallery/lib/ugallery.php:343
 msgid "Edit image details"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:340
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:198
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:207
+#: elements/upfront-gallery/lib/ugallery.php:344
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:199
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:208
 #: elements/upfront-posts/lib/upfront_posts.php:232
 msgid "Title"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:341
+#: elements/upfront-gallery/lib/ugallery.php:345
 msgid "Caption"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:342
+#: elements/upfront-gallery/lib/ugallery.php:346
 msgid "Alternative text"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:345
+#: elements/upfront-gallery/lib/ugallery.php:349
 msgid "Una etiqueta"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:346
+#: elements/upfront-gallery/lib/ugallery.php:350
 msgid "Add a new label"
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:347
+#: elements/upfront-gallery/lib/ugallery.php:351
 msgid "Turn on 'Label Sorting' in the settings to display gallery labels."
 msgstr ""
 
-#: elements/upfront-gallery/lib/ugallery.php:348
+#: elements/upfront-gallery/lib/ugallery.php:352
 #: library/servers/class_upfront_editor_l10n_server.php:333
 msgid "Add"
 msgstr ""
@@ -1450,131 +1485,164 @@ msgstr ""
 msgid "LikeBox settings"
 msgstr ""
 
-#: elements/upfront-login/lib/upfront_login.php:10
-#: elements/upfront-login/lib/upfront_login.php:126
+#: elements/upfront-login/lib/upfront_login.php:124
+#: elements/upfront-login/lib/upfront_login.php:156
 #: library/servers/class_upfront_editor_l10n_server.php:360
 msgid "Login"
 msgstr ""
 
-#: elements/upfront-login/lib/upfront_login.php:11
-msgid "log in"
-msgstr ""
-
-#: elements/upfront-login/lib/upfront_login.php:12
-#: elements/upfront-login/lib/upfront_login.php:45
-msgid "log out"
-msgstr ""
-
-#: elements/upfront-login/lib/upfront_login.php:13
-msgid "Log in"
-msgstr ""
-
-#: elements/upfront-login/lib/upfront_login.php:127
+#: elements/upfront-login/lib/upfront_login.php:125
 msgid "Click here to reset it"
 msgstr ""
 
-#: elements/upfront-login/lib/upfront_login.php:129
+#: elements/upfront-login/lib/upfront_login.php:127
 msgid "Field containers"
 msgstr ""
 
-#: elements/upfront-login/lib/upfront_login.php:130
+#: elements/upfront-login/lib/upfront_login.php:128
 msgid "Wrapper layer for every field"
 msgstr ""
 
-#: elements/upfront-login/lib/upfront_login.php:132
+#: elements/upfront-login/lib/upfront_login.php:130
 msgid "Labels for the input fields"
 msgstr ""
 
-#: elements/upfront-login/lib/upfront_login.php:133
+#: elements/upfront-login/lib/upfront_login.php:131
 msgid "Input fields"
 msgstr ""
 
-#: elements/upfront-login/lib/upfront_login.php:134
+#: elements/upfront-login/lib/upfront_login.php:132
 msgid "Username and password fields"
 msgstr ""
 
-#: elements/upfront-login/lib/upfront_login.php:135
-#: elements/upfront-login/lib/upfront_login.php:136
+#: elements/upfront-login/lib/upfront_login.php:133
+#: elements/upfront-login/lib/upfront_login.php:134
 msgid "Login button"
 msgstr ""
 
-#: elements/upfront-login/lib/upfront_login.php:137
+#: elements/upfront-login/lib/upfront_login.php:135
 msgid "Remember me checkbox"
 msgstr ""
 
-#: elements/upfront-login/lib/upfront_login.php:138
+#: elements/upfront-login/lib/upfront_login.php:136
 msgid "Remember me checkbox input."
 msgstr ""
 
-#: elements/upfront-login/lib/upfront_login.php:139
+#: elements/upfront-login/lib/upfront_login.php:137
 msgid "Lost password wrapper"
 msgstr ""
 
-#: elements/upfront-login/lib/upfront_login.php:140
+#: elements/upfront-login/lib/upfront_login.php:138
 msgid "Container wrapper for the lost pasword function."
 msgstr ""
 
-#: elements/upfront-login/lib/upfront_login.php:141
+#: elements/upfront-login/lib/upfront_login.php:139
 msgid "Lost password link"
 msgstr ""
 
-#: elements/upfront-login/lib/upfront_login.php:142
+#: elements/upfront-login/lib/upfront_login.php:140
 msgid "Link for lost passwords"
 msgstr ""
 
-#: elements/upfront-login/lib/upfront_login.php:143
+#: elements/upfront-login/lib/upfront_login.php:141
 msgid "Closed login link"
 msgstr ""
 
-#: elements/upfront-login/lib/upfront_login.php:144
+#: elements/upfront-login/lib/upfront_login.php:142
 msgid ""
 "The link that allows to open the login when the dropdown or lightbox option "
 "is selected."
 msgstr ""
 
-#: elements/upfront-login/lib/upfront_login.php:146
+#: elements/upfront-login/lib/upfront_login.php:144
 #: elements/upfront-maps/lib/upfront_maps.php:78
 msgid "Please, hold on"
 msgstr ""
 
-#: elements/upfront-login/lib/upfront_login.php:147
+#: elements/upfront-login/lib/upfront_login.php:145
 msgid "Login settings"
 msgstr ""
 
-#: elements/upfront-login/lib/upfront_login.php:148
+#: elements/upfront-login/lib/upfront_login.php:146
 msgid "Display"
 msgstr ""
 
-#: elements/upfront-login/lib/upfront_login.php:149
+#: elements/upfront-login/lib/upfront_login.php:147
 msgid "Show on hover"
 msgstr ""
 
-#: elements/upfront-login/lib/upfront_login.php:150
+#: elements/upfront-login/lib/upfront_login.php:148
 msgid "Show on click"
 msgstr ""
 
-#: elements/upfront-login/lib/upfront_login.php:151
+#: elements/upfront-login/lib/upfront_login.php:149
 msgid "Display behavior"
 msgstr ""
 
-#: elements/upfront-login/lib/upfront_login.php:152
+#: elements/upfront-login/lib/upfront_login.php:150
 msgid "Form on page"
 msgstr ""
 
-#: elements/upfront-login/lib/upfront_login.php:153
+#: elements/upfront-login/lib/upfront_login.php:151
 msgid "Drop down form"
 msgstr ""
 
-#: elements/upfront-login/lib/upfront_login.php:154
+#: elements/upfront-login/lib/upfront_login.php:152
 msgid "Form in lightbox"
 msgstr ""
 
-#: elements/upfront-login/lib/upfront_login.php:155
+#: elements/upfront-login/lib/upfront_login.php:153
 msgid "Display Appearance"
 msgstr ""
 
-#: elements/upfront-login/lib/upfront_login.php:156
+#: elements/upfront-login/lib/upfront_login.php:154
 msgid "Trigger"
+msgstr ""
+
+#: elements/upfront-login/lib/upfront_login.php:155
+msgid "Lost Password?"
+msgstr ""
+
+#: elements/upfront-login/lib/upfront_login.php:157
+msgid "Log in"
+msgstr ""
+
+#: elements/upfront-login/lib/upfront_login.php:158
+msgid "Log out"
+msgstr ""
+
+#: elements/upfront-login/lib/upfront_login.php:160
+msgid "Logged in Users see"
+msgstr ""
+
+#: elements/upfront-login/lib/upfront_login.php:161
+#: library/servers/class_upfront_editor_l10n_server.php:115
+#: library/servers/class_upfront_editor_l10n_server.php:259
+msgid "Preview"
+msgstr ""
+
+#: elements/upfront-login/lib/upfront_login.php:162
+msgid "Nothing"
+msgstr ""
+
+#: elements/upfront-login/lib/upfront_login.php:163
+msgid "Log Out Link"
+msgstr ""
+
+#: elements/upfront-login/lib/upfront_login.php:164
+msgid "Log Out Link:"
+msgstr ""
+
+#: elements/upfront-login/lib/upfront_login.php:165
+msgid "Log In Button:"
+msgstr ""
+
+#: elements/upfront-login/lib/upfront_login.php:166
+msgid "Log In Trigger:"
+msgstr ""
+
+#: elements/upfront-login/lib/upfront_login.php:167
+msgid "Register"
 msgstr ""
 
 #: elements/upfront-maps/lib/upfront_maps.php:61
@@ -1861,84 +1929,88 @@ msgid "Load Different Menu"
 msgstr ""
 
 #: elements/upfront-newnavigation/lib/unewnavigation.php:162
-msgid "Use"
+msgid "or Create New"
 msgstr ""
 
 #: elements/upfront-newnavigation/lib/unewnavigation.php:163
-msgid "button to open menu"
+msgid "Use"
 msgstr ""
 
 #: elements/upfront-newnavigation/lib/unewnavigation.php:164
-msgid "Revealed Menu Appearance"
+msgid "button to open menu"
 msgstr ""
 
 #: elements/upfront-newnavigation/lib/unewnavigation.php:165
-msgid "Menu Item Alignment"
+msgid "Revealed Menu Appearance"
 msgstr ""
 
 #: elements/upfront-newnavigation/lib/unewnavigation.php:166
+msgid "Menu Item Alignment"
+msgstr ""
+
+#: elements/upfront-newnavigation/lib/unewnavigation.php:167
 #: library/servers/class_upfront_editor_l10n_server.php:199
 #: library/servers/class_upfront_editor_l10n_server.php:439
 msgid "Left"
 msgstr ""
 
-#: elements/upfront-newnavigation/lib/unewnavigation.php:167
-#: elements/upfront-newnavigation/lib/unewnavigation.php:170
+#: elements/upfront-newnavigation/lib/unewnavigation.php:168
+#: elements/upfront-newnavigation/lib/unewnavigation.php:171
 #: library/servers/class_upfront_editor_l10n_server.php:200
 #: library/servers/class_upfront_editor_l10n_server.php:440
 msgid "Right"
 msgstr ""
 
-#: elements/upfront-newnavigation/lib/unewnavigation.php:168
+#: elements/upfront-newnavigation/lib/unewnavigation.php:169
 msgid "Horizontal"
 msgstr ""
 
-#: elements/upfront-newnavigation/lib/unewnavigation.php:169
+#: elements/upfront-newnavigation/lib/unewnavigation.php:170
 msgid "Vertical"
 msgstr ""
 
-#: elements/upfront-newnavigation/lib/unewnavigation.php:171
+#: elements/upfront-newnavigation/lib/unewnavigation.php:172
 #: library/servers/class_upfront_editor_l10n_server.php:431
 msgid "Top"
 msgstr ""
 
-#: elements/upfront-newnavigation/lib/unewnavigation.php:172
+#: elements/upfront-newnavigation/lib/unewnavigation.php:173
 msgid "Whole"
 msgstr ""
 
-#: elements/upfront-newnavigation/lib/unewnavigation.php:173
+#: elements/upfront-newnavigation/lib/unewnavigation.php:174
 msgid "Over Content"
 msgstr ""
 
-#: elements/upfront-newnavigation/lib/unewnavigation.php:174
+#: elements/upfront-newnavigation/lib/unewnavigation.php:175
 msgid "Pushes Content"
 msgstr ""
 
-#: elements/upfront-newnavigation/lib/unewnavigation.php:175
+#: elements/upfront-newnavigation/lib/unewnavigation.php:176
 msgid "Menu Items Alignment"
 msgstr ""
 
-#: elements/upfront-newnavigation/lib/unewnavigation.php:176
+#: elements/upfront-newnavigation/lib/unewnavigation.php:177
 msgid "Menu Style"
 msgstr ""
 
-#: elements/upfront-newnavigation/lib/unewnavigation.php:177
+#: elements/upfront-newnavigation/lib/unewnavigation.php:178
 msgid "Center"
 msgstr ""
 
-#: elements/upfront-newnavigation/lib/unewnavigation.php:178
+#: elements/upfront-newnavigation/lib/unewnavigation.php:179
 msgid "Behaviour Settings"
 msgstr ""
 
-#: elements/upfront-newnavigation/lib/unewnavigation.php:179
+#: elements/upfront-newnavigation/lib/unewnavigation.php:180
 msgid "Add new Pages automatically"
 msgstr ""
 
-#: elements/upfront-newnavigation/lib/unewnavigation.php:180
+#: elements/upfront-newnavigation/lib/unewnavigation.php:181
 msgid "Float this menu"
 msgstr ""
 
-#: elements/upfront-newnavigation/lib/unewnavigation.php:182
+#: elements/upfront-newnavigation/lib/unewnavigation.php:183
 msgid "Navigation settings"
 msgstr ""
 
@@ -2017,236 +2089,235 @@ msgid "Generic"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:158
-msgid "No."
+msgid "Post type"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:159
+msgid "No."
+msgstr ""
+
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:160
 #: elements/upfront-posts/lib/upfront_posts.php:248
 msgid "Result Length"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:160
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:161
 #: elements/upfront-posts/lib/upfront_posts.php:250
 msgid "Excerpt"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:161
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:162
 msgid "Full Post"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:162
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:163
 msgid "Limit to"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:163
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:164
 #: elements/upfront-posts/lib/upfront_posts.php:244
 msgid "Pagination:"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:165
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:166
 #: elements/upfront-posts/lib/upfront_posts.php:246
 msgid "Prev. / Next Page"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:166
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:167
 #: elements/upfront-posts/lib/upfront_posts.php:247
 msgid "Numeric"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:167
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:168
 msgid "Pick Post Parts to Display"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:168
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:169
 msgid "Drag to re-order Post Parts"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:169
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:170
 msgid "Select custom post"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:170
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:171
 msgid "Add a custom post"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:171
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:172
 msgid "Re-size featured image to fit container"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:174
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:175
 msgid "Element container"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:175
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:176
 msgid "The container for all posts"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:176
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:177
 msgid "Individual post"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:177
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:178
 msgid "The container for each individual post"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:178
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:179
 msgid "Post part"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:179
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:180
 msgid "General post part selector"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:180
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:202
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:181
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:203
 #: elements/upfront-posts/lib/upfront_posts.php:228
 msgid "Date posted"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:181
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:182
 msgid "Date posted part"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:182
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:203
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:183
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:204
 #: elements/upfront-posts/lib/upfront_posts.php:231
-#: library/class_upfront_model.php:195
+#: library/models/class_upfront_entity_resolver.php:195
 #: library/servers/class_upfront_editor_l10n_server.php:65
 #: library/servers/class_upfront_editor_l10n_server.php:148
 msgid "Author"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:183
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:184
 msgid "Author part"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:184
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:211
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:185
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:212
 #: elements/upfront-this-post/lib/this_post.php:621
 #: library/servers/class_upfront_editor_l10n_server.php:136
 #: library/servers/class_upfront_editor_l10n_server.php:188
 msgid "Categories"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:185
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:186
 msgid "Post categories list part"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:186
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:205
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:187
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:206
 #: elements/upfront-posts/lib/upfront_posts.php:230
 msgid "Comment count"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:187
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:188
 msgid "Comments count part"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:188
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:208
-msgid "Content"
-msgstr ""
-
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:189
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:190
 msgid "Main content part"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:190
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:204
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:191
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:205
 msgid "Gravatar"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:191
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:192
 msgid "Author gravatar part"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:192
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:193
 msgid "Read more"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:193
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:194
 msgid "Read more button part"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:194
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:210
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:195
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:211
 #: elements/upfront-this-post/lib/this_post.php:622
 #: library/servers/class_upfront_editor_l10n_server.php:137
 #: library/servers/class_upfront_editor_l10n_server.php:189
 msgid "Tags"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:195
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:196
 msgid "Post tags part"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:196
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:197
 msgid "Thumbnail"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:197
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:198
 msgid "Featured image part"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:199
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:200
 msgid "Post title part"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:206
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:207
 #: library/servers/class_upfront_editor_l10n_server.php:143
 #: library/servers/class_upfront_editor_l10n_server.php:411
 msgid "Featured Image"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:209
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:210
 msgid "Read More"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:212
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:213
 msgid "Meta"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:215
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:216
 msgid "Edit HTML"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:216
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:217
 msgid "Format"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:217
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:218
 msgid "max. categories"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:218
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:219
 msgid "max. tags"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:219
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:220
 msgid "Hide if no comments"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:220
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:221
 msgid "Limit words"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:221
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:222
 msgid "Re-size to fit container"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:222
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:223
 msgid "Size in px"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:224
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:225
 msgid "Insert meta field"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:225
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:226
 msgid "Hide hidden fields"
 msgstr ""
 
-#: elements/upfront-posts/lib/class_upfront_posts_data.php:226
+#: elements/upfront-posts/lib/class_upfront_posts_data.php:227
 msgid "Available meta fields"
 msgstr ""
 
@@ -2337,7 +2408,7 @@ msgid "Show featured image?"
 msgstr ""
 
 #: elements/upfront-posts/lib/upfront_posts.php:320
-#: elements/upfront-posts/lib/upfront_posts.php:321 functions.php:85
+#: elements/upfront-posts/lib/upfront_posts.php:321 functions.php:83
 #: library/servers/class_upfront_editor_l10n_server.php:145
 #: library/servers/class_upfront_editor_l10n_server.php:341
 msgid "Default"
@@ -2349,6 +2420,10 @@ msgstr ""
 
 #: elements/upfront-posts/tpl/parts/posts-author.php:2
 msgid "By <a href=\"{{url}}\">{{name}}</a>"
+msgstr ""
+
+#: elements/upfront-posts/tpl/parts/posts-comment_count.php:2
+msgid "No comments"
 msgstr ""
 
 #: elements/upfront-posts/tpl/parts/posts-date_posted.php:2
@@ -2363,7 +2438,7 @@ msgstr ""
 
 #: elements/upfront-search/lib/upfront_search.php:54
 #: elements/upfront-search/lib/upfront_search.php:55
-#: library/class_upfront_model.php:190
+#: library/models/class_upfront_entity_resolver.php:190
 #: library/servers/class_upfront_editor_l10n_server.php:366
 msgid "Search"
 msgstr ""
@@ -2865,7 +2940,7 @@ msgid "Social Counter style:"
 msgstr ""
 
 #: elements/upfront-tabs/lib/utabs.php:106
-#: elements/upfront-tabs/lib/utabs.php:114
+#: elements/upfront-tabs/lib/utabs.php:117
 #: library/servers/class_upfront_editor_l10n_server.php:369
 msgid "Tabs"
 msgstr ""
@@ -2880,64 +2955,72 @@ msgstr ""
 msgid "Have fun with tabs."
 msgstr ""
 
-#: elements/upfront-tabs/lib/utabs.php:110
-msgid "Tabs container"
+#: elements/upfront-tabs/lib/utabs.php:109
+msgid "Tab"
 msgstr ""
 
 #: elements/upfront-tabs/lib/utabs.php:111
-msgid "The layer that contains all the contents of the tab element."
-msgstr ""
-
-#: elements/upfront-tabs/lib/utabs.php:112
-msgid "Tabs menu"
+msgid "Tab Content"
 msgstr ""
 
 #: elements/upfront-tabs/lib/utabs.php:113
-msgid "The row that contains all tabs."
+msgid "Tabs container"
+msgstr ""
+
+#: elements/upfront-tabs/lib/utabs.php:114
+msgid "The layer that contains all the contents of the tab element."
 msgstr ""
 
 #: elements/upfront-tabs/lib/utabs.php:115
-msgid "Each of the tabs."
+msgid "Tabs menu"
 msgstr ""
 
 #: elements/upfront-tabs/lib/utabs.php:116
-#: elements/upfront-tabs/lib/utabs.php:117
-msgid "Active tab"
+msgid "The row that contains all tabs."
 msgstr ""
 
 #: elements/upfront-tabs/lib/utabs.php:118
-msgid "Tab content"
+msgid "Each of the tabs."
 msgstr ""
 
 #: elements/upfront-tabs/lib/utabs.php:119
-msgid "The layer that wraps tab content"
-msgstr ""
-
 #: elements/upfront-tabs/lib/utabs.php:120
-msgid "Tab content paragraph"
+msgid "Active tab"
 msgstr ""
 
 #: elements/upfront-tabs/lib/utabs.php:121
-msgid "The paragraph that contains tab content"
+msgid "Tab content"
 msgstr ""
 
 #: elements/upfront-tabs/lib/utabs.php:122
-msgid "Active tab content"
+msgid "The layer that wraps tab content"
 msgstr ""
 
 #: elements/upfront-tabs/lib/utabs.php:123
-msgid "The layer that wraps active tab content"
+msgid "Tab content paragraph"
 msgstr ""
 
 #: elements/upfront-tabs/lib/utabs.php:124
-msgid "Active tab content paragraph"
+msgid "The paragraph that contains tab content"
 msgstr ""
 
 #: elements/upfront-tabs/lib/utabs.php:125
-msgid "The paragraph that contains active tab content"
+msgid "Active tab content"
+msgstr ""
+
+#: elements/upfront-tabs/lib/utabs.php:126
+msgid "The layer that wraps active tab content"
 msgstr ""
 
 #: elements/upfront-tabs/lib/utabs.php:127
+msgid "Active tab content paragraph"
+msgstr ""
+
+#: elements/upfront-tabs/lib/utabs.php:128
+msgid "The paragraph that contains active tab content"
+msgstr ""
+
+#: elements/upfront-tabs/lib/utabs.php:130
 msgid "Tabs settings"
 msgstr ""
 
@@ -2947,6 +3030,10 @@ msgid "Text"
 msgstr ""
 
 #: elements/upfront-text/lib/upfront_text.php:81
+msgid "<p>My awesome stub content goes here</p>"
+msgstr ""
+
+#: elements/upfront-text/lib/upfront_text.php:82
 msgid "Double click to edit text"
 msgstr ""
 
@@ -3049,19 +3136,11 @@ msgstr ""
 msgid "Widget links"
 msgstr ""
 
-#: functions.php:119
-msgid "Create New Theme"
-msgstr ""
-
 #. Theme Name of the plugin/theme
 msgid "Upfront"
 msgstr ""
 
-#: functions.php:164
-msgid "Page %s"
-msgstr ""
-
-#: functions.php:299
+#: functions.php:266
 msgid "Please, hold on for just a little bit more"
 msgstr ""
 
@@ -3132,14 +3211,6 @@ msgstr ""
 
 #: library/class_upfront_form.php:281
 msgid "Please, enter a valid email"
-msgstr ""
-
-#: library/class_upfront_model.php:180
-msgid "Home Page"
-msgstr ""
-
-#: library/class_upfront_model.php:185
-msgid "Archive"
 msgstr ""
 
 #: library/media/class_upfront_media_server.php:53
@@ -3324,20 +3395,34 @@ msgstr ""
 msgid "This functionality has been disabled"
 msgstr ""
 
-#: library/servers/class_upfront_admin.php:116
+#: library/models/class_upfront_entity_resolver.php:180
+msgid "Home Page"
+msgstr ""
+
+#: library/models/class_upfront_entity_resolver.php:185
+msgid "Archive"
+msgstr ""
+
+#: library/servers/class_upfront_admin.php:119
 msgid ""
 "You have tried removing Upfront core while still having an Upfront child "
 "theme active. Please, activate a different theme and try again."
 msgstr ""
 
-#: library/servers/class_upfront_admin.php:125
+#: library/servers/class_upfront_admin.php:128
 msgid ""
 "Upfront requires Pretty Permalinks to work. Please enable them <a "
 "href=\"%s\">here</a>"
 msgstr ""
 
-#: library/servers/class_upfront_admin.php:141
+#: library/servers/class_upfront_admin.php:144
 msgid "Please, activate one of the Upfront child themes."
+msgstr ""
+
+#: library/servers/class_upfront_admin.php:226
+msgid ""
+"To make use of your widgets, add Widget element to your layouts. You can do "
+"so <a href=\"%s\">here</a>"
 msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:23
@@ -3674,11 +3759,6 @@ msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:114
 msgid "Scheduled"
-msgstr ""
-
-#: library/servers/class_upfront_editor_l10n_server.php:115
-#: library/servers/class_upfront_editor_l10n_server.php:259
-msgid "Preview"
 msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:116
@@ -4047,7 +4127,7 @@ msgid "The layer that wrap region."
 msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:232
-#: library/servers/class_upfront_editor_l10n_server.php:509
+#: library/servers/class_upfront_editor_l10n_server.php:511
 msgid "Are you sure you want to delete this section?"
 msgstr ""
 
@@ -4905,214 +4985,222 @@ msgid "Insert sidebar region"
 msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:508
-msgid "Delete this section"
+msgid "Insert left sidebar region"
+msgstr ""
+
+#: library/servers/class_upfront_editor_l10n_server.php:509
+msgid "Insert right sidebar region"
 msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:510
-msgid "Click here to add a region"
-msgstr ""
-
-#: library/servers/class_upfront_editor_l10n_server.php:511
-msgid "Breakpoints could not be saved."
+msgid "Delete this section"
 msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:512
-msgid "Viewport Width"
+msgid "Click here to add a region"
 msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:513
-msgid "Set-up your custom Breakpoint"
+msgid "Breakpoints could not be saved."
 msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:514
-msgid "Name"
+msgid "Viewport Width"
 msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:515
-msgid "Custom Breakpoint 01"
+msgid "Set-up your custom Breakpoint"
 msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:516
-msgid "Number of columns"
+msgid "Name"
 msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:517
-msgid "Edit breakpoint"
+msgid "Custom Breakpoint 01"
 msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:518
-msgid "Could not create a lightbox with an empty name."
+msgid "Number of columns"
+msgstr ""
+
+#: library/servers/class_upfront_editor_l10n_server.php:519
+msgid "Edit breakpoint"
 msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:520
-msgid "Remove"
-msgstr ""
-
-#: library/servers/class_upfront_editor_l10n_server.php:521
-msgid "Edit background areas"
+msgid "Could not create a lightbox with an empty name."
 msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:522
-msgid "Click here to lock header and footer areas in place."
+msgid "Remove"
 msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:523
+msgid "Edit background areas"
+msgstr ""
+
+#: library/servers/class_upfront_editor_l10n_server.php:524
+msgid "Click here to lock header and footer areas in place."
+msgstr ""
+
+#: library/servers/class_upfront_editor_l10n_server.php:525
 msgid ""
 "When unlocked, header and footer area will allow you to place elements "
 "inside them."
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:524
+#: library/servers/class_upfront_editor_l10n_server.php:526
 msgid "Background"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:525
+#: library/servers/class_upfront_editor_l10n_server.php:527
 msgid "Upload Image"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:526
+#: library/servers/class_upfront_editor_l10n_server.php:528
 msgid "Edit Image"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:527
+#: library/servers/class_upfront_editor_l10n_server.php:529
 msgid "Background Image Position"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:528
+#: library/servers/class_upfront_editor_l10n_server.php:530
 msgid "Fill the Space"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:529
+#: library/servers/class_upfront_editor_l10n_server.php:531
 msgid "Edit Name"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:530
+#: library/servers/class_upfront_editor_l10n_server.php:532
 msgid "Floating Region Settings"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:531
+#: library/servers/class_upfront_editor_l10n_server.php:533
 msgid "Lightbox Settings for"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:532
+#: library/servers/class_upfront_editor_l10n_server.php:534
 msgid "Global Background Settings"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:533
+#: library/servers/class_upfront_editor_l10n_server.php:535
 msgid "Area Type"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:534
+#: library/servers/class_upfront_editor_l10n_server.php:536
 msgid "Add Sub Regions"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:535
+#: library/servers/class_upfront_editor_l10n_server.php:537
 msgid "Element Behavior"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:536
+#: library/servers/class_upfront_editor_l10n_server.php:538
 msgid "Background Type"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:537
+#: library/servers/class_upfront_editor_l10n_server.php:539
 msgid "Change Image"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:538
+#: library/servers/class_upfront_editor_l10n_server.php:540
 msgid "Edit region CSS"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:539
+#: library/servers/class_upfront_editor_l10n_server.php:541
 msgid "Auto-resize"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:540
+#: library/servers/class_upfront_editor_l10n_server.php:542
 msgid "Not applicable for Full Screen Regions"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:541
+#: library/servers/class_upfront_editor_l10n_server.php:543
 msgid "Pick Color"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:542
+#: library/servers/class_upfront_editor_l10n_server.php:544
 msgid "Image Variation"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:543
+#: library/servers/class_upfront_editor_l10n_server.php:545
 msgid "Slider Transition"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:544
+#: library/servers/class_upfront_editor_l10n_server.php:546
 msgid "No colors defined for this theme. Click (+) below to define a color"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:545
+#: library/servers/class_upfront_editor_l10n_server.php:547
 msgid ""
 "Click either Highlight or Shade swatch to choose it. Hover for original "
 "color."
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:546
+#: library/servers/class_upfront_editor_l10n_server.php:548
 msgid "Define <span class=\"hovers\">:hovers</span> for your swatches ?"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:547
+#: library/servers/class_upfront_editor_l10n_server.php:549
 msgid "Highlight"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:548
+#: library/servers/class_upfront_editor_l10n_server.php:550
 msgid "Show Markers"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:550
+#: library/servers/class_upfront_editor_l10n_server.php:552
 msgid "01-Jan"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:551
+#: library/servers/class_upfront_editor_l10n_server.php:553
 msgid "02-Feb"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:552
+#: library/servers/class_upfront_editor_l10n_server.php:554
 msgid "03-Mar"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:553
+#: library/servers/class_upfront_editor_l10n_server.php:555
 msgid "04-Apr"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:554
+#: library/servers/class_upfront_editor_l10n_server.php:556
 msgid "05-May"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:555
+#: library/servers/class_upfront_editor_l10n_server.php:557
 msgid "06-Jun"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:556
+#: library/servers/class_upfront_editor_l10n_server.php:558
 msgid "07-Jul"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:557
+#: library/servers/class_upfront_editor_l10n_server.php:559
 msgid "08-Aug"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:558
+#: library/servers/class_upfront_editor_l10n_server.php:560
 msgid "09-Sep"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:559
+#: library/servers/class_upfront_editor_l10n_server.php:561
 msgid "10-Oct"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:560
+#: library/servers/class_upfront_editor_l10n_server.php:562
 msgid "11-Nov"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:561
+#: library/servers/class_upfront_editor_l10n_server.php:563
 msgid "12-Dec"
 msgstr ""
 
-#: library/servers/class_upfront_editor_l10n_server.php:563
+#: library/servers/class_upfront_editor_l10n_server.php:565
 msgid "Toggle grid"
 msgstr ""
 
@@ -5156,4 +5244,24 @@ msgstr ""
 
 #. Author of the plugin/theme
 msgid "Incsub Team"
+msgstr ""
+
+#: elements/upfront-comment/lib/upfront_comment.php:157
+msgctxt "noun"
+msgid "Comment"
+msgstr ""
+
+#: searchform.php:10 searchform.php:11
+msgctxt "label"
+msgid "Search for:"
+msgstr ""
+
+#: searchform.php:11
+msgctxt "placeholder"
+msgid "Search &hellip;"
+msgstr ""
+
+#: searchform.php:14
+msgctxt "submit button"
+msgid "Search"
 msgstr ""
