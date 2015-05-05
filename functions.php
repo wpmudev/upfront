@@ -230,6 +230,7 @@ class Upfront {
 	}
 
 	function inject_upfront_dependencies () {
+		
 		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) return false; // Do not inject for users that can't use this
 		$url = self::get_root_url();
 		//Boot Edit Mode if the querystring contains the editmode param

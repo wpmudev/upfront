@@ -1,7 +1,33 @@
-;
+
+;(function($,sr){
+
+  // debouncing function from John Hann
+  // http://unscriptable.com/index.php/2009/03/20/debouncing-javascript-methods/
+  var debounce = function (func, threshold, execAsap) {
+	  var timeout;
+
+	  return function debounced () {
+		  var obj = this, args = arguments;
+		  function delayed () {
+			  if (!execAsap)
+				  func.apply(obj, args);
+			  timeout = null;
+		  };
+
+		  if (timeout)
+			  clearTimeout(timeout);
+		  else if (execAsap)
+			  func.apply(obj, args);
+
+		  timeout = setTimeout(delayed, threshold || 400);
+	  };
+  }
+  // smartresize
+  jQuery.fn[sr] = function(fn){  return fn ? this.bind('resize', debounce(fn)) : this.trigger(sr); };
+
+})(jQuery,'smartresize');
 
 jQuery(document).ready(function($) {
-
 
 	//Work around for having the region container have a higher z-index if it contains the nav, so that the dropdowns, if overlapping to the following regions should not loose "hover" when the mouse travels down to the next region.
 	$('div.upfront-navigation').each(function() {
@@ -166,7 +192,16 @@ jQuery(document).ready(function($) {
 	}
 	roll_responsive_nav(".upfront-output-unewnavigation > .upfront-navigation");
 	
+	$(window).smartresize(function() {
+		$('.responsive_nav_toggler').css({position: '', left: '', top: ''});
+		$('ul.menu').css('padding-top', '');
+		$('.burger_nav_close').remove();
+		roll_responsive_nav(".upfront-output-unewnavigation > .upfront-navigation");
+	});
+
+/*
 	$(window).on('load', function() {
+
 		if( $("html").hasClass("ie8") ) {
 			$(window).resize(function() {
 				$('.responsive_nav_toggler').css({position: '', left: '', top: ''});
@@ -176,6 +211,7 @@ jQuery(document).ready(function($) {
 			});
 		} else {
 			$(window).resize(_.debounce(function() {
+				
 				$('.responsive_nav_toggler').css({position: '', left: '', top: ''});
 				$('ul.menu').css('padding-top', '');
 				$('.burger_nav_close').remove();
@@ -184,7 +220,7 @@ jQuery(document).ready(function($) {
 		}
 		
 	});
-	
+*/	
 	$(document).on('changed_breakpoint', function(e) {
 		roll_responsive_nav( e.selector, e.width);
 	});
