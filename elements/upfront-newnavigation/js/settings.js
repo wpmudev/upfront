@@ -99,7 +99,9 @@ define([], function() {
 		 */
 		render: function() {
 			this.constructor.__super__.render.call(this);
-			var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
+			var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+				item // this is used to cache stuff
+			;
 			if ( breakpoint && !breakpoint.default ){
 				model_breakpoint = Upfront.Util.clone(this.model.get_property_value_by_name('breakpoint') || {});
 				breakpoint_data = model_breakpoint[breakpoint.id];
@@ -109,25 +111,37 @@ define([], function() {
 					this.panels._wrapped[0].settings._wrapped[0].fields._wrapped[1].$el.find('input').removeAttr("checked");
 				}
 
-				if(typeof(breakpoint_data) != 'undefined') {
-					if(breakpoint_data.burger_alignment) {
-						this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[0].$el.find('input').removeAttr("checked");
-						this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[0].$el.find('input[value="'+breakpoint_data.burger_alignment+'"]').attr("checked", 'checked');
+				if (typeof(breakpoint_data) != 'undefined') {
+					if (breakpoint_data.burger_alignment) {
+						item = this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[0];
+						if (item && item.$el && item.$el.length) {
+							item.$el.find('input').removeAttr("checked");
+							item.$el.find('input[value="'+breakpoint_data.burger_alignment+'"]').attr("checked", 'checked');
+						}
 					}
 
-					if(breakpoint_data.menu_style) {
-						this.panels._wrapped[0].settings._wrapped[2].fields._wrapped[0].$el.find('input').removeAttr("checked");
-						this.panels._wrapped[0].settings._wrapped[2].fields._wrapped[0].$el.find('input[value="'+breakpoint_data.menu_style+'"]').attr("checked", 'checked');
+					if (breakpoint_data.menu_style) {
+						item = this.panels._wrapped[0].settings._wrapped[2].fields._wrapped[0];
+						if (item && item.$el && item.$el.length) {
+							item.$el.find('input').removeAttr("checked");
+							item.$el.find('input[value="'+breakpoint_data.menu_style+'"]').attr("checked", 'checked');
+						}
 					}
 
 					if(breakpoint_data.menu_alignment) {
-						this.panels._wrapped[0].settings._wrapped[3].fields._wrapped[0].$el.find('input').removeAttr("checked");
-						this.panels._wrapped[0].settings._wrapped[3].fields._wrapped[0].$el.find('input[value="'+breakpoint_data.menu_alignment+'"]').attr("checked", 'checked');
+						item = this.panels._wrapped[0].settings._wrapped[3].fields._wrapped[0];
+						if (item && item.$el && item.$el.length) {
+							item.$el.find('input').removeAttr("checked");
+							item.$el.find('input[value="'+breakpoint_data.menu_alignment+'"]').attr("checked", 'checked');
+						}
 					}
 
 					if(breakpoint_data.burger_over) {
-						this.panels._wrapped[0].settings._wrapped[2].fields._wrapped[1].$el.find('input').removeAttr("checked");
-						this.panels._wrapped[0].settings._wrapped[2].fields._wrapped[1].$el.find('input[value="'+breakpoint_data.burger_over+'"]').attr("checked", 'checked');
+						item = this.panels._wrapped[0].settings._wrapped[2].fields._wrapped[1];
+						if (item && item.$el && item.$el.length) {
+							item.$el.find('input').removeAttr("checked");
+							item.$el.find('input[value="'+breakpoint_data.burger_over+'"]').attr("checked", 'checked');
+						}
 					}
 				}
 			}
