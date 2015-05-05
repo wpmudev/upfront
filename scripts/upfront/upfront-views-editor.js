@@ -7271,8 +7271,8 @@ var GeneralCSSEditor = Backbone.View.extend({
 
 		this.options = options || {};
 		this.model = options.model;
-		this.sidebar = ( options.sidebar !== false );
-		this.global = ( options.global === true );
+		this.sidebar = options.sidebar !== false;
+		this.global = options.global === true;
 
 		this.prepareAce = deferred.promise();
 		require([Upfront.Settings.ace_url], function(){
@@ -7294,8 +7294,13 @@ var GeneralCSSEditor = Backbone.View.extend({
 			this.$style = $style
 		}
 
+		if (options.cssSelectors) {
+			this.selectors = options.cssSelectors;
+		}
+
 
 		if ( typeof options.change == 'function' ) this.listenTo(this, 'change', options.change);
+		if ( typeof options.onClose == 'function' ) this.listenTo(this, 'close', options.onClose);
 
 		this.render();
 
@@ -7441,6 +7446,7 @@ var GeneralCSSEditor = Backbone.View.extend({
 		});
 	},
 	remove: function() {
+		this.trigger('close');
 		Backbone.View.prototype.remove.call(this);
 		$(window).off('resize', this.resizeHandler);
 	},

@@ -976,3 +976,33 @@ figure.gallery-labels-figure img.mfp-img {
 	margin: 0 !important;
 	vertical-align: middle;
 }
+
+.glb-caption-container {
+	position: relative;
+}
+
+[class*=gallery-ugallery-object] .mfp-image-holder .mfp-close {
+	width: auto;
+	height: auto;
+	top: -25px;
+	right: 0;
+	padding: 0;
+	text-align: right;
+	line-height: 1;
+}
+[class*=gallery-ugallery-object] .mfp-image-holder .mfp-counter {
+	white-space: nowrap;
+}
+[class*=gallery-ugallery-object] figure {
+	margin: 0;
+}
+.glb-image-container img.mfp-img {
+	padding: 0;
+}
+.glb-content-container {
+	padding: 10px;
+}
+.glb-caption-container {
+	margin-top: 10px;
+	min-height: 1em;
+}

@@ -141,22 +141,22 @@ jQuery(function($){
 			var data = $('#' + galleryId).find('.ugallery').data();
 			var containerClass ='gallery-' + galleryId + '-lightbox';
 
-			if (data.lightbox_show_close === true) {
+			if (data.lightboxShowClose === true) {
 				$('.mfp-close').show();
 			} else {
 				$('.mfp-close').hide();
 			}
 
-			if (data.lightbox_show_image_count === true) {
+			if (data.lightboxShowImageCount === true) {
 				$('.mfp-counter').show();
 			} else {
 				$('.mfp-counter').hide();
 			}
 
 			$('.mfp-content').css('background', data.lightboxActiveAreaBg);
-			$('.mfp-wrap').css('background', data.lightboxOverlayBg);
+			$('.mfp-bg').css('background', data.lightboxOverlayBg);
 
-			$('.mfp-wrap').addClass(containerClass);
+			$('.mfp-wrap, .mfp-bg').addClass(containerClass);
 
 			if ($('style#' + containerClass).length === 0) {
 				$('body').append('<style id="' + containerClass + '"></style>');
@@ -164,7 +164,8 @@ jQuery(function($){
 			$('style#' + containerClass).html(data.styles);
 		};
 
-		var gallery, magOptions;
+		var markup, gallery, magOptions;
+		markup = '<div class="mfp-close">&times;</div><div class="glb-content-container"><figure class="glb-image-container"><div class="mfp-img"></div></figure><div class="glb-caption-container"><div class="mfp-title"></div><div class="mfp-counter"></div></div></div>';
 		for (var galleryId in ugalleries) {
 			gallery = false;
 			magOptions = ugalleries[galleryId].magnific;
@@ -176,7 +177,8 @@ jQuery(function($){
 				});
 				if (ugalleries[galleryId].useLightbox) {
 					magOptions.image = {
-						titleSrc: titleSrc
+						titleSrc: titleSrc,
+						markup: markup
 					};
 				}
 
