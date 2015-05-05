@@ -1923,7 +1923,10 @@ define([
 				}
 				if (_.isUndefined(font_family)) {
 					// This is a Google font
-					font_family = google_fonts_storage.get_fonts().findWhere({family: typeface});
+					var ggfonts = google_fonts_storage.get_fonts();
+					if (ggfonts && ggfonts.findWhere) {
+						font_family = ggfonts.findWhere({family: typeface});
+					}
 					if (!font_family) return true; // Missing typeface family, pretend we're normal
 					// If so, let's do this - load up the font
 					url = '//fonts.googleapis.com/css?family=' + font_family.get('family').replace(/ /g, '+');
