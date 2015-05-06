@@ -246,7 +246,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		// Add icon font style if there is active icon font other than UpFont
 		$font = $this->getActiveIconFont();
 		if ($font) {
-			$out .= "\nin font \n";
+			//$out .= "\nin font \n";
 			$longSrc = '';
 			foreach($font['files'] as $type=>$file) {
 				$longSrc .= "url('" . get_stylesheet_directory_uri() . '/icon-fonts/' . $file . "') format('";
