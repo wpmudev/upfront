@@ -602,9 +602,9 @@ jQuery(document).ready(function($){
 	}
 	regions_scroll_update();
 	$(window).on('load', regions_scroll_update);
-	//var lazyScrollUpdate = throttle(regions_scroll_update, 100);
-	//$(window).on('scroll', lazyScrollUpdate);
+	var lazyScrollUpdate = throttle(regions_scroll_update, 100);
 	$(window).on('scroll', regions_scroll_update);
+	$(window).on('resize', lazyScrollUpdate);
 
 	/* Lightbox front end logic */
 	var overlay = $('<div class="upfront-lightbox-bg"></div>'),
@@ -786,6 +786,9 @@ jQuery(document).ready(function($){
 					else (obj.$el.attr('src', obj.url));
 					obj.$el.removeClass('upfront-image-lazy-loading').addClass('upfront-image-lazy-loaded');
 					deferred.resolve();
+				})
+				.on('error abort', function () {
+					deferred.reject();
 				})
 			;
 			return deferred.promise();
