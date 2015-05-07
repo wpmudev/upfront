@@ -99,10 +99,12 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 	get_content_markup: function () {
 		var props = this.extract_properties();
 		
-		//Check if preset is empty and set currentpreset
+		//Check if preset is empty and set it to currentpreset (porting old data to new preset manager)
 		if(props.preset === "" && props.currentpreset != "") {
 			props.preset = props.currentpreset;
+			this.model.set_property('preset', props.currentpreset)
 		}
+
 		props.preset = props.preset || 'default';
 		
 		return this.buttonTpl(props);
