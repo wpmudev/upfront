@@ -4349,6 +4349,8 @@ var Field_ToggleableText = Field_Text.extend({
 			if(this.options.spectrum && typeof this.options.spectrum.change === "function"){
 				this.options.spectrum.change(color);
 			}
+			//Update preview color
+			this.update_input_border_color(color.toRgbString);
 		},
 		set_to_blank : function(){
 			var blank_color = 'rgba(0, 0, 0, ' + this.options.blank_alpha + ')',
