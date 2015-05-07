@@ -1,0 +1,37 @@
+<div class="upfront-settings-item">
+	<div class="upfront-settings-item-title">
+		<span>Video {{cloneId}} Options</span>
+	</div>
+	<div class="upfront-settings-item-content">
+		<div class="multiple_sources">
+			<label class="upfront-field-label upfront-field-label-block" for="view3296-multiple_source_{{cloneId}}"></label>
+			<input id="view3296-multiple_source_{{cloneId}}" class="upfront-field upfront-field-text" type="text" placeholder="YouTube Video URL" value="{{videoUrl}}" name="multiple_source_{{cloneId}}">
+		</div>
+		<div class="upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-checkboxes">
+			<span class="upfront-field-multiple upfront-field-multiple-selected" style="float: left; margin-top: 22px;">
+				<input id="view3297-multiple_show_title-0" class="upfront-field-checkbox" type="checkbox" {[ if (titleCheckbox) { ]} checked="checked" {[ } ]} value="multiple_show_title" name="multiple_show_title_{{cloneId}}">
+				<label for="view3297-multiple_show_title-0">
+					<span class="upfront-field-label-text"></span>
+				</label>
+			</span>
+		</div>
+		<div class="upfront-field-wrap upfront-field-wrap-text">
+			<label class="upfront-field-label upfront-field-label-inline" for="view3298-multiple_title_length">Title</label>
+			<input id="view3298-multiple_title_length" class="upfront-field upfront-field-number" type="number" step="1" max="100" min="50" value="{{titleLength}}" name="multiple_title_length_{{cloneId}}">
+		characters
+		</div>
+		<div class="upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-checkboxes">
+			<span class="upfront-field-multiple upfront-field-multiple-selected" style="float: left; margin-top: 22px;">
+				<input id="view3299-multiple_show_description-0" class="upfront-field-checkbox" type="checkbox" {[ if (descriptionCheckbox) { ]} checked="checked" {[ } ]} value="multiple_show_description" name="multiple_show_description_{{cloneId}}">
+				<label for="view3299-multiple_show_description-0">
+					<span class="upfront-field-label-text"></span>
+				</label>
+			</span>
+		</div>
+		<div class="upfront-field-wrap upfront-field-wrap-number upfront-field-wrap-disabled">
+			<label class="upfront-field-label upfront-field-label-inline" for="view3300-multiple_description_length">Description</label>
+			<input id="view3300-multiple_description_length" class="upfront-field upfront-field-number" type="number" step="1" max="100" min="50" value="{{descriptionLength}}" name="multiple_description_length_{{cloneId}}">
+		characters
+		</div>
+	</div>
+</div>

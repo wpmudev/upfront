@@ -1,8 +1,9 @@
 (function ($) {
 
   define([
-    'text!elements/upfront-youtube/tpl/youtube.html'
-    ], function(youtubeTpl) {
+    'text!elements/upfront-youtube/tpl/youtube.html',
+	'text!elements/upfront-youtube/tpl/clonevideo.html'
+    ], function(youtubeTpl, cloneTpl) {
     var UyoutubeModel = Upfront.Models.ObjectModel.extend({
       init: function () {
         var properties = _.clone(Upfront.data.uyoutube.defaults);
@@ -61,7 +62,7 @@
         if (props.videoType === 'multiple' && props.display_style === 'list') {
           this.trimListDescriptions();
         }
-
+		
         rendered = this.youtubeTpl(this.extract_properties());
 
         if(this.property('youtube_status') === 'starting'){
@@ -167,7 +168,8 @@
     var YoutubeSettings = Upfront.Views.Editor.Settings.Settings.extend({
       events: {
         'change [name="video_url"]': 'singleVideo',
-        'change [name="multiple_source_id"]': 'multipleVideos',
+        'change .multiple_sources': 'multipleVideos',
+		'change input': 'multipleVideos',
         'change [name="videoType"]': 'setType'
       },
 
@@ -187,12 +189,12 @@
       singleVideo: function(event) {
         var me = this;
         var videoUrl = $(event.currentTarget).val();
-				var videoId;
-				if (videoUrl.match(/youtu\.be/)) {
-					videoId = videoUrl.match(/^(https?:\/\/)?youtu.be\/([0-9a-zA-Z\-_]{11})/)[2];
-				} else {
-					videoId = videoUrl.match(/^(https?:\/\/(www\.)?)?youtube\.com\/watch\?v=([0-9a-zA-Z\-_]{11}).*/)[3];
-				}
+		var videoId;
+		if (videoUrl.match(/youtu\.be/)) {
+			videoId = videoUrl.match(/^(https?:\/\/)?youtu.be\/([0-9a-zA-Z\-_]{11})/)[2];
+		} else {
+			videoId = videoUrl.match(/^(https?:\/\/(www\.)?)?youtube\.com\/watch\?v=([0-9a-zA-Z\-_]{11}).*/)[3];
+		}
         //TODO check if input is correct youtube url
         var data = {'video_id': videoId};
         Upfront.Util.post({"action": this.actions.single, "data": data})
@@ -210,30 +212,49 @@
 
       multipleVideos: function(event) {
         var me = this;
-        var source = $(event.currentTarget).val();
-        var sourceType = this.$el.find('[name="multiple_source"]:checked').val();
-        if (sourceType === 'user_channel') {
-          Upfront.Util.post({"action": this.actions.channel, "data": {channel: source}})
-            .success(function (response) {
-              me.for_view.model.set_property('multiple_videos', response.data.videos);
-            })
-            .error(function () {
-              Upfront.Util.log("error channel video");
-            })
-          ;
-        } else {
-          if (source.match(/^http/)) {
-            source = source.match(/^(https?:\/\/(www\.)?)?youtube\.com\/.*list=([0-9a-zA-Z\-_]+).*/)[3];
-          }
-          Upfront.Util.post({"action": this.actions.playlist, "data": {playlist: source}})
-            .success(function (response) {
-              me.for_view.model.set_property('multiple_videos', response.data.videos);
-            })
-            .error(function () {
-              Upfront.Util.log("error playlist videos");
-            })
-          ;
-        }
+		var multiple_videos_array = [];
+		
+		//Get all videos urls
+		$('[name^="multiple_source_"]').each(function( index, element ) {
+			var videoUrl = $(element).val();
+			var elementId = index + 1;
+			//Get video settings
+			var title_box = $('[name="multiple_show_title_' + elementId + '"]').prop('checked');
+			var title_length = $('[name="multiple_title_length_' + elementId + '"]').val();
+			var description_box = $('[name="multiple_show_description_' + elementId + '"]').prop('checked');
+			var description_length = $('[name="multiple_description_length_' + elementId + '"]').val();
+			var videoId;
+			if(videoUrl) {
+				if (videoUrl.match(/youtu\.be/)) {
+					videoId = videoUrl.match(/^(https?:\/\/)?youtu.be\/([0-9a-zA-Z\-_]{11})/)[2];
+				} else {
+					videoId = videoUrl.match(/^(https?:\/\/(www\.)?)?youtube\.com\/watch\?v=([0-9a-zA-Z\-_]{11}).*/)[3];
+				}
+
+				var data = {'video_id': videoId};
+				Upfront.Util.post({"action": me.actions.single, "data": data})
+				  .success(function (response) {
+					multiple_videos_array.push({
+						title: response.data.video.title, 
+						description: response.data.video.description, 
+						id: videoId, 
+						single_video_url: videoUrl,
+						title_length: title_length,
+						title_box: title_box,
+						description_length: description_length,
+						description_box: description_box,
+						thumbnail: 'http://img.youtube.com/vi/'+ videoId +'/hqdefault.jpg'
+					});
+				  })
+				  .error(function () {
+					Upfront.Util.log("error single video");
+				  })
+				;
+			}	
+        });
+		
+		me.for_view.model.set_property('multiple_videos', multiple_videos_array, false);
+		
       },
 
       setType: function(event) {
@@ -297,43 +318,19 @@
               }),
               new SettingsItem({
                 model: this.model,
-                title: 'Custom Options',
+                title: 'Video 1 Options',
+				className: 'multiple_video_section',
                 fields: [
-                  new Fields.Radios({
-                  model: this.model,
-                  property: 'multiple_source',
-                  layout: "horizontal-inline",
-                  values: [
-                      {
-                      label: 'User Channel',
-                      value: 'user_channel',
-                    },
-                    {
-                      label: 'Playlist',
-                      value: 'playlist',
-                    }
-                    ]
-                  }),
                   new Fields.Text({
                     model: this.model,
-                    property: 'multiple_source_id',
+					className: 'multiple_sources',
+                    property: 'multiple_source_1',
                     label: "",
-                    placeholder: "YouTube Username or Channel ID"
-                  }),
-                  new Disablable_Field_Number({
-                    model: this.model,
-                    property: 'multiple_count',
-                    label: "Display",
-                    label_style: 'inline',
-                    suffix: "latest Videos",
-                    min: 3,
-                    max: 60,
-                    step: 1,
-                    default_value: 6
+                    placeholder: "YouTube Video URL"
                   }),
                   new Fields.Checkboxes({
                     model: this.model,
-                    property: 'multiple_show_title',
+                    property: 'multiple_show_title_1',
                     values: [
                       {
                         value: 'multiple_show_title',
@@ -343,7 +340,7 @@
                   }),
                   new Disablable_Field_Number({
                     model: this.model,
-                    property: 'multiple_title_length',
+                    property: 'multiple_title_length_1',
                     label: "Title",
                     label_style: 'inline',
                     suffix: "characters",
@@ -354,23 +351,37 @@
                   }),
                   new Fields.Checkboxes({
                     model: this.model,
-                    property: 'multiple_show_description',
+                    property: 'multiple_show_description_1',
                     values: [
-                      { label: "", value: 'multiple_show_description', disabled: true },
+                      { 
+						label: "", 
+						value: 'multiple_show_description'
+					  },
                     ]
                   }),
                   new Fields.Number({
                     model: this.model,
-                    property: 'multiple_description_length',
+                    property: 'multiple_description_length_1',
                     label: "Description",
                     label_style: 'inline',
                     suffix: "characters",
                     min: 50,
                     max: 100,
                     step: 1,
-                    default_value: 100,
-                    disabled: true
+                    default_value: 100
                   }),
+				],
+			}),
+			new SettingsItem({
+                model: this.model,
+                fields: [
+				  new Fields.Button({
+					label: 'Add Video',
+					compact: true,
+					on_click: function(){
+						me.cloneMultipleVideo();
+					}
+				  }),
                   new Fields.Slider({
                     model: this.model,
                     property: 'thumbWidth',
@@ -480,8 +491,9 @@
         this.$el.find('.upfront-settings_label').remove();
         this.$el.find('.upfront-settings_panel').css('left', 0);
         this.toggleDescriptionEnabled();
+		this.listMultipleVideos();
         // Inline checkboxes
-        this.$el.find('[name=multiple_show_description], [name=multiple_show_title], [name=show_title], [name=show_description]').parent().css({
+        this.$el.find('[name^=multiple_show_description], [name^=multiple_show_title], [name^=show_title], [name^=show_description]').parent().css({
           'float': 'left',
           'margin-top': '22px'
         });
@@ -517,11 +529,6 @@
             .addClass('upfront-field-wrap-disabled')
           ;
 
-          this.$el.find('[name=multiple_show_description]')
-            .attr('disabled', 'disabled')
-            .parent()
-            .addClass('upfront-field-multiple-disabled')
-          ;
           return;
         }
 
@@ -545,7 +552,39 @@
           return this.model.set_property(name, value, silent);
         }
         return this.model.get_property_value_by_name(name);
-      }
+      },
+	  
+	  //Listing all videos fields when settings panel is opened
+	  listMultipleVideos: function() {
+		var videos = this.model.get_property_value_by_name('multiple_videos');
+		var me = this;
+		//Empty the container
+		me.$el.find('.multiple_video_section').html('');
+		$(videos).each(function( index, element ) {  
+			me.$el.find('.multiple_video_section').append(_.template(cloneTpl, { 
+				cloneId: index + 1,
+				videoUrl: element.single_video_url,
+				titleLength: element.title_length,
+				descriptionLength: element.description_length,
+				titleCheckbox: element.title_box,
+				descriptionCheckbox: element.description_box
+			}));
+		});
+
+	  },
+	  
+	  //Adding new set of fields from template
+	  cloneMultipleVideo: function() {
+		var panel_count = $('.multiple_video_section .upfront-settings-item').length;
+		$('.multiple_video_section').append(_.template(cloneTpl, { 
+			cloneId: panel_count + 1,
+			videoUrl: '',
+			titleLength: 100,
+			descriptionLength: 100,
+			titleCheckbox: true,
+			descriptionCheckbox: true
+		}));
+	  }
     });
 
 

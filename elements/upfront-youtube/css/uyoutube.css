@@ -109,6 +109,15 @@
 	margin-right: 50px;
 }
 
+#settings .uyoutube-settings .upfront-settings-item-tab-content {
+	overflow-y: auto;
+	max-height: 370px;
+}
+
+#settings .uyoutube-settings .upfront-settings-item-tab-content .multiple_video_section .upfront-settings-item {
+	margin-bottom: 15px;
+}
+
 /* Starting */
 .upfront-youtube-starting-select {
 	box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;
