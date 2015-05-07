@@ -662,6 +662,7 @@ jQuery(document).ready(function($){
 		  	return;
 
 			if(url.indexOf('#') >=0) {
+			  e.preventDefault();
 			  var tempurl = url.split('#');
 			  if(tempurl[1].trim() != '')
 				if(tempurl[1].trim().indexOf('ltb-') == 0) {
