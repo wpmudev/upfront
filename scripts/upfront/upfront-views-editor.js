@@ -2629,6 +2629,12 @@ define([
 			}, this);
 
 			return this;
+		},
+		destroy: function() {
+			this.remove();
+			_.each(this.views, function(view) {
+				view.remove();
+			});
 		}
 	});
 
@@ -2787,7 +2793,11 @@ define([
 
 			// Responsive
 			if ( is_responsive_app ) {
+				if (this.responsive_commands) {
+					this.responsive_commands.destroy();
+				}
 				var responsive_commands = new SidebarCommands_Responsive({"model": this.model});
+				this.responsive_commands = responsive_commands;
 				output.append(responsive_commands.render().el);
 			}
 
@@ -9735,7 +9745,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				scroll_top = $(document).scrollTop(),
 				scroll_bottom = scroll_top + win_height - bottom_height,
 				rel_top = $main.offset().top + top_height;
-			
+
 			this.add_responsive_items();
 
 			/*this.$el.css({
@@ -9810,19 +9820,19 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				});
 				$regionEl.append(openItemControls);
 			}
-			
+
 			responsiveAddRegionTop.click(function() {
 				me.add_panel_top.$el.find('.upfront-icon').trigger('click');
 				$regionEl.toggleClass('controls-visible');
 			});
 			itemControls.append(responsiveAddRegionTop);
-			
+
 			responsiveAddRegionBottom.click(function() {
 				me.add_panel_bottom.$el.find('.upfront-icon').trigger('click');
 				$regionEl.toggleClass('controls-visible');
 			});
 			itemControls.append(responsiveAddRegionBottom);
-			
+
 			if ( me.model.is_main() && this.model.get('allow_sidebar') ){
 				if(sub_models.left === false) {
 					responsiveAddRegionLeft.click(function() {
