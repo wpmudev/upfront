@@ -90,6 +90,8 @@ class Upfront_Posts_PostView {
 		$out = Upfront_Codec::get()->expand($out, "date", date(get_option('date_format'), $time));
 		$out = Upfront_Codec::get()->expand($out, "time", date(get_option('time_format'), $time));
 
+		$out = Upfront_Codec::get()->expand($out, "permalink", get_permalink($this->_post->ID));
+
 		return $out;
 	}
 
