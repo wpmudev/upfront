@@ -1587,9 +1587,12 @@ define([
 		initialize: function () {
 			var me = this;
 			SidebarPanel_Settings_Item.prototype.initialize.call(this);
-			$.when(google_fonts_storage.get_fonts()).done(function() {
-				me.render();
-			});
+			var fonts = google_fonts_storage.get_fonts();
+			if (fonts && fonts.state) { // Is this a promise object? If not, DON'T try to re-render when it's "done", because we already have fonts
+				$.when(fonts).done(function() {
+					me.render();
+				});
+			}
 			this.listenTo(Upfront.Events, 'upfront:render_typography_sidebar', this.render);
 			this.listenTo(Upfront.Events, 'entity:object:after_render', this.update_typography_elements);
 			this.listenTo(Upfront.Events, "theme_colors:update", this.update_typography_elements, this);
