@@ -98,7 +98,11 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		
 	get_content_markup: function () {
 		var props = this.extract_properties();
-
+		
+		//Check if preset is empty and set currentpreset
+		if(props.preset === "" && props.currentpreset != "") {
+			props.preset = props.currentpreset;
+		}
 		props.preset = props.preset || 'default';
 		
 		return this.buttonTpl(props);
@@ -121,7 +125,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		return is_edited ? true : false;
 	},
   
-  onOpenPanelClick: function(event) {
+	onOpenPanelClick: function(event) {
 		event.preventDefault();
 		this.toggleLinkPanel();
 	},
@@ -183,7 +187,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 	on_render: function() {
 		var me = this,
 		blurTimeout = false;
-    this.delegateEvents(); 
+		this.delegateEvents(); 
 		var $target = this.$el.find('.upfront-object-content a.upfront_cta');
 		  $target.ueditor({
 				linebreaks: true,
@@ -204,7 +208,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 				me.saveTitle($(this));
 			});
       
-    this.createInlineControlPanel();     
+		this.createInlineControlPanel();     
 	},
 	stopEdit: function() {
 		var $target = this.$el.find('.upfront-object-content a.upfront_cta');

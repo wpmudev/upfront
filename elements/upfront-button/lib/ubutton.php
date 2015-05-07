@@ -6,14 +6,14 @@ class Upfront_ButtonView extends Upfront_Object {
 		return array(
 			"content" => "Click here", 
 			"href" => "", 
-      "linkTarget" => "",
+			"linkTarget" => "",
 			"align" => "center", 
 			"type" => "UbuttonModel", 
 			"view_class" => "ButtonView",  
 			"class" => "c24 upfront-button", 
 			"has_settings" => 1, 
 			"id_slug" => "ubutton",
-			'preset' => 'default'
+			'preset' => ''
 		);
 	}
 	
@@ -40,18 +40,19 @@ class Upfront_ButtonView extends Upfront_Object {
 	}
 	
 	public function get_markup () {
-			// This data is passed on to the template to precompile template
-			$data = $this->properties_to_array();
-			
-			//if(isset($data['currentpreset'])) { $data['preset'] = $data['currentpreset']; }
-			$data['preset'] = isset($data['preset']) ? $data['preset'] : 'default';
-      
-      $data['linkTarget'] = $this->_get_property('linkTarget');
+		// This data is passed on to the template to precompile template
+		$data = $this->properties_to_array();
+		if(isset($data['currentpreset']) && empty($data['preset'])) { 
+			$data['preset'] = $data['currentpreset']; 
+		}
+		$data['preset'] = isset($data['preset']) ? $data['preset'] : 'default';
+  
+		$data['linkTarget'] = $this->_get_property('linkTarget');
 
-			$markup = upfront_get_template('ubutton', $data, dirname(dirname(__FILE__)) . '/tpl/ubutton.html');
+		$markup = upfront_get_template('ubutton', $data, dirname(dirname(__FILE__)) . '/tpl/ubutton.html');
 
-			//upfront_add_element_script('ubutton_script', array('js/ubutton-front.js', dirname(__FILE__)));
-			return $markup;
+		//upfront_add_element_script('ubutton_script', array('js/ubutton-front.js', dirname(__FILE__)));
+		return $markup;
 	}
 	
 	public static function add_js_defaults($data){	
