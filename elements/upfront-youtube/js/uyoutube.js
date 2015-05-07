@@ -213,9 +213,10 @@
       multipleVideos: function(event) {
         var me = this;
 		var multiple_videos_array = [];
-		
+		var videoCounter = 1;
+		var videoFields = $('[name^="multiple_source_"]');
 		//Get all videos urls
-		$('[name^="multiple_source_"]').each(function( index, element ) {
+		videoFields.each(function( index, element ) {
 			var videoUrl = $(element).val();
 			var elementId = index + 1;
 			//Get video settings
@@ -245,15 +246,23 @@
 						description_box: description_box,
 						thumbnail: 'http://img.youtube.com/vi/'+ videoId +'/hqdefault.jpg'
 					});
+					
+					videoCounter++;
 				  })
 				  .error(function () {
 					Upfront.Util.log("error single video");
+				  })
+				  .done(function () {
+					  if(videoCounter == videoFields.length) {
+						me.for_view.model.set_property('multiple_videos', multiple_videos_array, false);
+						console.log(multiple_videos_array);
+					  }
 				  })
 				;
 			}	
         });
 		
-		me.for_view.model.set_property('multiple_videos', multiple_videos_array, false);
+		
 		
       },
 
