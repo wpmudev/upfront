@@ -23,6 +23,13 @@ class Upfront_StylePreprocessor {
         $override_baseline = $_SERVER['REQUEST_METHOD'] == 'POST' ? intval((!empty($_POST['baseline']) ? $_POST['baseline'] : 0)) : intval((!empty($_GET['baseline']) ? $_GET['baseline'] : 0));
 	    $breakpoints = $this->_grid->get_breakpoints();
         $style = '';
+
+        // Let's go with caching
+        $cache = Upfront_Cache::get_instance();
+        $cache_key = $cache->key('grid', array($this->_grid, $breakpoints, $editor));
+        $css = $cache->get($cache_key);
+        if (false !== $css) return $editor ? $css : self::compress($css);
+
         foreach ($breakpoints as $scope => $breakpoint) {
             if($scope != 'desktop')
                 continue;
@@ -109,7 +116,10 @@ class Upfront_StylePreprocessor {
             }
             $style .= join("\n", $rules);
         }
-        return ($editor) ? $style : self::compress($style);
+
+        $cache->set($cache_key, $style); // Cache stuff for laters
+
+        return $editor ? $style : self::compress($style);
 	}
 
 	protected function _get_width_classes ($col, $parent, $max_col, $width_class, $ml_class, $mr_class = false) {
