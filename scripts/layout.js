@@ -606,7 +606,6 @@ jQuery(document).ready(function($){
 			var target = $(this).data("groupTarget");
 			if(url.indexOf('#') >=0) {
 				var nav = $('.upfront-output-region-container[data-sticky="1"], .upfront-output-region-sub-container[data-sticky="1"]').first();
-				console.log(nav.height());
 				var height = nav.height() ? nav.height() : 0;
 				//It is an anchor
 				$('html,body').animate({scrollTop: $(url).offset().top - height },'slow');
