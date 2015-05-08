@@ -121,6 +121,7 @@ class Upfront_UcommentView extends Upfront_Object {
 			if (!empty($posts[0])) {
 				$post = $posts[0];
 				$comments = self::spawn_random_comments($post);
+				add_filter('comments_open', '__return_true');
 			}
 			else return '';
 		}
