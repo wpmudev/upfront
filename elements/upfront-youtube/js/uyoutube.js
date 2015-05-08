@@ -224,7 +224,6 @@
 				var data = {'video_id': videoUrl};
 				Upfront.Util.post({"action": me.actions.single, "data": data})
 				  .success(function (response) {
-					console.log(response);
 					multiple_videos_array.push({
 						order: videoCounter,
 						title: response.data.video.title, 
