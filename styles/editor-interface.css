@@ -11351,7 +11351,9 @@ div.upfront-region-container:hover > a.feature_image_selector {
   font-size: 11px;
   font-family: Verdana, sans-serif;
   color: #607f99;
-  padding: 5px; }
+  padding: 5px;
+  /* Prevents chosen sprite image from displaying */
+  background-image: none !important; }
 
 #insert-font-widget .chosen-container-single .chosen-results::-webkit-scrollbar, #sidebar-ui .chosen-container-single .chosen-results::-webkit-scrollbar, #upfront-popup .chosen-container-single .chosen-results::-webkit-scrollbar, #insert-font-widget .chosen-container-multi .chosen-results::-webkit-scrollbar, #sidebar-ui .chosen-container-multi .chosen-results::-webkit-scrollbar, #upfront-popup .chosen-container-multi .chosen-results::-webkit-scrollbar {
   background: #d4dee8;
