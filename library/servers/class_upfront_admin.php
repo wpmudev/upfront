@@ -43,7 +43,7 @@ class Upfront_Server_Admin implements IUpfront_Server {
 		$screen = get_current_screen();
 		if (!($screen && !empty($screen->id) && 'customize' === $screen->id)) return false;
 		
-		// We just don't do customizer. Fuck that
+		// We just don't do customizer.
 		wp_safe_redirect(admin_url('themes.php'));
 		die;
 	}
