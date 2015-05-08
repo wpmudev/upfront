@@ -24,7 +24,7 @@
             <div class="uyoutube-thumb-mask" style="width:<?php echo $thumbWidth ?>px;height:<?php echo $thumbHeight ?>px"><!-- add width height dynamicly -->
               <img class="uyoutube-thumb" src="<?php echo $multiple_videos[$i]['thumbnail'] ?>" style="width:<?php echo $thumbWidth ?>px; margin-top: -<?php echo $thumbOffset ?>px;">
             </div>
-            <?php if($multiple_show_title[0]){ ?>
+            <?php if(isset($multiple_show_title[0]) && !empty($multiple_show_title[0])){ ?>
             <h4 class="uyoutube-title"><?php echo $multiple_videos[$i]['title'] ?></h4>
             <?php } ?>
           </div>
