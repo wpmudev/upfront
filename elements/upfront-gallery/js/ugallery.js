@@ -189,6 +189,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		this. debouncedRender = _.debounce(this.render, 300);
 	},
 
+	preventClose: function(event) {
+		event.stopPropagation();
+	},
+
 	// Remove default dblclick behavior because it messes up things
 	on_edit: function() {},
 
@@ -428,6 +432,14 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 				open: function() {
 					me.setupLightbox();
 					me.createLightboxSettings();
+					// Prevent lightbox from closing when clicking on image or caption
+					$('.glb-content-container').click(me.preventClose);
+					$('.glb-image-container').click(me.preventClose);
+					$('.glb-caption-container').click(me.preventClose);
+					// Prevent magnific from capturing focus
+					setTimeout(function() {
+						$(document).off('focusin');
+					}, 500);
 				},
 				imageLoadComplete: function() {
 					var title = $(this.container).find('.mfp-title');
@@ -447,7 +459,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 							})
 						;
 					}
-
 				},
 				beforeClose: function() {
 					if (titleUpdated) {
