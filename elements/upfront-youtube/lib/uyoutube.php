@@ -117,17 +117,16 @@ class Upfront_Uyoutube_Server extends Upfront_Server {
 			return $this->_out(new Upfront_JsonResponse_Error("No video id sent"));
 
 		$gdata_video_url = sprintf(
-			'https://gdata.youtube.com/feeds/api/videos/%s?alt=json',
+			'http://www.youtube.com/oembed?url=%s&format=json',
 			$data['data']['video_id']
 		);
 		try {
 			$response = wp_remote_get($gdata_video_url);
 			//TODO check errors
 			$response_json = json_decode($response['body'], true);
-			$video = $response_json['entry'];
 			$data = array(
-				'title' => $video['title']['$t'],
-				'description' => $video['content']['$t']
+				'title' => $response_json['title'],
+				'thumbnail_url' => $response_json['thumbnail_url']
 			);
 			return $this->_out(new Upfront_JsonResponse_Success(array('video' => $data)));
 		} catch (Exception $e) {
