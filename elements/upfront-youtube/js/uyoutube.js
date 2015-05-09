@@ -225,7 +225,7 @@
 				Upfront.Util.post({"action": me.actions.single, "data": data})
 				  .success(function (response) {
 					multiple_videos_array.push({
-						order: videoCounter,
+						order: elementId,
 						title: response.data.video.title, 
 						id: videoId, 
 						video_url: videoUrl,
@@ -238,12 +238,15 @@
 				  })
 				  .done(function () {
 					  if(videoCounter == videoFields.length) {
+						multiple_videos_array.sort(function(a,b) { return a.order - b.order; })  
 						me.for_view.model.set_property('multiple_videos', multiple_videos_array, false);
 					  }
 				  })
 				;
 			}
-			
+			else {
+				videoCounter++;
+			}
         });
       },
 
