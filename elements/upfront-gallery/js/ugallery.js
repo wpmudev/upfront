@@ -779,6 +779,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		} else {
 			this.cleanupSortable();
 		}
+
+		if (this.property('linkTo') === false) {
+			this.showSelectType();
+		}
 	},
 
 	ensureCaptionEditorExists: function(title, image) {
@@ -910,7 +914,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 					loading: false,
 					status: 'ok',
 					element_id: element_id,
-					urlType: 'image',
+					urlType: me.property('linkTo'),
 					url: image.full[0]
 				})
 			);
@@ -920,7 +924,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			me.property('status', 'ok');
 			me.property('has_settings', 1);
 			me.images.reset(models);
-			me.selectType = true;
 		} else if (replaceId) {
 			var item = me.images.get(replaceId),
 				idx = me.images.indexOf(item);
@@ -932,9 +935,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		}
 
 		me.render();
-		if (me.selectType === true) {
-			this.showSelectType();
-		}
 	},
 
 	showSelectType: function() {

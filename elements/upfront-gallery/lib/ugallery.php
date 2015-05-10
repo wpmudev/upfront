@@ -253,7 +253,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'captionUseBackground' => 0,
 			'captionBackground' => apply_filters('upfront_gallery_caption_background', '#000000'),
 			'showCaptionOnHover' => array( 'true' ),
-			'linkTo' => 'image', // 'url' | 'image'
+			'linkTo' => false, // 'url' | 'image', false is special case meaning type is not selected yet
 			'even_padding' => array('false'),
 			'thumbPadding' => 15,
 
