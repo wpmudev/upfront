@@ -106,8 +106,11 @@ define([
 			this.listenTo(this.model, 'change:url', function() {
 				me.trigger('change', me.model.toJSON());
 			});
-			this.listenTo(this.model, 'change:target', function() {
-				me.trigger('change:target', me.model.toJSON());
+			// 'change:target' modified to 'change' because unlink doesnt have any target
+			this.listenTo(this.model, 'change', function() {
+				if(me.model.attributes.type == "unlink" || me.model.attributes.url !== "") {
+					me.trigger('change:target', me.model.toJSON());
+				}
 			});
 			this.listenTo(this.model, 'change:type', this.handleTypeChange);
 		},
