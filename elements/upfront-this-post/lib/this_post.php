@@ -22,6 +22,9 @@ class Upfront_ThisPostView extends Upfront_Object {
 	public function __construct($data){
 		parent::__construct($data);
 		$parts = array_values(apply_filters('upfront_post_parts', self::$PARTNAMES));
+
+		// adds features to wp caption shortcode to support UF post image variants
+		add_filter("img_caption_shortcode", array( $this, "image_caption_shortcode"), 10, 30);
 	}
 
 	public static function get_post_part($type, $options = array(), $tpl = false, $properties = array()){
@@ -694,6 +697,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 				$style_variant->group->marginRight = 0;
 			}
 		}
+		$data->caption = trim( $data->caption );
 
 		$markup = upfront_get_template(
 			'this-post',
@@ -704,6 +708,42 @@ class Upfront_ThisPostView extends Upfront_Object {
 			dirname(dirname(__FILE__)) . '/tpl/post-image-insert.php'
 		);
 		return $markup;
+	}
+
+	/**
+	 * Uses img_caption_shortcode to add support for UF image variants
+	 *
+	 * @param $out
+	 * @param $attr
+	 * @param $content
+	 *
+	 * @return string|void
+	 */
+	function image_caption_shortcode( $out, $attr, $content ){
+
+		$is_wp_cation = strpos($attr["id"], "uinsert-" ) === false;
+
+		if( $is_wp_cation ) return; // returning null let's wp do it's own logic and rendering for caption shortcode
+
+		$doc = new DOMDocument();
+//		$html = '<img class="" src="http://images.dressale.hk/images/320x480/201301/B/petite-girl-s-favorite-a-line-graduation-dress-with-empire-waist_1358440282519.jpg" alt="" width="320" height="480" /> Petite Girl';
+		$doc->loadHTML($content);
+		$xpath = new DOMXPath($doc);
+
+		$data = (object) shortcode_atts( array(
+			'id'	  => '',
+			'caption' => '',
+			'class'   => '',
+			'uf_variant' => '',
+			'uf_isLocal' => true,
+			'uf_show_caption' => true,
+			'image' => $xpath->evaluate("string(//img/@src)"),
+			'linkUrl' => $xpath->evaluate("string(//a/@href)")
+
+		), $attr, 'caption' );
+
+		return self::get_post_image_markup($data);
+
 	}
 }
 
