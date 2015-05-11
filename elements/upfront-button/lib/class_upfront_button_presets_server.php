@@ -12,7 +12,7 @@ class Upfront_Button_Presets_Server extends Upfront_Presets_Server {
 	public static function serve () {
 		self::$instance = new self;
 		self::$instance->_add_hooks();
-    add_filter( 'get_element_preset_styles', array(self::$instance, 'get_preset_styles_filter')) ;
+		add_filter( 'get_element_preset_styles', array(self::$instance, 'get_preset_styles_filter')) ;
 	}
 
 	public static function get_instance() {
