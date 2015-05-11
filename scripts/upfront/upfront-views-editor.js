@@ -1587,9 +1587,12 @@ define([
 		initialize: function () {
 			var me = this;
 			SidebarPanel_Settings_Item.prototype.initialize.call(this);
-			$.when(google_fonts_storage.get_fonts()).done(function() {
-				me.render();
-			});
+			var fonts = google_fonts_storage.get_fonts();
+			if (fonts && fonts.state) { // Is this a promise object? If not, DON'T try to re-render when it's "done", because we already have fonts
+				$.when(fonts).done(function() {
+					me.render();
+				});
+			}
 			this.listenTo(Upfront.Events, 'upfront:render_typography_sidebar', this.render);
 			this.listenTo(Upfront.Events, 'entity:object:after_render', this.update_typography_elements);
 			this.listenTo(Upfront.Events, "theme_colors:update", this.update_typography_elements, this);
@@ -2626,6 +2629,12 @@ define([
 			}, this);
 
 			return this;
+		},
+		destroy: function() {
+			this.remove();
+			_.each(this.views, function(view) {
+				view.remove();
+			});
 		}
 	});
 
@@ -2784,7 +2793,11 @@ define([
 
 			// Responsive
 			if ( is_responsive_app ) {
+				if (this.responsive_commands) {
+					this.responsive_commands.destroy();
+				}
 				var responsive_commands = new SidebarCommands_Responsive({"model": this.model});
+				this.responsive_commands = responsive_commands;
 				output.append(responsive_commands.render().el);
 			}
 
@@ -4346,6 +4359,8 @@ var Field_ToggleableText = Field_Text.extend({
 			if(this.options.spectrum && typeof this.options.spectrum.change === "function"){
 				this.options.spectrum.change(color);
 			}
+			//Update preview color
+			this.update_input_border_color(color.toRgbString);
 		},
 		set_to_blank : function(){
 			var blank_color = 'rgba(0, 0, 0, ' + this.options.blank_alpha + ')',
@@ -9730,7 +9745,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				scroll_top = $(document).scrollTop(),
 				scroll_bottom = scroll_top + win_height - bottom_height,
 				rel_top = $main.offset().top + top_height;
-			
+
 			this.add_responsive_items();
 
 			/*this.$el.css({
@@ -9805,19 +9820,19 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				});
 				$regionEl.append(openItemControls);
 			}
-			
+
 			responsiveAddRegionTop.click(function() {
 				me.add_panel_top.$el.find('.upfront-icon').trigger('click');
 				$regionEl.toggleClass('controls-visible');
 			});
 			itemControls.append(responsiveAddRegionTop);
-			
+
 			responsiveAddRegionBottom.click(function() {
 				me.add_panel_bottom.$el.find('.upfront-icon').trigger('click');
 				$regionEl.toggleClass('controls-visible');
 			});
 			itemControls.append(responsiveAddRegionBottom);
-			
+
 			if ( me.model.is_main() && this.model.get('allow_sidebar') ){
 				if(sub_models.left === false) {
 					responsiveAddRegionLeft.click(function() {

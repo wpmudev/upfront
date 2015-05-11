@@ -510,6 +510,7 @@ class Upfront_GridBreakpoint {
 			"#page.upfront-layout-view .upfront-grid-layout {width: {$width}px;}" . "\n" .
 			"#page.upfront-layout-view .upfront-overlay-grid {background-size: 100% {$baseline}px}" . "\n" .
 			( $width_rule != "" ? "#page.upfront-layout-view { {$width_rule} }" . "\n" : "" ) .
+			( $min_width > 0 ? "#page.upfront-layout-view.desktop-breakpoint .upfront-region-container, #page.upfront-layout-view.desktop-breakpoint .upfront-region-sub-container {min-width: {$min_width}px;}" . "\n" : "" ) .
 			"#page.upfront-layout-view .upfront-object {padding: {$column_padding}px;}" . "\n" .
 			"#page.upfront-layout-view .upfront-inserted_image-wrapper .wp-caption-text, #page.upfront-layout-view .uinsert-image-wrapper {padding: {$column_padding}px;}" . "\n" .
             "#page.upfront-layout-view .upfront-module-group-bg-padding {margin: {$column_padding}px;}" . "\n" .

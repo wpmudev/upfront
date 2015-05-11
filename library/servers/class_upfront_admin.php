@@ -23,6 +23,9 @@ class Upfront_Server_Admin implements IUpfront_Server {
 
 		add_action( 'widgets_init', array($this, 'add_widgets_page') );
 
+		// Kill the damn customizer. It's like cancer, popping out randomly all over the place
+		add_action('customize_controls_init', array($this, 'refuse_customizer'));
+
 		$this->dashboard_notice();
 	}
 	
@@ -31,6 +34,18 @@ class Upfront_Server_Admin implements IUpfront_Server {
 		if (!file_exists($path)) return false;
 
 		require_once($path);
+	}
+
+	/**
+	 * If someone tries to "live preview", send them back.
+	 */
+	public function refuse_customizer () {
+		$screen = get_current_screen();
+		if (!($screen && !empty($screen->id) && 'customize' === $screen->id)) return false;
+		
+		// We just don't do customizer.
+		wp_safe_redirect(admin_url('themes.php'));
+		die;
 	}
 
 	/**

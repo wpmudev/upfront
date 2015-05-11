@@ -99,6 +99,8 @@
 	font-family: Verdana, sans-serif;
 	color: rgb(96, 127, 153);
 	padding:5px;
+	/* Prevents chosen sprite image from displaying */
+	background-image:none!important; 
 }
 #insert-font-widget .chosen-container-single .chosen-results::-webkit-scrollbar,
 #sidebar-ui .chosen-container-single .chosen-results::-webkit-scrollbar,

@@ -430,19 +430,7 @@ jQuery(document).ready(function($){
 	var lazyFixFullBg = throttle(fix_full_bg, 500);
 	$(window).on('resize', lazyFixFullBg);
 	$(window).on('load', lazyFixFullBg);
-	
-	//Sticky header adding offest to anchors
-	function sticky_header_anchor_update() {
-		var nav = $('.upfront-output-region-container[data-sticky="1"], .upfront-output-region-sub-container[data-sticky="1"]').first();
-		if(nav.length > 0) {
-			$('a[data-is-anchor="1"]').each(function(){
-				$(this).next().css('marginTop', nav.height() + 30);
-			});
-		}
-	}
-	
-	$(window).on('load', sticky_header_anchor_update);
-	
+
 	// Regions behavior on scroll
 	function regions_scroll_update () {
 		var breakpoint = get_breakpoint(),
@@ -614,7 +602,16 @@ jQuery(document).ready(function($){
 	$( "[data-group-link]" ).each( function() {
 		$(this).css({'cursor': 'pointer'});
 		$(this).live( "click", function () {
-			window.open($(this).data("groupLink"), $(this).data("groupTarget"));
+			var url = $(this).data("groupLink");
+			var target = $(this).data("groupTarget");
+			if(url.indexOf('#') >=0) {
+				var nav = $('.upfront-output-region-container[data-sticky="1"], .upfront-output-region-sub-container[data-sticky="1"]').first();
+				var height = nav.height() ? nav.height() : 0;
+				//It is an anchor
+				$('html,body').animate({scrollTop: $(url).offset().top - height },'slow');
+			} else {
+				window.open(url, $(this).data("groupTarget"));
+			}
 		});
 	});
 	
@@ -664,6 +661,7 @@ jQuery(document).ready(function($){
 		  	return;
 
 			if(url.indexOf('#') >=0) {
+			  e.preventDefault();
 			  var tempurl = url.split('#');
 			  if(tempurl[1].trim() != '')
 				if(tempurl[1].trim().indexOf('ltb-') == 0) {
@@ -703,8 +701,10 @@ jQuery(document).ready(function($){
 					}
 				}
 				else {
+					var nav = $('.upfront-output-region-container[data-sticky="1"], .upfront-output-region-sub-container[data-sticky="1"]').first();
+					var height = nav.height() ? nav.height() : 0;
 					//It is an anchor
-					$('html,body').animate({scrollTop: $(url).offset().top},'slow');
+					$('html,body').animate({scrollTop: $(url).offset().top - height },'slow');
 				}
 			}
 		});
