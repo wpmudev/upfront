@@ -725,10 +725,9 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 		if( $is_wp_cation ) return; // returning null let's wp do it's own logic and rendering for caption shortcode
 
-		$doc = new DOMDocument();
 //		$html = '<img class="" src="http://images.dressale.hk/images/320x480/201301/B/petite-girl-s-favorite-a-line-graduation-dress-with-empire-waist_1358440282519.jpg" alt="" width="320" height="480" /> Petite Girl';
-		$doc->loadHTML($content);
-		$xpath = new DOMXPath($doc);
+		$image_reg = preg_match('/src="([^"]+)"/', $content, $image_arr);
+		$href_reg = preg_match('/href="([^"]+)"/', $content, $anchor_arr);
 
 		$data = (object) shortcode_atts( array(
 			'id'	  => '',
@@ -737,8 +736,8 @@ class Upfront_ThisPostView extends Upfront_Object {
 			'uf_variant' => '',
 			'uf_isLocal' => true,
 			'uf_show_caption' => true,
-			'image' => $xpath->evaluate("string(//img/@src)"),
-			'linkUrl' => $xpath->evaluate("string(//a/@href)")
+			'image' => $image_reg ? $image_arr[1] : "",
+			'linkUrl' => $href_reg ? $anchor_arr[1] : "",
 
 		), $attr, 'caption' );
 
