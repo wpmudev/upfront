@@ -258,8 +258,12 @@ define([
 				label: '',
 				values: typeSelectValues,
 				default_value: this.model.get('type'),
-				change: function () {
-					me.model.set({'type': this.get_value()});
+				change: function (value) {
+					me.model.set({'type': value});
+
+					if ('anchor' === value || 'email' === value) {
+						me.model.set({'target': '_self'});
+					}
 				}
 			});
 
