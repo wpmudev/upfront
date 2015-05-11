@@ -19,6 +19,7 @@ require_once(dirname(__FILE__) . '/library/class_upfront_endpoint.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_media.php');
 require_once(dirname(__FILE__) . '/library/class_ufront_ufc.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_codec.php');
+require_once(dirname(__FILE__) . '/library/class_upfront_postpart.php');
 
 
 

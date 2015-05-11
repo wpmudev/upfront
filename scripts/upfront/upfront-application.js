@@ -110,27 +110,38 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		var app = this;
 
 		var _set_up_draggables = function () {
-			var elements = [];
+			var elements = {},
+				panel = Upfront.Application.sidebar.get_panel("elements"),
+				sort_cb = function(element){ return element.priority; };
 			_(app.Objects).each(function (obj, idx) {
-				if ( obj.Element ) {
-					var el = new obj.Element({"model": app.layout});
+				_.each(["Element", "DataElement", "PluginElement"], function(type_el){
+					if ( !_.isObject(obj[type_el]) )
+						return;
+					var el = new obj[type_el]({"model": app.layout});
 					el.element_type = idx;
-					elements.push(el);
-				}
+					if ( !_.isArray(elements[type_el]) )
+						elements[type_el] = [];
+					elements[type_el].push(el);
+				});
 				if ( obj.Command )
 					app.sidebar.get_commands("control").commands.push(new obj.Command({"model": app.layout}));
 			});
-			Upfront.Application.sidebar.get_panel("elements").elements = _(_.sortBy(elements, function(element){
-				return element.priority;
-			}));
+			panel.get_section("layout").elements = _(_.sortBy(elements.Element, sort_cb));
+			panel.get_section("data").elements = _(_.sortBy(elements.DataElement, sort_cb));
+			panel.get_section("plugins").elements = _(_.sortBy(elements.PluginElement, sort_cb));
 			Upfront.Application.sidebar.render();
 		};
+		Upfront.Events.trigger("application:setup:editor_interface");
 		_set_up_draggables();
 		//this.listenTo(Upfront.Events, "elements:requirements:async:added", _set_up_draggables); // Deprecated
 	},
 
 	add_object: function (name, data) {
 		this.Objects[name] = _.extend({}, Upfront.Mixins.Anchorable, data);
+	},
+
+	remove_object: function (name) {
+		delete this.Objects[name];
 	},
 
 
@@ -140,6 +151,8 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		this.listenTo(Upfront.Events, "entity:module:after_render", Upfront.Behaviors.GridEditor.create_draggable);
 		this.listenTo(Upfront.Events, "entity:module_group:after_render", Upfront.Behaviors.GridEditor.create_resizable);
 		this.listenTo(Upfront.Events, "entity:module_group:after_render", Upfront.Behaviors.GridEditor.create_draggable);
+		this.listenTo(Upfront.Events, "entity:object:after_render", Upfront.Behaviors.GridEditor.create_resizable);
+		this.listenTo(Upfront.Events, "entity:object:after_render", Upfront.Behaviors.GridEditor.create_draggable);
 		// Enable resizables and draggables
 		//Upfront.Behaviors.GridEditor.toggle_resizables(true);
 		//Upfront.Behaviors.GridEditor.toggle_draggables(true);
@@ -1214,7 +1227,7 @@ var Application = new (Backbone.Router.extend({
 		app.create_sidebar();
 
 		require(
-			["objects", 'media', 'content', 'bg-settings', 'spectrum', 'responsive', "uaccordion", 'redactor', 'ueditor', 'utext', "ucomment", "ucontact", "ugallery", "uimage", "upfront-like-box", "upfront_login", "upfront_maps", "unewnavigation", "ubutton", "uposts", "usearch", "upfront_slider", "upfront-social_media", "utabs", "this_post", "this_page", "uwidget", "uyoutube", "upfront_code"],
+			["objects", 'media', 'content', 'bg-settings', 'spectrum', 'responsive', "uaccordion", 'redactor', 'ueditor', 'utext', "ucomment", "ucontact", "ugallery", "uimage", "upfront-like-box", "upfront_login", "upfront_maps", "unewnavigation", "ubutton", "upostdata", "uposts", "usearch", "upfront_slider", "upfront-social_media", "utabs", "this_post", "this_page", "uwidget", "uyoutube", "upfront_code"],
 			function (objects) {
 				app.currentUrl = window.location.pathname + window.location.search;
 				app.saveCache = true;

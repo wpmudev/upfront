@@ -7,6 +7,7 @@ var l10n = Upfront.Settings && Upfront.Settings.l10n
 
 define([
 	"text!upfront/templates/object.html",
+	"text!upfront/templates/object_group.html",
 	"text!upfront/templates/module.html",
 	"text!upfront/templates/module_group.html",
 	"text!upfront/templates/region_container.html",
@@ -15,6 +16,7 @@ define([
 ], function () {
   var _template_files = [
     "text!upfront/templates/object.html",
+    "text!upfront/templates/object_group.html",
     "text!upfront/templates/module.html",
     "text!upfront/templates/module_group.html",
     "text!upfront/templates/region_container.html",
@@ -848,6 +850,19 @@ define([
 
 						}
 					}));
+
+				menuitems.push(new Upfront.Views.ContextMenuItem({
+						get_label: function() {
+							return 'Edit Object';
+						},
+						in_context: function() {
+							// Only show this menu on ObjectGroup instance
+							return this.for_view instanceof Upfront.Views.ObjectGroup;
+						},
+						action: function(for_view, e) {
+							this.for_view.enable_object_edit();
+						}
+					}));
 				this.menuitems = _(menuitems);
 			}
 
@@ -908,7 +923,6 @@ define([
 		}),
 
 		ObjectView = _Upfront_EditableContentEntity.extend({
-			className: "upfront-object-view",
 			events: {
 				"click .upfront-object > .upfront-entity_meta > a.upfront-entity-settings_trigger": "on_settings_click",
                 "click .upfront-object > .upfront-entity_meta > a.upfront-entity-delete_trigger": "on_delete_click",
@@ -918,12 +932,10 @@ define([
 				"contextmenu": "on_context_menu"
 			},
 			initialize: function () {
-				// this.model.get("properties").bind("change", this.render, this);
-				// this.model.get("properties").bind("add", this.render, this);
-				// this.model.get("properties").bind("remove", this.render, this);
-				this.listenTo(this.model.get("properties"), 'change', this.render);
-				this.listenTo(this.model.get("properties"), 'add', this.render);
-				this.listenTo(this.model.get("properties"), 'remove', this.render);
+				var callback = this.update || this.render;
+				this.listenTo(this.model.get("properties"), 'change', callback);
+				this.listenTo(this.model.get("properties"), 'add', callback);
+				this.listenTo(this.model.get("properties"), 'remove', callback);
 
 				this.listenTo(Upfront.Events, 'entity:resize_start', this.close_settings);
 				this.listenTo(Upfront.Events, 'entity:drag_start', this.close_settings);
@@ -947,6 +959,8 @@ define([
 					content = (this.get_content_markup ? this.get_content_markup() : ''),
 					height, model, template
 				;
+				this.$el.addClass('upfront-object-view');
+				
 				// Id the element by anchor, if anchor is defined
 				var the_anchor = this.model.get_property_value_by_name("anchor");
 				if (the_anchor && the_anchor.length)
@@ -999,6 +1013,34 @@ define([
 				// Put this here because initialize gets overriden by child classes
 				this.ensure_breakpoint_change_is_listened();
 				this.ensureUiOffsetCalls();
+			},
+			update: function (prop, options) {
+				var prev_value = prop._previousAttributes.value,
+					value = prop.get('value'),
+					$me = this.$el.find('.upfront-editable_entity:first'),
+					grid = Upfront.Settings.LayoutEditor.Grid
+				;
+				if ( prop.id == 'row' ){
+					// row change
+					var height = value * grid.baseline;
+					$me.css('min-height', height).attr('data-row', value);
+				}
+				else if ( prop.id == 'class' ){
+					// column and margin changes
+					var classes = $me.attr('class');
+					_.each([grid.class, grid.left_margin_class, grid.top_margin_class, grid.bottom_margin_class, grid.right_margin_class], function(class_name){
+						var rx = new RegExp('\\b' + class_name + '(\\d+)'),
+							val = value.match(rx);
+						if ( val && val[1] )
+							Upfront.Behaviors.GridEditor.update_class($me, class_name, val[1]);
+					});
+				}
+				else if ( prop.id == 'breakpoint' ){
+					this.update_position();
+				}
+				else {
+					this.render();
+				}
 			},
 			update_position: function () {
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
@@ -1097,6 +1139,14 @@ define([
 				this.update_position();
 				this.checkUiOffset();
 			},
+			
+			
+			on_context_menu: function(e) {
+				// Don't run context menu if this view is under ObjectGroup
+				if ( this.object_group_view )
+					return;
+				_Upfront_EditableEntity.prototype.on_context_menu.call(this, e);
+			},
 
 
 			/* Getting dimension and resize element */
@@ -1171,6 +1221,110 @@ define([
 				$(window).off('resize', this.lazyCheckUiOffset);
 				this.parent_view = false;
 				this.parent_module_view = false;
+				this.object_group_view = false;
+				Backbone.View.prototype.remove.call(this);
+			}
+		}),
+		
+		ObjectGroup = ObjectView.extend({
+			className: "upfront-object-group-view",
+			events: {
+				"click .upfront-object-group > .upfront-entity_meta > a.upfront-entity-settings_trigger": "on_settings_click",
+                "click .upfront-object-group > .upfront-entity_meta > a.upfront-entity-delete_trigger": "on_delete_click",
+				"click .upfront-object-group > .upfront-entity_meta": "on_meta_click",
+				"click > .upfront-object-group-finish-edit": "disable_object_edit",
+				"click": "on_click",
+				//"dblclick": "on_edit",
+				"contextmenu": "on_context_menu"
+			},
+			
+			render: function () {
+				var objects_view = this._objects_view || new Objects({"model": this.model.get("objects")}),
+					props = {},
+					buttons = (this.get_buttons ? this.get_buttons() : ''),
+					extra_buttons = (this.get_extra_buttons ? this.get_extra_buttons() : ''),
+					height, model, template;
+				
+				// Id the element by anchor, if anchor is defined
+				var the_anchor = this.model.get_property_value_by_name("anchor");
+				if (the_anchor && the_anchor.length)
+					this.el.id = the_anchor;
+
+				this.model.get("properties").each(function (prop) {
+					props[prop.get("name")] = prop.get("value");
+				});
+
+				var row = this.model.get_breakpoint_property_value('row', true);
+				height = ( row ) ? row * Upfront.Settings.LayoutEditor.Grid.baseline : 0;
+
+				var theme_style = this.model.get_breakpoint_property_value('theme_style', true);
+				if(theme_style){
+					props.class += ' ' + theme_style.toLowerCase();
+					this._theme_style = theme_style;
+				}
+
+				model = _.extend(this.model.toJSON(), {"properties": props, "buttons": buttons, "height": height, "extra_buttons": extra_buttons});
+				template = _.template(_Upfront_Templates["object_group"], model);
+				
+				Upfront.Events.trigger("entity:object_group:before_render", this, this.model);
+				// Listen to module resize and drop event
+				if ( this.parent_module_view ){
+					this.stopListening((this._previous_parent_module_view || this.parent_module_view), 'entity:resize');
+					this.listenTo(this.parent_module_view, 'entity:resize', this.on_element_resize);
+					this.stopListening((this._previous_parent_module_view || this.parent_module_view), 'entity:drop');
+					this.listenTo(this.parent_module_view, 'entity:drop', this.on_element_drop);
+				}
+				
+				this.$el.html(template);
+				
+				objects_view.object_group_view = this;
+				objects_view.render();
+				this.$(".upfront-objects_container").append(objects_view.el);
+
+				Upfront.Events.trigger("entity:object_group:after_render", this, this.model);
+				if ( this.on_render ) this.on_render();
+				
+				if ( ! this._objects_view )
+					this._objects_view = objects_view;
+				else
+					this._objects_view.delegateEvents();
+					
+				this.ensure_breakpoint_change_is_listened();
+				this.ensureUiOffsetCalls();
+			},
+			
+			enable_object_edit: function () {
+				this.toggle_object_edit(true);
+			},
+			
+			disable_object_edit: function () {
+				this.toggle_object_edit(false);
+			},
+			
+			toggle_object_edit: function (enable) {
+				if ( enable ){
+					this.$el.addClass('upfront-object-group-on-edit');
+					this.parent_module_view.disable_interaction(true, true, false, false, true);
+					this.parent_module_view.$el.addClass('upfront-object-group-editing');
+				}
+				else {
+					this.$el.removeClass('upfront-object-group-on-edit');
+					this.parent_module_view.enable_interaction(true);
+					this.parent_module_view.$el.removeClass('upfront-object-group-editing');
+				}
+				this.model.get('objects').each(function(object){
+					var object_view = Upfront.data.object_views[object.cid];
+					if ( !object_view )
+						return;
+					var $object = object_view.$el.find('>.upfront-editable_entity:first');
+					if ( $object.data('ui-draggable') )
+						$object.draggable('option', 'disabled', !enable);
+				});
+			},
+			
+			remove: function () {
+				if(this._objects_view)
+					this._objects_view.remove();
 				Backbone.View.prototype.remove.call(this);
 			}
 		}),
@@ -1179,25 +1333,70 @@ define([
 			"attributes": {
 				"class": "upfront-editable_entities_container"
 			},
+			
+			init: function () {
+				this.listenTo(Upfront.Events, "entity:drag_stop", this.apply_flexbox_clear);
+				this.listenTo(Upfront.Events, "entity:resized", this.apply_flexbox_clear);
+				this.listenTo(Upfront.Events, "entity:wrappers:update", this.on_wrappers_update);
+			},
 
 			render: function () {
 				var $el = this.$el,
-					me = this
+					me = this,
+					wrappers = this.object_group_view && this.object_group_view.model ? this.object_group_view.model.get('wrappers') : false
 				;
 				$el.html('');
 				if ( typeof Upfront.data.object_views == 'undefined' )
 					Upfront.data.object_views = {};
+				if ( typeof Upfront.data.wrapper_views == 'undefined' )
+					Upfront.data.wrapper_views = {};
+				this.current_wrapper_id = this.current_wrapper_el = null
 				this.model.each(function (obj) {
 					var view_class_prop = obj.get("properties").where({"name": "view_class"}),
-						view_class = view_class_prop.length ? view_class_prop[0].get("value") : "ObjectView",
-						local_view = Upfront.Views[view_class] ? Upfront.data.object_views[obj.cid] || new Upfront.Views[view_class]({model: obj}) : false
+						is_obj_group = obj.get("objects") ? true : false,
+						default_view_class = is_obj_group ? "ObjectGroup" : "ObjectView",
+						view_class = view_class_prop.length ? view_class_prop[0].get("value") : default_view_class,
+						local_view = Upfront.Views[view_class] ? Upfront.data.object_views[obj.cid] || new Upfront.Views[view_class]({model: obj}) : false,
+						wrapper_id = obj.get_wrapper_id(),
+						wrapper = wrappers && wrapper_id ? wrappers.get_by_wrapper_id(wrapper_id) : false,
+						wrapper_view, wrapper_el
 					;
 					if(local_view) {
 						local_view.parent_view = me;
-						local_view._previous_parent_module_view = local_view.parent_module_view;
-						local_view.parent_module_view = me.parent_view;
+						if ( local_view.parent_module_view )
+							local_view._previous_parent_module_view = local_view.parent_module_view;
+						if ( me.object_group_view ) {
+							local_view.object_group_view = me.object_group_view;
+							local_view.parent_module_view = me.object_group_view.parent_module_view;
+						}
+						else {
+							local_view.parent_module_view = me.parent_view;
+						}
 						local_view.render();
-						$el.append(local_view.el);
+						
+						if ( !wrapper ){
+							local_view.render();
+							$el.append(local_view.el);
+						}
+						else {
+							if ( this.current_wrapper_id == wrapper_id ){
+								wrapper_el = this.current_wrapper_el;
+							}
+							else {
+								wrapper_view = Upfront.data.wrapper_views[wrapper.cid] || new Upfront.Views.Wrapper({model: wrapper});
+								wrapper_view.render();
+								wrapper_el = wrapper_view.el;
+							}
+							this.current_wrapper_id = wrapper_id;
+							this.current_wrapper_el = wrapper_el;
+							local_view.render();
+							$(wrapper_el).append(local_view.el);
+							if ( wrapper_view ){
+								$el.append(wrapper_el);
+								if ( ! Upfront.data.wrapper_views[wrapper.cid] )
+									Upfront.data.wrapper_views[wrapper.cid] = wrapper_view;
+							}
+						}
 						if ( ! Upfront.data.object_views[obj.cid] ){
 							me.listenTo(local_view, 'upfront:entity:activate', me.on_activate);
 							me.listenTo(local_view.model, 'remove', me.deactivate);
@@ -1211,6 +1410,21 @@ define([
 						}
 					}
 				});
+				this.apply_flexbox_clear();
+			},
+			apply_flexbox_clear: function () {
+				this.fix_flexbox_clear(this.$el);
+			},
+			on_wrappers_update: function (parent_model) {
+				if ( _.isObject(parent_model) && parent_model.get('objects') != this.model )
+					return;
+				this.model.each(function(object){
+					var local_view = Upfront.data.object_views[object.cid];
+					if ( ! local_view )
+						return;
+					local_view.update_position();
+				});
+				this.apply_flexbox_clear();
 			},
 			remove: function() {
 				if(this.model)
@@ -1244,9 +1458,6 @@ define([
 			},
 			initialize: function () {
 				var callback = this.update || this.render;
-				// this.model.get("properties").bind("change", callback, this);
-				// this.model.get("properties").bind("add", callback, this);
-				// this.model.get("properties").bind("remove", callback, this);
 				this.listenTo(this.model.get("properties"), 'change', callback);
 				this.listenTo(this.model.get("properties"), 'add', callback);
 				this.listenTo(this.model.get("properties"), 'remove', callback);
@@ -4567,6 +4778,7 @@ define([
 	return {
 		"Views": {
 			"ObjectView": ObjectView,
+			"ObjectGroup": ObjectGroup,
 			"Module": Module,
 			"ModuleGroup": ModuleGroup,
 			"Wrapper": Wrapper,

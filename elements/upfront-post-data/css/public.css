@@ -1,0 +1,25 @@
+.upfront-output-post-data * {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+.upostdata-part {
+    margin: 0 0 15px;
+}
+.upostdata-part.gravatar img {
+    max-width: 100%;
+}
+.upostdata-part.thumbnail {
+    overflow: hidden;
+}
+.upostdata-part.thumbnail img {
+    display: block;
+    max-width: 100%;
+    max-height: none;
+    height: auto;
+    margin: 0 auto;
+}
+.upostdata-part.thumbnail[data-resize="1"] img {
+    max-width: none;
+}

@@ -1,6 +1,7 @@
 /* Flexbox */
 .flexbox-support .upfront-modules_container > .upfront-editable_entities_container,
 .flexbox-support .upfront-module-group > .upfront-editable_entities_container,
+.flexbox-support .upfront-objects_container > .upfront-editable_entities_container,
 .flexbox-support .upfront-editable_entities_container > .upfront-wrapper,
 .flexbox-support .upfront-grid-layout,
 .flexbox-support .upfront-region,
@@ -38,12 +39,16 @@
 }
 .flexbox-support .upfront-modules_container > .upfront-editable_entities_container > .upfront-wrapper,
 .flexbox-support .upfront-module-group > .upfront-editable_entities_container > .upfront-wrapper,
-.flexbox-support .upfront-editable_entities_container > .upfront-wrapper > .upfront-module-view {
+.flexbox-support .upfront-editable_entities_container > .upfront-wrapper > .upfront-module-view,
+.flexbox-support .upfront-editable_entities_container > .upfront-wrapper > .upfront-object-view {
 	-webkit-order: 0;
 	order: 0;
 }
 .flexbox-support .upfront-editable_entities_container > .upfront-wrapper > .upfront-module-view,
-.flexbox-support .upfront-editable_entities_container > .upfront-module-view {
+.flexbox-support .upfront-editable_entities_container > .upfront-module-view,
+.flexbox-support .upfront-editable_entities_container > .upfront-wrapper > .upfront-object-view,
+.flexbox-support .upfront-editable_entities_container > .upfront-object-view,
+.flexbox-support .upfront-editable_entities_container > .upfront-object-group-view {
 	width: 100%;
 }
 

@@ -1415,7 +1415,9 @@ var GridEditor = {
 
 	drop: null,
 
-	el_selector: '.upfront-module, .upfront-module-group',
+	module_selector: '.upfront-module-view > .upfront-module, .upfront-module-group',
+	object_selector: '.upfront-object-view > .upfront-object',
+	el_selector: '',
 	_id: 0,
 
 	show_debug_element: false,
@@ -1682,7 +1684,7 @@ var GridEditor = {
 
 	get_wrap_els: function( use_wrap ){
 		var ed = Upfront.Behaviors.GridEditor,
-			$els = use_wrap.$el.find('> .upfront-module-view > .upfront-module, > .upfront-module-group');
+			$els = use_wrap.$el.find('> .upfront-module-view > .upfront-module, > .upfront-module-group, > .upfront-object-view > .upfront-object');
 		return _.map($els, function(el){
 			var el = ed.get_el($(el));
 			return _.find(ed.els, function(each){ return each._id == el._id; });
@@ -1773,10 +1775,11 @@ var GridEditor = {
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.GridEditor,
 			regions = app.layout.get('regions'),
+			element_id = $el.attr('id'),
 			find_model = function (modules) {
 				if ( !modules )
 					return false;
-				var module_model = modules.get_by_element_id($el.attr('id')),
+				var module_model = modules.get_by_element_id(element_id),
 					found_model;
 				if ( module_model )
 					return module_model;
@@ -1786,11 +1789,26 @@ var GridEditor = {
 						return found_model ? true : false;
 					}
 					else if ( module.get('objects') ) {
-						found_model = module.get('objects').get_by_element_id($el.attr('id'));
+						found_model = find_object(module.get('objects'));
 						return found_model ? true : false;
 					}
 				});
 				return found_model;
+			},
+			find_object = function (objects) {
+				if ( !objects )
+					return false;
+				var object_model = objects.get_by_element_id(element_id),
+					found_object;
+				if ( object_model )
+					return object_model;
+				objects.find(function(object){
+					if ( object.get('objects') ) {
+						found_object = find_object(object.get('objects'));
+						return found_object ? true : false;
+					}
+				});
+				return found_object;
 			},
 			model;
 		regions.find(function(region){
@@ -1982,9 +2000,9 @@ var GridEditor = {
 			is_responsive = ( breakpoint && !breakpoint.default );
 		// Iterate through elements and check if it must be contained in separate wrapper
 		_.each(wraps, function(wrap){
-			var $wrap_els= wrap.$el.find('> .upfront-module-view > .upfront-module, > .upfront-module-group'),
+			var $wrap_els= wrap.$el.find('> .upfront-module-view > .upfront-module, > .upfront-module-group, > .upfront-object-view > .upfront-object'),
 				region = ed.get_region(wrap.$el.closest('.upfront-region')),
-				$parent_group = wrap.$el.closest('.upfront-module-group'),
+				$parent_group = wrap.$el.closest('.upfront-objects_container').length == 0 ? wrap.$el.closest('.upfront-module-group') : false,
 				is_parent_group = ( $parent_group.length > 0 ),
 				group = is_parent_group ? ed.get_el($parent_group) : false,
 				wrap_index = !is_responsive ? wrap.$el.index('.upfront-wrapper') : wrap.$el.data('breakpoint_order'),
@@ -2208,7 +2226,7 @@ var GridEditor = {
 			containment_pos = $containment.offset();
 		// Set variables
 		ed.col_size = ed.grid.column_width;
-		ed.el_selector = is_object ? '.upfront-object' : '.upfront-module, .upfront-module-group';
+		ed.el_selector = is_object ? ed.object_selector : ed.module_selector;
 		ed.main.top = main_pos.top;
 		ed.main.bottom = main_pos.top + ed.main.$el.outerHeight();
 		ed.main.left = main_pos.left;
@@ -2253,9 +2271,9 @@ var GridEditor = {
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.GridEditor,
 			$layout = ed.main.$el.find('.upfront-layout'),
-			is_object = ( ed.el_selector == '.upfront-object' ),
-			$els = is_object ? ed.containment.$el.find('.upfront-object') : $layout.find('.upfront-module, .upfront-module-group'),
-			$wraps = $layout.find('.upfront-wrapper'),
+			is_object = ( ed.el_selector == ed.object_selector ),
+			$els = is_object ? ed.containment.$el.find(ed.el_selector) : $layout.find(ed.el_selector),
+			$wraps = is_object ? ed.containment.$el.find('> .upfront-wrapper') : $layout.find('.upfront-modules_container, .upfront-module-group').find('> .upfront-editable_entities_container > .upfront-wrapper'),
 			$regions = $layout.find('.upfront-region').not('.upfront-region-locked');
 		ed.els = _.map($els, ed.get_position ); // Generate elements position data
 		_.each(ed.els, function(el){ ed.init_margin(el); }); // Generate margin data
@@ -2296,7 +2314,7 @@ var GridEditor = {
 
 		ed.drops = [];
 
-		var module_selector = '> .upfront-module-view > .upfront-module, > .upfront-module-group',
+		var module_selector = '> .upfront-module-view > .upfront-module, > .upfront-module-group, > .upfront-object-view > .upfront-object',
 			$sibling_els = me.$el.closest('.upfront-wrapper').find(module_selector).each(Upfront.Util.normalize_sort_elements_cb).sort(Upfront.Util.sort_elements_cb),
 			has_siblings = $sibling_els.length > 1,
 			sibling_index = $sibling_els.index(me.$el);
@@ -2616,10 +2634,10 @@ var GridEditor = {
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.GridEditor,
 			breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+			is_object = ( ed.el_selector == ed.object_selector ),
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
 			$layout = $main.find('.upfront-layout'),
-			wraps = parent_model.get('wrappers'),
-			modules = parent_model.get('modules');
+			wraps = parent_model.get('wrappers');
 		($parent ? $parent : $layout).find('.upfront-wrapper').each(function(){
 			var $wrap = $(this),
 				wrap_id = $wrap.attr('id'),
@@ -2687,6 +2705,7 @@ var GridEditor = {
 		var app = this,
 			ed = Upfront.Behaviors.GridEditor,
 			is_group = view.$el.hasClass('upfront-module-group'),
+			is_object = view.$el.hasClass('upfront-object-view'),
 			$me = is_group ? view.$el : view.$el.find('.upfront-editable_entity:first'),
 			is_parent_group = ( typeof view.group_view != 'undefined' ),
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
@@ -2695,6 +2714,9 @@ var GridEditor = {
 			axis
 		;
 		if ( Upfront.Application.mode.current !== Upfront.Application.MODE.THEME && model.get_property_value_by_name('disable_resize') )
+			return false;
+		// If it's object, only allow resizable if it's from ObjectGroup, not from Module
+		if ( is_object && typeof view.object_group_view == 'undefined' )
 			return false;
 		if ( $me.data('ui-resizable') ){
 			$me.resizable('option', 'disabled', false);
@@ -2795,7 +2817,6 @@ var GridEditor = {
 
 					top_aff_el = aff_els.bottom.length ? _.min(aff_els.bottom, function(each){ return each.grid.top; }) : false,
 					max_row = top_aff_el ? top_aff_el.grid.top-me.grid.top : region.grid.bottom-me.grid.top+1,
-
 					current_col = Math.ceil(ui.size.width/ed.col_size),
 					w = ( current_col > max_col ? Math.round(max_col*ed.col_size) : ui.size.width ),
 					h = ( (ui.size.height > 15 ? ui.size.height : 0) || ui.originalSize.height ),
@@ -2848,6 +2869,8 @@ var GridEditor = {
 
 					regions = app.layout.get('regions'),
 					region = regions.get_by_name($region.data('name')),
+					$container = is_object ? ed.containment.$el : ( is_parent_group ? view.group_view.$el.find('.upfront-editable_entities_container:first') : $region.find('.upfront-modules_container > .upfront-editable_entities_container:first') ),
+					module_selector = is_object ? ".upfront-wrapper > .upfront-object-view > .upfront-object" : ".upfront-wrapper > .upfront-module-view > .upfront-module, .upfront-wrapper > .upfront-module-group",
 					model_breakpoint, breakpoint_data
 				;
 
@@ -2903,7 +2926,7 @@ var GridEditor = {
 					}
 					else{
 						model.replace_class(ed.grid.class+rsz_col);
-						ed.update_model_margin_classes($region.find('.upfront-module, .upfront-module-group').not($me));
+						ed.update_model_margin_classes($container.find(module_selector).not($me));
 					}
 				}
 				else {
@@ -2919,7 +2942,7 @@ var GridEditor = {
 						breakpoint_data.top = margin.current.top;
 					}
 					else {
-						ed.update_model_margin_classes($region.find('.upfront-module, .upfront-module-group').not($me));
+						ed.update_model_margin_classes($container.find(module_selector).not($me));
 					}
 					model.set_property('breakpoint', model_breakpoint);
 					// Also resize containing object if it's only one object
@@ -2937,6 +2960,8 @@ var GridEditor = {
 
 				if ( is_parent_group )
 					ed.update_wrappers(view.group_view.model, view.group_view.$el);
+				else if ( is_object )
+					ed.update_wrappers(view.object_group_view.model, view.object_group_view.$el);
 				else
 					ed.update_wrappers(region, $region);
 
@@ -3077,9 +3102,10 @@ var GridEditor = {
 		var app = this,
 			ed = Upfront.Behaviors.GridEditor,
 			is_group = view.$el.hasClass('upfront-module-group'),
+			is_object = view.$el.hasClass('upfront-object-view'),
 			$me = is_group ? view.$el : view.$el.find('.upfront-editable_entity:first'),
 			is_parent_group = ( typeof view.group_view != 'undefined' ),
-			is_disabled = ( is_parent_group && !view.group_view.$el.hasClass('upfront-module-group-on-edit') ),
+			is_disabled = ( ( is_parent_group && !view.group_view.$el.hasClass('upfront-module-group-on-edit') ) || ( is_object && view.object_group_view && !view.object_group_view.$el.hasClass('upfront-object-group-on-edit') ) ),
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
 			$layout = $main.find('.upfront-layout'),
 			drop_top, drop_left, drop_col,
@@ -3087,6 +3113,9 @@ var GridEditor = {
 		;
 
 		if ( Upfront.Application.mode.current !== Upfront.Application.MODE.THEME && model.get_property_value_by_name('disable_drag') )
+			return false;
+		// If it's object, only allow draggable if it's from ObjectGroup, not from Module
+		if ( is_object && typeof view.object_group_view == 'undefined' )
 			return false;
 		if ( $me.data('ui-draggable') ){
 			if ( is_group || !is_disabled )
@@ -3167,7 +3196,7 @@ var GridEditor = {
 				ed.time_start('drag start');
 				$main.addClass('upfront-dragging');
 				// remove position which might be set to the module view
-				$(this).closest(".upfront-module-view").css("position", "");
+				$(this).closest(".upfront-module-view, .upfront-object-view").css("position", "");
 				ed.start(view, model);
 				ed.normalize(ed.els, ed.wraps);
 				ed.update_position_data();
@@ -3200,6 +3229,8 @@ var GridEditor = {
 
 				if ( is_parent_group )
 					drop_areas = [ ed.get_el(view.group_view.$el) ];
+				else if ( is_object )
+					drop_areas = [ ed.get_position(view.object_group_view.$el) ];
 				else if ( breakpoint && !breakpoint.default )
 					drop_areas = [ ed.get_region($region) ];
 
@@ -3519,12 +3550,12 @@ var GridEditor = {
 					region = regions.get_by_name( $('.upfront-region-drag-active').data('name') ),
 					move_region = ( me.region != region.get('name') ),
 					prev_region = regions.get_by_name( me.region ),
-					wrappers = is_parent_group ? view.group_view.model.get('wrappers') : region.get('wrappers'),
+					wrappers = is_object && view.object_group_view ? view.object_group_view.model.get('wrappers') :( is_parent_group ? view.group_view.model.get('wrappers') : region.get('wrappers') ),
 					region_el = ed.get_region($('.upfront-region-drag-active')),
 					prev_region_el = ed.get_region($me.closest('.upfront-region')),
-					$container = is_parent_group ? view.group_view.$el.find('.upfront-editable_entities_container:first') : region_el.$el.find('.upfront-modules_container > .upfront-editable_entities_container:first'),
+					$container = is_object ? ed.containment.$el : ( is_parent_group ? view.group_view.$el.find('.upfront-editable_entities_container:first') : region_el.$el.find('.upfront-modules_container > .upfront-editable_entities_container:first') ),
 					$prev_container = prev_region_el.$el.find('.upfront-modules_container > .upfront-editable_entities_container:first'),
-					module_selector = ".upfront-wrapper > .upfront-module-view > .upfront-module, .upfront-wrapper > .upfront-module-group";
+					module_selector = is_object ? ".upfront-wrapper > .upfront-object-view > .upfront-object" : ".upfront-wrapper > .upfront-module-view > .upfront-module, .upfront-wrapper > .upfront-module-group";
 
 				clearTimeout(ed._t); // clear remaining timeout immediately
 
@@ -3753,11 +3784,13 @@ var GridEditor = {
 					});
 
 					// Update model value
-					ed.update_model_margin_classes( ( is_object ? ed.containment.$el.find('.upfront-object') : $container.find(module_selector) ).not($me) );
+					ed.update_model_margin_classes( $container.find(module_selector).not($me) );
 					ed.update_model_margin_classes( $me, [ed.grid.class + drop_col] );
 
 					if ( is_parent_group )
 						ed.update_wrappers(view.group_view.model, view.group_view.$el);
+					else if ( is_object )
+						ed.update_wrappers(view.object_group_view.model, view.object_group_view.$el);
 					else
 						ed.update_wrappers(region, region_el.$el);
 
@@ -3797,8 +3830,8 @@ var GridEditor = {
 						var orders = [],
 							index = 0,
 							is_drop_wrapper = ( ed.drop.type != 'inside' ),
-							$els = $container.find( is_drop_wrapper ? '> .upfront-wrapper' : '.upfront-module' ).each(Upfront.Util.normalize_sort_elements_cb).sort(Upfront.Util.sort_elements_cb),
-							inside_length = !is_drop_wrapper ? $me.closest('.upfront-wrapper').find('.upfront-module').length : 0,
+							$els = $container.find( is_drop_wrapper ? '> .upfront-wrapper' : ( is_object ? '.upfront-object' : '.upfront-module' ) ).each(Upfront.Util.normalize_sort_elements_cb).sort(Upfront.Util.sort_elements_cb),
+							inside_length = !is_drop_wrapper ? $me.closest('.upfront-wrapper').find( is_object ? '.upfront-object' : '.upfront-module').length : 0,
 							insert_index = false;
 						if ( !ed.drop.is_me && ed.drop.insert[0] == 'append' && is_drop_wrapper ) {
 							insert_index = $els.length-1;
@@ -3875,7 +3908,7 @@ var GridEditor = {
 						Upfront.Events.trigger("entity:drag_animate_stop", view, view.model);
 					}).addClass('upfront-dropped');
 
-					$container.find('.upfront-module').css('max-height', '');
+					$container.find('.upfront-module, .upfront-object').css('max-height', '');
 					$('.upfront-region-drag-active').removeClass('upfront-region-drag-active');
 					$wrap.css('min-height', '');
 					$main.removeClass('upfront-dragging');
@@ -5027,7 +5060,7 @@ var GridEditor = {
 				step: 1,
 				default_value: 300,
 				change: function () {
-					$('.upfront-module.ui-draggable, .upfront-module-group.ui-draggable').draggable('option', 'delay', this.get_value());
+					$('.upfront-module.ui-draggable, .upfront-module-group.ui-draggable, .upfront-object.ui-draggable').draggable('option', 'delay', this.get_value());
 				}
 			}),
 			field_timeout = new Upfront.Views.Editor.Field.Number({

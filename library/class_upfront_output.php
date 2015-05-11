@@ -259,6 +259,11 @@ abstract class Upfront_Entity {
 		return $this->get_name();
 	}
 
+	public function get_wrapper () {
+		$wrapper_id = $this->_get_property('wrapper_id');
+		return Upfront_Wrapper::get_instance($wrapper_id);
+	}
+
 	public function get_class_num ($classname) {
 		$classes = $this->_get_property('class');
 		return upfront_get_class_num($classname, $classes);
@@ -451,45 +456,24 @@ abstract class Upfront_Container extends Upfront_Entity {
 
 		if (!empty($this->_data[$this->_children])) foreach ($this->_data[$this->_children] as $idx => $child) {
 			$child_view = $this->instantiate_child($child, $idx);
-			if ($child_view instanceof Upfront_Container){
+			if ($child_view instanceof Upfront_Entity){
 				// Have wrapper? If so, then add wrappers
 				$wrapper = $child_view->get_wrapper();
 
 				if ( $wrapper && !$this->_wrapper )
 					$this->_wrapper = $wrapper;
 				if ( $wrapper && $this->_wrapper->get_wrapper_id() == $wrapper->get_wrapper_id() ){
-					$wrap .= $child_view->get_markup();
+					$wrap .= $this->_get_child_markup($child_view, $child);
 				}
 				else if ( $wrapper ) {
 					$html .= $this->_wrapper->wrap($wrap);
 					$this->_wrapper = $wrapper;
-					$wrap = $child_view->get_markup();
+					$wrap = $this->_get_child_markup($child_view, $child);
 				}
 			}
 			// No wrapper, just appending html
 			if ( !isset($wrapper) || !$wrapper ){
-				if($this->_child_view_class == 'Upfront_Object'){
-					$theme_style = upfront_get_property_value('theme_style', $child);
-					if($theme_style)
-						$theme_style = strtolower($theme_style);
-					$breakpoint = upfront_get_property_value('breakpoint', $child);
-					$theme_styles = array( 'default' => $theme_style );
-					$theme_styles_attr = '';
-					if ( $breakpoint ) {
-						foreach ( $breakpoint as $id => $props ){
-							if ( !empty($props['theme_style']) )
-								$theme_styles[$id] = strtolower($props['theme_style']);
-						}
-						$theme_styles_attr = " data-theme-styles='" . json_encode($theme_styles) . "'";
-					}
-					$slug = upfront_get_property_value('id_slug', $child);
-					$classes = $this->_get_property('class');
-					$column = upfront_get_class_num('c', $classes);
-					$class = $slug === "uposts" ?   "c" . $column . " uposts-object" : upfront_get_property_value('class', $child);
-					$html .= '<div class="upfront-output-object ' . $theme_style .' upfront-output-' . $slug . ' ' . $class . '" id="' . upfront_get_property_value('element_id', $child)  . '"' . $theme_styles_attr . '>' . $child_view->get_markup() . '</div>';
-				}
-				else
-					$html .= $child_view->get_markup();
+				$html .= $this->_get_child_markup($child_view, $child);
 			}
 		}
 
@@ -497,6 +481,32 @@ abstract class Upfront_Container extends Upfront_Entity {
 		if ( isset($wrapper) && $wrapper )
 			$html .= $this->_wrapper->wrap($wrap);
 		return $this->wrap($html);
+	}
+
+	protected function _get_child_markup ($view, $data) {
+		if ( $view instanceof Upfront_Object ){
+			$theme_style = upfront_get_property_value('theme_style', $data);
+			if($theme_style)
+				$theme_style = strtolower($theme_style);
+			$breakpoint = upfront_get_property_value('breakpoint', $data);
+			$theme_styles = array( 'default' => $theme_style );
+			$theme_styles_attr = '';
+			if ( $breakpoint ) {
+				foreach ( $breakpoint as $id => $props ){
+					if ( !empty($props['theme_style']) )
+						$theme_styles[$id] = strtolower($props['theme_style']);
+				}
+				$theme_styles_attr = " data-theme-styles='" . json_encode($theme_styles) . "'";
+			}
+			$slug = upfront_get_property_value('id_slug', $data);
+			$classes = $this->_get_property('class');
+			$column = upfront_get_class_num('c', $classes);
+			$class = $slug === "uposts" ?   "c" . $column . " uposts-object" : upfront_get_property_value('class', $data);
+			return '<div class="upfront-output-object ' . $theme_style .' upfront-output-' . $slug . ' ' . $class . '" id="' . upfront_get_property_value('element_id', $data)  . '"' . $theme_styles_attr . '>' . $view->get_markup() . '</div>';
+		}
+		else {
+			return $view->get_markup();
+		}
 	}
 
 	// Overriden from Upfront_Entity
@@ -538,11 +548,6 @@ abstract class Upfront_Container extends Upfront_Entity {
 		$style = $style ? "style='{$style}'" : '';
 		$element_id = $element_id ? "id='{$element_id}'" : '';
 		return "{$pre}<{$this->_tag} class='{$class}' {$style} {$element_id} {$attr}>{$out}</{$this->_tag}>{$post}";
-	}
-
-	public function get_wrapper () {
-		$wrapper_id = $this->_get_property('wrapper_id');
-		return Upfront_Wrapper::get_instance($wrapper_id);
 	}
 
 
@@ -1072,16 +1077,95 @@ class Upfront_Module extends Upfront_Container {
         $more_classes[] = 'c' . $column;
         return $classes . ' ' . join(' ', $more_classes);
     }
+
+	public function instantiate_child ($child_data, $idx) {
+		$default_view = !empty($child_data['objects']) && is_array($child_data['objects']) ? "Upfront_Object_Group" : $this->_child_view_class;
+		$view_class = upfront_get_property_value("view_class", $child_data);
+		$view = $view_class
+			? "Upfront_{$view_class}"
+			: $default_view
+		;
+		if (!class_exists($view)) $view = $default_view;
+		return new $view($child_data);
+	}
+}
+
+class Upfront_Object_Group extends Upfront_Container {
+	protected $_type = 'Object_Group';
+	protected $_children = 'objects';
+	protected $_child_view_class = 'Upfront_Object';
+
+	public function __construct ($data) {
+		parent::__construct($data);
+	}
+
+	public function get_markup () {
+		$pre = '';
+		$anchor = upfront_get_property_value('anchor', $this->_data);
+		if (!empty($anchor)) $pre .= '<a id="' . esc_attr($anchor) . '" data-is-anchor="1"></a>';
+		return $pre . parent::get_markup();
+	}
+	
+	public function wrap ($out) {
+        return parent::wrap( "{$out}\n" );
+    }
+    
+    public function get_css_class () {
+        $classes = parent::get_css_class();
+        $classes .= ' upfront-object-group';
+        $theme_style = $this->_get_property('theme_style');
+        if($theme_style)
+            $classes .= ' ' . strtolower($theme_style);
+        return $classes;
+    }
+    
+    public function get_attr () {
+        $theme_style = $this->_get_property('theme_style');
+        $link = $this->_get_property('href');
+        $linkTarget = $this->_get_property('linkTarget');
+        if($theme_style)
+            $theme_style = strtolower($theme_style);
+        $theme_styles = array( 'default' => $theme_style );
+        foreach ( Upfront_Output::$grid->get_breakpoints(true) as $breakpoint ) {
+            $theme_styles[$breakpoint->get_id()] = $this->_get_breakpoint_property('theme_style', $breakpoint->get_id());
+        }
+				
+        $link_attributes = '';
+        if(!empty($link)) {
+        	$link_attributes = "data-group-link='".$link."'";
+        	if(!empty($linkTarget)) {
+        		$link_attributes .= "data-group-target='".$linkTarget."'";
+        	}
+        }
+
+        return " data-theme-styles='" . json_encode($theme_styles) . "' ".$link_attributes;
+    }
+
+	public function instantiate_child ($child_data, $idx) {
+		$view_class = upfront_get_property_value("view_class", $child_data);
+		$view = $view_class
+			? "Upfront_{$view_class}"
+			: $this->_child_view_class
+		;
+		if (!class_exists($view)) $view = $this->_child_view_class;
+		return new $view($child_data, $this->_data);
+	}
 }
 
 class Upfront_Object extends Upfront_Entity {
 	protected $_type = 'Object';
 
-	public function __construct ($data) {
+	public function __construct ($data, $parent_data = "") {
 		//Make sure all the properties are initialized
 		$data['properties'] = $this->merge_default_properties($data);
 		parent::__construct($data);
+		$this->_parent_data = $parent_data;
 		Upfront_Output::$current_object = $this;
+	}
+
+	public function get_wrapper () {
+		$wrapper_id = $this->_get_property('wrapper_id');
+		return Upfront_Wrapper::get_instance($wrapper_id, $this->_parent_data);
 	}
 
 	protected function merge_default_properties($data){

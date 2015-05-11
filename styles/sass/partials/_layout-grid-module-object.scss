@@ -232,6 +232,9 @@
 #page.upfront-layout-view .upfront-module.upfront-module-disabled-all {
 	opacity: 0.5;
 }
+#page.upfront-layout-view .upfront-object-group-editing .upfront-module.upfront-module-disabled-all {
+  opacity: 1;
+}
 .upfront-module-disabled-edit .upfront-object:after {
 	content: " ";
 	position: absolute;
@@ -248,7 +251,8 @@
 	/*border: 1px solid #b3da11;*/
 	background: rgba(44, 62, 80, 0.3)
 }
-.upfront-module:hover {
+.upfront-module:hover,
+.upfront-object-group-on-edit .upfront-object:hover {
 	outline: 1px dotted #7f7f7f;
 	/*z-index: 40;*/
 }
@@ -260,13 +264,18 @@
 .upfront-module-editing .upfront-entity_meta {
 	display: none;
 }
-.upfront-dragging .upfront-module {
+.upfront-dragging .upfront-module,
+.upfront-dragging .upfront-object-group-on-edit .upfront-object {
 	outline: 1px dotted #7f7f7f;
 	overflow: hidden;
 }
 .upfront-dragging .upfront-module:hover {
 	outline: 1px dotted #7f7f7f;
 	/*z-index: 40;*/
+}
+.upfront-object-group-editing .upfront-module.upfront-module-disabled-edit {
+  outline: 1px dotted #7f7f7f;
+  z-index: 10;
 }
 .upfront-objects_container {
 	width: 100%;
@@ -324,6 +333,10 @@
 	width: 100px;
 }
 
+.upfront-object-group {
+  position: relative;
+  float: left;
+}
 
 .upfront-object {
 	position: relative;
@@ -416,14 +429,18 @@
 .upfront-module-group.upfront-module-group-on-edit .upfront-selected-border {
 	display: block;
 }
-.upfront-module-group .upfront-editable_entities_container .ui-resizable-handle {
+.upfront-module-group .upfront-editable_entities_container .ui-resizable-handle,
+.upfront-object-group .upfront-editable_entities_container .ui-resizable-handle {
   visibility: hidden;
 }
 .upfront-module-group-on-edit > .ui-resizable-handle,
-.upfront-module-group-on-edit > .upfront-entity_meta > .upfront-icon-button {
+.upfront-module-group-on-edit > .upfront-entity_meta > .upfront-icon-button,
+.upfront-object-group-on-edit > .upfront-object-group > .ui-resizable-handle,
+.upfront-object-group-on-edit > .upfront-object-group > .upfront-entity_meta > .upfront-icon-button {
   visibility: hidden !important;
 }
-.upfront-module-group-on-edit .upfront-editable_entities_container .upfront-editable_entity:hover > .ui-resizable-handle {
+.upfront-module-group-on-edit .upfront-editable_entities_container .upfront-editable_entity:hover > .ui-resizable-handle,
+.upfront-object-group-on-edit .upfront-editable_entities_container .upfront-editable_entity:hover > .ui-resizable-handle {
   visibility: visible;
 }
 .upfront-module-group-on-edit > .upfront-editable_entities_container {
@@ -443,15 +460,19 @@
 	top: 5px;
 	right: 5px;
 }
-.upfront-object > .upfront-entity_meta {
+.upfront-object > .upfront-entity_meta,
+.upfront-object-group > .upfront-entity_meta {
 	top: 28px;
 	right: 5px;
 }
 .offset-ui-from-right-top .upfront-module > .upfront-entity_meta,
-.offset-ui-from-right-top .upfront-object > .upfront-entity_meta {
+.offset-ui-from-right-top .upfront-module-group > .upfront-entity_meta,
+.offset-ui-from-right-top .upfront-object > .upfront-entity_meta,
+.offset-ui-from-right-top .upfront-object-group > .upfront-entity_meta {
 	right: 50px;
 }
-.upfront-object > .upfront-entity_meta_extra {
+.upfront-object > .upfront-entity_meta_extra,
+.upfront-object-group > .upfront-entity_meta_extra {
 	top: 50px;
 	right:5px;
 }

@@ -194,6 +194,43 @@ var _alpha = "alpha",
 		}
 	}),
 
+	ObjectGroup = ObjectModel.extend({
+		"defaults": function(){
+			return {
+				"name": "",
+				"objects": new Objects(),
+				"wrappers": new Wrappers(),
+				"properties": new Properties()
+			};
+		},
+		initialize: function () {
+			var args = arguments;
+			if (args && args[0] && args[0]["objects"]) {
+				args[0]["objects"] = args[0]["objects"] instanceof Objects
+					? args[0]["objects"]
+					: new Objects(args[0]["objects"])
+				;
+				this.set("objects", args[0]["objects"]);
+			} else this.set("objects", new Objects([]));
+			if (args && args[0] && args[0]["wrappers"]) {
+				args[0]["wrappers"] = args[0]["wrappers"] instanceof Wrappers
+					? args[0]["wrappers"]
+					: new Wrappers(args[0]["wrappers"])
+				;
+				this.set("wrappers", args[0].wrappers)
+			} else this.set("wrappers", new Wrappers([]));
+			if (args && args[0] && args[0]["properties"]) {
+				args[0]["properties"] = args[0]["properties"] instanceof Properties
+					? args[0]["properties"]
+					: new Properties(args[0]["properties"])
+				;
+				this.set("properties", args[0]["properties"]);
+			} else this.set("properties", new Properties([]));
+			
+			if (this.init) this.init();
+		}
+	}),
+
 		// Basic interface dataset
 	Objects = Backbone.Collection.extend({
 		"model": ObjectModel,
@@ -202,7 +239,8 @@ var _alpha = "alpha",
 			if (!raw_models || !raw_models.length) return false;
 			_(raw_models).each(function (model) {
 				var type_prop = model["properties"] ? _(model["properties"]).where({"name": "type"}) : model.get("properties").where({"name": "type"}),
-					type = type_prop.length ? type_prop[0].value : "ObjectModel",
+					default_type = model["objects"] ? "ObjectGroup" : "ObjectModel",
+					type = type_prop.length ? type_prop[0].value : default_type,
 					instance = Upfront.Models[type] ? new Upfront.Models[type](model) : false
 				;
 				if (Upfront.Models[type] && instance) models.push(instance);
@@ -1573,6 +1611,7 @@ return {
     "Models": {
       "Property": Property,
       "ObjectModel": ObjectModel,
+      "ObjectGroup": ObjectGroup,
       "Module": Module,
       "ModuleGroup": ModuleGroup,
       "Region": Region,

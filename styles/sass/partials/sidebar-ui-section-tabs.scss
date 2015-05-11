@@ -9,6 +9,9 @@
 #sidebar-ui .expanded ul.sidebar-panel-tabspane {
 	display: block;
 }
+#sidebar-ui .expanded ul.sidebar-panel-tabspane-hidden {
+  display: none;
+}
 .sidebar-panel-tabspane li {
     display: inline-block;
     margin-left: 5px;

@@ -217,49 +217,11 @@ class Upfront_Grid {
 			$module_col = $module_col > $col ? $col : $module_col;
 			$module_hide = ( !$breakpoint->is_default() ) ? $this->_get_breakpoint_data($module, 'hide') : false;
 			$wrapper_id = upfront_get_property_value('wrapper_id', $module);
-			$wrapper_data = $this->_find_wrapper($wrapper_id, $wrappers);
-			$wrapper_index = array_search($wrapper_data, $wrappers);
-			$next_wrapper_id = false;
-			$next_wrapper_data = false;
-			if ( !empty($wrapper_data) ) {
-				$wrapper_col = $this->_get_class_col($wrapper_data);
-				$wrapper_col = $wrapper_col > $col ? $col : $wrapper_col;
-				if ( ! in_array($wrapper_id, $rendered_wrappers) ){
-					if ( ! $breakpoint->is_default() ) { // find next wrapper based on the breakpoint order
-						if ( isset($wrappers[$wrapper_index+1]) )
-							$next_wrapper_data = $wrappers[$wrapper_index+1];
-					}
-					if ( empty($next_wrapper_data) ) { // find next wrapper based on the module order
-						$next_modules = array_slice($modules, $m+1);
-						if ( !empty($next_modules) ){
-							foreach ( $next_modules as $n => $mod ){
-								$next_wrapper_id = upfront_get_property_value('wrapper_id', $mod);
-								if ( $next_wrapper_id != $wrapper_id ) {
-									$next_wrapper_data = $this->_find_wrapper($next_wrapper_id, $wrappers);
-									break;
-								}
-							}
-						}
-					}
-					// additional check, making sure next wrapper order is > current order
-					if ( ! $breakpoint->is_default() && !empty($next_wrapper_data) ) {
-						$wrapper_order = $this->_get_breakpoint_order($wrapper_data);
-						$next_wrapper_order = $this->_get_breakpoint_order($next_wrapper_data);
-						if ( intval($next_wrapper_order) < intval($wrapper_order) )
-							$next_wrapper_data = false;
-					}
-					if ( !$module_hide )
-						$line_col -= $wrapper_col;
-					$next_clear = $this->_get_property_clear($next_wrapper_data);
-					$next_wrapper_col = $this->_get_class_col($next_wrapper_data);
-					$next_wrapper_col = $next_wrapper_col > $col ? $col : $next_wrapper_col;
-					$next_fill = $next_clear && $line_col > 0 ? $line_col : 0;
-					$point_css .= $breakpoint->apply($wrapper_data, $this->get_grid_scope(), 'wrapper_id', $col, $next_fill);
-					if ( !$module_hide && ( $next_clear || $line_col < $next_wrapper_col ) )
-						$line_col = $col;
-					$rendered_wrappers[] = $wrapper_id;
-				}
-				$point_css .= $breakpoint->apply($module, $this->get_grid_scope(), 'element_id', $wrapper_col);
+			$apply_wrapper = $this->_apply_wrapper($wrapper_id, $wrappers, $module, $modules, $m, $module_hide, $col, $line_col, $rendered_wrappers, $breakpoint);
+			if ( $apply_wrapper !== false ){
+				if ( !empty($apply_wrapper['css']) )
+					$point_css .= $apply_wrapper['css'];
+				$point_css .= $breakpoint->apply($module, $this->get_grid_scope(), 'element_id', $apply_wrapper['col']);
 			}
 			else {
 				$point_css .= $breakpoint->apply($module, $this->get_grid_scope(), 'element_id', $col);
@@ -272,11 +234,99 @@ class Upfront_Grid {
 			}
 			else {
 				foreach ($module['objects'] as $object) {
-					$point_css .= $breakpoint->apply($object, $this->get_grid_scope(), 'element_id', $module_col);
+					$point_css .= $this->_apply_objects($object, $module_col, $breakpoint);
 				}
 			}
 		}
 		return $point_css;
+	}
+
+	protected function _apply_objects ($data, $max_col, $breakpoint = false) {
+		$breakpoint = $breakpoint !== false ? $breakpoint : $this->_current_breakpoint;
+		$point_css = '';
+		
+		if ( isset($data['objects']) && is_array($data['objects']) ){
+			$wrappers = $data['wrappers'];
+			$objects = $data['objects'];
+			if ( !$breakpoint->is_default() )
+				usort($wrappers, array($this, '_sort_cb'));
+	
+			$line_col = $col; // keep track of how many column has been applied for each line
+			$rendered_wrappers = array(); // keep track of rendered wrappers to avoid render more than once
+			foreach ($objects as $o => $object) {
+				$object_col = $this->_get_class_col($object);
+				$object_col = $object_col > $col ? $col : $object_col;
+				$object_hide = ( !$breakpoint->is_default() ) ? $this->_get_breakpoint_data($object, 'hide') : false;
+				$wrapper_id = upfront_get_property_value('wrapper_id', $object);
+				$apply_wrapper = $this->_apply_wrapper($wrapper_id, $wrappers, $object, $objects, $o, $object_hide, $max_col, $line_col, $rendered_wrappers, $breakpoint);
+				if ( $apply_wrapper !== false ){
+					if ( !empty($apply_wrapper['css']) )
+						$point_css .= $apply_wrapper['css'];
+					$point_css .= $breakpoint->apply($object, $this->get_grid_scope(), 'element_id', $apply_wrapper['col']);
+				}
+				else {
+					$point_css .= $breakpoint->apply($object, $this->get_grid_scope(), 'element_id', $max_col);
+				}
+			}
+		}
+		else {
+			$point_css .= $breakpoint->apply($data, $this->get_grid_scope(), 'element_id', $max_col);
+		}
+		return $point_css;
+	}
+	
+	protected function _apply_wrapper ($wrapper_id, $wrappers, $object, $objects, $obj_index, $obj_hide, $max_col, &$line_col, &$rendered_wrappers, $breakpoint = false) {
+		$breakpoint = $breakpoint !== false ? $breakpoint : $this->_current_breakpoint;
+		$css = '';
+		$wrapper_data = $this->_find_wrapper($wrapper_id, $wrappers);
+		$wrapper_index = array_search($wrapper_data, $wrappers);
+		$next_wrapper_id = false;
+		$next_wrapper_data = false;
+		if ( !empty($wrapper_data) ) {
+			$wrapper_col = $this->_get_class_col($wrapper_data);
+			$wrapper_col = $wrapper_col > $max_col ? $max_col : $wrapper_col;
+			if ( ! in_array($wrapper_id, $rendered_wrappers) ){
+				if ( ! $breakpoint->is_default() ) { // find next wrapper based on the breakpoint order
+					if ( isset($wrappers[$wrapper_index+1]) )
+						$next_wrapper_data = $wrappers[$wrapper_index+1];
+				}
+				if ( empty($next_wrapper_data) ) { // find next wrapper based on the element/object order
+					$next_objects = array_slice($objects, $obj_index+1);
+					if ( !empty($next_objects) ){
+						foreach ( $next_objects as $n => $obj ){
+							$next_wrapper_id = upfront_get_property_value('wrapper_id', $obj);
+							if ( $next_wrapper_id != $wrapper_id ) {
+								$next_wrapper_data = $this->_find_wrapper($next_wrapper_id, $wrappers);
+								break;
+							}
+						}
+					}
+				}
+				// additional check, making sure next wrapper order is > current order
+				if ( ! $breakpoint->is_default() && !empty($next_wrapper_data) ) {
+					$wrapper_order = $this->_get_breakpoint_order($wrapper_data);
+					$next_wrapper_order = $this->_get_breakpoint_order($next_wrapper_data);
+					if ( intval($next_wrapper_order) < intval($wrapper_order) )
+						$next_wrapper_data = false;
+				}
+				if ( !$obj_hide )
+					$line_col -= $wrapper_col;
+				$next_clear = $this->_get_property_clear($next_wrapper_data);
+				$next_wrapper_col = $this->_get_class_col($next_wrapper_data);
+				$next_wrapper_col = $next_wrapper_col > $max_col ? $max_col : $next_wrapper_col;
+				$next_fill = $next_clear && $line_col > 0 ? $line_col : 0;
+				$css = $breakpoint->apply($wrapper_data, $this->get_grid_scope(), 'wrapper_id', $max_col, $next_fill);
+				if ( !$obj_hide && ( $next_clear || $line_col < $next_wrapper_col ) )
+					$line_col = $col;
+				$rendered_wrappers[] = $wrapper_id;
+			}
+			return array(
+				'data' => $wrapper_data,
+				'col' => $wrapper_col,
+				'css' => $css
+			);
+		}
+		return false;
 	}
 
 	protected function _find_wrapper ($wrapper_id, $wrappers) {
