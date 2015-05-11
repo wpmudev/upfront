@@ -909,6 +909,7 @@ VRT;
         return $attach_id;
     }
 
+<<<<<<< HEAD
     /**
      * Returns theme font icons if specified
      *
@@ -927,13 +928,24 @@ VRT;
         return is_array( $theme_font_icons ) ? $theme_font_icons : json_decode( $theme_font_icons );
     }
 
+=======
+	/**
+	 * Finds image variant object using variant id
+	 *
+	 * @param string $vid variant id
+	 *
+	 * @return array
+	 */
+>>>>>>> make code support older php
 	public static function get_image_variant_by_id( $vid ){
 		$variants = self::getPostImageVariants();
-		$v = array_filter($variants, function($variant) use($vid){
-			return $variant->vid == $vid;
-		});
 
-		return $v === array() ? array() : $v[0];
+		foreach( $variants as $variant ){
+			if( $variant->vid == $vid ){
+				return $variant;
+			}
+		}
+		return array();
 	}
 
 }
