@@ -660,6 +660,14 @@ var PostContentEditor = Backbone.View.extend({
                         me.$el.find(".upfront-inline-panel").remove();
                         me.$el.find(".ueditor-insert-remove").remove();
 
+						// replace image inserts with their shortcodes
+						me.$(".upfront-inserted_image-wrapper").each(function(){
+							var $this = $(this),
+								$shortcode = $this.find(".post-images-shortcode"),
+								shortcode = $.trim( $shortcode.html() );
+							$this.replaceWith( shortcode );
+						});
+
 						results.content = $.trim( editor.getValue() );
 						results.content = results.content.replace(/(\n)*?<br\s*\/?>\n*/g, "<br/>");
 						results.inserts = editor.getInsertsData();

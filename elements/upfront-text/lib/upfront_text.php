@@ -54,12 +54,13 @@ class Upfront_PlainTxtView extends Upfront_Object {
 	}
 
 	protected function _decorate_content ($content) {
+
 		if (defined('DOING_AJAX') && DOING_AJAX) return $content;
 		$do_processing = apply_filters(
 			'upfront-shortcode-enable_in_layout', 
 			(defined('UPFRONT_DISABLE_LAYOUT_TEXT_SHORTCODES') && UPFRONT_DISABLE_LAYOUT_TEXT_SHORTCODES ? false : true)
 		);
-		if ($do_processing) $content = do_shortcode($content);
+		if ($do_processing) $content = apply_filters("the_content", $content);
 		return Upfront_Codec::get('wordpress')->expand_all($content);
 	}
 

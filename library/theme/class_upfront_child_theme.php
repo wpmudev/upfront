@@ -7,8 +7,9 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 	private $_version = false;
 	private $_required_pages = array();
-	private $_theme_settings;
 
+	private static $_theme_settings;
+	
 	protected static $instance;
 
 	public static function get_instance () {
@@ -77,7 +78,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	 * @param Upfront_Theme_Settings $settings Theme settings object
 	 */
 	public function set_theme_settings (Upfront_Theme_Settings $settings) {
-		$this->_theme_settings = $settings;
+		self::$_theme_settings = $settings;
 	}
 
 	/**
@@ -87,7 +88,11 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	 * @return Upfront_Theme_Settings Current theme settings.
 	 */
 	public function get_theme_settings () {
-		return $this->_theme_settings;
+		return self::_get_theme_settings();
+	}
+
+	protected static function  _get_theme_settings(){
+		return self::$_theme_settings;
 	}
 
 	/**
@@ -624,10 +629,10 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		return json_decode($presets, $as_array);
 	}
 
-	public function getPostImageVariants($image_variants, $args) {
+	public static function getPostImageVariants($image_variants = null, $args = null) {
 	  if (empty($image_variants) === false) return $image_variants;
 
-	  $image_variants = $this->get_theme_settings()->get('post_image_variants');
+	  $image_variants = self::_get_theme_settings()->get('post_image_variants');
 	  if( empty( $image_variants )){
 		$image_variants = <<< VRT
 		[
@@ -921,4 +926,14 @@ VRT;
 
         return is_array( $theme_font_icons ) ? $theme_font_icons : json_decode( $theme_font_icons );
     }
+
+	public static function get_image_variant_by_id( $vid ){
+		$variants = self::getPostImageVariants();
+		$v = array_filter($variants, function($variant) use($vid){
+			return $variant->vid == $vid;
+		});
+
+		return $v === array() ? array() : $v[0];
+	}
+
 }

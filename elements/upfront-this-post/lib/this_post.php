@@ -663,6 +663,48 @@ class Upfront_ThisPostView extends Upfront_Object {
 			: $l10n
 		;
 	}
+
+	public static function get_post_image_markup($data) {
+		global $post;
+		$style_variant = (object) Upfront_ChildTheme::get_image_variant_by_id( $data->uf_variant );
+		$style_variant->label_id = !empty( $style_variant->label ) ? "ueditor-image-style-" . str_replace(" ", "-", trim(strtolower( $style_variant->label )))  : $style_variant->vid;
+
+		$layout_data = Upfront_ThisPostView::find_postlayout("single", $post->post_type, $post->ID);
+		$options = !empty($layout_data['partOptions']) ? $layout_data['partOptions'] : array();
+
+		$padding_left = $padding_right = 0;
+		$col_size = isset($layout_data['colSize']) ? $layout_data['colSize'] : 45;
+		if(isset($options['contents'])){
+			$padding_left = $options['contents']['padding_left'] * $col_size;
+			$padding_right = $options['contents']['padding_right'] * $col_size;
+		}
+
+		if ($style_variant && isset( $style_variant->group ) && isset( $style_variant->group->float )) {
+			$style_variant->group->marginLeft = $style_variant->group->marginRight = 0;
+			if ( $style_variant->group->float == 'left' && $padding_left > 0 ){
+				$style_variant->group->marginLeft = ( $padding_left - abs($style_variant->group->margin_left) ) * $col_size;
+				$style_variant->group->marginRight = 0;
+			}
+			else if ( $style_variant->group->float == 'right' && $padding_right > 0 ){
+				$style_variant->group->marginRight = ( $padding_right - abs($style_variant->group->margin_right) ) * $col_size;
+				$style_variant->group->marginLeft = 0;
+			}
+			else if ( $style_variant->group->float == 'none' && $padding_left > 0 ){
+				$style_variant->group->marginLeft = ( $padding_left - abs($style_variant->group->margin_left) + abs($style_variant->group->left) ) * $col_size;
+				$style_variant->group->marginRight = 0;
+			}
+		}
+
+		$markup = upfront_get_template(
+			'this-post',
+			array(
+				"style" => $style_variant,
+				"data" => $data,
+			),
+			dirname(dirname(__FILE__)) . '/tpl/post-image-insert.php'
+		);
+		return $markup;
+	}
 }
 
 /**

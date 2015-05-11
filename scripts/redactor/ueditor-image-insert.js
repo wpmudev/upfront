@@ -88,6 +88,8 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
                 self.data.set('caption', this.innerHTML, {silent: true});
                 //Update event makes InsertManager update its data without rendering.
                 self.data.trigger('update');
+                if( self.render_shortcode )
+                    self.render_shortcode();
             })
             .ueditor({
                 linebreaks: false,
@@ -469,7 +471,7 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
 var PostImageInsert = ImageInsertBase.extend({
     className: 'ueditor-insert upfront-inserted_image-wrapper ueditor-insert-variant ueditor-post-image-insert',
     tpl: _.template($(tpls).find('#post-image-insert-tpl').html()),
-
+    shortcode_tpl: _.template($(tpls).find('#post-image-insert-shortcode-tpl').html()),
 	//Called just after initialize
 	init: function(){
 		this.controlsData = [
@@ -489,7 +491,7 @@ var PostImageInsert = ImageInsertBase.extend({
 			var imageData = me.getImageData(result);
 			imageData.id = me.data.id;
 			me.data.clear({silent: true});
-			imageData.variant_id = imageData.style.vid;
+			imageData.variant_id = imageData.style.vid ? imageData.style.vid : Upfront.Content.ImageVariants.first().get("vid");
 			me.data.set(imageData);
 
 		});
@@ -498,14 +500,30 @@ var PostImageInsert = ImageInsertBase.extend({
 	},
 	// Insert editor UI
 	render: function(){
-		var data = _.extend( {}, this.defaultData, this.data.toJSON() ),
-			style_variant = data.style;
+        var data = this.prepare_data();
+
+		this.$el
+			.html(this.tpl(data))
+		;
+
+        this.render_shortcode(data);
+		this.createControls();
+		this.controls.render();
+		this.$(".ueditor-insert-variant-group").append(this.controls.$el);
+		this.make_caption_editable();
+		this.updateControlsPosition();
+		this.$(".ueditor-insert-variant-group").append('<a href="#" contenteditable="false" class="upfront-icon-button upfront-icon-button-delete ueditor-insert-remove"></a>');
+      
+	},
+    prepare_data: function(){
+        var data = _.extend( {}, this.defaultData, this.data.toJSON() ),
+            style_variant = data.style;
 
         if( !style_variant ) return;
-		//data.style = style_variant && style_variant.toJSON ? style_variant.toJSON() : {}; // Force this to be POJ object
+        //data.style = style_variant && style_variant.toJSON ? style_variant.toJSON() : {}; // Force this to be POJ object
 
         data.style.label_id = data.style.label && data.style.label.trim() !== "" ? "ueditor-image-style-" +  data.style.label.toLowerCase().trim().replace(" ", "-") : data.style.vid;
-		data.image = this.get_proper_image();
+        data.image = this.get_proper_image();
 
         if( data.show_caption == 0 ){
             data.style.image.width_cls = Upfront.Settings.LayoutEditor.Grid.class + 24;
@@ -525,32 +543,26 @@ var PostImageInsert = ImageInsertBase.extend({
         padding_right = padding_right ? parseInt(padding_right) : 0;
 
         if (style_variant && style_variant.group && style_variant.group.float) {
-	        if ( style_variant.group.float == 'left' && padding_left > 0 ){
-	            data.style.group.marginLeft = ( padding_left - Math.abs(style_variant.group.margin_left) ) * col_size;
-	            data.style.group.marginRight = 0;
-	        }
-	        else if ( style_variant.group.float == 'right' && padding_right > 0 ){
-	            data.style.group.marginRight = ( padding_right - Math.abs(style_variant.group.margin_right) ) * col_size;
-	            data.style.group.marginLeft = 0;
-	        }
-	        else if ( style_variant.group.float == 'none' && padding_left > 0 ){
-	            data.style.group.marginLeft = ( padding_left - Math.abs(style_variant.group.margin_left) + Math.abs(style_variant.group.left) ) * col_size;
-	            data.style.group.marginRight = 0;
-	        }
-	    }
-
-		this.$el
-			.html(this.tpl(data))
-		;
-		this.createControls();
-		this.controls.render();
-		this.$(".ueditor-insert-variant-group").append(this.controls.$el);
-		this.make_caption_editable();
-		this.updateControlsPosition();
-		this.$(".ueditor-insert-variant-group").append('<a href="#" contenteditable="false" class="upfront-icon-button upfront-icon-button-delete ueditor-insert-remove"></a>');
-      
-	},
-
+            if ( style_variant.group.float == 'left' && padding_left > 0 ){
+                data.style.group.marginLeft = ( padding_left - Math.abs(style_variant.group.margin_left) ) * col_size;
+                data.style.group.marginRight = 0;
+            }
+            else if ( style_variant.group.float == 'right' && padding_right > 0 ){
+                data.style.group.marginRight = ( padding_right - Math.abs(style_variant.group.margin_right) ) * col_size;
+                data.style.group.marginLeft = 0;
+            }
+            else if ( style_variant.group.float == 'none' && padding_left > 0 ){
+                data.style.group.marginLeft = ( padding_left - Math.abs(style_variant.group.margin_left) + Math.abs(style_variant.group.left) ) * col_size;
+                data.style.group.marginRight = 0;
+            }
+        }
+        return data;
+    },
+    render_shortcode: function(data){
+        data = data || this.prepare_data();
+        this.$shortcode = this.$(".post-images-shortcode");
+        this.$shortcode.html(this.shortcode_tpl(data));
+    },
 	//this function is called automatically by UEditorInsert whenever the controls are created or refreshed
 	control_events: function(){
 		/**
@@ -838,9 +850,8 @@ var ImageInsert = ImageInsertBase.extend({
             $caption = $group.find(".wp-caption-text"),
             caption_classes = $caption.attr("class"),
             $image_wrapper = $group.find(".uinsert-image-wrapper"),
-            image_wrapper_classes = $image_wrapper.attr("class")
+            image_wrapper_classes = $image_wrapper.attr("class"),
             caption_order = 1
-
             ;
 
         if(link.origin != window.location.origin)

@@ -50,8 +50,28 @@
         <div style="clear:both;"></div>
 
     </div>
+    <div class="post-images-shortcode">
+    </div>
 </script>
 
+<script type="text/template" id="post-image-insert-shortcode-tpl">
+
+    [caption id="{{id}}"  uf-variant="{{variant_id}}" uf-islocal="{{isLocal}}"]
+
+        {[if( style.caption.order == 0 && show_caption) {]}
+            {{ caption }}
+        {[ } ]}
+
+        {[if(linkType != "do_nothing"){ ]}<a href="{{linkUrl}}">{[ } ]}
+        <img src="{{image.src}}"/>
+        {[if(linkType != "do_nothing"){ ]}</a>{[ } ]}
+
+        {[if( style.caption.order == 1 && show_caption) {]}
+            {{ caption }}
+        {[ } ]}
+    [/caption]
+
+</script>
 <script type="text/template" id="image-insert-tpl">
     <div data-variant="{{variant_id}}" class="ueditor-insert ueditor-insert-variant-group {{style.label_id}} ueditor-insert-float-{{style.group.float}} {{style.group.width_cls}} {{style.group.left_cls}}" style="min-height: {{style.group.height}}px;float:{{style.group.float}}; {[if( style.group.marginRight > 0 ){]}margin-right:{{style.group.marginRight}}px;{[ } ]} {[if( style.group.marginLeft > 0 ) {]}margin-left:{{style.group.marginLeft}}px;{[ } ]}" >
         {[if( style.caption.order == 0 && show_caption) {]}
