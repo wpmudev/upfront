@@ -135,6 +135,8 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 	onOpenItemControlsClick: function() {
 		this.$el.toggleClass('controls-visible');
 		if (this.$el.hasClass('controls-visible')) {
+			$('.upfront-button.controls-visible').removeClass('controls-visible');
+			this.$el.addClass('controls-visible');
 			this.controlsVisible = true;
 		} else {
 			this.controlsVisible = false;
