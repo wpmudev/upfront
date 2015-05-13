@@ -388,7 +388,7 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
             if(wrapper.length) {
                 //insert = me.importFromWrapper(wrapper, insertsData, inserts);
             } else {
-                insert = me.importFromImage($img);
+                //insert = me.importFromImage($img);
             }
 
             if( insert )
@@ -503,7 +503,7 @@ var PostImageStylesView = Backbone.View.extend({
 
 
 return {
-    ImageInsertBase: ImageInsertBase,
+    ImageInsertBase: ImageInsertBase
 };
 
 //End Define

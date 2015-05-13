@@ -55,14 +55,14 @@
 
 <script type="text/template" id="post-image-insert-shortcode-tpl">
     [caption id="{{id}}"  uf_variant="{{variant_id}}" uf_islocal="{{isLocal}}" uf_show_caption="{{show_caption}}" ]
-        {[if( style.caption.order == 0 && show_caption) {]}
+        {[if( style.caption.order == 0 ) {]}
             {{ caption }}
         {[ } ]}
         {[if(linkType != "do_nothing"){ ]}<a href="{{linkUrl}}">{[ } ]}
         <img src="{{image.src}}"/>
         {[if(linkType != "do_nothing"){ ]}</a>{[ } ]}
 
-        {[if( style.caption.order == 1 && show_caption) {]}
+        {[if( style.caption.order == 1 ) {]}
             {{ caption }}
         {[ } ]}
     [/caption]
@@ -81,7 +81,6 @@
 
     </div>
 </script>
-
 <script type="text/template" id="image-link-tpl">
 	<div class="upfront-field-wrap">
 		<input type="radio" name="uinsert-image-link" value="do_nothing" class="upfront-field-radio" id="uinsert-image-link-1" {{linkType == 'do_nothing' ? checked : ''}}>

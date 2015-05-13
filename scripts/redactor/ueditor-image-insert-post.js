@@ -9,7 +9,7 @@ function(Insert, base, tpls){
 var PostImageInsert = base.ImageInsertBase.extend({
     className: 'ueditor-insert upfront-inserted_image-wrapper ueditor-insert-variant ueditor-post-image-insert',
     tpl: _.template($(tpls).find('#post-image-insert-tpl').html()),
-    shortcode_tpl: _.template($(tpls).find('#post-image-insert-shortcode-tpl').html()),
+    shortcode_tpl: _.template($(tpls).find('#post-image-insert-shortcode-tpl').html().replace(/\s+/g," ")),
     //Called just after initialize
     init: function(){
         this.controlsData = [
@@ -62,6 +62,9 @@ var PostImageInsert = base.ImageInsertBase.extend({
 
         data.style.label_id = data.style.label && data.style.label.trim() !== "" ? "ueditor-image-style-" +  data.style.label.toLowerCase().trim().replace(" ", "-") : data.style.vid;
         data.image = this.get_proper_image();
+
+        if( data.linkType == "show_larger_image" )
+            data.linkUrl = data.image.src;
 
         if( data.show_caption == 0 ){
             data.style.image.width_cls = Upfront.Settings.LayoutEditor.Grid.class + 24;
@@ -156,8 +159,10 @@ var PostImageInsert = base.ImageInsertBase.extend({
             realSize = this.calculateRealSize( imageData.imageThumb.src )
         ;
 
-        imageData.imageThumb.src = this.get_shortcode_image_src( shortcode_data.parse_content );
+        imageData.imageThumb.src = this.get_shortcode_image_src( shortcode_data.content );
         imageData.caption = this.get_shortcode_caption_text( shortcode_data.parse_content );
+
+        imageData = this.populate_link(shortcode_data.content, imageData);
 
         imageData.imageFull = {
             width: realSize.width,
@@ -185,16 +190,11 @@ var PostImageInsert = base.ImageInsertBase.extend({
     /**
      * Extracts image src from shorcdode's content
      *
-     * @param parse_content jquery parsed html
-     * @returns string image src value
+     * @param  html content
+     * @returns string|bool image src value
      */
-    get_shortcode_image_src: function( parse_content ){
-        var src = "";
-        _.each(parse_content, function( el, i ){
-            if( el.src )
-                src = el.src;
-        });
-        return src;
+    get_shortcode_image_src: function( content ){
+        return $("<div>").html(content).find("img").attr("src");
     },
 
     /**
@@ -214,6 +214,41 @@ var PostImageInsert = base.ImageInsertBase.extend({
         });
 
         return html;
+    },
+    /**
+     * Populates proper data regarding linking of the image
+     *
+     * @param content
+     * @param imageData
+     * @returns {*}
+     */
+    populate_link: function( content, imageData ){
+        imageData.linkUrl = this.get_shortcode_url( content );
+
+        if( !imageData.linkUrl ) return imageData; // if there is no href then there is no link
+
+        // Create a url parser
+        var parsed = document.createElement('a');
+        parsed.href = imageData.linkUrl;
+
+        if(parsed.origin != window.location.origin)
+            imageData.linkType = 'external';
+
+        if(parsed.origin == window.location.origin && imageData.imageThumb.src != imageData.linkUrl )
+            imageData.linkType = 'post';
+
+        if(parsed.origin == window.location.origin && imageData.imageThumb.src == imageData.linkUrl )
+            imageData.linkType = 'show_larger_image';
+
+        return imageData;
+    },
+    /**
+     * Extracts anchor's href attribute
+     * @param content
+     * @returns {*}
+     */
+    get_shortcode_url: function( content ){
+        return $("<div>").html(content).find("a").attr("href");
     },
     //Import from any image tag
     importFromImage: function(image){
