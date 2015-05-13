@@ -144,11 +144,6 @@ var PostContentEditor = Backbone.View.extend({
 			editorOptions = isExcerpt ? this.getExcerptEditorOptions() : this.getContentEditorOptions()
 			;
 
-			//content = wp.shortcode.replace("caption", content, function(shorcode){
-			//	if( shorcode.attrs.named.id.indexOf("uinsert") !== -1 ){
-			//		return " ";
-			//	}
-			//});
 			this.onContentsEdited = _.bind(this.contentEdited, this);
 			this.editors = [];
 			this.parts.contents.html(content).ueditor(editorOptions);
@@ -670,7 +665,7 @@ var PostContentEditor = Backbone.View.extend({
 						me.$(".upfront-inserted_image-wrapper").each(function(){
 							var $this = $(this),
 								$shortcode = $this.find(".post-images-shortcode"),
-								shortcode = $.trim( $shortcode.html() );
+								shortcode = $.trim( $shortcode.html().replace(/(\r\n|\n|\r)/gm,"") );
 							$this.replaceWith( shortcode );
 						});
 

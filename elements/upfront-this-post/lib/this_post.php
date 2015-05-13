@@ -773,7 +773,10 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 		//add_action('wp_ajax_upfront_get_postlayout', array($this, "get_postlayout"));
 		upfront_add_ajax('upfront_get_postlayout', array($this, "get_postlayout"));
 
-		add_action('update_postmeta', array($this, 'update_image_thumbs'), 10, 4);
+		/**
+		 * No need to save image inserts separately anymore
+		 */
+//		add_action('update_postmeta', array($this, 'update_image_thumbs'), 10, 4);
 	}
 	public function get_thumbnail() {
 		$post_id = stripslashes($_POST['post_id']);
@@ -997,6 +1000,7 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 			return;
 
 		$inserts = maybe_unserialize($value);
+
 
 		if(!is_array($inserts))
 			return;

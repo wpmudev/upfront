@@ -293,7 +293,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 				$resize = isset($imageData['resize']) ? $imageData['resize'] : false;
 				$crop = isset($imageData['crop']) ? $imageData['crop'] : false;
 
-				$images[$imageData['id']] = $this->resize_image($imageData);
+				$images[$imageData['id']] = self::resize_image($imageData);
 			}
 		}
 		return $this->_out(new Upfront_JsonResponse_Success(array('images' => $images)));
@@ -377,7 +377,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 		}
 
 		if($custom_size){
-			$image_custom_size = $this->calculate_image_resize_data($data['customSize'], array('width' => $sizes['full'][1], 'height' => $sizes['full'][2]));
+			$image_custom_size = self::calculate_image_resize_data($data['customSize'], array('width' => $sizes['full'][1], 'height' => $sizes['full'][2]));
 			$image_custom_size['id'] = $id;
 			if (!empty($data['element_id'])) $image_custom_size['element_id'] = $data['element_id'];
 			$sizes['custom'] = $this->resize_image($image_custom_size);
@@ -402,7 +402,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 		return $this->_out(new Upfront_JsonResponse_Success($result));
 	}
 
-	function resize_image($imageData) {
+	public static function resize_image($imageData) {
 		$rotate = isset($imageData['rotate']) && is_numeric($imageData['rotate']) ? $imageData['rotate'] : false;
 		$resize = isset($imageData['resize']) ? $imageData['resize'] : false;
 		$crop = isset($imageData['crop']) ? $imageData['crop'] : false;
@@ -515,7 +515,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 		);
 	}
 
-	function calculate_image_resize_data($custom, $full) {
+	public static function calculate_image_resize_data($custom, $full) {
 		$image_factor = $full['width'] / $full['height'];
 		$custom_factor =  $custom['width'] / $custom['height'];
 
