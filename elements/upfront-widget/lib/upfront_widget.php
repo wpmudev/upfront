@@ -3,43 +3,66 @@
 class Upfront_Uwidget {
 
 	public static function get_widget_list () {
-		global $wp_widget_factory, $wp_registered_widgets;
 		$data = array();
-		foreach ( $wp_widget_factory->widgets as $widget ){
-			$class = get_class($widget);
+		global $wp_registered_widget_controls, $wp_registered_widgets;		
+		foreach ($wp_registered_widgets as $key => $widget) {
 			$data[] = array(
-				'name' => $widget->name,
-				'class' => $class
+				'name' => $widget['name'],
+				'key' => $key,
+				'admin' => !empty($wp_registered_widget_controls[$key])
 			);
 		}
 		return $data;
 	}
 
 	public static function get_widget_markup ($widget, $instance = array()) {
-		$args = apply_filters('upfront_widget_widget_args', array());
+		global $wp_registered_widgets;
+		$result = '';
+		$args = !empty($wp_registered_widgets[$widget]['params']) ? $wp_registered_widgets[$widget]['params'] : array();
+
+		$callback = $wp_registered_widgets[$widget]['callback'];
+		if (empty($callback) || !is_callable($callback)) return $result;
+
+		if (is_array($callback) && !empty($callback[0]) && is_object($callback[0]) && $callback[0] instanceof WP_Widget) {
+			$callback[1] = 'widget';
+		}
+		$args = wp_parse_args($args, array(
+			'before_widget' => '',
+			'before_title' => '',
+			'after_title' => '',
+			'after_widget' => '',
+		));
+		$args = apply_filters('upfront_widget_widget_args', $args);
+		$instance = wp_parse_args($instance, array(
+			'title' => '',
+		));
 
 		ob_start();
-		the_widget($widget, (!empty($instance) ? $instance : array()), $args);
+		call_user_func_array($callback, array($args, $instance));
+		$out = ob_get_clean();
 
-		return ob_get_clean();
+		return !empty($out) ? $out : $result;
 	}
 
-	public static function get_widget_admin_fields($widget) {
+	public static function _admin_fields ($widget) {
+		global $wp_registered_widget_controls;
+		$result = array();
 
-		if (!class_exists($widget)) return array(); // This is so we don't choke on fatal error if there's no such thing (e.g. deactivated plugin)
-		if (
-			!class_exists('ReflectionClass') ||
-			!class_exists('DOMDocument') ||
-			!class_exists('DOMXPath')
-		) return array(); // Don't deal with this if we can't
+		if (empty($wp_registered_widget_controls[$widget])) return $result;
+		
+		$callback = $wp_registered_widget_controls[$widget]['callback'];
+		if (empty($callback) || !is_callable($callback)) return $result;
 
-		$rc = new ReflectionClass($widget);
-		$dwidget = $rc->newInstance();
+		$params = $wp_registered_widget_controls[$widget]['params'];
 
 		ob_start();
-		$dwidget->form(array());
-		$markup =  ob_get_clean();
+		call_user_func_array($callback, array($params));
+		$markup = ob_get_clean();
 
+		return self::_get_fields($markup);
+	}
+
+	public static function _get_fields ($markup) {
 		$form = new DOMDocument();
 		@$form->loadHTML($markup);
 
@@ -76,7 +99,10 @@ class Upfront_Uwidget {
 		}
 
 		return $fields;
+	}
 
+	public static function get_widget_admin_fields($widget) {
+		return self::_admin_fields($widget);
 	}
 
 }
@@ -94,7 +120,7 @@ class Upfront_UwidgetView extends Upfront_Object {
 		$instance = array();
 
 		foreach($fields as $field) {
-			$instance[$field['name']] = 	$this->_get_property($field['name']);
+			$instance[$field['name']] = $this->_get_property($field['name']);
 		}
 
 

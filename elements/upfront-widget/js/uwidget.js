@@ -158,8 +158,10 @@ var UwidgetSpecific_Settings = Upfront.Views.Editor.Settings.Item.extend({
 	},
 	update_settings: function(widget, parent) {
 
-		var self = this;
-		Upfront.Util.post({"action": "uwidget_get_widget_admin_form", "data": JSON.stringify({"widget": widget})})
+		var self = this,
+			data = {"action": "uwidget_get_widget_admin_form", "data": JSON.stringify({"widget": widget})}
+		;
+		Upfront.Util.post(data)
 		.success(function (ret) {
 			self.model.set_property('widget_specific_fields', ret.data);
 			self.$el.html('');
@@ -246,8 +248,10 @@ var UwidgetSettings = Upfront.Views.Editor.Settings.Settings.extend({
 			this.has_tabs = false;
 			this.options= opts;
 
-		var widget_values = _.map(Upfront.data.uwidget.widgets, function (each) {
-			return { label: each.name, value: each.class };
+		var widget_values = _(_.filter(Upfront.data.uwidget.widgets, function (each) {
+			return each.admin;
+		})).map(function (each) {
+			return { label: each.name, value: each.key };
 		});
 
 		var panel = new Upfront.Views.Editor.Settings.Panel({
