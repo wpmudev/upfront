@@ -249,7 +249,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			//$out .= "\nin font \n";
 			$longSrc = '';
 			foreach($font['files'] as $type=>$file) {
-				$longSrc .= "url('" . get_stylesheet_directory_uri() . '/icon-fonts/' . $file . "') format('";
+				$longSrc .= "url('" . self::THEME_BASE_URL_MACRO . '/icon-fonts/' . $file . "') format('";
 				switch($type) {
 					case 'eot':
 						$longSrc .= 'embedded-opentype';
@@ -270,7 +270,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			$icon_font_style = "@font-face {" .
 				"	font-family: '" . $font['family'] . "';";
 			if (isset($font['files']['eot'])) {
-				$icon_font_style .= "src: url('" . get_stylesheet_directory_uri() . '/icon-fonts/' . $font['files']['eot'] . "');";
+				$icon_font_style .= "src: url('" . self::THEME_BASE_URL_MACRO . '/icon-fonts/' . $font['files']['eot'] . "');";
 			}
 			$icon_font_style .= "src:" . substr($longSrc, 0, -1) . ';';
 
@@ -281,7 +281,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 				".uf_font_icon {" .
 				"	font-family: '" . $font['family'] . "'!important;" .
 				"}";
-			$out .= $icon_font_style . "\n";
+			$out .= $this->_expand_passive_relative_url($icon_font_style) . "\n";
 		}
 
 		$this->_theme_styles_called = true;
