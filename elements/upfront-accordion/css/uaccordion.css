@@ -57,9 +57,6 @@
 .upfront-accordion_module .upfront-accordion-container .accordion-panel-active:hover i {
   visibility: visible;
 }
-.upfront-accordion-container .accordion-panel-active:hover .accordion-panel-title:after {
-  display: none;
-}
 
 .upfront-accordion-container .accordion-panel-content {
 	overflow: hidden;
