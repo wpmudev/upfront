@@ -120,7 +120,9 @@ class Upfront_UwidgetView extends Upfront_Object {
 		$instance = array();
 
 		foreach($fields as $field) {
-			$instance[$field['name']] = $this->_get_property($field['name']);
+			$name = !empty($field['name']) ? $field['name'] : false;
+			if (empty($name)) continue;
+			$instance[$name] = $this->_get_property($name);
 		}
 
 
