@@ -55,7 +55,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		add_filter('upfront_get_theme_styles', array($this, 'getThemeStyles'));
 		add_filter('upfront_get_global_regions', array($this, 'getGlobalRegions'));
 		add_filter('upfront_get_responsive_settings', array($this, 'getResponsiveSettings'));
-		add_filter('upfront_prepare_theme_styles', array($this, 'prepareThemeStyles'));
+		add_filter('upfront_prepare_theme_styles', array($this, 'prepareThemeStyles'), 10, 2);
 
 		add_filter('upfront-storage-key', array($this, 'theme_storage_key'));
 
@@ -249,7 +249,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			//$out .= "\nin font \n";
 			$longSrc = '';
 			foreach($font['files'] as $type=>$file) {
-				$longSrc .= "url('" . get_stylesheet_directory_uri() . '/icon-fonts/' . $file . "') format('";
+				$longSrc .= "url('" . self::THEME_BASE_URL_MACRO . '/icon-fonts/' . $file . "') format('";
 				switch($type) {
 					case 'eot':
 						$longSrc .= 'embedded-opentype';
@@ -270,7 +270,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			$icon_font_style = "@font-face {" .
 				"	font-family: '" . $font['family'] . "';";
 			if (isset($font['files']['eot'])) {
-				$icon_font_style .= "src: url('" . get_stylesheet_directory_uri() . '/icon-fonts/' . $font['files']['eot'] . "');";
+				$icon_font_style .= "src: url('" . self::THEME_BASE_URL_MACRO . '/icon-fonts/' . $font['files']['eot'] . "');";
 			}
 			$icon_font_style .= "src:" . substr($longSrc, 0, -1) . ';';
 
@@ -281,8 +281,10 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 				".uf_font_icon {" .
 				"	font-family: '" . $font['family'] . "'!important;" .
 				"}";
-			$out .= $icon_font_style . "\n";
+			$out .= $this->_expand_passive_relative_url($icon_font_style) . "\n";
 		}
+
+		$this->_theme_styles_called = true;
 
 		return $out;
 	}
@@ -303,16 +305,22 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	/**
 	 * Get theme styles as css output for stylesheet.
 	 */
-	public function prepareThemeStyles($styles) {
+	public function prepareThemeStyles($styles, $has_layout_style = false) {
 		// If styles are empty than there is no overrides in db, load from theme
-		if(empty($styles) === false) return $styles;
+		if(empty($styles) === false && $has_layout_style) return $styles;
 
-		$out = $this->getThemeStylesAsCss();
+		$out = '';
+		if (empty($styles) === false)
+			$out .= $styles;
+		else if ( !isset($this->_theme_styles_called) || !$this->_theme_styles_called )
+			$out .= $this->getThemeStylesAsCss();
 
 		// ALSO!!! Do the theme global styles >.<
-		$global_layout_styles = $this->get_theme_settings()->get('layout_style');
-		if (!empty($global_layout_styles)) {
-			$out .= $this->_expand_passive_relative_url($global_layout_styles);
+		if ( !$has_layout_style ){
+			$global_layout_styles = $this->get_theme_settings()->get('layout_style');
+			if (!empty($global_layout_styles)) {
+				$out .= $this->_expand_passive_relative_url($global_layout_styles);
+			}
 		}
 
 		return $out;
@@ -347,7 +355,8 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	 * @return string Processed content
 	 */
 	private function _expand_passive_relative_url ($content) {
-		return preg_replace('/' . preg_quote(self::THEME_BASE_URL_MACRO, '/') . '/', get_stylesheet_directory_uri(), $content);
+		$contextless_uri = preg_replace('/^https?:/', '', get_stylesheet_directory_uri());
+		return preg_replace('/' . preg_quote(self::THEME_BASE_URL_MACRO, '/') . '/', $contextless_uri, $content);
 	}
 
 	public function getGlobalRegions($global_regions = array())  {

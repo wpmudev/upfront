@@ -1566,7 +1566,7 @@ define([
 				var imageControlsTpl = '<div class="uimage-controls image-element-controls upfront-ui"></div>';
 				this.$el.append(imageControlsTpl);
 				panel.render();
-				this.$el.find('.uimage-controls').append(panel.el);
+				this.$el.find('.uimage-controls').last().append(panel.el);
 				panel.delegateEvents();
 			},
 

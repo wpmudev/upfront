@@ -219,6 +219,8 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 	onOpenItemControlsClick: function() {
 		this.$el.toggleClass('controls-visible');
 		if (this.$el.hasClass('controls-visible')) {
+			$('.upfront-button.controls-visible').removeClass('controls-visible');
+			this.$el.addClass('controls-visible');
 			this.controlsVisible = true;
 		} else {
 			this.controlsVisible = false;
@@ -243,8 +245,8 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 
 		this.listenTo(linkPanelControl, 'change change:target', function(data) {
 			visitLinkControl.setLink(data.url);
-			me.property('href', data.url);
-			me.property('linkTarget', data.target);
+			this.property('href', data.url);
+			this.property('linkTarget', data.target);
 		});
 
 		panel.items = _([
