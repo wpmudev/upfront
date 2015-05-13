@@ -355,7 +355,8 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	 * @return string Processed content
 	 */
 	private function _expand_passive_relative_url ($content) {
-		return preg_replace('/' . preg_quote(self::THEME_BASE_URL_MACRO, '/') . '/', get_stylesheet_directory_uri(), $content);
+		$contextless_uri = preg_replace('/^https?:/', '', get_stylesheet_directory_uri());
+		return preg_replace('/' . preg_quote(self::THEME_BASE_URL_MACRO, '/') . '/', $contextless_uri, $content);
 	}
 
 	public function getGlobalRegions($global_regions = array())  {
