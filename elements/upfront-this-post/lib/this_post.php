@@ -24,7 +24,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 		$parts = array_values(apply_filters('upfront_post_parts', self::$PARTNAMES));
 
 		// adds features to wp caption shortcode to support UF post image variants
-		add_filter("img_caption_shortcode", array( $this, "image_caption_shortcode"), 10, 30);
+//		add_filter("img_caption_shortcode", array( $this, "image_caption_shortcode"), 10, 30);
 	}
 
 	public static function get_post_part($type, $options = array(), $tpl = false, $properties = array()){
@@ -742,7 +742,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 		), $attr, 'caption' );
 
-		return Upfront_ThisPostView::get_post_image_markup($data);
+		return self::get_post_image_markup($data);
 
 	}
 

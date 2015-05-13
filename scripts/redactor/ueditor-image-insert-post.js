@@ -117,6 +117,7 @@ var PostImageInsert = base.ImageInsertBase.extend({
         });
 
     },
+
     /**
      * Imports images using caption shortcode
      *
@@ -129,10 +130,12 @@ var PostImageInsert = base.ImageInsertBase.extend({
         var self = this,
             inserts = {};
 
-        var content = wp.shortcode.replace("caption", $contentEl.html(), function( shorcode_data ){
+        var content = wp.shortcode.replace("caption", $contentEl.html(), function( shortcode_data ){
 
-            if( shorcode_data.attrs.named.id.indexOf("uinsert-") !== -1 ){ // if it's a UF caption shortcode
-                var insert =  self.importFromShortcode_UF( shorcode_data );
+            shortcode_data.parse_content = $.parseHTML( shortcode_data.content );
+
+            if( shortcode_data.attrs.named.id.indexOf("uinsert-") !== -1 ){ // if it's a UF caption shortcode
+                var insert =  self.importFromShortcode_UF( shortcode_data );
 
                 // add this insert to the pull of inserts
                 inserts[insert.data.id] = insert;
@@ -140,7 +143,7 @@ var PostImageInsert = base.ImageInsertBase.extend({
                 // return insert el's outerHtml to replace the shortcode
                 return insert.el.outerHTML;
             }else{ // it's a wp caption shortcode
-                return self.importFromShortcode_WP( shorcode_data );
+                return self.importFromShortcode_WP( shortcode_data );
             }
 
         });
@@ -148,12 +151,13 @@ var PostImageInsert = base.ImageInsertBase.extend({
         $contentEl.html( content );
         return inserts;
     },
-    importFromShortcode_UF: function( shorcode_data ){
+    importFromShortcode_UF: function( shortcode_data ){
         var imageData = _.extend({}, this.defaultData ),
             realSize = this.calculateRealSize( imageData.imageThumb.src )
         ;
 
-        imageData.imageThumb.src = this.get_image_regex( shorcode_data.content );
+        imageData.imageThumb.src = this.get_shortcode_image_src( shortcode_data.parse_content );
+        imageData.caption = this.get_shortcode_caption_text( shortcode_data.parse_content );
 
         imageData.imageFull = {
             width: realSize.width,
@@ -161,7 +165,11 @@ var PostImageInsert = base.ImageInsertBase.extend({
             src: imageData.imageThumb.src
         };
 
-        imageData.style = Upfront.Content.ImageVariants.findWhere({ 'vid': shorcode_data.attrs.named.uf_variant }).toJSON();
+        imageData.style = Upfront.Content.ImageVariants.findWhere({ 'vid': shortcode_data.attrs.named.uf_variant }).toJSON();
+
+        imageData.style.caption.show =  shortcode_data.attrs.named.uf_show_caption;
+
+
         imageData.variant_id = imageData.style.vid;
         var insert = new PostImageInsert({data: imageData});
 
@@ -169,18 +177,43 @@ var PostImageInsert = base.ImageInsertBase.extend({
         return insert;
 
     },
-    importFromShortcode_WP: function( shorcode_data ){
+
+    importFromShortcode_WP: function( shortcode_data ){
 
     },
+
     /**
-     * Extract iamge src from shorcdode's content
+     * Extracts image src from shorcdode's content
      *
-     * @param content
+     * @param parse_content jquery parsed html
      * @returns string image src value
      */
-    get_image_regex: function( content ){
-        var regex = new RegExp('\[src] *= *[\"\']{0,1}([^\"\'\ >]*)');
-        return content.match( regex )[1];
+    get_shortcode_image_src: function( parse_content ){
+        var src = "";
+        _.each(parse_content, function( el, i ){
+            if( el.src )
+                src = el.src;
+        });
+        return src;
+    },
+
+    /**
+     * Extracts shortcode caption text from jquery parsed html
+     *
+     * @param parse_content jquery parsed html
+     * @returns {string}
+     */
+    get_shortcode_caption_text: function( parse_content ){
+        var html = "";
+        _.each(parse_content, function( el, i ){
+            if( el.innerHtml )
+                html += el.innerHtml;
+
+            if( el.textContent )
+                html += el.textContent;
+        });
+
+        return html;
     },
     //Import from any image tag
     importFromImage: function(image){
