@@ -27,6 +27,37 @@ class Upfront_Button_Presets_Server extends Upfront_Presets_Server {
 	protected function get_style_template_path() {
 		return realpath(Upfront::get_root_dir() . '/elements/upfront-button/tpl/preset-style.html');
 	}
+	
+	public function get() {
+		$this->_out(new Upfront_JsonResponse_Success($this->clearPreset($this->get_presets(true))));
+	}
+	
+	public function get_presets($as_array = false) {
+		$json = true;
+		if ($as_array) {
+			$json = false;
+			$as_array = true;
+		}
+		$button_presets = get_option('upfront_' . get_stylesheet() . '_button_presets');
+		$button_presets = apply_filters(
+			'upfront_get_button_presets',
+			$button_presets,
+			array(
+				'json' => $json,
+				'as_array' => $as_array
+			)
+		);
+		
+		if (empty($button_presets)) {
+			if($json) {
+				$button_presets = json_encode(array());
+			} else {
+				$button_presets = array();
+			}
+		}
+		
+		return self::$instance->clearPreset($button_presets, true);
+	}
 }
 
 add_action('init', array('Upfront_Button_Presets_Server', 'serve'));

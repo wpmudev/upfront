@@ -27,6 +27,31 @@ class Upfront_Accordion_Presets_Server extends Upfront_Presets_Server {
 	protected function get_style_template_path() {
 		return realpath(Upfront::get_root_dir() . '/elements/upfront-accordion/tpl/preset-style.html');
 	}
+	
+	public function get_presets($as_array = false) {
+		$json = true;
+		if ($as_array) {
+			$json = false;
+		}
+		$accordion_presets = get_option('upfront_' . get_stylesheet() . '_accordion_presets');
+		$accordion_presets = apply_filters(
+			'upfront_get_accordion_presets',
+			$accordion_presets,
+			array(
+				'json' => $json
+			)
+		);
+		
+		if (empty($accordion_presets)) {
+			if($json) {
+				$accordion_presets = json_encode(array());
+			} else {
+				$accordion_presets = array();
+			}
+		}
+		
+		return self::$instance->clearPreset($accordion_presets, $json);
+	}
 }
 
 add_action('init', array('Upfront_Accordion_Presets_Server', 'serve'));
