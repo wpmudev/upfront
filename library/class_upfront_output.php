@@ -483,6 +483,9 @@ abstract class Upfront_Container extends Upfront_Entity {
 						$theme_styles_attr = " data-theme-styles='" . json_encode($theme_styles) . "'";
 					}
 					$slug = upfront_get_property_value('id_slug', $child);
+					if($slug === 'ucomment' && is_single() && !comments_open())
+						return $html; 
+
 					$classes = $this->_get_property('class');
 					$column = upfront_get_class_num('c', $classes);
 					$class = $slug === "uposts" ?   "c" . $column . " uposts-object" : upfront_get_property_value('class', $child);
