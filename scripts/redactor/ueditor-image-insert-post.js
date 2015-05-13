@@ -1,36 +1,26 @@
 ;(function($){
 define([
         "scripts/redactor/ueditor-insert",
-        "scripts/redactor/ueditor-insert-utils",
         "scripts/redactor/ueditor-image-insert-base",
         'text!scripts/redactor/ueditor-templates.html'
     ],
-    function(Insert, utils, base, tpls){
+function(Insert, base, tpls){
 
-var BasicImageVariants =  _([
-            { vid: "center", label: "Center"  },
-            { vid: "left", label: "Left"  },
-            { vid: "right", label: "Right"  }
-        ]);
-
-
-var ImageInsert = base.ImageInsertBase.extend({
-    className: 'ueditor-insert upfront-inserted_image-wrapper upfront-inserted_image-basic-wrapper',
+var PostImageInsert = base.ImageInsertBase.extend({
+    className: 'ueditor-insert upfront-inserted_image-wrapper ueditor-insert-variant ueditor-post-image-insert',
+    tpl: _.template($(tpls).find('#post-image-insert-tpl').html()),
+    shortcode_tpl: _.template($(tpls).find('#post-image-insert-shortcode-tpl').html()),
     //Called just after initialize
-    create_controlls: function(group_width_cls){
+    init: function(){
         this.controlsData = [
+            {id: 'style', type: 'dialog', icon: 'style', tooltip: 'Style', view: this.getStyleView()},
             {id: 'link', type: 'dialog', icon: 'link', tooltip: 'Link image', view: this.getLinkView()},
             {id: 'toggle_caption', type: 'simple', icon: 'caption', tooltip: 'Toggle Caption', active: _.bind( this.get_caption_state, this ) }
         ];
-
-        if( this.allow_alignment( group_width_cls ) )
-            this.controlsData.unshift( {id: 'style', type: 'dialog', icon: 'style', tooltip: 'Alignment', view: this.getStyleView()} );
-
         this.createControls();
     },
     // The user want a new insert. Fetch all the required data to create a new image insert
-    start: function( $el ){
-
+    start: function(){
         var me = this,
             promise = Upfront.Media.Manager.open({multiple_selection: false})
             ;
@@ -39,34 +29,39 @@ var ImageInsert = base.ImageInsertBase.extend({
             var imageData = me.getImageData(result);
             imageData.id = me.data.id;
             me.data.clear({silent: true});
-            imageData.style =  me.defaultData.style;
-            imageData.variant_id = "basic-image";
-            me.$editor = $el.closest(".redactor-box");
+            imageData.variant_id = imageData.style.vid ? imageData.style.vid : Upfront.Content.ImageVariants.first().get("vid");
             me.data.set(imageData);
+
         });
 
         return promise;
     },
     // Insert editor UI
     render: function(){
+        var data = this.prepare_data();
+
+        this.$el
+            .html(this.tpl(data))
+        ;
+
+        this.render_shortcode(data);
+        this.createControls();
+        this.controls.render();
+        this.$(".ueditor-insert-variant-group").append(this.controls.$el);
+        this.make_caption_editable();
+        this.updateControlsPosition();
+        this.$(".ueditor-insert-variant-group").append('<a href="#" contenteditable="false" class="upfront-icon-button upfront-icon-button-delete ueditor-insert-remove"></a>');
+
+    },
+    prepare_data: function(){
         var data = _.extend( {}, this.defaultData, this.data.toJSON() ),
-            style_variant = data.style,
-            alignment = this.data.get("alignment") ;
+            style_variant = data.style;
 
         if( !style_variant ) return;
         //data.style = style_variant && style_variant.toJSON ? style_variant.toJSON() : {}; // Force this to be POJ object
-        data.style.label_id = "ueditor-image-style-center";
-        if(  alignment  ){
-            data.style.label_id = "ueditor-image-style-" + alignment.vid;
-            data.style.group.float = alignment.vid;
-        }
 
+        data.style.label_id = data.style.label && data.style.label.trim() !== "" ? "ueditor-image-style-" +  data.style.label.toLowerCase().trim().replace(" ", "-") : data.style.vid;
         data.image = this.get_proper_image();
-
-
-
-        data.style.group.width_cls = this.get_group_width_cls( data.image );
-
 
         if( data.show_caption == 0 ){
             data.style.image.width_cls = Upfront.Settings.LayoutEditor.Grid.class + 24;
@@ -99,66 +94,93 @@ var ImageInsert = base.ImageInsertBase.extend({
                 data.style.group.marginRight = 0;
             }
         }
-
-        this.$el
-            .html(this.tpl(data))
-        ;
-        this.create_controlls( data.style.group.width_cls );
-
-        this.controls.render();
-        this.$(".ueditor-insert-variant-group").append(this.controls.$el);
-        this.make_caption_editable();
-        this.updateControlsPosition();
-        this.$(".ueditor-insert-variant-group").append('<a href="#" contenteditable="false" class="upfront-icon-button upfront-icon-button-delete ueditor-insert-remove"></a>');
-
+        return data;
     },
-
-    allow_alignment: function( group_width_cls ){
-        if( typeof group_width_cls === "undefined" ) return false;
-
-        var group_width_col = parseInt(group_width_cls.replace("c", ""), 10),
-            editor_col = Upfront.Util.grid.width_to_col( this.$editor.width() ) ;
-
-        return ( group_width_col + 2 ) <= editor_col;
+    render_shortcode: function(data){
+        data = data || this.prepare_data();
+        this.$shortcode = this.$(".post-images-shortcode");
+        this.$shortcode.html(this.shortcode_tpl(data));
     },
     //this function is called automatically by UEditorInsert whenever the controls are created or refreshed
     control_events: function(){
-        var me = this;
-
         /**
          * Image style from variants
          */
         this.listenTo(this.controls, 'control:ok:style', function(view, control){
             if( view._style ){
+                var style = view._style.toJSON();
                 this.data.set("variant_id", view.variant_id );
-                this.data.set("alignment", view._style );
-
+                this.data.set("style", view._style.toJSON());
                 view.data.set( "selected", view.variant_id   );
             }
             control.close();
         });
 
     },
-    get_group_width_cls: function( image ){
-        var image_col = Upfront.Util.grid.width_to_col( image.width),
-            editor_col = Upfront.Util.grid.width_to_col( this.$editor.width() ) ;
+    /**
+     * Imports images using caption shortcode
+     *
+     * @param $contentEl
+     * @param insertsData
+     * @param inserts
+     * @returns {*}
+     */
+    importFromShortcode: function($contentEl, insertsData, inserts){
+        var self = this,
+            inserts = {};
 
-        if( ( image_col + 1 ) <= editor_col ){
-            return Upfront.Settings.LayoutEditor.Grid.class + image_col;
-        }else{
-            return Upfront.Settings.LayoutEditor.Grid.class + editor_col;
-        }
+        var content = wp.shortcode.replace("caption", $contentEl.html(), function( shorcode_data ){
+
+            if( shorcode_data.attrs.named.id.indexOf("uinsert-") !== -1 ){ // if it's a UF caption shortcode
+                var insert =  self.importFromShortcode_UF( shorcode_data );
+
+                // add this insert to the pull of inserts
+                inserts[insert.data.id] = insert;
+
+                // return insert el's outerHtml to replace the shortcode
+                return insert.el.outerHTML;
+            }else{ // it's a wp caption shortcode
+                return self.importFromShortcode_WP( shorcode_data );
+            }
+
+        });
+
+        $contentEl.html( content );
+        return inserts;
     },
-    get_proper_image: function(){
-        var data = this.data.toJSON(),
-            image = data.imageFull,
-            grid = Upfront.Settings.LayoutEditor.Grid,
-            editor_col = Upfront.Util.grid.width_to_col( this.$editor.width() )
-            ;
+    importFromShortcode_UF: function( shorcode_data ){
+        var imageData = _.extend({}, this.defaultData ),
+            realSize = this.calculateRealSize( imageData.imageThumb.src )
+        ;
 
-        if( !_.isEmpty( data.selectedImage.src  ) ) return  data.selectedImage;
+        imageData.imageThumb.src = this.get_image_regex( shorcode_data.content );
 
-        return image;
+        imageData.imageFull = {
+            width: realSize.width,
+            height: realSize.height,
+            src: imageData.imageThumb.src
+        };
+
+        imageData.style = Upfront.Content.ImageVariants.findWhere({ 'vid': shorcode_data.attrs.named.uf_variant }).toJSON();
+        imageData.variant_id = imageData.style.vid;
+        var insert = new PostImageInsert({data: imageData});
+
+        insert.render();
+        return insert;
+
+    },
+    importFromShortcode_WP: function( shorcode_data ){
+
+    },
+    /**
+     * Extract iamge src from shorcdode's content
+     *
+     * @param content
+     * @returns string image src value
+     */
+    get_image_regex: function( content ){
+        var regex = new RegExp('\[src] *= *[\"\']{0,1}([^\"\'\ >]*)');
+        return content.match( regex )[1];
     },
     //Import from any image tag
     importFromImage: function(image){
@@ -183,6 +205,7 @@ var ImageInsert = base.ImageInsertBase.extend({
         if(link.origin != window.location.origin)
             imageData.isLocal = 0;
 
+        this.calculateRealSize(imageSpecs.src);
 
         imageData.imageThumb = imageSpecs;
         imageData.imageFull = {
@@ -214,15 +237,15 @@ var ImageInsert = base.ImageInsertBase.extend({
         if( !_.isEmpty( $caption.text() ) ){
             imageData.caption =  $caption.html();
         }
-        
-
 
         caption_order = $caption.prev( $image_wrapper).length ? 1 : 0;
-        imageData.show_caption = $caption.length;
+        if( $caption.length === 0){
+            caption_order = 1;
+        }
         if(  $group.length ){
             imageData.style = {
                 caption: {
-                    "order": 1,
+                    "order": caption_order,
                     "height": $caption.css("minHeight") ? $caption.css("minHeight").replace("px", "") : $caption.height(),
                     "width_cls": Upfront.Util.grid.derive_column_class( caption_classes ),
                     "left_cls": Upfront.Util.grid.derive_marginleft_class( caption_classes ),
@@ -246,40 +269,23 @@ var ImageInsert = base.ImageInsertBase.extend({
                 }
             };
             imageData.variant_id = $group.data("variant");
-            if( imageData.variant_id  ){
-                imageData.alignment = BasicImageVariants.findWhere( { "vid": $group.data("variant") } );
-            }
         }else{
-            imageData.alignment = BasicImageVariants.first();
-            imageData.variant_id = imageData.alignment.vid;
+            imageData.style = Upfront.Content.ImageVariants.first().toJSON();
+            imageData.variant_id = imageData.style.vid;
         }
 
 
-        var insert = new ImageInsert({data: imageData});
-
+        var insert = new PostImageInsert({data: imageData});
 
         insert.render();
         image.replaceWith(insert.$el);
         return insert;
-    },
-    getStyleView: function(){
-        if(this.styleView)
-            return this.styleView;
-        var view = new utils.ImageStylesView( this.data );
-        this.styleView = view;
-        return view;
-
-    },
-    updateControlsPosition: function(){
-        this.controls.$el.css({
-            marginLeft: 15,
-            marginTop:15
-        });
     }
 });
 
+
 return {
-    ImageInsert: ImageInsert
+    PostImageInsert: PostImageInsert
 };
 
 //End Define

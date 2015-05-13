@@ -1,5 +1,10 @@
 ;(function($){
-define(["scripts/redactor/ueditor-insert", "scripts/redactor/ueditor-image-insert", "scripts/redactor/ueditor-embed-insert"], function(Insert,ImageInsert, EmbedInsert){
+define([
+    "scripts/redactor/ueditor-insert",
+    "scripts/redactor/ueditor-image-insert",
+    "scripts/redactor/ueditor-image-insert-post",
+    "scripts/redactor/ueditor-embed-insert"
+], function(Insert, ImageInsert, ImageInsertPost, EmbedInsert){
 
 var TYPES = {
 	IMAGE: 'image',
@@ -9,7 +14,7 @@ var TYPES = {
 
 var insertObjects = {};
 var insertNames = {};
-insertObjects[TYPES.POSTIMAGE] = ImageInsert.PostImageInsert;
+insertObjects[TYPES.POSTIMAGE] = ImageInsertPost.PostImageInsert;
 insertObjects[TYPES.IMAGE] = ImageInsert.ImageInsert;
 insertObjects[TYPES.EMBED] = EmbedInsert.EmbedInsert;
 

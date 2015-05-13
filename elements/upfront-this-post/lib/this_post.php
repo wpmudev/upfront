@@ -24,7 +24,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 		$parts = array_values(apply_filters('upfront_post_parts', self::$PARTNAMES));
 
 		// adds features to wp caption shortcode to support UF post image variants
-		add_filter("img_caption_shortcode", array( $this, "image_caption_shortcode"), 10, 30);
+//		add_filter("img_caption_shortcode", array( $this, "image_caption_shortcode"), 10, 30);
 	}
 
 	public static function get_post_part($type, $options = array(), $tpl = false, $properties = array()){
@@ -669,6 +669,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 	public static function get_post_image_markup($data) {
 		global $post;
+		if( !is_object( $post ) ) return;
 		$style_variant = (object) Upfront_ChildTheme::get_image_variant_by_id( $data->uf_variant );
 		$style_variant->label_id = !empty( $style_variant->label ) ? "ueditor-image-style-" . str_replace(" ", "-", trim(strtolower( $style_variant->label )))  : $style_variant->vid;
 
@@ -710,40 +711,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 		return $markup;
 	}
 
-	/**
-	 * Uses img_caption_shortcode to add support for UF image variants
-	 *
-	 * @param $out
-	 * @param $attr
-	 * @param $content
-	 *
-	 * @return string|void
-	 */
-	function image_caption_shortcode( $out, $attr, $content ){
 
-		$is_wp_cation = strpos($attr["id"], "uinsert-" ) === false;
-
-		if( $is_wp_cation ) return; // returning null let's wp do it's own logic and rendering for caption shortcode
-
-//		$html = '<img class="" src="http://images.dressale.hk/images/320x480/201301/B/petite-girl-s-favorite-a-line-graduation-dress-with-empire-waist_1358440282519.jpg" alt="" width="320" height="480" /> Petite Girl';
-		$image_reg = preg_match('/src="([^"]+)"/', $content, $image_arr);
-		$href_reg = preg_match('/href="([^"]+)"/', $content, $anchor_arr);
-
-		$data = (object) shortcode_atts( array(
-			'id'	  => '',
-			'caption' => '',
-			'class'   => '',
-			'uf_variant' => '',
-			'uf_isLocal' => true,
-			'uf_show_caption' => true,
-			'image' => $image_reg ? $image_arr[1] : "",
-			'linkUrl' => $href_reg ? $anchor_arr[1] : "",
-
-		), $attr, 'caption' );
-
-		return self::get_post_image_markup($data);
-
-	}
 }
 
 /**

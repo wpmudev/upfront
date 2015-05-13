@@ -194,6 +194,10 @@ class Upfront {
 			wp_enqueue_script('jquery-ui-datepicker');
 		}
 
+		/**
+		 * Todo Sam: make it cleaner
+		 */
+		wp_enqueue_script("wp_shortcode", admin_url("wp-includes/js/shortcode.js"), array("jquery", "underscore"));
 	}
 
 	function inject_global_dependencies () {
@@ -287,3 +291,38 @@ EOAdditivemarkup;
 }
 add_action('init', array('Upfront', 'serve'), 0);
 
+add_filter("img_caption_shortcode", "image_caption_shortcode", 10, 3);
+/**
+ * Uses img_caption_shortcode to add support for UF image variants
+ *
+ * @param $out
+ * @param $attr
+ * @param $content
+ *
+ * @return string|void
+ */
+function image_caption_shortcode( $out, $attr, $content ){
+
+	$is_wp_cation = strpos($attr["id"], "uinsert-" ) === false;
+
+	if( $is_wp_cation ) return; // returning null let's wp do it's own logic and rendering for caption shortcode
+
+//		$html = '<img class="" src="http://images.dressale.hk/images/320x480/201301/B/petite-girl-s-favorite-a-line-graduation-dress-with-empire-waist_1358440282519.jpg" alt="" width="320" height="480" /> Petite Girl';
+	$image_reg = preg_match('/src="([^"]+)"/', $content, $image_arr);
+	$href_reg = preg_match('/href="([^"]+)"/', $content, $anchor_arr);
+
+	$data = (object) shortcode_atts( array(
+		'id'	  => '',
+		'caption' => '',
+		'class'   => '',
+		'uf_variant' => '',
+		'uf_isLocal' => true,
+		'uf_show_caption' => true,
+		'image' => $image_reg ? $image_arr[1] : "",
+		'linkUrl' => $href_reg ? $anchor_arr[1] : "",
+
+	), $attr, 'caption' );
+
+	return Upfront_ThisPostView::get_post_image_markup($data);
+
+}

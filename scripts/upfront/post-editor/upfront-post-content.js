@@ -143,6 +143,12 @@ var PostContentEditor = Backbone.View.extend({
 			content = isExcerpt ? this.rawExcerpt: this.rawContent,
 			editorOptions = isExcerpt ? this.getExcerptEditorOptions() : this.getContentEditorOptions()
 			;
+
+			//content = wp.shortcode.replace("caption", content, function(shorcode){
+			//	if( shorcode.attrs.named.id.indexOf("uinsert") !== -1 ){
+			//		return " ";
+			//	}
+			//});
 			this.onContentsEdited = _.bind(this.contentEdited, this);
 			this.editors = [];
 			this.parts.contents.html(content).ueditor(editorOptions);
