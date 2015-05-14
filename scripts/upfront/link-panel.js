@@ -113,7 +113,8 @@ define([
 		},
 
 		onOkClick: function() {
-			console.log('wassup wassup');
+			if(this.model.get('type') == 'lightbox' && this.$el.find('.js-ulinkpanel-lightbox-input').val() != '')
+				this.createLightBox();
 			this.trigger('change', this.model.toJSON());
 		},
 
