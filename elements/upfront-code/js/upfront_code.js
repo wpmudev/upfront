@@ -667,7 +667,7 @@ var CodeView = Upfront.Views.ObjectView.extend({
 });
 
 var CodeElement = Upfront.Views.Editor.Sidebar.Element.extend({
-	priority: 130,
+	priority: 120,
 
 	render: function () {
 		this.$el.addClass('upfront-icon-element upfront-icon-element-code');

@@ -355,7 +355,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 
 
 var ButtonElement = Upfront.Views.Editor.Sidebar.Element.extend({
-	priority: 260,
+	priority: 150,
 	render: function () {
 		this.$el.addClass('upfront-icon-element upfront-icon-element-button');
 		this.$el.html('Button');

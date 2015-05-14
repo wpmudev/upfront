@@ -115,7 +115,7 @@
     });
 
     var YoutubeElement = Upfront.Views.Editor.Sidebar.Element.extend({
-      priority: 110,
+      priority: 90,
       render: function () {
         this.$el.addClass('upfront-icon-element upfront-icon-element-youtube');
         this.$el.html('YouTube');
