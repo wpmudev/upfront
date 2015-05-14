@@ -773,6 +773,7 @@ RedactorPlugins.upfrontLink = function() {
 				});
 
 				this.listenTo(this.linkPanel, 'change change:target', function (data) {
+					this.redactor.link.setClass('someclass')
 					if (data.type == 'unlink') {
 						this.unlink();
 					} else {
