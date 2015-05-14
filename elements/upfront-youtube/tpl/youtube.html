@@ -25,7 +25,7 @@
 		<?php if(empty($first_to_thumbnails[0]) && $i == 0) { continue; } ?>
           <div class="uyoutube-thumbnail uyoutube-gallery-item <?php if(empty($first_to_thumbnails[0])) { ?>firstHidden<?php } ?>" data-video-id="<?php echo $multiple_videos[$i]['id'] ?>" style="width:<?php echo $thumbWidth ?>px;">
             <div class="uyoutube-thumb-mask" style="width:<?php echo $thumbWidth ?>px;height:<?php echo $thumbHeight ?>px"><!-- add width height dynamicly -->
-              <img class="uyoutube-thumb" src="<?php echo $multiple_videos[$i]['thumbnail'] ?>" style="width:<?php echo $thumbWidth ?>px; margin-top: -<?php echo $thumbOffset ?>px;">
+				<img class="uyoutube-thumb" src="http://img.youtube.com/vi/<?php echo $multiple_videos[$i]['id'] ?>/hqdefault.jpg" style="width:<?php echo $thumbWidth ?>px; margin-top: -<?php echo $thumbOffset ?>px;">
             </div>
             <?php if(!empty($multiple_show_title[0])){ ?>
             <h4 class="uyoutube-title"><?php echo $multiple_videos[$i]['title'] ?></h4>
@@ -41,7 +41,7 @@
         <div class="uyoutube-thumbnail uyoutube-list-item <?php if(empty($first_to_thumbnails[0])) { ?>firstHidden<?php } ?>" data-video-id="<?php echo $multiple_videos[$i]['id'] ?>">
             <div class="uyoutube-thumb-holder" style="width:<?php echo $thumbWidth ?>px;">
               <div class="uyoutube-thumb-mask" style="width:<?php echo $thumbWidth ?>px;height:<?php echo $thumbHeight ?>px">
-                <img class="uyoutube-thumb" style="width:<?php echo $thumbWidth ?>px; margin-top: -<?php echo $thumbOffset ?>px" src="<?php echo $multiple_videos[$i]['thumbnail'] ?>" width="80">
+                <img class="uyoutube-thumb" style="width:<?php echo $thumbWidth ?>px; margin-top: -<?php echo $thumbOffset ?>px" src="http://img.youtube.com/vi/<?php echo $multiple_videos[$i]['id'] ?>/hqdefault.jpg" width="80">
               </div>
             </div>
             <div class="uyoutube-content-holder">
