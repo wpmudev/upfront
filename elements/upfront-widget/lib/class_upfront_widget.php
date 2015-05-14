@@ -52,13 +52,20 @@ class Upfront_Uwidget {
 		if (is_array($callback) && !empty($callback[0]) && is_object($callback[0]) && $callback[0] instanceof WP_Widget) {
 			$callback[1] = 'widget';
 		}
+
+		$classname = !empty($wp_registered_widgets[$widget]['classname'])
+			? $wp_registered_widgets[$widget]['classname']
+			: ''
+		;
+
 		$args = wp_parse_args($args, array(
-			'before_widget' => '',
-			'before_title' => '',
-			'after_title' => '',
-			'after_widget' => '',
+			'before_widget' => sprintf('<div class="widget %s">', $classname),
+			'before_title' => '<h2 class="widgettitle">',
+			'after_title' => '</h2>',
+			'after_widget' => '</div>',
 		));
 		$args = apply_filters('upfront_widget_widget_args', $args);
+		
 		$instance = wp_parse_args($instance, array(
 			'title' => '',
 		));
