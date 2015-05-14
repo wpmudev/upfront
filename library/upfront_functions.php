@@ -298,6 +298,32 @@ function upfront_get_attachment_image_lazy ($attachment_id, $ref_size = 'full') 
 	return $out;
 }
 
+function upfront_get_edited_post_thumbnail ($post_id = null, $return_src = false) {
+	$post_id = ( null === $post_id ) ? get_the_ID() : $post_id;
+	$image_id = get_post_thumbnail_id($post_id);
+	$data = get_post_meta($post_id, '_thumbnail_data', true);
+	if ( empty($data) || $data['imageId'] != $image_id || empty($data['src']) ) // no edited thumbnail
+		return get_the_post_thumbnail($post_id);
+	if ( $return_src)
+		return $data['src'];
+	$image = get_post($image_id);
+	$attr = array(
+		'src' => $data['src'],
+		'width' => $data['cropSize']['width'],
+		'height' => $data['cropSize']['height'],
+		'alt' => trim(strip_tags( get_post_meta($image, '_wp_attachment_image_alt', true) ))
+	);
+	if ( empty($attr['alt']) )
+		$attr['alt'] = trim(strip_tags( $image->post_excerpt ));
+	if ( empty($attr['alt']) )
+		$attr['alt'] = trim(strip_tags( $image->post_title ));
+	$html = '<img';
+	foreach ( $attr as $name => $value )
+		$html .= ' ' . $name . '="' . $value . '"';
+	$html .= ' />';
+	return $html;
+}
+
 function upfront_realperson_hash($value) { 
 	$hash = 5381; 
 	$value = strtoupper($value); 

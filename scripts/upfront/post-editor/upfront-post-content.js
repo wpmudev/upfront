@@ -392,9 +392,10 @@ var PostContentEditor = Backbone.View.extend({
 	openImageEditor: function(newImage, imageInfo, postId){
 		var me = this,
 		mask = this.$('.ueditor_thumb'),
+		height = this.partOptions.featured_image && this.partOptions.featured_image.height ? this.partOptions.featured_image.height : 60
 		editorOptions = _.extend({}, imageInfo, {
 			maskOffset: mask.offset(),
-			maskSize: {width: mask.width(), height: mask.height()},
+			maskSize: {width: mask.width(), height: height},
 			setImageSize: newImage,
 			extraButtons: [
 			{

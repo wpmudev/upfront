@@ -110,7 +110,7 @@ class Upfront_ThisPostView extends Upfront_Object {
                 break;
 
 			case self::$PARTNAMES['IMAGE']:
-				$replacements['%image%'] = get_the_post_thumbnail();
+				$replacements['%image%'] = upfront_get_edited_post_thumbnail();
 				$replacements['%permalink%'] = get_permalink();
 				break;
 
@@ -180,6 +180,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 		return $date;
 	}
+	
 	protected static  function excerpt( $limit ) {
         $excerpt = explode(' ', get_the_excerpt(), $limit);
         if (count($excerpt)>=$limit) {
