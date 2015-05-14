@@ -506,7 +506,13 @@ Upfront.Application.LayoutEditor.add_object("Uyoutube", {
 	"Settings": YoutubeSettings,
 	'anchor': {
 		is_target: false
-	}
+	},
+	cssSelectors: {
+		'.upfront-youtube-container': { label: l10n.css.global_wrapper_label, info: l10n.css.global_wrapper_info },
+		'.uyoutube-thumbnails': { label: l10n.css.thumbnails_wrapper_label, info: l10n.css.thumbnails_wrapper_info},
+		'.uyoutube-thumbnail': { label: l10n.css.thumbnail_label, info: l10n.css.thumbnail_info }
+	},
+	cssSelectorsId: 'UyoutubeModel'
 });
 
 Upfront.Models.UyoutubeModel = UyoutubeModel;
