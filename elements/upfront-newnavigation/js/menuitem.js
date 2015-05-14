@@ -11,8 +11,8 @@ return (function ($) {
 			'click i.navigation-add-item': 'addMenuItem',
 			"contextmenu a.menu_item": "on_context_menu",
 			'click a.redactor_act': 'onOpenPanelClick',
-			'click .sub-menu': 'onOpenPanelSubMenuClick',
-			'click .upfront-save_settings': 'onOpenPanelSubMenuClick',
+			'click .sub-menu': 'onOpenPanelSubMenu',
+			'click .upfront-save_settings': 'onOpenPanelSubMenu',
 			'click .upfront-save_settings': 'processPanelsonsave',
 			'click > .open-item-controls': 'onOpenItemControlsClick'
 		},
@@ -134,7 +134,7 @@ return (function ($) {
 		},
 		
 		onOpenPanelSubMenuClick: function(event) {
-			event.preventDefault();
+			//event.preventDefault();
 			this.onOpenPanelSubMenu();
 		},
 		
@@ -144,11 +144,12 @@ return (function ($) {
 				this.$el.children('ul').sortable('disable');
 			} else {
 				this.$el.addClass('ui-sortable-handle');
-				this.$el.children('ul').sortable('enable');
-				this.$el.parent('ul').sortable('enable');
+				//this.$el.children('ul').sortable('enable');
+				//this.$el.parent('ul').sortable('enable');
 			}
 		},
 		processPanelsonsave: function() {
+			this.parent_view.$el.find('ul.time_being_display').removeClass('time_being_display');
 			this.toggleLinkPanel();
 			this.$el.removeClass('controls-visible');
 			this.setItemControlsState();
@@ -201,11 +202,19 @@ return (function ($) {
 		},
 
 		setItemControlsState: function() {
-
 			if (this.$el.hasClass('controls-visible')) {
 				this.controlsVisible = true;
 				this.$el.siblings().removeClass('controls-visible');
+
 				this.$el.parents('.menu').sortable('disable');
+
+				var currentcontext = this.$el.closest('ul');
+
+				while(currentcontext.length > 0 && currentcontext.hasClass('sub-menu')) {
+					currentcontext.addClass('time_being_display');
+					currentcontext = currentcontext.parent().parent('ul');
+				}
+
 			} else {
 				this.controlsVisible = false;
 				if (this.$el.parents('.menu').find('.controls-visible').length === 0) {
@@ -254,6 +263,7 @@ return (function ($) {
 			var placeholder = $('<ul>').addClass('sub-menu').addClass('time_being_display');
 			$(e.target).closest('li').append(placeholder);
 			this.parent_view.addMenuItem(placeholder);
+			this.parent_view.makeSortable();
 		},
 
 		addMenuItem: function(e) {
@@ -349,7 +359,7 @@ return (function ($) {
 			me.$el.find('a.new_menu_item').removeClass('new_menu_item');
 			me.$el.removeClass('new_menu_item');
 
-			me.parent_view.$el.find('ul.time_being_display').removeClass('time_being_display');
+			//me.parent_view.$el.find('ul.time_being_display').removeClass('time_being_display');
 
 			var menu_item = ($(this.el).children('a.menu_item').length > 0) ? $(this.el).children('a.menu_item'):$(this.el).children('div').children('a.menu_item');
 

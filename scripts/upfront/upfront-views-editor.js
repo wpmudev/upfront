@@ -6805,12 +6805,13 @@ var CSSEditor = Backbone.View.extend({
 			;
 			_.each(individual_selectors, function (sel) {
 				sel = $.trim(sel);
-				var clean_selector = sel.replace(/:[^\s]+/, ''), // Clean up states states such as :hover, so as to not mess up the matching
-					is_container = clean_selector[0] === '@' || !!$(selector + clean_selector).closest('#' + me.element_id).length,
+				var clean_selector = sel.replace(/:[^\s]+/, ''); // Clean up states states such as :hover, so as to not mess up the matching
+				var	is_container = clean_selector[0] === '@' || me.recursiveExistence(selector, clean_selector),
 					spacer = is_container
 						? '' // This is not a descentent selector - used for containers
 						: ' ' // This is a descentent selector
 				;
+				
 				processed_selectors.push('' +
 					selector + spacer + sel +
 				'');
@@ -6832,7 +6833,17 @@ var CSSEditor = Backbone.View.extend({
 		return separator + rules.join('\n}' + separator) + '\n}';
 	*/
 	},
+	recursiveExistence: function(selector, clean_selector) {
+		var splitted = clean_selector.split(' ');
+		var me = this;
+		while(splitted.length > 1) {
+			if(!!$(selector + splitted.join(' ')).closest('#' + me.element_id).length)
+				return true;
+			splitted.pop();
+		}
 
+		return false;
+	},
 	// When stylename changes upfront needs to update element model theme_style property
 	// and also to save style under new stylename.
 	updateStylename: function() {

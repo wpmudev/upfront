@@ -106,16 +106,14 @@ define([
 			this.listenTo(this.model, 'change:url', function() {
 				me.trigger('change', me.model.toJSON());
 			});
-			// 'change:target' modified to 'change' because unlink doesnt have any target
-			this.listenTo(this.model, 'change', function() {
-				if(me.model.attributes.type == "unlink" || me.model.attributes.url !== "") {
-					me.trigger('change:target', me.model.toJSON());
-				}
+			this.listenTo(this.model, 'change:target', function() {
+				me.trigger('change:target', me.model.toJSON());
 			});
 			this.listenTo(this.model, 'change:type', this.handleTypeChange);
 		},
 
 		onOkClick: function() {
+			console.log('wassup wassup');
 			this.trigger('change', this.model.toJSON());
 		},
 
@@ -217,6 +215,7 @@ define([
 
 		/* Rendering stuff below */
 		render: function() {
+			
 			var me = this;
 
 			var tplData = {
@@ -226,8 +225,12 @@ define([
 				button: this.button,
 				type: this.model.get('type')
 			};
+			
 
+			
+			
 			this.$el.html(this.tpl(tplData));
+
 
 			this.renderTypeSelect();
 
@@ -261,12 +264,8 @@ define([
 				label: '',
 				values: typeSelectValues,
 				default_value: this.model.get('type'),
-				change: function (value) {
-					me.model.set({'type': value});
-
-					if ('anchor' === value || 'email' === value) {
-						me.model.set({'target': '_self'});
-					}
+				change: function () {
+					me.model.set({'type': this.get_value()});
 				}
 			});
 

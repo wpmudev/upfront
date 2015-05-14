@@ -319,6 +319,9 @@ div.upfront-navigation div[data-style="burger"][data-aliment="right"] i.navigati
   margin-left: 10px;
 }
 
+div.upfront-navigation div[data-style="burger"] ul.sub-menu {
+  z-index: inherit !important;
+}
 
 /* Hover to open sub-menu in the layout edit mode */
 div.upfront-navigation div[data-style="burger"] > ul.menu li.menu-item:hover > ul.sub-menu {

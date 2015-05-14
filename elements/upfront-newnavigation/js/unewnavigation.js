@@ -246,7 +246,11 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				if($(this).hasClass('ui-sortable')) $(this).sortable('enable');
 		});
 	},
-	onDeactivate: function() {
+	onDeactivate: function(e) {
+		
+		//if($(e.target).closest('form').length > 0)
+		//	return;
+
 		if(this.$el.find('li.edit_mode').data('backboneview'))
 			this.$el.find('li.edit_mode').data('backboneview').model['being-edited']= false;
 		this.$el.find('li.edit_mode a.menu_item').blur();
@@ -376,6 +380,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		}).on('keydown', function(e) {if(e.which == 13) me.$el.find('div.upfront-object-content > div.new_menu_button > input').trigger('click');});
 
 		me.$el.find('div.upfront-object-content > div.new_menu_name').on('mouseout', function() {
+			console.log('wtf 1');
 			me.$el.parent().parent().parent().draggable('enable');
 		});
 
@@ -384,6 +389,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		});
 
 		me.$el.find('div.upfront-object-content > div.existing_menu_list').on('mouseout', function() {
+			console.log('wtf 2');
 			me.$el.parent().parent().parent().draggable('enable');
 		});
 
@@ -398,6 +404,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		});
 
 		me.$el.find('div.upfront-object-content > div.existing_menu_list input').on('change', function() {
+			console.log('wtf 3');
 			me.$el.parent().parent().parent().draggable('enable');
 			if(me.$el.find('div.upfront-object-content > div.existing_menu_list input:checked').val() != 0) {
 				var id = me.$el.find('div.upfront-object-content > div.existing_menu_list input:checked').val();
@@ -783,7 +790,9 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			}
 			$dom.append($li);
 		});
-		$dom.find('li:last').append('<i class="navigation-add-item"></i>')
+
+		$dom.children('li:last').append('<i class="navigation-add-item"></i>');
+
 		return $dom;
 	},
 

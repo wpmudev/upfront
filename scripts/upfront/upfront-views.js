@@ -20,7 +20,7 @@ define([
     "text!upfront/templates/region_container.html",
     "text!upfront/templates/region.html",
     "text!upfront/templates/layout.html",
-  ];
+];
 
 	// Auto-assign the template contents to internal variable
 	var _template_args = arguments,
@@ -4406,7 +4406,7 @@ define([
 				if(currentEntity){
 					//If the click has been made outside the currentEntity, deactivate it
 					if(!$(e.target).closest(currentEntity.el).length){
-						currentEntity.trigger('deactivated');
+						currentEntity.trigger('deactivated', e);
 						currentEntity.$el.removeClass("upfront-active_entity");
 						Upfront.Events.trigger("entity:deactivated", e);
 						Upfront.data.currentEntity = false;
