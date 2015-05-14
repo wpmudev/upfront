@@ -3,7 +3,9 @@
 define([
 	'text!elements/upfront-youtube/tpl/youtube.html',
 	'text!elements/upfront-youtube/tpl/clonevideo.html'
-	], function(youtubeTpl, cloneTpl) {
+], function(youtubeTpl, cloneTpl) {
+		
+var l10n = Upfront.Settings.l10n.youtube_element;		
 		
 var UyoutubeModel = Upfront.Models.ObjectModel.extend({
 	init: function () {
@@ -47,9 +49,9 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 
 		if(this.property('youtube_status') === 'starting'){
 		rendered += '<div class="upfront-youtube-starting-select" style="min-height:' + this.elementSize.height + 'px">' +
-			'<div class="upfront-youtube-starting-text">Enter YouTube video URL</div>'+
-			'<div class="upfront-youtube-box-wrapper"><input type="text" class="upfront-youtube-url" placeholder="YouTube URL" /></div>' +
-			'<div class="upfront-youtube-button-wrapper"><button type="button" class="upfront-youtube-button">Go</button></div>'+
+			'<div class="upfront-youtube-starting-text">'+ l10n.enter_url +'</div>'+
+			'<div class="upfront-youtube-box-wrapper"><input type="text" class="upfront-youtube-url" placeholder="'+ l10n.url_placeholder +'" /></div>' +
+			'<div class="upfront-youtube-button-wrapper"><button type="button" class="upfront-youtube-button">'+ l10n.submit_button +'</button></div>'+
 			'</div>';
 		}
 
@@ -177,7 +179,6 @@ var YoutubeSettings = Upfront.Views.Editor.Settings.Settings.extend({
 	events: {
 		'change .multiple_sources': 'multipleVideos',
 	},
-	
 
 	initialize: function (opts) {
 		this.options = opts;
@@ -240,7 +241,7 @@ var YoutubeSettings = Upfront.Views.Editor.Settings.Settings.extend({
 	},
 
 	get_title: function () {
-		return "YouTube settings";
+		return l10n.element_settings;
 	}
 });
 
@@ -262,22 +263,22 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 		this.settings = _([
 		new SettingsItem({
 			className: 'optional-field align-center',
-			title: 'APPEARANCE',
+			title: l10n.apperance_title,
 			fields: [
 				new Fields.Checkboxes({
 					model: this.model,
 					property: 'multiple_show_title',
 					label: "",
 					values: [
-					{ label: "", value: 'multiple_show_title' },
+						{ label: "", value: 'multiple_show_title' },
 					]
 				}),
 				new Fields.Number({
 					model: this.model,
 					property: 'multiple_title_length',
-					label: "Video Title limit to",
+					label: l10n.title_limit,
 					label_style: 'inline',
-					suffix: "characters",
+					suffix: l10n.characters_label,
 					min: 50,
 					max: 100,
 					step: 1,
@@ -292,15 +293,15 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 					model: this.model,
 					property: 'display_style',
 					layout: "horizontal",
-					label: 'Display style:',
+					label: l10n.display_style,
 					className: 'field-display_style upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios',
 					values: [
 						{
-							label: 'Gallery',
+							label: l10n.gallery_label,
 							value: 'gallery',
 						},
 						{
-							label: 'List',
+							label: l10n.list_label,
 							value: 'list',
 						}
 					]
@@ -310,7 +311,7 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 					model: this.model,
 					property: 'first_to_thumbnails',
 					values: [
-						{ label: "Add 1st Video to Thumbnails", value: 'first_to_thumbnails' },
+						{ label: l10n.first_to_thumbnails, value: 'first_to_thumbnails' },
 					]
 				}),
 				
@@ -320,8 +321,8 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 					min: 100,
 					max: 250,
 					step: 5,
-					label: 'Thumbnail Size',
-					info: 'Slide to resize the thumbnails.',
+					label: l10n.thumbnail_size,
+					info: l10n.thumbnail_size_info,
 					valueTextFilter: function(value){
 						return '(' + value + 'px x ' + me.model.get_property_value_by_name('thumbHeight') + 'px)';
 					}
@@ -334,24 +335,25 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 		}),
 		new SettingsItem({
 			model: this.model,
-			title: 'VIDEO(S)',
+			title: l10n.videos_title,
 			className: 'multiple_video_section',
 			fields: [
 				new Fields.Text({
 					model: this.model,
-					label: 'Video 1 URL',
+					label: l10n.default_video,
 					className: 'multiple_sources yt_first_video',
 					property: 'multiple_source_1',
-					placeholder: "YouTube Video URL"
+					placeholder: l10n.video_placeholder
 				}),
 			],
 		}),
 		new SettingsItem({
 			model: this.model,
+			className: 'upfront-add-another-wrapper',
 			fields: [
 			new Fields.Button({
 				className: 'upfront-add-another',
-				label: 'Add Another Video',
+				label: l10n.add_video,
 				compact: true,
 				on_click: function(){
 					me.cloneMultipleVideo();
@@ -373,7 +375,7 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	},
 
 	get_label: function () {
-		return 'Settings';
+		return l10n.settings;
 	},
 
 	get_title: function () {
@@ -472,11 +474,12 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 		var me = this;
 		if(videos.length > 0) {
 			//Empty the container to prevent field duplicate
-			me.$el.find('.multiple_video_section').html('<div class="upfront-settings-item-title"><span>VIDEO(S)</span></div>');
+			me.$el.find('.multiple_video_section').html('<div class="upfront-settings-item-title"><span>'+ l10n.videos_title +'</span></div>');
 			$(videos).each(function( index, element ) {  
 				me.$el.find('.multiple_video_section').append(_.template(cloneTpl, { 
 					cloneId: index + 1,
-					videoUrl: element.video_url
+					videoUrl: element.video_url,
+					l10n: l10n.template
 				}));
 			});
 		}
@@ -489,6 +492,7 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 		$('.multiple_video_section').append(_.template(cloneTpl, { 
 			cloneId: panel_count + 1,
 			videoUrl: '',
+			l10n: l10n.template
 		}));
 		this.toggleMultipleSettings();
 	}

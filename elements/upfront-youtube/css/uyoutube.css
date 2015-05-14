@@ -118,6 +118,10 @@
 	margin-bottom: 15px;
 }
 
+.multiple_video_section {
+	margin-top: 15px;
+}
+
 .upfront-field-wrap-multiple span.upfront-field-multiple-horizontal {
 	margin-right: 15px;
 	margin-top: 5px;
@@ -217,15 +221,22 @@ input.upfront-like-box_url:-ms-input-placeholder {
 	height: 40px;
 }
 
-.upfront-add-another {
+.upfront-add-another input {
 	border: 1px solid #a1c4e5;
 	background: #e5f3ff;
 	display: inline-block;
-	padding: 2px 8px;
+	padding: 3px 8px;
 	border-radius: 4px;
 	font-size: 13px;
 }
 
-.upfront-add-another:hover {
+.upfront-add-another input:hover {
 	background: #d4e9fb;
+	border: 1px solid #a1c4e5;
 }
+
+.upfront-add-another-wrapper .upfront-settings-item-title {
+	display: none;
+}
+
+.uyoutube-gallery-item { margin-left:0 !important; }

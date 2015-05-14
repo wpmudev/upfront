@@ -10,7 +10,6 @@ class Upfront_UyoutubeView extends Upfront_Object {
 			'has_settings' => 1,
 			'class' =>  'upfront-youtube',
 			'id_slug' => 'uyoutube',
-
 			'videoType' => false,
 			'display_style' => 'gallery',
 			'multiple_source' => 'user_channel',
@@ -90,6 +89,56 @@ class Upfront_UyoutubeView extends Upfront_Object {
 					$out[$prop['name']] = $prop['value'];
 			return $out;
 	}
+	
+	public static function add_l10n_strings ($strings) {
+		if (!empty($strings['youtube_element'])) return $strings;
+		$strings['youtube_element'] = self::_get_l10n();
+		return $strings;
+	}
+
+	private static function _get_l10n ($key=false) {
+		$l10n = array(
+			'element_name' => __('YouTube', 'upfront'),
+			'enter_url' => __('Enter YouTube video URL', 'upfront'),
+			'url_placeholder' => __('YouTube URL', 'upfront'),
+			'submit_button' => __('Go', 'upfront'),
+			'element_settings' => __('YouTube settings', 'upfront'),
+			'apperance_title' => __('APPEARANCE', 'upfront'),
+			'title_limit' => __('Video Title limit to', 'upfront'),
+			'characters_label' => __('characters', 'upfront'),
+			'display_style' => __('Display style:', 'upfront'),
+			'gallery_label' => __('Gallery', 'upfront'),
+			'list_label' => __('List', 'upfront'),
+			'first_to_thumbnails' => __('Add 1st Video to Thumbnails', 'upfront'),
+			'thumbnail_size' => __('Thumbnail Size', 'upfront'),
+			'thumbnail_size_info' => __('Slide to resize the thumbnails.', 'upfront'),
+			'videos_title' => __('VIDEO(S)', 'upfront'),
+			'default_video' => __('Video 1 URL', 'upfront'),
+			'video_placeholder' => __('YouTube Video URL', 'upfront'),
+			'add_video' => __('Add Another Video', 'upfront'),
+			'settings' => __('Settings', 'upfront'),
+			'template' => array(
+				'video_label' => __('Video', 'upfront'),
+				'url_label' => __('URL', 'upfront'),
+				'url_placeholder' => __('YouTube Video URL', 'upfront'),
+			),
+			'css' => array(
+				'global_wrapper_label' => __('Global container', 'upfront'),
+				'global_wrapper_info' => __('The layer that contains all content of the element.', 'upfront'),
+				'thumbnails_wrapper_label' => __('Thumbnails container', 'upfront'),
+				'thumbnails_wrapper_info' => __('The layer that contains thumbnails.', 'upfront'),
+				'thumbnail_label' => __('Thumbnail', 'upfront'),
+				'thumbnail__info' => __('The layer that contains thumbnail image and title.', 'upfront'),
+			),
+		
+			'edit_text' => __('Edit Text', 'upfront'),
+		);
+		return !empty($key)
+			? (!empty($l10n[$key]) ? $l10n[$key] : $key)
+			: $l10n
+		;
+	}
+	
 
 	public static function add_styles_scripts() {
 		upfront_add_element_style('uyoutube-style', array('css/uyoutube.css', dirname(__FILE__)));
