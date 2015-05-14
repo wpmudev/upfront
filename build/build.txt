@@ -169,6 +169,9 @@ text!elements/upfront-tabs/tpl/utabs.html
 D:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-tabs/js/utabs.js
 D:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-this-post/js/this_post.js
 D:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-this-page/js/this_page.js
+D:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-widget/js/model.js
+D:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-widget/js/element.js
+D:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-widget/js/settings.js
 D:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-widget/js/uwidget.js
 text!elements/upfront-youtube/tpl/youtube.html
 D:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-youtube/js/uyoutube.js
