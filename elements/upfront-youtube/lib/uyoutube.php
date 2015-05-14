@@ -129,7 +129,7 @@ class Upfront_UyoutubeView extends Upfront_Object {
 				'thumbnails_wrapper_label' => __('Thumbnails container', 'upfront'),
 				'thumbnails_wrapper_info' => __('The layer that contains thumbnails.', 'upfront'),
 				'thumbnail_label' => __('Thumbnail', 'upfront'),
-				'thumbnail_info' => __('The layer that contains thumbnail image and title.', 'upfront'),
+				'thumbnail__info' => __('The layer that contains thumbnail image and title.', 'upfront'),
 			),
 		
 			'edit_text' => __('Edit Text', 'upfront'),
