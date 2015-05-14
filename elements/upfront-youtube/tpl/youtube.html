@@ -1,15 +1,17 @@
 <div class=" upfront-youtube-container">
-  <?php if ($videoType == 'single') { ?>
-    <?php if ($single_video_url) { ?>
-      <iframe src="http://www.youtube.com/embed/<?php echo $single_video_id ?>?modestbranding=1" height="<?php echo $player_height ?>" width="<?php echo $player_width ?>"></iframe>
-      <?php if(!empty($show_title[0])){ ?>
-        <h3><?php echo $title ?></h3>
-      <?php } ?>
-    <?php } else { ?>
-      <div class="uyoutube-player" style="width: <?php echo $player_width ?>px; height: <?php echo $player_height ?>px;"></div>
-    <?php } ?>
-  <?php } ?>
-  <?php if ($videoType == 'multiple') { ?>
+
+    <?php if ($multiple_videos && count($multiple_videos) == 1) { ?>
+		<?php if(!empty($multiple_videos[0]['id'])) { ?>
+			<iframe src="http://www.youtube.com/embed/<?php echo $multiple_videos[0]['id'] ?>?modestbranding=1" height="<?php echo $player_height ?>" width="<?php echo $player_width ?>"></iframe>
+			<?php if(!empty($multiple_show_title[0])){ ?>
+				<h3><?php echo $multiple_videos[0]['title'] ?></h3>
+			<?php } ?>
+		<?php } else { ?>
+			<div class="uyoutube-player" style="width: <?php echo $player_width ?>px; height: <?php echo $player_height ?>px;"></div>
+		<?php } ?>
+	<?php } ?>
+	
+	<?php if (count($multiple_videos) > 1) { ?>
     <div class="uyoutube-main-video">
       <?php if ( !empty($multiple_videos[0] ) ) { ?>
         <iframe src="http://www.youtube.com/embed/<?php echo $multiple_videos[0]['id'] ?>?modestbranding=1" height="<?php echo $player_height ?>" width="<?php echo $player_width ?>"></iframe>
@@ -20,7 +22,8 @@
     <?php if ($display_style == 'gallery') { ?>
       <?php if ($multiple_videos && count( $multiple_videos )  ) {  ?>
         <?php for ($i = 0; $i < count( $multiple_videos ); $i++) {  ?>
-          <div class="uyoutube-gallery-item" data-video-id="<?php echo $multiple_videos[$i]['id'] ?>" style="width:<?php echo $thumbWidth ?>px;">
+		<?php if(empty($first_to_thumbnails[0]) && $i == 0) { continue; } ?>
+          <div class="uyoutube-gallery-item <?php if(empty($first_to_thumbnails[0])) { ?>firstHidden<?php } ?>" data-video-id="<?php echo $multiple_videos[$i]['id'] ?>" style="width:<?php echo $thumbWidth ?>px;">
             <div class="uyoutube-thumb-mask" style="width:<?php echo $thumbWidth ?>px;height:<?php echo $thumbHeight ?>px"><!-- add width height dynamicly -->
               <img class="uyoutube-thumb" src="<?php echo $multiple_videos[$i]['thumbnail'] ?>" style="width:<?php echo $thumbWidth ?>px; margin-top: -<?php echo $thumbOffset ?>px;">
             </div>
@@ -29,18 +32,13 @@
             <?php } ?>
           </div>
         <?php } ?>
-      <?php } else { ?>
-        <?php for ($i = 0; $i < count( $multiple_videos ); $i++) { ?>
-          <div class="uyoutube-gallery-item" style="width:<?php echo $thumbWidth ?>px;">
-            <div class="uyoutube-thumb-mask" style="width:<?php echo $thumbWidth ?>px;height:<?php echo $thumbHeight ?>px"></div><!-- add width height dynamicly -->
-          </div>
-        <?php } ?>
       <?php } ?>
     <?php } ?>
     <?php if ($display_style == 'list') { ?>
       <?php if ($multiple_videos) { ?>
         <?php for ($i = 0; $i < count( $multiple_videos ); $i++) { ?>
-        <div class="uyoutube-list-item" data-video-id="<?php echo $multiple_videos[$i]['id'] ?>">
+		<?php if(empty($first_to_thumbnails[0]) && $i == 0) { continue; } ?>
+        <div class="uyoutube-list-item <?php if(empty($first_to_thumbnails[0])) { ?>firstHidden<?php } ?>" data-video-id="<?php echo $multiple_videos[$i]['id'] ?>">
             <div class="uyoutube-thumb-holder" style="width:<?php echo $thumbWidth ?>px;">
               <div class="uyoutube-thumb-mask" style="width:<?php echo $thumbWidth ?>px;height:<?php echo $thumbHeight ?>px">
                 <img class="uyoutube-thumb" style="width:<?php echo $thumbWidth ?>px; margin-top: -<?php echo $thumbOffset ?>px" src="<?php echo $multiple_videos[$i]['thumbnail'] ?>" width="80">
@@ -53,19 +51,7 @@
             </div>
           </div>
         <?php } ?>
-      <?php } else { ?>
-        <?php for ($i = 0; $i < count( $multiple_videos ); $i++) { ?>
-          <div class="uyoutube-list-item">
-            <div class="uyoutube-thumb-holder" style="width:<?php echo $thumbWidth ?>px;">
-              <div class="uyoutube-thumb-mask" style="width:<?php echo $thumbWidth ?>px; height:<?php echo $thumbHeight ?>px"></div>
-            </div>
-            <div class="uyoutube-content-holder">
-              <h4 class="uyoutube-title uyoutube-fake-title"></h4>
-              <p class="uyoutube-description uyoutube-fake-description"></p>
-            </div>
-          </div>
-        <?php } ?>
-      <?php } ?>
+      <?php }  ?>
     <?php } ?>
   <?php } ?>
 </div>
