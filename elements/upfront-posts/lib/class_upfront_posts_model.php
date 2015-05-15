@@ -112,13 +112,19 @@ class Upfront_Posts_Model {
 		// Determine sticky posts behavior
 		$args['ignore_sticky_posts'] = empty($data['sticky']); // Ignore by default
 
+		$has_pages = !empty($args['paged']) && $args['paged'] > 1;
+
 		// Exclude if requested
-		if (!empty($data['sticky']) && 'exclude' === $data['sticky']) {
+		if (
+			!empty($data['sticky']) && 'exclude' === $data['sticky'] 
+			|| 
+			!empty($data['sticky']) && 'prepend' === $data['sticky'] && $has_pages // If we're prepending stickies, drop them on subsequent pages
+		) {
 			$args['post__not_in'] = get_option('sticky_posts');
 		}
 
 		// Prepend if requested
-		if (!empty($data['sticky']) && 'prepend' === $data['sticky']) {
+		if (!empty($data['sticky']) && 'prepend' === $data['sticky'] && !$has_pages) {
 			// Hack: force `is_home` property so WP does what it does to sticky stuff
 			add_filter('posts_clauses', array('Upfront_Posts_Model', 'filter_force_home'), 10, 2);
 		}
@@ -126,7 +132,7 @@ class Upfront_Posts_Model {
 		$query = new WP_Query($args);
 
 		// Drop the hack as soon as we're done
-		if (!empty($data['sticky']) && 'prepend' === $data['sticky']) {
+		if (!empty($data['sticky']) && 'prepend' === $data['sticky'] && !$has_pages) {
 			remove_filter('posts_clauses', array('Upfront_Posts_Model', 'filter_force_home'), 10, 2);
 		}
 		return $query;
