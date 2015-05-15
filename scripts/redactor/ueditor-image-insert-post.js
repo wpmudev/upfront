@@ -11,13 +11,18 @@ var PostImageInsert = base.ImageInsertBase.extend({
     tpl: _.template($(tpls).find('#post-image-insert-tpl').html()),
     shortcode_tpl: _.template($(tpls).find('#post-image-insert-shortcode-tpl').html().replace(/\s+/g," ")),
     //Called just after initialize
-    init: function(){
+    init: function(opts){
         this.controlsData = [
             {id: 'style', type: 'dialog', icon: 'style', tooltip: 'Style', view: this.getStyleView()},
             {id: 'link', type: 'dialog', icon: 'link', tooltip: 'Link image', view: this.getLinkView()},
             {id: 'toggle_caption', type: 'simple', icon: 'caption', tooltip: 'Toggle Caption', active: _.bind( this.get_caption_state, this ) }
         ];
         this.createControls();
+        if( this.is_wp ){
+            this.tpl = _.template($(tpls).find('#post-image-insert-wp-tpl').html());
+            this.shortcode_tpl = _.template($(tpls).find('#post-image-insert-shortcode-wp-tpl').html().replace(/\s+/g," "));
+        }
+
     },
     // The user want a new insert. Fetch all the required data to create a new image insert
     start: function(){
@@ -38,18 +43,22 @@ var PostImageInsert = base.ImageInsertBase.extend({
     },
     // Insert editor UI
     render: function(){
-        var data = this.prepare_data();
+        var data = this.is_wp ? this.data.toJSON() : this.prepare_data();
+
 
         this.$el
             .html(this.tpl(data))
         ;
+
+        this.$shortcode_el = this.is_wp ?  this.$(".post-images-shortcode-wp") : this.$(".post-images-shortcode");
 
         this.render_shortcode(data);
         this.createControls();
         this.controls.render();
         this.$(".ueditor-insert-variant-group").append(this.controls.$el);
         this.make_caption_editable();
-        this.updateControlsPosition();
+        if(!this.is_wp)
+            this.updateControlsPosition();
         this.$(".ueditor-insert-variant-group").append('<a href="#" contenteditable="false" class="upfront-icon-button upfront-icon-button-delete ueditor-insert-remove"></a>');
 
     },
@@ -100,8 +109,8 @@ var PostImageInsert = base.ImageInsertBase.extend({
         return data;
     },
     render_shortcode: function(data){
-        data = data || this.prepare_data();
-        this.$shortcode = this.$(".post-images-shortcode");
+        data = data || ( this.is_wp ? this.data.toJSON() : this.prepare_data() );
+
         var html = this.shortcode_tpl(data);
 
         //cleanup new lines and unneeded whitespace
@@ -114,7 +123,7 @@ var PostImageInsert = base.ImageInsertBase.extend({
         html = html.replace( /\s*\[caption([^\[]+)\[\/caption\]\s*/gi, '\n\n[caption$1[/caption]\n\n' );
         html = html.replace( /caption\]\n\n+\[caption/g, 'caption]\n\n[caption' );
 
-        this.$shortcode.html( html );
+        this.$shortcode_el.html( html );
     },
     //this function is called automatically by UEditorInsert whenever the controls are created or refreshed
     control_events: function(){
@@ -143,29 +152,35 @@ var PostImageInsert = base.ImageInsertBase.extend({
      */
     importFromShortcode: function($contentEl, insertsData, inserts){
         var self = this,
+            insert,
             inserts = {};
 
         var content = wp.shortcode.replace("caption", $contentEl.html(), function( shortcode_data ){
 
             shortcode_data.parse_content = $.parseHTML( shortcode_data.content );
 
-            if( shortcode_data.attrs.named.id.indexOf("uinsert-") !== -1 ){ // if it's a UF caption shortcode
-                var insert =  self.importFromShortcode_UF( shortcode_data );
-
-                // add this insert to the pull of inserts
-                inserts[insert.data.id] = insert;
-
-                // return insert el's outerHtml to replace the shortcode
-                return insert.el.outerHTML;
+            if( shortcode_data.get("id").indexOf("uinsert-") !== -1 ){ // if it's a UF caption shortcode
+                insert =  self.importFromShortcode_UF( shortcode_data );
             }else{ // it's a wp caption shortcode
-                return self.importFromShortcode_WP( shortcode_data );
+                insert = self.importFromShortcode_WP( shortcode_data );
             }
 
+            // add this insert to the pull of inserts
+            inserts[insert.data.id] = insert;
+
+            // return insert el's outerHtml to replace the shortcode
+            return insert.el.outerHTML;
         });
 
         $contentEl.html( content );
         return inserts;
     },
+    /**
+     * Imports from captions shortcode with uf specific id
+     *
+     * @param shortcode_data
+     * @returns {PostImageInsert}
+     */
     importFromShortcode_UF: function( shortcode_data ){
         var imageData = _.extend({}, this.defaultData ),
             realSize = this.calculateRealSize( imageData.imageThumb.src )
@@ -182,13 +197,13 @@ var PostImageInsert = base.ImageInsertBase.extend({
             src: imageData.imageThumb.src
         };
 
-        imageData.style = Upfront.Content.ImageVariants.findWhere({ 'vid': shortcode_data.attrs.named.uf_variant }).toJSON();
+        imageData.style = Upfront.Content.ImageVariants.findWhere({ 'vid': shortcode_data.get("uf_variant") }).toJSON();
 
-        imageData.style.caption.show =  shortcode_data.attrs.named.uf_show_caption;
+        imageData.style.caption.show =  shortcode_data.get("uf_show_caption");
 
 
         imageData.variant_id = imageData.style.vid;
-        var insert = new PostImageInsert({data: imageData});
+        var insert = new PostImageInsert({data: imageData, is_wp: false});
 
         insert.render();
         return insert;
@@ -196,7 +211,33 @@ var PostImageInsert = base.ImageInsertBase.extend({
     },
 
     importFromShortcode_WP: function( shortcode_data ){
+        var data = _.extend({}, this.wp_defaults, {
+            attachment_id: shortcode_data.get("id").replace("attachment_", ""),
+            caption:  this.get_shortcode_caption_text( $.parseHTML( shortcode_data.content ) ),
+            link_url: this.get_shortcode_url( shortcode_data.content ),
+            image: {
+                height: this.get_shortcode_content_image_height( shortcode_data.content ),
+                width:  shortcode_data.get("width"),
+                src: this.get_shortcode_image_src( shortcode_data.content ),
+            },
+            style: {
+                caption:{
+                    show: true
+                },
+                wrapper: {
+                    alignment: shortcode_data.get("align"),
+                    wrapper: parseInt( shortcode_data.get("width") ) + 10
+                },
+                image: {
+                    size_class: this.get_shortcode_content_image_size_class( shortcode_data.content )
+                }
+            }
+        } );
 
+        var insert = new PostImageInsert({data: data, is_wp: true});
+
+        insert.render();
+        return insert;
     },
 
     /**
@@ -212,12 +253,12 @@ var PostImageInsert = base.ImageInsertBase.extend({
     /**
      * Extracts shortcode caption text from jquery parsed html
      *
-     * @param parse_content jquery parsed html
+     * @param parsed_content jquery parsed html
      * @returns {string}
      */
-    get_shortcode_caption_text: function( parse_content ){
+    get_shortcode_caption_text: function( parsed_content ){
         var html = "";
-        _.each(parse_content, function( el, i ){
+        _.each(parsed_content, function( el, i ){
             if( el.innerHtml )
                 html += el.innerHtml;
 
@@ -226,6 +267,18 @@ var PostImageInsert = base.ImageInsertBase.extend({
         });
 
         return html;
+    },
+
+    get_shortcode_content_image_size_class: function( content ){
+        var regex = /(?:^|\W)size-(\w+)(?!\w)/g,
+            $img = $("<div>").html(content).find("img"),
+            reg_result = $img.length ? $img.attr("class").match( regex ) : false;
+        return reg_result ? reg_result[0] : "";
+    },
+
+    get_shortcode_content_image_height: function( content ){
+        var $img = $("<div>").html(content).find("img");
+        return ($img.length ? $img.attr("height") : "") || "auto";
     },
     /**
      * Populates proper data regarding linking of the image

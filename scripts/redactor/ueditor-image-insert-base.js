@@ -58,6 +58,28 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
             }
         }
     },
+    wp_defaults: {
+        attachment_id: "",
+        caption: "WP default caption",
+        link_url: "",
+        image: {
+            src: "",
+            width: 0,
+            height: 0
+        },
+        style:{
+            wrapper: {
+                alignment: "alignnone",
+                width: "310"
+            },
+            caption: {
+                show: true
+            },
+            image: {
+                size_class: "size-medium"
+            }
+        }
+    },
     events:{
         "click .ueditor-insert-remove": "click_remove"
     },

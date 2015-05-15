@@ -54,7 +54,7 @@
 </script>
 
 <script type="text/template" id="post-image-insert-shortcode-tpl">
-    [caption id="{{id}}"  uf_variant="{{variant_id}}" uf_islocal="{{isLocal}}" uf_show_caption="{{show_caption}}" ]
+    [caption id="{{id}}"  uf_variant="{{variant_id}}" uf_show_caption="{{show_caption}}" ]
         {[if( style.caption.order == 0 ) {]}
             {{ caption }}
         {[ } ]}
@@ -66,6 +66,23 @@
             {{ caption }}
         {[ } ]}
     [/caption]
+</script>
+<script type="text/template" id="post-image-insert-wp-tpl">
+    <div id="attachment_{{attachment_id}}" style="width: {{style.wrapper.alignment}}px" class="wp-caption {{style.wrapper.alignment}}">
+        {[ if(link_url){ ]}<a href="{{link_url}}"> {[ } ]}
+            <img src="{{image.src}}" {[ if( image.width ){  ]} width="{{image.width}}" {[ } ]} {[ if(image.height){ ]} height="{{image.height}}" {[ } ]} class="{{style.image.size_class}} wp-image-{{attachment_id}}" >
+        {[ if(link_url){ ]} </a> {[ } ]}
+        <p class="wp-caption-text">{{caption}}</p>
+    </div>
+    <div class="post-images-shortcode-wp"></div>
+</script>
+<script type="text/template" id="post-image-insert-shortcode-wp-tpl">
+   [caption id="attachment_{{attachment_id}}" align="{{style.wrapper.alignment}}" width="{{style.image.width}}"]
+        {[ if(link_url){ ]}<a href="{{link_url}}"> {[ } ]}
+            <img src="{{image.src}}" alt="{{caption}}" {[ if( style.image.width ){  ]} width="{{image.width}}" {[ } ]} {[ if(image.height){ ]} height="{{style.image.height}}" {[ } ]} class="{{style.image.size_class}}  wp-image-{{attachment_id}}">
+       {[ if(link_url){ ]} </a> {[ } ]}
+        {{caption}}
+   [/caption]
 </script>
 <script type="text/template" id="image-insert-tpl">
     <div data-variant="{{variant_id}}" class="ueditor-insert ueditor-insert-variant-group {{style.label_id}} ueditor-insert-float-{{style.group.float}} {{style.group.width_cls}} {{style.group.left_cls}}" style="min-height: {{style.group.height}}px;float:{{style.group.float}}; {[if( style.group.marginRight > 0 ){]}margin-right:{{style.group.marginRight}}px;{[ } ]} {[if( style.group.marginLeft > 0 ) {]}margin-left:{{style.group.marginLeft}}px;{[ } ]}" >

@@ -147,16 +147,18 @@ var PostContentEditor = Backbone.View.extend({
             /**
              * Replace wp captions from rawContent with their markup
              */
-            var $wp_captions = this.parts.contents.find("[id^='attachment'].wp-caption");
+            //var $wp_captions = this.parts.contents.find("[id^='attachment'].wp-caption");
 
-            content = wp.shortcode.replace("caption", content, function(caption){
-               var id = caption.attrs.named.id.toString();
-
-                var markup = $wp_captions.filter(function(){
-                    return this.id == id;
-                });
-                return markup.length ? markup[0].innerHTML : "";
-            });
+            //content = wp.shortcode.replace("caption", content, function(caption){
+            //   var id = caption.get("id").toString();
+            //
+            //    var markup = $wp_captions.filter(function(){
+            //        return this.id == id;
+            //    }),
+            //    shortcode = "<div class='post-images-shortcode-wp'>" + caption.string() + "</div>";
+            //
+            //    return markup.length ? markup.append(shortcode)[0].outerHTML : "";
+            //});
 
 
 			this.onContentsEdited = _.bind(this.contentEdited, this);

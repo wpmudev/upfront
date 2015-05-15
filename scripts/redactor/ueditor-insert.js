@@ -20,7 +20,7 @@ var UeditorInsert = Backbone.View.extend({
 	initialize: function(opts){
 		opts = opts || {};
 		var data = opts.data || {};
-		data = _.extend({}, this.defaultData, data);
+		//data = _.extend({}, this.defaultData, data);
 		if(!data.id){
 			data.id = 'uinsert-' + (++Upfront.data.ueditor.insertCount);
 			//Trigger the insertcount change for updating the server
@@ -29,7 +29,7 @@ var UeditorInsert = Backbone.View.extend({
 		this.el.id = data.id;
 		this.data = new Backbone.Model(data);
 		this.listenTo(this.data, 'change add remove reset', this.render);
-
+        this.is_wp = opts.is_wp;
 		this.createControls();
 
 
