@@ -6836,7 +6836,7 @@ var CSSEditor = Backbone.View.extend({
 	recursiveExistence: function(selector, clean_selector) {
 		var splitted = clean_selector.split(' ');
 		var me = this;
-		while(splitted.length > 1) {
+		while(splitted.length > 0) {
 			if(!!$(selector + splitted.join(' ')).closest('#' + me.element_id).length)
 				return true;
 			splitted.pop();
