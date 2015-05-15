@@ -190,9 +190,20 @@ class Upfront_Posts_Model_Taxonomy extends Upfront_Posts_Model {
 	public static function spawn_query ($data) {
 		$args = array();
 
+		if (empty($data['query'])) {
+			global $wp_query;
+			$query = json_decode(json_encode($wp_query), true);
+		} else $query = $data['query'];
+		
+		// Let's deal with the pagination here
+		if (empty($data['pagination'])) {
+			$offset = self::get_offset($data);
+			if (!empty($offset)) $args['offset'] = $offset;
+		} else {
+			if (!empty($query['query_vars']['paged'])) $args['paged'] = $query['query_vars']['paged'];
+			if (!empty($query['query_vars']['page'])) $args['paged'] = $query['query_vars']['page'];
+		}
 		$args['posts_per_page'] = self::get_limit($data);
-		$offset = self::get_offset($data);
-		if (!empty($offset)) $args['offset'] = $offset;
 
 		$args['tax_query'] = array();
 		$tax_query = array();
