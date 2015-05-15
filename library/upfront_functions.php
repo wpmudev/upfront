@@ -302,15 +302,15 @@ function upfront_get_edited_post_thumbnail ($post_id = null, $return_src = false
 	$post_id = ( null === $post_id ) ? get_the_ID() : $post_id;
 	$image_id = get_post_thumbnail_id($post_id);
 	$data = get_post_meta($post_id, '_thumbnail_data', true);
-	if ( empty($data) || (!empty($data['imageId']) && $data['imageId'] != $image_id) || empty($data['src']) ) // no edited thumbnail
+	if ( empty($data) || empty( $data['imageId'] ) || $data['imageId'] != $image_id || empty($data['src']) ) // no edited thumbnail
 		return get_the_post_thumbnail($post_id);
 	if ( $return_src)
 		return $data['src'];
 	$image = get_post($image_id);
 	$attr = array(
 		'src' => $data['src'],
-		'width' => !empty($data['cropSize']['width']) ? $data['cropSize']['width'] : 0,
-		'height' => !empty($data['cropSize']['height']) ? $data['cropSize']['height'] : 0,
+		'width' => $data['cropSize']['width'],
+		'height' => $data['cropSize']['height'],
 		'alt' => trim(strip_tags( get_post_meta($image, '_wp_attachment_image_alt', true) ))
 	);
 	if ( empty($attr['alt']) )
