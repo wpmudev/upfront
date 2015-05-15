@@ -444,7 +444,7 @@ var Views = {
 					url = imageModel.get('image').src
 				;
 
-				url = url.replace(document.location.origin, '');
+				//url = url.replace(document.location.origin, ''); // Let's not do this
 
 				if(currentSyntax == 'style')
 					me.currentEditor.insert('url("' + url + '")');
