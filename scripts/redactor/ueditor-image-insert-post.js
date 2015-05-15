@@ -102,7 +102,19 @@ var PostImageInsert = base.ImageInsertBase.extend({
     render_shortcode: function(data){
         data = data || this.prepare_data();
         this.$shortcode = this.$(".post-images-shortcode");
-        this.$shortcode.html(this.shortcode_tpl(data));
+        var html = this.shortcode_tpl(data);
+
+        //cleanup new lines and unneeded whitespace
+        html = html.replace( /\[caption[\s\S]+?\[\/caption\]/g, function( a ) {
+            return a.replace( /<br([^>]*)>/g, '<wp-temp-br$1>' ).replace( /[\r\n\t]+/, '' );
+        });
+
+        html = html.replace( /\s*<div/g, '\n<div' );
+        html = html.replace( /<\/div>\s*/g, '</div>\n' );
+        html = html.replace( /\s*\[caption([^\[]+)\[\/caption\]\s*/gi, '\n\n[caption$1[/caption]\n\n' );
+        html = html.replace( /caption\]\n\n+\[caption/g, 'caption]\n\n[caption' );
+
+        this.$shortcode.html( html );
     },
     //this function is called automatically by UEditorInsert whenever the controls are created or refreshed
     control_events: function(){

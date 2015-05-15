@@ -323,6 +323,6 @@ function image_caption_shortcode( $out, $attr, $content ){
 
 	), $attr, 'caption' );
 
-	return Upfront_ThisPostView::get_post_image_markup($data);
+	 return Upfront_ThisPostView::get_post_image_markup($data);
 
 }

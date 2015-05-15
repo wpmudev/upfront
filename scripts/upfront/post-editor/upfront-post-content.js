@@ -144,6 +144,21 @@ var PostContentEditor = Backbone.View.extend({
 			editorOptions = isExcerpt ? this.getExcerptEditorOptions() : this.getContentEditorOptions()
 			;
 
+            /**
+             * Replace wp captions from rawContent with their markup
+             */
+            var $wp_captions = this.parts.contents.find("[id^='attachment'].wp-caption");
+
+            content = wp.shortcode.replace("caption", content, function(caption){
+               var id = caption.attrs.named.id.toString();
+
+                var markup = $wp_captions.filter(function(){
+                    return this.id == id;
+                });
+                return markup.length ? markup[0].innerHTML : "";
+            });
+
+
 			this.onContentsEdited = _.bind(this.contentEdited, this);
 			this.editors = [];
 			this.parts.contents.html(content).ueditor(editorOptions);
