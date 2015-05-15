@@ -186,10 +186,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 
 		if ('custom' === type) this.populate_custom_items();
 		else if ('taxonomy' === type) this.populate_tax_items();
-		else {
-			this.populate_shared_tax_generic_items();
-			this.populate_pagination_items();
-		}
+		else this.populate_generic_items();
 	},
 
 	populate_custom_items: function () {
@@ -204,6 +201,11 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 			this.trigger("post:removed");
 		}, this);
 		this.fields = _([fld]);
+	},
+
+	populate_generic_items: function () {
+		this.populate_shared_tax_generic_items();
+		this.populate_pagination_items();
 	},
 
 	populate_tax_items: function () {
