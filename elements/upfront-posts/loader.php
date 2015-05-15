@@ -90,6 +90,21 @@ class Upfront_Posts extends Upfront_Server {
 		// Handle legacy element parsing
 		add_filter('upfront-virtual_region-object_defaults-fallback', array($this, 'handle_legacy_data'), 10, 2);
 		add_filter('upfront-output-get_markup-fallback', array($this, 'handle_legacy_output'), 10, 2);
+
+		// Force out the 404 handling for archives
+		add_action('parse_request', array($this, 'force_wp_archive_limit'));
+	}
+
+	/**
+	 * Force default limit to single post.
+	 * This is because on archive pages, we're using our own posts element.
+	 * The default query global will use whatever instead, and will 404 if its limit
+	 * value is higher than our posts element
+	 *
+	 * @param WP $wp WordPress object
+	 */
+	public function force_wp_archive_limit ($wp) {
+		if (!empty($wp->query_vars['paged'])) $wp->query_vars['posts_per_page'] = 1;
 	}
 
 	public function handle_legacy_data ($data, $type) {
