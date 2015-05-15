@@ -307,6 +307,16 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 				min: 1,
 				max: 20
 			}));
+			this.fields.push(new Upfront.Views.Editor.Field.Radios({
+				model: this.model,
+				property: "sticky",
+				label: l10n.sticky_posts,
+				values: [
+					{label: l10n.sticky_ignore, value: ""},
+					{label: l10n.sticky_prepend, value: "prepend"},
+					{label: l10n.sticky_exclude, value: "exclude"},
+				]
+			}));
 		}
 		this.fields.push(new Upfront.Views.Editor.Field.Radios({
 			model: this.model,
@@ -356,7 +366,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 			property: "term",
 			values: terms
 		});
-		this.fields._wrapped[3] = field;
+		this.fields._wrapped[4] = field;
 		this.$el.empty();
 		this.render();
 	}
