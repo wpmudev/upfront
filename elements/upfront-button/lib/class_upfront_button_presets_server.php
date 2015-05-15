@@ -56,7 +56,7 @@ class Upfront_Button_Presets_Server extends Upfront_Presets_Server {
 			}
 		}
 		
-		return self::$instance->clearPreset($button_presets, true);
+		return $button_presets;
 	}
 }
 

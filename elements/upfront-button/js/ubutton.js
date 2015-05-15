@@ -95,6 +95,12 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		PresetUtil.updatePresetStyle('button', props, settingsStyleTpl);
 
 	},
+	
+	clear_preset_name: function(preset) {
+		preset = preset.replace(/[^\w\s]/gi, '');
+		preset = preset.replace(' ', '-');
+		return preset;
+	},
 		
 	get_content_markup: function () {
 		var props = this.extract_properties();
@@ -104,9 +110,11 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			props.preset = props.currentpreset;
 			this.model.set_property('preset', props.currentpreset)
 		}
-
+		
 		props.preset = props.preset || 'default';
 		
+		props.preset = this.clear_preset_name(props.preset);
+
 		return this.buttonTpl(props);
 	},
 	
