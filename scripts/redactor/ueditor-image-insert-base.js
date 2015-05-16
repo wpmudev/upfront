@@ -120,7 +120,8 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
                 buttons: [],
                 placeholder: self.defaultData.caption,
                 inserts:[],
-                focus: false
+                focus: false,
+                paragraphize: false
             })
             .attr('contenteditable', false)
         ;

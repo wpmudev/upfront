@@ -122,7 +122,7 @@ var PostImageInsert = base.ImageInsertBase.extend({
         html = html.replace( /<\/div>\s*/g, '</div>\n' );
         html = html.replace( /\s*\[caption([^\[]+)\[\/caption\]\s*/gi, '\n\n[caption$1[/caption]\n\n' );
         html = html.replace( /caption\]\n\n+\[caption/g, 'caption]\n\n[caption' );
-
+        html = html.replace(/\s+/g," ");
         this.$shortcode_el.html( html );
     },
     //this function is called automatically by UEditorInsert whenever the controls are created or refreshed
