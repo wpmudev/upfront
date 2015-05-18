@@ -2422,7 +2422,7 @@ define([
             this.edit_colors = new SidebarPanel_Settings_Item_Colors_Editor({"model": this.model});
         },
         get_title: function () {
-            return "Colors";
+            return l10n.colors_section;
         },
         on_render: function () {
             this.edit_colors.render();
@@ -2441,7 +2441,7 @@ define([
 			]);
 		},
 		get_title: function () {
-			return "Theme Settings";
+			return l10n.theme_settings;
 		},
 		on_render: function () {
 			var me = this;
