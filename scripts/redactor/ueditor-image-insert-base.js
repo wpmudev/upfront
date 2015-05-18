@@ -60,7 +60,7 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
     },
     wp_defaults: {
         attachment_id: "",
-        caption: "WP default caption",
+        caption: "Default caption",
         link_url: "",
         image: {
             src: "",
@@ -342,7 +342,7 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
             image = this.getSelectedImage(imagePost),
             imageData = this.is_wp ?  $.extend({}, this.wp_defaults, {
                 attachment_id: imagePost.ID,
-                caption:  imagePost.post_excerpt,
+                caption: imagePost.post_excerpt ?  imagePost.post_excerpt : "" ,
                 link_url: "",
                 image: image,
                 style: {

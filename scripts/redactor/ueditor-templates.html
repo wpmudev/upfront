@@ -68,11 +68,13 @@
     [/caption]
 </script>
 <script type="text/template" id="post-image-insert-wp-tpl">
-    <div id="attachment_{{attachment_id}}" style="width: {{style.wrapper.alignment}}px" class="wp-caption {{style.wrapper.alignment}}">
+    <div id="attachment_{{attachment_id}}" style="width: {{style.wrapper.width}}px" class="wp-caption {{style.wrapper.alignment}}">
         {[ if(link_url){ ]}<a href="{{link_url}}"> {[ } ]}
             <img src="{{image.src}}" {[ if( image.width ){  ]} width="{{image.width}}" {[ } ]} {[ if(image.height){ ]} height="{{image.height}}" {[ } ]} class="{{style.image.size_class}} wp-image-{{attachment_id}}" >
         {[ if(link_url){ ]} </a> {[ } ]}
-        <p class="wp-caption-text">{{caption}}</p>
+        {[ if(style.caption.show){ ]}
+            <p class="wp-caption-text">{{caption}}</p>
+        {[ } ]}
     </div>
     <div class="post-images-shortcode-wp"></div>
 </script>
