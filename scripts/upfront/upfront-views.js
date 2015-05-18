@@ -833,11 +833,11 @@ define([
 							ed.start(new_module_view, new_model);
 							ed.normalize(ed.els, ed.wraps);
 
-							// properly possition the new module and show it under the cursor
+							// properly position the new module and show it under the cursor
 							$new_module.css({
-								position: "absolute",
-								top: ( e.pageY-( off.top-pos.top )-(h/2) ),
-								left: ( e.pageX-( off.left-pos.left )-(w/2) ),
+								position: "relative",
+								top: ( e.pageY-off.top-(h/2) ),
+								left: ( e.pageX-off.left-(w/2) )
 							});
 
 							// Simulate and mousedown and actually trigger drag

@@ -2556,7 +2556,7 @@ var GridEditor = {
 					top = bottom_wrap.grid.bottom+1,
 					bottom_not_me = ( !me_wrap || ( bottom_wrap && me_wrap && bottom_wrap._id != me_wrap._id ) ),
 					priority_top = ( bottom_not_me && top > current_full_top ? top : current_full_top );
-				if ( can_drop(priority_top, bottom) ){
+				if ( can_drop(priority_top, bottom) || is_drop_me ){
 					ed.drops.push({
 						_id: ed._new_id(),
 						top: current_full_top,
