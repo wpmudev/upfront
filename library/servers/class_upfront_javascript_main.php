@@ -227,7 +227,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		$presets = '';
 		foreach ($preset_servers as $key => $server) {
 			$element_server = $server::get_instance();
-			$element_presets = $element_server->get_presets();
+			$element_presets = $element_server->get_presets_javascript_server();
 			$presets .= "{$key}Presets: {$element_presets}, \n";
 		}
 

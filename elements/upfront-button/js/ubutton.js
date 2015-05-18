@@ -97,8 +97,8 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 	},
 	
 	clear_preset_name: function(preset) {
-		preset = preset.replace(/[^\w\s]/gi, '');
 		preset = preset.replace(' ', '-');
+		preset = preset.replace(/[^-a-zA-Z0-9]/, '');
 		return preset;
 	},
 		

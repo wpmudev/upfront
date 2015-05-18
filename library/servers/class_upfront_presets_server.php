@@ -26,24 +26,6 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 	public function get() {
 		$this->_out(new Upfront_JsonResponse_Success($this->get_presets()));
 	}
-	
-	public function clearPreset($presets, $json) {
-		if($json) {
-			$presets = json_decode($presets, true);
-		}
-		
-		$cleared_preset = array();
-		foreach($presets as $preset) {
-			$preset['id'] = str_replace(' ', '-', $preset['id']);
-			$preset['id'] = preg_replace('/[^A-Za-z0-9\-]/', '', $preset['id']);
-			$cleared_preset[] = $preset;
-		}
-		if($json) {
-			$cleared_preset = json_encode($cleared_preset);
-		}
-		
-		return $cleared_preset; // Removes special chars.
-	}
 
 	public function delete() {
 		if (!isset($_POST['data'])) {
@@ -93,7 +75,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 		return $presets;
 	}
-
+	
 	protected function update_presets($presets = array()) {
 		update_option($this->db_key, json_encode($presets));
 	}
@@ -128,12 +110,12 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 	}
 
 	public function get_presets_styles() {
-		$presets = $this->clearPreset($this->get_presets(true), false);
+		$presets = $this->get_presets();
 		
 		if (empty($presets)) {
 			return '';
 		}
-
+		
 		$styles = '';
 		foreach ($presets as $preset) {
 			$args = array('properties' => $preset);
@@ -144,5 +126,20 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		}
 
 		return $styles;
+	}
+	
+	public function get_presets_javascript_server() {
+		$presets = get_option('upfront_' . get_stylesheet() . '_' . $this->elementName . '_presets');
+		$presets = apply_filters(
+			'upfront_get_' . $this->elementName . '_presets',
+			$presets,
+			array(
+				'json' => true
+			)
+		);
+		
+		if(empty($presets)) $presets = json_encode(array());
+		
+		return $presets;
 	}
 }

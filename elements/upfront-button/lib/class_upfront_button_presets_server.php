@@ -20,7 +20,7 @@ class Upfront_Button_Presets_Server extends Upfront_Presets_Server {
 	}
 	
 	public function get_preset_styles_filter($style) {
-		$style .= self::$instance->get_presets_styles();
+		$style .= $this->get_presets_styles();
 		return $style;
 	}
 
@@ -29,34 +29,46 @@ class Upfront_Button_Presets_Server extends Upfront_Presets_Server {
 	}
 	
 	public function get() {
-		$this->_out(new Upfront_JsonResponse_Success($this->clearPreset($this->get_presets(true))));
+		$this->_out(new Upfront_JsonResponse_Success($this->get_presets(true)));
 	}
-	
-	public function get_presets($as_array = false) {
-		$json = true;
-		if ($as_array) {
-			$json = false;
-			$as_array = true;
-		}
-		$button_presets = get_option('upfront_' . get_stylesheet() . '_button_presets');
-		$button_presets = apply_filters(
-			'upfront_get_button_presets',
-			$button_presets,
+		
+	public function get_presets() {
+		$presets = json_decode(get_option($this->db_key, '[]'), true);
+
+		$presets = apply_filters(
+			'upfront_get_' . $this->elementName . '_presets',
+			$presets,
 			array(
-				'json' => $json,
-				'as_array' => $as_array
+				'json' => false,
+				'as_array' => true
 			)
 		);
 		
-		if (empty($button_presets)) {
-			if($json) {
-				$button_presets = json_encode(array());
-			} else {
-				$button_presets = array();
-			}
+		$result = array();
+		
+		foreach ($presets as $preset) {
+			$preset['id'] = $this->clearPreset($preset['id']);
+				
+			$result[] = $preset;
 		}
 		
-		return $button_presets;
+		$this->update_presets($result);
+		
+		$presets = $result;
+
+		// Fail-safe
+		if (is_array($presets) === false) {
+			$presets = array();
+		}
+
+		return $presets;
+	}
+	
+	public function clearPreset($preset) {
+		$preset = str_replace(' ', '-', $preset);
+		$preset = preg_replace('/[^-a-zA-Z0-9]/', '', $preset);
+
+		return $preset; // Removes special chars.
 	}
 }
 
