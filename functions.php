@@ -81,7 +81,7 @@ class Upfront {
 	private function _add_supports () {
 		add_theme_support('post-thumbnails');
 		add_theme_support('title-tag'); // Let WP deal with our theme titles
-		register_nav_menu('default', _('Default'));
+		register_nav_menu('default', __('Default', 'upfront'));
 		// Do widget text
 		$do_widget_text = apply_filters(
 			'upfront-shortcode-enable_in_widgets',
@@ -268,19 +268,9 @@ class Upfront {
 			var _upfront_please_hold_on = ' . json_encode(__('Please, hold on for just a little bit more', 'upfront')) . ';
 		</script>';
 		echo <<<EOAdditivemarkup
-<div id="layouts" style="display:none"></div>
-<div id="properties" style="display:none">
-    <h3>Properties</h3>
-  </div>
-  <div id="commands" style="display:none">
-    <h3>Actions</h3>
-    <button class="upfront-finish_layout_editing">Finish editing</button>
-  </div>
-  <div id="sidebar-ui" class="upfront-ui"></div>
-  <div id="settings" style="display:none"></div>
-  <div id="contextmenu" style="display:none"></div>
+	<div id="sidebar-ui" class="upfront-ui"></div>
+	<div id="contextmenu" style="display:none"></div>
 EOAdditivemarkup;
-
 
 		do_action('upfront-core-inject_dependencies');
 	}
