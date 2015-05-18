@@ -4129,11 +4129,9 @@ var GridEditor = {
 			if ( !_.isObject(data[breakpoint_id]) )
 				data[breakpoint_id] = { edited: false };
 			if ( !data[breakpoint_id].edited ){
-				if ( !region.is_main() ){
-					// Sidebar, let's make the column to full width on responsive
-					if ( !sub || sub.match(/^(left|right)$/) ) {
-						data[breakpoint_id].col = default_breakpoint.columns;
-					}
+				if ( region.is_main() || ( !sub || sub.match(/^(left|right)$/) )  ){ 
+					// Sidebar/main region, let's make the column to full width on responsive
+					data[breakpoint_id].col = default_breakpoint.columns;
 				}
 			}
 			region.set_property('breakpoint', data, silent);
