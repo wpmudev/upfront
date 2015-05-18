@@ -80,6 +80,7 @@ class Upfront {
 
 	private function _add_supports () {
 		add_theme_support('post-thumbnails');
+		add_theme_support('title-tag'); // Let WP deal with our theme titles
 		register_nav_menu('default', _('Default'));
 		// Do widget text
 		$do_widget_text = apply_filters(
