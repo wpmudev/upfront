@@ -199,26 +199,26 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
 
         });
 
+        /**
+         * Manage editability on image insert el events
+         */
         self.$el.on("hover, click", function(e){
             e.stopPropagation();
-            var $parent = self.$el.closest('.redactor-editor');
             $caption.attr("contenteditable", true);
-            $parent.attr("contenteditable", false);
+            self.$editor.attr("contenteditable", false);
             self.caption_active = true;
         });
 
 
         /**
-         * Wait for the parent to get rendered
+         * Manage editability on $editor events
          */
-        setTimeout( function(){
-            var $parent = self.$el.closest('.redactor-editor');
-            $parent.on("mouseenter, click", function(e){
-                $caption.attr("contenteditable", false);
-                $parent.attr("contenteditable", true);
-                self.caption_active = false;
-            });
-        }, 10 );
+        this.$editor.on("mouseenter, click", function(e){
+            $caption.attr("contenteditable", false);
+            $(this).attr("contenteditable", true);
+            self.caption_active = false;
+        });
+
 
     },
     //this function is called automatically by UEditorInsert whenever the controls are created or refreshed
