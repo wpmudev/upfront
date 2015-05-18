@@ -107,6 +107,9 @@ class Upfront_MediaServer extends Upfront_Server {
 			'media_labels' => __('Media Labels', 'upfront'),
 			'media_label' => __('Media Label', 'upfront'),
 			'disabled' => __('This functionality has been disabled', 'upfront'),
+			'insert_options' => __('Insert Options', 'upfront'),
+			'image_inserts' => __('Image Inserts', 'upfront'),
+			'wp_default' => __('WP Default', 'upfront'),
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)

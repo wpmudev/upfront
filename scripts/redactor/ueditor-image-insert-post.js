@@ -18,19 +18,24 @@ var PostImageInsert = base.ImageInsertBase.extend({
             {id: 'toggle_caption', type: 'simple', icon: 'caption', tooltip: 'Toggle Caption', active: _.bind( this.get_caption_state, this ) }
         ];
         this.createControls();
+        this.set_template();
+
+    },
+    set_template: function(){
         if( this.is_wp ){
             this.tpl = _.template($(tpls).find('#post-image-insert-wp-tpl').html());
             this.shortcode_tpl = _.template($(tpls).find('#post-image-insert-shortcode-wp-tpl').html().replace(/\s+/g," "));
         }
-
     },
     // The user want a new insert. Fetch all the required data to create a new image insert
     start: function(){
         var me = this,
-            promise = Upfront.Media.Manager.open({multiple_selection: false})
+            promise = Upfront.Media.Manager.open({multiple_selection: false, insert_options: true})
             ;
 
         promise.done(function(popup, result){
+            me.is_wp = result.at(0).get("insert_option") === "wp_default";
+            me.set_template();
             var imageData = me.getImageData(result);
             imageData.id = me.data.id;
             me.data.clear({silent: true});
@@ -226,7 +231,7 @@ var PostImageInsert = base.ImageInsertBase.extend({
                 },
                 wrapper: {
                     alignment: shortcode_data.get("align"),
-                    wrapper: parseInt( shortcode_data.get("width") ) + 10
+                    width: parseInt( shortcode_data.get("width") ) + 10
                 },
                 image: {
                     size_class: this.get_shortcode_content_image_size_class( shortcode_data.content )

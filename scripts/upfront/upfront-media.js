@@ -1,6 +1,8 @@
 (function ($, undefined) {
 
-define(function() {
+define([
+    'scripts/upfront/upfront-media/insert-options-item-control'
+],function(InsertOptions) {
 
 	var MEDIA_SIZES = {
 		FULL: "full",
@@ -132,7 +134,8 @@ define(function() {
 	});
 	var MediaItem_Model = Backbone.Model.extend({
 		defaults: {
-			thumbnail: "<span class='upfront-image-upload-placeholder'></span>"
+			thumbnail: "<span class='upfront-image-upload-placeholder'></span>",
+            insert_option: "image_insert"
 		}
 	});
 
@@ -300,9 +303,10 @@ define(function() {
 	var MediaManager_Controls_View = Backbone.View.extend({
 		className: "upfront-media-controls",
 		is_search_active: false,
-		initialize: function () {
+		initialize: function (args) {
 			Upfront.Events.on("media:item:selection_changed", this.switch_controls, this);
 			Upfront.Events.on("media:search:requested", this.switch_to_search, this);
+            this.options = args.options;
 		},
 		render: function () {
 			this.render_filters();
@@ -315,7 +319,7 @@ define(function() {
 			else this.$el.removeClass('upfront-media-controls-search');
 		},
 		render_media: function (selected) {
-			var item_control = new MediaManager_ItemControl({model: new MediaCollection_Selection(selected)});
+			var item_control = new MediaManager_ItemControl({model: new MediaCollection_Selection(selected), options: this.options});
 			item_control.render();
 			this.$el.empty();
 			if (this.is_search_active) {
@@ -428,6 +432,9 @@ define(function() {
 
 		var MediaManager_ItemControl = Backbone.View.extend({
 			className: "upfront-item-control",
+            options: {
+                insert_options: false
+            },
 			templates: {
 				caption: _.template('<label class="upfront-field-label upfront-field-label-block">{{title}}</label>'),
 				shared_label: _.template('<a href="#remove" class="upfront-icon upfront-icon-media-label-delete" data-idx="{{value}}">{{filter}}</a>'),
@@ -438,20 +445,53 @@ define(function() {
 				"click .existing_labels a": "drop_label",
 				//"change .additional_sizes select": "select_size"
 			},
-			initialize: function () {
+			initialize: function ( opts ) {
 				this.model.on("change", this.render, this);
+                this.options = _.extend( this.options, opts.options );
 			},
 			render: function () {
-				this.$el.empty()
-					.append('<div class="change_title" />')
-					.append('<div class="add_labels" />')
-					.append('<div class="existing_labels" />')
-					.append('<div class="additional_sizes" />')
-				;
-				this.render_title();
-				this.render_labels_adding();
-				this.render_shared_labels();
-				this.render_additional_sizes();
+                var self = this,
+                    sections = _([
+                        'change_title',
+                        'add_labels',
+                        'existing_labels',
+                        'insert_options',
+                        'additional_sizes'
+                    ]),
+                    renderers = _([
+                        'render_title',
+                        'render_labels_adding',
+                        'render_shared_labels',
+                        'render_additional_sizes',
+                        'render_insert_options'
+                    ]);
+
+                // remove prev sections
+                this.$el.empty();
+
+                // if insert_options is false remove insert options section
+                if( !this.options.insert_options ){
+                    sections = _( sections.reject(function(section){
+                        return section === "insert_options";
+                    }) );
+
+                    renderers =  _( renderers.reject(function(renderer){
+                        return renderer === "render_insert_options";
+                    }) );
+                }
+
+
+
+                // add sections
+                sections.each(function(section){
+                    self.$el.append( '<div class="' + section +  '" />' )
+                });
+
+                // render sections
+                renderers.each(function(renderer){
+                    self[renderer]();
+                });
+
 			},
 			render_title: function () {
 				var	me = this,
@@ -574,7 +614,14 @@ define(function() {
 					label = label_idx >= 0 && shared[label_idx] ? shared[label_idx] : false
 				;
 				if (label) this.model.update_label_state(label);
-			}
+			},
+            render_insert_options: function(){
+                var $this_section = this.$(".insert_options"),
+                    view = new InsertOptions.Options_Control( {model: this.model} );
+                view.render();
+
+                $this_section.html(view.el);
+            }
 		});
 
 			var MediaManager_ItemControl_LabelsContainer = Backbone.View.extend({
@@ -1226,7 +1273,7 @@ define(function() {
             this.listenTo(this.switcher_view, "media_manager:switcher:to_markup", this.render_markup, this);
 
 			this.command_view = new MediaManager_BottomCommand({el: this.popup_data.$bottom, button_text: button_text, ck_insert: data.ck_insert});
-			this.library_view = new MediaManager_PostImage_View(data.collection);
+			this.library_view = new MediaManager_PostImage_View(data.collection, data);
 			//this.embed_view = new MediaManager_EmbedMedia({});
 
 			this.library_view.multiple_selection = multiple_selection;
@@ -1281,13 +1328,13 @@ define(function() {
 		},
 		render_upload: function (e) {
 			if (!this.library_view.$el.is(":visible")) this.render_library();
-			
+
 			// Check if we're actually allowing uploads
 			if (!(window._upfront_media_upload && _upfront_media_upload.image_ref)) {
 				alert(l10n.disabled);
 				return false;
 			}
-			
+
 			var me = this,
 				uploaded = 0, progressing = 0, done =0,
 				new_media = [],
@@ -1755,13 +1802,15 @@ define(function() {
 			aux: false,
 			controls: false
 		},
-		initialize: function (collection) {
+		initialize: function (collection, opts) {
 			var data = data || {};
 			if(collection.models)
 				collection = new MediaCollection_Model(collection);
 			else
 				collection = new MediaCollection_Model();
 			this.media_collection = collection;
+
+            this.options = opts;
 		},
 		render: function () {
 			if (!this._subviews.media) {
@@ -1775,7 +1824,7 @@ define(function() {
 			var aux = this._subviews.aux;
 			
 			if (!this._subviews.controls) {
-				this._subviews.controls = new MediaManager_Controls_View({model: this.media_collection});
+				this._subviews.controls = new MediaManager_Controls_View({model: this.media_collection, options: this.options });
 			}
 			var controls = this._subviews.controls;
 

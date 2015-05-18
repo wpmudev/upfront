@@ -337,9 +337,27 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
     getImageData: function(libraryResult){
         if(!libraryResult)
             return false;
+
         var imagePost = libraryResult.at(0).toJSON(),
             image = this.getSelectedImage(imagePost),
-            imageData = $.extend({}, this.defaultData, {
+            imageData = this.is_wp ?  $.extend({}, this.wp_defaults, {
+                attachment_id: imagePost.ID,
+                caption:  imagePost.post_excerpt,
+                link_url: "",
+                image: image,
+                style: {
+                    caption:{
+                        show: true
+                    },
+                    wrapper: {
+                        alignment: "alignnone",
+                        width: image.width + 10
+                    },
+                    image: {
+                        size_class: 'size-' + image.selected_size
+                    }
+                }
+            }) : $.extend({}, this.defaultData, {
                 attachmentId: imagePost.ID,
                 title: imagePost.post_tite,
                 imageFull: imagePost.image,
@@ -369,18 +387,24 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
 
     //Get the image with the selected size
     getSelectedImage: function(imagePost){
+        // set default _selected_size
+        imagePost.image.selected_size = 'full';
+
         if(imagePost.selected_size == 'full')
             return imagePost.image;
 
+
         var dimensions = imagePost.selected_size
                 ? imagePost.selected_size.split('x')
-                : []
+                : [],
+            size_names = ["thumbnail", "medium", "large"]
             ;
         if(dimensions.length != 2)
             return imagePost.image;
 
         for(var i = 0; i < imagePost.additional_sizes.length; i++){
             var size = imagePost.additional_sizes[i];
+            size.selected_size = size_names[i];
             if(size.width == dimensions[0] && size.height == dimensions[1])
                 return size;
         }

@@ -1671,7 +1671,8 @@ input.upfront-field-text:hover,
 
 .upfront-field-multiple label .upfront-field-label-text {
   display: table-cell;
-  vertical-align: middle; }
+  vertical-align: middle;
+  cursor: pointer; }
 
 .upfront-field-multiple-vertical label {
   display: block;
@@ -7650,6 +7651,16 @@ a.upfront-post-layout-trigger:before {
 #upfront-popup.discussion-popup #upfront-popup-content {
   max-height: 450px;
   overflow-y: scroll; }
+
+/* ----------- Insert Options -------- */
+.upfront-media-controls .insert_options {
+  border-bottom: 1px solid rgba(97, 128, 152, 0.2);
+  margin-bottom: 10px;
+  display: block;
+  min-height: 40px; }
+
+.upfront-media-controls .insert_options .upfront-field-wrap {
+  line-height: 40px; }
 
 /* --- Color Picker --- */
 /***
