@@ -13,14 +13,14 @@ Insert purpose is let upfront handle this kind of parts of a post content with e
 
 */
 var UeditorInsert = Backbone.View.extend({
-	shortcodeName: 'ueditor-insert',
-	attributes: {contenteditable: 'false'},
-   defaultData : {},
-   resizable: false,
+    shortcodeName: 'ueditor-insert',
+    attributes: {contenteditable: 'false'},
+    defaultData : {},
+    resizable: false,
 	initialize: function(opts){
 		opts = opts || {};
 		var data = opts.data || {};
-		//data = _.extend({}, this.defaultData, data);
+		//data = _.extend({}, this.defaultData, data); // lets merge data in the child classes
 		if(!data.id){
 			data.id = 'uinsert-' + (++Upfront.data.ueditor.insertCount);
 			//Trigger the insertcount change for updating the server
@@ -29,12 +29,10 @@ var UeditorInsert = Backbone.View.extend({
 		this.el.id = data.id;
 		this.data = new Backbone.Model(data);
 		this.listenTo(this.data, 'change add remove reset', this.render);
-        this.is_wp = opts.is_wp;
 		this.createControls();
 
-
 		if(typeof this.init == 'function')
-			this.init();
+			this.init( opts );
 	},
 	start: function(){
 		//Dumb start method returning a resolved promise. Override it if async start needed.

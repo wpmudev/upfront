@@ -111,7 +111,7 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
                 //Update event makes InsertManager update its data without rendering.
                 self.data.trigger('update');
                 if( self.render_shortcode )
-                    self.render_shortcode();
+                    self.render_shortcode( self.data.toJSON() );
             })
             .ueditor({
                 linebreaks: false,
@@ -351,7 +351,7 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
                     },
                     wrapper: {
                         alignment: "alignnone",
-                        width: image.width + 10
+                        width: image.width
                     },
                     image: {
                         size_class: 'size-' + image.selected_size
@@ -516,7 +516,24 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
         imageData.left = widthPivot ? 0 : -Math.round((imageData.width - wrapperSize.width) / 2);
 
         return imageData;
-    }
+    },
+    render_shortcode: function(data){
+        data = data instanceof Backbone.Model ? data.toJSON() : data;
+
+        var html = this.shortcode_tpl(data);
+
+        //cleanup new lines and unneeded whitespace
+        html = html.replace( /\[caption[\s\S]+?\[\/caption\]/g, function( a ) {
+            return a.replace( /<br([^>]*)>/g, '<wp-temp-br$1>' ).replace( /[\r\n\t]+/, '' );
+        });
+
+        html = html.replace( /\s*<div/g, '\n<div' );
+        html = html.replace( /<\/div>\s*/g, '</div>\n' );
+        html = html.replace( /\s*\[caption([^\[]+)\[\/caption\]\s*/gi, '\n\n[caption$1[/caption]\n\n' );
+        html = html.replace( /caption\]\n\n+\[caption/g, 'caption]\n\n[caption' );
+        html = html.replace(/\s+/g," ");
+        this.$shortcode_el.html( html );
+    },
 
 });
 

@@ -311,3 +311,33 @@ div.uinsert-selector a:hover {
 .post-images-shortcode-wp{
   display: none;
 }
+.upfront-content-marker.redactor-editor .wp-caption{
+  margin: 0;
+  padding: 0;
+  outline: 1px dotted #979797;
+  position: relative;
+}
+.upfront-content-marker.redactor-editor .wp-caption:hover{
+  outline-style: solid;
+}
+.upfront-content-marker.redactor-editor .wp-caption .ueditor-insert-remove{
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  display: none;
+}
+.upfront-content-marker.redactor-editor .wp-caption .upfront-inline-panel{
+  display: none;
+}
+.upfront-content-marker.redactor-editor .wp-caption:hover .ueditor-insert-remove,
+.upfront-content-marker.redactor-editor .wp-caption:hover .upfront-inline-panel{
+  display: block;
+}
+.upfront-content-marker.redactor-editor .wp-caption.aligncenter{
+  margin: 0 auto;
+}
+.upfront-content-marker.redactor-editor .wp-caption .wp-caption-text,
+.upfront-content-marker.redactor-editor .wp-caption img{
+  padding: 15px;
+  margin: 0;
+}

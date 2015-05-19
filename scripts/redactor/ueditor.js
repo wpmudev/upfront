@@ -1064,12 +1064,23 @@ var InsertManagerInserts = Backbone.View.extend({
             self = this
             ;
 
-        insert.start( this.$el )
-            .done(function(popup, results){
+        insert.start( this.$el, this.redactor.$editor )
+            .done(function(args, resolve_insert){
 
-                if(!results) //Had to uncomment this because if we let it through with blank result, it inserts an empty wrapper which blocks the "inert/embed" button to appear again: Gagan
-                	return;
+                /**
+                 * Allows to get resolved insert from inserts with insert managers
+                 */
+                if(_.isArray(args) ){
+                    var popup = args[0],
+                        results = args[0],
+                        insert = resolve_insert;
+                }else{
+                    var popup = args,
+                        results = resolve_insert;
+                }
 
+                // if(!results) Let's allow promises without result for now!
+                //	return;
                 self.inserts[insert.cid] = insert;
                 //Allow to undo
                 //this.trigger('insert:prechange'); // "this" is the embedded image object
