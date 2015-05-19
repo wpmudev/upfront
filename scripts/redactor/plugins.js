@@ -1360,10 +1360,18 @@ RedactorPlugins.upfrontFormatting = function() {
             },
             select_tag: function( e ){
                 e.preventDefault();
-                var tag = $(e.target).data("tag");
                 this.redactor.buffer.set();
                 this.redactor.$editor.focus();
+
+                var tag = $(e.target).data("tag"),
+                    html = this.redactor.selection.getHtml(); // Gets selected html
+
+                // Change tag name
                 this.redactor.block.format(tag);
+
+                // Puts prev html into the current tag
+                this.redactor.$editor.find(tag).eq(0).html( html );
+                
                 this.redactor.dropdown.hideAll();
             },
             change_custom_class: function(e){
