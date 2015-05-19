@@ -11,7 +11,7 @@ define([
 					property: 'preset',
 					values: this.get_presets(),
 					change: function(value) {
-						me.model.set_property('preset', value);
+						me.model.set_property('preset', this.get_value());
 					}
 				});
 

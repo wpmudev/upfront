@@ -6,7 +6,8 @@ define([
 		className: 'preset_specific',
 
 		get_title: function() {
-			return 'Edit ' + this.options.model.get('name');
+			var panelTitle = this.options.model.get('name') ? this.options.model.get('name') : this.options.model.get('id');
+			return 'Edit ' + panelTitle;
 		},
 
 		initialize: function(options) {

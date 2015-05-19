@@ -13447,8 +13447,10 @@ div.upfront-region-container:hover > a.feature_image_selector {
   width: 230px; }
 
 /* Chosen */
-/* line 4, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/chosen */
-#insert-font-widget .chosen-container-single .chosen-single, #sidebar-ui .chosen-container-single .chosen-single, #upfront-popup .chosen-container-single .chosen-single {
+#insert-font-widget .chosen-container-single .chosen-single,
+#sidebar-ui .chosen-container-single .chosen-single,
+#upfront-popup .chosen-container-single .chosen-single,
+.preset-manager-panel .chosen-container-single .chosen-single {
   margin: 0;
   text-decoration: none;
   background: #e6f3fe;
@@ -13458,74 +13460,133 @@ div.upfront-region-container:hover > a.feature_image_selector {
   font-family: Verdana, sans-serif;
   line-height: 22px;
   border-radius: 3px;
-  border: 1px solid #a3bfd9; }
+  border: 1px solid #a3bfd9;
+}
 
-/* line 19, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/chosen */
-#insert-font-widget .chosen-container-single .chosen-single:hover, #sidebar-ui .chosen-container-single .chosen-single:hover, #upfront-popup .chosen-container-single .chosen-single:hover {
-  border-color: #607f99; }
+#insert-font-widget .chosen-container-single .chosen-single:hover,
+#sidebar-ui .chosen-container-single .chosen-single:hover,
+#upfront-popup .chosen-container-single .chosen-single:hover,
+.preset-manager-panel .chosen-container-single .chosen-single:hover {
+  border-color: #607f99;
+}
 
-/* line 28, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/chosen */
-#insert-font-widget .chosen-with-drop .chosen-single, #sidebar-ui .chosen-with-drop .chosen-single, #insert-font-widget .chosen-with-drop .chosen-single:hover, #sidebar-ui .chosen-with-drop .chosen-single:hover, #upfront-popup .chosen-with-drop .chosen-single, #upfront-popup .chosen-with-drop .chosen-single:hover {
+#insert-font-widget .chosen-with-drop .chosen-single,
+#sidebar-ui .chosen-with-drop .chosen-single,
+#insert-font-widget .chosen-with-drop .chosen-single:hover,
+#sidebar-ui .chosen-with-drop .chosen-single:hover,
+#upfront-popup .chosen-with-drop .chosen-single,
+#upfront-popup .chosen-with-drop .chosen-single:hover,
+.preset-manager-panel .chosen-with-drop .chosen-single,
+.preset-manager-panel .chosen-with-drop .chosen-single:hover {
   border-color: #a3bfd9;
   border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0; }
+  border-bottom-right-radius: 0;
+}
 
-/* line 34, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/chosen */
 #upfront-popup .chosen-container-multi .chosen-choices .search-choice {
-  display: none; }
+  display: none;
+}
 
-/* line 39, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/chosen */
-#insert-font-widget .chosen-container .chosen-results li, #sidebar-ui .chosen-container .chosen-results li, #upfront-popup .chosen-container .chosen-results li {
-  margin: 0 0 0 5px; }
+#insert-font-widget .chosen-container .chosen-results li,
+#sidebar-ui .chosen-container .chosen-results li,
+#upfront-popup .chosen-container .chosen-results li,
+.preset-manager-panel .chosen-container .chosen-results li {
+  margin: 0 0 0 5px;
+}
 
-/* line 49, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/chosen */
-#insert-font-widget .chosen-container-single .chosen-drop, #sidebar-ui .chosen-container-single .chosen-drop, #upfront-popup .chosen-container-single .chosen-drop, #insert-font-widget .chosen-container-multi .chosen-drop, #sidebar-ui .chosen-container-multi .chosen-drop, #upfront-popup .chosen-container-multi .chosen-drop {
+#insert-font-widget .chosen-container-single .chosen-drop,
+#sidebar-ui .chosen-container-single .chosen-drop,
+#upfront-popup .chosen-container-single .chosen-drop,
+.preset-manager-panel .chosen-container-single .chosen-drop,
+#insert-font-widget .chosen-container-multi .chosen-drop,
+#sidebar-ui .chosen-container-multi .chosen-drop,
+#upfront-popup .chosen-container-multi .chosen-drop,
+.preset-manager-panel .chosen-container-multi .chosen-drop {
   background: #e6f3fe;
   color: #607f99;
   border-color: #a3bfd9;
   font-size: 11px;
   font-family: Verdana, sans-serif;
-  box-shadow: none; }
+  box-shadow: none;
+}
 
-/* line 60, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/chosen */
-#insert-font-widget .chosen-container .chosen-results, #sidebar-ui .chosen-container .chosen-results, #upfront-popup .chosen-container .chosen-results {
+#insert-font-widget .chosen-container .chosen-results,
+#sidebar-ui .chosen-container .chosen-results,
+#upfront-popup .chosen-container .chosen-results,
+.preset-manager-panel .chosen-container .chosen-results {
   max-height: 150px;
-  margin-right: 5px; }
+  margin-right: 5px;
+}
 
-/* line 66, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/chosen */
-#sidebar-ui .chosen-container .chosen-results, #upfront-popup .chosen-container .chosen-results {
-  max-height: 120px; }
+#sidebar-ui .chosen-container .chosen-results,
+#upfront-popup .chosen-container .chosen-results,
+.preset-manager-panel .chosen-container .chosen-results {
+  max-height: 120px;
+}
 
-/* line 72, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/chosen */
-#insert-font-widget .chosen-container .chosen-results li.highlighted, #sidebar-ui .chosen-container .chosen-results li.highlighted, #upfront-popup .chosen-container .chosen-results li.highlighted {
+#insert-font-widget .chosen-container .chosen-results li.highlighted,
+#sidebar-ui .chosen-container .chosen-results li.highlighted,
+#upfront-popup .chosen-container .chosen-results li.highlighted,
+.preset-manager-panel .chosen-container .chosen-results li.highlighted {
   background: #5f7f9a;
-  color: #fff; }
+  color: #fff;
+}
 
-/* line 83, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/chosen */
-#insert-font-widget .chosen-container-single .chosen-search, #sidebar-ui .chosen-container-single .chosen-search, #upfront-popup .chosen-container-single .chosen-search, #insert-font-widget .chosen-container-multi .chosen-search, #sidebar-ui .chosen-container-multi .chosen-search, #upfront-popup .chosen-container-multi .chosen-search {
-  padding: 3px 5px; }
+#insert-font-widget .chosen-container-single .chosen-search,
+#sidebar-ui .chosen-container-single .chosen-search,
+#upfront-popup .chosen-container-single .chosen-search,
+.preset-manager-panel .chosen-container-single .chosen-search,
+#insert-font-widget .chosen-container-multi .chosen-search,
+#sidebar-ui .chosen-container-multi .chosen-search,
+#upfront-popup .chosen-container-multi .chosen-search,
+.preset-manager-panel .chosen-container-multi .chosen-search {
+  padding: 3px 5px;
+}
 
-/* line 93, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/chosen */
-#insert-font-widget .chosen-container-single .chosen-search input[type=text], #sidebar-ui .chosen-container-single .chosen-search input[type=text], #upfront-popup .chosen-container-single .chosen-search input[type=text], #insert-font-widget .chosen-container-multi .chosen-choices input[type=text], #sidebar-ui .chosen-container-multi .chosen-choices input[type=text], #upfront-popup .chosen-container-multi .chosen-choices input[type=text] {
+#insert-font-widget .chosen-container-single .chosen-search input[type=text],
+#sidebar-ui .chosen-container-single .chosen-search input[type=text],
+#upfront-popup .chosen-container-single .chosen-search input[type=text],
+.preset-manager-panel .chosen-container-single .chosen-search input[type=text],
+#insert-font-widget .chosen-container-multi .chosen-choices input[type=text],
+#sidebar-ui .chosen-container-multi .chosen-choices input[type=text],
+#upfront-popup .chosen-container-multi .chosen-choices input[type=text],
+.preset-manager-panel .chosen-container-multi .chosen-choices input[type=text] {
   background: #f7fbff;
   border-color: #a4bfd8;
   font-weight: normal;
   font-size: 11px;
   font-family: Verdana, sans-serif;
   color: #607f99;
-  padding: 5px; }
+  padding: 5px;
+}
 
-/* line 109, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/chosen */
-#insert-font-widget .chosen-container-single .chosen-results::-webkit-scrollbar, #sidebar-ui .chosen-container-single .chosen-results::-webkit-scrollbar, #upfront-popup .chosen-container-single .chosen-results::-webkit-scrollbar, #insert-font-widget .chosen-container-multi .chosen-results::-webkit-scrollbar, #sidebar-ui .chosen-container-multi .chosen-results::-webkit-scrollbar, #upfront-popup .chosen-container-multi .chosen-results::-webkit-scrollbar {
+#insert-font-widget .chosen-container-single .chosen-results::-webkit-scrollbar,
+#sidebar-ui .chosen-container-single .chosen-results::-webkit-scrollbar,
+#upfront-popup .chosen-container-single .chosen-results::-webkit-scrollbar,
+.preset-manager-panel .chosen-container-single .chosen-results::-webkit-scrollbar,
+#insert-font-widget .chosen-container-multi .chosen-results::-webkit-scrollbar,
+#sidebar-ui .chosen-container-multi .chosen-results::-webkit-scrollbar,
+#upfront-popup .chosen-container-multi .chosen-results::-webkit-scrollbar,
+.preset-manager-panel .chosen-container-multi .chosen-results::-webkit-scrollbar {
   background: #d4dee8;
-  width: 5px; }
+  width: 5px;
+}
 
-/* line 120, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/chosen */
-#insert-font-widget .chosen-container-single .chosen-results::-webkit-scrollbar-thumb, #sidebar-ui .chosen-container-single .chosen-results::-webkit-scrollbar-thumb, #upfront-popup .chosen-container-single .chosen-results::-webkit-scrollbar-thumb, #insert-font-widget .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb, #sidebar-ui .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb, #upfront-popup .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb {
-  background-color: #1fcd8f; }
+#insert-font-widget .chosen-container-single .chosen-results::-webkit-scrollbar-thumb,
+#sidebar-ui .chosen-container-single .chosen-results::-webkit-scrollbar-thumb,
+#upfront-popup .chosen-container-single .chosen-results::-webkit-scrollbar-thumb,
+.preset-manager-panel .chosen-container-single .chosen-results::-webkit-scrollbar-thumb,
+#insert-font-widget .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb,
+#sidebar-ui .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb,
+#upfront-popup .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb,
+.preset-manager-panel .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb {
+  background-color: #1fcd8f;
+}
 
-/* line 126, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/chosen */
-#insert-font-widget .chosen-container-single .chosen-single div b, #sidebar-ui .chosen-container-single .chosen-single div b, #upfront-popup .chosen-container-single .chosen-single div b {
+#insert-font-widget .chosen-container-single .chosen-single div b,
+#sidebar-ui .chosen-container-single .chosen-single div b,
+#upfront-popup .chosen-container-single .chosen-single div b,
+.preset-manager-panel .chosen-container-single .chosen-single div b {
   display: block;
   width: 0;
   height: 0;
@@ -13533,21 +13594,26 @@ div.upfront-region-container:hover > a.feature_image_selector {
   border-top: 4px solid #607f99;
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
-  margin-top: 9px; }
+  margin-top: 9px;
+}
 
-/* line 139, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/chosen */
-#insert-font-widget .chosen-with-drop .chosen-single div b, #sidebar-ui .chosen-with-drop .chosen-single div b, #upfront-popup .chosen-with-drop .chosen-single div b {
+#insert-font-widget .chosen-with-drop .chosen-single div b,
+#sidebar-ui .chosen-with-drop .chosen-single div b,
+#upfront-popup .chosen-with-drop .chosen-single div b,
+.preset-manager-panel .chosen-with-drop .chosen-single div b {
   border-top: 0 none transparent;
-  border-bottom: 4px solid #607f99; }
+  border-bottom: 4px solid #607f99;
+}
 
-/* line 145, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/chosen */
 .chosen-container .chosen-results li em {
   background-color: #00CE8D;
   color: #fff;
   border-radius: 3px;
   box-shadow: 0 1px 0 #00B47C;
   padding: 2px 0;
-  text-decoration: none !important; }
+  text-decoration: none !important;
+}
+
 
 /* Theme fonts managesr */
 /* line 2, /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/styles/sass/partials/theme-fonts-manager */

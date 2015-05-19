@@ -46,15 +46,24 @@ class Upfront_Button_Presets_Server extends Upfront_Presets_Server {
 		
 		$result = array();
 		
+		$i = 0;
 		foreach ($presets as $preset) {
-			$preset['id'] = $this->clearPreset($preset['id']);
-				
+			$new_preset = $this->clearPreset($preset['id']);
+			
+			//Check if preset is valid else strip special characters
+			if($preset['id'] != $new_preset) {
+				$preset['id'] = $new_preset;
+				$i++;
+			}
+			
 			$result[] = $preset;
 		}
 		
-		$this->update_presets($result);
-		
-		$presets = $result;
+		//If result is not empty update presets
+		if($i > 0 && !empty($result)) {
+			$this->update_presets($result);
+			$presets = $result;
+		}
 
 		// Fail-safe
 		if (is_array($presets) === false) {
