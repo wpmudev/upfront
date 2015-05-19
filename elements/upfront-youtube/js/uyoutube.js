@@ -95,16 +95,18 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 			me.property('multiple_source_1', $(this).parents().find('input.upfront-youtube-url').val());
 
 			Upfront.Events.trigger("entity:settings:activate", me);
-			
-			//Trigger event for adding videos to array
-			Upfront.Events.trigger("upfront:youtube:added");
-			
+
 			//Call resize function to match player width with object width
 			me.onResizeStop();
-		
+
+			//Delay events else values are empty
 			setTimeout(function(){
 				me.$(".upfront-entity-settings_trigger").click();
-			}, 100);
+				
+				//Trigger event for adding videos to array
+				Upfront.Events.trigger("upfront:youtube:added");
+				
+			}, 50);
 			
 		});
 		
