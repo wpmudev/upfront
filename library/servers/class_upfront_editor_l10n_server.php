@@ -211,7 +211,16 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'year' => __('Year', 'upfront'),
 				'hour' => __('Hour', 'upfront'),
 				'minute' => __('Minute', 'upfront'),
-				'sticky_post_label' => __('', 'upfront'),
+			),
+			'ueditor' => array(
+				'text_align' => __('Text alignment', 'upfront'),
+				'list_style' => __('List style', 'upfront'),
+				'more_tools' => __('More tools', 'upfront'),
+				'icons' => __('Icons', 'upfront'),
+				'link' => __('Link', 'upfront'),
+				'color' => __('Color', 'upfront'),
+				'formatting' => __('Formatting', 'upfront'),
+				'blockquote' => __('Set a quote', 'upfront'),
 			),
 			'views' => array(
 				'unsaved_changes_nag' => __('You have unsaved changes you\'re about to lose by navigating off this page.', 'upfront'),
