@@ -56,15 +56,60 @@ class Upfront_UcommentView extends Upfront_Object {
 		return $comments;
 	}
 
+	/**
+	 * Check if we have any external comments templates assigned by plugins.
+	 *
+	 * @param int $post_id Current post ID
+	 *
+	 * @return mixed (bool)false if nothing found, (string)finished template otherwise
+	 */
+	private static function _get_external_comments_template ($post_id) {
+		if (!is_numeric($post_id)) return false;
+
+		global $post, $wp_query;
+
+		$overriden_template = false;
+
+		// Sooo... override the post globals
+		$global_post = is_object($post) ? clone($post) : $post;
+		$post = get_post($post_id);
+
+		$global_query = is_object($wp_query) ? clone($wp_query) : $wp_query;
+		$wp_query->is_singular = true;
+		if (!isset($wp_query->comments)) {
+			$wp_query->comments = get_comments("post_id={$post_id}");
+			$wp_query->comment_count = count($wp_query->comments);
+		}
+
+		$wp_tpl = apply_filters('comments_template', false);
+
+		if (!empty($wp_tpl)) {
+			ob_start();
+			require_once($wp_tpl);
+			$overriden_template = ob_get_clean();
+		}
+		
+		$post = is_object($global_post) ? clone($global_post) : $global_post;
+		$wp_query = is_object($global_query) ? clone($global_query) : $global_query;
+
+		return $overriden_template;
+	}
+
 	public static function get_comment_markup ($post_id) {
 		if (!$post_id) return '';
 		if (!is_numeric($post_id)) {
 			if (!in_array($post_id, array('fake_post', 'fake_styled_post'))) return '';
 		}
 
+		$tpl = self::_get_external_comments_template($post_id);
+		if (!empty($tpl)) return $tpl;
+
         $defaults = self::default_properties();
         $prepend_form = (bool) $defaults['prepend_form'];
-        $form_args = apply_filters('upfront_comment_form_args', array());
+        $form_args = array(
+        	'comment_field' => self::_get_comment_form_field(),
+        );
+        $form_args = apply_filters('upfront_comment_form_args', array_filter($form_args));
         
         $comments = array();
         $post = false;
@@ -76,6 +121,7 @@ class Upfront_UcommentView extends Upfront_Object {
 			if (!empty($posts[0])) {
 				$post = $posts[0];
 				$comments = self::spawn_random_comments($post);
+				add_filter('comments_open', '__return_true');
 			}
 			else return '';
 		}
@@ -98,6 +144,21 @@ class Upfront_UcommentView extends Upfront_Object {
             comment_form($form_args, $post->ID);
         }
 		return ob_get_clean();
+	}
+
+	/**
+	 * Get the actual input form field markup.
+	 * Yanked directly from wp-includes/comment-template.php
+	 * because that's where it's hardcoded. Yay for hardcoding stuff.
+	 *
+	 * @return string
+	 */
+	private static function _get_comment_form_field () {
+		return '<p class="comment-form-comment">' .
+			'<label for="comment">' . _x( 'Comment', 'noun' ) . '</label>' .
+			' ' .
+			'<textarea placeholder="' . esc_attr(__('Leave a Reply')) . '" id="comment" name="comment" cols="45" rows="8" aria-describedby="form-allowed-tags" aria-required="true" required="required"></textarea>' .
+		'</p>';
 	}
 
 	public static function list_comment ( $comment, $args, $depth ) {

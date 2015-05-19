@@ -715,8 +715,8 @@ figure.gallery-labels-figure img.mfp-img {
 }
 
 .ugallery-controls {
-	bottom: 0;
-	left: 0;
+	top:0;
+	bottom: auto;
 	width: auto;
 }
 .ugallery-controls > .upfront-inline-panel {
@@ -912,14 +912,13 @@ figure.gallery-labels-figure img.mfp-img {
 .mobile-breakpoint .ugallery_item {
 	width: 135px !important;
 	height: auto;
+	display: table;
+	margin-bottom: 15px;
 }
 
 .mobile-breakpoint .ugallery_item img {
 	width: 135px !important;
 	height: 135px !important;
-}
-.mobile-breakpoint .ugallery_item {
-	margin-bottom: 15px;
 }
 .mobile-breakpoint .ugallery_item:nth-child(odd) {
 	margin-right: 15px;

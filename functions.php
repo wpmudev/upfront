@@ -49,12 +49,10 @@ class Upfront {
 
 	private function _add_hooks () {
 		add_filter('body_class', array($this, 'inject_grid_scope_class'));
-		add_filter('wp_title', array($this, 'filter_wp_title'), 10, 2);
 		add_action('wp_head', array($this, "inject_global_dependencies"), 1);
 		add_action('wp_footer', array($this, "inject_upfront_dependencies"), 99);
 		add_action('upfront-core-wp_dependencies', array($this, "inject_core_wp_dependencies"), 99);
 
-		add_filter('attachment_fields_to_edit', array($this, 'attachment_fields_to_edit'), 100, 2);
 		add_action('admin_bar_menu', array($this, 'add_edit_menu'), 85);
 
 		if (is_admin()) { // This prevents "Edit layout" being shown on frontend
@@ -62,10 +60,10 @@ class Upfront {
 			if (class_exists('Upfront_Server_Admin')) Upfront_Server_Admin::serve();
 		}
 		
-		$this->load_textdomain();
+		$this->_load_textdomain();
 	}
 	
-	public function load_textdomain () {
+	private function _load_textdomain () {
 		$path = untrailingslashit(self::get_root_dir()) . '/languages';
 		load_theme_textdomain('upfront', $path);
 		
@@ -82,7 +80,8 @@ class Upfront {
 
 	private function _add_supports () {
 		add_theme_support('post-thumbnails');
-		register_nav_menu('default', _('Default'));
+		add_theme_support('title-tag'); // Let WP deal with our theme titles
+		register_nav_menu('default', __('Default', 'upfront'));
 		// Do widget text
 		$do_widget_text = apply_filters(
 			'upfront-shortcode-enable_in_widgets',
@@ -108,61 +107,47 @@ class Upfront {
 	}
 
 
-	public function add_edit_menu ( $wp_admin_bar ) {
-		global $post, $tag, $wp_the_query;
-		$current_object = $wp_the_query->get_queried_object();
-		include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+	public function add_edit_menu ($wp_admin_bar) {
+		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) return false;
 
-		if ( is_plugin_active('upfront-theme-exporter/upfront-theme-exporter.php') ) {
-			$wp_admin_bar->add_menu( array(
-				'id' => 'upfront-create-theme',
-				'title' => __('Create New Theme', 'upfront'),
-				'href' => home_url('/create_new/theme'),
-				'meta' => array( 'class' => 'upfront-create_theme' )
-			) );
-		}
-
-		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
-			$item = array(
-				'id' => 'upfront-edit_layout',
-				'title' => __('Upfront', 'upfront'),
-				'href' => (is_admin() ? home_url('/?editmode=true') : '#'),
-				'meta' => array(
-					'class' => 'upfront-edit_layout upfront-editable_trigger'
-				),
-			);
-			if (!get_option('permalink_structure')) {
-				// We're checking WP priv directly because we need an admin for this
-				if (current_user_can('manage_options')) {
-					$item['href'] = admin_url('/options-permalink.php');
-					unset($item['meta']);
-				} else {
-					$item = array(); // No such thing for non-admins
-				}
+		$item = array(
+			'id' => 'upfront-edit_layout',
+			'title' => __('Upfront', 'upfront'),
+			'href' => (is_admin() ? home_url('/?editmode=true') : '#'),
+			'meta' => array(
+				'class' => 'upfront-edit_layout upfront-editable_trigger'
+			),
+		);
+		$permalinks_on = get_option('permalink_structure');
+		
+		if (!$permalinks_on) {
+			// We're checking WP priv directly because we need an admin for this
+			if (current_user_can('manage_options')) {
+				$item['href'] = admin_url('/options-permalink.php');
+				unset($item['meta']);
+			} else {
+				$item = array(); // No such thing for non-admins
 			}
-			if (!empty($item)) $wp_admin_bar->add_menu($item);
+		}
+		
+		if (!empty($item)) {
+			$wp_admin_bar->add_menu($item);
 		}
 
 		// Change the existing nodes
 		$nodes = $wp_admin_bar->get_nodes();
-		if (empty($nodes) || !is_array($nodes)) return false;
-
-		foreach ($nodes as $node) {
-			if (!empty($node->href) && preg_match('/customize\.php/', $node->href)) {
-				$node->href = home_url('?editmode=true');
+		if (!empty($nodes) && is_array($nodes)) {
+			foreach ($nodes as $node) {
+				if (!empty($node->href) && preg_match('/customize\.php/', $node->href)) {
+					$node->href = home_url('?editmode=true');
+				}
+				$wp_admin_bar->add_node($node);
 			}
-			$wp_admin_bar->add_node($node);
 		}
-	}
 
-	function filter_wp_title ( $title, $sep ) {
-		global $paged, $page;
-		if ( is_feed() )
-			return $title;
-		$title .= get_bloginfo('name');
-		if ( $paged >= 2 || $page >= 2 )
-			$title = "$title $sep " . sprintf(__('Page %s'), max($paged, $page));
-		return $title;
+		// Action hook here, so other stuff can add its bar items
+		// (most notably, the exporter)
+		do_action('upfront-admin_bar-process', $wp_admin_bar, $item);
 	}
 
 	function inject_grid_scope_class ($cls) {
@@ -222,21 +207,10 @@ class Upfront {
 		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
 			do_action('upfront-core-wp_dependencies');
 
-/*			
-			wp_enqueue_style('upfront-font-source-sans-pro', 'http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic', array(), Upfront_ChildTheme::get_version());
-
-			// Enqueue needed styles
-			wp_enqueue_style('upfront-editor-grid', admin_url('admin-ajax.php?action=upfront_load_editor_grid'), array(), Upfront_ChildTheme::get_version());
-			wp_enqueue_style('upfront-chosen-default-style', self::get_root_url() . '/scripts/chosen/chosen.min.css', array(), Upfront_ChildTheme::get_version());
-
-			// Font icons
-			wp_enqueue_style('upfront-default-font-icons', self::get_root_url() . '/styles/font-icons.css', array(), Upfront_ChildTheme::get_version());
-*/	
 			wp_enqueue_style('upfront-editor-interface', self::get_root_url() . '/styles/editor-interface.css', array(), Upfront_ChildTheme::get_version());
 			
 			$link_urls =  array(
 				admin_url('admin-ajax.php?action=upfront_load_editor_grid'),
-				//self::get_root_url() . '/styles/editor-interface.css', // Wtf this doesn't work
 				self::get_root_url() . '/scripts/chosen/chosen.min.css',
 				self::get_root_url() . '/styles/font-icons.css',
 			);
@@ -257,6 +231,7 @@ class Upfront {
 	}
 
 	function inject_upfront_dependencies () {
+		
 		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) return false; // Do not inject for users that can't use this
 		$url = self::get_root_url();
 		//Boot Edit Mode if the querystring contains the editmode param
@@ -270,13 +245,7 @@ class Upfront {
 		if (isset($_GET['dev']) && current_user_can('switch_themes') && apply_filters('upfront-enable-dev-saving', true)) {
 			$save_storage_key .= '_dev';
 		}
-/*
-		if (isset($_GET['dev']) || isset($_GET['debug'])) {// || $this->_debugger->is_active(Upfront_Debug::DEV)) {			
-			echo '<script src="' . $url . '/build/require.js"></script>';
-			echo '<script src="' . admin_url('admin-ajax.php?action=upfront_load_main' . $is_ssl) . '"></script>';
-			echo '<script src="' . $url . '/build/main.js"></script>';
-		}
-*/
+
 		$script_urls = array(
 			"{$url}/scripts/require.js",
 			admin_url('admin-ajax.php?action=upfront_load_main' . $is_ssl),
@@ -299,35 +268,15 @@ class Upfront {
 			var _upfront_please_hold_on = ' . json_encode(__('Please, hold on for just a little bit more', 'upfront')) . ';
 		</script>';
 		echo <<<EOAdditivemarkup
-<div id="layouts" style="display:none"></div>
-<div id="properties" style="display:none">
-    <h3>Properties</h3>
-  </div>
-  <div id="commands" style="display:none">
-    <h3>Actions</h3>
-    <button class="upfront-finish_layout_editing">Finish editing</button>
-  </div>
-  <div id="sidebar-ui" class="upfront-ui"></div>
-  <div id="settings" style="display:none"></div>
-  <div id="contextmenu" style="display:none"></div>
+	<div id="sidebar-ui" class="upfront-ui"></div>
+	<div id="contextmenu" style="display:none"></div>
 EOAdditivemarkup;
-
 
 		do_action('upfront-core-inject_dependencies');
 	}
 
 	function add_responsive_css () {
 		include(self::get_root_dir().'/styles/editor-interface-responsive.html');
-	}
-
-	function attachment_fields_to_edit ( $form_fields, $post ) {
-		$image_src = wp_get_attachment_image_src($post->ID, 'full');
-		$form_fields['use_image'] = array(
-			'label' => __(''),
-			'input' => 'html',
-			'html'  => '<a href="#" onclick="top.Upfront.Events.trigger(\'uploader:image:selected\', ' . $post->ID . ', \'' . $image_src[0] . '\'); top.tb_remove(); return false;" class="button" id="upfront-use-image">Use Image</a>',
-		);
-		return $form_fields;
 	}
 
 }

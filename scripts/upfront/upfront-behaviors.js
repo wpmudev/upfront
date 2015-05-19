@@ -2556,7 +2556,7 @@ var GridEditor = {
 					top = bottom_wrap.grid.bottom+1,
 					bottom_not_me = ( !me_wrap || ( bottom_wrap && me_wrap && bottom_wrap._id != me_wrap._id ) ),
 					priority_top = ( bottom_not_me && top > current_full_top ? top : current_full_top );
-				if ( can_drop(priority_top, bottom) ){
+				if ( can_drop(priority_top, bottom) || is_drop_me ){
 					ed.drops.push({
 						_id: ed._new_id(),
 						top: current_full_top,
@@ -4129,11 +4129,9 @@ var GridEditor = {
 			if ( !_.isObject(data[breakpoint_id]) )
 				data[breakpoint_id] = { edited: false };
 			if ( !data[breakpoint_id].edited ){
-				if ( !region.is_main() ){
-					// Sidebar, let's make the column to full width on responsive
-					if ( !sub || sub.match(/^(left|right)$/) ) {
-						data[breakpoint_id].col = default_breakpoint.columns;
-					}
+				if ( region.is_main() || ( !sub || sub.match(/^(left|right)$/) )  ){ 
+					// Sidebar/main region, let's make the column to full width on responsive
+					data[breakpoint_id].col = default_breakpoint.columns;
 				}
 			}
 			region.set_property('breakpoint', data, silent);

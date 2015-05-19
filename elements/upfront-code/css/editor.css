@@ -21,6 +21,7 @@
 	border: 0;
 	border-radius: 0;
 	font-size: 14px;
+	z-index: 2;
 }
 .upfront_code-editor button:hover {
 	background: #3ea;

@@ -392,9 +392,11 @@ var PostContentEditor = Backbone.View.extend({
 	openImageEditor: function(newImage, imageInfo, postId){
 		var me = this,
 		mask = this.$('.ueditor_thumb'),
+		height = this.partOptions.featured_image && this.partOptions.featured_image.height ? this.partOptions.featured_image.height : 60
 		editorOptions = _.extend({}, imageInfo, {
+			element_id: 'post_' + postId,
 			maskOffset: mask.offset(),
-			maskSize: {width: mask.width(), height: mask.height()},
+			maskSize: {width: mask.width(), height: height},
 			setImageSize: newImage,
 			extraButtons: [
 			{
@@ -635,7 +637,12 @@ var PostContentEditor = Backbone.View.extend({
 					if(me.parts.titles) results.title = $.trim(me.parts.titles.text());
 					if(me.currentContent){
 						var editor = $(me.currentContent).data('ueditor');
-						results.content = $.trim(editor.getValue());
+
+                        // cleanup inserts markup
+                        me.$el.find(".upfront-inline-panel").remove();
+                        me.$el.find(".ueditor-insert-remove").remove();
+
+						results.content = $.trim( editor.getValue() );
 						results.content = results.content.replace(/(\n)*?<br\s*\/?>\n*/g, "<br/>");
 						results.inserts = editor.getInsertsData();
 						results.author = me.postAuthor;

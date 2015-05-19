@@ -110,7 +110,7 @@ class Upfront_ThisPostView extends Upfront_Object {
                 break;
 
 			case self::$PARTNAMES['IMAGE']:
-				$replacements['%image%'] = get_the_post_thumbnail();
+				$replacements['%image%'] = upfront_get_edited_post_thumbnail();
 				$replacements['%permalink%'] = get_permalink();
 				break;
 
@@ -180,6 +180,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 		return $date;
 	}
+	
 	protected static  function excerpt( $limit ) {
         $excerpt = explode(' ', get_the_excerpt(), $limit);
         if (count($excerpt)>=$limit) {
@@ -254,7 +255,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 			$post = get_post($post_id);
 		}
 		$post = !empty($post) && is_object($post) ? $post : new WP_Post(new StdClass);
-		if ($post->post_password && !is_user_logged_in() || $post->post_status != 'publish' && !is_user_logged_in())
+		if ($post->post_status != 'publish' && !is_user_logged_in())
 			return ''; // Augment this!
 
 		if(!$properties['post_data'])

@@ -1,3 +1,4 @@
+
 ;(function($,sr){
 
   // debouncing function from John Hann
@@ -27,7 +28,6 @@
 })(jQuery,'smartresize');
 
 jQuery(document).ready(function($) {
-
 
 	//Work around for having the region container have a higher z-index if it contains the nav, so that the dropdowns, if overlapping to the following regions should not loose "hover" when the mouse travels down to the next region.
 	$('div.upfront-navigation').each(function() {
@@ -84,6 +84,7 @@ jQuery(document).ready(function($) {
 			});
 		}
 	});
+
 	function pushContent(nav) {
 		var currentwidth = $('div#page').width();
 		var navwidth = nav.find('ul.menu').width();
@@ -190,13 +191,36 @@ jQuery(document).ready(function($) {
 		});
 	}
 	roll_responsive_nav(".upfront-output-unewnavigation > .upfront-navigation");
-
+	
 	$(window).smartresize(function() {
 		$('.responsive_nav_toggler').css({position: '', left: '', top: ''});
 		$('ul.menu').css('padding-top', '');
 		$('.burger_nav_close').remove();
 		roll_responsive_nav(".upfront-output-unewnavigation > .upfront-navigation");
 	});
+
+/*
+	$(window).on('load', function() {
+
+		if( $("html").hasClass("ie8") ) {
+			$(window).resize(function() {
+				$('.responsive_nav_toggler').css({position: '', left: '', top: ''});
+				$('ul.menu').css('padding-top', '');
+				$('.burger_nav_close').remove();
+				roll_responsive_nav(".upfront-output-unewnavigation > .upfront-navigation");
+			});
+		} else {
+			$(window).resize(_.debounce(function() {
+				
+				$('.responsive_nav_toggler').css({position: '', left: '', top: ''});
+				$('ul.menu').css('padding-top', '');
+				$('.burger_nav_close').remove();
+				roll_responsive_nav(".upfront-output-unewnavigation > .upfront-navigation");
+			}, 500));
+		}
+		
+	});
+*/	
 	$(document).on('changed_breakpoint', function(e) {
 		roll_responsive_nav( e.selector, e.width);
 	});

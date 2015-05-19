@@ -1587,9 +1587,12 @@ define([
 		initialize: function () {
 			var me = this;
 			SidebarPanel_Settings_Item.prototype.initialize.call(this);
-			$.when(google_fonts_storage.get_fonts()).done(function() {
-				me.render();
-			});
+			var fonts = google_fonts_storage.get_fonts();
+			if (fonts && fonts.state) { // Is this a promise object? If not, DON'T try to re-render when it's "done", because we already have fonts
+				$.when(fonts).done(function() {
+					me.render();
+				});
+			}
 			this.listenTo(Upfront.Events, 'upfront:render_typography_sidebar', this.render);
 			this.listenTo(Upfront.Events, 'entity:object:after_render', this.update_typography_elements);
 			this.listenTo(Upfront.Events, "theme_colors:update", this.update_typography_elements, this);
@@ -1923,7 +1926,10 @@ define([
 				}
 				if (_.isUndefined(font_family)) {
 					// This is a Google font
-					font_family = google_fonts_storage.get_fonts().findWhere({family: typeface});
+					var ggfonts = google_fonts_storage.get_fonts();
+					if (ggfonts && ggfonts.findWhere) {
+						font_family = ggfonts.findWhere({family: typeface});
+					}
 					if (!font_family) return true; // Missing typeface family, pretend we're normal
 					// If so, let's do this - load up the font
 					url = '//fonts.googleapis.com/css?family=' + font_family.get('family').replace(/ /g, '+');
@@ -1990,15 +1996,7 @@ define([
 			}
 			if (_.contains(['tablet', 'mobile'], this.model.get('id'))) {
 				var styleId = this.model.get('id') + '-breakpoint-style';
-				var cssText = '';
-				switch(this.model.get('id')) {
-					case 'tablet':
-						cssText += '@media only screen and (min-width:570px) and (max-width:1079px) {';
-						break;
-					case 'mobile':
-						cssText += '@media only screen and (max-width:569px) {';
-				}
-				cssText += css.join() + '} ' + breakpointCss.join();
+				var cssText = breakpointCss.join("\n");
 
 				if ( $('#' + styleId).length ) {
 					$('#' + styleId).html(cssText);
@@ -2015,16 +2013,6 @@ define([
 		},
 		update_typography_elements: function (view) {
 			var me = this;
-/*
-			_.each(this.elements, function(element) {
-				var $this_el = view && view.$el ? view.$el.find('.upfront-object-content ' + element) : $('.upfront-object-content ' + element );
-				Upfront.Views.Theme_Colors.colors.remove_theme_color_classes( $this_el );
-				if( !_.isEmpty(me.colors[element]) && me.colors[element].indexOf("ufc") !== -1 ){
-					 //var theme_color_class = Upfront.Views.Theme_Colors.colors.get_css_class( me.colors[element]);
-					 $this_el.css("color", me.colors[element]);
-				}
-			});
-*/
 			var css = [],
 				$style = false
 			;
@@ -2434,7 +2422,7 @@ define([
             this.edit_colors = new SidebarPanel_Settings_Item_Colors_Editor({"model": this.model});
         },
         get_title: function () {
-            return "Colors";
+            return l10n.colors_section;
         },
         on_render: function () {
             this.edit_colors.render();
@@ -2453,7 +2441,7 @@ define([
 			]);
 		},
 		get_title: function () {
-			return "Theme Settings";
+			return l10n.theme_settings;
 		},
 		on_render: function () {
 			var me = this;
@@ -2608,7 +2596,7 @@ define([
 		},
 		render: function() {
 			var breakpoint_model = breakpoints_storage.get_breakpoints().get_active();
-				
+
 			if(breakpoint_model.get('default'))
 				this.model.attributes.id = 'default';
 
@@ -2641,6 +2629,12 @@ define([
 			}, this);
 
 			return this;
+		},
+		destroy: function() {
+			this.remove();
+			_.each(this.views, function(view) {
+				view.remove();
+			});
 		}
 	});
 
@@ -2799,7 +2793,11 @@ define([
 
 			// Responsive
 			if ( is_responsive_app ) {
+				if (this.responsive_commands) {
+					this.responsive_commands.destroy();
+				}
 				var responsive_commands = new SidebarCommands_Responsive({"model": this.model});
+				this.responsive_commands = responsive_commands;
 				output.append(responsive_commands.render().el);
 			}
 
@@ -4361,6 +4359,8 @@ var Field_ToggleableText = Field_Text.extend({
 			if(this.options.spectrum && typeof this.options.spectrum.change === "function"){
 				this.options.spectrum.change(color);
 			}
+			//Update preview color
+			this.update_input_border_color(color.toRgbString);
 		},
 		set_to_blank : function(){
 			var blank_color = 'rgba(0, 0, 0, ' + this.options.blank_alpha + ')',
@@ -5004,15 +5004,15 @@ var Field_ToggleableText = Field_Text.extend({
 
 	var SettingsPanel = Backbone.View.extend(_.extend({}, Upfront_Scroll_Mixin, {
 		className: 'upfront-settings_panel_wrap',
-    // For Anchor & Styles settings
-	hide_common_anchors: false,
-    hide_common_fields: false,
+		// For Anchor & Styles settings
+		hide_common_anchors: false,
+		hide_common_fields: false,
 
 		events: {
 			"click .upfront-save_settings": "on_save",
 			"click .upfront-cancel_settings": "on_cancel",
 			"click .upfront-settings_label": "on_toggle",
-      "click .upfront-settings-common_panel .upfront-settings-item-title": "on_toggle_common"
+    		"click .upfront-settings-common_panel .upfront-settings-item-title": "on_toggle_common"
 		},
 
 		get_title: function () {
@@ -6805,12 +6805,13 @@ var CSSEditor = Backbone.View.extend({
 			;
 			_.each(individual_selectors, function (sel) {
 				sel = $.trim(sel);
-				var clean_selector = sel.replace(/:[^\s]+/, ''), // Clean up states states such as :hover, so as to not mess up the matching
-					is_container = clean_selector[0] === '@' || !!$(selector + clean_selector).closest('#' + me.element_id).length,
+				var clean_selector = sel.replace(/:[^\s]+/, ''); // Clean up states states such as :hover, so as to not mess up the matching
+				var	is_container = clean_selector[0] === '@' || me.recursiveExistence(selector, clean_selector),
 					spacer = is_container
 						? '' // This is not a descentent selector - used for containers
 						: ' ' // This is a descentent selector
 				;
+				
 				processed_selectors.push('' +
 					selector + spacer + sel +
 				'');
@@ -6832,7 +6833,17 @@ var CSSEditor = Backbone.View.extend({
 		return separator + rules.join('\n}' + separator) + '\n}';
 	*/
 	},
+	recursiveExistence: function(selector, clean_selector) {
+		var splitted = clean_selector.split(' ');
+		var me = this;
+		while(splitted.length > 0) {
+			if(!!$(selector + splitted.join(' ')).closest('#' + me.element_id).length)
+				return true;
+			splitted.pop();
+		}
 
+		return false;
+	},
 	// When stylename changes upfront needs to update element model theme_style property
 	// and also to save style under new stylename.
 	updateStylename: function() {
@@ -9521,89 +9532,89 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		}
 	});
 
-	var RegionPanelItem_DeleteRegion = RegionPanelItem.extend({
-		events: {
-			'click .upfront-icon': 'delete_region'
-		},
-		className: 'upfront-inline-panel-item upfront-region-panel-item-delete-region',
-		icon: 'delete',
-		tooltip: l10n.delete_section,
-		//label: "Delete this section",
-		delete_region: function () {
-			var collection = this.model.collection;
-			if ( confirm(l10n.delete_section_nag) ){
-				collection.remove(this.model);
-			}
-		}
-	});
+	// var RegionPanelItem_DeleteRegion = RegionPanelItem.extend({
+	// 	events: {
+	// 		'click .upfront-icon': 'delete_region'
+	// 	},
+	// 	className: 'upfront-inline-panel-item upfront-region-panel-item-delete-region',
+	// 	icon: 'delete',
+	// 	tooltip: l10n.delete_section,
+	// 	//label: "Delete this section",
+	// 	delete_region: function () {
+	// 		var collection = this.model.collection;
+	// 		if ( confirm(l10n.delete_section_nag) ){
+	// 			collection.remove(this.model);
+	// 		}
+	// 	}
+	// });
 
-	var RegionPanel = InlinePanels.Panel.extend({
-		className: 'upfront-inline-panel upfront-region-panel upfront-no-select',
-		initialize: function () {
-			this.items = _([]);
-		},
-		render: function() {
-			var me = this,
-				items = typeof this.items == 'function' ? this.items() : this.items,
-				classes = [
-					'upfront-inline-panel-'+this.position_v,
-					'upfront-inline-panel-'+this.position_v+'-'+this.position_h
-				],
-				width = 0,
-				height = 0;
-			this.$el.html('');
-			items.each(function(item){
-				item.panel_view = me;
-				item.render();
-				item.delegateEvents();
-				me.$el.append(item.el);
-				if ( me.position_v == 'center' )
-					height += item.$el.height();
-				else
-					width += item.$el.width();
-			});
-			this.$el.attr('class', this.className + ' ' + classes.join(' '));
-		},
-		remove: function() {
-			var items = typeof this.items == 'function' ? this.items() : this.items;
+	// var RegionPanel = InlinePanels.Panel.extend({
+	// 	className: 'upfront-inline-panel upfront-region-panel upfront-no-select',
+	// 	initialize: function () {
+	// 		this.items = _([]);
+	// 	},
+	// 	render: function() {
+	// 		var me = this,
+	// 			items = typeof this.items == 'function' ? this.items() : this.items,
+	// 			classes = [
+	// 				'upfront-inline-panel-'+this.position_v,
+	// 				'upfront-inline-panel-'+this.position_v+'-'+this.position_h
+	// 			],
+	// 			width = 0,
+	// 			height = 0;
+	// 		this.$el.html('');
+	// 		items.each(function(item){
+	// 			item.panel_view = me;
+	// 			item.render();
+	// 			item.delegateEvents();
+	// 			me.$el.append(item.el);
+	// 			if ( me.position_v == 'center' )
+	// 				height += item.$el.height();
+	// 			else
+	// 				width += item.$el.width();
+	// 		});
+	// 		this.$el.attr('class', this.className + ' ' + classes.join(' '));
+	// 	},
+	// 	remove: function() {
+	// 		var items = typeof this.items == 'function' ? this.items() : this.items;
 
-			if(items)
-				items.each(function(item){
-					item.remove();
-				})
-			Backbone.View.prototype.remove.call(this);
-		}
-	});
+	// 		if(items)
+	// 			items.each(function(item){
+	// 				item.remove();
+	// 			})
+	// 		Backbone.View.prototype.remove.call(this);
+	// 	}
+	// });
 
-	var RegionPanel_Edit = InlinePanels.Panel.extend({
-		initialize: function () {
-			//this.bg = new RegionPanelItem_BgSetting({model: this.model});
-			if ( this.model.is_main() ){
-				//this.expand_lock = new RegionPanelItem_ExpandLock({model: this.model});
-				this.add_region = new RegionPanelItem_AddRegion({model: this.model, to: 'top'});
-			}
-			//this.delete_region = new RegionPanelItem_DeleteRegion({model: this.model});
-		},
-		items: function () {
-			var items = _([]),
-				type = this.model.get_property_value_by_name('background_type'),
-				sub = this.model.get('sub');
-			//items.push(this.bg);
-			//if ( this.expand_lock )
-			//	items.push(this.expand_lock);
-			if ( this.add_region && type != 'full' )
-				items.push(this.add_region);
-			if ( this.model.is_main() ) {
-				// if ( ! this.model.has_side_region() && ! this.model.get('default') && this.model.get('scope') != 'global' )
-					// items.push( this.delete_region );
-			}
-			else {
-				// if ( sub != 'top' && sub != 'bottom' )
-					// items.push( this.delete_region );
-			}
-			return items;
-		}
-	});
+	// var RegionPanel_Edit = InlinePanels.Panel.extend({
+	// 	initialize: function () {
+	// 		//this.bg = new RegionPanelItem_BgSetting({model: this.model});
+	// 		if ( this.model.is_main() ){
+	// 			//this.expand_lock = new RegionPanelItem_ExpandLock({model: this.model});
+	// 			this.add_region = new RegionPanelItem_AddRegion({model: this.model, to: 'top'});
+	// 		}
+	// 		//this.delete_region = new RegionPanelItem_DeleteRegion({model: this.model});
+	// 	},
+	// 	items: function () {
+	// 		var items = _([]),
+	// 			type = this.model.get_property_value_by_name('background_type'),
+	// 			sub = this.model.get('sub');
+	// 		//items.push(this.bg);
+	// 		//if ( this.expand_lock )
+	// 		//	items.push(this.expand_lock);
+	// 		if ( this.add_region && type != 'full' )
+	// 			items.push(this.add_region);
+	// 		if ( this.model.is_main() ) {
+	// 			// if ( ! this.model.has_side_region() && ! this.model.get('default') && this.model.get('scope') != 'global' )
+	// 				// items.push( this.delete_region );
+	// 		}
+	// 		else {
+	// 			// if ( sub != 'top' && sub != 'bottom' )
+	// 				// items.push( this.delete_region );
+	// 		}
+	// 		return items;
+	// 	}
+	// });
 
 	var RegionPanel_Add = InlinePanels.Panel.extend({
 		initialize: function (opts) {
@@ -9635,12 +9646,12 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		}
 	});
 
-	var RegionPanel_Delete = InlinePanels.Panel.extend({
-		position_h: 'right',
-		initialize: function () {
-			this.items = _( [ new RegionPanelItem_DeleteRegion({model: this.model}) ] );
-		}
-	});
+	// var RegionPanel_Delete = InlinePanels.Panel.extend({
+	// 	position_h: 'right',
+	// 	initialize: function () {
+	// 		this.items = _( [ new RegionPanelItem_DeleteRegion({model: this.model}) ] );
+	// 	}
+	// });
 
 	var RegionPanels = InlinePanels.Panels.extend({
 		className: 'upfront-inline-panels upfront-region-panels upfront-ui',
@@ -9745,6 +9756,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				scroll_top = $(document).scrollTop(),
 				scroll_bottom = scroll_top + win_height - bottom_height,
 				rel_top = $main.offset().top + top_height;
+
+			this.add_responsive_items();
+
 			/*this.$el.css({
 				top: scroll_top > top ? scroll_top-top+25 : 0,
 				bottom: bottom > scroll_bottom ? bottom-scroll_bottom : 0
@@ -9798,6 +9812,56 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					});
 				}
 			});
+		},
+		add_responsive_items: function() {
+			var me = this,
+				$regionEl = me.$el.parents('.upfront-region'),
+				sub_models = me.model.get_sub_regions(),
+				openItemControls = $('<span class="open-responsive-item-controls"></span>'),
+				itemControls = $('<div class="responsive-item-controls">' + l10n.add_region + '</div>'),
+				responsiveAddRegionTop = $('<div class="responsive-item-control responsive-add-region-top">' + l10n.above + '</div>'),
+				responsiveAddRegionBottom = $('<div class="responsive-item-control responsive-add-region-bottom">' + l10n.below + '</div>'),
+				responsiveAddRegionLeft = $('<div class="responsive-item-control responsive-add-region-left">' + l10n.left_sidebar + '</div>'),
+				responsiveAddRegionRight = $('<div class="responsive-item-control responsive-add-region-right">' + l10n.right_sidebar + '</div>')
+			;
+
+			if($regionEl.find('.open-responsive-item-controls').length === 0) {
+				openItemControls.click(function() {
+					$regionEl.toggleClass('controls-visible');
+				});
+				$regionEl.append(openItemControls);
+			}
+
+			responsiveAddRegionTop.click(function() {
+				me.add_panel_top.$el.find('.upfront-icon').trigger('click');
+				$regionEl.toggleClass('controls-visible');
+			});
+			itemControls.append(responsiveAddRegionTop);
+
+			responsiveAddRegionBottom.click(function() {
+				me.add_panel_bottom.$el.find('.upfront-icon').trigger('click');
+				$regionEl.toggleClass('controls-visible');
+			});
+			itemControls.append(responsiveAddRegionBottom);
+
+			if ( me.model.is_main() && this.model.get('allow_sidebar') ){
+				if(sub_models.left === false) {
+					responsiveAddRegionLeft.click(function() {
+						me.add_panel_left.$el.find('.upfront-icon').trigger('click');
+						$regionEl.toggleClass('controls-visible');
+					});
+					itemControls.append(responsiveAddRegionLeft);
+				}
+				if(sub_models.right === false) {
+					responsiveAddRegionRight.click(function() {
+						me.add_panel_right.$el.find('.upfront-icon').trigger('click');
+						$regionEl.toggleClass('controls-visible');
+					});
+					itemControls.append(responsiveAddRegionRight);
+				}
+			}
+			$regionEl.find('.responsive-item-controls').remove();
+			$regionEl.append(itemControls);
 		},
 		remove: function() {
 			//this.edit_panel.remove();

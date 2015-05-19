@@ -87,13 +87,14 @@ class Upfront_Posts_PostsView {
 	}
 
 	private static function _get_arrow_pagination ($data) {
-		global $wp_query;
+		global $wp_query, $paged;
 
 		$old_query = clone($wp_query);
 		$query = Upfront_Posts_Model::spawn_query($data);
 		if (empty($query)) return '';
 
 		$wp_query = $query;
+		$paged = get_query_var('paged');
 
 		$pagination = get_posts_nav_link();
 		$wp_query = $old_query;

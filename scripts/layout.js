@@ -13,8 +13,26 @@ jQuery(document).ready(function($){
 	}
 
 	function get_breakpoint(){
+		if (!window.getComputedStyle) {
+				window.getComputedStyle = function(el, pseudo) {
+				this.el = el;
+				this.getPropertyValue = function(prop) {
+					var re = /(\-([a-z]){1})/g;
+					if (prop == 'float') prop = 'styleFloat';
+					if (re.test(prop)) {
+						prop = prop.replace(re, function () {
+							return arguments[2].toUpperCase();
+						});
+					}
+					return el.currentStyle[prop] ? el.currentStyle[prop] : null;
+				}
+				return this;
+			}
+		}
 		var breakpoint = window.getComputedStyle(document.body,':after').getPropertyValue('content');
-		return breakpoint.replace(/['"]/g, '');
+		if(breakpoint) {
+			return breakpoint.replace(/['"]/g, '');
+		}
 	}
 	
 	/* Youtube API */
@@ -572,15 +590,31 @@ jQuery(document).ready(function($){
 	}
 	regions_scroll_update();
 	$(window).on('load', regions_scroll_update);
-	//var lazyScrollUpdate = throttle(regions_scroll_update, 100);
-	//$(window).on('scroll', lazyScrollUpdate);
+	var lazyScrollUpdate = throttle(regions_scroll_update, 100);
 	$(window).on('scroll', regions_scroll_update);
+	$(window).on('resize', lazyScrollUpdate);
 
 	/* Lightbox front end logic */
 	var overlay = $('<div class="upfront-lightbox-bg"></div>'),
 		close= $('<div class="upfront-ui close_lightbox"></div>'),
 		close_icon= $('<div class="upfront-icon upfront-icon-popup-close"></div>');
 
+	$( "[data-group-link]" ).each( function() {
+		$(this).css({'cursor': 'pointer'});
+		$(this).live( "click", function () {
+			var url = $(this).data("groupLink");
+			var target = $(this).data("groupTarget");
+			if(url.indexOf('#') >=0) {
+				var nav = $('.upfront-output-region-container[data-sticky="1"], .upfront-output-region-sub-container[data-sticky="1"]').first();
+				var height = nav.height() ? nav.height() : 0;
+				//It is an anchor
+				$('html,body').animate({scrollTop: $(url).offset().top - height },'slow');
+			} else {
+				window.open(url, $(this).data("groupTarget"));
+			}
+		});
+	});
+	
 	$(document).on('click', 'a', function(e) {
 		//If we are in the editor the lightbox is open using the region.
 		//if(typeof(Upfront) != 'undefined' && Upfront.Views)
@@ -627,6 +661,7 @@ jQuery(document).ready(function($){
 		  	return;
 
 			if(url.indexOf('#') >=0) {
+			  e.preventDefault();
 			  var tempurl = url.split('#');
 			  if(tempurl[1].trim() != '')
 				if(tempurl[1].trim().indexOf('ltb-') == 0) {
@@ -664,6 +699,12 @@ jQuery(document).ready(function($){
 						overlay.remove();
 						lightbox.hide();
 					}
+				}
+				else {
+					var nav = $('.upfront-output-region-container[data-sticky="1"], .upfront-output-region-sub-container[data-sticky="1"]').first();
+					var height = nav.height() ? nav.height() : 0;
+					//It is an anchor
+					$('html,body').animate({scrollTop: $(url).offset().top - height },'slow');
 				}
 			}
 		});
@@ -745,6 +786,9 @@ jQuery(document).ready(function($){
 					else (obj.$el.attr('src', obj.url));
 					obj.$el.removeClass('upfront-image-lazy-loading').addClass('upfront-image-lazy-loaded');
 					deferred.resolve();
+				})
+				.on('error abort', function () {
+					deferred.reject();
 				})
 			;
 			return deferred.promise();
@@ -876,16 +920,17 @@ jQuery(document).ready(function($){
 		$('[data-theme-styles]').each(function(){
 			var theme_styles = $(this).attr('data-theme-styles'),
 				classes = [];
+			theme_styles = theme_styles.replace("\"default\":", "\"defaults\":");
 			if ( theme_styles )
 				theme_styles = JSON.parse(theme_styles);
 			$.each(theme_styles, function(id, style_class){
 				classes.push(style_class);
 			});
 			$(this).removeClass(classes.join(' '));
-			if ( !breakpoint && theme_styles.default )
-				$(this).addClass( theme_styles.default );
-			else if ( breakpoint && ( theme_styles[breakpoint] || theme_styles.default ) )
-				$(this).addClass( theme_styles[breakpoint] ? theme_styles[breakpoint] : theme_styles.default );
+			if ( !breakpoint && theme_styles.defaults )
+				$(this).addClass( theme_styles.defaults );
+			else if ( breakpoint && ( theme_styles[breakpoint] || theme_styles.defaults ) )
+				$(this).addClass( theme_styles[breakpoint] ? theme_styles[breakpoint] : theme_styles.defaults );
 		});
 	}
 	update_theme_styles();

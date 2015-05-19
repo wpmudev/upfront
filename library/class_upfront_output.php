@@ -483,6 +483,9 @@ abstract class Upfront_Container extends Upfront_Entity {
 						$theme_styles_attr = " data-theme-styles='" . json_encode($theme_styles) . "'";
 					}
 					$slug = upfront_get_property_value('id_slug', $child);
+					if($slug === 'ucomment' && is_single() && !comments_open())
+						return $html; 
+
 					$classes = $this->_get_property('class');
 					$column = upfront_get_class_num('c', $classes);
 					$class = $slug === "uposts" ?   "c" . $column . " uposts-object" : upfront_get_property_value('class', $child);
@@ -942,7 +945,10 @@ class Upfront_Module_Group extends Upfront_Container {
 	}
 
 	public function get_markup () {
-		return parent::get_markup();
+		$pre = '';
+		$anchor = upfront_get_property_value('anchor', $this->_data);
+		if (!empty($anchor)) $pre .= '<a id="' . esc_attr($anchor) . '" data-is-anchor="1"></a>';
+		return $pre . parent::get_markup();
 	}
 	
 	public function wrap ($out) {
@@ -968,13 +974,24 @@ class Upfront_Module_Group extends Upfront_Container {
     
     public function get_attr () {
         $theme_style = $this->_get_property('theme_style');
+        $link = $this->_get_property('href');
+        $linkTarget = $this->_get_property('linkTarget');
         if($theme_style)
             $theme_style = strtolower($theme_style);
         $theme_styles = array( 'default' => $theme_style );
         foreach ( Upfront_Output::$grid->get_breakpoints(true) as $breakpoint ) {
             $theme_styles[$breakpoint->get_id()] = $this->_get_breakpoint_property('theme_style', $breakpoint->get_id());
         }
-        return " data-theme-styles='" . json_encode($theme_styles) . "'";
+				
+        $link_attributes = '';
+        if(!empty($link)) {
+        	$link_attributes = "data-group-link='".$link."'";
+        	if(!empty($linkTarget)) {
+        		$link_attributes .= "data-group-target='".$linkTarget."'";
+        	}
+        }
+
+        return " data-theme-styles='" . json_encode($theme_styles) . "' ".$link_attributes;
     }
 
     public function get_style_for ($point, $scope) {
@@ -1040,7 +1057,7 @@ class Upfront_Module extends Upfront_Container {
 		$pre = '';
 		if (!empty($children)) foreach ($children as $child) {
 			$anchor = upfront_get_property_value('anchor', $child);
-			if (!empty($anchor)) $pre .= '<a id="' . esc_attr($anchor) . '"></a>';
+			if (!empty($anchor)) $pre .= '<a id="' . esc_attr($anchor) . '" data-is-anchor="1"></a>';
 		}
 		return $pre . parent::get_markup();
 	}

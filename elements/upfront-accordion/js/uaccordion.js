@@ -69,8 +69,8 @@ define([
 		addPanel: function(event) {
 			event.preventDefault();
 			this.property('accordion').push({
-				title: 'Panel ' + (1 + this.property('accordion_count')),
-				content: 'Content ' + (1 + this.property('accordion_count'))
+				title: l10n.panel_label + ' ' + (1 + this.property('accordion_count')),
+				content: l10n.content_label + ' ' + (1 + this.property('accordion_count'))
 			});
 			this.property('accordion_count', this.property('accordion').length, false);
 		},

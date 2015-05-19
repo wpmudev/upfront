@@ -444,7 +444,7 @@ var Views = {
 					url = imageModel.get('image').src
 				;
 
-				url = url.replace(document.location.origin, '');
+				//url = url.replace(document.location.origin, ''); // Let's not do this
 
 				if(currentSyntax == 'style')
 					me.currentEditor.insert('url("' + url + '")');
@@ -667,7 +667,7 @@ var CodeView = Upfront.Views.ObjectView.extend({
 });
 
 var CodeElement = Upfront.Views.Editor.Sidebar.Element.extend({
-	priority: 130,
+	priority: 120,
 
 	render: function () {
 		this.$el.addClass('upfront-icon-element upfront-icon-element-code');

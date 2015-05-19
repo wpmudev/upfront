@@ -1049,10 +1049,10 @@ class Upfront_ElementDependencies_VirtualPage extends Upfront_VirtualPage {
 //Upfront_ElementDependencies_VirtualPage::serve();
 add_action('init', array('Upfront_ElementDependencies_VirtualPage', 'serve'));
 
+if (!(defined('UF_THX_TMP_SWITCH') && UF_THX_TMP_SWITCH)) {
 /**
  * Create new endpoint
  */
-
 class Upfront_CreateNew_Theme_VirtualSubpage extends Upfront_VirtualSubpage {
 
 	public function get_slug () { return 'theme'; }
@@ -1143,3 +1143,4 @@ class Upfront_CreateNew_VirtualPage extends Upfront_VirtualPage {
 }
 //Upfront_CreateNew_VirtualPage::serve();
 add_action('init', array('Upfront_CreateNew_VirtualPage', 'serve'));
+}

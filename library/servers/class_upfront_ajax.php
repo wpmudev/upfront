@@ -53,6 +53,16 @@ class Upfront_Ajax extends Upfront_Server {
 		$post_type = isset($_POST['new_post']) ? $_POST['new_post'] : false;
 		$parsed = false;
 
+		//Check if assigned WP template and delete DB layout
+		if(isset($_POST['post_id']) && !empty($_POST['post_id']) && isset($_POST['data']['specificity']) && !empty($_POST['data']['specificity'])) {
+			$template = get_post_meta((int)$_POST['post_id'], '_wp_page_template', true);
+			$theme = Upfront_ChildTheme::get_instance();
+			$prefix = $theme->get_prefix();
+			if(!empty($template) && $template != "default") {
+				delete_option($prefix.'-'.$_POST['data']['specificity']);
+			}
+		}
+
 		if (empty($layout_ids))
 			$this->_out(new Upfront_JsonResponse_Error("No such layout"));
 
@@ -94,9 +104,10 @@ class Upfront_Ajax extends Upfront_Server {
 					// Deal with page templates
 					$template = get_post_meta((int)$post->ID, '_wp_page_template', true);
 					$theme = Upfront_ChildTheme::get_instance();
-					if (!empty($template) && !empty($theme->themeSettings)) {
+					$settings = $theme->get_theme_settings();
+					if (!empty($template) && !empty($settings)) {
 						$tpl = preg_replace('/page-(.*)\.php$/', '\1', $template);
-						$required_pages = $theme->themeSettings->get('required_pages');
+						$required_pages = $settings->get('required_pages');
 						if (!empty($required_pages)) $required_pages = json_decode($required_pages, true);
 						$specificity = !empty($required_pages[$tpl]['layout']) ? $required_pages[$tpl]['layout'] : false;
 						if (!empty($specificity)) {
@@ -121,9 +132,10 @@ class Upfront_Ajax extends Upfront_Server {
 				// Deal with page templates
 				$template = get_post_meta((int)$_POST['post_id'], '_wp_page_template', true);
 				$theme = Upfront_ChildTheme::get_instance();
-				if (!empty($template) && !empty($theme->themeSettings)) {
+				$settings = $theme instanceof Upfront_ChildTheme ? $theme->get_theme_settings() : false;
+				if (!empty($template) && !empty($settings)) {
 					$tpl = preg_replace('/page-(.*)\.php$/', '\1', $template);
-					$required_pages = $theme->themeSettings->get('required_pages');
+					$required_pages = $settings->get('required_pages');
 					if (!empty($required_pages)) $required_pages = json_decode($required_pages, true);
 					$specificity = !empty($required_pages[$tpl]['layout']) ? $required_pages[$tpl]['layout'] : false;
 					if (!empty($specificity)) {
@@ -179,8 +191,9 @@ class Upfront_Ajax extends Upfront_Server {
 			// Resolve existing page template to a layout
 			$tpl = preg_replace('/page_tpl-(.*)\.php/', '\1', $_POST['use_existing']);
 			$theme = Upfront_ChildTheme::get_instance();
-			if (!empty($tpl) && !empty($theme->themeSettings)) {
-				$required_pages = $theme->themeSettings->get('required_pages');
+			$settings = $theme->get_theme_settings();
+			if (!empty($tpl) && !empty($settings)) {
+				$required_pages = $settings->get('required_pages');
 				if (!empty($required_pages)) $required_pages = json_decode($required_pages, true);
 				$specificity = !empty($required_pages[$tpl]['layout']) ? $required_pages[$tpl]['layout'] : false;
 				if (!empty($specificity)) {
@@ -341,7 +354,7 @@ class Upfront_Ajax extends Upfront_Server {
 
 	private function _reset_cache () {
 		global $wpdb;
-		$sql = "DELETE FROM {$wpdb->options} WHERE option_name REGEXP '_transient(_timeout)?_(js|css)(_uf_)?[a-f0-9]+'";
+		$sql = "DELETE FROM {$wpdb->options} WHERE option_name REGEXP '_transient(_timeout)?_(js|css|grid)(_uf_)?[a-f0-9]+'";
 		return $wpdb->query($sql);
 	}
 

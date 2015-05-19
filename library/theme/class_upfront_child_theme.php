@@ -7,6 +7,8 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 	private $_version = false;
 	private $_required_pages = array();
+	private $_theme_settings;
+	
 	protected static $instance;
 
 	public static function get_instance () {
@@ -22,16 +24,30 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		return '1.0';
 	}
 
+	/**
+	 * Static wrapper for theme settings getter.
+	 *
+	 * @return mixed Either Upfront_Theme_Settings object instance or false.
+	 */
+	public static function get_settings () {
+		if (!empty(self::$instance)) return self::$instance->get_theme_settings();
+		return false;
+	}
+
 	protected function __construct () {
 		$this->_version = wp_get_theme()->version;
-		$this->themeSettings = new Upfront_Theme_Settings(get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'settings.php');
+		
+		$this->set_theme_settings(new Upfront_Theme_Settings(get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'settings.php'));
+		
 		self::$instance = $this;
+		
 		//add_filter('upfront_create_default_layout', array($this, 'load_page_regions'), 10, 3); // Soooo... this no longer works, yay
 		add_filter('upfront_override_layout_data', array($this, 'load_page_regions'), 10, 2); // This goes in instead of the above ^
 		add_filter('upfront_get_layout_properties', array($this, 'getLayoutProperties'));
 		add_filter('upfront_get_theme_fonts', array($this, 'getThemeFonts'), 10, 2);
 		add_filter('upfront_get_icon_fonts', array($this, 'getIconFonts'), 10, 2);
 		add_filter('upfront_get_theme_colors', array($this, 'getThemeColors'), 10, 2);
+		add_filter('upfront_get_theme_colors_styles', array($this, 'getThemeColorsStyles'), 10, 1);
 		add_filter('upfront_get_post_image_variants', array($this, 'getPostImageVariants'), 10, 2);
 		add_filter('upfront_get_button_presets', array($this, 'getButtonPresets'), 10, 2);
 		add_filter('upfront_get_tab_presets', array($this, 'getTabPresets'), 10, 2);
@@ -39,7 +55,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		add_filter('upfront_get_theme_styles', array($this, 'getThemeStyles'));
 		add_filter('upfront_get_global_regions', array($this, 'getGlobalRegions'));
 		add_filter('upfront_get_responsive_settings', array($this, 'getResponsiveSettings'));
-		add_filter('upfront_prepare_theme_styles', array($this, 'prepareThemeStyles'));
+		add_filter('upfront_prepare_theme_styles', array($this, 'prepareThemeStyles'), 10, 2);
 
 		add_filter('upfront-storage-key', array($this, 'theme_storage_key'));
 
@@ -51,6 +67,27 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		$this->checkMenusExist();
 		$this->initialize();
+	}
+
+	/**
+	 * Sets the theme settings object
+	 * Not really all that useful in the context of this class, but comes
+	 * really handy when the exporter comes into play.
+	 *
+	 * @param Upfront_Theme_Settings $settings Theme settings object
+	 */
+	public function set_theme_settings (Upfront_Theme_Settings $settings) {
+		$this->_theme_settings = $settings;
+	}
+
+	/**
+	 * Theme settings getter.
+	 * Added in preparation for refactoring the theme settings object to private.
+	 *
+	 * @return Upfront_Theme_Settings Current theme settings.
+	 */
+	public function get_theme_settings () {
+		return $this->_theme_settings;
 	}
 
 	/**
@@ -73,7 +110,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	 * and spawn some required pages based on whatever is in there.
 	 */
 	private function _set_up_required_pages_from_settings () {
-		$pages = $this->themeSettings->get('required_pages');
+		$pages = $this->get_theme_settings()->get('required_pages');
 		if (empty($pages)) return false;
 
 		$pages = json_decode($pages, true);
@@ -100,7 +137,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	}
 
 	protected function checkMenusExist() {
-		$menus = json_decode($this->themeSettings->get('menus'), true);
+		$menus = json_decode($this->get_theme_settings()->get('menus'), true);
 		if (empty($menus)) return;
 
 		$existing_menus = $this->getExistingMenus();
@@ -209,10 +246,10 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		// Add icon font style if there is active icon font other than UpFont
 		$font = $this->getActiveIconFont();
 		if ($font) {
-			$out .= "\nin font \n";
+			//$out .= "\nin font \n";
 			$longSrc = '';
 			foreach($font['files'] as $type=>$file) {
-				$longSrc .= "url('" . get_stylesheet_directory_uri() . '/icon-fonts/' . $file . "') format('";
+				$longSrc .= "url('" . self::THEME_BASE_URL_MACRO . '/icon-fonts/' . $file . "') format('";
 				switch($type) {
 					case 'eot':
 						$longSrc .= 'embedded-opentype';
@@ -233,7 +270,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			$icon_font_style = "@font-face {" .
 				"	font-family: '" . $font['family'] . "';";
 			if (isset($font['files']['eot'])) {
-				$icon_font_style .= "src: url('" . get_stylesheet_directory_uri() . '/icon-fonts/' . $font['files']['eot'] . "');";
+				$icon_font_style .= "src: url('" . self::THEME_BASE_URL_MACRO . '/icon-fonts/' . $font['files']['eot'] . "');";
 			}
 			$icon_font_style .= "src:" . substr($longSrc, 0, -1) . ';';
 
@@ -244,14 +281,16 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 				".uf_font_icon {" .
 				"	font-family: '" . $font['family'] . "'!important;" .
 				"}";
-			$out .= $icon_font_style . "\n";
+			$out .= $this->_expand_passive_relative_url($icon_font_style) . "\n";
 		}
+
+		$this->_theme_styles_called = true;
 
 		return $out;
 	}
 
 	private function getActiveIconFont() {
-		$fonts = json_decode($this->themeSettings->get('icon_fonts'), true);
+		$fonts = json_decode($this->get_theme_settings()->get('icon_fonts'), true);
 		$active_font = false;
         if(empty($fonts)) return false;
 		foreach($fonts as $font) {
@@ -266,16 +305,22 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	/**
 	 * Get theme styles as css output for stylesheet.
 	 */
-	public function prepareThemeStyles($styles) {
+	public function prepareThemeStyles($styles, $has_layout_style = false) {
 		// If styles are empty than there is no overrides in db, load from theme
-		if(empty($styles) === false) return $styles;
+		if(empty($styles) === false && $has_layout_style) return $styles;
 
-		$out = $this->getThemeStylesAsCss();
+		$out = '';
+		if (empty($styles) === false)
+			$out .= $styles;
+		else if ( !isset($this->_theme_styles_called) || !$this->_theme_styles_called )
+			$out .= $this->getThemeStylesAsCss();
 
 		// ALSO!!! Do the theme global styles >.<
-		$global_layout_styles = $this->themeSettings->get('layout_style');
-		if (!empty($global_layout_styles)) {
-			$out .= $this->_expand_passive_relative_url($global_layout_styles);
+		if ( !$has_layout_style ){
+			$global_layout_styles = $this->get_theme_settings()->get('layout_style');
+			if (!empty($global_layout_styles)) {
+				$out .= $this->_expand_passive_relative_url($global_layout_styles);
+			}
 		}
 
 		return $out;
@@ -310,7 +355,8 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	 * @return string Processed content
 	 */
 	private function _expand_passive_relative_url ($content) {
-		return preg_replace('/' . preg_quote(self::THEME_BASE_URL_MACRO, '/') . '/', get_stylesheet_directory_uri(), $content);
+		$contextless_uri = preg_replace('/^https?:/', '', get_stylesheet_directory_uri());
+		return preg_replace('/' . preg_quote(self::THEME_BASE_URL_MACRO, '/') . '/', $contextless_uri, $content);
 	}
 
 	public function getGlobalRegions($global_regions = array())  {
@@ -359,7 +405,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	public function getResponsiveSettings($settings) {
 		if (empty($settings) === false) return $settings;
 
-		$properties = $this->themeSettings->get('responsive_settings');
+		$properties = $this->get_theme_settings()->get('responsive_settings');
 		if (!empty($properties)) {
 			$properties = json_decode($properties, true);
 		}
@@ -400,11 +446,11 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	public function getLayoutProperties($properties = array()) {
 		if (empty($properties) === false) return $properties;
 
-		if ($this->themeSettings->get('layout_properties')) {
-			$properties = json_decode(stripslashes($this->themeSettings->get('layout_properties')), true);
+		if ($this->get_theme_settings()->get('layout_properties')) {
+			$properties = json_decode(stripslashes($this->get_theme_settings()->get('layout_properties')), true);
 		}
 
-		$typography = $this->themeSettings->get('typography');
+		$typography = $this->get_theme_settings()->get('typography');
 		if ($typography && $typography !== '{}') {
 			$properties[] = array(
 				'name' => 'typography',
@@ -417,16 +463,16 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 				'value' => json_decode(stripslashes('{\"h1\":{\"weight\":\"100\",\"style\":\"normal\",\"size\":\"72\",\"line_height\":\"1\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\",\"color\":\"rgba(0,0,0,1)\"},\"h2\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"50\",\"line_height\":\"1\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h3\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"36\",\"line_height\":\"1.3\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h4\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"30\",\"line_height\":\"1.2\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\"},\"h5\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"25\",\"line_height\":\"1.2\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h6\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"22\",\"line_height\":\"1.3\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"p\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"18\",\"line_height\":\"1.4\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"a\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":false,\"line_height\":false,\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(0,206,141,1)\"},\"a:hover\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":false,\"line_height\":false,\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(0,165,113,1)\"},\"ul\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"16\",\"line_height\":\"1.5\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\",\"color\":\"rgba(0,0,0,1)\"},\"ol\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"16\",\"line_height\":\"1.5\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\"},\"blockquote\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"20\",\"line_height\":\"1.5\",\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(103,103,103,1)\"},\"blockquote.upfront-quote-alternative\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"20\",\"line_height\":\"1.5\",\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(103,103,103,1)\"}}'))
 			);
 		}
-		if ($this->themeSettings->get('layout_style')) {
+		if ($this->get_theme_settings()->get('layout_style')) {
 			$properties[] = array(
 				'name' => 'layout_style',
-				'value' => $this->_expand_passive_relative_url($this->themeSettings->get('layout_style')),
+				'value' => $this->_expand_passive_relative_url($this->get_theme_settings()->get('layout_style')),
 			);
 		}
-		if ($this->themeSettings->get('global_regions')) {
+		if ($this->get_theme_settings()->get('global_regions')) {
 			$properties[] = array(
 				'name' => 'global_regions',
-				'value' => json_decode($this->themeSettings->get('global_regions'))
+				'value' => json_decode($this->get_theme_settings()->get('global_regions'))
 			);
 		}
 
@@ -436,7 +482,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	public function getThemeFonts($theme_fonts, $args) {
 		if (empty($theme_fonts) === false && $theme_fonts !== '[]') return $theme_fonts;
 
-		$theme_fonts = $this->themeSettings->get('theme_fonts');
+		$theme_fonts = $this->get_theme_settings()->get('theme_fonts');
 		if (isset($args['json']) && $args['json']) return $theme_fonts;
 
 		return is_array( $theme_fonts ) ? $theme_fonts : json_decode($theme_fonts);
@@ -445,7 +491,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	public function getIconFonts($icon_fonts, $args) {
 		if (empty($icon_fonts) === false && $icon_fonts !== '[]') return $icon_fonts;
 
-		$icon_fonts = $this->themeSettings->get('icon_fonts');
+		$icon_fonts = $this->get_theme_settings()->get('icon_fonts');
 		// Always add icomoon which is always available from Upfront theme
 		$icon_fonts_array = is_array( $icon_fonts ) ? $icon_fonts : json_decode($icon_fonts);
 		$icon_fonts_array = is_array( $icon_fonts_array ) ? $icon_fonts_array : array(); // doublecheck we have something useful
@@ -468,23 +514,41 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	}
 
 	public function getAdditionalFonts() {
-		$additional_fonts = $this->themeSettings->get('additional_fonts');
+		$additional_fonts = $this->get_theme_settings()->get('additional_fonts');
 		return empty($additional_fonts) ? '[]' : $additional_fonts;
 	}
 
 	public function getThemeColors($theme_colors, $args) {
 		if (empty($theme_colors) === false) return $theme_colors;
 
-		$theme_colors = $this->themeSettings->get('theme_colors');
+		$theme_colors = $this->get_theme_settings()->get('theme_colors');
 		if (isset($args['json']) && $args['json']) return $theme_colors;
 
 		return json_decode($theme_colors);
+	}
+	
+	public function getThemeColorsStyles($theme_colors_styles) {
+		if (empty($theme_colors_styles) === false) return $theme_colors_styles;
+
+		$theme_colors = json_decode($this->get_theme_settings()->get('theme_colors'), true);
+		$theme_colors_styles = '';
+		
+		if (!empty($theme_colors['colors'])) foreach($theme_colors['colors'] as $index => $item) {
+			$theme_colors_styles .= " .upfront_theme_color_" . $index ."{ color: " . $item["color"] . ";}";
+            $theme_colors_styles .= " a .upfront_theme_color_" . $index .":hover{ color: " . $item["color"] . ";}";
+            $theme_colors_styles .= " button .upfront_theme_color_" . $index .":hover{ color: " . $item["color"] . ";}";
+            $theme_colors_styles .= " .upfront_theme_bg_color_" . $index ."{ background-color: " . $item["color"] . ";}";
+            $theme_colors_styles .= " a .upfront_theme_bg_color_" . $index .":hover{ background-color: " . $item["color"] . ";}";
+            $theme_colors_styles .= " button .upfront_theme_bg_color_" . $index .":hover{ background-color: " . $item["color"] . ";}";
+		}
+		
+		return $theme_colors_styles;
 	}
 
 	public function getButtonPresets($button_presets, $args) {
 		if (empty($button_presets) === false) return $button_presets;
 
-		$button_presets = $this->themeSettings->get('button_presets');
+		$button_presets = $this->get_theme_settings()->get('button_presets');
 		if (isset($args['json']) && $args['json']) return $button_presets;
 
 		$as_array = false;
@@ -498,7 +562,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	public function getTabPresets($presets, $args) {
 		if (empty($presets) === false) return $presets;
 
-		$presets = $this->themeSettings->get('tab_presets');
+		$presets = $this->get_theme_settings()->get('tab_presets');
 		if (isset($args['json']) && $args['json']) return $presets;
 
 		$as_array = false;
@@ -512,7 +576,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	public function getAccordionPresets($presets, $args) {
 		if (empty($presets) === false) return $presets;
 
-		$presets = $this->themeSettings->get('accordion_presets');
+		$presets = $this->get_theme_settings()->get('accordion_presets');
 		if (isset($args['json']) && $args['json']) return $presets;
 
 		$as_array = false;
@@ -526,7 +590,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	public function getPostImageVariants($image_variants, $args) {
 	  if (empty($image_variants) === false) return $image_variants;
 
-	  $image_variants = $this->themeSettings->get('post_image_variants');
+	  $image_variants = $this->get_theme_settings()->get('post_image_variants');
 	  if( empty( $image_variants )){
 		$image_variants = <<< VRT
 		[
@@ -584,7 +648,7 @@ VRT;
 			if (!empty($tpl)) {
 				$theme = Upfront_ChildTheme::get_instance();
 				$tpl = preg_replace('/page_tpl-(.*)\.php$/', '\1', $tpl);
-				$required_pages = $theme->themeSettings->get('required_pages');
+				$required_pages = $theme->get_theme_settings()->get('required_pages');
 
 				if (!empty($required_pages)) $required_pages = json_decode($required_pages, true);
 				$layoutId = !empty($required_pages[$tpl]['layout']) ? $required_pages[$tpl]['layout'] : $layoutId;

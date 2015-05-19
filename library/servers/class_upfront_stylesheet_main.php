@@ -140,8 +140,12 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		if (!empty($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'create_new') !== false) {
 			return '';
 		}
+		$child = Upfront_ChildTheme::get_instance();
 
-		return Upfront_ChildTheme::get_instance()->getThemeStylesAsCss();
+		return $child instanceof Upfront_ChildTheme
+			? $child->getThemeStylesAsCss()
+			: ''
+		;
 	}
 
 	function prepare_theme_styles() {
@@ -155,6 +159,8 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$layout = Upfront_Layout::get_parsed_cascade(); // Use pure static method instead
 		$layout_id = ( !empty($layout['specificity']) ? $layout['specificity'] : ( !empty($layout['item']) ? $layout['item'] : $layout['type'] ) );
 
+		$layout_style_loaded = false; // Keep track of global layout CSS, so we sent over to the filter
+
 		if( is_array( $styles ) ){
 		  foreach($styles as $type => $elements) {
 			foreach($elements as $name => $content) {
@@ -163,12 +169,14 @@ class Upfront_StylesheetMain extends Upfront_Server {
 			  if ( preg_match('/^region(-container|)$/', $type) && !preg_match($style_rx, $name) )
 				continue;
 			  $out .= $content;
+			  if ( $type == 'layout' && $name == 'layout-style' )
+			  	$layout_style_loaded = true;
 			}
 		  }
 		}
 
 
-		$out = apply_filters('upfront_prepare_theme_styles', $out);
+		$out = apply_filters('upfront_prepare_theme_styles', $out, $layout_style_loaded);
 
 		return $out;
 	}
@@ -312,6 +320,6 @@ class Upfront_StylesheetMain extends Upfront_Server {
     }
 
     private function _get_theme_colors_styles(){
-        return apply_filters('upfront-get_theme_colors_styles', get_option("upfront_" . get_stylesheet() . "_theme_colors_styles"));
+        return apply_filters('upfront_get_theme_colors_styles', get_option("upfront_" . get_stylesheet() . "_theme_colors_styles"));
     }
 }

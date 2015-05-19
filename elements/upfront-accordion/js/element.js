@@ -4,7 +4,7 @@ define([
 	var l10n = Upfront.Settings.l10n.accordion_element;
 
 	var AccordionElement = Upfront.Views.Editor.Sidebar.Element.extend({
-		priority: 200,
+		priority: 140,
 		render: function () {
 			this.$el.addClass('upfront-icon-element upfront-icon-element-accordion');
 			this.$el.html(l10n.element_name);

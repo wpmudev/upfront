@@ -237,21 +237,32 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		});
 	},
 	editModeOff: function() {
+		var me = this;
 		this.$el.find('.upfront-object-content ul').each(function() {
 			if ($(this).hasClass('redactor-toolbar') || $(this).hasClass('upfront-field-select-options')) {
 				return;
 			}
-			if(this.$el.find('li.menu-item.controls-visible').length < 1 )
+			if(me.$el.find('li.menu-item.controls-visible').length < 1 )
 				if($(this).hasClass('ui-sortable')) $(this).sortable('enable');
 		});
 	},
-	onDeactivate: function() {
+	onDeactivate: function(e) {
+		
+		//if($(e.target).closest('form').length > 0)
+		//	return;
+
 		if(this.$el.find('li.edit_mode').data('backboneview'))
 			this.$el.find('li.edit_mode').data('backboneview').model['being-edited']= false;
 		this.$el.find('li.edit_mode a.menu_item').blur();
 		this.editModeOff();
 		if(!$('#upfront-popup').hasClass('upfront-postselector-popup') || !$('#upfront-popup').css('display')== 'block')
 			this.$el.find('.time_being_display').removeClass('time_being_display');
+
+		var currentControlsItem = this.$el.find('li.controls-visible');
+		if(currentControlsItem.length > 0) {
+			currentControlsItem.removeClass('controls-visible');
+			currentControlsItem.data('backboneview').setItemControlsState();
+		}
 	},
 	property: function(name, value, silent) {
 		if(typeof value != "undefined") return this.model.set_property(name, value, silent);
@@ -369,6 +380,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		}).on('keydown', function(e) {if(e.which == 13) me.$el.find('div.upfront-object-content > div.new_menu_button > input').trigger('click');});
 
 		me.$el.find('div.upfront-object-content > div.new_menu_name').on('mouseout', function() {
+			console.log('wtf 1');
 			me.$el.parent().parent().parent().draggable('enable');
 		});
 
@@ -377,6 +389,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		});
 
 		me.$el.find('div.upfront-object-content > div.existing_menu_list').on('mouseout', function() {
+			console.log('wtf 2');
 			me.$el.parent().parent().parent().draggable('enable');
 		});
 
@@ -391,6 +404,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		});
 
 		me.$el.find('div.upfront-object-content > div.existing_menu_list input').on('change', function() {
+			console.log('wtf 3');
 			me.$el.parent().parent().parent().draggable('enable');
 			if(me.$el.find('div.upfront-object-content > div.existing_menu_list input:checked').val() != 0) {
 				var id = me.$el.find('div.upfront-object-content > div.existing_menu_list input:checked').val();
@@ -578,11 +592,11 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					if(selector.hasClass('upfront-output-unewnavigation')) {
 
 						$('head').find('style#responsive_nav_sidebar_offset').remove();
-						var responsive_css = 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"] ul.menu, div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] ul.menu {left:'+parseInt(regions_off.left)+'px !important; right:'+parseInt((win_width-currentwidth-sidebar_width) / 2 -30)+'px !important; } ';
+						var responsive_css = 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"] ul.menu, div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] ul.menu {left:'+parseInt(regions_off.left)+'px !important; } ';
 
 						responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="left"] ul.menu {left:'+parseInt(regions_off.left)+'px !important; right:inherit !important; width:'+parseInt(30/100*regions_width)+'px !important;} ';
 
-						responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="right"] ul.menu {left:inherit !important; right:'+parseInt((win_width-currentwidth-sidebar_width) / 2)+'px !important; width:'+parseInt(30/100*regions_width)+'px !important; } ';
+						responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="right"] ul.menu {left:inherit !important; right:0 !important; width:'+parseInt(30/100*regions_width)+'px !important; } ';
 						responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"] ul.menu {top:'+parseInt(topbar_height)+'px !important; } ';
 
 						$('head').append($('<style id="responsive_nav_sidebar_offset">'+responsive_css+'</style>'));
@@ -776,7 +790,9 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			}
 			$dom.append($li);
 		});
-		$dom.find('li:last').append('<i class="navigation-add-item"></i>')
+
+		$dom.children('li:last').append('<i class="navigation-add-item"></i>');
+
 		return $dom;
 	},
 

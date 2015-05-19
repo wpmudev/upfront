@@ -106,6 +106,9 @@ class Upfront_UtabsView extends Upfront_Object {
 			'element_name' => __('Tabs', 'upfront'),
 			'default_tab_content' => __('Click on active tab title to edit title. Confirm with Enter key.<br>Click on plus button [+] to add new tab.', 'upfront'),
 			'second_tab_content' => __('Have fun with tabs.', 'upfront'),
+			'tab_label'	=> __('Tab', 'upfront'),
+			'content_label'	=> __('Content', 'upfront'),
+			'tab_placeholder' => __('Tab Content', 'upfront'),
 			'css' => array(
 				'container_label' => __('Tabs container', 'upfront'),
 				'container_info' => __('The layer that contains all the contents of the tab element.', 'upfront'),

@@ -4,7 +4,7 @@ define([
 	var l10n = Upfront.Settings.l10n.utabs_element;
 
 	var Element = Upfront.Views.Editor.Sidebar.Element.extend({
-		priority: 100,
+		priority: 130,
 		render: function () {
 			this.$el.addClass('upfront-icon-element upfront-icon-element-tabs');
 			this.$el.html(l10n.element_name);

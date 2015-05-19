@@ -21,7 +21,7 @@ define(function() {
 					label_style: 'inline',
 					label: color.label,
 					spectrum: {
-						preferredFormat: 'rgb',
+						preferredFormat: 'hex',
 						change: function(value) {
 							if (!value) return false;
 							var c = value.get_is_theme_color() !== false ? value.theme_color : value.toRgbString();

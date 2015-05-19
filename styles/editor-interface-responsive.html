@@ -94,13 +94,31 @@
 	}
 </script>
 
-<script type="text/responsive_css" data-bind=".upfront-region" data-min-height="60px" data-max-height="159px">
+<script type="text/responsive_css" data-bind=".upfront-region" data-max-height="159px">
 	(this) > .upfront-entity_meta > .upfront-icon-button {
 		float: right;
 		margin: 0 0 0 5px;
 	}
 </script>
 
+<script type="text/responsive_css" data-bind=".upfront-region-container" data-max-height="99px">
+	(this) .upfront-region-size-hint.upfront-ui,
+	(this) .upfront-region > .upfront-entity_meta.upfront-ui {
+		top: -24px;
+	}
+	(this) .upfront-region-panels.upfront-ui > .upfront-inline-panels-wrap > .upfront-inline-panel {
+		display: none;
+	}
+	.upfront-region-editing (this) .upfront-region > .open-responsive-item-controls {
+		display: block;
+	}
+</script>
+
+<script type="text/responsive_css" data-bind=".upfront-region-container" data-min-height="100px">
+	.upfront-region-editing (this) .upfront-region > .responsive-item-controls {
+		display: none;
+	}
+</script>
 
 <script type="text/responsive_css" data-bind="#upfront-image-details" data-max-width="540px">
 	(this) .upfront-image-orientation {
