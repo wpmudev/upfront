@@ -1,4 +1,4 @@
-<div class="upfront-youtube-container <?php if ($multiple_videos && count($multiple_videos) == 1) { ?>uyoutube-single<?php } else { ?>uyoutube-multiple-<?php echo $display_style ?><?php } ?>">
+<div class="upfront-youtube-container <?php if ($multiple_videos && count($multiple_videos) < 2) { ?>uyoutube-single<?php } else { ?>uyoutube-multiple-<?php echo $display_style ?><?php } ?>">
     <?php if ($multiple_videos && count($multiple_videos) == 1) { ?>
 		<?php if(!empty($multiple_videos[0]['id'])) { ?>
 			<iframe src="http://www.youtube.com/embed/<?php echo $multiple_videos[0]['id'] ?>?modestbranding=1" height="<?php echo $player_height ?>" width="<?php echo $player_width ?>"></iframe>
