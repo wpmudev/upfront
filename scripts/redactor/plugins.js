@@ -4,6 +4,11 @@
         'text!scripts/redactor/ueditor-templates.html'
     ];
 
+    var l10n = Upfront.Settings && Upfront.Settings.l10n
+        ? Upfront.Settings.l10n.global.ueditor
+        : Upfront.mainData.l10n.global.views
+    ;
+
 define("redactor_plugins", deps, function(tpl){
 
 var UeditorEvents = _.extend({}, Backbone.Events);
@@ -212,7 +217,7 @@ RedactorPlugins.stateAlignment = function() {
             if( !this.$toolbar  ) return;
             var self = this;
             this.opts.stateButtons.stateAlign = {
-                title: 'Text alignment',
+                title: l10n.text_align,
                 defaultState: 'left',
                 states: {
                     left: {
@@ -274,7 +279,7 @@ RedactorPlugins.stateAlignmentCTA = {
         if( !this.$toolbar  ) return;
         var self = this;
         this.opts.stateButtons.stateAlignCTA = {
-            title: 'Text alignment',
+            title: l10n.text_align,
             defaultState: 'left',
             states: {
                 left: {
@@ -336,7 +341,7 @@ RedactorPlugins.stateLists = function() {
         init: function () {
             var self = this;
             this.opts.stateButtons.stateLists = {
-                title: 'List style',
+                title: l10n.list_style,
                 defaultState: 'none',
                 states: {
                     none: {
@@ -424,7 +429,7 @@ RedactorPlugins.upfrontSink = {
         if(!Upfront.data.ueditor)
             Upfront.data.ueditor = {sink: false};
         this.opts.buttonsCustom.upfrontSink = {
-            title: 'More tools'
+            title: l10n.more_tools
         };
     },
     init: function(){
@@ -629,7 +634,7 @@ RedactorPlugins.upfrontIcons = function() {
         $sel: false,
         init: function () {
             this.opts.buttonsCustom.upfrontIcons = {
-                title: 'Icons',
+                title: l10n.icons,
                 panel: this.upfrontIcons.panel
             };
             UeditorEvents.on("ueditor:key:down", function (redactor, e) {
@@ -730,7 +735,7 @@ RedactorPlugins.upfrontLink = function() {
 	return {
 		init: function () {
 			this.opts.buttonsCustom.upfrontLink = {
-				title: 'Link',
+				title: l10n.link,
 				panel: this.upfrontLink.panel
 			};
 		},
@@ -869,7 +874,7 @@ RedactorPlugins.upfrontColor = function() {
     return {
         init: function () {
             this.opts.buttonsCustom.upfrontColor = {
-                title: 'Color',
+                title: l10n.color,
                 panel: this.upfrontColor.panel
             };
         },
@@ -1291,7 +1296,7 @@ RedactorPlugins.upfrontFormatting = function() {
         init: function () {
 
             this.opts.buttonsCustom.upfrontFormatting = {
-                title: 'Formatting',
+                title: l10n.formatting,
                 panel: this.upfrontFormatting.panel,
                 first: true
             };
@@ -1385,7 +1390,7 @@ RedactorPlugins.blockquote = function() {
 
             var me = this;
             this.opts.stateButtons.blockquote = {
-                title: 'Set a quote',
+                title: l10n.blockquote,
                 defaultState: 'noquote',
                 states: {
                     noquote: {
