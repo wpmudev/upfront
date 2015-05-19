@@ -32,11 +32,7 @@ define([
 
 		get_presets: function () {
 			return _.union([{ label: 'None', value: 'default'}], _.map(this.options.presets.models, function(model) {
-        if('undefined' === typeof model.get('name')) {
-          return { label: model.get('id'), value: model.get('id') };
-        } else {
-          return { label: model.get('name'), value: model.get('id') };
-        }
+				return { label: model.get('name'), value: model.get('id') };
 			}));
 		}
 	});

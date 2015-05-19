@@ -1,32 +1,37 @@
 <?php
 
-require_once Upfront::get_root_dir() . '/library/servers/class_upfront_presets_server.php';
-
-class Upfront_Button_Presets_Server extends Upfront_Presets_Server {
-	private static $instance;
-
-	public function get_element_name() {
-		return 'button';
-	}
+class Upfront_Server_ButtonPresetsServer extends Upfront_Server {
 
 	public static function serve () {
-		self::$instance = new self;
-		self::$instance->_add_hooks();
-    add_filter( 'get_element_preset_styles', array(self::$instance, 'get_preset_styles_filter')) ;
+		$me = new self;
+		$me->_add_hooks();
 	}
 
-	public static function get_instance() {
-		return self::$instance;
-	}
-	
-	public function get_preset_styles_filter($style) {
-		$style .= self::$instance->get_presets_styles();
-		return $style;
+	private function _add_hooks () {
+		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) upfront_add_ajax('upfront_get_button_presets', array($this, 'get'));
+		if (Upfront_Permissions::current(Upfront_Permissions::SAVE)) upfront_add_ajax('upfront_update_button_presets', array($this, 'update'));
 	}
 
-	protected function get_style_template_path() {
-		return realpath(Upfront::get_root_dir() . '/elements/upfront-button/tpl/preset-style.html');
+	public function get() {
+		$button_presets = get_option('upfront_' . get_stylesheet() . '_button_presets');
+		if (empty($button_presets)) $button_presets = array();
+		$this->_out(new Upfront_JsonResponse_Success($button_presets));
+	}
+
+	public function update() {
+		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
+
+		$button_presets = isset($_POST['button_presets']) ? $_POST['button_presets'] : array();
+
+
+		//do_action('upfront_save_button_presets', $button_presets);
+
+		if (!has_action('upfront_update_button_presets')) {
+			update_option('upfront_' . get_stylesheet() . '_button_presets', json_encode($button_presets));
+		}
+
+		$this->_out(new Upfront_JsonResponse_Success(get_stylesheet() . ' button presets updated'));
 	}
 }
 
-add_action('init', array('Upfront_Button_Presets_Server', 'serve'));
+add_action('init', array('Upfront_Server_ButtonPresetsServer', 'serve'));

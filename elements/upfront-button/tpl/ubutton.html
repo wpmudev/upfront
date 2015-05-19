@@ -1,3 +1,9 @@
-<div class="upfront-button-container button-style button-preset-<?php echo $preset ?>">
-	<a href="<?php echo $href ?>" target="<?php echo $linkTarget ?>" style="text-align: <?php echo $align ?>;" class="upfront_cta"><?php echo $content ?></a>
-</div>
+<a href="{{href}}" target="{{linkTarget}}" style="text-align: {{align}};" class="upfront_cta">{{content}}</a>
+<style id="style{{id}}">
+	div#{{id}} a.upfront_cta {
+		{{style_static}}
+	}
+	div#{{id}} a.upfront_cta:hover {
+		{{style_hover}}
+	}
+</style>
