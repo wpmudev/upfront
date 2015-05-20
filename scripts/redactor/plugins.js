@@ -6,7 +6,7 @@
 
     var l10n = Upfront.Settings && Upfront.Settings.l10n
         ? Upfront.Settings.l10n.global.ueditor
-        : Upfront.mainData.l10n.global.views
+        : Upfront.mainData.l10n.global.ueditor
     ;
 
 define("redactor_plugins", deps, function(tpl){
