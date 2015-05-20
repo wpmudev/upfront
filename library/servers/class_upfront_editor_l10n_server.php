@@ -212,6 +212,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'year' => __('Year', 'upfront'),
 				'hour' => __('Hour', 'upfront'),
 				'minute' => __('Minute', 'upfront'),
+				'choose_image_insert' => __('Choose Image Insert: ', 'upfront')
 			),
 			'ueditor' => array(
 				'text_align' => __('Text alignment', 'upfront'),

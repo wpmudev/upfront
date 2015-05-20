@@ -480,7 +480,7 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
     getStyleView: function(){
         if(this.styleView)
             return this.styleView;
-        var view = new PostImageStylesView( this.data );
+        var view = new utils.PostImageStylesView( this.data );
         this.styleView = view;
         return view;
     },
@@ -533,36 +533,8 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
         html = html.replace( /caption\]\n\n+\[caption/g, 'caption]\n\n[caption' );
         html = html.replace(/\s+/g," ");
         this.$shortcode_el.html( html );
-    },
-
-});
-
-var PostImageStylesView = Backbone.View.extend({
-
-    tpl: _.template($(tpls).find('#image-style-tpl').html()),
-    initialize: function( options ){
-        this.data = new Backbone.Model();
-        this.listenTo(this.data, 'change', this.render);
-        this.data.set("variants", Upfront.Content.ImageVariants.toJSON());
-        this.data.set( "selected", options.get('variant_id') );
-
-    },
-    events: {
-        'change input[type=radio]': 'update_data',
-        'click input[type=radio]': 'on_click'
-    },
-    render: function(){
-        this.$el.html(this.tpl( { data: this.data.toJSON() } ));
-        return this;
-    },
-    on_click: function(e){
-        e.stopPropagation();
-    },
-    update_data: function(e){
-        e.stopPropagation();
-        this.variant_id = $(e.target).val();
-        this._style = Upfront.Content.ImageVariants.findWhere({vid : this.variant_id});
     }
+
 });
 
 

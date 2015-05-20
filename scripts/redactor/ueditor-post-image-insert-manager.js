@@ -34,13 +34,10 @@ var PostImageInsert_Manager = base.ImageInsertBase.extend({
                 var insert = new WP_PostImageInsert({start: result, $editor: $editor});
                 deferred.resolve(insert);
             }else{
-                var imageData = me.getImageData(result);
-                imageData.id = me.data.id;
-                me.data.clear({silent: true});
-                imageData.variant_id = imageData.style.vid ? imageData.style.vid : Upfront.Content.ImageVariants.first().get("vid");
-                me.data.set(imageData);
-            }
+                var insert = new PostImageInsert({start: result, $editor: $editor});
+                deferred.resolve(insert);
 
+            }
         });
 
         return $.when( promise, deferred.promise() );

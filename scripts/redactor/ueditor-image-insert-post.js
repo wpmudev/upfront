@@ -19,11 +19,29 @@ var PostImageInsert = base.ImageInsertBase.extend({
             {id: 'toggle_caption', type: 'simple', icon: 'caption', tooltip: 'Toggle Caption', active: _.bind( this.get_caption_state, this ) }
         ];
         this.createControls();
+
+        if( opts.start )
+            return this.start( opts.start );
+    },
+    start: function( result ){
+        var imageData = this.getImageData(result);
+        imageData.id = this.data.id;
+        this.data.clear({silent: true});
+        imageData.style = Upfront.Content.ImageVariants.first().toJSON();
+        imageData.variant_id = imageData.style.vid;
+        this.data.set(imageData);
+        this.set_selected_style();
+        this.render();
+        return this;
+    },
+    set_selected_style: function(){
+        // set selected item in the styles control data
+        _.findWhere(this.controlsData, {id : "style"})
+            .view.data.set("selected", this.data.get("variant_id") );
     },
     // Insert editor UI
     render: function(){
         var data = this.prepare_data();
-
 
         this.$el
             .html(this.tpl(data))

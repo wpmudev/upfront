@@ -4,6 +4,8 @@
         ],
         function(tpls){
 
+var l10n = Upfront.mainData.l10n.global.content;
+
 var ImageStylesView = Backbone.View.extend({
     tpl: _.template($(tpls).find('#image-style-tpl').html()),
     initialize: function( options ){
@@ -30,7 +32,6 @@ var ImageStylesView = Backbone.View.extend({
         this._style = BasicImageVariants.findWhere({vid : this.variant_id});
     }
 });
-
 
 var LinkView = Backbone.View.extend({
     tpl: _.template($(tpls).find('#image-link-tpl').html()),
@@ -74,9 +75,56 @@ var LinkView = Backbone.View.extend({
     }
 });
 
+var PostImageStylesView = Backbone.View.extend({
+    initialize: function( options ){
+        this.data = new Backbone.Model();
+        this.data.set( "variants", Upfront.Content.ImageVariants.toJSON());
+        this.data.set( "selected", options.get('variant_id') );
+    },
+    events: {
+        //'change input[type=radio]': 'update_data',
+        //'click input[type=radio]': 'on_click'
+    },
+    prepare_values: function(){
+        var self = this,
+            values = [];
+        _.each(this.data.get("variants"), function(val, index){
+            values.push(  { value: val.vid, label: val.label } );
+        });
+        return values;
+    },
+    get_default_value: function(){
+        return this.data.get("selected");
+    },
+    render: function(){
+        var self = this,
+            select = new  Upfront.Views.Editor.Field.Select({
+                className: 'upfront-field-wrap upfront-field-wrap-image-style-variant',
+                label: l10n.choose_image_insert,
+                name: "uf_image_style_variants",
+                default_value: this.get_default_value(),
+                multiple: false,
+                values: this.prepare_values(),
+                change: function(variant_id){
+                    self._style = Upfront.Content.ImageVariants.findWhere({vid : variant_id});
+                    self.data.set( "selected", variant_id );
+                }
+            });
+
+        select.render();
+        this.$el.html( select.$el );
+        return this;
+    },
+    on_click: function(e){
+        e.stopPropagation();
+    }
+});
+
+
 return {
     LinkView: LinkView,
-    ImageStylesView: ImageStylesView
+    ImageStylesView: ImageStylesView,
+    PostImageStylesView: PostImageStylesView
 };
 
 //End Define
