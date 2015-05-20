@@ -223,6 +223,9 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'blockquote' => __('Set a quote', 'upfront'),
 				'bold' => __('Bold', 'upfront'),
 				'italic' => __('Italic', 'upfront'),
+				'text_color' => __('Text Color', 'upfront'),
+				'text_background' => __('Text Background', 'upfront'),
+				'italic' => __('Italic', 'upfront'),
 			),
 			'views' => array(
 				'unsaved_changes_nag' => __('You have unsaved changes you\'re about to lose by navigating off this page.', 'upfront'),
