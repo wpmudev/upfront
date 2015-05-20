@@ -598,7 +598,9 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'style_name' => __('Style name', 'upfront'),
 				'select_post_type' => __('Select a post type:', 'upfront'),
 				'upload_icon_font' => __('Upload Icon Font', 'upfront'),
-				'upload_icon_font' => __('Upload Icon Font', 'upfront'),
+				'current_color' => __('Current color:', 'upfront'),
+				'theme_colors' => __('Theme colors:', 'upfront'),
+				'recent_colors' => __('Recent colors:', 'upfront'),
 			),
 		);
 		return !empty($key)

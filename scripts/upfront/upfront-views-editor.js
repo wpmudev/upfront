@@ -4240,8 +4240,6 @@ var Field_ToggleableText = Field_Text.extend({
 				if(me.options.spectrum && me.options.spectrum.beforeShow) me.options.spectrum.beforeShow(color);
 
 				me.$(".sp-container").data("sp-options", me.options.spectrum );
-
-
 			};
 
 			if( !spectrumOptions.autoHide  ){
@@ -4252,12 +4250,26 @@ var Field_ToggleableText = Field_Text.extend({
 				};
 			}
 
+			var l10n_update = _.debounce(function () {
+				// Let's fix the strings
+				$(".sp-container").each(function () {
+					$(this)
+						.find(".sp-input-container").attr("data-label", l10n.current_color).end()
+						.find(".sp-palette-container").attr("data-label", l10n.theme_colors).end()
+						.find(".sp-palette-row:last").attr("data-label", l10n.recent_colors)
+					;
+				})
+			});
+
 
 			Field_Color.__super__.initialize.apply(this, arguments);
 
 			this.on('rendered', function(){
 				me.$('input[name=' + me.get_field_name() + ']').spectrum(spectrumOptions);
 				me.$spectrum = me.$('input[name=' + me.get_field_name() + ']');
+
+				// Listen to spectrum events and fire off l10n labels update
+				me.$spectrum.on("reflow.spectrum move.spectrum change", l10n_update);
 
 				me.$(".sp-container").append("<div class='color_picker_rgb_container'></div>");
 				me.update_input_border_color(me.get_saved_value());
