@@ -557,7 +557,7 @@ RedactorPlugins.panelButtons = function () {
 
             $.each(this.opts.buttonsCustom, function (id, b) {
                 if (b.panel) {
-                    var $panel = $('<div class="redactor-dropdown ueditor_panel redactor-dropdown-box-' + id + '" style="display: none;">'),
+                    var $panel = $('<div class="redactor-dropdown ueditor_panel redactor-dropdown-box-' + id + ' redactor-dropdown-' + self.uuid +' " style="display: none;">'),
                         $button = self.button.get(id),
                         addMethod = _.isUndefined(  b.first ) ? "add" : "addFirst"
                         ;
