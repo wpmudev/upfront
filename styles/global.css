@@ -202,6 +202,13 @@ h2, h3 { page-break-after: avoid; }
   /*padding-right:0;*/
 }
 
+.upfront-postpart-object.hide-featured_image {
+	display: none;
+}
+.upfront-postpart-object.full-featured_image {
+	max-height: none !important;
+}
+
 /* Post Inserts */
 
 .ueditor-insert {
