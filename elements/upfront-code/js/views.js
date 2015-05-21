@@ -378,9 +378,10 @@ define([
 				this.prepareSpectrum($editor);
 
 				//Prepare image picker
-				$editor.on('click', '.upfront-css-image', function(){
-					me.openImagePicker();
-				});
+				$editor
+					.on('click', '.upfront-css-theme_image', _.bind(this.open_theme_image_picker, this))
+					.on('click', '.upfront-css-media_image', _.bind(this.open_media_image_picker, this))
+				;
 			},
 
 			prepareSpectrum: function($editor){
@@ -415,22 +416,32 @@ define([
 				});
 			},
 
-			openImagePicker: function(){
+			open_theme_image_picker: function () {
+				return this._open_image_picker({themeImages: true});
+			},
+			open_media_image_picker: function () {
+				return this._open_image_picker();
+			},
+
+			_open_image_picker: function (opts) {
+				opts = _.isObject(opts) ? opts : {};
 				var me = this,
+					options = _.extend({
+						multiple_selection: false,
+						media_type:['images']
+					}, opts),
 					currentSyntax = $('#upfront_code-editor').find('.upfront_code-switch.active').data('for')
 				;
 
-				Upfront.Media.Manager.open({
-					multiple_selection: false,
-					media_type:['images']
-				}).done(function(popup, result){
+				Upfront.Media.Manager.open(options).done(function(popup, result){
 					Upfront.Events.trigger('upfront:element:edit:stop');
-					if(!result)
-						return;
+					if (!result) return false;
 
 					var imageModel = result.models[0],
-						url = imageModel.get('image').src
+						img = imageModel || result.models[0],
+						url = 'src' in img ? img.src : ('get' in img ? img.get('original_url') : false)
 					;
+					if (!url) return false;
 
 					//url = url.replace(document.location.origin, ''); // Let's not do this
 
