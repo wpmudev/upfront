@@ -7125,7 +7125,7 @@ var CSSEditor = Backbone.View.extend({
 			if (!result) return;
 
 			var imageModel = result.models[0],
-				img = imageModel || result.models[0],
+				img = imageModel.get('image') ? imageModel.get('image') : result.models[0],
 				url = 'src' in img ? img.src : ('get' in img ? img.get('original_url') : false)
 			;
 
