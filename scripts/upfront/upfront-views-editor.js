@@ -6410,7 +6410,8 @@ var CSSEditor = Backbone.View.extend({
 	events: {
 		'click .upfront-css-save-ok': 'save',
 		'click .upfront-css-close': 'close',
-		'click .upfront-css-image': 'openImagePicker',
+		'click .upfront-css-theme_image': 'openThemeImagePicker',
+		'click .upfront-css-media_image': 'openImagePicker',
 		'click .upfront-css-font': 'startInsertFontWidget',
 		'click .upfront-css-selector': 'addSelector',
 		'click .upfront-css-type' : 'scrollToElement',
@@ -7099,14 +7100,35 @@ var CSSEditor = Backbone.View.extend({
 		view.remove();
 	},
 
-	openImagePicker: function(){
-		var me = this;
-		Upfront.Media.Manager.open({}).done(function(popup, result){
-			Upfront.Events.trigger('upfront:element:edit:stop');
-			if(!result)
-				return;
+	openThemeImagePicker: function () {
+		this._open_media_popup({themeImages: true});
+	},
 
-			var url = result.models[0].get('image').src;//.replace(document.location.origin, '');
+	openImagePicker: function(){
+		this._open_media_popup();
+	},
+
+	/**
+	 * Handles media popups.
+	 * In this context, used for both theme and media images list.
+	 *
+	 * @param object opts Boot-time options to be passed to Upfront.Media.Manager
+	 */
+	_open_media_popup: function (opts) {
+		opts = _.isObject(opts) ? opts : {};
+		var me = this,
+			options = _.extend({}, opts)
+		;
+
+		Upfront.Media.Manager.open(options).done(function(popup, result){
+			Upfront.Events.trigger('upfront:element:edit:stop');
+			if (!result) return;
+
+			var imageModel = result.models[0],
+				img = imageModel || result.models[0],
+				url = 'src' in img ? img.src : ('get' in img ? img.get('original_url') : false)
+			;
+
 			me.editor.insert('url("' + url + '")');
 			me.editor.focus();
 		});

@@ -163,6 +163,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'parent_category' => __('Parent Category', 'upfront'),
 				'insert_font' => __('Insert Font', 'upfront'),
 				'insert_theme_image' => __('Link theme image', 'upfront'),
+				'insert_image' => __('Link image', 'upfront'),
 				'available_element_selectors' => __('Available element selectors:', 'upfront'),
 				'save' => __('Save', 'upfront'),
 				'loading_fonts' => __('Loading fonts...', 'upfront'),
