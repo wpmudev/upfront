@@ -285,6 +285,10 @@ define(function() {
 				data[idx] = _(active_non_defaults).invoke("get", "filter");
 			});
 			return data;
+		},
+		has_upload: function () {
+			if (!this.themeImages) return true; // Allow when not looking into theme images
+			return Upfront.Application.is_builder(); // Otherwise, allow if in builder
 		}
 	});
 
@@ -1117,15 +1121,19 @@ define(function() {
 			"click .shortcode": "switch_to_shortcode",
 			"click .markup": "switch_to_markup",
 		},
-		template: _.template(
-			'<ul class="upfront-tabs upfront-media_manager-tabs"> <li class="library">' + l10n.library + '</li> <li class="embed">' + l10n.embed + '</li> </ul> <button type="button" class="upload">' + l10n.upload + '</button>'
+		switch_template: _.template(
+			'<ul class="upfront-tabs upfront-media_manager-tabs"> <li class="library">' + l10n.library + '</li> <li class="embed">' + l10n.embed + '</li> </ul> '
+		),
+		upload_template: _.template(
+			'<button type="button" class="upload">' + l10n.upload + '</button>'
 		),
 		initialize: function () {
 			Upfront.Events.on("media_manager:media:show_library", this.switch_to_library, this);
 		},
 		render: function () {
 			this.$el.empty().append(
-				this.template({})
+				this.switch_template({}) +
+				(ActiveFilters.has_upload() ? this.upload_template({}) : '')
 			);
 			this.$el.addClass('clearfix');
 			this.switch_to_library();
