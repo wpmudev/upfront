@@ -472,7 +472,6 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		var me = this;
 
-
 		if(!this.property('menu_id')) {
 			this.display_menu_list();
 		}
@@ -519,7 +518,6 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 						width = default_breakpoint.attributes.width;
 					} else width = breakpoint.width;
 					// To roll responsive nav settings into action
-
 					me.activate_responsive_nav($upfrontObjectContent, width);
 					
 				}
@@ -592,11 +590,15 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					if(selector.hasClass('upfront-output-unewnavigation')) {
 
 						$('head').find('style#responsive_nav_sidebar_offset').remove();
-						var responsive_css = 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"] ul.menu, div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] ul.menu {left:'+parseInt(regions_off.left)+'px !important; } ';
-
+						
+						var responsive_css = 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"] ul.menu, div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] ul.menu {left:'+parseInt(regions_off.left)+'px !important; right: inherit; width:'+((parseInt(currentwidth) < parseInt(win_width-sidebar_width))?parseInt(currentwidth):parseInt(win_width-sidebar_width)) +'px !important; } ';
+						
 						responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="left"] ul.menu {left:'+parseInt(regions_off.left)+'px !important; right:inherit !important; width:'+parseInt(30/100*regions_width)+'px !important;} ';
 
-						responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="right"] ul.menu {left:inherit !important; right:0 !important; width:'+parseInt(30/100*regions_width)+'px !important; } ';
+						
+						//responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="right"] ul.menu {left:inherit !important; right:'+parseInt((win_width-currentwidth-sidebar_width) / 2)+'px !important; width:'+parseInt(30/100*regions_width)+'px !important; } ';
+						responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="right"] ul.menu {left:inherit !important; right:'+((parseInt((win_width-currentwidth-sidebar_width) / 2 - 30) > 0)?parseInt((win_width-currentwidth-sidebar_width) / 2 - 30):0)+'px !important; width:'+parseInt(30/100*regions_width)+'px !important; } ';
+
 						responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"] ul.menu {top:'+parseInt(topbar_height)+'px !important; } ';
 
 						$('head').append($('<style id="responsive_nav_sidebar_offset">'+responsive_css+'</style>'));
@@ -609,7 +611,9 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				}
 				else {
 					//selector.attr('data-style', selector.data('stylebk'))
-					selector.attr('data-style', bparray[key]['menu_style'])
+					selector.attr('data-style', bparray[key]['menu_style']);
+					selector.attr('data-aliment', bparray[key]['menu_alignment']);
+					
 
 					selector.removeAttr('data-burger_alignment','');
 					selector.removeAttr('data-burger_over', '');
