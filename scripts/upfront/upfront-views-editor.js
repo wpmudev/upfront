@@ -2242,7 +2242,16 @@ define([
                 default_value: '#ffffff',
                 spectrum: {
                     choose: function (color) {
-                        self.add_new_color( color );
+                    	if (!_.isObject(color)) return false;
+                    	var value = empty_picker.get_value();
+                        if (value && "undefined" !== typeof tinycolor) {
+                        	color = tinycolor(value);
+                        }
+                        self.add_new_color(color);
+                    },
+                    change: function (color) {
+                    	if (!_.isObject(color)) return false;
+						empty_picker.update_input_val(color.toHexString())
                     }
                 }
             });
