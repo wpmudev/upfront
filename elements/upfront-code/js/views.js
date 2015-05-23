@@ -384,36 +384,34 @@ define([
 				;
 			},
 
-			prepareSpectrum: function($editor){
-				var me = this;
-
-				$editor.find('.upfront-css-color').spectrum({
-					showAlpha: true,
-					showPalette: true,
-					palette: Upfront.Views.Theme_Colors.colors.pluck("color").length ? Upfront.Views.Theme_Colors.colors.pluck("color") : ['fff', '000', '0f0'],
-					maxSelectionSize: 9,
-					localStorageKey: "spectrum.recent_bgs",
-					preferredFormat: "hex",
-					chooseText: l10n.create.ok,
-					showInput: true,
-					allowEmpty:true,
-					show: function(){
-						spectrum = $('.sp-container:visible');
-					},
-					change: function(color) {
-						var colorString = color.get_is_theme_color()
-							? color.theme_color
-							: (color.alpha < 1 ? color.toRgbString() : color.toHexString())
-						;
-						me.currentEditor.insert(colorString);
-						me.currentEditor.focus();
-					},
-					move: function(color) {
-						var rgba = color.toRgbString();
-						spectrum.find('.sp-dragger').css('border-top-color', rgba);
-						spectrum.parent().find('.sp-dragger').css('border-right-color', rgba);
-					}
-				});
+			prepareSpectrum: function ($editor) {
+				var me = this,
+					fld = new Upfront.Views.Editor.Field.Color({
+						blank_alpha: 0,
+						default_value: '#ffffff',
+						flat: true,
+						showAlpha: true,
+						appendTo: "parent",
+						showPalette: true,
+						maxSelectionSize: 10,
+						preferredFormat: "hex",
+						chooseText: l10n.create.ok,
+						showInput: true,
+						allowEmpty: true,
+						spectrum: {
+							choose: function(color) {
+								var colorString = color.get_is_theme_color()
+									? color.theme_color
+									: (color.alpha < 1 ? color.toRgbString() : color.toHexString())
+								;
+								me.currentEditor.insert(colorString);
+								me.currentEditor.focus();
+							}
+						}
+					})
+				;
+				fld.render();
+				$editor.find(".upfront-css-color").empty().append(fld.$el);
 			},
 
 			open_theme_image_picker: function () {
