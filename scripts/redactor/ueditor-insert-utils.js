@@ -120,11 +120,45 @@ var PostImageStylesView = Backbone.View.extend({
     }
 });
 
+var WP_PostImageStylesView = Backbone.View.extend({
+    className: "upfront-wp-image-style-variants",
+    tpl: _.template($(tpls).find('#wp-image-style-tpl').html()),
+    get_alignments: function(){
+      return [
+          { id: "alignone",  label: "No aligment", icon: "upfront-icon-region-style" },
+          { id: "alignleft",  label: "Align left", icon: "upfront-icon-region-style" },
+          { id: "aligncenter",  label: "Align center", icon: "upfront-icon-region-style" },
+          { id: "alignright",  label: "Align right", icon: "upfront-icon-region-style" }
+      ];
+    },
+    initialize: function( options ){
+        this.data = new Backbone.Model();
+        this.data.set( "variants", this.get_alignments());
+        this.listenTo(this.data, 'change', this.render);
+        this.data.set( "selected", options.get('variant_id') );
+    },
+    events: {
+        //'change input[type=radio]': 'update_data',
+        //'click input[type=radio]': 'on_click'
+    },
+
+    get_default_value: function(){
+        return this.data.get("selected");
+    },
+    render: function(){
+        this.$el.html( this.tpl( { data: this.data.toJSON() } ) );
+        return this;
+    },
+    on_click: function(e){
+        e.stopPropagation();
+    }
+});
 
 return {
     LinkView: LinkView,
     ImageStylesView: ImageStylesView,
-    PostImageStylesView: PostImageStylesView
+    PostImageStylesView: PostImageStylesView,
+    WP_PostImageStylesView: WP_PostImageStylesView
 };
 
 //End Define

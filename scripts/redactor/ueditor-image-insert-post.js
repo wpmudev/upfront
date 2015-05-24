@@ -2,9 +2,10 @@
 define([
         "scripts/redactor/ueditor-insert",
         "scripts/redactor/ueditor-image-insert-base",
-        'text!scripts/redactor/ueditor-templates.html'
+        'text!scripts/redactor/ueditor-templates.html',
+        "scripts/redactor/ueditor-insert-utils"
     ],
-function(Insert, base, tpls){
+function(Insert, base, tpls, utils){
 
 var PostImageInsert = base.ImageInsertBase.extend({
     className: 'ueditor-insert upfront-inserted_image-wrapper ueditor-insert-variant ueditor-post-image-insert',
@@ -131,23 +132,28 @@ var WP_PostImageInsert = base.ImageInsertBase.extend({
     shortcode_tpl : _.template($(tpls).find('#post-image-insert-shortcode-wp-tpl').html().replace(/\s+/g," ")),
     init: function(opts){
         this.$editor = opts.$editor;
+
+
+      if( opts.start )
+        return this.start( opts.start );
+    },
+    prepare_controls: function(){
         this.controlsData = [
             {id: 'style', type: 'dialog', icon: 'style', tooltip: 'Style', view: this.getStyleView()},
             {id: 'link', type: 'dialog', icon: 'link', tooltip: 'Link image', view: this.getLinkView()},
             {id: 'toggle_caption', type: 'simple', icon: 'caption', tooltip: 'Toggle Caption', active: _.bind( this.get_caption_state, this ) }
         ];
-        this.createControls();
-
-      if( opts.start )
-        return this.start( opts.start );
     },
     start: function( result ){
         var me = this,
             imageData = me.getImageData(result);
 
         imageData.id = me.data.id;
+        imageData.variant_id = "alignnone";
         me.data.clear({silent: true});
         me.data.set(imageData);
+        this.prepare_controls();
+        this.createControls();
         this.render();
         return this;
     },
@@ -188,6 +194,7 @@ var WP_PostImageInsert = base.ImageInsertBase.extend({
         this.$shortcode_el = this.$(".post-images-shortcode-wp");
 
         this.render_shortcode(data);
+        this.prepare_controls();
         this.createControls();
         this.controls.render();
 
@@ -197,6 +204,13 @@ var WP_PostImageInsert = base.ImageInsertBase.extend({
         this.make_caption_editable();
         $tools_el.append('<a href="#" contenteditable="false" class="upfront-icon-button upfront-icon-button-delete ueditor-insert-remove"></a>');
 
+    },
+    getStyleView: function(){
+        if(this.styleView)
+            return this.styleView;
+        var view = new utils.WP_PostImageStylesView( this.data );
+        this.styleView = view;
+        return view;
     }
 });
 

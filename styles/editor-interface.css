@@ -2209,6 +2209,19 @@ div.uinsert-selector a:hover {
   font-size: 13px;
   font-weight: normal; }
 
+.upfront-wp-image-style-variants {
+  width: 90px; }
+
+.upfront-inline-panel-item .upfront-icon.upfront-icon-wp-image-style {
+  display: block;
+  width: 30px;
+  height: 30px;
+  margin: 0;
+  padding: 0; }
+
+.upfront-inline-panel-item .upfront-icon.upfront-icon-wp-image-style-selected {
+  background: gray; }
+
 .upfront-region-container {
   position: relative;
   /*z-index: 0;*/
