@@ -79,7 +79,7 @@
     <div class="post-images-shortcode-wp"></div>
 </script>
 <script type="text/template" id="post-image-insert-shortcode-wp-tpl">
-   [caption id="attachment_{{attachment_id}}" align="{{style.wrapper.alignment}}" width="{{style.wrapper.width}}"]
+   [caption id="attachment_{{attachment_id}}" align="{{style.wrapper.alignment}}" width="{{style.wrapper.width}}" show_caption="{{style.caption.show}}" ]
         {[ if(link_url){ ]}<a href="{{link_url}}"> {[ } ]}
             <img src="{{image.src}}" alt="{{caption}}" {[ if( style.image.width ){  ]} width="{{image.width}}" {[ } ]} {[ if(image.height){ ]} height="{{style.image.height}}" {[ } ]} class="{{style.image.size_class}}  wp-image-{{attachment_id}}">
        {[ if(link_url){ ]} </a> {[ } ]}

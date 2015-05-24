@@ -30,7 +30,7 @@ var PostImageInsert = base.ImageInsertBase.extend({
         this.data.clear({silent: true});
         imageData.style = Upfront.Content.ImageVariants.first().toJSON();
         imageData.variant_id = imageData.style.vid;
-        this.data.set(imageData);
+        this.data.set(imageData, {silent: true});
         this.set_selected_style();
         this.render();
         return this;
@@ -148,10 +148,12 @@ var WP_PostImageInsert = base.ImageInsertBase.extend({
         var me = this,
             imageData = me.getImageData(result);
 
+
+
         imageData.id = me.data.id;
         imageData.variant_id = "alignnone";
         me.data.clear({silent: true});
-        me.data.set(imageData);
+        me.data.set(imageData, {silent: true});
         this.prepare_controls();
         this.createControls();
         this.render();
@@ -186,6 +188,8 @@ var WP_PostImageInsert = base.ImageInsertBase.extend({
     render: function(){
         var data = this.data.toJSON();
 
+        // Set alignment to style
+        data.style.wrapper.alignment = data.variant_id;
 
         this.$el
             .html(this.tpl(data))
@@ -208,10 +212,33 @@ var WP_PostImageInsert = base.ImageInsertBase.extend({
     getStyleView: function(){
         if(this.styleView)
             return this.styleView;
-        var view = new utils.WP_PostImageStylesView( this.data );
+        var view = new utils.WP_PostImageStylesView( {model: this.data} );
         this.styleView = view;
         return view;
+    },
+    get_caption_state: function(){
+        if( this.data.get("style").caption.show ){
+            return 0
+        }else{
+            return 1;
+        }
+    },
+    control_events: function(){
+        /**
+         * Toggle Caption
+         */
+        this.listenTo(this.controls, 'control:click:toggle_caption', function(control){
+            var new_state = 1,
+                style = this.data.toJSON().style;
+            if( !this.get_caption_state() )
+                new_state = 0;
+
+            style.caption.show = new_state;
+            this.data.set("style", style);
+        });
     }
+
+
 });
 
 return {
