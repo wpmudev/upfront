@@ -596,6 +596,24 @@ define([
 			check_deactivated: function (){
 				if(Upfront.data.currentEntity == this)
 					Upfront.data.currentEntity = false;
+			},
+			create_size_hint: function ($el) {
+				var me = this,
+					$el = $el ? $el : this.$el.find('.upfront-editable_entity:first');
+				if ( !$el.children('.upfront-entity-size-hint').length ){
+					this.$size_hint = $('<div class="upfront-entity-size-hint upfront-ui"></div>');
+					$el.append(this.$size_hint);
+				}
+				setTimeout(function(){ me.update_size_hint(); }, 500);
+			},
+			update_size_hint: function (width, height) {
+				if ( !this.$size_hint )
+					return;
+				var $el = this.$size_hint.parent(),
+					width = width ? width : $el.width(),
+					height = height ? height : $el.height(),
+					hint = '<b>w:</b>' + width + 'px <b>h:</b>' + height + 'px';
+				this.$size_hint.html(hint);
 			}
 		}),
 
@@ -1509,6 +1527,7 @@ define([
 				this._prev_class = this.model.get_property_value_by_name('class');
 				
 				this.listenTo(Upfront.Events, 'layout:after_render', this.refresh_background);
+				this.listenTo(Upfront.Events, 'layout:after_render', this.update_size_hint);
 
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 				this.listenTo(Upfront.Events, "command:module_group:finish_edit", this.on_finish);
@@ -1619,6 +1638,8 @@ define([
 					this._modules_view.delegateEvents();
 				
 				this.createInlineControlPanel();
+				
+				this.create_size_hint(this.$el);
 			},
 			update: function () {
 				var prop_class = this.model.get_property_value_by_name('class'),
@@ -1695,6 +1716,7 @@ define([
 					this.$el.addClass(theme_style.toLowerCase());
 					this._theme_style = theme_style;
 				}
+				this.update_size_hint();
 				Upfront.Events.trigger('entity:module_group:update_position', this, this.model);
 			},
 			on_settings_click: function (e) {

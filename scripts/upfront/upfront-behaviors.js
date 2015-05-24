@@ -2829,6 +2829,7 @@ var GridEditor = {
 				}
 				if ( !expand_lock && axis != 'nw' )
 					$resize_placeholder.css('height', rsz_row*ed.baseline);
+				view.update_size_hint(rsz_col*ed.col_size, rsz_row*ed.baseline);
 			},
 			stop: function(e, ui){
 				Upfront.Events.trigger("entity:pre_resize_stop", view, view.model, ui);
@@ -3159,7 +3160,7 @@ var GridEditor = {
 			helper: 'clone',
 			disabled: is_disabled,
 			cancel: '.upfront-entity_meta',
-			delay: 15,
+			distance: 10,
 			appendTo: $main,
 			iframeFix: true,
 			start: function(e, ui){
