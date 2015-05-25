@@ -476,6 +476,16 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			);
 		}
 
+		// Take one more pass through properties and try to expand the base URL macro
+		foreach ($properties as $key => $prop) {
+			if (empty($prop['name']) || empty($prop['value'])) continue;
+			if (!is_scalar($prop['value'])) continue; // Do not work on non-scalars
+			if (false === strstr($prop['value'], self::THEME_BASE_URL_MACRO)) continue; // Quick scan first
+			
+			$prop['value'] = $this->_expand_passive_relative_url($prop['value']);
+			$properties[$key] = $prop;
+		}
+
 		return $properties;
 	}
 
