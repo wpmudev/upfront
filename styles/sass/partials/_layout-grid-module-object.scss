@@ -596,6 +596,10 @@
 .upfront-editable_entity.ui-resizable-resizing > .upfront-entity-size-hint {
   display: block;
 }
+.upfront-module-group-on-edit > .upfront-entity-size-hint,
+.upfront-module-group-on-edit:hover > .upfront-entity-size-hint {
+  display: none;
+}
 
 
 /* Group Element Link Panel Style */

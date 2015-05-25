@@ -1876,6 +1876,7 @@ define([
 						return;
 					view.update_position();
 				});
+				this.update_size_hint();
 			},
 			disable_interaction: function (prevent_edit, drag) {
 				if ( prevent_edit )
