@@ -205,6 +205,7 @@ return (function ($) {
 			if (this.$el.hasClass('controls-visible')) {
 				this.controlsVisible = true;
 				this.$el.siblings().removeClass('controls-visible');
+				this.$el.data('linkpanel').render();
 
 				this.$el.parents('.menu').sortable('disable');
 
@@ -251,7 +252,7 @@ return (function ($) {
 				linkPanelControl,
 				visitLinkControl
 			]);
-
+			this.$el.data('linkpanel', linkPanelControl);
 			var imageControlsTpl = '<div class="uimage-controls image-element-controls upfront-ui"></div>';
 			this.$el.append(imageControlsTpl);
 			panel.render();

@@ -228,8 +228,6 @@ define([
 			};
 			
 
-			
-			
 			this.$el.html(this.tpl(tplData));
 
 
