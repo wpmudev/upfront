@@ -291,7 +291,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 			if (!$google_fonts->is_from_google($face['face'])) continue;
 			$imports .= "@import \"https://fonts.googleapis.com/css?family=" .
 				preg_replace('/\s/', '+', $face['face']);
-			if ($face['weight'] != 400) $imports .= ':' . $face['weight'];
+			if (400 !== (int)$face['weight'] && 'inherit' !== $face['weight']) $imports .= ':' . $face['weight'];
 			$imports .= "\";\n";
 		}
 		if (!empty($imports)) $out = "{$imports}\n\n{$out}";
