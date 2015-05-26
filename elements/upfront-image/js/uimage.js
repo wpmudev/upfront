@@ -236,6 +236,9 @@ define([
 			});
 
 			this.listenTo(control, 'panel:ok', function() {
+				if(linkPanel.model.get('type') == 'lightbox' && linkPanel.$el.find('.js-ulinkpanel-lightbox-input').val() != '') {
+					linkPanel.createLightBox();
+				}
 				control.close();
 			});
 
