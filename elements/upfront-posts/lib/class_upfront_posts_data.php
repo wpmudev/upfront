@@ -38,6 +38,7 @@ class Upfront_Posts_PostsData {
 			'content' => 'excerpt', // excerpt or content
 			'limit' => 5, // Only applicable if 'display_type' <> 'single'
 			'pagination' => '', // '' (none), 'numeric', 'arrows' - only applicable if 'display_type' <> 'single'
+			'sticky' => '', // '' (default - as normal posts), 'exclude', 'prepend'
 
 			// list_type===custom settings
 			'posts_list' => '', // JSON map of id/permalink pairs
@@ -225,6 +226,11 @@ class Upfront_Posts_PostsData {
 			'meta_insert' => __('Insert meta field', 'upfront'),
 			'meta_toggle' => __('Hide hidden fields', 'upfront'),
 			'meta_fields' => __('Available meta fields', 'upfront'),
+			
+			'sticky_posts' => __('Sticky posts', 'upfront'),
+			'sticky_ignore' => __('Ignore sticky posts', 'upfront'),
+			'sticky_prepend' => __('Prepend sticky posts', 'upfront'),
+			'sticky_exclude' => __('Exclude sticky posts', 'upfront'),
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)

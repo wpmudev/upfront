@@ -64,7 +64,7 @@ class Upfront_ButtonView extends Upfront_Object {
 			if(isset($preset['hov_color']))
 				$data['style_hover'] = $data['style_hover'].'color: '.$ufc->process_colors($preset['hov_color']).'; ';
 
-			$data['linkTarget'] = $this->_get_property('linkTarget');
+			$data['linkTarget'] = (strpos($data['href'], '#') === 0 || strpos($data['href'], 'mailto:') === 0) ? '_self' : $this->_get_property('linkTarget');
 		/*
 		$data['style_hover'] = "border: ".$preset['hov_borderwidth']."px ".$preset['hov_bordertype']." ".$preset['hov_bordercolor']."; "."border-radius: ".$preset['hov_borderradius1']."px ".$preset['hov_borderradius2']."px ".$preset['hov_borderradius4']."px ".$preset['hov_borderradius3']."px; "."background-color: ".$preset['hov_bgcolor']."; "."font-size: ".$preset['hov_fontsize']."px; "."font-family: ".$preset['hov_fontface']."; "."color: ".$preset['hov_color']."; ";
 		*/

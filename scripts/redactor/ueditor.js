@@ -395,6 +395,22 @@ var hackRedactor = function(){
             }
         };
 	}
+
+    var l10n = Upfront.Settings && Upfront.Settings.l10n
+        ? Upfront.Settings.l10n.global.ueditor
+        : Upfront.mainData.l10n.global.ueditor
+    ; 
+
+    /**
+     * Proxy the Redactor l10n
+     * This is so we're using Redactor string handling
+     * with our own delivery mechanism.
+     */
+    $.Redactor.opts.langs['upfront'] = $.extend({}, $.Redactor.opts.langs['en'], {
+        bold: l10n.bold,
+        italic: l10n.italic,
+    });
+
 };
 
 var Ueditor = function($el, options) {
@@ -440,6 +456,7 @@ var Ueditor = function($el, options) {
             //cleanStyleOnEnter: false,
             //removeDataAttr: false,
             removeEmpty: false,
+            lang: 'upfront' // <-- This is IMPORTANT. See the l10n proxying bit in `hackRedactor`
 		}, options)
 	;
 	/* --- Redactor allows for single callbacks - let's dispatch events instead --- */

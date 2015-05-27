@@ -31,11 +31,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 function uwidget_initialize () {
 	// Include the backend support stuff
-	require_once (dirname(__FILE__) . '/lib/upfront_widget.php');
+	require_once (dirname(__FILE__) . '/lib/class_upfront_widget_view.php');
+	require_once (dirname(__FILE__) . '/lib/class_upfront_widget.php');
+	require_once (dirname(__FILE__) . '/lib/class_upfront_widget_server.php');
 
 	// Add element defaults to data object
 	add_action('upfront_data', array('Upfront_UwidgetView', 'add_js_defaults'));
 	add_filter('upfront_l10n', array('Upfront_UwidgetView', 'add_l10n_strings'));
+	add_filter('upfront_data', array('Upfront_UwidgetView', 'add_data'));
 	add_filter('wp_enqueue_scripts', array('Upfront_UwidgetView', 'add_dependencies'));
 
 	// Expose our JavaScript definitions to the Upfront API

@@ -1,4 +1,4 @@
-﻿/* http://keith-wood.name/realPerson.html
+/* http://keith-wood.name/realPerson.html
    Real Person Form Submission for jQuery v2.0.1.
    Written by Keith Wood (kwood{at}iinet.com.au) June 2009.
    Available under the MIT (http://keith-wood.name/licence.html) license. 

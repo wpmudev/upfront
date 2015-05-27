@@ -104,6 +104,7 @@ class Upfront_CodeView extends Upfront_Object {
 				'css' => __('CSS', 'upfront'),
 				'js' => __('JS', 'upfront'),
 				'link_image' => __('Link image', 'upfront'),
+				'link_theme_image' => __('Link theme image', 'upfront'),
 				'code_error' => __('There is an error in your JS code', 'upfront'),
 				'close' => __('close', 'upfront'),
 				'save' => __('Save', 'upfront'),
@@ -117,4 +118,3 @@ class Upfront_CodeView extends Upfront_Object {
 	}
 
 }
-add_filter('upfront_data', array('Upfront_CodeView', 'add_js_defaults'));

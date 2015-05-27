@@ -159,6 +159,8 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$layout = Upfront_Layout::get_parsed_cascade(); // Use pure static method instead
 		$layout_id = ( !empty($layout['specificity']) ? $layout['specificity'] : ( !empty($layout['item']) ? $layout['item'] : $layout['type'] ) );
 
+		$layout_style_loaded = false; // Keep track of global layout CSS, so we sent over to the filter
+
 		if( is_array( $styles ) ){
 		  foreach($styles as $type => $elements) {
 			foreach($elements as $name => $content) {
@@ -167,12 +169,14 @@ class Upfront_StylesheetMain extends Upfront_Server {
 			  if ( preg_match('/^region(-container|)$/', $type) && !preg_match($style_rx, $name) )
 				continue;
 			  $out .= $content;
+			  if ( $type == 'layout' && $name == 'layout-style' )
+			  	$layout_style_loaded = true;
 			}
 		  }
 		}
 
 
-		$out = apply_filters('upfront_prepare_theme_styles', $out);
+		$out = apply_filters('upfront_prepare_theme_styles', $out, $layout_style_loaded);
 
 		return $out;
 	}
@@ -287,7 +291,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 			if (!$google_fonts->is_from_google($face['face'])) continue;
 			$imports .= "@import \"https://fonts.googleapis.com/css?family=" .
 				preg_replace('/\s/', '+', $face['face']);
-			if ($face['weight'] != 400) $imports .= ':' . $face['weight'];
+			if (400 !== (int)$face['weight'] && 'inherit' !== $face['weight']) $imports .= ':' . $face['weight'];
 			$imports .= "\";\n";
 		}
 		if (!empty($imports)) $out = "{$imports}\n\n{$out}";

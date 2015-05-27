@@ -2024,7 +2024,7 @@ define([
 					if (!font_family) return true; // Missing typeface family, pretend we're normal
 					// If so, let's do this - load up the font
 					url = '//fonts.googleapis.com/css?family=' + font_family.get('family').replace(/ /g, '+');
-					if (400 != weight || 'inherit' !== weight) url += ':' + weight; // If not default weight, DO include the info
+					if (400 !== parseInt("" + weight, 10) && 'inherit' !== weight) url += ':' + weight; // If not default weight, DO include the info
 					$("head").append('<link href="' + url + '" rel="stylesheet" type="text/css" />');
 				}
 
@@ -2333,7 +2333,16 @@ define([
                 default_value: '#ffffff',
                 spectrum: {
                     choose: function (color) {
-                        self.add_new_color( color );
+                    	if (!_.isObject(color)) return false;
+                    	var value = empty_picker.get_value();
+                        if (value && "undefined" !== typeof tinycolor) {
+                        	color = tinycolor(value);
+                        }
+                        self.add_new_color(color);
+                    },
+                    change: function (color) {
+                    	if (!_.isObject(color)) return false;
+						empty_picker.update_input_val(color.toHexString())
                     }
                 }
             });
@@ -2513,7 +2522,7 @@ define([
             this.edit_colors = new SidebarPanel_Settings_Item_Colors_Editor({"model": this.model});
         },
         get_title: function () {
-            return "Colors";
+            return l10n.colors_section;
         },
         on_render: function () {
             this.edit_colors.render();
@@ -2532,7 +2541,7 @@ define([
 			]);
 		},
 		get_title: function () {
-			return "Theme Settings";
+			return l10n.theme_settings;
 		},
 		on_render: function () {
 			var me = this;
@@ -4322,8 +4331,6 @@ var Field_ToggleableText = Field_Text.extend({
 				if(me.options.spectrum && me.options.spectrum.beforeShow) me.options.spectrum.beforeShow(color);
 
 				me.$(".sp-container").data("sp-options", me.options.spectrum );
-
-
 			};
 
 			if( !spectrumOptions.autoHide  ){
@@ -4334,12 +4341,26 @@ var Field_ToggleableText = Field_Text.extend({
 				};
 			}
 
+			var l10n_update = _.debounce(function () {
+				// Let's fix the strings
+				$(".sp-container").each(function () {
+					$(this)
+						.find(".sp-input-container").attr("data-label", l10n.current_color).end()
+						.find(".sp-palette-container").attr("data-label", l10n.theme_colors).end()
+						.find(".sp-palette-row:last").attr("data-label", l10n.recent_colors)
+					;
+				})
+			});
+
 
 			Field_Color.__super__.initialize.apply(this, arguments);
 
 			this.on('rendered', function(){
 				me.$('input[name=' + me.get_field_name() + ']').spectrum(spectrumOptions);
 				me.$spectrum = me.$('input[name=' + me.get_field_name() + ']');
+
+				// Listen to spectrum events and fire off l10n labels update
+				me.$spectrum.on("reflow.spectrum move.spectrum change", l10n_update);
 
 				me.$(".sp-container").append("<div class='color_picker_rgb_container'></div>");
 				me.update_input_border_color(me.get_saved_value());
@@ -5323,7 +5344,7 @@ var Field_ToggleableText = Field_Text.extend({
 
 		render: function () {
 			var me = this,
-				$view = me.for_view.$el.find(".upfront-editable_entity"),
+				$view = me.for_view.$el.hasClass('upfront-editable_entity') ? me.for_view.$el : me.for_view.$el.find(".upfront-editable_entity:first"),
 				view_pos = $view.offset(),
 				view_outer_width = $view.outerWidth(),
 				view_pos_right = view_pos.left + view_outer_width,
@@ -6480,7 +6501,8 @@ var CSSEditor = Backbone.View.extend({
 	events: {
 		'click .upfront-css-save-ok': 'save',
 		'click .upfront-css-close': 'close',
-		'click .upfront-css-image': 'openImagePicker',
+		'click .upfront-css-theme_image': 'openThemeImagePicker',
+		'click .upfront-css-media_image': 'openImagePicker',
 		'click .upfront-css-font': 'startInsertFontWidget',
 		'click .upfront-css-selector': 'addSelector',
 		'click .upfront-css-type' : 'scrollToElement',
@@ -6887,12 +6909,13 @@ var CSSEditor = Backbone.View.extend({
 			;
 			_.each(individual_selectors, function (sel) {
 				sel = $.trim(sel);
-				var clean_selector = sel.replace(/:[^\s]+/, ''), // Clean up states states such as :hover, so as to not mess up the matching
-					is_container = clean_selector[0] === '@' || !!$(selector + clean_selector).closest('#' + me.element_id).length,
+				var clean_selector = sel.replace(/:[^\s]+/, ''); // Clean up states states such as :hover, so as to not mess up the matching
+				var	is_container = clean_selector[0] === '@' || me.recursiveExistence(selector, clean_selector),
 					spacer = is_container
 						? '' // This is not a descentent selector - used for containers
 						: ' ' // This is a descentent selector
 				;
+				
 				processed_selectors.push('' +
 					selector + spacer + sel +
 				'');
@@ -6914,7 +6937,17 @@ var CSSEditor = Backbone.View.extend({
 		return separator + rules.join('\n}' + separator) + '\n}';
 	*/
 	},
+	recursiveExistence: function(selector, clean_selector) {
+		var splitted = clean_selector.split(' ');
+		var me = this;
+		while(splitted.length > 0) {
+			if(!!$(selector + splitted.join(' ')).closest('#' + me.element_id).length)
+				return true;
+			splitted.pop();
+		}
 
+		return false;
+	},
 	// When stylename changes upfront needs to update element model theme_style property
 	// and also to save style under new stylename.
 	updateStylename: function() {
@@ -7158,14 +7191,35 @@ var CSSEditor = Backbone.View.extend({
 		view.remove();
 	},
 
-	openImagePicker: function(){
-		var me = this;
-		Upfront.Media.Manager.open({}).done(function(popup, result){
-			Upfront.Events.trigger('upfront:element:edit:stop');
-			if(!result)
-				return;
+	openThemeImagePicker: function () {
+		this._open_media_popup({themeImages: true});
+	},
 
-			var url = result.models[0].get('image').src;//.replace(document.location.origin, '');
+	openImagePicker: function(){
+		this._open_media_popup();
+	},
+
+	/**
+	 * Handles media popups.
+	 * In this context, used for both theme and media images list.
+	 *
+	 * @param object opts Boot-time options to be passed to Upfront.Media.Manager
+	 */
+	_open_media_popup: function (opts) {
+		opts = _.isObject(opts) ? opts : {};
+		var me = this,
+			options = _.extend({}, opts)
+		;
+
+		Upfront.Media.Manager.open(options).done(function(popup, result){
+			Upfront.Events.trigger('upfront:element:edit:stop');
+			if (!result) return;
+
+			var imageModel = result.models[0],
+				img = imageModel.get('image') ? imageModel.get('image') : result.models[0],
+				url = 'src' in img ? img.src : ('get' in img ? img.get('original_url') : false)
+			;
+
 			me.editor.insert('url("' + url + '")');
 			me.editor.focus();
 		});
@@ -9596,8 +9650,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				//model.set_property('row', Math.ceil(height/baseline), true);
 				view.$el.removeClass(ani_class);
 				// enable edit and activate the new region
-				Upfront.Events.trigger('command:region:edit_toggle', true);
-				Upfront.Events.trigger('command:region:fixed_edit_toggle', true);
+				Upfront.Events.trigger('command:region:edit_toggle', false);
+				Upfront.Events.trigger('command:region:fixed_edit_toggle', false);
 				view.trigger("activate_region", view);
 			}
 		}

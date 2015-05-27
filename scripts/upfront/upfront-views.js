@@ -22,7 +22,7 @@ define([
     "text!upfront/templates/region_container.html",
     "text!upfront/templates/region.html",
     "text!upfront/templates/layout.html",
-  ];
+];
 
 	// Auto-assign the template contents to internal variable
 	var _template_args = arguments,
@@ -598,6 +598,24 @@ define([
 			check_deactivated: function (){
 				if(Upfront.data.currentEntity == this)
 					Upfront.data.currentEntity = false;
+			},
+			create_size_hint: function ($el) {
+				var me = this,
+					$el = $el ? $el : this.$el.find('.upfront-editable_entity:first');
+				if ( !$el.children('.upfront-entity-size-hint').length ){
+					this.$size_hint = $('<div class="upfront-entity-size-hint upfront-ui"></div>');
+					$el.append(this.$size_hint);
+				}
+				setTimeout(function(){ me.update_size_hint(); }, 500);
+			},
+			update_size_hint: function (width, height) {
+				if ( !this.$size_hint )
+					return;
+				var $el = this.$size_hint.parent(),
+					width = width ? width : $el.width(),
+					height = height ? height : $el.height(),
+					hint = '<b>w:</b>' + width + 'px <b>h:</b>' + height + 'px';
+				this.$size_hint.html(hint);
 			}
 		}),
 
@@ -835,11 +853,11 @@ define([
 							ed.start(new_module_view, new_model);
 							ed.normalize(ed.els, ed.wraps);
 
-							// properly possition the new module and show it under the cursor
+							// properly position the new module and show it under the cursor
 							$new_module.css({
-								position: "absolute",
-								top: ( e.pageY-( off.top-pos.top )-(h/2) ),
-								left: ( e.pageX-( off.left-pos.left )-(w/2) ),
+								position: "relative",
+								top: ( e.pageY-off.top-(h/2) ),
+								left: ( e.pageX-off.left-(w/2) )
 							});
 
 							// Simulate and mousedown and actually trigger drag
@@ -1720,6 +1738,7 @@ define([
 				this._prev_class = this.model.get_property_value_by_name('class');
 				
 				this.listenTo(Upfront.Events, 'layout:after_render', this.refresh_background);
+				this.listenTo(Upfront.Events, 'layout:after_render', this.update_size_hint);
 
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 				this.listenTo(Upfront.Events, "command:module_group:finish_edit", this.on_finish);
@@ -1777,7 +1796,7 @@ define([
 				var imageControlsTpl = '<div class="uimage-controls image-element-controls upfront-ui"></div>';
 				this.$el.append(imageControlsTpl);
 				panel.render();
-				this.$el.find('.uimage-controls').append(panel.el);
+				this.$el.find('.uimage-controls').last().append(panel.el);
 				panel.delegateEvents();
 			},
 
@@ -1830,6 +1849,8 @@ define([
 					this._modules_view.delegateEvents();
 				
 				this.createInlineControlPanel();
+				
+				this.create_size_hint(this.$el);
 			},
 			update: function () {
 				var prop_class = this.model.get_property_value_by_name('class'),
@@ -1906,6 +1927,7 @@ define([
 					this.$el.addClass(theme_style.toLowerCase());
 					this._theme_style = theme_style;
 				}
+				this.update_size_hint();
 				Upfront.Events.trigger('entity:module_group:update_position', this, this.model);
 			},
 			on_settings_click: function (e) {
@@ -2065,6 +2087,7 @@ define([
 						return;
 					view.update_position();
 				});
+				this.update_size_hint();
 			},
 			disable_interaction: function (prevent_edit, drag) {
 				if ( prevent_edit )
@@ -4617,7 +4640,7 @@ define([
 				if(currentEntity){
 					//If the click has been made outside the currentEntity, deactivate it
 					if(!$(e.target).closest(currentEntity.el).length){
-						currentEntity.trigger('deactivated');
+						currentEntity.trigger('deactivated', e);
 						currentEntity.$el.removeClass("upfront-active_entity");
 						Upfront.Events.trigger("entity:deactivated", e);
 						Upfront.data.currentEntity = false;

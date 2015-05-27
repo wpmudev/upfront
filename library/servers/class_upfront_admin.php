@@ -12,6 +12,8 @@ class Upfront_Server_Admin implements IUpfront_Server {
 	private function _add_hooks () {
 		// Dispatch all notices
 		add_action('admin_notices', array($this, 'dispatch_notices'));
+		
+		add_action('admin_notices', array($this, 'pagetemplate_notice'));
 
 		// Deal with parent deletion attempts
 		add_action('load-themes.php', array($this, 'detect_parent_theme_deletion'));
@@ -27,6 +29,12 @@ class Upfront_Server_Admin implements IUpfront_Server {
 		add_action('customize_controls_init', array($this, 'refuse_customizer'));
 
 		$this->dashboard_notice();
+	}
+	
+	public function pagetemplate_notice() {
+		if(($GLOBALS['pagenow'] == "post.php" && get_current_screen()->post_type == "page")|| $GLOBALS['pagenow'] == "post-new.php" ) {
+			echo '<div class="error"><p>'. __('WARNING! If you select Page Template, Upfront Layout for this page will be deleted permanently!', 'upfront'). '</p></div>';
+		}
 	}
 	
 	public function dashboard_notice () {

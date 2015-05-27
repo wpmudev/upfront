@@ -106,16 +106,15 @@ define([
 			this.listenTo(this.model, 'change:url', function() {
 				me.trigger('change', me.model.toJSON());
 			});
-			// 'change:target' modified to 'change' because unlink doesnt have any target
-			this.listenTo(this.model, 'change', function() {
-				if(me.model.attributes.type == "unlink" || me.model.attributes.url !== "") {
-					me.trigger('change:target', me.model.toJSON());
-				}
+			this.listenTo(this.model, 'change:target', function() {
+				me.trigger('change:target', me.model.toJSON());
 			});
 			this.listenTo(this.model, 'change:type', this.handleTypeChange);
 		},
 
 		onOkClick: function() {
+			if(this.model.get('type') == 'lightbox' && this.$el.find('.js-ulinkpanel-lightbox-input').val() != '')
+				this.createLightBox();
 			this.trigger('change', this.model.toJSON());
 		},
 
@@ -217,6 +216,7 @@ define([
 
 		/* Rendering stuff below */
 		render: function() {
+			
 			var me = this;
 
 			var tplData = {
@@ -226,8 +226,10 @@ define([
 				button: this.button,
 				type: this.model.get('type')
 			};
+			
 
 			this.$el.html(this.tpl(tplData));
+
 
 			this.renderTypeSelect();
 

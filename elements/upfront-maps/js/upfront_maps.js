@@ -567,7 +567,7 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 	});
 
 	var MapElement = Upfront.Views.Editor.Sidebar.Element.extend({
-		priority: 40,
+		priority: 50,
 		render: function () {
 			this.$el.addClass('upfront-icon-element upfront-icon-element-maps');
 			this.$el.html(l10n.element_name);

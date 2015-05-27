@@ -112,14 +112,17 @@ li#tabbackground-content .sp-palette-row-selection span.sp-thumb-el:last-child >
 /* Color Picker Labels */
 .sp-input-container:before,
 .sp-palette-container:before,
-.sp-palette-row.sp-palette-row-selection:before {
+.sp-palette-row.sp-palette-row-selection:before,
+{
 	font-family: Verdana, sans-serif!important;
 	font-size:11px;
 	color:#97b8da;
 }
-
 .sp-input-container:before {
+/*
 	content: "Current color:";
+*/
+	content: attr(data-label);
 	margin-bottom:8px;
 }
 
@@ -149,9 +152,11 @@ input[type=text].sp-input {
 .sp-palette-container {
 	top: 50px;
 }
-
 .sp-palette-container:before {
+/*
 	content: "Theme colors:";
+*/
+	content: attr(data-label);
 }
 
 .sp-palette.sp-cf {
@@ -162,9 +167,11 @@ input[type=text].sp-input {
 .sp-palette-row.sp-palette-row-selection {
   margin-top: 4px;
 }
-
 .sp-palette-row.sp-palette-row-selection:before {
+/*
 	content: "Recent colors:";
+*/
+	content: attr(data-label);
 	margin-bottom: 4px;
 }
 

@@ -1145,6 +1145,7 @@ var SlidesField = Upfront.Views.Editor.Field.Field.extend({
  * @type {Upfront.Views.Editor.Command}
  */
 var USliderElement = Upfront.Views.Editor.Sidebar.Element.extend({
+	priority: 40,
 	draggable: true,
 	/**
 	 * Set up command appearance.

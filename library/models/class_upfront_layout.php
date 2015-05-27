@@ -540,7 +540,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 		}
 
 		foreach ( $scopes as $scope => $data ) {
-			$current_scope = json_decode( get_option(self::_get_scope_id($region['scope']), json_encode(array())), true );
+			$current_scope = json_decode( get_option(self::_get_scope_id($scope), json_encode(array())), true );
 			$current_scope = apply_filters('upfront_get_global_regions', $current_scope, self::_get_scope_id($region['scope']));
 			$scope_data = $data;
 			if ( $current_scope ){ // merge with current scope if it's exist

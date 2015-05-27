@@ -4,6 +4,11 @@
         'text!scripts/redactor/ueditor-templates.html'
     ];
 
+    var l10n = Upfront.Settings && Upfront.Settings.l10n
+        ? Upfront.Settings.l10n.global.ueditor
+        : Upfront.mainData.l10n.global.ueditor
+    ;
+
 define("redactor_plugins", deps, function(tpl){
 
 var UeditorEvents = _.extend({}, Backbone.Events);
@@ -212,7 +217,7 @@ RedactorPlugins.stateAlignment = function() {
             if( !this.$toolbar  ) return;
             var self = this;
             this.opts.stateButtons.stateAlign = {
-                title: 'Text alignment',
+                title: l10n.text_align,
                 defaultState: 'left',
                 states: {
                     left: {
@@ -274,7 +279,7 @@ RedactorPlugins.stateAlignmentCTA = {
         if( !this.$toolbar  ) return;
         var self = this;
         this.opts.stateButtons.stateAlignCTA = {
-            title: 'Text alignment',
+            title: l10n.text_align,
             defaultState: 'left',
             states: {
                 left: {
@@ -336,7 +341,7 @@ RedactorPlugins.stateLists = function() {
         init: function () {
             var self = this;
             this.opts.stateButtons.stateLists = {
-                title: 'List style',
+                title: l10n.list_style,
                 defaultState: 'none',
                 states: {
                     none: {
@@ -424,7 +429,7 @@ RedactorPlugins.upfrontSink = {
         if(!Upfront.data.ueditor)
             Upfront.data.ueditor = {sink: false};
         this.opts.buttonsCustom.upfrontSink = {
-            title: 'More tools'
+            title: l10n.more_tools
         };
     },
     init: function(){
@@ -552,7 +557,7 @@ RedactorPlugins.panelButtons = function () {
 
             $.each(this.opts.buttonsCustom, function (id, b) {
                 if (b.panel) {
-                    var $panel = $('<div class="redactor-dropdown ueditor_panel redactor-dropdown-box-' + id + '" style="display: none;">'),
+                    var $panel = $('<div class="redactor-dropdown ueditor_panel redactor-dropdown-box-' + id + ' redactor-dropdown-' + self.uuid +' " style="display: none;">'),
                         $button = self.button.get(id),
                         addMethod = _.isUndefined(  b.first ) ? "add" : "addFirst"
                         ;
@@ -629,7 +634,7 @@ RedactorPlugins.upfrontIcons = function() {
         $sel: false,
         init: function () {
             this.opts.buttonsCustom.upfrontIcons = {
-                title: 'Icons',
+                title: l10n.icons,
                 panel: this.upfrontIcons.panel
             };
             UeditorEvents.on("ueditor:key:down", function (redactor, e) {
@@ -730,7 +735,7 @@ RedactorPlugins.upfrontLink = function() {
 	return {
 		init: function () {
 			this.opts.buttonsCustom.upfrontLink = {
-				title: 'Link',
+				title: l10n.link,
 				panel: this.upfrontLink.panel
 			};
 		},
@@ -869,7 +874,7 @@ RedactorPlugins.upfrontColor = function() {
     return {
         init: function () {
             this.opts.buttonsCustom.upfrontColor = {
-                title: 'Color',
+                title: l10n.color,
                 panel: this.upfrontColor.panel
             };
         },
@@ -1015,8 +1020,8 @@ RedactorPlugins.upfrontColor = function() {
             },
             render: function () {
 
-                var tabforeground = $('<li id="tabforeground" class="active">').html('Text Color');
-                var tabbackground = $('<li id="tabbackground">').html('Text Background');
+                var tabforeground = $('<li id="tabforeground" class="active">').html(l10n.text_color);
+                var tabbackground = $('<li id="tabbackground">').html(l10n.text_background);
                 var tablist = $('<ul class="tablist">').append(tabforeground).append(tabbackground);
 
                 var tabs = $('<ul class="tabs">').append($('<li id="tabforeground-content" class="active">').html('<input class="foreground" type="text">')).append($('<li id="tabbackground-content">').html('<input class="background" type="text">'));
@@ -1291,7 +1296,7 @@ RedactorPlugins.upfrontFormatting = function() {
         init: function () {
 
             this.opts.buttonsCustom.upfrontFormatting = {
-                title: 'Formatting',
+                title: l10n.formatting,
                 panel: this.upfrontFormatting.panel,
                 first: true
             };
@@ -1355,10 +1360,24 @@ RedactorPlugins.upfrontFormatting = function() {
             },
             select_tag: function( e ){
                 e.preventDefault();
-                var tag = $(e.target).data("tag");
                 this.redactor.buffer.set();
                 this.redactor.$editor.focus();
+
+                var tag = $(e.target).data("tag"),
+                    html = this.redactor.selection.getHtml(), // Gets selected html
+                    css = this.redactor.selection.getCurrent() ? this.redactor.selection.getCurrent().style.cssText : false;
+
+                // Change tag name
                 this.redactor.block.format(tag);
+
+                if( css ){
+                    // Puts prev html into the current tag
+                    this.redactor.$editor.find(tag).eq(0).html( html)[0].style.cssText = css;
+                }else{
+                    this.redactor.$editor.find(tag).eq(0).html( html);
+                }
+
+                
                 this.redactor.dropdown.hideAll();
             },
             change_custom_class: function(e){
@@ -1385,7 +1404,7 @@ RedactorPlugins.blockquote = function() {
 
             var me = this;
             this.opts.stateButtons.blockquote = {
-                title: 'Set a quote',
+                title: l10n.blockquote,
                 defaultState: 'noquote',
                 states: {
                     noquote: {

@@ -30,6 +30,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 function uyoutube_initialize () {
 	// Include the backend support stuff
 	require_once (dirname(__FILE__) . '/lib/uyoutube.php');
+	
+	add_filter('upfront_l10n', array('Upfront_UyoutubeView', 'add_l10n_strings'));
 
 	// Expose our JavaScript definitions to the Upfront API
 	upfront_add_layout_editor_entity('uyoutube', upfront_relative_element_url('js/uyoutube', __FILE__));

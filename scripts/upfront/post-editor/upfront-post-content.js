@@ -296,10 +296,11 @@ var PostContentEditor = Backbone.View.extend({
 			done: Upfront.Settings.l10n.global.content.here_we_are,
 			fixed: false
 		}),
-		imageId = this.post.meta.getValue('_thumbnail_id')
+		imageId = this.post.meta.getValue('_thumbnail_id'),
+		full_image = this.postView.property('full_featured_image')
 		;
 
-		if(!imageId)
+		if(!imageId || full_image == '1')
 			return me.openImageSelector();
 
 		loading.render();
@@ -362,7 +363,8 @@ var PostContentEditor = Backbone.View.extend({
 	},
 
 	openImageSelector: function(postId){
-		var me = this;
+		var me = this,
+			full_image = this.postView.property('full_featured_image');
 		Upfront.Views.Editor.ImageSelector.open().done(function(images){
 			var sizes = {},
 			imageId = 0
@@ -384,6 +386,22 @@ var PostContentEditor = Backbone.View.extend({
 			;
 			$('<img>').attr('src', imageInfo.srcFull).load(function(){
 				Upfront.Views.Editor.ImageSelector.close();
+				if ( full_image == '1' ){
+					var img = me.$('.ueditor_thumb img'),
+						newimg = $('<img style="z-index:2;position:relative">');
+					me.post.meta.add([
+						{meta_key: '_thumbnail_id', meta_value: imageId},
+						{meta_key: '_thumbnail_data', meta_value: ''}
+						], {merge: true});
+					if (!img.length)
+						img = newimg.appendTo(me.$('.ueditor_thumb'));
+					else{
+						img.replaceWith(newimg);
+						img = newimg;
+					}
+					img.attr('src', imageInfo.srcFull);
+					return;
+				}
 				me.openImageEditor(true, imageInfo, postId);
 			});
 		});
@@ -392,9 +410,11 @@ var PostContentEditor = Backbone.View.extend({
 	openImageEditor: function(newImage, imageInfo, postId){
 		var me = this,
 		mask = this.$('.ueditor_thumb'),
+		height = this.partOptions.featured_image && this.partOptions.featured_image.height ? this.partOptions.featured_image.height : 60
 		editorOptions = _.extend({}, imageInfo, {
+			element_id: 'post_' + postId,
 			maskOffset: mask.offset(),
-			maskSize: {width: mask.width(), height: mask.height()},
+			maskSize: {width: mask.width(), height: height},
 			setImageSize: newImage,
 			extraButtons: [
 			{

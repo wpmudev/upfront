@@ -72,8 +72,11 @@ define([
 
 			this.controls = this.createControls();
 
-			if(this.property('image_status') !== 'ok' || this.property('quick_swap') || this.isThemeImage()) {
+			if(this.property('image_status') !== 'ok' || this.property('quick_swap') || (this.isThemeImage() && !Upfront.themeExporter)) {
 				this.property('has_settings', 0);
+			}
+			else {
+				this.property('has_settings', 1);
 			}
 
 			this.listenTo(Upfront.Events, 'upfront:element:edit:start', this.on_element_edit_start);
@@ -233,6 +236,9 @@ define([
 			});
 
 			this.listenTo(control, 'panel:ok', function() {
+				if(linkPanel.model.get('type') == 'lightbox' && linkPanel.$el.find('.js-ulinkpanel-lightbox-input').val() != '') {
+					linkPanel.createLightBox();
+				}
 				control.close();
 			});
 
