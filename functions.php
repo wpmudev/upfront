@@ -269,6 +269,7 @@ class Upfront {
 		</script>';
 		echo <<<EOAdditivemarkup
 	<div id="sidebar-ui" class="upfront-ui"></div>
+	<div id="settings" style="display:none"></div>
 	<div id="contextmenu" style="display:none"></div>
 EOAdditivemarkup;
 

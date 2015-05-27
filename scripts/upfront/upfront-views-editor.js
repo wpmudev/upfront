@@ -5262,7 +5262,7 @@ var Field_ToggleableText = Field_Text.extend({
 
 		render: function () {
 			var me = this,
-				$view = me.for_view.$el.find(".upfront-editable_entity"),
+				$view = me.for_view.$el.hasClass('upfront-editable_entity') ? me.for_view.$el : me.for_view.$el.find(".upfront-editable_entity:first"),
 				view_pos = $view.offset(),
 				view_outer_width = $view.outerWidth(),
 				view_pos_right = view_pos.left + view_outer_width,
