@@ -512,6 +512,8 @@ abstract class Upfront_Container extends Upfront_Entity {
 			? "Upfront_{$view_class}"
 			: $this->_child_view_class
 		;
+		$view = apply_filters('upfront-views-view_class', $view, $child_data);
+
 		if (!class_exists($view)) $view = $this->_child_view_class;
 		return new $view($child_data);
 	}
