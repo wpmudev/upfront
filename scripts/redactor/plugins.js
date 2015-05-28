@@ -1364,11 +1364,23 @@ RedactorPlugins.upfrontFormatting = function() {
                 this.redactor.$editor.focus();
 
                 var tag = $(e.target).data("tag"),
+                    selection = this.redactor.selection,
                     html = this.redactor.selection.getHtml(), // Gets selected html
+                    //$html = $(html),
+                    resulting_html = "",
                     css = this.redactor.selection.getParent() ? this.redactor.selection.getParent().style.cssText : false;
 
-                // Change tag name
-                this.redactor.block.format(tag);
+
+                var formatted = this.redactor.selection.wrap(tag);
+                if (formatted === false) return;
+
+                var $formatted = $(formatted);
+
+                this.redactor.block.formatTableWrapping($formatted);
+
+                if( this.redactor.selection.getParent() )
+                    $(this.redactor.selection.getCurrent()).find(tag).unwrap();
+
 
                 this.redactor.dropdown.hideAll();
             },
