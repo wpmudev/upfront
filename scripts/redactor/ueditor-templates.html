@@ -43,7 +43,7 @@
         {[if( style.caption.order == 0 && show_caption) {]}
             <div class="upfront-wrapper wp-caption-text {{style.caption.width_cls}} {{style.caption.left_cls}} {{style.caption.top_cls}}" style="min-height:{{style.caption.height}}px">{{ caption }}</div>
         {[ } ]}
-        <div class="upfront-wrapper uinsert-image-wrapper {{style.image.width_cls}} {{style.image.left_cls}} {{style.image.top_cls}} {[ if(!isLocal){ ]}uinsert-image-external{[ } ]}" style="min-height: {{style.image.height}}px;">{[if(linkType != "do_nothing"){ ]}<a href="{{linkUrl}}">{[ } ]}<img class="" src="{{image.src}}" {[if(!isLocal){ ]}style="top: {{ externalImage.top }}px; left: {{ externalImage.left }}px; width: {{ externalImage.width }}px; height: {{ externalImage.height }}px"{[ } ]}/>{[if(linkType != "do_nothing"){ ]}</a>{[ } ]}</div>
+        <div class="upfront-wrapper uinsert-image-wrapper {{style.image.width_cls}} {{style.image.left_cls}} {{style.image.top_cls}} {[ if(!isLocal){ ]}uinsert-image-external{[ } ]}" style="min-height: {{style.image.height}}px;">{[if(linkType != "do_nothing"){ ]}<a href="{{linkUrl}}">{[ } ]}<img class="" data-url="{imageFull.src}"  src="{{image.src}}" {[if(!isLocal){ ]}style="top: {{ externalImage.top }}px; left: {{ externalImage.left }}px; width: {{ externalImage.width }}px; height: {{ externalImage.height }}px"{[ } ]}/>{[if(linkType != "do_nothing"){ ]}</a>{[ } ]}</div>
             {[if( style.caption.order == 1 && show_caption) {]}
                 <div class="upfront-wrapper wp-caption-text {{style.caption.width_cls}} {{style.caption.left_cls}} {{style.caption.top_cls}}" style="min-height:{{style.caption.height}}px">{{ caption }}</div>
             {[ } ]}
@@ -59,7 +59,7 @@
             {{ caption }}
         {[ } ]}
         {[if(linkType != "do_nothing"){ ]}<a href="{{linkUrl}}">{[ } ]}
-        <img src="{{image.src}}"/>
+        <img data-url="{imageFull.src}" src="{{image.src}}"/>
         {[if(linkType != "do_nothing"){ ]}</a>{[ } ]}
 
         {[if( style.caption.order == 1 ) {]}
@@ -70,7 +70,7 @@
 <script type="text/template" id="post-image-insert-wp-tpl">
     <div id="attachment_{{attachment_id}}" style="width: {{style.wrapper.width}}px" class="wp-caption {{style.wrapper.alignment}}">
         {[ if(link_url){ ]}<a href="{{link_url}}"> {[ } ]}
-            <img src="{{image.src}}" {[ if( image.width ){  ]} width="{{image.width}}" {[ } ]} {[ if(image.height){ ]} height="{{image.height}}" {[ } ]} class="{{style.image.size_class}} wp-image-{{attachment_id}}" >
+            <img data-url="{image.url}" src="{{image.src}}" {[ if( image.width ){  ]} width="{{image.width}}" {[ } ]} {[ if(image.height){ ]} height="{{image.height}}" {[ } ]} class="{{style.image.size_class}} wp-image-{{attachment_id}}" >
         {[ if(link_url){ ]} </a> {[ } ]}
         {[ if(style.caption.show){ ]}
             <p class="wp-caption-text">{{caption}}</p>
@@ -81,7 +81,7 @@
 <script type="text/template" id="post-image-insert-shortcode-wp-tpl">
    [caption id="attachment_{{attachment_id}}" align="{{style.wrapper.alignment}}" width="{{style.wrapper.width}}" show_caption="{{style.caption.show}}" ]
         {[ if(link_url){ ]}<a href="{{link_url}}"> {[ } ]}
-            <img src="{{image.src}}" alt="{{caption}}" {[ if( style.image.width ){  ]} width="{{image.width}}" {[ } ]} {[ if(image.height){ ]} height="{{style.image.height}}" {[ } ]} class="{{style.image.size_class}}  wp-image-{{attachment_id}}">
+            <img data-url="{image.url}" src="{{image.src}}" alt="{{caption}}" {[ if( style.image.width ){  ]} width="{{image.width}}" {[ } ]} {[ if(image.height){ ]} height="{{style.image.height}}" {[ } ]} class="{{style.image.size_class}}  wp-image-{{attachment_id}}">
        {[ if(link_url){ ]} </a> {[ } ]}
         {{caption}}
    [/caption]

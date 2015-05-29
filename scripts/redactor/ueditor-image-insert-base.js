@@ -64,6 +64,7 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
         link_url: "",
         image: {
             src: "",
+            url: "",
             width: 0,
             height: 0
         },

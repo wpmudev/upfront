@@ -223,7 +223,7 @@ var WP_PostImageInsert = base.ImageInsertBase.extend({
             return 1;
         }
     },
-    control_events: function(){
+    controlEvents: function(){
         /**
          * Toggle Caption
          */
@@ -236,8 +236,48 @@ var WP_PostImageInsert = base.ImageInsertBase.extend({
             style.caption.show = new_state;
             this.data.set("style", style);
         });
-    }
 
+        this.listenTo(this.controls, 'control:ok:link', function(view, control){
+            var url = view.$('input[type=text]').val(),
+                type = view.$('input[type=radio]:checked').val() || 'do_nothing',
+                linkData = {},
+                link_url = ""
+                ;
+
+            //linkData = {
+            //    linkType: type,
+            //    linkUrl: url
+            //};
+
+            if( type == "show_larger_image" )
+                url = this.data.get("image").src;
+
+            this.data.set('link_url', url);
+            //view.model.set(linkData);
+            control.close();
+        });
+
+    },
+    get_url_type: function( url, image_src ){
+        // Create a url parser
+        var type = "",
+            parsed = document.createElement('a')
+            ;
+
+        parsed.href = url;
+
+        if(parsed.origin != window.location.origin)
+            type = 'external';
+
+        if(parsed.origin == window.location.origin && image_src != url )
+            type = 'post';
+
+        if(parsed.origin == window.location.origin && image_src == url )
+            type = 'show_larger_image';
+
+
+        return type;
+    }
 
 });
 
