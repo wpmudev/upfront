@@ -1089,6 +1089,8 @@ span.draggable-post-element.element-dragging {
 #upfront-general-csseditor .ace_scrollbar::-webkit-scrollbar,
 .upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar,
 .upfront_code-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar,
+.upfront_map-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar,
+.upfront_map-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar,
 .redactor-dropdown-box-upfrontIcons div.icons::-webkit-scrollbar {
   background: none;
   width: 5px; }
@@ -1096,7 +1098,8 @@ span.draggable-post-element.element-dragging {
 /* overwriting Ace editor scrollbar */
 #upfront-csseditor .ace_scrollbar,
 #upfront-general-csseditor .ace_scrollbar,
-.upfront_code-editor-complex-wrapper .ace_scrollbar {
+.upfront_code-editor-complex-wrapper .ace_scrollbar
+.upfront_map-editor-complex-wrapper .ace_scrollbar {
   width: 5px !important; }
 
 #sidebar-ui .sidebar-panel-content::-webkit-scrollbar-thumb,
@@ -1114,6 +1117,8 @@ span.draggable-post-element.element-dragging {
 #upfront-general-csseditor .ace_scrollbar::-webkit-scrollbar-thumb,
 .upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar-thumb,
 .upfront_code-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar-thumb,
+.upfront_map-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar-thumb,
+.upfront_map-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar-thumb,
 .redactor-dropdown-box-upfrontIcons div.icons::-webkit-scrollbar-thumb {
   border-right: 5px solid #1fcd8f; }
 

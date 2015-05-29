@@ -315,6 +315,7 @@ define([
 					styles = this.model.get_breakpoint_property_value('background_map_styles', true),
 					controls = this.model.get_breakpoint_property_value('background_map_controls', true),
 					show_markers = this.model.get_breakpoint_property_value('background_show_markers', true),
+					styles = (this.model.get_breakpoint_property_value("background_use_custom_map_code", true) ? JSON.parse(this.model.get_breakpoint_property_value("background_map_styles", true)) : false),
 					options = {
 						center: new google.maps.LatLng(center[0], center[1]),
 						zoom: parseInt(zoom),
@@ -331,9 +332,15 @@ define([
 				;
 				if ( !this.bg_map ){
 					this.bg_map = new google.maps.Map($type.get(0), options);
+					if (styles) {
+						this.bg_map.setOptions({styles: styles});
+					}
 				} else {
 					$type.show();
 					this.bg_map.setOptions(options);
+					if (styles) {
+						this.bg_map.setOptions({styles: styles});
+					}
 					setTimeout(function(){
 						me.bg_map.setCenter(options.center);
 					}, 500);

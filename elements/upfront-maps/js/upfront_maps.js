@@ -2,13 +2,18 @@
 
 // I have removed logic that checks if google maps are loaded. In current
 // app setup maps will always we loaded before this script.
-define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], function (_ctx, maps_style) {
+define([
+	'maps_context_menu',
+	'text!elements/upfront-maps/css/edit.css',
+	'text!elements/upfront-maps/tpl/editor.html'
+], function (_ctx, maps_style, editorTpl) {
 
 	var DEFAULTS = {
 		OPTIMUM_MAP_HEIGHT: 300,
 		center: [10.722250, 106.730762],
 		zoom: 10,
 		style: 'ROADMAP',
+		use_custom_map_code: false,
 		controls: {
 			pan: false,
 			zoom: false,
@@ -22,7 +27,6 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 	var l10n = Upfront.Settings.l10n.maps_element;
 
 	$("head").append("<style>" + maps_style + "</style>");
-
 
 	var MapModel = Upfront.Models.ObjectModel.extend({
 		init: function () {
@@ -39,7 +43,6 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 	var Maps_Fields_Simple_Checkbox = Upfront.Views.Editor.Field.Checkboxes.extend({
 		multiple: false
 	});
-
 
 	var Map_Fields_Simple_Refresh = Upfront.Views.Editor.Field.Text.extend({
 		className: 'upfront-field-wrap upfront-field-wrap-refresh',
@@ -148,7 +151,7 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 					scaleControl: controls.indexOf("scale") >= 0 || DEFAULTS.controls.scale,
 					streetViewControl: controls.indexOf("street_view") >= 0 || DEFAULTS.controls.street_view,
 					overviewMapControl: controls.indexOf("overview_map") >= 0 || DEFAULTS.controls.overview_map,
-					style_overlay: this.model.get_property_value_by_name("styles") || false,
+					style_overlay: (this.model.get_property_value_by_name("use_custom_map_code") ? JSON.parse(this.model.get_property_value_by_name("styles")) || false : false),
 					draggable: !!this.model.get_property_value_by_name("draggable"),
 					scrollwheel: !!this.model.get_property_value_by_name("scrollwheel")
 				}
@@ -602,121 +605,418 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 			return l10n.settings;
 		}
 	});
-		var MapSettings_Panel = Upfront.Views.Editor.Settings.Panel.extend({
-			initialize: function (opts) {
+
+	var MapSettings_Panel = Upfront.Views.Editor.Settings.Panel.extend({
+		initialize: function (opts) {
 			this.options = opts;
-				this.settings = _([
-					new MapSettings_Field_Location({model: this.model}),
-					new MapSettings_Settings({model: this.model})
-					// new MapSettings_Field_Style({model: this.model}),
-					// new MapSettings_Field_Controls({model: this.model})
-				]);
-			},
-			render: function () {
-				Upfront.Views.Editor.Settings.Panel.prototype.render.call(this);
-				this.$el.addClass("ufpront-maps_element-settings_panel");
-			},
-			get_label: function () {
-				return l10n.label;
-			},
-			get_title: function () {
-				return l10n.label;
-			}
-		});
+			this.settings = _([
+				new MapSettings_Field_Location({model: this.model}),
+				new MapSettings_Settings({model: this.model})
+				// new MapSettings_Field_Style({model: this.model}),
+				// new MapSettings_Field_Controls({model: this.model})
+			]);
+		},
+		render: function () {
+			Upfront.Views.Editor.Settings.Panel.prototype.render.call(this);
+			this.$el.addClass("ufpront-maps_element-settings_panel");
+			$('[name="use_custom_map_code"]', this.$el).trigger('change');
+		},
+		get_label: function () {
+			return l10n.label;
+		},
+		get_title: function () {
+			return l10n.label;
+		}
+	});
 
-			var MapSettings_Field_Location = Upfront.Views.Editor.Settings.Item.extend({
-				className: "upfront-settings-item-maps_element-location",
-				initialize: function () {
-					this.fields = _([
-						new Map_Fields_Simple_Location({
-							model: this.model,
-							hide_label: true,
-							property: 'location'
+	var MapSettings_Field_Location = Upfront.Views.Editor.Settings.Item.extend({
+		className: "upfront-settings-item-maps_element-location",
+		initialize: function () {
+			this.fields = _([
+				new Map_Fields_Simple_Location({
+					model: this.model,
+					hide_label: true,
+					property: 'location'
+				})
+			]);
+		},
+		get_title: function () {
+			return l10n.location_label;
+		}
+	});
+
+	var MapSettings_Settings = Upfront.Views.Editor.Settings.Item.extend({
+		events: {
+			"click .open-map-code-panel-button": "init_code_panel"
+		},
+		initialize: function () {
+			var zooms = [],
+				saved_zoom = this.model.get_property_value_by_name("zoom")
+			;
+			if (!saved_zoom) this.model.set_property("zoom", DEFAULTS.zoom, true);
+			_(_.range(1,19)).each(function (idx) {
+				zooms.push({label: idx, value: idx});
+			});
+			var saved_style = this.model.get_property_value_by_name("style"),
+				styles = [
+					{label: l10n.style.roadmap, value: "ROADMAP"},
+					{label: l10n.style.satellite, value: "SATELLITE"},
+					{label: l10n.style.hybrid, value: "HYBRID"},
+					{label: l10n.style.terrain, value: "TERRAIN"},
+				]
+			;
+			if (!saved_style) this.model.set_property("style", DEFAULTS.style, true);
+			var controls = [
+				{label: l10n.ctrl.pan, value: "pan"},
+				{label: l10n.ctrl.zoom, value: "zoom"},
+				{label: l10n.ctrl.type, value: "map_type"},
+				{label: l10n.ctrl.scale, value: "scale"},
+				{label: l10n.ctrl.street_view, value: "street_view"},
+				{label: l10n.ctrl.overview, value: "overview_map"},
+			];
+			this.fields = _([
+				new Upfront.Views.Editor.Field.Slider({
+					className: 'upfront-field-wrap upfront-field-wrap-slider map-zoom-level',
+					model: this.model,
+					label: l10n.zoom_level,
+					property: 'zoom',
+					min: 1,
+					max: 19,
+					change: function () { this.property.set({value: this.get_value()}); }
+				}),
+				new Upfront.Views.Editor.Field.Select({
+					model: this.model,
+					label: l10n.map_style,
+					property: 'style',
+					values: styles,
+					change: function () { this.property.set({value: this.get_value()}); }
+				}),
+				new Upfront.Views.Editor.Field.Select({
+					model: this.model,
+					label: l10n.map_controls,
+					placeholder: "Choose map controls",
+					property: 'controls',
+					multiple: true,
+					values: controls,
+					change: function () { this.property.set({value: this.get_value()}); }
+				}),
+				new Upfront.Views.Editor.Field.Checkboxes({
+					model: this.model,
+					label: l10n.draggable_map,
+					property: "draggable",
+					hide_label: true,
+					values: [{label: l10n.draggable_map, value: 1}],
+					multiple: false,
+					change: function () { this.property.set({value: this.get_value()}); }
+				}),
+				new Upfront.Views.Editor.Field.Checkboxes({
+					model: this.model,
+					label: l10n.hide_markers,
+					property: "hide_markers",
+					hide_label: true,
+					values: [{label: l10n.hide_markers, value: 1}],
+					multiple: false,
+					change: function () { this.property.set({value: this.get_value()}); }
+				}),
+				new Upfront.Views.Editor.Field.Checkboxes({
+					model: this.model,
+					label: l10n.use_custom_map_code,
+					property: "use_custom_map_code",
+					hide_label: true,
+					values: [{label: l10n.use_custom_map_code + '<span class="checkbox-info" title="' + l10n.use_custom_map_code_info + '"></span>', value: 1}],
+					multiple: false,
+					change: function () {
+						var value = this.get_value();
+
+						this.property.set({value: value});
+
+						if(value == 1) {
+							$('.open-map-code-panel-button', this.$el.parent()).show();
+						}
+						else {
+							$('.open-map-code-panel-button', this.$el.parent()).hide();
+						}
+					}
+				}),
+				new Upfront.Views.Editor.Field.Button({
+					model: me.model,
+					label: l10n.open_map_code_panel,
+					className: "open-map-code-panel-button",
+					compact: true
+				}),
+			]);
+		},
+		get_title: function () {
+			return l10n.settings;
+		},
+		init_code_panel: function () {
+			var view = new this.create_code({model: this.model});
+			view.render();
+		},
+		create_code: Upfront.Views.ObjectView.extend({
+
+			is_editing: false,
+			script_error: false,
+
+			SYNTAX_TYPES: {
+				"script": "json"
+			},
+
+			MIN_HEIGHT: 200,
+
+			editorTpl: _.template(editorTpl),
+
+			content_editable_selector: ".editable",
+
+			initialize: function() {
+				var json = this.fallback('script');
+				this.checkJSon(json);
+			},
+
+			on_render: function () {
+				this.start_json_editor();
+			},
+
+			start_json_editor: function () {
+				if (this.is_editing) return false;
+
+				this.is_editing = true;
+				var $editor = $('#upfront_map-editor');
+
+				if(!$editor.length){
+					$editor = $('<section id="upfront_map-editor" class="upfront-ui upfront_map-editor upfront_map-editor-complex"></section>');
+					$('body').append($editor);
+				}
+
+				this.createEditor($editor);
+
+			},
+
+			on_edit: function(){
+				if (this.is_editing) return false;
+
+				// Since we're doing double duty here, let's first check if content editing mode is to boot
+				var $contenteditables = this.$el.find('.upfront_map-element ' + this.content_editable_selector);
+				if ($contenteditables.length) {
+					// Yes? go for it
+					return this.bootContentEditors($contenteditables);
+				}
+				// Oh well, let's just go ahead and boot code editing mode.
+				this.is_editing = true;
+				var $editor = $('#upfront_map-editor');
+
+				if(!$editor.length){
+					$editor = $('<section id="upfront_map-editor" class="upfront-ui upfront_map-editor upfront_map-editor-complex"></section>');
+					$('body').append($editor);
+				}
+
+				this.createEditor($editor);
+			},
+
+			bootContentEditors: function ($editables) {
+				if (!$editables || !$editables.length) return false;
+				var $markup = $(this.fallback("markup")),
+					me = this
+				;
+				$editables.each(function (idx) {
+					var $me = $(this),
+						start = idx <= 0
+					;
+					if ($me.data('ueditor')) return true;
+					$me
+						.ueditor({
+							autostart: start,
+							placeholder: "",
+							disableLineBreak: true
 						})
-					]);
-				},
-				get_title: function () {
-					return l10n.location_label;
-				}
-			});
-
-			var MapSettings_Settings = Upfront.Views.Editor.Settings.Item.extend({
-				initialize: function () {
-					var zooms = [],
-						saved_zoom = this.model.get_property_value_by_name("zoom")
+						.on("start", function () {
+							me.is_editing = true;
+						})
+						.on("stop", function () {
+							me.is_editing = false;
+						})
+						.on('syncAfter', function(){
+							var $existing = $($markup.find(me.content_editable_selector)[idx]);
+							if (!$existing.length) return false;
+							$existing.html($me.html());
+							me.property(
+								"markup",
+								$("<div />").append($markup).html()
+							);
+						})
 					;
-					if (!saved_zoom) this.model.set_property("zoom", DEFAULTS.zoom, true);
-					_(_.range(1,19)).each(function (idx) {
-						zooms.push({label: idx, value: idx});
+				});
+			},
+
+			createEditor: function($editor){
+				var me = this;
+				$editor.html(this.editorTpl({
+					markup: this.fallback('markup'),
+					style: this.fallback('style'),
+					script: this.fallback('script'),
+					l10n: l10n.template
+				}));
+
+				$('#page').css('padding-bottom', '200px');
+				$editor.show();
+
+				this.resizeHandler = this.resizeHandler || function(){
+					$editor.width($(window).width() - $('#sidebar-ui').width() -1);
+				};
+				$(window).on('resize', this.resizeHandler);
+				this.resizeHandler();
+
+				//Start the editors
+				this.editors = {};
+				this.timers = {};
+
+				$editor.find('.upfront_map-ace').each(function(){
+					var $this = $(this),
+						html = $this.html(),
+						editor = ace.edit(this),
+						syntax = $this.data('type')
+					;
+
+					editor.getSession().setUseWorker(false);
+					editor.setTheme("ace/theme/monokai");
+					editor.getSession().setMode("ace/mode/" + me.SYNTAX_TYPES[syntax]);
+					editor.setShowPrintMargin(false);
+
+					if ("markup" === syntax && html)
+							editor.getSession().setValue(html);
+
+					// Live update
+					editor.on('change', function(){
+						if(me.timers[syntax])
+							clearTimeout(me.timers[syntax]);
+						me.timers[syntax] = setTimeout(function(){
+							var value = editor.getValue();
+
+							if(syntax == 'script')
+								me.checkJSon(value);
+
+							if(me.script_error)
+								$editor.find('.upfront_map-jsalert').show().find('i').attr('title', l10n.create.js_error + ' ' + me.script_error);
+							else
+								$editor.find('.upfront_map-jsalert').hide();
+
+							me.property(syntax, value, false);
+						}, 1000);
 					});
-					var saved_style = this.model.get_property_value_by_name("style"),
-						styles = [
-							{label: l10n.style.roadmap, value: "ROADMAP"},
-							{label: l10n.style.satellite, value: "SATELLITE"},
-							{label: l10n.style.hybrid, value: "HYBRID"},
-							{label: l10n.style.terrain, value: "TERRAIN"},
-						]
-					;
-					if (!saved_style) this.model.set_property("style", DEFAULTS.style, true);
-					var controls = [
-						{label: l10n.ctrl.pan, value: "pan"},
-						{label: l10n.ctrl.zoom, value: "zoom"},
-						{label: l10n.ctrl.type, value: "map_type"},
-						{label: l10n.ctrl.scale, value: "scale"},
-						{label: l10n.ctrl.street_view, value: "street_view"},
-						{label: l10n.ctrl.overview, value: "overview_map"},
-					];
-					this.fields = _([
-						new Upfront.Views.Editor.Field.Slider({
-							className: 'upfront-field-wrap upfront-field-wrap-slider map-zoom-level',
-							model: this.model,
-							label: l10n.zoom_level,
-							property: 'zoom',
-							min: 1,
-							max: 19,
-							change: function () { this.property.set({value: this.get_value()}); }
-						}),
-						new Upfront.Views.Editor.Field.Select({
-							model: this.model,
-							label: l10n.map_style,
-							property: 'style',
-							values: styles,
-							change: function () { this.property.set({value: this.get_value()}); }
-						}),
-						new Upfront.Views.Editor.Field.Select({
-							model: this.model,
-							label: l10n.map_controls,
-							placeholder: "Choose map controls",
-							property: 'controls',
-							multiple: true,
-							values: controls,
-							change: function () { this.property.set({value: this.get_value()}); }
-						}),
-						new Upfront.Views.Editor.Field.Checkboxes({
-							model: this.model,
-							label: l10n.draggable_map,
-							property: "draggable",
-							hide_label: true,
-							values: [{label: l10n.draggable_map, value: 1}],
-							multiple: false,
-							change: function () { this.property.set({value: this.get_value()}); }
-						}),
-						new Upfront.Views.Editor.Field.Checkboxes({
-							model: this.model,
-							label: l10n.hide_markers,
-							property: "hide_markers",
-							hide_label: true,
-							values: [{label: l10n.hide_markers, value: 1}],
-							multiple: false,
-							change: function () { this.property.set({value: this.get_value()}); }
-						}),
-					]);
-				},
-				get_title: function () {
-					return l10n.settings;
-				}
-			});
 
+					// Set up the proper vscroller width to go along with new change.
+					editor.renderer.scrollBar.width = 5;
+					editor.renderer.scroller.style.right = "5px";
+
+					me.editors[syntax] = editor;
+				});
+				this.currentEditor = this.editors['markup'];
+
+				var editorTop = $editor.find('.upfront-css-top'),
+					editorBody = $editor.find('.upfront-css-body')
+				;
+
+				//Start resizable
+				editorBody.height(this.MIN_HEIGHT - editorTop.outerHeight());
+				$editor.find(".upfront_map-editor-complex-wrapper").resizable({
+					handles: {
+						n: ".upfront-css-top"
+					},
+					resize: function(e, ui){
+						editorBody.height(ui.size.height - editorTop.outerHeight());
+						_.each(me.editors, function(editor){
+							editor.resize();
+						});
+					},
+					minHeight: me.MIN_HEIGHT,
+					delay:  100
+				});
+
+				//save edition
+				$editor.find('button').on('click', function(e){
+					_.each(me.editors, function(editor, type){
+						me.property(type, editor.getValue());
+					});
+
+					me.property('styles', me.fallback('script'));
+					me.is_editing = false;
+					me.destroyEditor();
+				});
+
+				//Highlight element
+				$editor
+					.on('click', '.upfront-css-type', function(e){
+						me.hiliteElement(e);
+					}) // Close editor
+					.on('click', '.upfront-css-close', function(e){
+						e.preventDefault();
+						me.destroyEditor();
+						$('#page').css('padding-bottom', 0);
+					})
+				;
+			},
+
+			destroyEditor: function(){
+				var me = this;
+				if(this.editors && this.editors.length){
+					_.each(this.editors, function(ed){
+						ed.destroy();
+					});
+					me.editors = false;
+				}
+				this.currentEditor = false;
+				$('#upfront_map-editor').html('').hide();
+				$(window).off('resize', this.resizeHandler);
+				this.is_editing = false;
+			},
+
+			hiliteElement: function(e){
+				e.preventDefault();
+				var element = this.$el.find('.upfront-object-content');
+				var offset = element.offset().top - 50;
+				$(document).scrollTop(offset > 0 ? offset : 0);
+				this.blink(element, 4);
+			},
+
+			blink: function(element, times) {
+				var me = this;
+				element.css('outline', '3px solid #3ea');
+				setTimeout(function(){
+					element.css('outline', 'none');
+
+					times--;
+					if(times > 0){
+						setTimeout(function(){
+							me.blink(element, times - 1);
+						}, 100);
+					}
+
+				}, 100);
+			},
+
+			checkJSon: function(json){
+				this.script_error = false;
+				try {
+					eval(json);
+				} catch (e) {
+					this.script_error = e.message;
+				}
+			},
+
+			fallback: function(attribute){
+				return this.model.get_property_value_by_name(attribute) || Upfront.data.upfront_code.defaults.fallbacks[attribute];
+			},
+
+			property: function(name, value, silent) {
+				if(typeof value != "undefined"){
+					if(typeof silent == "undefined")
+						silent = true;
+					return this.model.set_property(name, value, silent);
+				}
+				return this.model.get_property_value_by_name(name);
+			}
+		})
+	});
 
 	Upfront.Application.LayoutEditor.add_object("Map", {
 		"Model": MapModel,

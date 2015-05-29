@@ -599,6 +599,18 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'select_post_type' => __('Select a post type:', 'upfront'),
 				'upload_icon_font' => __('Upload Icon Font', 'upfront'),
 				'upload_icon_font' => __('Upload Icon Font', 'upfront'),
+				'create' => array(
+					'change' => __('Click to change', 'upfront'),
+					'js_error' => __('JS error:', 'upfront'),
+					'ok' => __('OK', 'upfront'),
+				),
+				'template' => array(
+					'custom_map_code' => __('Custom Map Code', 'upfront'),
+					'paste_below' => __('Paste your generated code below.', 'upfront'),
+					'code_error' => __('There is an error in your JS code', 'upfront'),
+					'close' => __('close', 'upfront'),
+					'save' => __('Save', 'upfront'),
+				),
 			),
 		);
 		return !empty($key)
