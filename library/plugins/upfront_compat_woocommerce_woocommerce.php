@@ -13,6 +13,7 @@ class Upfront_Compat_Woocommerce_Woocommerce extends Upfront_Server {
 
 		// Deal with editor
 		add_action('wp_ajax_upfront_posts-load', array($this, "load_posts"), 9); // Bind this early to override the default Posts element action
+		//add_filter('upfront_data', array($this, 'override_data'), 99); // Bind this late to make sure the posts data is already injected
 	}
 
 	public function detect_virtual_page () {
@@ -75,6 +76,7 @@ class Upfront_Compat_Woocommerce_Woocommerce extends Upfront_Server {
 		if (!empty($spec)) $cascade['specificity'] = "woocommerce-{$item}-{$spec}"; 
 
 		return $cascade;
+	}
 
 	public function load_posts () {
 		$data = stripslashes_deep($_POST);
@@ -90,6 +92,36 @@ class Upfront_Compat_Woocommerce_Woocommerce extends Upfront_Server {
 			'pagination' => '',
 		)));
 	}
+
+	public function override_data ($data) {
+		if (empty($data['upfront_posts'])) return $data;
+
+		// Data is loaded via an external request, so let's try to make use of this
+		if (empty($_SERVER['HTTP_REFERER'])) return $data;
+		$origin = preg_replace('/^https?:/', '', esc_url($_SERVER['HTTP_REFERER']));
+		
+		$wc_ends = array(
+			'myaccount', 
+			'shop', 
+			'cart', 
+			'checkout', 
+			'pay', 
+			'view_order', 
+			'terms'
+		);
+		$override = false;
+		foreach ($wc_ends as $point) {
+			$url = preg_replace('/^https?:/', '', wc_get_page_permalink($point));
+			if (!empty($url) && $url === $origin) {
+				$override = true;
+				break;
+			}
+		}
+
+		if (empty($override)) return $data;
+		$data['upfront_posts']['has_settings'] = 0;
+
+		return $data;
 	}
 }
 Upfront_Compat_Woocommerce_Woocommerce::serve();
@@ -105,10 +137,4 @@ class Upfront_WooView extends Upfront_Object {
 		woocommerce_content();
 		return ob_get_clean();
 	}
-
-/*
-	public static function default_properties () {
-		return Upfront_Posts_PostsData::get_defaults();
-	}
-*/
 }
