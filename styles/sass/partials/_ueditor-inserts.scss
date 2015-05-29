@@ -350,15 +350,55 @@ div.uinsert-selector a:hover {
   font-weight: normal;
 }
 .upfront-wp-image-style-variants{
-  width: 90px;
+  width: 55px;
 }
 .upfront-inline-panel-item .upfront-icon.upfront-icon-wp-image-style{
-  display: block;
-  width: 30px;
-  height: 30px;
+  display: inline-block;
+  width: 25px;
+  height: 25px;
   margin: 0;
   padding: 0;
+
 }
-.upfront-inline-panel-item .upfront-icon.upfront-icon-wp-image-style-selected{
-  background: gray;
+.upfront-inline-panel-item .upfront-icon.upfront-icon-wp-image-style:before,
+.ueditor-insert .upfront-inline-panel-item .upfront-icon.upfront-icon-region-wp-style:before{
+  background-image: url("../img/uf-ui-sprite.svg");
+  display: block;
+  content: "";
 }
+.upfront-ui.uimage-control-panel.inline-panel-control-dialog-wp_style{
+  min-width: 50px;
+}
+.upfront-content-marker.redactor-editor .wp-caption .upfront-inline-panel{
+  display: block;
+}
+.upfront-icon.upfront-icon-wp-image-style.upfront-icon-wp-image-style-alignnone:before{
+  background-position: -730px -359px;
+}
+.upfront-icon.upfront-icon-wp-image-style.upfront-icon-wp-image-style-alignnone.upfront-icon-wp-image-style-selected:before,
+.upfront-icon.upfront-icon-region-wp-style.upfront-icon-region-alignnone:before{
+  background-position: -730px -391px;
+}
+.upfront-icon.upfront-icon-wp-image-style.upfront-icon-wp-image-style-alignleft:before{
+  background-position: -731px -296px;
+}
+.upfront-icon.upfront-icon-wp-image-style.upfront-icon-wp-image-style-alignleft.upfront-icon-wp-image-style-selected:before,
+.upfront-icon.upfront-icon-region-wp-style.upfront-icon-region-alignleft:before{
+  background-position: -731px -328px;
+}
+.upfront-icon.upfront-icon-wp-image-style.upfront-icon-wp-image-style-alignright:before{
+  background-position: -819px -296px;
+}
+.upfront-icon.upfront-icon-wp-image-style.upfront-icon-wp-image-style-alignright.upfront-icon-wp-image-style-selected:before,
+.upfront-icon.upfront-icon-region-wp-style.upfront-icon-region-alignright:before{
+  background-position: -819px -327px;
+}
+.upfront-icon.upfront-icon-wp-image-style.upfront-icon-wp-image-style-aligncenter:before{
+  background-position: -908px -296px;
+}
+.upfront-icon.upfront-icon-wp-image-style.upfront-icon-wp-image-style-aligncenter.upfront-icon-wp-image-style-selected:before,
+.upfront-icon.upfront-icon-region-wp-style.upfront-icon-region-aligncenter:before{
+  background-position: -908px -328px;
+}
+
+

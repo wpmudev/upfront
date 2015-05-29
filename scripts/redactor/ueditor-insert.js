@@ -186,11 +186,7 @@ var UeditorInsert = Backbone.View.extend({
 			}
 
 			if(control){
-				control.icon = controlData.icon;
-				control.tooltip = controlData.tooltip;
-				control.id = controlData.id;
-				control.label = controlData.label;
-				control.active = controlData.active;
+                _.extend(control, controlData);
 				items.push(control);
 			}
 		});

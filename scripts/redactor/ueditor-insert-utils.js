@@ -124,14 +124,14 @@ var WP_PostImageStylesView = Backbone.View.extend({
     className: "upfront-wp-image-style-variants",
     tpl: _.template($(tpls).find('#wp-image-style-tpl').html()),
     events: {
-        'click .upfront-icon-region-style': 'update_data'
+        'click .upfront-icon-wp-image-style': 'update_data'
     },
     get_alignments: function(){
       return [
-          { id: "alignone",  label: "No aligment", icon: "upfront-icon-region-style" },
-          { id: "alignleft",  label: "Align left", icon: "upfront-icon-region-style" },
-          { id: "aligncenter",  label: "Align center", icon: "upfront-icon-region-style" },
-          { id: "alignright",  label: "Align right", icon: "upfront-icon-region-style" }
+          { id: "alignleft",  label: "Align left", icon: 'upfront-icon-wp-image-style-alignleft' },
+          { id: "aligncenter",  label: "Align center", icon: 'upfront-icon-wp-image-style-aligncenter' },
+          { id: "alignright",  label: "Align right", icon: 'upfront-icon-wp-image-style-alignright' },
+          { id: "alignnone",  label: "No aligment", icon: 'upfront-icon-wp-image-style-alignnone' }
       ];
     },
     initialize: function( model ){

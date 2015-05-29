@@ -46,6 +46,7 @@ define([
 				//this is like initialize
 				panel = $(_.template(panelControlTemplate, {l10n: l10n.template, hideOkButton: this.hideOkButton}));
 				panel.addClass('inline-panel-control-dialog');
+				panel.addClass('inline-panel-control-dialog-' + this.id);
 				this.$el.append(panel);
 				panel.find('.uimage-control-panel-content').html('').append(this.view.$el);
 				this.panel = panel;

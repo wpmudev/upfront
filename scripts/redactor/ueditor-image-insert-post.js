@@ -139,7 +139,7 @@ var WP_PostImageInsert = base.ImageInsertBase.extend({
     },
     prepare_controls: function(){
         this.controlsData = [
-            {id: 'style', type: 'dialog', icon: 'style', tooltip: 'Style', view: this.getStyleView()},
+            {id: 'wp_style', type: 'dialog', icon:  _.bind( this.get_style_icon, this ), tooltip: 'Style', view: this.getStyleView(), hideOkButton: true },
             {id: 'link', type: 'dialog', icon: 'link', tooltip: 'Link image', view: this.getLinkView()},
             {id: 'toggle_caption', type: 'simple', icon: 'caption', tooltip: 'Toggle Caption', active: _.bind( this.get_caption_state, this ) }
         ];
@@ -189,7 +189,8 @@ var WP_PostImageInsert = base.ImageInsertBase.extend({
         var data = this.data.toJSON();
 
         // Set alignment to style
-        data.style.wrapper.alignment = data.variant_id;
+        if( data.variant_id )
+            data.style.wrapper.alignment = data.variant_id;
 
         this.$el
             .html(this.tpl(data))
@@ -222,6 +223,14 @@ var WP_PostImageInsert = base.ImageInsertBase.extend({
         }else{
             return 1;
         }
+    },
+    get_style_icon: function(){
+      var icon = "wp-style";
+
+        if( this.data && this.data.get('style') )
+            icon += ( " " + this.data.get('style').wrapper.alignment );
+
+        return icon;
     },
     controlEvents: function(){
         /**

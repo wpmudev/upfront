@@ -177,7 +177,7 @@
 
 <script type="text/template" id="wp-image-style-tpl">
     {[ _.each(data.variants, function(variant, index){  ]}
-        <i class="upfront-icon upfront-icon-wp-image-style {{variant.icon}} {[ if( data.selected ) { ]} upfront-icon-wp-image-style-selected {[ } ]}" data-id="{{variant.id}}" title="{{variant.label}}"></i>
+        <i class="upfront-icon upfront-icon-wp-image-style  {{variant.icon}} {[ if( data.selected == variant.id ) { ]} upfront-icon-wp-image-style-selected {[ } ]}" data-id="{{variant.id}}" title="{{variant.label}}"></i>
     {[ }); ]}
 </script>
 <script type="text/template" id="upfront-formatting">
