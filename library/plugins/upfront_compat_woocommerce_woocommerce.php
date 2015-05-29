@@ -10,6 +10,9 @@ class Upfront_Compat_Woocommerce_Woocommerce extends Upfront_Server {
 	private function _add_hooks () {
 		add_theme_support('woocommerce'); // Yeah, so we're a supporting theme now
 		add_action('wp', array($this, 'detect_virtual_page'));
+
+		// Deal with editor
+		add_action('wp_ajax_upfront_posts-load', array($this, "load_posts"), 9); // Bind this early to override the default Posts element action
 	}
 
 	public function detect_virtual_page () {
@@ -73,6 +76,20 @@ class Upfront_Compat_Woocommerce_Woocommerce extends Upfront_Server {
 
 		return $cascade;
 
+	public function load_posts () {
+		$data = stripslashes_deep($_POST);
+		if (empty($data['layout']['item']) && empty($data['layout']['specificity'])) return false; // Don't deal with this if we don't know what it is
+
+		$has_woo_item = !empty($data['layout']['item']) && (bool)preg_match('/^woocommerce/', $data['layout']['item']);
+		$has_woo_spec = !empty($data['layout']['specificity']) && (bool)preg_match('/^woocommerce/', $data['layout']['specificity']);
+
+		if (!$has_woo_item && !$has_woo_spec) return false;
+
+		$this->_out(new Upfront_JsonResponse_Success(array(
+			'posts' => '<div class="upfront-woocommerce_compat upfront-plugin_compat"><p>WooCommerce specific content</p></div>',
+			'pagination' => '',
+		)));
+	}
 	}
 }
 Upfront_Compat_Woocommerce_Woocommerce::serve();
