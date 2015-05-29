@@ -8,6 +8,7 @@ class Upfront_Compat_Woocommerce_Woocommerce extends Upfront_Server {
 	}
 
 	private function _add_hooks () {
+		add_theme_support('woocommerce'); // Yeah, so we're a supporting theme now
 		add_action('wp', array($this, 'detect_virtual_page'));
 	}
 
