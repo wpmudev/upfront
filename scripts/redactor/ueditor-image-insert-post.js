@@ -247,9 +247,8 @@ var WP_PostImageInsert = base.ImageInsertBase.extend({
         });
 
         this.listenTo(this.controls, 'control:ok:link', function(view, control){
-            var url = view.$('input[type=text]').val(),
-                type = view.$('input[type=radio]:checked').val() || 'do_nothing',
-                linkData = {},
+            var type = view.$('input[type=radio]:checked').val() || 'do_nothing',
+                url = type === "do_nothing" ? "" :  view.$('input[type=text]').val(),
                 link_url = ""
                 ;
 
