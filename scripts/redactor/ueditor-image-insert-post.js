@@ -128,8 +128,9 @@ var PostImageInsert = base.ImageInsertBase.extend({
 });
 
 var WP_PostImageInsert = base.ImageInsertBase.extend({
-    tpl : _.template($(tpls).find('#post-image-insert-wp-tpl').html()),
-    shortcode_tpl : _.template($(tpls).find('#post-image-insert-shortcode-wp-tpl').html().replace(/\s+/g," ")),
+    className:  'ueditor-insert upfront-inserted_image-wrapper upfront-wp-inserted_image-wrapper',
+    tpl : _.template( $(tpls).find('#post-image-insert-wp-tpl').html() ),
+    shortcode_tpl : _.template( $(tpls).find('#post-image-insert-shortcode-wp-tpl').html() ),
     init: function(opts){
         this.$editor = opts.$editor;
 

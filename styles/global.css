@@ -213,7 +213,7 @@ h2, h3 { page-break-after: avoid; }
 
 .ueditor-insert {
   margin-bottom: 15px;
-  max-width: 100%;
+  /*max-width: 100%;*/
   padding-left: 0px !important;
   padding-right: 0px !important;
 }
