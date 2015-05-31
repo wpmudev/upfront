@@ -681,7 +681,7 @@ var PostContentEditor = Backbone.View.extend({
 						// replace image inserts with their shortcodes
 						me.$(".upfront-inserted_image-wrapper").each(function(){
 							var $this = $(this),
-								$shortcode = $this.find(".post-images-shortcode"),
+								$shortcode = $this.find(".post-images-shortcode").length ? $this.find(".post-images-shortcode") : $this.find(".post-images-shortcode-wp"),
 								shortcode = $.trim( $shortcode.html().replace(/(\r\n|\n|\r)/gm,"") );
 							$this.replaceWith( shortcode );
 						});

@@ -2228,7 +2228,7 @@ div.uinsert-selector a:hover {
   min-width: 50px; }
 
 .upfront-content-marker.redactor-editor .wp-caption .upfront-inline-panel {
-  display: block; }
+  display: none; }
 
 .upfront-icon.upfront-icon-wp-image-style.upfront-icon-wp-image-style-alignnone:before {
   background-position: -730px -359px; }

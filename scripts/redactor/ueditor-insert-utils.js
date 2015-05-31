@@ -138,7 +138,7 @@ var WP_PostImageStylesView = Backbone.View.extend({
         this.data = new Backbone.Model();
         this.data.set( "variants", this.get_alignments());
         this.listenTo(this.data, 'change', this.render);
-        this.data.set( "selected", this.model.get('variant_id') );
+        this.data.set( "selected", ( this.model.get('variant_id') || this.model.get('style').wrapper.alignment ) );
     },
     get_default_value: function(){
         return this.data.get("selected");
