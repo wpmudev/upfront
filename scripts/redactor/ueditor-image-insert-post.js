@@ -238,7 +238,7 @@ var WP_PostImageInsert = base.ImageInsertBase.extend({
          */
         this.listenTo(this.controls, 'control:click:toggle_caption', function(control){
             var new_state = 1,
-                style = this.data.toJSON().style;
+                style = Upfront.Util.clone( this.data.toJSON().style ); //  cloning to make it trigger the BB model change event
             if( !this.get_caption_state() )
                 new_state = 0;
 
