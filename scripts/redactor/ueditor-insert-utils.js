@@ -4,7 +4,7 @@
         ],
         function(tpls){
 
-var l10n = Upfront.mainData.l10n.global.content;
+var l10n = Upfront.mainData.l10n.global.ueditor;
 
 var ImageStylesView = Backbone.View.extend({
     tpl: _.template($(tpls).find('#image-style-tpl').html()),
@@ -128,10 +128,10 @@ var WP_PostImageStylesView = Backbone.View.extend({
     },
     get_alignments: function(){
       return [
-          { id: "alignleft",  label: "Align left", icon: 'upfront-icon-wp-image-style-alignleft' },
-          { id: "aligncenter",  label: "Align center", icon: 'upfront-icon-wp-image-style-aligncenter' },
-          { id: "alignright",  label: "Align right", icon: 'upfront-icon-wp-image-style-alignright' },
-          { id: "alignnone",  label: "No aligment", icon: 'upfront-icon-wp-image-style-alignnone' }
+          { id: "alignleft",  label: l10n.align_left, icon: 'upfront-icon-wp-image-style-alignleft' },
+          { id: "aligncenter",  label: l10n.align_center, icon: 'upfront-icon-wp-image-style-aligncenter' },
+          { id: "alignright",  label: l10n.align_right, icon: 'upfront-icon-wp-image-style-alignright' },
+          { id: "alignnone",  label: l10n.align_none, icon: 'upfront-icon-wp-image-style-alignnone' }
       ];
     },
     initialize: function( model ){

@@ -212,7 +212,6 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'year' => __('Year', 'upfront'),
 				'hour' => __('Hour', 'upfront'),
 				'minute' => __('Minute', 'upfront'),
-				'choose_image_insert' => __('Choose Image Insert: ', 'upfront')
 			),
 			'ueditor' => array(
 				'text_align' => __('Text alignment', 'upfront'),
@@ -228,6 +227,11 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'text_color' => __('Text Color', 'upfront'),
 				'text_background' => __('Text Background', 'upfront'),
 				'italic' => __('Italic', 'upfront'),
+                'align_left' => __("Align left", Upfront::TextDomain),
+                'align_right' => __("Align right", Upfront::TextDomain),
+                'align_none' => __("Align none", Upfront::TextDomain),
+                'align_center' => __("No alignment", Upfront::TextDomain),
+                'choose_image_insert' => __('Choose Image Insert: ', Upfront::TextDomain),
                 'formatting' => array(
                     "heading_01" => __("Heading 01", 'upfront'),
                     "heading_02" => __("Heading 02", 'upfront'),

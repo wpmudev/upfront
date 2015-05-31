@@ -24,6 +24,12 @@ Upfront_Behavior::debug()->set_baseline();
 
 
 class Upfront {
+
+    /**
+     * string theme text domain
+     */
+    const TextDomain = "upfront";
+
 	public static $Excluded_Files = array(".", "..", ".DS_Store");
 	private $_servers = array(
 		'ajax',
