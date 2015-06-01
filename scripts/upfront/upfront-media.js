@@ -701,7 +701,6 @@ define(function() {
 			render: function () {
 				var search = ActiveFilters.get("search").first(),
 					obj = search.toJSON();
-				//console.log(ActiveFilters);
 				obj.total = ActiveFilters.get("search").length;
 				this.$el.empty().append(
 					_.template(l10n.showing_total_results + ' <b class="search-text">{{value}}</b> <a href="#clear" class="clear_search">' + l10n.clear_search + '</a>', obj)
@@ -811,7 +810,6 @@ define(function() {
 			},
 			remove: function() {
 				Upfront.Events.off("media_manager:media:list", this.set_filters);
-				console.log('removed set filters');
 			}
 		});
 
@@ -1190,7 +1188,6 @@ define(function() {
 		 */
 		is_in_editing_mode: function () {
 			var type = Upfront.Application.sidebar.prevented_usage_type;
-			console.log(type);
 			return !(type.match(/media/));
 		}
 	});
@@ -1356,10 +1353,10 @@ define(function() {
 
 		},
 		render_shortcode: function () {
-			console.log("SHORTCODE YAY");
+			//console.log("SHORTCODE YAY");
 		},
 		render_markup: function () {
-			console.log("MARKUP YAY");
+			//console.log("MARKUP YAY");
 		},
 		load: function (data) {
 			this._request_in_progress = true;
