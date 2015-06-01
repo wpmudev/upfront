@@ -427,21 +427,19 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
             inserts_from_shortcode = me.importFromShortcode(contentElement, insertsData, inserts);
         }
 
-        contentElement.find('img').each(function(){
-            var $img = $(this),
-                wrapper = $img.closest('.upfront-inserted_image-wrapper'),
-                insert = false
-                ;
+        var remaining_images =  contentElement.find('img').filter( function() {
+            return !$(this).closest(".ueditor-insert").length;
+        } );
 
-            if(wrapper.length) {
-                //insert = me.importFromWrapper(wrapper, insertsData, inserts);
-            } else {
-                //insert = me.importFromImage($img);
-            }
+        _.each(remaining_images, function( img ){
+            var insert = false;
+
+            insert = me.importFromImage(img);
 
             if( insert )
                 _inserts[insert.data.id] = insert;
         });
+
         return _.extend(_inserts, inserts_from_shortcode);
     },
 

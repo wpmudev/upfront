@@ -22,7 +22,7 @@ var UeditorInsert = Backbone.View.extend({
 		var data = opts.data || {};
 		//data = _.extend({}, this.defaultData, data); // lets merge data in the child classes
 		if(!data.id){
-			data.id = 'uinsert-' + (++Upfront.data.ueditor.insertCount);
+			data.id = this.generate_new_id();
 			//Trigger the insertcount change for updating the server
 			Upfront.Events.trigger('content:insertcount:updated');
 		}
@@ -34,6 +34,9 @@ var UeditorInsert = Backbone.View.extend({
 		if(typeof this.init == 'function')
 			this.init( opts );
 	},
+    generate_new_id: function(){
+       return 'uinsert-' + (++Upfront.data.ueditor.insertCount);
+    },
 	start: function(){
 		//Dumb start method returning a resolved promise. Override it if async start needed.
 		var deferred = $.Deferred();

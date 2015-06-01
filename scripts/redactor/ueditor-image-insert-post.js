@@ -131,6 +131,9 @@ var WP_PostImageInsert = base.ImageInsertBase.extend({
     className:  'ueditor-insert upfront-inserted_image-wrapper upfront-wp-inserted_image-wrapper',
     tpl : _.template( $(tpls).find('#post-image-insert-wp-tpl').html() ),
     shortcode_tpl : _.template( $(tpls).find('#post-image-insert-shortcode-wp-tpl').html() ),
+    generate_new_id: function(){
+        return 'wpinsert-' + (++Upfront.data.ueditor.insertCount);
+    },
     init: function(opts){
         this.$editor = opts.$editor;
 

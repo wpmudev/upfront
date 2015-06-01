@@ -135,7 +135,7 @@ var PostImageInsert_Manager = base.ImageInsertBase.extend({
                 },
                 wrapper: {
                     alignment: shortcode_data.get("align"),
-                    width: parseInt( shortcode_data.get("width") )
+                    width: parseInt( shortcode_data.get("width"), 10 )
                 },
                 image: {
                     size_class: this.get_shortcode_content_image_size_class( shortcode_data.content )
@@ -223,8 +223,60 @@ var PostImageInsert_Manager = base.ImageInsertBase.extend({
     get_shortcode_url: function( content ){
         return $("<div>").html(content).find("a").attr("href");
     },
+    /**
+     * Returns image size class by parsing img tag classes
+     *
+      * @param img
+     * @returns {*}
+     */
+    get_image_size_class: function( img ){
+        var regex = /(?:^|\W)size-(\w+)(?!\w)/g,
+            reg_result = img.className ? img.className.match( regex ) : false;
+        return reg_result ? reg_result[0] : "";
+    },
+    /**
+     * Returns image attachment id by parsing img tag classes
+     * @param img
+     * @returns {*}
+     */
+    get_image_attachment_id: function( img ){
+        var regex = /(?:^|\W)wp-image-(\w+)(?!\w)/g,
+            reg_result = img.className ? img.className.match( regex ) : false;
+        return reg_result ? reg_result[0] : "";
+    },
+    importFromImage: function( img ){
+        var $img = $(img),
+             data = $.extend(true, {}, this.wp_defaults, {
+            attachment_id: this.get_image_attachment_id( img ),
+            caption: $.trim( "" ||  $img.attr("alt") ),
+            link_url: img.src,
+            image: {
+                height: parseInt( $img.height(), 10 ),
+                width:   parseInt( $img.width(), 10 ),
+                src:  img.src
+            },
+            style: {
+                caption:{
+                    show: false
+                },
+                wrapper: {
+                    alignment: "alignnone",
+                    width: parseInt( $img.width(), 10 )
+                },
+                image: {
+                    size_class: this.get_image_size_class( img )
+                }
+            }
+        } );
+
+        var insert = new WP_PostImageInsert({data: data, $editor: this.$editor });
+
+        insert.render();
+        $img.replaceWith( insert.$el );
+        return insert;
+    },
     //Import from any image tag
-    importFromImage: function(image){
+    importFromImage_prev: function(image){
         //var imageData = Upfront.Util.clone(this.defaultData),
         var imageData = _.extend({}, this.defaultData),
             imageSpecs = {
