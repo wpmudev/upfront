@@ -71,7 +71,6 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		this.listenTo(Upfront.Events, "theme_colors:update", this.render, this);
 
 		if (this.property('link') === false) {
-			console.log('init link from button old prop', this.property('link'));
 			this.link = new LinkModel({
 				type: Upfront.Util.guessLinkType(this.property('href')),
 				url: this.property('href'),
@@ -79,7 +78,6 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			});
 			this.property('link', this.link.toJSON());
 		} else {
-			console.log('init link from button link prop', this.property('link'));
 			this.link = new LinkModel(this.property('link'));
 		}
 
@@ -206,9 +204,9 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		var data = {
 			"id" : this.property('element_id'),
 			"content" : content,
-			"href" : this.property('href'),
-			"linktype" : Upfront.Util.guessLinkType(this.property('href')),
-			"linkTarget": this.property('linkTarget'),
+			"href" : this.link.get('url'),
+			"linktype" : this.link.get('type'),
+			"linkTarget": this.link.get('target'),
 			"align" : this.property('align'),
 			"style_static" : style_static,
 			"style_hover" : style_hover,
@@ -218,8 +216,9 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 
 		rendered = _.template(template, data)+'<span class="open-item-controls"></span>';
 
-		if(this.property('href').indexOf('#ltb-') > -1 && !Upfront.Util.checkLightbox(this.property('href')))
+		if(this.link.get('type') === 'lightbox' && !Upfront.Util.checkLightbox(this.link.get('url'))) {
 			rendered = rendered + '<span class="missing-lightbox-warning"></span>';
+		}
 
 		return rendered;// + ( !this.is_edited() || $.trim(content) == '' ? '<div class="upfront-quick-swap"><p>' + l10n.dbl_click + '</p></div>' : '');
 

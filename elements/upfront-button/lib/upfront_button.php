@@ -4,6 +4,14 @@ class Upfront_ButtonView extends Upfront_Object {
 
 	public function get_markup () {
 		$data = array();
+
+		$link = $this->_get_property('link');
+		if ($link === false) {
+			$link = array(
+				'url' => $this->_get_property('href'),
+				'target' => $this->_get_property('linkTarget')
+			);
+		}
 		$data['id'] = $this->_get_property('element_id');
 		$button_presets = get_option('upfront_' . get_stylesheet() . '_button_presets');
 		$button_presets = apply_filters(
@@ -35,7 +43,7 @@ class Upfront_ButtonView extends Upfront_Object {
 			$data['content'] = $default_properties['content'];
 		}
 
-		$data['href'] = $this->_get_property('href');
+		$data['href'] = $link['url'];
 		$data['align'] = $this->_get_property('align');
 		$data['style_static'] = "border: ".$preset['borderwidth']."px ".$preset['bordertype']." ".$ufc->process_colors($preset['bordercolor'])."; "."border-radius: ".$preset['borderradius1']."px ".$preset['borderradius2']."px ".$preset['borderradius4']."px ".$preset['borderradius3']."px; "."background-color: ".$ufc->process_colors($preset['bgcolor'])."; "."font-size: ".$preset['fontsize']."px; "."font-family: ".$preset['fontface']."; "."color: ".$ufc->process_colors($preset['color'])."; "."transition: all ".$preset['hov_duration']."s ".$preset['hov_transition']."; ";
 
@@ -64,14 +72,13 @@ class Upfront_ButtonView extends Upfront_Object {
 			if(isset($preset['hov_color']))
 				$data['style_hover'] = $data['style_hover'].'color: '.$ufc->process_colors($preset['hov_color']).'; ';
 
-			$data['linkTarget'] = (strpos($data['href'], '#') === 0 || strpos($data['href'], 'mailto:') === 0) ? '_self' : $this->_get_property('linkTarget');
+			$data['linkTarget'] = $link['target'];
 		/*
 		$data['style_hover'] = "border: ".$preset['hov_borderwidth']."px ".$preset['hov_bordertype']." ".$preset['hov_bordercolor']."; "."border-radius: ".$preset['hov_borderradius1']."px ".$preset['hov_borderradius2']."px ".$preset['hov_borderradius4']."px ".$preset['hov_borderradius3']."px; "."background-color: ".$preset['hov_bgcolor']."; "."font-size: ".$preset['hov_fontsize']."px; "."font-family: ".$preset['hov_fontface']."; "."color: ".$preset['hov_color']."; ";
 		*/
 
 		$markup = upfront_get_template('ubutton', $data, dirname(dirname(__FILE__)) . '/tpl/ubutton.php.html');
 		return $markup;
-
 	}
 
 	//Defaults for properties
