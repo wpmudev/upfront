@@ -1289,12 +1289,13 @@ define(function() {
 			var me = this,
 				uploaded = 0, progressing = 0, done =0,
 				new_media = [],
+				media_library_view = me.library_view._subviews.media,
 				uploadUrl = ActiveFilters.themeImages ? _upfront_media_upload.theme : _upfront_media_upload.normal
 			;
 
             this.$("#fileupload").remove();
             this.$el.append('<input id="fileupload" type="file" style="display:none" name="media" data-url="' + uploadUrl + '" multiple >');
-            this.$("#fileupload").on("click", function (e) { e.stopPropagation(); }).fileupload({
+            this.$("#fileupload").off("click").on("click", function (e) { e.stopPropagation(); }).fileupload({
 				dataType: 'json',
 				add: function (e, data) {
 					var media = data.files[0],
@@ -1304,7 +1305,7 @@ define(function() {
 					uploaded +=1;
 					new_media[count] = new MediaItem_Model({progress: 0});
 					new_media[count].set({post_title: name});
-					me.library_view.media_collection.add(new_media[count], {at: 0});
+					media_library_view.model.add(new_media[count], {at: 0});
 					data.submit();
 					new_media[count].on("upload:abort", function () {
 						data.abort();
@@ -1314,11 +1315,11 @@ define(function() {
 								action: "upfront-media-remove_item",
 								item_id: new_media[count].get("ID")
 							}).always(function () {
-								me.library_view.media_collection.trigger("change");
+								media_library_view.model.trigger("change");
 							});
 						}
-						me.library_view.media_collection.remove(new_media[count]);
-						me.library_view.media_collection.trigger("change");
+						media_library_view.model.remove(new_media[count]);
+						media_library_view.model.trigger("change");
 					});
 					new_media[count].trigger("upload:start", media);
 				},
