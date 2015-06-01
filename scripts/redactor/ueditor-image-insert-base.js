@@ -341,7 +341,7 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
 
         var imagePost = libraryResult.at(0).toJSON(),
             image = this.getSelectedImage(imagePost),
-            imageData = this.is_wp ?  $.extend({}, this.wp_defaults, {
+            imageData = this.is_wp ?  _.extend( {}, this.wp_defaults, {
                 attachment_id: imagePost.ID,
                 caption: imagePost.post_excerpt ?  imagePost.post_excerpt : "" ,
                 link_url: "",
@@ -358,7 +358,7 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
                         size_class: 'size-' + image.selected_size
                     }
                 }
-            }) : $.extend({}, this.defaultData, {
+            }) : _.extend({}, this.defaultData, {
                 attachmentId: imagePost.ID,
                 title: imagePost.post_tite,
                 imageFull: imagePost.image,

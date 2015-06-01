@@ -120,7 +120,7 @@ var PostImageInsert_Manager = base.ImageInsertBase.extend({
      * @returns {post_inserts.WP_PostImageInsert}
      */
     importFromShortcode_WP: function( shortcode_data ){
-        var data = _.extend({}, this.wp_defaults, {
+        var data = _.extend( {}, this.wp_defaults, {
             attachment_id: shortcode_data.get("id").replace("attachment_", ""),
             caption:  this.get_shortcode_caption_text( $.parseHTML( shortcode_data.content ) ),
             link_url: this.get_shortcode_url( shortcode_data.content ),
@@ -246,7 +246,7 @@ var PostImageInsert_Manager = base.ImageInsertBase.extend({
     },
     importFromImage: function( img ){
         var $img = $(img),
-             data = $.extend(true, {}, this.wp_defaults, {
+             data = _.extend( {}, this.wp_defaults, {
             attachment_id: this.get_image_attachment_id( img ),
             caption: $.trim( "" ||  $img.attr("alt") ),
             link_url: img.src,

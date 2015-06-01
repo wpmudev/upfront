@@ -169,7 +169,7 @@ var WP_PostImageInsert = base.ImageInsertBase.extend({
 
         var imagePost = libraryResult.at(0).toJSON(),
             image = this.getSelectedImage(imagePost),
-            imageData = $.extend({}, this.wp_defaults, {
+            imageData = _.extend( {}, this.wp_defaults, {
                 attachment_id: imagePost.ID,
                 caption: imagePost.post_excerpt ?  imagePost.post_excerpt : "" ,
                 link_url: "",
