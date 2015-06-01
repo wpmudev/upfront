@@ -71,7 +71,8 @@ define([
 			anchor: true,
 			image: false,
 			lightbox: true,
-			email: true
+			email: true,
+			homepage: true
 		},
 
 		events: {
@@ -97,7 +98,8 @@ define([
 			this.button = options.button || false;
 
 			if (typeof options.model === 'undefined') {
-				console.log('no model in options');
+				// Make sure app does not fail if there is no model.
+				Upfront.Util.log('There was no link model, use new linking.');
 				return;
 			}
 
@@ -118,9 +120,13 @@ define([
 		},
 
 		handleTypeChange: function() {
-			// First reset url property
-			// We don't want funny results when changing from one type to another.
-			this.model.set({'url': ''}, {silent: true});
+			if (this.model.get('type') === 'homepage') {
+				this.model.set({'url': Upfront.mainData.site}, {silent: true});
+			} else {
+				// Reset url property
+				// We don't want funny results when changing from one type to another.
+				this.model.set({'url': ''}, {silent: true});
+			}
 			this.render();
 
 			if (this.model.get('type') === 'entry') {
@@ -138,12 +144,14 @@ define([
 		getLinkTypeValue: function(type) {
 			var contentL10n = Upfront.Settings.l10n.global.content;
 			switch(type) {
+				case 'homepage':
+					return { value: 'homepage', label: contentL10n.homepage };
 				case 'unlink':
 					return { value: 'unlink', label: contentL10n.no_link };
 				case 'external':
 					return { value: 'external', label: contentL10n.url };
 				case 'email':
-					return { value: 'email', label: 'Email address' };
+					return { value: 'email', label: contentL10n.email };
 				case 'entry':
 					return { value: 'entry', label: contentL10n.post_or_page };
 				case 'anchor':
@@ -242,7 +250,7 @@ define([
 				this.renderLightBoxesSelect();
 			}
 
-			if (_.contains(['external', 'entry'], this.model.get('type'))) {
+			if (_.contains(['external', 'entry', 'homepage'], this.model.get('type'))) {
 				this.renderTargetRadio();
 			}
 
@@ -294,16 +302,17 @@ define([
 		},
 
 		renderAnchorSelect: function() {
-			var model = this.model;
+			var model = this.model,
+				pageUrl = document.location.origin + document.location.pathname;
 
 			var anchorValues = [{label: 'Choose Anchor...', value: ''}];
 			_.each(getAnchors(), function(anchor) {
-				anchorValues.push({label: anchor.label, value: anchor.id});
+				anchorValues.push({label: anchor.label, value: pageUrl + anchor.id});
 			});
 
 			var anchorValue = this.model.get('url');
 			anchorValue = anchorValue ? anchorValue : '';
-			anchorValue = anchorValue.match(/^#/) ? anchorValue : '';
+			anchorValue = anchorValue.indexOf('#') !== -1 ? anchorValue : '';
 
 			this.anchorSelect = new Upfront.Views.Editor.Field.Select({
 				label: '',

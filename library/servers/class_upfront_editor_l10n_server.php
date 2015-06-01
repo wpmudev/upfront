@@ -180,6 +180,8 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'anchor' => __('Anchor', 'upfront'),
 				'change_link' => __('Change link', 'upfront'),
 				'larger_image' => __('Larger image', 'upfront'),
+				'homepage' => __('Home Page', 'upfront'),
+				'email' => __('Email', 'upfront'),
 				'lightbox' => __('Lightbox', 'upfront'),
 				'lightbox_name' => __('Lightbox Name', 'upfront'),
 				'new_lightbox' => __('New Lightbox', 'upfront'),
