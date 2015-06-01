@@ -3,14 +3,16 @@ define([
 ], function (Control) {
 	var VisitLinkControl = Control.extend({
 		initialize: function(options) {
+			this.options = options || {};
 			this.constructor.__super__.initialize.call(this, options);
-			this.setOptions(this.options.url);
+			this.setOptions(this.options.url, this.options.type);
 		},
 
-		setOptions: function(url) {
+		setOptions: function(url, type) {
+			var theType = type ? type : Upfront.Util.guessLinkType(url);
 			this.url = url;
-			this.icon = 'visit-link-' + Upfront.Util.guessLinkType(url),
-			this.label = this.getTextByLinkType(Upfront.Util.guessLinkType(url));
+			this.icon = 'visit-link-' + theType,
+			this.label = this.getTextByLinkType(theType);
 		},
 
 		clicked: function(event) {
@@ -20,8 +22,8 @@ define([
 			}
 		},
 
-		setLink: function(url) {
-			this.setOptions(url);
+		setLink: function(url, type) {
+			this.setOptions(url, type);
 			this.render();
 		},
 
