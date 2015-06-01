@@ -338,7 +338,7 @@ define(function() {
 			this.render_filters();
 		},
 		remove: function() {
-			this.control.remove();
+			if (this.control) this.control.remove();
 			Upfront.Events.off("media:item:selection_changed", this.switch_controls);
 			Upfront.Events.off("media:search:requested", this.switch_to_search);
 		}
@@ -1136,6 +1136,10 @@ define(function() {
 			this.$el.addClass('clearfix');
 			this.switch_to_library();
 		},
+		remove: function () {
+			this.undelegateEvents();
+			this.$el.empty();
+		},
 		switch_to_library: function (e) {
 			var data = {};
 			this.$el
@@ -1212,11 +1216,12 @@ define(function() {
 
 			ActiveFilters.to_defaults();
 			this.switcher_view = new MediaManager_Switcher({el: this.popup_data.$top});
-            this.switcher_view.on("media_manager:switcher:to_library", this.render_library, this);
-            this.switcher_view.on("media_manager:switcher:to_embed", this.render_embed, this);
-            this.switcher_view.on("media_manager:switcher:to_upload", this.render_upload, this);
-            this.switcher_view.on("media_manager:switcher:to_shortcode", this.render_shortcode, this);
-            this.switcher_view.on("media_manager:switcher:to_markup", this.render_markup, this);
+
+            this.listenTo(this.switcher_view, "media_manager:switcher:to_library", this.render_library, this);
+            this.listenTo(this.switcher_view, "media_manager:switcher:to_embed", this.render_embed, this);
+            this.listenTo(this.switcher_view, "media_manager:switcher:to_upload", this.render_upload, this);
+            this.listenTo(this.switcher_view, "media_manager:switcher:to_shortcode", this.render_shortcode, this);
+            this.listenTo(this.switcher_view, "media_manager:switcher:to_markup", this.render_markup, this);
 
 			this.command_view = new MediaManager_BottomCommand({el: this.popup_data.$bottom, button_text: button_text, ck_insert: data.ck_insert});
 			this.library_view = new MediaManager_PostImage_View(data.collection);
@@ -1231,6 +1236,7 @@ define(function() {
 		},
 		remove: function() {
 			this.library_view.remove();
+			this.switcher_view.remove();
 			this.library_view = new MediaManager_PostImage_View(this.collection);
 			Upfront.Events.off("media_manager:media:list", this.switch_media_type, this);
 		},
@@ -2228,19 +2234,27 @@ define(function() {
 			ActiveFilters.allowed_media_types = [];
 		},
 		load: function (options) {
-			if( _.isUndefined( this.media_manage_options ) ){
-				this.media_manage_options = _.extend({
-					el: this.out,
-					data: this.popup_data
-				}, options);
-				this.media_manager = new MediaManager_View( this.media_manage_options );
-			}else if( !_.isEqual( this.media_manage_options,  _.extend({ el: this.out, data: this.popup_data }, options)) ){
-				this.media_manage_options = _.extend({
-					el: this.out,
-					data: this.popup_data
-				}, options);
-				this.media_manager = new MediaManager_View( this.media_manage_options );
+
+			if (this.media_manager) {
+				this.media_manager.undelegateEvents();
+				this.media_manager.remove();
+				this.media_manage_options = undefined;
 			}
+
+			if (_.isUndefined(this.media_manage_options)) {
+				this.media_manage_options = _.extend({
+					el: this.out,
+					data: this.popup_data
+				}, options);
+				this.media_manager = new MediaManager_View(this.media_manage_options);
+			} else if(!_.isEqual(this.media_manage_options,  _.extend({ el: this.out, data: this.popup_data }, options))) {
+				this.media_manage_options = _.extend({
+					el: this.out,
+					data: this.popup_data
+				}, options);
+				this.media_manager = new MediaManager_View(this.media_manage_options);
+			}
+
 			this.media_manager.render();
 			return false;
 		},
