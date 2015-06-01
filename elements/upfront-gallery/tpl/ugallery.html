@@ -14,10 +14,10 @@
 <?php if($imagesLength){ ?>
 	<div class="ugallery_items ugallery_grid" rel="<?php echo $element_id ?>">
 	<?php for($i=0; $i<$imagesLength; $i++) { ?>
-	<div class="ugallery_item ugallery_item_<?php echo !empty($images[$i]['urlType']) && $images[$i]['urlType'] == 'image' ? 'image' : $images[$i]['urlType'] ?> <?php if($captionType === 'over') { ?>ugallery_caption_on_hover_<?php echo $showCaptionOnHover['length'] ?><?php } ?>" style="position:relative; width:<?php echo $thumbWidth ?>px;" rel="<?php echo $images[$i]['id'] ?>" data-groups='[<?php echo $image_labels[$images[$i]['id']] ?>]'>
-		<?php $images[$i]['urlType'] = !empty($images[$i]['urlType']) ? $images[$i]['urlType'] : false; ?>
-		  <?php if ($images[$i]['urlType'] !== 'unlink') { ?>
-			<a class="ugallery_link<?php echo !empty($images[$i]['urlType']) && $images[$i]['urlType'] == 'image' ? ' ugallery_lightbox_link' : $images[$i]['urlType'] ?>" href="<?php echo $images[$i]['url'] ?>" target="<?php echo $images[$i]['linkTarget'] ?>" title="">
+	<div class="ugallery_item ugallery_item_<?php echo !empty($images[$i]['imageLinkType']) && $images[$i]['imageLinkType'] == 'image' ? 'image' : $images[$i]['imageLinkType'] ?> <?php if($captionType === 'over') { ?>ugallery_caption_on_hover_<?php echo $showCaptionOnHover['length'] ?><?php } ?>" style="position:relative; width:<?php echo $thumbWidth ?>px;" rel="<?php echo $images[$i]['id'] ?>" data-groups='[<?php echo $image_labels[$images[$i]['id']] ?>]'>
+		<?php $images[$i]['imageLinkType'] = !empty($images[$i]['imageLinkType']) ? $images[$i]['imageLinkType'] : false; ?>
+		  <?php if ($images[$i]['imageLinkType'] !== 'unlink') { ?>
+			<a class="ugallery_link ugallery_link<?php echo !empty($images[$i]['imageLinkType']) && $images[$i]['imageLinkType'] == 'image' ? ' ugallery_lightbox_link' : $images[$i]['imageLinkType'] ?>" href="<?php echo $images[$i]['imageLinkUrl'] ?>" target="<?php echo $images[$i]['imageLinkTarget'] ?>" title="">
 			<?php } ?>
 				<img src="<?php echo $images[$i]['src'] ?>" alt="" class="ugallery-image" style="<?php echo !empty($images[$i]['loading']) && $images[$i]['loading'] ? 'display:none;' : '' ?> margin-left:<?php echo $images[$i]['margin']['left'] ?>px;  margin-top:<?php echo $images[$i]['margin']['top'] ?>px;width:<?php echo $thumbWidth ?>px; height:<?php echo $thumbHeight ?>px">
 				<?php if(!empty($in_editor)) { ?>
@@ -30,7 +30,7 @@
 			<div class="ugallery_lb_text" rel="<?php echo $images[$i]['id'] ?>"><?php if (!$editing && $images[$i]['caption'] != 'Image description') { ?><?php echo $images[$i]['caption'] ?><?php } ?></div>
 			<?php } ?>
 
-			<?php if ($images[$i]['urlType'] !== 'unlink') { ?>
+			<?php if ($images[$i]['imageLinkType'] !== 'unlink') { ?>
 			</a>
 			<?php } ?>
 		</div><?php } ?>

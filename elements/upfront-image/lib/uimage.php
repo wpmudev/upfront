@@ -8,15 +8,24 @@ class Upfront_UimageView extends Upfront_Object {
 		$data = $this->properties_to_array();
 
 		$data['in_editor'] = false;
+		if (!isset($data['link'])) {
+			$link = array(
+				'type' => $data['when_clicked'],
+				'target' => isset($data['link_target']) ? $data['link_target'] : '_self',
+				'url' => $data['image_link']
+			);
+		} else {
+			$link = $data['link'];
+		}
 
-		if($data['when_clicked'] == 'show_larger_image'){
+		if($link['type'] == 'image'){
 			//wp_enqueue_style('magnific');
 			upfront_add_element_style('magnific', array('/scripts/magnific-popup/magnific-popup.css', false));
 			//wp_enqueue_script('magnific');
 			upfront_add_element_script('magnific', array('/scripts/magnific-popup/magnific-popup.min.js', false));
 		}
 
-		$data['url'] = $data['when_clicked'] == 'do_nothing' ? false : $data['image_link'];
+		$data['url'] = $link['type'] == 'unlink' ? false : $link['url'];
 
 		$data['wrapper_id'] = str_replace('image-object-', 'wrapper-', $data['element_id']);
 
@@ -49,13 +58,12 @@ class Upfront_UimageView extends Upfront_Object {
 
 		if ($data['caption_position'] === 'below_image') $data['captionBackground'] = false;
 
-		if (!isset($data['link_target'])) $data['link_target'] = false; // Initialize array member to prevent notices
-		// We could really go with wp_parge_args here...
+		$data['link_target'] = $link['target'];
 
 
 		$markup = '<div>' . upfront_get_template('uimage', $data, dirname(dirname(__FILE__)) . '/tpl/image.html') . '</div>';
 
-		if($data['when_clicked'] == 'image'){
+		if($link['type'] == 'image'){
 			//Lightbox
 			//wp_enqueue_style('magnific');
 			upfront_add_element_style('magnific', array('/scripts/magnific-popup/magnific-popup.css', false));
@@ -96,8 +104,6 @@ class Upfront_UimageView extends Upfront_Object {
 			'srcOriginal' => false,
 			'image_title' => '',
 			'alternative_text' => '',
-			'when_clicked' => false, // false | external | entry | anchor | image | lightbox
-			'image_link' => '',
 			'include_image_caption' => false,
 			'image_caption' => self::_get_l10n('image_caption'),
 			'caption_position' => false,
@@ -125,7 +131,11 @@ class Upfront_UimageView extends Upfront_Object {
 			'view_class' => 'UimageView',
 			'has_settings' => 1,
 			'class' =>  'upfront-image',
-			'id_slug' => 'image'
+			'id_slug' => 'image',
+
+			'when_clicked' => false, // false | external | entry | anchor | image | lightbox
+			'image_link' => '',
+			'link' => false
 		);
 	}
 

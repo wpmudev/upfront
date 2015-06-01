@@ -7,8 +7,9 @@ define([
 	'elements/upfront-gallery/js/settings',
 	'elements/upfront-gallery/js/model',
 	'elements/upfront-gallery/js/label-editor',
-	'elements/upfront-gallery/js/element'
-], function(galleryTpl, sortingStyleTpl, editorTpl, UgallerySettings, UgalleryModel, LabelEditor, UgalleryElement) {
+	'elements/upfront-gallery/js/element',
+	"scripts/upfront/link-model"
+], function(galleryTpl, sortingStyleTpl, editorTpl, UgallerySettings, UgalleryModel, LabelEditor, UgalleryElement, LinkModel) {
 
 var l10n = Upfront.Settings.l10n.gallery_element;
 
@@ -62,7 +63,21 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 		images = this.property('images');
 
+		// Ensure images are using new linking
+		_.each(images, function(image, index) {
+			if (image.imageLink === false || typeof image.imageLink === 'undefined') {
+				// Create imageLink from properties, backward compat
+				images[index]['imageLink'] = {
+					type: image.urlType,
+					url: image.url,
+					target: image.linkTarget
+				};
+			}
+		});
+
 		this.images = new UgalleryImages(images);
+
+
 		this.listenTo(this.images, 'add remove reset change', this.imagesChanged);
 		this.property('images', this.images.toJSON()); // Hack to add image defaults;
 
@@ -253,7 +268,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 		panel.items.push(this.createLabelControl(image));
 
-		if (image.get('urlType') === 'image') {
+		if (image.get('imageLink').type === 'image' || image.get('imageLink').type === 'lightbox') {
 			panel.items.push(this.createControl('fullscreen', l10n.ctrl.show_image, 'openLightbox'));
 		}
 
@@ -312,22 +327,17 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 	createLinkControl: function(image){
 		var me = this,
-			linkControl = new Upfront.Views.Editor.InlinePanels.DialogControl();
+			linkControl = new Upfront.Views.Editor.InlinePanels.DialogControl(),
+			imageLink = new LinkModel(image.get('imageLink'));
 
 		linkControl.view = linkPanel = new Upfront.Views.Editor.LinkPanel({
-			linkType: image.get('urlType'),
-			linkUrl: image.get('url'),
-			linkTarget: image.get('linkTarget'),
+			model: imageLink,
 			linkTypes: { image: true },
 			imageUrl: image.get('srcFull')
 		});
 
-		me.listenTo(linkPanel, 'change change:target', function(data){
-			image.set({
-				urlType: data.type,
-				url: data.url,
-				linkTarget: data.target
-			});
+		this.listenTo(imageLink, 'change', function(){
+			image.set({'imageLink': imageLink.toJSON()});
 		});
 
 		this.listenTo(linkControl, 'panel:ok', function(){
@@ -348,10 +358,14 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		me.listenTo(linkControl, 'panel:close', function(){
 			linkControl.$el
 				.parents('.ugallery_item')
-					.removeClass('upfront-control-visible').end()
-				.closest('.ugallery_link')
-					.attr('href', image.get('url'))
-			;
+					.removeClass('upfront-control-visible');
+
+			setTimeout(function() {
+				linkControl.$el.closest('.ugallery-controls').siblings('.ugallery_link')
+					.attr('href', imageLink.get('url'))
+					.attr('target', imageLink.get('target'))
+					.attr('class', 'ugallery_link ugallery_link' + imageLink.get('type'));
+			}, 50);
 
 			me.$el.closest('.ui-draggable').draggable('enable');
 		});
@@ -365,6 +379,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 	openLightbox: function(e) {
 		var me = this,
+			lightboxName,
 			item = $(e.target).closest('.ugallery_item'),
 			image = me.images.get(item.attr('rel')),
 			titleUpdated = false,
@@ -380,6 +395,12 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 				});
 			}
 		;
+
+		if (image.get('imageLink').type === 'lightbox') {
+			lightboxName = image.get('imageLink').url.substring(1);
+			Upfront.Application.LayoutEditor.openLightboxRegion(lightboxName);
+			return;
+		}
 
 		$.magnificPopup.open({
 			items: {
@@ -447,6 +468,12 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		props.labels = this.labels;
 		props.labels_length = this.labels.length;
 		props.image_labels = this.imageLabels;
+
+		_.each(props.images, function(image, index) {
+			props.images[index]['imageLinkType'] = image.imageLink.type;
+			props.images[index]['imageLinkUrl'] = image.imageLink.url;
+			props.images[index]['imageLinkTarget'] = image.imageLink.target;
+		});
 
 		props.l10n = l10n.template;
 		props.in_editor = true;

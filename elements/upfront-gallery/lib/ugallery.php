@@ -21,8 +21,21 @@ class Upfront_UgalleryView extends Upfront_Object {
 		$data['even_padding'] = isset($data['even_padding']) ? $data['even_padding'] : array('false');
 		$data['thumbPadding'] = isset($data['thumbPadding']) ? $data['thumbPadding'] : 15;
 
-		if (!empty($data['images'])) foreach($data['images'] as $im){
-			$images[] = array_merge(self::image_defaults(), $im);
+		if (!empty($data['images'])) foreach($data['images'] as $image){
+			$images[] = array_merge(self::image_defaults(), $image);
+		}
+
+		// Ensure template backward compatibility
+		foreach($images as $index=>$image) {
+			if (isset($images[$index]['imageLink']) && $images[$index]['imageLink'] !== false) {
+				$images[$index]['imageLinkType'] = $image['imageLink']['type'];
+				$images[$index]['imageLinkUrl'] = $image['imageLink']['url'];
+				$images[$index]['imageLinkTarget'] = $image['imageLink']['target'];
+			} else {
+				$images[$index]['imageLinkType'] = $image['urlType'];
+				$images[$index]['imageLinkUrl'] = $image['url'];
+				$images[$index]['imageLinkTarget'] = $image['linkTarget'];
+			}
 		}
 		$data['images'] = $images;
 
@@ -200,14 +213,18 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'cropSize' => array('width' => 0, 'height' => 0),
 			'cropOffset' => array('top' => 0, 'left' => 0),
 			'rotation' => 0,
-			'link' => 'original',
-			'url' => '',
 			'title' => 'Image caption',
 			'caption' => 'Image description',
 			'alt' => '',
 			'tags' => array(),
 			'margin' => array('left' => 0, 'top' => 0),
+
+			'imageLink' => false,
+
+			// Deprecated properties, leave for safety
 			'linkTarget' => '',
+			'link' => 'original',
+			'url' => '',
 		);
 	}
 
@@ -243,14 +260,14 @@ class Upfront_UgalleryView extends Upfront_Object {
 	public static function add_styles_scripts () {
 		//wp_enqueue_style('ugallery-style', upfront_element_url('css/ugallery.css', dirname(__FILE__)));
 		upfront_add_element_style('upfront_gallery', array('css/ugallery.css', dirname(__FILE__)));
-		
+
 		//Lightbox
 		//wp_enqueue_style('magnific');
 		upfront_add_element_style('magnific', array('/scripts/magnific-popup/magnific-popup.css', false));
 
 		//wp_enqueue_script('magnific');
 		upfront_add_element_script('magnific', array('/scripts/magnific-popup/magnific-popup.min.js', false));
-		
+
 		upfront_add_element_script('jquery-shuffle', array('js/jquery.shuffle.js', dirname(__FILE__)));
 
 		//Front script

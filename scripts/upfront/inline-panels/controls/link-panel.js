@@ -11,15 +11,8 @@ define([
 			this.id = this.options.id;
 
 			this.view = new Upfront.Views.Editor.LinkPanel({
-				linkUrl: this.options.linkUrl,
-				linkType: this.options.linkType,
-				linkTarget: this.options.linkTarget,
-				linkObject: this.options.linkObject,
-				linkObjectId: this.options.linkObjectId,
+				model: this.model,
 				button: false
-			});
-			this.listenTo(this.view, 'change change:target', function(data) {
-				this.trigger('change', data);
 			});
 		},
 

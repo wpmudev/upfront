@@ -85,7 +85,9 @@ class Upfront_ButtonView extends Upfront_Object {
 			"element_id" => "button-object-1410952320306-1435",
 			"class" => "c24 upfront-button",
 			"has_settings" => 1,
-			"id_slug" => "button"
+			"id_slug" => "button",
+
+			"link" => false
 		);
 	}
 

@@ -1,5 +1,8 @@
 (function ($) {
-define(['text!elements/upfront-button/tpl/ubutton.html'], function(template) {
+define([
+	'text!elements/upfront-button/tpl/ubutton.html',
+	"scripts/upfront/link-model"
+], function(template, LinkModel) {
 
 var l10n = Upfront.Settings.l10n.text_element;
 
@@ -67,6 +70,22 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 
 		this.listenTo(Upfront.Events, "theme_colors:update", this.render, this);
 
+		if (this.property('link') === false) {
+			console.log('init link from button old prop', this.property('link'));
+			this.link = new LinkModel({
+				type: Upfront.Util.guessLinkType(this.property('href')),
+				url: this.property('href'),
+				target: this.property('linkTarget')
+			});
+			this.property('link', this.link.toJSON());
+		} else {
+			console.log('init link from button link prop', this.property('link'));
+			this.link = new LinkModel(this.property('link'));
+		}
+
+		me.listenTo(this.link, 'change', function() {
+			me.property('link', me.link.toJSON());
+		});
 	},
 	/*onResizeStop: function(view, model, ui) {
 		this.conformSize();
@@ -229,12 +248,10 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 	createInlineControlPanel: function() {
 		var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
 			visitLinkControl = new Upfront.Views.Editor.InlinePanels.Controls.VisitLink({
-				url: this.property('href')
+				url: this.link.get('url')
 			}),
 			linkPanelControl = new Upfront.Views.Editor.InlinePanels.Controls.LinkPanel({
-				linkUrl: this.property('href'),
-				linkType: Upfront.Util.guessLinkType(this.property('href')),
-				linkTarget: this.property('linkTarget'),
+				model: this.link,
 				button: false,
 				icon: 'link',
 				tooltip: 'link',
@@ -242,10 +259,8 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			});
 			me = this;
 
-		this.listenTo(linkPanelControl, 'change change:target', function(data) {
-			visitLinkControl.setLink(data.url);
-			this.property('href', data.url);
-			this.property('linkTarget', data.target);
+		this.listenTo(this.link, 'change', function() {
+			visitLinkControl.setLink(me.link.get('url'));
 		});
 
 		panel.items = _([

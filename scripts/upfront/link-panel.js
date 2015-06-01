@@ -1,10 +1,8 @@
 (function ($) {
 define([
+	"scripts/upfront/link-model",
 	"text!scripts/upfront/templates/link-panel.html",
-], function(linkPanelTpl) {
-
-	var LinkModel = Backbone.Model.extend({
-	});
+], function(LinkModel, linkPanelTpl) {
 
 	var getAnchors = function() {
 		var regions = Upfront.Application.layout.get("regions"),
@@ -98,27 +96,25 @@ define([
 			this.theme = options.theme || 'dark';
 			this.button = options.button || false;
 
-			this.model = new LinkModel({
-				type: options.linkType || 'unlink',
-				url: options.linkUrl || '',
-				target: options.linkTarget || '_self',
-				object: options.linkObject || 'custom',
-				object_id: options.linkObjectId || 0,
+			if (typeof options.model === 'undefined') {
+				console.log('no model in options');
+				return;
+			}
 
-			});
-			this.listenTo(this.model, 'change:url', function() {
-				me.trigger('change', me.model.toJSON());
-			});
-			this.listenTo(this.model, 'change:target', function() {
-				me.trigger('change:target', me.model.toJSON());
-			});
 			this.listenTo(this.model, 'change:type', this.handleTypeChange);
 		},
 
 		onOkClick: function() {
-			if(this.model.get('type') == 'lightbox' && this.$el.find('.js-ulinkpanel-lightbox-input').val() != '')
+			if(this.model.get('type') == 'lightbox' && this.$el.find('.js-ulinkpanel-lightbox-input').val() != '') {
 				this.createLightBox();
-			this.trigger('change', this.model.toJSON());
+			} else {
+				this.close();
+			}
+			this.trigger('change', this.model);
+		},
+
+		close: function() {
+			this.trigger('linkpanel:close');
 		},
 
 		handleTypeChange: function() {
@@ -219,9 +215,13 @@ define([
 
 		/* Rendering stuff below */
 		render: function() {
-			
+
 			var me = this;
 
+			if (!this.model) {
+			this.$el.html('lsdfjslfjs');
+				return;
+			}
 			var tplData = {
 				link: this.model.toJSON(),
 				checked: 'checked="checked"',
@@ -229,10 +229,8 @@ define([
 				button: this.button,
 				type: this.model.get('type')
 			};
-			
 
 			this.$el.html(this.tpl(tplData));
-
 
 			this.renderTypeSelect();
 
