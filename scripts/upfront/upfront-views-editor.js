@@ -6859,8 +6859,13 @@ var CSSEditor = Backbone.View.extend({
 		var splitted = clean_selector.split(' ');
 		var me = this;
 		while(splitted.length > 0) {
-			if(!!$(selector + splitted.join(' ')).closest('#' + me.element_id).length)
-				return true;
+			try{
+				if(!!$(selector + splitted.join(' ')).closest('#' + me.element_id).length)
+					return true;
+			}
+			catch (err) {
+				
+			}
 			splitted.pop();
 		}
 
