@@ -49,7 +49,7 @@ class Upfront {
 
 	private function _add_hooks () {
 		add_filter('body_class', array($this, 'inject_grid_scope_class'));
-		add_action('wp_head', array($this, "inject_global_dependencies"), 1);
+		add_action('wp_head', array($this, "inject_global_dependencies"), 0);
 		add_action('wp_footer', array($this, "inject_upfront_dependencies"), 99);
 		add_action('upfront-core-wp_dependencies', array($this, "inject_core_wp_dependencies"), 99);
 
