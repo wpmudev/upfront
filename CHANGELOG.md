@@ -1,6 +1,13 @@
 Change Log
 ============
 
+0.3.2.1 - 2015-06-02
+-------------------------------------------------------------------------------
+- Fix: minor style fixes.
+- Fix: legacy widget rendering.
+- Fix: error in cache spawning.
+- Fix: clean up multiplied listeners.
+
 0.3.2 - 2015-05-29
 -------------------------------------------------------------------------------
 - Fix: images lightbox options.
