@@ -312,10 +312,9 @@ define([
 					center = this.model.get_breakpoint_property_value('background_map_center', true),
 					zoom = this.model.get_breakpoint_property_value('background_map_zoom', true),
 					style = this.model.get_breakpoint_property_value('background_map_style', true),
-					styles = this.model.get_breakpoint_property_value('background_map_styles', true),
 					controls = this.model.get_breakpoint_property_value('background_map_controls', true),
 					show_markers = this.model.get_breakpoint_property_value('background_show_markers', true),
-					styles = (this.model.get_breakpoint_property_value("background_use_custom_map_code", true) ? JSON.parse(this.model.get_breakpoint_property_value("background_map_styles", true)) : false),
+					styles = (this.model.get_breakpoint_property_value("background_use_custom_map_code", true) ? JSON.parse(this.model.get_breakpoint_property_value("map_styles", true)) : false),
 					options = {
 						center: new google.maps.LatLng(center[0], center[1]),
 						zoom: parseInt(zoom),
