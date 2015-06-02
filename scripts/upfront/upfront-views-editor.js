@@ -1993,6 +1993,7 @@ define([
 			// next wider breakpoint to show what gets applied to current breakpoint.
 			if (!updateSilently) {
 				this.model.set_property('typography', options);
+				this.typography = options;
 			}
 			if (_.contains(['tablet', 'mobile'], this.model.get('id'))) {
 				var styleId = this.model.get('id') + '-breakpoint-style';
@@ -6833,7 +6834,7 @@ var CSSEditor = Backbone.View.extend({
 						? '' // This is not a descentent selector - used for containers
 						: ' ' // This is a descentent selector
 				;
-				
+
 				processed_selectors.push('' +
 					selector + spacer + sel +
 				'');
