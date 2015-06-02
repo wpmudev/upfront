@@ -250,10 +250,11 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		controls.setWidth(wrapper.width());
 		controls.render();
-
-		me.$('.uslides').append(
-			$('<div class="uimage-controls upfront-ui" rel="' + currentSlide.id + '"></div>').append(controls.$el)
-		);
+		if(typeof(currentSlide) != 'undefined') {
+			me.$('.uslides').append(
+				$('<div class="uimage-controls upfront-ui" rel="' + currentSlide.id + '"></div>').append(controls.$el)
+			);
+		}
 		me.onSlideShow();
 
 		this.controls = controls;
@@ -297,8 +298,10 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		}
 
 		//Adapt slider height to the image crop
-		var textHeight = this.property('primaryStyle') == 'below' ? this.$('.uslide[rel=' + currentSlide.id + ']').find('.uslide-caption').outerHeight() : 0;
-		me.$('.uslides').css({ 'padding-top' : wrapper.height() + textHeight});
+		if(typeof(currentSlide) != 'undefined') {
+			var textHeight = this.property('primaryStyle') == 'below' ? this.$('.uslide[rel=' + currentSlide.id + ']').find('.uslide-caption').outerHeight() : 0;
+			me.$('.uslides').css({ 'padding-top' : wrapper.height() + textHeight});
+		}
 	},
 
 	updateControls: function(){
@@ -564,7 +567,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		}
 
 		panelItems.push(this.createControl('crop', l10n.edit_img, 'imageEditMask'));
-    panelItems.push(this.createLinkControl(slide));
+    	
+    	panelItems.push(this.createLinkControl(slide));
 
 		if(_.indexOf(['notext', 'onlytext'], primaryStyle) == -1)
 			panelItems.push(captionControl);
@@ -594,11 +598,11 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			control = new Upfront.Views.Editor.InlinePanels.DialogControl();
 
 		control.view = linkPanel = new Upfront.Views.Editor.LinkPanel({
-			linkType: slide.get('urlType'),
-			linkUrl: slide.get('url'),
-			linkTarget: slide.get('linkTarget'),
+			linkType: slide?slide.get('urlType'):'',
+			linkUrl: slide?slide.get('url'):'',
+			linkTarget: slide?slide.get('linkTarget'):'',
 			linkTypes: { image: true },
-			imageUrl: slide.get('srcFull')
+			imageUrl: slide?slide.get('srcFull'):''
 		});
 
 		this.listenTo(control, 'panel:ok', function(){
