@@ -14,6 +14,7 @@ class Upfront_UwidgetView extends Upfront_Object {
 		if (empty($fields) && !(defined('DOING_AJAX') && DOING_AJAX)) {
 			$fields_tmp = $this->_get_property('widget_specific_fields');
 			if (!empty($fields_tmp)) foreach ($fields_tmp as $field) {
+				if (empty($field['name'])) continue;
 				$fields[] = array('name' => $field['name']);
 			}
 		}
