@@ -95,6 +95,14 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
         e.preventDefault();
         this.trigger('remove', this);
     },
+    /**
+     * Returns POJO of main model
+     * 
+     * @returns {*}
+     */
+    get_data_json: function(){
+        return ( typeof self.prepare_data == "function" ? self.prepare_data() : self.data.toJSON() );
+    },
     make_caption_editable: function(){
         var self = this,
             data = this.data.get("style"),
@@ -111,8 +119,9 @@ var ImageInsertBase = Insert.UeditorInsert.extend({
                 self.data.set('caption', this.innerHTML, {silent: true});
                 //Update event makes InsertManager update its data without rendering.
                 self.data.trigger('update');
-                if( self.render_shortcode )
-                    self.render_shortcode( self.data.toJSON() );
+                if( self.render_shortcode ){
+                    self.render_shortcode( self.get_data_json() );
+
             })
             .ueditor({
                 linebreaks: false,

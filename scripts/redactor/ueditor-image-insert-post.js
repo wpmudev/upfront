@@ -50,7 +50,7 @@ var PostImageInsert = base.ImageInsertBase.extend({
 
         this.$shortcode_el = this.$(".post-images-shortcode");
 
-        this.render_shortcode(data);
+        this.render_shortcode( data );
         this.createControls();
         this.controls.render();
 
@@ -116,9 +116,9 @@ var PostImageInsert = base.ImageInsertBase.extend({
         this.listenTo(this.controls, 'control:ok:style', function(view, control){
             if( view._style ){
                 var style = view._style.toJSON();
-                this.data.set("variant_id", view.variant_id );
-                this.data.set("style", view._style.toJSON());
-                view.data.set( "selected", view.variant_id   );
+                this.data.set("variant_id", style.vid );
+                this.data.set("style", style);
+                view.data.set( "selected", style.vid   );
             }
             control.close();
         });
