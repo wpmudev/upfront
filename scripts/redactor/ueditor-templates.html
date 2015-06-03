@@ -50,7 +50,7 @@
         <div style="clear:both;"></div>
 
     </div>
-    <div class="post-images-shortcode"></div>
+    <div class="post-images-shortcode" contenteditable="false"></div>
 </script>
 
 <script type="text/template" id="post-image-insert-shortcode-tpl">
@@ -59,7 +59,7 @@
             {{ caption }}
         {[ } ]}
         {[if(linkType != "do_nothing"){ ]}<a href="{{linkUrl}}">{[ } ]}
-        <img data-url="{imageFull.src}" src="{{image.src}}"/>
+        <img width="{{image.width}}" height="{{image.height}}"  src="{{image.src}}"/>
         {[if(linkType != "do_nothing"){ ]}</a>{[ } ]}
 
         {[if( style.caption.order == 1 ) {]}
@@ -76,12 +76,12 @@
             <p class="wp-caption-text">{{caption}}</p>
         {[ } ]}
     </div>
-    <div class="post-images-shortcode-wp"></div>
+    <div class="post-images-shortcode-wp" contenteditable="false"></div>
 </script>
 <script type="text/template" id="post-image-insert-shortcode-wp-tpl">
    [caption id="attachment_{{attachment_id}}" align="{{style.wrapper.alignment}}" width="{{style.wrapper.width}}" show_caption="{{style.caption.show}}" ]
         {[ if(link_url){ ]}<a href="{{link_url}}"> {[ } ]}
-            <img  src="{{image.src}}" alt="{{caption}}" {[ if( style.image.width ){  ]} width="{{image.width}}" {[ } ]} {[ if(image.height){ ]} height="{{style.image.height}}" {[ } ]} class="{{style.image.size_class}}  wp-image-{{attachment_id}}">
+            <img  src="{{image.src}}" alt="{{caption}}" width="{{image.width}}" height="{{image.height}}"  class="{{style.image.size_class}}  wp-image-{{attachment_id}}">
        {[ if(link_url){ ]} </a> {[ } ]}
         {{caption}}
    [/caption]
