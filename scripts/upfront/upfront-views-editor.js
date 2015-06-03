@@ -289,7 +289,7 @@ define([
 		},
 		render: function () {
 			Upfront.Events.trigger("command:newpost:start", true);
-			this.$el.addClass('upfront-icon upfront-icon-post');
+			// this.$el.addClass('upfront-icon upfront-icon-post');
 			this.$el.html(l10n.new_post);
             this.$el.prop("title", l10n.new_post);
 		},
@@ -340,7 +340,7 @@ define([
 		},
 		render: function () {
 			Upfront.Events.trigger("command:newpage:start", true);
-			this.$el.addClass('upfront-icon upfront-icon-page');
+			// this.$el.addClass('upfront-icon upfront-icon-page');
 			this.$el.html(this._default_label);
             this.$el.prop("title", this._default_label);
 		},
@@ -454,7 +454,7 @@ define([
 	var Command_SaveLayout = Command.extend({
 		"className": "command-save",
 		render: function () {
-			this.$el.addClass('upfront-icon upfront-icon-save');
+			// this.$el.addClass('upfront-icon upfront-icon-save');
 			this.$el.html(l10n.save);
             this.$el.prop("title", l10n.save);
 		},
@@ -2675,7 +2675,7 @@ define([
 				roles = user.get('roles') || [],
 				tpl
 			;
-			tpl = '<div class="sidebar-profile-avatar"><img src="http://www.gravatar.com/avatar/{{ gravatar ? gravatar : "gravatar" }}?s=26" /></div>' +
+			tpl = '<div class="sidebar-profile-avatar"><img src="http://www.gravatar.com/avatar/{{ gravatar ? gravatar : "gravatar" }}?s=25" /></div>' +
 				'<div class="sidebar-profile-detail"><span class="sidebar-profile-name">{{name}}</span><span class="sidebar-profile-role">{{role}}</span></div>' +
 				(roles.length ? '<div class="sidebar-profile-edit"><a class="upfront-icon upfront-icon-edit" data-bypass="true" title="'+  l10n.edit_profile +'" href="{{edit_url}}">' + l10n.edit_profile + '</a></div>' : '');
 			this.$el.html(_.template(tpl,
