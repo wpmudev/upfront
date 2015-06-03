@@ -115,7 +115,19 @@ class Upfront_UcommentView extends Upfront_Object {
         $post = false;
 		if (is_numeric($post_id)) {
 			$post = get_post($post_id);
-			$comments = get_comments(array('post_id' => $post->ID));
+			$comment_args = array(
+				'post_id' => $post->ID,
+				'order'   => 'ASC',
+				'orderby' => 'comment_date_gmt',
+				'status'  => 'approve',
+			);
+			$commenter = wp_get_current_commenter();
+			$user_id = get_current_user_id();
+			
+			if (!empty($user_id)) $comment_args['include_unapproved'] = array($user_id);
+			else if (!empty($commenter['comment_author_email'])) $comment_args['include_unapproved'] = array($commenter['comment_author_email']);
+
+			$comments = get_comments($comment_args);
 		} else {
 			$posts = get_posts(array('orderby' => 'rand', 'posts_per_page' => 1));
 			if (!empty($posts[0])) {
