@@ -422,7 +422,8 @@ em {
   background-position: -196px -176px;
   width: 14px;
   margin-right: 4px;
-  display: inline-block; }
+  display: inline-block;
+  opacity: .5; }
 
 #sidebar-ui .sidebar-commands-primary .command-browse-layout {
   line-height: 34px;
@@ -532,29 +533,22 @@ em {
 
 #sidebar-ui .sidebar-commands-control .command-save {
   background: #1fcd8f;
-  -moz-box-shadow: 0 1px 0 #192d3f;
-  -webkit-box-shadow: 0 1px 0 #192d3f;
-  box-shadow: 0 1px 0 #192d3f;
+  box-shadow: 0 1px 0 rgba(37, 58, 77, 0.5);
   color: #f1f8ff;
   font-size: 18px;
   float: right;
-  margin: 0;
-  position: absolute;
-  top: 613px;
-  right: 15px;
+  margin: 10px 15px 0 0;
   padding: 0 10px 0 10px;
-  line-height: 40px;
-  height: 40px;
-  width: 94px; }
+  line-height: 36px;
+  height: 36px;
+  width: 94px;
+  text-align: center; }
 
 #sidebar-ui .sidebar-commands-control .command-save:before {
   margin-top: 8px; }
 
 #sidebar-ui .sidebar-commands-control .command-start-responsive {
-  position: absolute;
-  top: 611px;
-  left: 13px;
-  margin: 0;
+  margin: 10px 0 0 10px;
   font-size: 13px;
   max-width: 122px;
   line-height: 27px; }
@@ -4841,7 +4835,8 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-icon-browse:before {
   width: 10px;
   margin-right: 5px;
-  background-position: -736px -70px; }
+  background-position: -736px -70px;
+  opacity: .5; }
 
 .upfront-icon-collapse:before, .upfront-icon-expand:before {
   width: 12px;
@@ -4859,7 +4854,8 @@ a.upfront-region-name-edit-trigger:before {
   background-position: -41px -380px; }
 
 .upfront-icon-start-responsive:before, .upfront-icon-panel-settings:before {
-  background-position: -41px -415px; }
+  background-position: -41px -415px;
+  opacity: .5; }
 
 .upfront-icon-button-hide:before {
   background-position: -1230px -410px; }
@@ -4937,7 +4933,8 @@ a.upfront-region-name-edit-trigger:before {
   background-position: -164px -612px; }
 
 .upfront-icon-region-expand-lock:before {
-  background-position: -288px -612px; }
+  background-position: -288px -612px;
+  opacity: .5; }
 
 .upfront-icon-region-expand-lock:hover:before {
   background-position: -412px -612px; }

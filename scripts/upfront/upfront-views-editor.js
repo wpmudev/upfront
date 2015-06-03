@@ -454,7 +454,7 @@ define([
 	var Command_SaveLayout = Command.extend({
 		"className": "command-save",
 		render: function () {
-			this.$el.addClass('upfront-icon upfront-icon-save');
+			// this.$el.addClass('upfront-icon upfront-icon-save');
 			this.$el.html(l10n.save);
             this.$el.prop("title", l10n.save);
 		},

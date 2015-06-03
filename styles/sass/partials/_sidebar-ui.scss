@@ -274,6 +274,7 @@
 	width: 14px;
 	margin-right: 4px;
 	display: inline-block;
+	opacity:.5;
 }
 #sidebar-ui .sidebar-commands-primary .command-browse-layout {
 	line-height: 34px;
@@ -384,29 +385,22 @@
 }
 #sidebar-ui .sidebar-commands-control .command-save {
 	background: #1fcd8f;
-	-moz-box-shadow: 0 1px 0 #192d3f;
-	-webkit-box-shadow: 0 1px 0 #192d3f;
-	box-shadow: 0 1px 0 #192d3f;
+	box-shadow: 0 1px 0 rgba(37,58,77,.5);
 	color: #f1f8ff;
 	font-size: 18px;
 	float: right;
-	margin: 0;
-	position: absolute;
-	top: 613px;
-	right: 15px;
+	margin: 10px 15px 0 0;
 	padding: 0 10px 0 10px;
-	line-height: 40px;
-    height:40px;
+	line-height: 36px;
+    height:36px;
     width: 94px;
+    text-align:center;
 }
 #sidebar-ui .sidebar-commands-control .command-save:before{
   margin-top: 8px;
 }
 #sidebar-ui .sidebar-commands-control .command-start-responsive {
-	position: absolute;
-	top: 611px;
-	left: 13px;
-	margin: 0;
+	margin:10px 0 0 10px;
 	font-size: 13px;
     max-width: 122px;
     line-height: 27px;
