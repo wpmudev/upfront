@@ -63,9 +63,15 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		add_action('after_switch_theme', array($this, 'initial_theme_setup'));
 
+
         add_filter('upfront_get_editor_font_icons', array($this, 'get_editor_font_icons'), 10, 2);
 		$this->_set_up_required_pages_from_settings();
 
+		add_action('pre_update_option_stylesheet', array($this, 'update_prev_stylesheet'), 10, 2);
+		add_action('after_switch_theme', array($this, 'update_post_image_variants'), 10, 2);
+
+
+		$this->_set_up_required_pages_from_settings();
 		$this->checkMenusExist();
 		$this->initialize();
 	}
@@ -637,25 +643,8 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	public static function getPostImageVariants($image_variants = null, $args = null) {
 	  if (empty($image_variants) === false) return $image_variants;
 
-	  $image_variants = self::_get_theme_settings()->get('post_image_variants');
-	  if( empty( $image_variants )){
-		$image_variants = <<< VRT
-		[
-		{"vid":"variant-1414082104315-1342","label":"Left","group":{"margin_left":"0","margin_right":"0","col":"12","row":"66","left":"0","float":"left","height":"300","width_cls":"c12","left_cls":"ml0","clear_cls":""},"image":{"order":"0","col":"24","top":"0","left":"0","row":"51","clear":"true","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"1","col":"12","top":"0","left":"0","row":"10","clear":"true","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}},
-		{"vid":"variant-1414082128389-1073","label":"Right","group":{"margin_left":"0","margin_right":"0","col":"12","row":"65","left":"0","float":"right","height":"300","width_cls":"c12","left_cls":"ml0","clear_cls":""},"image":{"order":"0","col":"24","top":"0","left":"0","row":"51","clear":"true","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"1","col":"13","top":"0","left":"0","row":"10","clear":"true","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}},
-		{"vid":"variant-1414082154417-1612","label":"Full Width","group":{"margin_left":"0","margin_right":"0","col":"24","row":"60","left":"0","float":"none","height":"300","width_cls":"c24","left_cls":"ml0","clear_cls":""},"image":{"order":"0","col":"24","top":"0","left":"0","row":"51","clear":"true","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"1","col":"24","top":"0","left":"0","row":"10","clear":"true","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}},
-		{"vid":"variant-1414082173807-1526","label":"Center","group":{"margin_left":"0","margin_right":"0","col":"16","row":"63","left":"4","float":"none","height":"300","width_cls":"c16","left_cls":"ml0","clear_cls":""},"image":{"order":"0","col":"24","top":"0","left":"0","row":"51","clear":"true","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"1","col":"16","top":"0","left":"0","row":"10","clear":"true","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}},
-		{"vid":"variant-1414082210132-1390","label":"Left caption right","group":{"margin_left":"0","margin_right":"0","col":"12","row":"47","left":"0","float":"left","height":"300","width_cls":"c12","left_cls":"ml0","clear_cls":""},"image":{"order":"0","col":"7","top":"0","left":"0","row":"47","clear":"true","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"1","col":"5","top":"10","left":"0","row":"10","clear":"false","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}},
-		{"vid":"variant-1414082243148-1249","label":"Right caption left","group":{"margin_left":"0","margin_right":"0","col":"12","row":"62","left":"0","float":"right","height":"300","width_cls":"c12","left_cls":"ml0","clear_cls":""},"image":{"order":"1","col":"8","top":"0","left":"-8","row":"051","clear":"false","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"0","col":"4","top":"1","left":"0","row":"10","clear":"true","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}},
-		{"vid":"variant-1414082289322-1599","label":"Full width caption above","group":{"margin_left":"0","margin_right":"0","col":"24","row":"60","left":"0","float":"none","height":"300","width_cls":"c24","left_cls":"ml0","clear_cls":""},"image":{"order":"1","col":"24","top":"0","left":"0","row":"51","clear":"true","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"0","col":"24","top":"0","left":"0","row":"10","clear":"true","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}}]
-VRT;
-		  $image_variants = <<< VRT
-		[
-		{"vid":"variant-1414082154417-1612","label":"Full Width","group":{"margin_left":"0","margin_right":"0","col":"24","row":"60","left":"0","float":"none","height":"300","width_cls":"c24","left_cls":"ml0","clear_cls":""},"image":{"order":"0","col":"24","top":"0","left":"0","row":"51","clear":"true","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"1","col":"24","top":"0","left":"0","row":"10","clear":"true","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}},
-		{"vid":"variant-1414082173807-1526","label":"Center","group":{"margin_left":"0","margin_right":"0","col":"16","row":"63","left":"4","float":"none","height":"300","width_cls":"c16","left_cls":"ml0","clear_cls":""},"image":{"order":"0","col":"24","top":"0","left":"0","row":"51","clear":"true","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"1","col":"16","top":"0","left":"0","row":"10","clear":"true","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}}
-		]
-VRT;
-	  }
+      $db_image_variants = self::get_post_image_variants_from_db();
+	  $image_variants = $db_image_variants ? $db_image_variants :  self::get_post_image_variants_from_settings();
 
 	  if (isset($args['json']) && $args['json']) return $image_variants;
 
@@ -951,5 +940,93 @@ VRT;
 		}
 		return array();
 	}
+
+    private static function _get_post_image_variant_key( $key = null ){
+        $theme = wp_get_theme();
+
+        return ( empty( $key ) ? $theme->get_stylesheet() : $key  ) . "-post_image_variants";
+    }
+
+    /**
+     * Gets post image variants from db
+     *
+     * @param null $key
+     * @return mixed|void
+     */
+    public static function get_post_image_variants_from_db( $key = null ){
+//        var_dump( self::_get_post_image_variant_key( $key ));die;
+        return get_option( self::_get_post_image_variant_key( $key ) );
+    }
+
+    /**
+     * Gets post image variants from settings file
+     *
+     * @return string
+     */
+    public static function get_post_image_variants_from_settings(){
+        $image_variants = self::_get_theme_settings()->get('post_image_variants');
+        if( empty( $image_variants )){
+            $image_variants = <<< VRT
+		[
+		{"vid":"variant-1414082104315-1342","label":"Left","group":{"margin_left":"0","margin_right":"0","col":"12","row":"66","left":"0","float":"left","height":"300","width_cls":"c12","left_cls":"ml0","clear_cls":""},"image":{"order":"0","col":"24","top":"0","left":"0","row":"51","clear":"true","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"1","col":"12","top":"0","left":"0","row":"10","clear":"true","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}},
+		{"vid":"variant-1414082128389-1073","label":"Right","group":{"margin_left":"0","margin_right":"0","col":"12","row":"65","left":"0","float":"right","height":"300","width_cls":"c12","left_cls":"ml0","clear_cls":""},"image":{"order":"0","col":"24","top":"0","left":"0","row":"51","clear":"true","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"1","col":"13","top":"0","left":"0","row":"10","clear":"true","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}},
+		{"vid":"variant-1414082154417-1612","label":"Full Width","group":{"margin_left":"0","margin_right":"0","col":"24","row":"60","left":"0","float":"none","height":"300","width_cls":"c24","left_cls":"ml0","clear_cls":""},"image":{"order":"0","col":"24","top":"0","left":"0","row":"51","clear":"true","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"1","col":"24","top":"0","left":"0","row":"10","clear":"true","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}},
+		{"vid":"variant-1414082173807-1526","label":"Center","group":{"margin_left":"0","margin_right":"0","col":"16","row":"63","left":"4","float":"none","height":"300","width_cls":"c16","left_cls":"ml0","clear_cls":""},"image":{"order":"0","col":"24","top":"0","left":"0","row":"51","clear":"true","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"1","col":"16","top":"0","left":"0","row":"10","clear":"true","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}},
+		{"vid":"variant-1414082210132-1390","label":"Left caption right","group":{"margin_left":"0","margin_right":"0","col":"12","row":"47","left":"0","float":"left","height":"300","width_cls":"c12","left_cls":"ml0","clear_cls":""},"image":{"order":"0","col":"7","top":"0","left":"0","row":"47","clear":"true","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"1","col":"5","top":"10","left":"0","row":"10","clear":"false","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}},
+		{"vid":"variant-1414082243148-1249","label":"Right caption left","group":{"margin_left":"0","margin_right":"0","col":"12","row":"62","left":"0","float":"right","height":"300","width_cls":"c12","left_cls":"ml0","clear_cls":""},"image":{"order":"1","col":"8","top":"0","left":"-8","row":"051","clear":"false","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"0","col":"4","top":"1","left":"0","row":"10","clear":"true","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}},
+		{"vid":"variant-1414082289322-1599","label":"Full width caption above","group":{"margin_left":"0","margin_right":"0","col":"24","row":"60","left":"0","float":"none","height":"300","width_cls":"c24","left_cls":"ml0","clear_cls":""},"image":{"order":"1","col":"24","top":"0","left":"0","row":"51","clear":"true","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"0","col":"24","top":"0","left":"0","row":"10","clear":"true","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}}]
+VRT;
+            $image_variants = <<< VRT
+		[
+		{"vid":"variant-1414082154417-1612","label":"Full Width","group":{"margin_left":"0","margin_right":"0","col":"24","row":"60","left":"0","float":"none","height":"300","width_cls":"c24","left_cls":"ml0","clear_cls":""},"image":{"order":"0","col":"24","top":"0","left":"0","row":"51","clear":"true","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"1","col":"24","top":"0","left":"0","row":"10","clear":"true","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}},
+		{"vid":"variant-1414082173807-1526","label":"Center","group":{"margin_left":"0","margin_right":"0","col":"16","row":"63","left":"4","float":"none","height":"300","width_cls":"c16","left_cls":"ml0","clear_cls":""},"image":{"order":"0","col":"24","top":"0","left":"0","row":"51","clear":"true","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"1","col":"16","top":"0","left":"0","row":"10","clear":"true","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}}
+		]
+VRT;
+        }
+
+        return $image_variants;
+    }
+    /**
+     * Updates previous theme's stylesheet name to db
+     *
+     * @uses pre_update_option_stylesheet hook
+     *
+     * @param string $value new theme stylesheet name
+     * @param string $old_value old theme stylesheet name
+     * @return string $value new theme stylesheet name
+     */
+    function update_prev_stylesheet($value, $old_value){
+        if( $value != $old_value ){
+            update_option("uf_prev_stylesheet", $old_value);
+        }
+        return $value;
+    }
+
+    /**
+     * Returns previous theme's stylesheet name
+     *
+     * @return mixed|void previous theme's stylesheet name | false
+     */
+    public static function get_prev_stylesheet(){
+        return get_option( 'uf_prev_stylesheet', false);
+    }
+
+
+    /**
+     * Updates post image variants
+     *
+     * @param $value new them stylesheet name
+     * @param $old_value old theme stylesheet name
+     * @return string $value new theme stylesheet name
+     */
+    function update_post_image_variants(){
+       update_option(self::_get_post_image_variant_key(), self::get_post_image_variants_from_settings() );
+    }
+
+    public static function get_prev_post_image_variant(){
+        $prev_theme = self::get_prev_stylesheet();
+
+        return $prev_theme ?  json_decode( self::get_post_image_variants_from_db( $prev_theme ) ) : false;
+    }
 
 }
