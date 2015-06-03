@@ -305,7 +305,7 @@ define(function() {
 			Upfront.Events.on("media:search:requested", this.switch_to_search, this);
 		},
 		render: function () {
-			var me = this; setTimeout(function () { me.render_filters(); }, 1); // Fixes the initial inability to toggle filters
+			this.render_filters();
 		},
 		render_filters: function () {
 			this.control = this.is_search_active ? new MediaManager_SearchFiltersControl() : new MediaManager_FiltersControl();
@@ -1766,10 +1766,12 @@ define(function() {
 				this._subviews.media = new MediaCollection_View({model: this.media_collection});
 			}
 			var media = this._subviews.media;
+			
 			if (!this._subviews.aux) {
 				this._subviews.aux = new MediaManager_AuxControls_View({model: this.media_collection});
 			}
 			var aux = this._subviews.aux;
+			
 			if (!this._subviews.controls) {
 				this._subviews.controls = new MediaManager_Controls_View({model: this.media_collection});
 			}
@@ -1797,9 +1799,10 @@ define(function() {
 			});
 		},
 		remove: function() {
-			_.each(this._subviews, function(subview) {
+			_.each(this._subviews, function(subview, idx) {
 				subview.remove();
-			});
+				this._subviews[idx] = false;
+			}, this);
 		}
 	});
 
@@ -1844,10 +1847,9 @@ define(function() {
 			this.$el.append(this.loading.$el);
 		},
 		end_loading: function (callback) {
-			if ( this.loading && this.loading.done )
-				this.loading.done(callback);
-			else
-				callback();
+			if (this.loading && this.loading.done) this.loading.done(callback);
+			else callback();
+			Upfront.Events.trigger("media:item:selection_changed", this.model);
 		},
 		propagate_selection: function (model) {
 			if (!this.multiple_selection) {
