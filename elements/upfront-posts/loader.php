@@ -92,7 +92,9 @@ class Upfront_Posts extends Upfront_Server {
 		add_filter('upfront-output-get_markup-fallback', array($this, 'handle_legacy_output'), 10, 2);
 
 		// Force out the 404 handling for archives
-		add_action('parse_request', array($this, 'force_wp_archive_limit'));
+		if (!is_admin()) {
+			add_action('parse_request', array($this, 'force_wp_archive_limit'));
+		}
 	}
 
 	/**
