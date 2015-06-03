@@ -944,6 +944,8 @@ define(function() {
 					$hub = this.$el.find("div.labels_list ul")
 				;
 				$hub.empty();
+				if (!this.$el.is(".active")) return false; // Only actually render this if we can see it - it takes *a while* to do so
+
 				this.model.each(function (model) {
 					if (me.allowed_values && me.allowed_values.indexOf(model.get("value")) < 0) return false;
 					var item = new Media_FilterSelection_AdditiveMultiselection_Item({model: model});
@@ -1237,7 +1239,7 @@ define(function() {
 		remove: function() {
 			this.library_view.remove();
 			this.switcher_view.remove();
-			this.library_view = new MediaManager_PostImage_View(this.collection);
+			//this.library_view = new MediaManager_PostImage_View(this.collection);
 			Upfront.Events.off("media_manager:media:list", this.switch_media_type, this);
 		},
 		render: function () {
@@ -1800,6 +1802,7 @@ define(function() {
 		},
 		remove: function() {
 			_.each(this._subviews, function(subview, idx) {
+				if (!subview) return true;
 				subview.remove();
 				this._subviews[idx] = false;
 			}, this);
@@ -2218,7 +2221,7 @@ define(function() {
 				me.load(options);
 			}, {width: 800, hold_editor: options.hold_editor}, 'media-manager');
 
-			popup.always(this.cleanup_active_filters);
+			popup.always(_.bind(this.cleanup_active_filters, this));
 			popup.progress($.proxy(this.clean_up, this));
 
 			Upfront.Events.trigger('upfront:element:edit:start', 'media-upload');
@@ -2235,14 +2238,18 @@ define(function() {
 		},
 		cleanup_active_filters: function () {
 			ActiveFilters.allowed_media_types = [];
+			this.cleanup_manager_view();
 		},
-		load: function (options) {
-
+		cleanup_manager_view: function () {
 			if (this.media_manager) {
 				this.media_manager.undelegateEvents();
 				this.media_manager.remove();
 				this.media_manage_options = undefined;
 			}
+		},
+		load: function (options) {
+
+			this.cleanup_manager_view();
 
 			if (_.isUndefined(this.media_manage_options)) {
 				this.media_manage_options = _.extend({
