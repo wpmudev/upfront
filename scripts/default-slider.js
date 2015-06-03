@@ -107,9 +107,9 @@
 
 			if ( typeof slider_auto != 'string' ) {
 				slider_auto = data.auto;
-      } else {
-				slider_auto == '0' ? false : true;
-      }
+			} else {
+				slider_auto = slider_auto == '0' ? false : true;
+			}
 
 			data.auto = slider_auto;
 			data.interval = $slider.attr('data-slider-interval') || data.interval;
