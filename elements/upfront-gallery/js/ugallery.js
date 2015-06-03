@@ -782,8 +782,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			loading.render();
 			this.parent_module_view.$el.append(loading.$el);
 
-			Upfront.Util.post(editOptions).done(function(response){
-
+			Upfront.Util.post(editOptions).done(function(response) {
 				loading.done();
 				var images = response.data.images,
 					models = []

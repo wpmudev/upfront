@@ -490,7 +490,10 @@ class Upfront_Uimage_Server extends Upfront_Server {
 		$element_id = !empty($imageData['element_id']) ? $imageData['element_id'] : 0;
 		if (!empty($used) && !empty($used[$element_id]['path']) && file_exists($used[$element_id]['path'])) {
 			// OOOH, so we have a previos crop!
-			@unlink($used[$element_id]['path']); // Drop the old one, we have new stuffs to replace it
+			//TODO ok so we don't do this anymore because it causes any element that uses images to
+			// have a broken image if user have not saved layout after croping image or resizing thumbnails.
+			// This have to be mplemented better so it does not lead to broken images.
+			// @unlink($used[$element_id]['path']); // Drop the old one, we have new stuffs to replace it
 		}
 		$used[$element_id] = $saved; // Keep track of used elements per element ID
 		update_post_meta($imageData['id'], 'upfront_used_image_sizes', $used);
