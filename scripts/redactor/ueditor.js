@@ -463,7 +463,6 @@ var Ueditor = function($el, options) {
 	this.options.dropdownShowCallback = function () { UeditorEvents.trigger("ueditor:dropdownShow", this); };
 	this.options.dropdownHideCallback = function () { UeditorEvents.trigger("ueditor:dropdownHide", this); };
 	this.options.initCallback = function () { UeditorEvents.trigger("ueditor:init", this); };
-	this.options.enterCallback = function (e) {  UeditorEvents.trigger("ueditor:enter", this, e); };
 	this.options.changeCallback = function (e) { UeditorEvents.trigger("ueditor:change", this, e); };
 	//this.options.pasteBeforeCallback = function (html) { UeditorEvents.trigger("ueditor:paste:before", this, html); }; //events can return anything so it's useless
 	//this.options.pasteCallback = function (html) { UeditorEvents.trigger("ueditor:paste:after", this, html); }; //events can return anything so it's useless
@@ -506,6 +505,55 @@ var Ueditor = function($el, options) {
 		}
 		return html;
 	};
+
+    // Enter callback inside lists 
+    this.options.enterCallback = function (e) { 
+        // Current Block is a list item
+        if(this.keydown.block.tagName === 'LI') {
+            var current = this.selection.getCurrent(),
+                $parent = $(current).closest('li'),
+                $list = $parent.parent('ul,ol'),
+                $listlist = $list.parent('li').parent('ul,ol'),
+                emptyList = '<li>&#x200b;</li>'
+            ;
+
+            // Sublist to list
+            if (
+                $parent.length !== 0 && 
+                $listlist.length !== 0 &&
+                this.utils.isEmpty($parent.html()) && 
+                $list.next().length === 0
+            ) {
+                var node = $(emptyList);
+                $listlist.append(node);
+                this.caret.setStart(node);
+                $parent.remove();
+
+                return false;
+            }
+            // List to paragraph
+            else if (
+                $parent.length !== 0 && 
+                this.utils.isEmpty($parent.html()) && 
+                $list.next().length === 0
+            ) {
+                var node = $(this.opts.emptyHtml);
+                $list.after(node);
+                this.caret.setStart(node);
+                $parent.remove();
+
+                return false;
+            }
+            // List 
+            else {
+                UeditorEvents.trigger("ueditor:enter", this, e);
+            }
+        }
+        // Default
+        else {        
+            UeditorEvents.trigger("ueditor:enter", this, e);
+        }
+    };
 
 };
 
