@@ -925,19 +925,81 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 	/**
 	 * Finds image variant object using variant id
+     *
+     * If variant is not found within the current theme's variants, tries to find
+     * it from the previous theme's variants and  then find a match for it in the current theme
+     *
 	 *
 	 * @param string $vid variant id
 	 *
 	 * @return array
 	 */
 	public static function get_image_variant_by_id( $vid ){
-		$variants = self::getPostImageVariants();
+		$current_variants = self::getPostImageVariants();
 
-		foreach( $variants as $variant ){
+        /**
+         * If variant is found among the current theme's variants
+         */
+		foreach( $current_variants as $variant ){
 			if( $variant->vid == $vid ){
 				return $variant;
 			}
 		}
+
+        /**
+         * If variant is found in the prev theme's variants
+         */
+        $prev_variant = false;
+        $prev_variants = self::get_prev_post_image_variants();
+        if( $prev_variants ){
+            foreach( $prev_variants as $variant ){
+                if( $variant->vid == $vid ){
+                    $prev_variant =  $variant;
+                }
+            }
+        }
+
+        if( $prev_variant ){
+
+            /**
+             * Match current and prev variant labels, if found any match return as variant
+             */
+            foreach( $current_variants as $variant ){
+                if( trim( $variant->label ) == trim( $prev_variant->label ) ){
+                    return $variant;
+                }
+            }
+
+
+            /**
+             * Find a variant with matching group float
+             */
+            foreach( $current_variants as $variant ){
+                if( trim( $variant->group->float ) == trim( $prev_variant->group->float ) ){
+                    return $variant;
+                }
+            }
+
+            /**
+             * Find a variant with matching image left and top
+             */
+            foreach( $current_variants as $variant ){
+                if( trim( $variant->image->left ) == trim( $prev_variant->image->left ) && trim( $variant->image->top ) == trim( $prev_variant->image->top ) ){
+                    return $variant;
+                }
+            }
+
+            /**
+             * Find a variant with matching image order
+             */
+            foreach( $current_variants as $variant ){
+                if( trim( $variant->image->order ) == trim( $prev_variant->image->order )  ){
+                    return $variant;
+                }
+            }
+
+        }
+
 		return array();
 	}
 
@@ -1023,7 +1085,7 @@ VRT;
        update_option(self::_get_post_image_variant_key(), self::get_post_image_variants_from_settings() );
     }
 
-    public static function get_prev_post_image_variant(){
+    public static function get_prev_post_image_variants(){
         $prev_theme = self::get_prev_stylesheet();
 
         return $prev_theme ?  json_decode( self::get_post_image_variants_from_db( $prev_theme ) ) : false;

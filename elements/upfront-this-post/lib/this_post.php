@@ -670,7 +670,9 @@ class Upfront_ThisPostView extends Upfront_Object {
 	public static function get_post_image_markup($data) {
 		global $post;
 		if( !is_object( $post ) ) return;
-		$style_variant = (object) Upfront_ChildTheme::get_image_variant_by_id( $data->uf_variant );
+		$style_variant =  Upfront_ChildTheme::get_image_variant_by_id( $data->uf_variant );
+        // if no variant is found, default to the first variant
+        $style_variant =  (object) ( $style_variant === array() ? reset( $style_variant )  : $style_variant );
 		$style_variant->label_id = !empty( $style_variant->label ) ? "ueditor-image-style-" . str_replace(" ", "-", trim(strtolower( $style_variant->label )))  : $style_variant->vid;
 
 		$layout_data = Upfront_ThisPostView::find_postlayout("single", $post->post_type, $post->ID);
