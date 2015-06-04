@@ -927,7 +927,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	 * Finds image variant object using variant id
      *
      * If variant is not found within the current theme's variants, tries to find
-     * it from the previous theme's variants and  then find a match for it in the current theme
+     * it from the previous themes' variants and  then find a match for it in the current theme
      *
 	 *
 	 * @param string $vid variant id
@@ -980,6 +980,43 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
                 }
             }
 
+
+        }
+
+        $all_other_themes_variants = self::get_all_other_theme_variants();
+        $old_theme_variant = false;
+        if( $all_other_themes_variants &&  array() !== $all_other_themes_variants  ){
+            foreach( $all_other_themes_variants as  $variant ){
+                if( $variant->vid ===  $vid)
+                    $old_theme_variant = $variant;
+            }
+
+            if( $old_theme_variant  ){
+                /**
+                 * Match current and prev variant labels, if found any match return as variant
+                 */
+                foreach( $current_variants as $variant ){
+                    if( trim( $variant->label ) == trim( $old_theme_variant->label ) ){
+                        return $variant;
+                    }
+                }
+
+
+                /**
+                 * Find a variant with matching group float
+                 */
+                foreach( $current_variants as $variant ){
+                    if( trim( $variant->group->float ) == trim( $old_theme_variant->group->float ) ){
+                        return $variant;
+                    }
+                }
+            }
+        }
+
+        /**
+         * Do not so desirable matching from the previous theme
+         */
+        if( $prev_variant ){
             /**
              * Find a variant with matching image left and top
              */
@@ -997,7 +1034,29 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
                     return $variant;
                 }
             }
+        }
 
+        /**
+         * Do not so desirable matching from all the previous uf themes
+         */
+        if( $old_theme_variant ){
+            /**
+             * Find a variant with matching image left and top
+             */
+            foreach( $current_variants as $variant ){
+                if( trim( $variant->image->left ) == trim( $old_theme_variant->image->left ) && trim( $variant->image->top ) == trim( $prev_variant->image->top ) ){
+                    return $variant;
+                }
+            }
+
+            /**
+             * Find a variant with matching image order
+             */
+            foreach( $current_variants as $variant ){
+                if( trim( $variant->image->order ) == trim( $old_theme_variant->image->order )  ){
+                    return $variant;
+                }
+            }
         }
 
 		return array();
@@ -1016,7 +1075,6 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
      * @return mixed|void
      */
     public static function get_post_image_variants_from_db( $key = null ){
-//        var_dump( self::_get_post_image_variant_key( $key ));die;
         return get_option( self::_get_post_image_variant_key( $key ) );
     }
 
@@ -1089,6 +1147,39 @@ VRT;
         $prev_theme = self::get_prev_stylesheet();
 
         return $prev_theme ?  json_decode( self::get_post_image_variants_from_db( $prev_theme ) ) : false;
+    }
+
+    /**
+     * Returns all uf theme names
+     *
+     * @return array
+     */
+    public static function get_all_uf_theme_names(){
+        $theme_names = array();
+        foreach( wp_get_themes()   as $theme_name => $theme ){
+            if( ucfirst( $theme->Template ) === "Upfront" && ucfirst( $theme_name ) !== "Upfront" ){
+                $theme_names[] = $theme_name;
+            }
+        }
+        return $theme_names;
+    }
+
+    /**
+     * Gets all image variants from all other uf themes
+     *
+     * @return array
+     */
+    public static function get_all_other_theme_variants(){
+        $variants = array();
+
+        foreach( self::get_all_uf_theme_names()  as $theme_name ){
+            $theme_variants = self::get_post_image_variants_from_db( $theme_name );
+            if( $theme_variants  )
+                $variants = array_merge( $variants, $theme_variants );
+        }
+
+        return $variants;
+
     }
 
 }
