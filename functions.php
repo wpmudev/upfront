@@ -297,7 +297,31 @@ EOAdditivemarkup;
 }
 add_action('init', array('Upfront', 'serve'), 0);
 
-add_filter("img_caption_shortcode", "image_caption_shortcode", 10, 30);
+/**
+ * filters wp caption atts to hide the caption in case show_caption is equal  to "0"
+ */
+add_filter("shortcode_atts_caption", 'uf_shortcode_atts_caption', 10, 3);
+
+/**
+ * Filters wp captions atts to remove the caption in case show_caption is equal to "0"
+ *
+ * @param $out
+ * @param $pairs
+ * @param $atts
+ * @return mixed
+ */
+function uf_shortcode_atts_caption(  $out, $pairs, $atts ){
+
+    if( isset( $atts['show_caption'] ) && $atts['show_caption'] == "0" )
+        $out['caption'] = "";
+
+    return $out;
+}
+/**
+ * Filters image caption shortcode to generate uf caption spefic markup
+ *
+ */
+add_filter("img_caption_shortcode", "uf_image_caption_shortcode", 10, 3);
 /**
  * Uses img_caption_shortcode to add support for UF image variants
  *
@@ -307,7 +331,7 @@ add_filter("img_caption_shortcode", "image_caption_shortcode", 10, 30);
  *
  * @return string|void
  */
-function image_caption_shortcode( $out, $attr, $content ){
+function uf_image_caption_shortcode( $out, $attr, $content ){
 
 	$is_wp_cation = strpos($attr["id"], "uinsert-" ) === false;
 
