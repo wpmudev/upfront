@@ -307,6 +307,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 
 	function get_image_id_by_filename($filename) {
 		global $wpdb;
+
 		// Query post meta because it contains literal filename
 		$query = $wpdb->prepare("SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_wp_attached_file' AND meta_value like '%%%s';", $filename);
 		$image = $wpdb->get_col($query);
@@ -345,7 +346,8 @@ class Upfront_Uimage_Server extends Upfront_Server {
 					continue;
 				}
 
-				$image_filename = str_replace('/images/', '', $id);
+				$slash = preg_quote('/', '/');
+				$image_filename = preg_replace("/{$slash}?images{$slash}/", '', $id);
 				$image_id = $this->get_image_id_by_filename($image_filename);
 				if (!is_null($image_id)) {
 					$image_ids[] = $image_id;
