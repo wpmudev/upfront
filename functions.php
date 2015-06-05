@@ -7,6 +7,7 @@ require_once(dirname(__FILE__) . '/library/upfront_functions_theme.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_permissions.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_registry.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_debug.php');
+require_once(dirname(__FILE__) . '/library/class_upfront_behavior.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_http_response.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_server.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_model.php');
