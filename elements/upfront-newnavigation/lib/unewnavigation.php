@@ -503,6 +503,9 @@ class upfront_nav_walker extends Walker_Nav_Menu
 
 		$classes = empty( $item->classes ) ? array() : (array) $item->classes;
 
+		// to add current menu item status to a paginated blog
+		if($item->url == rtrim(get_permalink(), '/') && !array_search('current-menu-item', $classes))
+			$classes[] = 'current-menu-item';
 
 		//this code is why all this function has been overriden, this one checks if the link is anchor and removes the current-menu-item class
 		if(strpos($item->url, '#')) {
