@@ -1065,8 +1065,12 @@ var InsertManagerInserts = Backbone.View.extend({
             self = this
             ;
 
+        /**
+         * Todo Sam: remove __insert and try to find why sometimes insert doesn't get found inside the done event
+         */
+        this.__insert = insert;
         insert.start( this.$el, this.redactor.$editor )
-            .done(function(args, resolve_insert){
+            .done(function(args, resolved_insert){
 
                 /**
                  * Allows to get resolved insert from inserts with insert managers
@@ -1074,10 +1078,13 @@ var InsertManagerInserts = Backbone.View.extend({
                 if(_.isArray(args) ){
                     var popup = args[0],
                         results = args[0],
-                        insert = resolve_insert;
+                        insert = resolved_insert;
                 }else{
                     var popup = args,
-                        results = resolve_insert;
+                        results = resolved_insert,
+                        insert = insert || self.__insert
+                    ;
+
                 }
 
                 // if(!results) Let's allow promises without result for now!

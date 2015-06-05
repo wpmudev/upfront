@@ -7,12 +7,6 @@ define([
     ],
     function(Insert, utils, base, tpls){
 
-var BasicImageVariants =  _([
-            { vid: "center", label: "Center"  },
-            { vid: "left", label: "Left"  },
-            { vid: "right", label: "Right"  }
-        ]);
-
 
 var ImageInsert = base.ImageInsertBase.extend({
     className: 'ueditor-insert upfront-inserted_image-wrapper upfront-inserted_image-basic-wrapper',

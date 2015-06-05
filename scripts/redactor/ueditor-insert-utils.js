@@ -6,6 +6,12 @@
 
 var l10n = Upfront.mainData.l10n.global.ueditor;
 
+var BasicImageVariants =  _([
+    { vid: "center", label: "Center"  },
+    { vid: "left", label: "Left"  },
+    { vid: "right", label: "Right"  }
+]);
+
 var ImageStylesView = Backbone.View.extend({
     tpl: _.template($(tpls).find('#image-style-tpl').html()),
     initialize: function( options ){
