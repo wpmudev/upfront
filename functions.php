@@ -55,7 +55,7 @@ class Upfront {
 
 		add_action('admin_bar_menu', array($this, 'add_edit_menu'), 85);
 
-		if (is_admin()) { // This prevents "Edit layout" being shown on frontend
+		if (is_admin()) {
 			require_once(dirname(__FILE__) . '/library/servers/class_upfront_admin.php');
 			if (class_exists('Upfront_Server_Admin')) Upfront_Server_Admin::serve();
 		}
@@ -139,7 +139,10 @@ class Upfront {
 		if (!empty($nodes) && is_array($nodes)) {
 			foreach ($nodes as $node) {
 				if (!empty($node->href) && preg_match('/customize\.php/', $node->href)) {
-					$node->href = home_url('?editmode=true');
+					$node->href = !empty($node->id) && 'customize-themes' === $node->id // WordPress doubles down on customizer endpoint for themes list too...
+						? admin_url('themes.php') // ... not gonna happen
+						: home_url('?editmode=true')
+					;
 				}
 				$wp_admin_bar->add_node($node);
 			}
