@@ -17,7 +17,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 	private function _add_hooks () {
 		$this->_cache = Upfront_Cache::get_instance(Upfront_Cache::TYPE_LONG_TERM);
 
-		if (Upfront_OutputBehavior::has_experiments()) {
+		if (Upfront_Behavior::compression()->has_experiments()) {
 			add_filter('upfront-experiments-styles-debounce_dependency_load', array($this, 'add_style_load_url'));
 			add_filter('upfront-experiments-scripts-debounce_dependency_load', array($this, 'add_script_load_url'));
 		} else {

@@ -10,7 +10,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 		$layout = array();
 		if (!is_array($cascade)) return $layout;
 		self::$cascade = $cascade;
-		if ( current_user_can('switch_themes') && (!empty($_GET['dev']) || $dev_first) ){
+		if ( current_user_can('switch_themes') && (Upfront_Behavior::debug()->is_dev() || $dev_first) ){
 			// try loading for dev stored layout first
 			$dev_storage_key = $storage_key ? $storage_key : self::get_storage_key();
 			if ( !preg_match("/_dev$/", $dev_storage_key) ){

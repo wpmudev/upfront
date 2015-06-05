@@ -19,7 +19,7 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 	public function dispatch_fonts_loading () {
 		$deps = Upfront_CoreDependencies_Registry::get_instance();
 		$fonts = $deps->get_fonts();
-		if (Upfront_OutputBehavior::has_experiments()) {
+		if (Upfront_Behavior::compression()->has_experiments()) {
 			if (!empty($fonts)) $deps->add_script('//ajax.googleapis.com/ajax/libs/webfont/1.5.10/webfont.js');
 			return false;
 		}
@@ -31,7 +31,7 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 	 */
 	public function dispatch_dependencies_output () {
 		$deps = Upfront_CoreDependencies_Registry::get_instance();
-		if (Upfront_OutputBehavior::has_experiments()) {
+		if (Upfront_Behavior::compression()->has_experiments()) {
 			$fonts = $deps->get_fonts();
 			if (!empty($fonts)) $this->_output_experimental_fonts($fonts);
 			
@@ -100,13 +100,15 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 		$debug = $this->_debugger->is_active(Upfront_Debug::JS_TRANSIENTS) ? 'class="upfront-debounced"' : '';
 		$script_tpl = json_encode('<script type="text/javascript" src="%url%" ' . $debug . '></script>');
 
+		$comp = Upfront_Behavior::compression();
+
 		$callback_wrap_start = $callback_wrap_end = '';
 		$injection_root = 'head';
-		if (Upfront_OutputBehavior::has_experiments_level(Upfront_OutputBehavior::LEVEL_DEFAULT)) {
+		if ($comp->has_experiments_level($comp->constant('DEFAULT'))) {
 			$callback_wrap_start = '$(function () {';
 			$callback_wrap_end = '});';
 		}
-		if (Upfront_OutputBehavior::has_experiments_level(Upfront_OutputBehavior::LEVEL_AGGRESSIVE)) {
+		if ($comp->has_experiments_level($comp->constant('AGGRESSIVE'))) {
 			$callback_wrap_start = '$(function () { setTimeout(function () {';
 			$callback_wrap_end = '}, 500);});';
 			$injection_root = 'body';
@@ -206,72 +208,3 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 }
 Upfront_CoreDependencies_Server::serve();
 
-
-
-
-
-
-class Upfront_OutputBehavior {
-
-	const LEVEL_AGGRESSIVE = 'aggressive';
-	const LEVEL_DEFAULT = 'default';
-	const LEVEL_LOW = 'low';
-
-	private static $_compression;
-	private static $_experiments;
-	
-	private function __construct () {}
-	private function __clone () {}
-
-	private static function _parse_compression () {
-		if (empty(self::$_compression)) {
-			if (defined('UPFRONT_COMPRESS_RESPONSE') && UPFRONT_COMPRESS_RESPONSE) self::$_compression = true;
-		}
-	}
-
-	private static function _parse_experiments () {
-		if (empty(self::$_experiments) && defined('UPFRONT_EXPERIMENTS_ON') && UPFRONT_EXPERIMENTS_ON) {
-			$level = UPFRONT_EXPERIMENTS_ON;
-			if (in_array($level, array(1, '1', true), true)) self::$_experiments = self::LEVEL_DEFAULT;
-			else self::$_experiments = $level;
-		}
-	}
-
-	private static function _init () {
-		self::_parse_compression();
-		self::_parse_experiments();
-	}
-
-	/**
-	 * Whether or not the compression has been enabled.
-	 *
-	 * @return bool True if it actually is, false otherwise
-	 */
-	public static function has_compression () { 
-		self::_init();
-		return (bool)self::$_compression; 
-	}
-	
-	/**
-	 * Whether or not the load experiments has been enabled at all
-	 *
-	 * @return bool True if they are, false otherwise
-	 */
-	public static function has_experiments () {
-		self::_init();
-		return (bool)self::$_experiments;
-	}
-
-	/**
-	 * Check if the particular experiments level is active.
-	 *
-	 * @param bool $level Level (see constants map) to check
-	 * @return bool
-	 */
-	public static function has_experiments_level ($level=false) {
-		$level = empty($level) ? self::LEVEL_DEFAULT : $level;
-		if (!self::has_experiments()) return false;
-
-		return self::$_experiments === $level;
-	}
-}

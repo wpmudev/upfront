@@ -163,7 +163,7 @@ class Upfront {
 	public function inject_core_wp_dependencies () {
 		$deps = Upfront_CoreDependencies_Registry::get_instance();
 
-		if (Upfront_OutputBehavior::has_experiments()) {
+		if (Upfront_Behavior::compression()->has_experiments()) {
 			if (defined('DOING_AJAX') && DOING_AJAX) {
 				$deps->add_wp_script('jquery-ui-core');
 				$deps->add_wp_script('jquery-ui-widget');
@@ -246,7 +246,7 @@ class Upfront {
 		$save_storage_key = $storage_key;
 		$is_ssl = is_ssl() ? '&ssl=1' : '';
 
-		if (isset($_GET['dev']) && current_user_can('switch_themes') && apply_filters('upfront-enable-dev-saving', true)) {
+		if (Upfront_Behavior::debug()->is_dev() && current_user_can('switch_themes') && apply_filters('upfront-enable-dev-saving', true)) {
 			$save_storage_key .= '_dev';
 		}
 
@@ -268,7 +268,7 @@ class Upfront {
 			var _upfront_storage_key = "' . $storage_key . '";
 			var _upfront_save_storage_key = "' . $save_storage_key . '";
 			var _upfront_stylesheet = "' . get_stylesheet() . '";
-			var _upfront_debug_mode = ' . (int)isset($_GET['debug']) . ';
+			var _upfront_debug_mode = ' . (int)Upfront_Behavior::debug()->is_debug() . ';
 			var _upfront_please_hold_on = ' . json_encode(__('Please, hold on for just a little bit more', 'upfront')) . ';
 		</script>';
 		echo <<<EOAdditivemarkup
