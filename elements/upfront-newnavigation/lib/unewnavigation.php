@@ -132,6 +132,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 			'visit_url' => __('Visit URL', 'upfront'),
 			'edit_url' => __('Edit URL', 'upfront'),
 			'create_dropdown' => __('Create Drop-Down', 'upfront'),
+			'choose_existing_menu' => __('Choose existing menu', 'upfront'),
 			'css' => array(
 				'bar_label' => __('Menu Bar', 'upfront'),
 				'bar_info' => __('Menu Bar', 'upfront'),

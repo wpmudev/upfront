@@ -340,14 +340,22 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		;
 	},
 	display_menu_list: function () {
-		var me = this;
+		var me = this,
+			menuItemsValues = [{label:l10n.choose_existing_menu, value: 0}],
+			menuList = Upfront.data.unewnavigation.currentMenuItemData.get('menuList')
+		;
+
+		if(typeof(menuList) != 'undefined'){
+			menuItemsValues.concat(menuList);
+		}
+
 		me.$el.find('div.upfront-object-content').html('');
 
 		var menuItems = new Upfront.Views.Editor.Field.Select({
 			model: me.model,
 			label: "",
 			className: "existing_menu_list",
-			values: [{label:'Choose existing menu', value: 0}].concat(Upfront.data.unewnavigation.currentMenuItemData.get('menuList'))
+			values: menuItemsValues
 		});
 
 		menuItems.render();
