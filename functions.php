@@ -1,7 +1,5 @@
 <?php
 
-defined('UPFRONT_DEBUG_LEVELS') || define('UPFRONT_DEBUG_LEVELS', 'none');
-
 require_once(dirname(__FILE__) . '/library/upfront_functions.php');
 require_once(dirname(__FILE__) . '/library/upfront_functions_theme.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_permissions.php');
@@ -21,6 +19,8 @@ require_once(dirname(__FILE__) . '/library/class_upfront_media.php');
 require_once(dirname(__FILE__) . '/library/class_ufront_ufc.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_codec.php');
 
+
+Upfront_Behavior::debug()->set_baseline();
 
 
 class Upfront {
