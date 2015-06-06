@@ -382,7 +382,7 @@ define(function() {
 				"click a.all": "select_all"
 			},
 			render: function () {
-				this.$el.empty().append('Select <a href="#all" class="all">' + l10n.all + '</a>&nbsp;|&nbsp;<a href="#none" class="none">' + l10n.none + '</a>');
+				this.$el.empty().append(l10n.select + ' <a href="#all" class="all">' + l10n.all + '</a>&nbsp;|&nbsp;<a href="#none" class="none">' + l10n.none + '</a>');
 			},
 			select_none: function (e) {
 				e.preventDefault();
@@ -411,7 +411,7 @@ define(function() {
 				click: "delete_selection"
 			},
 			render: function () {
-				this.$el.empty().append('<a href="#delete">Delete</a>');
+				this.$el.empty().append('<a href="#delete">' + l10n.del_command + '</a>');
 			},
 			delete_selection: function (e) {
 				e.preventDefault();
@@ -509,7 +509,7 @@ define(function() {
 				$hub.empty();
 				if (!additional_sizes.length) return false;
 				_(additional_sizes).each(function (size) {
-					sizes.push({ label: size, value: size });
+					sizes.push({ label: (size === MEDIA_SIZES.FULL ? l10n.size_full : size), value: size });
 				});
 				this.size_field = new Upfront.Views.Editor.Field.Select({
 					model: this.model.at(0),
@@ -597,7 +597,7 @@ define(function() {
 				},
 				render: function () {
 					this.$el.empty()
-						.append('<div class="title">' + 'Please, select labels...' + '</div>')
+						.append('<div class="title">' + l10n.please_select_labels + '</div>')
 						.append('<div class="search_labels" />')
 						.append('<div class="labels_list"><ul></ul></div>')
 						.append('<div class="add_labels" />')
@@ -930,7 +930,7 @@ define(function() {
 				;
 				this.$el
 					.empty()
-					.append('<div class="title">' + 'Please, select labels...' + '</div>')
+					.append('<div class="title">' + l10n.please_select_labels + '</div>')
 					.append('<input type="text" class="filter upfront-field upfront-field-text" value="' + sel + '" />')
 					.append('<div class="labels_list"><ul></ul></div>')
 				;
@@ -1440,7 +1440,7 @@ define(function() {
 					// Input
 					markup += '<div class="upfront-pagination_navigation">';
 					markup += 	'<input type="text" class="upfront-pagination_page-current" value="' + ActiveFilters.current_page + '" />';
-					markup += 	" of ";
+					markup += 	'&nbsp;' + l10n.n_of_x + '&nbsp;';
 					markup += 	'<a class="upfront-pagination_page-item" data-idx="' + (ActiveFilters.max_pages - 1) + '">' + (ActiveFilters.max_pages - 1) + '</a>';
 					markup += '</div>';
 
@@ -1496,7 +1496,7 @@ define(function() {
 					has_search = !!search && search.get("state")
 				;
 				this.$el.empty()
-					.append('<input type="text" placeholder="Search" value="' + (has_search && search ? search.get("value") : '') + '" />')
+					.append('<input type="text" placeholder="' + l10n.search + '" value="' + (has_search && search ? search.get("value") : '') + '" />')
 				;
 				if (has_search) {
 					this.$el.append('<a href="#clear" class="clear upfront-icon upfront-icon-popup-search-clear"></a>');
@@ -2275,7 +2275,7 @@ define(function() {
 					selected_size = item.get("selected_size") || MEDIA_SIZES.FULL,
 					all_sizes = item.get("additional_sizes")
 				;
-				if (selected_size && "full" != selected_size) {
+				if (selected_size && MEDIA_SIZES.FULL != selected_size) {
 					_(all_sizes).each(function (size) {
 						if (MEDIA_SIZES.to_size(size) != selected_size) return true;
 						data.image = size;
