@@ -291,7 +291,7 @@
 	right: 0;
 	width: auto;
 	height: auto;
-	z-index: 999999;
+	z-index: 9997;
 	cursor: s-resize;
 	display: block;
 	visibility: hidden;
@@ -324,7 +324,7 @@
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region > .upfront-region-resize-handle-s,
 .upfront-region-fixed-editing .upfront-region-side-fixed .upfront-region-resize-handle {
 	visibility: visible;
-	z-index: 9998;
+	z-index: 9997;
 }
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active > .upfront-region-resize-handle,
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region-side-left > .upfront-region-resize-handle-e,
