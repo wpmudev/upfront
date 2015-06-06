@@ -1307,6 +1307,7 @@ RedactorPlugins.upfrontFormatting = function() {
             className: "ufront-air-formatting",
             init: function(){
                 this.custom_classes = ["first-class", "second-class", "third-class"];
+
             },
             events: {
                 "click a" : "select_tag",
@@ -1363,24 +1364,24 @@ RedactorPlugins.upfrontFormatting = function() {
                 this.redactor.buffer.set();
                 this.redactor.$editor.focus();
 
-                var tag = $(e.target).data("tag"),
-                    selection = this.redactor.selection,
-                    html = this.redactor.selection.getHtml(), // Gets selected html
-                    //$html = $(html),
-                    resulting_html = "",
-                    css = this.redactor.selection.getParent() ? this.redactor.selection.getParent().style.cssText : false;
+                var tag = $(e.target).data("tag");
 
+                if (!this.redactor.utils.browser('msie')) this.redactor.$editor.focus();
 
-                var formatted = this.redactor.selection.wrap(tag);
-                if (formatted === false) return;
+                this.redactor.block.blocks = this.redactor.selection.getBlocks();
 
-                var $formatted = $(formatted);
+                this.redactor.block.blocksSize = this.redactor.block.blocks.length;
+                this.redactor.block.type = "";
+                this.redactor.block.value = "";
 
-                this.redactor.block.formatTableWrapping($formatted);
+                this.redactor.buffer.set();
+                this.redactor.selection.save();
 
-                if( this.redactor.selection.getParent() )
-                    $(this.redactor.selection.getCurrent()).find(tag).unwrap();
+                var block = this.redactor.block.blocks[0];
+                var $formatted = this.redactor.utils.replaceToTag(block, tag);
+                this.redactor.block.toggle($formatted);
 
+                if (tag == 'p' || this.redactor.block.headTag) $formatted.find('p').contents().unwrap();
 
                 this.redactor.dropdown.hideAll();
             },
