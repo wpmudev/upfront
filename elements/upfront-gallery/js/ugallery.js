@@ -1195,12 +1195,13 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			return;
 		}
 
-		if ($caption.data('ueditor')) {
+		if ($caption.data('ueditor') && !$caption.data('ueditor').active ) {
 			$caption.data('ueditor').start();
 		} else {
 			image = this.images.get($caption.closest('.ugallery_item').attr('rel'));
 			this.ensureCaptionEditorExists($caption, image);
-			$caption.data('ueditor').start();
+            if( !$caption.data('ueditor').active )
+			    $caption.data('ueditor').start();
 		}
 	},
 
