@@ -63,6 +63,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		add_action('after_switch_theme', array($this, 'initial_theme_setup'));
 
+        add_filter('upfront_get_editor_font_icons', array($this, 'get_editor_font_icons'), 10, 2);
 		$this->_set_up_required_pages_from_settings();
 
 		$this->checkMenusExist();
@@ -870,5 +871,23 @@ VRT;
         update_option($key, $images);
 
         return $attach_id;
+    }
+
+    /**
+     * Returns theme font icons if specified
+     *
+     * @param $font_icons default font icons
+     * @param $args
+     * @return array|mixed
+     */
+    function get_editor_font_icons($font_icons, $args){
+
+        $theme_font_icons = $this->get_theme_settings()->get('font_icons');
+
+        $theme_font_icons =  empty( $theme_font_icons ) ? $font_icons : $theme_font_icons;
+
+        if( $args['json'] ) return $theme_font_icons;
+
+        return is_array( $theme_font_icons ) ? $theme_font_icons : json_decode( $theme_font_icons );
     }
 }

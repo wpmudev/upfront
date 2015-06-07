@@ -655,7 +655,7 @@ RedactorPlugins.upfrontIcons = function() {
                 'change .upfront-font-icons-controlls input': "input_change"
             },
             render: function (options) {
-                this.$el.html(this.tpl());
+                this.$el.html(this.tpl({icons: Upfront.mainData.font_icons }));
                 this.stop_scroll_propagation(this.$el);
             },
             open: function (e, redactor) {
