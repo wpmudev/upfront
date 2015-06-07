@@ -827,12 +827,19 @@ RedactorPlugins.upfrontLink = function() {
 			link: function (url, type, target) {
 				this.redactor.selection.restore();
 				if (url) {
-					var caption = this.redactor.selection.getHtml();
+					var caption = $(this.redactor.selection.getCurrent()).last().hasClass("uf_font_icon") ? this.redactor.selection.getCurrent().outerHTML :  this.redactor.selection.getHtml() ;
 					var link = this.redactor.utils.isCurrentOrParent('A');
 					if (link) {
 						$(link).attr('href', url).attr('rel', type).attr('target', target);
 					} else {
-						this.redactor.link.set(caption, url, target);
+                        var $link = $("<a>");
+                        // allow caption to be html to the contrary to this.redactor.link.set(caption, url, target) which needs the caption to be text
+                        $link.html( caption )
+                            .attr("rel", type)
+                            .attr("href", url)
+                            .attr("target", target);
+                        this.redactor.insert.html($link[0].outerHTML, false);
+
 					}
 					this.redactor.$element.focus();
 				}
