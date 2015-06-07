@@ -682,7 +682,7 @@ RedactorPlugins.upfrontIcons = function() {
                     "font-size": fontSize + "px",
                     "top": top + "px"
                 });
-                var inserted = this.redactor.insert.node($icon[0], false); //inserted false instead of true to retain the selected content
+                var inserted = this.redactor.insert.html($icon[0].outerHTML, false); //inserted false instead of true to retain the selected content
                 this.redactor.code.sync();
 
                 //var offset = this.redactor.caret.getOffset(); //existing caret position

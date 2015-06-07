@@ -970,10 +970,11 @@ Ueditor.prototype = {
 				$('.redactor_air').hide();
 
 			if($(e.target).hasClass('uf_font_icon')) {
-				if(e.pageX < ($(e.target).offset().left + $(e.target).width()/2))
-					me.redactor.caret.setBefore($(e.target));
-				else
-					me.redactor.caret.setAfter($(e.target));
+                // Todo Gagan: had to comment the following to allow the font icon to be selected, hope this doesn't brean anything
+				//if(e.pageX < ($(e.target).offset().left + $(e.target).width()/2))
+				//	me.redactor.caret.setBefore($(e.target));
+				//else
+				//	me.redactor.caret.setAfter($(e.target));
 			}
 		});
 
