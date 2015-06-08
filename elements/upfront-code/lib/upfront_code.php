@@ -96,8 +96,13 @@ class Upfront_CodeView extends Upfront_Object {
 			),
 			'create' => array(
 				'change' => __('Click to change', 'upfront'),
-				'js_error' => __('JS error:', 'upfront'),
 				'ok' => __('OK', 'upfront'),
+			),
+			'errors' => array(
+				'markup' => __('HTML error:', 'upfront'),
+				'style' => __('CSS error:', 'upfront'),
+				'script' => __('JS error:', 'upfront'),
+				'error_markup' => __('There\'s an error in your HTML. Please, re-check your markup for invalid arguments, broken tags and the like.', 'upfront'),
 			),
 			'template' => array(
 				'html' => __('HTML', 'upfront'),
