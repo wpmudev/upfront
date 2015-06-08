@@ -5809,6 +5809,39 @@ var ThemeFontsCollection = Backbone.Collection.extend({
 		variants.unshift('inherit');
 		return variants;
 	},
+	
+	get_variants_for_select: function(font_family) {
+		var variants;
+		var typefaces_list = [];
+		
+		console.log(font_family);
+
+		_.each(system_fonts_storage.get_fonts().models, function(font) {
+			if (font_family === font.get('family')) {
+				_.each(font.get('variants'), function(font_style) {
+					typefaces_list.push({ label: font_style, value: font_style });
+				});
+			}
+		});
+		
+		_.each(Upfront.mainData.additionalFonts, function(font) {
+			if (font_family === font.family) {
+				_.each(font.variants, function(font_style) {
+					typefaces_list.push({ label: font_style, value: font_style });
+				});
+			}
+		});
+
+		_.each(theme_fonts_collection.models, function(theme_font) {
+			if (font_family === theme_font.get('font').family) {
+				var font_style = theme_font.get('displayVariant');
+				typefaces_list.push({ label: font_style, value: font_style });
+			}
+		});
+
+		return typefaces_list;
+	},
+
 
 	get_additional_font: function(font_family) {
 		var font = _.findWhere(Upfront.mainData.additionalFonts, {family: font_family});

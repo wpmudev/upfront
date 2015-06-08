@@ -6,6 +6,8 @@ define([
 	'text!elements/upfront-button/tpl/preset-style.html'
 ], function(PresetManager, Util, FontSettingsItem, ColorsSettingsItem, styleTpl) {
 	var l10n = Upfront.Settings.l10n.button_element;
+	
+	var me = this;
 
 	var Settings = PresetManager.extend({
 		mainDataCollection: 'buttonPresets',
@@ -44,9 +46,40 @@ define([
 		stateFields: {
 			Static: [
 				{
-					fieldClass: Upfront.Views.Editor.Field.Radios,
+					fieldClass: Upfront.Views.Editor.Field.Checkboxes,
 					options: {
-						className: 'inline-radios plaintext-settings static',
+						name: 'useborder',
+						label: '',
+						default_value: 1,
+						values: [
+							{ label: 'Border', value: 'yes' }
+						],
+						change: function(value, parentPanel) {
+							parentPanel.model.set({'useborder': value});
+						}
+					}
+				},	
+				{
+					fieldClass: Upfront.Views.Editor.Field.Number,
+					options: {
+						className: 'static',
+						name: 'borderwidth',
+						label: '',
+						default_value: 1,
+						suffix: 'px',
+						values: [
+							{ label: "", value: '1' }
+						],
+						change: function(value, parentPanel) {
+							parentPanel.model.set({'borderwidth': value});
+						}
+						
+					}
+				},
+				{
+					fieldClass: Upfront.Views.Editor.Field.Select,
+					options: {
+						className: 'static',
 						name: 'bordertype',
 						label: l10n.border,
 						default_value: "none",
@@ -61,29 +94,14 @@ define([
 						}
 					}
 				},
-				{
-					fieldClass: Upfront.Views.Editor.Field.Number,
-					options: {
-						className: 'inline-number plaintext-settings static',
-						name: 'borderwidth',
-						label: l10n.width,
-						default_value: 1,
-						values: [
-							{ label: "", value: '1' }
-						],
-						change: function(value, parentPanel) {
-							parentPanel.model.set({'borderwidth': value});
-						}
-						
-					}
-				},
+				
 				{
 					fieldClass: Upfront.Views.Editor.Field.Color,
 					options: {
-						className: 'upfront-field-wrap upfront-field-wrap-color sp-cf plaintext-settings inline-color border-color static',
+						className: 'upfront-field-wrap upfront-field-wrap-color sp-cf static',
 						name: 'bordercolor',
 						blank_alpha : 0,
-						label: l10n.color,
+						label: '',
 						default_value: '#000',
 						spectrum: {
 							preferredFormat: "rgb",
@@ -98,6 +116,119 @@ define([
 						}
 					}
 				},
+				
+				{
+					fieldClass: Upfront.Views.Editor.Field.Color,
+					options: {
+						className: 'upfront-field-wrap upfront-field-wrap-color sp-cf',
+						name: 'bgcolor',
+						blank_alpha : 0,
+						label: l10n.bg_color,
+						default_value: '#ccc',
+						spectrum: {
+							preferredFormat: "rgb",
+						},
+						change: function(value, parentPanel) {
+							if (!value) return false;
+							parentPanel.model.set({'bgcolor': value});
+						},
+						move: function(value, parentPanel) {
+							if (!value) return false;
+							parentPanel.model.set({'bgcolor': value});
+						}
+						
+					}
+				},
+				
+				{
+					fieldClass: Upfront.Views.Editor.Field.Select,
+					options: {
+						name: 'fontface',
+						values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_fonts_for_select(),
+						label: 'Typeface',
+						label_style: 'inline',
+						className: 'font-face static',
+						change: function(value, parentPanel) {
+							parentPanel.model.set({'fontface': value});
+							
+							var styles = new Upfront.Views.Editor.Field.Select({
+								name: 'fontstyle',
+								label: 'Weight/Style',
+								label_style: 'inline',
+								className: 'font-style static',
+								values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants_for_select(value)
+							});
+							
+							parentPanel.$el.find('.font-style').html(styles.get_field_html());
+						}
+					},
+				},
+				{
+					fieldClass: Upfront.Views.Editor.Field.Select,
+					options: {
+						name: 'fontstyle',
+						values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants_for_select(),
+						label: 'Weight/Style',
+						label_style: 'inline',
+						className: 'font-style static',
+						change: function(value, parentPanel) {
+							parentPanel.model.set({'fontstyle': value});
+						},
+						render: function(){
+							console.log(this);
+						}
+					}
+				},
+				{
+					fieldClass: Upfront.Views.Editor.Field.Number,
+					options: {
+						className: 'font static',
+						name: 'fontsize',
+						label: 'Font: ',
+						default_value: 12,
+						change: function(value, parentPanel) {
+							parentPanel.model.set({'fontsize': value});
+						}
+					}
+				},
+				{
+					fieldClass: Upfront.Views.Editor.Field.Number,
+					options: {
+						className: 'font static',
+						name: 'lineheight',
+						label: 'Font: ',
+						default_value: 1,
+						min: 0,
+						step: 0.1,
+						change: function(value, parentPanel) {
+							parentPanel.model.set({'lineheight': value});
+						}
+					}
+				},
+				{
+					fieldClass: Upfront.Views.Editor.Field.Color,
+					options: {
+						className: 'upfront-field-wrap upfront-field-wrap-color sp-cf',
+						name: 'color',
+						blank_alpha : 0,
+						default_value: '#000',
+						label_style: 'inline',
+						label: '',
+						spectrum: {
+							preferredFormat: "rgb",
+						},
+						change: function(value, parentPanel) {
+							if (!value) return false;
+							parentPanel.model.set({'color': value});
+						},
+						move: function(value, parentPanel) {
+							if (!value) return false;
+							parentPanel.model.set({'color': value});
+						}
+						
+					}
+				},
+				
 				{
 					fieldClass: Upfront.Views.Editor.Field.Checkboxes,
 					options: {
@@ -208,76 +339,6 @@ define([
 						}
 					}
 				},	
-				{
-					fieldClass: Upfront.Views.Editor.Field.Color,
-					options: {
-						className: 'upfront-field-wrap upfront-field-wrap-color sp-cf  bg-color static',
-						name: 'bgcolor',
-						blank_alpha : 0,
-						label: l10n.bg_color,
-						default_value: '#ccc',
-						spectrum: {
-							preferredFormat: "rgb",
-						},
-						change: function(value, parentPanel) {
-							if (!value) return false;
-							parentPanel.model.set({'bgcolor': value});
-						},
-						move: function(value, parentPanel) {
-							if (!value) return false;
-							parentPanel.model.set({'bgcolor': value});
-						}
-						
-					}
-				},
-				{
-					fieldClass: Upfront.Views.Editor.Field.Number,
-					options: {
-						className: 'font static',
-						name: 'fontsize',
-						label: 'Font: ',
-						default_value: 12,
-						change: function(value, parentPanel) {
-							parentPanel.model.set({'fontsize': value});
-						}
-					}
-				},
-				{
-					fieldClass: Upfront.Views.Editor.Field.Select,
-					options: {
-						name: 'fontface',
-						values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_fonts_for_select(),
-						label: 'px',
-						label_style: 'inline',
-						className: 'font-face static',
-						change: function(value, parentPanel) {
-							parentPanel.model.set({'fontface': value});
-						}
-					}
-				},
-				{
-					fieldClass: Upfront.Views.Editor.Field.Color,
-					options: {
-						className: 'upfront-field-wrap upfront-field-wrap-color sp-cf font_color bg-color static',
-						name: 'color',
-						blank_alpha : 0,
-						default_value: '#000',
-						label_style: 'inline',
-						label: '',
-						spectrum: {
-							preferredFormat: "rgb",
-						},
-						change: function(value, parentPanel) {
-							if (!value) return false;
-							parentPanel.model.set({'color': value});
-						},
-						move: function(value, parentPanel) {
-							if (!value) return false;
-							parentPanel.model.set({'color': value});
-						}
-						
-					}
-				},
 			],
 			Hover: [
 				{
@@ -553,7 +614,7 @@ define([
 			]
 		}
 	});
-
+	
 	// Generate presets styles to page
 	Util.generatePresetsToPage('button', styleTpl);
 

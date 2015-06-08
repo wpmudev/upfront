@@ -5,29 +5,30 @@ define([
 	var EditPresetItem = Upfront.Views.Editor.Settings.Item.extend({
 		className: 'preset_specific',
 
-		get_title: function() {
-			var panelTitle = this.options.model.get('name') ? this.options.model.get('name') : this.options.model.get('id');
-			return 'Edit ' + panelTitle;
-		},
-
 		initialize: function(options) {
 			this.options = options || {};
 
+			this.listenTo(this.model, 'change', this.onPresetUpdate);
+			
 			var me = this,
 				firstStateButton = false,
 				firstStateSettings = false;
-
-			var fields = [
-				new Upfront.Views.Editor.Field.Button({
-					model: this.model,
-					label: 'Delete Preset',
-					className: 'delete_preset',
-					compact: true,
-					on_click: function() {
-						me.deletePreset();
-					}
-				})
-			];
+			
+			if(this.options.model.get('id') !== 'default') {
+				var fields = [
+					new Upfront.Views.Editor.Field.Button({
+						model: this.model,
+						label: 'Delete',
+						className: 'delete_preset',
+						compact: true,
+						on_click: function() {
+							me.deletePreset();
+						}
+					})
+				];
+			} else {
+				var fields = [];
+			}
 
 			// First add settings state selectors
 			_.each(this.options.stateFields, function(stateFields, state) {
@@ -61,6 +62,10 @@ define([
 			firstStateSettings.$el.show();
 
 			this.fields =_(fields);
+		},
+		
+		onPresetUpdate: function() {
+			this.trigger('upfront:presets:update', this.model.toJSON());
 		},
 
 		deletePreset: function() {

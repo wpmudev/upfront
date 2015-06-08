@@ -19,16 +19,21 @@ function() {
 						fieldOnChangeCallback(value, me);
 					};
 				}
+				
+				field.options.render = function() {
+					console.log('asdasd');
+				}
+								
 				var stateField = new field.fieldClass(_.extend({
 						model: this.options.model
 					}, field.options)
 				);
-
+				
 				Upfront.Events.once('entity:settings:deactivate', function() {
 					// Reset change callback to avoid zombies
 					field.options.change = fieldOnChangeCallback;
 				});
-
+				
 				fields.push(stateField);
 			}, this);
 

@@ -2,8 +2,8 @@
 define([
 	'scripts/upfront/preset-settings/select-preset-panel',
 	'scripts/upfront/preset-settings/util',
-	'scripts/upfront/preset-settings/edit-preset-panel'
-], function(SelectPresetPanel, Util, EditPresetPanel) {
+	'scripts/upfront/preset-settings/edit-preset-item'
+], function(SelectPresetPanel, Util, EditPresetItem) {
 	/**
 	 * Handles presets: load, edit, delete and update for elements.
 	 *
@@ -35,16 +35,22 @@ define([
 		},
 
 		showSelectPresetPanel: function(render) {
+			var me = this;
 			this.selectPresetPanel = new SelectPresetPanel({
 				model: this.model,
-				presets: this.presets
+				presets: this.presets,
+				stateFields: this.stateFields
 			});
 			this.panels = _([
 				this.selectPresetPanel
 			]);
+			
+			this.delegateEvents();
 
 			this.listenTo(this.selectPresetPanel, 'upfront:presets:new', this.createPreset);
-			this.listenTo(this.selectPresetPanel, 'upfront:presets:edit', this.editPreset);
+			this.listenTo(this.selectPresetPanel, 'upfront:presets:delete', this.deletePreset);
+			this.listenTo(this.selectPresetPanel, 'upfront:presets:change', this.changePreset);
+			this.listenTo(this.selectPresetPanel, 'upfront:presets:update', this.updatePreset);
 
 			if (render) {
 				this.render();
@@ -59,16 +65,17 @@ define([
 		},
 
 		updatePreset: function(properties) {
+			console.log(properties);
 			var index,
 				//css = Util.generateCss(properties, this.styleTpl),
 				styleElementId;
-/* // Note: killed, because we already do this in Util
+			/* // Note: killed, because we already do this in Util
 			styleElementId = this.styleElementPrefix + '-' + properties.id;
 			if ($('style#' + styleElementId).length === 0) {
 				$('body').append('<style id="' + styleElementId + '"></style>');
 			}
 			$('style#' + styleElementId).text(css);
-*/
+			*/
 			Util.updatePresetStyle(this.styleElementPrefix.replace(/-preset/, ''), properties, this.styleTpl);
 			Upfront.Util.post({
 				action: 'upfront_save_' + this.ajaxActionSlug + '_preset',
@@ -91,12 +98,11 @@ define([
 			this.presets.add(preset);
 			this.model.set_property('preset', preset.id);
 			this.updatePreset(preset);
-			this.editPreset(preset.id);
 		},
 
 		deletePreset: function(preset) {
 			var index;
-
+			
 			Upfront.Util.post({
 				data: preset.toJSON(),
 				action: 'upfront_delete_' + this.ajaxActionSlug + '_preset'
@@ -116,22 +122,10 @@ define([
 			this.showSelectPresetPanel(true);
 		},
 
-		editPreset: function(preset) {
-			this.editPresetPanel = new EditPresetPanel({
-				model: this.model,
-				preset: this.presets.findWhere({id: preset}),
-				stateFields: this.stateFields
-			});
-
-			this.panels = _([
-				this.editPresetPanel
-			]);
-
-			this.listenTo(this.editPresetPanel, 'upfront:presets:update', this.updatePreset);
-			this.listenTo(this.editPresetPanel, 'upfront:presets:delete', this.deletePreset);
-
-			this.$el.html('');
-			this.render();
+		changePreset: function(preset) {
+			this.$el.empty();
+			this.selectPresetPanel.remove();
+			this.showSelectPresetPanel(true);
 		},
 
 		get_title: function () {

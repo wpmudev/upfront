@@ -1,13 +1,19 @@
 define(function() {
 	var SelectPresetField = Upfront.Views.Editor.Field.Chosen_Select.extend({
 		className: 'preset select-preset-field',
-
 		render: function() {
 			Upfront.Views.Editor.Field.Chosen_Select.prototype.render.call(this);
 			var me = this;
-
+			var selectWidth = '';
+			var preset = this.$el.find('.upfront-chosen-select').val();
+			
+			if(preset == 'default') {
+				selectWidth = '230px';
+			} else {
+				selectWidth = '175px';
+			}
 			this.$el.find('.upfront-chosen-select').chosen({
-				width: '230px'
+				width: selectWidth
 			});
 			
 			var html = ['<a href="#" title="Add preset" class="upfront-preset-add">Add</a>'];
@@ -35,7 +41,8 @@ define(function() {
 		
 		get_value_html: function (value, index) {
 			var selected = '';
-			if (value.value === this.clear_preset_name(this.get_saved_value())) selected = ' selected="selected"';
+			var currentPreset = this.get_saved_value() ? this.get_saved_value() : 'default';
+			if (value.value === this.clear_preset_name(currentPreset)) selected = ' selected="selected"';
 			return ['<option value="', value.value, '"', selected, '>', value.label, '</option>'].join('');
 		},
 		

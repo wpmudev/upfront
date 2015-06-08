@@ -8,6 +8,7 @@ define([
 
 			this.selectPresetField = new SelectPresetField({
 					model: this.model,
+					label: 'Select Preset or Create a New One',
 					property: 'preset',
 					values: this.get_presets(),
 					change: function(value) {
@@ -20,6 +21,11 @@ define([
 			]);
 
 			this.listenTo(this.selectPresetField, 'upfront:presets:edit', this.editPreset);
+			this.listenTo(this.selectPresetField, 'upfront:presets:new', this.createPreset);
+		},
+
+		createPreset: function(preset) {
+			this.trigger('upfront:presets:new', preset);
 		},
 
 		editPreset: function(preset) {

@@ -41,6 +41,25 @@ div.preset-manager-panel .delete_preset input {
 div.preset-manager-panel .delete_preset {
 	position: relative;
 	z-index: 99;
+	top: -22px;
+}
+div.preset-manager-panel div.preset_specific {
+	background: #e7f1fb; /* Old browsers */
+	background: -moz-linear-gradient(top,  #e7f1fb 0%, #f2f9ff 39%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e7f1fb), color-stop(39%,#f2f9ff)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #e7f1fb 0%,#f2f9ff 39%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #e7f1fb 0%,#f2f9ff 39%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #e7f1fb 0%,#f2f9ff 39%); /* IE10+ */
+	background: linear-gradient(to bottom,  #e7f1fb 0%,#f2f9ff 39%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e7f1fb', endColorstr='#f2f9ff',GradientType=0 ); /* IE6-9 */
+	margin-top: 10px;
+	padding: 1px 0px;
+}
+div.preset-manager-panel div.upfront-settings_panel_scroll {
+	padding: 15px 0px !important;
+}
+div.preset-manager-panel div.upfront-settings_panel_scroll .upfront-settings-item {
+	padding: 0px 5px;
 }
 div.preset-manager-panel div.preset_specific div.upfront-settings-item {
 	padding-top: 0;
@@ -50,6 +69,29 @@ div.preset-manager-panel div.preset_specific div.upfront-settings-item div.upfro
 }
 div.preset-manager-panel div.preset_specific div.upfront-settings-item div.upfront-settings-item-content {
 	margin-top: 10px;
+}
+div.preset-manager-panel div.preset_specific .upfront-settings-item-title {
+	display: none;
+}
+div.preset-manager-panel .upfront-preset-add {
+	display: block;
+	position: absolute;
+	border-left: 1px solid #a4bfd8;
+	width: 40px;
+	height: 23px;
+	top: 5px;
+	right: 6px;
+	background: #f1f8fe;
+	color: #4d6c8e;
+	text-align: center;
+}
+div.preset-manager-panel .chosen-search {
+	position: relative;
+}
+div.preset-manager-panel div.select-preset-field label {
+	font-weight: normal;
+	font-family: Tahoma;
+	margin-bottom: 3px;
 }
 div.preset-manager-panel div.preset_specific div.border_radius input,
 div.preset-manager-panel div.preset_specific div.inline-number input,
