@@ -6935,6 +6935,9 @@ a.upfront-post-layout-trigger:before {
   font-family: "Source Sans Pro", sans-serif;
   font-weight: normal; }
 
+.upfront-loading.upfront-boot {
+  background: #132a40; }
+
 .upfront-loading-fixed {
   position: fixed; }
 
