@@ -1145,21 +1145,25 @@ RedactorPlugins.upfrontColor = function() {
                             wrapper = $range.get(0);
                         }
 
-                        if( contents.childNodes[0] && contents.childNodes[0].tagName.toLowerCase() === "p" ){
+                        if( contents.childNodes[0] && contents.childNodes[0].tagName.toLowerCase() === "p" ){ //  make sure use can set color to multiple paragraphs at once
                             var _nodes = [];
 
                             /**
                              * Prepare nodes and wrap them into wrappers
                              *
                              */
-                            $.each(  contents.childNodes, function(index, node) {
-                                var p_wrapper = document.createElement("p"),
-                                    wrapper = document.createElement("span");
+                            _.each(  contents.childNodes, function(node, index) {
+                                var wrapper = document.createElement("span"),
+                                    first_child = node.childNodes[0];
 
                                 if(_.isUndefined(node) ) return;
 
-                                
-                                wrapper.innerHTML =  node.innerHTML;
+                                if( first_child  && first_child.tagName &&  first_child.tagName.toLowerCase() === "span" && ( first_child.className.match(/upfront_theme_/) || first_child.style.cssText.match(/color/) ) ){ // if already color is applied
+                                    wrapper.innerHTML = first_child.innerHTML;
+                                }else{
+                                    wrapper.innerHTML =  node.innerHTML;
+                                }
+
                                 node.innerHTML = "";
                                 node.appendChild( wrapper );
                                 _nodes.push({
@@ -1174,7 +1178,7 @@ RedactorPlugins.upfrontColor = function() {
                              *
                              *
                              */
-                            $.each( _nodes.reverse(),  function(index, _node){
+                            _.each( _nodes.reverse(),  function( _node, index){
                                 var node = _node.node,
                                     wrapper = _node.wrapper;
 
