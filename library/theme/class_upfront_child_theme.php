@@ -230,7 +230,12 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			}
 		}
 
-		foreach($element_types as $type) {
+		// Also check more general cascade styles - works with single post layouts
+		if (empty($alternate_layout_id) && !empty($layout['specificity']) && !empty($layout['item'])) {
+			$alternate_layout_id = $layout['item'];
+		}
+
+		foreach ($element_types as $type) {
 			$style_files = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), Upfront::$Excluded_Files);
 			foreach ($style_files as $style) {
 				// If region CSS, only load the one saved matched the layout_id
