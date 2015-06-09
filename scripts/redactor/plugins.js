@@ -1113,6 +1113,7 @@ RedactorPlugins.upfrontColor = function() {
                     },
                     color_set = function(rule, raw_value) {
                         var theme_color = false, cls = false, is_bg = !!rule.match(/background/);
+
                         if (raw_value.is_theme_color) {
                             cls = Upfront.Views.Theme_Colors.colors.get_css_class(raw_value, is_bg);
                             if (!cls) theme_color = raw_value.theme_color;
@@ -1123,7 +1124,18 @@ RedactorPlugins.upfrontColor = function() {
                         var wrapper = document.createElement("span"),
                             contents = self.redactor.range.extractContents(),
                             range = self.redactor.range,
-                            $range = range.commonAncestorContainer ? $(range.commonAncestorContainer) : false
+                            $range = range.commonAncestorContainer ? $(range.commonAncestorContainer) : false,
+                            apply_to_wrapper = function($wrapper){
+                                if (cls) {
+                                    $wrapper
+                                        .addClass(cls)
+                                    ;
+                                } else if (!!theme_color) {
+                                    $wrapper
+                                        .attr("style", rule + ':' + theme_color) // use color otherwise
+                                    ;
+                                }
+                            }
                         ;
 
                         if ($range && $range.length && $range.is("span")) {
@@ -1132,19 +1144,50 @@ RedactorPlugins.upfrontColor = function() {
                             $range.attr("style", "");
                             wrapper = $range.get(0);
                         }
-                        wrapper.appendChild(contents);
-                        self.redactor.range.insertNode(wrapper);
 
-                        if (cls) {
-                            $(wrapper)
-                                .addClass(cls)
-                            ;
-                        } else if (!!theme_color) {
-                            $(wrapper)
-                                .attr("style", rule + ':' + theme_color) // use color otherwise
-                            ;
+                        if( contents.childNodes[0] && contents.childNodes[0].tagName.toLowerCase() === "p" ){
+                            var _nodes = [];
+
+                            /**
+                             * Prepare nodes and wrap them into wrappers
+                             *
+                             */
+                            $.each(  contents.childNodes, function(index, node) {
+                                var p_wrapper = document.createElement("p"),
+                                    wrapper = document.createElement("span");
+
+                                if(_.isUndefined(node) ) return;
+
+                                
+                                wrapper.innerHTML =  node.innerHTML;
+                                node.innerHTML = "";
+                                node.appendChild( wrapper );
+                                _nodes.push({
+                                    node: node,
+                                    wrapper: wrapper
+                                });
+
+                            } );
+                            /**
+                             * Insert nodes back to where they were
+                             * Reverse them since insertNode adds nodes to the beginning
+                             *
+                             *
+                             */
+                            $.each( _nodes.reverse(),  function(index, _node){
+                                var node = _node.node,
+                                    wrapper = _node.wrapper;
+
+                                self.redactor.range.insertNode(node);
+                                var $wrapper = $(wrapper);
+                                apply_to_wrapper( $wrapper );
+                            } );
+                        }else{
+                            wrapper.appendChild(contents);
+                            self.redactor.range.insertNode(wrapper);
+
+                            apply_to_wrapper( $(wrapper) );
                         }
-
 
                         self.redactor.selection.restore();
                         self.redactor.code.sync();
