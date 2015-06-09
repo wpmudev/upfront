@@ -111,26 +111,32 @@ div.preset-manager-panel div.preset_specific div.border_radius1 label {
 }
 div.preset-manager-panel div.preset_specific div.border_radius {
 	display: inline-block;
-	margin-top: 35px;
 	position: relative;
+	margin-top: 0px;
 }
-div.preset-manager-panel div.preset_specific div.border_radius3, div.preset-manager-panel div.preset_specific div.border_radius4 {
-	top:-42px;
+div.preset-manager-panel div.preset_specific div.border_radius label {
+	display: none;
+}
+div.preset-manager-panel div.preset_specific div.border_radius1 {
+	
 }
 div.preset-manager-panel div.preset_specific div.border_radius2 {
-	left:30px;
+	left: 30px;
 }
 div.preset-manager-panel div.preset_specific div.border_radius3 {
-	left: -15px;
+	top: 50px;
+	left: -135px;
 }
 div.preset-manager-panel div.preset_specific div.border_radius4 {
-	left: -45px;
+	left: -13px;
+	top: 50px;
+	margin-bottom: 10px;
 }
-div.preset-manager-panel div.preset_specific div.border_radius4.hover {
-	left: 0;
-}
-div.preset-manager-panel div.preset_specific div.border_radius3.hover {
-	left: 30px;
+div.preset-manager-panel div.border_radius_lock {
+	position: relative;
+	margin-top: 0px;
+	top: -11px;
+	left: 2px;
 }
 div.preset-manager-panel div.preset_specific div.bg-color {
 	display: inline-block;
@@ -284,4 +290,82 @@ div.preset-manager-panel div.border_radius_lock input[type=checkbox]:checked:aft
 }
 .state_settings > .upfront-settings-item-content > div {
 	margin-top: 20px;
+}
+div.preset-manager-panel div.borderWidth, div.preset-manager-panel div.borderType, div.preset-manager-panel div.borderColor {
+	display: inline-block;
+	margin-top: 0px;
+}
+div.preset-manager-panel div.borderWidth {
+	position: relative;
+	top: -7px;
+}
+div.preset-manager-panel div.borderWidth input{
+	width: 50px;
+}
+div.preset-manager-panel div.borderWidth label {
+	display: none;
+}
+div.preset-manager-panel div.borderType {
+	width: 90px;
+	margin-left: 13px;
+	margin-right: 14px;
+}
+div.preset-manager-panel div.borderColor {
+	margin-top: -25px;
+}
+div.preset-manager-panel .backgroundColor .sp-replacer  {
+	margin-top: -50px;
+	margin-left: 130px;
+}
+div.preset-manager-panel div.typeFace, div.preset-manager-panel div.weightStyle {
+	display: inline-block;
+	margin-top: 0px;
+}
+div.preset-manager-panel div.typeFace {
+	width: 125px;
+}
+div.preset-manager-panel div.weightStyle {
+	width: 95px;
+	margin-left: 10px;
+}
+div.preset-manager-panel .upfront-field-label-inline {
+	font-size: 11px;
+	display: block;
+	font-family: verdana, sans-serif;
+}
+div.preset-manager-panel .fontSize, div.preset-manager-panel .lineHeight, div.preset-manager-panel .fontColor {
+	display: inline-block;
+	margin-top: 0px;
+	margin-right: 18px;
+}
+div.preset-manager-panel .fontSize input {
+	width: 55px;
+}
+div.preset-manager-panel .lineHeight input {
+	width: 70px;
+}
+div.preset-manager-panel div.fontColor {
+	margin-top: -30px;
+	color: #000;
+}
+div.preset-manager-panel div.preset-separator {
+	border-bottom: 1px solid #e1edf8;
+	margin-top: 0px;
+}
+div.preset-manager-panel .separator-background {
+	position: relative;
+	top: -15px;
+}
+div.preset-manager-panel .separator-corners {
+	position: relative;
+	top: 10px;
+}
+div.preset-manager-panel .typography-heading {
+	margin-top: 0px;
+}
+div.preset-manager-panel .transition .upfront-field-select {
+	margin-top: -24px;
+}
+div.preset-manager-panel .border_radius_lock_hover {
+	margin-bottom: 50px;
 }

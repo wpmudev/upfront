@@ -48,8 +48,7 @@ define([
 		},
 		
 		onPresetUpdate: function(preset) {
-			//this.trigger('upfront:presets:update', preset);
-			this.trigger('upfront:presets:update', this.model.toJSON());
+			this.trigger('upfront:presets:update', preset);
 		},
 
 		// Propagate to parent
