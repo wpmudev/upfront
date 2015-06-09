@@ -786,10 +786,12 @@ var LayoutEditor = {
 				? fields.existing.get_value()
 				: false
 			;
-
+/*
+// Why were we using this?
+// It was causing issues when trying to create a pre-existing layout: https://app.asana.com/0/11140166463836/36929734950095
 			if ( data.latest_post )
 				_upfront_post_data.post_id = data.latest_post;
-
+*/
 			app.create_layout(data.layout, {layout_slug: layout_slug, use_existing: data.use_existing}).done(function() {
 				app.layout.set('current_layout', layout);
 				// Immediately export layout to write initial state to file.
