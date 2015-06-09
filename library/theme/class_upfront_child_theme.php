@@ -209,7 +209,6 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	}
 
 	public function getThemeStylesAsCss() {
-		//$layout = Upfront_Layout::get_cascade();
 		$layout = Upfront_Layout::get_parsed_cascade(); // Use pure static method instead
 		$layout_id = ( !empty($layout['specificity']) ? $layout['specificity'] : ( !empty($layout['item']) ? $layout['item'] : $layout['type'] ) );
 		$out = '';
@@ -231,13 +230,19 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			}
 		}
 
-		foreach($element_types as $type) {
+		// Also check more general cascade styles - works with single post layouts
+		if (empty($alternate_layout_id) && !empty($layout['specificity']) && !empty($layout['item'])) {
+			$alternate_layout_id = $layout['item'];
+		}
+
+		foreach ($element_types as $type) {
 			$style_files = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), Upfront::$Excluded_Files);
 			foreach ($style_files as $style) {
 				// If region CSS, only load the one saved matched the layout_id
 				$style_rx = '/^(' . preg_quote("{$layout_id}", '/') . '|' . preg_quote("{$type}", '/') . (!empty($alternate_layout_id) ? '|' . preg_quote($alternate_layout_id, '/') : '') . ')/';
-				if ( preg_match('/^region(-container|)$/', $type) && !preg_match($style_rx, $style) )
+				if (preg_match('/^region(-container|)$/', $type) && !preg_match($style_rx, $style)) {
 					continue;
+				}
 				$style_content = file_get_contents($styles_root . DIRECTORY_SEPARATOR . $type . DIRECTORY_SEPARATOR . $style);
 				$style_content = $this->_expand_passive_relative_url($style_content);
 				$out .= $style_content;
