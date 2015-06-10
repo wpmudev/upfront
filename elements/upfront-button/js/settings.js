@@ -56,6 +56,13 @@ define([
 						],
 						change: function(value, parentPanel) {
 							parentPanel.model.set({'useborder': value});
+						},
+						show: function(value, parentPanel) {
+							console.log('SETTINGS.JS');
+							console.log('value: ');
+							console.log(value);
+							console.log('parentPanel:');
+							console.log(parentPanel);
 						}
 					}
 				},	
