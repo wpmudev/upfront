@@ -3757,6 +3757,8 @@ define([
 				this.init();
 			if ( this.options.change )
 				this.on('changed', this.options.change, this);
+			if ( this.options.show )
+				this.on('changed rendered', this.dispatch_show, this);
 			if ( this.options.focus )
 				this.on('focus', this.options.focus, this);
 			if ( this.options.blur )
@@ -3765,7 +3767,6 @@ define([
 				this.on('rendered', this.options.rendered, this);
 			if (this.options.on_click)
 				this['on_click'] = this.options.on_click;
-
 			this.once('rendered', function(){
 				var me = this;
 				this.get_field().on('focus', function(){
@@ -3774,6 +3775,9 @@ define([
 					me.trigger('blur');
 				});
 			}, this);
+		},
+		dispatch_show: function () {
+			this.options.show(this.get_value(), this.$el);
 		},
 		get_name: function () {
 			return this.property ? this.property.get('name') : this.name;
@@ -3812,7 +3816,7 @@ define([
 			return this.$el.find( '[name=' + this.get_field_name() + ']' + (this.selected_state ? ':'+this.selected_state : '') );
 		},
 		get_label_html: function () {
-      if (this.options.hide_label === true) return '';
+			if (this.options.hide_label === true) return '';
 			var attr = {
 				'for': this.get_field_id(),
 				'class': 'upfront-field-label ' + ( this.options.label_style == 'inline' ? 'upfront-field-label-inline' : 'upfront-field-label-block' )

@@ -69,15 +69,15 @@ define([
 						change: function(value, parentPanel) {
 							parentPanel.model.set({'useborder': value});
 						},
-						show: function(value, parentPanel) {						
-							if(value == "yes") {
-								parentPanel.$el.find('.borderwidth-static').show();
-								parentPanel.$el.find('.bordertype-static').show();
-								parentPanel.$el.find('.bordercolor-static').show();
+						show: function(value, $el) {
+							if(value[0] == "yes") {
+								$el.closest('.state_settings').find('.borderwidth-static').show();
+								$el.closest('.state_settings').find('.bordertype-static').show();
+								$el.closest('.state_settings').find('.bordercolor-static').show();
 							} else {
-								parentPanel.$el.find('.borderwidth-static').hide();
-								parentPanel.$el.find('.bordertype-static').hide();
-								parentPanel.$el.find('.bordercolor-static').hide();
+								$el.closest('.state_settings').find('.borderwidth-static').hide();
+								$el.closest('.state_settings').find('.bordertype-static').hide();
+								$el.closest('.state_settings').find('.bordercolor-static').hide();
 							}
 						}
 					}
