@@ -68,7 +68,8 @@ define([
 						],
 						change: function(value, parentPanel) {
 							parentPanel.model.set({'useborder': value});
-							
+						},
+						show: function(value, parentPanel) {						
 							if(value == "yes") {
 								parentPanel.$el.find('.borderwidth-static').show();
 								parentPanel.$el.find('.bordertype-static').show();
