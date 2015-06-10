@@ -218,7 +218,10 @@ define([
 						label_style: 'inline',
 						className: 'font-style static weightStyle',
 						change: function(value, parentPanel) {
+							var parsed_variant = Upfront.Views.Font_Model.parse_variant(value);
 							parentPanel.model.set({'fontstyle': value});
+							parentPanel.model.set({'fontstyle_weight': parsed_variant.weight});
+							parentPanel.model.set({'fontstyle_style': parsed_variant.style});
 						}
 					}
 				},
@@ -611,7 +614,7 @@ define([
 						label_style: 'inline',
 						className: 'font-face hover typeFace typeface-hover',
 						change: function(value, parentPanel) {
-							parentPanel.model.set({'fontface': value});
+							parentPanel.model.set({'hov_fontface': value});
 							
 							var styles = new Upfront.Views.Editor.Field.Select({
 								name: 'hov_fontstyle',
@@ -634,7 +637,10 @@ define([
 						label_style: 'inline',
 						className: 'hov-font-style hover weightStyle weightstyle-hover',
 						change: function(value, parentPanel) {
+							var parsed_variant = Upfront.Views.Font_Model.parse_variant(value);
 							parentPanel.model.set({'hov_fontstyle': value});
+							parentPanel.model.set({'hov_fontstyle_weight': parsed_variant.weight});
+							parentPanel.model.set({'hov_fontstyle_style': parsed_variant.style});
 						}
 					}
 				},
