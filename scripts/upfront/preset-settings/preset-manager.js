@@ -65,7 +65,6 @@ define([
 		},
 
 		updatePreset: function(properties) {
-			console.log(properties);
 			var index,
 				//css = Util.generateCss(properties, this.styleTpl),
 				styleElementId;
