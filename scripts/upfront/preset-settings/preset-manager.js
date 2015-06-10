@@ -51,6 +51,7 @@ define([
 			this.listenTo(this.selectPresetPanel, 'upfront:presets:delete', this.deletePreset);
 			this.listenTo(this.selectPresetPanel, 'upfront:presets:change', this.changePreset);
 			this.listenTo(this.selectPresetPanel, 'upfront:presets:update', this.updatePreset);
+			this.listenTo(this.selectPresetPanel, 'upfront:presets:show', this.showPreset);
 
 			if (render) {
 				this.render();
@@ -126,6 +127,12 @@ define([
 			this.$el.empty();
 			this.selectPresetPanel.remove();
 			this.showSelectPresetPanel(true);
+		},
+
+		showPreset: function(preset) {
+			console.log('PRESET-MANAGER.JS');
+			console.log('preset: ');
+			console.log(preset);
 		},
 
 		get_title: function () {
