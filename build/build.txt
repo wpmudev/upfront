@@ -178,6 +178,7 @@ text!elements/upfront-youtube/tpl/clonevideo.html
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/elements/upfront-youtube/js/uyoutube.js
 text!elements/upfront-code/css/editor.css
 text!elements/upfront-code/tpl/editor.html
+/home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/elements/upfront-code/js/syntax.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/elements/upfront-code/js/views.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/elements/upfront-code/js/model.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/elements/upfront-code/js/element.js

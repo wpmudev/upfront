@@ -1,6 +1,6 @@
 <div class="uimage uimage-<?php echo $caption_position ?> uimage-status-<?php echo $image_status ?> uimage-caption-<?php echo $caption_position ?>-<?php echo $caption_alignment ?><?php echo $gifImage ?> <?php echo $placeholder_class ?>" style="text-align: <?php echo $align ?>;">
 	<div class="upfront-image-caption-container" style="margin-top:<?php echo $marginTop ?>px">
-		<?php if($url) { ?>
+		<?php if($url && !$in_editor) { ?>
 		<a href="<?php echo $url ?>" target="<?php echo $link_target ?>">
 		<?php } ?>
 			<?php if($src){ ?>
@@ -23,7 +23,7 @@
 		</div>
 		<?php } ?>
 
-		<?php if($url) { ?>
+		<?php if($url && !$in_editor) { ?>
 		</a>
 		<?php } ?>
 	</div>

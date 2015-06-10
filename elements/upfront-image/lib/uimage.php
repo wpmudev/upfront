@@ -7,6 +7,8 @@ class Upfront_UimageView extends Upfront_Object {
 	public function get_markup () {
 		$data = $this->properties_to_array();
 
+		$data['in_editor'] = false;
+
 		if($data['when_clicked'] == 'show_larger_image'){
 			//wp_enqueue_style('magnific');
 			upfront_add_element_style('magnific', array('/scripts/magnific-popup/magnific-popup.css', false));
@@ -49,6 +51,7 @@ class Upfront_UimageView extends Upfront_Object {
 
 		if (!isset($data['link_target'])) $data['link_target'] = false; // Initialize array member to prevent notices
 		// We could really go with wp_parge_args here...
+
 
 		$markup = '<div>' . upfront_get_template('uimage', $data, dirname(dirname(__FILE__)) . '/tpl/image.html') . '</div>';
 
