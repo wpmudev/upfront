@@ -8,7 +8,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	private $_version = false;
 	private $_required_pages = array();
 	private $_theme_settings;
-	
+
 	protected static $instance;
 
 	public static function get_instance () {
@@ -36,11 +36,10 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 	protected function __construct () {
 		$this->_version = wp_get_theme()->version;
-		
 		$this->set_theme_settings(new Upfront_Theme_Settings(get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'settings.php'));
-		
+
 		self::$instance = $this;
-		
+
 		//add_filter('upfront_create_default_layout', array($this, 'load_page_regions'), 10, 3); // Soooo... this no longer works, yay
 		add_filter('upfront_override_layout_data', array($this, 'load_page_regions'), 10, 2); // This goes in instead of the above ^
 		add_filter('upfront_get_layout_properties', array($this, 'getLayoutProperties'));
@@ -288,6 +287,32 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 				"	font-family: '" . $font['family'] . "'!important;" .
 				"}";
 			$out .= $this->_expand_passive_relative_url($icon_font_style) . "\n";
+		} else {
+			// Load UpfOnt as default
+			$out .= "/* icomoon fonts */
+				@font-face {
+					font-family: 'icomoon';
+					src: url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.eot?-7vfzzg');
+					src: url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.eot?#iefix-7vfzzg') format('embedded-opentype'),
+					url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.woff?-7vfzzg') format('woff'),
+					url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.ttf?-7vfzzg') format('truetype'),
+					url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.svg?-7vfzzg#icomoon') format('svg');
+					font-weight: normal;
+					font-style: normal;
+				}
+				.uf_font_icon {
+					font-family: 'icomoon';
+					speak: none;
+					font-style: normal;
+					font-weight: normal;
+					font-variant: normal;
+					text-transform: none;
+					line-height: 1;
+					position: relative;
+					/* Better Font Rendering =========== */
+					-webkit-font-smoothing: antialiased;
+					-moz-osx-font-smoothing: grayscale;
+				}";
 		}
 
 		$this->_theme_styles_called = true;
@@ -296,9 +321,10 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	}
 
 	private function getActiveIconFont() {
+		error_log('getting active icon font' . $this->get_theme_settings()->get('icon_fonts'));
 		$fonts = json_decode($this->get_theme_settings()->get('icon_fonts'), true);
 		$active_font = false;
-        if(empty($fonts)) return false;
+		if(empty($fonts)) return false;
 		foreach($fonts as $font) {
 			if ($font['active'] === true) {
 				$active_font = $font;
@@ -487,7 +513,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			if (empty($prop['name']) || empty($prop['value'])) continue;
 			if (!is_scalar($prop['value'])) continue; // Do not work on non-scalars
 			if (false === strstr($prop['value'], self::THEME_BASE_URL_MACRO)) continue; // Quick scan first
-			
+
 			$prop['value'] = $this->_expand_passive_relative_url($prop['value']);
 			$properties[$key] = $prop;
 		}
@@ -542,13 +568,13 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		return json_decode($theme_colors);
 	}
-	
+
 	public function getThemeColorsStyles($theme_colors_styles) {
 		if (empty($theme_colors_styles) === false) return $theme_colors_styles;
 
 		$theme_colors = json_decode($this->get_theme_settings()->get('theme_colors'), true);
 		$theme_colors_styles = '';
-		
+
 		if (!empty($theme_colors['colors'])) foreach($theme_colors['colors'] as $index => $item) {
 			$theme_colors_styles .= " .upfront_theme_color_" . $index ."{ color: " . $item["color"] . ";}";
             $theme_colors_styles .= " a .upfront_theme_color_" . $index .":hover{ color: " . $item["color"] . ";}";
@@ -557,7 +583,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
             $theme_colors_styles .= " a .upfront_theme_bg_color_" . $index .":hover{ background-color: " . $item["color"] . ";}";
             $theme_colors_styles .= " button .upfront_theme_bg_color_" . $index .":hover{ background-color: " . $item["color"] . ";}";
 		}
-		
+
 		return $theme_colors_styles;
 	}
 
