@@ -8,13 +8,15 @@ define([
 	var l10n = Upfront.Settings.l10n.button_element;
 	
 	var me = this;
-	
+
+    //Create new field type Separator
 	var FieldSeparator = Upfront.Views.Editor.Field.Text.extend({
       get_field_html: function () {
         return '';
       }
     });
-	
+
+    //Create new field type Heading
 	var FieldHeading = Upfront.Views.Editor.Field.Text.extend({
       get_field_html: function () {
         return '';
@@ -63,6 +65,7 @@ define([
 						name: 'useborder',
 						label: '',
 						default_value: 1,
+                        multiple: false,
 						values: [
 							{ label: 'Border', value: 'yes' }
 						],
@@ -70,7 +73,8 @@ define([
 							parentPanel.model.set({'useborder': value});
 						},
 						show: function(value, $el) {
-							if(value[0] == "yes") {
+                            //Toggle border settings when depending on checkbox value
+							if(value == "yes") {
 								$el.closest('.state_settings').find('.borderwidth-static').show();
 								$el.closest('.state_settings').find('.bordertype-static').show();
 								$el.closest('.state_settings').find('.bordercolor-static').show();
@@ -104,7 +108,6 @@ define([
 					options: {
 						className: 'static borderType bordertype-static',
 						name: 'bordertype',
-						label: l10n.border,
 						default_value: "none",
 						label: '',
 						values: [
@@ -128,7 +131,7 @@ define([
 						label: '',
 						default_value: '#000',
 						spectrum: {
-							preferredFormat: "rgb",
+							preferredFormat: "rgb"
 						},
 						change: function(value, parentPanel) {
 							if (!value) return false;
@@ -144,7 +147,7 @@ define([
 					fieldClass: FieldSeparator,
 					options: {
 						className: 'preset-separator',
-						name: 'presetseparator',
+						name: 'presetseparator'
 					}
 				},
 				{
@@ -156,7 +159,7 @@ define([
 						label: l10n.bg_color,
 						default_value: '#ccc',
 						spectrum: {
-							preferredFormat: "rgb",
+							preferredFormat: "rgb"
 						},
 						change: function(value, parentPanel) {
 							if (!value) return false;
@@ -186,7 +189,6 @@ define([
 						label: 'Typography',
 					}
 				},
-				
 				{
 					fieldClass: Upfront.Views.Editor.Field.Select,
 					options: {
@@ -197,16 +199,18 @@ define([
 						className: 'font-face static typeFace',
 						change: function(value, parentPanel) {
 							parentPanel.model.set({'fontface': value});
-							
-							var styles = new Upfront.Views.Editor.Field.Select({
+						},
+						show: function(value, $el) {
+							//Create new field to update the fontstyle values.
+                            var styles = new Upfront.Views.Editor.Field.Select({
 								name: 'fontstyle',
 								label: 'Weight/Style',
 								label_style: 'inline',
 								className: 'font-style static weightStyle',
 								values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants_for_select(value)
 							});
-							
-							parentPanel.$el.find('.font-style').html(styles.get_field_html());
+
+							$el.closest('.state_settings').find('.font-style').html(styles.get_label_html() + styles.get_field_html());
 						}
 					},
 				},
@@ -219,11 +223,17 @@ define([
 						label_style: 'inline',
 						className: 'font-style static weightStyle',
 						change: function(value, parentPanel) {
+                            //Explode Font style and font weight and save them as separate values
 							var parsed_variant = Upfront.Views.Font_Model.parse_variant(value);
 							parentPanel.model.set({'fontstyle': value});
 							parentPanel.model.set({'fontstyle_weight': parsed_variant.weight});
 							parentPanel.model.set({'fontstyle_style': parsed_variant.style});
-						}
+						},
+                        show: function(value, $el) {
+                            //Set selected value to fontstyle field
+                            var select_value = this.model.get('fontstyle') ? this.model.get('fontstyle') : '';
+                            $el.closest('.state_settings').find('.font-style').find('.upfront-field-select-value').html('<span>' + select_value + '</span>');
+                        }
 					}
 				},
 				{
@@ -264,7 +274,6 @@ define([
 						default_value: '#000',
 						label_style: 'inline',
 						label: 'Color:',
-						label_style: 'inline',
 						spectrum: {
 							preferredFormat: "rgb",
 						},
@@ -292,24 +301,27 @@ define([
 						name: 'useradius',
 						label: '',
 						default_value: 1,
+                        multiple: false,
 						values: [
 							{ label: 'Rounded Corners', value: 'yes' }
 						],
 						change: function(value, parentPanel) {
 							parentPanel.model.set({'useradius': value});
-							
+						},
+						show: function(value, $el) {
+                            //Toggle border radius fields depending on checkbox value
 							if(value == "yes") {
-								parentPanel.$el.find('.border_radius1_static').show();
-								parentPanel.$el.find('.border_radius2_static').show();
-								parentPanel.$el.find('.border_radius3_static').show();
-								parentPanel.$el.find('.border_radius4_static').show();
-								parentPanel.$el.find('.border_radius_lock_static').show();
+								$el.closest('.state_settings').find('.border_radius1_static').show();
+								$el.closest('.state_settings').find('.border_radius2_static').show();
+								$el.closest('.state_settings').find('.border_radius3_static').show();
+								$el.closest('.state_settings').find('.border_radius4_static').show();
+								$el.closest('.state_settings').find('.border_radius_lock_static').show();
 							} else {
-								parentPanel.$el.find('.border_radius1_static').hide();
-								parentPanel.$el.find('.border_radius2_static').hide();
-								parentPanel.$el.find('.border_radius3_static').hide();
-								parentPanel.$el.find('.border_radius4_static').hide();
-								parentPanel.$el.find('.border_radius_lock_static').hide();
+								$el.closest('.state_settings').find('.border_radius1_static').hide();
+								$el.closest('.state_settings').find('.border_radius2_static').hide();
+								$el.closest('.state_settings').find('.border_radius3_static').hide();
+								$el.closest('.state_settings').find('.border_radius4_static').hide();
+								$el.closest('.state_settings').find('.border_radius_lock_static').hide();
 							}
 						}
 					}
@@ -409,6 +421,7 @@ define([
 						name: 'borderradiuslock',
 						label: "",
 						default_value: 1,
+                        multiple: false,
 						values: [
 							{ label: '', value: 'yes' }
 						],
@@ -431,23 +444,26 @@ define([
 					options: {
 						name: 'hov_useborder',
 						label: '',
-						default_value: 1,
+						default_value: 0,
+                        multiple: false,
 						values: [
 							{ label: 'Border', value: 'yes' }
 						],
 						change: function(value, parentPanel) {
 							parentPanel.model.set({'hov_useborder': value});
-							
-							if(value == "yes") {
-								parentPanel.$el.find('.borderwidth-hover').show();
-								parentPanel.$el.find('.bordertype-hover').show();
-								parentPanel.$el.find('.bordercolor-hover').show();
-							} else {
-								parentPanel.$el.find('.borderwidth-hover').hide();
-								parentPanel.$el.find('.bordertype-hover').hide();
-								parentPanel.$el.find('.bordercolor-hover').hide();
-							}
-						}
+						},
+                        show: function(value, $el) {
+                            //Toggle border settings when depending on checkbox value
+                            if(value == "yes") {
+                                $el.closest('.state_settings').find('.borderwidth-hover').show();
+                                $el.closest('.state_settings').find('.bordertype-hover').show();
+                                $el.closest('.state_settings').find('.bordercolor-hover').show();
+                            } else {
+                                $el.closest('.state_settings').find('.borderwidth-hover').hide();
+                                $el.closest('.state_settings').find('.bordertype-hover').hide();
+                                $el.closest('.state_settings').find('.bordercolor-hover').hide();
+                            }
+                        }
 					}
 				},	
 				{
@@ -520,20 +536,21 @@ define([
 					options: {
 						name: 'hov_usebgcolor',
 						className: 'backgroundcolor-hover',
-						label: '',
-						default_value: 1,
+						default_value: 0,
+                        multiple: false,
 						values: [
 							{ label: 'Background color', value: 'yes' }
 						],
 						change: function(value, parentPanel) {
 							parentPanel.model.set({'hov_usebgcolor': value});
-							
-							if(value == "yes") {
-								parentPanel.$el.find('.bgcolor-hover').show();
-							} else {
-								parentPanel.$el.find('.bgcolor-hover').hide();
-							}
-						}
+						},
+                        show: function(value, $el) {
+                            if(value == "yes") {
+                                $el.closest('.state_settings').find('.bgcolor-hover').show();
+                            } else {
+                                $el.closest('.state_settings').find('.bgcolor-hover').hide();
+                            }
+                        }
 					}
 				},	
 				{
@@ -572,29 +589,31 @@ define([
 						name: 'hov_usetypography',
 						label: '',
 						className: 'typography-hover',
-						default_value: 1,
+                        multiple: false,
+						default_value: 0,
 						values: [
 							{ label: 'Typography', value: 'yes' }
 						],
 						change: function(value, parentPanel) {
 							parentPanel.model.set({'hov_usetypography': value});
-							
-							if(value == "yes") {
-								parentPanel.$el.find('.typeface-hover').show();
-								parentPanel.$el.find('.weightstyle-hover').show();
-								parentPanel.$el.find('.fontsize-hover').show();
-								parentPanel.$el.find('.lineheight-hover').show();
-								parentPanel.$el.find('.fontcolor-hover').show();
-								parentPanel.$el.find('.typography-heading-hover').show();
-							} else {
-								parentPanel.$el.find('.typeface-hover').hide();
-								parentPanel.$el.find('.weightstyle-hover').hide();
-								parentPanel.$el.find('.fontsize-hover').hide();
-								parentPanel.$el.find('.lineheight-hover').hide();
-								parentPanel.$el.find('.fontcolor-hover').hide();
-								parentPanel.$el.find('.typography-heading-hover').hide();
-							}
-						}
+						},
+                        show: function(value, $el) {
+                            if(value == "yes") {
+                                $el.closest('.state_settings').find('.typeface-hover').show();
+                                $el.closest('.state_settings').find('.weightstyle-hover').show();
+                                $el.closest('.state_settings').find('.fontsize-hover').show();
+                                $el.closest('.state_settings').find('.lineheight-hover').show();
+                                $el.closest('.state_settings').find('.fontcolor-hover').show();
+                                $el.closest('.state_settings').find('.typography-heading-hover').show();
+                            } else {
+                                $el.closest('.state_settings').find('.typeface-hover').hide();
+                                $el.closest('.state_settings').find('.weightstyle-hover').hide();
+                                $el.closest('.state_settings').find('.fontsize-hover').hide();
+                                $el.closest('.state_settings').find('.lineheight-hover').hide();
+                                $el.closest('.state_settings').find('.fontcolor-hover').hide();
+                                $el.closest('.state_settings').find('.typography-heading-hover').hide();
+                            }
+                        }
 					}
 				},	
 				{
@@ -616,17 +635,19 @@ define([
 						className: 'font-face hover typeFace typeface-hover',
 						change: function(value, parentPanel) {
 							parentPanel.model.set({'hov_fontface': value});
-							
-							var styles = new Upfront.Views.Editor.Field.Select({
-								name: 'hov_fontstyle',
-								label: 'Weight/Style',
-								label_style: 'inline',
-								className: 'hov-font-style static weightStyle weightstyle-hover',
-								values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants_for_select(value)
-							});
-							
-							parentPanel.$el.find('.hov-font-style').html(styles.get_field_html());
-						}
+						},
+                        show: function(value, $el) {
+                            //Create new field to update the fontstyle values.
+                            var styles = new Upfront.Views.Editor.Field.Select({
+                                name: 'hov_fontstyle',
+                                label: 'Weight/Style',
+                                label_style: 'inline',
+                                className: 'hov-font-style static weightStyle weightstyle-hover',
+                                values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants_for_select(value)
+                            });
+
+                            $el.closest('.state_settings').find('.hov-font-style').html(styles.get_label_html() + styles.get_field_html());
+                        }
 					},
 				},
 				{
@@ -637,12 +658,18 @@ define([
 						label: 'Weight/Style:',
 						label_style: 'inline',
 						className: 'hov-font-style hover weightStyle weightstyle-hover',
-						change: function(value, parentPanel) {
-							var parsed_variant = Upfront.Views.Font_Model.parse_variant(value);
-							parentPanel.model.set({'hov_fontstyle': value});
-							parentPanel.model.set({'hov_fontstyle_weight': parsed_variant.weight});
-							parentPanel.model.set({'hov_fontstyle_style': parsed_variant.style});
-						}
+                        change: function(value, parentPanel) {
+                            //Explode Font style and font weight and save them as separate values
+                            var parsed_variant = Upfront.Views.Font_Model.parse_variant(value);
+                            parentPanel.model.set({'hov_fontstyle': value});
+                            parentPanel.model.set({'hov_fontstyle_weight': parsed_variant.weight});
+                            parentPanel.model.set({'hov_fontstyle_style': parsed_variant.style});
+                        },
+                        show: function(value, $el) {
+                            //Set selected value to hov_fontstyle
+                            var select_value = this.model.get('hov_fontstyle') ? this.model.get('hov_fontstyle') : '';
+                            $el.closest('.state_settings').find('.hov-font-style').find('.upfront-field-select-value').html('<span>' + select_value + '</span>');
+                        }
 					}
 				},
 				{
@@ -683,7 +710,6 @@ define([
 						default_value: '#000',
 						label_style: 'inline',
 						label: 'Color:',
-						label_style: 'inline',
 						spectrum: {
 							preferredFormat: "rgb",
 						},
@@ -710,27 +736,29 @@ define([
 					options: {
 						name: 'hov_useradius',
 						label: '',
-						default_value: 1,
+						default_value: 0,
+                        multiple: false,
 						values: [
 							{ label: 'Rounded Corners', value: 'yes' }
 						],
 						change: function(value, parentPanel) {
 							parentPanel.model.set({'hov_useradius': value});
-							
-							if(value == "yes") {
-								parentPanel.$el.find('.border_radius1_hover').show();
-								parentPanel.$el.find('.border_radius2_hover').show();
-								parentPanel.$el.find('.border_radius3_hover').show();
-								parentPanel.$el.find('.border_radius4_hover').show();
-								parentPanel.$el.find('.border_radius_lock_hover').show();
-							} else {
-								parentPanel.$el.find('.border_radius1_hover').hide();
-								parentPanel.$el.find('.border_radius2_hover').hide();
-								parentPanel.$el.find('.border_radius3_hover').hide();
-								parentPanel.$el.find('.border_radius4_hover').hide();
-								parentPanel.$el.find('.border_radius_lock_hover').hide();
-							}
-						}
+						},
+                        show: function(value, $el) {
+                            if(value == "yes") {
+                                $el.closest('.state_settings').find('.border_radius1_hover').show();
+                                $el.closest('.state_settings').find('.border_radius2_hover').show();
+                                $el.closest('.state_settings').find('.border_radius3_hover').show();
+                                $el.closest('.state_settings').find('.border_radius4_hover').show();
+                                $el.closest('.state_settings').find('.border_radius_lock_hover').show();
+                            } else {
+                                $el.closest('.state_settings').find('.border_radius1_hover').hide();
+                                $el.closest('.state_settings').find('.border_radius2_hover').hide();
+                                $el.closest('.state_settings').find('.border_radius3_hover').hide();
+                                $el.closest('.state_settings').find('.border_radius4_hover').hide();
+                                $el.closest('.state_settings').find('.border_radius_lock_hover').hide();
+                            }
+                        }
 					}
 				},	
 				
@@ -829,6 +857,7 @@ define([
 						name: 'hov_borderradiuslock',
 						label: "",
 						default_value: 1,
+                        multiple: false,
 						values: [
 							{ label: '', value: 'yes' }
 						],

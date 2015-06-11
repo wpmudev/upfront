@@ -3777,7 +3777,11 @@ define([
 			}, this);
 		},
 		dispatch_show: function () {
-			this.options.show(this.get_value(), this.$el);
+			var me = this;
+			setTimeout(function(){
+				me.options.show(me.get_value(), me.$el);
+			}, 100);
+			
 		},
 		get_name: function () {
 			return this.property ? this.property.get('name') : this.name;
@@ -5817,8 +5821,6 @@ var ThemeFontsCollection = Backbone.Collection.extend({
 	get_variants_for_select: function(font_family) {
 		var variants;
 		var typefaces_list = [];
-		
-		console.log(font_family);
 
 		_.each(system_fonts_storage.get_fonts().models, function(font) {
 			if (font_family === font.get('family')) {
