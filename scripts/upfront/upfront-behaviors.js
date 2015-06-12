@@ -4936,22 +4936,36 @@ var GridEditor = {
 				column_paddings: {},
 				baselines: {},
 				type_paddings: {}
-			};
-		if ( grid_data.column_width ){
+			},
+			// Dealing with responsive settings which, apparently, trump the grid entirely
+			current_bp_id = Upfront.Settings.LayoutEditor.CurrentBreakpoint || Upfront.Settings.LayoutEditor.Grid.size_name,
+			breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().findWhere({id: current_bp_id}),
+			flag_update_breakpoint = false
+		;
+
+		if (grid_data.column_width) {
 			options.column_widths[grid.size_name] = grid_data.column_width;
+			if (breakpoint.get_property_value_by_name('column_width') != grid_data.column_width) {
+				breakpoint.set_property("column_width", grid_data.column_width);
+				flag_update_breakpoint = true;
+			}
 		}
-		if ( grid_data.column_padding ){
+		if ("column_padding" in grid_data) { // Special case! Allow zero values in column paddings
 			options.column_paddings[grid.size_name] = grid_data.column_padding;
+			if (breakpoint.get_property_value_by_name('column_padding') != grid_data.column_padding) {
+				breakpoint.set_property("column_padding", grid_data.column_padding);
+				flag_update_breakpoint = true;
+			}
 		}
-		if ( grid_data.baseline ){
-			if ( grid_data.baseline != grid.baseline ){
+		if (grid_data.baseline) {
+			if (grid_data.baseline != grid.baseline) {
 				// to prevent css loading at every change, we timeout to 1000ms before decide to load it
 				clearTimeout(this._load_editor_css);
-				this._load_editor_css = setTimeout(function(){
+				this._load_editor_css = setTimeout(function() {
 					Upfront.Util.post({
 						action: 'upfront_load_editor_grid',
 						baseline: grid_data.baseline
-					}, 'text').success(function(data){
+					}, 'text').success(function(data) {
 						if ( $('#upfront-editor-grid-inline').length )
 							$('#upfront-editor-grid-inline').html( data );
 						else
@@ -4960,14 +4974,27 @@ var GridEditor = {
 				}, 1000);
 			}
 			options.baselines[grid.size_name] = grid_data.baseline;
+			if (breakpoint.get_property_value_by_name('baseline') != grid_data.baseline) {
+				breakpoint.set_property("baseline", grid_data.baseline);
+				flag_update_breakpoint = true;
+			}
 		}
-		if ( grid_data.type_padding ){
+		if (grid_data.type_padding) {
 			options.type_paddings[grid.size_name] = grid_data.type_padding;
+			if (breakpoint.get_property_value_by_name('type_padding') != grid_data.type_padding) {
+				breakpoint.set_property("type_padding", grid_data.type_padding);
+				flag_update_breakpoint = true;
+			}
 		}
 		Upfront.Settings.LayoutEditor.Grid = _.extend(grid, grid_data);
 		app.layout.set_property('grid', options);
 		app.layout_view.update_grid_css();
 		this.init(); // re-init to update grid values
+
+		if (flag_update_breakpoint && Upfront.Application.get_current() == Upfront.Settings.Application.MODE.THEME) {
+			// Only do this in exporter, because that's where we're actually allowing structural changes.
+			breakpoint.trigger("change:enabled", breakpoint);
+		}
 	},
 
 
