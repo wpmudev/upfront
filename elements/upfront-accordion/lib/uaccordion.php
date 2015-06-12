@@ -129,6 +129,7 @@ class Upfront_UaccordionView extends Upfront_Object {
 			'section_bg' => __('Section Background:', 'upfront'),
 			'header_bg' => __('Header Background:', 'upfront'),
 			'header_border' => __('Header Border:', 'upfront'),
+			'default_preset' => __('Default', 'upfront'),
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)

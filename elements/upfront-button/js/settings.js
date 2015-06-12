@@ -55,7 +55,9 @@ define([
 			'hov_fontface': 'Arial',
 			'hov_color': 'rgb(0, 0, 0)',
 			'hov_duration': 0.25,
-			'hov_transition': 'linear'
+			'hov_transition': 'linear',
+			'id': 'default',
+			'name': l10n.default_preset
 		},
 		stateFields: {
 			Static: [

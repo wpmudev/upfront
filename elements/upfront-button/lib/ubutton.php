@@ -101,6 +101,7 @@ class Upfront_ButtonView extends Upfront_Object {
 			'color' => __('Color', 'upfront'),
 			'bg_color' => __('Background Color', 'upfront'),
 			'edit_text' => __('Edit Text', 'upfront'),
+			'default_preset' => __('Default', 'upfront'),
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)

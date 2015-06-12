@@ -29,6 +29,16 @@ define([
 			this.options = options;
 			this.has_tabs = false;
 
+			var defaultPreset = false;
+			_.each(Upfront.mainData[this.mainDataCollection], function(preset, presetIndex) {
+				if (preset.id === 'default') {
+					defaultPreset = true;
+				}
+			});
+			if(!defaultPreset) {
+				Upfront.mainData[this.mainDataCollection].unshift(this.presetDefaults);
+			}
+
 			this.presets = new Backbone.Collection(Upfront.mainData[this.mainDataCollection] || []);
 
 			this.showSelectPresetPanel(false);

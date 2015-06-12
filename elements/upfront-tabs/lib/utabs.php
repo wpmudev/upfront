@@ -125,6 +125,7 @@ class Upfront_UtabsView extends Upfront_Object {
 				'active_p_info' => __('The paragraph that contains active tab content', 'upfront'),
 			),
 			'settings' => __('Tabs settings', 'upfront'),
+			'default_preset' => __('Default', 'upfront'),
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)

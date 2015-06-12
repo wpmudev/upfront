@@ -27,7 +27,9 @@ define([
 			'static-font-color': 'rgb(96, 96, 96)',
 			'static-header-background': 'rgb(0, 0, 0)',
 			'static-header-bg-color': 'rgb(0, 0, 0)',
-			'static-triangle-icon-color': 'rgb(255, 255, 255)'
+			'static-triangle-icon-color': 'rgb(255, 255, 255)',
+			'id': 'default',
+			'name': l10n.default_preset
 		},
 		stateFields: {
 			Active: [
