@@ -65,7 +65,7 @@ define([
 		},
 
 		updatePreset: function(properties) {
-			var index,
+            var index,
 				//css = Util.generateCss(properties, this.styleTpl),
 				styleElementId;
 			/* // Note: killed, because we already do this in Util
