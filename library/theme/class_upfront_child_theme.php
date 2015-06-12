@@ -442,53 +442,6 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			$properties = json_decode($properties, true);
 		}
 
-		// Grid editing fix!!
-		if (!empty($properties['breakpoints'])) {
-			
-			$layout_properties = $this->get_theme_settings()->get('layout_properties');
-			if (!empty($layout_properties)) {
-				$layout_properties = json_decode($layout_properties, true);
-				
-				$overrides = array();
-				foreach ($properties['breakpoints'] as $point) {
-					$id = $point['id'];
-					$overrides[$id] = array();
-					if (!empty($point['column_width'])) $overrides[$id]['column_width'] = $point['column_width'];
-					if (!empty($point['column_padding'])) $overrides[$id]['column_padding'] = $point['column_padding'];
-					if (!empty($point['baseline'])) $overrides[$id]['baseline'] = $point['baseline'];
-					if (!empty($point['type_padding'])) $overrides[$id]['type_padding'] = $point['type_padding'];
-				}
-
-				foreach ($layout_properties as $prop) {
-					if (empty($prop['name']) || empty($prop['value'])) continue;
-					if ('grid' === $prop['name']) {
-						if (!empty($prop['value']['column_widths'])) foreach ($prop['value']['column_widths'] as $key => $value) {
-							if (!empty($overrides[$key])) $overrides[$key]['column_width'] = $value;
-						}
-						if (!empty($prop['value']['column_paddings'])) foreach ($prop['value']['column_paddings'] as $key => $value) {
-							if (!empty($overrides[$key])) $overrides[$key]['column_padding'] = $value;
-						}
-						if (!empty($prop['value']['baselines'])) foreach ($prop['value']['baselines'] as $key => $value) {
-							if (!empty($overrides[$key])) $overrides[$key]['baseline'] = $value;
-						}
-						if (!empty($prop['value']['type_paddings'])) foreach ($prop['value']['type_paddings'] as $key => $value) {
-							if (!empty($overrides[$key])) $overrides[$key]['type_padding'] = $value;
-						}
-					}
-				}
-
-				// Okay, so now we have the overridden global stuff...
-				// Apply it
-				foreach ($properties['breakpoints'] as $idx => $point) {
-					$id = $point['id'];
-					if (!empty($overrides[$id])) {
-						$properties['breakpoints'][$idx] = array_merge($point, $overrides[$id]);
-					}
-				}
-			}
-		}
-		// End grid editing fix
-
 		return !empty($properties)
 			? $properties
 			: array()
