@@ -30,7 +30,7 @@ function() {
 				Upfront.Events.once('entity:settings:deactivate', function() {
 					// Reset change callback to avoid zombies
 					field.options.change = field.options.preserved_preset_change;
-					field.options.preserved_preset_change = false;
+					//field.options.preserved_preset_change = false;
 				});
 
 				fields.push(stateField);
