@@ -1122,7 +1122,9 @@ RedactorPlugins.upfrontColor = function() {
                         }
 
                         var wrapper = document.createElement("span"),
+                            //contents = document.createRange().createContextualFragment( self.redactor.selection.getHtml() ),
                             contents = self.redactor.range.extractContents(),
+                            //contents = self.redactor.range.cloneContents(),
                             range = self.redactor.range,
                             $range = range.commonAncestorContainer ? $(range.commonAncestorContainer) : false,
                             apply_to_wrapper = function($wrapper){
@@ -1138,14 +1140,25 @@ RedactorPlugins.upfrontColor = function() {
                             }
                         ;
 
-                        if ($range && $range.length && $range.is("span")) {
-                            range.selectNode(range.commonAncestorContainer);
-                            Upfront.Views.Theme_Colors.colors.remove_theme_color_classes($range, is_bg);
-                            $range.attr("style", "");
-                            wrapper = $range.get(0);
-                        }
+                        // Todo Ve: Removing this would allow changing the color of part of a block which already has color i.e
+                        // You have "This is my whole text" and it's aready red, but you wanna change the color of "whole" word
 
-                        if( contents.childNodes[0] && contents.childNodes[0].tagName.toLowerCase() === "p" ){ //  make sure use can set color to multiple paragraphs at once
+                        //if ($range && $range.length && $range.is("span")) {
+                        //    range.selectNode(range.commonAncestorContainer);
+                        //    Upfront.Views.Theme_Colors.colors.remove_theme_color_classes($range, is_bg);
+                        //    $range.attr("style", "");
+                        //    wrapper = $range.get(0);
+                        //
+                        //}
+
+
+
+                        //if( contents.childNodes[0] && _.indexOf(["p", "li"], contents.childNodes[0].tagName.toLowerCase() ) !== -1 ){ //  make sure use can set color to multiple paragraphs at once
+                        if( contents.childNodes[0] && self.redactor.utils.isBlock( contents.childNodes[0] )  ){ //  make sure use can set color to multiple blocks at once
+
+                            while( self.redactor.selection.getParent() ){// try to remove selected nodes as long as we have any selected node
+                                $( self.redactor.selection.getBlocks()).remove();
+                            }
                             var _nodes = [];
 
                             /**
@@ -1183,7 +1196,9 @@ RedactorPlugins.upfrontColor = function() {
                                     wrapper = _node.wrapper;
 
                                 self.redactor.range.insertNode(node);
+                                //container.appendChild(node);
                                 var $wrapper = $(wrapper);
+
                                 apply_to_wrapper( $wrapper );
                             } );
                         }else{
