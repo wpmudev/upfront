@@ -323,6 +323,24 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		}
 		$content_settings = json_encode($content_settings);
 
+        /**
+         * Redactor font icons
+         *
+         *
+         */
+
+        // get default font
+        $redactor_font_icons = $this->_get_default_font_icons();
+
+        $redactor_font_icons = apply_filters(
+            'upfront_get_editor_font_icons',
+            $redactor_font_icons,
+            array(
+                'json' => true
+            )
+        );
+
+
 		$main = <<<EOMainJs
 // Set up the global namespace
 var Upfront = window.Upfront || {};
@@ -352,7 +370,8 @@ Upfront.mainData = {
 	postImageVariants: {$post_image_variants},
 	content: {$content},
 	content_settings: {$content_settings},
-	l10n: {$l10n}
+	l10n: {$l10n},
+	font_icons: {$redactor_font_icons}
 };
 EOMainJs;
 		$this->_out(new Upfront_JavascriptResponse_Success($main));
@@ -387,4 +406,61 @@ EOMainJs;
 		$l10n = array();
 		return apply_filters('upfront_l10n', $l10n);
 	}
+
+    /**
+     * Returns default font icons
+     *
+     * @return array
+     */
+    private function _get_default_font_icons(){
+        return json_encode( array(
+            "~",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "0",
+            "-",
+            "+",
+            "Q",
+            "W",
+            "E",
+            "R",
+            "T",
+            "Y",
+            "U",
+            "I",
+            "O",
+            "P",
+            "{",
+            "}",
+            "|",
+            "A",
+            "S",
+            "D",
+            "F",
+            "G",
+            "H",
+            "J",
+            "K",
+            "L",
+            ":",
+            '"',
+            "Z",
+            "X",
+            "C",
+            "V",
+            "B",
+            "N",
+            "M",
+            "<",
+            ">",
+            "?",
+        ) );
+    }
 }

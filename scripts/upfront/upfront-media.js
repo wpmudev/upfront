@@ -305,7 +305,7 @@ define(function() {
 			Upfront.Events.on("media:search:requested", this.switch_to_search, this);
 		},
 		render: function () {
-			var me = this; setTimeout(function () { me.render_filters(); }, 1); // Fixes the initial inability to toggle filters
+			this.render_filters();
 		},
 		render_filters: function () {
 			this.control = this.is_search_active ? new MediaManager_SearchFiltersControl() : new MediaManager_FiltersControl();
@@ -382,7 +382,7 @@ define(function() {
 				"click a.all": "select_all"
 			},
 			render: function () {
-				this.$el.empty().append('Select <a href="#all" class="all">' + l10n.all + '</a>&nbsp;|&nbsp;<a href="#none" class="none">' + l10n.none + '</a>');
+				this.$el.empty().append(l10n.select + ' <a href="#all" class="all">' + l10n.all + '</a>&nbsp;|&nbsp;<a href="#none" class="none">' + l10n.none + '</a>');
 			},
 			select_none: function (e) {
 				e.preventDefault();
@@ -411,7 +411,7 @@ define(function() {
 				click: "delete_selection"
 			},
 			render: function () {
-				this.$el.empty().append('<a href="#delete">Delete</a>');
+				this.$el.empty().append('<a href="#delete">' + l10n.del_command + '</a>');
 			},
 			delete_selection: function (e) {
 				e.preventDefault();
@@ -509,7 +509,7 @@ define(function() {
 				$hub.empty();
 				if (!additional_sizes.length) return false;
 				_(additional_sizes).each(function (size) {
-					sizes.push({ label: size, value: size });
+					sizes.push({ label: (size === MEDIA_SIZES.FULL ? l10n.size_full : size), value: size });
 				});
 				this.size_field = new Upfront.Views.Editor.Field.Select({
 					model: this.model.at(0),
@@ -597,7 +597,7 @@ define(function() {
 				},
 				render: function () {
 					this.$el.empty()
-						.append('<div class="title">' + 'Please, select labels...' + '</div>')
+						.append('<div class="title">' + l10n.please_select_labels + '</div>')
 						.append('<div class="search_labels" />')
 						.append('<div class="labels_list"><ul></ul></div>')
 						.append('<div class="add_labels" />')
@@ -930,7 +930,7 @@ define(function() {
 				;
 				this.$el
 					.empty()
-					.append('<div class="title">' + 'Please, select labels...' + '</div>')
+					.append('<div class="title">' + l10n.please_select_labels + '</div>')
 					.append('<input type="text" class="filter upfront-field upfront-field-text" value="' + sel + '" />')
 					.append('<div class="labels_list"><ul></ul></div>')
 				;
@@ -944,6 +944,8 @@ define(function() {
 					$hub = this.$el.find("div.labels_list ul")
 				;
 				$hub.empty();
+				if (!this.$el.is(".active")) return false; // Only actually render this if we can see it - it takes *a while* to do so
+
 				this.model.each(function (model) {
 					if (me.allowed_values && me.allowed_values.indexOf(model.get("value")) < 0) return false;
 					var item = new Media_FilterSelection_AdditiveMultiselection_Item({model: model});
@@ -1237,7 +1239,7 @@ define(function() {
 		remove: function() {
 			this.library_view.remove();
 			this.switcher_view.remove();
-			this.library_view = new MediaManager_PostImage_View(this.collection);
+			//this.library_view = new MediaManager_PostImage_View(this.collection);
 			Upfront.Events.off("media_manager:media:list", this.switch_media_type, this);
 		},
 		render: function () {
@@ -1438,7 +1440,7 @@ define(function() {
 					// Input
 					markup += '<div class="upfront-pagination_navigation">';
 					markup += 	'<input type="text" class="upfront-pagination_page-current" value="' + ActiveFilters.current_page + '" />';
-					markup += 	" of ";
+					markup += 	'&nbsp;' + l10n.n_of_x + '&nbsp;';
 					markup += 	'<a class="upfront-pagination_page-item" data-idx="' + (ActiveFilters.max_pages - 1) + '">' + (ActiveFilters.max_pages - 1) + '</a>';
 					markup += '</div>';
 
@@ -1494,7 +1496,7 @@ define(function() {
 					has_search = !!search && search.get("state")
 				;
 				this.$el.empty()
-					.append('<input type="text" placeholder="Search" value="' + (has_search && search ? search.get("value") : '') + '" />')
+					.append('<input type="text" placeholder="' + l10n.search + '" value="' + (has_search && search ? search.get("value") : '') + '" />')
 				;
 				if (has_search) {
 					this.$el.append('<a href="#clear" class="clear upfront-icon upfront-icon-popup-search-clear"></a>');
@@ -1766,10 +1768,12 @@ define(function() {
 				this._subviews.media = new MediaCollection_View({model: this.media_collection});
 			}
 			var media = this._subviews.media;
+			
 			if (!this._subviews.aux) {
 				this._subviews.aux = new MediaManager_AuxControls_View({model: this.media_collection});
 			}
 			var aux = this._subviews.aux;
+			
 			if (!this._subviews.controls) {
 				this._subviews.controls = new MediaManager_Controls_View({model: this.media_collection});
 			}
@@ -1797,9 +1801,11 @@ define(function() {
 			});
 		},
 		remove: function() {
-			_.each(this._subviews, function(subview) {
+			_.each(this._subviews, function(subview, idx) {
+				if (!subview) return true;
 				subview.remove();
-			});
+				this._subviews[idx] = false;
+			}, this);
 		}
 	});
 
@@ -1844,10 +1850,9 @@ define(function() {
 			this.$el.append(this.loading.$el);
 		},
 		end_loading: function (callback) {
-			if ( this.loading && this.loading.done )
-				this.loading.done(callback);
-			else
-				callback();
+			if (this.loading && this.loading.done) this.loading.done(callback);
+			else callback();
+			Upfront.Events.trigger("media:item:selection_changed", this.model);
 		},
 		propagate_selection: function (model) {
 			if (!this.multiple_selection) {
@@ -2216,7 +2221,7 @@ define(function() {
 				me.load(options);
 			}, {width: 800, hold_editor: options.hold_editor}, 'media-manager');
 
-			popup.always(this.cleanup_active_filters);
+			popup.always(_.bind(this.cleanup_active_filters, this));
 			popup.progress($.proxy(this.clean_up, this));
 
 			Upfront.Events.trigger('upfront:element:edit:start', 'media-upload');
@@ -2233,14 +2238,18 @@ define(function() {
 		},
 		cleanup_active_filters: function () {
 			ActiveFilters.allowed_media_types = [];
+			this.cleanup_manager_view();
 		},
-		load: function (options) {
-
+		cleanup_manager_view: function () {
 			if (this.media_manager) {
 				this.media_manager.undelegateEvents();
 				this.media_manager.remove();
 				this.media_manage_options = undefined;
 			}
+		},
+		load: function (options) {
+
+			this.cleanup_manager_view();
 
 			if (_.isUndefined(this.media_manage_options)) {
 				this.media_manage_options = _.extend({
@@ -2266,7 +2275,7 @@ define(function() {
 					selected_size = item.get("selected_size") || MEDIA_SIZES.FULL,
 					all_sizes = item.get("additional_sizes")
 				;
-				if (selected_size && "full" != selected_size) {
+				if (selected_size && MEDIA_SIZES.FULL != selected_size) {
 					_(all_sizes).each(function (size) {
 						if (MEDIA_SIZES.to_size(size) != selected_size) return true;
 						data.image = size;

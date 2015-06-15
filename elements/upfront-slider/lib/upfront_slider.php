@@ -12,8 +12,9 @@ class Upfront_UsliderView extends Upfront_Object {
 		foreach($data['slides'] as $slide){
 			$slides[] = array_merge(self::slide_defaults(), $slide);
 		}
+
 		$data['slides'] = $slides;
-		$data['rotate'] = sizeof($data['rotate']);
+		$data['rotate'] = $data['rotate'] ? true : false;
 
 		$data['dots'] = array_search($data['controls'], array('dots', 'both')) !== false;
 		$data['arrows'] = array_search($data['controls'], array('arrows', 'both')) !== false;

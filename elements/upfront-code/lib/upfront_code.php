@@ -23,7 +23,7 @@ class Upfront_CodeView extends Upfront_Object {
 			: ''
 		;
 		$markup = !empty($properties['markup'])
-			? $properties['markup']
+			? $this->_to_valid_html($properties['markup'])
 			: ''
 		;
 		return '<div class="upfront_code-element clearfix">' . $markup . $style . $script . "</div>";
@@ -53,6 +53,22 @@ class Upfront_CodeView extends Upfront_Object {
 			? "<script>;try { (function ($) { {$raw}\n })(jQuery); } catch(e) {}</script>"
 			: ''
 		;
+	}
+
+	private function _to_valid_html ($raw) {
+		if (class_exists('DOMDocument') && class_exists('DOMXpath')) {
+			$doc = new DOMDocument();
+			if (function_exists('libxml_use_internal_errors')) libxml_use_internal_errors(true);
+			$doc->loadHTML($raw);
+			$parsed = $doc->saveHTML();
+			if (function_exists('libxml_use_internal_errors')) libxml_use_internal_errors(false);
+			$raw = !empty($parsed)
+				? preg_replace('/^.*<body>/ms', '', preg_replace('/<\/body>.*$/ms', '', $parsed))
+				: $raw
+			;
+		}
+
+		return $raw;
 	}
 
 	public static function default_properties () {
@@ -96,8 +112,13 @@ class Upfront_CodeView extends Upfront_Object {
 			),
 			'create' => array(
 				'change' => __('Click to change', 'upfront'),
-				'js_error' => __('JS error:', 'upfront'),
 				'ok' => __('OK', 'upfront'),
+			),
+			'errors' => array(
+				'markup' => __('HTML error:', 'upfront'),
+				'style' => __('CSS error:', 'upfront'),
+				'script' => __('JS error:', 'upfront'),
+				'error_markup' => __('There\'s an error in your HTML. Please, re-check your markup for invalid arguments, broken tags and the like.', 'upfront'),
 			),
 			'template' => array(
 				'html' => __('HTML', 'upfront'),

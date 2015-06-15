@@ -446,6 +446,8 @@ define([
 			props.marginTop = Math.max(0, -props.position.top);
 			props.link_target = props.link_target || '_self';
 
+			props.in_editor = true;
+
 			props.cover_caption = props.caption_position !== 'below_image';
 
 			if(props.stretch) {

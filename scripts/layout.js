@@ -656,58 +656,73 @@ jQuery(document).ready(function($){
 		}
 
 
-		  var url = $(this).attr('href');
-		  if(!url)
-		  	return;
+	  	var url = $(this).attr('href');
+	  	if(!url)
+	  		return;
 
-			if(url.indexOf('#') >=0) {
-			  e.preventDefault();
-			  var tempurl = url.split('#');
-			  if(tempurl[1].trim() != '')
-				if(tempurl[1].trim().indexOf('ltb-') == 0) {
-					var lightbox =  $('div.upfront-region-'+tempurl[1].trim());
+		if(url.indexOf('#') >=0) {
+		  
+		  var tempurl = url.split('#');
+		  if(tempurl[1].trim() != '')
+			if(tempurl[1].trim().indexOf('ltb-') == 0) {
+				var lightbox =  $('div.upfront-region-'+tempurl[1].trim());
 
-					overlay.css('background-color', lightbox .data('overlay')).insertBefore(lightbox);
+				overlay.css('background-color', lightbox .data('overlay')).insertBefore(lightbox);
 
-					if(lightbox.data('closeicon') == 'yes' || lightbox.data('addclosetext') == 'yes') {
-						lightbox.prepend(close);
+				if(lightbox.data('closeicon') == 'yes' || lightbox.data('addclosetext') == 'yes') {
+					lightbox.prepend(close);
 
-						if(lightbox.data('addclosetext') == 'yes') {
-							close.append($('<h3>'+lightbox.data('closetext')+'</h3>'));
-							if(lightbox.data('closeicon') == 'yes')
-								close.children('h3').css('margin-right', '40px');
-						}
+					if(lightbox.data('addclosetext') == 'yes') {
+						close.append($('<h3>'+lightbox.data('closetext')+'</h3>'));
 						if(lightbox.data('closeicon') == 'yes')
-							close.append(close_icon);
-
-						close.bind('click', function() {
-							lightboxhide();
-						});
+							close.children('h3').css('margin-right', '40px');
 					}
+					if(lightbox.data('closeicon') == 'yes')
+						close.append(close_icon);
 
-					if(lightbox.data('clickout') == 'yes')
-						overlay.bind('click', function() {
-							lightboxhide();
-						});
-					//translate width in columns to width in pixels as per the total width of upfront-grid-layout being 24 cols
-					lightbox.css('width', $('div.upfront-grid-layout').first().width()*lightbox.data('col')/24);
-					lightbox.show().css({'margin-left': -(parseInt(lightbox.width()/2)), 'margin-top': -(parseInt(lightbox.height()/2))});
-					$(document).trigger("upfront-lightbox-open");
-					e.preventDefault();
-					function lightboxhide() {
-						close.html('').remove()
-						overlay.remove();
-						lightbox.hide();
-					}
+					close.bind('click', function() {
+						lightboxhide();
+					});
 				}
-				else {
-					var nav = $('.upfront-output-region-container[data-sticky="1"], .upfront-output-region-sub-container[data-sticky="1"]').first();
-					var height = nav.height() ? nav.height() : 0;
-					//It is an anchor
-					$('html,body').animate({scrollTop: $(url).offset().top - height },'slow');
+
+				if(lightbox.data('clickout') == 'yes')
+					overlay.bind('click', function() {
+						lightboxhide();
+					});
+				//translate width in columns to width in pixels as per the total width of upfront-grid-layout being 24 cols
+				lightbox.css('width', $('div.upfront-grid-layout').first().width()*lightbox.data('col')/24);
+				lightbox.show().css({'margin-left': -(parseInt(lightbox.width()/2)), 'margin-top': -(parseInt(lightbox.height()/2))});
+				$(document).trigger("upfront-lightbox-open");
+				e.preventDefault();
+				function lightboxhide() {
+					close.html('').remove()
+					overlay.remove();
+					lightbox.hide();
 				}
 			}
-		});
+			else {
+				
+				var nav = $('.upfront-output-region-container[data-sticky="1"], .upfront-output-region-sub-container[data-sticky="1"]').first();
+				var height = nav.height() ? nav.height() : 0;
+
+				var splitted, anchor;
+				if(url.indexOf('#') > 0) {
+					splitted = url.split('#');
+					anchor = '#'+splitted[1];
+				}
+				else if(url.indexOf('#') == 0) {
+					anchor = url;
+				}
+				
+				if($('a[data-is-anchor="1"]'+anchor).length > 0)
+					$('html,body').animate({scrollTop: $('a'+anchor).offset().top - height },'slow');
+				else //this link with a hash might be for another page
+					return;
+				
+			}
+			e.preventDefault();
+		}
+	});
 
 
 

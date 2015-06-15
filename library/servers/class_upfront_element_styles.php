@@ -17,7 +17,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 	private function _add_hooks () {
 		$this->_cache = Upfront_Cache::get_instance(Upfront_Cache::TYPE_LONG_TERM);
 
-		if (Upfront_OutputBehavior::has_experiments()) {
+		if (Upfront_Behavior::compression()->has_experiments()) {
 			add_filter('upfront-experiments-styles-debounce_dependency_load', array($this, 'add_style_load_url'));
 			add_filter('upfront-experiments-scripts-debounce_dependency_load', array($this, 'add_script_load_url'));
 		} else {
@@ -54,12 +54,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 			$this->_cache->set($ckey, $cache);
 		}
 
-		//wp_enqueue_style('upfront-element-styles', admin_url('admin-ajax.php?action=upfront-element-styles&key=' . $cache_key)); // It'll also work as an AJAX request
-		wp_enqueue_style('upfront-element-styles', Upfront_VirtualPage::get_url(join('/', array(
-			'upfront-dependencies',
-			'styles',
-			$raw_cache_key
-		))), array(), $this->_get_enqueue_version()); // But let's do pretty instead
+		wp_enqueue_style('upfront-element-styles', $this->_get_enqueueing_url(self::TYPE_STYLE, $raw_cache_key), array(), $this->_get_enqueue_version()); // But let's do pretty instead
 	}
 
 	public function add_style_load_url ($urls) {
@@ -84,11 +79,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 			$this->_cache->set($ckey, $cache);
 		}
 
-		$url = Upfront_VirtualPage::get_url(join('/', array(
-			'upfront-dependencies',
-			'styles',
-			$raw_cache_key
-		)));
+		$url = $this->_get_enqueueing_url(self::TYPE_STYLE, $raw_cache_key);
 		$urls[] = $url;
 		return $urls;
 	}
@@ -157,12 +148,8 @@ class Upfront_ElementStyles extends Upfront_Server {
 			}
 			$this->_cache->set($ckey, $cache);
 		}
-		//wp_enqueue_script('upfront-element-scripts', admin_url('admin-ajax.php?action=upfront-element-scripts&key=' . $cache_key), array('jquery')); // It'll also work as an AJAX request
-		wp_enqueue_script('upfront-element-scripts', Upfront_VirtualPage::get_url(join('/', array(
-			'upfront-dependencies',
-			'scripts',
-			$raw_cache_key
-		))), array('jquery'), $this->_get_enqueue_version(), true); // Scripts go into footer
+
+		wp_enqueue_script('upfront-element-scripts', $this->_get_enqueueing_url(self::TYPE_SCRIPT, $raw_cache_key), array('jquery'), $this->_get_enqueue_version(), true); // Scripts go into footer
 	}
 
 	public function add_script_load_url ($urls) {
@@ -182,11 +169,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 			}
 			$this->_cache->set($ckey, $cache);
 		}
-		$url = Upfront_VirtualPage::get_url(join('/', array(
-			'upfront-dependencies',
-			'scripts',
-			$raw_cache_key
-		)));
+		$url = $this->_get_enqueueing_url(self::TYPE_SCRIPT, $raw_cache_key);
 		$urls[] = $url;
 		return $urls;
 	}
@@ -219,6 +202,24 @@ class Upfront_ElementStyles extends Upfront_Server {
 
 	private function _get_enqueue_version () {
 		return Upfront_ChildTheme::get_version();
+	}
+
+	private function _get_enqueueing_url ($type, $key) {
+		$url = false;
+		$endpoint = self::TYPE_SCRIPT === $type
+			? 'scripts'
+			: 'styles'
+		;
+		if (Upfront_Behavior::debug()->is_active(Upfront_Debug::DEPENDENCIES)) {
+			$url = admin_url("admin-ajax.php?action=upfront-element-{$endpoint}&key={$key}");
+		} else {
+			$url = Upfront_VirtualPage::get_url(join('/', array(
+				'upfront-dependencies',
+				$endpoint,
+				$key
+			)));
+		}
+		return $url;
 	}
 
 }

@@ -299,7 +299,8 @@ class Upfront_Posts_PostView {
 
 		// Detect `more` tag and act on it
 		if (preg_match('/(<!--more(.*?)?-->)/', $content, $matches)) {
-			$content = reset(explode($matches[0], $content, 2));
+			$mtc = explode($matches[0], $content, 2);
+			$content = reset($mtc);
 		}
 
 		$excerpt = preg_replace('/\s+/', ' ', // Collapse potential multiple consecutive whitespaces

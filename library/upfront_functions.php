@@ -177,7 +177,7 @@ function upfront_ajax_url ($action, $args = '') {
 	$args = wp_parse_args($args);
 	$args['action'] = $action;
 	$args['layout'] = Upfront_EntityResolver::get_entity_ids();
-	if ( current_user_can('switch_themes') && !empty($_GET['dev']) )
+	if ( current_user_can('switch_themes') && Upfront_Behavior::debug()->is_dev() )
 		$args['load_dev'] = 1;
 	return admin_url( 'admin-ajax.php?' . http_build_query($args) );
 }
@@ -231,7 +231,7 @@ function upfront_add_element_style ($slug, $path_info) {
 
 	if (current_theme_supports($slug)) return true; // Current theme supports this style
 
-	if (empty($_GET['dev']) && empty($_GET['debug'])) { // Yeah, so re-intorduce the hacks
+	if (!Upfront_Behavior::debug()->is_dev() && !Upfront_Behavior::debug()->is_debug()) { // Yeah, so re-intorduce the hacks
 		$hub = Upfront_PublicStylesheets_Registry::get_instance();
 		return $hub->set($slug, $path_info);
 	} else {
@@ -256,7 +256,7 @@ function upfront_add_element_script ($slug, $path_info) {
 		current_theme_supports("{$slug}-script")
 	) return true; // Current theme supports element scripts, and this script in particular
 
-	if (empty($_GET['dev']) && empty($_GET['debug'])) { // Yeah, so re-intorduce the hacks
+	if (!Upfront_Behavior::debug()->is_dev() && !Upfront_Behavior::debug()->is_debug()) { // Yeah, so re-intorduce the hacks
 		$hub = Upfront_PublicScripts_Registry::get_instance();
 		return $hub->set($slug, $path_info);
 	} else {

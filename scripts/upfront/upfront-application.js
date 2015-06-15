@@ -1214,6 +1214,7 @@ var Application = new (Backbone.Router.extend({
 		// Start loading animation
 		app.loading = new Upfront.Views.Editor.Loading({
 			loading: Upfront.Settings.l10n.global.application.loading,
+			loading_type: 'upfront-boot',
 			done: Upfront.Settings.l10n.global.application.thank_you_for_waiting,
 			fixed: true
 		});

@@ -135,7 +135,8 @@ class Upfront_Cache_Key {
 abstract class Upfront_Cache_Abstract {
 
 	public function key () {
-		return call_user_func_array(array('Upfront_Cache_Key', 'spawn'), func_get_args());
+        $func_args = func_get_args();
+		return call_user_func_array(array('Upfront_Cache_Key', 'spawn'), $func_args);
 	}
 
 	public function get_expiration ($context=false) {

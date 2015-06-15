@@ -475,29 +475,20 @@ class Upfront_GridBreakpoint {
 
 	public function __construct ($data) {
 		$this->_debugger = Upfront_Debug::get_debugger();
-		extract($data);
-		if ( $name )
-			$this->_name = $name;
-		if ( $short_name )
-			$this->_short_name = $short_name;
-		if ( $id )
-			$this->_id = $id;
-		if ( $width )
-			$this->_width = $width;
-		if ( $columns )
-			$this->_columns = $columns;
-		if ( !empty($default) )
-			$this->_default = $default;
-		if ( !empty($enabled) )
-			$this->_enabled = $enabled;
-		if ( !empty($column_padding) )
-			$this->_column_padding = $column_padding;
-		if ( !empty($column_width) )
-			$this->_column_width = $column_width;
-		if ( !empty($baseline) )
-			$this->_baseline = $baseline;
-		if ( !empty($type_padding) )
-			$this->_type_padding = $type_padding;
+		
+		if (isset($data['name'])) $this->_name = $data['name'];
+		if (isset($data['short_name'])) $this->_short_name = $data['short_name'];
+		if (isset($data['id'])) $this->_id = $data['id'];
+		if (isset($data['width'])) $this->_width = $data['width'];
+		if (isset($data['columns'])) $this->_columns = $data['columns'];
+		if (isset($data['column_padding'])) $this->_column_padding = $data['column_padding']; // Special-case handling to allow zero-width column paddings
+		
+		if (!empty($data['default'])) $this->_default = $data['default'];
+		if (!empty($data['enabled'])) $this->_enabled = $data['enabled'];
+		if (!empty($data['column_width'])) $this->_column_width = $data['column_width'];
+		if (!empty($data['baseline'])) $this->_baseline = $data['baseline'];
+		if (!empty($data['type_padding'])) $this->_type_padding = $data['type_padding'];
+
 		$this->_data = $data;
 	}
 

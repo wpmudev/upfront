@@ -48,7 +48,7 @@ var UcommentView = Upfront.Views.ObjectView.extend({
 		Upfront.Util.post({"action": "ucomment_get_comment_markup", "data": JSON.stringify({"post_id": post_id})})
 			.success(function (ret) {
 				var html = ret.data.replace(/<script.*?>.*?<\/script>/gim, ''); // strip script
-				$(document).data('upfront-comment-' + _upfront_post_data.post_id, html);
+				$(document).data('upfront-comment-' + _upfront_post_data.post_id, html || '&nbsp;');
 				me.render();
 			})
 			.error(function (ret) {
