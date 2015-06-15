@@ -4,7 +4,13 @@ require_once Upfront::get_root_dir() . '/library/servers/class_upfront_presets_s
 
 class Upfront_Button_Presets_Server extends Upfront_Presets_Server {
 	private static $instance;
-
+	
+	protected function __construct() {
+		parent::__construct();
+		
+		$this->update_preset_values();
+	}
+	
 	public function get_element_name() {
 		return 'button';
 	}
@@ -43,8 +49,51 @@ class Upfront_Button_Presets_Server extends Upfront_Presets_Server {
 				'as_array' => true
 			)
 		);
+
+		// Fail-safe
+		if (is_array($presets) === false) {
+			$presets = array();
+		}
+
+		return $presets;
+	}
+	
+	public function clearPreset($preset) {
+		$preset = str_replace(' ', '-', $preset);
+		$preset = preg_replace('/[^-a-zA-Z0-9]/', '', $preset);
+
+		return $preset; // Removes special chars.
+	}
+	
+	public function update_preset_values() {
+		$presets = $this->get_presets();
 		
+		$update_settings = array();
 		$result = array();
+		
+		$count = 0;
+		//Check if old preset data and enable preset options
+		foreach($presets as $preset_options) {
+			
+			//Enable all checkboxes for button preset
+			if(!isset($preset_options['lineheight'])) {
+				$preset_options['useborder'] = 'yes';
+				$preset_options['useradius'] = 'yes';
+				$preset_options['hov_usetypography'] = 'yes';
+				$preset_options['hov_useborder'] = 'yes';
+				$preset_options['hov_useradius'] = 'yes';
+				$preset_options['hov_usebgcolor'] = 'yes';
+				$preset_options['lineheight'] = 1;
+				$count++;
+			}
+			
+			$update_settings[] = $preset_options;
+		}
+		
+		//If changed presets update database
+		if($count > 0 && !empty($update_settings)) {
+			$this->update_presets($update_settings);
+		}
 		
 		$i = 0;
 		foreach ($presets as $preset) {
@@ -64,20 +113,6 @@ class Upfront_Button_Presets_Server extends Upfront_Presets_Server {
 			$this->update_presets($result);
 			$presets = $result;
 		}
-
-		// Fail-safe
-		if (is_array($presets) === false) {
-			$presets = array();
-		}
-
-		return $presets;
-	}
-	
-	public function clearPreset($preset) {
-		$preset = str_replace(' ', '-', $preset);
-		$preset = preg_replace('/[^-a-zA-Z0-9]/', '', $preset);
-
-		return $preset; // Removes special chars.
 	}
 }
 
