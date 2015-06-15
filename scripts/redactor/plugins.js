@@ -1364,20 +1364,24 @@ RedactorPlugins.upfrontFormatting = function() {
                 this.redactor.$editor.focus();
 
                 var tag = $(e.target).data("tag"),
+                    selection = this.redactor.selection,
                     html = this.redactor.selection.getHtml(), // Gets selected html
-                    css = this.redactor.selection.getCurrent() ? this.redactor.selection.getCurrent().style.cssText : false;
+                    //$html = $(html),
+                    resulting_html = "",
+                    css = this.redactor.selection.getParent() ? this.redactor.selection.getParent().style.cssText : false;
 
-                // Change tag name
-                this.redactor.block.format(tag);
 
-                if( css ){
-                    // Puts prev html into the current tag
-                    this.redactor.$editor.find(tag).eq(0).html( html)[0].style.cssText = css;
-                }else{
-                    this.redactor.$editor.find(tag).eq(0).html( html);
-                }
+                var formatted = this.redactor.selection.wrap(tag);
+                if (formatted === false) return;
 
-                
+                var $formatted = $(formatted);
+
+                this.redactor.block.formatTableWrapping($formatted);
+
+                if( this.redactor.selection.getParent() )
+                    $(this.redactor.selection.getCurrent()).find(tag).unwrap();
+
+
                 this.redactor.dropdown.hideAll();
             },
             change_custom_class: function(e){

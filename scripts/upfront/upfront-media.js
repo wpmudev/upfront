@@ -338,7 +338,7 @@ define(function() {
 			this.render_filters();
 		},
 		remove: function() {
-			this.control.remove();
+			if (this.control) this.control.remove();
 			Upfront.Events.off("media:item:selection_changed", this.switch_controls);
 			Upfront.Events.off("media:search:requested", this.switch_to_search);
 		}
@@ -701,7 +701,6 @@ define(function() {
 			render: function () {
 				var search = ActiveFilters.get("search").first(),
 					obj = search.toJSON();
-				//console.log(ActiveFilters);
 				obj.total = ActiveFilters.get("search").length;
 				this.$el.empty().append(
 					_.template(l10n.showing_total_results + ' <b class="search-text">{{value}}</b> <a href="#clear" class="clear_search">' + l10n.clear_search + '</a>', obj)
@@ -811,7 +810,6 @@ define(function() {
 			},
 			remove: function() {
 				Upfront.Events.off("media_manager:media:list", this.set_filters);
-				console.log('removed set filters');
 			}
 		});
 
@@ -1138,6 +1136,10 @@ define(function() {
 			this.$el.addClass('clearfix');
 			this.switch_to_library();
 		},
+		remove: function () {
+			this.undelegateEvents();
+			this.$el.empty();
+		},
 		switch_to_library: function (e) {
 			var data = {};
 			this.$el
@@ -1190,7 +1192,6 @@ define(function() {
 		 */
 		is_in_editing_mode: function () {
 			var type = Upfront.Application.sidebar.prevented_usage_type;
-			console.log(type);
 			return !(type.match(/media/));
 		}
 	});
@@ -1215,11 +1216,12 @@ define(function() {
 
 			ActiveFilters.to_defaults();
 			this.switcher_view = new MediaManager_Switcher({el: this.popup_data.$top});
-            this.switcher_view.on("media_manager:switcher:to_library", this.render_library, this);
-            this.switcher_view.on("media_manager:switcher:to_embed", this.render_embed, this);
-            this.switcher_view.on("media_manager:switcher:to_upload", this.render_upload, this);
-            this.switcher_view.on("media_manager:switcher:to_shortcode", this.render_shortcode, this);
-            this.switcher_view.on("media_manager:switcher:to_markup", this.render_markup, this);
+
+            this.listenTo(this.switcher_view, "media_manager:switcher:to_library", this.render_library, this);
+            this.listenTo(this.switcher_view, "media_manager:switcher:to_embed", this.render_embed, this);
+            this.listenTo(this.switcher_view, "media_manager:switcher:to_upload", this.render_upload, this);
+            this.listenTo(this.switcher_view, "media_manager:switcher:to_shortcode", this.render_shortcode, this);
+            this.listenTo(this.switcher_view, "media_manager:switcher:to_markup", this.render_markup, this);
 
 			this.command_view = new MediaManager_BottomCommand({el: this.popup_data.$bottom, button_text: button_text, ck_insert: data.ck_insert});
 			this.library_view = new MediaManager_PostImage_View(data.collection);
@@ -1234,6 +1236,7 @@ define(function() {
 		},
 		remove: function() {
 			this.library_view.remove();
+			this.switcher_view.remove();
 			this.library_view = new MediaManager_PostImage_View(this.collection);
 			Upfront.Events.off("media_manager:media:list", this.switch_media_type, this);
 		},
@@ -1286,12 +1289,13 @@ define(function() {
 			var me = this,
 				uploaded = 0, progressing = 0, done =0,
 				new_media = [],
+				media_library_view = me.library_view._subviews.media,
 				uploadUrl = ActiveFilters.themeImages ? _upfront_media_upload.theme : _upfront_media_upload.normal
 			;
 
             this.$("#fileupload").remove();
             this.$el.append('<input id="fileupload" type="file" style="display:none" name="media" data-url="' + uploadUrl + '" multiple >');
-            this.$("#fileupload").on("click", function (e) { e.stopPropagation(); }).fileupload({
+            this.$("#fileupload").off("click").on("click", function (e) { e.stopPropagation(); }).fileupload({
 				dataType: 'json',
 				add: function (e, data) {
 					var media = data.files[0],
@@ -1301,7 +1305,7 @@ define(function() {
 					uploaded +=1;
 					new_media[count] = new MediaItem_Model({progress: 0});
 					new_media[count].set({post_title: name});
-					me.library_view.media_collection.add(new_media[count], {at: 0});
+					media_library_view.model.add(new_media[count], {at: 0});
 					data.submit();
 					new_media[count].on("upload:abort", function () {
 						data.abort();
@@ -1311,11 +1315,11 @@ define(function() {
 								action: "upfront-media-remove_item",
 								item_id: new_media[count].get("ID")
 							}).always(function () {
-								me.library_view.media_collection.trigger("change");
+								media_library_view.model.trigger("change");
 							});
 						}
-						me.library_view.media_collection.remove(new_media[count]);
-						me.library_view.media_collection.trigger("change");
+						media_library_view.model.remove(new_media[count]);
+						media_library_view.model.trigger("change");
 					});
 					new_media[count].trigger("upload:start", media);
 				},
@@ -1356,10 +1360,10 @@ define(function() {
 
 		},
 		render_shortcode: function () {
-			console.log("SHORTCODE YAY");
+			//console.log("SHORTCODE YAY");
 		},
 		render_markup: function () {
-			console.log("MARKUP YAY");
+			//console.log("MARKUP YAY");
 		},
 		load: function (data) {
 			this._request_in_progress = true;
@@ -2231,19 +2235,27 @@ define(function() {
 			ActiveFilters.allowed_media_types = [];
 		},
 		load: function (options) {
-			if( _.isUndefined( this.media_manage_options ) ){
-				this.media_manage_options = _.extend({
-					el: this.out,
-					data: this.popup_data
-				}, options);
-				this.media_manager = new MediaManager_View( this.media_manage_options );
-			}else if( !_.isEqual( this.media_manage_options,  _.extend({ el: this.out, data: this.popup_data }, options)) ){
-				this.media_manage_options = _.extend({
-					el: this.out,
-					data: this.popup_data
-				}, options);
-				this.media_manager = new MediaManager_View( this.media_manage_options );
+
+			if (this.media_manager) {
+				this.media_manager.undelegateEvents();
+				this.media_manager.remove();
+				this.media_manage_options = undefined;
 			}
+
+			if (_.isUndefined(this.media_manage_options)) {
+				this.media_manage_options = _.extend({
+					el: this.out,
+					data: this.popup_data
+				}, options);
+				this.media_manager = new MediaManager_View(this.media_manage_options);
+			} else if(!_.isEqual(this.media_manage_options,  _.extend({ el: this.out, data: this.popup_data }, options))) {
+				this.media_manage_options = _.extend({
+					el: this.out,
+					data: this.popup_data
+				}, options);
+				this.media_manager = new MediaManager_View(this.media_manage_options);
+			}
+
 			this.media_manager.render();
 			return false;
 		},
