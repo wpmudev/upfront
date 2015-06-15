@@ -11,45 +11,81 @@ var Views = {
 	DEFAULT: 'post_data',
 
 	_view: Backbone.View.extend({
+		_do_cache: true,
 
-		render: function () {
+		render: function (only_objects) {
 			var me = this,
 				model = Upfront.Util.model_to_json(this.model),
 				props = model.properties || {},
 				objects = model.objects || {},
-				post_id = 0
+				data = {
+					props: props,
+					objects: objects,
+					post_id: this.element.postId
+				}
 			;
-			if ( _upfront_post_data.post_id )
-				post_id = _upfront_post_data.post_id;
-			console.log('rendering view', post_id);
+			console.log('rendering view', this.element.postId);
+			if ( this.element.authorId ) {
+				data.author_id = this.element.authorId;
+			}
+			if ( this.element.postDate ) {
+				data.post_date = this.element.postDate;
+			}
 			this._post_data_load = Upfront.Util
 				.post({
 					action: "upfront_post-data-load",
-					data: {
-						props: props,
-						objects: objects,
-						post_id: post_id
-					}
+					data: data
 				})
 				.success(function (response) {
 					console.log(response.data)
 					if (response.data && response.data.post_data) {
-						me.model.get('objects').each(function(object){
-							var view = Upfront.data.object_views[object.cid],
-								type = object.get_property_value_by_name('part_type');
-							if ( !view || !type || !response.data.post_data[type] )
-								return;
-							view.render_view(response.data.post_data[type]);
-						});
-						me.$el.empty();
+						me.render_object_view(response.data.post_data, only_objects);
+						if ( me._do_cache ) {
+							me._cached_data = response.data.post_data;
+						}
+						me.$el
+							.empty()
+							.removeClass('upfront_post-data-loading');
 					}
-					else me.$el.empty().append(me.tpl.error({l10n: l10n}));
+					else { 
+						me.$el
+							.empty()
+							.append(me.tpl.error({l10n: l10n}))
+							.removeClass('upfront_post-data-loading');
+					}
 				})
 				.error(function () {
-					me.$el.empty().append(me.tpl.error({l10n: l10n}));
+					me.$el
+						.empty()
+						.append(me.tpl.error({l10n: l10n}))
+						.removeClass('upfront_post-data-loading');
 				})
 			;
-			this.$el.empty().append(this.tpl.load({l10n: l10n}));
+			this.$el
+				.empty()
+				.append(this.tpl.load({l10n: l10n}))
+				.addClass('upfront_post-data-loading');
+		},
+		
+		// Just re-render with the same cached data
+		rerender: function (only_objects) {
+			if ( this._cached_data ) {
+				this.render_object_view(this._cached_data, only_objects);
+			}
+			else {
+				this.render();
+			}
+		},
+		
+		render_object_view: function (data, only_objects) {
+			if ( ! _.isArray(only_objects) ) only_objects = [];
+			this.model.get('objects').each(function(object){
+				var view = Upfront.data.object_views[object.cid],
+					type = object.get_property_value_by_name('part_type');
+				if ( only_objects.length > 0 && ! _.contains(only_objects, type) ) return;
+				if ( !view || !type || !data[type] ) return;
+				view.render_view(data[type]);
+			});
 		},
 		
 		tpl: {
@@ -62,23 +98,23 @@ var Views = {
 };
 
 Views.post_data = Views._view.extend({
-	className: 'upfront_post-data-post_data'
+	className: 'upfront_post-data-view upfront_post-data-post_data'
 });
 
 Views.author = Views._view.extend({
-	className: 'upfront_post-data-author'
+	className: 'upfront_post-data-view upfront_post-data-author'
 });
 
 Views.taxonomy = Views._view.extend({
-	className: 'upfront_post-data-taxonomy'
+	className: 'upfront_post-data-view upfront_post-data-taxonomy'
 });
 
 Views.featured_image = Views._view.extend({
-	className: 'upfront_post-data-featured_image'
+	className: 'upfront_post-data-view upfront_post-data-featured_image'
 });
 
 Views.comments = Views._view.extend({
-	className: 'upfront_post-data-comments'
+	className: 'upfront_post-data-view upfront_post-data-comments'
 });
 
 return Views;

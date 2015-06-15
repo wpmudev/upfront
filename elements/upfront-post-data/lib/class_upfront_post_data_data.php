@@ -37,16 +37,18 @@ class Upfront_Post_Data_Data {
 			switch ( $data_type ){
 				case 'post_data':
 					$defaults['date_posted_format'] = get_option('date_format') . ' ' . get_option('time_format');
+					$defaults['content'] = 'content';
 					break;
 				case 'author':
+					$defaults['gravatar_size'] = 200;
 					break;
 				case 'taxonomy':
 					$defaults['categories_limit'] = 3;
 					$defaults['tags_limit'] = 3;
 					break;
 				case 'featured_image':
-					$defaults['resize_featured'] = '1';
-					$defaults['gravatar_size'] = 200;
+					$defaults['full_featured_image'] = '0';
+					$defaults['hide_featured_image'] = '0';
 					break;
 				case 'comments':
 					$defaults['comment_count_hide'] = 0;

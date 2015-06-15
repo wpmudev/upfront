@@ -1250,10 +1250,15 @@ define([
 				"click .upfront-object-group > .upfront-entity_meta > a.upfront-entity-settings_trigger": "on_settings_click",
                 "click .upfront-object-group > .upfront-entity_meta > a.upfront-entity-delete_trigger": "on_delete_click",
 				"click .upfront-object-group > .upfront-entity_meta": "on_meta_click",
-				"click > .upfront-object-group-finish-edit": "disable_object_edit",
+				"click > .upfront-object-group-finish-edit": "on_finish",
 				"click": "on_click",
 				//"dblclick": "on_edit",
 				"contextmenu": "on_context_menu"
+			},
+			
+			initialize: function () {
+				ObjectView.prototype.initialize.call(this);
+				this.listenTo(Upfront.Events, "command:object_group:finish_edit", this.on_finish);
 			},
 			
 			render: function () {
@@ -1312,6 +1317,7 @@ define([
 			},
 			
 			enable_object_edit: function () {
+				Upfront.Events.trigger("command:object_group:finish_edit"); // close other edit first
 				this.toggle_object_edit(true);
 			},
 			
@@ -1338,6 +1344,13 @@ define([
 					if ( $object.data('ui-draggable') )
 						$object.draggable('option', 'disabled', !enable);
 				});
+			},
+			
+			on_finish: function (e) {
+				if( typeof e !== "undefined" ){
+					e.preventDefault();
+				}
+				this.disable_object_edit();
 			},
 			
 			remove: function () {
@@ -1368,7 +1381,8 @@ define([
 					Upfront.data.object_views = {};
 				if ( typeof Upfront.data.wrapper_views == 'undefined' )
 					Upfront.data.wrapper_views = {};
-				this.current_wrapper_id = this.current_wrapper_el = null
+				this.current_wrapper_id = null;
+				this.current_wrapper_el = null;
 				this.model.each(function (obj) {
 					var view_class_prop = obj.get("properties").where({"name": "view_class"}),
 						is_obj_group = obj.get("objects") ? true : false,
@@ -1390,23 +1404,22 @@ define([
 						else {
 							local_view.parent_module_view = me.parent_view;
 						}
-						local_view.render();
 						
 						if ( !wrapper ){
 							local_view.render();
 							$el.append(local_view.el);
 						}
 						else {
-							if ( this.current_wrapper_id == wrapper_id ){
-								wrapper_el = this.current_wrapper_el;
+							if ( me.current_wrapper_id == wrapper_id ){
+								wrapper_el = me.current_wrapper_el;
 							}
 							else {
 								wrapper_view = Upfront.data.wrapper_views[wrapper.cid] || new Upfront.Views.Wrapper({model: wrapper});
 								wrapper_view.render();
 								wrapper_el = wrapper_view.el;
 							}
-							this.current_wrapper_id = wrapper_id;
-							this.current_wrapper_el = wrapper_el;
+							me.current_wrapper_id = wrapper_id;
+							me.current_wrapper_el = wrapper_el;
 							local_view.render();
 							$(wrapper_el).append(local_view.el);
 							if ( wrapper_view ){
@@ -2196,7 +2209,8 @@ define([
 				this.$el.html('');
 				var $el = this.$el,
 					me = this;
-				this.current_wrapper_id = this.current_wrapper_el = null;
+				this.current_wrapper_id = null;
+				this.current_wrapper_el = null;
 				//console.log('Modules render - ' + this.cid + ' - ' + this.region_view.model.get('name'));
 				Upfront.Events.trigger("entity:modules:before_render", this, this.model);
 				if ( typeof Upfront.data.module_views == 'undefined' )
@@ -4628,6 +4642,8 @@ define([
 				Upfront.Events.trigger("layout:after_render");
 			},
 			on_click: function (e) {
+				// Check that we are not editing post content
+				if (this.$el.hasClass('upfront-editing-post-content')) return;
 				//Check we are not selecting text
 				//var selection = document.getSelection ? document.getSelection() : document.selection;
 				//if(selection && selection.type == 'Range')
@@ -4656,9 +4672,11 @@ define([
 				// Unselect selection
 				if ( !Upfront.Behaviors.LayoutEditor.selecting )
 					Upfront.Events.trigger("command:selection:remove");
-				// Deactiving group reorder on clicking anywhere
+				// Deactiving group edit on clicking anywhere
 				if ( !$(e.target).closest('.upfront-module-group-on-edit').length )
 					Upfront.Events.trigger("command:module_group:finish_edit");
+				if ( !$(e.target).closest('.upfront-object-group-on-edit').length )
+					Upfront.Events.trigger("command:object_group:finish_edit");
 			},
 			on_mode_switch: function () {
 				if ( Upfront.Application.get_current() !== Upfront.Settings.Application.MODE.RESPONSIVE )

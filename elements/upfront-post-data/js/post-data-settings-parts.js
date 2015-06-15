@@ -243,9 +243,10 @@ Parts.Part_Featured_image = Parts.Part.extend({
 	set_options: function () {
 		this.field = new Upfront.Views.Editor.Field.Checkboxes({
 			model: this.model,
-			property: "resize_featured",
+			property: "full_featured_image",
+			multiple: false,
 			values: [
-				{label: l10n.resize_to_fit, value: '1'}
+				{label: 'Show Full-Size featured image', value: '1'}
 			]
 		});
 	}

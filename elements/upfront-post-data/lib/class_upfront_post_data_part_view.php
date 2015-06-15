@@ -36,7 +36,7 @@ abstract class Upfront_Post_Data_PartView extends Upfront_PostPart_View {
 			if (!in_array($part, $enabled_post_parts)) continue;
 			$method = "expand_{$part}_template";
 			if (method_exists($this, $method)) $parts[$part] = $this->$method();
-			else $parts[$part] = apply_filters('upfront_posts-' . $method, '', $post);
+			else $parts[$part] = apply_filters('upfront_postdata-' . $method, '', $post);
 		}
 
 		// Also expand postmeta codes outside the meta element

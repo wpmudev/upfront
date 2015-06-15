@@ -152,9 +152,10 @@
 
 /* line 1, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/general-stuff */
 [contenteditable="true"] {
-  outline: none; }
+  outline: none;
+  cursor: text; }
 
-/* line 5, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/general-stuff */
+/* line 6, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/general-stuff */
 .upfront-no-select {
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -162,20 +163,20 @@
   -o-user-select: none;
   user-select: none; }
 
-/* line 12, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/general-stuff */
+/* line 13, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/general-stuff */
 strike {
   text-decoration: line-through; }
 
-/* line 15, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/general-stuff */
+/* line 16, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/general-stuff */
 em {
   font-style: italic; }
 
-/* line 18, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/general-stuff */
+/* line 19, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/general-stuff */
 .ui-resizable-handle-hidden {
   display: none !important; }
 
 /* --- Make text editing look better --- */
-/* line 22, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/general-stuff */
+/* line 23, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/general-stuff */
 [contenteditable=true]:focus {
   outline: none; }
 

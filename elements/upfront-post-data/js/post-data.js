@@ -8,6 +8,8 @@ define([
 var l10n = Upfront.Settings.l10n.post_data_element;
 var $template = $(tpl);
 
+var data = {};
+
 
 var PostDataPartModel = Upfront.Models.ObjectModel.extend({
 	init: function () {
@@ -34,18 +36,43 @@ var PostDataModel = Upfront.Models.ObjectGroup.extend({
 });
 
 
+var PostDataEditor = null; // Store editor instance
+
 var PostDataPartView = Upfront.Views.ObjectView.extend({
 	init: function () {
-		
 	},
 	
 	on_render: function () {
-		
+		//console.log(this.el, this)
 	},
 	
 	render_view: function (markup) {
-		console.log('part render view???', this, markup)
+		console.log(markup)
 		this.$el.find('.upfront-object-content').empty().append(markup);
+		this.prepare_editor();
+	},
+	
+	prepare_editor: function () {
+		var me = this,
+			type = this.model.get_property_value_by_name('part_type'),
+			node = this.$el.find('.upfront-object-content');
+		if ( this._editor_prepared && this.editor_view ){
+			this.editor_view.setElement(node);
+			this.trigger_edit();
+		}
+		else if ( !this._editor_prepared && PostDataEditor ) {
+			PostDataEditor.addPartView(type, node.get(0), this.model, this.object_group_view.model).done(function(view){
+				me.editor_view = view;
+				me.trigger_edit();
+			});
+			this._editor_prepared = true;
+		}
+	},
+	
+	// Trigger edit if it's in the middle of editing (re-rendering whie editing)
+	trigger_edit: function () {
+		if ( !PostDataEditor.contentEditor || !PostDataEditor.contentEditor._editing ) return;
+		this.editor_view.editContent();
 	}
 });
 
@@ -54,6 +81,26 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		this.listenTo(this.model.get('objects'), 'change', this.on_render);
 		this.listenTo(this.model.get('objects'), 'add', this.on_render);
 		this.listenTo(this.model.get('objects'), 'remove', this.on_render);
+		
+		_.extend(this.events, {
+			'click .upfront-post-part-trigger': 'on_edit_click'
+		});
+		this.delegateEvents();
+		
+		this.postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
+
+		this.prepare_editor();
+	},
+	
+	get_extra_buttons: function(){
+		return '<a href="#" title="Edit post part" class="upfront-icon-button upfront-icon-button-nav upfront-post-part-trigger"></a>';
+	},
+	
+	on_edit_click: function (e) {
+		if( typeof e !== "undefined" ){
+			e.preventDefault();
+		}
+		this.enable_object_edit();
 	},
 
 	on_render: function () {
@@ -62,6 +109,10 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	},
 
 	render_view: function (type) {
+		if ( this.child_view ) {
+			this.child_view.render();
+			return;
+		}
 		type = type || Views.DEFAULT;
 		var me = this,
 			view = Views[type]
@@ -70,7 +121,88 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		;
 		view.element = this;
 		view.render();
+		this.child_view = view;
 		this.$el.find(".upfront-object-group-default").append(view.$el);
+	},
+	
+	prepare_editor: function () {
+		var postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
+		if ( !this.postId && "themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.THEME ) {
+			// We're dealing with a theme exporter request
+			// Okay, so let's fake a post
+			postId = "fake_post";
+		}
+		else if ( !this.postId && "themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.CONTENT_STYLE ){
+			postId = "fake_styled_post";
+		}
+		if ( !PostDataEditor || PostDataEditor.postId != postId ){
+			PostDataEditor = new Upfront.Content.PostEditor({
+				editor_id: 'this_post_' + postId,
+				post_id: postId,
+				content_mode: 'post_content'
+			});
+		}
+		this.listenTo(PostDataEditor, 'post:saved post:trash', this.on_render);
+		this.listenTo(PostDataEditor, 'post:cancel', this.on_cancel);
+		this.listenTo(PostDataEditor, 'editor:edit:start', this.on_edit_start);
+		this.listenTo(PostDataEditor, 'editor:edit:stop', this.on_edit_stop);
+		// Listen to change event too
+		this.listenTo(PostDataEditor, 'editor:change:title', this.on_title_change);
+		this.listenTo(PostDataEditor, 'editor:change:content', this.on_content_change);
+		this.listenTo(PostDataEditor, 'editor:change:author', this.on_author_change);
+		this.listenTo(PostDataEditor, 'editor:change:date', this.on_date_change);
+	},
+	
+	/**
+	 * On cancel handler, do rerender with cached data
+	 */
+	on_cancel: function () {
+		if ( ! this.child_view ) return;
+		this.child_view.rerender();
+	},
+	
+	/**
+	 * On edit start handler, don't cache data on requested rendering
+	 */
+	on_edit_start: function () {
+		if ( ! this.child_view ) return;
+		this.child_view._do_cache = false;
+	},
+	
+	/**
+	 * On edit stop handler, do enable caching back
+	 */
+	on_edit_stop: function () {
+		if ( ! this.child_view ) return;
+		this.child_view._do_cache = true;
+	},
+	
+	on_title_change: function (title) {
+		// Do nothing for now
+	},
+	
+	on_content_change: function (content, isExcerpt) {
+		// Do nothing for now
+	},
+	
+	on_author_change: function (authorId) {
+		if ( ! this.child_view ) return;
+		var type = this.model.get_property_value_by_name("data_type");
+		this.authorId = authorId;
+		// Render again if it's author element
+		if ( type == 'author' ) {
+			this.child_view.render();
+		}
+	},
+	
+	on_date_change: function (date) {
+		if ( ! this.child_view ) return;
+		var type = this.model.get_property_value_by_name("data_type");
+		this.postDate = Upfront.Util.format_date(date, true, true).replace(/\//g, '-');
+		// Render again if it's post data element
+		if ( type == 'post_data' ) {
+			this.child_view.render(['date_posted']);
+		}
 	},
 
 });

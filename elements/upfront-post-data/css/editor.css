@@ -1,3 +1,31 @@
+/* Loading/error */
+.upfront_post-data-loading {
+	background: rgba(255,255,255,0.5);
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 1;
+}
+.upfront_post-data-loading .loading {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin: auto;
+	height: 1em;
+	text-align: center;
+}
+
+/* Editing */
+.upfront-editing-post-content .upostdata-part.date_posted,
+.upfront-editing-post-content .upostdata-part.author,
+.upfront-editing-post-content .upostdata-part.gravatar {
+	cursor: pointer;
+}
+
 /* --- Post parts list --- */
 .upfront-settings-item-content .postdata_parts {
 	margin-top: 1em;

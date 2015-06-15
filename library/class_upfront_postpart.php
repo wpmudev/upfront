@@ -107,13 +107,25 @@ abstract class Upfront_PostPart_View {
 	public function expand_featured_image_template () {
 		if (empty($this->_post->ID)) return '';
 
-		$thumbnail = get_the_post_thumbnail($this->_post->ID);
+		$resize_featured = isset($this->_data['resize_featured'])
+			? (int)$this->_data['resize_featured']
+			: (int)Upfront_Posts_PostsData::get_default('resize_featured')
+		;
+		$full_featured = isset($this->_data['full_featured_image'])
+			? (int)$this->_data['full_featured_image']
+			: (int)Upfront_Posts_PostsData::get_default('full_featured_image')
+		;
+		$hide_featured = isset($this->_data['hide_featured_image'])
+			? (int)$this->_data['hide_featured_image']
+			: (int)Upfront_Posts_PostsData::get_default('hide_featured_image')
+		;
+		if ( $full_featured == 1 ) {
+			$thumbnail = get_the_post_thumbnail($this->_post->ID);
+		}
+		else {
+			$thumbnail = upfront_get_edited_post_thumbnail($this->_post->ID);
+		}
 		if (empty($thumbnail)) return '';
-
-        $resize_featured = isset($this->_data['resize_featured'])
-        	? (int)$this->_data['resize_featured']
-        	: (int)Upfront_Posts_PostsData::get_default('resize_featured')
-        ;
 
 		$out = $this->_get_template('featured_image');
 

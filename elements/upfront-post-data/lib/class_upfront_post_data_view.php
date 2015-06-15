@@ -22,6 +22,15 @@ class Upfront_Post_Data_View {
 	
 	protected static function _get_post ($data) {
 		$post = Upfront_Post_Data_Model::get_post( is_numeric($data['post_id']) && $data['post_id'] > 0 ? $data['post_id'] : null );
+		// Let's override author id if requested, this is to support rendering different author while editing post
+		if ( is_numeric($data['author_id']) && $data['author_id'] > 0 && $data['author_id'] != $post->post_author ){
+			$author = get_userdata($data['author_id']);
+			if ( $author ) $post->post_author = $data['author_id'];
+		}
+		// Also override date if requested, to support rendering date while editing
+		if ( ! empty($data['post_date']) && strtotime($data['post_date']) != strtotime($post->post_date) ){
+			$post->post_date = date('Y-m-d H:i:s', strtotime($data['post_date']));
+		}
 		return $post;
 	}
 

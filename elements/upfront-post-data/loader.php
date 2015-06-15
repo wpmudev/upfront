@@ -73,6 +73,8 @@ class Upfront_Post_Data extends Upfront_Server {
 		$request = !empty($_POST['data']) ? stripslashes_deep($_POST['data']) : array();
 		$data = !empty($request['props']) ? $this->to_data_array($request['props']) : array();
 		if (!empty($request['post_id'])) $data['post_id'] = $request['post_id'];
+		if (!empty($request['author_id'])) $data['author_id'] = $request['author_id'];
+		if (!empty($request['post_date'])) $data['post_date'] = $request['post_date'];
 		if (!empty($request['objects'])) $data['objects'] = $request['objects'];
 
 		$this->_out(new Upfront_JsonResponse_Success(array(

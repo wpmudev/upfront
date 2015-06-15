@@ -130,7 +130,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			node = [$('<div>')];
 
 		if(!this.editor){
-			this.editor = new Upfront.Content.PostEditor({
+			this.editor = new Upfront.Content.PostEditorLegacy({
 				editor_id: 'this_post_' + this.postId,
 				post_id: this.postId,
 				preload: true,

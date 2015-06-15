@@ -180,7 +180,8 @@ h2, h3 { page-break-after: avoid; }
 
 /* Object */
 .upfront-object,
-.upfront-output-object {
+.upfront-output-object,
+.upfront-output-object-group {
   float:left;
   width:100%;
   -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
@@ -296,10 +297,10 @@ h2, h3 { page-break-after: avoid; }
   max-height: none !important;
 }
 
-.upfront-postpart-featured_image {
+.upfront-postpart-featured_image, .upostdata-part.thumbnail {
   overflow: hidden;
 }
-.upfront-postpart-featured_image img {
+.upfront-postpart-featured_image img, .upostdata-part.thumbnail img {
   max-width: 100%;
   min-width: 100%;
   height: auto;
