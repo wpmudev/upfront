@@ -312,9 +312,13 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 				new Fields.Checkboxes({
 					model: this.model,
 					property: 'first_to_thumbnails',
+					default_value: ['1'],
 					values: [
-						{ label: l10n.first_to_thumbnails, value: 'first_to_thumbnails' },
-					]
+						{ label: l10n.first_to_thumbnails, value: '1' },
+					],
+					change: function(value) {
+						this.model.set_property('first_to_thumbnails', value);
+					}
 				}),
 				
 				new Fields.Slider({
