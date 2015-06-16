@@ -230,12 +230,7 @@ Parts.Part_Comment_count = Parts.Part.extend({
 
 Parts.Part_Content = Parts.Part.extend({
 	set_options: function () {
-		this.field = new Upfront.Views.Editor.Field.Number({
-			model: this.model,
-			label: l10n.limit_words,
-			label_style: 'inline',
-			property: "content_length"
-		});
+		this.field = new Content_Options({model: this.model});
 	}
 });
 
@@ -259,6 +254,39 @@ Parts.Part_Gravatar = Parts.Part.extend({
 			label: l10n.size_px,
 			label_style: 'inline',
 			property: "gravatar_size"
+		});
+	}
+});
+
+var Content_Options = Backbone.View.extend({
+
+	initialize: function () {
+		this.fields = [
+			new Upfront.Views.Editor.Field.Number({
+				model: this.model,
+				label: l10n.limit_words,
+				label_style: 'inline',
+				property: "content_length"
+			}),
+			new Upfront.Views.Editor.Field.Number({
+				model: this.model,
+				label: "Content part",
+				default_value: 0,
+				label_style: 'inline',
+				property: "content_part"
+			})
+		];
+	},
+
+	render: function () {
+		this.$el.empty();
+		var me = this;
+		_.each(this.fields, function (field) {
+			field.on("changed", function (value) {
+				me.model.set_property(field.options.property, value);
+			}, this);
+			field.render();
+			me.$el.append(field.$el);
 		});
 	}
 });
