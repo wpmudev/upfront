@@ -250,6 +250,8 @@ class Upfront_Grid {
 			$objects = $data['objects'];
 			if ( !$breakpoint->is_default() )
 				usort($wrappers, array($this, '_sort_cb'));
+
+			if (!isset($col)) $col = 0;
 	
 			$line_col = $col; // keep track of how many column has been applied for each line
 			$rendered_wrappers = array(); // keep track of rendered wrappers to avoid render more than once
@@ -316,7 +318,7 @@ class Upfront_Grid {
 				$next_wrapper_col = $next_wrapper_col > $max_col ? $max_col : $next_wrapper_col;
 				$next_fill = $next_clear && $line_col > 0 ? $line_col : 0;
 				$css = $breakpoint->apply($wrapper_data, $this->get_grid_scope(), 'wrapper_id', $max_col, $next_fill);
-				if ( !$obj_hide && ( $next_clear || $line_col < $next_wrapper_col ) )
+				if ( !$obj_hide && ( $next_clear || $line_col < $next_wrapper_col ) && isset($col) )
 					$line_col = $col;
 				$rendered_wrappers[] = $wrapper_id;
 			}
