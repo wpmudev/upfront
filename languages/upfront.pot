@@ -1117,6 +1117,7 @@ msgstr ""
 
 #: elements/upfront-gallery/lib/ugallery.php:348
 #: library/servers/class_upfront_editor_l10n_server.php:333
+#: library/servers/class_upfront_presets_server.php:160
 msgid "Add"
 msgstr ""
 
@@ -2340,6 +2341,7 @@ msgstr ""
 #: elements/upfront-posts/lib/upfront_posts.php:321 functions.php:85
 #: library/servers/class_upfront_editor_l10n_server.php:145
 #: library/servers/class_upfront_editor_l10n_server.php:341
+#: library/servers/class_upfront_presets_server.php:163
 msgid "Default"
 msgstr ""
 
@@ -3340,6 +3342,26 @@ msgstr ""
 msgid "Please, activate one of the Upfront child themes."
 msgstr ""
 
+#: library/servers/cclass_upfront_presets_server.php:157
+msgid "Select Preset"
+msgstr ""
+
+#: library/servers/cclass_upfront_presets_server.php:158
+msgid "Select Preset or Create a New One"
+msgstr ""
+
+#: library/servers/cclass_upfront_presets_server.php:161
+msgid "Preset name can not be empty."
+msgstr ""
+
+#: library/servers/cclass_upfront_presets_server.php:162
+msgid "Preset name can contain only numbers, letters and spaces."
+msgstr ""
+
+#: library/servers/cclass_upfront_presets_server.php:164
+msgid "Add Preset"
+msgstr ""
+
 #: library/servers/class_upfront_editor_l10n_server.php:23
 msgid "Your preview is not ready yet"
 msgstr ""
@@ -4156,6 +4178,7 @@ msgid "Merge selected"
 msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:269
+#: library/servers/class_upfront_presets_server.php:159
 msgid "Delete"
 msgstr ""
 

@@ -1,6 +1,8 @@
 define([
 	'scripts/upfront/preset-settings/select-preset-field'
 ], function(SelectPresetField) {
+	var l10n = Upfront.Settings.l10n.preset_manager;
+	
 	var SelectPresetItem = Upfront.Views.Editor.Settings.Item.extend({
 		initialize: function (options) {
 			this.options = options || {};
@@ -8,7 +10,7 @@ define([
 
 			this.selectPresetField = new SelectPresetField({
 					model: this.model,
-					label: 'Select Preset or Create a New One',
+					label: l10n.select_preset_label,
 					property: 'preset',
 					values: this.get_presets(),
 					change: function(value) {
@@ -33,7 +35,7 @@ define([
 		},
 
 		get_title: function() {
-			return 'Select Preset';
+			return l10n.select_preset;
 		},
 
 		get_presets: function () {

@@ -2,6 +2,8 @@ define([
 	'scripts/upfront/preset-settings/show-state-settings-button',
 	'scripts/upfront/preset-settings/state-settings'
 ], function(ShowStateSettingsButton, StateSettings) {
+	var l10n = Upfront.Settings.l10n.preset_manager;
+	
 	var EditPresetItem = Upfront.Views.Editor.Settings.Item.extend({
 		className: 'preset_specific',
 
@@ -18,7 +20,7 @@ define([
 				var fields = [
 					new Upfront.Views.Editor.Field.Button({
 						model: this.model,
-						label: 'Delete',
+						label: l10n.delete_label,
 						className: 'delete_preset',
 						compact: true,
 						on_click: function() {

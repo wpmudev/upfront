@@ -1,4 +1,6 @@
 define(function() {
+	var l10n = Upfront.Settings.l10n.preset_manager;
+	
 	var SelectPresetField = Upfront.Views.Editor.Field.Chosen_Select.extend({
 		className: 'preset select-preset-field',
 		render: function() {
@@ -16,7 +18,7 @@ define(function() {
 				width: selectWidth
 			});
 			
-			var html = ['<a href="#" title="Add preset" class="upfront-preset-add">Add</a>'];
+			var html = ['<a href="#" title="'+ l10n.add_preset_label +'" class="upfront-preset-add">'+ l10n.add_label +'</a>'];
 			this.$el.find('.chosen-search').append(html.join(''));
 			
 			this.$el.on('click', '.upfront-preset-add', function(event) {
@@ -25,11 +27,11 @@ define(function() {
 				var preset_name = me.$el.find('.chosen-search input').val();
 				
 				if (preset_name.trim() === '') {
-					alert('Preset name can not be empty.');
+					alert(l10n.not_empty_label);
 					return;
 				}
 				if (preset_name.match(/[^A-Za-z0-9 ]/)) {
-					alert('Preset name can contain only numbers, letters and spaces.');
+					alert(l10n.special_character_label);
 					return;
 				}
 				
