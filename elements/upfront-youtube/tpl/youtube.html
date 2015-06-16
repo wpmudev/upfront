@@ -14,7 +14,8 @@
     <div class="uyoutube-main-video">
       <?php if ( !empty($multiple_videos[0] ) ) { ?>
         <iframe src="http://www.youtube.com/embed/<?php echo $multiple_videos[0]['id'] ?>?modestbranding=1" height="<?php echo $player_height ?>" width="<?php echo $player_width ?>"></iframe>
-      <?php } else { ?>
+		<h3><?php echo $multiple_videos[0]['title'] ?></h3>
+	  <?php } else { ?>
         <div class="uyoutube-player" style="height:<?php echo $player_height ?>px; width:<?php echo $player_width ?>px;"></div>
       <?php } ?>
     </div>
