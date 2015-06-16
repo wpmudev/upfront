@@ -242,7 +242,7 @@ abstract class Upfront_PostPart_View {
 	 * Return either full content or excerpt, based on data state.
 	 * @return string Content or excerpt
 	 */
-	private function _get_content_value ($length) {
+	protected function _get_content_value ($length) {
 		return !empty($this->_data['content']) && 'content' === $this->_data['content']
 			? $this->_get_content()
 			: $this->_get_excerpt($length)
@@ -253,7 +253,7 @@ abstract class Upfront_PostPart_View {
 	 * Returns post full content, with filters applied.
 	 * @return string Final post full content.
 	 */
-	private function _get_content () {
+	protected function _get_content () {
 		return apply_filters('the_content', $this->_post->post_content);
 	}
 
@@ -263,7 +263,7 @@ abstract class Upfront_PostPart_View {
 	 * @param int $length Length in words
 	 * @return string Post excerpt
 	 */
-	private function _get_excerpt ($length) {
+	protected function _get_excerpt ($length) {
 		if (!empty($this->_post->post_excerpt)) return wpautop($this->_post->post_excerpt);
 
 		$content = $this->_post->post_content;
