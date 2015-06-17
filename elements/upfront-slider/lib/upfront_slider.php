@@ -198,6 +198,7 @@ class Upfront_UsliderView extends Upfront_Object {
 			'txt_on_side' => __('txt on the side', 'upfront'),
 			'txt_only' => __('txt / widget only', 'upfront'),
 			'choose_img' => __('Choose Images', 'upfront'),
+			'slide_desc' => __('Slide description', 'upfront'),
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)
