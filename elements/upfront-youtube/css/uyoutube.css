@@ -2,6 +2,15 @@
     background: #ccc;
 }
 
+.uyoutube-single {
+	min-height: inherit;
+}
+
+.uyoutube-single iframe {
+	width: 100% !important;
+	min-height: inherit;
+}
+
 .uyoutube-main-video {
     margin-bottom: 10px;
 }
