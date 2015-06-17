@@ -215,6 +215,7 @@ class Upfront_UcommentView extends Upfront_Object {
 			'loading' => __('Loading', 'upfront'),
 			'loading_error' => __("Error loading comment", 'upfront'),
 			'discussion_settings' => __('Discussion Settings', 'upfront'),
+			'settings_disabled' => __('Discussion Settings are disabled', 'upfront'),
 			'avatars' => __('Avatars', 'upfront'),
 			'ok' => __('OK', 'upfront'),
 			'please_wait' => __('Please, wait', 'upfront'),
@@ -295,7 +296,7 @@ class Upfront_UcommentAjax extends Upfront_Server {
 	}
 
 	public function save_discussion_settings () {
-		if (!current_user_can('manage_options')) $this->_out(new Upfront_JsonResponse_Error("You can not do this"));
+		if (!Upfront_Permissions::current(Upfront_Permissions::OPTIONS)) $this->_out(new Upfront_JsonResponse_Error("You can not do this"));
 		$data = stripslashes_deep($_POST['data']);
 
 		if (isset($data['default_pingback_flag'])) {
@@ -413,7 +414,7 @@ class Upfront_UcommentAjax extends Upfront_Server {
 	}
 
 	public function save_avatars_settings () {
-		if (!current_user_can('manage_options')) $this->_out(new Upfront_JsonResponse_Error(self::_get_l10n('error_permissions')));
+		if (!Upfront_Permissions::current(Upfront_Permissions::OPTIONS)) $this->_out(new Upfront_JsonResponse_Error(self::_get_l10n('error_permissions')));
 		$data = stripslashes_deep($_POST['data']);
 
 		if (isset($data['show_avatars'])) {
@@ -451,7 +452,7 @@ class Upfront_UcommentAjax extends Upfront_Server {
 	}
 
 	public function get_settings () {
-		if (!current_user_can('manage_options')) $this->_out(new Upfront_JsonResponse_Error(self::_get_l10n('error_permissions')));
+		if (!Upfront_Permissions::current(Upfront_Permissions::OPTIONS)) $this->_out(new Upfront_JsonResponse_Error(self::_get_l10n('error_permissions')));
 		global $current_user;
 		$avatar_defaults = apply_filters('avatar_defaults', array(
 			'mystery' => __('Mystery Man'),
