@@ -366,6 +366,10 @@ div.preset-manager-panel .typography-heading {
 div.preset-manager-panel .transition .upfront-field-select {
 	margin-top: -24px;
 }
+div.preset-manager-panel .transition .upfront-field-select-single .upfront-field-select-option-selected label:before {
+	left: 12px;
+	position: relative;
+}
 div.preset-manager-panel .border_radius_lock_hover {
 	margin-bottom: 50px;
 }

@@ -15268,6 +15268,11 @@ div.preset-manager-panel .transition .upfront-field-select {
   margin-top: -24px; }
 
 /* line 369, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+div.preset-manager-panel .transition .upfront-field-select-single .upfront-field-select-option-selected label:before {
+  left: 12px;
+  position: relative; }
+
+/* line 373, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel .border_radius_lock_hover {
   margin-bottom: 50px; }
 
