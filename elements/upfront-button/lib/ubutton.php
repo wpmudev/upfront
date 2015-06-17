@@ -102,6 +102,22 @@ class Upfront_ButtonView extends Upfront_Object {
 			'bg_color' => __('Background Color', 'upfront'),
 			'edit_text' => __('Edit Text', 'upfront'),
 			'default_preset' => __('Default', 'upfront'),
+			'border' => __('Border', 'upfront'),
+			'px' => __('px', 'upfront'),
+			'typeface' => __('Typeface:', 'upfront'),
+			'weight_style' => __('Weight/Style:', 'upfront'),
+			'size' => __('Size:', 'upfront'),
+			'line_height' => __('Line Height: ', 'upfront'),
+			'color' => __('Color:', 'upfront'),
+			'rounded_corners' => __('Rounded Corners', 'upfront'),
+			'typography' => __('Typography', 'upfront'),
+			'animate_hover_changes' => __('Animate Hover Changes:', 'upfront'),
+			'sec' => __('sec', 'upfront'),
+			'ease' => __('ease', 'upfront'),
+			'linear' => __('linear', 'upfront'),
+			'ease_in' => __('ease-in', 'upfront'),
+			'ease_out' => __('ease-out', 'upfront'),
+			'ease_in_out' => __('ease-in-out', 'upfront'),
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)

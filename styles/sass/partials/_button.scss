@@ -1,16 +1,19 @@
 /* Let's have a standard class for common button, text, etc */
 .uf-button {
 	display: inline-block;
-	background: #1fcd8f;
-	padding: 8px 20px 0 20px;
-	color: #f1f8ff;
-	font-size: 18px;
+	background: rgb(255, 255, 255);
+	padding: 5px 20px 0 20px;
+	color: rgb(66, 127, 237);
+	font-size: 16px;
+	font-family: "Helvetica";
 	height: 40px;
 	line-height: 24px;
-	font-size: 16px;
 	cursor: pointer;
+	border: 4px solid rgb(66, 127, 237);
+	border-radius: 100px 100px 100px 100px;
+	transition: all 0.25 linear;
 }
 .uf-button:hover {
-	border-color: #1fcd8f;
+	background: rgb(66, 127, 237);
+	color: rgb(255, 255, 255);
 }
-
