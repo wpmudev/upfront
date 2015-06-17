@@ -14,13 +14,14 @@ function() {
 
 			// Proxy the `change` callbacks, and reset as needed
 			_.each(this.options.fields, function (field) {
-				if (!("change" in field.options)) return true; // Nothing to do here
-				if (!field.options.preserved_preset_change) field.options.preserved_preset_change = field.options.change; // Store the old callback
+				if (("change" in field.options)) {
+					if (!field.options.preserved_preset_change) field.options.preserved_preset_change = field.options.change; // Store the old callback
 
-				// Actually proxy the stored callback and use this as the new one
-				field.options.change = function (value) {
-					field.options.preserved_preset_change(value, me);
-				};
+					// Actually proxy the stored callback and use this as the new one
+					field.options.change = function (value) {
+						field.options.preserved_preset_change(value, me);
+					};					
+				}
 
 				var stateField = new field.fieldClass(_.extend({
 						model: this.options.model

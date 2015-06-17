@@ -30,30 +30,40 @@ define([
 		panelTitle: l10n.settings,
 		styleTpl: styleTpl,
 		presetDefaults: {
-			'bordertype': '',
-			'borderwidth': 1,
-			'bordercolor': 'rgb(0, 0, 0)',
-			'borderradiuslock': '',
-			'borderradius1': 0,
-			'borderradius2': 0,
-			'borderradius3': 0,
-			'borderradius4': 0,
-			'bgcolor': 'rgb(128, 128, 128)',
-			'fontsize': 14,
+			'useborder': 'yes',
+			'bordertype': 'solid',
+			'borderwidth': 4,
+			'bordercolor': 'rgb(66, 127, 237)',
+			'useradius': 'yes',
+			'borderradiuslock': 'yes',
+			'borderradius1': 100,
+			'borderradius2': 100,
+			'borderradius3': 100,
+			'borderradius4': 100,
+			'bgcolor': 'rgb(255, 255, 255)',
+			'fontsize': 16,
 			'fontface': 'Arial',
-			'color': 'rgb(255, 255, 255)',
-			'hov_bordertype': '',
-			'hov_borderwidth': 1,
-			'hov_bordercolor': 'rgb(0, 0, 0)',
-			'hov_borderradiuslock': '',
-			'hov_borderradius1': 0,
-			'hov_borderradius2': 0,
-			'hov_borderradius3': 0,
-			'hov_borderradius4': 0,
-			'hov_bgcolor': 'rgb(128, 128, 128)',
-			'hov_fontsize': 14,
+			'fontstyle': '600 normal',
+			'fontstyle_weight': '600',
+			'fontstyle_style': 'normal',
+			'lineheight': 1,
+			'color': 'rgb(66, 127, 237)',
+			'hov_bordertype': 'solid',
+			'hov_borderwidth': 4,
+			'hov_bordercolor': 'rgb(66, 127, 237)',
+			'hov_borderradiuslock': 'yes',
+			'hov_borderradius1': 100,
+			'hov_borderradius2': 100,
+			'hov_borderradius3': 100,
+			'hov_borderradius4': 100,
+			'hov_bgcolor': 'rgb(66, 127, 237)',
+			'hov_fontsize': 16,
 			'hov_fontface': 'Arial',
-			'hov_color': 'rgb(0, 0, 0)',
+			'hov_fontstyle': '600 normal',
+			'hov_fontstyle_weight': '600',
+			'hov_fontstyle_style': 'normal',
+			'hov_lineheight': 1,
+			'hov_color': 'rgb(255, 255, 255)',
 			'hov_duration': 0.25,
 			'hov_transition': 'linear',
 			'id': 'default',
@@ -69,7 +79,7 @@ define([
 						default_value: 1,
 						multiple: false,
 						values: [
-							{ label: 'Border', value: 'yes' }
+							{ label: l10n.border, value: 'yes' }
 						],
 						change: function(value, parentPanel) {
 							parentPanel.model.set({'useborder': value});
@@ -97,7 +107,7 @@ define([
 						name: 'borderwidth',
 						label: '',
 						default_value: 1,
-						suffix: 'px',
+						suffix: l10n.px,
 						values: [
 							{ label: "", value: '1' }
 						],
@@ -190,7 +200,7 @@ define([
 					options: {
 						className: 'typography-heading',
 						name: 'typography-heading',
-						label: 'Typography',
+						label: l10n.typography,
 					}
 				},
 				{
@@ -198,7 +208,7 @@ define([
 					options: {
 						name: 'fontface',
 						values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_fonts_for_select(),
-						label: 'Typeface:',
+						label: l10n.typeface,
 						label_style: 'inline',
 						className: 'font-face static typeFace',
 						change: function(value, parentPanel) {
@@ -208,7 +218,7 @@ define([
 							//Create new field to update the fontstyle values.
 							var styles = new Upfront.Views.Editor.Field.Select({
 								name: 'fontstyle',
-								label: 'Weight/Style',
+								label: l10n.weight_style,
 								label_style: 'inline',
 								className: 'font-style static weightStyle',
 								values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants_for_select(value)
@@ -223,7 +233,7 @@ define([
 					options: {
 						name: 'fontstyle',
 						values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants_for_select(),
-						label: 'Weight/Style:',
+						label: l10n.weight_style,
 						label_style: 'inline',
 						className: 'font-style static weightStyle',
 						change: function(value, parentPanel) {
@@ -245,9 +255,9 @@ define([
 					options: {
 						className: 'static fontSize',
 						name: 'fontsize',
-						label: 'Size:',
+						label: l10n.size,
 						label_style: 'inline',
-						suffix: 'px',
+						suffix: l10n.px,
 						default_value: 12,
 						change: function(value, parentPanel) {
 							parentPanel.model.set({'fontsize': value});
@@ -259,7 +269,7 @@ define([
 					options: {
 						className: 'static lineHeight',
 						name: 'lineheight',
-						label: 'Line Height: ',
+						label: l10n.line_height,
 						label_style: 'inline',
 						default_value: 1,
 						min: 0,
@@ -277,7 +287,7 @@ define([
 						blank_alpha : 0,
 						default_value: '#000',
 						label_style: 'inline',
-						label: 'Color:',
+						label: l10n.color,
 						spectrum: {
 							preferredFormat: "rgb",
 						},
@@ -307,7 +317,7 @@ define([
 						default_value: 1,
 						multiple: false,
 						values: [
-							{ label: 'Rounded Corners', value: 'yes' }
+							{ label: l10n.rounded_corners, value: 'yes' }
 						],
 						change: function(value, parentPanel) {
 							parentPanel.model.set({'useradius': value});
@@ -453,7 +463,7 @@ define([
 						default_value: 0,
 						multiple: false,
 						values: [
-							{ label: 'Border', value: 'yes' }
+							{ label: l10n.border, value: 'yes' }
 						],
 						change: function(value, parentPanel) {
 							parentPanel.model.set({'hov_useborder': value});
@@ -481,7 +491,7 @@ define([
 						name: 'hov_borderwidth',
 						label: '',
 						default_value: 1,
-						suffix: 'px',
+						suffix: l10n.px,
 						values: [
 							{ label: "", value: '1' }
 						],
@@ -547,7 +557,7 @@ define([
 						default_value: 0,
 						multiple: false,
 						values: [
-							{ label: 'Background color', value: 'yes' }
+							{ label: l10n.bg_color, value: 'yes' }
 						],
 						change: function(value, parentPanel) {
 							parentPanel.model.set({'hov_usebgcolor': value});
@@ -602,7 +612,7 @@ define([
 						multiple: false,
 						default_value: 0,
 						values: [
-							{ label: 'Typography', value: 'yes' }
+							{ label: l10n.typography, value: 'yes' }
 						],
 						change: function(value, parentPanel) {
 							parentPanel.model.set({'hov_usetypography': value});
@@ -633,7 +643,7 @@ define([
 					options: {
 						className: 'typography-heading typography-heading-hover',
 						name: 'typography-heading',
-						label: 'Typography',
+						label: l10n.typography,
 					}
 				},
 				
@@ -642,7 +652,7 @@ define([
 					options: {
 						name: 'hov_fontface',
 						values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_fonts_for_select(),
-						label: 'Typeface:',
+						label: l10n.typeface,
 						label_style: 'inline',
 						className: 'font-face hover typeFace typeface-hover',
 						change: function(value, parentPanel) {
@@ -652,7 +662,7 @@ define([
 							//Create new field to update the fontstyle values.
 							var styles = new Upfront.Views.Editor.Field.Select({
 								name: 'hov_fontstyle',
-								label: 'Weight/Style',
+								label: l10n.weight_style,
 								label_style: 'inline',
 								className: 'hov-font-style static weightStyle weightstyle-hover',
 								values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants_for_select(value)
@@ -667,7 +677,7 @@ define([
 					options: {
 						name: 'hov_fontstyle',
 						values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants_for_select(),
-						label: 'Weight/Style:',
+						label: l10n.weight_style,
 						label_style: 'inline',
 						className: 'hov-font-style hover weightStyle weightstyle-hover',
 						change: function(value, parentPanel) {
@@ -689,7 +699,7 @@ define([
 					options: {
 						className: 'hover fontSize fontsize-hover',
 						name: 'hov_fontsize',
-						label: 'Size:',
+						label: l10n.size,
 						label_style: 'inline',
 						suffix: 'px',
 						default_value: 12,
@@ -703,7 +713,7 @@ define([
 					options: {
 						className: 'hover lineHeight lineheight-hover',
 						name: 'hov_lineheight',
-						label: 'Line Height: ',
+						label: l10n.line_height,
 						label_style: 'inline',
 						default_value: 1,
 						min: 0,
@@ -721,7 +731,7 @@ define([
 						blank_alpha : 0,
 						default_value: '#000',
 						label_style: 'inline',
-						label: 'Color:',
+						label: l10n.color,
 						spectrum: {
 							preferredFormat: "rgb",
 						},
@@ -751,7 +761,7 @@ define([
 						default_value: 0,
 						multiple: false,
 						values: [
-							{ label: 'Rounded Corners', value: 'yes' }
+							{ label: l10n.rounded_corners, value: 'yes' }
 						],
 						change: function(value, parentPanel) {
 							parentPanel.model.set({'hov_useradius': value});
@@ -900,7 +910,7 @@ define([
 						className: 'duration',
 						name: 'hov_duration',
 						min: 0,
-						label: 'Animate Hover Changes:',
+						label: l10n.animate_hover_changes,
 						step: 0.1,
 						values: [
 							{ label: '', value: '12' }
@@ -914,15 +924,15 @@ define([
 					fieldClass: Upfront.Views.Editor.Field.Select,
 					options: {
 						name: 'hov_transition',
-						label: 'sec',
+						label: l10n.sec,
 						step: 0.1,
 						label_style: 'inline',
 						values: [
-							{ label: 'ease', value: 'ease' },
-							{ label: 'linear', value: 'linear' },
-							{ label: 'ease-in', value: 'ease-in' },
-							{ label: 'ease-out', value: 'ease-out' },
-							{ label: 'ease-in-out', value: 'ease-in-out' }
+							{ label: l10n.ease, value: 'ease' },
+							{ label: l10n.linear, value: 'linear' },
+							{ label: l10n.ease_in, value: 'ease-in' },
+							{ label: l10n.ease_out, value: 'ease-out' },
+							{ label: l10n.ease_in_out, value: 'ease-in-out' }
 						],
 						className: 'transition hover',
 						change: function(value, parentPanel) {
