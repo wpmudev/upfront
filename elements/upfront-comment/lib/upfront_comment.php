@@ -24,6 +24,7 @@ class Upfront_UcommentView extends Upfront_Object {
 			'comment_date_gmt' => current_time('mysql', 1),
 			'comment_approved' => 1,
 			'comment_content' => 'test stuff author comment',
+			'comment_parent' => 0,
 		);
 		$comments = array(
 			array_merge($fake_comment, array(
