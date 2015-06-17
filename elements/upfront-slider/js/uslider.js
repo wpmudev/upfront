@@ -261,14 +261,16 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		me.$('.uslide').css({height: 'auto'});
 
-
 		//Enable text editors
-		if (!text.data('ueditor')) {
+		text.each(function () {
+			var text = $(this); // Re-bind to local
+			if (text.data('ueditor')) return true; // If ueditor is already up, carry on
+
 			text.ueditor({
 					autostart: false,
 					upfrontMedia: false,
 					upfrontImages: false,
-					placeholder: 'Slide description'
+					placeholder: l10n.slide_desc
 				})
 				.on('start', function() {
 					var id = $(this).closest('.uslide').attr('rel'),
@@ -287,11 +289,16 @@ var USliderView = Upfront.Views.ObjectView.extend({
 						me.$el.removeClass('upfront-editing');
 
 						Upfront.Events.trigger('upfront:element:edit:stop');
-						$(this).data('ueditor').redactor.events.trigger('cleanUpListeners');
+
+						// Trigger cleanup if possible
+						var ed = $(this).data('ueditor');
+						if (ed.redactor) ed.redactor.events.trigger('cleanUpListeners');
+						
 						me.render();
 					});
-				});
-		}
+				})
+			;
+		});
 
 		if(me.property('primaryStyle') == 'side'){
 			me.setImageResizable();
