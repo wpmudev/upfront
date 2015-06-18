@@ -625,7 +625,21 @@ class Upfront_Region_Container extends Upfront_Container {
 			$overlay .= $this->_get_background_overlay($breakpoint->get_id());
 			$bg_attr .= $this->_get_background_attr(false, true, $breakpoint->get_id());
 		}
-		$bg_node_start = "<div class='upfront-region-container-bg upfront-image-lazy upfront-image-lazy-bg' {$bg_attr}>";
+
+		$additional_classes = array();
+        // Additional test for background type - only if we're dealing with the featured image regions
+		if ('featured' === $this->get_background_type() && !has_post_thumbnail(Upfront_Output::get_post_id())) {
+			$additional_classes[] = 'no-featured_image'; // We don't seem to have a featured image here
+		}
+
+		// Build the class attribute
+		$extras = '';
+		if (!empty($additional_classes) && is_array($additional_classes)) {
+			$additional_classes = array_values(array_filter(array_map('sanitize_html_class', $additional_classes)));
+			$extras = join(' ', $additional_classes);
+		}
+
+		$bg_node_start = "<div class='upfront-region-container-bg upfront-image-lazy upfront-image-lazy-bg {$extras}' {$bg_attr}>";
 		$bg_node_end = "</div>";
 		return parent::wrap("{$bg_node_start}{$before}<div class='upfront-grid-layout'>{$out}</div>\n{$overlay}{$after}{$bg_node_end}");
 	}
@@ -743,12 +757,6 @@ class Upfront_Region extends Upfront_Container {
         if ( $this->_is_background() ) {
             $more_classes[] = 'upfront-image-lazy upfront-image-lazy-bg';
         }
-
-        // Additional test for background type - only if we're dealing with the featured image regions
-		if ('featured' === $this->get_background_type() && !has_post_thumbnail(Upfront_Output::get_post_id())) {
-			$more_classes[] = 'no-featured_image'; // We don't seem to have a featured image here
-		}
-
 		return $classes . ' ' . join(' ', $more_classes);
 	}
 
