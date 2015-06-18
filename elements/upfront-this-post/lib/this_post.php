@@ -393,10 +393,18 @@ class Upfront_ThisPostView extends Upfront_Object {
 			$found = get_option($cascade[$i]);
 			$i++;
 		}
-		if(!$found)
-			$found = self::get_theme_layout($type, $post_type, $id);
-		if(!$found)
-			$found = self::default_postlayout($type);
+		if(!$found) $found = self::get_theme_layout($type, $post_type, $id);
+		if(!$found) $found = self::default_postlayout($type);
+
+		if ($found && !empty($found['postLayout'])) {
+			foreach ($found['postLayout'] as $idx => $wrapper) {
+				$obj = !empty($wrapper['objects']) ? end($wrapper['objects']) : false;
+				if ($obj && !empty($obj['slug'])) {
+					if (empty($wrapper['classes'])) $wrapper['classes'] = '';
+					$found['postLayout'][$idx]['classes'] = $wrapper['classes'] . ' part-' . $obj['slug'];
+				}
+			}
+		}
 
 		return $found;
 	}
