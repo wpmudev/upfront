@@ -2270,8 +2270,10 @@ define([
                         hide_label : true,
                         default_value: color,
                         spectrum: {
-                            move : function(color){
+                        	change: function (color) {
                                 self.update_colors(this, color, index);
+                        	},
+                            move: function (color) {
 	                            picker.$(".sp-preview").css({
                                     backgroundColor : color.toRgbString(),
                                     backgroundImage : "none"
