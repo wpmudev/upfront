@@ -122,6 +122,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 				else {
 					$replacements['%image%'] = upfront_get_edited_post_thumbnail();
 				}
+				if (empty($replacements['%image%'])) $classes[] = 'no-featured_image';
 				$replacements['%permalink%'] = get_permalink();
 				break;
 
