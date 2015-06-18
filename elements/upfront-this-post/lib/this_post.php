@@ -362,8 +362,12 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 			    $part_style_class = self::_part_style_class( $options,  $o["slug"] );
 			  	$layout['extraClasses'][$o['slug']] .= $part_style_class;
-				if ( !empty($markups['classes']) )
-					$layout['extraClasses'][$o['slug']] .= ' ' . join(' ', $markups['classes']);
+
+				if (empty($markups['classes'])) $markups['classes'] = array();
+				$layout['extraClasses'][$o['slug']] .= ' ' . join(' ', $markups['classes']);
+				
+				if (empty($layout['wrappers'][$i]['classes'])) $layout['wrappers'][$i]['classes'] = '';
+				$layout['wrappers'][$i]['classes'] .= ' ' . join(' ', $markups['classes']);
 				
 				$attributes = '';
 				if(isset($opts['attributes'])){
