@@ -25,6 +25,13 @@ class Upfront_PluginCompat implements IUpfront_Server {
 			if (!is_plugin_active($key)) continue;
 			
 			$plugin_id = $this->_to_plugin_id($key, $plug);
+
+			// Let's try and see if anything registered the compatibility layer first
+			if (apply_filters('upfront-core-plugin_compat', false, $plugin_id, $plug)) {
+				$loaded = true;
+				continue;
+			}
+
 			$class_name = "Upfront_Compat_{$plugin_id}";
 			if (class_exists($class_name)) continue;
 
