@@ -92,6 +92,51 @@ class Upfront_Posts_Model {
 			: ($offset > 0 ? $offset-1 : $offset)
 		;
 	}
+
+	public static function filter_force_home ($what, $query) {
+		$query->is_home = true;
+		return $what;
+	}
+
+	/**
+	 * Applies common setup, deals with stickies and spawns a WP_Query instance.
+	 *
+	 * @param array $args Arguments to be passed to WP_Query constructor
+	 * @param array $data Element properties
+	 *
+	 * @return WP_Query Query instance
+	 */
+	protected static function _spawn_query ($args, $data) {
+		$args['post_status'] = 'publish'; // double-ensure for AJAX requests
+
+		// Determine sticky posts behavior
+		$args['ignore_sticky_posts'] = empty($data['sticky']); // Ignore by default
+
+		$has_pages = !empty($args['paged']) && $args['paged'] > 1;
+
+		// Exclude if requested
+		if (
+			!empty($data['sticky']) && 'exclude' === $data['sticky'] 
+			|| 
+			!empty($data['sticky']) && 'prepend' === $data['sticky'] && $has_pages // If we're prepending stickies, drop them on subsequent pages
+		) {
+			$args['post__not_in'] = get_option('sticky_posts');
+		}
+
+		// Prepend if requested
+		if (!empty($data['sticky']) && 'prepend' === $data['sticky'] && !$has_pages) {
+			// Hack: force `is_home` property so WP does what it does to sticky stuff
+			add_filter('posts_clauses', array('Upfront_Posts_Model', 'filter_force_home'), 10, 2);
+		}
+
+		$query = new WP_Query($args);
+
+		// Drop the hack as soon as we're done
+		if (!empty($data['sticky']) && 'prepend' === $data['sticky'] && !$has_pages) {
+			remove_filter('posts_clauses', array('Upfront_Posts_Model', 'filter_force_home'), 10, 2);
+		}
+		return $query;
+	}
 }
 
 /**
@@ -117,6 +162,7 @@ class Upfront_Posts_Model_Generic extends Upfront_Posts_Model {
 			//if (!empty($offset)) $args['offset'] = $offset;
 		} else {
 			if (!empty($query['query_vars']['paged'])) $args['paged'] = $query['query_vars']['paged'];
+			if (!empty($query['query_vars']['page'])) $args['paged'] = $query['query_vars']['page'];
 		}
 
 		// Misc queries: time, search...
@@ -128,11 +174,10 @@ class Upfront_Posts_Model_Generic extends Upfront_Posts_Model {
 		if (!empty($query['tax_query']['queries'])) {
 			$args['tax_query'] = $query['tax_query']['queries'];
 		}
-		$args['post_status'] = 'publish'; // double-ensure for AJAX requests
 
 		$args = apply_filters('upfront_posts-model-generic-args', $args, $data);
 
-		return new WP_Query($args);
+		return self::_spawn_query($args, $data);
 	}
 
 	public static function get_posts ($data) {
@@ -162,17 +207,16 @@ class Upfront_Posts_Model_Custom extends Upfront_Posts_Model {
 
 		$args = array(
 			'post__in' => $posts,
-			'ignore_sticky_posts' => true,
 			'post_type' => get_post_types(array('public' => true)),
 		);
-		$args['post_status'] = 'publish'; // double-ensure for AJAX requests
+
 		if (self::is_single($data)) {
 			$args['posts_per_page'] = 1;
 		}
 
 		$args = apply_filters('upfront_posts-model-custom-args', $args, $data);
 
-		return new WP_Query($args);
+		return self::_spawn_query($args, $data);
 	}
 	public static function get_posts ($data) {
 		$query = self::spawn_query($data);
@@ -191,9 +235,20 @@ class Upfront_Posts_Model_Taxonomy extends Upfront_Posts_Model {
 	public static function spawn_query ($data) {
 		$args = array();
 
+		if (empty($data['query'])) {
+			global $wp_query;
+			$query = json_decode(json_encode($wp_query), true);
+		} else $query = $data['query'];
+		
+		// Let's deal with the pagination here
+		if (empty($data['pagination'])) {
+			$offset = self::get_offset($data);
+			if (!empty($offset)) $args['offset'] = $offset;
+		} else {
+			if (!empty($query['query_vars']['paged'])) $args['paged'] = $query['query_vars']['paged'];
+			if (!empty($query['query_vars']['page'])) $args['paged'] = $query['query_vars']['page'];
+		}
 		$args['posts_per_page'] = self::get_limit($data);
-		$offset = self::get_offset($data);
-		if (!empty($offset)) $args['offset'] = $offset;
 
 		$args['tax_query'] = array();
 		$tax_query = array();
@@ -201,13 +256,13 @@ class Upfront_Posts_Model_Taxonomy extends Upfront_Posts_Model {
 		if (!empty($data['term'])) $tax_query['terms'] = array($data['term']);
 
 		if (!empty($tax_query)) $args['tax_query'][] = $tax_query;
-		$args['post_status'] = 'publish'; // double-ensure for AJAX requests
 
 		if (!empty($data['post_type'])) $args['post_type'] = $data['post_type'];
 
 		if (!empty($data['post_type']) && empty($data['term'])) unset($args['tax_query']);
 
-		return new WP_Query($args);
+
+		return self::_spawn_query($args, $data);
 	}
 	public static function get_posts ($data) {
 		$query = self::spawn_query($data);
