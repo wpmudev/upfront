@@ -23,6 +23,13 @@ class Upfront_StylePreprocessor {
         $override_baseline = $_SERVER['REQUEST_METHOD'] == 'POST' ? intval((!empty($_POST['baseline']) ? $_POST['baseline'] : 0)) : intval((!empty($_GET['baseline']) ? $_GET['baseline'] : 0));
 	    $breakpoints = $this->_grid->get_breakpoints();
         $style = '';
+
+        // Let's go with caching
+        $cache = Upfront_Cache::get_instance();
+        $cache_key = $cache->key('grid', array($this->_grid, $breakpoints, $editor));
+        $css = $cache->get($cache_key);
+        if (false !== $css) return $editor ? $css : self::compress($css);
+
         foreach ($breakpoints as $scope => $breakpoint) {
             if($scope != 'desktop')
                 continue;
@@ -109,7 +116,10 @@ class Upfront_StylePreprocessor {
             }
             $style .= join("\n", $rules);
         }
-        return ($editor) ? $style : self::compress($style);
+
+        $cache->set($cache_key, $style); // Cache stuff for laters
+
+        return $editor ? $style : self::compress($style);
 	}
 
 	protected function _get_width_classes ($col, $parent, $max_col, $width_class, $ml_class, $mr_class = false) {
@@ -149,14 +159,26 @@ class Upfront_StylePreprocessor {
 	 * @return string Compressed CSS
 	 */
 	public static function compress ($buffer) {
-		/* remove comments */
-		$buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
+        // Let's normalize the non-breaking spaces first
+        $buffer = preg_replace('/\xA0/u', ' ', $buffer);
 
-		/* remove tabs, spaces, newlines, etc. */
-		$buffer = str_replace(array("\r\n", "\r", "\n", "\t", '  ', '    ', '    '), '', $buffer);
+        /* remove comments */
+        $buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
+
+        /* remove tabs, spaces, newlines, etc. */
+        $buffer = str_replace(array("\r\n", "\r", "\n", "\t", '  ', '   ', '    '), ' ', $buffer); // Actually, replace them with single space
+
+        /* Whitespaces cleanup */
+        // We need this because fixing the issue with the previous statement (dropping whitespace that killed selectors too)
+        // leaves way too much whitespace that we know we don't need
+        $buffer = preg_replace('/\s+/', ' ', $buffer); // Collapse spaces
+        $buffer = preg_replace('/\s(\{|\})/', '$1', $buffer); // Drop leading spaces surrounding braces
+        $buffer = preg_replace('/(\{|\})\s/', '$1', $buffer); // Drop trailing spaces surrounding braces
+        $buffer = preg_replace('/(\s;|;\s)/', ';', $buffer); // Drop spaces surrounding semicolons, leading or trailing
 
 		// Remove space after colons
-		$buffer = str_replace(': ', ':', $buffer);
+		//$buffer = str_replace(': ', ':', $buffer); // Actually, let's not >.<
+        // This will wreak havoc on selectors
 
 		return $buffer;
 	}

@@ -53,6 +53,9 @@ class Upfront_MediaServer extends Upfront_Server {
 			'clear_all_filters' => __('Clear all filters', 'upfront'),
 			'all' => __('All', 'upfront'),
 			'none' => __('None', 'upfront'),
+			'select' => __('Select', 'upfront'),
+			'del_command' => __('Delete', 'upfront'),
+			'size_full' => __('Full size', 'upfront'),
 			'item_in_use_nag' => __("The selected media file is already in use. Are you sure?", 'upfront'),
 			'files_selected' => __('%d files selected', 'upfront'),
 			'media_title' => __("Media Title", 'upfront'),
@@ -61,6 +64,7 @@ class Upfront_MediaServer extends Upfront_Server {
 			'additional_sizes' => __("Additional sizes", 'upfront'),
 			'url' => __("URL", 'upfront'),
 			'add' => __("+Add", 'upfront'),
+			'search' => __("Search", 'upfront'),
 			'clear_search' => __("Clear search", 'upfront'),
 			'showing_total_results' => __("Showing {{total}} results for", 'upfront'),
 			'active_filters' => __("Active filters", 'upfront'),
@@ -70,6 +74,7 @@ class Upfront_MediaServer extends Upfront_Server {
 			'file_name' => __("File Name", 'upfront'),
 			'recent' => __("Recent", 'upfront'),
 			'labels' => __("Labels", 'upfront'),
+			'please_select_labels' => __("Please, select labels...", 'upfront'),
 			'library' => __("Library", 'upfront'),
 			'embed' => __("Embed", 'upfront'),
 			'upload' => __("Upload Media", 'upfront'),
@@ -87,6 +92,7 @@ class Upfront_MediaServer extends Upfront_Server {
 			'media_url' => __('URL of the media', 'upfront'),
 			'image_title' => __('Image Title', 'upfront'),
 			'your_image_title' => __('Your image title', 'upfront'),
+			'n_of_x' => _x("of", "N of X", 'upfront'),
 			'entity_list_info' => __('{{items}} Media Files', 'upfront'),
 			'filter' => array(
 				'images' => __('Images', 'upfront'),
@@ -527,8 +533,15 @@ add_action('init', array('Upfront_MediaServer', 'serve'));
 function upfront_media_file_upload () {
 	if (!Upfront_Permissions::current(Upfront_Permissions::UPLOAD)) return false; // Do not inject for users that can't use this
 	$base_url = Upfront::get_root_url();
+
+/*
 	wp_enqueue_script('fileupload', "{$base_url}/scripts/file_upload/jquery.fileupload.js", array('jquery'));
 	wp_enqueue_script('fileupload-iframe', "{$base_url}/scripts/file_upload/jquery.iframe-transport.js", array('fileupload'));
+*/
+	$deps = Upfront_CoreDependencies_Registry::get_instance();
+	$deps->add_script("{$base_url}/scripts/file_upload/jquery.fileupload.js");
+	$deps->add_script("{$base_url}/scripts/file_upload/jquery.iframe-transport.js");
+	
 	echo '<script>var _upfront_media_upload=' . json_encode(array(
 		'normal' => Upfront_UploadHandler::get_action_url('upfront-media-upload'),
 		'theme' => Upfront_UploadHandler::get_action_url('upfront-media-upload-theme-image'),

@@ -61,6 +61,11 @@ input.upfront-field-text:hover,
 	height: 30px;
 	padding: 0 0 0 5px;
   border-radius:2px;
+  opacity:.9;
+}
+.upfront-field-number[type=number]:hover {
+	border: 1px solid rgb(163, 191, 217);
+	opacity:1;
 }
 .upfront-field-number[type=number]:focus {
 	outline:none;
@@ -108,7 +113,7 @@ input.upfront-field-text:hover,
 	border-radius: 3px;
 }
 .upfront-field-select {
-	display: inline-block;
+	display: block;
 	height: 26px;
 	max-height: 26px;
 	margin: 0;
@@ -120,6 +125,33 @@ input.upfront-field-text:hover,
 	overflow: hidden;
 	cursor: pointer;
 }
+.upfront-object-content .ulinkpanel-dark ul,
+.upfront-object-content .ulinkpanel ul {
+	color: rgb(96, 127, 153);
+	font-size: 11px;
+	font-family: verdana, sans-serif;
+	line-height: 22px;
+}
+.ulinkpanel-dark .upfront-field-multiple label,
+.ulinkpanel .upfront-field-multiple label {
+	color: rgb(96, 127, 153);
+	font-size: 11px;
+	font-family: verdana, sans-serif;
+}
+.ulinkpanel .upfront-field-wrap-radios > label,
+.ulinkpanel-dark .upfront-field-wrap-radios > label {
+	display: inline-block;
+	margin: 0 15px 0 0;
+}
+.ulinkpanel-dark .upfront-field-wrap-radios > label,
+.ulinkpanel-dark .upfront-field-wrap-radios > .upfront-field-multiple,
+.ulinkpanel .upfront-field-wrap-radios > label,
+.ulinkpanel .upfront-field-wrap-radios > .upfront-field-multiple {
+	vertical-align: top;
+	color:#97B8DA;
+	font-weight:normal;
+}
+
 .upfront-field-select-disabled {
 	border-color: rgb(153, 181, 204);
 	color: rgb(153, 181, 204);
@@ -195,9 +227,18 @@ input.upfront-field-text:hover,
 .upfront-field-select-option {
 	margin: 0 10px 0 0 !important;
 	position: relative;
+	width:100%;
 }
 .upfront-field-select-expanded .upfront-field-select-option {
 	margin: 0 !important;
+}
+.upfront-field-select-expanded .upfront-field-select-option:before,
+.upfront-field-select-expanded .upfront-field-select-option:after {
+	background-color:transparent;
+	content:normal;
+}
+.upfront-field-select-option label {
+	font:normal 11px/2 Verdana, sans-serif;
 }
 .upfront-field-select-single .upfront-field-select-option-selected {
 
@@ -217,6 +258,7 @@ input.upfront-field-text:hover,
 .upfront-field-select-zebra .upfront-field-select-option-even {
 	background: rgb(218, 231, 242);
 }
+.upfront-object-content div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap ul .upfront-field-select-option:hover label,
 .upfront-field-select-option:hover {
 	background: rgb(96, 127, 153);
 	color: rgb(238, 247, 255);
@@ -247,6 +289,10 @@ input.upfront-field-text:hover,
 	cursor: pointer;
 	float: none;
 }
+.upfront-ui .upfront-field-checkbox:hover, .upfront-ui .upfront-field-radio:hover {
+	border: 2px solid rgb(157, 172, 186);
+}
+
 .upfront-field-radio {
 	border-radius: 6px;
 }
@@ -254,17 +300,22 @@ input.upfront-field-text:hover,
 	border-width: 3px;
 	outline: none;
 }
-.upfront-field-radio:checked {
+.upfront-field-radio:checked,
+.upfront-field-radio:checked:hover {
   border-width: 3px;
   border-color: rgb(38, 58, 77);
 	background: rgb(31, 205, 143);
 }
+
 .upfront-field-checkbox {
 	border-radius: 2px;
 }
 .upfront-field-checkbox:checked {
 	border-width: 0;
 	background: rgb(38, 58, 77);
+}
+.upfront-field-checkbox:checked:hover {
+	border-width:0;
 }
 .tile-select {
 	width: 16px;
@@ -346,6 +397,7 @@ input.upfront-field-text:hover,
 	max-height: 30px;
 	padding: 3px 0;
 	overflow: hidden;
+    line-height: 13px;
 }
 .upfront-field-icon {
 	display: inline-block;

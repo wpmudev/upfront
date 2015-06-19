@@ -111,9 +111,11 @@ class Upfront_SocialMediaView extends Upfront_Object {
 		upfront_add_element_style('upfront-social-media', array('css/upfront-social-media-style.css', dirname(__FILE__)));
 		//wp_enqueue_style('upfront-social-media', upfront_element_url('css/upfront-social-media-style.css', dirname(__FILE__)));
 		
+		/*
 		if(Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
-			wp_enqueue_script(array('jquery-ui-sortable'));
+			wp_enqueue_script(array('jquery-ui-sortable')); // Added to core
 		}
+		*/
 	}
 
 	//Add properties to Upfront.data

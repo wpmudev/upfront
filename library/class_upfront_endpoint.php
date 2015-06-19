@@ -44,8 +44,8 @@ abstract class Upfront_VirtualPage extends Upfront_Server {
 
 	public static function redirect ($request) {
 		$url = get_option('permalink_structure')
-			? site_url($request)
-			: site_url() . '?name=' . $request
+			? home_url($request)
+			: home_url() . '?name=' . $request
 		;
 		wp_safe_redirect($url);
 		die;
@@ -84,8 +84,8 @@ abstract class Upfront_VirtualPage extends Upfront_Server {
 
 	public static function get_url ($request) {
 		return get_option('permalink_structure')
-			? site_url($request)
-			: site_url() . '?name=' . $request
+			? home_url($request)
+			: home_url() . '?name=' . $request
 		;
 	}
 
@@ -782,7 +782,9 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		if(empty($data['ID']))
 			$data['ID'] = get_current_user_id();
 
-		$user = $this->remove_private_user_fields(new WP_User(wp_get_current_user()));
+		$current_user = wp_get_current_user();
+		$current_user = $current_user instanceof WP_User ? $current_user : new WP_User($current_user);
+		$user = $this->remove_private_user_fields($current_user);
 
 		$this->_out(new Upfront_JsonResponse_Success($user));
 	}
@@ -1049,10 +1051,10 @@ class Upfront_ElementDependencies_VirtualPage extends Upfront_VirtualPage {
 //Upfront_ElementDependencies_VirtualPage::serve();
 add_action('init', array('Upfront_ElementDependencies_VirtualPage', 'serve'));
 
+if (!(defined('UF_THX_TMP_SWITCH') && UF_THX_TMP_SWITCH)) {
 /**
  * Create new endpoint
  */
-
 class Upfront_CreateNew_Theme_VirtualSubpage extends Upfront_VirtualSubpage {
 
 	public function get_slug () { return 'theme'; }
@@ -1143,3 +1145,4 @@ class Upfront_CreateNew_VirtualPage extends Upfront_VirtualPage {
 }
 //Upfront_CreateNew_VirtualPage::serve();
 add_action('init', array('Upfront_CreateNew_VirtualPage', 'serve'));
+}

@@ -1,7 +1,7 @@
 <?php
 
-require_once('class_upfront_accordion_presets_server.php');
-require_once('class_upfront_tab_presets_server.php');
+//require_once('class_upfront_accordion_presets_server.php');
+//require_once('class_upfront_tab_presets_server.php');
 
 /**
  * Serves frontend stylesheet.
@@ -31,10 +31,18 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$grid = Upfront_Grid::get_grid();
 		$layout = apply_filters('upfront-style-base_layout', Upfront_Layout::get_instance());
 		$preprocessor = new Upfront_StylePreprocessor($grid, $layout);
+		$base_only = isset($_POST['base_only']) ? filter_var($_POST['base_only'], FILTER_VALIDATE_BOOLEAN) : false;
 
-		//Add typography styles - rearranging so the imports from Google fonts come first, if needed
-		$style = $this->prepare_typography_styles($layout, $grid);
-		$style .= $preprocessor->process();
+		// Alright, so initialize the var first
+		$style = '';
+
+		// Add typography styles - rearranging so the imports from Google fonts come first, if needed.
+		// When loading styles in editor mode don't include typography styles since they are generated
+		// by javascript
+		if (false === $base_only) {
+			$style = $this->prepare_typography_styles($layout, $grid);
+			$style .= $preprocessor->process();
+		}
 
 		// Always load original theme styles into theme unless we're in builder, yay
 		// Reasoning behind it: we want theme users to always have original theme styles loaded
@@ -48,7 +56,6 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		// will be loaded separately to the body. If they are included in main style than after
 		// style is edited in editor (e.g. some property is removed) inconsistencies may occur
 		// especially with rules removal since those would still be defined in main style.
-		$base_only = isset($_POST['base_only']) ? filter_var($_POST['base_only'], FILTER_VALIDATE_BOOLEAN) : false;
 		if ($base_only) {
 			$this->_out(new Upfront_JsonResponse_Success(array('styles' => $style)));
 			return;
@@ -58,10 +65,8 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$style .= $this->prepare_theme_styles();
 		// Add theme colors styles
 		$style .= $this->_get_theme_colors_styles();
-		// Add tab presets styles
-		$style .= Upfront_Tab_Presets_Server::get_instance()->get_presets_styles();
-		// Add accordion presets styles
-		$style .= Upfront_Accordion_Presets_Server::get_instance()->get_presets_styles();
+		// Add elements presets styles
+		$style = apply_filters('get_element_preset_styles', $style);
 		$style = Upfront_UFC::init()->process_colors($style);
 		$this->_out(new Upfront_CssResponse_Success($style));
 	}
@@ -123,10 +128,10 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		// Fix storage key missing _dev in dev mode. This is called from ajax calls so use POST.
 		$storage_key = Upfront_Layout::get_storage_key();
 		if (isset($_POST['dev']) && $_POST['dev'] === 'true' && strpos($storage_key, '_dev') === false) $storage_key = $storage_key . '_dev';
-	  $styles = get_option($storage_key . '_' . get_stylesheet() . '_styles');
-	  $styles = apply_filters('upfront_get_theme_styles', $styles);
+		$styles = get_option($storage_key . '_' . get_stylesheet() . '_styles');
+		$styles = apply_filters('upfront_get_theme_styles', $styles);
 
-	  $this->_out(new Upfront_JsonResponse_Success(array(
+		$this->_out(new Upfront_JsonResponse_Success(array(
 			'styles' => $styles
 		)));
 	}
@@ -135,8 +140,12 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		if (!empty($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'create_new') !== false) {
 			return '';
 		}
+		$child = Upfront_ChildTheme::get_instance();
 
-		return Upfront_ChildTheme::get_instance()->getThemeStylesAsCss();
+		return $child instanceof Upfront_ChildTheme
+			? $child->getThemeStylesAsCss()
+			: ''
+		;
 	}
 
 	function prepare_theme_styles() {
@@ -150,6 +159,8 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$layout = Upfront_Layout::get_parsed_cascade(); // Use pure static method instead
 		$layout_id = ( !empty($layout['specificity']) ? $layout['specificity'] : ( !empty($layout['item']) ? $layout['item'] : $layout['type'] ) );
 
+		$layout_style_loaded = false; // Keep track of global layout CSS, so we sent over to the filter
+
 		if( is_array( $styles ) ){
 		  foreach($styles as $type => $elements) {
 			foreach($elements as $name => $content) {
@@ -158,12 +169,14 @@ class Upfront_StylesheetMain extends Upfront_Server {
 			  if ( preg_match('/^region(-container|)$/', $type) && !preg_match($style_rx, $name) )
 				continue;
 			  $out .= $content;
+			  if ( $type == 'layout' && $name == 'layout-style' )
+			  	$layout_style_loaded = true;
 			}
 		  }
 		}
 
 
-		$out = apply_filters('upfront_prepare_theme_styles', $out);
+		$out = apply_filters('upfront_prepare_theme_styles', $out, $layout_style_loaded);
 
 		return $out;
 	}
@@ -174,7 +187,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 			return '';
 		$out = '';
 		$faces = array();
-		foreach ( $typography as $element=>$properties ){
+		foreach ( $typography as $element=>$properties ) {
 			$properties = wp_parse_args($properties, array(
 				'font_face' => false,
 				'weight' => false,
@@ -205,12 +218,44 @@ class Upfront_StylesheetMain extends Upfront_Server {
 
 		// Responsive/breakpoint typography
 		$breakpoints = $grid->get_breakpoints();
+		$tablet_typography;
 		foreach ($breakpoints as $breakpoint) {
-		    // Ignore default/desktop breakpoint as we store it separately
-		    if ( $breakpoint->is_default() )
-                continue;
+			// Ignore default/desktop breakpoint as we store it separately
+			if ( $breakpoint->is_default() ) {
+				continue;
+			}
+
 			$breakpoint_css = '';
-			$typography = $breakpoint->get_typography();;
+			// Breakpoint's typography should load (inherit) like this:
+			// - if there is no typography for current breakpoint it should inherit settings from
+			//   wider one, if wider one is not defined inherit from one above, last one is default
+			//   typography
+			// - in case of widest (tablet for now) it should inherit from default typography
+			$breakpoint_id = $breakpoint->get_id();
+			$typography = $breakpoint->get_typography();
+
+			if ($breakpoint_id === 'tablet') {
+				$tablet_typography = $typography;// needed for mobile
+			}
+
+			if (empty($typography) || false === isset($typography['h2'])) {
+				switch ($breakpoint_id) {
+				case 'tablet':
+					$layout_properties = Upfront_ChildTheme::get_instance()->getLayoutProperties();
+					$value = upfront_get_property_value('typography', array('properties'=>$layout_properties));
+					$typography = $value;
+					break;
+				case 'mobile':
+					if (empty($tablet_typography)) {
+						$layout_properties = Upfront_ChildTheme::get_instance()->getLayoutProperties();
+						$value = upfront_get_property_value('typography', array('properties'=>$layout_properties));
+						$typography = $value;
+					} else {
+						$typography = $tablet_typography;
+					}
+					break;
+				}
+			}
 			foreach ( $typography as $element=>$properties ){
 				$properties = wp_parse_args($properties, array(
 					'font_face' => 'Arial',
@@ -246,7 +291,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 			if (!$google_fonts->is_from_google($face['face'])) continue;
 			$imports .= "@import \"https://fonts.googleapis.com/css?family=" .
 				preg_replace('/\s/', '+', $face['face']);
-			if ($face['weight'] != 400) $imports .= ':' . $face['weight'];
+			if (400 !== (int)$face['weight'] && 'inherit' !== $face['weight']) $imports .= ':' . $face['weight'];
 			$imports .= "\";\n";
 		}
 		if (!empty($imports)) $out = "{$imports}\n\n{$out}";
@@ -275,6 +320,6 @@ class Upfront_StylesheetMain extends Upfront_Server {
     }
 
     private function _get_theme_colors_styles(){
-        return apply_filters('upfront-get_theme_colors_styles', get_option("upfront_" . get_stylesheet() . "_theme_colors_styles"));
+        return apply_filters('upfront_get_theme_colors_styles', get_option("upfront_" . get_stylesheet() . "_theme_colors_styles"));
     }
 }

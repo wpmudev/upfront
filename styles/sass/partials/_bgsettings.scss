@@ -23,7 +23,7 @@
 }
 .upfront-region-bg-setting-tab-primary .uf-bgsettings-image-pick {
   float: right;
-  margin: 37px 0 0;
+  margin: 33px 0 0;
 }
 .upfront-settings_panel .uf-bgsettings-image-pick {
   float: right;
@@ -100,6 +100,11 @@
   float: none;
   margin-right: 0;
   width: auto;
+}
+.uf-bgsettings-map-show-marker {
+  clear: both;
+  float: left;
+  width: 100%;
 }
 .uf-bgsettings-slideritem .uf-bgsettings-slider-rotate {
   display: inline-block;

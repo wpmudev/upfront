@@ -7,6 +7,8 @@ class Upfront_UimageView extends Upfront_Object {
 	public function get_markup () {
 		$data = $this->properties_to_array();
 
+		$data['in_editor'] = false;
+
 		if($data['when_clicked'] == 'show_larger_image'){
 			//wp_enqueue_style('magnific');
 			upfront_add_element_style('magnific', array('/scripts/magnific-popup/magnific-popup.css', false));
@@ -46,6 +48,10 @@ class Upfront_UimageView extends Upfront_Object {
 		$data['placeholder_class'] = !empty($data['src']) ? '' : 'uimage-placeholder';
 
 		if ($data['caption_position'] === 'below_image') $data['captionBackground'] = false;
+
+		if (!isset($data['link_target'])) $data['link_target'] = false; // Initialize array member to prevent notices
+		// We could really go with wp_parge_args here...
+
 
 		$markup = '<div>' . upfront_get_template('uimage', $data, dirname(dirname(__FILE__)) . '/tpl/image.html') . '</div>';
 
@@ -304,6 +310,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 
 	function get_image_id_by_filename($filename) {
 		global $wpdb;
+
 		// Query post meta because it contains literal filename
 		$query = $wpdb->prepare("SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_wp_attached_file' AND meta_value like '%%%s';", $filename);
 		$image = $wpdb->get_col($query);
@@ -342,7 +349,8 @@ class Upfront_Uimage_Server extends Upfront_Server {
 					continue;
 				}
 
-				$image_filename = str_replace('/images/', '', $id);
+				$slash = preg_quote('/', '/');
+				$image_filename = preg_replace("/{$slash}?images{$slash}/", '', $id);
 				$image_id = $this->get_image_id_by_filename($image_filename);
 				if (!is_null($image_id)) {
 					$image_ids[] = $image_id;
@@ -487,7 +495,10 @@ class Upfront_Uimage_Server extends Upfront_Server {
 		$element_id = !empty($imageData['element_id']) ? $imageData['element_id'] : 0;
 		if (!empty($used) && !empty($used[$element_id]['path']) && file_exists($used[$element_id]['path'])) {
 			// OOOH, so we have a previos crop!
-			@unlink($used[$element_id]['path']); // Drop the old one, we have new stuffs to replace it
+			//TODO ok so we don't do this anymore because it causes any element that uses images to
+			// have a broken image if user have not saved layout after croping image or resizing thumbnails.
+			// This have to be mplemented better so it does not lead to broken images.
+			// @unlink($used[$element_id]['path']); // Drop the old one, we have new stuffs to replace it
 		}
 		$used[$element_id] = $saved; // Keep track of used elements per element ID
 		update_post_meta($imageData['id'], 'upfront_used_image_sizes', $used);

@@ -149,6 +149,14 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			me.updateCaptionType();
 		});
 
+		this.listenTo(this.model, 'change:fitThumbCaptions', function() {
+			me.updateFitThumbCaptions();
+		});
+
+		this.listenTo(this.model, 'change:thumbCaptionsHeight', function() {
+			me.updateThumbCaptionsHeight();
+		});
+
 		if (this.property('status') !== 'ok' || !this.images.length) {
 			this.property('has_settings', 0);
 		}
@@ -187,6 +195,14 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			this.$el.find('.ugallery_item').addClass('ugallery_caption_on_hover_' + suffix);
 			this.$el.find('.ugallery-thumb-title').addClass('ugallery-caption-on-hover-' + suffix);
 		}
+	},
+
+	updateFitThumbCaptions: function() {
+		this.debouncedRender();
+	},
+
+	updateThumbCaptionsHeight: function() {
+		this.debouncedRender();
 	},
 
 	updateShowCaptionOnHover: function() {
@@ -296,32 +312,31 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 	createLinkControl: function(image){
 		var me = this,
-			control = new Upfront.Views.Editor.InlinePanels.DialogControl();
+			linkControl = new Upfront.Views.Editor.InlinePanels.DialogControl();
 
-		control.view = new Upfront.Views.Editor.LinkPanel({
-			model: new Backbone.Model({
-				type: image.get('urlType'),
-				url: image.get('url')
-			}),
-			linkTypes: {image:true}
+		linkControl.view = linkPanel = new Upfront.Views.Editor.LinkPanel({
+			linkType: image.get('urlType'),
+			linkUrl: image.get('url'),
+			linkTarget: image.get('linkTarget'),
+			linkTypes: { image: true },
+			imageUrl: image.get('srcFull')
 		});
 
-		control.image = image;
-
-		me.listenTo(control, 'panel:ok', function() {
-			//call the panel linkOk method to let it parse the link,
-			// later the link:ok event will be emitted and we will use it to
-			// save the link.
-			control.view.linkOk();
+		me.listenTo(linkPanel, 'change change:target', function(data){
+			image.set({
+				urlType: data.type,
+				url: data.url,
+				linkTarget: data.target
+			});
 		});
 
-		me.listenTo(control.view, 'link:ok', function(){
-			me.updateLink(control);
+		this.listenTo(linkControl, 'panel:ok', function(){
+			linkControl.close();
 		});
 
-		me.listenTo(control, 'panel:open', function(){
-			control.$el
-				.closest('.ugallery-controls')
+		me.listenTo(linkControl, 'panel:open', function(){
+			linkControl.$el
+				.parents('.ugallery_item')
 					.addClass('upfront-control-visible').end()
 				.closest('.ugallery_link')
 					.removeAttr('href') //Deactivate link when the panel is open
@@ -330,56 +345,22 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			me.$el.closest('.ui-draggable').draggable('disable');
 		});
 
-		me.listenTo(control, 'panel:close', function(){
-			control.$el
-				.closest('.ugallery-controls')
+		me.listenTo(linkControl, 'panel:close', function(){
+			linkControl.$el
+				.parents('.ugallery_item')
 					.removeClass('upfront-control-visible').end()
 				.closest('.ugallery_link')
-					.attr('href', control.image.get('url'))
+					.attr('href', image.get('url'))
 			;
 
 			me.$el.closest('.ui-draggable').draggable('enable');
-
-			//Roll back the view, ready for reopen.
-			control.view.render();
 		});
 
-		me.listenTo(control.view, 'link:postselected', function(linkData){
-			control.image.set({
-				urlType: linkData.type,
-				ur: linkData.url
-			});
+		linkControl.icon = 'link';
+		linkControl.tooltip = l10n.ctrl.image_link;
+		linkControl.id = 'link';
 
-			control.view.model.set(linkData);
-			control.view.render();
-			control.open();
-		});
-
-		control.icon = 'link';
-		control.tooltip = l10n.ctrl.image_link;
-		control.id = 'link';
-
-		return control;
-	},
-
-	updateLink: function(control){
-		var data = control.view.getCurrentValue();
-
-		if(!data){
-			return;
-		}
-
-		if (data.type === 'image') {
-			data.url = control.image.get('srcFull');
-		}
-
-		control.image.set({
-			urlType: data.type,
-			url: data.url
-		});
-
-		control.view.model.set(data);
-		control.render().close();
+		return linkControl;
 	},
 
 	openLightbox: function(e) {
@@ -801,8 +782,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			loading.render();
 			this.parent_module_view.$el.append(loading.$el);
 
-			Upfront.Util.post(editOptions).done(function(response){
-
+			Upfront.Util.post(editOptions).done(function(response) {
 				loading.done();
 				var images = response.data.images,
 					models = []
@@ -1087,7 +1067,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 					label.id = newLabel.id;
 				}
 			});
-			
+
 			me.render();
 		});
 
@@ -1215,12 +1195,13 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			return;
 		}
 
-		if ($caption.data('ueditor')) {
+		if ($caption.data('ueditor') && !$caption.data('ueditor').active ) {
 			$caption.data('ueditor').start();
 		} else {
 			image = this.images.get($caption.closest('.ugallery_item').attr('rel'));
 			this.ensureCaptionEditorExists($caption, image);
-			$caption.data('ueditor').start();
+            if( !$caption.data('ueditor').active )
+			    $caption.data('ueditor').start();
 		}
 	},
 

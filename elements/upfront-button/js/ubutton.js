@@ -15,6 +15,7 @@ var ButtonModel = Upfront.Models.ObjectModel.extend({
 });
 
 var singleclickcount = 0;
+
 var ButtonView = Upfront.Views.ObjectView.extend({
 	className: 'upfront-button',
 	initialize: function() {
@@ -28,12 +29,13 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 
 		this.events = _.extend({}, this.events, {
 			'click a.upfront_cta.ueditor-placeholder' : 'placeholderClick',
-			'click i.visit_link' : 'visitLink'
-
+			'click a.redactor_act': 'onOpenPanelClick',
+			'click .upfront-save_settings': 'onOpenPanelClick',
+			'click .open-item-controls': 'onOpenItemControlsClick'
 		});
 
 		this.on('deactivated', function() {
-			
+
 			Upfront.Events.trigger('upfront:element:edit:stop');
 		}, this);
 //		Upfront.Events.on("entity:deactivated", this.stopEdit, this);
@@ -47,7 +49,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		//Upfront.Events.on("entity:resize_stop", this.onResizeStop, this);
 
 		Upfront.Events.on("upfront:themestyle:saved", function(theme_style) {
-			var preset = Upfront.Views.Editor.Button.Presets.get(me.model.get_property_value_by_name("currentpreset"));
+			var preset = Upfront.Views.Editor.Button.Presets.get(me.property("currentpreset"));
 			if(preset) {
 				preset.attributes.theme_style = theme_style;
 				Upfront.Views.Editor.Button.Presets.trigger('edit');
@@ -73,56 +75,12 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		this.$el.find('.upfront-output-button').css('height', this.$el.find('.upfront-object.upfront-button').height());
 	},*/
 
-	processClick: function(e) {
-		e.stopPropagation();
-		e.preventDefault();
-		return;
-		var me = this
-		singleclickcount++;
-		if(singleclickcount == 1) {
-			setTimeout(function(){
-				if(singleclickcount == 1) {
-					if(!$(e.target).hasClass('redactor_editor'))
-						me.visitLink(e);
-				}
-			singleclickcount = 0;
-			}, 400);
-		}
-		//else
-		//	me.editLink(e);
-	},
 	placeholderClick: function(e) {
 		e.stopPropagation();
 		e.preventDefault();
 		this.hidePlaceholder();
 		$(e.target).siblings('a.upfront_cta').trigger('dblclick');
 
-	},
-	visitLink: function() {
-		var me = this;
-		var url = this.model.get_property_value_by_name('href');
-		var linktype = me.guessLinkType();
-		if(linktype == 'lightbox') {
-			var regions = Upfront.Application.layout.get('regions');
-			region = regions ? regions.get_by_name(me.getUrlanchor(url)) : false;
-			if(region){
-				//hide other lightboxes
-				_.each(regions.models, function(model) {
-					if(model.attributes.sub == 'lightbox')
-						Upfront.data.region_views[model.cid].hide();
-				});
-				var regionview = Upfront.data.region_views[region.cid];
-				regionview.show();
-			}
-		}
-		else if(linktype == 'anchor') {
-			var anchors = me.get_anchors();
-			$('html,body').animate({scrollTop: $('#'+me.getUrlanchor(url)).offset().top},'slow');
-		}
-		else if(linktype == 'entry')
-			window.location.href = url.replace('&editmode=true', '').replace('editmode=true', '')+((url.indexOf('?')>0)?'&editmode=true':'?editmode=true');
-		else
-			window.open(url);
 	},
 	getCleanurl: function(url) {
 		//this one removes any existing # anchor postfix from the url
@@ -182,15 +140,15 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 	},*/
 	get_content_markup: function () {
 		var content = this.model.get_content(), style_static = '', style_hover = '';
-		
+
 		//Apply Default preset if none is selected for a new item
-		if(!this.model.get_property_value_by_name('currentpreset') && Upfront.Views.Editor.Button.Presets.first())
+		if(!this.property('currentpreset') && Upfront.Views.Editor.Button.Presets.first())
 			this.model.set_property('currentpreset', Upfront.Views.Editor.Button.Presets.first().id);
 
 
-		if(this.model.get_property_value_by_name("currentpreset") && this.model.get_property_value_by_name("currentpreset")!='' && Upfront.Views.Editor.Button.Presets.get(this.model.get_property_value_by_name("currentpreset"))) {
-			
-			var preset = Upfront.Views.Editor.Button.Presets.get(this.model.get_property_value_by_name("currentpreset")).attributes;
+		if(this.property("currentpreset") && this.property("currentpreset")!='' && Upfront.Views.Editor.Button.Presets.get(this.property("currentpreset"))) {
+
+			var preset = Upfront.Views.Editor.Button.Presets.get(this.property("currentpreset")).attributes;
 
 			style_static = "border: "+preset.borderwidth+"px "+preset.bordertype+" "+ this.process_color(preset.bordercolor)+"; "+
 					"border-radius: "+preset.borderradius1+"px "+preset.borderradius2+"px "+preset.borderradius4+"px "+preset.borderradius3+"px; "+
@@ -227,51 +185,105 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		}
 
 		var data = {
-			"id" : this.model.get_property_value_by_name('element_id'),
+			"id" : this.property('element_id'),
 			"content" : content,
-			"href" : this.model.get_property_value_by_name('href'),
-			"linktype" : this.guessLinkType(),
-			"align" : this.model.get_property_value_by_name('align'),
+			"href" : this.property('href'),
+			"linktype" : Upfront.Util.guessLinkType(this.property('href')),
+			"linkTarget": this.property('linkTarget'),
+			"align" : this.property('align'),
 			"style_static" : style_static,
 			"style_hover" : style_hover,
 		};
 
 		var rendered = '';
 
-		rendered = _.template(template, data)+'<i class="visit_link visit_link_'+this.guessLinkType()+'"></i>';
+		rendered = _.template(template, data)+'<span class="open-item-controls"></span>';
+
+		if(this.property('href').indexOf('#ltb-') > -1 && !Upfront.Util.checkLightbox(this.property('href')))
+			rendered = rendered + '<span class="missing-lightbox-warning"></span>';
 
 		return rendered;// + ( !this.is_edited() || $.trim(content) == '' ? '<div class="upfront-quick-swap"><p>' + l10n.dbl_click + '</p></div>' : '');
 
 	},
-	guessLinkType: function(){
-		var url = this.model.get_property_value_by_name('href');
 
-
-		if(!$.trim(url) || $.trim(url) == '#')
-			return 'unlink';
-		if(url.length && url[0] == '#')
-			return url.indexOf('#ltb-') > -1 ? 'lightbox' : 'anchor';
-		if(url.substring(0, location.origin.length) == location.origin)
-			return 'entry';
-
-		return 'external';
-
-
-	},
 	is_edited: function () {
-		var is_edited = this.model.get_property_value_by_name('is_edited');
+		var is_edited = this.property('is_edited');
 		return is_edited ? true : false;
 	},
+
+	onOpenPanelClick: function(event) {
+		event.preventDefault();
+		this.toggleLinkPanel();
+	},
+
+	onOpenItemControlsClick: function() {
+		this.$el.toggleClass('controls-visible');
+		if (this.$el.hasClass('controls-visible')) {
+			$('.upfront-button.controls-visible').removeClass('controls-visible');
+			this.$el.addClass('controls-visible');
+			this.controlsVisible = true;
+		} else {
+			this.controlsVisible = false;
+		}
+	},
+
+	createInlineControlPanel: function() {
+		var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
+			visitLinkControl = new Upfront.Views.Editor.InlinePanels.Controls.VisitLink({
+				url: this.property('href')
+			}),
+			linkPanelControl = new Upfront.Views.Editor.InlinePanels.Controls.LinkPanel({
+				linkUrl: this.property('href'),
+				linkType: Upfront.Util.guessLinkType(this.property('href')),
+				linkTarget: this.property('linkTarget'),
+				button: false,
+				icon: 'link',
+				tooltip: 'link',
+				id: 'link'
+			});
+			me = this;
+
+		this.listenTo(linkPanelControl, 'change change:target', function(data) {
+			visitLinkControl.setLink(data.url);
+			this.property('href', data.url);
+			this.property('linkTarget', data.target);
+		});
+
+		panel.items = _([
+			linkPanelControl,
+			visitLinkControl
+		]);
+
+		var imageControlsTpl = '<div class="uimage-controls image-element-controls upfront-ui"></div>';
+		this.$el.append(imageControlsTpl);
+		panel.render();
+		this.$el.find('.uimage-controls').append(panel.el);
+		panel.delegateEvents();
+	},
+
+	toggleLinkPanel: function() {
+		var me = this;
+		if (this.$el.hasClass('stayOpen')) {
+			this.$el.removeClass('stayOpen');
+			me.render();
+		} else {
+			this.$el.addClass('stayOpen');
+		}
+	},
+
 	on_render: function() {
 		var me = this,
-		blurTimeout = false;
+			blurTimeout = false;
+
+		this.delegateEvents();
+
 		var $target = this.$el.find('.upfront-object-content a.upfront_cta');
 		$target.ueditor({
 				linebreaks: true,
 				disableLineBreak: true,
 				//focus: true,
 
-				airButtons: ['upfrontLink', 'stateAlignCTA', 'upfrontIcons'],
+				airButtons: ['stateAlignCTA', 'upfrontIcons'],
 
 				placeholder: 'Click here',
 				autostart: false
@@ -293,8 +305,6 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 					me.showPlaceholder();
 
 				me.model.set_content(text, {silent: true}); // Something in inserts is destroying the sidebar
-				
-				me.property('href', $target.attr('href'), true);
 
 				me.property('align', $target.css('text-align'), true);
 				me.$el.find('div.being_edited').removeClass('being_edited');
@@ -312,41 +322,11 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 				if (text) me.model.set_content(text, {silent: true});
 			})
 
-		/*.ueditor({
-				linebreaks: true,
-				disableLineBreak: true,
-				//focus: true,
-
-				airButtons: ['upfrontLinkCTA', 'stateAlignCTA'],
-				placeholder: 'Click here',
-			}).on('start', function(e) {
-				Upfront.Events.trigger('upfront:element:edit:start', 'text');
-				$(this).focus();
-			 }).on("stop", function () {
-				me.property('content', $target.text(), true);
-				me.property('href', $target.attr('href'), true);
-				console.log($target.text());
-				me.property('align', $target.css('text-align'), true);
-				//Upfront.Events.trigger('upfront:element:edit:stop');
-			 }).on("blur", function(){
-				$target.data('ueditor').stop();
-			 });
-
-			$target.data('ueditor').stop();
-			*/
-/*			setTimeout(function() {
-				me.conformSize();
-			}, 100);
-			*/
-		//this.$el.children('.upfront-object').css('min-height', this.$el.closest('.upfront-module').css('min-height'));
 		this.property('row', this.parent_module_view.model.get('properties').get('row').attributes.value);
 		if(this.property('content') == '')
 			this.showPlaceholder();
 
-		//console.log(this.property('currentpreset'));
-		var preset = Upfront.Views.Editor.Button.Presets.get(this.property('currentpreset'));
-		if(preset.get('theme_style'))
-			this.$el.children('.upfront-object').addClass(preset.get('theme_style'));
+		this.createInlineControlPanel();
 	},
 	showPlaceholder: function() {
 		var $target = this.$el.find('.upfront-object-content a.upfront_cta:not(.ueditor-placeholder)');
@@ -375,7 +355,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 
 
 var ButtonElement = Upfront.Views.Editor.Sidebar.Element.extend({
-	priority: 260,
+	priority: 150,
 	render: function () {
 		this.$el.addClass('upfront-icon-element upfront-icon-element-button');
 		this.$el.html('Button');
@@ -651,7 +631,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 					if (!color) return false;
 					me.updatelivecss(me, me.bgColor);
 				},
-				move: function (color) { 
+				move: function (color) {
 					if (!color) return false;
 					me.updatelivecss(me, me.bgColor, true);
 				},
@@ -1051,7 +1031,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 			me.$el.find('div.upfront-settings-common_panel').css('display', 'none');
 		}, 100);
 
-		Upfront.Events.on("entity:settings:beforedeactivate", this.on_save, this);
+		Upfront.Events.once("entity:settings:beforedeactivate", this.on_save, this);
 		Upfront.Events.once("entity:settings:deactivate", this.revert_preset, this);
 		me.is_saving = false;
 		me.original_style = $('style#style'+me.property('element_id')).html();
@@ -1172,6 +1152,8 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 
 
 		$('style#style'+me.property('element_id')).html(style);
+
+
 	},
 	get_raw_picker_field_color: function (value) {
 		var color = value.color || false;
@@ -1193,6 +1175,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 
 		this.is_saving = true;
 		var currentpreset = this.property('currentpreset');
+
 		if(this.buttonpresets.$el.css('display') == 'none')
 			this.save_preset(this.property('currentpreset'));
 		this.is_changed = true;
@@ -1237,6 +1220,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 	},
 
 	load_preset: function(presetname) {
+		var me = this;
 			if(Upfront.Views.Editor.Button.Presets.get(presetname)) {
 				var preset = Upfront.Views.Editor.Button.Presets.get(presetname).attributes;
 
@@ -1266,7 +1250,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 
 				this.color.set_value(preset.color);
 				this.color.update_input_border_color(Upfront.Util.colors.to_color_value(preset.color));
-				
+
 				this.hov_duration.set_value(preset.hov_duration);
 
 				this.hov_transition.set_value(preset.hov_transition);
@@ -1375,7 +1359,17 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				}
 
 				this.$el.find('div.upfront-settings-css input[value="'+preset.theme_style+'"]').trigger('click');
+
+				var preset = Upfront.Views.Editor.Button.Presets.get(presetname);
+				if(preset && preset.get('theme_style')) {
+					var for_view = me.parent_view.for_view;
+					_.each(Upfront.Views.Editor.Button.Presets, function(element, index, list) {
+						for_view.$el.children('.upfront-object').removeClass(list.models[index].get('theme_style'));
+					});
+					for_view.$el.children('.upfront-object').addClass(preset.get('theme_style'));
+				}
 			}
+
 	},
 	save_preset: function(presetname) {
 		var preset = Upfront.Views.Editor.Button.Presets.get(presetname);
@@ -1483,7 +1477,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 				newpreset.hov_color = this.get_raw_picker_field_color(this.hov_color);
 
 
-			newpresettheme_style = this.$el.find('div.upfront-settings-css li.upfront-field-select-option-selected input').val();
+			newpreset.theme_style = this.$el.find('div.upfront-settings-css li.upfront-field-select-option-selected input').val();
 
 			Upfront.Views.Editor.Button.Presets.add(newpreset);
 
@@ -1508,24 +1502,24 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 		  return this.model.set_property(name, value, silent);
 		}
 		return this.model.get_property_value_by_name(name);
-	  },
-	  get_label: function () {
+	},
+	get_label: function () {
 		return 'Appearance';
-	  },
-	  render: function() {
-			// Render as usual
-			this.constructor.__super__.render.apply(this, arguments);
-	  // Show border width if needed
-	  if(this.property('border_style') != 'none') {
-		this.$el.find('div.inline-color.plaintext-settings.border-color, div.inline-number.plaintext-settings').css('display', 'inline-block');
-	  }
-	  else {
-		this.$el.find('div.inline-color.plaintext-settings.border-color, div.inline-number.plaintext-settings').css('display', 'none');
-	  }
-			// Remove panel tabs
-			this.$el.find('.upfront-settings_label').remove();
-			this.$el.find('.upfront-settings_panel').css('left', 0);
-	  }
+	},
+	render: function() {
+		// Render as usual
+		this.constructor.__super__.render.apply(this, arguments);
+	// Show border width if needed
+		if(this.property('border_style') != 'none') {
+			this.$el.find('div.inline-color.plaintext-settings.border-color, div.inline-number.plaintext-settings').css('display', 'inline-block');
+		}
+		else {
+			this.$el.find('div.inline-color.plaintext-settings.border-color, div.inline-number.plaintext-settings').css('display', 'none');
+		}
+		// Remove panel tabs
+		this.$el.find('.upfront-settings_label').remove();
+		this.$el.find('.upfront-settings_panel').css('left', 0);
+	}
 });
 
 
@@ -1551,7 +1545,7 @@ var ButtonMenuList = Upfront.Views.ContextMenuList.extend({
 		    new Upfront.Views.ContextMenuItem({
 				get_label: function() {
 
-					var linktype = me.for_view.guessLinkType();
+					var linktype = Upfront.Util.guessLinkType(me.for_view.property('href'));
 					if(linktype == 'lightbox')
 						return 'Open Lightbox';
 					else if(linktype == 'anchor')
@@ -1562,7 +1556,7 @@ var ButtonMenuList = Upfront.Views.ContextMenuList.extend({
 						return 'Visit Link';
 				},
 				action: function() {
-					me.for_view.visitLink();
+					Upfront.Util.visitLink(me.for_view.property('href'));
 				}
 		    })
 		]);

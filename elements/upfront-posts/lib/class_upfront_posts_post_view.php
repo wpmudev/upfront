@@ -51,6 +51,9 @@ class Upfront_Posts_PostView {
 			else $out .= apply_filters('upfront_posts-' . $method, '', $post);
 		}
 
+		// Also expand postmeta codes outside the meta element
+		$out = Upfront_Codec::get('postmeta')->expand_all($out, $post);
+
 		return $this->_wrap_post($out, $post);
 	}
 
@@ -78,14 +81,16 @@ class Upfront_Posts_PostView {
 
 		$part = 1;
 		foreach ($format as $fmt) {
-			$out = Upfront_MacroCodec::expand($out, "date_{$part}", date($fmt, $time));
+			$out = Upfront_Codec::get()->expand($out, "date_{$part}", date($fmt, $time));
 			$part++;
 		}
-		$out = Upfront_MacroCodec::expand($out, "datetime", date($date_format, $time));
-		$out = Upfront_MacroCodec::expand($out, "timestamp", $time);
+		$out = Upfront_Codec::get()->expand($out, "datetime", date($date_format, $time));
+		$out = Upfront_Codec::get()->expand($out, "timestamp", $time);
 
-		$out = Upfront_MacroCodec::expand($out, "date", date(get_option('date_format'), $time));
-		$out = Upfront_MacroCodec::expand($out, "time", date(get_option('time_format'), $time));
+		$out = Upfront_Codec::get()->expand($out, "date", date(get_option('date_format'), $time));
+		$out = Upfront_Codec::get()->expand($out, "time", date(get_option('time_format'), $time));
+
+		$out = Upfront_Codec::get()->expand($out, "permalink", get_permalink($this->_post->ID));
 
 		return $out;
 	}
@@ -99,8 +104,8 @@ class Upfront_Posts_PostView {
 
 		$out = $this->_get_template('author');
 
-		$out = Upfront_MacroCodec::expand($out, "name", esc_html($name));
-		$out = Upfront_MacroCodec::expand($out, "url", esc_url($url));
+		$out = Upfront_Codec::get()->expand($out, "name", esc_html($name));
+		$out = Upfront_Codec::get()->expand($out, "url", esc_url($url));
 
 		return $out;
 	}
@@ -119,8 +124,8 @@ class Upfront_Posts_PostView {
 
 		$out = $this->_get_template('gravatar');
 
-		$out = Upfront_MacroCodec::expand($out, "name", esc_html($name));
-		$out = Upfront_MacroCodec::expand($out, "gravatar", $gravatar);
+		$out = Upfront_Codec::get()->expand($out, "name", esc_html($name));
+		$out = Upfront_Codec::get()->expand($out, "gravatar", $gravatar);
 
 		return $out;
 	}
@@ -135,7 +140,7 @@ class Upfront_Posts_PostView {
 
 		$out = $this->_get_template('comment_count');
 
-		$out = Upfront_MacroCodec::expand($out, "comment_count", (int)($this->_post->comment_count));
+		$out = Upfront_Codec::get()->expand($out, "comment_count", (int)($this->_post->comment_count));
 
 		return $out;
 	}
@@ -143,7 +148,7 @@ class Upfront_Posts_PostView {
 	public function expand_featured_image_template () {
 		if (empty($this->_post->ID)) return '';
 
-		$thumbnail = get_the_post_thumbnail($this->_post->ID);
+		$thumbnail = upfront_get_edited_post_thumbnail($this->_post->ID);
 		if (empty($thumbnail)) return '';
 
         $resize_featured = isset($this->_data['resize_featured'])
@@ -153,9 +158,9 @@ class Upfront_Posts_PostView {
 
 		$out = $this->_get_template('featured_image');
 
-		$out = Upfront_MacroCodec::expand($out, "thumbnail", $thumbnail);
-		$out = Upfront_MacroCodec::expand($out, "resize", $resize_featured);
-		$out = Upfront_MacroCodec::expand($out, "permalink", get_permalink($this->_post->ID));
+		$out = Upfront_Codec::get()->expand($out, "thumbnail", $thumbnail);
+		$out = Upfront_Codec::get()->expand($out, "resize", $resize_featured);
+		$out = Upfront_Codec::get()->expand($out, "permalink", get_permalink($this->_post->ID));
 
 		return $out;
 	}
@@ -168,8 +173,8 @@ class Upfront_Posts_PostView {
 
 		$out = $this->_get_template('title');
 
-		$out = Upfront_MacroCodec::expand($out, "permalink", $permalink);
-		$out = Upfront_MacroCodec::expand($out, "title", $title);
+		$out = Upfront_Codec::get()->expand($out, "permalink", $permalink);
+		$out = Upfront_Codec::get()->expand($out, "title", $title);
 
 		return $out;
 	}
@@ -183,7 +188,7 @@ class Upfront_Posts_PostView {
 
 		$out = $this->_get_template('content');
 
-		$out = Upfront_MacroCodec::expand($out, "content", $content);
+		$out = Upfront_Codec::get()->expand($out, "content", $content);
 
 		return $out;
 	}
@@ -207,7 +212,7 @@ class Upfront_Posts_PostView {
 
 		$out = $this->_get_template('tags');
 
-		$out = Upfront_MacroCodec::expand($out, "tags", $tags);
+		$out = Upfront_Codec::get()->expand($out, "tags", $tags);
 
 		return $out;
 	}
@@ -230,7 +235,7 @@ class Upfront_Posts_PostView {
 
 		$out = $this->_get_template('categories');
 
-		$out = Upfront_MacroCodec::expand($out, "categories", $categories);
+		$out = Upfront_Codec::get()->expand($out, "categories", $categories);
 
 		return $out;
 	}
@@ -243,7 +248,7 @@ class Upfront_Posts_PostView {
 
 		$out = $this->_get_template('read_more');
 
-		$out = Upfront_MacroCodec::expand($out, "permalink", $permalink);
+		$out = Upfront_Codec::get()->expand($out, "permalink", $permalink);
 
 		return $out;
 	}
@@ -259,7 +264,7 @@ class Upfront_Posts_PostView {
 		$out = $this->_get_template('meta');
 		if (empty($out)) return $out;
 
-		return Upfront_MacroCodec_Postmeta::expand_all($out, $this->_post);
+		return Upfront_Codec::get('postmeta')->expand_all($out, $this->_post);
 	}
 
 	/**
@@ -290,14 +295,28 @@ class Upfront_Posts_PostView {
 	private function _get_excerpt ($length) {
 		if (!empty($this->_post->post_excerpt)) return wpautop($this->_post->post_excerpt);
 
-		$excerpt = str_replace(array("\n", "\r"), '', strip_shortcodes(wp_strip_all_tags($this->_post->post_content)));
+		$content = $this->_post->post_content;
+
+		// Detect `more` tag and act on it
+		if (preg_match('/(<!--more(.*?)?-->)/', $content, $matches)) {
+			$mtc = explode($matches[0], $content, 2);
+			$content = reset($mtc);
+		}
+
+		$excerpt = preg_replace('/\s+/', ' ', // Collapse potential multiple consecutive whitespaces
+			str_replace(array("\n", "\r"), ' ',  // Normalize linebreaks to spaces - no block-level stuff in excerpts
+				strip_shortcodes( // No shortcodes in excerpts
+					wp_strip_all_tags($content) // Also no HTML tags - allowing that together with limit parsing might end up with broken HTML
+				)
+			)
+		);
 
 		$length = (int)$length;
 		if (!empty($length)) {
 			$words = explode(' ', $excerpt, $length+1);
 			$excerpt = join(' ', array_slice($words, 0, $length));
 		}
-		// Just first 128 chars
+
 		return wpautop($excerpt);
 	}
 

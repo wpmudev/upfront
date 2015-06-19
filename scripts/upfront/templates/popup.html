@@ -20,7 +20,7 @@
 			<div class="upfront-list_item-component upfront-date post-status-{{ post.get("post_status") }}" title="{[ if(post.get("post_status") == "publish") { ]}Published{[ } else if(post.get("post_status") == "future") { ]}Scheduled{[ } else { ]}Draft{[ } ]}">{[ if(post.get("post_status") == "future") { ]}sched. for{[ } ]}
 			{{ Upfront.Util.format_date(post.get("post_date")) }}</div>
 			<div class="upfront-list_item-component upfront-title upfront-list_item-main">{{ post.get("post_title") }}</div>
-			<div class="upfront-list_item-component upfront-author">{{ post.author.get('data').display_name }}</div>
+			<div class="upfront-list_item-component upfront-author">{[ if(post.author.get('data')){ ]} {{ post.author.get('data').display_name }} {[ } ]}</div>
 			<div class="upfront-list_item-component upfront-comments">{{ post.get("comment_count") }}</div>
 			<div class="upfront-list_item-component upfront-editactions"><a href="{{ post.get("permalink") }}" class="editaction edit">Edit</a><a href="{{ post.get("permalink") }}" class="editaction view">View</a><a href="#" class="editaction trash">Trash</a></div>
 		</div>
@@ -106,7 +106,7 @@
 			<div class="upfront-list_item-component upfront-date post-status-{{ post.get("post_status") }}" title="{[ if(post.get("post_status") == "publish") { ]}Published{[ } else if(post.get("post_status") == "future") { ]}Scheduled{[ } else { ]}Draft{[ } ]}">{[ if(post.get("post_status") == "future") { ]}sched. for{[ } ]}
 			{{ Upfront.Util.format_date(post.get("post_date")) }}</div>
 			<div class="upfront-list_item-component upfront-title upfront-list_item-main">{{ post.get("post_title") }}</div>
-			<div class="upfront-list_item-component upfront-author">{{ post.author.get('data').display_name }}</div>
+			<div class="upfront-list_item-component upfront-author">{[ if(post.author.get('data')){ ]} {{ post.author.get('data').display_name }} {[ } ]}</div>
 			<div class="upfront-list_item-component upfront-comments">{{ post.get("comment_count") }}</div>
 			<div class="upfront-list_item-component upfront-editactions"><a href="{{ post.get("permalink") }}" class="editaction edit">Edit</a><a href="{{ post.get("permalink") }}" class="editaction view">View</a><a href="#" class="editaction trash">Trash</a></div>
 		</div>
@@ -277,7 +277,7 @@
 <script type="text/template" id="selector-post_type-tpl">
 {[if(postTypes.length > 1){ ]}
 <div id="upfront-selector-post_type">
-	Select a post type:
+	{{Upfront.Settings.l10n.global.views.select_post_type}}
 	<div class="upfront-field-select">
 		<div class="upfront-field-select-value">{{postTypes[0].label}}</div>
 		<ul class="upfront-field-select-options">
@@ -349,7 +349,8 @@
 			<div id="insert-font-widget" class="upfront-icon">
 				<a class="upfront-css-font" href="#">{{Upfront.Settings.l10n.global.content.insert_font}}</a>
 			</div>
-			<a class="upfront-css-image" href="#">{{Upfront.Settings.l10n.global.content.insert_theme_image}}</a>
+			<a class="upfront-css-theme_image upfront-css-image" href="#">{{Upfront.Settings.l10n.global.content.insert_theme_image}}</a>
+			<a class="upfront-css-media_image upfront-css-image" href="#">{{Upfront.Settings.l10n.global.content.insert_image}}</a>
 			<span class="upfront-css-color"></span>
 			<a class="upfront-css-close" href="#">close</a>
 		</div>
@@ -369,7 +370,7 @@
         {[ } ]}
 				<div class="upfront-css-save-form">
         		{[ if (show_style_name) { ]}
-					<p>Style name</p>
+					<p>{{Upfront.Settings.l10n.global.views.style_name}}</p>
 					<input type="text" class="upfront-css-save-name-field" value="{{ name }}">
         		{[ } ]}
           			<button class="upfront-css-save-ok">{{Upfront.Settings.l10n.global.content.save}}</button>
@@ -392,7 +393,7 @@
 			{[ }); ]}
 		</div>
 		{[ if(Upfront.themeExporter && location.pathname.match(/\/create_new\/theme/) === null) { ]}
-		<div class="upload-icon-font">Upload Icon Font</div>
+		<div class="upload-icon-font">{{Upfront.Settings.l10n.global.views.upload_icon_font}}</div>
 		<form style="display: none" id="upfront-upload-icon-font" name="upfront-upload-icon-font" enctype="multipart/form-data" method="post" action="{{url}}" data-url="{{url}}?action=upfront-upload-icon-font">
 			<input type="file" name="media" id="upfront-icon-font-input">
 			<input type="hidden" name="action" value="upfront-upload-icon-font">
@@ -501,78 +502,6 @@
 		<span class="upfront-save-button" data-save-as="this-post">{{ thisPostButton }}</span>
 		<span class="upfront-save-button" data-save-as="all-posts">{{ allPostsButton }}</span>
 	</div>
-</script>
-
-<script type="text/template" id="linkpanel-tpl">
-	<div class="ulinkpanel-title">{{Upfront.Settings.l10n.global.content.links_to}}</div>
-	<form>
-	{[if(types.unlink) { ]}
-	<div class="upfront-field-wrap ulinkpanel-unlink-wrap">
-		<input type="radio" name="ulinkpanel-link" value="unlink" class="upfront-field-radio js-ulinkpanel-type" id="ulinkpanel-link-0" {{ link.type == 'unlink' ? checked : ''}}>
-		<label for="ulinkpanel-link-0">{{Upfront.Settings.l10n.global.content.no_link}}</label>
-	</div>
-	{[ } ]}
-	{[if(types.external) { ]}
-	<div class="upfront-field-wrap ulinkpanel-external-wrap">
-		<input type="radio" name="ulinkpanel-link" value="external" class="upfront-field-radio js-ulinkpanel-type" id="ulinkpanel-link-2" {{link.type == 'external' ? checked : ''}}>
-		<label for="ulinkpanel-link-2">{{Upfront.Settings.l10n.global.content.url}}</label>
-		<input type="text" value="{{link.url}}" id="ulinkpanel-link-url" placeholder="Type link URL" class="upfront-field-text js-ulinkpanel-input-url js-ulinkpanel-input-external">
-	</div>
-	{[ } ]}
-	{[if(types.entry) { ]}
-	<div class="upfront-field-wrap ulinkpanel-entry-wrap">
-		<input type="radio" name="ulinkpanel-link" value="entry" class="upfront-field-radio js-ulinkpanel-type" id="ulinkpanel-link-3" {{link.type == 'entry' ? checked : ''}}>
-		<label for="ulinkpanel-link-3">{{Upfront.Settings.l10n.global.content.post_or_page}}</label>
-	</div>
-	{[ } ]}
-	{[if(types.anchor && anchors.length) { ]}
-	<div class="upfront-field-wrap ulinkpanel-anchor-wrap">
-		<input type="radio" name="ulinkpanel-link" value="anchor" class="upfront-field-radio js-ulinkpanel-type" {{link.type == 'anchor' ? checked : ''}} id="ulinkpanel-link-anchor">
-		<label for="ulinkpanel-link-anchor">{{Upfront.Settings.l10n.global.content.anchor}}</label>
-		<div id="ulinkpanel-anchor-select" class="js-ulinkpanel-input-url js-ulinkpanel-input-anchor">
-			<select class="ulinkpanel-anchor-selector">
-			{[ _.each(anchors, function(anchor){ ]}
-				<option value="{{ anchor.id }}" {{ link.url == anchor.id ? 'selected="selected"' : '' }}>{{anchor.label}}</option>
-			{[ }); ]}
-			</select>
-		</div>
-	</div>
-	{[ } ]}
-	<a title="{{Upfront.Settings.l10n.global.content.change_link}}" class="ulinkpanel-entry-url js-ulinkpanel-input-url js-ulinkpanel-input-entry" href="#">{{(!link.url || link.url=='' || link.url=='http://')?'Select':link.url}}</a>
-	{[if(types.image) { ]}
-	<div class="upfront-field-wrap ulinkpanel-image-wrap">
-		<input type="radio" name="ulinkpanel-link" value="image" class="upfront-field-radio js-ulinkpanel-type" id="ulinkpanel-link-4" {{link.type == 'image' ? checked : ''}}>
-		<label for="ulinkpanel-link-4">{{Upfront.Settings.l10n.global.content.larger_image}}</label>
-	</div>
-	{[ } ]}
-	{[if(types.lightbox) { ]}
-	<div class="upfront-field-wrap ulinkpanel-lightbox-wrap">
-		<input type="radio" name="ulinkpanel-link" value="lightbox" class="upfront-field-radio js-ulinkpanel-type" id="ulinkpanel-link-6" {{link.type == 'lightbox' ? checked : ''}}>
-		<label for="ulinkpanel-link-6">{{Upfront.Settings.l10n.global.content.lightbox}}</label>
-	</div>
-	{[ } ]}
-	{[if(types.lightbox) { ]}
-	<div id="ulinkpanel-lightbox-extra" class="js-ulinkpanel-input-url js-ulinkpanel-input-lightbox clearfix">
-		<div class="js-ulinkpanel-new-lightbox ulinkpanel-new-lightbox" style="display: none">
-			<input type="text" name="new_lightbox" id="ulinkpanel-new-lightbox" class="upfront-field upfront-field-text upfront-field-empty ulinkpanel-lightbox-input js-ulinkpanel-lightbox-input" value="" placeholder="{{Upfront.Settings.l10n.global.content.lightbox_name}}" />
-			<a href="#" class="ulinkpanel-lightbox-cancel js-ulinkpanel-lightbox-cancel"></a>
-		</div>
-		{[ if(lightboxes.length) { ]}
-		<select class="ulinkpanel-lightbox-selector js-ulinkpanel-lightbox-select">
-		{[ _.each(lightboxes, function(lightbox){ ]}
-			<option value="{{ lightbox.id }}" {{ link.url == lightbox.id ? 'selected="selected"' : '' }}>{{lightbox.label}}</option>
-		{[ }) ]}
-		</select>
-		{[ } ]}
-		<a href="#" id="ulinkpanel-create-lightbox" class="js-show-lightbox-input">{{Upfront.Settings.l10n.global.content.new_lightbox}}</a>
-	</div>
-	{[ } ]}
-	</form>
-	{[if(button) { ]}
-	<div class="upfront-settings-button_panel">
-		<button type="button" class="upfront-save_settings js-ulinkpanel-ok"><i class="icon-ok"></i> {{Upfront.Settings.l10n.global.content.ok}}</button>
-	</div>
-	{[ } ]}
 </script>
 
 

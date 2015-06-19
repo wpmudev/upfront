@@ -8,44 +8,35 @@ $left_sidebar = !empty($left_sidebar) ? $left_sidebar : false;
 $right_sidebar = !empty($right_sidebar) ? $right_sidebar : false;
 
 $main = upfront_create_region(array(
-	'name' => "main", 
-	'title' => __("Main Area"),
-	'scope' => "local",
-	'type' => $type,
-	'default' => true,
-	'allow_sidebar' => true
+	"name" => "main",
+	"title" => __("Main Area"),
+	"scope" => "local",
+	"type" => "wide",
+	"default" => true,
+	"allow_sidebar" => true
 ), array(
-	'row' => 140,
-	'background_type' => 'color',
-	'background_color' => '#c5d0db'
+	"row" => 140,
+	"background_type" => "color",
+	"background_color" => "#c5d0db"
 ));
-
-
-$main->add_element('ThisPage', array(	
-	'id' => 'default-page-title',
-	'columns' => 24,
-	'rows' => 3,
-	'margin_top' => 3,
-	'options' => array(
-		'display' => 'title',
-		'disable_resize' => false,
-		'disable_drag' => false
+$main->add_element("ThisPost", array(
+	"id" => "default-page",
+	"columns" => 24,
+	"rows" => 20,
+	"margin_top" => 1,
+	"options" => array(
+		"post_data" => array(),
+		"layout" => array(
+			array("classes" => "c24 clr", "objects"=> array(array("slug" => "title", "classes" => "post-part c24"))),
+			array("classes" => "c24 clr", "objects"=> array(array("slug" => "contents", "classes" => " post-part c24")))
+		)
 	),
-	'sticky' => true
+	"sticky" => true,
+    "disable_resize" => true,
+    "disable_drag" => false,
 ));
 
-$main->add_element('ThisPage', array(	
-	'id' => 'default-page-content',
-	'columns' => 24,
-	'rows' => 20,
-	'margin_top' => 3,
-	'options' => array(
-		'display' => 'content',
-		'disable_resize' => false,
-		'disable_drag' => false
-	),
-	'sticky' => true
-));
+$regions->add($main);
 
 
 if ( $left_sidebar ){

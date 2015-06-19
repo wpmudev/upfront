@@ -4,6 +4,11 @@
         'text!scripts/redactor/ueditor-templates.html'
     ];
 
+    var l10n = Upfront.Settings && Upfront.Settings.l10n
+        ? Upfront.Settings.l10n.global.ueditor
+        : Upfront.mainData.l10n.global.ueditor
+    ;
+
 define("redactor_plugins", deps, function(tpl){
 
 var UeditorEvents = _.extend({}, Backbone.Events);
@@ -19,11 +24,9 @@ var UeditorPanel = Backbone.View.extend({
         me.panel = options.panel;
 
         this.on('open', function(redactor){
-            console.log('Panel open');
             me.$el.trigger('open', redactor);
         });
         this.on('closed', function(redactor){
-            console.log('Panel closed');
             me.$el.trigger('closed', redactor);
         });
 
@@ -214,7 +217,7 @@ RedactorPlugins.stateAlignment = function() {
             if( !this.$toolbar  ) return;
             var self = this;
             this.opts.stateButtons.stateAlign = {
-                title: 'Text alignment',
+                title: l10n.text_align,
                 defaultState: 'left',
                 states: {
                     left: {
@@ -276,13 +279,12 @@ RedactorPlugins.stateAlignmentCTA = {
         if( !this.$toolbar  ) return;
         var self = this;
         this.opts.stateButtons.stateAlignCTA = {
-            title: 'Text alignment',
+            title: l10n.text_align,
             defaultState: 'left',
             states: {
                 left: {
                     iconClass: 'ueditor-left',
                     isActive: function(redactor){
-                        //console.log('returned left' + (self.$element.length && self.$element.css('text-align') == 'left'));
                         return self.$element.length && self.$element.css('text-align') == 'left';
 
                     },
@@ -296,7 +298,6 @@ RedactorPlugins.stateAlignmentCTA = {
                     iconClass: 'ueditor-center',
                     isActive: function(redactor){
 
-                        //console.log('returned center' + (self.$element.length && self.$element.css('text-align') == 'center'));
                         return self.$element.length && self.$element.css('text-align') == 'center';
 
                     },
@@ -310,7 +311,6 @@ RedactorPlugins.stateAlignmentCTA = {
                     iconClass: 'ueditor-right',
                     isActive: function(redactor){
 
-                        //console.log('returned right' + (self.$element.length && self.$element.css('text-align') == 'right'));
                         return self.$element.length && self.$element.css('text-align') == 'right';
 
                     },
@@ -323,7 +323,6 @@ RedactorPlugins.stateAlignmentCTA = {
                     iconClass: 'ueditor-justify',
                     isActive: function(redactor){
 
-                        //console.log('returned justify' + (self.$element.length && self.$element.css('text-align') == 'justify'));
                         return self.$element.length && self.$element.css('text-align') == 'justify';
 
                     },
@@ -342,7 +341,7 @@ RedactorPlugins.stateLists = function() {
         init: function () {
             var self = this;
             this.opts.stateButtons.stateLists = {
-                title: 'List style',
+                title: l10n.list_style,
                 defaultState: 'none',
                 states: {
                     none: {
@@ -430,7 +429,7 @@ RedactorPlugins.upfrontSink = {
         if(!Upfront.data.ueditor)
             Upfront.data.ueditor = {sink: false};
         this.opts.buttonsCustom.upfrontSink = {
-            title: 'More tools'
+            title: l10n.more_tools
         };
     },
     init: function(){
@@ -541,7 +540,6 @@ RedactorPlugins.upfrontPlaceholder = function() {
             else
                 this.$placeholder.hide();
 
-            console.log('wtf wtf');
         }*/
     }
 };
@@ -559,7 +557,7 @@ RedactorPlugins.panelButtons = function () {
 
             $.each(this.opts.buttonsCustom, function (id, b) {
                 if (b.panel) {
-                    var $panel = $('<div class="redactor-dropdown ueditor_panel redactor-dropdown-box-' + id + '" style="display: none;">'),
+                    var $panel = $('<div class="redactor-dropdown ueditor_panel redactor-dropdown-box-' + id + ' redactor-dropdown-' + self.uuid +' " style="display: none;">'),
                         $button = self.button.get(id),
                         addMethod = _.isUndefined(  b.first ) ? "add" : "addFirst"
                         ;
@@ -636,7 +634,7 @@ RedactorPlugins.upfrontIcons = function() {
         $sel: false,
         init: function () {
             this.opts.buttonsCustom.upfrontIcons = {
-                title: 'Icons',
+                title: l10n.icons,
                 panel: this.upfrontIcons.panel
             };
             UeditorEvents.on("ueditor:key:down", function (redactor, e) {
@@ -657,7 +655,7 @@ RedactorPlugins.upfrontIcons = function() {
                 'change .upfront-font-icons-controlls input': "input_change"
             },
             render: function (options) {
-                this.$el.html(this.tpl());
+                this.$el.html(this.tpl({icons: Upfront.mainData.font_icons }));
                 this.stop_scroll_propagation(this.$el);
             },
             open: function (e, redactor) {
@@ -671,7 +669,6 @@ RedactorPlugins.upfrontIcons = function() {
                 });
             },
             close: function () {
-                console.log("closing close panel");
                 if (this.redactor) {
                     //this.redactor.selection.restore();
                     this.$sel = false;
@@ -685,11 +682,11 @@ RedactorPlugins.upfrontIcons = function() {
                     "font-size": fontSize + "px",
                     "top": top + "px"
                 });
-                var inserted = this.redactor.insert.node($icon[0], false); //inserted false instead of true to retain the selected content
+                var inserted = this.redactor.insert.html($icon[0].outerHTML, false); //inserted false instead of true to retain the selected content
                 this.redactor.code.sync();
-                
+
                 //var offset = this.redactor.caret.getOffset(); //existing caret position
-                
+
                 this.redactor.selection.restore();
 
                 this.closeToolbar();
@@ -733,167 +730,150 @@ RedactorPlugins.upfrontIcons = function() {
 /*--------------------
  Upfront link panel button
  -----------------------*/
-
 RedactorPlugins.upfrontLink = function() {
 
-    return {
-        init: function () {
-            this.opts.buttonsCustom.upfrontLink = {
-                title: 'Link',
-                panel: this.upfrontLink.panel
-            };
-        },
-        openPanel: function () {
-            var left = this.button.get("link").position().left;
-            $(".redactor-dropdown-box-upfrontLink").css("left", left + "px").toggle();
-        },
-        panel: UeditorPanel.extend({
-            tpl: _.template($(tpl).find('#link-tpl').html()),
-            events: {
-                open: 'open'
-            },
-            initialize: function () {
-                var me = this;
-                this.linkPanel = new Upfront.Views.Editor.LinkPanel({button: true});
-                this.bindEvents();
-                UeditorPanel.prototype.initialize.apply(this, arguments);
+	return {
+		init: function () {
+			this.opts.buttonsCustom.upfrontLink = {
+				title: l10n.link,
+				panel: this.upfrontLink.panel
+			};
+		},
+		openPanel: function () {
+			var left = this.button.get("link").position().left;
+			$(".redactor-dropdown-box-upfrontLink").css("left", left + "px").toggle();
+		},
+		panel: UeditorPanel.extend({
+			tpl: _.template($(tpl).find('#link-tpl').html()),
+			events: {
+				open: 'open'
+			},
+			initialize: function () {
+				UeditorPanel.prototype.initialize.apply(this, arguments);
+			},
+			render: function (options) {
+				var linkTypes = {};
+				options = options || {};
 
-               /* this.listenTo(this.linkPanel, 'link:ok', function() {
-                    console.log('now did this ever happen?');
-                    me.redactor.$element.closest('li').find('a.menu_item').trigger('blur');
-                    me.redactor.$element.closest('li').data('backboneview').saveLink(false, true);
-                });*/
-            },
-            render: function (options) {
-                options = options || {};
-                this.linkPanel.model.set({
-                    url: options.url,
-                    type: options.link || this.guessLinkType(options.url)
-                });
+				if (this.redactor.$element.hasClass('mfp-title')) {
+					linkTypes = {
+						anchor: false,
+						lightbox: false
+					};
+					// Prevent magnific focus handler to mess up everything
+					$(document).off('focusin');
+				}
 
-                this.linkPanel.render();
-                this.$el.html(this.linkPanel.el);
-                this.linkPanel.delegateEvents();
-            },
-            open: function (e, redactor) {
-                this.redactor = redactor;
-                redactor.selection.save();
-                var link = false;
-                var url = false;
-                if (redactor.$element.hasClass('upfront_cta'))
-                    link = redactor.$element;
-                else if(redactor.$element.hasClass('menu_item')) {
-                    var menuitem = redactor.$element.closest('li').data('backboneview');
-                    url = menuitem.model['menu-item-url'];
-                    menuitem.model['being-edited'] = true;
-                }
-                else {
-                    link = redactor.utils.isCurrentOrParent('A');
-                }
+				this.linkPanel = new Upfront.Views.Editor.LinkPanel({
+					linkUrl: options.url,
+					linkType: options.link || this.guessLinkType(options.url),
+					linkTarget: options.target || '_self',
+					linkTypes: linkTypes,
+					button: true
+				});
 
-                if (link || url) {
-                    this.render({url: link?$(link).attr('href'):url, link: this.guessLinkType(link?$(link).attr('href'):url)});//this.render({url: $(link).attr('href'), link: $(link).attr('rel') || 'external'});
-                }
-                else
-                    this.render();
-            },
-            close: function (e, redactor) {
-                redactor.selection.restore();
-                
-                if(redactor.$element.hasClass('menu_item')) {
-                    var menuitem = redactor.$element.closest('li').data('backboneview');
-                    menuitem.model['being-edited'] = false;
-                }
-            },
-            unlink: function (e) {
-                if (e)
-                    e.preventDefault();
+				this.listenTo(this.linkPanel, 'change change:target', function (data) {
+					if (data.type == 'unlink') {
+						this.unlink();
+					} else {
+						this.link(data.url, data.type, data.target);
+					}
 
-                if (this.redactor.$element.hasClass('upfront_cta'))
-                    this.redactor.$element.attr('href', '#');
-                else if(this.redactor.$element.hasClass('menu_item')) {
-                    var menuitem = this.redactor.$element.closest('li').data('backboneview');
-                    menuitem.model['menu-item-url'] = '#';
-                }
-                else {
-                    var text = this.redactor.selection.getHtml();
-                    this.redactor.selection.restore();
-                    if ($.parseHTML(text).length > 1) {// there is html inside
-                        this.redactor.insert.html(text, true);
-                    } else {
-                        this.redactor.link.unlink();
-                    }
-                }
+					this.closeToolbar();
+				});
 
-                if(this.redactor.$element.hasClass('menu_item')) {
-                    var menuitem = this.redactor.$element.closest('li').data('backboneview');
-                    menuitem.model['being-edited'] = false;
-                }
-                this.redactor.$element.focus();
+				this.linkPanel.render();
+				this.$el.html(this.linkPanel.el);
+				this.linkPanel.delegateEvents();
+			},
+			open: function (e, redactor) {
+				this.redactor = redactor;
+				redactor.selection.save();
+				var link = redactor.utils.isCurrentOrParent('A');
+				var url = false;
 
-            },
-            link: function (url, type) {
-                this.redactor.selection.restore();
-                if (url) {
-                    if (this.redactor.$element.hasClass('upfront_cta'))
-                        this.redactor.$element.attr('href', url);
-                    else if(this.redactor.$element.hasClass('menu_item')) {
+				if (link || url) {
+					this.render({
+						url: link ? $(link).attr('href') : url,
+						link: this.guessLinkType(link ? $(link).attr('href') : url),
+						target: $(link).attr('target')
+					});//this.render({url: $(link).attr('href'), link: $(link).attr('rel') || 'external'});
+				} else {
+					this.render({
+						url: '',
+						link: 'external',
+						target: '_blank'
+					});
+				}
+			},
+			close: function (e, redactor) {
+				redactor.selection.restore();
+			},
+			unlink: function (e) {
+				if (e) {
+					e.preventDefault();
+				}
 
-                        var menuitem = this.redactor.$element.closest('li').data('backboneview');
+				var text = this.redactor.selection.getHtml();
+				this.redactor.selection.restore();
+				if (text !== '' && $.parseHTML(text).length > 1) {// there is html inside
+					this.redactor.insert.html(text, true);
+				} else {
+					this.redactor.link.unlink();
+				}
+				this.redactor.$element.focus();
+                this.updateMissingLightboxFlag();
+			},
+			link: function (url, type, target) {
+				this.redactor.selection.restore();
+				if (url) {
+					var caption = $(this.redactor.selection.getCurrent()).last().hasClass("uf_font_icon") ? this.redactor.selection.getCurrent().outerHTML :  this.redactor.selection.getHtml() ;
+					var link = this.redactor.utils.isCurrentOrParent('A');
+					if (link) {
+						$(link).attr('href', url).attr('rel', type).attr('target', target);
+					} else {
+                        var $link = $("<a>");
+                        // allow caption to be html to the contrary to this.redactor.link.set(caption, url, target) which needs the caption to be text
+                        $link.html( caption )
+                            .attr("rel", type)
+                            .attr("href", url)
+                            .attr("target", target);
+                        this.redactor.insert.html($link[0].outerHTML, false);
 
-                        menuitem.model['menu-item-url'] = url;
-                    }
-                    else {
-                        var caption = this.redactor.selection.getHtml();
-                        var link = this.redactor.utils.isCurrentOrParent('A');
-                        if (link)
-                            $(link).attr('href', url).attr('rel', type);
-                        else
-                            this.redactor.link.set(caption, url);
-                            //this.redactor.insert.html('<a href="' + url + '" rel="' + type + '">' + caption + '</a>', true);
-                    }
-                    this.redactor.$element.focus();
-                }
+					}
+					this.redactor.$element.focus();
+				}
+                this.updateMissingLightboxFlag();
+				this.redactor.code.sync();
 
-                if(this.redactor.$element.hasClass('menu_item')) {
-                    var menuitem = this.redactor.$element.closest('li').data('backboneview');
-                    menuitem.model['being-edited'] = false;
-                }
+			},
+			bindEvents: function () {
+			},
+			guessLinkType: function(url){
+				if(!$.trim(url) || $.trim(url) == '#')
+					return 'unlink';
+				if(url.length && url[0] == '#')
+					return url.indexOf('#ltb-') > -1 ? 'lightbox' : 'anchor';
+				if(url.substring(0, location.origin.length) == location.origin)
+					return 'entry';
+				if (url.match(/^mailto/)) {
+					return 'email';
+				}
 
-                this.redactor.code.sync();
+				return 'external';
+			},
+            updateMissingLightboxFlag: function() {
+                var link = this.redactor.utils.isCurrentOrParent('A');
 
-            },
-
-            bindEvents: function () {
-                this.listenTo(this.linkPanel, 'link:ok', function (data) {
-                    if (data.type == 'unlink')
-                        this.unlink();
+                if(link && $(link).attr('href').indexOf('#ltb-') > -1 ) {
+                    if(!Upfront.Util.checkLightbox($(link).attr('href')))
+                        $(link).addClass('missing-lightbox-warning');
                     else
-                        this.link(data.url, data.type);
-
-                    this.closeToolbar();
-                });
-
-                this.listenTo(this.linkPanel, 'link:postselector', this.disableEditorStop);
-
-                this.listenTo(this.linkPanel, 'link:postselected', function (data) {
-                    this.enableEditorStop();
-                    this.link(data.url, data.type);
-                });
-            },
-
-            guessLinkType: function(url){
-                if(!$.trim(url) || $.trim(url) == '#')
-                    return 'unlink';
-                if(url.length && url[0] == '#')
-                    return url.indexOf('#ltb-') > -1 ? 'lightbox' : 'anchor';
-                if(url.substring(0, location.origin.length) == location.origin)
-                    return 'entry';
-
-                return 'external';
+                        $(link).removeClass('missing-lightbox-warning');
+                }
             }
-        })
-    }
+		})
+	}
 };
 
 RedactorPlugins.upfrontColor = function() {
@@ -901,7 +881,7 @@ RedactorPlugins.upfrontColor = function() {
     return {
         init: function () {
             this.opts.buttonsCustom.upfrontColor = {
-                title: 'Color',
+                title: l10n.color,
                 panel: this.upfrontColor.panel
             };
         },
@@ -1047,8 +1027,8 @@ RedactorPlugins.upfrontColor = function() {
             },
             render: function () {
 
-                var tabforeground = $('<li id="tabforeground" class="active">').html('Text Color');
-                var tabbackground = $('<li id="tabbackground">').html('Text Background');
+                var tabforeground = $('<li id="tabforeground" class="active">').html(l10n.text_color);
+                var tabbackground = $('<li id="tabbackground">').html(l10n.text_background);
                 var tablist = $('<ul class="tablist">').append(tabforeground).append(tabbackground);
 
                 var tabs = $('<ul class="tabs">').append($('<li id="tabforeground-content" class="active">').html('<input class="foreground" type="text">')).append($('<li id="tabbackground-content">').html('<input class="background" type="text">'));
@@ -1133,6 +1113,7 @@ RedactorPlugins.upfrontColor = function() {
                     },
                     color_set = function(rule, raw_value) {
                         var theme_color = false, cls = false, is_bg = !!rule.match(/background/);
+
                         if (raw_value.is_theme_color) {
                             cls = Upfront.Views.Theme_Colors.colors.get_css_class(raw_value, is_bg);
                             if (!cls) theme_color = raw_value.theme_color;
@@ -1141,30 +1122,91 @@ RedactorPlugins.upfrontColor = function() {
                         }
 
                         var wrapper = document.createElement("span"),
+                            //contents = document.createRange().createContextualFragment( self.redactor.selection.getHtml() ),
                             contents = self.redactor.range.extractContents(),
+                            //contents = self.redactor.range.cloneContents(),
                             range = self.redactor.range,
-                            $range = range.commonAncestorContainer ? $(range.commonAncestorContainer) : false
+                            $range = range.commonAncestorContainer ? $(range.commonAncestorContainer) : false,
+                            apply_to_wrapper = function($wrapper){
+                                if (cls) {
+                                    $wrapper
+                                        .addClass(cls)
+                                    ;
+                                } else if (!!theme_color) {
+                                    $wrapper
+                                        .attr("style", rule + ':' + theme_color) // use color otherwise
+                                    ;
+                                }
+                            }
                         ;
 
-                        if ($range && $range.length && $range.is("span")) {
-                            range.selectNode(range.commonAncestorContainer);
-                            Upfront.Views.Theme_Colors.colors.remove_theme_color_classes($range, is_bg);
-                            $range.attr("style", "");
-                            wrapper = $range.get(0);
-                        }
-                        wrapper.appendChild(contents);
-                        self.redactor.range.insertNode(wrapper);
+                        // Todo Ve: Removing this would allow changing the color of part of a block which already has color i.e
+                        // You have "This is my whole text" and it's aready red, but you wanna change the color of "whole" word
 
-                        if (cls) {
-                            $(wrapper)
-                                .addClass(cls)
-                            ;
-                        } else if (!!theme_color) {
-                            $(wrapper)
-                                .attr("style", rule + ':' + theme_color) // use color otherwise
-                            ;
-                        }
+                        //if ($range && $range.length && $range.is("span")) {
+                        //    range.selectNode(range.commonAncestorContainer);
+                        //    Upfront.Views.Theme_Colors.colors.remove_theme_color_classes($range, is_bg);
+                        //    $range.attr("style", "");
+                        //    wrapper = $range.get(0);
+                        //
+                        //}
 
+
+
+                        //if( contents.childNodes[0] && _.indexOf(["p", "li"], contents.childNodes[0].tagName.toLowerCase() ) !== -1 ){ //  make sure use can set color to multiple paragraphs at once
+                        if( contents.childNodes[0] && self.redactor.utils.isBlock( contents.childNodes[0] )  ){ //  make sure use can set color to multiple blocks at once
+
+                            while( self.redactor.selection.getParent() ){// try to remove selected nodes as long as we have any selected node
+                                $( self.redactor.selection.getBlocks()).remove();
+                            }
+                            var _nodes = [];
+
+                            /**
+                             * Prepare nodes and wrap them into wrappers
+                             *
+                             */
+                            _.each(  contents.childNodes, function(node, index) {
+                                var wrapper = document.createElement("span"),
+                                    first_child = node.childNodes[0];
+
+                                if(_.isUndefined(node) ) return;
+
+                                if( first_child  && first_child.tagName &&  first_child.tagName.toLowerCase() === "span" && ( first_child.className.match(/upfront_theme_/) || first_child.style.cssText.match(/color/) ) ){ // if already color is applied
+                                    wrapper.innerHTML = first_child.innerHTML;
+                                }else{
+                                    wrapper.innerHTML =  node.innerHTML;
+                                }
+
+                                node.innerHTML = "";
+                                node.appendChild( wrapper );
+                                _nodes.push({
+                                    node: node,
+                                    wrapper: wrapper
+                                });
+
+                            } );
+                            /**
+                             * Insert nodes back to where they were
+                             * Reverse them since insertNode adds nodes to the beginning
+                             *
+                             *
+                             */
+                            _.each( _nodes.reverse(),  function( _node, index){
+                                var node = _node.node,
+                                    wrapper = _node.wrapper;
+
+                                self.redactor.range.insertNode(node);
+                                //container.appendChild(node);
+                                var $wrapper = $(wrapper);
+
+                                apply_to_wrapper( $wrapper );
+                            } );
+                        }else{
+                            wrapper.appendChild(contents);
+                            self.redactor.range.insertNode(wrapper);
+
+                            apply_to_wrapper( $(wrapper) );
+                        }
 
                         self.redactor.selection.restore();
                         self.redactor.code.sync();
@@ -1298,7 +1340,6 @@ RedactorPlugins.upfrontColor = function() {
                 //if( html.replace(/(\r\n|\n|\r)/gm,"").trim() === $(current).html().replace(/(\r\n|\n|\r)/gm,"").trim() && !_.isEmpty( current.style.color ) ){
                     this.redactor.inline.removeFormat("color");
                 //}else{
-                //    console.log("here");
                 //}
                 $(this.redactor.selection.getCurrent()).find("font").each(function(){
                    var $this = $(this),
@@ -1324,7 +1365,7 @@ RedactorPlugins.upfrontFormatting = function() {
         init: function () {
 
             this.opts.buttonsCustom.upfrontFormatting = {
-                title: 'Formatting',
+                title: l10n.formatting,
                 panel: this.upfrontFormatting.panel,
                 first: true
             };
@@ -1335,6 +1376,7 @@ RedactorPlugins.upfrontFormatting = function() {
             className: "ufront-air-formatting",
             init: function(){
                 this.custom_classes = ["first-class", "second-class", "third-class"];
+
             },
             events: {
                 "click a" : "select_tag",
@@ -1388,10 +1430,28 @@ RedactorPlugins.upfrontFormatting = function() {
             },
             select_tag: function( e ){
                 e.preventDefault();
-                var tag = $(e.target).data("tag");
                 this.redactor.buffer.set();
                 this.redactor.$editor.focus();
-                this.redactor.block.format(tag);
+
+                var tag = $(e.target).data("tag");
+
+                if (!this.redactor.utils.browser('msie')) this.redactor.$editor.focus();
+
+                this.redactor.block.blocks = this.redactor.selection.getBlocks();
+
+                this.redactor.block.blocksSize = this.redactor.block.blocks.length;
+                this.redactor.block.type = "";
+                this.redactor.block.value = "";
+
+                this.redactor.buffer.set();
+                this.redactor.selection.save();
+
+                var block = this.redactor.block.blocks[0];
+                var $formatted = this.redactor.utils.replaceToTag(block, tag);
+                this.redactor.block.toggle($formatted);
+
+                if (tag == 'p' || this.redactor.block.headTag) $formatted.find('p').contents().unwrap();
+
                 this.redactor.dropdown.hideAll();
             },
             change_custom_class: function(e){
@@ -1418,7 +1478,7 @@ RedactorPlugins.blockquote = function() {
 
             var me = this;
             this.opts.stateButtons.blockquote = {
-                title: 'Set a quote',
+                title: l10n.blockquote,
                 defaultState: 'noquote',
                 states: {
                     noquote: {

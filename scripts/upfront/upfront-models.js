@@ -459,8 +459,8 @@ var _alpha = "alpha",
 		},
 		
 		get_new_title: function (prefix, start) {
-			var title = prefix + start,
-				name = title.toLowerCase().replace(/\s/, '-');
+			var title = (prefix + start).replace(/[^A-Za-z0-9\s_-]/g, ''),
+				name = title.toLowerCase().replace(/\s/g, '-');
 			if ( this.get_by_name(name) )
 				return this.get_new_title(prefix, start+1);
 			return {

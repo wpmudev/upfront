@@ -186,7 +186,7 @@ define([
 				$wrap = this.$el.find('.upfront-settings-item-content');
 			$wrap.html('');
 
-			if ( slide_images ) {
+			if ( slide_images.length > 0 ) {
 				Upfront.Views.Editor.ImageEditor.getImageData(slide_images).done(function(response){
 					var images = response.data.images;
 					// Rewrite slide images because in builder mode they will be just paths of theme images
@@ -194,14 +194,16 @@ define([
 					//slide_images = images;
 					_.each(slide_images, function (id) {
 						var image = _.isNumber(id) || id.match(/^\d+$/) ? images[id] : _.find(images, function(img){
-								return img.full[0].split(/[\\/]/).pop() == id.split(/[\\/]/).pop();
-							}),
-							$image = $('<div class="upfront-region-bg-slider-image" />');
+							return img.full[0].split(/[\\/]/).pop() == id.split(/[\\/]/).pop();
+						}),
+						$image = $('<div class="upfront-region-bg-slider-image" />');
 						$image.data('image-id', id);
-						$image.css({
-							background: 'url("' + image.thumbnail[0] + '") no-repeat 50% 50%',
-							backgroundSize: '100% auto'
-						});
+						if(typeof image.thumbnail !== "undefined") {
+							$image.css({
+								background: 'url("' + image.thumbnail[0] + '") no-repeat 50% 50%',
+								backgroundSize: '100% auto'
+							});
+						}
 						$image.append('<span href="#" class="upfront-region-bg-slider-delete-image">&times;</span>');
 						$wrap.append($image);
 					});

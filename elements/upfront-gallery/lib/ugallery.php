@@ -21,7 +21,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 		$data['even_padding'] = isset($data['even_padding']) ? $data['even_padding'] : array('false');
 		$data['thumbPadding'] = isset($data['thumbPadding']) ? $data['thumbPadding'] : 15;
 
-		foreach($data['images'] as $im){
+		if (!empty($data['images'])) foreach($data['images'] as $im){
 			$images[] = array_merge(self::image_defaults(), $im);
 		}
 		$data['images'] = $images;
@@ -168,6 +168,14 @@ class Upfront_UgalleryView extends Upfront_Object {
 			$labels_names[$label->name] = array('id' => $label->term_id, 'text' => $label->name);
 		}
 
+		// Sanitize post type objects array
+		foreach ($post_types as $ptidx => $ptype) {
+			if (empty($ptype->register_meta_box_cb)) continue;
+			$ptype->register_meta_box_cb = false;
+			$post_types[$ptidx] = $ptype;
+		}
+		// Whatever we need in the post types array, I am fairly sure metabox callback is *NOT* one of those things...
+
 		$data['ugallery'] = array(
 			'defaults' => self::default_properties(),
 			'imageDefaults' => self::image_defaults(),
@@ -198,7 +206,8 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'caption' => 'Image description',
 			'alt' => '',
 			'tags' => array(),
-			'margin' => array('left' => 0, 'top' => 0)
+			'margin' => array('left' => 0, 'top' => 0),
+			'linkTarget' => '',
 		);
 	}
 
@@ -225,7 +234,9 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'showCaptionOnHover' => array( 'true' ),
 			'linkTo' => 'image', // 'url' | 'image'
 			'even_padding' => array('false'),
-			'thumbPadding' => 15
+			'thumbPadding' => 15,
+			'fitThumbCaptions' => false,
+			'thumbCaptionsHeight' => 20
 		);
 	}
 
@@ -304,6 +315,8 @@ class Upfront_UgalleryView extends Upfront_Object {
 				'caption_bg' => __('Caption Background:', 'upfront'),
 				'ok' => __('Ok', 'upfront'),
 				'adds_sortable' => __('Adds sortable interface based on the labels given to the images.', 'upfront'),
+				'fit_thumb_captions' => __('Fit thumbnail captions.', 'upfront'),
+				'thumb_captions_height' => __('Height of captions (in px).', 'upfront'),
 			),
 			'thumb' => array(
 				'ratio' => __('Thumbnail Ratio', 'upfront'),

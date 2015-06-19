@@ -27,67 +27,78 @@ class Upfront_UtabsView extends Upfront_Object {
 	}
 
 	function __construct($data) {
-			$data['properties'] = $this->merge_default_properties($data);
-			parent::__construct($data);
+		$data['properties'] = $this->merge_default_properties($data);
+		parent::__construct($data);
 	}
 
 	protected function merge_default_properties($data){
-			$flat = array();
-			if(!isset($data['properties']))
-					return $flat;
+		$flat = array();
+		if(!isset($data['properties']))
+				return $flat;
 
-			foreach($data['properties'] as $prop)
-					$flat[$prop['name']] = $prop['value'];
+		foreach($data['properties'] as $prop)
+				$flat[$prop['name']] = $prop['value'];
 
-			$flat = array_merge(self::default_properties(), $flat);
+		$flat = array_merge(self::default_properties(), $flat);
 
-			$properties = array();
-			foreach($flat as $name => $value)
-					$properties[] = array('name' => $name, 'value' => $value);
+		$properties = array();
+		foreach($flat as $name => $value)
+				$properties[] = array('name' => $name, 'value' => $value);
 
-			return $properties;
+		return $properties;
 	}
 
 	public function get_markup () {
-	// This data is passed on to the template to precompile template
-			$data = $this->properties_to_array();
+		// This data is passed on to the template to precompile template
+		$data = $this->properties_to_array();
 
-			// Ensure tab title
-			foreach($data['tabs'] as $index=>$tab) {
-				$ttl = trim(str_replace("\n", '', $tab['title']));
-				if (empty($ttl)) {
-					$tab['title'] = 'Tab ' . ($index + 1);
-					$data['tabs'][$index] = $tab;
-				}
+		// Ensure tab title
+		// Do shortcode
+		foreach($data['tabs'] as $index=>$tab) {
+			$ttl = trim(str_replace("\n", '', $tab['title']));
+			if (empty($ttl)) {
+				$tab['title'] = 'Tab ' . ($index + 1);
 			}
+			$tab['content'] = $this->_do_shortcode($tab['content']);
+			$data['tabs'][$index] = $tab;
+		}
 
-			if (!$data['preset']) {
-				$data['preset'] = 'default';
-			}
+		if (!$data['preset']) {
+			$data['preset'] = 'default';
+		}
 
-			$data['wrapper_id'] = str_replace('utabs-object-', 'wrapper-', $data['element_id']);
+		$data['wrapper_id'] = str_replace('utabs-object-', 'wrapper-', $data['element_id']);
 
-			$markup = upfront_get_template('utabs', $data, dirname(dirname(__FILE__)) . '/tpl/utabs.html');
+		$markup = upfront_get_template('utabs', $data, dirname(dirname(__FILE__)) . '/tpl/utabs.html');
 
-			// upfront_add_element_style('upfront_tabs', array('css/utabs.css', dirname(__FILE__)));
-			upfront_add_element_script('upfront_tabs', array('js/utabs-front.js', dirname(__FILE__)));
+		// upfront_add_element_style('upfront_tabs', array('css/utabs.css', dirname(__FILE__)));
+		upfront_add_element_script('upfront_tabs', array('js/utabs-front.js', dirname(__FILE__)));
 
-			return $markup;
+		return $markup;
+	}
+
+	protected function _do_shortcode ($content) {
+		$do_processing = apply_filters(
+			'upfront-shortcode-enable_in_layout', 
+			(defined('UPFRONT_DISABLE_LAYOUT_TEXT_SHORTCODES') && UPFRONT_DISABLE_LAYOUT_TEXT_SHORTCODES ? false : true)
+		);
+		if ($do_processing) $content = do_shortcode($content);
+		return $content;
 	}
 
 	public function add_js_defaults($data){
-			$data['utabs'] = array(
-					'defaults' => self::default_properties(),
-					'template' => upfront_get_template_url('utabs', upfront_element_url('tpl/utabs.html', dirname(__FILE__)))
-			);
-			return $data;
+		$data['utabs'] = array(
+				'defaults' => self::default_properties(),
+				'template' => upfront_get_template_url('utabs', upfront_element_url('tpl/utabs.html', dirname(__FILE__)))
+		);
+		return $data;
 	}
 
 	private function properties_to_array(){
-			$out = array();
-			foreach($this->_data['properties'] as $prop)
-					$out[$prop['name']] = $prop['value'];
-			return $out;
+		$out = array();
+		foreach($this->_data['properties'] as $prop)
+				$out[$prop['name']] = $prop['value'];
+		return $out;
 	}
 
 	public static function add_styles_scripts() {
@@ -106,6 +117,9 @@ class Upfront_UtabsView extends Upfront_Object {
 			'element_name' => __('Tabs', 'upfront'),
 			'default_tab_content' => __('Click on active tab title to edit title. Confirm with Enter key.<br>Click on plus button [+] to add new tab.', 'upfront'),
 			'second_tab_content' => __('Have fun with tabs.', 'upfront'),
+			'tab_label'	=> __('Tab', 'upfront'),
+			'content_label'	=> __('Content', 'upfront'),
+			'tab_placeholder' => __('Tab Content', 'upfront'),
 			'css' => array(
 				'container_label' => __('Tabs container', 'upfront'),
 				'container_info' => __('The layer that contains all the contents of the tab element.', 'upfront'),

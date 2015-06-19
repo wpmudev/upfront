@@ -11,22 +11,135 @@ class Upfront_UcommentView extends Upfront_Object {
 		"</div>";
 	}
 
+	public static function spawn_random_comments ($post) {
+		$fake_comment = array(
+			'user_id' => get_current_user_id(),
+			'comment_author' => 'Author',
+			'comment_author_IP' => '',
+			'comment_author_url' => '',
+			'comment_author_email' => '',
+			'comment_post_ID' => $post->ID,
+			'comment_type' => '',
+			'comment_date' => current_time('mysql'),
+			'comment_date_gmt' => current_time('mysql', 1),
+			'comment_approved' => 1,
+			'comment_content' => 'test stuff author comment',
+			'comment_parent' => 0,
+		);
+		$comments = array(
+			array_merge($fake_comment, array(
+				'user_id' => get_current_user_id(),
+				'comment_author' => 'Author',
+				'comment_content' => 'test stuff author comment',
+			)),
+			array_merge($fake_comment, array(
+				'user_id' => 0,
+				'comment_author' => 'Visitor',
+				'comment_content' => 'test stuff visitor comment',
+			)),
+			array_merge($fake_comment, array(
+				'user_id' => 0,
+				'comment_author' => 'Trackback',
+				'comment_type' => 'trackback',
+				'comment_content' => 'test stuff visitor trackback',
+			)),
+			array_merge($fake_comment, array(
+				'user_id' => 0,
+				'comment_author' => 'Pingback',
+				'comment_type' => 'pingback',
+				'comment_content' => 'test stuff visitor pingkback',
+			)),
+		);
+		foreach ($comments as $cid => $comment) {
+			$comment['comment_ID'] = $cid;
+			$comments[$cid] = (object)wp_filter_comment($comment);
+		}
+		return $comments;
+	}
+
+	/**
+	 * Check if we have any external comments templates assigned by plugins.
+	 *
+	 * @param int $post_id Current post ID
+	 *
+	 * @return mixed (bool)false if nothing found, (string)finished template otherwise
+	 */
+	private static function _get_external_comments_template ($post_id) {
+		if (!is_numeric($post_id)) return false;
+
+		global $post, $wp_query;
+
+		$overriden_template = false;
+
+		// Sooo... override the post globals
+		$global_post = is_object($post) ? clone($post) : $post;
+		$post = get_post($post_id);
+
+		$global_query = is_object($wp_query) ? clone($wp_query) : $wp_query;
+		$wp_query->is_singular = true;
+		if (!isset($wp_query->comments)) {
+			$wp_query->comments = get_comments("post_id={$post_id}");
+			$wp_query->comment_count = count($wp_query->comments);
+		}
+
+		$wp_tpl = apply_filters('comments_template', false);
+
+		if (!empty($wp_tpl)) {
+			ob_start();
+			require_once($wp_tpl);
+			$overriden_template = ob_get_clean();
+		}
+		
+		$post = is_object($global_post) ? clone($global_post) : $global_post;
+		$wp_query = is_object($global_query) ? clone($global_query) : $global_query;
+
+		return $overriden_template;
+	}
+
 	public static function get_comment_markup ($post_id) {
-		//if (!$post_id || !is_numeric($post_id)) return '';
-		if (!$post_id) return ''; 
-		if (!is_numeric($post_id) && ( 'fake_post' !== $post_id || 'fake_styled_post' !== $post_id )) return '';
+		if (!$post_id) return '';
+		if (!is_numeric($post_id)) {
+			if (!in_array($post_id, array('fake_post', 'fake_styled_post'))) return '';
+		}
+
+		$tpl = self::_get_external_comments_template($post_id);
+		if (!empty($tpl)) return $tpl;
 
         $defaults = self::default_properties();
         $prepend_form = (bool) $defaults['prepend_form'];
-        $form_args = apply_filters('upfront_comment_form_args', array());
-		//$post = get_post($post_id);
+        $form_args = array(
+        	'comment_field' => self::_get_comment_form_field(),
+        );
+        $form_args = apply_filters('upfront_comment_form_args', array_filter($form_args));
+        
+        $comments = array();
+        $post = false;
 		if (is_numeric($post_id)) {
 			$post = get_post($post_id);
+			$comment_args = array(
+				'post_id' => $post->ID,
+				'order'   => 'ASC',
+				'orderby' => 'comment_date_gmt',
+				'status'  => 'approve',
+			);
+			$commenter = wp_get_current_commenter();
+			$user_id = get_current_user_id();
+			
+			if (!empty($user_id)) $comment_args['include_unapproved'] = array($user_id);
+			else if (!empty($commenter['comment_author_email'])) $comment_args['include_unapproved'] = array($commenter['comment_author_email']);
+
+			$comments = get_comments($comment_args);
 		} else {
 			$posts = get_posts(array('orderby' => 'rand', 'posts_per_page' => 1));
-			if (!empty($posts[0])) $post = $posts[0];
+			if (!empty($posts[0])) {
+				$post = $posts[0];
+				$comments = self::spawn_random_comments($post);
+				add_filter('comments_open', '__return_true');
+			}
 			else return '';
 		}
+		if (empty($post) || !is_object($post)) return '';
+
 		if (post_password_required($post->ID)) return '';
 		ob_start();
 
@@ -34,7 +147,6 @@ class Upfront_UcommentView extends Upfront_Object {
             comment_form($form_args, $post->ID);
         }
 		// Load comments
-		$comments = get_comments(array('post_id' => $post->ID));
 		if($comments && sizeof($comments)){
 			echo '<ol class="upfront-comments">';
 			wp_list_comments(array('callback' => array('Upfront_UcommentView', 'list_comment'), 'style' => 'ol'), $comments);
@@ -45,6 +157,21 @@ class Upfront_UcommentView extends Upfront_Object {
             comment_form($form_args, $post->ID);
         }
 		return ob_get_clean();
+	}
+
+	/**
+	 * Get the actual input form field markup.
+	 * Yanked directly from wp-includes/comment-template.php
+	 * because that's where it's hardcoded. Yay for hardcoding stuff.
+	 *
+	 * @return string
+	 */
+	private static function _get_comment_form_field () {
+		return '<p class="comment-form-comment">' .
+			'<label for="comment">' . _x( 'Comment', 'noun' ) . '</label>' .
+			' ' .
+			'<textarea placeholder="' . esc_attr(__('Leave a Reply')) . '" id="comment" name="comment" cols="45" rows="8" aria-describedby="form-allowed-tags" aria-required="true" required="required"></textarea>' .
+		'</p>';
 	}
 
 	public static function list_comment ( $comment, $args, $depth ) {
@@ -70,7 +197,7 @@ class Upfront_UcommentView extends Upfront_Object {
 			'type' => "UcommentModel",
 			'view_class' => "UcommentView",
 			"class" => "c24 upfront-comment",
-			'has_settings' => 0,
+			'has_settings' => 1,
             "prepend_form" => false
 		);
 	}
@@ -88,12 +215,15 @@ class Upfront_UcommentView extends Upfront_Object {
 			'loading' => __('Loading', 'upfront'),
 			'loading_error' => __("Error loading comment", 'upfront'),
 			'discussion_settings' => __('Discussion Settings', 'upfront'),
+			'settings_disabled' => __('Discussion Settings are disabled', 'upfront'),
 			'avatars' => __('Avatars', 'upfront'),
 			'ok' => __('OK', 'upfront'),
 			'please_wait' => __('Please, wait', 'upfront'),
 			'avatar_settings' => __('Avatar Settings', 'upfront'),
 			'show_avatars' => __('Show avatars', 'upfront'),
 			'max_rating' => __('Maximum rating', 'upfront'),
+			'settings' => __('Settings', 'upfront'),
+			'main_panel' => __('Main', 'upfront'),
 			'rating' => array(
 				'g' => __('Suitable for all audiences', 'upfront'),
 				'pg' => __('Possibly offensive, usually for audiences 13 and above', 'upfront'),
@@ -166,7 +296,7 @@ class Upfront_UcommentAjax extends Upfront_Server {
 	}
 
 	public function save_discussion_settings () {
-		if (!current_user_can('manage_options')) $this->_out(new Upfront_JsonResponse_Error("You can not do this"));
+		if (!Upfront_Permissions::current(Upfront_Permissions::OPTIONS)) $this->_out(new Upfront_JsonResponse_Error("You can not do this"));
 		$data = stripslashes_deep($_POST['data']);
 
 		if (isset($data['default_pingback_flag'])) {
@@ -284,7 +414,7 @@ class Upfront_UcommentAjax extends Upfront_Server {
 	}
 
 	public function save_avatars_settings () {
-		if (!current_user_can('manage_options')) $this->_out(new Upfront_JsonResponse_Error(self::_get_l10n('error_permissions')));
+		if (!Upfront_Permissions::current(Upfront_Permissions::OPTIONS)) $this->_out(new Upfront_JsonResponse_Error(self::_get_l10n('error_permissions')));
 		$data = stripslashes_deep($_POST['data']);
 
 		if (isset($data['show_avatars'])) {
@@ -322,7 +452,7 @@ class Upfront_UcommentAjax extends Upfront_Server {
 	}
 
 	public function get_settings () {
-		if (!current_user_can('manage_options')) $this->_out(new Upfront_JsonResponse_Error(self::_get_l10n('error_permissions')));
+		if (!Upfront_Permissions::current(Upfront_Permissions::OPTIONS)) $this->_out(new Upfront_JsonResponse_Error(self::_get_l10n('error_permissions')));
 		global $current_user;
 		$avatar_defaults = apply_filters('avatar_defaults', array(
 			'mystery' => __('Mystery Man'),

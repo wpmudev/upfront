@@ -7,10 +7,10 @@ class Upfront_LoginView extends Upfront_Object {
 			'style' => 'form',
 			'behavior' => 'click',
 			'appearance' => 'icon',
-			'label_image' => __('Login', 'upfront'),
-			'label_text' => __('log in', 'upfront'),
-			'logout_link' => __('log out', 'upfront'),
-			'trigger_text' => __('Log in', 'upfront'),
+			'label_image' => self::_get_l10n('login'),
+			'label_text' => self::_get_l10n('log_in'),
+			'logout_link' => self::_get_l10n('log_out'),
+			'trigger_text' => self::_get_l10n('log_in'),
 			'logged_in_preview' => '',
 			'type' => "LoginModel",
 			'view_class' => "LoginView",
@@ -30,92 +30,87 @@ class Upfront_LoginView extends Upfront_Object {
 
 		$properties = !empty($this->_data['properties']) ? $this->_data['properties'] : array();
 
-		
 		return is_user_logged_in ()
-			? self::fake_upfront_init(self::_normalize_properties($properties))
-			: self::get_element_markup($properties)
+			? self::get_logout_markup(self::_normalize_properties($properties))
+			: self::get_login_markup($properties)
 		;
 	}
 
-	public static function fake_upfront_init ($properties = array()) {
+	public static function get_logout_markup ($properties=array()) {
+		if (!(!empty($properties['logout_style']) && 'link' === $properties['logout_style'])) return ' ';
 
-		$show_logout_link = !empty($properties['logout_style'])?$properties['logout_style']:false;
-
-		if($show_logout_link == 'link') {
-			$logout_link = !empty($properties['logout_link'])?$properties['logout_link']:__('log out', 'upfront');
-			return '<a class="logout_link" href="'.wp_logout_url().'">'.$logout_link.'</a>';
-		} 
-		else {
-			return " ";
-		}
-		
-		/*
-		return !current_user_can('manage_options')
-			? ''
-			: upfront_boot_editor_trigger()
+		$label = !empty($properties['logout_link'])
+			? $properties['logout_link']
+			: self::_get_l10n('log_out')
 		;
-		*/
+		return upfront_get_template("login-logout", array('label' => $label), dirname(dirname(__FILE__)) . "/tpl/logout.php");
 	}
 
-	public static function get_element_markup ($properties=array()) {
+	public static function get_login_markup ($properties=array()) {
 		$properties = self::_normalize_properties($properties);
 
+		$logged_in_preview = is_array($properties['logged_in_preview'])
+			? !empty($properties['logged_in_preview'][0])
+			: !empty($properties['logged_in_preview'])
+		;
 
-		$logged_in_property = is_array($properties['logged_in_preview'])?$properties['logged_in_preview'][0]:$properties['logged_in_preview'];
-
-		$logged_in_preview =!empty($logged_in_property) ? $logged_in_property :false;
-
-		if($logged_in_preview == 'yes') {
-			return self::fake_upfront_init($properties);
+		if ($logged_in_preview) {
+			return self::get_logout_markup($properties);
 		}
-		
+
 		$block = !empty($properties['style']) && 'form' == $properties['style'];
-		$click = !$block && !empty($properties['behavior']) && "click" == $properties['behavior'];
-		$hover = !$block && !empty($properties['behavior']) && "hover" == $properties['behavior'];
-		//$log_in_label = !empty($properties['login_button'])? $properties['login_button']:
+		
 		$icon = !empty($properties['appearance']) && "icon" == $properties['appearance'];
 		$label = !empty($properties['label_text'])
 			? $properties['label_text']
-			: 'Log in';//(!empty($properties['label_image']) && 'icon' == $properties['appearance'] ? $properties['label_image'] : '')	;
+			: self::_get_l10n('log_in')
+		;
+		if ('icon' === $label) $label = '';
 
-		$trigger_label = !empty($properties['trigger_text']) ? $properties['trigger_text']:"$label";
+		$trigger_label = !empty($properties['trigger_text']) ? $properties['trigger_text'] : $label;
+		$trigger = empty($block)
+			? self::_get_trigger_markup($icon, $trigger_label)
+			: ''
+		;
 
-		if ('icon' == $label) $label = '';
-		$class = array();
-
-		if ($click) $class[] = 'upfront_login-click';
-		if ($hover) $class[] = 'upfront_login-hover';
-		if ($block) $class[] = 'upfront_login-block';
-
-		$trigger = '';
-		if (!$block) {
-			$icon_class = $icon ? 'upfront_login-trigger-icon' : '';
-			$trigger = '<div class="upfront_login-trigger ' . $icon_class . '"><span class="upfront_login-label">' . esc_html($trigger_label);
-				
-			'</span></div>';
+		$allow_registration = !is_user_logged_in() && get_option('users_can_register');
+		// Allow override for in-editor form previews
+		if (defined('DOING_AJAX') && DOING_AJAX && Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
+			$allow_registration = get_option('users_can_register');
 		}
 
-		return '<div class="upfront_login ' . join(' ', $class) . '">' .
-			$trigger .
-			'<div class="upfront_login-form-wrapper"><div class="upfront_login-form">' .
-				wp_login_form(array(
-					'echo' => false,
-					'remember' => true,
-					'label_log_in' => $label,
-				)) .
-			'<p class="login-lostpassword"><small>Lost Password? <br /> <a class="login-lostpassword-link" href="' .
-				wp_lostpassword_url( /*$redirect*/ ) .
-			'">' . self::_get_l10n('click_here') . '</a></small></p></div>' .
-		'</div></div>';
+		$data = array(
+			'trigger' => $trigger,
+			'label' => $label,
+			'allow_registration' => $allow_registration,
+			'lost_password' => self::_get_l10n('lost_password'),
+			'click_here' => self::_get_l10n('click_here'),
+			'register' => self::_get_l10n('register'),
+		);
+		$tpl = 'block'; // default
+		if (!$block && !empty($properties['behavior'])) {
+			$tpl = preg_replace('/[^a-z0-9]/', '', $properties['behavior']);
+		}
+		return upfront_get_template("login-form-{$tpl}", $data, dirname(dirname(__FILE__)) . "/tpl/form-{$tpl}.php");
+	}
+
+	private static function _get_trigger_markup ($icon=false, $trigger_label='') {
+		$tpl = !empty($icon) ? 'icon' : 'link';
+		return upfront_get_template("login-trigger-{$tpl}", array('label' => $trigger_label), dirname(dirname(__FILE__)) . "/tpl/trigger-{$tpl}.php");
 	}
 
 	private static function _normalize_properties ($raw_properties) {
 		$to_map = array('style', 'behavior', 'appearance', 'label_text', 'trigger_text', 'logged_in_preview', 'logout_style', 'logout_link', 'label_image');
-		$properties = array();
-		foreach ($raw_properties as $prop) {
-			if (in_array($prop['name'], $to_map)) $properties[$prop['name']] = $prop['value'];
-		}
+		$properties = upfront_properties_to_array($raw_properties, $to_map);
 		return $properties;
+	}
+
+	public static function add_data_defaults ($data) {
+		$data['upfront_login'] = array(
+			"defaults" => self::default_properties(),
+			"root_url" => trailingslashit(upfront_element_url('/', dirname(__FILE__)))
+		);
+		return $data;
 	}
 
 	public static function add_l10n_strings ($strings) {
@@ -157,6 +152,19 @@ class Upfront_LoginView extends Upfront_Object {
 			'in_lightbox' => __("Form in lightbox", 'upfront'),
 			'appearance' => __("Display Appearance", 'upfront'),
 			'trigger' => __("Trigger", 'upfront'),
+			'lost_password' => __("Lost Password?", 'upfront'),
+			'login' => __("Login", 'upfront'),
+			'log_in' => __("Log in", 'upfront'),
+			'log_out' => __("Log out", 'upfront'),
+			
+			'logged_in_preview' => __("Logged in Users see", 'upfront'),
+			'preview' => __("Preview", 'upfront'),
+			'nothing' => __("Nothing", 'upfront'),
+			'log_out_link' => __("Log Out Link", 'upfront'),
+			'log_out_label' => __("Log Out Link:", 'upfront'),
+			'log_in_button' => __("Log In Button:", 'upfront'),
+			'log_in_trigger' => __("Log In Trigger:", 'upfront'),
+			'register' => __("Register", 'upfront'),
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)
@@ -164,29 +172,3 @@ class Upfront_LoginView extends Upfront_Object {
 		;
 	}
 }
-
-class Upfront_LoginAjax extends Upfront_Server {
-	public static function serve () {
-		$me = new self;
-		$me->_add_hooks();
-	}
-
-	private function _add_hooks () {
-		add_action('wp_ajax_upfront-login_element-get_markup', array($this, "json_get_markup"));
-	}
-
-	public function json_get_markup () {
-		$markup = Upfront_LoginView::get_element_markup($_POST['properties']);
-		$this->_out(new Upfront_JsonResponse_Success($markup));
-	}
-}
-Upfront_LoginAjax::serve();
-
-function upfront_login_add_login_local_url ($data) {
-	$data['upfront_login'] = array(
-		"defaults" => Upfront_LoginView::default_properties(),
-		"root_url" => trailingslashit(upfront_element_url('/', dirname(__FILE__)))
-	);
-	return $data;
-}
-add_filter('upfront_data', 'upfront_login_add_login_local_url');

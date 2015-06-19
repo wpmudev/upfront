@@ -127,19 +127,33 @@ jQuery(function($){
 			});
 		};
 
+		/**
+		 * re-Resize Magnific Popup 100ms after MFP open (iPhone issue) 
+		 */
+		var resizeMFP = function() {
+			if(/i(Pad|Phone|Pod)/g.test(navigator.userAgent))
+				setTimeout(function(){
+					$.magnificPopup.instance.updateSize();
+				}, 500);
+		};
+
 		var gallery, magOptions;
 		for (var galleryId in ugalleries) {
 			gallery = false;
 			magOptions = ugalleries[galleryId].magnific;
 			if (magOptions){
 				gallery = $('#' + galleryId).find('.ugallery_item_image');
+				$.each(gallery, function() {
+					// Remove added linking to larger image - it breaks links in image description
+					$(this).find('.ugallery_lb_text .ugallery_lightbox_link').removeAttr('href');
+				});
 				if (ugalleries[galleryId].useLightbox) {
 					magOptions.image = {
 						titleSrc: titleSrc
 					};
 				}
 
-				magOptions.callbacks = {resize: resizeWithText, afterChange: resizeWithText};
+				magOptions.callbacks = {resize: resizeWithText, afterChange: resizeWithText, open: resizeMFP};
 				gallery.magnificPopup(magOptions);
 			} else {
 				gallery = $('#' + galleryId).find('.ugallery_lightbox_link');
@@ -156,7 +170,7 @@ jQuery(function($){
 						titleSrc: 'title',
 						verticalFit: true
 					},
-					callbacks: {resize: resizeWithText, afterChange: resizeWithText}
+					callbacks: {resize: resizeWithText, afterChange: resizeWithText, open: resizeMFP}
 				};
 				gallery.magnificPopup(magOptions);
 			}

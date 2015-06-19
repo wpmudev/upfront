@@ -54,7 +54,6 @@
 	bottom: 0;
 	left: 0;
 	width: 260px;
-	background: #3d5266;
 	border-right: 1px solid #1a2d40;
 	color: #adc3d8;
 	display: none;
@@ -66,7 +65,17 @@
 	-moz-user-select: none;
 	-o-user-select: none;
 	user-select: none;
-	z-index:2001;
+	z-index:1040;
+	background: rgb(51,68,84); /* Old browsers */
+	background: -moz-linear-gradient(top,  rgba(51,68,84,1) 0%, rgba(61,82,102,1) 20%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(51,68,84,1)), color-stop(20%,rgba(61,82,102,1))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  rgba(51,68,84,1) 0%,rgba(61,82,102,1) 20%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  rgba(51,68,84,1) 0%,rgba(61,82,102,1) 20%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  rgba(51,68,84,1) 0%,rgba(61,82,102,1) 20%); /* IE10+ */
+	background: linear-gradient(to bottom,  rgba(51,68,84,1) 0%,rgba(61,82,102,1) 20%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#334454', endColorstr='#3d5266',GradientType=0 ); /* IE6-9 */
+
+	background-position:0 45px;
 }
 
 #sidebar-ui-wrapper {
@@ -95,25 +104,21 @@
 	-webkit-box-sizing: border-box;
 }
 #sidebar-ui .sidebar-commands-header {
-	background: #2c3e50;
-	border-bottom: 1px solid #1a2d40;
-	-webkit-box-shadow: 0 1px 0 #3f5a73;
-	-moz-box-shadow: 0 1px 0 #3f5a73;
-	box-shadow: 0 1px 0 #3f5a73;
+	background: rgb(61,82,102);
 	overflow: hidden;
 }
 #sidebar-ui .command-logo {
-	padding: 10px 15px 9px;
+	padding: 7px 15px 7px;
 	float: left;
+	opacity:0.85;
 }
 #sidebar-ui .upfront-logo {
 	margin: 0;
 }
 #sidebar-ui .command-exit {
-	padding: 14px 13px 13px 11px;
-	background: #233140;
-	border-left: 1px solid #1a2d40;
+	padding: 11px 15px;
 	float: right;
+	opacity:.6;
 }
 #sidebar-ui .sidebar-editor-mode {
 	border-top: 1px solid #3f5870;
@@ -186,22 +191,20 @@
 	vertical-align: top;
 }
 #sidebar-ui .sidebar-commands-primary {
-	padding: 10px 15px 0;
+	padding: 15px 15px 0;
 }
 #sidebar-ui .sidebar-commands-primary .command-new-page,
 #sidebar-ui .sidebar-commands-primary .command-new-post,
 #sidebar-ui .sidebar-commands-primary .command-new-layout,
 #sidebar-ui .sidebar-commands-primary .command-browse-layout{
 	line-height: 34px;
-	padding: 0 10px;
-	border: 2px solid #25394d;
+	padding: 0 20px;
 	font-size: 15px;
-	height: 36px;
-	-webkit-transition: border .15s ease-in-out;
-	   -moz-transition: border .15s ease-in-out;
-	    -ms-transition: border .15s ease-in-out;
-	     -o-transition: border .15s ease-in-out;
-	        transition: border .15s ease-in-out;
+	height: 34px;
+	opacity:.8;
+	background: #54708C;
+	box-shadow: 0px 1px 0px 0px #2F3E4D, 
+				inset 0px 2px 0px 0px rgba(255,255,255,0.10);
 }
 #sidebar-ui .sidebar-commands-primary .command-new-layout{
 	height: 40px;
@@ -211,18 +214,23 @@
 .upfront-edit-content #sidebar-ui .sidebar-commands-primary .command-new-layout {
 	padding-right: 5px;
 }
-#sidebar-ui .sidebar-commands-primary .command-new-post,
-#sidebar-ui .sidebar-commands-primary .command-new-layout {
+#sidebar-ui .sidebar-commands-primary .command-new-post{
 	float: left;
+    max-width: 102px;
+}
+#sidebar-ui .sidebar-commands-primary .command-new-layout {
+  float: left;
+  max-width: 117px;
 }
 #sidebar-ui .sidebar-commands-primary .command-new-page {
 	float: right;
+    max-width: 103px;
 }
 #sidebar-ui .sidebar-commands-primary .command-new-page:hover,
 #sidebar-ui .sidebar-commands-primary .command-new-post:hover,
 #sidebar-ui .sidebar-commands-primary .command-new-layout:hover,
 #sidebar-ui .sidebar-commands-primary .command-browse-layout:hover {
-	border-color: #1fcd8f;
+	opacity:1;
 	color: #cbe5ff;
 }
 #sidebar-ui .sidebar-commands-primary .command-open-media-gallery,
@@ -239,7 +247,7 @@
 #sidebar-ui .command-open-media-gallery a,
 #sidebar-ui .command-popup-list a,
 #sidebar-ui .sidebar-profile-edit a {
-	border-bottom:1px solid rgb(37,57,77);
+	// border-bottom:1px solid rgb(37,57,77);
 	margin:0;
 }
 #sidebar-ui .command-open-media-gallery a:hover,
@@ -249,7 +257,8 @@
 }
 
 #sidebar-ui .sidebar-commands-primary .command-popup-list {
-	width: 170px;
+	max-width: 170px;
+    height: 34px;
 	font:11px/22px Verdana, sans-serif;
 }
 #sidebar-ui .sidebar-commands-primary .command-open-media-gallery {
@@ -257,12 +266,15 @@
 	margin-bottom: 0;
 	font:11px/22px Verdana, sans-serif;
 	float:right;
+    max-width: 51px;
+    height: 34px;
 }
 #sidebar-ui .upfront-icon-open-gallery:before {
 	background-position: -196px -176px;
 	width: 14px;
 	margin-right: 4px;
 	display: inline-block;
+	opacity:.5;
 }
 #sidebar-ui .sidebar-commands-primary .command-browse-layout {
 	line-height: 34px;
@@ -271,6 +283,7 @@
 	font-size: 15px;
 	height: 40px;
 	float: right;
+    max-width: 110px;
 }
 #sidebar-ui .upfront-icon-browse-layouts:before {
 	background-position: -45px -80px;
@@ -294,7 +307,7 @@
 	padding: 4px;
 }
 #sidebar-ui .sidebar-profile {
-	padding: 9px 15px 0;
+	padding: 13px 15px 0;
 	font: 11px/11px Verdana, sans-serif;
 	overflow: hidden; /* reset float */
 }
@@ -329,10 +342,14 @@
 	margin-top: 3px;
 }
 #sidebar-ui .sidebar-profile-edit {
-	float: right;
-	margin: 0;
-	padding-top: 19px;
-	margin-left: 0;
+    float: right;
+    margin: 0;
+    padding-top: 14px;
+    margin-left: 0;
+    width: 77px;
+    height: 29px;
+    overflow: hidden;
+    line-height: 15px;
 }
 .upfront-edit-content #sidebar-ui .sidebar-profile-edit {
 	display: none;
@@ -341,7 +358,7 @@
 	margin: 0 0 0 5px;
 }
 #sidebar-ui .sidebar-profile-edit .upfront-icon:before {
-	margin: 0;
+	margin: 2px 0 0 0;
 	padding: 0 0 0 10px;
 }
 #sidebar-ui .sidebar-commands-control {
@@ -361,31 +378,32 @@
 	margin-bottom: 0;
 	font-size: 14px;
 	height: 20px;
+    max-width: 48px;
 }
 #sidebar-ui .sidebar-commands-control .command-redo {
 	margin-left: 8px;
 }
 #sidebar-ui .sidebar-commands-control .command-save {
 	background: #1fcd8f;
-	-moz-box-shadow: 0 1px 0 #192d3f;
-	-webkit-box-shadow: 0 1px 0 #192d3f;
-	box-shadow: 0 1px 0 #192d3f;
+	box-shadow: 0 1px 0 rgba(37,58,77,.5);
 	color: #f1f8ff;
 	font-size: 18px;
 	float: right;
-	margin: 0;
-	position: absolute;
-	top: 613px;
-	right: 15px;
-	padding: 8px 20px 0 10px;
-	line-height: 22px;
+	margin: 10px 15px 0 0;
+	padding: 0 10px 0 10px;
+	line-height: 36px;
+    height:36px;
+    width: 94px;
+    text-align:center;
+}
+#sidebar-ui .sidebar-commands-control .command-save:before{
+  margin-top: 8px;
 }
 #sidebar-ui .sidebar-commands-control .command-start-responsive {
-	position: absolute;
-	top: 611px;
-	left: 13px;
-	margin: 0;
+	margin:10px 0 0 10px;
 	font-size: 13px;
+    max-width: 122px;
+    line-height: 27px;
 }
 #sidebar-ui .sidebar-commands-control .command-save:hover {
 	border-color: #1fcd8f;
@@ -401,6 +419,7 @@
 	left: 10px;
 	margin: 0;
     float: left;
+    max-width: 230px;
 }
 #sidebar-ui .upfront-icon-export:before {
 	background-position: -42px -384px;
@@ -414,6 +433,8 @@
 	padding: 0 10px 0 8px;
 	line-height: 34px;
 	white-space: nowrap;
+    max-width: 230px;
+    overflow: hidden;
 }
 #sidebar-ui .sidebar-commands-control .command-create-responsive-layouts:before {
 	margin-top: 6px;
@@ -860,9 +881,14 @@ span.draggable-post-element.element-dragging
 	color: #0F9969;
 	font-family: "Verdana";
 	font-size: 11px;
-  border-bottom: 1px solid #1fcd8f;
-  line-height: 1;
+    border-bottom: 1px solid #1fcd8f;
+    line-height: 20px;
 	cursor: pointer;
+    max-width: 210px;
+    height:17px;
+    margin-top: 2px;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 #sidebar-ui .command-link {
@@ -882,6 +908,9 @@ span.draggable-post-element.element-dragging
 #sidebar-ui .command-edit-bg {
 	display: inline-block;
 	width: 150px;
+}
+#sidebar-ui .command-edit-global-regions {
+  display: inline-block;
 }
 
 /* Scrollbar */
@@ -955,7 +984,7 @@ span.draggable-post-element.element-dragging
 	padding: 15px;
 }
 #sidebar-ui .create-theme-sidebar .command-edit-bg {
-	text-align: right;
+//	text-align: right;
 }
 /* debug mode */
 #sidebar-ui .sidebar-commands-control .command-toggle-mode,
@@ -1010,7 +1039,7 @@ span.draggable-post-element.element-dragging
 
 #sidebar-ui a {
 	margin: 1em;
-	color: #1fcd8f;
+	color: rgb(194,219,242);
 	text-decoration: none;
 	margin: 0 10px;
 }
@@ -1108,7 +1137,17 @@ span.draggable-post-element.element-dragging
 .sidebar-tab-content{
     display: none;
 }
-
+#sidebar-ui [class^=command-],
+#sidebar-ui [class^=sidebar-command-]{
+  overflow: hidden;
+  white-space:nowrap;
+  max-width: 230px;
+}
+#sidebar-ui .sidebar-commands li.themes-dropdown{
+  float: left;
+  margin-bottom: 15px;
+  width: 230px;
+}
 /* Height Media Queries Fixes
 	 ========================== */
 

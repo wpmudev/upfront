@@ -6,7 +6,7 @@
 	bottom: 0;
 	right: 0;
 	width: 100%;
-	z-index: 2000;
+	z-index: 90;
 	display: none;
 }
 
@@ -75,6 +75,10 @@ a.upfront-css-image {
 	line-height: 31px;
 	font-size: 11px;
 	font-family: verdana, sans-serif;
+    max-width: 110px;
+    overflow: hidden;
+    height: 30px;
+    white-space: nowrap;
 }
 
 span.upfront-css-color {
@@ -176,13 +180,16 @@ div.ace_editor .ace_fold {
 
 .upfront-css-selector {
 	border: 1px solid rgb(46, 61, 76);
-	display: inline-block;
+	display: inline-flex;
 	padding: 2px 5px;
 	cursor: pointer;
 	margin: 5px 5px 0 0;
 	border-radius: 4px;
 	line-height: 14px;
 	color: rgb(170, 191, 210);
+    height: 20px;
+    overflow: hidden;
+    max-width: 370px;
 }
 
 .upfront-css-selector:hover {
@@ -255,15 +262,21 @@ div.ace_editor .ace_fold {
 span.upfront-css-new-text {
 	border-bottom: 1px solid #1fcd8f;
 	font-size: 11px;
+	margin-left:20px;
+	position: relative;
 }
 
-.upfront-css-new span.codeicon {
-	color: #1fcd8f;
-	background: #30475E;
-	font-family: tahoma, sans-serif;
-	font-size: 10px;
-	padding: 0px 2px 2px;
-	border-radius: 2px;
+.upfront-css-new-text:before {
+	content: '';
+	position: absolute;
+	width: 18px;
+	height: 15px;
+	margin-right: 5px;
+	background-image: url('../img/uf-core-el-sprite.png');
+	background-image: url('../img/uf-core-el-sprite.svg');
+	background-position: -660px -44px;
+	top:0;
+	left:-20px;
 }
 
 a.upfront-css-delete {
@@ -280,6 +293,7 @@ a.upfront-css-delete:before {
 	width: 10px;
 	height: 14px;
 	margin-right: 5px;
+	background-image: url('../img/uf-core-el-sprite.png');
 	background-image: url('../img/uf-core-el-sprite.svg');
 	background-position: -664px -78px;
 	vertical-align: middle;

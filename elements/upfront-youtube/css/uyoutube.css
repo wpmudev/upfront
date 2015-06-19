@@ -2,6 +2,15 @@
     background: #ccc;
 }
 
+.uyoutube-single {
+	min-height: inherit;
+}
+
+.uyoutube-single iframe {
+	width: 100% !important;
+	min-height: inherit;
+}
+
 .uyoutube-main-video {
     margin-bottom: 10px;
 }
@@ -94,7 +103,7 @@
 }
 
 .uyoutube-settings .upfront-field-number[type=number] {
-  width: 60px;
+	width: 46px;
 	padding-right: 0;
 }
 
@@ -109,6 +118,41 @@
 	margin-right: 50px;
 }
 
+#settings .uyoutube-settings .upfront-settings-item-tab-content {
+	overflow-y: auto;
+	max-height: 370px;
+}
+
+#settings .uyoutube-settings .upfront-settings-item-tab-content .multiple_video_section .upfront-settings-item {
+	margin-bottom: 15px;
+}
+
+.multiple_video_section {
+	margin-top: 15px;
+}
+
+.upfront-field-wrap-multiple span.upfront-field-multiple-horizontal {
+	margin-right: 15px;
+	margin-top: 5px;
+}
+
+.multiple_settings .upfront-settings-item-title {
+	display: none;
+}
+
+.multiple_settings .upfront-settings-item {
+	padding-top: 0px;
+	margin-top: -7px;
+}
+
+.multiple_settings .upfront-field-wrap-checkboxes {
+	margin-top: 0px;
+}
+
+.multiple_sources.yt_first_video {
+	margin-top: 15px;
+}
+
 /* Starting */
 .upfront-youtube-starting-select {
 	box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;
@@ -118,8 +162,8 @@
 	width: 385px;
 	height: 228px;
 	background: #eeeff0;
-	text-align: center;
-	padding: 40px 10px 0;
+	text-align: left;
+	padding: 70px 15px 0;
 }
 
 .upfront-youtube-resizing-icons {
@@ -127,52 +171,82 @@
     margin: 20px auto 0;
 }
 
-.upfront-youtube-starting-select a.upfront-youtube-select-button {
+.upfront-youtube-starting-text {
+	font-size: 14px;
+	color: #999;
+	padding-bottom: 5px;
+	text-align: left;
+}
+
+.upfront-youtube-box-wrapper{
+	background: #dcdddb;
+	border: 1px solid #ccc;
+	padding: 0 10px;
+	margin-bottom: 10px;
+	width: 70%;
+	display: block;
+	float: left;
+}
+
+input.upfront-youtube-url {
+	font-size: 1em;
+	padding: 10px 0 !important;
+	outline: none;
+	width: 100%;
+	display: block;
+	background-color:transparent;
+	font-size: 14px;
+	height: 38px !important;
+}
+
+input.upfront-youtube-url::-webkit-input-placeholder {
+	color: #999;
+}
+
+input.upfront-youtube-url:-moz-placeholder { /* Firefox 18- */
+	color: #999;  
+}
+
+input.upfront-like-box_url::-moz-placeholder {  /* Firefox 19+ */
+	color: #999;  
+}
+
+input.upfront-like-box_url:-ms-input-placeholder {  
+	color: #99;  
+}
+
+.upfront-youtube-button-wrapper {
+	width: 30%;
+	display: block;
+	float: left;
+}
+
+.upfront-youtube-button {
+	width: 100%;
+	padding: 10px 0;
+	box-sizing: border-box;
+	background-color: #00ce8d;
 	color: #fff;
-	font-family: 'Source Sans Pro', sans-serif;
 	text-align: center;
-	font-weight: 200;
+	height: 40px;
+}
+
+.upfront-add-another input {
+	border: 1px solid #a1c4e5;
+	background: #e5f3ff;
 	display: inline-block;
-	margin: 0;
-    width: 100px;
-    line-height: 15px;
+	padding: 3px 8px;
+	border-radius: 4px;
+	font-size: 13px;
 }
 
-.upfront-youtube-starting-select a.upfront-youtube-select-button .yticon {
-	background: #28DC96 url(../../../img/uf-core-el-sprite.png) no-repeat -1790px -30px;
-	border-radius: 60px;
-	border: none;
-	border: 3px solid rgba(255,255,255,0.3);
-	display: inline-block;
-	-moz-background-clip: padding;
-	-webkit-background-clip: padding;
-	background-clip: padding-box;
-	height: 60px;
-	width: 60px;
+.upfront-add-another input:hover {
+	background: #d4e9fb;
+	border: 1px solid #a1c4e5;
 }
 
-.upfront-youtube-starting-select a.single-video .yticon {
-    background-position: -1881px -30px;
+.upfront-add-another-wrapper .upfront-settings-item-title {
+	display: none;
 }
 
-.upfront-youtube-starting-select a.upfront-youtube-select-button:hover .yticon {
-	background-color: #3ea;
-}
-
-.upfront-youtube-starting-select a.upfront-youtube-select-button .ytdesc {
-	color: #28DC96;
-    font-size: 13px;
-    font-weight: bolder;
-    white-space: nowrap;
-}
-
-.upfront-youtube-starting-select a.upfront-youtube-select-button:hover .ytdesc {
-	color: #3ea;
-}
-
-.upfront-youtube-starting-title {
-	line-height: 1.1;
-	text-align: center;
-    color: #9097ac;
-    font-size: 25px;
-}
+.uyoutube-gallery-item { margin-left:0 !important; }

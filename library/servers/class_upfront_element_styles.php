@@ -5,20 +5,25 @@
  * Serves registered element stylesheets.
  */
 class Upfront_ElementStyles extends Upfront_Server {
+
+	const TYPE_SCRIPT = 'js';
+	const TYPE_STYLE = 'css';
+
 	public static function serve () {
 		$me = new self;
 		$me->_add_hooks();
 	}
 
 	private function _add_hooks () {
-		if (defined('UPFRONT_EXPERIMENTS_ON') && UPFRONT_EXPERIMENTS_ON) {
+		$this->_cache = Upfront_Cache::get_instance(Upfront_Cache::TYPE_LONG_TERM);
+
+		if (Upfront_Behavior::compression()->has_experiments()) {
 			add_filter('upfront-experiments-styles-debounce_dependency_load', array($this, 'add_style_load_url'));
 			add_filter('upfront-experiments-scripts-debounce_dependency_load', array($this, 'add_script_load_url'));
 		} else {
 			add_action('upfront-layout-applied', array($this, 'load_styles'));
 			add_action('upfront-layout-applied', array($this, 'load_scripts'));
 		}
-		
 
 		upfront_add_ajax('upfront-element-styles', array($this, 'serve_styles'));
 		upfront_add_ajax_nopriv('upfront-element-styles', array($this, 'serve_styles'));
@@ -32,9 +37,11 @@ class Upfront_ElementStyles extends Upfront_Server {
 		$styles = $hub->get_all();
 		if (empty($styles)) return false;
 
-		$raw_cache_key = $this->_get_raw_cache_key($styles);
-		$cache_key = "css{$raw_cache_key}";
-		$cache = $this->_debugger->is_active() ? false : get_transient($cache_key);
+		$ckey = $this->_cache->key(self::TYPE_STYLE, $styles);
+
+		$raw_cache_key = $ckey->get_hash();
+		$cache = $this->_debugger->is_active() ? false : $this->_cache->get($ckey);
+		
 		if (empty($cache)) {
 			foreach ($styles as $key => $frags) {
 				//$path = upfront_element_dir($frags[0], $frags[1]);
@@ -44,15 +51,10 @@ class Upfront_ElementStyles extends Upfront_Server {
 				if (!empty($style))  $cache .= "/* {$key} */\n{$style}\n";
 			}
 			if (!$this->_debugger->is_active(Upfront_Debug::STYLE)) $cache = Upfront_StylePreprocessor::compress($cache);
-			set_transient($cache_key, $cache);
+			$this->_cache->set($ckey, $cache);
 		}
 
-		//wp_enqueue_style('upfront-element-styles', admin_url('admin-ajax.php?action=upfront-element-styles&key=' . $cache_key)); // It'll also work as an AJAX request
-		wp_enqueue_style('upfront-element-styles', Upfront_VirtualPage::get_url(join('/', array(
-			'upfront-dependencies',
-			'styles',
-			$raw_cache_key
-		))), array(), $this->_get_enqueue_version()); // But let's do pretty instead
+		wp_enqueue_style('upfront-element-styles', $this->_get_enqueueing_url(self::TYPE_STYLE, $raw_cache_key), array(), $this->_get_enqueue_version()); // But let's do pretty instead
 	}
 
 	public function add_style_load_url ($urls) {
@@ -60,9 +62,11 @@ class Upfront_ElementStyles extends Upfront_Server {
 		$styles = $hub->get_all();
 		if (empty($styles)) return $urls;
 
-		$raw_cache_key = $this->_get_raw_cache_key($styles);
-		$cache_key = "css{$raw_cache_key}";
-		$cache = $this->_debugger->is_active() ? false : get_transient($cache_key);
+		$ckey = $this->_cache->key(self::TYPE_STYLE, $styles);
+
+		$raw_cache_key = $ckey->get_hash();
+		$cache = $this->_debugger->is_active() ? false : $this->_cache->get($ckey);
+
 		if (empty($cache)) {
 			foreach ($styles as $key => $frags) {
 				//$path = upfront_element_dir($frags[0], $frags[1]);
@@ -72,14 +76,10 @@ class Upfront_ElementStyles extends Upfront_Server {
 				if (!empty($style))  $cache .= "/* {$key} */\n{$style}\n";
 			}
 			if (!$this->_debugger->is_active(Upfront_Debug::STYLE)) $cache = Upfront_StylePreprocessor::compress($cache);
-			set_transient($cache_key, $cache);
+			$this->_cache->set($ckey, $cache);
 		}
 
-		$url = Upfront_VirtualPage::get_url(join('/', array(
-			'upfront-dependencies',
-			'styles',
-			$raw_cache_key
-		)));
+		$url = $this->_get_enqueueing_url(self::TYPE_STYLE, $raw_cache_key);
 		$urls[] = $url;
 		return $urls;
 	}
@@ -136,22 +136,20 @@ class Upfront_ElementStyles extends Upfront_Server {
 		$scripts = $hub->get_all();
 		if (empty($scripts)) return false;
 
-		$raw_cache_key = $this->_get_raw_cache_key($scripts);
-		$cache_key = "js{$raw_cache_key}";
-		$cache = $this->_debugger->is_active() ? false : get_transient($cache_key);
+		$ckey = $this->_cache->key(self::TYPE_SCRIPT, $scripts);
+
+		$raw_cache_key = $ckey->get_hash();
+		$cache = $this->_debugger->is_active() ? false : $this->_cache->get($ckey);
+
 		if (empty($cache)) {
 			foreach ($scripts as $key => $frags) {
 				$path = upfront_element_dir($frags[0], $frags[1]);
 				if (file_exists($path)) $cache .= "/* {$key} */\n" . file_get_contents($path) . "\n";
 			}
-			set_transient($cache_key, $cache);
+			$this->_cache->set($ckey, $cache);
 		}
-		//wp_enqueue_script('upfront-element-scripts', admin_url('admin-ajax.php?action=upfront-element-scripts&key=' . $cache_key), array('jquery')); // It'll also work as an AJAX request
-		wp_enqueue_script('upfront-element-scripts', Upfront_VirtualPage::get_url(join('/', array(
-			'upfront-dependencies',
-			'scripts',
-			$raw_cache_key
-		))), array('jquery'), $this->_get_enqueue_version(), true); // Scripts go into footer
+
+		wp_enqueue_script('upfront-element-scripts', $this->_get_enqueueing_url(self::TYPE_SCRIPT, $raw_cache_key), array('jquery'), $this->_get_enqueue_version(), true); // Scripts go into footer
 	}
 
 	public function add_script_load_url ($urls) {
@@ -159,47 +157,69 @@ class Upfront_ElementStyles extends Upfront_Server {
 		$scripts = $hub->get_all();
 		if (empty($scripts)) return $urls;
 
-		$raw_cache_key = $this->_get_raw_cache_key($scripts);
-		$cache_key = "js{$raw_cache_key}";
-		$cache = $this->_debugger->is_active() ? false : get_transient($cache_key);
+		$ckey = $this->_cache->key(self::TYPE_SCRIPT, $scripts);
+
+		$raw_cache_key = $ckey->get_hash();
+		$cache = $this->_debugger->is_active() ? false : $this->_cache->get($ckey);
+
 		if (empty($cache)) {
 			foreach ($scripts as $key => $frags) {
 				$path = upfront_element_dir($frags[0], $frags[1]);
 				if (file_exists($path)) $cache .= "/* {$key} */\n" . file_get_contents($path) . "\n";
 			}
-			set_transient($cache_key, $cache);
+			$this->_cache->set($ckey, $cache);
 		}
-		$url = Upfront_VirtualPage::get_url(join('/', array(
-			'upfront-dependencies',
-			'scripts',
-			$raw_cache_key
-		)));
+		$url = $this->_get_enqueueing_url(self::TYPE_SCRIPT, $raw_cache_key);
 		$urls[] = $url;
 		return $urls;
 	}
 
 	function serve_styles () {
-		$key = 'css' . stripslashes($_REQUEST['key']);
-		if (empty($key)) $this->_out(new Upfront_CssResponse_Error());
+		$key = $this->_cache->key(self::TYPE_STYLE);
+		$key->set_hash(stripslashes($_REQUEST['key']));
 
-		$cache = get_transient($key);
-		$this->_out(new Upfront_CssResponse_Success($cache));
+		$cache = $this->_cache->get($key);
+		$response = empty($cache)
+			? new Upfront_CssResponse_Error('')
+			: new Upfront_CssResponse_Success($cache)
+		;
+
+		$this->_out($response);
 	}
 
 	function serve_scripts () {
-		$key = 'js' . stripslashes($_REQUEST['key']);
-		if (empty($key)) $this->_out(new Upfront_JavascriptResponse_Error());
+		$key = $this->_cache->key(self::TYPE_SCRIPT);
+		$key->set_hash(stripslashes($_REQUEST['key']));
 
-		$cache = get_transient($key);
-		$this->_out(new Upfront_JavascriptResponse_Success($cache));
-	}
+		$cache = $this->_cache->get($key);
+		$response = empty($cache)
+			? new Upfront_JavascriptResponse_Error('')
+			: new Upfront_JavascriptResponse_Success($cache)
+		;
 
-	private function _get_raw_cache_key ($stuff) {
-		//return substr(md5(serialize($stuff)), 0, 24); // Forced length for transients API key length limitation
-		return md5(serialize($stuff));
+		$this->_out($response);
 	}
 
 	private function _get_enqueue_version () {
 		return Upfront_ChildTheme::get_version();
 	}
+
+	private function _get_enqueueing_url ($type, $key) {
+		$url = false;
+		$endpoint = self::TYPE_SCRIPT === $type
+			? 'scripts'
+			: 'styles'
+		;
+		if (Upfront_Behavior::debug()->is_active(Upfront_Debug::DEPENDENCIES)) {
+			$url = admin_url("admin-ajax.php?action=upfront-element-{$endpoint}&key={$key}");
+		} else {
+			$url = Upfront_VirtualPage::get_url(join('/', array(
+				'upfront-dependencies',
+				$endpoint,
+				$key
+			)));
+		}
+		return $url;
+	}
+
 }

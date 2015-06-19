@@ -36,7 +36,7 @@ abstract class Upfront_Model {
 		}
 
 		$storage_key = self::get_storage_key();
-		return apply_filters('upfront-model-get_id', $storage_key . '-' . $id, $this);
+		return $storage_key . '-' . $id;
 	}
 
 	public static function id_to_type ($id) {

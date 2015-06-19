@@ -96,7 +96,11 @@ define("content", deps, function(postTpl, ContentTools) {
 			var deferred = $.Deferred(),
 				me = this,
 				layoutType = me.postView.property('type') == 'ThisPostModel' ? 'single' : 'archive',
-				id = layoutType == 'single' ? this.postId : me.postView.property('element_id').replace('uposts-object-','')
+				id = layoutType == 'single' ? this.postId : me.postView.property('element_id').replace('uposts-object-',''),
+				properties = {
+					hide_featured_image: me.postView.property('hide_featured_image'),
+					full_featured_image: me.postView.property('full_featured_image')
+				}
 			;
 
 			this.getPost().done(function(){
@@ -106,7 +110,8 @@ define("content", deps, function(postTpl, ContentTools) {
 					id: id,
 					layout_cascade: Upfront.Application.current_subapplication.get_layout_data().layout,
 					post_id: me.postId,
-					post_type: me.post.get('post_type')
+					post_type: me.post.get('post_type'),
+					properties: properties
 				}).done(function(response){
 					var layoutData = response.data;
 					if(!layoutData.partOptions)
@@ -167,6 +172,9 @@ define("content", deps, function(postTpl, ContentTools) {
 					layout.attributes[object.slug] = attrs;
 					layout.extraClasses[object.slug] = options && options[object.slug] && options[object.slug].extraClasses ? options[object.slug].extraClasses : '';
 
+					if ( object.slug in me.parts.classes && me.parts.classes[object.slug] && me.parts.classes[object.slug].length )
+						layout.extraClasses[object.slug] = me.parts.classes[object.slug].join(' ');
+
 					object.markup = markupper.markup(object.slug, me.parts.replacements, me.getTemplate(object.slug));
 				});
 			});
@@ -212,10 +220,10 @@ define("content", deps, function(postTpl, ContentTools) {
 		editContents: function(e, focusElement){
 			var me = this,
 				ram = function () {
-					arguments.callee.iter = arguments.callee.iter || 0; 
-					arguments.callee.iter++; 
+					arguments.callee.iter = arguments.callee.iter || 0;
+					arguments.callee.iter++;
 					if (arguments.callee.iter < 30) setTimeout(function () { // Total 3s wait time
-						me.editContents(e, focusElement); 
+						me.editContents(e, focusElement);
 					}, 100);
 				}
 			;
@@ -334,7 +342,7 @@ define("content", deps, function(postTpl, ContentTools) {
             }
 
 
-			
+
 			if(results.title)
 				this.post.set('post_title', results.title);
 			if(results.content) {

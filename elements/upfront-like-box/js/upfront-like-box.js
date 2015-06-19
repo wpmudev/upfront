@@ -167,7 +167,7 @@
 	 * @type {Upfront.Views.Editor.Sidebar.Element}
 	 */
 	var LikeBoxElement = Upfront.Views.Editor.Sidebar.Element.extend({
-		priority: 70,
+		priority: 100,
 		render: function () {
 			this.$el.addClass('upfront-icon-element upfront-icon-element-likebox');
 			this.$el.html(l10n.element_name);

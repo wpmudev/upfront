@@ -72,8 +72,11 @@ define([
 
 			this.controls = this.createControls();
 
-			if(this.property('image_status') !== 'ok' || this.property('quick_swap') || this.isThemeImage()) {
+			if(this.property('image_status') !== 'ok' || this.property('quick_swap') || (this.isThemeImage() && !Upfront.themeExporter)) {
 				this.property('has_settings', 0);
+			}
+			else {
+				this.property('has_settings', 1);
 			}
 
 			this.listenTo(Upfront.Events, 'upfront:element:edit:start', this.on_element_edit_start);
@@ -221,73 +224,53 @@ define([
 
 		createLinkControl: function(){
 			var me = this,
-				control = new Upfront.Views.Editor.InlinePanels.DialogControl();
+				control = new Upfront.Views.Editor.InlinePanels.DialogControl(),
+				linkPanel;
 
-			control.view = new Upfront.Views.Editor.LinkPanel({
-				model: new Backbone.Model({
-					type: this.property('when_clicked'),
-					url: this.property('image_link')
-				}),
-				linkTypes: {image:true}
+			control.view = linkPanel = new Upfront.Views.Editor.LinkPanel({
+				linkType: this.property('when_clicked'),
+				linkUrl: this.property('image_link'),
+				linkTarget: this.property('link_target'),
+				linkTypes: { image: true },
+				imageUrl: this.property('srcFull')
 			});
 
-			me.listenTo(control, 'panel:ok', function(){
-				//call the panel linkOk method to let it parse the link,
-				// later the link:ok event will be emitted and we will use it to
-				// save the link.
-				control.view.linkOk();
+			this.listenTo(control, 'panel:ok', function() {
+				if(linkPanel.model.get('type') == 'lightbox' && linkPanel.$el.find('.js-ulinkpanel-lightbox-input').val() != '') {
+					linkPanel.createLightBox();
+				}
+				control.close();
 			});
 
-			me.listenTo(control.view, 'link:ok', function(data){
-				me.updateLink(data, control.view);
-			});
-
-
-			me.listenTo(control, 'panel:open', function(){
-				me.controls.$el.parent().addClass('upfront-control-visible');
+			this.listenTo(control, 'panel:open', function() {
 				me.$el.closest('.ui-draggable').draggable('disable');
+				_.delay( function() {
+					me.controls.$el.parent().parent().addClass('upfront-control-visible');
+				}, 1000);
 			});
 
 			me.listenTo(control, 'panel:close', function(){
-				me.controls.$el.parent().removeClass('upfront-control-visible');
+				me.controls.$el.parent().parent().removeClass('upfront-control-visible');
 				me.$el.closest('.ui-draggable').draggable('enable');
-				//Roll back the view, ready for reopen.
-				control.view.render();
 			});
 
-			me.listenTo(control.view, 'link:postselected', function(linkData){
-				me.property('when_clicked', linkData.type);
-				me.property('image_link', linkData.url);
-				control.view.model.set(linkData);
-				control.view.render();
-				control.open();
+			me.listenTo(linkPanel, 'change', me.updateLink);
+			me.listenTo(linkPanel, 'change:target', function(data) {
+				me.property('link_target', data.target);
+				me.$el.find('a').attr('target', data.target);
 			});
-
-			me.listenTo(control.view, 'link:ok', me.updateLink);
 
 			control.icon = 'link';
 			control.tooltip = l10n.ctrl.image_link;
 			control.id = 'link';
 
-			this.linkControl = control;
-
 			return control;
 		},
 
-		updateLink: function(data, view){
-			if(!view) {
-				view = this.linkControl.view;
-			}
+		updateLink: function(data) {
 			this.property('when_clicked', data.type);
-			if(data.type === 'image') {
-				data.url = this.property('srcFull');
-			}
 			this.property('image_link', data.url);
-
-			view.model.set(data);
-			view.render();
-
-			this.linkControl.close();
+			this.property('link_target', data.target);
 
 			this.render();
 		},
@@ -461,6 +444,9 @@ define([
 			props.size = this.temporaryProps.size;
 			props.position = this.temporaryProps.position;
 			props.marginTop = Math.max(0, -props.position.top);
+			props.link_target = props.link_target || '_self';
+
+			props.in_editor = true;
 
 			props.cover_caption = props.caption_position !== 'below_image';
 
@@ -542,7 +528,7 @@ define([
 				this.$('a').addClass('js-uimage-open-lightbox');
 			}
 
-			if (this.isThemeImage()) {
+			if (this.isThemeImage() && !Upfront.themeExporter) {
 				this.$el.addClass('image-from-theme');
 				this.$el.find('b.upfront-entity_meta').after('<div class="swap-image-overlay"><p class="upfront-icon upfront-icon-swap-image"><span>Click to </span>Swap Image</p></div>');
 			} else {
@@ -705,8 +691,8 @@ define([
 			this.$el
 				.find('.uimage-resize-hint').hide().end()
 				.find('.uimage').css('min-height', 'none')
-				.find('.upfront-image-caption-container').width('100%').end()
-				.find('.upfront-image-container').width('100%').height('auto').end()
+				.find('.upfront-image-caption-container').css('width', '100%').end()
+				.find('.upfront-image-container').css('width', '100%').css('height', 'auto').end()
 				.find('img')
 					.css({
 						position: 'static',

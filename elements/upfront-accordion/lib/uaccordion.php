@@ -24,68 +24,83 @@ class Upfront_UaccordionView extends Upfront_Object {
 	}
 
 	function __construct($data) {
-			$data['properties'] = $this->merge_default_properties($data);
-			parent::__construct($data);
+		$data['properties'] = $this->merge_default_properties($data);
+		parent::__construct($data);
 	}
 
 	protected function merge_default_properties($data){
-			$flat = array();
-			if(!isset($data['properties']))
-					return $flat;
+		$flat = array();
+		if(!isset($data['properties']))
+			return $flat;
 
-			foreach($data['properties'] as $prop)
-					$flat[$prop['name']] = $prop['value'];
+		foreach($data['properties'] as $prop)
+			$flat[$prop['name']] = $prop['value'];
 
-			$flat = array_merge(self::default_properties(), $flat);
+		$flat = array_merge(self::default_properties(), $flat);
 
-			$properties = array();
-			foreach($flat as $name => $value)
-					$properties[] = array('name' => $name, 'value' => $value);
+		$properties = array();
+		foreach($flat as $name => $value)
+			$properties[] = array('name' => $name, 'value' => $value);
 
-			return $properties;
+		return $properties;
 	}
 
 	public function get_markup () {
-			// This data is passed on to the template to precompile template
-			$data = $this->properties_to_array();
+		// This data is passed on to the template to precompile template
+		$data = $this->properties_to_array();
 
-			$data['preset'] = isset($data['preset']) ? $data['preset'] : 'default';
+		// Do shortcode
+		foreach($data['accordion'] as $index=>$accordion) {
+			$accordion['content'] = $this->_do_shortcode($accordion['content']);
+			$data['accordion'][$index] = $accordion;
+		}
 
-			$data['wrapper_id'] = str_replace('uaccordion-object-', 'wrapper-', $data['element_id']);
+		$data['preset'] = isset($data['preset']) ? $data['preset'] : 'default';
 
-			$markup = upfront_get_template('uaccordion', $data, dirname(dirname(__FILE__)) . '/tpl/uaccordion.html');
+		$data['wrapper_id'] = str_replace('uaccordion-object-', 'wrapper-', $data['element_id']);
 
-		 // upfront_add_element_style('uaccordion_style', array('css/uaccordion.css', dirname(__FILE__)));
-			upfront_add_element_script('uaccordion_script', array('js/uaccordion-front.js', dirname(__FILE__)));
-			return $markup;
+		$markup = upfront_get_template('uaccordion', $data, dirname(dirname(__FILE__)) . '/tpl/uaccordion.html');
+
+		// upfront_add_element_style('uaccordion_style', array('css/uaccordion.css', dirname(__FILE__)));
+		upfront_add_element_script('uaccordion_script', array('js/uaccordion-front.js', dirname(__FILE__)));
+		return $markup;
+	}
+
+	protected function _do_shortcode ($content) {
+		$do_processing = apply_filters(
+			'upfront-shortcode-enable_in_layout', 
+			(defined('UPFRONT_DISABLE_LAYOUT_TEXT_SHORTCODES') && UPFRONT_DISABLE_LAYOUT_TEXT_SHORTCODES ? false : true)
+		);
+		if ($do_processing) $content = do_shortcode($content);
+		return $content;
 	}
 
 	public function add_js_defaults($data){
 		$newdata = array(
-					'defaults' => self::default_properties(),
-					'template' => upfront_get_template_url('uaccordion', upfront_element_url('tpl/uaccordion.html', dirname(__FILE__)))
-			);
+			'defaults' => self::default_properties(),
+			'template' => upfront_get_template_url('uaccordion', upfront_element_url('tpl/uaccordion.html', dirname(__FILE__)))
+		);
 
-			if(isset($data['uaccordion'])) {
-		if(isset($data['uaccordion']['defaults'])) {
-			$merged_defaults = array_merge($data['uaccordion']['defaults'], $newdata['defaults']);
-			$data['uaccordion']['defaults'] = $merged_defaults;
-		}
-		else {
-			$data['uaccordion']['defaults'] = $newdata['defaults'];
+		if(isset($data['uaccordion'])) {
+			if(isset($data['uaccordion']['defaults'])) {
+				$merged_defaults = array_merge($data['uaccordion']['defaults'], $newdata['defaults']);
+				$data['uaccordion']['defaults'] = $merged_defaults;
+			}
+			else {
+				$data['uaccordion']['defaults'] = $newdata['defaults'];
 			}
 			$data['uaccordion']['template'] = $newdata['template'];
 		}
 		else
 			$data['uaccordion'] = $newdata;
 
-			return $data;
+		return $data;
 	}
 
 	private function properties_to_array(){
 		$out = array();
 		foreach($this->_data['properties'] as $prop)
-				$out[$prop['name']] = $prop['value'];
+			$out[$prop['name']] = $prop['value'];
 		return $out;
 	}
 	public static function add_styles_scripts() {
@@ -125,6 +140,8 @@ class Upfront_UaccordionView extends Upfront_Object {
 				'wrap_info' => __('The wrapper of the whole element.', 'upfront'),
 			),
 			'settings' => __('Accordion settings', 'upfront'),
+			'panel_label'	=> __('Panel', 'upfront'),
+			'content_label' => __('Content', 'upfront'),
 			'appearance' => __('Appearance', 'upfront'),
 			'section_bg' => __('Section Background:', 'upfront'),
 			'header_bg' => __('Header Background:', 'upfront'),

@@ -45,7 +45,7 @@ $upfront_data['region_default_args'] = upfront_get_region_default_args();
 
 
 //Upfront styles
-$dev = isset($_GET['dev']) && $_GET['dev'] ? 'dev_' : '';
+$dev = Upfront_Behavior::debug()->is_dev() ? 'dev_' : '';
 $styles = get_option('upfront_' . $dev . get_stylesheet() . '_styles');
 $elementTypes = array();
 if($styles) {

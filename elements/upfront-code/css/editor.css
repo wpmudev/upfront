@@ -6,7 +6,7 @@
 	cursor: auto;
 	right: 0;
 	bottom: 0;
-	z-index: 100;
+	z-index: 99;
 	min-height: 200px;
 	display: none
 }
@@ -21,6 +21,7 @@
 	border: 0;
 	border-radius: 0;
 	font-size: 14px;
+	z-index: 2;
 }
 .upfront_code-editor button:hover {
 	background: #3ea;
@@ -158,4 +159,19 @@
 	z-index: 999999999999999;
 	opacity: 0.75;
 	text-align: center;
+}
+
+/* Color picker */
+.upfront_code-editor .upfront-css-color {
+	display: inline-block;
+}
+.upfront_code-editor .upfront-css-color .upfront-field-wrap, 
+.upfront_code-editor .upfront-css-color .upfront-field-wrap label
+{
+	margin: 0;
+}
+.upfront_code-editor .upfront-css-color .upfront-field-wrap .sp-button-container.sp-cf {
+	position: absolute;
+	bottom: -48px;
+	right: -15px;
 }

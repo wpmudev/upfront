@@ -44,7 +44,7 @@ class Upfront_Grid {
 		if (is_null(Upfront_ChildTheme::get_instance())) {
 			return $this->get_default_breakpoints();
 		}
-		$layout_properties = json_decode(Upfront_ChildTheme::get_instance()->themeSettings->get('layout_properties'), true);
+		$layout_properties = json_decode(Upfront_ChildTheme::get_settings()->get('layout_properties'), true);
 		if (!is_array($layout_properties)) {
 			return $this->get_default_breakpoints();
 		}
@@ -214,8 +214,8 @@ class Upfront_Grid {
 		$rendered_wrappers = array(); // keep track of rendered wrappers to avoid render more than once
 		foreach ($modules as $m => $module) {
 			$module_col = $this->_get_class_col($module);
-            $module_col = $module_col > $col ? $col : $module_col;
-            $module_hide = ( !$breakpoint->is_default() ) ? $this->_get_breakpoint_data($module, 'hide') : false;
+			$module_col = $module_col > $col ? $col : $module_col;
+			$module_hide = ( !$breakpoint->is_default() ) ? $this->_get_breakpoint_data($module, 'hide') : false;
 			$wrapper_id = upfront_get_property_value('wrapper_id', $module);
 			$wrapper_data = $this->_find_wrapper($wrapper_id, $wrappers);
 			$wrapper_index = array_search($wrapper_data, $wrappers);
@@ -223,7 +223,7 @@ class Upfront_Grid {
 			$next_wrapper_data = false;
 			if ( !empty($wrapper_data) ) {
 				$wrapper_col = $this->_get_class_col($wrapper_data);
-                $wrapper_col = $wrapper_col > $col ? $col : $wrapper_col;
+				$wrapper_col = $wrapper_col > $col ? $col : $wrapper_col;
 				if ( ! in_array($wrapper_id, $rendered_wrappers) ){
 					if ( ! $breakpoint->is_default() ) { // find next wrapper based on the breakpoint order
 						if ( isset($wrappers[$wrapper_index+1]) )
@@ -241,18 +241,18 @@ class Upfront_Grid {
 							}
 						}
 					}
-                    // additional check, making sure next wrapper order is > current order
-                    if ( ! $breakpoint->is_default() && !empty($next_wrapper_data) ) {
-                        $wrapper_order = $this->_get_breakpoint_order($wrapper_data);
-                        $next_wrapper_order = $this->_get_breakpoint_order($next_wrapper_data);
-                        if ( intval($next_wrapper_order) < intval($wrapper_order) )
-                            $next_wrapper_data = false;
-                    }
-                    if ( !$module_hide )
-    					$line_col -= $wrapper_col;
+					// additional check, making sure next wrapper order is > current order
+					if ( ! $breakpoint->is_default() && !empty($next_wrapper_data) ) {
+						$wrapper_order = $this->_get_breakpoint_order($wrapper_data);
+						$next_wrapper_order = $this->_get_breakpoint_order($next_wrapper_data);
+						if ( intval($next_wrapper_order) < intval($wrapper_order) )
+							$next_wrapper_data = false;
+					}
+					if ( !$module_hide )
+						$line_col -= $wrapper_col;
 					$next_clear = $this->_get_property_clear($next_wrapper_data);
-                    $next_wrapper_col = $this->_get_class_col($next_wrapper_data);
-                    $next_wrapper_col = $next_wrapper_col > $col ? $col : $next_wrapper_col;
+					$next_wrapper_col = $this->_get_class_col($next_wrapper_data);
+					$next_wrapper_col = $next_wrapper_col > $col ? $col : $next_wrapper_col;
 					$next_fill = $next_clear && $line_col > 0 ? $line_col : 0;
 					$point_css .= $breakpoint->apply($wrapper_data, $this->get_grid_scope(), 'wrapper_id', $col, $next_fill);
 					if ( !$module_hide && ( $next_clear || $line_col < $next_wrapper_col ) )
@@ -266,8 +266,8 @@ class Upfront_Grid {
 			}
 
 			if ( isset($module['modules']) && is_array($module['modules']) ){ // rendering module group
-                $module_view = new Upfront_Module_Group($module);
-    			$point_css .= $module_view->get_style_for($breakpoint, $this->get_grid_scope());
+				$module_view = new Upfront_Module_Group($module);
+				$point_css .= $module_view->get_style_for($breakpoint, $this->get_grid_scope());
 				$point_css .= $this->_apply_modules($module, $module_col);
 			}
 			else {
@@ -294,39 +294,48 @@ class Upfront_Grid {
 		$breakpoint = $breakpoint !== false ? $breakpoint : $this->_current_breakpoint;
 		$occupied = 0;
 		$columns = $breakpoint->get_columns();
-		foreach ( $regions as $region ){
-			if ( isset($region['container']) && $region['container'] != $container )
-				continue;
-			if ( empty($region['sub']) || ($region['sub'] != 'left' && $region['sub'] != 'right') )
-				continue;
-			$region_col = $this->_get_property_col($region, $breakpoint);
-			if ( $region_col )
-				$occupied += $region_col;
+		if ( $breakpoint->is_default() ) {
+			foreach ( $regions as $region ){
+				if ( isset($region['container']) && $region['container'] != $container )
+					continue;
+				if ( empty($region['sub']) || ($region['sub'] != 'left' && $region['sub'] != 'right') )
+					continue;
+				$region_col = $this->_get_property_col($region, $breakpoint);
+				if ( $region_col )
+					$occupied += $region_col;
+			}
+			return ( $occupied > $columns ) ? $columns : $columns-$occupied;
 		}
-		return ( $occupied > $columns ) ? $columns : $columns-$occupied;
+		else {
+			return $columns;
+		}
 	}
 
 	protected function _get_property_col ($data, $breakpoint = false) {
 		$breakpoint = $breakpoint !== false ? $breakpoint : $this->_current_breakpoint;
+		$max_col = $breakpoint->get_columns();
 		if ( $breakpoint->is_default() ){
-			return upfront_get_property_value('col', $data);
+			$col = upfront_get_property_value('col', $data);
 		}
 		else {
-			return $this->_get_breakpoint_col($data, $breakpoint);
+			$col = $this->_get_breakpoint_col($data, $breakpoint);
 		}
+		return $col < $max_col ? $col : $max_col;
 	}
 
 	protected function _get_class_col ($data, $breakpoint = false) {
 		$breakpoint = $breakpoint !== false ? $breakpoint : $this->_current_breakpoint;
+		$max_col = $breakpoint->get_columns();
 		if ( !$breakpoint->is_default() ){
 			$col = $this->_get_breakpoint_col($data, $breakpoint);
 			if ( is_numeric($col) )
-				return $col;
+				return $col < $max_col ? $col : $max_col;
 		}
 		if ( $breakpoint->is_default() || !is_numeric($col) ){
 			$width_pfx = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_WIDTH);
 			$class = upfront_get_property_value('class', $data);
-			return upfront_get_class_num($width_pfx, $class);
+			$col = upfront_get_class_num($width_pfx, $class);
+			return $col < $max_col ? $col : $max_col;
 		}
 	}
 
@@ -416,29 +425,20 @@ class Upfront_GridBreakpoint {
 
 	public function __construct ($data) {
 		$this->_debugger = Upfront_Debug::get_debugger();
-		extract($data);
-		if ( $name )
-			$this->_name = $name;
-		if ( $short_name )
-			$this->_short_name = $short_name;
-		if ( $id )
-			$this->_id = $id;
-		if ( $width )
-			$this->_width = $width;
-		if ( $columns )
-			$this->_columns = $columns;
-		if ( !empty($default) )
-			$this->_default = $default;
-		if ( !empty($enabled) )
-			$this->_enabled = $enabled;
-		if ( !empty($column_padding) )
-			$this->_column_padding = $column_padding;
-		if ( !empty($column_width) )
-			$this->_column_width = $column_width;
-		if ( !empty($baseline) )
-			$this->_baseline = $baseline;
-		if ( !empty($type_padding) )
-			$this->_type_padding = $type_padding;
+		
+		if (isset($data['name'])) $this->_name = $data['name'];
+		if (isset($data['short_name'])) $this->_short_name = $data['short_name'];
+		if (isset($data['id'])) $this->_id = $data['id'];
+		if (isset($data['width'])) $this->_width = $data['width'];
+		if (isset($data['columns'])) $this->_columns = $data['columns'];
+		if (isset($data['column_padding'])) $this->_column_padding = $data['column_padding']; // Special-case handling to allow zero-width column paddings
+		
+		if (!empty($data['default'])) $this->_default = $data['default'];
+		if (!empty($data['enabled'])) $this->_enabled = $data['enabled'];
+		if (!empty($data['column_width'])) $this->_column_width = $data['column_width'];
+		if (!empty($data['baseline'])) $this->_baseline = $data['baseline'];
+		if (!empty($data['type_padding'])) $this->_type_padding = $data['type_padding'];
+
 		$this->_data = $data;
 	}
 
@@ -501,7 +501,9 @@ class Upfront_GridBreakpoint {
 			"#page.upfront-layout-view .upfront-grid-layout {width: {$width}px;}" . "\n" .
 			"#page.upfront-layout-view .upfront-overlay-grid {background-size: 100% {$baseline}px}" . "\n" .
 			( $width_rule != "" ? "#page.upfront-layout-view { {$width_rule} }" . "\n" : "" ) .
+			( $min_width > 0 ? "#page.upfront-layout-view.desktop-breakpoint .upfront-region-container, #page.upfront-layout-view.desktop-breakpoint .upfront-region-sub-container {min-width: {$min_width}px;}" . "\n" : "" ) .
 			"#page.upfront-layout-view .upfront-object {padding: {$column_padding}px;}" . "\n" .
+			"#page.upfront-layout-view .upfront-inserted_image-wrapper .wp-caption-text, #page.upfront-layout-view .uinsert-image-wrapper {padding: {$column_padding}px;}" . "\n" .
             "#page.upfront-layout-view .upfront-module-group-bg-padding {margin: {$column_padding}px;}" . "\n" .
 			"#page.upfront-layout-view .plaintxt_padding {padding: {$type_padding}px;}" . "\n" .
 			"#page.upfront-layout-view .upfront-region-postlayouteditor {padding: {$column_padding}px 0;}" . "\n" .
@@ -518,8 +520,9 @@ class Upfront_GridBreakpoint {
 		return '' .
 			( $this->is_default() ? ".upfront-region-container-clip .upfront-region-container-bg {max-width: {$contained_width}px;}" . "\n" : "" ) .
 			".upfront-grid-layout {width: {$width}px;}" . "\n" .
-			".upfront-output-object {padding: {$column_padding}px;}" . "\n" .
-			".plaintxt_padding {padding: {$type_padding}px;}" . "\n" .
+			( $this->is_default() ? ".upfront-output-object {padding: {$column_padding}px;}" . "\n" : "") .
+			( $this->is_default() ? ".upfront-inserted_image-wrapper .wp-caption-text, .uinsert-image-wrapper {padding: {$column_padding}px;}" . "\n" : "") .
+			( $this->is_default() ? ".plaintxt_padding {padding: {$type_padding}px;}" . "\n" : "") .
 		'';
 	}
 

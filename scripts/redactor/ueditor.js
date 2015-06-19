@@ -91,7 +91,7 @@ var hackRedactor = function(){
 
 	//Change the position of the air toolbar
 	$.Redactor.prototype.airShow = function (e, keyboard)
-    {    	
+    {
         if( typeof e !== "undefined" && ( $(e.target).parents().is(".uimage-control-panel") || $(e.target).is(".upfront-icon") || $(e.target).is(".upfront-icon-button") || ( !_.isUndefined(e.target.contentEditable) && e.target.contentEditable === "false" ) || $(e.target).closest(".redactor-editor").attr("contentEditable") === "false"  ) ) return;
         //if( $(e.target).parents().is(".uimage-control-panel") || $(e.target).is(".upfront-icon") || $(e.target).is(".upfront-icon-button")) return;
 
@@ -114,7 +114,7 @@ var hackRedactor = function(){
         if (!m1 || !m2) {
             return false;
         }
-        
+
         var bounds = m2.top < m1.top ? {top: m2.top - 55, left: m2.left, right: m1.left, i:2} : {top: m1.top - 55, left: m1.left, right: m2.left, i:1},
             atRight = false,
             $win = $(window),
@@ -159,8 +159,9 @@ var hackRedactor = function(){
          * If redactor is to high for the user to see it, show it under the selected text
          */
         if( this.$air.offset().top < 0 ){
+            var ey = e && e.clientY ? e.clientY : this.$box.height();
             this.$air.css({
-                top : e.clientY + 14 + this.$box.position().top + "px"
+                top : ey + 14 + this.$box.position().top + "px"
             });
             this.$air.addClass("under");
         }else{
@@ -227,11 +228,11 @@ var hackRedactor = function(){
                     this.dropdown.build(btnName, $dropdown, btnObject.dropdown);
                 }
 
-                
+
 
                 return $button;
             },
-            
+
             onClick: function(e, btnName, type, callback)
             {
                 this.button.caretOffset = this.caret.getOffset();
@@ -393,7 +394,23 @@ var hackRedactor = function(){
                 this.button.get(key).remove();
             }
         };
-	} 
+	}
+
+    var l10n = Upfront.Settings && Upfront.Settings.l10n
+        ? Upfront.Settings.l10n.global.ueditor
+        : Upfront.mainData.l10n.global.ueditor
+    ; 
+
+    /**
+     * Proxy the Redactor l10n
+     * This is so we're using Redactor string handling
+     * with our own delivery mechanism.
+     */
+    $.Redactor.opts.langs['upfront'] = $.extend({}, $.Redactor.opts.langs['en'], {
+        bold: l10n.bold,
+        italic: l10n.italic,
+    });
+
 };
 
 var Ueditor = function($el, options) {
@@ -429,7 +446,7 @@ var Ueditor = function($el, options) {
 			observeLinks: false,
 			observeImages: false,
 			formattingTags: ['h1', 'h2', 'h3', 'h4', 'p', 'pre'],
-			inserts: false,
+            inserts: ["image", "embed"],
             linkTooltip: false,
             cleanOnPaste: true, // font icons copy and paste wont work without this set to true - BUT, with it set to true, paste won't work AT ALL!!!
             replaceDivs: false,
@@ -438,14 +455,14 @@ var Ueditor = function($el, options) {
             replaceDivs: false,
             //cleanStyleOnEnter: false,
             //removeDataAttr: false,
-            removeEmpty: false
+            removeEmpty: false,
+            lang: 'upfront' // <-- This is IMPORTANT. See the l10n proxying bit in `hackRedactor`
 		}, options)
 	;
 	/* --- Redactor allows for single callbacks - let's dispatch events instead --- */
 	this.options.dropdownShowCallback = function () { UeditorEvents.trigger("ueditor:dropdownShow", this); };
 	this.options.dropdownHideCallback = function () { UeditorEvents.trigger("ueditor:dropdownHide", this); };
 	this.options.initCallback = function () { UeditorEvents.trigger("ueditor:init", this); };
-	this.options.enterCallback = function (e) {  UeditorEvents.trigger("ueditor:enter", this, e); };
 	this.options.changeCallback = function (e) { UeditorEvents.trigger("ueditor:change", this, e); };
 	//this.options.pasteBeforeCallback = function (html) { UeditorEvents.trigger("ueditor:paste:before", this, html); }; //events can return anything so it's useless
 	//this.options.pasteCallback = function (html) { UeditorEvents.trigger("ueditor:paste:after", this, html); }; //events can return anything so it's useless
@@ -489,6 +506,55 @@ var Ueditor = function($el, options) {
 		return html;
 	};
 
+    // Enter callback inside lists 
+    this.options.enterCallback = function (e) { 
+        // Current Block is a list item
+        if(this.keydown.block.tagName === 'LI') {
+            var current = this.selection.getCurrent(),
+                $parent = $(current).closest('li'),
+                $list = $parent.parent('ul,ol'),
+                $listlist = $list.parent('li').parent('ul,ol'),
+                emptyList = '<li>&#x200b;</li>'
+            ;
+
+            // Sublist to list
+            if (
+                $parent.length !== 0 && 
+                $listlist.length !== 0 &&
+                this.utils.isEmpty($parent.html()) && 
+                $list.next().length === 0
+            ) {
+                var node = $(emptyList);
+                $listlist.append(node);
+                this.caret.setStart(node);
+                $parent.remove();
+
+                return false;
+            }
+            // List to paragraph
+            else if (
+                $parent.length !== 0 && 
+                this.utils.isEmpty($parent.html()) && 
+                $list.next().length === 0
+            ) {
+                var node = $(this.opts.emptyHtml);
+                $list.after(node);
+                this.caret.setStart(node);
+                $parent.remove();
+
+                return false;
+            }
+            // List 
+            else {
+                UeditorEvents.trigger("ueditor:enter", this, e);
+            }
+        }
+        // Default
+        else {        
+            UeditorEvents.trigger("ueditor:enter", this, e);
+        }
+    };
+
 };
 
 
@@ -496,7 +562,7 @@ var Ueditor = function($el, options) {
  * Make sure selection of text show's the air buttons
  */
 UeditorEvents.on("ueditor:key:up", function(redactor){
-    if( !_.isEmpty( redactor.selection.getCurrent() ) ){
+    if( !_.isEmpty( redactor.selection.getText() ) ){
         redactor.airShow();
     }
 });
@@ -559,7 +625,7 @@ Ueditor.prototype = {
 				}
 
 			}
-			
+
 		});
 
 
@@ -636,6 +702,13 @@ Ueditor.prototype = {
 
 			});
 		}
+
+        // Add warning flags to all the lightbox links if the lightbox is missing
+        this.$el.find('a').each(function(){
+            var href = $(this).attr('href');
+            if(href && href.indexOf('#ltb-') > -1 && !Upfront.Util.checkLightbox(href))
+                $(this).addClass('missing-lightbox-warning');
+        });
 	},
 	displayLinkFlags: function() {
 		var me = this;
@@ -718,7 +791,7 @@ Ueditor.prototype = {
 	},
 	insertsSetUp: function(){
 		var me = this,
-			manager = new InsertManager({el: this.$el, insertsData: this.options.inserts, ueditor: this}),
+			manager = new InsertManager({el: this.$el, insertsData: this.options.insertsData, inserts: this.options.inserts, ueditor: this}),
 			redactorEvents = this.redactor.events
 		;
 
@@ -897,10 +970,11 @@ Ueditor.prototype = {
 				$('.redactor_air').hide();
 
 			if($(e.target).hasClass('uf_font_icon')) {
-				if(e.pageX < ($(e.target).offset().left + $(e.target).width()/2))
-					me.redactor.caret.setBefore($(e.target));
-				else
-					me.redactor.caret.setAfter($(e.target));
+                // Todo Gagan: had to comment the following to allow the font icon to be selected, hope this doesn't brean anything
+				//if(e.pageX < ($(e.target).offset().left + $(e.target).width()/2))
+				//	me.redactor.caret.setBefore($(e.target));
+				//else
+				//	me.redactor.caret.setAfter($(e.target));
 			}
 		});
 
@@ -917,7 +991,7 @@ Ueditor.prototype = {
 		if(!this.insertManager)
 			return {};
 
-		_.each(this.insertManager.inserts, function(insert){
+		_.each(this.insertManager._inserts, function(insert){
 			insertsData[insert.data.id] = insert.data.toJSON();
 		});
 
@@ -972,7 +1046,7 @@ var InsertManagerInserts = Backbone.View.extend({
         "click .upfront-post-media-trigger": "toggle_inserts"
     },
     render: function(){
-      this.$el.html( this.tpl( { inserts: Inserts.inserts } ) );
+      this.$el.html( this.tpl( { inserts: _.pick(Inserts.inserts, this.inserts), names: Inserts.NAMES } ) );
     },
     insert_relocate: function( $current ){
       this.$block = $current;
@@ -990,7 +1064,7 @@ var InsertManagerInserts = Backbone.View.extend({
             self = this
             ;
 
-        insert.start()
+        insert.start( this.$el )
             .done(function(popup, results){
                 // if(!results) Let's allow promises without result for now!
                 //	return;
@@ -1003,7 +1077,24 @@ var InsertManagerInserts = Backbone.View.extend({
                 if( self.is_last_p() ){
 					self.$block.before(insert.$el);
                 }else{
-					self.$block.replaceWith(insert.$el);
+
+                    if(self.redactor.$element.find(self.$block).length < 1) {
+/*                        if(self.redactor.$element.hasClass('redactor-placeholder')) {
+                    
+                            var f = jQuery.Event("keydown");
+                            f.which = 65;
+                            f.keyCode = 65;// # Some key code value
+                              
+                            
+                            
+                            self.redactor.$element.trigger(f);
+
+                        }
+*/
+                        self.redactor.$element.append(self.$block);  
+                    }
+
+                    self.$block.replaceWith(insert.$el);
 				}
 
                 self.$block.prev("br").remove();
@@ -1032,7 +1123,8 @@ var InsertManagerInserts = Backbone.View.extend({
 var InsertManager = Backbone.View.extend({
     tpl: _.template($(tpl).find('#insert-manager-tpl').html()),
 	initialize: function(opts){
-		this.inserts = {};
+		this.inserts = opts.inserts || {};
+        this._inserts = {};
         this.ueditor = opts.ueditor;
 		this.onRemoveInsert = _.bind(this.removeInsert, this);
 		this.insertsData = opts.insertsData || {};
@@ -1054,6 +1146,8 @@ var InsertManager = Backbone.View.extend({
 		});
 	},
     render_tooltips: function(){
+        if( !this.ueditor.options.inserts ||  this.ueditor.options.inserts.length === 0 ) return;
+
         var self = this,
             tooltips = new InsertManagerInserts({
             insertsData: this.insertsData,
@@ -1066,6 +1160,8 @@ var InsertManager = Backbone.View.extend({
         this.$tooltips = tooltips.$el;
     },
     position_tooltips: function(redactor){
+        if( !this.$tooltips ) return;
+
         var $current = $( redactor.selection.getCurrent());
         if( this.show_tooltip_in_this_location( redactor ) ){
 			if( typeof $current[0] === "undefined" || !_.isElement($current[0]) ) return;
@@ -1173,11 +1269,11 @@ var InsertManager = Backbone.View.extend({
 			insertsData = _.extend({}, me.insertsData, me.deletedInserts)
 		;
 
-		_.each(Inserts.inserts, function(Insert){
-			_.extend(me.inserts, Insert.prototype.importInserts(me.$el, insertsData));
+		_.each(_.pick(Inserts.inserts, this.inserts), function(Insert){
+			_.extend(me._inserts, Insert.prototype.importInserts(me.$el, insertsData, me.inserts));
 		});
 
-		_.each(me.inserts, function(insert){
+		_.each(me._inserts, function(insert){
 			me.insertsData[insert.data.id] = insert.data.toJSON();
 
 			// Listen to the inserts model to update the data on any change
@@ -1203,7 +1299,7 @@ var InsertManager = Backbone.View.extend({
 	insertExport: function(html, is_simple_element){
 		var $html = $('<div>').html(html);
 		$html.find('.nosortable').removeClass('nosortable');
-		_.each(this.inserts, function(insert){
+		_.each(this._inserts, function(insert){
 			var elementId = '#' + insert.data.id,
 				out = is_simple_element ? insert.getSimpleOutput() : insert.getOutput()
 			;
@@ -1221,7 +1317,7 @@ var InsertManager = Backbone.View.extend({
 			_.each(me.deletedInserts, function(insert, id){
 				var element = me.$el.find('#' + id);
 				if(element.length){
-					me.inserts[id] = insert;
+					me._inserts[id] = insert;
 					delete me.deletedInserts[id];/*
 
 					//We need to re-create the controls in order to make them work again
@@ -1232,7 +1328,7 @@ var InsertManager = Backbone.View.extend({
 					insert.delegateEvents();*/
 				}
 			});
-			_.each(me.inserts, function(insert, id){
+			_.each(me._inserts, function(insert, id){
 				if(!insert.$el.parent().length){
 					var element = me.$el.find('#' + id);
 					if(element.length){
@@ -1244,7 +1340,7 @@ var InsertManager = Backbone.View.extend({
 					}
 					else{
 						me.deletedInserts[id] = insert;
-						delete me.inserts[id];
+						delete me._inserts[id];
 					}
 				}
 			});

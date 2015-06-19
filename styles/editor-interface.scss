@@ -1,3 +1,5 @@
+@charset 'UTF-8';
+
 @import "sass/partials/layout";
 @import 'sass/partials/upfront-ui';
 @import 'sass/partials/general-stuff';
@@ -76,7 +78,7 @@
 	background-image: url('../img/uf-ui-sprite.svg?v=20131127');
 	background-repeat: no-repeat;
 	background-position: -509px -483px;
-	height: 24px;
+	height: 26px;
 	width: 60px;
 	z-index: 1;
 	left: -45px;
@@ -423,3 +425,4 @@
 @import 'sass/partials/visit-link';
 @import 'sass/partials/fix-theme-style-messes-ui';
 @import 'sass/partials/_preset-manager.scss';
+@import 'sass/partials/_inline-panels.scss';

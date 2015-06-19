@@ -73,11 +73,20 @@ define([
 				if(e.target === e.currentTarget){
 					if(me.saveOnClose) {
 						me.imageOk();
-					} else if(!me.isResizing) {
+					} else if(!me.isResizing && !me.isDragged) {
 						me.cancel();
 					}
 				}
 				me.isResizing = false;
+				me.isDragged = false;
+			});
+
+			$('body').bind( 'keyup', function( event ) {
+				if ( event.keyCode === 27) {
+					if('undefined' !== typeof me.element_id) {
+						me.close();
+					}
+				}
 			});
 		},
 
@@ -564,7 +573,10 @@ define([
 				})
 				.draggable({
 					opacity:1,
-					start: function(){},
+					start: function(){
+						//Prevent editor closing during cropping. It is set to false by the initialize method.
+						me.isDragged = true;
+					},
 					drag: function(e, ui){
 						canvas.css({
 							top: ui.position.top,
@@ -789,7 +801,7 @@ define([
 				return;
 			}
 			var me = this;
-			Upfront.Popup.open(function(){}, {width: 320})
+			Upfront.Popup.open(function(){}, {width: 320}, 'warning_img')
 				.progress(function(progress){
 					if(progress === 'before_close') {
 						me.ignoreFullwidthAlert = $('#upfront-popup-content').find('input:checked').length;

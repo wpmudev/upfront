@@ -45,8 +45,8 @@ a.ueditor-action-pickercancel{
 	display: none;
 }
 
-.ueditor-insert:hover .upfront-inline-panel,
-.ueditor-insert .upfront-inline-panel.uinsert-control-visible {
+.redactor-box .ueditor-insert:hover .upfront-inline-panel,
+.redactor-box .ueditor-insert .upfront-inline-panel.uinsert-control-visible {
 	display: block;
 }
 
@@ -113,10 +113,10 @@ a.ueditor-action-pickercancel{
   background: none !important;
   margin: 0 -15px;
 }
-.upfront-inserted_image-wrapper .wp-caption-text,
+/*.upfront-inserted_image-wrapper .wp-caption-text,
 .uinsert-image-wrapper{
 	padding: 15px;
-}
+}*/
 .uinsert-image-wrapper img{
 	width: 100%;
 	height: 100%;
@@ -141,11 +141,10 @@ i.upfront-icon.upfront-icon-region-remove:before{
 }
 
 .upfront-inline-panel-item i.upfront-icon.upfront-icon-region-caption:before{
-  background-position: -700px -454px;
+  background-position: -809px -71px;
 }
 
-.upfront-inline-panel-item.active i.upfront-icon.upfront-icon-region-caption:before,
-.upfront-inline-panel-item i.upfront-icon.upfront-icon-region-caption:hover:before{
+.upfront-inline-panel-item.active i.upfront-icon.upfront-icon-region-caption:before{
   background-position: -808px -454px;
 }
 
@@ -210,6 +209,10 @@ div.uinsert-selector a {
 	line-height: 30px;
 	padding: 0 5px;
     cursor: pointer;
+    max-width: 100px;
+    overflow: hidden;
+    height: 30px;
+    white-space: nowrap;
 }
 
 div.uinsert-selector a:hover {
@@ -251,13 +254,16 @@ div.uinsert-selector a:hover {
 .upfront-control-dialog-open .inline-panel-control-dialog{
   display: block;
 }
+.ueditor-insert-variant-group {
+  position: relative;
+}
 .ueditor-insert-variant-group .ueditor-insert-remove{
   position: absolute;
   right: 5px;
   top: 5px;
   display: none;
 }
-.ueditor-insert-variant-group:hover .ueditor-insert-remove{
+.redactor-box .ueditor-insert-variant-group:hover .ueditor-insert-remove{
   display: block;
 }
 
@@ -289,6 +295,15 @@ div.uinsert-selector a:hover {
 .upfront-inserted_image-wrapper .ueditor-image-style-center{
   margin: 0 auto;
 }
-
-
-
+.ueditor-insert.upfront-inserted_image-basic-wrapper, .ueditor-insert.upfront-inserted_image-basic-wrapper:hover{
+	margin:0;
+}
+.upfront-inserted_image-basic-wrapper .ueditor-image-style-left{
+	margin-left:-15px;
+}
+.upfront-inserted_image-basic-wrapper .ueditor-image-style-right{
+	margin-right:-15px;
+}
+.upfront-inserted_image-basic-wrapper .ueditor-insert{
+	margin-top:-15px;
+}

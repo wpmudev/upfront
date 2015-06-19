@@ -124,17 +124,25 @@
   border: 3px solid #263a4d;
   padding: 2px 5px;
   height: 33px;
+  max-width: 121px;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 #sidebar-ui .command-browse-layout-responsive {
   overflow: hidden;
   padding: 3px 0 15px 15px;
   cursor: default;
+  height: 42px;
 }
 #sidebar-ui .command-browse-layout-responsive span {
   border: 3px solid #263a4d;
   padding: 2px 5px;
   cursor: pointer;
+  display: inline-block;
+  overflow: hidden;
+  max-width: 230px;
+  white-space: nowrap;
 }
 #sidebar-ui .sidebar-commands-responsive-control .command-grid {
   margin-left: 66px;
@@ -156,13 +164,10 @@
 	height: 20px;
 	background: #1c2733;
 	position: relative;
-	z-index: 1;
+	z-index: 2;
+	margin-top: -20px;
 }
 .upfront-ruler {
-	position: absolute;
-	top: -20px;
-	left: 0;
-	right: 0;
 	height: 20px;
 	background: -webkit-linear-gradient(right, #185a4c 1px, transparent 1px, transparent);
 	background: -moz-linear-gradient(right, #185a4c 1px, transparent 1px, transparent);
@@ -175,7 +180,7 @@
 	font-family: "Verdana", sans-serif;
 	font-size: 10px;
 	line-height: 10px;
-	margin: auto;
+	margin: 0 auto;
 }
 .upfront-ruler-mark {
 	float: left;
@@ -270,6 +275,7 @@
 li.activate-breakpoints-dropdown {
   margin: 15px 0 10px 15px;
   height: 23px;
+  max-width: 230px;
 }
 .activate-breakpoints-dropdown .upfront-field-select-options {
   max-height: 30px;

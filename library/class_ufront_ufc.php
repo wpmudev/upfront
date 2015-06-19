@@ -34,7 +34,7 @@ class Upfront_UFC {
 			)
 		);
 
-		self::$_theme_colors = json_decode( self::$_theme_colors );
+		self::$_theme_colors = is_string(self::$_theme_colors) ? json_decode( self::$_theme_colors ) : self::$_theme_colors;
 		self::$_theme_color_count = !empty(self::$_theme_colors->colors) ? count( self::$_theme_colors->colors ) : 0;
 
 		if( strpos( $color, "ufc" ) !== false ){

@@ -1,4 +1,3 @@
-
 (function ($) {
 
 define([
@@ -87,7 +86,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		this.imageProps = {};
 		this.cropHeight =  false;
 		this.cropTimer =  false;
-		this.cropTimeAfterResize =  10000;
+		this.cropTimeAfterResize = 500;
 
 		//Current Slide index
 		this.setCurrentSlide(0);
@@ -123,12 +122,13 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		props.textWidth =  props.primaryStyle == 'side' ? Math.round((props.rightWidth - props.rightImageWidth) / props.rightWidth * 100) + '%' : '100%';
 
 		props.imageHeight = '100%';
-		if(props.slides.length){
+		if (props.slides.length) {
 			var imageProps = me.imageProps[props.slides[0].id];
-			if(imageProps)
-				props.imageHeight = imageProps.size.height;
-			else
-				props.imageHeight = props.slides[0].cropSize.height
+			if (imageProps) {
+				props.imageHeight = imageProps.cropSize.height;
+			} else {
+				props.imageHeight = props.slides[0].cropSize.height;
+			}
 		}
 
 		props.production = false;
@@ -177,6 +177,23 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	on_render: function() {
 		var me = this;
 
+		setTimeout( function() {
+			var slider = me.$el.find('[id^="uslider-"]'),
+			options = slider.find('.uslider').data();
+
+			slider.find('.uslides').upfront_default_slider(options);
+
+			slider.find('.uslide-above').each(function(){
+				var slide = $(this);
+				slide.find('.uslide-caption').remove().prependTo(slide);
+			});
+			slider.find('.uslide-left').each(function(){
+				var slide = $(this);
+				slide.find('.uslide-caption').remove().prependTo(slide);
+			});
+			me.prepareSlider();
+		}, 100);
+
 		if(!me.parent_module_view)
 			return;
 
@@ -193,11 +210,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		if(!slideCollection.length)
 			return;
 
-		if(this.$el.parent().length){
-			me.prepareSlider();
-//			me.hideSliderNavigation();
-		}
-		else{
+		if(!this.$el.parent().length) {
 			setTimeout(function(){
 				me.on_render();
 			}, 100);
@@ -237,52 +250,65 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		controls.setWidth(wrapper.width());
 		controls.render();
-
-		me.$('.uslides').append(
-			$('<div class="uimage-controls upfront-ui" rel="' + currentSlide.id + '"></div>').append(controls.$el)
-		);
+		if(typeof(currentSlide) != 'undefined') {
+			me.$('.uslides').append(
+				$('<div class="uimage-controls upfront-ui" rel="' + currentSlide.id + '"></div>').append(controls.$el)
+			);
+		}
 		me.onSlideShow();
 
 		this.controls = controls;
 
 		me.$('.uslide').css({height: 'auto'});
 
-
 		//Enable text editors
-		if(!me.$('.uslide-editable-text').data('ueditor'))
-			me.$('.uslide-editable-text').ueditor({
+		text.each(function () {
+			var text = $(this); // Re-bind to local
+			if (text.data('ueditor')) return true; // If ueditor is already up, carry on
+
+			text.ueditor({
 					autostart: false,
 					upfrontMedia: false,
 					upfrontImages: false,
-					placeholder: 'Slide description'
+					placeholder: l10n.slide_desc
 				})
-				.on('start', function(){
-					var $this = $(this),
-						id = $this.closest('.uslide').attr('rel'),
+				.on('start', function() {
+					var id = $(this).closest('.uslide').attr('rel'),
 						slide = slideCollection.get(id)
 					;
 
 					me.$el.addClass('upfront-editing');
+					Upfront.Events.trigger('upfront:element:edit:start', 'text');
 
-					$this.on('syncAfter', function(){
-							slide.set('text', $this.html(), {silent: true});
-						})
-						.on('stop', function(){
-							slide.set('text', $this.html());
-							me.property('slides', slideCollection.toJSON());
-							me.$el.removeClass('upfront-editing');
-						})
-					;
+					$(this).on('syncAfter', function(){
+						slide.set('text', $(this).html(), {silent: true});
+					})
+					.on('stop', function(){
+						slide.set('text', $(this).html());
+						me.property('slides', slideCollection.toJSON());
+						me.$el.removeClass('upfront-editing');
+
+						Upfront.Events.trigger('upfront:element:edit:stop');
+
+						// Trigger cleanup if possible
+						var ed = $(this).data('ueditor');
+						if (ed.redactor) ed.redactor.events.trigger('cleanUpListeners');
+						
+						me.render();
+					});
 				})
 			;
+		});
 
 		if(me.property('primaryStyle') == 'side'){
 			me.setImageResizable();
 		}
 
 		//Adapt slider height to the image crop
-		var textHeight = this.property('primaryStyle') == 'below' ? this.$('.uslide[rel=' + currentSlide.id + ']').find('.uslide-caption').outerHeight() : 0;
-		me.$('.uslides').css({ 'padding-top' : wrapper.height() + textHeight});
+		if(typeof(currentSlide) != 'undefined') {
+			var textHeight = this.property('primaryStyle') == 'below' ? this.$('.uslide[rel=' + currentSlide.id + ']').find('.uslide-caption').outerHeight() : 0;
+			me.$('.uslides').css({ 'padding-top' : wrapper.height() + textHeight});
+		}
 	},
 
 	updateControls: function(){
@@ -370,7 +396,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			elementCols, colWidth,
 			text = current.find('.uslide-caption'),
 			id = current.attr('rel'),
-			slide = slideCollection.get(id),
+			slide = slideCollection.get(id) || slideCollection.at(this.getCurrentSlide()),
 			height = false,
 			style = slide.get('style')
 		;
@@ -455,16 +481,15 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			clearTimeout(me.cropTimer);
 			me.cropTimer = false;
 		}
-		me.cropTimer = setTimeout(function(){
+		me.cropTimer = setTimeout(function() {
 			var slide = slideCollection.at(me.getCurrentSlide()),
-				editor = me.$('.uslide[rel=' + slide.id + ']').find('.uslide-editable-text')
-			;
-			if(editor.length && editor.data('redactor')){
+				editor = me.$('.uslide[rel=' + slide.id + ']').find('.uslide-editable-text');
+
+			if (editor.length && editor.data('redactor')) {
 				editor.on('stop', function(){
 					me.saveTemporaryResizing();
 				});
-			}
-			else {
+			} else {
 				me.saveTemporaryResizing();
 			}
 		}, me.cropTimeAfterResize);
@@ -549,7 +574,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		}
 
 		panelItems.push(this.createControl('crop', l10n.edit_img, 'imageEditMask'));
-		panelItems.push(this.createLinkControl(slide));
+    	
+    	panelItems.push(this.createLinkControl(slide));
 
 		if(_.indexOf(['notext', 'onlytext'], primaryStyle) == -1)
 			panelItems.push(captionControl);
@@ -574,26 +600,20 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		return item;
 	},
 
-	createLinkControl: function(slide){
+	createLinkControl: function(slide) {
 		var me = this,
-			control = new Upfront.Views.Editor.InlinePanels.DialogControl()
-		;
+			control = new Upfront.Views.Editor.InlinePanels.DialogControl();
 
-		control.view = new Upfront.Views.Editor.LinkPanel({
-			model: new Backbone.Model({
-				type: slide.get('urlType'),
-				url: slide.get('url')
-			}),
-			linkTypes: {image:true}
+		control.view = linkPanel = new Upfront.Views.Editor.LinkPanel({
+			linkType: slide?slide.get('urlType'):'',
+			linkUrl: slide?slide.get('url'):'',
+			linkTarget: slide?slide.get('linkTarget'):'',
+			linkTypes: { image: true },
+			imageUrl: slide?slide.get('srcFull'):''
 		});
 
-		control.slide = slide;
-
-		me.listenTo(control, 'panel:ok', function(){
-			//call the panel linkOk method to let it parse the link,
-			// later the link:ok event will be emitted and we will use it to
-			// save the link.
-			control.view.linkOk();
+		this.listenTo(control, 'panel:ok', function(){
+			control.close();
 		});
 
 		me.listenTo(control, 'panel:open', function(){
@@ -613,28 +633,24 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				.closest('.uimage-controls')
 					.removeClass('upfront-control-visible').end()
 				.closest('.uslider-link')
-					.attr('href', control.slide.get('url'))
+					.attr('href', slide.get('url'))
 			;
 
 			me.$el.closest('.ui-draggable').draggable('enable');
-
-			//Roll back the view, ready for reopen.
-			control.view.render();
 		});
 
-		me.listenTo(control.view, 'link:postselected', function(linkData){
-			control.slide.set({
-				urlType: linkData.type,
-				ur: linkData.url
-			}, {silent: true});
-
-			control.view.model.set(linkData);
-			control.view.render();
-			control.open();
+		me.listenTo(linkPanel, 'change', function(data) {
+			slide.set({
+				urlType: data.type,
+				url: data.url,
+				linkTarget: data.target
+			});
 		});
 
-		me.listenTo(control.view, 'link:ok', function(){
-			me.updateLink(control);
+		me.listenTo(linkPanel, 'change:target', function(data) {
+			slide.set({linkTarget: data.target});
+			me.$el.find('.upfront-default-slider-item-current a')
+				.attr('target', data.target);
 		});
 
 		control.icon = 'link';
@@ -642,25 +658,6 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		control.id = 'link';
 
 		return control;
-	},
-
-	updateLink: function(control){
-		var data = control.view.getCurrentValue();
-
-		if(!data){
-			return;
-		}
-
-		if(data.type == 'image')
-			data.url = control.slide.get('srcFull');
-
-		control.slide.set({
-			urlType: data.type,
-			url: data.url
-		});
-
-		control.view.model.set(data);
-		control.render().close();
 	},
 
 	getElementColumns: function(){
@@ -1159,6 +1156,7 @@ var SlidesField = Upfront.Views.Editor.Field.Field.extend({
  * @type {Upfront.Views.Editor.Command}
  */
 var USliderElement = Upfront.Views.Editor.Sidebar.Element.extend({
+	priority: 40,
 	draggable: true,
 	/**
 	 * Set up command appearance.

@@ -57,9 +57,6 @@
 .upfront-accordion_module .upfront-accordion-container .accordion-panel-active:hover i {
   visibility: visible;
 }
-.upfront-accordion-container .accordion-panel-active:hover .accordion-panel-title:after {
-  display: none;
-}
 
 .upfront-accordion-container .accordion-panel-content {
 	overflow: hidden;
@@ -77,7 +74,7 @@
 .upfront-accordion-container .upfront-icon-button-accordion-add-panel:before {
 background-position: -261px -132px;
 }
-.upfront-editable_entity:hover  .upfront-entity_meta .upfront-icon-button-accordion-add-panel {
+.upfront-editable_entity:hover .upfront-entity_meta .upfront-icon-button-accordion-add-panel {
     opacity: 1;
 	visibility: visible;
 }

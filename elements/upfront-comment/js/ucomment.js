@@ -33,7 +33,10 @@ var UcommentView = Upfront.Views.ObjectView.extend({
 	on_render: function () {
 		if ( !$(document).data('upfront-comment-' + _upfront_post_data.post_id) )
 			this._get_comment_markup();
-		var discussion_settings = new DiscussionSettings_View({model: this.model});
+		var discussion_settings = Upfront.Settings.Application.PERMS.OPTIONS
+			? new DiscussionSettings_View({model: this.model})
+			: new DiscussionFallback_View({model: this.model})
+		;
 		discussion_settings.render();
 		this.$el.append(discussion_settings.$el);
 	},
@@ -48,7 +51,7 @@ var UcommentView = Upfront.Views.ObjectView.extend({
 		Upfront.Util.post({"action": "ucomment_get_comment_markup", "data": JSON.stringify({"post_id": post_id})})
 			.success(function (ret) {
 				var html = ret.data.replace(/<script.*?>.*?<\/script>/gim, ''); // strip script
-				$(document).data('upfront-comment-' + _upfront_post_data.post_id, html);
+				$(document).data('upfront-comment-' + _upfront_post_data.post_id, html || '&nbsp;');
 				me.render();
 			})
 			.error(function (ret) {
@@ -74,6 +77,10 @@ var DiscussionSettings_Model = Upfront.Models.ObjectModel.extend({
 		return this.loading;
 	},
 	_populate: function () {
+		if (!(_.isObject(this.cache) && "avatar_defaults" in this.cache)) {
+			this.loading.reject();
+			return false;
+		}
 		var avatars = _(this.cache.avatar_defaults).map(function (avatar) {
 			if (avatar.icon) avatar.icon = avatar.icon.match(/^https?:\/\//) ? avatar.icon : $(avatar.icon).attr("src");
 			return avatar;
@@ -108,7 +115,7 @@ var GlobalSettings_View = Backbone.View.extend({
 				me.setup_tabs($top);
 				me.setup_actions($bottom);
 				me.setup_content();
-			})
+			}, {}, "discussion-popup")
 		;
 		this.popup = this;
 	},
@@ -117,8 +124,21 @@ var GlobalSettings_View = Backbone.View.extend({
 	setup_content: function () {},
 	save_settings: function () {},
 });
+
+var DiscussionFallback_View = GlobalSettings_View.extend({
+	label: l10n.discussion_settings,
+	setup_content: function () {
+		$(this.out)
+			.empty()
+			.append(
+				'<p class="settings-disabled">' + l10n.settings_disabled + '</p>'
+			)
+		;
+	}
+});
+
 var DiscussionSettings_View = GlobalSettings_View.extend({
-	label: "Discussion settings",
+	label: l10n.discussion_settings,
     initialize: function () {
     	GlobalSettings_View.prototype.initialize.call(this);
     	this.on("settings:tabs:switch_to:settings", this.render_settings_content, this);
@@ -138,10 +158,6 @@ var DiscussionSettings_View = GlobalSettings_View.extend({
 		$el.empty().append(actions.$el);
 	},
 	setup_content: function () {
-		$(this.out).css({
-			height: this.popup_data.height,
-			"overflow-y": "scroll"
-		});
 		this.render_settings_content();
 		this.tabs.activate_tab('settings');
 	},
@@ -228,7 +244,7 @@ var DiscussionSettings_ActionView = Backbone.View.extend({
 		var me = this;
 		this.populate_sections();
 		this.$el.empty();
-    this.$el.addClass('discussion-settings-wrapper');
+		this.$el.addClass('discussion-settings-wrapper');
 
 		this.sections.each(function (section) {
 			if (section.label) me.$el.append(_.template(me.templates.section_label, {label: section.label}));
@@ -301,7 +317,8 @@ var DiscussionSettings_Settings_View = DiscussionSettings_ActionView.extend({
 	type: "settings",
 	spawn_checkbox: function (label, prop, value) {
 		value = value || "1";
-		return new CheckboxField({
+		return new Upfront.Views.Editor.Field.Checkboxes({
+			multiple: false,
 			model: this.model,
 			property: prop,
 			values: [
@@ -510,6 +527,36 @@ var PagedCommentsField = BooleanSubfieldField.extend({
 	}
 });
 
+
+var Settings_MainPanel = Upfront.Views.Editor.Settings.Panel.extend({
+	label: l10n.element_name,
+	initialize: function (opts) {
+		this.options = opts;
+		this.settings = _([]);
+	},
+
+	get_label: function () {
+		return this.label;
+	},
+
+	get_title: function () {
+		return l10n.main_panel;
+	}
+});
+
+var Settings = Upfront.Views.Editor.Settings.Settings.extend({
+	initialize: function (opts) {
+		this.options = opts;
+		this.panels = _([
+			new Settings_MainPanel({model: this.model})
+		]);
+	},
+
+	get_title: function () {
+		return l10n.settings;
+	}
+});
+
 var UcommentElement = Upfront.Views.Editor.Sidebar.Element.extend({
 
 	render: function () {
@@ -537,13 +584,25 @@ var UcommentElement = Upfront.Views.Editor.Sidebar.Element.extend({
 });
 
 
-if (_upfront_post_data.post_id) {
-	Upfront.Application.LayoutEditor.add_object("Ucomment", {
-		"Model": UcommentModel,
-		"View": UcommentView,
-		"Element": UcommentElement
-	});
+function add_comment () {
+	if (
+		_upfront_post_data.post_id
+		||
+		(Upfront.Application.get_current() === Upfront.Application.MODE.THEME && 'type' in _upfront_post_data.layout && 'single' === _upfront_post_data.layout.type)
+	) {
+		Upfront.Application.LayoutEditor.add_object("Ucomment", {
+			"Model": UcommentModel,
+			"View": UcommentView,
+			"Element": UcommentElement,
+			"Settings": Settings
+		});
+	}
 }
+Upfront.Events.on("application:mode:after_switch", function () {
+	if (Upfront.Application.get_current() !== Upfront.Application.MODE.THEME) return false;
+	add_comment();
+});
+add_comment();
 
 Upfront.Models.UcommentModel = UcommentModel;
 Upfront.Views.UcommentView = UcommentView;

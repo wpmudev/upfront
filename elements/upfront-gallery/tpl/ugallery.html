@@ -17,7 +17,7 @@
 	<div class="ugallery_item ugallery_item_<?php echo !empty($images[$i]['urlType']) && $images[$i]['urlType'] == 'image' ? 'image' : $images[$i]['urlType'] ?> <?php if($captionType === 'over') { ?>ugallery_caption_on_hover_<?php echo $showCaptionOnHover['length'] ?><?php } ?>" style="position:relative; width:<?php echo $thumbWidth ?>px;" rel="<?php echo $images[$i]['id'] ?>" data-groups='[<?php echo $image_labels[$images[$i]['id']] ?>]'>
 		<?php $images[$i]['urlType'] = !empty($images[$i]['urlType']) ? $images[$i]['urlType'] : false; ?>
 		  <?php if ($images[$i]['urlType'] !== 'unlink') { ?>
-			<a class="ugallery_link<?php echo !empty($images[$i]['urlType']) && $images[$i]['urlType'] == 'image' ? ' ugallery_lightbox_link' : $images[$i]['urlType'] ?>" href="<?php echo $images[$i]['urlType'] == 'image' ? $images[$i]['sizes']['full'][0] : $images[$i]['url'] ?>" title="">
+			<a class="ugallery_link<?php echo !empty($images[$i]['urlType']) && $images[$i]['urlType'] == 'image' ? ' ugallery_lightbox_link' : $images[$i]['urlType'] ?>" href="<?php echo $images[$i]['url'] ?>" target="<?php echo $images[$i]['linkTarget'] ?>" title="">
 			<?php } ?>
 				<img src="<?php echo $images[$i]['src'] ?>" alt="" class="ugallery-image" style="<?php echo !empty($images[$i]['loading']) && $images[$i]['loading'] ? 'display:none;' : '' ?> margin-left:<?php echo $images[$i]['margin']['left'] ?>px;  margin-top:<?php echo $images[$i]['margin']['top'] ?>px;width:<?php echo $thumbWidth ?>px; height:<?php echo $thumbHeight ?>px">
 				<?php if(!empty($in_editor)) { ?>
@@ -37,7 +37,7 @@
 	</div>
 <?php } else { ?>
 	<?php if(! $editing) { ?>
-		{{ l10n.no_images }}
+		<?php echo $l10n['no_images'] ?>
 	<?php } else { ?>
 		<div class="ugallery-starting-wrapper upfront-ui">
 				<div class="uimage-centered">
@@ -51,8 +51,11 @@
 
 <style>
 	#<?php echo $element_id ?> .ugallery-thumb-title {
-		color: <?php echo $captionColor ?>;
 		background: <?php echo  $captionBackground ?>;
+		<?php if($fitThumbCaptions[0] === 'true') { ?>
+			overflow: hidden;
+			height: <?php echo $thumbCaptionsHeight ?>px;
+		<?php } ?>
 	}
 
 </style>

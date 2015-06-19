@@ -126,8 +126,12 @@ var CustomSelectorField =  Upfront.Views.Editor.Field.Hidden.extend({
 					is_single = 'single' === me.model.get_property_value_by_name('display_type'),
 					values = me.get_decoded_values(me.options.property)
 				;
-				if (is_single) values = [{id: id, permalink: link}];
-				else values.push({id: id, permalink: link});
+				if (is_single) {
+					values = [{id: id, permalink: link}];
+				} else {
+					values.push({id: id, permalink: link}); 
+					me.select_posts(e);
+				}
 				me.model.set_property(me.options.property, me.encode_values(values));
 				me.trigger("post:added");
 			})
@@ -182,7 +186,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 
 		if ('custom' === type) this.populate_custom_items();
 		else if ('taxonomy' === type) this.populate_tax_items();
-		else this.populate_shared_tax_generic_items();
+		else this.populate_generic_items();
 	},
 
 	populate_custom_items: function () {
@@ -199,6 +203,11 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 		this.fields = _([fld]);
 	},
 
+	populate_generic_items: function () {
+		this.populate_shared_tax_generic_items();
+		this.populate_pagination_items();
+	},
+
 	populate_tax_items: function () {
 		var taxs = [], types = [];
 		var display_type = this.model.get_property_value_by_name("display_type");
@@ -212,6 +221,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 		this.fields = _([]);
 
 		if ("list" === display_type) {
+			this.populate_pagination_items();
 			this.fields.push(new Upfront.Views.Editor.Field.Number({
 				model: this.model,
 				label: l10n.offset,
@@ -222,7 +232,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 		}
 		this.fields.push(new Upfront.Views.Editor.Field.Select({
 			model: this.model,
-			label: 'Post type',
+			label: l10n.post_type,
 			property: "post_type",
 			values: types
 		}));
@@ -240,6 +250,51 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 		}));
 		this.populate_shared_tax_generic_items();
 		this.once("rendered", this.update_terms, this);
+		this.once("rendered", function () {
+			this.toggle_offset_based_on_pagination_value(this.model.get_property_value_by_name("pagination"));
+		}, this);
+	},
+
+	populate_pagination_items: function () {
+		var display_type = this.model.get_property_value_by_name("display_type"),
+			me = this
+		;
+		if ("list" === display_type) {
+			this.fields.push(new Upfront.Views.Editor.Field.Radios({
+				model: this.model,
+				label: l10n.pagination,
+				property: "pagination",
+				layout: "horizontal-inline",
+				values: [
+					{label:l10n.none, value:""},
+					{label:l10n.numeric, value:"numeric"},
+					{label:l10n.prev_next, value:"arrows"}
+				],
+				change: function (value) {
+					me.toggle_offset_based_on_pagination_value(value);
+				}
+			}));
+		}
+	},
+
+	toggle_offset_based_on_pagination_value: function (pagination) {
+		if ("taxonomy" !== this.model.get_property_value_by_name("list_type")) return false;
+		if ("numeric" === pagination || "arrows" === pagination) {
+			this.model.set_property("offset", 1, true); // This is always 1 if we're paginating
+			this.hide_offset_field();
+		} else {
+			this.show_offset_field();
+		}
+	},
+
+	show_offset_field: function () {
+		var $field = this.$el.find('input[name="offset"]').closest(".upfront-field-wrap-number");
+		$field.show();
+	},
+
+	hide_offset_field: function () {
+		var $field = this.$el.find('input[name="offset"]').closest(".upfront-field-wrap-number");
+		$field.hide();
 	},
 
 	populate_shared_tax_generic_items: function () {
@@ -252,6 +307,16 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 				min: 1,
 				max: 20
 			}));
+			this.fields.push(new Upfront.Views.Editor.Field.Radios({
+				model: this.model,
+				property: "sticky",
+				label: l10n.sticky_posts,
+				values: [
+					{label: l10n.sticky_ignore, value: ""},
+					{label: l10n.sticky_prepend, value: "prepend"},
+					{label: l10n.sticky_exclude, value: "exclude"},
+				]
+			}));
 		}
 		this.fields.push(new Upfront.Views.Editor.Field.Radios({
 			model: this.model,
@@ -263,19 +328,6 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 				{label:l10n.full_post, value:"content"}
 			]
 		}));
-		if ("list" === display_type) {
-			this.fields.push(new Upfront.Views.Editor.Field.Radios({
-				model: this.model,
-				label: l10n.pagination,
-				property: "pagination",
-				layout: "horizontal-inline",
-				values: [
-					{label:l10n.none, value:""},
-					{label:l10n.numeric, value:"numeric"},
-					{label:l10n.prev_next, value:"arrows"}
-				]
-			}));
-		}
 	},
 
 	update_terms: function () {
@@ -314,7 +366,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 			property: "term",
 			values: terms
 		});
-		this.fields._wrapped[3] = field;
+		this.fields._wrapped[4] = field;
 		this.$el.empty();
 		this.render();
 	}
@@ -339,6 +391,7 @@ Panels.PostParts = Upfront.Views.Editor.Settings.Panel.extend({
 			}),
 			autorefresh = function (value) {
 				this.model.set_property(this.options.property, this.get_value());
+				this.model.set_property("post_parts", this.get_value(), false);
 				me.trigger("settings:dispatched");
 			},
 			post_parts = new Upfront.Views.Editor.Field.Checkboxes({
@@ -391,10 +444,19 @@ var SortSettings_Sorter = Upfront.Views.Editor.Field.Hidden.extend({
 		Upfront.Views.Editor.Field.Hidden.prototype.render.apply(this);
 		this.$el.append('<ul class="post_parts"></ul>');
 		var me = this,
-			parts = this.model.get_property_value_by_name("enabled_post_parts"),
+			enabled_parts = this.model.get_property_value_by_name("enabled_post_parts"),
+			saved_parts = this.model.get_property_value_by_name(this.options.property),
+			parts = [],
 			$sortable = this.$el.find("ul")
 		;
+
+		parts = saved_parts && saved_parts.length
+			? saved_parts
+			: enabled_parts
+		;
+
 		_.each(parts, function (part, idx) {
+			if (enabled_parts.indexOf(part) < 0) return true; // This one is disabled, move on
 			var pt = Parts.get_part(part, me.model);
 			pt.render();
 			$sortable.append(pt.$el);

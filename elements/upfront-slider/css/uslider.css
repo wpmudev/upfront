@@ -28,6 +28,10 @@ div.uslide-text-current {
 	overflow: hidden;
 }
 
+.uslide-caption {
+  position: relative;
+}
+
 .uslide-topOver .uslide-caption,
 .uslide-bottomOver .uslide-caption,
 .uslide-bottomCover .uslide-caption,
@@ -66,7 +70,7 @@ div.uslide-text-current {
 
 .uslide-bottomOver .uslide-caption{
 	bottom: 0;
-	top: auto;
+	top: inherit;
 }
 
 .uslide-bottomCover .uslide-caption,
@@ -124,6 +128,9 @@ div.uslide-image img {
 
 .uslider .ui-resizable-handle {
 	display: none;
+}
+.uslider .uslide-image .ui-resizable-handle {
+  position: absolute;
 }
 
 .ui-resizable-autohide .uslider .ui-resizable-handle.ui-resizable-w,
@@ -190,6 +197,6 @@ div.uslide-image img {
 .upfront-default-slider i.upfront-icon.upfront-icon-region-remove:before {
 	content: "";
 }
-.uslider .uimage-controls > .upfront-inline-panel {
+/*.uslider .uimage-controls > .upfront-inline-panel {
 	bottom: 0;
-}
+}*/

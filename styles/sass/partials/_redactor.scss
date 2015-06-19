@@ -470,14 +470,16 @@ body .redactor-toolbar  li a.re-upfrontLink.redactor-act	{ background-position: 
 	z-index: 2004;
 	padding: 10px;
 	min-width: 200px;
-	background-color: #1e364c;
-	/*background-color: rgba(30, 47, 63, .95);*/
-	/* box-shadow: 0 1px 5px #bbb; */
+	background-color: rgba(42,70,95,.95);
 	font-size: 13px;
 	font-family: Helvetica, Arial, Verdana, Tahoma, sans-serif;
 	line-height: 21px;
 	margin-top: 5px;
 	color: #97b8da;
+}
+
+.redactor-dropdown .upfront-save_settings {
+	box-shadow:none;
 }
 
 .redactor-dropdown .ulinkpanel-lightbox-wrap {
@@ -549,7 +551,8 @@ a.ueditor-format-pre{
 	text-align: center;
 }
 .redactor-toolbar  li a.re-upfrontFormatting:after{
-	content : "¶";
+	/*content : "¶";*/
+	content : "\00b6";
 }
 /* MODAL */
 /* 300 lines deleted here, not using modals */

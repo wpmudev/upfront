@@ -27,6 +27,31 @@ function upfront_set_property_value ($prop, $value, $data) {
 	return $data;
 }
 
+/**
+ * Converts an Upfront Property collection to a normal associative array.
+ */
+function upfront_properties_to_array ($the_properties, $map=null) {
+	$the_array = array();
+	foreach ($the_properties as $prop) {
+		if ( is_array($map) && ! in_array($prop['name'], $map) ) { continue; }
+		$the_array[$prop['name']] = isset($prop['value']) ? $prop['value'] : false;
+	}
+	return $the_array;
+}
+
+/**
+ * Reverse of the `upfront_properties_to_array` function: Takes an associtative
+ * array and returns an Upfront Property collection.
+ */
+function upfront_array_to_properties ($the_array, $map=null) {
+	$the_properties = array();
+	foreach ($the_array as $name=>$value) {
+		if ( is_array($map) && ! in_array($name, $map) ) { continue; }
+		$the_properties[] = array( 'name' => $name, 'value' => $value );
+	}
+	return $the_properties;
+}
+
 function upfront_get_breakpoint_property_value ($prop, $data, $breakpoint, $return_default = false) {
 	$model_breakpoint = upfront_get_property_value('breakpoint', $data);
 	$breakpoint_data = $model_breakpoint && !empty($model_breakpoint[$breakpoint->get_id()]) ? $model_breakpoint[$breakpoint->get_id()] : false;
@@ -152,7 +177,7 @@ function upfront_ajax_url ($action, $args = '') {
 	$args = wp_parse_args($args);
 	$args['action'] = $action;
 	$args['layout'] = Upfront_EntityResolver::get_entity_ids();
-	if ( current_user_can('switch_themes') && !empty($_GET['dev']) )
+	if ( current_user_can('switch_themes') && Upfront_Behavior::debug()->is_dev() )
 		$args['load_dev'] = 1;
 	return admin_url( 'admin-ajax.php?' . http_build_query($args) );
 }
@@ -206,7 +231,7 @@ function upfront_add_element_style ($slug, $path_info) {
 
 	if (current_theme_supports($slug)) return true; // Current theme supports this style
 
-	if (empty($_GET['dev']) && empty($_GET['debug'])) { // Yeah, so re-intorduce the hacks
+	if (!Upfront_Behavior::debug()->is_dev() && !Upfront_Behavior::debug()->is_debug()) { // Yeah, so re-intorduce the hacks
 		$hub = Upfront_PublicStylesheets_Registry::get_instance();
 		return $hub->set($slug, $path_info);
 	} else {
@@ -231,7 +256,7 @@ function upfront_add_element_script ($slug, $path_info) {
 		current_theme_supports("{$slug}-script")
 	) return true; // Current theme supports element scripts, and this script in particular
 
-	if (empty($_GET['dev']) && empty($_GET['debug'])) { // Yeah, so re-intorduce the hacks
+	if (!Upfront_Behavior::debug()->is_dev() && !Upfront_Behavior::debug()->is_debug()) { // Yeah, so re-intorduce the hacks
 		$hub = Upfront_PublicScripts_Registry::get_instance();
 		return $hub->set($slug, $path_info);
 	} else {
@@ -247,7 +272,7 @@ function upfront_get_attachment_image_lazy ($attachment_id, $ref_size = 'full') 
   // page load which in builder will be instantly replaced by js app so it's safe to
   // skip this in builder mode.
   if (!is_object($attachment)) {
-    return;
+	return;
   }
 	$imagedata = wp_get_attachment_metadata($attachment_id);
 	$full_src = wp_get_attachment_image_src($attachment_id, 'full');
@@ -260,12 +285,12 @@ function upfront_get_attachment_image_lazy ($attachment_id, $ref_size = 'full') 
 		$alt = trim(strip_tags( $attachment->post_title )); // Finally, use the title
 	$out = '<img class="upfront-image-lazy" src="' . get_template_directory_uri() . '/img/blank.gif" width="' . $ref_src[1] . '" height="' . $ref_src[2]. '" alt="' . $alt . '" ';
 
-    if( isset( $imagedata['sizes'] ) ){
-        foreach ( $imagedata['sizes'] as $size => $data ){
-            $src = wp_get_attachment_image_src($attachment_id, $size);
-            $srcset[] = array($src[0], $src[1], $src[2]);
-        }
-    }
+	if( isset( $imagedata['sizes'] ) ){
+		foreach ( $imagedata['sizes'] as $size => $data ){
+			$src = wp_get_attachment_image_src($attachment_id, $size);
+			$srcset[] = array($src[0], $src[1], $src[2]);
+		}
+	}
 
 	$srcset[] = array($full_src[0], $full_src[1], $full_src[2]);
 	$out .= "data-sources='" . json_encode($srcset) . "'";
@@ -273,4 +298,63 @@ function upfront_get_attachment_image_lazy ($attachment_id, $ref_size = 'full') 
 	return $out;
 }
 
+function upfront_get_edited_post_thumbnail ($post_id = null, $return_src = false) {
+	$post_id = ( null === $post_id ) ? get_the_ID() : $post_id;
+	$image_id = get_post_thumbnail_id($post_id);
+	$data = get_post_meta($post_id, '_thumbnail_data', true);
+	if ( empty($data) || empty( $data['imageId'] ) || $data['imageId'] != $image_id || empty($data['src']) ) // no edited thumbnail
+		return get_the_post_thumbnail($post_id);
+	if ( $return_src)
+		return $data['src'];
+	$image = get_post($image_id);
+	$attr = array(
+		'src' => $data['src'],
+		'width' => $data['cropSize']['width'],
+		'height' => $data['cropSize']['height'],
+		'alt' => trim(strip_tags( get_post_meta($image, '_wp_attachment_image_alt', true) ))
+	);
+	if ( empty($attr['alt']) )
+		$attr['alt'] = trim(strip_tags( $image->post_excerpt ));
+	if ( empty($attr['alt']) )
+		$attr['alt'] = trim(strip_tags( $image->post_title ));
+	$html = '<img';
+	foreach ( $attr as $name => $value )
+		$html .= ' ' . $name . '="' . $value . '"';
+	$html .= ' />';
+	return $html;
+}
+
+function upfront_realperson_hash($value) { 
+	$hash = 5381; 
+	$value = strtoupper($value); 
+	for($i = 0; $i < strlen($value); $i++) { 
+		$hash = (($hash << 5) + $hash) + ord(substr($value, $i)); 
+	} 
+	return $hash; 
+}
+
+// function upfront_realperson_hash($value) { 
+// 	$hash = 5381; 
+// 	$value = strtoupper($value); 
+// 	for($i = 0; $i < strlen($value); $i++) { 
+// 		$hash = (upfront_left_shift32($hash, 5) + $hash) + ord(substr($value, $i)); 
+// 	} 
+// 	return $hash; 
+// } 
+ 
+// // Perform a 32bit left shift 
+// function upfront_left_shift32($number, $steps) { 
+// 	// convert to binary (string) 
+// 	$binary = decbin($number); 
+// 	// left-pad with 0's if necessary 
+// 	$binary = str_pad($binary, 32, "0", STR_PAD_LEFT); 
+// 	// left shift manually 
+// 	$binary = $binary.str_repeat("0", $steps); 
+// 	// get the last 32 bits 
+// 	$binary = substr($binary, strlen($binary) - 32); 
+// 	// if it's a positive number return it 
+// 	// otherwise return the 2's complement 
+// 	return ($binary{0} == "0" ? bindec($binary) : 
+// 		-(pow(2, 31) - bindec(substr($binary, 1)))); 
+// } 
 

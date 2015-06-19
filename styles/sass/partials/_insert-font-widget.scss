@@ -60,6 +60,9 @@ a.upfront-css-font {
 	line-height: 31px;
 	font-size: 11px;
 	font-family: verdana, sans-serif;
+    max-width: 70px;
+    overflow: hidden;
+    white-space: nowrap;
 }
 .theme-fonts-ok-button {
 	margin-top: 30px;
@@ -89,7 +92,8 @@ a.upfront-css-font {
 		left: 0px;
 		top: 11px;
 }
-.open-theme-fonts-manager input {
+.open-theme-fonts-manager input,
+.open-theme-fonts-manager input:hover{
 	line-height: 36px;
 	border: 2px solid #1fcd8f;
 	margin-top: 13px;

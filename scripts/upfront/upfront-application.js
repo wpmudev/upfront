@@ -217,8 +217,10 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		this.listenTo(Upfront.Events, "command:layout:save_success", function(){ stop(true); });
 		this.listenTo(Upfront.Events, "command:layout:save_error", function(){ stop(false); });
 		this.listenTo(Upfront.Events, "command:themefontsmanager:open", Upfront.Behaviors.LayoutEditor.open_theme_fonts_manager);
+		this.listenTo(Upfront.Events, "command:layout:edit_global_regions", Upfront.Behaviors.LayoutEditor.open_global_region_manager);
 
 		this.listenTo(Upfront.Events, "command:layout:save_success", Upfront.Behaviors.LayoutEditor.clean_region_css);
+		this.listenTo(Upfront.Events, "command:layout:save_success", Upfront.Behaviors.LayoutEditor.clean_global_regions);
 	},
 
 	create_properties: function (view, model) {
@@ -796,14 +798,14 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 			.addClass('upfront-region-locked')
 			//Stop interaction with the rest of the page
 			.find('.upfront-module').each(function(){
-				if ( $(this).is('.ui-draggable') ) 
+				if ( $(this).is('.ui-draggable') )
 					$(this).draggable('disable');
 				if ( $(this).is('.ui-resizable') )
 					$(this).resizable('disable');
 			})
 		;
 		$('#page').find('.upfront-region-postlayouteditor').find('.upfront-module').each(function(){
-			if ( $(this).is('.ui-draggable') ) 
+			if ( $(this).is('.ui-draggable') )
 				$(this).draggable('enable');
 			if ( $(this).is('.ui-resizable') )
 				$(this).resizable('enable');
@@ -837,7 +839,7 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 
 		$('#page').find('.upfront-region-locked').removeClass('upfront-region-locked')
 			.find('.upfront-module').each(function(){
-				if ( $(this).is('.ui-draggable') ) 
+				if ( $(this).is('.ui-draggable') )
 					$(this).draggable('enable');
 				if ( $(this).is('.ui-resizable') )
 					$(this).resizable('enable');
@@ -959,7 +961,7 @@ var PostContentEditor = new (Subapplication.extend({
 		var $page = $('#page');
 		Upfront.Util.log("Stopping post the content edit mode");
 		$page.find('.upfront-module').each(function(){
-			if ( $(this).is('.ui-draggable') ) 
+			if ( $(this).is('.ui-draggable') )
 				$(this).draggable('enable');
 			if ( $(this).is('.ui-resizable') )
 				$(this).resizable('enable');
@@ -980,7 +982,7 @@ var PostContentEditor = new (Subapplication.extend({
 		//There is no need of start the application, just set the current one
 		Application.set_current(Application.MODE.POSTCONTENT);
 		$page.find('.upfront-module').each(function(){
-			if ( $(this).is('.ui-draggable') ) 
+			if ( $(this).is('.ui-draggable') )
 				$(this).draggable('disable');
 			if ( $(this).is('.ui-resizable') )
 				$(this).resizable('disable');
@@ -1061,11 +1063,9 @@ var ResponsiveEditor = new (LayoutEditorSubapplication.extend({
 	Objects: {},
 
 	boot: function () {
-		Upfront.Util.log("Preparing responsive mode for execution");
 	},
 
 	start: function () {
-		Upfront.Util.log("Starting responsive mode.");
 		this.stop();
 		this.Objects = Upfront.Application.LayoutEditor.Objects;
 		this.set_up_event_plumbing_before_render();
@@ -1081,7 +1081,6 @@ var ResponsiveEditor = new (LayoutEditorSubapplication.extend({
 	stop: function () {
 		if ( this.topbar )
 		    this.topbar.stop();
-		Upfront.Util.log("Leaving responsive mode.");
 		return this.stopListening(Upfront.Events);
 	}
 
@@ -1202,6 +1201,7 @@ var Application = new (Backbone.Router.extend({
 		// Start loading animation
 		app.loading = new Upfront.Views.Editor.Loading({
 			loading: Upfront.Settings.l10n.global.application.loading,
+			loading_type: 'upfront-boot',
 			done: Upfront.Settings.l10n.global.application.thank_you_for_waiting,
 			fixed: true
 		});
@@ -1624,7 +1624,7 @@ var Application = new (Backbone.Router.extend({
 		});
 
 		cssEditor.createSelectors(Upfront.Application.LayoutEditor.Objects);
-		
+
 		// Group selectors
 		cssEditor.createSelector(Upfront.Models.ModuleGroup, Upfront.Views.ModuleGroup, 'ModuleGroup');
 
@@ -1716,52 +1716,6 @@ var Application = new (Backbone.Router.extend({
 
 		site_url.href = Upfront.Settings.site_url;
 		Backbone.history.start({pushState: true, root: site_url.pathname, silent:true});
-
-		$(document)
-			.on('click', 'a', function(e){
-				var bypass, href, a, pathname, search;
-
-				if(e.isDefaultPrevented()) return;
-
-				bypass = $(e.currentTarget).data('bypass');
-				if(bypass) return;
-
-				a = e.target;
-				pathname = a.pathname;
-				href = a.getAttribute('href');
-				search = a.search;
-
-				if(href == '#' || a.origin != window.location.origin ||
-						(pathname == window.location.pathname && search == window.location.search)) return;
-
-				//If we are editing text, don't follow the link
-				if($(e.target).closest('.redactor_box').length) return;
-
-				// Prevent crazy double url navigation
-				if (Upfront.mainData.site.indexOf('localhost') > -1
-						&& Upfront.mainData.site + '/' === a.origin + pathname) pathname = '/';
-
-				// Make dev=true remain in arguments
-				if (window.location.search.indexOf('dev=true') > -1
-						&& search.indexOf('dev=true') === -1) {
-					if (search === '') search = '?';
-					search += 'dev=true';
-				}
-
-				e.preventDefault();
-
-				if(!Upfront.PreviewUpdate._is_dirty || confirm(Upfront.Settings.l10n.global.application.navigation_confirm))
-					me.navigate(pathname + search, {trigger: true});
-			})
-			.on('keydown', function(e){
-				//Don't let the backspace go back in history
-				if(e.which == 8){
-					var tag = e.target.tagName.toUpperCase();
-					if(tag != 'INPUT' && tag != 'TEXTAREA' && !$(e.target).closest('.redactor_box').length && !e.target.contentEditable)
-						e.preventDefault();
-				}
-			})
-		;
 	},
 
 	set_loading: function(message, done){

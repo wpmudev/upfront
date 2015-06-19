@@ -115,6 +115,9 @@ class Upfront_Output {
 			else if ( $region_sub == 'fixed' ){
 				$region_markups_after[$container] .= $markup;
 			}
+			else if ( $region_sub == 'left' ){
+				$region_markups[$container] = $markup . $region_markups[$container];
+			}
 			else{
 				$region_markups[$container] .= $markup;
 			}
@@ -408,7 +411,7 @@ abstract class Upfront_Entity {
 				// hack additional attributes
 				$vid_attrs = array(
 					'.*?vimeo\.' => 'loop=1' . $autoplay_attr . ( $mute == 1 ? '&amp;api=1&amp;player_id=' . $video_id : '' ),
-					'.*?youtube\.com\/(v|embed)\/(.+?)(\/|\?).*?$' =>  '&amp;controls=0&amp;showinfo=0&amp;modestbranding=1&amp;loop=1&amp;playlist=$3' . $autoplay_attr . ( $mute == 1 ? '&amp;enablejsapi=1' /*. '&amp;origin=' . site_url()*/ : '' ),
+					'.*?youtube\.com\/(v|embed)\/(.+?)(\/|\?).*?$' =>  '&amp;controls=0&amp;showinfo=0&amp;rel=0&amp;wmode=transparent&amp;html5=1&amp;loop=1&amp;modestbranding=1&amp;' . $autoplay_attr . ( $mute == 1 ? '&amp;enablejsapi=1' /*. '&amp;origin=' . site_url()*/ : '' ),
 					'.*?wistia\.' => 'endVideoBehavior=loop' . ( $autoplay == 1 ? '&amp;autoPlay=true' : '' ) . ( $mute == 1 ? '&amp;volume=0' : '' )
 				);
 				$vid_attr = '';
@@ -480,6 +483,9 @@ abstract class Upfront_Container extends Upfront_Entity {
 						$theme_styles_attr = " data-theme-styles='" . json_encode($theme_styles) . "'";
 					}
 					$slug = upfront_get_property_value('id_slug', $child);
+					if($slug === 'ucomment' && is_single() && !comments_open())
+						return $html; 
+
 					$classes = $this->_get_property('class');
 					$column = upfront_get_class_num('c', $classes);
 					$class = $slug === "uposts" ?   "c" . $column . " uposts-object" : upfront_get_property_value('class', $child);
@@ -621,7 +627,21 @@ class Upfront_Region_Container extends Upfront_Container {
 			$overlay .= $this->_get_background_overlay($breakpoint->get_id());
 			$bg_attr .= $this->_get_background_attr(false, true, $breakpoint->get_id());
 		}
-		$bg_node_start = "<div class='upfront-region-container-bg upfront-image-lazy upfront-image-lazy-bg' {$bg_attr}>";
+
+		$additional_classes = array();
+        // Additional test for background type - only if we're dealing with the featured image regions
+		if ('featured' === $this->get_background_type() && !has_post_thumbnail(Upfront_Output::get_post_id())) {
+			$additional_classes[] = 'no-featured_image'; // We don't seem to have a featured image here
+		}
+
+		// Build the class attribute
+		$extras = '';
+		if (!empty($additional_classes) && is_array($additional_classes)) {
+			$additional_classes = array_values(array_filter(array_map('sanitize_html_class', $additional_classes)));
+			$extras = join(' ', $additional_classes);
+		}
+
+		$bg_node_start = "<div class='upfront-region-container-bg upfront-image-lazy upfront-image-lazy-bg {$extras}' {$bg_attr}>";
 		$bg_node_end = "</div>";
 		return parent::wrap("{$bg_node_start}{$before}<div class='upfront-grid-layout'>{$out}</div>\n{$overlay}{$after}{$bg_node_end}");
 	}
@@ -682,6 +702,17 @@ class Upfront_Region_Container extends Upfront_Container {
 
 class Upfront_Region_Sub_Container extends Upfront_Region_Container {
 	protected $_type = 'Region_Sub_Container';
+
+	public function get_sub () {
+		return !empty($this->_data['sub']) ? $this->_data['sub'] : false;
+	}
+
+	public function get_css_class () {
+		$classes = parent::get_css_class();
+		$more_classes = array();
+		$more_classes[] = 'upfront-region-sub-container-' . $this->get_sub();
+		return $classes . ' ' . join(' ', $more_classes);
+	}
 
 	public function wrap ($out, $before = '', $after = '') {
 		return parent::wrap($out, '', '');
@@ -930,7 +961,10 @@ class Upfront_Module_Group extends Upfront_Container {
 	}
 
 	public function get_markup () {
-		return parent::get_markup();
+		$pre = '';
+		$anchor = upfront_get_property_value('anchor', $this->_data);
+		if (!empty($anchor)) $pre .= '<a id="' . esc_attr($anchor) . '" data-is-anchor="1"></a>';
+		return $pre . parent::get_markup();
 	}
 	
 	public function wrap ($out) {
@@ -956,13 +990,24 @@ class Upfront_Module_Group extends Upfront_Container {
     
     public function get_attr () {
         $theme_style = $this->_get_property('theme_style');
+        $link = $this->_get_property('href');
+        $linkTarget = $this->_get_property('linkTarget');
         if($theme_style)
             $theme_style = strtolower($theme_style);
         $theme_styles = array( 'default' => $theme_style );
         foreach ( Upfront_Output::$grid->get_breakpoints(true) as $breakpoint ) {
             $theme_styles[$breakpoint->get_id()] = $this->_get_breakpoint_property('theme_style', $breakpoint->get_id());
         }
-        return " data-theme-styles='" . json_encode($theme_styles) . "'";
+				
+        $link_attributes = '';
+        if(!empty($link)) {
+        	$link_attributes = "data-group-link='".$link."'";
+        	if(!empty($linkTarget)) {
+        		$link_attributes .= "data-group-target='".$linkTarget."'";
+        	}
+        }
+
+        return " data-theme-styles='" . json_encode($theme_styles) . "' ".$link_attributes;
     }
 
     public function get_style_for ($point, $scope) {
@@ -1028,7 +1073,7 @@ class Upfront_Module extends Upfront_Container {
 		$pre = '';
 		if (!empty($children)) foreach ($children as $child) {
 			$anchor = upfront_get_property_value('anchor', $child);
-			if (!empty($anchor)) $pre .= '<a id="' . esc_attr($anchor) . '"></a>';
+			if (!empty($anchor)) $pre .= '<a id="' . esc_attr($anchor) . '" data-is-anchor="1"></a>';
 		}
 		return $pre . parent::get_markup();
 	}

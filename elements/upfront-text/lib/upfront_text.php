@@ -60,7 +60,7 @@ class Upfront_PlainTxtView extends Upfront_Object {
 			(defined('UPFRONT_DISABLE_LAYOUT_TEXT_SHORTCODES') && UPFRONT_DISABLE_LAYOUT_TEXT_SHORTCODES ? false : true)
 		);
 		if ($do_processing) $content = do_shortcode($content);
-		return $content;
+		return Upfront_Codec::get('wordpress')->expand_all($content);
 	}
 
 	public static function add_l10n_strings ($strings) {
@@ -78,6 +78,7 @@ class Upfront_PlainTxtView extends Upfront_Object {
 				'p_label' => __('Text paragragh', 'upfront'),
 				'p_info' => __('The paragragh that contains all the text of the element.', 'upfront'),
 			),
+			'default_content' => __('<p>My awesome stub content goes here</p>', 'upfront'),
 			'dbl_click' => __('Double click to edit text', 'upfront'),
 			'appearance' => __('Textbox Appearance', 'upfront'),
 			'border' => __('Border', 'upfront'),
