@@ -185,7 +185,9 @@ var EmbedInsert = Insert.UeditorInsert.extend({
 			$code = $("<div />").append(code)
 		;
 		this.$el.empty();
+
 		if (!code) return;
+		
 		$code.append('<div class="upfront-edit_insert">edit</div>');
 		this.$el.append(
 			$("<div />").append($code).html()
@@ -324,7 +326,8 @@ var EmbedViews = {
 			var me = this;
 			Upfront.Media.Manager.open({
 				multiple_selection: false,
-				media_type: ["images"]
+				media_type: ["images"],
+				hold_editor: true
 			}).done(function (pop, result) {
 				if(!result) return;
 				var imageModel = result.models[0],

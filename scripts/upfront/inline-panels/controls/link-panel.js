@@ -23,6 +23,8 @@ define([
 
 		onClickOk: function(event){
 			event.preventDefault();
+			if(this.view.model.get('type') == 'lightbox' && this.view.$el.find('.js-ulinkpanel-lightbox-input').val() != '')
+				this.view.createLightBox();
 			this.close();
 		}
 	});

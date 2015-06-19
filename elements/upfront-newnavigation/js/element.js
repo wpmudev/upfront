@@ -5,7 +5,7 @@ define([
 	var l10n = Upfront.Settings.l10n.newnavigation_element;
 
 	var UnewnavigationElement = Upfront.Views.Editor.Sidebar.Element.extend({
-			priority: 200,
+			priority: 60,
 		/**
 		 * Set up element appearance that will be displayed on sidebar panel.
 		 */

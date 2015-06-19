@@ -37,10 +37,6 @@ div.upfront-navigation.upfront-editable_entity  ul.menu > li > i.navigation-add-
 	display: none !important;
 }
 
-
-.upfront-output-unewnavigation[data-style="vertical"] {
-	padding-right:30px;	
-}
 .upfront-output-unewnavigation[data-style="vertical"] ul.sub-menu {
   z-index:9999;
 }
@@ -291,7 +287,7 @@ input#unavigation-link-type-3 {
 
 
 div.upfront-output-unewnavigation .ueditor-placeholder {
-	z-index:1 !important;	
+	z-index:1 !important;
 }
 
 
@@ -319,6 +315,9 @@ div.upfront-navigation div[data-style="burger"][data-aliment="right"] i.navigati
   margin-left: 10px;
 }
 
+div.upfront-navigation div[data-style="burger"] ul.sub-menu {
+  z-index: inherit !important;
+}
 
 /* Hover to open sub-menu in the layout edit mode */
 div.upfront-navigation div[data-style="burger"] > ul.menu li.menu-item:hover > ul.sub-menu {
@@ -347,4 +346,116 @@ div.upfront-navigation div[data-style="burger"] > ul.menu li.menu-item:hover > u
 
 .upfront-settings-item div.menu_style > span:first-child {
   margin-right:20px;
+}
+
+/* Small adjustemnts for linking panel, it uses redactor template */
+div.upfront-navigation li.menu-item .redactor-toolbar a {
+	padding: 0;
+}
+div.upfront-navigation li.menu-item .redactor_air {
+	left: 50%;
+	margin-left: -20px;
+	display: none;
+}
+div.upfront-navigation li.menu-item.stayOpen .redactor_air,
+div.upfront-navigation li.menu-item:hover .redactor_air {
+	display: block!important;
+}
+
+/* Make link panel work well */
+li.menu-item .uimage-controls.image-element-controls .upfront-inline-panel .upfront-inline-panel-item.labeled {
+	width: auto!important;
+	min-width: 0px!important;
+	line-height: inherit!important;
+	padding-left: 0;
+}
+li.menu-item .uimage-controls.image-element-controls .upfront-inline-panel .upfront-inline-panel-item.labeled i {
+	display: inline-block;
+}
+li.menu-item .uimage-controls.image-element-controls .upfront-inline-panel .upfront-inline-panel-item.labeled span {
+	display: inline-block;
+	width: auto!important;
+}
+li.menu-item .uimage-controls.image-element-controls {
+	display: block;
+	visibility: hidden;
+	bottom: -30px;
+	left: 0;
+}
+li.menu-item .uimage-controls.image-element-controls .upfront-inline-panel {
+	visibility: hidden;
+}
+li.menu-item.controls-visible > .uimage-controls.image-element-controls {
+	visibility: visible;
+}
+li.menu-item.controls-visible > .uimage-controls.image-element-controls .upfront-inline-panel {
+	visibility: visible;
+}
+li.menu-item .open-item-controls {
+	display: block;
+	width: 30px;
+	height: 10px;
+	background: green;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	z-index: 10;
+	display: none;
+	cursor: pointer;
+  background-image: -moz-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
+  background-image: -ms-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
+  background-image: linear-gradient(-179deg, #2F445D 0%, #152841 100%);
+}
+li.menu-item:hover > .open-item-controls,
+li.menu-item.controls-visible > .open-item-controls {
+	display: block;
+}
+li.menu-item .uimage-controls .upfront-inline-panel {
+	background-image: none;
+	box-shadow: none;
+	width: 300px!important;
+}
+li.menu-item .uimage-controls .inline-panel-control-dialog {
+	min-width: 190px;
+}
+li.menu-item .uimage-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-control-dialog-open:first-child {
+	height: 31px!important;
+}
+li.menu-item .uimage-controls .upfront-inline-panel .upfront-inline-panel-item {
+  background-image: -moz-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
+  background-image: -ms-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
+  background-image: linear-gradient(-179deg, #2F445D 0%, #152841 100%);
+  -moz-box-shadow: inset 0px -1px 0px 0px #43607A, inset 0px 1px 0px 0px #26394A;
+  box-shadow: inset 0px -1px 0px 0px #43607A, inset 0px 1px 0px 0px #26394A;
+}
+/* Collapsed control */
+li.menu-item .open-item-controls:before {
+	background-image: url(../../../img/uf-core-el-sprite.svg);
+	content: " ";
+  background-repeat: no-repeat;
+  float: left;
+  display: block;
+	height: 6px;
+	width: 24px;
+	background-position: -699px -721px;
+	margin: 2px 0 0 3px;
+}
+div.upfront-navigation li.menu-item .uimage-controls a {
+  padding: 0;
+  font-size: 13px;
+  margin-bottom: 2px;
+}
+
+/* style adjustments */
+.upfront-navigation .upfront-field-select {
+	max-width:170px;
+}
+
+.newnavigation_squished .upfront-editable_entity.upfront-navigation:hover .responsive_nav_toggler {
+	top:15px;
+	right: inherit;
+}
+
+.upfront-editable_entity.upfront-navigation:hover .responsive_nav_toggler {
+	right:15px;
 }

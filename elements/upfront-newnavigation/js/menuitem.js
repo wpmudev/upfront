@@ -11,7 +11,9 @@ return (function ($) {
 			'click i.navigation-add-item': 'addMenuItem',
 			"contextmenu a.menu_item": "on_context_menu",
 			'click a.redactor_act': 'onOpenPanelClick',
-			'click .upfront-save_settings': 'onOpenPanelClick',
+			'click .sub-menu': 'onOpenPanelSubMenu',
+			'click .upfront-save_settings': 'onOpenPanelSubMenu',
+			'click .upfront-save_settings': 'processPanelsonsave',
 			'click > .open-item-controls': 'onOpenItemControlsClick'
 		},
 		initialize: function(options) {
@@ -130,7 +132,28 @@ return (function ($) {
 			event.preventDefault();
 			this.toggleLinkPanel();
 		},
-
+		
+		onOpenPanelSubMenuClick: function(event) {
+			//event.preventDefault();
+			this.onOpenPanelSubMenu();
+		},
+		
+		onOpenPanelSubMenu: function() {
+			var me = this;
+			if (this.$el.hasClass('ui-sortable-handle') && this.$el.children('ul').children('li').hasClass('controls-visible')) {
+				this.$el.children('ul').sortable('disable');
+			} else {
+				this.$el.addClass('ui-sortable-handle');
+				//this.$el.children('ul').sortable('enable');
+				//this.$el.parent('ul').sortable('enable');
+			}
+		},
+		processPanelsonsave: function() {
+			this.parent_view.$el.find('ul.time_being_display').removeClass('time_being_display');
+			this.toggleLinkPanel();
+			this.$el.removeClass('controls-visible');
+			this.setItemControlsState();
+		},
 		toggleLinkPanel: function() {
 			var me = this;
 			if (this.$el.hasClass('ui-sortable-handle')) {
@@ -144,9 +167,12 @@ return (function ($) {
 				this.$el.parents('.menu').sortable('enable');
 				this.$el.find('.linkingPanelGoesHere').hide();
 				// Model linkType won't set on time if this is not delayed
+				/*
+				// Commented, because hide Sub Navigation items after OK button
 				setTimeout(function() {
 					me.render();
 				}, 100);
+				*/
 			}
 		},
 
@@ -157,6 +183,10 @@ return (function ($) {
 			if(me.newitem) content = content + ' new_menu_item menu_item_placeholder';
 
 			content = content+'" >'+this.model['menu-item-title']+'</a><i class="delete_menu_item">x</i><span class="open-item-controls"></span>';
+			
+			if(this.model['menu-item-url'].indexOf('#ltb-') > -1 && !Upfront.Util.checkLightbox(this.model['menu-item-url']))
+					content = content + '<span class="missing-lightbox-warning"></span>';
+
 			$(this.el).html(content);
 			this.createInlineControlPanel();
 
@@ -168,10 +198,24 @@ return (function ($) {
 
 		onOpenItemControlsClick: function() {
 			this.$el.toggleClass('controls-visible');
+			this.setItemControlsState();
+		},
+
+		setItemControlsState: function() {
 			if (this.$el.hasClass('controls-visible')) {
 				this.controlsVisible = true;
 				this.$el.siblings().removeClass('controls-visible');
+				this.$el.data('linkpanel').render();
+
 				this.$el.parents('.menu').sortable('disable');
+
+				var currentcontext = this.$el.closest('ul');
+
+				while(currentcontext.length > 0 && currentcontext.hasClass('sub-menu')) {
+					currentcontext.addClass('time_being_display');
+					currentcontext = currentcontext.parent().parent('ul');
+				}
+
 			} else {
 				this.controlsVisible = false;
 				if (this.$el.parents('.menu').find('.controls-visible').length === 0) {
@@ -208,7 +252,7 @@ return (function ($) {
 				linkPanelControl,
 				visitLinkControl
 			]);
-
+			this.$el.data('linkpanel', linkPanelControl);
 			var imageControlsTpl = '<div class="uimage-controls image-element-controls upfront-ui"></div>';
 			this.$el.append(imageControlsTpl);
 			panel.render();
@@ -220,6 +264,7 @@ return (function ($) {
 			var placeholder = $('<ul>').addClass('sub-menu').addClass('time_being_display');
 			$(e.target).closest('li').append(placeholder);
 			this.parent_view.addMenuItem(placeholder);
+			this.parent_view.makeSortable();
 		},
 
 		addMenuItem: function(e) {
@@ -315,7 +360,7 @@ return (function ($) {
 			me.$el.find('a.new_menu_item').removeClass('new_menu_item');
 			me.$el.removeClass('new_menu_item');
 
-			me.parent_view.$el.find('ul.time_being_display').removeClass('time_being_display');
+			//me.parent_view.$el.find('ul.time_being_display').removeClass('time_being_display');
 
 			var menu_item = ($(this.el).children('a.menu_item').length > 0) ? $(this.el).children('a.menu_item'):$(this.el).children('div').children('a.menu_item');
 
