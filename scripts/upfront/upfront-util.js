@@ -837,7 +837,7 @@ define(function() {
 			}
 
 			Upfront.Events.trigger('popup:closed');
-
+			
 			this._deferred.resolve(this.$popup, result);
 		}
 

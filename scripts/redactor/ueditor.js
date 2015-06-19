@@ -1066,8 +1066,10 @@ var InsertManagerInserts = Backbone.View.extend({
 
         insert.start( this.$el )
             .done(function(popup, results){
-                // if(!results) Let's allow promises without result for now!
-                //	return;
+
+                if(!results) //Had to uncomment this because if we let it through with blank result, it inserts an empty wrapper which blocks the "inert/embed" button to appear again: Gagan
+                	return;
+
                 self.inserts[insert.cid] = insert;
                 //Allow to undo
                 //this.trigger('insert:prechange'); // "this" is the embedded image object
@@ -1363,11 +1365,10 @@ var InsertManager = Backbone.View.extend({
 
 		if(_.isEmpty( $block ) ) return false;
 
-		var $image_insert_wrappers = $(".upfront-inserted_image-wrapper"),
+		var $image_embed_insert_wrappers = $(".upfront-inserted_image-wrapper, .upfront-inserted_embed-wrapper"),
 			block_top = $block.offset().top,
 			show_tooltip = true;
-
-		$image_insert_wrappers.each(function(){
+		$image_embed_insert_wrappers.each(function(){
 			var $this = $(this),
 				height = $this.find(".ueditor-insert-variant-group").height(),
 				top = $this.offset().top;
@@ -1375,6 +1376,7 @@ var InsertManager = Backbone.View.extend({
 				show_tooltip = false;
 			}
 		});
+
 		return 	show_tooltip
 				&& 	$block.closest(".ueditor-insert").length === 0
 				&&  ( $.trim( $block.html() ) === "<br>" || ( typeof $block.closest("p.nosortable").html() !== "undefined" &&  $.trim( $block.closest("p.nosortable").html() ) === "" ) ) ;
