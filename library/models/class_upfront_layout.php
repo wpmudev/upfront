@@ -527,7 +527,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 	}
 
 	public function save () {
-		$key = $this->get_id();
+		$key = apply_filters('upfront-model-save_key', $this->get_id(), $this);
 
 		$scopes = array();
 		foreach ( $this->_data['regions'] as $region ){
