@@ -313,6 +313,9 @@ div.preset-manager-panel div.borderType {
 div.preset-manager-panel div.borderColor {
 	margin-top: -25px;
 }
+div.preset-manager-panel .backgroundColor {
+	padding-top: 8px;
+}
 div.preset-manager-panel .backgroundColor .sp-replacer  {
 	margin-top: -50px;
 	margin-left: 130px;
@@ -359,10 +362,24 @@ div.preset-manager-panel .separator-background {
 }
 div.preset-manager-panel .separator-corners {
 	position: relative;
-	top: 10px;
+	top: 0px;
+}
+div.preset-manager-panel .separator-corners-hov {
+	position: relative;
+	top: 2px;
+}
+div.preset-manager-panel .useRadius {
+	padding-top: 15px;
 }
 div.preset-manager-panel .typography-heading {
 	margin-top: 0px;
+}
+div.preset-manager-panel .useBorder {
+	margin-top: 19px;
+}
+div.preset-manager-panel .useBorderSeparator {
+	top: 8px;
+	position: relative;
 }
 div.preset-manager-panel .transition .upfront-field-select {
 	margin-top: -24px;
@@ -373,4 +390,7 @@ div.preset-manager-panel .transition .upfront-field-select-single .upfront-field
 }
 div.preset-manager-panel .border_radius_lock_hover {
 	margin-bottom: 50px;
+}
+div.preset-manager-panel .backgroundcolor-hover, div.preset-manager-panel .typography-hover {
+	padding-top: 11px;
 }
