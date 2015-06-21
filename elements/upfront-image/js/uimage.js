@@ -765,13 +765,14 @@ define([
 				data = resizingData.data,
 				img = resizingData.img,
 				captionHeight = this.property('caption_position') === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
+				padding = this.property('no_padding') == 1 ? 0 : breakpointColumnPadding,
 				ratio;
 
 			if(!resizer){
 				resizer = $('html').find('.upfront-resize');
 				resizingData.resizer = resizer;
 			}
-			data.elementSize = {width: resizer.width() - (2 * breakpointColumnPadding), height: resizer.height() - (2 * breakpointColumnPadding) - captionHeight};
+			data.elementSize = {width: resizer.width() - (2 * padding), height: resizer.height() - (2 * padding) - captionHeight};
 
 			this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
 					width: data.elementSize.width,
@@ -822,12 +823,13 @@ define([
 				me = this,
 				img = resizingData.img,
 				imgSize = {width: img.width(), height: img.height()},
-				imgPosition = img.position();
+				imgPosition = img.position(),
+				padding = this.property('no_padding') == 1 ? 0 : breakpointColumnPadding;
 
 			if(starting.length){
 				this.elementSize = {
-					height: $('.upfront-resize').height() - (2 * breakpointColumnPadding),
-					width: $('.upfront-resize').width() - (2 * breakpointColumnPadding)
+					height: $('.upfront-resize').height() - (2 * padding),
+					width: $('.upfront-resize').width() - (2 * padding)
 				};
 				this.property('element_size', this.elementSize);
 				return;
@@ -1036,12 +1038,13 @@ define([
 		setElementSize: function(ui) {
 			var me = this,
 				parent = this.parent_module_view.$('.upfront-editable_entity:first'),
-				resizer = ui ? $('.upfront-resize') : parent
+				resizer = ui ? $('.upfront-resize') : parent,
+				padding = this.property('no_padding') == 1 ? 0 : breakpointColumnPadding
 			;
 
 			me.elementSize = {
-				width: resizer.width() - (2 * breakpointColumnPadding) + 2,
-				height: resizer.height() - (2 * breakpointColumnPadding)
+				width: resizer.width() - (2 * padding) + 2,
+				height: resizer.height() - (2 * padding)
 			};
 
 			if(this.property('caption_position') === 'below_image') {
@@ -1052,6 +1055,23 @@ define([
 				this.$('.upfront-object-content').height(me.elementSize.height);
 			}
 
+		},
+		
+		applyElementSize: function () {
+			var me = this,
+				parent = this.parent_module_view.$('.upfront-editable_entity:first'),
+				resizer = parent,
+				captionHeight = this.property('caption_position') === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
+				padding = this.property('no_padding') == 1 ? 0 : breakpointColumnPadding,
+				elementSize = {width: resizer.width() - (2 * padding), height: resizer.height() - (2 * padding) - captionHeight}
+			;
+			this.property('element_size', elementSize);
+			this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
+					width: elementSize.width,
+					height: elementSize.height,
+					l10n: l10n.template
+				})
+			);
 		},
 
 		openImageSelector: function(e){
