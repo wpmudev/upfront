@@ -14,9 +14,15 @@ class Upfront_Ajax extends Upfront_Server {
 		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
 			upfront_add_ajax('upfront_load_layout', array($this, "load_layout"));
 			upfront_add_ajax('upfront_create_layout', array($this, "create_layout"));
+			
+			/* --- These 3 are to be removed --- */
+
 			upfront_add_ajax('upfront_list_available_layout', array($this, "list_available_layout"));
 			upfront_add_ajax('upfront_list_theme_layouts', array($this, "list_theme_layouts"));
 			upfront_add_ajax('upfront_list_saved_layout', array($this, "list_saved_layout"));
+
+			/* --- Remove up to here --- */
+            
             upfront_add_ajax('upfront_list_scoped_regions', array($this, "list_scoped_regions"));
             upfront_add_ajax('upfront_get_scoped_regions', array($this, "get_scoped_regions"));
             upfront_add_ajax('upfront_delete_scoped_regions', array($this, "delete_scoped_regions"));
@@ -280,7 +286,7 @@ class Upfront_Ajax extends Upfront_Server {
 
 		$this->_out(new Upfront_JsonResponse_Success($key));
 	}
-
+/* --- Snip, snip. These three are to be removed --- */
 	function list_available_layout () {
 		$layouts = Upfront_Layout::list_available_layout();
 		$this->_out(new Upfront_JsonResponse_Success($layouts));
@@ -296,7 +302,7 @@ class Upfront_Ajax extends Upfront_Server {
 		$layouts = Upfront_Layout::list_saved_layout($storage_key);
 		$this->_out(new Upfront_JsonResponse_Success($layouts));
 	}
-
+/* --- Remove up to here --- */
     function list_scoped_regions () {
         $storage_key = $_POST['storage_key'];
         $scope = $_POST['scope'];
