@@ -36,6 +36,12 @@ define(function() {
 					],
 					change: function(value) {
 						me.model.set({'hov_usebgcolor': value});
+						
+						if(value === "yes") {
+							var bgcolor = me.model.get('bgcolor');
+							me.model.set('hov_bgcolor', bgcolor);
+							me.update_fields();
+						}
 					},
 					show: function(value, $el) {
 						var stateSettings = $el.closest('.state_settings');
@@ -87,6 +93,21 @@ define(function() {
 					],
 					change: function(value) {
 						me.model.set({'hov_usetypography': value});
+						if(value === "yes") {
+							//Update colors
+							var fontface = me.model.get('fontface');
+							var fontstyle = me.model.get('fontstyle');
+							var fontsize = me.model.get('fontsize');
+							var lineheight = me.model.get('lineheight');
+							var fontcolor = me.model.get('color');
+							me.model.set('hov_fontface', fontface);
+							me.model.set('hov_fontstyle', fontstyle);
+							me.model.set('hov_fontsize', fontsize);
+							me.model.set('hov_lineheight', lineheight);
+							me.model.set('hov_color', fontcolor);
+							//Update value
+							me.update_fields();
+						}
 					},
 					show: function(value, $el) {
 						var stateSettings = $el.closest('.state_settings');
@@ -235,6 +256,7 @@ define(function() {
 							me.model.set('hov_borderwidth', borderwidth);
 							me.model.set('hov_bordertype', bordertype);
 							me.model.set('hov_bordercolor', bordercolor);
+							me.update_fields();
 						}
 					},
 					show: function(value, $el) {
@@ -324,6 +346,21 @@ define(function() {
 					],
 					change: function(value) {
 						me.model.set({'hov_useradius': value});
+						if(value === "yes") {
+							//Update colors
+							var borderradius1 = me.model.get('borderradius1');
+							var borderradius2 = me.model.get('borderradius2');
+							var borderradius4 = me.model.get('borderradius4');
+							var borderradius3 = me.model.get('borderradius3');
+							var borderradiuslock = me.model.get('borderradiuslock');
+							me.model.set('hov_borderradius1', borderradius1);
+							me.model.set('hov_borderradius2', borderradius2);
+							me.model.set('hov_borderradius4', borderradius4);
+							me.model.set('hov_borderradius3', borderradius3);
+							me.model.set('hov_borderradiuslock', borderradiuslock);
+							//Update value
+							me.update_fields();
+						}
 					},
 					show: function(value, $el) {
 						var stateSettings = $el.closest('.state_settings');
@@ -491,6 +528,21 @@ define(function() {
 				})
 
 			]);
+		},
+		update_fields: function() {
+			this.fields.each( function (field) {
+				//check if field is defined and skip checkboxes
+				if(typeof field.model !== "undefined" && field.model.get(field.name) !== "yes") {
+					//update field value
+					var value = field.model.get(field.name);
+					field.set_value(value);
+					
+					//update field value if color field
+					if(typeof field.rgba !== "undefined") {
+						field.update_input_border_color(Upfront.Util.colors.to_color_value(value));
+					}
+				}
+            });
 		}
 	});
 
