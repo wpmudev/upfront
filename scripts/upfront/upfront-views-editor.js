@@ -37,7 +37,8 @@ define([
 	"chosen",
 	"scripts/upfront/global-event-handlers",
 	"scripts/upfront/inline-panels/inline-panels",
-	"scripts/upfront/link-panel", // If adding more arguments adjust _.rest in line 69
+	"scripts/upfront/element-settings-sidebar",
+	"scripts/upfront/link-panel", // If adding more arguments adjust _.rest in line 72
 	"text!upfront/templates/property.html",
 	"text!upfront/templates/properties.html",
 	"text!upfront/templates/property_edit.html",
@@ -51,7 +52,7 @@ define([
 	"text!upfront/templates/sidebar_settings_theme_colors.html",
 	"text!upfront/templates/color_picker.html",
     'spectrum'
-], function (chosen, globalEventHandlers, InlinePanelsLoader, LinkPanel) {
+], function (chosen, globalEventHandlers, InlinePanelsLoader, ElementSettingsSidebar, LinkPanel) {
 	var _template_files = [
 		"text!upfront/templates/property.html",
 		"text!upfront/templates/properties.html",
@@ -68,7 +69,7 @@ define([
 	];
 
 	// Auto-assign the template contents to internal variable
-	var _template_args = _.rest(arguments, 4),
+	var _template_args = _.rest(arguments, 5),
 		_Upfront_Templates = {}
 	;
 	_(_template_files).each(function (file, idx) {
@@ -2919,7 +2920,7 @@ define([
 			this.$('#sidebar-ui-toggler').height(height);
 		},
 
-		toggleSidebar: function(){
+		toggleSidebar: function(instant){
 			var me = this;
 			if(!this.visible){
 				$('#sidebar-ui').removeClass('collapsed').stop().animate({width: '260px'}, 300);
@@ -6934,7 +6935,7 @@ var CSSEditor = Backbone.View.extend({
 					return true;
 			}
 			catch (err) {
-				
+
 			}
 			splitted.pop();
 		}
@@ -7959,9 +7960,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		},
 		render: function () {
 			var me = this;
-			
+
 			this.$el.html('<div class="upfront-loading-ani" />');
-			
+
 			if (this.options.fixed) this.$el.addClass('upfront-loading-fixed');
 			if (this.options.loading_type) this.$el.addClass(this.options.loading_type);
 			if (this.options.loading)this.$el.append('<p class="upfront-loading-text">' + this.options.loading + '</p>');
@@ -10587,7 +10588,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				"Anchor": {
 					"Trigger": Settings_AnchorTrigger,
 					"LabeledTrigger": Settings_LabeledAnchorTrigger
-				}
+				},
+				"Settings_CSS": _Settings_CSS,
+				"AnchorSetting": _Settings_AnchorSetting
 			},
 			"Button": {
 				"Presets": button_presets_collection,

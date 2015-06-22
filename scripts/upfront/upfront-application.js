@@ -266,25 +266,28 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		//context_menu_view.trigger('closed');
 	},
 	create_settings: function (view, settings_obj_view) {
+		var current_object, settings_view;
+
 		if (this.settings_view) return this.destroy_settings();
+
 		if (!parseInt(view.model.get_property_value_by_name("has_settings"), 10)) return false;
+
 		if ( !settings_obj_view ) {
-			var current_object = _(this.Objects).reduce(function (obj, current) {
-					if(view instanceof current.View){
-						console.log(obj + ' ' + current);
-						return current;
-					}
-					return obj;
-				}, false),
-				current_object = (current_object && current_object.Settings ? current_object : Upfront.Views.Editor.Settings),
-				settings_obj_view = current_object.Settings;
-			;
+			current_object = _(this.Objects).reduce(function (obj, current) {
+				if(view instanceof current.View){
+					return current;
+				}
+				return obj;
+			}, false);
+			current_object = (current_object && current_object.Settings ? current_object : Upfront.Views.Editor.Settings);
+			settings_obj_view = current_object.Settings;
 		}
-		var settings_view = new settings_obj_view({
-				model: view.model,
-				anchor: ( current_object ? current_object.anchor : false ),
-				el: $(Upfront.Settings.LayoutEditor.Selectors.settings)
-			})
+
+		settings_view = new settings_obj_view({
+			model: view.model,
+			anchor: ( current_object ? current_object.anchor : false ),
+			el: $(Upfront.Settings.LayoutEditor.Selectors.settings)
+		});
 		settings_view.for_view = view;
 		settings_view.render();
 		this.settings_view = settings_view;

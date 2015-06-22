@@ -1,10 +1,10 @@
 define([
-	'elements/upfront-image/js/settings/description-panel'
-], function(DescriptionPanel) {
+	'elements/upfront-image/js/settings/description-panel',
+	'scripts/upfront/element-settings'
+], function(DescriptionPanel, ElementSettings) {
 	var l10n = Upfront.Settings.l10n.image_element;
-	var ImageSettings = Upfront.Views.Editor.Settings.Settings.extend({
+	var ImageSettings = ElementSettings.extend({
 		initialize: function (opts) {
-			this.has_tabs = false;
 			this.options = opts;
 			var me = this;
 			this.panels = _([

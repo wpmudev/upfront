@@ -591,6 +591,7 @@ define([
 				if( typeof e !== "undefined" ){
 					e.preventDefault();
 				}
+				console.log('U.E.t(e:s:a)');
 				Upfront.Events.trigger("entity:settings:activate", this);
 			},
 			check_deactivated: function (){
@@ -1190,6 +1191,13 @@ define([
 				this.parent_view = false;
 				this.parent_module_view = false;
 				Backbone.View.prototype.remove.call(this);
+			},
+			on_settings_click: function(event) {
+				console.log('overridden for  elements, yay');
+				if( typeof event !== "undefined" ){
+					event.preventDefault();
+				}
+				Upfront.Events.trigger("element:settings:activate", this);
 			}
 		}),
 
@@ -1395,7 +1403,7 @@ define([
 					$module.removeData('breakpoint_order');
 				}
 				Upfront.Events.trigger('entity:module:update_position', this, this.model);
-				
+
 			},
 			render_object: function () {
 				var objects_view = this._objects_view || new Objects({"model": this.model.get("objects")});
@@ -1525,13 +1533,13 @@ define([
 				this.listenTo(this.model.get("properties"), 'add', callback);
 				this.listenTo(this.model.get("properties"), 'remove', callback);
 				this._prev_class = this.model.get_property_value_by_name('class');
-				
+
 				this.listenTo(Upfront.Events, 'layout:after_render', this.refresh_background);
 				this.listenTo(Upfront.Events, 'layout:after_render', this.update_size_hint);
 
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 				this.listenTo(Upfront.Events, "command:module_group:finish_edit", this.on_finish);
-				
+
 				this.on('entity:resize', this.on_resize, this);
 			},
 			onOpenPanelClick: function(event) {
@@ -1547,10 +1555,10 @@ define([
 					this.controlsVisible = false;
 				}
 			},
-			
+
 			createInlineControlPanel: function() {
 				var property_url = this.model.get_property_value_by_name('href');
-				
+
 				if(!property_url) {
 					property_url = "";
 				}
@@ -1569,8 +1577,8 @@ define([
 						id: 'link'
 					});
 
-				me = this;				
-				
+				me = this;
+
 				this.listenTo(linkPanelControl, 'change change:target', function(data) {
 					visitLinkControl.setLink(data.url);
 					this.model.set_property('href', data.url);
@@ -1608,8 +1616,8 @@ define([
 					template = _.template(_Upfront_Templates["module_group"], model);
 
 				Upfront.Events.trigger("entity:module_group:before_render", this, this.model);
-				
-				
+
+
 				// Id the element by anchor, if anchor is defined
 				var the_anchor = this.model.get_property_value_by_name("anchor");
 				if (the_anchor && the_anchor.length)
@@ -1636,9 +1644,9 @@ define([
 					this._modules_view = local_view;
 				else
 					this._modules_view.delegateEvents();
-				
+
 				this.createInlineControlPanel();
-				
+
 				this.create_size_hint(this.$el);
 			},
 			update: function () {
@@ -1654,9 +1662,9 @@ define([
 					this._theme_style = theme_style;
 				}
 				this.$el.css('min-height', (row*grid.baseline) + 'px').attr('data-row', row);
-				
+
 				this.$bg.toggleClass('upfront-module-group-bg-padding', use_padding ? true : false);
-				
+
 				this.update_position();
 				this.update_background();
 			},
@@ -1723,6 +1731,7 @@ define([
 				if( typeof e !== "undefined" ){
 					e.preventDefault();
 				}
+				console.log('U.E.t(e:s:a) 2');
 				var BgSettings = Upfront.Views.Editor.BgSettings.Settings.extend({
 					bg_title: l10n.group_settings,
 					enable_types: ['color', 'image'/*, 'slider', 'video', 'map'*/]
@@ -1751,8 +1760,8 @@ define([
 					line_col = 0,
 					current_wrapper_id;
 				ed.start(this, this.model);
-				if ( 
-					$wrap.find('>.upfront-module-view, >.upfront-module-group').length > 1 || 
+				if (
+					$wrap.find('>.upfront-module-view, >.upfront-module-group').length > 1 ||
 					( $next_wrap.length > 0 && !$next_wrap.hasClass('clr') ) ||
 					( $prev_wrap.length > 0 && !is_clr )
 				) {
@@ -2257,7 +2266,7 @@ define([
 
 				context_menu_view.for_view = this;
 				this.context_menu_view = context_menu_view;
-				
+
 				return this.context_menu_view.render();
 
 			},
@@ -3153,11 +3162,11 @@ define([
 			render_bg_setting: function () {
 				var container_view = this.parent_view.get_container_view(this.model),
 					opts = {
-						model: this.model, 
-						to: this.$el, 
-						width: 420, 
-						top: 52, 
-						right:43, 
+						model: this.model,
+						to: this.$el,
+						width: 420,
+						top: 52,
+						right:43,
 						keep_position: false
 					};
 				this.bg_setting = new Upfront.Views.Editor.ModalBgSetting(opts);
@@ -3415,6 +3424,7 @@ define([
 					e.preventDefault();
 					e.stopPropagation();
 				}
+				console.log('U.E.t(e:s:a) 3');
 
 				var me = this,
 					container_view = this.parent_view.get_container_view(this.model);
@@ -3438,13 +3448,13 @@ define([
 					if ( each_view && each_view.bg_setting )
 						each_view.bg_setting.close(false);
 				});
-				
+
 				var $settings_trigger = this.$el.find('> .upfront-entity_meta > a.upfront-entity-settings_trigger'),
 					setting_offset = $settings_trigger.offset(),
 					offset = this.$el.offset(),
 					width = this.$el.width();
 
-				
+
 
 				if(this.model.get('type') == 'lightbox') {
 					this.bg_setting.right =  80;
@@ -3711,7 +3721,7 @@ define([
 					bottom = this.model.get_property_value_by_name('bottom'),
 					is_bottom = ( typeof bottom == 'number' ),
 					css = {};
-					
+
 				if((scroll_bottom < container_view.$el.offset().top || scroll_top > container_view.$el.offset().top + container_view.$el.outerHeight()) !== true) {
 					if(right == 0) {
 						this.$el.find('.upfront-region-edit-trigger').css({
