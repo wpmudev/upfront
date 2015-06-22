@@ -69,16 +69,23 @@ define(function() {
 					change: function(value) {
 						me.model.set({'fontface': value});
 						
-						//Create new field to update the fontstyle values.
-						var styles = new Upfront.Views.Editor.Field.Select({
+						me.fields._wrapped[4] = new Upfront.Views.Editor.Field.Select({
+							model: this.model,
 							name: 'fontstyle',
+							values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants_for_select(me.model.get('fontface')),
 							label: l10n.weight_style,
 							label_style: 'inline',
 							className: 'font-style static weightStyle',
-							values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants_for_select(value)
-						});
-
-						me.$el.closest('.state_settings').find('.font-style').html(styles.get_label_html() + styles.get_field_html());
+							change: function(value) {
+								//Explode Font style and font weight and save them as separate values
+								var parsed_variant = Upfront.Views.Font_Model.parse_variant(value);
+								me.model.set({'fontstyle': value});
+								me.model.set({'fontstyle_weight': parsed_variant.weight});
+								me.model.set({'fontstyle_style': parsed_variant.style});
+							},
+						}),
+						me.$el.empty();
+						me.render();
 					}
 				}),
 				
@@ -381,14 +388,6 @@ define(function() {
 				}),
 
 			]);
-		},
-		update_styles_field: function() {
-			console.log(this.fields);
-			/*
-			this.fields.style.remove();
-			this.fields.style.render();
-			this.fields.style.delegateEvents();
-			*/
 		},
 	});
 

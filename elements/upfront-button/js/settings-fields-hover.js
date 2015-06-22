@@ -124,15 +124,24 @@ define(function() {
 					className: 'font-face hover typeFace typeface-hover',
 					change: function(value) {
 						me.model.set({'hov_fontface': value});
-						var styles = new Upfront.Views.Editor.Field.Select({
+
+						me.fields._wrapped[6] = new Upfront.Views.Editor.Field.Select({
+							model: this.model,
 							name: 'hov_fontstyle',
+							values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants_for_select(me.model.get('hov_fontface')),
 							label: l10n.weight_style,
 							label_style: 'inline',
-							className: 'hov-font-style static weightStyle weightstyle-hover',
-							values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants_for_select(value)
+							className: 'hov-font-style hover weightStyle weightstyle-hover',
+							change: function(value) {
+								//Explode Font style and font weight and save them as separate values
+								var parsed_variant = Upfront.Views.Font_Model.parse_variant(value);
+								me.model.set({'hov_fontstyle': value});
+								me.model.set({'hov_fontstyle_weight': parsed_variant.weight});
+								me.model.set({'hov_fontstyle_style': parsed_variant.style});
+							}
 						});
-
-						me.$el.closest('.state_settings').find('.hov-font-style').html(styles.get_label_html() + styles.get_field_html());
+						me.$el.empty();
+						me.render();
 					}
 				}),
 				
@@ -149,11 +158,6 @@ define(function() {
 						me.model.set({'hov_fontstyle': value});
 						me.model.set({'hov_fontstyle_weight': parsed_variant.weight});
 						me.model.set({'hov_fontstyle_style': parsed_variant.style});
-					},
-					show: function(value, $el) {
-						//Set selected value to hov_fontstyle
-						var select_value = me.model.get('hov_fontstyle') ? me.model.get('hov_fontstyle') : '';
-						$el.closest('.state_settings').find('.hov-font-style').find('.upfront-field-select-value').html('<span>' + select_value + '</span>');
 					}
 				}),
 				
@@ -228,7 +232,6 @@ define(function() {
 							var borderwidth = me.model.get('borderwidth');
 							var bordertype = me.model.get('bordertype');
 							var bordercolor = me.model.get('bordercolor');
-							console.log(me);
 							me.model.set('hov_borderwidth', borderwidth);
 							me.model.set('hov_bordertype', bordertype);
 							me.model.set('hov_bordercolor', bordercolor);
