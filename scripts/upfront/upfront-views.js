@@ -591,7 +591,6 @@ define([
 				if( typeof e !== "undefined" ){
 					e.preventDefault();
 				}
-				console.log('U.E.t(e:s:a)');
 				Upfront.Events.trigger("entity:settings:activate", this);
 			},
 			check_deactivated: function (){
@@ -789,7 +788,6 @@ define([
 							return l10n.undo;
 						},
 						action: function(for_view) {
-							//console.log(Upfront.Application.layout);
 							var undo = new Upfront.Views.Editor.Command_Undo({"model": Upfront.Application.layout});
 							undo.on_click();
 						}
@@ -996,7 +994,6 @@ define([
 					this.listenTo(this.parent_module_view, 'entity:drop', this.on_element_drop);
 				}
 
-				//console.log('---- Object render - ' + this.cid + ' - ' + props.view_class);
 				this.$el.html(template);
 
 				// render subview if it exists
@@ -1193,7 +1190,6 @@ define([
 				Backbone.View.prototype.remove.call(this);
 			},
 			on_settings_click: function(event) {
-				console.log('overridden for  elements, yay');
 				if( typeof event !== "undefined" ){
 					event.preventDefault();
 				}
@@ -1300,7 +1296,6 @@ define([
 				;
 				Upfront.Events.trigger("entity:module:before_render", this, this.model);
 
-				//console.log('-- Module render ' + this.cid);
 				this.$el.html(template);
 
 				if ( this.model.get("shadow") ){
@@ -1731,7 +1726,6 @@ define([
 				if( typeof e !== "undefined" ){
 					e.preventDefault();
 				}
-				console.log('U.E.t(e:s:a) 2');
 				var BgSettings = Upfront.Views.Editor.BgSettings.Settings.extend({
 					bg_title: l10n.group_settings,
 					enable_types: ['color', 'image'/*, 'slider', 'video', 'map'*/]
@@ -1995,7 +1989,6 @@ define([
 				var $el = this.$el,
 					me = this;
 				this.current_wrapper_id = this.current_wrapper_el = null;
-				//console.log('Modules render - ' + this.cid + ' - ' + this.region_view.model.get('name'));
 				Upfront.Events.trigger("entity:modules:before_render", this, this.model);
 				if ( typeof Upfront.data.module_views == 'undefined' )
 					Upfront.data.module_views = {};
@@ -3424,7 +3417,6 @@ define([
 					e.preventDefault();
 					e.stopPropagation();
 				}
-				console.log('U.E.t(e:s:a) 3');
 
 				var me = this,
 					container_view = this.parent_view.get_container_view(this.model);
