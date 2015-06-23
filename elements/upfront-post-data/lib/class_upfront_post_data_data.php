@@ -147,7 +147,8 @@ class Upfront_Post_Data_Data {
 			'post_parts' => __('Post Parts', 'upfront'),
 			'post_parts_picker' => __('Pick Post Parts to Display', 'upfront'),
 			'post_parts_sorter' => __('Drag to re-order Post Parts', 'upfront'),
-            'resize_featured' => __('Re-size featured image to fit container', 'upfront'),
+			'resize_featured' => __('Re-size featured image to fit container', 'upfront'),
+			'edit_post_parts' => __('Edit post parts', 'upfront'),
 
 			'css' => array(
 				'container_label' => __('Element container', 'upfront'),

@@ -10,7 +10,6 @@ var $template = $(tpl);
 
 var data = {};
 
-
 var PostDataPartModel = Upfront.Models.ObjectModel.extend({
 	init: function () {
 		var properties = Upfront.data.upfront_post_data_part
@@ -47,7 +46,6 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 	},
 	
 	render_view: function (markup) {
-		console.log(markup)
 		this.$el.find('.upfront-object-content').empty().append(markup);
 		this.prepare_editor();
 	},
@@ -69,7 +67,9 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 		}
 	},
 	
-	// Trigger edit if it's in the middle of editing (re-rendering whie editing)
+	/**
+	 * Trigger edit if it's in the middle of editing (re-rendering whie editing)
+	 */
 	trigger_edit: function () {
 		if ( !PostDataEditor.contentEditor || !PostDataEditor.contentEditor._editing ) return;
 		this.editor_view.editContent();
@@ -86,14 +86,12 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			'click .upfront-post-part-trigger': 'on_edit_click'
 		});
 		this.delegateEvents();
-		
-		this.postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
 
 		this.prepare_editor();
 	},
 	
 	get_extra_buttons: function(){
-		return '<a href="#" title="Edit post part" class="upfront-icon-button upfront-icon-button-nav upfront-post-part-trigger"></a>';
+		return '<a href="#" title="' + l10n.edit_post_parts + '" class="upfront-icon-button upfront-icon-button-nav upfront-post-part-trigger"></a>';
 	},
 	
 	on_edit_click: function (e) {
@@ -126,19 +124,19 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	},
 	
 	prepare_editor: function () {
-		var postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
+		this.postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
 		if ( !this.postId && "themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.THEME ) {
 			// We're dealing with a theme exporter request
 			// Okay, so let's fake a post
-			postId = "fake_post";
+			this.postId = "fake_post";
 		}
 		else if ( !this.postId && "themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.CONTENT_STYLE ){
-			postId = "fake_styled_post";
+			this.postId = "fake_styled_post";
 		}
-		if ( !PostDataEditor || PostDataEditor.postId != postId ){
+		if ( !PostDataEditor || PostDataEditor.postId != this.postId ){
 			PostDataEditor = new Upfront.Content.PostEditor({
-				editor_id: 'this_post_' + postId,
-				post_id: postId,
+				editor_id: 'this_post_' + this.postId,
+				post_id: this.postId,
 				content_mode: 'post_content'
 			});
 		}
@@ -177,31 +175,48 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		this.child_view._do_cache = true;
 	},
 	
+	/**
+	 * On title change handler, do nothing for now, just for handy reference in case we need it
+	 * @param {String} title
+	 */
 	on_title_change: function (title) {
-		// Do nothing for now
+		
 	},
 	
+	/**
+	 * On content change handler, do nothing for now, just for handy reference in case we need it
+	 * @param {String} content
+	 * @param {Bool} isExcerpt
+	 */
 	on_content_change: function (content, isExcerpt) {
-		// Do nothing for now
+		
 	},
 	
+	/**
+	 * On author change handler, rerender if this is author element
+	 * @param {Object} authorId
+	 */
 	on_author_change: function (authorId) {
 		if ( ! this.child_view ) return;
 		var type = this.model.get_property_value_by_name("data_type");
 		this.authorId = authorId;
 		// Render again if it's author element
-		if ( type == 'author' ) {
+		if ( 'author' == type ) {
 			this.child_view.render();
 		}
 	},
 	
+	/**
+	 * On date change handler, rerender if this is post data element
+	 * @param {Object} date
+	 */
 	on_date_change: function (date) {
 		if ( ! this.child_view ) return;
 		var type = this.model.get_property_value_by_name("data_type");
 		this.postDate = Upfront.Util.format_date(date, true, true).replace(/\//g, '-');
 		// Render again if it's post data element
-		if ( type == 'post_data' ) {
-			this.child_view.render(['date_posted']);
+		if ( 'post_data' == type ) {
+			this.child_view.render(['date_posted']); // Only render the date_posted part
 		}
 	},
 
@@ -224,6 +239,10 @@ var PostDataElement = Upfront.Views.Editor.Sidebar.Element.extend({
 		this.$el.html(this._default_data.name);
 	},
 	
+	/**
+	 * Create default part objects
+	 * @param {Array} types
+	 */
 	create_part_objects: function (types) {
 		var me = this,
 			objects = [],
@@ -239,6 +258,10 @@ var PostDataElement = Upfront.Views.Editor.Sidebar.Element.extend({
 		};
 	},
 	
+	/**
+	 * Create default part object
+	 * @param {String} type
+	 */
 	create_part_object: function (type) {
 		var wrapper_id = Upfront.Util.get_unique_id("wrapper"),
 			wrapper = new Upfront.Models.Wrapper({
@@ -353,6 +376,9 @@ var PostDataElement_Comments = PostDataElement.extend({
 	]
 });
 
+/**
+ * Add the elements to Upfront, only when in single layout. Place the element in DataElement.
+ */
 function add_elements () {
 	if ( 'type' in _upfront_post_data.layout && 'single' === _upfront_post_data.layout.type ) {
 		Upfront.Application.LayoutEditor.add_object("Upostdata-post_data", {

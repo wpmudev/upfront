@@ -24,7 +24,6 @@ var Views = {
 					post_id: this.element.postId
 				}
 			;
-			console.log('rendering view', this.element.postId);
 			if ( this.element.authorId ) {
 				data.author_id = this.element.authorId;
 			}
@@ -37,7 +36,6 @@ var Views = {
 					data: data
 				})
 				.success(function (response) {
-					console.log(response.data)
 					if (response.data && response.data.post_data) {
 						me.render_object_view(response.data.post_data, only_objects);
 						if ( me._do_cache ) {
@@ -67,7 +65,10 @@ var Views = {
 				.addClass('upfront_post-data-loading');
 		},
 		
-		// Just re-render with the same cached data
+		/**
+		 * Re-render with the same cached data
+		 * @param {Array} only_objects
+		 */
 		rerender: function (only_objects) {
 			if ( this._cached_data ) {
 				this.render_object_view(this._cached_data, only_objects);
@@ -77,6 +78,11 @@ var Views = {
 			}
 		},
 		
+		/**
+		 * Render the child object view
+		 * @param {Object} data
+		 * @param {Array} only_objects
+		 */
 		render_object_view: function (data, only_objects) {
 			if ( ! _.isArray(only_objects) ) only_objects = [];
 			this.model.get('objects').each(function(object){

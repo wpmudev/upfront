@@ -22,6 +22,7 @@ class Upfront_Post_Data_View {
 	
 	protected static function _get_post ($data) {
 		$post = Upfront_Post_Data_Model::get_post( !empty($data['post_id']) && is_numeric($data['post_id']) && $data['post_id'] > 0 ? $data['post_id'] : null );
+		$post = apply_filters('upfront-post_data-unknown_post', $post, $data);
 		// Let's override author id if requested, this is to support rendering different author while editing post
 		if ( !empty($data['author_id']) && is_numeric($data['author_id']) && $data['author_id'] > 0 && $data['author_id'] != $post->post_author ){
 			$author = get_userdata($data['author_id']);

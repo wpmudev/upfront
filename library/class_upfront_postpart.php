@@ -125,7 +125,6 @@ abstract class Upfront_PostPart_View {
 		else {
 			$thumbnail = upfront_get_edited_post_thumbnail($this->_post->ID);
 		}
-		if (empty($thumbnail)) return '';
 
 		$out = $this->_get_template('featured_image');
 

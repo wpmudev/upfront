@@ -64,6 +64,10 @@ abstract class Upfront_Post_Data_PartView extends Upfront_PostPart_View {
 		return Upfront_Post_Data_Data::get_template($slug, $this->_data);
 	}
 	
+	/**
+	 * Find post parts from each child object
+	 * @return array Array of post part type (string)
+	 */
 	protected function _get_parts_from_objects () {
 		if ( empty($this->_data['objects']) )
 			return array();
@@ -75,6 +79,11 @@ abstract class Upfront_Post_Data_PartView extends Upfront_PostPart_View {
 		return $parts;
 	}
 
+	/**
+	 * Get view class responsible for rendering
+	 * @param array $data Data array
+	 * @return string The class name
+	 */
 	public static function _get_view_class ($data) {
 		$data_type = !empty($data['data_type']) ? $data['data_type'] : self::DEFAULT_DATA_TYPE;
 		$class_name = get_class() . '_' . self::_normalize_type_to_class($data_type);

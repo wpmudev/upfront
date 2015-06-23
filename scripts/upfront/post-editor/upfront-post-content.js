@@ -713,7 +713,6 @@ PostContentEditor.prototype = {
 	 * Set the editor view to the part view
 	 */
 	setView: function (type, el, model, parentModel) {
-		console.log(type, el, model, parentModel)
 		if ( _.isUndefined(this.partView[type]) )
 			return false;
 		var view = new this.partView[type]({

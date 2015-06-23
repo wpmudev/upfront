@@ -138,7 +138,7 @@ var Box = Backbone.View.extend({
     },
 
     setPosition: function(){
-        var $container = $(".upfront-output-this_post").length ? $(".upfront-output-this_post") : this.$el.closest(".upfront-postcontent-editor"),
+        var $container = $(".upost-data-object-post_data, .upfront-output-this_post").length ? $(".upost-data-object-post_data, .upfront-output-this_post") : this.$el.closest(".upfront-postcontent-editor"),
             right_space = $("body").width() - ( $container.width() + ( _.isUndefined( $container.offset() ) ? 0 : $container.offset().left ) ),
             right = right_space > this.$el.width() ? right_space - this.$el.width() :  10
             ;
