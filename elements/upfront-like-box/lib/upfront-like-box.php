@@ -22,7 +22,7 @@ class Upfront_LikeBoxView extends Upfront_Object {
 		if($url) {
 			$parts = parse_url($url);
 			$fbname = end(explode('/', trim($parts['path'], '/')));
-			
+
 			$wide = intval($element_size['width'])-22;
 
 				if($wide%53 > 0)

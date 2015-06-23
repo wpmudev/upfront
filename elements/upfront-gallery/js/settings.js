@@ -1,9 +1,10 @@
 define([
-	'elements/upfront-gallery/js/settings/layout-panel'
-], function(LayoutPanel) {
+	'elements/upfront-gallery/js/settings/layout-panel',
+	'scripts/upfront/element-settings'
+], function(LayoutPanel, ElementSettings) {
 	var l10n = Upfront.Settings.l10n.gallery_element;
 
-	var UgallerySettings = Upfront.Views.Editor.Settings.Settings.extend({
+	var UgallerySettings = ElementSettings.extend({
 		initialize: function (opts) {
 			var me = this;
 

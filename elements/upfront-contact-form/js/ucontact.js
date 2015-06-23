@@ -1,7 +1,11 @@
 (function($) {
 
 // Require the Upfront data, so the template resolution can work minified too
-define(['upfront-data'], function (upfront_data) {
+define([
+	'upfront-data',
+	'scripts/upfront/element-settings',
+	'scripts/upfront/element-settings-panel'
+], function (upfront_data, ElementSettings, ElementSettingsPanel) {
 var template = upfront_data.data && upfront_data.data.ucontact && upfront_data.data.ucontact.template
 	? upfront_data.data.ucontact.template
 	: 'elements/upfront-contact-form/templates/ucontact.html'
@@ -47,10 +51,10 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 			'dblclick button.submit-field' : 'editButtontext',
 			'dblclick .upfront-field-container > label' : 'editLabeltext'
 		});
-		
+
 	},
 	on_render: function() {
-		
+
 		var me = this;
 		$button = this.$el.find('button.submit-field > span');
 
@@ -70,7 +74,7 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 
 			try { text = ed.getValue(true); } catch (e) { text = ''; }
 
-			if (text) me.model.set_property('form_button_text', text, true); 
+			if (text) me.model.set_property('form_button_text', text, true);
 		})
 		;
 
@@ -91,7 +95,7 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 			.on('start', function(e) {
 				$(e.target).closest('.upfront-field-container').children('input, textarea').attr('placeholder', '');
 				$(e.target).css('opacity', 1);
-				
+
 			})
 			.on('stop', function(e) {
 				$label = $(this);
@@ -105,18 +109,18 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 					text = $label.text();
 
 					$(e.target).closest('.upfront-field-container').children('input, textarea').attr('placeholder', text);
-				
+
 					$(e.target).css('opacity', 0 );
 				}
 				else {
 
 					try { text = ed.getValue(true); } catch (e) { text = ''; }
 				}
-				
-				
+
+
 				var targetproperty = false;
 
-				
+
 
 
 				if($label.attr('for') == 'sendername')
@@ -129,8 +133,8 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 					targetproperty = 'form_subject_label';
 				else if($label.attr('for') == 'realPerson')
 					targetproperty = 'form_captcha_label';
-				
-				if (text && targetproperty) me.model.set_property(targetproperty, text, true); 
+
+				if (text && targetproperty) me.model.set_property(targetproperty, text, true);
 			})
 			;
 
@@ -146,7 +150,7 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 	editButtontext: function(e) {
 		e.preventDefault();
 		e.stopPropagation();
-		
+
 		$button = this.$el.find('button.submit-field > span');
 		var ueditor = $button.data('ueditor');
 
@@ -157,7 +161,7 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 	editLabeltext: function(e) {
 		e.preventDefault();
 		e.stopPropagation();
-		
+
 		$label = $(e.target);
 		$label.css('opacity', 1);
 		var ueditor = $label.data('ueditor');
@@ -304,7 +308,7 @@ var OptionalField = Upfront.Views.Editor.Field.Checkboxes.extend({
  * Contact form settings hub, populated with the panels we'll be showing.
  * @type {Upfront.Views.Editor.Settings.Settings}
  */
-var UcontactSettings = Upfront.Views.Editor.Settings.Settings.extend({
+var UcontactSettings = ElementSettings.extend({
 	/**
 	 * Bootstrap the object - populate the internal
 	 * panels array with the panel instances we'll be showing (Form data and appearance).
@@ -312,7 +316,7 @@ var UcontactSettings = Upfront.Views.Editor.Settings.Settings.extend({
 	initialize: function(opts) {
 		this.has_tabs = false;
 		this.options = opts;
-		var Panel = Upfront.Views.Editor.Settings.Panel,
+		var Panel = ElementSettingsPanel,
 			SettingsItem =  Upfront.Views.Editor.Settings.Item,
 			Fields = Upfront.Views.Editor.Field
 		;
@@ -483,7 +487,7 @@ var UcontactSettings = Upfront.Views.Editor.Settings.Settings.extend({
 							property: 'form_message_label',
 							label: l10n.fields.msg
 						}),
-						
+
 						new Fields.Text({
 							model: this.model,
 							property: 'form_default_subject',

@@ -1,12 +1,13 @@
 (function ($) {
 define([
-	'elements/upfront-posts/js/post-list-settings-panels'
-], function(Panels) {
+	'elements/upfront-posts/js/post-list-settings-panels',
+	'scripts/upfront/element-settings'
+], function(Panels, ElementSettings) {
 
 var l10n = Upfront.Settings.l10n.posts_element;
 
 
-var PostsSettings = Upfront.Views.Editor.Settings.Settings.extend({
+var PostsSettings = ElementSettings.extend({
 
 	initialize: function (opts) {
 		this.options = opts;

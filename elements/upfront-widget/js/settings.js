@@ -1,7 +1,10 @@
 (function ($) {
-define(function () {
+define([
+	'scripts/upfront/element-settings',
+	'scripts/upfront/element-settings-panel'
+], function (ElementSettings, ElementSettingsPanel) {
 	var l10n = Upfront.Settings.l10n.widget_element;
-	
+
 	// Settings - load widget list first before adding object
 	var WidgetSpecific_Settings = Upfront.Views.Editor.Settings.Item.extend({
 		/**
@@ -24,7 +27,7 @@ define(function () {
 			var self = this,
 				data = {"action": "uwidget_get_widget_admin_form", "data": JSON.stringify({"widget": widget})}
 			;
-			
+
 			this.$el.empty().append('<p>' + l10n.loading + '</p>');
 
 			Upfront.Util.post(data)
@@ -123,7 +126,7 @@ define(function () {
 	});
 
 
-	var Settings = Upfront.Views.Editor.Settings.Settings.extend({
+	var Settings = ElementSettings.extend({
 
 		initialize: function (opts) {
 			this.has_tabs = false;
@@ -136,7 +139,7 @@ define(function () {
 			});
 			widget_values.unshift({label: l10n.select_one, value: ''});
 
-			var panel = new Upfront.Views.Editor.Settings.Panel({
+			var panel = new ElementSettingsPanel({
 				model: this.model,
 				label: l10n.widget,
 				title: l10n.settings,

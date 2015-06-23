@@ -79,12 +79,14 @@ upfront/bg-settings/bg-settings.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/preset-settings/select-preset-field.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/preset-settings/select-preset-item.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/preset-settings/new-preset-item.js
+/home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/element-settings-panel.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/preset-settings/select-preset-panel.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/preset-settings/util.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/preset-settings/show-state-settings-button.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/preset-settings/state-settings.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/preset-settings/edit-preset-item.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/preset-settings/edit-preset-panel.js
+/home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/element-settings.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/preset-settings/preset-manager.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/preset-settings/font-settings-item.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/preset-settings/colors-settings-item.js
@@ -128,9 +130,7 @@ text!elements/upfront-image/tpl/image_editor.html
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/elements/upfront-image/js/context-menu/list.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/elements/upfront-image/js/image-context-menu.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/elements/upfront-image/js/settings/color-picker-field.js
-/home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/element-settings-panel.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/elements/upfront-image/js/settings/description-panel.js
-/home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/element-settings.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/elements/upfront-image/js/image-settings.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/elements/upfront-image/js/image-selector.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/elements/upfront-image/js/image-editor.js

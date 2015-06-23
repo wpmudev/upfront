@@ -2,8 +2,8 @@
 define([
 	'scripts/upfront/preset-settings/select-preset-panel',
 	'scripts/upfront/preset-settings/util',
-	'scripts/upfront/preset-settings/edit-preset-item'
-], function(SelectPresetPanel, Util, EditPresetItem) {
+	'scripts/upfront/element-settings'
+], function(SelectPresetPanel, Util, ElementSettings) {
 	/**
 	 * Handles presets: load, edit, delete and update for elements.
 	 *
@@ -24,7 +24,7 @@ define([
 	 *
 	 * styleTpl - Upfront.Util.template parsed styles template
 	 */
-	var PresetManager = Upfront.Views.Editor.Settings.Settings.extend({
+	var PresetManager = ElementSettings.extend({
 		initialize: function (options) {
 			this.options = options;
 			this.has_tabs = false;
@@ -54,7 +54,7 @@ define([
 			this.panels = _([
 				this.selectPresetPanel
 			]);
-			
+
 			this.delegateEvents();
 
 			this.listenTo(this.selectPresetPanel, 'upfront:presets:new', this.createPreset);
@@ -111,7 +111,7 @@ define([
 
 		deletePreset: function(preset) {
 			var index;
-			
+
 			Upfront.Util.post({
 				data: preset.toJSON(),
 				action: 'upfront_delete_' + this.ajaxActionSlug + '_preset'

@@ -1,8 +1,10 @@
 (function ($) {
 define([
 	'text!elements/upfront-login/css/edit.css',
-	'text!elements/upfront-login/css/public.css'
-], function (editor_style, public_style) {
+	'text!elements/upfront-login/css/public.css',
+	'scripts/upfront/element-settings',
+	'scripts/upfront/element-settings-panel'
+], function (editor_style, public_style, ElementSettings, ElementSettingsPanel) {
 
 	$("head").append("<style>" + editor_style + "</style>");
 	$("head").append("<style>" + public_style + "</style>");
@@ -128,7 +130,7 @@ define([
 	});
 
 
-	var LoginSettings = Upfront.Views.Editor.Settings.Settings.extend({
+	var LoginSettings = ElementSettings.extend({
 		initialize: function (opts) {
 			this.has_tabs = false;
 			this.options = opts;
@@ -141,7 +143,7 @@ define([
 			return l10n.settings;
 		}
 	});
-		var LoginSettings_Panel = Upfront.Views.Editor.Settings.Panel.extend({
+		var LoginSettings_Panel = ElementSettingsPanel.extend({
 			initialize: function (opts) {
 				this.options = opts;
 				var appearance = new LoginSettings_Field_DisplayAppearance({model: this.model}),
@@ -203,7 +205,7 @@ define([
 				})
 			},
 			render: function () {
-				Upfront.Views.Editor.Settings.Panel.prototype.render.call(this);
+				ElementSettingsPanel.prototype.render.call(this);
 				this.$el.addClass("upfront_login-settings-panel");
 				this.settings.each(function (setting) {
 					if (setting.update) setting.update();

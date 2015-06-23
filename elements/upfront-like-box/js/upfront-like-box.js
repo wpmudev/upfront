@@ -1,5 +1,8 @@
 (function ($) {
-  define(function() {
+  define([
+		'scripts/upfront/element-settings',
+		'scripts/upfront/element-settings-panel'
+	], function(ElementSettings, ElementSettingsPanel) {
 
 	var l10n = Upfront.Settings.l10n.like_box_element;
 
@@ -227,7 +230,7 @@
 	 * Social Media settings hub, populated with the panels we'll be showing.
 	 * @type {Upfront.Views.Editor.Settings.Settings}
 	 */
-	var LikeBoxSettings = Upfront.Views.Editor.Settings.Settings.extend({
+	var LikeBoxSettings = ElementSettings.extend({
 		/**
 		 * Bootstrap the object - populate the internal
 		 * panels array with the panel instances we'll be showing.
@@ -249,7 +252,7 @@
 		initialize: function (opts) {
 			this.options = opts;
 			this.has_tabs = false;
-			this.panel = new Upfront.Views.Editor.Settings.Panel({
+			this.panel = new ElementSettingsPanel({
 
 					model: this.model,
 					label: l10n.opts.style_label,

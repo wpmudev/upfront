@@ -1,8 +1,10 @@
 (function ($) {
-	define([], function() {
+	define([
+		'scripts/upfront/element-settings-panel'
+	], function(ElementSettingsPanel) {
 		var l10n = Upfront.Settings.l10n.text_element;
-		
-		var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
+
+		var AppearancePanel = ElementSettingsPanel.extend({
 		  className: 'plaintxt-settings-panel',
 		  initialize: function (opts) {
 				this.options = opts;
@@ -121,7 +123,7 @@
 				if(typeof value != "undefined") {
 					if(typeof silent == "undefined")
 						silent = true;
-					
+
 					return this.model.set_property(name, value, silent);
 				}
 				return this.model.get_property_value_by_name(name);

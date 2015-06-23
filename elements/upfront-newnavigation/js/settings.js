@@ -1,7 +1,10 @@
-define([], function() {
+define([
+	'scripts/upfront/element-settings',
+	'scripts/upfront/element-settings-panel'
+], function(ElementSettings, ElementSettingsPanel) {
 	var l10n = Upfront.Settings.l10n.newnavigation_element;
 
-	var Menu_Panel = Upfront.Views.Editor.Settings.Panel.extend({
+	var Menu_Panel = ElementSettingsPanel.extend({
 		className: 'upfront-settings_panel_wrap menu-settings',
 		save_settings: function(){
 			Menu_Panel.__super__.save_settings.apply(this, arguments);
@@ -92,7 +95,7 @@ define([], function() {
 	});
 
 
-	var NavigationSettings = Upfront.Views.Editor.Settings.Settings.extend({
+	var NavigationSettings = ElementSettings.extend({
 		/**
 		 * Bootstrap the object - populate the internal
 		 * panels array with the panel instances we'll be showing.
@@ -345,7 +348,7 @@ define([], function() {
 			]);
 		},
 		onSaveSettings: function() {
-			
+
 			// Update slug because it's depending on id and has to be updated properly
 			var themenu = _.findWhere(this.for_view.existingMenus, {term_id: this.model.get_property_value_by_name('menu_id')});
 			if(themenu)

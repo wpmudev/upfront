@@ -2,8 +2,10 @@
 
 define([
 	'text!elements/upfront-slider/tpls/uslider.html',
-	'text!elements/upfront-slider/tpls/backend.html'
-], function(sliderTpl, editorTpl){
+	'text!elements/upfront-slider/tpls/backend.html',
+	'scripts/upfront/element-settings',
+	'scripts/upfront/element-settings-panel'
+], function(sliderTpl, editorTpl, ElementSettings, ElementSettingsPanel){
 
 var l10n = Upfront.Settings.l10n.slider_element;
 
@@ -293,7 +295,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 						// Trigger cleanup if possible
 						var ed = $(this).data('ueditor');
 						if (ed.redactor) ed.redactor.events.trigger('cleanUpListeners');
-						
+
 						me.render();
 					});
 				})
@@ -574,7 +576,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		}
 
 		panelItems.push(this.createControl('crop', l10n.edit_img, 'imageEditMask'));
-    	
+
     	panelItems.push(this.createLinkControl(slide));
 
 		if(_.indexOf(['notext', 'onlytext'], primaryStyle) == -1)
@@ -1191,7 +1193,7 @@ var USliderElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	}
 });
 
-var USliderSettings = Upfront.Views.Editor.Settings.Settings.extend({
+var USliderSettings = ElementSettings.extend({
 	/**
 	 * Bootstrap the object - populate the internal
 	 * panels array with the panel instances we'll be showing.
@@ -1213,7 +1215,7 @@ var USliderSettings = Upfront.Views.Editor.Settings.Settings.extend({
 	}
 });
 
-var LayoutPanel =  Upfront.Views.Editor.Settings.Panel.extend({
+var LayoutPanel =  ElementSettingsPanel.extend({
 	className: 'upfront-settings_panel_wrap uslider-settings',
 	initialize: function(opts) {
 		this.options = opts;
@@ -1411,7 +1413,7 @@ var LayoutPanel =  Upfront.Views.Editor.Settings.Panel.extend({
 });
 
 
-var SlidesPanel =  Upfront.Views.Editor.Settings.Panel.extend({
+var SlidesPanel =  ElementSettingsPanel.extend({
 	initialize: function(opts) {
 		this.options = opts;
 		var me = this,

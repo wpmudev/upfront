@@ -1,7 +1,8 @@
 define([
-	'scripts/upfront/preset-settings/edit-preset-item'
-], function(EditPresetItem) {
-	var EditPresetPanel = Upfront.Views.Editor.Settings.Panel.extend({
+	'scripts/upfront/preset-settings/edit-preset-item',
+	'scripts/upfront/element-settings-panel'
+], function(EditPresetItem, ElementSettingsPanel) {
+	var EditPresetPanel = ElementSettingsPanel.extend({
 		className: 'preset-manager-panel',
 
 		initialize: function (options) {

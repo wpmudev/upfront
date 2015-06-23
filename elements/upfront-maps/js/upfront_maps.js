@@ -2,7 +2,12 @@
 
 // I have removed logic that checks if google maps are loaded. In current
 // app setup maps will always we loaded before this script.
-define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], function (_ctx, maps_style) {
+define([
+	'maps_context_menu',
+	'text!elements/upfront-maps/css/edit.css',
+	'scripts/upfront/element-settings',
+	'scripts/upfront/element-settings-panel'
+], function (_ctx, maps_style, ElementSettings, ElementSettingsPanel) {
 
 	var DEFAULTS = {
 		OPTIMUM_MAP_HEIGHT: 300,
@@ -596,7 +601,7 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 		}
 	});
 
-	var MapSettings = Upfront.Views.Editor.Settings.Settings.extend({
+	var MapSettings = ElementSettings.extend({
 		initialize: function (opts) {
       this.has_tabs = false;
 			this.options = opts;
@@ -608,7 +613,7 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 			return l10n.settings;
 		}
 	});
-		var MapSettings_Panel = Upfront.Views.Editor.Settings.Panel.extend({
+		var MapSettings_Panel = ElementSettingsPanel.extend({
 			initialize: function (opts) {
 			this.options = opts;
 				this.settings = _([
