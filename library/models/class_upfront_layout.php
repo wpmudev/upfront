@@ -433,6 +433,42 @@ class Upfront_Layout extends Upfront_JsonModel {
 /* --- Remove up to here --- */
 
 	/**
+	 * Returns a list of default, generic layouts - the predefined ones.
+	 *
+	 * @return array List of predefined layouts.
+	 */
+	public static function get_default_layouts () {
+		$layouts = array(
+			'archive-home' => array(
+				'layout' => array(
+					'item' => 'archive-home',
+					'type' => 'archive'
+				)
+			),
+			'archive' => array(
+				'layout' => array(
+					'type' => 'archive'
+				)
+			),
+			'archive-search' => array(
+				'layout' => array(
+					'item' => 'archive-search',
+					'type' => 'archive'
+				)
+			),
+			'404' => array(
+				'layout' => array(
+					'specificity' => 'single-404_page',
+					'item' => 'single-page',
+					'type' => 'single',
+				)
+			),
+		);
+		
+		return apply_filters('upfront-core-default_layouts', $layouts);
+	}
+
+	/**
 	 * Returns a list of database-stored layouts
 	 * for a particular storage key.
 	 *
