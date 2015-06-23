@@ -315,6 +315,10 @@ define("content", deps, function(postTpl, ContentTools) {
 
 				if(me.postView.property('type') == 'UpostsModel')
 					me.postView.refreshMarkup();
+
+                // navigate to home
+                Upfront.Application.sidebar.toggleSidebar();
+                Upfront.Application.navigate( "/" , true);
 			});
 		},
 

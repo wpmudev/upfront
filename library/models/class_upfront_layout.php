@@ -258,6 +258,8 @@ class Upfront_Layout extends Upfront_JsonModel {
 		return self::from_php(apply_filters('upfront_create_default_layout', $data, $layout_ids, self::$cascade));
 	}
 
+/* --- Snip, snip. These 3 are to be removed --- */
+
 	public static function list_theme_layouts() {
 		$theme_slug = $_POST['stylesheet'];
 		$theme_directory = trailingslashit(get_theme_root($theme_slug)) . $theme_slug;
@@ -426,6 +428,31 @@ class Upfront_Layout extends Upfront_JsonModel {
 			}
 		}
 		return $return;
+	}
+
+/* --- Remove up to here --- */
+
+	/**
+	 * Returns a list of database-stored layouts
+	 * for a particular storage key.
+	 *
+	 * @param string $storage_key Optional storage key
+	 *
+	 * @return array List of db-stored hash, in full_key => simple_key pairs format
+	 */
+	public static function get_db_layouts ($storage_key = '') {
+		global $wpdb;
+		self::set_storage_key($storage_key);
+		$storage_key = self::get_storage_key();
+
+		$results = array();
+		$list = $wpdb->get_row("SELECT option_name FROM $wpdb->options WHERE ( `option_name` LIKE '{$storage_key}-single%' OR `option_name` LIKE '{$storage_key}-archive%' )");
+		if (empty($list)) return $results;
+
+		foreach ($list as $item) {
+			$results[$item] = preg_replace('/^' . preg_quote($storage_key, '/') . '-?/', '', $item);
+		}
+		return $results;
 	}
 
 	public static function list_scoped_regions ($scope, $storage_key = '') {

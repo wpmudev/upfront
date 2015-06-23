@@ -200,6 +200,8 @@ class Upfront_UimageView extends Upfront_Object {
 				'none' => __('None', 'upfront'),
 				'pick' => __('Pick color', 'upfront'),
 				'ok' => __('Ok', 'upfront'),
+				'padding' => __('Padding Settings:', 'upfront'),
+				'no_padding' => __('Do not use theme padding', 'upfront'),
 			),
 			'btn' => array(
 				'fit_label' => __('Fit to Element', 'upfront'),
