@@ -264,6 +264,9 @@
 .upfront-module-editing .upfront-entity_meta {
 	display: none;
 }
+.upfront-object-group-editing .upfront-object-group .upfront-entity_meta {
+  display: block;
+}
 .upfront-dragging .upfront-module,
 .upfront-dragging .upfront-object-group-on-edit .upfront-object {
 	outline: 1px dotted #7f7f7f;
@@ -282,6 +285,7 @@
 	position: relative;
 }
 
+.upfront-object-hidden-toggle,
 .upfront-module-hidden-toggle,
 .upfront-region-hidden-toggle {
 	text-align: center;
@@ -309,6 +313,7 @@
 	display: block;
 	margin-top: 0;
 }
+.upfront-object-hidden-toggle .upfront-entity-hide_trigger,
 .upfront-module-hidden-toggle .upfront-entity-hide_trigger,
 .upfront-region-hidden-toggle .upfront-entity-hide_trigger {
 	display: inline-block;
@@ -464,6 +469,9 @@
 .upfront-object-group > .upfront-entity_meta {
 	top: 28px;
 	right: 5px;
+}
+.upfront-object-group-editing .upfront-object-group .upfront-object > .upfront-entity_meta {
+  top: 5px;
 }
 .offset-ui-from-right-top .upfront-module > .upfront-entity_meta,
 .offset-ui-from-right-top .upfront-module-group > .upfront-entity_meta,

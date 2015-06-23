@@ -4069,6 +4069,7 @@ var GridEditor = {
 			lines = [],
 			modules_data = [],
 			set_wrappers_col = {}, // keep track of set wrappers col
+			wrapper_index = 0,
 			silent = ( silent === true ) ? true : false;
 		modules.each(function(module){
 			var data = module.get_property_value_by_name('breakpoint'),
@@ -4107,12 +4108,13 @@ var GridEditor = {
 			_.each(line_modules, function(data, index){
 				var new_left = 0,
 					new_col = 0,
-					wrapper_col = 0,
-					wrapper_index = 0;
-				if ( ! _.isObject(data.breakpoint[breakpoint_id]) )
+					wrapper_col = 0;
+				if ( ! _.isObject(data.breakpoint[breakpoint_id]) ) {
 					data.breakpoint[breakpoint_id] = { edited: false };
-				if ( !_.isObject(data.wrapper_breakpoint[breakpoint_id]) )
+				}
+				if ( !_.isObject(data.wrapper_breakpoint[breakpoint_id]) ) {
 					data.wrapper_breakpoint[breakpoint_id] = { edited: false };
+				}
 				if ( !data.breakpoint[breakpoint_id].edited ){
 					if ( index === 0 ){ // first of line, try to center
 						new_left = Math.floor((parent_col-(line_col-data.left))/2);

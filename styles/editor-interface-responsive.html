@@ -11,7 +11,8 @@
 		top: 0px;
 		right: 0px;
 	}
-	(this) .upfront-object > .upfront-entity_meta {
+	(this) .upfront-object > .upfront-entity_meta,
+	(this) .upfront-object-group > .upfront-entity_meta {
 		top: 23px;
 		right: 0px;
 	}
@@ -27,7 +28,8 @@
 </script>
 
 <script type="text/responsive_css" data-bind=".upfront-module" data-min-height="60px" data-max-height="125px">
-	(this) .upfront-object > .upfront-entity_meta_extra {
+	(this) .upfront-object > .upfront-entity_meta_extra,
+	(this) .upfront-object-group > .upfront-entity_meta_extra {
 		display: none;
 		top: 100%;
 		left: 0;
@@ -44,13 +46,16 @@
 		-o-transition: height 0.3s;
 		transition: height 0.3s;
 	}
-	(this):hover .upfront-object > .upfront-entity_meta_extra {
+	(this):hover .upfront-object > .upfront-entity_meta_extra,
+	(this):hover .upfront-object-group > .upfront-entity_meta_extra {
 		display: block;
 	}
-	(this) .upfront-object > .upfront-entity_meta_extra:hover {
+	(this) .upfront-object > .upfront-entity_meta_extra:hover,
+	(this) .upfront-object-group > .upfront-entity_meta_extra:hover {
 		height: 38px;
 	}
-	(this) .upfront-object > .upfront-entity_meta_extra:before {
+	(this) .upfront-object > .upfront-entity_meta_extra:before,
+	(this) .upfront-object-group > .upfront-entity_meta_extra:before {
 		content: " ";
 		position: absolute;
 		top: -12px;
@@ -61,7 +66,8 @@
 		height: 12px;
 		background: #395269;
 	}
-	(this) .upfront-object > .upfront-entity_meta_extra:after {
+	(this) .upfront-object > .upfront-entity_meta_extra:after,
+	(this) .upfront-object-group > .upfront-entity_meta_extra:after {
 		content: " ";
 		position: absolute;
 		top: -8px;
@@ -74,15 +80,18 @@
 		border-left: 4px solid transparent;
 		border-right: 4px solid transparent;
 	}
-	(this) .upfront-object > .upfront-entity_meta_extra:hover:after {
+	(this) .upfront-object > .upfront-entity_meta_extra:hover:after,
+	(this) .upfront-object-group > .upfront-entity_meta_extra:hover:after {
 		border-top: 4px solid #fff;
 		border-bottom: none;
 	}
-	(this) .upfront-object > .upfront-entity_meta_extra .upfront-icon-button {
+	(this) .upfront-object > .upfront-entity_meta_extra .upfront-icon-button,
+	(this) .upfront-object-group > .upfront-entity_meta_extra .upfront-icon-button {
 		display: none;
 		margin: 9px 5px 0;
 	}
-	(this) .upfront-object > .upfront-entity_meta_extra:hover .upfront-icon-button {
+	(this) .upfront-object > .upfront-entity_meta_extra:hover .upfront-icon-button,
+	(this) .upfront-object-group > .upfront-entity_meta_extra:hover .upfront-icon-button {
 		display: inline-block;
 	}
 </script>
