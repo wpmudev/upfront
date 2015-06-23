@@ -1957,9 +1957,9 @@ define([
 				if ('blockquote' === element) {
 					selector = '.upfront-object-content blockquote, .upfront-object-content blockquote p';
 				} else if ('a' === element) {
-					selector = '.upfront-object-content a, .upfront-object-content a:link, .upfront-object-content a:visited';
+					selector = '.upfront-object-content:not(.upfront-output-ubutton) a, .upfront-object-content:not(.upfront-output-ubutton) a:link, .upfront-object-content:not(.upfront-output-ubutton) a:visited';
 				} else {
-					selector = '.upfront-object-content ' + element;
+					selector = '.upfront-object-content:not(.upfront-output-ubutton) ' + element;
 				}
 				css.push(selector + '{ ' + rules.join("; ") + '; }');
 
@@ -2034,7 +2034,7 @@ define([
 				$style = $("style#typography-colors");
 			}
 			_.each(this.elements, function (element) {
-				if (me.colors[element]) css.push('.upfront-object-content ' + element + '{ color:' + Upfront.Util.colors.to_color_value(me.colors[element]) + '; }');
+				if (me.colors[element]) css.push('.upfront-object-content:not(.upfront-output-ubutton) ' + element + '{ color:' + Upfront.Util.colors.to_color_value(me.colors[element]) + '; }');
 			});
 			$style.empty().append(css.join("\n"));
 		}
