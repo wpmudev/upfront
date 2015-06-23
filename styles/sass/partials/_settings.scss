@@ -266,22 +266,3 @@
   white-space: nowrap;
   height: 10px;
 }
-
-
-#element-settings-sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 100000000000000000;
-  bottom: 0;
-  background-color: #334454;
-  width: 260px;
-}
-#element-settings-sidebar #settings {
-	position: relative;
-	left: auto;
-	top: auto;
-}
-#element-settings-sidebar #settings .upfront-settings_panel_scroll {
-	min-width: 255px;
-}

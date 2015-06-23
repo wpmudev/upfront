@@ -6,9 +6,28 @@ define([], function () {
 	;
 
 	var ElementSettings = Backbone.View.extend({
+		id: 'settings',
+		events: {
+			'click .upfront-save_settings' : 'saveSettings'
+		},
+
 		initialize: function(opts) {
 			this.options = opts;
 			this.panels = _([]);
+		},
+
+		saveSettings: function() {
+			this.panels.each(function(panel){
+				panel.save_settings();
+			});
+
+			this.model.get("properties").trigger('change');
+			Upfront.Events.trigger("element:settings:saved");
+			Upfront.Events.trigger("element:settings:deactivate");
+			if ( _upfront_post_data.layout.specificity && _upfront_post_data.layout.item && !_upfront_post_data.layout.item.match(/-page/) )
+				Upfront.Events.trigger("command:layout:save_as");
+			else
+				Upfront.Events.trigger("command:layout:save");
 		},
 
 		get_title: function () {
@@ -19,8 +38,6 @@ define([], function () {
 			var me = this;
 
 			me.$el
-				.empty()
-				.show()
 				.html(
 					'<div class="upfront-settings_title">' + this.get_title() + '</div>'
 				)
@@ -56,9 +73,11 @@ define([], function () {
 				panel_width = this.panels.first().$el.find('.upfront-settings_panel').outerWidth();
 
 			this.$el.addClass('upfront-ui');
-			this.$el.addClass('settings-no-tabs');
-
-			this.trigger('open');
+			this.$el.append(
+				"<div class='upfront-settings-button_panel'>" +
+					"<button type='button' class='upfront-save_settings'><i class='icon-ok'></i> " + l10n.save + "</button>" +
+				'</div>'
+			);
 		},
 
 		set_title: function (title) {
@@ -72,18 +91,6 @@ define([], function () {
 			panel.show();
 			panel.reveal();
 			this.set_title(panel.get_title());
-			var min_height = 0;
-			this.panels.each(function(p){
-				min_height += p.$el.find(".upfront-settings_label").outerHeight();
-			});
-			var panel_height = panel.$el.find(".upfront-settings_panel").outerHeight() - 1;
-			if ( panel_height >= min_height ) {
-				this.$el.css('height', panel_height);
-			}
-			else {
-				panel.$el.find(".upfront-settings_panel").css('height', min_height);
-				this.$el.css('height', min_height);
-			}
 		},
 
 		refresh_panel: function (panel) {
@@ -95,12 +102,13 @@ define([], function () {
 			this.panels.invoke("show");
 			this.set_title(this.get_title());
 		},
-		remove: function(){
-			if(this.panels)
+		cleanUp: function(){
+			if (this.panels) {
 				this.panels.each(function(panel){
-					panel.remove();
+					panel.cleanUp();
 				});
-			Backbone.View.prototype.remove.call(this);
+			}
+			this.remove();
 		}
 	});
 

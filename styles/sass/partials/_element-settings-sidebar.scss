@@ -1,0 +1,34 @@
+#element-settings-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100000000000000000;
+  bottom: 0;
+  background-color: #334454;
+  width: 260px;
+}
+#element-settings-sidebar #settings {
+	position: relative;
+	left: auto;
+	top: auto;
+	width: auto;
+	border-left: 0 none;
+	background: none;
+	box-shadow: 0 0;
+}
+#element-settings-sidebar #settings .upfront-settings_panel_scroll {
+	min-width: 255px;
+}
+#element-settings-sidebar #settings .upfront-settings_panel {
+	position: relative;
+	left: 0;
+}
+#element-settings-sidebar .upfront-settings-button_panel {
+	position: relative;
+	bottom: auto;
+	right: auto;
+	margin-top: 15px;
+	text-align: right;
+	padding-right: 15px;
+	z-index: 0;
+}

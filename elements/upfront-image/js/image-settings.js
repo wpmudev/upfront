@@ -5,6 +5,7 @@ define([
 	var l10n = Upfront.Settings.l10n.image_element;
 	var ImageSettings = ElementSettings.extend({
 		initialize: function (opts) {
+			console.log('initializing image settings');
 			this.options = opts;
 			var me = this;
 			this.panels = _([

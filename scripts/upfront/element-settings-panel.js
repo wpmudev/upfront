@@ -12,7 +12,6 @@ define([], function () {
 		hide_common_fields: false,
 
 		events: {
-			"click .upfront-save_settings": "on_save",
 			"click .upfront-cancel_settings": "on_cancel",
 			"click .upfront-settings_label": "on_toggle",
 			"click .upfront-settings-common_panel .upfront-settings-item-title": "on_toggle_common"
@@ -177,20 +176,6 @@ define([], function () {
 				callback();
 		},
 		//end
-		on_save: function () {
-			var any_panel_changed = false;
-			this.parent_view.panels.each(function(panel){
-				panel.save_settings();
-				if ( panel.is_changed ){
-					any_panel_changed = true;
-					panel.is_changed = false;
-				}
-			});
-			if ( any_panel_changed )
-				this.parent_view.model.get("properties").trigger('change');
-			this.trigger("upfront:settings:panel:saved", this);
-			Upfront.Events.trigger("entity:settings:deactivate");
-		},
 		save_settings: function () {
 			if (!this.settings) return false;
 
@@ -208,19 +193,18 @@ define([], function () {
 						);
 				}
 			});
-			Upfront.Events.trigger("entity:settings:saved");
 		},
 
 		on_cancel: function () {
 			this.trigger("upfront:settings:panel:close", this);
 		},
-		remove: function(){
+		cleanUp: function(){
 			if(this.settings)
 				this.settings.each(function(setting){
 					setting.remove();
 				});
 			this.$el.off();
-			Backbone.View.prototype.remove.call(this);
+			this.remove();
 		}
 
 	}));
