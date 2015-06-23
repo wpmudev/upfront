@@ -9,6 +9,7 @@ class Upfront_Permissions {
 	const RESIZE = 'resize_media';
 	const SAVE = 'save_changes';
 	const SAVE_REVISION = 'save_changes';
+	const OPTIONS = 'change_options';
 
 	const DEFAULT_LEVEL = 'save_changes';
 
@@ -69,6 +70,7 @@ class Upfront_Permissions {
 			self::EMBED => 'edit_posts',
 			self::UPLOAD => 'upload_files',
 			self::SAVE => 'edit_theme_options',
+			self::OPTIONS => 'manage_options',
 
 			self::LAYOUT_MODE => 'edit_theme_options',
 			self::CONTENT_MODE => 'edit_posts',

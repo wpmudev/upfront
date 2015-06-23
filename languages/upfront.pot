@@ -3293,6 +3293,10 @@ msgstr ""
 msgid "The layer that contains thumbnail image and title."
 msgstr ""
 
+#: elements/upfront-youtube/lib/uyoutube.php:120
+msgid "Please enter valid YouTube video URL"
+msgstr ""
+
 #. Theme Name of the plugin/theme
 msgid "Upfront"
 msgstr ""

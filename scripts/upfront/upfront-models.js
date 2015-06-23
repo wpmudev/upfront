@@ -233,7 +233,7 @@ var _alpha = "alpha",
 
 		// Basic interface dataset
 	Objects = Backbone.Collection.extend({
-		"model": ObjectModel,
+		/*"model": ObjectModel,
 		initialize: function (raw_models) {
 			var models = [];
 			if (!raw_models || !raw_models.length) return false;
@@ -246,6 +246,12 @@ var _alpha = "alpha",
 				if (Upfront.Models[type] && instance) models.push(instance);
 			});
 			this.reset(models);
+		},*/
+		model: function (attrs, options) {
+			var type_prop = attrs["properties"] ? _(attrs["properties"]).where({"name": "type"}) : attrs.get("properties").where({"name": "type"}),
+				type = type_prop.length ? type_prop[0].value : '';
+			if (Upfront.Models[type]) return new Upfront.Models[type](attrs, options);
+			return new ObjectModel(attrs, options);
 		},
 		get_by_element_id: function (element_id) {
 			var found = false;

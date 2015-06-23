@@ -47,12 +47,33 @@ define([
 							]
 						})
 					]
+				}),
+
+				new SettingsItem({
+					title: l10n.settings.padding,
+					fields: [
+						new Fields.Checkboxes({
+							model: this.model,
+							property: 'no_padding',
+							layout: 'horizontal-inline',
+							multiple: false,
+							values: [
+								{
+									label: l10n.settings.no_padding,
+									value: 1
+								}
+							]
+						})
+					]
 				})
 			]);
 
 			if(this.model.get_property_value_by_name('include_image_caption')) {
 				this.addCaptionBackgroundPicker();
 			}
+			
+			this._init_no_padding = ( this.model.get_property_value_by_name('no_padding') == 1 );
+			this.on('upfront:settings:panel:saved', this.onThisPanelSaved)
 		},
 
 		addCaptionBackgroundPicker: function(){
@@ -139,6 +160,22 @@ define([
 				if(this.parent_view) {
 					this.parent_view.for_view.$el.find('.wp-caption').css('background-color', 'transparent');
 				}
+			}
+		},
+		onThisPanelSaved: function(){
+			var no_padding = ( this.model.get_property_value_by_name('no_padding') == 1 ),
+				view = Upfront.data.object_views[this.model.cid],
+				size = view.get_element_size_px(false);
+			if ( this._init_no_padding != no_padding ) {
+				if ( no_padding ) {
+					this.model.add_class('uimage-no-padding');
+				}
+				else {
+					this.model.remove_class('uimage-no-padding');
+				}
+				// Save resizing and prompt re-crop
+				view.applyElementSize();
+				view.editRequest();
 			}
 		},
 		get_label: function () {

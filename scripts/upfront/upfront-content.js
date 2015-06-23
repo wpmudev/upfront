@@ -165,6 +165,10 @@ define("content", deps, function(postTpl, ContentTools) {
 				Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.content.deleted.replace(/%s/, postType));
 				me.stopEditContents();
 				me.trigger('post:trash');
+				
+				// navigate to home
+				Upfront.Application.sidebar.toggleSidebar();
+				Upfront.Application.navigate( "/" , true);
 			});
 		},
 
@@ -532,7 +536,28 @@ define("content", deps, function(postTpl, ContentTools) {
 		},
 		
 		trash: function(){
-			
+			var me = this,
+				postType = this.post.get('post_type'),
+				loading = new Upfront.Views.Editor.Loading({
+					loading: Upfront.Settings.l10n.global.content.deleting.replace(/%s/, postType),
+					done: Upfront.Settings.l10n.global.content.here_we_are,
+					fixed: false
+				})
+			;
+			loading.render();
+			this.$el.append(loading.$el);
+			this.post.set('post_status', 'trash').save().done(function(){
+				loading.$el.remove();
+				Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.content.deleted.replace(/%s/, postType));
+				me.stopEditContents();
+
+				if(me.postView.property('type') == 'UpostsModel')
+					me.postView.refreshMarkup();
+
+				// navigate to home
+				Upfront.Application.sidebar.toggleSidebar();
+				Upfront.Application.navigate( "/" , true);
+			});
 		},
 		
 		save: function(results, status, loadingMsg, successMsg){

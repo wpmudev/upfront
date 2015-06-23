@@ -122,6 +122,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 				else {
 					$replacements['%image%'] = upfront_get_edited_post_thumbnail();
 				}
+				if (empty($replacements['%image%'])) $classes[] = 'no-featured_image';
 				$replacements['%permalink%'] = get_permalink();
 				break;
 
@@ -361,8 +362,12 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 			    $part_style_class = self::_part_style_class( $options,  $o["slug"] );
 			  	$layout['extraClasses'][$o['slug']] .= $part_style_class;
-				if ( !empty($markups['classes']) )
-					$layout['extraClasses'][$o['slug']] .= ' ' . join(' ', $markups['classes']);
+
+				if (empty($markups['classes'])) $markups['classes'] = array();
+				$layout['extraClasses'][$o['slug']] .= ' ' . join(' ', $markups['classes']);
+				
+				if (empty($layout['wrappers'][$i]['classes'])) $layout['wrappers'][$i]['classes'] = '';
+				$layout['wrappers'][$i]['classes'] .= ' ' . join(' ', $markups['classes']);
 				
 				$attributes = '';
 				if(isset($opts['attributes'])){
@@ -388,10 +393,18 @@ class Upfront_ThisPostView extends Upfront_Object {
 			$found = get_option($cascade[$i]);
 			$i++;
 		}
-		if(!$found)
-			$found = self::get_theme_layout($type, $post_type, $id);
-		if(!$found)
-			$found = self::default_postlayout($type);
+		if(!$found) $found = self::get_theme_layout($type, $post_type, $id);
+		if(!$found) $found = self::default_postlayout($type);
+
+		if ($found && !empty($found['postLayout'])) {
+			foreach ($found['postLayout'] as $idx => $wrapper) {
+				$obj = !empty($wrapper['objects']) ? end($wrapper['objects']) : false;
+				if ($obj && !empty($obj['slug'])) {
+					if (empty($wrapper['classes'])) $wrapper['classes'] = '';
+					$found['postLayout'][$idx]['classes'] = $wrapper['classes'] . ' part-' . $obj['slug'];
+				}
+			}
+		}
 
 		return $found;
 	}

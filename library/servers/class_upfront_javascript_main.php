@@ -305,6 +305,13 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		$read_only = json_encode(defined('UPFRONT_READ_ONLY') && UPFRONT_READ_ONLY);
 		$allow_revisions = json_encode(Upfront_Permissions::current(Upfront_Permissions::SAVE_REVISION));
 
+		$permissions = json_encode(array(
+			'REVISIONS' => (bool)Upfront_Permissions::current(Upfront_Permissions::SAVE_REVISION),
+			'OPTIONS' => (bool)Upfront_Permissions::current(Upfront_Permissions::OPTIONS),
+			'EMBED' => (bool)Upfront_Permissions::current(Upfront_Permissions::EMBED),
+			'UPLOAD' => (bool)Upfront_Permissions::current(Upfront_Permissions::UPLOAD),
+		));
+
 		$l10n = json_encode($this->_get_l10n_strings());
 
 		$content_settings = array();
@@ -356,6 +363,9 @@ Upfront.mainData = {
 	applicationModes: {$application_modes},
 	ALLOW_REVISIONS: {$allow_revisions},
 	readOnly: {$read_only},
+
+	PERMS: {$permissions},
+
 	specificity: {$specificity},
 	gridInfo: {$grid_info},
 	themeInfo: {$theme_info},

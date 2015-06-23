@@ -450,3 +450,12 @@ div.upfront-navigation li.menu-item .uimage-controls a {
 .upfront-navigation .upfront-field-select {
 	max-width:170px;
 }
+
+.newnavigation_squished .upfront-editable_entity.upfront-navigation:hover .responsive_nav_toggler {
+	top:15px;
+	right: inherit;
+}
+
+.upfront-editable_entity.upfront-navigation:hover .responsive_nav_toggler {
+	right:15px;
+}

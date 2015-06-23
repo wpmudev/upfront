@@ -782,7 +782,9 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		if(empty($data['ID']))
 			$data['ID'] = get_current_user_id();
 
-		$user = $this->remove_private_user_fields(new WP_User(wp_get_current_user()));
+		$current_user = wp_get_current_user();
+		$current_user = $current_user instanceof WP_User ? $current_user : new WP_User($current_user);
+		$user = $this->remove_private_user_fields($current_user);
 
 		$this->_out(new Upfront_JsonResponse_Success($user));
 	}
