@@ -20,6 +20,10 @@
     border: 0 none;
 }
 
+.upfront-output-uyoutube {
+	min-height: inherit;
+}
+
 .uyoutube-gallery-item {
     overflow:hidden;
     margin: 0 7px 10px;
