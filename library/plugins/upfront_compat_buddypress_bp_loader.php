@@ -27,6 +27,9 @@ class Upfront_Compat_Buddypress_Bp_loader extends Upfront_Server {
 		// Show proper page titles where we're committed to BP.
 		add_filter('upfront_post_part_replacements', array($this, 'restore_post_data_bp_killed'), 10, 2);
 
+		// Exporter - let's add BuddyPress-specific layouts.
+		add_filter('upfront-core-default_layouts', array($this, 'augment_default_layouts'));
+
 		// NASTINESS!!! This is only so we can get this post to cooperate
 		add_filter('upfront-data-post_id', array($this, 'augment_singular_entity_id'));
 		add_action('wp_ajax_upfront-wp-model', array($this, 'prepare_for_editor_output'), 9);
@@ -151,6 +154,34 @@ class Upfront_Compat_Buddypress_Bp_loader extends Upfront_Server {
 			? $layout['item']
 			: (!empty($layout['type']) ? $layout['type'] : '')
 		;
+	}
+
+	/**
+	 * Augments the available layouts list by adding some BuddyPress-specific,
+	 * user-level pages.
+	 *
+	 * @param array $layouts Predefined Upfront layouts
+	 *
+	 * @return array Augmented layouts list
+	 */
+	public function augment_default_layouts ($layouts) {
+		$known_components = bp_core_admin_get_components();
+		if (empty($known_components)) return $layouts;
+
+		foreach ($known_components as $component => $info) {
+			if (in_array($component, array('core', 'blogs'))) continue;
+			$spec = 'single-' . $component . '-user';
+			$layout = array(
+				'label' => sprintf(__("BuddyPress %s user page", 'upfront'), $info['title']),
+				'layout' => array(
+					'type' => 'single',
+					'specificity' => $spec,
+				),
+			);
+			$layouts[$spec] = $layout;
+		}
+
+		return $layouts;
 	}
 
 // NASTINESS ENSUES!!!

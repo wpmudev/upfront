@@ -11,6 +11,9 @@ class Upfront_Compat_Woocommerce_Woocommerce extends Upfront_Server {
 		add_theme_support('woocommerce'); // Yeah, so we're a supporting theme now
 		add_action('wp', array($this, 'detect_virtual_page'));
 
+		// Exporter - let's add WooCommerce-specific layouts.
+		add_filter('upfront-core-default_layouts', array($this, 'augment_default_layouts'));
+
 		// Deal with editor
 		add_action('wp_ajax_upfront_posts-load', array($this, "load_posts"), 9); // Bind this early to override the default Posts element action
 		//add_filter('upfront_data', array($this, 'override_data'), 99); // Bind this late to make sure the posts data is already injected
@@ -76,6 +79,52 @@ class Upfront_Compat_Woocommerce_Woocommerce extends Upfront_Server {
 		if (!empty($spec)) $cascade['specificity'] = "woocommerce-{$item}-{$spec}"; 
 
 		return $cascade;
+	}
+
+	/**
+	 * Augments the available layouts list by adding some WooCommerce-specific ones.
+	 *
+	 * @param array $layouts Predefined Upfront layouts
+	 *
+	 * @return array Augmented layouts list
+	 */
+	public function augment_default_layouts ($layouts) {
+		// This is where we rely on Woo virtual pages output
+		$singulars = array(
+			'woocommerce-cart' => __('Woo Cart page', 'upfront'),
+			'woocommerce-checkout' => __('Woo Checkout page', 'upfront'),
+			'woocommerce-payment' => __('Woo Payment page', 'upfront'),
+			'woocommerce-account' => __('Woo Account page', 'upfront'),
+		);
+		// This is where we replace the Posts element with our custom Woo output element
+		$archives = array(
+			'woocommerce-shop' => __('Woo Shop page', 'upfront'),
+			'woocommerce-product' => __('Woo Product', 'upfront'),
+			'woocommerce-product_tax' => __('Woo Product taxonomy', 'upfront'),
+		);
+
+		foreach ($singulars as $item => $label) {
+			$layouts[$item] = array(
+				'label' => $label,
+				'layout' => array(
+					'type' => 'single',
+					'item' => $item,
+				),
+			);
+		}
+		foreach ($archives as $item => $label) {
+			$layouts[$item] = array(
+				'label' => $label,
+				'layout' => array(
+					'type' => 'archive',
+					'item' => $item,
+				),
+			);
+		}
+
+		unset($layouts['single-product']); // Kill the default one
+
+		return $layouts;
 	}
 
 	public function load_posts () {
