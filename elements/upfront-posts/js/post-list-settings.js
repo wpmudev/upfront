@@ -1,7 +1,7 @@
 (function ($) {
 define([
 	'elements/upfront-posts/js/post-list-settings-panels',
-	'scripts/upfront/element-settings'
+	'scripts/upfront/element-settings/settings'
 ], function(Panels, ElementSettings) {
 
 var l10n = Upfront.Settings.l10n.posts_element;

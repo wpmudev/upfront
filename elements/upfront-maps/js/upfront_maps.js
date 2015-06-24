@@ -5,8 +5,8 @@
 define([
 	'maps_context_menu',
 	'text!elements/upfront-maps/css/edit.css',
-	'scripts/upfront/element-settings',
-	'scripts/upfront/element-settings-panel'
+	'scripts/upfront/element-settings/settings',
+	'scripts/upfront/element-settings/panel'
 ], function (_ctx, maps_style, ElementSettings, ElementSettingsPanel) {
 
 	var DEFAULTS = {

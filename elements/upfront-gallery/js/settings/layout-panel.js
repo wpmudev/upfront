@@ -1,7 +1,7 @@
 (function ($) {
 define([
 	'elements/upfront-gallery/js/settings/thumbnail-fields',
-	'scripts/upfront/element-settings-panel'
+	'scripts/upfront/element-settings/panel'
 ], function(ThumbnailFields, ElementSettingsPanel) {
 	var l10n = Upfront.Settings.l10n.gallery_element;
 

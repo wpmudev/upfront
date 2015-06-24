@@ -1,6 +1,6 @@
 define([
 	'elements/upfront-image/js/settings/description-panel',
-	'scripts/upfront/element-settings'
+	'scripts/upfront/element-settings/settings'
 ], function(DescriptionPanel, ElementSettings) {
 	var l10n = Upfront.Settings.l10n.image_element;
 	var ImageSettings = ElementSettings.extend({

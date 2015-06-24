@@ -1,7 +1,7 @@
 (function ($) {
 define([
 	'elements/upfront-image/js/settings/color-picker-field',
-	'scripts/upfront/element-settings-panel'
+	'scripts/upfront/element-settings/panel'
 ], function(ColorPickerField, ElementSettingsPanel) {
 	var l10n = Upfront.Settings.l10n.image_element;
 	var DescriptionPanel = ElementSettingsPanel.extend({

@@ -3,8 +3,8 @@
 define([
 	'text!elements/upfront-slider/tpls/uslider.html',
 	'text!elements/upfront-slider/tpls/backend.html',
-	'scripts/upfront/element-settings',
-	'scripts/upfront/element-settings-panel'
+	'scripts/upfront/element-settings/settings',
+	'scripts/upfront/element-settings/panel'
 ], function(sliderTpl, editorTpl, ElementSettings, ElementSettingsPanel){
 
 var l10n = Upfront.Settings.l10n.slider_element;

@@ -1,6 +1,6 @@
 (function ($) {
 	define([
-		'scripts/upfront/element-settings-panel'
+		'scripts/upfront/element-settings/panel'
 	], function(ElementSettingsPanel) {
 		var l10n = Upfront.Settings.l10n.text_element;
 

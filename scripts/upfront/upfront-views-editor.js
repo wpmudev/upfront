@@ -37,7 +37,7 @@ define([
 	"chosen",
 	"scripts/upfront/global-event-handlers",
 	"scripts/upfront/inline-panels/inline-panels",
-	"scripts/upfront/element-settings-sidebar",
+	"scripts/upfront/element-settings/sidebar",
 	"scripts/upfront/link-panel", // If adding more arguments adjust _.rest in line 72
 	"text!upfront/templates/property.html",
 	"text!upfront/templates/properties.html",

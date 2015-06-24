@@ -1,7 +1,7 @@
 (function ($) {
 define([
-	'scripts/upfront/element-settings',
-	'scripts/upfront/element-settings-panel'
+	'scripts/upfront/element-settings/settings',
+	'scripts/upfront/element-settings/panel'
 ], function (ElementSettings, ElementSettingsPanel) {
 	var l10n = Upfront.Settings.l10n.widget_element;
 

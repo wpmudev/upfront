@@ -2,7 +2,7 @@
 define([
 	'text!elements/upfront-posts/tpl/views.html',
 	'elements/upfront-posts/js/post-list-settings-parts',
-	'scripts/upfront/element-settings-panel'
+	'scripts/upfront/element-settings/panel'
 ], function(tpl, Parts, ElementSettingsPanel) {
 
 var l10n = Upfront.Settings.l10n.posts_element;

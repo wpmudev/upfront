@@ -1,7 +1,7 @@
 define([
 	'scripts/upfront/preset-settings/select-preset-item',
 	'scripts/upfront/preset-settings/edit-preset-item',
-	'scripts/upfront/element-settings-panel'
+	'scripts/upfront/element-settings/panel'
 ], function(SelectPresetItem, EditPresetItem, ElementSettingsPanel) {
 	var SelectPresetPanel = ElementSettingsPanel.extend({
 		className: 'preset-manager-panel',

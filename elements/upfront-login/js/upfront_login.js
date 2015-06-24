@@ -2,8 +2,8 @@
 define([
 	'text!elements/upfront-login/css/edit.css',
 	'text!elements/upfront-login/css/public.css',
-	'scripts/upfront/element-settings',
-	'scripts/upfront/element-settings-panel'
+	'scripts/upfront/element-settings/settings',
+	'scripts/upfront/element-settings/panel'
 ], function (editor_style, public_style, ElementSettings, ElementSettingsPanel) {
 
 	$("head").append("<style>" + editor_style + "</style>");

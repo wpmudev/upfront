@@ -1,6 +1,6 @@
 define([
 	'elements/upfront-gallery/js/settings/layout-panel',
-	'scripts/upfront/element-settings'
+	'scripts/upfront/element-settings/settings'
 ], function(LayoutPanel, ElementSettings) {
 	var l10n = Upfront.Settings.l10n.gallery_element;
 

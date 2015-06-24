@@ -5,8 +5,14 @@ define([
 	'elements/upfront-button/js/settings',
 	'scripts/upfront/preset-settings/util',
 	'text!elements/upfront-button/tpl/ubutton.html',
+<<<<<<< HEAD
 	'text!elements/upfront-button/tpl/preset-style.html'
 ], function(ButtonModel, ButtonElement, ButtonSettings, PresetUtil, buttonTpl, settingsStyleTpl) {
+=======
+	'scripts/upfront/element-settings/settings',
+	'scripts/upfront/element-settings/panel'
+], function(template, ElementSettings, ElementSettingsPanel) {
+>>>>>>> Organize element settings files to one directory
 
 var l10n = Upfront.Settings.l10n.button_element;
 

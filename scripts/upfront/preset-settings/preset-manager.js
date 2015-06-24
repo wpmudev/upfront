@@ -2,7 +2,7 @@
 define([
 	'scripts/upfront/preset-settings/select-preset-panel',
 	'scripts/upfront/preset-settings/util',
-	'scripts/upfront/element-settings'
+	'scripts/upfront/element-settings/settings'
 ], function(SelectPresetPanel, Util, ElementSettings) {
 	/**
 	 * Handles presets: load, edit, delete and update for elements.

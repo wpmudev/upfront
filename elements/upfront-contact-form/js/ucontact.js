@@ -3,8 +3,8 @@
 // Require the Upfront data, so the template resolution can work minified too
 define([
 	'upfront-data',
-	'scripts/upfront/element-settings',
-	'scripts/upfront/element-settings-panel'
+	'scripts/upfront/element-settings/settings',
+	'scripts/upfront/element-settings/panel'
 ], function (upfront_data, ElementSettings, ElementSettingsPanel) {
 var template = upfront_data.data && upfront_data.data.ucontact && upfront_data.data.ucontact.template
 	? upfront_data.data.ucontact.template
