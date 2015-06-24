@@ -123,6 +123,10 @@ Views.comments = Views._view.extend({
 	className: 'upfront_post-data-view upfront_post-data-comments'
 });
 
+Views.meta = Views._view.extend({
+	className: 'upfront_post-data-view upfront_post-data-meta'
+});
+
 return Views;
 
 });

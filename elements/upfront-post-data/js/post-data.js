@@ -376,6 +376,18 @@ var PostDataElement_Comments = PostDataElement.extend({
 	]
 });
 
+var PostDataElement_Meta = PostDataElement.extend({
+	_default_data: {
+		type: 'meta',
+		columns: 4,
+		rows: Upfront.Util.height_to_row(50),
+		name: 'Meta'
+	},
+	_post_parts: [
+		'meta'
+	]
+});
+
 /**
  * Add the elements to Upfront, only when in single layout. Place the element in DataElement.
  */
@@ -430,6 +442,16 @@ function add_elements () {
 			},
 			cssSelectorsId: 'PostDataModel'
 		});
+
+		Upfront.Application.LayoutEditor.add_object("Upostdata-meta", {
+			"Model": PostDataModel,
+			"View": PostDataView,
+			"DataElement": PostDataElement_Meta,
+			"Settings": PostDataSettings,
+			cssSelectors: {
+			},
+			cssSelectorsId: 'PostDataModel'
+		});
 	}
 	else {
 		Upfront.Application.LayoutEditor.remove_object('Upostdata-post_data');
@@ -437,6 +459,7 @@ function add_elements () {
 		Upfront.Application.LayoutEditor.remove_object('Upostdata-taxonomy');
 		Upfront.Application.LayoutEditor.remove_object('Upostdata-featured_image');
 		Upfront.Application.LayoutEditor.remove_object('Upostdata-comments');
+		Upfront.Application.LayoutEditor.remove_object('Upostdata-meta');
 	}
 }
 

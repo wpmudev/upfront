@@ -126,6 +126,12 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 	);
 }
 
+class Upfront_Post_Data_PartView_Meta extends Upfront_Post_Data_PartView {
+	protected static $_parts = array(
+		0 => 'meta'
+	);
+}
+
 
 class Upfront_Post_Data_PartView_Post_data extends Upfront_Post_Data_PartView {
 	protected static $_parts = array(

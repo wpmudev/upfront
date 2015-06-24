@@ -10,7 +10,8 @@ class Upfront_Post_Data_Data {
 		'author',
 		'taxonomy',
 		'featured_image',
-		'comments'
+		'comments',
+		'meta',
 	);
 
 	/**
@@ -52,6 +53,9 @@ class Upfront_Post_Data_Data {
 					break;
 				case 'comments':
 					$defaults['comment_count_hide'] = 0;
+					break;
+				case 'meta':
+					$defaults['meta'] = 0;
 					break;
 			}
 
