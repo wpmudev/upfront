@@ -175,13 +175,29 @@ var Parts = {
 				objects.remove(this._stored_object);
 			}
 		}
+	}),
+
+	Options: Backbone.View.extend({
+
+		render: function () {
+			this.$el.empty();
+			var me = this;
+			_.each(this.fields, function (field) {
+				field.on("changed", function (value) {
+					me.model.set_property(field.options.property, value);
+				}, this);
+				field.render();
+				me.$el.append(field.$el);
+			});
+		}
 	})
 };
 
 Parts.Part_Author = Parts.Part.extend({});
 Parts.Part_Title = Parts.Part.extend({});
 Parts.Part_Read_more = Parts.Part.extend({});
-//Parts.Part_Meta = Parts.Part.extend({});
+
+Parts.Part_Meta = Parts.Part.extend({});
 
 Parts.Part_Date_posted = Parts.Part.extend({
 	set_options: function () {
@@ -258,7 +274,7 @@ Parts.Part_Gravatar = Parts.Part.extend({
 	}
 });
 
-var Content_Options = Backbone.View.extend({
+var Content_Options = Parts.Options.extend({
 
 	initialize: function () {
 		this.fields = [
@@ -276,18 +292,6 @@ var Content_Options = Backbone.View.extend({
 				property: "content_part"
 			})
 		];
-	},
-
-	render: function () {
-		this.$el.empty();
-		var me = this;
-		_.each(this.fields, function (field) {
-			field.on("changed", function (value) {
-				me.model.set_property(field.options.property, value);
-			}, this);
-			field.render();
-			me.$el.append(field.$el);
-		});
 	}
 });
 
