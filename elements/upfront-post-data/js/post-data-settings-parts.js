@@ -250,7 +250,7 @@ Parts.Part_Comment_count = Parts.Part.extend({
 
 Parts.Part_Content = Parts.Part.extend({
 	set_options: function () {
-		this.field = new Content_Options({model: this.model});
+		this.field = new Options.Content({model: this.model});
 	}
 });
 
@@ -278,27 +278,63 @@ Parts.Part_Gravatar = Parts.Part.extend({
 	}
 });
 
-var Content_Options = Parts.Options.extend({
+var Options = {
 
-	initialize: function () {
-		this.fields = [
-			new Upfront.Views.Editor.Field.Number({
-				model: this.model,
-				label: l10n.limit_words,
-				label_style: 'inline',
-				property: "content_length"
-			}),
-			new Upfront.Views.Editor.Field.Number({
-				model: this.model,
-				label: "Content part",
-				default_value: 0,
-				label_style: 'inline',
-				property: "content_part"
-			})
-		];
-	}
-});
+	Content: Parts.Options.extend({
+		initialize: function () {
+			this.fields = [
+				new Upfront.Views.Editor.Field.Number({
+					model: this.model,
+					label: l10n.limit_words,
+					label_style: 'inline',
+					property: "content_length"
+				}),
+				new Upfront.Views.Editor.Field.Number({
+					model: this.model,
+					label: "Content part",
+					default_value: 0,
+					label_style: 'inline',
+					property: "content_part"
+				})
+			];
+		}
+	}),
 
+	Featured: Parts.Options.extend({
+		initialize: function () {
+			this.fields = [
+				new Upfront.Views.Editor.Field.Checkboxes({
+					model: this.model,
+					property: "full_featured_image",
+					multiple: false,
+					values: [
+						{label: 'Show Full-Size featured image', value: '1'}
+					]
+				}),
+				new Upfront.Views.Editor.Field.Select({
+					model: this.model,
+					property: "fallback_option",
+					multiple: false,
+					values: [
+						{label: 'Hide region', value: 'hide'},
+						{label: 'Use this color', value: 'color'},
+						{label: 'Use default image', value: 'image'}
+					]
+				}),
+				new Upfront.Views.Editor.Field.Color({
+					model: this.model,
+					property: "fallback_color",
+					label: "Fallback Color"
+				}),
+				new Upfront.Views.Editor.Field.Text({
+					model: this.model,
+					property: "fallback_image",
+					label: "Fallback Image"
+				}),
+			];
+		}
+	})
+};
 
 return {
 	get_part: function (pt, model) {
