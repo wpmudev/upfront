@@ -119,17 +119,51 @@ abstract class Upfront_PostPart_View {
 			? (int)$this->_data['hide_featured_image']
 			: (int)Upfront_Posts_PostsData::get_default('hide_featured_image')
 		;
+
+		$thumbnail = false;
 		if ( $full_featured == 1 ) {
 			$thumbnail = get_the_post_thumbnail($this->_post->ID);
-		}
-		else {
+		} else {
 			$thumbnail = upfront_get_edited_post_thumbnail($this->_post->ID);
+		}
+
+		// Let's deal with the fallback options
+		$fallback = false;
+		if (empty($thumbnail)) {
+			$fallback_option = !empty($this->_data['fallback_option'])
+				? $this->_data['fallback_option']
+				: Upfront_Posts_PostsData::get_default('fallback_option')
+			;
+
+			// Hide fallback
+			if (empty($fallback_option) || 'hide' === $fallback_option) return ''; // Drop this
+
+			// Solid color fallback
+			if ('color' === $fallback_option) {
+				$color = !empty($this->_data['fallback_color'])
+					? $this->_data['fallback_color']
+					: Upfront_Posts_PostsData::get_default('fallback_color')
+				;
+				if (!empty($color) && preg_match('/^(#|rgba?)/', $color)) {
+					$fallback = sprintf('style="background-color: %s;"', $color);
+				}
+			}
+
+			// Image fallback
+			if ('image' === $fallback_option) {
+				$image = !empty($this->_data['fallback_image'])
+					? $this->_data['fallback_image']
+					: Upfront_Posts_PostsData::get_default('fallback_image')
+				;
+				if (!empty($image)) $thumbnail = '<img class="featured-image fallback-image" src="' . esc_url($image) . '" />';
+			}
 		}
 
 		$out = $this->_get_template('featured_image');
 
 		$out = Upfront_Codec::get()->expand($out, "thumbnail", $thumbnail);
 		$out = Upfront_Codec::get()->expand($out, "resize", $resize_featured);
+		$out = Upfront_Codec::get()->expand($out, "fallback", $fallback);
 		$out = Upfront_Codec::get()->expand($out, "permalink", get_permalink($this->_post->ID));
 
 		return $out;

@@ -1,3 +1,3 @@
-<div class="upostdata-part thumbnail" data-resize="{{resize}}">
+<div class="upostdata-part thumbnail" {{fallback_option}} data-resize="{{resize}}">
 	{{thumbnail}}
 </div>

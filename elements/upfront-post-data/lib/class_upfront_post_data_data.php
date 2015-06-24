@@ -50,6 +50,10 @@ class Upfront_Post_Data_Data {
 				case 'featured_image':
 					$defaults['full_featured_image'] = '0';
 					$defaults['hide_featured_image'] = '0';
+					$defaults['fallback_image'] = '0';
+					$defaults['fallback_color'] = '#f00';
+					$defaults['fallback_hide'] = 0;
+					$defaults['fallback_option'] = 'hide';
 					break;
 				case 'comments':
 					$defaults['comment_count_hide'] = 0;
