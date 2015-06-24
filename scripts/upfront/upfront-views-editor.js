@@ -3040,8 +3040,10 @@ define([
 
 			//Already loaded?
 			if(me.views[panel]){
-				if(panel != 'comments' || (Upfront.data.currentPost && Upfront.data.currentPost.id && me.views[panel].view.collection.postId == Upfront.data.currentPost.id))
-			 		return this.render_panel(me.views[panel]);
+				if(panel != 'pages' && panel != 'posts') {
+					if(panel != 'comments' || (Upfront.data.currentPost && Upfront.data.currentPost.id && me.views[panel].view.collection.postId == Upfront.data.currentPost.id))
+						return this.render_panel(me.views[panel]);
+				}
 			}
 
 			if(panel == 'posts'){
@@ -3065,6 +3067,19 @@ define([
 			collection.fetch(fetchOptions).done(function(response){
 				switch(panel){
 					case "posts":
+						//Check if we have rendered the panel once
+						var cachedElements = null;
+						if(typeof me.views[panel] !== "undefined") {
+							cachedElements = me.views[panel].view.collection.pagination.totalElements;
+						}
+						//Check collection total elements
+						var collectionElements = collection.pagination.totalElements;
+						
+						//Compare total items, if same return cached panel
+						if(cachedElements == collectionElements) {
+							return me.render_panel(me.views[panel]);
+						}
+						
 						collection.on('reset sort', me.render_panel, me);
 						views = {
 							view: new ContentEditorPosts({collection: collection, $popup: me.$popup}),
@@ -3074,6 +3089,19 @@ define([
 						me.views.posts = views;
 						break;
 					case "pages":
+						//Check if we have rendered the panel once
+						var cachedElements = null;
+						if(typeof me.views[panel] !== "undefined") {
+							cachedElements = me.views[panel].view.collection.pagination.totalElements;
+						}
+						//Check collection total elements
+						var collectionElements = collection.pagination.totalElements;
+						
+						//Compare total items, if same return cached panel
+						if(cachedElements == collectionElements) {
+							return me.render_panel(me.views[panel]);
+						}
+						
 						collection.on('reset sort', me.render_panel, me);
 						views = {
 							view: new ContentEditorPages({collection: collection, $popup: me.$popup}),
