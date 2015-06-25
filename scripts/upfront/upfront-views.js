@@ -684,7 +684,8 @@ define([
 			},
 
 			fix_flexbox_clear: function ($el) {
-				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+				// @TODO Experiment: don't need flexbox clearing workaround as elements will always take the whole width!
+				/*var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
 					off = $el.offset(),
 					width = $el.width(),
 					$prev;
@@ -701,7 +702,7 @@ define([
 						$prev.css('margin-right', (margin/width*100-1) + '%' ); // Add -1 to prevent rounding error
 					}
 					$prev = $(this);
-				});
+				});*/
 			},
 		}),
 
