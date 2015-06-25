@@ -5064,7 +5064,8 @@ var Field_ToggleableText = Field_Text.extend({
 			"click .upfront-save_settings": "on_save",
 			"click .upfront-cancel_settings": "on_cancel",
 			"click .upfront-settings_label": "on_toggle",
-    		"click .upfront-settings-common_panel .upfront-settings-item-title": "on_toggle_common"
+    		"click .upfront-settings-common_panel .upfront-settings-item-title": "on_toggle_common",
+    		"click .upfront-settings-padding_panel .upfront-settings-item-title": "on_toggle_padding"
 		},
 
 		get_title: function () {
@@ -5145,6 +5146,19 @@ var Field_ToggleableText = Field_Text.extend({
 					// this.toggle_panel(first); //todo don't know what this was for should investigate
 				// });
 			}
+			// Padding panel
+			this.$el.find('.upfront-settings_panel_scroll').after('<div class="upfront-settings-padding_panel"></div>');
+			$padding_panel = this.$el.find(".upfront-settings-padding_panel");
+			if(typeof this.paddingEditor == 'undefined' || this.paddingEditor){
+				// Adding Padding item
+				var padding_settings = new _Settings_Padding({
+					model: this.model,
+					title: l10n.padding_settings
+				});
+				padding_settings.panel = me;
+				padding_settings.render();
+				$padding_panel.append(padding_settings.el);
+			}
 			// Save button
 			$panel.append(
 				"<div class='upfront-settings-button_panel'>" +
@@ -5176,6 +5190,12 @@ var Field_ToggleableText = Field_Text.extend({
 					(false === me.hide_common_anchors ? l10n.css_and_anchor : l10n.css_styles)
 				);
 			}
+		},
+
+		on_toggle_padding: function () {
+			var me = this;
+			var panel = this.$el.find('.upfront-settings-padding_panel');
+			panel.toggleClass('open');
 		},
 
 		conceal: function () {
@@ -5471,6 +5491,82 @@ var Field_Complex_Toggleable_Text_Field = Field.extend({
 		;
 		return $field.is(":checked") && value ? value : ''; // was false
 	}
+});
+
+var _Settings_Padding = SettingsItem.extend({
+	className: 'upfront-settings-padding',
+	events: {
+		//'change input[name=theme_style]': 'stylesChanged'
+	},
+	initialize: function(options) {
+		SettingsItem.prototype.initialize.call(this, options);
+
+		this.fields = _([
+			new Upfront.Views.Editor.Field.Checkboxes({
+				model: this.model,
+				property: 'top-padding-use',
+				label: '',
+				values: [{ label: l10n.top_padding, value: 'yes' }],
+				change: this.clear_cache
+			}),
+			new Upfront.Views.Editor.Field.Checkboxes({
+				model: this.model,
+				property: 'bottom-padding-use',
+				label: '',
+				values: [{ label: l10n.bottom_padding, value: 'yes' }],
+				change: this.clear_cache
+			}),
+			new Upfront.Views.Editor.Field.Checkboxes({
+				model: this.model,
+				property: 'left-padding-use',
+				label: '',
+				values: [{ label: l10n.left_padding, value: 'yes' }],
+				change: this.clear_cache
+			}),
+			new Upfront.Views.Editor.Field.Checkboxes({
+				model: this.model,
+				property: 'right-padding-use',
+				label: '',
+				values: [{ label: l10n.right_padding, value: 'yes' }],
+				change: this.clear_cache
+			}),
+		]);
+	},
+	// stylesChanged: function(e) {
+	// 	var style = this.$('input[name=theme_style]:checked').val();
+	// 	this.model.set_breakpoint_property('theme_style', style);
+	// },
+
+	// openEditor: function(e){
+	// 	e.preventDefault();
+
+	// 	Upfront.Events.trigger("entity:settings:beforedeactivate");
+
+	// 	var value = this.fields._wrapped[0].get_value(),
+	// 		default_value = this.fields._wrapped[0].default_value
+	// 	;
+	// 	Upfront.Application.cssEditor.init({
+	// 		model: this.model,
+	// 		stylename: value || default_value // Let's make sure we have *something* to work with
+	// 	});
+
+	// 	Upfront.Events.trigger("entity:settings:deactivate");
+
+	// 	//$('#settings').find('.upfront-save_settings').click();
+	// },
+	// openNewEditor: function(e){
+	// 	e.preventDefault();
+
+	// 	Upfront.Events.trigger("entity:settings:beforedeactivate");
+
+	// 	Upfront.Application.cssEditor.init({
+	// 		model: this.model,
+	// 		stylename: ''
+	// 	});
+
+	// 	Upfront.Events.trigger("entity:settings:deactivate");
+	// 	//$('#settings').find('.upfront-save_settings').click();
+	// }
 });
 
 var _Settings_CSS = SettingsItem.extend({
