@@ -2271,6 +2271,9 @@ div.uinsert-selector a:hover {
 .wp-caption.alignleft {
   float: left; }
 
+.inline-panel-control-dialog-style .upfront-field-select-options label {
+  color: #3d5266; }
+
 .upfront-region-container {
   position: relative;
   /*z-index: 0;*/
