@@ -59,7 +59,7 @@
             {{ caption }}
         {[ } ]}
         {[if(linkType != "do_nothing"){ ]}<a href="{{linkUrl}}">{[ } ]}
-        <img width="{{image.width}}" height="{{image.height}}"  src="{{image.src}}"/>
+        <img width="{{image.width}}"   src="{{image.src}}"/>
         {[if(linkType != "do_nothing"){ ]}</a>{[ } ]}
 
         {[if( style.caption.order == 1 ) {]}
@@ -70,7 +70,7 @@
 <script type="text/template" id="post-image-insert-wp-tpl">
     <div id="attachment_{{attachment_id}}" style="width: {{style.wrapper.width}}px" class="wp-caption {{style.wrapper.alignment}}">
         {[ if(link_url){ ]}<a href="{{link_url}}"> {[ } ]}
-            <img src="{{image.src}}" {[ if( image.width ){  ]} width="{{image.width}}" {[ } ]} {[ if(image.height){ ]} height="{{image.height}}" {[ } ]} class="{{style.image.size_class}} wp-image-{{attachment_id}}" >
+            <img src="{{image.src}}" {[ if( image.width ){  ]} width="{{image.width}}" {[ } ]}  class="{{style.image.size_class}} wp-image-{{attachment_id}}" >
         {[ if(link_url){ ]} </a> {[ } ]}
         {[ if(style.caption.show){ ]}
             <p class="wp-caption-text">{{caption}}</p>

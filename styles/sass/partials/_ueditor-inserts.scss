@@ -114,6 +114,9 @@ a.ueditor-action-pickercancel{
   margin: 0 -15px;
   clear: both;
 }
+.upfront-wp-inserted_image-wrapper{
+  max-width: 100%;
+}
 /*.upfront-inserted_image-wrapper .wp-caption-text,
 .uinsert-image-wrapper{
 	padding: 15px;
@@ -317,6 +320,8 @@ div.uinsert-selector a:hover {
   padding: 0;
   outline: 1px dotted #979797;
   position: relative;
+  max-width:100%;
+  padding: 15px;
 }
 .upfront-content-marker.redactor-editor .wp-caption:hover{
   outline-style: solid;
@@ -339,7 +344,7 @@ div.uinsert-selector a:hover {
 }
 .upfront-content-marker.redactor-editor .wp-caption .wp-caption-text,
 .upfront-content-marker.redactor-editor .wp-caption img{
-  padding: 15px;
+//  padding: 15px;
   margin: 0;
 }
 .upfront-field-wrap-image-style-variant{
@@ -402,4 +407,9 @@ div.uinsert-selector a:hover {
   background-position: -908px -328px;
 }
 
-
+.wp-caption.alignright{
+  float: right;
+}
+.wp-caption.alignleft{
+  float: left;
+}
