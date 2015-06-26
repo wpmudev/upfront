@@ -11,12 +11,9 @@ define([
 		}
 	};
 
-    var INSERT_OPTIONS = {
-      uf_insert: 'image_insert',
-      wp_insert: 'wp_default'
-    };
-
 	var l10n = Upfront.Settings.l10n.media;
+
+    var INSERT_OPTIONS = InsertOptions.INSERT_OPTIONS;
 
 // ----- Models -----
 

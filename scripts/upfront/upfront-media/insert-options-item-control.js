@@ -1,6 +1,11 @@
 ;(function($){
     define(function(){
     var l10n = Upfront.Settings.l10n.media;
+    var INSERT_OPTIONS = {
+        uf_insert: 'image_insert',
+        wp_insert: 'wp_default'
+    };
+
     var Options_Control = Backbone.View.extend({
         initialize: function(opts){
 
@@ -13,8 +18,8 @@
                 layout: 'horizontal-inline',
                 default_value: 'image_insert',
                 values: [
-                    { label: l10n.image_inserts, value: 'image_insert' },
-                    { label: l10n.wp_default, value: 'wp_default' }
+                    { label: l10n.image_inserts, value: INSERT_OPTIONS.uf_insert },
+                    { label: l10n.wp_default, value: INSERT_OPTIONS.wp_insert }
                 ],
                 change: function(val){
                     this.model.at(0).set("insert_option", val);
@@ -28,7 +33,8 @@
     });
 
     return {
-        Options_Control: Options_Control
+        Options_Control: Options_Control,
+        INSERT_OPTIONS: INSERT_OPTIONS
     };
 
 //End Define
