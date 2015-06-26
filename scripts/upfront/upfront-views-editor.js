@@ -5636,8 +5636,8 @@ var _Settings_Padding = SettingsItem.extend({
 				values: [{ label: l10n.bottom_padding, value: 'yes' }],
 				change: this.clear_cache,
 				show: function (value, $el) {
-					if(value[0] === 'yes')	$(top_padding_slider.$el, top_padding.$el).show();
-					else	$(top_padding_slider.$el, top_padding.$el).hide();
+					if(value[0] === 'yes')	$(bottom_padding_slider.$el, bottom_padding.$el).show();
+					else	$(bottom_padding_slider.$el, bottom_padding.$el).hide();
 				}
 			}),
 			bottom_padding_slider,
@@ -5649,8 +5649,8 @@ var _Settings_Padding = SettingsItem.extend({
 				values: [{ label: l10n.left_padding, value: 'yes' }],
 				change: this.clear_cache,
 				show: function (value, $el) {
-					if(value[0] === 'yes')	$(top_padding_slider.$el, top_padding.$el).show();
-					else	$(top_padding_slider.$el, top_padding.$el).hide();
+					if(value[0] === 'yes')	$(left_padding_slider.$el, left_padding.$el).show();
+					else	$(left_padding_slider.$el, left_padding.$el).hide();
 				}
 			}),
 			left_padding_slider,
@@ -5662,8 +5662,8 @@ var _Settings_Padding = SettingsItem.extend({
 				values: [{ label: l10n.right_padding, value: 'yes' }],
 				change: this.clear_cache,
 				show: function (value, $el) {
-					if(value[0] === 'yes')	$(top_padding_slider.$el, top_padding.$el).show();
-					else	$(top_padding_slider.$el, top_padding.$el).hide();
+					if(value[0] === 'yes')	$(right_padding_slider.$el, right_padding.$el).show();
+					else	$(right_padding_slider.$el, right_padding.$el).hide();
 				}
 			}),
 			right_padding_slider,
