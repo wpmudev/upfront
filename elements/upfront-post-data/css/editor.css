@@ -123,3 +123,11 @@
 .upfront-settings-item-content .postdata_parts li.active .part_action:after {
 	background-position: -43px -145px;
 }
+
+[data-fallback="color"] {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
