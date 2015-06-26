@@ -5499,6 +5499,120 @@ var _Settings_Padding = SettingsItem.extend({
 		//'change input[name=theme_style]': 'stylesChanged'
 	},
 	initialize: function(options) {
+		var top_padding_slider = new Upfront.Views.Editor.Field.Slider({
+				model: this.model,
+				property: 'top-padding-slider',
+				label: '',
+				default_value: 0,
+				min: 0,
+				max: 200,
+				change: function () {
+					var value = this.get_value();
+
+					this.property.set({value: value});
+					top_padding.set_value(value);
+				}
+			}),
+			top_padding = new Upfront.Views.Editor.Field.Number({
+				model: this.model,
+				property: 'top-padding',
+				label: '',
+				default_value: 0,
+				suffix: 'px',
+				min: 0,
+				change: function () {
+					var value = this.get_value();
+
+					this.property.set({value: value});
+					top_padding_slider.set_value(value);
+				}
+			}),
+			bottom_padding_slider = new Upfront.Views.Editor.Field.Slider({
+				model: this.model,
+				property: 'bottom-padding-slider',
+				label: '',
+				default_value: 0,
+				min: 0,
+				max: 200,
+				change: function () {
+					var value = this.get_value();
+
+					this.property.set({value: value});
+					bottom_padding.set_value(value);
+				}
+			}),
+			bottom_padding = new Upfront.Views.Editor.Field.Number({
+				model: this.model,
+				property: 'bottom-padding',
+				label: '',
+				default_value: 0,
+				suffix: 'px',
+				min: 0,
+				change: function () {
+					var value = this.get_value();
+
+					this.property.set({value: value});
+					bottom_padding_slider.set_value(value);
+				}
+			}),
+			left_padding_slider = new Upfront.Views.Editor.Field.Slider({
+				model: this.model,
+				property: 'left-padding-slider',
+				label: '',
+				default_value: 0,
+				min: 0,
+				max: 200,
+				change: function () {
+					var value = this.get_value();
+
+					this.property.set({value: value});
+					left_padding.set_value(value);
+				}
+			}),
+			left_padding = new Upfront.Views.Editor.Field.Number({
+				model: this.model,
+				property: 'left-padding',
+				label: '',
+				default_value: 0,
+				suffix: 'px',
+				min: 0,
+				change: function () {
+					var value = this.get_value();
+
+					this.property.set({value: value});
+					left_padding_slider.set_value(value);
+				}
+			}),
+			right_padding_slider = new Upfront.Views.Editor.Field.Slider({
+				model: this.model,
+				property: 'right-padding-slider',
+				label: '',
+				default_value: 0,
+				min: 0,
+				max: 200,
+				change: function () {
+					var value = this.get_value();
+
+					this.property.set({value: value});
+					right_padding.set_value(value);
+				}
+			}),
+			right_padding = new Upfront.Views.Editor.Field.Number({
+				model: this.model,
+				property: 'right-padding',
+				label: '',
+				default_value: 0,
+				suffix: 'px',
+				min: 0,
+				change: function () {
+					var value = this.get_value();
+
+					this.property.set({value: value});
+					right_padding_slider.set_value(value);
+				}
+			})
+		;
+
 		SettingsItem.prototype.initialize.call(this, options);
 
 		this.fields = _([
@@ -5507,29 +5621,53 @@ var _Settings_Padding = SettingsItem.extend({
 				property: 'top-padding-use',
 				label: '',
 				values: [{ label: l10n.top_padding, value: 'yes' }],
-				change: this.clear_cache
+				change: this.clear_cache,
+				show: function (value, $el) {
+					if(value[0] === 'yes')	$(top_padding_slider.$el, top_padding.$el).show();
+					else	$(top_padding_slider.$el, top_padding.$el).hide();
+				}
 			}),
+			top_padding_slider,
+			top_padding,
 			new Upfront.Views.Editor.Field.Checkboxes({
 				model: this.model,
 				property: 'bottom-padding-use',
 				label: '',
 				values: [{ label: l10n.bottom_padding, value: 'yes' }],
-				change: this.clear_cache
+				change: this.clear_cache,
+				show: function (value, $el) {
+					if(value[0] === 'yes')	$(top_padding_slider.$el, top_padding.$el).show();
+					else	$(top_padding_slider.$el, top_padding.$el).hide();
+				}
 			}),
+			bottom_padding_slider,
+			bottom_padding,
 			new Upfront.Views.Editor.Field.Checkboxes({
 				model: this.model,
 				property: 'left-padding-use',
 				label: '',
 				values: [{ label: l10n.left_padding, value: 'yes' }],
-				change: this.clear_cache
+				change: this.clear_cache,
+				show: function (value, $el) {
+					if(value[0] === 'yes')	$(top_padding_slider.$el, top_padding.$el).show();
+					else	$(top_padding_slider.$el, top_padding.$el).hide();
+				}
 			}),
+			left_padding_slider,
+			left_padding,
 			new Upfront.Views.Editor.Field.Checkboxes({
 				model: this.model,
 				property: 'right-padding-use',
 				label: '',
 				values: [{ label: l10n.right_padding, value: 'yes' }],
-				change: this.clear_cache
+				change: this.clear_cache,
+				show: function (value, $el) {
+					if(value[0] === 'yes')	$(top_padding_slider.$el, top_padding.$el).show();
+					else	$(top_padding_slider.$el, top_padding.$el).hide();
+				}
 			}),
+			right_padding_slider,
+			right_padding
 		]);
 	},
 	// stylesChanged: function(e) {
