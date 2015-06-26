@@ -5,35 +5,35 @@
  */
 class Upfront_PostDataView extends Upfront_Object_Group {
 
-	protected $post_markups = array();
-	
-	public function get_post_markup () {
-		if ( !empty($this->post_markups) ) return $this->post_markups;
-		
-		$data = $this->_properties_to_array();
-		if (empty($data)) $data = Upfront_Post_Data_Data::get_defaults();
-		$data['objects'] = $this->_data['objects'];
-		
-		$this->post_markups = Upfront_Post_Data_View::get_post_markup($data);
-		return $this->post_markups;
-	}
-	
+
+	private $_post;
+	private $_child_instances = array();
+
 	public function get_css_class () {
 		$classes = parent::get_css_class();
 		
-		$data = $this->_properties_to_array();
-		if (empty($data)) $data = Upfront_Post_Data_Data::get_defaults();
-		$post = Upfront_Post_Data_Model::get_post($data);
+		$this->get_post();
 		
-		$classes .= is_sticky( $post->ID ) ? " uf-post-data uf-post-data-sticky" : " uf-post-data";
-		if (!empty($post->ID) && !has_post_thumbnail($post->ID)) {
-			$classes .= " noFeature";
-		}
+		$classes .= is_sticky( $this->_post->ID ) ? " uf-post-data uf-post-data-sticky" : " uf-post-data";
+
 		return $classes;
+	}
+
+	public function get_post () {
+		if (empty($this->_post)) {
+			$data = $this->_properties_to_array();
+			if (empty($data)) $data = Upfront_Post_Data_Data::get_defaults();
+			$this->_post = Upfront_Post_Data_Model::spawn_post($data);
+		}
+		return $this->_post;
 	}
 	
 	public function instantiate_child ($child_data, $idx) {
-		return new Upfront_PostDataPartView($child_data, $this->_data, $this);
+		$key = md5(serialize($child_data));
+		if (!empty($this->_child_instances[$key])) return $this->_child_instances[$key];
+
+		$this->_child_instances[$key] = new Upfront_PostDataPartView($child_data, $this->_data, $this);
+		return $this->_child_instances[$key];
 	}
 
 	private function _properties_to_array(){
@@ -47,21 +47,64 @@ class Upfront_PostDataView extends Upfront_Object_Group {
 	public static function default_properties () {
 		return Upfront_Post_Data_Data::get_defaults();
 	}
+
+	public function get_propagated_classes () {
+		$classes = array();
+		foreach ($this->_child_instances as $part_view) {
+			$classes = array_merge($classes, $part_view->get_propagated_classes());
+		}
+		return $classes;
+	}
 }
 
 
 class Upfront_PostDataPartView extends Upfront_Object {
+
+	private $_parent;
+	
+	private $_part_type;
+	private $_part_view;
+	
+	private $_markup = array();
 	
 	public function __construct ($data, $parent_data = '', $parent_obj = false) {
 		parent::__construct($data, $parent_data);
-		if ( $parent_obj !== false )
-			$this->parent = $parent_obj;
+		if ($parent_obj !== false) {
+			$this->_parent = $parent_obj;
+		}
+
+		$this->_part_type = $this->_get_property('part_type');
+
+		$props = !empty($parent_data['properties'])
+			? upfront_properties_to_array($parent_data['properties'])
+			: Upfront_Post_Data_Data::get_defaults()
+		;
+
+		$view_class = Upfront_Post_Data_PartView::_get_view_class($props);
+		$this->_part_view = new $view_class(array_merge(
+			$props,
+			$parent_data
+		));
+
 	}
 
 	public function get_markup () {
-		$post_markups = $this->parent->get_post_markup();
-		$type = $this->_get_property('part_type');
-		return isset($post_markups[$type]) ? $post_markups[$type] : '';
+		if (empty($this->_markup)) {
+			$post = $this->_parent->get_post();
+			$this->_markup = $this->_part_view->get_markup($post);
+		}
+		return isset($this->_markup[$this->get_part_type()])
+			? $this->_markup[$this->get_part_type()]
+			: ''
+		;
+	}
+
+	public function get_part_type () {
+		return $this->_part_type;
+	}
+
+	public function get_propagated_classes () {
+		return $this->_part_view->get_propagated_classes();
 	}
 	
 }
