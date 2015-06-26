@@ -2547,13 +2547,14 @@ var GridEditor = {
 							top: wrap.grid.top,
 							bottom: bottom,
 							left: wrap.grid.left,
-							right: ( is_wrap_me || is_switch_left ? next_wrap_el_left.grid.left-1 : right ),
+							//right: ( is_wrap_me || is_switch_left ? next_wrap_el_left.grid.left-1 : right ),
+							right: ( is_wrap_me && next_wrap_el_left ? next_wrap_el_left.grid.left-1 : right ), // @TODO Experiment: change position for better behavior
 							priority: {
 								top: wrap.grid.top,
 								bottom: bottom,
 								left: left,
 								//right: ( is_wrap_me || is_switch_left ? next_wrap_el_left.grid.left-1 : ( is_switch_right ? switch_right : wrap_el_left.grid.left-1 ) ),
-								right: ( is_wrap_me || is_switch_left ? next_wrap_el_left.grid.left-1 : left+Math.ceil((right-left)/2)-1 ), // @TODO Experiment: change position for better behavior
+								right: ( is_wrap_me && next_wrap_el_left ? next_wrap_el_left.grid.left-1 : left+Math.ceil((right-left)/2)-1 ), // @TODO Experiment: change position for better behavior
 								index: ( is_wrap_me ? 1 : 4 )
 							},
 							priority_index: 10, //( is_switch_left || is_switch_right ? 4 : 7 ), // @TODO Experiment: priority change for better behavior
@@ -3826,11 +3827,12 @@ var GridEditor = {
 					});
 
 					// Update model value
-					ed.update_model_margin_classes( ( is_object ? ed.containment.$el.find('.upfront-object') : $container.find(module_selector) ).not($me) );
+					//ed.update_model_margin_classes( ( is_object ? ed.containment.$el.find('.upfront-object') : $container.find(module_selector) ).not($me) );
 					ed.update_model_margin_classes( $me, [ed.grid.class + drop_col] );
 					
 					// @TODO Experiment: if the drop is to side, also update the elements inside
 					if ( !ed.drop.is_me && ( ed.drop.type == 'side-before' || ed.drop.type == 'side-after' ) ) {
+						//var $all_wrappers = 
 						ed.drop.insert[1].find("> .upfront-module-view > .upfront-module, > .upfront-module-group").each(function () {
 							var rel_el = ed.get_el($(this)),
 								new_col = rel_el.col - drop_col
@@ -3838,6 +3840,9 @@ var GridEditor = {
 							ed.update_model_margin_classes( $(this), [ed.grid.class + new_col] );	
 						});
 					}
+					/*else {
+						ed.update_model_margin_classes( $me, [ed.grid.class + drop_col] );
+					}*/
 
 					if ( is_parent_group )
 						ed.update_wrappers(view.group_view.model, view.group_view.$el);
@@ -4029,11 +4034,11 @@ var GridEditor = {
 			next_wrapper_class = next_wrapper.get_property_value_by_name('class');
 			next_wrapper_col = ed.get_class_num(next_wrapper_class, ed.grid.class);
 			if ( !next_wrapper_class.match(/clr/g) ){
-				next_wrapper.replace_class(
+				/*next_wrapper.replace_class(
 					ed.grid.class + (next_wrapper_col+wrapper_col) +
 					( wrapper_class.match(/clr/g) ? ' clr' : '' )
 				);
-				adjust_next = true;
+				adjust_next = true;*/ // @TODO Experiment: no adjusting next wrapper for now
 				split_next = true;
 			}
 		}
@@ -4043,7 +4048,7 @@ var GridEditor = {
 			if ( prev_wrapper_class.match(/clr/g) && !split_next )
 				split_prev = true;
 		}
-		while ( modules.at(i) ){
+		/*while ( modules.at(i) ){
 			var this_module = modules.at(i),
 				this_module_class = this_module.get_property_value_by_name('class'),
 				this_module_left = ed.get_class_num(this_module_class, ed.grid.left_margin_class);
@@ -4071,6 +4076,67 @@ var GridEditor = {
 				var each_module_class = each_module.get_property_value_by_name('class'),
 					each_module_left = ed.get_class_num(each_module_class, ed.grid.left_margin_class);
 				each_module.replace_class(ed.grid.left_margin_class + (each_module_left+wrapper_col));
+			});
+		}*/ // @TODO Experiment: don't need this anymore
+		// @TODO Experiment: adjust remaining modules in equal columns
+		var all_modules = [],
+			all_wrappers = []
+		;
+		while ( modules.at(i) ) {
+			var this_module = modules.at(i),
+				this_wrapper = wrappers.get_by_wrapper_id(this_module.get_wrapper_id()),
+				this_wrapper_class = this_wrapper.get_property_value_by_name('class')
+			;
+			if ( i == 0 || this_wrapper_class.match(/clr/g) ) {
+				if ( i > index ) break;
+				all_wrappers = [];
+				all_modules = [];
+			}
+			if ( i == index ) {
+				i++;
+				continue;
+			}
+			if ( !_.contains(all_wrappers, this_wrapper) ) {
+				all_wrappers.push(this_wrapper);
+			}
+			all_modules.push(this_module);
+			i++;
+		}
+		if ( all_wrappers.length >= 2 ) {
+			split_next = false;
+		}
+		if ( !_.contains(all_wrappers, wrapper) ) {
+			var total_col = wrapper_col,
+				new_col = 0,
+				remaining_col = 0;
+			_.each(all_wrappers, function (each_wrapper) {
+				var each_wrapper_class = each_wrapper.get_property_value_by_name('class'),
+					each_wrapper_col = ed.get_class_num(each_wrapper_class, ed.grid.class)
+				;
+				total_col += each_wrapper_col;
+			});
+			// Now split columns evenly
+			new_col = Math.floor(total_col/all_wrappers.length);
+			remaining_col = total_col - (all_wrappers.length * new_col);
+			// Apply the new col
+			_.each(all_wrappers, function (each_wrapper, id) {
+				var each_wrapper_class = each_wrapper.get_property_value_by_name('class'),
+					apply_col =  new_col
+				;
+				// Distribute remaining_col
+				if ( remaining_col > 0 ) {
+					apply_col += 1;
+					remaining_col -= 1;
+				}
+				each_wrapper.replace_class(
+					ed.grid.class + apply_col +
+					( id == 0 && !each_wrapper_class.match(/clr/g) ? ' clr' : '' )
+				);
+				_.each(all_modules, function (each_module) {
+					if ( each_module.get_wrapper_id() == each_wrapper.get_wrapper_id() ) {
+						each_module.replace_class(ed.grid.class + apply_col);
+					}
+				});
 			});
 		}
 		if ( split_prev || split_next ){
