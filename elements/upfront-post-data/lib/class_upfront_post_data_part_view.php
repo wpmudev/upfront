@@ -45,6 +45,10 @@ abstract class Upfront_Post_Data_PartView extends Upfront_PostPart_View {
 		return $parts;
 	}
 
+	public function get_propagated_classes () {
+		return array();
+	}
+
 	/**
 	 * Fetches array of supported post parts.
 	 * @return array A list of known parts.
