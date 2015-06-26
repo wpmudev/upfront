@@ -11,6 +11,11 @@ define([
 		}
 	};
 
+    var INSERT_OPTIONS = {
+      uf_insert: 'image_insert',
+      wp_insert: 'wp_default'
+    };
+
 	var l10n = Upfront.Settings.l10n.media;
 
 // ----- Models -----
@@ -540,46 +545,52 @@ define([
 				});
 			},
 			render_additional_sizes: function () {
-				var me = this,
-					$hub = this.$el.find(".additional_sizes"),
-					additional_sizes = this.model.get_additional_sizes(),
-					title = l10n.additional_sizes,
-					sizes = []
-				;
-				$hub.empty();
-				if (!additional_sizes.length) return false;
-				_(additional_sizes).each(function (size) {
-					sizes.push({ label: (size === MEDIA_SIZES.FULL ? l10n.size_full : size), value: size });
-				});
-				this.size_field = new Upfront.Views.Editor.Field.Select({
-					model: this.model.at(0),
-					label: title,
-					name: 'selected_size',
-					width: '100%',
-					values: sizes,
-					default_value: MEDIA_SIZES.FULL,
-					change: function(){
-						me.select_size();
-					}
-				});
-				this.size_field.render();
-				$hub.append(this.size_field.$el);
+                var me = this,
+                    $hub = this.$el.find(".additional_sizes"),
+                    additional_sizes = this.model.get_additional_sizes(),
+                    title = l10n.additional_sizes,
+                    sizes = []
+                    ;
+                $hub.empty();
 
-				// Add URL label
-				if (this.model.length < 2) {
-					var url_field = new Upfront.Views.Editor.Field.Text({
-						model: this.model.at(0),
-						label: l10n.url,
-						name: "document_url",
-					});
-					url_field.render();
-					$hub.append(url_field.$el);
-				}
+                if( this.options.insert_options && this.model.at(0).get("insert_option") === INSERT_OPTIONS.wp_insert   ) {
+                    if (!additional_sizes.length) return false;
+                    _(additional_sizes).each(function (size) {
+                        sizes.push({ label: (size === MEDIA_SIZES.FULL ? l10n.size_full : size), value: size });
+                    });
+                    this.size_field = new Upfront.Views.Editor.Field.Select({
+                        model: this.model.at(0),
+                        label: title,
+                        name: 'selected_size',
+                        width: '100%',
+                        values: sizes,
+                        default_value: MEDIA_SIZES.FULL,
+                        change: function(){
+                            me.select_size();
+                        }
+                    });
+                    this.size_field.render();
+                    $hub.append(this.size_field.$el);
+                    this.size_field.$el.on("click", function (e) {
+                        e.stopPropagation();
+                    });
+                }
 
-				this.size_field.$el.on("click", function (e) {
-					e.stopPropagation();
-				});
+                if (this.model.length < 2) {
+                    this.add_url_label($hub);
+                }
+
 			},
+            add_url_label: function($hub){
+                // Add URL label
+                var url_field = new Upfront.Views.Editor.Field.Text({
+                    model: this.model.at(0),
+                    label: l10n.url,
+                    name: "document_url"
+                });
+                url_field.render();
+                $hub.append(url_field.$el);
+            },
 			select_size: function (e) {
 				//e.stopPropagation();
 				var size = this.size_field.get_value() || MEDIA_SIZES.FULL;
