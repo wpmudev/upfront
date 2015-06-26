@@ -5704,40 +5704,7 @@ var _Settings_Padding = SettingsItem.extend({
 	},
 	paddingChanged: function(e) {
 		console.log(this.$('input'));
-		// var style = this.$('input[name=theme_style]:checked').val();
-		// this.model.set_breakpoint_property('theme_style', style);
 	}
-
-	// openEditor: function(e){
-	// 	e.preventDefault();
-
-	// 	Upfront.Events.trigger("entity:settings:beforedeactivate");
-
-	// 	var value = this.fields._wrapped[0].get_value(),
-	// 		default_value = this.fields._wrapped[0].default_value
-	// 	;
-	// 	Upfront.Application.cssEditor.init({
-	// 		model: this.model,
-	// 		stylename: value || default_value // Let's make sure we have *something* to work with
-	// 	});
-
-	// 	Upfront.Events.trigger("entity:settings:deactivate");
-
-	// 	//$('#settings').find('.upfront-save_settings').click();
-	// },
-	// openNewEditor: function(e){
-	// 	e.preventDefault();
-
-	// 	Upfront.Events.trigger("entity:settings:beforedeactivate");
-
-	// 	Upfront.Application.cssEditor.init({
-	// 		model: this.model,
-	// 		stylename: ''
-	// 	});
-
-	// 	Upfront.Events.trigger("entity:settings:deactivate");
-	// 	//$('#settings').find('.upfront-save_settings').click();
-	// }
 });
 
 var _Settings_CSS = SettingsItem.extend({
