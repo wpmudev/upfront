@@ -5504,6 +5504,7 @@ var _Settings_Padding = SettingsItem.extend({
 				property: 'top_padding_use',
 				label: '',
 				values: [{ label: l10n.top_padding, value: 'yes' }],
+				default_value: this.model.get_breakpoint_property_value('top_padding_use', true) || [],
 				change: function () {
 					this.property.set({value: this.get_value()});
 				},
@@ -5516,7 +5517,7 @@ var _Settings_Padding = SettingsItem.extend({
 				model: this.model,
 				property: 'top_padding_slider',
 				label: '',
-				default_value: 0,
+				default_value: this.model.get_breakpoint_property_value('top_padding_slider', true) || 0,
 				min: 0,
 				max: 200,
 				valueTextFilter: function () {return '';},
@@ -5532,7 +5533,7 @@ var _Settings_Padding = SettingsItem.extend({
 				model: this.model,
 				property: 'top_padding_num',
 				label: '',
-				default_value: 0,
+				default_value: this.model.get_breakpoint_property_value('top_padding_num', true) || 0,
 				suffix: 'px',
 				min: 0,
 				change: function () {
@@ -5549,6 +5550,7 @@ var _Settings_Padding = SettingsItem.extend({
 				property: 'bottom_padding_use',
 				label: '',
 				values: [{ label: l10n.bottom_padding, value: 'yes' }],
+				default_value: this.model.get_breakpoint_property_value('bottom_padding_use', true) || [],
 				change: function () {
 					this.property.set({value: this.get_value()});
 				},
@@ -5561,7 +5563,7 @@ var _Settings_Padding = SettingsItem.extend({
 				model: this.model,
 				property: 'bottom_padding_slider',
 				label: '',
-				default_value: 0,
+				default_value: this.model.get_breakpoint_property_value('bottom_padding_slider', true) || 0,
 				min: 0,
 				max: 200,
 				valueTextFilter: function () {return '';},
@@ -5577,7 +5579,7 @@ var _Settings_Padding = SettingsItem.extend({
 				model: this.model,
 				property: 'bottom_padding_num',
 				label: '',
-				default_value: 0,
+				default_value: this.model.get_breakpoint_property_value('bottom_padding_num', true) || 0,
 				suffix: 'px',
 				min: 0,
 				change: function () {
@@ -5594,6 +5596,7 @@ var _Settings_Padding = SettingsItem.extend({
 				property: 'left_padding_use',
 				label: '',
 				values: [{ label: l10n.left_padding, value: 'yes' }],
+				default_value: this.model.get_breakpoint_property_value('left_padding_use', true) || [],
 				change: function () {
 					this.property.set({value: this.get_value()});
 				},
@@ -5606,7 +5609,7 @@ var _Settings_Padding = SettingsItem.extend({
 				model: this.model,
 				property: 'left_padding_slider',
 				label: '',
-				default_value: 0,
+				default_value: this.model.get_breakpoint_property_value('left_padding_slider', true) || 0,
 				min: 0,
 				max: 200,
 				valueTextFilter: function () {return '';},
@@ -5622,7 +5625,7 @@ var _Settings_Padding = SettingsItem.extend({
 				model: this.model,
 				property: 'left_padding_num',
 				label: '',
-				default_value: 0,
+				default_value: this.model.get_breakpoint_property_value('left_padding_num', true) || 0,
 				suffix: 'px',
 				min: 0,
 				change: function () {
@@ -5639,6 +5642,7 @@ var _Settings_Padding = SettingsItem.extend({
 				property: 'right_padding_use',
 				label: '',
 				values: [{ label: l10n.right_padding, value: 'yes' }],
+				default_value: this.model.get_breakpoint_property_value('right_padding_use', true) || [],
 				change: function () {
 					this.property.set({value: this.get_value()});
 				},
@@ -5651,7 +5655,7 @@ var _Settings_Padding = SettingsItem.extend({
 				model: this.model,
 				property: 'right_padding_slider',
 				label: '',
-				default_value: 0,
+				default_value: this.model.get_breakpoint_property_value('right_padding_slider', true) || 0,
 				min: 0,
 				max: 200,
 				valueTextFilter: function () {return '';},
@@ -5667,7 +5671,7 @@ var _Settings_Padding = SettingsItem.extend({
 				model: this.model,
 				property: 'right_padding_num',
 				label: '',
-				default_value: 0,
+				default_value: this.model.get_breakpoint_property_value('right_padding_num', true) || 0,
 				suffix: 'px',
 				min: 0,
 				change: function () {
