@@ -1,6 +1,6 @@
 define([
 	'elements/upfront-button/js/model'
-], function(UbuttonModel) {
+], function(ButtonModel) {
 	var l10n = Upfront.Settings.l10n.button_element;
 	
 	var ButtonElement = Upfront.Views.Editor.Sidebar.Element.extend({
@@ -10,7 +10,7 @@ define([
 			this.$el.html(l10n.element_name);
 		},
 		add_element: function () {
-			var object = new UbuttonModel(),
+			var object = new ButtonModel(),
 				module = new Upfront.Models.Module({
 					"name": "",
 					"properties": [

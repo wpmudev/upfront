@@ -8,7 +8,7 @@ class Upfront_ButtonView extends Upfront_Object {
 			"href" => "", 
 			"linkTarget" => "",
 			"align" => "center", 
-			"type" => "UbuttonModel", 
+			"type" => "ButtonModel", 
 			"view_class" => "ButtonView",  
 			"class" => "c24 upfront-button", 
 			"has_settings" => 1, 

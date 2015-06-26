@@ -6,18 +6,18 @@ define([
 	'scripts/upfront/preset-settings/util',
 	'text!elements/upfront-button/tpl/ubutton.html',
 	'text!elements/upfront-button/tpl/preset-style.html'
-], function(UbuttonModel, ButtonElement, ButtonSettings, PresetUtil, buttonTpl, settingsStyleTpl) {
+], function(ButtonModel, ButtonElement, ButtonSettings, PresetUtil, buttonTpl, settingsStyleTpl) {
 
 var l10n = Upfront.Settings.l10n.button_element;
 
 var singleclickcount = 0;
 var ButtonView = Upfront.Views.ObjectView.extend({
-	model: UbuttonModel,
+	model: ButtonModel,
 	className: 'upfront-button',
 	buttonTpl: Upfront.Util.template(buttonTpl),
 	initialize: function() {
-		if(! (this.model instanceof UbuttonModel)){
-			this.model = new UbuttonModel({properties: this.model.get('properties')});
+		if(! (this.model instanceof ButtonModel)){
+			this.model = new ButtonModel({properties: this.model.get('properties')});
 		}
     
 		this.events = _.extend({}, this.events, {
@@ -264,27 +264,17 @@ var ButtonMenuList = Upfront.Views.ContextMenuList.extend({
 	}
 });
 
-var ButtonMenu = Upfront.Views.ContextMenu.extend({
-	initialize: function() {
-		this.menulists = _([
-		  new ButtonMenuList()
-		]);
-	}
-});
-
-
 Upfront.Application.LayoutEditor.add_object("Button", {
-	"Model": UbuttonModel,
+	"Model": ButtonModel,
 	"View": ButtonView,
 	"Element": ButtonElement,
 	"Settings": ButtonSettings,
-	"ContextMenu": ButtonMenu,
 	cssSelectors: {
 		'.upfront-button': {label: l10n.css.container_label, info: l10n.css.container_info}
 	},
-	cssSelectorsId: 'UbuttonModel'
+	cssSelectorsId: Upfront.data.ubutton.defaults.type
 });
-Upfront.Models.UbuttonModel = UbuttonModel;
+Upfront.Models.ButtonModel = ButtonModel;
 Upfront.Views.ButtonView = ButtonView;
 
 });
