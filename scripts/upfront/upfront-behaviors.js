@@ -2547,13 +2547,14 @@ var GridEditor = {
 							top: wrap.grid.top,
 							bottom: bottom,
 							left: wrap.grid.left,
-							right: ( is_wrap_me || is_switch_left ? next_wrap_el_left.grid.left-1 : right ),
+							//right: ( is_wrap_me || is_switch_left ? next_wrap_el_left.grid.left-1 : right ),
+							right: ( is_wrap_me && next_wrap_el_left ? next_wrap_el_left.grid.left-1 : right ), // @TODO Experiment: change position for better behavior
 							priority: {
 								top: wrap.grid.top,
 								bottom: bottom,
 								left: left,
 								//right: ( is_wrap_me || is_switch_left ? next_wrap_el_left.grid.left-1 : ( is_switch_right ? switch_right : wrap_el_left.grid.left-1 ) ),
-								right: ( is_wrap_me || is_switch_left ? next_wrap_el_left.grid.left-1 : left+Math.ceil((right-left)/2)-1 ), // @TODO Experiment: change position for better behavior
+								right: ( is_wrap_me && next_wrap_el_left ? next_wrap_el_left.grid.left-1 : left+Math.ceil((right-left)/2)-1 ), // @TODO Experiment: change position for better behavior
 								index: ( is_wrap_me ? 1 : 4 )
 							},
 							priority_index: 10, //( is_switch_left || is_switch_right ? 4 : 7 ), // @TODO Experiment: priority change for better behavior
