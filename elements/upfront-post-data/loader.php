@@ -40,7 +40,6 @@ class Upfront_Post_Data extends Upfront_Server {
 	public function initialize () {
 		require_once (dirname(__FILE__) . '/lib/class_upfront_post_data_model.php');
 		require_once (dirname(__FILE__) . '/lib/class_upfront_post_data_data.php');
-		require_once (dirname(__FILE__) . '/lib/class_upfront_post_data_view.php');
 		require_once (dirname(__FILE__) . '/lib/class_upfront_post_data_part_view.php');
 		require_once (dirname(__FILE__) . '/lib/class_upfront_post_data_frontend_view.php');
 
@@ -77,8 +76,12 @@ class Upfront_Post_Data extends Upfront_Server {
 		if (!empty($request['post_date'])) $data['post_date'] = $request['post_date'];
 		if (!empty($request['objects'])) $data['objects'] = $request['objects'];
 
+		$post = Upfront_Post_Data_Model::spawn_post($data);
+		$view_class = Upfront_Post_Data_PartView::_get_view_class($data);
+		$view = new $view_class($data);
+
 		$this->_out(new Upfront_JsonResponse_Success(array(
-			'post_data' => Upfront_Post_Data_View::get_post_markup($data)
+			'post_data' => $view->get_markup($post),
 		)));
 	}
 

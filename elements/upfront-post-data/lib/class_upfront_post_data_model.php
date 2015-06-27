@@ -16,6 +16,13 @@ class Upfront_Post_Data_Model {
 		return $post;
 	}
 
+	/**
+	 * Spawn a WP_Post instance from the passed in data array
+	 *
+	 * @param array $data Data array
+	 *
+	 * @return WP_Post
+	 */
 	public static function spawn_post ($data) {
 		$post = Upfront_Post_Data_Model::get_post( !empty($data['post_id']) && is_numeric($data['post_id']) && $data['post_id'] > 0 ? $data['post_id'] : null );
 		$post = apply_filters('upfront-post_data-unknown_post', $post, $data);
