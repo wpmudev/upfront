@@ -321,7 +321,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	}
 
 	private function getActiveIconFont() {
-		error_log('getting active icon font' . $this->get_theme_settings()->get('icon_fonts'));
+		//error_log('getting active icon font' . $this->get_theme_settings()->get('icon_fonts'));
 		$fonts = json_decode($this->get_theme_settings()->get('icon_fonts'), true);
 		$active_font = false;
 		if(empty($fonts)) return false;
