@@ -89,21 +89,6 @@ abstract class Upfront_PostPart_View {
 		return $out;
 	}
 
-	public function expand_comment_count_template () {
-		$hide_empty = isset($this->_data['comment_count_hide'])
-			? (int)$this->_data['comment_count_hide']
-			: (int)Upfront_Posts_PostsData::get_default('comment_count_hide')
-		;
-
-		if ($hide_empty && empty($this->_post->comment_count)) return '';
-
-		$out = $this->_get_template('comment_count');
-
-		$out = Upfront_Codec::get()->expand($out, "comment_count", (int)($this->_post->comment_count));
-
-		return $out;
-	}
-
 	public function expand_title_template () {
 		if (empty($this->_post->post_title)) return '';
 
@@ -128,6 +113,21 @@ abstract class Upfront_PostPart_View {
 		$out = $this->_get_template('content');
 
 		$out = Upfront_Codec::get()->expand($out, "content", $content);
+
+		return $out;
+	}
+
+	public function expand_comment_count_template () {
+		$hide_empty = isset($this->_data['comment_count_hide'])
+			? (int)$this->_data['comment_count_hide']
+			: (int)Upfront_Posts_PostsData::get_default('comment_count_hide')
+		;
+
+		if ($hide_empty && empty($this->_post->comment_count)) return '';
+
+		$out = $this->_get_template('comment_count');
+
+		$out = Upfront_Codec::get()->expand($out, "comment_count", (int)($this->_post->comment_count));
 
 		return $out;
 	}
