@@ -5499,7 +5499,8 @@ var _Settings_Padding = SettingsItem.extend({
 		'change input': 'paddingChanged'
 	},
 	initialize: function(options) {
-		var top_padding_use = new Upfront.Views.Editor.Field.Checkboxes({
+		var column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
+			top_padding_use = new Upfront.Views.Editor.Field.Checkboxes({
 				model: this.model,
 				property: 'top_padding_use',
 				label: '',
@@ -5517,7 +5518,7 @@ var _Settings_Padding = SettingsItem.extend({
 				model: this.model,
 				property: 'top_padding_slider',
 				label: '',
-				default_value: this.model.get_breakpoint_property_value('top_padding_slider', true) || 0,
+				default_value: this.model.get_breakpoint_property_value('top_padding_slider', true) || column_padding,
 				min: 0,
 				max: 200,
 				valueTextFilter: function () {return '';},
@@ -5533,7 +5534,7 @@ var _Settings_Padding = SettingsItem.extend({
 				model: this.model,
 				property: 'top_padding_num',
 				label: '',
-				default_value: this.model.get_breakpoint_property_value('top_padding_num', true) || 0,
+				default_value: this.model.get_breakpoint_property_value('top_padding_num', true) || column_padding,
 				suffix: 'px',
 				min: 0,
 				change: function () {
@@ -5563,7 +5564,7 @@ var _Settings_Padding = SettingsItem.extend({
 				model: this.model,
 				property: 'bottom_padding_slider',
 				label: '',
-				default_value: this.model.get_breakpoint_property_value('bottom_padding_slider', true) || 0,
+				default_value: this.model.get_breakpoint_property_value('bottom_padding_slider', true) || column_padding,
 				min: 0,
 				max: 200,
 				valueTextFilter: function () {return '';},
@@ -5579,7 +5580,7 @@ var _Settings_Padding = SettingsItem.extend({
 				model: this.model,
 				property: 'bottom_padding_num',
 				label: '',
-				default_value: this.model.get_breakpoint_property_value('bottom_padding_num', true) || 0,
+				default_value: this.model.get_breakpoint_property_value('bottom_padding_num', true) || column_padding,
 				suffix: 'px',
 				min: 0,
 				change: function () {
@@ -5609,7 +5610,7 @@ var _Settings_Padding = SettingsItem.extend({
 				model: this.model,
 				property: 'left_padding_slider',
 				label: '',
-				default_value: this.model.get_breakpoint_property_value('left_padding_slider', true) || 0,
+				default_value: this.model.get_breakpoint_property_value('left_padding_slider', true) || column_padding,
 				min: 0,
 				max: 200,
 				valueTextFilter: function () {return '';},
@@ -5625,7 +5626,7 @@ var _Settings_Padding = SettingsItem.extend({
 				model: this.model,
 				property: 'left_padding_num',
 				label: '',
-				default_value: this.model.get_breakpoint_property_value('left_padding_num', true) || 0,
+				default_value: this.model.get_breakpoint_property_value('left_padding_num', true) || column_padding,
 				suffix: 'px',
 				min: 0,
 				change: function () {
@@ -5655,7 +5656,7 @@ var _Settings_Padding = SettingsItem.extend({
 				model: this.model,
 				property: 'right_padding_slider',
 				label: '',
-				default_value: this.model.get_breakpoint_property_value('right_padding_slider', true) || 0,
+				default_value: this.model.get_breakpoint_property_value('right_padding_slider', true) || column_padding,
 				min: 0,
 				max: 200,
 				valueTextFilter: function () {return '';},
@@ -5671,7 +5672,7 @@ var _Settings_Padding = SettingsItem.extend({
 				model: this.model,
 				property: 'right_padding_num',
 				label: '',
-				default_value: this.model.get_breakpoint_property_value('right_padding_num', true) || 0,
+				default_value: this.model.get_breakpoint_property_value('right_padding_num', true) || column_padding,
 				suffix: 'px',
 				min: 0,
 				change: function () {
