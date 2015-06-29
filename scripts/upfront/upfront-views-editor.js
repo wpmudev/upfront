@@ -5704,7 +5704,7 @@ var _Settings_Padding = SettingsItem.extend({
 		]);
 	},
 	paddingChanged: function(e) {
-		console.log(this.$('input'));
+		// console.log(this.$('input'));
 	}
 });
 
