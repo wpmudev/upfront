@@ -964,6 +964,7 @@ define([
 					buttons = (this.get_buttons ? this.get_buttons() : ''),
 					extra_buttons = (this.get_extra_buttons ? this.get_extra_buttons() : ''),
 					content = (this.get_content_markup ? this.get_content_markup() : ''),
+					column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
 					height, model, template
 				;
 				// Id the element by anchor, if anchor is defined
@@ -974,6 +975,14 @@ define([
 				this.model.get("properties").each(function (prop) {
 					props[prop.get("name")] = prop.get("value");
 				});
+
+				// Padding settings
+				var top_padding = (props.top_padding_use && props.top_padding_use.length) ? props.top_padding_num : column_padding,
+					bottom_padding = (props.bottom_padding_use && props.bottom_padding_use.length) ? props.bottom_padding_num : column_padding,
+					left_padding = (props.left_padding_use && props.left_padding_use.length) ? props.left_padding_num : column_padding,
+					right_padding = (props.right_padding_use && props.right_padding_use.length) ? props.right_padding_num : column_padding
+				;
+				me.$el.css('padding', top_padding + 'px ' + right_padding + 'px ' + bottom_padding + 'px ' + left_padding + 'px');
 
 				var row = this.model.get_breakpoint_property_value('row', true);
 				height = ( row ) ? row * Upfront.Settings.LayoutEditor.Grid.baseline : 0;
