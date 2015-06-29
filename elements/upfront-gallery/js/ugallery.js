@@ -782,8 +782,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			loading.render();
 			this.parent_module_view.$el.append(loading.$el);
 
-			Upfront.Util.post(editOptions).done(function(response){
-
+			Upfront.Util.post(editOptions).done(function(response) {
 				loading.done();
 				var images = response.data.images,
 					models = []
@@ -1196,12 +1195,13 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			return;
 		}
 
-		if ($caption.data('ueditor')) {
+		if ($caption.data('ueditor') && !$caption.data('ueditor').active ) {
 			$caption.data('ueditor').start();
 		} else {
 			image = this.images.get($caption.closest('.ugallery_item').attr('rel'));
 			this.ensureCaptionEditorExists($caption, image);
-			$caption.data('ueditor').start();
+            if( !$caption.data('ueditor').active )
+			    $caption.data('ueditor').start();
 		}
 	},
 

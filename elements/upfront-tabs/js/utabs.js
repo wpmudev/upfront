@@ -27,7 +27,7 @@ define([
 			var tabs = this.property('tabs');
 			_.each(tabs, function(tab, index) {
 				if (tab.title.trim() === '') {
-					tabs[index].title = 'Tab ' + (index + 1);
+					tabs[index].title = l10n.tab_label + ' ' + (index + 1);
 				}
 			});
 			this.property('tabs', tabs);
@@ -70,8 +70,8 @@ define([
 		addTab: function(e) {
 			e.preventDefault();
 			this.property('tabs').push({
-				title: 'Tab ' + (1 + this.property('tabs_count')),
-				content: 'Content ' + (1 + this.property('tabs_count'))
+				title: l10n.tab_label + ' ' + (1 + this.property('tabs_count')),
+				content: l10n.content_label + ' ' + (1 + this.property('tabs_count'))
 			});
 			this.property('tabs_count', this.property('tabs').length, false);
 			this.render();
@@ -218,9 +218,9 @@ define([
 				 var id = $content.parent().parent().data('content-id').split('-').pop();
 				 var editor = $content.data('ueditor');
 				 if (editor.getValue(true).trim() === '') {
-					 me.property('tabs')[id].title =  'Tab ' + count;
+					 me.property('tabs')[id].title =  l10n.tab_label + ' ' + count;
 					 setTimeout( function() {
-						 $content.text('Tab ' + count);
+						 $content.text(l10n.tab_label + ' ' + count);
 					 }, 50);
 				 } else {
 					 me.property('tabs')[id].title =  editor.getValue(true).trim();
@@ -271,7 +271,7 @@ define([
 
 		stopContentEdit: function($content) {
 			if($content.text().trim() === '') {
-				$content.html('Tab Content');
+				$content.html(l10n.tab_placeholder);
 			}
 			this.saveTabContent($content);
 			Upfront.Events.trigger('upfront:element:edit:stop');

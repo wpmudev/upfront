@@ -1,6 +1,8 @@
 <?php
 
-require_once Upfront::get_root_dir() . '/library/servers/class_upfront_presets_server.php';
+if (!class_exists('Upfront_Presets_Server')) {
+	require_once Upfront::get_root_dir() . '/library/servers/class_upfront_presets_server.php';
+}
 
 class Upfront_Tab_Presets_Server extends Upfront_Presets_Server {
 	private static $instance;
@@ -28,5 +30,4 @@ class Upfront_Tab_Presets_Server extends Upfront_Presets_Server {
 		return realpath(Upfront::get_root_dir() . '/elements/upfront-tabs/tpl/preset-style.html');
 	}
 }
-
-add_action('init', array('Upfront_Tab_Presets_Server', 'serve'));
+Upfront_Tab_Presets_Server::serve();

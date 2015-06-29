@@ -194,7 +194,12 @@ background-position: -699px -646px;
 	line-height: 30px;
 	display: inline-block;
 	margin-top: 10px;
+}
+.upfront-ui .uslider-starting-centered a.upfront-image-select {
 	color: #666;
+}
+.upfront-ui .uslider-starting-centered a.upfront-image-select:hover {
+	color: #3ea;
 }
 
 .uslides .uimage-controls .upfront-inline-panel-bottom-left {

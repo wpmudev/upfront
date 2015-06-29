@@ -282,6 +282,13 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		$read_only = json_encode(defined('UPFRONT_READ_ONLY') && UPFRONT_READ_ONLY);
 		$allow_revisions = json_encode(Upfront_Permissions::current(Upfront_Permissions::SAVE_REVISION));
 
+		$permissions = json_encode(array(
+			'REVISIONS' => (bool)Upfront_Permissions::current(Upfront_Permissions::SAVE_REVISION),
+			'OPTIONS' => (bool)Upfront_Permissions::current(Upfront_Permissions::OPTIONS),
+			'EMBED' => (bool)Upfront_Permissions::current(Upfront_Permissions::EMBED),
+			'UPLOAD' => (bool)Upfront_Permissions::current(Upfront_Permissions::UPLOAD),
+		));
+
 		$l10n = json_encode($this->_get_l10n_strings());
 
 		$content_settings = array();
@@ -300,6 +307,24 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		}
 		$content_settings = json_encode($content_settings);
 
+        /**
+         * Redactor font icons
+         *
+         *
+         */
+
+        // get default font
+        $redactor_font_icons = $this->_get_default_font_icons();
+
+        $redactor_font_icons = apply_filters(
+            'upfront_get_editor_font_icons',
+            $redactor_font_icons,
+            array(
+                'json' => true
+            )
+        );
+
+
 		$main = <<<EOMainJs
 // Set up the global namespace
 var Upfront = window.Upfront || {};
@@ -315,6 +340,9 @@ Upfront.mainData = {
 	applicationModes: {$application_modes},
 	ALLOW_REVISIONS: {$allow_revisions},
 	readOnly: {$read_only},
+
+	PERMS: {$permissions},
+
 	specificity: {$specificity},
 	gridInfo: {$grid_info},
 	themeInfo: {$theme_info},
@@ -327,7 +355,8 @@ Upfront.mainData = {
 	postImageVariants: {$post_image_variants},
 	content: {$content},
 	content_settings: {$content_settings},
-	l10n: {$l10n}
+	l10n: {$l10n},
+	font_icons: {$redactor_font_icons}
 };
 EOMainJs;
 		$this->_out(new Upfront_JavascriptResponse_Success($main));
@@ -362,4 +391,61 @@ EOMainJs;
 		$l10n = array();
 		return apply_filters('upfront_l10n', $l10n);
 	}
+
+    /**
+     * Returns default font icons
+     *
+     * @return array
+     */
+    private function _get_default_font_icons(){
+        return json_encode( array(
+            "~",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "0",
+            "-",
+            "+",
+            "Q",
+            "W",
+            "E",
+            "R",
+            "T",
+            "Y",
+            "U",
+            "I",
+            "O",
+            "P",
+            "{",
+            "}",
+            "|",
+            "A",
+            "S",
+            "D",
+            "F",
+            "G",
+            "H",
+            "J",
+            "K",
+            "L",
+            ":",
+            '"',
+            "Z",
+            "X",
+            "C",
+            "V",
+            "B",
+            "N",
+            "M",
+            "<",
+            ">",
+            "?",
+        ) );
+    }
 }

@@ -29,7 +29,7 @@ abstract class Upfront_Server implements IUpfront_Server {
 	}
 
 	protected function _out (Upfront_HttpResponse $out) {
-		if (!$this->_debugger->is_active(Upfront_Debug::RESPONSE) && extension_loaded('zlib') && Upfront_OutputBehavior::has_compression()) {
+		if (!Upfront_Behavior::debug()->is_active(Upfront_Behavior::debug()->constant('RESPONSE')) && extension_loaded('zlib') && Upfront_Behavior::compression()->has_compression()) {
 			ob_start('ob_gzhandler');
 		}
 		status_header($out->get_status());

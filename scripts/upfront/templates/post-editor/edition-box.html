@@ -4,7 +4,7 @@
     <div class="ueditor-box ueditable" id="{{cid}}">
         <ul>
             <li id="ueditor-box-publish" class="ueditor-box-section active show">
-                <div class="ueditor-box-title">Publish</div>
+                <div class="ueditor-box-title">{{Upfront.Settings.l10n.global.content.publish}}</div>
                 <div class="ueditor-box-content-wrap">
                     <div class="ueditor-bix-top-buttons">
                         {[ if(draftButton){ ]}
@@ -27,7 +27,7 @@
                 </div>
             </li>
             <li id="ueditor-box-cats-tags" class="ueditor-box-section">
-                <div class="ueditor-box-title">Categories, Tags & URL</div>
+                <div class="ueditor-box-title">{{Upfront.Settings.l10n.global.content.tags_cats_url}}</div>
                 <div class="ueditor-box-content-wrap">
                     <div class="ueditor-box-content">
                         <div class="misc-pub-section misc-pub-post-category"></div>
@@ -159,7 +159,7 @@
 </script>
 
 <script type="text/template" id="post-visibility-tpl">
-    <label id="post-visibility-display" class="ueditor-icon-label">Visibility:</label>
+    <label id="post-visibility-display" class="ueditor-icon-label">{{Upfront.Settings.l10n.global.content.visibility}}</label>
     <span class="ueditor-previous-data">{{status.name}}</span>
     <a href="#" class="edit-visibility ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</span>
     </a>
@@ -167,15 +167,15 @@
     <div id="post-visibility-select" class="ueditor-togglable">
         <input type="checkbox" style="display:none" name="hidden_post_sticky" id="hidden-post-sticky" value="sticky">
         <input type="radio" name="visibility" id="visibility-radio-public" value="public" {[ if( status.value == "public" ) { ]} checked="checked" {[ } ]} >
-        <label for="visibility-radio-public">Public</label>
+        <label for="visibility-radio-public">{{Upfront.Settings.l10n.global.content.public_post}}</label>
         <br>
         <span id="sticky-span" class="ueditor-togglable-child ueditor-togglable-child-public" {[ if( status.value == "public" ) { ]} style="display:block" {[ } ]}>
             <input name="sticky" type="checkbox" value="sticky">
-            <label>Stick this post to the front page</label>
+            <label>{{Upfront.Settings.l10n.global.content.sticky_post_label}}</label>
             <br>
         </span>
         <input type="radio" name="visibility" id="visibility-radio-password" value="password" {[ if( status.value == "password" ) { ]} checked="checked" {[ } ]}>
-        <label for="visibility-radio-password">Password protected</label>
+        <label for="visibility-radio-password">{{Upfront.Settings.l10n.global.content.password_protected}}</label>
         <br>
         <span id="password-span" class="ueditor-togglable-child ueditor-togglable-child-password" {[ if( status.value == "password" ) { ]} style="display:block" {[ } ]}>
             <label>{{Upfront.Settings.l10n.global.content.password}}:</label>
@@ -183,7 +183,7 @@
             <br>
         </span>
         <input type="radio" name="visibility" id="visibility-radio-private" value="private" {[ if( status.value == "private" ) { ]} checked="checked" {[ } ]}>
-        <label for="visibility-radio-private">Private</label>
+        <label for="visibility-radio-private">{{Upfront.Settings.l10n.global.content.is_private}}</label>
         <br>
         <p>
             <a href="#visibility" class="save-post-visibility ueditor-small-button  ueditor-button-small-ok">{{Upfront.Settings.l10n.global.content.ok}}</a>
@@ -200,20 +200,20 @@
     <a href="#" class="edit-timestamp ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
     <div class="ueditor-togglable ueditor-togglable-post-schedule-date">
         <div class="timestamp-wrap">
-            <label class="screen-reader-text">Month</label>
+            <label class="screen-reader-text">{{Upfront.Settings.l10n.global.content.month}}</label>
             <select name="mm">
                 {[ _.each(_.sortBy(Upfront.Settings.l10n.global.views.month_names), function(month, idx){ ]}
                 <option value="{{idx}}" {[ if( idx == currentMonth ) { ]} selected="selected" {[ } ]}>{{month}}</option>
                 {[ }); ]}
             </select>
-            <label class="screen-reader-text">Day</label>
+            <label class="screen-reader-text">{{Upfront.Settings.l10n.global.content.day}}</label>
             <input type="text" name="jj" value="{{currentDay}}" size="2" maxlength="2" autocomplete="off">,
-            <label class="screen-reader-text">Year</label>
+            <label class="screen-reader-text">{{Upfront.Settings.l10n.global.content.year}}</label>
             <input type="text" name="yy" value="{{currentYear}}" size="4" maxlength="4" autocomplete="off">
             @
-            <label class="screen-reader-text">Hour</label>
+            <label class="screen-reader-text">{{Upfront.Settings.l10n.global.content.hour}}</label>
             <input type="text"  name="hh" value="{{currentHour}}" size="2" maxlength="2" autocomplete="off">
-            : <label class="screen-reader-text">Minute</label>
+            : <label class="screen-reader-text">{{Upfront.Settings.l10n.global.content.minute}}</label>
             <input type="text"  name="mn" value="{{currentMinute}}" size="2" maxlength="2" autocomplete="off">
         </div>
 

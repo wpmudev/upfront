@@ -10,7 +10,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 		$layout = array();
 		if (!is_array($cascade)) return $layout;
 		self::$cascade = $cascade;
-		if ( current_user_can('switch_themes') && (!empty($_GET['dev']) || $dev_first) ){
+		if ( current_user_can('switch_themes') && (Upfront_Behavior::debug()->is_dev() || $dev_first) ){
 			// try loading for dev stored layout first
 			$dev_storage_key = $storage_key ? $storage_key : self::get_storage_key();
 			if ( !preg_match("/_dev$/", $dev_storage_key) ){
@@ -258,6 +258,8 @@ class Upfront_Layout extends Upfront_JsonModel {
 		return self::from_php(apply_filters('upfront_create_default_layout', $data, $layout_ids, self::$cascade));
 	}
 
+/* --- Snip, snip. These 3 are to be removed --- */
+
 	public static function list_theme_layouts() {
 		$theme_slug = $_POST['stylesheet'];
 		$theme_directory = trailingslashit(get_theme_root($theme_slug)) . $theme_slug;
@@ -428,6 +430,67 @@ class Upfront_Layout extends Upfront_JsonModel {
 		return $return;
 	}
 
+/* --- Remove up to here --- */
+
+	/**
+	 * Returns a list of default, generic layouts - the predefined ones.
+	 *
+	 * @return array List of predefined layouts.
+	 */
+	public static function get_default_layouts () {
+		$layouts = array(
+			'archive-home' => array(
+				'layout' => array(
+					'item' => 'archive-home',
+					'type' => 'archive'
+				)
+			),
+			'archive' => array(
+				'layout' => array(
+					'type' => 'archive'
+				)
+			),
+			'archive-search' => array(
+				'layout' => array(
+					'item' => 'archive-search',
+					'type' => 'archive'
+				)
+			),
+			'404' => array(
+				'layout' => array(
+					'specificity' => 'single-404_page',
+					'item' => 'single-page',
+					'type' => 'single',
+				)
+			),
+		);
+		
+		return apply_filters('upfront-core-default_layouts', $layouts);
+	}
+
+	/**
+	 * Returns a list of database-stored layouts
+	 * for a particular storage key.
+	 *
+	 * @param string $storage_key Optional storage key
+	 *
+	 * @return array List of db-stored hash, in full_key => simple_key pairs format
+	 */
+	public static function get_db_layouts ($storage_key = '') {
+		global $wpdb;
+		self::set_storage_key($storage_key);
+		$storage_key = self::get_storage_key();
+
+		$results = array();
+		$list = $wpdb->get_row("SELECT option_name FROM $wpdb->options WHERE ( `option_name` LIKE '{$storage_key}-single%' OR `option_name` LIKE '{$storage_key}-archive%' )");
+		if (empty($list)) return $results;
+
+		foreach ($list as $item) {
+			$results[$item] = preg_replace('/^' . preg_quote($storage_key, '/') . '-?/', '', $item);
+		}
+		return $results;
+	}
+
 	public static function list_scoped_regions ($scope, $storage_key = '') {
 		self::set_storage_key($storage_key);
 		$storage_key = self::get_storage_key();
@@ -540,7 +603,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 		}
 
 		foreach ( $scopes as $scope => $data ) {
-			$current_scope = json_decode( get_option(self::_get_scope_id($region['scope']), json_encode(array())), true );
+			$current_scope = json_decode( get_option(self::_get_scope_id($scope), json_encode(array())), true );
 			$current_scope = apply_filters('upfront_get_global_regions', $current_scope, self::_get_scope_id($region['scope']));
 			$scope_data = $data;
 			if ( $current_scope ){ // merge with current scope if it's exist

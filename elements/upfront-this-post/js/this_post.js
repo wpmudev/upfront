@@ -31,6 +31,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		if(! (this.model instanceof ThisPostModel)){
 			this.model = new ThisPostModel({properties: this.model.get('properties')});
 		}
+		this.listenTo(this.model.get('properties'), 'change', this.reset_markup);
 		this.constructor.__super__.initialize.call(this, [options]);
 
 		if (Upfront.Application.mode.current === Upfront.Application.MODE.THEME) {
@@ -97,6 +98,27 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			return 'loading';
 		}
 		return this.markup;
+	},
+	
+	reset_markup: function () {
+		var me = this,
+			props = ['hide_featured_image', 'full_featured_image'];
+		if ( ! this.markup )
+			return;
+		_.find(props, function(prop){
+			var value = me.property(prop),
+				prev_value = me._properties[prop];
+			if ( !value && !prev_value ) // nothing change
+				return false;
+			if ( prev_value != value ){
+				me.markup = false;
+				return true;
+			}
+			return false;
+		});
+		if ( this.markup === false && this.editor ){ // Markup refreshed, let's also fetchPostLayout
+			this.editor.fetchPostLayout();
+		}
 	},
 
 	prepareEditor: function(){
@@ -185,13 +207,20 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			loading.render();
 			node.append(loading.$el);
 		}
+		
+		this._properties = {
+			post_data: this.property("post_data"),
+			element_id: this.property('element_id'),
+			hide_featured_image: this.property('hide_featured_image'),
+			full_featured_image: this.property('full_featured_image')
+		};
 
 		this.loadingMarkup = Upfront.Util.post({
 				action: "this_post-get_markup",
 				data: JSON.stringify({
 					post_id: this.postId,
 					post_type: Upfront.Settings.LayoutEditor.newpostType,
-					properties: {post_data: this.property("post_data"), element_id: this.property('element_id')}
+					properties: this._properties
 				})
 			}).success(function(response){
 				if(loading){
@@ -356,7 +385,36 @@ var Settings_PostPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	label: l10n.element_name,
 	initialize: function (opts) {
 		this.options = opts;
+		
+		var hide_featured = new Upfront.Views.Editor.Field.Checkboxes({
+				model: this.model,
+				property: "hide_featured_image",
+				multiple: false,
+				values: [{ label: l10n.hide_featured_image, value: '1' }],
+				change: function () {
+					var value = this.get_value();
+					if ( value == '1' )
+						full_featured.get_field().prop(this.selected_state, false);
+				}
+			}),
+			full_featured = new Upfront.Views.Editor.Field.Checkboxes({
+				model: this.model,
+				property: "full_featured_image",
+				multiple: false,
+				values: [{ label: l10n.full_featured_image, value: '1' }],
+				change: function () {
+					var value = this.get_value();
+					if ( value == '1' )
+						hide_featured.get_field().prop(this.selected_state, false);
+				}
+			});
+		
 		this.settings = _([
+			new Upfront.Views.Editor.Settings.Item({
+				model: this.model,
+				title: l10n.featured_image_option,
+				fields: [ hide_featured, full_featured ]
+			}),
 			//new Settings_PostPanel_PostData({model: this.model})
 		]);
 	},

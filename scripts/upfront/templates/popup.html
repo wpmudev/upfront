@@ -277,7 +277,7 @@
 <script type="text/template" id="selector-post_type-tpl">
 {[if(postTypes.length > 1){ ]}
 <div id="upfront-selector-post_type">
-	Select a post type:
+	{{Upfront.Settings.l10n.global.views.select_post_type}}
 	<div class="upfront-field-select">
 		<div class="upfront-field-select-value">{{postTypes[0].label}}</div>
 		<ul class="upfront-field-select-options">
@@ -349,7 +349,8 @@
 			<div id="insert-font-widget" class="upfront-icon">
 				<a class="upfront-css-font" href="#">{{Upfront.Settings.l10n.global.content.insert_font}}</a>
 			</div>
-			<a class="upfront-css-image" href="#">{{Upfront.Settings.l10n.global.content.insert_theme_image}}</a>
+			<a class="upfront-css-theme_image upfront-css-image" href="#">{{Upfront.Settings.l10n.global.content.insert_theme_image}}</a>
+			<a class="upfront-css-media_image upfront-css-image" href="#">{{Upfront.Settings.l10n.global.content.insert_image}}</a>
 			<span class="upfront-css-color"></span>
 			<a class="upfront-css-close" href="#">close</a>
 		</div>
@@ -369,7 +370,7 @@
         {[ } ]}
 				<div class="upfront-css-save-form">
         		{[ if (show_style_name) { ]}
-					<p>Style name</p>
+					<p>{{Upfront.Settings.l10n.global.views.style_name}}</p>
 					<input type="text" class="upfront-css-save-name-field" value="{{ name }}">
         		{[ } ]}
           			<button class="upfront-css-save-ok">{{Upfront.Settings.l10n.global.content.save}}</button>
@@ -392,7 +393,7 @@
 			{[ }); ]}
 		</div>
 		{[ if(Upfront.themeExporter && location.pathname.match(/\/create_new\/theme/) === null) { ]}
-		<div class="upload-icon-font">Upload Icon Font</div>
+		<div class="upload-icon-font">{{Upfront.Settings.l10n.global.views.upload_icon_font}}</div>
 		<form style="display: none" id="upfront-upload-icon-font" name="upfront-upload-icon-font" enctype="multipart/form-data" method="post" action="{{url}}" data-url="{{url}}?action=upfront-upload-icon-font">
 			<input type="file" name="media" id="upfront-icon-font-input">
 			<input type="hidden" name="action" value="upfront-upload-icon-font">

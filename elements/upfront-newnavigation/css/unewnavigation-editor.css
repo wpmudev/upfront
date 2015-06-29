@@ -37,10 +37,6 @@ div.upfront-navigation.upfront-editable_entity  ul.menu > li > i.navigation-add-
 	display: none !important;
 }
 
-
-.upfront-output-unewnavigation[data-style="vertical"] {
-	padding-right:30px;
-}
 .upfront-output-unewnavigation[data-style="vertical"] ul.sub-menu {
   z-index:9999;
 }
@@ -319,6 +315,9 @@ div.upfront-navigation div[data-style="burger"][data-aliment="right"] i.navigati
   margin-left: 10px;
 }
 
+div.upfront-navigation div[data-style="burger"] ul.sub-menu {
+  z-index: inherit !important;
+}
 
 /* Hover to open sub-menu in the layout edit mode */
 div.upfront-navigation div[data-style="burger"] > ul.menu li.menu-item:hover > ul.sub-menu {
@@ -450,4 +449,13 @@ div.upfront-navigation li.menu-item .uimage-controls a {
 /* style adjustments */
 .upfront-navigation .upfront-field-select {
 	max-width:170px;
+}
+
+.newnavigation_squished .upfront-editable_entity.upfront-navigation:hover .responsive_nav_toggler {
+	top:15px;
+	right: inherit;
+}
+
+.upfront-editable_entity.upfront-navigation:hover .responsive_nav_toggler {
+	right:15px;
 }

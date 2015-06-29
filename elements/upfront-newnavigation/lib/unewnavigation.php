@@ -62,7 +62,8 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 			$menu = wp_nav_menu(array(
 				'menu' => $menu_id,
 				'fallback_cb'     => false,
-				'echo' => false
+				'echo' => false,
+				'walker' => new upfront_nav_walker(),
 			));
 		} else {
 			return "<div class=' {$float_class} upfront-navigation' {$menu_style} {$menu_aliment} {$breakpoint_data} {$sub_navigation}>" . self::_get_l10n('select_menu') . "</div>";
@@ -131,6 +132,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 			'visit_url' => __('Visit URL', 'upfront'),
 			'edit_url' => __('Edit URL', 'upfront'),
 			'create_dropdown' => __('Create Drop-Down', 'upfront'),
+			'choose_existing_menu' => __('Choose existing menu', 'upfront'),
 			'css' => array(
 				'bar_label' => __('Menu Bar', 'upfront'),
 				'bar_info' => __('Menu Bar', 'upfront'),
@@ -302,7 +304,7 @@ class Upfront_newMenuSetting extends Upfront_Server {
 			'menu-item-url' => $e->url,
 			'menu-item-object' => $e->object,
 			'menu-item-object-id' => $e->object_id,
-			'menu-item-target' => $e->target,
+			'menu-item-target' => ($e->type === 'anchor' || $e->type === 'email') ? '_self' : $e->target,
 			'menu-item-position' => $e->menu_order
 			);
 		if(isset($children_elements[$e->ID])) {
@@ -491,3 +493,117 @@ class Upfront_newMenuSetting extends Upfront_Server {
 }
 
 Upfront_newMenuSetting::serve();
+
+class upfront_nav_walker extends Walker_Nav_Menu
+{
+    
+
+    public function start_el( &$output, $item, $depth = 0, $args = array(), $id = 0 ) {
+		$indent = ( $depth ) ? str_repeat( "\t", $depth ) : '';
+
+		$classes = empty( $item->classes ) ? array() : (array) $item->classes;
+
+		// to add current menu item status to a paginated blog
+		if($item->url == rtrim(get_permalink(), '/') && !array_search('current-menu-item', $classes))
+			$classes[] = 'current-menu-item';
+
+		//this code is why all this function has been overriden, this one checks if the link is anchor and removes the current-menu-item class
+		if(strpos($item->url, '#')) {
+           	foreach($classes as $index => $class_item) {
+           		if($class_item == 'current-menu-item')
+           			unset($classes[$index]);
+           	}
+        }
+
+		$classes[] = 'menu-item-' . $item->ID;
+
+		/**
+		 * Filter the CSS class(es) applied to a menu item's <li>.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @see wp_nav_menu()
+		 *
+		 * @param array  $classes The CSS classes that are applied to the menu item's <li>.
+		 * @param object $item    The current menu item.
+		 * @param array  $args    An array of wp_nav_menu() arguments.
+		 */
+		$class_names = join( ' ', apply_filters( 'nav_menu_css_class', array_filter( $classes ), $item, $args ) );
+		$class_names = $class_names ? ' class="' . esc_attr( $class_names ) . '"' : '';
+
+		/**
+		 * Filter the ID applied to a menu item's <li>.
+		 *
+		 * @since 3.0.1
+		 *
+		 * @see wp_nav_menu()
+		 *
+		 * @param string $menu_id The ID that is applied to the menu item's <li>.
+		 * @param object $item    The current menu item.
+		 * @param array  $args    An array of wp_nav_menu() arguments.
+		 */
+		$id = apply_filters( 'nav_menu_item_id', 'menu-item-'. $item->ID, $item, $args );
+		$id = $id ? ' id="' . esc_attr( $id ) . '"' : '';
+
+		$output .= $indent . '<li' . $id . $class_names .'>';
+
+		$atts = array();
+		$atts['title']  = ! empty( $item->attr_title ) ? $item->attr_title : '';
+		$atts['target'] = ! empty( $item->target )     ? $item->target     : '';
+		$atts['rel']    = ! empty( $item->xfn )        ? $item->xfn        : '';
+		$atts['href']   = ! empty( $item->url )        ? $item->url        : '';
+
+		/**
+		 * Filter the HTML attributes applied to a menu item's <a>.
+		 *
+		 * @since 3.6.0
+		 *
+		 * @see wp_nav_menu()
+		 *
+		 * @param array $atts {
+		 *     The HTML attributes applied to the menu item's <a>, empty strings are ignored.
+		 *
+		 *     @type string $title  Title attribute.
+		 *     @type string $target Target attribute.
+		 *     @type string $rel    The rel attribute.
+		 *     @type string $href   The href attribute.
+		 * }
+		 * @param object $item The current menu item.
+		 * @param array  $args An array of wp_nav_menu() arguments.
+		 */
+		$atts = apply_filters( 'nav_menu_link_attributes', $atts, $item, $args );
+
+		$attributes = '';
+		foreach ( $atts as $attr => $value ) {
+			if ( ! empty( $value ) ) {
+				$value = ( 'href' === $attr ) ? esc_url( $value ) : esc_attr( $value );
+				$attributes .= ' ' . $attr . '="' . $value . '"';
+			}
+		}
+
+		$item_output = $args->before;
+		$item_output .= '<a'. $attributes .'>';
+		/** This filter is documented in wp-includes/post-template.php */
+		$item_output .= $args->link_before . apply_filters( 'the_title', $item->title, $item->ID ) . $args->link_after;
+		$item_output .= '</a>';
+		$item_output .= $args->after;
+
+		/**
+		 * Filter a menu item's starting output.
+		 *
+		 * The menu item's starting output only includes $args->before, the opening <a>,
+		 * the menu item's title, the closing </a>, and $args->after. Currently, there is
+		 * no filter for modifying the opening and closing <li> for a menu item.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @see wp_nav_menu()
+		 *
+		 * @param string $item_output The menu item's starting HTML output.
+		 * @param object $item        Menu item data object.
+		 * @param int    $depth       Depth of menu item. Used for padding.
+		 * @param array  $args        An array of wp_nav_menu() arguments.
+		 */
+		$output .= apply_filters( 'walker_nav_menu_start_el', $item_output, $item, $depth, $args );
+	}
+}

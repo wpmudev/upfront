@@ -4,6 +4,11 @@
         'text!scripts/redactor/ueditor-templates.html'
     ];
 
+    var l10n = Upfront.Settings && Upfront.Settings.l10n
+        ? Upfront.Settings.l10n.global.ueditor
+        : Upfront.mainData.l10n.global.ueditor
+    ;
+
 define("redactor_plugins", deps, function(tpl){
 
 var UeditorEvents = _.extend({}, Backbone.Events);
@@ -212,7 +217,7 @@ RedactorPlugins.stateAlignment = function() {
             if( !this.$toolbar  ) return;
             var self = this;
             this.opts.stateButtons.stateAlign = {
-                title: 'Text alignment',
+                title: l10n.text_align,
                 defaultState: 'left',
                 states: {
                     left: {
@@ -274,7 +279,7 @@ RedactorPlugins.stateAlignmentCTA = {
         if( !this.$toolbar  ) return;
         var self = this;
         this.opts.stateButtons.stateAlignCTA = {
-            title: 'Text alignment',
+            title: l10n.text_align,
             defaultState: 'left',
             states: {
                 left: {
@@ -336,7 +341,7 @@ RedactorPlugins.stateLists = function() {
         init: function () {
             var self = this;
             this.opts.stateButtons.stateLists = {
-                title: 'List style',
+                title: l10n.list_style,
                 defaultState: 'none',
                 states: {
                     none: {
@@ -424,7 +429,7 @@ RedactorPlugins.upfrontSink = {
         if(!Upfront.data.ueditor)
             Upfront.data.ueditor = {sink: false};
         this.opts.buttonsCustom.upfrontSink = {
-            title: 'More tools'
+            title: l10n.more_tools
         };
     },
     init: function(){
@@ -552,7 +557,7 @@ RedactorPlugins.panelButtons = function () {
 
             $.each(this.opts.buttonsCustom, function (id, b) {
                 if (b.panel) {
-                    var $panel = $('<div class="redactor-dropdown ueditor_panel redactor-dropdown-box-' + id + '" style="display: none;">'),
+                    var $panel = $('<div class="redactor-dropdown ueditor_panel redactor-dropdown-box-' + id + ' redactor-dropdown-' + self.uuid +' " style="display: none;">'),
                         $button = self.button.get(id),
                         addMethod = _.isUndefined(  b.first ) ? "add" : "addFirst"
                         ;
@@ -629,7 +634,7 @@ RedactorPlugins.upfrontIcons = function() {
         $sel: false,
         init: function () {
             this.opts.buttonsCustom.upfrontIcons = {
-                title: 'Icons',
+                title: l10n.icons,
                 panel: this.upfrontIcons.panel
             };
             UeditorEvents.on("ueditor:key:down", function (redactor, e) {
@@ -650,7 +655,7 @@ RedactorPlugins.upfrontIcons = function() {
                 'change .upfront-font-icons-controlls input': "input_change"
             },
             render: function (options) {
-                this.$el.html(this.tpl());
+                this.$el.html(this.tpl({icons: Upfront.mainData.font_icons }));
                 this.stop_scroll_propagation(this.$el);
             },
             open: function (e, redactor) {
@@ -677,7 +682,7 @@ RedactorPlugins.upfrontIcons = function() {
                     "font-size": fontSize + "px",
                     "top": top + "px"
                 });
-                var inserted = this.redactor.insert.node($icon[0], false); //inserted false instead of true to retain the selected content
+                var inserted = this.redactor.insert.html($icon[0].outerHTML, false); //inserted false instead of true to retain the selected content
                 this.redactor.code.sync();
 
                 //var offset = this.redactor.caret.getOffset(); //existing caret position
@@ -730,7 +735,7 @@ RedactorPlugins.upfrontLink = function() {
 	return {
 		init: function () {
 			this.opts.buttonsCustom.upfrontLink = {
-				title: 'Link',
+				title: l10n.link,
 				panel: this.upfrontLink.panel
 			};
 		},
@@ -822,12 +827,19 @@ RedactorPlugins.upfrontLink = function() {
 			link: function (url, type, target) {
 				this.redactor.selection.restore();
 				if (url) {
-					var caption = this.redactor.selection.getHtml();
+					var caption = $(this.redactor.selection.getCurrent()).last().hasClass("uf_font_icon") ? this.redactor.selection.getCurrent().outerHTML :  this.redactor.selection.getHtml() ;
 					var link = this.redactor.utils.isCurrentOrParent('A');
 					if (link) {
 						$(link).attr('href', url).attr('rel', type).attr('target', target);
 					} else {
-						this.redactor.link.set(caption, url, target);
+                        var $link = $("<a>");
+                        // allow caption to be html to the contrary to this.redactor.link.set(caption, url, target) which needs the caption to be text
+                        $link.html( caption )
+                            .attr("rel", type)
+                            .attr("href", url)
+                            .attr("target", target);
+                        this.redactor.insert.html($link[0].outerHTML, false);
+
 					}
 					this.redactor.$element.focus();
 				}
@@ -869,7 +881,7 @@ RedactorPlugins.upfrontColor = function() {
     return {
         init: function () {
             this.opts.buttonsCustom.upfrontColor = {
-                title: 'Color',
+                title: l10n.color,
                 panel: this.upfrontColor.panel
             };
         },
@@ -1015,8 +1027,8 @@ RedactorPlugins.upfrontColor = function() {
             },
             render: function () {
 
-                var tabforeground = $('<li id="tabforeground" class="active">').html('Text Color');
-                var tabbackground = $('<li id="tabbackground">').html('Text Background');
+                var tabforeground = $('<li id="tabforeground" class="active">').html(l10n.text_color);
+                var tabbackground = $('<li id="tabbackground">').html(l10n.text_background);
                 var tablist = $('<ul class="tablist">').append(tabforeground).append(tabbackground);
 
                 var tabs = $('<ul class="tabs">').append($('<li id="tabforeground-content" class="active">').html('<input class="foreground" type="text">')).append($('<li id="tabbackground-content">').html('<input class="background" type="text">'));
@@ -1101,6 +1113,7 @@ RedactorPlugins.upfrontColor = function() {
                     },
                     color_set = function(rule, raw_value) {
                         var theme_color = false, cls = false, is_bg = !!rule.match(/background/);
+
                         if (raw_value.is_theme_color) {
                             cls = Upfront.Views.Theme_Colors.colors.get_css_class(raw_value, is_bg);
                             if (!cls) theme_color = raw_value.theme_color;
@@ -1109,30 +1122,91 @@ RedactorPlugins.upfrontColor = function() {
                         }
 
                         var wrapper = document.createElement("span"),
+                            //contents = document.createRange().createContextualFragment( self.redactor.selection.getHtml() ),
                             contents = self.redactor.range.extractContents(),
+                            //contents = self.redactor.range.cloneContents(),
                             range = self.redactor.range,
-                            $range = range.commonAncestorContainer ? $(range.commonAncestorContainer) : false
+                            $range = range.commonAncestorContainer ? $(range.commonAncestorContainer) : false,
+                            apply_to_wrapper = function($wrapper){
+                                if (cls) {
+                                    $wrapper
+                                        .addClass(cls)
+                                    ;
+                                } else if (!!theme_color) {
+                                    $wrapper
+                                        .attr("style", rule + ':' + theme_color) // use color otherwise
+                                    ;
+                                }
+                            }
                         ;
 
-                        if ($range && $range.length && $range.is("span")) {
-                            range.selectNode(range.commonAncestorContainer);
-                            Upfront.Views.Theme_Colors.colors.remove_theme_color_classes($range, is_bg);
-                            $range.attr("style", "");
-                            wrapper = $range.get(0);
-                        }
-                        wrapper.appendChild(contents);
-                        self.redactor.range.insertNode(wrapper);
+                        // Todo Ve: Removing this would allow changing the color of part of a block which already has color i.e
+                        // You have "This is my whole text" and it's aready red, but you wanna change the color of "whole" word
 
-                        if (cls) {
-                            $(wrapper)
-                                .addClass(cls)
-                            ;
-                        } else if (!!theme_color) {
-                            $(wrapper)
-                                .attr("style", rule + ':' + theme_color) // use color otherwise
-                            ;
-                        }
+                        //if ($range && $range.length && $range.is("span")) {
+                        //    range.selectNode(range.commonAncestorContainer);
+                        //    Upfront.Views.Theme_Colors.colors.remove_theme_color_classes($range, is_bg);
+                        //    $range.attr("style", "");
+                        //    wrapper = $range.get(0);
+                        //
+                        //}
 
+
+
+                        //if( contents.childNodes[0] && _.indexOf(["p", "li"], contents.childNodes[0].tagName.toLowerCase() ) !== -1 ){ //  make sure use can set color to multiple paragraphs at once
+                        if( contents.childNodes[0] && self.redactor.utils.isBlock( contents.childNodes[0] )  ){ //  make sure use can set color to multiple blocks at once
+
+                            while( self.redactor.selection.getParent() ){// try to remove selected nodes as long as we have any selected node
+                                $( self.redactor.selection.getBlocks()).remove();
+                            }
+                            var _nodes = [];
+
+                            /**
+                             * Prepare nodes and wrap them into wrappers
+                             *
+                             */
+                            _.each(  contents.childNodes, function(node, index) {
+                                var wrapper = document.createElement("span"),
+                                    first_child = node.childNodes[0];
+
+                                if(_.isUndefined(node) ) return;
+
+                                if( first_child  && first_child.tagName &&  first_child.tagName.toLowerCase() === "span" && ( first_child.className.match(/upfront_theme_/) || first_child.style.cssText.match(/color/) ) ){ // if already color is applied
+                                    wrapper.innerHTML = first_child.innerHTML;
+                                }else{
+                                    wrapper.innerHTML =  node.innerHTML;
+                                }
+
+                                node.innerHTML = "";
+                                node.appendChild( wrapper );
+                                _nodes.push({
+                                    node: node,
+                                    wrapper: wrapper
+                                });
+
+                            } );
+                            /**
+                             * Insert nodes back to where they were
+                             * Reverse them since insertNode adds nodes to the beginning
+                             *
+                             *
+                             */
+                            _.each( _nodes.reverse(),  function( _node, index){
+                                var node = _node.node,
+                                    wrapper = _node.wrapper;
+
+                                self.redactor.range.insertNode(node);
+                                //container.appendChild(node);
+                                var $wrapper = $(wrapper);
+
+                                apply_to_wrapper( $wrapper );
+                            } );
+                        }else{
+                            wrapper.appendChild(contents);
+                            self.redactor.range.insertNode(wrapper);
+
+                            apply_to_wrapper( $(wrapper) );
+                        }
 
                         self.redactor.selection.restore();
                         self.redactor.code.sync();
@@ -1291,7 +1365,7 @@ RedactorPlugins.upfrontFormatting = function() {
         init: function () {
 
             this.opts.buttonsCustom.upfrontFormatting = {
-                title: 'Formatting',
+                title: l10n.formatting,
                 panel: this.upfrontFormatting.panel,
                 first: true
             };
@@ -1302,6 +1376,7 @@ RedactorPlugins.upfrontFormatting = function() {
             className: "ufront-air-formatting",
             init: function(){
                 this.custom_classes = ["first-class", "second-class", "third-class"];
+
             },
             events: {
                 "click a" : "select_tag",
@@ -1355,10 +1430,28 @@ RedactorPlugins.upfrontFormatting = function() {
             },
             select_tag: function( e ){
                 e.preventDefault();
-                var tag = $(e.target).data("tag");
                 this.redactor.buffer.set();
                 this.redactor.$editor.focus();
-                this.redactor.block.format(tag);
+
+                var tag = $(e.target).data("tag");
+
+                if (!this.redactor.utils.browser('msie')) this.redactor.$editor.focus();
+
+                this.redactor.block.blocks = this.redactor.selection.getBlocks();
+
+                this.redactor.block.blocksSize = this.redactor.block.blocks.length;
+                this.redactor.block.type = "";
+                this.redactor.block.value = "";
+
+                this.redactor.buffer.set();
+                this.redactor.selection.save();
+
+                var block = this.redactor.block.blocks[0];
+                var $formatted = this.redactor.utils.replaceToTag(block, tag);
+                this.redactor.block.toggle($formatted);
+
+                if (tag == 'p' || this.redactor.block.headTag) $formatted.find('p').contents().unwrap();
+
                 this.redactor.dropdown.hideAll();
             },
             change_custom_class: function(e){
@@ -1385,7 +1478,7 @@ RedactorPlugins.blockquote = function() {
 
             var me = this;
             this.opts.stateButtons.blockquote = {
-                title: 'Set a quote',
+                title: l10n.blockquote,
                 defaultState: 'noquote',
                 states: {
                     noquote: {

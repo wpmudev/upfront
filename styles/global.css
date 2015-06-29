@@ -43,7 +43,7 @@ td,th{padding:0}
 .ir { display: block; border: 0; text-indent: -999em; overflow: hidden; background-color: transparent; background-repeat: no-repeat; text-align: left; direction: ltr; }
 .ir br { display: none; }
 .hidden { display: none !important; visibility: hidden; }
-.visuallyhidden { border: 0; clip: rect(0 0 0 0); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; width: 1px; }
+.visuallyhidden, .screen-reader-text { border: 0; clip: rect(0 0 0 0); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; width: 1px; }
 .visuallyhidden.focusable:active, .visuallyhidden.focusable:focus { clip: auto; height: auto; margin: 0; overflow: visible; position: static; width: auto; }
 .invisible { visibility: hidden; }
 .clearfix:before, .clearfix:after { content: ""; display: table; }
@@ -200,6 +200,13 @@ h2, h3 { page-break-after: avoid; }
 .upfront-output-object.upfront-postpart-contents {
   /*padding-left:0;*/
   /*padding-right:0;*/
+}
+
+.upfront-postpart-object.hide-featured_image {
+	display: none;
+}
+.upfront-postpart-object.full-featured_image {
+	max-height: none !important;
 }
 
 /* Post Inserts */
@@ -441,9 +448,11 @@ div.upfront-region-lightbox .upfront-icon-popup-close, div.upfront-region-side-l
 .upfront-inserted_image-wrapper{
     position: relative;
 }
-.upfront-object-content p{
+.upfront-object-content p,
+.upfront-output-object p{
   margin:0 0 15px 0;
 }
 /* upfront element output resets – defaults */
 
 .upfront-navigation li { display: inline-block;  list-style:none; }
+

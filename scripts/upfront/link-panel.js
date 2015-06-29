@@ -13,6 +13,10 @@ define([
 
 		find = function (modules) {
 			modules.each(function(module) {
+				var group_anchor = module.get_property_value_by_name("anchor");
+				if (group_anchor && group_anchor.length) {
+					anchors.push({id: '#' + group_anchor, label: group_anchor});
+				}
 				if (module.get("objects")) {
 					module.get("objects").each(function (object) {
 						var anchor = object.get_property_value_by_name("anchor");
@@ -76,7 +80,8 @@ define([
 			'click .js-ulinkpanel-input-entry': 'openPostSelector',
 			'keydown .js-ulinkpanel-lightbox-input': 'onLightboxNameInputChange',
 			'blur .js-ulinkpanel-input-external': 'onUrlInputBlur',
-			'click .js-ulinkpanel-ok': 'onOkClick'
+			//'click .js-ulinkpanel-ok': 'onOkClick',
+			'click .upfront-save_settings': 'onOkClick'
 		},
 
 		className: 'ulinkpanel-dark',
@@ -108,6 +113,8 @@ define([
 		},
 
 		onOkClick: function() {
+			if(this.model.get('type') == 'lightbox' && this.$el.find('.js-ulinkpanel-lightbox-input').val() != '')
+				this.createLightBox();
 			this.trigger('change', this.model.toJSON());
 		},
 
@@ -209,6 +216,7 @@ define([
 
 		/* Rendering stuff below */
 		render: function() {
+			
 			var me = this;
 
 			var tplData = {
@@ -218,8 +226,10 @@ define([
 				button: this.button,
 				type: this.model.get('type')
 			};
+			
 
 			this.$el.html(this.tpl(tplData));
+
 
 			this.renderTypeSelect();
 

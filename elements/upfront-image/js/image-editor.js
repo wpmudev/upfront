@@ -73,11 +73,12 @@ define([
 				if(e.target === e.currentTarget){
 					if(me.saveOnClose) {
 						me.imageOk();
-					} else if(!me.isResizing) {
+					} else if(!me.isResizing && !me.isDragged) {
 						me.cancel();
 					}
 				}
 				me.isResizing = false;
+				me.isDragged = false;
 			});
 
 			$('body').bind( 'keyup', function( event ) {
@@ -572,7 +573,10 @@ define([
 				})
 				.draggable({
 					opacity:1,
-					start: function(){},
+					start: function(){
+						//Prevent editor closing during cropping. It is set to false by the initialize method.
+						me.isDragged = true;
+					},
 					drag: function(e, ui){
 						canvas.css({
 							top: ui.position.top,

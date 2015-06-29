@@ -90,6 +90,8 @@ class Upfront_Posts_PostView {
 		$out = Upfront_Codec::get()->expand($out, "date", date(get_option('date_format'), $time));
 		$out = Upfront_Codec::get()->expand($out, "time", date(get_option('time_format'), $time));
 
+		$out = Upfront_Codec::get()->expand($out, "permalink", get_permalink($this->_post->ID));
+
 		return $out;
 	}
 
@@ -146,7 +148,7 @@ class Upfront_Posts_PostView {
 	public function expand_featured_image_template () {
 		if (empty($this->_post->ID)) return '';
 
-		$thumbnail = get_the_post_thumbnail($this->_post->ID);
+		$thumbnail = upfront_get_edited_post_thumbnail($this->_post->ID);
 		if (empty($thumbnail)) return '';
 
         $resize_featured = isset($this->_data['resize_featured'])
@@ -297,7 +299,8 @@ class Upfront_Posts_PostView {
 
 		// Detect `more` tag and act on it
 		if (preg_match('/(<!--more(.*?)?-->)/', $content, $matches)) {
-			$content = reset(explode($matches[0], $content, 2));
+			$mtc = explode($matches[0], $content, 2);
+			$content = reset($mtc);
 		}
 
 		$excerpt = preg_replace('/\s+/', ' ', // Collapse potential multiple consecutive whitespaces

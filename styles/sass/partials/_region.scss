@@ -291,7 +291,7 @@
 	right: 0;
 	width: auto;
 	height: auto;
-	z-index: 999999;
+	z-index: 9997;
 	cursor: s-resize;
 	display: block;
 	visibility: hidden;
@@ -324,7 +324,7 @@
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region > .upfront-region-resize-handle-s,
 .upfront-region-fixed-editing .upfront-region-side-fixed .upfront-region-resize-handle {
 	visibility: visible;
-	z-index: 9998;
+	z-index: 9997;
 }
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active > .upfront-region-resize-handle,
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region-side-left > .upfront-region-resize-handle-e,
@@ -1290,4 +1290,69 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-region-bg-setting-lightbox-region .sp-cf.overlay_color,
 .upfront-region-bg-setting-lightbox-region .upfront-field-wrap-number.width_cols {
   margin-right:40px;
+}
+
+.upfront-region-container .open-responsive-item-controls {
+	display: none;
+	z-index: 1000000;
+	position: absolute;
+	top: 0;
+	left: 0;
+	cursor: pointer;
+	width: 30px;
+	height: 10px;
+	background: #2F445D;
+	background-image: -moz-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
+	background-image: -ms-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
+	background-image: linear-gradient(-179deg, #2F445D 0%, #152841 100%);
+}
+.upfront-region-container .open-responsive-item-controls:before {
+	background-image: url(../img/uf-core-el-sprite.svg);
+	content: " ";
+	background-repeat: no-repeat;
+	display: block;
+	height: 6px;
+	width: 24px;
+	background-position: -699px -721px;
+	margin: 2px 0 0 3px;
+}
+.upfront-region-container .responsive-item-controls {
+	display: none;
+	z-index: 1000001;
+	position: absolute;
+	top: 10px;
+	left: 0px;
+	padding: 10px;
+	background: #2F445D;
+	background-image: -moz-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
+	background-image: -ms-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
+	background-image: linear-gradient(-179deg, #2F445D 0%, #152841 100%);
+	color: #90B0D2;
+	font-family: Verdana;
+	font-size: 11px;
+}
+.upfront-region-container .responsive-item-controls > .responsive-item-control {
+	cursor: pointer;
+	border-radius: 4px;
+	padding: 4px;
+	background: #eeeeee;
+	margin-top: 4px;
+	color: #2F445D;
+}
+.upfront-region-container .responsive-item-controls > .responsive-item-control:first-child {
+	margin-top: 10px;
+}
+.upfront-region-container .responsive-item-controls > .responsive-item-control:hover {
+	background: #90B0D2;
+	color: #2F445D;
+}
+.upfront-region-editing .upfront-region.controls-visible .responsive-item-controls {
+	display: block;
+}
+
+/* Hide 'Add Region' triggers & 'Region Resize' handle when settings panel is open */
+.upfront-region-editing .upfront-region-bg-setting-open .upfront-region-panel-item-add-region,
+.upfront-region-editing .upfront-region-bg-setting-open .upfront-icon-control-region-resize-e:before,
+.upfront-region-editing .upfront-region-bg-setting-open .upfront-icon-control-region-resize-w:before {
+	display:none;
 }

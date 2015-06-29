@@ -351,7 +351,7 @@ define([
 
 
 	var LoginElement = Upfront.Views.Editor.Sidebar.Element.extend({
-		priority: 130,
+		priority: 160,
 
 		render: function () {
 			this.$el.addClass('upfront-icon-element upfront-icon-element-login');
