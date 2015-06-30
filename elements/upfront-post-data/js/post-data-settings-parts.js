@@ -1,4 +1,4 @@
-(function ($) {
+(function ($, undefined) {
 define([
 	'text!elements/upfront-post-data/tpl/views.html',
 	'scripts/redactor/ueditor-inserts',
@@ -250,6 +250,13 @@ Parts.Part_Comment_count = Parts.Part.extend({
 
 Parts.Part_Content = Parts.Part.extend({
 	set_options: function () {
+		Upfront.data.upfront_post_data.split_allowed = typeof Upfront.data.upfront_post_data.split_allowed === typeof undefined
+			? false
+			: Upfront.data.upfront_post_data.split_allowed
+		;
+		var allowed = this.model.get_property_value_by_name("allow_splitting");
+		if (allowed) Upfront.data.upfront_post_data.split_allowed = true;
+		
 		this.field = new Options.Content({model: this.model});
 	}
 });
@@ -275,6 +282,25 @@ var Options = {
 
 	Content: Parts.Options.extend({
 		initialize: function () {
+			var global_split = Upfront.data.upfront_post_data.split_allowed
+				? '1'
+				: 0
+			;
+
+			this._allow_splitting_field = new Upfront.Views.Editor.Field.Checkboxes({
+				model: this.model,
+				property: "allow_splitting",
+				default_value: global_split,
+				values: [{ label: 'Allow content splitting', value: '1' }]
+			});
+			this._content_part_field = new Upfront.Views.Editor.Field.Number({
+				model: this.model,
+				label: "Content part",
+				default_value: 0,
+				label_style: 'inline',
+				property: "content_part"
+			});
+
 			this.fields = [
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
@@ -282,14 +308,25 @@ var Options = {
 					label_style: 'inline',
 					property: "content_length"
 				}),
-				new Upfront.Views.Editor.Field.Number({
-					model: this.model,
-					label: "Content part",
-					default_value: 0,
-					label_style: 'inline',
-					property: "content_part"
-				})
+				this._allow_splitting_field,
+				this._content_part_field
 			];
+
+			this.listenTo(this._allow_splitting_field, "changed", this.update_fields);
+		},
+		render: function () {
+			Parts.Options.prototype.render.call(this);
+			this.update_fields();
+		},
+		update_fields: function () {
+			var allow_splitting = this._allow_splitting_field.get_value();
+
+			if (allow_splitting && allow_splitting.length) {
+				Upfront.data.upfront_post_data.split_allowed = true; // yeah, so keep track of this
+				this._content_part_field.$el.show();
+			} else {
+				this._content_part_field.$el.hide();
+			}
 		}
 	}),
 

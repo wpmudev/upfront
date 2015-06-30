@@ -15,14 +15,20 @@ class Upfront_Post_Data_PartView_Post_data extends Upfront_Post_Data_PartView {
 		$this->_data['content'] = !empty($this->_data['content']) ? $this->_data['content'] : 'content'; // Make sure it's the content we're dealing with
 		$content = $this->_get_content_value($length);
 
+		$allow_splitting = !empty($this->_data['allow_splitting'])
+			? (int)$this->_data['allow_splitting']
+			: false
+		;
 		$part = !empty($this->_data['content_part'])
 			? (int)$this->_data['content_part']
 			: false
 		;
 
-		if (!empty($part)) {
-			if (!$this->_has_content_parts($content) && $part > 1) return ''; // We have a post with no parts, and multiple content
-			$content = $this->_get_content_part($part, $content);
+		if (!empty($allow_splitting) || !empty($part)) {
+			if (!empty($part)) {
+				if (!$this->_has_content_parts($content) && $part > 1) return ''; // We have a post with no parts, and multiple content
+				$content = $this->_get_content_part($part, $content);
+			}
 		}
 
 		$out = $this->_get_template('content');
