@@ -3816,10 +3816,7 @@ define([
 		},
 		dispatch_show: function () {
 			var me = this;
-			setTimeout(function(){
-				me.options.show(me.get_value(), me.$el);
-			}, 100);
-			
+			me.options.show(me.get_value(), me.$el);			
 		},
 		get_name: function () {
 			return this.property ? this.property.get('name') : this.name;
