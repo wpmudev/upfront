@@ -14,7 +14,9 @@ define(function() {
 			} else {
 				selectWidth = '175px';
 			}
+			
 			this.$el.find('.upfront-chosen-select').chosen({
+				search_contains: true,
 				width: selectWidth
 			});
 			
