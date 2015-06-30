@@ -3795,6 +3795,8 @@ define([
 				this.init();
 			if ( this.options.change )
 				this.on('changed', this.options.change, this);
+			if ( this.options.show )
+				this.on('changed rendered', this.dispatch_show, this);
 			if ( this.options.focus )
 				this.on('focus', this.options.focus, this);
 			if ( this.options.blur )
@@ -3812,6 +3814,10 @@ define([
 					me.trigger('blur');
 				});
 			}, this);
+		},
+		dispatch_show: function () {
+			var me = this;
+			me.options.show(me.get_value(), me.$el);
 		},
 		get_name: function () {
 			return this.property ? this.property.get('name') : this.name;
@@ -5510,8 +5516,14 @@ var _Settings_Padding = SettingsItem.extend({
 					this.property.set({value: this.get_value()});
 				},
 				show: function (value, $el) {
-					if(value[0] === 'yes')	$(top_padding_slider.$el, top_padding_num.$el).show();
-					else	$(top_padding_slider.$el, top_padding_num.$el).hide();
+					if(value[0] === 'yes') {
+						$(top_padding_slider.$el).show(); 
+						$(top_padding_num.$el).show(); 
+					}
+					else {
+						$(top_padding_slider.$el).hide(); 
+						$(top_padding_num.$el).hide(); 
+					}
 				}
 			}),
 			top_padding_slider = new Upfront.Views.Editor.Field.Slider({
@@ -5556,8 +5568,14 @@ var _Settings_Padding = SettingsItem.extend({
 					this.property.set({value: this.get_value()});
 				},
 				show: function (value, $el) {
-					if(value[0] === 'yes')	$(bottom_padding_slider.$el, bottom_padding_num.$el).show();
-					else	$(bottom_padding_slider.$el, bottom_padding_num.$el).hide();
+					if(value[0] === 'yes') {
+						$(bottom_padding_slider.$el).show(); 
+						$(bottom_padding_num.$el).show(); 
+					}
+					else {
+						$(bottom_padding_slider.$el).hide(); 
+						$(bottom_padding_num.$el).hide(); 
+					}
 				}
 			}),
 			bottom_padding_slider = new Upfront.Views.Editor.Field.Slider({
@@ -5602,8 +5620,14 @@ var _Settings_Padding = SettingsItem.extend({
 					this.property.set({value: this.get_value()});
 				},
 				show: function (value, $el) {
-					if(value[0] === 'yes')	$(left_padding_slider.$el, left_padding_num.$el).show();
-					else	$(left_padding_slider.$el, left_padding_num.$el).hide();
+					if(value[0] === 'yes') {
+						$(left_padding_slider.$el).show(); 
+						$(left_padding_num.$el).show(); 
+					}
+					else {
+						$(left_padding_slider.$el).hide(); 
+						$(left_padding_num.$el).hide(); 
+					}
 				}
 			}),
 			left_padding_slider = new Upfront.Views.Editor.Field.Slider({
@@ -5648,8 +5672,14 @@ var _Settings_Padding = SettingsItem.extend({
 					this.property.set({value: this.get_value()});
 				},
 				show: function (value, $el) {
-					if(value[0] === 'yes')	$(right_padding_slider.$el, right_padding_num.$el).show();
-					else	$(right_padding_slider.$el, right_padding_num.$el).hide();
+					if(value[0] === 'yes') {
+						$(right_padding_slider.$el).show(); 
+						$(right_padding_num.$el).show(); 
+					}
+					else {
+						$(right_padding_slider.$el).hide(); 
+						$(right_padding_num.$el).hide(); 
+					}
 				}
 			}),
 			right_padding_slider = new Upfront.Views.Editor.Field.Slider({
