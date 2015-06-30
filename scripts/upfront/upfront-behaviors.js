@@ -2396,7 +2396,8 @@ var GridEditor = {
 							is_clear: false,
 							is_use: false,
 							is_switch: false,
-							switch_dir: false
+							switch_dir: false,
+							row_wraps: false
 						});
 						current_el_top = bottom+1;
 					});
@@ -2427,7 +2428,8 @@ var GridEditor = {
 							is_clear: false,
 							is_use: false,
 							is_switch: false,
-							switch_dir: false
+							switch_dir: false,
+							row_wraps: false
 						});
 					}
 				}
@@ -2463,23 +2465,24 @@ var GridEditor = {
 							is_clear: true,
 							is_use: false,
 							is_switch: false,
-							switch_dir: false
+							switch_dir: false,
+							row_wraps: false
 						});
 						current_full_top = bottom+1;
 					}
 				}
 				// Check to see if the right side on wrapper has enough column to add droppable
-				/*if ( 
+				if ( 
 					( !next_wrap || next_wrap_clr )
-					&&
+					/*&&
 					( 
 						( !is_wrap_me && area.grid.right-wrap.grid.right >= min_col ) 
 						|| 
 						( wrap_me_only && !wrap_clr ) 
 						|| 
 						( prev_me_only && !wrap_clr && wrap_only ) 
-					)
-				){*/ // @TODO Experiment: always allow right side drop
+					)*/
+				){ // @TODO Experiment: always allow right side drop
 					var /*is_switch = ( prev_me_only && !wrap_clr && wrap_only ),
 						switch_left = is_switch ? wrap.grid.right-prev_wrap_el_left.col+1 : 0,
 						left = is_switch ? ( switch_left < wrap_el_left.grid.left ? switch_left : wrap_el_left.grid.left ) : wrap.grid.right+1,*/ // @TODO Experiment: no need for switch mechanism
@@ -2510,15 +2513,16 @@ var GridEditor = {
 							is_clear: false,
 							is_use: false,
 							is_switch: is_switch,
-							switch_dir: is_switch ? 'left' : false
+							switch_dir: is_switch ? 'left' : false,
+							row_wraps: row_wraps
 						});
 					}
-				//}
+				}
 				// Now check the left side, finding spaces between wrapper and inner modules
-				/*if ( 
+				if ( 
 					( 
-						wrap_el_left.grid.left-wrap.grid.left >= min_col 
-						&&
+						//wrap_el_left.grid.left-wrap.grid.left >= min_col 
+						//&&
 						(!is_prev_me || wrap_clr) 
 						&& 
 						!is_wrap_me 
@@ -2529,7 +2533,7 @@ var GridEditor = {
 					( prev_me_only && !wrap_clr && wrap_only && next_wrap && !next_wrap_clr ) 
 					|| 
 					( next_me_only && !next_wrap_clr && wrap_only ) 
-				){ */ // @TODO Experiment: always allow left side drop
+				){ // @TODO Experiment: always allow left side drop
 					var /*is_switch_left = ( prev_me_only && !wrap_clr && wrap_only ),
 						switch_left = is_switch_left ? wrap_el_left.grid.left : 0,
 						left = is_switch_left ? switch_left : wrap.grid.left,
@@ -2538,7 +2542,7 @@ var GridEditor = {
 						right = is_switch_right ? ( switch_right > wrap.grid.right ? switch_right : wrap.grid.right ) : wrap_el_left.grid.left-1,*/ // @TODO Expriment: no need for switch mechanism
 						is_switch_left = false,
 						is_switch_right = false,
-						left = wrap.grid.left,
+						left = ( prev_wrap && !wrap_clr ? Math.ceil(prev_wrap.grid_center.x)+1 : wrap.grid.left ),
 						right = Math.ceil(wrap.grid_center.x),
 						bottom = ( is_wrap_me && wrap.grid.bottom > max_row_wrap.grid.bottom ? wrap.grid.bottom : max_row_wrap.grid.bottom );
 					if ( can_drop(wrap.grid.top, bottom) ){
@@ -2546,15 +2550,19 @@ var GridEditor = {
 							_id: ed._new_id(),
 							top: wrap.grid.top,
 							bottom: bottom,
-							left: wrap.grid.left,
+							//left: wrap.grid.left,
 							//right: ( is_wrap_me || is_switch_left ? next_wrap_el_left.grid.left-1 : right ),
-							right: ( is_wrap_me && next_wrap_el_left ? next_wrap_el_left.grid.left-1 : right ), // @TODO Experiment: change position for better behavior
+							// @TODO Experiment: change position for better behavior
+							left: left,
+							right: ( is_wrap_me && next_wrap_el_left ? next_wrap_el_left.grid.left-1 : right ), 
 							priority: {
 								top: wrap.grid.top,
 								bottom: bottom,
-								left: left,
+								//left: left,
 								//right: ( is_wrap_me || is_switch_left ? next_wrap_el_left.grid.left-1 : ( is_switch_right ? switch_right : wrap_el_left.grid.left-1 ) ),
-								right: ( is_wrap_me && next_wrap_el_left ? next_wrap_el_left.grid.left-1 : left+Math.ceil((right-left)/2)-1 ), // @TODO Experiment: change position for better behavior
+								// @TODO Experiment: change position for better behavior
+								left: ( prev_wrap && !wrap_clr ? left+Math.ceil((prev_wrap.grid.right-left)/2) : left ),
+								right: ( is_wrap_me && next_wrap_el_left ? next_wrap_el_left.grid.left-1 : wrap.grid.left+Math.ceil((right-wrap.grid.left)/2)-1 ),
 								index: ( is_wrap_me ? 1 : 4 )
 							},
 							priority_index: 10, //( is_switch_left || is_switch_right ? 4 : 7 ), // @TODO Experiment: priority change for better behavior
@@ -2565,10 +2573,11 @@ var GridEditor = {
 							is_clear: wrap_clr,
 							is_use: false,
 							is_switch: ( is_switch_left || is_switch_right ),
-							switch_dir: ( is_switch_left ? 'left' : ( is_switch_right ? 'right' : false ) )
+							switch_dir: ( is_switch_left ? 'left' : ( is_switch_right ? 'right' : false ) ),
+							row_wraps: row_wraps
 						});
 					}
-				//}
+				}
 			});
 
 			// Don't add another droppable if this is not the first el from wrapper, only on responsive
@@ -2614,7 +2623,8 @@ var GridEditor = {
 						is_clear: true,
 						is_use: false,
 						is_switch: false,
-						switch_dir: false
+						switch_dir: false,
+						row_wraps: false
 					});
 				}
 			}
@@ -2636,7 +2646,8 @@ var GridEditor = {
 						is_clear: true,
 						is_use: false,
 						is_switch: false,
-						switch_dir: false
+						switch_dir: false,
+						row_wraps: false
 					});
 				}
 			}
@@ -3520,8 +3531,9 @@ var GridEditor = {
 					}
 					else {
 						if ( ed.drop.type == 'side-before' || ed.drop.type == 'side-after' ) {
-							var rel_wrap = ed.get_wrap(ed.drop.insert[1]);
-							drop_col = Math.floor(rel_wrap.col/2);
+							var row_wraps = ed.drop.row_wraps,
+								total_col = _.reduce(row_wraps, function (memo, wrap) { return memo + wrap.col; }, 0);
+							drop_col = Math.floor(total_col/(row_wraps.length+1));
 						}
 						else {
 							drop_col = ed.drop.priority ? ed.drop.priority.right-ed.drop.priority.left+1 : ed.drop.right-ed.drop.left+1;
@@ -3832,12 +3844,20 @@ var GridEditor = {
 					
 					// @TODO Experiment: if the drop is to side, also update the elements inside
 					if ( !ed.drop.is_me && ( ed.drop.type == 'side-before' || ed.drop.type == 'side-after' ) ) {
-						//var $all_wrappers = 
-						ed.drop.insert[1].find("> .upfront-module-view > .upfront-module, > .upfront-module-group").each(function () {
-							var rel_el = ed.get_el($(this)),
-								new_col = rel_el.col - drop_col
-							;
-							ed.update_model_margin_classes( $(this), [ed.grid.class + new_col] );	
+						var row_wraps = ed.drop.row_wraps,
+							total_col = _.reduce(row_wraps, function (memo, wrap) { return memo + wrap.col; }, 0) - drop_col,
+							new_col = Math.floor(total_col/row_wraps.length),
+							remaining_col = total_col - (new_col*row_wraps.length);
+						_.each(row_wraps, function (wrap) {
+							wrap.$el.find("> .upfront-module-view > .upfront-module, > .upfront-module-group").each(function () {
+								var apply_col = new_col;
+								// Distribute remaining_col
+								if ( remaining_col > 0 ) {
+									apply_col += 1;
+									remaining_col -= 1;
+								}
+								ed.update_model_margin_classes( $(this), [ed.grid.class + apply_col] );	
+							});
 						});
 					}
 					/*else {
