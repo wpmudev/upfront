@@ -45,11 +45,11 @@ class Upfront_Post_Data_PartView_Post_data extends Upfront_Post_Data_PartView {
 	
 	private function _get_content_parts ($content) {
 		$separator = $this->_get_content_part_separator();
-		$parts = preg_split('/(<p>\s*)?' . preg_quote($separator, '/') . '(\s*<\/p>)/', $content);
+		$parts = preg_split('/(<p>\s*)?' . preg_quote($separator, '/') . '(\s*<\/p>)?/', $content);
 		return array_values(array_filter(array_map('trim', $parts)));
 	}
 
 	private function _get_content_part_separator () {
-		return '!!PART!!';
+		return '<hr />';
 	}
 }
