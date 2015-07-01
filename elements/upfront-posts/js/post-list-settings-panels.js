@@ -242,9 +242,10 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 			property: "taxonomy",
 			values: taxs
 		}));
-		this.fields.push(new Upfront.Views.Editor.Field.Select({
+		this.fields.push(new Upfront.Views.Editor.Field.Chosen_Select({
 			model: this.model,
 			label: l10n.term,
+			compact: true,
 			property: "term",
 			values: [{label:l10n.select_tax, value:"", disabled: true}]
 		}));
@@ -360,9 +361,10 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 	},
 
 	_spawn_terms_element: function (terms) {
-		var field = new Upfront.Views.Editor.Field.Select({
+		var field = new Upfront.Views.Editor.Field.Chosen_Select({
 			model: this.model,
 			label: l10n.term,
+			compact: true,
 			property: "term",
 			values: terms
 		});
