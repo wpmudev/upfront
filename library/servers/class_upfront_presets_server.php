@@ -64,7 +64,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 		$properties = stripslashes_deep($_POST['data']);
 		
-		if(!empty($properties['id'])) $properties['id'] = 'default';
+		if(empty($properties['id'])) $properties['id'] = 'default';
 		
 		do_action('upfront_reset_' . $this->elementName . '_preset', $properties, $this->elementName);
 		
@@ -76,7 +76,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			foreach ($presets as $preset) {
 				if ($preset['id'] === $properties['id']) {
 					$preset = $this->get_theme_preset_by_id($properties['id']);
-					$resetpreset = $this->get_theme_preset_by_id($properties['id']);
+					$resetpreset = $preset;
 				}
 				$result[] = $preset;
 			}
