@@ -74,6 +74,10 @@ class Upfront_Button_Presets_Server extends Upfront_Presets_Server {
 		$count = 0;
 		//Check if old preset data and enable preset options
 		foreach($presets as $preset_options) {
+			//If empty preset continue
+			if(empty($preset_options['id'])) {
+				continue;
+			}
 			
 			//Enable all checkboxes for button preset
 			if(!isset($preset_options['lineheight'])) {

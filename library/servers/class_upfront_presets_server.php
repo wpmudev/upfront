@@ -64,7 +64,10 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 		$properties = stripslashes_deep($_POST['data']);
 		
-		if(empty($properties['id'])) $properties['id'] = 'default';
+		//If automatically generated default preset return false
+		if(empty($properties['id'])) { 
+			return $this->_out(new Upfront_JsonResponse_Error("Invalid preset"));
+		}
 		
 		do_action('upfront_reset_' . $this->elementName . '_preset', $properties, $this->elementName);
 		
@@ -75,6 +78,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 			foreach ($presets as $preset) {
 				if ($preset['id'] === $properties['id']) {
+					//Update preset properties
 					$preset = $this->get_theme_preset_by_id($properties['id']);
 					$resetpreset = $preset;
 				}
@@ -219,6 +223,10 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		
 		//Get presets distributed with the theme
 		$theme_presets = $this->get_theme_presets_names();
+		
+		if(empty($theme_presets)) {
+			return json_encode($presets);
+		}
 		
 		//Check if preset is distributed with the theme
 		foreach($presets as $preset) {

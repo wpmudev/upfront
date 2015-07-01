@@ -161,6 +161,9 @@ define([
 				me.$el.empty();
 				me.selectPresetPanel.remove();
 				me.showSelectPresetPanel(true);
+			}).error(function (ret) {
+				//Notify error
+				Upfront.Views.Editor.notify(ret);
 			});
 		},
 
