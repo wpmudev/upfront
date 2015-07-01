@@ -24,6 +24,7 @@ define([
 			this.listenTo(this.selectPresetItem, 'upfront:presets:new', this.createPreset);
 			this.listenTo(this.selectPresetItem, 'upfront:presets:edit', this.editPreset);
 			this.listenTo(this.editPresetItem, 'upfront:presets:delete', this.deletePreset);
+			this.listenTo(this.editPresetItem, 'upfront:presets:reset', this.resetPreset);
 			this.listenTo(this.editPresetItem, 'upfront:presets:update', this.onPresetUpdate);
 			this.listenTo(this.model.get("properties"), 'change', this.onPresetChange);
 
@@ -59,6 +60,10 @@ define([
 
 		deletePreset: function(preset) {
 			this.trigger('upfront:presets:delete', preset);
+		},
+		
+		resetPreset: function(preset) {
+			this.trigger('upfront:presets:reset', preset);
 		},
 
 		property: function(name, value, silent) {

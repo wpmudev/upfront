@@ -23,6 +23,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		if (Upfront_Permissions::current(Upfront_Permissions::SAVE)) {
 			upfront_add_ajax('upfront_save_' . $this->elementName . '_preset', array($this, 'save'));
 			upfront_add_ajax('upfront_delete_' . $this->elementName . '_preset', array($this, 'delete'));
+			upfront_add_ajax('upfront_reset_' . $this->elementName . '_preset', array($this, 'reset'));
 		}
 	}
 
@@ -54,6 +55,37 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		}
 
 		$this->_out(new Upfront_JsonResponse_Success('Deleted ' . $this->elementName . ' preset.'));
+	}
+	
+	public function reset() {
+		if (!isset($_POST['data'])) {
+			return;
+		}
+
+		$properties = stripslashes_deep($_POST['data']);
+		
+		if(!empty($properties['id'])) $properties['id'] = 'default';
+		
+		do_action('upfront_reset_' . $this->elementName . '_preset', $properties, $this->elementName);
+		
+		if (!has_action('upfront_reset_' . $this->elementName . '_preset')) {
+			$presets = $this->get_presets();
+			$result = array();
+			$resetpreset = array();
+
+			foreach ($presets as $preset) {
+				if ($preset['id'] === $properties['id']) {
+					$preset = $this->get_theme_preset_by_id($properties['id']);
+					$resetpreset = $this->get_theme_preset_by_id($properties['id']);
+				}
+				$result[] = $preset;
+			}
+			
+			$this->update_presets($result);
+		}
+		
+	
+		$this->_out(new Upfront_JsonResponse_Success($resetpreset));
 	}
 
 	/**
@@ -131,19 +163,78 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		return $styles;
 	}
 	
+	public function get_theme_presets() {
+		
+		//Get presets distributed with the theme
+		$theme_presets = json_decode(Upfront_ChildTheme::get_settings()->get($this->elementName . '_presets'), true);
+		
+		return $theme_presets;
+	}
+	
+	public function get_theme_presets_names() {
+		
+		//Get presets distributed with the theme
+		$theme_presets = $this->get_theme_presets();
+		
+		if(empty($theme_presets)) return false;
+		
+		$theme_preset_names = array();
+		
+		foreach($theme_presets as $preset) {
+			$theme_preset_names[] = $preset['id'];
+		}
+		
+		return $theme_preset_names;
+	}
+	
+	public function get_theme_preset_by_id($preset) {
+		$theme_presets = $this->get_theme_presets();
+
+		foreach($theme_presets as $tpreset) {
+			if($tpreset['id'] == $preset) {
+				return $tpreset;
+			}
+		}
+		
+		return false;
+	}
+	
 	public function get_presets_javascript_server() {
 		$presets = get_option('upfront_' . get_stylesheet() . '_' . $this->elementName . '_presets');
 		$presets = apply_filters(
 			'upfront_get_' . $this->elementName . '_presets',
 			$presets,
 			array(
-				'json' => true
+				'json' => false,
+				'as_array' => true
 			)
 		);
 		
-		if(empty($presets)) $presets = json_encode(array());
+		if(!is_array($presets)) { 
+			$presets = json_decode($presets, true); 
+		}
 		
-		return $presets;
+		$theme_presets = array();
+		$updatedPresets = array();
+		
+		//Get presets distributed with the theme
+		$theme_presets = $this->get_theme_presets_names();
+		
+		//Check if preset is distributed with the theme
+		foreach($presets as $preset) {
+			if(in_array($preset['id'], $theme_presets)) {
+				$preset['theme_preset'] = true;
+			} else {
+				$preset['theme_preset'] = false;
+			}
+			$updatedPresets[] = $preset;
+		}
+		
+		$updatedPresets = json_encode($updatedPresets);
+		
+		if(empty($updatedPresets)) $updatedPresets = json_encode(array());
+		
+		return $updatedPresets;
 	}
 	
 	public static function add_l10n_strings ($strings) {

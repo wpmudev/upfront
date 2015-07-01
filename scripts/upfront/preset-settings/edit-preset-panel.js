@@ -15,6 +15,7 @@ define([
 
 			this.listenTo(this.options.preset, 'change', this.onPresetChange);
 			this.listenTo(this.editPresetItem, 'upfront:presets:delete', this.deletePreset);
+			this.listenTo(this.editPresetItem, 'upfront:presets:reset', this.resetPreset);
 
 			this.settings = _([
 				this.editPresetItem
@@ -27,6 +28,10 @@ define([
 
 		deletePreset: function(preset) {
 			this.trigger('upfront:presets:delete', preset);
+		},
+		
+		resetPreset: function(preset) {
+			this.trigger('upfront:presets:reset', preset);
 		}
 	});
 

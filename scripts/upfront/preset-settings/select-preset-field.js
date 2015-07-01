@@ -9,15 +9,9 @@ define(function() {
 			var selectWidth = '';
 			var preset = this.$el.find('.upfront-chosen-select').val();
 			
-			if(preset == 'default') {
-				selectWidth = '230px';
-			} else {
-				selectWidth = '175px';
-			}
-			
 			this.$el.find('.upfront-chosen-select').chosen({
 				search_contains: true,
-				width: selectWidth
+				width: '175px'
 			});
 			
 			var html = ['<a href="#" title="'+ l10n.add_preset_label +'" class="upfront-preset-add">'+ l10n.add_label +'</a>'];

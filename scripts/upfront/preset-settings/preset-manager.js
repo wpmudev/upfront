@@ -59,6 +59,7 @@ define([
 
 			this.listenTo(this.selectPresetPanel, 'upfront:presets:new', this.createPreset);
 			this.listenTo(this.selectPresetPanel, 'upfront:presets:delete', this.deletePreset);
+			this.listenTo(this.selectPresetPanel, 'upfront:presets:reset', this.resetPreset);
 			this.listenTo(this.selectPresetPanel, 'upfront:presets:change', this.changePreset);
 			this.listenTo(this.selectPresetPanel, 'upfront:presets:update', this.updatePreset);
 
@@ -128,6 +129,36 @@ define([
 
 			this.presets.remove(preset);
 
+			this.showSelectPresetPanel(true);
+		},
+		
+		resetPreset: function(preset) {
+			var index;
+			var me = this;
+						
+			Upfront.Util.post({
+				data: preset.toJSON(),
+				action: 'upfront_reset_' + this.ajaxActionSlug + '_preset'
+			}).success(function (ret) {
+				//Update preset CSS with reset properties
+				Util.updatePresetStyle(me.styleElementPrefix.replace(/-preset/, ''), ret.data, me.styleTpl);
+				
+				_.each(Upfront.mainData[me.mainDataCollection], function(preset, presetIndex) {
+					if (preset.id === ret.data.id) {
+						index = presetIndex;
+					}
+				});
+				if (_.isUndefined(index) === false) {
+					Upfront.mainData[me.mainDataCollection].splice(index, 1);
+				}
+				Upfront.mainData[me.mainDataCollection].push(ret.data);
+				
+				//Notify preset is reset
+				Upfront.Views.Editor.notify('Preset '+ preset.get('id') +' was reset');
+			});
+			
+			this.$el.empty();
+			this.selectPresetPanel.remove();
 			this.showSelectPresetPanel(true);
 		},
 
