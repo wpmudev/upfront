@@ -16,7 +16,8 @@ define([
 				firstStateButton = false,
 				firstStateSettings = false;
 			
-			if(this.options.model.get('id') !== 'default' && this.options.model.get('theme_preset') !== true) {
+			if((Upfront.Application.get_current() === Upfront.Application.MODE.THEME || this.options.model.get('theme_preset') !== true) 
+					&& this.options.model.get('id') !== 'default') {
 				var fields = [
 					new Upfront.Views.Editor.Field.Button({
 						model: this.model,
@@ -28,7 +29,8 @@ define([
 						}
 					})
 				];
-			} else if(this.options.model.get('id') === 'default' || this.options.model.get('theme_preset') === true) {
+			} else if(Upfront.Application.get_current() !== Upfront.Application.MODE.THEME 
+						&& (this.options.model.get('id') === 'default' || this.options.model.get('theme_preset') === true)) {
 				var fields = [
 					new Upfront.Views.Editor.Field.Button({
 						model: this.model,
