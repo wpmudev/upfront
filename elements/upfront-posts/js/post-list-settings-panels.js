@@ -180,6 +180,13 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 		this.dispatch_settings();
 	},
 
+	render: function () {
+		Upfront.Views.Editor.Settings.Item.prototype.render.call(this);
+		$('.upfront-chosen-select', this.$el).chosen({
+			width: '230px'
+		});
+	},
+
 	dispatch_settings: function () {
 		var type = this.model.get_property_value_by_name('list_type');
 		this.fields = _([]); // Pre-initialize the fields
