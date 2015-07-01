@@ -16,6 +16,8 @@ class Upfront_Post_Data_PartView_Author extends Upfront_Post_Data_PartView {
 	 *    {{name}} - Author display_name
 	 *    {{email}} - Author email
 	 *
+	 * Part template: post-data-author_email
+	 *
 	 * @return string
 	 */
 	public function expand_email_template () {
@@ -42,6 +44,8 @@ class Upfront_Post_Data_PartView_Author extends Upfront_Post_Data_PartView {
 	 *    {{name}} - Author display_name
 	 *    {{url}} - Author's website URL (WP profile field value). Falls back to author's local posts URL
 	 *
+	 * Part template: post-data-author_url
+	 *
 	 * @return string
 	 */
 	public function expand_url_template () {
@@ -67,6 +71,8 @@ class Upfront_Post_Data_PartView_Author extends Upfront_Post_Data_PartView {
 	 *
 	 * Supported macros:
 	 *    {{bio}} - Author's description (WP profile field value). Does NOT support HTML.
+	 *
+	 * Part template: post-data-author_bio
 	 *
 	 * @return string
 	 */

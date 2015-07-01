@@ -5,6 +5,19 @@ class Upfront_Post_Data_PartView_Featured_Image extends Upfront_Post_Data_PartVi
 		0 => 'featured_image',
 	);
 
+	/**
+	 * Converts the featured image part into markup.
+	 *
+	 * Supported macros:
+	 *    {{thumbnail}} - Featured image markup (`<img />`)
+	 *    {{resize}} - Resize boolean
+	 *    {{fallback}} - Fallback info (attributes) for cases when we're missing a featured image
+	 *    {{permalink}} - Post permalink
+	 *
+	 * Part template: post-data-featured_image
+	 *
+	 * @return string
+	 */
 	public function expand_featured_image_template () {
 		if (empty($this->_post->ID)) return '';
 

@@ -8,6 +8,16 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 	);
 
 
+	/**
+	 * Converts the comment form part into markup.
+	 *
+	 * Supported macros:
+	 *    {{comment_form}} - Standard WP comment form
+	 *
+	 * Part template: post-data-comment_form
+	 *
+	 * @return string
+	 */
 	public function expand_comment_form_template () {
 		if (empty($this->_post->ID)) return '';
 
@@ -17,6 +27,12 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
         $form_args = array(
         	'comment_field' => $this->_get_comment_form_field(),
         );
+
+        /**
+         * Filter the default WP form arguments
+         *
+         * @param array default form arguments
+         */
         $form_args = apply_filters('upfront_comment_form_args', array_filter($form_args));
 
         ob_start();
@@ -30,17 +46,22 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
         return $out;
 	}
 
+	/**
+	 * Converts the comments list part into markup.
+	 *
+	 * Supported macros:
+	 *    {{comments}} - Comments list markup
+	 *
+	 * Part template: post-data-comments
+	 *
+	 * @return string
+	 */
 	public function expand_comments_template () {
 		if (empty($this->_post->ID)) return '';
 		if (empty($this->_post->comment_count)) return '';
 
 		$tpl = $this->_get_external_comments_template();
 		if (!empty($tpl)) return $tpl;
-
-        $form_args = array(
-        	'comment_field' => $this->_get_comment_form_field(),
-        );
-        $form_args = apply_filters('upfront_comment_form_args', array_filter($form_args));
         
         $comments = array();
         $post = false;
@@ -73,7 +94,6 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 
 		if (post_password_required($post->ID)) return '';
 		ob_start();
-
 
 		// Load comments
 		if($comments && sizeof($comments)){

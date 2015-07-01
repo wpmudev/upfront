@@ -7,6 +7,18 @@ class Upfront_Post_Data_PartView_Post_data extends Upfront_Post_Data_PartView {
 		2 => 'content',
 	);
 
+	/**
+	 * Converts the content part of the main post data part into markup.
+	 *
+	 * Allows for optional content splitting.
+	 *
+	 * Supported macros:
+	 *    {{content}} - Post content, or content part if splitting allowed
+	 *
+	 * Part template: post-data-content
+	 *
+	 * @return string
+	 */
 	public function expand_content_template () {
 		$length = isset($this->_data['content_length'])
         	? (int)$this->_data['content_length']
@@ -38,10 +50,25 @@ class Upfront_Post_Data_PartView_Post_data extends Upfront_Post_Data_PartView {
 		return $out;
 	}
 
+	/**
+	 * Check if the content has any part markers.
+	 *
+	 * @param string $content Content to check for markers
+	 *
+	 * @return bool
+	 */
 	private function _has_content_parts ($content) {
 		return count($this->_get_content_parts($content)) > 1;
 	}
 
+	/**
+	 * Get specific content part
+	 *
+	 * @param int $part Part to get (in order)
+	 * @param string $content Content to process and extract the requested part from
+	 *
+	 * @return string Requested part or empty string
+	 */
 	private function _get_content_part ($part, $content) {
 		$parts = $this->_get_content_parts($content);
 		$part -= 1; // Mortals count from 1
@@ -49,12 +76,28 @@ class Upfront_Post_Data_PartView_Post_data extends Upfront_Post_Data_PartView {
 
 	}
 	
+	/**
+	 * Split the content into parts and return all parts
+	 *
+	 * @param string $content Content to process
+	 *
+	 * @return array All content parts
+	 */
 	private function _get_content_parts ($content) {
 		$separator = $this->_get_content_part_separator();
-		$parts = preg_split('/(<p>\s*)?' . preg_quote($separator, '/') . '(\s*<\/p>)?/', $content);
+		$parts = preg_split(
+			'/(<p>\s*)?' . // Optional paragraph start, potentially added by `wpautop`
+			preg_quote($separator, '/') . 
+			'(\s*<\/p>)?/', // Match optional paragraph end
+		$content);
 		return array_values(array_filter(array_map('trim', $parts)));
 	}
 
+	/**
+	 * Get the raw content splitting marker
+	 *
+	 * @return string
+	 */
 	private function _get_content_part_separator () {
 		return '<hr />';
 	}

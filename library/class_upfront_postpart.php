@@ -26,6 +26,20 @@ abstract class Upfront_PostPart_View {
 	abstract protected function _get_template ($slug);
 
 
+	/**
+	 * Converts the date posted part into markup.
+	 *
+	 * Supported macros:
+	 *    {{datetime}} - Date in the pre-set date posted format
+	 *    {{timestamp}} - Raw timestamp (UNIX timestamp)
+	 *    {{date}} - Date formatted according to raw WP setting
+	 *    {{time}} - Time formatted according to raw WP setting
+	 *    {{date_<N>}} - (where N=1,2,3...) Date part formatted by the portion of format indicated by N. Format is split on whitespace (` `).
+	 *
+	 * Part template: post-data-date_posted
+	 *
+	 * @return string
+	 */
 	public function expand_date_posted_template () {
 		if (empty($this->_post->post_date)) return '';
 
@@ -54,6 +68,17 @@ abstract class Upfront_PostPart_View {
 		return $out;
 	}
 
+	/**
+	 * Converts the author part into markup.
+	 *
+	 * Supported macros:
+	 *    {{name}} - Author's `display_name`
+	 *    {{url}} - Author's posts URL (link to the author archive on local site)
+	 *
+	 * Part template: post-data-author
+	 *
+	 * @return string
+	 */
 	public function expand_author_template () {
 		if (empty($this->_post->post_author)) return '';
 
@@ -69,6 +94,17 @@ abstract class Upfront_PostPart_View {
 		return $out;
 	}
 
+	/**
+	 * Converts the author gravatar part into markup.
+	 *
+	 * Supported macros:
+	 *    {{name}} - Author's `display_name`
+	 *    {{gravatar}} - Gravatar markup (`<img />`)
+	 *
+	 * Part template: post-data-gravatar
+	 *
+	 * @return string
+	 */
 	public function expand_gravatar_template () {
 		if (empty($this->_post->post_author)) return '';
 
@@ -89,6 +125,17 @@ abstract class Upfront_PostPart_View {
 		return $out;
 	}
 
+	/**
+	 * Converts the title part of post data part into markup.
+	 *
+	 * Supported macros:
+	 *    {{permalink}} - Permalink to post
+	 *    {{title}} - Post title
+	 *
+	 * Part template: post-data-title
+	 *
+	 * @return string
+	 */
 	public function expand_title_template () {
 		if (empty($this->_post->post_title)) return '';
 
@@ -103,6 +150,16 @@ abstract class Upfront_PostPart_View {
 		return $out;
 	}
 
+	/**
+	 * Converts the content part of post data part into markup.
+	 *
+	 * Supported macros:
+	 *    {{content}} - Post content (content or excerpt)
+	 *
+	 * Part template: post-data-content
+	 *
+	 * @return string
+	 */
 	public function expand_content_template () {
 		$length = isset($this->_data['content_length'])
         	? (int)$this->_data['content_length']
@@ -117,6 +174,16 @@ abstract class Upfront_PostPart_View {
 		return $out;
 	}
 
+	/**
+	 * Converts the comment count part into markup.
+	 *
+	 * Supported macros:
+	 *    {{comment_count}} - Number of comments for current post
+	 *
+	 * Part template: post-data-comment_count
+	 *
+	 * @return string
+	 */
 	public function expand_comment_count_template () {
 		$hide_empty = isset($this->_data['comment_count_hide'])
 			? (int)$this->_data['comment_count_hide']
@@ -132,6 +199,16 @@ abstract class Upfront_PostPart_View {
 		return $out;
 	}
 
+	/**
+	 * Converts the tags part into markup.
+	 *
+	 * Supported macros:
+	 *    {{tags}} - Comma-separated list of tags for the current post
+	 *
+	 * Part template: post-data-tags
+	 *
+	 * @return string
+	 */
 	public function expand_tags_template () {
 		if (empty($this->_post->ID)) return '';
 
@@ -156,6 +233,16 @@ abstract class Upfront_PostPart_View {
 		return $out;
 	}
 
+	/**
+	 * Converts the categories part into markup.
+	 *
+	 * Supported macros:
+	 *    {{categories}} - Comma-separated list of categories for the current post
+	 *
+	 * Part template: post-data-categories
+	 *
+	 * @return string
+	 */
 	public function expand_categories_template () {
 		if (empty($this->_post->ID)) return '';
 
@@ -179,6 +266,16 @@ abstract class Upfront_PostPart_View {
 		return $out;
 	}
 
+	/**
+	 * Converts the "read more" part into markup (posts element).
+	 *
+	 * Supported macros:
+	 *    {{permalink}} - Post permalink
+	 *
+	 * Part template: post-data-read_more
+	 *
+	 * @return string
+	 */
 	public function expand_read_more_template () {
 		if (empty($this->_post->ID)) return '';
 		if (!empty($this->_data['content']) && 'content' === $this->_data['content']) return ''; // Only for excerpts
@@ -194,6 +291,8 @@ abstract class Upfront_PostPart_View {
 
 	/**
 	 * Expands post meta values.
+	 *
+	 * Part template: post-data-meta
 	 *
 	 * @return string Compiled expression
 	 */
