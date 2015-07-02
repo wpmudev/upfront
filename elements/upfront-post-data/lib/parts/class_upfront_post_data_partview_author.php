@@ -4,9 +4,9 @@ class Upfront_Post_Data_PartView_Author extends Upfront_Post_Data_PartView {
 	protected static $_parts = array(
 		0 => 'author',
 		1 => 'gravatar',
-		2 => 'email',
-		3 => 'url',
-		4 => 'bio',
+		2 => 'author_email',
+		3 => 'author_url',
+		4 => 'author_bio',
 	);
 
 	/**
@@ -20,7 +20,7 @@ class Upfront_Post_Data_PartView_Author extends Upfront_Post_Data_PartView {
 	 *
 	 * @return string
 	 */
-	public function expand_email_template () {
+	public function expand_author_email_template () {
 		if (empty($this->_post->post_author)) return '';
 
 		$author = $this->_post->post_author;
@@ -48,7 +48,7 @@ class Upfront_Post_Data_PartView_Author extends Upfront_Post_Data_PartView {
 	 *
 	 * @return string
 	 */
-	public function expand_url_template () {
+	public function expand_author_url_template () {
 		if (empty($this->_post->post_author)) return '';
 
 		$author = $this->_post->post_author;
@@ -76,7 +76,7 @@ class Upfront_Post_Data_PartView_Author extends Upfront_Post_Data_PartView {
 	 *
 	 * @return string
 	 */
-	public function expand_bio_template () {
+	public function expand_author_bio_template () {
 		if (empty($this->_post->post_author)) return '';
 
 		$author = $this->_post->post_author;
