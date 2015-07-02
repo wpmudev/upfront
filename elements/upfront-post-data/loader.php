@@ -53,6 +53,10 @@ class Upfront_Post_Data extends Upfront_Server {
 		add_filter('upfront_l10n', array('Upfront_Post_Data_Data', 'add_l10n_strings'));
 
 		upfront_add_ajax('upfront_post-data-load', array($this, "load_post"));
+
+		upfront_add_ajax('upfront-post_data-post-specific', array($this, "json_get_post_specific_settings"));
+		upfront_add_ajax('upfront-post_data-comments-disable', array($this, "json_set_comment_settings"));
+		
 		//upfront_add_ajax('upfront_posts-data', array($this, "load_data"));
 		//upfront_add_ajax('upfront_posts-terms', array($this, "load_terms"));
 
@@ -83,6 +87,51 @@ class Upfront_Post_Data extends Upfront_Server {
 		$this->_out(new Upfront_JsonResponse_Success(array(
 			'post_data' => $view->get_markup($post),
 		)));
+	}
+
+	/**
+	 * Load post-specific settings and send it out as JSON.
+	 */
+	public function json_get_post_specific_settings () {
+		$data = stripslashes_deep($_POST);
+		$response = array();
+		
+		if (!empty($data['post_id']) && is_numeric($data['post_id'])) {
+			$post = get_post($data['post_id']);
+
+			$disabled = array();
+			if ('open' !== $post->comment_status) $disabled[] = 'comments';
+			if ('open' !== $post->ping_status) $disabled[] = 'trackbacks';
+			$response['comments'] = array(
+				'disable' => $disabled,
+			);
+		}
+
+		$this->_out(new Upfront_JsonResponse_Success($response));
+	}
+
+	/**
+	 * Set comments/trackbacks state per post.
+	 */
+	public function json_set_comment_settings () {
+		$data = stripslashes_deep($_POST);
+		$response = array();
+		
+		$post_id = !empty($data['post_id']) && is_numeric($data['post_id']) ? $data['post_id'] : false;
+		$disable = !empty($data['disable']) ? $data['disable'] : array();
+
+		if (!empty($post_id) && Upfront_Permissions::current(Upfront_Permissions::EDIT)) {
+			$post = get_post($post_id);
+
+			$post->comment_status = in_array('comments', $disable) ? 'closed' : 'open';
+			$post->ping_status = in_array('trackbacks', $disable) ? 'closed' : 'open';
+			
+			wp_update_post($post);
+			$response['comments'] = $post->comment_status;
+			$response['trackbacks'] = $post->ping_status;
+		}
+
+		$this->_out(new Upfront_JsonResponse_Success($response));
 	}
 
 	public function load_meta () {

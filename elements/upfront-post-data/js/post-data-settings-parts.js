@@ -248,6 +248,12 @@ Parts.Part_Comment_count = Parts.Part.extend({
 	}
 });
 
+Parts.Part_Comments = Parts.Part.extend({
+	set_options: function () {
+		this.field = new Options.Comments({model: this.model});
+	}
+});
+
 Parts.Part_Content = Parts.Part.extend({
 	set_options: function () {
 		Upfront.data.upfront_post_data.split_allowed = typeof Upfront.data.upfront_post_data.split_allowed === typeof undefined
@@ -363,8 +369,69 @@ var Options = {
 				}),
 			];
 		}
+	}),
+
+	Comments: Parts.Options.extend({
+		initialize: function () {
+			var post_specific = Upfront.data.upfront_post_data.post_data,
+				comments = (post_specific || {comments: {}}).comments,
+				disabled = (comments || {disable: []}).disable,
+				fields = []
+			;
+
+			this.model.set_property("disable", disabled);
+			
+			this._fld_disable = new Upfront.Views.Editor.Field.Checkboxes({
+				model: this.model,
+				property: "disable",
+				label: "For this post:",
+				values: [
+					{label: 'Disable comments', value: 'comments'},
+					{label: 'Disable trackbacks', value: 'trackbacks'}
+				]
+			});
+
+			fields.push(this._fld_disable);
+			fields.push(
+				new Upfront.Views.Editor.Field.Checkboxes({
+					model: this.model,
+					property: "disable_showing",
+					label: "Do not show:",
+					values: [
+						{label: 'Comments', value: 'comments'},
+						{label: 'Trackbacks', value: 'trackbacks'}
+					]
+				})
+			);
+
+			// Append the discussion settings view also, depending on privs...
+
+			this.fields = fields;
+
+			this.listenTo(this._fld_disable, "changed", this.send_update_request);
+		},
+		send_update_request: _.debounce(function () {
+			var disabled = this._fld_disable.get_value();
+			Upfront.Util.post({
+				action: 'upfront-post_data-comments-disable',
+				post_id: _upfront_post_data.post_id,
+				disable: disabled
+			});
+		}, 3000)
 	})
 };
+
+// Let's go with loading up the post-specific settings right away
+Upfront.data.upfront_post_data.post_data = {}; // Set up the defaults
+Upfront.Util.post({
+	action: 'upfront-post_data-post-specific',
+	post_id: _upfront_post_data.post_id
+}).done(function (response) {
+	Upfront.data.upfront_post_data.post_data = "data" in response
+		? response.data
+		: {}
+	;
+});
 
 return {
 	get_part: function (pt, model) {

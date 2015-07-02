@@ -28,7 +28,7 @@ class Upfront_Post_Data_Data {
 
 			'data_type' => ''
 		);
-		
+
 		if ( $data_type ){
 			$type_parts = Upfront_Post_Data_PartView::get_default_parts(array('data_type' => $data_type));
 			$defaults['data_type'] = $data_type;
@@ -57,6 +57,13 @@ class Upfront_Post_Data_Data {
 					break;
 				case 'comments':
 					$defaults['comment_count_hide'] = 0;
+					$defaults['disable_showing'] = array(
+						'trackbacks',
+					);
+					$defaults['disable'] = array(
+						'trackbacks',
+						'comments',
+					);
 					break;
 				case 'meta':
 					$defaults['meta'] = 0;
