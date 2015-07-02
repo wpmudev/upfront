@@ -62,7 +62,7 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 
 		$tpl = $this->_get_external_comments_template();
 		if (!empty($tpl)) return $tpl;
-        
+
         $comments = array();
         $post = false;
 		if (is_numeric($this->_post->ID)) {
@@ -72,12 +72,22 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 				'order'   => 'ASC',
 				'orderby' => 'comment_date_gmt',
 				'status'  => 'approve',
+				'type__not_in' => array(),
 			);
 			$commenter = wp_get_current_commenter();
 			$user_id = get_current_user_id();
 			
 			if (!empty($user_id)) $comment_args['include_unapproved'] = array($user_id);
 			else if (!empty($commenter['comment_author_email'])) $comment_args['include_unapproved'] = array($commenter['comment_author_email']);
+
+			$skip = !empty($this->_data['disable_showing'])
+				? $this->_data['disable_showing']
+				: Upfront_Posts_PostsData::get_default('disable_showing')
+			;
+			if (!empty($skip)) {
+				if (in_array('comments', $skip)) $comment_args['type__not_in'][] = 'comment';
+				if (in_array('trackbacks', $skip)) $comment_args['type__not_in'][] = 'pings';
+			}
 
 			$comments = get_comments($comment_args);
 		} else {

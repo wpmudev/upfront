@@ -7,9 +7,12 @@
 
 
 switch ( $comment->comment_type ){
+/*	
+// Not needed anymore, this is now a toggleable option applied to query directly
 	case 'pingback':
 	case 'trackback':
 		break;
+*/
 	
 	default:
 ?>
