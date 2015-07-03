@@ -6,7 +6,10 @@ define([
         "scripts/redactor/ueditor-insert-utils"
     ],
 function(Insert, base, tpls, utils){
-
+var l10n = Upfront.Settings && Upfront.Settings.l10n
+        ? Upfront.Settings.l10n.global.ueditor
+        : Upfront.mainData.l10n.global.ueditor
+    ;
 var PostImageInsert = base.ImageInsertBase.extend({
     className: 'ueditor-insert upfront-inserted_image-wrapper ueditor-insert-variant ueditor-post-image-insert',
     tpl: _.template($(tpls).find('#post-image-insert-tpl').html()),
@@ -15,9 +18,10 @@ var PostImageInsert = base.ImageInsertBase.extend({
     init: function(opts){
         this.$editor = opts.$editor;
         this.controlsData = [
-            {id: 'style', type: 'dialog', icon: 'style', tooltip: 'Style', view: this.getStyleView()},
-            {id: 'link', type: 'dialog', icon: 'link', tooltip: 'Link image', view: this.getLinkView()},
-            {id: 'toggle_caption', type: 'simple', icon: 'caption', tooltip: 'Toggle Caption', active: _.bind( this.get_caption_state, this ) }
+            {id: 'style', type: 'dialog', icon: 'style', tooltip: l10n.style, view: this.getStyleView()},
+            {id: 'change_image', type: 'simple', icon: 'change_image', tooltip: l10n.change_image},
+            {id: 'link', type: 'dialog', icon: 'link', tooltip: l10n.link_image, view: this.getLinkView()},
+            {id: 'toggle_caption', type: 'simple', icon: 'caption', tooltip: l10n.toggle_caption, active: _.bind( this.get_caption_state, this ) }
         ];
         this.createControls();
 
@@ -27,9 +31,9 @@ var PostImageInsert = base.ImageInsertBase.extend({
     start: function( result ){
         var imageData = this.getImageData(result);
         imageData.id = this.data.id;
-        this.data.clear({silent: true});
-        imageData.style = Upfront.Content.ImageVariants.first().toJSON();
+        imageData.style = this.data.get("style") ||   Upfront.Content.ImageVariants.first().toJSON();
         imageData.variant_id = imageData.style.vid;
+        this.data.clear({silent: true});
         this.data.set(imageData, {silent: true});
         this.set_selected_style();
         this.render();
@@ -144,6 +148,7 @@ var WP_PostImageInsert = base.ImageInsertBase.extend({
     prepare_controls: function(){
         this.controlsData = [
             {id: 'wp_style', type: 'dialog', icon:  _.bind( this.get_style_icon, this ), tooltip: 'Style', view: this.getStyleView(), hideOkButton: true },
+            {id: 'change_image', type: 'simple', icon: 'change_image', tooltip: l10n.change_image},
             {id: 'link', type: 'dialog', icon: 'link', tooltip: 'Link image', view: this.getLinkView()},
             {id: 'toggle_caption', type: 'simple', icon: 'caption', tooltip: 'Toggle Caption', active: _.bind( this.get_caption_state, this ) }
         ];
@@ -155,7 +160,7 @@ var WP_PostImageInsert = base.ImageInsertBase.extend({
 
 
         imageData.id = me.data.id;
-        imageData.variant_id = "alignnone";
+        imageData.variant_id = me.data.get("variant_id") || "alignnone";
         me.data.clear({silent: true});
         me.data.set(imageData, {silent: true});
         this.prepare_controls();
@@ -268,6 +273,8 @@ var WP_PostImageInsert = base.ImageInsertBase.extend({
             //view.model.set(linkData);
             control.close();
         });
+
+        this.listenTo(this.controls, 'control:click:change_image', this.change_image);
 
     },
     get_url_type: function( url, image_src ){

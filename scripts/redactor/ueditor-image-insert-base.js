@@ -5,7 +5,10 @@
             "scripts/redactor/ueditor-insert-utils"
         ],
         function(Insert, tpls, utils){
-
+            var l10n = Upfront.Settings && Upfront.Settings.l10n
+                    ? Upfront.Settings.l10n.global.ueditor
+                    : Upfront.mainData.l10n.global.ueditor
+                ;
             var ImageInsertBase = Insert.UeditorInsert.extend({
                 $editor: false,
                 caption_active: false,
@@ -14,6 +17,7 @@
                 tpl: _.template($(tpls).find('#image-insert-tpl').html()),
                 resizable: false,
                 defaultData: {
+                    insert_type: "image_insert",
                     caption: "Default caption",
                     show_caption: 1,
                     imageFull: {src:'', width:100, height: 100},
@@ -59,6 +63,7 @@
                     }
                 },
                 wp_defaults: {
+                    insert_type: "wp_default",
                     attachment_id: "",
                     caption: "Default caption",
                     link_url: "",
@@ -269,6 +274,8 @@
 
                         this.data.set("show_caption", new_state);
                     });
+
+                    this.listenTo(this.controls, 'control:click:change_image', this.change_image);
 
                     if( typeof this.control_events === "function")
                         this.control_events();
@@ -546,8 +553,19 @@
                 on_image_dragstart: function(e){
                     // disable dragging image
                     e.preventDefault();
+                },
+                change_image: function(){
+                    var self = this;
+                    Upfront.Media.Manager.open({
+                        multiple_selection: false,
+                        insert_options: false,
+                        button_text: l10n.change_image,
+                        show_sizes: this.data.get("insert_type") === "wp_default"
+                    }).done(function (popup, result) {
+                        self.start( result );
+                    });
+                    return false;
                 }
-
             });
 
 

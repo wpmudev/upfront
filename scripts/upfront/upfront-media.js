@@ -435,7 +435,8 @@ define([
 		var MediaManager_ItemControl = Backbone.View.extend({
 			className: "upfront-item-control",
             options: {
-                insert_options: false
+                insert_options: false,
+                show_sizes: false
             },
 			templates: {
 				caption: _.template('<label class="upfront-field-label upfront-field-label-block">{{title}}</label>'),
@@ -550,7 +551,7 @@ define([
                     ;
                 $hub.empty();
 
-                if( this.options.insert_options && this.model.at(0).get("insert_option") === INSERT_OPTIONS.wp_insert   ) {
+                if( ( this.options.insert_options &&  this.model.at(0).get("insert_option") === INSERT_OPTIONS.wp_insert)  || this.options.show_sizes    ) {
                     if (!additional_sizes.length) return false;
                     _(additional_sizes).each(function (size) {
                         sizes.push({ label: (size === MEDIA_SIZES.FULL ? l10n.size_full : size), value: size });
