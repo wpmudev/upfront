@@ -64,6 +64,10 @@ class Upfront_Post_Data_Data {
 						'trackbacks',
 						'comments',
 					);
+					$defaults['order'] = 'comment_date_gmt';
+					$defaults['direction'] = 'oldest' === get_option('default_comments_page') ? 'ASC' : 'DESC';
+					$defaults['limit'] = (int)get_option('comments_per_page');
+					$defaults['paginated'] = (int)get_option('page_comments');
 					break;
 				case 'meta':
 					$defaults['meta'] = 0;
@@ -203,6 +207,7 @@ class Upfront_Post_Data_Data {
 			'part_comment_count' => __('Comment count', 'upfront'),
 			'part_comment_form' => __('Comment form', 'upfront'),
 			'part_comments' => __('Comments', 'upfront'),
+			'part_comments_pagination' => __('Comments pagination', 'upfront'),
 			'part_featured_image' => __('Featured Image', 'upfront'),
 			'part_title' => __('Title', 'upfront'),
 			'part_content' => __('Content', 'upfront'),

@@ -4,7 +4,8 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 	protected static $_parts = array(
 		0 => 'comment_count',
 		1 => 'comments',
-		2 => 'comment_form'
+		2 => 'comments_pagination',
+		3 => 'comment_form'
 	);
 
 
@@ -47,10 +48,35 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 	}
 
 	/**
+	 * Converts the comments pagination part into markup.
+	 *
+	 * Supported macros:
+	 *    {{pagination}} - Comments pagination links
+	 *
+	 * Part template: post-data-comments_pagination
+	 *
+	 * @return string
+	 */
+	public function expand_comments_pagination_template () {
+		if (empty($this->_post->ID)) return '';
+		if (empty($this->_post->comment_count)) return '';
+
+		$pagination = $this->_get_pagination();
+		if (empty($pagination)) return '';
+		
+		$out = $this->_get_template('comments_pagination');
+
+        $out = Upfront_Codec::get()->expand($out, "pagination", $pagination);
+
+        return $out;
+	}
+
+	/**
 	 * Converts the comments list part into markup.
 	 *
 	 * Supported macros:
 	 *    {{comments}} - Comments list markup
+	 *    {{pagination}} - Comments pagination links
 	 *
 	 * Part template: post-data-comments
 	 *
@@ -69,8 +95,8 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 			$post = $this->_post;
 			$comment_args = array(
 				'post_id' => $this->_post->ID,
-				'order'   => 'ASC',
-				'orderby' => 'comment_date_gmt',
+				'order'   => $this->_get_order(),
+				'orderby' => $this->_get_order_by(),
 				'status'  => 'approve',
 				'type__not_in' => array(),
 			);
@@ -106,17 +132,25 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 		ob_start();
 
 		// Load comments
-		if($comments && sizeof($comments)){
+		if ($comments && sizeof($comments)) {
 			echo '<ol class="upfront-comments">';
-			wp_list_comments(array('callback' => array('Upfront_Post_Data_PartView_Comments', 'list_comment'), 'style' => 'ol'), $comments);
+			wp_list_comments(array(
+				'callback' => array('Upfront_Post_Data_PartView_Comments', 'list_comment'), 
+				'per_page' => $this->_get_limit(),
+				'page' => (int)get_query_var('cpage'),
+				'style' => 'ol'), 
+			$comments);
 			echo '</ol>';
 		}
 
 		$comments = ob_get_clean();
 
+		$pagination = $this->_get_pagination();
+
 		$out = $this->_get_template('comments');
 
 		$out = Upfront_Codec::get()->expand($out, "comments", $comments);
+		$out = Upfront_Codec::get()->expand($out, "pagination", $pagination);
 
 		return $out;
 	}
@@ -124,7 +158,7 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 	/**
 	 * Callback for `wp_list_comments`
 	 */
-	public static function list_comment ( $comment, $args, $depth ) {
+	public static function list_comment ($comment, $args, $depth) {
 		$GLOBALS['comment'] = $comment;
 		echo upfront_get_template('upfront-comment-list', array( 'comment' => $comment, 'args' => $args, 'depth' => $depth ), upfront_element_dir('tpl/upfront-comment-list.php', dirname(__DIR__)));
 	}
@@ -179,5 +213,115 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 		$wp_query = is_object($global_query) ? clone($global_query) : $global_query;
 
 		return $overriden_template;
+	}
+
+	/**
+	 * Determine if the comments should be paginated
+	 *
+	 * @return bool
+	 */
+	private function _is_paginated () {
+		return (bool)get_option('page_comments');
+	}
+
+	/**
+	 * Pagination markup getter.
+	 *
+	 * Implemented as separate method, so we can have it in macro expansion,
+	 * as well as separate part.
+	 *
+	 * @return string Comment pagination links.
+	 */
+	private function _get_pagination () {
+		if (empty($this->_post->ID)) return '';
+		if (empty($this->_post->comment_count)) return '';
+
+		// No pagination
+		if (!$this->_is_paginated()) return '';
+
+		$total = (int)$this->_post->comment_count / $this->_get_limit();
+		if ((int)$this->_post->comment_count % $this->_get_limit()) $total++; // Fix trailing comment offset
+
+		if (defined('DOING_AJAX') && DOING_AJAX) {
+			// Admin area override when doing AJAX preview (editor/builder)
+			global $wp_query;
+			$wp_query->is_singular = true;
+		}
+		
+		$out = paginate_comments_links(array(
+			'total' => $total,
+			'echo' => false,
+		));
+
+		if (defined('DOING_AJAX') && DOING_AJAX && isset($wp_query)) {
+			// Clean up
+			$wp_query->is_singular = false;
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Determine the number of displayed comments per page.
+	 *
+	 * Only applicable if comments pagination is allowed
+	 *
+	 * @return int
+	 */
+	private function _get_limit () {
+		if (!$this->_is_paginated()) return 0;
+
+		$opt = (int)get_option('comments_per_page');
+		
+		$limit = !empty($this->_data['limit']) && is_numeric($this->_data['limit'])
+			? (int)$this->_data['limit']
+			: $opt
+		;
+
+		return $limit;
+	}
+
+	/**
+	 * Determine the sort ordering direction.
+	 *
+	 * Falls back to whatever is set in Settings > Discussion.
+	 *
+	 * @return string Always either ASC or DESC.
+	 */
+	private function _get_order () {
+		$allowed = array('ASC', 'DESC');
+		// Defaults first
+		$opt = get_option('default_comments_page') === 'oldest' ? 'ASC' : 'DESC';
+		
+		$direction = !empty($this->_data['direction']) && in_array(strtoupper($this->_data['direction']), $allowed)
+			? strtoupper($this->_data['direction'])
+			: $opt
+		;
+		
+		return $direction;
+	}
+
+	/**
+	 * Determine the field used for sorting.
+	 *
+	 * Falls back to comment date.
+	 *
+	 * @return string Field to sort the comments by
+	 */
+	private function _get_order_by () {
+		$allowed = array(
+			'comment_date_gmt',
+			'comment_karma',
+			'comment_parent',
+		);
+		// Defaults first
+		$opt = 'comment_date_gmt';
+		
+		$order = !empty($this->_data['order']) && in_array($this->_data['order'], $allowed)
+			? $this->_data['order']
+			: $opt
+		;
+
+		return $order;
 	}
 }

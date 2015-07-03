@@ -404,6 +404,43 @@ var Options = {
 				})
 			);
 
+			// Pagination fields
+			var paginated = (Upfront.data || {upfront_post_data_comments: {paginated: 0}}).upfront_post_data_comments.paginated;
+			if (paginated && parseInt(paginated, 10)) {
+				fields.push(
+					new Upfront.Views.Editor.Field.Number({
+						model: this.model,
+						property: "limit",
+						label: 'Comments per page'
+					})
+				);
+			}
+
+			// Order/orderby fields
+			fields.push(
+				new Upfront.Views.Editor.Field.Radios({
+					model: this.model,
+					property: "order",
+					label: "Order by:",
+					values: [
+						{label: 'Date', value: 'comment_date_gmt'},
+						{label: 'Karma', value: 'comment_karma'},
+						{label: 'Parent', value: 'comment_parent'},
+					]
+				})
+			);
+			fields.push(
+				new Upfront.Views.Editor.Field.Radios({
+					model: this.model,
+					property: "direction",
+					label: "Direction:",
+					values: [
+						{label: 'Oldest first', value: 'ASC'},
+						{label: 'Newest first', value: 'DESC'},
+					]
+				})
+			);
+
 			// Append the discussion settings view also, depending on privs...
 
 			this.fields = fields;
