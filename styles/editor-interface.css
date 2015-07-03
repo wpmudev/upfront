@@ -2058,6 +2058,12 @@ i.upfront-icon.upfront-icon-region-remove:before {
 .ueditor-insert .upfront-icon-region-link:hover:before {
   background-position: -808px -421px; }
 
+.upfront-inline-panel-item i.upfront-icon.upfront-icon-region-change_image:before {
+  background-position: -699px -743px; }
+
+.upfront-inline-panel-item i.upfront-icon.upfront-icon-region-change_image:hover:before {
+  background-position: -807px -743px; }
+
 .ueditor-insert .upfront-icon-region-embed {
   background-position: -552px -164px;
   height: 100%; }

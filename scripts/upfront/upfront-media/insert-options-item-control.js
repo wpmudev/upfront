@@ -16,7 +16,7 @@
                 model:  this.model,
                 name:  "insert_option",
                 layout: 'horizontal-inline',
-                default_value: 'image_insert',
+                default_value: this.model.at(0).get("insert_option") || 'image_insert',
                 values: [
                     { label: l10n.image_inserts, value: INSERT_OPTIONS.uf_insert },
                     { label: l10n.wp_default, value: INSERT_OPTIONS.wp_insert }
