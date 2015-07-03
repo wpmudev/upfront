@@ -1,8 +1,9 @@
 define([
 	'scripts/upfront/preset-settings/select-preset-item',
 	'scripts/upfront/preset-settings/edit-preset-item',
+	'scripts/upfront/preset-settings/preset-css-settings',
 	'scripts/upfront/element-settings/panel'
-], function(SelectPresetItem, EditPresetItem, ElementSettingsPanel) {
+], function(SelectPresetItem, EditPresetItem, PresetCSS, ElementSettingsPanel) {
 	var SelectPresetPanel = ElementSettingsPanel.extend({
 		className: 'preset-manager-panel',
 
@@ -20,17 +21,24 @@ define([
 				model: this.options.presets.findWhere({id: preset}),
 				stateFields: this.options.stateFields
 			});
+			
+			this.presetCSS = new PresetCSS({
+				model: this.model,
+				preset: this.options.presets.findWhere({id: preset}), 
+			});
 
 			this.listenTo(this.selectPresetItem, 'upfront:presets:new', this.createPreset);
 			this.listenTo(this.selectPresetItem, 'upfront:presets:edit', this.editPreset);
 			this.listenTo(this.editPresetItem, 'upfront:presets:delete', this.deletePreset);
 			this.listenTo(this.editPresetItem, 'upfront:presets:reset', this.resetPreset);
 			this.listenTo(this.editPresetItem, 'upfront:presets:update', this.onPresetUpdate);
+			this.listenTo(this.presetCSS, 'upfront:presets:update', this.onPresetCSSUpdate);
 			this.listenTo(this.model.get("properties"), 'change', this.onPresetChange);
 
 			this.settings = _([
 				this.selectPresetItem,
-				this.editPresetItem
+				this.editPresetItem,
+				this.presetCSS
 			]);
 		},
 
@@ -50,6 +58,10 @@ define([
 		},
 
 		onPresetUpdate: function(preset) {
+			this.trigger('upfront:presets:update', preset);
+		},
+		
+		onPresetCSSUpdate: function(preset) {
 			this.trigger('upfront:presets:update', preset);
 		},
 

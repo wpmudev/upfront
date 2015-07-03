@@ -22,3 +22,5 @@
 	font-size: <?php echo $properties['static-font-size'] ?>px;
 	background: <?php echo $properties['static-header-bg-color'] ?>;
 }
+
+<?php if(!empty($properties['preset_style'])) { ?><?php echo $properties['preset_style'] ?><?php } ?>

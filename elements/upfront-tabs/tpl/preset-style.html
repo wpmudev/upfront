@@ -15,3 +15,4 @@
 	font-size: <?php echo $properties['static-font-size']  ?>px;
 	transition: all <?php echo $properties['hover-transition-duration']  ?>s <?php echo $properties['hover-transition-easing']  ?>;
 }
+<?php if(!empty($properties['preset_style'])) { ?><?php echo $properties['preset_style'] ?><?php } ?>

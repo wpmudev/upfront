@@ -270,7 +270,7 @@ Upfront.Application.LayoutEditor.add_object("Button", {
 	"Element": ButtonElement,
 	"Settings": ButtonSettings,
 	cssSelectors: {
-		'.upfront-button': {label: l10n.css.container_label, info: l10n.css.container_info}
+		'.upfront_cta': {label: l10n.css.container_label, info: l10n.css.container_info}
 	},
 	cssSelectorsId: Upfront.data.ubutton.defaults.type
 });

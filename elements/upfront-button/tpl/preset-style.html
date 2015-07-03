@@ -1,4 +1,4 @@
-.upfront-button .button-preset-<?php echo $properties['id'] ?>.upfront_cta {
+.button-preset-<?php echo $properties['id'] ?> .upfront_cta {
     <?php if(!empty($properties['color'])) { ?>color: <?php echo $properties['color']  ?>; <?php } ?>
 
     <?php if(!empty($properties['fontface'])) { ?>font-family: <?php echo $properties['fontface']  ?>; <?php } ?>
@@ -29,7 +29,7 @@
 
 }
 
-.upfront-button .button-preset-<?php echo $properties['id']  ?>.upfront_cta:hover {
+.button-preset-<?php echo $properties['id']  ?> .upfront_cta:hover {
     <?php if(!empty($properties['hov_usetypography']) && $properties['hov_usetypography'] == 'yes') { ?>
 
         <?php if(!empty($properties['hov_color'])) { ?>color: <?php echo $properties['hov_color']  ?>; <?php } ?>
@@ -87,3 +87,5 @@
     <?php } ?>
 
 }
+
+<?php if(!empty($properties['preset_style'])) { ?><?php echo $properties['preset_style'] ?><?php } ?>

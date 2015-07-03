@@ -5524,6 +5524,7 @@ var _Settings_CSS = SettingsItem.extend({
 		var value = this.fields._wrapped[0].get_value(),
 			default_value = this.fields._wrapped[0].default_value
 		;
+		
 		Upfront.Application.cssEditor.init({
 			model: this.model,
 			stylename: value || default_value // Let's make sure we have *something* to work with
@@ -7219,10 +7220,10 @@ var CSSEditor = Backbone.View.extend({
 		});
 	},
 
-  startInsertFontWidget: function() {
-    var insertFontWidget = new Insert_Font_Widget({ collection: theme_fonts_collection });
-    $('#insert-font-widget').html(insertFontWidget.render().el);
-  },
+	startInsertFontWidget: function() {
+		var insertFontWidget = new Insert_Font_Widget({ collection: theme_fonts_collection });
+		$('#insert-font-widget').html(insertFontWidget.render().el);
+	},
 
 	getElementType: function(model){
 		var type = model.get_property_value_by_name('type'),
@@ -10641,6 +10642,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			"RegionFixedPanels": RegionFixedPanels,
 			"RegionFixedEditPosition" : RegionFixedEditPosition,
 			"CSSEditor": CSSEditor,
+			"Insert_Font_Widget": Insert_Font_Widget,
 			"LinkPanel": LinkPanel
 		},
 		Mixins: {
