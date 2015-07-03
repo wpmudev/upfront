@@ -976,14 +976,6 @@ define([
 					props[prop.get("name")] = prop.get("value");
 				});
 
-				// Padding settings
-				var top_padding = (props.top_padding_use && props.top_padding_use.length) ? props.top_padding_num : column_padding,
-					bottom_padding = (props.bottom_padding_use && props.bottom_padding_use.length) ? props.bottom_padding_num : column_padding,
-					left_padding = (props.left_padding_use && props.left_padding_use.length) ? props.left_padding_num : column_padding,
-					right_padding = (props.right_padding_use && props.right_padding_use.length) ? props.right_padding_num : column_padding
-				;
-				me.$el.css('padding', top_padding + 'px ' + right_padding + 'px ' + bottom_padding + 'px ' + left_padding + 'px');
-
 				var row = this.model.get_breakpoint_property_value('row', true);
 				height = ( row ) ? row * Upfront.Settings.LayoutEditor.Grid.baseline : 0;
 
@@ -993,7 +985,14 @@ define([
 					this._theme_style = theme_style;
 				}
 
-				model = _.extend(this.model.toJSON(), {"properties": props, "buttons": buttons, "content": content, "height": height, "extra_buttons": extra_buttons});
+				// Padding settings
+				var top_padding = (props.top_padding_use && props.top_padding_use.length) ? props.top_padding_num : column_padding,
+					bottom_padding = (props.bottom_padding_use && props.bottom_padding_use.length) ? props.bottom_padding_num : column_padding,
+					left_padding = (props.left_padding_use && props.left_padding_use.length) ? props.left_padding_num : column_padding,
+					right_padding = (props.right_padding_use && props.right_padding_use.length) ? props.right_padding_num : column_padding
+				;
+
+				model = _.extend(this.model.toJSON(), {"properties": props, "buttons": buttons, "content": content, "height": height, "extra_buttons": extra_buttons, "top_padding": top_padding, "bottom_padding": bottom_padding, "left_padding": left_padding, "right_padding": right_padding});
 				template = _.template(_Upfront_Templates["object"], model);
 
 				Upfront.Events.trigger("entity:object:before_render", this, this.model);
