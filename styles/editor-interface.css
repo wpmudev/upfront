@@ -1038,7 +1038,7 @@ span.draggable-post-element:hover, span.draggable-post-element.element-dragging 
   display: inline-block; }
 
 /* Scrollbar */
-#sidebar-ui .sidebar-panel-content::-webkit-scrollbar, .upfront-scroll-panel::-webkit-scrollbar, .upfront-settings_panel_scroll::-webkit-scrollbar, .upfront-field-select-options::-webkit-scrollbar, .upfront-suggest-lists::-webkit-scrollbar, .upfront-additive_multiselection .labels_list ul::-webkit-scrollbar, .upfront-media_collection::-webkit-scrollbar, .upfront-item-control::-webkit-scrollbar, .upfront-filter-control::-webkit-scrollbar, #upfront-csseditor .ace_scrollbar-inner::-webkit-scrollbar, #upfront-csseditor .ace_scrollbar::-webkit-scrollbar, #upfront-general-csseditor .ace_scrollbar-inner::-webkit-scrollbar, #upfront-general-csseditor .ace_scrollbar::-webkit-scrollbar, .upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar, .upfront_code-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar, .redactor-dropdown-box-upfrontIcons div.icons::-webkit-scrollbar {
+#sidebar-ui .sidebar-panel-content::-webkit-scrollbar, .upfront-scroll-panel::-webkit-scrollbar, .upfront-settings_panel_scroll::-webkit-scrollbar, .upfront-field-select-options::-webkit-scrollbar, .upfront-suggest-lists::-webkit-scrollbar, .upfront-additive_multiselection .labels_list ul::-webkit-scrollbar, .upfront-media_collection::-webkit-scrollbar, .upfront-item-control::-webkit-scrollbar, .upfront-filter-control::-webkit-scrollbar, #upfront-csseditor .ace_scrollbar-inner::-webkit-scrollbar, #upfront-csseditor .ace_scrollbar::-webkit-scrollbar, #upfront-general-csseditor .ace_scrollbar-inner::-webkit-scrollbar, #upfront-general-csseditor .ace_scrollbar::-webkit-scrollbar, .upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar, .upfront_code-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar, .redactor-dropdown-box-upfrontIcons div.icons::-webkit-scrollbar, .redactor-dropdown-box-upfrontFormatting::-webkit-scrollbar {
   background: none;
   width: 5px; }
 
@@ -1046,7 +1046,7 @@ span.draggable-post-element:hover, span.draggable-post-element.element-dragging 
 #upfront-csseditor .ace_scrollbar, #upfront-general-csseditor .ace_scrollbar, .upfront_code-editor-complex-wrapper .ace_scrollbar {
   width: 5px !important; }
 
-#sidebar-ui .sidebar-panel-content::-webkit-scrollbar-thumb, .upfront-scroll-panel::-webkit-scrollbar-thumb, .upfront-settings_panel_scroll::-webkit-scrollbar-thumb, .upfront-field-select-options::-webkit-scrollbar-thumb, .upfront-suggest-lists::-webkit-scrollbar-thumb, .upfront-additive_multiselection .labels_list ul::-webkit-scrollbar-thumb, .upfront-media_collection::-webkit-scrollbar-thumb, .upfront-item-control::-webkit-scrollbar-thumb, .upfront-filter-control::-webkit-scrollbar-thumb, #upfront-csseditor .ace_scrollbar-inner::-webkit-scrollbar-thumb, #upfront-csseditor .ace_scrollbar::-webkit-scrollbar-thumb, #upfront-general-csseditor .ace_scrollbar-inner::-webkit-scrollbar-thumb, #upfront-general-csseditor .ace_scrollbar::-webkit-scrollbar-thumb, .upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar-thumb, .upfront_code-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar-thumb, .redactor-dropdown-box-upfrontIcons div.icons::-webkit-scrollbar-thumb {
+#sidebar-ui .sidebar-panel-content::-webkit-scrollbar-thumb, .upfront-scroll-panel::-webkit-scrollbar-thumb, .upfront-settings_panel_scroll::-webkit-scrollbar-thumb, .upfront-field-select-options::-webkit-scrollbar-thumb, .upfront-suggest-lists::-webkit-scrollbar-thumb, .upfront-additive_multiselection .labels_list ul::-webkit-scrollbar-thumb, .upfront-media_collection::-webkit-scrollbar-thumb, .upfront-item-control::-webkit-scrollbar-thumb, .upfront-filter-control::-webkit-scrollbar-thumb, #upfront-csseditor .ace_scrollbar-inner::-webkit-scrollbar-thumb, #upfront-csseditor .ace_scrollbar::-webkit-scrollbar-thumb, #upfront-general-csseditor .ace_scrollbar-inner::-webkit-scrollbar-thumb, #upfront-general-csseditor .ace_scrollbar::-webkit-scrollbar-thumb, .upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar-thumb, .upfront_code-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar-thumb, .redactor-dropdown-box-upfrontIcons div.icons::-webkit-scrollbar-thumb, .redactor-dropdown-box-upfrontFormatting::-webkit-scrollbar-thumb {
   border-right: 5px solid #1fcd8f; }
 
 /* Corrections for create theme mode sidebar */
@@ -9876,10 +9876,14 @@ a.ueditor-unlink {
   color: #97b8da !important; }
 
 .redactor-dropdown-box-upfrontFormatting {
-  min-width: 0; }
-
-.ufront-air-formatting {
-  width: 152px; }
+  min-width: 0;
+  width: 200px;
+  height: 180px;
+  background-color: #f2f9ff;
+  border: 1px solid #2a465f;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  padding: 0; }
 
 .ufront-air-formatting ul {
   height: 80px; }
@@ -9887,8 +9891,27 @@ a.ueditor-unlink {
 .ufront-air-formatting li {
   display: inline-block;
   margin: 0;
-  height: 38px;
-  width: 38px; }
+  height: 30px;
+  width: 100%;
+  padding: 0 8px;
+  line-height: 35px; }
+
+.ufront-air-formatting li * {
+  cursor: pointer;
+  color: #2f475f; }
+
+.ufront-air-formatting li .dropact {
+  color: #40a6ff; }
+
+.ufront-air-formatting li.tag-list-section-title {
+  background-color: #e2edf6;
+  color: #5e7f9b;
+  border-bottom: 1px solid #c9d5e1;
+  width: 100%;
+  display: block;
+  height: 19px;
+  font-size: 12px;
+  line-height: 18px; }
 
 .ufront-air-formatting li a {
   width: 100%;
@@ -9897,29 +9920,32 @@ a.ueditor-unlink {
   text-indent: 0;
   text-align: center; }
 
-.ufront-air-formatting li a.tag-list-tag-h1 {
-  background-position: -512px -291px; }
+.ufront-air-formatting li .tag-list-tag-h1 {
+  font-size: 22px; }
 
-.ufront-air-formatting li a.tag-list-tag-h2 {
-  background-position: -554px -291px; }
+.ufront-air-formatting li .tag-list-tag-h2 {
+  font-size: 20px; }
 
-.ufront-air-formatting li a.tag-list-tag-h3 {
-  background-position: -594px -291px; }
+.ufront-air-formatting li .tag-list-tag-h3 {
+  font-size: 18px; }
 
-.ufront-air-formatting li a.tag-list-tag-h4 {
-  background-position: -636px -291px; }
+.ufront-air-formatting li .tag-list-tag-h4 {
+  font-size: 16px; }
 
-.ufront-air-formatting li a.tag-list-tag-h5 {
-  background-position: -512px -333px; }
+.ufront-air-formatting li .tag-list-tag-h5 {
+  font-size: 14px; }
 
-.ufront-air-formatting li a.tag-list-tag-h6 {
-  background-position: -554px -333px; }
+.ufront-air-formatting li .tag-list-tag-h6 {
+  font-size: 12px; }
 
-.ufront-air-formatting li a.tag-list-tag-p {
-  background-position: -594px -333px; }
+.ufront-air-formatting li .tag-list-tag-p {
+  font-size: 15px; }
 
-.ufront-air-formatting li a.tag-list-tag-pre {
-  background-position: -636px -333px; }
+.ufront-air-formatting li .tag-list-tag-pre {
+  font-size: 14px; }
+
+.ufront-air-formatting li .tag-list-tag-blockquote {
+  font-size: 16px; }
 
 .ufront-formatting-custom-class {
   width: 145px;
@@ -11524,7 +11550,7 @@ div.upfront-region-container:hover > a.feature_image_selector {
   width: 230px; }
 
 /* Chosen */
-#insert-font-widget .chosen-container-single .chosen-single, #sidebar-ui .chosen-container-single .chosen-single, #upfront-popup .chosen-container-single .chosen-single {
+#insert-font-widget .chosen-container-single .chosen-single, #sidebar-ui .chosen-container-single .chosen-single, #settings .chosen-container-single .chosen-single, #upfront-popup .chosen-container-single .chosen-single {
   margin: 0;
   text-decoration: none;
   background: #e6f3fe;
@@ -11536,10 +11562,10 @@ div.upfront-region-container:hover > a.feature_image_selector {
   border-radius: 3px;
   border: 1px solid #a3bfd9; }
 
-#insert-font-widget .chosen-container-single .chosen-single:hover, #sidebar-ui .chosen-container-single .chosen-single:hover, #upfront-popup .chosen-container-single .chosen-single:hover {
+#insert-font-widget .chosen-container-single .chosen-single:hover, #sidebar-ui .chosen-container-single .chosen-single:hover, #settings .chosen-container-single .chosen-single:hover, #upfront-popup .chosen-container-single .chosen-single:hover {
   border-color: #607f99; }
 
-#insert-font-widget .chosen-with-drop .chosen-single, #sidebar-ui .chosen-with-drop .chosen-single, #insert-font-widget .chosen-with-drop .chosen-single:hover, #sidebar-ui .chosen-with-drop .chosen-single:hover, #upfront-popup .chosen-with-drop .chosen-single, #upfront-popup .chosen-with-drop .chosen-single:hover {
+#insert-font-widget .chosen-with-drop .chosen-single, #sidebar-ui .chosen-with-drop .chosen-single, #insert-font-widget .chosen-with-drop .chosen-single:hover, #sidebar-ui .chosen-with-drop .chosen-single:hover, #settings .chosen-with-drop .chosen-single, #settings .chosen-with-drop .chosen-single:hover, #upfront-popup .chosen-with-drop .chosen-single, #upfront-popup .chosen-with-drop .chosen-single:hover {
   border-color: #a3bfd9;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0; }
@@ -11547,10 +11573,10 @@ div.upfront-region-container:hover > a.feature_image_selector {
 #upfront-popup .chosen-container-multi .chosen-choices .search-choice {
   display: none; }
 
-#insert-font-widget .chosen-container .chosen-results li, #sidebar-ui .chosen-container .chosen-results li, #upfront-popup .chosen-container .chosen-results li {
+#insert-font-widget .chosen-container .chosen-results li, #sidebar-ui .chosen-container .chosen-results li, #settings .chosen-container .chosen-results li, #upfront-popup .chosen-container .chosen-results li {
   margin: 0 0 0 5px; }
 
-#insert-font-widget .chosen-container-single .chosen-drop, #sidebar-ui .chosen-container-single .chosen-drop, #upfront-popup .chosen-container-single .chosen-drop, #insert-font-widget .chosen-container-multi .chosen-drop, #sidebar-ui .chosen-container-multi .chosen-drop, #upfront-popup .chosen-container-multi .chosen-drop {
+#insert-font-widget .chosen-container-single .chosen-drop, #sidebar-ui .chosen-container-single .chosen-drop, #settings .chosen-container-single .chosen-drop, #upfront-popup .chosen-container-single .chosen-drop, #insert-font-widget .chosen-container-multi .chosen-drop, #sidebar-ui .chosen-container-multi .chosen-drop, #settings .chosen-container-multi .chosen-drop, #upfront-popup .chosen-container-multi .chosen-drop {
   background: #e6f3fe;
   color: #607f99;
   border-color: #a3bfd9;
@@ -11558,21 +11584,21 @@ div.upfront-region-container:hover > a.feature_image_selector {
   font-family: Verdana, sans-serif;
   box-shadow: none; }
 
-#insert-font-widget .chosen-container .chosen-results, #sidebar-ui .chosen-container .chosen-results, #upfront-popup .chosen-container .chosen-results {
+#insert-font-widget .chosen-container .chosen-results, #sidebar-ui .chosen-container .chosen-results, #settings .chosen-container .chosen-results, #upfront-popup .chosen-container .chosen-results {
   max-height: 150px;
   margin-right: 5px; }
 
-#sidebar-ui .chosen-container .chosen-results, #upfront-popup .chosen-container .chosen-results {
+#sidebar-ui .chosen-container .chosen-results, #settings .chosen-container .chosen-results, #upfront-popup .chosen-container .chosen-results {
   max-height: 120px; }
 
-#insert-font-widget .chosen-container .chosen-results li.highlighted, #sidebar-ui .chosen-container .chosen-results li.highlighted, #upfront-popup .chosen-container .chosen-results li.highlighted {
+#insert-font-widget .chosen-container .chosen-results li.highlighted, #sidebar-ui .chosen-container .chosen-results li.highlighted, #settings .chosen-container .chosen-results li.highlighted, #upfront-popup .chosen-container .chosen-results li.highlighted {
   background: #5f7f9a;
   color: #fff; }
 
-#insert-font-widget .chosen-container-single .chosen-search, #sidebar-ui .chosen-container-single .chosen-search, #upfront-popup .chosen-container-single .chosen-search, #insert-font-widget .chosen-container-multi .chosen-search, #sidebar-ui .chosen-container-multi .chosen-search, #upfront-popup .chosen-container-multi .chosen-search {
+#insert-font-widget .chosen-container-single .chosen-search, #sidebar-ui .chosen-container-single .chosen-search, #settings .chosen-container-single .chosen-search, #upfront-popup .chosen-container-single .chosen-search, #insert-font-widget .chosen-container-multi .chosen-search, #sidebar-ui .chosen-container-multi .chosen-search, #settings .chosen-container-multi .chosen-search, #upfront-popup .chosen-container-multi .chosen-search {
   padding: 3px 5px; }
 
-#insert-font-widget .chosen-container-single .chosen-search input[type=text], #sidebar-ui .chosen-container-single .chosen-search input[type=text], #upfront-popup .chosen-container-single .chosen-search input[type=text], #insert-font-widget .chosen-container-multi .chosen-choices input[type=text], #sidebar-ui .chosen-container-multi .chosen-choices input[type=text], #upfront-popup .chosen-container-multi .chosen-choices input[type=text] {
+#insert-font-widget .chosen-container-single .chosen-search input[type=text], #sidebar-ui .chosen-container-single .chosen-search input[type=text], #settings .chosen-container-single .chosen-search input[type=text], #upfront-popup .chosen-container-single .chosen-search input[type=text], #insert-font-widget .chosen-container-multi .chosen-choices input[type=text], #sidebar-ui .chosen-container-multi .chosen-choices input[type=text], #settings .chosen-container-multi .chosen-choices input[type=text], #upfront-popup .chosen-container-multi .chosen-choices input[type=text] {
   background: #f7fbff;
   border-color: #a4bfd8;
   font-weight: normal;
@@ -11583,14 +11609,14 @@ div.upfront-region-container:hover > a.feature_image_selector {
   /* Prevents chosen sprite image from displaying */
   background-image: none !important; }
 
-#insert-font-widget .chosen-container-single .chosen-results::-webkit-scrollbar, #sidebar-ui .chosen-container-single .chosen-results::-webkit-scrollbar, #upfront-popup .chosen-container-single .chosen-results::-webkit-scrollbar, #insert-font-widget .chosen-container-multi .chosen-results::-webkit-scrollbar, #sidebar-ui .chosen-container-multi .chosen-results::-webkit-scrollbar, #upfront-popup .chosen-container-multi .chosen-results::-webkit-scrollbar {
+#insert-font-widget .chosen-container-single .chosen-results::-webkit-scrollbar, #sidebar-ui .chosen-container-single .chosen-results::-webkit-scrollbar, #settings .chosen-container-single .chosen-results::-webkit-scrollbar, #upfront-popup .chosen-container-single .chosen-results::-webkit-scrollbar, #insert-font-widget .chosen-container-multi .chosen-results::-webkit-scrollbar, #sidebar-ui .chosen-container-multi .chosen-results::-webkit-scrollbar, #settings .chosen-container-multi .chosen-results::-webkit-scrollbar, #upfront-popup .chosen-container-multi .chosen-results::-webkit-scrollbar {
   background: #d4dee8;
   width: 5px; }
 
-#insert-font-widget .chosen-container-single .chosen-results::-webkit-scrollbar-thumb, #sidebar-ui .chosen-container-single .chosen-results::-webkit-scrollbar-thumb, #upfront-popup .chosen-container-single .chosen-results::-webkit-scrollbar-thumb, #insert-font-widget .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb, #sidebar-ui .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb, #upfront-popup .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb {
+#insert-font-widget .chosen-container-single .chosen-results::-webkit-scrollbar-thumb, #sidebar-ui .chosen-container-single .chosen-results::-webkit-scrollbar-thumb, #settings .chosen-container-single .chosen-results::-webkit-scrollbar-thumb, #upfront-popup .chosen-container-single .chosen-results::-webkit-scrollbar-thumb, #insert-font-widget .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb, #sidebar-ui .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb, #settings .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb, #upfront-popup .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb {
   background-color: #1fcd8f; }
 
-#insert-font-widget .chosen-container-single .chosen-single div b, #sidebar-ui .chosen-container-single .chosen-single div b, #upfront-popup .chosen-container-single .chosen-single div b {
+#insert-font-widget .chosen-container-single .chosen-single div b, #sidebar-ui .chosen-container-single .chosen-single div b, #settings .chosen-container-single .chosen-single div b, #upfront-popup .chosen-container-single .chosen-single div b {
   display: block;
   width: 0;
   height: 0;
@@ -11600,7 +11626,7 @@ div.upfront-region-container:hover > a.feature_image_selector {
   border-right: 4px solid transparent;
   margin-top: 9px; }
 
-#insert-font-widget .chosen-with-drop .chosen-single div b, #sidebar-ui .chosen-with-drop .chosen-single div b, #upfront-popup .chosen-with-drop .chosen-single div b {
+#insert-font-widget .chosen-with-drop .chosen-single div b, #sidebar-ui .chosen-with-drop .chosen-single div b, #settings .chosen-with-drop .chosen-single div b, #upfront-popup .chosen-with-drop .chosen-single div b {
   border-top: 0 none transparent;
   border-bottom: 4px solid #607f99; }
 
