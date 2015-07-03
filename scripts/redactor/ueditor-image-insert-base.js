@@ -562,6 +562,7 @@
                         button_text: l10n.change_image,
                         show_sizes: this.data.get("insert_type") === "wp_default"
                     }).done(function (popup, result) {
+                        if(_.isEmpty(  result ) ) return;
                         self.start( result );
                     });
                     return false;

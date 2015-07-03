@@ -29,6 +29,7 @@ var PostImageInsert_Manager = base.ImageInsertBase.extend({
             ;
 
         promise.done(function(popup, result){
+            if(_.isEmpty(  result ) ) return;
             var is_wp = result.at(0).get("insert_option") === "wp_default";
             if( is_wp ) {
                 var insert = new WP_PostImageInsert({start: result, $editor: $editor});
