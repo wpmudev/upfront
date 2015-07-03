@@ -4223,10 +4223,8 @@ var GridEditor = {
 				line++;
 				lines[line] = [];
 			}
-			// module_col = module_col > parent_col ? parent_col : module_col;
-			module_col = parent_col;
-			// module_left = module_col + module_left > parent_col ? parent_col - module_col : module_left;
-			module_left = 0;
+			module_col = module_col > parent_col ? parent_col : module_col;
+			module_left = module_col + module_left > parent_col ? parent_col - module_col : module_left;
 			lines[line].push({
 				clear: is_clear,
 				module: module,
