@@ -5517,8 +5517,8 @@ var _Settings_Padding = SettingsItem.extend({
 				},
 				show: function (value, $el) {
 					if(value[0] === 'yes') {
-						$(top_padding_slider.$el).show(); 
-						$(top_padding_num.$el).show(); 
+						$(top_padding_slider.$el).css('display', 'inline-block'); 
+						$(top_padding_num.$el).css('display', 'inline-block'); 
 					}
 					else {
 						$(top_padding_slider.$el).hide(); 
@@ -5569,8 +5569,8 @@ var _Settings_Padding = SettingsItem.extend({
 				},
 				show: function (value, $el) {
 					if(value[0] === 'yes') {
-						$(bottom_padding_slider.$el).show(); 
-						$(bottom_padding_num.$el).show(); 
+						$(bottom_padding_slider.$el).css('display', 'inline-block'); 
+						$(bottom_padding_num.$el).css('display', 'inline-block'); 
 					}
 					else {
 						$(bottom_padding_slider.$el).hide(); 
@@ -5621,8 +5621,8 @@ var _Settings_Padding = SettingsItem.extend({
 				},
 				show: function (value, $el) {
 					if(value[0] === 'yes') {
-						$(left_padding_slider.$el).show(); 
-						$(left_padding_num.$el).show(); 
+						$(left_padding_slider.$el).css('display', 'inline-block'); 
+						$(left_padding_num.$el).css('display', 'inline-block'); 
 					}
 					else {
 						$(left_padding_slider.$el).hide(); 
@@ -5673,8 +5673,8 @@ var _Settings_Padding = SettingsItem.extend({
 				},
 				show: function (value, $el) {
 					if(value[0] === 'yes') {
-						$(right_padding_slider.$el).show(); 
-						$(right_padding_num.$el).show(); 
+						$(right_padding_slider.$el).css('display', 'inline-block'); 
+						$(right_padding_num.$el).css('display', 'inline-block'); 
 					}
 					else {
 						$(right_padding_slider.$el).hide(); 
