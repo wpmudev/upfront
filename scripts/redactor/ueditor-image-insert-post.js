@@ -216,6 +216,7 @@ var WP_PostImageInsert = base.ImageInsertBase.extend({
         var $tools_el = this.$(".wp-caption");
         $tools_el.append(this.controls.$el);
         this.make_caption_editable();
+        this.updateControlsPosition();
         $tools_el.append('<a href="#" contenteditable="false" class="upfront-icon-button upfront-icon-button-delete ueditor-insert-remove"></a>');
 
     },

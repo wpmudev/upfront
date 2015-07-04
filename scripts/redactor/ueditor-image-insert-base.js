@@ -282,14 +282,18 @@
                 },
 
                 updateControlsPosition: function(){
-                    var width = Upfront.Util.grid.col_to_width( this.data.get('style').group.width_cls ),
-                        controls = this.controls.$el,
-                        margin = 0
-                        ;
-
-                    margin =   ( width - controls.width()  )  / 2;
-
-                    controls.css('margin-left', margin + 'px');
+                    //var width = Upfront.Util.grid.col_to_width( this.data.get('style').group.width_cls ),
+                    //    controls = this.controls.$el,
+                    //    margin = 0
+                    //    ;
+                    //
+                    //margin =   ( width - controls.width()  )  / 2;
+                    //
+                    //controls.css('margin-left', margin + 'px');
+                    this.controls.$el.css({
+                        left: 15,
+                        top:15
+                    });
                 },
 
                 getSimpleOutput: function () {

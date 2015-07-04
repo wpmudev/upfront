@@ -263,12 +263,6 @@ var ImageInsert = base.ImageInsertBase.extend({
         this.styleView = view;
         return view;
 
-    },
-    updateControlsPosition: function(){
-        this.controls.$el.css({
-            marginLeft: 15,
-            marginTop:15
-        });
     }
 });
 
