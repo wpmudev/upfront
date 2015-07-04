@@ -560,7 +560,7 @@
                         multiple_selection: false,
                         insert_options: false,
                         button_text: l10n.change_image,
-                        show_sizes: this.data.get("insert_type") === "wp_default"
+                        hide_sizes: this.data.get("insert_type") === "image_insert"
                     }).done(function (popup, result) {
                         if(_.isEmpty(  result ) ) return;
                         self.start( result );

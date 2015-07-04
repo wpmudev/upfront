@@ -26,7 +26,7 @@ var ImageInsert = base.ImageInsertBase.extend({
     start: function( $el ){
 
         var me = this,
-            promise = Upfront.Media.Manager.open({multiple_selection: false})
+            promise = Upfront.Media.Manager.open({multiple_selection: false })
             ;
 
         promise.done(function(popup, result){
