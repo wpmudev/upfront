@@ -25,9 +25,11 @@ define(function() {
 		if(url.length && url[0] == '#') {
 			return url.indexOf('#ltb-') > -1 ? 'lightbox' : 'anchor';
 		}
-
-		if(url.substring(0, location.origin.length) == location.origin) {
-			return 'entry';
+		
+		if(typeof window.location.origin !== "undefined") {
+			if(url.substring(0, window.location.origin.length) == window.location.origin) {
+				return 'entry';
+			}
 		}
 
 		if (url.match(/^mailto/)) {
