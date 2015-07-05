@@ -14,14 +14,10 @@
 	flex-direction: row;
 	-webkit-flex-wrap: wrap;
 	flex-wrap: wrap;
-/*	-webkit-align-items: flex-start;
+	-webkit-align-items: flex-start;
 	align-items: flex-start;
 	-webkit-align-content: flex-start;
-	align-content: flex-start;*/
-	-webkit-align-items: stretch;
-  align-items: stretch;
-  -webkit-align-content: stretch;
-  align-content: stretch;
+	align-content: flex-start;
 }
 .flexbox-support .upfront-grid-layout {
 	-webkit-align-items: stretch;

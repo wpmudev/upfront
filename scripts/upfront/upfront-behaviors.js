@@ -3205,12 +3205,18 @@ var GridEditor = {
 				}
 			}
 			else if ( drop.type == 'side-before' || drop.type == 'side-after' ) {
+				var pos = $insert_rel.position();
 				$drop.css('height', (drop.bottom-drop.top+1)*ed.baseline); // @TODO Experiment: no animation
 				if ( drop.is_me ){ // @TODO Experiment: if drop me, add width too
 					$drop.css('width', $me.width());
 					if ( drop.type == 'side-before' ) $drop.css('margin-right', $me.width()*-1);
 					else $drop.css('margin-left', $me.width()*-1);
 				}
+				$drop.css({
+					position: 'absolute',
+					top: pos.top,
+					left: pos.left + ( drop.type == 'side-after' ? $insert_rel.width() : 0 )
+				});
 			}
 			else if ( drop_move ) {
 				drop_change();
