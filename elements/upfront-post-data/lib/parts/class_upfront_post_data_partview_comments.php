@@ -186,6 +186,12 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 	private function _get_external_comments_template () {
 		if (!is_numeric($this->_post->ID)) return false;
 
+		// Instantiate the markup registry and go with that.
+		$registry = Upfront_Global_Registry::get_instance();
+		$regkey = "comments_template_{$this->_post->ID}";
+		$tpl = $registry->get($regkey);
+		if (!empty($tpl)) return $tpl;
+
 		global $post, $wp_query;
 
 		$overriden_template = false;
@@ -211,6 +217,10 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 		
 		$post = is_object($global_post) ? clone($global_post) : $global_post;
 		$wp_query = is_object($global_query) ? clone($global_query) : $global_query;
+
+		if (!empty($overriden_template)) {
+			$registry->set($regkey, $overriden_template);
+		}
 
 		return $overriden_template;
 	}
