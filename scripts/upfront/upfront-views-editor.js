@@ -6699,6 +6699,7 @@ var CSSEditor = Backbone.View.extend({
 		var me = this,
 			editor = ace.edit(this.$('.upfront-css-ace')[0]),
 			session = editor.getSession(),
+			scrollerDisplayed = false,
 			scope,
 			styles
 		;
@@ -6715,6 +6716,20 @@ var CSSEditor = Backbone.View.extend({
 				me.updateStyles(editor.getValue());
 			},800);
 			me.trigger('change', editor);
+						
+			if(typeof me.editor !== "undefined") {
+				var aceOuterWidth = $(me.editor.container).get(0).scrollWidth;
+				var aceInnerWidth = $(me.editor.container).find('.ace_content').innerWidth();
+				
+				if(aceOuterWidth < aceInnerWidth + 40) {
+					if(!scrollerDisplayed) {
+						me.startResizable();
+					}
+					scrollerDisplayed = true;
+				} else {
+					scrollerDisplayed = false;
+				}
+			}
 		});
 
 		styles = Upfront.Util.colors.convert_string_color_to_ufc(this.get_style_element().html());
@@ -6727,9 +6742,15 @@ var CSSEditor = Backbone.View.extend({
 		// Set up the proper vscroller width to go along with new change.
 		editor.renderer.scrollBar.width = 5;
 		editor.renderer.scroller.style.right = "5px";
-
+		
 		editor.focus();
 		this.editor = editor;
+		
+		if(me.timer) clearTimeout(me.timer);
+		me.timer = setTimeout(function(){
+			me.startResizable();
+		},300);
+		
 	},
 	prepareSpectrum: function(){
 		var me = this,
