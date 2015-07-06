@@ -4213,16 +4213,14 @@ var GridEditor = {
 			var data = module.get_property_value_by_name('breakpoint'),
 				module_class = module.get_property_value_by_name('class'),
 				module_col = ed.get_class_num(module_class, ed.grid.class),
-				module_left = ed.get_class_num(module_class, ed.grid.left_margin_class),
 				wrapper = wrappers.get_by_wrapper_id(module.get_wrapper_id()),
 				wrapper_data = wrapper && wrapper.get_property_value_by_name('breakpoint'),
 				wrapper_class = wrapper && wrapper.get_property_value_by_name('class'),
 				is_clear = wrapper && ( !!wrapper_class.match(/clr/) || line_col === 0 );
-			if ( !wrapper )
-				return;
-			line_col += module_col + module_left;
+			if ( !wrapper )	return;
+			line_col += module_col; // Elements in a line have to fit the whole region now
 			if ( line_col >= parent_col ){
-				line_col = module_col + module_left;
+				line_col = module_col; // Elements in a line have to fit the whole region now
 				is_clear = true;
 			}
 			if ( is_clear ){
@@ -4230,45 +4228,41 @@ var GridEditor = {
 				lines[line] = [];
 			}
 			module_col = module_col > parent_col ? parent_col : module_col;
-			module_left = module_col + module_left > parent_col ? parent_col - module_col : module_left;
 			lines[line].push({
 				clear: is_clear,
 				module: module,
 				col: module_col,
-				left: module_left,
+				left: 0, // Elements in a line have to fit the whole region now
 				wrapper: wrapper,
 				breakpoint: Upfront.Util.clone( data || {} ),
 				wrapper_breakpoint: Upfront.Util.clone( wrapper_data || {} )
 			});
 		});
 		_.each(lines, function(line_modules){
-			var line_col = _.map(line_modules, function(data){ return data.col + data.left; }).reduce(function(sum, col){ return sum + col; });
+			var line_col = _.map(line_modules, function(data){ 
+				return data.col; // Elements in a line have to fit the whole region now
+			}).reduce(function(sum, col){ 
+				return sum + col;
+			});
 			_.each(line_modules, function(data, index){
-				var new_left = 0,
-					new_col = 0,
+				var new_col = 0,
 					wrapper_col = 0,
 					wrapper_index = 0;
-				if ( ! _.isObject(data.breakpoint[breakpoint_id]) )
+				if ( ! _.isObject(data.breakpoint[breakpoint_id]) ) {
 					data.breakpoint[breakpoint_id] = { edited: false };
-				if ( !_.isObject(data.wrapper_breakpoint[breakpoint_id]) )
+				}
+				if ( !_.isObject(data.wrapper_breakpoint[breakpoint_id]) ) {
 					data.wrapper_breakpoint[breakpoint_id] = { edited: false };
+				}
 				if ( !data.breakpoint[breakpoint_id].edited ){
-					if ( index === 0 ){ // first of line, try to center
-						new_left = Math.floor((parent_col-(line_col-data.left))/2);
-						new_col = ( line_modules.length == 1 ) ? parent_col-(new_left*2) : data.col; // only resize if it's the only element
-					}
-					else {
-						new_left = data.left;
-						new_col = data.col;
-					}
-					data.breakpoint[breakpoint_id].left = new_left;
-					data.breakpoint[breakpoint_id].col = new_col;
+					// Elements in a line have to fit evenly the whole region now
+					data.breakpoint[breakpoint_id].left = 0; 
+					data.breakpoint[breakpoint_id].col = parent_col / line_modules.length;
 					data.breakpoint[breakpoint_id].order = index;
 					data.module.set_property('breakpoint', data.breakpoint, silent);
 				}
 				else {
 					new_col = typeof data.breakpoint[breakpoint_id].col == 'number' ? data.breakpoint[breakpoint_id].col : data.col;
-					new_left = typeof data.breakpoint[breakpoint_id].left == 'number' ? data.breakpoint[breakpoint_id].left : data.left;
 				}
 				if ( !_.isUndefined(set_wrappers_col[data.wrapper.get_wrapper_id()]) ) {
 					wrapper_col = set_wrappers_col[data.wrapper.get_wrapper_id()];
@@ -4276,8 +4270,8 @@ var GridEditor = {
 				else {
 					wrapper_index++;
 				}
-				if ( wrapper_col < new_col+new_left ) {
-					wrapper_col = new_col+new_left;
+				if ( wrapper_col < new_col ) {
+					wrapper_col = new_col;
 					data.wrapper_breakpoint[breakpoint_id].col = wrapper_col;
 					set_wrappers_col[data.wrapper.get_wrapper_id()] = wrapper_col;
 					if ( !data.wrapper_breakpoint[breakpoint_id].edited ) {
