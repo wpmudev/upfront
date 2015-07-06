@@ -30,6 +30,9 @@
   left: -3px;
   background: rgba(128, 128, 255, 0.8);
 }
+.upfront-drop.upfront-drop-use:after {
+  content: none;
+}
 .show-debug .upfront-drop {
 	background: rgba(0, 0, 128, 0.1);
 }
