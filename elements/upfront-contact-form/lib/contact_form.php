@@ -8,6 +8,8 @@ class Upfront_UcontactView extends Upfront_Object {
 
 	public function get_markup () {
 
+		$element_id = $this->_get_property('element_id');
+
 		//Check if the form has been sent
 		//$this->check_form_received(); // Do NOT just send out form data.
 		$args = array_merge($this->properties_to_array(), array(
@@ -29,6 +31,13 @@ class Upfront_UcontactView extends Upfront_Object {
 				'email' => esc_attr($this->get_post('senderemail')),
 				'subject' => esc_attr($this->get_post('subject')),
 				'message' => esc_textarea($this->get_post('sendermessage')),
+			),
+			'ids' => array(
+				'name' => esc_attr("name-{$element_id}"),
+				'email' => esc_attr("email-{$element_id}"),
+				'subject' => esc_attr("subject-{$element_id}"),
+				'message' => esc_attr("message-{$element_id}"),
+				'captcha' => esc_attr("captcha-{$element_id}"),
 			),
 		));
 
