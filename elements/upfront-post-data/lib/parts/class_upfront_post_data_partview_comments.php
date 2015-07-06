@@ -1,6 +1,7 @@
 <?php
 
 class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
+	
 	protected static $_parts = array(
 		0 => 'comment_count',
 		1 => 'comments',
@@ -11,6 +12,8 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 
 	/**
 	 * Converts the comment form part into markup.
+	 *
+	 * Doesn't do anything in overridden comments template environment.
 	 *
 	 * Supported macros:
 	 *    {{comment_form}} - Standard WP comment form
@@ -50,6 +53,8 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 	/**
 	 * Converts the comments pagination part into markup.
 	 *
+	 * Doesn't do anything in overridden comments template environment.
+	 *
 	 * Supported macros:
 	 *    {{pagination}} - Comments pagination links
 	 *
@@ -60,6 +65,10 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 	public function expand_comments_pagination_template () {
 		if (empty($this->_post->ID)) return '';
 		if (empty($this->_post->comment_count)) return '';
+
+		// If we have plugin-overridden template, then assume it'll take care of itself
+		$tpl = $this->_get_external_comments_template();
+		if (!empty($tpl)) return '';
 
 		$pagination = $this->_get_pagination();
 		if (empty($pagination)) return '';
@@ -74,6 +83,8 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 	/**
 	 * Converts the comments list part into markup.
 	 *
+	 * In overridden comments template environment, it falls back to using the template.
+	 *
 	 * Supported macros:
 	 *    {{comments}} - Comments list markup
 	 *    {{pagination}} - Comments pagination links
@@ -86,6 +97,7 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 		if (empty($this->_post->ID)) return '';
 		if (empty($this->_post->comment_count)) return '';
 
+		// If we have plugin-overridden template, then yeah... go with that
 		$tpl = $this->_get_external_comments_template();
 		if (!empty($tpl)) return $tpl;
 
