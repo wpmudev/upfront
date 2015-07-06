@@ -25,12 +25,11 @@ class Upfront_UcontactView extends Upfront_Object {
 				'message' => $this->get_placeholder($this->_get_property('form_message_label'))
 			),
 			'values' => array(
-				'name' => $this->get_post('sendername'),
-				'email' => $this->get_post('senderemail'),
-				'subject' => $this->get_post('subject'),
-				'captcha' => $this->get_post('subject'),
-				'message' => $this->get_post('sendermessage')
-			)
+				'name' => esc_attr($this->get_post('sendername')),
+				'email' => esc_attr($this->get_post('senderemail')),
+				'subject' => esc_attr($this->get_post('subject')),
+				'message' => esc_textarea($this->get_post('sendermessage')),
+			),
 		));
 
 		$args['show_subject'] = $args['show_subject'] && sizeof($args['show_subject']);
@@ -319,9 +318,10 @@ class Upfront_UcontactView extends Upfront_Object {
 		return 'ucontact-label-' . $this->_get_property('form_label_position');
 	}
 
-	public function get_placeholder($label){
-		if($this->_get_property('form_label_position') == 'over')
-			return 'placeholder="' . preg_replace('/<span[^<]+<\/span>/i', '', $label) . '"';
+	public function get_placeholder ($label) {
+		if ('over' === $this->_get_property('form_label_position')) {
+			return 'placeholder="' . esc_attr(preg_replace('/<span[^<]+<\/span>/i', '', $label)) . '"';
+		}
 		return '';
 	}
 
