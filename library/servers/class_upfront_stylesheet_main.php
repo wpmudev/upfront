@@ -286,15 +286,24 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		// Include Google fonts
 		$faces = array_values(array_filter(array_unique($faces, SORT_REGULAR)));
 		$google_fonts = new Upfront_Model_GoogleFonts;
-		$imports = '';
+		//$imports = ''; // Skip this, we're not doing imports
+
+		$deps = Upfront_CoreDependencies_Registry::get_instance();
+
 		foreach ($faces as $face) {
+			// Yeah, let's not do the imports directly
+			// and fall back to just adding the fonts like we normally would
+			/*
 			if (!$google_fonts->is_from_google($face['face'])) continue;
 			$imports .= "@import \"https://fonts.googleapis.com/css?family=" .
 				preg_replace('/\s/', '+', $face['face']);
 			if (400 !== (int)$face['weight'] && 'inherit' !== $face['weight']) $imports .= ':' . $face['weight'];
 			$imports .= "\";\n";
+			*/
+			if (!$google_fonts->is_from_google($face['face'])) continue;
+			$deps->add_font($face['face'], $face['weight']);
 		}
-		if (!empty($imports)) $out = "{$imports}\n\n{$out}";
+		//if (!empty($imports)) $out = "{$imports}\n\n{$out}"; // Skip this, we're not doing imports
 
 		$out = apply_filters('upfront_prepare_typography_styles', $out);
 
