@@ -2406,7 +2406,7 @@ var GridEditor = {
 						last_me = ( last && last._id == me._id ),
 						wrap_bottom = ( breakpoint && !breakpoint.default && next_clr_el_top ) ? Math.ceil(next_clr_el_top.grid_center.y) : max_row_wrap.grid.bottom;
 					// Don't add dropping below the most bottom wrap in a row
-					if ( last_me || !max_row_wrap || max_row_wrap != wrap || ( breakpoint && !breakpoint.default ) ){
+					//if ( last_me || !max_row_wrap || max_row_wrap != wrap || ( breakpoint && !breakpoint.default ) ){
 						ed.drops.push({
 							_id: ed._new_id(),
 							top: current_el_top,
@@ -2431,7 +2431,7 @@ var GridEditor = {
 							switch_dir: false,
 							row_wraps: false
 						});
-					}
+					//}
 				}
 				// Don't add another droppable if this is not the first el from wrapper, only on responsive
 				if ( breakpoint && !breakpoint.default && has_siblings && sibling_index > 0 )
@@ -4219,7 +4219,7 @@ var GridEditor = {
 				is_clear = wrapper && ( !!wrapper_class.match(/clr/) || line_col === 0 );
 			if ( !wrapper )	return;
 			line_col += module_col; // Elements in a line have to fit the whole region now
-			if ( line_col >= parent_col ){
+			if ( line_col > parent_col ){
 				line_col = module_col; // Elements in a line have to fit the whole region now
 				is_clear = true;
 			}
@@ -4256,8 +4256,9 @@ var GridEditor = {
 				}
 				if ( !data.breakpoint[breakpoint_id].edited ){
 					// Elements in a line have to fit evenly the whole region now
+					new_col = parent_col / line_modules.length;
 					data.breakpoint[breakpoint_id].left = 0; 
-					data.breakpoint[breakpoint_id].col = parent_col / line_modules.length;
+					data.breakpoint[breakpoint_id].col = new_col;
 					data.breakpoint[breakpoint_id].order = index;
 					data.module.set_property('breakpoint', data.breakpoint, silent);
 				}
