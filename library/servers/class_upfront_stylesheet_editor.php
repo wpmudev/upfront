@@ -35,12 +35,17 @@ class Upfront_StylesheetEditor extends Upfront_Server {
 	function load_front_styles () {
 		$grid = Upfront_Grid::get_grid();
 
-		$cache = Upfront_Cache::get_instance(Upfront_Cache::TYPE_LONG_TERM);
-		$style = $cache->get('grid_front_response', $grid);
-		if (!$style) {
+		if (!Upfront_Behavior::debug()->is_active(Upfront_Behavior::debug()->constant('STYLE'))) {
+			$cache = Upfront_Cache::get_instance(Upfront_Cache::TYPE_LONG_TERM);
+			$style = $cache->get('grid_front_response', $grid);
+			if (!$style) {
+				$preprocessor = new Upfront_StylePreprocessor($grid);
+				$style = $preprocessor->get_grid();
+				$cache->set('grid_front_response', $grid, $style);
+			}
+		} else {
 			$preprocessor = new Upfront_StylePreprocessor($grid);
 			$style = $preprocessor->get_grid();
-			$cache->set('grid_front_response', $grid, $style);
 		}
 
 		$this->_out(new Upfront_CssResponse_Success($style), !Upfront_Permissions::current(Upfront_Permissions::BOOT)); // Serve cacheable styles for visitors
