@@ -31,6 +31,6 @@ class Upfront_StylesheetEditor extends Upfront_Server {
 
 		$preprocessor = new Upfront_StylePreprocessor($grid);
 		$style = $preprocessor->get_grid();
-		$this->_out(new Upfront_CssResponse_Success($style));
+		$this->_out(new Upfront_CssResponse_Success($style), !Upfront_Permissions::current(Upfront_Permissions::BOOT)); // Serve cacheable styles for visitors
 	}
 }

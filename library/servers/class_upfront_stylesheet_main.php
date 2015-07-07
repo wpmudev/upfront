@@ -68,7 +68,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		// Add elements presets styles
 		$style = apply_filters('get_element_preset_styles', $style);
 		$style = Upfront_UFC::init()->process_colors($style);
-		$this->_out(new Upfront_CssResponse_Success($style));
+		$this->_out(new Upfront_CssResponse_Success($style), !Upfront_Permissions::current(Upfront_Permissions::BOOT)); // Serve cacheable styles for visitors
 	}
 
 	function save_styles(){
