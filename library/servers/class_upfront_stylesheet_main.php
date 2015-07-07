@@ -301,7 +301,11 @@ class Upfront_StylesheetMain extends Upfront_Server {
 			$imports .= "\";\n";
 			*/
 			if (!$google_fonts->is_from_google($face['face'])) continue;
-			$deps->add_font($face['face'], $face['weight']);
+			$variant = 400 !== (int)$face['weight'] && 'inherit' !== $face['weight']
+				? $face['weight']
+				: false
+			;
+			$deps->add_font($face['face'], $variant);
 		}
 		//if (!empty($imports)) $out = "{$imports}\n\n{$out}"; // Skip this, we're not doing imports
 
