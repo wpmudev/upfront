@@ -9297,6 +9297,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				me = this,
 				modal = new Modal({ to: this.panel_view.panels_view.$el, button: true, width: 422 }),
 				disable_global = ( ( to == 'left' || to == 'right' ) && me.model.get('scope') == 'global' );
+				var parentContainer = me.$el.parents('.upfront-region-center');
+				parentContainer.addClass('upfront-region-editing-modal');
+				parentContainer.next().find('.upfront-icon-control-region-resize').hide();
 				fields = {
 					from: new Field_Radios({
 						name: 'from',
@@ -9414,6 +9417,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				}
 			})
 			.always(function(modal_view){
+				parentContainer.removeClass('upfront-region-editing-modal');
+				parentContainer.next().find('.upfront-icon-control-region-resize').show();
 				modal_view.remove();
 			});
 
