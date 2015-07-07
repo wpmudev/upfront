@@ -28,18 +28,29 @@ class Upfront_StylesheetMain extends Upfront_Server {
 	}
 
 	function load_styles () {
-		$grid = Upfront_Grid::get_grid();
 		$layout = apply_filters('upfront-style-base_layout', Upfront_Layout::get_instance());
-		$preprocessor = new Upfront_StylePreprocessor($grid, $layout);
 		$base_only = isset($_POST['base_only']) ? filter_var($_POST['base_only'], FILTER_VALIDATE_BOOLEAN) : false;
 
 		// Alright, so initialize the var first
 		$style = '';
+		$bootable = Upfront_Permissions::current(Upfront_Permissions::BOOT);
+		$cache = $ckey = false;
+		
+		// Let's try to go with cached response first, if we can
+		if (!Upfront_Behavior::debug()->is_active(Upfront_Behavior::debug()->constant('STYLE'))) {
+			$cache = Upfront_Cache::get_instance(Upfront_Cache::TYPE_LONG_TERM);
+			$ckey = $cache->key('styles_main', array($layout, $bootable));
+			$style = $cache->get($ckey);
+			if (!empty($style)) $this->_out(new Upfront_CssResponse_Success($style), !$bootable);
+		}
 
 		// Add typography styles - rearranging so the imports from Google fonts come first, if needed.
 		// When loading styles in editor mode don't include typography styles since they are generated
 		// by javascript
 		if (false === $base_only) {
+			$grid = Upfront_Grid::get_grid();
+			$preprocessor = new Upfront_StylePreprocessor($grid, $layout);
+			
 			$style = $this->prepare_typography_styles($layout, $grid);
 			$style .= $preprocessor->process();
 		}
@@ -68,7 +79,12 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		// Add elements presets styles
 		$style = apply_filters('get_element_preset_styles', $style);
 		$style = Upfront_UFC::init()->process_colors($style);
-		$this->_out(new Upfront_CssResponse_Success($style), !Upfront_Permissions::current(Upfront_Permissions::BOOT)); // Serve cacheable styles for visitors
+
+		if (!empty($cache) && !empty($ckey)) { // make use of cache, if possible
+			$cache->set($ckey, $style);
+		}
+
+		$this->_out(new Upfront_CssResponse_Success($style), !$bootable); // Serve cacheable styles for visitors
 	}
 
 	function save_styles(){
