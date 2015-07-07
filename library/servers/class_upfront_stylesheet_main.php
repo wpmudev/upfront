@@ -36,6 +36,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$bootable = Upfront_Permissions::current(Upfront_Permissions::BOOT);
 		$cache = $ckey = false;
 		
+		/*
 		// Let's try to go with cached response first, if we can
 		if (!Upfront_Behavior::debug()->is_active(Upfront_Behavior::debug()->constant('STYLE'))) {
 			$cache = Upfront_Cache::get_instance(Upfront_Cache::TYPE_LONG_TERM);
@@ -43,6 +44,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 			$style = $cache->get($ckey);
 			if (!empty($style)) $this->_out(new Upfront_CssResponse_Success($style), !$bootable);
 		}
+		*/
 
 		// Add typography styles - rearranging so the imports from Google fonts come first, if needed.
 		// When loading styles in editor mode don't include typography styles since they are generated
