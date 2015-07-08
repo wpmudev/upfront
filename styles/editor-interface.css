@@ -13458,8 +13458,8 @@ div.upfront-region-container:hover > a.feature_image_selector {
 /* line 26, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/theme-colors-ui */
 .theme_color_swatch_empty .sp-preview {
   background-image: url('../img/uf-core-el-sprite.svg');
-  background-position: -1362px -170px;
-  border-radius: 0; }
+  background-position: -1363px -171px;
+  border-radius: 50%; }
 
 /* line 34, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/theme-colors-ui */
 #sidebar-ui .panel-setting-theme-colors-shades-range a {
@@ -13546,31 +13546,31 @@ div.upfront-region-container:hover > a.feature_image_selector {
 #sidebar-ui #theme-colors-swatches .upfront-field-wrap {
   margin: 14px 15px 13px 0; }
 
-/* line 104, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/theme-colors-ui */
+/* line 103, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/theme-colors-ui */
 .panel-setting-theme-colors-meta {
   margin-top: 15px;
   line-height: 13px; }
 
-/* line 108, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/theme-colors-ui */
+/* line 107, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/theme-colors-ui */
 #sidebar-ui .swatch-title {
   margin-top: 9px;
   color: #263a4d; }
 
-/* line 114, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/theme-colors-ui */
+/* line 113, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/theme-colors-ui */
 .panel-setting-theme-colors-highlights, .panel-setting-theme-colors-shades {
   text-align: justify; }
 
-/* line 118, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/theme-colors-ui */
+/* line 117, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/theme-colors-ui */
 .panel-setting-theme-colors-highlights:after, .panel-setting-theme-colors-shades:after {
   content: '';
   display: inline-block;
   width: 100%; }
 
-/* line 124, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/theme-colors-ui */
+/* line 123, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/theme-colors-ui */
 #sidebar-ui .panel-setting-theme-colors-highlights + .swatch-title {
   margin-top: 4px; }
 
-/* line 127, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/theme-colors-ui */
+/* line 126, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/theme-colors-ui */
 .theme-colors-color-box:first-child {
   margin-left: 0; }
 
