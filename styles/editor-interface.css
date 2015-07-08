@@ -1541,8 +1541,8 @@ input.upfront-field-text:hover, .upfront-field-text:focus {
 /* end chrome input[type=number] styling */
 /* line 110, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-select, .upfront-field-select-options {
-  background: #e6f3fe;
-  border: 1px solid #a3bfd9;
+  background: #f2f9ff;
+  border: 1px solid #b7c9d9;
   border-radius: 3px; }
 
 /* line 115, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
@@ -1551,9 +1551,9 @@ input.upfront-field-text:hover, .upfront-field-text:focus {
   height: 26px;
   max-height: 26px;
   margin: 0;
-  color: #607f99;
+  color: #4e4770;
   font-size: 11px;
-  font-family: verdana, sans-serif;
+  font-family: Verdana, sans-serif;
   line-height: 22px;
   position: relative;
   overflow: hidden;
@@ -1638,8 +1638,9 @@ input.upfront-field-text:hover, .upfront-field-text:focus {
 .upfront-field-select-options {
   list-style: none;
   /*float: left;*/
+  background: #fafdff;
   box-shadow: 0 0 3px rgba(96, 127, 153, 0.5);
-  border-color: #607f99;
+  border-color: #7d99b3;
   padding: 5px 0 !important;
   margin: 10px -1px 0 !important;
   position: relative;
@@ -1653,7 +1654,7 @@ input.upfront-field-text:hover, .upfront-field-text:focus {
   -o-transition: max-height 0.3s;
   transition: max-height 0.3s; }
 
-/* line 218, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 219, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-select-expanded .upfront-field-select-options {
   margin-top: -1px !important;
   position: absolute;
@@ -1663,30 +1664,30 @@ input.upfront-field-text:hover, .upfront-field-text:focus {
   max-height: 142px;
   z-index: 21; }
 
-/* line 227, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 228, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-select-option {
   margin: 0 10px 0 0 !important;
   position: relative;
   width: 100%; }
 
-/* line 232, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 233, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-select-expanded .upfront-field-select-option {
   margin: 0 !important; }
 
-/* line 236, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 237, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-select-expanded .upfront-field-select-option:before, .upfront-field-select-expanded .upfront-field-select-option:after {
   background-color: transparent;
   content: normal; }
 
-/* line 240, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 241, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-select-option label {
   font: normal 11px/2 Verdana, sans-serif; }
 
-/* line 246, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 247, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-select-option .upfront-field-radio {
   display: none; }
 
-/* line 249, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 250, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-select-option .upfront-field-checkbox {
   float: none !important;
   position: absolute;
@@ -1696,37 +1697,38 @@ input.upfront-field-text:hover, .upfront-field-text:focus {
   right: 5px;
   margin: auto; }
 
-/* line 258, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 259, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-select-zebra .upfront-field-select-option-even {
   background: #dae7f2; }
 
-/* line 262, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 263, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-object-content div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap ul .upfront-field-select-option:hover label, .upfront-field-select-option:hover {
-  background: #607f99;
-  color: #eef7ff; }
+  background: #d4dee8;
+  color: black; }
 
-/* line 266, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 267, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-select-option label {
   display: block;
   font-weight: normal;
   padding: 2px 20px 2px 10px;
   margin: 0; }
 
-/* line 272, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 273, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-select-option-selected label {
-  padding-right: 4px; }
+  padding-right: 4px;
+  color: #46cd99; }
 
-/* line 275, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 277, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-select-option label .upfront-field-icon {
   margin-top: 0;
   vertical-align: top; }
 
-/* line 280, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 282, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-select-option-disabled, .upfront-field-select-option-disabled:hover {
   background: none;
   color: #99b5cc; }
 
-/* line 284, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 286, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-checkbox, .upfront-field-radio {
   width: 12px;
   height: 12px;
@@ -1735,54 +1737,54 @@ input.upfront-field-text:hover, .upfront-field-text:focus {
   cursor: pointer;
   float: none; }
 
-/* line 292, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 294, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-ui .upfront-field-checkbox:hover, .upfront-ui .upfront-field-radio:hover {
   border: 2px solid #9dacba; }
 
-/* line 296, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 298, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-radio {
   border-radius: 6px; }
 
-/* line 299, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 301, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-radio:focus {
   border-width: 3px;
   outline: none; }
 
-/* line 304, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 306, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-radio:checked, .upfront-field-radio:checked:hover {
   border-width: 3px;
   border-color: #263a4d;
   background: #1fcd8f; }
 
-/* line 310, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 312, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-checkbox {
   border-radius: 2px; }
 
-/* line 313, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 315, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-checkbox:checked {
   border-width: 0;
   background: #263a4d; }
 
-/* line 317, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 319, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-checkbox:checked:hover {
   border-width: 0; }
 
-/* line 320, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 322, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .tile-select {
   width: 16px;
   height: 16px;
   border: 2px solid #7a8d9f; }
 
-/* line 325, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 327, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .tile-select:hover {
   border-color: #263a4d; }
 
-/* line 328, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 330, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .tile-select:checked {
   border-color: #263a4d;
   background-color: #263a4d; }
 
-/* line 332, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 334, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-multiple {
   display: block;
   opacity: 0.8;
@@ -1791,7 +1793,7 @@ input.upfront-field-text:hover, .upfront-field-text:focus {
   position: relative;
   margin-bottom: 10px; }
 
-/* line 340, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 342, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-multiple-vertical {
   display: inline-block;
   max-width: 72px;
@@ -1799,43 +1801,43 @@ input.upfront-field-text:hover, .upfront-field-text:focus {
   margin: 0 35px 10px 0;
   padding: 0 0 12px; }
 
-/* line 347, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 349, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-multiple-horizontal-inline {
   display: inline-block;
   vertical-align: baseline;
   margin: 0 15px 0 0; }
 
-/* line 353, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 355, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-multiple:hover, .upfront-field-multiple-selected {
   opacity: 1; }
 
-/* line 357, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 359, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-multiple-disabled, .upfront-field-multiple-disabled:hover {
   opacity: 0.5; }
 
-/* line 361, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 363, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-multiple input.upfront-field-checkbox, .upfront-field-multiple input.upfront-field-radio {
   position: absolute;
   bottom: 0;
   left: 0; }
 
-/* line 366, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 368, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-multiple.upfront-field-complex_field-boolean_toggleable_text input.upfront-field-checkbox {
   bottom: auto;
   top: 0px; }
 
-/* line 370, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 372, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-multiple.upfront-field-complex_field-boolean_toggleable_text label.upfront-field-label {
   display: none; }
 
-/* line 374, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 376, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-multiple-vertical input.upfront-field-checkbox, .upfront-field-multiple-vertical input.upfront-field-radio {
   position: absolute;
   bottom: 0;
   left: 50%;
   margin: 0 0 0 -6px; }
 
-/* line 380, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 382, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-multiple label {
   display: table;
   color: #30475e;
@@ -1843,17 +1845,17 @@ input.upfront-field-text:hover, .upfront-field-text:focus {
   font-weight: normal;
   font-family: verdana, sans-serif; }
 
-/* line 387, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 389, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-multiple label .upfront-field-label-text {
   display: table-cell;
   vertical-align: middle; }
 
-/* line 391, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 393, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-multiple-vertical label {
   display: block;
   height: auto; }
 
-/* line 395, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 397, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-multiple-vertical label .upfront-field-label-text {
   display: block;
   max-height: 30px;
@@ -1861,17 +1863,17 @@ input.upfront-field-text:hover, .upfront-field-text:focus {
   overflow: hidden;
   line-height: 13px; }
 
-/* line 402, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 404, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-icon {
   display: inline-block;
   vertical-align: middle;
   margin: 1px 5px 0 0; }
 
-/* line 407, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 409, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-multiple-vertical .upfront-field-icon {
   margin: 0 auto; }
 
-/* line 410, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 412, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-suggest-list-wrap {
   height: 0;
   max-height: 0;
@@ -1883,12 +1885,12 @@ input.upfront-field-text:hover, .upfront-field-text:focus {
   -o-transition: max-height 0.3s;
   transition: max-height 0.3s; }
 
-/* line 422, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 424, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-suggest-list-wrap-expanded, .upfront-additive_multiselection .labels_list {
   height: auto;
   max-height: 142px; }
 
-/* line 426, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 428, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-suggest-lists {
   border: 1px solid #a3bfd9;
   border-top: none;
@@ -1898,7 +1900,7 @@ input.upfront-field-text:hover, .upfront-field-text:focus {
   overflow-x: hidden;
   overflow-y: scroll; }
 
-/* line 435, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 437, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-additive_multiselection {
   color: #607f99;
   cursor: pointer;
@@ -1914,23 +1916,23 @@ input.upfront-field-text:hover, .upfront-field-text:focus {
   padding: 0 4px;
   width: 100%; }
 
-/* line 450, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 452, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .add_labels .upfront-additive_multiselection {
   padding-bottom: 2px; }
 
-/* line 453, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 455, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .add_labels .upfront-field-label {
   margin-top: 0.6em; }
 
-/* line 456, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 458, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .add_labels .upfront-additive_multiselection .add_labels {
   border: none; }
 
-/* line 459, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 461, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-additive_multiselection .title {
   padding: 1px 30px 1px 10px; }
 
-/* line 462, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 464, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-additive_multiselection .title:after {
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
@@ -1942,22 +1944,22 @@ input.upfront-field-text:hover, .upfront-field-text:focus {
   right: 11px;
   top: 11px; }
 
-/* line 473, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 475, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-additive_multiselection.active .title:after {
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
   border-bottom: 4px solid #607f99;
   border-top: none; }
 
-/* line 481, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 483, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-additive_multiselection .labels_list, .upfront-additive_multiselection input {
   display: none; }
 
-/* line 486, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 488, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-additive_multiselection.active .labels_list, .upfront-additive_multiselection.active input {
   display: block; }
 
-/* line 489, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 491, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-additive_multiselection {
   overflow: hidden;
   -webkit-transition: max-height 0.3s;
@@ -1966,7 +1968,7 @@ input.upfront-field-text:hover, .upfront-field-text:focus {
   -o-transition: max-height 0.3s;
   transition: max-height 0.3s; }
 
-/* line 497, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 499, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-additive_multiselection .labels_list ul {
   margin: 0;
   padding: 0;
@@ -1974,25 +1976,25 @@ input.upfront-field-text:hover, .upfront-field-text:focus {
   overflow-x: hidden;
   overflow-y: scroll; }
 
-/* line 504, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 506, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-additive_multiselection .labels_list ul.empty {
   border: none;
   display: none; }
 
-/* line 509, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 511, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-suggest-list, .upfront-additive_multiselection .labels_list li {
   padding: 0;
   margin: 0 !important;
   line-height: 14px;
   position: relative; }
 
-/* line 515, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 517, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-additive_multiselection .labels_list li label {
   font-weight: normal;
   font-family: verdana, sans-serif;
   font-size: 11px; }
 
-/* line 521, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 523, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-suggest-list .upfront-field-checkbox, .upfront-additive_multiselection .labels_list .upfront-field-checkbox {
   float: none;
   position: absolute;
@@ -2002,23 +2004,23 @@ input.upfront-field-text:hover, .upfront-field-text:focus {
   right: 10px;
   margin: auto; }
 
-/* line 531, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 533, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-suggest-list label, .upfront-additive_multiselection .labels_list li label {
   display: block;
   padding: 7px 30px 7px 10px; }
 
-/* line 536, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 538, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-additive_multiselection .upfront-field-checkbox {
   border: none; }
 
-/* line 539, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 541, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-suggest-match, .upfront-additive_multiselection .labels_list .selection {
   background: #1fcd8f;
   box-shadow: 0 0 0 1px #1fcd8f, 0 2px 0 #1bb37d, 0 0 0 2px #1fcd8f;
   border-radius: 1px;
   color: white; }
 
-/* line 545, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 547, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-wrap {
   color: #30475e;
   font-size: 11px;
@@ -2027,19 +2029,19 @@ input.upfront-field-text:hover, .upfront-field-text:focus {
   font-family: verdana, sans-serif;
   margin: 13px 0 0; }
 
-/* line 554, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 556, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .inline-radios {
   margin: 15px 0 0; }
 
-/* line 557, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 559, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .inline-radios .upfront-field-multiple {
   margin-bottom: 0; }
 
-/* line 561, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 563, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-wrap-multiple {
   margin-right: -15px; }
 
-/* line 565, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 567, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-suggest-add-wrap, .upfront-additive_multiselection .add_labels {
   border: 1px solid #a3bfd9;
   border-top: none;
@@ -2047,17 +2049,17 @@ input.upfront-field-text:hover, .upfront-field-text:focus {
   line-height: 16px;
   position: relative; }
 
-/* line 572, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 574, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-additive_multiselection .add_labels.empty {
   border: none; }
 
-/* line 576, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 578, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-suggest-add-value, .upfront-additive_multiselection .add_labels .add_value {
   display: block;
   font-weight: bold;
   padding: 6px 0 6px 12px; }
 
-/* line 582, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 584, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-suggest-add, .upfront-additive_multiselection .add_labels .add_link {
   display: block;
   position: absolute;
@@ -2065,12 +2067,12 @@ input.upfront-field-text:hover, .upfront-field-text:focus {
   right: 10px;
   cursor: pointer; }
 
-/* line 590, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 592, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-wrap .upfront-field-label, .upfront-field-label {
   font-weight: normal;
   margin: 0; }
 
-/* line 595, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 597, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-wrap .upfront-field-label-block, .upfront-field-label-block {
   display: block;
   color: #607f99;
@@ -2081,26 +2083,26 @@ input.upfront-field-text:hover, .upfront-field-text:focus {
   margin: 0;
   margin-bottom: 8px; }
 
-/* line 606, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 608, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-wrap-optional span {
   margin: 20px 0 0 0; }
 
-/* line 610, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 612, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-wrap-color {
   clear: both;
   vertical-align: middle;
   line-height: 24px; }
 
-/* line 616, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 618, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-wrap-color label {
   /* float: left; */
   float: none; }
 
-/* line 621, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 623, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-wrap-color .upfront-settings-item {
   margin-bottom: 10px; }
 
-/* line 625, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 627, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-wrap-color .sp-preview {
   display: inline-block;
   width: 18px;
@@ -2113,34 +2115,34 @@ input.upfront-field-text:hover, .upfront-field-text:focus {
   border: 1px solid #A2BFDA;
   box-shadow: inset 0 0 0 1px #fff; }
 
-/* line 638, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 640, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-wrap-color .sp-replacer {
   line-height: 30px; }
 
-/* line 646, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 648, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-slider {
   height: 2px;
   background: #C2D5E6;
   position: relative; }
 
-/* line 651, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 653, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-slider-vertical {
   height: 100px;
   width: 2px; }
 
-/* line 656, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 658, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-slider .ui-slider-range {
   background: #263A4D;
   height: 2px; }
 
-/* line 660, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 662, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-slider-vertical .ui-slider-range {
   width: 2px;
   position: absolute;
   bottom: 0;
   left: 0; }
 
-/* line 666, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 668, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-slider .ui-slider-handle {
   border: 3px solid #263A4D;
   background: #ADC4D9;
@@ -2150,21 +2152,21 @@ input.upfront-field-text:hover, .upfront-field-text:focus {
   position: absolute;
   top: -5px; }
 
-/* line 675, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 677, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-slider-vertical .ui-slider-handle {
   left: -5px;
   top: auto; }
 
-/* line 680, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 682, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-wrap-slider .upfront-field-info {
   margin-bottom: 10px; }
 
-/* line 684, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 686, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-slider-value {
   margin-top: 6px;
   text-align: center; }
 
-/* line 689, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 691, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-date_picker {
   background: #F2F9FF;
   border: 1px solid #6386A6;
@@ -2176,59 +2178,59 @@ input.upfront-field-text:hover, .upfront-field-text:focus {
   text-transform: none !important;
   text-decoration: none !important; }
 
-/* line 701, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 703, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-date_picker .ui-datepicker-header {
   padding: 5px 10px;
   border-bottom: 1px solid #accae6;
   text-align: center; }
 
-/* line 707, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 709, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-date_picker table {
   margin: 5px 10px; }
 
-/* line 711, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 713, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-date_picker thead {
   color: #395269; }
 
-/* line 715, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 717, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-date_picker select {
   font-family: 'Source Sans Pro', sans-serif;
   margin: 0 2px; }
 
-/* line 721, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 723, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-date_picker .ui-datepicker-prev, .upfront-date_picker .ui-datepicker-next {
   display: none; }
 
-/* line 725, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 727, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-date_picker .ui-datepicker-prev {
   float: left; }
 
-/* line 728, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 730, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-date_picker .ui-datepicker-next {
   float: right; }
 
-/* line 733, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 735, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-date_picker td, .upfront-date_picker th {
   text-align: center; }
 
-/* line 737, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 739, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 div.upfront-date_picker td a {
   padding: 2px 4px;
   color: #607F99; }
 
-/* line 742, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 744, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-date_picker td a:hover {
   padding: 2px 4px;
   background: #1fcd8f;
   color: #fff !important;
   text-decoration: none; }
 
-/* line 749, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 751, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-date_picker a.ui-state-active {
   background: #607F99;
   color: #F2F9FF !important; }
 
-/* line 754, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
+/* line 756, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-time_picker {
   padding: 5px 10px;
   border-top: 1px solid #accae6;
@@ -5647,15 +5649,15 @@ a.upfront-region-name-edit-trigger:before {
   float: left;
   display: block; }
 
-/* line 27, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
-.upfront-logo, .upfront-ui .upfront-icon:before, .region-lock-switch:before, .upfront-icon-control-region:before, .panel-setting-dialog-region:before, .panel-setting-dialog-info:before, .position-select-wrap .position-select:checked, .upfront-field-checkbox:checked, .upfront-field-select-single .upfront-field-select-option-selected label:before, .upfront-ui .upfront-region-field-icon:before, #upfront-popup-top.upfront-popup-meta .upload:before, .upfront-icon-button-hide:before, .upfront-entity-hide_trigger:before {
+/* line 26, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+.upfront-logo, .upfront-ui .upfront-icon:before, .region-lock-switch:before, .upfront-icon-control-region:before, .panel-setting-dialog-region:before, .panel-setting-dialog-info:before, .position-select-wrap .position-select:checked, .upfront-field-checkbox:checked, .upfront-ui .upfront-region-field-icon:before, #upfront-popup-top.upfront-popup-meta .upload:before, .upfront-icon-button-hide:before, .upfront-entity-hide_trigger:before {
   content: " ";
   background-image: url('../img/uf-ui-sprite.svg?v=20131127');
   background-repeat: no-repeat;
   float: left;
   display: block; }
 
-/* line 34, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 33, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .sp-preview {
   background-position: -817px -105px;
   width: 20px;
@@ -5667,11 +5669,11 @@ a.upfront-region-name-edit-trigger:before {
   margin-right: 5px;
   float: left; }
 
-/* line 45, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 44, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .sp-preview-inner {
   display: none !important; }
 
-/* line 48, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 47, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-logo {
   background-position: -190px -407px;
   width: 120px;
@@ -5679,546 +5681,539 @@ a.upfront-region-name-edit-trigger:before {
   overflow: hidden;
   display: block; }
 
-/* line 55, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 54, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-logo-small {
   background-position: -340px -405px;
   width: 32px; }
 
-/* line 59, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 58, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-element:before {
   width: 24px;
   height: 24px;
   margin: 0 3px 0 0; }
 
-/* line 64, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 63, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-element-text:before {
   background-position: -39px -40px; }
 
-/* line 67, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 66, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-element-image:before {
   background-position: -39px -74px; }
 
-/* line 70, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 69, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-element-search:before {
   background-position: -39px -108px; }
 
-/* line 73, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 72, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-element-social:before {
   background-position: -39px -142px; }
 
-/* line 76, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 75, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-element-blockquote:before {
   /* @TODO is it blockquote? */
   background-position: -39px -176px; }
 
-/* line 79, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 78, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-element-table:before {
   background-position: -39px -210px; }
 
-/* line 82, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 81, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-element-button:before {
   background-position: -39px -244px; }
 
-/* line 85, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 84, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-element-video:before {
   background-position: -39px -278px; }
 
-/* line 88, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 87, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-element-maps:before {
   background-position: -39px -312px; }
 
-/* line 91, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 90, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-element-slider:before {
   background-position: -39px -346px; }
 
 /* hiding accordion until it's finished */
-/* line 96, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 95, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-element-gallery:before {
   background-position: -39px -380px; }
 
-/* line 99, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 98, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-element-login:before {
   background-position: -39px -414px; }
 
-/* line 102, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 101, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-element-accordion:before {
   background-position: -39px -448px; }
 
-/* line 105, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 104, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-element-nav:before {
   background-position: -39px -482px; }
 
-/* line 108, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 107, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-element-likebox:before {
   background-position: -39px -518px; }
 
-/* line 111, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 110, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-element-contact:before {
   background-position: -39px -550px; }
 
-/* line 114, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 113, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-element-posts:before {
   background-position: -39px -584px; }
 
-/* line 117, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 116, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-element-comment:before {
   background-position: -39px -618px; }
 
-/* line 120, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 119, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-element-widget:before {
   background-position: -39px -652px; }
 
-/* line 123, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 122, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-element-youtube:before {
   background-position: -39px -687px; }
 
-/* line 126, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 125, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-element-tabs:before {
   background-position: -39px -720px; }
 
-/* line 129, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 128, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-element-code:before {
   background-position: -39px -755px; }
 
-/* line 133, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 132, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-tabs-container .tabs-tab i {
   z-index: 2; }
 
-/* line 137, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 136, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon:before {
   width: 24px;
   height: 24px;
   margin: 0 3px 0 0; }
 
-/* line 142, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 141, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-exit:before {
   background-position: -188px -380px;
   margin: 0; }
 
-/* line 157, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 156, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-layout:before {
   background-position: -45px -44px;
   width: 15px;
   height: 16px;
   margin-top: 10px; }
 
-/* line 163, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 162, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-browse:before {
   width: 10px;
   margin-right: 5px;
   background-position: -736px -70px;
   opacity: 0.5; }
 
-/* line 170, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 169, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-collapse:before, .upfront-icon-expand:before {
   width: 12px;
   height: 12px;
   background-position: -190px -312px;
   margin: 0; }
 
-/* line 176, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 175, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-expand:before {
   background-position: -190px -346px; }
 
-/* line 179, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 178, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-panel-post:before {
   background-position: -729px -40px; }
 
-/* line 182, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 181, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-panel-elements:before {
   background-position: -41px -380px; }
 
-/* line 186, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 185, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-start-responsive:before, .upfront-icon-panel-settings:before {
   background-position: -41px -415px;
   opacity: 0.5; }
 
-/* line 190, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 189, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-button-hide:before {
   background-position: -1230px -410px; }
 
-/* line 194, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 193, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-module-hidden-toggle .upfront-entity-hide_trigger:before, .upfront-region-hidden-toggle .upfront-entity-hide_trigger:before {
   background-position: -1229px -444px;
   width: 24px;
   height: 18px; }
 
-/* line 199, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 198, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-save:before {
   background-position: -340px -380px; }
 
-/* line 202, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 201, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-edit:before {
   background-position: -345px -215px;
   width: 12px;
   height: 12px; }
 
-/* line 207, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 206, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-delete:before {
   width: 18px;
   height: 18px;
   margin: 0; }
 
-/* line 212, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 211, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-delete:before {
   background-position: -343px -77px; }
 
-/* line 215, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 214, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-check:before {
   background-position: -733px -138px; }
 
-/* line 218, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 217, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-region-nosidebar-none:before {
   background-position: -40px -510px; }
 
-/* line 221, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 220, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-region-rightsidebar-none:before {
   background-position: -164px -510px; }
 
-/* line 224, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 223, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-region-leftsidebar-none:before {
   background-position: -288px -510px; }
 
-/* line 227, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 226, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-region-2sidebar-none:before {
   background-position: -412px -510px; }
 
-/* line 230, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 229, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-region-color:before {
   background-position: -40px -544px; }
 
-/* line 234, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 233, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-region-color:hover:before, .upfront-icon-region-color-active:before {
   background-position: -164px -544px; }
 
-/* line 237, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 236, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-region-image:before {
   background-position: -288px -544px; }
 
-/* line 241, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 240, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-region-image:hover:before, .upfront-icon-region-image-active:before {
   background-position: -412px -544px; }
 
-/* line 244, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 243, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-region-slider:before {
   background-position: -40px -578px; }
 
-/* line 248, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 247, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-region-slider:hover:before, .upfront-icon-region-slider-active:before {
   background-position: -164px -578px; }
 
-/* line 251, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 250, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-region-map:before {
   background-position: -288px -578px; }
 
-/* line 255, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 254, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-region-map:hover:before, .upfront-icon-region-map-active:before {
   background-position: -412px -578px; }
 
-/* line 258, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 257, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-region-bg-setting:before {
   background-position: -819px -39px; }
 
-/* line 262, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 261, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-region-bg-setting:hover:before, .upfront-icon-region-bg-setting-active:before {
   background-position: -819px -71px; }
 
-/* line 265, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 264, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-region-expand-unlock:before {
   background-position: -40px -612px; }
 
-/* line 268, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 267, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-region-expand-unlock:hover:before {
   background-position: -164px -612px; }
 
-/* line 271, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 270, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-region-expand-lock:before {
   background-position: -288px -612px;
   opacity: 0.5; }
 
-/* line 275, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 274, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-region-expand-lock:hover:before {
   background-position: -412px -612px; }
 
-/* line 278, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 277, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-region-add:before {
   background-position: -260px -130px; }
 
-/* line 281, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 280, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-region-delete:before {
   background-position: -288px -646px; }
 
-/* line 284, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 283, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-region-delete:hover:before {
   background-position: -412px -646px; }
 
-/* line 287, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 286, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-region-add-slide:before {
   background-position: -164px -712px; }
 
-/* line 290, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 289, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-region-edit:before {
   background-position: -412px -712px;
   width: 31px;
   height: 61px; }
 
-/* line 295, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 294, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-popup-close:before {
   width: 17px;
   height: 17px;
   /*background-position: -1080px -85px;*/
   background-image: none; }
 
-/* line 302, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 301, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-popup-search:before {
   width: 15px;
   height: 15px;
   background-position: -1186px -85px; }
 
-/* line 307, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 306, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-popup-search-clear:before {
   width: 16px;
   height: 16px;
   background-position: -1080px -121px; }
 
-/* line 313, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 312, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-popup-pagination-prev:before, .upfront-icon-popup-pagination-next:before {
   width: 8px;
   height: 14px;
   background-position: -1234px -87px; }
 
-/* line 318, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 317, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-popup-pagination-next:before {
   background-position: -1340px -87px; }
 
-/* line 321, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 320, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-comment-pending:before {
   width: 14px;
   height: 14px;
   background-position: -1442px -87px; }
 
-/* line 329, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 328, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-comment-menu-reply:before, .upfront-icon-comment-menu-edit:before, .upfront-icon-comment-menu-approve:before, .upfront-icon-comment-menu-trash:before {
   width: 13px;
   height: 12px;
   background-position: -1232px -123px; }
 
-/* line 334, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 333, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-comment-menu-edit:before {
   background-position: -1338px -125px; }
 
-/* line 337, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 336, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-comment-menu-approve:before {
   background-position: -1443px -125px; }
 
-/* line 340, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 339, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-comment-menu-trash:before {
   background-position: -1233px -160px; }
 
-/* line 343, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 342, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-page-edit:before {
   width: 11px;
   height: 11px;
   background-position: -1339px -160px; }
 
-/* line 348, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 347, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-tag-add:before {
   width: 8px;
   height: 8px;
   background-position: -1445px -161px; }
 
-/* line 353, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 352, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-tag-add:hover:before {
   background-position: -1235px -197px; }
 
-/* line 356, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 355, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-tag-delete:before {
   width: 14px;
   height: 14px;
   background-position: -1337px -194px; }
 
-/* line 361, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 360, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-tag-delete:hover:before {
   background-position: -1442px -194px; }
 
-/* line 364, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 363, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-media-selected:before {
   width: 25px;
   height: 20px;
   background-position: -970px -83px; }
 
-/* line 369, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 368, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-media-label-delete:before {
   width: 10px;
   height: 10px;
   background-position: -977px -124px; }
 
-/* line 374, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 373, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-media-upload-placeholder:before {
   width: 254px;
   height: 181px;
   background-position: -961px -154px; }
 
-/* line 381, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 380, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-media-insert-multi-plain:before, .upfront-icon-media-insert-multi-slider:before, .upfront-icon-media-insert-multi-gallery:before {
   width: 60px;
   height: 89px;
   background-position: -990px -367px; }
 
-/* line 386, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 385, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-media-insert-multi-plain:hover:before {
   background-position: -1100px -367px; }
 
-/* line 389, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 388, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-media-insert-multi-slider:before {
   background-position: -990px -477px; }
 
-/* line 392, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 391, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-media-insert-multi-slider:hover:before {
   background-position: -1100px -477px; }
 
-/* line 395, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 394, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-media-insert-multi-gallery:before {
   background-position: -990px -587px; }
 
-/* line 398, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 397, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-media-insert-multi-gallery:hover:before {
   background-position: -1100px -587px; }
 
-/* line 404, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 403, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-image-left:before, .upfront-icon-image-center:before, .upfront-icon-image-right:before, .upfront-icon-image-full:before {
   height: 25px; }
 
-/* line 407, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 406, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-image-left:before {
   background-position: -603px -484px; }
 
-/* line 410, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 409, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-image-left:hover:before {
   background-position: -647px -484px; }
 
-/* line 413, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 412, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-image-center:before {
   background-position: -603px -528px; }
 
-/* line 416, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 415, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-image-center:hover:before {
   background-position: -647px -528px; }
 
-/* line 419, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 418, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-image-right:before {
   background-position: -603px -572px; }
 
-/* line 422, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 421, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-image-right:hover:before {
   background-position: -647px -572px; }
 
-/* line 425, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 424, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-image-full:before {
   background-position: -603px -616px; }
 
-/* line 428, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 427, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-image-full:hover:before {
   background-position: -647px -616px; }
 
-/* line 431, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 430, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-image-select:before {
   width: 21px;
   height: 11px;
   background-position: -516px -536px; }
 
-/* line 436, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 435, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-image-detail:before {
   width: 21px;
   height: 11px;
   background-position: -516px -580px; }
 
-/* line 441, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 440, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .position-select-wrap .position-select:checked {
   background-position: -46px -353px; }
 
-/* line 444, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 443, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .tile-select:checked {
   background-position: -46px -353px; }
 
-/* line 447, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 446, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-checkbox:checked {
   background-position: -46px -353px; }
 
-/* line 450, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
-.upfront-field-select-single .upfront-field-select-option-selected label:before {
-  width: 11px;
-  height: 8px;
-  margin: 7px 12px 0 -5px;
-  background-position: -46px -354px; }
-
-/* line 456, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 449, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .region-lock-switch:before {
   width: 22px;
   height: 30px;
   margin: 5px 20px 0 0;
   background-position: -341px -157px; }
 
-/* line 462, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 455, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .region-lock-switch.locked:before {
   background-position: -341px -221px; }
 
-/* line 465, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 458, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-simple:before, .upfront-icon-advanced:before {
   width: 20px;
   height: 18px; }
 
-/* line 469, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 462, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-simple:before {
   background-position: -41px -42px; }
 
-/* line 473, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 466, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-simple:hover:before, .active .upfront-icon-simple:before {
   background-position: -41px -76px; }
 
-/* line 476, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 469, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-advanced:before {
   background-position: -42px -111px; }
 
-/* line 480, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 473, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-advanced:hover:before, .active .upfront-icon-advanced:before {
   background-position: -42px -145px; }
 
-/* line 483, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 476, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-undo:before, .upfront-icon-redo:before {
   width: 10px;
   height: 24px;
   margin: 0 6px 0 0; }
 
-/* line 488, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 481, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-undo:before {
   background-position: -197px -44px;
   height: 14px; }
 
-/* line 492, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 485, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-undo:hover:before {
   background-position: -197px -78px; }
 
-/* line 495, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 488, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-redo:before {
   background-position: -196px -112px;
   height: 14px; }
 
-/* line 499, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 492, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-redo:hover:before {
   background-position: -196px -146px; }
 
-/* line 502, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 495, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-grid:before {
   width: 20px;
   height: 20px;
   background-position: -342px -144px; }
 
-/* line 507, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 500, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-grid:hover:before, .upfront-icon-grid-active:before {
   background-position: -342px -178px; }
 
-/* line 510, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 503, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-button:before {
   width: 18px;
   height: 18px;
@@ -6226,81 +6221,81 @@ a.upfront-region-name-edit-trigger:before {
   float: none;
   display: block; }
 
-/* line 517, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 510, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-module-small .upfront-icon-button {
   width: 18px;
   height: 18px; }
 
-/* line 521, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 514, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-module-small .upfront-icon-button:before {
   width: 16px;
   height: 16px; }
 
-/* line 525, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 518, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-module-small .upfront-object > .upfront-entity_meta {
   top: 23px;
   right: 0; }
 
-/* line 530, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 523, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-button-delete:before {
   background-position: -262px -42px; }
 
-/* line 533, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 526, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-button-setting:before {
   background-position: -261px -73px; }
 
-/* line 536, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 529, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-button-crop:before {
   background-position: -261px -100px; }
 
-/* line 539, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 532, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-button-align-left:before {
   background-position: -261px -130px; }
 
-/* line 542, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 535, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-button-align-center:before {
   background-position: -261px -160px; }
 
-/* line 545, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 538, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-button-align-right:before {
   background-position: -261px -190px; }
 
-/* line 548, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 541, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-button-move:before {
   background-position: -261px -280px; }
 
-/* line 552, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 545, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-module-small .upfront-icon-button-delete:before {
   background-position: -262px -43px; }
 
-/* line 555, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 548, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-module-small .upfront-icon-button-setting:before {
   background-position: -262px -73px; }
 
-/* line 559, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 552, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-module-small .upfront-module > .upfront-entity_meta {
   top: 0;
   right: 0; }
 
-/* line 564, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 557, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-control:before, .upfront-icon-control-region:before {
   margin: 0 auto;
   float: none;
   display: block; }
 
-/* line 570, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 563, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-control-resize-nw:before, .upfront-icon-control-resize-ne:before {
   width: 12px;
   height: 12px;
   background-position: -294px -74px; }
 
-/* line 576, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 569, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-control-resize-se:before, .upfront-icon-control-resize-sw:before {
   width: 12px;
   height: 12px;
   background-position: -294px -44px; }
 
-/* line 582, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 575, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-control-resize-ne:before, .upfront-icon-control-resize-sw:before {
   -webkit-transform: scaleX(-1);
   -moz-transform: scaleX(-1);
@@ -6308,13 +6303,13 @@ a.upfront-region-name-edit-trigger:before {
   -o-transform: scaleX(-1);
   transform: scaleX(-1); }
 
-/* line 590, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 583, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-control-region-resize-s:before, .upfront-icon-control-region-resize-n:before {
   width: 35px;
   height: 24px;
   background-position: -282px -712px; }
 
-/* line 596, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 589, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-control-region-resize-e:before, .upfront-icon-control-region-resize-w:before {
   width: 24px;
   height: 35px;
@@ -6323,367 +6318,367 @@ a.upfront-region-name-edit-trigger:before {
   margin-top: -18px;
   background-position: -288px -743px; }
 
-/* line 605, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 598, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-control-expand:before, .upfront-icon-control-collapse:before {
   width: 6px;
   height: 3px;
   background-position: -267px -229px; }
 
-/* line 610, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 603, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-control-collapse:before {
   background-position: -267px -259px; }
 
-/* line 616, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 609, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .panel-setting-dialog-info:before {
   width: 23px;
   height: 23px;
   margin: 0 0 0 -30px;
   background-position: -218px -439px; }
 
-/* line 622, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 615, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon:before {
   width: 22px;
   height: 22px; }
 
-/* line 626, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 619, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-tick:before {
   background-position: -808px -200px; }
 
-/* line 629, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 622, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-image-caption-below:before {
   background-position: -700px -40px; }
 
-/* line 632, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 625, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-image-caption-over-bottom:before {
   background-position: -808px -40px; }
 
-/* line 635, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 628, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-image-caption-over-top:before {
   background-position: -700px -72px; }
 
-/* line 638, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 631, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-image-caption-over-fill:before {
   background-position: -808px -72px; }
 
-/* line 641, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 634, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-navigation-link:before {
   background-position: -920px -40px; }
 
-/* line 644, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 637, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-navigation-open:before {
   background-position: -920px -72px; }
 
-/* line 647, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 640, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-navigation-horizontal:before {
   background-position: -920px -100px;
   width: 42px; }
 
-/* line 651, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 644, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-multiple:hover .upfront-field-icon-navigation-horizontal:before {
   background-position: -1028px -100px; }
 
-/* line 654, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 647, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-navigation-vertical:before {
   background-position: -917px -230px; }
 
-/* line 657, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 650, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-multiple:hover .upfront-field-icon-navigation-vertical:before {
   background-position: -1025px -230px; }
 
-/* line 660, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 653, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-navigation-left:before {
   background-position: -920px -143px;
   width: 42px;
   height: 8px; }
 
-/* line 665, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 658, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-multiple:hover .upfront-field-icon-navigation-left:before {
   background-position: -1028px -143px; }
 
-/* line 668, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 661, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-navigation-center:before {
   background-position: -920px -175px;
   height: 8px;
   width: 42px; }
 
-/* line 673, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 666, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-multiple:hover .upfront-field-icon-navigation-center:before {
   background-position: -1028px -175px; }
 
-/* line 676, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 669, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-navigation-right:before {
   background-position: -920px -207px;
   width: 42px;
   height: 8px; }
 
-/* line 681, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 674, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-multiple:hover .upfront-field-icon-navigation-right:before {
   background-position: -1028px -207px; }
 
-/* line 684, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 677, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-burger-left:before {
   background-position: -920px -268px;
   width: 22px;
   height: 14px; }
 
-/* line 689, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 682, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-burger-right:before {
   background-position: -920px -300px;
   width: 22px;
   height: 14px; }
 
-/* line 694, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 687, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-burger-top:before {
   background-position: -1027px -268px;
   width: 22px;
   height: 14px; }
 
-/* line 699, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 692, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-burger-whole:before {
   background-position: -1027px -300px;
   width: 22px;
   height: 14px; }
 
-/* line 704, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 697, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-burger-trigger:before {
   background-position: -920px -330px;
   width: 20px;
   height: 18px; }
 
-/* line 709, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 702, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 i.upfront-field-icon-burger-trigger {
   vertical-align: bottom; }
 
-/* line 712, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 705, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-contact-above-field:before {
   background-position: -1140px -40px; }
 
-/* line 715, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 708, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-contact-over-field:before {
   background-position: -1248px -40px; }
 
-/* line 718, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 711, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-contact-inline-field:before {
   background-position: -1140px -72px; }
 
-/* line 721, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 714, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-social-like:before {
   width: 40px;
   background-position: -1360px -40px; }
 
-/* line 725, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 718, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-social-count:before {
   width: 45px;
   background-position: -1468px -40px; }
 
-/* line 729, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 722, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-social-button:before {
   background-position: -1360px -72px; }
 
-/* line 732, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 725, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-social-button-style-1:before {
   background-position: -1468px -72px; }
 
-/* line 735, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 728, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-social-button-style-2:before {
   background-position: -1360px -104px; }
 
-/* line 738, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 731, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-social-button-style-3:before {
   background-position: -1468px -104px; }
 
-/* line 741, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 734, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-social-sort:before {
   background-position: -1360px -136px; }
 
-/* line 744, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 737, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-social-back:before {
   background-position: -1468px -136px; }
 
-/* line 747, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 740, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-social-add:before {
   background-position: -1360px -168px; }
 
-/* line 750, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 743, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-social-count-horizontal:before {
   width: 70px;
   background-position: -1360px -200px; }
 
-/* line 754, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 747, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-social-count-vertical:before {
   width: 39px;
   height: 42px;
   background-position: -1360px -244px; }
 
-/* line 760, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 753, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-social-title-align:before {
   width: 70px;
   background-position: -1360px -296px; }
 
-/* line 764, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 757, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-social-content-align:before {
   width: 70px;
   height: 30px;
   background-position: -1360px -330px; }
 
-/* line 770, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 763, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-gallery-crop-theme:before {
   background-position: -1688px -136px; }
 
-/* line 773, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 766, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-gallery-crop-1_1:before {
   background-position: -1688px -168px; }
 
-/* line 776, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 769, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-gallery-crop-2_3:before {
   background-position: -1688px -198px; }
 
-/* line 779, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 772, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-gallery-crop-4_3:before {
   background-position: -1688px -228px; }
 
-/* line 783, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 776, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-refresh:before {
   background-position: -480px -40px; }
 
-/* line 786, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 779, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-refresh-2:before {
   background-position: -480px -72px; }
 
-/* line 789, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 782, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-video-multiple:before {
   background-position: -1801px -104px; }
 
-/* line 793, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 786, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-video-single:before {
   background-position: -1908px -104px; }
 
-/* line 797, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 790, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-display-style-gallery:before {
   background-position: -1800px -136px; }
 
-/* line 801, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 794, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-field-icon-display-style-list:before {
   background-position: -1908px -136px; }
 
-/* line 805, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 798, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-region-field-icon-color:before {
   background-position: -40px -511px; }
 
-/* line 809, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 802, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-region-field-icon-image:before {
   background-position: -163px -511px; }
 
-/* line 813, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 806, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-region-field-icon-video:before {
   background-position: -411px -510px; }
 
-/* line 817, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 810, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-region-field-icon-slider:before {
   background-position: -39px -544px; }
 
-/* line 821, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 814, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-region-field-icon-map:before {
   background-position: -162px -545px; }
 
-/* line 825, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 818, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-region-field-icon-feat:before {
   background-position: -287px -511px; }
 
-/* line 829, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 822, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-region-field-icon-expand-unlock:before {
   /*background-position: -40px -612px;*/
   background-position: -164px -612px; }
 
-/* line 833, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 826, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-region-field-icon-expand-lock:before {
   /*background-position: -288px -612px;*/
   background-position: -412px -612px; }
 
-/* line 837, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 830, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-region-field-icon-bg-image-full:before {
   background-position: -287px -545px; }
 
-/* line 840, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 833, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-region-field-icon-bg-image-tile:before {
   background-position: -411px -545px; }
 
-/* line 843, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 836, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-region-field-icon-bg-image-fixed:before {
   background-position: -39px -579px; }
 
-/* line 846, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 839, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-region-field-icon-bg-image-change:before {
   background-position: -412px -780px; }
 
-/* line 849, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 842, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-region-field-icon-bg-slider-slide-down:before {
   background-position: -40px -678px; }
 
-/* line 852, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 845, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-region-field-icon-bg-slider-slide-up:before {
   background-position: -164px -678px; }
 
-/* line 855, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 848, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-region-field-icon-bg-slider-slide-left:before {
   background-position: -288px -678px; }
 
-/* line 858, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 851, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-region-field-icon-bg-slider-slide-right:before {
   background-position: -412px -678px; }
 
-/* line 861, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 854, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-region-field-icon-bg-slider-crossfade:before {
   background-position: -40px -712px; }
 
-/* line 865, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 858, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-structure-field-icon:before {
   width: 22px;
   height: 26px; }
 
-/* line 869, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 862, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-structure-field-icon-blank:before {
   background-position: -658px -392px; }
 
-/* line 872, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 865, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-structure-field-icon-wide-no-sidebar:before {
   background-position: -480px -329px; }
 
-/* line 875, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 868, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-structure-field-icon-wide-right-sidebar:before {
   background-position: -569px -329px; }
 
-/* line 878, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 871, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-structure-field-icon-wide-left-sidebar:before {
   background-position: -658px -329px; }
 
-/* line 881, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 874, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-structure-field-icon-clip-no-sidebar:before {
   background-position: -480px -361px; }
 
-/* line 884, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 877, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-structure-field-icon-clip-right-sidebar:before {
   background-position: -569px -361px; }
 
-/* line 887, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 880, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-structure-field-icon-clip-left-sidebar:before {
   background-position: -658px -361px; }
 
-/* line 890, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 883, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-structure-field-icon-full:before {
   background-position: -480px -393px; }
 
-/* line 893, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 886, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-structure-field-icon-full-extended:before {
   background-position: -569px -393px; }
 
 /* maps default layout */
-/* line 899, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 892, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-map-refresh:before {
   content: ' ';
   background-position: -480px -40px; }
 
-/* line 904, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 897, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-button {
   width: 18px;
   height: 18px;
@@ -6695,23 +6690,23 @@ i.upfront-field-icon-burger-trigger {
   text-decoration: none;
   padding: 1px 0; }
 
-/* line 915, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 908, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-entity_meta .upfront-icon-button {
   opacity: 0;
   visibility: hidden;
   margin: 0 0 4px; }
 
-/* line 921, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 914, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-editable_entity:hover > .upfront-entity_meta .upfront-icon-button, .upfront-editable_entity:hover > .upfront-objects_container .upfront-entity_meta .upfront-entity-settings_trigger {
   opacity: 1;
   visibility: visible; }
 
-/* line 928, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 921, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-region-editing .upfront-region-active > .upfront-entity_meta .upfront-icon-button, .upfront-region-fixed-editing .upfront-region-side-fixed:hover > .upfront-entity_meta .upfront-icon-button, .upfront-region-lightbox-editing .upfront-region-side-lightbox:hover > .upfront-entity_meta .upfront-icon-button {
   opacity: 1;
   visibility: visible; }
 
-/* line 932, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 925, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-button-delete {
   box-shadow: inset 0 0 0 1px #cc423d;
   background: #d94641 -moz-linear-gradient(-45deg, #eb534d 0%, #eb534d 50%, rgba(0, 0, 0, 0) 51%, rgba(0, 0, 0, 0) 100%);
@@ -6727,7 +6722,7 @@ i.upfront-field-icon-burger-trigger {
   background: #d94641 linear-gradient(135deg, #eb534d 0%, #eb534d 50%, rgba(0, 0, 0, 0) 51%, rgba(0, 0, 0, 0) 100%);
   /* W3C */ }
 
-/* line 941, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 934, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-button-setting {
   box-shadow: inset 0 0 0 1px #13bf83;
   background: #1fcd8f -moz-linear-gradient(-45deg, #21d998 0%, #21d998 50%, rgba(0, 0, 0, 0) 51%, rgba(0, 0, 0, 0) 100%);
@@ -6743,7 +6738,7 @@ i.upfront-field-icon-burger-trigger {
   background: #1fcd8f linear-gradient(135deg, #21d998 0%, #21d998 50%, rgba(0, 0, 0, 0) 51%, rgba(0, 0, 0, 0) 100%);
   /* W3C */ }
 
-/* line 950, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 943, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-button-crop {
   box-shadow: inset 0 0 0 1px #1d81bf;
   background: #1f89cd -moz-linear-gradient(-45deg, #229be6 0%, #229be6 50%, rgba(0, 0, 0, 0) 51%, rgba(0, 0, 0, 0) 100%);
@@ -6759,7 +6754,7 @@ i.upfront-field-icon-burger-trigger {
   background: #1f89cd linear-gradient(135deg, #229be6 0%, #229be6 50%, rgba(0, 0, 0, 0) 51%, rgba(0, 0, 0, 0) 100%);
   /* W3C */ }
 
-/* line 959, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 952, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-button-hide {
   box-shadow: inset 0 0 0 1px #23313f;
   background: #233140 -moz-linear-gradient(-45deg, #384f66 0%, #384f66 50%, rgba(0, 0, 0, 0) 51%, rgba(0, 0, 0, 0) 100%);
@@ -6775,7 +6770,7 @@ i.upfront-field-icon-burger-trigger {
   background: #233140 linear-gradient(135deg, #384f66 0%, #384f66 50%, rgba(0, 0, 0, 0) 51%, rgba(0, 0, 0, 0) 100%);
   /* W3C */ }
 
-/* line 969, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
+/* line 962, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-button-add, .upfront-region-panel-item-add-region {
   box-shadow: inset 0 0 0 1px #e6ab2e;
   background: #f2b530 -moz-linear-gradient(-45deg, #ffbe33 0%, #ffbe33 50%, rgba(0, 0, 0, 0) 51%, rgba(0, 0, 0, 0) 100%);
