@@ -13621,82 +13621,88 @@ div.upfront-region-container:hover > a.feature_image_selector {
 #insert-font-widget .chosen-container-single .chosen-single, #sidebar-ui .chosen-container-single .chosen-single, #upfront-popup .chosen-container-single .chosen-single, .preset-manager-panel .chosen-container-single .chosen-single {
   margin: 0;
   text-decoration: none;
-  background: #e6f3fe !important;
-  color: #607f99;
+  color: #4e4770;
   font-size: 11px;
   box-shadow: inset 0 2px 0 #f2f9ff;
   font-family: Verdana, sans-serif;
   line-height: 22px;
+  background: #f2f9ff;
+  border: 1px solid #b7c9d9;
   border-radius: 3px;
-  border: 1px solid #a3bfd9; }
+  height: 24px;
+  max-height: 24px; }
 
-/* line 21, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/chosen */
+/* line 23, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/chosen */
 #insert-font-widget .chosen-container-single .chosen-single:hover, #sidebar-ui .chosen-container-single .chosen-single:hover, #upfront-popup .chosen-container-single .chosen-single:hover, .preset-manager-panel .chosen-container-single .chosen-single:hover {
   border-color: #607f99; }
 
-/* line 32, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/chosen */
+/* line 34, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/chosen */
 #insert-font-widget .chosen-with-drop .chosen-single, #sidebar-ui .chosen-with-drop .chosen-single, #insert-font-widget .chosen-with-drop .chosen-single:hover, #sidebar-ui .chosen-with-drop .chosen-single:hover, #upfront-popup .chosen-with-drop .chosen-single, #upfront-popup .chosen-with-drop .chosen-single:hover, .preset-manager-panel .chosen-with-drop .chosen-single, .preset-manager-panel .chosen-with-drop .chosen-single:hover {
   border-color: #a3bfd9;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0; }
 
-/* line 38, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/chosen */
+/* line 40, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/chosen */
 #upfront-popup .chosen-container-multi .chosen-choices .search-choice {
   display: none; }
 
-/* line 44, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/chosen */
+/* line 46, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/chosen */
 #insert-font-widget .chosen-container .chosen-results li, #sidebar-ui .chosen-container .chosen-results li, #upfront-popup .chosen-container .chosen-results li, .preset-manager-panel .chosen-container .chosen-results li {
   margin: 0 0 0 5px; }
 
-/* line 56, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/chosen */
+/* line 50, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/chosen */
+.chosen-with-drop .chosen-single {
+  background: #fafdff !important; }
+
+/* line 61, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/chosen */
 #insert-font-widget .chosen-container-single .chosen-drop, #sidebar-ui .chosen-container-single .chosen-drop, #upfront-popup .chosen-container-single .chosen-drop, .preset-manager-panel .chosen-container-single .chosen-drop, #insert-font-widget .chosen-container-multi .chosen-drop, #sidebar-ui .chosen-container-multi .chosen-drop, #upfront-popup .chosen-container-multi .chosen-drop, .preset-manager-panel .chosen-container-multi .chosen-drop {
-  background: #e6f3fe;
-  color: #607f99;
-  border-color: #a3bfd9;
+  background: #fafdff;
+  box-shadow: 0 0 3px rgba(96, 127, 153, 0.5);
+  border-color: #7d99b3;
   font-size: 11px;
   font-family: Verdana, sans-serif;
   box-shadow: none; }
 
-/* line 68, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/chosen */
+/* line 73, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/chosen */
 #insert-font-widget .chosen-container .chosen-results, #sidebar-ui .chosen-container .chosen-results, #upfront-popup .chosen-container .chosen-results, .preset-manager-panel .chosen-container .chosen-results {
   max-height: 150px;
   margin-right: 5px; }
 
-/* line 75, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/chosen */
+/* line 80, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/chosen */
 #sidebar-ui .chosen-container .chosen-results, #upfront-popup .chosen-container .chosen-results, .preset-manager-panel .chosen-container .chosen-results {
   max-height: 120px; }
 
-/* line 82, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/chosen */
+/* line 87, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/chosen */
 #insert-font-widget .chosen-container .chosen-results li.highlighted, #sidebar-ui .chosen-container .chosen-results li.highlighted, #upfront-popup .chosen-container .chosen-results li.highlighted, .preset-manager-panel .chosen-container .chosen-results li.highlighted {
-  background: #5f7f9a;
-  color: #fff; }
+  background: #d4dee8;
+  color: #2f475f; }
 
-/* line 95, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/chosen */
+/* line 100, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/chosen */
 #insert-font-widget .chosen-container-single .chosen-search, #sidebar-ui .chosen-container-single .chosen-search, #upfront-popup .chosen-container-single .chosen-search, .preset-manager-panel .chosen-container-single .chosen-search, #insert-font-widget .chosen-container-multi .chosen-search, #sidebar-ui .chosen-container-multi .chosen-search, #upfront-popup .chosen-container-multi .chosen-search, .preset-manager-panel .chosen-container-multi .chosen-search {
   padding: 3px 5px; }
 
-/* line 107, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/chosen */
+/* line 112, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/chosen */
 #insert-font-widget .chosen-container-single .chosen-search input[type=text], #sidebar-ui .chosen-container-single .chosen-search input[type=text], #upfront-popup .chosen-container-single .chosen-search input[type=text], .preset-manager-panel .chosen-container-single .chosen-search input[type=text], #insert-font-widget .chosen-container-multi .chosen-choices input[type=text], #sidebar-ui .chosen-container-multi .chosen-choices input[type=text], #upfront-popup .chosen-container-multi .chosen-choices input[type=text], .preset-manager-panel .chosen-container-multi .chosen-choices input[type=text] {
-  background: #f7fbff;
-  border-color: #a4bfd8;
+  background: white;
+  border-color: #a2bfda;
   font-weight: normal;
   font-size: 11px;
   font-family: Verdana, sans-serif;
-  color: #607f99;
+  color: #4e475f;
   padding: 5px;
   /* Prevents chosen sprite image from displaying */
   background-image: none !important; }
 
-/* line 127, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/chosen */
+/* line 132, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/chosen */
 #insert-font-widget .chosen-container-single .chosen-results::-webkit-scrollbar, #sidebar-ui .chosen-container-single .chosen-results::-webkit-scrollbar, #upfront-popup .chosen-container-single .chosen-results::-webkit-scrollbar, .preset-manager-panel .chosen-container-single .chosen-results::-webkit-scrollbar, #insert-font-widget .chosen-container-multi .chosen-results::-webkit-scrollbar, #sidebar-ui .chosen-container-multi .chosen-results::-webkit-scrollbar, #upfront-popup .chosen-container-multi .chosen-results::-webkit-scrollbar, .preset-manager-panel .chosen-container-multi .chosen-results::-webkit-scrollbar {
   background: #d4dee8;
   width: 5px; }
 
-/* line 140, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/chosen */
+/* line 145, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/chosen */
 #insert-font-widget .chosen-container-single .chosen-results::-webkit-scrollbar-thumb, #sidebar-ui .chosen-container-single .chosen-results::-webkit-scrollbar-thumb, #upfront-popup .chosen-container-single .chosen-results::-webkit-scrollbar-thumb, .preset-manager-panel .chosen-container-single .chosen-results::-webkit-scrollbar-thumb, #insert-font-widget .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb, #sidebar-ui .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb, #upfront-popup .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb, .preset-manager-panel .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb {
   background-color: #1fcd8f; }
 
-/* line 147, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/chosen */
+/* line 152, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/chosen */
 #insert-font-widget .chosen-container-single .chosen-single div b, #sidebar-ui .chosen-container-single .chosen-single div b, #upfront-popup .chosen-container-single .chosen-single div b, .preset-manager-panel .chosen-container-single .chosen-single div b {
   display: block;
   width: 0;
@@ -13707,12 +13713,12 @@ div.upfront-region-container:hover > a.feature_image_selector {
   border-right: 4px solid transparent;
   margin-top: 9px; }
 
-/* line 161, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/chosen */
+/* line 166, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/chosen */
 #insert-font-widget .chosen-with-drop .chosen-single div b, #sidebar-ui .chosen-with-drop .chosen-single div b, #upfront-popup .chosen-with-drop .chosen-single div b, .preset-manager-panel .chosen-with-drop .chosen-single div b {
   border-top: 0 none transparent;
   border-bottom: 4px solid #607f99; }
 
-/* line 167, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/chosen */
+/* line 172, c:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/chosen */
 .chosen-container .chosen-results li em {
   background-color: #00CE8D;
   color: #fff;
