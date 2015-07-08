@@ -5604,6 +5604,10 @@ msgstr ""
 msgid "Recent colors:"
 msgstr ""
 
+#: library/servers/class_upfront_editor_l10n_server.php:605
+msgid "Opacity not available for Theme Colors"
+msgstr ""
+
 #: library/servers/class_upfront_javascript_main.php:246
 msgid "All posts"
 msgstr ""

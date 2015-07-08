@@ -602,6 +602,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'current_color' => __('Current color:', 'upfront'),
 				'theme_colors' => __('Theme colors:', 'upfront'),
 				'recent_colors' => __('Recent colors:', 'upfront'),
+				'theme_colors_opacity_disabled' => __('Opacity not available for Theme Colors', 'upfront'),
 			),
 		);
 		return !empty($key)
