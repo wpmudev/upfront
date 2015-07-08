@@ -4240,10 +4240,10 @@ var GridEditor = {
 		});
 		_.each(lines, function(line_modules){
 			var line_col = _.map(line_modules, function(data){ 
-				return data.col; // Elements in a line have to fit the whole region now
-			}).reduce(function(sum, col){ 
-				return sum + col;
-			});
+					return data.col; // Elements in a line have to fit the whole region now
+				}).reduce(function(sum, col){ 
+					return sum + col;
+				});
 			_.each(line_modules, function(data, index){
 				var new_col = 0,
 					wrapper_col = 0,
@@ -4256,7 +4256,7 @@ var GridEditor = {
 				}
 				if ( !data.breakpoint[breakpoint_id].edited ){
 					// Elements in a line have to fit evenly the whole region now
-					new_col = parent_col / line_modules.length;
+					new_col = (line_col === parent_col) ? data.col : parent_col / line_modules.length;
 					data.breakpoint[breakpoint_id].left = 0; 
 					data.breakpoint[breakpoint_id].col = new_col;
 					data.breakpoint[breakpoint_id].order = index;
