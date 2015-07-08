@@ -21,29 +21,8 @@
     display: inline-block;
     margin:10px;
 }
-#sidebar-ui .theme_color_swatch .sp-preview{
-    margin: 0;
-    border: none;
-    border-radius: 0;
-}
-.upfront-field-wrap-color .theme_color_swatch .sp-preview{
-    border: none;
-    border-radius: 0;
-}
-.theme_color_swatch .sp-replacer{
-    display: inline-block;
-    height: 22px;
-    width: 22px;
-    border: 1px solid #253a4e;
-    cursor: pointer;
-}
-.theme_color_swatch_empty .sp-replacer{
-    border-color: #9dbbd8;
-    text-align: center;
-    line-height: 19px;
-    font-size: 20px;
-    background: none;
-}
+
+
 .theme_color_swatch_empty .sp-preview{
     background-image: url('../img/uf-core-el-sprite.svg');
     background-position: -1362px -170px;
@@ -121,26 +100,7 @@
 #sidebar-ui #theme-colors-swatches .upfront-field-wrap {
 	margin: 14px 15px 13px 0;
 }
-#sidebar-ui .colors-panel-section .sp-preview {
-	width: 19px !important;
-	height: 19px !important;
-	border-radius: 0;
-	-webkit-border-radius: 0px;
-    border: 1px solid #2E4760;
-    box-shadow: inset -1px -1px 0 #FFF,inset 1px 1px 0 #FFF;
-}
-#sidebar-ui .colors-panel-section .sp-replacer {
-    padding: 2px;
-}
-#sidebar-ui .colors-panel-section .sp-replacer:before {
-    width: 19px;
-    height: 19px;
-    border-color: #fff;
-}
-.theme_color_swatch .sp-replacer {
-	height: auto;
-	width: auto;
-}
+
 .panel-setting-theme-colors-meta {
 	margin-top: 15px;
 	line-height: 13px;
