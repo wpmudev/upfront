@@ -1965,7 +1965,7 @@ define([
 				} else if ('a' === element) {
 					selector = '.upfront-object-content a, .upfront-object-content a:link, .upfront-object-content a:visited';
 				} else {
-					selector = '.upfront-object-content ' + element;
+					selector = '.upfront-object-content ' + element  + ', .upfront-ui ' + element + '.tag-list-tag';
 				}
 				css.push(selector + '{ ' + rules.join("; ") + '; }');
 
@@ -2023,7 +2023,9 @@ define([
 				$style = $("style#typography-colors");
 			}
 			_.each(this.elements, function (element) {
-				if (me.colors[element]) css.push('.upfront-object-content ' + element + '{ color:' + Upfront.Util.colors.to_color_value(me.colors[element]) + '; }');
+				if (me.colors[element]) {
+                    css.push('.upfront-object-content ' + element + '{ color:' + Upfront.Util.colors.to_color_value(me.colors[element]) + '; }');
+                }
 			});
 			$style.empty().append(css.join("\n"));
 		}
