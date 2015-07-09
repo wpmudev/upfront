@@ -4680,7 +4680,7 @@ var Field_ToggleableText = Field_Text.extend({
 		multiple: false,
 		get_field_html: function() {
 			var multiple = this.multiple ? 'multiple' : '';
-			return ['<select class="upfront-chosen-select-typeface"' , multiple, ' data-placeholder="', this.options.placeholder,  '">', this.get_values_html(), '</select>'].join('');
+			return ['<div class="upfront-select-font"><select class="upfront-chosen-select-typeface"' , multiple, ' data-placeholder="', this.options.placeholder,  '">', this.get_values_html(), '</select></div>'].join('');
 		},
 		get_value_html: function (value, index) {
 			var selected = '';
@@ -4720,7 +4720,7 @@ var Field_ToggleableText = Field_Text.extend({
 		multiple: false,
 		get_field_html: function() {
 			var multiple = this.multiple ? 'multiple' : '';
-			return ['<select class="upfront-chosen-select-style"' , multiple, ' data-placeholder="', this.options.placeholder,  '">', this.get_values_html(), '</select>'].join('');
+			return ['<div class="upfront-select-font"><select class="upfront-chosen-select-style"' , multiple, ' data-placeholder="', this.options.placeholder,  '">', this.get_values_html(), '</select></div>'].join('');
 		},
 		get_value_html: function (value, index) {
 			var selected = '';
