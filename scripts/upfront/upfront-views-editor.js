@@ -4730,7 +4730,8 @@ var Field_ToggleableText = Field_Text.extend({
 			if (value.value === saved_value) { 
 				selected = ' selected="selected"'; 
 			}
-			return ['<option value="', value.value, '"', selected, ' style="font-family: ', font_family ,'; font-weight: ', parsed_variant.weight ,'; font-style: ', parsed_variant.style ,' ">', value.label, '</option>'].join('');
+			var label =  this.map_labels(parsed_variant.weight, parsed_variant.style);
+			return ['<option value="', value.value, '"', selected, ' style="font-family: ', font_family ,'; font-weight: ', parsed_variant.weight ,'; font-style: ', parsed_variant.style ,' ">', label, '</option>'].join('');
 		},
 		render: function() {
 			Field_Chosen_Select.prototype.render.call(this);
@@ -4746,6 +4747,29 @@ var Field_ToggleableText = Field_Text.extend({
 				me.set_option_font(me.get_saved_value());
 			}, 50);
 			
+		},
+		map_labels: function(weight, style) {
+			//Map font weight to labels
+			var labels = {
+				'100': l10n.label_thin, 
+				'200': l10n.label_extra_light, 
+				'300': l10n.label_light, 
+				'400': l10n.label_regular, 
+				'500': l10n.label_medium, 
+				'600': l10n.label_semi_bold, 
+				'700': l10n.label_bold, 
+				'800':  l10n.label_extra_bold, 
+				'900': l10n.label_ultra_bold
+			}
+			
+			var label = labels[weight];
+			
+			//Display style only if style is Italic
+			if(style == "italic") {
+				label += ' ' + style;
+			}
+			
+			return label;
 		},
 		on_change: function(event) {
 			this.trigger('changed', this.get_value());
@@ -5871,12 +5895,7 @@ var System_Fonts_Storage = function() {
 		var variants;
 
 		// Default variants for system fonts
-		variants = ['inherit'];
-		_.each(['normal', 'italic', 'oblique'], function(style) {
-			_.each(_.range(100, 900, 100), function(weight) {
-				variants.push(weight + ' ' + style );
-			});
-		});
+		variants = ['inherit', 'regular', 'italic', 'bold', 'bold italic'];
 
 		// Add variants
 		_.each(font_families, function(font_family) {
