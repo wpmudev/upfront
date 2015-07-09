@@ -4673,6 +4673,90 @@ var Field_ToggleableText = Field_Text.extend({
 		}
 	});
 
+	var Field_Typeface_Chosen_Select = Field_Chosen_Select.extend({
+		events: {
+			'change select': 'on_change'
+		},
+		multiple: false,
+		get_field_html: function() {
+			var multiple = this.multiple ? 'multiple' : '';
+			return ['<select class="upfront-chosen-select-typeface"' , multiple, ' data-placeholder="', this.options.placeholder,  '">', this.get_values_html(), '</select>'].join('');
+		},
+		get_value_html: function (value, index) {
+			var selected = '';
+			var saved_value = this.get_saved_value();
+			if (value.value === saved_value) { 
+				selected = ' selected="selected"'; 
+			}
+			return ['<option value="', value.value, '"', selected, ' style="font-family: ', value.value ,'">', value.label, '</option>'].join('');
+		},
+		render: function() {
+			Field_Chosen_Select.prototype.render.call(this);
+			
+			var me = this;
+			$('.upfront-chosen-select-typeface', this.$el).chosen({
+				width: this.options.select_width
+			});
+			
+			//Wait for Chosen to be initialized
+			setTimeout(function(){
+				me.set_option_font(me.get_saved_value());
+			}, 50);
+			
+		},
+		on_change: function(event) {
+			this.trigger('changed', this.get_value());
+			this.set_option_font(this.get_value());
+		},
+		set_option_font: function(value) {
+			$('.upfront-chosen-select-typeface').parent().find('.chosen-single').css( "font-family", value );
+		},
+	});
+	
+	var Field_Typeface_Style_Chosen_Select = Field_Chosen_Select.extend({
+		events: {
+			'change select': 'on_change'
+		},
+		multiple: false,
+		get_field_html: function() {
+			var multiple = this.multiple ? 'multiple' : '';
+			return ['<select class="upfront-chosen-select-style"' , multiple, ' data-placeholder="', this.options.placeholder,  '">', this.get_values_html(), '</select>'].join('');
+		},
+		get_value_html: function (value, index) {
+			var selected = '';
+			var saved_value = this.get_saved_value();
+			var font_family = $('.upfront-chosen-select-typeface').val();
+			var parsed_variant = Upfront.Views.Font_Model.parse_variant(value.value);
+			if (value.value === saved_value) { 
+				selected = ' selected="selected"'; 
+			}
+			return ['<option value="', value.value, '"', selected, ' style="font-family: ', font_family ,'; font-weight: ', parsed_variant.weight ,'; font-style: ', parsed_variant.style ,' ">', value.label, '</option>'].join('');
+		},
+		render: function() {
+			Field_Chosen_Select.prototype.render.call(this);
+			
+			var me = this;
+			$('.upfront-chosen-select-style', this.$el).chosen({
+				width: this.options.select_width
+			});
+			
+			//Wait for Chosen to be initialized
+			setTimeout(function(){
+				me.set_option_font(me.get_saved_value());
+			}, 50);
+			
+		},
+		on_change: function(event) {
+			this.trigger('changed', this.get_value());
+			this.set_option_font(this.get_value());
+		},
+		set_option_font: function(value) {
+			var font_family = $('.upfront-chosen-select-typeface').val();
+			var parsed_variant = Upfront.Views.Font_Model.parse_variant(value);
+			$('.upfront-chosen-select-style').parent().find('.chosen-single').css( {"font-family": font_family, "font-weight": parsed_variant.weight, "font-style": parsed_variant.style });
+		},
+	});
+
 	var Field_Multiple_Input = Field_Multiple.extend({
 		selected_state: 'checked',
 		render: function () {
@@ -10613,6 +10697,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				"Color": Field_Color,
 				"Multiple_Suggest": Field_Multiple_Suggest,
 				"Chosen_Select": Field_Chosen_Select,
+				"Typeface_Chosen_Select": Field_Typeface_Chosen_Select,
+				"Typeface_Style_Chosen_Select": Field_Typeface_Style_Chosen_Select,
 				"Number": Field_Number,
 				"Slider": Field_Slider,
 				"Select": Field_Select,

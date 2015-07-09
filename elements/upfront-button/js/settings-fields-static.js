@@ -22,8 +22,8 @@ define(function() {
 			this.options = options || {};
 
 			var me = this,
-				state = this.options.state;
-
+				state = this.options.state;		
+			
 			this.fields = _([
 
 				new Upfront.Views.Editor.Field.Color({
@@ -59,21 +59,23 @@ define(function() {
 						label: l10n.typography,
 				}),
 
-				new Upfront.Views.Editor.Field.Select({
+				new Upfront.Views.Editor.Field.Typeface_Chosen_Select({
 					name: 'fontface',
 					model: this.model,
 					values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_fonts_for_select(),
 					label: l10n.typeface,
+					select_width: '110px',
 					label_style: 'inline',
 					className: 'font-face static typeFace',
 					change: function(value) {
 						me.model.set({'fontface': value});
 						
-						me.fields._wrapped[4] = new Upfront.Views.Editor.Field.Select({
+						me.fields._wrapped[4] = new Upfront.Views.Editor.Field.Typeface_Style_Chosen_Select({
 							model: this.model,
 							name: 'fontstyle',
 							values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants_for_select(me.model.get('fontface')),
 							label: l10n.weight_style,
+							select_width: '100px',
 							label_style: 'inline',
 							className: 'font-style static weightStyle',
 							change: function(value) {
@@ -89,11 +91,12 @@ define(function() {
 					}
 				}),
 				
-				new Upfront.Views.Editor.Field.Select({
+				new Upfront.Views.Editor.Field.Typeface_Style_Chosen_Select({
 					model: this.model,
 					name: 'fontstyle',
 					values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants_for_select(me.model.get('fontface')),
 					label: l10n.weight_style,
+					select_width: '100px',
 					label_style: 'inline',
 					className: 'font-style static weightStyle',
 					change: function(value) {
@@ -388,7 +391,7 @@ define(function() {
 				}),
 
 			]);
-		},
+		}
 	});
 
 	return ButtonSettingsStatic;
