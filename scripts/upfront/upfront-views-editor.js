@@ -4725,7 +4725,7 @@ var Field_ToggleableText = Field_Text.extend({
 		get_value_html: function (value, index) {
 			var selected = '';
 			var saved_value = this.get_saved_value();
-			var font_family = $('.upfront-chosen-select-typeface').val();
+			var font_family = this.options.font_family;
 			var parsed_variant = Upfront.Views.Font_Model.parse_variant(value.value);
 			if (value.value === saved_value) { 
 				selected = ' selected="selected"'; 
