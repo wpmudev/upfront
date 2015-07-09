@@ -4750,7 +4750,7 @@ var Field_ToggleableText = Field_Text.extend({
 		},
 		map_labels: function(weight, style) {
 			//Map font weight to labels
-			var labels = {
+			var label, labels = {
 				'100': l10n.label_thin, 
 				'200': l10n.label_extra_light, 
 				'300': l10n.label_light, 
@@ -4762,7 +4762,12 @@ var Field_ToggleableText = Field_Text.extend({
 				'900': l10n.label_ultra_bold
 			}
 			
-			var label = labels[weight];
+			//Check if weight is number or string
+			if (!_.isUndefined( weight ) && weight.match(/^(\d+)/)) {
+				label = labels[weight];
+			} else {
+				label = weight;
+			}
 			
 			//Display style only if style is Italic
 			if(style == "italic") {
@@ -5895,7 +5900,7 @@ var System_Fonts_Storage = function() {
 		var variants;
 
 		// Default variants for system fonts
-		variants = ['inherit', 'regular', 'italic', 'bold', 'bold italic'];
+		variants = ['Inherit', '400', '400 italic', '700', '700 italic'];
 
 		// Add variants
 		_.each(font_families, function(font_family) {
