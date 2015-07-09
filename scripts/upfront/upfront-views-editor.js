@@ -4737,7 +4737,8 @@ var Field_ToggleableText = Field_Text.extend({
 			
 			var me = this;
 			$('.upfront-chosen-select-style', this.$el).chosen({
-				width: this.options.select_width
+				width: this.options.select_width,
+				disable_search: true
 			});
 			
 			//Wait for Chosen to be initialized
