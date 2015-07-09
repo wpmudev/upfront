@@ -4757,7 +4757,38 @@ var Field_ToggleableText = Field_Text.extend({
 			$('.upfront-chosen-select-style').parent().find('.chosen-single').css( {"font-family": font_family, "font-weight": parsed_variant.weight, "font-style": parsed_variant.style });
 		},
 	});
-
+	
+	var Field_Multiple_Chosen_Select = Field_Chosen_Select.extend({
+		events: {
+			'change select': 'on_change'
+		},
+		multiple: true,
+		get_field_html: function() {
+			var multiple = this.multiple ? 'multiple' : '';
+			return ['<select class="upfront-chosen-select-multiple"' , multiple, ' data-placeholder="', this.options.placeholder,  '">', this.get_values_html(), '</select>'].join('');
+		},
+		get_value_html: function (value, index) {
+			var selected = '';
+			var saved_value = this.get_saved_value();
+			if (_.contains(saved_value, value.value) ) {
+				selected = ' selected="selected"';
+			}
+			return ['<option value="', value.value, '"', selected, '>', value.label, '</option>'].join('');
+		},
+		render: function() {
+			Field_Chosen_Select.prototype.render.call(this);
+			
+			var me = this;
+			$('.upfront-chosen-select-multiple', this.$el).chosen({
+				width: this.options.select_width,
+			});
+		
+		},
+		on_change: function(event) {
+			this.trigger('changed', this.get_value());
+		},
+	});
+	
 	var Field_Multiple_Input = Field_Multiple.extend({
 		selected_state: 'checked',
 		render: function () {
@@ -10700,6 +10731,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				"Chosen_Select": Field_Chosen_Select,
 				"Typeface_Chosen_Select": Field_Typeface_Chosen_Select,
 				"Typeface_Style_Chosen_Select": Field_Typeface_Style_Chosen_Select,
+				"Multiple_Chosen_Select": Field_Multiple_Chosen_Select,
 				"Number": Field_Number,
 				"Slider": Field_Slider,
 				"Select": Field_Select,

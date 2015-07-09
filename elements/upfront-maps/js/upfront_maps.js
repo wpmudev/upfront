@@ -694,12 +694,13 @@ define([
 							values: styles,
 							change: function () { this.property.set({value: this.get_value()}); }
 						}),
-						new Upfront.Views.Editor.Field.Select({
+						new Upfront.Views.Editor.Field.Multiple_Chosen_Select({
 							model: this.model,
 							label: l10n.map_controls,
 							placeholder: "Choose map controls",
 							property: 'controls',
 							multiple: true,
+							select_width: '200px',
 							values: controls,
 							change: function () { this.property.set({value: this.get_value()}); }
 						}),
