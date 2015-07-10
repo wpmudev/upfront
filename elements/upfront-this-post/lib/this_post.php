@@ -803,7 +803,8 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 
 		Upfront_ThisPostView::prepare_post($post);
 		$content = Upfront_ThisPostView::get_template_markup($post, $data['properties']);
-
+		
+		
 		$this->_out(new Upfront_JsonResponse_Success(array(
 			"filtered" => $content
 		)));

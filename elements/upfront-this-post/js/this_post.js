@@ -227,6 +227,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 					loading.done();
 					loading = false;
 				}
+
 				var node = node || $('#' + me.property('element_id')).find(".upfront-object-content");
 				me.markup = response.data.filtered;
 				node.html(me.get_content_markup());
