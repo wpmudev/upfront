@@ -68,8 +68,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 	}
 
 	public static function from_php ($data, $storage_key = '') {
-		if ( isset($data['layout']) )
-			self::$cascade = $data['layout'];
+		if ( isset($data['layout']) ) self::$cascade = $data['layout'];
 		self::set_storage_key($storage_key);
 		return new self($data);
 	}
@@ -147,6 +146,13 @@ class Upfront_Layout extends Upfront_JsonModel {
 		// is to fix augment_regions to not re-import images every time page reloads.
 		if (!function_exists('upfront_exporter_is_running') || !upfront_exporter_is_running()) {
 		  $data = apply_filters('upfront_augment_theme_layout', $data);
+		}
+
+		// This should be the only place where we deal with data from exporter files,
+		// which means this is where we expand exporter macros.
+		if (!empty($data)) {
+			$codec = new Upfront_MacroCodec_LayoutData();
+			$data = $codec->expand_all($data);
 		}
 
 		return self::from_php($data, $storage_key);
