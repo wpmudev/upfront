@@ -11,6 +11,7 @@ define([
 	"text!upfront/templates/module_group.html",
 	"text!upfront/templates/region_container.html",
 	"text!upfront/templates/region.html",
+	"text!upfront/templates/wrapper.html",
 	"text!upfront/templates/layout.html",
 ], function () {
   var _template_files = [
@@ -19,6 +20,7 @@ define([
     "text!upfront/templates/module_group.html",
     "text!upfront/templates/region_container.html",
     "text!upfront/templates/region.html",
+    "text!upfront/templates/wrapper.html",
     "text!upfront/templates/layout.html",
 ];
 
@@ -703,6 +705,59 @@ define([
 					}
 					$prev = $(this);
 				});*/
+			},
+			
+			fix_wrapper_height: function ($el) {
+				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+					off = $el.offset(),
+					width = $el.width(),
+					prevs = [],
+					apply_height = function (wraps) {
+						// Reset height first
+						_.each(wraps, function ($wrap) {
+							$wrap.css('min-height', '');
+						});
+						// Find max height and apply to all
+						var max_wrap = _.max(wraps, function ($wrap) {
+								return $wrap.height();
+							}),
+							height = max_wrap.height();
+						_.each(wraps, function ($wrap, index) {
+							$wrap.removeAttr('data-first-in-row');
+							$wrap.removeAttr('data-last-in-row');
+							if ( index == 0 ) $wrap.attr('data-first-in-row', '1');
+							if ( index == wraps.length-1 ) $wrap.attr('data-last-in-row', '1');
+							$wrap.css('min-height', height);
+						});
+					};
+				Upfront.Events.trigger('upfront:wrappers:before_fix_height', this);
+				$el.children('.upfront-wrapper')
+					.each(Upfront.Util.normalize_sort_elements_cb)
+					.sort(Upfront.Util.sort_elements_cb)
+					.filter(function(){
+						return $(this).children().size() > 0;
+					}).each(function(){
+						var order = $(this).data('breakpoint_order') || 0,
+							clear = $(this).data('breakpoint_clear')
+						;
+						if (
+							prevs.length > 0 
+							&&
+							(
+								( ( !breakpoint || breakpoint.default ) && $(this).hasClass('clr') )
+								||
+								( breakpoint && !breakpoint.default && clear)
+							)
+						){
+							apply_height(prevs);
+							prevs = [];
+						}
+						prevs.push($(this));
+					});
+				if ( prevs.length > 0 ) {
+					apply_height(prevs);
+				}
+				Upfront.Events.trigger('upfront:wrappers:after_fix_height', this);
 			},
 		}),
 
@@ -1956,10 +2011,15 @@ define([
 				this.stopListening(this.model, 'remove', this.render);
 				this.listenTo(this.model, 'remove', this.on_remove);
 				this.listenTo(this.model, 'reset', this.on_reset);
+				
 				this.listenTo(Upfront.Events, "entity:drag_stop", this.apply_flexbox_clear);
+				this.listenTo(Upfront.Events, "entity:drag_stop", this.apply_wrapper_height);
 				this.listenTo(Upfront.Events, "entity:drag_stop", this.apply_adapt_to_breakpoints);
 				this.listenTo(Upfront.Events, "entity:resized", this.apply_flexbox_clear);
+				this.listenTo(Upfront.Events, "entity:resized", this.apply_wrapper_height);
 				this.listenTo(Upfront.Events, "entity:resized", this.apply_adapt_to_breakpoints);
+				this.listenTo(Upfront.Events, "entity:wrapper:resized", this.apply_wrapper_height);
+				this.listenTo(Upfront.Events, "entity:wrapper:resized", this.apply_adapt_to_breakpoints);
 				this.listenTo(Upfront.Events, "entity:wrappers:update", this.on_wrappers_update);
 				this.listenTo(Upfront.Events, "entity:module_group:group", this.on_group);
 				this.listenTo(Upfront.Events, "entity:module_group:ungroup", this.on_ungroup);
@@ -2005,6 +2065,7 @@ define([
 					me.render_module(module);
 				});
 				this.apply_flexbox_clear();
+				this.apply_wrapper_height();
 				Upfront.Events.trigger("entity:modules:after_render", this, this.model);
 			},
 			render_module: function (module, options) {
@@ -2022,6 +2083,7 @@ define([
 					wrapper_view, wrapper_el
 				;
 				if(local_view){
+					local_view.parent_view = this;
 					local_view.region_view = this.region_view;
 					local_view.region = this.region_view.model;
 					if ( this.group_view )
@@ -2095,16 +2157,19 @@ define([
 					local_view.update_position();
 				});
 				this.apply_flexbox_clear();
+				this.apply_wrapper_height();
 			},
 			on_add: function (model, collection, options) {
 				this.current_wrapper_id = this.current_wrapper_el = null;
 				this.render_module(model, options);
 				this.apply_flexbox_clear();
+				this.apply_wrapper_height();
 				this.apply_adapt_to_breakpoints();
 				Upfront.Events.trigger("entity:added:after");
 			},
 			on_remove: function (model) {
 				this.remove_model(model);
+				this.apply_wrapper_height();
 				this.apply_adapt_to_breakpoints();
 			},
 			remove_model: function (model) {
@@ -2122,17 +2187,22 @@ define([
 						var index = collection.indexOf(module);
 						me.render_module(module, {index: index});
 					});
-					this.fix_flexbox_clear(this.$el);
+					this.apply_flexbox_clear();
+					this.apply_wrapper_height();
 					this.apply_adapt_to_breakpoints();
 				}
 			},
 			on_after_layout_render: function () {
 				this.apply_flexbox_clear();
+				this.apply_wrapper_height();
 				this.apply_adapt_to_breakpoints();
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.apply_flexbox_clear);
 			},
 			apply_flexbox_clear: function () {
 				this.fix_flexbox_clear(this.$el);
+			},
+			apply_wrapper_height: function () {
+				this.fix_wrapper_height(this.$el);
 			},
 			apply_adapt_to_breakpoints: function () {
 				var current_breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
@@ -2183,7 +2253,10 @@ define([
 			on_change_breakpoint: function (breakpoint) {
 				var me = this;
 				// Make sure clearing flexbox is applied, set a timeout to let other positioning finish
-				setTimeout(function(){ me.apply_flexbox_clear(); }, 1000);
+				setTimeout(function(){
+					me.apply_flexbox_clear();
+					me.apply_wrapper_height();
+				}, 1000);
 			},
 			remove: function() {
 				var me = this;
@@ -4310,7 +4383,8 @@ define([
 
 		Wrapper = _Upfront_SingularEditor.extend({
 			events: {
-				"mouseup": "on_mouse_up"
+				"mouseup": "on_mouse_up",
+				"click > .upfront-wrapper-meta > .upfront-add-spacer": "on_add_spacer"
 			},
 			attributes: function(){
 				var cls = "upfront-wrapper",
@@ -4325,6 +4399,7 @@ define([
 				this.listenTo(this.model.get("properties"), 'change', this.update);
 				// this.model.bind("remove", this.on_remove, this);
 				this.listenTo(this.model, 'remove', this.on_remove);
+				
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.update_position);
 			},
 			update: function (prop, options) {
@@ -4369,6 +4444,59 @@ define([
 
 			},
 			render: function () {
+				var template = _.template(_Upfront_Templates["wrapper"]);
+				Upfront.Events.trigger('entity:wrapper:before_render', this, this.model);
+				this.$el.html(template);
+				Upfront.Events.trigger('entity:wrapper:after_render', this, this.model);
+			},
+			on_add_spacer: function (e) {
+				var $target = $(e.target),
+					position = $target.attr('data-position'),
+					ed = Upfront.Behaviors.GridEditor,
+					col_class = Upfront.Settings.LayoutEditor.Grid.class,
+					spacer_col = 1,
+					object = new Upfront.Models.UspacerModel({
+						"name": "",
+						"properties": []
+					}),
+					wrapper_id = Upfront.Util.get_unique_id("wrapper"),
+					module = new Upfront.Models.Module({
+						"name": "",
+						"properties": [
+							{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
+							{"name": "wrapper_id", "value": wrapper_id},
+							{"name": "class", "value": col_class+spacer_col + " upfront-module-spacer"},
+							{"name": "has_settings", "value": 0}
+						],
+						"objects": [
+							object
+						]
+					}),
+					wrapper = new Upfront.Models.Wrapper({
+						"name": "",
+						"properties": [
+							{"name": "wrapper_id", "value": wrapper_id},
+							{"name": "class", "value": col_class+spacer_col}
+						]
+					}),
+					$child = this.$el.find("> .upfront-module-view > .upfront-module, > .upfront-module-group"),
+					$target_child = ( position == 'right' ? $child.last() : $child.first() ),
+					target_model = ed.get_el_model($target_child),
+					index = target_model.collection.indexOf(target_model)
+				;
+				e.preventDefault();
+				
+				this.model.collection.add(wrapper);
+				module.add_to(target_model.collection, ( position == 'right' ? index+1 : index ));
+				
+				// Also change the columns of current wrapper and the containing models
+				var current_col = ed.get_class_num(this.$el, col_class),
+					new_col = current_col-spacer_col;
+				$child.each(function () {
+					var child = ed.get_el_model($(this));
+					child.replace_class(col_class+new_col);
+				});
+				this.model.replace_class(col_class+new_col);
 			},
 			on_mouse_up: function (e) {
 				$('.upfront-wrapper-active').not(this.$el).removeClass('upfront-wrapper-active');
