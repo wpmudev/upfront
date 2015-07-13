@@ -534,6 +534,9 @@
   width: 6px;
   padding-top: 15px;
   z-index: 10;
+  display: none;
+}
+.upfront-region:hover .upfront-wrapper-meta {
   display: block;
 }
 .upfront-wrapper-meta-left {

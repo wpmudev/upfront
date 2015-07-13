@@ -12,6 +12,7 @@
 .upfront-resize {
 	background: rgba(100,100,100,.2);
 	z-index:1;
+	pointer-events: none;
 }
 
 .upfront-resize-handle-nw,
@@ -83,7 +84,7 @@
   height: auto;
   width: 6px;
   background: none;
-  display: block !important;
+  display: none !important;
   cursor: ew-resize;
   z-index: 20;
 }
@@ -103,6 +104,9 @@
 }
 .upfront-resize-handle-wrapper.upfront-resize-handle-e {
   right: -3px;
+}
+.upfront-region:hover .upfront-resize-handle-wrapper {
+  display: block !important;
 }
 .upfront-dragging .upfront-resize-handle-wrapper {
   display: none !important;
