@@ -14,9 +14,10 @@ define([
 			this.fields = _([
 				new Upfront.Views.Editor.Field.Button({
 					model: me.model,
+					className: 'edit_preset_css',
 					compact: true,
 					name: 'preset_css',
-					label: 'Preset CSS',
+					label: 'Edit Preset CSS',
 				})
 			]);
 		},

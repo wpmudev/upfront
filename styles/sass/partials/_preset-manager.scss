@@ -403,9 +403,32 @@ div.preset-manager-panel .transition .upfront-field-select-single .upfront-field
 	left: 12px;
 	position: relative;
 }
-div.preset-manager-panel .border_radius_lock_hover {
-	margin-bottom: 50px;
-}
 div.preset-manager-panel .backgroundcolor-hover, div.preset-manager-panel .typography-hover {
 	padding-top: 11px;
+}
+div.preset-manager-panel .edit_preset_css {
+	position: relative;
+	margin-top: 20px;
+}
+div.preset-manager-panel .edit_preset_css input{
+	background-image: linear-gradient(-179deg, #fafdff 0%, #f3faff 100%);
+	border: 1px solid rgba(162,191,218,1);
+	border-radius: 5px;
+	font-size: 14px;
+	color: #8786a6;
+	padding: 4px 8px;
+	position: relative;
+	padding-left: 32px;
+}
+div.preset-manager-panel .edit_preset_css:before{
+	background-image: url(../img/uf-core-el-sprite.svg);
+	background-position: -660px -44px;
+	width: 18px;
+	height: 15px;
+	content: "";
+    display: block;
+	position: absolute;
+	z-index: 99;
+	top: 6px;
+	left: 8px;
 }
