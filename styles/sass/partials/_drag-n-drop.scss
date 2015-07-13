@@ -12,6 +12,110 @@
 .upfront-resize {
 	background: rgba(100,100,100,.2);
 	z-index:1;
+	pointer-events: none;
+}
+
+.upfront-resize-handle-nw,
+.upfront-resize-handle-se,
+.upfront-resize-handle-ne,
+.upfront-resize-handle-sw,
+.upfront-region-resize-handle-nw,
+.upfront-region-resize-handle-se,
+.upfront-region-resize-handle-ne,
+.upfront-region-resize-handle-sw {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  z-index: 2000;
+  overflow: hidden;
+}
+.upfront-resize-handle-nw,
+.upfront-region-resize-handle-nw {
+  top: 0;
+  left: 0;
+  right: auto;
+  cursor: nw-resize;
+}
+.upfront-resize-handle-se,
+.upfront-region-resize-handle-se {
+  bottom: 0;
+  right: 0;
+  left: auto;
+  cursor: se-resize;
+}
+.upfront-resize-handle-ne,
+.upfront-region-resize-handle-ne {
+  top: 0;
+  right: 0;
+  left: auto;
+  cursor: ne-resize;
+}
+.upfront-resize-handle-sw,
+.upfront-region-resize-handle-sw {
+  bottom: 0;
+  left: 0;
+  right: auto;
+  cursor: sw-resize;
+}
+
+.upfront-resize-handle-s {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 12px;
+  cursor: ns-resize;
+  z-index: 10;
+}
+
+.upfront-resize-handle-e,
+.upfront-resize-handle-w {
+  background: #f2b530;
+  width: 5px;
+  height: 20px;
+  top: 48%;
+  display: none !important;
+}
+
+.upfront-resize-handle-wrapper {
+  position: absolute;
+  top: 38px;
+  bottom: 0;
+  height: auto;
+  width: 6px;
+  background: none;
+  display: none !important;
+  cursor: ew-resize;
+  z-index: 20;
+}
+.upfront-resize-handle-wrapper:before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -7px;
+  width: 20px;
+  height: 20px;
+  background: rgba(200, 0, 0, 0.2);
+  margin-top: -32px;
+  border-radius: 10px;
+}
+.upfront-resize-handle-wrapper.upfront-resize-handle-w {
+  left: -3px;
+}
+.upfront-resize-handle-wrapper.upfront-resize-handle-e {
+  right: -3px;
+}
+.upfront-region:hover .upfront-resize-handle-wrapper {
+  display: block !important;
+}
+.upfront-dragging .upfront-resize-handle-wrapper {
+  display: none !important;
+}
+.upfront-wrapper[data-first-in-row="1"] .upfront-resize-handle-wrapper.upfront-resize-handle-w {
+  display: none !important;
+}
+.upfront-wrapper[data-last-in-row="1"] .upfront-resize-handle-wrapper.upfront-resize-handle-e {
+  display: none !important;
 }
 
 .upfront-drop {
@@ -28,6 +132,7 @@
   bottom: -3px;
   right: -3px;
   left: -3px;
+  z-index: 100;
   background: rgba(128, 128, 255, 0.8);
 }
 .upfront-drop.upfront-drop-use:after {
