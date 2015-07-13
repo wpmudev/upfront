@@ -1,11 +1,12 @@
 define([
 	'scripts/upfront/preset-settings/preset-manager',
 	'scripts/upfront/preset-settings/util',
+	'scripts/upfront/preset-settings/border-settings-item',
 	'scripts/upfront/preset-settings/radius-settings-item',
 	'text!elements/upfront-button/tpl/preset-style.html',
 	'elements/upfront-button/js/settings-fields-static',
 	'elements/upfront-button/js/settings-fields-hover',
-], function(PresetManager, Util, RadiusSettingsItem, styleTpl, ButtonSettingsStatic, ButtonSettingsHover) {
+], function(PresetManager, Util, BorderSettingsItem, RadiusSettingsItem, styleTpl, ButtonSettingsStatic, ButtonSettingsHover) {
 	var l10n = Upfront.Settings.l10n.button_element;
 	
 	var me = this;
@@ -92,7 +93,19 @@ define([
 							radius4: 'borderradius4'
 						}
 					}
-				}
+				},
+				{
+					fieldClass: BorderSettingsItem,
+					options: {
+						state: 'static',
+						fields: {
+							use: 'useborder', 
+							width: 'borderwidth',
+							type: 'bordertype',
+							color: 'bordercolor',
+						}
+					}
+				}	
 			],
 			Hover: [
 				{
