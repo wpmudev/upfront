@@ -118,25 +118,40 @@ div.preset-manager-panel div.preset_specific div.border_radius label {
 	display: none;
 }
 div.preset-manager-panel div.preset_specific div.border_radius1 {
-	
+	top: -25px;
+	padding: 7px 0px 0px 10px;
+	position: relative;
+	border-left: 2px solid #dae6f2;
 }
 div.preset-manager-panel div.preset_specific div.border_radius2 {
-	left: 30px;
+	left: 15px;
+	top: -25px;
 }
 div.preset-manager-panel div.preset_specific div.border_radius3 {
-	top: 50px;
-	left: -135px;
+	padding: 15px 0px 9px 10px;
+	position: relative;
+	border-left: 2px solid #dae6f2;
+	left: -147px;
+	top: 20px;
 }
 div.preset-manager-panel div.preset_specific div.border_radius4 {
-	left: -13px;
-	top: 50px;
+	left: -30px;
+	top: 20px;
+	position: relative;
 	margin-bottom: 10px;
 }
 div.preset-manager-panel div.border_radius_lock {
 	position: relative;
 	margin-top: 0px;
-	top: -11px;
-	left: 2px;
+	top: -27px;
+	left: 72px;
+}
+div.preset-manager-panel div.radius-slider {
+	top: -25px;
+	padding-top: 7px;
+	position: relative;
+	border-left: 2px solid #dae6f2;
+	padding-left: 10px;
 }
 div.preset-manager-panel div.preset_specific div.bg-color {
 	display: inline-block;

@@ -1,10 +1,11 @@
 define([
 	'scripts/upfront/preset-settings/preset-manager',
 	'scripts/upfront/preset-settings/util',
+	'scripts/upfront/preset-settings/radius-settings-item',
 	'text!elements/upfront-button/tpl/preset-style.html',
 	'elements/upfront-button/js/settings-fields-static',
 	'elements/upfront-button/js/settings-fields-hover',
-], function(PresetManager, Util, styleTpl, ButtonSettingsStatic, ButtonSettingsHover) {
+], function(PresetManager, Util, RadiusSettingsItem, styleTpl, ButtonSettingsStatic, ButtonSettingsHover) {
 	var l10n = Upfront.Settings.l10n.button_element;
 	
 	var me = this;
@@ -75,6 +76,21 @@ define([
 					fieldClass: ButtonSettingsStatic,
 					options: {
 						state: 'static'
+					}
+				},
+				{
+					fieldClass: RadiusSettingsItem,
+					options: {
+						state: 'static',
+						fields: {
+							use: 'useradius', 
+							lock: 'borderradiuslock',
+							radius: 'radius',
+							radius1: 'borderradius1',
+							radius2: 'borderradius2',
+							radius3: 'borderradius3',
+							radius4: 'borderradius4'
+						}
 					}
 				}
 			],
