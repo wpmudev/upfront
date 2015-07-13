@@ -5157,13 +5157,13 @@ var Field_ToggleableText = Field_Text.extend({
 			$padding_panel = this.$el.find(".upfront-settings-padding_panel");
 			if(typeof this.paddingEditor == 'undefined' || this.paddingEditor){
 				// Adding Padding item
-				var padding_settings = new _Settings_Padding({
+				this.paddingEditor = new _Settings_Padding({
 					model: this.model,
 					title: l10n.padding_settings
 				});
-				padding_settings.panel = me;
-				padding_settings.render();
-				$padding_panel.append(padding_settings.el);
+				this.paddingEditor.panel = me;
+				this.paddingEditor.render();
+				$padding_panel.append(this.paddingEditor.el);
 			}
 			// Save button
 			$panel.append(
@@ -5501,22 +5501,21 @@ var Field_Complex_Toggleable_Text_Field = Field.extend({
 
 var _Settings_Padding = SettingsItem.extend({
 	className: 'upfront-settings-padding',
-	events: {
-		'change input': 'paddingChanged'
-	},
 	initialize: function(options) {
 		var column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
 			top_padding_use = new Upfront.Views.Editor.Field.Checkboxes({
 				model: this.model,
+				use_breakpoint_property: true,
 				property: 'top_padding_use',
 				label: '',
+				multiple: false,
 				values: [{ label: l10n.top_padding, value: 'yes' }],
-				default_value: this.model.get_breakpoint_property_value('top_padding_use', true) || [],
+				default_value: this.model.get_breakpoint_property_value('top_padding_use') || false,
 				change: function () {
-					this.property.set({value: this.get_value()});
+					this.model.set_breakpoint_property('top_padding_use', this.get_value());
 				},
 				show: function (value, $el) {
-					if(value[0] === 'yes') {
+					if(value === 'yes') {
 						$(top_padding_slider.$el).css('display', 'inline-block'); 
 						$(top_padding_num.$el).css('display', 'inline-block'); 
 					}
@@ -5528,47 +5527,50 @@ var _Settings_Padding = SettingsItem.extend({
 			}),
 			top_padding_slider = new Upfront.Views.Editor.Field.Slider({
 				model: this.model,
+				use_breakpoint_property: true,
 				property: 'top_padding_slider',
 				label: '',
-				default_value: this.model.get_breakpoint_property_value('top_padding_slider', true) || column_padding,
+				default_value: this.model.get_breakpoint_property_value('top_padding_slider') || column_padding,
 				min: 0,
 				max: 200,
 				valueTextFilter: function () {return '';},
 				change: function () {
 					var value = this.get_value();
 
-					this.property.set({value: value});
+					this.model.set_breakpoint_property('top_padding_slider', value);
 					top_padding_num.get_field().val(value);
-					this.model.set_breakpoint_property('top_padding_num', value);
+					this.model.set_breakpoint_property('top_padding_num', value, true);
 				}
 			}),
 			top_padding_num = new Upfront.Views.Editor.Field.Number({
 				model: this.model,
+				use_breakpoint_property: true,
 				property: 'top_padding_num',
 				label: '',
-				default_value: this.model.get_breakpoint_property_value('top_padding_num', true) || column_padding,
+				default_value: this.model.get_breakpoint_property_value('top_padding_num') || column_padding,
 				suffix: 'px',
 				min: 0,
 				change: function () {
 					var value = this.get_value();
 
-					this.property.set({value: value});
-					top_padding_slider.set_value(value);
+					this.model.set_breakpoint_property('top_padding_num', value);
+					this.model.set_breakpoint_property('top_padding_slider', value, true);
 					top_padding_slider.$el.find('#'+top_padding_slider.get_field_id()).slider('value', value);
-					top_padding_slider.trigger('changed');
 				}
 			}),
 			bottom_padding_use = new Upfront.Views.Editor.Field.Checkboxes({
 				model: this.model,
+				use_breakpoint_property: true,
 				property: 'bottom_padding_use',
 				label: '',
+				multiple: false,
 				values: [{ label: l10n.bottom_padding, value: 'yes' }],
-				default_value: this.model.get_breakpoint_property_value('bottom_padding_use', true) || [],
+				default_value: this.model.get_breakpoint_property_value('bottom_padding_use') || false,
 				change: function () {
-					this.property.set({value: this.get_value()});
+					this.model.set_breakpoint_property('bottom_padding_use', this.get_value());
 				},
 				show: function (value, $el) {
-					if(value[0] === 'yes') {
+					if(value === 'yes') {
 						$(bottom_padding_slider.$el).css('display', 'inline-block'); 
 						$(bottom_padding_num.$el).css('display', 'inline-block'); 
 					}
@@ -5580,47 +5582,50 @@ var _Settings_Padding = SettingsItem.extend({
 			}),
 			bottom_padding_slider = new Upfront.Views.Editor.Field.Slider({
 				model: this.model,
+				use_breakpoint_property: true,
 				property: 'bottom_padding_slider',
 				label: '',
-				default_value: this.model.get_breakpoint_property_value('bottom_padding_slider', true) || column_padding,
+				default_value: this.model.get_breakpoint_property_value('bottom_padding_slider') || column_padding,
 				min: 0,
 				max: 200,
 				valueTextFilter: function () {return '';},
 				change: function () {
 					var value = this.get_value();
 
-					this.property.set({value: value});
+					this.model.set_breakpoint_property('bottom_padding_slider', value);
 					bottom_padding_num.get_field().val(value);
-					this.model.set_breakpoint_property('bottom_padding_num', value);
+					this.model.set_breakpoint_property('bottom_padding_num', value, true);
 				}
 			}),
 			bottom_padding_num = new Upfront.Views.Editor.Field.Number({
 				model: this.model,
+				use_breakpoint_property: true,
 				property: 'bottom_padding_num',
 				label: '',
-				default_value: this.model.get_breakpoint_property_value('bottom_padding_num', true) || column_padding,
+				default_value: this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding,
 				suffix: 'px',
 				min: 0,
 				change: function () {
 					var value = this.get_value();
 
-					this.property.set({value: value});
-					bottom_padding_slider.set_value(value);
+					this.model.set_breakpoint_property('bottom_padding_num', value);
+					this.model.set_breakpoint_property('bottom_padding_slider', value, true);
 					bottom_padding_slider.$el.find('#'+bottom_padding_slider.get_field_id()).slider('value', value);
-					bottom_padding_slider.trigger('changed');
 				}
 			}),
 			left_padding_use = new Upfront.Views.Editor.Field.Checkboxes({
 				model: this.model,
+				use_breakpoint_property: true,
 				property: 'left_padding_use',
 				label: '',
+				multiple: false,
 				values: [{ label: l10n.left_padding, value: 'yes' }],
-				default_value: this.model.get_breakpoint_property_value('left_padding_use', true) || [],
+				default_value: this.model.get_breakpoint_property_value('left_padding_use') || false,
 				change: function () {
-					this.property.set({value: this.get_value()});
+					this.model.set_breakpoint_property('left_padding_use', this.get_value());
 				},
 				show: function (value, $el) {
-					if(value[0] === 'yes') {
+					if(value === 'yes') {
 						$(left_padding_slider.$el).css('display', 'inline-block'); 
 						$(left_padding_num.$el).css('display', 'inline-block'); 
 					}
@@ -5632,47 +5637,50 @@ var _Settings_Padding = SettingsItem.extend({
 			}),
 			left_padding_slider = new Upfront.Views.Editor.Field.Slider({
 				model: this.model,
+				use_breakpoint_property: true,
 				property: 'left_padding_slider',
 				label: '',
-				default_value: this.model.get_breakpoint_property_value('left_padding_slider', true) || column_padding,
+				default_value: this.model.get_breakpoint_property_value('left_padding_slider') || column_padding,
 				min: 0,
 				max: 200,
 				valueTextFilter: function () {return '';},
 				change: function () {
 					var value = this.get_value();
 
-					this.property.set({value: value});
+					this.model.set_breakpoint_property('left_padding_slider', value);
 					left_padding_num.get_field().val(value);
-					this.model.set_breakpoint_property('left_padding_num', value);
+					this.model.set_breakpoint_property('left_padding_num', value, true);
 				}
 			}),
 			left_padding_num = new Upfront.Views.Editor.Field.Number({
 				model: this.model,
+				use_breakpoint_property: true,
 				property: 'left_padding_num',
 				label: '',
-				default_value: this.model.get_breakpoint_property_value('left_padding_num', true) || column_padding,
+				default_value: this.model.get_breakpoint_property_value('left_padding_num') || column_padding,
 				suffix: 'px',
 				min: 0,
 				change: function () {
 					var value = this.get_value();
 
-					this.property.set({value: value});
-					left_padding_slider.set_value(value);
+					this.model.set_breakpoint_property('left_padding_num', value);
+					this.model.set_breakpoint_property('left_padding_slider', value, true);
 					left_padding_slider.$el.find('#'+left_padding_slider.get_field_id()).slider('value', value);
-					left_padding_slider.trigger('changed');
 				}
 			}),
 			right_padding_use = new Upfront.Views.Editor.Field.Checkboxes({
 				model: this.model,
+				use_breakpoint_property: true,
 				property: 'right_padding_use',
 				label: '',
+				multiple: false,
 				values: [{ label: l10n.right_padding, value: 'yes' }],
-				default_value: this.model.get_breakpoint_property_value('right_padding_use', true) || [],
+				default_value: this.model.get_breakpoint_property_value('right_padding_use') || false,
 				change: function () {
-					this.property.set({value: this.get_value()});
+					this.model.set_breakpoint_property('right_padding_use', this.get_value());
 				},
 				show: function (value, $el) {
-					if(value[0] === 'yes') {
+					if(value === 'yes') {
 						$(right_padding_slider.$el).css('display', 'inline-block'); 
 						$(right_padding_num.$el).css('display', 'inline-block'); 
 					}
@@ -5684,34 +5692,35 @@ var _Settings_Padding = SettingsItem.extend({
 			}),
 			right_padding_slider = new Upfront.Views.Editor.Field.Slider({
 				model: this.model,
+				use_breakpoint_property: true,
 				property: 'right_padding_slider',
 				label: '',
-				default_value: this.model.get_breakpoint_property_value('right_padding_slider', true) || column_padding,
+				default_value: this.model.get_breakpoint_property_value('right_padding_slider') || column_padding,
 				min: 0,
 				max: 200,
 				valueTextFilter: function () {return '';},
 				change: function () {
 					var value = this.get_value();
 
-					this.property.set({value: value});
+					this.model.set_breakpoint_property('right_padding_slider', value);
 					right_padding_num.get_field().val(value);
-					this.model.set_breakpoint_property('right_padding_num', value);
+					this.model.set_breakpoint_property('right_padding_num', value, true);
 				}
 			}),
 			right_padding_num = new Upfront.Views.Editor.Field.Number({
 				model: this.model,
+				use_breakpoint_property: true,
 				property: 'right_padding_num',
 				label: '',
-				default_value: this.model.get_breakpoint_property_value('right_padding_num', true) || column_padding,
+				default_value: this.model.get_breakpoint_property_value('right_padding_num') || column_padding,
 				suffix: 'px',
 				min: 0,
 				change: function () {
 					var value = this.get_value();
 
-					this.property.set({value: value});
-					right_padding_slider.set_value(value);
+					this.model.set_breakpoint_property('right_padding_num', value);
+					this.model.set_breakpoint_property('right_padding_slider', value, true);
 					right_padding_slider.$el.find('#'+right_padding_slider.get_field_id()).slider('value', value);
-					right_padding_slider.trigger('changed');
 				}
 			})
 		;
@@ -5732,9 +5741,6 @@ var _Settings_Padding = SettingsItem.extend({
 			right_padding_slider,
 			right_padding_num
 		]);
-	},
-	paddingChanged: function(e) {
-		// console.log(this.$('input'));
 	}
 });
 

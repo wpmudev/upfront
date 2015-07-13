@@ -986,13 +986,92 @@ define([
 				}
 
 				// Padding settings
-				var top_padding = (props.top_padding_use && props.top_padding_use.length) ? props.top_padding_num : column_padding,
-					bottom_padding = (props.bottom_padding_use && props.bottom_padding_use.length) ? props.bottom_padding_num : column_padding,
-					left_padding = (props.left_padding_use && props.left_padding_use.length) ? props.left_padding_num : column_padding,
-					right_padding = (props.right_padding_use && props.right_padding_use.length) ? props.right_padding_num : column_padding
+				var breakpoints = typeof Upfront.Settings.LayoutEditor.Theme.breakpoints !== 'undefined' ? Upfront.Settings.LayoutEditor.Theme.breakpoints : [],
+					top_paddings = [],
+					bottom_paddings = [],
+					left_paddings = [],
+					right_paddings = []
 				;
 
-				model = _.extend(this.model.toJSON(), {"properties": props, "buttons": buttons, "content": content, "height": height, "extra_buttons": extra_buttons, "top_padding": top_padding, "bottom_padding": bottom_padding, "left_padding": left_padding, "right_padding": right_padding});
+				_.each(breakpoints, function(breakpoint) {
+					var breakpoint_obj = (
+							typeof props.breakpoint !== 'undefined'
+							&& typeof props.breakpoint[breakpoint.id] !== 'undefined' 
+						)
+						? props.breakpoint[breakpoint.id]
+						: false
+					;
+
+					top_paddings[breakpoint.id] = (
+							breakpoint_obj
+							&& typeof breakpoint_obj.top_padding_use !== 'undefined'
+							&& breakpoint_obj.top_padding_use.length
+							&& typeof breakpoint_obj.top_padding_num !== 'undefined'
+						)
+						? breakpoint_obj.top_padding_num
+						: 	(
+								breakpoint.id === 'desktop'
+								&& typeof props.top_padding_use !== 'undefined'
+								&& props.top_padding_use.length
+								&& typeof props.top_padding_num !== 'undefined'
+							)
+							? props.top_padding_num
+							: column_padding
+					;
+
+					bottom_paddings[breakpoint.id] = (
+							breakpoint_obj
+							&& typeof breakpoint_obj.bottom_padding_use !== 'undefined'
+							&& breakpoint_obj.bottom_padding_use.length
+							&& typeof breakpoint_obj.bottom_padding_num !== 'undefined'
+						)
+						? breakpoint_obj.bottom_padding_num
+						: 	(
+								breakpoint.id === 'desktop'
+								&& typeof props.bottom_padding_use !== 'undefined'
+								&& props.bottom_padding_use.length
+								&& typeof props.bottom_padding_num !== 'undefined'
+							)
+							? props.bottom_padding_num
+							: column_padding
+					;
+
+					left_paddings[breakpoint.id] = (
+							breakpoint_obj
+							&& typeof breakpoint_obj.left_padding_use !== 'undefined'
+							&& breakpoint_obj.left_padding_use.length
+							&& typeof breakpoint_obj.left_padding_num !== 'undefined'
+						)
+						? breakpoint_obj.left_padding_num
+						: 	(
+								breakpoint.id === 'desktop'
+								&& typeof props.left_padding_use !== 'undefined'
+								&& props.left_padding_use.length
+								&& typeof props.left_padding_num !== 'undefined'
+							)
+							? props.left_padding_num
+							: column_padding
+					;
+
+					right_paddings[breakpoint.id] = (
+							breakpoint_obj
+							&& typeof breakpoint_obj.right_padding_use !== 'undefined'
+							&& breakpoint_obj.right_padding_use.length
+							&& typeof breakpoint_obj.right_padding_num !== 'undefined'
+						)
+						? breakpoint_obj.right_padding_num
+						: 	(
+								breakpoint.id === 'desktop'
+								&& typeof props.right_padding_use !== 'undefined'
+								&& props.right_padding_use.length
+								&& typeof props.right_padding_num !== 'undefined'
+							)
+							? props.right_padding_num
+							: column_padding
+					;
+				});
+
+				model = _.extend(this.model.toJSON(), {"properties": props, "buttons": buttons, "content": content, "height": height, "extra_buttons": extra_buttons, "breakpoints": breakpoints, "top_paddings": top_paddings, "bottom_paddings": bottom_paddings, "left_paddings": left_paddings, "right_paddings": right_paddings});
 				template = _.template(_Upfront_Templates["object"], model);
 
 				Upfront.Events.trigger("entity:object:before_render", this, this.model);
