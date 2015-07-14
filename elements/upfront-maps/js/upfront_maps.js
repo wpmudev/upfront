@@ -745,7 +745,7 @@ define([
 					}
 				}),
 				new Upfront.Views.Editor.Field.Button({
-					model: me.model,
+					model: this.model,
 					label: l10n.open_map_code_panel,
 					className: "open-map-code-panel-button",
 					compact: true
