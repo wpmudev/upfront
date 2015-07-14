@@ -3,10 +3,11 @@ define([
 	'scripts/upfront/preset-settings/util',
 	'scripts/upfront/preset-settings/border-settings-item',
 	'scripts/upfront/preset-settings/radius-settings-item',
+	'scripts/upfront/preset-settings/typography-settings-item',
 	'text!elements/upfront-button/tpl/preset-style.html',
 	'elements/upfront-button/js/settings-fields-static',
 	'elements/upfront-button/js/settings-fields-hover',
-], function(PresetManager, Util, BorderSettingsItem, RadiusSettingsItem, styleTpl, ButtonSettingsStatic, ButtonSettingsHover) {
+], function(PresetManager, Util, BorderSettingsItem, RadiusSettingsItem, TypographySettingsItem, styleTpl, ButtonSettingsStatic, ButtonSettingsHover) {
 	var l10n = Upfront.Settings.l10n.button_element;
 	
 	var me = this;
@@ -79,6 +80,19 @@ define([
 						state: 'static'
 					}
 				},
+				{
+					fieldClass: TypographySettingsItem,
+					options: {
+						state: 'static',
+						fields: {
+							typeface: 'fontface', 
+							weight: 'fontstyle',
+							size: 'fontsize',
+							line_height: 'lineheight',
+							color: 'color',
+						}
+					}
+				},	
 				{
 					fieldClass: RadiusSettingsItem,
 					options: {
