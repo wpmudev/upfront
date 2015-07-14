@@ -70,7 +70,7 @@ div.uslide-text-current {
 
 .uslide-bottomOver .uslide-caption{
 	bottom: 0;
-	top: auto;
+	top: inherit;
 }
 
 .uslide-bottomCover .uslide-caption,
@@ -197,6 +197,6 @@ div.uslide-image img {
 .upfront-default-slider i.upfront-icon.upfront-icon-region-remove:before {
 	content: "";
 }
-.uslider .uimage-controls > .upfront-inline-panel {
+/*.uslider .uimage-controls > .upfront-inline-panel {
 	bottom: 0;
-}
+}*/

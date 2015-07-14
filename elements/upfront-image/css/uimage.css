@@ -36,11 +36,6 @@
 	width: 90%;
 }
 
-.ufront-ui .upfront-image-selector-container {
-	width: 280px;
-	margin: 0 auto;
-}
-
 #upfront-image-overlay h2 {
 	font-size: 42px;
 	color: #fff;
@@ -1085,8 +1080,14 @@ div.uimage-controls i.upfront-icon:before {
   margin-top: 6px;
 }
 
+#page.upfront-layout-view .upfront-image.uimage-no-padding {
+	padding: 0;
+}
 
 /* front-end placeholder */
+.upfront-output-image.uimage-no-padding {
+	padding: 0;
+}
 .upfront-output-image .uimage.uimage-placeholder {
 	min-height: inherit;
 }

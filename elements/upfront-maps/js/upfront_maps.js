@@ -97,6 +97,8 @@ define([
 			this.options.locate.render();
 			this.options.field.render();
 
+			this.options.field.set_value(this.model.get_property_value_by_name("address"));
+
 			this.$el.append(this.options.field.$el);
 			this.$el.append(this.options.locate.$el);
 		},
@@ -107,10 +109,12 @@ define([
 			var location = this.options.field.get_value(),
 				element_id = this.model.get_property_value_by_name("element_id"),
 				old_location = $(document).data(element_id + "-location"),
+				old_address = this.model.get_property_value_by_name("address"),
 				geocoder = new google.maps.Geocoder(),
 				me = this
 			;
-			if (!location || location == old_location) return false;
+			if (!location || location === old_location) return false;
+			if (location === old_address) return false; // Do not re-geocode the same location
 			if (this._geocoding_in_progress) return false;
 			this._geocoding_in_progress = true;
 			geocoder.geocode({address: location}, function (results, status) {
@@ -119,6 +123,7 @@ define([
 				var markers = me.model.get_property_value_by_name("markers") || [];
 				markers.push({lat:pos.lat(), lng:pos.lng()});
 				me.model.set_property("markers", markers, true);
+				me.model.set_property("address", location, true);
 
 				me.model.set_property("map_center", [pos.lat(), pos.lng()], false);
 
@@ -245,6 +250,7 @@ define([
 						var markers = me.model.get_property_value_by_name("markers") || [];
 						markers.push({lat:pos.lat(), lng:pos.lng()});
 						me.model.set_property("markers", markers, true);
+						me.model.set_property("address", add, true);
 
 						me.model.set_property("map_center", [pos.lat(), pos.lng()], false);
 

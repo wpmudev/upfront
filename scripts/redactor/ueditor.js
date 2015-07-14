@@ -463,7 +463,6 @@ var Ueditor = function($el, options) {
 	this.options.dropdownShowCallback = function () { UeditorEvents.trigger("ueditor:dropdownShow", this); };
 	this.options.dropdownHideCallback = function () { UeditorEvents.trigger("ueditor:dropdownHide", this); };
 	this.options.initCallback = function () { UeditorEvents.trigger("ueditor:init", this); };
-	this.options.enterCallback = function (e) {  UeditorEvents.trigger("ueditor:enter", this, e); };
 	this.options.changeCallback = function (e) { UeditorEvents.trigger("ueditor:change", this, e); };
 	//this.options.pasteBeforeCallback = function (html) { UeditorEvents.trigger("ueditor:paste:before", this, html); }; //events can return anything so it's useless
 	//this.options.pasteCallback = function (html) { UeditorEvents.trigger("ueditor:paste:after", this, html); }; //events can return anything so it's useless
@@ -506,6 +505,55 @@ var Ueditor = function($el, options) {
 		}
 		return html;
 	};
+
+    // Enter callback inside lists 
+    this.options.enterCallback = function (e) { 
+        // Current Block is a list item
+        if(this.keydown.block.tagName === 'LI') {
+            var current = this.selection.getCurrent(),
+                $parent = $(current).closest('li'),
+                $list = $parent.parent('ul,ol'),
+                $listlist = $list.parent('li').parent('ul,ol'),
+                emptyList = '<li>&#x200b;</li>'
+            ;
+
+            // Sublist to list
+            if (
+                $parent.length !== 0 && 
+                $listlist.length !== 0 &&
+                this.utils.isEmpty($parent.html()) && 
+                $list.next().length === 0
+            ) {
+                var node = $(emptyList);
+                $listlist.append(node);
+                this.caret.setStart(node);
+                $parent.remove();
+
+                return false;
+            }
+            // List to paragraph
+            else if (
+                $parent.length !== 0 && 
+                this.utils.isEmpty($parent.html()) && 
+                $list.next().length === 0
+            ) {
+                var node = $(this.opts.emptyHtml);
+                $list.after(node);
+                this.caret.setStart(node);
+                $parent.remove();
+
+                return false;
+            }
+            // List 
+            else {
+                UeditorEvents.trigger("ueditor:enter", this, e);
+            }
+        }
+        // Default
+        else {        
+            UeditorEvents.trigger("ueditor:enter", this, e);
+        }
+    };
 
 };
 
@@ -922,10 +970,11 @@ Ueditor.prototype = {
 				$('.redactor_air').hide();
 
 			if($(e.target).hasClass('uf_font_icon')) {
-				if(e.pageX < ($(e.target).offset().left + $(e.target).width()/2))
-					me.redactor.caret.setBefore($(e.target));
-				else
-					me.redactor.caret.setAfter($(e.target));
+                // Todo Gagan: had to comment the following to allow the font icon to be selected, hope this doesn't brean anything
+				//if(e.pageX < ($(e.target).offset().left + $(e.target).width()/2))
+				//	me.redactor.caret.setBefore($(e.target));
+				//else
+				//	me.redactor.caret.setAfter($(e.target));
 			}
 		});
 
@@ -1017,8 +1066,10 @@ var InsertManagerInserts = Backbone.View.extend({
 
         insert.start( this.$el )
             .done(function(popup, results){
-                // if(!results) Let's allow promises without result for now!
-                //	return;
+
+                if(!results) //Had to uncomment this because if we let it through with blank result, it inserts an empty wrapper which blocks the "inert/embed" button to appear again: Gagan
+                	return;
+
                 self.inserts[insert.cid] = insert;
                 //Allow to undo
                 //this.trigger('insert:prechange'); // "this" is the embedded image object
@@ -1314,11 +1365,10 @@ var InsertManager = Backbone.View.extend({
 
 		if(_.isEmpty( $block ) ) return false;
 
-		var $image_insert_wrappers = $(".upfront-inserted_image-wrapper"),
+		var $image_embed_insert_wrappers = $(".upfront-inserted_image-wrapper, .upfront-inserted_embed-wrapper"),
 			block_top = $block.offset().top,
 			show_tooltip = true;
-
-		$image_insert_wrappers.each(function(){
+		$image_embed_insert_wrappers.each(function(){
 			var $this = $(this),
 				height = $this.find(".ueditor-insert-variant-group").height(),
 				top = $this.offset().top;
@@ -1326,6 +1376,7 @@ var InsertManager = Backbone.View.extend({
 				show_tooltip = false;
 			}
 		});
+
 		return 	show_tooltip
 				&& 	$block.closest(".ueditor-insert").length === 0
 				&&  ( $.trim( $block.html() ) === "<br>" || ( typeof $block.closest("p.nosortable").html() !== "undefined" &&  $.trim( $block.closest("p.nosortable").html() ) === "" ) ) ;

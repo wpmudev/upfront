@@ -602,6 +602,24 @@ define([
 			check_deactivated: function (){
 				if(Upfront.data.currentEntity == this)
 					Upfront.data.currentEntity = false;
+			},
+			create_size_hint: function ($el) {
+				var me = this,
+					$el = $el ? $el : this.$el.find('.upfront-editable_entity:first');
+				if ( !$el.children('.upfront-entity-size-hint').length ){
+					this.$size_hint = $('<div class="upfront-entity-size-hint upfront-ui"></div>');
+					$el.append(this.$size_hint);
+				}
+				setTimeout(function(){ me.update_size_hint(); }, 500);
+			},
+			update_size_hint: function (width, height) {
+				if ( !this.$size_hint )
+					return;
+				var $el = this.$size_hint.parent(),
+					width = width ? width : $el.width(),
+					height = height ? height : $el.height(),
+					hint = '<b>w:</b>' + width + 'px <b>h:</b>' + height + 'px';
+				this.$size_hint.html(hint);
 			}
 		}),
 
@@ -1104,6 +1122,27 @@ define([
 				this.checkUiOffset();
 			},
 
+			toggle_region_class: function (classname, add, container) {
+				var region_view = ( this.parent_module_view && this.parent_module_view.region_view ) ? this.parent_module_view.region_view : false,
+					container_view = ( region_view ) ? region_view.parent_view.get_container_view(region_view.model) : false,
+					container = ( true === container )
+				;
+				if ( !region_view ) return;
+				if ( container ) {
+					container_view.$el.toggleClass(classname, add);
+				}
+				else {
+					region_view.$el.toggleClass(classname, add);
+				}
+			},
+
+			add_region_class: function (classname, container) {
+				this.toggle_region_class(classname, true, container);
+			},
+			
+			remove_region_class: function (classname, container) {
+				this.toggle_region_class(classname, false, container);
+			},
 
 			/* Getting dimension and resize element */
 			get_element_size: function (real) {
@@ -1515,6 +1554,7 @@ define([
 				this._prev_class = this.model.get_property_value_by_name('class');
 				
 				this.listenTo(Upfront.Events, 'layout:after_render', this.refresh_background);
+				this.listenTo(Upfront.Events, 'layout:after_render', this.update_size_hint);
 
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 				this.listenTo(Upfront.Events, "command:module_group:finish_edit", this.on_finish);
@@ -1625,6 +1665,8 @@ define([
 					this._modules_view.delegateEvents();
 				
 				this.createInlineControlPanel();
+				
+				this.create_size_hint(this.$el);
 			},
 			update: function () {
 				var prop_class = this.model.get_property_value_by_name('class'),
@@ -1701,6 +1743,7 @@ define([
 					this.$el.addClass(theme_style.toLowerCase());
 					this._theme_style = theme_style;
 				}
+				this.update_size_hint();
 				Upfront.Events.trigger('entity:module_group:update_position', this, this.model);
 			},
 			on_settings_click: function (e) {
@@ -1860,6 +1903,7 @@ define([
 						return;
 					view.update_position();
 				});
+				this.update_size_hint();
 			},
 			disable_interaction: function (prevent_edit, drag) {
 				if ( prevent_edit )
@@ -3165,15 +3209,19 @@ define([
 				this.$el.data('type', this.model.get("type"));
 				this.$el.find('.upfront-region-title').html(this.model.get("title"));
 				if ( !breakpoint || breakpoint.default ){
-					if ( col && col != this.col )
+					if ( col && col != this.col ) {
 						this.region_resize(col);
+					}
 				}
-				if ( height > 0 )
+				if ( height > 0 ) {
 					this.$el.css('min-height', height + 'px');
-				if ( expand_lock )
+				}
+				if ( expand_lock ) {
 					this.$el.addClass('upfront-region-expand-lock');
-				else
+				}
+				else {
 					this.$el.removeClass('upfront-region-expand-lock');
+				}
 				if ( previous_name != name ){
 					this.$el.removeClass('upfront-region-' + previous_name.toLowerCase().replace(/\s/g, "-"));
 					this.$el.addClass('upfront-region-' + name);

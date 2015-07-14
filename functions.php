@@ -1,12 +1,11 @@
 <?php
 
-defined('UPFRONT_DEBUG_LEVELS') || define('UPFRONT_DEBUG_LEVELS', 'none');
-
 require_once(dirname(__FILE__) . '/library/upfront_functions.php');
 require_once(dirname(__FILE__) . '/library/upfront_functions_theme.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_permissions.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_registry.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_debug.php');
+require_once(dirname(__FILE__) . '/library/class_upfront_behavior.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_http_response.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_server.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_model.php');
@@ -20,6 +19,8 @@ require_once(dirname(__FILE__) . '/library/class_upfront_media.php');
 require_once(dirname(__FILE__) . '/library/class_ufront_ufc.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_codec.php');
 
+
+Upfront_Behavior::debug()->set_baseline();
 
 
 class Upfront {
@@ -49,13 +50,13 @@ class Upfront {
 
 	private function _add_hooks () {
 		add_filter('body_class', array($this, 'inject_grid_scope_class'));
-		add_action('wp_head', array($this, "inject_global_dependencies"), 1);
+		add_action('wp_head', array($this, "inject_global_dependencies"), 0);
 		add_action('wp_footer', array($this, "inject_upfront_dependencies"), 99);
 		add_action('upfront-core-wp_dependencies', array($this, "inject_core_wp_dependencies"), 99);
 
 		add_action('admin_bar_menu', array($this, 'add_edit_menu'), 85);
 
-		if (is_admin()) { // This prevents "Edit layout" being shown on frontend
+		if (is_admin()) {
 			require_once(dirname(__FILE__) . '/library/servers/class_upfront_admin.php');
 			if (class_exists('Upfront_Server_Admin')) Upfront_Server_Admin::serve();
 		}
@@ -139,7 +140,10 @@ class Upfront {
 		if (!empty($nodes) && is_array($nodes)) {
 			foreach ($nodes as $node) {
 				if (!empty($node->href) && preg_match('/customize\.php/', $node->href)) {
-					$node->href = home_url('?editmode=true');
+					$node->href = !empty($node->id) && 'customize-themes' === $node->id // WordPress doubles down on customizer endpoint for themes list too...
+						? admin_url('themes.php') // ... not gonna happen
+						: home_url('?editmode=true')
+					;
 				}
 				$wp_admin_bar->add_node($node);
 			}
@@ -159,7 +163,7 @@ class Upfront {
 	public function inject_core_wp_dependencies () {
 		$deps = Upfront_CoreDependencies_Registry::get_instance();
 
-		if (Upfront_OutputBehavior::has_experiments()) {
+		if (Upfront_Behavior::compression()->has_experiments()) {
 			if (defined('DOING_AJAX') && DOING_AJAX) {
 				$deps->add_wp_script('jquery-ui-core');
 				$deps->add_wp_script('jquery-ui-widget');
@@ -232,7 +236,11 @@ class Upfront {
 
 	function inject_upfront_dependencies () {
 		
-		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) return false; // Do not inject for users that can't use this
+		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
+			do_action('upfront-core-inject_dependencies'); // Also trigger the dependencies injection hook
+			return false; // Do not inject for users that can't use this
+		}
+		
 		$url = self::get_root_url();
 		//Boot Edit Mode if the querystring contains the editmode param
 		if (isset($_GET['editmode']))
@@ -242,7 +250,7 @@ class Upfront {
 		$save_storage_key = $storage_key;
 		$is_ssl = is_ssl() ? '&ssl=1' : '';
 
-		if (isset($_GET['dev']) && current_user_can('switch_themes') && apply_filters('upfront-enable-dev-saving', true)) {
+		if (Upfront_Behavior::debug()->is_dev() && current_user_can('switch_themes') && apply_filters('upfront-enable-dev-saving', true)) {
 			$save_storage_key .= '_dev';
 		}
 
@@ -264,11 +272,12 @@ class Upfront {
 			var _upfront_storage_key = "' . $storage_key . '";
 			var _upfront_save_storage_key = "' . $save_storage_key . '";
 			var _upfront_stylesheet = "' . get_stylesheet() . '";
-			var _upfront_debug_mode = ' . (int)isset($_GET['debug']) . ';
+			var _upfront_debug_mode = ' . (int)Upfront_Behavior::debug()->is_debug() . ';
 			var _upfront_please_hold_on = ' . json_encode(__('Please, hold on for just a little bit more', 'upfront')) . ';
 		</script>';
 		echo <<<EOAdditivemarkup
 	<div id="sidebar-ui" class="upfront-ui"></div>
+	<div id="settings" style="display:none"></div>
 	<div id="contextmenu" style="display:none"></div>
 EOAdditivemarkup;
 

@@ -9,6 +9,17 @@ class Upfront_UwidgetView extends Upfront_Object {
 		$widget_name = $this->_get_property('widget');
 		$widget = new Upfront_Uwidget($widget_name);
 		$fields = $widget->get_widget_admin_fields();
+
+		// Treat the legacy widget setup
+		if (empty($fields) && !(defined('DOING_AJAX') && DOING_AJAX)) {
+			$fields_tmp = $this->_get_property('widget_specific_fields');
+			if (!empty($fields_tmp)) foreach ($fields_tmp as $field) {
+				if (empty($field['name'])) continue;
+				$fields[] = array('name' => $field['name']);
+			}
+		}
+		// We should be good here now
+
 		$instance = array();
 
 		foreach($fields as $field) {

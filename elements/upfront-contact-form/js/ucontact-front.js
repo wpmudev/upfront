@@ -62,6 +62,7 @@ jQuery(function($){
 			email = $this.find('input[name=senderemail]'),
 			subject = $this.find('input[name=subject]'),
 			message = $this.find('textarea[name=sendermessage]'),
+			realPerson = $this.find('input[name="realPerson"]'),
 			errors = []
 		;
 
@@ -92,8 +93,8 @@ jQuery(function($){
 					ucontact: $this.find('input[name=ucontact]').val(),
 					contactformid: $this.find('input[name=contactformid]').val(),
 					entity_ids: $this.find('input[name=entity_ids]').val(),
-					realPerson: $this.find('input.is-realperson') ? $this.find('input.is-realperson').val() : '',
-					realPersonHash: $this.find('input.realperson-hash') ? $this.find('input.realperson-hash').val() : ''
+					realPerson: realPerson.length ? realPerson.val() : '',
+					realPersonHash: realPerson.length ? realPerson.realperson('getHash') : ''
 				},
 				success: function(data){
 					var msg = (data.data && "message" in data.data ? data.data.message : ''),
@@ -114,8 +115,14 @@ jQuery(function($){
 
 						name.val('');
 						email.val('');
-						subject.val('');
+						if (subject.length)	{subject.val('');}
 						message.val('');
+
+						if (realPerson.length) {
+							realPerson.val('');
+							realPerson.realperson('destroy');
+							realPerson.realperson();
+						}
 					}
 				},
 				error: function(error){

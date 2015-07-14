@@ -177,7 +177,7 @@ function upfront_ajax_url ($action, $args = '') {
 	$args = wp_parse_args($args);
 	$args['action'] = $action;
 	$args['layout'] = Upfront_EntityResolver::get_entity_ids();
-	if ( current_user_can('switch_themes') && !empty($_GET['dev']) )
+	if ( current_user_can('switch_themes') && Upfront_Behavior::debug()->is_dev() )
 		$args['load_dev'] = 1;
 	return admin_url( 'admin-ajax.php?' . http_build_query($args) );
 }
@@ -231,7 +231,7 @@ function upfront_add_element_style ($slug, $path_info) {
 
 	if (current_theme_supports($slug)) return true; // Current theme supports this style
 
-	if (empty($_GET['dev']) && empty($_GET['debug'])) { // Yeah, so re-intorduce the hacks
+	if (!Upfront_Behavior::debug()->is_dev() && !Upfront_Behavior::debug()->is_debug()) { // Yeah, so re-intorduce the hacks
 		$hub = Upfront_PublicStylesheets_Registry::get_instance();
 		return $hub->set($slug, $path_info);
 	} else {
@@ -256,7 +256,7 @@ function upfront_add_element_script ($slug, $path_info) {
 		current_theme_supports("{$slug}-script")
 	) return true; // Current theme supports element scripts, and this script in particular
 
-	if (empty($_GET['dev']) && empty($_GET['debug'])) { // Yeah, so re-intorduce the hacks
+	if (!Upfront_Behavior::debug()->is_dev() && !Upfront_Behavior::debug()->is_debug()) { // Yeah, so re-intorduce the hacks
 		$hub = Upfront_PublicScripts_Registry::get_instance();
 		return $hub->set($slug, $path_info);
 	} else {
@@ -328,33 +328,24 @@ function upfront_realperson_hash($value) {
 	$hash = 5381; 
 	$value = strtoupper($value); 
 	for($i = 0; $i < strlen($value); $i++) { 
-		$hash = (($hash << 5) + $hash) + ord(substr($value, $i)); 
+		$hash = (PHP_INT_SIZE === 8) ? (upfront_left_shift32($hash, 5) + $hash) + ord(substr($value, $i)) : (($hash << 5) + $hash) + ord(substr($value, $i)); 
 	} 
 	return $hash; 
 }
-
-// function upfront_realperson_hash($value) { 
-// 	$hash = 5381; 
-// 	$value = strtoupper($value); 
-// 	for($i = 0; $i < strlen($value); $i++) { 
-// 		$hash = (upfront_left_shift32($hash, 5) + $hash) + ord(substr($value, $i)); 
-// 	} 
-// 	return $hash; 
-// } 
  
-// // Perform a 32bit left shift 
-// function upfront_left_shift32($number, $steps) { 
-// 	// convert to binary (string) 
-// 	$binary = decbin($number); 
-// 	// left-pad with 0's if necessary 
-// 	$binary = str_pad($binary, 32, "0", STR_PAD_LEFT); 
-// 	// left shift manually 
-// 	$binary = $binary.str_repeat("0", $steps); 
-// 	// get the last 32 bits 
-// 	$binary = substr($binary, strlen($binary) - 32); 
-// 	// if it's a positive number return it 
-// 	// otherwise return the 2's complement 
-// 	return ($binary{0} == "0" ? bindec($binary) : 
-// 		-(pow(2, 31) - bindec(substr($binary, 1)))); 
-// } 
+// Perform a 32bit left shift 
+function upfront_left_shift32($number, $steps) { 
+	// convert to binary (string) 
+	$binary = decbin($number); 
+	// left-pad with 0's if necessary 
+	$binary = str_pad($binary, 32, "0", STR_PAD_LEFT); 
+	// left shift manually 
+	$binary = $binary.str_repeat("0", $steps); 
+	// get the last 32 bits 
+	$binary = substr($binary, strlen($binary) - 32); 
+	// if it's a positive number return it 
+	// otherwise return the 2's complement 
+	return ($binary{0} == "0" ? bindec($binary) : 
+		-(pow(2, 31) - bindec(substr($binary, 1)))); 
+} 
 

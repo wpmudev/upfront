@@ -24,7 +24,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 		$parts = array_values(apply_filters('upfront_post_parts', self::$PARTNAMES));
 	}
 
-	public static function get_post_part($type, $options = array(), $tpl = false){
+	public static function get_post_part($type, $options = array(), $tpl = false, $properties = array()){
 		$options = is_array($options) ? $options : array();
 		global $post;
 		$parts = array_values(apply_filters('upfront_post_parts', self::$PARTNAMES));
@@ -37,6 +37,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 		$part = array('replacements' => array());
 		$replacements = array();
 		$tpls = array();
+		$classes = array();
 
 		if(!sizeof(self::$partTemplates))
 			self::$partTemplates = self::get_templates();
@@ -110,7 +111,18 @@ class Upfront_ThisPostView extends Upfront_Object {
                 break;
 
 			case self::$PARTNAMES['IMAGE']:
-				$replacements['%image%'] = upfront_get_edited_post_thumbnail();
+				if ( isset($properties['hide_featured_image']) && $properties['hide_featured_image'] == 1 ){
+					$classes[] = 'hide-featured_image';
+					$tpl = ''; // empty $tpl so it doesn't output anything
+				}
+				if ( isset($properties['full_featured_image']) && $properties['full_featured_image'] == 1 ){
+					$classes[] = 'full-featured_image';
+					$replacements['%image%'] = get_the_post_thumbnail(null, 'full');
+				}
+				else {
+					$replacements['%image%'] = upfront_get_edited_post_thumbnail();
+				}
+				if (empty($replacements['%image%'])) $classes[] = 'no-featured_image';
 				$replacements['%permalink%'] = get_permalink();
 				break;
 
@@ -148,7 +160,8 @@ class Upfront_ThisPostView extends Upfront_Object {
 		$replacements = apply_filters('upfront_post_part_replacements', $replacements, $type, $options, $tpl);
 		$out = array(
 			'replacements' => $replacements,
-			'tpl' => self::replace($tpl, $replacements)
+			'tpl' => self::replace($tpl, $replacements),
+			'classes' => $classes
 		);
 
 		// Cleanup unused meta
@@ -342,13 +355,20 @@ class Upfront_ThisPostView extends Upfront_Object {
 				$opts = !empty($options[$o['slug']]) ? $options[$o['slug']] : array(); // This is for the layout
 				$opts['excerpt'] = $excerpt;
 				$tpl = !empty($templates[$o['slug']]) ? $templates[$o['slug']] : false;
-				$markups = self::get_post_part($o['slug'], $opts, $tpl);
+				$markups = self::get_post_part($o['slug'], $opts, $tpl, $properties);
 
 				$layout['wrappers'][$i]['objects'][$k]['markup'] = !empty($markups['tpl']) ? $markups['tpl'] : false;
 				$layout['extraClasses'][$o['slug']] = isset($opts['extraClasses']) ? $opts['extraClasses'] : '';
 
 			    $part_style_class = self::_part_style_class( $options,  $o["slug"] );
 			  	$layout['extraClasses'][$o['slug']] .= $part_style_class;
+
+				if (empty($markups['classes'])) $markups['classes'] = array();
+				$layout['extraClasses'][$o['slug']] .= ' ' . join(' ', $markups['classes']);
+				
+				if (empty($layout['wrappers'][$i]['classes'])) $layout['wrappers'][$i]['classes'] = '';
+				$layout['wrappers'][$i]['classes'] .= ' ' . join(' ', $markups['classes']);
+				
 				$attributes = '';
 				if(isset($opts['attributes'])){
 					foreach($opts['attributes'] as $key => $value)
@@ -373,10 +393,18 @@ class Upfront_ThisPostView extends Upfront_Object {
 			$found = get_option($cascade[$i]);
 			$i++;
 		}
-		if(!$found)
-			$found = self::get_theme_layout($type, $post_type, $id);
-		if(!$found)
-			$found = self::default_postlayout($type);
+		if(!$found) $found = self::get_theme_layout($type, $post_type, $id);
+		if(!$found) $found = self::default_postlayout($type);
+
+		if ($found && !empty($found['postLayout'])) {
+			foreach ($found['postLayout'] as $idx => $wrapper) {
+				$obj = !empty($wrapper['objects']) ? end($wrapper['objects']) : false;
+				if ($obj && !empty($obj['slug'])) {
+					if (empty($wrapper['classes'])) $wrapper['classes'] = '';
+					$found['postLayout'][$idx]['classes'] = $wrapper['classes'] . ' part-' . $obj['slug'];
+				}
+			}
+		}
 
 		return $found;
 	}
@@ -626,6 +654,9 @@ class Upfront_ThisPostView extends Upfront_Object {
 			'show_post_data' => __('Show the following Post Data:', 'upfront'),
 			'post_data' => __('Post Data', 'upfront'),
 			'post_settings' => __('Post settings', 'upfront'),
+			'featured_image_option' => __('Featured Image Option', 'upfront'),
+			'hide_featured_image' => __('Hide Featured Image ', 'upfront'),
+			'full_featured_image' => __('Show Full-Size featured image', 'upfront'),
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)
@@ -700,7 +731,7 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 		$this->_out(new Upfront_JsonResponse_Success($output));
 	}
 
-	protected function generate_part_contents($post_id, $options, $templates, $parts = false){
+	protected function generate_part_contents($post_id, $options, $templates, $parts = false, $properties = array()){
 		//Prepare the parts before rendering
 		if(!$parts){
 			$parts = array();
@@ -716,15 +747,17 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 
 		$tpls = array();
 		$replacements = array();
+		$classes = array();
 
 		$post_data = Upfront_ThisPostView::prepare_post($post);
 
 		foreach($parts as $part){
 			$slug = $part['slug'];
 			$part_options = !empty($part['options']) ? $part['options'] : array(); // This is for editor
-			$contents = Upfront_ThisPostView::get_post_part($slug, $part_options, isset($templates[$slug]) ? $templates[$slug] : '');
+			$contents = Upfront_ThisPostView::get_post_part($slug, $part_options, isset($templates[$slug]) ? $templates[$slug] : '', $properties);
 
 			$tpls[$slug] = $contents['tpl'];
+			$classes[$slug] = $contents['classes'];
 			$replacements = array_merge($replacements, $contents['replacements']);
 			if($slug == 'contents'){
 				$replacements['%raw_content%'] = wpautop($post->post_content);
@@ -733,7 +766,8 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 		}
 		$output = array(
 			'tpls' => $tpls,
-			'replacements' => $replacements
+			'replacements' => $replacements,
+			'classes' => $classes
 		);
 
 		return $output;
@@ -859,6 +893,7 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 		$type = isset($_POST['type']) ? $_POST['type'] : false;
 		$id = isset($_POST['id']) ? $_POST['id'] : false;
 		$post_id = isset($_POST['post_id']) ? $_POST['post_id'] : false;
+		$properties = isset($_POST['properties']) ? $_POST['properties'] : false;
 
 		if(!$post_type || !$type || !$id || !$post_id)
 			$this->_out(new Upfront_JsonResponse_Error('No post_type, type or id sent.'));
@@ -870,7 +905,7 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 		$layout_data = Upfront_ThisPostView::find_postlayout($type, $post_type, $id);
 
 		$layout_data['partTemplates'] = stripslashes_deep(Upfront_ThisPostView::find_partTemplates($type, $post_type, $id));
-		$layout_data['partContents'] = $this->generate_part_contents($post_id, $layout_data['partOptions'], $layout_data['partTemplates']);
+		$layout_data['partContents'] = $this->generate_part_contents($post_id, $layout_data['partOptions'], $layout_data['partTemplates'], false, $properties);
 		$this->_out(new Upfront_JsonResponse_Success($layout_data));
 	}
 

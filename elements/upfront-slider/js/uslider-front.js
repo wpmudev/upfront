@@ -35,19 +35,19 @@ jQuery(function($){
 });
 
 jQuery(function($){
-  $('[id^="uslider-"]').each( function() {
-    var slider = $(this),
-      options = slider.find('.uslider').data();
+	$('[id^="uslider-"]').each( function() {
+		var slider = $(this),
+			options = slider.find('.uslider').data();
 
-    slider.find('.uslides').upfront_default_slider(options);
+		slider.find('.uslides').upfront_default_slider(options);
 
-    slider.find('.uslide-above').each(function(){
-      var slide = $(this);
-      slide.find('.uslide-caption').remove().prependTo(slide);
-    });
-    slider.find('.uslide-left').each(function(){
-      var slide = $(this);
-      slide.find('.uslide-caption').remove().prependTo(slide);
-    });
-  });
+		slider.find('.uslide-above').each(function(){
+			var slide = $(this);
+			slide.find('.uslide-caption').remove().prependTo(slide);
+		});
+		slider.find('.uslide-left').each(function(){
+			var slide = $(this);
+			slide.find('.uslide-caption').remove().prependTo(slide);
+		});
+	});
 });

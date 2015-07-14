@@ -2,6 +2,15 @@
     background: #ccc;
 }
 
+.uyoutube-single {
+	min-height: inherit;
+}
+
+.uyoutube-single iframe {
+	width: 100% !important;
+	min-height: inherit;
+}
+
 .uyoutube-main-video {
     margin-bottom: 10px;
 }
@@ -9,6 +18,10 @@
 .uyoutube-main-video iframe {
     background: black;
     border: 0 none;
+}
+
+.upfront-output-uyoutube {
+	min-height: inherit;
 }
 
 .uyoutube-gallery-item {
@@ -181,12 +194,13 @@
 
 input.upfront-youtube-url {
 	font-size: 1em;
-	padding: 10px 0;
+	padding: 10px 0 !important;
 	outline: none;
 	width: 100%;
 	display: block;
 	background-color:transparent;
 	font-size: 14px;
+	height: 38px !important;
 }
 
 input.upfront-youtube-url::-webkit-input-placeholder {

@@ -14,6 +14,11 @@
 	width: 100%;
 }
 
+.upfront-region-container-has-posts .upfront-region,
+.upfront-region-container-has-this_post .upfront-region {
+  min-height: 0 !important;
+}
+
 .upfront-region-current {
 	z-index: 10;
 }
@@ -291,7 +296,7 @@
 	right: 0;
 	width: auto;
 	height: auto;
-	z-index: 999999;
+	z-index: 9997;
 	cursor: s-resize;
 	display: block;
 	visibility: hidden;
@@ -324,7 +329,7 @@
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region > .upfront-region-resize-handle-s,
 .upfront-region-fixed-editing .upfront-region-side-fixed .upfront-region-resize-handle {
 	visibility: visible;
-	z-index: 9998;
+	z-index: 9997;
 }
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active > .upfront-region-resize-handle,
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region-side-left > .upfront-region-resize-handle-e,
@@ -368,6 +373,12 @@
 }
 .upfront-region-editing .upfront-region-container-active .upfront-region-sub-container-active {
     z-index: 9999;
+}
+.upfront-region-editing-modal {
+	z-index: 999999999;
+}
+.upfront-region-editing-modal .upfront-entity_meta{
+	display: none !important;
 }
 .upfront-region-editing .upfront-region-container-active .upfront-region-active-overlay,
 .upfront-region-editing .upfront-region-active .upfront-region-active-overlay,

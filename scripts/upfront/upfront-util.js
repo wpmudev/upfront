@@ -25,9 +25,11 @@ define(function() {
 		if(url.length && url[0] == '#') {
 			return url.indexOf('#ltb-') > -1 ? 'lightbox' : 'anchor';
 		}
-
-		if(url.substring(0, location.origin.length) == location.origin) {
-			return 'entry';
+		
+		if(typeof window.location.origin !== "undefined") {
+			if(url.substring(0, window.location.origin.length) == window.location.origin) {
+				return 'entry';
+			}
 		}
 
 		if (url.match(/^mailto/)) {
@@ -837,7 +839,7 @@ define(function() {
 			}
 
 			Upfront.Events.trigger('popup:closed');
-
+			
 			this._deferred.resolve(this.$popup, result);
 		}
 
@@ -850,7 +852,7 @@ define(function() {
 			_is_dirty = false,
 			_preview_url = false,
 			run = function (layout) {
-				if (!!Upfront.Settings.Application.ALLOW_REVISIONS) { // Only rebind stuff when revisions listening is enabled.
+				if (!!Upfront.Settings.Application.PERMS.REVISIONS) { // Only rebind stuff when revisions listening is enabled.
 					if (Upfront.Application.mode.current === Upfront.Application.MODE.THEME) {
 						// Exporter mode
 						rebind_exporter_events();

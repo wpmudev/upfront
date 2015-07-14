@@ -35,7 +35,7 @@ require(['backbone'], function (Backbone) {
 				"MODE": Upfront.mainData.applicationModes,
 				"NO_SAVE": Upfront.mainData.readOnly,
 				"DEBUG": false,
-				"ALLOW_REVISIONS": Upfront.mainData.ALLOW_REVISIONS
+				"PERMS": Upfront.mainData.PERMS
 			},
 			"LayoutEditor": {
 				"Requirements": Upfront.mainData.layoutEditorRequirements,

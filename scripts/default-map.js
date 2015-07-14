@@ -49,17 +49,25 @@
 		});
 	}
 
-	$(document).on('upfront-google_maps-loaded', upfront_bg_map_init);
+	function init () {
+		if (!("Upfront" in window || $("[data-bg-map]").length)) {
+			// No Upfront object, no region maps - nothing to do
+			return false;
+		}
 
-	var lazyUpfrontBgMapInit = throttle(upfront_bg_map_init, 100);
+		$(document).on('upfront-google_maps-loaded', upfront_bg_map_init);
+		var lazyUpfrontBgMapInit = throttle(upfront_bg_map_init, 100);
 
-	if (!window.upfront_maps_loaded) {
-		window.upfront_maps_loaded = window.upfront_maps_loaded || function () {
-			$(document).trigger("upfront-google_maps-loaded");
-			$(document).data("upfront-google_maps-loading", false);
-			$(window).on('resize', lazyUpfrontBgMapInit);
-		};
-		$(load_google_maps);
+		if (!window.upfront_maps_loaded) {
+			window.upfront_maps_loaded = window.upfront_maps_loaded || function () {
+				$(document).trigger("upfront-google_maps-loaded");
+				$(document).data("upfront-google_maps-loading", false);
+				$(window).on('resize', lazyUpfrontBgMapInit);
+			};
+			load_google_maps();
+		}
 	}
+
+	$(init);
 
 })(jQuery);

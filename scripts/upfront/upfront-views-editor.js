@@ -289,7 +289,7 @@ define([
 		},
 		render: function () {
 			Upfront.Events.trigger("command:newpost:start", true);
-			this.$el.addClass('upfront-icon upfront-icon-post');
+			// this.$el.addClass('upfront-icon upfront-icon-post');
 			this.$el.html(l10n.new_post);
             this.$el.prop("title", l10n.new_post);
 		},
@@ -340,7 +340,7 @@ define([
 		},
 		render: function () {
 			Upfront.Events.trigger("command:newpage:start", true);
-			this.$el.addClass('upfront-icon upfront-icon-page');
+			// this.$el.addClass('upfront-icon upfront-icon-page');
 			this.$el.html(this._default_label);
             this.$el.prop("title", this._default_label);
 		},
@@ -454,7 +454,7 @@ define([
 	var Command_SaveLayout = Command.extend({
 		"className": "command-save",
 		render: function () {
-			this.$el.addClass('upfront-icon upfront-icon-save');
+			// this.$el.addClass('upfront-icon upfront-icon-save');
 			this.$el.html(l10n.save);
             this.$el.prop("title", l10n.save);
 		},
@@ -1933,7 +1933,7 @@ define([
 					if (!font_family) return true; // Missing typeface family, pretend we're normal
 					// If so, let's do this - load up the font
 					url = '//fonts.googleapis.com/css?family=' + font_family.get('family').replace(/ /g, '+');
-					if (400 != weight || 'inherit' !== weight) url += ':' + weight; // If not default weight, DO include the info
+					if (400 !== parseInt("" + weight, 10) && 'inherit' !== weight) url += ':' + weight; // If not default weight, DO include the info
 					$("head").append('<link href="' + url + '" rel="stylesheet" type="text/css" />');
 				}
 
@@ -1965,7 +1965,7 @@ define([
 				} else if ('a' === element) {
 					selector = '.upfront-object-content a, .upfront-object-content a:link, .upfront-object-content a:visited';
 				} else {
-					selector = '.upfront-object-content ' + element;
+					selector = '.upfront-object-content ' + element  + ', .upfront-ui ' + element + '.tag-list-tag';
 				}
 				css.push(selector + '{ ' + rules.join("; ") + '; }');
 
@@ -1993,6 +1993,7 @@ define([
 			// next wider breakpoint to show what gets applied to current breakpoint.
 			if (!updateSilently) {
 				this.model.set_property('typography', options);
+				this.typography = options;
 			}
 			if (_.contains(['tablet', 'mobile'], this.model.get('id'))) {
 				var styleId = this.model.get('id') + '-breakpoint-style';
@@ -2022,7 +2023,9 @@ define([
 				$style = $("style#typography-colors");
 			}
 			_.each(this.elements, function (element) {
-				if (me.colors[element]) css.push('.upfront-object-content ' + element + '{ color:' + Upfront.Util.colors.to_color_value(me.colors[element]) + '; }');
+				if (me.colors[element]) {
+                    css.push('.upfront-object-content ' + element + '{ color:' + Upfront.Util.colors.to_color_value(me.colors[element]) + '; }');
+                }
 			});
 			$style.empty().append(css.join("\n"));
 		}
@@ -2242,7 +2245,16 @@ define([
                 default_value: '#ffffff',
                 spectrum: {
                     choose: function (color) {
-                        self.add_new_color( color );
+                    	if (!_.isObject(color)) return false;
+                    	var value = empty_picker.get_value();
+                        if (value && "undefined" !== typeof tinycolor) {
+                        	color = tinycolor(value);
+                        }
+                        self.add_new_color(color);
+                    },
+                    change: function (color) {
+                    	if (!_.isObject(color)) return false;
+						empty_picker.update_input_val(color.toHexString())
                     }
                 }
             });
@@ -2260,8 +2272,10 @@ define([
                         hide_label : true,
                         default_value: color,
                         spectrum: {
-                            move : function(color){
+                        	change: function (color) {
                                 self.update_colors(this, color, index);
+                        	},
+                            move: function (color) {
 	                            picker.$(".sp-preview").css({
                                     backgroundColor : color.toRgbString(),
                                     backgroundImage : "none"
@@ -2553,7 +2567,7 @@ define([
 			}
 			if (!Upfront.Settings.Application.NO_SAVE && current_app !== MODE.THEME) {
 				this.commands.push(new Command_SaveLayout({"model": this.model}));
-			} else if (current_app !== MODE.THEME && Upfront.Settings.Application.ALLOW_REVISIONS) {
+			} else if (current_app !== MODE.THEME && Upfront.Settings.Application.PERMS.REVISIONS) {
 				this.commands.push(new Command_PreviewLayout({"model": this.model}));
 			}
 			if (MODE.ALLOW.match(MODE.RESPONSIVE) && current_app !== MODE.THEME) {
@@ -2665,7 +2679,7 @@ define([
 				roles = user.get('roles') || [],
 				tpl
 			;
-			tpl = '<div class="sidebar-profile-avatar"><img src="http://www.gravatar.com/avatar/{{ gravatar ? gravatar : "gravatar" }}?s=26" /></div>' +
+			tpl = '<div class="sidebar-profile-avatar"><img src="http://www.gravatar.com/avatar/{{ gravatar ? gravatar : "gravatar" }}?s=25" /></div>' +
 				'<div class="sidebar-profile-detail"><span class="sidebar-profile-name">{{name}}</span><span class="sidebar-profile-role">{{role}}</span></div>' +
 				(roles.length ? '<div class="sidebar-profile-edit"><a class="upfront-icon upfront-icon-edit" data-bypass="true" title="'+  l10n.edit_profile +'" href="{{edit_url}}">' + l10n.edit_profile + '</a></div>' : '');
 			this.$el.html(_.template(tpl,
@@ -3028,8 +3042,10 @@ define([
 
 			//Already loaded?
 			if(me.views[panel]){
-				if(panel != 'comments' || (Upfront.data.currentPost && Upfront.data.currentPost.id && me.views[panel].view.collection.postId == Upfront.data.currentPost.id))
-			 		return this.render_panel(me.views[panel]);
+				if(panel != 'pages' && panel != 'posts') {
+					if(panel != 'comments' || (Upfront.data.currentPost && Upfront.data.currentPost.id && me.views[panel].view.collection.postId == Upfront.data.currentPost.id))
+						return this.render_panel(me.views[panel]);
+				}
 			}
 
 			if(panel == 'posts'){
@@ -3053,6 +3069,19 @@ define([
 			collection.fetch(fetchOptions).done(function(response){
 				switch(panel){
 					case "posts":
+						//Check if we have rendered the panel once
+						var cachedElements = null;
+						if(typeof me.views[panel] !== "undefined") {
+							cachedElements = me.views[panel].view.collection.pagination.totalElements;
+						}
+						//Check collection total elements
+						var collectionElements = collection.pagination.totalElements;
+						
+						//Compare total items, if same return cached panel
+						if(cachedElements == collectionElements) {
+							return me.render_panel(me.views[panel]);
+						}
+						
 						collection.on('reset sort', me.render_panel, me);
 						views = {
 							view: new ContentEditorPosts({collection: collection, $popup: me.$popup}),
@@ -3062,6 +3091,19 @@ define([
 						me.views.posts = views;
 						break;
 					case "pages":
+						//Check if we have rendered the panel once
+						var cachedElements = null;
+						if(typeof me.views[panel] !== "undefined") {
+							cachedElements = me.views[panel].view.collection.pagination.totalElements;
+						}
+						//Check collection total elements
+						var collectionElements = collection.pagination.totalElements;
+						
+						//Compare total items, if same return cached panel
+						if(cachedElements == collectionElements) {
+							return me.render_panel(me.views[panel]);
+						}
+						
 						collection.on('reset sort', me.render_panel, me);
 						views = {
 							view: new ContentEditorPages({collection: collection, $popup: me.$popup}),
@@ -4240,8 +4282,6 @@ var Field_ToggleableText = Field_Text.extend({
 				if(me.options.spectrum && me.options.spectrum.beforeShow) me.options.spectrum.beforeShow(color);
 
 				me.$(".sp-container").data("sp-options", me.options.spectrum );
-
-
 			};
 
 			if( !spectrumOptions.autoHide  ){
@@ -4252,12 +4292,26 @@ var Field_ToggleableText = Field_Text.extend({
 				};
 			}
 
+			var l10n_update = _.debounce(function () {
+				// Let's fix the strings
+				$(".sp-container").each(function () {
+					$(this)
+						.find(".sp-input-container").attr("data-label", l10n.current_color).end()
+						.find(".sp-palette-container").attr("data-label", l10n.theme_colors).end()
+						.find(".sp-palette-row:last").attr("data-label", l10n.recent_colors)
+					;
+				})
+			});
+
 
 			Field_Color.__super__.initialize.apply(this, arguments);
 
 			this.on('rendered', function(){
 				me.$('input[name=' + me.get_field_name() + ']').spectrum(spectrumOptions);
 				me.$spectrum = me.$('input[name=' + me.get_field_name() + ']');
+
+				// Listen to spectrum events and fire off l10n labels update
+				me.$spectrum.on("reflow.spectrum move.spectrum change", l10n_update);
 
 				me.$(".sp-container").append("<div class='color_picker_rgb_container'></div>");
 				me.update_input_border_color(me.get_saved_value());
@@ -5241,7 +5295,7 @@ var Field_ToggleableText = Field_Text.extend({
 
 		render: function () {
 			var me = this,
-				$view = me.for_view.$el.find(".upfront-editable_entity"),
+				$view = me.for_view.$el.hasClass('upfront-editable_entity') ? me.for_view.$el : me.for_view.$el.find(".upfront-editable_entity:first"),
 				view_pos = $view.offset(),
 				view_outer_width = $view.outerWidth(),
 				view_pos_right = view_pos.left + view_outer_width,
@@ -6398,7 +6452,8 @@ var CSSEditor = Backbone.View.extend({
 	events: {
 		'click .upfront-css-save-ok': 'save',
 		'click .upfront-css-close': 'close',
-		'click .upfront-css-image': 'openImagePicker',
+		'click .upfront-css-theme_image': 'openThemeImagePicker',
+		'click .upfront-css-media_image': 'openImagePicker',
 		'click .upfront-css-font': 'startInsertFontWidget',
 		'click .upfront-css-selector': 'addSelector',
 		'click .upfront-css-type' : 'scrollToElement',
@@ -6646,6 +6701,7 @@ var CSSEditor = Backbone.View.extend({
 		var me = this,
 			editor = ace.edit(this.$('.upfront-css-ace')[0]),
 			session = editor.getSession(),
+			scrollerDisplayed = false,
 			scope,
 			styles
 		;
@@ -6662,6 +6718,20 @@ var CSSEditor = Backbone.View.extend({
 				me.updateStyles(editor.getValue());
 			},800);
 			me.trigger('change', editor);
+						
+			if(typeof me.editor !== "undefined") {
+				var aceOuterWidth = $(me.editor.container).get(0).scrollWidth;
+				var aceInnerWidth = $(me.editor.container).find('.ace_content').innerWidth();
+				
+				if(aceOuterWidth < aceInnerWidth + 40) {
+					if(!scrollerDisplayed) {
+						me.startResizable();
+					}
+					scrollerDisplayed = true;
+				} else {
+					scrollerDisplayed = false;
+				}
+			}
 		});
 
 		styles = Upfront.Util.colors.convert_string_color_to_ufc(this.get_style_element().html());
@@ -6674,9 +6744,15 @@ var CSSEditor = Backbone.View.extend({
 		// Set up the proper vscroller width to go along with new change.
 		editor.renderer.scrollBar.width = 5;
 		editor.renderer.scroller.style.right = "5px";
-
+		
 		editor.focus();
 		this.editor = editor;
+		
+		if(me.timer) clearTimeout(me.timer);
+		me.timer = setTimeout(function(){
+			me.startResizable();
+		},300);
+		
 	},
 	prepareSpectrum: function(){
 		var me = this,
@@ -6811,7 +6887,7 @@ var CSSEditor = Backbone.View.extend({
 						? '' // This is not a descentent selector - used for containers
 						: ' ' // This is a descentent selector
 				;
-				
+
 				processed_selectors.push('' +
 					selector + spacer + sel +
 				'');
@@ -6837,8 +6913,13 @@ var CSSEditor = Backbone.View.extend({
 		var splitted = clean_selector.split(' ');
 		var me = this;
 		while(splitted.length > 0) {
-			if(!!$(selector + splitted.join(' ')).closest('#' + me.element_id).length)
-				return true;
+			try{
+				if(!!$(selector + splitted.join(' ')).closest('#' + me.element_id).length)
+					return true;
+			}
+			catch (err) {
+				
+			}
 			splitted.pop();
 		}
 
@@ -7087,14 +7168,35 @@ var CSSEditor = Backbone.View.extend({
 		view.remove();
 	},
 
-	openImagePicker: function(){
-		var me = this;
-		Upfront.Media.Manager.open({}).done(function(popup, result){
-			Upfront.Events.trigger('upfront:element:edit:stop');
-			if(!result)
-				return;
+	openThemeImagePicker: function () {
+		this._open_media_popup({themeImages: true});
+	},
 
-			var url = result.models[0].get('image').src;//.replace(document.location.origin, '');
+	openImagePicker: function(){
+		this._open_media_popup();
+	},
+
+	/**
+	 * Handles media popups.
+	 * In this context, used for both theme and media images list.
+	 *
+	 * @param object opts Boot-time options to be passed to Upfront.Media.Manager
+	 */
+	_open_media_popup: function (opts) {
+		opts = _.isObject(opts) ? opts : {};
+		var me = this,
+			options = _.extend({}, opts)
+		;
+
+		Upfront.Media.Manager.open(options).done(function(popup, result){
+			Upfront.Events.trigger('upfront:element:edit:stop');
+			if (!result) return;
+
+			var imageModel = result.models[0],
+				img = imageModel.get('image') ? imageModel.get('image') : result.models[0],
+				url = 'src' in img ? img.src : ('get' in img ? img.get('original_url') : false)
+			;
+
 			me.editor.insert('url("' + url + '")');
 			me.editor.focus();
 		});
@@ -7841,11 +7943,13 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		},
 		render: function () {
 			var me = this;
-			if ( this.options.fixed )
-				this.$el.addClass('upfront-loading-fixed');
+			
 			this.$el.html('<div class="upfront-loading-ani" />');
-			if ( this.options.loading )
-				this.$el.append('<p class="upfront-loading-text">' + this.options.loading + '</p>');
+			
+			if (this.options.fixed) this.$el.addClass('upfront-loading-fixed');
+			if (this.options.loading_type) this.$el.addClass(this.options.loading_type);
+			if (this.options.loading)this.$el.append('<p class="upfront-loading-text">' + this.options.loading + '</p>');
+
 			this.$el.find('.upfront-loading-ani').on('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function(){
 				var state = me.$el.hasClass('upfront-loading-repeat') ? 'repeat' : (me.$el.hasClass('upfront-loading-done') ? 'done' : 'start');
 				if ( state == 'start' ){
@@ -9195,6 +9299,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				me = this,
 				modal = new Modal({ to: this.panel_view.panels_view.$el, button: true, width: 422 }),
 				disable_global = ( ( to == 'left' || to == 'right' ) && me.model.get('scope') == 'global' );
+				var parentContainer = me.$el.parents('.upfront-region-center');
+				parentContainer.addClass('upfront-region-editing-modal');
+				parentContainer.next().find('.upfront-icon-control-region-resize').hide();
 				fields = {
 					from: new Field_Radios({
 						name: 'from',
@@ -9312,6 +9419,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				}
 			})
 			.always(function(modal_view){
+				parentContainer.removeClass('upfront-region-editing-modal');
+				parentContainer.next().find('.upfront-icon-control-region-resize').show();
 				modal_view.remove();
 			});
 
@@ -9525,8 +9634,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				//model.set_property('row', Math.ceil(height/baseline), true);
 				view.$el.removeClass(ani_class);
 				// enable edit and activate the new region
-				Upfront.Events.trigger('command:region:edit_toggle', true);
-				Upfront.Events.trigger('command:region:fixed_edit_toggle', true);
+				Upfront.Events.trigger('command:region:edit_toggle', false);
+				Upfront.Events.trigger('command:region:fixed_edit_toggle', false);
 				view.trigger("activate_region", view);
 			}
 		}

@@ -8,7 +8,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	private $_version = false;
 	private $_required_pages = array();
 	private $_theme_settings;
-	
+
 	protected static $instance;
 
 	public static function get_instance () {
@@ -36,11 +36,10 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 	protected function __construct () {
 		$this->_version = wp_get_theme()->version;
-		
 		$this->set_theme_settings(new Upfront_Theme_Settings(get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'settings.php'));
-		
+
 		self::$instance = $this;
-		
+
 		//add_filter('upfront_create_default_layout', array($this, 'load_page_regions'), 10, 3); // Soooo... this no longer works, yay
 		add_filter('upfront_override_layout_data', array($this, 'load_page_regions'), 10, 2); // This goes in instead of the above ^
 		add_filter('upfront_get_layout_properties', array($this, 'getLayoutProperties'));
@@ -63,6 +62,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		add_action('after_switch_theme', array($this, 'initial_theme_setup'));
 
+        add_filter('upfront_get_editor_font_icons', array($this, 'get_editor_font_icons'), 10, 2);
 		$this->_set_up_required_pages_from_settings();
 
 		$this->checkMenusExist();
@@ -208,7 +208,6 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	}
 
 	public function getThemeStylesAsCss() {
-		//$layout = Upfront_Layout::get_cascade();
 		$layout = Upfront_Layout::get_parsed_cascade(); // Use pure static method instead
 		$layout_id = ( !empty($layout['specificity']) ? $layout['specificity'] : ( !empty($layout['item']) ? $layout['item'] : $layout['type'] ) );
 		$out = '';
@@ -230,13 +229,19 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			}
 		}
 
-		foreach($element_types as $type) {
+		// Also check more general cascade styles - works with single post layouts
+		if (empty($alternate_layout_id) && !empty($layout['specificity']) && !empty($layout['item'])) {
+			$alternate_layout_id = $layout['item'];
+		}
+
+		foreach ($element_types as $type) {
 			$style_files = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), Upfront::$Excluded_Files);
 			foreach ($style_files as $style) {
 				// If region CSS, only load the one saved matched the layout_id
 				$style_rx = '/^(' . preg_quote("{$layout_id}", '/') . '|' . preg_quote("{$type}", '/') . (!empty($alternate_layout_id) ? '|' . preg_quote($alternate_layout_id, '/') : '') . ')/';
-				if ( preg_match('/^region(-container|)$/', $type) && !preg_match($style_rx, $style) )
+				if (preg_match('/^region(-container|)$/', $type) && !preg_match($style_rx, $style)) {
 					continue;
+				}
 				$style_content = file_get_contents($styles_root . DIRECTORY_SEPARATOR . $type . DIRECTORY_SEPARATOR . $style);
 				$style_content = $this->_expand_passive_relative_url($style_content);
 				$out .= $style_content;
@@ -282,6 +287,32 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 				"	font-family: '" . $font['family'] . "'!important;" .
 				"}";
 			$out .= $this->_expand_passive_relative_url($icon_font_style) . "\n";
+		} else {
+			// Load UpfOnt as default
+			$out .= "/* icomoon fonts */
+				@font-face {
+					font-family: 'icomoon';
+					src: url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.eot?-7vfzzg');
+					src: url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.eot?#iefix-7vfzzg') format('embedded-opentype'),
+					url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.woff?-7vfzzg') format('woff'),
+					url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.ttf?-7vfzzg') format('truetype'),
+					url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.svg?-7vfzzg#icomoon') format('svg');
+					font-weight: normal;
+					font-style: normal;
+				}
+				.uf_font_icon {
+					font-family: 'icomoon';
+					speak: none;
+					font-style: normal;
+					font-weight: normal;
+					font-variant: normal;
+					text-transform: none;
+					line-height: 1;
+					position: relative;
+					/* Better Font Rendering =========== */
+					-webkit-font-smoothing: antialiased;
+					-moz-osx-font-smoothing: grayscale;
+				}";
 		}
 
 		$this->_theme_styles_called = true;
@@ -292,7 +323,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	private function getActiveIconFont() {
 		$fonts = json_decode($this->get_theme_settings()->get('icon_fonts'), true);
 		$active_font = false;
-        if(empty($fonts)) return false;
+		if(empty($fonts)) return false;
 		foreach($fonts as $font) {
 			if ($font['active'] === true) {
 				$active_font = $font;
@@ -409,6 +440,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		if (!empty($properties)) {
 			$properties = json_decode($properties, true);
 		}
+
 		return !empty($properties)
 			? $properties
 			: array()
@@ -476,6 +508,16 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			);
 		}
 
+		// Take one more pass through properties and try to expand the base URL macro
+		foreach ($properties as $key => $prop) {
+			if (empty($prop['name']) || empty($prop['value'])) continue;
+			if (!is_scalar($prop['value'])) continue; // Do not work on non-scalars
+			if (false === strstr($prop['value'], self::THEME_BASE_URL_MACRO)) continue; // Quick scan first
+
+			$prop['value'] = $this->_expand_passive_relative_url($prop['value']);
+			$properties[$key] = $prop;
+		}
+
 		return $properties;
 	}
 
@@ -526,13 +568,13 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		return json_decode($theme_colors);
 	}
-	
+
 	public function getThemeColorsStyles($theme_colors_styles) {
 		if (empty($theme_colors_styles) === false) return $theme_colors_styles;
 
 		$theme_colors = json_decode($this->get_theme_settings()->get('theme_colors'), true);
 		$theme_colors_styles = '';
-		
+
 		if (!empty($theme_colors['colors'])) foreach($theme_colors['colors'] as $index => $item) {
 			$theme_colors_styles .= " .upfront_theme_color_" . $index ."{ color: " . $item["color"] . ";}";
             $theme_colors_styles .= " a .upfront_theme_color_" . $index .":hover{ color: " . $item["color"] . ";}";
@@ -541,7 +583,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
             $theme_colors_styles .= " a .upfront_theme_bg_color_" . $index .":hover{ background-color: " . $item["color"] . ";}";
             $theme_colors_styles .= " button .upfront_theme_bg_color_" . $index .":hover{ background-color: " . $item["color"] . ";}";
 		}
-		
+
 		return $theme_colors_styles;
 	}
 
@@ -860,5 +902,23 @@ VRT;
         update_option($key, $images);
 
         return $attach_id;
+    }
+
+    /**
+     * Returns theme font icons if specified
+     *
+     * @param $font_icons default font icons
+     * @param $args
+     * @return array|mixed
+     */
+    function get_editor_font_icons($font_icons, $args){
+
+        $theme_font_icons = $this->get_theme_settings()->get('font_icons');
+
+        $theme_font_icons =  empty( $theme_font_icons ) ? $font_icons : $theme_font_icons;
+
+        if( $args['json'] ) return $theme_font_icons;
+
+        return is_array( $theme_font_icons ) ? $theme_font_icons : json_decode( $theme_font_icons );
     }
 }

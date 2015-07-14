@@ -91,22 +91,29 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 		this.$el.find('.upfront-youtube-button').on('click', function(e) {
 			me.property('youtube_status', 'ok');
 			
-			//Add first video
-			me.property('multiple_source_1', $(this).parents().find('input.upfront-youtube-url').val());
+			var videoInput = $(this).parents().find('input.upfront-youtube-url').val();
+			
+			//Check if Video Input field is empty
+			if(videoInput == "") {
+				Upfront.Views.Editor.notify(l10n.validMessage);
+			} else {
+				//Add first video
+				me.property('multiple_source_1', videoInput);
 
-			Upfront.Events.trigger("entity:settings:activate", me);
+				Upfront.Events.trigger("entity:settings:activate", me);
 
-			//Call resize function to match player width with object width
-			me.onResizeStop();
+				//Call resize function to match player width with object width
+				me.onResizeStop();
 
-			//Delay events else values are empty
-			setTimeout(function(){
-				me.$(".upfront-entity-settings_trigger").click();
-				
-				//Trigger event for adding videos to array
-				Upfront.Events.trigger("upfront:youtube:added");
-				
-			}, 50);
+				//Delay events else values are empty
+				setTimeout(function(){
+					me.$(".upfront-entity-settings_trigger").click();
+					
+					//Trigger event for adding videos to array
+					Upfront.Events.trigger("upfront:youtube:added");
+					
+				}, 50);
+			}
 			
 		});
 		
@@ -208,9 +215,19 @@ var YoutubeSettings = Upfront.Views.Editor.Settings.Settings.extend({
 			var videoId;
 			if(videoUrl) {
 				if (videoUrl.match(/youtu\.be/)) {
-					videoId = videoUrl.match(/^(https?:\/\/)?youtu.be\/([0-9a-zA-Z\-_]{11})/)[2];
+					var videoMatch = videoUrl.match(/^(https?:\/\/)?youtu.be\/([0-9a-zA-Z\-_]{11})/);
+					if(videoMatch !== null && videoMatch.length > 0) {
+						videoId = videoMatch[2];
+					} else {
+						Upfront.Views.Editor.notify(l10n.validMessage);
+					}
 				} else {
-					videoId = videoUrl.match(/^(https?:\/\/(www\.)?)?youtube\.com\/watch\?v=([0-9a-zA-Z\-_]{11}).*/)[3];
+					var videoMatch = videoUrl.match(/^(https?:\/\/(www\.)?)?youtube\.com\/watch\?v=([0-9a-zA-Z\-_]{11}).*/);
+					if(videoMatch !== null && videoMatch.length > 0) {
+						videoId = videoMatch[3];
+					} else {
+						Upfront.Views.Editor.notify(l10n.validMessage);
+					}
 				}
 				var data = {'video_id': videoUrl};
 				
@@ -312,9 +329,13 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 				new Fields.Checkboxes({
 					model: this.model,
 					property: 'first_to_thumbnails',
+					default_value: ['1'],
 					values: [
-						{ label: l10n.first_to_thumbnails, value: 'first_to_thumbnails' },
-					]
+						{ label: l10n.first_to_thumbnails, value: '1' },
+					],
+					change: function(value) {
+						this.model.set_property('first_to_thumbnails', value);
+					}
 				}),
 				
 				new Fields.Slider({

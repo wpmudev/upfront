@@ -12,8 +12,9 @@ class Upfront_UsliderView extends Upfront_Object {
 		foreach($data['slides'] as $slide){
 			$slides[] = array_merge(self::slide_defaults(), $slide);
 		}
+
 		$data['slides'] = $slides;
-		$data['rotate'] = sizeof($data['rotate']);
+		$data['rotate'] = $data['rotate'] ? true : false;
 
 		$data['dots'] = array_search($data['controls'], array('dots', 'both')) !== false;
 		$data['arrows'] = array_search($data['controls'], array('arrows', 'both')) !== false;
@@ -197,6 +198,7 @@ class Upfront_UsliderView extends Upfront_Object {
 			'txt_on_side' => __('txt on the side', 'upfront'),
 			'txt_only' => __('txt / widget only', 'upfront'),
 			'choose_img' => __('Choose Images', 'upfront'),
+			'slide_desc' => __('Slide description', 'upfront'),
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)

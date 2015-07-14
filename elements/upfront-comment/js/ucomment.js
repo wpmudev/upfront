@@ -33,7 +33,10 @@ var UcommentView = Upfront.Views.ObjectView.extend({
 	on_render: function () {
 		if ( !$(document).data('upfront-comment-' + _upfront_post_data.post_id) )
 			this._get_comment_markup();
-		var discussion_settings = new DiscussionSettings_View({model: this.model});
+		var discussion_settings = Upfront.Settings.Application.PERMS.OPTIONS
+			? new DiscussionSettings_View({model: this.model})
+			: new DiscussionFallback_View({model: this.model})
+		;
 		discussion_settings.render();
 		this.$el.append(discussion_settings.$el);
 	},
@@ -48,7 +51,7 @@ var UcommentView = Upfront.Views.ObjectView.extend({
 		Upfront.Util.post({"action": "ucomment_get_comment_markup", "data": JSON.stringify({"post_id": post_id})})
 			.success(function (ret) {
 				var html = ret.data.replace(/<script.*?>.*?<\/script>/gim, ''); // strip script
-				$(document).data('upfront-comment-' + _upfront_post_data.post_id, html);
+				$(document).data('upfront-comment-' + _upfront_post_data.post_id, html || '&nbsp;');
 				me.render();
 			})
 			.error(function (ret) {
@@ -74,6 +77,10 @@ var DiscussionSettings_Model = Upfront.Models.ObjectModel.extend({
 		return this.loading;
 	},
 	_populate: function () {
+		if (!(_.isObject(this.cache) && "avatar_defaults" in this.cache)) {
+			this.loading.reject();
+			return false;
+		}
 		var avatars = _(this.cache.avatar_defaults).map(function (avatar) {
 			if (avatar.icon) avatar.icon = avatar.icon.match(/^https?:\/\//) ? avatar.icon : $(avatar.icon).attr("src");
 			return avatar;
@@ -117,8 +124,21 @@ var GlobalSettings_View = Backbone.View.extend({
 	setup_content: function () {},
 	save_settings: function () {},
 });
+
+var DiscussionFallback_View = GlobalSettings_View.extend({
+	label: l10n.discussion_settings,
+	setup_content: function () {
+		$(this.out)
+			.empty()
+			.append(
+				'<p class="settings-disabled">' + l10n.settings_disabled + '</p>'
+			)
+		;
+	}
+});
+
 var DiscussionSettings_View = GlobalSettings_View.extend({
-	label: "Discussion settings",
+	label: l10n.discussion_settings,
     initialize: function () {
     	GlobalSettings_View.prototype.initialize.call(this);
     	this.on("settings:tabs:switch_to:settings", this.render_settings_content, this);

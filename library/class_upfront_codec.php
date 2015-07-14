@@ -342,3 +342,94 @@ class Upfront_MacroCodec_Wordpress extends Upfront_SimpleExpansionMacroCodec {
 		);
 	}
 }
+
+
+/**
+ * Upfront-specific layout vars macro codec
+ * Expands variables used in exporter layouts.
+ */
+class Upfront_MacroCodec_Layout extends Upfront_SimpleExpansionMacroCodec {
+
+	/**
+		 * Set up specific macro opening tags.
+		 * Example: `{{upfront:style_uri}}`, `{{upfront:home_url}}`
+		 */
+		public function __construct () {
+			$this->_open = self::OPEN . 'upfront:';
+		}
+
+		public function expand_all ($content) {
+			if (empty($content)) return $content;
+
+			$macros = $this->get_macros();
+			if (empty($macros)) return $content;
+			
+			foreach ($macros as $tag => $value) {
+				$content = $this->expand($content, $tag, $value);
+			}
+
+			return $content;
+		}
+
+		/**
+		 * Get known Upfront layout macros.
+		 *
+		 * @return array Known macros as tag=>value hash
+		 */
+		public function get_macros () {
+			return array(
+				'style_url' => get_stylesheet_directory_uri(),
+				'home_url' => get_home_url(),
+				'site_url' => get_site_url(),
+			);
+		}
+
+		/**
+		 * Encodes the expanded variables into their macro representations
+		 *
+		 * @param string $content Content to process
+		 *
+		 * @return string Content with macros instead of values
+		 */
+		public function encode_all ($content) {
+			$macros = $this->get_macros();
+			if (empty($macros)) return $content;
+
+			foreach ($macros as $tag => $value) {
+				$value = preg_quote($value, '/');
+				$tag = $this->get_clean_macro($tag);
+				$content = preg_replace("/{$value}/", $tag, $content);
+			}
+
+			return $content;
+		}
+}
+
+
+/**
+ * Special-case data macro implementation
+ * Pretty much the same as Upfront_MacroCodec_Layout,
+ * _except_ that it accepts a data object for `expand_all` and
+ * works off that.
+ */
+class Upfront_MacroCodec_LayoutData extends Upfront_MacroCodec_Layout {
+
+	/**
+	 * Overridden expansion interface
+	 *
+	 * Accept a data map (raw layout) and serialize it as JSON 
+	 * so we deal with simple string before processing.
+	 *
+	 * @param array $data Raw layout as data hash
+	 *
+	 * @return array Processed layout
+	 */
+	public function expand_all ($data) {
+		if (empty($data)) return $data;
+
+		$content = parent::expand_all(json_encode($data));		
+		$data = json_decode($content, true);
+
+		return $data;
+	}	
+}

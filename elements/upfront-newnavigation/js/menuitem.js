@@ -205,6 +205,7 @@ return (function ($) {
 			if (this.$el.hasClass('controls-visible')) {
 				this.controlsVisible = true;
 				this.$el.siblings().removeClass('controls-visible');
+				this.$el.data('linkpanel').render();
 
 				this.$el.parents('.menu').sortable('disable');
 
@@ -232,6 +233,8 @@ return (function ($) {
 					linkUrl: this.model['menu-item-url'],
 					linkTarget: this.model['menu-item-target'],
 					linkType: Upfront.Util.guessLinkType(this.model['menu-item-url']),
+					linkObject: Upfront.Util.guessLinkType(this.model['menu-item-object']),
+					linkObjectId: Upfront.Util.guessLinkType(this.model['menu-item-object-id']),
 					button: false,
 					icon: 'link',
 					tooltip: 'link',
@@ -244,6 +247,15 @@ return (function ($) {
 				visitLinkControl.setLink(data.url);
 				me.model['menu-item-url'] = data.url;
 				me.model['menu-item-target'] = data.target;
+				me.model['menu-item-object'] = data.object;
+				me.model['menu-item-object-id'] = data.object_id;
+
+				if(data.type == "entry")
+					me.model['menu-item-type'] = "post_type";
+				else
+					me.model['menu-item-type'] = "custom";
+				
+
 				me.saveLink();
 			});
 
@@ -251,7 +263,7 @@ return (function ($) {
 				linkPanelControl,
 				visitLinkControl
 			]);
-
+			this.$el.data('linkpanel', linkPanelControl);
 			var imageControlsTpl = '<div class="uimage-controls image-element-controls upfront-ui"></div>';
 			this.$el.append(imageControlsTpl);
 			panel.render();

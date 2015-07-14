@@ -1,7 +1,8 @@
 ;(function ($) {
 define([
-	'text!elements/upfront-code/tpl/editor.html'
-], function (tplSource) {
+	'text!elements/upfront-code/tpl/editor.html',
+	'elements/upfront-code/js/syntax'
+], function (tplSource, Syntax) {
 
 	var tpls = $(tplSource);
 	var l10n = Upfront.Settings.l10n.code_element;
@@ -14,16 +15,6 @@ define([
 				"click .create": "create_code"
 			},
 			render: function () {
-				/*
-				var me = this;
-
-				this.$el.empty().append('Loading...');
-
-				require([
-					'//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'
-				], function () {
-				});
-	*/
 				this.$el.empty()
 					.append(
 						'<p class="code-element-choose"><button type="button" class="embed">' + l10n.intro.embed + '</button>' +
@@ -45,13 +36,6 @@ define([
 		Create: Upfront.Views.ObjectView.extend({
 
 			is_editing: false,
-			script_error: false,
-
-			SYNTAX_TYPES: {
-				"markup": "html",
-				"style": "css",
-				"script": "javascript"
-			},
 
 			MIN_HEIGHT: 200,
 
@@ -60,14 +44,14 @@ define([
 			content_editable_selector: ".editable",
 
 			initialize: function() {
-				var script = this.fallback('script');
-				this.checkJS(script);
+				//var script = this.fallback('script');
+				//this.checkJS(script);
 			},
 
 			get_content_markup: function () {
 				var markup = this.fallback('markup'),
 					raw_style = this.fallback('style'),
-					script = this.script_error ? '' : '(function($){' + this.fallback('script') + '})(jQuery)',
+					script = '(function($){' + this.fallback('script') + '})(jQuery)',
 					element_id = this.property('element_id'),
 					style = ''
 				;
@@ -78,6 +62,11 @@ define([
 					style += '#' + element_id + ' .upfront_code-element ' + el + '}';
 				});
 				style = Upfront.Util.colors.convert_string_ufc_to_color(style); // Allow for theme colors.
+
+				// Check initial scripts
+				if (!Syntax.checker("script").check(script)) {
+					script = '';
+				}
 
 				return '<div class="upfront_code-element clearfix">' + markup +
 					'<style>' + style + '</style>' +
@@ -276,12 +265,13 @@ define([
 					var $this = $(this),
 						html = $this.html(),
 						editor = ace.edit(this),
-						syntax = $this.data('type')
+						syntax = $this.data('type'),
+						check = Syntax.checker(syntax)
 					;
 
 					editor.getSession().setUseWorker(false);
 					editor.setTheme("ace/theme/monokai");
-					editor.getSession().setMode("ace/mode/" + me.SYNTAX_TYPES[syntax]);
+					editor.getSession().setMode("ace/mode/" + Syntax.TYPES[syntax]);
 					editor.setShowPrintMargin(false);
 
 					if ("markup" === syntax && html)
@@ -289,20 +279,20 @@ define([
 
 					// Live update
 					editor.on('change', function(){
-						if(me.timers[syntax])
-							clearTimeout(me.timers[syntax]);
+						if (me.timers[syntax]) clearTimeout(me.timers[syntax]);
 						me.timers[syntax] = setTimeout(function(){
 							var value = editor.getValue();
+							check.set(value)
+								.done(function () {
+									$editor.find('.upfront_code-jsalert').hide();
+									me.property(syntax, value, false); // Only update the property if this is actually decent
+								})
+								.fail(function (error) {
+									$editor.find('.upfront_code-jsalert').show().find('i').attr('title', l10n.errors[syntax] + ' ' + error);
+								})
+							;
+							check.test();
 
-							if(syntax == 'script')
-								me.checkJS(value);
-
-							if(me.script_error)
-								$editor.find('.upfront_code-jsalert').show().find('i').attr('title', l10n.create.js_error + ' ' + me.script_error);
-							else
-								$editor.find('.upfront_code-jsalert').hide();
-
-							me.property(syntax, value, false);
 						}, 1000);
 					});
 
@@ -355,7 +345,9 @@ define([
 				//save edition
 				$editor.find('button').on('click', function(e){
 					_.each(me.editors, function(editor, type){
-						me.property(type, editor.getValue());
+						var value = editor.getValue();
+						if (Syntax.checker(type).check(value)) me.property(type, value);
+						else me.property(type, me.fallback(type));
 					});
 
 					me.$("section.upfront_code-element").replaceWith(me.get_content_markup()).end();
@@ -378,59 +370,68 @@ define([
 				this.prepareSpectrum($editor);
 
 				//Prepare image picker
-				$editor.on('click', '.upfront-css-image', function(){
-					me.openImagePicker();
-				});
+				$editor
+					.on('click', '.upfront-css-theme_image', _.bind(this.open_theme_image_picker, this))
+					.on('click', '.upfront-css-media_image', _.bind(this.open_media_image_picker, this))
+				;
 			},
 
-			prepareSpectrum: function($editor){
-				var me = this;
-
-				$editor.find('.upfront-css-color').spectrum({
-					showAlpha: true,
-					showPalette: true,
-					palette: Upfront.Views.Theme_Colors.colors.pluck("color").length ? Upfront.Views.Theme_Colors.colors.pluck("color") : ['fff', '000', '0f0'],
-					maxSelectionSize: 9,
-					localStorageKey: "spectrum.recent_bgs",
-					preferredFormat: "hex",
-					chooseText: l10n.create.ok,
-					showInput: true,
-					allowEmpty:true,
-					show: function(){
-						spectrum = $('.sp-container:visible');
-					},
-					change: function(color) {
-						var colorString = color.get_is_theme_color()
-							? color.theme_color
-							: (color.alpha < 1 ? color.toRgbString() : color.toHexString())
-						;
-						me.currentEditor.insert(colorString);
-						me.currentEditor.focus();
-					},
-					move: function(color) {
-						var rgba = color.toRgbString();
-						spectrum.find('.sp-dragger').css('border-top-color', rgba);
-						spectrum.parent().find('.sp-dragger').css('border-right-color', rgba);
-					}
-				});
-			},
-
-			openImagePicker: function(){
+			prepareSpectrum: function ($editor) {
 				var me = this,
+					fld = new Upfront.Views.Editor.Field.Color({
+						blank_alpha: 0,
+						default_value: '#ffffff',
+						flat: true,
+						showAlpha: true,
+						appendTo: "parent",
+						showPalette: true,
+						maxSelectionSize: 10,
+						preferredFormat: "hex",
+						chooseText: l10n.create.ok,
+						showInput: true,
+						allowEmpty: true,
+						spectrum: {
+							choose: function(color) {
+								var colorString = color.get_is_theme_color()
+									? color.theme_color
+									: (color.alpha < 1 ? color.toRgbString() : color.toHexString())
+								;
+								me.currentEditor.insert(colorString);
+								me.currentEditor.focus();
+							}
+						}
+					})
+				;
+				fld.render();
+				$editor.find(".upfront-css-color").empty().append(fld.$el);
+			},
+
+			open_theme_image_picker: function () {
+				return this._open_image_picker({themeImages: true});
+			},
+			open_media_image_picker: function () {
+				return this._open_image_picker();
+			},
+
+			_open_image_picker: function (opts) {
+				opts = _.isObject(opts) ? opts : {};
+				var me = this,
+					options = _.extend({
+						multiple_selection: false,
+						media_type:['images']
+					}, opts),
 					currentSyntax = $('#upfront_code-editor').find('.upfront_code-switch.active').data('for')
 				;
 
-				Upfront.Media.Manager.open({
-					multiple_selection: false,
-					media_type:['images']
-				}).done(function(popup, result){
+				Upfront.Media.Manager.open(options).done(function(popup, result){
 					Upfront.Events.trigger('upfront:element:edit:stop');
-					if(!result)
-						return;
+					if (!result) return false;
 
 					var imageModel = result.models[0],
-						url = imageModel.get('image').src
+						img = imageModel.get('image') ? imageModel.get('image') : result.models[0],
+						url = 'src' in img ? img.src : ('get' in img ? img.get('original_url') : false)
 					;
+					if (!url) return false;
 
 					//url = url.replace(document.location.origin, ''); // Let's not do this
 
@@ -492,23 +493,13 @@ define([
 				}, 100);
 			},
 
-			checkJS: function(script){
-				this.script_error = false;
-				try {
-					eval(script);
-				} catch (e) {
-					this.script_error = e.message;
-				}
-			},
-
 			fallback: function(attribute){
 				return this.model.get_property_value_by_name(attribute) || Upfront.data.upfront_code.defaults.fallbacks[attribute];
 			},
 
 			property: function(name, value, silent) {
-				if(typeof value != "undefined"){
-					if(typeof silent == "undefined")
-						silent = true;
+				if ("undefined" != typeof value) {
+					if ("undefined" == typeof silent) silent = true;
 					return this.model.set_property(name, value, silent);
 				}
 				return this.model.get_property_value_by_name(name);

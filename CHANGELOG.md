@@ -1,6 +1,34 @@
 Change Log
 ============
 
+0.3.2.1 - 2015-06-02
+-------------------------------------------------------------------------------
+- Fix: minor style fixes.
+- Fix: legacy widget rendering.
+- Fix: error in cache spawning.
+- Fix: clean up multiplied listeners.
+
+0.3.2 - 2015-05-29
+-------------------------------------------------------------------------------
+- Fix: images lightbox options.
+- Fix: anchor links behavior.
+- Fix: element groups and cloning.
+- Fix: redactor formatting changes.
+- Fix: global regions revert issues.
+- Fix: backend content editing page templates issue.
+- Fix: menu UI issues.
+- Fix: "self" link selection options and rendering.
+- Fix: anchors not taking into account sticky header height.
+- Fix: text icons rendering.
+- Fix: small height regions.
+- Fix: prevent live preview when it's not supported.
+- Fix: media paths SSL issues in certain setups.
+- Fix: widget element changes.
+- Fix: code element color picker.
+- Fix: redactor and spectrum l10n strings.
+- Add: augmented default search markup.
+- Add: post date permalink in posts element.
+- Add: posts element sticky posts handling options.
 
 0.3.1 - 2015-05-05
 -------------------------------------------------------------------------------

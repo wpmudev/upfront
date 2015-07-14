@@ -655,7 +655,7 @@ RedactorPlugins.upfrontIcons = function() {
                 'change .upfront-font-icons-controlls input': "input_change"
             },
             render: function (options) {
-                this.$el.html(this.tpl());
+                this.$el.html(this.tpl({icons: Upfront.mainData.font_icons }));
                 this.stop_scroll_propagation(this.$el);
             },
             open: function (e, redactor) {
@@ -682,7 +682,7 @@ RedactorPlugins.upfrontIcons = function() {
                     "font-size": fontSize + "px",
                     "top": top + "px"
                 });
-                var inserted = this.redactor.insert.node($icon[0], false); //inserted false instead of true to retain the selected content
+                var inserted = this.redactor.insert.html($icon[0].outerHTML, false); //inserted false instead of true to retain the selected content
                 this.redactor.code.sync();
 
                 //var offset = this.redactor.caret.getOffset(); //existing caret position
@@ -827,12 +827,19 @@ RedactorPlugins.upfrontLink = function() {
 			link: function (url, type, target) {
 				this.redactor.selection.restore();
 				if (url) {
-					var caption = this.redactor.selection.getHtml();
+					var caption = $(this.redactor.selection.getCurrent()).last().hasClass("uf_font_icon") ? this.redactor.selection.getCurrent().outerHTML :  this.redactor.selection.getHtml() ;
 					var link = this.redactor.utils.isCurrentOrParent('A');
 					if (link) {
 						$(link).attr('href', url).attr('rel', type).attr('target', target);
 					} else {
-						this.redactor.link.set(caption, url, target);
+                        var $link = $("<a>");
+                        // allow caption to be html to the contrary to this.redactor.link.set(caption, url, target) which needs the caption to be text
+                        $link.html( caption )
+                            .attr("rel", type)
+                            .attr("href", url)
+                            .attr("target", target);
+                        this.redactor.insert.html($link[0].outerHTML, false);
+
 					}
 					this.redactor.$element.focus();
 				}
@@ -1106,6 +1113,7 @@ RedactorPlugins.upfrontColor = function() {
                     },
                     color_set = function(rule, raw_value) {
                         var theme_color = false, cls = false, is_bg = !!rule.match(/background/);
+
                         if (raw_value.is_theme_color) {
                             cls = Upfront.Views.Theme_Colors.colors.get_css_class(raw_value, is_bg);
                             if (!cls) theme_color = raw_value.theme_color;
@@ -1114,30 +1122,91 @@ RedactorPlugins.upfrontColor = function() {
                         }
 
                         var wrapper = document.createElement("span"),
+                            //contents = document.createRange().createContextualFragment( self.redactor.selection.getHtml() ),
                             contents = self.redactor.range.extractContents(),
+                            //contents = self.redactor.range.cloneContents(),
                             range = self.redactor.range,
-                            $range = range.commonAncestorContainer ? $(range.commonAncestorContainer) : false
+                            $range = range.commonAncestorContainer ? $(range.commonAncestorContainer) : false,
+                            apply_to_wrapper = function($wrapper){
+                                if (cls) {
+                                    $wrapper
+                                        .addClass(cls)
+                                    ;
+                                } else if (!!theme_color) {
+                                    $wrapper
+                                        .attr("style", rule + ':' + theme_color) // use color otherwise
+                                    ;
+                                }
+                            }
                         ;
 
-                        if ($range && $range.length && $range.is("span")) {
-                            range.selectNode(range.commonAncestorContainer);
-                            Upfront.Views.Theme_Colors.colors.remove_theme_color_classes($range, is_bg);
-                            $range.attr("style", "");
-                            wrapper = $range.get(0);
-                        }
-                        wrapper.appendChild(contents);
-                        self.redactor.range.insertNode(wrapper);
+                        // Todo Ve: Removing this would allow changing the color of part of a block which already has color i.e
+                        // You have "This is my whole text" and it's aready red, but you wanna change the color of "whole" word
 
-                        if (cls) {
-                            $(wrapper)
-                                .addClass(cls)
-                            ;
-                        } else if (!!theme_color) {
-                            $(wrapper)
-                                .attr("style", rule + ':' + theme_color) // use color otherwise
-                            ;
-                        }
+                        //if ($range && $range.length && $range.is("span")) {
+                        //    range.selectNode(range.commonAncestorContainer);
+                        //    Upfront.Views.Theme_Colors.colors.remove_theme_color_classes($range, is_bg);
+                        //    $range.attr("style", "");
+                        //    wrapper = $range.get(0);
+                        //
+                        //}
 
+
+
+                        //if( contents.childNodes[0] && _.indexOf(["p", "li"], contents.childNodes[0].tagName.toLowerCase() ) !== -1 ){ //  make sure use can set color to multiple paragraphs at once
+                        if( contents.childNodes[0] && self.redactor.utils.isBlock( contents.childNodes[0] )  ){ //  make sure use can set color to multiple blocks at once
+
+                            while( self.redactor.selection.getParent() ){// try to remove selected nodes as long as we have any selected node
+                                $( self.redactor.selection.getBlocks()).remove();
+                            }
+                            var _nodes = [];
+
+                            /**
+                             * Prepare nodes and wrap them into wrappers
+                             *
+                             */
+                            _.each(  contents.childNodes, function(node, index) {
+                                var wrapper = document.createElement("span"),
+                                    first_child = node.childNodes[0];
+
+                                if(_.isUndefined(node) ) return;
+
+                                if( first_child  && first_child.tagName &&  first_child.tagName.toLowerCase() === "span" && ( first_child.className.match(/upfront_theme_/) || first_child.style.cssText.match(/color/) ) ){ // if already color is applied
+                                    wrapper.innerHTML = first_child.innerHTML;
+                                }else{
+                                    wrapper.innerHTML =  node.innerHTML;
+                                }
+
+                                node.innerHTML = "";
+                                node.appendChild( wrapper );
+                                _nodes.push({
+                                    node: node,
+                                    wrapper: wrapper
+                                });
+
+                            } );
+                            /**
+                             * Insert nodes back to where they were
+                             * Reverse them since insertNode adds nodes to the beginning
+                             *
+                             *
+                             */
+                            _.each( _nodes.reverse(),  function( _node, index){
+                                var node = _node.node,
+                                    wrapper = _node.wrapper;
+
+                                self.redactor.range.insertNode(node);
+                                //container.appendChild(node);
+                                var $wrapper = $(wrapper);
+
+                                apply_to_wrapper( $wrapper );
+                            } );
+                        }else{
+                            wrapper.appendChild(contents);
+                            self.redactor.range.insertNode(wrapper);
+
+                            apply_to_wrapper( $(wrapper) );
+                        }
 
                         self.redactor.selection.restore();
                         self.redactor.code.sync();
@@ -1301,22 +1370,23 @@ RedactorPlugins.upfrontFormatting = function() {
                 first: true
             };
         },
-        panel: UeditorPanel.extend({
+        panel: UeditorPanel.extend(_.extend({}, Upfront.Views.Mixins.Upfront_Scroll_Mixin, {
             selected_class: "",
             tpl: _.template($(tpl).find('#upfront-formatting').html()),
             className: "ufront-air-formatting",
             init: function(){
                 this.custom_classes = ["first-class", "second-class", "third-class"];
+
             },
             events: {
-                "click a" : "select_tag",
+                "click li *" : "select_tag",
                 "change .ufront-formatting-custom-class": "change_custom_class"
             },
             render: function (options) {
-                this.$el.html(this.tpl({
+                this.$el.html(this.tpl( _.extend({}, {
                     custom_classes: this.custom_classes,
                     selected_class: this.selected_class
-                }));
+                }, l10n.formatting) ));
             },
             open: function (e, redactor) {
                 this.redactor = redactor;
@@ -1333,8 +1403,8 @@ RedactorPlugins.upfrontFormatting = function() {
                 var tag = $(this.redactor.selection.getBlock()).length ? $(this.redactor.selection.getBlock())[0].tagName : false;
                 if (tag) {
                     tag = tag.toLowerCase();
-                    this.$(".tags-list li a").removeClass("dropact");
-                    this.$("a[data-tag='" + tag + "']").addClass("dropact");
+                    this.$(".tags-list li *").removeClass("dropact");
+                    this.$("[data-tag='" + tag + "']").addClass("dropact");
                 }
             },
             set_previously_selected_class: function(){
@@ -1363,21 +1433,25 @@ RedactorPlugins.upfrontFormatting = function() {
                 this.redactor.buffer.set();
                 this.redactor.$editor.focus();
 
-                var tag = $(e.target).data("tag"),
-                    html = this.redactor.selection.getHtml(), // Gets selected html
-                    css = this.redactor.selection.getCurrent() ? this.redactor.selection.getCurrent().style.cssText : false;
+                var tag = $(e.target).data("tag");
 
-                // Change tag name
-                this.redactor.block.format(tag);
+                if (!this.redactor.utils.browser('msie')) this.redactor.$editor.focus();
 
-                if( css ){
-                    // Puts prev html into the current tag
-                    this.redactor.$editor.find(tag).eq(0).html( html)[0].style.cssText = css;
-                }else{
-                    this.redactor.$editor.find(tag).eq(0).html( html);
-                }
+                this.redactor.block.blocks = this.redactor.selection.getBlocks();
 
-                
+                this.redactor.block.blocksSize = this.redactor.block.blocks.length;
+                this.redactor.block.type = "";
+                this.redactor.block.value = "";
+
+                this.redactor.buffer.set();
+                this.redactor.selection.save();
+
+                var block = this.redactor.block.blocks[0];
+                var $formatted = this.redactor.utils.replaceToTag(block, tag);
+                this.redactor.block.toggle($formatted);
+
+                if (tag == 'p' || this.redactor.block.headTag) $formatted.find('p').contents().unwrap();
+
                 this.redactor.dropdown.hideAll();
             },
             change_custom_class: function(e){
@@ -1393,6 +1467,7 @@ RedactorPlugins.upfrontFormatting = function() {
                 this.redactor.dropdown.hideAll();
             }
         })
+        )
 
     }
 };
