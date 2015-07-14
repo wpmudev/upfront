@@ -37,14 +37,18 @@ define([
 			if (this.is_editing) return false;
 
 			this.is_editing = true;
-			var $editor = $('#upfront_map-editor');
+			var $editor = $('#upfront_map-editor'),
+				me = this
+			;
 
 			if(!$editor.length){
 				$editor = $('<section id="upfront_map-editor" class="upfront-ui upfront_map-editor upfront_map-editor-complex"></section>');
 				$('body').append($editor);
 			}
 
-			this.createEditor($editor);
+			require(['//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'], function () {
+				me.createEditor($editor);
+			});
 
 		},
 
