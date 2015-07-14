@@ -198,7 +198,7 @@ define([
 					me.property(type, editor.getValue());
 				});
 
-				me.property('map_styles', me.fallback('script'));
+				me.property('map_styles', me.fallback('script'), false);
 				me.is_editing = false;
 				me.destroyEditor();
 			});
