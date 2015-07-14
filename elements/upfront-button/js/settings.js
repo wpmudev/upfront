@@ -83,10 +83,12 @@ define([
 					fieldClass: RadiusSettingsItem,
 					options: {
 						state: 'static',
+						max_value: 100,
 						fields: {
 							use: 'useradius', 
 							lock: 'borderradiuslock',
 							radius: 'radius',
+							radius_number: 'radius_number',
 							radius1: 'borderradius1',
 							radius2: 'borderradius2',
 							radius3: 'borderradius3',

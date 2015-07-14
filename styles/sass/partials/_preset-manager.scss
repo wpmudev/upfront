@@ -148,10 +148,23 @@ div.preset-manager-panel div.border_radius_lock {
 }
 div.preset-manager-panel div.radius-slider {
 	top: -25px;
-	padding-top: 7px;
+	padding-top: 10px;
+	padding-bottom: 17px;
 	position: relative;
 	border-left: 2px solid #dae6f2;
 	padding-left: 10px;
+	width: 130px;
+	float: left;
+}
+div.preset-manager-panel div.radius-slider .upfront-field-slider-value {
+	display: none;
+}
+div.preset-manager-panel div.border_radius_number, div.preset-manager-panel div.border_radius_number input {
+	width: 60px;
+	float: left;
+	top: -8px;
+	position: relative;
+	margin-left: 15px;
 }
 div.preset-manager-panel div.preset_specific div.bg-color {
 	display: inline-block;
