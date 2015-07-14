@@ -97,7 +97,8 @@ define([
 			this.options.locate.render();
 			this.options.field.render();
 
-			this.options.field.set_value(this.model.get_property_value_by_name("address"));
+			var address = this.model.get_property_value_by_name("address") || '';
+			this.options.field.set_value(address);
 
 			this.$el.append(this.options.field.$el);
 			this.$el.append(this.options.locate.$el);
