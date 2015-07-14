@@ -2,13 +2,18 @@
 
 // I have removed logic that checks if google maps are loaded. In current
 // app setup maps will always we loaded before this script.
-define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], function (_ctx, maps_style) {
+define([
+	'maps_context_menu',
+	'scripts/upfront/inline-panels/map-editor',
+	'text!elements/upfront-maps/css/edit.css'
+], function (_ctx, MapEditorView, maps_style) {
 
 	var DEFAULTS = {
 		OPTIMUM_MAP_HEIGHT: 300,
 		center: [10.722250, 106.730762],
 		zoom: 10,
 		style: 'ROADMAP',
+		use_custom_map_code: false,
 		controls: {
 			pan: false,
 			zoom: false,
@@ -22,7 +27,6 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 	var l10n = Upfront.Settings.l10n.maps_element;
 
 	$("head").append("<style>" + maps_style + "</style>");
-
 
 	var MapModel = Upfront.Models.ObjectModel.extend({
 		init: function () {
@@ -39,7 +43,6 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 	var Maps_Fields_Simple_Checkbox = Upfront.Views.Editor.Field.Checkboxes.extend({
 		multiple: false
 	});
-
 
 	var Map_Fields_Simple_Refresh = Upfront.Views.Editor.Field.Text.extend({
 		className: 'upfront-field-wrap upfront-field-wrap-refresh',
@@ -153,7 +156,7 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 					scaleControl: controls.indexOf("scale") >= 0 || DEFAULTS.controls.scale,
 					streetViewControl: controls.indexOf("street_view") >= 0 || DEFAULTS.controls.street_view,
 					overviewMapControl: controls.indexOf("overview_map") >= 0 || DEFAULTS.controls.overview_map,
-					style_overlay: this.model.get_property_value_by_name("styles") || false,
+					style_overlay: (this.model.get_property_value_by_name("use_custom_map_code") ? JSON.parse(this.model.get_property_value_by_name("map_styles")) || false : false),
 					draggable: !!this.model.get_property_value_by_name("draggable"),
 					scrollwheel: !!this.model.get_property_value_by_name("scrollwheel")
 				}
@@ -608,121 +611,155 @@ define(['maps_context_menu', 'text!elements/upfront-maps/css/edit.css'], functio
 			return l10n.settings;
 		}
 	});
-		var MapSettings_Panel = Upfront.Views.Editor.Settings.Panel.extend({
-			initialize: function (opts) {
+
+	var MapSettings_Panel = Upfront.Views.Editor.Settings.Panel.extend({
+		initialize: function (opts) {
 			this.options = opts;
-				this.settings = _([
-					new MapSettings_Field_Location({model: this.model}),
-					new MapSettings_Settings({model: this.model})
-					// new MapSettings_Field_Style({model: this.model}),
-					// new MapSettings_Field_Controls({model: this.model})
-				]);
-			},
-			render: function () {
-				Upfront.Views.Editor.Settings.Panel.prototype.render.call(this);
-				this.$el.addClass("ufpront-maps_element-settings_panel");
-			},
-			get_label: function () {
-				return l10n.label;
-			},
-			get_title: function () {
-				return l10n.label;
-			}
-		});
+			this.settings = _([
+				new MapSettings_Field_Location({model: this.model}),
+				new MapSettings_Settings({model: this.model})
+				// new MapSettings_Field_Style({model: this.model}),
+				// new MapSettings_Field_Controls({model: this.model})
+			]);
+		},
+		render: function () {
+			Upfront.Views.Editor.Settings.Panel.prototype.render.call(this);
+			this.$el.addClass("ufpront-maps_element-settings_panel");
+			$('[name="use_custom_map_code"]', this.$el).trigger('change');
+		},
+		get_label: function () {
+			return l10n.label;
+		},
+		get_title: function () {
+			return l10n.label;
+		}
+	});
 
-			var MapSettings_Field_Location = Upfront.Views.Editor.Settings.Item.extend({
-				className: "upfront-settings-item-maps_element-location",
-				initialize: function () {
-					this.fields = _([
-						new Map_Fields_Simple_Location({
-							model: this.model,
-							hide_label: true,
-							property: 'location'
-						})
-					]);
-				},
-				get_title: function () {
-					return l10n.location_label;
-				}
+	var MapSettings_Field_Location = Upfront.Views.Editor.Settings.Item.extend({
+		className: "upfront-settings-item-maps_element-location",
+		initialize: function () {
+			this.fields = _([
+				new Map_Fields_Simple_Location({
+					model: this.model,
+					hide_label: true,
+					property: 'location'
+				})
+			]);
+		},
+		get_title: function () {
+			return l10n.location_label;
+		}
+	});
+
+	var MapSettings_Settings = Upfront.Views.Editor.Settings.Item.extend({
+		events: {
+			"click .open-map-code-panel-button": "init_code_panel"
+		},
+		initialize: function () {
+			var zooms = [],
+				saved_zoom = this.model.get_property_value_by_name("zoom")
+			;
+			if (!saved_zoom) this.model.set_property("zoom", DEFAULTS.zoom, true);
+			_(_.range(1,19)).each(function (idx) {
+				zooms.push({label: idx, value: idx});
 			});
+			var saved_style = this.model.get_property_value_by_name("style"),
+				styles = [
+					{label: l10n.style.roadmap, value: "ROADMAP"},
+					{label: l10n.style.satellite, value: "SATELLITE"},
+					{label: l10n.style.hybrid, value: "HYBRID"},
+					{label: l10n.style.terrain, value: "TERRAIN"},
+				]
+			;
+			if (!saved_style) this.model.set_property("style", DEFAULTS.style, true);
+			var controls = [
+				{label: l10n.ctrl.pan, value: "pan"},
+				{label: l10n.ctrl.zoom, value: "zoom"},
+				{label: l10n.ctrl.type, value: "map_type"},
+				{label: l10n.ctrl.scale, value: "scale"},
+				{label: l10n.ctrl.street_view, value: "street_view"},
+				{label: l10n.ctrl.overview, value: "overview_map"},
+			];
+			this.fields = _([
+				new Upfront.Views.Editor.Field.Slider({
+					className: 'upfront-field-wrap upfront-field-wrap-slider map-zoom-level',
+					model: this.model,
+					label: l10n.zoom_level,
+					property: 'zoom',
+					min: 1,
+					max: 19,
+					change: function () { this.property.set({value: this.get_value()}); }
+				}),
+				new Upfront.Views.Editor.Field.Select({
+					model: this.model,
+					label: l10n.map_style,
+					property: 'style',
+					values: styles,
+					change: function () { this.property.set({value: this.get_value()}); }
+				}),
+				new Upfront.Views.Editor.Field.Select({
+					model: this.model,
+					label: l10n.map_controls,
+					placeholder: "Choose map controls",
+					property: 'controls',
+					multiple: true,
+					values: controls,
+					change: function () { this.property.set({value: this.get_value()}); }
+				}),
+				new Upfront.Views.Editor.Field.Checkboxes({
+					model: this.model,
+					label: l10n.draggable_map,
+					property: "draggable",
+					hide_label: true,
+					values: [{label: l10n.draggable_map, value: 1}],
+					multiple: false,
+					change: function () { this.property.set({value: this.get_value()}); }
+				}),
+				new Upfront.Views.Editor.Field.Checkboxes({
+					model: this.model,
+					label: l10n.hide_markers,
+					property: "hide_markers",
+					hide_label: true,
+					values: [{label: l10n.hide_markers, value: 1}],
+					multiple: false,
+					change: function () { this.property.set({value: this.get_value()}); }
+				}),
+				new Upfront.Views.Editor.Field.Checkboxes({
+					model: this.model,
+					label: l10n.use_custom_map_code,
+					property: "use_custom_map_code",
+					hide_label: true,
+					values: [{label: l10n.use_custom_map_code + '<span class="checkbox-info" title="' + l10n.use_custom_map_code_info + '"></span>', value: 1}],
+					multiple: false,
+					change: function () {
+						var value = this.get_value();
 
-			var MapSettings_Settings = Upfront.Views.Editor.Settings.Item.extend({
-				initialize: function () {
-					var zooms = [],
-						saved_zoom = this.model.get_property_value_by_name("zoom")
-					;
-					if (!saved_zoom) this.model.set_property("zoom", DEFAULTS.zoom, true);
-					_(_.range(1,19)).each(function (idx) {
-						zooms.push({label: idx, value: idx});
-					});
-					var saved_style = this.model.get_property_value_by_name("style"),
-						styles = [
-							{label: l10n.style.roadmap, value: "ROADMAP"},
-							{label: l10n.style.satellite, value: "SATELLITE"},
-							{label: l10n.style.hybrid, value: "HYBRID"},
-							{label: l10n.style.terrain, value: "TERRAIN"},
-						]
-					;
-					if (!saved_style) this.model.set_property("style", DEFAULTS.style, true);
-					var controls = [
-						{label: l10n.ctrl.pan, value: "pan"},
-						{label: l10n.ctrl.zoom, value: "zoom"},
-						{label: l10n.ctrl.type, value: "map_type"},
-						{label: l10n.ctrl.scale, value: "scale"},
-						{label: l10n.ctrl.street_view, value: "street_view"},
-						{label: l10n.ctrl.overview, value: "overview_map"},
-					];
-					this.fields = _([
-						new Upfront.Views.Editor.Field.Slider({
-							className: 'upfront-field-wrap upfront-field-wrap-slider map-zoom-level',
-							model: this.model,
-							label: l10n.zoom_level,
-							property: 'zoom',
-							min: 1,
-							max: 19,
-							change: function () { this.property.set({value: this.get_value()}); }
-						}),
-						new Upfront.Views.Editor.Field.Select({
-							model: this.model,
-							label: l10n.map_style,
-							property: 'style',
-							values: styles,
-							change: function () { this.property.set({value: this.get_value()}); }
-						}),
-						new Upfront.Views.Editor.Field.Select({
-							model: this.model,
-							label: l10n.map_controls,
-							placeholder: "Choose map controls",
-							property: 'controls',
-							multiple: true,
-							values: controls,
-							change: function () { this.property.set({value: this.get_value()}); }
-						}),
-						new Upfront.Views.Editor.Field.Checkboxes({
-							model: this.model,
-							label: l10n.draggable_map,
-							property: "draggable",
-							hide_label: true,
-							values: [{label: l10n.draggable_map, value: 1}],
-							multiple: false,
-							change: function () { this.property.set({value: this.get_value()}); }
-						}),
-						new Upfront.Views.Editor.Field.Checkboxes({
-							model: this.model,
-							label: l10n.hide_markers,
-							property: "hide_markers",
-							hide_label: true,
-							values: [{label: l10n.hide_markers, value: 1}],
-							multiple: false,
-							change: function () { this.property.set({value: this.get_value()}); }
-						}),
-					]);
-				},
-				get_title: function () {
-					return l10n.settings;
-				}
-			});
+						this.property.set({value: value});
 
+						if(value == 1) {
+							$('.open-map-code-panel-button', this.$el.parent()).show();
+						}
+						else {
+							$('.open-map-code-panel-button', this.$el.parent()).hide();
+						}
+					}
+				}),
+				new Upfront.Views.Editor.Field.Button({
+					model: me.model,
+					label: l10n.open_map_code_panel,
+					className: "open-map-code-panel-button",
+					compact: true
+				}),
+			]);
+		},
+		get_title: function () {
+			return l10n.settings;
+		},
+		init_code_panel: function () {
+			var view = new MapEditorView({model: this.model});
+			view.render();
+		}
+	});
 
 	Upfront.Application.LayoutEditor.add_object("Map", {
 		"Model": MapModel,

@@ -753,3 +753,15 @@ div.upfront-date_picker td a{
 	border-top: 1px solid #accae6;
 	text-align: center;
 }
+
+.upfront-field-wrap-checkboxes .checkbox-info:before {
+	display: inline-block;
+	content: "";
+	width: 15px;
+	height: 15px;
+	background-image: url('../img/uf-core-el-sprite.svg');
+	background-position: -483px -141px;
+	margin-left: 5px;
+	margin-right: 5px;
+	margin-bottom: -4px;
+}
