@@ -19,8 +19,24 @@ define(function() {
 
 			var me = this,
 				state = this.options.state;
-
+			
+			var current_element = '';
+			
 			this.fields = _([
+				new Upfront.Views.Editor.Field.Select({
+					label: l10n.type_element,
+					values: me.options.elements,
+					change: function () {
+						var value = this.get_value();
+						current_element = value + '_';
+						me.fields._wrapped[1].set_value(me.model.get(current_element + me.options.fields.typeface));
+						me.fields._wrapped[2].set_value(me.model.get(current_element + me.options.fields.fontstyle));
+						me.fields._wrapped[3].set_value(me.model.get(current_element + me.options.fields.size));
+						me.fields._wrapped[4].set_value(me.model.get(current_element + me.options.fields.line_height));
+						me.fields._wrapped[5].set_value(me.model.get(current_element + me.options.fields.color));
+						me.fields._wrapped[5].update_input_border_color(me.model.get(current_element + me.options.fields.color));
+					}
+				}),
 				new Upfront.Views.Editor.Field.Typeface_Chosen_Select({
 					name: this.options.fields.typeface,
 					model: this.model,
@@ -30,11 +46,11 @@ define(function() {
 					label_style: 'inline',
 					className: state + '-font-face static typeFace',
 					change: function(value) {
-						me.model.set(me.options.fields.typeface, value);
+						me.model.set(current_element + me.options.fields.typeface, value);
 						
 						me.fields._wrapped[1] = new Upfront.Views.Editor.Field.Typeface_Style_Chosen_Select({
 							model: this.model,
-							name: me.options.fields.weight,
+							name: me.options.fields.fontstyle,
 							values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants_for_select(me.model.get(me.options.fields.typeface)),
 							label: l10n.weight_style,
 							font_family: me.model.get(me.options.fields.typeface),
@@ -44,9 +60,9 @@ define(function() {
 							change: function(value) {
 								//Explode Font style and font weight and save them as separate values
 								var parsed_variant = Upfront.Views.Font_Model.parse_variant(value);
-								me.model.set(me.options.fields.weight, value);
-								//me.model.set({'fontstyle_weight': parsed_variant.weight});
-								//me.model.set({'fontstyle_style': parsed_variant.style});
+								me.model.set(current_element + me.options.fields.fontstyle, value);
+								me.model.set(current_element + me.options.fields.weight, parsed_variant.weight);
+								me.model.set(current_element + me.options.fields.style, parsed_variant.style);
 							},
 						}),
 						me.$el.empty();
@@ -66,9 +82,9 @@ define(function() {
 					change: function(value) {
 						//Explode Font style and font weight and save them as separate values
 						var parsed_variant = Upfront.Views.Font_Model.parse_variant(value);
-						me.model.set(me.options.fields.weight, value);
-						//me.model.set({'fontstyle_weight': parsed_variant.weight});
-						//me.model.set({'fontstyle_style': parsed_variant.style});
+						me.model.set(current_element + me.options.fields.fontstyle, value);
+						me.model.set(current_element + me.options.fields.weight, parsed_variant.weight);
+						me.model.set(current_element + me.options.fields.style, parsed_variant.style);
 					},
 				}),
 				
@@ -81,7 +97,7 @@ define(function() {
 					suffix: l10n.px,
 					default_value: 12,
 					change: function(value) {
-						me.model.set(me.options.fields.size, value);
+						me.model.set(current_element + me.options.fields.size, value);
 					}
 				}),
 				
@@ -95,7 +111,7 @@ define(function() {
 					min: 0,
 					step: 0.1,
 					change: function(value) {
-						me.model.set(me.options.fields.line_height, value);
+						me.model.set(current_element + me.options.fields.line_height, value);
 					}
 				}),
 				
@@ -112,17 +128,22 @@ define(function() {
 						change: function(value) {
 							if (!value) return false;
 							var c = value.get_is_theme_color() !== false ? value.theme_color : value.toRgbString();
-							me.model.set(me.options.fields.color, c);
+							me.model.set(current_element + me.options.fields.color, c);
 						},
 						move: function(value) {
 							if (!value) return false;
 							var c = value.get_is_theme_color() !== false ? value.theme_color : value.toRgbString();
-							me.model.set(me.options.fields.color, c);
+							me.model.set(current_element + me.options.fields.color, c);
 						}
 					}
 				}),
 
 			]);
+			
+			//Remove inner elements dropdown if none
+			if(typeof me.options.elements === "undefined") {
+				this.fields.splice(0,1);
+			}
 		}
 	});
 

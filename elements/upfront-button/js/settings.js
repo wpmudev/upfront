@@ -86,7 +86,9 @@ define([
 						state: 'static',
 						fields: {
 							typeface: 'fontface', 
-							weight: 'fontstyle',
+							fontstyle: 'fontstyle',
+							weight: 'weight',
+							style: 'style',
 							size: 'fontsize',
 							line_height: 'lineheight',
 							color: 'color',
