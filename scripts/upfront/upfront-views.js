@@ -4481,6 +4481,12 @@ define([
 				
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.update_position);
 			},
+			render: function () {
+				var template = _.template(_Upfront_Templates["wrapper"]);
+				Upfront.Events.trigger('entity:wrapper:before_render', this, this.model);
+				this.$el.html(template);
+				Upfront.Events.trigger('entity:wrapper:after_render', this, this.model);
+			},
 			update: function (prop, options) {
 				if ( prop.id == 'class' ){
 					this.$el.attr('class', this.attributes().class);
@@ -4520,13 +4526,6 @@ define([
 				else
 					this.$el.removeData('breakpoint_clear');
 				Upfront.Events.trigger('entity:wrapper:update_position', this, this.model);
-
-			},
-			render: function () {
-				var template = _.template(_Upfront_Templates["wrapper"]);
-				Upfront.Events.trigger('entity:wrapper:before_render', this, this.model);
-				this.$el.html(template);
-				Upfront.Events.trigger('entity:wrapper:after_render', this, this.model);
 			},
 			on_add_spacer: function (e) {
 				var $target = $(e.target),
@@ -4534,6 +4533,10 @@ define([
 					ed = Upfront.Behaviors.GridEditor,
 					col_class = Upfront.Settings.LayoutEditor.Grid.class,
 					spacer_col = 1,
+					current_col = ed.get_class_num(this.$el, col_class),
+					new_col = current_col-spacer_col,
+					model_cls = this.model.get_property_value_by_name('class'),
+					is_clr = model_cls.match(/clr/),
 					object = new Upfront.Models.UspacerModel({
 						"name": "",
 						"properties": []
@@ -4555,7 +4558,7 @@ define([
 						"name": "",
 						"properties": [
 							{"name": "wrapper_id", "value": wrapper_id},
-							{"name": "class", "value": col_class+spacer_col}
+							{"name": "class", "value": col_class+spacer_col + ( is_clr ? ' clr' : '' )}
 						]
 					}),
 					$child = this.$el.find("> .upfront-module-view > .upfront-module, > .upfront-module-group"),
@@ -4565,17 +4568,21 @@ define([
 				;
 				e.preventDefault();
 				
-				this.model.collection.add(wrapper);
-				module.add_to(target_model.collection, ( position == 'right' ? index+1 : index ));
+				if ( new_col < 1 ) return;
 				
-				// Also change the columns of current wrapper and the containing models
-				var current_col = ed.get_class_num(this.$el, col_class),
-					new_col = current_col-spacer_col;
+				// Change the columns of current wrapper and the containing models
 				$child.each(function () {
 					var child = ed.get_el_model($(this));
 					child.replace_class(col_class+new_col);
 				});
+				if ( position == 'left' ) {
+					this.model.remove_class('clr');
+				}
 				this.model.replace_class(col_class+new_col);
+				
+				// Add the spacer element
+				this.model.collection.add(wrapper);
+				module.add_to(target_model.collection, ( position == 'right' ? index+1 : index ));
 			},
 			on_mouse_up: function (e) {
 				$('.upfront-wrapper-active').not(this.$el).removeClass('upfront-wrapper-active');

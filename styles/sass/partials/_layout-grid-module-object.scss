@@ -545,18 +545,21 @@
 .upfront-wrapper-meta-right {
   right: -3px;
 }
-.upfront-wrapper[data-first-in-row="1"] .upfront-wrapper-meta-left {
+/*.upfront-wrapper[data-first-in-row="1"] .upfront-wrapper-meta-left {
   display: none;
 }
 .upfront-wrapper[data-last-in-row="1"] .upfront-wrapper-meta-right {
   display: none;
-}
+}*/
 .upfront-wrapper-meta > .upfront-icon-button {
   margin-left: -7px;
   display: none;
 }
 .default-breakpoint .upfront-wrapper-meta > .upfront-icon-button {
   display: block;
+}
+.default-breakpoint .upfront-wrapper.c1 > .upfront-wrapper-meta > .upfront-icon-button {
+  display: none;
 }
 
 

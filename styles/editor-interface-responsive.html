@@ -15,6 +15,10 @@
 		top: 23px;
 		right: 0px;
 	}
+	.offset-ui-from-right-top (this) > .upfront-entity_meta,
+	.offset-ui-from-right-top (this) .upfront-object > .upfront-entity_meta {
+		right: 50px;
+	}
 	(this) .upfront-entity_meta .upfront-icon-button {
 		margin-bottom: 3px;
 	}
@@ -84,6 +88,15 @@
 	}
 	(this) .upfront-object > .upfront-entity_meta_extra:hover .upfront-icon-button {
 		display: inline-block;
+	}
+</script>
+
+<script type="text/responsive_css" data-bind=".upfront-wrapper" data-max-height="100px">
+	(this) > .upfront-wrapper-meta {
+		padding-top: 0;
+	}
+	(this) > .upfront-resize-handle-wrapper:before {
+		margin-top: -20px;
 	}
 </script>
 
