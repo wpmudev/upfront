@@ -1657,7 +1657,7 @@ input.upfront-field-text:hover, .upfront-field-text:focus {
 /* line 219, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-select-expanded .upfront-field-select-options {
   margin-top: -1px !important;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;

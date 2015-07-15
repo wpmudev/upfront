@@ -4530,13 +4530,23 @@ var Field_ToggleableText = Field_Text.extend({
 					options_bottom;
 
 				$scroll_panel = me.$el.parents('.upfront-settings_panel_scroll');
+				
+				/*
 				if ($scroll_panel) {
 					scroll_panel_bottom = ($scroll_panel.offset()?$scroll_panel.offset().top:0) + $scroll_panel.outerHeight();
 					$select_options = me.$el.find('.upfront-field-select-options');
 					options_bottom =  $select_options.offset().top + $select_options.outerHeight();
 					$scroll_panel.scrollTop(options_bottom-$scroll_panel.outerHeight());
 				}
-			}, 500);
+				*/
+				var select_dropdown = me.$el.find('.upfront-field-select-options');
+				var select = select_dropdown.parent();
+				var dropDownTop = select.position().top + select.outerHeight();
+				select_dropdown.css("width", select.width());
+				select_dropdown.css('top', dropDownTop + "px");
+				select_dropdown.css('left', select.offset().left + "px");
+				
+			}, 20);
 			this.trigger('focus');
 		},
 
