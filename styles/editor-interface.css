@@ -15590,7 +15590,7 @@ div.preset-manager-panel .edit_preset_css:before {
   left: 8px; }
 
 /* line 441, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
-div.preset-manager-panel .color-module .upfront-field-label-inline {
+div.preset-manager-panel .module-color-field .upfront-field-label-inline {
   font-size: 11px;
   display: inline;
   font-family: verdana, sans-serif;
@@ -15601,7 +15601,7 @@ div.preset-manager-panel .color-module .upfront-field-label-inline {
   padding-left: 5px; }
 
 /* line 451, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
-div.preset-manager-panel .color-module .sp-replacer {
+div.preset-manager-panel .module-color-field .sp-replacer {
   float: left; }
 
 /* line 454, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
