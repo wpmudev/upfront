@@ -78,44 +78,12 @@
 }
 
 .upfront-resize-handle-wrapper {
-  position: absolute;
-  top: 38px;
-  bottom: 0;
+  width: 14px;
   height: auto;
-  width: 6px;
   background: none;
-  display: none !important;
-  cursor: ew-resize;
-  z-index: 20;
-}
-.upfront-resize-handle-wrapper:before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: -7px;
-  width: 20px;
-  height: 20px;
-  background: rgba(200, 0, 0, 0.2);
-  margin-top: -32px;
-  border-radius: 10px;
-}
-.upfront-resize-handle-wrapper.upfront-resize-handle-w {
-  left: -3px;
-}
-.upfront-resize-handle-wrapper.upfront-resize-handle-e {
-  right: -3px;
-}
-.upfront-region:hover .upfront-resize-handle-wrapper {
+  top: 0;
   display: block !important;
-}
-.upfront-dragging .upfront-resize-handle-wrapper {
-  display: none !important;
-}
-.upfront-wrapper[data-first-in-row="1"] .upfront-resize-handle-wrapper.upfront-resize-handle-w {
-  display: none !important;
-}
-.upfront-wrapper[data-last-in-row="1"] .upfront-resize-handle-wrapper.upfront-resize-handle-e {
-  display: none !important;
+  cursor: ew-resize;
 }
 
 .upfront-drop {
