@@ -11,10 +11,16 @@ define(function() {
 			this.options = options || {};
 
 			var me = this,
+				per_row = 'single';
 				fields = [];
-// TODO: investigate why theme colors aren't pre-selected??
+				
+			if(this.options.single !== true) {
+				per_row = 'two';
+			}	
+			// TODO: investigate why theme colors aren't pre-selected??
 			_.each(this.options.abccolors, function(color) {
 				var colorField = new Upfront.Views.Editor.Field.Color({
+					className: 'upfront-field-wrap-color color-module module-color-field ' + per_row,
 					blank_alpha : 0,
 					model: this.model,
 					name: color.name,
@@ -34,11 +40,7 @@ define(function() {
 						}
 					}
 				});
-				//colorField.update_input_border_color('rgb(180, 83, 83)')
 				fields.push(colorField);
-				//console.log('this is happening');
-
-				//colorField.update_input_border_color('rgb(180, 83, 83)');
 			});
 
 			this.fields = _(fields);
@@ -46,7 +48,6 @@ define(function() {
 		render: function() {
 			var me = this;
 			this.constructor.__super__.render.call(this);
-			//console.log(this.model.get('active-header-bg-color'));
 
 			this.fields.each( function (field) {
 				var color = me.model.get(field.name);

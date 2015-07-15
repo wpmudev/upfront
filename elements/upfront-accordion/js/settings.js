@@ -1,10 +1,10 @@
 define([
 	'scripts/upfront/preset-settings/preset-manager',
 	'scripts/upfront/preset-settings/util',
-	'scripts/upfront/preset-settings/font-settings-item',
+	'scripts/upfront/preset-settings/typography-settings-item',
 	'scripts/upfront/preset-settings/colors-settings-item',
 	'text!elements/upfront-accordion/tpl/preset-style.html'
-], function(PresetManager, Util, FontSettingsItem, ColorsSettingsItem, styleTpl) {
+], function(PresetManager, Util, TypographySettingsItem, ColorsSettingsItem, styleTpl) {
 	var l10n = Upfront.Settings.l10n.accordion_element;
 
 	var Settings = PresetManager.extend({
@@ -34,6 +34,7 @@ define([
 					fieldClass: ColorsSettingsItem,
 					options: {
 						title: 'Colors',
+						multiple: false,
 						abccolors: [
 							{
 								name: 'active-header-bg-color',
@@ -45,15 +46,24 @@ define([
 							},
 							{
 								name: 'active-triangle-icon-color',
-								label: 'Triangle Icon'
+								label: 'Angle Icon'
 							}
 						]
 					}
 				},
 				{
-					fieldClass: FontSettingsItem,
+					fieldClass: TypographySettingsItem,
 					options: {
-						state: 'active'
+						state: 'active',
+						fields: {
+							typeface: 'active-font-family', 
+							fontstyle: 'active-font-style',
+							weight: 'active-weight',
+							style: 'active-style',
+							size: 'active-font-size',
+							line_height: 'active-line-height',
+							color: 'active-font-color',
+						}
 					}
 				}
 			],
@@ -75,9 +85,18 @@ define([
 					}
 				},
 				{
-					fieldClass: FontSettingsItem,
+					fieldClass: TypographySettingsItem,
 					options: {
-						state: 'static'
+						state: 'static',
+						fields: {
+							typeface: 'static-font-family', 
+							fontstyle: 'static-font-style',
+							weight: 'static-weight',
+							style: 'static-style',
+							size: 'static-font-size',
+							line_height: 'static-line-height',
+							color: 'static-font-color',
+						}
 					}
 				}
 			]
