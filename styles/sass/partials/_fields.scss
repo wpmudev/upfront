@@ -218,12 +218,17 @@ input.upfront-field-text:hover,
 }
 .upfront-field-select-expanded .upfront-field-select-options {
 	margin-top: -1px !important;
-	position: fixed;
+	position: absolute;
 	top: 0;
 	left: 0;
 	right: 0;
 	max-height: 142px;
 	z-index: 21;
+}
+#sidebar-ui .upfront-field-select-expanded .upfront-field-select-options,
+#element-settings-sidebar .upfront-field-select-expanded .upfront-field-select-options {
+	position: fixed;
+	display: none;
 }
 .upfront-field-select-option {
 	margin: 0 10px 0 0 !important;

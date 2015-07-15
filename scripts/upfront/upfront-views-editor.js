@@ -4539,12 +4539,20 @@ var Field_ToggleableText = Field_Text.extend({
 					$scroll_panel.scrollTop(options_bottom-$scroll_panel.outerHeight());
 				}
 				*/
-				var select_dropdown = me.$el.find('.upfront-field-select-options');
-				var select = select_dropdown.parent();
-				var dropDownTop = select.position().top + select.outerHeight();
-				select_dropdown.css("width", select.width());
-				select_dropdown.css('top', dropDownTop + "px");
-				select_dropdown.css('left', select.offset().left + "px");
+				var in_sidebar = me.$el.parents('#sidebar-ui').length,
+					in_settings = me.$el.parents('#element-settings-sidebar').length;
+				
+				// Apply if select field is in sidebar or settings sidebar
+				if(in_sidebar == 1 || in_settings == 1) {
+					var select_dropdown = me.$el.find('.upfront-field-select-options'),
+						select = select_dropdown.parent(),
+						dropDownTop = select.position().top;
+					
+					select_dropdown.css("width", select.width() + 2);
+					select_dropdown.css('top', dropDownTop + "px");
+					select_dropdown.css('left', select.offset().left + "px");
+					select_dropdown.css('display', 'block');
+				}
 				
 			}, 20);
 			this.trigger('focus');
