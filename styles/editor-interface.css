@@ -13786,6 +13786,11 @@ div.upfront-region-container:hover > a.feature_image_selector {
 .chosen-container-multi .chosen-choices li.search-choice .search-choice-close:hover {
   opacity: 1; }
 
+/* line 229, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/chosen */
+#sidebar-ui .chosen-with-drop .chosen-drop, #element-settings-sidebar .chosen-with-drop .chosen-drop {
+  position: fixed;
+  /* display: none; */ }
+
 /* Theme fonts managesr */
 /* line 2, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/theme-fonts-manager */
 #text-fonts-manager {

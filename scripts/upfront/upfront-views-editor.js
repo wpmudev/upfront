@@ -4668,7 +4668,8 @@ var Field_ToggleableText = Field_Text.extend({
 
 	var Field_Chosen_Select = Field_Select.extend({
 		events: {
-			'change select': 'on_change'
+			'change select': 'on_change',
+			'click .chosen-container .chosen-single': 'openOptions'
 		},
 		multiple: false,
 		get_field_html: function() {
@@ -4680,7 +4681,8 @@ var Field_ToggleableText = Field_Text.extend({
 			if (value.value === this.options.default_value) selected = ' selected="selected"';
 			return ['<option value="', value.value, '"', selected, '>', value.label, '</option>'].join('');
 		},
-		on_change: function(event) {
+		on_change: function(e) {
+			this.$el.find('.chosen-drop').css('display', 'none');
 			this.trigger('changed');
 		},
 		get_value: function() {
@@ -4688,12 +4690,33 @@ var Field_ToggleableText = Field_Text.extend({
 		},
 		set_value: function(value) {
 			this.$el.find('select').val(value).trigger('chosen:updated');
-		}
+		},
+		openOptions: function(e) {
+			var me = this;
+			_.delay(function() { // Delay because opening animation causes wrong outerHeight results
+				var in_sidebar = me.$el.parents('#sidebar-ui').length,
+					in_settings = me.$el.parents('#element-settings-sidebar').length;
+								
+				// Apply if select field is in sidebar or settings sidebar
+				if(in_sidebar == 1 || in_settings == 1) {
+					var select_dropdown = me.$el.find('.chosen-drop'),
+						select = select_dropdown.parent(),
+						dropDownTop = select.position().top;
+
+					select_dropdown.css("width", select.width() + 2);
+					select_dropdown.css('top', dropDownTop + "px");
+					select_dropdown.css('left', select.offset().left + "px");
+					select_dropdown.css('display', 'block');
+				}
+				
+			}, 20);
+		},
 	});
 
 	var Field_Typeface_Chosen_Select = Field_Chosen_Select.extend({
 		events: {
-			'change select': 'on_change'
+			'change select': 'on_change',
+			'click .chosen-container .chosen-single': 'openOptions'
 		},
 		multiple: false,
 		get_field_html: function() {
@@ -4724,16 +4747,21 @@ var Field_ToggleableText = Field_Text.extend({
 		},
 		on_change: function(event) {
 			this.trigger('changed', this.get_value());
+			this.$el.find('.chosen-drop').css('display', 'none');
 			this.set_option_font(this.get_value());
 		},
 		set_option_font: function(value) {
 			$('.upfront-chosen-select-typeface').parent().find('.chosen-single').css( "font-family", value );
 		},
+		openOptions: function(e) {
+			Field_Chosen_Select.prototype.openOptions.call(this);
+		}
 	});
 	
 	var Field_Typeface_Style_Chosen_Select = Field_Chosen_Select.extend({
 		events: {
-			'change select': 'on_change'
+			'change select': 'on_change',
+			'click .chosen-container .chosen-single': 'openOptions'
 		},
 		multiple: false,
 		get_field_html: function() {
@@ -4796,6 +4824,7 @@ var Field_ToggleableText = Field_Text.extend({
 		},
 		on_change: function(event) {
 			this.trigger('changed', this.get_value());
+			this.$el.find('.chosen-drop').css('display', 'none');
 			this.set_option_font(this.get_value());
 		},
 		set_option_font: function(value) {
@@ -4803,6 +4832,9 @@ var Field_ToggleableText = Field_Text.extend({
 			var parsed_variant = Upfront.Views.Font_Model.parse_variant(value);
 			$('.upfront-chosen-select-style').parent().find('.chosen-single').css( {"font-family": font_family, "font-weight": parsed_variant.weight, "font-style": parsed_variant.style });
 		},
+		openOptions: function(e) {
+			Field_Chosen_Select.prototype.openOptions.call(this);
+		}
 	});
 	
 	var Field_Multiple_Chosen_Select = Field_Chosen_Select.extend({

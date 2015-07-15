@@ -225,3 +225,8 @@
 .chosen-container-multi .chosen-choices li.search-choice .search-choice-close:hover {
 	opacity: 1;
 }
+#sidebar-ui .chosen-with-drop .chosen-drop,
+#element-settings-sidebar .chosen-with-drop .chosen-drop {
+	position: fixed;
+	display: none;
+}
