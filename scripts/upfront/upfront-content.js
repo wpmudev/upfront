@@ -141,13 +141,20 @@ define("content", deps, function(postTpl, ContentTools) {
 				markupper = ContentTools.getMarkupper()
 			;
 
+			// plugin_compat, if it is a complex post type specific to a plugin (or a virtual page using the single post layout), no need of editor
+			if(Upfront.Application.current_subapplication.get_layout_data().layout.specificity.indexOf("noedit") > -1) {
+				return;
+			}
+
 			if(!this.layoutData){
 				this.$el.html(Upfront.Settings.l10n.global.content.loading);
 				return this.loadingLayout.done(function(){
 					me.render();
 				});
 			}
+			
 
+			
 			var wrappers = this.postView.postLayout || {},
 				options = this.postView.partOptions || {},
 				layout = {

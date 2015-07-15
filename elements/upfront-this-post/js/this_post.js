@@ -122,6 +122,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 	},
 
 	prepareEditor: function(){
+
 		var node = this.$('.upfront-object-content').children();
 
 		//If we don't have the node rendered yet,

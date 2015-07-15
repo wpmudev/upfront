@@ -14,7 +14,9 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
         
         add_action('wp_ajax_upfront_posts-load', array($this, "load_posts"), 9);
         
-        add_action('wp_ajax_this_post-get_markup', array($this, "load_markup"), 9);        
+        add_action('wp_ajax_this_post-get_markup', array($this, "load_markup"), 9);  
+
+        //upfront_add_ajax('wp_ajax_content_part_markup', array($this, "get_part_contents"), 9); // to override loading of post parts in case the editor initializes on this_post.      
     }
 
     public function detect_virtual_page () {
@@ -48,11 +50,11 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
         $type = false;
         $spec = get_queried_object_id();
 
-        if ( bbp_is_forum_archive() ) {
+        if ( bbp_is_forum_archive() ) { //works fine in editor mode
             $item = "forum-archive";
             $type = "archive";
 
-        } elseif ( bbp_is_topic_archive() ) {
+        } elseif ( bbp_is_topic_archive() ) { //works fine in editor mode
             $item = "topic-archive";
             $type = "archive";
 
@@ -68,11 +70,11 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
 
         /** Components ************************************************************/
 
-        } elseif ( bbp_is_single_forum() ) {
+        } elseif ( bbp_is_single_forum() ) { //works fine in editor mode
             $item = "single-forum";
             $type = "single";
 
-        } elseif ( bbp_is_single_topic() ) {
+        } elseif ( bbp_is_single_topic() ) { //not persistent
             $item = "single-topic";
             $type = "single";
 
@@ -148,7 +150,7 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
             $cascade['item'] = "bbpress-{$item}"; 
             $cascade['type'] = $type;
             if (!empty($spec)) {
-                $cascade['specificity'] = "bbpress-{$item}-{$spec}";
+                $cascade['specificity'] = "bbpress-noedit-{$item}-{$spec}";
             }
             
         }
@@ -161,53 +163,43 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
 
         $data = stripslashes_deep($_POST);
          
-        ob_start();
-
-        var_dump($data['layout']);
-
-        file_put_contents("debugg.txt", ob_get_clean());
-    
+      
         if (empty($data['layout']['item']) && empty($data['layout']['specificity'])) return false; // Don't deal with this if we don't know what it is
 
 
 
-        $has_forum_item = !empty($data['layout']['item']) && (bool)strpos($data['layout']['item'], 'forum');
-        $has_forum_spec = !empty($data['layout']['specificity']) && (bool)strpos($data['layout']['specificity'], 'forum');
+        $has_forum_item = !empty($data['layout']['item']) && !(strpos($data['layout']['item'], 'bbpress') === false);
+        $has_forum_spec = !empty($data['layout']['specificity']) && !(strpos($data['layout']['specificity'], 'bbpress') === false);
 
 
 
         if (!$has_forum_item && !$has_forum_spec) return false;
 
-        
-          
         $this->_out(new Upfront_JsonResponse_Success(array(
                 "filtered" => '<div class="upfront-bbpress_compat upfront-plugin_compat"><p>BBPress specific content</p></div>'
             )));
        
 
     }
+
     public function load_posts () {
         
        $data = stripslashes_deep($_POST);
        
-       ob_start();
+    
 
-        var_dump($data['layout']);
-
-        file_put_contents("debugg.txt", ob_get_clean());
-
-        if (empty($data['layout']['item']) && empty($data['layout']['specificity'])) return false; // Don't deal with this if we don't know what it is
+        if (empty($data['layout']['item'])) return false; // Don't deal with this if we don't know what it is
 
 
 
-        $has_forum_item = !empty($data['layout']['item']) && (bool)strpos($data['layout']['item'], 'forum');
-        $has_forum_spec = !empty($data['layout']['specificity']) && (bool)strpos($data['layout']['specificity'], 'forum');
+        $has_forum_item = !(strpos($data['layout']['item'], 'bbpress') === false);
+        //$has_forum_spec = !empty($data['layout']['specificity']) && (bool)strpos($data['layout']['specificity'], 'bbpress');
 
 
 
-        if (!$has_forum_item && !$has_forum_spec) return false;
-
-        
+        if (!$has_forum_item )//&& !$has_forum_spec) return false;
+            return false;
+  
         
         $this->_out(new Upfront_JsonResponse_Success(array(
             'posts' => '<div class="upfront-bbpress_compat upfront-plugin_compat"><p>BBPress specific content</p></div>',
