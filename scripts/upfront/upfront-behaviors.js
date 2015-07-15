@@ -2824,7 +2824,7 @@ var GridEditor = {
 					width: ((me.col/(me.col+margin.original.left))*100) + '%',
 					height: ui.originalSize.height
 				});
-				/*$resize = $('<div class="upfront-resize" style="height:'+me.height+'px;"></div>');
+				$resize = $('<div class="upfront-resize" style="height:'+me.height+'px;"></div>');
 				$resize.css({
 					height: me.height,
 					width: me.width,
@@ -2844,7 +2844,7 @@ var GridEditor = {
 						top: me.position.top,
 						left: me.position.left
 					});
-				$('body').append($resize);*/
+				$('body').append($resize);
 				// Refreshing the elements position
 				_.each(ed.els, function(each, index){
 					ed.els[index] = ed.get_position(each.$el);
@@ -2912,12 +2912,12 @@ var GridEditor = {
 				});
 				$me.data('resize-col', rsz_col);
 				$me.data('resize-row', rsz_row);
-				/*$resize.css({
+				$resize.css({
 					height: rsz_row*ed.baseline,
 					width: rsz_col*ed.col_size,
 					minWidth: rsz_col*ed.col_size,
 					maxWidth: rsz_col*ed.col_size,
-				});*/
+				});
 				if(axis == 'nw') {
 					$resize.css({
 						top: me.$el.find('>.upfront-resize-handle-nw').offset().top,
@@ -2953,7 +2953,7 @@ var GridEditor = {
 				ed.resizing = false;
 
 				$resize_placeholder.remove();
-				//$resize.remove();
+				$resize.remove();
 
 				ed.update_class($me, ed.grid.class, rsz_col);
 				if ( axis == 'nw' ){

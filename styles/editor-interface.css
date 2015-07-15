@@ -6337,7 +6337,7 @@ a.upfront-region-name-edit-trigger:before {
 
 /* line 551, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-icon-button-add-spacer:before {
-  background-position: -261px -132px; }
+  background-position: -262px -133px; }
 
 /* line 555, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/icon */
 .upfront-module-small .upfront-icon-button-delete:before {
@@ -6861,11 +6861,11 @@ i.upfront-field-icon-burger-trigger {
   background: #f2b530 linear-gradient(135deg, #ffbe33 0%, #ffbe33 50%, rgba(0, 0, 0, 0) 51%, rgba(0, 0, 0, 0) 100%);
   /* W3C */ }
 
-/* line 981, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/icon */
-.upfront-icon-button-add-spacer {
+/* line 982, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/icon */
+.upfront-icon-button-add-spacer, .upfront-ui .upfront-icon-button-add-spacer:hover {
   background: #1fcd8f;
-  box-shadow: inset 0 0 0 2px #fff;
-  outline: 1px solid #ccc;
+  border: 1px solid #fff;
+  box-shadow: 0px 0px 3px 0px rgba(36, 57, 77, 0.4);
   border-radius: 9px; }
 
 /* Tooltips */
