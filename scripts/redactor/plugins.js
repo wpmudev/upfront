@@ -1447,8 +1447,9 @@ RedactorPlugins.upfrontFormatting = function() {
                 this.redactor.selection.save();
 
                 var block = this.redactor.block.blocks[0];
+
                 var $formatted = this.redactor.utils.replaceToTag(block, tag);
-                this.redactor.block.toggle($formatted);
+                //this.redactor.block.toggle($formatted);
 
                 if (tag == 'p' || this.redactor.block.headTag) $formatted.find('p').contents().unwrap();
 
