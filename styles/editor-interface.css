@@ -4905,7 +4905,7 @@ a.upfront-region-name-edit-trigger:before {
   z-index: -1; }
 
 /* line 549, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/layout-grid-module-object */
-.upfront-region:hover .upfront-wrapper-meta {
+.upfront-wrapper:hover > .upfront-wrapper-meta {
   display: block; }
 
 /* line 552, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/layout-grid-module-object */
@@ -5231,21 +5231,16 @@ a.upfront-region-name-edit-trigger:before {
 
 /* line 80, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
 .upfront-resize-handle-wrapper {
-  width: 14px;
-  height: auto;
-  background: none;
-  top: 0;
-  display: block !important;
   cursor: ew-resize; }
 
-/* line 89, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
+/* line 84, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
 .upfront-drop {
   float: left;
   width: 0;
   height: 0;
   position: relative; }
 
-/* line 95, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
+/* line 90, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
 .upfront-drop.upfront-drop-use:before {
   content: "";
   display: block;
@@ -5257,22 +5252,22 @@ a.upfront-region-name-edit-trigger:before {
   z-index: 100;
   background: rgba(128, 128, 255, 0.8); }
 
-/* line 106, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
+/* line 101, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
 .upfront-drop.upfront-drop-use:after {
   content: none; }
 
-/* line 109, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
+/* line 104, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
 .show-debug .upfront-drop {
   background: rgba(0, 0, 128, 0.1); }
 
-/* line 113, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
+/* line 108, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
 #upfront-drop-preview {
   position: absolute;
   border: 1px dashed #666;
   background: rgba(0, 0, 0, 0.2);
   z-index: 99998; }
 
-/* line 119, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
+/* line 114, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
 .upfront-drop-transition {
   -webkit-transition: top 0.3s, left 0.3s;
   -moz-transition: top 0.3s, left 0.3s;
@@ -5280,43 +5275,43 @@ a.upfront-region-name-edit-trigger:before {
   -o-transition: top 0.3s, left 0.3s;
   transition: top 0.3s, left 0.3s; }
 
-/* line 126, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
+/* line 121, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
 #upfront-compare-area {
   position: absolute;
   background: rgba(255, 0, 0, 0.2);
   z-index: 99999; }
 
-/* line 131, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
+/* line 126, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
 .upfront-drop-view {
   position: absolute;
   border: 2px dotted #88f;
   z-index: 99990;
   opacity: 0.4; }
 
-/* line 137, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
+/* line 132, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
 .upfront-drop-view-full {
   border-color: #4c4; }
 
-/* line 140, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
+/* line 135, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
 .upfront-drop-view-inside {
   border-color: #c44; }
 
-/* line 143, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
+/* line 138, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
 .upfront-drop-view-me {
   border-color: #999; }
 
-/* line 146, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
+/* line 141, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
 .upfront-drop-view-current {
   border-color: #222;
   z-index: 99995;
   opacity: 1; }
 
-/* line 151, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
+/* line 146, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
 .upfront-drop-priority-view {
   position: absolute;
   background: rgba(255, 0, 0, 0.2); }
 
-/* line 155, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
+/* line 150, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
 .upfront-drop-view-pos {
   background: #fff;
   font: 11px/16px Verdana, sans-serif;
@@ -5326,42 +5321,42 @@ a.upfront-region-name-edit-trigger:before {
 
 /* Experimental animation */
 @-webkit-keyframes dropped {
-  /* line 165, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
+  /* line 160, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
   0% {
     opacity: 0.6;
     -webkit-transform: scale(1, 1); }
 
-  /* line 169, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
+  /* line 164, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
   50% {
     -webkit-transform: scale(0.95, 0.95); }
 
-  /* line 172, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
+  /* line 167, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
   100% {
     opacity: 1;
     -webkit-transform: scale(1, 1); } }
 
 @keyframes dropped {
-  /* line 178, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
+  /* line 173, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
   0% {
     opacity: 0.6;
     transform: scale(1, 1); }
 
-  /* line 182, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
+  /* line 177, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
   50% {
     transform: scale(0.95, 0.95); }
 
-  /* line 185, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
+  /* line 180, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
   100% {
     opacity: 1;
     transform: scale(1, 1); } }
 
-/* line 190, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
+/* line 185, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
 .ui-draggable-dragging {
   opacity: 0.6;
   min-height: 0 !important;
   /*-webkit-transition: max-width .3s, max-height .3s;*/ }
 
-/* line 195, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
+/* line 190, /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/styles/sass/partials/drag-n-drop */
 .upfront-dropped {
   -webkit-animation: dropped 0.3s linear 0s 1 both;
   animation: dropped 0.3s linear 0s 1 both; }

@@ -3196,8 +3196,8 @@ var GridEditor = {
 			autoHide: true,
 			delay: 50,
 			handles: {
-				w: '.upfront-resize-handle-w',
-				e: '.upfront-resize-handle-e'
+				w: '.upfront-resize-handle-wrapper-w',
+				e: '.upfront-resize-handle-wrapper-e'
 			},
 			start: function(e, ui){
 				ed.start(view, model);
