@@ -67,6 +67,22 @@
   cursor: ns-resize;
   z-index: 10;
 }
+.upfront-editable_entity > .upfront-resize-handle-s:before {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 45px;
+  height: 4px;
+  background: #fff;
+  border-radius:3px;
+  box-shadow: 0px 0px 3px 0px rgba(36,57,77,0.2);
+}
+.upfront-module-spacer > .upfront-resize-handle-s {
+  display: none !important;
+}
 
 .upfront-resize-handle-e,
 .upfront-resize-handle-w {
