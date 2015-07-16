@@ -1050,77 +1050,57 @@ define([
 
 				_.each(breakpoints, function(breakpoint) {
 					var breakpoint_obj = (
-							typeof props.breakpoint !== 'undefined'
-							&& typeof props.breakpoint[breakpoint.id] !== 'undefined' 
-						)
-						? props.breakpoint[breakpoint.id]
-						: false
+								typeof props.breakpoint !== 'undefined'
+								&& typeof props.breakpoint[breakpoint.id] !== 'undefined' 
+							)
+							? props.breakpoint[breakpoint.id]
+							: false,
+						top_padding_use = (breakpoint_obj && "top_padding_use" in breakpoint_obj)
+							? breakpoint_obj.top_padding_use
+							: typeof props.top_padding_use !== 'undefined'
+								? props.top_padding_use
+								: false,							
+						bottom_padding_use = (breakpoint_obj && "bottom_padding_use" in breakpoint_obj)
+							? breakpoint_obj.bottom_padding_use
+							: typeof props.bottom_padding_use !== 'undefined'
+								? props.bottom_padding_use
+								: false,							
+						left_padding_use = (breakpoint_obj && "left_padding_use" in breakpoint_obj)
+							? breakpoint_obj.left_padding_use
+							: typeof props.left_padding_use !== 'undefined'
+								? props.left_padding_use
+								: false,							
+						right_padding_use = (breakpoint_obj && "right_padding_use" in breakpoint_obj)
+							? breakpoint_obj.right_padding_use
+							: typeof props.right_padding_use !== 'undefined'
+								? props.right_padding_use
+								: false							
 					;
 
-					top_paddings[breakpoint.id] = (
-							breakpoint_obj
-							&& typeof breakpoint_obj.top_padding_use !== 'undefined'
-							&& breakpoint_obj.top_padding_use.length
-							&& typeof breakpoint_obj.top_padding_num !== 'undefined'
-						)
+					top_paddings[breakpoint.id] = (top_padding_use && typeof breakpoint_obj.top_padding_num !== 'undefined')
 						? breakpoint_obj.top_padding_num
-						: 	(
-								breakpoint.id === 'desktop'
-								&& typeof props.top_padding_use !== 'undefined'
-								&& props.top_padding_use.length
-								&& typeof props.top_padding_num !== 'undefined'
-							)
+						: (top_padding_use && typeof props.top_padding_num !== 'undefined')
 							? props.top_padding_num
 							: column_padding
 					;
 
-					bottom_paddings[breakpoint.id] = (
-							breakpoint_obj
-							&& typeof breakpoint_obj.bottom_padding_use !== 'undefined'
-							&& breakpoint_obj.bottom_padding_use.length
-							&& typeof breakpoint_obj.bottom_padding_num !== 'undefined'
-						)
+					bottom_paddings[breakpoint.id] = (bottom_padding_use && typeof breakpoint_obj.bottom_padding_num !== 'undefined')
 						? breakpoint_obj.bottom_padding_num
-						: 	(
-								breakpoint.id === 'desktop'
-								&& typeof props.bottom_padding_use !== 'undefined'
-								&& props.bottom_padding_use.length
-								&& typeof props.bottom_padding_num !== 'undefined'
-							)
+						: (bottom_padding_use && typeof props.bottom_padding_num !== 'undefined')
 							? props.bottom_padding_num
 							: column_padding
 					;
 
-					left_paddings[breakpoint.id] = (
-							breakpoint_obj
-							&& typeof breakpoint_obj.left_padding_use !== 'undefined'
-							&& breakpoint_obj.left_padding_use.length
-							&& typeof breakpoint_obj.left_padding_num !== 'undefined'
-						)
+					left_paddings[breakpoint.id] = (left_padding_use && typeof breakpoint_obj.left_padding_num !== 'undefined')
 						? breakpoint_obj.left_padding_num
-						: 	(
-								breakpoint.id === 'desktop'
-								&& typeof props.left_padding_use !== 'undefined'
-								&& props.left_padding_use.length
-								&& typeof props.left_padding_num !== 'undefined'
-							)
+						: (left_padding_use && typeof props.left_padding_num !== 'undefined')
 							? props.left_padding_num
 							: column_padding
 					;
 
-					right_paddings[breakpoint.id] = (
-							breakpoint_obj
-							&& typeof breakpoint_obj.right_padding_use !== 'undefined'
-							&& breakpoint_obj.right_padding_use.length
-							&& typeof breakpoint_obj.right_padding_num !== 'undefined'
-						)
+					right_paddings[breakpoint.id] = (right_padding_use && typeof breakpoint_obj.right_padding_num !== 'undefined')
 						? breakpoint_obj.right_padding_num
-						: 	(
-								breakpoint.id === 'desktop'
-								&& typeof props.right_padding_use !== 'undefined'
-								&& props.right_padding_use.length
-								&& typeof props.right_padding_num !== 'undefined'
-							)
+						: (right_padding_use && typeof props.right_padding_num !== 'undefined')
 							? props.right_padding_num
 							: column_padding
 					;
