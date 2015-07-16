@@ -24,7 +24,7 @@ Upfront_Behavior::debug()->set_baseline();
 
 
 class Upfront {
-	public static $Excluded_Files = array(".", "..", ".DS_Store");
+
 	private $_servers = array(
 		'ajax',
 		'javascript_main',
