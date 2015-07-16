@@ -4509,12 +4509,24 @@ define([
 			},
 			on_add_spacer: function (e) {
 				var $target = $(e.target),
-					position = $target.attr('data-position'),
-					ed = Upfront.Behaviors.GridEditor,
+					position = $target.attr('data-position');
+				e.preventDefault();
+				this.add_spacer(position);
+			},
+			add_spacer: function (position, spacer_col) {
+				var ed = Upfront.Behaviors.GridEditor,
 					col_class = Upfront.Settings.LayoutEditor.Grid.class,
-					spacer_col = 1,
-					current_col = ed.get_class_num(this.$el, col_class),
+					spacer_col = spacer_col > 0 ? spacer_col : 1,
+					current_col = Upfront.Util.width_to_col(this.$el.width()),
 					new_col = current_col-spacer_col,
+					$rsz_wrapper = ( new_col > 0 ? this.$el : ( this._find_closest_wrapper(position == 'left', spacer_col) ) )
+				;
+				if ( !$rsz_wrapper.length ) return;
+				if ( new_col < 1 ) {
+					current_col = Upfront.Util.width_to_col($rsz_wrapper.width());
+					new_col = current_col-spacer_col;
+				}
+				var rsz_model = this.model.collection.get_by_wrapper_id($rsz_wrapper.attr('id')),
 					model_cls = this.model.get_property_value_by_name('class'),
 					is_clr = model_cls.match(/clr/),
 					object = new Upfront.Models.UspacerModel({
@@ -4538,7 +4550,7 @@ define([
 						"name": "",
 						"properties": [
 							{"name": "wrapper_id", "value": wrapper_id},
-							{"name": "class", "value": col_class+spacer_col + ( is_clr ? ' clr' : '' )}
+							{"name": "class", "value": col_class+spacer_col + ( is_clr && position == 'left' ? ' clr' : '' )}
 						]
 					}),
 					$child = this.$el.find("> .upfront-module-view > .upfront-module, > .upfront-module-group"),
@@ -4546,23 +4558,44 @@ define([
 					target_model = ed.get_el_model($target_child),
 					index = target_model.collection.indexOf(target_model)
 				;
-				e.preventDefault();
 				
-				if ( new_col < 1 ) return;
+				if ( !rsz_model ) return;
 				
-				// Change the columns of current wrapper and the containing models
-				$child.each(function () {
+				// Change the columns of current/closest wrapper and the containing models
+				$rsz_wrapper.find("> .upfront-module-view > .upfront-module, > .upfront-module-group").each(function () {
 					var child = ed.get_el_model($(this));
 					child.replace_class(col_class+new_col);
 				});
-				if ( position == 'left' ) {
+				if ( is_clr && position == 'left' ) {
 					this.model.remove_class('clr');
 				}
-				this.model.replace_class(col_class+new_col);
+				rsz_model.replace_class(col_class+new_col);
 				
 				// Add the spacer element
 				this.model.collection.add(wrapper);
 				module.add_to(target_model.collection, ( position == 'right' ? index+1 : index ));
+			},
+			_find_closest_wrapper: function (reverse, min_col) {
+				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+					$wrappers = this.$el.parent()
+						.children('.upfront-wrapper')
+						.each(Upfront.Util.normalize_sort_elements_cb)
+						.sort(Upfront.Util.sort_elements_cb),
+					index = $wrappers.index(this.$el),
+					is_clr = function ($each) {
+						return ( !breakpoint || breakpoint.default ? $each.hasClass('clr') : $each.data('breakpoint_clear') )
+					},
+					find_cb = function ($each) {
+						return ( Upfront.Util.width_to_col($each.width()) > min_col )
+					},
+					$start = is_clr(this.$el) ? this.$el : Upfront.Util.find_from_elements($wrappers, this.$el, is_clr, true),
+					$nexts = Upfront.Util.find_from_elements($wrappers, $start, '.upfront-wrapper', false, is_clr),
+					$all = $( _.union( [$start.get(0)], $nexts.map(function(){ return this; }).get() ) ),
+					find_1 = Upfront.Util.find_from_elements($all, this.$el, find_cb, reverse),
+					find_2 = ( !find_1.length ? Upfront.Util.find_from_elements($all, this.$el, find_cb, !reverse) : find_1 )
+				;
+				console.log($start, $nexts, $all, find_1, find_2, reverse);
+				return find_2.first();
 			},
 			on_mouse_up: function (e) {
 				$('.upfront-wrapper-active').not(this.$el).removeClass('upfront-wrapper-active');

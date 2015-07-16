@@ -33,6 +33,7 @@
 				return;
 			}
 			var $wrap = this.$el.closest('.upfront-wrapper');
+			$wrap.addClass('upfront-wrapper-spacer');
 			this.$el.find('>.upfront-object').css('min-height', $wrap.height());
 		}
 	});

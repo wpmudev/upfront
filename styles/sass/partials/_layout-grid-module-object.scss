@@ -249,7 +249,8 @@
 	background: rgba(44, 62, 80, 0.3)
 }
 .upfront-module:hover {
-	outline: 1px dotted #7f7f7f;
+  background-color: rgba(255,255,255,0.3);
+  box-shadow: inset 0px 0px 3px 0px rgba(60,82,103,0.15);
 	/*z-index: 40;*/
 }
 .upfront-module-disabled-all:hover,
@@ -555,12 +556,6 @@
 .upfront-wrapper-meta-right {
   right: -7px;
 }
-/*.upfront-wrapper[data-first-in-row="1"] .upfront-wrapper-meta-left {
-  display: none;
-}
-.upfront-wrapper[data-last-in-row="1"] .upfront-wrapper-meta-right {
-  display: none;
-}*/
 .upfront-wrapper-meta > .upfront-icon-button {
   margin-left: -2px;
   display: none;
@@ -568,8 +563,15 @@
 .default-breakpoint .upfront-wrapper-meta:hover > .upfront-icon-button {
   display: block;
 }
-.default-breakpoint .upfront-wrapper.c1 > .upfront-wrapper-meta > .upfront-icon-button {
+.default-breakpoint .upfront-wrapper[data-first-in-row="1"] > .upfront-wrapper-meta-left > .upfront-icon-button,
+.default-breakpoint .upfront-wrapper[data-last-in-row="1"] > .upfront-wrapper-meta-right > .upfront-icon-button {
   display: none;
+}
+.default-breakpoint .upfront-wrapper-spacer[data-first-in-row="1"] > .upfront-wrapper-meta-left {
+  display: none !important;
+}
+.default-breakpoint .upfront-wrapper-spacer[data-last-in-row="1"] > .upfront-wrapper-meta-right {
+  display: none !important;
 }
 
 

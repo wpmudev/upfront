@@ -3180,8 +3180,14 @@ var GridEditor = {
 			$me = view.$el,
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
 			$layout = $main.find('.upfront-layout'),
-			$resize, $resize_placeholder, $also_resize,
-			axis
+			$resize,
+			$resize_placeholder,
+			$also_resize,
+			is_spacer,
+			also_is_spacer,
+			axis,
+			min_col,
+			max_col
 		;
 		if ( Upfront.Application.mode.current !== Upfront.Application.MODE.THEME && model.get_property_value_by_name('disable_resize') )
 			return false;
@@ -3208,8 +3214,19 @@ var GridEditor = {
 				var me = ed.get_wrap($me),
 					//margin = $me.data('margin'),
 					data = $(this).data('ui-resizable'),
+					$wrappers = $me.parent()
+						.children('.upfront-wrapper')
+						.each(Upfront.Util.normalize_sort_elements_cb)
+						.sort(Upfront.Util.sort_elements_cb),
+					aff_els = ed.get_affected_els(me, ed.wraps, [], true),
+					resize_limit = ed.get_resize_limit(aff_els, ed.containment),
 					also_resize;
+					
 				axis = data.axis ? data.axis : 'e';
+				max_col = me.col + ( axis == 'w' ? me.grid.left-resize_limit[0] : resize_limit[1]-me.grid.right );
+				min_col = ed.min_col;
+				is_spacer = ( $me.find('> .upfront-module-view > .upfront-module-spacer').length > 0 );
+				
 				$resize = $('<div class="upfront-resize" style="height:'+me.height+'px;"></div>');
 				$resize.css({
 					height: me.height,
@@ -3233,17 +3250,25 @@ var GridEditor = {
 				$('body').append($resize);
 				$also_resize = false;
 				if ( axis == 'w' && me.outer_grid.left > ed.containment.grid.left ) {
-					$also_resize = $me.prev('.upfront-wrapper');
+					$also_resize = Upfront.Util.find_from_elements($wrappers, $me, '.upfront-wrapper', true).first();
 				}
 				else if ( axis == 'e' && me.outer_grid.right < ed.containment.grid.right ) {
-					$also_resize = $me.next('.upfront-wrapper');
+					$also_resize = Upfront.Util.find_from_elements($wrappers, $me, '.upfront-wrapper', false).first();
 				}
 				if ( $also_resize && $also_resize.length ) {
 					also_resize = ed.get_wrap($also_resize);
+					also_is_spacer = ( $also_resize.find('> .upfront-module-view > .upfront-module-spacer').length > 0 );
+					//if ( !is_spacer && !also_is_spacer ) {
+						max_col -= min_col;
+					//}
+					/*if ( is_spacer ) {
+						min_col = 0;
+					}*/
 				}
 				else {
 					$also_resize = false;
 					also_resize = false;
+					also_is_spacer = false;
 				}
 				$resize_placeholder = $('<div class="upfront-resize-placeholder"></div>');
 				$resize_placeholder.css({
@@ -3294,19 +3319,16 @@ var GridEditor = {
 					me = ed.get_wrap($me),
 					also_resize = ( $also_resize ? ed.get_wrap($also_resize) : false ),
 					region = ed.get_region($region),
-					col = me.col,
-					aff_els = ed.get_affected_els(me, ed.wraps, [], true),
-					resize_limit = ed.get_resize_limit(aff_els, ed.containment),
-					max_col = col + ( axis == 'w' ? me.grid.left-resize_limit[0] : resize_limit[1]-me.grid.right ) - 1,
 					current_col = Math.ceil(ui.size.width/ed.col_size),
-					min_w = ed.min_col*ed.col_size,
+					min_w = min_col*ed.col_size,
 					w = ( current_col > max_col ? Math.round(max_col*ed.col_size) : ( min_w > ui.size.width ? min_w : ui.size.width ) ),
 					h = ( (ui.size.height > 15 ? ui.size.height : 0) || ui.originalSize.height ),
 					l = ( axis == 'w' ? ui.originalPosition.left+ui.originalSize.width-w : ui.position.left ),
 					rsz_col = ( current_col > max_col ? max_col : current_col ),
-					also_col = max_col - rsz_col + 1,
-					also_w = ( ( max_col + 1 ) * ed.col_size ) - w
+					also_col = max_col - rsz_col + min_col,
+					also_w = ( ( max_col + min_col ) * ed.col_size ) - w
 				;
+				//console.log(max_col, min_col, rsz_col, also_col)
 				$me.css({
 					left: l,
 					height: h,
@@ -3348,7 +3370,9 @@ var GridEditor = {
 					region = regions.get_by_name($region.data('name')),
 					also_model = ( $also_resize ? model.collection.get_by_wrapper_id($also_resize.attr('id')) : false ),
 					child_models = [],
-					also_child_models = []
+					also_child_models = [],
+					first_in_row = ( axis == 'w' && me.outer_grid.left == ed.containment.grid.left ),
+					last_in_row = ( axis == 'e' && me.outer_grid.right == ed.containment.grid.right )
 				;
 
 				// Prevents quick scroll when resizing
@@ -3393,16 +3417,23 @@ var GridEditor = {
 				}
 
 				if ( !breakpoint || breakpoint.default ){
-					// Update model value
-					model.replace_class(ed.grid.class+rsz_col);
-					_.each(child_models, function (child) {
-						child.replace_class(ed.grid.class+rsz_col);
-					});
-					if ( also_model ) {
-						also_model.replace_class(ed.grid.class+also_col);
-						_.each(also_child_models, function (child) {
-							child.replace_class(ed.grid.class+also_col);
+					// If this is placed on the side, let's add spacer
+					if ( !also_model && ( first_in_row || last_in_row ) ) {
+						view.add_spacer( ( first_in_row ? 'left' : 'right' ), max_col-rsz_col );
+					}
+					else {
+						// Else just update model value
+						model.replace_class(ed.grid.class+rsz_col);
+						_.each(child_models, function (child) {
+							child.replace_class(ed.grid.class+rsz_col);
 						});
+						if ( also_model ) {
+							//console.log(also_col)
+							also_model.replace_class(ed.grid.class+also_col);
+							_.each(also_child_models, function (child) {
+								child.replace_class(ed.grid.class+also_col);
+							});
+						}
 					}
 				}
 				else {
