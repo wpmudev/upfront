@@ -6545,7 +6545,7 @@ var CSSEditor = Backbone.View.extend({
 
 		if ( !this.no_render ) {
 			this.prepareAce = deferred.promise();
-			require(['//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'], function() {
+			require([Upfront.Settings.ace_url], function() {
 				deferred.resolve();
 			});
 
@@ -7253,7 +7253,7 @@ var GeneralCSSEditor = Backbone.View.extend({
 		this.global = ( options.global === true );
 
 		this.prepareAce = deferred.promise();
-		require(['//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'], function(){
+		require([Upfront.Settings.ace_url], function(){
 			deferred.resolve();
 		});
 

@@ -46,7 +46,7 @@ define([
 				$('body').append($editor);
 			}
 
-			require(['//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'], function () {
+			require([Upfront.Settings.ace_url], function () {
 				me.createEditor($editor);
 			});
 
