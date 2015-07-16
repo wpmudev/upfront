@@ -5503,7 +5503,7 @@ var _Settings_Padding = SettingsItem.extend({
 	className: 'upfront-settings-padding',
 	initialize: function(options) {
 		var column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
-			top_padding_use = new Upfront.Views.Editor.Field.Checkboxes({
+			top_padding_use = new Field_Checkboxes({
 				model: this.model,
 				use_breakpoint_property: true,
 				property: 'top_padding_use',
@@ -5525,7 +5525,7 @@ var _Settings_Padding = SettingsItem.extend({
 					}
 				}
 			}),
-			top_padding_slider = new Upfront.Views.Editor.Field.Slider({
+			top_padding_slider = new Field_Slider({
 				model: this.model,
 				use_breakpoint_property: true,
 				property: 'top_padding_slider',
@@ -5542,7 +5542,7 @@ var _Settings_Padding = SettingsItem.extend({
 					this.model.set_breakpoint_property('top_padding_num', value, true);
 				}
 			}),
-			top_padding_num = new Upfront.Views.Editor.Field.Number({
+			top_padding_num = new Field_Number({
 				model: this.model,
 				use_breakpoint_property: true,
 				property: 'top_padding_num',
@@ -5558,7 +5558,7 @@ var _Settings_Padding = SettingsItem.extend({
 					top_padding_slider.$el.find('#'+top_padding_slider.get_field_id()).slider('value', value);
 				}
 			}),
-			bottom_padding_use = new Upfront.Views.Editor.Field.Checkboxes({
+			bottom_padding_use = new Field_Checkboxes({
 				model: this.model,
 				use_breakpoint_property: true,
 				property: 'bottom_padding_use',
@@ -5580,7 +5580,7 @@ var _Settings_Padding = SettingsItem.extend({
 					}
 				}
 			}),
-			bottom_padding_slider = new Upfront.Views.Editor.Field.Slider({
+			bottom_padding_slider = new Field_Slider({
 				model: this.model,
 				use_breakpoint_property: true,
 				property: 'bottom_padding_slider',
@@ -5597,7 +5597,7 @@ var _Settings_Padding = SettingsItem.extend({
 					this.model.set_breakpoint_property('bottom_padding_num', value, true);
 				}
 			}),
-			bottom_padding_num = new Upfront.Views.Editor.Field.Number({
+			bottom_padding_num = new Field_Number({
 				model: this.model,
 				use_breakpoint_property: true,
 				property: 'bottom_padding_num',
@@ -5613,7 +5613,7 @@ var _Settings_Padding = SettingsItem.extend({
 					bottom_padding_slider.$el.find('#'+bottom_padding_slider.get_field_id()).slider('value', value);
 				}
 			}),
-			left_padding_use = new Upfront.Views.Editor.Field.Checkboxes({
+			left_padding_use = new Field_Checkboxes({
 				model: this.model,
 				use_breakpoint_property: true,
 				property: 'left_padding_use',
@@ -5635,7 +5635,7 @@ var _Settings_Padding = SettingsItem.extend({
 					}
 				}
 			}),
-			left_padding_slider = new Upfront.Views.Editor.Field.Slider({
+			left_padding_slider = new Field_Slider({
 				model: this.model,
 				use_breakpoint_property: true,
 				property: 'left_padding_slider',
@@ -5652,7 +5652,7 @@ var _Settings_Padding = SettingsItem.extend({
 					this.model.set_breakpoint_property('left_padding_num', value, true);
 				}
 			}),
-			left_padding_num = new Upfront.Views.Editor.Field.Number({
+			left_padding_num = new Field_Number({
 				model: this.model,
 				use_breakpoint_property: true,
 				property: 'left_padding_num',
@@ -5668,7 +5668,7 @@ var _Settings_Padding = SettingsItem.extend({
 					left_padding_slider.$el.find('#'+left_padding_slider.get_field_id()).slider('value', value);
 				}
 			}),
-			right_padding_use = new Upfront.Views.Editor.Field.Checkboxes({
+			right_padding_use = new Field_Checkboxes({
 				model: this.model,
 				use_breakpoint_property: true,
 				property: 'right_padding_use',
@@ -5690,7 +5690,7 @@ var _Settings_Padding = SettingsItem.extend({
 					}
 				}
 			}),
-			right_padding_slider = new Upfront.Views.Editor.Field.Slider({
+			right_padding_slider = new Field_Slider({
 				model: this.model,
 				use_breakpoint_property: true,
 				property: 'right_padding_slider',
@@ -5707,7 +5707,7 @@ var _Settings_Padding = SettingsItem.extend({
 					this.model.set_breakpoint_property('right_padding_num', value, true);
 				}
 			}),
-			right_padding_num = new Upfront.Views.Editor.Field.Number({
+			right_padding_num = new Field_Number({
 				model: this.model,
 				use_breakpoint_property: true,
 				property: 'right_padding_num',
@@ -8599,7 +8599,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				});
 			}
 			if ( is_region && this.model.is_main() ){
-			  var global_regions = _.findWhere(Upfront.Application.current_subapplication.get_layout_data().properties, {name: 'global_regions'});
+				var global_regions = _.findWhere(Upfront.Application.current_subapplication.get_layout_data().properties, {name: 'global_regions'});
 				var global_header_defined = _.isUndefined(global_regions) ?
 					false : _.findWhere(global_regions.value, {name: 'header'});
 				var global_footer_defined = _.isUndefined(global_regions) ?
