@@ -223,7 +223,7 @@ class Upfront_newMenuSetting extends Upfront_Server {
 		upfront_add_ajax('upfront_new_update_menu_order', array($this, "update_menu_order"));
 		upfront_add_ajax('upfront_new_create_menu', array($this, "create_menu"));
 		upfront_add_ajax('upfront_new_rename_menu', array($this, "rename_menu"));
-		
+
 		upfront_add_ajax('upfront_new_update_menu_item', array($this, "update_menu_item"));
 		upfront_add_ajax('upfront_new_update_auto_add_pages', array($this, "update_auto_add_pages"));
 	}
@@ -497,9 +497,7 @@ Upfront_newMenuSetting::serve();
 
 class upfront_nav_walker extends Walker_Nav_Menu
 {
-    
-
-    public function start_el( &$output, $item, $depth = 0, $args = array(), $id = 0 ) {
+	public function start_el( &$output, $item, $depth = 0, $args = array(), $id = 0 ) {
 		$indent = ( $depth ) ? str_repeat( "\t", $depth ) : '';
 
 		$classes = empty( $item->classes ) ? array() : (array) $item->classes;
@@ -510,11 +508,11 @@ class upfront_nav_walker extends Walker_Nav_Menu
 
 		//this code is why all this function has been overriden, this one checks if the link is anchor and removes the current-menu-item class
 		if(strpos($item->url, '#')) {
-           	foreach($classes as $index => $class_item) {
-           		if($class_item == 'current-menu-item')
-           			unset($classes[$index]);
-           	}
-        }
+			foreach($classes as $index => $class_item) {
+				if($class_item == 'current-menu-item')
+					unset($classes[$index]);
+			}
+		}
 
 		$classes[] = 'menu-item-' . $item->ID;
 
