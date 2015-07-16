@@ -1,9 +1,12 @@
 define([
 	'scripts/upfront/preset-settings/preset-manager',
 	'scripts/upfront/preset-settings/util',
-	'scripts/upfront/preset-settings/font-settings-item',
+	'scripts/upfront/preset-settings/typography-settings-item',
+	'scripts/upfront/preset-settings/colors-settings-item',
+	'scripts/upfront/preset-settings/border-settings-item',
+	'scripts/upfront/preset-settings/hov-animation-settings-item',
 	'text!elements/upfront-tabs/tpl/preset-style.html'
-], function(PresetManager, Util, FontSettingsItem, styleTpl) {
+], function(PresetManager, Util, TypographySettingsItem, ColorsSettingsItem, BorderSettingsItem, HovAnimationSettingsItem, styleTpl) {
 	var l10n = Upfront.Settings.l10n.utabs_element;
 
 	var Settings = PresetManager.extend({
@@ -28,63 +31,180 @@ define([
 		},
 		styleTpl: styleTpl,
 		stateFields: {
-			Active: [
+			Global: [
 				{
-					fieldClass: FontSettingsItem,
+					fieldClass: ColorsSettingsItem,
 					options: {
-						state: 'active'
-					}
-				}
-			],
-			Hover: [
-				{
-					fieldClass: FontSettingsItem,
-					options: {
-						state: 'hover'
-					}
-				},
-				{
-					fieldClass: Upfront.Views.Editor.Field.Number,
-					options: {
-						className: 'duration',
-						name: 'hover-transition-duration',
-						min: 0,
-						label: 'Animate Hover Changes:',
-						step: 0.1,
-						values: [
-							{ label: '', value: '12' }
-						],
-						change: function(value, parentPanel) {
-							parentPanel.model.set({'hover-transition-duration': value});
-						}
+						title: 'Content Area Colors',
+						multiple: false,
+						single: true,
+						abccolors: [
+							{
+								name: 'global-content-bg',
+								label: 'Content Area BG'
+							},
+						]
 					}
 				},
 				{
-					fieldClass: Upfront.Views.Editor.Field.Select,
+					fieldClass: BorderSettingsItem,
 					options: {
-						name: 'hover-transition-easing',
-						label: 'sec',
-						step: 0.1,
-						label_style: 'inline',
-						values: [
-							{ label: 'ease', value: 'ease' },
-							{ label: 'linear', value: 'linear' },
-							{ label: 'ease-in', value: 'ease-in' },
-							{ label: 'ease-out', value: 'ease-out' },
-							{ label: 'ease-in-out', value: 'ease-in-out' }
-						],
-						className: 'transition hover',
-						change: function(value, parentPanel) {
-							parentPanel.model.set({'hover-transition-easing': value});
+						state: 'static',
+						title: '',
+						fields: {
+							use: 'global-useborder', 
+							width: 'global-borderwidth',
+							type: 'global-bordertype',
+							color: 'global-bordercolor',
 						}
 					}
 				}
 			],
 			Static: [
 				{
-					fieldClass: FontSettingsItem,
+					fieldClass: ColorsSettingsItem,
 					options: {
-						state: 'static'
+						title: 'Colors',
+						multiple: false,
+						single: true,
+						abccolors: [
+							{
+								name: 'static-tab-bg',
+								label: 'Tab Background'
+							},
+						]
+					}
+				},
+				{
+					fieldClass: TypographySettingsItem,
+					options: {
+						title: 'Tab Label Typography',
+						state: 'static',
+						fields: {
+							typeface: 'static-font-family', 
+							fontstyle: 'static-font-style',
+							weight: 'static-weight',
+							style: 'static-style',
+							size: 'static-font-size',
+							line_height: 'static-line-height',
+							color: 'static-font-color',
+						}
+					}
+				},
+				{
+					fieldClass: BorderSettingsItem,
+					options: {
+						state: 'static',
+						title: '',
+						fields: {
+							use: 'static-useborder', 
+							width: 'static-borderwidth',
+							type: 'static-bordertype',
+							color: 'static-bordercolor',
+						}
+					}
+				}
+			],
+			
+			Hover: [
+				{
+					fieldClass: ColorsSettingsItem,
+					options: {
+						title: 'Colors',
+						multiple: false,
+						single: true,
+						abccolors: [
+							{
+								name: 'hover-tab-bg',
+								label: 'Tab Background'
+							},
+						]
+					}
+				},
+				{
+					fieldClass: TypographySettingsItem,
+					options: {
+						title: 'Tab Label Typography',
+						state: 'hover',
+						fields: {
+							typeface: 'hover-font-family', 
+							fontstyle: 'hover-font-style',
+							weight: 'hover-weight',
+							style: 'hover-style',
+							size: 'hover-font-size',
+							line_height: 'hover-line-height',
+							color: 'hover-font-color',
+						}
+					}
+				},
+				{
+					fieldClass: BorderSettingsItem,
+					options: {
+						state: 'hover',
+						title: '',
+						fields: {
+							use: 'hover-useborder', 
+							width: 'hover-borderwidth',
+							type: 'hover-bordertype',
+							color: 'hover-bordercolor',
+						}
+					}
+				},
+				{
+					fieldClass: HovAnimationSettingsItem,
+					options: {
+						state: 'hover',
+						title: '',
+						fields: {
+							duration: 'hover-transition-duration', 
+							easing: 'hover-transition-easing',
+						}
+					}
+				}
+			],
+			
+			Active: [
+				{
+					fieldClass: ColorsSettingsItem,
+					options: {
+						title: 'Colors',
+						multiple: false,
+						single: true,
+						abccolors: [
+							{
+								name: 'active-tab-bg',
+								label: 'Tab Background'
+							},
+						]
+					}
+				},
+				{
+					fieldClass: TypographySettingsItem,
+					options: {
+						title: 'Tab Label Typography',
+						state: 'active',
+						fields: {
+							typeface: 'active-font-family', 
+							fontstyle: 'active-font-style',
+							weight: 'active-weight',
+							style: 'active-style',
+							size: 'active-font-size',
+							line_height: 'active-line-height',
+							color: 'active-font-color',
+						}
+					}
+				},
+				{
+					fieldClass: BorderSettingsItem,
+					options: {
+						state: 'active',
+						title: '',
+						fields: {
+							use: 'active-useborder', 
+							width: 'active-borderwidth',
+							type: 'active-bordertype',
+							color: 'active-bordercolor',
+						}
 					}
 				}
 			]
