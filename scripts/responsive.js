@@ -27,7 +27,9 @@
 					});
 					Upfront.Events.on("entity:module:after_render", apply_binding_view);
 					Upfront.Events.on("entity:region:after_render", apply_binding_view);
-					Upfront.Events.on("entity:resize_stop", apply_binding_view);
+					Upfront.Events.on("entity:resize_stop", apply_binding_container);
+					Upfront.Events.on("entity:drag_stop", apply_binding_container);
+					Upfront.Events.on("upfront:wrappers:after_fix_height", apply_binding_view);
 					Upfront.Events.on("entity:region_container:resize_stop", apply_binding_view);
 					Upfront.Events.on("upfront:editor:image_on", function(sel){
 						apply_binding_all();
@@ -43,6 +45,9 @@
 			}
 			function apply_binding_view (view) {
 				return apply_binding(view.$el.parent());
+			}
+			function apply_binding_container (view) {
+				return apply_binding(view.$el.closest('.upfront-editable_entities_container'));
 			}
 			function apply_binding ($sel, single) {
 				var $style = $('#'+r_id);

@@ -2905,7 +2905,7 @@ var GridEditor = {
 					$(window).scrollTop( $(window).scrollTop()+(ed.baseline*10) );
 				}
 				$me.css({
-					height: h,
+					height: rsz_row*ed.baseline,
 					width: w,
 					minWidth: w,
 					maxWidth: w
@@ -3189,15 +3189,15 @@ var GridEditor = {
 			$me.resizable('option', 'disabled', false);
 			return false;
 		}
-		$me.append('<span class="upfront-resize-handle-wrapper upfront-resize-handle-w ui-resizable-handle ui-resizable-w">');
-		$me.append('<span class="upfront-resize-handle-wrapper upfront-resize-handle-e ui-resizable-handle ui-resizable-e">');
+		//$me.append('<span class="upfront-resize-handle-wrapper upfront-resize-handle-w ui-resizable-handle ui-resizable-w">');
+		//$me.append('<span class="upfront-resize-handle-wrapper upfront-resize-handle-e ui-resizable-handle ui-resizable-e">');
 		$me.resizable({
 			containment: "document",
 			autoHide: true,
 			delay: 50,
 			handles: {
-				w: '.upfront-resize-handle-w',
-				e: '.upfront-resize-handle-e'
+				w: '.upfront-resize-handle-wrapper-w',
+				e: '.upfront-resize-handle-wrapper-e'
 			},
 			start: function(e, ui){
 				ed.start(view, model);
