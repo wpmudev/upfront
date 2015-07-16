@@ -45,32 +45,48 @@ define([
 			} else {
 				var fields = [];
 			}
+			
+			// First add global fields
+			_.each(this.options.stateFields, function(stateFields, state) {
+				if(state === "Global") {
+					var stateSettings = new StateSettings({
+						model: this.model,
+						fields: stateFields,
+						state: state
+					});
+					fields.push(stateSettings);
+				}
+			}, this);
 
 			// First add settings state selectors
 			_.each(this.options.stateFields, function(stateFields, state) {
-				var showStateButton = new ShowStateSettingsButton({
-					state: state
-				});
-				fields.push(showStateButton);
-				this.listenTo(showStateButton, 'upfront:presets:state_show', this.showState);
+				if(state !== "Global") {
+					var showStateButton = new ShowStateSettingsButton({
+						state: state
+					});
+					fields.push(showStateButton);
+					this.listenTo(showStateButton, 'upfront:presets:state_show', this.showState);
 
-				if (!firstStateButton) {
-					firstStateButton = showStateButton;
+					if (!firstStateButton) {
+						firstStateButton = showStateButton;
+					}
 				}
 			}, this);
 
 			// Than add settings state settings
 			_.each(this.options.stateFields, function(stateFields, state) {
-				var stateSettings = new StateSettings({
-					model: this.model,
-					fields: stateFields,
-					state: state
-				});
-				fields.push(stateSettings);
-				if (!firstStateSettings) {
-					firstStateSettings = stateSettings;
-				} else {
-					stateSettings.$el.hide();
+				if(state !== "Global") {
+					var stateSettings = new StateSettings({
+						model: this.model,
+						fields: stateFields,
+						state: state
+					});
+					fields.push(stateSettings);
+					if (!firstStateSettings) {
+						firstStateSettings = stateSettings;
+					} else {
+						stateSettings.$el.hide();
+					}
 				}
 			}, this);
 

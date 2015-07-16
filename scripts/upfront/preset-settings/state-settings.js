@@ -5,9 +5,11 @@ function() {
 
 		initialize: function(options) {
 			this.options = options || {};
-
-			this.$el.addClass('state_settings state_settings_' + this.options.state.toLowerCase());
-
+			
+			if(this.options.state !== "Global") {
+				this.$el.addClass('state_settings state_settings_' + this.options.state.toLowerCase());
+			}
+			
 			var fields = [],
 				me = this
 			;
