@@ -9,12 +9,8 @@ define(function() {
 	var l10n = Upfront.Settings.l10n.button_element;
 	var BorderSettingsItem = Upfront.Views.Editor.Settings.Item.extend({
 		className: 'border_settings_item clearfix',
-		group: true,
-
-		get_title: function() {
-			return this.options.title;
-		},
-
+		group: false,
+		
 		initialize: function(options) {
 			this.options = options || {};
 			var me = this,
@@ -101,7 +97,7 @@ define(function() {
 					}
 				}),
 			]);
-		}
+		},
 	});
 
 	return BorderSettingsItem;

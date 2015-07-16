@@ -73,6 +73,16 @@ div.preset-manager-panel div.preset_specific div.upfront-settings-item div.upfro
 div.preset-manager-panel div.preset_specific .upfront-settings-item-title {
 	display: none;
 }
+div.preset-manager-panel div.preset_specific .upfront-settings-item-title span {
+	background: none !important;
+	margin-left: 0px;
+	padding: 0px;
+}
+div.preset-manager-panel div.preset_specific .upfront-settings-item-content .upfront-settings-item-title {
+	display: block;
+	color: #2f475f;
+	margin-bottom: 5px;
+}
 div.preset-manager-panel .upfront-preset-add {
 	display: block;
 	position: absolute;
@@ -439,6 +449,9 @@ div.preset-manager-panel .edit_preset_css:before{
 	z-index: 99;
 	top: 6px;
 	left: 8px;
+}
+div.preset-manager-panel .module-color-field {
+	padding-top: 5px;
 }
 div.preset-manager-panel .module-color-field .upfront-field-label-inline {
 	font-size: 11px;

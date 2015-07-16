@@ -48,7 +48,7 @@ define(function() {
 		render: function() {
 			var me = this;
 			this.constructor.__super__.render.call(this);
-
+			
 			this.fields.each( function (field) {
 				var color = me.model.get(field.name);
 				field.set_value(color);

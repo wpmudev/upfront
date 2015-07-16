@@ -13,7 +13,7 @@ define(function() {
 	var l10n = Upfront.Settings.l10n.button_element;
 	var RadiusSettingsItem = Upfront.Views.Editor.Settings.Item.extend({
 		className: 'corner_radius_settings_item clearfix',
-		group: true,
+		group: false,
 
 		get_title: function() {
 			return this.options.title;
