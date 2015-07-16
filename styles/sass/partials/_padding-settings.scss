@@ -28,7 +28,7 @@
 }
 
 
-/* CSS Styles settings */
+/* Padding settings */
 .upfront-settings-padding {
   padding: 0 5px;
 }
@@ -100,26 +100,3 @@
   position: absolute;
   z-index: 1;
 }
-/* Anchor settings */
-.upfront-settings-item-anchor {
-  padding: 10px 5px 15px;
-  position: relative;
-  margin-top: 10px;
-}
-.upfront-settings-item-anchor:before {
-  content: "";
-  display: block;
-  position: absolute;
-  border-top: 1px solid #a3bfd9;
-  left: 15px;
-  right: 15px;
-  top: 0;
-}
-.upfront-settings-item-anchor .upfront-settings-item-title {
-  display: none;
-}
-
-.upfront-settings-item-anchor .upfront-embedded_toggleable {
-  margin-top: 10px;
-}
-
