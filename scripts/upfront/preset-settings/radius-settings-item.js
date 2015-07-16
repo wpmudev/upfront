@@ -39,7 +39,7 @@ define(function() {
 						me.model.set(me.options.fields.use, value);
 					},
 					show: function(value, $el) {
-						var stateSettings = $el.closest('.state_settings');
+						var stateSettings = $el.closest('.state_modules');
 						var lock = me.model.get(me.options.fields.lock); 
 						//Toggle border radius fields
 						if(value == "yes") {
@@ -76,7 +76,7 @@ define(function() {
 					show: function(value) {
 						me.model.set(me.options.fields.lock, value);
 						
-						var stateSettings = me.$el.closest('.state_settings');
+						var stateSettings = me.$el.closest('.state_modules');
 						var useRadius = me.model.get(me.options.fields.use);
 
 						//Toggle border radius fields
@@ -124,14 +124,14 @@ define(function() {
 						me.$el.find("input[name="+ me.options.fields.radius_number +"]").val(value);
 						
 						//Set opacity to 1
-						me.$el.closest('.state_settings').find('.'+ state +'-radius-slider').css('opacity', 1);
+						me.$el.closest('.state_modules').find('.'+ state +'-radius-slider').css('opacity', 1);
 					},
 					show: function() {
 						var value = me.model.get(me.options.fields.radius_number);
 						if(value > me.options.max_value) {
-							me.$el.closest('.state_settings').find('.'+ state +'-radius-slider').css('opacity', 0.6);
+							me.$el.closest('.state_modules').find('.'+ state +'-radius-slider').css('opacity', 0.6);
 						} else {
-							me.$el.closest('.state_settings').find('.'+ state +'-radius-slider').css('opacity', 1);
+							me.$el.closest('.state_modules').find('.'+ state +'-radius-slider').css('opacity', 1);
 						}
 					}
 				}),
@@ -169,9 +169,9 @@ define(function() {
 						
 						//Lower opacity if value is bigger than the slider MAX_VALUE
 						if(value > me.options.max_value) {
-							me.$el.closest('.state_settings').find('.'+ state +'-radius-slider').css('opacity', 0.6);
+							me.$el.closest('.state_modules').find('.'+ state +'-radius-slider').css('opacity', 0.6);
 						} else {
-							me.$el.closest('.state_settings').find('.'+ state +'-radius-slider').css('opacity', 1);
+							me.$el.closest('.state_modules').find('.'+ state +'-radius-slider').css('opacity', 1);
 						} 
 					}
 				}),	

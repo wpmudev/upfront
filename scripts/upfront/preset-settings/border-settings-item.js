@@ -31,8 +31,8 @@ define(function() {
 						me.model.set(me.options.fields.use, value);
 					},
 					show: function(value, $el) {
-						var stateSettings = $el.closest('.state_settings');
-
+						var stateSettings = $el.closest('.state_modules');
+						
 						//Toggle border settings when depending on checkbox value
 						if(value == "yes") {
 							stateSettings.find('.' + state + '-border-width').show();
