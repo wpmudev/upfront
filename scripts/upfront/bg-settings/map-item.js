@@ -142,6 +142,9 @@ define([
 							else {
 								$('.open-map-code-panel-button', this.$el.parent()).hide();
 							}
+						},
+						rendered: function () {
+							this.$el.addClass('uf-bgsettings-map-custom-map-code');
 						}
 					}),
 					open_map_code_panel: new Upfront.Views.Editor.Field.Button({
