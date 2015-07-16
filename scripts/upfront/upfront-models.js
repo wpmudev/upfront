@@ -153,7 +153,7 @@ var _alpha = "alpha",
 			if ( !breakpoint || breakpoint.default )
 				return this.get_property_value_by_name(property);
 			var data = this.get_property_value_by_name('breakpoint');
-			if ( _.isObject(data) && _.isObject(data[breakpoint.id]) && !_.isUndefined(data[breakpoint.id][property]) )
+			if ( _.isObject(data) && _.isObject(data[breakpoint.id]) && property in data[breakpoint.id] )
 				return data[breakpoint.id][property];
 			if ( return_default )
 				return this.get_property_value_by_name(property);
