@@ -25,8 +25,8 @@ define(function() {
 					values: [
 						{ label: '', value: '12' }
 					],
-					change: function(value, parentPanel) {
-						parentPanel.model.set(me.options.fields.duration, value);
+					change: function(value) {
+						me.model.set(me.options.fields.duration, value);
 					}
 				}),
 				new Upfront.Views.Editor.Field.Select({
@@ -43,8 +43,8 @@ define(function() {
 						{ label: 'ease-in-out', value: 'ease-in-out' }
 					],
 					className: 'transition hover',
-					change: function(value, parentPanel) {
-						parentPanel.model.set(me.options.fields.easing, value);
+					change: function(value) {
+						me.model.set(me.options.fields.easing, value);
 					}
 				}),
 			]);
