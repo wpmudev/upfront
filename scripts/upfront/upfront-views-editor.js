@@ -4524,40 +4524,31 @@ var Field_ToggleableText = Field_Text.extend({
 			// Make sure all select options are visible in scroll panel i.e. scroll scroll panel as needed
 			var me = this;
 			_.delay(function() { // Delay because opening animation causes wrong outerHeight results
-				var $scroll_panel,
-					scroll_panel_bottom,
-					$select_options,
-					options_bottom;
-
-				$scroll_panel = me.$el.parents('.upfront-settings_panel_scroll');
-				
-				/*
-				if ($scroll_panel) {
-					scroll_panel_bottom = ($scroll_panel.offset()?$scroll_panel.offset().top:0) + $scroll_panel.outerHeight();
-					$select_options = me.$el.find('.upfront-field-select-options');
-					options_bottom =  $select_options.offset().top + $select_options.outerHeight();
-					$scroll_panel.scrollTop(options_bottom-$scroll_panel.outerHeight());
-				}
-				*/
 				var in_sidebar = me.$el.parents('#sidebar-ui').length,
 					in_settings = me.$el.parents('#element-settings-sidebar').length;
-				
+								
 				// Apply if select field is in sidebar or settings sidebar
 				if(in_sidebar == 1 || in_settings == 1) {
 					var select_dropdown = me.$el.find('.upfront-field-select-options'),
 						select = select_dropdown.parent(),
 						dropDownTop = select.position().top;
-					
-					select_dropdown.css("width", select.width() + 2);
+
+					select_dropdown.css("width", select.width());
 					select_dropdown.css('top', dropDownTop + "px");
 					select_dropdown.css('left', select.offset().left + "px");
 					select_dropdown.css('display', 'block');
 				}
-				
-			}, 20);
+			}, 10);
+			
+			$('.sidebar-panel-content, .upfront-settings_panel_scroll').on('scroll', this, this.on_scroll);
+			
 			this.trigger('focus');
 		},
-
+		on_scroll: function(e) {
+			var me = e.data;
+			me.$el.find('.upfront-field-select').removeClass('upfront-field-select-expanded');
+			me.trigger('blur');
+		},
 		onMouseUp: function(e){
 			e.stopPropagation();
 		},
@@ -4669,7 +4660,7 @@ var Field_ToggleableText = Field_Text.extend({
 	var Field_Chosen_Select = Field_Select.extend({
 		events: {
 			'change select': 'on_change',
-			'click .chosen-container .chosen-single': 'openOptions'
+			'click .chosen-container .chosen-single': 'openOptions',
 		},
 		multiple: false,
 		get_field_html: function() {
@@ -4703,14 +4694,20 @@ var Field_ToggleableText = Field_Text.extend({
 						select = select_dropdown.parent(),
 						dropDownTop = select.position().top;
 
-					select_dropdown.css("width", select.width() + 2);
+					select_dropdown.css("width", select.width());
 					select_dropdown.css('top', dropDownTop + "px");
 					select_dropdown.css('left', select.offset().left + "px");
 					select_dropdown.css('display', 'block');
 				}
-				
 			}, 20);
+			
+			//Close dropdown on parent scroll
+			$('.sidebar-panel-content, .upfront-settings_panel_scroll').on('scroll', this, this.on_scroll);
 		},
+		on_scroll: function(e) {
+			var me = e.data;
+			me.$el.find('select').trigger("chosen:close");;
+		}
 	});
 
 	var Field_Typeface_Chosen_Select = Field_Chosen_Select.extend({
