@@ -4660,7 +4660,7 @@ var Field_ToggleableText = Field_Text.extend({
 	var Field_Chosen_Select = Field_Select.extend({
 		events: {
 			'change select': 'on_change',
-			'click .chosen-container .chosen-single': 'openOptions',
+			'click .chosen-container .chosen-single': 'openOptions'
 		},
 		multiple: false,
 		get_field_html: function() {
@@ -4702,11 +4702,13 @@ var Field_ToggleableText = Field_Text.extend({
 			}, 20);
 			
 			//Close dropdown on parent scroll
-			$('.sidebar-panel-content, .upfront-settings_panel_scroll').on('scroll', this, this.on_scroll);
+			$('.sidebar-panel-content, .upfront-settings_panel_scroll').on('scroll', this, this.closeChosen);
+			me.$el.find('select').on("chosen:hiding_dropdown", this, this.closeChosen);
 		},
-		on_scroll: function(e) {
+		closeChosen: function(e) {
 			var me = e.data;
-			me.$el.find('select').trigger("chosen:close");;
+			me.$el.find('.chosen-drop').css('display', 'none');
+			me.$el.find('select').trigger("chosen:close");
 		}
 	});
 
