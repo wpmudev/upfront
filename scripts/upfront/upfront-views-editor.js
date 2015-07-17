@@ -4531,9 +4531,9 @@ var Field_ToggleableText = Field_Text.extend({
 				if(in_sidebar == 1 || in_settings == 1) {
 					var select_dropdown = me.$el.find('.upfront-field-select-options'),
 						select = select_dropdown.parent(),
-						dropDownTop = select.position().top;
+						dropDownTop = select.offset().top - $('#element-settings-sidebar').offset().top;
 
-					select_dropdown.css("width", select.width());
+					select_dropdown.css("width", select.width() + 3);
 					select_dropdown.css('top', dropDownTop + "px");
 					select_dropdown.css('left', select.offset().left + "px");
 					select_dropdown.css('display', 'block');
@@ -4692,7 +4692,7 @@ var Field_ToggleableText = Field_Text.extend({
 				if(in_sidebar == 1 || in_settings == 1) {
 					var select_dropdown = me.$el.find('.chosen-drop'),
 						select = select_dropdown.parent(),
-						dropDownTop = select.position().top;
+						dropDownTop = (select.offset().top - $('#element-settings-sidebar').offset().top) + select.height();
 
 					select_dropdown.css("width", select.width());
 					select_dropdown.css('top', dropDownTop + "px");
