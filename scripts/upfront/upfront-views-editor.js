@@ -4750,7 +4750,7 @@ var Field_ToggleableText = Field_Text.extend({
 			this.set_option_font(this.get_value());
 		},
 		set_option_font: function(value) {
-			$('.upfront-chosen-select-typeface').parent().find('.chosen-single').css( "font-family", value );
+			this.$el.find('.upfront-chosen-select-typeface').parent().find('.chosen-single').css( "font-family", value );
 		},
 		openOptions: function(e) {
 			Field_Chosen_Select.prototype.openOptions.call(this);
