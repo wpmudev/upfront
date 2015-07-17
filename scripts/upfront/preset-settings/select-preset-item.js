@@ -6,6 +6,7 @@ define([
 	var SelectPresetItem = Upfront.Views.Editor.Settings.Item.extend({
 		initialize: function (options) {
 			this.options = options || {};
+			this.group = false;
 			var me = this;
 
 			this.selectPresetField = new SelectPresetField({

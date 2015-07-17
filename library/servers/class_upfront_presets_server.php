@@ -254,7 +254,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 	private static function _get_l10n ($key=false) {
 		$l10n = array(
 			'select_preset' => __('Select Preset', 'upfront'),
-			'select_preset_label' => __('Select Preset or Create a New One', 'upfront'),
+			'select_preset_label' => __('Choose or Create Preset:', 'upfront'),
 			'delete_label' => __('Delete', 'upfront'),
 			'add_label' => __('Add', 'upfront'),
 			'not_empty_label' => __('Preset name can not be empty.', 'upfront'),

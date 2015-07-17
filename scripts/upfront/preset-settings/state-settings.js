@@ -9,7 +9,7 @@ function() {
 			if(this.options.state !== "Global") {
 				this.$el.addClass('state_modules state_settings state_settings_' + this.options.state.toLowerCase());
 			} else {
-				this.$el.addClass('state_modules');
+				this.$el.addClass('state_modules global_modules');
 			}
 			
 			var fields = [],

@@ -89,7 +89,12 @@ define([
 					}
 				}
 			}, this);
-
+			
+			//Wrap tab buttons
+			setTimeout(function(){
+				me.$el.find('.state_settings_button').wrapAll('<div class="state_settings_button_wrapper">');
+			}, 50);
+			
 			firstStateButton.$el.addClass('active');
 			firstStateSettings.$el.show();
 

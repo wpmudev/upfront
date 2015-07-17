@@ -8,7 +8,7 @@ div.preset-manager-panel .hover_preset,
 div.preset-manager-panel .state_settings_button,
 div.preset-manager-panel .static_preset {
 	display: inline;
-	margin-right: 15px;
+	margin-right: 5px;
 }
 div.preset-manager-panel .hover_preset input,
 div.preset-manager-panel .state_settings_button input,
@@ -28,9 +28,27 @@ div.preset-manager-panel .static_preset input {
 div.preset-manager-panel .hover_preset.active input,
 div.preset-manager-panel .state_settings_button.active input,
 div.preset-manager-panel .static_preset.active input{
-	background-color:#84a8ce !important;
+	background-color:#84a8ce;
 	color:#fff;
 	text-decoration: none;
+}
+div.preset-manager-panel .state_settings {
+	padding-bottom: 10px;
+}
+div.preset-manager-panel .state_settings_button input {
+	background: #e9f1fa;
+	color: #90a3c3;
+	border: 1px solid #e9f1fa;
+	border-bottom: none;
+	text-decoration: none;
+	border-radius: 0 !important;
+	position: relative;
+	bottom: -1px;
+}
+div.preset-manager-panel .state_settings_button.active input {
+	background: #fff;
+	color: #86a3c3;
+	border-color: #e5eef8;
 }
 div.preset-manager-panel .delete_preset input {
 	background-color:#d71b12 !important;
@@ -38,25 +56,42 @@ div.preset-manager-panel .delete_preset input {
 	float: right;
 	margin-top: -25px;
 }
+#settings div.preset-manager-panel .upfront-settings_panel {
+	background: #dae6f2;
+}
+div.preset-manager-panel .upfront-settings-css {
+	padding: 0px;
+	background: #f7fbff;
+}
 div.preset-manager-panel .delete_preset {
 	position: relative;
 	z-index: 99;
 	top: -22px;
 }
 div.preset-manager-panel div.preset_specific {
-	background: #e7f1fb; /* Old browsers */
-	background: -moz-linear-gradient(top,  #e7f1fb 0%, #f2f9ff 39%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e7f1fb), color-stop(39%,#f2f9ff)); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top,  #e7f1fb 0%,#f2f9ff 39%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top,  #e7f1fb 0%,#f2f9ff 39%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top,  #e7f1fb 0%,#f2f9ff 39%); /* IE10+ */
-	background: linear-gradient(to bottom,  #e7f1fb 0%,#f2f9ff 39%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e7f1fb', endColorstr='#f2f9ff',GradientType=0 ); /* IE6-9 */
-	margin-top: 10px;
+	background: #fff;
+	padding-top: 10px;
 	padding: 1px 0px;
 }
+div.preset-manager-panel div.global_modules {
+	margin: -15px;
+	margin-bottom: 0px;
+	padding-top: 15px;
+	padding-left: 15px;
+	background: #f7fbff;
+}
+div.preset-manager-panel div.state_settings_button_wrapper {
+	background: #f7fbff;
+	margin: 0px -15px;
+	padding-top: 15px;
+	padding-left: 15px;
+	border-bottom: 1px solid #e5eef8;
+}
+div.preset-manager-panel div.state_settings div.upfront-settings-item {
+	padding: 0px;
+}
 div.preset-manager-panel div.upfront-settings_panel_scroll {
-	padding: 15px 0px !important;
+	padding: 0px !important;
 }
 div.preset-manager-panel div.upfront-settings_panel_scroll .upfront-settings-item {
 	padding: 0px 5px;
@@ -97,6 +132,9 @@ div.preset-manager-panel .upfront-preset-add {
 }
 div.preset-manager-panel .chosen-search {
 	position: relative;
+}
+div.preset-manager-panel div.select-preset-field {
+	padding-bottom: 10px;
 }
 div.preset-manager-panel div.select-preset-field label {
 	font-weight: normal;
