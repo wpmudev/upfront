@@ -192,7 +192,7 @@ div.preset-manager-panel div.border_radius_lock {
 	position: relative;
 	margin-top: 0px;
 	top: -27px;
-	left: 72px;
+	left: 80px;
 }
 div.preset-manager-panel div.radius-slider {
 	top: -25px;
@@ -219,6 +219,7 @@ div.preset-manager-panel div.preset_specific div.bg-color {
 	vertical-align: text-bottom;
 	margin-left: 70px;
 	margin-bottom: -2px;
+	position: relative;
 }
 div.preset-manager-panel div.preset_specific div.border-color {
 	margin-left: 28px;
@@ -512,4 +513,8 @@ div.preset-manager-panel .color-module.two {
 div.preset-manager-panel .color-module.single {
 	width: 100%;
 	margin-top: -3px;
+}
+div.preset-manager-panel .checkbox-title span {
+	text-transform: uppercase;
+	font-weight: bold;
 }

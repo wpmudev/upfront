@@ -109,7 +109,7 @@ class Upfront_ButtonView extends Upfront_Object {
 			'size' => __('Size:', 'upfront'),
 			'line_height' => __('Line Height: ', 'upfront'),
 			'color' => __('Color:', 'upfront'),
-			'rounded_corners' => __('Rounded Corners', 'upfront'),
+			'rounded_corners' => __('Round Corners', 'upfront'),
 			'typography' => __('Typography', 'upfront'),
 			'animate_hover_changes' => __('Animate Hover Changes:', 'upfront'),
 			'sec' => __('sec', 'upfront'),

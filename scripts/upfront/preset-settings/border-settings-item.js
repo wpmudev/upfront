@@ -19,7 +19,7 @@ define(function() {
 			this.fields = _([
 				new Upfront.Views.Editor.Field.Checkboxes({
 					model: this.model,
-					className: 'useBorder',
+					className: 'useBorder checkbox-title',
 					name: me.options.fields.use,
 					label: '',
 					default_value: 1,
