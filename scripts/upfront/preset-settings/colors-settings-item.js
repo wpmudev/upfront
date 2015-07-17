@@ -1,6 +1,6 @@
 define(function() {
 	var ColorsSettingsItem = Upfront.Views.Editor.Settings.Item.extend({
-		className: 'colors_settings_item clearfix',
+		className: 'settings_module colors_settings_item clearfix',
 		group: true,
 
 		get_title: function() {

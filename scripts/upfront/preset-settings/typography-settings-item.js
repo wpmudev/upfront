@@ -11,7 +11,7 @@
 define(function() {
 	var l10n = Upfront.Settings.l10n.button_element;
 	var TypographySettingsItem = Upfront.Views.Editor.Settings.Item.extend({
-		className: 'typography_settings_item',
+		className: 'settings_module typography_settings_item',
 		group: true,
 		
 		get_title: function() {

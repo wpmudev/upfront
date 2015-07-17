@@ -6,7 +6,7 @@
 define(function() {	
 	var l10n = Upfront.Settings.l10n.button_element;
 	var HovAnimationSettingsItem = Upfront.Views.Editor.Settings.Item.extend({
-		className: 'hov_animation_settings_item clearfix',
+		className: 'settings_module hov_animation_settings_item clearfix',
 		group: false,
 		
 		initialize: function(options) {

@@ -72,11 +72,11 @@ div.preset-manager-panel div.preset_specific {
 	background: #fff;
 	padding-top: 10px;
 	padding: 1px 0px;
+	position: relative;
 }
 div.preset-manager-panel div.global_modules {
 	margin: -15px;
 	margin-bottom: 0px;
-	padding-top: 15px;
 	padding-left: 15px;
 	background: #f7fbff;
 }
@@ -89,6 +89,17 @@ div.preset-manager-panel div.state_settings_button_wrapper {
 }
 div.preset-manager-panel div.state_settings div.upfront-settings-item {
 	padding: 0px;
+}
+div.preset-manager-panel div.preset_specific:before {
+	content: "";
+	position: absolute;
+	width: 0; 
+	top: -7px;
+	left: 30px;
+	height: 0; 
+	border-left: 5px solid transparent;
+	border-right: 5px solid transparent;
+	border-bottom: 5px solid #f7fbff;
 }
 div.preset-manager-panel div.upfront-settings_panel_scroll {
 	padding: 0px !important;
@@ -370,7 +381,7 @@ div.preset-manager-panel div.border_radius_lock input[type=checkbox]:checked:aft
 }
 div.preset-manager-panel div.borderWidth, div.preset-manager-panel div.borderType, div.preset-manager-panel div.borderColor {
 	display: inline-block;
-	margin-top: 0px;
+	margin-top: 5px;
 }
 div.preset-manager-panel div.borderWidth {
 	padding: 5px 0px 5px 10px;
@@ -447,7 +458,7 @@ div.preset-manager-panel .typography-heading {
 	margin-top: 0px;
 }
 div.preset-manager-panel .useBorder {
-	margin-top: 19px;
+	margin-top: 15px;
 }
 div.preset-manager-panel .useBorderSeparator {
 	top: 8px;
@@ -517,4 +528,17 @@ div.preset-manager-panel .color-module.single {
 div.preset-manager-panel .checkbox-title span {
 	text-transform: uppercase;
 	font-weight: bold;
+	margin: 0px;
+}
+div.preset-manager-panel .settings_module {
+	border-bottom: 1px solid #e5ecf4;
+	margin: 0px -15px;
+	padding-left: 15px;
+	padding-bottom: 15px;
+}
+div.preset-manager-panel .colors_settings_item {
+	padding-bottom: 12px;
+}
+div.preset-manager-panel .colors_settings_item, div.preset-manager-panel .typography_settings_item {
+	padding-top: 15px;
 }

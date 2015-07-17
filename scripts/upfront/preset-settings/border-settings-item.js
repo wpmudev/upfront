@@ -8,7 +8,7 @@
 define(function() {	
 	var l10n = Upfront.Settings.l10n.button_element;
 	var BorderSettingsItem = Upfront.Views.Editor.Settings.Item.extend({
-		className: 'border_settings_item clearfix',
+		className: 'settings_module border_settings_item clearfix',
 		group: false,
 		
 		initialize: function(options) {
