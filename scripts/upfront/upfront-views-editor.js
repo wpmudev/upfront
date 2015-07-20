@@ -4769,10 +4769,10 @@ var Field_ToggleableText = Field_Text.extend({
 		},
 		get_value_html: function (value, index) {
 			var selected = '';
-			var saved_value = this.get_saved_value();
 			var font_family = this.options.font_family;
 			var parsed_variant = Upfront.Views.Font_Model.parse_variant(value.value);
-			if (value.value === saved_value) { 
+			var saved_value = this.get_saved_value();
+			if (value.value === saved_value) {
 				selected = ' selected="selected"'; 
 			}
 			var label =  this.map_labels(parsed_variant.weight, parsed_variant.style);
@@ -4827,9 +4827,9 @@ var Field_ToggleableText = Field_Text.extend({
 			this.set_option_font(this.get_value());
 		},
 		set_option_font: function(value) {
-			var font_family = $('.upfront-chosen-select-typeface').val();
+			var font_family = this.$el.parent().find('.upfront-chosen-select-typeface').val();
 			var parsed_variant = Upfront.Views.Font_Model.parse_variant(value);
-			$('.upfront-chosen-select-style').parent().find('.chosen-single').css( {"font-family": font_family, "font-weight": parsed_variant.weight, "font-style": parsed_variant.style });
+			this.$el.find('.chosen-single').css( {"font-family": font_family, "font-weight": parsed_variant.weight, "font-style": parsed_variant.style });
 		},
 		openOptions: function(e) {
 			Field_Chosen_Select.prototype.openOptions.call(this);

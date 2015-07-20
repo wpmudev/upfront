@@ -71,8 +71,8 @@ define(function() {
 				
 				new Upfront.Views.Editor.Field.Typeface_Style_Chosen_Select({
 					model: this.model,
-					name: this.options.fields.weight,
-					values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants_for_select(me.model.get('fontface')),
+					name: this.options.fields.fontstyle,
+					values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants_for_select(me.model.get(me.options.fields.typeface)),
 					label: l10n.weight_style,
 					font_family: me.model.get(this.options.fields.typeface),
 					select_width: '225px',
@@ -84,7 +84,7 @@ define(function() {
 						me.model.set(current_element + me.options.fields.fontstyle, value);
 						me.model.set(current_element + me.options.fields.weight, parsed_variant.weight);
 						me.model.set(current_element + me.options.fields.style, parsed_variant.style);
-					},
+					}
 				}),
 				
 				new Upfront.Views.Editor.Field.Number({
