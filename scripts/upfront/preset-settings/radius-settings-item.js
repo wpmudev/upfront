@@ -10,7 +10,7 @@
 * `radius4` - Bottom right corner
 */
 define(function() {	
-	var l10n = Upfront.Settings.l10n.button_element;
+	var l10n = Upfront.Settings.l10n.preset_manager;
 	var RadiusSettingsItem = Upfront.Views.Editor.Settings.Item.extend({
 		className: 'settings_module corner_radius_settings_item clearfix',
 		group: false,

@@ -6,7 +6,7 @@
 * `color` - Border color
 */
 define(function() {	
-	var l10n = Upfront.Settings.l10n.button_element;
+	var l10n = Upfront.Settings.l10n.preset_manager;
 	var BorderSettingsItem = Upfront.Views.Editor.Settings.Item.extend({
 		className: 'settings_module border_settings_item clearfix',
 		group: false,
