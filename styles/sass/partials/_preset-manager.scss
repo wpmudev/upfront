@@ -160,13 +160,8 @@ div.preset-manager-panel div.preset_specific div.duration input
 	width: 45px;
 	font-size: 12px;
 }
-div.preset-manager-panel div.preset_specific div.border_radius1 {
-	position: relative;
-}
-div.preset-manager-panel div.preset_specific div.border_radius1 label {
-	position: absolute;
-	top: -20px;
-	width: 150px;
+div.preset-manager-panel .settings_module.corner_radius_settings_item {
+	padding-bottom: 11px;
 }
 div.preset-manager-panel div.preset_specific div.border_radius {
 	display: inline-block;
@@ -177,36 +172,41 @@ div.preset-manager-panel div.preset_specific div.border_radius label {
 	display: none;
 }
 div.preset-manager-panel div.preset_specific div.border_radius1 {
-	top: -25px;
+	top: -6px;
 	padding: 7px 0px 0px 10px;
 	position: relative;
 	border-left: 2px solid #dae6f2;
 }
+div.preset-manager-panel div.preset_specific div.border_radius1 label {
+	position: absolute;
+	top: -20px;
+	width: 150px;
+}
 div.preset-manager-panel div.preset_specific div.border_radius2 {
 	left: 15px;
-	top: -25px;
+	top: -6px;
 }
 div.preset-manager-panel div.preset_specific div.border_radius3 {
 	padding: 15px 0px 9px 10px;
 	position: relative;
 	border-left: 2px solid #dae6f2;
 	left: -147px;
-	top: 20px;
+	top: 39px;
+	margin-bottom: 39px;
 }
 div.preset-manager-panel div.preset_specific div.border_radius4 {
 	left: -30px;
-	top: 20px;
+	top: 39px;
 	position: relative;
 	margin-bottom: 10px;
 }
 div.preset-manager-panel div.border_radius_lock {
 	position: relative;
-	margin-top: 0px;
-	top: -27px;
-	left: 80px;
+	margin-top: -19px;
+	left: 85px;
 }
 div.preset-manager-panel div.radius-slider {
-	top: -25px;
+	top: -11px;
 	padding-top: 10px;
 	padding-bottom: 17px;
 	position: relative;
@@ -221,7 +221,6 @@ div.preset-manager-panel div.radius-slider .upfront-field-slider-value {
 div.preset-manager-panel div.border_radius_number, div.preset-manager-panel div.border_radius_number input {
 	width: 60px;
 	float: left;
-	top: -8px;
 	position: relative;
 	margin-left: 15px;
 }
@@ -330,7 +329,7 @@ div.preset-manager-panel div.border_radius_lock input[type=checkbox]:after {
 	background-image: url('../img/uf-core-el-sprite.png');
 	background-image: url('../img/uf-core-el-sprite.svg'), none;
 	background-position: -661px -172px;
-	background-color: rgb(242, 249, 255);
+	background-color: rgb(255, 255, 255);
 	left: -3px;
 	top: -3px;
 	position: relative;
@@ -422,10 +421,10 @@ div.preset-manager-panel .upfront-field-label-inline {
 div.preset-manager-panel .fontSize, div.preset-manager-panel .lineHeight, div.preset-manager-panel .fontColor {
 	display: inline-block;
 	margin-top: 0px;
-	margin-right: 18px;
+	margin-right: 12px;
 }
 div.preset-manager-panel .fontSize input {
-	width: 55px;
+	width: 50px;
 }
 div.preset-manager-panel .lineHeight input {
 	width: 60px;
@@ -434,6 +433,11 @@ div.preset-manager-panel div.fontColor {
 	margin-top: -30px;
 	color: #000;
 	margin-right: 0px;
+}
+div.preset-manager-panel div.fontColor label {
+	position: relative;
+	top: 25px;
+	left: 25px;
 }
 div.preset-manager-panel div.preset-separator {
 	border-bottom: 1px solid #e1edf8;
