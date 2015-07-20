@@ -43,5 +43,5 @@ module.exports = function(grunt) {
 		}
 	});
 
-	grunt.registerTask('default', ['sass']);
+	grunt.registerTask('default', ['sass', 'cssmin']);
 };
