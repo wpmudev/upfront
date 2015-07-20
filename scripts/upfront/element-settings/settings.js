@@ -69,9 +69,6 @@ define([], function () {
 
 			this.toggle_panel(this.panels.first());
 
-			var label_width = this.panels.first().$el.find('.upfront-settings_label').outerWidth(),
-				panel_width = this.panels.first().$el.find('.upfront-settings_panel').outerWidth();
-
 			this.$el.addClass('upfront-ui');
 			this.$el.append(
 				"<div class='upfront-settings-button_panel'>" +

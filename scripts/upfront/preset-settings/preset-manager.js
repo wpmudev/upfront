@@ -24,18 +24,22 @@ define([
 	 *
 	 * styleTpl - Upfront.Util.template parsed styles template
 	 */
-	var PresetManager = ElementSettings.extend({
+	var PresetManager = Backbone.View.extend({
 		initialize: function (options) {
 			this.options = options;
 			this.has_tabs = false;
 
-			var defaultPreset = false;
+			var defaultPreset = false,
+				preset;
 			_.each(Upfront.mainData[this.mainDataCollection], function(preset, presetIndex) {
 				if (preset.id === 'default') {
 					defaultPreset = true;
 				}
 			});
 			if(!defaultPreset) {
+				Upfront.mainData[this.mainDataCollection] = _.isArray(Upfront.mainData[this.mainDataCollection]) ?
+						Upfront.mainData[this.mainDataCollection] : [];
+
 				Upfront.mainData[this.mainDataCollection].unshift(this.presetDefaults);
 			}
 
@@ -76,7 +80,7 @@ define([
 		},
 
 		updatePreset: function(properties) {
-            var index,
+			var index,
 				//css = Util.generateCss(properties, this.styleTpl),
 				styleElementId;
 			/* // Note: killed, because we already do this in Util
@@ -175,6 +179,64 @@ define([
 
 		get_title: function () {
 			return this.panelTitle;
+		},
+
+		render: function () {
+			var me = this;
+
+			me.$el
+				.html(
+					'<div class="upfront-settings_title">' + this.get_title() + '</div>'
+				)
+			;
+
+			me.panels.each(function (panel) {
+				panel.render();
+
+				me.listenTo(panel, "upfront:settings:panel:toggle", me.toggle_panel);
+				me.listenTo(panel, "upfront:settings:panel:close", me.close_panel);
+				me.listenTo(panel, "upfront:settings:panel:refresh", me.refresh_panel);
+
+				panel.parent_view = me;
+				me.$el.append(panel.el);
+			});
+
+			this.toggle_panel(this.panels.first());
+		},
+
+		save_settings: function() {
+			this.panels.each(function(panel){
+				panel.save_settings();
+			});
+		},
+
+		toggle_panel: function (panel) {
+			this.panels.invoke("conceal");
+			panel.$el.find(".upfront-settings_panel").css('height', '');
+			panel.show();
+			panel.reveal();
+			this.set_title(panel.get_title());
+		},
+
+		set_title: function (title) {
+			if (!title || !title.length) return false;
+			this.$el.find(".upfront-settings_title").html(title);
+		},
+
+		// Fixes for ElementSettings compatibility, this will be removed later
+		//TODO remove this when ElementSettings is refactored
+		conceal: function() {
+
+		},
+		reveal: function() {
+
+		},
+		show: function() {
+
+		},
+
+		cleanUp: function() {
+
 		}
 	});
 

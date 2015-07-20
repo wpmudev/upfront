@@ -183,8 +183,7 @@ define([], function () {
 			this.settings.each(function (setting) {
 				if ( (setting.fields || setting.settings).size() > 0 ) {
 					setting.save_fields();
-				}
-				else {
+				} else {
 					var value = me.model.get_property_value_by_name(setting.get_name());
 					if ( value != setting.get_value() )
 						me.model.set_property(
@@ -198,6 +197,7 @@ define([], function () {
 		on_cancel: function () {
 			this.trigger("upfront:settings:panel:close", this);
 		},
+
 		cleanUp: function(){
 			if(this.settings)
 				this.settings.each(function(setting){

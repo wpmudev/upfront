@@ -4,9 +4,9 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 	protected function __construct() {
 		parent::__construct();
-		
+
 		add_filter('upfront_l10n', array('Upfront_Presets_Server', 'add_l10n_strings'));
-		
+
 		$this->elementName = $this->get_element_name();
 		$this->db_key = 'upfront_' . get_stylesheet() . '_' . $this->elementName . '_presets';
 
@@ -56,21 +56,21 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 		$this->_out(new Upfront_JsonResponse_Success('Deleted ' . $this->elementName . ' preset.'));
 	}
-	
+
 	public function reset() {
 		if (!isset($_POST['data'])) {
 			return;
 		}
 
 		$properties = stripslashes_deep($_POST['data']);
-		
+
 		//If automatically generated default preset return false
-		if(empty($properties['id'])) { 
+		if(empty($properties['id'])) {
 			return $this->_out(new Upfront_JsonResponse_Error("Invalid preset"));
 		}
-		
+
 		do_action('upfront_reset_' . $this->elementName . '_preset', $properties, $this->elementName);
-		
+
 		if (!has_action('upfront_reset_' . $this->elementName . '_preset')) {
 			$presets = $this->get_presets();
 			$result = array();
@@ -84,11 +84,11 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 				}
 				$result[] = $preset;
 			}
-			
+
 			$this->update_presets($result);
 		}
-		
-	
+
+
 		$this->_out(new Upfront_JsonResponse_Success($resetpreset));
 	}
 
@@ -114,7 +114,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 		return $presets;
 	}
-	
+
 	protected function update_presets($presets = array()) {
 		update_option($this->db_key, json_encode($presets));
 	}
@@ -150,11 +150,11 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 	public function get_presets_styles() {
 		$presets = $this->get_presets();
-		
+
 		if (empty($presets)) {
 			return '';
 		}
-		
+
 		$styles = '';
 		foreach ($presets as $preset) {
 			$args = array('properties' => $preset);
@@ -166,31 +166,31 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 		return $styles;
 	}
-	
+
 	public function get_theme_presets() {
-		
+
 		//Get presets distributed with the theme
 		$theme_presets = json_decode(Upfront_ChildTheme::get_settings()->get($this->elementName . '_presets'), true);
-		
+
 		return $theme_presets;
 	}
-	
+
 	public function get_theme_presets_names() {
-		
+
 		//Get presets distributed with the theme
 		$theme_presets = $this->get_theme_presets();
-		
+
 		if(empty($theme_presets)) return false;
-		
+
 		$theme_preset_names = array();
-		
+
 		foreach($theme_presets as $preset) {
 			$theme_preset_names[] = $preset['id'];
 		}
-		
+
 		return $theme_preset_names;
 	}
-	
+
 	public function get_theme_preset_by_id($preset) {
 		$theme_presets = $this->get_theme_presets();
 
@@ -199,10 +199,10 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 				return $tpreset;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	public function get_presets_javascript_server() {
 		$presets = get_option('upfront_' . get_stylesheet() . '_' . $this->elementName . '_presets');
 		$presets = apply_filters(
@@ -213,21 +213,21 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 				'as_array' => true
 			)
 		);
-		
-		if(!is_array($presets)) { 
-			$presets = json_decode($presets, true); 
+
+		if(!is_array($presets)) {
+			$presets = json_decode($presets, true);
 		}
-		
+
 		$theme_presets = array();
 		$updatedPresets = array();
-		
+
 		//Get presets distributed with the theme
 		$theme_presets = $this->get_theme_presets_names();
-		
+
 		if(empty($theme_presets)) {
 			return json_encode($presets);
 		}
-		
+
 		//Check if preset is distributed with the theme
 		foreach($presets as $preset) {
 			if(in_array($preset['id'], $theme_presets)) {
@@ -237,14 +237,14 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			}
 			$updatedPresets[] = $preset;
 		}
-		
+
 		$updatedPresets = json_encode($updatedPresets);
-		
+
 		if(empty($updatedPresets)) $updatedPresets = json_encode(array());
-		
+
 		return $updatedPresets;
 	}
-	
+
 	public static function add_l10n_strings ($strings) {
 		if (!empty($strings['preset_manager'])) return $strings;
 		$strings['preset_manager'] = self::_get_l10n();

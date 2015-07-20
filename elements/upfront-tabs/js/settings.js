@@ -1,4 +1,5 @@
 define([
+	'scripts/upfront/element-settings/settings',
 	'scripts/upfront/preset-settings/preset-manager',
 	'scripts/upfront/preset-settings/util',
 	'scripts/upfront/preset-settings/typography-settings-item',
@@ -6,10 +7,10 @@ define([
 	'scripts/upfront/preset-settings/border-settings-item',
 	'scripts/upfront/preset-settings/hov-animation-settings-item',
 	'text!elements/upfront-tabs/tpl/preset-style.html'
-], function(PresetManager, Util, TypographySettingsItem, ColorsSettingsItem, BorderSettingsItem, HovAnimationSettingsItem, styleTpl) {
+], function(ElementSettings, PresetManager, Util, TypographySettingsItem, ColorsSettingsItem, BorderSettingsItem, HovAnimationSettingsItem, styleTpl) {
 	var l10n = Upfront.Settings.l10n.utabs_element;
 
-	var Settings = PresetManager.extend({
+	var TabsAppearance = PresetManager.extend({
 		mainDataCollection: 'tabPresets',
 		styleElementPrefix: 'tab-preset',
 		ajaxActionSlug: 'tab',
@@ -52,7 +53,7 @@ define([
 						state: 'static',
 						title: '',
 						fields: {
-							use: 'global-useborder', 
+							use: 'global-useborder',
 							width: 'global-borderwidth',
 							type: 'global-bordertype',
 							color: 'global-bordercolor',
@@ -81,7 +82,7 @@ define([
 						title: 'Tab Label Typography',
 						state: 'static',
 						fields: {
-							typeface: 'static-font-family', 
+							typeface: 'static-font-family',
 							fontstyle: 'static-font-style',
 							weight: 'static-weight',
 							style: 'static-style',
@@ -97,7 +98,7 @@ define([
 						state: 'static',
 						title: '',
 						fields: {
-							use: 'static-useborder', 
+							use: 'static-useborder',
 							width: 'static-borderwidth',
 							type: 'static-bordertype',
 							color: 'static-bordercolor',
@@ -105,7 +106,7 @@ define([
 					}
 				}
 			],
-			
+
 			Hover: [
 				{
 					fieldClass: ColorsSettingsItem,
@@ -127,7 +128,7 @@ define([
 						title: 'Tab Label Typography',
 						state: 'hover',
 						fields: {
-							typeface: 'hover-font-family', 
+							typeface: 'hover-font-family',
 							fontstyle: 'hover-font-style',
 							weight: 'hover-weight',
 							style: 'hover-style',
@@ -143,7 +144,7 @@ define([
 						state: 'hover',
 						title: '',
 						fields: {
-							use: 'hover-useborder', 
+							use: 'hover-useborder',
 							width: 'hover-borderwidth',
 							type: 'hover-bordertype',
 							color: 'hover-bordercolor',
@@ -156,13 +157,13 @@ define([
 						state: 'hover',
 						title: '',
 						fields: {
-							duration: 'hover-transition-duration', 
+							duration: 'hover-transition-duration',
 							easing: 'hover-transition-easing',
 						}
 					}
 				}
 			],
-			
+
 			Active: [
 				{
 					fieldClass: ColorsSettingsItem,
@@ -184,7 +185,7 @@ define([
 						title: 'Tab Label Typography',
 						state: 'active',
 						fields: {
-							typeface: 'active-font-family', 
+							typeface: 'active-font-family',
 							fontstyle: 'active-font-style',
 							weight: 'active-weight',
 							style: 'active-style',
@@ -200,7 +201,7 @@ define([
 						state: 'active',
 						title: '',
 						fields: {
-							use: 'active-useborder', 
+							use: 'active-useborder',
 							width: 'active-borderwidth',
 							type: 'active-bordertype',
 							color: 'active-bordercolor',
@@ -211,8 +212,28 @@ define([
 		}
 	});
 
+	var TabsSettings = ElementSettings.extend({
+		initialize: function (opts) {
+			this.options = opts;
+			var me = this;
+			this.panels = _([
+				new TabsAppearance({
+					model: this.model
+				})
+			]);
+
+			this.on('open', function(){
+				me.model.trigger('settings:open', me);
+			});
+		},
+
+		get_title: function () {
+			return 'Tabs Settings';
+		}
+	});
+
 	// Generate presets styles to page
 	Util.generatePresetsToPage('tab', styleTpl);
 
-	return Settings;
+	return TabsSettings;
 });

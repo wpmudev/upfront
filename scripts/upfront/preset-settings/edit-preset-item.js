@@ -3,7 +3,7 @@ define([
 	'scripts/upfront/preset-settings/state-settings'
 ], function(ShowStateSettingsButton, StateSettings) {
 	var l10n = Upfront.Settings.l10n.preset_manager;
-	
+
 	var EditPresetItem = Upfront.Views.Editor.Settings.Item.extend({
 		className: 'preset_specific',
 
@@ -11,12 +11,12 @@ define([
 			this.options = options || {};
 
 			this.listenTo(this.model, 'change', this.onPresetUpdate);
-			
+
 			var me = this,
 				firstStateButton = false,
 				firstStateSettings = false;
-			
-			if((Upfront.Application.get_current() === Upfront.Application.MODE.THEME || this.options.model.get('theme_preset') !== true) 
+
+			if((Upfront.Application.get_current() === Upfront.Application.MODE.THEME || this.options.model.get('theme_preset') !== true)
 					&& this.options.model.get('id') !== 'default') {
 				var fields = [
 					new Upfront.Views.Editor.Field.Button({
@@ -29,7 +29,7 @@ define([
 						}
 					})
 				];
-			} else if(Upfront.Application.get_current() !== Upfront.Application.MODE.THEME 
+			} else if(Upfront.Application.get_current() !== Upfront.Application.MODE.THEME
 						&& (this.options.model.get('id') === 'default' || this.options.model.get('theme_preset') === true)) {
 				var fields = [
 					new Upfront.Views.Editor.Field.Button({
@@ -45,7 +45,7 @@ define([
 			} else {
 				var fields = [];
 			}
-			
+
 			// First add global fields
 			_.each(this.options.stateFields, function(stateFields, state) {
 				if(state === "Global") {
@@ -89,18 +89,18 @@ define([
 					}
 				}
 			}, this);
-			
+
 			//Wrap tab buttons
 			setTimeout(function(){
 				me.$el.find('.state_settings_button').wrapAll('<div class="state_settings_button_wrapper">');
 			}, 50);
-			
-			firstStateButton.$el.addClass('active');
-			firstStateSettings.$el.show();
+
+			if (firstStateButton) firstStateButton.$el.addClass('active');
+			if (firstStateSettings) firstStateSettings.$el.show();
 
 			this.fields =_(fields);
 		},
-		
+
 		onPresetUpdate: function() {
 			this.trigger('upfront:presets:update', this.model.toJSON());
 		},
@@ -108,7 +108,7 @@ define([
 		deletePreset: function() {
 			this.trigger('upfront:presets:delete', this.model);
 		},
-		
+
 		resetPreset: function() {
 			this.trigger('upfront:presets:reset', this.model);
 		},
