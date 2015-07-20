@@ -15375,52 +15375,53 @@ div.preset-manager-panel div.preset_specific div.duration {
 /* line 259, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel div.preset_specific div.transition {
   margin-top: -28px;
-  margin-left: 80px; }
+  margin-left: 80px;
+  width: 145px; }
 
-/* line 264, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 265, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel div.preset_specific div.font_face > label, div.preset-manager-panel div.preset_specific div.transition label {
   font-size: 12px;
   display: inline;
   vertical-align: top; }
 
-/* line 269, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 270, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel div.preset_specific div.transition > label {
   margin-left: -30px;
   margin-right: 10px; }
 
-/* line 273, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 274, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel div.preset_specific div.font_face > label {
   position: relative;
   left: 6px; }
 
-/* line 277, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 278, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel div.new_preset input {
   background: transparent;
   border: 2px #818d96 solid;
   font-size: 12px;
   padding: 3px 16px; }
 
-/* line 283, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 284, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel div.new_preset_name {
   width: 140px;
   margin-right: 10px;
   display: inline-block; }
 
-/* line 288, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 289, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel div.new_preset {
   display: inline-block;
   width: 80px;
   margin-top: 10px; }
 
-/* line 293, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 294, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel div.preset {
   margin-top: 10px; }
 
-/* line 296, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 297, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel div.or_divider div.upfront-settings-item-title {
   text-align: center; }
 
-/* line 299, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 300, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel div.or_divider div.upfront-settings-item-title > span {
   display: inline-block;
   background-color: #84a8ce;
@@ -15433,23 +15434,23 @@ div.preset-manager-panel div.or_divider div.upfront-settings-item-title > span {
   color: #fff;
   text-transform: lowercase; }
 
-/* line 311, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 312, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel div.upfront-settings-common_panel {
   padding-bottom: 15px; }
 
-/* line 314, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 315, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel div.border_radius_lock input[type=checkbox] {
   position: relative;
   left: 36px;
   top: 6px; }
 
-/* line 319, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 320, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel div.border_radius_lock input[type=checkbox]:checked {
   float: none !important;
   left: 38px;
   top: 7px; }
 
-/* line 324, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 325, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel div.border_radius_lock input[type=checkbox]:after {
   content: '';
   display: block;
@@ -15463,191 +15464,195 @@ div.preset-manager-panel div.border_radius_lock input[type=checkbox]:after {
   top: -3px;
   position: relative; }
 
-/* line 337, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 338, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel div.border_radius_lock input[type=checkbox]:checked:after {
   background-position: -661px -140px; }
 
-/* line 341, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 342, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 #settings .preset_specific .upfront-settings-item-content .upfront-settings-item-content {
   margin: 0;
   padding: 0; }
 
-/* line 345, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 346, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 .font_settings_item .upfront-settings-item-content > div {
   display: inline-block;
   vertical-align: bottom; }
 
-/* line 349, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 350, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 .font_settings_item .font-size {
   width: 70px; }
 
-/* line 352, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 353, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 .font_settings_item .font-size input {
   width: 50px; }
 
-/* line 355, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 356, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 .font_settings_item .font-size label {
   white-space: nowrap; }
 
-/* line 358, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 359, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 .font_settings_item .font-face {
   width: 125px; }
 
-/* line 361, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 362, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 .font_settings_item .font-face .upfront-field-select {
   vertical-align: bottom; }
 
-/* line 366, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 367, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 .select-preset-field .upfront-field-select {
   width: 150px; }
 
-/* line 369, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 370, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 .colors_settings_item .upfront-settings-item-title span {
   padding: 0;
   margin: 0; }
 
-/* line 373, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 374, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 .colors_settings_item .upfront-field-wrap-color {
   float: left;
   clear: none;
   margin-right: 10px; }
 
-/* line 378, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 379, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 .state_settings > .upfront-settings-item-content > div {
   margin-top: 20px; }
 
-/* line 381, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 382, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+div.preset-manager-panel .field-toggle {
+  margin-top: 5px !important; }
+
+/* line 385, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel div.borderWidth, div.preset-manager-panel div.borderType, div.preset-manager-panel div.borderColor {
   display: inline-block;
   margin-top: 5px; }
 
-/* line 385, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 389, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel div.borderWidth {
   padding: 5px 0px 5px 10px;
   position: relative;
   top: 0px;
   border-left: 2px solid #dae6f2; }
 
-/* line 391, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 395, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel div.borderWidth input {
   width: 50px; }
 
-/* line 394, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 398, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel div.borderWidth label {
   display: none; }
 
-/* line 397, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 401, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel div.borderType {
   width: 80px;
   margin-left: 13px;
   margin-right: 14px; }
 
-/* line 402, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 406, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel div.borderType .upfront-field-select {
   position: relative;
   top: 7px; }
 
-/* line 406, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 410, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel div.borderColor {
   margin-top: -15px; }
 
-/* line 409, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 413, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel .backgroundColor {
   padding-top: 8px; }
 
-/* line 412, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 416, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel .backgroundColor .sp-replacer {
   margin-top: -50px;
   margin-left: 130px; }
 
-/* line 416, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 420, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel .upfront-field-label-inline {
   font-size: 11px;
   display: block;
   font-family: verdana, sans-serif; }
 
-/* line 421, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 425, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel .fontSize, div.preset-manager-panel .lineHeight, div.preset-manager-panel .fontColor {
   display: inline-block;
   margin-top: 0px;
   margin-right: 12px; }
 
-/* line 426, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 430, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel .fontSize input {
   width: 50px; }
 
-/* line 429, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 433, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel .lineHeight input {
   width: 60px; }
 
-/* line 432, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 436, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel div.fontColor {
   margin-top: -30px;
   color: #000;
   margin-right: 0px; }
 
-/* line 437, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 441, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel div.fontColor label {
   position: relative;
   top: 25px;
   left: 25px; }
 
-/* line 442, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 446, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel div.preset-separator {
   border-bottom: 1px solid #e1edf8;
   margin-top: 0px; }
 
-/* line 446, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 450, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel .separator-background {
   position: relative;
   top: -15px; }
 
-/* line 450, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 454, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel .separator-corners {
   position: relative;
   top: 0px; }
 
-/* line 454, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 458, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel .separator-corners-hov {
   position: relative;
   top: 2px; }
 
-/* line 458, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 462, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel .useRadius {
   padding-top: 15px; }
 
-/* line 461, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 465, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel .typography-heading {
   margin-top: 0px; }
 
-/* line 464, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 468, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel .useBorder {
   margin-top: 15px; }
 
-/* line 467, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 471, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel .useBorderSeparator {
   top: 8px;
   position: relative; }
 
-/* line 471, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 475, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel .transition .upfront-field-select {
   margin-top: -24px; }
 
-/* line 474, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 478, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel .transition .upfront-field-select-single .upfront-field-select-option-selected label:before {
   left: 12px;
   position: relative; }
 
-/* line 478, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 482, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel .backgroundcolor-hover, div.preset-manager-panel .typography-hover {
   padding-top: 11px; }
 
-/* line 481, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 485, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel .edit_preset_css {
   position: relative;
   margin-top: 20px; }
 
-/* line 485, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 489, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel .edit_preset_css input {
   background-image: linear-gradient(-179deg, #fafdff 0%, #f3faff 100%);
   border: 1px solid #a2bfda;
@@ -15658,7 +15663,7 @@ div.preset-manager-panel .edit_preset_css input {
   position: relative;
   padding-left: 32px; }
 
-/* line 495, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 499, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel .edit_preset_css:before {
   background-image: url(../img/uf-core-el-sprite.svg);
   background-position: -660px -44px;
@@ -15671,11 +15676,11 @@ div.preset-manager-panel .edit_preset_css:before {
   top: 6px;
   left: 8px; }
 
-/* line 507, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 511, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel .module-color-field {
   padding-top: 5px; }
 
-/* line 510, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 514, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel .module-color-field .upfront-field-label-inline {
   font-size: 11px;
   display: inline;
@@ -15686,40 +15691,40 @@ div.preset-manager-panel .module-color-field .upfront-field-label-inline {
   top: -5px;
   padding-left: 5px; }
 
-/* line 520, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 524, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel .module-color-field .sp-replacer {
   float: left; }
 
-/* line 523, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 527, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel .color-module.two {
   width: 45%;
   float: left;
   margin-bottom: 2px; }
 
-/* line 528, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 532, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel .color-module.single {
   width: 100%;
   margin-top: -3px; }
 
-/* line 532, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 536, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel .checkbox-title span {
   text-transform: uppercase;
   font-weight: bold;
   margin: 0px; }
 
-/* line 537, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 541, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel .settings_module {
   border-bottom: 1px solid #e5ecf4;
   margin: 0px -15px;
   padding-left: 15px;
   padding-bottom: 15px; }
 
-/* line 543, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 547, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel .colors_settings_item {
   padding-bottom: 12px; }
 
-/* line 546, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
-div.preset-manager-panel .colors_settings_item, div.preset-manager-panel .typography_settings_item {
+/* line 550, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+div.preset-manager-panel .colors_settings_item, div.preset-manager-panel .typography_settings_item, div.preset-manager-panel .hov_animation_settings_item {
   padding-top: 15px; }
 
 /* line 2, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_inline-panels.scss */
