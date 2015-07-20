@@ -3,6 +3,17 @@
 abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 	const THEME_BASE_URL_MACRO = 'UPFRONT_THEME_BASE';
+	
+	/**
+	 * Constant-like file exclusion pattern.
+	 *
+	 * @var array
+	 */
+	private static $_EXCLUDED_FILES = array(
+		".", 
+		"..", 
+		".DS_Store",
+	);
 
 
 	private $_version = false;
@@ -215,7 +226,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		$styles_root = get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'element-styles';
 		// List subdirectories as element types
 		$element_types = is_dir($styles_root)
-			? array_diff(scandir($styles_root), Upfront::$Excluded_Files)
+			? array_diff(scandir($styles_root), self::$_EXCLUDED_FILES)
 			: array()
 		;
 
@@ -235,7 +246,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		}
 
 		foreach ($element_types as $type) {
-			$style_files = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), Upfront::$Excluded_Files);
+			$style_files = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), self::$_EXCLUDED_FILES);
 			foreach ($style_files as $style) {
 				// If region CSS, only load the one saved matched the layout_id
 				$style_rx = '/^(' . preg_quote("{$layout_id}", '/') . '|' . preg_quote("{$type}", '/') . (!empty($alternate_layout_id) ? '|' . preg_quote($alternate_layout_id, '/') : '') . ')/';
@@ -366,11 +377,11 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		if (file_exists($styles_root) === false) return $theme_styles;
 
 		// List subdirectories as element types
-		$element_types = array_diff(scandir($styles_root), Upfront::$Excluded_Files);
+		$element_types = array_diff(scandir($styles_root), self::$_EXCLUDED_FILES);
 
 		foreach($element_types as $type) {
 			$theme_styles[$type] = array();
-			$styles = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), Upfront::$Excluded_Files);
+			$styles = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), self::$_EXCLUDED_FILES);
 			foreach ($styles as $style) {
 				$style_content = file_get_contents($styles_root . DIRECTORY_SEPARATOR . $type . DIRECTORY_SEPARATOR . $style);
 				$style_content = $this->_expand_passive_relative_url($style_content);
@@ -454,10 +465,10 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		if (file_exists($styles_root) === false) return $elementTypes;
 
 		// List subdirectories as element types
-		$element_types = array_diff(scandir($styles_root), Upfront::$Excluded_Files);
+		$element_types = array_diff(scandir($styles_root), self::$_EXCLUDED_FILES);
 		foreach($element_types as $type) {
 			$elementTypes[$type] = array();
-			$styles = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), Upfront::$Excluded_Files);
+			$styles = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), self::$_EXCLUDED_FILES);
 			foreach ($styles as $style) {
 				$elementTypes[$type][] = str_replace('.css', '', $style);
 			}

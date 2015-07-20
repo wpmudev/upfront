@@ -24,7 +24,7 @@ Upfront_Behavior::debug()->set_baseline();
 
 
 class Upfront {
-	public static $Excluded_Files = array(".", "..", ".DS_Store");
+
 	private $_servers = array(
 		'ajax',
 		'javascript_main',
@@ -201,7 +201,11 @@ class Upfront {
 		wp_enqueue_script('jquery');
 		
 		//Basic styles for upfront to work are always loaded.
-		wp_enqueue_style('upfront-global', self::get_root_url() . '/styles/global.css', array(), Upfront_ChildTheme::get_version());
+		$global_style = Upfront_Behavior::compression()->has_experiments()
+			? '/styles/global.min.css'
+			: '/styles/global.css'
+		;
+		wp_enqueue_style('upfront-global', self::get_root_url() . $global_style, array(), Upfront_ChildTheme::get_version());
         
         if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
             // Don't queue the front grid if has permission to boot Upfront, queue editor grid instead
@@ -236,7 +240,11 @@ class Upfront {
 
 	function inject_upfront_dependencies () {
 		
-		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) return false; // Do not inject for users that can't use this
+		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
+			do_action('upfront-core-inject_dependencies'); // Also trigger the dependencies injection hook
+			return false; // Do not inject for users that can't use this
+		}
+		
 		$url = self::get_root_url();
 		//Boot Edit Mode if the querystring contains the editmode param
 		if (isset($_GET['editmode']))

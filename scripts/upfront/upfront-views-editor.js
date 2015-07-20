@@ -1965,7 +1965,7 @@ define([
 				} else if ('a' === element) {
 					selector = '.upfront-object-content a, .upfront-object-content a:link, .upfront-object-content a:visited';
 				} else {
-					selector = '.upfront-object-content ' + element;
+					selector = '.upfront-object-content ' + element  + ', .upfront-ui ' + element + '.tag-list-tag';
 				}
 				css.push(selector + '{ ' + rules.join("; ") + '; }');
 
@@ -2023,7 +2023,9 @@ define([
 				$style = $("style#typography-colors");
 			}
 			_.each(this.elements, function (element) {
-				if (me.colors[element]) css.push('.upfront-object-content ' + element + '{ color:' + Upfront.Util.colors.to_color_value(me.colors[element]) + '; }');
+				if (me.colors[element]) {
+                    css.push('.upfront-object-content ' + element + '{ color:' + Upfront.Util.colors.to_color_value(me.colors[element]) + '; }');
+                }
 			});
 			$style.empty().append(css.join("\n"));
 		}
@@ -6814,7 +6816,7 @@ var CSSEditor = Backbone.View.extend({
 
 		if ( !this.no_render ) {
 			this.prepareAce = deferred.promise();
-			require(['//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'], function() {
+			require([Upfront.Settings.ace_url], function() {
 				deferred.resolve();
 			});
 
@@ -6970,6 +6972,7 @@ var CSSEditor = Backbone.View.extend({
 		var me = this,
 			editor = ace.edit(this.$('.upfront-css-ace')[0]),
 			session = editor.getSession(),
+			scrollerDisplayed = false,
 			scope,
 			styles
 		;
@@ -6986,6 +6989,20 @@ var CSSEditor = Backbone.View.extend({
 				me.updateStyles(editor.getValue());
 			},800);
 			me.trigger('change', editor);
+						
+			if(typeof me.editor !== "undefined") {
+				var aceOuterWidth = $(me.editor.container).get(0).scrollWidth;
+				var aceInnerWidth = $(me.editor.container).find('.ace_content').innerWidth();
+				
+				if(aceOuterWidth < aceInnerWidth + 40) {
+					if(!scrollerDisplayed) {
+						me.startResizable();
+					}
+					scrollerDisplayed = true;
+				} else {
+					scrollerDisplayed = false;
+				}
+			}
 		});
 
 		styles = Upfront.Util.colors.convert_string_color_to_ufc(this.get_style_element().html());
@@ -6998,9 +7015,15 @@ var CSSEditor = Backbone.View.extend({
 		// Set up the proper vscroller width to go along with new change.
 		editor.renderer.scrollBar.width = 5;
 		editor.renderer.scroller.style.right = "5px";
-
+		
 		editor.focus();
 		this.editor = editor;
+		
+		if(me.timer) clearTimeout(me.timer);
+		me.timer = setTimeout(function(){
+			me.startResizable();
+		},300);
+		
 	},
 	prepareSpectrum: function(){
 		var me = this,
@@ -7501,7 +7524,7 @@ var GeneralCSSEditor = Backbone.View.extend({
 		this.global = ( options.global === true );
 
 		this.prepareAce = deferred.promise();
-		require(['//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'], function(){
+		require([Upfront.Settings.ace_url], function(){
 			deferred.resolve();
 		});
 
@@ -9547,6 +9570,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				me = this,
 				modal = new Modal({ to: this.panel_view.panels_view.$el, button: true, width: 422 }),
 				disable_global = ( ( to == 'left' || to == 'right' ) && me.model.get('scope') == 'global' );
+				var parentContainer = me.$el.parents('.upfront-region-center');
+				parentContainer.addClass('upfront-region-editing-modal');
+				parentContainer.next().find('.upfront-icon-control-region-resize').hide();
 				fields = {
 					from: new Field_Radios({
 						name: 'from',
@@ -9664,6 +9690,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				}
 			})
 			.always(function(modal_view){
+				parentContainer.removeClass('upfront-region-editing-modal');
+				parentContainer.next().find('.upfront-icon-control-region-resize').show();
 				modal_view.remove();
 			});
 

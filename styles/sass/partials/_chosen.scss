@@ -1,6 +1,7 @@
 /* Chosen */
 #insert-font-widget .chosen-container-single .chosen-single,
 #sidebar-ui .chosen-container-single .chosen-single,
+#settings .chosen-container-single .chosen-single,
 #upfront-popup .chosen-container-single .chosen-single
 {
 	margin: 0;
@@ -16,6 +17,7 @@
 }
 #insert-font-widget .chosen-container-single .chosen-single:hover,
 #sidebar-ui .chosen-container-single .chosen-single:hover,
+#settings .chosen-container-single .chosen-single:hover,
 #upfront-popup .chosen-container-single .chosen-single:hover
 {
 	border-color: rgb(96, 127, 153);
@@ -24,6 +26,8 @@
 #sidebar-ui .chosen-with-drop .chosen-single,
 #insert-font-widget .chosen-with-drop .chosen-single:hover,
 #sidebar-ui .chosen-with-drop .chosen-single:hover,
+#settings .chosen-with-drop .chosen-single,
+#settings .chosen-with-drop .chosen-single:hover,
 #upfront-popup .chosen-with-drop .chosen-single,
 #upfront-popup .chosen-with-drop .chosen-single:hover
 {
@@ -36,16 +40,19 @@
 }
 #insert-font-widget .chosen-container .chosen-results li,
 #sidebar-ui .chosen-container .chosen-results li,
+#settings .chosen-container .chosen-results li,
 #upfront-popup .chosen-container .chosen-results li
 {
 	margin: 0 0 0 5px;
 }
 #insert-font-widget .chosen-container-single .chosen-drop,
 #sidebar-ui .chosen-container-single .chosen-drop,
+#settings .chosen-container-single .chosen-drop,
 #upfront-popup .chosen-container-single .chosen-drop,
 
 #insert-font-widget .chosen-container-multi .chosen-drop,
 #sidebar-ui .chosen-container-multi .chosen-drop,
+#settings .chosen-container-multi .chosen-drop,
 #upfront-popup .chosen-container-multi .chosen-drop
 {
 	background: #e6f3fe;
@@ -57,18 +64,21 @@
 }
 #insert-font-widget .chosen-container .chosen-results,
 #sidebar-ui .chosen-container .chosen-results,
+#settings .chosen-container .chosen-results,
 #upfront-popup .chosen-container .chosen-results
 {
 	max-height: 150px;
 	margin-right: 5px;
 }
 #sidebar-ui .chosen-container .chosen-results,
+#settings .chosen-container .chosen-results,
 #upfront-popup .chosen-container .chosen-results
 {
 	max-height: 120px;
 }
 #insert-font-widget .chosen-container .chosen-results li.highlighted,
 #sidebar-ui .chosen-container .chosen-results li.highlighted,
+#settings .chosen-container .chosen-results li.highlighted,
 #upfront-popup .chosen-container .chosen-results li.highlighted
 {
 	background: #5f7f9a;
@@ -76,20 +86,24 @@
 }
 #insert-font-widget .chosen-container-single .chosen-search,
 #sidebar-ui .chosen-container-single .chosen-search,
+#settings .chosen-container-single .chosen-search,
 #upfront-popup .chosen-container-single .chosen-search,
 
 #insert-font-widget .chosen-container-multi .chosen-search,
 #sidebar-ui .chosen-container-multi .chosen-search,
+#settings .chosen-container-multi .chosen-search,
 #upfront-popup .chosen-container-multi .chosen-search
 {
 	padding: 3px 5px;
 }
 #insert-font-widget .chosen-container-single .chosen-search input[type=text],
 #sidebar-ui .chosen-container-single .chosen-search input[type=text],
+#settings .chosen-container-single .chosen-search input[type=text],
 #upfront-popup .chosen-container-single .chosen-search input[type=text],
 
 #insert-font-widget .chosen-container-multi .chosen-choices input[type=text],
 #sidebar-ui .chosen-container-multi .chosen-choices input[type=text],
+#settings .chosen-container-multi .chosen-choices input[type=text],
 #upfront-popup .chosen-container-multi .chosen-choices input[type=text]
 {
 	background: #f7fbff;
@@ -104,10 +118,12 @@
 }
 #insert-font-widget .chosen-container-single .chosen-results::-webkit-scrollbar,
 #sidebar-ui .chosen-container-single .chosen-results::-webkit-scrollbar,
+#settings .chosen-container-single .chosen-results::-webkit-scrollbar,
 #upfront-popup .chosen-container-single .chosen-results::-webkit-scrollbar,
 
 #insert-font-widget .chosen-container-multi .chosen-results::-webkit-scrollbar,
 #sidebar-ui .chosen-container-multi .chosen-results::-webkit-scrollbar,
+#settings .chosen-container-multi .chosen-results::-webkit-scrollbar,
 #upfront-popup .chosen-container-multi .chosen-results::-webkit-scrollbar
 {
 	background: #d4dee8;
@@ -115,16 +131,19 @@
 }
 #insert-font-widget .chosen-container-single .chosen-results::-webkit-scrollbar-thumb,
 #sidebar-ui .chosen-container-single .chosen-results::-webkit-scrollbar-thumb,
+#settings .chosen-container-single .chosen-results::-webkit-scrollbar-thumb,
 #upfront-popup .chosen-container-single .chosen-results::-webkit-scrollbar-thumb,
 
 #insert-font-widget .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb,
 #sidebar-ui .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb,
+#settings .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb,
 #upfront-popup .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb
 {
 	background-color: #1fcd8f;
 }
 #insert-font-widget .chosen-container-single .chosen-single div b,
 #sidebar-ui .chosen-container-single .chosen-single div b,
+#settings .chosen-container-single .chosen-single div b,
 #upfront-popup .chosen-container-single .chosen-single div b
 {
 	display: block;
@@ -138,6 +157,7 @@
 }
 #insert-font-widget .chosen-with-drop .chosen-single div b,
 #sidebar-ui .chosen-with-drop .chosen-single div b,
+#settings .chosen-with-drop .chosen-single div b,
 #upfront-popup .chosen-with-drop .chosen-single div b
 {
 	border-top: 0 none transparent;
