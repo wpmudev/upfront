@@ -67,8 +67,6 @@ define([], function () {
 				me.$el.append(panel.el);
 			});
 
-			this.toggle_panel(this.panels.first());
-
 			this.$el.addClass('upfront-ui');
 			this.$el.append(
 				"<div class='upfront-settings-button_panel'>" +
