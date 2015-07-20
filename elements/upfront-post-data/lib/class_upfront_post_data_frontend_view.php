@@ -55,6 +55,19 @@ class Upfront_PostDataView extends Upfront_Object_Group {
 		}
 		return $classes;
 	}
+
+	public function get_attr () {
+		$attr = parent::get_attr();
+		$propagated = array($attr);
+		foreach ($this->_child_instances as $part_view) {
+			$propagated[] = $part_view->get_propagated_attr();
+		}
+		$propagated = array_values(array_unique(array_filter($propagated)));
+		return empty($propagated)
+			? $attr
+			: join(' ', $propagated) . ' '
+		;
+	}
 }
 
 
@@ -105,6 +118,18 @@ class Upfront_PostDataPartView extends Upfront_Object {
 
 	public function get_propagated_classes () {
 		return $this->_part_view->get_propagated_classes();
+	}
+
+	/**
+	 * Check the part view for propagated attributes other than class.
+	 *
+	 * @return string
+	 */
+	public function get_propagated_attr () {
+		return is_callable(array($this->_part_view, 'get_propagated_attr'))
+			? $this->_part_view->get_propagated_attr()
+			: ''
+		;
 	}
 	
 }
