@@ -254,12 +254,12 @@ div.preset-manager-panel div.preset_specific div.font_color {
 	margin-top: -30px;
 }
 div.preset-manager-panel div.preset_specific div.duration {
-	margin-top: 15px;
+	margin-top: 5px;
 }
 div.preset-manager-panel div.preset_specific div.transition{
-	margin-top: -28px;
+	margin-top: -32px;
 	margin-left: 80px;
-	width: 145px;
+	width: 135px;
 }
 div.preset-manager-panel div.preset_specific div.font_face > label,
 div.preset-manager-panel div.preset_specific div.transition label {
@@ -270,6 +270,13 @@ div.preset-manager-panel div.preset_specific div.transition label {
 div.preset-manager-panel div.preset_specific div.transition > label {
 	margin-left:-30px;
 	margin-right: 10px;
+}
+div.preset-manager-panel div.preset_specific div.transition.element-toggled > label {
+	margin-left:-20px;
+	margin-right: 30px;
+}
+div.preset-manager-panel div.preset_specific div.transition .upfront-field-select-single {
+	margin-left: 10px;
 }
 div.preset-manager-panel div.preset_specific div.font_face > label {
 	position: relative;
@@ -379,9 +386,6 @@ div.preset-manager-panel div.border_radius_lock input[type=checkbox]:checked:aft
 .state_settings > .upfront-settings-item-content > div {
 	margin-top: 20px;
 }
-div.preset-manager-panel .field-toggle {
-	margin-top: 5px !important;
-}
 div.preset-manager-panel div.borderWidth, div.preset-manager-panel div.borderType, div.preset-manager-panel div.borderColor {
 	display: inline-block;
 	margin-top: 5px;
@@ -464,6 +468,12 @@ div.preset-manager-panel .useRadius {
 }
 div.preset-manager-panel .typography-heading {
 	margin-top: 0px;
+}
+div.preset-manager-panel .selectElement {
+	width: 225px;
+}
+div.preset-manager-panel .selectElement.element-toggled {
+	margin-top: 5px;
 }
 div.preset-manager-panel .useBorder {
 	margin-top: 15px;
@@ -549,4 +559,27 @@ div.preset-manager-panel .colors_settings_item {
 }
 div.preset-manager-panel .colors_settings_item, div.preset-manager-panel .typography_settings_item, div.preset-manager-panel .hov_animation_settings_item {
 	padding-top: 15px;
+}
+div.preset-manager-panel .typography_settings_item .element-toggled.selectElement,
+div.preset-manager-panel .typography_settings_item .element-toggled.typeFace, 
+div.preset-manager-panel .typography_settings_item .element-toggled.weightStyle,
+div.preset-manager-panel .typography_settings_item .element-toggled.fontSize,
+div.preset-manager-panel .hov_animation_settings_item .element-toggled.duration,
+div.preset-manager-panel .colors_settings_item .element-toggled.single,
+div.preset-manager-panel .colors_settings_item .element-toggled.two:nth-child(even) {
+	border-left: 2px solid #dae6f2;
+	padding: 5px 0px 5px 10px;
+	position: relative;
+	top: 0px;
+}
+
+div.preset-manager-panel .typography_settings_item .element-toggled.typeFace .chosen-container, 
+div.preset-manager-panel .typography_settings_item .element-toggled.weightStyle .chosen-container {
+	width: 213px !important;
+}
+div.preset-manager-panel .useTypography .upfront-field-multiple-selected {
+	margin-bottom: 5px;
+}
+div.preset-manager-panel .useColors .upfront-field-multiple-selected {
+	margin-bottom: 8px;
 }

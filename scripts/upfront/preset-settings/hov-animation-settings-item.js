@@ -12,12 +12,17 @@ define(function() {
 		initialize: function(options) {
 			this.options = options || {};
 			var me = this,
-				state = this.options.state;
+				state = this.options.state,
+				toggleClass = 'no-toggle';
+				
+			if(me.options.toggle === true) {
+				toggleClass = 'element-toggled';
+			}	
 
 			this.fields = _([
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
-					className: state + '-duration duration',
+					className: state + '-duration duration ' + toggleClass,
 					name: me.options.fields.duration,
 					min: 0,
 					label: 'Animate Hover Changes:',
@@ -42,7 +47,7 @@ define(function() {
 						{ label: 'ease-out', value: 'ease-out' },
 						{ label: 'ease-in-out', value: 'ease-in-out' }
 					],
-					className: state + '-transition transition hover',
+					className: state + '-transition transition ' + toggleClass,
 					change: function(value) {
 						me.model.set(me.options.fields.easing, value);
 					}
