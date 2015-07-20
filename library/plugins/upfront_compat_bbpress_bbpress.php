@@ -23,7 +23,6 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
 
         if(is_bbpress()) { // if it is a bbPress page
             //add_filter('template_include', array($this, 'resolve_template'), 99);
-
             add_filter('upfront-views-view_class', array($this, 'override_view'));
             add_filter('upfront-entity_resolver-entity_ids', array($this, 'resolve_entity_ids'));
         }
@@ -149,20 +148,19 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
         if (!empty($item)) {
             $cascade['item'] = "bbpress-{$item}"; 
             $cascade['type'] = $type;
-            if (!empty($spec)) {
-                $cascade['specificity'] = "bbpress-noedit-{$item}-{$spec}";
-            }
+            //if (!empty($spec)) {
+                $cascade['specificity'] = "bbpress-noedit-{$item}".((!empty($spec))?"-{$spec}":"");
+            //}
             
         }
+
         return $cascade;
 
     }
     public function load_markup () {
 
-
-
         $data = stripslashes_deep($_POST);
-         
+        
       
         if (empty($data['layout']['item']) && empty($data['layout']['specificity'])) return false; // Don't deal with this if we don't know what it is
 
@@ -184,9 +182,7 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
 
     public function load_posts () {
         
-       $data = stripslashes_deep($_POST);
-       
-    
+        $data = stripslashes_deep($_POST);
 
         if (empty($data['layout']['item'])) return false; // Don't deal with this if we don't know what it is
 

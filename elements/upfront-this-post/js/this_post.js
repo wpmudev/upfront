@@ -43,7 +43,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		this.delegateEvents();
 
 		this.postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
-
+		console.log(Upfront.Application.current_subapplication.get_layout_data());
 		if(this.postId){
 			this.refreshMarkup().then(function(){
 				if(me.postId)
