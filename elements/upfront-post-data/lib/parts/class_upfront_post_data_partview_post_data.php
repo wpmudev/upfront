@@ -51,6 +51,15 @@ class Upfront_Post_Data_PartView_Post_data extends Upfront_Post_Data_PartView {
 	}
 
 	/**
+	 * Propagate the role attribute.
+	 *
+	 * @return string ARIA role attribute for this part
+	 */
+	public function get_propagated_attr () {
+		return 'role="main"';
+	}
+
+	/**
 	 * Check if the content has any part markers.
 	 *
 	 * @param string $content Content to check for markers
