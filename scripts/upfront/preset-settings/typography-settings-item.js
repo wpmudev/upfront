@@ -9,7 +9,7 @@
 * `color` - Font color
 */
 define(function() {
-	var l10n = Upfront.Settings.l10n.button_element;
+	var l10n = Upfront.Settings.l10n.preset_manager;
 	var TypographySettingsItem = Upfront.Views.Editor.Settings.Item.extend({
 		className: 'settings_module typography_settings_item',
 		group: true,
@@ -23,10 +23,11 @@ define(function() {
 
 			var me = this,
 				state = this.options.state;
-			
+						
 			var current_element = '';
 			
 			this.fields = _([
+				/*
 				new Upfront.Views.Editor.Field.Select({
 					label: l10n.type_element,
 					values: me.options.elements,
@@ -41,6 +42,7 @@ define(function() {
 						me.fields._wrapped[5].update_input_border_color(me.model.get(current_element + me.options.fields.color));
 					}
 				}),
+				*/
 				new Upfront.Views.Editor.Field.Typeface_Chosen_Select({
 					name: this.options.fields.typeface,
 					model: this.model,
@@ -60,7 +62,7 @@ define(function() {
 							font_family: me.model.get(me.options.fields.typeface),
 							select_width: '225px',
 							label_style: 'inline',
-							className: state + 'font-style static weightStyle',
+							className: state + '-font-style static weightStyle',
 							change: function(value) {
 								//Explode Font style and font weight and save them as separate values
 								var parsed_variant = Upfront.Views.Font_Model.parse_variant(value);
@@ -94,7 +96,7 @@ define(function() {
 				
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
-					className: state + 'font-size fontSize',
+					className: state + '-font-size fontSize',
 					name: this.options.fields.size,
 					label: l10n.size,
 					label_style: 'inline',
@@ -144,10 +146,50 @@ define(function() {
 
 			]);
 			
+			//Add toggle typography checkbox
+			if(this.options.toggle === true) {			
+				this.group = false;
+				this.fields.unshift(
+					new Upfront.Views.Editor.Field.Checkboxes({
+						model: this.model,
+						className: 'useTypography checkbox-title',
+						name: me.options.fields.use,
+						label: '',
+						default_value: 1,
+						multiple: false,
+						values: [
+							{ label: l10n.typography, value: 'yes' }
+						],
+						change: function(value) {
+							me.model.set(me.options.fields.use, value);
+						},
+						show: function(value, $el) {
+							var stateSettings = $el.closest('.state_modules');
+							//Toggle typography fields
+							if(value == "yes") {
+								stateSettings.find('.'+ state +'-font-face').show();
+								stateSettings.find('.'+ state +'-font-style').show();
+								stateSettings.find('.'+ state +'-font-size').show();
+								stateSettings.find('.'+ state +'-font-lineheight').show();
+								stateSettings.find('.'+ state +'-font-color').show();
+							} else {
+								stateSettings.find('.'+ state +'-font-face').hide();
+								stateSettings.find('.'+ state +'-font-style').hide();
+								stateSettings.find('.'+ state +'-font-size').hide();
+								stateSettings.find('.'+ state +'-font-lineheight').hide();
+								stateSettings.find('.'+ state +'-font-color').hide();
+							}
+						}
+					})	
+				);
+			}
+			
 			//Remove inner elements dropdown if none
+			/*
 			if(typeof me.options.elements === "undefined") {
 				this.fields.splice(0,1);
 			}
+			*/
 		}
 	});
 

@@ -4,7 +4,7 @@
 * `easing` - Animation effect
 */
 define(function() {	
-	var l10n = Upfront.Settings.l10n.button_element;
+	var l10n = Upfront.Settings.l10n.preset_manager;
 	var HovAnimationSettingsItem = Upfront.Views.Editor.Settings.Item.extend({
 		className: 'settings_module hov_animation_settings_item clearfix',
 		group: false,
@@ -17,7 +17,7 @@ define(function() {
 			this.fields = _([
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
-					className: 'duration',
+					className: state + '-duration duration',
 					name: me.options.fields.duration,
 					min: 0,
 					label: 'Animate Hover Changes:',
@@ -42,12 +42,44 @@ define(function() {
 						{ label: 'ease-out', value: 'ease-out' },
 						{ label: 'ease-in-out', value: 'ease-in-out' }
 					],
-					className: 'transition hover',
+					className: state + '-transition transition hover',
 					change: function(value) {
 						me.model.set(me.options.fields.easing, value);
 					}
 				}),
 			]);
+			
+			//Add toggle typography checkbox
+			if(this.options.toggle === true) {			
+				this.group = false;
+				this.fields.unshift(
+					new Upfront.Views.Editor.Field.Checkboxes({
+						model: this.model,
+						className: 'useAnimation checkbox-title',
+						name: me.options.fields.use,
+						label: '',
+						default_value: 1,
+						multiple: false,
+						values: [
+							{ label: l10n.animate_hover_changes, value: 'yes' }
+						],
+						change: function(value) {
+							me.model.set(me.options.fields.use, value);
+						},
+						show: function(value, $el) {
+							var stateSettings = $el.closest('.state_modules');
+							//Toggle color fields
+							if(value == "yes") {
+								stateSettings.find('.'+ state +'-transition').show();
+								stateSettings.find('.'+ state +'-duration').show();
+							} else {
+								stateSettings.find('.'+ state +'-transition').hide();
+								stateSettings.find('.'+ state +'-duration').hide();
+							}
+						}
+					})	
+				);
+			}
 		},
 	});
 
