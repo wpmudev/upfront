@@ -22,27 +22,21 @@ define(function() {
 			this.options = options || {};
 
 			var me = this,
-				state = this.options.state;
-						
-			var current_element = '';
+				state = this.options.state,
+				toggleClass = 'no-toggle',
+				fieldCounter = 0,
+				current_element = '';
+				
+			if(typeof me.options.elements !== "undefined") {
+				fieldCounter++;
+			}
+			
+			if(this.options.toggle === true) {		
+				fieldCounter++;
+				toggleClass = 'element-toggled';
+			}
 			
 			this.fields = _([
-				/*
-				new Upfront.Views.Editor.Field.Select({
-					label: l10n.type_element,
-					values: me.options.elements,
-					change: function () {
-						var value = this.get_value();
-						current_element = value + '_';
-						me.fields._wrapped[1].set_value(me.model.get(current_element + me.options.fields.typeface));
-						me.fields._wrapped[2].set_value(me.model.get(current_element + me.options.fields.fontstyle));
-						me.fields._wrapped[3].set_value(me.model.get(current_element + me.options.fields.size));
-						me.fields._wrapped[4].set_value(me.model.get(current_element + me.options.fields.line_height));
-						me.fields._wrapped[5].set_value(me.model.get(current_element + me.options.fields.color));
-						me.fields._wrapped[5].update_input_border_color(me.model.get(current_element + me.options.fields.color));
-					}
-				}),
-				*/
 				new Upfront.Views.Editor.Field.Typeface_Chosen_Select({
 					name: this.options.fields.typeface,
 					model: this.model,
@@ -50,11 +44,10 @@ define(function() {
 					label: l10n.typeface,
 					select_width: '225px',
 					label_style: 'inline',
-					className: state + '-font-face static typeFace',
+					className: state + '-font-face static typeFace ' + toggleClass,
 					change: function(value) {
 						me.model.set(current_element + me.options.fields.typeface, value);
-						
-						me.fields._wrapped[1] = new Upfront.Views.Editor.Field.Typeface_Style_Chosen_Select({
+						me.fields._wrapped[1 + fieldCounter] = new Upfront.Views.Editor.Field.Typeface_Style_Chosen_Select({
 							model: this.model,
 							name: me.options.fields.fontstyle,
 							values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants_for_select(me.model.get(me.options.fields.typeface)),
@@ -62,7 +55,7 @@ define(function() {
 							font_family: me.model.get(me.options.fields.typeface),
 							select_width: '225px',
 							label_style: 'inline',
-							className: state + '-font-style static weightStyle',
+							className: state + '-font-style static weightStyle ' + toggleClass,
 							change: function(value) {
 								//Explode Font style and font weight and save them as separate values
 								var parsed_variant = Upfront.Views.Font_Model.parse_variant(value);
@@ -84,7 +77,7 @@ define(function() {
 					font_family: me.model.get(this.options.fields.typeface),
 					select_width: '225px',
 					label_style: 'inline',
-					className: state + '-font-style static weightStyle',
+					className: state + '-font-style static weightStyle ' + toggleClass,
 					change: function(value) {
 						//Explode Font style and font weight and save them as separate values
 						var parsed_variant = Upfront.Views.Font_Model.parse_variant(value);
@@ -96,7 +89,7 @@ define(function() {
 				
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
-					className: state + '-font-size fontSize',
+					className: state + '-font-size fontSize ' + toggleClass,
 					name: this.options.fields.size,
 					label: l10n.size,
 					label_style: 'inline',
@@ -109,7 +102,7 @@ define(function() {
 				
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
-					className: state + '-font-lineheight lineHeight',
+					className: state + '-font-lineheight lineHeight ' + toggleClass,
 					name: this.options.fields.line_height,
 					label: l10n.line_height,
 					label_style: 'inline',
@@ -123,7 +116,7 @@ define(function() {
 				
 				new Upfront.Views.Editor.Field.Color({
 					model: this.model,
-					className: state + '-font-color upfront-field-wrap upfront-field-wrap-color sp-cf fontColor',
+					className: state + '-font-color upfront-field-wrap upfront-field-wrap-color sp-cf fontColor ' + toggleClass,
 					name: this.options.fields.color,
 					blank_alpha : 0,
 					default_value: '#000',
@@ -146,13 +139,35 @@ define(function() {
 
 			]);
 			
+			
+			//Add fields select box
+			if(typeof me.options.elements !== "undefined") {
+				this.fields.unshift(
+					new Upfront.Views.Editor.Field.Select({
+						label: l10n.type_element,
+						className: state + '-select-element selectElement ' + toggleClass,
+						values: me.options.elements,
+						change: function () {
+							var value = this.get_value();
+							current_element = value + '_';
+							me.fields._wrapped[fieldCounter].set_value(me.model.get(current_element + me.options.fields.typeface));
+							me.fields._wrapped[fieldCounter + 1].set_value(me.model.get(current_element + me.options.fields.fontstyle));
+							me.fields._wrapped[fieldCounter + 2].set_value(me.model.get(current_element + me.options.fields.size));
+							me.fields._wrapped[fieldCounter + 3].set_value(me.model.get(current_element + me.options.fields.line_height));
+							me.fields._wrapped[fieldCounter + 4].set_value(me.model.get(current_element + me.options.fields.color));
+							me.fields._wrapped[fieldCounter + 4].update_input_border_color(me.model.get(current_element + me.options.fields.color));
+						}
+					})
+				);	
+			}
+			
 			//Add toggle typography checkbox
 			if(this.options.toggle === true) {			
 				this.group = false;
 				this.fields.unshift(
 					new Upfront.Views.Editor.Field.Checkboxes({
 						model: this.model,
-						className: 'useTypography checkbox-title',
+						className: 'useTypography checkbox-title ' + toggleClass,
 						name: me.options.fields.use,
 						label: '',
 						default_value: 1,
@@ -167,12 +182,14 @@ define(function() {
 							var stateSettings = $el.closest('.state_modules');
 							//Toggle typography fields
 							if(value == "yes") {
+								stateSettings.find('.'+ state +'-select-element').show();
 								stateSettings.find('.'+ state +'-font-face').show();
 								stateSettings.find('.'+ state +'-font-style').show();
 								stateSettings.find('.'+ state +'-font-size').show();
 								stateSettings.find('.'+ state +'-font-lineheight').show();
 								stateSettings.find('.'+ state +'-font-color').show();
 							} else {
+								stateSettings.find('.'+ state +'-select-element').hide();
 								stateSettings.find('.'+ state +'-font-face').hide();
 								stateSettings.find('.'+ state +'-font-style').hide();
 								stateSettings.find('.'+ state +'-font-size').hide();
@@ -183,13 +200,6 @@ define(function() {
 					})	
 				);
 			}
-			
-			//Remove inner elements dropdown if none
-			/*
-			if(typeof me.options.elements === "undefined") {
-				this.fields.splice(0,1);
-			}
-			*/
 		}
 	});
 
