@@ -8802,8 +8802,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			}
 
 			// Padding Settings
-			var column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
-				top_bg_padding_use = new Field_Checkboxes({
+			var top_bg_padding_use = new Field_Checkboxes({
 					model: this.model,
 					use_breakpoint_property: true,
 					property: 'top_bg_padding_use',
@@ -8832,7 +8831,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					use_breakpoint_property: true,
 					property: 'top_bg_padding_slider',
 					label: '',
-					default_value: this.model.get_breakpoint_property_value('top_bg_padding_slider') || column_padding,
+					default_value: this.model.get_breakpoint_property_value('top_bg_padding_slider') || 0,
 					min: 0,
 					max: 200,
 					valueTextFilter: function () {return '';},
@@ -8849,7 +8848,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					use_breakpoint_property: true,
 					property: 'top_bg_padding_num',
 					label: '',
-					default_value: this.model.get_breakpoint_property_value('top_bg_padding_num') || column_padding,
+					default_value: this.model.get_breakpoint_property_value('top_bg_padding_num') || 0,
 					suffix: 'px',
 					min: 0,
 					change: function () {
@@ -8889,7 +8888,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					use_breakpoint_property: true,
 					property: 'bottom_bg_padding_slider',
 					label: '',
-					default_value: this.model.get_breakpoint_property_value('bottom_bg_padding_slider') || column_padding,
+					default_value: this.model.get_breakpoint_property_value('bottom_bg_padding_slider') || 0,
 					min: 0,
 					max: 200,
 					valueTextFilter: function () {return '';},
@@ -8906,7 +8905,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					use_breakpoint_property: true,
 					property: 'bottom_bg_padding_num',
 					label: '',
-					default_value: this.model.get_breakpoint_property_value('bottom_bg_padding_num') || column_padding,
+					default_value: this.model.get_breakpoint_property_value('bottom_bg_padding_num') || 0,
 					suffix: 'px',
 					min: 0,
 					change: function () {
@@ -9099,18 +9098,23 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			}
 
 			// Padding Settings
+			$region_padding_fields_wrap = $region_padding.find('.upfront-fields-wrap');
 			top_bg_padding_use.render();
-			$region_padding.append(top_bg_padding_use.$el)
+			$region_padding_fields_wrap.append(top_bg_padding_use.$el);
 			top_bg_padding_slider.render();
-			$region_padding.append(top_bg_padding_slider.$el)
+			$region_padding_fields_wrap.append(top_bg_padding_slider.$el);
 			top_bg_padding_num.render();
-			$region_padding.append(top_bg_padding_num.$el)
+			$region_padding_fields_wrap.append(top_bg_padding_num.$el);
 			bottom_bg_padding_use.render();
-			$region_padding.append(bottom_bg_padding_use.$el)
+			$region_padding_fields_wrap.append(bottom_bg_padding_use.$el);
 			bottom_bg_padding_slider.render();
-			$region_padding.append(bottom_bg_padding_slider.$el)
+			$region_padding_fields_wrap.append(bottom_bg_padding_slider.$el);
 			bottom_bg_padding_num.render();
-			$region_padding.append(bottom_bg_padding_num.$el)
+			$region_padding_fields_wrap.append(bottom_bg_padding_num.$el);
+
+			$region_padding.find('.upfront-region-bg-setting-label').on('click', function(event) {
+				$region_padding.toggleClass('open');
+			});
 
 			bg_type.trigger('changed');
 		},
@@ -10157,6 +10161,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			this.listenTo(this.model.get("properties"), 'change', this.render);
 			this.listenTo(this.model.get("properties"), 'add', this.render);
 			this.listenTo(this.model.get("properties"), 'remove', this.render);
+			this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.update_padding);
+			this.listenTo(Upfront.Events, "layout:after_render", this.update_padding);
 			this.listenTo(Upfront.Events, "entity:region:activated", this.on_region_active);
 			this.listenTo(Upfront.Events, "entity:region:deactivated", this.on_region_deactive);
 			//this.listenTo(Upfront.Events, "command:region:edit_toggle", this.update_pos);
@@ -10249,7 +10255,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				win_height = $(window).height(),
 				scroll_top = $(document).scrollTop(),
 				scroll_bottom = scroll_top + win_height - bottom_height,
-				rel_top = $main.offset().top + top_height;
+				rel_top = $main.offset().top + top_height
+			;
 
 			this.add_responsive_items();
 
@@ -10306,6 +10313,65 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					});
 				}
 			});
+
+			this.update_padding();
+		},
+		update_padding: function () {
+			var props = {},
+				$region = this.$el.closest('.upfront-region')
+			;
+
+			// Padding settings
+			this.model.get("properties").each(function (prop) {
+				props[prop.get("name")] = prop.get("value");
+			});
+
+			var breakpoints = typeof Upfront.Settings.LayoutEditor.Theme.breakpoints !== 'undefined' ? Upfront.Settings.LayoutEditor.Theme.breakpoints : [],
+				current_breakpoint = typeof Upfront.Settings.LayoutEditor.CurrentBreakpoint !== 'undefined' ? Upfront.Settings.LayoutEditor.CurrentBreakpoint : 'desktop',
+				current_breakpoint_id = current_breakpoint === 'default' ? current_breakpoint : current_breakpoint.id,
+				top_padding,
+				bottom_padding
+			;
+
+			var breakpoint_obj = (
+						typeof props.breakpoint !== 'undefined'
+						&& typeof props.breakpoint[current_breakpoint_id] !== 'undefined' 
+					)
+					? props.breakpoint[current_breakpoint_id]
+					: false,
+				top_bg_padding_use = (breakpoint_obj && "top_bg_padding_use" in breakpoint_obj)
+					? breakpoint_obj.top_bg_padding_use
+					: typeof props.top_bg_padding_use !== 'undefined'
+						? props.top_bg_padding_use
+						: false,							
+				bottom_bg_padding_use = (breakpoint_obj && "bottom_bg_padding_use" in breakpoint_obj)
+					? breakpoint_obj.bottom_bg_padding_use
+					: typeof props.bottom_bg_padding_use !== 'undefined'
+						? props.bottom_bg_padding_use
+						: false							
+			;
+
+			top_padding = (top_bg_padding_use && typeof breakpoint_obj.top_bg_padding_num !== 'undefined')
+				? breakpoint_obj.top_bg_padding_num
+				: (top_bg_padding_use && typeof props.top_bg_padding_num !== 'undefined')
+					? props.top_bg_padding_num
+					: 0
+			;
+
+			bottom_padding = (bottom_bg_padding_use && typeof breakpoint_obj.bottom_bg_padding_num !== 'undefined')
+				? breakpoint_obj.bottom_bg_padding_num
+				: (bottom_bg_padding_use && typeof props.bottom_bg_padding_num !== 'undefined')
+					? props.bottom_bg_padding_num
+					: 0
+			;
+
+			$region.css({
+				'padding-top': top_padding + 'px',
+				'padding-bottom': bottom_padding + 'px'
+			});
+
+			console.log(current_breakpoint_id);
+
 		},
 		add_responsive_items: function() {
 			var me = this,
