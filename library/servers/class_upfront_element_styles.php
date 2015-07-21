@@ -58,7 +58,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 		$ckey = $this->_cache->key(self::TYPE_STYLE, $styles);
 
 		$raw_cache_key = $ckey->get_hash();
-		$cache = $this->_debugger->is_active() ? false : $this->_cache->get($ckey);
+		$cache = false;//$this->_debugger->is_active() ? false : $this->_cache->get($ckey);
 		
 		if (empty($cache)) {
 			foreach ($styles as $key => $frags) {
@@ -158,7 +158,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 		$ckey = $this->_cache->key(self::TYPE_SCRIPT, $scripts);
 
 		$raw_cache_key = $ckey->get_hash();
-		$cache = $this->_debugger->is_active() ? false : $this->_cache->get($ckey);
+		$cache = false;//$this->_debugger->is_active() ? false : $this->_cache->get($ckey);
 
 		if (empty($cache)) {
 			foreach ($scripts as $key => $frags) {
@@ -229,3 +229,31 @@ class Upfront_ElementStyles extends Upfront_Server {
 	}
 
 }
+
+class Upfront_MinificationServer implements IUpfront_Server {
+	
+	public static function serve () {
+		$me = new self;
+		$me->_add_hooks();
+	}
+
+	private function _add_hooks () {
+		if (version_compare(PHP_VERSION, '5.3.1') < 0) return false; // We require PHPv5.3 for this
+
+		add_filter('upfront-dependencies-cache-styles', array($this, 'minify_css'));
+		add_filter('upfront-dependencies-main-styles', array($this, 'minify_css'));
+		add_filter('upfront-dependencies-grid-styles', array($this, 'minify_css'));
+		add_filter('upfront-dependencies-cache-scripts', array($this, 'minify_js'));
+	}
+
+	public function minify_css ($what) {
+		require_once dirname(dirname(__FILE__)) . '/external/cssmin/cssmin.php';
+		return CssMin::minify($what);
+	}
+
+	public function minify_js ($what) {
+		require_once dirname(dirname(__FILE__)) . '/external/jshrink/src/JShrink/Minifier.php';
+		return \JShrink\Minifier::minify($what);
+	}
+}
+Upfront_MinificationServer::serve();
