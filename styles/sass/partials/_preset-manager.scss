@@ -557,7 +557,17 @@ div.preset-manager-panel .settings_module {
 div.preset-manager-panel .colors_settings_item {
 	padding-bottom: 12px;
 }
-div.preset-manager-panel .colors_settings_item, div.preset-manager-panel .typography_settings_item, div.preset-manager-panel .hov_animation_settings_item {
+div.preset-manager-panel .image_style {
+	width: 215px;
+}
+div.preset-manager-panel .selectbox_settings_item label {
+	font-weight: normal;
+	margin-top: 10px;
+}
+div.preset-manager-panel .colors_settings_item, 
+div.preset-manager-panel .selectbox_settings_item, 
+div.preset-manager-panel .typography_settings_item, 
+div.preset-manager-panel .hov_animation_settings_item {
 	padding-top: 15px;
 }
 div.preset-manager-panel .typography_settings_item .element-toggled.selectElement,

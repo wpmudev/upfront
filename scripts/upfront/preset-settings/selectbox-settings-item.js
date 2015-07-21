@@ -5,12 +5,14 @@
 define(function() {	
 	var SelectboxSettingsItem = Upfront.Views.Editor.Settings.Item.extend({
 		className: 'settings_module selectbox_settings_item clearfix',
-		group: false,
-		
+		group: true,
+		get_title: function() {
+			return this.options.title;
+		},
 		initialize: function(options) {
 			this.options = options || {};
 			var me = this,
-				custom_class = this.options.className,
+				custom_class = this.options.custom_class,
 				state = this.options.state;
 
 			this.fields = _([
