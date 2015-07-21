@@ -248,12 +248,9 @@ define([
 		},
 
 		get_title: function () {
-			return 'Accordion Settings';
+			return l10n.settings;
 		}
 	});
-
-	// Generate presets styles to page
-	Util.generatePresetsToPage('tab', styleTpl);
 
 	return AccordionSettings;
 });

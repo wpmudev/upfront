@@ -243,7 +243,7 @@ define([
 		},
 
 		get_title: function () {
-			return 'Tabs Settings';
+			return l10n.settings;
 		}
 	});
 
