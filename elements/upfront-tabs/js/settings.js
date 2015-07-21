@@ -81,6 +81,7 @@ define([
 					options: {
 						title: 'Tab Label Typography',
 						state: 'static',
+						toggle: false,
 						fields: {
 							typeface: 'static-font-family',
 							fontstyle: 'static-font-style',
@@ -114,6 +115,10 @@ define([
 						title: 'Colors',
 						multiple: false,
 						single: true,
+						toggle: true,
+						fields: {
+							use: 'hover-use-color',
+						},
 						abccolors: [
 							{
 								name: 'hover-tab-bg',
@@ -127,7 +132,9 @@ define([
 					options: {
 						title: 'Tab Label Typography',
 						state: 'hover',
+						toggle: true,
 						fields: {
+							use: 'hover-use-typography',
 							typeface: 'hover-font-family',
 							fontstyle: 'hover-font-style',
 							weight: 'hover-weight',
@@ -156,7 +163,9 @@ define([
 					options: {
 						state: 'hover',
 						title: '',
+						toggle: true,
 						fields: {
+							use: 'hover-use-transition',
 							duration: 'hover-transition-duration',
 							easing: 'hover-transition-easing',
 						}
@@ -171,6 +180,10 @@ define([
 						title: 'Colors',
 						multiple: false,
 						single: true,
+						toggle: true,
+						fields: {
+							use: 'active-use-color',
+						},
 						abccolors: [
 							{
 								name: 'active-tab-bg',
@@ -184,7 +197,9 @@ define([
 					options: {
 						title: 'Tab Label Typography',
 						state: 'active',
+						toggle: true,
 						fields: {
+							use: 'active-use-typography',
 							typeface: 'active-font-family',
 							fontstyle: 'active-font-style',
 							weight: 'active-weight',
