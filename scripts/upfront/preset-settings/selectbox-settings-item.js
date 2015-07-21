@@ -3,7 +3,6 @@
 * `name` - Select box name
 */
 define(function() {	
-	var l10n = Upfront.Settings.l10n.preset_manager;
 	var SelectboxSettingsItem = Upfront.Views.Editor.Settings.Item.extend({
 		className: 'settings_module selectbox_settings_item clearfix',
 		group: false,
@@ -20,7 +19,7 @@ define(function() {
 					className: state + '-select select-module ' + custom_class,
 					name: me.options.fields.name,
 					default_value: me.options.default_value,
-					label: '',
+					label: me.options.label,
 					values: me.options.values,
 					change: function(value) {
 						me.model.set(me.options.fields.name, value);
