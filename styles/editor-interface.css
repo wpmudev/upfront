@@ -1275,18 +1275,22 @@ span.draggable-post-element.element-dragging {
 #upfront-general-csseditor .ace_scrollbar::-webkit-scrollbar,
 .upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar,
 .upfront_code-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar,
-.redactor-dropdown-box-upfrontIcons div.icons::-webkit-scrollbar {
+.redactor-dropdown-box-upfrontIcons div.icons::-webkit-scrollbar,
+.redactor-dropdown-box-upfrontFormatting::-webkit-scrollbar,
+.upfront_map-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar,
+.upfront_map-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar {
   background: none;
   width: 5px; }
 
 /* overwriting Ace editor scrollbar */
-/* line 938, sass/partials/_sidebar-ui.scss */
+/* line 941, sass/partials/_sidebar-ui.scss */
 #upfront-csseditor .ace_scrollbar,
 #upfront-general-csseditor .ace_scrollbar,
-.upfront_code-editor-complex-wrapper .ace_scrollbar {
+.upfront_code-editor-complex-wrapper .ace_scrollbar,
+.upfront_map-editor-complex-wrapper .ace_scrollbar {
   width: 5px !important; }
 
-/* line 962, sass/partials/_sidebar-ui.scss */
+/* line 968, sass/partials/_sidebar-ui.scss */
 #sidebar-ui .sidebar-panel-content::-webkit-scrollbar-thumb,
 .upfront-scroll-panel::-webkit-scrollbar-thumb,
 .upfront-settings_panel_scroll::-webkit-scrollbar-thumb,
@@ -1302,16 +1306,20 @@ span.draggable-post-element.element-dragging {
 #upfront-general-csseditor .ace_scrollbar::-webkit-scrollbar-thumb,
 .upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar-thumb,
 .upfront_code-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar-thumb,
+.redactor-dropdown-box-upfrontIcons div.icons::-webkit-scrollbar-thumb,
+.redactor-dropdown-box-upfrontFormatting::-webkit-scrollbar-thumb,
+.upfront_map-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar-thumb,
+.upfront_map-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar-thumb,
 .redactor-dropdown-box-upfrontIcons div.icons::-webkit-scrollbar-thumb {
   border-right: 5px solid #1fcd8f; }
 
 /* Corrections for create theme mode sidebar */
-/* line 983, sass/partials/_sidebar-ui.scss */
+/* line 993, sass/partials/_sidebar-ui.scss */
 #sidebar-ui .create-theme-sidebar .sidebar-commands-primary {
   padding: 15px; }
 
 /* debug mode */
-/* line 990, sass/partials/_sidebar-ui.scss */
+/* line 1000, sass/partials/_sidebar-ui.scss */
 #sidebar-ui .sidebar-commands-control .command-toggle-mode,
 #sidebar-ui .sidebar-commands-control .command-reset-everything,
 #sidebar-ui .sidebar-commands-control .command-publish-layout {
@@ -1324,67 +1332,67 @@ span.draggable-post-element.element-dragging {
   height: 12px;
   line-height: 12px; }
 
-/* line 1002, sass/partials/_sidebar-ui.scss */
+/* line 1012, sass/partials/_sidebar-ui.scss */
 #sidebar-ui .sidebar-commands-control .command-toggle-mode:hover,
 #sidebar-ui .sidebar-commands-control .command-reset-everything:hover,
 #sidebar-ui .sidebar-commands-control .command-publish-layout:hover {
   color: white; }
 
-/* line 1007, sass/partials/_sidebar-ui.scss */
+/* line 1017, sass/partials/_sidebar-ui.scss */
 #sidebar-ui .sidebar-commands-control .command-toggle-mode {
   left: 15px;
   right: auto; }
 
-/* line 1011, sass/partials/_sidebar-ui.scss */
+/* line 1021, sass/partials/_sidebar-ui.scss */
 #sidebar-ui .sidebar-commands-control .command-publish-layout {
   top: 670px;
   right: 20px; }
 
 /* ContentEditor sidebar */
-/* line 1017, sass/partials/_sidebar-ui.scss */
+/* line 1027, sass/partials/_sidebar-ui.scss */
 .upfront-sidebar-content_editor-sidebar_command {
   font-size: 15px;
   margin: 0 10px; }
 
-/* line 1021, sass/partials/_sidebar-ui.scss */
+/* line 1031, sass/partials/_sidebar-ui.scss */
 .upfront-sidebar-content_editor-sidebar_command i {
   font-size: 14px;
   color: #6C92B1; }
 
-/* line 1026, sass/partials/_sidebar-ui.scss */
+/* line 1036, sass/partials/_sidebar-ui.scss */
 .upfront-save_state {
   float: left;
   clear: none;
   display: block;
   margin-right: 0; }
 
-/* line 1032, sass/partials/_sidebar-ui.scss */
+/* line 1042, sass/partials/_sidebar-ui.scss */
 #sidebar-ui .upfront-save_state a {
   margin-right: 0; }
 
-/* line 1035, sass/partials/_sidebar-ui.scss */
+/* line 1045, sass/partials/_sidebar-ui.scss */
 .upfront-save_state:hover {
   border-color: #1fcd8f;
   color: #cce6ff; }
 
-/* line 1040, sass/partials/_sidebar-ui.scss */
+/* line 1050, sass/partials/_sidebar-ui.scss */
 #sidebar-ui a {
   margin: 1em;
   color: #c2dbf2;
   text-decoration: none;
   margin: 0 10px; }
 
-/* line 1047, sass/partials/_sidebar-ui.scss */
+/* line 1057, sass/partials/_sidebar-ui.scss */
 #sidebar-ui i {
   font-size: 14px;
   color: #6C92B1; }
 
-/* line 1052, sass/partials/_sidebar-ui.scss */
+/* line 1062, sass/partials/_sidebar-ui.scss */
 #sidebar-ui a i {
   color: #1fcd8f;
   text-decoration: none; }
 
-/* line 1057, sass/partials/_sidebar-ui.scss */
+/* line 1067, sass/partials/_sidebar-ui.scss */
 #sidebar-ui .button {
   width: 118px;
   display: block;
@@ -1403,36 +1411,36 @@ span.draggable-post-element.element-dragging {
   border-radius: 10px;
   color: #B9CFE5; }
 
-/* line 1073, sass/partials/_sidebar-ui.scss */
+/* line 1083, sass/partials/_sidebar-ui.scss */
 #sidebar-ui .button:hover {
   border-color: #1fcd8f;
   text-decoration: none; }
 
-/* line 1078, sass/partials/_sidebar-ui.scss */
+/* line 1088, sass/partials/_sidebar-ui.scss */
 .upfront-post-state b, .upfront-post-state a {
   font-size: 15px; }
 
-/* line 1083, sass/partials/_sidebar-ui.scss */
+/* line 1093, sass/partials/_sidebar-ui.scss */
 .upfront-command_inline {
   float: left;
   margin: 0 0 15px 20px;
   font-size: 15px; }
 
-/* line 1088, sass/partials/_sidebar-ui.scss */
+/* line 1098, sass/partials/_sidebar-ui.scss */
 #sidebar-ui .upfront-command_inline a {
   margin: 0; }
 
-/* line 1092, sass/partials/_sidebar-ui.scss */
+/* line 1102, sass/partials/_sidebar-ui.scss */
 #sidebar-ui .upfront-post-trash a {
   color: #6C92B1;
   margin: 0; }
 
-/* line 1096, sass/partials/_sidebar-ui.scss */
+/* line 1106, sass/partials/_sidebar-ui.scss */
 #sidebar-ui .upfront-post-trash a:hover {
   color: #E3474A; }
 
 /*------------------- Setting sections tabs -----------------------*/
-/* line 1100, sass/partials/_sidebar-ui.scss */
+/* line 1110, sass/partials/_sidebar-ui.scss */
 #sidebar-ui ul.sidebar-panel-tabspane {
   width: 100%;
   background: #d9edff;
@@ -1440,11 +1448,11 @@ span.draggable-post-element.element-dragging {
   display: none;
   line-height: 10px; }
 
-/* line 1107, sass/partials/_sidebar-ui.scss */
+/* line 1117, sass/partials/_sidebar-ui.scss */
 #sidebar-ui .expanded ul.sidebar-panel-tabspane {
   display: block; }
 
-/* line 1110, sass/partials/_sidebar-ui.scss */
+/* line 1120, sass/partials/_sidebar-ui.scss */
 .sidebar-panel-tabspane li {
   display: inline-block;
   margin-left: 5px;
@@ -1453,24 +1461,24 @@ span.draggable-post-element.element-dragging {
   padding: 3px 5px;
   font: normal 11px/10px Verdana, sans-serif; }
 
-/* line 1118, sass/partials/_sidebar-ui.scss */
+/* line 1128, sass/partials/_sidebar-ui.scss */
 #sidebar-ui ul.panel-setting-theme-colors-shades-range-labels {
   width: 100%;
   overflow: hidden;
   margin-top: 9px; }
 
-/* line 1123, sass/partials/_sidebar-ui.scss */
+/* line 1133, sass/partials/_sidebar-ui.scss */
 .panel-setting-theme-colors-shades-range-labels li {
   display: inline-block;
   float: left;
   font: 11px normal verdana, sans-serif;
   color: #476580; }
 
-/* line 1129, sass/partials/_sidebar-ui.scss */
+/* line 1139, sass/partials/_sidebar-ui.scss */
 .panel-setting-theme-colors-shades-range-labels li:last-child {
   float: right; }
 
-/* line 1132, sass/partials/_sidebar-ui.scss */
+/* line 1142, sass/partials/_sidebar-ui.scss */
 .sidebar-panel-tabspane li.active {
   color: #E5F3FF;
   background: #85A9CC;
@@ -1478,18 +1486,18 @@ span.draggable-post-element.element-dragging {
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px; }
 
-/* line 1137, sass/partials/_sidebar-ui.scss */
+/* line 1147, sass/partials/_sidebar-ui.scss */
 .sidebar-tab-content {
   display: none; }
 
-/* line 1140, sass/partials/_sidebar-ui.scss */
+/* line 1150, sass/partials/_sidebar-ui.scss */
 #sidebar-ui [class^=command-],
 #sidebar-ui [class^=sidebar-command-] {
   overflow: hidden;
   white-space: nowrap;
   max-width: 230px; }
 
-/* line 1146, sass/partials/_sidebar-ui.scss */
+/* line 1156, sass/partials/_sidebar-ui.scss */
 #sidebar-ui .sidebar-commands li.themes-dropdown {
   float: left;
   margin-bottom: 15px;
@@ -1498,15 +1506,15 @@ span.draggable-post-element.element-dragging {
 /* Height Media Queries Fixes
 	 ========================== */
 @media screen and (max-height: 650px) {
-  /* line 1155, sass/partials/_sidebar-ui.scss */
+  /* line 1165, sass/partials/_sidebar-ui.scss */
   #sidebar-ui .sidebar-panel.expanded .sidebar-panel-content {
     height: 129px; }
 
-  /* line 1158, sass/partials/_sidebar-ui.scss */
+  /* line 1168, sass/partials/_sidebar-ui.scss */
   #sidebar-ui .sidebar-panel-settings.expanded .sidebar-panel-content {
     height: 110px; }
 
-  /* line 1161, sass/partials/_sidebar-ui.scss */
+  /* line 1171, sass/partials/_sidebar-ui.scss */
   #sidebar-ui .sidebar-commands-control .command-save,
   #sidebar-ui .sidebar-commands-control .command-start-responsive {
     top: 434px; } }
@@ -2270,23 +2278,24 @@ input.upfront-field-text:hover,
   height: 12px;
   border-radius: 6px;
   position: absolute;
-  top: -5px; }
+  top: -5px;
+  cursor: pointer; }
 
-/* line 672, sass/partials/_fields.scss */
+/* line 673, sass/partials/_fields.scss */
 .upfront-field-slider-vertical .ui-slider-handle {
   left: -5px;
   top: auto; }
 
-/* line 677, sass/partials/_fields.scss */
+/* line 678, sass/partials/_fields.scss */
 .upfront-field-wrap-slider .upfront-field-info {
   margin-bottom: 10px; }
 
-/* line 681, sass/partials/_fields.scss */
+/* line 682, sass/partials/_fields.scss */
 .upfront-field-slider-value {
   margin-top: 6px;
   text-align: center; }
 
-/* line 686, sass/partials/_fields.scss */
+/* line 687, sass/partials/_fields.scss */
 .upfront-date_picker {
   background: #F2F9FF;
   border: 1px solid #6386A6;
@@ -2298,65 +2307,77 @@ input.upfront-field-text:hover,
   text-transform: none !important;
   text-decoration: none !important; }
 
-/* line 698, sass/partials/_fields.scss */
+/* line 699, sass/partials/_fields.scss */
 .upfront-date_picker .ui-datepicker-header {
   padding: 5px 10px;
   border-bottom: 1px solid #accae6;
   text-align: center; }
 
-/* line 704, sass/partials/_fields.scss */
+/* line 705, sass/partials/_fields.scss */
 .upfront-date_picker table {
   margin: 5px 10px; }
 
-/* line 708, sass/partials/_fields.scss */
+/* line 709, sass/partials/_fields.scss */
 .upfront-date_picker thead {
   color: #395269; }
 
-/* line 712, sass/partials/_fields.scss */
+/* line 713, sass/partials/_fields.scss */
 .upfront-date_picker select {
   font-family: 'Source Sans Pro', sans-serif;
   margin: 0 2px; }
 
-/* line 717, sass/partials/_fields.scss */
+/* line 718, sass/partials/_fields.scss */
 .upfront-date_picker .ui-datepicker-prev,
 .upfront-date_picker .ui-datepicker-next {
   display: none; }
 
-/* line 722, sass/partials/_fields.scss */
+/* line 723, sass/partials/_fields.scss */
 .upfront-date_picker .ui-datepicker-prev {
   float: left; }
 
-/* line 725, sass/partials/_fields.scss */
+/* line 726, sass/partials/_fields.scss */
 .upfront-date_picker .ui-datepicker-next {
   float: right; }
 
-/* line 729, sass/partials/_fields.scss */
+/* line 730, sass/partials/_fields.scss */
 .upfront-date_picker td,
 .upfront-date_picker th {
   text-align: center; }
 
-/* line 734, sass/partials/_fields.scss */
+/* line 735, sass/partials/_fields.scss */
 div.upfront-date_picker td a {
   padding: 2px 4px;
   color: #607F99; }
 
-/* line 739, sass/partials/_fields.scss */
+/* line 740, sass/partials/_fields.scss */
 .upfront-date_picker td a:hover {
   padding: 2px 4px;
   background: #1fcd8f;
   color: #fff !important;
   text-decoration: none; }
 
-/* line 746, sass/partials/_fields.scss */
+/* line 747, sass/partials/_fields.scss */
 .upfront-date_picker a.ui-state-active {
   background: #607F99;
   color: #F2F9FF !important; }
 
-/* line 751, sass/partials/_fields.scss */
+/* line 752, sass/partials/_fields.scss */
 .upfront-time_picker {
   padding: 5px 10px;
   border-top: 1px solid #accae6;
   text-align: center; }
+
+/* line 758, sass/partials/_fields.scss */
+.upfront-field-wrap-checkboxes .checkbox-info:before {
+  display: inline-block;
+  content: "";
+  width: 15px;
+  height: 15px;
+  background-image: url("../img/uf-core-el-sprite.svg");
+  background-position: -483px -141px;
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-bottom: -4px; }
 
 /* line 1, sass/partials/_ueditor-inserts.scss */
 .ueditor-datepicker-buttons {
@@ -2717,15 +2738,20 @@ div.uinsert-selector a:hover {
   width: 100%; }
 
 /* line 17, sass/partials/_region.scss */
+.upfront-region-container-has-posts .upfront-region,
+.upfront-region-container-has-this_post .upfront-region {
+  min-height: 0 !important; }
+
+/* line 22, sass/partials/_region.scss */
 .upfront-region-current {
   z-index: 10; }
 
-/* line 21, sass/partials/_region.scss */
+/* line 26, sass/partials/_region.scss */
 .upfront-region-sub-container {
   position: relative;
   z-index: 12; }
 
-/* line 25, sass/partials/_region.scss */
+/* line 30, sass/partials/_region.scss */
 .upfront-region {
   /*background-color: rgba(127, 127, 127, .5);*/
   padding: 0;
@@ -2735,49 +2761,49 @@ div.uinsert-selector a:hover {
   min-height: 90px;
   /*z-index: 1;*/ }
 
-/* line 34, sass/partials/_region.scss */
+/* line 39, sass/partials/_region.scss */
 .upfront-region-side-fixed,
 .upfront-region-side-lightbox {
   position: fixed;
   z-index: 12; }
 
-/* line 40, sass/partials/_region.scss */
+/* line 45, sass/partials/_region.scss */
 .upfront-region-container-sticky {
   z-index: 2999999; }
 
-/* line 44, sass/partials/_region.scss */
+/* line 49, sass/partials/_region.scss */
 .upfront-region-hidden {
   height: auto !important;
   min-height: 0 !important;
   width: 100% !important;
   float: none; }
 
-/* line 51, sass/partials/_region.scss */
+/* line 56, sass/partials/_region.scss */
 .upfront-region-wrapper {
   width: 100%; }
 
-/* line 54, sass/partials/_region.scss */
+/* line 59, sass/partials/_region.scss */
 .upfront-modules_container {
   position: relative;
   width: 100%;
   margin: 0 auto;
   min-height: 100%; }
 
-/* line 61, sass/partials/_region.scss */
+/* line 66, sass/partials/_region.scss */
 .upfront-region-side-lightbox > b.upfront-entity_meta {
   display: block;
   position: fixed;
   top: 50px;
   right: 50px; }
 
-/* line 67, sass/partials/_region.scss */
+/* line 72, sass/partials/_region.scss */
 .upfront-region-side-lightbox > b.upfront-entity_meta > a.upfront-entity-delete_trigger,
 .upfront-region-side-lightbox > b.upfront-entity_meta > a.upfront-entity-settings_trigger {
   display: block;
   opacity: 1;
   visibility: visible; }
 
-/* line 75, sass/partials/_region.scss */
+/* line 80, sass/partials/_region.scss */
 .upfront-region-bg-overlay,
 .upfront-region-bg {
   position: absolute;
@@ -2786,15 +2812,15 @@ div.uinsert-selector a:hover {
   right: 0;
   bottom: 0; }
 
-/* line 83, sass/partials/_region.scss */
+/* line 88, sass/partials/_region.scss */
 .upfront-region-bg-map {
   position: absolute !important; }
 
-/* line 86, sass/partials/_region.scss */
+/* line 91, sass/partials/_region.scss */
 .upfront-region-bg-video {
   overflow: hidden; }
 
-/* line 89, sass/partials/_region.scss */
+/* line 94, sass/partials/_region.scss */
 .upfront-region-edit-trigger {
   position: absolute;
   top: 0;
@@ -2810,7 +2836,7 @@ div.uinsert-selector a:hover {
   -o-transition: opacity 0.6s;
   transition: opacity 0.6s; }
 
-/* line 104, sass/partials/_region.scss */
+/* line 109, sass/partials/_region.scss */
 .upfront-region-edit-trigger-full {
   left: 0;
   bottom: 0;
@@ -2819,7 +2845,7 @@ div.uinsert-selector a:hover {
   color: #fdfdfd;
   font-size: 17px; }
 
-/* line 112, sass/partials/_region.scss */
+/* line 117, sass/partials/_region.scss */
 .upfront-region-edit-fixed-trigger {
   position: fixed;
   left: 30px;
@@ -2833,7 +2859,7 @@ div.uinsert-selector a:hover {
   cursor: pointer;
   z-index: 9999; }
 
-/* line 125, sass/partials/_region.scss */
+/* line 130, sass/partials/_region.scss */
 .upfront-region-edit-text {
   position: absolute;
   top: 0;
@@ -2843,11 +2869,11 @@ div.uinsert-selector a:hover {
   height: 48px;
   margin: auto; }
 
-/* line 134, sass/partials/_region.scss */
+/* line 139, sass/partials/_region.scss */
 .upfront-region-edit-trigger .upfront-icon:before {
   margin: 0; }
 
-/* line 137, sass/partials/_region.scss */
+/* line 142, sass/partials/_region.scss */
 .upfront-edit-layout .upfront-region-container:hover > .upfront-region-edit-trigger,
 .upfront-edit-theme .upfront-region-container:hover > .upfront-region-edit-trigger,
 .upfront-edit-responsive .default-breakpoint .upfront-region-container:hover > .upfront-region-edit-trigger,
@@ -2862,7 +2888,7 @@ div.uinsert-selector a:hover {
   visibility: visible;
   opacity: 1; }
 
-/* line 152, sass/partials/_region.scss */
+/* line 157, sass/partials/_region.scss */
 .upfront-region-editing .upfront-region-container .upfront-region-edit-trigger,
 .upfront-region-editing .upfront-region-container:hover .upfront-region-edit-trigger,
 .upfront-region-fixed-editing .upfront-region-container .upfront-region-edit-trigger,
@@ -2873,7 +2899,7 @@ div.uinsert-selector a:hover {
   visibility: hidden;
   opacity: 0; }
 
-/* line 162, sass/partials/_region.scss */
+/* line 167, sass/partials/_region.scss */
 .upfront-region-finish-edit,
 .upfront-region-finish-edit-fixed,
 .upfront-region-finish-edit-lightbox,
@@ -2892,28 +2918,28 @@ div.uinsert-selector a:hover {
   white-space: nowrap;
   display: none; }
 
-/* line 180, sass/partials/_region.scss */
+/* line 185, sass/partials/_region.scss */
 .upfront-region-finish-edit .upfront-field-icon {
   margin: 0 7px 0 0; }
 
-/* line 183, sass/partials/_region.scss */
+/* line 188, sass/partials/_region.scss */
 .upfront-region-fixed-editing .upfront-region-finish-edit {
   bottom: 10px; }
 
-/* line 186, sass/partials/_region.scss */
+/* line 191, sass/partials/_region.scss */
 .upfront-region-finish-edit-fixed {
   bottom: -35px;
   border-bottom: 1px solid rgba(27, 45, 63, 0.5);
   padding: 5px 36px; }
 
-/* line 191, sass/partials/_region.scss */
+/* line 196, sass/partials/_region.scss */
 .upfront-region-editing .upfront-region-container-active .upfront-region-finish-edit,
 .upfront-region-fixed-editing .upfront-region-side-fixed .upfront-region-finish-edit-fixed,
 .upfront-module-group-on-edit .upfront-module-group-finish-edit,
 .upfront-region-lightbox-editing .upfront-region-side-lightbox .upfront-region-finish-edit-lightbox {
   display: block; }
 
-/* line 198, sass/partials/_region.scss */
+/* line 203, sass/partials/_region.scss */
 .upfront-region-title {
   position: absolute;
   top: -11px;
@@ -2927,27 +2953,27 @@ div.uinsert-selector a:hover {
   color: #d9eafa;
   display: none; }
 
-/* line 211, sass/partials/_region.scss */
+/* line 216, sass/partials/_region.scss */
 .upfront-region-container:first-child .upfront-region-title {
   top: auto;
   bottom: -11px; }
 
-/* line 215, sass/partials/_region.scss */
+/* line 220, sass/partials/_region.scss */
 .upfront-dragging .upfront-region {
   opacity: .4;
   /*-webkit-transform: scale(.96, .96);*/ }
 
-/* line 219, sass/partials/_region.scss */
+/* line 224, sass/partials/_region.scss */
 .upfront-dragging .upfront-region-drag-active {
   opacity: 1;
   /*-webkit-transform: scale(1, 1);*/
   outline: 1px dotted #858585; }
 
-/* line 225, sass/partials/_region.scss */
+/* line 230, sass/partials/_region.scss */
 .upfront-dragging .upfront-region-drag-active .upfront-region-title {
   display: block; }
 
-/* line 229, sass/partials/_region.scss */
+/* line 234, sass/partials/_region.scss */
 .upfront-region-size-hint,
 .upfront-region-position-hint {
   position: absolute;
@@ -2960,56 +2986,56 @@ div.uinsert-selector a:hover {
   z-index: 10;
   display: none; }
 
-/* line 241, sass/partials/_region.scss */
+/* line 246, sass/partials/_region.scss */
 .upfront-region-size-hint b,
 .upfront-region-position-hint b {
   color: #ADC3D8; }
 
-/* line 245, sass/partials/_region.scss */
+/* line 250, sass/partials/_region.scss */
 .upfront-region-side-fixed .upfront-region-size-hint {
   top: 15px;
   left: 15px; }
 
-/* line 249, sass/partials/_region.scss */
+/* line 254, sass/partials/_region.scss */
 .upfront-region-side-fixed .upfront-region-position-hint {
   top: 46px;
   left: 15px; }
 
-/* line 253, sass/partials/_region.scss */
+/* line 258, sass/partials/_region.scss */
 .upfront-region-editing .upfront-region-size-hint,
 .upfront-region-fixed-editing .upfront-region-side-fixed .upfront-region-size-hint,
 .upfront-region-fixed-editing .upfront-region-side-fixed .upfront-region-position-hint {
   display: block; }
 
 /* Region edit panel */
-/* line 266, sass/partials/_region.scss */
+/* line 271, sass/partials/_region.scss */
 .upfront-region-editing .upfront-regions {
   padding-bottom: 260px; }
 
-/* line 269, sass/partials/_region.scss */
+/* line 274, sass/partials/_region.scss */
 .upfront-region-editing .upfront-region-container {
   opacity: 0.5;
   /*min-height: 90px;*/
   z-index: 1; }
 
-/* line 274, sass/partials/_region.scss */
+/* line 279, sass/partials/_region.scss */
 .upfront-region-editing .upfront-region-container-shadow {
   min-height: 0; }
 
-/* line 277, sass/partials/_region.scss */
+/* line 282, sass/partials/_region.scss */
 .upfront-region-editing.responsive-breakpoint .upfront-region-container {
   min-height: 0; }
 
-/* line 280, sass/partials/_region.scss */
+/* line 285, sass/partials/_region.scss */
 .upfront-region-editing .upfront-region-side-fixed {
   display: none !important; }
 
-/* line 283, sass/partials/_region.scss */
+/* line 288, sass/partials/_region.scss */
 .upfront-region-editing .upfront-region-container-active .upfront-module,
 .upfront-region-fixed-editing .upfront-region-container-active .upfront-module {
   opacity: 0.5; }
 
-/* line 287, sass/partials/_region.scss */
+/* line 292, sass/partials/_region.scss */
 .upfront-region-resize-handle {
   position: absolute;
   bottom: -14px;
@@ -3022,13 +3048,13 @@ div.uinsert-selector a:hover {
   display: block;
   visibility: hidden; }
 
-/* line 299, sass/partials/_region.scss */
+/* line 304, sass/partials/_region.scss */
 .upfront-region-resize-handle-n {
   top: -14px;
   bottom: auto;
   cursor: n-resize; }
 
-/* line 304, sass/partials/_region.scss */
+/* line 309, sass/partials/_region.scss */
 .upfront-region-resize-handle-e {
   top: 0;
   bottom: 0;
@@ -3037,7 +3063,7 @@ div.uinsert-selector a:hover {
   width: 24px;
   cursor: e-resize; }
 
-/* line 312, sass/partials/_region.scss */
+/* line 317, sass/partials/_region.scss */
 .upfront-region-resize-handle-w {
   top: 0;
   bottom: 0;
@@ -3046,7 +3072,7 @@ div.uinsert-selector a:hover {
   width: 24px;
   cursor: w-resize; }
 
-/* line 320, sass/partials/_region.scss */
+/* line 325, sass/partials/_region.scss */
 .upfront-region-editing .upfront-region-container-active > .upfront-region-resize-handle,
 .upfront-region-editing .upfront-region-container-active .upfront-region-side-left > .upfront-region-resize-handle-e,
 .upfront-region-editing .upfront-region-container-active .upfront-region-side-right > .upfront-region-resize-handle-w,
@@ -3056,7 +3082,7 @@ div.uinsert-selector a:hover {
   visibility: visible;
   z-index: 9997; }
 
-/* line 329, sass/partials/_region.scss */
+/* line 334, sass/partials/_region.scss */
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active > .upfront-region-resize-handle,
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region-side-left > .upfront-region-resize-handle-e,
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region-side-right > .upfront-region-resize-handle-w,
@@ -3065,7 +3091,7 @@ div.uinsert-selector a:hover {
 .upfront-region-editing .upfront-region-bg-setting-open .upfront-region-resize-handle {
   visibility: hidden; }
 
-/* line 337, sass/partials/_region.scss */
+/* line 342, sass/partials/_region.scss */
 .upfront-region-editing .upfront-region-active-overlay,
 .upfront-inline-panels,
 .upfront-inline-panels-wrap,
@@ -3080,31 +3106,39 @@ div.uinsert-selector a:hover {
   bottom: 0;
   z-index: 9996; }
 
-/* line 351, sass/partials/_region.scss */
+/* line 356, sass/partials/_region.scss */
 .upfront-region-editing .upfront-region-container-active,
 .upfront-region-fixed-editing .upfront-region-side-fixed {
   opacity: 1;
   z-index: 9997;
   -webkit-backface-visibility: hidden; }
 
-/* line 358, sass/partials/_region.scss */
+/* line 363, sass/partials/_region.scss */
 .upfront-region-editing .upfront-grid-layout {
   -webkit-backface-visibility: hidden; }
 
-/* line 362, sass/partials/_region.scss */
+/* line 367, sass/partials/_region.scss */
 .upfront-region-editing .upfront-region-active,
 .upfront-region-editing .upfront-region-container-active .upfront-region-sub-container {
   z-index: 9997; }
 
-/* line 366, sass/partials/_region.scss */
+/* line 371, sass/partials/_region.scss */
 .upfront-region-editing .upfront-region-container-active div.upfront-grid-layout {
   z-index: 9998; }
 
-/* line 369, sass/partials/_region.scss */
+/* line 374, sass/partials/_region.scss */
 .upfront-region-editing .upfront-region-container-active .upfront-region-sub-container-active {
   z-index: 9999; }
 
-/* line 372, sass/partials/_region.scss */
+/* line 377, sass/partials/_region.scss */
+.upfront-region-editing-modal {
+  z-index: 999999999; }
+
+/* line 380, sass/partials/_region.scss */
+.upfront-region-editing-modal .upfront-entity_meta {
+  display: none !important; }
+
+/* line 383, sass/partials/_region.scss */
 .upfront-region-editing .upfront-region-container-active .upfront-region-active-overlay,
 .upfront-region-editing .upfront-region-active .upfront-region-active-overlay,
 .upfront-region-side-left.upfront-add-region-ani:after,
@@ -3114,29 +3148,29 @@ div.uinsert-selector a:hover {
   top: -3px;
   bottom: -3px; }
 
-/* line 381, sass/partials/_region.scss */
+/* line 392, sass/partials/_region.scss */
 .upfront-region-editing .upfront-region-active .upfront-region-title,
 .upfront-region-fixed-editing .upfront-region-active .upfront-region-title {
   top: 0;
   bottom: auto;
   /*display: block;*/ }
 
-/* line 387, sass/partials/_region.scss */
+/* line 398, sass/partials/_region.scss */
 .upfront-region-editing .upfront-region-editing-overlay {
   z-index: 20;
   background: rgba(31, 48, 63, 0.8); }
 
-/* line 391, sass/partials/_region.scss */
+/* line 402, sass/partials/_region.scss */
 .upfront-region-editing .upfront-region-container-active .upfront-region-side,
 .upfront-region-editing .upfront-region-container-active .upfront-region-sub-container,
 .upfront-region-fixed-editing .upfront-region-side-fixed {
   background: rgba(175, 185, 195, 0.5); }
 
-/* line 396, sass/partials/_region.scss */
+/* line 407, sass/partials/_region.scss */
 .upfront-region-editing .upfront-region-container-active .upfront-region-sub-container .upfront-region-side {
   background: none; }
 
-/* line 399, sass/partials/_region.scss */
+/* line 410, sass/partials/_region.scss */
 .upfront-region-editing .upfront-region-container-active .upfront-region:after {
   content: " ";
   display: block;
@@ -3149,19 +3183,19 @@ div.uinsert-selector a:hover {
   border-left: 1px dotted #7f7f7f;
   border-right: 1px dotted #7f7f7f; }
 
-/* line 411, sass/partials/_region.scss */
+/* line 422, sass/partials/_region.scss */
 .upfront-region-editing .upfront-region-container-active .upfront-region-side-left:after {
   border-right: none; }
 
-/* line 414, sass/partials/_region.scss */
+/* line 425, sass/partials/_region.scss */
 .upfront-region-editing .upfront-region-container-active .upfront-region-side-right:after {
   border-left: none; }
 
-/* line 417, sass/partials/_region.scss */
+/* line 428, sass/partials/_region.scss */
 .upfront-region-fixed-editing .upfront-region-side-fixed {
   border: 1px dotted #7f7f7f; }
 
-/* line 420, sass/partials/_region.scss */
+/* line 431, sass/partials/_region.scss */
 .upfront-region-fixed-edit-pos {
   position: absolute;
   left: 0;
@@ -3171,29 +3205,29 @@ div.uinsert-selector a:hover {
   background: #e5f3ff;
   display: none; }
 
-/* line 429, sass/partials/_region.scss */
+/* line 440, sass/partials/_region.scss */
 .upfront-region-fixed-edit-pos .upfront-field-wrap {
   float: left;
   line-height: 16px;
   margin: 0 5px 3px; }
 
-/* line 434, sass/partials/_region.scss */
+/* line 445, sass/partials/_region.scss */
 .upfront-region-fixed-edit-pos .upfront-field-wrap:nth-child(3) {
   clear: both; }
 
-/* line 437, sass/partials/_region.scss */
+/* line 448, sass/partials/_region.scss */
 .upfront-region-fixed-edit-pos .upfront-field-number[type=number] {
   width: 48px;
   height: 18px;
   padding: 0 5px;
   font-size: 11px; }
 
-/* line 443, sass/partials/_region.scss */
+/* line 454, sass/partials/_region.scss */
 .upfront-region-fixed-edit-pos .upfront-field-wrap .upfront-field-label {
   font-weight: bold;
   color: #2f4355; }
 
-/* line 447, sass/partials/_region.scss */
+/* line 458, sass/partials/_region.scss */
 .upfront-region-fixed-editing .upfront-region-fixed-edit-pos {
   display: block; }
 
@@ -3310,77 +3344,77 @@ div.uinsert-selector a:hover {
     transform: translate(-15px, -15px) scale(1); }
   100% {
     transform: translate(0, 0) scale(1); } }
-/* line 627, sass/partials/_region.scss */
+/* line 638, sass/partials/_region.scss */
 .upfront-region-editing .upfront-add-region-ani {
   opacity: 1;
   z-index: 0; }
 
-/* line 631, sass/partials/_region.scss */
+/* line 642, sass/partials/_region.scss */
 .upfront-add-region-ani-top {
   -webkit-animation: upfront-add-region-top 1s linear 0s 1 both;
   animation: upfront-add-region-top 1s linear 0s 1 both; }
 
-/* line 635, sass/partials/_region.scss */
+/* line 646, sass/partials/_region.scss */
 .upfront-add-region-ani-bottom {
   -webkit-animation: upfront-add-region-bottom 1s linear 0s 1 both;
   animation: upfront-add-region-bottom 1s linear 0s 1 both; }
 
-/* line 639, sass/partials/_region.scss */
+/* line 650, sass/partials/_region.scss */
 .upfront-add-region-ani-left {
   -webkit-animation: upfront-add-region-left 0.8s linear 0s 1 both;
   animation: upfront-add-region-left 0.8s linear 0s 1 both; }
 
-/* line 643, sass/partials/_region.scss */
+/* line 654, sass/partials/_region.scss */
 .upfront-add-region-ani-right {
   -webkit-animation: upfront-add-region-right 0.8s linear 0s 1 both;
   animation: upfront-add-region-right 0.8s linear 0s 1 both; }
 
-/* line 647, sass/partials/_region.scss */
+/* line 658, sass/partials/_region.scss */
 .upfront-add-region-ani-top-left {
   -webkit-animation: upfront-add-region-top-left 1s linear 0s 1 both;
   animation: upfront-add-region-top-left 1s linear 0s 1 both; }
 
-/* line 651, sass/partials/_region.scss */
+/* line 662, sass/partials/_region.scss */
 .upfront-add-region-ani-top-right {
   -webkit-animation: upfront-add-region-top-right 1s linear 0s 1 both;
   animation: upfront-add-region-top-right 1s linear 0s 1 both; }
 
-/* line 655, sass/partials/_region.scss */
+/* line 666, sass/partials/_region.scss */
 .upfront-add-region-ani-bottom-left {
   -webkit-animation: upfront-add-region-bottom-left 1s linear 0s 1 both;
   animation: upfront-add-region-bottom-left 1s linear 0s 1 both; }
 
-/* line 659, sass/partials/_region.scss */
+/* line 670, sass/partials/_region.scss */
 .upfront-add-region-ani-bottom-right {
   -webkit-animation: upfront-add-region-bottom-right 1s linear 0s 1 both;
   animation: upfront-add-region-bottom-right 1s linear 0s 1 both; }
 
-/* line 663, sass/partials/_region.scss */
+/* line 674, sass/partials/_region.scss */
 .upfront-inline-panels {
   display: none; }
 
-/* line 666, sass/partials/_region.scss */
+/* line 677, sass/partials/_region.scss */
 .upfront-region-editing .upfront-region-container-active .upfront-region-panels {
   display: block;
   z-index: 9996; }
 
-/* line 670, sass/partials/_region.scss */
+/* line 681, sass/partials/_region.scss */
 .upfront-edit-responsive .upfront-region-editing .upfront-region-panels {
   display: none; }
 
-/* line 673, sass/partials/_region.scss */
+/* line 684, sass/partials/_region.scss */
 .upfront-region-fixed-editing .upfront-region-fixed-panels {
   display: block; }
 
-/* line 676, sass/partials/_region.scss */
+/* line 687, sass/partials/_region.scss */
 .upfront-region-editing .upfront-region-panels.upfront-inline-panels-active {
   z-index: 9999; }
 
-/* line 681, sass/partials/_region.scss */
+/* line 692, sass/partials/_region.scss */
 .upfront-inline-panels-wrap {
   /*overflow: hidden;*/ }
 
-/* line 684, sass/partials/_region.scss */
+/* line 695, sass/partials/_region.scss */
 .upfront-inline-panel {
   position: absolute;
   width: 40px;
@@ -3391,7 +3425,7 @@ div.uinsert-selector a:hover {
   -webkit-transition: visibility 0s linear 0.6s, -webkit-transform 0.6s, opacity 0.6s;
   transition: visibility 0s linear 0.6s, transform 0.6s, opacity 0.6s; }
 
-/* line 694, sass/partials/_region.scss */
+/* line 705, sass/partials/_region.scss */
 .upfront-inline-panel-top {
   top: 0;
   -webkit-transform: scale(1);
@@ -3399,20 +3433,20 @@ div.uinsert-selector a:hover {
   transform: scale(1);
   transform-origin: 50% 0; }
 
-/* line 701, sass/partials/_region.scss */
+/* line 712, sass/partials/_region.scss */
 .upfront-region-panels .upfront-inline-panel-top {
   margin-top: 20px; }
 
-/* line 704, sass/partials/_region.scss */
+/* line 715, sass/partials/_region.scss */
 .upfront-inline-panel-top-center {
   left: 0;
   right: 0; }
 
-/* line 708, sass/partials/_region.scss */
+/* line 719, sass/partials/_region.scss */
 .upfront-inline-panel-top-left {
   left: 8.3%; }
 
-/* line 711, sass/partials/_region.scss */
+/* line 722, sass/partials/_region.scss */
 .upfront-region-fixed-panels .upfront-inline-panel-top-left {
   left: 0;
   -webkit-transform: scale(0, 0);
@@ -3420,11 +3454,11 @@ div.uinsert-selector a:hover {
   transform: scale(0, 0);
   transform-origin: 0 0; }
 
-/* line 718, sass/partials/_region.scss */
+/* line 729, sass/partials/_region.scss */
 .upfront-inline-panel-top-right {
   right: 8.3%; }
 
-/* line 721, sass/partials/_region.scss */
+/* line 732, sass/partials/_region.scss */
 .upfront-region-fixed-panels .upfront-inline-panel-top-right {
   right: 0;
   -webkit-transform: scale(0, 0);
@@ -3432,17 +3466,17 @@ div.uinsert-selector a:hover {
   transform: scale(0, 0);
   transform-origin: 100% 0; }
 
-/* line 728, sass/partials/_region.scss */
+/* line 739, sass/partials/_region.scss */
 .upfront-inline-panel-center {
   top: 0;
   bottom: 0; }
 
-/* line 732, sass/partials/_region.scss */
+/* line 743, sass/partials/_region.scss */
 .upfront-inline-panel-center-center {
   left: 0;
   right: 0; }
 
-/* line 736, sass/partials/_region.scss */
+/* line 747, sass/partials/_region.scss */
 .upfront-inline-panel-center-left {
   left: 0;
   -webkit-transform: scale(1);
@@ -3450,11 +3484,11 @@ div.uinsert-selector a:hover {
   transform: scale(1);
   transform-origin: 0 50%; }
 
-/* line 743, sass/partials/_region.scss */
+/* line 754, sass/partials/_region.scss */
 .upfront-region-panels .upfront-inline-panel-center-left {
   left: 20px; }
 
-/* line 746, sass/partials/_region.scss */
+/* line 757, sass/partials/_region.scss */
 .upfront-inline-panel-center-right {
   right: 0;
   -webkit-transform: scale(1);
@@ -3462,11 +3496,11 @@ div.uinsert-selector a:hover {
   transform: scale(1);
   transform-origin: 100% 50%; }
 
-/* line 753, sass/partials/_region.scss */
+/* line 764, sass/partials/_region.scss */
 .upfront-region-panels .upfront-inline-panel-center-right {
   right: 20px; }
 
-/* line 756, sass/partials/_region.scss */
+/* line 767, sass/partials/_region.scss */
 .upfront-inline-panel-bottom {
   bottom: 0;
   -webkit-transform: scale(1);
@@ -3474,29 +3508,29 @@ div.uinsert-selector a:hover {
   transform: scale(1);
   transform-origin: 50% 100%; }
 
-/* line 763, sass/partials/_region.scss */
+/* line 774, sass/partials/_region.scss */
 .upfront-region-panels .upfront-inline-panel-bottom {
   margin-bottom: 20px; }
 
-/* line 766, sass/partials/_region.scss */
+/* line 777, sass/partials/_region.scss */
 .upfront-inline-panels-active .upfront-inline-panel-bottom {
   /*-webkit-animation: upfront-inline-panel-bottom 0.6s 1;*/ }
 
-/* line 769, sass/partials/_region.scss */
+/* line 780, sass/partials/_region.scss */
 .upfront-inline-panel-bottom-center {
   left: 0;
   right: 0; }
 
-/* line 773, sass/partials/_region.scss */
+/* line 784, sass/partials/_region.scss */
 .upfront-inline-panel-bottom-left {
   left: 8.3%; }
 
-/* line 776, sass/partials/_region.scss */
+/* line 787, sass/partials/_region.scss */
 .uimage-controls .upfront-inline-panel-bottom-left {
   bottom: 15px;
   left: 15px; }
 
-/* line 780, sass/partials/_region.scss */
+/* line 791, sass/partials/_region.scss */
 .upfront-region-fixed-panels .upfront-inline-panel-bottom-left {
   left: 0;
   -webkit-transform: scale(0, 0);
@@ -3504,11 +3538,11 @@ div.uinsert-selector a:hover {
   transform: scale(0, 0);
   transform-origin: 0 100%; }
 
-/* line 787, sass/partials/_region.scss */
+/* line 798, sass/partials/_region.scss */
 .upfront-inline-panel-bottom-right {
   right: 8.3%; }
 
-/* line 790, sass/partials/_region.scss */
+/* line 801, sass/partials/_region.scss */
 .upfront-region-fixed-panels .upfront-inline-panel-bottom-right {
   right: 0;
   -webkit-transform: scale(0, 0);
@@ -3516,7 +3550,7 @@ div.uinsert-selector a:hover {
   transform: scale(0, 0);
   transform-origin: 100% 100%; }
 
-/* line 797, sass/partials/_region.scss */
+/* line 808, sass/partials/_region.scss */
 .upfront-inline-panels-active .upfront-inline-panel {
   visibility: visible;
   opacity: 1;
@@ -3525,39 +3559,39 @@ div.uinsert-selector a:hover {
   transform: scale(1);
   transition-delay: 0s; }
 
-/* line 805, sass/partials/_region.scss */
+/* line 816, sass/partials/_region.scss */
 .upfront-inline-panel-size-2 {
   width: 80px; }
 
-/* line 808, sass/partials/_region.scss */
+/* line 819, sass/partials/_region.scss */
 .upfront-inline-panel-size-3 {
   width: 120px; }
 
-/* line 811, sass/partials/_region.scss */
+/* line 822, sass/partials/_region.scss */
 .upfront-inline-panel-size-4 {
   width: 160px; }
 
-/* line 814, sass/partials/_region.scss */
+/* line 825, sass/partials/_region.scss */
 .upfront-inline-panel-size-5 {
   width: 200px; }
 
-/* line 817, sass/partials/_region.scss */
+/* line 828, sass/partials/_region.scss */
 .upfront-inline-panel-size-6 {
   width: 240px; }
 
-/* line 820, sass/partials/_region.scss */
+/* line 831, sass/partials/_region.scss */
 .upfront-inline-panel-size-7 {
   width: 280px; }
 
-/* line 823, sass/partials/_region.scss */
+/* line 834, sass/partials/_region.scss */
 .upfront-inline-panel-size-8 {
   width: 320px; }
 
-/* line 826, sass/partials/_region.scss */
+/* line 837, sass/partials/_region.scss */
 .upfront-inline-panel-size-9 {
   width: 360px; }
 
-/* line 829, sass/partials/_region.scss */
+/* line 840, sass/partials/_region.scss */
 .upfront-inline-panel-item {
   width: 30px;
   height: 30px;
@@ -3568,79 +3602,79 @@ div.uinsert-selector a:hover {
   position: relative;
   z-index: 50; }
 
-/* line 839, sass/partials/_region.scss */
+/* line 850, sass/partials/_region.scss */
 .inline-panel-item-selected .upfront-icon:before {
   cursor: default;
   opacity: 0.4; }
 
-/* line 843, sass/partials/_region.scss */
+/* line 854, sass/partials/_region.scss */
 .upfront-region-panel-item-add-region {
   width: 24px;
   height: 24px;
   border-bottom: none; }
 
-/* line 848, sass/partials/_region.scss */
+/* line 859, sass/partials/_region.scss */
 .upfront-region-panel-item-bg.upfront-inline-panel-subitem-active {
   background: #1f303f; }
 
-/* line 851, sass/partials/_region.scss */
+/* line 862, sass/partials/_region.scss */
 .upfront-inline-panel-subitem-active .upfront-inline-panel-subitem {
   border-bottom: 1px solid #2d3945; }
 
-/* line 854, sass/partials/_region.scss */
+/* line 865, sass/partials/_region.scss */
 .inline-panel-collapsed-control .upfront-inline-panel-subitem {
   width: 90px; }
 
-/* line 857, sass/partials/_region.scss */
+/* line 868, sass/partials/_region.scss */
 .upfront-inline-panel-item.inline-panel-collapsed-control {
   height: 10px;
   position: relative;
   z-index: 50; }
 
-/* line 862, sass/partials/_region.scss */
+/* line 873, sass/partials/_region.scss */
 .upfront-inline-panel-item.inline-panel-collapsed-control .upfront-icon-region-collapsedControl-active {
   height: 10px; }
 
-/* line 865, sass/partials/_region.scss */
+/* line 876, sass/partials/_region.scss */
 .upfront-inline-panel-item.inline-panel-collapsed-control .upfront-icon-region-collapsedControl-active:before {
   height: 6px; }
 
-/* line 868, sass/partials/_region.scss */
+/* line 879, sass/partials/_region.scss */
 .upfront-inline-panel-subitem {
   position: relative;
   z-index: -1; }
 
-/* line 872, sass/partials/_region.scss */
+/* line 883, sass/partials/_region.scss */
 .upfront-inline-panel-subitem .upfront-inline-panel-item {
   visibility: hidden;
   border-bottom: none;
   position: relative;
   opacity: 0; }
 
-/* line 878, sass/partials/_region.scss */
+/* line 889, sass/partials/_region.scss */
 .uimage-controls .upfront-inline-panel-subitem-active .upfront-inline-panel-item {
   visibility: visible;
   background: #284159;
   opacity: 1; }
 
-/* line 883, sass/partials/_region.scss */
+/* line 894, sass/partials/_region.scss */
 .upfront-inline-panel-subitem .upfront-inline-panel-item:hover {
   background: #22384c;
   z-index: 100; }
 
-/* line 887, sass/partials/_region.scss */
+/* line 898, sass/partials/_region.scss */
 .upfront-inline-panel-item .upfront-icon {
   display: block;
   padding: 4px 4px 0 4px; }
 
-/* line 891, sass/partials/_region.scss */
+/* line 902, sass/partials/_region.scss */
 .upfront-inline-panel-item.labeled {
   line-height: 40px !important;
   color: #fff;
   min-width: 200px !important;
   padding: 0 10px; }
 
-/* line 897, sass/partials/_region.scss */
+/* line 908, sass/partials/_region.scss */
 .upfront-inline-panel-item .upfront-inline-panel-item-label {
   display: block;
   width: 100%;
@@ -3648,22 +3682,22 @@ div.uinsert-selector a:hover {
   overflow: hidden;
   font: normal 11px/2.7 Verdana, sans serif; }
 
-/* line 904, sass/partials/_region.scss */
+/* line 915, sass/partials/_region.scss */
 .upfront-region-panel-item-add-region .upfront-icon {
   padding: 2px; }
 
-/* line 907, sass/partials/_region.scss */
+/* line 918, sass/partials/_region.scss */
 .upfront-inline-panel-item .upfront-icon:before {
   float: none !important;
   margin: 0; }
 
-/* line 911, sass/partials/_region.scss */
+/* line 922, sass/partials/_region.scss */
 .upfront-region-fixed-panels .upfront-inline-panel-item {
   border-bottom: none;
   width: 50px;
   height: 50px; }
 
-/* line 916, sass/partials/_region.scss */
+/* line 927, sass/partials/_region.scss */
 .upfront-region-fixed-panels .upfront-inline-panel-top-left .upfront-inline-panel-item {
   background: -moz-linear-gradient(-45deg, #e5f3ff 0%, #e5f3ff 40%, rgba(61, 82, 102, 0.5) 41%, transparent 45%, transparent 100%);
   background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, #e5f3ff), color-stop(40%, #e5f3ff), color-stop(41%, rgba(61, 82, 102, 0.5)), color-stop(45%, transparent), color-stop(100%, transparent));
@@ -3672,7 +3706,7 @@ div.uinsert-selector a:hover {
   background: -ms-linear-gradient(-45deg, #e5f3ff 0%, #e5f3ff 40%, rgba(61, 82, 102, 0.5) 41%, transparent 45%, transparent 100%);
   background: linear-gradient(135deg, #e5f3ff 0%, #e5f3ff 40%, rgba(61, 82, 102, 0.5) 41%, transparent 45%, transparent 100%); }
 
-/* line 924, sass/partials/_region.scss */
+/* line 935, sass/partials/_region.scss */
 .upfront-region-fixed-panels .upfront-inline-panel-top-right .upfront-inline-panel-item {
   background: -moz-linear-gradient(45deg, transparent 0%, transparent 55%, rgba(61, 82, 102, 0.5) 59%, #e5f3ff 60%, #e5f3ff 100%);
   background: -webkit-gradient(linear, left bottom, right top, color-stop(0%, transparent), color-stop(55%, transparent), color-stop(59%, rgba(61, 82, 102, 0.5)), color-stop(60%, #e5f3ff), color-stop(100%, #e5f3ff));
@@ -3681,7 +3715,7 @@ div.uinsert-selector a:hover {
   background: -ms-linear-gradient(45deg, transparent 0%, transparent 55%, rgba(61, 82, 102, 0.5) 59%, #e5f3ff 60%, #e5f3ff 100%);
   background: linear-gradient(45deg, transparent 0%, transparent 55%, rgba(61, 82, 102, 0.5) 59%, #e5f3ff 60%, #e5f3ff 100%); }
 
-/* line 932, sass/partials/_region.scss */
+/* line 943, sass/partials/_region.scss */
 .upfront-region-fixed-panels .upfront-inline-panel-bottom-left .upfront-inline-panel-item {
   background: -moz-linear-gradient(45deg, #e5f3ff 0%, #e5f3ff 40%, rgba(61, 82, 102, 0.5) 41%, transparent 45%, transparent 100%);
   background: -webkit-gradient(linear, left bottom, right top, color-stop(0%, #e5f3ff), color-stop(40%, #e5f3ff), color-stop(41%, rgba(61, 82, 102, 0.5)), color-stop(45%, transparent), color-stop(100%, transparent));
@@ -3690,7 +3724,7 @@ div.uinsert-selector a:hover {
   background: -ms-linear-gradient(45deg, #e5f3ff 0%, #e5f3ff 40%, rgba(61, 82, 102, 0.5) 41%, transparent 45%, transparent 100%);
   background: linear-gradient(45deg, #e5f3ff 0%, #e5f3ff 40%, rgba(61, 82, 102, 0.5) 41%, transparent 45%, transparent 100%); }
 
-/* line 940, sass/partials/_region.scss */
+/* line 951, sass/partials/_region.scss */
 .upfront-region-fixed-panels .upfront-inline-panel-bottom-right .upfront-inline-panel-item {
   background: -moz-linear-gradient(-45deg, transparent 0%, transparent 55%, rgba(61, 82, 102, 0.5) 59%, #e5f3ff 60%, #e5f3ff 100%);
   background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, transparent), color-stop(55%, transparent), color-stop(59%, rgba(61, 82, 102, 0.5)), color-stop(60%, #e5f3ff), color-stop(100%, #e5f3ff));
@@ -3699,7 +3733,7 @@ div.uinsert-selector a:hover {
   background: -ms-linear-gradient(-45deg, transparent 0%, transparent 55%, rgba(61, 82, 102, 0.5) 59%, #e5f3ff 60%, #e5f3ff 100%);
   background: linear-gradient(135deg, transparent 0%, transparent 55%, rgba(61, 82, 102, 0.5) 59%, #e5f3ff 60%, #e5f3ff 100%); }
 
-/* line 948, sass/partials/_region.scss */
+/* line 959, sass/partials/_region.scss */
 .upfront-region-fixed-panels .upfront-region-panel-item-add-region:before {
   content: "+";
   color: #3d5266;
@@ -3709,21 +3743,21 @@ div.uinsert-selector a:hover {
   float: left;
   display: block; }
 
-/* line 957, sass/partials/_region.scss */
+/* line 968, sass/partials/_region.scss */
 .upfront-region-fixed-panels .upfront-inline-panel-bottom-left .upfront-region-panel-item-add-region:before {
   margin: 36px 0 0 6px; }
 
-/* line 960, sass/partials/_region.scss */
+/* line 971, sass/partials/_region.scss */
 .upfront-region-fixed-panels .upfront-inline-panel-top-right .upfront-region-panel-item-add-region:before {
   margin: 12px 6px 0 0;
   float: right; }
 
-/* line 964, sass/partials/_region.scss */
+/* line 975, sass/partials/_region.scss */
 .upfront-region-fixed-panels .upfront-inline-panel-bottom-right .upfront-region-panel-item-add-region:before {
   margin: 36px 6px 0 0;
   float: right; }
 
-/* line 968, sass/partials/_region.scss */
+/* line 979, sass/partials/_region.scss */
 .upfront-inline-modal,
 .upfront-inline-modal-wrap {
   position: absolute;
@@ -3733,7 +3767,7 @@ div.uinsert-selector a:hover {
   right: 0;
   z-index: 10001000; }
 
-/* line 979, sass/partials/_region.scss */
+/* line 990, sass/partials/_region.scss */
 .upfront-inline-modal-wrap {
   margin: auto;
   width: 50%;
@@ -3743,21 +3777,21 @@ div.uinsert-selector a:hover {
   -webkit-box-shadow: 0 0 20px rgba(39, 58, 76, 0.8);
   box-shadow: 0 0 20px rgba(39, 58, 76, 0.8); }
 
-/* line 988, sass/partials/_region.scss */
+/* line 999, sass/partials/_region.scss */
 .upfront-inline-modal-wrap .upfront-inline-modal-content {
   padding: 16px; }
 
-/* line 991, sass/partials/_region.scss */
+/* line 1002, sass/partials/_region.scss */
 .upfront-inline-modal-wrap .upfront-inline-modal-content:before,
 .upfront-inline-modal-wrap .upfront-inline-modal-content:after {
   content: " ";
   display: table; }
 
-/* line 996, sass/partials/_region.scss */
+/* line 1007, sass/partials/_region.scss */
 .upfront-inline-modal-wrap .upfront-inline-modal-content:after {
   clear: both; }
 
-/* line 999, sass/partials/_region.scss */
+/* line 1010, sass/partials/_region.scss */
 .upfront-inline-modal-save,
 .upfront-inline-modal-save:hover {
   position: absolute;
@@ -3772,66 +3806,66 @@ div.uinsert-selector a:hover {
   border: none;
   border-bottom: 1px solid rgba(27, 45, 63, 0.5); }
 
-/* line 1013, sass/partials/_region.scss */
+/* line 1024, sass/partials/_region.scss */
 .upfront-region-modal-color {
   background: none;
   border-bottom: none;
   padding: 0; }
 
-/* line 1018, sass/partials/_region.scss */
+/* line 1029, sass/partials/_region.scss */
 .upfront-region-modal-color .upfront-inline-modal-wrap {
   width: 255px;
   height: 210px;
   background: none; }
 
-/* line 1023, sass/partials/_region.scss */
+/* line 1034, sass/partials/_region.scss */
 .upfront-region-modal-color .upfront-region-color-picker {
   display: block;
   width: 120px;
   margin: 0 auto; }
 
-/* line 1028, sass/partials/_region.scss */
+/* line 1039, sass/partials/_region.scss */
 .upfront-region-modal-bg .upfront-inline-modal-wrap {
   width: 384px; }
 
-/* line 1031, sass/partials/_region.scss */
+/* line 1042, sass/partials/_region.scss */
 .upfront-region-bg-setting-fixed-region {
   margin: 0 0 10px; }
 
-/* line 1034, sass/partials/_region.scss */
+/* line 1045, sass/partials/_region.scss */
 .upfront-region-bg-setting-fixed-region .upfront-region-bg-setting-label {
   margin: 0 0 5px; }
 
-/* line 1037, sass/partials/_region.scss */
+/* line 1048, sass/partials/_region.scss */
 .upfront-region-bg-setting-fixed-region .upfront-field-wrap {
   width: 50%;
   float: left; }
 
-/* line 1041, sass/partials/_region.scss */
+/* line 1052, sass/partials/_region.scss */
 .upfront-region-bg-setting-fixed-region .upfront-field-number[type=number] {
   width: 80px; }
 
-/* line 1044, sass/partials/_region.scss */
+/* line 1055, sass/partials/_region.scss */
 .upfront-region-bg-setting-fixed-region .upfront-field-wrap .upfront-field-label {
   display: inline-block;
   width: 40px; }
 
-/* line 1048, sass/partials/_region.scss */
+/* line 1059, sass/partials/_region.scss */
 .upfront-region-bg-setting-header {
   margin: -16px -16px 0;
   padding: 0 16px 12px;
   border-bottom: 1px solid #cce1f4;
   position: relative; }
 
-/* line 1054, sass/partials/_region.scss */
+/* line 1065, sass/partials/_region.scss */
 .upfront-region-bg-setting-name {
   color: #6a8eb5; }
 
-/* line 1057, sass/partials/_region.scss */
+/* line 1068, sass/partials/_region.scss */
 .upfront-region-bg-setting-name-wrap {
   padding: 16px 0 0; }
 
-/* line 1060, sass/partials/_region.scss */
+/* line 1071, sass/partials/_region.scss */
 .upfront-region-bg-setting-is-global {
   display: inline-block;
   background: #20394f;
@@ -3841,7 +3875,7 @@ div.uinsert-selector a:hover {
   padding: 2px 3px;
   margin: 0 0 0 5px; }
 
-/* line 1069, sass/partials/_region.scss */
+/* line 1080, sass/partials/_region.scss */
 a.upfront-region-name-edit-trigger {
   font-size: 11px;
   font-family: verdana, sans-serif;
@@ -3853,39 +3887,39 @@ a.upfront-region-name-edit-trigger {
   height: 18px;
   line-height: 20px; }
 
-/* line 1080, sass/partials/_region.scss */
+/* line 1091, sass/partials/_region.scss */
 a.upfront-region-name-edit-trigger:hover {
   border-bottom: 1px solid #00cf8b;
   color: #243877;
   text-decoration: none; }
 
-/* line 1085, sass/partials/_region.scss */
+/* line 1096, sass/partials/_region.scss */
 a.upfront-region-name-edit-trigger:before {
   position: absolute;
   top: 0;
   left: -20px; }
 
-/* line 1090, sass/partials/_region.scss */
+/* line 1101, sass/partials/_region.scss */
 .upfront-region-bg-setting-name-edit .upfront-field-wrap-text {
   width: 170px;
   margin-right: 10px; }
 
-/* line 1094, sass/partials/_region.scss */
+/* line 1105, sass/partials/_region.scss */
 .upfront-region-bg-setting-name-edit .upfront-field-wrap {
   float: left; }
 
-/* line 1097, sass/partials/_region.scss */
+/* line 1108, sass/partials/_region.scss */
 .upfront-region-bg-setting-name-edit .upfront-field-wrap-checkboxes {
   position: relative;
   top: 7px; }
 
-/* line 1101, sass/partials/_region.scss */
+/* line 1112, sass/partials/_region.scss */
 .upfront-region-bg-setting-name-edit .upfront-region-bg-setting-localize {
   position: relative;
   top: 4px;
   border-bottom: 1px solid #00d78b; }
 
-/* line 1106, sass/partials/_region.scss */
+/* line 1117, sass/partials/_region.scss */
 .upfront-region-bg-setting-name-edit .upfront-region-bg-setting-localize:before {
   display: inline-block;
   content: "";
@@ -3897,7 +3931,7 @@ a.upfront-region-name-edit-trigger:before {
   top: 2px;
   right: -20px; }
 
-/* line 1117, sass/partials/_region.scss */
+/* line 1128, sass/partials/_region.scss */
 .upfront-region-bg-setting-name-edit .upfront-region-bg-setting-name-save {
   float: right;
   background: #e6f3ff;
@@ -3907,38 +3941,38 @@ a.upfront-region-name-edit-trigger:before {
   border-radius: 3px;
   padding: 0 10px; }
 
-/* line 1126, sass/partials/_region.scss */
+/* line 1137, sass/partials/_region.scss */
 .upfront-region-bg-setting-region-type {
   margin: 0 0 20px; }
 
-/* line 1129, sass/partials/_region.scss */
+/* line 1140, sass/partials/_region.scss */
 .upfront-region-bg-setting-region-nav {
   width: 45%;
   float: right;
   margin: 0 0 20px; }
 
-/* line 1134, sass/partials/_region.scss */
+/* line 1145, sass/partials/_region.scss */
 .upfront-region-bg-setting-region-behavior {
   width: 50%;
   float: left;
   margin: 0 0 20px; }
 
-/* line 1139, sass/partials/_region.scss */
+/* line 1150, sass/partials/_region.scss */
 .upfront-region-bg-setting-type {
   clear: both;
   width: 36%;
   float: left; }
 
-/* line 1144, sass/partials/_region.scss */
+/* line 1155, sass/partials/_region.scss */
 .upfront-region-bg-setting-tab .upfront-field-number {
   width: 55px; }
 
-/* line 1147, sass/partials/_region.scss */
+/* line 1158, sass/partials/_region.scss */
 .upfront-region-bg-setting-tab .sp-replacer {
   float: none;
   width: auto; }
 
-/* line 1151, sass/partials/_region.scss */
+/* line 1162, sass/partials/_region.scss */
 .upfront-region-bg-setting-footer {
   color: #1f2f3f;
   font-family: "Verdana";
@@ -3950,7 +3984,7 @@ a.upfront-region-name-edit-trigger:before {
   top: 16px;
   clear: both; }
 
-/* line 1163, sass/partials/_region.scss */
+/* line 1174, sass/partials/_region.scss */
 .upfront-region-bg-setting-auto-resize {
   cursor: pointer;
   float: right;
@@ -3961,12 +3995,12 @@ a.upfront-region-name-edit-trigger:before {
   line-height: 16px;
   margin: 20px 0 0; }
 
-/* line 1173, sass/partials/_region.scss */
+/* line 1184, sass/partials/_region.scss */
 .upfront-region-bg-setting-auto-resize-disabled {
   cursor: not-allowed;
   opacity: 0.5; }
 
-/* line 1177, sass/partials/_region.scss */
+/* line 1188, sass/partials/_region.scss */
 .auto-resize-off, .auto-resize-on {
   display: inline-block;
   float: right;
@@ -3977,7 +4011,7 @@ a.upfront-region-name-edit-trigger:before {
   border-radius: 8px;
   background: #98a8b8; }
 
-/* line 1187, sass/partials/_region.scss */
+/* line 1198, sass/partials/_region.scss */
 .auto-resize-off:after, .auto-resize-on:after {
   content: " ";
   display: block;
@@ -3987,15 +4021,15 @@ a.upfront-region-name-edit-trigger:before {
   border-radius: 5px;
   background: #f5f5f5; }
 
-/* line 1196, sass/partials/_region.scss */
+/* line 1207, sass/partials/_region.scss */
 .auto-resize-on {
   background: #00ce8d; }
 
-/* line 1199, sass/partials/_region.scss */
+/* line 1210, sass/partials/_region.scss */
 .auto-resize-on:after {
   float: right; }
 
-/* line 1203, sass/partials/_region.scss */
+/* line 1214, sass/partials/_region.scss */
 .upfront-region-bg-setting-change-image {
   cursor: pointer;
   float: left;
@@ -4010,17 +4044,17 @@ a.upfront-region-name-edit-trigger:before {
   border-radius: 3px;
   margin: 10px 30px 0 0; }
 
-/* line 1217, sass/partials/_region.scss */
+/* line 1228, sass/partials/_region.scss */
 .upfront-region-bg-setting-change-image:hover {
   border-color: #607f99; }
 
-/* line 1220, sass/partials/_region.scss */
+/* line 1231, sass/partials/_region.scss */
 .upfront-region-bg-setting-edit-css {
   display: inline-block;
   vertical-align: top;
   padding: 10px 0; }
 
-/* line 1225, sass/partials/_region.scss */
+/* line 1236, sass/partials/_region.scss */
 .upfront-region-bg-setting-edit-css.upfront-icon:before {
   background-position: -660px -44px;
   width: 18px;
@@ -4028,7 +4062,7 @@ a.upfront-region-name-edit-trigger:before {
   margin-right: 5px;
   margin-top: 6px; }
 
-/* line 1232, sass/partials/_region.scss */
+/* line 1243, sass/partials/_region.scss */
 .upfront-region-bg-setting-edit-css span {
   display: inline-block;
   color: #513a4e;
@@ -4038,46 +4072,46 @@ a.upfront-region-name-edit-trigger:before {
   line-height: 1;
   cursor: pointer; }
 
-/* line 1241, sass/partials/_region.scss */
+/* line 1252, sass/partials/_region.scss */
 .upfront-region-bg-setting-floating-restrict,
 .upfront-region-bg-setting-sticky {
   float: right;
   margin: 4px 0 10px; }
 
-/* line 1246, sass/partials/_region.scss */
+/* line 1257, sass/partials/_region.scss */
 .upfront-region-bg-setting-tab-primary {
   width: 62%;
   float: right; }
 
-/* line 1250, sass/partials/_region.scss */
+/* line 1261, sass/partials/_region.scss */
 .upfront-region-bg-setting-tab-secondary {
   padding: 10px 0 0;
   clear: both; }
 
-/* line 1255, sass/partials/_region.scss */
+/* line 1266, sass/partials/_region.scss */
 .upfront-region-bg-setting-heading {
   color: #27394b;
   font-size: 18px;
   font-weight: bold;
   margin: 0 0 10px; }
 
-/* line 1261, sass/partials/_region.scss */
+/* line 1272, sass/partials/_region.scss */
 .upfront-region-bg-setting-label {
   color: #3f617f;
   font-size: 14px;
   line-height: 20px; }
 
-/* line 1266, sass/partials/_region.scss */
+/* line 1277, sass/partials/_region.scss */
 .upfront-region-bg-setting-label-alt {
   color: #2f475d;
   font-family: "Verdana";
   font-size: 11px; }
 
-/* line 1272, sass/partials/_region.scss */
+/* line 1283, sass/partials/_region.scss */
 .region-resizable-helper {
   background: rgba(0, 0, 0, 0.1); }
 
-/* line 1276, sass/partials/_region.scss */
+/* line 1287, sass/partials/_region.scss */
 .upfront-region-container .upfront-region-shadow {
   visibility: hidden;
   min-height: 0 !important;
@@ -4085,18 +4119,18 @@ a.upfront-region-name-edit-trigger:before {
   max-height: 0;
   overflow: hidden; }
 
-/* line 1284, sass/partials/_region.scss */
+/* line 1295, sass/partials/_region.scss */
 .upfront-region-bg-setting-lightbox-region .upfront-field-wrap-number,
 .upfront-region-bg-setting-lightbox-region .sp-cf,
 .upfront-region-bg-setting-lightbox-region .sp-cf label {
   display: inline-block; }
 
-/* line 1290, sass/partials/_region.scss */
+/* line 1301, sass/partials/_region.scss */
 .upfront-region-bg-setting-lightbox-region .sp-cf.overlay_color,
 .upfront-region-bg-setting-lightbox-region .upfront-field-wrap-number.width_cols {
   margin-right: 40px; }
 
-/* line 1295, sass/partials/_region.scss */
+/* line 1306, sass/partials/_region.scss */
 .upfront-region-container .open-responsive-item-controls {
   display: none;
   z-index: 1000000;
@@ -4111,7 +4145,7 @@ a.upfront-region-name-edit-trigger:before {
   background-image: -ms-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
   background-image: linear-gradient(-179deg, #2F445D 0%, #152841 100%); }
 
-/* line 1309, sass/partials/_region.scss */
+/* line 1320, sass/partials/_region.scss */
 .upfront-region-container .open-responsive-item-controls:before {
   background-image: url(../img/uf-core-el-sprite.svg);
   content: " ";
@@ -4122,7 +4156,7 @@ a.upfront-region-name-edit-trigger:before {
   background-position: -699px -721px;
   margin: 2px 0 0 3px; }
 
-/* line 1319, sass/partials/_region.scss */
+/* line 1330, sass/partials/_region.scss */
 .upfront-region-container .responsive-item-controls {
   display: none;
   z-index: 1000001;
@@ -4138,7 +4172,7 @@ a.upfront-region-name-edit-trigger:before {
   font-family: Verdana;
   font-size: 11px; }
 
-/* line 1334, sass/partials/_region.scss */
+/* line 1345, sass/partials/_region.scss */
 .upfront-region-container .responsive-item-controls > .responsive-item-control {
   cursor: pointer;
   border-radius: 4px;
@@ -4147,25 +4181,191 @@ a.upfront-region-name-edit-trigger:before {
   margin-top: 4px;
   color: #2F445D; }
 
-/* line 1342, sass/partials/_region.scss */
+/* line 1353, sass/partials/_region.scss */
 .upfront-region-container .responsive-item-controls > .responsive-item-control:first-child {
   margin-top: 10px; }
 
-/* line 1345, sass/partials/_region.scss */
+/* line 1356, sass/partials/_region.scss */
 .upfront-region-container .responsive-item-controls > .responsive-item-control:hover {
   background: #90B0D2;
   color: #2F445D; }
 
-/* line 1349, sass/partials/_region.scss */
+/* line 1360, sass/partials/_region.scss */
 .upfront-region-editing .upfront-region.controls-visible .responsive-item-controls {
   display: block; }
 
 /* Hide 'Add Region' triggers & 'Region Resize' handle when settings panel is open */
-/* line 1354, sass/partials/_region.scss */
+/* line 1365, sass/partials/_region.scss */
 .upfront-region-editing .upfront-region-bg-setting-open .upfront-region-panel-item-add-region,
 .upfront-region-editing .upfront-region-bg-setting-open .upfront-icon-control-region-resize-e:before,
 .upfront-region-editing .upfront-region-bg-setting-open .upfront-icon-control-region-resize-w:before {
   display: none; }
+
+/* line 2, sass/partials/_map-editor.scss */
+.upfront_map-editor {
+  position: fixed;
+  width: 100%;
+  cursor: auto;
+  right: 0;
+  bottom: 0;
+  z-index: 10000000;
+  min-height: 200px;
+  display: none; }
+
+/* line 13, sass/partials/_map-editor.scss */
+.upfront_map-editor button {
+  background: #2ecc90;
+  color: #fff;
+  position: absolute;
+  bottom: 10px;
+  right: 25px;
+  padding: 5px 10px;
+  border: 0;
+  border-radius: 0;
+  font-size: 14px;
+  z-index: 2; }
+
+/* line 25, sass/partials/_map-editor.scss */
+.upfront_map-editor button:hover {
+  background: #3ea; }
+
+/* Simple */
+/* line 30, sass/partials/_map-editor.scss */
+.upfront_map-editor.upfront_map-editor-simple {
+  padding: 10px; }
+
+/* line 33, sass/partials/_map-editor.scss */
+.upfront_map-editor.upfront_map-editor-simple h3 {
+  margin: 0;
+  text-transform: none; }
+
+/* line 38, sass/partials/_map-editor.scss */
+.upfront_map-editor-simple textarea {
+  min-height: 80px; }
+
+/* Complex */
+/* line 43, sass/partials/_map-editor.scss */
+.upfront_map-editor.upfront_map-editor-complex textarea {
+  color: white;
+  background: #454e58;
+  border: none;
+  outline: none; }
+
+/* line 49, sass/partials/_map-editor.scss */
+.upfront_map-editor .upfront_map-editor-complex-wrapper {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  left: 0;
+  background: #3d5266;
+  min-height: 200px; }
+
+/* line 58, sass/partials/_map-editor.scss */
+.upfront_map-switches {
+  margin: 2px 15px 0 20px;
+  float: left; }
+
+/* line 64, sass/partials/_map-editor.scss */
+.upfront_map-switch {
+  color: #cbe5ff;
+  float: left;
+  padding: 2px 10px;
+  margin: 2px 5px 0 0;
+  cursor: pointer; }
+
+/* line 72, sass/partials/_map-editor.scss */
+.upfront_map-switch:hover {
+  color: #dae6f2;
+  background: #2E3D4C; }
+
+/* line 77, sass/partials/_map-editor.scss */
+.upfront_map-switch.active {
+  background: #26333F; }
+
+/* line 81, sass/partials/_map-editor.scss */
+.upfront_map-jsalert {
+  display: inline-block;
+  margin: 0 5px 0;
+  padding: 0 5px;
+  color: #444d56;
+  display: none;
+  float: left; }
+
+/* line 90, sass/partials/_map-editor.scss */
+.upfront_map-jsalert .upfront-icon-button:before {
+  background-position: -482px -205px;
+  margin-top: 7px; }
+
+/* line 95, sass/partials/_map-editor.scss */
+.upfront_map-editor-section {
+  height: 100%; }
+
+/* line 99, sass/partials/_map-editor.scss */
+.upfront_map-editor.upfront_map-editor-complex .upfront_map-editor-complex-wrapper .upfront_map-editor-section {
+  display: none; }
+
+/* line 102, sass/partials/_map-editor.scss */
+.upfront_map-editor.upfront_map-editor-complex .upfront_map-editor-complex-wrapper .upfront_map-editor-section.active {
+  display: block; }
+
+/* line 105, sass/partials/_map-editor.scss */
+.upfront_map-editor.upfront_map-editor-complex .handle.ui-resizable-handle.ui-resizable-s {
+  text-align: center;
+  font-size: 18px;
+  line-height: 7px;
+  bottom: 5px; }
+
+/* line 112, sass/partials/_map-editor.scss */
+.ace_editor.upfront_map-ace {
+  height: 100%;
+  width: 100%; }
+
+/* Missing defaults */
+/* line 119, sass/partials/_map-editor.scss */
+.upfront-map_element-module button.embed,
+.upfront-map_element-module button.create,
+.upfront_map-editor-simple button {
+  border: 0;
+  border-radius: 2px;
+  padding: 10px 30px;
+  cursor: pointer; }
+
+/* line 128, sass/partials/_map-editor.scss */
+.upfront_map-editor-simple textarea {
+  width: 98%; }
+
+/* line 132, sass/partials/_map-editor.scss */
+.upfront_map-editor .upfront-css-top {
+  border-bottom: none; }
+
+/* line 136, sass/partials/_map-editor.scss */
+.upfront_map-editor .upfront-icon-info {
+  padding: 0 20px;
+  float: left;
+  line-height: 34px; }
+
+/* line 142, sass/partials/_map-editor.scss */
+.upfront_map-editor .upfront-icon-info:before {
+  display: inline-block;
+  content: "";
+  width: 15px;
+  height: 15px;
+  background-image: url("../img/uf-core-el-sprite.svg");
+  background-position: -483px -141px;
+  margin-left: 5px;
+  margin-right: 15px;
+  margin-bottom: -4px; }
+
+/* line 154, sass/partials/_map-editor.scss */
+.upfront_map-editor .upfront_map-custom_map_code {
+  display: inline-block;
+  padding: 0 10px;
+  color: #2ecc90;
+  font-weight: bold;
+  background-color: #2C3E50;
+  height: 34px;
+  line-height: 34px;
+  float: left; }
 
 /* line 1, sass/partials/_bgsettings.scss */
 .uf-bgsettings-item .upfront-field-wrap .upfront-field-label-block,
@@ -4291,41 +4491,42 @@ a.upfront-region-name-edit-trigger:before {
   width: auto; }
 
 /* line 104, sass/partials/_bgsettings.scss */
+.uf-bgsettings-map-custom-map-code,
 .uf-bgsettings-map-show-marker {
   clear: both;
   float: left;
   width: 100%; }
 
-/* line 109, sass/partials/_bgsettings.scss */
+/* line 110, sass/partials/_bgsettings.scss */
 .uf-bgsettings-slideritem .uf-bgsettings-slider-rotate {
   display: inline-block; }
 
-/* line 112, sass/partials/_bgsettings.scss */
+/* line 113, sass/partials/_bgsettings.scss */
 .uf-bgsettings-slideritem .uf-bgsettings-slider-time {
   display: inline-block;
   position: relative;
   top: -2px;
   margin-left: 5px; }
 
-/* line 119, sass/partials/_bgsettings.scss */
+/* line 120, sass/partials/_bgsettings.scss */
 .upfront-region-bg-slider-slides {
   margin-top: 10px; }
 
-/* line 122, sass/partials/_bgsettings.scss */
+/* line 123, sass/partials/_bgsettings.scss */
 .upfront-region-bg-slider-slides .upfront-settings-item-title {
   line-height: 1; }
 
-/* line 125, sass/partials/_bgsettings.scss */
+/* line 126, sass/partials/_bgsettings.scss */
 .upfront-region-bg-slider-slides .upfront-settings-item-content,
 .uf-bgsettings-slider-slidesitem .upfront-settings-item-content {
   position: relative;
   margin: 20px -7px 0; }
 
-/* line 130, sass/partials/_bgsettings.scss */
+/* line 131, sass/partials/_bgsettings.scss */
 .upfront-region-bg-slider-image-loading {
   min-height: 126px; }
 
-/* line 133, sass/partials/_bgsettings.scss */
+/* line 134, sass/partials/_bgsettings.scss */
 .upfront-region-bg-slider-image,
 .upfront-region-bg-slider-add-image {
   float: left;
@@ -4333,17 +4534,17 @@ a.upfront-region-name-edit-trigger:before {
   height: 37px;
   margin: 0 7px 15px 7px; }
 
-/* line 140, sass/partials/_bgsettings.scss */
+/* line 141, sass/partials/_bgsettings.scss */
 .upfront-region-bg-slider-image {
   position: relative;
   cursor: move;
   border: 1px solid #233d54; }
 
-/* line 145, sass/partials/_bgsettings.scss */
+/* line 146, sass/partials/_bgsettings.scss */
 .upfront-region-bg-slider-image:hover {
   box-shadow: inset 0 0 0 1px #233d54; }
 
-/* line 148, sass/partials/_bgsettings.scss */
+/* line 149, sass/partials/_bgsettings.scss */
 .upfront-region-bg-slider-add-image {
   color: #1f2f3e;
   font-size: 11px;
@@ -4353,13 +4554,13 @@ a.upfront-region-name-edit-trigger:before {
   margin: 0 0 15px;
   cursor: pointer; }
 
-/* line 157, sass/partials/_bgsettings.scss */
+/* line 158, sass/partials/_bgsettings.scss */
 .upfront-region-bg-slider-add-image.upfront-icon:before {
   float: none !important;
   display: block;
   margin: 0 auto; }
 
-/* line 162, sass/partials/_bgsettings.scss */
+/* line 163, sass/partials/_bgsettings.scss */
 .upfront-region-bg-slider-image img {
   width: 100%;
   position: absolute;
@@ -4371,7 +4572,7 @@ a.upfront-region-name-edit-trigger:before {
   -o-transform: translateY(-50%);
   transform: translateY(-50%); }
 
-/* line 173, sass/partials/_bgsettings.scss */
+/* line 174, sass/partials/_bgsettings.scss */
 .upfront-region-bg-slider-delete-image {
   position: absolute;
   top: -5px;
@@ -4388,12 +4589,12 @@ a.upfront-region-name-edit-trigger:before {
   cursor: pointer;
   display: none; }
 
-/* line 189, sass/partials/_bgsettings.scss */
+/* line 190, sass/partials/_bgsettings.scss */
 .upfront-region-bg-slider-image:hover .upfront-region-bg-slider-delete-image {
   display: block; }
 
 /* Padding Settings */
-/* line 194, sass/partials/_bgsettings.scss */
+/* line 195, sass/partials/_bgsettings.scss */
 .upfront-region-bg-setting-padding {
   background: #cee1f2;
   height: 48px;
@@ -4405,26 +4606,26 @@ a.upfront-region-name-edit-trigger:before {
   border-bottom: 1px solid #ABBAC7;
   clear: both; }
 
-/* line 205, sass/partials/_bgsettings.scss */
+/* line 206, sass/partials/_bgsettings.scss */
 .upfront-region-bg-setting-padding.open {
   overflow: visible;
   height: auto; }
 
-/* line 209, sass/partials/_bgsettings.scss */
+/* line 210, sass/partials/_bgsettings.scss */
 .upfront-region-bg-setting-padding .upfront-fields-wrap {
   display: none; }
 
-/* line 212, sass/partials/_bgsettings.scss */
+/* line 213, sass/partials/_bgsettings.scss */
 .upfront-region-bg-setting-padding.open .upfront-fields-wrap {
   display: block;
   margin: 0 10px; }
 
-/* line 216, sass/partials/_bgsettings.scss */
+/* line 217, sass/partials/_bgsettings.scss */
 .upfront-region-bg-setting-padding.open .upfront-region-bg-setting-label {
   font-weight: bold;
   padding-bottom: 9px; }
 
-/* line 220, sass/partials/_bgsettings.scss */
+/* line 221, sass/partials/_bgsettings.scss */
 .upfront-region-bg-setting-padding .upfront-region-bg-setting-label {
   cursor: pointer;
   text-transform: none;
@@ -4432,30 +4633,30 @@ a.upfront-region-name-edit-trigger:before {
   font-weight: normal;
   line-height: 28px; }
 
-/* line 228, sass/partials/_bgsettings.scss */
+/* line 229, sass/partials/_bgsettings.scss */
 .upfront-region-bg-setting-padding .upfront-region-bg-setting-label span {
   background: none;
   margin-left: 0; }
 
-/* line 233, sass/partials/_bgsettings.scss */
+/* line 234, sass/partials/_bgsettings.scss */
 .upfront-region-bg-setting-padding {
   padding: 0 5px; }
 
-/* line 236, sass/partials/_bgsettings.scss */
+/* line 237, sass/partials/_bgsettings.scss */
 .upfront-region-bg-setting-padding .upfront-field-select-single {
   width: 215px;
   display: inline-block; }
 
-/* line 240, sass/partials/_bgsettings.scss */
+/* line 241, sass/partials/_bgsettings.scss */
 .upfront-region-bg-setting-padding .upfront-settings-item-title span {
   margin-top: 3px;
   display: inline-block; }
 
-/* line 244, sass/partials/_bgsettings.scss */
+/* line 245, sass/partials/_bgsettings.scss */
 .upfront-region-bg-setting-padding .upfront-field-wrap-multiple:first-child {
   margin-top: 0; }
 
-/* line 247, sass/partials/_bgsettings.scss */
+/* line 248, sass/partials/_bgsettings.scss */
 .upfront-region-bg-setting-padding .upfront-region-bg-setting-label:after {
   content: "";
   border: 0 none;
@@ -4468,7 +4669,7 @@ a.upfront-region-name-edit-trigger:before {
   top: 18px;
   border-radius: 50%; }
 
-/* line 259, sass/partials/_bgsettings.scss */
+/* line 260, sass/partials/_bgsettings.scss */
 .upfront-region-bg-setting-padding.open .upfront-region-bg-setting-label:before {
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
@@ -4477,7 +4678,7 @@ a.upfront-region-name-edit-trigger:before {
   top: 25px;
   right: 15px; }
 
-/* line 267, sass/partials/_bgsettings.scss */
+/* line 268, sass/partials/_bgsettings.scss */
 .upfront-region-bg-setting-padding .upfront-field-wrap-slider {
   display: inline-block;
   width: 63%;
@@ -4487,7 +4688,7 @@ a.upfront-region-name-edit-trigger:before {
   padding-top: 6px;
   height: 30px; }
 
-/* line 276, sass/partials/_bgsettings.scss */
+/* line 277, sass/partials/_bgsettings.scss */
 .upfront-region-bg-setting-padding .upfront-field-wrap-number {
   width: 30%;
   display: inline-block;
@@ -4496,16 +4697,16 @@ a.upfront-region-name-edit-trigger:before {
   position: relative;
   top: -10px; }
 
-/* line 284, sass/partials/_bgsettings.scss */
+/* line 285, sass/partials/_bgsettings.scss */
 .upfront-region-bg-setting-padding .upfront-field-wrap-number label {
   margin: 0; }
 
-/* line 287, sass/partials/_bgsettings.scss */
+/* line 288, sass/partials/_bgsettings.scss */
 .upfront-region-bg-setting-padding .upfront-field-wrap-number .upfront-field-number {
   width: 45px;
   clear: both; }
 
-/* line 291, sass/partials/_bgsettings.scss */
+/* line 292, sass/partials/_bgsettings.scss */
 .upfront-region-bg-setting-padding .upfront-region-bg-setting-label:before {
   content: '';
   width: 0;
@@ -5023,58 +5224,62 @@ a.upfront-region-name-edit-trigger:before {
   right: 5px; }
 
 /* line 447, sass/partials/_layout-grid-module-object.scss */
+.upfront-module-spacer > .upfront-entity_meta {
+  display: none; }
+
+/* line 450, sass/partials/_layout-grid-module-object.scss */
 .upfront-object > .upfront-entity_meta {
   top: 28px;
   right: 5px; }
 
-/* line 451, sass/partials/_layout-grid-module-object.scss */
+/* line 454, sass/partials/_layout-grid-module-object.scss */
 .offset-ui-from-right-top .upfront-module > .upfront-entity_meta,
 .offset-ui-from-right-top .upfront-object > .upfront-entity_meta {
   right: 50px; }
 
-/* line 455, sass/partials/_layout-grid-module-object.scss */
+/* line 458, sass/partials/_layout-grid-module-object.scss */
 .upfront-object > .upfront-entity_meta_extra {
   top: 50px;
   right: 5px; }
 
-/* line 459, sass/partials/_layout-grid-module-object.scss */
+/* line 462, sass/partials/_layout-grid-module-object.scss */
 .upfront-region > .upfront-entity_meta {
   top: 30px;
   right: 15px;
   z-index: 999999;
   display: none; }
 
-/* line 465, sass/partials/_layout-grid-module-object.scss */
+/* line 468, sass/partials/_layout-grid-module-object.scss */
 .upfront-region-editing .upfront-region > .upfront-entity_meta,
 .upfront-region-lightbox-editing .upfront-region-side-lightbox > .upfront-entity_meta {
   display: block; }
 
-/* line 469, sass/partials/_layout-grid-module-object.scss */
+/* line 472, sass/partials/_layout-grid-module-object.scss */
 .upfront-region-side-fixed > .upfront-entity_meta {
   top: 10px;
   right: 15px;
   z-index: 999999;
   display: block; }
 
-/* line 477, sass/partials/_layout-grid-module-object.scss */
+/* line 480, sass/partials/_layout-grid-module-object.scss */
 .upfront-object > .upfront-entity_meta.add_item {
   top: 51px; }
 
-/* line 481, sass/partials/_layout-grid-module-object.scss */
+/* line 484, sass/partials/_layout-grid-module-object.scss */
 .upfront-edit-responsive .upfront-object > .upfront-entity_meta.add_item,
 .upfront-edit-responsive .upfront-object > .upfront-entity_meta.toggle_sorting {
   display: none; }
 
-/* line 485, sass/partials/_layout-grid-module-object.scss */
+/* line 488, sass/partials/_layout-grid-module-object.scss */
 .upfront-object > .upfront-entity_meta.toggle_sorting {
   top: 75px; }
 
-/* line 488, sass/partials/_layout-grid-module-object.scss */
+/* line 491, sass/partials/_layout-grid-module-object.scss */
 .upfront-object > .upfront-entity_meta.toggle_sorting a {
   background: rgba(0, 0, 0, 0.5);
   border: 1px solid black; }
 
-/* line 492, sass/partials/_layout-grid-module-object.scss */
+/* line 495, sass/partials/_layout-grid-module-object.scss */
 .upfront-object > .upfront-entity_meta.toggle_sorting a:before {
   content: "OFF";
   position: absolute;
@@ -5087,20 +5292,20 @@ a.upfront-region-name-edit-trigger:before {
   line-height: 19px;
   color: white; }
 
-/* line 504, sass/partials/_layout-grid-module-object.scss */
+/* line 507, sass/partials/_layout-grid-module-object.scss */
 .upfront-object > .upfront-entity_meta.toggle_sorting.sorting-active a:before {
   content: 'ON';
   color: black; }
 
-/* line 508, sass/partials/_layout-grid-module-object.scss */
+/* line 511, sass/partials/_layout-grid-module-object.scss */
 .upfront-object > .upfront-entity_meta.toggle_sorting.sorting-active a {
   background: white; }
 
-/* line 512, sass/partials/_layout-grid-module-object.scss */
+/* line 515, sass/partials/_layout-grid-module-object.scss */
 .upfront-entity_meta .add-item:before {
   background-position: -261px -133px; }
 
-/* line 516, sass/partials/_layout-grid-module-object.scss */
+/* line 519, sass/partials/_layout-grid-module-object.scss */
 .upfront-entity_meta .add-item {
   box-shadow: inset 0 0 0 1px #e6ab2e;
   background: #f2b530 -moz-linear-gradient(-45deg, #ffbe33 0%, #ffbe33 50%, transparent 51%, transparent 100%);
@@ -5116,7 +5321,7 @@ a.upfront-region-name-edit-trigger:before {
   background: #f2b530 linear-gradient(135deg, #ffbe33 0%, #ffbe33 50%, transparent 51%, transparent 100%);
   /* W3C */ }
 
-/* line 528, sass/partials/_layout-grid-module-object.scss */
+/* line 531, sass/partials/_layout-grid-module-object.scss */
 .upfront-wrapper-meta {
   position: absolute;
   top: 0;
@@ -5127,7 +5332,7 @@ a.upfront-region-name-edit-trigger:before {
   z-index: 10;
   display: none; }
 
-/* line 538, sass/partials/_layout-grid-module-object.scss */
+/* line 541, sass/partials/_layout-grid-module-object.scss */
 .upfront-wrapper-meta:before {
   content: "";
   position: absolute;
@@ -5140,41 +5345,41 @@ a.upfront-region-name-edit-trigger:before {
   box-shadow: 0px 0px 3px 0px rgba(36, 57, 77, 0.2);
   z-index: -1; }
 
-/* line 550, sass/partials/_layout-grid-module-object.scss */
+/* line 553, sass/partials/_layout-grid-module-object.scss */
 .upfront-wrapper:hover > .upfront-wrapper-meta {
   display: block; }
 
-/* line 553, sass/partials/_layout-grid-module-object.scss */
+/* line 556, sass/partials/_layout-grid-module-object.scss */
 .upfront-wrapper-meta-left {
   left: -7px; }
 
-/* line 556, sass/partials/_layout-grid-module-object.scss */
+/* line 559, sass/partials/_layout-grid-module-object.scss */
 .upfront-wrapper-meta-right {
   right: -7px; }
 
-/* line 559, sass/partials/_layout-grid-module-object.scss */
+/* line 562, sass/partials/_layout-grid-module-object.scss */
 .upfront-wrapper-meta > .upfront-icon-button {
   margin-left: -2px;
   display: none; }
 
-/* line 563, sass/partials/_layout-grid-module-object.scss */
+/* line 566, sass/partials/_layout-grid-module-object.scss */
 .default-breakpoint .upfront-wrapper-meta:hover > .upfront-icon-button {
   display: block; }
 
-/* line 566, sass/partials/_layout-grid-module-object.scss */
+/* line 569, sass/partials/_layout-grid-module-object.scss */
 .default-breakpoint .upfront-wrapper[data-first-in-row="1"] > .upfront-wrapper-meta-left > .upfront-icon-button,
 .default-breakpoint .upfront-wrapper[data-last-in-row="1"] > .upfront-wrapper-meta-right > .upfront-icon-button {
   display: none; }
 
-/* line 570, sass/partials/_layout-grid-module-object.scss */
+/* line 573, sass/partials/_layout-grid-module-object.scss */
 .default-breakpoint .upfront-wrapper-spacer[data-first-in-row="1"] > .upfront-wrapper-meta-left {
   display: none !important; }
 
-/* line 573, sass/partials/_layout-grid-module-object.scss */
+/* line 576, sass/partials/_layout-grid-module-object.scss */
 .default-breakpoint .upfront-wrapper-spacer[data-last-in-row="1"] > .upfront-wrapper-meta-right {
   display: none !important; }
 
-/* line 579, sass/partials/_layout-grid-module-object.scss */
+/* line 582, sass/partials/_layout-grid-module-object.scss */
 .upfront-entity-size-hint {
   position: absolute;
   top: 0;
@@ -5186,57 +5391,57 @@ a.upfront-region-name-edit-trigger:before {
   z-index: 10;
   display: none; }
 
-/* line 590, sass/partials/_layout-grid-module-object.scss */
+/* line 593, sass/partials/_layout-grid-module-object.scss */
 .upfront-entity-size-hint b {
   color: #ADC3D8; }
 
-/* line 593, sass/partials/_layout-grid-module-object.scss */
+/* line 596, sass/partials/_layout-grid-module-object.scss */
 .upfront-editable_entity:hover > .upfront-entity-size-hint,
 .upfront-editable_entity.ui-resizable-resizing > .upfront-entity-size-hint {
   display: block; }
 
-/* line 597, sass/partials/_layout-grid-module-object.scss */
+/* line 600, sass/partials/_layout-grid-module-object.scss */
 .upfront-module-group-on-edit > .upfront-entity-size-hint,
 .upfront-module-group-on-edit:hover > .upfront-entity-size-hint {
   display: none; }
 
 /* Group Element Link Panel Style */
-/* line 604, sass/partials/_layout-grid-module-object.scss */
+/* line 607, sass/partials/_layout-grid-module-object.scss */
 .upfront-module-group > .uimage-controls.image-element-controls .upfront-inline-panel .upfront-inline-panel-item.labeled {
   width: auto !important;
   min-width: 0px !important;
   line-height: inherit !important;
   padding-left: 0; }
 
-/* line 610, sass/partials/_layout-grid-module-object.scss */
+/* line 613, sass/partials/_layout-grid-module-object.scss */
 .upfront-module-group > .uimage-controls.image-element-controls .upfront-inline-panel .upfront-inline-panel-item.labeled i {
   display: inline-block; }
 
-/* line 613, sass/partials/_layout-grid-module-object.scss */
+/* line 616, sass/partials/_layout-grid-module-object.scss */
 .upfront-module-group > .uimage-controls.image-element-controls .upfront-inline-panel .upfront-inline-panel-item.labeled span {
   display: inline-block;
   width: auto !important; }
 
-/* line 617, sass/partials/_layout-grid-module-object.scss */
+/* line 620, sass/partials/_layout-grid-module-object.scss */
 .upfront-module-group > .uimage-controls.image-element-controls {
   display: block;
   visibility: hidden;
   bottom: -30px;
   left: 0; }
 
-/* line 623, sass/partials/_layout-grid-module-object.scss */
+/* line 626, sass/partials/_layout-grid-module-object.scss */
 .upfront-module-group > .uimage-controls.image-element-controls .upfront-inline-panel {
   visibility: hidden; }
 
-/* line 626, sass/partials/_layout-grid-module-object.scss */
+/* line 629, sass/partials/_layout-grid-module-object.scss */
 .upfront-module-group.controls-visible > .uimage-controls.image-element-controls {
   visibility: visible; }
 
-/* line 629, sass/partials/_layout-grid-module-object.scss */
+/* line 632, sass/partials/_layout-grid-module-object.scss */
 .upfront-module-group.controls-visible > .uimage-controls.image-element-controls .upfront-inline-panel {
   visibility: visible; }
 
-/* line 632, sass/partials/_layout-grid-module-object.scss */
+/* line 635, sass/partials/_layout-grid-module-object.scss */
 .upfront-module-group > .open-item-controls {
   display: block;
   width: 30px;
@@ -5252,26 +5457,26 @@ a.upfront-region-name-edit-trigger:before {
   background-image: -ms-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
   background-image: linear-gradient(-179deg, #2F445D 0%, #152841 100%); }
 
-/* line 647, sass/partials/_layout-grid-module-object.scss */
+/* line 650, sass/partials/_layout-grid-module-object.scss */
 .upfront-module-group:hover > .open-item-controls,
 .upfront-module-group.controls-visible > .open-item-controls {
   display: block; }
 
-/* line 651, sass/partials/_layout-grid-module-object.scss */
+/* line 654, sass/partials/_layout-grid-module-object.scss */
 .upfront-module-group > .uimage-controls .upfront-inline-panel {
   background-image: none;
   box-shadow: none;
   width: 300px !important; }
 
-/* line 656, sass/partials/_layout-grid-module-object.scss */
+/* line 659, sass/partials/_layout-grid-module-object.scss */
 .upfront-module-group > .uimage-controls .inline-panel-control-dialog {
   min-width: 190px; }
 
-/* line 659, sass/partials/_layout-grid-module-object.scss */
+/* line 662, sass/partials/_layout-grid-module-object.scss */
 .upfront-module-group > .uimage-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-control-dialog-open:first-child {
   height: 31px !important; }
 
-/* line 662, sass/partials/_layout-grid-module-object.scss */
+/* line 665, sass/partials/_layout-grid-module-object.scss */
 .upfront-module-group > .uimage-controls .upfront-inline-panel .upfront-inline-panel-item {
   background-image: -moz-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
   background-image: -ms-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
@@ -5280,7 +5485,7 @@ a.upfront-region-name-edit-trigger:before {
   box-shadow: inset 0px -1px 0px 0px #43607A, inset 0px 1px 0px 0px #26394A; }
 
 /* Collapsed control */
-/* line 670, sass/partials/_layout-grid-module-object.scss */
+/* line 673, sass/partials/_layout-grid-module-object.scss */
 .upfront-module-group > .open-item-controls:before {
   background-image: url(../img/uf-core-el-sprite.svg);
   content: " ";
@@ -5295,7 +5500,7 @@ a.upfront-region-name-edit-trigger:before {
   cursor: pointer;
   position: absolute; }
 
-/* line 684, sass/partials/_layout-grid-module-object.scss */
+/* line 687, sass/partials/_layout-grid-module-object.scss */
 .upfront-module-group > .uimage-controls a {
   padding: 0;
   font-size: 13px;
@@ -10162,7 +10367,7 @@ div.sp-replacer:before {
   opacity: 1;
   z-index: 0; }
 
-/* line 32, editor-interface.scss */
+/* line 33, editor-interface.scss */
 #upfront-inline-slider-nav {
   position: absolute;
   right: auto;
@@ -11103,42 +11308,42 @@ a.ueditor-action-trash:hover {
   clear: none;
   padding-top: 4px; }
 
-/* line 43, editor-interface.scss */
+/* line 44, editor-interface.scss */
 #settings .upfront-settings-item-anchor .upfront-settings-item {
   border: none;
   margin: 0;
   padding: 0; }
 
-/* line 48, editor-interface.scss */
+/* line 49, editor-interface.scss */
 .upfront-field-complex_field-boolean_toggleable_text label,
 .upfront-field-complex_field-boolean_toggleable_text .upfront-embedded_toggleable-notice {
   font-size: 11px; }
 
-/* line 53, editor-interface.scss */
+/* line 54, editor-interface.scss */
 .upfront-field-complex_field-boolean_toggleable_text .upfront-embedded_toggleable-notice {
   margin-top: 3px;
   font: 11px/13px Verdana, sans-serif;
   color: #26394d;
   padding: 5px; }
 
-/* line 59, editor-interface.scss */
+/* line 60, editor-interface.scss */
 #settings .upfront-embedded_toggleable.error .upfront-embedded_toggleable-notice {
   background-color: #edafaf; }
 
-/* line 62, editor-interface.scss */
+/* line 63, editor-interface.scss */
 #settings .upfront-embedded_toggleable.error input {
   border: 1px solid #dc6060;
   background-image: url("../img/uf-ui-sprite.svg?v=20131127");
   background-repeat: no-repeat;
   background-position: 170px -310px; }
 
-/* line 68, editor-interface.scss */
+/* line 69, editor-interface.scss */
 #settings .upfront-embedded_toggleable.ok input {
   background-image: url("../img/uf-ui-sprite.svg?v=20131127");
   background-repeat: no-repeat;
   background-position: 170px -345px; }
 
-/* line 75, editor-interface.scss */
+/* line 76, editor-interface.scss */
 .upfront-image-attachment-bits {
   opacity: 0.6;
   position: relative;
@@ -11152,14 +11357,14 @@ a.ueditor-action-trash:hover {
   cursor: pointer;
   transition: opacity .5s ease, left .5s ease; }
 
-/* line 88, editor-interface.scss */
+/* line 89, editor-interface.scss */
 .upfront-image-attachment-bits.upfront-post-media-trigger-visible,
 .upfront-image-attachment-bits:hover {
   /*left: -30px;*/
   opacity: 1; }
 
 /* ----- CKE link selection ------ */
-/* line 96, editor-interface.scss */
+/* line 97, editor-interface.scss */
 #upfront-cke-link_editor {
   position: absolute;
   z-index: 999;
@@ -11167,18 +11372,18 @@ a.ueditor-action-trash:hover {
   right: 110px;
   width: 235px; }
 
-/* line 104, editor-interface.scss */
+/* line 105, editor-interface.scss */
 #upfront-cke-link_editor .wrap {
   border: 1px solid #6386a6;
   background: #f2f9ff;
   box-shadow: 3px 3px 0 rgba(99, 134, 166, 0.25);
   padding: 10px; }
 
-/* line 110, editor-interface.scss */
+/* line 111, editor-interface.scss */
 #upfront-cke-link_editor .upfront-save_settings {
   float: right; }
 
-/* line 115, editor-interface.scss */
+/* line 116, editor-interface.scss */
 .upfront-quick-swap {
   color: #3f5870;
   background: rgba(255, 255, 255, 0.9);
@@ -11199,7 +11404,7 @@ a.ueditor-action-trash:hover {
   padding: 10px;
   display: none; }
 
-/* line 136, editor-interface.scss */
+/* line 137, editor-interface.scss */
 .upfront-quick-swap p {
   position: absolute;
   top: 0;
@@ -11209,15 +11414,15 @@ a.ueditor-action-trash:hover {
   margin: auto;
   height: 1.6em; }
 
-/* line 146, editor-interface.scss */
+/* line 147, editor-interface.scss */
 .upfront-object:hover .upfront-quick-swap {
   display: block; }
 
-/* line 149, editor-interface.scss */
+/* line 150, editor-interface.scss */
 .upfront-edit-responsive .upfront-object:hover .upfront-quick-swap {
   display: none; }
 
-/* line 152, editor-interface.scss */
+/* line 153, editor-interface.scss */
 #preventUsageOverlay {
   text-align: center;
   cursor: not-allowed;
@@ -11230,7 +11435,7 @@ a.ueditor-action-trash:hover {
   display: none;
   z-index: 10; }
 
-/* line 165, editor-interface.scss */
+/* line 166, editor-interface.scss */
 #preventUsageOverlay span {
   padding: 2px 5px;
   margin-bottom: 14px;
@@ -11249,11 +11454,11 @@ a.ueditor-action-trash:hover {
   margin-top: -20px;
   visibility: hidden; }
 
-/* line 184, editor-interface.scss */
+/* line 185, editor-interface.scss */
 #preventUsageOverlay:hover span {
   visibility: visible; }
 
-/* line 188, editor-interface.scss */
+/* line 189, editor-interface.scss */
 .upfront-region-container-shadow .upfront-region-edit-trigger {
   /* This is very important fix for anchor linking to element cuts off top of page. */
   display: none; }
@@ -12094,24 +12299,49 @@ a.ueditor-unlink {
 
 /* line 685, sass/partials/_redactor.scss */
 .redactor-dropdown-box-upfrontFormatting {
-  min-width: 0; }
+  min-width: 0;
+  width: 200px;
+  height: 180px;
+  background-color: #f2f9ff;
+  border: 1px solid #2a465f;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  padding: 0; }
 
-/* line 688, sass/partials/_redactor.scss */
-.ufront-air-formatting {
-  width: 152px; }
-
-/* line 691, sass/partials/_redactor.scss */
+/* line 696, sass/partials/_redactor.scss */
 .ufront-air-formatting ul {
   height: 80px; }
 
-/* line 694, sass/partials/_redactor.scss */
+/* line 699, sass/partials/_redactor.scss */
 .ufront-air-formatting li {
   display: inline-block;
   margin: 0;
-  height: 38px;
-  width: 38px; }
+  height: 30px;
+  width: 100%;
+  padding: 0 8px;
+  line-height: 35px; }
 
-/* line 700, sass/partials/_redactor.scss */
+/* line 707, sass/partials/_redactor.scss */
+.ufront-air-formatting li * {
+  cursor: pointer;
+  color: #2f475f; }
+
+/* line 711, sass/partials/_redactor.scss */
+.ufront-air-formatting li .dropact {
+  color: #40a6ff; }
+
+/* line 714, sass/partials/_redactor.scss */
+.ufront-air-formatting li.tag-list-section-title {
+  background-color: #e2edf6;
+  color: #5e7f9b;
+  border-bottom: 1px solid #c9d5e1;
+  width: 100%;
+  display: block;
+  height: 19px;
+  font-size: 12px;
+  line-height: 18px; }
+
+/* line 724, sass/partials/_redactor.scss */
 .ufront-air-formatting li a {
   width: 100%;
   height: 100%;
@@ -12119,39 +12349,43 @@ a.ueditor-unlink {
   text-indent: 0;
   text-align: center; }
 
-/* line 707, sass/partials/_redactor.scss */
-.ufront-air-formatting li a.tag-list-tag-h1 {
-  background-position: -512px -291px; }
+/* line 755, sass/partials/_redactor.scss */
+.ufront-air-formatting li .tag-list-tag-h1 {
+  font-size: 22px; }
 
-/* line 710, sass/partials/_redactor.scss */
-.ufront-air-formatting li a.tag-list-tag-h2 {
-  background-position: -554px -291px; }
+/* line 758, sass/partials/_redactor.scss */
+.ufront-air-formatting li .tag-list-tag-h2 {
+  font-size: 20px; }
 
-/* line 713, sass/partials/_redactor.scss */
-.ufront-air-formatting li a.tag-list-tag-h3 {
-  background-position: -594px -291px; }
+/* line 761, sass/partials/_redactor.scss */
+.ufront-air-formatting li .tag-list-tag-h3 {
+  font-size: 18px; }
 
-/* line 716, sass/partials/_redactor.scss */
-.ufront-air-formatting li a.tag-list-tag-h4 {
-  background-position: -636px -291px; }
+/* line 764, sass/partials/_redactor.scss */
+.ufront-air-formatting li .tag-list-tag-h4 {
+  font-size: 16px; }
 
-/* line 719, sass/partials/_redactor.scss */
-.ufront-air-formatting li a.tag-list-tag-h5 {
-  background-position: -512px -333px; }
+/* line 767, sass/partials/_redactor.scss */
+.ufront-air-formatting li .tag-list-tag-h5 {
+  font-size: 14px; }
 
-/* line 722, sass/partials/_redactor.scss */
-.ufront-air-formatting li a.tag-list-tag-h6 {
-  background-position: -554px -333px; }
+/* line 770, sass/partials/_redactor.scss */
+.ufront-air-formatting li .tag-list-tag-h6 {
+  font-size: 12px; }
 
-/* line 725, sass/partials/_redactor.scss */
-.ufront-air-formatting li a.tag-list-tag-p {
-  background-position: -594px -333px; }
+/* line 773, sass/partials/_redactor.scss */
+.ufront-air-formatting li .tag-list-tag-p {
+  font-size: 15px; }
 
-/* line 728, sass/partials/_redactor.scss */
-.ufront-air-formatting li a.tag-list-tag-pre {
-  background-position: -636px -333px; }
+/* line 776, sass/partials/_redactor.scss */
+.ufront-air-formatting li .tag-list-tag-pre {
+  font-size: 14px; }
 
-/* line 731, sass/partials/_redactor.scss */
+/* line 779, sass/partials/_redactor.scss */
+.ufront-air-formatting li .tag-list-tag-blockquote {
+  font-size: 16px; }
+
+/* line 782, sass/partials/_redactor.scss */
 .ufront-formatting-custom-class {
   width: 145px;
   margin: 0 auto;
@@ -13025,77 +13259,77 @@ a.upfront-css-edit:before, a.upfront-preset-edit:before, a.upfront-region-name-e
   vertical-align: top; }
 
 /* Layout editor region */
-/* line 201, editor-interface.scss */
+/* line 202, editor-interface.scss */
 .upfront-edit-postlayout .upfront-overlay-grid {
   display: none; }
 
-/* line 204, editor-interface.scss */
+/* line 205, editor-interface.scss */
 .upfront-edit-postlayout .upfront-region-container-postlayouteditor .upfront-overlay-grid {
   display: block; }
 
-/* line 207, editor-interface.scss */
+/* line 208, editor-interface.scss */
 .upfront-edit-postlayout .upfront-region-postlayouteditor {
   box-shadow: 0 0 0 5000px rgba(0, 0, 10, 0.5);
   position: relative;
   z-index: 1; }
 
-/* line 213, editor-interface.scss */
+/* line 214, editor-interface.scss */
 #page.desktop .upfront-region-container-postlayouteditor .upfront-grid-layout {
   width: 100%; }
 
-/* line 217, editor-interface.scss */
+/* line 218, editor-interface.scss */
 #page .upfront-region-postlayouteditor div.upfront-object {
   padding-top: 0;
   padding-bottom: 0; }
 
-/* line 222, editor-interface.scss */
+/* line 223, editor-interface.scss */
 .upfront-object-content > *:first-child {
   margin-top: 0; }
 
-/* line 225, editor-interface.scss */
+/* line 226, editor-interface.scss */
 .upfront-object-content > *:last-child {
   margin-bottom: 0; }
 
-/* line 229, editor-interface.scss */
+/* line 230, editor-interface.scss */
 #page div.upfront-object.upfront-this_post {
   padding-left: 0;
   padding-right: 0; }
 
-/* line 233, editor-interface.scss */
+/* line 234, editor-interface.scss */
 #page div.upfront-object.uposts-object {
   padding: 0; }
 
-/* line 237, editor-interface.scss */
+/* line 238, editor-interface.scss */
 .upfront-content-marker {
   margin: 0;
   padding: 0;
   display: inline-block; }
 
-/* line 243, editor-interface.scss */
+/* line 244, editor-interface.scss */
 .upfront-content-marker-contents {
   display: block; }
 
-/* line 247, editor-interface.scss */
+/* line 248, editor-interface.scss */
 .content-overflow-setting .upfront-field-wrap {
   width: 45%;
   display: inline-block;
   margin-left: 10%; }
 
-/* line 252, editor-interface.scss */
+/* line 253, editor-interface.scss */
 .content-overflow-setting .upfront-field-wrap:first-child {
   margin-left: 0; }
 
-/* line 256, editor-interface.scss */
+/* line 257, editor-interface.scss */
 .content-overflow-setting input.upfront-field-number {
   width: 100%; }
 
-/* line 260, editor-interface.scss */
+/* line 261, editor-interface.scss */
 .upfront-post-thumb-placeholder {
   background: rgba(255, 255, 255, 0.1);
   border: 1px dashed #3d5266;
   position: relative; }
 
-/* line 265, editor-interface.scss */
+/* line 266, editor-interface.scss */
 .upfront-post-thumb-placeholder div {
   position: absolute;
   width: 150px;
@@ -13108,7 +13342,7 @@ a.upfront-css-edit:before, a.upfront-preset-edit:before, a.upfront-region-name-e
   text-align: center; }
 
 /* Fix for the 1px element movement glitch */
-/* line 281, editor-interface.scss */
+/* line 282, editor-interface.scss */
 .upfront-region-bg-slider,
 .upfront-overlay-grid,
 .upfront-region-side-fixed,
@@ -13120,46 +13354,46 @@ a.upfront-css-edit:before, a.upfront-preset-edit:before, a.upfront-region-name-e
   -ms-backface-visibility: hidden;
   backface-visibility: hidden; }
 
-/* line 293, editor-interface.scss */
+/* line 294, editor-interface.scss */
 .inline-radios.plaintext-settings .upfront-field-label-block {
   margin-bottom: 3px; }
 
-/* line 297, editor-interface.scss */
+/* line 298, editor-interface.scss */
 .ugallery-setting-labels {
   margin-top: 0; }
 
-/* line 301, editor-interface.scss */
+/* line 302, editor-interface.scss */
 .upfront-field-wrap-radios .upfront-field-label-block {
   margin-bottom: 5px; }
 
-/* line 305, editor-interface.scss */
+/* line 306, editor-interface.scss */
 .upfront-field-wrap-select .upfront-field-label-block {
   margin-bottom: 3px; }
 
-/* line 309, editor-interface.scss */
+/* line 310, editor-interface.scss */
 .ugallery-thumbnail-fields .upfront-field-wrap-radios {
   margin-top: 9px; }
 
-/* line 312, editor-interface.scss */
+/* line 313, editor-interface.scss */
 .ugallery-thumbnail-fields .upfront-field-wrap-slider {
   margin-top: 5px; }
 
-/* line 315, editor-interface.scss */
+/* line 316, editor-interface.scss */
 .ugallery-thumbnail-fields .upfront-field-wrap-slider label {
   margin-bottom: 13px; }
 
-/* line 319, editor-interface.scss */
+/* line 320, editor-interface.scss */
 .upfront-field-wrap-hidden,
 .upfront-field-wrap-hidden label,
 .upfront-field-wrap-hidden input {
   margin: 0 !important; }
 
-/* line 325, editor-interface.scss */
+/* line 326, editor-interface.scss */
 .map-zoom-level {
   position: relative;
   margin-bottom: 20px; }
 
-/* line 329, editor-interface.scss */
+/* line 330, editor-interface.scss */
 .map-zoom-level .upfront-field-slider-value {
   position: absolute;
   color: #1fcd8f;
@@ -13167,19 +13401,19 @@ a.upfront-css-edit:before, a.upfront-preset-edit:before, a.upfront-region-name-e
   left: 109px;
   font-weight: bold; }
 
-/* line 337, editor-interface.scss */
+/* line 338, editor-interface.scss */
 .upfront_map-fields-simple_location .upfront-field-wrap {
   margin-top: 3px; }
 
-/* line 341, editor-interface.scss */
+/* line 342, editor-interface.scss */
 .ufpront-maps_element-settings_panel .upfront-field-select {
   width: 100%; }
 
-/* line 345, editor-interface.scss */
+/* line 346, editor-interface.scss */
 .menu-settings .upfront-field-wrap {
   margin-top: 8px; }
 
-/* line 349, editor-interface.scss */
+/* line 350, editor-interface.scss */
 .upfront-field-wrap.inline-color label,
 .inline-number label {
   font-weight: normal; }
@@ -14220,6 +14454,7 @@ div.upfront-region-container:hover > a.feature_image_selector {
 /* line 2, sass/partials/_chosen.scss */
 #insert-font-widget .chosen-container-single .chosen-single,
 #sidebar-ui .chosen-container-single .chosen-single,
+#settings .chosen-container-single .chosen-single,
 #upfront-popup .chosen-container-single .chosen-single {
   margin: 0;
   text-decoration: none;
@@ -14232,39 +14467,45 @@ div.upfront-region-container:hover > a.feature_image_selector {
   border-radius: 3px;
   border: 1px solid #a3bfd9; }
 
-/* line 17, sass/partials/_chosen.scss */
+/* line 18, sass/partials/_chosen.scss */
 #insert-font-widget .chosen-container-single .chosen-single:hover,
 #sidebar-ui .chosen-container-single .chosen-single:hover,
+#settings .chosen-container-single .chosen-single:hover,
 #upfront-popup .chosen-container-single .chosen-single:hover {
   border-color: #607f99; }
 
-/* line 23, sass/partials/_chosen.scss */
+/* line 25, sass/partials/_chosen.scss */
 #insert-font-widget .chosen-with-drop .chosen-single,
 #sidebar-ui .chosen-with-drop .chosen-single,
 #insert-font-widget .chosen-with-drop .chosen-single:hover,
 #sidebar-ui .chosen-with-drop .chosen-single:hover,
+#settings .chosen-with-drop .chosen-single,
+#settings .chosen-with-drop .chosen-single:hover,
 #upfront-popup .chosen-with-drop .chosen-single,
 #upfront-popup .chosen-with-drop .chosen-single:hover {
   border-color: #a3bfd9;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0; }
 
-/* line 34, sass/partials/_chosen.scss */
+/* line 38, sass/partials/_chosen.scss */
 #upfront-popup .chosen-container-multi .chosen-choices .search-choice {
   display: none; }
 
-/* line 37, sass/partials/_chosen.scss */
+/* line 41, sass/partials/_chosen.scss */
 #insert-font-widget .chosen-container .chosen-results li,
 #sidebar-ui .chosen-container .chosen-results li,
+#settings .chosen-container .chosen-results li,
 #upfront-popup .chosen-container .chosen-results li {
   margin: 0 0 0 5px; }
 
-/* line 43, sass/partials/_chosen.scss */
+/* line 48, sass/partials/_chosen.scss */
 #insert-font-widget .chosen-container-single .chosen-drop,
 #sidebar-ui .chosen-container-single .chosen-drop,
+#settings .chosen-container-single .chosen-drop,
 #upfront-popup .chosen-container-single .chosen-drop,
 #insert-font-widget .chosen-container-multi .chosen-drop,
 #sidebar-ui .chosen-container-multi .chosen-drop,
+#settings .chosen-container-multi .chosen-drop,
 #upfront-popup .chosen-container-multi .chosen-drop {
   background: #e6f3fe;
   color: #607f99;
@@ -14273,40 +14514,47 @@ div.upfront-region-container:hover > a.feature_image_selector {
   font-family: Verdana, sans-serif;
   box-shadow: none; }
 
-/* line 58, sass/partials/_chosen.scss */
+/* line 65, sass/partials/_chosen.scss */
 #insert-font-widget .chosen-container .chosen-results,
 #sidebar-ui .chosen-container .chosen-results,
+#settings .chosen-container .chosen-results,
 #upfront-popup .chosen-container .chosen-results {
   max-height: 150px;
   margin-right: 5px; }
 
-/* line 65, sass/partials/_chosen.scss */
+/* line 73, sass/partials/_chosen.scss */
 #sidebar-ui .chosen-container .chosen-results,
+#settings .chosen-container .chosen-results,
 #upfront-popup .chosen-container .chosen-results {
   max-height: 120px; }
 
-/* line 70, sass/partials/_chosen.scss */
+/* line 79, sass/partials/_chosen.scss */
 #insert-font-widget .chosen-container .chosen-results li.highlighted,
 #sidebar-ui .chosen-container .chosen-results li.highlighted,
+#settings .chosen-container .chosen-results li.highlighted,
 #upfront-popup .chosen-container .chosen-results li.highlighted {
   background: #5f7f9a;
   color: #fff; }
 
-/* line 77, sass/partials/_chosen.scss */
+/* line 87, sass/partials/_chosen.scss */
 #insert-font-widget .chosen-container-single .chosen-search,
 #sidebar-ui .chosen-container-single .chosen-search,
+#settings .chosen-container-single .chosen-search,
 #upfront-popup .chosen-container-single .chosen-search,
 #insert-font-widget .chosen-container-multi .chosen-search,
 #sidebar-ui .chosen-container-multi .chosen-search,
+#settings .chosen-container-multi .chosen-search,
 #upfront-popup .chosen-container-multi .chosen-search {
   padding: 3px 5px; }
 
-/* line 87, sass/partials/_chosen.scss */
+/* line 99, sass/partials/_chosen.scss */
 #insert-font-widget .chosen-container-single .chosen-search input[type=text],
 #sidebar-ui .chosen-container-single .chosen-search input[type=text],
+#settings .chosen-container-single .chosen-search input[type=text],
 #upfront-popup .chosen-container-single .chosen-search input[type=text],
 #insert-font-widget .chosen-container-multi .chosen-choices input[type=text],
 #sidebar-ui .chosen-container-multi .chosen-choices input[type=text],
+#settings .chosen-container-multi .chosen-choices input[type=text],
 #upfront-popup .chosen-container-multi .chosen-choices input[type=text] {
   background: #f7fbff;
   border-color: #a4bfd8;
@@ -14318,28 +14566,33 @@ div.upfront-region-container:hover > a.feature_image_selector {
   /* Prevents chosen sprite image from displaying */
   background-image: none !important; }
 
-/* line 105, sass/partials/_chosen.scss */
+/* line 119, sass/partials/_chosen.scss */
 #insert-font-widget .chosen-container-single .chosen-results::-webkit-scrollbar,
 #sidebar-ui .chosen-container-single .chosen-results::-webkit-scrollbar,
+#settings .chosen-container-single .chosen-results::-webkit-scrollbar,
 #upfront-popup .chosen-container-single .chosen-results::-webkit-scrollbar,
 #insert-font-widget .chosen-container-multi .chosen-results::-webkit-scrollbar,
 #sidebar-ui .chosen-container-multi .chosen-results::-webkit-scrollbar,
+#settings .chosen-container-multi .chosen-results::-webkit-scrollbar,
 #upfront-popup .chosen-container-multi .chosen-results::-webkit-scrollbar {
   background: #d4dee8;
   width: 5px; }
 
-/* line 116, sass/partials/_chosen.scss */
+/* line 132, sass/partials/_chosen.scss */
 #insert-font-widget .chosen-container-single .chosen-results::-webkit-scrollbar-thumb,
 #sidebar-ui .chosen-container-single .chosen-results::-webkit-scrollbar-thumb,
+#settings .chosen-container-single .chosen-results::-webkit-scrollbar-thumb,
 #upfront-popup .chosen-container-single .chosen-results::-webkit-scrollbar-thumb,
 #insert-font-widget .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb,
 #sidebar-ui .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb,
+#settings .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb,
 #upfront-popup .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb {
   background-color: #1fcd8f; }
 
-/* line 126, sass/partials/_chosen.scss */
+/* line 144, sass/partials/_chosen.scss */
 #insert-font-widget .chosen-container-single .chosen-single div b,
 #sidebar-ui .chosen-container-single .chosen-single div b,
+#settings .chosen-container-single .chosen-single div b,
 #upfront-popup .chosen-container-single .chosen-single div b {
   display: block;
   width: 0;
@@ -14350,14 +14603,15 @@ div.upfront-region-container:hover > a.feature_image_selector {
   border-right: 4px solid transparent;
   margin-top: 9px; }
 
-/* line 139, sass/partials/_chosen.scss */
+/* line 158, sass/partials/_chosen.scss */
 #insert-font-widget .chosen-with-drop .chosen-single div b,
 #sidebar-ui .chosen-with-drop .chosen-single div b,
+#settings .chosen-with-drop .chosen-single div b,
 #upfront-popup .chosen-with-drop .chosen-single div b {
   border-top: 0 none transparent;
   border-bottom: 4px solid #607f99; }
 
-/* line 147, sass/partials/_chosen.scss */
+/* line 167, sass/partials/_chosen.scss */
 .chosen-container .chosen-results li em {
   background-color: #00CE8D;
   color: #fff;
@@ -15467,11 +15721,11 @@ a.upfront-css-font {
   cursor: default; }
 
 /* Toggleable text field */
-/* line 372, editor-interface.scss */
+/* line 373, editor-interface.scss */
 .upfront-ui .upfront-field-wrap-toggleable label b {
   font-weight: bold; }
 
-/* line 375, editor-interface.scss */
+/* line 376, editor-interface.scss */
 .upfront-ui .upfront-toggleable-button {
   border: 1px solid #a3bfd9;
   border-radius: 3px;
@@ -15479,7 +15733,7 @@ a.upfront-css-font {
   margin-left: 8px; }
 
 /* Toggleable text field */
-/* line 382, editor-interface.scss */
+/* line 383, editor-interface.scss */
 .uimage-small .uimage-resize-hint.sizehint-top,
 .uimage-small .uimage-resize-hint {
   top: 0;
@@ -15488,35 +15742,35 @@ a.upfront-css-font {
   width: 55px;
   left: -55px; }
 
-/* line 390, editor-interface.scss */
+/* line 391, editor-interface.scss */
 .uimage-small .stuck-to-top .uimage-resize-hint.sizehint-top,
 .uimage-small .stuck-to-top .uimage-resize-hint {
   top: 0;
   left: -55px; }
 
-/* line 395, editor-interface.scss */
+/* line 396, editor-interface.scss */
 .uimage-small .uimage-controls.image-element-controls {
   bottom: 0;
   left: 0; }
 
-/* line 399, editor-interface.scss */
+/* line 400, editor-interface.scss */
 .uimage-control-panel .upfront-field-wrap {
   text-align: left; }
 
-/* line 402, editor-interface.scss */
+/* line 403, editor-interface.scss */
 .inline-panel-control-dialog {
   display: none; }
 
-/* line 405, editor-interface.scss */
+/* line 406, editor-interface.scss */
 .upfront-control-dialog-open .inline-panel-control-dialog,
 .upfront-ui .upfront-control-dialog-open .inline-panel-control-dialog {
   display: block; }
 
-/* line 409, editor-interface.scss */
+/* line 410, editor-interface.scss */
 .inline-panel-item-selected.labeled {
   display: none; }
 
-/* line 412, editor-interface.scss */
+/* line 413, editor-interface.scss */
 .uf-exporter-save-post-design {
   display: block;
   width: 214px;
