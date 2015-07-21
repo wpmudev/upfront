@@ -193,7 +193,7 @@ class Upfront_UimageView extends Upfront_Object {
 				'label' => __('Image settings', 'upfront'),
 				'alt' => __('Alternative Text', 'upfront'),
 				'caption' => __('Caption Settings:', 'upfront'),
-				'show_caption' => __('Show Caption:', 'upfront'),
+				'show_caption' => __('Show Captions', 'upfront'),
 				'always' => __('Always', 'upfront'),
 				'hover' => __('On Hover', 'upfront'),
 				'caption_bg' => __('Caption Background', 'upfront'),
