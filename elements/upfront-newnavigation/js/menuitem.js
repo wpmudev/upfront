@@ -233,6 +233,8 @@ return (function ($) {
 					linkUrl: this.model['menu-item-url'],
 					linkTarget: this.model['menu-item-target'],
 					linkType: Upfront.Util.guessLinkType(this.model['menu-item-url']),
+					linkObject: Upfront.Util.guessLinkType(this.model['menu-item-object']),
+					linkObjectId: Upfront.Util.guessLinkType(this.model['menu-item-object-id']),
 					button: false,
 					icon: 'link',
 					tooltip: 'link',
@@ -245,6 +247,15 @@ return (function ($) {
 				visitLinkControl.setLink(data.url);
 				me.model['menu-item-url'] = data.url;
 				me.model['menu-item-target'] = data.target;
+				me.model['menu-item-object'] = data.object;
+				me.model['menu-item-object-id'] = data.object_id;
+
+				if(data.type == "entry")
+					me.model['menu-item-type'] = "post_type";
+				else
+					me.model['menu-item-type'] = "custom";
+				
+
 				me.saveLink();
 			});
 

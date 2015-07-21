@@ -2316,6 +2316,7 @@ var GridEditor = {
 		areas = areas ? areas : (lightbox ? [lightbox, shadowregion] : ed.regions);
 
 		ed.drops = [];
+		ed.current_row_wraps = false;
 
 		var module_selector = '> .upfront-module-view > .upfront-module, > .upfront-module-group',
 			$sibling_els = me.$el.closest('.upfront-wrapper').find(module_selector).each(Upfront.Util.normalize_sort_elements_cb).sort(Upfront.Util.sort_elements_cb),
@@ -2371,6 +2372,10 @@ var GridEditor = {
 					min_row_el = ed.get_wrap_el_min(min_row_wrap, false, true),
 					wrap_me_in_row = _.find(row_wraps, function(row_wrap){ return me_wrap && me_wrap._id == row_wrap._id })
 				;
+				if ( wrap_me_in_row && ed.current_row_wraps === false ) {
+					ed.current_row_wraps = row_wraps;
+				}
+				
 				if (
 					!is_spacer
 					&&
@@ -3183,10 +3188,12 @@ var GridEditor = {
 			$resize,
 			$resize_placeholder,
 			$also_resize,
+			$spacer_feed,
 			is_spacer,
 			also_is_spacer,
 			axis,
 			min_col,
+			also_min_col,
 			max_col
 		;
 		if ( Upfront.Application.mode.current !== Upfront.Application.MODE.THEME && model.get_property_value_by_name('disable_resize') )
@@ -3225,6 +3232,7 @@ var GridEditor = {
 				axis = data.axis ? data.axis : 'e';
 				max_col = me.col + ( axis == 'w' ? me.grid.left-resize_limit[0] : resize_limit[1]-me.grid.right );
 				min_col = ed.min_col;
+				also_min_col = ed.min_col;
 				is_spacer = ( $me.find('> .upfront-module-view > .upfront-module-spacer').length > 0 );
 				
 				$resize = $('<div class="upfront-resize" style="height:'+me.height+'px;"></div>');
@@ -3258,12 +3266,16 @@ var GridEditor = {
 				if ( $also_resize && $also_resize.length ) {
 					also_resize = ed.get_wrap($also_resize);
 					also_is_spacer = ( $also_resize.find('> .upfront-module-view > .upfront-module-spacer').length > 0 );
-					//if ( !is_spacer && !also_is_spacer ) {
+					if ( !is_spacer && !also_is_spacer ) {
 						max_col -= min_col;
-					//}
-					/*if ( is_spacer ) {
+					}
+					else if ( is_spacer ) {
+						max_col -= min_col;
 						min_col = 0;
-					}*/
+					}
+					if ( also_is_spacer ) {
+						also_min_col = 0;
+					}
 				}
 				else {
 					$also_resize = false;
@@ -3273,8 +3285,20 @@ var GridEditor = {
 				$resize_placeholder = $('<div class="upfront-resize-placeholder"></div>');
 				$resize_placeholder.css({
 					width: (((also_resize ? also_resize.col + me.col : me.col)/ed.containment.col)*100) + '%',
-					height: ui.originalSize.height
+					height: ui.originalSize.height,
+					position: 'relative'
 				});
+				if ( is_spacer || also_is_spacer ) {
+					$spacer_feed = $('<div class="upfront-spacer-feed"></div>');
+					$spacer_feed.css({
+						width: ed.col_size,
+						height: 'auto',
+						top: 0,
+						bottom: 0,
+						position: 'absolute'
+					});
+					$resize_placeholder.append($spacer_feed);
+				}
 				// Refreshing the elements position
 				_.each(ed.els, function(each, index){
 					ed.els[index] = ed.get_position(each.$el);
@@ -3319,16 +3343,15 @@ var GridEditor = {
 					me = ed.get_wrap($me),
 					also_resize = ( $also_resize ? ed.get_wrap($also_resize) : false ),
 					region = ed.get_region($region),
-					current_col = Math.ceil(ui.size.width/ed.col_size),
+					current_col = Math.round(ui.size.width/ed.col_size),
 					min_w = min_col*ed.col_size,
 					w = ( current_col > max_col ? Math.round(max_col*ed.col_size) : ( min_w > ui.size.width ? min_w : ui.size.width ) ),
 					h = ( (ui.size.height > 15 ? ui.size.height : 0) || ui.originalSize.height ),
 					l = ( axis == 'w' ? ui.originalPosition.left+ui.originalSize.width-w : ui.position.left ),
 					rsz_col = ( current_col > max_col ? max_col : current_col ),
-					also_col = max_col - rsz_col + min_col,
-					also_w = ( ( max_col + min_col ) * ed.col_size ) - w
+					also_col = max_col - rsz_col + also_min_col,
+					also_w = ( ( max_col + also_min_col ) * ed.col_size ) - w
 				;
-				//console.log(max_col, min_col, rsz_col, also_col)
 				$me.css({
 					left: l,
 					height: h,
@@ -3337,6 +3360,15 @@ var GridEditor = {
 					maxWidth: w
 				});
 				$me.data('resize-col', rsz_col);
+				// Visual feedback for deleting spacer
+				if ( is_spacer && w < ed.col_size ) {
+					var opacity = 0.5 * Math.round((ed.col_size-w)/ed.col_size*100)/100;
+					$spacer_feed.css({
+						left: ( axis == 'e' ? 0 : 'auto' ),
+						right: ( axis == 'e' ? 'auto' : 0 ),
+						backgroundColor: 'rgba(200, 0, 0, ' + opacity + ')'
+					});
+				}
 				if ( $also_resize ) {
 					$also_resize.css({
 						width: also_w,
@@ -3347,6 +3379,15 @@ var GridEditor = {
 						$also_resize.css('margin-left', also_resize.width - also_w);
 					}
 					$also_resize.data('resize-col', also_col);
+					// Visual feedback for deleting spacer
+					if ( also_is_spacer && also_w < ed.col_size ) {
+						var opacity = 0.5 * Math.round((ed.col_size-also_w)/ed.col_size*100)/100;
+						$spacer_feed.css({
+							left: ( axis == 'w' ? 0 : 'auto' ),
+							right: ( axis == 'w' ? 'auto' : 0 ),
+							backgroundColor: 'rgba(200, 0, 0, ' + opacity + ')'
+						});
+					}
 				}
 				$resize.css({
 					height: h,
@@ -3422,17 +3463,33 @@ var GridEditor = {
 						view.add_spacer( ( first_in_row ? 'left' : 'right' ), max_col-rsz_col );
 					}
 					else {
-						// Else just update model value
-						model.replace_class(ed.grid.class+rsz_col);
-						_.each(child_models, function (child) {
-							child.replace_class(ed.grid.class+rsz_col);
-						});
-						if ( also_model ) {
-							//console.log(also_col)
-							also_model.replace_class(ed.grid.class+also_col);
-							_.each(also_child_models, function (child) {
-								child.replace_class(ed.grid.class+also_col);
+						// Else if rsz_col is 0, remove model, otherwise update model
+						if ( rsz_col > 0 ) {
+							model.replace_class(ed.grid.class+rsz_col);
+							_.each(child_models, function (child) {
+								child.replace_class(ed.grid.class+rsz_col);
 							});
+						}
+						else if ( is_spacer ) {
+							model.collection.remove(model);
+							_.each(child_models, function (child) {
+								child.collection.remove(child);
+							});
+						}
+						if ( also_model ) {
+							// Do the same if also_col is 0, remove model, otherwise update model
+							if ( also_col > 0 ) {
+								also_model.replace_class(ed.grid.class+also_col);
+								_.each(also_child_models, function (child) {
+									child.replace_class(ed.grid.class+also_col);
+								});
+							}
+							else if ( also_is_spacer ) {
+								also_model.collection.remove(also_model);
+								_.each(also_child_models, function (child) {
+									child.collection.remove(child);
+								});
+							}
 						}
 					}
 				}
@@ -4227,8 +4284,8 @@ var GridEditor = {
 							}, 0) - drop_col,
 							new_col = Math.floor(total_col/row_wraps_total),
 							remaining_col = total_col - (new_col*row_wraps_total);
-						_.each(row_wraps, function (wrap) {
-							wrap.$el.find("> .upfront-module-view > .upfront-module, > .upfront-module-group").each(function () {
+						_.each(row_wraps, function (row_wrap) {
+							row_wrap.$el.find("> .upfront-module-view > .upfront-module, > .upfront-module-group").each(function () {
 								if ( $(this).hasClass('upfront-module-spacer') ) return;
 								var apply_col = new_col;
 								// Distribute remaining_col
@@ -4243,6 +4300,38 @@ var GridEditor = {
 					/*else {
 						ed.update_model_margin_classes( $me, [ed.grid.class + drop_col] );
 					}*/
+					
+					// @TODO Experiment: Also try to distribute columns if the element was moved away and leave empty spaces in previous place
+					if ( !ed.drop.is_me ) {
+						if ( ed.current_row_wraps && ed.drop.row_wraps != ed.current_row_wraps ) {
+							var row_wraps_total = -1,
+								total_col = _.reduce(ed.current_row_wraps, function (sum, row_wrap) {
+									if ( row_wrap.$el.find('> .upfront-module-view > .upfront-module-spacer').length > 0 ) {
+										return sum;
+									}
+									row_wraps_total++;
+									return sum + row_wrap.col;
+								}, 0),
+								new_col = row_wraps_total > 0 ? Math.floor(total_col/row_wraps_total) : 0,
+								remaining_col = new_col > 0 ? total_col - (new_col*row_wraps_total) : 0
+							;
+							if ( row_wraps_total > 0 ) {
+								_.each(ed.current_row_wraps, function (row_wrap) {
+									if ( wrap.$el.get(0) == row_wrap.$el.get(0) ) return;
+									row_wrap.$el.find("> .upfront-module-view > .upfront-module, > .upfront-module-group").each(function () {
+										if ( $(this).hasClass('upfront-module-spacer') ) return;
+										var apply_col = new_col;
+										// Distribute remaining_col
+										if ( remaining_col > 0 ) {
+											apply_col += 1;
+											remaining_col -= 1;
+										}
+										ed.update_model_margin_classes( $(this), [ed.grid.class + apply_col] );	
+									});
+								});
+							}
+						}
+					}
 
 					if ( is_parent_group ) {
 						ed.update_wrappers(view.group_view.model, view.group_view.$el);
@@ -4482,10 +4571,12 @@ var GridEditor = {
 		}*/ // @TODO Experiment: don't need this anymore
 		// @TODO Experiment: adjust remaining modules in equal columns
 		var all_modules = [],
-			all_wrappers = []
+			all_wrappers = [],
+			spacer_wrappers = []
 		;
 		while ( modules.at(i) ) {
 			var this_module = modules.at(i),
+				this_module_class = this_module.get_property_value_by_name('class'),
 				this_wrapper = wrappers.get_by_wrapper_id(this_module.get_wrapper_id()),
 				this_wrapper_class = this_wrapper.get_property_value_by_name('class')
 			;
@@ -4500,6 +4591,9 @@ var GridEditor = {
 			}
 			if ( !_.contains(all_wrappers, this_wrapper) ) {
 				all_wrappers.push(this_wrapper);
+				if ( this_module_class.match(/upfront-module-spacer/) ) {
+					spacer_wrappers.push(this_wrapper);
+				}
 			}
 			all_modules.push(this_module);
 			i++;
@@ -4512,34 +4606,49 @@ var GridEditor = {
 				new_col = 0,
 				remaining_col = 0;
 			_.each(all_wrappers, function (each_wrapper) {
+				if ( _.contains(spacer_wrappers, each_wrapper) ) return;
 				var each_wrapper_class = each_wrapper.get_property_value_by_name('class'),
 					each_wrapper_col = ed.get_class_num(each_wrapper_class, ed.grid.class)
 				;
 				total_col += each_wrapper_col;
 			});
-			// Now split columns evenly
-			new_col = Math.floor(total_col/all_wrappers.length);
-			remaining_col = total_col - (all_wrappers.length * new_col);
-			// Apply the new col
-			_.each(all_wrappers, function (each_wrapper, id) {
-				var each_wrapper_class = each_wrapper.get_property_value_by_name('class'),
-					apply_col =  new_col
-				;
-				// Distribute remaining_col
-				if ( remaining_col > 0 ) {
-					apply_col += 1;
-					remaining_col -= 1;
-				}
-				each_wrapper.replace_class(
-					ed.grid.class + apply_col +
-					( id == 0 && !each_wrapper_class.match(/clr/g) ? ' clr' : '' )
-				);
-				_.each(all_modules, function (each_module) {
-					if ( each_module.get_wrapper_id() == each_wrapper.get_wrapper_id() ) {
-						each_module.replace_class(ed.grid.class + apply_col);
-					}
+			if ( all_wrappers.length == spacer_wrappers.length ) {
+				// All wrappers is spacers, just remove them as we don't need it anymore
+				_.each(all_wrappers, function (each_wrapper, id) {
+					_.each(all_modules, function (each_module) {
+						if ( each_module.get_wrapper_id() == each_wrapper.get_wrapper_id() ) {
+							modules.remove(each_module);
+						}
+					});
+					wrappers.remove(each_wrapper);
 				});
-			});
+			}
+			else {
+				// Otherwise split columns evenly and ignore spacer columns
+				new_col = Math.floor(total_col/(all_wrappers.length-spacer_wrappers.length));
+				remaining_col = total_col - ((all_wrappers.length-spacer_wrappers.length) * new_col);
+				// Apply the new col
+				_.each(all_wrappers, function (each_wrapper, id) {
+					if ( _.contains(spacer_wrappers, each_wrapper) ) return;
+					var each_wrapper_class = each_wrapper.get_property_value_by_name('class'),
+						apply_col =  new_col
+					;
+					// Distribute remaining_col
+					if ( remaining_col > 0 ) {
+						apply_col += 1;
+						remaining_col -= 1;
+					}
+					each_wrapper.replace_class(
+						ed.grid.class + apply_col +
+						( id == 0 && !each_wrapper_class.match(/clr/g) ? ' clr' : '' )
+					);
+					_.each(all_modules, function (each_module) {
+						if ( each_module.get_wrapper_id() == each_wrapper.get_wrapper_id() ) {
+							each_module.replace_class(ed.grid.class + apply_col);
+						}
+					});
+				});
+			}
 		}
 		if ( split_prev || split_next ){
 			var current_wrapper = false;

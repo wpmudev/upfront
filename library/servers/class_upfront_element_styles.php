@@ -184,7 +184,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 			: new Upfront_CssResponse_Success($cache)
 		;
 
-		$this->_out($response);
+		$this->_out($response, true);
 	}
 
 	function serve_scripts () {
@@ -197,7 +197,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 			: new Upfront_JavascriptResponse_Success($cache)
 		;
 
-		$this->_out($response);
+		$this->_out($response, true);
 	}
 
 	private function _get_enqueue_version () {

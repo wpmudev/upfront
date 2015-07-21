@@ -568,6 +568,7 @@ UeditorEvents.on("ueditor:key:up", function(redactor){
 });
 
 
+
 Ueditor.prototype = {
 	disableStop: false,
 	mouseupListener: false,
@@ -961,7 +962,8 @@ Ueditor.prototype = {
 
 		$(document).one('mouseup', function(e){
 
-			var is_selection = ((Math.abs(e.pageX-me.lastmousedown.x) + Math.abs(e.pageY-me.lastmousedown.y)) > 2);
+			//var is_selection = ((Math.abs(e.pageX-me.lastmousedown.x) + Math.abs(e.pageY-me.lastmousedown.y)) > 2);
+            var is_selection = !!me.redactor.selection.getText();
 			if((is_selection || me.clickcount > 1) && me.redactor && me.redactor.waitForMouseUp && me.redactor.selection.getText()){
 				me.redactor.airShow(e);
 				me.redactor.$element.trigger('mouseup.redactor');

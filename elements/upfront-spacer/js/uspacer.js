@@ -7,7 +7,7 @@
 			this.init_property("type", "UspacerModel");
 			this.init_property("view_class", "UspacerView");
 			this.init_property("element_id", Upfront.Util.get_unique_id("spacer-object"));
-			this.init_property("class", "c1");
+			this.init_property("class", "c24");
 			this.init_property("has_settings", 0);
 			this.init_property("id_slug", "uspacer");
 		}
