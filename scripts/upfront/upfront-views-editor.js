@@ -10397,9 +10397,6 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				'padding-top': top_padding + 'px',
 				'padding-bottom': bottom_padding + 'px'
 			});
-
-			console.log(current_breakpoint_id);
-
 		},
 		add_responsive_items: function() {
 			var me = this,
