@@ -1,13 +1,13 @@
 define([
+	'scripts/upfront/element-settings/settings',
 	'scripts/upfront/preset-settings/preset-manager',
 	'scripts/upfront/preset-settings/util',
 	'scripts/upfront/preset-settings/border-settings-item',
 	'scripts/upfront/preset-settings/radius-settings-item',
+	'scripts/upfront/preset-settings/colors-settings-item',
 	'scripts/upfront/preset-settings/typography-settings-item',
 	'text!elements/upfront-button/tpl/preset-style.html',
-	'elements/upfront-button/js/settings-fields-static',
-	'elements/upfront-button/js/settings-fields-hover',
-], function(PresetManager, Util, BorderSettingsItem, RadiusSettingsItem, TypographySettingsItem, styleTpl, ButtonSettingsStatic, ButtonSettingsHover) {
+], function(ElementSettings, PresetManager, Util, BorderSettingsItem, RadiusSettingsItem, ColorsSettingsItem, TypographySettingsItem, styleTpl) {
 	var l10n = Upfront.Settings.l10n.button_element;
 	
 	var me = this;
@@ -26,7 +26,7 @@ define([
 	  }
 	});
 
-	var Settings = PresetManager.extend({
+	var ButtonAppearance = PresetManager.extend({
 		mainDataCollection: 'buttonPresets',
 		styleElementPrefix: 'button-preset',
 		ajaxActionSlug: 'button',
@@ -75,15 +75,24 @@ define([
 		stateFields: {
 			Static: [
 				{
-					fieldClass: ButtonSettingsStatic,
+					fieldClass: ColorsSettingsItem,
 					options: {
-						state: 'static'
+						title: 'Colors',
+						multiple: false,
+						single: true,
+						abccolors: [
+							{
+								name: 'bgcolor',
+								label: 'Button Background'
+							},
+						]
 					}
 				},
 				{
 					fieldClass: TypographySettingsItem,
 					options: {
 						state: 'static',
+						title: 'Typography',
 						fields: {
 							typeface: 'fontface', 
 							fontstyle: 'fontstyle',
@@ -127,17 +136,160 @@ define([
 			],
 			Hover: [
 				{
-					fieldClass: ButtonSettingsHover,
+					fieldClass: ColorsSettingsItem,
 					options: {
-						state: 'hover'
+						state: 'hover',
+						title: 'Colors',
+						multiple: false,
+						toggle: true,
+						single: true,
+						abccolors: [
+							{
+								name: 'hov_bgcolor',
+								label: 'Button Background'
+							},
+						],
+						fields: {
+							use: 'hov_usebgcolor'
+						}
+					}
+				},
+				{
+					fieldClass: TypographySettingsItem,
+					options: {
+						state: 'hover',
+						title: 'Typography',
+						toggle: true,
+						fields: {
+							typeface: 'hov_fontface', 
+							fontstyle: 'hov_fontstyle',
+							weight: 'hov_weight',
+							style: 'hov_style',
+							size: 'hov_fontsize',
+							line_height: 'hov_lineheight',
+							color: 'hov_color',
+						}
+					}
+				},	
+				{
+					fieldClass: RadiusSettingsItem,
+					options: {
+						state: 'hover',
+						max_value: 100,
+						fields: {
+							use: 'hov_useradius', 
+							lock: 'hov_borderradiuslock',
+							radius: 'hov_radius',
+							radius_number: 'hov_radius_number',
+							radius1: 'hov_borderradius1',
+							radius2: 'hov_borderradius2',
+							radius3: 'hov_borderradius3',
+							radius4: 'hov_borderradius4'
+						}
+					}
+				},
+				{
+					fieldClass: BorderSettingsItem,
+					options: {
+						state: 'hover',
+						fields: {
+							use: 'hov_useborder', 
+							width: 'hov_borderwidth',
+							type: 'hov_bordertype',
+							color: 'hov_bordercolor',
+						}
+					}
+				}
+			],
+			Focus: [
+				{
+					fieldClass: ColorsSettingsItem,
+					options: {
+						state: 'focus',
+						title: 'Colors',
+						multiple: false,
+						toggle: true,
+						single: true,
+						abccolors: [
+							{
+								name: 'focus_bgcolor',
+								label: 'Button Background'
+							},
+						],
+						fields: {
+							use: 'focus_usebgcolor'
+						}
+					}
+				},
+				{
+					fieldClass: TypographySettingsItem,
+					options: {
+						state: 'focus',
+						title: 'Typography',
+						toggle: true,
+						fields: {
+							typeface: 'focus_fontface', 
+							fontstyle: 'focus_fontstyle',
+							weight: 'focus_weight',
+							style: 'focus_style',
+							size: 'focus_fontsize',
+							line_height: 'focus_lineheight',
+							color: 'focus_color',
+						}
+					}
+				},	
+				{
+					fieldClass: RadiusSettingsItem,
+					options: {
+						state: 'focus',
+						max_value: 100,
+						fields: {
+							use: 'focus_useradius', 
+							lock: 'focus_borderradiuslock',
+							radius: 'focus_radius',
+							radius_number: 'focus_radius_number',
+							radius1: 'focus_borderradius1',
+							radius2: 'focus_borderradius2',
+							radius3: 'focus_borderradius3',
+							radius4: 'focus_borderradius4'
+						}
+					}
+				},
+				{
+					fieldClass: BorderSettingsItem,
+					options: {
+						state: 'focus',
+						fields: {
+							use: 'focus_useborder', 
+							width: 'focus_borderwidth',
+							type: 'focus_bordertype',
+							color: 'focus_bordercolor',
+						}
 					}
 				}
 			]
 		}
 	});
 	
-	// Generate presets styles to page
-	Util.generatePresetsToPage('button', styleTpl);
+	var ButtonSettings = ElementSettings.extend({
+		initialize: function (opts) {
+			this.options = opts;
+			var me = this;
+			this.panels = _([
+				new ButtonAppearance({
+					model: this.model
+				})
+			]);
 
-	return Settings;
+			this.on('open', function(){
+				me.model.trigger('settings:open', me);
+			});
+		},
+
+		get_title: function () {
+			return l10n.settings.label;
+		}
+	});
+
+	return ButtonSettings;
 });

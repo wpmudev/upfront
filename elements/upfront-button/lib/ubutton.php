@@ -92,6 +92,9 @@ class Upfront_ButtonView extends Upfront_Object {
 			),
 			'dbl_click' => __('Click here', 'upfront'),
 			'appearance' => __('Textbox Appearance', 'upfront'),
+			'settings' => array(
+				'label' => __('Button settings', 'upfront'),
+			)	
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)
