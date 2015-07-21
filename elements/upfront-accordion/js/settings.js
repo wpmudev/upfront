@@ -1,4 +1,5 @@
 define([
+	'scripts/upfront/element-settings/settings',
 	'scripts/upfront/preset-settings/preset-manager',
 	'scripts/upfront/preset-settings/util',
 	'scripts/upfront/preset-settings/typography-settings-item',
@@ -6,10 +7,10 @@ define([
 	'scripts/upfront/preset-settings/border-settings-item',
 	'scripts/upfront/preset-settings/hov-animation-settings-item',
 	'text!elements/upfront-accordion/tpl/preset-style.html'
-], function(PresetManager, Util, TypographySettingsItem, ColorsSettingsItem, BorderSettingsItem, HovAnimationSettingsItem, styleTpl) {
+], function(ElementSettings, PresetManager, Util, TypographySettingsItem, ColorsSettingsItem, BorderSettingsItem, HovAnimationSettingsItem, styleTpl) {
 	var l10n = Upfront.Settings.l10n.accordion_element;
 
-	var Settings = PresetManager.extend({
+	var AccordionAppearance = PresetManager.extend({
 		mainDataCollection: 'accordionPresets',
 		styleElementPrefix: 'accordion-preset',
 		ajaxActionSlug: 'accordion',
@@ -63,6 +64,7 @@ define([
 			Static: [
 				{
 					fieldClass: ColorsSettingsItem,
+					toggle: false,
 					options: {
 						title: 'Colors',
 						abccolors: [
@@ -79,6 +81,7 @@ define([
 				},
 				{
 					fieldClass: TypographySettingsItem,
+					toggle: false,
 					options: {
 						state: 'static',
 						title: 'Tab Label Typography',
@@ -112,6 +115,10 @@ define([
 					fieldClass: ColorsSettingsItem,
 					options: {
 						title: 'Colors',
+						toggle: true,
+						fields: {
+							use: 'hover-use-colors'
+						},
 						abccolors: [
 							{
 								name: 'hover-header-bg-color',
@@ -128,8 +135,10 @@ define([
 					fieldClass: TypographySettingsItem,
 					options: {
 						state: 'hover',
+						toggle: true,
 						title: 'Tab Label Typography',
 						fields: {
+							use: 'hover-use-typography',
 							typeface: 'hover-font-family', 
 							fontstyle: 'hover-font-style',
 							weight: 'hover-weight',
@@ -158,7 +167,9 @@ define([
 					options: {
 						state: 'hover',
 						title: '',
+						toggle: true,
 						fields: {
+							use: 'hover-use-animation',
 							duration: 'hover-transition-duration', 
 							easing: 'hover-transition-easing',
 						}
@@ -170,6 +181,10 @@ define([
 					fieldClass: ColorsSettingsItem,
 					options: {
 						title: 'Colors',
+						toggle: true,
+						fields: {
+							use: 'active-use-color'
+						},
 						abccolors: [
 							{
 								name: 'active-header-bg-color',
@@ -186,8 +201,10 @@ define([
 					fieldClass: TypographySettingsItem,
 					options: {
 						state: 'active',
+						toggle: true,
 						title: 'Tab Label Typography',
 						fields: {
+							use: 'active-use-typography',
 							typeface: 'active-font-family', 
 							fontstyle: 'active-font-style',
 							weight: 'active-weight',
@@ -215,8 +232,28 @@ define([
 		}
 	});
 
-	// Generate presets styles to page
-	Util.generatePresetsToPage('accordion', styleTpl);
+	var AccordionSettings = ElementSettings.extend({
+		initialize: function (opts) {
+			this.options = opts;
+			var me = this;
+			this.panels = _([
+				new AccordionAppearance({
+					model: this.model
+				})
+			]);
 
-	return Settings;
+			this.on('open', function(){
+				me.model.trigger('settings:open', me);
+			});
+		},
+
+		get_title: function () {
+			return 'Accordion Settings';
+		}
+	});
+
+	// Generate presets styles to page
+	Util.generatePresetsToPage('tab', styleTpl);
+
+	return AccordionSettings;
 });
