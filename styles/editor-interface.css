@@ -4596,67 +4596,29 @@ a.upfront-region-name-edit-trigger:before {
 /* Padding Settings */
 /* line 195, sass/partials/_bgsettings.scss */
 .upfront-region-bg-setting-padding {
-  background: #cee1f2;
-  height: 48px;
+  background: none;
   overflow: hidden;
-  margin: 0 -16px;
   position: relative;
-  padding: 0 12px;
+  padding: 16px 0;
   top: 16px;
-  border-bottom: 1px solid #ABBAC7;
+  border-top: 1px solid #cce1f4;
   clear: both; }
 
-/* line 206, sass/partials/_bgsettings.scss */
-.upfront-region-bg-setting-padding.open {
-  overflow: visible;
-  height: auto; }
-
-/* line 210, sass/partials/_bgsettings.scss */
-.upfront-region-bg-setting-padding .upfront-fields-wrap {
-  display: none; }
-
-/* line 213, sass/partials/_bgsettings.scss */
-.upfront-region-bg-setting-padding.open .upfront-fields-wrap {
-  display: block;
-  margin: 0 10px; }
-
-/* line 217, sass/partials/_bgsettings.scss */
-.upfront-region-bg-setting-padding.open .upfront-region-bg-setting-label {
-  font-weight: bold;
-  padding-bottom: 9px; }
-
-/* line 221, sass/partials/_bgsettings.scss */
-.upfront-region-bg-setting-padding .upfront-region-bg-setting-label {
-  cursor: pointer;
-  text-transform: none;
-  padding: 10px 2px;
-  font-weight: normal;
-  line-height: 28px; }
-
-/* line 229, sass/partials/_bgsettings.scss */
-.upfront-region-bg-setting-padding .upfront-region-bg-setting-label span {
-  background: none;
-  margin-left: 0; }
-
-/* line 234, sass/partials/_bgsettings.scss */
-.upfront-region-bg-setting-padding {
-  padding: 0 5px; }
-
-/* line 237, sass/partials/_bgsettings.scss */
+/* line 204, sass/partials/_bgsettings.scss */
 .upfront-region-bg-setting-padding .upfront-field-select-single {
   width: 215px;
   display: inline-block; }
 
-/* line 241, sass/partials/_bgsettings.scss */
+/* line 208, sass/partials/_bgsettings.scss */
 .upfront-region-bg-setting-padding .upfront-settings-item-title span {
   margin-top: 3px;
   display: inline-block; }
 
-/* line 245, sass/partials/_bgsettings.scss */
+/* line 212, sass/partials/_bgsettings.scss */
 .upfront-region-bg-setting-padding .upfront-field-wrap-multiple:first-child {
   margin-top: 0; }
 
-/* line 248, sass/partials/_bgsettings.scss */
+/* line 215, sass/partials/_bgsettings.scss */
 .upfront-region-bg-setting-padding .upfront-region-bg-setting-label:after {
   content: "";
   border: 0 none;
@@ -4669,8 +4631,8 @@ a.upfront-region-name-edit-trigger:before {
   top: 18px;
   border-radius: 50%; }
 
-/* line 260, sass/partials/_bgsettings.scss */
-.upfront-region-bg-setting-padding.open .upfront-region-bg-setting-label:before {
+/* line 227, sass/partials/_bgsettings.scss */
+.upfront-region-bg-setting-padding .upfront-region-bg-setting-label:before {
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
   border-top: 4px solid #273a4c;
@@ -4678,17 +4640,17 @@ a.upfront-region-name-edit-trigger:before {
   top: 25px;
   right: 15px; }
 
-/* line 268, sass/partials/_bgsettings.scss */
+/* line 235, sass/partials/_bgsettings.scss */
 .upfront-region-bg-setting-padding .upfront-field-wrap-slider {
   display: inline-block;
   width: 63%;
   margin: 0 5% 0 2%;
-  border-left: 3px solid #C2D5E6;
+  border-left: 2px solid #C2D5E6;
   padding-left: 5%;
   padding-top: 6px;
   height: 30px; }
 
-/* line 277, sass/partials/_bgsettings.scss */
+/* line 244, sass/partials/_bgsettings.scss */
 .upfront-region-bg-setting-padding .upfront-field-wrap-number {
   width: 30%;
   display: inline-block;
@@ -4697,28 +4659,14 @@ a.upfront-region-name-edit-trigger:before {
   position: relative;
   top: -10px; }
 
-/* line 285, sass/partials/_bgsettings.scss */
+/* line 252, sass/partials/_bgsettings.scss */
 .upfront-region-bg-setting-padding .upfront-field-wrap-number label {
   margin: 0; }
 
-/* line 288, sass/partials/_bgsettings.scss */
+/* line 255, sass/partials/_bgsettings.scss */
 .upfront-region-bg-setting-padding .upfront-field-wrap-number .upfront-field-number {
   width: 45px;
   clear: both; }
-
-/* line 292, sass/partials/_bgsettings.scss */
-.upfront-region-bg-setting-padding .upfront-region-bg-setting-label:before {
-  content: '';
-  width: 0;
-  height: 0;
-  border-top: 4px solid transparent;
-  border-bottom: 4px solid transparent;
-  border-left: 4px solid #273a4c;
-  display: block;
-  top: 22px;
-  right: 16px;
-  position: absolute;
-  z-index: 1; }
 
 /* line 1, sass/partials/_layout-grid-module-object.scss */
 #settings {
