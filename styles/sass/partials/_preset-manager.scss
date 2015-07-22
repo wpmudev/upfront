@@ -593,3 +593,14 @@ div.preset-manager-panel .useTypography .upfront-field-multiple-selected {
 div.preset-manager-panel .useColors .upfront-field-multiple-selected {
 	margin-bottom: 8px;
 }
+div.preset-manager-panel .border-with-fields {
+	padding-top: 15px !important;
+}
+div.preset-manager-panel .border_selectElement {
+	width: 145px;
+	z-index: 99999;
+	position: relative;
+	margin-bottom: -34px;
+	margin-left: 80px;
+	margin-top: 10px;
+}

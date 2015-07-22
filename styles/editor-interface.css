@@ -15768,6 +15768,19 @@ div.preset-manager-panel .useTypography .upfront-field-multiple-selected {
 div.preset-manager-panel .useColors .upfront-field-multiple-selected {
   margin-bottom: 8px; }
 
+/* line 596, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+div.preset-manager-panel .border-with-fields {
+  padding-top: 15px !important; }
+
+/* line 599, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+div.preset-manager-panel .border_selectElement {
+  width: 145px;
+  z-index: 99999;
+  position: relative;
+  margin-bottom: -34px;
+  margin-left: 80px;
+  margin-top: 10px; }
+
 /* line 2, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_inline-panels.scss */
 .upfront-button .upfront-inline-panel, .menu-item .upfront-inline-panel {
   -webkit-transition-delay: 0;
