@@ -1,8 +1,8 @@
 (function ($) {
 
 define([
-	'text!elements/upfront-slider/tpls/uslider.html',
-	'text!elements/upfront-slider/tpls/backend.html',
+	'text!elements/upfront-slider/tpl/uslider.html',
+	'text!elements/upfront-slider/tpl/backend.html',
 	'scripts/upfront/element-settings/settings',
 	'scripts/upfront/element-settings/panel'
 ], function(sliderTpl, editorTpl, ElementSettings, ElementSettingsPanel){

@@ -31,7 +31,7 @@ class Upfront_UsliderView extends Upfront_Object {
 		$data['production'] = true;
 		$data['startingSlide'] = 0;
 
-		$markup = upfront_get_template('uslider', $data, dirname(dirname(__FILE__)) . '/tpls/uslider.html');
+		$markup = upfront_get_template('uslider', $data, dirname(dirname(__FILE__)) . '/tpl/uslider.html');
 
 		return $markup;
 	}
@@ -50,7 +50,7 @@ class Upfront_UsliderView extends Upfront_Object {
 		$data['uslider'] = array(
 			'defaults' => self::default_properties(),
 			'slideDefaults' => self::slide_defaults(),
-			'template' => upfront_get_template_url('uslider', upfront_element_url('tpls/uslider.html', dirname(__FILE__)))
+			'template' => upfront_get_template_url('uslider', upfront_element_url('tpl/uslider.html', dirname(__FILE__)))
 		);
 		return $data;
 	}
