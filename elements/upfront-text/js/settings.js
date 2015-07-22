@@ -4,13 +4,19 @@ define([
 ], function(AppearancePanel, ElementSettings) {
 	var l10n = Upfront.Settings.l10n.text_element;
 
-	var Settings = ElementSettings.extend({
+	var TextSettings = ElementSettings.extend({
 		initialize: function (opts) {
-			this.has_tabs = false;
 			this.options = opts;
+			var me = this;
 			this.panels = _([
-				new AppearancePanel({model: this.model})
+				new AppearancePanel({
+					model: this.model
+				})
 			]);
+
+			this.on('open', function(){
+				me.model.trigger('settings:open', me);
+			});
 		},
 
 		get_title: function () {
@@ -18,5 +24,5 @@ define([
 		}
 	});
 
-	return Settings;
+	return TextSettings;
 });

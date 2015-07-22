@@ -90,6 +90,19 @@ class Upfront_PlainTxtView extends Upfront_Object {
 			'color' => __('Color', 'upfront'),
 			'bg_color' => __('Background Color', 'upfront'),
 			'edit_text' => __('Edit Text', 'upfront'),
+			'h1' => __('Main Heading (H1)', 'upfront'),
+			'h2' => __('Sub Heading (H2)', 'upfront'),
+			'h3' => __('Sub Heading (H3)', 'upfront'),
+			'h4' => __('Sub Heading (H4)', 'upfront'),
+			'h5' => __('Sub Heading (H5)', 'upfront'),
+			'h6' => __('Sub Heading (H6)', 'upfront'),
+			'p' => __('Paragraph (P)', 'upfront'),
+			'a' => __('Anchor Link (A)', 'upfront'),
+			'ahover' => __('Anchor Link Hover (A:HOVER)', 'upfront'),
+			'ul' => __('Unordered List (UL)', 'upfront'),
+			'ol' => __('Ordered List (OL)', 'upfront'),
+			'bq' => __('Blockquote (BLOCKQUOTE)', 'upfront'),
+			'bqalt' => __('Blockquote Alternative (BLOCKQUOTE)', 'upfront'),
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)
