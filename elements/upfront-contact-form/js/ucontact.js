@@ -4,8 +4,9 @@
 define([
 	'upfront-data',
 	'scripts/upfront/element-settings/settings',
-	'scripts/upfront/element-settings/panel'
-], function (upfront_data, ElementSettings, ElementSettingsPanel) {
+	'scripts/upfront/element-settings/panel',
+	'elements/upfront-contact-form/js/settings',
+], function (upfront_data, ElementSettings, ElementSettingsPanel, AppearancePanel) {
 var template = upfront_data.data && upfront_data.data.ucontact && upfront_data.data.ucontact.template
 	? upfront_data.data.ucontact.template
 	: 'elements/upfront-contact-form/templates/ucontact.html'
@@ -321,6 +322,7 @@ var UcontactSettings = ElementSettings.extend({
 			Fields = Upfront.Views.Editor.Field
 		;
 		this.panels = _([
+			new AppearancePanel({model: this.model}),
 			this.get_general_panel(Panel, SettingsItem, Fields),
 			//this.get_fields_panel(Panel, SettingsItem, Fields),
 			//this.get_appearance_panel(Panel, SettingsItem, Fields)
