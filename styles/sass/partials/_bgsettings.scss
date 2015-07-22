@@ -212,26 +212,6 @@
 .upfront-region-bg-setting-padding .upfront-field-wrap-multiple:first-child {
   margin-top: 0;
 }
-.upfront-region-bg-setting-padding .upfront-region-bg-setting-label:after {
-  content: "";
-  border: 0 none;
-  width: 15px;
-  height: 15px;
-  background-color: #c3d7e6;
-  display: inline-block;
-  position: absolute;
-  right: 11px;
-  top: 18px;
-  border-radius: 50%;
-}
-.upfront-region-bg-setting-padding .upfront-region-bg-setting-label:before {
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 4px solid #273a4c;
-  border-bottom: 0 none;
-  top: 25px;
-  right: 15px;
-}
 .upfront-region-bg-setting-padding .upfront-field-wrap-slider {
   display: inline-block;
   width: 63%;
