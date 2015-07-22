@@ -126,7 +126,7 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 			$callback_wrap_start = '$(function () {';
 			$callback_wrap_end = '});';
 		}
-		if ($comp->has_experiments_level($comp->constant('AGGRESSIVE'))) {
+		if ($comp->has_experiments_level($comp->constant('AGGRESSIVE')) || $comp->has_experiments_level($comp->constant('HARDCORE'))) {
 			$callback_wrap_start = '$(function () { setTimeout(function () {';
 			$callback_wrap_end = '}, 500);});';
 			$injection_root = 'body';
