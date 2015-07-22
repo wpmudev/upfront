@@ -1,7 +1,8 @@
 define([
 	'scripts/upfront/element-settings/settings',
-	'scripts/upfront/element-settings/panel'
-], function(ElementSettings, ElementSettingsPanel) {
+	'scripts/upfront/element-settings/panel',
+	'elements/upfront-newnavigation/js/settings/appearance-panel',
+], function(ElementSettings, ElementSettingsPanel, AppearancePanel) {
 	var l10n = Upfront.Settings.l10n.newnavigation_element;
 
 	var Menu_Panel = ElementSettingsPanel.extend({
@@ -344,7 +345,13 @@ define([
 							]
 						})
 					]
-				}).on('upfront:settings:panel:saved', this.onSaveSettings, this)
+				}).on('upfront:settings:panel:saved', this.onSaveSettings, this),
+				
+				//Menu Apperance
+				
+				new AppearancePanel({
+					model: this.model
+				})
 			]);
 		},
 		onSaveSettings: function() {

@@ -459,3 +459,29 @@ div.upfront-navigation li.menu-item .uimage-controls a {
 .upfront-editable_entity.upfront-navigation:hover .responsive_nav_toggler {
 	right:15px;
 }
+
+div.preset-manager-panel .menustyle_settings_item {
+	padding-top: 15px;
+}
+
+div.preset-manager-panel .menustyle_settings_item label {
+	font-weight: normal;
+	position: relative;
+	top: 5px;
+}
+
+div.preset-manager-panel .menustyle_settings_item .menu_style {
+	width: 110px;
+}
+
+div.preset-manager-panel .menustyle_settings_item .menu_alingment {
+	width: 90px;
+	margin-top: -45px;
+	position: relative;
+	left: 125px;
+}
+
+div.preset-manager-panel .menustyle_settings_item  .burger_alingment {
+	margin-top: 5px;
+	width: 215px;
+}
