@@ -11,6 +11,11 @@ define(function() {
 		},
 		initialize: function(options) {
 			this.options = options || {};
+			
+			if(typeof this.options.title === "undefined") {
+				this.group = false;
+			}
+			
 			var me = this,
 				custom_class = this.options.custom_class,
 				state = this.options.state;
