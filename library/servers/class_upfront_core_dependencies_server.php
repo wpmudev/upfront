@@ -11,6 +11,15 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 		add_action('wp_head', array($this, 'dispatch_fonts_loading'));
 
 		upfront_add_ajax('wp_scripts', array($this, 'wp_scripts_load'));
+
+		// We're serously playing with fire here
+		add_action('wp_enqueue_scripts', array($this, 'setup_hard_experiments'));
+	}
+
+	public function setup_hard_experiments () {
+		$comp = Upfront_Behavior::compression();
+		if (!$comp->has_experiments_level($comp->constant('HARDCORE'))) return false;
+		wp_dequeue_script('jquery'); // Oooooh yeah we went there!
 	}
 
 	/**
@@ -91,6 +100,15 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 	 * @param Upfront_CoreDependencies_Registry $deps Dependencies registry
 	 */
 	private function _output_experimental ($deps) {
+
+		// Yeah, so we need jQuery here. If it's not done, drop it from the queue and get the default one
+		if (!wp_script_is('jquery', 'done')) {
+			wp_dequeue_script('jquery');
+			echo '<script src="' . home_url('/wp-includes/js/jquery/jquery.js') . '"></script>';
+			if ($this->_debugger->is_active()) {
+				echo '<script src="' . home_url('/wp-includes/js/jquery/jquery-migrate.min.js') . '"></script>';
+			}
+		}
 
 		$link_urls = json_encode(apply_filters('upfront-experiments-styles-debounce_dependency_load', $deps->get_styles()));
 		$debug = $this->_debugger->is_active(Upfront_Debug::STYLE) ? 'class="upfront-debounced"' : '';
