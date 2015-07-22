@@ -240,16 +240,19 @@ class Upfront_MinificationServer implements IUpfront_Server {
 	private function _add_hooks () {
 		if (version_compare(PHP_VERSION, '5.3.1') < 0) return false; // We require PHPv5.3 for this
 
+		/*
 		add_filter('upfront-dependencies-cache-styles', array($this, 'minify_css'));
 		add_filter('upfront-dependencies-main-styles', array($this, 'minify_css'));
 		add_filter('upfront-dependencies-grid-styles', array($this, 'minify_css'));
+		*/
 		add_filter('upfront-dependencies-cache-scripts', array($this, 'minify_js'));
 	}
 
+/*
 	public function minify_css ($what) {
-		require_once dirname(dirname(__FILE__)) . '/external/cssmin/cssmin.php';
-		return CssMin::minify($what);
+		return $what;
 	}
+*/
 
 	public function minify_js ($what) {
 		require_once dirname(dirname(__FILE__)) . '/external/jshrink/src/JShrink/Minifier.php';
