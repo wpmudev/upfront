@@ -145,6 +145,7 @@ define(function() {
 				this.fields.unshift(
 					new Upfront.Views.Editor.Field.Select({
 						label: l10n.type_element,
+						label_style: 'inline',
 						className: state + '-select-element selectElement ' + toggleClass,
 						values: me.options.elements,
 						change: function () {

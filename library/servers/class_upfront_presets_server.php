@@ -273,6 +273,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			'default_preset' => __('Default', 'upfront'),
 			'border' => __('Border', 'upfront'),
 			'px' => __('px', 'upfront'),
+			'type_element' => __('Type Element:', 'upfront'),
 			'typeface' => __('Typeface:', 'upfront'),
 			'weight_style' => __('Weight/Style:', 'upfront'),
 			'size' => __('Size:', 'upfront'),
