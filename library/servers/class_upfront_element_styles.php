@@ -255,6 +255,8 @@ class Upfront_MinificationServer implements IUpfront_Server {
 */
 
 	public function minify_js ($what) {
+		if (!Upfront_Behavior::compression()->has_experiments()) return $what; // Only do this within the compression mode ON
+		
 		require_once dirname(dirname(__FILE__)) . '/external/jshrink/src/JShrink/Minifier.php';
 		return JShrink_Minifier::minify($what);
 	}
