@@ -16,7 +16,7 @@
  * @author     Robert Hafner <tedivm@tedivm.com>
  */
 
-namespace JShrink;
+//namespace JShrink; // Drop namespace
 
 /**
  * Minifier
@@ -29,7 +29,7 @@ namespace JShrink;
  * @author Robert Hafner <tedivm@tedivm.com>
  * @license http://www.opensource.org/licenses/bsd-license.php  BSD License
  */
-class Minifier
+class JShrink_Minifier
 {
     /**
      * The input javascript to be minified.
@@ -105,7 +105,7 @@ class Minifier
         try {
             ob_start();
 
-            $jshrink = new Minifier();
+            $jshrink = new JShrink_Minifier();
             $js = $jshrink->lock($js);
             $jshrink->minifyDirectToOutput($js, $options);
 

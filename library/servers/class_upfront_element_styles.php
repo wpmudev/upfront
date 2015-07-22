@@ -58,7 +58,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 		$ckey = $this->_cache->key(self::TYPE_STYLE, $styles);
 
 		$raw_cache_key = $ckey->get_hash();
-		$cache = false;//$this->_debugger->is_active() ? false : $this->_cache->get($ckey);
+		$cache = $this->_debugger->is_active() ? false : $this->_cache->get($ckey);
 		
 		if (empty($cache)) {
 			foreach ($styles as $key => $frags) {
@@ -158,7 +158,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 		$ckey = $this->_cache->key(self::TYPE_SCRIPT, $scripts);
 
 		$raw_cache_key = $ckey->get_hash();
-		$cache = false;//$this->_debugger->is_active() ? false : $this->_cache->get($ckey);
+		$cache = $this->_debugger->is_active() ? false : $this->_cache->get($ckey);
 
 		if (empty($cache)) {
 			foreach ($scripts as $key => $frags) {
@@ -256,7 +256,7 @@ class Upfront_MinificationServer implements IUpfront_Server {
 
 	public function minify_js ($what) {
 		require_once dirname(dirname(__FILE__)) . '/external/jshrink/src/JShrink/Minifier.php';
-		return \JShrink\Minifier::minify($what);
+		return JShrink_Minifier::minify($what);
 	}
 }
 Upfront_MinificationServer::serve();
