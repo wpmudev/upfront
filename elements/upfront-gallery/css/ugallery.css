@@ -408,6 +408,10 @@ div.ugallery-controls i.upfront-icon:before {
 	background-position: -807px -486px;
 }
 
+.upfront-field-icon-none:before {
+	background-position: -700px -455px!important;
+}
+
 .upfront-ui .upfront-field-icon-below:before {
 	background-position: -699px -646px;
 }
@@ -449,7 +453,32 @@ div.ugallery-controls i.upfront-icon:before {
 	background-position: -479px -201px;
 }
 
-
+div.preset-manager-panel .field-caption-height {
+	border-left: 2px solid #dae6f2;
+	padding: 5px 0px 5px 10px;
+	position: relative;
+	top: 0px;
+}
+div.preset-manager-panel .field-caption-height label {
+	font-weight: normal;
+	top: -5px;
+	position: relative;
+}
+div.preset-manager-panel .field-caption-height span label {
+	top: 0px;
+}
+div.preset-manager-panel .field-caption-height {
+	margin-top: 0px;
+	padding-top: 10px;
+}
+div.preset-manager-panel .caption-height-number {
+	position: relative;
+	margin-top: -38px;
+	left: 130px;
+}
+div.preset-manager-panel .caption-height-number input {
+	width: 60px;
+}
 .ugallery-onclick {
 	background: rgba(57,82,105,0.9);
 	position: absolute;
