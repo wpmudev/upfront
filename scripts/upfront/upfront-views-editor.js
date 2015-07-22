@@ -8837,20 +8837,14 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					},
 					show: function (value, $el) {
 						if(value === 'varied') {
-							$(top_bg_padding_slider.$el).css('display', 'inline-block'); 
-							$(top_bg_padding_num.$el).css('display', 'inline-block'); 
-							$(bottom_bg_padding_slider.$el).css('display', 'inline-block'); 
-							$(bottom_bg_padding_num.$el).css('display', 'inline-block'); 
-							$(bg_padding_slider.$el).hide();
-							$(bg_padding_num.$el).hide();
+							$('.upfront-region-bg-setting-padding-top', $content).show(); 
+							$('.upfront-region-bg-setting-padding-bottom', $content).show(); 
+							$('.upfront-region-bg-setting-equal-padding', $content).hide(); 
 						}
 						else {
-							$(bg_padding_slider.$el).css('display', 'inline-block');
-							$(bg_padding_num.$el).css('display', 'inline-block');
-							$(top_bg_padding_slider.$el).hide(); 
-							$(top_bg_padding_num.$el).hide(); 
-							$(bottom_bg_padding_slider.$el).hide(); 
-							$(bottom_bg_padding_num.$el).hide(); 
+							$('.upfront-region-bg-setting-equal-padding', $content).show(); 
+							$('.upfront-region-bg-setting-padding-top', $content).hide(); 
+							$('.upfront-region-bg-setting-padding-bottom', $content).hide(); 
 						}
 					}
 				}),
@@ -8992,7 +8986,10 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			$region_restrict = $content.find('.upfront-region-bg-setting-floating-restrict');
 			$region_sticky = $content.find('.upfront-region-bg-setting-sticky');
 			$region_auto = $content.find('.upfront-region-bg-setting-auto-resize');
-			$region_padding = $content.find('.upfront-region-bg-setting-padding');
+			$region_padding_type = $content.find('.upfront-region-bg-setting-padding-type');
+			$region_equal_padding = $content.find('.upfront-region-bg-setting-equal-padding');
+			$region_top_padding = $content.find('.upfront-region-bg-setting-padding-top');
+			$region_bottom_padding = $content.find('.upfront-region-bg-setting-padding-bottom');
 
 			if ( !is_responsive && is_region ) {
 				region_name.render();
@@ -9153,19 +9150,19 @@ var Field_Compact_Label_Select = Field_Select.extend({
 
 			// Padding Settings
 			bg_padding_type.render();
-			$region_padding.append(bg_padding_type.$el);
+			$region_padding_type.append(bg_padding_type.$el);
 			top_bg_padding_slider.render();
-			$region_padding.append(top_bg_padding_slider.$el);
+			$region_top_padding.append(top_bg_padding_slider.$el);
 			top_bg_padding_num.render();
-			$region_padding.append(top_bg_padding_num.$el);
+			$region_top_padding.append(top_bg_padding_num.$el);
 			bottom_bg_padding_slider.render();
-			$region_padding.append(bottom_bg_padding_slider.$el);
+			$region_bottom_padding.append(bottom_bg_padding_slider.$el);
 			bottom_bg_padding_num.render();
-			$region_padding.append(bottom_bg_padding_num.$el);
+			$region_bottom_padding.append(bottom_bg_padding_num.$el);
 			bg_padding_slider.render();
-			$region_padding.append(bg_padding_slider.$el);
+			$region_equal_padding.append(bg_padding_slider.$el);
 			bg_padding_num.render();
-			$region_padding.append(bg_padding_num.$el);
+			$region_equal_padding.append(bg_padding_num.$el);
 
 			bg_type.trigger('changed');
 		},
