@@ -15756,23 +15756,31 @@ div.preset-manager-panel .typography_settings_item .element-toggled.selectElemen
   position: relative;
   top: 0px; }
 
-/* line 587, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 585, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+div.preset-manager-panel .colors_settings_item .element-toggled.two:nth-child(even) {
+  clear: left; }
+
+/* line 588, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+div.preset-manager-panel .element-toggled.two {
+  margin-top: -2px; }
+
+/* line 592, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel .typography_settings_item .element-toggled.typeFace .chosen-container, div.preset-manager-panel .typography_settings_item .element-toggled.weightStyle .chosen-container {
   width: 213px !important; }
 
-/* line 590, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 595, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel .useTypography .upfront-field-multiple-selected {
   margin-bottom: 5px; }
 
-/* line 593, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 598, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel .useColors .upfront-field-multiple-selected {
   margin-bottom: 8px; }
 
-/* line 596, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 601, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel .border-with-fields {
   padding-top: 15px !important; }
 
-/* line 599, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
+/* line 604, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/_preset-manager.scss */
 div.preset-manager-panel .border_selectElement {
   width: 145px;
   z-index: 99999;

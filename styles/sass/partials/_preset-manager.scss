@@ -582,7 +582,12 @@ div.preset-manager-panel .colors_settings_item .element-toggled.two:nth-child(ev
 	position: relative;
 	top: 0px;
 }
-
+div.preset-manager-panel .colors_settings_item .element-toggled.two:nth-child(even) { 
+	clear: left;
+}
+div.preset-manager-panel .element-toggled.two {
+	margin-top: -2px;
+}
 div.preset-manager-panel .typography_settings_item .element-toggled.typeFace .chosen-container, 
 div.preset-manager-panel .typography_settings_item .element-toggled.weightStyle .chosen-container {
 	width: 213px !important;
