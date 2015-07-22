@@ -152,6 +152,7 @@ class Upfront_UsliderView extends Upfront_Object {
 			'general' => __('General', 'upfront'),
 			'above_img' => __('Above the image', 'upfront'),
 			'below_img' => __('Below the image', 'upfront'),
+			'image_caption_position' => 'Image &amp; Caption Position:',
 			'no_text' => __('No text', 'upfront'),
 			'over_top' => __('Over image, top', 'upfront'),
 			'over_bottom' => __('Over image, bottom', 'upfront'),

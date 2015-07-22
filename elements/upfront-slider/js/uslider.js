@@ -3,9 +3,10 @@
 define([
 	'text!elements/upfront-slider/tpl/uslider.html',
 	'text!elements/upfront-slider/tpl/backend.html',
+	'elements/upfront-slider/js/settings',
 	'scripts/upfront/element-settings/settings',
 	'scripts/upfront/element-settings/panel'
-], function(sliderTpl, editorTpl, ElementSettings, ElementSettingsPanel){
+], function(sliderTpl, editorTpl, AppearancePanel, ElementSettings, ElementSettingsPanel){
 
 var l10n = Upfront.Settings.l10n.slider_element;
 
@@ -1201,6 +1202,7 @@ var USliderSettings = ElementSettings.extend({
 	initialize: function (opts) {
 		this.options = opts;
 		this.panels = _([
+			new AppearancePanel({model: this.model}),
 			new LayoutPanel({model: this.model}),
 			new SlidesPanel({model: this.model})
 		]);
