@@ -360,7 +360,7 @@ class Upfront_Ajax extends Upfront_Server {
 
 	private function _reset_cache () {
 		global $wpdb;
-		$sql = "DELETE FROM {$wpdb->options} WHERE option_name REGEXP '_transient(_timeout)?_(js|css|grid)(_uf_)?[a-f0-9]+'";
+		$sql = "DELETE FROM {$wpdb->options} WHERE option_name REGEXP '_transient(_timeout)?_(js|css|grid|grid_front_response|styles_main)(_uf_)?[a-f0-9]+'";
 		return $wpdb->query($sql);
 	}
 
