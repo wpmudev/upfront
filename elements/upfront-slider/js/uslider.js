@@ -1227,69 +1227,41 @@ var LayoutPanel =  ElementSettingsPanel.extend({
 		;
 		this.settings = _([
 			new SettingsItem({
-				title: l10n.slider_styles,
-				className: 'uslider-style-setting',
-				fields: [
-					new Fields.Radios({
-						model: this.model,
-						property: 'primaryStyle',
-						layout: 'horizontal-inline',
-						values: [
-							{ label: l10n.notxt, value: 'notext', icon: 'nocaption' },
-							{ label: l10n.txtb, value: 'below', icon: 'below' },
-							{ label: l10n.txto, value: 'over', icon: 'bottomOver' },
-							{ label: l10n.txts, value: 'side', icon: 'right' }/*,
-							{ label: "txt / widget only", value: 'onlytext', icon: 'textonly' }*/
-						]
-					})
-				]
-			}),
-			new ColorPickerField({
-				title: l10n.caption_bg,
-				fields: [
-					new Fields.Radios({
-						model: this.model,
-						property: 'captionUseBackground',
-						layout: "horizontal-inline",
-						values: [
-							{value: '0', label: l10n.none},
-							{value: '1', label: l10n.pick_color}
-						]
-					}),
-				]
-			}),
-			new SettingsItem({
-				title: '',
-				group: false,
-				className: 'uslider-rotate-settings',
+				title: l10n.slider_behaviour,
+				group: true,
+				className: 'general_settings_item uslider-rotate-settings',
 				fields: [
 					new Fields.Checkboxes({
 						model: this.model,
 						property: 'rotate',
 						layout: 'horizontal-inline',
+						className: 'rotate',
 						multiple: true,
-						values: [ { label: l10n.rotate_every, value: 'true' } ]
+						values: [ { label: l10n.rotate_every, value: 'true' } ],
+						change: function(value) {
+							if(value[0] === 'true') {
+								me.$el.find('.rotate-time').css('opacity', '1');
+							} else {
+								me.$el.find('.rotate-time').css('opacity', '0.5');
+							}
+						}
 					}),
 					new Fields.Number({
 						model: this.model,
+						className: 'rotate-time',
 						property: 'rotateTime',
 						min: 1,
 						max: 60,
 						step: 1,
 						suffix: 'sec.'
-					})
-				]
-			}),
-			new SettingsItem({
-				title: 'Transitions',
-				className: 'uslider-transition-setting',
-				fields: [
-					new Fields.Radios({
+					}),
+					new Fields.Select({
 						model: this.model,
 						property: 'transition',
+						label: l10n.slider_transition,
 						layout: 'horizontal-inline',
 						icon_class: 'upfront-region-field-icon',
-						className: 'uslider-transition-setting upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios',
+						className: 'uslider-transition-setting rotate-effect',
 						values: [
 							{ label: l10n.slide_down, value: 'slide-down', icon: 'bg-slider-slide-down' },
 							{ label: l10n.slide_up, value: 'slide-up', icon: 'bg-slider-slide-up' },
@@ -1302,7 +1274,20 @@ var LayoutPanel =  ElementSettingsPanel.extend({
 			}),
 			new SettingsItem({
 				title: l10n.slider_controls,
+				className: 'general_settings_item',
 				fields: [
+					new Fields.Select({
+						model: this.model,
+						label: l10n.slider_controls_style,
+						className: 'slider-contrls-style',
+						property: 'controls',
+						values: [
+							{label: l10n.dots, value: 'dots'},
+							{label: l10n.arrows, value: 'arrows'},
+							{label: l10n.both, value: 'both'}
+						]
+					}),
+					
 					new Fields.Radios({
 						model: this.model,
 						property: 'controlsWhen',
@@ -1313,15 +1298,6 @@ var LayoutPanel =  ElementSettingsPanel.extend({
 							{ label: l10n.always, value: 'always' }
 						]
 					}),
-					new Fields.Select({
-						model: this.model,
-						property: 'controls',
-						values: [
-							{label: l10n.dots, value: 'dots'},
-							{label: l10n.arrows, value: 'arrows'},
-							{label: l10n.both, value: 'both'}
-						]
-					})
 				]
 			})
 		]);

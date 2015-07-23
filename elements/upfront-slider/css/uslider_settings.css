@@ -206,3 +206,13 @@ background-position: -699px -646px;
 	bottom: 0;
 	left: 0;
 }
+.slide_style {
+	width: 215px;
+}
+.rotate, .rotate-time {
+	display: inline-block;
+}
+.rotate-effect, .slider-contrls-style {
+	width: 225px;
+	margin-top: 10px;
+}
