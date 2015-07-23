@@ -1401,7 +1401,8 @@ var SlidesPanel =  ElementSettingsPanel.extend({
 
 		this.settings = _([
 			new SettingsItem({
-				title: l10n.slides_order,
+				group: false,
+				title:  '',
 				fields: [
 					new SlidesField({
 						model: this.model
