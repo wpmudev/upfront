@@ -420,6 +420,10 @@ class Upfront_GridBreakpoint {
 	const PREFIX_MARGIN_RIGHT = 'margin-right';
 	const PREFIX_MARGIN_TOP = 'margin-top';
 	const PREFIX_MARGIN_BOTTOM = 'margin-bottom';
+	const PREFIX_PADDING_TOP = 'padding-top';
+	const PREFIX_PADDING_RIGHT = 'padding-right';
+	const PREFIX_PADDING_BOTTOM = 'padding-bottom';
+	const PREFIX_PADDING_LEFT = 'padding-left';
 
 	protected $_data = false;
 	protected $_name = "";
@@ -708,6 +712,10 @@ class Upfront_GridBreakpoint {
 				$raw_styles[$selector][] = rtrim($style, ' ;') . ';';
 			}
 			$row = $this->_get_property('row', $entity);
+			$top_padding = $this->_get_property('top_padding_num', $entity);
+			$right_padding = $this->_get_property('right_padding_num', $entity);
+			$bottom_padding = $this->_get_property('bottom_padding_num', $entity);
+			$left_padding = $this->_get_property('left_padding_num', $entity);
 		}
 		else if ($breakpoint_data){
 			foreach ( $breakpoint_data as $key => $value ){
@@ -718,6 +726,10 @@ class Upfront_GridBreakpoint {
 				$raw_styles[$selector][] = rtrim($style, ' ;') . ';';
 			}
 			if (!empty($breakpoint_data['row'])) $row = $breakpoint_data['row'];
+			if (!empty($breakpoint_data['top_padding_num'])) $top_padding = $breakpoint_data['top_padding_num'];
+			if (!empty($breakpoint_data['right_padding_num'])) $right_padding = $breakpoint_data['right_padding_num'];
+			if (!empty($breakpoint_data['bottom_padding_num'])) $bottom_padding = $breakpoint_data['bottom_padding_num'];
+			if (!empty($breakpoint_data['left_padding_num'])) $left_padding = $breakpoint_data['left_padding_num'];
 		}
 
 		// Add margin right for flexbox clearing
@@ -738,6 +750,30 @@ class Upfront_GridBreakpoint {
 			$raw_styles[$selector][] = rtrim($style, ';') . ';';
 		}
 
+		if ( !in_array('top_padding', $exception) && !empty($top_padding) ){
+			$style = $this->_top_padding_to_style($top_padding);
+			$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
+			$raw_styles[$selector][] = rtrim($style, ';') . ';';
+		}
+
+		if ( !in_array('right_padding', $exception) && !empty($right_padding) ){
+			$style = $this->_right_padding_to_style($right_padding);
+			$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
+			$raw_styles[$selector][] = rtrim($style, ';') . ';';
+		}
+
+		if ( !in_array('bottom_padding', $exception) && !empty($bottom_padding) ){
+			$style = $this->_bottom_padding_to_style($bottom_padding);
+			$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
+			$raw_styles[$selector][] = rtrim($style, ';') . ';';
+		}
+
+		if ( !in_array('left_padding', $exception) && !empty($left_padding) ){
+			$style = $this->_left_padding_to_style($left_padding);
+			$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
+			$raw_styles[$selector][] = rtrim($style, ';') . ';';
+		}
+
 		$all_styles = '';
 		foreach ($raw_styles as $selector => $rules) {
 			$all_styles .= sprintf('%s #%s {%s}',
@@ -746,6 +782,7 @@ class Upfront_GridBreakpoint {
 				join(' ', $rules)
 			) . "\n";
 		}
+
 		return $all_styles;
 	}
 
@@ -835,6 +872,30 @@ class Upfront_GridBreakpoint {
 		$rule = self::PREFIX_HEIGHT;
 		$size = ($row * $this->_baseline) . 'px';
 		return "{$rule}: {$size}";
+	}
+
+	protected function _top_padding_to_style ($top_padding) {
+		$rule = self::PREFIX_PADDING_TOP;
+		$value = $top_padding . 'px';
+		return "{$rule}: {$value}";
+	}
+
+	protected function _right_padding_to_style ($right_padding) {
+		$rule = self::PREFIX_PADDING_RIGHT;
+		$value = $right_padding . 'px';
+		return "{$rule}: {$value}";
+	}
+
+	protected function _bottom_padding_to_style ($bottom_padding) {
+		$rule = self::PREFIX_PADDING_BOTTOM;
+		$value = $bottom_padding . 'px';
+		return "{$rule}: {$value}";
+	}
+
+	protected function _left_padding_to_style ($left_padding) {
+		$rule = self::PREFIX_PADDING_LEFT;
+		$value = $left_padding . 'px';
+		return "{$rule}: {$value}";
 	}
 
 	protected function _get_property ($prop, $entity) {
