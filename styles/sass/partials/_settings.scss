@@ -54,11 +54,22 @@
 	left: 89px;
 	top: 0;
 	border: 1px solid rgb(99, 134, 166);
-	background: rgb(242, 249, 255);
+	background: rgb(247, 251, 255);
 	box-shadow: 3px 3px 0 rgba(99, 134, 166, 0.25);
 	z-index: 5;
 }
-
+#settings .general_settings_item {
+	border-bottom: 1px solid rgb(229, 236, 244);
+	padding: 0 0 15px 5px;
+	margin-left: -5px;
+	margin-right: -10px;
+}
+#settings .general_settings_item .upfront-settings-item-title {
+	color: rgb(47, 71, 95);
+}
+#settings .general_settings_item label {
+	font-weight: normal;
+}
 #settings.settings-no-tabs {
   width: 0;
   border: 0 none;
@@ -220,6 +231,14 @@
 	position: absolute;
 	top: 4px;
 }
+.general_settings_item .upfront-settings-item-title:after {
+	content: "";
+	width: 100%;
+	display: block;
+	border: none;
+	position: absolute;
+}
+
 .upfront-region-modal-bg .upfront-settings-item-title,
 .upfront-global-social-settings .upfront-settings-item-title
 {
