@@ -49,6 +49,19 @@ jQuery(document).ready(function($) {
 			$(this).parent().find('ul.menu').show();
 			$(this).parent().find('ul.sub-menu').show();
 
+			if($(this).parent().data('burger_over') == 'pushes' && ($(this).parent().data('burger_alignment') == 'top' || $(this).parent().data('burger_alignment') == 'whole')) {
+		
+				$('div#page').css('margin-top', $(this).parent().find('ul.menu').height());
+		
+
+				//var topbar_height = $('div#upfront-ui-topbar').outerHeight();
+				var adminbar_height = $('div#wpadminbar').outerHeight();
+				$(this).parent().find('ul.menu').offset({top:adminbar_height, left:$('div').offset().left});
+				$(this).parent().find('ul.menu').width($('div#page').width());
+
+			}
+
+
 			var offset = $(this).parent().find('ul.menu').position();
 
 			//$(e.target).closest('.responsive_nav_toggler').css({position: 'fixed', left: offset.left, top: offset.top+(($('div#wpadminbar').length && $('div#wpadminbar').css('display') == 'block')?$('div#wpadminbar').outerHeight():0)});
@@ -59,12 +72,18 @@ jQuery(document).ready(function($) {
 
 			close_icon.css({position: 'fixed', left: offset.left+$(this).parent().find('ul.menu').width()-close_icon.width()-10, top: offset.top+(($('div#wpadminbar').length && $('div#wpadminbar').css('display') == 'block')?$('div#wpadminbar').outerHeight():0) + 10});
 
+			/*
+
 			if($(this).parent().data('burger_over') == 'pushes')
 				pushContent($(this).parent());
+			*/
+
+			
 
 			$(this).closest('.upfront-output-region-container').each(function() {
 				$(this).addClass('upfront-region-container-has-nav');
 			});
+
 		}
 		else {
 			$(this).parent().find('ul.menu').hide();
@@ -76,8 +95,15 @@ jQuery(document).ready(function($) {
 			$('i.burger_nav_close').remove();
 
 			$(this).closest('div.upfront-output-wrapper').removeClass('on_the_top');
+			
+			/*
 			if($(this).parent().data('burger_over') == 'pushes')
 				pullContent($(this).parent());
+			*/
+
+			if($(this).parent().data('burger_over') == 'pushes')
+				$('div#page').css('margin-top', '');
+
 
 			$(this).closest('.upfront-output-region-container').each(function() {
 				$(this).removeClass('upfront-region-container-has-nav');
@@ -193,6 +219,7 @@ jQuery(document).ready(function($) {
 	roll_responsive_nav(".upfront-output-unewnavigation > .upfront-navigation");
 	
 	$(window).smartresize(function() {
+		$('div#page').css('margin-top', '');
 		$('.responsive_nav_toggler').css({position: '', left: '', top: ''});
 		$('ul.menu').css('padding-top', '');
 		$('.burger_nav_close').remove();
