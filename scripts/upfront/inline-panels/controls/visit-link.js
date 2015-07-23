@@ -15,7 +15,9 @@ define([
 
 		clicked: function(event) {
 			this.constructor.__super__.clicked.call(this, event);
-			Upfront.Util.visitLink(this.url);
+			if(this.url !== "") {
+				Upfront.Util.visitLink(this.url);
+			}
 		},
 
 		setLink: function(url) {

@@ -101,7 +101,10 @@ define([
 			this.model = new LinkModel({
 				type: options.linkType || 'unlink',
 				url: options.linkUrl || '',
-				target: options.linkTarget || '_self'
+				target: options.linkTarget || '_self',
+				object: options.linkObject || 'custom',
+				object_id: options.linkObjectId || 0,
+
 			});
 			this.listenTo(this.model, 'change:url', function() {
 				me.trigger('change', me.model.toJSON());
@@ -171,7 +174,7 @@ define([
 				};
 
 			Upfront.Views.Editor.PostSelector.open(selectorOptions).done(function(post){
-				me.model.set({url: post.get('permalink')});
+				me.model.set({url: post.get('permalink'), object: post.get('post_type'), object_id: post.get('ID')});
 				me.render();
 			});
 		},

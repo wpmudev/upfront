@@ -227,6 +227,18 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'text_color' => __('Text Color', 'upfront'),
 				'text_background' => __('Text Background', 'upfront'),
 				'italic' => __('Italic', 'upfront'),
+                'formatting' => array(
+                    "heading_01" => __("Heading 01", 'upfront'),
+                    "heading_02" => __("Heading 02", 'upfront'),
+                    "heading_03" => __("Heading 03", 'upfront'),
+                    "heading_04" => __("Heading 04", 'upfront'),
+                    "heading_05" => __("Heading 05", 'upfront'),
+                    "heading_06" => __("Heading 06", 'upfront'),
+                    "paragraph" => __("Paragraph", 'upfront'),
+                    "blockquote" => __("Blockquote", 'upfront'),
+                    "preformatted" => __("Preformatted", 'upfront'),
+                    "standard_formatting" => __("Standard Formatting:", 'upfront'),
+                ),
 			),
 			'views' => array(
 				'unsaved_changes_nag' => __('You have unsaved changes you\'re about to lose by navigating off this page.', 'upfront'),
@@ -612,6 +624,18 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'label_bold' => __('Bold', 'upfront'),
 				'label_extra_bold' => __('Extra Bold', 'upfront'),
 				'label_ultra_bold' => __('Ultra Bold', 'upfront'),
+				'create' => array(
+					'change' => __('Click to change', 'upfront'),
+					'js_error' => __('JS error:', 'upfront'),
+					'ok' => __('OK', 'upfront'),
+				),
+				'template' => array(
+					'custom_map_code' => __('Custom Map Code', 'upfront'),
+					'paste_below' => __('Paste your generated code below.', 'upfront'),
+					'code_error' => __('There is an error in your JS code', 'upfront'),
+					'close' => __('close', 'upfront'),
+					'save' => __('Save', 'upfront'),
+				),
 			),
 		);
 		return !empty($key)

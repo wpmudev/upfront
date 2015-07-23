@@ -460,10 +460,12 @@ define([
 			props.gifImage = '';
 			props.gifLeft = 0;
 			props.gifTop = 0;
-
+			
+			/* Commented to allow caption below image to have background
 			if (props.caption_position === 'below_image') {
 				props.captionBackground = false;
 			}
+			*/
 
 			props.l10n = l10n.template;
 

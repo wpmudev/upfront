@@ -19,7 +19,7 @@ var CodeView = Upfront.Views.ObjectView.extend({
 		;
 		this.$el.empty().append("Loading...");
 		require([
-			'//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'
+			Upfront.Settings.ace_url
 		], function () {
 			if (!type) view = me.render_initial_view();
 			else view = me.render_code_view();

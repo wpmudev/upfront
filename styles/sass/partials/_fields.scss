@@ -678,6 +678,7 @@ input.upfront-field-text:hover,
 	border-radius: 6px;
 	position:absolute;
 	top: -5px;
+	cursor: pointer;
 }
 .upfront-field-slider-vertical .ui-slider-handle {
 	left: -5px;
@@ -762,4 +763,16 @@ div.upfront-date_picker td a{
 	padding: 5px 10px;
 	border-top: 1px solid #accae6;
 	text-align: center;
+}
+
+.upfront-field-wrap-checkboxes .checkbox-info:before {
+	display: inline-block;
+	content: "";
+	width: 15px;
+	height: 15px;
+	background-image: url('../img/uf-core-el-sprite.svg');
+	background-position: -483px -141px;
+	margin-left: 5px;
+	margin-right: 5px;
+	margin-bottom: -4px;
 }

@@ -562,7 +562,7 @@ var TemplateEditor = Backbone.View.extend({
 
 		this.prepareAce = deferred.promise();
 
-		require(['//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'], function(){
+		require([Upfront.Settings.ace_url], function(){
 			deferred.resolve();
 		});
 

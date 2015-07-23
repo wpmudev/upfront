@@ -16,7 +16,7 @@
 				streetViewControl: (data.controls && data.controls.indexOf("street_view") >= 0),
 				overviewMapControl: (data.controls && data.controls.indexOf("overview_map") >= 0),
 				scrollwheel: false,
-				styles: data.styles
+				styles: (data.use_custom_map_code ? JSON.parse(data.styles) || false : false)
 			},
 			map = new google.maps.Map($el.get(0), options);
 		$el.data('map', map);

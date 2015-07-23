@@ -312,9 +312,9 @@ define([
 					center = this.model.get_breakpoint_property_value('background_map_center', true),
 					zoom = this.model.get_breakpoint_property_value('background_map_zoom', true),
 					style = this.model.get_breakpoint_property_value('background_map_style', true),
-					styles = this.model.get_breakpoint_property_value('background_map_styles', true),
 					controls = this.model.get_breakpoint_property_value('background_map_controls', true),
 					show_markers = this.model.get_breakpoint_property_value('background_show_markers', true),
+					styles = (this.model.get_breakpoint_property_value("background_use_custom_map_code", true) ? JSON.parse(this.model.get_breakpoint_property_value("map_styles", true)) : false),
 					options = {
 						center: new google.maps.LatLng(center[0], center[1]),
 						zoom: parseInt(zoom),
@@ -331,9 +331,15 @@ define([
 				;
 				if ( !this.bg_map ){
 					this.bg_map = new google.maps.Map($type.get(0), options);
+					if (styles) {
+						this.bg_map.setOptions({styles: styles});
+					}
 				} else {
 					$type.show();
 					this.bg_map.setOptions(options);
+					if (styles) {
+						this.bg_map.setOptions({styles: styles});
+					}
 					setTimeout(function(){
 						me.bg_map.setCenter(options.center);
 					}, 500);
@@ -1114,6 +1120,27 @@ define([
 				this.checkUiOffset();
 			},
 
+			toggle_region_class: function (classname, add, container) {
+				var region_view = ( this.parent_module_view && this.parent_module_view.region_view ) ? this.parent_module_view.region_view : false,
+					container_view = ( region_view ) ? region_view.parent_view.get_container_view(region_view.model) : false,
+					container = ( true === container )
+				;
+				if ( !region_view ) return;
+				if ( container ) {
+					container_view.$el.toggleClass(classname, add);
+				}
+				else {
+					region_view.$el.toggleClass(classname, add);
+				}
+			},
+
+			add_region_class: function (classname, container) {
+				this.toggle_region_class(classname, true, container);
+			},
+			
+			remove_region_class: function (classname, container) {
+				this.toggle_region_class(classname, false, container);
+			},
 
 			/* Getting dimension and resize element */
 			get_element_size: function (real) {
@@ -3184,15 +3211,19 @@ define([
 				this.$el.data('type', this.model.get("type"));
 				this.$el.find('.upfront-region-title').html(this.model.get("title"));
 				if ( !breakpoint || breakpoint.default ){
-					if ( col && col != this.col )
+					if ( col && col != this.col ) {
 						this.region_resize(col);
+					}
 				}
-				if ( height > 0 )
+				if ( height > 0 ) {
 					this.$el.css('min-height', height + 'px');
-				if ( expand_lock )
+				}
+				if ( expand_lock ) {
 					this.$el.addClass('upfront-region-expand-lock');
-				else
+				}
+				else {
 					this.$el.removeClass('upfront-region-expand-lock');
+				}
 				if ( previous_name != name ){
 					this.$el.removeClass('upfront-region-' + previous_name.toLowerCase().replace(/\s/g, "-"));
 					this.$el.addClass('upfront-region-' + name);

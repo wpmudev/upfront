@@ -3075,12 +3075,12 @@ define([
 						}
 						//Check collection total elements
 						var collectionElements = collection.pagination.totalElements;
-						
+
 						//Compare total items, if same return cached panel
 						if(cachedElements == collectionElements) {
 							return me.render_panel(me.views[panel]);
 						}
-						
+
 						collection.on('reset sort', me.render_panel, me);
 						views = {
 							view: new ContentEditorPosts({collection: collection, $popup: me.$popup}),
@@ -3097,12 +3097,12 @@ define([
 						}
 						//Check collection total elements
 						var collectionElements = collection.pagination.totalElements;
-						
+
 						//Compare total items, if same return cached panel
 						if(cachedElements == collectionElements) {
 							return me.render_panel(me.views[panel]);
 						}
-						
+
 						collection.on('reset sort', me.render_panel, me);
 						views = {
 							view: new ContentEditorPages({collection: collection, $popup: me.$popup}),
@@ -3820,7 +3820,7 @@ define([
 			setTimeout(function(){
 				me.options.show(me.get_value(), me.$el);
 			}, 100);
-			
+
 		},
 		get_name: function () {
 			return this.property ? this.property.get('name') : this.name;
@@ -4526,7 +4526,7 @@ var Field_ToggleableText = Field_Text.extend({
 			_.delay(function() { // Delay because opening animation causes wrong outerHeight results
 				var in_sidebar = me.$el.parents('#sidebar-ui').length,
 					in_settings = me.$el.parents('#element-settings-sidebar').length;
-								
+
 				// Apply if select field is in sidebar or settings sidebar
 				if(in_sidebar == 1 || in_settings == 1) {
 					var select_dropdown = me.$el.find('.upfront-field-select-options'),
@@ -4539,9 +4539,9 @@ var Field_ToggleableText = Field_Text.extend({
 					select_dropdown.css('display', 'block');
 				}
 			}, 10);
-			
+
 			$('.sidebar-panel-content, .upfront-settings_panel_scroll').on('scroll', this, this.on_scroll);
-			
+
 			this.trigger('focus');
 		},
 		on_scroll: function(e) {
@@ -4687,7 +4687,7 @@ var Field_ToggleableText = Field_Text.extend({
 			_.delay(function() { // Delay because opening animation causes wrong outerHeight results
 				var in_sidebar = me.$el.parents('#sidebar-ui').length,
 					in_settings = me.$el.parents('#element-settings-sidebar').length;
-								
+
 				// Apply if select field is in sidebar or settings sidebar
 				if(in_sidebar == 1 || in_settings == 1) {
 					var select_dropdown = me.$el.find('.chosen-drop'),
@@ -4700,7 +4700,7 @@ var Field_ToggleableText = Field_Text.extend({
 					select_dropdown.css('display', 'block');
 				}
 			}, 20);
-			
+
 			//Close dropdown on parent scroll
 			$('.sidebar-panel-content, .upfront-settings_panel_scroll').on('scroll', this, this.closeChosen);
 			me.$el.find('select').on("chosen:hiding_dropdown", this, this.closeChosen);
@@ -4725,24 +4725,24 @@ var Field_ToggleableText = Field_Text.extend({
 		get_value_html: function (value, index) {
 			var selected = '';
 			var saved_value = this.get_saved_value();
-			if (value.value === saved_value) { 
-				selected = ' selected="selected"'; 
+			if (value.value === saved_value) {
+				selected = ' selected="selected"';
 			}
 			return ['<option value="', value.value, '"', selected, ' style="font-family: ', value.value ,'">', value.label, '</option>'].join('');
 		},
 		render: function() {
 			Field_Chosen_Select.prototype.render.call(this);
-			
+
 			var me = this;
 			$('.upfront-chosen-select-typeface', this.$el).chosen({
 				width: this.options.select_width
 			});
-			
+
 			//Wait for Chosen to be initialized
 			setTimeout(function(){
 				me.set_option_font(me.get_saved_value());
 			}, 50);
-			
+
 		},
 		on_change: function(event) {
 			this.trigger('changed', this.get_value());
@@ -4756,7 +4756,7 @@ var Field_ToggleableText = Field_Text.extend({
 			Field_Chosen_Select.prototype.openOptions.call(this);
 		}
 	});
-	
+
 	var Field_Typeface_Style_Chosen_Select = Field_Chosen_Select.extend({
 		events: {
 			'change select': 'on_change',
@@ -4773,52 +4773,52 @@ var Field_ToggleableText = Field_Text.extend({
 			var parsed_variant = Upfront.Views.Font_Model.parse_variant(value.value);
 			var saved_value = this.get_saved_value();
 			if (value.value === saved_value) {
-				selected = ' selected="selected"'; 
+				selected = ' selected="selected"';
 			}
 			var label =  this.map_labels(parsed_variant.weight, parsed_variant.style);
 			return ['<option value="', value.value, '"', selected, ' style="font-family: ', font_family ,'; font-weight: ', parsed_variant.weight ,'; font-style: ', parsed_variant.style ,' ">', label, '</option>'].join('');
 		},
 		render: function() {
 			Field_Chosen_Select.prototype.render.call(this);
-			
+
 			var me = this;
 			$('.upfront-chosen-select-style', this.$el).chosen({
 				width: this.options.select_width,
 				disable_search: true
 			});
-			
+
 			//Wait for Chosen to be initialized
 			setTimeout(function(){
 				me.set_option_font(me.get_saved_value());
 			}, 50);
-			
+
 		},
 		map_labels: function(weight, style) {
 			//Map font weight to labels
 			var label, labels = {
-				'100': l10n.label_thin, 
-				'200': l10n.label_extra_light, 
-				'300': l10n.label_light, 
-				'400': l10n.label_regular, 
-				'500': l10n.label_medium, 
-				'600': l10n.label_semi_bold, 
-				'700': l10n.label_bold, 
-				'800':  l10n.label_extra_bold, 
+				'100': l10n.label_thin,
+				'200': l10n.label_extra_light,
+				'300': l10n.label_light,
+				'400': l10n.label_regular,
+				'500': l10n.label_medium,
+				'600': l10n.label_semi_bold,
+				'700': l10n.label_bold,
+				'800':  l10n.label_extra_bold,
 				'900': l10n.label_ultra_bold
 			}
-			
+
 			//Check if weight is number or string
 			if (!_.isUndefined( weight ) && weight.match(/^(\d+)/)) {
 				label = labels[weight];
 			} else {
 				label = weight;
 			}
-			
+
 			//Display style only if style is Italic
 			if(style == "italic") {
 				label += ' ' + style;
 			}
-			
+
 			return label;
 		},
 		on_change: function(event) {
@@ -4835,7 +4835,7 @@ var Field_ToggleableText = Field_Text.extend({
 			Field_Chosen_Select.prototype.openOptions.call(this);
 		}
 	});
-	
+
 	var Field_Multiple_Chosen_Select = Field_Chosen_Select.extend({
 		events: {
 			'change select': 'on_change'
@@ -4855,18 +4855,18 @@ var Field_ToggleableText = Field_Text.extend({
 		},
 		render: function() {
 			Field_Chosen_Select.prototype.render.call(this);
-			
+
 			var me = this;
 			$('.upfront-chosen-select-multiple', this.$el).chosen({
 				width: this.options.select_width,
 			});
-		
+
 		},
 		on_change: function(event) {
 			this.trigger('changed', this.get_value());
 		},
 	});
-	
+
 	var Field_Multiple_Input = Field_Multiple.extend({
 		selected_state: 'checked',
 		render: function () {
@@ -5718,7 +5718,7 @@ var _Settings_CSS = SettingsItem.extend({
 		var value = this.fields._wrapped[0].get_value(),
 			default_value = this.fields._wrapped[0].default_value
 		;
-		
+
 		Upfront.Application.cssEditor.init({
 			model: this.model,
 			stylename: value || default_value // Let's make sure we have *something* to work with
@@ -6060,7 +6060,7 @@ var ThemeFontsCollection = Backbone.Collection.extend({
 		variants.unshift('inherit');
 		return variants;
 	},
-	
+
 	get_variants_for_select: function(font_family) {
 		var variants;
 		var typefaces_list = [];
@@ -6072,7 +6072,7 @@ var ThemeFontsCollection = Backbone.Collection.extend({
 				});
 			}
 		});
-		
+
 		_.each(Upfront.mainData.additionalFonts, function(font) {
 			if (font_family === font.family) {
 				_.each(font.variants, function(font_style) {
@@ -6773,7 +6773,7 @@ var CSSEditor = Backbone.View.extend({
 
 		if ( !this.no_render ) {
 			this.prepareAce = deferred.promise();
-			require(['//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'], function() {
+			require([Upfront.Settings.ace_url], function() {
 				deferred.resolve();
 			});
 
@@ -6929,6 +6929,7 @@ var CSSEditor = Backbone.View.extend({
 		var me = this,
 			editor = ace.edit(this.$('.upfront-css-ace')[0]),
 			session = editor.getSession(),
+			scrollerDisplayed = false,
 			scope,
 			styles
 		;
@@ -6945,6 +6946,20 @@ var CSSEditor = Backbone.View.extend({
 				me.updateStyles(editor.getValue());
 			},800);
 			me.trigger('change', editor);
+
+			if(typeof me.editor !== "undefined") {
+				var aceOuterWidth = $(me.editor.container).get(0).scrollWidth;
+				var aceInnerWidth = $(me.editor.container).find('.ace_content').innerWidth();
+
+				if(aceOuterWidth < aceInnerWidth + 40) {
+					if(!scrollerDisplayed) {
+						me.startResizable();
+					}
+					scrollerDisplayed = true;
+				} else {
+					scrollerDisplayed = false;
+				}
+			}
 		});
 
 		styles = Upfront.Util.colors.convert_string_color_to_ufc(this.get_style_element().html());
@@ -6960,6 +6975,12 @@ var CSSEditor = Backbone.View.extend({
 
 		editor.focus();
 		this.editor = editor;
+
+		if(me.timer) clearTimeout(me.timer);
+		me.timer = setTimeout(function(){
+			me.startResizable();
+		},300);
+
 	},
 	prepareSpectrum: function(){
 		var me = this,
@@ -7460,7 +7481,7 @@ var GeneralCSSEditor = Backbone.View.extend({
 		this.global = ( options.global === true );
 
 		this.prepareAce = deferred.promise();
-		require(['//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'], function(){
+		require([Upfront.Settings.ace_url], function(){
 			deferred.resolve();
 		});
 
@@ -9506,6 +9527,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				me = this,
 				modal = new Modal({ to: this.panel_view.panels_view.$el, button: true, width: 422 }),
 				disable_global = ( ( to == 'left' || to == 'right' ) && me.model.get('scope') == 'global' );
+				var parentContainer = me.$el.parents('.upfront-region-center');
+				parentContainer.addClass('upfront-region-editing-modal');
+				parentContainer.next().find('.upfront-icon-control-region-resize').hide();
 				fields = {
 					from: new Field_Radios({
 						name: 'from',
@@ -9623,6 +9647,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				}
 			})
 			.always(function(modal_view){
+				parentContainer.removeClass('upfront-region-editing-modal');
+				parentContainer.next().find('.upfront-icon-control-region-resize').show();
 				modal_view.remove();
 			});
 
