@@ -335,14 +335,22 @@ var UcontactSettings = ElementSettings.extend({
 			model:  this.model,
 			settings: [
 				new SettingsItem({
-					title: 'General setup',
+					title: l10n.contact_details,
 					model: this.model,
+					className: 'general_settings_item',
 					fields: [
 						new Fields.Email({
 							model: this.model,
 							property: 'form_email_to',
 							label: l10n.general.send_to
 						}),
+					]
+				}),	
+				new SettingsItem({
+					title: l10n.fields.label,
+					model: this.model,
+					className: 'general_settings_item multiple_radio_no_padding',
+					fields: [
 						new OptionalField({
 							model: this.model,
 							property: 'show_subject',
@@ -353,21 +361,6 @@ var UcontactSettings = ElementSettings.extend({
 									value: 'true'
 								}
 							],
-							/*onChange: function(){
-								var check = this.$('input'),
-									related = this.panel.$('input[name=' + this.options.relatedField + ']').closest('.upfront-field-wrap'),
-									defaultSubject = this.panel.$('input[name=form_default_subject]').closest('.upfront-field-wrap')
-								;
-								if(check.is(':checked')){
-									related.show();
-									defaultSubject.hide();
-								}
-								else{
-									related.hide();
-									defaultSubject.show();
-								}
-								console.log(related);
-							}*/
 						}),
 						new OptionalField({
 							model: this.model,
@@ -380,62 +373,11 @@ var UcontactSettings = ElementSettings.extend({
 								}
 							],
 						}),
-						/*new Fields.Text({
-							model: this.model,
-							property: 'form_subject_label',
-							label: l10n.fields.subject
-						}),
-						new Fields.Text({
-							model: this.model,
-							property: 'form_button_text',
-							label: l10n.general.button_text
-						}),
-						new OptionalField({
-							model: this.model,
-							property: 'form_add_title',
-							relatedField: 'form_title',
-							values: [
-								{
-									label: l10n.general.use_title,
-									value: 'true'
-								}
-							]
-						}),*/
-						new Fields.Text({
-							model: this.model,
-							property: 'form_title',
-							label: l10n.general.form_title
-						})
-					]
-				}),
-				new SettingsItem({
-					title: l10n.validation.label,
-					model: this.model,
-					fields: [
-						new Fields.Radios({
-							className: 'inline-radios plaintext-settings',
-							model: this.model,
-							property: 'form_validate_when',
-							values: [
-								{
-									label: l10n.validation.on_field,
-									value: 'field'
-								},
-								{
-									label: l10n.validation.on_submit,
-									value: 'submit'
-								}
-							]
-						})
-					]
-				}),
-				new SettingsItem({
-					title: 'Field label position',
-					fields: [
-						new Fields.Radios({
+						new Fields.Select({
 							className: 'contact_label_position',
 							model: this.model,
 							layout: "vertical",
+							label: l10n.fields.label_localtion,
 							change : function(e){
 								this.model.set_property("form_label_position", this.get_value());
 							},
@@ -459,7 +401,29 @@ var UcontactSettings = ElementSettings.extend({
 							]
 						})
 					]
-				})
+				}),
+				new SettingsItem({
+					title: l10n.validation.label,
+					className: 'general_settings_item',
+					model: this.model,
+					fields: [
+						new Fields.Radios({
+							className: 'inline-radios plaintext-settings',
+							model: this.model,
+							property: 'form_validate_when',
+							values: [
+								{
+									label: l10n.validation.on_field,
+									value: 'field'
+								},
+								{
+									label: l10n.validation.on_submit,
+									value: 'submit'
+								}
+							]
+						}),
+					]
+				}),
 			]
 		});
 	},

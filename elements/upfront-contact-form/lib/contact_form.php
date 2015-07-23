@@ -95,6 +95,10 @@ class Upfront_UcontactView extends Upfront_Object {
 
 		upfront_add_element_style('ucontact-style', array('css/ucontact.css', dirname(__FILE__)));
 		upfront_add_element_script('ucontact-front', array('js/ucontact-front.js', dirname(__FILE__)));
+		
+		if (is_user_logged_in()) {
+			upfront_add_element_style('ucontact-style-editor', array('css/ucontact-editor.css', dirname(__FILE__)));
+		}
 	}
 
 	public static function ajax_send () {
@@ -335,6 +339,7 @@ class Upfront_UcontactView extends Upfront_Object {
 		$l10n = array(
 			'element_name' => __('Contact', 'upfront'),
 			'contact_form' => __('Contact form', 'upfront'),
+			'contact_details' => __('Contact Details', 'upfront'),
 			'name_label' => __('Name:', 'upfront'),
 			'email_label' => __('Email:', 'upfront'),
 			'subject_label' => __('Subject:', 'upfront'),
@@ -367,15 +372,15 @@ class Upfront_UcontactView extends Upfront_Object {
 			),
 			'general' => array(
 				'label' => __('General', 'upfront'),
-				'send_to' => __('Send results to:', 'upfront'),
+				'send_to' => __('Send form content to:', 'upfront'),
 				'button_text' => __('Contact form submit button text:', 'upfront'),
 				'use_title' => __('Use form title', 'upfront'),
 				'form_title' => __('Contact form title:', 'upfront'),
 			),
 			'validation' => array(
 				'label' => __('Form validation', 'upfront'),
-				'on_field' => __('Inline validation', 'upfront'),
-				'on_submit' => __('On button click', 'upfront'),
+				'on_field' => __('Inline', 'upfront'),
+				'on_submit' => __('On Submit', 'upfront'),
 			),
 			'fields' => array(
 				'label' => __('Form Fields', 'upfront'),
@@ -387,6 +392,7 @@ class Upfront_UcontactView extends Upfront_Object {
 				'show_captcha' => __('Show CAPTCHA field', 'upfront'),
 				'subject' => __('Subject Field text:', 'upfront'),
 				'default_subject' => __('Default subject:', 'upfront'),
+				'label_localtion' => __('Field Label Location:', 'upfront')
 			),
 			'apr' => array(
 				'label' => __('Appearance', 'upfront'),
