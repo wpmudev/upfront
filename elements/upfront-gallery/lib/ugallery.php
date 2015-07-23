@@ -244,6 +244,10 @@ class Upfront_UgalleryView extends Upfront_Object {
 		//wp_enqueue_style('ugallery-style', upfront_element_url('css/ugallery.css', dirname(__FILE__)));
 		upfront_add_element_style('upfront_gallery', array('css/ugallery.css', dirname(__FILE__)));
 		
+		if (is_user_logged_in()) {
+			upfront_add_element_style('ugallery-style-editor', array('css/ugallery-editor.css', dirname(__FILE__)));
+		}
+		
 		//Lightbox
 		//wp_enqueue_style('magnific');
 		upfront_add_element_style('magnific', array('/scripts/magnific-popup/magnific-popup.css', false));
@@ -323,11 +327,14 @@ class Upfront_UgalleryView extends Upfront_Object {
 				'thumb_captions_height' => __('Height of captions (in px).', 'upfront'),
 			),
 			'thumb' => array(
-				'ratio' => __('Thumbnail Ratio', 'upfront'),
+				'ratio' => __('Thumbnails Shape Ratio:', 'upfront'),
 				'theme' => __('Theme', 'upfront'),
-				'size' => __('Thumbnail Size', 'upfront'),
-				'settings' => __('Thumbnails Settings', 'upfront'),
+				'size' => __('Thumbnails Size', 'upfront'),
+				'thumb_settings' => __('Thumbnails Settings', 'upfront'),
 				'padding' => __('Thumbnails Padding', 'upfront'),
+				'spacing' => __('Thumbnails Spacing', 'upfront'),
+				'side_spacing' => __('Side Spacing:', 'upfront'),
+				'bottom_spacing' => __('Bottom Spacing:', 'upfront')
 			),
 			'template' => array(
 				'add_more' => __('Add more', 'upfront'),
