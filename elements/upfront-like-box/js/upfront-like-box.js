@@ -253,18 +253,17 @@
 			this.options = opts;
 			this.has_tabs = false;
 			this.panel = new ElementSettingsPanel({
-
 					model: this.model,
-					label: l10n.opts.style_label,
-					title: l10n.opts.style_title,
 					settings: [
 						new Upfront.Views.Editor.Settings.Item({
-							className: 'upfront-social-services-item',
+							className: 'upfront-social-services-item general_settings_item',
 							model: this.model,
-							title: l10n.opts.page_url,
+							title: l10n.facebook_account,
+							label: l10n.opts.page_url,
 							fields: [
 								new Field_Text({
 									model: this.model,
+									className: 'facebook-url',
 									property: 'facebook_url',
 									label: l10n.opts.url_sample,
 									compact: true
