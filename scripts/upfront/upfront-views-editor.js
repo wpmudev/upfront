@@ -4693,7 +4693,7 @@ var Field_ToggleableText = Field_Text.extend({
 					var select_dropdown = me.$el.find('.chosen-drop'),
 						select = select_dropdown.parent(),
 						dropDownTop = (select.offset().top - $('#element-settings-sidebar').offset().top) + select.height();
-
+					
 					select_dropdown.css("width", select.width());
 					select_dropdown.css('top', dropDownTop + "px");
 					select_dropdown.css('left', select.offset().left + "px");
@@ -4838,7 +4838,8 @@ var Field_ToggleableText = Field_Text.extend({
 
 	var Field_Multiple_Chosen_Select = Field_Chosen_Select.extend({
 		events: {
-			'change select': 'on_change'
+			'change select': 'on_change',
+			'click .chosen-container-multi': 'openOptions'
 		},
 		multiple: true,
 		get_field_html: function() {
@@ -4864,7 +4865,11 @@ var Field_ToggleableText = Field_Text.extend({
 		},
 		on_change: function(event) {
 			this.trigger('changed', this.get_value());
+			this.$el.find('.chosen-drop').css('display', 'none');
 		},
+		openOptions: function(e) {
+			Field_Chosen_Select.prototype.openOptions.call(this);
+		}
 	});
 
 	var Field_Multiple_Input = Field_Multiple.extend({
