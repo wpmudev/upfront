@@ -236,16 +236,16 @@ input.upfront-like-box_url:-ms-input-placeholder {
 }
 
 .upfront-add-another input {
-	border: 1px solid #a1c4e5;
-	background: #e5f3ff;
+	background-image: linear-gradient(-179deg, #fafdff 0%, #f3faff 100%);
+    border: 1px solid #a2bfda;
+    border-radius: 5px;
 	display: inline-block;
 	padding: 3px 8px;
-	border-radius: 4px;
 	font-size: 13px;
 }
 
 .upfront-add-another input:hover {
-	background: #d4e9fb;
+	background-image: linear-gradient(-179deg, #fafdff 0%, #f3faff 100%);
 	border: 1px solid #a1c4e5;
 }
 
@@ -254,3 +254,21 @@ input.upfront-like-box_url:-ms-input-placeholder {
 }
 
 .uyoutube-gallery-item { margin-left:0 !important; }
+
+.thumbnails-width {
+	clear: both;
+	margin-top: 10px;
+	width: 225px;
+}
+
+.thumbnails-width .upfront-field-slider-value {
+	font-size: 11px;
+}
+
+.multiple_sources label {
+	margin-bottom: 3px;
+}
+
+.multiple_video_section .upfront-settings-item {
+	padding-top: 10px;
+}

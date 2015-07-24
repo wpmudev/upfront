@@ -1,9 +1,10 @@
 (function ($) {
-
 define([
+	'scripts/upfront/element-settings/settings',
+	'scripts/upfront/element-settings/panel',
 	'text!elements/upfront-youtube/tpl/youtube.html',
 	'text!elements/upfront-youtube/tpl/clonevideo.html'
-], function(youtubeTpl, cloneTpl) {
+], function(ElementSettings, ElementSettingsPanel, youtubeTpl, cloneTpl) {
 		
 var l10n = Upfront.Settings.l10n.youtube_element;		
 		
@@ -184,7 +185,7 @@ var Disablable_Field_Number = Upfront.Views.Editor.Field.Text.extend({
 	}
 });
 
-var YoutubeSettings = Upfront.Views.Editor.Settings.Settings.extend({
+var YoutubeSettings = ElementSettings.extend({
 	events: {
 		'change .multiple_sources': 'multipleVideos',
 	},
@@ -264,7 +265,7 @@ var YoutubeSettings = Upfront.Views.Editor.Settings.Settings.extend({
 	}
 });
 
-var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
+var BehaviorPanel = ElementSettingsPanel.extend({
 	className: 'uyoutube-settings',
 	tabbed: false,
 	initialize: function (opts) {
@@ -281,9 +282,40 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 
 		this.settings = _([
 		new SettingsItem({
-			className: 'optional-field align-center',
+			className: 'optional-field align-center general_settings_item',
 			title: l10n.apperance_title,
 			fields: [
+				new Fields.Radios({
+					model: this.model,
+					property: 'display_style',
+					layout: "horizontal",
+					label: l10n.display_style,
+					className: 'field-display_style upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios',
+					values: [
+						{
+							label: l10n.gallery_label,
+							value: 'gallery',
+						},
+						{
+							label: l10n.list_label,
+							value: 'list',
+						}
+					]
+				}),			
+				
+				new Fields.Checkboxes({
+					model: this.model,
+					property: 'first_to_thumbnails',
+					className: 'first-video-to-thumbnails',
+					default_value: ['1'],
+					values: [
+						{ label: l10n.first_to_thumbnails, value: '1' },
+					],
+					change: function(value) {
+						this.model.set_property('first_to_thumbnails', value);
+					}
+				}),
+				
 				new Fields.Checkboxes({
 					model: this.model,
 					property: 'multiple_show_title',
@@ -303,49 +335,15 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 					step: 1,
 					default_value: 100
 				}),
-				]
-			}),
-			new SettingsItem({
-				className: 'optional-field align-center multiple_settings',
-				fields: [	 
-				new Fields.Radios({
-					model: this.model,
-					property: 'display_style',
-					layout: "horizontal",
-					label: l10n.display_style,
-					className: 'field-display_style upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios',
-					values: [
-						{
-							label: l10n.gallery_label,
-							value: 'gallery',
-						},
-						{
-							label: l10n.list_label,
-							value: 'list',
-						}
-					]
-				}),
-				
-				new Fields.Checkboxes({
-					model: this.model,
-					property: 'first_to_thumbnails',
-					default_value: ['1'],
-					values: [
-						{ label: l10n.first_to_thumbnails, value: '1' },
-					],
-					change: function(value) {
-						this.model.set_property('first_to_thumbnails', value);
-					}
-				}),
 				
 				new Fields.Slider({
 					model: this.model,
 					property: 'thumbWidth',
+					className: 'thumbnails-width',
 					min: 100,
 					max: 250,
 					step: 5,
 					label: l10n.thumbnail_size,
-					info: l10n.thumbnail_size_info,
 					valueTextFilter: function(value){
 						return '(' + value + 'px x ' + me.model.get_property_value_by_name('thumbHeight') + 'px)';
 					}
@@ -359,7 +357,7 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 		new SettingsItem({
 			model: this.model,
 			title: l10n.videos_title,
-			className: 'multiple_video_section',
+			className: 'multiple_video_section general_settings_item',
 			fields: [
 				new Fields.Text({
 					model: this.model,
@@ -402,17 +400,13 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	},
 
 	get_title: function () {
-		return false;
+		return l10n.settings;
 	},
 
 	render: function() {
 		var me = this;
-		// Render as usual
-		this.constructor.__super__.render.apply(this, arguments);
-		// Remove panel tabs
-		this.$el.find('.upfront-settings_label').remove();
-		this.$el.find('.upfront-settings_panel').css('left', 0);
-		this.toggleDescriptionEnabled();
+		ElementSettingsPanel.prototype.render.call(this);
+
 		this.listMultipleVideos();
 		setTimeout(function(){
 			me.toggleMultipleSettings();
@@ -429,9 +423,9 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 		//If multiple videos added show multiple videos settings
 		var videosCount = $('[name^="multiple_source_"]').length;
 		if(videosCount > 1) {
-			$('.multiple_settings').show();
+			$('.field-display_style, .first-video-to-thumbnails, .thumbnails-width').show();
 		} else {
-			$('.multiple_settings').hide();
+			$('.field-display_style, .first-video-to-thumbnails, .thumbnails-width').hide();
 		}
 	},
 
