@@ -921,7 +921,9 @@ i.upfront-field-icon-burger-trigger {
 	margin: 0 0 4px;
 }
 .upfront-editable_entity:hover > .upfront-entity_meta .upfront-icon-button,
-.upfront-editable_entity:hover > .upfront-objects_container .upfront-entity_meta .upfront-entity-settings_trigger{
+.upfront-editable_entity:hover > .upfront-objects_container .upfront-entity_meta .upfront-entity-settings_trigger,
+.upfront-module-active > .upfront-entity_meta .upfront-icon-button,
+.upfront-active_entity > .upfront-editable_entity > .upfront-entity_meta .upfront-entity-settings_trigger {
     opacity: 1;
 	visibility: visible;
 }

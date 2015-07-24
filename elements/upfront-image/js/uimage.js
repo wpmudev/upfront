@@ -23,6 +23,9 @@ define([
 		imageTpl: Upfront.Util.template(imageTpl),
 		sizehintTpl: _.template($(editorTpl).find('#sizehint-tpl').html()),
 		cropTimeAfterResize: 1,// making this longer makes image resize not save
+		
+		// Disable size hint as image element already has it's own
+		display_size_hint: false,
 
 		initialize: function() {
 			var me = this;

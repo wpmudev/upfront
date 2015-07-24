@@ -66,6 +66,7 @@
   height: 12px;
   cursor: ns-resize;
   z-index: 10;
+  display: none !important;
 }
 .upfront-editable_entity > .upfront-resize-handle-s:before {
   content: "";
@@ -79,6 +80,11 @@
   background: #fff;
   border-radius:3px;
   box-shadow: 0px 0px 3px 0px rgba(36,57,77,0.2);
+}
+.upfront-editable_entity:hover > .upfront-resize-handle-s,
+.upfront-editable_entity.ui-resizable-resizing > .upfront-resize-handle-s,
+.upfront-module-active > .upfront-resize-handle-s {
+  display: block !important;
 }
 .upfront-module-spacer > .upfront-resize-handle-s {
   display: none !important;

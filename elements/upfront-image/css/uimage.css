@@ -599,6 +599,7 @@ a.image-edit-button.deactivated:hover {
 	position: absolute;
 	bottom: 0;
 	z-index: 2001;
+	display: none;
 }
 
 .uimage-controls .upfront-inline-panel {
@@ -627,7 +628,7 @@ a.image-edit-button.deactivated:hover {
 	display: none;
 }
 
-.ui-resizable-autohide .upfront-active_entity .uimage-controls .upfront-inline-panel-top,
+.upfront-active_entity .uimage-controls .upfront-inline-panel-top,
 .uimage-controls .upfront-inline-panel-top {
 	-webkit-transform: translate(0,0);
 	display: block;
@@ -637,11 +638,9 @@ a.image-edit-button.deactivated:hover {
 	-webkit-transform: translate(0,0);
 }
 
-.ui-resizable-autohide .uimage-controls {
-	display: none;
-}
-
-.ui-resizable-autohide .uimage-controls.upfront-control-visible {
+.upfront-module:hover .uimage-controls,
+.upfront-module-active .uimage-controls,
+.uimage-controls.upfront-control-visible {
 	display: block;
 }
 
@@ -979,8 +978,12 @@ div.uimage-controls i.upfront-icon:before {
     top: 0;
 }
 
-.ui-resizable-autohide .uimage-resize-hint {
+.uimage-resize-hint {
 	display: none;
+}
+.upfront-module:hover .uimage-resize-hint,
+.upfront-module-active .uimage-resize-hint {
+	display: block;
 }
 
 .upfront-ui .uimage-sizehint-small {

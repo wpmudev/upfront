@@ -563,21 +563,21 @@ define([
 					currentEntity = Upfront.data.currentEntity
 				;
 				if (this.activate_condition && !this.activate_condition()) return false;
-				if(currentEntity && currentEntity != this){
+				if (currentEntity && currentEntity == this) return false;
+				if (!(this instanceof ObjectView)) return;
+				if (currentEntity && currentEntity != this) {
 					//If the current entity is my child we are ok
 					if(Upfront.data.currentEntity.$el.closest(me.$el).length)
 						return;
 					Upfront.data.currentEntity.trigger('deactivated');
-					Upfront.data.currentEntity.$el.removeClass('upfront-active_entity');
 				}
 
-				if(this instanceof ObjectView)
-					Upfront.data.currentEntity = this;
+				Upfront.data.currentEntity = this;
+				this.trigger("upfront:entity:activate", this);
 				this.trigger("activated", this);
+				this.listenToOnce(this, 'deactivated', this.deactivate);
 
-				//$(".upfront-active_entity").removeClass("upfront-active_entity");
 				this.$el.addClass("upfront-active_entity");
-				//return false;
 			},
 			// Stub handlers
 			on_meta_click: function () {},
@@ -989,6 +989,7 @@ define([
 
 		ObjectView = _Upfront_EditableContentEntity.extend({
 			className: "upfront-object-view",
+			display_size_hint: true,
 			events: {
 				"click .upfront-object > .upfront-entity_meta > a.upfront-entity-settings_trigger": "on_settings_click",
                 "click .upfront-object > .upfront-entity_meta > a.upfront-entity-delete_trigger": "on_delete_click",
@@ -1028,6 +1029,9 @@ define([
 					column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
 					height, model, template
 				;
+				// Force add upfront-object-view class as element object can override the view and left without this class
+				this.$el.addClass('upfront-object-view');
+
 				// Id the element by anchor, if anchor is defined
 				var the_anchor = this.model.get_property_value_by_name("anchor");
 				if (the_anchor && the_anchor.length)
@@ -1118,8 +1122,13 @@ define([
 				Upfront.Events.trigger("entity:object:before_render", this, this.model);
 				// Listen to module resize and drop event
 				if ( this.parent_module_view ){
+					this.stopListening((this._previous_parent_module_view || this.parent_module_view), 'entity:resize_start');
+					this.listenTo(this.parent_module_view, 'entity:resize_start', this.on_element_resize_start);
+					this.stopListening((this._previous_parent_module_view || this.parent_module_view), 'entity:resizing');
+					this.listenTo(this.parent_module_view, 'entity:resizing', this.on_element_resizing);
 					this.stopListening((this._previous_parent_module_view || this.parent_module_view), 'entity:resize');
 					this.listenTo(this.parent_module_view, 'entity:resize', this.on_element_resize);
+					
 					this.stopListening((this._previous_parent_module_view || this.parent_module_view), 'entity:drop');
 					this.listenTo(this.parent_module_view, 'entity:drop', this.on_element_drop);
 				}
@@ -1142,6 +1151,10 @@ define([
 				//setTimeout(function() {
 				//	me.checkUiOffset();
 				//}, 300);
+				
+				if ( this.display_size_hint ) {
+					this.create_size_hint(this.$el);
+				}
 
 				// Put this here because initialize gets overriden by child classes
 				this.ensure_breakpoint_change_is_listened();
@@ -1164,6 +1177,9 @@ define([
 				else {
 					$object.css('min-height', (row*grid.baseline) + 'px');
 					$object.removeData('breakpoint_row');
+				}
+				if ( this.display_size_hint ) {
+					this.update_size_hint();
 				}
 			},
 			ensure_breakpoint_change_is_listened: function() {
@@ -1213,14 +1229,22 @@ define([
 			},
 			on_element_edit_start: function (edit, post) {
 				if ( ( edit == 'text' || edit == 'write' ) && this.parent_module_view ){
-					this.parent_module_view.$el.find('.upfront-module').addClass('upfront-module-editing')
+					this.parent_module_view.$el.find('>.upfront-module').addClass('upfront-module-editing')
 					this.parent_module_view.disable_interaction(false);
 				}
 			},
 			on_element_edit_stop: function (edit, post) {
 				if (this.parent_module_view && this.parent_module_view.enable_interaction){
-					this.parent_module_view.$el.find('.upfront-module').removeClass('upfront-module-editing')
+					this.parent_module_view.$el.find('>.upfront-module').removeClass('upfront-module-editing')
 					this.parent_module_view.enable_interaction(false);
+				}
+			},
+			on_element_resize_start: function (attr) {
+
+			},
+			on_element_resizing: function (attr) {
+				if ( this.display_size_hint ) {
+					this.update_size_hint(attr.width, attr.height);
 				}
 			},
 			on_element_resize: function (attr) {
@@ -1243,6 +1267,17 @@ define([
 				}
 				this.update_position();
 				this.checkUiOffset();
+			},
+			
+			activate: function () {
+				_Upfront_EditableEntity.prototype.activate.call(this);
+				if ( !this.parent_module_view ) return;
+				this.parent_module_view.$el.find('>.upfront-module').addClass('upfront-module-active');
+			},
+			deactivate: function () {
+				_Upfront_EditableEntity.prototype.deactivate.call(this);
+				if ( !this.parent_module_view ) return;
+				this.parent_module_view.$el.find('>.upfront-module').removeClass('upfront-module-active');
 			},
 
 			toggle_region_class: function (classname, add, container) {
@@ -1446,7 +1481,7 @@ define([
 				this.$el.html(template);
 
 				if ( this.model.get("shadow") ){
-					this.$el.find('.upfront-editable_entity:first').attr("data-shadow", this.model.get("shadow"));
+					this.$el.find('>.upfront-editable_entity:first').attr("data-shadow", this.model.get("shadow"));
 				}
 				else {
 					this.render_object();
@@ -1667,7 +1702,8 @@ define([
 				"click a.redactor_act": "onOpenPanelClick",
 				"click .upfront-save_settings": "onOpenPanelClick",
 				"click .open-item-controls": "onOpenItemControlsClick",
-				"click > .upfront-module-group-finish-edit": "on_finish"
+				"click > .upfront-module-group-finish-edit": "on_finish",
+				"click": "on_click"
 			},
 			initialize: function () {
 				var callback = this.update || this.render;
@@ -2005,6 +2041,7 @@ define([
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 				$main.addClass('upfront-module-group-editing');
 				this.$el.addClass('upfront-module-group-on-edit');
+				this.trigger('deactivated');
 				this.disable_interaction(false, false);
 				this.toggle_modules_interaction(true, true);
 				Upfront.Events.trigger('entity:module_group:edit', this, this.model);
@@ -2063,6 +2100,27 @@ define([
 				}
 				this.update_position();
 				this.update_background();
+			},
+			deactivate: function () {
+				this.$el.removeClass("upfront-module-group-active");
+				this.check_deactivated();
+				this.trigger("upfront:entity:deactivate", this);
+			},
+			activate: function () {
+				var me= this,
+					currentEntity = Upfront.data.currentEntity
+				;
+				if (this.activate_condition && !this.activate_condition()) return false;
+				if (currentEntity && currentEntity == this) return false;
+				if (currentEntity && currentEntity != this) {
+					Upfront.data.currentEntity.trigger('deactivated');
+				}
+
+				Upfront.data.currentEntity = this;
+				this.trigger("activated", this);
+				this.trigger("upfront:entity:activate", this);
+				this.listenToOnce(this, 'deactivated', this.deactivate);
+				this.$el.addClass("upfront-module-group-active");
 			},
 			remove: function(){
 				if(this._modules_view)
