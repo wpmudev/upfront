@@ -344,10 +344,12 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			menuItemsValues = [{label:l10n.choose_existing_menu, value: 0}],
 			menuList = Upfront.data.unewnavigation.currentMenuItemData.get('menuList')
 		;
-
+		var clubbedvalues = [];
 		if(typeof(menuList) != 'undefined'){
-			menuItemsValues.concat(menuList);
+
+			clubbedvalues = menuItemsValues.concat(menuList);
 		}
+
 
 		me.$el.find('div.upfront-object-content').html('');
 
@@ -355,7 +357,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			model: me.model,
 			label: "",
 			className: "existing_menu_list",
-			values: menuItemsValues
+			values: clubbedvalues
 		});
 
 		menuItems.render();
