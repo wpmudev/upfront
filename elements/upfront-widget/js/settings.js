@@ -10,6 +10,8 @@ define([
 		/**
 		 * Set up setting item appearance.
 		 */
+		 
+		className: 'general_settings_item widget_settings_item',
 
 		get_title: function () {
 			var selected = this.model.get_property_value_by_name('selected_widget');
@@ -47,7 +49,6 @@ define([
 
 		initialize: function () {
 			var widget = this.model.get_property_value_by_name('widget');
-
 			// Check legacy mode
 			// And internally convert accordingly
 			for (i in Upfront.data.uwidget.widgets) {
@@ -152,12 +153,13 @@ define([
 
 			var settings_item1 = new Upfront.Views.Editor.Settings.Item({
 				model: this.model,
-				title: l10n.widget_select,
+				group: false,
+				className: 'select-widget-panel',
 				fields: [
 					new Upfront.Views.Editor.Field.Select({
 						model: this.model,
 						property: 'widget',
-						label: "",
+						label: l10n.widget_select,
 						values: widget_values,
 						change: function() {
 							var $checked = this.$el.find('.upfront-field-select-option input:checked');
