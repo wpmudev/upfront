@@ -524,6 +524,17 @@ class Upfront_Uimage_Server extends Upfront_Server {
 		update_post_meta($imageData['id'], 'upfront_used_image_sizes', $used);
 // *** Flags updated, files clear. Moving on
 
+		if (!empty($imagepath) && !empty($url)) {
+			/**
+			 * Image has been successfully changed. Trigger any post-processing hook.
+			 *
+			 * @param string $imagepath Path to the newly created image
+			 * @param string $url Newly changed image URL
+			 * @param array $saved Processing data
+			 */
+			do_action('upfront-media-images-image_changed', $imagepath, $url, $saved);
+		}
+
 		return array(
 			'error' => false,
 			'url' => $url,
