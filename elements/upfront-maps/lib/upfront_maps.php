@@ -88,6 +88,7 @@ class Upfront_UmapView extends Upfront_Object{
 			'edit_this' => __('Edit this...', 'upfront'),
 			'image_url' => __('Image URL (.png):', 'upfront'),
 			'settings' => __('Map settings', 'upfront'),
+			'address' => __('Address:', 'upfront'),
 			'label' => __('Google Map', 'upfront'),
 			'location_label' => __('Map Location', 'upfront'),
 			'style' => array(

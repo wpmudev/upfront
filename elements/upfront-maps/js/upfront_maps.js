@@ -65,7 +65,7 @@ define([
 	});
 
 	var Map_Fields_Simple_Location = Backbone.View.extend({
-		className: "upfront_map-fields-simple_location clearfix",
+		className: "upfront_map-fields-simple_location map_location clearfix",
 		events: {
 			keypress: "wait_for_enter"
 		},
@@ -623,11 +623,7 @@ define([
 				// new MapSettings_Field_Controls({model: this.model})
 			]);
 		},
-		render: function () {
-			Upfront.Views.Editor.Settings.Panel.prototype.render.call(this);
-			this.$el.addClass("ufpront-maps_element-settings_panel");
-			$('[name="use_custom_map_code"]', this.$el).trigger('change');
-		},
+
 		get_label: function () {
 			return l10n.label;
 		},
@@ -637,7 +633,7 @@ define([
 	});
 
 	var MapSettings_Field_Location = Upfront.Views.Editor.Settings.Item.extend({
-		className: "upfront-settings-item-maps_element-location",
+		className: "upfront-settings-item-maps_element-location general_settings_item",
 		initialize: function () {
 			this.fields = _([
 				new Map_Fields_Simple_Location({
@@ -656,6 +652,7 @@ define([
 		events: {
 			"click .open-map-code-panel-button": "init_code_panel"
 		},
+		className: "general_settings_item",
 		initialize: function () {
 			var zooms = [],
 				saved_zoom = this.model.get_property_value_by_name("zoom")
@@ -694,15 +691,17 @@ define([
 				new Upfront.Views.Editor.Field.Select({
 					model: this.model,
 					label: l10n.map_style,
+					className: 'map-style',
 					property: 'style',
 					values: styles,
 					change: function () { this.property.set({value: this.get_value()}); }
 				}),
-				new Upfront.Views.Editor.Field.Select({
+				new Upfront.Views.Editor.Field.Multiple_Chosen_Select({
 					model: this.model,
 					label: l10n.map_controls,
 					placeholder: "Choose map controls",
 					property: 'controls',
+					select_width: '225px',
 					multiple: true,
 					values: controls,
 					change: function () { this.property.set({value: this.get_value()}); }
@@ -711,6 +710,7 @@ define([
 					model: this.model,
 					label: l10n.draggable_map,
 					property: "draggable",
+					className: 'draggable-checkbox',
 					hide_label: true,
 					values: [{label: l10n.draggable_map, value: 1}],
 					multiple: false,
@@ -719,6 +719,7 @@ define([
 				new Upfront.Views.Editor.Field.Checkboxes({
 					model: this.model,
 					label: l10n.hide_markers,
+					className: 'markers-checkbox',
 					property: "hide_markers",
 					hide_label: true,
 					values: [{label: l10n.hide_markers, value: 1}],
@@ -729,6 +730,7 @@ define([
 					model: this.model,
 					label: l10n.use_custom_map_code,
 					property: "use_custom_map_code",
+					className: "upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-checkboxes custom-map-code",
 					hide_label: true,
 					values: [{label: l10n.use_custom_map_code + '<span class="checkbox-info" title="' + l10n.use_custom_map_code_info + '"></span>', value: 1}],
 					multiple: false,
@@ -736,12 +738,13 @@ define([
 						var value = this.get_value();
 
 						this.property.set({value: value});
-
+					},
+					show: function (value, $el) {
 						if(value == 1) {
-							$('.open-map-code-panel-button', this.$el.parent()).show();
+							$('.open-map-code-panel-button', $el.parent()).show();
 						}
 						else {
-							$('.open-map-code-panel-button', this.$el.parent()).hide();
+							$('.open-map-code-panel-button', $el.parent()).hide();
 						}
 					}
 				}),
