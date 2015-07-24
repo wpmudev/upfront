@@ -10391,29 +10391,19 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						&& typeof props.breakpoint[current_breakpoint_id] !== 'undefined' 
 					)
 					? props.breakpoint[current_breakpoint_id]
-					: false,
-				top_bg_padding_use = (breakpoint_obj && "top_bg_padding_use" in breakpoint_obj)
-					? breakpoint_obj.top_bg_padding_use
-					: typeof props.top_bg_padding_use !== 'undefined'
-						? props.top_bg_padding_use
-						: false,							
-				bottom_bg_padding_use = (breakpoint_obj && "bottom_bg_padding_use" in breakpoint_obj)
-					? breakpoint_obj.bottom_bg_padding_use
-					: typeof props.bottom_bg_padding_use !== 'undefined'
-						? props.bottom_bg_padding_use
-						: false							
+					: false						
 			;
 
-			top_padding = (top_bg_padding_use && typeof breakpoint_obj.top_bg_padding_num !== 'undefined')
+			top_padding = (typeof breakpoint_obj.top_bg_padding_num !== 'undefined')
 				? breakpoint_obj.top_bg_padding_num
-				: (top_bg_padding_use && typeof props.top_bg_padding_num !== 'undefined')
+				: (typeof props.top_bg_padding_num !== 'undefined')
 					? props.top_bg_padding_num
 					: 0
 			;
 
-			bottom_padding = (bottom_bg_padding_use && typeof breakpoint_obj.bottom_bg_padding_num !== 'undefined')
+			bottom_padding = (typeof breakpoint_obj.bottom_bg_padding_num !== 'undefined')
 				? breakpoint_obj.bottom_bg_padding_num
-				: (bottom_bg_padding_use && typeof props.bottom_bg_padding_num !== 'undefined')
+				: (typeof props.bottom_bg_padding_num !== 'undefined')
 					? props.bottom_bg_padding_num
 					: 0
 			;
