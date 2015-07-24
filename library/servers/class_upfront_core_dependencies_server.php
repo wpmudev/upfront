@@ -16,6 +16,11 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 		add_action('wp_enqueue_scripts', array($this, 'setup_hard_experiments'));
 	}
 
+	/**
+	 * Drops default jquery. Happens only in hardcode mode.
+	 * It will be re-added later on, in Upfront_CoreDependencies_Server::_output_experimental()
+	 * Although this does *not* replace stock WP jQuery, it is sure to break some plugins!
+	 */
 	public function setup_hard_experiments () {
 		$comp = Upfront_Behavior::compression();
 		if (!$comp->has_experiments_level($comp->constant('HARDCORE'))) return false;
