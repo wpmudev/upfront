@@ -721,8 +721,10 @@ define([
 					this.in_context = this.options.in_context;
 			},
 			render: function () {
-				var me = this;
-				this.$el.empty();
+				var me = this,
+					cls = 'upfront-ctx-' + this.label().replace(/[^a-z0-9]/ig, '_').toLowerCase()
+				;
+				this.$el.empty().addClass(cls);
 				this.$el.append(this.label);
 
 				this.$el.bind('click', function(e) {
@@ -776,6 +778,7 @@ define([
 
 		}),
 		DefaultMenuList = ContextMenuList.extend({
+			className: 'upfront-default_ctx_list',
 			initialize: function() {
 				var menuitems = [];
 
