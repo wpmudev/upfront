@@ -815,7 +815,7 @@ define([
 
 				menuitems.push(new Upfront.Views.ContextMenuItem({
 					get_label: function() {
-						return 'Clone';
+						return l10n.clone;
 					},
 					in_context: function() {
 						// Only show this menu on ObjectView instance
