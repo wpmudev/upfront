@@ -6,15 +6,15 @@ define([
 	'scripts/upfront/preset-settings/colors-settings-item',
 	'scripts/upfront/preset-settings/selectbox-settings-item',
 	'elements/upfront-gallery/js/settings/caption-location',
-	'text!elements/upfront-image/tpl/preset-style.html'
+	'text!elements/upfront-gallery/tpl/preset-style.html'
 ], function(ElementSettings, PresetManager, BorderSettingsItem, RadiusSettingsItem, ColorsSettingsItem, SelectboxSettingsItem, CaptionLocation, styleTpl) {
 
 	var l10n = Upfront.Settings.l10n.gallery_element;
 
 	var AppearancePanel = PresetManager.extend({
-		mainDataCollection: 'imagePresets',
-		styleElementPrefix: 'image-preset',
-		ajaxActionSlug: 'image',
+		mainDataCollection: 'galleryPresets',
+		styleElementPrefix: 'gallery-preset',
+		ajaxActionSlug: 'gallery',
 		panelTitle: l10n.settings,
 		presetDefaults: {
 			'id': 'default',
