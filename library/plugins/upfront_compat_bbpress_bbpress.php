@@ -53,98 +53,140 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
             $item = "forum-archive";
             $type = "archive";
 
-        } elseif ( bbp_is_topic_archive() ) { //works fine in editor mode
+        } 
+
+        if ( bbp_is_topic_archive() ) { //works fine in editor mode
             $item = "topic-archive";
             $type = "archive";
 
         /** Topic Tags ************************************************************/
 
-        } elseif ( bbp_is_topic_tag() ) {
+        } 
+
+        if ( bbp_is_topic_tag() ) {
             $item = "topic-tag";
             $type = "single";
 
-        } elseif ( bbp_is_topic_tag_edit() ) {
+        } 
+
+        if ( bbp_is_topic_tag_edit() ) {
             $item = "topic-tag-edit";
             $type = "single";
 
         /** Components ************************************************************/
 
-        } elseif ( bbp_is_single_forum() ) { //works fine in editor mode
+        } 
+
+        if ( bbp_is_single_forum() ) { //works fine in editor mode
             $item = "single-forum";
             $type = "single";
 
-        } elseif ( bbp_is_single_topic() ) { //not persistent
+        } 
+
+        if ( bbp_is_single_topic() ) { //not persistent
             $item = "single-topic";
             $type = "single";
 
-        } elseif ( bbp_is_single_reply() ) {
+        } 
+
+        if ( bbp_is_single_reply() ) {
             $item = "single-reply";
             $type = "single";
 
-        } elseif ( bbp_is_topic_edit() ) {
+        } 
+
+        if ( bbp_is_topic_edit() ) {
             $item = "topic-edit";
             $type = "single";
 
-        } elseif ( bbp_is_topic_merge() ) {
+        } 
+
+        if ( bbp_is_topic_merge() ) {
             $item = "topic-merge";
             $type = "single";
 
-        } elseif ( bbp_is_topic_split() ) {
+        } 
+
+        if ( bbp_is_topic_split() ) {
             $item = "topic-split";
             $type = "single";
 
-        } elseif ( bbp_is_reply_edit() ) {
+        } 
+
+        if ( bbp_is_reply_edit() ) {
             $item = "reply-edit";
             $type = "single";
 
-        } elseif ( bbp_is_reply_move() ) {
+        } 
+
+        if ( bbp_is_reply_move() ) {
             $item = "reply-move";
             $type = "single";
 
-        } elseif ( bbp_is_single_view() ) {
+        } 
+
+        if ( bbp_is_single_view() ) {
             $item = "single-view";
             $type = "single";
 
         /** User ******************************************************************/
 
-        } elseif ( bbp_is_single_user_edit() ) {
+        } 
+
+        /*if ( bbp_is_single_user_edit() ) {
             $item = "user-edit";
             $type = "single";
 
-        } elseif ( bbp_is_single_user() ) {
-            $item = "single-user";
-            $type = "single";
+        } */
 
-        } elseif ( bbp_is_user_home() ) {
-            $item = "user-home";
-            $type = "single";
+        if (bbp_is_single_user() ) {
+               
+                $item = "single-user";
+                $type = "single";
 
-        } elseif ( bbp_is_user_home_edit() ) {
-            $item = "user-home-edit";
-            $type = "single";
+            if ( bbp_is_topics_created() ) {
+                $item = "topics-created";
+                $type = "single";
 
-        } elseif ( bbp_is_topics_created() ) {
-            $item = "topics-created";
-            $type = "single";
+            } 
+            elseif( bbp_is_replies_created() ) {
+                $item = "replies-created";
+                $type = "single";
+            }
+            elseif ( bbp_is_favorites() ) {
+                $item = "favorites";
+                $type = "single";
 
-        } elseif ( bbp_is_favorites() ) {
-            $item = "favorites";
-            $type = "single";
+            } 
 
-        } elseif ( bbp_is_subscriptions() ) {
-            $item = "subscriptions";
-            $type = "single";
+            elseif ( bbp_is_subscriptions() ) {
+                $item = "subscriptions";
+                $type = "single";
 
-        /** Search ****************************************************************/
+            } 
+            elseif ( bbp_is_user_home_edit() ) {
+                $item = "user-home-edit";
+                $type = "single";
 
-        } elseif ( bbp_is_search() ) {
+            } 
+            elseif ( bbp_is_user_home() ) {
+                $item = "user-home";
+                $type = "single";
+
+            } 
+        }
+
+        if ( bbp_is_search() ) {
             $item = "search";
             $type = "single";
 
-        } elseif ( bbp_is_search_results() ) {
+        } 
+
+        if ( bbp_is_search_results() ) {
             $item = "search-results";
             $type = "archive";
         }
+
         if (!empty($item)) {
             $cascade['item'] = "bbpress-{$item}"; 
             $cascade['type'] = $type;
@@ -153,6 +195,7 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
             //}
             
         }
+
 
         return $cascade;
 

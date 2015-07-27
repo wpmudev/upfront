@@ -25,7 +25,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 	loading: false,
 	postId: false,
 	editor: false,
-
+	noedit: false,
 	initialize: function(options){
 		var me = this;
 		if(! (this.model instanceof ThisPostModel)){
@@ -43,15 +43,20 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		this.delegateEvents();
 
 		this.postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
-		console.log(Upfront.Application.current_subapplication.get_layout_data());
-		if(this.postId){
+		
+		if(Upfront.Application.current_subapplication.get_layout_data().layout.specificity.indexOf('noedit') > -1) {
+			this.noedit=true; //to enable loading of non-editable content for plugins when ID is not available
+		}
+
+		if(this.noedit || this.postId){
 			this.refreshMarkup().then(function(){
 				if(me.postId)
 					me.prepareEditor();
 			});
 			//let's also start the editor before getting the markup
 			//so its load will be faster
-			me.prepareEditor();
+			if(!this.noedit)
+				me.prepareEditor();
 		} else if ("themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.THEME) {
 			// We're dealing with a theme exporter request
 			// Okay, so let's fake a post
@@ -188,12 +193,13 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
     },
 
 	refreshMarkup: function () {
+		
 		var me = this;
 
 		if(this.loadingMarkup)
 			return this.loadingMarkup;
 
-		if(this.postId === false)
+		if(this.postId === false && !this.noedit)
 			return new $.Deferred().resolve({data:{filtered: 'Error'}});
 
 		var node = $('#' + me.property('element_id')).find(".upfront-object-content"),
