@@ -7759,6 +7759,9 @@ License: MIT
 .sp-container.sp-flat {
   position: relative; }
 
+#element-settings-sidebar .sp-container {
+  position: fixed !important; }
+
 /* http://ansciath.tumblr.com/post/7347495869/css-aspect-ratio */
 .sp-top {
   position: relative;
