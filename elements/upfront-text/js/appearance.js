@@ -13,7 +13,7 @@ define([
 		var AppearancePanel = PresetManager.extend({
 			mainDataCollection: 'textPresets',
 			styleElementPrefix: 'text-preset',
-			ajaxActionSlug: 'tab',
+			ajaxActionSlug: 'text',
 			panelTitle: l10n.settings,
 			presetDefaults: {
 				'id': 'default',
