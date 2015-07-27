@@ -6066,6 +6066,8 @@ var Icon_Fonts_Manager = Backbone.View.extend({
 	},
 
 	initializeFileUpload: function() {
+		if (!jQuery.fn.fileupload) return false; // No file upload, carry on
+
 		var me = this;
 		this.$el.find('#upfront-upload-icon-font').fileupload({
 			dataType: 'json',
