@@ -779,17 +779,19 @@ define([
 			initialize: function() {
 				var menuitems = [];
 
-				if(Upfront.Application.get_current() != "theme") {
-				menuitems.push(new Upfront.Views.ContextMenuItem({
-						get_label: function() {
-							return l10n.save;
-						},
-						action: function() {
-							var savelayout = new Upfront.Views.Editor.Command_SaveLayout();
-							savelayout.on_click();
-						}
-					}));
-				menuitems.push(new Upfront.Views.ContextMenuItem({
+				if (Upfront.Application.get_current() != "theme") {
+					if (!Upfront.Settings.Application.NO_SAVE) {
+						menuitems.push(new Upfront.Views.ContextMenuItem({
+							get_label: function() {
+								return l10n.save;
+							},
+							action: function() {
+								var savelayout = new Upfront.Views.Editor.Command_SaveLayout();
+								savelayout.on_click();
+							}
+						}));
+					}
+					menuitems.push(new Upfront.Views.ContextMenuItem({
 						get_label: function() {
 							return l10n.undo;
 						},
@@ -802,76 +804,76 @@ define([
 				}
 
 				menuitems.push(new Upfront.Views.ContextMenuItem({
-						get_label: function() {
-							return Upfront.Application.get_gridstate() ? l10n.hide_grid: l10n.show_grid;
-						},
-						action: function() {
-							var togglegrid = new Upfront.Views.Editor.Command_ToggleGrid();
-							togglegrid.on_click();
-						}
-					}));
+					get_label: function() {
+						return Upfront.Application.get_gridstate() ? l10n.hide_grid: l10n.show_grid;
+					},
+					action: function() {
+						var togglegrid = new Upfront.Views.Editor.Command_ToggleGrid();
+						togglegrid.on_click();
+					}
+				}));
 
 				menuitems.push(new Upfront.Views.ContextMenuItem({
-						get_label: function() {
-							return 'Clone';
-						},
-						in_context: function() {
-							// Only show this menu on ObjectView instance
-							return this.for_view instanceof Upfront.Views.ObjectView;
-						},
-						action: function(for_view, e) {
-							var module_view = this.for_view.parent_module_view,
-								module = module_view.model,
-								parent_region_view = module_view.group_view ? module_view.group_view : module_view.region_view,
-								modules = parent_region_view.model.get('modules'),
-								wrappers = parent_region_view.model.get('wrappers'),
-								wrap_model = wrappers.get_by_wrapper_id(module.get_property_value_by_name('wrapper_id')),
-								data = Upfront.Util.model_to_json(module),
-								new_model = new Upfront.Models.Module(data),
-								wrapper_id = Upfront.Util.get_unique_id("wrapper"),
-								wrap_data = Upfront.Util.model_to_json(wrap_model),
-								new_wrap_model = new Upfront.Models.Wrapper(wrap_data),
-								index = modules.indexOf(module),
-								models = [];
+					get_label: function() {
+						return 'Clone';
+					},
+					in_context: function() {
+						// Only show this menu on ObjectView instance
+						return this.for_view instanceof Upfront.Views.ObjectView;
+					},
+					action: function(for_view, e) {
+						var module_view = this.for_view.parent_module_view,
+							module = module_view.model,
+							parent_region_view = module_view.group_view ? module_view.group_view : module_view.region_view,
+							modules = parent_region_view.model.get('modules'),
+							wrappers = parent_region_view.model.get('wrappers'),
+							wrap_model = wrappers.get_by_wrapper_id(module.get_property_value_by_name('wrapper_id')),
+							data = Upfront.Util.model_to_json(module),
+							new_model = new Upfront.Models.Module(data),
+							wrapper_id = Upfront.Util.get_unique_id("wrapper"),
+							wrap_data = Upfront.Util.model_to_json(wrap_model),
+							new_wrap_model = new Upfront.Models.Wrapper(wrap_data),
+							index = modules.indexOf(module),
+							models = [];
 
-							// Make sure new model element ids and wrapper id is unique
-							new_wrap_model.set_property('wrapper_id', wrapper_id);
-							new_model.set_property('wrapper_id', wrapper_id);
-							new_model.set_property('element_id', Upfront.Util.get_unique_id('module'));
-							new_model.get('objects').each(function(obj){
-								obj.set_property('element_id', Upfront.Util.get_unique_id('object'));
-							});
-							// Add to layout now
-							wrappers.add(new_wrap_model);
-							//new_model.add_to(modules, index+1);
-							modules.add(new_model);
-							// Normalize layout
-							var ed = Upfront.Behaviors.GridEditor,
-								new_module_view =  Upfront.data.module_views[new_model.cid],
-								$new_module_view = new_module_view.$el,
-								$new_module = $new_module_view.find(".upfront-module"),
-								off = $new_module.offset(),
-								pos = $new_module.position(),
-								h = $new_module.outerHeight(),
-								w = $new_module.outerWidth();
-							ed.start(new_module_view, new_model);
-							ed.normalize(ed.els, ed.wraps);
+						// Make sure new model element ids and wrapper id is unique
+						new_wrap_model.set_property('wrapper_id', wrapper_id);
+						new_model.set_property('wrapper_id', wrapper_id);
+						new_model.set_property('element_id', Upfront.Util.get_unique_id('module'));
+						new_model.get('objects').each(function(obj){
+							obj.set_property('element_id', Upfront.Util.get_unique_id('object'));
+						});
+						// Add to layout now
+						wrappers.add(new_wrap_model);
+						//new_model.add_to(modules, index+1);
+						modules.add(new_model);
+						// Normalize layout
+						var ed = Upfront.Behaviors.GridEditor,
+							new_module_view =  Upfront.data.module_views[new_model.cid],
+							$new_module_view = new_module_view.$el,
+							$new_module = $new_module_view.find(".upfront-module"),
+							off = $new_module.offset(),
+							pos = $new_module.position(),
+							h = $new_module.outerHeight(),
+							w = $new_module.outerWidth();
+						ed.start(new_module_view, new_model);
+						ed.normalize(ed.els, ed.wraps);
 
-							// properly position the new module and show it under the cursor
-							$new_module.css({
-								position: "relative",
-								top: ( e.pageY-off.top-(h/2) ),
-								left: ( e.pageX-off.left-(w/2) )
-							});
+						// properly position the new module and show it under the cursor
+						$new_module.css({
+							position: "relative",
+							top: ( e.pageY-off.top-(h/2) ),
+							left: ( e.pageX-off.left-(w/2) )
+						});
 
-							// Simulate and mousedown and actually trigger drag
-						    $new_module.simulate("mousedown", {
-						        clientX: e.clientX,
-						        clientY: e.clientY
-						    });
+						// Simulate and mousedown and actually trigger drag
+					    $new_module.simulate("mousedown", {
+					        clientX: e.clientX,
+					        clientY: e.clientY
+					    });
 
-						}
-					}));
+					}
+				}));
 				this.menuitems = _(menuitems);
 			}
 
