@@ -27,7 +27,7 @@ class Upfront_Contact_Presets_Server extends Upfront_Presets_Server {
 	}
 
 	protected function get_style_template_path() {
-		return realpath(Upfront::get_root_dir() . '/elements/upfront-contact-form/tpl/preset-style.html');
+		return realpath(Upfront::get_root_dir() . '/elements/upfront-contact-form/templates/preset-style.html');
 	}
 }
 
