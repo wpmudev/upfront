@@ -26,7 +26,7 @@ define(function() {
 			
 			//Set default element
 			if(typeof this.options.default_element !== "undefined") {
-				current_element = this.options.default_element + '_';
+				current_element = this.options.default_element + '-';
 				custom_class = 'border-with-fields';
 			}
 			
@@ -122,7 +122,7 @@ define(function() {
 						values: me.options.elements,
 						change: function () {
 							var value = this.get_value();
-							current_element = value + '_';
+							current_element = value + '-';
 							me.fields._wrapped[fieldCounter + 1].set_value(me.model.get(current_element + me.options.fields.width));
 							me.fields._wrapped[fieldCounter + 2].set_value(me.model.get(current_element + me.options.fields.type));
 							me.fields._wrapped[fieldCounter + 3].set_value(me.model.get(current_element + me.options.fields.color));
