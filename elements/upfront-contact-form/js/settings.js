@@ -37,14 +37,6 @@ define([
 								name: 'static-button-bg',
 								label: 'Button BG'
 							},
-							{
-								name: 'static-field-label',
-								label: 'Field Label'
-							},
-							{
-								name: 'static-button-label',
-								label: 'Button Label'
-							},
 						]
 					}
 				},
@@ -62,7 +54,13 @@ define([
 							size: 'static-font-size',
 							line_height: 'static-line-height',
 							color: 'static-font-color',
-						}
+						},
+						default_element: "field-labels",
+						elements: [
+							{ label: "Field Labels", value: "field-labels" },
+							{ label: "Field Values", value: "field-values" },
+							{ label: "Button", value: "button" },
+						],
 					}
 				},
 				{
