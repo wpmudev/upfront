@@ -152,18 +152,28 @@ define(function() {
 					new Upfront.Views.Editor.Field.Select({
 						label: l10n.type_element,
 						label_style: 'inline',
+						name: state + '-element-type',
 						className: state + '-select-element selectElement ' + toggleClass,
 						values: me.options.elements,
 						change: function () {
+							//Get the value
 							var value = this.get_value();
+
+							//Update element type value to keep it on typography re-render
+							me.model.set(state + '-element-type', value);
+
+							//Reset typography fields for selected element
 							current_element = value + '-';
+							me.fields._wrapped[fieldCounter -1].set_value(value);
 							me.fields._wrapped[fieldCounter].set_value(me.model.get(current_element + me.options.fields.typeface));
+							me.fields._wrapped[fieldCounter].set_option_font(me.model.get(current_element + me.options.fields.typeface));
 							me.fields._wrapped[fieldCounter + 1].set_value(me.model.get(current_element + me.options.fields.fontstyle));
+							me.fields._wrapped[fieldCounter + 1].set_option_font(me.model.get(current_element + me.options.fields.fontstyle));
 							me.fields._wrapped[fieldCounter + 2].set_value(me.model.get(current_element + me.options.fields.size));
 							me.fields._wrapped[fieldCounter + 3].set_value(me.model.get(current_element + me.options.fields.line_height));
 							me.fields._wrapped[fieldCounter + 4].set_value(me.model.get(current_element + me.options.fields.color));
 							me.fields._wrapped[fieldCounter + 4].update_input_border_color(me.model.get(current_element + me.options.fields.color));
-						}
+						},
 					})
 				);	
 			}
@@ -175,7 +185,7 @@ define(function() {
 					new Upfront.Views.Editor.Field.Checkboxes({
 						model: this.model,
 						className: 'useTypography checkbox-title ' + toggleClass,
-						name: current_element + me.options.fields.use,
+						name: me.options.fields.use,
 						label: '',
 						default_value: 1,
 						multiple: false,
