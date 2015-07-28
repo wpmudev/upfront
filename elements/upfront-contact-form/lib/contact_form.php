@@ -40,6 +40,10 @@ class Upfront_UcontactView extends Upfront_Object {
 				'captcha' => esc_attr("captcha-{$element_id}"),
 			),
 		));
+		
+		if (!isset($args['preset'])) {
+			$args['preset'] = 'default';
+		}
 
 		$args['show_subject'] = $args['show_subject'] && sizeof($args['show_subject']);
 		$args['show_captcha'] = $args['show_captcha'] && sizeof($args['show_captcha']);

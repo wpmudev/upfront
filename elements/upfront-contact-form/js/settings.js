@@ -6,7 +6,7 @@ define([
 	'scripts/upfront/preset-settings/colors-settings-item',
 	'scripts/upfront/preset-settings/border-settings-item',
 	'scripts/upfront/preset-settings/hov-animation-settings-item',
-	'text!elements/upfront-tabs/tpl/preset-style.html'
+	'text!elements/upfront-contact-form/templates/preset-style.html'
 ], function(ElementSettings, PresetManager, Util, TypographySettingsItem, ColorsSettingsItem, BorderSettingsItem, HovAnimationSettingsItem, styleTpl) {
 	var l10n = Upfront.Settings.l10n.contact_element;
 
@@ -74,9 +74,9 @@ define([
 							type: 'static-bordertype',
 							color: 'static-bordercolor',
 						},
-						default_element: 'field_button',
+						default_element: 'field-button',
 						elements: [
-							{label: 'Field & Button', value: 'field_button'},
+							{label: 'Field & Button', value: 'field-button'},
 							{label: 'Field', value: 'field'},
 							{label: 'Button', value: 'button'}
 						]
@@ -104,14 +104,6 @@ define([
 								name: 'hover-button-bg',
 								label: 'Button BG'
 							},
-							{
-								name: 'hover-field-label',
-								label: 'Field Label'
-							},
-							{
-								name: 'hover-button-label',
-								label: 'Button Label'
-							},
 						]
 					}
 				},
@@ -130,7 +122,13 @@ define([
 							size: 'hover-font-size',
 							line_height: 'hover-line-height',
 							color: 'hover-font-color',
-						}
+						},
+						default_element: "field-labels",
+						elements: [
+							{ label: "Field Labels", value: "field-labels" },
+							{ label: "Field Values", value: "field-values" },
+							{ label: "Button", value: "button" },
+						],
 					}
 				},
 				{
@@ -144,9 +142,9 @@ define([
 							type: 'hover-bordertype',
 							color: 'hover-bordercolor',
 						},
-						default_element: 'field_button',
+						default_element: 'field-button',
 						elements: [
-							{label: 'Field & Button', value: 'field_button'},
+							{label: 'Field & Button', value: 'field-button'},
 							{label: 'Field', value: 'field'},
 							{label: 'Button', value: 'button'}
 						]
@@ -187,14 +185,6 @@ define([
 								name: 'focus-button-bg',
 								label: 'Button BG'
 							},
-							{
-								name: 'focus-field-label',
-								label: 'Field Label'
-							},
-							{
-								name: 'focus-button-label',
-								label: 'Button Label'
-							},
 						]
 					}
 				},
@@ -213,7 +203,12 @@ define([
 							size: 'focus-font-size',
 							line_height: 'focus-line-height',
 							color: 'focus-font-color',
-						}
+						},
+						default_element: "field-labels",
+						elements: [
+							{ label: "Field Values", value: "field-values" },
+							{ label: "Button", value: "button" },
+						],
 					}
 				},
 				{
@@ -227,9 +222,9 @@ define([
 							type: 'focus-bordertype',
 							color: 'focus-bordercolor',
 						},
-						default_element: 'field_button',
+						default_element: 'field-button',
 						elements: [
-							{label: 'Field & Button', value: 'field_button'},
+							{label: 'Field & Button', value: 'field-button'},
 							{label: 'Field', value: 'field'},
 							{label: 'Button', value: 'button'}
 						]

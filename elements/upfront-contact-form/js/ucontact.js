@@ -6,7 +6,8 @@ define([
 	'scripts/upfront/element-settings/settings',
 	'scripts/upfront/element-settings/panel',
 	'elements/upfront-contact-form/js/settings',
-], function (upfront_data, ElementSettings, ElementSettingsPanel, AppearancePanel) {
+	'text!elements/upfront-contact-form/templates/preset-style.html',
+], function (upfront_data, ElementSettings, ElementSettingsPanel, AppearancePanel, settingsStyleTpl) {
 var template = upfront_data.data && upfront_data.data.ucontact && upfront_data.data.ucontact.template
 	? upfront_data.data.ucontact.template
 	: 'elements/upfront-contact-form/templates/ucontact.html'
@@ -52,8 +53,26 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 			'dblclick button.submit-field' : 'editButtontext',
 			'dblclick .upfront-field-container > label' : 'editLabeltext'
 		});
+		
+		this.delegateEvents();
+		
+		this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
 
 	},
+	
+	update_colors: function () {
+
+		var me = this,
+			preset = this.model.get_property_value_by_name("preset"),
+			props = PresetUtil.getPresetProperties('contact', preset) || {}
+		;
+		
+		if (_.size(props) <= 0) return false; // No properties, carry on
+
+		PresetUtil.updatePresetStyle('contact', props, settingsStyleTpl);
+
+	},
+	
 	on_render: function() {
 
 		var me = this;
@@ -188,6 +207,8 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 			ids: {},
 			values: {}
 		});
+		
+		args.preset = args.preset || 'default';
 
 		args.show_subject = args.show_subject && args.show_subject.length;
 		args.show_captcha = args.show_captcha && args.show_captcha.length;
