@@ -7626,34 +7626,44 @@ var Field_Compact_Label_Select_Option = Backbone.View.extend({
 });
 var Field_Compact_Label_Select = Field_Select.extend({
 	className: 'upfront-field-select upfront-no-select upfront-field-compact-label-select',
-	template: '<ul class="upfront-field-select-options">' +
+	template: '' +
+		'<ul class="upfront-field-select-options">' +
 			'<li class="upfront-field-select-option">' +
-			'<label><span class="upfront-field-label-text">{{ label_text }}</span></label>' +
+				'<label><span class="upfront-field-label-text">{{ label_text }}</span></label>' +
 			'</li>' +
-			'</ul></div>',
+		'</ul></div>' +
+	'',
+
 	initialize: function(options) {
 		this.options = options || {};
 		this.listenTo(this.collection, 'add remove change:name change:width', this.render);
 	},
+	
 	render: function () {
 		var me = this;
 		this.$el.html('');
 		this.$el.append(_.template(this.template, this.options));
 		this.$el.addClass(' upfront-field-select-' + ( this.options.multiple ? 'multiple' : 'single' ));
-		if ( this.options.disabled )
+		
+		if (this.options.disabled) {
 			this.$el.addClass('upfront-field-select-disabled');
-		if ( this.options.style == 'zebra' )
+		}
+		
+		if (this.options.style == 'zebra') {
 			this.$el.addClass('upfront-field-select-zebra');
+		}
 
 		// Add option views
 		_.each(this.collection.models, function(breakpoint) {
 			var option = new Field_Compact_Label_Select_Option({ model: breakpoint });
-			this.$el.find('ul').append(option.render().el);
+			option.render();
+			this.$el.find('ul').append(option.el);
 		}, this);
-
-		this.$el.on('click', '.upfront-field-select-option:first-child', function() {
-			me.$el.toggleClass('compact-label-select-open');
-		});
+	},
+	
+	onOptionClick: function (e) {
+		this.$el.toggleClass('compact-label-select-open');
+		Field_Select.prototype.onOptionClick.call(this, e);
 	}
 });
 
