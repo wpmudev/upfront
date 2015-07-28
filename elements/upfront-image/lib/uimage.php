@@ -52,6 +52,8 @@ class Upfront_UimageView extends Upfront_Object {
 		if (!isset($data['link_target'])) $data['link_target'] = false; // Initialize array member to prevent notices
 		// We could really go with wp_parge_args here...
 
+		if (!empty($data['src'])) $data['src'] = preg_replace('/^https?:/', '', trim($data['src']));
+
 
 		$markup = '<div>' . upfront_get_template('uimage', $data, dirname(dirname(__FILE__)) . '/tpl/image.html') . '</div>';
 
