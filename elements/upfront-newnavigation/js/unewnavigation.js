@@ -705,14 +705,29 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		var me = this;
 		var menu_id = this.model.get_property_value_by_name('menu_id');
 		if(!menu_id) return;
+		var container;
+
 
 		this.$el.find('.upfront-object-content').html('');
+
+		if(this.model.get_property_value_by_name('burger_menu') == 'yes') {
+
+			this.$el.find('.upfront-object-content').append($('<div class="burger_overlay"></div>'));
+			container = this.$el.find('.burger_overlay');
+ 			
+		}
+		else {
+			container = this.$el.find('.upfront-object-content');
+		}
+
 		if(this.property('menu_items').length > 0) {
 			var menu = this.renderMenu(this.property('menu_items'), 'menu');
-			this.$el.find('.upfront-object-content').append(menu);
-		} else {
+			container.append(menu);
+		} 
+		else 
+		{
 			
-			this.$el.find('.upfront-object-content').append(this.renderMenu(this.property('menu_items'), 'menu'));
+			container.append(this.renderMenu(this.property('menu_items'), 'menu'));
 			
 			setTimeout(function() {
 				me.$el.find('a.newnavigation-add-item').trigger('click');
@@ -734,7 +749,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		if(!breakpoint || breakpoint.default) {
 			if(this.model.get_property_value_by_name('burger_menu') == 'yes') {
-				this.$el.find('.upfront-object-content').prepend($('<div>').addClass("responsive_nav_toggler").append('<div></div><div></div><div></div>').bind('click', me.toggle_responsive_nav));
+				container.prepend($('<div>').addClass("responsive_nav_toggler").append('<div></div><div></div><div></div>').bind('click', me.toggle_responsive_nav));
 				
 				this.$el.find('ul.menu').hide();
 				
@@ -744,7 +759,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			model_breakpoint = this.model.get_property_value_by_name('breakpoint');
 			breakpoint_data = model_breakpoint[breakpoint.id];
 			if(breakpoint_data && breakpoint_data.burger_menu == 'yes') {
-				this.$el.find('.upfront-object-content').prepend($('<div>').addClass("responsive_nav_toggler").append('<div></div><div></div><div></div>').bind('click', me.toggle_responsive_nav));
+				container.prepend($('<div>').addClass("responsive_nav_toggler").append('<div></div><div></div><div></div>').bind('click', me.toggle_responsive_nav));
 
 				this.$el.find('ul.menu').hide();
 				
