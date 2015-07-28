@@ -31,6 +31,11 @@ define(function() {
 				fieldCounter++;
 			}
 			
+			//Set default element
+			if(typeof this.options.default_element !== "undefined") {
+				current_element = this.options.default_element + '-';
+			}
+			
 			if(this.options.toggle === true) {		
 				fieldCounter++;
 				toggleClass = 'element-toggled';
@@ -38,7 +43,7 @@ define(function() {
 			
 			this.fields = _([
 				new Upfront.Views.Editor.Field.Typeface_Chosen_Select({
-					name: this.options.fields.typeface,
+					name: current_element + this.options.fields.typeface,
 					model: this.model,
 					values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_fonts_for_select(),
 					label: l10n.typeface,
@@ -47,10 +52,11 @@ define(function() {
 					className: state + '-font-face static typeFace ' + toggleClass,
 					change: function(value) {
 						me.model.set(current_element + me.options.fields.typeface, value);
+						
 						me.fields._wrapped[1 + fieldCounter] = new Upfront.Views.Editor.Field.Typeface_Style_Chosen_Select({
 							model: this.model,
-							name: me.options.fields.fontstyle,
-							values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants_for_select(me.model.get(me.options.fields.typeface)),
+							name: current_element + me.options.fields.fontstyle,
+							values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants_for_select(me.model.get(current_element + me.options.fields.typeface)),
 							label: l10n.weight_style,
 							font_family: me.model.get(me.options.fields.typeface),
 							select_width: '225px',
@@ -71,8 +77,8 @@ define(function() {
 				
 				new Upfront.Views.Editor.Field.Typeface_Style_Chosen_Select({
 					model: this.model,
-					name: this.options.fields.fontstyle,
-					values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants_for_select(me.model.get(me.options.fields.typeface)),
+					name: current_element + this.options.fields.fontstyle,
+					values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants_for_select(me.model.get(current_element + me.options.fields.typeface)),
 					label: l10n.weight_style,
 					font_family: me.model.get(this.options.fields.typeface),
 					select_width: '225px',
@@ -90,7 +96,7 @@ define(function() {
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					className: state + '-font-size fontSize ' + toggleClass,
-					name: this.options.fields.size,
+					name: current_element + this.options.fields.size,
 					label: l10n.size,
 					label_style: 'inline',
 					suffix: l10n.px,
@@ -103,7 +109,7 @@ define(function() {
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					className: state + '-font-lineheight lineHeight ' + toggleClass,
-					name: this.options.fields.line_height,
+					name: current_element + this.options.fields.line_height,
 					label: l10n.line_height,
 					label_style: 'inline',
 					default_value: 1,
@@ -117,7 +123,7 @@ define(function() {
 				new Upfront.Views.Editor.Field.Color({
 					model: this.model,
 					className: state + '-font-color upfront-field-wrap upfront-field-wrap-color sp-cf fontColor ' + toggleClass,
-					name: this.options.fields.color,
+					name: current_element + this.options.fields.color,
 					blank_alpha : 0,
 					default_value: '#000',
 					label_style: 'inline',
@@ -150,7 +156,7 @@ define(function() {
 						values: me.options.elements,
 						change: function () {
 							var value = this.get_value();
-							current_element = value + '_';
+							current_element = value + '-';
 							me.fields._wrapped[fieldCounter].set_value(me.model.get(current_element + me.options.fields.typeface));
 							me.fields._wrapped[fieldCounter + 1].set_value(me.model.get(current_element + me.options.fields.fontstyle));
 							me.fields._wrapped[fieldCounter + 2].set_value(me.model.get(current_element + me.options.fields.size));
@@ -169,7 +175,7 @@ define(function() {
 					new Upfront.Views.Editor.Field.Checkboxes({
 						model: this.model,
 						className: 'useTypography checkbox-title ' + toggleClass,
-						name: me.options.fields.use,
+						name: current_element + me.options.fields.use,
 						label: '',
 						default_value: 1,
 						multiple: false,
