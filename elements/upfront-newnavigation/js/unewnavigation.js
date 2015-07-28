@@ -710,7 +710,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		this.$el.find('.upfront-object-content').html('');
 
-		if(this.model.get_property_value_by_name('burger_menu') == 'yes') {
+		if(this.model.get_property_value_by_name('burger_menu') == 'yes' && this.model.get_property_value_by_name('burger_over') != 'pushes' && this.model.get_property_value_by_name('burger_alignment') != 'whole') {
 
 			this.$el.find('.upfront-object-content').append($('<div class="burger_overlay"></div>'));
 			container = this.$el.find('.burger_overlay');
