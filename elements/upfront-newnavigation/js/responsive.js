@@ -46,6 +46,11 @@ jQuery(document).ready(function($) {
 		e.preventDefault();
 		if($(this).parent().find('ul.menu').css('display') == 'none') {
 			$(this).closest('div.upfront-output-wrapper').addClass('on_the_top');
+
+			if($(this).parent().data('burger_over') != 'pushes' && $(this).parent().data('burger_alignment') != 'whole') {
+				$('<div class="burger_overlay"></div>').insertBefore($(this).parent().find('ul.menu'));
+			}
+	
 			$(this).parent().find('ul.menu').show();
 			$(this).parent().find('ul.sub-menu').show();
 
@@ -87,6 +92,7 @@ jQuery(document).ready(function($) {
 		}
 		else {
 			$(this).parent().find('ul.menu').hide();
+			$(this).parent().find('ul.menu').siblings('.burger_overlay').remove();
 			$(this).parent().find('ul.sub-menu').hide();
 
 			//$(e.target).closest('.responsive_nav_toggler').css({position: '', left: '', top: ''});
@@ -184,7 +190,7 @@ jQuery(document).ready(function($) {
 						//Z-index the container module to always be on top, in the layout edit mode
 						$(this).closest('div.upfront-newnavigation_module').css('z-index', 3);
 
-
+						$(this).find('ul.menu').siblings('.burger_overlay').remove();
 						$(this).find('ul.menu').hide();
 					}
 					else {

@@ -659,10 +659,35 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 	},
 	hideMenu: function(menu) {
-		menu.hide();
 
+		menu.hide();
+		if(menu.siblings('.burger_overlay').length > 0) {
+			var burger_overlay = menu.siblings('.burger_overlay');
+			/*menu.insertBefore(burger_overlay);
+			burger_overlay.remove();
+			*/
+			burger_overlay.hide();
+
+		}
+		
 	},
 	showMenu: function(menu) {
+		
+
+		/*if(this.model.get_property_value_by_name('burger_menu') == 'yes' && this.model.get_property_value_by_name('burger_over') != 'pushes' && this.model.get_property_value_by_name('burger_alignment') != 'whole') {
+			var burger_overlay = $('<div class="burger_overlay"></div>')
+			menu.closest('.upfront-object-content').append(burger_overlay);
+			burger_overlay.append(menu);
+ 			
+		}*/
+
+		if(menu.siblings('.burger_overlay').length > 0) {
+			var burger_overlay = menu.siblings('.burger_overlay');
+			
+			burger_overlay.show();
+
+		}
+
 		menu.show();
 	},
 	toggle_responsive_nav: function(e) {
@@ -718,20 +743,11 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		var me = this;
 		var menu_id = this.model.get_property_value_by_name('menu_id');
 		if(!menu_id) return;
-		var container;
+		var container = this.$el.find('.upfront-object-content');;
 
 
 		this.$el.find('.upfront-object-content').html('');
-
-		if(this.model.get_property_value_by_name('burger_menu') == 'yes' && this.model.get_property_value_by_name('burger_over') != 'pushes' && this.model.get_property_value_by_name('burger_alignment') != 'whole') {
-
-			this.$el.find('.upfront-object-content').append($('<div class="burger_overlay"></div>'));
-			container = this.$el.find('.burger_overlay');
- 			
-		}
-		else {
-			container = this.$el.find('.upfront-object-content');
-		}
+		
 
 		if(this.property('menu_items').length > 0) {
 			var menu = this.renderMenu(this.property('menu_items'), 'menu');
@@ -761,6 +777,12 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
 
 		if(!breakpoint || breakpoint.default) {
+
+			if(this.model.get_property_value_by_name('burger_menu') == 'yes' && this.model.get_property_value_by_name('burger_over') != 'pushes' && this.model.get_property_value_by_name('burger_alignment') != 'whole') {
+				this.$el.find('.upfront-object-content').append($('<div class="burger_overlay"></div>'));
+			}
+
+
 			if(this.model.get_property_value_by_name('burger_menu') == 'yes') {
 				container.prepend($('<div>').addClass("responsive_nav_toggler").data('view', me).append('<div></div><div></div><div></div>').bind('click', me.toggle_responsive_nav));
 				
@@ -771,6 +793,12 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		} else {
 			model_breakpoint = this.model.get_property_value_by_name('breakpoint');
 			breakpoint_data = model_breakpoint[breakpoint.id];
+
+
+			if(breakpoint_data && breakpoint_data.burger_menu ==  'yes' && breakpoint_data.burger_over != 'pushes' && breakpoint_data.burger_alignment != 'whole') {
+				this.$el.find('.upfront-object-content').append($('<div class="burger_overlay"></div>'));
+			}
+
 			if(breakpoint_data && breakpoint_data.burger_menu == 'yes') {
 				container.prepend($('<div>').addClass("responsive_nav_toggler").data('view', me).append('<div></div><div></div><div></div>').bind('click', me.toggle_responsive_nav));
 
