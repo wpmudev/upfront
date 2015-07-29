@@ -49,7 +49,7 @@ jQuery(document).ready(function($) {
 			$(this).parent().find('ul.menu').show();
 			$(this).parent().find('ul.sub-menu').show();
 
-			if($(this).parent().data('burger_over') == 'pushes' && ($(this).parent().data('burger_alignment') == 'top' || $(this).parent().data('burger_alignment') == 'whole')) {
+			if($(this).parent().data('burger_over') == 'pushes' && $(this).parent().data('burger_alignment') == 'top') {
 		
 				$('div#page').css('margin-top', $(this).parent().find('ul.menu').height());
 		

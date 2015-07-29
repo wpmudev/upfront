@@ -192,8 +192,8 @@ define([], function() {
 				this.panels._wrapped[0].settings._wrapped[1].$el.css('display', 'block');
 				this.panels._wrapped[0].settings._wrapped[2].$el.css('display', 'none');
 
-				if(this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[0].get_value() == "left" || this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[0].get_value() == "right")
-					this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[1].$el.hide();;
+				if(this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[0].get_value() == "left" || this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[0].get_value() == "right" || this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[0].get_value() == "whole")
+					this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[1].$el.hide();
 			}
 			else {
 				this.panels._wrapped[0].settings._wrapped[1].$el.css('display', 'none');
@@ -274,7 +274,7 @@ define([], function() {
 									],
 									change: function() {
 										var value = this.get_value();
-										if(value == 'left' || value == 'right') {
+										if(value == 'left' || value == 'right' || value == 'whole') {
 											me.panels._wrapped[0].settings._wrapped[1].fields._wrapped[1].$el.hide();
 											me.panels._wrapped[0].settings._wrapped[1].fields._wrapped[1].set_value("over");
 										}

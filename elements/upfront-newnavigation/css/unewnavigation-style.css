@@ -132,11 +132,11 @@ div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] 
   right:0;
 }
 
-/*
+
 div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] ul.menu {
 	height: 100%;	
 }
-*/
+
 
 div.upfront-navigation div[data-style="burger"][ data-burger_alignment="left"] ul.menu {
   width:30%;
