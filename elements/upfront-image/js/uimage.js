@@ -15,9 +15,6 @@ define([
 	breakpointColumnPadding = parseInt(breakpointColumnPadding, 10);
 	breakpointColumnPadding = _.isNaN(breakpointColumnPadding) ? 15 : breakpointColumnPadding;
 
-	// Variable used to speed resizing up;
-	var resizingData = {};
-
 	var UimageView = Upfront.Views.ObjectView.extend({
 		model: UimageModel,
 		imageTpl: Upfront.Util.template(imageTpl),
@@ -26,6 +23,9 @@ define([
 		
 		// Disable size hint as image element already has it's own
 		display_size_hint: false,
+		
+		// Property used to speed resizing up;
+		resizingData: {},
 
 		initialize: function() {
 			var me = this;
@@ -67,9 +67,9 @@ define([
 				this.property('srcFull', this.property('src'));
 			}
 
-			this.listenTo(this.model.get('properties'), 'change', this.render);
-			this.listenTo(this.model.get('properties'), 'add', this.render);
-			this.listenTo(this.model.get('properties'), 'remove', this.render);
+			this.listenTo(this.model.get('properties'), 'change', this.update);
+			this.listenTo(this.model.get('properties'), 'add', this.update);
+			this.listenTo(this.model.get('properties'), 'remove', this.update);
 
 			this.listenTo(this.model, 'uimage:edit', this.editRequest);
 
@@ -393,8 +393,8 @@ define([
 
 		isSmallImage: function() {
 			var elementSize = this.property('element_size');
-			if (resizingData.data && resizingData.data.elementSize) {
-				elementSize = resizingData.data.elementSize;
+			if (this.resizingData.data && this.resizingData.data.elementSize) {
+				elementSize = this.resizingData.data.elementSize;
 			}
 			return elementSize.width < 100 || elementSize.height < 50;
 		},
@@ -523,9 +523,9 @@ define([
 			//Bind resizing events
 			if (!this.parent_module_view.$el.data('resizeHandling')) {
 				this.parent_module_view.$el
-					.on('resizestart', $.proxy(this.onElementResizeStart, this))
-					.on('resize', $.proxy(this.onElementResizing, this))
-					.on('resizestop', $.proxy(this.onElementResizeStop, this))
+					//.on('resizestart', $.proxy(this.onElementResizeStart, this))
+					//.on('resize', $.proxy(this.onElementResizing, this))
+					//.on('resizestop', $.proxy(this.onElementResizeStop, this))
 					.data('resizeHandling', true);
 			}
 
@@ -718,7 +718,8 @@ define([
 		/***************************************************************************/
 		/*           Handling element resize events (jQuery resizeable)            */
 		/***************************************************************************/
-		onElementResizeStart: function() {
+		
+		on_element_resize_start: function(attr) {
 			if(this.mobileMode) {
 				return;
 			}
@@ -730,7 +731,7 @@ define([
 			}
 
 			// Store variables used in resize event handlers
-			resizingData = {
+			this.resizingData = {
 				starting: starting,
 				data: {
 					position: this.property('position'),
@@ -760,24 +761,19 @@ define([
 			this.$('.uimage').css('min-height', 'auto');
 		},
 
-		onElementResizing: function() {
+		on_element_resizing: function(attr) {
 			if(this.mobileMode) {
 				return;
 			}
 
-			var starting = resizingData.starting,
-				resizer = resizingData.resizer,
-				data = resizingData.data,
-				img = resizingData.img,
+			var starting = this.resizingData.starting,
+				data = this.resizingData.data,
+				img = this.resizingData.img,
 				captionHeight = this.property('caption_position') === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
 				padding = this.property('no_padding') == 1 ? 0 : breakpointColumnPadding,
 				ratio;
 
-			if(!resizer){
-				resizer = $('html').find('.upfront-resize');
-				resizingData.resizer = resizer;
-			}
-			data.elementSize = {width: resizer.width() - (2 * padding), height: resizer.height() - (2 * padding) - captionHeight};
+			data.elementSize = {width: attr.width - (2 * padding), height: attr.height - (2 * padding) - captionHeight};
 
 			this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
 					width: data.elementSize.width,
@@ -819,22 +815,22 @@ define([
 			this.setupBySize();
 		},
 
-		onElementResizeStop: function() {
+		on_element_resize: function(attr) {
 			if(this.mobileMode) {
 				return;
 			}
 
-			var starting = resizingData.starting,
+			var starting = this.resizingData.starting,
 				me = this,
-				img = resizingData.img,
+				img = this.resizingData.img,
 				imgSize = {width: img.width(), height: img.height()},
 				imgPosition = img.position(),
 				padding = this.property('no_padding') == 1 ? 0 : breakpointColumnPadding;
 
 			if(starting.length){
 				this.elementSize = {
-					height: $('.upfront-resize').height() - (2 * padding),
-					width: $('.upfront-resize').width() - (2 * padding)
+					height: attr.height - (2 * padding),
+					width: attr.width - (2 * padding)
 				};
 				this.property('element_size', this.elementSize);
 				return;
@@ -843,7 +839,7 @@ define([
 			}
 
 			// Save resizing, be sure we have the good dimensions
-			this.onElementResizing();
+			this.on_element_resizing(attr);
 
 			// Change the sign
 			imgPosition.top = -imgPosition.top;
@@ -854,13 +850,13 @@ define([
 				position: imgPosition
 			};
 
-			this.property('element_size', resizingData.data.elementSize);
+			this.property('element_size', this.resizingData.data.elementSize);
 
 			this.cropTimer = setTimeout(function(){
 				me.saveTemporaryResizing();
 			}, this.cropTimeAfterResize);
 
-			resizingData = {};
+			this.resizingData = {};
 			this.showCaption();
 		},
 
