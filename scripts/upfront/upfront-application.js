@@ -1045,9 +1045,9 @@ var ThemeEditor = new (LayoutEditorSubapplication.extend({
 		}
 		this.listenToOnce(Upfront.Events, 'layout:render', Upfront.Behaviors.GridEditor.apply_grid);
 		this.listenToOnce(Upfront.Events, 'command:layout:save_done', Upfront.Behaviors.LayoutEditor.first_save_dialog);
-		this.listenTo(Upfront.Events, "command:layout:create", Upfront.Behaviors.LayoutEditor.create_layout_dialog);
+		this.listenTo(Upfront.Events, "command:layout:create", Upfront.Behaviors.LayoutEditor.create_layout_dialog); // DEPRECATED
 		this.listenTo(Upfront.Events, "command:themefontsmanager:open", Upfront.Behaviors.LayoutEditor.open_theme_fonts_manager);
-		this.listenTo(Upfront.Events, "command:layout:browse", Upfront.Behaviors.LayoutEditor.browse_layout_dialog);
+		this.listenTo(Upfront.Events, "command:layout:browse", Upfront.Behaviors.LayoutEditor.browse_layout_dialog); // DEPRECATED
 		this.listenTo(Upfront.Events, "command:layout:edit_structure", Upfront.Behaviors.GridEditor.edit_structure);
 		this.listenTo(Upfront.Events, "command:layout:export_theme", Upfront.Behaviors.LayoutEditor.export_dialog);
 		this.listenTo(Upfront.Events, "builder:load_theme", Upfront.Behaviors.LayoutEditor.load_theme);
