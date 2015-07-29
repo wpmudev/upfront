@@ -889,6 +889,9 @@ define([
 		}
 	});
 
+	/**
+	 * DEPRECATED
+	 */
 	var Command_ThemesDropdown = Command.extend({
 		className: 'themes-dropdown',
 		enabled: true,
@@ -939,6 +942,9 @@ define([
 
 	});
 
+	/**
+	 * DEPRECATED
+	 */
 	var Command_NewLayout = Command.extend({
 		className: "command-new-layout",
 		render: function () {
@@ -951,6 +957,9 @@ define([
 		}
 	});
 
+	/**
+	 * DEPRECATED
+	 */
 	var Command_BrowseLayout = Command.extend({
 		className: "command-browse-layout upfront-icon upfront-icon-browse-layouts",
 		render: function () {
@@ -2509,6 +2518,9 @@ define([
 		}
 	});
 
+	/**
+	 * DEPRECATED
+	 */
 	var SidebarCommands_PrimaryLayout = Commands.extend({
 		"className": "sidebar-commands sidebar-commands-primary clearfix",
 		initialize: function () {
@@ -2734,8 +2746,8 @@ define([
 			this.sidebar_profile = new SidebarProfile({"model": this.model});
 			this.sidebar_commands = {
 				header: new SidebarCommands_Header({"model": this.model}),
-				primary: is_theme ? new SidebarCommands_PrimaryLayout({"model": this.model}) : new SidebarCommands_PrimaryPostType({"model": this.model}),
-				additional: is_theme ? false : new SidebarCommands_AdditionalPostType({"model": this.model}),
+				primary: is_theme ? new SidebarCommands_PrimaryLayout({"model": this.model}) : new SidebarCommands_PrimaryPostType({"model": this.model}), // DEPRECATED
+				additional: is_theme ? false : new SidebarCommands_AdditionalPostType({"model": this.model}), // DEPRECATED
 				control: new SidebarCommands_Control({"model": this.model})
 			};
 			this.sidebar_panels = new SidebarPanels({"model": this.model});
