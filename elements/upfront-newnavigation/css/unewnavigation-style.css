@@ -121,14 +121,23 @@ div.upfront-navigation div[data-style="burger"] ul.menu {
   overflow-y: auto !important;
 }
 
+div.upfront-navigation div[data-style="burger"][data-burger_over="pushes"][data-burger_alignment="top"] ul.menu, div.upfront-navigation div[data-style="burger"][data-burger_over="pushes"][data-burger_alignment="whole"] ul.menu {
+  position: absolute;
+  max-height: inherit;
+}
+
 div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"] ul.menu,
 div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] ul.menu {
   left:0;
   right:0;
 }
+
+/*
 div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] ul.menu {
 	height: 100%;	
 }
+*/
+
 div.upfront-navigation div[data-style="burger"][ data-burger_alignment="left"] ul.menu {
   width:30%;
   height: 100%;

@@ -137,7 +137,7 @@ define([], function() {
 					}
 
 					if(breakpoint_data.burger_over) {
-						item = this.panels._wrapped[0].settings._wrapped[2].fields._wrapped[1];
+						item = this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[1];
 						if (item && item.$el && item.$el.length) {
 							item.$el.find('input').removeAttr("checked");
 							item.$el.find('input[value="'+breakpoint_data.burger_over+'"]').attr("checked", 'checked');
@@ -191,6 +191,9 @@ define([], function() {
 			if(this.panels._wrapped[0].settings._wrapped[0].fields._wrapped[1].$el.find('input:checked').length > 0) {
 				this.panels._wrapped[0].settings._wrapped[1].$el.css('display', 'block');
 				this.panels._wrapped[0].settings._wrapped[2].$el.css('display', 'none');
+
+				if(this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[0].get_value() == "left" || this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[0].get_value() == "right")
+					this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[1].$el.hide();;
 			}
 			else {
 				this.panels._wrapped[0].settings._wrapped[1].$el.css('display', 'none');
@@ -268,7 +271,17 @@ define([], function() {
 										{ label: l10n.mnu.right, value: 'right', icon: 'burger-right'},
 										{ label: l10n.mnu.top, value: 'top', icon: 'burger-top'},
 										{ label: l10n.mnu.whole, value: 'whole', icon: 'burger-whole'}
-									]
+									],
+									change: function() {
+										var value = this.get_value();
+										if(value == 'left' || value == 'right') {
+											me.panels._wrapped[0].settings._wrapped[1].fields._wrapped[1].$el.hide();
+											me.panels._wrapped[0].settings._wrapped[1].fields._wrapped[1].set_value("over");
+										}
+										else {
+											me.panels._wrapped[0].settings._wrapped[1].fields._wrapped[1].$el.show();	
+										}
+									}
 								}),
 								new Upfront.Views.Editor.Field.Radios({
 									model: this.model,

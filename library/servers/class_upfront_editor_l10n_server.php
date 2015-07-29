@@ -291,6 +291,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'page_template' => __('Page Template', 'upfront'),
 				'save_as' => __('Save As...', 'upfront'),
 				'save_layout' => __('Save layout', 'upfront'),
+				'clone' => __('Clone', 'upfront'),
 				'cancel' => __('Cancel', 'upfront'),
 				'building' => __('Building...', 'upfront'),
 				'preview' => __('Preview', 'upfront'),

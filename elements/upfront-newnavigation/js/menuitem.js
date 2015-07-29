@@ -92,6 +92,8 @@ return (function ($) {
 			}
 		},
 		on_context_menu: function(e) {
+			if (Upfront.Settings.Application.no_context_menu) return;
+			
 			e.stopPropagation();
 			if(this.parent_view.$el.find('ul.menu').hasClass('edit_mode')) return;
 

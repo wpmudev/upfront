@@ -344,10 +344,12 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			menuItemsValues = [{label:l10n.choose_existing_menu, value: 0}],
 			menuList = Upfront.data.unewnavigation.currentMenuItemData.get('menuList')
 		;
-
+		var clubbedvalues = [];
 		if(typeof(menuList) != 'undefined'){
-			menuItemsValues.concat(menuList);
+
+			clubbedvalues = menuItemsValues.concat(menuList);
 		}
+
 
 		me.$el.find('div.upfront-object-content').html('');
 
@@ -355,7 +357,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			model: me.model,
 			label: "",
 			className: "existing_menu_list",
-			values: menuItemsValues
+			values: clubbedvalues
 		});
 
 		menuItems.render();
@@ -566,6 +568,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			win_width = $(window).width(),
 			sidebar_width = $('div#sidebar-ui').outerWidth(),
 			topbar_height = $('div#upfront-ui-topbar').outerHeight();
+			ruler_height = $('.upfront-ruler-container').outerHeight();
 
 		for (var key in bparray) {
 			if(parseInt(currentwidth) >= parseInt(bparray[key]['width'])) {
@@ -596,7 +599,10 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 						$('head').find('style#responsive_nav_sidebar_offset').remove();
 						
-						var responsive_css = 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"] ul.menu, div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] ul.menu {left:'+parseInt(regions_off.left)+'px !important; right: inherit; width:'+((parseInt(currentwidth) < parseInt(win_width-sidebar_width))?parseInt(currentwidth):parseInt(win_width-sidebar_width)) +'px !important; } ';
+						var responsive_css = 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"][data-burger_over="over"] ul.menu, div.upfront-navigation div[data-style="burger"][data-burger_over="over"][data-burger_alignment="whole"] ul.menu {left:'+parseInt(regions_off.left)+'px !important;} ';
+
+						responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"] ul.menu, div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] ul.menu {right: inherit; width:'+((parseInt(currentwidth) < parseInt(win_width-sidebar_width))?parseInt(currentwidth):parseInt(win_width-sidebar_width)) +'px !important; } ';
+												
 						
 						responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="left"] ul.menu {left:'+parseInt(regions_off.left)+'px !important; right:inherit !important; width:'+parseInt(30/100*regions_width)+'px !important;} ';
 
@@ -604,7 +610,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 						//responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="right"] ul.menu {left:inherit !important; right:'+parseInt((win_width-currentwidth-sidebar_width) / 2)+'px !important; width:'+parseInt(30/100*regions_width)+'px !important; } ';
 						responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="right"] ul.menu {left:inherit !important; right:'+((parseInt((win_width-currentwidth-sidebar_width) / 2 - 30) > 0)?parseInt((win_width-currentwidth-sidebar_width) / 2 - 30):0)+'px !important; width:'+parseInt(30/100*regions_width)+'px !important; } ';
 
-						responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"] ul.menu {top:'+parseInt(topbar_height)+'px !important; } ';
+						responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][data-burger_over="over"] ul.menu {top:'+(parseInt(topbar_height) + parseInt(ruler_height))+'px !important; } ';
 
 						$('head').append($('<style id="responsive_nav_sidebar_offset">'+responsive_css+'</style>'));
 					}
@@ -655,7 +661,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	toggle_responsive_nav: function(e) {
 		var me = this;
 		var region_container = $(this).closest('.upfront-region-container');
-		if($(this).parent().find('ul.menu').css('display') == 'none') {
+		if($(this).parent().find('ul.menu').css('display') == 'none' && typeof(e) != 'undefined') {
+			
 			$(this).parent().find('ul.menu').show();
 			var offset = $(this).parent().find('ul.menu').position();
 			
@@ -666,7 +673,20 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			});
 			close_icon.css({position: 'fixed', left: offset.left+$(this).parent().find('ul.menu').width()-close_icon.width()-10, top: offset.top+10});
 			region_container.addClass('upfront-region-container-has-nav');
+
+			if($(this).parent().data('burger_over') == 'pushes' && ($(this).parent().data('burger_alignment') == 'top' || $(this).parent().data('burger_alignment') == 'whole')) {
+		
+				$('section.upfront-layout').css('margin-top', $(this).parent().find('ul.menu').height());
+		
+
+				var topbar_height = $('div#upfront-ui-topbar').outerHeight();
+				var ruler_height = $('.upfront-ruler-container').outerHeight();
+				$(this).parent().find('ul.menu').offset({top:topbar_height+ruler_height, left:$('section.upfront-layout').offset().left});
+				
+
+			}
 		} else {
+			
 			$(this).parent().find('ul.menu').hide();
 			
 
@@ -675,20 +695,39 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			$(this).parent().find('ul.sub-menu').css('display', '');
 			if($(this).parent().find('ul.sub-menu').length < 1 )
 				region_container.removeClass('upfront-region-container-has-nav');
+
+			if($(this).parent().data('burger_over') == 'pushes') {
+				$('section.upfront-layout').css('margin-top', '');
+			}
 		}
 	},
 	generate_menu: function() {
 		var me = this;
 		var menu_id = this.model.get_property_value_by_name('menu_id');
 		if(!menu_id) return;
+		var container;
+
 
 		this.$el.find('.upfront-object-content').html('');
+
+		if(this.model.get_property_value_by_name('burger_menu') == 'yes' && this.model.get_property_value_by_name('burger_over') != 'pushes' && this.model.get_property_value_by_name('burger_alignment') != 'whole') {
+
+			this.$el.find('.upfront-object-content').append($('<div class="burger_overlay"></div>'));
+			container = this.$el.find('.burger_overlay');
+ 			
+		}
+		else {
+			container = this.$el.find('.upfront-object-content');
+		}
+
 		if(this.property('menu_items').length > 0) {
 			var menu = this.renderMenu(this.property('menu_items'), 'menu');
-			this.$el.find('.upfront-object-content').append(menu);
-		} else {
+			container.append(menu);
+		} 
+		else 
+		{
 			
-			this.$el.find('.upfront-object-content').append(this.renderMenu(this.property('menu_items'), 'menu'));
+			container.append(this.renderMenu(this.property('menu_items'), 'menu'));
 			
 			setTimeout(function() {
 				me.$el.find('a.newnavigation-add-item').trigger('click');
@@ -710,17 +749,25 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		if(!breakpoint || breakpoint.default) {
 			if(this.model.get_property_value_by_name('burger_menu') == 'yes') {
-				this.$el.find('.upfront-object-content').prepend($('<div>').addClass("responsive_nav_toggler").append('<div></div><div></div><div></div>').bind('click', me.toggle_responsive_nav));
+				container.prepend($('<div>').addClass("responsive_nav_toggler").append('<div></div><div></div><div></div>').bind('click', me.toggle_responsive_nav));
+				
 				this.$el.find('ul.menu').hide();
+				
+				
 			}
 		} else {
 			model_breakpoint = this.model.get_property_value_by_name('breakpoint');
 			breakpoint_data = model_breakpoint[breakpoint.id];
 			if(breakpoint_data && breakpoint_data.burger_menu == 'yes') {
-				this.$el.find('.upfront-object-content').prepend($('<div>').addClass("responsive_nav_toggler").append('<div></div><div></div><div></div>').bind('click', me.toggle_responsive_nav));
+				container.prepend($('<div>').addClass("responsive_nav_toggler").append('<div></div><div></div><div></div>').bind('click', me.toggle_responsive_nav));
+
 				this.$el.find('ul.menu').hide();
+				
 			}
 		}
+		//clear any top margin applied to the layout for accomodating a burger menu when set to "push content"
+		$('section.upfront-layout').css('margin-top', '');
+
 		this.makeSortable();
 
 	},
