@@ -11,6 +11,21 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 		add_action('wp_head', array($this, 'dispatch_fonts_loading'));
 
 		upfront_add_ajax('wp_scripts', array($this, 'wp_scripts_load'));
+
+		// We're serously playing with fire here
+		add_action('wp_enqueue_scripts', array($this, 'setup_hard_experiments'));
+	}
+
+	/**
+	 * Drops default jquery. Happens only in hardcode mode.
+	 * It will be re-added later on, in Upfront_CoreDependencies_Server::_output_experimental()
+	 * Although this does *not* replace stock WP jQuery, it is sure to break some plugins!
+	 */
+	public function setup_hard_experiments () {
+		$comp = Upfront_Behavior::compression();
+		if (!$comp->has_experiments_level($comp->constant('HARDCORE'))) return false;
+		if (!empty($_GET['editmode'])) return false; // Absolutely don't do this if we're to auto-boot
+		wp_dequeue_script('jquery'); // Oooooh yeah we went there!
 	}
 
 	/**
@@ -92,6 +107,15 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 	 */
 	private function _output_experimental ($deps) {
 
+		// Yeah, so we need jQuery here. If it's not done, drop it from the queue and get the default one
+		if (!wp_script_is('jquery', 'done')) {
+			wp_dequeue_script('jquery');
+			echo '<script src="' . home_url('/wp-includes/js/jquery/jquery.js') . '"></script>';
+			if ($this->_debugger->is_active()) {
+				echo '<script src="' . home_url('/wp-includes/js/jquery/jquery-migrate.min.js') . '"></script>';
+			}
+		}
+
 		$link_urls = json_encode(apply_filters('upfront-experiments-styles-debounce_dependency_load', $deps->get_styles()));
 		$debug = $this->_debugger->is_active(Upfront_Debug::STYLE) ? 'class="upfront-debounced"' : '';
 		$link_tpl = json_encode('<link rel="stylesheet"  href="%url%" type="text/css" media="all" ' . $debug . ' />');
@@ -108,7 +132,7 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 			$callback_wrap_start = '$(function () {';
 			$callback_wrap_end = '});';
 		}
-		if ($comp->has_experiments_level($comp->constant('AGGRESSIVE'))) {
+		if ($comp->has_experiments_level($comp->constant('AGGRESSIVE')) || $comp->has_experiments_level($comp->constant('HARDCORE'))) {
 			$callback_wrap_start = '$(function () { setTimeout(function () {';
 			$callback_wrap_end = '}, 500);});';
 			$injection_root = 'body';

@@ -32,11 +32,18 @@ class Upfront_ElementStyles extends Upfront_Server {
 		upfront_add_ajax_nopriv('upfront-element-scripts', array($this, 'serve_scripts'));
 	}
 
-	function load_styles () {
+	/**
+	 * Loads element style dependencies in normal execution mode.
+	 * @uses wp_enqueue_style
+	 */
+	public function load_styles () {
 		$raw_cache_key = $this->_get_cached_styles();
 		wp_enqueue_style('upfront-element-styles', $this->_get_enqueueing_url(self::TYPE_STYLE, $raw_cache_key), array(), $this->_get_enqueue_version()); // But let's do pretty instead
 	}
 
+	/**
+	 * Queue up element style dependencies for deferred loading in experiments mode.
+	 */
 	public function add_style_load_url ($urls) {
 		$raw_cache_key = $this->_get_cached_styles();
 
@@ -133,11 +140,18 @@ class Upfront_ElementStyles extends Upfront_Server {
 		return $style;
 	}
 
-	function load_scripts () {
+	/**
+	 * Loads element script dependencies in normal execution mode.
+	 * @uses wp_enqueue_script
+	 */
+	public function load_scripts () {
 		$raw_cache_key = $this->_get_cached_scripts();
 		wp_enqueue_script('upfront-element-scripts', $this->_get_enqueueing_url(self::TYPE_SCRIPT, $raw_cache_key), array('jquery'), $this->_get_enqueue_version(), true); // Scripts go into footer
 	}
 
+	/**
+	 * Queue up element script dependencies for deferred loading in experiments mode.
+	 */
 	public function add_script_load_url ($urls) {
 		$raw_cache_key = $this->_get_cached_scripts();
 		$url = $this->_get_enqueueing_url(self::TYPE_SCRIPT, $raw_cache_key);
@@ -180,7 +194,10 @@ class Upfront_ElementStyles extends Upfront_Server {
 		return $raw_cache_key;
 	}
 
-	function serve_styles () {
+	/**
+	 * Serve layout element styles according to the requested key.
+	 */
+	public function serve_styles () {
 		$key = $this->_cache->key(self::TYPE_STYLE);
 		$key->set_hash(stripslashes($_REQUEST['key']));
 
@@ -193,6 +210,9 @@ class Upfront_ElementStyles extends Upfront_Server {
 		$this->_out($response, true);
 	}
 
+	/**
+	 * Serve layout element scripts according to the requested key.
+	 */
 	function serve_scripts () {
 		$key = $this->_cache->key(self::TYPE_SCRIPT);
 		$key->set_hash(stripslashes($_REQUEST['key']));
@@ -206,10 +226,23 @@ class Upfront_ElementStyles extends Upfront_Server {
 		$this->_out($response, true);
 	}
 
+	/**
+	 * Obtain the enqueueing cache breaking version.
+	 *
+	 * @return string Child theme version info
+	 */
 	private function _get_enqueue_version () {
 		return Upfront_ChildTheme::get_version();
 	}
 
+	/**
+	 * Determine the endpoint URL format to use for dependencies.
+	 *
+	 * @param string $type Dependency (and endpoint) type
+	 * @param string $key Raw cache key used for temporary storage
+	 *
+	 * @return string Final dependency URL
+	 */
 	private function _get_enqueueing_url ($type, $key) {
 		$url = false;
 		$endpoint = self::TYPE_SCRIPT === $type
@@ -229,3 +262,90 @@ class Upfront_ElementStyles extends Upfront_Server {
 	}
 
 }
+
+
+/**
+ * Minification listener.
+ * Takes care of dependency minification.
+ */
+class Upfront_MinificationServer implements IUpfront_Server {
+	
+	public static function serve () {
+		$me = new self;
+		$me->_add_hooks();
+	}
+
+	private function _add_hooks () {
+		if (version_compare(PHP_VERSION, '5.3.1') < 0) return false; // We require PHPv5.3 for this
+
+		/*
+		// Currently not in use, because the performance overhead trumps the gains in request size
+		add_filter('upfront-dependencies-cache-styles', array($this, 'minify_css'));
+		add_filter('upfront-dependencies-main-styles', array($this, 'minify_css'));
+		add_filter('upfront-dependencies-grid-styles', array($this, 'minify_css'));
+		*/
+		add_filter('upfront-dependencies-cache-scripts', array($this, 'minify_js'));
+	}
+
+	/**
+	 * Processes styles just before they get output or hit cache.
+	 * Currently not in use, as what we do to styles by default is way faster, and
+	 * with just a little bit more weight in processed styles.
+	 *
+	 * @param string $what Stylesheet to process
+	 *
+	 * @return string Minified CSS
+	 */
+	public function minify_css ($what) {
+		return $what;
+	}
+
+	/**
+	 * Processes scripts just before they hit cache.
+	 * @uses JShrink_Minifier::minify Adapted JShrink mnifier (https://github.com/tedious/JShrink)
+	 *
+	 * @param string $what Scripts to process
+	 *
+	 * @return string Minified javascript
+	 */
+	public function minify_js ($what) {
+		if (!Upfront_Behavior::compression()->has_experiments()) return $what; // Only do this within the compression mode ON
+		
+		require_once dirname(dirname(__FILE__)) . '/external/jshrink/src/JShrink/Minifier.php';
+		return JShrink_Minifier::minify($what);
+	}
+}
+Upfront_MinificationServer::serve();
+
+
+/**
+ * Smush listener.
+ * Passes off custom image sizing requests to the Smush plugin, if present
+ */
+class Upfront_SmushServer implements IUpfront_Server {
+
+	public static function serve () {
+		$me = new self;
+		$me->_add_hooks();
+	}
+
+	private function _add_hooks () {
+		if (!class_exists('WpSmush')) return false; // Do we have Smush plugin?
+		if (!defined('WpSmush::API_SERVER')) return false; // Is it ours?
+
+		add_action('upfront-media-images-image_changed', array($this, 'pass_over_to_smush'), 10, 2);
+	}
+
+	public function pass_over_to_smush ($path, $url) {
+		if (empty($path) || empty($url)) return false;
+		if (!is_readable($path)) return false;
+
+		global $WpSmush;
+		if (!is_callable(array($WpSmush, 'do_smushit'))) return false;
+
+		$res = $WpSmush->do_smushit($path, $url);
+		
+		return $res;
+	}
+}
+Upfront_SmushServer::serve();
