@@ -233,6 +233,9 @@ define([
 			]
 		}
 	});
+	
+	// Generate presets styles to page
+	Util.generatePresetsToPage('contact', styleTpl);
 
 	return AppearancePanel;
 });

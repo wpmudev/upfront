@@ -290,6 +290,9 @@ define([
 			return l10n.settings.label;
 		}
 	});
+	
+	// Generate presets styles to page
+	Util.generatePresetsToPage('button', styleTpl);
 
 	return ButtonSettings;
 });

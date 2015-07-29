@@ -1,4 +1,5 @@
 define([
+	'scripts/upfront/preset-settings/util',
 	'scripts/upfront/element-settings/settings',
 	'scripts/upfront/preset-settings/preset-manager',
 	'scripts/upfront/preset-settings/border-settings-item',
@@ -7,7 +8,7 @@ define([
 	'scripts/upfront/preset-settings/selectbox-settings-item',
 	'elements/upfront-gallery/js/settings/caption-location',
 	'text!elements/upfront-gallery/tpl/preset-style.html'
-], function(ElementSettings, PresetManager, BorderSettingsItem, RadiusSettingsItem, ColorsSettingsItem, SelectboxSettingsItem, CaptionLocation, styleTpl) {
+], function(Util, ElementSettings, PresetManager, BorderSettingsItem, RadiusSettingsItem, ColorsSettingsItem, SelectboxSettingsItem, CaptionLocation, styleTpl) {
 
 	var l10n = Upfront.Settings.l10n.gallery_element;
 
@@ -83,6 +84,9 @@ define([
 			]
 		}
 	});
+	
+	// Generate presets styles to page
+	Util.generatePresetsToPage('gallery', styleTpl);
 	
 	return AppearancePanel;
 });

@@ -58,6 +58,9 @@ define([
 				]
 			}
 		});
+		
+		// Generate presets styles to page
+		Util.generatePresetsToPage('slider', styleTpl);
 
 		return AppearancePanel;
 });

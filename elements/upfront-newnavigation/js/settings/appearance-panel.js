@@ -142,6 +142,9 @@ define([
 				],
 			}
 		});
+		
+		// Generate presets styles to page
+		Util.generatePresetsToPage('nav', styleTpl);
 
 		return AppearancePanel;
 });

@@ -84,6 +84,9 @@ define([
 				]
 			}
 		});
+		
+		// Generate presets styles to page
+		Util.generatePresetsToPage('text', styleTpl);
 
 		return AppearancePanel;
 });

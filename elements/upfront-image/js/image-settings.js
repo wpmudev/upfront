@@ -1,4 +1,5 @@
 define([
+	'scripts/upfront/preset-settings/util',
 	'elements/upfront-image/js/settings/description-panel',
 	'scripts/upfront/element-settings/settings',
 	'scripts/upfront/preset-settings/preset-manager',
@@ -8,7 +9,7 @@ define([
 	'scripts/upfront/preset-settings/selectbox-settings-item',
 	'elements/upfront-image/js/settings/caption-location',
 	'text!elements/upfront-image/tpl/preset-style.html'
-], function(DescriptionPanel, ElementSettings, PresetManager, BorderSettingsItem, RadiusSettingsItem, ColorsSettingsItem, SelectboxSettingsItem, CaptionLocation, styleTpl) {
+], function(Util,DescriptionPanel, ElementSettings, PresetManager, BorderSettingsItem, RadiusSettingsItem, ColorsSettingsItem, SelectboxSettingsItem, CaptionLocation, styleTpl) {
 	var l10n = Upfront.Settings.l10n.image_element;
 
 	var ImageAppearance = PresetManager.extend({
@@ -120,6 +121,9 @@ define([
 			return l10n.settings.label;
 		}
 	});
+	
+	// Generate presets styles to page
+	Util.generatePresetsToPage('image', styleTpl);
 
 	return ImageSettings;
 });
