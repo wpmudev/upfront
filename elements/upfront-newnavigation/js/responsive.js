@@ -52,7 +52,7 @@ jQuery(document).ready(function($) {
 			}
 	
 			$(this).parent().find('ul.menu').show();
-			$(this).parent().find('ul.sub-menu').show();
+			//$(this).parent().find('ul.sub-menu').show();
 
 			if($(this).parent().data('burger_over') == 'pushes' && $(this).parent().data('burger_alignment') == 'top') {
 		
@@ -73,9 +73,9 @@ jQuery(document).ready(function($) {
 			//$(this).parent().find('ul.menu').css('padding-top', '60px');
 			var close_icon = $('<i class="burger_nav_close"></i>');
 
-			$(this).parent().find('ul.menu').parent().append(close_icon);
+			$(this).parent().find('ul.menu').prepend($('<li>').addClass('wrap_bruger_nav_close').append(close_icon));
 
-			close_icon.css({position: 'fixed', left: offset.left+$(this).parent().find('ul.menu').width()-close_icon.width()-10, top: offset.top+(($('div#wpadminbar').length && $('div#wpadminbar').css('display') == 'block')?$('div#wpadminbar').outerHeight():0) + 10});
+			//close_icon.css({position: 'fixed', left: offset.left+$(this).parent().find('ul.menu').width()-close_icon.width()-10, top: offset.top+(($('div#wpadminbar').length && $('div#wpadminbar').css('display') == 'block')?$('div#wpadminbar').outerHeight():0) + 10});
 
 			/*
 
@@ -93,12 +93,12 @@ jQuery(document).ready(function($) {
 		else {
 			$(this).parent().find('ul.menu').hide();
 			$(this).parent().find('ul.menu').siblings('.burger_overlay').remove();
-			$(this).parent().find('ul.sub-menu').hide();
+			//$(this).parent().find('ul.sub-menu').hide();
 
 			//$(e.target).closest('.responsive_nav_toggler').css({position: '', left: '', top: ''});
 			//$(this).parent().find('ul.menu').css('padding-top', '');
 
-			$('i.burger_nav_close').remove();
+			$('i.burger_nav_close').parent('li.wrap_bruger_nav_close').remove();
 
 			$(this).closest('div.upfront-output-wrapper').removeClass('on_the_top');
 			
@@ -228,7 +228,7 @@ jQuery(document).ready(function($) {
 		$('div#page').css('margin-top', '');
 		$('.responsive_nav_toggler').css({position: '', left: '', top: ''});
 		$('ul.menu').css('padding-top', '');
-		$('.burger_nav_close').remove();
+		$('.burger_nav_close').parent('li.wrap_bruger_nav_close').remove();
 		roll_responsive_nav(".upfront-output-unewnavigation > .upfront-navigation");
 	});
 

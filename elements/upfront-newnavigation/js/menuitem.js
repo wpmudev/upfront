@@ -10,6 +10,8 @@ return (function ($) {
 			'click i.delete_menu_item' : 'deleteMenuItem',
 			'click i.navigation-add-item': 'addMenuItem',
 			"contextmenu a.menu_item": "on_context_menu",
+			"click a.menu_item": "on_click",
+			"touchstart a.menu_item": "on_click",
 			'click a.redactor_act': 'onOpenPanelClick',
 			'click .sub-menu': 'onOpenPanelSubMenu',
 			'click .upfront-save_settings': 'onOpenPanelSubMenu',
@@ -89,6 +91,19 @@ return (function ($) {
 				menu.addClass('time_being_display');
 				this.contextmenuContext.push(menu);
 				this.loadContexts(menu);
+			}
+		},
+		on_click: function(e) {
+			//e.preventDefault();
+			//e.stopPropagation();
+			var linkitem = $(e.target).parent('li.menu-item');
+			console.log(linkitem);
+			console.log(linkitem.closest('.upfront-output-unewnavigation').data('style'))
+			if(linkitem.hasClass('parent') && linkitem.closest('.upfront-output-unewnavigation').data('style') == 'burger') {
+				if(linkitem.children('ul.sub-menu').css('display') == 'block')
+					linkitem.children('ul.sub-menu').css('display', '');
+				else
+					linkitem.children('ul.sub-menu').css('display', 'block');
 			}
 		},
 		on_context_menu: function(e) {

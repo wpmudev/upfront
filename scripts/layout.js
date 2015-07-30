@@ -634,11 +634,9 @@ jQuery(document).ready(function($){
 
 				if(url && url.indexOf && url.indexOf('#ltb-') > -1)	 {
 
-
 					e.preventDefault();
 					var regions = Upfront.Application.layout.get('regions');
 					var urlanchor = url.split('#');
-
 
 					region = regions ? regions.get_by_name(urlanchor[1]) : false;
 					if(region){
@@ -655,6 +653,14 @@ jQuery(document).ready(function($){
 			return;
 		}
 
+		if($(this).closest('div.upfront-navigation').data('style') == 'burger' && $(this).parent('li.menu-item.menu-item-has-children').length > 0) {
+			var linkitem = $(this).parent('li.menu-item.menu-item-has-children');
+
+			if(linkitem.children('ul.sub-menu').css('display') == 'block')
+					linkitem.children('ul.sub-menu').css('display', '');
+				else
+					linkitem.children('ul.sub-menu').css('display', 'block');
+		}
 
 	  	var url = $(this).attr('href');
 	  	if(!url)

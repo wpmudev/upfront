@@ -705,11 +705,13 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			var offset = $(this).parent().find('ul.menu').position();
 			
 			var close_icon = $('<i class="burger_nav_close"></i>');
-			$(this).parent().append(close_icon);
+			//$(this).parent().append(close_icon);
+			$(this).parent().find('ul.menu').prepend($('<li>').addClass('wrap_burger_nav_close').append(close_icon));
+			
 			close_icon.bind('touchstart click', function() {
 				$(e.target).closest('.responsive_nav_toggler').data('view', view).trigger('click');
 			});
-			close_icon.css({position: 'fixed', left: offset.left+$(this).parent().find('ul.menu').width()-close_icon.width()-10, top: offset.top+10});
+			//close_icon.css({position: 'fixed', left: offset.left+$(this).parent().find('ul.menu').width()-close_icon.width()-10, top: offset.top+10});
 			region_container.addClass('upfront-region-container-has-nav');
 
 			if($(this).parent().data('burger_over') == 'pushes' && ($(this).parent().data('burger_alignment') == 'top' || $(this).parent().data('burger_alignment') == 'whole')) {
@@ -728,7 +730,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			view.hideMenu($(this).parent().find('ul.menu'));
 			
 
-			$(this).parent().find('i.burger_nav_close').remove();
+			$(this).parent().find('i.burger_nav_close').parent('li.wrap_burger_nav_close').remove();
 
 			$(this).parent().find('ul.sub-menu').css('display', '');
 			if($(this).parent().find('ul.sub-menu').length < 1 )

@@ -8,12 +8,12 @@ div.upfront-navigation ul.sub-menu {
   display: none;
   z-index:2;
 }
-div.upfront-navigation div[data-style="burger"] ul.sub-menu {
+/*div.upfront-navigation div[data-style="burger"] ul.sub-menu {
   display: block;
-}
+}*/
 
-div.upfront-navigation div[data-style="horizontal"] li.menu-item:hover > ul.sub-menu,
-div.upfront-navigation div[data-style="vertical"] li.menu-item:hover > ul.sub-menu {
+div.upfront-navigation div[data-style="horizontal"]:not([data-style="burger"]) li.menu-item:hover > ul.sub-menu,
+div.upfront-navigation div[data-style="vertical"]:not([data-style="burger"]) li.menu-item:hover > ul.sub-menu {
   display: block;
 }
 
