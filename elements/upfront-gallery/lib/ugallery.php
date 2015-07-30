@@ -242,6 +242,10 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'linkTo' => 'image', // 'url' | 'image'
 			'even_padding' => array('false'),
 			'thumbPadding' => 15,
+			'sidePadding' => 0,
+			'showCaptionOnHover' => 0,
+			'bottomPadding' => 0,
+			'lockPadding' => 1,
 			'fitThumbCaptions' => false,
 			'thumbCaptionsHeight' => 20
 		);
