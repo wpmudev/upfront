@@ -104,6 +104,8 @@ define([
 				Upfront.mainData[this.mainDataCollection].splice(index, 1);
 			}
 			Upfront.mainData[this.mainDataCollection].push(properties);
+			
+			Upfront.Events.trigger("preset:updated");
 		},
 
 		createPreset: function(presetName) {

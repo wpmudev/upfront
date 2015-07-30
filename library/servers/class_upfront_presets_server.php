@@ -202,6 +202,17 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 		return false;
 	}
+	
+	public function get_preset_by_id($preset_id) {
+		$presets = $this->get_presets();	
+		
+		foreach($presets as $preset) {
+			if($preset['id'] == $preset_id) {
+				return $preset;
+			}
+		}
+	}
+	
 
 	public function get_presets_javascript_server() {
 		$presets = get_option('upfront_' . get_stylesheet() . '_' . $this->elementName . '_presets');
