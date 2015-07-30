@@ -105,7 +105,7 @@ define([
 			}
 			Upfront.mainData[this.mainDataCollection].push(properties);
 			
-			Upfront.Events.trigger("preset:updated");
+			this.model.trigger("preset:updated");
 		},
 
 		createPreset: function(presetName) {
