@@ -29,6 +29,13 @@ class Upfront_Gallery_Presets_Server extends Upfront_Presets_Server {
 	protected function get_style_template_path() {
 		return realpath(Upfront::get_root_dir() . '/elements/upfront-gallery/tpl/preset-style.html');
 	}
+	
+	public static function get_preset_properties($preset) {
+		$properties = self::$instance->get_preset_by_id($preset);
+
+		return $properties;
+	}
+	
 }
 
 Upfront_Gallery_Presets_Server::serve();

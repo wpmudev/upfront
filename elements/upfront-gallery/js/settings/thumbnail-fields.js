@@ -43,7 +43,10 @@ define([
 									value: '1.33',
 									icon: 'gallery-crop-4_3'
 								}
-							]
+							],
+							change: function(value) {
+								me.model.set_property('thumbProportions', value);
+							}
 						}),
 					]
 				}),
@@ -58,7 +61,11 @@ define([
 							min: 100,
 							max: 250,
 							step: 5,
-							label: l10n.thumb.size
+							label: l10n.thumb.size,
+							change: function(value) {
+								me.model.set_property('thumbWidth', value);
+								me.model.set_property('thumbWidthNumber', value);
+							}
 						}),
 						
 						new Upfront.Views.Editor.Field.Number({
@@ -66,6 +73,8 @@ define([
 							className: 'thumb-size-number',
 							property: 'thumbWidthNumber',
 							default_value: 0,
+							min: 100,
+							max: 250,
 							change: function(value) {
 
 								me.model.set_property('thumbWidthNumber', value);
@@ -77,7 +86,7 @@ define([
 								s.trigger('changed');
 								
 								//Lower opacity if value is bigger than the slider MAX_VALUE
-								if(value > 50) {
+								if(value > 250) {
 									me.$el.find('.thumb-size-slider').css('opacity', 0.6);
 								} else {
 									me.$el.find('.thumb-size-slider').css('opacity', 1);
@@ -104,6 +113,9 @@ define([
 							values: [
 								{ label: '', value: 'yes' }
 							],
+							change: function(value) {
+								me.model.set_property('lockPadding', value);
+							},
 							show: function(value) {
 								//Toggle border radius fields
 								if(value == "yes") {
@@ -172,6 +184,10 @@ define([
 							max: 50,
 							step: 1,
 							label: l10n.thumb.side_spacing,
+							change: function(value) {
+								me.model.set_property('sidePadding', value);
+								me.model.set_property('sidePaddingNumber', value);
+							}
 						}),
 						
 						new Upfront.Views.Editor.Field.Number({
@@ -205,6 +221,10 @@ define([
 							max: 50,
 							step: 1,
 							label: l10n.thumb.bottom_spacing,
+							change: function(value) {
+								me.model.set_property('bottomPadding', value);
+								me.model.set_property('bottomPaddingNumber', value);
+							}
 						}),
 						
 						new Upfront.Views.Editor.Field.Number({

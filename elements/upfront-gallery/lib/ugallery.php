@@ -44,6 +44,12 @@ class Upfront_UgalleryView extends Upfront_Object {
 		$data['image_labels'] = $this->image_labels;
 
 		$data['l10n'] = self::_get_l10n('template');
+		
+		if (!isset($data['preset'])) {
+			$data['preset'] = 'default';
+		}
+		
+		$data['properties'] = Upfront_Gallery_Presets_Server::get_instance()->get_preset_properties($data['preset']);
 
 		$lbTpl = upfront_get_template('ugallery', $data, dirname(dirname(__FILE__)) . '/tpl/lightbox.html');
 		$markup = upfront_get_template('ugallery', $data, dirname(dirname(__FILE__)) . '/tpl/ugallery.html');
@@ -208,6 +214,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'tags' => array(),
 			'margin' => array('left' => 0, 'top' => 0),
 			'linkTarget' => '',
+			'preset' => 'default'
 		);
 	}
 

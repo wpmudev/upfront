@@ -822,6 +822,19 @@ figure.gallery-labels-figure img.mfp-img {
 .ugallery-caption-below {
 	display: block;
 }
+.ugallery-caption-below.ugallery-caption-on-hover-1 {
+	opacity: 0;
+}
+.ugallery-caption-below.ugallery-caption-on-hover-1:hover {
+	opacity: 1;
+}
+.ugallery-caption-over.ugallery-caption-on-hover-1 {
+	display: block;
+}
+.ugallery-caption-over.ugallery-caption-on-hover-0 {
+	height: 100%;
+	opacity: 1;
+}
 .ugallery_caption_on_hover_1:hover .ugallery-caption-over.ugallery-caption-on-hover-1 {
 	display: block;
 }

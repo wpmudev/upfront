@@ -7,8 +7,10 @@ define([
 	'elements/upfront-gallery/js/settings',
 	'elements/upfront-gallery/js/model',
 	'elements/upfront-gallery/js/label-editor',
-	'elements/upfront-gallery/js/element'
-], function(galleryTpl, sortingStyleTpl, editorTpl, UgallerySettings, UgalleryModel, LabelEditor, UgalleryElement) {
+	'elements/upfront-gallery/js/element',
+	'text!elements/upfront-gallery/tpl/preset-style.html',
+	'scripts/upfront/preset-settings/util',
+], function(galleryTpl, sortingStyleTpl, editorTpl, UgallerySettings, UgalleryModel, LabelEditor, UgalleryElement, settingsStyleTpl, PresetUtil) {
 
 var l10n = Upfront.Settings.l10n.gallery_element;
 
@@ -77,6 +79,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		this.listenTo(Upfront.Events, 'entity:deactivated', this.closeTooltip);
 		this.listenTo(Upfront.Events, 'entity:region:activated', this.closeTooltip);
 		this.listenTo(Upfront.Events, 'upfront:layout_size:change_breakpoint', this.rebindShuffle);
+
+		this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
+		
+		this.listenTo(Upfront.Events, "preset:updated", this.preset_updated);
 
 		this.lastThumbnailSize = {width: this.property('thumbWidth'), height: this.property('thumbHeight')};
 
@@ -167,6 +173,27 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			}, 100);
 		});
 		this. debouncedRender = _.debounce(this.render, 300);
+	},
+	
+	get_preset_properties: function() {
+		var preset = this.model.get_property_value_by_name("preset"),
+			props = PresetUtil.getPresetProperties('gallery', preset) || {};
+			
+		return props;	
+	},
+	
+	preset_updated: function() {
+		this.debouncedRender();
+	},
+	
+	update_colors: function () {
+		
+		var props = this.get_preset_properties();
+		
+		if (_.size(props) <= 0) return false; // No properties, carry on
+
+		PresetUtil.updatePresetStyle('gallery', props, settingsStyleTpl);
+
 	},
 
 	// Remove default dblclick behavior because it messes up things
@@ -440,7 +467,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 	getPropertiesForTemplate: function() {
 		var props = this.extract_properties();
-
+		
+		props.properties = this.get_preset_properties();
+		
 		props.imagesLength = props.images.length;
 		props.editing = true;
 
@@ -1222,6 +1251,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		this.model.get('properties').each(function(prop){
 			props[prop.get('name')] = prop.get('value');
 		});
+		props.preset = props.preset || 'default';
 		return props;
 	},
 

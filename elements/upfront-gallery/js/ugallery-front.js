@@ -11,40 +11,52 @@ jQuery(function($){
 			itemWidth = items.outerWidth(),
 			row = 0,
 			columns,
-			even_padding,
 			thumbPaddingData,
 			thumbPadding,
+			thumbSidePadding,
+			thumbBottomPadding,
+			lockPadding,
 			itemsTotalWidth;
 
-		even_padding = gallery.data('even-padding');
+		thumbSidePadding = gallery.data('thumb-side-padding') ? gallery.data('thumb-side-padding') : 0;
+		thumbBottomPadding = gallery.data('thumb-bottom-padding') ? gallery.data('thumb-bottom-padding') : 0;
 		thumbPaddingData = gallery.data('thumb-padding');
-		thumbPadding = typeof thumbPaddingData === 'undefined' ? 15 : thumbPaddingData;
-		columns = Math.floor(container / (itemWidth + thumbPadding));
+		lockPadding = gallery.data('thumb-lock-padding');
+
+		if(typeof lockPadding === 'undefined') {
+			sidePadding = thumbSidePadding;
+			bottomPadding = thumbBottomPadding;
+		} else {
+			sidePadding = typeof thumbPaddingData === 'undefined' ? 15 : thumbPaddingData;
+			bottomPadding = sidePadding;
+		}
+		
+		columns = Math.floor(container / (itemWidth + sidePadding));
 		columns++;// Increase for 1 besause upper calculation will always give one less
-		itemsTotalWidth = columns * itemWidth + (columns - 1) * thumbPadding;
+		itemsTotalWidth = columns * itemWidth + (columns - 1) * sidePadding;
 		if (itemsTotalWidth > container) {// But check if got too much
 			columns--;
 		}
-
+		
 		items.each(function(item_index) {
 			var $this = $(this);
 
 			if (absolute) {
 				// Set top margin for all thumbs that are not in first row
-				if (item_index + 1 > columns && even_padding) {
-					$this.css('top', parseInt($this.css('top'), 10) + thumbPadding * row);
+				if (item_index + 1 > columns && bottomPadding) {
+					$this.css('top', parseInt($this.css('top'), 10) + bottomPadding * row);
 				}
 
 				if (item_index > 0 && (item_index + 1) % columns === 0) {
 					row++;
-					if (even_padding && !gallery.data('height-adjusted')) {
-						gallery.css('height', parseInt(gallery.css('height'), 10) + thumbPadding);
+					if (bottomPadding && !gallery.data('height-adjusted')) {
+						gallery.css('height', parseInt(gallery.css('height'), 10) + bottomPadding);
 					}
 				}
 			} else {
 				// Set top margin for all thumbs that are not in first row
-				if (item_index + 1 > columns && even_padding) {
-					$this.css('margin-top', thumbPadding);
+				if (item_index + 1 > columns && bottomPadding) {
+					$this.css('margin-top', bottomPadding);
 				}
 			}
 		});
@@ -70,9 +82,17 @@ jQuery(function($){
 		var $grids = $ugallery_grid || $('.ugallery_grid');
 
 		$grids.each(function(){
-			var grid = $(this),
-				thumbPaddingData = grid.parent().data('thumb-padding'),
-				thumbPadding = typeof thumbPaddingData === 'undefined' ? 15 : thumbPaddingData;
+			var grid = $(this);
+			var sidePadding;
+			var thumbSidePadding = grid.parent().data('thumb-side-padding') ? grid.parent().data('thumb-side-padding') : 0;
+			var thumbPaddingData = grid.parent().data('thumb-padding');
+			var lockPadding = gallery.data('thumb-lock-padding');
+
+			if(typeof lockPadding === 'undefined') {
+				sidePadding = thumbSidePadding;
+			} else {
+				sidePadding = typeof thumbPaddingData === 'undefined' ? 15 : thumbPaddingData;
+			}
 
 			grid.parent().data('height-adjusted', false);
 
@@ -84,7 +104,7 @@ jQuery(function($){
 
 			grid.shuffle({
 				itemSelector: '#' + $(this).attr('rel') + ' .ugallery_item',
-				gutterWidth: thumbPadding,
+				gutterWidth: sidePadding,
 				supported: false
 			});
 

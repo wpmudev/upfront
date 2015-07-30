@@ -61,19 +61,22 @@ define(function() {
 				new Upfront.Views.Editor.Field.Radios({
 					className: state + '-caption-trigger field-caption_trigger upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios over_image_field',
 					model: this.model,
-					name: 'caption-trigger',
+					name: 'showCaptionOnHover',
 					label: '',
 					layout: 'horizontal-inline',
 					values: [
 						{
 							label: l10n.panel.always,
-							value: 'always_show'
+							value: '0'
 						},
 						{
 							label: l10n.panel.hover,
-							value: 'hover_show'
+							value: '1'
 						}
-					]
+					],
+					change: function(value) {
+						me.model.set('showCaptionOnHover', value);
+					},
 				}),
 				
 				new Upfront.Views.Editor.Field.Radios({
