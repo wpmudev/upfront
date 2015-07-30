@@ -82,7 +82,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 		this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
 		
-		this.listenTo(Upfront.Events, "preset:updated", this.preset_updated);
+		this.listenTo(this.model, "preset:updated", this.preset_updated);
 
 		this.lastThumbnailSize = {width: this.property('thumbWidth'), height: this.property('thumbHeight')};
 
@@ -125,7 +125,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			ugalleries[elementId].labels = this.labels;
 			ugalleries[elementId].imageLabels = this.imageLabels;
 		}
-
 
 		this.on('deactivated', this.sortCancel, this);
 
