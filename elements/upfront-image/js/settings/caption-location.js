@@ -38,7 +38,7 @@ define(function() {
 				new Upfront.Views.Editor.Field.Select({
 					model: this.model,
 					className: state + '-caption-select caption_select',
-					name: 'caption-position',
+					name: 'caption-position-value',
 					default_value: 'nocaption',
 					label: l10n.ctrl.caption_position,
 					values: [
@@ -47,10 +47,35 @@ define(function() {
 						{ label: l10n.ctrl.cover_top, value: 'topCover', icon: 'topCover' },
 						{ label: l10n.ctrl.cover_middle, value: 'middleCover', icon: 'middleCover' },
 						{ label: l10n.ctrl.cover_bottom, value: 'bottomCover', icon: 'bottomCover' },
-						{ label: l10n.ctrl.no_caption, value: 'nocaption', icon: 'nocaption' },
+						{ label: l10n.ctrl.below, value: 'below', icon: 'below' },
 					],
 					change: function(value) {
-						me.model.set(me.options.fields.caption, value);
+						me.model.set('caption-position-value', value);
+						switch(value){
+							case 'topOver':
+								me.model.set('caption-position', 'over_image');
+								me.model.set('caption-alignment', 'top');
+								break;
+							case 'bottomOver':
+								me.model.set('caption-position', 'over_image');
+								me.model.set('caption-alignment', 'bottom');
+								break;
+							case 'topCover':
+								me.model.set('caption-position', 'over_image');
+								me.model.set('caption-alignment', 'fill');
+								break;
+							case 'middleCover':
+								me.model.set('caption-position', 'over_image');
+								me.model.set('caption-alignment', 'fill_middle');
+								break;
+							case 'bottomCover':
+								me.model.set('caption-position', 'over_image');
+								me.model.set('caption-alignment', 'fill_bottom');
+								break;
+							case 'below':
+								me.model.set('caption-position', 'below_image');
+								me.model.set('caption-alignment', false);
+						}
 					}
 				}),
 				
@@ -69,7 +94,10 @@ define(function() {
 							label: l10n.settings.hover,
 							value: 'hover_show'
 						}
-					]
+					],
+					change: function(value) {
+						me.model.set('caption-trigger', value);
+					}
 				})
 			]);
 		},

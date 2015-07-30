@@ -42,6 +42,12 @@ class Upfront_UimageView extends Upfront_Object {
 			'height'=> $data['vstretch'] ? '100%' : $data['size']['height'] . 'px',
 			'bottom' => $data['vstretch'] ? '100%' : ($data['element_size']['height'] + $data['position']['top'] - $data['size']['height']) . 'px'
 		);
+		
+		if(!isset($data['preset'])) {
+			$data['preset'] = 'default';
+		}
+		
+		$data['properties'] = Upfront_Image_Presets_Server::get_instance()->get_preset_properties($data['preset']);
 
 		$data['cover_caption'] = $data['caption_position'] != 'below_image'; // array_search($data['caption_alignment'], array('fill', 'fill_bottom', 'fill_middle')) !== FALSE;
 
@@ -120,6 +126,7 @@ class Upfront_UimageView extends Upfront_Object {
 			'quick_swap' => false,
 			'gifImage' => 0,
 			'placeholder_class' => '',
+			'preset' => 'default',
 
 			'type' => 'UimageModel',
 			'view_class' => 'UimageView',

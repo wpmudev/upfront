@@ -110,7 +110,6 @@ define([
 				new ImageAppearance({
 					model: this.model
 				}),
-				new DescriptionPanel({model: this.model})
 			]);
 
 			this.on('open', function(){
