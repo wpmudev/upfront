@@ -13408,6 +13408,9 @@ div.preset-manager-panel .border_selectElement {
   margin-left: 80px;
   margin-top: 10px; }
 
+div.preset-manager-panel .move-wrapper-top {
+  margin-top: -15px !important; }
+
 .upfront-button .upfront-inline-panel, .menu-item .upfront-inline-panel {
   -webkit-transition-delay: 0;
   -webkit-transition-duration: 0;

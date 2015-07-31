@@ -93,6 +93,11 @@ define([
 			//Wrap tab buttons
 			setTimeout(function(){
 				me.$el.find('.state_settings_button').wrapAll('<div class="state_settings_button_wrapper">');
+				
+				var wrapper = me.$el.find('.state_settings_button_wrapper');
+				if(wrapper.prev().hasClass('delete_preset')) {
+					wrapper.addClass('move-wrapper-top');
+				}
 			}, 50);
 
 			if (firstStateButton) firstStateButton.$el.addClass('active');
