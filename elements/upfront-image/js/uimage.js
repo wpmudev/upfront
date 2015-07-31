@@ -663,6 +663,7 @@ define([
 			this.model.get('properties').each(function(prop){
 				props[prop.get('name')] = prop.get('value');
 			});
+			props.preset = props.preset || 'default';
 			return props;
 		},
 
