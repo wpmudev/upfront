@@ -5,8 +5,10 @@ define([
 	'text!elements/upfront-slider/tpl/backend.html',
 	'elements/upfront-slider/js/settings',
 	'scripts/upfront/element-settings/settings',
-	'scripts/upfront/element-settings/panel'
-], function(sliderTpl, editorTpl, AppearancePanel, ElementSettings, ElementSettingsPanel){
+	'scripts/upfront/element-settings/panel',
+	'text!elements/upfront-gallery/tpl/preset-style.html',
+	'scripts/upfront/preset-settings/util',
+], function(sliderTpl, editorTpl, AppearancePanel, ElementSettings, ElementSettingsPanel, settingsStyleTpl, PresetUtil){
 
 var l10n = Upfront.Settings.l10n.slider_element;
 
@@ -81,6 +83,10 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				slide.set('captionBackground', rgba);
 			});
 		});
+		
+		this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
+		
+		this.listenTo(this.model, "preset:updated", this.preset_updated);
 
 		this.listenTo(Upfront.Events, 'command:layout:save', this.saveResizing);
 		this.listenTo(Upfront.Events, 'command:layout:save_as', this.saveResizing);
@@ -93,6 +99,27 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		//Current Slide index
 		this.setCurrentSlide(0);
+	},
+	
+	get_preset_properties: function() {
+		var preset = this.model.get_property_value_by_name("preset"),
+			props = PresetUtil.getPresetProperties('slider', preset) || {};
+			
+		return props;	
+	},
+	
+	preset_updated: function() {
+		this.render();
+	},
+	
+	update_colors: function () {
+		
+		var props = this.get_preset_properties();
+		
+		if (_.size(props) <= 0) return false; // No properties, carry on
+
+		PresetUtil.updatePresetStyle('slider', props, settingsStyleTpl);
+
 	},
 
 	on_edit: function(){
@@ -110,7 +137,9 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			this.startingHeight = this.startingHeight || 225;
 			return this.startingTpl({startingHeight: this.startingHeight, l10n: l10n});
 		}
-
+		
+		props.properties = this.get_preset_properties();
+		
 		//Stop autorotate
 		props.rotate = false;
 
@@ -1061,6 +1090,9 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		_.each(model, function(prop){
 			props[prop.name] = prop.value;
 		});
+		
+		props.preset = props.preset || 'default';
+		
 		return props;
 	},
 

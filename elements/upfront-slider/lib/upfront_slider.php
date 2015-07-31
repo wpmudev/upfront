@@ -30,6 +30,12 @@ class Upfront_UsliderView extends Upfront_Object {
 
 		$data['production'] = true;
 		$data['startingSlide'] = 0;
+		
+		if (!isset($data['preset'])) {
+			$data['preset'] = 'default';
+		}
+		
+		$data['properties'] = Upfront_Slider_Presets_Server::get_instance()->get_preset_properties($data['preset']);
 
 		$markup = upfront_get_template('uslider', $data, dirname(dirname(__FILE__)) . '/tpl/uslider.html');
 
@@ -70,6 +76,7 @@ class Upfront_UsliderView extends Upfront_Object {
 			'view_class' => "USliderView",
 			"class" => "c24 upfront-uslider",
 			'has_settings' => 1,
+			'preset' => 'default',
 
 			'primaryStyle' => 'notext', // notext, below, over, side, onlytext
 
