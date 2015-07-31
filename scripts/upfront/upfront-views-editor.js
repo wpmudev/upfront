@@ -1964,9 +1964,9 @@ define([
 				if ('blockquote' === element) {
 					selector = '.upfront-object-content blockquote, .upfront-object-content blockquote p';
 				} else if ('a' === element) {
-					selector = '.upfront-object-content:not(.upfront-output-ubutton) a, .upfront-object-content:not(.upfront-output-ubutton) a:link, .upfront-object-content:not(.upfront-output-ubutton) a:visited';
+					selector = '.upfront-object-content:not(.upfront-output-button) a, .upfront-object-content:not(.upfront-output-button) a:link, .upfront-object-content:not(.upfront-output-button) a:visited';
 				} else {
-					selector = '.upfront-object-content:not(.upfront-output-ubutton) ' + element;
+					selector = '.upfront-object-content:not(.upfront-output-button) ' + element;
 				}
 				css.push(selector + '{ ' + rules.join("; ") + '; }');
 
@@ -2024,7 +2024,7 @@ define([
 				$style = $("style#typography-colors");
 			}
 			_.each(this.elements, function (element) {
-				if (me.colors[element]) css.push('.upfront-object-content:not(.upfront-output-ubutton) ' + element + '{ color:' + Upfront.Util.colors.to_color_value(me.colors[element]) + '; }');
+				if (me.colors[element]) css.push('.upfront-object-content:not(.upfront-output-button) ' + element + '{ color:' + Upfront.Util.colors.to_color_value(me.colors[element]) + '; }');
 			});
 			$style.empty().append(css.join("\n"));
 		}

@@ -96,8 +96,8 @@ define([
 						fields: {
 							typeface: 'fontface', 
 							fontstyle: 'fontstyle',
-							weight: 'weight',
-							style: 'style',
+							weight: 'fontstyle_weight',
+							style: 'fontstyle_style',
 							size: 'fontsize',
 							line_height: 'lineheight',
 							color: 'color',
@@ -163,11 +163,12 @@ define([
 						fields: {
 							typeface: 'hov_fontface', 
 							fontstyle: 'hov_fontstyle',
-							weight: 'hov_weight',
-							style: 'hov_style',
+							weight: 'hov_fontstyle_weight',
+							style: 'hov_fontstyle_style',
 							size: 'hov_fontsize',
 							line_height: 'hov_lineheight',
 							color: 'hov_color',
+							use: 'hov_usetypography'
 						}
 					}
 				},	
@@ -230,11 +231,12 @@ define([
 						fields: {
 							typeface: 'focus_fontface', 
 							fontstyle: 'focus_fontstyle',
-							weight: 'focus_weight',
-							style: 'focus_style',
+							weight: 'focus_fontstyle_weight',
+							style: 'focus_fontstyle_style',
 							size: 'focus_fontsize',
 							line_height: 'focus_lineheight',
 							color: 'focus_color',
+							use: 'focus_usetypography'
 						}
 					}
 				},	
