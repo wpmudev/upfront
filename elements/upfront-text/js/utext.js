@@ -27,6 +27,12 @@
 				//}, this);
 				this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
 			},
+			get_preset_properties: function() {
+				var preset = this.model.get_property_value_by_name("preset"),
+					props = PresetUtil.getPresetProperties('text', preset) || {};
+					
+				return props;	
+			},
 			get_content_markup: function () {
 				var content = this.model.get_content(),
 					$content;
@@ -41,11 +47,14 @@
 				if($content.hasClass('plaintxt_padding')) {
 					content = $content.html();
 				}
+				
+				var preset = this.model.get_property_value_by_name("preset") || 'default';
 
 				var data = {
 					"content" : content,
 					"background_color" : this.model.get_property_value_by_name("background_color"),
-					"border" : this.model.get_property_value_by_name("border")
+					"border" : this.model.get_property_value_by_name("border"),
+					"preset": preset
 				};
 				var rendered = '';
 				rendered = _.template(textTpl, data);

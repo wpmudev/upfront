@@ -1,1 +1,12 @@
-/* here goes template for text preset style */
+<?php $elements = ["h1", "h2", "h3", "h4", "h5", "h6", "p", "a", "a:hover", "ul", "ol", "blockquote", "blockquote.upfront-quote-alternative"] ?>
+.text-preset-<?php echo $properties['id'] ?> {
+	<?php if(!empty($properties['bg_color'])) { ?>
+	background: <?php echo $properties['bg_color']  ?>; 
+	<?php } ?>
+	
+	<?php if(!empty($properties['useborder'])) { ?>
+        <?php if(!empty($properties['border_width']) && !empty($properties['border_style']) && !empty($properties['border_color'])) { ?>border: <?php echo $properties['border_width'] ?>px <?php echo $properties['border_style'] ?> <?php echo $properties['border_color'] ?>;<?php } ?>
+    <?php } else { ?>
+        border: none;
+    <?php } ?>
+}

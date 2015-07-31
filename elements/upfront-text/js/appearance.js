@@ -6,7 +6,7 @@ define([
 	'scripts/upfront/preset-settings/colors-settings-item',
 	'scripts/upfront/preset-settings/border-settings-item',
 	'scripts/upfront/preset-settings/hov-animation-settings-item',
-	'text!elements/upfront-tabs/tpl/preset-style.html'
+	'text!elements/upfront-text/tpl/preset-style.html'
 ], function(ElementSettings, PresetManager, Util, TypographySettingsItem, ColorsSettingsItem, BorderSettingsItem, HovAnimationSettingsItem, styleTpl) {
 		var l10n = Upfront.Settings.l10n.text_element;
 
