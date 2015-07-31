@@ -1073,7 +1073,7 @@ var ResponsiveEditor = new (LayoutEditorSubapplication.extend({
     	this.topbar = new Upfront.Views.Editor.Topbar.Topbar();
     	this.topbar.start();
 		this.set_up_event_plumbing_after_render();
-		this.listenTo(Upfront.Events, "command:layout:browse", Upfront.Behaviors.LayoutEditor.browse_layout_dialog);
+		this.listenTo(Upfront.Events, "command:layout:browse", Upfront.Behaviors.LayoutEditor.browse_layout_dialog); // DEPRECATED
 
 		$("html").removeClass("upfront-edit-content upfront-edit-theme upfront-edit-postlayout upfront-edit-layout").addClass("upfront-edit-responsive");
 	},

@@ -1216,6 +1216,9 @@ define([
 		}
 	});
 
+	/**
+	 * DEPRECATED
+	 */
 	var ResponsiveCommand_BrowseLayout = Command.extend({
 		className: "command-browse-layout command-browse-layout-responsive",
 		render: function () {
@@ -2643,10 +2646,14 @@ define([
 		initialize: function () {
 			this.views = [
 				new Command_BreakpointDropdown(),
-				new Command_AddCustomBreakpoint(),
-				new ResponsiveCommand_BrowseLayout(),
-				new SidebarPanel_ResponsiveSettings({"model": this.model})
+				new Command_AddCustomBreakpoint()
 			];
+			/*
+			if ("themeExporter" in Upfront) {
+				this.views.push(new ResponsiveCommand_BrowseLayout());
+			}
+			*/
+			this.views.push(new SidebarPanel_ResponsiveSettings({"model": this.model}));
 		},
 		render: function() {
 			_.each(this.views, function(view) {
@@ -2748,7 +2755,8 @@ define([
 				header: new SidebarCommands_Header({"model": this.model}),
 				primary: is_theme ? new SidebarCommands_PrimaryLayout({"model": this.model}) : new SidebarCommands_PrimaryPostType({"model": this.model}), // DEPRECATED
 				additional: is_theme ? false : new SidebarCommands_AdditionalPostType({"model": this.model}), // DEPRECATED
-				control: new SidebarCommands_Control({"model": this.model})
+				control: new SidebarCommands_Control({"model": this.model}),
+				responsive: new SidebarCommands_Responsive({"model": this.model})
 			};
 			this.sidebar_panels = new SidebarPanels({"model": this.model});
 
@@ -2819,12 +2827,8 @@ define([
 
 			// Responsive
 			if ( is_responsive_app ) {
-				if (this.responsive_commands) {
-					this.responsive_commands.destroy();
-				}
-				var responsive_commands = new SidebarCommands_Responsive({"model": this.model});
-				this.responsive_commands = responsive_commands;
-				output.append(responsive_commands.render().el);
+				this.sidebar_commands.responsive.render();
+				output.append(this.sidebar_commands.responsive.el);
 			}
 
 			if ( current_app !== Upfront.Settings.Application.MODE.CONTENT && !is_responsive_app ) {
