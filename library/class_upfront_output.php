@@ -281,74 +281,80 @@ abstract class Upfront_Entity {
 		$default_type = $this->get_background_type();
 		$css = array();
 		$background_color = $this->_get_breakpoint_property('background_color', $breakpoint_id);
-		if ( !$type || in_array($type, array('image', 'color', 'featured')) ){
-			if($type == 'featured' && has_post_thumbnail(Upfront_Output::get_post_id())) {
+		if (!$type || in_array($type, array('image', 'color', 'featured'))) {
+			if ('featured' == $type && has_post_thumbnail(Upfront_Output::get_post_id())) {
 				$featured_image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'single-post-thumbnail' );
 				$background_image = $featured_image[0];
-			}
-			else
+			} else {
 				$background_image = $this->_get_breakpoint_property('background_image', $breakpoint_id);
+			}
 			$background_repeat = $this->_get_breakpoint_property('background_repeat', $breakpoint_id);
 			$background_fill = $this->_get_breakpoint_property('background_fill', $breakpoint_id);
 			$background_position = $this->_get_breakpoint_property('background_position', $breakpoint_id);
 			$background_style = $this->_get_breakpoint_property('background_style', $breakpoint_id);
 			
-			if ( $background_color )
+			if ($background_color) {
 				$css[] = 'background-color: ' . $background_color;
-			if ( $type == 'image' || $type == 'featured' && $background_image ){
-				if ( !$lazy_loading )
+			}
+			if ('image' == $type || 'featured' == $type && $background_image) {
+				$background_image = preg_replace('/^https?:/', '', $background_image);
+				if (!$lazy_loading) {
 					$css[] = 'background-image: url("' . $background_image . '")';
-				if ( $background_style == 'full' ){
+				}
+				if ($background_style == 'full') {
 					$css[] = 'background-size: 100% auto';
 					$css[] = 'background-repeat: no-repeat';
 					$css[] = 'background-position: 50% 50%';
-				}
-				else {
+				} else {
 					$css[] = 'background-size: auto auto';
 					$css[] = 'background-repeat: ' . $background_repeat;
 					$css[] = 'background-position: ' . $background_position;
 				}
 			}
-		}
-		else if ( $type == 'video' ){
+		} else if ('video' == $type) {
 			$background_video_style = $this->_get_breakpoint_property('background_video_style', $breakpoint_id);
-			if ( $background_video_style == 'inside' && $background_color )
+			if ($background_video_style == 'inside' && $background_color) {
 				$css[] = 'background-color: ' . $background_color;
+			}
 		}
-		if ( !empty($breakpoint_id) && ( $default_type == 'image' || $default_type == 'featured' ) ) {
+
+		if (!empty($breakpoint_id) && ($default_type == 'image' || $default_type == 'featured')) {
 			$css[] = 'background-image: none';
 		}
-		return ( !empty($css) ) ? implode('; ', $css) . '; ' : '';
+
+		return !empty($css) ? implode('; ', $css) . '; ' : '';
 	}
 
 	protected function _get_background_attr ($is_layout = false, $lazy_loading = false, $breakpoint_id = '') {
 		$type = $this->get_background_type($breakpoint_id);
 		$attr = '';
 		$breakpoint = empty($breakpoint_id) ? 'desktop' : $breakpoint_id;
-		if ( !$type || $type == 'image' || $type == 'featured' ){
-			if($type == 'featured' && has_post_thumbnail(Upfront_Output::get_post_id())) {
+		if (!$type || $type == 'image' || $type == 'featured') {
+			if ($type == 'featured' && has_post_thumbnail(Upfront_Output::get_post_id())) {
 				$featured_image = wp_get_attachment_image_src( get_post_thumbnail_id( Upfront_Output::get_post_id() ), 'single-post-thumbnail' );
 				$background_image = $featured_image[0];
                 $background_image_ratio = round($featured_image[2]/$featured_image[1], 2);
-			}
-			else {
+			} else {
 				$background_image = $this->_get_breakpoint_property('background_image', $breakpoint_id);
                 $background_image_ratio = $this->_get_breakpoint_property('background_image_ratio', $breakpoint_id);
             }
 			$background_style = $this->_get_breakpoint_property('background_style', $breakpoint_id);
-			if ( $background_image ){
-				if ( $lazy_loading )
+			if ($background_image) {
+				$background_image = preg_replace('/^https?:/', '', $background_image);
+				if ($lazy_loading) {
 					$attr .= " data-src-{$breakpoint}='{$background_image}'";
-				if ( $background_style == 'full' ){
+				}
+				if ($background_style == 'full') {
 					$attr .= " data-bg-image-ratio-{$breakpoint}='{$background_image_ratio}'";
 				}
-				if ( !$type )
+				if (!$type) {
 					$type = 'image';
+				}
 			}
 		}
-		if ( !$type )
-			$type = 'color';
+		if (!$type) $type = 'color';
 		$attr .= " data-bg-type-{$breakpoint}='{$type}'";
+
 		return $attr;
 	}
 
