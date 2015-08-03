@@ -592,6 +592,10 @@ div.preset-manager-panel .typography_settings_item .element-toggled.typeFace .ch
 div.preset-manager-panel .typography_settings_item .element-toggled.weightStyle .chosen-container {
 	width: 213px !important;
 }
+div.preset-manager-panel .typography_settings_item label {
+	top: 4px;
+	position: relative;
+}
 div.preset-manager-panel .useTypography .upfront-field-multiple-selected {
 	margin-bottom: 5px;
 }
