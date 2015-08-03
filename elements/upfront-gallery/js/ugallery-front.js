@@ -22,15 +22,15 @@ jQuery(function($){
 		thumbBottomPadding = gallery.data('thumb-bottom-padding') ? gallery.data('thumb-bottom-padding') : 0;
 		thumbPaddingData = gallery.data('thumb-padding');
 		lockPadding = gallery.data('thumb-lock-padding');
-
-		if(typeof lockPadding === 'undefined') {
+		
+		if(typeof lockPadding === 'undefined' || lockPadding === "") {
 			sidePadding = thumbSidePadding;
 			bottomPadding = thumbBottomPadding;
 		} else {
 			sidePadding = typeof thumbPaddingData === 'undefined' ? 15 : thumbPaddingData;
 			bottomPadding = sidePadding;
 		}
-		
+
 		columns = Math.floor(container / (itemWidth + sidePadding));
 		columns++;// Increase for 1 besause upper calculation will always give one less
 		itemsTotalWidth = columns * itemWidth + (columns - 1) * sidePadding;
@@ -38,9 +38,11 @@ jQuery(function($){
 			columns--;
 		}
 		
+		console.log(bottomPadding);
+		
 		items.each(function(item_index) {
 			var $this = $(this);
-
+			
 			if (absolute) {
 				// Set top margin for all thumbs that are not in first row
 				if (item_index + 1 > columns && bottomPadding) {
@@ -86,9 +88,9 @@ jQuery(function($){
 			var sidePadding;
 			var thumbSidePadding = grid.parent().data('thumb-side-padding') ? grid.parent().data('thumb-side-padding') : 0;
 			var thumbPaddingData = grid.parent().data('thumb-padding');
-			var lockPadding = gallery.data('thumb-lock-padding');
+			var lockPadding = grid.parent().data('thumb-lock-padding');
 
-			if(typeof lockPadding === 'undefined') {
+			if(typeof lockPadding === 'undefined' || lockPadding === "") {
 				sidePadding = thumbSidePadding;
 			} else {
 				sidePadding = typeof thumbPaddingData === 'undefined' ? 15 : thumbPaddingData;
