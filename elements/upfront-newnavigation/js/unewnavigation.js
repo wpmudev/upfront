@@ -4,7 +4,9 @@ define([
 	'elements/upfront-newnavigation/js/model',
 	'elements/upfront-newnavigation/js/element',
 	'elements/upfront-newnavigation/js/settings',
-], function(MenuItemView, UnewnavigationModel, UnewnavigationElement, NavigationSettings) {
+	'text!elements/upfront-newnavigation/tpl/preset-style.html',
+	'scripts/upfront/preset-settings/util',
+], function(MenuItemView, UnewnavigationModel, UnewnavigationElement, NavigationSettings, settingsStyleTpl, PresetUtil) {
 
 var l10n = Upfront.Settings.l10n.newnavigation_element;
 
@@ -44,6 +46,10 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			'click a.newnavigation-add-item': 'addPrimaryMenuItem',
 
 		});
+		
+		this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
+		
+		this.listenTo(this.model, "preset:updated", this.preset_updated);
 
 		// get all menus
 		this.getMenus();
@@ -92,6 +98,27 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			tooltip.remove();
 		}, 100);
 	},*/
+	get_preset_properties: function() {
+		var preset = this.model.get_property_value_by_name("preset"),
+			props = PresetUtil.getPresetProperties('nav', preset) || {};
+			
+		return props;	
+	},
+	
+	preset_updated: function() {
+		this.render();
+	},
+	
+	update_colors: function () {
+		
+		var props = this.get_preset_properties();
+		
+		if (_.size(props) <= 0) return false; // No properties, carry on
+
+		PresetUtil.updatePresetStyle('nav', props, settingsStyleTpl);
+
+	},
+	
 	exitEditMode: function(e) {
 		var me = this;
 		var thelink = $(e.target).closest('li').data('backboneview');
@@ -438,7 +465,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			me = this
 		;
 		var menu_slug =  this.model.get_property_value_by_name('menu_slug');
-
+		
+		properties = this.get_preset_properties();
 
 		if ( !menu_id ) {
 			if(typeof(menu_slug != 'undefined') && menu_slug != '') this.set_menu_id_from_slug(menu_slug);
@@ -474,15 +502,17 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	},
 	
 	on_render: function() {
-
+		
 		var me = this;
+		
+		var props = this.get_preset_properties();
 
 		if(!this.property('menu_id')) {
 			this.display_menu_list();
 		}
 
-		var menuStyle = this.property("menu_style"),
-			menuAliment = this.property("menu_alignment"),
+		var menuStyle = props.menu_style,
+			menuAliment = props.menu_alingment,
 			allowSubNav = this.property("allow_sub_nav"),
 			$upfrontObjectContent
 		;
@@ -510,10 +540,10 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					var is_burger_menu = me.property('burger_menu');
 					model_breakpoint[default_breakpoint.attributes.id] = {};
 					model_breakpoint[default_breakpoint.attributes.id].burger_menu = ( is_burger_menu instanceof Array ) ? is_burger_menu[0] : is_burger_menu;
-					model_breakpoint[default_breakpoint.attributes.id].burger_alignment = me.property('burger_alignment');
+					model_breakpoint[default_breakpoint.attributes.id].burger_alignment = props.burger_alignment;
 					model_breakpoint[default_breakpoint.attributes.id].burger_over = me.property('burger_over');
-					model_breakpoint[default_breakpoint.attributes.id].menu_style = me.property('menu_style');
-					model_breakpoint[default_breakpoint.attributes.id].menu_alignment = me.property('menu_alignment');
+					model_breakpoint[default_breakpoint.attributes.id].menu_style = props.menu_style;
+					model_breakpoint[default_breakpoint.attributes.id].menu_alignment = props.menu_alingment;
 					model_breakpoint[default_breakpoint.attributes.id].width = default_breakpoint.attributes.width;
 
 					$upfrontObjectContent.attr('data-breakpoints',	JSON.stringify(model_breakpoint));
@@ -716,6 +746,13 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				me.$el.find('a.newnavigation-add-item').trigger('click');
 			}, 200);
 		}
+		
+		var preset = this.model.get_property_value_by_name("preset");
+		
+		setTimeout(function() {
+			me.$el.find('.upfront-object-content').addClass('nav-preset-' + preset);
+			console.log('nav-preset-' + preset);
+		}, 50);
 
 		//Work around for having the region container have a higher z-index if it contains the nav, so that the dropdowns, if overlapping to the following regions should not loose "hover" when the mouse travels down to the next region.
 
