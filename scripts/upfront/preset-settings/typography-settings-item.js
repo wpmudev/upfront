@@ -52,7 +52,6 @@ define(function() {
 					className: state + '-font-face static typeFace ' + toggleClass,
 					change: function(value) {
 						me.model.set(current_element + me.options.fields.typeface, value);
-						
 						me.fields._wrapped[1 + fieldCounter] = new Upfront.Views.Editor.Field.Typeface_Style_Chosen_Select({
 							model: this.model,
 							name: current_element + me.options.fields.fontstyle,
@@ -69,7 +68,12 @@ define(function() {
 								me.model.set(current_element + me.options.fields.weight, parsed_variant.weight);
 								me.model.set(current_element + me.options.fields.style, parsed_variant.style);
 							},
-						}),
+							show: function(value) {
+								if(value !== null) {
+									me.fields._wrapped[1 + fieldCounter].set_option_font(value);
+								}
+							}
+						});						
 						me.$el.empty();
 						me.render();
 					}
@@ -90,6 +94,11 @@ define(function() {
 						me.model.set(current_element + me.options.fields.fontstyle, value);
 						me.model.set(current_element + me.options.fields.weight, parsed_variant.weight);
 						me.model.set(current_element + me.options.fields.style, parsed_variant.style);
+					},
+					show: function(value) {
+						if(value !== null) {
+							me.fields._wrapped[1 + fieldCounter].set_option_font(value);
+						}
 					}
 				}),
 				
