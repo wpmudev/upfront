@@ -62,9 +62,10 @@ define([
 							max: 250,
 							step: 5,
 							label: l10n.thumb.size,
-							change: function(value) {
-								me.model.set_property('thumbWidth', value);
-								me.model.set_property('thumbWidthNumber', value);
+							change: function() {
+								var value = this.get_value(),
+								f = me.settings._wrapped[1].fields._wrapped[1];
+								f.get_field().val(value);
 							}
 						}),
 						
@@ -75,15 +76,17 @@ define([
 							default_value: 0,
 							min: 100,
 							max: 250,
-							change: function(value) {
-
-								me.model.set_property('thumbWidthNumber', value);
-								
+							change: function() {
+								var value = this.get_value(),
 								//Update slider value
 								s = me.settings._wrapped[1].fields._wrapped[0];
 								s.$el.find('#'+s.get_field_id()).slider('value', value);
 								s.get_field().val(value);
 								s.trigger('changed');
+								
+								//Update slider number value
+								f = me.settings._wrapped[1].fields._wrapped[1];
+								f.get_field().val(value);
 								
 								//Lower opacity if value is bigger than the slider MAX_VALUE
 								if(value > 250) {
@@ -147,9 +150,10 @@ define([
 							valueTextFilter: function(value){
 								return value + 'px';
 							},
-							change: function(value) {
-								me.model.set_property('thumbPadding', value);
-								me.model.set_property('thumbPaddingNumber', value);
+							change: function() {
+								var value = this.get_value(),
+								f = me.settings._wrapped[2].fields._wrapped[2];
+								f.get_field().val(value);
 							}
 						}),
 						
@@ -158,8 +162,8 @@ define([
 							className: 'thumb-padding-number',
 							property: 'thumbPaddingNumber',
 							default_value: 0,
-							change: function(value) {
-								me.model.set_property('thumbPaddingNumber', value);
+							change: function() {
+								var value = this.get_value(),
 								
 								//Update slider value
 								s = me.settings._wrapped[2].fields._wrapped[1];
@@ -167,12 +171,15 @@ define([
 								s.get_field().val(value);
 								s.trigger('changed');
 								
+								f = me.settings._wrapped[2].fields._wrapped[2];
+								f.get_field().val(value);
+								
 								//Lower opacity if value is bigger than the slider MAX_VALUE
 								if(value > 50) {
 									me.$el.find('.thumb-padding-slider').css('opacity', 0.6);
 								} else {
 									me.$el.find('.thumb-padding-slider').css('opacity', 1);
-								} 
+								}
 							}
 						}),	
 						
@@ -184,9 +191,10 @@ define([
 							max: 50,
 							step: 1,
 							label: l10n.thumb.side_spacing,
-							change: function(value) {
-								me.model.set_property('sidePadding', value);
-								me.model.set_property('sidePaddingNumber', value);
+							change: function() {
+								var value = this.get_value(),
+								f = me.settings._wrapped[2].fields._wrapped[4];
+								f.get_field().val(value);
 							}
 						}),
 						
@@ -195,8 +203,10 @@ define([
 							className: 'thumb-side-padding-number',
 							property: 'thumbSidePaddingNumber',
 							default_value: 0,
-							change: function(value) {
-								me.model.set_property('sidePaddingNumber', value);
+							change: function() {
+								var value = this.get_value(),
+								f = me.settings._wrapped[2].fields._wrapped[4];
+								f.get_field().val(value);
 								
 								//Update slider value
 								s = me.settings._wrapped[2].fields._wrapped[3];
@@ -221,9 +231,10 @@ define([
 							max: 50,
 							step: 1,
 							label: l10n.thumb.bottom_spacing,
-							change: function(value) {
-								me.model.set_property('bottomPadding', value);
-								me.model.set_property('bottomPaddingNumber', value);
+							change: function() {
+								var value = this.get_value(),
+								f = me.settings._wrapped[2].fields._wrapped[6];
+								f.get_field().val(value);
 							}
 						}),
 						
@@ -232,8 +243,10 @@ define([
 							className: 'thumb-bottom-padding-number',
 							property: 'thumbBottomPaddingNumber',
 							default_value: 0,
-							change: function(value) {
-								me.model.set_property('bottomPaddingNumber', value);
+							change: function() {
+								var value = this.get_value(),
+								f = me.settings._wrapped[2].fields._wrapped[6];
+								f.get_field().val(value);
 								
 								//Update slider value
 								s = me.settings._wrapped[2].fields._wrapped[5];
