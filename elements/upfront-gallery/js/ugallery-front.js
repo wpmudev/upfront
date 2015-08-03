@@ -38,8 +38,6 @@ jQuery(function($){
 			columns--;
 		}
 		
-		console.log(bottomPadding);
-		
 		items.each(function(item_index) {
 			var $this = $(this);
 			
