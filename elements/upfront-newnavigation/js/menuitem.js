@@ -108,6 +108,21 @@ return (function ($) {
 					linkitem.removeClass('burger_sub_display');
 				else
 					linkitem.addClass('burger_sub_display');
+
+				var menu = linkitem.closest('ul.menu');
+				var menucontainer = linkitem.closest('div.upfront-output-unewnavigation');
+
+				if(menucontainer.data('burger_over') == 'pushes' && (menucontainer.data('burger_alignment') == 'top' || menucontainer.data('burger_alignment') == 'whole')) {
+		
+					$('section.upfront-layout').css('margin-top', menu.height());
+			
+
+					var topbar_height = $('div#upfront-ui-topbar').outerHeight();
+					var ruler_height = $('.upfront-ruler-container').outerHeight();
+					menu.offset({top:topbar_height+ruler_height, left:$('section.upfront-layout').offset().left});
+					
+
+				}
 			}
 		},
 		on_context_menu: function(e) {

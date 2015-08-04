@@ -658,8 +658,22 @@ jQuery(document).ready(function($){
 
 			if(linkitem.children('ul.sub-menu').closest('li.menu-item').hasClass('burger_sub_display'))
 					linkitem.children('ul.sub-menu').closest('li.menu-item').removeClass('burger_sub_display');
-				else
-					linkitem.children('ul.sub-menu').closest('li.menu-item').addClass('burger_sub_display');
+			else
+				linkitem.children('ul.sub-menu').closest('li.menu-item').addClass('burger_sub_display');
+
+			var menu = linkitem.closest('ul.menu');
+			var menucontainer = menu.closest('div.upfront-output-unewnavigation').children('div');
+			if(menucontainer.data('burger_over') == 'pushes' && menucontainer.data('burger_alignment') == 'top') {
+
+				$('div#page').css('margin-top', menu.height());
+		
+
+				//var topbar_height = $('div#upfront-ui-topbar').outerHeight();
+				var adminbar_height = $('div#wpadminbar').outerHeight();
+				menu.offset({top:adminbar_height, left:$('div').offset().left});
+				//menu.width($('div#page').width());
+
+			}
 		}
 
 	  	var url = $(this).attr('href');
