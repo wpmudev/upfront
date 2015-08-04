@@ -6,6 +6,7 @@ return (function ($) {
 		tagName: 'li',
 		contextmenuContext: [],
 		removeContexts: true,
+		
 		events: {
 			'click i.delete_menu_item' : 'deleteMenuItem',
 			'click i.navigation-add-item': 'addMenuItem',
@@ -94,16 +95,19 @@ return (function ($) {
 			}
 		},
 		on_click: function(e) {
+			
 			//e.preventDefault();
-			//e.stopPropagation();
+			
 			var linkitem = $(e.target).parent('li.menu-item');
-			console.log(linkitem);
-			console.log(linkitem.closest('.upfront-output-unewnavigation').data('style'))
+			//console.log(linkitem);
+			//console.log(linkitem.closest('.upfront-output-unewnavigation').data('style'))
 			if(linkitem.hasClass('parent') && linkitem.closest('.upfront-output-unewnavigation').data('style') == 'burger') {
-				if(linkitem.children('ul.sub-menu').css('display') == 'block')
-					linkitem.children('ul.sub-menu').css('display', '');
+				e.stopPropagation();
+
+				if(linkitem.hasClass('burger_sub_display'))
+					linkitem.removeClass('burger_sub_display');
 				else
-					linkitem.children('ul.sub-menu').css('display', 'block');
+					linkitem.addClass('burger_sub_display');
 			}
 		},
 		on_context_menu: function(e) {

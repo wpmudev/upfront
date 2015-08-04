@@ -656,10 +656,10 @@ jQuery(document).ready(function($){
 		if($(this).closest('div.upfront-navigation').data('style') == 'burger' && $(this).parent('li.menu-item.menu-item-has-children').length > 0) {
 			var linkitem = $(this).parent('li.menu-item.menu-item-has-children');
 
-			if(linkitem.children('ul.sub-menu').css('display') == 'block')
-					linkitem.children('ul.sub-menu').css('display', '');
+			if(linkitem.children('ul.sub-menu').closest('li.menu-item').hasClass('burger_sub_display'))
+					linkitem.children('ul.sub-menu').closest('li.menu-item').removeClass('burger_sub_display');
 				else
-					linkitem.children('ul.sub-menu').css('display', 'block');
+					linkitem.children('ul.sub-menu').closest('li.menu-item').addClass('burger_sub_display');
 		}
 
 	  	var url = $(this).attr('href');
