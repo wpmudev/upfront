@@ -336,6 +336,9 @@ class Upfront_UgalleryView extends Upfront_Object {
 				'adds_sortable' => __('Adds sortable interface based on the labels given to the images.', 'upfront'),
 				'fit_thumb_captions' => __('Fit thumbnail captions.', 'upfront'),
 				'thumb_captions_height' => __('Height of captions (in px).', 'upfront'),
+				'content_area_label' => __('Content Area Colors', 'upfront'),
+				'caption_text_label' => __('Captiong Text', 'upfront'),
+				'caption_bg_label' => __('Captiong BG', 'upfront'),
 			),
 			'thumb' => array(
 				'ratio' => __('Thumbnails Shape Ratio:', 'upfront'),

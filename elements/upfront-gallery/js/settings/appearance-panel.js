@@ -44,17 +44,17 @@ define([
 				{
 					fieldClass: ColorsSettingsItem,
 					options: {
-						title: 'Content Area Colors',
+						title: l10n.panel.content_area_label,
 						multiple: false,
 						single: false,
 						abccolors: [
 							{
 								name: 'caption-text',
-								label: 'Captiong Text'
+								label: l10n.panel.caption_text_label
 							},
 							{
 								name: 'caption-bg',
-								label: 'Captiong BG'
+								label: l10n.panel.caption_bg_label
 							},
 						]
 					}
