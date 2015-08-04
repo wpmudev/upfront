@@ -418,6 +418,15 @@ class Upfront_UcontactView extends Upfront_Object {
 				'inline' => __('Inline with field', 'upfront'),
 			),
 			'settings' => __('Contact form settings', 'upfront'),
+			'colors_label' => __('Colors', 'upfront'),
+			'field_bg_label' => __('Field BG', 'upfront'),
+			'button_bg_label' => __('Button BG', 'upfront'),
+			'typography_label' => __('Typography', 'upfront'),
+			'field_labels_label' => __('Field Labels', 'upfront'),
+			'field_values_label' => __('Field Values', 'upfront'),
+			'button_label' => __('Button', 'upfront'),
+			'field_button_label' => __('Field & Button', 'upfront'),
+			'field_label' => __('Field', 'upfront'),
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)

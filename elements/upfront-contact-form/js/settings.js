@@ -25,17 +25,17 @@ define([
 				{
 					fieldClass: ColorsSettingsItem,
 					options: {
-						title: 'Colors',
+						title: l10n.colors_label,
 						multiple: false,
 						single: false,
 						abccolors: [
 							{
 								name: 'static-field-bg',
-								label: 'Field BG'
+								label: l10n.field_bg_label
 							},
 							{
 								name: 'static-button-bg',
-								label: 'Button BG'
+								label: l10n.button_bg_label
 							},
 						]
 					}
@@ -43,7 +43,7 @@ define([
 				{
 					fieldClass: TypographySettingsItem,
 					options: {
-						title: 'Typography',
+						title: l10n.typography_label,
 						state: 'static',
 						toggle: false,
 						fields: {
@@ -57,9 +57,9 @@ define([
 						},
 						default_element: "field-labels",
 						elements: [
-							{ label: "Field Labels", value: "field-labels" },
-							{ label: "Field Values", value: "field-values" },
-							{ label: "Button", value: "button" },
+							{ label: l10n.field_labels_label, value: "field-labels" },
+							{ label: l10n.field_values_label, value: "field-values" },
+							{ label: l10n.button_label, value: "button" },
 						],
 					}
 				},
@@ -76,9 +76,9 @@ define([
 						},
 						default_element: 'field-button',
 						elements: [
-							{label: 'Field & Button', value: 'field-button'},
-							{label: 'Field', value: 'field'},
-							{label: 'Button', value: 'button'}
+							{label: l10n.field_button_label, value: 'field-button'},
+							{label: l10n.field_label, value: 'field'},
+							{label: l10n.button_label, value: 'button'}
 						]
 					}
 				}
@@ -88,7 +88,7 @@ define([
 				{
 					fieldClass: ColorsSettingsItem,
 					options: {
-						title: 'Colors',
+						title: l10n.colors_label,
 						multiple: false,
 						single: false,
 						toggle: true,
@@ -98,11 +98,11 @@ define([
 						abccolors: [
 							{
 								name: 'hover-field-bg',
-								label: 'Field BG'
+								label: l10n.field_bg_label
 							},
 							{
 								name: 'hover-button-bg',
-								label: 'Button BG'
+								label: l10n.button_bg_label
 							},
 						]
 					}
@@ -110,7 +110,7 @@ define([
 				{
 					fieldClass: TypographySettingsItem,
 					options: {
-						title: 'Typography',
+						title: l10n.typography_label,
 						state: 'hover',
 						toggle: true,
 						fields: {
@@ -125,9 +125,9 @@ define([
 						},
 						default_element: "field-labels",
 						elements: [
-							{ label: "Field Labels", value: "field-labels" },
-							{ label: "Field Values", value: "field-values" },
-							{ label: "Button", value: "button" },
+							{ label: l10n.field_labels_label, value: "field-labels" },
+							{ label: l10n.field_values_label, value: "field-values" },
+							{ label: l10n.button_label, value: "button" },
 						],
 					}
 				},
@@ -144,9 +144,9 @@ define([
 						},
 						default_element: 'field-button',
 						elements: [
-							{label: 'Field & Button', value: 'field-button'},
-							{label: 'Field', value: 'field'},
-							{label: 'Button', value: 'button'}
+							{label: l10n.field_button_label, value: 'field-button'},
+							{label: l10n.field_label, value: 'field'},
+							{label: l10n.button_label, value: 'button'}
 						]
 					}
 				},
@@ -169,7 +169,7 @@ define([
 				{
 					fieldClass: ColorsSettingsItem,
 					options: {
-						title: 'Colors',
+						title: l10n.colors_label,
 						multiple: false,
 						single: false,
 						toggle: true,
@@ -179,11 +179,11 @@ define([
 						abccolors: [
 							{
 								name: 'focus-field-bg',
-								label: 'Field BG'
+								label: l10n.field_bg_label
 							},
 							{
 								name: 'focus-button-bg',
-								label: 'Button BG'
+								label: l10n.button_bg_label
 							},
 						]
 					}
@@ -191,7 +191,7 @@ define([
 				{
 					fieldClass: TypographySettingsItem,
 					options: {
-						title: 'Typography',
+						title: l10n.typography_label,
 						state: 'focus',
 						toggle: true,
 						fields: {
@@ -206,8 +206,8 @@ define([
 						},
 						default_element: "field-labels",
 						elements: [
-							{ label: "Field Values", value: "field-values" },
-							{ label: "Button", value: "button" },
+							{ label: l10n.field_values_label, value: "field-values" },
+							{ label: l10n.button_label, value: "button" },
 						],
 					}
 				},
@@ -224,9 +224,9 @@ define([
 						},
 						default_element: 'field-button',
 						elements: [
-							{label: 'Field & Button', value: 'field-button'},
-							{label: 'Field', value: 'field'},
-							{label: 'Button', value: 'button'}
+							{label: l10n.field_button_label, value: 'field-button'},
+							{label: l10n.field_label, value: 'field'},
+							{label: l10n.button_label, value: 'button'}
 						]
 					}
 				}
