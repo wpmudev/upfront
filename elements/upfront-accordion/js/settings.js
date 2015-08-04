@@ -36,13 +36,13 @@ define([
 				{
 					fieldClass: ColorsSettingsItem,
 					options: {
-						title: 'Content Area Colors',
+						title: l10n.content_area_colors_label,
 						multiple: false,
 						single: true,
 						abccolors: [
 							{
 								name: 'active-content-bg-color',
-								label: 'Content Area BG'
+								label: l10n.content_area_bg_label
 							},
 						]
 					}
@@ -66,15 +66,15 @@ define([
 					fieldClass: ColorsSettingsItem,
 					toggle: false,
 					options: {
-						title: 'Colors',
+						title: l10n.colors_label,
 						abccolors: [
 							{
 								name: 'static-header-bg-color',
-								label: 'Header BG'
+								label: l10n.header_bg_label
 							},
 							{
 								name: 'static-triangle-icon-color',
-								label: 'Triangle Icon'
+								label: l10n.triangle_icon_label
 							}
 						]
 					}
@@ -84,7 +84,7 @@ define([
 					toggle: false,
 					options: {
 						state: 'static',
-						title: 'Tab Label Typography',
+						title: l10n.typography_tab_label,
 						fields: {
 							typeface: 'static-font-family', 
 							fontstyle: 'static-font-style',
@@ -114,7 +114,7 @@ define([
 				{
 					fieldClass: ColorsSettingsItem,
 					options: {
-						title: 'Colors',
+						title: l10n.colors_label,
 						toggle: true,
 						fields: {
 							use: 'hover-use-colors'
@@ -122,11 +122,11 @@ define([
 						abccolors: [
 							{
 								name: 'hover-header-bg-color',
-								label: 'Header BG'
+								label: l10n.header_bg_label
 							},
 							{
 								name: 'hover-triangle-icon-color',
-								label: 'Triangle Icon'
+								label: l10n.triangle_icon_label
 							}
 						]
 					}
@@ -136,7 +136,7 @@ define([
 					options: {
 						state: 'hover',
 						toggle: true,
-						title: 'Tab Label Typography',
+						title: l10n.typography_tab_label,
 						fields: {
 							use: 'hover-use-typography',
 							typeface: 'hover-font-family', 
@@ -180,7 +180,7 @@ define([
 				{
 					fieldClass: ColorsSettingsItem,
 					options: {
-						title: 'Colors',
+						title: l10n.colors_label,
 						toggle: true,
 						fields: {
 							use: 'active-use-color'
@@ -188,11 +188,11 @@ define([
 						abccolors: [
 							{
 								name: 'active-header-bg-color',
-								label: 'Header BG'
+								label: l10n.header_bg_label
 							},
 							{
 								name: 'active-triangle-icon-color',
-								label: 'Triangle Icon'
+								label: l10n.triangle_icon_label
 							}
 						]
 					}
@@ -202,7 +202,7 @@ define([
 					options: {
 						state: 'active',
 						toggle: true,
-						title: 'Tab Label Typography',
+						title: l10n.typography_tab_label,
 						fields: {
 							use: 'active-use-typography',
 							typeface: 'active-font-family', 
