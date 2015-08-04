@@ -30,9 +30,9 @@ define([
 					options: {
 						state: 'global',
 						default_value: 'default',
-						title: 'Image Style',
+						title: l10n.settings.image_style_label,
 						custom_class: 'image_style',
-						label: 'Image Element Shape:',
+						label: l10n.settings.image_style_info,
 						fields: {
 							name: 'image-style'
 						},
@@ -70,17 +70,17 @@ define([
 				{
 					fieldClass: ColorsSettingsItem,
 					options: {
-						title: 'Content Area Colors',
+						title: l10n.settings.content_area_colors_label,
 						multiple: false,
 						single: false,
 						abccolors: [
 							{
 								name: 'caption-text',
-								label: 'Captiong Text'
+								label: l10n.settings.caption_text_label
 							},
 							{
 								name: 'caption-bg',
-								label: 'Captiong BG'
+								label: l10n.settings.caption_bg_label
 							},
 						]
 					}

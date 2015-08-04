@@ -50,7 +50,7 @@ define([
 							abccolors: [
 								{
 									name: 'captionBackground',
-									label: 'Caption BG'
+									label: l10n.caption_bg
 								},
 							]
 						}

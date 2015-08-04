@@ -209,6 +209,11 @@ class Upfront_UimageView extends Upfront_Object {
 				'ok' => __('Ok', 'upfront'),
 				'padding' => __('Padding Settings:', 'upfront'),
 				'no_padding' => __('Do not use theme padding', 'upfront'),
+				'image_style_label' => __('Image Style', 'upfront'),
+				'image_style_info' => __('Image Element Shape:', 'upfront'),
+				'content_area_colors_label' => __('Content Area Colors', 'upfront'),
+				'caption_text_label' => __('Captiong Text', 'upfront'),
+				'caption_bg_label' => __('Captiong BG', 'upfront'),
 			),
 			'btn' => array(
 				'fit_label' => __('Fit to Element', 'upfront'),
