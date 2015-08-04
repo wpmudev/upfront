@@ -389,7 +389,7 @@ define([
 						});
 						return;
 					}
-					if ( this.slide_images != slide_images ){
+					if ( (this.slide_images != slide_images) && slide_images.length > 0 ){
 						Upfront.Views.Editor.ImageEditor.getImageData(slide_images).done(function(response){
 							var images = response.data.images;
 							_.each(slide_images, function(id){
@@ -403,6 +403,12 @@ define([
 						});
 					}
 					else {
+						$type.trigger('refresh');
+					}
+					
+					//If all images deleted remove content
+					if(slide_images.length == 0) {
+						$type.html('');
 						$type.trigger('refresh');
 					}
 				}
