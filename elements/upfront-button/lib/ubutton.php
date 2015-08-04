@@ -94,6 +94,9 @@ class Upfront_ButtonView extends Upfront_Object {
 			'appearance' => __('Textbox Appearance', 'upfront'),
 			'settings' => array(
 				'label' => __('Button settings', 'upfront'),
+				'colors_label' => __('Colors', 'upfront'),
+				'typography_label' => __('Typography', 'upfront'),
+				'button_bg_label' => __('Button Background', 'upfront'),
 			)	
 		);
 		return !empty($key)

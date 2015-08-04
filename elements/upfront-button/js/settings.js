@@ -77,13 +77,13 @@ define([
 				{
 					fieldClass: ColorsSettingsItem,
 					options: {
-						title: 'Colors',
+						title: l10n.settings.colors_label,
 						multiple: false,
 						single: true,
 						abccolors: [
 							{
 								name: 'bgcolor',
-								label: 'Button Background'
+								label: l10n.settings.button_bg_label
 							},
 						]
 					}
@@ -92,7 +92,7 @@ define([
 					fieldClass: TypographySettingsItem,
 					options: {
 						state: 'static',
-						title: 'Typography',
+						title: l10n.settings.typography_label,
 						fields: {
 							typeface: 'fontface', 
 							fontstyle: 'fontstyle',
@@ -139,14 +139,14 @@ define([
 					fieldClass: ColorsSettingsItem,
 					options: {
 						state: 'hover',
-						title: 'Colors',
+						title: l10n.settings.colors_label,
 						multiple: false,
 						toggle: true,
 						single: true,
 						abccolors: [
 							{
 								name: 'hov_bgcolor',
-								label: 'Button Background'
+								label: l10n.settings.button_bg_label
 							},
 						],
 						fields: {
@@ -158,7 +158,7 @@ define([
 					fieldClass: TypographySettingsItem,
 					options: {
 						state: 'hover',
-						title: 'Typography',
+						title: l10n.settings.typography_label,
 						toggle: true,
 						fields: {
 							typeface: 'hov_fontface', 
@@ -207,14 +207,14 @@ define([
 					fieldClass: ColorsSettingsItem,
 					options: {
 						state: 'focus',
-						title: 'Colors',
+						title: l10n.settings.colors_label,
 						multiple: false,
 						toggle: true,
 						single: true,
 						abccolors: [
 							{
 								name: 'focus_bgcolor',
-								label: 'Button Background'
+								label: l10n.settings.button_bg_label
 							},
 						],
 						fields: {
@@ -226,7 +226,7 @@ define([
 					fieldClass: TypographySettingsItem,
 					options: {
 						state: 'focus',
-						title: 'Typography',
+						title: l10n.settings.typography_label,
 						toggle: true,
 						fields: {
 							typeface: 'focus_fontface', 
