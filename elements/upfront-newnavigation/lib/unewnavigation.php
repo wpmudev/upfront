@@ -192,6 +192,12 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 				'auto_add' => __('Add new Pages automatically', 'upfront'),
 				'float' => __('Float this menu', 'upfront'),
 			),
+			'panel' => array(
+				'menu_kind_label' => __('Menu Kind', 'upfront'),
+				'typography_label' => __('Typography', 'upfront'),
+				'colors_label' => __('Colors', 'upfront'),
+				'background_label' => __('Background', 'upfront'),
+			),
 			'settings' => __('Navigation settings', 'upfront'),
 		);
 		return !empty($key)

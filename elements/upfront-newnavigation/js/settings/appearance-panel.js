@@ -26,7 +26,7 @@ define([
 					{
 						fieldClass: MenuStyle,
 						options: {
-							title: 'Menu Kind',
+							title: l10n.panel.menu_kind_label,
 							state: 'global',
 						}
 					},
@@ -35,7 +35,7 @@ define([
 					{
 						fieldClass: TypographySettingsItem,
 						options: {
-							title: 'Typography',
+							title: l10n.panel.typography_label,
 							state: 'static',
 							toggle: false,
 							fields: {
@@ -52,13 +52,13 @@ define([
 					{
 						fieldClass: ColorsSettingsItem,
 						options: {
-							title: 'Colors',
+							title: l10n.panel.colors_label,
 							multiple: false,
 							single: true,
 							abccolors: [
 								{
 									name: 'static-nav-bg',
-									label: 'Background'
+									label: l10n.panel.background_label
 								},
 							]
 						}
@@ -68,7 +68,7 @@ define([
 					{
 						fieldClass: TypographySettingsItem,
 						options: {
-							title: 'Typography',
+							title: l10n.panel.typography_label,
 							state: 'hover',
 							toggle: true,
 							fields: {
@@ -86,7 +86,7 @@ define([
 					{
 						fieldClass: ColorsSettingsItem,
 						options: {
-							title: 'Colors',
+							title: l10n.panel.colors_label,
 							multiple: false,
 							single: true,
 							toggle: true,
@@ -96,7 +96,7 @@ define([
 							abccolors: [
 								{
 									name: 'hover-nav-bg',
-									label: 'Background'
+									label: l10n.panel.background_label
 								},
 							]
 						}
@@ -106,7 +106,7 @@ define([
 					{
 						fieldClass: TypographySettingsItem,
 						options: {
-							title: 'Typography',
+							title: l10n.panel.typography_label,
 							state: 'focus',
 							toggle: true,
 							fields: {
@@ -124,7 +124,7 @@ define([
 					{
 						fieldClass: ColorsSettingsItem,
 						options: {
-							title: 'Colors',
+							title: l10n.panel.colors_label,
 							multiple: false,
 							single: true,
 							toggle: true,
@@ -134,7 +134,7 @@ define([
 							abccolors: [
 								{
 									name: 'focus-nav-bg',
-									label: 'Background'
+									label: l10n.panel.background_label
 								},
 							]
 						}
