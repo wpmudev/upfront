@@ -5,9 +5,8 @@ define([
 	'scripts/upfront/preset-settings/typography-settings-item',
 	'scripts/upfront/preset-settings/colors-settings-item',
 	'scripts/upfront/preset-settings/border-settings-item',
-	'scripts/upfront/preset-settings/hov-animation-settings-item',
 	'text!elements/upfront-text/tpl/preset-style.html'
-], function(ElementSettings, PresetManager, Util, TypographySettingsItem, ColorsSettingsItem, BorderSettingsItem, HovAnimationSettingsItem, styleTpl) {
+], function(ElementSettings, PresetManager, Util, TypographySettingsItem, ColorsSettingsItem, BorderSettingsItem, styleTpl) {
 		var l10n = Upfront.Settings.l10n.text_element;
 
 		var AppearancePanel = PresetManager.extend({
@@ -25,13 +24,13 @@ define([
 					{
 						fieldClass: ColorsSettingsItem,
 						options: {
-							title: 'Colors',
+							title: l10n.settings.colors_label,
 							multiple: false,
 							single: true,
 							abccolors: [
 								{
 									name: 'bg_color',
-									label: 'Content Area BG'
+									label: l10n.settings.content_area_bg
 								},
 							]
 						}
@@ -53,7 +52,7 @@ define([
 						fieldClass: TypographySettingsItem,
 						options: {
 							state: 'focus',
-							title: 'Typography',
+							title: l10n.settings.typography_label,
 							toggle: true,
 							fields: {
 								typeface: 'fontface', 

@@ -36,13 +36,13 @@ define([
 				{
 					fieldClass: ColorsSettingsItem,
 					options: {
-						title: 'Content Area Colors',
+						title: l10n.content_area_colors_label,
 						multiple: false,
 						single: true,
 						abccolors: [
 							{
 								name: 'global-content-bg',
-								label: 'Content Area BG'
+								label: l10n.content_area_bg_label
 							},
 						]
 					}
@@ -65,13 +65,13 @@ define([
 				{
 					fieldClass: ColorsSettingsItem,
 					options: {
-						title: 'Colors',
+						title: l10n.colors_label,
 						multiple: false,
 						single: true,
 						abccolors: [
 							{
 								name: 'static-tab-bg',
-								label: 'Tab Background'
+								label: l10n.tab_bg_label
 							},
 						]
 					}
@@ -79,7 +79,7 @@ define([
 				{
 					fieldClass: TypographySettingsItem,
 					options: {
-						title: 'Tab Label Typography',
+						title: l10n.tab_typography_label,
 						state: 'static',
 						toggle: false,
 						fields: {
@@ -112,7 +112,7 @@ define([
 				{
 					fieldClass: ColorsSettingsItem,
 					options: {
-						title: 'Colors',
+						title: l10n.colors_label,
 						multiple: false,
 						single: true,
 						toggle: true,
@@ -122,7 +122,7 @@ define([
 						abccolors: [
 							{
 								name: 'hover-tab-bg',
-								label: 'Tab Background'
+								label: l10n.tab_bg_label
 							},
 						]
 					}
@@ -130,7 +130,7 @@ define([
 				{
 					fieldClass: TypographySettingsItem,
 					options: {
-						title: 'Tab Label Typography',
+						title: l10n.tab_typography_label,
 						state: 'hover',
 						toggle: true,
 						fields: {
@@ -177,7 +177,7 @@ define([
 				{
 					fieldClass: ColorsSettingsItem,
 					options: {
-						title: 'Colors',
+						title: l10n.colors_label,
 						multiple: false,
 						single: true,
 						toggle: true,
@@ -187,7 +187,7 @@ define([
 						abccolors: [
 							{
 								name: 'active-tab-bg',
-								label: 'Tab Background'
+								label: l10n.tab_bg_label
 							},
 						]
 					}
@@ -195,7 +195,7 @@ define([
 				{
 					fieldClass: TypographySettingsItem,
 					options: {
-						title: 'Tab Label Typography',
+						title: l10n.tab_typography_label,
 						state: 'active',
 						toggle: true,
 						fields: {

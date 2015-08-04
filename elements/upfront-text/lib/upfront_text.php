@@ -96,6 +96,11 @@ class Upfront_PlainTxtView extends Upfront_Object {
 			'ol' => __('Ordered List (OL)', 'upfront'),
 			'bq' => __('Blockquote (BLOCKQUOTE)', 'upfront'),
 			'bqalt' => __('Blockquote Alternative (BLOCKQUOTE)', 'upfront'),
+			'settings' => array(
+				'colors_label' => __('Colors', 'upfront'),
+				'content_area_bg' => __('Content Area BG', 'upfront'),
+				'typography_label' => __('Typography', 'upfront'),
+			)
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)
