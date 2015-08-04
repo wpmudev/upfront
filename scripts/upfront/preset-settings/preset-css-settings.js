@@ -1,6 +1,7 @@
 define([
 	'scripts/upfront/preset-settings/preset-css-editor'
 ], function(PresetCSSEditor) {
+	var l10n = Upfront.Settings.l10n.preset_manager;
 	var PresetCSS = Upfront.Views.Editor.Settings.Item.extend({
 		className: 'upfront-settings-css',
 		events: {
