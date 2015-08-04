@@ -17,7 +17,7 @@ define([
 					className: 'edit_preset_css',
 					compact: true,
 					name: 'preset_css',
-					label: 'Edit Preset CSS',
+					label: l10n.edit_preset_css,
 				})
 			]);
 		},

@@ -298,6 +298,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			'ease_in' => __('ease-in', 'upfront'),
 			'ease_out' => __('ease-out', 'upfront'),
 			'ease_in_out' => __('ease-in-out', 'upfront'),
+			'edit_preset_css' => __('Edit Preset CSS', 'upfront'),
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)

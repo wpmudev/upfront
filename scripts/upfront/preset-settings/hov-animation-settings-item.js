@@ -25,7 +25,7 @@ define(function() {
 					className: state + '-duration duration ' + toggleClass,
 					name: me.options.fields.duration,
 					min: 0,
-					label: 'Animate Hover Changes:',
+					label: l10n.animate_hover_changes,
 					step: 0.1,
 					values: [
 						{ label: '', value: '12' }
@@ -37,7 +37,7 @@ define(function() {
 				new Upfront.Views.Editor.Field.Select({
 					model: this.model,
 					name: me.options.fields.easing,
-					label: 'sec',
+					label: l10n.sec,
 					step: 0.1,
 					label_style: 'inline',
 					values: [
