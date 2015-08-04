@@ -408,7 +408,7 @@ define([
 					
 					//If all images deleted remove content
 					if(slide_images.length == 0) {
-						$type.html('');
+						$type.find('.upfront-default-slider-wrap').html('');
 						$type.trigger('refresh');
 					}
 				}
