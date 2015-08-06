@@ -541,12 +541,14 @@ class Upfront_GridBreakpoint {
 		$column_padding = $this->get_column_padding();
 		$type_padding = $this->get_type_padding();
 		$contained_width = $contained_width ? $contained_width : $width;
+		$styles = $this->get_styles();
 		return '' .
 			( $this->is_default() ? ".upfront-region-container-clip .upfront-region-container-bg {max-width: {$contained_width}px;}" . "\n" : "" ) .
 			".upfront-grid-layout {width: {$width}px;}" . "\n" .
 			( $this->is_default() ? ".upfront-output-object {padding: {$column_padding}px;}" . "\n" : "") .
 			( $this->is_default() ? ".upfront-inserted_image-wrapper .wp-caption-text, .uinsert-image-wrapper {padding: {$column_padding}px;}" . "\n" : "") .
 			( $this->is_default() ? ".plaintxt_padding {padding: {$type_padding}px;}" . "\n" : "") .
+			$styles .
 		'';
 	}
 
@@ -608,6 +610,10 @@ class Upfront_GridBreakpoint {
 
 	public function get_typography() {
 		return isset($this->_data['typography']) ? $this->_data['typography'] : array();
+	}
+
+	public function get_styles() {
+		return isset($this->_data['styles']) ? $this->_data['styles'] : '';
 	}
 
 	public function get_grid_width () {
