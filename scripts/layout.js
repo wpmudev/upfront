@@ -12,6 +12,8 @@ jQuery(document).ready(function($){
 		return false;
 	}
 
+	var previous_breakpoint = '';
+	var current_breakpoint = '';
 	function get_breakpoint(){
 		if (!window.getComputedStyle) {
 				window.getComputedStyle = function(el, pseudo) {
@@ -31,7 +33,12 @@ jQuery(document).ready(function($){
 		}
 		var breakpoint = window.getComputedStyle(document.body,':after').getPropertyValue('content');
 		if(breakpoint) {
-			return breakpoint.replace(/['"]/g, '');
+			breakpoint = breakpoint.replace(/['"]/g, '')
+			if (current_breakpoint != breakpoint) {
+				previous_breakpoint = current_breakpoint;
+				current_breakpoint = breakpoint;
+			}
+			return breakpoint;
 		}
 	}
 	
@@ -978,17 +985,33 @@ jQuery(document).ready(function($){
 		if ( $('#page').hasClass('upfront-layout-view') ){
 			return remove_responsive_class();
 		}
-		if ( breakpoint && breakpoint !== 'none' && breakpoint !== 'desktop' )
+		if (previous_breakpoint) {
+			$('#page').removeClass(previous_breakpoint + '-breakpoint');
+		}
+		if ( breakpoint && breakpoint !== 'none' && breakpoint !== 'desktop' ) {
 			$('html').addClass('uf-responsive');
-		else
+			$('#page').removeClass('desktop-breakpoint default-breakpoint').addClass('responsive-breakpoint ' + breakpoint + '-breakpoint');
+		}
+		else {
+			$('#page').removeClass('responsive-breakpoint').addClass('default-breakpoint desktop-breakpoint');
 			remove_responsive_class();
+		}
 	}
 	function remove_responsive_class () {
 		$('html').removeClass('uf-responsive');
 	}
+	function reset_responsive_class () {
+		var breakpoint = get_breakpoint();
+		if ( breakpoint ) {
+			$('#page').removeClass(breakpoint + '-breakpoint');
+		}
+	}
 	update_responsive_class();
 	var lazyUpdateResponsiveClass = throttle(update_responsive_class, 100);
 	$(window).on('resize', lazyUpdateResponsiveClass);
-	$(document).on('upfront-load', function(){ Upfront.Events.on("layout:render", remove_responsive_class); });
+	$(document).on('upfront-load', function(){
+		Upfront.Events.once("application:mode:before_switch", reset_responsive_class);
+		Upfront.Events.once("layout:render", remove_responsive_class);
+	});
 
 });

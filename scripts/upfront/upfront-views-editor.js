@@ -2008,7 +2008,7 @@ define([
 				this.typography = options;
 			}
 			if (_.contains(['tablet', 'mobile'], this.model.get('id'))) {
-				var styleId = this.model.get('id') + '-breakpoint-style';
+				var styleId = this.model.get('id') + '-breakpoint-typography';
 				var cssText = breakpointCss.join("\n");
 
 				if ( $('#' + styleId).length ) {
@@ -10367,7 +10367,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				});
 		};
 
-		initialize();
+		Upfront.Events.once("application:mode:before_switch", initialize);
 	};
 
 	var breakpoints_storage = new Breakpoints_Storage(Upfront.mainData.themeInfo.breakpoints);
