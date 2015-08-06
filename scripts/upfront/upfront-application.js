@@ -1666,6 +1666,21 @@ var Application = new (Backbone.Router.extend({
 			});
 		});
 	},
+	
+	adjust_grid_padding_settings: function(region) {
+		//Handle region top/bottom padding and move grid rulers
+		$region = $(region).parent(),
+			padding_top = parseInt($region.css('padding-top')),
+			padding_bottom = parseInt($region.css('padding-bottom'));
+
+		if(padding_top > 0) {
+			$region.find('.upfront-overlay-grid').css("top", padding_top * -1);
+		}
+		
+		if(padding_bottom > 0) {
+			$region.find('.upfront-overlay-grid').css("bottom", padding_bottom * -1);
+		}
+	},
 
 	fetchLayout: function(path, urlParams){
 		if(this.mode.current != this.MODE.LAYOUT)

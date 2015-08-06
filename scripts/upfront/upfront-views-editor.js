@@ -786,6 +786,9 @@ define([
 				var columns = grid.size,
 					template = _.template(_Upfront_Templates.overlay_grid, {columns: columns, size_class: grid.class, style: 'simple'});
 				$(this).prepend(template);
+				
+				//Adjust grid rulers position
+				Upfront.Application.adjust_grid_padding_settings(this);
 			});
 
 			!Upfront.Application.get_gridstate() || this.show_grid();
@@ -9200,7 +9203,13 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				type: this.model.is_main() ? "RegionContainer" : (this.model.get('type') == 'lightbox')?"RegionLightbox":"Region",
 				element_id: this.model.is_main() ? "region-container-" + this.model.get('name') : "region-" + this.model.get('name')
 			});
-
+			
+			this.listenTo(Upfront.Application.cssEditor, 'updateStyles', this.adjust_grid_padding);
+		},
+		
+		adjust_grid_padding: function() {
+			var togglegrid = new Upfront.Views.Editor.Command_ToggleGrid();
+			togglegrid.update_grid();
 		}
 	});
 
