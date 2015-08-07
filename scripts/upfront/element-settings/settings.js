@@ -1,5 +1,7 @@
 (function ($) {
-define([], function () {
+define([
+	'scripts/upfront/element-settings/advanced-settings',
+], function (AdvancedSettings) {
 	var l10n = Upfront.Settings && Upfront.Settings.l10n
 		? Upfront.Settings.l10n.global.views
 		: Upfront.mainData.l10n.global.views
@@ -55,7 +57,12 @@ define([], function () {
 			 * });
 			 */
 			Upfront.Events.trigger("settings:prepare");
-
+			
+			//Add Advanced Settings as separate panel
+			me.panels.push(
+				new AdvancedSettings({model: this.model})
+			);
+			
 			me.panels.each(function (panel) {
 				panel.render();
 
