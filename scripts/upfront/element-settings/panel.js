@@ -1,5 +1,7 @@
 (function ($) {
-define([], function () {
+define([
+	'scripts/upfront/element-settings/settings/padding-settings-module',
+], function(PaddingSettings) {
 	var l10n = Upfront.Settings && Upfront.Settings.l10n
 		? Upfront.Settings.l10n.global.views
 		: Upfront.mainData.l10n.global.views
@@ -77,9 +79,11 @@ define([], function () {
 						model: this.model,
 						title: (false === this.hide_common_anchors ? l10n.css_and_anchor : l10n.css_styles)
 					});
+
 					css_settings.panel = me;
 					css_settings.render();
 					$common_panel.append(css_settings.el);
+					
 				}
 				// Adding anchor trigger
 				//todo should add this check again// if (this.options.anchor && this.options.anchor.is_target) {
@@ -90,6 +94,15 @@ define([], function () {
 					anchor_settings.render();
 					$common_panel.append(anchor_settings.el);
 				}
+				
+				var padding_settings = new PaddingSettings({
+					model: this.model
+				});
+				
+				//Append element padding settings
+				padding_settings.panel = me;
+				padding_settings.render();
+				$common_panel.append(padding_settings.el);
 
 				// this.listenTo(anchor_settings, "anchor:item:updated", function () {
 					// this.toggle_panel(first); //todo don't know what this was for should investigate

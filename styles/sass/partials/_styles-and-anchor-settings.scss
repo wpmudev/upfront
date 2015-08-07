@@ -1,5 +1,5 @@
 .upfront-settings-common_panel {
-  background: #dae7f2;
+  background: #f7fbff;
   height: 35px;
   overflow: hidden;
 }
@@ -99,3 +99,102 @@
   margin-top: 10px;
 }
 
+/* Padding Settings */
+
+#element-settings-sidebar .padding-lock input[type=checkbox] {
+	position: relative;
+	left: 36px;
+	top: 6px;
+}
+#element-settings-sidebar .padding-lock input[type=checkbox]:checked {
+	float:none !important;
+	left: 38px;
+	top: 7px;
+}
+#element-settings-sidebar .padding-lock input[type=checkbox]:after {
+	content: '';
+	display: block;
+	height: 15px;
+	width: 15px;
+	background-image: url('../img/uf-core-el-sprite.png');
+	background-image: url('../img/uf-core-el-sprite.svg'), none;
+	background-position: -661px -172px;
+	background-color: #f7fbff;
+	left: -3px;
+	top: -3px;
+	position: relative;
+}
+#element-settings-sidebar .padding-lock input[type=checkbox]:checked:after {
+	background-position: -661px -140px;
+}
+#element-settings-sidebar .padding-lock {
+	position: relative;
+	margin-top: -19px;
+	left: 110px;
+}
+
+#element-settings-sidebar .padding-settings input[type=number] {
+	width: 45px;
+	font-size: 12px;
+}
+#element-settings-sidebar .padding-settings .padding-top {
+	position: relative;
+	border-left: 2px solid #dae6f2;
+	padding: 1px 10px;
+	padding-left: 60px;
+	top: 2px;
+	z-index: 11;
+}
+#element-settings-sidebar .padding-settings .padding-left {
+	position: relative;
+	border-left: 2px solid #dae6f2;
+	padding: 1px 10px;
+	z-index: 15;
+}
+#element-settings-sidebar .padding-settings .padding-right {
+	position: relative;
+	margin-top: -39px;
+	left: 112px;
+	z-index: 15;
+}
+#element-settings-sidebar .padding-settings .padding-bottom {
+	position: relative;
+	border-left: 2px solid #dae6f2;
+	padding: 1px 10px;
+	padding-bottom: 5px;
+	padding-left: 60px;
+	margin-top: -18px;
+	z-index: 11;
+}
+
+#element-settings-sidebar .padding-bottom label {
+	display: block;
+	width: 25px;
+	height: 18px;
+	border: 1px dotted #7d99b3;
+	/* border-top: 3px solid #7bebc6; */
+	position: relative;
+	z-index: 10;
+	top: -7px;
+	left: 10px;
+}
+
+#element-settings-sidebar .padding-slider {
+	top: -11px;
+	padding-top: 10px;
+	padding-bottom: 17px;
+	position: relative;
+	border-left: 2px solid #dae6f2;
+	padding-left: 10px;
+	width: 130px;
+	float: left;
+}
+#element-settings-sidebar .padding-slider .upfront-field-slider-value {
+	display: none;
+}
+#element-settings-sidebar .padding-number, #element-settings-sidebar .padding-number input {
+	width: 60px;
+	float: left;
+	position: relative;
+	margin-left: 15px;
+}
