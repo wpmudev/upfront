@@ -16,7 +16,19 @@ define([
 			panelTitle: l10n.settings,
 			presetDefaults: {
 				'id': 'default',
-				'name': l10n.default_preset
+				'name': l10n.default_preset,
+				'bg_color': 'rgb(0, 0, 0)',
+				'useborder': '',
+				'border_width': 1,
+				'border_style': 'solid',
+				'border_color': 'rgb(0, 0, 0)',
+				'fontface': 'Arial', 
+				'fontstyle': '400 normal',
+				'weight': '400',
+				'style': 'normal',
+				'fontsize': 14,
+				'lineheight': 1,
+				'color': 'rgb(0, 0, 0)',
 			},
 			styleTpl: styleTpl,
 			stateFields: {

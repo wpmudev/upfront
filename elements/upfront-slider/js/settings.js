@@ -14,6 +14,8 @@ define([
 			ajaxActionSlug: 'slider',
 			panelTitle: l10n.settings,
 			presetDefaults: {
+				'primaryStyle': 'notext',
+				'captionBackground': 'rgb(222, 222, 222)',
 				'id': 'default',
 				'name': l10n.default_preset
 			},
