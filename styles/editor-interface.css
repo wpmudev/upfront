@@ -9160,7 +9160,7 @@ a.ueditor-action-trash:hover {
   margin-top: 3px;
   font: 11px/13px Verdana, sans-serif;
   color: #26394d;
-  padding: 5px; }
+  padding: 5px 0px; }
 
 #settings .upfront-embedded_toggleable.error .upfront-embedded_toggleable-notice {
   background-color: #edafaf; }
@@ -10966,7 +10966,7 @@ a.upfront-css-edit:before, a.upfront-preset-edit:before, a.upfront-region-name-e
 
 /* Anchor settings */
 .upfront-settings-item-anchor {
-  padding: 10px 5px 15px;
+  padding: 10px 0px 15px;
   position: relative;
   margin-top: 10px; }
 
@@ -10983,7 +10983,14 @@ a.upfront-css-edit:before, a.upfront-preset-edit:before, a.upfront-region-name-e
   display: none; }
 
 .upfront-settings-item-anchor .upfront-embedded_toggleable {
-  margin-top: 10px; }
+  margin-top: 5px;
+  border-left: 2px solid #dae6f2;
+  margin-left: -17px;
+  padding-left: 10px;
+  padding-top: 8px; }
+
+.upfront-settings-item-anchor .upfront-embedded_toggleable input {
+  width: 180px; }
 
 /* Padding Settings */
 #element-settings-sidebar .padding-lock input[type=checkbox] {
@@ -13441,7 +13448,7 @@ div.preset-manager-panel .color-module.single {
   width: 100%;
   margin-top: -3px; }
 
-div.preset-manager-panel .checkbox-title span {
+div.preset-manager-panel .checkbox-title span, #element-settings-sidebar .checkbox-title span {
   text-transform: uppercase;
   font-weight: bold;
   margin: 0px; }

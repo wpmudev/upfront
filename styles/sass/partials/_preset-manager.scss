@@ -543,7 +543,8 @@ div.preset-manager-panel .color-module.single {
 	width: 100%;
 	margin-top: -3px;
 }
-div.preset-manager-panel .checkbox-title span {
+div.preset-manager-panel .checkbox-title span,
+#element-settings-sidebar .checkbox-title span {
 	text-transform: uppercase;
 	font-weight: bold;
 	margin: 0px;

@@ -7675,6 +7675,7 @@ var _Settings_AnchorSetting = SettingsItem.extend({
 		SettingsItem.prototype.initialize.call(this, this.options);
 		var item = new Field_Complex_Toggleable_Text_Field({
 			element_label: l10n.make_element_anchor,
+			className: 'upfront-field-complex_field-boolean_toggleable_text upfront-field-multiple checkbox-title',
 			model: this.model,
 			property: 'anchor'
 		});
