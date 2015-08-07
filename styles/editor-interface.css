@@ -10965,19 +10965,15 @@ a.upfront-css-edit:before, a.upfront-preset-edit:before, a.upfront-region-name-e
   z-index: 1; }
 
 /* Anchor settings */
-.upfront-settings-item-anchor {
-  padding: 10px 0px 15px;
+.upfront-settings-item-anchor, .padding-settings {
+  border-bottom: 1px solid #e5ecf4;
+  margin: 0px -15px;
+  padding-left: 15px;
   position: relative;
   margin-top: 10px; }
 
-.upfront-settings-item-anchor:before {
-  content: "";
-  display: block;
-  position: absolute;
-  border-top: 1px solid #a3bfd9;
-  left: 15px;
-  right: 15px;
-  top: 0; }
+.padding-settings {
+  padding-bottom: 5px; }
 
 .upfront-settings-item-anchor .upfront-settings-item-title {
   display: none; }
@@ -13510,6 +13506,9 @@ div.preset-manager-panel .border_selectElement {
 
 div.preset-manager-panel .move-wrapper-top {
   margin-top: -15px !important; }
+
+div.preset-manager-panel .upfront-settings-css {
+  padding-bottom: 15px; }
 
 .upfront-button .upfront-inline-panel, .menu-item .upfront-inline-panel {
   -webkit-transition-delay: 0;
