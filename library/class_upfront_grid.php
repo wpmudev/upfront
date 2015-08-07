@@ -531,6 +531,7 @@ class Upfront_GridBreakpoint {
             "#page.upfront-layout-view .upfront-module-group-bg-padding {margin: {$column_padding}px;}" . "\n" .
 			"#page.upfront-layout-view .plaintxt_padding {padding: {$type_padding}px;}" . "\n" .
 			"#page.upfront-layout-view .upfront-region-postlayouteditor {padding: {$column_padding}px 0;}" . "\n" .
+			"#page.upfront-layout-view #region-container-postlayouteditor {min-width: 0;}" . "\n" .
 		'';
 	}
 
