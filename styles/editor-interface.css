@@ -10321,7 +10321,7 @@ div.sp-replacer:before {
 
 /* line 7, sass/partials/_inline-controls-panel.scss */
 .upfront-element-controls .upfront-inline-panel {
-  z-index: 10;
+  z-index: 2000;
   box-shadow: 0px 0px 2px #ADADAD; }
 
 /* line 11, sass/partials/_inline-controls-panel.scss */
@@ -10353,7 +10353,7 @@ div.sp-replacer:before {
   min-width: 140px;
   width: 100%;
   font-size: 0.8em;
-  padding: 5px 10px 10px 10px;
+  padding: 5px 20px 10px 10px;
   background: #E8E8E8;
   box-shadow: 0px 1px 2px #ADADAD;
   color: #ADADAD; }
