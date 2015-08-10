@@ -999,12 +999,10 @@ define([
 				"contextmenu": "on_context_menu"
 			},
 			initialize: function () {
-				// this.model.get("properties").bind("change", this.render, this);
-				// this.model.get("properties").bind("add", this.render, this);
-				// this.model.get("properties").bind("remove", this.render, this);
-				this.listenTo(this.model.get("properties"), 'change', this.render);
-				this.listenTo(this.model.get("properties"), 'add', this.render);
-				this.listenTo(this.model.get("properties"), 'remove', this.render);
+				var callback = this.update || this.render;
+				this.listenTo(this.model.get("properties"), 'change', callback);
+				this.listenTo(this.model.get("properties"), 'add', callback);
+				this.listenTo(this.model.get("properties"), 'remove', callback);
 
 				this.listenTo(Upfront.Events, 'entity:resize_start', this.close_settings);
 				this.listenTo(Upfront.Events, 'entity:drag_start', this.close_settings);
@@ -1126,8 +1124,8 @@ define([
 					this.listenTo(this.parent_module_view, 'entity:resize_start', this.on_element_resize_start);
 					this.stopListening((this._previous_parent_module_view || this.parent_module_view), 'entity:resizing');
 					this.listenTo(this.parent_module_view, 'entity:resizing', this.on_element_resizing);
-					this.stopListening((this._previous_parent_module_view || this.parent_module_view), 'entity:resize');
-					this.listenTo(this.parent_module_view, 'entity:resize', this.on_element_resize);
+					this.stopListening((this._previous_parent_module_view || this.parent_module_view), 'entity:resize_stop');
+					this.listenTo(this.parent_module_view, 'entity:resize_stop', this.on_element_resize);
 					
 					this.stopListening((this._previous_parent_module_view || this.parent_module_view), 'entity:drop');
 					this.listenTo(this.parent_module_view, 'entity:drop', this.on_element_drop);
@@ -1219,6 +1217,34 @@ define([
 					this.createPaddingControl(),
 					this.createControl('settings', l10n.settings, 'on_settings_click')
 				]);
+			},
+			update: function (prop, options) {
+				var prev_value = prop._previousAttributes.value,
+					value = prop.get('value'),
+					$me = this.$el.find('.upfront-editable_entity:first'),
+					grid = Upfront.Settings.LayoutEditor.Grid
+				;
+				if ( prop.id == 'row' ){
+					// row change
+					var height = value * grid.baseline;
+					$me.css('min-height', height).attr('data-row', value);
+				}
+				else if ( prop.id == 'class' ){
+					// column and margin changes
+					var classes = $me.attr('class');
+					_.each([grid.class, grid.left_margin_class, grid.top_margin_class, grid.bottom_margin_class, grid.right_margin_class], function(class_name){
+						var rx = new RegExp('\\b' + class_name + '(\\d+)'),
+							val = value.match(rx);
+						if ( val && val[1] )
+							Upfront.Behaviors.GridEditor.update_class($me, class_name, val[1]);
+					});
+				}
+				else if ( prop.id == 'breakpoint' ){
+					this.update_position();
+				}
+				else {
+					this.render();
+				}
 			},
 			update_position: function () {
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
@@ -1518,7 +1544,7 @@ define([
 				this.listenTo(Upfront.Events, 'command:region:fixed_edit_toggle', this.on_region_edit);
 
 				this.on('on_layout', this.render_object, this);
-				//this.on('entity:resize', this.on_resize, this);
+				//this.on('entity:resize_stop', this.on_resize, this);
 				//this.on('entity:drop', this.on_drop, this);
 				this.on('region:updated', this.on_region_update, this);
 
@@ -1778,7 +1804,7 @@ define([
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 				this.listenTo(Upfront.Events, "command:module_group:finish_edit", this.on_finish);
 				
-				this.on('entity:resize', this.on_resize, this);
+				this.on('entity:resize_stop', this.on_resize, this);
 			},
 			onOpenPanelClick: function(event) {
 				event.preventDefault();
