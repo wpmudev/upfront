@@ -151,79 +151,79 @@ define([
 			this.openImageSelector();
 		},
 
-		createControls: function() {
-			var me = this,
-				panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
-				captionControl = new Upfront.Views.Editor.InlinePanels.TooltipControl()
-			;
+		// createControls: function() {
+		// 	var me = this,
+		// 		panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
+		// 		captionControl = new Upfront.Views.Editor.InlinePanels.TooltipControl()
+		// 	;
 
-			// Do not allow editing of theme images if not in builder
-			if (this.isThemeImage() && !Upfront.themeExporter) {
-				return false;
-			}
+		// 	// Do not allow editing of theme images if not in builder
+		// 	if (this.isThemeImage() && !Upfront.themeExporter) {
+		// 		return false;
+		// 	}
 
-			captionControl.sub_items = {
-				topOver: this.createControl('topOver', l10n.ctrl.over_top),
-				bottomOver: this.createControl('bottomOver', l10n.ctrl.over_bottom),
-				topCover: this.createControl('topCover', l10n.ctrl.cover_top),
-				middleCover: this.createControl('middleCover', l10n.ctrl.cover_middle),
-				bottomCover: this.createControl('bottomCover', l10n.ctrl.cover_bottom),
-				below: this.createControl('below', l10n.ctrl.below),
-				nocaption: this.createControl('nocaption', l10n.ctrl.no_caption)
-			};
+		// 	captionControl.sub_items = {
+		// 		topOver: this.createControl('topOver', l10n.ctrl.over_top),
+		// 		bottomOver: this.createControl('bottomOver', l10n.ctrl.over_bottom),
+		// 		topCover: this.createControl('topCover', l10n.ctrl.cover_top),
+		// 		middleCover: this.createControl('middleCover', l10n.ctrl.cover_middle),
+		// 		bottomCover: this.createControl('bottomCover', l10n.ctrl.cover_bottom),
+		// 		below: this.createControl('below', l10n.ctrl.below),
+		// 		nocaption: this.createControl('nocaption', l10n.ctrl.no_caption)
+		// 	};
 
-			captionControl.icon = 'caption';
-			captionControl.tooltip = l10n.ctrl.caption_position;
-			captionControl.selected = this.getSelectedAlignment();
+		// 	captionControl.icon = 'caption';
+		// 	captionControl.tooltip = l10n.ctrl.caption_position;
+		// 	captionControl.selected = this.getSelectedAlignment();
 
-			this.listenTo(captionControl, 'select', function(item){
-				switch(item){
-					case 'topOver':
-						me.property('include_image_caption', [1]);
-						me.property('caption_position', 'over_image');
-						me.property('caption_alignment', 'top');
-						break;
-					case 'bottomOver':
-						me.property('include_image_caption', [1]);
-						me.property('caption_position', 'over_image');
-						me.property('caption_alignment', 'bottom');
-						break;
-					case 'topCover':
-						me.property('include_image_caption', [1]);
-						me.property('caption_position', 'over_image');
-						me.property('caption_alignment', 'fill');
-						break;
-					case 'middleCover':
-						me.property('include_image_caption', [1]);
-						me.property('caption_position', 'over_image');
-						me.property('caption_alignment', 'fill_middle');
-						break;
-					case 'bottomCover':
-						me.property('include_image_caption', [1]);
-						me.property('caption_position', 'over_image');
-						me.property('caption_alignment', 'fill_bottom');
-						break;
-					case 'below':
-						me.property('include_image_caption', [1]);
-						me.property('caption_position', 'below_image');
-						me.property('caption_alignment', false);
-						break;
-					case 'nocaption':
-						me.property('include_image_caption', false);
-						me.property('caption_position', false);
-						me.property('caption_alignment', false);
-				}
-				me.render();
-			});
+		// 	this.listenTo(captionControl, 'select', function(item){
+		// 		switch(item){
+		// 			case 'topOver':
+		// 				me.property('include_image_caption', [1]);
+		// 				me.property('caption_position', 'over_image');
+		// 				me.property('caption_alignment', 'top');
+		// 				break;
+		// 			case 'bottomOver':
+		// 				me.property('include_image_caption', [1]);
+		// 				me.property('caption_position', 'over_image');
+		// 				me.property('caption_alignment', 'bottom');
+		// 				break;
+		// 			case 'topCover':
+		// 				me.property('include_image_caption', [1]);
+		// 				me.property('caption_position', 'over_image');
+		// 				me.property('caption_alignment', 'fill');
+		// 				break;
+		// 			case 'middleCover':
+		// 				me.property('include_image_caption', [1]);
+		// 				me.property('caption_position', 'over_image');
+		// 				me.property('caption_alignment', 'fill_middle');
+		// 				break;
+		// 			case 'bottomCover':
+		// 				me.property('include_image_caption', [1]);
+		// 				me.property('caption_position', 'over_image');
+		// 				me.property('caption_alignment', 'fill_bottom');
+		// 				break;
+		// 			case 'below':
+		// 				me.property('include_image_caption', [1]);
+		// 				me.property('caption_position', 'below_image');
+		// 				me.property('caption_alignment', false);
+		// 				break;
+		// 			case 'nocaption':
+		// 				me.property('include_image_caption', false);
+		// 				me.property('caption_position', false);
+		// 				me.property('caption_alignment', false);
+		// 		}
+		// 		me.render();
+		// 	});
 
-			panel.items = _([
-				this.createControl('crop', l10n.ctrl.edit_image, 'editRequest'),
-				this.createLinkControl(),
-				captionControl
-			]);
+		// 	panel.items = _([
+		// 		this.createControl('crop', l10n.ctrl.edit_image, 'editRequest'),
+		// 		this.createLinkControl(),
+		// 		captionControl
+		// 	]);
 
-			return panel;
-		},
+		// 	return panel;
+		// },
 
 		createLinkControl: function(){
 			var me = this,
@@ -606,27 +606,27 @@ define([
 			}
 		},
 
-		updateControls: function(width, height) {
-			var imageControlsTpl = '<div class="uimage-controls image-element-controls upfront-ui"></div>';
+		// updateControls: function(width, height) {
+		// 	var imageControlsTpl = '<div class="uimage-controls image-element-controls upfront-ui"></div>';
 
-			this.controls = this.createControls();
+		// 	this.controls = this.createControls();
 
-			if (this.controls === false) {
-				return;
-			}
+		// 	if (this.controls === false) {
+		// 		return;
+		// 	}
 
-			this.controls.setWidth({
-				width: width,
-				height:height
-			});
-			this.controls.render();
+		// 	this.controls.setWidth({
+		// 		width: width,
+		// 		height:height
+		// 	});
+		// 	this.controls.render();
 
-			if (this.parent_module_view.$('.upfront-module').find('.uimage-controls').length === 0) {
-				this.parent_module_view.$('.upfront-module').append(imageControlsTpl);
-			}
-			this.parent_module_view.$('.upfront-module').find('.uimage-controls').html('').append(this.controls.$el);
-			this.controls.delegateEvents();
-		},
+		// 	if (this.parent_module_view.$('.upfront-module').find('.uimage-controls').length === 0) {
+		// 		this.parent_module_view.$('.upfront-module').append(imageControlsTpl);
+		// 	}
+		// 	this.parent_module_view.$('.upfront-module').find('.uimage-controls').html('').append(this.controls.$el);
+		// 	this.controls.delegateEvents();
+		// },
 
 		on_edit: function(){
 			return false;
@@ -1248,6 +1248,75 @@ define([
 				return this.model.set_property(name, value, silent);
 			}
 			return this.model.get_property_value_by_name(name);
+		},
+
+		getControlItems: function(){
+			var me = this,
+				panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
+				captionControl = new Upfront.Views.Editor.InlinePanels.TooltipControl()
+			;
+
+			captionControl.sub_items = {
+				topOver: this.createControl('topOver', l10n.ctrl.over_top),
+				bottomOver: this.createControl('bottomOver', l10n.ctrl.over_bottom),
+				topCover: this.createControl('topCover', l10n.ctrl.cover_top),
+				middleCover: this.createControl('middleCover', l10n.ctrl.cover_middle),
+				bottomCover: this.createControl('bottomCover', l10n.ctrl.cover_bottom),
+				below: this.createControl('below', l10n.ctrl.below),
+				nocaption: this.createControl('nocaption', l10n.ctrl.no_caption)
+			};
+
+			captionControl.icon = 'caption';
+			captionControl.tooltip = l10n.ctrl.caption_position;
+			captionControl.selected = this.getSelectedAlignment();
+
+			this.listenTo(captionControl, 'select', function(item){
+				switch(item){
+					case 'topOver':
+						me.property('include_image_caption', [1]);
+						me.property('caption_position', 'over_image');
+						me.property('caption_alignment', 'top');
+						break;
+					case 'bottomOver':
+						me.property('include_image_caption', [1]);
+						me.property('caption_position', 'over_image');
+						me.property('caption_alignment', 'bottom');
+						break;
+					case 'topCover':
+						me.property('include_image_caption', [1]);
+						me.property('caption_position', 'over_image');
+						me.property('caption_alignment', 'fill');
+						break;
+					case 'middleCover':
+						me.property('include_image_caption', [1]);
+						me.property('caption_position', 'over_image');
+						me.property('caption_alignment', 'fill_middle');
+						break;
+					case 'bottomCover':
+						me.property('include_image_caption', [1]);
+						me.property('caption_position', 'over_image');
+						me.property('caption_alignment', 'fill_bottom');
+						break;
+					case 'below':
+						me.property('include_image_caption', [1]);
+						me.property('caption_position', 'below_image');
+						me.property('caption_alignment', false);
+						break;
+					case 'nocaption':
+						me.property('include_image_caption', false);
+						me.property('caption_position', false);
+						me.property('caption_alignment', false);
+				}
+				me.render();
+			});
+
+			return _([
+				this.createControl('crop', l10n.ctrl.edit_image, 'editRequest'),
+				this.createLinkControl(),
+				captionControl,
+				this.createPaddingControl(),
+				this.createControl('settings', l10n.settings, 'on_settings_click')
+			]);
 		}
 	});
 
