@@ -618,7 +618,8 @@ define([
 			this.options = opts;
 			this.settings = _([
 				new MapSettings_Field_Location({model: this.model}),
-				new MapSettings_Settings({model: this.model})
+				new MapSettings_Settings({model: this.model}),
+				new Upfront.Views.Editor.Settings.Settings_CSS({model: this.model }),
 				// new MapSettings_Field_Style({model: this.model}),
 				// new MapSettings_Field_Controls({model: this.model})
 			]);

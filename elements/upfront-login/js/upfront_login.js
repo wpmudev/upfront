@@ -196,7 +196,8 @@ define([
 
 						]
 
-					})
+					}),
+					new Upfront.Views.Editor.Settings.Settings_CSS({model: this.model }),
 				]);
 				appearance.on("login:appearance:changed", behavior.update, behavior);
 				appearance.on("login:appearance:changed", trigger.update, trigger);

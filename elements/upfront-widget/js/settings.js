@@ -170,7 +170,9 @@ define([
 					})
 				]
 			});
-			panel.settings = _([settings_item1, dynamic_settings]);
+			
+			var css_settings = new Upfront.Views.Editor.Settings.Settings_CSS({model: this.model });
+			panel.settings = _([settings_item1, dynamic_settings, css_settings]);
 
 			this.panels = _([panel]);
 		},

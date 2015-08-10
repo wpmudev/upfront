@@ -5684,9 +5684,7 @@ var Field_Complex_Toggleable_Text_Field = Field.extend({
 var _Settings_CSS = SettingsItem.extend({
 	className: 'upfront-settings-css',
 	events: {
-		'click a.upfront-css-edit': 'openEditor',
-		'click .upfront-css-new>a': 'openNewEditor',
-		'change input[name=theme_style]': 'stylesChanged'
+		'click .upfront-css-edit': 'openEditor',
 	},
 	initialize: function(options) {
 		SettingsItem.prototype.initialize.call(this, options);
@@ -5702,17 +5700,14 @@ var _Settings_CSS = SettingsItem.extend({
 			});
 
 		this.fields = _([
-			new _Settings_CSS_Field({
+			new Upfront.Views.Editor.Field.Button({
 				model: this.model,
-				name: 'theme_style',
-				default_value: this.model.get_breakpoint_property_value('theme_style', true) || '_default',
-				values: values
+				className: 'upfront-css-edit',
+				compact: true,
+				name: 'preset_css',
+				label: l10n.edit_css,
 			})
 		]);
-	},
-	stylesChanged: function(e) {
-		var style = this.$('input[name=theme_style]:checked').val();
-		this.model.set_breakpoint_property('theme_style', style);
 	},
 
 	openEditor: function(e){
@@ -5720,45 +5715,15 @@ var _Settings_CSS = SettingsItem.extend({
 
 		Upfront.Events.trigger("entity:settings:beforedeactivate");
 
-		var value = this.fields._wrapped[0].get_value(),
-			default_value = this.fields._wrapped[0].default_value
-		;
-
 		Upfront.Application.cssEditor.init({
 			model: this.model,
-			stylename: value || default_value // Let's make sure we have *something* to work with
+			stylename: '_default' // Let's make sure we have *something* to work with
 		});
 
 		Upfront.Events.trigger("entity:settings:deactivate");
 
 		//$('#settings').find('.upfront-save_settings').click();
 	},
-	openNewEditor: function(e){
-		e.preventDefault();
-
-		Upfront.Events.trigger("entity:settings:beforedeactivate");
-
-		Upfront.Application.cssEditor.init({
-			model: this.model,
-			stylename: ''
-		});
-
-		Upfront.Events.trigger("entity:settings:deactivate");
-		//$('#settings').find('.upfront-save_settings').click();
-	}
-});
-
-var _Settings_CSS_Field = Field_Select.extend({
-	render: function() {
-		Field_Select.prototype.render.call(this);
-		var html = ['<a href="#" title="Edit style" class="upfront-css-edit"></a>'];
-		html.push('<p class="upfront-css-new"><a href="#"><span class="upfront-css-new-text">' + l10n.add_new_style + '</span></a></p>');
-		this.$el.append(html.join(''));
-		return this;
-	},
-	remove: function(){
-		Field.prototype.remove.call(this);
-	}
 });
 
 var ButtonPresetModel = Backbone.Model.extend({
@@ -6912,7 +6877,7 @@ var CSSEditor = Backbone.View.extend({
 			name: this.stylename,
 			elementType: this.elementType.label,
 			selectors: this.selectors,
-			show_style_name: this.is_region_style() === false && this.is_global_stylesheet === false
+			show_style_name: this.is_region_style() === false && this.is_global_stylesheet === false && this.sidebar !== true
 		}));
 
 		this.resizeHandler('.');

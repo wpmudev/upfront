@@ -381,7 +381,8 @@ var BehaviorPanel = ElementSettingsPanel.extend({
 				}
 			}),
 			]
-		})
+		}),
+		new Upfront.Views.Editor.Settings.Settings_CSS({model: this.model }),
 		]);
 
 		this.$el

@@ -280,6 +280,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'exiting_upfront' => __('Exiting upfront...', 'upfront'),
 				'exit_done' => __('Wow, those are cool!', 'upfront'),
 				'already_creating_post' => __('You are already creating a new %s.', 'upfront'),
+				'edit_css' => __('Edit Element CSS', 'upfront'),
 				'preparing_new_post' => __('Preparing new %s...', 'upfront'),
 				'preparing_done' => __('Wow, those are cool!', 'upfront'),
 				'new_page' => __('New Page', 'upfront'),

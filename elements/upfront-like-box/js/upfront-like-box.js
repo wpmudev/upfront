@@ -269,8 +269,9 @@
 									compact: true
 								})
 							]
-						})
-
+						}),
+						
+						new Upfront.Views.Editor.Settings.Settings_CSS({model: this.model })
 					]
 				});
 			this.panels = _([this.panel]);
