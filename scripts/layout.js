@@ -132,32 +132,54 @@ jQuery(document).ready(function($){
 		var breakpoint = get_breakpoint();
 		breakpoint = !breakpoint ? 'desktop' : breakpoint;
 		$('[data-bg-type-'+breakpoint+']').each(function(){
-			var type = $(this).attr('data-bg-type-'+breakpoint);
-			$(this).find('> .upfront-output-bg-overlay').not('.upfront-output-bg-'+breakpoint).each(function(){
-				if ( $(this).is('.upfront-output-bg-video') )
+			var type = $(this).attr('data-bg-type-'+breakpoint),
+				$overlay = $(this).find('> .upfront-output-bg-'+breakpoint)
+			;
+			$(this).find('> .upfront-output-bg-overlay').not($overlay).each(function(){
+				if ( $(this).is('.upfront-output-bg-video') ) {
 					$(this).children().not('script.video-embed-code').remove();
+				}
+				if ( $(this).attr('data-bg-parallax') && $(this).data('uparallax') ) {
+					$(this).uparallax('destroy');
+				}
 			});
+			if ( $overlay.attr('data-bg-parallax') ) {
+				$overlay.uparallax({
+					element: $overlay.attr('data-bg-parallax')
+				});
+			}
 			if ( type == 'image' || type == 'featured' ) {
-				var before_src = $(this).attr('data-src'),
-					src = $(this).attr('data-src-'+breakpoint),
-					ratio = $(this).attr('data-bg-image-ratio-'+breakpoint);
-				if ( src )
-					$(this).attr('data-src', src);
-				else
-					$(this).removeAttr('data-src');
-				if ( ratio )
-					$(this).attr('data-bg-image-ratio', ratio);
-				else
-					$(this).removeAttr('data-bg-image-ratio').css('background-position', '').css('background-size', '');
-				if ( src && before_src != src && $(this).hasClass('upfront-image-lazy') )
-					$(this).removeClass('upfront-image-lazy-loaded');
+				var is_overlay = $(this).attr('data-bg-overlay-'+breakpoint),
+					$el = is_overlay ? $overlay.children('.upfront-bg-image') : $(this),
+					before_src = $el.attr('data-src'),
+					src = $el.attr('data-src-'+breakpoint),
+					ratio = $el.attr('data-bg-image-ratio-'+breakpoint)
+				;
+				if ( is_overlay ) {
+					$(this).css('background-image', 'none');
+				}
+				if ( src ) {
+					$el.attr('data-src', src);
+				}
+				else {
+					$el.removeAttr('data-src');
+				}
+				if ( ratio ) {
+					$el.attr('data-bg-image-ratio', ratio);
+				}
+				else {
+					$el.removeAttr('data-bg-image-ratio').css('background-position', '').css('background-size', '');
+				}
+				if ( src && before_src != src && $el.hasClass('upfront-image-lazy') ){
+					$el.removeClass('upfront-image-lazy-loaded');
+				}
 			}
 			else if ( type == 'color' ) {
 				$(this).css('background-image', 'none');
 			}
 			else {
 				$(this).css('background-image', 'none');
-				$(this).find('> .upfront-output-bg-'+breakpoint).each(function(){
+				$overlay.each(function(){
 					if ( $(this).is('.upfront-output-bg-video') && $(this).children().length == 1 ){
 						var $iframe = $($(this).children('script.video-embed-code').html()),
 							id = $iframe.attr('id');

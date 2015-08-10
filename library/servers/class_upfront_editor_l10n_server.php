@@ -502,6 +502,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'full_width_bg' => __('Full Width', 'upfront'),
 				'tiled_pattern' => __('Tiled / Pattern', 'upfront'),
 				'fixed_position' => __('Fixed Position', 'upfront'),
+				'parallax' => __('Parallax', 'upfront'),
 				'tile_vertically' => __('Tile Vertically', 'upfront'),
 				'tile_horizontally' => __('Tile Horizontally', 'upfront'),
 				'autorotate_each' => __('Rotate automatically every', 'upfront'),

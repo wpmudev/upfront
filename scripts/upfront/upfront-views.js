@@ -103,164 +103,18 @@ define([
 					is_layout = ( this instanceof Layout ),
 					$bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el,
 					type = this.model.get_breakpoint_property_value('background_type', true),
-					color = this.model.get_breakpoint_property_value('background_color', true),
-					image = this.model.get_breakpoint_property_value('background_image', true),
-					ratio = parseFloat(this.model.get_breakpoint_property_value('background_image_ratio', true)),
-					repeat = this.model.get_breakpoint_property_value('background_repeat', true),
-					position = this.model.get_breakpoint_property_value('background_position', true),
-					style = this.model.get_breakpoint_property_value('background_style', true),
-					width = $bg.outerWidth(),
-					height = $bg.outerHeight(),
 					$overlay = $bg.children('.upfront-region-bg-overlay');
 
-				if ( type == 'featured'){
-					if ( color )
-						$bg.css('background-color', color);
-					else
-						$bg.css('background-color', '');
-
-
-					if(me.$el.children('.feature_image_selector').length < 1) {
-						var feature_selector = $('<a href="#" class="feature_image_selector"></a>');
-						feature_selector.bind('click', function() {
-								Upfront.Views.Editor.ImageSelector.open().done(function(images){
-									var sizes = {},
-										imageId = 0
-									;
-									_.each(images, function(image, id){
-										sizes = image;
-										imageId = id;
-									});
-									var imageInfo = {
-											src: sizes.medium ? sizes.medium[0] : sizes.full[0],
-											srcFull: sizes.full[0],
-											srcOriginal: sizes.full[0],
-											fullSize: {width: sizes.full[1], height: sizes.full[2]},
-											size: sizes.medium ? {width: sizes.medium[1], height: sizes.medium[2]} : {width: sizes.full[1], height: sizes.full[2]},
-											position: false,
-											rotation: 0,
-											id: imageId
-										}
-									;
-									$('<img>').attr('src', imageInfo.srcFull).load(function(){
-										var post = Upfront.data.posts[_upfront_post_data.post_id];
-										post.meta.setValue('_thumbnail_id', imageInfo.id);
-										post.meta.setValue('_thumbnail_data', imageInfo);
-
-										post.meta.save().done(function(){
-											$('<img>').attr('src', imageInfo.srcOriginal).load(function() {
-												me.update_background();
-												Upfront.Views.Editor.ImageSelector.close();
-											});
-										});
-									});
-								});
-							});
-						me.$el.append(feature_selector);
-					}
-
-
-
-					Upfront.Util.post({action: 'this_post-get_thumbnail', post_id: _upfront_post_data.post_id})
-						.done(function(response){
-							if(typeof(response.data.featured_image) != 'undefined'){
-
-								if(response.data.featured_image != '')
-									me.$el.children('.feature_image_selector').addClass('change_feature_image');
-								else
-									me.$el.children('.feature_image_selector').removeClass('change_feature_image');
-
-								image = response.data.featured_image;
-								var temp_image = $('<img>').attr('src', response.data.featured_image);
-								temp_image.load(function(){
-									ratio = parseFloat(Math.round(this.height/this.width*100)/100);
-									$bg.css('background-image', "url('" + image + "')");
-									$bg.data('bg-featured-image-ratio', ratio);
-
-									if ( style == 'full' ){
-										var size = me._get_full_size_el( ( is_layout ? $(window) : $bg ), ratio, false );
-										$bg.data('bg-position-y', size[3]);
-										$bg.data('bg-position-x', size[2]);
-										$bg.css({
-											backgroundSize: size[0] + "px " + size[1] + "px", // "auto 100%",
-											backgroundRepeat: "no-repeat",
-											backgroundPosition:  size[2] + "px " + size[3] + "px"
-										});
-									}
-									else {
-										$bg.css({
-											backgroundSize: "auto auto",
-											backgroundRepeat: repeat,
-											backgroundPosition: position
-										});
-									}
-
-								});
-								if ( is_layout )
-									$bg.css('background-attachment', 'fixed');
-							}
-							else {
-								$bg.css({
-									backgroundImage: "none",
-									backgroundSize: "",
-									backgroundRepeat: "",
-									backgroundPosition: ""
-								});
-							}
-
-
-
-
-						})
-					;
-
+				if ( type != 'featured' && me.$el.children('.feature_image_selector').length > 0 ) {
+					me.$el.children('.feature_image_selector').remove();
 				}
-
-				else if ( !type || type == 'color' || type == 'image'){
-					if(me.$el.children('.feature_image_selector').length > 0)
-						me.$el.children('.feature_image_selector').remove();
-					if ( color )
-						$bg.css('background-color', color);
-					else
-						$bg.css('background-color', '');
-					if ( type != 'color' && image ){
-						$bg.css('background-image', "url('" + image + "')");
-						if ( style == 'full' ){
-							var size = this._get_full_size_el( ( is_layout ? $(window) : $bg ), ratio, false );
-							$bg.data('bg-position-y', size[3]);
-							$bg.data('bg-position-x', size[2]);
-							$bg.css({
-								backgroundSize: size[0] + "px " + size[1] + "px", // "auto 100%",
-								backgroundRepeat: "no-repeat",
-								backgroundPosition: size[2] + "px " + size[3] + "px"
-							});
-						}
-						else {
-							$bg.css({
-								backgroundSize: "auto auto",
-								backgroundRepeat: repeat,
-								backgroundPosition: position
-							});
-						}
-						if ( is_layout )
-							$bg.css('background-attachment', 'fixed');
-					}
-					else {
-						$bg.css({
-							backgroundImage: "none",
-							backgroundSize: "",
-							backgroundRepeat: "",
-							backgroundPosition: "",
-							backgroundAttachment: ""
-						});
-					}
-					if ( $overlay.length )
+				if ( !type || type == 'color'){
+					this.update_background_color();
+					if ( $overlay.length ) {
 						$overlay.hide();
+					}
 				}
 				else {
-					if(me.$el.children('.feature_image_selector').length > 0)
-						me.$el.children('.feature_image_selector').remove();
-
 					if ( ! $overlay.length ){
 						$overlay = $('<div class="upfront-region-bg-overlay" />');
 						$bg.append($overlay);
@@ -284,17 +138,170 @@ define([
 						backgroundRepeat: "",
 						backgroundPosition: ""
 					});
-					if ( type == 'map' ){
-						this.update_background_map($type, $overlay);
-					}
-					else if ( type == 'slider' ){
-						this.update_background_slider($type, $overlay);
-					}
-					else if ( type == 'video' ){
-						this.update_background_video($type, $overlay);
+					switch ( type ) {
+						case 'image':
+							this.update_background_image($type, $overlay);
+							break;
+						case 'featured':
+							this.update_background_featured($type, $overlay);
+							break;
+						case 'map': 
+							this.update_background_map($type, $overlay);
+							break;
+						case 'slider':
+							this.update_background_slider($type, $overlay);
+							break;
+						case 'video':
+							this.update_background_video($type, $overlay);
+							break;
 					}
 				}
 				Upfront.Events.trigger("entity:background:update", this, this.model);
+			},
+			update_background_color: function () {
+				var $bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el,
+					color = this.model.get_breakpoint_property_value('background_color', true)
+				;
+				if ( color ) {
+					$bg.css('background-color', color);
+				}
+				else {
+					$bg.css('background-color', '');
+				}
+			},
+			_update_background_image_from_data: function (data, $type, $overlay) {
+				var is_layout = ( this instanceof Layout ),
+					repeat = this.model.get_breakpoint_property_value('background_repeat', true),
+					position = this.model.get_breakpoint_property_value('background_position', true),
+					style = this.model.get_breakpoint_property_value('background_style', true)
+				;
+				if ( data.image ){
+					$type.css('background-image', "url('" + data.image + "')");
+					// If parallax, then run parallax first so it applies correct background size
+					// If not, check if we need to destroy it
+					if ( style == 'parallax' ) {
+						$overlay.uparallax({
+							element: $type
+						});
+					}
+					else if ( $overlay.data('uparallax') ) {
+						$overlay.uparallax('destroy');
+					}
+					if ( style == 'full' || style == 'parallax' ){
+						var size = this._get_full_size_el($type, data.ratio, false);
+						$type.data('bg-position-y', size[3]);
+						$type.data('bg-position-x', size[2]);
+						$type.css({
+							backgroundSize: size[0] + "px " + size[1] + "px", // "auto 100%",
+							backgroundRepeat: "no-repeat",
+							backgroundPosition: size[2] + "px " + size[3] + "px"
+						});
+					}
+					else {
+						$type.css({
+							backgroundSize: "auto auto",
+							backgroundRepeat: repeat,
+							backgroundPosition: position
+						});
+					}
+					if ( is_layout ) {
+						$type.css('background-attachment', 'fixed');
+					}
+				}
+				else {
+					$type.css({
+						backgroundImage: "none",
+						backgroundSize: "",
+						backgroundRepeat: "",
+						backgroundPosition: "",
+						backgroundAttachment: ""
+					});
+				}
+			},
+			update_background_image: function ($type, $overlay) {
+				var $bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el,
+					image = this.model.get_breakpoint_property_value('background_image', true),
+					ratio = parseFloat(this.model.get_breakpoint_property_value('background_image_ratio', true))
+				;
+				this.update_background_color();
+				this._update_background_image_from_data({
+					image: image,
+					ratio: ratio
+				}, $type, $overlay);
+			},
+			update_background_featured: function ($type, $overlay) {
+				var me = this;
+				this.update_background_color();
+
+				if(me.$el.children('.feature_image_selector').length < 1) {
+					var feature_selector = $('<a href="#" class="feature_image_selector"></a>');
+					feature_selector.bind('click', function() {
+							Upfront.Views.Editor.ImageSelector.open().done(function(images){
+								var sizes = {},
+									imageId = 0
+								;
+								_.each(images, function(image, id){
+									sizes = image;
+									imageId = id;
+								});
+								var imageInfo = {
+										src: sizes.medium ? sizes.medium[0] : sizes.full[0],
+										srcFull: sizes.full[0],
+										srcOriginal: sizes.full[0],
+										fullSize: {width: sizes.full[1], height: sizes.full[2]},
+										size: sizes.medium ? {width: sizes.medium[1], height: sizes.medium[2]} : {width: sizes.full[1], height: sizes.full[2]},
+										position: false,
+										rotation: 0,
+										id: imageId
+									}
+								;
+								$('<img>').attr('src', imageInfo.srcFull).load(function(){
+									var post = Upfront.data.posts[_upfront_post_data.post_id];
+									post.meta.setValue('_thumbnail_id', imageInfo.id);
+									post.meta.setValue('_thumbnail_data', imageInfo);
+
+									post.meta.save().done(function(){
+										$('<img>').attr('src', imageInfo.srcOriginal).load(function() {
+											me.update_background();
+											Upfront.Views.Editor.ImageSelector.close();
+										});
+									});
+								});
+							});
+						});
+					me.$el.append(feature_selector);
+				}
+
+				Upfront.Util.post({action: 'this_post-get_thumbnail', post_id: _upfront_post_data.post_id})
+					.done(function(response){
+						if(typeof(response.data.featured_image) != 'undefined'){
+
+							if(response.data.featured_image != '')
+								me.$el.children('.feature_image_selector').addClass('change_feature_image');
+							else
+								me.$el.children('.feature_image_selector').removeClass('change_feature_image');
+
+							image = response.data.featured_image;
+							var temp_image = $('<img>').attr('src', response.data.featured_image);
+							temp_image.load(function(){
+								ratio = parseFloat(Math.round(this.height/this.width*100)/100);
+								$bg.data('bg-featured-image-ratio', ratio);
+								
+								me._update_background_image_from_data({
+									image: image,
+									ratio: ratio
+								}, $type, $overlay);
+
+							});
+						}
+						else {
+							me._update_background_image_from_data({
+								image: false,
+								ratio: 0
+							}, $type, $overlay);
+						}
+					})
+				;
 			},
 			postpone_map_init: function ($type, $overlay) {
 				var me = this;
@@ -461,68 +468,100 @@ define([
 				}
 			},
 			refresh_background: function () {
-				var is_layout = ( this instanceof Layout ),
-					$bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el,
+				var $bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el,
 					type = this.model.get_breakpoint_property_value('background_type', true),
-					color = this.model.get_breakpoint_property_value('background_color', true),
-					image = this.model.get_breakpoint_property_value('background_image', true);
-				if ( type == 'map' && this.bg_map ){
-					google.maps.event.trigger(this.bg_map, 'resize');
+					$overlay = $bg.children('.upfront-region-bg-overlay'),
+					$type = $overlay.find('.upfront-region-bg-' + type)
+				;
+				switch ( type ) {
+					case 'image':
+						this.refresh_background_image($type, $overlay);
+						break;
+					case 'featured':
+						this.refresh_background_featured($type, $overlay);
+						break;
+					case 'map':
+						this.refresh_background_map($type, $overlay);
+						break;
+					case 'slider':
+						this.refresh_background_slider($type, $overlay);
+						break;
+					case 'video':
+						this.refresh_background_video($type, $overlay);
+						break;
 				}
-				else if ( type == 'slider' ) {
-					$bg.find('.upfront-region-bg-' + type).trigger('refresh');
+			},
+			_refresh_background_image_from_data: function (data, $type, $overlay) {
+				var style = this.model.get_breakpoint_property_value('background_style', true);
+				// If parallax, then run parallax first so it applies correct background size
+				if ( style == 'parallax' ) {
+					$overlay.uparallax('refresh');
 				}
-				else if ( type == 'video' ) {
-					var video = this.model.get_breakpoint_property_value('background_video', true),
-						embed = this.model.get_breakpoint_property_value('background_video_embed', true),
-						width = this.model.get_breakpoint_property_value('background_video_width', true),
-						height = this.model.get_breakpoint_property_value('background_video_height', true),
-						style = this.model.get_breakpoint_property_value('background_video_style', true) || 'crop',
-						ratio,
-						$type = $bg.find('.upfront-region-bg-' + type),
-						$embed = $type.children('iframe');
-					if ( video && embed ){
-						ratio = height/width;
-						if ( style == 'crop' || style == 'inside' ){
-							var size = this._get_full_size_el($type, ratio, (style == 'inside'));
-							$embed.css({
-								width: size[0],
-								height: size[1],
-								left: size[2],
-								top: size[3]
-							});
-						}
-						else if ( style == 'full' ){
-							$embed.css({
-								width: $type.width(),
-								height: $type.height(),
-								left: 0,
-								top: 0
-							});
-						}
+				if ( style == 'full' || style == 'parallax' ){
+					var size = this._get_full_size_el($type, data.ratio, false);
+					$type.data('bg-position-y', size[3]);
+					$type.data('bg-position-x', size[2]);
+					$type.css({
+						backgroundSize: size[0] + "px " + size[1] + "px", // "auto 100%",
+						backgroundRepeat: "no-repeat",
+						backgroundPosition: size[2] + "px " + size[3] + "px"
+					});
+				}
+			},
+			refresh_background_image: function ($type, $overlay) {
+				var ratio = this.model.get_breakpoint_property_value('background_image_ratio', true);
+				this._refresh_background_image_from_data({
+					ratio: ratio
+				}, $type, $overlay);
+			},
+			refresh_background_featured: function ($type, $overlay) {
+				var ratio = $type.data('bg-featured-image-ratio');
+				this._refresh_background_image_from_data({
+					ratio: ratio
+				}, $type, $overlay);
+			},
+			refresh_background_map: function ($type, $overlay) {
+				if ( !this.bg_map ) return;
+				google.maps.event.trigger(this.bg_map, 'resize');
+			},
+			refresh_background_video: function ($type, $overlay) {
+				var video = this.model.get_breakpoint_property_value('background_video', true),
+					embed = this.model.get_breakpoint_property_value('background_video_embed', true),
+					width = this.model.get_breakpoint_property_value('background_video_width', true),
+					height = this.model.get_breakpoint_property_value('background_video_height', true),
+					style = this.model.get_breakpoint_property_value('background_video_style', true) || 'crop',
+					ratio,
+					$embed = $type.children('iframe');
+				if ( video && embed ){
+					ratio = height/width;
+					if ( style == 'crop' || style == 'inside' ){
+						var size = this._get_full_size_el($type, ratio, (style == 'inside'));
+						$embed.css({
+							width: size[0],
+							height: size[1],
+							left: size[2],
+							top: size[3]
+						});
 					}
-
-				}
-				else if ( type == 'featured' || ( ( !type || type == 'image' ) && image ) ) {
-					var style = this.model.get_breakpoint_property_value('background_style', true),
-						ratio = ( type == 'featured' ) ? $bg.data('bg-featured-image-ratio') : this.model.get_breakpoint_property_value('background_image_ratio', true);
-					if ( style == 'full' ){
-						var size = this._get_full_size_el( ( is_layout ? $(window) : $bg ), ratio, false );
-						$bg.data('bg-position-y', size[3]);
-						$bg.data('bg-position-x', size[2]);
-						$bg.css({
-							backgroundSize: size[0] + "px " + size[1] + "px", // "auto 100%",
-							backgroundRepeat: "no-repeat",
-							backgroundPosition: size[2] + "px " + size[3] + "px"
+					else if ( style == 'full' ){
+						$embed.css({
+							width: $type.width(),
+							height: $type.height(),
+							left: 0,
+							top: 0
 						});
 					}
 				}
 			},
+			refresh_background_slider: function ($type, $overlay) {
+				$type.trigger('refresh');
+			},
 			remove_background: function () {
 				var $bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el,
 					$overlay = this.$el.find('.upfront-region-bg-overlay');
-				if ( $overlay.length )
+				if ( $overlay.length ) {
 					$overlay.hide();
+				}
 				$bg.css({
 					backgroundColor: "",
 					backgroundImage: "none",
@@ -2263,13 +2302,13 @@ define([
 			_get_previous_region_type: function () {
 				return this.model.previous('type') || ( this.model.previous('clip') ? 'clip' : 'wide' );
 			},
-			_get_full_size_el: function ($el, ratio, inside) {
+			/*_get_full_size_el: function ($el, ratio, inside) {
 				var is_full_screen = ( this._get_region_type() == 'full' ),
 					width = $el.width(),
 					win_height = $(window).height(),
 					height = is_full_screen ? win_height : $el.height();
 				return this._get_full_size(width, height, ratio, inside);
-			},
+			},*/
 			on_mouse_over: function () {
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 				if ( $main.hasClass('upfront-region-fixed-editing') )
@@ -2788,40 +2827,12 @@ define([
 				// Keep background position on scroll for full screen region
 				if ( this._get_region_type() == 'full' ) {
 					var bg_type = this.model.get_breakpoint_property_value('background_type', true),
-						bg_image = this.model.get_breakpoint_property_value('background_image', true),
-						bg_style = this.model.get_breakpoint_property_value('background_style', true),
-						bg_position_y = this.model.get_breakpoint_property_value('background_position_y', true),
-						bg_position_x = this.model.get_breakpoint_property_value('background_position_x', true),
-						is_bg_image = ( ( !bg_type || bg_type == 'image' || bg_type == 'featured' ) && bg_image ),
-						is_bg_overlay = ( bg_type && bg_type != 'color' && !is_bg_image ),
 						full_screen_height = parseInt(this.$layout.find('.upfront-region-center').css('min-height'));
-					if ( is_bg_image ) {
-						if ( bg_style != 'full' ){
-							var img = new Image;
-							img.src = bg_image;
-							bg_position_y = parseInt(bg_position_y)/100 * (height-img.height);
-							bg_position_x = bg_position_x + '%';
-						}
-						else {
-							bg_position_y = parseInt(this.$bg.data('bg-position-y'));
-							bg_position_x = parseInt(this.$bg.data('bg-position-x')) + 'px';
-						}
-					}
 					if ( scroll_top >= top-rel_top && scroll_bottom <= bottom ) {
-						if ( is_bg_image ) {
-							this.$bg.css('background-position', bg_position_x + ' ' + ( bg_position_y + scroll_top - rel_top ) + 'px');
-						}
-						else if ( is_bg_overlay ) {
-							this.$bg.children('.upfront-region-bg-overlay').css('top', ( scroll_top - rel_top ))
-						}
+						this.$bg.children('.upfront-region-bg-overlay').css('top', ( scroll_top - rel_top ))
 					}
 					else {
-						if ( is_bg_image ) {
-							this.$bg.css('background-position', bg_position_x + ' ' + ( bg_position_y + ( height - win_height ) ) + 'px');
-						}
-						else if ( is_bg_overlay ) {
-							this.$bg.children('.upfront-region-bg-overlay').css('top', ( height - win_height ));
-						}
+						this.$bg.children('.upfront-region-bg-overlay').css('top', ( height - win_height ));
 					}
 				}
 
