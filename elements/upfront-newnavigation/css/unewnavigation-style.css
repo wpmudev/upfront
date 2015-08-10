@@ -268,6 +268,17 @@ div[data-style="burger"][data-aliment="center"] ul li ul {
     top: 0px !important;
     z-index: 99999999;
 }
+
+div[data-style="burger"] div[data-already_floating="yes"] {
+    z-index: inherit;
+}
+
+div.upfront-navigation-float[data-style="burger"][data-burger_over="pushes"][data-burger_alignment="top"] ul.menu {
+    position:fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+}
+
 li.wrap_burger_nav_close {
   text-align:right;
 }
