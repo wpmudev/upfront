@@ -12,7 +12,7 @@ define([
 	"text!upfront/templates/region_container.html",
 	"text!upfront/templates/region.html",
 	"text!upfront/templates/wrapper.html",
-	"text!upfront/templates/layout.html",
+	"text!upfront/templates/layout.html"
 ], function () {
   var _template_files = [
     "text!upfront/templates/object.html",
@@ -21,7 +21,7 @@ define([
     "text!upfront/templates/region_container.html",
     "text!upfront/templates/region.html",
     "text!upfront/templates/wrapper.html",
-    "text!upfront/templates/layout.html",
+    "text!upfront/templates/layout.html"
 ];
 
 	// Auto-assign the template contents to internal variable
@@ -1159,6 +1159,66 @@ define([
 				// Put this here because initialize gets overriden by child classes
 				this.ensure_breakpoint_change_is_listened();
 				this.ensureUiOffsetCalls();
+
+				setTimeout(function() {
+					if(!me.controls)	me.updateControls();
+					else if(me.paddingControl && typeof me.paddingControl.isOpen !== 'undefined' && !me.paddingControl.isOpen)	me.paddingControl.refresh();
+				}, 300);
+			},
+			updateControls: function() {
+				var elementControlsTpl = '<div class="upfront-element-controls upfront-ui"></div>';
+
+				this.controls = this.createControls();
+
+				if (this.controls === false) {
+					return;
+				}
+
+				this.controls.render();
+
+				if (this.parent_module_view.$('.upfront-module').find('.upfront-element-controls').length === 0) {
+					this.parent_module_view.$('.upfront-module').append(elementControlsTpl);
+				}
+				this.parent_module_view.$('.upfront-module').find('.upfront-element-controls').html('').append(this.controls.$el);
+				this.controls.delegateEvents();
+			},
+			createControls: function() {
+				var me = this,
+					panel = new Upfront.Views.Editor.InlinePanels.Panel()
+				;
+
+				panel.items = this.getControlItems();
+
+				return panel;
+			},
+			createControl: function(icon, tooltip, click){
+				var me = this,
+					item = new Upfront.Views.Editor.InlinePanels.Control();
+				item.icon = icon;
+				item.tooltip = tooltip;
+				if(click){
+					this.listenTo(item, 'click', function(e){
+						me[click](e);
+					});
+				}
+
+				return item;
+			},
+			createPaddingControl: function(){
+				this.paddingControl = new Upfront.Views.Editor.InlinePanels.PaddingControl({
+					model: this.model
+				});
+
+				this.paddingControl.icon = 'padding';
+				this.paddingControl.tooltip = l10n.padding_settings;
+				
+				return this.paddingControl;
+			},
+			getControlItems: function(){
+				return _([
+					this.createPaddingControl(),
+					this.createControl('settings', l10n.settings, 'on_settings_click')
+				]);
 			},
 			update_position: function () {
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,

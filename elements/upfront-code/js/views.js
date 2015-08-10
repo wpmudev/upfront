@@ -503,6 +503,12 @@ define([
 					return this.model.set_property(name, value, silent);
 				}
 				return this.model.get_property_value_by_name(name);
+			},
+
+			getControlItems: function(){
+				return _([
+					this.createControl('edit', l10n.edit, 'start_markup_editor')
+				]);
 			}
 		}),
 
@@ -580,6 +586,12 @@ define([
 			fallback: function(attribute){
 				return this.model.get_property_value_by_name(attribute) || Upfront.data.upfront_code.defaults.fallbacks[attribute];
 			},
+
+			getControlItems: function(){
+				return _([
+					this.createControl('edit', l10n.edit, 'on_edit')
+				]);
+			}
 		})
 	};
 
