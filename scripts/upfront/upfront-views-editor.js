@@ -3820,7 +3820,6 @@ define([
 			setTimeout(function(){
 				me.options.show(me.get_value(), me.$el);
 			}, 100);
-
 		},
 		get_name: function () {
 			return this.property ? this.property.get('name') : this.name;
@@ -4693,7 +4692,7 @@ var Field_ToggleableText = Field_Text.extend({
 					var select_dropdown = me.$el.find('.chosen-drop'),
 						select = select_dropdown.parent(),
 						dropDownTop = (select.offset().top - $('#element-settings-sidebar').offset().top) + select.height();
-					
+
 					select_dropdown.css("width", select.width());
 					select_dropdown.css('top', dropDownTop + "px");
 					select_dropdown.css('left', select.offset().left + "px");
@@ -4940,6 +4939,41 @@ var Field_ToggleableText = Field_Text.extend({
 		className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-checkboxes',
 		type: 'checkbox',
 		multiple: true
+	});
+
+	var OptionalField = Field_Checkboxes.extend({
+		className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-checkboxes upfront-field-wrap-optional',
+		events: {
+			'change input': 'onChange'
+		},
+
+		initialize: function(opts){
+			var me = this;
+			OptionalField.__super__.initialize.apply(this, arguments);
+
+			this.options = opts;
+
+			this.on('panel:set', function(){
+				this.panel.on('rendered', function(){
+					me.onChange();
+				});
+			});
+
+			if(opts.onChange)
+				this.onChange = opts.onChange;
+		},
+
+		onChange: function(){
+			var check = this.$('input'),
+				related = this.panel.$('input[name=' + this.options.relatedField + ']').closest('.upfront-field-wrap')
+			;
+			if(check.is(':checked'))
+				related.show();
+			else
+				related.hide();
+
+			$('#settings').height(this.panel.$('.upfront-settings_panel').outerHeight());
+		}
 	});
 
 	var Field_Multiple_Suggest = Field.extend(_.extend({}, Upfront_Scroll_Mixin, {
@@ -10808,7 +10842,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				"Radios": Field_Radios,
 				"Checkboxes": Field_Checkboxes,
 				"Hidden": Field_Hidden,
-				"Anchor": Field_Anchor
+				"Anchor": Field_Anchor,
+				"Optional": OptionalField
 			},
 			"Sidebar": {
 				"Sidebar": Sidebar,

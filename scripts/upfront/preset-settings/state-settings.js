@@ -1,17 +1,19 @@
-define(
-function() {
+define([
+	'scripts/upfront/preset-settings/field-factory'
+], function(FieldFactory) {
+
 	var StateSettings = Upfront.Views.Editor.Settings.Item.extend({
 		group: false,
 
 		initialize: function(options) {
 			this.options = options || {};
-			
+
 			if(this.options.state !== "Global") {
 				this.$el.addClass('state_modules state_settings state_settings_' + this.options.state.toLowerCase());
 			} else {
 				this.$el.addClass('state_modules global_modules');
 			}
-			
+
 			var fields = [],
 				me = this
 			;
@@ -24,14 +26,11 @@ function() {
 					// Actually proxy the stored callback and use this as the new one
 					field.options.change = function (value) {
 						field.options.preserved_preset_change(value, me);
-					};					
+					};
 				}
 
-				var stateField = new field.fieldClass(_.extend({
-						model: this.options.model
-					}, field.options)
-				);
-				
+				var stateField = FieldFactory.createField(field.fieldClass, field.options, this.options.model);
+
 				Upfront.Events.once('entity:settings:deactivate', function() {
 					// Reset change callback to avoid zombies
 					field.options.change = field.options.preserved_preset_change;

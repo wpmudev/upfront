@@ -10,7 +10,7 @@ define([
 		/**
 		 * Set up setting item appearance.
 		 */
-		 
+
 		className: 'general_settings_item widget_settings_item',
 
 		get_title: function () {
@@ -137,7 +137,7 @@ define([
 				return each.admin;
 			})).map(function (each) {
 				return { label: each.name, value: each.key };
-			});
+			})
 			widget_values.unshift({label: l10n.select_one, value: ''});
 
 			var panel = new ElementSettingsPanel({
@@ -174,12 +174,10 @@ define([
 			var css_settings = new Upfront.Views.Editor.Settings.Settings_CSS({model: this.model });
 			panel.settings = _([settings_item1, dynamic_settings, css_settings]);
 
-			this.panels = _([panel]);
+			this.panels = [panel];
 		},
 
-		get_title: function () {
-			return l10n.settings;
-		}
+		title: l10n.settings
 	});
 
 	return Settings;

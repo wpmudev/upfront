@@ -9,7 +9,7 @@
 * `radius3` - Bottom left corner
 * `radius4` - Bottom right corner
 */
-define(function() {	
+define(function() {
 	var l10n = Upfront.Settings.l10n.preset_manager;
 	var RadiusSettingsItem = Upfront.Views.Editor.Settings.Item.extend({
 		className: 'settings_module corner_radius_settings_item clearfix',
@@ -40,13 +40,15 @@ define(function() {
 					},
 					show: function(value, $el) {
 						var stateSettings = $el.closest('.state_modules');
-						var lock = me.model.get(me.options.fields.lock); 
+						var lock = me.model.get(me.options.fields.lock);
 						//Toggle border radius fields
 						if(value == "yes") {
 							if(lock == "yes") {
 								stateSettings.find('.'+ state +'-radius-slider').show();
 								stateSettings.find('.'+ state +'-radius-slider-number').show();
 							} else {
+								stateSettings.find('.'+ state +'-radius-slider').hide();
+								stateSettings.find('.'+ state +'-radius-slider-number').hide();
 								stateSettings.find('.'+ state +'-radius1').show();
 								stateSettings.find('.'+ state +'-radius2').show();
 								stateSettings.find('.'+ state +'-radius3').show();
@@ -61,8 +63,8 @@ define(function() {
 							stateSettings.find('.'+ state +'-radius-slider-number').hide();
 						}
 					}
-				}),	
-				
+				}),
+
 				new Upfront.Views.Editor.Field.Checkboxes({
 					model: this.model,
 					className: state + '-radius-lock border_radius_lock',
@@ -75,7 +77,7 @@ define(function() {
 					],
 					show: function(value) {
 						me.model.set(me.options.fields.lock, value);
-						
+
 						var stateSettings = me.$el.closest('.state_modules');
 						var useRadius = me.model.get(me.options.fields.use);
 
@@ -96,11 +98,11 @@ define(function() {
 								stateSettings.find('.'+ state +'-radius3').show();
 								stateSettings.find('.'+ state +'-radius4').show();
 							}
-						}						
+						}
 					}
 				}),
-				
-				
+
+
 				new Upfront.Views.Editor.Field.Slider({
 					className: state + '-radius-slider upfront-field-wrap upfront-field-wrap-slider radius-slider',
 					model: this.model,
@@ -122,7 +124,7 @@ define(function() {
 						me.$el.find("input[name="+ me.options.fields.radius3 +"]").val(value);
 						me.$el.find("input[name="+ me.options.fields.radius4 +"]").val(value);
 						me.$el.find("input[name="+ me.options.fields.radius_number +"]").val(value);
-						
+
 						//Set opacity to 1
 						me.$el.closest('.state_modules').find('.'+ state +'-radius-slider').css('opacity', 1);
 					},
@@ -135,7 +137,7 @@ define(function() {
 						}
 					}
 				}),
-				
+
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					className: state + '-radius-slider-number border_radius_number',
@@ -147,7 +149,7 @@ define(function() {
 					],
 					change: function(value) {
 						me.model.set(me.options.fields.radius_number, value);
-						
+
 						//Update border radius
 						var value = this.get_value();
 						me.model.set(me.options.fields.radius1, value);
@@ -160,22 +162,22 @@ define(function() {
 						me.$el.find("input[name="+ me.options.fields.radius3 +"]").val(value);
 						me.$el.find("input[name="+ me.options.fields.radius4 +"]").val(value);
 						me.$el.find("input[name="+ me.options.fields.radius +"]").val(value);
-						
+
 						//Update slider value
 						s = me.fields._wrapped[2];
 						s.$el.find('#'+s.get_field_id()).slider('value', value);
 						s.get_field().val(value);
 						s.trigger('changed');
-						
+
 						//Lower opacity if value is bigger than the slider MAX_VALUE
 						if(value > me.options.max_value) {
 							me.$el.closest('.state_modules').find('.'+ state +'-radius-slider').css('opacity', 0.6);
 						} else {
 							me.$el.closest('.state_modules').find('.'+ state +'-radius-slider').css('opacity', 1);
-						} 
+						}
 					}
-				}),	
-				
+				}),
+
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					className: state + '-radius1 border_radius border_radius1',
@@ -188,8 +190,8 @@ define(function() {
 					change: function(value) {
 						me.model.set(me.options.fields.radius1, value);
 					}
-				}),	
-				
+				}),
+
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					className: state + '-radius2 border_radius border_radius2 border_radius2_static',
@@ -202,8 +204,8 @@ define(function() {
 					change: function(value) {
 						me.model.set(me.options.fields.radius2, value);
 					}
-				}),		
-				
+				}),
+
 				new	Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					className: state + '-radius4 border_radius border_radius4',
@@ -217,7 +219,7 @@ define(function() {
 						me.model.set(me.options.fields.radius4, value);
 					}
 				}),
-				
+
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					className: state + '-radius3 border_radius border_radius3',
@@ -230,8 +232,8 @@ define(function() {
 					change: function(value) {
 						me.model.set(me.options.fields.radius3, value);
 					}
-				}),	
-				
+				}),
+
 
 			]);
 		}

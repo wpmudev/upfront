@@ -601,27 +601,13 @@ define([
 		}
 	});
 
-	var MapSettings = ElementSettings.extend({
+	var MapSettings_Panel = ElementSettingsPanel.extend({
 		initialize: function (opts) {
-      this.has_tabs = false;
-			this.options = opts;
-			this.panels = _([
-				new MapSettings_Panel({model: this.model})
-			]);
-		},
-		get_title: function () {
-			return l10n.settings;
-		}
-	});
-		var MapSettings_Panel = ElementSettingsPanel.extend({
-			initialize: function (opts) {
 			this.options = opts;
 			this.settings = _([
 				new MapSettings_Field_Location({model: this.model}),
 				new MapSettings_Settings({model: this.model}),
 				new Upfront.Views.Editor.Settings.Settings_CSS({model: this.model }),
-				// new MapSettings_Field_Style({model: this.model}),
-				// new MapSettings_Field_Controls({model: this.model})
 			]);
 		},
 
@@ -631,6 +617,13 @@ define([
 		get_title: function () {
 			return l10n.label;
 		}
+	});
+
+	var MapSettings = ElementSettings.extend({
+		panels: {
+			'Settings' : MapSettings_Panel
+		},
+		title: l10n.settings
 	});
 
 	var MapSettings_Field_Location = Upfront.Views.Editor.Settings.Item.extend({

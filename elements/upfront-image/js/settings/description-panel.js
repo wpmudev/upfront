@@ -14,7 +14,6 @@ define([
 
 			this.settings = _([
 				new SettingsItem({
-
 					title: l10n.settings.alt,
 					fields: [
 						new Fields.Text({

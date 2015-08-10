@@ -4,7 +4,7 @@ define([
 	var l10n = Upfront.Settings.l10n.gallery_element;
 
 	var ThumbnailFields = ElementSettingsPanel.extend({
-		className: 'ugallery-thumbnail-fields',
+		className: 'ugallery-thumbnail-fields upfront-settings_panel',
 		initialize: function(opts) {
 			this.options = opts;
 			var me = this,
@@ -53,7 +53,7 @@ define([
 				new SettingsItem({
 					className: 'general_settings_item',
 					title: l10n.thumb.size,
-					fields: [	
+					fields: [
 						new fields.Slider({
 							model: this.model,
 							property: 'thumbWidth',
@@ -68,7 +68,7 @@ define([
 								f.get_field().val(value);
 							}
 						}),
-						
+
 						new Upfront.Views.Editor.Field.Number({
 							model: this.model,
 							className: 'thumb-size-number',
@@ -83,19 +83,19 @@ define([
 								s.$el.find('#'+s.get_field_id()).slider('value', value);
 								s.get_field().val(value);
 								s.trigger('changed');
-								
+
 								//Update slider number value
 								f = me.settings._wrapped[1].fields._wrapped[1];
 								f.get_field().val(value);
-								
+
 								//Lower opacity if value is bigger than the slider MAX_VALUE
 								if(value > 250) {
 									me.$el.find('.thumb-size-slider').css('opacity', 0.6);
 								} else {
 									me.$el.find('.thumb-size-slider').css('opacity', 1);
-								} 
+								}
 							}
-						}),	
+						}),
 						new fields.Hidden({
 							model: this.model,
 							property: 'thumbHeight'
@@ -105,7 +105,7 @@ define([
 				new SettingsItem({
 					className: 'general_settings_item',
 					title: l10n.thumb.spacing,
-					fields: [	
+					fields: [
 						new fields.Checkboxes({
 							model: this.model,
 							className: 'gallery-padding-lock',
@@ -135,10 +135,10 @@ define([
 									me.$el.find('.thumb-side-padding-number').show();
 									me.$el.find('.thumb-bottom-padding-slider').show();
 									me.$el.find('.thumb-bottom-padding-number').show();
-								}				
+								}
 							}
 						}),
-						
+
 						new fields.Slider({
 							model: this.model,
 							property: 'thumbPadding',
@@ -156,7 +156,7 @@ define([
 								f.get_field().val(value);
 							}
 						}),
-						
+
 						new Upfront.Views.Editor.Field.Number({
 							model: this.model,
 							className: 'thumb-padding-number',
@@ -164,16 +164,16 @@ define([
 							default_value: 0,
 							change: function() {
 								var value = this.get_value(),
-								
+
 								//Update slider value
 								s = me.settings._wrapped[2].fields._wrapped[1];
 								s.$el.find('#'+s.get_field_id()).slider('value', value);
 								s.get_field().val(value);
 								s.trigger('changed');
-								
+
 								f = me.settings._wrapped[2].fields._wrapped[2];
 								f.get_field().val(value);
-								
+
 								//Lower opacity if value is bigger than the slider MAX_VALUE
 								if(value > 50) {
 									me.$el.find('.thumb-padding-slider').css('opacity', 0.6);
@@ -181,8 +181,8 @@ define([
 									me.$el.find('.thumb-padding-slider').css('opacity', 1);
 								}
 							}
-						}),	
-						
+						}),
+
 						new fields.Slider({
 							model: this.model,
 							property: 'sidePadding',
@@ -197,7 +197,7 @@ define([
 								f.get_field().val(value);
 							}
 						}),
-						
+
 						new Upfront.Views.Editor.Field.Number({
 							model: this.model,
 							className: 'thumb-side-padding-number',
@@ -207,22 +207,22 @@ define([
 								var value = this.get_value(),
 								f = me.settings._wrapped[2].fields._wrapped[4];
 								f.get_field().val(value);
-								
+
 								//Update slider value
 								s = me.settings._wrapped[2].fields._wrapped[3];
 								s.$el.find('#'+s.get_field_id()).slider('value', value);
 								s.get_field().val(value);
 								s.trigger('changed');
-								
+
 								//Lower opacity if value is bigger than the slider MAX_VALUE
 								if(value > 50) {
 									me.$el.find('.thumb-side-padding-slider').css('opacity', 0.6);
 								} else {
 									me.$el.find('.thumb-side-padding-slider').css('opacity', 1);
-								} 
+								}
 							}
-						}),	
-						
+						}),
+
 						new fields.Slider({
 							model: this.model,
 							property: 'bottomPadding',
@@ -237,7 +237,7 @@ define([
 								f.get_field().val(value);
 							}
 						}),
-						
+
 						new Upfront.Views.Editor.Field.Number({
 							model: this.model,
 							className: 'thumb-bottom-padding-number',
@@ -247,28 +247,26 @@ define([
 								var value = this.get_value(),
 								f = me.settings._wrapped[2].fields._wrapped[6];
 								f.get_field().val(value);
-								
+
 								//Update slider value
 								s = me.settings._wrapped[2].fields._wrapped[5];
 								s.$el.find('#'+s.get_field_id()).slider('value', value);
 								s.get_field().val(value);
 								s.trigger('changed');
-								
+
 								//Lower opacity if value is bigger than the slider MAX_VALUE
 								if(value > 50) {
 									me.$el.find('.thumb-bottom-padding-slider').css('opacity', 0.6);
 								} else {
 									me.$el.find('.thumb-bottom-padding-slider').css('opacity', 1);
-								} 
+								}
 							}
-						}),	
+						}),
 					]
 				})
-			]);	
+			]);
 		},
-		get_title: function(){
-			return l10n.thumb.settings;
-		}
+		title: l10n.thumb.settings
 	});
 
 	return ThumbnailFields;

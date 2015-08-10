@@ -59,7 +59,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 
 		$raw_cache_key = $ckey->get_hash();
 		$cache = $this->_debugger->is_active() ? false : $this->_cache->get($ckey);
-		
+
 		if (empty($cache)) {
 			foreach ($styles as $key => $frags) {
 				//$path = upfront_element_dir($frags[0], $frags[1]);
@@ -79,7 +79,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 			 * @param string $raw_cache_key Cache key used for storage
 			 */
 			$cache = apply_filters('upfront-dependencies-cache-styles', $cache, $raw_cache_key);
-			
+
 			$this->_cache->set($ckey, $cache);
 		}
 
@@ -153,7 +153,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 	private function _get_cached_scripts () {
 		$hub = Upfront_PublicScripts_Registry::get_instance();
 		$scripts = $hub->get_all();
-		if (empty($scripts)) return $urls;
+		if (empty($scripts)) return false;
 
 		$ckey = $this->_cache->key(self::TYPE_SCRIPT, $scripts);
 

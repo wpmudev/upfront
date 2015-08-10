@@ -1,9 +1,9 @@
 (function($) {
 define([
+	'scripts/upfront/element-settings/base-panel',
 	'scripts/upfront/preset-settings/select-preset-panel',
-	'scripts/upfront/preset-settings/util',
-	'scripts/upfront/element-settings/settings'
-], function(SelectPresetPanel, Util, ElementSettings) {
+	'scripts/upfront/preset-settings/util'
+], function(BasePanel, SelectPresetPanel, Util) {
 	/**
 	 * Handles presets: load, edit, delete and update for elements.
 	 *
@@ -24,9 +24,12 @@ define([
 	 *
 	 * styleTpl - Upfront.Util.template parsed styles template
 	 */
-	var PresetManager = Backbone.View.extend({
+	var PresetManager = BasePanel.extend({
 		initialize: function (options) {
 			this.options = options;
+			_.each(this.options, function(option, index) {
+				this[index] = option;
+			}, this);
 			this.has_tabs = false;
 
 			var defaultPreset = false,
@@ -46,6 +49,10 @@ define([
 			this.presets = new Backbone.Collection(Upfront.mainData[this.mainDataCollection] || []);
 
 			this.showSelectPresetPanel(false);
+		},
+
+		getTitle: function() {
+			return 'Appearance';
 		},
 
 		showSelectPresetPanel: function(render) {
@@ -104,7 +111,7 @@ define([
 				Upfront.mainData[this.mainDataCollection].splice(index, 1);
 			}
 			Upfront.mainData[this.mainDataCollection].push(properties);
-			
+
 			this.model.trigger("preset:updated");
 		},
 
@@ -179,62 +186,22 @@ define([
 			this.showSelectPresetPanel(true);
 		},
 
-		get_title: function () {
-			return this.panelTitle;
-		},
+		getBody: function () {
+			var $body = $('<div class="" />');
 
-		render: function () {
-			var me = this;
-
-			me.$el
-				.html(
-					'<div class="upfront-settings_title">' + this.get_title() + '</div>'
-				)
-			;
-
-			me.panels.each(function (panel) {
+			this.panels.each(function (panel) {
 				panel.render();
-
-				me.listenTo(panel, "upfront:settings:panel:toggle", me.toggle_panel);
-				me.listenTo(panel, "upfront:settings:panel:close", me.close_panel);
-				me.listenTo(panel, "upfront:settings:panel:refresh", me.refresh_panel);
-
 				panel.parent_view = me;
-				me.$el.append(panel.el);
+				$body.append(panel.el);
 			});
 
-			this.toggle_panel(this.panels.first());
+			return $body;
 		},
 
 		save_settings: function() {
 			this.panels.each(function(panel){
 				panel.save_settings();
 			});
-		},
-
-		toggle_panel: function (panel) {
-			this.panels.invoke("conceal");
-			panel.$el.find(".upfront-settings_panel").css('height', '');
-			panel.show();
-			panel.reveal();
-			this.set_title(panel.get_title());
-		},
-
-		set_title: function (title) {
-			if (!title || !title.length) return false;
-			this.$el.find(".upfront-settings_title").html(title);
-		},
-
-		// Fixes for ElementSettings compatibility, this will be removed later
-		//TODO remove this when ElementSettings is refactored
-		conceal: function() {
-
-		},
-		reveal: function() {
-
-		},
-		show: function() {
-
 		},
 
 		cleanUp: function() {

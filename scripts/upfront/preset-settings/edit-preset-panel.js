@@ -1,8 +1,8 @@
 define([
 	'scripts/upfront/preset-settings/edit-preset-item',
-	'scripts/upfront/element-settings/panel'
-], function(EditPresetItem, ElementSettingsPanel) {
-	var EditPresetPanel = ElementSettingsPanel.extend({
+	'scripts/upfront/element-settings/subpanel'
+], function(EditPresetItem, ElementSettingsSubpanel) {
+	var EditPresetPanel = ElementSettingsSubpanel.extend({
 		className: 'preset-manager-panel',
 
 		initialize: function (options) {
@@ -29,7 +29,7 @@ define([
 		deletePreset: function(preset) {
 			this.trigger('upfront:presets:delete', preset);
 		},
-		
+
 		resetPreset: function(preset) {
 			this.trigger('upfront:presets:reset', preset);
 		}

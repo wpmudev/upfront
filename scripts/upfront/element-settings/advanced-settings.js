@@ -4,10 +4,10 @@ define([
 	'scripts/upfront/element-settings/settings/padding-settings-module',
 ], function(ElementSettingsPanel, PaddingSettings) {
 	var AdvancedSettings = ElementSettingsPanel.extend({
-		className: 'upfront-settings_panel_wrap advanced-settings',
+		className: 'uf-settings-panel upfront-settings_panel advanced-settings',
 		initialize: function (opts) {
 			this.options = opts;
-			var me = this;
+			this.options.title = this.options.title || 'Advanced Settings';
 
 			this.settings = _([
 				new PaddingSettings({
@@ -17,7 +17,7 @@ define([
 					model: this.model
 				})
 			]);
-		}		
+		}
 	});
 
 	return AdvancedSettings;

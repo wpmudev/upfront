@@ -1,7 +1,8 @@
 (function ($) {
 define([
-	'scripts/upfront/element-settings/advanced-settings',
-], function (AdvancedSettings) {
+	'scripts/upfront/preset-settings/preset-manager',
+	'scripts/upfront/element-settings/advanced-settings'
+], function (PresetManager, AdvancedSettings) {
 	var l10n = Upfront.Settings && Upfront.Settings.l10n
 		? Upfront.Settings.l10n.global.views
 		: Upfront.mainData.l10n.global.views
@@ -15,11 +16,32 @@ define([
 
 		initialize: function(opts) {
 			this.options = opts;
-			this.panels = _([]);
+			var me = this,
+				panels = {};
+
+			// Instantiate panels
+			_.each(this.panels, function(panel, index) {
+				if (index === 'Appearance') {
+					panels.Appearance = new PresetManager(_.extend({}, panel, { model: this.model }));
+					return;
+				}
+				panels[index] = new panel({ model: this.model });
+			}, this);
+
+			// Hard wiring here instead having every element define advanced panel
+			// because all elements have identical advanced settings panel
+			panels.Advanced = new AdvancedSettings({model: this.model});
+
+			// Have to do this because overwriting own property
+			this.panels = panels;
+
+			this.on('open', function(){
+				me.model.trigger('settings:open', me);
+			});
 		},
 
 		saveSettings: function() {
-			this.panels.each(function(panel){
+			_.each(this.panels, function(panel){
 				panel.save_settings();
 			});
 
@@ -32,16 +54,12 @@ define([
 				Upfront.Events.trigger("command:layout:save");
 		},
 
-		get_title: function () {
-			return l10n.settings;
-		},
-
 		render: function () {
 			var me = this;
 
-			me.$el
+			this.$el
 				.html(
-					'<div class="upfront-settings_title">' + this.get_title() + '</div>'
+					'<div class="upfront-settings-title">' + this.title + '</div><div id="sidebar-scroll-wrapper" />'
 				)
 			;
 
@@ -57,21 +75,11 @@ define([
 			 * });
 			 */
 			Upfront.Events.trigger("settings:prepare");
-			
-			//Add Advanced Settings as separate panel
-			me.panels.push(
-				new AdvancedSettings({model: this.model})
-			);
-			
-			me.panels.each(function (panel) {
+
+			_.each(this.panels, function (panel) {
 				panel.render();
-
-				me.listenTo(panel, "upfront:settings:panel:toggle", me.toggle_panel);
-				me.listenTo(panel, "upfront:settings:panel:close", me.close_panel);
-				me.listenTo(panel, "upfront:settings:panel:refresh", me.refresh_panel);
-
 				panel.parent_view = me;
-				me.$el.append(panel.el);
+				me.$el.find('#sidebar-scroll-wrapper').append(panel.el);
 			});
 
 			this.$el.addClass('upfront-ui');
@@ -82,31 +90,9 @@ define([
 			);
 		},
 
-		set_title: function (title) {
-			if (!title || !title.length) return false;
-			this.$el.find(".upfront-settings_title").html(title);
-		},
-
-		toggle_panel: function (panel) {
-			this.panels.invoke("conceal");
-			panel.$el.find(".upfront-settings_panel").css('height', '');
-			panel.show();
-			panel.reveal();
-			this.set_title(panel.get_title());
-		},
-
-		refresh_panel: function (panel) {
-			if (panel.is_active()) this.toggle_panel(panel);
-		},
-
-		close_panel: function (panel) {
-			this.panels.invoke("conceal");
-			this.panels.invoke("show");
-			this.set_title(this.get_title());
-		},
 		cleanUp: function(){
 			if (this.panels) {
-				this.panels.each(function(panel){
+				_.each(this.panels, function(panel){
 					panel.cleanUp();
 				});
 			}
