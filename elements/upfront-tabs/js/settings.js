@@ -62,10 +62,10 @@ define([
 					'name': l10n.default_preset
 				},
 				styleTpl: styleTpl,
-				stateFields: {
+				stateModules: {
 					Global: [
 						{
-							fieldClass: 'ColorsSettingsItem',
+							moduleType: 'Colors',
 							options: {
 								title: l10n.content_area_colors_label,
 								multiple: false,
@@ -79,7 +79,7 @@ define([
 							}
 						},
 						{
-							fieldClass: 'BorderSettingsItem',
+							moduleType: 'Border',
 							options: {
 								state: 'static',
 								title: '',
@@ -94,7 +94,7 @@ define([
 					],
 					Static: [
 						{
-							fieldClass: 'ColorsSettingsItem',
+							moduleType: 'Colors',
 							options: {
 								title: l10n.colors_label,
 								multiple: false,
@@ -108,7 +108,7 @@ define([
 							}
 						},
 						{
-							fieldClass: 'TypographySettingsItem',
+							moduleType: 'Typography',
 							options: {
 								title: l10n.tab_typography_label,
 								state: 'static',
@@ -125,7 +125,7 @@ define([
 							}
 						},
 						{
-							fieldClass: 'BorderSettingsItem',
+							moduleType: 'Border',
 							options: {
 								state: 'static',
 								title: '',
@@ -141,7 +141,7 @@ define([
 
 					Hover: [
 						{
-							fieldClass: 'ColorsSettingsItem',
+							moduleType: 'Colors',
 							options: {
 								title: l10n.colors_label,
 								multiple: false,
@@ -159,7 +159,7 @@ define([
 							}
 						},
 						{
-							fieldClass: 'TypographySettingsItem',
+							moduleType: 'Typography',
 							options: {
 								title: l10n.tab_typography_label,
 								state: 'hover',
@@ -177,7 +177,7 @@ define([
 							}
 						},
 						{
-							fieldClass: 'BorderSettingsItem',
+							moduleType: 'Border',
 							options: {
 								state: 'hover',
 								title: '',
@@ -190,7 +190,7 @@ define([
 							}
 						},
 						{
-							fieldClass: 'HovAnimationSettingsItem',
+							moduleType: 'HovAnimation',
 							options: {
 								state: 'hover',
 								title: '',
@@ -206,7 +206,7 @@ define([
 
 					Active: [
 						{
-							fieldClass: 'ColorsSettingsItem',
+							moduleType: 'Colors',
 							options: {
 								title: l10n.colors_label,
 								multiple: false,
@@ -224,7 +224,7 @@ define([
 					}
 				},
 						{
-							fieldClass: 'TypographySettingsItem',
+							moduleType: 'Typography',
 							options: {
 								title: l10n.tab_typography_label,
 								state: 'active',
@@ -242,7 +242,7 @@ define([
 							}
 						},
 						{
-							fieldClass: 'BorderSettingsItem',
+							moduleType: 'Border',
 							options: {
 								state: 'active',
 								title: '',

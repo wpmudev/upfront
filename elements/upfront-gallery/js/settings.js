@@ -36,10 +36,10 @@ define([
 					'name': l10n.default_preset
 				},
 				styleTpl: presetTpl,
-				stateFields: {
+				stateModules: {
 					Global: [
 						{
-							fieldClass: 'RadiusSettingsItem',
+							moduleType: 'Radius',
 							options: {
 								state: 'global',
 								max_value: 100,
@@ -56,7 +56,7 @@ define([
 							}
 						},
 						{
-							fieldClass: 'ColorsSettingsItem',
+							moduleType: 'Colors',
 							options: {
 								title: l10n.panel.content_area_label,
 								multiple: false,
@@ -74,7 +74,7 @@ define([
 							}
 						},
 						{
-							fieldClass: 'CaptionLocation',
+							moduleType: 'GalleryCaptionLocation',
 							options: {
 								state: 'global',
 								fields: {
@@ -83,7 +83,7 @@ define([
 							}
 						},
 						{
-							fieldClass: 'BorderSettingsItem',
+							moduleType: 'Border',
 							options: {
 								state: 'global',
 								title: '',

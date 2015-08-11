@@ -2,13 +2,11 @@ define([
 	'scripts/upfront/element-settings/settings',
 	'scripts/upfront/preset-settings/preset-manager',
 	'scripts/upfront/preset-settings/util',
-	'scripts/upfront/preset-settings/typography-settings-item',
-	'scripts/upfront/preset-settings/colors-settings-item',
-	'scripts/upfront/preset-settings/border-settings-item',
-	'scripts/upfront/preset-settings/hov-animation-settings-item',
+	'scripts/upfront/settings/modules/typography',
+	'scripts/upfront/settings/modules/colors',
 	'elements/upfront-newnavigation/js/settings/menu-style',
 	'text!elements/upfront-newnavigation/tpl/preset-style.html'
-], function(ElementSettings, PresetManager, Util, TypographySettingsItem, ColorsSettingsItem, BorderSettingsItem, HovAnimationSettingsItem, MenuStyle, styleTpl) {
+], function(ElementSettings, PresetManager, Util, TypographySettingsModule, ColorsSettingsModule, MenuStyle, styleTpl) {
 		var l10n = Upfront.Settings.l10n.newnavigation_element;
 
 		var AppearancePanel = PresetManager.extend({
@@ -50,10 +48,10 @@ define([
 				'name': l10n.default_preset
 			},
 			styleTpl: styleTpl,
-			stateFields: {
+			stateModules: {
 				Global: [
 					{
-						fieldClass: MenuStyle,
+						moduleType: MenuStyle,
 						options: {
 							title: l10n.panel.menu_kind_label,
 							state: 'global',
@@ -62,7 +60,7 @@ define([
 				],
 				Static: [
 					{
-						fieldClass: TypographySettingsItem,
+						moduleType: TypographySettingsModule,
 						options: {
 							title: l10n.panel.typography_label,
 							state: 'static',
@@ -79,7 +77,7 @@ define([
 						}
 					},
 					{
-						fieldClass: ColorsSettingsItem,
+						moduleType: ColorsSettingsModule,
 						options: {
 							title: l10n.panel.colors_label,
 							multiple: false,
@@ -95,7 +93,7 @@ define([
 				],
 				Hover: [
 					{
-						fieldClass: TypographySettingsItem,
+						moduleType: TypographySettingsModule,
 						options: {
 							title: l10n.panel.typography_label,
 							state: 'hover',
@@ -113,7 +111,7 @@ define([
 						}
 					},
 					{
-						fieldClass: ColorsSettingsItem,
+						moduleType: ColorsSettingsModule,
 						options: {
 							title: l10n.panel.colors_label,
 							multiple: false,
@@ -133,7 +131,7 @@ define([
 				],
 				Focus: [
 					{
-						fieldClass: TypographySettingsItem,
+						moduleType: TypographySettingsModule,
 						options: {
 							title: l10n.panel.typography_label,
 							state: 'focus',
@@ -151,7 +149,7 @@ define([
 						}
 					},
 					{
-						fieldClass: ColorsSettingsItem,
+						moduleType: ColorsSettingsModule,
 						options: {
 							title: l10n.panel.colors_label,
 							multiple: false,
@@ -171,7 +169,7 @@ define([
 				],
 			}
 		});
-		
+
 		// Generate presets styles to page
 		Util.generatePresetsToPage('nav', styleTpl);
 

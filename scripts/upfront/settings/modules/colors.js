@@ -1,6 +1,6 @@
 define(function() {
 	var l10n = Upfront.Settings.l10n.preset_manager;
-	var ColorsSettingsItem = Upfront.Views.Editor.Settings.Item.extend({
+	var ColorsSettingsModule = Upfront.Views.Editor.Settings.Item.extend({
 		className: 'settings_module colors_settings_item clearfix',
 		group: true,
 
@@ -16,12 +16,12 @@ define(function() {
 				per_row = 'single',
 				toggleClass = 'no-toggle',
 				fields = [];
-				
+
 			if(this.options.single !== true) {
 				per_row = 'two';
 			}
 			// TODO: investigate why theme colors aren't pre-selected??
-			_.each(this.options.abccolors, function(color) { 
+			_.each(this.options.abccolors, function(color) {
 				if(me.options.toggle === true) {
 					toggleClass = 'element-toggled';
 				}
@@ -50,9 +50,9 @@ define(function() {
 			});
 
 			this.fields = _(fields);
-			
+
 			//Add toggle typography checkbox
-			if(this.options.toggle === true) {			
+			if(this.options.toggle === true) {
 				this.group = false;
 				this.fields.unshift(
 					new Upfront.Views.Editor.Field.Checkboxes({
@@ -77,7 +77,7 @@ define(function() {
 								stateSettings.find('.'+ state +'-color-field').hide();
 							}
 						}
-					})	
+					})
 				);
 			}
 		},
@@ -94,5 +94,5 @@ define(function() {
 		}
 	});
 
-	return ColorsSettingsItem;
+	return ColorsSettingsModule;
 });

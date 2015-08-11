@@ -2,8 +2,8 @@
 * Field names properies
 * `name` - Select box name
 */
-define(function() {	
-	var SelectboxSettingsItem = Upfront.Views.Editor.Settings.Item.extend({
+define(function() {
+	var SelectboxSettingsModule = Upfront.Views.Editor.Settings.Item.extend({
 		className: 'settings_module selectbox_settings_item clearfix',
 		group: true,
 		get_title: function() {
@@ -11,11 +11,11 @@ define(function() {
 		},
 		initialize: function(options) {
 			this.options = options || {};
-			
+
 			if(typeof this.options.title === "undefined") {
 				this.group = false;
 			}
-			
+
 			var me = this,
 				custom_class = this.options.custom_class,
 				state = this.options.state;
@@ -36,5 +36,5 @@ define(function() {
 		},
 	});
 
-	return SelectboxSettingsItem;
+	return SelectboxSettingsModule;
 });

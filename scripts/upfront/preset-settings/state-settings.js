@@ -1,10 +1,9 @@
 define([
-	'scripts/upfront/preset-settings/field-factory'
-], function(FieldFactory) {
+	'scripts/upfront/settings/modules-container',
+	'scripts/upfront/settings/module-factory'
+], function(ModulesContainer, ModuleFactory) {
 
-	var StateSettings = Upfront.Views.Editor.Settings.Item.extend({
-		group: false,
-
+	var StateSettings = ModulesContainer.extend({
 		initialize: function(options) {
 			this.options = options || {};
 
@@ -14,33 +13,33 @@ define([
 				this.$el.addClass('state_modules global_modules');
 			}
 
-			var fields = [],
+			var modules = [],
 				me = this
 			;
 
 			// Proxy the `change` callbacks, and reset as needed
-			_.each(this.options.fields, function (field) {
-				if (("change" in field.options)) {
-					if (!field.options.preserved_preset_change) field.options.preserved_preset_change = field.options.change; // Store the old callback
+			_.each(this.options.modules, function (module) {
+				if (("change" in module.options)) {
+					if (!module.options.preserved_preset_change) module.options.preserved_preset_change = module.options.change; // Store the old callback
 
 					// Actually proxy the stored callback and use this as the new one
-					field.options.change = function (value) {
-						field.options.preserved_preset_change(value, me);
+					module.options.change = function (value) {
+						module.options.preserved_preset_change(value, me);
 					};
 				}
 
-				var stateField = FieldFactory.createField(field.fieldClass, field.options, this.options.model);
+				var stateModule = ModuleFactory.createModule(module.moduleType, module.options, this.options.model);
 
 				Upfront.Events.once('entity:settings:deactivate', function() {
 					// Reset change callback to avoid zombies
-					field.options.change = field.options.preserved_preset_change;
-					//field.options.preserved_preset_change = false;
+					module.options.change = module.options.preserved_preset_change;
+					//module.options.preserved_preset_change = false;
 				});
 
-				fields.push(stateField);
+				modules.push(stateModule);
 			}, this);
 
-			this.fields = _(fields);
+			this.modules = _(modules);
 		}
 	});
 

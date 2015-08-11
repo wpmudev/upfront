@@ -7,11 +7,11 @@ define([
 		: Upfront.mainData.l10n.global.views
 	;
 
-	var ElementSettingsBasePanel = SaveableSettingsPanel.extend({
+	var RootPanel = SaveableSettingsPanel.extend({
 		className: 'uf-settings-panel upfront-settings_panel',
 
 		events: {
-			'click .uf-settings-panel__title': 'togglePanel'
+			'click .uf-settings-panel__title': 'toggleBody'
 		},
 
 		getTitle: function () {
@@ -27,7 +27,7 @@ define([
 			return $body;
 		},
 
-		togglePanel: function() {
+		toggleBody: function() {
 			this.$el.find('.uf-settings-panel__body').toggle();
 			this.$el.toggleClass('uf-settings-panel--expended');
 		},
@@ -53,6 +53,6 @@ define([
 
 	});
 
-	return ElementSettingsBasePanel;
+	return RootPanel;
 });
 })(jQuery);

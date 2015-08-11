@@ -47,11 +47,11 @@ define([
 			}
 
 			// First add global fields
-			_.each(this.options.stateFields, function(stateFields, state) {
+			_.each(this.options.stateModules, function(stateModules, state) {
 				if(state === "Global") {
 					var stateSettings = new StateSettings({
 						model: this.model,
-						fields: stateFields,
+						modules: stateModules,
 						state: state
 					});
 					fields.push(stateSettings);
@@ -59,7 +59,7 @@ define([
 			}, this);
 
 			// First add settings state selectors
-			_.each(this.options.stateFields, function(stateFields, state) {
+			_.each(this.options.stateModules, function(stateModules, state) {
 				if(state !== "Global") {
 					var showStateButton = new ShowStateSettingsButton({
 						state: state
@@ -74,11 +74,11 @@ define([
 			}, this);
 
 			// Than add settings state settings
-			_.each(this.options.stateFields, function(stateFields, state) {
+			_.each(this.options.stateModules, function(stateModules, state) {
 				if(state !== "Global") {
 					var stateSettings = new StateSettings({
 						model: this.model,
-						fields: stateFields,
+						modules: stateModules,
 						state: state
 					});
 					fields.push(stateSettings);
@@ -93,7 +93,7 @@ define([
 			//Wrap tab buttons
 			setTimeout(function(){
 				me.$el.find('.state_settings_button').wrapAll('<div class="state_settings_button_wrapper">');
-				
+
 				var wrapper = me.$el.find('.state_settings_button_wrapper');
 				if(wrapper.prev().hasClass('delete_preset')) {
 					wrapper.addClass('move-wrapper-top');

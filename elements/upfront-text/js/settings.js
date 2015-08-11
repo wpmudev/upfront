@@ -29,10 +29,10 @@ define([
 					'color': 'rgb(0, 0, 0)',
 				},
 				styleTpl: styleTpl,
-				stateFields: {
+				stateModules: {
 					Global: [
 						{
-							fieldClass: 'ColorsSettingsItem',
+							moduleType: 'Colors',
 							options: {
 								title: l10n.settings.colors_label,
 								multiple: false,
@@ -46,7 +46,7 @@ define([
 							}
 						},
 						{
-							fieldClass: 'BorderSettingsItem',
+							moduleType: 'Border',
 							options: {
 								state: 'static',
 								title: '',
@@ -59,7 +59,7 @@ define([
 							}
 						},
 						{
-							fieldClass: 'TypographySettingsItem',
+							moduleType: 'Typography',
 							options: {
 								state: 'focus',
 								title: l10n.settings.typography_label,

@@ -93,7 +93,7 @@ define([
 		cleanUp: function(){
 			if (this.panels) {
 				_.each(this.panels, function(panel){
-					panel.cleanUp();
+					if (panel.cleanUp) panel.cleanUp();
 				});
 			}
 			this.remove();

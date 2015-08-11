@@ -71,10 +71,10 @@ define([
 					'id': 'default',
 					'name': l10n.default_preset
 				},
-				stateFields: {
+				stateModules: {
 					Static: [
 						{
-							fieldClass: 'ColorsSettingsItem',
+							moduleType: 'Colors',
 							options: {
 								title: l10n.settings.colors_label,
 								multiple: false,
@@ -88,7 +88,7 @@ define([
 							}
 						},
 						{
-							fieldClass: 'TypographySettingsItem',
+							moduleType: 'Typography',
 							options: {
 								state: 'static',
 								title: l10n.settings.typography_label,
@@ -104,7 +104,7 @@ define([
 							}
 						},
 						{
-							fieldClass: 'RadiusSettingsItem',
+							moduleType: 'Radius',
 							options: {
 								state: 'static',
 								max_value: 100,
@@ -121,7 +121,7 @@ define([
 							}
 						},
 						{
-							fieldClass: 'BorderSettingsItem',
+							moduleType: 'Border',
 							options: {
 								state: 'static',
 								fields: {
@@ -135,7 +135,7 @@ define([
 					],
 					Hover: [
 						{
-							fieldClass: 'ColorsSettingsItem',
+							moduleType: 'Colors',
 							options: {
 								state: 'hover',
 								title: l10n.settings.colors_label,
@@ -154,7 +154,7 @@ define([
 							}
 						},
 						{
-							fieldClass: 'TypographySettingsItem',
+							moduleType: 'Typography',
 							options: {
 								state: 'hover',
 								title: l10n.settings.typography_label,
@@ -172,7 +172,7 @@ define([
 							}
 						},
 						{
-							fieldClass: 'RadiusSettingsItem',
+							moduleType: 'Radius',
 							options: {
 								state: 'hover',
 								max_value: 100,
@@ -189,7 +189,7 @@ define([
 							}
 						},
 						{
-							fieldClass: 'BorderSettingsItem',
+							moduleType: 'Border',
 							options: {
 								state: 'hover',
 								fields: {
@@ -203,7 +203,7 @@ define([
 					],
 					Focus: [
 						{
-							fieldClass: 'ColorsSettingsItem',
+							moduleType: 'Colors',
 							options: {
 								state: 'focus',
 								title: l10n.settings.colors_label,
@@ -222,7 +222,7 @@ define([
 							}
 						},
 						{
-							fieldClass: 'TypographySettingsItem',
+							moduleType: 'Typography',
 							options: {
 								state: 'focus',
 								title: l10n.settings.typography_label,
@@ -240,7 +240,7 @@ define([
 							}
 						},
 						{
-							fieldClass: 'RadiusSettingsItem',
+							moduleType: 'Radius',
 							options: {
 								state: 'focus',
 								max_value: 100,
@@ -257,7 +257,7 @@ define([
 							}
 						},
 						{
-							fieldClass: 'BorderSettingsItem',
+							moduleType: 'Border',
 							options: {
 								state: 'focus',
 								fields: {

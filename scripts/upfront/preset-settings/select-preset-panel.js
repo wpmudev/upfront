@@ -4,8 +4,22 @@ define([
 	'scripts/upfront/preset-settings/preset-css-settings',
 	'scripts/upfront/element-settings/subpanel'
 ], function(SelectPresetItem, EditPresetItem, PresetCSS, ElementSettingsSubpanel) {
+
 	var SelectPresetPanel = ElementSettingsSubpanel.extend({
 		className: 'preset-manager-panel',
+
+		// This is redundant is inherit from ElementSettingsSubpanel
+		getBody: function () {
+			var $body = $('<div />');
+
+			this.settings.each(function (setting) {
+				if ( ! setting.panel ) setting.panel = me;
+				setting.render();
+				$body.append(setting.el)
+			});
+
+			return $body;
+		},
 
 		initialize: function (opts) {
 			this.options = opts;
@@ -19,7 +33,7 @@ define([
 
 			this.editPresetItem = new EditPresetItem({
 				model: this.options.presets.findWhere({id: preset}),
-				stateFields: this.options.stateFields
+				stateModules: this.options.stateModules
 			});
 
 			this.presetCSS = new PresetCSS({

@@ -1,13 +1,13 @@
-define(function() {	
+define(function() {
 	var l10n = Upfront.Settings.l10n.preset_manager;
-	var PaddingSettings = Upfront.Views.Editor.Settings.Item.extend({
+	var PaddingSettingsModule = Upfront.Views.Editor.Settings.Item.extend({
 		className: 'padding-settings sidebar-settings clearfix',
 		group: false,
-		
+
 		initialize: function(options) {
 			this.options = options || {};
 			var me = this;
-				
+
 			this.fields = _([
 				new Upfront.Views.Editor.Field.Checkboxes({
 					model: this.model,
@@ -24,7 +24,7 @@ define(function() {
 					},
 					show: function(value, $el) {
 						var stateSettings = $el.closest('.upfront-settings-item-content');
-						var lock = me.model.get('padding_lock'); 
+						var lock = me.model.get('padding_lock');
 						//Toggle padding fields
 						if(value == "yes") {
 							if(lock == "yes") {
@@ -45,8 +45,8 @@ define(function() {
 							stateSettings.find('.padding-number').hide();
 						}
 					}
-				}),	
-				
+				}),
+
 				new Upfront.Views.Editor.Field.Checkboxes({
 					model: this.model,
 					className: 'padding-lock',
@@ -59,7 +59,7 @@ define(function() {
 					],
 					show: function(value) {
 						me.model.set('lock_padding', value);
-						
+
 						var stateSettings = me.$el;
 						var usePadding = me.model.get('use_padding');
 
@@ -80,14 +80,14 @@ define(function() {
 								stateSettings.find('.padding-left').show();
 								stateSettings.find('.padding-right').show();
 							}
-						}						
+						}
 					},
 					change: function(value) {
 						me.model.set('lock_padding', value);
 					}
 				}),
-				
-				
+
+
 				new Upfront.Views.Editor.Field.Slider({
 					className: 'padding-slider upfront-field-wrap',
 					model: this.model,
@@ -107,7 +107,7 @@ define(function() {
 						}
 					}
 				}),
-				
+
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					className: 'padding-number',
@@ -119,22 +119,22 @@ define(function() {
 					],
 					change: function(value) {
 						me.model.set('padding_number', value);
-						
+
 						//Update slider value
 						s = me.fields._wrapped[2];
 						s.$el.find('#'+s.get_field_id()).slider('value', value);
 						s.get_field().val(value);
 						s.trigger('changed');
-						
+
 						//Lower opacity if value is bigger than the slider MAX_VALUE
 						if(value > 250) {
 							me.$el.find('.padding-slider').css('opacity', 0.6);
 						} else {
 							me.$el.find('.padding-slider').css('opacity', 1);
-						} 
+						}
 					}
-				}),	
-				
+				}),
+
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					className: 'padding-top',
@@ -150,8 +150,8 @@ define(function() {
 					blur: function() {
 						me.$el.find('.padding-bottom label').css('border', '1px dotted #7d99b3');
 					}
-				}),	
-				
+				}),
+
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					className: 'padding-left',
@@ -167,8 +167,8 @@ define(function() {
 					blur: function() {
 						me.$el.find('.padding-bottom label').css('border', '1px dotted #7d99b3');
 					}
-				}),		
-				
+				}),
+
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					className: 'padding-right',
@@ -184,8 +184,8 @@ define(function() {
 					blur: function() {
 						me.$el.find('.padding-bottom label').css('border', '1px dotted #7d99b3');
 					}
-				}),	
-				
+				}),
+
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					className: 'padding-bottom',
@@ -201,11 +201,11 @@ define(function() {
 					blur: function() {
 						me.$el.find('.padding-bottom label').css('border', '1px dotted #7d99b3');
 					}
-				}),	
-				
+				}),
+
 			]);
 		},
 	});
 
-	return PaddingSettings;
+	return PaddingSettingsModule;
 });

@@ -1,9 +1,9 @@
-define(function() {	
+define(function() {
 	var l10n = Upfront.Settings.l10n.image_element;
-	var CaptionLocation = Upfront.Views.Editor.Settings.Item.extend({
+	var CaptionLocationSettingsModule = Upfront.Views.Editor.Settings.Item.extend({
 		className: 'settings_module caption_location clearfix',
 		group: false,
-		
+
 		initialize: function(options) {
 			this.options = options || {};
 			var me = this,
@@ -78,7 +78,7 @@ define(function() {
 						}
 					}
 				}),
-				
+
 				new Upfront.Views.Editor.Field.Radios({
 					className: state + '-caption-trigger field-caption_trigger upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios over_image_field',
 					model: this.model,
@@ -103,5 +103,5 @@ define(function() {
 		},
 	});
 
-	return CaptionLocation;
+	return CaptionLocationSettingsModule;
 });

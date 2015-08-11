@@ -1,9 +1,9 @@
 (function($) {
 define([
-	'scripts/upfront/element-settings/base-panel',
+	'scripts/upfront/element-settings/root-panel',
 	'scripts/upfront/preset-settings/select-preset-panel',
 	'scripts/upfront/preset-settings/util'
-], function(BasePanel, SelectPresetPanel, Util) {
+], function(RootPanel, SelectPresetPanel, Util) {
 	/**
 	 * Handles presets: load, edit, delete and update for elements.
 	 *
@@ -16,7 +16,7 @@ define([
 	 * panelTitle - title of panel
 	 * presetDefaults - these include all preset properties except name and id that will be usde to
 	 *		create new presets
-	 * stateFields - presets handle element states like hover, static and active; for each state all
+	 * stateModules - presets handle element states like hover, static and active; for each state all
 	 *		properties can be set this is object containing all states and their properties see Tab Element
 	 *		settings for example.
 	 *		In state fields, fields that have change callback can use second parameter which will be parent
@@ -24,21 +24,22 @@ define([
 	 *
 	 * styleTpl - Upfront.Util.template parsed styles template
 	 */
-	var PresetManager = BasePanel.extend({
+	var PresetManager = RootPanel.extend({
 		initialize: function (options) {
 			this.options = options;
 			_.each(this.options, function(option, index) {
 				this[index] = option;
 			}, this);
-			this.has_tabs = false;
 
 			var defaultPreset = false,
 				preset;
+
 			_.each(Upfront.mainData[this.mainDataCollection], function(preset, presetIndex) {
 				if (preset.id === 'default') {
 					defaultPreset = true;
 				}
 			});
+
 			if(!defaultPreset) {
 				Upfront.mainData[this.mainDataCollection] = _.isArray(Upfront.mainData[this.mainDataCollection]) ?
 						Upfront.mainData[this.mainDataCollection] : [];
@@ -60,7 +61,7 @@ define([
 			this.selectPresetPanel = new SelectPresetPanel({
 				model: this.model,
 				presets: this.presets,
-				stateFields: this.stateFields
+				stateModules: this.stateModules
 			});
 			this.panels = _([
 				this.selectPresetPanel
@@ -187,7 +188,7 @@ define([
 		},
 
 		getBody: function () {
-			var $body = $('<div class="" />');
+			var $body = $('<div />');
 
 			this.panels.each(function (panel) {
 				panel.render();
@@ -202,10 +203,6 @@ define([
 			this.panels.each(function(panel){
 				panel.save_settings();
 			});
-		},
-
-		cleanUp: function() {
-
 		}
 	});
 

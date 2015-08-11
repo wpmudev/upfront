@@ -33,11 +33,11 @@ define([
 					'name': l10n.default_preset
 				},
 				styleTpl: styleTpl,
-				stateFields: {
+				stateModules: {
 					Global: [
 						{
 							//TODO: We should add values when provided
-							fieldClass: 'SelectboxSettingsItem',
+							moduleType: 'Selectbox',
 							options: {
 								state: 'global',
 								default_value: 'default',
@@ -53,7 +53,7 @@ define([
 							}
 						},
 						{
-							fieldClass: 'CaptionLocation',
+							moduleType: 'CaptionLocation',
 							options: {
 								state: 'global',
 								fields: {
@@ -62,7 +62,7 @@ define([
 							}
 						},
 						{
-							fieldClass: 'RadiusSettingsItem',
+							moduleType: 'Radius',
 							options: {
 								state: 'global',
 								max_value: 100,
@@ -79,7 +79,7 @@ define([
 							}
 						},
 						{
-							fieldClass: 'ColorsSettingsItem',
+							moduleType: 'Colors',
 							options: {
 								title: l10n.settings.content_area_colors_label,
 								multiple: false,
@@ -97,7 +97,7 @@ define([
 							}
 						},
 						{
-							fieldClass: 'BorderSettingsItem',
+							moduleType: 'Border',
 							options: {
 								state: 'global',
 								title: '',

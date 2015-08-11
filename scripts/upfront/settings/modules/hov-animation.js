@@ -3,21 +3,21 @@
 * `duration` - Animation duration
 * `easing` - Animation effect
 */
-define(function() {	
+define(function() {
 	var l10n = Upfront.Settings.l10n.preset_manager;
-	var HovAnimationSettingsItem = Upfront.Views.Editor.Settings.Item.extend({
+	var HovAnimationSettingsModule = Upfront.Views.Editor.Settings.Item.extend({
 		className: 'settings_module hov_animation_settings_item clearfix',
 		group: false,
-		
+
 		initialize: function(options) {
 			this.options = options || {};
 			var me = this,
 				state = this.options.state,
 				toggleClass = 'no-toggle';
-				
+
 			if(me.options.toggle === true) {
 				toggleClass = 'element-toggled';
-			}	
+			}
 
 			this.fields = _([
 				new Upfront.Views.Editor.Field.Number({
@@ -53,9 +53,9 @@ define(function() {
 					}
 				}),
 			]);
-			
+
 			//Add toggle typography checkbox
-			if(this.options.toggle === true) {			
+			if(this.options.toggle === true) {
 				this.group = false;
 				this.fields.unshift(
 					new Upfront.Views.Editor.Field.Checkboxes({
@@ -82,11 +82,11 @@ define(function() {
 								stateSettings.find('.'+ state +'-duration').hide();
 							}
 						}
-					})	
+					})
 				);
 			}
 		},
 	});
 
-	return HovAnimationSettingsItem;
+	return HovAnimationSettingsModule;
 });

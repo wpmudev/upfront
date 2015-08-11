@@ -18,10 +18,10 @@ define([
 			'name': l10n.default_preset
 		},
 		styleTpl: styleTpl,
-		stateFields: {
+		stateModules: {
 			Global: [
 				{
-					fieldClass: 'SelectboxSettingsItem',
+					moduleType: 'Selectbox',
 					options: {
 						state: 'global',
 						default_value: 'notext',
@@ -40,7 +40,7 @@ define([
 					}
 				},
 				{
-					fieldClass: 'ColorsSettingsItem',
+					moduleType: 'Colors',
 					options: {
 						title: 'Colors',
 						multiple: false,

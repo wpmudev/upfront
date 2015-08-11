@@ -1,16 +1,16 @@
 /*
-* Field names properies
+* Field names properties
 * `use` - Toggle border settings
 * `width` - Border width
 * `type` - Border type
 * `color` - Border color
 */
-define(function() {	
+define(function() {
 	var l10n = Upfront.Settings.l10n.preset_manager;
-	var BorderSettingsItem = Upfront.Views.Editor.Settings.Item.extend({
+	var BorderSettingsModule = Upfront.Views.Editor.Settings.Item.extend({
 		className: 'settings_module border_settings_item clearfix',
 		group: false,
-		
+
 		initialize: function(options) {
 			this.options = options || {};
 			var me = this,
@@ -18,18 +18,18 @@ define(function() {
 				fieldCounter = 0,
 				custom_class = '',
 				current_element = '';
-			
+
 			//If fields added increase field counter
 			if(typeof this.options.elements !== "undefined") {
 				fieldCounter++;
 			}
-			
+
 			//Set default element
 			if(typeof this.options.default_element !== "undefined") {
 				current_element = this.options.default_element + '-';
 				custom_class = 'border-with-fields';
 			}
-			
+
 			this.fields = _([
 				new Upfront.Views.Editor.Field.Checkboxes({
 					model: this.model,
@@ -46,7 +46,7 @@ define(function() {
 					},
 					show: function(value, $el) {
 						var stateSettings = $el.closest('.state_modules');
-						
+
 						//Toggle border settings when depending on checkbox value
 						if(value == "yes") {
 							stateSettings.find('.' + state + '-border-width').show();
@@ -90,7 +90,7 @@ define(function() {
 						me.model.set(current_element + me.options.fields.type, value);
 					}
 				}),
-				
+
 				new Upfront.Views.Editor.Field.Color({
 					model: this.model,
 					className: state + '-border-color upfront-field-wrap upfront-field-wrap-color sp-cf borderColor ' + custom_class,
@@ -113,7 +113,7 @@ define(function() {
 					}
 				})
 			]);
-			
+
 			//Add fields select box
 			if(typeof me.options.elements !== "undefined") {
 				this.fields.unshift(
@@ -129,10 +129,10 @@ define(function() {
 							me.fields._wrapped[fieldCounter + 3].update_input_border_color(me.model.get(current_element + me.options.fields.color));
 						}
 					})
-				);	
+				);
 			}
 		},
 	});
 
-	return BorderSettingsItem;
+	return BorderSettingsModule;
 });

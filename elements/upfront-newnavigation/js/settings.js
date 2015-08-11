@@ -5,7 +5,7 @@ define([
 ], function(ElementSettings, ElementSettingsPanel, AppearancePanel) {
 	var l10n = Upfront.Settings.l10n.newnavigation_element;
 
-	var Menu_Panel = ElementSettingsPanel.extend({
+	var Menu_Panel = Upfront.Views.Editor.Settings.Panel.extend({
 		className: 'upfront-settings_panel_wrap menu-settings',
 		save_settings: function(){
 			Menu_Panel.__super__.save_settings.apply(this, arguments);
@@ -110,14 +110,14 @@ define([
 				model_breakpoint = Upfront.Util.clone(this.model.get_property_value_by_name('breakpoint') || {});
 				breakpoint_data = model_breakpoint[breakpoint.id];
 				if(typeof(breakpoint_data) != 'undefined' && breakpoint_data.burger_menu == 'yes') {
-					this.panels._wrapped[0].settings._wrapped[0].fields._wrapped[1].$el.find('input').attr("checked", 'checked');
+					this.panels[0].settings._wrapped[0].fields._wrapped[1].$el.find('input').attr("checked", 'checked');
 				} else {
-					this.panels._wrapped[0].settings._wrapped[0].fields._wrapped[1].$el.find('input').removeAttr("checked");
+					this.panels[0].settings._wrapped[0].fields._wrapped[1].$el.find('input').removeAttr("checked");
 				}
 
 				if (typeof(breakpoint_data) != 'undefined') {
 					if (breakpoint_data.burger_alignment) {
-						item = this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[0];
+						item = this.panels[0].settings._wrapped[1].fields._wrapped[0];
 						if (item && item.$el && item.$el.length) {
 							item.$el.find('input').removeAttr("checked");
 							item.$el.find('input[value="'+breakpoint_data.burger_alignment+'"]').attr("checked", 'checked');
@@ -125,7 +125,7 @@ define([
 					}
 
 					if (breakpoint_data.menu_style) {
-						item = this.panels._wrapped[0].settings._wrapped[2].fields._wrapped[0];
+						item = this.panels[0].settings._wrapped[2].fields._wrapped[0];
 						if (item && item.$el && item.$el.length) {
 							item.$el.find('input').removeAttr("checked");
 							item.$el.find('input[value="'+breakpoint_data.menu_style+'"]').attr("checked", 'checked');
@@ -133,7 +133,7 @@ define([
 					}
 
 					if(breakpoint_data.menu_alignment) {
-						item = this.panels._wrapped[0].settings._wrapped[3].fields._wrapped[0];
+						item = this.panels[0].settings._wrapped[3].fields._wrapped[0];
 						if (item && item.$el && item.$el.length) {
 							item.$el.find('input').removeAttr("checked");
 							item.$el.find('input[value="'+breakpoint_data.menu_alignment+'"]').attr("checked", 'checked');
@@ -141,7 +141,7 @@ define([
 					}
 
 					if(breakpoint_data.burger_over) {
-						item = this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[1];
+						item = this.panels[0].settings._wrapped[1].fields._wrapped[1];
 						if (item && item.$el && item.$el.length) {
 							item.$el.find('input').removeAttr("checked");
 							item.$el.find('input[value="'+breakpoint_data.burger_over+'"]').attr("checked", 'checked');
@@ -171,7 +171,7 @@ define([
 
 					if((enabled_breakpoints[i].id == 'desktop' && this.model.get_property_value_by_name('burger_menu') == 'yes') || (breakpoint_data && breakpoint_data.burger_menu == 'yes')) {
 
-						this.panels._wrapped[0].settings._wrapped[0].fields._wrapped[1].$el.css('display', 'none');
+						this.panels[0].settings._wrapped[0].fields._wrapped[1].$el.css('display', 'none');
 
 						// extra care to ensure that the newly enabled items obey the hierarchy
 
@@ -182,7 +182,7 @@ define([
 
 						if(!breakpoint_data.burger_menu || breakpoint_data.burger_menu != 'yes') {
 							breakpoint_data.burger_menu = 'yes';
-							this.panels._wrapped[0].settings._wrapped[0].fields._wrapped[1].$el.find('input').attr("checked", 'checked');
+							this.panels[0].settings._wrapped[0].fields._wrapped[1].$el.find('input').attr("checked", 'checked');
 							this.model.set_property('breakpoint', model_breakpoint, true);
 						}
 					}
@@ -192,16 +192,16 @@ define([
 			}
 
 			// this is to turn on the display for revealed menu alignment settings in case the option is selected
-			if(this.panels._wrapped[0].settings._wrapped[0].fields._wrapped[1].$el.find('input:checked').length > 0) {
-				this.panels._wrapped[0].settings._wrapped[1].$el.css('display', 'block');
-				this.panels._wrapped[0].settings._wrapped[2].$el.css('display', 'none');
+			if(this.panels[0].settings._wrapped[0].fields._wrapped[1].$el.find('input:checked').length > 0) {
+				this.panels[0].settings._wrapped[1].$el.css('display', 'block');
+				this.panels[0].settings._wrapped[2].$el.css('display', 'none');
 
-				if(this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[0].get_value() == "left" || this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[0].get_value() == "right")
-					this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[1].$el.hide();;
+				if(this.panels[0].settings._wrapped[1].fields._wrapped[0].get_value() == "left" || this.panels[0].settings._wrapped[1].fields._wrapped[0].get_value() == "right")
+					this.panels[0].settings._wrapped[1].fields._wrapped[1].$el.hide();;
 			}
 			else {
-				this.panels._wrapped[0].settings._wrapped[1].$el.css('display', 'none');
-				this.panels._wrapped[0].settings._wrapped[2].$el.css('display', 'block');
+				this.panels[0].settings._wrapped[1].$el.css('display', 'none');
+				this.panels[0].settings._wrapped[2].$el.css('display', 'block');
 			}
 		},
 		initialize: function (opts) {
@@ -211,7 +211,7 @@ define([
 			this.has_tabs = false;
 			this.options= opts;
 			menuList.push({label: l10n.create_new, value: -1});
-			this.panels = _([
+			this.panels = [
 				// Menu
 				new Menu_Panel({
 					model: this.model,
@@ -249,12 +249,12 @@ define([
 									change: function() {
 										var value = this.get_value();
 										if(value[0] == 'yes') {
-											me.panels._wrapped[0].settings._wrapped[1].$el.css('display', 'block');
-											me.panels._wrapped[0].settings._wrapped[2].$el.css('display', 'none');
+											me.panels[0].settings._wrapped[1].$el.css('display', 'block');
+											me.panels[0].settings._wrapped[2].$el.css('display', 'none');
 										}
 										else {
-											me.panels._wrapped[0].settings._wrapped[1].$el.css('display', 'none');
-											me.panels._wrapped[0].settings._wrapped[2].$el.css('display', 'block');
+											me.panels[0].settings._wrapped[1].$el.css('display', 'none');
+											me.panels[0].settings._wrapped[2].$el.css('display', 'block');
 										}
 									}
 								})
@@ -279,11 +279,11 @@ define([
 									change: function() {
 										var value = this.get_value();
 										if(value == 'left' || value == 'right') {
-											me.panels._wrapped[0].settings._wrapped[1].fields._wrapped[1].$el.hide();
-											me.panels._wrapped[0].settings._wrapped[1].fields._wrapped[1].set_value("over");
+											me.panels[0].settings._wrapped[1].fields._wrapped[1].$el.hide();
+											me.panels[0].settings._wrapped[1].fields._wrapped[1].set_value("over");
 										}
 										else {
-											me.panels._wrapped[0].settings._wrapped[1].fields._wrapped[1].$el.show();	
+											me.panels[0].settings._wrapped[1].fields._wrapped[1].$el.show();
 										}
 									}
 								}),
@@ -359,13 +359,13 @@ define([
 						})
 					]
 				}).on('upfront:settings:panel:saved', this.onSaveSettings, this),
-				
+
 				//Menu Apperance
-				
+
 				new AppearancePanel({
 					model: this.model
 				})
-			]);
+			];
 		},
 		onSaveSettings: function() {
 

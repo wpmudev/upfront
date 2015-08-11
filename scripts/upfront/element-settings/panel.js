@@ -1,14 +1,14 @@
 (function ($) {
 define([
-	'scripts/upfront/element-settings/base-panel',
+	'scripts/upfront/element-settings/root-panel',
 	'scripts/upfront/settings/fields/slides'
-], function (BasePanel, SlidesField) {
+], function (RootPanel, SlidesField) {
 	var l10n = Upfront.Settings && Upfront.Settings.l10n
 		? Upfront.Settings.l10n.global.views
 		: Upfront.mainData.l10n.global.views
 	;
 
-	var ElementSettingsPanel = BasePanel.extend({
+	var ElementSettingsPanel = RootPanel.extend({
 		className: 'uf-settings-panel upfront-settings_panel upfront-settings_panel_wrap',
 		getTitle: function () {
 			var title = this.options.title ? this.options.title : this.title;
