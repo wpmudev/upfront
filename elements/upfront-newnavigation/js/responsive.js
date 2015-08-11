@@ -60,7 +60,8 @@ jQuery(document).ready(function($) {
 		
 
 				//var topbar_height = $('div#upfront-ui-topbar').outerHeight();
-				var adminbar_height = $('div#wpadminbar').outerHeight();
+				var adminbar_height = ($('div#wpadminbar').length > 0)?$('div#wpadminbar').outerHeight():0;
+				console.log(adminbar_height);
 				$(this).parent().find('ul.menu').offset({top:adminbar_height, left:$('div').offset().left});
 				$(this).parent().find('ul.menu').width($('div#page').width());
 

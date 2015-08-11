@@ -144,9 +144,11 @@ jQuery(document).ready(function($){
 				}
 			});
 			if ( $overlay.attr('data-bg-parallax') ) {
-				$overlay.uparallax({
-					element: $overlay.attr('data-bg-parallax')
-				});
+				setTimeout(function () { // Zero timeout to shift it out
+					$overlay.uparallax({
+						element: $overlay.attr('data-bg-parallax')
+					});
+				}, 0);
 			}
 			if ( type == 'image' || type == 'featured' ) {
 				var is_overlay = $(this).attr('data-bg-overlay-'+breakpoint),

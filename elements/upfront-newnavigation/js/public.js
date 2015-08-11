@@ -4,7 +4,7 @@ var $win = $(window),
 	_cache = {}
 ;
 var FloatNav = function ($el) {
-
+	var adminbarheight = ($('div#wpadminbar').length > 0)?$('div#wpadminbar').outerHeight():0;
 	var start_position = {
 		top: 0,
 		left: 0
@@ -16,10 +16,20 @@ var FloatNav = function ($el) {
 	var $root = $el;
 
 	var start_floating = function () {
-		$root
-			.css(start_size)
-			.attr("data-already_floating", "yes")
-		;
+
+		$current_offset = $root.offset();
+
+		$root.attr("data-already_floating", "yes");
+
+		$root.closest('.upfront-output-wrapper').css('z-index', 999);
+
+		if($root.hasClass('responsive_nav_toggler'))
+			$root.offset($current_offset);
+		else
+			$root.css(start_size);
+
+		if(adminbarheight > 0)
+			$root.css('margin-top', adminbarheight);
 	};
 
 	var stop_floating = function () {
@@ -27,12 +37,17 @@ var FloatNav = function ($el) {
 			.attr("style", "")
 			.attr("data-already_floating", "no")
 		;
+		$root.closest('.upfront-output-wrapper').css('z-index', '');
+
+		if(adminbarheight > 0)
+			$root.css('margin-top', '');
 	}
 
 	var dispatch_movement = function () {
 		var top = $win.scrollTop();
-		if (top > start_position.top && !$root.is('[data-already_floating="yes"]')) start_floating();
-		else if (top <= start_position.top && $root.is('[data-already_floating="yes"]')) stop_floating();
+		
+		if (top > (start_position.top-adminbarheight) && !$root.is('[data-already_floating="yes"]')) start_floating();
+		else if (top <= (start_position.top-adminbarheight) && $root.is('[data-already_floating="yes"]')) stop_floating();
 	};
 
 	var destroy = function () {		
@@ -66,8 +81,17 @@ var FloatNav = function ($el) {
 function init () {
 	$(".upfront-navigation.upfront-navigation-float").each(function () {
 		var $me = $(this);
-		if (_cache[$me.attr("id")]) _cache[$me.attr("id")].destroy();
-		_cache[$me.attr("id")] = new FloatNav($me);
+		
+		if($me.data('style') == 'burger') {
+			$toggler = $me.children('.responsive_nav_toggler');
+			$toggler.attr('id', $me.attr('id')+'-toggler');
+			if (_cache[$toggler.attr("id")]) _cache[$toggler.attr("id")].destroy();
+			_cache[$toggler.attr("id")] = new FloatNav($toggler);	
+		}
+		else {
+			if (_cache[$me.attr("id")]) _cache[$me.attr("id")].destroy();
+			_cache[$me.attr("id")] = new FloatNav($me);
+		}
 	});
 }
 
