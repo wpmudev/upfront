@@ -198,7 +198,7 @@ jQuery(document).ready(function($){
 	}
 	update_background();
 	var lazyUpdateBackground = throttle(update_background, 300);
-	$(window).on('resize', lazyUpdateBackground);
+	$(window).on('resize.uf_layout', lazyUpdateBackground);
 
 	// Making sure sidebar region height is fixed
 	function fix_region_height () {
@@ -338,13 +338,13 @@ jQuery(document).ready(function($){
 	if ( css_support('flex') ){
 		$('html').addClass('flexbox-support');
 		set_full_screen();
-		$(window).on('load', set_full_screen);
-		$(window).on('resize', lazySetFullScreen);
+		$(window).on('load.uf_layout', set_full_screen);
+		$(window).on('resize.uf_layout', lazySetFullScreen);
 	}
 	else {
 		fix_region_height();
-		$(window).on('load', fix_region_height);
-		$(window).on('resize', lazyFixRegionHeight);
+		$(window).on('load.uf_layout', fix_region_height);
+		$(window).on('resize.uf_layout', lazyFixRegionHeight);
 	}
 
 	// Full width image and video background
@@ -457,8 +457,8 @@ jQuery(document).ready(function($){
 	}
 	fix_full_bg();
 	var lazyFixFullBg = throttle(fix_full_bg, 500);
-	$(window).on('resize', lazyFixFullBg);
-	$(window).on('load', lazyFixFullBg);
+	$(window).on('resize.uf_layout', lazyFixFullBg);
+	$(window).on('load.uf_layout', lazyFixFullBg);
 
 	// Regions behavior on scroll
 	function regions_scroll_update () {
@@ -618,10 +618,10 @@ jQuery(document).ready(function($){
 		});
 	}
 	regions_scroll_update();
-	$(window).on('load', regions_scroll_update);
+	$(window).on('load.uf_layout', regions_scroll_update);
 	var lazyScrollUpdate = throttle(regions_scroll_update, 100);
-	$(window).on('scroll', regions_scroll_update);
-	$(window).on('resize', lazyScrollUpdate);
+	$(window).on('scroll.uf_layout', regions_scroll_update);
+	$(window).on('resize.uf_layout', lazyScrollUpdate);
 
 	/* Lightbox front end logic */
 	var overlay = $('<div class="upfront-lightbox-bg"></div>'),
@@ -999,7 +999,7 @@ jQuery(document).ready(function($){
 	}
 	update_theme_styles();
 	var lazyUpdateThemeStyles = throttle(update_theme_styles, 100);
-	$(window).on('resize', lazyUpdateThemeStyles);
+	$(window).on('resize.uf_layout', lazyUpdateThemeStyles);
 
 	/* Apply responsive class */
 	function update_responsive_class () {
@@ -1030,8 +1030,18 @@ jQuery(document).ready(function($){
 	}
 	update_responsive_class();
 	var lazyUpdateResponsiveClass = throttle(update_responsive_class, 100);
-	$(window).on('resize', lazyUpdateResponsiveClass);
+	$(window).on('resize.uf_layout', lazyUpdateResponsiveClass);
+	
+	function remove_all_bound_events () {
+		$(window).off('resize.uf_layout');
+		$(window).off('scroll.uf_layout');
+		$(window).off('load.uf_layout');
+		// Also destroy parallax
+		$('.upfront-parallax').uparallax('destroy');
+	}
+	
 	$(document).on('upfront-load', function(){
+		Upfront.Events.once("application:mode:before_switch", remove_all_bound_events);
 		Upfront.Events.once("application:mode:before_switch", reset_responsive_class);
 		Upfront.Events.once("layout:render", remove_responsive_class);
 	});

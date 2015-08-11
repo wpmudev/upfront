@@ -67,14 +67,46 @@
 		
 		Upfront_Parallax.id++;
 		this.id = Upfront_Parallax.id;
+		Upfront_Parallax.instances[this.id] = this;
 		
 		this.start();
 	}
 	
 	// Static ID
 	Upfront_Parallax.id = 0;
+	Upfront_Parallax.instances = {};
+	Upfront_Parallax.prevTime = 0;
+	Upfront_Parallax.cache = {
+		scrollTop: 0,
+		winHeight: 0,
+		scrollBottom: 0
+	};
+	Upfront_Parallax.start = function () {
+		Upfront_Parallax.draw();
+	}
+	Upfront_Parallax.draw = function (time) {
+		var scrollTop = $('body').scrollTop();
+		if (Upfront_Parallax.cache.scrollTop == scrollTop) {
+			requestAnimationFrame(Upfront_Parallax.draw);
+			return;
+		}
+		console.time('parallax draw');
+		var winHeight = $(window).height(),
+			scrollBottom = Math.round(scrollTop + winHeight);
+		Upfront_Parallax.cache.scrollTop = scrollTop;
+		Upfront_Parallax.cache.winHeight = winHeight;
+		Upfront_Parallax.cache.scrollBottom = scrollBottom;
+		
+		for (id in Upfront_Parallax.instances) {
+			Upfront_Parallax.instances[id].draw(time);
+		}
+		Upfront_Parallax.prevTime = time;
+		console.timeEnd('parallax draw');
+		requestAnimationFrame(Upfront_Parallax.draw);
+	}
 	
 	Upfront_Parallax.prototype = {
+		cache: {},
 		callMethod: function (method, args) {
 			switch (method) {
 				case 'start':
@@ -110,10 +142,12 @@
 			}
 		},
 		bindEvents: function () {
-			$(window).on('scroll.upfront_parallax_' + this.id, $.proxy(this.update, this));
+			//$(window).on('scroll.upfront_parallax_' + this.id, $.proxy(this.update, this));
+			$(window).on('resize.upfront_parallax_' + this.id, $.proxy(this.refreshCache, this));
 		},
 		unbindEvents: function () {
-			$(window).off('scroll.upfront_parallax_' + this.id);
+			//$(window).off('scroll.upfront_parallax_' + this.id);
+			$(window).off('resize.upfront_parallax_' + this.id);
 		},
 		setOption: function (option, value) {
 			this.opts[option] = value;
@@ -121,13 +155,27 @@
 		},
 		start: function () {
 			this.$parent.addClass('upfront-parallax');
+			this.$element.addClass('upfront-parallax-element');
+			this.reset_cache();
 			this.refresh();
 			this.bindEvents();
+			// Start parallax draw when needed
+			if (Upfront_Parallax.prevTime == 0) {
+				Upfront_Parallax.start();
+			}
 		},
 		stop: function () {
 			this.$parent.removeClass('upfront-parallax');
+			this.$element.removeClass('upfront-parallax-element');
 			this.reset();
 			this.unbindEvents();
+		},
+		reset_cache: function() {
+			this.cache = {
+				translate: 0,
+				offsetTop: 0,
+				height: 0
+			};
 		},
 		reset: function () {
 			this.$element.css({
@@ -137,10 +185,12 @@
 		},
 		destroy: function () {
 			this.stop();
+			delete Upfront_Parallax.instances[this.id];
 			this.$parent.removeData('uparallax');
 		},
 		refresh: function () {
-			var height = this.$parent.height(),
+			this.refreshCache();
+			var height = this.cache.height,
 				winHeight = $(window).height(),
 				heightOff =  Math.round((winHeight - height) / 2)
 			;
@@ -155,26 +205,31 @@
 			 * */
 			this.$element.css({
 				top: this.movementOffset*-1,
-				bottom: this.movementOffset*-1
+				//bottom: this.movementOffset*-1
+				height: height+this.movementOffset*2
 			});
 			this.update();
+		},
+		refreshCache: function () {
+			var offset = this.$parent.offset(),
+				height = this.$parent.height()
+			;
+			this.cache.offsetTop = offset.top;
+			this.cache.height = height;
 		},
 		update: function () {
 			requestAnimationFrame($.proxy(this.draw, this));
 		},
 		draw: function (time) {
-			var offset = this.$parent.offset(),
-				height = this.$parent.height(),
-				centerOff = Math.round(offset.top + (height / 2)),
-				bottomOff = Math.round(offset.top + height),
-				scrollTop = $(document).scrollTop(),
-				winHeight = $(window).height(),
-				scrollCenter = Math.round(scrollTop + (winHeight / 2)),
-				scrollBottom = Math.round(scrollTop + winHeight),
+			var offsetTop = this.cache.offsetTop,
+				height = this.cache.height,
+				scrollTop = Upfront_Parallax.cache.scrollTop,
+				winHeight = Upfront_Parallax.cache.winHeight,
+				scrollBottom = Upfront_Parallax.cache.scrollBottom,
 				moveHeight = (this.movementOffset * 2) + (this.opts.movement * 2),
 				range = 2 * this.movementOffset,
 				movement = (this.movementOffset > 0 ? range / moveHeight : 1),
-				translate = Math.round(movement * (scrollBottom - offset.top - height)) - this.movementOffset,
+				translate = Math.round(movement * (scrollBottom - offsetTop - height)) - this.movementOffset,
 				maxTranslate = Math.round(movement * (winHeight)) - this.movementOffset,
 				minTranslate = maxTranslate*-1,
 				effects = this.opts.effect.split(','),
@@ -186,6 +241,10 @@
 			else if (translate < minTranslate) {
 				translate = minTranslate;
 			}
+			
+			if (this.cache.translate == translate) return;
+			this.cache.translate = translate;
+			
 			for (i in effects) {
 				var effect = this.getEffect(effects[i], translate, maxTranslate);
 				if (effect.property == 'transform') {
@@ -208,6 +267,8 @@
 			switch (effect) {
 				case 'scroll':
 					value = 'translateY(' + translate + 'px)';
+					//property = 'margin-top';
+					//value = translate;
 					break;
 				case 'rotate':
 					value = 'rotate(' + (position*this.opts.rotation) + 'deg)';
