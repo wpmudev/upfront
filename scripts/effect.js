@@ -69,7 +69,9 @@
 		this.id = Upfront_Parallax.id;
 		Upfront_Parallax.instances[this.id] = this;
 		
-		this.start();
+		if (this.opts.autostart) {
+			this.start();
+		}
 	}
 	
 	// Static ID
@@ -85,12 +87,11 @@
 		Upfront_Parallax.draw();
 	}
 	Upfront_Parallax.draw = function (time) {
-		var scrollTop = $('body').scrollTop();
+		var scrollTop = $(window).scrollTop();
 		if (Upfront_Parallax.cache.scrollTop == scrollTop) {
 			requestAnimationFrame(Upfront_Parallax.draw);
 			return;
 		}
-		console.time('parallax draw');
 		var winHeight = $(window).height(),
 			scrollBottom = Math.round(scrollTop + winHeight);
 		Upfront_Parallax.cache.scrollTop = scrollTop;
@@ -101,7 +102,6 @@
 			Upfront_Parallax.instances[id].draw(time);
 		}
 		Upfront_Parallax.prevTime = time;
-		console.timeEnd('parallax draw');
 		requestAnimationFrame(Upfront_Parallax.draw);
 	}
 	
