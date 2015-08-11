@@ -4,7 +4,7 @@ var $win = $(window),
 	_cache = {}
 ;
 var FloatNav = function ($el) {
-
+	var adminbarheight = ($('div#wpadminbar').length > 0)?$('div#wpadminbar').outerHeight():0;
 	var start_position = {
 		top: 0,
 		left: 0
@@ -27,6 +27,9 @@ var FloatNav = function ($el) {
 			$root.offset($current_offset);
 		else
 			$root.css(start_size);
+
+		if(adminbarheight > 0)
+			$root.css('margin-top', adminbarheight);
 	};
 
 	var stop_floating = function () {
@@ -35,12 +38,16 @@ var FloatNav = function ($el) {
 			.attr("data-already_floating", "no")
 		;
 		$root.closest('.upfront-output-wrapper').css('z-index', '');
+
+		if(adminbarheight > 0)
+			$root.css('margin-top', '');
 	}
 
 	var dispatch_movement = function () {
 		var top = $win.scrollTop();
-		if (top > start_position.top && !$root.is('[data-already_floating="yes"]')) start_floating();
-		else if (top <= start_position.top && $root.is('[data-already_floating="yes"]')) stop_floating();
+		
+		if (top > (start_position.top-adminbarheight) && !$root.is('[data-already_floating="yes"]')) start_floating();
+		else if (top <= (start_position.top-adminbarheight) && $root.is('[data-already_floating="yes"]')) stop_floating();
 	};
 
 	var destroy = function () {		
