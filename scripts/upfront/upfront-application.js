@@ -549,9 +549,10 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 				object.slug = me.propertiesToObject(o.properties).postPart;
 			});
 
-			if(wrapper)
-				wrapper.objects.push(object);
-			else{
+			if (wrapper) {
+				//wrapper.objects.push(object);
+				wrapper.objects = [object];
+			} else {
 				wrapper = {objects: [object]};
 				layout.push(wrapper);
 				wrapperIds[props.wrapper_id] = wrapper;
