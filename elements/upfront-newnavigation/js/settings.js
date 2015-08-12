@@ -377,9 +377,7 @@ define([
 		 * Get the title (goes into settings title area)
 		 * @return {string} Title
 		 */
-		get_title: function () {
-				return l10n.settings;
-		}
+		title: l10n.settings
 	});
 
 

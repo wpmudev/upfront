@@ -787,7 +787,7 @@ define([
 				var columns = grid.size,
 					template = _.template(_Upfront_Templates.overlay_grid, {columns: columns, size_class: grid.class, style: 'simple'});
 				$(this).prepend(template);
-				
+
 				//Adjust grid rulers position
 				Upfront.Application.adjust_grid_padding_settings(this);
 			});
@@ -7619,6 +7619,74 @@ var GeneralCSSEditor = Backbone.View.extend({
 	}
 });
 
+	var Field_Complex_Toggleable_Text_Field = Field.extend({
+		className: "upfront-field-complex_field-boolean_toggleable_text upfront-field-multiple",
+		tpl: '<input type="checkbox" class = "upfront-field-checkbox" /> <label><span class="upfront-field-label-text">{{element_label}}</span></label> <div class="upfront-embedded_toggleable" style="display:none">{{field}}<div class="upfront-embedded_toggleable-notice">' + l10n.anchor_nag + '</div></div>',
+		initialize: function (opts) {
+			Field.prototype.initialize.call(this, opts);
+			this.options.field = new Field_Text(this.options);
+		},
+		render: function () {
+			var me = this;
+			this.$el.empty();
+			this.$el.append(this.get_field_html());
+
+			this.$el.on("click", ':checkbox', function (e) {
+				e.stopPropagation();
+				me.field_toggle.apply(me);
+			});
+			if (this.model.get_property_value_by_name(this.options.field.get_name())) {
+				this.$el.find(':checkbox').attr("checked", true);
+				this.check_value();
+				this.field_toggle();
+			}
+
+			this.$el.on("keyup", '[name="' + this.options.field.get_name() + '"]', function (e) {
+				e.stopPropagation();
+				me.check_value.apply(me);
+			});
+
+			setTimeout(function () {
+				me.trigger("anchor:updated");
+			}, 50);
+		},
+		field_toggle: function () {
+			if (this.$el.find(":checkbox").is(":checked")) {
+				this.$el.find(".upfront-embedded_toggleable").show();
+			} else {
+				this.$el.find(".upfront-embedded_toggleable").hide();
+			}
+			this.property.set({value: this.get_value()});
+			this.trigger("anchor:updated");
+		},
+		check_value: function () {
+			var $field = this.$el.find('[name="' + this.options.field.get_name() + '"]'),
+				$root = this.$el.find(".upfront-embedded_toggleable"),
+				val = $field.length && $field.val ? $field.val() : ''
+			;
+			$root.removeClass("error").removeClass("ok");
+			if (val.length && !val.match(/^[a-zA-Z]+$/)) {
+				$root.addClass("error");
+			} else if (val.length) {
+				$root.addClass("ok");
+			}
+			this.property.set({value: this.get_value()});
+		},
+		get_field_html: function () {
+			this.options.field.render();
+			var $input = this.options.field.$el;
+			return _.template(this.tpl, _.extend({}, this.options, {field: $input.html()}));
+		},
+		get_value: function () {
+			var data = {},
+				$field = this.$el.find(":checkbox"),
+				$subfield = this.$el.find('[name="' + this.options.field.get_name() + '"]'),
+				value = $subfield.val().replace(/[^a-zA-Z]/g, '')
+			;
+			return $field.is(":checked") && value ? value : ''; // was false
+		}
+	});
+
 var _Settings_AnchorSetting = SettingsItem.extend({
 	className: "upfront-settings-item-anchor",
 	group: false,
@@ -7822,17 +7890,17 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		this.options = options || {};
 		this.listenTo(this.collection, 'add remove change:name change:width', this.render);
 	},
-	
+
 	render: function () {
 		var me = this;
 		this.$el.html('');
 		this.$el.append(_.template(this.template, this.options));
 		this.$el.addClass(' upfront-field-select-' + ( this.options.multiple ? 'multiple' : 'single' ));
-		
+
 		if (this.options.disabled) {
 			this.$el.addClass('upfront-field-select-disabled');
 		}
-		
+
 		if (this.options.style == 'zebra') {
 			this.$el.addClass('upfront-field-select-zebra');
 		}
@@ -7844,7 +7912,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			this.$el.find('ul').append(option.el);
 		}, this);
 	},
-	
+
 	onOptionClick: function (e) {
 		this.$el.toggleClass('compact-label-select-open');
 		Field_Select.prototype.onOptionClick.call(this, e);
@@ -9368,10 +9436,10 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				type: this.model.is_main() ? "RegionContainer" : (this.model.get('type') == 'lightbox')?"RegionLightbox":"Region",
 				element_id: this.model.is_main() ? "region-container-" + this.model.get('name') : "region-" + this.model.get('name')
 			});
-			
+
 			this.listenTo(Upfront.Application.cssEditor, 'updateStyles', this.adjust_grid_padding);
 		},
-		
+
 		adjust_grid_padding: function() {
 			var togglegrid = new Upfront.Views.Editor.Command_ToggleGrid();
 			togglegrid.update_grid();
