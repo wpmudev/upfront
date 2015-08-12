@@ -1,11 +1,11 @@
 (function($) {
 define([
 	'scripts/upfront/element-settings/root-panel',
-	'scripts/upfront/preset-settings/select-preset-item',
-	'scripts/upfront/preset-settings/edit-preset-item',
-	'scripts/upfront/preset-settings/preset-css-settings',
+	'scripts/upfront/settings/modules/select-preset',
+	'scripts/upfront/settings/modules/edit-preset',
+	'scripts/upfront/settings/modules/preset-css',
 	'scripts/upfront/preset-settings/util'
-], function(RootPanel, SelectPresetItem, EditPresetItem, PresetCSS, Util) {
+], function(RootPanel, SelectPresetModule, EditPresetModule, PresetCssModule, Util) {
 	/**
 	 * Handles presets: load, edit, delete and update for elements.
 	 *
@@ -59,33 +59,32 @@ define([
 			var preset = this.property('preset') ? this.clear_preset_name(this.property('preset')) : 'default';
 
 			// Add items
-			this.selectPresetItem = new SelectPresetItem({
+			this.selectPresetModule = new SelectPresetModule({
 				model: this.model,
 				presets: this.presets
 			});
 
-			this.editPresetItem = new EditPresetItem({
+			this.editPresetModule = new EditPresetModule({
 				model: this.presets.findWhere({id: preset}),
 				stateModules: this.stateModules
 			});
 
-			this.presetCSS = new PresetCSS({
+			this.presetCssModule = new PresetCssModule({
 				model: this.model,
 				preset: this.presets.findWhere({id: preset}),
 			});
 
-			this.listenTo(this.selectPresetItem, 'upfront:presets:new', this.createPreset);
-			this.listenTo(this.selectPresetItem, 'upfront:presets:change', this.changePreset);
-			this.listenTo(this.editPresetItem, 'upfront:presets:delete', this.deletePreset);
-			this.listenTo(this.editPresetItem, 'upfront:presets:reset', this.resetPreset);
-			this.listenTo(this.editPresetItem, 'upfront:presets:update', this.updatePreset);
-			this.listenTo(this.presetCSS, 'upfront:presets:update', this.updatePreset);
-			// this.listenTo(this.model.get("properties"), 'change', this.changePreset);
+			this.listenTo(this.selectPresetModule, 'upfront:presets:new', this.createPreset);
+			this.listenTo(this.selectPresetModule, 'upfront:presets:change', this.changePreset);
+			this.listenTo(this.editPresetModule, 'upfront:presets:delete', this.deletePreset);
+			this.listenTo(this.editPresetModule, 'upfront:presets:reset', this.resetPreset);
+			this.listenTo(this.editPresetModule, 'upfront:presets:update', this.updatePreset);
+			this.listenTo(this.presetCssModule, 'upfront:presets:update', this.updatePreset);
 
 			this.settings = _([
-				this.selectPresetItem,
-				this.editPresetItem,
-				this.presetCSS
+				this.selectPresetModule,
+				this.editPresetModule,
+				this.presetCssModule
 			]);
 		},
 

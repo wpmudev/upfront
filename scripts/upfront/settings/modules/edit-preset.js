@@ -1,11 +1,11 @@
 define([
 	'scripts/upfront/settings/modules/base-module',
-	'scripts/upfront/preset-settings/show-state-settings-button',
+	'scripts/upfront/settings/fields/show-state',
 	'scripts/upfront/preset-settings/state-settings'
 ], function(BaseModule, ShowStateSettingsButton, StateSettings) {
 	var l10n = Upfront.Settings.l10n.preset_manager;
 
-	var EditPresetItem = BaseModule.extend({
+	var EditPresetModule = BaseModule.extend({
 		className: 'preset_specific',
 
 		initialize: function(options) {
@@ -47,7 +47,7 @@ define([
 				var fields = [];
 			}
 
-			// First add global fields
+			// First add global settings
 			_.each(this.options.stateModules, function(stateModules, state) {
 				if(state === "Global") {
 					var stateSettings = new StateSettings({
@@ -59,7 +59,7 @@ define([
 				}
 			}, this);
 
-			// First add settings state selectors
+			// Than add settings state tabs
 			_.each(this.options.stateModules, function(stateModules, state) {
 				if(state !== "Global") {
 					var showStateButton = new ShowStateSettingsButton({
@@ -74,7 +74,7 @@ define([
 				}
 			}, this);
 
-			// Than add settings state settings
+			// Than add non-global settings state panels
 			_.each(this.options.stateModules, function(stateModules, state) {
 				if(state !== "Global") {
 					var stateSettings = new StateSettings({
@@ -127,5 +127,5 @@ define([
 		}
 	});
 
-	return EditPresetItem;
+	return EditPresetModule;
 });

@@ -1,10 +1,10 @@
 define([
 	'scripts/upfront/settings/modules/base-module',
-	'scripts/upfront/preset-settings/select-preset-field'
+	'scripts/upfront/settings/fields/select-preset'
 ], function(BaseModule, SelectPresetField) {
 	var l10n = Upfront.Settings.l10n.preset_manager;
 
-	var SelectPresetItem = BaseModule.extend({
+	var SelectPresetModule = BaseModule.extend({
 		initialize: function (options) {
 			this.options = options || {};
 			this.group = false;
@@ -51,5 +51,5 @@ define([
 		}
 	});
 
-	return SelectPresetItem;
+	return SelectPresetModule;
 });
