@@ -1108,10 +1108,11 @@ define([
 
 		openImageSelector: function(e){
 			var me = this;
-			if(e) {
-				e.preventDefault();
-			}
-			Upfront.Views.Editor.ImageSelector.open().done(function(images){
+			if (e && e.preventDefault) e.preventDefault();
+			
+			Upfront.Views.Editor.ImageSelector.open({
+				multiple_sizes: false,
+			}).done(function(images){
 				var sizes = {};
 				_.each(images, function(image, id){
 					sizes = image;

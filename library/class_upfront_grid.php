@@ -531,6 +531,7 @@ class Upfront_GridBreakpoint {
             "#page.upfront-layout-view .upfront-module-group-bg-padding {margin: {$column_padding}px;}" . "\n" .
 			"#page.upfront-layout-view .plaintxt_padding {padding: {$type_padding}px;}" . "\n" .
 			"#page.upfront-layout-view .upfront-region-postlayouteditor {padding: {$column_padding}px 0;}" . "\n" .
+			"#page.upfront-layout-view #region-container-postlayouteditor {min-width: 0;}" . "\n" .
 		'';
 	}
 
@@ -541,12 +542,14 @@ class Upfront_GridBreakpoint {
 		$column_padding = $this->get_column_padding();
 		$type_padding = $this->get_type_padding();
 		$contained_width = $contained_width ? $contained_width : $width;
+		$styles = $this->get_styles();
 		return '' .
 			( $this->is_default() ? ".upfront-region-container-clip .upfront-region-container-bg {max-width: {$contained_width}px;}" . "\n" : "" ) .
 			".upfront-grid-layout {width: {$width}px;}" . "\n" .
 			( $this->is_default() ? ".upfront-output-object {padding: {$column_padding}px;}" . "\n" : "") .
 			( $this->is_default() ? ".upfront-inserted_image-wrapper .wp-caption-text, .uinsert-image-wrapper {padding: {$column_padding}px;}" . "\n" : "") .
 			( $this->is_default() ? ".plaintxt_padding {padding: {$type_padding}px;}" . "\n" : "") .
+			$styles .
 		'';
 	}
 
@@ -608,6 +611,10 @@ class Upfront_GridBreakpoint {
 
 	public function get_typography() {
 		return isset($this->_data['typography']) ? $this->_data['typography'] : array();
+	}
+
+	public function get_styles() {
+		return isset($this->_data['styles']) ? $this->_data['styles'] : '';
 	}
 
 	public function get_grid_width () {

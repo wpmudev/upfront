@@ -371,10 +371,12 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			menuItemsValues = [{label:l10n.choose_existing_menu, value: 0}],
 			menuList = Upfront.data.unewnavigation.currentMenuItemData.get('menuList')
 		;
-
+		var clubbedvalues = [];
 		if(typeof(menuList) != 'undefined'){
-			menuItemsValues.concat(menuList);
+
+			clubbedvalues = menuItemsValues.concat(menuList);
 		}
+
 
 		me.$el.find('div.upfront-object-content').html('');
 
@@ -382,7 +384,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			model: me.model,
 			label: "",
 			className: "existing_menu_list",
-			values: menuItemsValues
+			values: clubbedvalues
 		});
 
 		menuItems.render();
@@ -576,7 +578,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 	},
 	activate_responsive_nav: function(selector, bpwidth) {
-
+		var me = this;
 		var breakpoints = selector.data('breakpoints');
 
 		var bparray = new Array();
@@ -609,7 +611,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 					// Add responsive nav toggler
 					if(!selector.find('div.responsive_nav_toggler').length)
-						selector.prepend($('<div class="responsive_nav_toggler"><div></div><div></div><div></div></div>'));
+						selector.prepend($('<div class="responsive_nav_toggler"><div></div><div></div><div></div></div>').data('view', me));
 
 					// clone sub-menu's parent's link (if any) on top of the sub-menu's items, and make the parent clickable to toggle the appearance of sub-menu. Only on front end.
 					selector.find('li.menu-item-has-children').each(function() {
@@ -646,7 +648,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					selector.closest('div.upfront-newnavigation_module').css('z-index', 3);
 
 
-					selector.find('ul.menu').hide();
+					me.hideMenu(selector.find('ul.menu'));
 				}
 				else {
 					//selector.attr('data-style', selector.data('stylebk'))
@@ -659,7 +661,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 					// Remove responsive nav toggler
 					selector.find('div.responsive_nav_toggler').remove();
-					selector.find('ul.menu').show();
+					me.showMenu(selector.find('ul.menu'));
 
 					//remove any sub-menu item's parent's clones
 					selector.find('li.active-clone').each(function() {
@@ -686,20 +688,60 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		}
 
 	},
+	hideMenu: function(menu) {
+
+		menu.hide();
+		if(menu.siblings('.burger_overlay').length > 0) {
+			var burger_overlay = menu.siblings('.burger_overlay');
+			/*menu.insertBefore(burger_overlay);
+			burger_overlay.remove();
+			*/
+			burger_overlay.hide();
+
+		}
+		
+	},
+	showMenu: function(menu) {
+		
+
+		/*if(this.model.get_property_value_by_name('burger_menu') == 'yes' && this.model.get_property_value_by_name('burger_over') != 'pushes' && this.model.get_property_value_by_name('burger_alignment') != 'whole') {
+			var burger_overlay = $('<div class="burger_overlay"></div>')
+			menu.closest('.upfront-object-content').append(burger_overlay);
+			burger_overlay.append(menu);
+ 			
+		}*/
+
+		if(menu.siblings('.burger_overlay').length > 0) {
+			var burger_overlay = menu.siblings('.burger_overlay');
+			
+			burger_overlay.show();
+
+		}
+
+		menu.show();
+	},
 	toggle_responsive_nav: function(e) {
 		var me = this;
+		var view;
+		if($(e.target).hasClass('responsive_nav_toggler'))
+			view = $(e.target).data('view');
+		else
+			view = $(e.target).closest('.responsive_nav_toggler').data('view');
+		
 		var region_container = $(this).closest('.upfront-region-container');
 		if($(this).parent().find('ul.menu').css('display') == 'none' && typeof(e) != 'undefined') {
 			
-			$(this).parent().find('ul.menu').show();
+			view.showMenu($(this).parent().find('ul.menu'));
 			var offset = $(this).parent().find('ul.menu').position();
 			
 			var close_icon = $('<i class="burger_nav_close"></i>');
-			$(this).parent().append(close_icon);
+			//$(this).parent().append(close_icon);
+			$(this).parent().find('ul.menu').prepend($('<li>').addClass('wrap_burger_nav_close').append(close_icon));
+			
 			close_icon.bind('touchstart click', function() {
-				$(e.target).closest('.responsive_nav_toggler').trigger('click');
+				$(e.target).closest('.responsive_nav_toggler').data('view', view).trigger('click');
 			});
-			close_icon.css({position: 'fixed', left: offset.left+$(this).parent().find('ul.menu').width()-close_icon.width()-10, top: offset.top+10});
+			//close_icon.css({position: 'fixed', left: offset.left+$(this).parent().find('ul.menu').width()-close_icon.width()-10, top: offset.top+10});
 			region_container.addClass('upfront-region-container-has-nav');
 
 			if($(this).parent().data('burger_over') == 'pushes' && ($(this).parent().data('burger_alignment') == 'top' || $(this).parent().data('burger_alignment') == 'whole')) {
@@ -715,10 +757,10 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			}
 		} else {
 			
-			$(this).parent().find('ul.menu').hide();
+			view.hideMenu($(this).parent().find('ul.menu'));
 			
 
-			$(this).parent().find('i.burger_nav_close').remove();
+			$(this).parent().find('i.burger_nav_close').parent('li.wrap_burger_nav_close').remove();
 
 			$(this).parent().find('ul.sub-menu').css('display', '');
 			if($(this).parent().find('ul.sub-menu').length < 1 )
@@ -733,14 +775,20 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		var me = this;
 		var menu_id = this.model.get_property_value_by_name('menu_id');
 		if(!menu_id) return;
+		var container = this.$el.find('.upfront-object-content');;
+
 
 		this.$el.find('.upfront-object-content').html('');
+		
+
 		if(this.property('menu_items').length > 0) {
 			var menu = this.renderMenu(this.property('menu_items'), 'menu');
-			this.$el.find('.upfront-object-content').append(menu);
-		} else {
+			container.append(menu);
+		} 
+		else 
+		{
 			
-			this.$el.find('.upfront-object-content').append(this.renderMenu(this.property('menu_items'), 'menu'));
+			container.append(this.renderMenu(this.property('menu_items'), 'menu'));
 			
 			setTimeout(function() {
 				me.$el.find('a.newnavigation-add-item').trigger('click');
@@ -767,20 +815,32 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
 
 		if(!breakpoint || breakpoint.default) {
+
+			if(this.model.get_property_value_by_name('burger_menu') == 'yes' && this.model.get_property_value_by_name('burger_over') != 'pushes' && this.model.get_property_value_by_name('burger_alignment') != 'whole') {
+				this.$el.find('.upfront-object-content').append($('<div class="burger_overlay"></div>'));
+			}
+
+
 			if(this.model.get_property_value_by_name('burger_menu') == 'yes') {
-				this.$el.find('.upfront-object-content').prepend($('<div>').addClass("responsive_nav_toggler").append('<div></div><div></div><div></div>').bind('click', me.toggle_responsive_nav));
+				container.prepend($('<div>').addClass("responsive_nav_toggler").data('view', me).append('<div></div><div></div><div></div>').bind('click', me.toggle_responsive_nav));
 				
-				this.$el.find('ul.menu').hide();
+				me.hideMenu(this.$el.find('ul.menu'));
 				
 				
 			}
 		} else {
 			model_breakpoint = this.model.get_property_value_by_name('breakpoint');
 			breakpoint_data = model_breakpoint[breakpoint.id];
-			if(breakpoint_data && breakpoint_data.burger_menu == 'yes') {
-				this.$el.find('.upfront-object-content').prepend($('<div>').addClass("responsive_nav_toggler").append('<div></div><div></div><div></div>').bind('click', me.toggle_responsive_nav));
 
-				this.$el.find('ul.menu').hide();
+
+			if(breakpoint_data && breakpoint_data.burger_menu ==  'yes' && breakpoint_data.burger_over != 'pushes' && breakpoint_data.burger_alignment != 'whole') {
+				this.$el.find('.upfront-object-content').append($('<div class="burger_overlay"></div>'));
+			}
+
+			if(breakpoint_data && breakpoint_data.burger_menu == 'yes') {
+				container.prepend($('<div>').addClass("responsive_nav_toggler").data('view', me).append('<div></div><div></div><div></div>').bind('click', me.toggle_responsive_nav));
+
+				me.hideMenu(this.$el.find('ul.menu'));
 				
 			}
 		}
