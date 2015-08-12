@@ -1315,7 +1315,7 @@ define([
 				this.createLinkControl(),
 				captionControl,
 				this.createPaddingControl(),
-				this.createControl('settings', l10n.settings, 'on_settings_click')
+				this.createControl('settings', Upfront.Settings.l10n.global.views.settings, 'on_settings_click')
 			]);
 		}
 	});

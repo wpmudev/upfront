@@ -554,7 +554,7 @@
   box-shadow: 0px 0px 3px 0px rgba(36,57,77,0.2);
   z-index: -1;
 }
-.upfront-wrapper:hover > .upfront-wrapper-meta,
+.upfront-wrapper:not(.upfront-inline-panel-item-open):hover > .upfront-wrapper-meta,
 .upfront-wrapper.ui-resizable-resizing > .upfront-wrapper-meta {
   display: block !important;
 }

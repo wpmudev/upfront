@@ -5277,7 +5277,7 @@ a.upfront-region-name-edit-trigger:before {
   z-index: -1; }
 
 /* line 557, sass/partials/_layout-grid-module-object.scss */
-.upfront-wrapper:hover > .upfront-wrapper-meta,
+.upfront-wrapper:not(.upfront-inline-panel-item-open):hover > .upfront-wrapper-meta,
 .upfront-wrapper.ui-resizable-resizing > .upfront-wrapper-meta {
   display: block !important; }
 
