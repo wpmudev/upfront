@@ -1,6 +1,8 @@
-define(function() {
+define([
+	'scripts/upfront/settings/modules/base-module'
+], function(BaseModule) {
 	var l10n = Upfront.Settings.l10n.preset_manager;
-	var ColorsSettingsModule = Upfront.Views.Editor.Settings.Item.extend({
+	var ColorsSettingsModule = BaseModule.extend({
 		className: 'settings_module colors_settings_item clearfix',
 		group: true,
 

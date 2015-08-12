@@ -1,9 +1,11 @@
-define(function() {	
+define([
+	'scripts/upfront/settings/modules/base-module'
+], function(BaseModule) {
 	var l10n = Upfront.Settings.l10n.gallery_element;
-	var CaptionLocation = Upfront.Views.Editor.Settings.Item.extend({
+	var CaptionLocation = BaseModule.extend({
 		className: 'settings_module caption_location clearfix',
 		group: false,
-		
+
 		initialize: function(options) {
 			this.options = options || {};
 			var me = this,
@@ -57,7 +59,7 @@ define(function() {
 						me.model.set('captionType', value);
 					}
 				}),
-				
+
 				new Upfront.Views.Editor.Field.Radios({
 					className: state + '-caption-trigger field-caption_trigger upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios over_image_field',
 					model: this.model,
@@ -78,7 +80,7 @@ define(function() {
 						me.model.set('showCaptionOnHover', value);
 					},
 				}),
-				
+
 				new Upfront.Views.Editor.Field.Radios({
 					className: state + '-caption-height field-caption-height upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios',
 					model: this.model,
@@ -108,7 +110,7 @@ define(function() {
 						}
 					}
 				}),
-				
+
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					className: state + '-caption-height-number caption-height-number',

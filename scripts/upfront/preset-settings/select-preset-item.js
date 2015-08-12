@@ -1,9 +1,10 @@
 define([
+	'scripts/upfront/settings/modules/base-module',
 	'scripts/upfront/preset-settings/select-preset-field'
-], function(SelectPresetField) {
+], function(BaseModule, SelectPresetField) {
 	var l10n = Upfront.Settings.l10n.preset_manager;
-	
-	var SelectPresetItem = Upfront.Views.Editor.Settings.Item.extend({
+
+	var SelectPresetItem = BaseModule.extend({
 		initialize: function (options) {
 			this.options = options || {};
 			this.group = false;
@@ -23,16 +24,16 @@ define([
 				this.selectPresetField
 			]);
 
-			this.listenTo(this.selectPresetField, 'upfront:presets:edit', this.editPreset);
 			this.listenTo(this.selectPresetField, 'upfront:presets:new', this.createPreset);
+			this.listenTo(this.selectPresetField, 'changed', this.changePreset);
+		},
+
+		changePreset: function() {
+			this.trigger('upfront:presets:change', this.selectPresetField.get_value());
 		},
 
 		createPreset: function(preset) {
 			this.trigger('upfront:presets:new', preset);
-		},
-
-		editPreset: function(preset) {
-			this.trigger('upfront:presets:edit', preset);
 		},
 
 		get_title: function() {

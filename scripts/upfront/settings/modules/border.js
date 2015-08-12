@@ -5,9 +5,11 @@
 * `type` - Border type
 * `color` - Border color
 */
-define(function() {
+define([
+	'scripts/upfront/settings/modules/base-module'
+], function(BaseModule) {
 	var l10n = Upfront.Settings.l10n.preset_manager;
-	var BorderSettingsModule = Upfront.Views.Editor.Settings.Item.extend({
+	var BorderSettingsModule = BaseModule.extend({
 		className: 'settings_module border_settings_item clearfix',
 		group: false,
 

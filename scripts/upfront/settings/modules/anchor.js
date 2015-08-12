@@ -1,4 +1,6 @@
-define(function() {
+define([
+	'scripts/upfront/settings/modules/base-module'
+], function(BaseModule) {
 	var l10n = Upfront.Settings.l10n.preset_manager;
 
 	var Field_Complex_Toggleable_Text_Field = Upfront.Views.Editor.Field.Field.extend({
@@ -69,12 +71,12 @@ define(function() {
 		}
 	});
 
-	var AnchorSettingsModule = Upfront.Views.Editor.Settings.Item.extend({
+	var AnchorSettingsModule = BaseModule.extend({
 		className: "upfront-settings-item-anchor",
 		group: false,
 		initialize: function (opts) {
 			this.options = opts;
-			Upfront.Views.Editor.Settings.Item.prototype.initialize.call(this, this.options);
+			BaseModule.prototype.initialize.call(this, this.options);
 			var item = new Field_Complex_Toggleable_Text_Field({
 				element_label: l10n.make_element_anchor,
 				className: 'upfront-field-complex_field-boolean_toggleable_text upfront-field-multiple checkbox-title',

@@ -2,8 +2,10 @@
 * Field names properies
 * `name` - Select box name
 */
-define(function() {
-	var SelectboxSettingsModule = Upfront.Views.Editor.Settings.Item.extend({
+define([
+	'scripts/upfront/settings/modules/base-module'
+], function(BaseModule) {
+	var SelectboxSettingsModule = BaseModule.extend({
 		className: 'settings_module selectbox_settings_item clearfix',
 		group: true,
 		get_title: function() {

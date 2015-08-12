@@ -1,9 +1,11 @@
 (function($) {
 define([
 	'scripts/upfront/element-settings/root-panel',
-	'scripts/upfront/preset-settings/select-preset-panel',
+	'scripts/upfront/preset-settings/select-preset-item',
+	'scripts/upfront/preset-settings/edit-preset-item',
+	'scripts/upfront/preset-settings/preset-css-settings',
 	'scripts/upfront/preset-settings/util'
-], function(RootPanel, SelectPresetPanel, Util) {
+], function(RootPanel, SelectPresetItem, EditPresetItem, PresetCSS, Util) {
 	/**
 	 * Handles presets: load, edit, delete and update for elements.
 	 *
@@ -25,14 +27,15 @@ define([
 	 * styleTpl - Upfront.Util.template parsed styles template
 	 */
 	var PresetManager = RootPanel.extend({
+		className: 'uf-settings-panel upfront-settings_panel preset-manager-panel',
+
 		initialize: function (options) {
 			this.options = options;
 			_.each(this.options, function(option, index) {
 				this[index] = option;
 			}, this);
 
-			var defaultPreset = false,
-				preset;
+			var defaultPreset = false;
 
 			_.each(Upfront.mainData[this.mainDataCollection], function(preset, presetIndex) {
 				if (preset.id === 'default') {
@@ -49,35 +52,45 @@ define([
 
 			this.presets = new Backbone.Collection(Upfront.mainData[this.mainDataCollection] || []);
 
-			this.showSelectPresetPanel(false);
+			this.setupItems();
+		},
+
+		setupItems: function() {
+			var preset = this.property('preset') ? this.clear_preset_name(this.property('preset')) : 'default';
+
+			// Add items
+			this.selectPresetItem = new SelectPresetItem({
+				model: this.model,
+				presets: this.presets
+			});
+
+			this.editPresetItem = new EditPresetItem({
+				model: this.presets.findWhere({id: preset}),
+				stateModules: this.stateModules
+			});
+
+			this.presetCSS = new PresetCSS({
+				model: this.model,
+				preset: this.presets.findWhere({id: preset}),
+			});
+
+			this.listenTo(this.selectPresetItem, 'upfront:presets:new', this.createPreset);
+			this.listenTo(this.selectPresetItem, 'upfront:presets:change', this.changePreset);
+			this.listenTo(this.editPresetItem, 'upfront:presets:delete', this.deletePreset);
+			this.listenTo(this.editPresetItem, 'upfront:presets:reset', this.resetPreset);
+			this.listenTo(this.editPresetItem, 'upfront:presets:update', this.updatePreset);
+			this.listenTo(this.presetCSS, 'upfront:presets:update', this.updatePreset);
+			// this.listenTo(this.model.get("properties"), 'change', this.changePreset);
+
+			this.settings = _([
+				this.selectPresetItem,
+				this.editPresetItem,
+				this.presetCSS
+			]);
 		},
 
 		getTitle: function() {
 			return 'Appearance';
-		},
-
-		showSelectPresetPanel: function(render) {
-			var me = this;
-			this.selectPresetPanel = new SelectPresetPanel({
-				model: this.model,
-				presets: this.presets,
-				stateModules: this.stateModules
-			});
-			this.panels = _([
-				this.selectPresetPanel
-			]);
-
-			this.delegateEvents();
-
-			this.listenTo(this.selectPresetPanel, 'upfront:presets:new', this.createPreset);
-			this.listenTo(this.selectPresetPanel, 'upfront:presets:delete', this.deletePreset);
-			this.listenTo(this.selectPresetPanel, 'upfront:presets:reset', this.resetPreset);
-			this.listenTo(this.selectPresetPanel, 'upfront:presets:change', this.changePreset);
-			this.listenTo(this.selectPresetPanel, 'upfront:presets:update', this.updatePreset);
-
-			if (render) {
-				this.render();
-			}
 		},
 
 		getPresetDefaults: function(presetName) {
@@ -89,25 +102,20 @@ define([
 
 		updatePreset: function(properties) {
 			var index,
-				//css = Util.generateCss(properties, this.styleTpl),
 				styleElementId;
-			/* // Note: killed, because we already do this in Util
-			styleElementId = this.styleElementPrefix + '-' + properties.id;
-			if ($('style#' + styleElementId).length === 0) {
-				$('body').append('<style id="' + styleElementId + '"></style>');
-			}
-			$('style#' + styleElementId).text(css);
-			*/
+
 			Util.updatePresetStyle(this.styleElementPrefix.replace(/-preset/, ''), properties, this.styleTpl);
 			Upfront.Util.post({
 				action: 'upfront_save_' + this.ajaxActionSlug + '_preset',
 				data: properties
 			});
+
 			_.each(Upfront.mainData[this.mainDataCollection], function(preset, presetIndex) {
 				if (preset.id === properties.id) {
 					index = presetIndex;
 				}
 			});
+
 			if (_.isUndefined(index) === false) {
 				Upfront.mainData[this.mainDataCollection].splice(index, 1);
 			}
@@ -122,6 +130,7 @@ define([
 			this.presets.add(preset);
 			this.model.set_property('preset', preset.id);
 			this.updatePreset(preset);
+			this.render();
 		},
 
 		deletePreset: function(preset) {
@@ -143,7 +152,7 @@ define([
 
 			this.presets.remove(preset);
 
-			this.showSelectPresetPanel(true);
+			// this.render();
 		},
 
 		resetPreset: function(preset) {
@@ -173,8 +182,7 @@ define([
 				Upfront.Views.Editor.notify('Preset '+ preset.get('id') +' was reset');
 
 				me.$el.empty();
-				me.selectPresetPanel.remove();
-				me.showSelectPresetPanel(true);
+				me.render();
 			}).error(function (ret) {
 				//Notify error
 				Upfront.Views.Editor.notify(ret);
@@ -182,27 +190,37 @@ define([
 		},
 
 		changePreset: function(preset) {
-			this.$el.empty();
-			this.selectPresetPanel.remove();
-			this.showSelectPresetPanel(true);
+			// Add items
+			this.stopListening();
+			this.setupItems();
+			this.render();
 		},
 
 		getBody: function () {
 			var $body = $('<div />');
 
-			this.panels.each(function (panel) {
-				panel.render();
-				panel.parent_view = me;
-				$body.append(panel.el);
+			this.settings.each(function (setting) {
+				if ( ! setting.panel ) setting.panel = me;
+				setting.render();
+				$body.append(setting.el)
 			});
 
 			return $body;
 		},
 
-		save_settings: function() {
-			this.panels.each(function(panel){
-				panel.save_settings();
-			});
+		// utils
+		clear_preset_name: function(preset) {
+			preset = preset.replace(' ', '-');
+			preset = preset.replace(/[^-a-zA-Z0-9]/, '');
+			return preset;
+		},
+		property: function(name, value, silent) {
+			if(typeof value != "undefined"){
+				if(typeof silent == "undefined")
+					silent = true;
+				return this.model.set_property(name, value, silent);
+			}
+			return this.model.get_property_value_by_name(name);
 		}
 	});
 

@@ -1,6 +1,8 @@
-define(function() {
+define([
+	'scripts/upfront/settings/modules/base-module'
+], function(BaseModule) {
 	var l10n = Upfront.Settings.l10n.image_element;
-	var CaptionLocationSettingsModule = Upfront.Views.Editor.Settings.Item.extend({
+	var CaptionLocationSettingsModule = BaseModule.extend({
 		className: 'settings_module caption_location clearfix',
 		group: false,
 

@@ -8,12 +8,14 @@
 * `line_height` - Font line height
 * `color` - Font color
 */
-define(function() {
+define([
+	'scripts/upfront/settings/modules/base-module'
+], function(BaseModule) {
 	var l10n = Upfront.Settings.l10n.preset_manager;
-	var TypographySettingsItem = Upfront.Views.Editor.Settings.Item.extend({
+	var TypographySettingsItem = BaseModule.extend({
 		className: 'settings_module typography_settings_item',
 		group: true,
-		
+
 		get_title: function() {
 			return this.options.title;
 		},
@@ -26,21 +28,21 @@ define(function() {
 				toggleClass = 'no-toggle',
 				fieldCounter = 0,
 				current_element = '';
-				
+
 			if(typeof me.options.elements !== "undefined") {
 				fieldCounter++;
 			}
-			
+
 			//Set default element
 			if(typeof this.options.default_element !== "undefined") {
 				current_element = this.options.default_element + '-';
 			}
-			
-			if(this.options.toggle === true) {		
+
+			if(this.options.toggle === true) {
 				fieldCounter++;
 				toggleClass = 'element-toggled';
 			}
-			
+
 			this.fields = _([
 				new Upfront.Views.Editor.Field.Typeface_Chosen_Select({
 					name: current_element + this.options.fields.typeface,
@@ -73,12 +75,12 @@ define(function() {
 									me.fields._wrapped[1 + fieldCounter].set_option_font(value);
 								}
 							}
-						});						
+						});
 						me.$el.empty();
 						me.render();
 					}
 				}),
-				
+
 				new Upfront.Views.Editor.Field.Typeface_Style_Chosen_Select({
 					model: this.model,
 					name: current_element + this.options.fields.fontstyle,
@@ -101,7 +103,7 @@ define(function() {
 						}
 					}
 				}),
-				
+
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					className: state + '-font-size fontSize ' + toggleClass,
@@ -114,7 +116,7 @@ define(function() {
 						me.model.set(current_element + me.options.fields.size, value);
 					}
 				}),
-				
+
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					className: state + '-font-lineheight lineHeight ' + toggleClass,
@@ -128,7 +130,7 @@ define(function() {
 						me.model.set(current_element + me.options.fields.line_height, value);
 					}
 				}),
-				
+
 				new Upfront.Views.Editor.Field.Color({
 					model: this.model,
 					className: state + '-font-color upfront-field-wrap upfront-field-wrap-color sp-cf fontColor ' + toggleClass,
@@ -153,8 +155,8 @@ define(function() {
 				}),
 
 			]);
-			
-			
+
+
 			//Add fields select box
 			if(typeof me.options.elements !== "undefined") {
 				this.fields.unshift(
@@ -184,11 +186,11 @@ define(function() {
 							me.fields._wrapped[fieldCounter + 4].update_input_border_color(me.model.get(current_element + me.options.fields.color));
 						},
 					})
-				);	
+				);
 			}
-			
+
 			//Add toggle typography checkbox
-			if(this.options.toggle === true) {			
+			if(this.options.toggle === true) {
 				this.group = false;
 				this.fields.unshift(
 					new Upfront.Views.Editor.Field.Checkboxes({
@@ -223,7 +225,7 @@ define(function() {
 								stateSettings.find('.'+ state +'-font-color').hide();
 							}
 						}
-					})	
+					})
 				);
 			}
 		}

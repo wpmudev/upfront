@@ -1,10 +1,11 @@
 define([
+	'scripts/upfront/settings/modules/base-module',
 	'scripts/upfront/preset-settings/show-state-settings-button',
 	'scripts/upfront/preset-settings/state-settings'
-], function(ShowStateSettingsButton, StateSettings) {
+], function(BaseModule, ShowStateSettingsButton, StateSettings) {
 	var l10n = Upfront.Settings.l10n.preset_manager;
 
-	var EditPresetItem = Upfront.Views.Editor.Settings.Item.extend({
+	var EditPresetItem = BaseModule.extend({
 		className: 'preset_specific',
 
 		initialize: function(options) {
