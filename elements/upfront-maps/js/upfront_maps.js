@@ -6,8 +6,8 @@ define([
 	'maps_context_menu',
 	'text!elements/upfront-maps/css/edit.css',
 	'scripts/upfront/element-settings/settings',
-	'scripts/upfront/element-settings/panel'
-], function (_ctx, maps_style, ElementSettings, ElementSettingsPanel) {
+	'scripts/upfront/element-settings/root-settings-panel'
+], function (_ctx, maps_style, ElementSettings, RootSettingsPanel) {
 
 	var DEFAULTS = {
 		OPTIMUM_MAP_HEIGHT: 300,
@@ -601,7 +601,7 @@ define([
 		}
 	});
 
-	var MapSettings_Panel = ElementSettingsPanel.extend({
+	var MapSettings_Panel = RootSettingsPanel.extend({
 		initialize: function (opts) {
 			this.options = opts;
 			this.settings = _([

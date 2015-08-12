@@ -2,8 +2,8 @@
 define([
 	'text!elements/upfront-posts/tpl/views.html',
 	'elements/upfront-posts/js/post-list-settings-parts',
-	'scripts/upfront/element-settings/panel'
-], function(tpl, Parts, ElementSettingsPanel) {
+	'scripts/upfront/element-settings/root-settings-panel'
+], function(tpl, Parts, RootSettingsPanel) {
 
 var l10n = Upfront.Settings.l10n.posts_element;
 var $template = $(tpl);
@@ -19,7 +19,7 @@ var Panels = {
 	_initial: {}
 };
 
-Panels.General = ElementSettingsPanel.extend({
+Panels.General = RootSettingsPanel.extend({
 
 	initialize: function (opts) {
 		this.options = opts;
@@ -388,7 +388,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 
 
 
-Panels.PostParts = ElementSettingsPanel.extend({
+Panels.PostParts = RootSettingsPanel.extend({
 
 	initialize: function (opts) {
 		this.options = opts;

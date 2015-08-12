@@ -1,9 +1,9 @@
 define([
-	'scripts/upfront/element-settings/panel'
-], function(ElementSettingsPanel) {
+	'scripts/upfront/element-settings/root-settings-panel'
+], function(RootSettingsPanel) {
 	var l10n = Upfront.Settings.l10n.gallery_element;
 
-	var ThumbnailFields = ElementSettingsPanel.extend({
+	var ThumbnailFields = RootSettingsPanel.extend({
 		className: 'ugallery-thumbnail-fields upfront-settings_panel',
 		initialize: function(opts) {
 			this.options = opts;
@@ -266,7 +266,7 @@ define([
 				})
 			]);
 		},
-		title: l10n.thumb.settings
+		title: 'General Settings'
 	});
 
 	return ThumbnailFields;

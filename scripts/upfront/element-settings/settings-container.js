@@ -1,5 +1,5 @@
 define([], function () {
-	var SaveableSettingsPanel = Backbone.View.extend({
+	var SettingsContainer = Backbone.View.extend({
 		save_settings: function () {
 			if (!this.settings) return;
 
@@ -17,8 +17,20 @@ define([], function () {
 					}
 				}
 			});
+		},
+
+		cleanUp: function() {
+			if(this.settings) {
+				this.settings.each(function(setting){
+					setting.remove();
+				});
+			}
+
+			this.$el.off();
+			this.remove();
 		}
+
 	});
 
-	return SaveableSettingsPanel;
+	return SettingsContainer;
 });

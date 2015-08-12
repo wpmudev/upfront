@@ -1,10 +1,10 @@
 (function ($) {
 define([
 	'elements/upfront-image/js/settings/color-picker-field',
-	'scripts/upfront/element-settings/panel'
-], function(ColorPickerField, ElementSettingsPanel) {
+	'scripts/upfront/element-settings/root-settings-panel'
+], function(ColorPickerField, RootSettingsPanel) {
 	var l10n = Upfront.Settings.l10n.image_element;
-	var DescriptionPanel = ElementSettingsPanel.extend({
+	var DescriptionPanel = RootSettingsPanel.extend({
 		className: 'upfront-settings_panel_wrap uimage-settings',
 		initialize: function (opts) {
 			this.options = opts;

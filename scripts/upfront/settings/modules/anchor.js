@@ -5,10 +5,10 @@ define([
 
 	var Field_Complex_Toggleable_Text_Field = Upfront.Views.Editor.Field.Field.extend({
 		className: "upfront-field-complex_field-boolean_toggleable_text upfront-field-multiple",
-		tpl: '<input type="checkbox" class = "upfront-field-checkbox" /> <label><span class="upfront-field-label-text">{{element_label}}</span></label> <div class="upfront-embedded_toggleable" style="display:none">{{field}}<div class="upfront-embedded_toggleable-notice">' + l10n.anchor_nag + '</div></div>',
+		tpl: '<input type="checkbox" class = "upfront-field-checkbox" /> <label><span class="upfront-field-label-text">{{element_label}}</span></label> <div class="upfront-embedded_toggleable" style="display:none">{{field}}<div class="upfront-embedded_toggleable-notice">' + Upfront.Settings.l10n.global.views.anchor_nag + '</div></div>',
 		initialize: function (opts) {
-			this.prototype.initialize.call(this, opts);
-			this.options.field = new Field_Text(this.options);
+			Upfront.Views.Editor.Field.Field.prototype.initialize.call(this, opts);
+			this.options.field = new Upfront.Views.Editor.Field.Text(this.options);
 		},
 		render: function () {
 			var me = this;
@@ -73,24 +73,27 @@ define([
 
 	var AnchorSettingsModule = BaseModule.extend({
 		className: "upfront-settings-item-anchor",
-		group: false,
+
 		initialize: function (opts) {
 			this.options = opts;
-			BaseModule.prototype.initialize.call(this, this.options);
-			var item = new Field_Complex_Toggleable_Text_Field({
-				element_label: l10n.make_element_anchor,
+
+			var anchorField = new Field_Complex_Toggleable_Text_Field({
+				element_label: Upfront.Settings.l10n.global.views.make_element_anchor,
 				className: 'upfront-field-complex_field-boolean_toggleable_text upfront-field-multiple checkbox-title',
 				model: this.model,
 				property: 'anchor'
 			});
-			item.on("anchor:updated", function () {
+
+			anchorField.on("anchor:updated", function () {
 				this.trigger("anchor:item:updated");
 			}, this);
-			this.fields = _([item]);
+
+			this.fields = _([anchorField]);
 		},
+
 		save_fields: function () {
 			this.fields.invoke("check_value");
-			SettingsItem.prototype.save_fields.call(this);
+			BaseModule.prototype.save_fields.call(this);
 		}
 	});
 

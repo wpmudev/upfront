@@ -1,21 +1,15 @@
 (function ($) {
 define([
-	'scripts/upfront/element-settings/root-panel',
-	'scripts/upfront/settings/fields/slides'
-], function (RootPanel, SlidesField) {
+	'scripts/upfront/element-settings/settings-container',
+	'scripts/upfront/element-settings/root-panel-mixin',
+	'scripts/upfront/settings/field-factory'
+], function (SettingsContainer, RootPanelMixin, FieldFactory) {
 	var l10n = Upfront.Settings && Upfront.Settings.l10n
 		? Upfront.Settings.l10n.global.views
 		: Upfront.mainData.l10n.global.views
 	;
 
-	var ElementSettingsPanel = RootPanel.extend({
-		className: 'uf-settings-panel upfront-settings_panel upfront-settings_panel_wrap',
-		getTitle: function () {
-			var title = this.options.title ? this.options.title : this.title;
-			title = title ? title : 'Element Settings Panel';
-			return title;
-		},
-
+	var RootSettingsPanel = SettingsContainer.extend(_.extend({}, RootPanelMixin, {
 		initialize: function (options) {
 			var me = this,
 				settings = [];
@@ -33,7 +27,7 @@ define([
 				if (settingOptions.className) setting.className = settingOptions.className;
 
 				_.each(settingOptions.fields, function(fieldOptions) {
-					var field = me.getField(fieldOptions.type, _.extend({ model: me.model }, _.omit(fieldOptions, ['type'])));
+					var field = FieldFactory.createField(fieldOptions.type, _.extend({ model: me.model }, _.omit(fieldOptions, ['type'])));
 
 					setting.fields.push(field);
 				});
@@ -44,17 +38,6 @@ define([
 			});
 
 			this.settings = _(settings);
-		},
-
-		getField: function(type, options) {
-			var fieldClasses = {
-				'SlidesField': SlidesField
-			};
-			var fieldClass = Upfront.Views.Editor.Field[type];
-			if (_.isUndefined(fieldClass)) {
-				fieldClass = fieldClasses[type];
-			}
-			return new fieldClass(options);
 		},
 
 		getBody: function () {
@@ -68,8 +51,8 @@ define([
 
 			return $body;
 		}
-	});
+	}));
 
-	return ElementSettingsPanel;
+	return RootSettingsPanel;
 });
 })(jQuery);

@@ -1,14 +1,14 @@
 define([
-	'scripts/upfront/element-settings/panel'
-], function(ElementSettingsPanel) {
-	var AdvancedSettings = ElementSettingsPanel.extend({
+	'scripts/upfront/settings/root-modules-panel'
+], function(RootModulesPanel) {
+	var AdvancedSettings = RootModulesPanel.extend({
 		className: 'uf-settings-panel upfront-settings_panel advanced-settings',
-		settings: [
+		modules: [
 			{
-				type: 'Padding'
+				moduleType: 'Padding'
 			},
 			{
-			 type: 'Anchor'
+			 moduleType: 'Anchor'
 			}
 		],
 		title: 'Advanced Settings'

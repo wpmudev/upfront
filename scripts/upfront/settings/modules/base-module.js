@@ -2,17 +2,6 @@
 define([
 ], function() {
 	var BaseModule = Backbone.View.extend({
-		get_value: function () {
-			if ( this.fields.length == 1 )
-				return this.fields[0].get_value();
-			else if ( this.fields.length > 1 )
-				return this.fields.map(function(field){ return field.get_value(); });
-		},
-
-		get_title: function () {
-			return this.options.title ? this.options.title : '';
-		},
-
 		initialize: function (opts) {
 			var me = this;
 			me.options = opts;

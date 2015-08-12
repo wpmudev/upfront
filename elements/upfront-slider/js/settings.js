@@ -1,9 +1,9 @@
 define([
 	'scripts/upfront/element-settings/settings',
-	'scripts/upfront/element-settings/panel',
+	'scripts/upfront/element-settings/root-settings-panel',
 	'scripts/upfront/preset-settings/util',
 	'text!elements/upfront-slider/tpl/preset-style.html'
-], function(ElementSettings, ElementSettingsPanel, Util, styleTpl) {
+], function(ElementSettings, RootSettingsPanel, Util, styleTpl) {
 	var l10n = Upfront.Settings.l10n.slider_element;
 
 	var AppearancePanelConfig = {
@@ -57,7 +57,7 @@ define([
 		}
 	};
 
-	var LayoutPanel =  ElementSettingsPanel.extend({
+	var LayoutPanel =  RootSettingsPanel.extend({
 		className: 'uf-settings-panel upfront-settings_panel upfront-settings_panel_wrap uslider-settings',
 		settings: [
 			{
@@ -223,7 +223,7 @@ define([
 	});
 
 
-	var SlidesPanel =  ElementSettingsPanel.extend({
+	var SlidesPanel =  RootSettingsPanel.extend({
 		settings: [
 			{
 				type: 'SettingsItem',

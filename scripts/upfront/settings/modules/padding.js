@@ -4,7 +4,6 @@ define([
 	var l10n = Upfront.Settings.l10n.preset_manager;
 	var PaddingSettingsModule = BaseModule.extend({
 		className: 'padding-settings sidebar-settings clearfix',
-		group: false,
 
 		initialize: function(options) {
 			this.options = options || {};

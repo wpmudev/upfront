@@ -1,8 +1,8 @@
 (function ($) {
 define([
 	'scripts/upfront/element-settings/settings',
-	'scripts/upfront/element-settings/panel'
-], function (ElementSettings, ElementSettingsPanel) {
+	'scripts/upfront/element-settings/root-settings-panel'
+], function (ElementSettings, RootSettingsPanel) {
 	var l10n = Upfront.Settings.l10n.widget_element;
 
 	// Settings - load widget list first before adding object
@@ -140,7 +140,7 @@ define([
 			})
 			widget_values.unshift({label: l10n.select_one, value: ''});
 
-			var panel = new ElementSettingsPanel({
+			var panel = new RootSettingsPanel({
 				model: this.model,
 				label: l10n.widget,
 				title: l10n.settings,

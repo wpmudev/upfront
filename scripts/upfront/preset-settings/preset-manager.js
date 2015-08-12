@@ -1,11 +1,11 @@
 (function($) {
 define([
-	'scripts/upfront/element-settings/root-panel',
+	'scripts/upfront/element-settings/root-settings-panel',
 	'scripts/upfront/settings/modules/select-preset',
 	'scripts/upfront/settings/modules/edit-preset',
 	'scripts/upfront/settings/modules/preset-css',
 	'scripts/upfront/preset-settings/util'
-], function(RootPanel, SelectPresetModule, EditPresetModule, PresetCssModule, Util) {
+], function(RootSettingsPanel, SelectPresetModule, EditPresetModule, PresetCssModule, Util) {
 	/**
 	 * Handles presets: load, edit, delete and update for elements.
 	 *
@@ -26,7 +26,7 @@ define([
 	 *
 	 * styleTpl - Upfront.Util.template parsed styles template
 	 */
-	var PresetManager = RootPanel.extend({
+	var PresetManager = RootSettingsPanel.extend({
 		className: 'uf-settings-panel upfront-settings_panel preset-manager-panel',
 
 		initialize: function (options) {

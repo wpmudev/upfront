@@ -1,11 +1,11 @@
 (function ($) {
 define([
 	'elements/upfront-gallery/js/settings/thumbnail-fields',
-	'scripts/upfront/element-settings/panel'
-], function(ThumbnailFields, ElementSettingsPanel) {
+	'scripts/upfront/element-settings/root-settings-panel'
+], function(ThumbnailFields, RootSettingsPanel) {
 	var l10n = Upfront.Settings.l10n.gallery_element;
 
-	var LayoutPanel = ElementSettingsPanel.extend({
+	var LayoutPanel = RootSettingsPanel.extend({
 		className: 'upfront-settings_panel_wrap ugallery-settings',
 		initialize: function (opts) {
 			this.options = opts;

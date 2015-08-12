@@ -1,12 +1,12 @@
 define([
 	'scripts/upfront/element-settings/settings',
-	'scripts/upfront/element-settings/panel',
+	'scripts/upfront/element-settings/root-settings-panel',
 	'scripts/upfront/preset-settings/util',
 	'text!elements/upfront-contact-form/templates/preset-style.html'
-], function(ElementSettings, ElementSettingsPanel, Util, styleTpl) {
+], function(ElementSettings, RootSettingsPanel, Util, styleTpl) {
 	var l10n = Upfront.Settings.l10n.contact_element;
 
-	var GeneralPanel = ElementSettingsPanel.extend({
+	var GeneralPanel = RootSettingsPanel.extend({
 		label: 'Empty label',
 		title: l10n.general.label,
 		settings: [

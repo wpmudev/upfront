@@ -1,10 +1,10 @@
 (function ($) {
 define([
 	'scripts/upfront/element-settings/settings',
-	'scripts/upfront/element-settings/panel',
+	'scripts/upfront/element-settings/root-settings-panel',
 	'text!elements/upfront-youtube/tpl/youtube.html',
 	'text!elements/upfront-youtube/tpl/clonevideo.html'
-], function(ElementSettings, ElementSettingsPanel, youtubeTpl, cloneTpl) {
+], function(ElementSettings, RootSettingsPanel, youtubeTpl, cloneTpl) {
 
 var l10n = Upfront.Settings.l10n.youtube_element;
 
@@ -185,7 +185,7 @@ var Disablable_Field_Number = Upfront.Views.Editor.Field.Text.extend({
 	}
 });
 
-var BehaviorPanel = ElementSettingsPanel.extend({
+var BehaviorPanel = RootSettingsPanel.extend({
 	className: 'uyoutube-settings',
 	tabbed: false,
 	initialize: function (opts) {
@@ -326,7 +326,7 @@ var BehaviorPanel = ElementSettingsPanel.extend({
 
 	render: function() {
 		var me = this;
-		ElementSettingsPanel.prototype.render.call(this);
+		RootSettingsPanel.prototype.render.call(this);
 
 		this.listMultipleVideos();
 		setTimeout(function(){

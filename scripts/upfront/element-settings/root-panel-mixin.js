@@ -1,13 +1,7 @@
 (function ($) {
 define([
-	'scripts/upfront/element-settings/saveable-settings-panel'
-], function (SaveableSettingsPanel) {
-	var l10n = Upfront.Settings && Upfront.Settings.l10n
-		? Upfront.Settings.l10n.global.views
-		: Upfront.mainData.l10n.global.views
-	;
-
-	var RootPanel = SaveableSettingsPanel.extend({
+], function () {
+	var RootPanelMixin = {
 		className: 'uf-settings-panel upfront-settings_panel',
 
 		events: {
@@ -15,7 +9,9 @@ define([
 		},
 
 		getTitle: function () {
-			return this.options.title ? this.options.title : 'Settings Panel Base';
+			var title = this.options.title ? this.options.title : this.title;
+			title = title ? title : 'Default Panel Title';
+			return title;
 		},
 
 		/**
@@ -40,19 +36,9 @@ define([
 			body = this.getBody();
 			body.addClass('uf-settings-panel__body');
 			this.$el.append(body);
-		},
-
-		cleanUp: function() {
-			if(this.settings)
-				this.settings.each(function(setting){
-					setting.remove();
-				});
-			this.$el.off();
-			this.remove();
 		}
+	};
 
-	});
-
-	return RootPanel;
+	return RootPanelMixin;
 });
 })(jQuery);

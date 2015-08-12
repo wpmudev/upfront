@@ -1,8 +1,8 @@
 (function ($) {
   define([
 		'scripts/upfront/element-settings/settings',
-		'scripts/upfront/element-settings/panel'
-	], function(ElementSettings, ElementSettingsPanel) {
+		'scripts/upfront/element-settings/root-settings-panel'
+	], function(ElementSettings, RootSettingsPanel) {
 
 	var l10n = Upfront.Settings.l10n.like_box_element;
 
@@ -209,7 +209,7 @@
 	 * Social Media settings hub, populated with the panels we'll be showing.
 	 * @type {Upfront.Views.Editor.Settings.Settings}
 	 */
-	var GeneralPanel =ElementSettingsPanel.extend({
+	var GeneralPanel = RootSettingsPanel.extend({
 		settings: [
 			{
 				type: 'SettingsItem',
@@ -225,11 +225,12 @@
 						compact: true
 					},
 					{
-						type: 'Upfront.Views.Editor.Settings.Settings_CSS'
+						type: 'Settings_CSS'
 					}
 				]
 			}
-		]
+		],
+		title: 'General Settings'
 	});
 	var LikeBoxSettings = ElementSettings.extend({
 		panels: {

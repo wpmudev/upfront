@@ -1,8 +1,7 @@
 define([
 	'scripts/upfront/element-settings/settings',
-	'scripts/upfront/element-settings/panel',
 	'elements/upfront-newnavigation/js/settings/appearance-panel',
-], function(ElementSettings, ElementSettingsPanel, AppearancePanel) {
+], function(ElementSettings, AppearancePanel) {
 	var l10n = Upfront.Settings.l10n.newnavigation_element;
 
 	var Menu_Panel = Upfront.Views.Editor.Settings.Panel.extend({
