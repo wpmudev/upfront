@@ -1,16 +1,162 @@
 define([
 	'scripts/upfront/element-settings/settings',
+	'scripts/upfront/element-settings/root-settings-panel',
 	'elements/upfront-newnavigation/js/settings/appearance-panel',
-], function(ElementSettings, AppearancePanel) {
+	'elements/upfront-newnavigation/js/menu-util'
+], function(ElementSettings, RootSettingsPanel, AppearancePanel, MenuUtil) {
 	var l10n = Upfront.Settings.l10n.newnavigation_element;
 
-	var Menu_Panel = Upfront.Views.Editor.Settings.Panel.extend({
+	var Menu_Panel = RootSettingsPanel.extend({
 		className: 'upfront-settings_panel_wrap menu-settings',
+		title: l10n.mnu.title,
+		settings: [
+			{
+				type: 'SettingsItem',
+				title: l10n.mnu.load,
+				fields: [
+					{
+						type: 'Select',
+						property: 'menu_id',
+						label: "",
+						values: MenuUtil.getMenuList(),
+						change: function(value, me) {
+							if (value == -1) {
+								MenuUtil.set({menu_id: false, menu_slug: false});
+								me.model.set_property('menu_slug', false);
+								me.model.set_property('menu_id', false);
+								return;
+							}
+							// Menu slug is dependent on menu id, update it here
+							var slug = MenuUtil.getMenuSlugById(value);
+							me.model.set_property('menu_slug', slug);
+						}
+					}
+					// new Upfront.Views.Editor.Field.Checkboxes({
+						// model: this.model,
+						// property: 'burger_menu',
+						// label: "",
+						// values: [
+							// { label: l10n.mnu.use + " <i class='upfront-field-icon upfront-field-icon-burger-trigger'></i> " + l10n.mnu.btn, value: 'yes' }
+						// ],
+						// change: function() {
+							// var value = this.get_value();
+							// if(value[0] == 'yes') {
+								// me.panels[0].settings._wrapped[1].$el.css('display', 'block');
+								// me.panels[0].settings._wrapped[2].$el.css('display', 'none');
+							// }
+							// else {
+								// me.panels[0].settings._wrapped[1].$el.css('display', 'none');
+								// me.panels[0].settings._wrapped[2].$el.css('display', 'block');
+							// }
+						// }
+					// })
+				]
+			}
+			// new Upfront.Views.Editor.Settings.Item({
+				// model: this.model,
+				// title: l10n.mnu.appearance,
+				// fields: [
+					// new Upfront.Views.Editor.Field.Radios({
+						// model: this.model,
+						// property: 'burger_alignment',
+						// default_value: 'left',
+						// label: "",
+						// layout: "vertical",
+						// values: [
+							// { label: l10n.mnu.left, value: 'left', icon: 'burger-left'},
+							// { label: l10n.mnu.right, value: 'right', icon: 'burger-right'},
+							// { label: l10n.mnu.top, value: 'top', icon: 'burger-top'},
+							// { label: l10n.mnu.whole, value: 'whole', icon: 'burger-whole'}
+						// ],
+						// change: function() {
+							// var value = this.get_value();
+							// if(value == 'left' || value == 'right' || value == 'whole') {
+								// me.panels[0].settings._wrapped[1].fields._wrapped[1].$el.hide();
+								// me.panels[0].settings._wrapped[1].fields._wrapped[1].set_value("over");
+							// }
+							// else {
+								// me.panels[0].settings._wrapped[1].fields._wrapped[1].$el.show();
+							// }
+						// }
+					// }),
+					// new Upfront.Views.Editor.Field.Radios({
+						// model: this.model,
+						// property: 'burger_over',
+						// default_value: 'over',
+						// label: "",
+						// layout: "vertical",
+						// values: [
+							// { label: l10n.mnu.over, value: 'over' },
+							// { label: l10n.mnu.push, value: 'pushes' }
+						// ]
+					// })
+				// ]
+			// }),
+			// new Upfront.Views.Editor.Settings.Item({
+				// model: this.model,
+				// title: l10n.mnu.style,
+				// fields: [
+					// new Upfront.Views.Editor.Field.Radios({
+						// model: this.model,
+						// className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios menu_style',
+						// property: 'menu_style',
+						// default_value: 'horizontal',
+						// label: "",
+						// values: [
+							// { label: l10n.mnu.horiz, value: 'horizontal' },
+							// { label: l10n.mnu.vert, value: 'vertical' }
+						// ]
+					// })
+				// ]
+			// }),
+			// new Upfront.Views.Editor.Settings.Item({
+				// model: this.model,
+				// title: l10n.mnu.aligh,
+				// fields: [
+					// new Upfront.Views.Editor.Field.Radios({
+						// model: this.model,
+						// property: 'menu_alignment',
+						// default_value: 'left',
+						// label: "",
+						// layout: "vertical",
+						// values: [
+							// { label: l10n.mnu.left, value: 'left', icon: 'navigation-left' },
+							// { label: l10n.mnu.center, value: 'center', icon: 'navigation-center' },
+							// { label: l10n.mnu.right, value: 'right', icon: 'navigation-right' }
+						// ]
+					// })
+				// ]
+			// }),
+			// new Upfront.Views.Editor.Settings.Item({
+				// model: this.model,
+				// title: l10n.mnu.behavior,
+				// fields: [
+					// new Upfront.Views.Editor.Field.Checkboxes({
+							// model: this.model,
+							// property: 'allow_new_pages',
+							// label: "",
+							// values: [
+									// { label: l10n.mnu.auto_add, value: 'yes' }
+							// ]
+					// }),
+					// new Upfront.Views.Editor.Field.Checkboxes({
+							// model: this.model,
+							// property: 'is_floating',
+							// label: "",
+							// values: [
+									// { label: l10n.mnu.float, value: 'yes' }
+							// ]
+					// })
+				// ]
+			// })
+		],
 		save_settings: function(){
 			Menu_Panel.__super__.save_settings.apply(this, arguments);
 			this.model.set_property('menu_items', false, true);
 		},
 		on_save: function() {
+			//TODO this needs to be re-written to catch values from settings not from fields
+			return;
 			var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
 			var current_set_value = this.settings._wrapped[0].fields._wrapped[1].$el.find('input:checked').val();
 			var current_set_alignment = this.settings._wrapped[1].fields._wrapped[0].$el.find('input:checked').val();
@@ -20,7 +166,7 @@ define([
 			var current_set_is_floating = this.settings._wrapped[4].fields._wrapped[1].$el.find('input:checked').val();
 			if(typeof(current_set_is_floating) == 'undefined')
 				current_set_is_floating = 'no';
-			
+
 			model_breakpoint = Upfront.Util.clone(this.model.get_property_value_by_name('breakpoint') || {});
 
 			if ( breakpoint && !breakpoint.default ){
@@ -104,12 +250,11 @@ define([
 		},
 	});
 
-
 	var NavigationSettings = ElementSettings.extend({
-		/**
-		 * Bootstrap the object - populate the internal
-		 * panels array with the panel instances we'll be showing.
-		 */
+		panels: {
+			General: Menu_Panel,
+			Appearance: AppearancePanel
+		},
 		render: function() {
 			this.constructor.__super__.render.call(this);
 			var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
@@ -209,180 +354,17 @@ define([
 			}
 
 			// this is to turn on the display for revealed menu alignment settings in case the option is selected
-			if(this.panels[0].settings._wrapped[0].fields._wrapped[1].$el.find('input:checked').length > 0) {
-				this.panels[0].settings._wrapped[1].$el.css('display', 'block');
-				this.panels[0].settings._wrapped[2].$el.css('display', 'none');
+			// if(this.panels[0].settings._wrapped[0].fields._wrapped[1].$el.find('input:checked').length > 0) {
+				// this.panels[0].settings._wrapped[1].$el.css('display', 'block');
+				// this.panels[0].settings._wrapped[2].$el.css('display', 'none');
 
-				if(this.panels[0].settings._wrapped[1].fields._wrapped[0].get_value() == "left" || this.panels[0].settings._wrapped[1].fields._wrapped[0].get_value() == "right" || this.panels[0].settings._wrapped[1].fields._wrapped[0].get_value() == "whole")
-					this.panels[0].settings._wrapped[1].fields._wrapped[1].$el.hide();
-			}
-			else {
-				this.panels[0].settings._wrapped[1].$el.css('display', 'none');
-				this.panels[0].settings._wrapped[2].$el.css('display', 'block');
-			}
-		},
-		initialize: function (opts) {
-			var me = this,
-				menuList = Upfront.data.unewnavigation.currentMenuItemData.get('menuList')
-			;
-			this.has_tabs = false;
-			this.options= opts;
-			menuList.push({label: l10n.create_new, value: -1});
-			this.panels = [
-				// Menu
-				new Menu_Panel({
-					model: this.model,
-					label: l10n.mnu.label,
-					title: l10n.mnu.title,
-					settings: [
-						new Upfront.Views.Editor.Settings.Item({
-							model: this.model,
-							title: l10n.mnu.load,
-							fields: [
-								new Upfront.Views.Editor.Field.Select({
-									model: this.model,
-									property: 'menu_id',
-									label: "",
-									values: menuList,
-									change: function(value) {
-										if(value == -1) {
-											delete menuList[menuList.length-1];
-											Upfront.data.unewnavigation.currentMenuItemData.set({menu_id: false, menu_slug: false});
-											me.model.set_property('menu_slug', false);
-											me.model.set_property('menu_id', false);
-											me.for_view.property('menu_slug', false, true);
-											me.for_view.property('menu_id', false);
-											me.close_panel();
-										}
-									}
-								}),
-								new Upfront.Views.Editor.Field.Checkboxes({
-									model: this.model,
-									property: 'burger_menu',
-									label: "",
-									values: [
-										{ label: l10n.mnu.use + " <i class='upfront-field-icon upfront-field-icon-burger-trigger'></i> " + l10n.mnu.btn, value: 'yes' }
-									],
-									change: function() {
-										var value = this.get_value();
-										if(value[0] == 'yes') {
-											me.panels[0].settings._wrapped[1].$el.css('display', 'block');
-											me.panels[0].settings._wrapped[2].$el.css('display', 'none');
-										}
-										else {
-											me.panels[0].settings._wrapped[1].$el.css('display', 'none');
-											me.panels[0].settings._wrapped[2].$el.css('display', 'block');
-										}
-									}
-								})
-							]
-						}),
-						new Upfront.Views.Editor.Settings.Item({
-							model: this.model,
-							title: l10n.mnu.appearance,
-							fields: [
-								new Upfront.Views.Editor.Field.Radios({
-									model: this.model,
-									property: 'burger_alignment',
-									default_value: 'left',
-									label: "",
-									layout: "vertical",
-									values: [
-										{ label: l10n.mnu.left, value: 'left', icon: 'burger-left'},
-										{ label: l10n.mnu.right, value: 'right', icon: 'burger-right'},
-										{ label: l10n.mnu.top, value: 'top', icon: 'burger-top'},
-										{ label: l10n.mnu.whole, value: 'whole', icon: 'burger-whole'}
-									],
-									change: function() {
-										var value = this.get_value();
-										if(value == 'left' || value == 'right' || value == 'whole') {
-											me.panels[0].settings._wrapped[1].fields._wrapped[1].$el.hide();
-											me.panels[0].settings._wrapped[1].fields._wrapped[1].set_value("over");
-										}
-										else {
-											me.panels[0].settings._wrapped[1].fields._wrapped[1].$el.show();
-										}
-									}
-								}),
-								new Upfront.Views.Editor.Field.Radios({
-									model: this.model,
-									property: 'burger_over',
-									default_value: 'over',
-									label: "",
-									layout: "vertical",
-									values: [
-										{ label: l10n.mnu.over, value: 'over' },
-										{ label: l10n.mnu.push, value: 'pushes' }
-									]
-								})
-							]
-						}),
-						new Upfront.Views.Editor.Settings.Item({
-							model: this.model,
-							title: l10n.mnu.style,
-							fields: [
-								new Upfront.Views.Editor.Field.Radios({
-									model: this.model,
-									className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios menu_style',
-									property: 'menu_style',
-									default_value: 'horizontal',
-									label: "",
-									values: [
-										{ label: l10n.mnu.horiz, value: 'horizontal' },
-										{ label: l10n.mnu.vert, value: 'vertical' }
-									]
-								})
-							]
-						}),
-						new Upfront.Views.Editor.Settings.Item({
-							model: this.model,
-							title: l10n.mnu.aligh,
-							fields: [
-								new Upfront.Views.Editor.Field.Radios({
-									model: this.model,
-									property: 'menu_alignment',
-									default_value: 'left',
-									label: "",
-									layout: "vertical",
-									values: [
-										{ label: l10n.mnu.left, value: 'left', icon: 'navigation-left' },
-										{ label: l10n.mnu.center, value: 'center', icon: 'navigation-center' },
-										{ label: l10n.mnu.right, value: 'right', icon: 'navigation-right' }
-									]
-								})
-							]
-						}),
-						new Upfront.Views.Editor.Settings.Item({
-							model: this.model,
-							title: l10n.mnu.behavior,
-							fields: [
-								new Upfront.Views.Editor.Field.Checkboxes({
-										model: this.model,
-										property: 'allow_new_pages',
-										label: "",
-										values: [
-												{ label: l10n.mnu.auto_add, value: 'yes' }
-										]
-								}),
-								new Upfront.Views.Editor.Field.Checkboxes({
-										model: this.model,
-										property: 'is_floating',
-										label: "",
-										values: [
-												{ label: l10n.mnu.float, value: 'yes' }
-										]
-								})
-							]
-						})
-					]
-				}).on('upfront:settings:panel:saved', this.onSaveSettings, this),
-
-				//Menu Apperance
-
-				new AppearancePanel({
-					model: this.model
-				})
-			];
+				// if(this.panels[0].settings._wrapped[1].fields._wrapped[0].get_value() == "left" || this.panels[0].settings._wrapped[1].fields._wrapped[0].get_value() == "right" || this.panels[0].settings._wrapped[1].fields._wrapped[0].get_value() == "whole")
+					// this.panels[0].settings._wrapped[1].fields._wrapped[1].$el.hide();
+			// }
+			// else {
+				// this.panels[0].settings._wrapped[1].$el.css('display', 'none');
+				// this.panels[0].settings._wrapped[2].$el.css('display', 'block');
+			// }
 		},
 		onSaveSettings: function() {
 

@@ -10,11 +10,11 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 		$menu_id = $this->_get_property('menu_id');
 		$menu_slug = $this->_get_property('menu_slug');
 		$preset = $this->_get_property('preset');
-		
+
 		if (!isset($preset)) {
 			$preset = 'default';
 		}
-		
+
 		$properties = Upfront_Nav_Presets_Server::get_instance()->get_preset_properties($preset);
 
 		$layout_settings = json_decode($this->_get_property('layout_setting'));
@@ -40,7 +40,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 		$menu_aliment = $properties['menu_alingment'];
 		$sub_navigation = $this->_get_property('allow_sub_nav');
 		$is_floating = $this->_get_property('is_floating');
-		
+
 		$menu_style = $menu_style ? "data-style='{$menu_style}' data-stylebk='{$menu_style}'" : "";
 		$breakpoint_data = $breakpoint_data ? "data-breakpoints='{$breakpoint_data}'" : "";
 		$menu_aliment = $menu_aliment ? "data-aliment='{$menu_aliment}' data-alimentbk='{$menu_aliment}'" : "";
@@ -56,7 +56,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 			//wp_enqueue_script('unewnavigation', upfront_element_url('js/public.js', dirname(__FILE__)));
 			upfront_add_element_script('unewnavigation', array('js/public.js', dirname(__FILE__)));
 		}
-		
+
 		//wp_enqueue_script('unewnavigation_responsive', upfront_element_url('js/responsive.js', dirname(__FILE__)));
 		upfront_add_element_script('unewnavigation_responsive', array('js/responsive.js', dirname(__FILE__)));
 
@@ -168,8 +168,8 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 			'link_name' => __('Link Name', 'upfront'),
 			'mnu' => array(
 				'label' => __('Menu', 'upfront'),
-				'title' => __('Menu settings', 'upfront'),
-				'load' => __('Load Different Menu', 'upfront'),
+				'title' => __('General Settings', 'upfront'),
+				'load' => __('Select Menu to Use', 'upfront'),
 				'create' => __('or Create New', 'upfront'),
 				'use' => __('Use', 'upfront'),
 				'btn' => __('button to open menu', 'upfront'),
@@ -240,7 +240,7 @@ class Upfront_newMenuSetting extends Upfront_Server {
 		upfront_add_ajax('upfront_new_update_menu_order', array($this, "update_menu_order"));
 		upfront_add_ajax('upfront_new_create_menu', array($this, "create_menu"));
 		upfront_add_ajax('upfront_new_rename_menu', array($this, "rename_menu"));
-		
+
 		upfront_add_ajax('upfront_new_update_menu_item', array($this, "update_menu_item"));
 		upfront_add_ajax('upfront_new_update_auto_add_pages', array($this, "update_auto_add_pages"));
 	}
@@ -514,7 +514,7 @@ Upfront_newMenuSetting::serve();
 
 class upfront_nav_walker extends Walker_Nav_Menu
 {
-    
+
 
     public function start_el( &$output, $item, $depth = 0, $args = array(), $id = 0 ) {
 		$indent = ( $depth ) ? str_repeat( "\t", $depth ) : '';

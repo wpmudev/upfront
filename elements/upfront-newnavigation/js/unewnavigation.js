@@ -6,23 +6,11 @@ define([
 	'elements/upfront-newnavigation/js/settings',
 	'text!elements/upfront-newnavigation/tpl/preset-style.html',
 	'scripts/upfront/preset-settings/util',
-	'elements/upfront-newnavigation/js/floating'
-], function(MenuItemView, UnewnavigationModel, UnewnavigationElement, NavigationSettings, settingsStyleTpl, PresetUtil, NavigationFloating) {
+	'elements/upfront-newnavigation/js/floating',
+	'elements/upfront-newnavigation/js/menu-util'
+], function(MenuItemView, UnewnavigationModel, UnewnavigationElement, NavigationSettings, settingsStyleTpl, PresetUtil, NavigationFloating, MenuUtil) {
 
 var l10n = Upfront.Settings.l10n.newnavigation_element;
-
-var CurrentMenuItemData = Backbone.Model.extend({
-	defaults: {
-		'id':  false,
-		'name':  false,
-		'url':  false,
-		'model_true':  true,
-		"menu_id":     false,
-		"menuList":    false
-	}
-});
-Upfront.data.unewnavigation.currentMenuItemData = Upfront.data.unewnavigation.currentMenuItemData || new CurrentMenuItemData();
-
 
 /**
  * View instance - what the element looks like.
@@ -55,7 +43,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		// get all menus
 		this.getMenus();
 		var menu_id = this.model.get_property_value_by_name('menu_id');
-		Upfront.data.unewnavigation.currentMenuItemData.set({model_true:false, menu_id: menu_id});
+		MenuUtil.set({model_true:false, menu_id: menu_id});
 
 		// call this function on allow_new_pages change
 		if (!!this.model.get_property_by_name('allow_new_pages')) {
@@ -381,7 +369,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				var values = _.map(ret.data, function (each, index) {
 					return  {label: each.name, value: each.term_id};
 				});
-				Upfront.data.unewnavigation.currentMenuItemData.set({menuList: values});
+				MenuUtil.setMenuList(values);
 				if(!me.property('menu_id')) me.display_menu_list();
 			})
 			.error(function (ret) {
@@ -392,7 +380,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	display_menu_list: function () {
 		var me = this,
 			menuItemsValues = [{label:l10n.choose_existing_menu, value: 0}],
-			menuList = Upfront.data.unewnavigation.currentMenuItemData.get('menuList')
+			menuList = MenuUtil.getMenuList()
 		;
 		var clubbedvalues = [];
 		if(typeof(menuList) != 'undefined'){
