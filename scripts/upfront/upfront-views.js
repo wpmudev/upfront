@@ -1166,11 +1166,11 @@ define([
 			updateControls: function() {
 				var elementControlsTpl = '<div class="upfront-element-controls upfront-ui"></div>';
 
+				if(this.paddingControl && typeof this.paddingControl.isOpen !== 'undefined' && this.paddingControl.isOpen)	return;
+
 				this.controls = this.createControls();
 
-				if (this.controls === false) {
-					return;
-				}
+				if (this.controls === false) 	return;
 
 				this.controls.render();
 

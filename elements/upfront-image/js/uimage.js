@@ -560,7 +560,7 @@ define([
 			}
 
 			setTimeout(function() {
-				me.updateControls(elementSize.width, elementSize.height);
+				me.updateControls();
 				me.$el.removeClass('upfront-editing');
 
 				me.editCaption();
@@ -811,7 +811,7 @@ define([
 				}
 			}
 
-			this.updateControls(data.elementSize.width, data.elementSize.height);
+			this.updateControls();
 			this.setupBySize();
 		},
 
