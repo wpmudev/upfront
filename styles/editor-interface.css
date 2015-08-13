@@ -5331,51 +5331,54 @@ a.upfront-region-name-edit-trigger:before {
 /* .upfront-editable_entity:hover > .upfront-entity-size-hint, */
 /* line 603, sass/partials/_layout-grid-module-object.scss */
 .upfront-editable_entity.ui-resizable-resizing > .upfront-entity-size-hint,
-.upfront-module.ui-resizable-resizing > .upfront-objects_container > .upfront-editable_entities_container > .upfront-object-view > .upfront-entity-size-hint {
+.upfront-module:not(.upfront-module-active):hover .upfront-entity-size-hint,
+.upfront-wrapper.ui-resizable-resizing .upfront-editable_entity > .upfront-entity-size-hint,
+.upfront-module.ui-resizable-resizing > .upfront-objects_container > .upfront-editable_entities_container > .upfront-object-view > .upfront-entity-size-hint,
+.upfront-wrapper.ui-resizable-resizing .upfront-module > .upfront-objects_container > .upfront-editable_entities_container > .upfront-object-view > .upfront-entity-size-hint {
   display: block; }
 
-/* line 608, sass/partials/_layout-grid-module-object.scss */
+/* line 611, sass/partials/_layout-grid-module-object.scss */
 .upfront-module-group-on-edit > .upfront-entity-size-hint,
 .upfront-module-group-on-edit:hover > .upfront-entity-size-hint {
   display: none; }
 
 /* Group Element Link Panel Style */
-/* line 615, sass/partials/_layout-grid-module-object.scss */
+/* line 618, sass/partials/_layout-grid-module-object.scss */
 .upfront-module-group > .uimage-controls.image-element-controls .upfront-inline-panel .upfront-inline-panel-item.labeled {
   width: auto !important;
   min-width: 0px !important;
   line-height: inherit !important;
   padding-left: 0; }
 
-/* line 621, sass/partials/_layout-grid-module-object.scss */
+/* line 624, sass/partials/_layout-grid-module-object.scss */
 .upfront-module-group > .uimage-controls.image-element-controls .upfront-inline-panel .upfront-inline-panel-item.labeled i {
   display: inline-block; }
 
-/* line 624, sass/partials/_layout-grid-module-object.scss */
+/* line 627, sass/partials/_layout-grid-module-object.scss */
 .upfront-module-group > .uimage-controls.image-element-controls .upfront-inline-panel .upfront-inline-panel-item.labeled span {
   display: inline-block;
   width: auto !important; }
 
-/* line 628, sass/partials/_layout-grid-module-object.scss */
+/* line 631, sass/partials/_layout-grid-module-object.scss */
 .upfront-module-group > .uimage-controls.image-element-controls {
   display: block;
   visibility: hidden;
   bottom: -30px;
   left: 0; }
 
-/* line 634, sass/partials/_layout-grid-module-object.scss */
+/* line 637, sass/partials/_layout-grid-module-object.scss */
 .upfront-module-group > .uimage-controls.image-element-controls .upfront-inline-panel {
   visibility: hidden; }
 
-/* line 637, sass/partials/_layout-grid-module-object.scss */
+/* line 640, sass/partials/_layout-grid-module-object.scss */
 .upfront-module-group.controls-visible > .uimage-controls.image-element-controls {
   visibility: visible; }
 
-/* line 640, sass/partials/_layout-grid-module-object.scss */
+/* line 643, sass/partials/_layout-grid-module-object.scss */
 .upfront-module-group.controls-visible > .uimage-controls.image-element-controls .upfront-inline-panel {
   visibility: visible; }
 
-/* line 643, sass/partials/_layout-grid-module-object.scss */
+/* line 646, sass/partials/_layout-grid-module-object.scss */
 .upfront-module-group > .open-item-controls {
   display: block;
   width: 30px;
@@ -5391,26 +5394,26 @@ a.upfront-region-name-edit-trigger:before {
   background-image: -ms-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
   background-image: linear-gradient(-179deg, #2F445D 0%, #152841 100%); }
 
-/* line 658, sass/partials/_layout-grid-module-object.scss */
+/* line 661, sass/partials/_layout-grid-module-object.scss */
 .upfront-module-group:hover > .open-item-controls,
 .upfront-module-group.controls-visible > .open-item-controls {
   display: block; }
 
-/* line 662, sass/partials/_layout-grid-module-object.scss */
+/* line 665, sass/partials/_layout-grid-module-object.scss */
 .upfront-module-group > .uimage-controls .upfront-inline-panel {
   background-image: none;
   box-shadow: none;
   width: 300px !important; }
 
-/* line 667, sass/partials/_layout-grid-module-object.scss */
+/* line 670, sass/partials/_layout-grid-module-object.scss */
 .upfront-module-group > .uimage-controls .inline-panel-control-dialog {
   min-width: 190px; }
 
-/* line 670, sass/partials/_layout-grid-module-object.scss */
+/* line 673, sass/partials/_layout-grid-module-object.scss */
 .upfront-module-group > .uimage-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-control-dialog-open:first-child {
   height: 31px !important; }
 
-/* line 673, sass/partials/_layout-grid-module-object.scss */
+/* line 676, sass/partials/_layout-grid-module-object.scss */
 .upfront-module-group > .uimage-controls .upfront-inline-panel .upfront-inline-panel-item {
   background-image: -moz-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
   background-image: -ms-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
@@ -5419,7 +5422,7 @@ a.upfront-region-name-edit-trigger:before {
   box-shadow: inset 0px -1px 0px 0px #43607A, inset 0px 1px 0px 0px #26394A; }
 
 /* Collapsed control */
-/* line 681, sass/partials/_layout-grid-module-object.scss */
+/* line 684, sass/partials/_layout-grid-module-object.scss */
 .upfront-module-group > .open-item-controls:before {
   background-image: url(../img/uf-core-el-sprite.svg);
   content: " ";
@@ -5434,7 +5437,7 @@ a.upfront-region-name-edit-trigger:before {
   cursor: pointer;
   position: absolute; }
 
-/* line 695, sass/partials/_layout-grid-module-object.scss */
+/* line 698, sass/partials/_layout-grid-module-object.scss */
 .upfront-module-group > .uimage-controls a {
   padding: 0;
   font-size: 13px;
@@ -10311,7 +10314,7 @@ div.sp-replacer:before {
   z-index: 0; }
 
 /* line 1, sass/partials/_inline-controls-panel.scss */
-.upfront-module.upfront-module-active:not(.ui-resizable-resizing) .upfront-element-controls {
+.upfront-wrapper:not(.ui-resizable-resizing) .upfront-module.upfront-module-active:not(.ui-resizable-resizing) .upfront-element-controls {
   display: block; }
 
 /* line 4, sass/partials/_inline-controls-panel.scss */

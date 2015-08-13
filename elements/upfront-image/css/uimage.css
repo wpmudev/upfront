@@ -980,7 +980,9 @@ a.image-edit-button.deactivated:hover {
 .uimage-resize-hint {
 	display: none;
 }
+.upfront-wrapper.ui-resizable-resizing .uimage-resize-hint, 
 .upfront-module.ui-resizable-resizing:hover .uimage-resize-hint, 
+.upfront-module:not(.upfront-module-active):hover .uimage-resize-hint,
 .upfront-module-active.ui-resizable-resizing .uimage-resize-hint {
 	display: block;
 }
