@@ -52,6 +52,8 @@ define([
 				Upfront.Events.trigger("command:layout:save_as");
 			else
 				Upfront.Events.trigger("command:layout:save");
+
+			if (this.onSaveSettings) this.onSaveSettings();
 		},
 
 		render: function () {

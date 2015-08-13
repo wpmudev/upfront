@@ -17,6 +17,9 @@ define([], function () {
 					}
 				}
 			});
+			// some backward compatibility
+			if (this.on_save) this.on_save();
+			if (this.onSaveSettings) this.onSaveSettings();
 		},
 
 		cleanUp: function() {
