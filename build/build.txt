@@ -146,6 +146,7 @@ text!elements/upfront-maps/css/edit.css
 /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/elements/upfront-newnavigation/js/model.js
 /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/elements/upfront-newnavigation/js/element.js
 /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/elements/upfront-newnavigation/js/settings.js
+/Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/elements/upfront-newnavigation/js/floating.js
 /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/elements/upfront-newnavigation/js/unewnavigation.js
 text!elements/upfront-button/tpl/ubutton.html
 /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/elements/upfront-button/js/ubutton.js

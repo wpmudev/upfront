@@ -337,10 +337,10 @@ jQuery(document).ready(function($) {
 						$(this).closest('div.upfront-newnavigation_module').css('z-index', '');
 					}
 
-					if(bparray[key]['is_floating'] == 'no')
-						$(this).removeClass('upfront-navigation-float');
-					else
+					if(bparray[key]['is_floating'] && bparray[key]['is_floating'] == 'yes')
 						$(this).addClass('upfront-navigation-float');
+					else
+						$(this).removeClass('upfront-navigation-float');
 
 				}
 			}
