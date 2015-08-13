@@ -1219,8 +1219,10 @@ define([
 				]);
 			},
 			update: function (prop, options) {
-				var prev_value = prop._previousAttributes.value,
-					value = prop.get('value'),
+				if (typeof prop === 'undefined')	return;
+
+				// var prev_value = prop._previousAttributes.value,
+				var value = prop.get('value'),
 					$me = this.$el.find('.upfront-editable_entity:first'),
 					grid = Upfront.Settings.LayoutEditor.Grid
 				;
@@ -1241,6 +1243,7 @@ define([
 				}
 				else if ( prop.id == 'breakpoint' ){
 					this.update_position();
+					this.render();
 				}
 				else {
 					this.render();
