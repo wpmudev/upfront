@@ -5537,6 +5537,7 @@ var _Settings_Padding = SettingsItem.extend({
 				default_value: this.model.get_breakpoint_property_value('top_padding_slider') || column_padding,
 				min: 0,
 				max: 200,
+				step: 5,
 				valueTextFilter: function () {return '';},
 				change: function () {
 					var value = this.get_value();
@@ -5554,6 +5555,7 @@ var _Settings_Padding = SettingsItem.extend({
 				default_value: this.model.get_breakpoint_property_value('top_padding_num') || column_padding,
 				suffix: 'px',
 				min: 0,
+				step: 5,
 				change: function () {
 					var value = this.get_value();
 
@@ -5594,6 +5596,7 @@ var _Settings_Padding = SettingsItem.extend({
 				default_value: this.model.get_breakpoint_property_value('bottom_padding_slider') || column_padding,
 				min: 0,
 				max: 200,
+				step: 5,
 				valueTextFilter: function () {return '';},
 				change: function () {
 					var value = this.get_value();
@@ -5611,6 +5614,7 @@ var _Settings_Padding = SettingsItem.extend({
 				default_value: this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding,
 				suffix: 'px',
 				min: 0,
+				step: 5,
 				change: function () {
 					var value = this.get_value();
 
@@ -5651,6 +5655,7 @@ var _Settings_Padding = SettingsItem.extend({
 				default_value: this.model.get_breakpoint_property_value('left_padding_slider') || column_padding,
 				min: 0,
 				max: 200,
+				step: 5,
 				valueTextFilter: function () {return '';},
 				change: function () {
 					var value = this.get_value();
@@ -5668,6 +5673,7 @@ var _Settings_Padding = SettingsItem.extend({
 				default_value: this.model.get_breakpoint_property_value('left_padding_num') || column_padding,
 				suffix: 'px',
 				min: 0,
+				step: 5,
 				change: function () {
 					var value = this.get_value();
 
@@ -5708,6 +5714,7 @@ var _Settings_Padding = SettingsItem.extend({
 				default_value: this.model.get_breakpoint_property_value('right_padding_slider') || column_padding,
 				min: 0,
 				max: 200,
+				step: 5,
 				valueTextFilter: function () {return '';},
 				change: function () {
 					var value = this.get_value();
@@ -5725,6 +5732,7 @@ var _Settings_Padding = SettingsItem.extend({
 				default_value: this.model.get_breakpoint_property_value('right_padding_num') || column_padding,
 				suffix: 'px',
 				min: 0,
+				step: 5,
 				change: function () {
 					var value = this.get_value();
 
@@ -8856,6 +8864,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					default_value: this.model.get_breakpoint_property_value('top_bg_padding_slider') || 0,
 					min: 0,
 					max: 200,
+					step: 5,
 					valueTextFilter: function () {return '';},
 					change: function () {
 						var value = this.get_value();
@@ -8874,6 +8883,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					prefix: l10n.bottom_padding,
 					suffix: 'px',
 					min: 0,
+					step: 5,
 					change: function () {
 						var value = this.get_value();
 
@@ -8890,6 +8900,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					default_value: this.model.get_breakpoint_property_value('bottom_bg_padding_slider') || 0,
 					min: 0,
 					max: 200,
+					step: 5,
 					valueTextFilter: function () {return '';},
 					change: function () {
 						var value = this.get_value();
@@ -8907,6 +8918,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					default_value: this.model.get_breakpoint_property_value('bottom_bg_padding_num') || 0,
 					suffix: 'px',
 					min: 0,
+					step: 5,
 					change: function () {
 						var value = this.get_value();
 
@@ -8923,6 +8935,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					default_value: this.model.get_breakpoint_property_value('bg_padding_slider') || 0,
 					min: 0,
 					max: 200,
+					step: 5,
 					valueTextFilter: function () {return '';},
 					change: function () {
 						var value = this.get_value();
@@ -8948,6 +8961,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					default_value: this.model.get_breakpoint_property_value('bg_padding_num') || 0,
 					suffix: 'px',
 					min: 0,
+					step: 5,
 					change: function () {
 						var value = this.get_value();
 

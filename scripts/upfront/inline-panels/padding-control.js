@@ -68,6 +68,7 @@ define([
 				default_value: this.model.get_breakpoint_property_value('top_padding_num') || column_padding,
 				min: 0,
 				max: 200,
+				step: 5,
 				valueTextFilter: function (valueText) {
 					me.paddingTop.$el.parent('.upfront-padding-container').find('.upfront-padding-value').html(valueText);
 					return '';
@@ -88,6 +89,7 @@ define([
 				default_value: this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding,
 				min: 0,
 				max: 200,
+				step: 5,
 				valueTextFilter: function (valueText) {
 					me.paddingBottom.$el.parent('.upfront-padding-container').find('.upfront-padding-value').html(valueText);
 					return '';
@@ -121,10 +123,10 @@ define([
 		},
 		refresh: function() {
 			var column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
-				top_padding_use = this.model.get_breakpoint_property_value('top_padding_use'),
-				bottom_padding_use = this.model.get_breakpoint_property_value('bottom_padding_use'),
-				padding_top_val = top_padding_use ? this.model.get_breakpoint_property_value('top_padding_num') : column_padding,
-				padding_bottom_val = bottom_padding_use ? this.model.get_breakpoint_property_value('bottom_padding_num') : column_padding
+				top_padding_use = this.model.get_breakpoint_property_value('top_padding_use', true),
+				bottom_padding_use = this.model.get_breakpoint_property_value('bottom_padding_use', true),
+				padding_top_val = top_padding_use ? this.model.get_breakpoint_property_value('top_padding_num', true) : column_padding,
+				padding_bottom_val = bottom_padding_use ? this.model.get_breakpoint_property_value('bottom_padding_num', true) : column_padding
 			;
 
 			this.paddingTop.get_field().val(padding_top_val);
