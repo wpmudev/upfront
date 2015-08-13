@@ -27,7 +27,27 @@ define([
 				if (settingOptions.className) setting.className = settingOptions.className;
 
 				_.each(settingOptions.fields, function(fieldOptions) {
-					var field = FieldFactory.createField(fieldOptions.type, _.extend({ model: me.model }, _.omit(fieldOptions, ['type'])));
+					var field;
+
+					// Proxy the 'change' callback, and revert when finished
+					if ("change" in fieldOptions) {
+						if (!fieldOptions.preservedChangeCallback) {
+							// Store the callback
+							fieldOptions.preservedChangeCallback = fieldOptions.change;
+						}
+
+						// Proxy the stored callback to provide context
+						fieldOptions.change = function (value) {
+							fieldOptions.preservedChangeCallback(value, me);
+						};
+
+						// Reset change callback to avoid zombies
+						Upfront.Events.once('entity:settings:deactivate', function() {
+							fieldOptions.change = fieldOptions.preservedChangeCallback;
+						});
+					}
+
+					field = FieldFactory.createField(fieldOptions.type, _.extend({ model: me.model }, _.omit(fieldOptions, ['type'])));
 
 					setting.fields.push(field);
 				});
