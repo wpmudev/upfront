@@ -1,4 +1,4 @@
-.upfront-module.upfront-module-active .upfront-element-controls {
+.upfront-module.upfront-module-active:not(.ui-resizable-resizing) .upfront-element-controls {
     display: block;
 }
 .upfront-module .upfront-element-controls {
