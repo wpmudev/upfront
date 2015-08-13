@@ -25,6 +25,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 		$breakpoint_data['desktop']['burger_menu'] = is_array( $burgermenu_desktop ) && isset( $burgermenu_desktop[0] ) ? $burgermenu_desktop[0] : $burgermenu_desktop ;
 		$breakpoint_data['desktop']['burger_alignment'] = $this->_get_property('burger_alignment');
 		$breakpoint_data['desktop']['burger_over'] = $this->_get_property('burger_over');
+		$breakpoint_data['desktop']['is_floating'] = $this->_get_property('is_floating');
 		//$breakpoint_data['desktop']['menu_style'] = 'horizontal';
 
 		$breakpoint_data = json_encode($breakpoint_data);

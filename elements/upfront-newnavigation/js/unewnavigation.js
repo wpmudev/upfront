@@ -4,7 +4,8 @@ define([
 	'elements/upfront-newnavigation/js/model',
 	'elements/upfront-newnavigation/js/element',
 	'elements/upfront-newnavigation/js/settings',
-], function(MenuItemView, UnewnavigationModel, UnewnavigationElement, NavigationSettings) {
+	'elements/upfront-newnavigation/js/floating',
+], function(MenuItemView, UnewnavigationModel, UnewnavigationElement, NavigationSettings, NavigationFloating) {
 
 var l10n = Upfront.Settings.l10n.newnavigation_element;
 
@@ -83,6 +84,9 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		}
 
 		this.model.set_property('breakpoint', new_breakpoint_data, true);
+		this.listenTo(Upfront.Events, 'entity:resize_stop', this.onElementResize);
+		this.listenTo(Upfront.Events, 'entity:drag_stop', this.onElementReposition);
+
 
 	},/*
 	on_removal: function() {
@@ -92,6 +96,25 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			tooltip.remove();
 		}, 100);
 	},*/
+	onElementResize: function() {
+		this.processFloatStatus();
+	},
+	onElementReposition: function() {
+		this.processFloatStatus();
+	},
+	processFloatStatus: function() {
+		if (this.floating_cache) this.floating_cache.destroy();
+		$upfrontObjectContent = this.$el.find('.upfront-object-content');
+		var isFloating = $upfrontObjectContent.data('isfloating');
+		
+		if(isFloating && isFloating == 'yes') {
+			if(this.property('burger_menu') == 'yes')
+				this.floating_cache = new  NavigationFloating($upfrontObjectContent.children('.responsive_nav_toggler'));
+			else
+				this.floating_cache = new  NavigationFloating($upfrontObjectContent);
+		}
+
+	},
 	exitEditMode: function(e) {
 		var me = this;
 		var thelink = $(e.target).closest('li').data('backboneview');
@@ -436,6 +459,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		;
 	},
 	get_content_markup: function () {
+
 		var menu_id = this.model.get_property_value_by_name('menu_id'),
 			me = this
 		;
@@ -455,6 +479,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				}
 				me.property('menu_items', ret.data, true);
 				me.generate_menu();
+
 			})
 			.error(function (ret) {
 				Upfront.Util.log("Error loading menu");
@@ -486,6 +511,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		var menuStyle = this.property("menu_style"),
 			menuAliment = this.property("menu_alignment"),
 			allowSubNav = this.property("allow_sub_nav"),
+			isFloating = this.property("is_floating"),
 			$upfrontObjectContent
 		;
 
@@ -516,6 +542,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					model_breakpoint[default_breakpoint.attributes.id].burger_over = me.property('burger_over');
 					model_breakpoint[default_breakpoint.attributes.id].menu_style = me.property('menu_style');
 					model_breakpoint[default_breakpoint.attributes.id].menu_alignment = me.property('menu_alignment');
+					model_breakpoint[default_breakpoint.attributes.id].is_floating = me.property('is_floating');
 					model_breakpoint[default_breakpoint.attributes.id].width = default_breakpoint.attributes.width;
 
 					$upfrontObjectContent.attr('data-breakpoints',	JSON.stringify(model_breakpoint));
@@ -534,8 +561,11 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		$upfrontObjectContent.attr('data-aliment',(menuAliment ? menuAliment : 'left'));
 		$upfrontObjectContent.attr('data-style',(menuStyle ? menuStyle : 'horizontal'));
 		$upfrontObjectContent.attr('data-stylebk',(menuStyle ? menuStyle : 'horizontal'));
+		$upfrontObjectContent.attr('data-isfloating',(isFloating ? isFloating : 'no'));
 		$upfrontObjectContent.attr('data-allow-sub-nav',(allowSubNav.length !== 0 && allowSubNav[0] == 'yes' ? allowSubNav[0] : 'no'));
 
+		
+		
 
 		setTimeout(function() {
 			if(me.$el.height() < 80) {
@@ -544,6 +574,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			else {
 				me.$el.closest('div.upfront-module').removeClass('newnavigation_squished');
 			}
+
 		}, 200);
 
 	},
@@ -653,6 +684,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					//remove the z-index from the container module
 					selector.closest('div.upfront-newnavigation_module').css('z-index', '');
 				}
+
+				selector.attr('data-isfloating', bparray[key]['is_floating']);
 
 			}
 		}
@@ -813,6 +846,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		this.makeSortable();
 
+		this.processFloatStatus();
 	},
 	makeSortable: function() {
 		var me = this;
