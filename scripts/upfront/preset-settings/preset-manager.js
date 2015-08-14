@@ -151,7 +151,7 @@ define([
 
 			this.presets.remove(preset);
 
-			// this.render();
+			this.render();
 		},
 
 		resetPreset: function(preset) {

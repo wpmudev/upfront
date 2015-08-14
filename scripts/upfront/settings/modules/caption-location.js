@@ -37,6 +37,28 @@ define([
 						}
 					}
 				}),
+
+				new Upfront.Views.Editor.Field.Radios({
+					className: state + '-caption-trigger field-caption_trigger upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios over_image_field',
+					model: this.model,
+					name: 'caption-trigger',
+					label: '',
+					layout: 'horizontal-inline',
+					values: [
+						{
+							label: l10n.settings.always,
+							value: 'always_show'
+						},
+						{
+							label: l10n.settings.hover,
+							value: 'hover_show'
+						}
+					],
+					change: function(value) {
+						me.model.set('caption-trigger', value);
+					}
+				}),
+
 				new Upfront.Views.Editor.Field.Select({
 					model: this.model,
 					className: state + '-caption-select caption_select',
@@ -78,27 +100,6 @@ define([
 								me.model.set('caption-position', 'below_image');
 								me.model.set('caption-alignment', false);
 						}
-					}
-				}),
-
-				new Upfront.Views.Editor.Field.Radios({
-					className: state + '-caption-trigger field-caption_trigger upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios over_image_field',
-					model: this.model,
-					name: 'caption-trigger',
-					label: '',
-					layout: 'horizontal-inline',
-					values: [
-						{
-							label: l10n.settings.always,
-							value: 'always_show'
-						},
-						{
-							label: l10n.settings.hover,
-							value: 'hover_show'
-						}
-					],
-					change: function(value) {
-						me.model.set('caption-trigger', value);
 					}
 				})
 			]);

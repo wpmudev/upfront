@@ -42,11 +42,11 @@ class Upfront_UimageView extends Upfront_Object {
 			'height'=> $data['vstretch'] ? '100%' : $data['size']['height'] . 'px',
 			'bottom' => $data['vstretch'] ? '100%' : ($data['element_size']['height'] + $data['position']['top'] - $data['size']['height']) . 'px'
 		);
-		
+
 		if(!isset($data['preset'])) {
 			$data['preset'] = 'default';
 		}
-		
+
 		$data['properties'] = Upfront_Image_Presets_Server::get_instance()->get_preset_properties($data['preset']);
 
 		$data['cover_caption'] = $data['caption_position'] != 'below_image'; // array_search($data['caption_alignment'], array('fill', 'fill_bottom', 'fill_middle')) !== FALSE;
@@ -178,7 +178,7 @@ class Upfront_UimageView extends Upfront_Object {
 				'wrapper_info' => __('Image container', 'upfront'),
 			),
 			'ctrl' => array(
-				'caption_position' => __('Caption position', 'upfront'),
+				'caption_position' => __('Caption Location', 'upfront'),
 				'caption_position_disabled' => __('Caption is disabled for images smaller or narrower than 100px', 'upfront'),
 				'over_top' => __('Over image, top', 'upfront'),
 				'over_bottom' => __('Over image, bottom', 'upfront'),
@@ -213,9 +213,9 @@ class Upfront_UimageView extends Upfront_Object {
 				'no_padding' => __('Do not use theme padding', 'upfront'),
 				'image_style_label' => __('Image Style', 'upfront'),
 				'image_style_info' => __('Image Element Shape:', 'upfront'),
-				'content_area_colors_label' => __('Content Area Colors', 'upfront'),
-				'caption_text_label' => __('Captiong Text', 'upfront'),
-				'caption_bg_label' => __('Captiong BG', 'upfront'),
+				'content_area_colors_label' => __('Colors', 'upfront'),
+				'caption_text_label' => __('Caption Text', 'upfront'),
+				'caption_bg_label' => __('Caption BG', 'upfront'),
 			),
 			'btn' => array(
 				'fit_label' => __('Fit to Element', 'upfront'),
@@ -420,24 +420,24 @@ class Upfront_Uimage_Server extends Upfront_Server {
 
 		if (!$rotate && !$resize && !$crop) {
 			return array(
-				'error' => true, 
+				'error' => true,
 				'msg' => Upfront_UimageView::_get_l10n('not_modifications')
 			);
 		}
-		
+
 		$image_path = isset($imageData['image_path']) ? $imageData['image_path'] : _load_image_to_edit_path( $imageData['id'] );
 		$image_editor = wp_get_image_editor( $image_path );
 
 		if (is_wp_error($image_editor)) {
 			return array(
-				'error' => true, 
+				'error' => true,
 				'msg' => Upfront_UimageView::_get_l10n('invalid_id')
 			);
 		}
 
 
 		if ($rotate && !$image_editor->rotate(-$rotate)) return array(
-			'error' => true, 
+			'error' => true,
 			'msg' => Upfront_UimageView::_get_l10n('edit_error')
 		);
 
@@ -445,7 +445,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 		//Cropping for resizing allows to make the image bigger
 		if ($resize && !$image_editor->crop(0, 0, $full_size['width'], $full_size['height'], $resize['width'], $resize['height'], false)) {
 			return array(
-				'error' => true, 
+				'error' => true,
 				'msg' => Upfront_UimageView::_get_l10n('edit_error')
 			);
 		}
@@ -455,9 +455,9 @@ class Upfront_Uimage_Server extends Upfront_Server {
 		//Don't let the crop be bigger than the size
 		$size = $image_editor->get_size();
 		$crop = array(
-			'top' => round($crop['top']), 
-			'left' => round($crop['left']), 
-			'width' => round($crop['width']), 
+			'top' => round($crop['top']),
+			'left' => round($crop['left']),
+			'width' => round($crop['width']),
 			'height' => round($crop['height'])
 		);
 
@@ -500,7 +500,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 
 		if (is_wp_error($image_editor) || empty($imageData['id'])) {
 			return array(
-				'error' => true, 
+				'error' => true,
 				'msg' => Upfront_UimageView::_get_l10n('error_save')
 			);
 		}

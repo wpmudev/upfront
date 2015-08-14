@@ -36,7 +36,6 @@ define([
 				stateModules: {
 					Global: [
 						{
-							//TODO: We should add values when provided
 							moduleType: 'Selectbox',
 							options: {
 								state: 'global',
@@ -53,15 +52,6 @@ define([
 							}
 						},
 						{
-							moduleType: 'CaptionLocation',
-							options: {
-								state: 'global',
-								fields: {
-									caption: 'image-caption'
-								}
-							}
-						},
-						{
 							moduleType: 'Radius',
 							options: {
 								state: 'global',
@@ -75,6 +65,15 @@ define([
 									radius2: 'borderradius2',
 									radius3: 'borderradius3',
 									radius4: 'borderradius4'
+								}
+							}
+						},
+						{
+							moduleType: 'CaptionLocation',
+							options: {
+								state: 'global',
+								fields: {
+									caption: 'image-caption'
 								}
 							}
 						},
