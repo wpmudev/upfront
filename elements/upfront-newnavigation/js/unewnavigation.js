@@ -467,6 +467,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				me.property('menu_slug', ret.data.slug, true);
 				me.property('menu_id', ret.data.id);
 				me.getMenus();
+				Upfront.Events.trigger("menu_element:menu_created", ret.data);
 			})
 			.error(function (ret) {
 				Upfront.Util.log("Error creating menu");

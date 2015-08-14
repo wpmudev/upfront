@@ -9,6 +9,15 @@ define([
 	var Menu_Panel = RootSettingsPanel.extend({
 		className: 'upfront-settings_panel_wrap menu-settings',
 		title: l10n.mnu.title,
+		initialize: function(options) {
+			var me = this;
+			this.constructor.__super__.initialize.call(this, options);
+			Upfront.Events.on('menu_element:menu_created', function(menuData) {
+				me.settings._wrapped[0].fields._wrapped[0].options.values = MenuUtil.getMenuList();
+				me.settings._wrapped[0].fields._wrapped[0].render();
+				me.settings._wrapped[0].fields._wrapped[0].set_value(menuData.id);
+			});
+		},
 		settings: [
 			{
 				type: 'SettingsItem',

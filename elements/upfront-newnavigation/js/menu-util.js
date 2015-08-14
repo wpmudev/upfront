@@ -17,6 +17,12 @@ define([], function () {
 		var currentMenuItemData = new CurrentMenuItemData();
 		var menus;
 
+		Upfront.Events.on('menu_element:menu_created', function(menuData) {
+			menus.push({name: menuData.slug, term_id: menuData.id});
+			var menuList = currentMenuItemData.get('menuList');
+			menuList.push({label: menuData.slug, value: menuData.id});
+		});
+
 		// Initialize menu list
 		Upfront.Util.post({"action": "upfront_new_load_menu_list"})
 			.success(function (ret) {
