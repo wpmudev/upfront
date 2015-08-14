@@ -40,7 +40,7 @@ class Upfront_UcontactView extends Upfront_Object {
 				'captcha' => esc_attr("captcha-{$element_id}"),
 			),
 		));
-		
+
 		if (!isset($args['preset'])) {
 			$args['preset'] = 'default';
 		}
@@ -108,7 +108,7 @@ class Upfront_UcontactView extends Upfront_Object {
 
 		upfront_add_element_style('ucontact-style', array('css/ucontact.css', dirname(__FILE__)));
 		upfront_add_element_script('ucontact-front', array('js/ucontact-front.js', dirname(__FILE__)));
-		
+
 		if (is_user_logged_in()) {
 			upfront_add_element_style('ucontact-style-editor', array('css/ucontact-editor.css', dirname(__FILE__)));
 		}
@@ -148,7 +148,7 @@ class Upfront_UcontactView extends Upfront_Object {
 		foreach ($data as $prop) {
 			$contact_form[$prop['name']] = $prop['value'];
 		}
-		
+
 		if (!$contact_form['element_id']) {
 			return array(
 				'error' => true,
@@ -388,7 +388,7 @@ class Upfront_UcontactView extends Upfront_Object {
 				'send_info' => __('Form\'s submit button', 'upfront'),
 			),
 			'general' => array(
-				'label' => __('General', 'upfront'),
+				'label' => __('General Settings', 'upfront'),
 				'send_to' => __('Send form content to:', 'upfront'),
 				'button_text' => __('Contact form submit button text:', 'upfront'),
 				'use_title' => __('Use form title', 'upfront'),

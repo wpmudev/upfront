@@ -196,6 +196,7 @@ define([
 		},
 
 		getBody: function () {
+			this.setupItems();
 			var $body = $('<div />');
 
 			this.settings.each(function (setting) {

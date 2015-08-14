@@ -15,7 +15,11 @@ define([
 		},
 
 		render: function () {
-			this.$el.html('<div class="upfront-settings-item-content"></div>');
+			this.$el.html('');
+			if (this.options.title) {
+				this.$el.append('<div class="upfront-settings-item-title">' + this.options.title + '</div>');
+			};
+			this.$el.append('<div class="upfront-settings-item-content"></div>');
 
 			var $content = this.$el.find('.upfront-settings-item-content');
 			this.fields.each(function(field){
