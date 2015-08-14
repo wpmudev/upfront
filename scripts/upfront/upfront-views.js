@@ -4801,6 +4801,7 @@ define([
 				this.listenTo(Upfront.Events, "application:mode:after_switch", this.on_mode_switch);
 				$(window).on('resize.upfront_layout', this, this.on_window_resize);
 				$(window).on('scroll.upfront_layout', this, this.on_window_scroll);
+				$(window).on('keydown.upfront_layout', this, this.on_keydown);
 				this.render();
 			},
 			update: function () {
@@ -4862,6 +4863,25 @@ define([
 				// Deactiving group reorder on clicking anywhere
 				if ( !$(e.target).closest('.upfront-module-group-on-edit').length )
 					Upfront.Events.trigger("command:module_group:finish_edit");
+			},
+			on_keydown: function (e) {
+				var currentEntity = Upfront.data.currentEntity;
+
+				if (!currentEntity instanceof ObjectView || typeof currentEntity === 'undefined' || !currentEntity.paddingControl) 	return;
+
+				if (e.keyCode === 38 || e.keyCode === 40) {
+					e.preventDefault();
+					e.stopPropagation();
+
+					switch (e.keyCode) {
+						case 38: 
+							currentEntity.paddingControl.on_up_arrow_click();
+							break;
+						case 40:
+							currentEntity.paddingControl.on_down_arrow_click();
+							break;
+					}
+				}
 			},
 			on_mode_switch: function () {
 				if ( Upfront.Application.get_current() !== Upfront.Settings.Application.MODE.RESPONSIVE )

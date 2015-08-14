@@ -130,11 +130,31 @@ define([
 			;
 
 			this.paddingTop.get_field().val(padding_top_val);
-			this.paddingTop.$el.find('#'+this.paddingTop.get_field_id()).slider('value', padding_top_val);
+			if(typeof this.paddingTop.$el.find('#'+this.paddingTop.get_field_id()).slider('instance') !== 'undefined') 	this.paddingTop.$el.find('#'+this.paddingTop.get_field_id()).slider('value', padding_top_val);
 			this.paddingTop.$el.parent('.upfront-padding-container').find('.upfront-padding-value').html(padding_top_val);
 			this.paddingBottom.get_field().val(padding_bottom_val);
-			this.paddingBottom.$el.find('#'+this.paddingBottom.get_field_id()).slider('value', padding_bottom_val);
+			if(typeof this.paddingBottom.$el.find('#'+this.paddingBottom.get_field_id()).slider('instance') !== 'undefined') 	this.paddingBottom.$el.find('#'+this.paddingBottom.get_field_id()).slider('value', padding_bottom_val);
 			this.paddingBottom.$el.parent('.upfront-padding-container').find('.upfront-padding-value').html(padding_bottom_val);
+		},
+		on_up_arrow_click: function() {
+			var padding_top_val = parseInt(this.model.get_breakpoint_property_value('top_padding_num', true)) - 5;
+
+			padding_top_val = padding_top_val < 0 ? 0 : padding_top_val;
+
+			this.model.set_breakpoint_property('top_padding_use', 'yes');
+			this.model.set_breakpoint_property('top_padding_num', padding_top_val);
+			this.model.set_breakpoint_property('top_padding_slider', padding_top_val);
+
+			this.refresh();
+		},
+		on_down_arrow_click: function() {
+			var padding_top_val = parseInt(this.model.get_breakpoint_property_value('top_padding_num', true)) + 5;
+
+			this.model.set_breakpoint_property('top_padding_use', 'yes');
+			this.model.set_breakpoint_property('top_padding_num', padding_top_val);
+			this.model.set_breakpoint_property('top_padding_slider', padding_top_val);
+
+			this.refresh();
 		}
 	});
 
