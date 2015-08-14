@@ -518,6 +518,7 @@ class upfront_nav_walker extends Walker_Nav_Menu
         }
 
 		$classes[] = 'menu-item-' . $item->ID;
+		$classes[] = 'menu-item-depth-' . $depth;
 
 		/**
 		 * Filter the CSS class(es) applied to a menu item's <li>.
