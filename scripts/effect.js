@@ -62,8 +62,9 @@
 			}, args)
 		;
 		this.opts = data;
-		this.$parent = $el;
-		this.$element = typeof this.opts.element === 'string' ? $el.find(this.opts.element) : this.opts.element;
+		this.$parent = $el.parent();
+		this.$element = $el;
+		this.$moveElement = typeof this.opts.element === 'string' ? $el.find(this.opts.element) : this.opts.element;
 		
 		Upfront_Parallax.id++;
 		this.id = Upfront_Parallax.id;
@@ -78,23 +79,27 @@
 	Upfront_Parallax.id = 0;
 	Upfront_Parallax.instances = {};
 	Upfront_Parallax.prevTime = 0;
+	Upfront_Parallax.started = false;
 	Upfront_Parallax.cache = {
+		lastScrollTop: -1,
 		scrollTop: 0,
 		winHeight: 0,
 		scrollBottom: 0
 	};
 	Upfront_Parallax.start = function () {
+		if (Upfront_Parallax.started) return;
+		Upfront_Parallax.started = true;
 		Upfront_Parallax.draw();
 	}
 	Upfront_Parallax.draw = function (time) {
-		var scrollTop = $(window).scrollTop();
-		if (Upfront_Parallax.cache.scrollTop == scrollTop) {
+		var scrollTop = Upfront_Parallax.cache.scrollTop;
+		if (Upfront_Parallax.cache.lastScrollTop == scrollTop) {
 			requestAnimationFrame(Upfront_Parallax.draw);
 			return;
 		}
 		var winHeight = $(window).height(),
 			scrollBottom = Math.round(scrollTop + winHeight);
-		Upfront_Parallax.cache.scrollTop = scrollTop;
+		Upfront_Parallax.cache.lastScrollTop = scrollTop;
 		Upfront_Parallax.cache.winHeight = winHeight;
 		Upfront_Parallax.cache.scrollBottom = scrollBottom;
 		
@@ -104,6 +109,11 @@
 		Upfront_Parallax.prevTime = time;
 		requestAnimationFrame(Upfront_Parallax.draw);
 	}
+	Upfront_Parallax.updateScroll = function (e) {
+		var scrollTop = $(window).scrollTop();
+		Upfront_Parallax.cache.scrollTop = scrollTop;
+	}
+	$(window).on('scroll.upfront_paralax', Upfront_Parallax.updateScroll);
 	
 	Upfront_Parallax.prototype = {
 		cache: {},
@@ -154,19 +164,18 @@
 			this.refresh();
 		},
 		start: function () {
-			this.$parent.addClass('upfront-parallax');
-			this.$element.addClass('upfront-parallax-element');
+			this.$element.addClass('upfront-parallax');
+			this.$moveElement.addClass('upfront-parallax-element');
 			this.reset_cache();
+			this.prepareFixedPos();
 			this.refresh();
 			this.bindEvents();
-			// Start parallax draw when needed
-			if (Upfront_Parallax.prevTime == 0) {
-				Upfront_Parallax.start();
-			}
+			Upfront_Parallax.start();
 		},
 		stop: function () {
-			this.$parent.removeClass('upfront-parallax');
-			this.$element.removeClass('upfront-parallax-element');
+			this.$element.removeClass('upfront-parallax');
+			this.$moveElement.removeClass('upfront-parallax-element');
+			this.restorePos();
 			this.reset();
 			this.unbindEvents();
 		},
@@ -174,11 +183,15 @@
 			this.cache = {
 				translate: 0,
 				offsetTop: 0,
-				height: 0
+				offsetBottom: 0,
+				offsetLeft: 0,
+				height: 0,
+				width: 0,
+				visible: true
 			};
 		},
 		reset: function () {
-			this.$element.css({
+			this.$moveElement.css({
 				transform: '',
 				opacity: ''
 			});
@@ -186,7 +199,25 @@
 		destroy: function () {
 			this.stop();
 			delete Upfront_Parallax.instances[this.id];
-			this.$parent.removeData('uparallax');
+			this.$element.removeData('uparallax');
+		},
+		prepareFixedPos: function () {
+			this.$element.css({
+				position: 'fixed',
+				top: 0,
+				left: 0,
+				//transform: 'translate3d(0,0,0)',
+				//backfaceVisibility: 'hidden'
+			});
+		},
+		restorePos: function () {
+			this.$element.css({
+				position: '',
+				top: '',
+				left: '',
+				transform: '',
+				//backfaceVisibility: ''
+			});
 		},
 		refresh: function () {
 			this.refreshCache();
@@ -201,27 +232,37 @@
 				this.movementOffset = this.opts.movement;
 			}
 			/*
-			 * this.$element must have position absolute, with top and bottom set to 0 initially, height auto
+			 * this.$moveElement must have position absolute, with top and bottom set to 0 initially, height auto
 			 * */
-			this.$element.css({
+			this.$moveElement.css({
 				top: this.movementOffset*-1,
-				//bottom: this.movementOffset*-1
-				height: height+this.movementOffset*2
+				bottom: this.movementOffset*-1
+				//height: height+this.movementOffset*2
+			});
+			this.$element.css({
+				left: this.cache.offsetLeft,
+				height: this.cache.height,
+				width: this.cache.width
 			});
 			this.update();
 		},
 		refreshCache: function () {
 			var offset = this.$parent.offset(),
-				height = this.$parent.height()
+				height = this.$parent.height(),
+				width = this.$parent.width()
 			;
 			this.cache.offsetTop = offset.top;
+			this.cache.offsetBottom = offset.top + height;
+			this.cache.offsetLeft = offset.left;
 			this.cache.height = height;
+			this.cache.width = width;
 		},
 		update: function () {
 			requestAnimationFrame($.proxy(this.draw, this));
 		},
 		draw: function (time) {
 			var offsetTop = this.cache.offsetTop,
+				offsetBottom = this.cache.offsetBottom,
 				height = this.cache.height,
 				scrollTop = Upfront_Parallax.cache.scrollTop,
 				winHeight = Upfront_Parallax.cache.winHeight,
@@ -235,6 +276,26 @@
 				effects = this.opts.effect.split(','),
 				transform = ''
 			;
+			if (offsetBottom > scrollTop && offsetTop < scrollBottom) {
+				if (!this.cache.visible) {
+					this.$element.css('visibility', 'visible');
+				}
+				this.$element.css({
+					//transform: 'translate3d(0, ' + (offsetTop-scrollTop) + 'px, 0)'
+					transform: 'translateY(' + (offsetTop-scrollTop) + 'px)'
+				});
+				this.cache.visible = true;
+			}
+			else {
+				if (this.cache.visible) {
+					this.$element.css({
+						visibility: 'hidden',
+						//transform: 'translate3d(0, ' + winHeight + 'px, 0)'
+						//transform: 'translateY(' + winHeight + 'px)'
+					});
+					this.cache.visible = false;
+				}
+			}
 			if (translate > maxTranslate) {
 				translate = maxTranslate;
 			}
@@ -252,11 +313,11 @@
 					transform += effect.value;
 				}
 				else {
-					this.$element.css(effect.property, effect.value);
+					this.$moveElement.css(effect.property, effect.value);
 				}
 			}
 			if (transform !== '') {
-				this.$element.css('transform', transform);
+				this.$moveElement.css('transform', transform);
 			}
 		},
 		getEffect: function (effect, translate, maxTranslate) {
@@ -266,6 +327,7 @@
 			;
 			switch (effect) {
 				case 'scroll':
+					//value = 'translate3d(0, ' + translate + 'px, 0)';
 					value = 'translateY(' + translate + 'px)';
 					//property = 'margin-top';
 					//value = translate;
