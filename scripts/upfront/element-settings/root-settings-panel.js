@@ -45,6 +45,22 @@ define([
 							fieldOptions.change = fieldOptions.preservedChangeCallback;
 						});
 					}
+					if ("show" in fieldOptions) {
+						if (!fieldOptions.preservedShowCallback) {
+							// Store the callback
+							fieldOptions.preservedShowCallback = fieldOptions.show;
+						}
+
+						// Proxy the stored callback to provide context
+						fieldOptions.show = function (value) {
+							fieldOptions.preservedShowCallback(value, me);
+						};
+
+						// Reset show callback to avoid zombies
+						Upfront.Events.once('entity:settings:deactivate', function() {
+							fieldOptions.show = fieldOptions.preservedShowCallback;
+						});
+					}
 
 					field = FieldFactory.createField(fieldOptions.type, _.extend({ model: me.model }, _.omit(fieldOptions, ['type'])));
 
