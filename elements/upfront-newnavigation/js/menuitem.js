@@ -22,6 +22,7 @@ return (function ($) {
 		initialize: function(options) {
 			this.parent_view = options.parent_view;
 			this.newitem = options.newitem;
+			this.level = options.level;
 			var me = this;
 			_.bindAll(this, 'render');
 
@@ -223,7 +224,8 @@ return (function ($) {
 			if(this.model['menu-item-url'].indexOf('#ltb-') > -1 && !Upfront.Util.checkLightbox(this.model['menu-item-url']))
 					content = content + '<span class="missing-lightbox-warning"></span>';
 
-			$(this.el).html(content);
+			$(this.el).html(content).addClass('menu-item-depth-'+me.level);
+			$(this.el).data('depth', me.level);
 			this.createInlineControlPanel();
 
 			$(this.el).data('backboneview', me).addClass('menu-item');
