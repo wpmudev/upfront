@@ -4543,14 +4543,16 @@ var Field_ToggleableText = Field_Text.extend({
 			var me = this;
 			_.delay(function() { // Delay because opening animation causes wrong outerHeight results
 				var in_sidebar = me.$el.parents('#sidebar-ui').length,
-					in_settings = me.$el.parents('#element-settings-sidebar').length;
+					in_settings = me.$el.parents('#element-settings-sidebar').length,
+					settingsTitleHeight = 46;
 
 				// Apply if select field is in sidebar or settings sidebar
 				if(in_sidebar == 1 || in_settings == 1) {
 					var select_dropdown = me.$el.find('.upfront-field-select-options'),
 						select = select_dropdown.parent(),
 						dropDownTop = select.offset().top - $('#element-settings-sidebar').offset().top;
-
+						dropDownTop = dropDownTop + settingsTitleHeight;
+					
 					select_dropdown.css("width", select.width() + 3);
 					select_dropdown.css('top', dropDownTop + "px");
 					select_dropdown.css('left', select.offset().left + "px");
@@ -4704,13 +4706,15 @@ var Field_ToggleableText = Field_Text.extend({
 			var me = this;
 			_.delay(function() { // Delay because opening animation causes wrong outerHeight results
 				var in_sidebar = me.$el.parents('#sidebar-ui').length,
-					in_settings = me.$el.parents('#element-settings-sidebar').length;
+					in_settings = me.$el.parents('#element-settings-sidebar').length,
+					settingsTitleHeight = 44;
 
 				// Apply if select field is in sidebar or settings sidebar
 				if(in_sidebar == 1 || in_settings == 1) {
 					var select_dropdown = me.$el.find('.chosen-drop'),
 						select = select_dropdown.parent(),
-						dropDownTop = (select.offset().top - $('#element-settings-sidebar').offset().top) + select.height();
+						dropDownTop = (select.offset().top - $('#element-settings-sidebar').offset().top) + select.height();					
+						dropDownTop = dropDownTop + settingsTitleHeight;
 
 					select_dropdown.css("width", select.width());
 					select_dropdown.css('top', dropDownTop + "px");
