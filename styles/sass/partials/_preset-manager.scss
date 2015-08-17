@@ -13,10 +13,14 @@ div.preset-manager-panel .static_preset {
 div.preset-manager-panel .hover_preset input,
 div.preset-manager-panel .state_settings_button input,
 div.preset-manager-panel .static_preset input,
-div.preset-manager-panel .delete_preset input{
+div.preset-manager-panel .delete_preset input {
 	font-size: 13px;
-	padding: 1px 5px 2px;
+	padding: 0px 5px 2px;
 	border-radius: 5px;
+}
+div.preset-manager-panel .delete_preset input {
+	font-size: 13px;
+	padding: 1px 5px 1px;
 }
 div.preset-manager-panel .hover_preset input,
 div.preset-manager-panel .state_settings_button input,
@@ -51,12 +55,13 @@ div.preset-manager-panel .state_settings_button.active input {
 	border-color: #e5eef8;
 }
 div.preset-manager-panel .delete_preset input {
-	background-color:#d71b12 !important;
+	background-color: #d86c6b !important;
 	color:#fff;
 	float: right;
 	margin-top: -25px;
 }
-#settings div.preset-manager-panel .upfront-settings_panel {
+#settings div.preset-manager-panel .upfront-settings_panel,
+#settings div.preset-manager-panel .select-presets {
 	background: #dae6f2;
 }
 div.preset-manager-panel .upfront-settings-css {
@@ -66,24 +71,23 @@ div.preset-manager-panel .upfront-settings-css {
 div.preset-manager-panel .delete_preset {
 	position: relative;
 	z-index: 99;
-	top: -22px;
+	top: -8px;
 }
 div.preset-manager-panel div.preset_specific {
 	background: #fff;
 	padding-top: 10px;
-	padding: 1px 0px;
+	padding: 0px;
 	position: relative;
 }
 div.preset-manager-panel div.global_modules {
-	margin: -15px;
-	margin-bottom: 0px;
+	margin: -2px -15px;
 	padding-left: 15px;
 	background: #f7fbff;
 }
 div.preset-manager-panel div.state_settings_button_wrapper {
 	background: #f7fbff;
-	margin: 0px -15px;
-	padding-top: 15px;
+	margin: -2px -15px;
+	padding-top: 6px;
 	padding-left: 15px;
 	border-bottom: 1px solid #e5eef8;
 }
@@ -94,7 +98,7 @@ div.preset-manager-panel div.preset_specific:before {
 	content: "";
 	position: absolute;
 	width: 0; 
-	top: -7px;
+	top: -5px;
 	left: 30px;
 	height: 0; 
 	border-left: 5px solid transparent;
@@ -145,12 +149,14 @@ div.preset-manager-panel .chosen-search {
 	position: relative;
 }
 div.preset-manager-panel div.select-preset-field {
-	padding-bottom: 10px;
+	padding-bottom: 8px;
 }
 div.preset-manager-panel div.select-preset-field label {
 	font-weight: normal;
+	color: #7d99b3;
 	font-family: Tahoma;
 	margin-bottom: 3px;
+	padding-left: 2px;
 }
 div.preset-manager-panel div.preset_specific div.border_radius input,
 div.preset-manager-panel div.preset_specific div.inline-number input,
@@ -558,7 +564,7 @@ div.preset-manager-panel .checkbox-title span,
 div.preset-manager-panel .settings_module {
 	border-bottom: 1px solid #e5ecf4;
 	margin: 0px -15px;
-	padding-left: 15px;
+	padding-left: 20px;
 	padding-bottom: 15px;
 }
 div.preset-manager-panel .colors_settings_item {
@@ -620,9 +626,7 @@ div.preset-manager-panel .border_selectElement {
 	margin-left: 80px;
 	margin-top: 10px;
 }
-div.preset-manager-panel .move-wrapper-top {
-	margin-top: -15px !important;
-}
+
 div.preset-manager-panel .upfront-settings-css {
 	padding-bottom: 15px;
 }

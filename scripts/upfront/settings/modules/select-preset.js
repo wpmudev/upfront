@@ -5,6 +5,7 @@ define([
 	var l10n = Upfront.Settings.l10n.preset_manager;
 
 	var SelectPresetModule = BaseModule.extend({
+		className: 'select-presets',
 		initialize: function (options) {
 			this.options = options || {};
 			this.group = false;
