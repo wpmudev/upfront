@@ -16,7 +16,7 @@ define([
 
 		render: function () {
 			this.$el.html('');
-			if (this.options.title) {
+			if (this.options.title && this.options.toggle !== true) {
 				this.$el.append('<div class="upfront-settings-item-title">' + this.options.title + '</div>');
 			};
 			this.$el.append('<div class="upfront-settings-item-content"></div>');
