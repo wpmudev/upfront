@@ -25,7 +25,7 @@ define([
 
 		toggleBody: function() {
 			this.$el.find('.uf-settings-panel__body').toggle();
-			this.$el.toggleClass('uf-settings-panel--expended');
+			this.$el.toggleClass('uf-settings-panel--expanded');
 		},
 
 		render: function () {
@@ -36,6 +36,7 @@ define([
 			body = this.getBody();
 			body.addClass('uf-settings-panel__body');
 			this.$el.append(body);
+			this.$el.addClass('uf-settings-panel--expanded');
 		}
 	};
 
