@@ -141,7 +141,7 @@
 				if(captionSelector || caption){
 					if(!text.length){
 						text = $('<div class="uslide-caption" />');
-						slide.find('.uslide-image').append(text);
+						slide.append(text);
 					}
 					if(captionSelector) {
 						text.html($(captionSelector).html());
