@@ -58,7 +58,8 @@
 				movement: 30, // px
 				rotation: 15, // degrees
 				scaling: 1.1,
-				opacity: 0.5
+				opacity: 0.5,
+				renderer: this.getDefaultRenderer() // Available: canvas, absolute, fixed
 			}, args)
 		;
 		this.opts = data;
@@ -86,6 +87,8 @@
 		winHeight: 0,
 		scrollBottom: 0
 	};
+	Upfront_Parallax.canvas = false;
+	Upfront_Parallax.context = false;
 	Upfront_Parallax.start = function () {
 		if (Upfront_Parallax.started) return;
 		Upfront_Parallax.started = true;
@@ -93,7 +96,11 @@
 	}
 	Upfront_Parallax.draw = function (time) {
 		var scrollTop = Upfront_Parallax.cache.scrollTop;
-		if (Upfront_Parallax.cache.lastScrollTop == scrollTop) {
+		if (
+			Upfront_Parallax.cache.lastScrollTop == scrollTop
+			&&
+			time - Upfront_Parallax.prevTime < 5000 // Re-draw every 5 second
+		) {
 			requestAnimationFrame(Upfront_Parallax.draw);
 			return;
 		}
@@ -110,13 +117,18 @@
 		requestAnimationFrame(Upfront_Parallax.draw);
 	}
 	Upfront_Parallax.updateScroll = function (e) {
-		var scrollTop = $(window).scrollTop();
+		var scrollTop = window.pageYOffset;
 		Upfront_Parallax.cache.scrollTop = scrollTop;
 	}
+	$(window).on('load.upfront_paralax', Upfront_Parallax.draw);
 	$(window).on('scroll.upfront_paralax', Upfront_Parallax.updateScroll);
 	
 	Upfront_Parallax.prototype = {
 		cache: {},
+		canvas: false,
+		context: false,
+		imgCanvas: false,
+		imgContext: false,
 		callMethod: function (method, args) {
 			switch (method) {
 				case 'start':
@@ -153,21 +165,31 @@
 		},
 		bindEvents: function () {
 			//$(window).on('scroll.upfront_parallax_' + this.id, $.proxy(this.update, this));
-			$(window).on('resize.upfront_parallax_' + this.id, $.proxy(this.refreshCache, this));
+			$(window).on('load.upfront_parallax_' + this.id, $.proxy(this.refresh, this));
+			$(window).on('resize.upfront_parallax_' + this.id, $.proxy(this.refresh, this));
 		},
 		unbindEvents: function () {
 			//$(window).off('scroll.upfront_parallax_' + this.id);
+			$(window).off('load.upfront_parallax_' + this.id);
 			$(window).off('resize.upfront_parallax_' + this.id);
 		},
 		setOption: function (option, value) {
 			this.opts[option] = value;
 			this.refresh();
 		},
+		getDefaultRenderer: function () {
+			return 'canvas';
+		},
 		start: function () {
 			this.$element.addClass('upfront-parallax');
 			this.$moveElement.addClass('upfront-parallax-element');
 			this.reset_cache();
-			this.prepareFixedPos();
+			if ('fixed' == this.opts.renderer) {
+				this.prepareFixedPos();
+			}
+			else if ('canvas' == this.opts.renderer) {
+				this.prepareCanvas();
+			}
 			this.refresh();
 			this.bindEvents();
 			Upfront_Parallax.start();
@@ -175,7 +197,12 @@
 		stop: function () {
 			this.$element.removeClass('upfront-parallax');
 			this.$moveElement.removeClass('upfront-parallax-element');
-			this.restorePos();
+			if ('fixed' == this.opts.renderer) {
+				this.restorePos();
+			}
+			else if ('canvas' == this.opts.renderer) {
+				this.removeCanvas();
+			}
 			this.reset();
 			this.unbindEvents();
 		},
@@ -187,7 +214,10 @@
 				offsetLeft: 0,
 				height: 0,
 				width: 0,
-				visible: true
+				visible: true,
+				img: false,
+				imgCanvas: false,
+				imgContext: false
 			};
 		},
 		reset: function () {
@@ -219,6 +249,84 @@
 				//backfaceVisibility: ''
 			});
 		},
+		prepareCanvas: function () {
+			if (this.canvas === false) {
+				this.canvas = document.createElement('canvas');
+				this.canvas.id = 'uparallax-' + this.id;
+				$(this.canvas).css({
+					position: 'fixed',
+					top: 0,
+					left: 0,
+					zIndex: -1,
+					display: 'block'
+				});
+				$('.upfront-output-layout, .upfront-layout').append(this.canvas);
+			}
+			this.context = this.canvas.getContext('2d');
+			this.updateCanvas();
+		},
+		updateCanvas: function () {
+			if (this.canvas === false) return;
+			this.canvas.width = $(window).width();
+			this.canvas.height = $(window).height();
+		},
+		removeCanvas: function () {
+			this.canvas.remove();
+		},
+		prepareImage: function () {
+			if (this.cache.img) {
+				if (!this.imgCanvas) this.renderImage();
+				return;
+			}
+			var me = this,
+				img = new Image,
+				src = this.$moveElement.css('background-image').replace(/^url\(\s*['"]?\s*/, '').replace(/\s*['"]?\s*\)$/, '')
+			;
+			if (src != 'none') {
+				this.cache.img = img;
+				img.src = src;
+				this.$element.css('display', 'none');
+			}
+		},
+		renderImage: function () {
+			if (!this.cache.img) return;
+			if (!this.imgCanvas) {
+				this.imgCanvas = document.createElement('canvas');
+				$(this.imgCanvas).css({
+					display: 'block'
+				});
+				this.imgContext = this.imgCanvas.getContext('2d');
+			}
+			var width = this.cache.width,
+				height = this.cache.height,
+				parallaxHeight = height + (this.movementOffset*2),
+				winHeight = Upfront_Parallax.cache.winHeight,
+				ratio = this.cache.img.height/this.cache.img.width,
+				imgWidth = width,
+				imgHeight = parallaxHeight,
+				imgY = 0,
+				drawWidth = 0,
+				drawHeight = 0,
+				drawX = 0,
+				drawY = 0
+			;
+			this.imgCanvas.width = width;
+			this.imgCanvas.height = parallaxHeight;
+			if (parallaxHeight/width > ratio) {
+				imgWidth = parallaxHeight/ratio;
+				drawWidth = Math.floor(width/imgWidth * this.cache.img.width);
+			}
+			else {
+				imgHeight = width*ratio;
+				drawWidth = this.cache.img.width;
+			}
+			imgY = (height-imgHeight) / 2;
+			drawHeight = Math.floor(parallaxHeight/imgHeight * this.cache.img.height);
+			drawX = (this.cache.img.width - drawWidth) / 2;
+			drawY = (this.cache.img.height - drawHeight) / 2;
+			console.log('render image', this.id)
+			this.imgContext.drawImage(this.cache.img, drawX, drawY, drawWidth, drawHeight, 0, 0, width, parallaxHeight);
+		},
 		refresh: function () {
 			this.refreshCache();
 			var height = this.cache.height,
@@ -239,11 +347,20 @@
 				bottom: this.movementOffset*-1
 				//height: height+this.movementOffset*2
 			});
-			this.$element.css({
-				left: this.cache.offsetLeft,
-				height: this.cache.height,
-				width: this.cache.width
-			});
+			if ('fixed' == this.opts.renderer) {
+				this.$element.css({
+					left: this.cache.offsetLeft,
+					height: this.cache.height,
+					width: this.cache.width
+				});
+			}
+			else if ('canvas' == this.opts.renderer) {
+				this.$parent.css({
+					background: 'none'
+				});
+				this.updateCanvas();
+				this.renderImage();
+			}
 			this.update();
 		},
 		refreshCache: function () {
@@ -265,8 +382,8 @@
 				offsetBottom = this.cache.offsetBottom,
 				height = this.cache.height,
 				scrollTop = Upfront_Parallax.cache.scrollTop,
-				winHeight = Upfront_Parallax.cache.winHeight,
 				scrollBottom = Upfront_Parallax.cache.scrollBottom,
+				winHeight = Upfront_Parallax.cache.winHeight,
 				moveHeight = (this.movementOffset * 2) + (this.opts.movement * 2),
 				range = 2 * this.movementOffset,
 				movement = (this.movementOffset > 0 ? range / moveHeight : 1),
@@ -276,23 +393,34 @@
 				effects = this.opts.effect.split(','),
 				transform = ''
 			;
+			if ('canvas' == this.opts.renderer) {
+				this.prepareImage();
+				if (!this.cache.img) return;
+			}
 			if (offsetBottom > scrollTop && offsetTop < scrollBottom) {
-				if (!this.cache.visible) {
-					this.$element.css('visibility', 'visible');
+				if ('fixed' == this.opts.renderer) {
+					if (!this.cache.visible) {
+						this.$element.css('visibility', 'visible');
+					}
+					this.$element.css({
+						//transform: 'translate3d(0, ' + (offsetTop-scrollTop) + 'px, 0)'
+						transform: 'translateY(' + (offsetTop-scrollTop) + 'px)'
+					});
 				}
-				this.$element.css({
-					//transform: 'translate3d(0, ' + (offsetTop-scrollTop) + 'px, 0)'
-					transform: 'translateY(' + (offsetTop-scrollTop) + 'px)'
-				});
 				this.cache.visible = true;
 			}
 			else {
 				if (this.cache.visible) {
-					this.$element.css({
-						visibility: 'hidden',
-						//transform: 'translate3d(0, ' + winHeight + 'px, 0)'
-						//transform: 'translateY(' + winHeight + 'px)'
-					});
+					if ('fixed' == this.opts.renderer) {
+						this.$element.css({
+							visibility: 'hidden',
+							//transform: 'translate3d(0, ' + winHeight + 'px, 0)'
+							//transform: 'translateY(' + winHeight + 'px)'
+						});
+					}
+					else if ('canvas' == this.opts.renderer) {
+						this.clearCanvas();
+					}
 					this.cache.visible = false;
 				}
 			}
@@ -303,21 +431,100 @@
 				translate = minTranslate;
 			}
 			
-			if (this.cache.translate == translate) return;
+			if (!this.cache.visible) return;
 			this.cache.translate = translate;
 			
-			for (i in effects) {
-				var effect = this.getEffect(effects[i], translate, maxTranslate);
-				if (effect.property == 'transform') {
-					transform += (transform == '' ? '' : ' ');
-					transform += effect.value;
+			if ('canvas' == this.opts.renderer) {
+				this.drawCanvas(translate, maxTranslate);
+			}
+			else {
+				for (i in effects) {
+					var effect = this.getEffect(effects[i], translate, maxTranslate);
+					if (effect.property == 'transform') {
+						transform += (transform == '' ? '' : ' ');
+						transform += effect.value;
+					}
+					else {
+						this.$moveElement.css(effect.property, effect.value);
+					}
 				}
-				else {
-					this.$moveElement.css(effect.property, effect.value);
+				if (transform !== '') {
+					this.$moveElement.css('transform', transform);
 				}
 			}
-			if (transform !== '') {
-				this.$moveElement.css('transform', transform);
+		},
+		drawCanvas: function (translate, maxTranslate) {
+			if (!this.cache.img || !this.imgCanvas) return;
+			var offsetTop = this.cache.offsetTop,
+				offsetBottom = this.cache.offsetBottom,
+				offsetLeft = this.cache.offsetLeft,
+				width = this.cache.width,
+				height = this.cache.height,
+				parallaxHeight = height + (this.movementOffset*2),
+				scrollTop = Upfront_Parallax.cache.scrollTop,
+				scrollBottom = Upfront_Parallax.cache.scrollBottom,
+				winHeight = Upfront_Parallax.cache.winHeight,
+				visibleHeight = height,
+				ratio = this.cache.img.height/this.cache.img.width,
+				imgWidth = width,
+				imgHeight = parallaxHeight,
+				imgY = 0,
+				drawWidth = 0,
+				drawHeight = 0,
+				drawVisibleHeight = 0,
+				drawX = 0,
+				drawY = 0,
+				drawRelY = 0,
+				closest = this.findClosestInstances(),
+				clearTop = offsetTop,
+				clearBottom = offsetBottom
+			;
+			if (offsetTop < scrollTop) {
+				visibleHeight = offsetBottom - scrollTop;
+			}
+			else if (offsetBottom > scrollBottom) {
+				visibleHeight = scrollBottom - offsetTop;
+			}
+			visibleHeight = Math.min(winHeight, visibleHeight);
+			drawY = (parallaxHeight > height ? Math.round((parallaxHeight - height) / 2) : 0);
+			if (offsetTop < scrollTop) {
+				drawRelY = scrollTop - offsetTop;
+				drawY += drawRelY;
+			}
+			drawY += translate * -1;
+			if (closest.top && closest.top.cache.offsetBottom < offsetTop) {
+				clearTop = offsetTop - Math.ceil((offsetTop - closest.top.cache.offsetBottom) / 2);
+			}
+			if (closest.bottom && closest.bottom.cache.offsetTop > offsetBottom) {
+				clearBottom = offsetBottom + Math.floor((closest.bottom.cache.offsetTop - offsetBottom) / 2);
+			}
+			this.context.drawImage(this.imgCanvas, 0, 0, width, parallaxHeight, offsetLeft, offsetTop-this.movementOffset-scrollTop+translate, width, parallaxHeight);
+			this.context.clearRect(offsetLeft, 0, width, clearTop-scrollTop);
+			this.context.clearRect(offsetLeft, clearBottom-scrollTop, width, winHeight-(clearBottom-scrollTop));
+		},
+		clearCanvas: function () {
+			this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		},
+		findClosestInstances: function () {
+			var current = false,
+				closestTop = false,
+				closestBottom = false
+			;
+			for (id in Upfront_Parallax.instances) {
+				current = Upfront_Parallax.instances[id];
+				if (current.id == this.id) continue;
+				if (current.cache.offsetBottom <= this.cache.offsetTop) {
+					if (closestTop !== false && closestTop.cache.offsetBottom > current.cache.offsetBottom) continue;
+					closestTop = current;
+				}
+				else if (current.cache.offsetTop >= this.cache.offsetBottom) {
+					if (closestBottom !== false && closestBottom.cache.offsetTop < current.cache.offsetTop) continue;
+					closestBottom = current;
+				}
+			}
+			return {
+				top: closestTop,
+				bottom: closestBottom
 			}
 		},
 		getEffect: function (effect, translate, maxTranslate) {
