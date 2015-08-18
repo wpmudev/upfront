@@ -82,7 +82,6 @@ define([
 					className: state + '-border-type borderType ' + custom_class,
 					name: current_element + me.options.fields.type,
 					default_value: "solid",
-					label: '',
 					values: [
 						{ label: l10n.solid, value: 'solid' },
 						{ label: l10n.dashed, value: 'dashed' },
@@ -98,7 +97,8 @@ define([
 					className: state + '-border-color upfront-field-wrap upfront-field-wrap-color sp-cf borderColor ' + custom_class,
 					name: current_element + me.options.fields.color,
 					blank_alpha : 0,
-					label: '',
+					label_style: 'inline',
+					label: l10n.color,
 					default_value: '#000',
 					spectrum: {
 						preferredFormat: 'rgb',
