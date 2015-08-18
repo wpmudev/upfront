@@ -17,18 +17,23 @@ define([
 			$(document).click(function(e){
 				var	target = $(e.target);
 
-				if(target.closest('#page').length && target[0] !== me.el && !target.closest(me.el).length && me.isOpen) {
+				if (target.closest('#page').length && target[0] !== me.el && !target.closest(me.el).length && me.isOpen) {
 					me.close();
 				}
 			});
 		},
 
 		onClickControl: function(e){
-			if (this.isDisabled) {
-				return;
-			}
+			var	target = $(e.target);
+
+			if (this.isDisabled) 	return;
 
 			e.preventDefault();
+
+			if (!target.closest('.upfront-icon-region-padding').length) {
+				e.stopPropagation();
+				return;
+			}
 
 			this.clicked(e);
 

@@ -2251,26 +2251,27 @@ input.upfront-field-text:hover,
 .upfront-field-slider {
   height: 2px;
   background: #C2D5E6;
-  position: relative; }
+  position: relative;
+  cursor: pointer; }
 
-/* line 648, sass/partials/_fields.scss */
+/* line 649, sass/partials/_fields.scss */
 .upfront-field-slider-vertical {
   height: 100px;
   width: 2px; }
 
-/* line 653, sass/partials/_fields.scss */
+/* line 654, sass/partials/_fields.scss */
 .upfront-field-slider .ui-slider-range {
   background: #263A4D;
   height: 2px; }
 
-/* line 657, sass/partials/_fields.scss */
+/* line 658, sass/partials/_fields.scss */
 .upfront-field-slider-vertical .ui-slider-range {
   width: 2px;
   position: absolute;
   bottom: 0;
   left: 0; }
 
-/* line 663, sass/partials/_fields.scss */
+/* line 664, sass/partials/_fields.scss */
 .upfront-field-slider .ui-slider-handle {
   border: 3px solid #263A4D;
   background: #ADC4D9;
@@ -2281,21 +2282,21 @@ input.upfront-field-text:hover,
   top: -5px;
   cursor: pointer; }
 
-/* line 673, sass/partials/_fields.scss */
+/* line 674, sass/partials/_fields.scss */
 .upfront-field-slider-vertical .ui-slider-handle {
   left: -5px;
   top: auto; }
 
-/* line 678, sass/partials/_fields.scss */
+/* line 679, sass/partials/_fields.scss */
 .upfront-field-wrap-slider .upfront-field-info {
   margin-bottom: 10px; }
 
-/* line 682, sass/partials/_fields.scss */
+/* line 683, sass/partials/_fields.scss */
 .upfront-field-slider-value {
   margin-top: 6px;
   text-align: center; }
 
-/* line 687, sass/partials/_fields.scss */
+/* line 688, sass/partials/_fields.scss */
 .upfront-date_picker {
   background: #F2F9FF;
   border: 1px solid #6386A6;
@@ -2307,67 +2308,67 @@ input.upfront-field-text:hover,
   text-transform: none !important;
   text-decoration: none !important; }
 
-/* line 699, sass/partials/_fields.scss */
+/* line 700, sass/partials/_fields.scss */
 .upfront-date_picker .ui-datepicker-header {
   padding: 5px 10px;
   border-bottom: 1px solid #accae6;
   text-align: center; }
 
-/* line 705, sass/partials/_fields.scss */
+/* line 706, sass/partials/_fields.scss */
 .upfront-date_picker table {
   margin: 5px 10px; }
 
-/* line 709, sass/partials/_fields.scss */
+/* line 710, sass/partials/_fields.scss */
 .upfront-date_picker thead {
   color: #395269; }
 
-/* line 713, sass/partials/_fields.scss */
+/* line 714, sass/partials/_fields.scss */
 .upfront-date_picker select {
   font-family: 'Source Sans Pro', sans-serif;
   margin: 0 2px; }
 
-/* line 718, sass/partials/_fields.scss */
+/* line 719, sass/partials/_fields.scss */
 .upfront-date_picker .ui-datepicker-prev,
 .upfront-date_picker .ui-datepicker-next {
   display: none; }
 
-/* line 723, sass/partials/_fields.scss */
+/* line 724, sass/partials/_fields.scss */
 .upfront-date_picker .ui-datepicker-prev {
   float: left; }
 
-/* line 726, sass/partials/_fields.scss */
+/* line 727, sass/partials/_fields.scss */
 .upfront-date_picker .ui-datepicker-next {
   float: right; }
 
-/* line 730, sass/partials/_fields.scss */
+/* line 731, sass/partials/_fields.scss */
 .upfront-date_picker td,
 .upfront-date_picker th {
   text-align: center; }
 
-/* line 735, sass/partials/_fields.scss */
+/* line 736, sass/partials/_fields.scss */
 div.upfront-date_picker td a {
   padding: 2px 4px;
   color: #607F99; }
 
-/* line 740, sass/partials/_fields.scss */
+/* line 741, sass/partials/_fields.scss */
 .upfront-date_picker td a:hover {
   padding: 2px 4px;
   background: #1fcd8f;
   color: #fff !important;
   text-decoration: none; }
 
-/* line 747, sass/partials/_fields.scss */
+/* line 748, sass/partials/_fields.scss */
 .upfront-date_picker a.ui-state-active {
   background: #607F99;
   color: #F2F9FF !important; }
 
-/* line 752, sass/partials/_fields.scss */
+/* line 753, sass/partials/_fields.scss */
 .upfront-time_picker {
   padding: 5px 10px;
   border-top: 1px solid #accae6;
   text-align: center; }
 
-/* line 758, sass/partials/_fields.scss */
+/* line 759, sass/partials/_fields.scss */
 .upfront-field-wrap-checkboxes .checkbox-info:before {
   display: inline-block;
   content: "";
@@ -10329,14 +10330,19 @@ div.sp-replacer:before {
 /* line 11, sass/partials/_inline-controls-panel.scss */
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item {
   background: #F5F5F5;
-  border-bottom: 0; }
+  border-bottom: 0;
+  cursor: default; }
 
-/* line 15, sass/partials/_inline-controls-panel.scss */
+/* line 16, sass/partials/_inline-controls-panel.scss */
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon {
+  cursor: pointer; }
+
+/* line 19, sass/partials/_inline-controls-panel.scss */
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-control-dialog-open,
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item:hover {
   background: #E8E8E8; }
 
-/* line 19, sass/partials/_inline-controls-panel.scss */
+/* line 23, sass/partials/_inline-controls-panel.scss */
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-padding-control {
   min-width: 140px;
   width: 100%;
@@ -10346,23 +10352,23 @@ div.sp-replacer:before {
   box-shadow: 0px 1px 2px #ADADAD;
   color: #ADADAD; }
 
-/* line 28, sass/partials/_inline-controls-panel.scss */
+/* line 32, sass/partials/_inline-controls-panel.scss */
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-padding-control span.upfront-padding-value {
   color: #00afec;
   font-weight: bold;
   padding-left: 5px; }
 
-/* line 33, sass/partials/_inline-controls-panel.scss */
+/* line 37, sass/partials/_inline-controls-panel.scss */
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-settings:before {
   background-position: -818px -40px;
   background-image: url("../img/uf-ui-sprite.svg") !important; }
 
-/* line 37, sass/partials/_inline-controls-panel.scss */
+/* line 41, sass/partials/_inline-controls-panel.scss */
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-padding:before {
   background-position: -908px -296px;
   background-image: url("../img/uf-ui-sprite.svg") !important; }
 
-/* line 41, sass/partials/_inline-controls-panel.scss */
+/* line 45, sass/partials/_inline-controls-panel.scss */
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-edit:before {
   background-position: -1333px -116px;
   width: 24px;
