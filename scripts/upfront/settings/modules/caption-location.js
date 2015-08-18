@@ -63,7 +63,7 @@ define([
 					model: this.model,
 					className: state + '-caption-select caption_select',
 					name: 'caption-position-value',
-					default_value: 'nocaption',
+					default_value: 'topOver',
 					label: l10n.ctrl.caption_position,
 					values: [
 						{ label: l10n.ctrl.over_top, value: 'topOver', icon: 'topOver' },
