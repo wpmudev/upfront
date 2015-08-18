@@ -5,6 +5,7 @@
 	z-index: 100000000000000000;
 	bottom: 0;
 	background-color: #334454;
+	border-right: 1px solid #334454;
 	width: 260px;
 }
 
@@ -92,6 +93,7 @@
 	padding-left: 15px;
 	border-bottom: 1px solid #c3d5e6;
 	cursor: pointer;
+	color: #2f476f;
 }
 
 #element-settings-sidebar .uf-settings-panel--expanded .uf-settings-panel__title {
@@ -110,7 +112,7 @@
 	right: 16px;
 	border-top: 4px solid transparent;
 	border-bottom: 4px solid transparent;
-	border-left: 4px solid #273a4c;
+	border-left: 4px solid #6a8db4;
 }
 
 #element-settings-sidebar .uf-settings-panel--expanded .uf-settings-panel__title:before {
@@ -118,17 +120,20 @@
 	right: 15px;
 	border-left: 4px solid transparent;
 	border-right: 4px solid transparent;
-	border-top: 4px solid #273a4c;
+	border-top: 4px solid #6a8db4;
 	border-bottom: 0 none;
 }
 
 #element-settings-sidebar .upfront-settings-item {
 	padding-top: 0;
 }
+
 #element-settings-sidebar .upfront-settings-item-title:after {
 	display: none;
 }
 
-#element-settings-sidebar .upfront-settings-css .upfront-settings-item-title {
+#element-settings-sidebar .upfront-settings-css .upfront-settings-item-title,
+#element-settings-sidebar .uslider-slides .upfront-settings-item-title {
 	display: none;
 }
+

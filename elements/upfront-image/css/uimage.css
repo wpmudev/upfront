@@ -763,6 +763,8 @@ div.preset-manager-panel .caption_select label, div.preset-manager-panel .field-
 div.preset-manager-panel .field-caption_trigger {
 	margin-top: 0px;
 	padding-top: 10px;
+	position: relative;
+    top: 5px;
 }
 
 /* Controls */

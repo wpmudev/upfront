@@ -4864,6 +4864,7 @@ a.upfront-region-name-edit-trigger:before {
   z-index: 100000000000000000;
   bottom: 0;
   background-color: #334454;
+  border-right: 1px solid #334454;
   width: 260px; }
 
 #element-settings-sidebar #settings {
@@ -4940,7 +4941,8 @@ a.upfront-region-name-edit-trigger:before {
   line-height: 37px;
   padding-left: 15px;
   border-bottom: 1px solid #c3d5e6;
-  cursor: pointer; }
+  cursor: pointer;
+  color: #2f476f; }
 
 #element-settings-sidebar .uf-settings-panel--expanded .uf-settings-panel__title {
   background-color: #dae5f0;
@@ -4957,14 +4959,14 @@ a.upfront-region-name-edit-trigger:before {
   right: 16px;
   border-top: 4px solid transparent;
   border-bottom: 4px solid transparent;
-  border-left: 4px solid #273a4c; }
+  border-left: 4px solid #6a8db4; }
 
 #element-settings-sidebar .uf-settings-panel--expanded .uf-settings-panel__title:before {
   top: 17px;
   right: 15px;
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
-  border-top: 4px solid #273a4c;
+  border-top: 4px solid #6a8db4;
   border-bottom: 0 none; }
 
 #element-settings-sidebar .upfront-settings-item {
@@ -4973,7 +4975,7 @@ a.upfront-region-name-edit-trigger:before {
 #element-settings-sidebar .upfront-settings-item-title:after {
   display: none; }
 
-#element-settings-sidebar .upfront-settings-css .upfront-settings-item-title {
+#element-settings-sidebar .upfront-settings-css .upfront-settings-item-title, #element-settings-sidebar .uslider-slides .upfront-settings-item-title {
   display: none; }
 
 /* ----- Save As dialog ----- */
@@ -13026,7 +13028,7 @@ div.preset-manager-panel .hover_preset, div.preset-manager-panel .state_settings
   margin-right: 5px; }
 
 div.preset-manager-panel .hover_preset input, div.preset-manager-panel .state_settings_button input, div.preset-manager-panel .static_preset input, div.preset-manager-panel .delete_preset input {
-  font-size: 13px;
+  font-size: 12px;
   padding: 0px 5px 2px;
   border-radius: 5px; }
 
@@ -13055,7 +13057,7 @@ div.preset-manager-panel .state_settings_button input {
   text-decoration: none;
   border-radius: 0 !important;
   position: relative;
-  bottom: -1px; }
+  bottom: -2px; }
 
 div.preset-manager-panel .state_settings_button.active input {
   background: #fff;
@@ -13078,7 +13080,7 @@ div.preset-manager-panel .upfront-settings-css {
 div.preset-manager-panel .delete_preset {
   position: relative;
   z-index: 99;
-  top: -8px; }
+  top: -9px; }
 
 div.preset-manager-panel div.preset_specific {
   background: #fff;
@@ -13093,8 +13095,8 @@ div.preset-manager-panel div.global_modules {
 
 div.preset-manager-panel div.state_settings_button_wrapper {
   background: #f7fbff;
-  margin: -2px -15px;
-  padding-top: 6px;
+  margin: -3px -15px;
+  padding-top: 5px;
   padding-left: 15px;
   border-bottom: 1px solid #e5eef8; }
 
@@ -13156,7 +13158,7 @@ div.preset-manager-panel .chosen-search {
   position: relative; }
 
 div.preset-manager-panel div.select-preset-field {
-  padding-bottom: 8px; }
+  padding-bottom: 9px; }
 
 div.preset-manager-panel div.select-preset-field label {
   font-weight: normal;
@@ -13266,7 +13268,7 @@ div.preset-manager-panel div.preset_specific div.duration {
   margin-top: 5px; }
 
 div.preset-manager-panel div.preset_specific div.transition {
-  margin-top: -32px;
+  margin-top: -27px;
   margin-left: 80px;
   width: 135px; }
 
@@ -13307,7 +13309,7 @@ div.preset-manager-panel div.new_preset {
   margin-top: 10px; }
 
 div.preset-manager-panel div.preset {
-  margin-top: 10px; }
+  margin-top: 8px; }
 
 div.preset-manager-panel div.or_divider div.upfront-settings-item-title {
   text-align: center; }
@@ -13402,13 +13404,13 @@ div.preset-manager-panel div.borderWidth {
   border-left: 2px solid #dae6f2; }
 
 div.preset-manager-panel div.borderWidth input {
-  width: 50px; }
+  width: 40px; }
 
 div.preset-manager-panel div.borderWidth label {
   display: none; }
 
 div.preset-manager-panel div.borderType {
-  width: 80px;
+  width: 70px;
   margin-left: 13px;
   margin-right: 14px; }
 
@@ -13417,7 +13419,7 @@ div.preset-manager-panel div.borderType .upfront-field-select {
   top: 7px; }
 
 div.preset-manager-panel div.borderColor {
-  margin-top: -15px; }
+  margin-top: -32px; }
 
 div.preset-manager-panel .backgroundColor {
   padding-top: 8px; }
@@ -13447,10 +13449,11 @@ div.preset-manager-panel div.fontColor {
   color: #000;
   margin-right: 0px; }
 
-div.preset-manager-panel div.fontColor label {
+div.preset-manager-panel div.fontColor label, div.preset-manager-panel div.borderColor label {
   position: relative;
-  top: 25px;
-  left: 25px; }
+  top: 25px !important;
+  left: 25px;
+  color: #7d99b6; }
 
 div.preset-manager-panel div.preset-separator {
   border-bottom: 1px solid #e1edf8;
@@ -13528,7 +13531,8 @@ div.preset-manager-panel .edit_preset_css:before, #element-settings-sidebar .upf
   left: 8px; }
 
 div.preset-manager-panel .module-color-field {
-  padding-top: 5px; }
+  padding-top: 5px;
+  height: 25px; }
 
 div.preset-manager-panel .module-color-field .upfront-field-label-inline {
   font-size: 11px;
@@ -13578,25 +13582,43 @@ div.preset-manager-panel .colors_settings_item, div.preset-manager-panel .select
 
 div.preset-manager-panel .typography_settings_item .element-toggled.selectElement, div.preset-manager-panel .typography_settings_item .element-toggled.typeFace, div.preset-manager-panel .typography_settings_item .element-toggled.weightStyle, div.preset-manager-panel .typography_settings_item .element-toggled.fontSize, div.preset-manager-panel .hov_animation_settings_item .element-toggled.duration, div.preset-manager-panel .colors_settings_item .element-toggled.single, div.preset-manager-panel .colors_settings_item .element-toggled.two:nth-child(even) {
   border-left: 2px solid #dae6f2;
-  padding: 5px 0px 5px 10px;
-  position: relative;
-  top: 5px; }
+  padding: 5px 0px 5px 10px; }
 
-div.preset-manager-panel .colors_settings_item .element-toggled.two {
-  top: 8px;
+div.preset-manager-panel .typography_settings_item .element-toggled.lineHeight, div.preset-manager-panel .typography_settings_item .element-toggled.fontColor, div.preset-manager-panel .typography_settings_item .element-toggled.selectElement, div.preset-manager-panel .typography_settings_item .element-toggled.typeFace, div.preset-manager-panel .typography_settings_item .element-toggled.weightStyle, div.preset-manager-panel .typography_settings_item .element-toggled.fontSize, div.preset-manager-panel .hov_animation_settings_item .element-toggled.duration, div.preset-manager-panel .colors_settings_item .element-toggled.single, div.preset-manager-panel .colors_settings_item .element-toggled.two:nth-child(even), div.preset-manager-panel .colors_settings_item .element-toggled.two {
+  top: 5px;
   position: relative; }
+
+div.preset-manager-panel .typography_settings_item .element-toggled.fontColor {
+  top: 11px; }
+
+div.preset-manager-panel .typography_settings_item .element-toggled label {
+  margin-top: -10px; }
+
+div.preset-manager-panel .colors_settings_item .element-toggled.single, div.preset-manager-panel .colors_settings_item .element-toggled.two {
+  margin-top: 0px;
+  padding-bottom: 5px; }
 
 div.preset-manager-panel .colors_settings_item .element-toggled.two:nth-child(even) {
   clear: left; }
 
-div.preset-manager-panel .element-toggled.two {
-  margin-top: -2px; }
-
 div.preset-manager-panel .typography_settings_item .element-toggled.typeFace .chosen-container, div.preset-manager-panel .typography_settings_item .element-toggled.weightStyle .chosen-container {
   width: 213px !important; }
 
-div.preset-manager-panel .typography_settings_item label {
-  position: relative; }
+div.preset-manager-panel .typography_settings_item .upfront-settings-item-content label {
+  position: relative;
+  top: 5px;
+  color: #7d99b6; }
+
+div.preset-manager-panel .typography_settings_item .upfront-settings-item-content {
+  margin-top: -6px !important; }
+
+div.preset-manager-panel .typography_settings_item .useTypography label {
+  color: #2f475f;
+  top: 0px;
+  margin-top: 6px; }
+
+div.preset-manager-panel .typography_settings_item .upfront-settings-item-title {
+  margin-top: -3px; }
 
 div.preset-manager-panel .useTypography .upfront-field-multiple-selected {
   margin-bottom: 5px; }
@@ -13605,7 +13627,7 @@ div.preset-manager-panel .useColors .upfront-field-multiple-selected {
   margin-bottom: 8px; }
 
 div.preset-manager-panel .border-with-fields {
-  padding-top: 15px !important; }
+  padding-top: 10px !important; }
 
 div.preset-manager-panel .border_selectElement {
   width: 145px;
@@ -13619,7 +13641,7 @@ div.preset-manager-panel .upfront-settings-css {
   padding-bottom: 15px; }
 
 div.preset-manager-panel .upfront-settings-item-title {
-  line-height: 22px; }
+  line-height: 16px; }
 
 .upfront-button .upfront-inline-panel, .menu-item .upfront-inline-panel {
   -webkit-transition-delay: 0;
