@@ -4640,7 +4640,7 @@ a.upfront-region-name-edit-trigger:before {
   border: 1px solid #6386a6;
   background: #f7fbff;
   box-shadow: 3px 3px 0 rgba(99, 134, 166, 0.25);
-  z-index: 5; }
+  z-index: inherit; }
 
 #settings .general_settings_item {
   border-bottom: 1px solid #e5ecf4;
@@ -13580,7 +13580,11 @@ div.preset-manager-panel .typography_settings_item .element-toggled.selectElemen
   border-left: 2px solid #dae6f2;
   padding: 5px 0px 5px 10px;
   position: relative;
-  top: 0px; }
+  top: 5px; }
+
+div.preset-manager-panel .colors_settings_item .element-toggled.two {
+  top: 8px;
+  position: relative; }
 
 div.preset-manager-panel .colors_settings_item .element-toggled.two:nth-child(even) {
   clear: left; }
@@ -13592,7 +13596,6 @@ div.preset-manager-panel .typography_settings_item .element-toggled.typeFace .ch
   width: 213px !important; }
 
 div.preset-manager-panel .typography_settings_item label {
-  top: 4px;
   position: relative; }
 
 div.preset-manager-panel .useTypography .upfront-field-multiple-selected {
@@ -13606,7 +13609,7 @@ div.preset-manager-panel .border-with-fields {
 
 div.preset-manager-panel .border_selectElement {
   width: 145px;
-  z-index: 99999;
+  z-index: 9;
   position: relative;
   margin-bottom: -34px;
   margin-left: 80px;
@@ -13614,6 +13617,9 @@ div.preset-manager-panel .border_selectElement {
 
 div.preset-manager-panel .upfront-settings-css {
   padding-bottom: 15px; }
+
+div.preset-manager-panel .upfront-settings-item-title {
+  line-height: 22px; }
 
 .upfront-button .upfront-inline-panel, .menu-item .upfront-inline-panel {
   -webkit-transition-delay: 0;

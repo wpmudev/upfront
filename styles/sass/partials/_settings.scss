@@ -56,7 +56,7 @@
 	border: 1px solid rgb(99, 134, 166);
 	background: rgb(247, 251, 255);
 	box-shadow: 3px 3px 0 rgba(99, 134, 166, 0.25);
-	z-index: 5;
+	z-index: inherit;
 }
 #settings .general_settings_item {
 	border-bottom: 1px solid rgb(229, 236, 244);
