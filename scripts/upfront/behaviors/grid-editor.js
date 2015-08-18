@@ -2299,7 +2299,7 @@ var GridEditor = {
 			zIndex: 100,
 			helper: 'clone',
 			disabled: is_disabled,
-			cancel: '.upfront-entity_meta',
+			cancel: '.upfront-entity_meta, .upfront-element-controls',
 			distance: 10,
 			appendTo: $main,
 			iframeFix: true,
