@@ -224,11 +224,11 @@ define([
 
 
 	var SlidesPanel =  RootSettingsPanel.extend({
+		className: 'uf-settings-panel upfront-settings_panel upfront-settings_panel_wrap uslider-slides',
 		settings: [
 			{
 				type: 'SettingsItem',
 				group: false,
-				title:  '',
 				fields: [
 					{
 						type: 'SlidesField'
