@@ -21,10 +21,9 @@ define([
 				var setting = new Upfront.Views.Editor.Settings.Item({
 					title: settingOptions.title,
 					model: me.model,
+					className: settingOptions.className,
 					fields: []
 				});
-
-				if (settingOptions.className) setting.className = settingOptions.className;
 
 				_.each(settingOptions.fields, function(fieldOptions) {
 					var field;
