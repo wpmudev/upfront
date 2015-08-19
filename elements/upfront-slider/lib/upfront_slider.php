@@ -155,7 +155,7 @@ class Upfront_UsliderView extends Upfront_Object {
 				'next_label' => __('Navigation next', 'upfront'),
 				'next_info' => __('Navigation\'s next button', 'upfront'),
 			),
-			'settings' => __('Settings', 'upfront'),
+			'settings' => __('Slider Settings', 'upfront'),
 			'general' => __('General', 'upfront'),
 			'above_img' => __('Above the image', 'upfront'),
 			'below_img' => __('Below the image', 'upfront'),

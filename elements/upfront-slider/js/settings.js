@@ -73,13 +73,13 @@ define([
 						className: 'rotate',
 						multiple: true,
 						values: [ { label: l10n.rotate_every, value: 'true' } ],
-						change: function(value) {
+						change: function(value, parent) {
 							if(value[0] === 'true') {
-								me.$el.find('.rotate-time').css('opacity', '1');
+								parent.$el.find('.rotate-time').css('opacity', '1');
 							} else {
-								me.$el.find('.rotate-time').css('opacity', '0.5');
+								parent.$el.find('.rotate-time').css('opacity', '0.5');
 							}
-						}
+						},
 					},
 					{
 						type: 'Number',
