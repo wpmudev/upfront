@@ -18,10 +18,10 @@ var PostsSettings = ElementSettings.extend({
 		general.on("settings:dispatched", this.rerender, this);
 		general.on("post:removed", this.rerender, this);
 		post_parts.on("settings:dispatched", this.rerender, this);
-		this.panels = _([
+		this.panels = [
 			general,
 			post_parts
-		]);
+		];
 	},
 
 	rerender: function () {
@@ -34,6 +34,8 @@ var PostsSettings = ElementSettings.extend({
 		this.render();
 		if (active_panel) this.toggle_panel(this.panels.compact()[active_panel]);
 	},
+	
+	title: l10n.posts_settings,
 
 	get_title: function () {
 		return l10n.settings;
