@@ -5690,6 +5690,13 @@ var _Settings_CSS = SettingsItem.extend({
 
 		this.fields = _([
 			new Upfront.Views.Editor.Field.Button({
+				model: me.model,
+				className: 'edit-preset-css-label',
+				compact: true,
+				label: l10n.edit_css_label,
+			}),
+			
+			new Upfront.Views.Editor.Field.Button({
 				model: this.model,
 				className: 'upfront-css-edit',
 				compact: true,

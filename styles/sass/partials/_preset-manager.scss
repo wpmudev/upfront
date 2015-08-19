@@ -500,24 +500,51 @@ div.preset-manager-panel .transition .upfront-field-select-single .upfront-field
 div.preset-manager-panel .backgroundcolor-hover, div.preset-manager-panel .typography-hover {
 	padding-top: 11px;
 }
+#element-settings-sidebar .upfront-css-edit,
 div.preset-manager-panel .edit_preset_css {
 	position: relative;
-	margin-top: 20px;
+	margin-top: -12px;
+	left: 90px;
+}
+#element-settings-sidebar .edit-preset-css-label,
+div.preset-manager-panel .edit_preset_label {
+	font-weight: bold;
+	font-size: 13px;
+	color: #2f475f;
+	text-transform: uppercase;
+}
+#element-settings-sidebar .edit-preset-css-label input,
+div.preset-manager-panel .edit_preset_label input {
+	cursor: default;
+	position: relative;
+	top: 15px;
 }
 #element-settings-sidebar .upfront-css-edit {
-	margin-top: 0px;
 	position: relative;
 }
 .edit_preset_css input,
 #element-settings-sidebar .upfront-css-edit input {
 	background-image: linear-gradient(-179deg, #fafdff 0%, #f3faff 100%);
-	border: 1px solid rgba(162,191,218,1);
-	border-radius: 5px;
+	border: 1px solid #a2bfda;
+	border-radius: 2px;
 	font-size: 14px;
-	color: #8786a6;
+	color: #7c86a6;
 	padding: 4px 8px;
 	position: relative;
 	padding-left: 32px;
+}
+.edit_preset_css input:hover,
+#element-settings-sidebar .upfront-css-edit input:hover {
+	border: 1px solid #607f99;
+}
+#element-settings-sidebar .upfront-css-edit {
+	margin-bottom: 10px;
+}
+.upfront-settings-css .upfront-settings-item-content {
+	padding-left: 10px !important;
+}
+.upfront-social-services-item .upfront-settings-css {
+	margin-left: -15px;
 }
 div.preset-manager-panel .edit_preset_css:before,
 #element-settings-sidebar .upfront-css-edit:before {
@@ -567,7 +594,7 @@ div.preset-manager-panel .checkbox-title span,
 div.preset-manager-panel .settings_module {
 	border-bottom: 1px solid #e5ecf4;
 	margin: 0px -15px;
-	padding-left: 25px;
+	padding-left: 15px;
 	padding-bottom: 15px;
 }
 div.preset-manager-panel .colors_settings_item {
