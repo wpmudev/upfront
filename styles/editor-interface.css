@@ -4805,7 +4805,7 @@ a.upfront-region-name-edit-trigger:before {
   line-height: 25px;
   margin-top: 5px; }
 
-.general_settings_item .slider-contrls-style label, .general_settings_item .rotate-effect label, .general_settings_item .thumb-propostions label {
+.general_settings_item .slider-contrls-style label, .general_settings_item .rotate-effect label, .general_settings_item .thumb-propostions label, .general_settings_item .image_style label, .general_settings_item .caption_select label {
   position: relative;
   top: 5px;
   margin-top: -5px; }
@@ -13102,7 +13102,7 @@ div.preset-manager-panel div.preset_specific {
 
 div.preset-manager-panel div.global_modules {
   margin: -2px -15px;
-  padding-left: 15px;
+  padding-left: 5px;
   background: #f7fbff; }
 
 div.preset-manager-panel div.state_settings_button_wrapper {
@@ -13576,7 +13576,7 @@ div.preset-manager-panel .checkbox-title span, #element-settings-sidebar .checkb
 div.preset-manager-panel .settings_module {
   border-bottom: 1px solid #e5ecf4;
   margin: 0px -15px;
-  padding-left: 20px;
+  padding-left: 25px;
   padding-bottom: 15px; }
 
 div.preset-manager-panel .colors_settings_item {

@@ -3,7 +3,7 @@ define([
 ], function(BaseModule) {
 	var l10n = Upfront.Settings.l10n.gallery_element;
 	var CaptionLocation = BaseModule.extend({
-		className: 'settings_module caption_location clearfix',
+		className: 'settings_module caption_location gallery-caption-location clearfix',
 		group: false,
 
 		initialize: function(options) {

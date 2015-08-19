@@ -766,6 +766,15 @@ div.preset-manager-panel .field-caption_trigger {
 	position: relative;
     top: 0px;
 }
+div.preset-manager-panel .image-caption-location .field-caption_trigger {
+	top: 5px;
+}
+
+div.preset-manager-panel .image_style label,
+div.preset-manager-panel .caption_select label {
+	top: 4px;
+	position: relative;
+}
 
 /* Controls */
 

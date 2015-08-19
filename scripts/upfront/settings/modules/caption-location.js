@@ -3,7 +3,7 @@ define([
 ], function(BaseModule) {
 	var l10n = Upfront.Settings.l10n.image_element;
 	var CaptionLocationSettingsModule = BaseModule.extend({
-		className: 'settings_module caption_location clearfix',
+		className: 'settings_module image-caption-location caption_location clearfix',
 		group: false,
 
 		initialize: function(options) {
