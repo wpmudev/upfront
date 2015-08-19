@@ -460,15 +460,16 @@ div.preset-manager-panel .field-caption-height {
 	border-left: 2px solid #dae6f2;
 	padding: 5px 0px 5px 10px;
 	position: relative;
-	top: 0px;
+	top: -5px;
 }
 div.preset-manager-panel .field-caption-height label {
 	font-weight: normal;
-	top: -5px;
+	top: 0px;
 	position: relative;
+	margin-bottom: 5px;
 }
 div.preset-manager-panel .field-caption-height span label {
-	top: 0px;
+	top: 5px;
 }
 div.preset-manager-panel .field-caption-height {
 	margin-top: 0px;
@@ -476,7 +477,7 @@ div.preset-manager-panel .field-caption-height {
 }
 div.preset-manager-panel .caption-height-number {
 	position: relative;
-	margin-top: -38px;
+	margin-top: -43px;
 	left: 130px;
 }
 div.preset-manager-panel .caption-height-number input {

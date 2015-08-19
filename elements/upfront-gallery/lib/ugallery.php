@@ -235,6 +235,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'thumbProportions' => '1', // 'theme' | '1' | '0.66' | '1.33'
 			'thumbWidth' => 140,
 			'thumbHeight' => 140,
+			'thumbWidthNumber' => 140,
 			'captionType' => 'none', // 'above' | 'over' | 'none'
 			'captionColor' => apply_filters('upfront_gallery_caption_color', '#ffffff'),
 			'captionUseBackground' => 0,
@@ -243,9 +244,12 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'linkTo' => 'image', // 'url' | 'image'
 			'even_padding' => array('false'),
 			'thumbPadding' => 15,
-			'sidePadding' => 0,
+			'sidePadding' => 15,
 			'showCaptionOnHover' => 0,
-			'bottomPadding' => 0,
+			'bottomPadding' => 15,
+			'thumbPaddingNumber' => 15,
+			'thumbSidePaddingNumber' => 15,
+			'thumbBottomPaddingNumber' => 15,
 			'lockPadding' => 1,
 			'fitThumbCaptions' => false,
 			'thumbCaptionsHeight' => 20

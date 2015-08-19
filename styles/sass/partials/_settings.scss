@@ -230,10 +230,15 @@
 }
 
 .general_settings_item .slider-contrls-style label,
-.general_settings_item .rotate-effect label {
+.general_settings_item .rotate-effect label,
+.general_settings_item .thumb-propostions label {
 	position: relative;
 	top: 5px;
 	margin-top: -5px;
+}
+
+.general_settings_item .thumb-propostions {
+	width: 225px;
 }
 
 .upfront-settings-item-title:after {
