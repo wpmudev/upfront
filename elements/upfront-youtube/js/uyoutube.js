@@ -510,7 +510,7 @@ var YoutubeSettings = ElementSettings.extend({
 			}
 		});
 	},
-
+	title: l10n.element_settings,
 	get_title: function () {
 		return l10n.element_settings;
 	}
