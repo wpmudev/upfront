@@ -4560,7 +4560,7 @@ var Field_ToggleableText = Field_Text.extend({
 				}
 			}, 10);
 
-			$('.sidebar-panel-content, .upfront-settings_panel_scroll').on('scroll', this, this.on_scroll);
+			$('.sidebar-panel-content, #sidebar-scroll-wrapper').on('scroll', this, this.on_scroll);
 
 			this.trigger('focus');
 		},
@@ -4724,7 +4724,7 @@ var Field_ToggleableText = Field_Text.extend({
 			}, 20);
 
 			//Close dropdown on parent scroll
-			$('.sidebar-panel-content, .upfront-settings_panel_scroll').on('scroll', this, this.closeChosen);
+			$('.sidebar-panel-content, #sidebar-scroll-wrapper').on('scroll', this, this.closeChosen);
 			me.$el.find('select').on("chosen:hiding_dropdown", this, this.closeChosen);
 		},
 		closeChosen: function(e) {
