@@ -284,7 +284,11 @@ define([
 			});
 		},
 		startInsertFontWidget: function() {
-			var insertFontWidget = new Upfront.Views.Editor.Insert_Font_Widget({ collection: Upfront.Views.Editor.Fonts.theme_fonts_collection });
+			var insertFontWidget = new Preset_Insert_Font_Widget({ 
+				editor: this.editor,
+				collection: Upfront.Views.Editor.Fonts.theme_fonts_collection
+			});
+			
 			$('#insert-font-widget').html(insertFontWidget.render().el);
 		},
 		scrollToElement: function(){
@@ -431,6 +435,149 @@ define([
 			this.trigger('upfront:presets:update', this.options.preset.toJSON());
 
 		},
+	});
+	
+	var Preset_Insert_Font_Widget = Backbone.View.extend({
+		initialize: function(options) {
+			var me = this;
+			
+			this.editor = options.editor;
+			
+			this.fields = [
+				new Upfront.Views.Editor.Field.Typeface_Chosen_Select({
+					label: '',
+					compact: true,
+					values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_fonts_for_select(),
+					additional_classes: 'choose-typeface',
+					select_width: '230px'
+				}),
+				new Upfront.Views.Editor.Field.Typeface_Style_Chosen_Select({
+					label: '',
+					compact: true,
+					values: [],
+					additional_classes: 'choose-variant',
+					select_width: '120px'
+				}),
+				new Upfront.Views.Editor.Field.Button({
+					label: l10n.insert_font,
+					compact: true,
+					on_click: function(){
+						me.finish();
+					}
+				})
+			];
+		},
+		render: function() {
+			$('#insert-font-widget').html('').addClass('open');
+			this.$el.html('');
+			_.each(this.fields, function(field) {
+				field.render();
+				this.$el.append(field.el);
+			}, this);
+
+			this.listenTo(this.fields[0], 'changed', function() {
+				var variants = Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants(this.fields[0].get_value());
+				this.render_variants(variants);
+			});
+			this.listenTo(this.fields[1], 'changed', function() {
+				this.preview_font();
+			});
+
+			return this;
+		},
+		render_variants: function(variants) {
+			var $variant_field = this.$el.find('.choose-variant select');
+			$variant_field.find('option').remove();
+			$variant_field.append('<option value="">' + l10n.choose_variant + '</option>');
+			_.each(variants, function(variant) {
+				$variant_field.append('<option value="' + variant + '">' + variant + '</option>');
+			});
+			$variant_field.trigger('chosen:updated');
+		},
+		preview_font: function() {
+			this.replaceFont({
+				font_family: this.fields[0].get_value(),
+				variant: Upfront.Views.Font_Model.parse_variant(this.fields[1].get_value())
+			});
+		},
+		replaceFont: function(font) {
+			var lines;
+
+			this.style_doc = this.editor.getSession().getDocument();
+
+			this.last_selected_font = font;
+
+			// Insert selected font family
+			if (!this.font_family_range) {
+				this.font_family_range = this.editor.getSelection().getRange();
+			} else {
+				this.font_family_range.end = this.end_point;
+			}
+			this.end_point = this.style_doc.replace(this.font_family_range, font.font_family);
+
+			// Insert selected weight and style, first reset them
+			this.reset_properties();
+			lines = [];
+			if (font.variant.weight) {
+				lines.push('    font-weight: ' + font.variant.weight + ';');
+			}
+			if (font.variant.style) {
+				lines.push('    font-style: ' + font.variant.style + ';');
+			}
+			if (lines.length > 0) {
+				this.style_doc.insertLines(this.font_family_range.start.row + 1, lines);
+			}
+		},
+		reset_properties: function() {
+			var row, line, result;
+			this.style_doc = this.editor.getSession().getDocument();
+			// Search forward only from font family row since lower properties override upper
+			result = {};
+			row = this.font_family_range.start.row + 1;
+			line = this.style_doc.getLine(row);
+			while (line.indexOf('}') < 0) {
+				if (line.indexOf('font-weight') !== -1) {
+					result.weight = row;
+					if (!this.starting_weight) this.starting_weight = line;
+				}
+				if (line.indexOf('font-style') !== -1) {
+					result.style = row;
+					if (!this.starting_style) this.starting_style = line;
+				}
+
+				row++;
+				line = this.style_doc.getLine(row);
+				if (!line) {
+					// Fix missing closing paren
+					//this.style_doc.insertLines(row, ['}']); // This adds a standalone new brace for some reason
+					break;
+				}
+			}
+
+			// Reset properties. This is complicated. If both font style and font weight properties are in current style rule
+			// we need to remove them carefully because when we remove first, seconds' row number might change
+			// so first remove one with higher row number.
+			if (result.weight && result.style) {
+				if (result.weight > result.style) {
+					this.style_doc.removeLines(result.weight, result.weight);
+					this.style_doc.removeLines(result.style, result.style);
+				} else {
+					this.style_doc.removeLines(result.style, result.style);
+					this.style_doc.removeLines(result.weight, result.weight);
+				}
+				result.weight = false;
+				result.style = false;
+			}
+			if (result.weight) {
+				this.style_doc.removeLines(result.weight, result.weight);
+			}
+			if (result.style) {
+				this.style_doc.removeLines(result.style, result.style);
+			}
+		},
+		finish: function() {
+			$('#insert-font-widget').html('<a class="upfront-css-font" href="#">' + l10n.insert_font + '</a>').removeClass('open');
+		}
 	});
 	
 	return PresetCSSEditor;
