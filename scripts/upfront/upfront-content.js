@@ -268,7 +268,7 @@ define("content", deps, function(postTpl, ContentTools) {
 			this.listenTo(this.contentEditor, 'cancel', this.cancelChanges);
 			this.listenTo(this.contentEditor, 'publish', this.publish);
 			this.listenTo(this.contentEditor, 'draft', this.saveDraft);
-			this.listenTo(this.contentEditor, 'auto-draft', this.saveDraft);
+			this.listenTo(this.contentEditor, 'auto-draft', this.saveAutoDraft);
 			this.listenTo(this.contentEditor, 'trash', this.trash);
 
 			// So let's focus on title
@@ -294,7 +294,7 @@ define("content", deps, function(postTpl, ContentTools) {
 		saveDraft:function(results){
 			this.save(results, 'draft', Upfront.Settings.l10n.global.content.saving.replace(/%s/, this.post.get('post_type')), Upfront.Settings.l10n.global.content.drafted.replace(/%s/, this.capitalize(this.post.get('post_type'))));
 		},
-        saveDraft:function(results){
+        saveAutoDraft:function(results){
             this.save(results, 'auto-draft');
         },
 		trash: function(){
