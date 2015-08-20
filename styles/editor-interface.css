@@ -4784,6 +4784,23 @@ a.upfront-region-name-edit-trigger:before {
 #settings .upfront-settings-tab-height {
   width: 0; }
 
+#settings .upfront-cancel_settings {
+  position: relative;
+  color: #fff;
+  padding-left: 20px;
+  margin-right: 15px; }
+
+#settings .upfront-cancel_settings:before {
+  background-position: -735px -236px !important;
+  display: block;
+  content: "";
+  background: transparent url(../img/uf-ui-sprite.svg);
+  width: 12px !important;
+  height: 12px !important;
+  position: absolute;
+  left: 0px;
+  top: 6px; }
+
 .upfront-settings-item-title, .upfront-global-social-settings .upfront-settings-item-title {
   font-size: 11px;
   text-transform: uppercase;

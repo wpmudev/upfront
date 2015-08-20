@@ -11,7 +11,8 @@ define([
 	var ElementSettings = Backbone.View.extend({
 		id: 'settings',
 		events: {
-			'click .upfront-save_settings' : 'saveSettings'
+			'click .upfront-save_settings' : 'saveSettings',
+			'click .upfront-cancel_settings' : 'cancelSettings'
 		},
 
 		initialize: function(opts) {
@@ -55,6 +56,10 @@ define([
 
 			if (this.onSaveSettings) this.onSaveSettings();
 		},
+		
+		cancelSettings: function() {
+			Upfront.Events.trigger("element:settings:canceled");
+		},
 
 		render: function () {
 			var me = this;
@@ -87,7 +92,8 @@ define([
 			this.$el.addClass('upfront-ui');
 			this.$el.append(
 				"<div class='upfront-settings-button_panel'>" +
-					"<button type='button' class='upfront-save_settings'><i class='icon-ok'></i> " + l10n.save + "</button>" +
+					"<button type='button' class='upfront-cancel_settings'>" + l10n.cancel + "</button>" +
+					"<button type='button' class='upfront-save_settings'><i class='icon-ok'></i> " + l10n.save_element + "</button>" +
 				'</div>'
 			);
 		},

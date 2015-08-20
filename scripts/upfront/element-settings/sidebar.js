@@ -46,6 +46,9 @@ define([], function () {
 	
 	//Destroy settings when element is removed
 	Upfront.Events.on("entity:removed:after", destroySettings);
+	
+	//Destroy settings when Cancel button is clicked
+	Upfront.Events.on('element:settings:canceled', destroySettings);
 
 });
 })(jQuery);
