@@ -236,7 +236,7 @@ define([
 				]
 			}
 		],
-		title: l10n.slides
+		title: l10n.slides_order
 	});
 
 	var SliderSettings = ElementSettings.extend({

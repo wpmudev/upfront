@@ -148,6 +148,7 @@ define([
 	});
 	
 	var LoginSettings_Panel = RootSettingsPanel.extend({
+		title: l10n.general_settings,
 		initialize: function (opts) {
 			this.options = opts;
 			var appearance = new LoginSettings_Field_DisplayAppearance({model: this.model}),

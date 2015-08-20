@@ -603,6 +603,7 @@ define([
 	});
 
 	var MapSettings_Panel = RootSettingsPanel.extend({
+		title: l10n.general_settings,
 		initialize: function (opts) {
 			this.options = opts;
 			this.settings = _([

@@ -20,7 +20,8 @@ var Panels = {
 };
 
 Panels.General = RootSettingsPanel.extend({
-
+	title: l10n.general_settings,
+	
 	initialize: function (opts) {
 		this.options = opts;
 		var me = this,
@@ -389,7 +390,8 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 
 
 Panels.PostParts = RootSettingsPanel.extend({
-
+	title: l10n.post_part_settings,
+	
 	initialize: function (opts) {
 		this.options = opts;
 		var me = this,

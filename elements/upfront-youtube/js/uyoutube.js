@@ -188,6 +188,7 @@ var Disablable_Field_Number = Upfront.Views.Editor.Field.Text.extend({
 var BehaviorPanel = RootSettingsPanel.extend({
 	className: 'uyoutube-settings',
 	tabbed: false,
+	title: l10n.general_settings,
 	initialize: function (opts) {
 		this.options = opts;
 		var render_all = function(){

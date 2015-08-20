@@ -117,6 +117,7 @@ class Upfront_UyoutubeView extends Upfront_Object {
 			'video_placeholder' => __('YouTube Video URL', 'upfront'),
 			'add_video' => __('Add Another Video', 'upfront'),
 			'settings' => __('Settings', 'upfront'),
+			'general_settings' => __('General Settings', 'upfront'),
 			'validMessage' => __('Please enter valid YouTube video URL', 'upfront'),
 			'template' => array(
 				'video_label' => __('Videos', 'upfront'),

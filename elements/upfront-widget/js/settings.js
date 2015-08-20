@@ -143,7 +143,7 @@ define([
 			var panel = new RootSettingsPanel({
 				model: this.model,
 				label: l10n.widget,
-				title: l10n.settings,
+				title: l10n.general_settings,
 				min_height: '200px'
 			});
 
