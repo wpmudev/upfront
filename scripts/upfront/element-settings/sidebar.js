@@ -6,10 +6,13 @@ define([], function () {
 	var the_settings_view;
 
 	var destroySettings = function() {
-		the_settings_view.cleanUp();
-		the_settings_view = false;
-		$('#element-settings-sidebar').width(0).html('');
-		Upfront.Events.off('element:settings:saved', destroySettings);
+		//If settings are opened, destroy
+		if (the_settings_view) {
+			the_settings_view.cleanUp();
+			the_settings_view = false;
+			$('#element-settings-sidebar').width(0).html('');
+			Upfront.Events.off('element:settings:saved', destroySettings);
+		}
 	};
 
 	var showSettings = function(view) {
@@ -40,6 +43,9 @@ define([], function () {
 	};
 
 	Upfront.Events.on('element:settings:activate', showSettings);
+	
+	//Destroy settings when element is removed
+	Upfront.Events.on("entity:removed:after", destroySettings);
 
 });
 })(jQuery);
