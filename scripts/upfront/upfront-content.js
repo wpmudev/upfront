@@ -337,11 +337,11 @@ define("content", deps, function(postTpl, ContentTools) {
 				postUpdated = false
 			;
 
-            if( !is_auto_draft ){
+            if (!is_auto_draft && status !== 'draft') {
                 loading.render();
                 this.$el.append(loading.$el);
                 this.contentEditor.box.$el.hide();
-            }else{
+            } else {
                 status = "draft";
             }
 
@@ -387,7 +387,7 @@ define("content", deps, function(postTpl, ContentTools) {
                         Upfront.Views.Editor.notify(successMsg);
                     }
 					me.fetchPostLayout().then(function(){
-                        if( !is_auto_draft ) {
+                        if (!is_auto_draft && 'draft' !== status) {
                             me.stopEditContents();
                             me.render();
                         }
