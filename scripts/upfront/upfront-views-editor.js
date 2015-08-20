@@ -6495,17 +6495,19 @@ var Insert_Font_Widget = Backbone.View.extend({
 	initialize: function() {
 		var me = this;
 		this.fields = [
-			new Field_Chosen_Select({
+			new Field_Typeface_Chosen_Select({
 				label: '',
 				compact: true,
 				values: theme_fonts_collection.get_fonts_for_select(),
-				additional_classes: 'choose-typeface'
+				additional_classes: 'choose-typeface',
+				select_width: '230px'
 			}),
-			new Field_Chosen_Select({
+			new Field_Typeface_Style_Chosen_Select({
 				label: '',
 				compact: true,
 				values: [],
-				additional_classes: 'choose-variant'
+				additional_classes: 'choose-variant',
+				select_width: '120px'
 			}),
 			new Field_Button({
 				label: l10n.insert_font,
