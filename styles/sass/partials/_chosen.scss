@@ -250,3 +250,7 @@
 	position: fixed;
 	display: none;
 }
+
+.chosen-container:not(.chosen-with-drop) .chosen-drop {
+	display: none !important;
+}

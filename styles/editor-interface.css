@@ -11961,6 +11961,9 @@ div.upfront-region-container:hover > a.feature_image_selector {
   position: fixed;
   display: none; }
 
+.chosen-container:not(.chosen-with-drop) .chosen-drop {
+  display: none !important; }
+
 /* Theme fonts managesr */
 #text-fonts-manager {
   width: 750px;
@@ -13108,7 +13111,7 @@ div.preset-manager-panel .upfront-settings-css {
 
 div.preset-manager-panel .delete_preset {
   position: relative;
-  z-index: 99;
+  z-index: 9;
   top: -9px; }
 
 div.preset-manager-panel div.preset_specific {
