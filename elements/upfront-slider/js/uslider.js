@@ -178,7 +178,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		var me = this;
 
 		setTimeout( function() {
-			var slider = me.$el.find('[id^="uslider-"]'),
+			var slider = me.$el.find('.upfront-output-uslider'),
 			options = slider.find('.uslider').data();
 
 			slider.find('.uslides').upfront_default_slider(options);

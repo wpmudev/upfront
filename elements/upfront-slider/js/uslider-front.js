@@ -35,7 +35,7 @@ jQuery(function($){
 });
 
 jQuery(function($){
-	$('[id^="uslider-"]').each( function() {
+	$('.upfront-output-uslider').each( function() {
 		var slider = $(this),
 			options = slider.find('.uslider').data();
 
