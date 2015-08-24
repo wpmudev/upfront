@@ -37,6 +37,10 @@ define([
 			if(typeof this.options.default_element !== "undefined") {
 				current_element = this.options.default_element + '-';
 			}
+			
+			if(me.model.get(state + '-element-type') !== "") {
+				current_element = me.model.get(state + '-element-type') + '-';
+			}
 
 			if(this.options.toggle === true) {
 				fieldCounter++;
@@ -161,6 +165,7 @@ define([
 			if(typeof me.options.elements !== "undefined") {
 				this.fields.unshift(
 					new Upfront.Views.Editor.Field.Select({
+						model: this.model,
 						label: l10n.type_element,
 						label_style: 'inline',
 						name: state + '-element-type',
