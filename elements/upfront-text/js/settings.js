@@ -61,7 +61,7 @@ define([
 						{
 							moduleType: 'Typography',
 							options: {
-								state: 'focus',
+								state: 'static',
 								title: l10n.settings.typography_label,
 								toggle: true,
 								fields: {
@@ -72,7 +72,9 @@ define([
 									size: 'fontsize',
 									line_height: 'lineheight',
 									color: 'color',
+									use: 'usetypography'
 								},
+								default_element: 'h1',
 								elements: [
 									{ label: l10n.h1, value: "h1" },
 									{ label: l10n.h2, value: "h2" },
@@ -82,11 +84,11 @@ define([
 									{ label: l10n.h6, value: "h6" },
 									{ label: l10n.p, value: "p" },
 									{ label: l10n.a, value: "a" },
-									{ label: l10n.ahover, value: "a:hover" },
+									{ label: l10n.ahover, value: "a-hover" },
 									{ label: l10n.ul, value: "ul" },
 									{ label: l10n.ol, value: "ol" },
 									{ label: l10n.bq, value: "blockquote" },
-									{ label: l10n.bqalt, value: "blockquote.upfront-quote-alternative" },
+									{ label: l10n.bqalt, value: "blockquote-alternative" },
 								],
 							}
 						},
