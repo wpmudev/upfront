@@ -59,7 +59,9 @@
 				rotation: 15, // degrees
 				scaling: 1.1,
 				opacity: 0.5,
-				renderer: this.getDefaultRenderer() // Available: canvas, absolute, fixed
+				renderer: this.getDefaultRenderer(), // Available: canvas, absolute, fixed,
+				overflowTop: 100, // px, render more than the background height to prevent artifact on late refresh
+				overflowBottom: 100, // px, render more than the background height to prevent artifact on late refresh
 			}, args)
 		;
 		this.opts = data;
@@ -276,6 +278,7 @@
 		prepareImage: function () {
 			if (this.cache.img) {
 				if (!this.imgCanvas) this.renderImage();
+				this.$element.css('display', 'none');
 				return;
 			}
 			var me = this,
@@ -324,7 +327,6 @@
 			drawHeight = Math.floor(parallaxHeight/imgHeight * this.cache.img.height);
 			drawX = (this.cache.img.width - drawWidth) / 2;
 			drawY = (this.cache.img.height - drawHeight) / 2;
-			console.log('render image', this.id)
 			this.imgContext.drawImage(this.cache.img, drawX, drawY, drawWidth, drawHeight, 0, 0, width, parallaxHeight);
 		},
 		refresh: function () {
@@ -493,14 +495,24 @@
 			}
 			drawY += translate * -1;
 			if (closest.top && closest.top.cache.offsetBottom < offsetTop) {
-				clearTop = offsetTop - Math.ceil((offsetTop - closest.top.cache.offsetBottom) / 2);
+				clearTop -= Math.min(this.opts.overflowTop, Math.ceil((offsetTop - closest.top.cache.offsetBottom) / 2));
+			}
+			else if (!closest.top) {
+				clearTop -= this.opts.overflowTop;
 			}
 			if (closest.bottom && closest.bottom.cache.offsetTop > offsetBottom) {
-				clearBottom = offsetBottom + Math.floor((closest.bottom.cache.offsetTop - offsetBottom) / 2);
+				clearBottom += Math.min(this.opts.overflowBottom, Math.floor((closest.bottom.cache.offsetTop - offsetBottom) / 2));
+			}
+			else if (!closest.bottom) {
+				clearBottom += this.opts.overflowBottom;
 			}
 			this.context.drawImage(this.imgCanvas, 0, 0, width, parallaxHeight, offsetLeft, offsetTop-this.movementOffset-scrollTop+translate, width, parallaxHeight);
-			this.context.clearRect(offsetLeft, 0, width, clearTop-scrollTop);
-			this.context.clearRect(offsetLeft, clearBottom-scrollTop, width, winHeight-(clearBottom-scrollTop));
+			if (clearTop > scrollTop) {
+				this.context.clearRect(offsetLeft, 0, width, clearTop-scrollTop);
+			}
+			if (winHeight > clearBottom-scrollTop) {
+				this.context.clearRect(offsetLeft, clearBottom-scrollTop, width, winHeight-(clearBottom-scrollTop));
+			}
 		},
 		clearCanvas: function () {
 			this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);

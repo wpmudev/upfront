@@ -181,7 +181,9 @@ define([
 					// If not, check if we need to destroy it
 					if ( style == 'parallax' ) {
 						$overlay.uparallax({
-							element: $type
+							element: $type,
+							overflowTop: 0,
+							overflowBottom: 0
 						});
 					}
 					else if ( $overlay.data('uparallax') ) {
@@ -2034,6 +2036,7 @@ define([
 				this.listenTo(Upfront.Events, "entity:module_group:group", this.on_group);
 				this.listenTo(Upfront.Events, "entity:module_group:ungroup", this.on_ungroup);
 				this.listenTo(Upfront.Events, "layout:render", this.on_after_layout_render);
+				this.listenTo(Upfront.Events, "layout:after_render", this.apply_flexbox_clear);
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 			},
 			on_entity_remove: function(e, view) {
@@ -4315,6 +4318,15 @@ define([
 				}
 				Upfront.Events.trigger("entity:region:removed", view, model);
 			},
+			on_reset: function (collection, options) {
+				var me = this;
+				// Properly remove old views
+				if (options.previousModels) {
+					_.each(options.previousModels, function(model){
+						me.on_remove(model);
+					});
+				}
+			},
 			apply_adapt_region_to_breakpoints: function () {
 				var current_breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
 				if ( current_breakpoint && !current_breakpoint.default )
@@ -4453,10 +4465,15 @@ define([
 				this.$el.addClass('upfront-layout-view');
 				this.$el.html(this.tpl(this.model.toJSON()));
 				this.$layout = this.$(".upfront-layout");
-				//if(!this.local_view)
+				if (!this.local_view) {
 					this.local_view = new Regions({"model": this.model.get("regions")});
+					this.local_view.render();
+				}
+				else {
+					this.local_view.render();
+					this.local_view.delegateEvents();
+				}
 
-				this.local_view.render();
 
 				this.$layout.append(this.local_view.el);
 				this.update();
