@@ -1,4 +1,4 @@
-.upfront-button .button-preset-<?php echo $properties['id'] ?> .upfront_cta {
+.upfront-button .button-preset-<?php echo $properties['id'] ?>.upfront_cta {
     <?php if(!empty($properties['color'])) { ?>color: <?php echo $properties['color']  ?>; <?php } ?>
     <?php if(!empty($properties['fontface'])) { ?>font-family: <?php echo $properties['fontface']  ?>; <?php } ?>
     <?php if(!empty($properties['fontsize'])) { ?>font-size: <?php echo $properties['fontsize']  ?>px; <?php } ?>
@@ -24,7 +24,7 @@
 
 }
 
-.upfront-button .button-preset-<?php echo $properties['id']  ?> .upfront_cta:hover {
+.upfront-button .button-preset-<?php echo $properties['id']  ?>.upfront_cta:hover {
     <?php if(!empty($properties['hov_usetypography']) && $properties['hov_usetypography'] == 'yes') { ?>
         <?php if(!empty($properties['hov_color'])) { ?>color: <?php echo $properties['hov_color']  ?>; <?php } ?>
         <?php if(!empty($properties['hov_fontface'])) { ?>font-family: <?php echo $properties['hov_fontface']  ?>; <?php } ?>
@@ -68,7 +68,7 @@
     <?php } ?>
 }
 
-.upfront-button .button-preset-<?php echo $properties['id']  ?> .upfront_cta:focus {
+.upfront-button .button-preset-<?php echo $properties['id']  ?>.upfront_cta:focus {
     <?php if(!empty($properties['focus_usetypography']) && $properties['focus_usetypography'] == 'yes') { ?>
         <?php if(!empty($properties['focus_color'])) { ?>color: <?php echo $properties['focus_color']  ?>; <?php } ?>
         <?php if(!empty($properties['focus_fontface'])) { ?>font-family: <?php echo $properties['focus_fontface']  ?>; <?php } ?>
