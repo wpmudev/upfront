@@ -568,6 +568,78 @@ UeditorEvents.on("ueditor:key:up", function(redactor){
 });
 
 
+/**
+ * Bolt on text replacement
+ */
+UeditorEvents.on("ueditor:key:down", function (redactor, e) {
+    var 
+        rpl = {
+            '##': 'h2',
+            '###': 'h3',
+            '####': 'h4',
+            '#####': 'h5',
+            '######': 'h6',
+            '>': 'blockquote',
+            '-': 'ul',
+            '*': 'ul',
+            '1.': 'ol',
+            '1)': 'ol'
+        },
+        space = function () {
+            redactor.selection.get();
+
+            var sel = redactor.selection,
+                node = sel.getCurrent() || sel.getParent(),
+                caret, $el, check
+            ;
+            if (!node) return;
+
+            caret = redactor.caret.getOffsetOfElement(node);
+            if (!caret) return;
+            
+            $el = $(node).clone();
+            check = $el.text().substr(0, caret);
+
+            if (!check) return;
+
+            $.each(rpl, function (src, target) {
+                if (src !== check) return true;
+
+                var $node = $(node),
+                    rx = new RegExp('^' + src.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1") + ' ?')
+                ;
+                // Nuke out the replacement text
+                $node.text($node.text().replace(rx, ''));
+
+                // Replace the selection tag with the one from the replacement map
+                node = redactor.utils.replaceToTag(node, target);
+                // More work to be done for nested replacements
+                if ('ul' === target || 'ol' === target) {
+                    $node = jQuery('<div><ul><li>' + $node.text() + '</li></ul></div>');
+                }
+
+                // Finally, replace the actual HTML
+                sel.replaceWithHtml($node.html());
+
+                // Set up carets and repaint lists
+                if ('ul' === target || 'ol' === target) {
+                    redactor.list.toggle(
+                        'ul' === target ? 'unorderedlist' : 'orderedlist'
+                    );
+                    redactor.caret.setEnd($(node).find("li:last").get());
+                } else {
+                    redactor.caret.setEnd(node);
+                }
+
+
+                return false;
+            });
+        }
+    ;
+    if (32 === e.which) space();
+});
+
+
 
 Ueditor.prototype = {
 	disableStop: false,
