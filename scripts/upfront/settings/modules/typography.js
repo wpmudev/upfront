@@ -38,7 +38,7 @@ define([
 				current_element = this.options.default_element + '-';
 			}
 			
-			if(me.model.get(state + '-element-type') !== "") {
+			if(typeof me.model.get(state + '-element-type') !== "undefined" && typeof this.options.elements !== "undefined") {
 				current_element = me.model.get(state + '-element-type') + '-';
 			}
 
