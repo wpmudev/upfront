@@ -47,11 +47,11 @@ define([
 				Upfront.mainData[this.mainDataCollection] = _.isArray(Upfront.mainData[this.mainDataCollection]) ?
 						Upfront.mainData[this.mainDataCollection] : [];
 
-				Upfront.mainData[this.mainDataCollection].unshift(this.presetDefaults);
+				Upfront.mainData[this.mainDataCollection].unshift(this.getPresetDefaults('default'));
 			}
-
+			
 			this.presets = new Backbone.Collection(Upfront.mainData[this.mainDataCollection] || []);
-
+			
 			this.setupItems();
 		},
 
