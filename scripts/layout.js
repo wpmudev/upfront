@@ -145,9 +145,32 @@ jQuery(document).ready(function($){
 			});
 			if ( $overlay.attr('data-bg-parallax') ) {
 				setTimeout(function () { // Zero timeout to shift it out
+					var $next = $overlay
+									.closest('.upfront-output-region-container')
+									.next('.upfront-output-region-container')
+									.find('.upfront-region-container-bg'),
+						$prev = $overlay
+									.closest('.upfront-output-region-container')
+									.prev('.upfront-output-region-container')
+									.find('.upfront-region-container-bg'),
+						next_bg_color = $next.css('background-color'),
+						next_type = $next.attr('data-bg-type-' + breakpoint),
+						prev_bg_color = $prev.css('background-color'),
+						prev_type = $prev.attr('data-bg-type-' + breakpoint),
+						has_alpha = function (color) {
+							if (!color) return false;
+							var matches = color.match(/(rgba|hsla)\(.*?,.*?,.*?,.*?([\d.]+).*?\)/);
+							if (matches && matches[2] && parseFloat(matches[2]) < 1) return true;
+							return false;
+						},
+						overflow_top = ( $prev.length > 0 && prev_type == 'color' && prev_bg_color && has_alpha(prev_bg_color) ? 0 : false ),
+						overflow_bottom = ( $next.length > 0 && next_type == 'color' && next_bg_color && has_alpha(next_bg_color) ? 0 : false )
+					;
 					$overlay.uparallax({
 						element: $overlay.attr('data-bg-parallax')
 					});
+					if (false !== overflow_top) $overlay.uparallax('setOption', 'overflowTop', overflow_top);
+					if (false !== overflow_bottom) $overlay.uparallax('setOption', 'overflowBottom', overflow_bottom);
 				}, 0);
 			}
 			if ( type == 'image' || type == 'featured' ) {
@@ -363,7 +386,7 @@ jQuery(document).ready(function($){
 				$(this).data('bg-position-x', '50%');
 				$(this).css({
 					'background-position': '50% 0',
-					'background-size': (height/ratio) + "px " + height + "px" /*"auto 100%"*/
+					'background-size': Math.round(height/ratio) + "px " + height + "px" /*"auto 100%"*/
 				});
 			}
 			else {
@@ -371,7 +394,7 @@ jQuery(document).ready(function($){
 				$(this).data('bg-position-x', '0');
 				$(this).css({
 					'background-position': '0 ' + Math.round( ( ( height - (width*ratio) ) / 2) ) + 'px',
-					'background-size': width + "px " + (width*ratio) + "px" /*"100% auto"*/
+					'background-size': width + "px " + Math.round(width*ratio) + "px" /*"100% auto"*/
 				});
 			}
 		});
@@ -389,20 +412,20 @@ jQuery(document).ready(function($){
 			});
 			if ( style == 'crop' ){
 				if ( Math.round(height/width*100)/100 > ratio ){
-					var embed_w = (height/ratio);
+					var embed_w = Math.round(height/ratio);
 					$embed.css({
 						width: embed_w,
 						height: height,
 						top: 0,
-						left: (width-embed_w)/2
+						left: Math.round((width-embed_w)/2)
 					});
 				}
 				else {
-					var embed_h = (width*ratio);
+					var embed_h = Math.round(width*ratio);
 					$embed.css({
 						width: width,
 						height: embed_h,
-						top: (height-embed_h)/2,
+						top: Math.round((height-embed_h)/2),
 						left: 0
 					});
 				}
@@ -417,20 +440,20 @@ jQuery(document).ready(function($){
 			}
 			else if ( style == 'inside' ) {
 				if ( Math.round(height/width*100)/100 < ratio ){
-					var embed_w = (height/ratio);
+					var embed_w = Math.round(height/ratio);
 					$embed.css({
 						width: embed_w,
 						height: height,
 						top: 0,
-						left: (width-embed_w)/2
+						left: Math.round((width-embed_w)/2)
 					});
 				}
 				else {
-					var embed_h = (width*ratio);
+					var embed_h = Math.round(width*ratio);
 					$embed.css({
 						width: width,
 						height: embed_h,
-						top: (height-embed_h)/2,
+						top: Math.round((height-embed_h)/2),
 						left: 0
 					});
 				}
