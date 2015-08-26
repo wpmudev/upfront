@@ -17,6 +17,9 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
         add_action('wp_ajax_this_post-get_markup', array($this, "load_markup"), 9);  
 
         //upfront_add_ajax('wp_ajax_content_part_markup', array($this, "get_part_contents"), 9); // to override loading of post parts in case the editor initializes on this_post.      
+
+        // exporter, BBPress specific layouts
+        add_filter('upfront-core-default_layouts', array($this, 'augment_default_layouts'));
     }
 
     public function detect_virtual_page () {
@@ -29,14 +32,26 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
             
     }
 
-    /*public function resolve_template ($tpl) {
-      $wc_path = preg_quote(wp_normalize_path(WC()->plugin_path()), '/');
-        $tpl_path = wp_normalize_path($tpl);
+    /**
+     * Augments the available layouts list by adding some BBPress-specific ones.
+     *
+     * @param array $layouts Predefined Upfront layouts
+     *
+     * @return array Augmented layouts list
+     */
+    public function augment_default_layouts ($layouts) {
+       
+        $layouts["bbpress"] = array(
+                'label' => "BBPress layout",
+                'layout' => array(
+                    'type' => 'single',
+                    'item' => "bbpress",
+                ),
+            );
 
-        if (!preg_match("/{$wc_path}/", $tpl_path)) return $tpl;
-    
-        return locate_template('single.php');
-    }*/
+       
+        return $layouts;
+    }
 
     public function override_view ($view_class) {
         if ('Upfront_ThisPostView' === $view_class || 'Upfront_PostsView' === $view_class) return 'Upfront_BbPressView';
