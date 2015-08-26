@@ -574,16 +574,16 @@ UeditorEvents.on("ueditor:key:up", function(redactor){
 UeditorEvents.on("ueditor:key:down", function (redactor, e) {
     var 
         rpl = {
-            '##': 'h2',
-            '###': 'h3',
-            '####': 'h4',
-            '#####': 'h5',
-            '######': 'h6',
-            '>': 'blockquote',
-            '-': 'ul',
-            '*': 'ul',
-            '1.': 'ol',
-            '1)': 'ol'
+            '##': {tag: 'h2'},
+            '###': {tag: 'h3'},
+            '####': {tag: 'h4'},
+            '#####': {tag: 'h5'},
+            '######': {tag: 'h6'},
+            '>': {tag: 'blockquote'},
+            '-': {tag: 'ul', nest: 'li'},
+            '*': {tag: 'ul', nest: 'li'},
+            '1.': {tag: 'ol', nest: 'li'},
+            '1)': {tag: 'ol', nest: 'li'}
         },
         space = function () {
             redactor.selection.get();
@@ -606,35 +606,31 @@ UeditorEvents.on("ueditor:key:down", function (redactor, e) {
                 if (src !== check) return true;
 
                 var $node = $(node),
-                    rx = new RegExp('^' + src.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1") + ' ?')
+                    rx = new RegExp('^' + src.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1") + ' ?'),
+                    text = $node.text().replace(rx, '')
                 ;
-                // Nuke out the replacement text
-                $node.text($node.text().replace(rx, ''));
 
-                // Replace the selection tag with the one from the replacement map
-                node = redactor.utils.replaceToTag(node, target);
-                // More work to be done for nested replacements
-                if ('ul' === target || 'ol' === target) {
-                    $node = jQuery('<div><ul><li>' + $node.text() + '</li></ul></div>');
-                }
-
-                // Finally, replace the actual HTML
-                sel.replaceWithHtml($node.html());
                 // Let's not do nested lists
                 // or expansion within lists in general
                 // or in PRE tags
                 if ($node.is("li,ul,ol,pre")) return false;
 
-                // Set up carets and repaint lists
-                if ('ul' === target || 'ol' === target) {
-                    redactor.list.toggle(
-                        'ul' === target ? 'unorderedlist' : 'orderedlist'
+                // Replace the selection tag with the one from the replacement map
+                if ("nest" in target && target.nest) {
+                    $node.html(
+                        '<div><' + target.tag + '><' + target.nest + '>' + 
+                            text + 
+                        '</' + target.nest + '></' + target.tag + '></div>'
                     );
-                    redactor.caret.setEnd($(node).find("li:last").get());
                 } else {
-                    redactor.caret.setEnd(node);
+                    $node.html(
+                        '<div><' + target.tag + '>' + 
+                            text + 
+                        '</' + target.tag + '></div>'
+                    );
                 }
 
+                redactor.code.sync();
 
                 return false;
             });
