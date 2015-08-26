@@ -26,7 +26,7 @@ define([
 		},
 		//elemenTypes' element id matches model's 'id_slug' attribute
 		elementTypes: {
-			UaccordionModel: {label: l10n.accordion, id: 'accordion'},
+			UaccordionModel: {label: l10n.accordion, id: 'accordion', preset_container: 'inline'},
 			UcommentModel: {label: l10n.comments, id: 'comment'},
 			UcontactModel: {label: l10n.contact_form, id: 'contact'},
 			UgalleryModel: {label: l10n.gallery, id: 'gallery'},
@@ -34,19 +34,19 @@ define([
 			LoginModel: {label: l10n.login, id: 'upfront-login_element'},
 			LikeBox: {label: l10n.like_box, id: 'Like-box-object'},
 			MapModel: {label: l10n.map, id: 'upfront-map_element'},
-			UnewnavigationModel: {label: l10n.navigation, id: 'newnavigation'},
-			ButtonModel: {label: l10n.button, id: 'button'},
+			UnewnavigationModel: {label: l10n.navigation, id: 'nav'},
+			ButtonModel: {label: l10n.button, id: 'button', preset_container: 'inline'},
 			//UpostsModel: {label: l10n.posts, id: 'uposts'},
 			PostsModel: {label: l10n.posts, id: 'posts'},
 			UsearchModel: {label: l10n.search, id: 'search'},
 			USliderModel: {label: l10n.slider, id: 'slider'},
 			SocialMediaModel: {label: l10n.social, id: 'SocialMedia'},
-			UtabsModel: {label: l10n.tabs, id: 'tabs'},
+			UtabsModel: {label: l10n.tabs, id: 'tab', preset_container: 'inline'},
 			ThisPageModel: {label: l10n.page, id: 'this_page'},
 			ThisPostModel: {label: l10n.post, id: 'this_post'},
 			UwidgetModel: {label: l10n.widget, id: 'widget'},
 			UyoutubeModel: {label: l10n.youtube, id: 'youtube'},
-			PlainTxtModel: {label: l10n.text, id:'plain_text'},
+			PlainTxtModel: {label: l10n.text, id:'text'},
 		},
 		initialize: function(options) {
 			var me = this,
@@ -58,7 +58,7 @@ define([
 			this.model = options.model;
 			this.sidebar = ( options.sidebar !== false );
 			this.global = ( options.global === true );
-
+			
 			this.prepareAce = deferred.promise();
 			require(['//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'], function(){
 				deferred.resolve();
@@ -69,8 +69,11 @@ define([
 			};
 
 			$(window).on('resize', this.resizeHandler);
+			
+			this.modelType = this.options.model.get_property_value_by_name('type');
+			this.elementType = this.elementTypes[this.modelType] || {label: 'Unknown', id: 'unknown'};
 
-			style_selector = this.model.get('id') + '-breakpoint-style';
+			style_selector = this.elementType.id + '-' +this.options.preset.get('id') + '-breakpoint-style';
 			$style = $('#' + style_selector);
 			if ($style.length === 0) {
 				this.$style = $('<style id="' + style_selector + '"></style>');
@@ -80,9 +83,6 @@ define([
 			}
 			
 			this.createSelectors(Upfront.Application.LayoutEditor.Objects);
-			
-			this.modelType = this.options.model.get_property_value_by_name('type');
-			this.elementType = this.elementTypes[this.modelType] || {label: 'Unknown', id: 'unknown'};
 			
 			this.selectors = this.elementSelectors[this.modelType] || {};
 
@@ -148,13 +148,17 @@ define([
 
 			editor.on('change', function(event){
 				var styles_with_selector;
-				var rules = editor.getValue().split('}'),
-					separator = '\n\n.' + me.options.page_class + ' ';
+				var rules = editor.getValue().split('}');
+				var preset_class = '\n\n' + me.get_css_selector();
 
+				if(typeof me.elementType.preset_container === "undefined") {
+					preset_class = preset_class + ' ';
+				}
+				
 				rules = _.map(rules, function(rule){return $.trim(rule);});
 				rules.pop();
 
-				styles_with_selector = separator + rules.join('\n}' + separator) + '\n}';
+				styles_with_selector = preset_class + rules.join('\n}' + preset_class) + '\n}';
 
 				me.$style.html(styles_with_selector);
 				me.trigger('change', styles_with_selector);
@@ -433,6 +437,8 @@ define([
 			this.options.preset.set('preset_style', data.styles);
 			
 			this.trigger('upfront:presets:update', this.options.preset.toJSON());
+			
+			return Upfront.Views.Editor.notify(l10n.preset_style_saved.replace(/%s/,  this.elementType.id));
 
 		},
 	});

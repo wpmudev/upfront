@@ -433,6 +433,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'style_name_nag' => __('You need to set a name for the style.', 'upfront'),
 				'style_empty_nag' => __('The stylesheet is empty.', 'upfront'),
 				'style_saved_as' => __('Styles saved as %s', 'upfront'),
+				'preset_style_saved' => __('%s preset styles saved', 'upfront'),
 				'there_was_an_error' => __('There was an error.', 'upfront'),
 				'delete_style' => __('Delete this style', 'upfront'),
 				'delete_stylename_nag' => __('If you delete the "%s" style, all the elements with it will get unstyled. Are you sure?', 'upfront'),
