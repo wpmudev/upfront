@@ -630,6 +630,12 @@ UeditorEvents.on("ueditor:key:down", function (redactor, e) {
                     );
                 }
 
+                // Set caret position to end of the target
+                redactor.caret.setEnd(
+                    "nest" in target && target.nest
+                        ? $node.find(target.nest).last().get()
+                        : $node.find(target.tag).get()
+                );
                 redactor.code.sync();
 
                 return false;
