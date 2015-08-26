@@ -1290,7 +1290,7 @@ define([
 		'Settings': ImageSettings,
 		'ContextMenu': ImageContextMenu,
 		cssSelectors: {
-			'.upfront-image': {label: l10n.css.image_label, info: l10n.css.image_info},
+			'.upfront-image-wrapper': {label: l10n.css.image_label, info: l10n.css.image_info},
 			'.wp-caption': {label: l10n.css.caption_label, info: l10n.css.caption_info},
 			'.upfront-image-container': {label: l10n.css.wrapper_label, info: l10n.css.wrapper_info}
 		},

@@ -29,7 +29,7 @@ define([
 			UaccordionModel: {label: l10n.accordion, id: 'accordion', preset_container: 'inline'},
 			UcommentModel: {label: l10n.comments, id: 'comment'},
 			UcontactModel: {label: l10n.contact_form, id: 'contact'},
-			UgalleryModel: {label: l10n.gallery, id: 'gallery'},
+			UgalleryModel: {label: l10n.gallery, id: 'gallery', preset_container: 'inline'},
 			UimageModel: {label: l10n.image, id: 'image'},
 			LoginModel: {label: l10n.login, id: 'upfront-login_element'},
 			LikeBox: {label: l10n.like_box, id: 'Like-box-object'},
@@ -46,7 +46,7 @@ define([
 			ThisPostModel: {label: l10n.post, id: 'this_post'},
 			UwidgetModel: {label: l10n.widget, id: 'widget'},
 			UyoutubeModel: {label: l10n.youtube, id: 'youtube'},
-			PlainTxtModel: {label: l10n.text, id:'text'},
+			PlainTxtModel: {label: l10n.text, id:'text', preset_container: 'inline'},
 		},
 		initialize: function(options) {
 			var me = this,

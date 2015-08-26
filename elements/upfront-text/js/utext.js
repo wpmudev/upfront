@@ -138,8 +138,8 @@
 			"Settings": TextSettings,
 			"ContextMenu": TextMenu,
 			cssSelectors: {
-				'.upfront-plain_txt': {label: l10n.css.container_label, info: l10n.css.container_info},
-				'.upfront-plain_txt p': {label: l10n.css.p_label, info: l10n.css.p_info},
+				'.plain-text-container': {label: l10n.css.container_label, info: l10n.css.container_info},
+				'.plain-text-container p': {label: l10n.css.p_label, info: l10n.css.p_info},
 			},
 			cssSelectorsId: 'PlainTxtModel'
 		});
