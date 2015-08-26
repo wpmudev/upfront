@@ -197,7 +197,8 @@ define([
 
 		getBody: function () {
 			this.setupItems();
-			var $body = $('<div />');
+			var $body = $('<div />'),
+				me = this;
 
 			this.settings.each(function (setting) {
 				if ( ! setting.panel ) setting.panel = me;
