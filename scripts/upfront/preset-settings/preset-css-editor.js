@@ -34,7 +34,7 @@ define([
 			LoginModel: {label: l10n.login, id: 'upfront-login_element'},
 			LikeBox: {label: l10n.like_box, id: 'Like-box-object'},
 			MapModel: {label: l10n.map, id: 'upfront-map_element'},
-			UnewnavigationModel: {label: l10n.navigation, id: 'nav'},
+			UnewnavigationModel: {label: l10n.navigation, id: 'nav', preset_container: 'inline'},
 			ButtonModel: {label: l10n.button, id: 'button', preset_container: 'inline'},
 			//UpostsModel: {label: l10n.posts, id: 'uposts'},
 			PostsModel: {label: l10n.posts, id: 'posts'},
