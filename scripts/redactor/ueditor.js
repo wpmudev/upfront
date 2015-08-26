@@ -620,6 +620,10 @@ UeditorEvents.on("ueditor:key:down", function (redactor, e) {
 
                 // Finally, replace the actual HTML
                 sel.replaceWithHtml($node.html());
+                // Let's not do nested lists
+                // or expansion within lists in general
+                // or in PRE tags
+                if ($node.is("li,ul,ol,pre")) return false;
 
                 // Set up carets and repaint lists
                 if ('ul' === target || 'ol' === target) {
