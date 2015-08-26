@@ -589,7 +589,7 @@ UeditorEvents.on("ueditor:key:down", function (redactor, e) {
             redactor.selection.get();
 
             var sel = redactor.selection,
-                node = sel.getCurrent() || sel.getParent(),
+                node = sel.getBlock(),
                 caret, $el, check
             ;
             if (!node) return;
