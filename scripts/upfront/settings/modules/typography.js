@@ -231,7 +231,7 @@ define([
 		
 		update_fields: function(value, fieldCounter, current_element) {
 			//Get stored values else load from Global Typography settings
-			var font_settings = Upfront.mainData.global_typography[value],
+			var font_settings = Upfront.mainData.global_typography[this.normalize_elements_selector(value)],
 				typeface = this.model.get(current_element + this.options.fields.typeface) || font_settings.font_face || '',
 				fontstyle = this.model.get(current_element + this.options.fields.fontstyle) || font_settings.weight + ' ' + font_settings.style || '',
 				fontsize = this.model.get(current_element + this.options.fields.size) || font_settings.size || '',
@@ -250,6 +250,18 @@ define([
 			this.fields._wrapped[fieldCounter + 3].set_value(line_height);
 			this.fields._wrapped[fieldCounter + 4].set_value(color);
 			this.fields._wrapped[fieldCounter + 4].update_input_border_color(color);
+		},
+		
+		normalize_elements_selector: function(value) {
+			if(value === 'a-hover') {
+				return 'a:hover';
+			}
+			
+			if(value === "blockquote-alternative") {
+				return 'blockquote.upfront-quote-alternative';
+			}
+			
+			return value;
 		}
 	});
 
