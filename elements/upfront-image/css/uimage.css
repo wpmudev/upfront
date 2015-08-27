@@ -770,8 +770,8 @@ div.preset-manager-panel .image-caption-location .field-caption_trigger {
 	top: 5px;
 }
 
-div.preset-manager-panel .image_style label,
-div.preset-manager-panel .caption_select label {
+div.preset-manager-panel .image_style .upfront-field-label,
+div.preset-manager-panel .caption_select .upfront-field-label {
 	top: 4px;
 	position: relative;
 }
