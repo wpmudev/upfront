@@ -28,7 +28,8 @@ define([
 				toggleClass = 'no-toggle',
 				fieldCounter = 0,
 				current_element = '';
-
+			
+			//Increase field counter if inner elements
 			if(typeof me.options.elements !== "undefined") {
 				fieldCounter++;
 			}
@@ -38,8 +39,9 @@ define([
 				current_element = this.options.default_element + '-';
 			}
 			
-			if(typeof me.model.get(state + '-element-type') !== "undefined" && typeof this.options.elements !== "undefined") {
-				current_element = me.model.get(state + '-element-type') + '-';
+			//Set saved element to default element
+			if(typeof this.model.get(state + '-element-type') !== "undefined" && typeof this.options.elements !== "undefined") {
+				current_element = this.model.get(state + '-element-type') + '-';
 			}
 
 			if(this.options.toggle === true) {
@@ -171,29 +173,21 @@ define([
 						name: state + '-element-type',
 						className: state + '-select-element selectElement ' + toggleClass,
 						values: me.options.elements,
-						change: function () {
-							//Get the value
+						change: function (value) {
 							var value = this.get_value();
-
 							//Update element type value to keep it on typography re-render
 							me.model.set(state + '-element-type', value);
-
-							//Reset typography fields for selected element
-							current_element = value + '-';
-							me.fields._wrapped[fieldCounter -1].set_value(value);
-							me.fields._wrapped[fieldCounter].set_value(me.model.get(current_element + me.options.fields.typeface));
-							me.fields._wrapped[fieldCounter].set_option_font(me.model.get(current_element + me.options.fields.typeface));
-							me.fields._wrapped[fieldCounter + 1].set_value(me.model.get(current_element + me.options.fields.fontstyle));
-							me.fields._wrapped[fieldCounter + 1].set_option_font(me.model.get(current_element + me.options.fields.fontstyle));
-							me.fields._wrapped[fieldCounter + 2].set_value(me.model.get(current_element + me.options.fields.size));
-							me.fields._wrapped[fieldCounter + 3].set_value(me.model.get(current_element + me.options.fields.line_height));
-							me.fields._wrapped[fieldCounter + 4].set_value(me.model.get(current_element + me.options.fields.color));
-							me.fields._wrapped[fieldCounter + 4].update_input_border_color(me.model.get(current_element + me.options.fields.color));
+							me.$el.empty();
+							me.render();
 						},
+						show: function(value) {
+							current_element = value + '-';
+							me.update_fields(value, fieldCounter, current_element);
+						}
 					})
 				);
 			}
-
+			
 			//Add toggle typography checkbox
 			if(this.options.toggle === true) {
 				this.group = false;
@@ -233,6 +227,29 @@ define([
 					})
 				);
 			}
+		},
+		
+		update_fields: function(value, fieldCounter, current_element) {
+			//Get stored values else load from Global Typography settings
+			var font_settings = Upfront.mainData.global_typography[value],
+				typeface = this.model.get(current_element + this.options.fields.typeface) || font_settings.font_face || '',
+				fontstyle = this.model.get(current_element + this.options.fields.fontstyle) || font_settings.weight + ' ' + font_settings.style || '',
+				fontsize = this.model.get(current_element + this.options.fields.size) || font_settings.size || '',
+				line_height = this.model.get(current_element + this.options.fields.line_height) || font_settings.line_height || '',
+				color = this.model.get(current_element + this.options.fields.color) || font_settings.color || '';
+
+			//Reset typography fields for selected element
+			current_element = value + '-';
+			this.fields._wrapped[fieldCounter -1].set_value(value);
+			this.fields._wrapped[fieldCounter].set_value(typeface);
+			this.fields._wrapped[fieldCounter].set_option_font(typeface);
+			this.fields._wrapped[fieldCounter + 1].options.values = Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants_for_select(typeface);
+			this.fields._wrapped[fieldCounter + 1].set_value(fontstyle);
+			this.fields._wrapped[fieldCounter + 1].set_option_font(fontstyle);
+			this.fields._wrapped[fieldCounter + 2].set_value(fontsize);
+			this.fields._wrapped[fieldCounter + 3].set_value(line_height);
+			this.fields._wrapped[fieldCounter + 4].set_value(color);
+			this.fields._wrapped[fieldCounter + 4].update_input_border_color(color);
 		}
 	});
 

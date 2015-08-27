@@ -1670,6 +1670,9 @@ define([
 			}
 
 			this.typography = typography;
+			
+			//Pass global typography settings to typography module
+			Upfront.mainData.global_typography = typography;
 
 			// Check for theme fonts if no theme fonts just return string
 			var currentMode = Upfront.Application.get_current();
