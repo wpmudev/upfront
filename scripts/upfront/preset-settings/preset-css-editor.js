@@ -26,7 +26,7 @@ define([
 		},
 		//elemenTypes' element id matches model's 'id_slug' attribute
 		elementTypes: {
-			UaccordionModel: {label: l10n.accordion, id: 'accordion', preset_container: 'inline'},
+			UaccordionModel: {label: l10n.accordion, id: 'accordion'},
 			UcommentModel: {label: l10n.comments, id: 'comment'},
 			UcontactModel: {label: l10n.contact_form, id: 'contact'},
 			UgalleryModel: {label: l10n.gallery, id: 'gallery', preset_container: 'inline'},
@@ -36,7 +36,7 @@ define([
 			MapModel: {label: l10n.map, id: 'upfront-map_element'},
 			UnewnavigationModel: {label: l10n.navigation, id: 'nav', preset_container: 'inline'},
 			ButtonModel: {label: l10n.button, id: 'button', preset_container: 'inline'},
-			//UpostsModel: {label: l10n.posts, id: 'uposts'},
+			//UpostsModel: {label: l10n.posts, id: 'uposts'},WW
 			PostsModel: {label: l10n.posts, id: 'posts'},
 			UsearchModel: {label: l10n.search, id: 'search'},
 			USliderModel: {label: l10n.slider, id: 'slider'},
@@ -85,6 +85,8 @@ define([
 			this.createSelectors(Upfront.Application.LayoutEditor.Objects);
 			
 			this.selectors = this.elementSelectors[this.modelType] || {};
+			
+			this.element_id = options.element_id ? options.element_id : this.model.get_property_value_by_name('element_id');
 
 			if ( typeof options.change == 'function' ) this.listenTo(this, 'change', options.change);
 
@@ -306,7 +308,14 @@ define([
 			this.blink($element, 4);
 		},
 		hiliteElement: function(e){
-			var selector = $(e.target).data('selector');
+			var preset_selector = this.get_css_selector();
+
+			if(typeof this.elementType.preset_container === "undefined") {
+				preset_selector = preset_selector + ' ';
+			}
+			
+			var selector = preset_selector + $(e.target).data('selector');
+			
 			if(!selector.length)
 				return;
 			var element = $('#' + this.element_id);
@@ -314,7 +323,14 @@ define([
 		},
 
 		unhiliteElement: function(e){
-			var selector = $(e.target).data('selector');
+			var preset_selector = this.get_css_selector();
+
+			if(typeof this.elementType.preset_container === "undefined") {
+				preset_selector = preset_selector + ' ';
+			}
+			
+			var selector = preset_selector + $(e.target).data('selector');
+			
 			if(!selector.length)
 				return;
 			var element = $('#' + this.element_id);
