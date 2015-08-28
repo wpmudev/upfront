@@ -15,20 +15,20 @@ define([
 
 		initialize: function(options) {
 			this.options = options || {};
+			this.fieldCounter = 0;
+			this.currentElement = '';
 			var me = this,
 				state = this.options.state,
-				fieldCounter = 0,
-				custom_class = '',
-				current_element = '';
+				custom_class = '';
 
 			//If fields added increase field counter
 			if(typeof this.options.elements !== "undefined") {
-				fieldCounter++;
+				this.fieldCounter++;
 			}
 
 			//Set default element
 			if(typeof this.options.default_element !== "undefined") {
-				current_element = this.options.default_element + '-';
+				this.currentElement = this.options.default_element + '-';
 				custom_class = 'border-with-fields';
 			}
 
@@ -45,6 +45,7 @@ define([
 					],
 					change: function(value) {
 						me.model.set(me.options.fields.use, value);
+						me.reset_fields(value);
 					},
 					show: function(value, $el) {
 						var stateSettings = $el.closest('.state_modules');
@@ -66,7 +67,7 @@ define([
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					className: state + '-border-width borderWidth ' + custom_class,
-					name: current_element + me.options.fields.width,
+					name: this.currentElement + me.options.fields.width,
 					label: '',
 					default_value: 1,
 					suffix: l10n.px,
@@ -74,13 +75,13 @@ define([
 						{ label: "", value: '1' }
 					],
 					change: function(value) {
-						me.model.set(current_element + me.options.fields.width, value);
+						me.model.set(me.currentElement + me.options.fields.width, value);
 					}
 				}),
 				new Upfront.Views.Editor.Field.Select({
 					model: this.model,
 					className: state + '-border-type borderType ' + custom_class,
-					name: current_element + me.options.fields.type,
+					name: this.currentElement + me.options.fields.type,
 					default_value: "solid",
 					values: [
 						{ label: l10n.solid, value: 'solid' },
@@ -88,14 +89,14 @@ define([
 						{ label: l10n.dotted, value: 'dotted' }
 					],
 					change: function(value) {
-						me.model.set(current_element + me.options.fields.type, value);
+						me.model.set(me.currentElement + me.options.fields.type, value);
 					}
 				}),
 
 				new Upfront.Views.Editor.Field.Color({
 					model: this.model,
 					className: state + '-border-color upfront-field-wrap upfront-field-wrap-color sp-cf borderColor ' + custom_class,
-					name: current_element + me.options.fields.color,
+					name: this.currentElement + me.options.fields.color,
 					blank_alpha : 0,
 					label_style: 'inline',
 					label: l10n.color,
@@ -105,12 +106,12 @@ define([
 						change: function(value) {
 							if (!value) return false;
 							var c = value.get_is_theme_color() !== false ? value.theme_color : value.toRgbString();
-							me.model.set(current_element + me.options.fields.color, c);
+							me.model.set(me.currentElement + me.options.fields.color, c);
 						},
 						move: function(value) {
 							if (!value) return false;
 							var c = value.get_is_theme_color() !== false ? value.theme_color : value.toRgbString();
-							me.model.set(current_element + me.options.fields.color, c);
+							me.model.set(me.currentElement + me.options.fields.color, c);
 						}
 					}
 				})
@@ -124,15 +125,54 @@ define([
 						values: me.options.elements,
 						change: function () {
 							var value = this.get_value();
-							current_element = value + '-';
-							me.fields._wrapped[fieldCounter + 1].set_value(me.model.get(current_element + me.options.fields.width));
-							me.fields._wrapped[fieldCounter + 2].set_value(me.model.get(current_element + me.options.fields.type));
-							me.fields._wrapped[fieldCounter + 3].set_value(me.model.get(current_element + me.options.fields.color));
-							me.fields._wrapped[fieldCounter + 3].update_input_border_color(me.model.get(current_element + me.options.fields.color));
+							me.currentElement = value + '-';
+							me.fields._wrapped[me.fieldCounter + 1].set_value(me.model.get(me.currentElement + me.options.fields.width));
+							me.fields._wrapped[me.fieldCounter + 2].set_value(me.model.get(me.currentElement + me.options.fields.type));
+							me.fields._wrapped[me.fieldCounter + 3].set_value(me.model.get(me.currentElement + me.options.fields.color));
+							me.fields._wrapped[me.fieldCounter + 3].update_input_border_color(me.model.get(me.currentElement + me.options.fields.color));
 						}
 					})
 				);
 			}
+		},
+		
+		reset_fields: function(value) {
+			if(typeof value !== "undefined" && value === "yes") {
+				var settings = this.get_static_field_values(value, this.options.prepend);
+				this.update_fields(value, settings);
+				this.save_static_values(value, settings);
+				this.$el.empty();
+				this.render();
+			}
+		},
+		
+		save_static_values: function(value, settings) {
+			//Save preset values from static state
+			this.model.set(this.currentElement + this.options.fields.width, settings.width);
+			this.model.set(this.currentElement + this.options.fields.type, settings.type);
+			this.model.set(this.currentElement + this.options.fields.color, settings.color);
+		},
+		
+		get_static_field_values: function(value, prepend) {
+			var settings = {};
+			
+			settings.width = this.model.get(this.clear_prepend(this.options.fields.width, prepend)) || '';
+			settings.type = this.model.get(this.clear_prepend(this.options.fields.type, prepend)) || '';
+			settings.color = this.model.get(this.clear_prepend(this.options.fields.color, prepend)) || '';
+			
+			return settings;
+		},
+		
+		clear_prepend: function(field, prepend) {
+			return field.replace(prepend, '');
+		},
+		
+		update_fields: function(value, settings) {
+			//Update selected element
+			this.fields._wrapped[this.fieldCounter + 1].set_value(settings.width);
+			this.fields._wrapped[this.fieldCounter + 2].set_value(settings.type);
+			this.fields._wrapped[this.fieldCounter + 3].set_value(settings.color);
+			this.fields._wrapped[this.fieldCounter + 3].update_input_border_color(settings.color);
 		},
 	});
 
