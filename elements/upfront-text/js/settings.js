@@ -64,6 +64,7 @@ define([
 								state: 'static',
 								title: l10n.settings.typography_label,
 								toggle: true,
+								global_typography: true,
 								fields: {
 									typeface: 'fontface',
 									fontstyle: 'fontstyle',

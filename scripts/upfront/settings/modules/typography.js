@@ -230,13 +230,21 @@ define([
 		},
 		
 		update_fields: function(value, fieldCounter, current_element) {
-			//Get stored values else load from Global Typography settings
-			var font_settings = Upfront.mainData.global_typography[this.normalize_elements_selector(value)],
-				typeface = this.model.get(current_element + this.options.fields.typeface) || font_settings.font_face || '',
-				fontstyle = this.model.get(current_element + this.options.fields.fontstyle) || font_settings.weight + ' ' + font_settings.style || '',
-				fontsize = this.model.get(current_element + this.options.fields.size) || font_settings.size || '',
-				line_height = this.model.get(current_element + this.options.fields.line_height) || font_settings.line_height || '',
-				color = this.model.get(current_element + this.options.fields.color) || font_settings.color || '';
+			if(typeof this.options.global_typography !== "undefined" && this.options.global_typography === true) {
+				//Get stored values else load from Global Typography settings
+				var font_settings = Upfront.mainData.global_typography[this.normalize_elements_selector(value)],
+					typeface = this.model.get(current_element + this.options.fields.typeface) || font_settings.font_face || '',
+					fontstyle = this.model.get(current_element + this.options.fields.fontstyle) || font_settings.weight + ' ' + font_settings.style || '',
+					fontsize = this.model.get(current_element + this.options.fields.size) || font_settings.size || '',
+					line_height = this.model.get(current_element + this.options.fields.line_height) || font_settings.line_height || '',
+					color = this.model.get(current_element + this.options.fields.color) || font_settings.color || '';
+			} else {
+				var typeface = this.model.get(current_element + this.options.fields.typeface) || '',
+					fontstyle = this.model.get(current_element + this.options.fields.fontstyle) || '',
+					fontsize = this.model.get(current_element + this.options.fields.size) || '',
+					line_height = this.model.get(current_element + this.options.fields.line_height) || '',
+					color = this.model.get(current_element + this.options.fields.color) || '';
+			}
 
 			//Reset typography fields for selected element
 			current_element = value + '-';
