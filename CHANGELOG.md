@@ -1,6 +1,22 @@
 Change Log
 ============
 
+0.4 - 2015-08-28
+-------------------------------------------------------------------------------
+- Fix: shortcodes in tabs/accordion elements.
+- Fix: discussion settings update.
+- Fix: responsive menu behavior.
+- Fix: pagination issues.
+- Fix: menu custom CSS saving in certain scenarios.
+- Fix: YouTube element responsive behavior.
+- Fix: image caption issues.
+- Fix: lightbox creation issues.
+- Fix: anchor link issues in menu element.
+- Fix: text icons insertion issues.
+- Fix: admin bar items issues.
+- Add: styled map support for map elements and regions.
+- Add: parallax type for image background regions.
+
 0.3.2.1 - 2015-06-02
 -------------------------------------------------------------------------------
 - Fix: minor style fixes.

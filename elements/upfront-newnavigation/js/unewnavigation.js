@@ -937,6 +937,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			level = 0;
 
 		var me = this;
+
 		if(typeof newitem == 'undefined') newitem = false;
 
 		var view = new MenuItemView({model: model, parent_view: me, newitem: newitem, level: level});
@@ -970,6 +971,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		var menu_id = this.model.get_property_value_by_name('menu_id');
 
 		me.$el.find('a.new_menu_item').removeClass('new_menu_item');
+		var parent_level = 0;
 		var parent_level = 0;
 		var menu_item = this.menuItemTemplate();
 		var newmenuitem;
