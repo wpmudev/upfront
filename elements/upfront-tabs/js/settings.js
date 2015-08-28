@@ -147,6 +147,7 @@ define([
 								multiple: false,
 								single: true,
 								toggle: true,
+								prepend: 'hover-',
 								fields: {
 									use: 'hover-use-color',
 								},
@@ -164,6 +165,7 @@ define([
 								title: l10n.tab_typography_label,
 								state: 'hover',
 								toggle: true,
+								prepend: 'hover-',
 								fields: {
 									use: 'hover-use-typography',
 									typeface: 'hover-font-family',
@@ -181,6 +183,7 @@ define([
 							options: {
 								state: 'hover',
 								title: '',
+								prepend: 'hover-',
 								fields: {
 									use: 'hover-useborder',
 									width: 'hover-borderwidth',
@@ -212,10 +215,11 @@ define([
 								multiple: false,
 								single: true,
 								toggle: true,
+								prepend: 'active-',
 								fields: {
 									use: 'active-use-color',
-						},
-						abccolors: [
+							},
+							abccolors: [
 							{
 								name: 'active-tab-bg',
 								label: l10n.tab_bg_label
@@ -229,6 +233,7 @@ define([
 								title: l10n.tab_typography_label,
 								state: 'active',
 								toggle: true,
+								prepend: 'active-',
 								fields: {
 									use: 'active-use-typography',
 									typeface: 'active-font-family',
@@ -246,6 +251,7 @@ define([
 							options: {
 								state: 'active',
 								title: '',
+								prepend: 'active-',
 								fields: {
 									use: 'active-useborder',
 									width: 'active-borderwidth',

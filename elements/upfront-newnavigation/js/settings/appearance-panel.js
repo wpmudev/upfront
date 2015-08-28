@@ -93,6 +93,7 @@ define([
 							title: l10n.panel.typography_label,
 							state: 'hover',
 							toggle: true,
+							prepend: 'hover-',
 							fields: {
 								use: 'hover-use-typography',
 								typeface: 'hover-font-family',
@@ -112,6 +113,7 @@ define([
 							multiple: false,
 							single: true,
 							toggle: true,
+							prepend: 'hover-',
 							fields: {
 								use: 'hover-use-color',
 							},
@@ -131,6 +133,7 @@ define([
 							title: l10n.panel.typography_label,
 							state: 'focus',
 							toggle: true,
+							prepend: 'focus-',
 							fields: {
 								use: 'focus-use-typography',
 								typeface: 'focus-font-family',
@@ -150,6 +153,7 @@ define([
 							multiple: false,
 							single: true,
 							toggle: true,
+							prepend: 'focus-',
 							fields: {
 								use: 'focus-use-color',
 							},

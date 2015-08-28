@@ -229,6 +229,7 @@ define([
 								multiple: false,
 								single: false,
 								toggle: true,
+								prepend: 'hover-',
 								fields: {
 									use: 'hover-use-color',
 								},
@@ -250,6 +251,7 @@ define([
 								title: l10n.typography_label,
 								state: 'hover',
 								toggle: true,
+								prepend: 'hover-',
 								fields: {
 									use: 'hover-use-typography',
 									typeface: 'hover-font-family',
@@ -273,6 +275,7 @@ define([
 							options: {
 								state: 'hover',
 								title: '',
+								prepend: 'hover-',
 								fields: {
 									use: 'hover-useborder',
 									width: 'hover-borderwidth',
@@ -310,6 +313,7 @@ define([
 								multiple: false,
 								single: false,
 								toggle: true,
+								prepend: 'focus-',
 								fields: {
 									use: 'focus-use-color',
 								},
@@ -330,6 +334,7 @@ define([
 							options: {
 								title: l10n.typography_label,
 								state: 'focus',
+								prepend: 'focus-',
 								toggle: true,
 								fields: {
 									use: 'focus-use-typography',
@@ -353,6 +358,7 @@ define([
 							options: {
 								state: 'focus',
 								title: '',
+								prepend: 'focus-',
 								fields: {
 									use: 'focus-useborder',
 									width: 'focus-borderwidth',

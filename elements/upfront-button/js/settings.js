@@ -142,6 +142,7 @@ define([
 								multiple: false,
 								toggle: true,
 								single: true,
+								prepend: 'hov_',
 								abccolors: [
 									{
 										name: 'hov_bgcolor',
@@ -159,6 +160,7 @@ define([
 								state: 'hover',
 								title: l10n.settings.typography_label,
 								toggle: true,
+								prepend: 'hov_',
 								fields: {
 									typeface: 'hov_fontface',
 									fontstyle: 'hov_fontstyle',
@@ -176,6 +178,7 @@ define([
 							options: {
 								state: 'hover',
 								max_value: 100,
+								prepend: 'hov_',
 								fields: {
 									use: 'hov_useradius',
 									lock: 'hov_borderradiuslock',
@@ -192,6 +195,7 @@ define([
 							moduleType: 'Border',
 							options: {
 								state: 'hover',
+								prepend: 'hov_',
 								fields: {
 									use: 'hov_useborder',
 									width: 'hov_borderwidth',
@@ -210,6 +214,7 @@ define([
 								multiple: false,
 								toggle: true,
 								single: true,
+								prepend: 'focus_',
 								abccolors: [
 									{
 										name: 'focus_bgcolor',
@@ -227,6 +232,7 @@ define([
 								state: 'focus',
 								title: l10n.settings.typography_label,
 								toggle: true,
+								prepend: 'focus_',
 								fields: {
 									typeface: 'focus_fontface',
 									fontstyle: 'focus_fontstyle',
@@ -244,6 +250,7 @@ define([
 							options: {
 								state: 'focus',
 								max_value: 100,
+								prepend: 'focus_',
 								fields: {
 									use: 'focus_useradius',
 									lock: 'focus_borderradiuslock',
@@ -260,6 +267,7 @@ define([
 							moduleType: 'Border',
 							options: {
 								state: 'focus',
+								prepend: 'focus_',
 								fields: {
 									use: 'focus_useborder',
 									width: 'focus_borderwidth',

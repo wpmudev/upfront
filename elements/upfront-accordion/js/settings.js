@@ -147,6 +147,7 @@ define([
 							options: {
 								title: l10n.colors_label,
 								toggle: true,
+								prepend: 'hover-',
 								fields: {
 									use: 'hover-use-colors'
 								},
@@ -167,6 +168,7 @@ define([
 							options: {
 								state: 'hover',
 								toggle: true,
+								prepend: 'hover-',
 								title: l10n.typography_tab_label,
 								fields: {
 									use: 'hover-use-typography',
@@ -185,6 +187,7 @@ define([
 							options: {
 								state: 'hover',
 								title: '',
+								prepend: 'hover-',
 								fields: {
 									use: 'hover-useborder',
 									width: 'hover-borderwidth',
@@ -213,6 +216,7 @@ define([
 							options: {
 								title: l10n.colors_label,
 								toggle: true,
+								prepend: 'active-',
 								fields: {
 									use: 'active-use-color'
 								},
@@ -233,6 +237,7 @@ define([
 							options: {
 								state: 'active',
 								toggle: true,
+								prepend: 'active-',
 								title: l10n.typography_tab_label,
 								fields: {
 									use: 'active-use-typography',
@@ -251,6 +256,7 @@ define([
 							options: {
 								state: 'active',
 								title: '',
+								prepend: 'active-',
 								fields: {
 									use: 'active-useborder',
 									width: 'active-borderwidth',
