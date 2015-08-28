@@ -22,36 +22,35 @@ define([
 
 		initialize: function(options) {
 			this.options = options || {};
-
+			this.fieldCounter = 0;
+			this.currentElement = '';
 			var me = this,
 				state = this.options.state,
-				toggleClass = 'no-toggle',
-				fieldCounter = 0,
-				current_element = '';
-			
+				toggleClass = 'no-toggle';
+
 			//Increase field counter if inner elements
 			if(typeof me.options.elements !== "undefined") {
-				fieldCounter++;
+				this.fieldCounter++;
 			}
 
 			//Set default element
 			if(typeof this.options.default_element !== "undefined") {
-				current_element = this.options.default_element + '-';
+				this.currentElement = this.options.default_element + '-';
 			}
 			
 			//Set saved element to default element
 			if(typeof this.model.get(state + '-element-type') !== "undefined" && typeof this.options.elements !== "undefined") {
-				current_element = this.model.get(state + '-element-type') + '-';
+				this.currentElement = this.model.get(state + '-element-type') + '-';
 			}
 
 			if(this.options.toggle === true) {
-				fieldCounter++;
+				this.fieldCounter++;
 				toggleClass = 'element-toggled';
 			}
-
+			
 			this.fields = _([
 				new Upfront.Views.Editor.Field.Typeface_Chosen_Select({
-					name: current_element + this.options.fields.typeface,
+					name: this.currentElement + this.options.fields.typeface,
 					model: this.model,
 					values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_fonts_for_select(),
 					label: l10n.typeface,
@@ -59,11 +58,11 @@ define([
 					label_style: 'inline',
 					className: state + '-font-face static typeFace ' + toggleClass,
 					change: function(value) {
-						me.model.set(current_element + me.options.fields.typeface, value);
-						me.fields._wrapped[1 + fieldCounter] = new Upfront.Views.Editor.Field.Typeface_Style_Chosen_Select({
+						me.model.set(me.currentElement + me.options.fields.typeface, value);
+						me.fields._wrapped[1 + me.fieldCounter] = new Upfront.Views.Editor.Field.Typeface_Style_Chosen_Select({
 							model: this.model,
-							name: current_element + me.options.fields.fontstyle,
-							values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants_for_select(me.model.get(current_element + me.options.fields.typeface)),
+							name: me.currentElement + me.options.fields.fontstyle,
+							values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants_for_select(me.model.get(me.currentElement + me.options.fields.typeface)),
 							label: l10n.weight_style,
 							font_family: me.model.get(me.options.fields.typeface),
 							select_width: '225px',
@@ -72,13 +71,13 @@ define([
 							change: function(value) {
 								//Explode Font style and font weight and save them as separate values
 								var parsed_variant = Upfront.Views.Font_Model.parse_variant(value);
-								me.model.set(current_element + me.options.fields.fontstyle, value);
-								me.model.set(current_element + me.options.fields.weight, parsed_variant.weight);
-								me.model.set(current_element + me.options.fields.style, parsed_variant.style);
+								me.model.set(me.currentElement + me.options.fields.fontstyle, value);
+								me.model.set(me.currentElement + me.options.fields.weight, parsed_variant.weight);
+								me.model.set(me.currentElement + me.options.fields.style, parsed_variant.style);
 							},
 							show: function(value) {
 								if(value !== null) {
-									me.fields._wrapped[1 + fieldCounter].set_option_font(value);
+									me.fields._wrapped[1 + me.fieldCounter].set_option_font(value);
 								}
 							}
 						});
@@ -89,8 +88,8 @@ define([
 
 				new Upfront.Views.Editor.Field.Typeface_Style_Chosen_Select({
 					model: this.model,
-					name: current_element + this.options.fields.fontstyle,
-					values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants_for_select(me.model.get(current_element + me.options.fields.typeface)),
+					name: this.currentElement + this.options.fields.fontstyle,
+					values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants_for_select(me.model.get(this.currentElement + me.options.fields.typeface)),
 					label: l10n.weight_style,
 					font_family: me.model.get(this.options.fields.typeface),
 					select_width: '225px',
@@ -99,13 +98,14 @@ define([
 					change: function(value) {
 						//Explode Font style and font weight and save them as separate values
 						var parsed_variant = Upfront.Views.Font_Model.parse_variant(value);
-						me.model.set(current_element + me.options.fields.fontstyle, value);
-						me.model.set(current_element + me.options.fields.weight, parsed_variant.weight);
-						me.model.set(current_element + me.options.fields.style, parsed_variant.style);
+						me.model.set(me.currentElement + me.options.fields.fontstyle, value);
+						me.model.set(me.currentElement + me.options.fields.weight, parsed_variant.weight);
+						me.model.set(me.currentElement + me.options.fields.style, parsed_variant.style);
 					},
 					show: function(value) {
 						if(value !== null) {
-							me.fields._wrapped[1 + fieldCounter].set_option_font(value);
+							me.fields._wrapped[1 + me.fieldCounter].set_option_font(value);
+							
 						}
 					}
 				}),
@@ -113,34 +113,34 @@ define([
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					className: state + '-font-size fontSize ' + toggleClass,
-					name: current_element + this.options.fields.size,
+					name: this.currentElement + this.options.fields.size,
 					label: l10n.size,
 					label_style: 'inline',
 					suffix: l10n.px,
 					default_value: 12,
 					change: function(value) {
-						me.model.set(current_element + me.options.fields.size, value);
+						me.model.set(me.currentElement + me.options.fields.size, value);
 					}
 				}),
 
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					className: state + '-font-lineheight lineHeight ' + toggleClass,
-					name: current_element + this.options.fields.line_height,
+					name: this.currentElement + this.options.fields.line_height,
 					label: l10n.line_height,
 					label_style: 'inline',
 					default_value: 1,
 					min: 0,
 					step: 0.1,
 					change: function(value) {
-						me.model.set(current_element + me.options.fields.line_height, value);
+						me.model.set(me.currentElement + me.options.fields.line_height, value);
 					}
 				}),
 
 				new Upfront.Views.Editor.Field.Color({
 					model: this.model,
 					className: state + '-font-color upfront-field-wrap upfront-field-wrap-color sp-cf fontColor ' + toggleClass,
-					name: current_element + this.options.fields.color,
+					name: this.currentElement + this.options.fields.color,
 					blank_alpha : 0,
 					default_value: '#000',
 					label_style: 'inline',
@@ -150,12 +150,12 @@ define([
 						change: function(value) {
 							if (!value) return false;
 							var c = value.get_is_theme_color() !== false ? value.theme_color : value.toRgbString();
-							me.model.set(current_element + me.options.fields.color, c);
+							me.model.set(me.currentElement + me.options.fields.color, c);
 						},
 						move: function(value) {
 							if (!value) return false;
 							var c = value.get_is_theme_color() !== false ? value.theme_color : value.toRgbString();
-							me.model.set(current_element + me.options.fields.color, c);
+							me.model.set(me.currentElement + me.options.fields.color, c);
 						}
 					}
 				}),
@@ -181,8 +181,9 @@ define([
 							me.render();
 						},
 						show: function(value) {
-							current_element = value + '-';
-							me.update_fields(value, fieldCounter, current_element);
+							me.currentElement = value + '-';
+							var settings = me.get_field_values(value);
+							me.update_fields(value, settings);
 						}
 					})
 				);
@@ -204,6 +205,7 @@ define([
 						],
 						change: function(value) {
 							me.model.set(me.options.fields.use, value);
+							me.reset_fields(value);
 						},
 						show: function(value, $el) {
 							var stateSettings = $el.closest('.state_modules');
@@ -229,46 +231,88 @@ define([
 			}
 		},
 		
-		update_fields: function(value, fieldCounter, current_element) {
-			if(typeof this.options.global_typography !== "undefined" && this.options.global_typography === true) {
-				//Get stored values else load from Global Typography settings
-				var font_settings = Upfront.mainData.global_typography[this.normalize_elements_selector(value)],
-					typeface = this.model.get(current_element + this.options.fields.typeface) || font_settings.font_face || '',
-					fontstyle = this.model.get(current_element + this.options.fields.fontstyle) || font_settings.weight + ' ' + font_settings.style || '',
-					fontsize = this.model.get(current_element + this.options.fields.size) || font_settings.size || '',
-					line_height = this.model.get(current_element + this.options.fields.line_height) || font_settings.line_height || '',
-					color = this.model.get(current_element + this.options.fields.color) || font_settings.color || '';
-			} else {
-				var typeface = this.model.get(current_element + this.options.fields.typeface) || '',
-					fontstyle = this.model.get(current_element + this.options.fields.fontstyle) || '',
-					fontsize = this.model.get(current_element + this.options.fields.size) || '',
-					line_height = this.model.get(current_element + this.options.fields.line_height) || '',
-					color = this.model.get(current_element + this.options.fields.color) || '';
+		reset_fields: function(value) {
+			if(typeof value !== "undefined" && value === "yes") {
+				var settings = this.get_static_field_values(value, this.options.prepend);
+				this.update_fields(value, settings);
+				this.save_static_values(value, settings);
+				this.$el.empty();
+				this.render();
 			}
+		},
+		
+		save_static_values: function(value, settings) {
+			//Save preset values from static state
+			var parsed_variant = Upfront.Views.Font_Model.parse_variant(settings.fontstyle);
+			this.model.set(this.currentElement + this.options.fields.typeface, settings.typeface);
+			this.model.set(this.currentElement + this.options.fields.fontstyle, settings.fontstyle);
+			this.model.set(this.currentElement + this.options.fields.weight, parsed_variant.weight);
+			this.model.set(this.currentElement + this.options.fields.style, parsed_variant.style);
+			this.model.set(this.currentElement + this.options.fields.size, settings.fontsize);
+			this.model.set(this.currentElement + this.options.fields.line_height, settings.line_height);
+			this.model.set(this.currentElement + this.options.fields.color, settings.color);
+		},
+		
+		get_static_field_values: function(value, prepend) {
+			var settings = {};
+			
+			settings.typeface = this.model.get(this.clear_prepend(this.options.fields.typeface, prepend)) || '';
+			settings.fontstyle = this.model.get(this.clear_prepend(this.options.fields.fontstyle, prepend)) || '';
+			settings.fontsize = this.model.get(this.clear_prepend(this.options.fields.size, prepend)) || '';
+			settings.line_height = this.model.get(this.clear_prepend(this.options.fields.line_height, prepend)) || '';
+			settings.color = this.model.get(this.clear_prepend(this.options.fields.color, prepend)) || '';
+			
+			return settings;
+		},
+		
+		clear_prepend: function(field, prepend) {
+			return field.replace(prepend, '');
+		},
+		
+		get_field_values: function(value) {
+			var settings = {};
+			//Get stored values else load from Global Typography settings
+			if(typeof this.options.global_typography !== "undefined" && this.options.global_typography === true) {
+				var font_settings = Upfront.mainData.global_typography[this.normalize_elements_selector(value)];
+				settings.typeface = this.model.get(this.currentElement + this.options.fields.typeface) || font_settings.font_face || '';
+				settings.fontstyle = this.model.get(this.currentElement + this.options.fields.fontstyle) || font_settings.weight + ' ' + font_settings.style || '';
+				settings.fontsize = this.model.get(this.currentElement + this.options.fields.size) || font_settings.size || '';
+				settings.line_height = this.model.get(this.currentElement + this.options.fields.line_height) || font_settings.line_height || '';
+				settings.color = this.model.get(this.currentElement + this.options.fields.color) || font_settings.color || '';
+			} else {
+				settings.typeface = this.model.get(this.currentElement + this.options.fields.typeface) || '';
+				settings.fontstyle = this.model.get(this.currentElement + this.options.fields.fontstyle) || '';
+				settings.fontsize = this.model.get(this.currentElement + this.options.fields.size) || '';
+				settings.line_height = this.model.get(this.currentElement + this.options.fields.line_height) || '';
+				settings.color = this.model.get(this.currentElement + this.options.fields.color) || '';
+			}
+			
+			return settings;
+		},
+		
+		update_fields: function(value, settings) {
+			//Update selected element
+			this.fields._wrapped[this.fieldCounter -1].set_value(value);
 
-			//Reset typography fields for selected element
-			current_element = value + '-';
-			this.fields._wrapped[fieldCounter -1].set_value(value);
-			this.fields._wrapped[fieldCounter].set_value(typeface);
-			this.fields._wrapped[fieldCounter].set_option_font(typeface);
-			this.fields._wrapped[fieldCounter + 1].options.values = Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants_for_select(typeface);
-			this.fields._wrapped[fieldCounter + 1].set_value(fontstyle);
-			this.fields._wrapped[fieldCounter + 1].set_option_font(fontstyle);
-			this.fields._wrapped[fieldCounter + 2].set_value(fontsize);
-			this.fields._wrapped[fieldCounter + 3].set_value(line_height);
-			this.fields._wrapped[fieldCounter + 4].set_value(color);
-			this.fields._wrapped[fieldCounter + 4].update_input_border_color(color);
+			//Update typography fields for selected element
+			this.fields._wrapped[this.fieldCounter].set_value(settings.typeface);
+			this.fields._wrapped[this.fieldCounter].set_option_font(settings.typeface);
+			this.fields._wrapped[this.fieldCounter + 1].options.values = Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants_for_select(settings.typeface);
+			this.fields._wrapped[this.fieldCounter + 1].set_value(settings.fontstyle);
+			this.fields._wrapped[this.fieldCounter + 1].set_option_font(settings.fontstyle);
+			this.fields._wrapped[this.fieldCounter + 2].set_value(settings.fontsize);
+			this.fields._wrapped[this.fieldCounter + 3].set_value(settings.line_height);
+			this.fields._wrapped[this.fieldCounter + 4].set_value(settings.color);
+			this.fields._wrapped[this.fieldCounter + 4].update_input_border_color(settings.color);
 		},
 		
 		normalize_elements_selector: function(value) {
 			if(value === 'a-hover') {
 				return 'a:hover';
 			}
-			
 			if(value === "blockquote-alternative") {
 				return 'blockquote.upfront-quote-alternative';
 			}
-			
 			return value;
 		}
 	});
