@@ -13,7 +13,7 @@ class Upfront_ButtonView extends Upfront_Object {
 			"class" => "c24 upfront-button", 
 			"has_settings" => 1, 
 			"id_slug" => "ubutton",
-			'preset' => ''
+			"preset" => "default"
 		);
 	}
 	
@@ -29,7 +29,7 @@ class Upfront_ButtonView extends Upfront_Object {
 
 			foreach($data['properties'] as $prop)
 					$flat[$prop['name']] = $prop['value'];
-
+			
 			$flat = array_merge(self::default_properties(), $flat);
 
 			$properties = array();
