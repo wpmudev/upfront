@@ -167,7 +167,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 	private function _get_cached_scripts () {
 		$hub = Upfront_PublicScripts_Registry::get_instance();
 		$scripts = $hub->get_all();
-		if (empty($scripts)) return $urls;
+		if (empty($scripts)) return isset( $urls ) ? $urls : false; // Todo Ve: where does this $url come from?
 
 		$ckey = $this->_cache->key(self::TYPE_SCRIPT, $scripts);
 
