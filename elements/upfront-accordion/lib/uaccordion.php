@@ -146,6 +146,13 @@ class Upfront_UaccordionView extends Upfront_Object {
 			'section_bg' => __('Section Background:', 'upfront'),
 			'header_bg' => __('Header Background:', 'upfront'),
 			'header_border' => __('Header Border:', 'upfront'),
+			'default_preset' => __('Default', 'upfront'),
+			'content_area_colors_label' => __('Content Area Colors', 'upfront'),
+			'content_area_bg_label' => __('Content Area BG', 'upfront'),
+			'colors_label' => __('Colors', 'upfront'),
+			'header_bg_label' => __('Header BG', 'upfront'),
+			'triangle_icon_label' => __('Triangle Icon', 'upfront'),
+			'typography_tab_label' => __('Tab Label Typography', 'upfront'),
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)

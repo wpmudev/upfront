@@ -44,6 +44,7 @@ define(function() {
 			return shared_labels;
 		},
 		get_additional_sizes: function () {
+			if (!ActiveFilters.multiple_sizes) return false; // Do not use multiple sizes if we're told not to
 			var all_item_sizes = this.invoke("get", "additional_sizes"),
 				item_sizes = []
 			;
@@ -150,6 +151,7 @@ define(function() {
 		labels_cache: false,
 		default_media_types: ['images', 'videos', 'audios', 'other'],
 		allowed_media_types: [],
+		image_sizes: true,
 		showing_titles: true,
 		current_page: 1,
 		max_pages: 1,
@@ -2201,11 +2203,13 @@ define(function() {
 		open: function (options) {
 			options = _.extend({
 				media_type: ["images"],
+				multiple_sizes: true,
 				multiple_selection: true,
 				button_text: l10n.ok,
 				ck_insert: false,
 				hold_editor: false,
 			}, options);
+
 			var me = this,
 				popup = false,
 				media_type = options.media_type,
@@ -2213,6 +2217,8 @@ define(function() {
 				button_text = options.button_text
 			;
 			ActiveFilters.allowed_media_types = media_type;
+			ActiveFilters.multiple_sizes = options.multiple_sizes;
+
 			popup = Upfront.Popup.open(function (data, $top, $bottom) {
 				me.out = this;
 				me.popup_data = data;

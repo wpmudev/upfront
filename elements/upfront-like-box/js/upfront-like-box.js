@@ -1,5 +1,8 @@
 (function ($) {
-  define(function() {
+  define([
+		'scripts/upfront/element-settings/settings',
+		'scripts/upfront/element-settings/root-settings-panel'
+	], function(ElementSettings, RootSettingsPanel) {
 
 	var l10n = Upfront.Settings.l10n.like_box_element;
 
@@ -202,84 +205,38 @@
 	 * @type {Upfront.Views.Editor.Settings.Item}
 	 */
 
-	var Field_Text = Upfront.Views.Editor.Field.Text.extend({});
-
-	var Field_Button = Upfront.Views.Editor.Field.Field.extend({
-		events: {
-			'click a': 'buttonClicked'
-		},
-		render: function() {
-			this.$el.html(this.get_field_html());
-		},
-		get_field_html: function() {
-			return '<i class="upfront-field-icon upfront-field-icon-social-back"></i><span class="upfront-back-global-settings-info">' + this.options.info + ' <a href="#">' + this.options.label + '</a></span>';
-		},
-		buttonClicked: function(e) {
-			if(this.options.on_click)
-				this.options.on_click(e);
-		},
-		isProperty: false
-	});
-
-// --- Tie the settings together ---
-
 	/**
 	 * Social Media settings hub, populated with the panels we'll be showing.
 	 * @type {Upfront.Views.Editor.Settings.Settings}
 	 */
-	var LikeBoxSettings = Upfront.Views.Editor.Settings.Settings.extend({
-		/**
-		 * Bootstrap the object - populate the internal
-		 * panels array with the panel instances we'll be showing.
-		 */
-		 getGlobalFBUrl: function(){
-			if(!Upfront.data.usocial.globals)
-				return false;
-			var services = Upfront.data.usocial.globals.services,
-				url = false;
-
-			_(services).each( function( s ) {
-				if(s.id == 'facebook')
-					url = s.url;
-			});
-
-			return url;
+	var GeneralPanel = RootSettingsPanel.extend({
+		settings: [
+			{
+				type: 'SettingsItem',
+				className: 'upfront-social-services-item general_settings_item',
+				title: l10n.facebook_account,
+				label: l10n.opts.page_url,
+				fields: [
+					{
+						type: 'Text',
+						className: 'facebook-url',
+						property: 'facebook_url',
+						label: l10n.opts.url_sample,
+						compact: true
+					},
+					{
+						type: 'Settings_CSS'
+					}
+				]
+			}
+		],
+		title: 'General Settings'
+	});
+	var LikeBoxSettings = ElementSettings.extend({
+		panels: {
+			'General': GeneralPanel
 		},
-
-		initialize: function (opts) {
-			this.options = opts;
-			this.has_tabs = false;
-			this.panel = new Upfront.Views.Editor.Settings.Panel({
-
-					model: this.model,
-					label: l10n.opts.style_label,
-					title: l10n.opts.style_title,
-					settings: [
-						new Upfront.Views.Editor.Settings.Item({
-							className: 'upfront-social-services-item',
-							model: this.model,
-							title: l10n.opts.page_url,
-							fields: [
-								new Field_Text({
-									model: this.model,
-									property: 'facebook_url',
-									label: l10n.opts.url_sample,
-									compact: true
-								})
-							]
-						})
-
-					]
-				});
-			this.panels = _([this.panel]);
-		},
-		/**
-		 * Get the title (goes into settings title area)
-		 * @return {string} Title
-		 */
-		get_title: function () {
-			return l10n.settings;
-		}
+		title: l10n.settings
 	});
 
 

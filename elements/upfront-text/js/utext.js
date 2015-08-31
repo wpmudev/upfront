@@ -27,6 +27,12 @@
 				//}, this);
 				this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
 			},
+			get_preset_properties: function() {
+				var preset = this.model.get_property_value_by_name("preset"),
+					props = PresetUtil.getPresetProperties('text', preset) || {};
+					
+				return props;	
+			},
 			get_content_markup: function () {
 				var content = this.model.get_content(),
 					$content;
@@ -41,11 +47,14 @@
 				if($content.hasClass('plaintxt_padding')) {
 					content = $content.html();
 				}
+				
+				var preset = this.model.get_property_value_by_name("preset") || 'default';
 
 				var data = {
 					"content" : content,
 					"background_color" : this.model.get_property_value_by_name("background_color"),
-					"border" : this.model.get_property_value_by_name("border")
+					"border" : this.model.get_property_value_by_name("border"),
+					"preset": preset
 				};
 				var rendered = '';
 				rendered = _.template(textTpl, data);
@@ -129,8 +138,8 @@
 			"Settings": TextSettings,
 			"ContextMenu": TextMenu,
 			cssSelectors: {
-				'.upfront-plain_txt': {label: l10n.css.container_label, info: l10n.css.container_info},
-				'.upfront-plain_txt p': {label: l10n.css.p_label, info: l10n.css.p_info},
+				'.plain-text-container': {label: l10n.css.container_label, info: l10n.css.container_info},
+				'.plain-text-container p': {label: l10n.css.p_label, info: l10n.css.p_info},
 			},
 			cssSelectorsId: 'PlainTxtModel'
 		});

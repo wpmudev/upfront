@@ -20,6 +20,10 @@
     border: 0 none;
 }
 
+.upfront-output-uyoutube {
+	min-height: inherit;
+}
+
 .uyoutube-gallery-item {
     overflow:hidden;
     margin: 0 7px 10px;
@@ -183,7 +187,7 @@
 	border: 1px solid #ccc;
 	padding: 0 10px;
 	margin-bottom: 10px;
-	width: 70%;
+	width: 63%;
 	display: block;
 	float: left;
 }
@@ -196,7 +200,7 @@ input.upfront-youtube-url {
 	display: block;
 	background-color:transparent;
 	font-size: 14px;
-	height: 38px !important;
+	height: 18px !important;
 }
 
 input.upfront-youtube-url::-webkit-input-placeholder {
@@ -216,7 +220,7 @@ input.upfront-like-box_url:-ms-input-placeholder {
 }
 
 .upfront-youtube-button-wrapper {
-	width: 30%;
+	width: 30.8%;
 	display: block;
 	float: left;
 }
@@ -231,18 +235,32 @@ input.upfront-like-box_url:-ms-input-placeholder {
 	height: 40px;
 }
 
+.multiple_sources {
+	margin-top: 7px !important;
+	position: relative;
+}
+
+.multiple_sources input {
+	width: 96% !important;
+}
+
+.upfront-add-another  {
+	margin: 10px 0px;
+}
+
 .upfront-add-another input {
-	border: 1px solid #a1c4e5;
-	background: #e5f3ff;
 	display: inline-block;
-	padding: 3px 8px;
-	border-radius: 4px;
+	background-image: linear-gradient(-179deg, #fafdff 0%, #f3faff 100%);
+	border: 1px solid #a2bfda;
+	border-radius: 2px;
 	font-size: 13px;
+	color: #7c86a6;
+	padding: 4px 8px;
 }
 
 .upfront-add-another input:hover {
-	background: #d4e9fb;
-	border: 1px solid #a1c4e5;
+	background-image: linear-gradient(-179deg, #fafdff 0%, #f3faff 100%);
+	border: 1px solid #607f99;
 }
 
 .upfront-add-another-wrapper .upfront-settings-item-title {
@@ -250,3 +268,25 @@ input.upfront-like-box_url:-ms-input-placeholder {
 }
 
 .uyoutube-gallery-item { margin-left:0 !important; }
+
+.thumbnails-width {
+	clear: both;
+	margin-top: 10px;
+	width: 225px;
+}
+
+.thumbnails-width .upfront-field-slider-value {
+	font-size: 11px;
+}
+
+.multiple_sources label {
+	margin-bottom: 3px;
+}
+
+.multiple_video_section .upfront-settings-item {
+	padding-top: 10px;
+}
+
+.multiple_video_section .upfront-settings-item-title {
+	margin-top: -10px;
+}

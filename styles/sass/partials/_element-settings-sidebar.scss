@@ -1,0 +1,139 @@
+#element-settings-sidebar {
+	position: fixed;
+	top: 46px;
+	left: 0;
+	z-index: 100000000000000000;
+	bottom: 0;
+	background-color: #334454;
+	border-right: 1px solid #334454;
+	width: 260px;
+}
+
+#element-settings-sidebar #settings {
+	position: relative;
+	left: auto;
+	top: auto;
+	width: 100%;
+	height: 100%;
+	border-left: 0 none;
+	background: none;
+	box-shadow: 0 0;
+}
+
+#element-settings-sidebar .upfront-settings-title {
+	height: 44px;
+	line-height: 41px;
+	padding-left: 10px;
+	background: #ffffff;
+	border-top: 1px solid #334455;
+	border-bottom: 1px solid #c3d5e6;
+	color: #54708c !important;
+	padding-left: 30px;
+}
+
+#element-settings-sidebar .upfront-settings-title:before {
+	background-position: -823px -44px !important;
+	background-image: url('../img/uf-ui-sprite.svg');
+	left: 10px;
+	top: 14px;
+	width: 15px;
+	height: 14px;
+	content: "";
+    display: block;
+	position: absolute;
+	opacity: 0.7;
+}
+
+#element-settings-sidebar #settings #sidebar-scroll-wrapper {
+	overflow-x: hidden;
+	overflow-y : auto;
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 65px;
+	top: 44px;
+	background: #f7fbff;
+}
+
+#element-settings-sidebar #settings .upfront-settings_panel_scroll {
+	min-width: 255px;
+}
+
+#element-settings-sidebar #settings .upfront-settings_panel {
+	position: relative;
+	left: 0;
+	box-shadow: 0 0 0;
+	border: 0 none;
+}
+
+#element-settings-sidebar #settings .uf-settings-panel__body {
+	border-bottom: 1px solid #c3d5e6;
+}
+
+#element-settings-sidebar #settings .uf-settings-panel:last-child .uf-settings-panel__body {
+	border-bottom: 0 none;
+}
+
+#element-settings-sidebar .upfront-settings-button_panel {
+	margin-top: 15px;
+	text-align: right;
+	padding-right: 15px;
+	z-index: 0;
+	position: absolute;
+	bottom: 0;
+	right: auto;
+	width: 260px;
+	height: 50px;
+}
+
+#element-settings-sidebar .uf-settings-panel__title {
+	height: 38px;
+	background-color: #e6f2ff;
+	line-height: 37px;
+	padding-left: 15px;
+	border-bottom: 1px solid #c3d5e6;
+	cursor: pointer;
+	color: #2f476f;
+}
+
+#element-settings-sidebar .uf-settings-panel--expanded .uf-settings-panel__title {
+	background-color: #dae5f0;
+	border-bottom: 1px solid #dae5f0;
+}
+
+#element-settings-sidebar .uf-settings-panel__title:before {  
+	content: '';
+	width: 0;
+	height: 0;
+	display: block;
+	position: absolute;
+	z-index: 1;	
+	top: 14px;
+	right: 16px;
+	border-top: 4px solid transparent;
+	border-bottom: 4px solid transparent;
+	border-left: 4px solid #6a8db4;
+}
+
+#element-settings-sidebar .uf-settings-panel--expanded .uf-settings-panel__title:before {
+	top: 17px;
+	right: 15px;
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-top: 4px solid #6a8db4;
+	border-bottom: 0 none;
+}
+
+#element-settings-sidebar .upfront-settings-item {
+	padding-top: 0;
+}
+
+#element-settings-sidebar .upfront-settings-item-title:after {
+	display: none;
+}
+
+#element-settings-sidebar .upfront-settings-css .upfront-settings-item-title,
+#element-settings-sidebar .uslider-slides .upfront-settings-item-title {
+	display: none;
+}
+

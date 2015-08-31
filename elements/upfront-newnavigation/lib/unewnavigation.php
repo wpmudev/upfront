@@ -9,10 +9,17 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 	public function get_markup () {
 		$menu_id = $this->_get_property('menu_id');
 		$menu_slug = $this->_get_property('menu_slug');
+		$preset = $this->_get_property('preset');
+
+		if (!isset($preset)) {
+			$preset = 'default';
+		}
+
+		$properties = Upfront_Nav_Presets_Server::get_instance()->get_preset_properties($preset);
 
 		$layout_settings = json_decode($this->_get_property('layout_setting'));
 
-		$menu_style = $this->_get_property('menu_style');
+		$menu_style = $properties['menu_style'];
 		$breakpoint_data = $this->_get_property('breakpoint');
 		$breakpoints = Upfront_Grid::get_grid()->get_breakpoints();
 		foreach ($breakpoints as $name => $point) {
@@ -23,13 +30,14 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 		}
 		$burgermenu_desktop =  $this->_get_property('burger_menu');
 		$breakpoint_data['desktop']['burger_menu'] = is_array( $burgermenu_desktop ) && isset( $burgermenu_desktop[0] ) ? $burgermenu_desktop[0] : $burgermenu_desktop ;
-		$breakpoint_data['desktop']['burger_alignment'] = $this->_get_property('burger_alignment');
+		$breakpoint_data['desktop']['burger_alignment'] = $properties['burger_alignment'];
 		$breakpoint_data['desktop']['burger_over'] = $this->_get_property('burger_over');
+		$breakpoint_data['desktop']['is_floating'] = $this->_get_property('is_floating');
 		//$breakpoint_data['desktop']['menu_style'] = 'horizontal';
 
 		$breakpoint_data = json_encode($breakpoint_data);
 
-		$menu_aliment = $this->_get_property('menu_alignment');
+		$menu_aliment = $properties['menu_alingment'];
 		$sub_navigation = $this->_get_property('allow_sub_nav');
 		$is_floating = $this->_get_property('is_floating');
 
@@ -66,10 +74,10 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 				'walker' => new upfront_nav_walker(),
 			));
 		} else {
-			return "<div class=' {$float_class} upfront-navigation' {$menu_style} {$menu_aliment} {$breakpoint_data} {$sub_navigation}>" . self::_get_l10n('select_menu') . "</div>";
+			return "<div class='nav-preset-{$preset} {$float_class} upfront-navigation' {$menu_style} {$menu_aliment} {$breakpoint_data} {$sub_navigation}>" . self::_get_l10n('select_menu') . "</div>";
 		}
 
-		return "<div class=' {$float_class} upfront-navigation' {$menu_style} {$menu_aliment} {$breakpoint_data} {$sub_navigation}>" . $menu . "</div>";
+		return "<div class='nav-preset-{$preset} {$float_class} upfront-navigation' {$menu_style} {$menu_aliment} {$breakpoint_data} {$sub_navigation}>" . $menu . "</div>";
 	}
 
 	public static function add_js_defaults($data){
@@ -89,6 +97,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 			'id_slug' => 'unewnavigation',
 
 			'menu_items' => array(),
+			'preset' => 'default',
 
 			'menu_style' => 'horizontal', // horizontal | vertical
 			'menu_alignment' => 'left', // left | center | right
@@ -159,12 +168,14 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 			'link_name' => __('Link Name', 'upfront'),
 			'mnu' => array(
 				'label' => __('Menu', 'upfront'),
-				'title' => __('Menu settings', 'upfront'),
-				'load' => __('Load Different Menu', 'upfront'),
+				'title' => __('General Settings', 'upfront'),
+				'load' => __('Select Menu to Use', 'upfront'),
 				'create' => __('or Create New', 'upfront'),
 				'use' => __('Use', 'upfront'),
 				'btn' => __('button to open menu', 'upfront'),
 				'appearance' => __('Revealed Menu Appearance', 'upfront'),
+				'show_on_click' => __('Show on click menu location:', 'upfront'),
+				'alingment' => __('Alingment:', 'upfront'),
 				'aligh' => __('Menu Item Alignment', 'upfront'),
 				'left' => __('Left', 'upfront'),
 				'right' => __('Right', 'upfront'),
@@ -176,11 +187,17 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 				'over' => __('Over Content', 'upfront'),
 				'push' => __('Pushes Content', 'upfront'),
 				'align' => __('Menu Items Alignment', 'upfront'),
-				'style' => __('Menu Style', 'upfront'),
+				'style' => __('Menu Style:', 'upfront'),
 				'center' => __('Center', 'upfront'),
 				'behavior' => __('Behaviour Settings', 'upfront'),
 				'auto_add' => __('Add new Pages automatically', 'upfront'),
 				'float' => __('Float this menu', 'upfront'),
+			),
+			'panel' => array(
+				'menu_kind_label' => __('Menu Kind', 'upfront'),
+				'typography_label' => __('Typography', 'upfront'),
+				'colors_label' => __('Colors', 'upfront'),
+				'background_label' => __('Background', 'upfront'),
 			),
 			'settings' => __('Navigation settings', 'upfront'),
 		);
@@ -223,7 +240,7 @@ class Upfront_newMenuSetting extends Upfront_Server {
 		upfront_add_ajax('upfront_new_update_menu_order', array($this, "update_menu_order"));
 		upfront_add_ajax('upfront_new_create_menu', array($this, "create_menu"));
 		upfront_add_ajax('upfront_new_rename_menu', array($this, "rename_menu"));
-		
+
 		upfront_add_ajax('upfront_new_update_menu_item', array($this, "update_menu_item"));
 		upfront_add_ajax('upfront_new_update_auto_add_pages', array($this, "update_auto_add_pages"));
 	}
@@ -307,6 +324,7 @@ class Upfront_newMenuSetting extends Upfront_Server {
 			'menu-item-target' => ($e->type === 'anchor' || $e->type === 'email') ? '_self' : $e->target,
 			'menu-item-position' => $e->menu_order
 			);
+
 		if(isset($children_elements[$e->ID])) {
 			foreach($children_elements[$e->ID] as $child_element)
 				$this_menu_item['sub'][] = $this->recursive_processMenuItem($child_element, $children_elements);
@@ -496,7 +514,7 @@ Upfront_newMenuSetting::serve();
 
 class upfront_nav_walker extends Walker_Nav_Menu
 {
-    
+
 
     public function start_el( &$output, $item, $depth = 0, $args = array(), $id = 0 ) {
 		$indent = ( $depth ) ? str_repeat( "\t", $depth ) : '';

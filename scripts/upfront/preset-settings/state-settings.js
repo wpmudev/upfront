@@ -1,38 +1,14 @@
-define(
-function() {
-	var StateSettings = Upfront.Views.Editor.Settings.Item.extend({
-		group: false,
+define([
+	'scripts/upfront/settings/modules-container'
+], function(ModulesContainer) {
 
-		initialize: function(options) {
-			this.options = options || {};
-
-			this.$el.addClass('state_settings state_settings_' + this.options.state.toLowerCase());
-
-			var fields = [];
-
-			_.each(this.options.fields, function(field) {
-				var fieldOnChangeCallback = field.options.change;
-				var me = this;
-				if (fieldOnChangeCallback) {
-					// Proxy change callback and tie to this
-					field.options.change = function(value) {
-						fieldOnChangeCallback(value, me);
-					};
-				}
-				var stateField = new field.fieldClass(_.extend({
-						model: this.options.model
-					}, field.options)
-				);
-
-				Upfront.Events.once('entity:settings:deactivate', function() {
-					// Reset change callback to avoid zombies
-					field.options.change = fieldOnChangeCallback;
-				});
-
-				fields.push(stateField);
-			}, this);
-
-			this.fields = _(fields);
+	var StateSettings = ModulesContainer.extend({
+		onInitialize: function(options) {
+			if(this.options.state !== "Global") {
+				this.$el.addClass('state_modules state_settings state_settings_' + this.options.state.toLowerCase());
+			} else {
+				this.$el.addClass('state_modules global_modules');
+			}
 		}
 	});
 

@@ -99,7 +99,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		}
 		return this.markup;
 	},
-	
+
 	reset_markup: function () {
 		var me = this,
 			props = ['hide_featured_image', 'full_featured_image'];
@@ -157,6 +157,11 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			this.editor.setElement( contents[0] );
 		}
 
+		// Let's not render min-height (remove it)
+		this.$el.find('> .upfront-object').css('min-height', '');
+		this.parent_module_view.$el.find('> .upfront-module').css('min-height', '');
+		this.add_region_class('upfront-region-container-has-this_post', true);
+
 		//this.editor.render();
 		this.trigger('rendered');
 	},
@@ -207,7 +212,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			loading.render();
 			node.append(loading.$el);
 		}
-		
+
 		this._properties = {
 			post_data: this.property("post_data"),
 			element_id: this.property('element_id'),
@@ -309,6 +314,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			this.editor.remove();
 			this.editor = false;
 		}
+		this.remove_region_class('upfront-region-container-has-this_post', true);
 	}
 });
 
@@ -385,7 +391,7 @@ var Settings_PostPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	label: l10n.element_name,
 	initialize: function (opts) {
 		this.options = opts;
-		
+
 		var hide_featured = new Upfront.Views.Editor.Field.Checkboxes({
 				model: this.model,
 				property: "hide_featured_image",
@@ -408,7 +414,7 @@ var Settings_PostPanel = Upfront.Views.Editor.Settings.Panel.extend({
 						hide_featured.get_field().prop(this.selected_state, false);
 				}
 			});
-		
+
 		this.settings = _([
 			new Upfront.Views.Editor.Settings.Item({
 				model: this.model,

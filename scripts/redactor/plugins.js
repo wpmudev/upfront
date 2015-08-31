@@ -1370,7 +1370,7 @@ RedactorPlugins.upfrontFormatting = function() {
                 first: true
             };
         },
-        panel: UeditorPanel.extend({
+        panel: UeditorPanel.extend(_.extend({}, Upfront.Views.Mixins.Upfront_Scroll_Mixin, {
             selected_class: "",
             tpl: _.template($(tpl).find('#upfront-formatting').html()),
             className: "ufront-air-formatting",
@@ -1379,14 +1379,14 @@ RedactorPlugins.upfrontFormatting = function() {
 
             },
             events: {
-                "click a" : "select_tag",
+                "click li *" : "select_tag",
                 "change .ufront-formatting-custom-class": "change_custom_class"
             },
             render: function (options) {
-                this.$el.html(this.tpl({
+                this.$el.html(this.tpl( _.extend({}, {
                     custom_classes: this.custom_classes,
                     selected_class: this.selected_class
-                }));
+                }, l10n.formatting) ));
             },
             open: function (e, redactor) {
                 this.redactor = redactor;
@@ -1403,8 +1403,8 @@ RedactorPlugins.upfrontFormatting = function() {
                 var tag = $(this.redactor.selection.getBlock()).length ? $(this.redactor.selection.getBlock())[0].tagName : false;
                 if (tag) {
                     tag = tag.toLowerCase();
-                    this.$(".tags-list li a").removeClass("dropact");
-                    this.$("a[data-tag='" + tag + "']").addClass("dropact");
+                    this.$(".tags-list li *").removeClass("dropact");
+                    this.$("[data-tag='" + tag + "']").addClass("dropact");
                 }
             },
             set_previously_selected_class: function(){
@@ -1447,8 +1447,9 @@ RedactorPlugins.upfrontFormatting = function() {
                 this.redactor.selection.save();
 
                 var block = this.redactor.block.blocks[0];
+
                 var $formatted = this.redactor.utils.replaceToTag(block, tag);
-                this.redactor.block.toggle($formatted);
+                //this.redactor.block.toggle($formatted);
 
                 if (tag == 'p' || this.redactor.block.headTag) $formatted.find('p').contents().unwrap();
 
@@ -1467,6 +1468,7 @@ RedactorPlugins.upfrontFormatting = function() {
                 this.redactor.dropdown.hideAll();
             }
         })
+        )
 
     }
 };

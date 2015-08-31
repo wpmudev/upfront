@@ -42,6 +42,11 @@ input.upfront-like-box_url:-ms-input-placeholder {
    color: #99;  
 }
 
+.facebook-url {
+	width: 225px;
+	margin-top: 10px;
+}
+
 .upfront-like-box_button {
   width: 100%;
   padding: 10px 0;

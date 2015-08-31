@@ -1,12 +1,13 @@
 (function ($) {
 define([
-	'elements/upfront-posts/js/post-list-settings-panels'
-], function(Panels) {
+	'elements/upfront-posts/js/post-list-settings-panels',
+	'scripts/upfront/element-settings/settings'
+], function(Panels, ElementSettings) {
 
 var l10n = Upfront.Settings.l10n.posts_element;
 
 
-var PostsSettings = Upfront.Views.Editor.Settings.Settings.extend({
+var PostsSettings = ElementSettings.extend({
 
 	initialize: function (opts) {
 		this.options = opts;
@@ -17,10 +18,10 @@ var PostsSettings = Upfront.Views.Editor.Settings.Settings.extend({
 		general.on("settings:dispatched", this.rerender, this);
 		general.on("post:removed", this.rerender, this);
 		post_parts.on("settings:dispatched", this.rerender, this);
-		this.panels = _([
+		this.panels = [
 			general,
 			post_parts
-		]);
+		];
 	},
 
 	rerender: function () {
@@ -33,6 +34,8 @@ var PostsSettings = Upfront.Views.Editor.Settings.Settings.extend({
 		this.render();
 		if (active_panel) this.toggle_panel(this.panels.compact()[active_panel]);
 	},
+	
+	title: l10n.posts_settings,
 
 	get_title: function () {
 		return l10n.settings;

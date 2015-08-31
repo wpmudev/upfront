@@ -60,7 +60,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			"objects" => "scripts/upfront/upfront-objects",
 			"media" => "scripts/upfront/upfront-media",
 			"content" => "scripts/upfront/upfront-content",
-            "bg-settings" => "scripts/upfront/bg-settings/bg-settings",
+			"bg-settings" => "scripts/upfront/bg-settings/bg-settings",
 			"spectrum" => "scripts/spectrum/spectrum",
 			"responsive" => "scripts/responsive",
 			"redactor_plugins" => 'scripts/redactor/plugins',
@@ -73,15 +73,15 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		);
 		$paths = apply_filters('upfront-settings-requirement_paths', $paths + $registered);
 
-	    $shim = array(
-	      'underscore' => array('exports' => '_'),
-	      'redactor' => array('redactor_plugins'),
-	      'jquery-df' => array('jquery'),
-		   'chosen' => array(
+		$shim = array(
+			'underscore' => array('exports' => '_'),
+			'redactor' => array('redactor_plugins'),
+			'jquery-df' => array('jquery'),
+			'chosen' => array(
 				'deps' => array('jquery'),
 				'exports' => 'jQuery.fn.chosen'
-		   ),
-	    );
+			),
+		);
 
 		$require_config = array(
 			'baseUrl' => "{$root}",
@@ -221,38 +221,15 @@ class Upfront_JavascriptMain extends Upfront_Server {
 
 		if (empty($post_image_variants)) $post_image_variants = json_encode(array());
 
-		$button_presets = get_option('upfront_' . get_stylesheet() . '_button_presets');
-		$button_presets = apply_filters(
-			'upfront_get_button_presets',
-			$button_presets,
-			array(
-				'json' => true
-			)
-		);
+		$registry = Upfront_PresetServer_Registry::get_instance();
+		$preset_servers = $registry->get_all();
 
-		if (empty($button_presets)) $button_presets = json_encode(array());
-
-		$tab_presets = get_option('upfront_' . get_stylesheet() . '_tab_presets');
-		$tab_presets = apply_filters(
-			'upfront_get_tab_presets',
-			$tab_presets,
-			array(
-				'json' => true
-			)
-		);
-
-		if (empty($tab_presets)) $tab_presets = json_encode(array());
-
-		$accordion_presets = get_option('upfront_' . get_stylesheet() . '_accordion_presets');
-		$accordion_presets = apply_filters(
-			'upfront_get_accordion_presets',
-			$accordion_presets,
-			array(
-				'json' => true
-			)
-		);
-
-		if (empty($accordion_presets)) $accordion_presets = json_encode(array());
+		$presets = '';
+		foreach ($preset_servers as $key => $server) {
+			$element_server = $server::get_instance();
+			$element_presets = $element_server->get_presets_javascript_server();
+			$presets .= "{$key}Presets: {$element_presets}, \n";
+		}
 
 		$debug = array(
 			"transients" => $this->_debugger->is_active(Upfront_Debug::JS_TRANSIENTS),
@@ -373,9 +350,7 @@ Upfront.mainData = {
 	iconFonts: {$icon_fonts},
 	additionalFonts: {$additional_fonts},
 	userDoneFontsIntro: {$user_done_font_intro},
-	buttonPresets: {$button_presets},
-	tabPresets: {$tab_presets},
-	accordionPresets: {$accordion_presets},
+	{$presets}
 	themeColors: {$theme_colors},
 	postImageVariants: {$post_image_variants},
 	content: {$content},

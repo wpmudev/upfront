@@ -1,12 +1,13 @@
 (function ($) {
-
 define([
+	'scripts/upfront/element-settings/settings',
+	'scripts/upfront/element-settings/root-settings-panel',
 	'text!elements/upfront-youtube/tpl/youtube.html',
 	'text!elements/upfront-youtube/tpl/clonevideo.html'
-], function(youtubeTpl, cloneTpl) {
-		
-var l10n = Upfront.Settings.l10n.youtube_element;		
-		
+], function(ElementSettings, RootSettingsPanel, youtubeTpl, cloneTpl) {
+
+var l10n = Upfront.Settings.l10n.youtube_element;
+
 var UyoutubeModel = Upfront.Models.ObjectModel.extend({
 	init: function () {
 		var properties = _.clone(Upfront.data.uyoutube.defaults);
@@ -25,9 +26,9 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 		if(! (this.model instanceof UyoutubeModel)){
 			this.model = new UyoutubeModel({properties: this.model.get('properties')});
 		}
-		
+
 		var parent = this.parent_module_view, me = this;
-		
+
 		this.delegateEvents();
 
 		this.model.get("properties").bind("change", this.render, this);
@@ -42,7 +43,7 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 	get_content_markup: function () {
 		var rendered,
 		props = this.extract_properties();
-		
+
 		this.trimListTitle();
 
 		rendered = this.youtubeTpl(this.extract_properties());
@@ -84,15 +85,15 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 			this.property('player_width', width, false);
 		}
 	},
-	
+
 	on_render: function() {
 		me = this;
-		
+
 		this.$el.find('.upfront-youtube-button').on('click', function(e) {
 			me.property('youtube_status', 'ok');
-			
+
 			var videoInput = $(this).parents().find('input.upfront-youtube-url').val();
-			
+
 			//Check if Video Input field is empty
 			if(videoInput == "") {
 				Upfront.Views.Editor.notify(l10n.validMessage);
@@ -108,15 +109,15 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 				//Delay events else values are empty
 				setTimeout(function(){
 					me.$(".upfront-entity-settings_trigger").click();
-					
+
 					//Trigger event for adding videos to array
 					Upfront.Events.trigger("upfront:youtube:added");
-					
+
 				}, 50);
 			}
-			
+
 		});
-		
+
 		this.$el.find('.upfront-youtube-url').on('keydown', function(e) {
 			if(e.which == 13) {
 				me.$el.find('.upfront-youtube-button').click();
@@ -184,89 +185,10 @@ var Disablable_Field_Number = Upfront.Views.Editor.Field.Text.extend({
 	}
 });
 
-var YoutubeSettings = Upfront.Views.Editor.Settings.Settings.extend({
-	events: {
-		'change .multiple_sources': 'multipleVideos',
-	},
-
-	initialize: function (opts) {
-		this.options = opts;
-		this.panels = _([
-			new BehaviorPanel({model: this.model})
-		]);
-		
-		this.listenTo(Upfront.Events, "upfront:youtube:added", this.multipleVideos);
-	},
-
-	actions: {
-		'single': 'upfront_youtube_single',
-	},
-
-	multipleVideos: function(event) {
-		var me = this;
-		var multiple_videos_array = [];
-		var videoCounter = 0;
-		var videoFields = $('[name^="multiple_source_"]');
-		//Get all videos urls
-		videoFields.each(function( index, element ) {
-			var videoUrl = $(element).val();
-			var elementId = index + 1;
-			//Get video settings
-			var videoId;
-			if(videoUrl) {
-				if (videoUrl.match(/youtu\.be/)) {
-					var videoMatch = videoUrl.match(/^(https?:\/\/)?youtu.be\/([0-9a-zA-Z\-_]{11})/);
-					if(videoMatch !== null && videoMatch.length > 0) {
-						videoId = videoMatch[2];
-					} else {
-						Upfront.Views.Editor.notify(l10n.validMessage);
-					}
-				} else {
-					var videoMatch = videoUrl.match(/^(https?:\/\/(www\.)?)?youtube\.com\/watch\?v=([0-9a-zA-Z\-_]{11}).*/);
-					if(videoMatch !== null && videoMatch.length > 0) {
-						videoId = videoMatch[3];
-					} else {
-						Upfront.Views.Editor.notify(l10n.validMessage);
-					}
-				}
-				var data = {'video_id': videoUrl};
-				
-				Upfront.Util.post({"action": me.actions.single, "data": data})
-					.success(function (response) {
-						multiple_videos_array.push({
-							order: elementId,
-							title: response.data.video.title, 
-							id: videoId, 
-							video_url: videoUrl,
-							thumbnail: response.data.video.thumbnail_url
-						});
-						videoCounter++;
-					})
-					.error(function () {
-						Upfront.Util.log("error single video");
-					})
-					.done(function () {
-						if(videoCounter == videoFields.length) {
-							multiple_videos_array.sort(function(a,b) { return a.order - b.order; })  
-							me.for_view.model.set_property('multiple_videos', multiple_videos_array, false);
-						}
-					})
-					;
-			}
-			else {
-				videoCounter++;
-			}
-		});
-	},
-
-	get_title: function () {
-		return l10n.element_settings;
-	}
-});
-
-var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
+var BehaviorPanel = RootSettingsPanel.extend({
 	className: 'uyoutube-settings',
 	tabbed: false,
+	title: l10n.general_settings,
 	initialize: function (opts) {
 		this.options = opts;
 		var render_all = function(){
@@ -281,9 +203,40 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 
 		this.settings = _([
 		new SettingsItem({
-			className: 'optional-field align-center',
+			className: 'optional-field align-center general_settings_item',
 			title: l10n.apperance_title,
 			fields: [
+				new Fields.Radios({
+					model: this.model,
+					property: 'display_style',
+					layout: "horizontal",
+					label: l10n.display_style,
+					className: 'field-display_style upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios',
+					values: [
+						{
+							label: l10n.gallery_label,
+							value: 'gallery',
+						},
+						{
+							label: l10n.list_label,
+							value: 'list',
+						}
+					]
+				}),
+
+				new Fields.Checkboxes({
+					model: this.model,
+					property: 'first_to_thumbnails',
+					className: 'first-video-to-thumbnails',
+					default_value: ['1'],
+					values: [
+						{ label: l10n.first_to_thumbnails, value: '1' },
+					],
+					change: function(value) {
+						this.model.set_property('first_to_thumbnails', value);
+					}
+				}),
+
 				new Fields.Checkboxes({
 					model: this.model,
 					property: 'multiple_show_title',
@@ -303,49 +256,15 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 					step: 1,
 					default_value: 100
 				}),
-				]
-			}),
-			new SettingsItem({
-				className: 'optional-field align-center multiple_settings',
-				fields: [	 
-				new Fields.Radios({
-					model: this.model,
-					property: 'display_style',
-					layout: "horizontal",
-					label: l10n.display_style,
-					className: 'field-display_style upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios',
-					values: [
-						{
-							label: l10n.gallery_label,
-							value: 'gallery',
-						},
-						{
-							label: l10n.list_label,
-							value: 'list',
-						}
-					]
-				}),
-				
-				new Fields.Checkboxes({
-					model: this.model,
-					property: 'first_to_thumbnails',
-					default_value: ['1'],
-					values: [
-						{ label: l10n.first_to_thumbnails, value: '1' },
-					],
-					change: function(value) {
-						this.model.set_property('first_to_thumbnails', value);
-					}
-				}),
-				
+
 				new Fields.Slider({
 					model: this.model,
 					property: 'thumbWidth',
+					className: 'thumbnails-width',
 					min: 100,
 					max: 250,
 					step: 5,
 					label: l10n.thumbnail_size,
-					info: l10n.thumbnail_size_info,
 					valueTextFilter: function(value){
 						return '(' + value + 'px x ' + me.model.get_property_value_by_name('thumbHeight') + 'px)';
 					}
@@ -359,7 +278,7 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 		new SettingsItem({
 			model: this.model,
 			title: l10n.videos_title,
-			className: 'multiple_video_section',
+			className: 'multiple_video_section general_settings_item',
 			fields: [
 				new Fields.Text({
 					model: this.model,
@@ -383,7 +302,8 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 				}
 			}),
 			]
-		})
+		}),
+		new Upfront.Views.Editor.Settings.Settings_CSS({model: this.model }),
 		]);
 
 		this.$el
@@ -402,36 +322,32 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	},
 
 	get_title: function () {
-		return false;
+		return l10n.settings;
 	},
 
 	render: function() {
 		var me = this;
-		// Render as usual
-		this.constructor.__super__.render.apply(this, arguments);
-		// Remove panel tabs
-		this.$el.find('.upfront-settings_label').remove();
-		this.$el.find('.upfront-settings_panel').css('left', 0);
-		this.toggleDescriptionEnabled();
+		RootSettingsPanel.prototype.render.call(this);
+
 		this.listMultipleVideos();
 		setTimeout(function(){
 			me.toggleMultipleSettings();
 		}, 50);
-		
+
 		// Inline checkboxes
 		this.$el.find('[name^=multiple_show_title], [name^=show_title], [name^=show_description]').parent().css({
 		'float': 'left',
 		'margin-top': '22px'
 		});
 	},
-	
+
 	toggleMultipleSettings: function() {
 		//If multiple videos added show multiple videos settings
 		var videosCount = $('[name^="multiple_source_"]').length;
 		if(videosCount > 1) {
-			$('.multiple_settings').show();
+			$('.field-display_style, .first-video-to-thumbnails, .thumbnails-width').show();
 		} else {
-			$('.multiple_settings').hide();
+			$('.field-display_style, .first-video-to-thumbnails, .thumbnails-width').hide();
 		}
 	},
 
@@ -487,10 +403,10 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 				silent = true;
 				return this.model.set_property(name, value, silent);
 		}
-		
+
 		return this.model.get_property_value_by_name(name);
 	},
-	
+
 	//Listing all videos fields when settings panel is opened
 	listMultipleVideos: function() {
 		var videos = this.model.get_property_value_by_name('multiple_videos');
@@ -498,8 +414,8 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 		if(videos.length > 0) {
 			//Empty the container to prevent field duplicate
 			me.$el.find('.multiple_video_section').html('<div class="upfront-settings-item-title"><span>'+ l10n.videos_title +'</span></div>');
-			$(videos).each(function( index, element ) {  
-				me.$el.find('.multiple_video_section').append(_.template(cloneTpl, { 
+			$(videos).each(function( index, element ) {
+				me.$el.find('.multiple_video_section').append(_.template(cloneTpl, {
 					cloneId: index + 1,
 					videoUrl: element.video_url,
 					l10n: l10n.template
@@ -508,11 +424,11 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 		}
 
 	},
-	
+
 	//Adding new set of fields from template
 	cloneMultipleVideo: function() {
 		var panel_count = $('.multiple_video_section .upfront-settings-item').length;
-		$('.multiple_video_section').append(_.template(cloneTpl, { 
+		$('.multiple_video_section').append(_.template(cloneTpl, {
 			cloneId: panel_count + 1,
 			videoUrl: '',
 			l10n: l10n.template
@@ -521,6 +437,85 @@ var BehaviorPanel = Upfront.Views.Editor.Settings.Panel.extend({
 	}
 });
 
+var YoutubeSettings = ElementSettings.extend({
+	panels: {
+		'Behavior': BehaviorPanel
+	},
+	events: {
+		'change .multiple_sources': 'multipleVideos',
+	},
+
+	initialize: function (options) {
+		this.constructor.__super__.initialize.call(this, options);
+
+		this.listenTo(Upfront.Events, "upfront:youtube:added", this.multipleVideos);
+	},
+
+	actions: {
+		'single': 'upfront_youtube_single',
+	},
+
+	multipleVideos: function(event) {
+		var me = this;
+		var multiple_videos_array = [];
+		var videoCounter = 0;
+		var videoFields = $('[name^="multiple_source_"]');
+		//Get all videos urls
+		videoFields.each(function( index, element ) {
+			var videoUrl = $(element).val();
+			var elementId = index + 1;
+			//Get video settings
+			var videoId;
+			if(videoUrl) {
+				if (videoUrl.match(/youtu\.be/)) {
+					var videoMatch = videoUrl.match(/^(https?:\/\/)?youtu.be\/([0-9a-zA-Z\-_]{11})/);
+					if(videoMatch !== null && videoMatch.length > 0) {
+						videoId = videoMatch[2];
+					} else {
+						Upfront.Views.Editor.notify(l10n.validMessage);
+					}
+				} else {
+					var videoMatch = videoUrl.match(/^(https?:\/\/(www\.)?)?youtube\.com\/watch\?v=([0-9a-zA-Z\-_]{11}).*/);
+					if(videoMatch !== null && videoMatch.length > 0) {
+						videoId = videoMatch[3];
+					} else {
+						Upfront.Views.Editor.notify(l10n.validMessage);
+					}
+				}
+				var data = {'video_id': videoUrl};
+
+				Upfront.Util.post({"action": me.actions.single, "data": data})
+					.success(function (response) {
+						multiple_videos_array.push({
+							order: elementId,
+							title: response.data.video.title,
+							id: videoId,
+							video_url: videoUrl,
+							thumbnail: response.data.video.thumbnail_url
+						});
+						videoCounter++;
+					})
+					.error(function () {
+						Upfront.Util.log("error single video");
+					})
+					.done(function () {
+						if(videoCounter == videoFields.length) {
+							multiple_videos_array.sort(function(a,b) { return a.order - b.order; })
+							me.for_view.model.set_property('multiple_videos', multiple_videos_array, false);
+						}
+					})
+					;
+			}
+			else {
+				videoCounter++;
+			}
+		});
+	},
+	title: l10n.element_settings,
+	get_title: function () {
+		return l10n.element_settings;
+	}
+});
 
 Upfront.Application.LayoutEditor.add_object("Uyoutube", {
 	"Model": UyoutubeModel,

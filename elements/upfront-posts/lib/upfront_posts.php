@@ -252,6 +252,8 @@ class Upfront_UpostsView extends Upfront_Object {
 			'no' => __('No', 'upfront'),
 			'show_featured' => __('Show featured image?', 'upfront'),
 			'posts_settings' => __('Posts settings', 'upfront'),
+			'general_settings' => __('General Settings', 'upfront'),
+			'post_part_settings' => __('Post Parts Settings', 'upfront')
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)

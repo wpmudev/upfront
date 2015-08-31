@@ -3,17 +3,19 @@
 @import "sass/partials/layout";
 @import 'sass/partials/upfront-ui';
 @import 'sass/partials/general-stuff';
-@import 'sass/partials/button';
+/* @import 'sass/partials/button'; */
 @import 'sass/partials/sidebar-ui';
 @import 'sass/partials/fields';
 @import 'sass/partials/ueditor-inserts';
 @import 'sass/partials/region';
+@import 'sass/partials/map-editor';
 @import 'sass/partials/bgsettings';
 @import 'sass/partials/layout-grid-module-object';
 @import 'sass/partials/sidebar-buttons-commands';
 @import 'sass/partials/modal';
 @import 'sass/partials/drag-n-drop';
 @import 'sass/partials/settings';
+@import 'sass/partials/element-settings-sidebar';
 @import 'sass/partials/save-as-dialog';
 @import 'sass/partials/icon';
 @import 'sass/partials/tooltips';
@@ -54,7 +56,7 @@
 	margin-top: 3px;
 	font:11px/13px Verdana, sans-serif;
 	color:#26394d;
-	padding:5px;
+	padding:5px 0px;
 }
 #settings .upfront-embedded_toggleable.error .upfront-embedded_toggleable-notice {
 	background-color: #edafaf;

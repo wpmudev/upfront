@@ -141,7 +141,7 @@
 				if(captionSelector || caption){
 					if(!text.length){
 						text = $('<div class="uslide-caption" />');
-						slide.append(text);
+						slide.find('.uslide-image').append(text);
 					}
 					if(captionSelector) {
 						text.html($(captionSelector).html());
@@ -287,10 +287,10 @@
 					if($item.hasClass(data.classname.item+'-current'))
 						$slider.trigger('slidein', [$item, index]);
 				});
+				
+				$slider.find('.upfront-default-slider-nav-item').removeClass('uslider-dotnav-current');
+				$slider.find('.uslider-dotnav-' + index).addClass('uslider-dotnav-current');
 			}
-
-			$slider.find('.upfront-default-slider-nav-item').removeClass('uslider-dotnav-current');
-			$slider.find('.uslider-dotnav-' + index).addClass('uslider-dotnav-current');
 
 			this.pause = false;
 		},

@@ -31,6 +31,10 @@ var PostsView = Upfront.Views.ObjectView.extend({
 	on_render: function () {
 		var type = this.model.get_property_value_by_name("display_type");
 		this.render_type_view(type);
+		// Let's not render min-height (remove it)
+		this.$el.find('> .upfront-object').css('min-height', '');
+		this.parent_module_view.$el.find('> .upfront-module').css('min-height', '');
+		this.add_region_class('upfront-region-container-has-posts', true);
 	},
 
 	render_type_view: function (type) {
@@ -51,19 +55,16 @@ var PostsView = Upfront.Views.ObjectView.extend({
 	},
 
 	on_csseditor_open: function (id) {
-		if ( id != this.model.get_element_id() )
-			return;
+		if ( id != this.model.get_element_id() ) return;
 		this.listenTo(Upfront.Application.cssEditor, 'updateStyles', this.adjust_featured_images);
 	},
 
 	on_csseditor_closed: function (id) {
-		if ( id != this.model.get_element_id() )
-			return;
+		if ( id != this.model.get_element_id() ) return;
 		this.stopListening(Upfront.Application.cssEditor, 'updateStyles');
 	},
 
 	adjust_featured_images: function () {
-		console.log('adjust featured images...')
 		this.$el.find('.thumbnail').each(function(){
 			var height = $(this).height(),
 				width = $(this).width(),
@@ -84,6 +85,10 @@ var PostsView = Upfront.Views.ObjectView.extend({
 					$img.css('margin-top', (height-img_h)/2);
 			}
 		});
+	},
+	
+	cleanup: function () {
+		this.remove_region_class('upfront-region-container-has-posts', true);
 	}
 });
 

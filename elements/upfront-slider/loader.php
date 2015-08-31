@@ -33,6 +33,7 @@ function uslider_initialize () {
 
 	// Include the backend support stuff
 	require_once (dirname(__FILE__) . '/lib/upfront_slider.php');
+	require_once (dirname(__FILE__) . '/lib/class_upfront_slider_presets_server.php');
 
 	//Add js and css
 	add_action('wp_enqueue_scripts', array('Upfront_UsliderView', 'add_styles_scripts'));

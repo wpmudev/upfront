@@ -1,14 +1,4 @@
-<?php
-/**
- * The Header for our theme.
- *
- * Displays all of the <head> section and everything up till <div id="main">
- *
- * @package WordPress
- * @subpackage Twenty_Twelve
- * @since Twenty Twelve 1.0
- */
-?><!DOCTYPE html>
+<!DOCTYPE html>
 <!--[if IE 7]>
 <html class="ie ie7" <?php language_attributes(); ?>>
 <![endif]-->
@@ -32,4 +22,4 @@
 </head>
 
 <body <?php body_class(); ?>>
-<div id="page" class="hfeed site clearfix">
+	<div id="page" class="hfeed site clearfix">

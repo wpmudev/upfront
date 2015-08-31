@@ -7,8 +7,10 @@ define([
 	'elements/upfront-image/js/image-selector',
 	'elements/upfront-image/js/image-editor',
 	'elements/upfront-image/js/image-element',
-	'elements/upfront-image/js/model'
-], function(imageTpl, editorTpl, ImageContextMenu, ImageSettings, ImageSelector, ImageEditor, ImageElement, UimageModel) {
+	'elements/upfront-image/js/model',
+	'text!elements/upfront-image/tpl/preset-style.html',
+	'scripts/upfront/preset-settings/util',
+], function(imageTpl, editorTpl, ImageContextMenu, ImageSettings, ImageSelector, ImageEditor, ImageElement, UimageModel, settingsStyleTpl, PresetUtil) {
 
 	var l10n = Upfront.Settings.l10n.image_element;
 	var breakpointColumnPadding = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().get('column_padding');
@@ -92,6 +94,29 @@ define([
 					this.unsetMobileMode();
 				}
 			});
+
+			this.listenTo(this.model, "preset:updated", this.preset_updated);
+		},
+		
+		get_preset_properties: function() {
+			var preset = this.model.get_property_value_by_name("preset"),
+				props = PresetUtil.getPresetProperties('image', preset) || {};
+				
+			return props;	
+		},
+		
+		preset_updated: function() {
+			this.render();
+		},
+		
+		update_colors: function () {
+			
+			var props = this.get_preset_properties();
+			
+			if (_.size(props) <= 0) return false; // No properties, carry on
+
+			PresetUtil.updatePresetStyle('gallery', props, settingsStyleTpl);
+
 		},
 
 		setDefaults: function(){
@@ -439,7 +464,11 @@ define([
 					position: props.position
 				};
 			}
-
+			
+			var props = this.extract_properties();
+		
+			props.properties = this.get_preset_properties();
+			
 			props.url = this.property('when_clicked') ? this.property('image_link') : false;
 			props.size = this.temporaryProps.size;
 			props.position = this.temporaryProps.position;
@@ -460,10 +489,12 @@ define([
 			props.gifImage = '';
 			props.gifLeft = 0;
 			props.gifTop = 0;
-
+			
+			/* Commented to allow caption below image to have background
 			if (props.caption_position === 'below_image') {
 				props.captionBackground = false;
 			}
+			*/
 
 			props.l10n = l10n.template;
 
@@ -632,6 +663,7 @@ define([
 			this.model.get('properties').each(function(prop){
 				props[prop.get('name')] = prop.get('value');
 			});
+			props.preset = props.preset || 'default';
 			return props;
 		},
 
@@ -1076,10 +1108,11 @@ define([
 
 		openImageSelector: function(e){
 			var me = this;
-			if(e) {
-				e.preventDefault();
-			}
-			Upfront.Views.Editor.ImageSelector.open().done(function(images){
+			if (e && e.preventDefault) e.preventDefault();
+			
+			Upfront.Views.Editor.ImageSelector.open({
+				multiple_sizes: false,
+			}).done(function(images){
 				var sizes = {};
 				_.each(images, function(image, id){
 					sizes = image;
@@ -1257,7 +1290,7 @@ define([
 		'Settings': ImageSettings,
 		'ContextMenu': ImageContextMenu,
 		cssSelectors: {
-			'.upfront-image': {label: l10n.css.image_label, info: l10n.css.image_info},
+			'.upfront-image-wrapper': {label: l10n.css.image_label, info: l10n.css.image_info},
 			'.wp-caption': {label: l10n.css.caption_label, info: l10n.css.caption_info},
 			'.upfront-image-container': {label: l10n.css.wrapper_label, info: l10n.css.wrapper_info}
 		},

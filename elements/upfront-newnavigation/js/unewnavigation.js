@@ -4,22 +4,13 @@ define([
 	'elements/upfront-newnavigation/js/model',
 	'elements/upfront-newnavigation/js/element',
 	'elements/upfront-newnavigation/js/settings',
-], function(MenuItemView, UnewnavigationModel, UnewnavigationElement, NavigationSettings) {
+	'text!elements/upfront-newnavigation/tpl/preset-style.html',
+	'scripts/upfront/preset-settings/util',
+	'elements/upfront-newnavigation/js/floating',
+	'elements/upfront-newnavigation/js/menu-util'
+], function(MenuItemView, UnewnavigationModel, UnewnavigationElement, NavigationSettings, settingsStyleTpl, PresetUtil, NavigationFloating, MenuUtil) {
 
 var l10n = Upfront.Settings.l10n.newnavigation_element;
-
-var CurrentMenuItemData = Backbone.Model.extend({
-	defaults: {
-		'id':  false,
-		'name':  false,
-		'url':  false,
-		'model_true':  true,
-		"menu_id":     false,
-		"menuList":    false
-	}
-});
-Upfront.data.unewnavigation.currentMenuItemData = Upfront.data.unewnavigation.currentMenuItemData || new CurrentMenuItemData();
-
 
 /**
  * View instance - what the element looks like.
@@ -45,10 +36,14 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		});
 
+		this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
+
+		this.listenTo(this.model, "preset:updated", this.preset_updated);
+
 		// get all menus
 		this.getMenus();
 		var menu_id = this.model.get_property_value_by_name('menu_id');
-		Upfront.data.unewnavigation.currentMenuItemData.set({model_true:false, menu_id: menu_id});
+		MenuUtil.set({model_true:false, menu_id: menu_id});
 
 		// call this function on allow_new_pages change
 		if (!!this.model.get_property_by_name('allow_new_pages')) {
@@ -83,6 +78,9 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		}
 
 		this.model.set_property('breakpoint', new_breakpoint_data, true);
+		this.listenTo(Upfront.Events, 'entity:resize_stop', this.onElementResize);
+		this.listenTo(Upfront.Events, 'entity:drag_stop', this.onElementReposition);
+
 
 	},/*
 	on_removal: function() {
@@ -92,6 +90,46 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			tooltip.remove();
 		}, 100);
 	},*/
+	get_preset_properties: function() {
+		var preset = this.model.get_property_value_by_name("preset"),
+			props = PresetUtil.getPresetProperties('nav', preset) || {};
+
+		return props;
+	},
+
+	preset_updated: function() {
+		this.render();
+	},
+
+	update_colors: function () {
+
+		var props = this.get_preset_properties();
+
+		if (_.size(props) <= 0) return false; // No properties, carry on
+
+		PresetUtil.updatePresetStyle('nav', props, settingsStyleTpl);
+
+	},
+
+	onElementResize: function() {
+		this.processFloatStatus();
+	},
+	onElementReposition: function() {
+		this.processFloatStatus();
+	},
+	processFloatStatus: function() {
+		if (this.floating_cache) this.floating_cache.destroy();
+		$upfrontObjectContent = this.$el.find('.upfront-object-content');
+		var isFloating = $upfrontObjectContent.data('isfloating');
+
+		if(isFloating && isFloating == 'yes') {
+			if(this.property('burger_menu') == 'yes')
+				this.floating_cache = new  NavigationFloating($upfrontObjectContent.children('.responsive_nav_toggler'));
+			else
+				this.floating_cache = new  NavigationFloating($upfrontObjectContent);
+		}
+
+	},
 	exitEditMode: function(e) {
 		var me = this;
 		var thelink = $(e.target).closest('li').data('backboneview');
@@ -113,7 +151,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			return;
 		}
 
-		
+
 	},
 	editMenuItem: function(e) {
 
@@ -148,13 +186,13 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				air: false,
 				allowedTags: ['h5'],
 				placeholder: 'Link Name',
-				
+
 			}).on('start', function(e) {
 				target.focus();
 			}).on('keydown', function(e){
 				if (e.which == 8) {
 					setTimeout(function() {
-						
+
 						if(target.text() == '' && !target.hasClass('menu_item_placeholder')) {
 							var e = jQuery.Event("keydown");
 							e.which = 8;
@@ -175,10 +213,10 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					target.closest('ul').children('li:last').children('i.navigation-add-item').trigger('click');}
 				}
 				else if(e.which == 13) {
-					
+
 					target.closest('li').data('backboneview').model['being-edited'] = false;
 					setTimeout(function() {target.blur();}, 100);
-					
+
 				}
 				if(target.text().trim() != '') target.removeClass('menu_item_placeholder');
 				else target.addClass('menu_item_placeholder');
@@ -204,7 +242,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 
 			}).on('stop', function() {
-				
+
 				me.editModeOff();
 			});
 
@@ -247,7 +285,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		});
 	},
 	onDeactivate: function(e) {
-		
+
 		//if($(e.target).closest('form').length > 0)
 		//	return;
 
@@ -331,7 +369,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				var values = _.map(ret.data, function (each, index) {
 					return  {label: each.name, value: each.term_id};
 				});
-				Upfront.data.unewnavigation.currentMenuItemData.set({menuList: values});
+				MenuUtil.setMenuList(values);
 				if(!me.property('menu_id')) me.display_menu_list();
 			})
 			.error(function (ret) {
@@ -342,12 +380,14 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	display_menu_list: function () {
 		var me = this,
 			menuItemsValues = [{label:l10n.choose_existing_menu, value: 0}],
-			menuList = Upfront.data.unewnavigation.currentMenuItemData.get('menuList')
+			menuList = MenuUtil.getMenuList()
 		;
-
+		var clubbedvalues = [];
 		if(typeof(menuList) != 'undefined'){
-			menuItemsValues.concat(menuList);
+
+			clubbedvalues = menuItemsValues.concat(menuList);
 		}
+
 
 		me.$el.find('div.upfront-object-content').html('');
 
@@ -355,7 +395,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			model: me.model,
 			label: "",
 			className: "existing_menu_list",
-			values: menuItemsValues
+			values: clubbedvalues
 		});
 
 		menuItems.render();
@@ -427,6 +467,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				me.property('menu_slug', ret.data.slug, true);
 				me.property('menu_id', ret.data.id);
 				me.getMenus();
+				Upfront.Events.trigger("menu_element:menu_created", ret.data);
 			})
 			.error(function (ret) {
 				Upfront.Util.log("Error creating menu");
@@ -434,11 +475,13 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		;
 	},
 	get_content_markup: function () {
+
 		var menu_id = this.model.get_property_value_by_name('menu_id'),
 			me = this
 		;
 		var menu_slug =  this.model.get_property_value_by_name('menu_slug');
 
+		properties = this.get_preset_properties();
 
 		if ( !menu_id ) {
 			if(typeof(menu_slug != 'undefined') && menu_slug != '') this.set_menu_id_from_slug(menu_slug);
@@ -453,6 +496,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				}
 				me.property('menu_items', ret.data, true);
 				me.generate_menu();
+
 			})
 			.error(function (ret) {
 				Upfront.Util.log("Error loading menu");
@@ -472,18 +516,21 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			})
 		;
 	},
-	
+
 	on_render: function() {
 
 		var me = this;
+
+		var props = this.get_preset_properties();
 
 		if(!this.property('menu_id')) {
 			this.display_menu_list();
 		}
 
-		var menuStyle = this.property("menu_style"),
-			menuAliment = this.property("menu_alignment"),
+		var menuStyle = props.menu_style,
+			menuAliment = props.menu_alingment,
 			allowSubNav = this.property("allow_sub_nav"),
+			isFloating = this.property("is_floating"),
 			$upfrontObjectContent
 		;
 
@@ -493,7 +540,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		}
 
 		if(me.roll_responsive_settings) {
-			
+
 			setTimeout(function() {
 				var model_breakpoint = me.model.get_property_value_by_name('breakpoint');
 				if(model_breakpoint) {
@@ -510,10 +557,11 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					var is_burger_menu = me.property('burger_menu');
 					model_breakpoint[default_breakpoint.attributes.id] = {};
 					model_breakpoint[default_breakpoint.attributes.id].burger_menu = ( is_burger_menu instanceof Array ) ? is_burger_menu[0] : is_burger_menu;
-					model_breakpoint[default_breakpoint.attributes.id].burger_alignment = me.property('burger_alignment');
+					model_breakpoint[default_breakpoint.attributes.id].burger_alignment = props.burger_alignment;
 					model_breakpoint[default_breakpoint.attributes.id].burger_over = me.property('burger_over');
 					model_breakpoint[default_breakpoint.attributes.id].menu_style = me.property('menu_style');
 					model_breakpoint[default_breakpoint.attributes.id].menu_alignment = me.property('menu_alignment');
+					model_breakpoint[default_breakpoint.attributes.id].is_floating = me.property('is_floating');
 					model_breakpoint[default_breakpoint.attributes.id].width = default_breakpoint.attributes.width;
 
 					$upfrontObjectContent.attr('data-breakpoints',	JSON.stringify(model_breakpoint));
@@ -524,7 +572,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					} else width = breakpoint.width;
 					// To roll responsive nav settings into action
 					me.activate_responsive_nav($upfrontObjectContent, width);
-					
+
 				}
 				me.roll_responsive_settings = true;
 			}, 300);
@@ -532,7 +580,10 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		$upfrontObjectContent.attr('data-aliment',(menuAliment ? menuAliment : 'left'));
 		$upfrontObjectContent.attr('data-style',(menuStyle ? menuStyle : 'horizontal'));
 		$upfrontObjectContent.attr('data-stylebk',(menuStyle ? menuStyle : 'horizontal'));
+		$upfrontObjectContent.attr('data-isfloating',(isFloating ? isFloating : 'no'));
 		$upfrontObjectContent.attr('data-allow-sub-nav',(allowSubNav.length !== 0 && allowSubNav[0] == 'yes' ? allowSubNav[0] : 'no'));
+
+
 
 
 		setTimeout(function() {
@@ -542,11 +593,12 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			else {
 				me.$el.closest('div.upfront-module').removeClass('newnavigation_squished');
 			}
+
 		}, 200);
 
 	},
 	activate_responsive_nav: function(selector, bpwidth) {
-
+		var me = this;
 		var breakpoints = selector.data('breakpoints');
 
 		var bparray = new Array();
@@ -566,6 +618,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			win_width = $(window).width(),
 			sidebar_width = $('div#sidebar-ui').outerWidth(),
 			topbar_height = $('div#upfront-ui-topbar').outerHeight();
+			ruler_height = $('.upfront-ruler-container').outerHeight();
 
 		for (var key in bparray) {
 			if(parseInt(currentwidth) >= parseInt(bparray[key]['width'])) {
@@ -578,7 +631,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 					// Add responsive nav toggler
 					if(!selector.find('div.responsive_nav_toggler').length)
-						selector.prepend($('<div class="responsive_nav_toggler"><div></div><div></div><div></div></div>'));
+						selector.prepend($('<div class="responsive_nav_toggler"><div></div><div></div><div></div></div>').data('view', me));
 
 					// clone sub-menu's parent's link (if any) on top of the sub-menu's items, and make the parent clickable to toggle the appearance of sub-menu. Only on front end.
 					selector.find('li.menu-item-has-children').each(function() {
@@ -590,21 +643,24 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 						}
 					});
 
-					
+
 
 					if(selector.hasClass('upfront-output-unewnavigation')) {
 
 						$('head').find('style#responsive_nav_sidebar_offset').remove();
-						
-						var responsive_css = 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"] ul.menu, div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] ul.menu {left:'+parseInt(regions_off.left)+'px !important; right: inherit; width:'+((parseInt(currentwidth) < parseInt(win_width-sidebar_width))?parseInt(currentwidth):parseInt(win_width-sidebar_width)) +'px !important; } ';
-						
+
+						var responsive_css = 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"][data-burger_over="over"] ul.menu, div.upfront-navigation div[data-style="burger"][data-burger_over="over"][data-burger_alignment="whole"] ul.menu {left:'+parseInt(regions_off.left)+'px !important;} ';
+
+						responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"] ul.menu, div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] ul.menu {right: inherit; width:'+((parseInt(currentwidth) < parseInt(win_width-sidebar_width))?parseInt(currentwidth):parseInt(win_width-sidebar_width)) +'px !important; } ';
+
+
 						responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="left"] ul.menu {left:'+parseInt(regions_off.left)+'px !important; right:inherit !important; width:'+parseInt(30/100*regions_width)+'px !important;} ';
 
-						
+
 						//responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="right"] ul.menu {left:inherit !important; right:'+parseInt((win_width-currentwidth-sidebar_width) / 2)+'px !important; width:'+parseInt(30/100*regions_width)+'px !important; } ';
 						responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="right"] ul.menu {left:inherit !important; right:'+((parseInt((win_width-currentwidth-sidebar_width) / 2 - 30) > 0)?parseInt((win_width-currentwidth-sidebar_width) / 2 - 30):0)+'px !important; width:'+parseInt(30/100*regions_width)+'px !important; } ';
 
-						responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"] ul.menu {top:'+parseInt(topbar_height)+'px !important; } ';
+						responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][data-burger_over="over"] ul.menu {top:'+(parseInt(topbar_height) + parseInt(ruler_height))+'px !important; } ';
 
 						$('head').append($('<style id="responsive_nav_sidebar_offset">'+responsive_css+'</style>'));
 					}
@@ -612,20 +668,20 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					selector.closest('div.upfront-newnavigation_module').css('z-index', 3);
 
 
-					selector.find('ul.menu').hide();
+					me.hideMenu(selector.find('ul.menu'));
 				}
 				else {
 					//selector.attr('data-style', selector.data('stylebk'))
 					selector.attr('data-style', bparray[key]['menu_style']);
 					selector.attr('data-aliment', bparray[key]['menu_alignment']);
-					
+
 
 					selector.removeAttr('data-burger_alignment','');
 					selector.removeAttr('data-burger_over', '');
 
 					// Remove responsive nav toggler
 					selector.find('div.responsive_nav_toggler').remove();
-					selector.find('ul.menu').show();
+					me.showMenu(selector.find('ul.menu'));
 
 					//remove any sub-menu item's parent's clones
 					selector.find('li.active-clone').each(function() {
@@ -648,52 +704,124 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					selector.closest('div.upfront-newnavigation_module').css('z-index', '');
 				}
 
+				selector.attr('data-isfloating', bparray[key]['is_floating']);
+
 			}
 		}
 
 	},
+	hideMenu: function(menu) {
+
+		menu.hide();
+		if(menu.siblings('.burger_overlay').length > 0) {
+			var burger_overlay = menu.siblings('.burger_overlay');
+			/*menu.insertBefore(burger_overlay);
+			burger_overlay.remove();
+			*/
+			burger_overlay.hide();
+
+		}
+
+	},
+	showMenu: function(menu) {
+
+
+		/*if(this.model.get_property_value_by_name('burger_menu') == 'yes' && this.model.get_property_value_by_name('burger_over') != 'pushes' && this.model.get_property_value_by_name('burger_alignment') != 'whole') {
+			var burger_overlay = $('<div class="burger_overlay"></div>')
+			menu.closest('.upfront-object-content').append(burger_overlay);
+			burger_overlay.append(menu);
+
+		}*/
+
+		if(menu.siblings('.burger_overlay').length > 0) {
+			var burger_overlay = menu.siblings('.burger_overlay');
+
+			burger_overlay.show();
+
+		}
+
+		menu.show();
+	},
 	toggle_responsive_nav: function(e) {
 		var me = this;
-		var region_container = $(this).closest('.upfront-region-container');
-		if($(this).parent().find('ul.menu').css('display') == 'none') {
-			$(this).parent().find('ul.menu').show();
-			var offset = $(this).parent().find('ul.menu').position();
-			
-			var close_icon = $('<i class="burger_nav_close"></i>');
-			$(this).parent().append(close_icon);
-			close_icon.bind('touchstart click', function() {
-				$(e.target).closest('.responsive_nav_toggler').trigger('click');
-			});
-			close_icon.css({position: 'fixed', left: offset.left+$(this).parent().find('ul.menu').width()-close_icon.width()-10, top: offset.top+10});
-			region_container.addClass('upfront-region-container-has-nav');
-		} else {
-			$(this).parent().find('ul.menu').hide();
-			
+		var view;
+		if($(e.target).hasClass('responsive_nav_toggler'))
+			view = $(e.target).data('view');
+		else
+			view = $(e.target).closest('.responsive_nav_toggler').data('view');
 
-			$(this).parent().find('i.burger_nav_close').remove();
+		var region_container = $(this).closest('.upfront-region-container');
+		if($(this).parent().find('ul.menu').css('display') == 'none' && typeof(e) != 'undefined') {
+
+			view.showMenu($(this).parent().find('ul.menu'));
+			var offset = $(this).parent().find('ul.menu').position();
+
+			var close_icon = $('<i class="burger_nav_close"></i>');
+			//$(this).parent().append(close_icon);
+			$(this).parent().find('ul.menu').prepend($('<li>').addClass('wrap_burger_nav_close').append(close_icon));
+
+			close_icon.bind('touchstart click', function() {
+				$(e.target).closest('.responsive_nav_toggler').data('view', view).trigger('click');
+			});
+			//close_icon.css({position: 'fixed', left: offset.left+$(this).parent().find('ul.menu').width()-close_icon.width()-10, top: offset.top+10});
+			region_container.addClass('upfront-region-container-has-nav');
+
+			if($(this).parent().data('burger_over') == 'pushes' && ($(this).parent().data('burger_alignment') == 'top' || $(this).parent().data('burger_alignment') == 'whole')) {
+
+				$('section.upfront-layout').css('margin-top', $(this).parent().find('ul.menu').height());
+
+
+				var topbar_height = $('div#upfront-ui-topbar').outerHeight();
+				var ruler_height = $('.upfront-ruler-container').outerHeight();
+				$(this).parent().find('ul.menu').offset({top:topbar_height+ruler_height, left:$('section.upfront-layout').offset().left});
+
+
+			}
+		} else {
+
+			view.hideMenu($(this).parent().find('ul.menu'));
+
+
+			$(this).parent().find('i.burger_nav_close').parent('li.wrap_burger_nav_close').remove();
 
 			$(this).parent().find('ul.sub-menu').css('display', '');
 			if($(this).parent().find('ul.sub-menu').length < 1 )
 				region_container.removeClass('upfront-region-container-has-nav');
+
+			if($(this).parent().data('burger_over') == 'pushes') {
+				$('section.upfront-layout').css('margin-top', '');
+			}
 		}
 	},
 	generate_menu: function() {
 		var me = this;
 		var menu_id = this.model.get_property_value_by_name('menu_id');
 		if(!menu_id) return;
+		var container = this.$el.find('.upfront-object-content');;
+
 
 		this.$el.find('.upfront-object-content').html('');
+
+
 		if(this.property('menu_items').length > 0) {
 			var menu = this.renderMenu(this.property('menu_items'), 'menu');
-			this.$el.find('.upfront-object-content').append(menu);
-		} else {
-			
-			this.$el.find('.upfront-object-content').append(this.renderMenu(this.property('menu_items'), 'menu'));
-			
+			container.append(menu);
+		}
+		else
+		{
+
+			container.append(this.renderMenu(this.property('menu_items'), 'menu'));
+
 			setTimeout(function() {
 				me.$el.find('a.newnavigation-add-item').trigger('click');
 			}, 200);
 		}
+
+		var preset = this.model.get_property_value_by_name("preset");
+
+		setTimeout(function() {
+			me.$el.find('.upfront-object-content').addClass('nav-preset-' + preset);
+		}, 50);
 
 		//Work around for having the region container have a higher z-index if it contains the nav, so that the dropdowns, if overlapping to the following regions should not loose "hover" when the mouse travels down to the next region.
 
@@ -709,20 +837,41 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
 
 		if(!breakpoint || breakpoint.default) {
+
+			if(this.model.get_property_value_by_name('burger_menu') == 'yes' && this.model.get_property_value_by_name('burger_over') != 'pushes' && this.model.get_property_value_by_name('burger_alignment') != 'whole') {
+				this.$el.find('.upfront-object-content').append($('<div class="burger_overlay"></div>'));
+			}
+
+
 			if(this.model.get_property_value_by_name('burger_menu') == 'yes') {
-				this.$el.find('.upfront-object-content').prepend($('<div>').addClass("responsive_nav_toggler").append('<div></div><div></div><div></div>').bind('click', me.toggle_responsive_nav));
-				this.$el.find('ul.menu').hide();
+				container.prepend($('<div>').addClass("responsive_nav_toggler").data('view', me).append('<div></div><div></div><div></div>').bind('click', me.toggle_responsive_nav));
+
+				me.hideMenu(this.$el.find('ul.menu'));
+
+
 			}
 		} else {
 			model_breakpoint = this.model.get_property_value_by_name('breakpoint');
 			breakpoint_data = model_breakpoint[breakpoint.id];
+
+
+			if(breakpoint_data && breakpoint_data.burger_menu ==  'yes' && breakpoint_data.burger_over != 'pushes' && breakpoint_data.burger_alignment != 'whole') {
+				this.$el.find('.upfront-object-content').append($('<div class="burger_overlay"></div>'));
+			}
+
 			if(breakpoint_data && breakpoint_data.burger_menu == 'yes') {
-				this.$el.find('.upfront-object-content').prepend($('<div>').addClass("responsive_nav_toggler").append('<div></div><div></div><div></div>').bind('click', me.toggle_responsive_nav));
-				this.$el.find('ul.menu').hide();
+				container.prepend($('<div>').addClass("responsive_nav_toggler").data('view', me).append('<div></div><div></div><div></div>').bind('click', me.toggle_responsive_nav));
+
+				me.hideMenu(this.$el.find('ul.menu'));
+
 			}
 		}
+		//clear any top margin applied to the layout for accomodating a burger menu when set to "push content"
+		$('section.upfront-layout').css('margin-top', '');
+
 		this.makeSortable();
 
+		this.processFloatStatus();
 	},
 	makeSortable: function() {
 		var me = this;
@@ -829,7 +978,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			this.$el.find('ul.menu > li > i.navigation-add-item').trigger('click');
 		}
 		else {
-		
+
 			this.addMenuItem(e);
 		}
 	},
@@ -868,7 +1017,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 
 
-		
+
 
 // ----- Bringing everything together -----
 // The definitions part is over.
@@ -880,21 +1029,21 @@ Upfront.Application.LayoutEditor.add_object("Unewnavigation", {
 	"Element": UnewnavigationElement,
 	"Settings": NavigationSettings,
 	cssSelectors: {
-		"div[data-style='horizontal'] ul.menu, div[data-style='vertical'] ul.menu": {label: l10n.css.bar_label, info: l10n.css.bar_info},
-		"div[data-style='horizontal'] ul.menu > li.menu-item > a, div[data-style='vertical'] ul.menu > li.menu-item > a": {label: l10n.css.item_label, info: l10n.css.item_info},
-		"div[data-style='horizontal'] ul.menu > li.menu-item:hover > a, div[data-style='vertical'] ul.menu > li.menu-item:hover > a": {label: l10n.css.hover_label, info: l10n.css.hover_info},
-		"div[data-style='horizontal'] ul.sub-menu > li.menu-item > a, div[data-style='vertical'] ul.sub-menu > li.menu-item > a": {label: l10n.css.subitem_label, info: l10n.css.subitem_info},
-		"div[data-style='horizontal'] ul.sub-menu > li.menu-item:hover > a, div[data-style='vertical'] ul.sub-menu > li.menu-item:hover > a": {label: l10n.css.subitem_hover_label, info: l10n.css.subitem_hover_info},
+		"[data-style='horizontal'] ul.menu, div[data-style='vertical'] ul.menu": {label: l10n.css.bar_label, info: l10n.css.bar_info},
+		"[data-style='horizontal'] ul.menu > li.menu-item > a, div[data-style='vertical'] ul.menu > li.menu-item > a": {label: l10n.css.item_label, info: l10n.css.item_info},
+		"[data-style='horizontal'] ul.menu > li.menu-item:hover > a, div[data-style='vertical'] ul.menu > li.menu-item:hover > a": {label: l10n.css.hover_label, info: l10n.css.hover_info},
+		"[data-style='horizontal'] ul.sub-menu > li.menu-item > a, div[data-style='vertical'] ul.sub-menu > li.menu-item > a": {label: l10n.css.subitem_label, info: l10n.css.subitem_info},
+		"[data-style='horizontal'] ul.sub-menu > li.menu-item:hover > a, div[data-style='vertical'] ul.sub-menu > li.menu-item:hover > a": {label: l10n.css.subitem_hover_label, info: l10n.css.subitem_hover_info},
 
 
-		"div[data-style='burger'] ul.menu": {label: l10n.css.responsive_bar_label, info: l10n.css.bar_info},
-		"div.responsive_nav_toggler": {label: l10n.css.responsive_trigger, info: l10n.css.hover_info},
-		"div.responsive_nav_toggler > div": {label: l10n.css.responsive_trigger_bars, info: l10n.css.hover_info},
-		"i.burger_nav_close": {label: l10n.css.responsive_nav_close, info: l10n.css.close_info},
-		" div[data-style='burger'] ul.menu > li.menu-item > a": {label: l10n.css.responsive_item_label, info: l10n.css.item_info},
-		"div[data-style='burger'] ul.menu > li.menu-item:hover > a": {label: l10n.css.responsive_hover_label, info: l10n.css.hover_info},
-		"div[data-style='burger'] ul.sub-menu > li.menu-item > a": {label: l10n.css.responsive_subitem_label, info: l10n.css.subitem_info},
-		"div[data-style='burger'] ul.sub-menu > li.menu-item:hover > a": {label: l10n.css.responsive_subitem_hover_label, info: l10n.css.subitem_hover_info}
+		"[data-style='burger'] ul.menu": {label: l10n.css.responsive_bar_label, info: l10n.css.bar_info},
+		".upfront-output-unewnavigation .responsive_nav_toggler": {label: l10n.css.responsive_trigger, info: l10n.css.hover_info},
+		".upfront-output-unewnavigation div.responsive_nav_toggler > div": {label: l10n.css.responsive_trigger_bars, info: l10n.css.hover_info},
+		".upfront-output-unewnavigation i.burger_nav_close": {label: l10n.css.responsive_nav_close, info: l10n.css.close_info},
+		"[data-style='burger'] ul.menu > li.menu-item > a": {label: l10n.css.responsive_item_label, info: l10n.css.item_info},
+		"[data-style='burger'] ul.menu > li.menu-item:hover > a": {label: l10n.css.responsive_hover_label, info: l10n.css.hover_info},
+		"[data-style='burger'] ul.sub-menu > li.menu-item > a": {label: l10n.css.responsive_subitem_label, info: l10n.css.subitem_info},
+		"[data-style='burger'] ul.sub-menu > li.menu-item:hover > a": {label: l10n.css.responsive_subitem_hover_label, info: l10n.css.subitem_hover_info}
 	},
 	cssSelectorsId: Upfront.data.unewnavigation.defaults.type
 });
