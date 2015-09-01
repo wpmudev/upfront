@@ -44,7 +44,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 
 		this.postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
 		
-		if(Upfront.Application.current_subapplication.get_layout_data().layout.specificity.indexOf('noedit') > -1) {
+		if(Upfront.Application.current_subapplication.get_layout_data().layout.specificity && Upfront.Application.current_subapplication.get_layout_data().layout.specificity.indexOf('noedit') > -1) {
 			this.noedit=true; //to enable loading of non-editable content for plugins when ID is not available
 		}
 
@@ -221,7 +221,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			hide_featured_image: this.property('hide_featured_image'),
 			full_featured_image: this.property('full_featured_image')
 		};
-
+		console.log('two');
 		this.loadingMarkup = Upfront.Util.post({
 				action: "this_post-get_markup",
 				data: JSON.stringify({

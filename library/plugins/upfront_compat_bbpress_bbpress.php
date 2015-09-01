@@ -42,10 +42,11 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
     public function augment_default_layouts ($layouts) {
        
         $layouts["bbpress"] = array(
-                'label' => "BBPress layout",
+                'label' => "BBPress Forum",
                 'layout' => array(
                     'type' => 'single',
-                    'item' => "bbpress",
+                    'item' => "bbpress-single-forum",
+                    'specificity' => "bbpress-noedit-single-forum"
                 ),
             );
 
@@ -210,7 +211,6 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
             //}
             
         }
-
 
         return $cascade;
 
