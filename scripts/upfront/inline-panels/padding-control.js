@@ -55,6 +55,7 @@ define([
 		close: function() {
 			this.isOpen = false;
 			this.$el.removeClass('upfront-control-dialog-open');
+			this.$el.closest('.upfront-inline-panel-item-open').removeClass('upfront-inline-panel-item-open');
 		},
 
 		render: function() {
