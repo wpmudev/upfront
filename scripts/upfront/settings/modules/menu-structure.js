@@ -7,6 +7,7 @@ define([
 
 	var MenuStructureModule = Backbone.View.extend({
 		className: 'settings_module menu_structure_module clearfix',
+		handlesSaving: true,
 
 		initialize: function(options) {
 			var me = this;
@@ -57,10 +58,8 @@ define([
 				},
 				stop: function(event, ui) {
 					me.stopWatchingItemDepth(ui.item);
+					me.updateItemsPosition(ui.item);
 				},
-				// update: function(event, ui) {
-					// me.updateItemsPosition(ui.item);
-				// }
 			});
 		},
 
@@ -80,7 +79,6 @@ define([
 		},
 
 		updateItemDepth: function(oldX, newX, item) {
-			console.log(item.data('menuItemDepth'));
 			// Decrease item depth
 			var itemDepth = item.data('menu-item-depth'),
 				prevDepth = item.prev().data('menu-item-depth'),
@@ -88,12 +86,10 @@ define([
 				newDepth = itemDepth;
 
 			if (oldX > newX) {
-				console.log('decrease item depth', itemDepth, prevDepth, nextDepth);
 				this.decreaseItemDepth(newDepth - 1, itemDepth, prevDepth, nextDepth, item);
 			}
 			// Increase item depth
 			if (oldX < newX) {
-				console.log('increase item depth', itemDepth, prevDepth, nextDepth);
 				this.increaseItemDepth(newDepth + 1, itemDepth, prevDepth, nextDepth, item);
 			}
 		},
@@ -122,49 +118,84 @@ define([
 				item.removeClass('menu-structure-item-depth-' + itemDepth);
 				item.addClass('menu-structure-item-depth-' + newDepth);
 			}
-			if (prevDepth > itemDepth && nextDepth > itemDepth) {
-				item.data('menu-item-depth', newDepth);
-				item.removeClass('menu-structure-item-depth-' + itemDepth);
-				item.addClass('menu-structure-item-depth-' + newDepth);
-			}
-			if (prevDepth > itemDepth || nextDepth === itemDepth) {
-				item.data('menu-item-depth', newDepth);
-				item.removeClass('menu-structure-item-depth-' + itemDepth);
-				item.addClass('menu-structure-item-depth-' + newDepth);
-			}
-			if (prevDepth === itemDepth || nextDepth <= itemDepth) {
-				item.data('menu-item-depth', newDepth);
-				item.removeClass('menu-structure-item-depth-' + itemDepth);
-				item.addClass('menu-structure-item-depth-' + newDepth);
-			}
 		},
 
 		stopWatchingItemDepth: function() {
 			this.$el.off('mousemove');
 		},
 
+		flattenItem: function(item) {
+			var me = this,
+				allItems = [item];
+
+			if (item.sub) {
+				_.each(item.sub, function(subItem) {
+					allItems = _.union(allItems, me.flattenItem(subItem));
+				});
+			}
+
+			return allItems;
+		},
+
 		updateItemsPosition: function(movedItem) {
 			var me = this;
-			// console.log('recorded menu items', this.menuItems);
-			console.log(movedItem.data('menuItemDepth'));
+			// Flatten items
+			var oldItems = [];
+			_.each(this.menuItems, function(item) {
+				oldItems = _.union(oldItems, me.flattenItem(item));
+			});
 
-			// var $items = this.$el.find('.menu-structure-module-item');
-			// var newOrder = [];
-			// $items.each(function() {
-				// newOrder.push(_.findWhere(
-					// me.menuItems, {'menu-item-object-id': $(this).data('menuItemObjectId')}
-				// ));
-			// });
+			// Get all items
+			var $items = this.$el.find('.menu-structure-module-item');
+			var changedItems = [];
+			// Start from top and keep track of parent item.
+			// It needs to be an array because multiple levels of depth
+			var parentItem = [0];
+			var prevItemId = 0;
+			var position = 1;
+			var currentDepth = 0;
+			$items.each(function() {
+				var itemData = _.findWhere(
+					oldItems, {'menu-item-object-id': $(this).data('menuItemObjectId')}
+				);
+				var itemDepth = $(this).data('menuItemDepth');
 
-			// console.log('new order', newOrder);
-			// _.each(newOrder, function(item, index) {
-				// newOrder[index]['menu-item-position'] = index + 1;
-			// });
-			// console.log(newOrder);
+				// If depth increased change parent to previous item id
+				if (itemDepth > currentDepth) {
+					parentItem.push(prevItemId);
+					currentDepth = currentDepth + 1;
+				} else if (itemDepth === currentDepth) {
+					// do nothing
+				} else if (itemDepth < currentDepth) {
+					// Drop one level if depth decreased
+					parentItem = _.initial(parentItem);
+					currentDepth = currentDepth - 1;
+				}
+
+				changedItems.push(_.extend(itemData, {
+					'menu-item-parent-id': _.last(parentItem) || 0,
+					'menu-item-position': position
+				}));
+
+				// Must be done in the end
+				position = position + 1;
+				prevItemId = itemData['menu-item-object-id'];
+			});
+
+			Upfront.Util.post({
+				action: 'upfront_update_menu_items',
+				data: {
+					items: changedItems,
+					menuId: this.menuId
+				}
+			})..fail(
+					function(response) {
+						Upfront.Util.log('Failed saving menu items.');
+					}
+				);
 		},
 
 		save_fields: function() {
-			console.log('here be saved fields');
 		}
 	});
 

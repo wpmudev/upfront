@@ -243,6 +243,7 @@ class Upfront_newMenuSetting extends Upfront_Server {
 
 		upfront_add_ajax('upfront_new_update_menu_item', array($this, "update_menu_item"));
 		upfront_add_ajax('upfront_new_update_auto_add_pages', array($this, "update_auto_add_pages"));
+		upfront_add_ajax('upfront_update_menu_items', array($this, "update_menu_items"));
 	}
 
 
@@ -508,6 +509,14 @@ class Upfront_newMenuSetting extends Upfront_Server {
 		$this->_out(new Upfront_JsonResponse_Error(Upfront_UnewnavigationView::_get_l10n('cant_update_auto')));
 	}
 
+	public function update_menu_items(){
+		$menuId = isset($_POST['data']['menuId']) ? intval($_POST['data']['menuId']) : 0;
+		$items = isset($_POST['data']['items']) ? $_POST['data']['items'] : array();
+		foreach($items as $item) {
+			wp_update_nav_menu_item($menuId, $item['menu-item-db-id'], $item);
+		}
+		$this->_out(new Upfront_JsonResponse_Success('success'));
+	}
 }
 
 Upfront_newMenuSetting::serve();

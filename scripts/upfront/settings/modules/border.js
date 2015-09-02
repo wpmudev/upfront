@@ -135,7 +135,7 @@ define([
 				);
 			}
 		},
-		
+
 		reset_fields: function(value) {
 			if(typeof value !== "undefined" && value === "yes") {
 				var settings = this.get_static_field_values(value, this.options.prepend);
@@ -145,28 +145,28 @@ define([
 				this.render();
 			}
 		},
-		
+
 		save_static_values: function(value, settings) {
 			//Save preset values from static state
 			this.model.set(this.currentElement + this.options.fields.width, settings.width);
 			this.model.set(this.currentElement + this.options.fields.type, settings.type);
 			this.model.set(this.currentElement + this.options.fields.color, settings.color);
 		},
-		
+
 		get_static_field_values: function(value, prepend) {
 			var settings = {};
-			
+
 			settings.width = this.model.get(this.clear_prepend(this.options.fields.width, prepend)) || '';
 			settings.type = this.model.get(this.clear_prepend(this.options.fields.type, prepend)) || '';
 			settings.color = this.model.get(this.clear_prepend(this.options.fields.color, prepend)) || '';
-			
+
 			return settings;
 		},
-		
+
 		clear_prepend: function(field, prepend) {
 			return field.replace(prepend, '');
 		},
-		
+
 		update_fields: function(value, settings) {
 			//Update selected element
 			this.fields._wrapped[this.fieldCounter + 1].set_value(settings.width);
