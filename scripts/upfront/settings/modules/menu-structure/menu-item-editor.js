@@ -65,7 +65,9 @@ define([
 			'click .menu-item-entry-input': 'showPagePostSelector',
 			'keydown .menu-item-lightbox-input': 'onLightboxNameInputChange',
 			'keydown .menu-item-external-input': 'onUrlNameKeydown',
-			'change .menu-item-external-input': 'onUrlNameChange'
+			'change .menu-item-external-input': 'onUrlNameChange',
+			'keydown .menu-item-title': 'onItemNameKeydown',
+			'change .menu-item-title': 'onItemNameChange'
 		},
 
 		initialize: function(options) {
@@ -74,7 +76,6 @@ define([
 		},
 
 		render: function() {
-			console.log('rendering', this.type);
 			this.$el.html(_.template(tpl, {
 				title: this.model.get('menu-item-title'),
 				type:  this.type,
@@ -179,6 +180,7 @@ define([
 			if (this.type === 'entry') {
 				this.showPagePostSelector();
 			}
+			this.$el.parent().find('.menu-item-type').first().text(this.getLinkTypeLabel(value));
 		},
 
 		renderAnchorSelect: function() {
@@ -264,6 +266,42 @@ define([
 				'menu-item-url': $.trim(this.$el.find('.menu-item-external-input').val())
 			});
 			this.saveItem();
+		},
+
+		onItemNameKeydown: function(event) {
+			if (event.which == 13) {
+				event.preventDefault();
+				this.onItemNameChange();
+			}
+		},
+
+		onItemNameChange: function() {
+			var newTitle = $.trim(this.$el.find('.menu-item-title').val());
+			this.model.set({
+				'menu-item-title': newTitle
+			});
+			this.$el.parent().find('.menu-item-title').first().text(newTitle);
+			this.saveItem();
+		},
+
+		getLinkTypeLabel: function(type) {
+			var contentL10n = Upfront.Settings.l10n.global.content;
+			switch(type) {
+				case 'unlink':
+					return contentL10n.no_link ;
+				case 'external':
+					return contentL10n.url;
+				case 'email':
+					return 'Email address';
+				case 'entry':
+					return contentL10n.post_or_page;
+				case 'anchor':
+					return contentL10n.anchor;
+				case 'image':
+					return contentL10n.larger_image;
+				case 'lightbox':
+					return contentL10n.lightbox;
+			}
 		}
 	});
 

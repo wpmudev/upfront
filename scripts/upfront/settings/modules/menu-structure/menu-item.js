@@ -84,7 +84,7 @@ define([
 				case 'lightbox':
 					return contentL10n.lightbox;
 			}
-		},
+		}
 	});
 
 	return MenuItem;
