@@ -5075,6 +5075,25 @@ a.upfront-region-name-edit-trigger:before {
   float: right;
   color: #667a8f; }
 
+.menu-item-editor label {
+  color: #7d99b3; }
+
+.menu-item-editor input, .menu-item-editor input:hover {
+  line-height: 24px;
+  border: 1px solid #a2bfda;
+  border-radius: 2px;
+  background: white;
+  padding: 0 5px;
+  color: #2f475f;
+  width: 100%;
+  margin-bottom: 12px; }
+
+.menu-settings .menu-item-editor .upfront-field-wrap {
+  margin-top: 0; }
+
+.menu-item-editor .menu-item-type-editor {
+  margin-top: 5px; }
+
 /* ----- Save As dialog ----- */
 #upfront-save-dialog-background {
   background: rgba(31, 48, 63, 0.8);
