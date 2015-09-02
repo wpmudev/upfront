@@ -48,6 +48,32 @@ define([
 			_.each(this.menuItemViews, function(view) {
 				this.$el.append(view.render().el);
 			}, this);
+
+			this.$el.sortable({
+				axis: "y",
+				items: '.menu-structure-module-item',
+				grid: [15, 1]
+			});
+		},
+
+		updateItemsPosition: function(movedItem) {
+			var me = this;
+			console.log('recorded menu items', this.menuItems);
+			console.log(movedItem.data('menuItemDepth'));
+
+			var $items = this.$el.find('.menu-structure-module-item');
+			var newOrder = [];
+			$items.each(function() {
+				newOrder.push(_.findWhere(
+					me.menuItems, {'menu-item-object-id': $(this).data('menuItemObjectId')}
+				));
+			});
+
+			console.log('new order', newOrder);
+			_.each(newOrder, function(item, index) {
+				newOrder[index]['menu-item-position'] = index + 1;
+			});
+			console.log(newOrder);
 		},
 
 		save_fields: function() {

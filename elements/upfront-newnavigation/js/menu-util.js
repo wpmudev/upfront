@@ -44,6 +44,10 @@ define([], function () {
 			return _.findWhere(menus, {term_id: id}).slug;
 		};
 
+		this.getMenuById = function(id) {
+			return _.findWhere(menus, {term_id: id});
+		};
+
 		this.getMenuList = function() {
 			var menuList = currentMenuItemData.get('menuList');
 			//menuList.push({label: l10n.create_new, value: -1});
