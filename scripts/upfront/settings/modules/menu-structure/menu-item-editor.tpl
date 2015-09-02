@@ -13,5 +13,18 @@
 		<div class="anchor-selector">
 		</div>
 		{[ } ]}
+		{[if(type == 'lightbox') { ]}
+			{[ if(lightboxes.length) { ]}
+				<div class="lightbox-selector">
+				</div>
+			{[ } else { ]}
+
+			{[ } ]}
+
+				<div class="new-lightbox">
+						<label>Create lightbox</label>
+						<input type="text" name="menu-item-lightbox-input" class="menu-item-lightbox-input upfront-field upfront-field-text upfront-field-empty" value="" placeholder="{{Upfront.Settings.l10n.global.content.lightbox_name}}" />
+				</div>
+		{[ } ]}
 	</div>
 </form>

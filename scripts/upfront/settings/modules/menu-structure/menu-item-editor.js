@@ -1,6 +1,20 @@
+(function ($) {
 define([
 	'text!scripts/upfront/settings/modules/menu-structure/menu-item-editor.tpl'
 ], function(tpl) {
+	var getLightBoxes = function() {
+		var lightboxes = [],
+			regions = Upfront.Application.layout.get('regions');
+
+		_.each(regions.models, function(model) {
+			if(model.attributes.sub == 'lightbox') {
+				lightboxes.push({id: '#' + model.get('name'), label: model.get('title')});
+			}
+		});
+
+		return lightboxes;
+	};
+
 	var getAnchors = function() {
 		var regions = Upfront.Application.layout.get("regions"),
 			anchors = [],
@@ -48,13 +62,13 @@ define([
 		className: 'menu-item-editor',
 
 		events: {
-			'click .menu-item-entry-input': 'showPagePostSelector'
+			'click .menu-item-entry-input': 'showPagePostSelector',
+			'keydown .menu-item-lightbox-input': 'onLightboxNameInputChange',
 		},
 
 		initialize: function(options) {
 			this.options = options || {};
 			this.type = Upfront.Util.guessLinkType(this.model.get('menu-item-url'));
-			if (this.type === 'unlink') this.type = 'external';
 		},
 
 		render: function() {
@@ -62,10 +76,19 @@ define([
 			this.$el.html(_.template(tpl, {
 				title: this.model.get('menu-item-title'),
 				type:  this.type,
+				lightboxes: getLightBoxes(),
 				url: this.model.get('menu-item-url')
 			}));
 
 			this.renderTypeSelect();
+
+			if (this.type === 'anchor') {
+				this.renderAnchorSelect();
+			}
+
+			if (this.type === 'lightbox' && getLightBoxes()) {
+				this.renderLightBoxesSelect();
+			}
 
 			return this;
 		},
@@ -74,7 +97,7 @@ define([
 			var me = this;
 
 			var typeSelectValues = [];
-			_.each(['external', 'entry', 'anchor', 'lightbox', 'email'], function(t) {
+			_.each(['unlink', 'external', 'entry', 'anchor', 'lightbox', 'email'], function(t) {
 				typeSelectValues.push(this.getLinkTypeValue(t));
 			}, this);
 
@@ -89,11 +112,6 @@ define([
 
 			this.typeSelect.render();
 			this.$el.find('.item-links-to-label').after(this.typeSelect.el);
-
-
-			if (this.type === 'anchor') {
-				this.renderAnchorSelect();
-			}
 		},
 
 
@@ -185,7 +203,54 @@ define([
 			this.anchorSelect.render();
 			this.$el.find('.anchor-selector').append(this.anchorSelect.el);
 		},
+
+		renderLightBoxesSelect: function() {
+			var me = this;
+
+			var lightboxValues = [{label: 'Choose Lightbox...', value: ''}];
+			_.each(getLightBoxes() || [], function(lightbox) {
+				lightboxValues.push({label: lightbox.label, value: lightbox.id});
+			});
+
+			var lightboxValue = this.model.get('menu-item-url');
+			lightboxValue = lightboxValue ? lightboxValue : '';
+			lightboxValue = lightboxValue.match(/^#/) ? lightboxValue : '';
+
+			this.lightboxSelect = new Upfront.Views.Editor.Field.Select({
+				label: '',
+				values: lightboxValues,
+				default_value: lightboxValue,
+				change: function () {
+					me.model.set({'url': this.get_value()});
+					me.saveItem();
+				}
+			});
+			this.lightboxSelect.render();
+			this.$el.find('.lightbox-selector').append(this.lightboxSelect.el);
+		},
+
+		onLightboxNameInputChange: function(event) {
+			if (event.which == 13) {
+				event.preventDefault();
+				this.createLightBox();
+			}
+		},
+
+		createLightBox: function() {
+			var name = $.trim(this.$('.menu-item-lightbox-input').val());
+			if (!name) {
+				Upfront.Views.Editor.notify(l10n.ltbox_empty_name_nag, 'error');
+				return false;
+			}
+
+			this.model.set({
+				'menu-item-url': '#' + Upfront.Application.LayoutEditor.createLightboxRegion(name)
+			});
+			this.saveItem();
+			this.render();
+		},
 	});
 
 	return MenuItemEditor;
 });
+})(jQuery);
