@@ -30,7 +30,7 @@ define([
 			var me = this;
 			this.$el.html(_.template(tpl, {
 				title: this.model.get('menu-item-title'),
-				type:  this.model.get('menu-item-type'),
+				type:  this.getLinkTypeLabel(Upfront.Util.guessLinkType(this.model.get('menu-item-url')))
 			}));
 			this.$el.data('menu-item-object-id', this.model.get('menu-item-object-id'));
 			this.$el.data('menu-item-depth', this.depth);
@@ -47,7 +47,31 @@ define([
 			}, 100);
 
 			return this;
-		}
+		},
+
+		/**
+		 * Determine proper link type select value/label based on link type. Used
+		 * to populate link type select field.
+		 */
+		getLinkTypeLabel: function(type) {
+			var contentL10n = Upfront.Settings.l10n.global.content;
+			switch(type) {
+				case 'unlink':
+					return contentL10n.no_link ;
+				case 'external':
+					return contentL10n.url;
+				case 'email':
+					return 'Email address';
+				case 'entry':
+					return contentL10n.post_or_page;
+				case 'anchor':
+					return contentL10n.anchor;
+				case 'image':
+					return contentL10n.larger_image;
+				case 'lightbox':
+					return contentL10n.lightbox;
+			}
+		},
 	});
 
 	return MenuItem;

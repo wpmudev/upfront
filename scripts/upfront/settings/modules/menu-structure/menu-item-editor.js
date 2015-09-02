@@ -6,7 +6,7 @@ define([
 		render: function() {
 			this.$el.html(_.template(tpl, {
 				title: this.model.get('menu-item-title'),
-				type:  this.model.get('menu-item-type'),
+				type:  Upfront.Util.guessLinkType(this.model.get('menu-item-url')),
 				url: this.model.get('menu-item-url')
 			}));
 
@@ -26,14 +26,14 @@ define([
 			this.typeSelect = new Upfront.Views.Editor.Field.Select({
 				label: '',
 				values: typeSelectValues,
-				default_value: this.model.get('menu-item-type'),
+				default_value: Upfront.Util.guessLinkType(this.model.get('menu-item-url')),
 				change: function (value) {
 					me.onTypeChange(value);
 				}
 			});
 
 			this.typeSelect.render();
-			this.$el.find('form').prepend(this.typeSelect.el);
+			this.$el.find('.item-links-to-label').after(this.typeSelect.el);
 		},
 
 

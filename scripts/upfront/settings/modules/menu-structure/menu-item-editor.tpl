@@ -1,6 +1,10 @@
 <form>
 	<label>Menu Item Label</label>
-	<input type="text" value="{{ title }}">
-	<label>{{Upfront.Settings.l10n.global.content.links_to}}</label>
-	<input type="text" value="{{url}}" placeholder="Type link URL">
+	<input type="text" name="menu-item-title" value="{{ title }}">
+	<label class="item-links-to-label">{{Upfront.Settings.l10n.global.content.links_to}}</label>
+	<div class="menu-item-type-editor">
+		{[if(type == 'external') { ]}
+			<input type="text" name="menu-item-external-input" value="{{url}}" placeholder="Type link URL" >
+		{[ } ]}
+	</div>
 </form>
