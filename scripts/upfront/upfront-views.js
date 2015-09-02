@@ -2335,8 +2335,11 @@ define([
 							wrapper_el = this.current_wrapper_el;
 						}
 						else {
-							wrapper_view = Upfront.data.wrapper_views[wrapper.cid] || new Upfront.Views.Wrapper({model: wrapper});
-							wrapper_view.render();
+							wrapper_view = Upfront.data.wrapper_views[wrapper.cid];
+							if ( !wrapper_view ) {
+								wrapper_view = new Upfront.Views.Wrapper({model: wrapper})
+								wrapper_view.render();
+							}
 							wrapper_el = wrapper_view.el;
 						}
 						this.current_wrapper_id = wrapper_id;
