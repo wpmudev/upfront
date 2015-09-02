@@ -1,5 +1,6 @@
 define([
-], function() {
+	'text!scripts/upfront/settings/modules/menu-structure/menu-item.tpl'
+], function(tpl) {
 	var MenuItem = Backbone.View.extend({
 		className: 'menu-structure-module-item',
 
@@ -32,7 +33,10 @@ define([
 			// menu-item-title: "Home"
 			// menu-item-type: "custom"
 			// menu-item-url: "http://local.wordpress.dev/"
-			this.$el.html(this.model.get('menu-item-title') + ' ' + this.model.get('menu-item-type'));
+			this.$el.html(_.template(tpl, {
+				title: this.model.get('menu-item-title'),
+				type:  this.model.get('menu-item-type')
+			}));
 			this.$el.data('menu-item-object-id', this.model.get('menu-item-object-id'));
 			this.$el.data('menu-item-depth', this.depth);
 			this.$el.addClass('menu-structure-item-depth-' + this.depth);
