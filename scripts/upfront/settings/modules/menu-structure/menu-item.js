@@ -5,6 +5,10 @@ define([
 	var MenuItem = Backbone.View.extend({
 		className: 'menu-structure-module-item',
 
+		events: {
+			'click .menu-item-header': 'toggleEditor'
+		},
+
 		initialize: function(options) {
 			this.options = options || {};
 			this.subViews = [];
@@ -51,6 +55,11 @@ define([
 			}, 100);
 
 			return this;
+		},
+
+		toggleEditor: function() {
+			this.$el.toggleClass('menu-item-expanded');
+			this.$el.find('.menu-item-editor').toggle();
 		},
 
 		/**
