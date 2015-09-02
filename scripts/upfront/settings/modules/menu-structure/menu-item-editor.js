@@ -1,8 +1,29 @@
 define([
 	'text!scripts/upfront/settings/modules/menu-structure/menu-item-editor.tpl'
 ], function(tpl) {
+	var getPostTypes = function(){
+		var types = [];
+
+		_.each(Upfront.data.ugallery.postTypes, function(type){
+			if(type.name != 'attachment') {
+				types.push({name: type.name, label: type.label});
+			}
+		});
+
+		return types;
+	};
+
 	var MenuItemEditor = Backbone.View.extend({
 		className: 'menu-item-editor',
+
+		events: {
+			'click .menu-item-entry-input': 'showPagePostSelector'
+		},
+
+		initialize: function(options) {
+			this.options = options || {};
+		},
+
 		render: function() {
 			this.$el.html(_.template(tpl, {
 				title: this.model.get('menu-item-title'),
@@ -63,6 +84,29 @@ define([
 				case 'lightbox':
 					return { value: 'lightbox', label: contentL10n.lightbox };
 			}
+		},
+
+		showPagePostSelector: function(event) {
+			if (event) {
+				event.preventDefault();
+			}
+
+			var me = this,
+				selectorOptions = {
+					postTypes: getPostTypes()
+				};
+
+			Upfront.Views.Editor.PostSelector.open(selectorOptions).done(
+				function(post) {
+					me.model.set({'menu-item-url' : post.get('permalink')});
+					Upfront.Util.post({
+						action: 'upfront_update_single_menu_item',
+						menuId: me.options.menuId,
+						menuItemData: me.model.toJSON()
+					});
+					me.render();
+				}
+			);
 		},
 	});
 

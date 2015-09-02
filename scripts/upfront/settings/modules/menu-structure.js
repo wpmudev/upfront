@@ -32,7 +32,10 @@ define([
 				.success(function (response) {
 					me.menuItems = response.data || [];
 					_.each(me.menuItems, function(itemOptions) {
-						me.menuItemViews.push(new MenuStructureItem({model: new Backbone.Model(itemOptions)}));
+						me.menuItemViews.push(new MenuStructureItem({
+							model: new Backbone.Model(itemOptions),
+							menuId: me.menuId
+						}));
 					});
 					me.render();
 				})

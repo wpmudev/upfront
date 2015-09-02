@@ -19,7 +19,8 @@ define([
 					this.subViews.push(
 						new MenuItem({
 							model: new Backbone.Model(itemOptions),
-							depth: this.depth + 1
+							depth: this.depth + 1,
+							menuId: this.options.menuId
 						})
 					);
 				}, this);
@@ -36,7 +37,10 @@ define([
 			this.$el.data('menu-item-depth', this.depth);
 			this.$el.addClass('menu-structure-item-depth-' + this.depth);
 
-			var editor = new MenuItemEditor({model: this.model});
+			var editor = new MenuItemEditor({
+				model: this.model,
+				menuId: this.options.menuId
+			});
 			this.$el.append(editor.render().el);
 
 			// Gotta let this.$el render to use $.after()

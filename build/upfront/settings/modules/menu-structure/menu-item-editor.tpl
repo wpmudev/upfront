@@ -6,5 +6,8 @@
 		{[if(type == 'external') { ]}
 			<input type="text" name="menu-item-external-input" value="{{url}}" placeholder="Type link URL" >
 		{[ } ]}
+		{[if(type == 'entry') { ]}
+			<a class="menu-item-entry-input" title="{{Upfront.Settings.l10n.global.content.change_link}}"  href="#">{{(!url || url=='' || url=='http://') ? 'Select' : url}}</a>
+		{[ } ]}
 	</div>
 </form>
