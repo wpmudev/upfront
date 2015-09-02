@@ -6,6 +6,7 @@ define([
 		initialize: function(options) {
 			this.options = options || {};
 			this.subViews = [];
+			this.depth = this.options.depth || 0;
 			var sub = this.model.get('sub');
 
 			if (sub) {
@@ -33,10 +34,15 @@ define([
 			// menu-item-url: "http://local.wordpress.dev/"
 			this.$el.html(this.model.get('menu-item-title') + ' ' + this.model.get('menu-item-type'));
 			this.$el.data('menu-item-object-id', this.model.get('menu-item-object-id'));
+			this.$el.data('menu-item-depth', this.depth);
+			this.$el.addClass('menu-structure-item-depth-' + this.depth);
 
-			_.each(me.subViews, function(view) {
-				me.$el.append(view.render().el);
-			});
+			// Gotta let this.$el render to use $.after()
+			setTimeout(function() {
+				_.each(me.subViews, function(view) {
+					me.$el.after(view.render().el);
+				});
+			}, 100);
 
 			return this;
 		}
