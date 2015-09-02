@@ -5008,6 +5008,11 @@ a.upfront-region-name-edit-trigger:before {
 #element-settings-sidebar .upfront-settings-css .upfront-settings-item-title, #element-settings-sidebar .uslider-slides .upfront-settings-item-title {
   display: none; }
 
+.menu-structure-module-item {
+  font-size: 12px;
+  margin-top: 5px;
+  margin-bottom: 5px; }
+
 .menu-structure-item-depth-0 {
   margin-left: 15px; }
 
@@ -5018,10 +5023,12 @@ a.upfront-region-name-edit-trigger:before {
   margin-left: 45px; }
 
 .menu-item-editor {
-  background: #ccc;
-  font-size: 12px;
+  background: #f5f9ff;
   line-height: 16px;
-  padding: 10px; }
+  padding: 10px;
+  border: 1px solid #b8cfe6;
+  border-radius: 2px;
+  border-top: 0 none; }
 
 .menu-item-editor input, .menu-item-editor label {
   display: block; }
@@ -5030,7 +5037,41 @@ a.upfront-region-name-edit-trigger:before {
   background: white; }
 
 .menu-item-header {
-  background: yellow; }
+  line-height: 24px;
+  background: #e6f2ff;
+  border: 1px solid #b8cfe6;
+  padding: 0 18px 0 8px;
+  color: #2f475f;
+  border-radius: 2px;
+  position: relative; }
+
+.menu-item-header:before {
+  content: '';
+  width: 0;
+  height: 0;
+  display: block;
+  position: absolute;
+  z-index: 1;
+  top: 8px;
+  right: 8px;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-left: 4px solid #6a8db4; }
+
+.expanded .menu-item-header:before {
+  top: 11px;
+  right: 7px;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid #6a8db4;
+  border-bottom: 0 none; }
+
+.menu-item-header .menu-item-title {
+  font-weight: bold; }
+
+.menu-item-header .menu-item-type {
+  float: right;
+  color: #667a8f; }
 
 /* ----- Save As dialog ----- */
 #upfront-save-dialog-background {
