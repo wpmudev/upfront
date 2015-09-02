@@ -64,6 +64,8 @@ define([
 		events: {
 			'click .menu-item-entry-input': 'showPagePostSelector',
 			'keydown .menu-item-lightbox-input': 'onLightboxNameInputChange',
+			'keydown .menu-item-external-input': 'onUrlNameKeydown',
+			'change .menu-item-external-input': 'onUrlNameChange'
 		},
 
 		initialize: function(options) {
@@ -249,6 +251,20 @@ define([
 			this.saveItem();
 			this.render();
 		},
+
+		onUrlNameKeydown: function(event) {
+			if (event.which == 13) {
+				event.preventDefault();
+				this.onUrlNameChange();
+			}
+		},
+
+		onUrlNameChange: function() {
+			this.model.set({
+				'menu-item-url': $.trim(this.$el.find('.menu-item-external-input').val())
+			});
+			this.saveItem();
+		}
 	});
 
 	return MenuItemEditor;
