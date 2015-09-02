@@ -112,6 +112,31 @@ define([
 		},
 
 		increaseItemDepth: function(newDepth, itemDepth, prevDepth, nextDepth, item) {
+			if (prevDepth >= itemDepth) {
+				item.data('menu-item-depth', newDepth);
+				item.removeClass('menu-structure-item-depth-' + itemDepth);
+				item.addClass('menu-structure-item-depth-' + newDepth);
+			}
+			if (prevDepth === itemDepth && nextDepth < itemDepth) {
+				item.data('menu-item-depth', newDepth);
+				item.removeClass('menu-structure-item-depth-' + itemDepth);
+				item.addClass('menu-structure-item-depth-' + newDepth);
+			}
+			if (prevDepth > itemDepth && nextDepth > itemDepth) {
+				item.data('menu-item-depth', newDepth);
+				item.removeClass('menu-structure-item-depth-' + itemDepth);
+				item.addClass('menu-structure-item-depth-' + newDepth);
+			}
+			if (prevDepth > itemDepth || nextDepth === itemDepth) {
+				item.data('menu-item-depth', newDepth);
+				item.removeClass('menu-structure-item-depth-' + itemDepth);
+				item.addClass('menu-structure-item-depth-' + newDepth);
+			}
+			if (prevDepth === itemDepth || nextDepth <= itemDepth) {
+				item.data('menu-item-depth', newDepth);
+				item.removeClass('menu-structure-item-depth-' + itemDepth);
+				item.addClass('menu-structure-item-depth-' + newDepth);
+			}
 		},
 
 		stopWatchingItemDepth: function() {
