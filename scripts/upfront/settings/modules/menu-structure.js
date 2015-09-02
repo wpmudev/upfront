@@ -52,28 +52,90 @@ define([
 			this.$el.sortable({
 				axis: "y",
 				items: '.menu-structure-module-item',
-				grid: [15, 1]
+				start: function(event, ui) {
+					me.watchItemDepth(ui.item);
+				},
+				stop: function(event, ui) {
+					me.stopWatchingItemDepth(ui.item);
+				},
+				// update: function(event, ui) {
+					// me.updateItemsPosition(ui.item);
+				// }
 			});
+		},
+
+		watchItemDepth: function(movedItem) {
+			var me = this,
+				mouseX;
+
+			this.$el.on('mousemove', function(event) {
+				if (_.isUndefined(mouseX)) {
+					mouseX = event.pageX;
+					return;
+				}
+				me.updateItemDepth(mouseX, event.pageX, movedItem);
+
+				mouseX = event.pageX;
+			});
+		},
+
+		updateItemDepth: function(oldX, newX, item) {
+			console.log(item.data('menuItemDepth'));
+			// Decrease item depth
+			var itemDepth = item.data('menu-item-depth'),
+				prevDepth = item.prev().data('menu-item-depth'),
+				nextDepth = item.nextAll().not('.ui-sortable-placeholder').first().data('menu-item-depth'),
+				newDepth = itemDepth;
+
+			if (oldX > newX) {
+				console.log('decrease item depth', itemDepth, prevDepth, nextDepth);
+				this.decreaseItemDepth(newDepth - 1, itemDepth, prevDepth, nextDepth, item);
+			}
+			// Increase item depth
+			if (oldX < newX) {
+				console.log('increase item depth', itemDepth, prevDepth, nextDepth);
+				this.increaseItemDepth(newDepth + 1, itemDepth, prevDepth, nextDepth, item);
+			}
+		},
+
+		decreaseItemDepth: function(newDepth, itemDepth, prevDepth, nextDepth, item) {
+			if (prevDepth < itemDepth && nextDepth < itemDepth) {
+				item.data('menu-item-depth', newDepth);
+				item.removeClass('menu-structure-item-depth-' + itemDepth);
+				item.addClass('menu-structure-item-depth-' + newDepth);
+			}
+			if (prevDepth === itemDepth && nextDepth < itemDepth) {
+				item.data('menu-item-depth', newDepth);
+				item.removeClass('menu-structure-item-depth-' + itemDepth);
+				item.addClass('menu-structure-item-depth-' + newDepth);
+			}
+		},
+
+		increaseItemDepth: function(newDepth, itemDepth, prevDepth, nextDepth, item) {
+		},
+
+		stopWatchingItemDepth: function() {
+			this.$el.off('mousemove');
 		},
 
 		updateItemsPosition: function(movedItem) {
 			var me = this;
-			console.log('recorded menu items', this.menuItems);
+			// console.log('recorded menu items', this.menuItems);
 			console.log(movedItem.data('menuItemDepth'));
 
-			var $items = this.$el.find('.menu-structure-module-item');
-			var newOrder = [];
-			$items.each(function() {
-				newOrder.push(_.findWhere(
-					me.menuItems, {'menu-item-object-id': $(this).data('menuItemObjectId')}
-				));
-			});
+			// var $items = this.$el.find('.menu-structure-module-item');
+			// var newOrder = [];
+			// $items.each(function() {
+				// newOrder.push(_.findWhere(
+					// me.menuItems, {'menu-item-object-id': $(this).data('menuItemObjectId')}
+				// ));
+			// });
 
-			console.log('new order', newOrder);
-			_.each(newOrder, function(item, index) {
-				newOrder[index]['menu-item-position'] = index + 1;
-			});
-			console.log(newOrder);
+			// console.log('new order', newOrder);
+			// _.each(newOrder, function(item, index) {
+				// newOrder[index]['menu-item-position'] = index + 1;
+			// });
+			// console.log(newOrder);
 		},
 
 		save_fields: function() {

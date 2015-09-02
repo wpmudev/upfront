@@ -101,13 +101,13 @@
 	border-bottom: 1px solid #dae5f0;
 }
 
-#element-settings-sidebar .uf-settings-panel__title:before {  
+#element-settings-sidebar .uf-settings-panel__title:before {
 	content: '';
 	width: 0;
 	height: 0;
 	display: block;
 	position: absolute;
-	z-index: 1;	
+	z-index: 1;
 	top: 14px;
 	right: 16px;
 	border-top: 4px solid transparent;
@@ -137,3 +137,12 @@
 	display: none;
 }
 
+.menu-structure-item-depth-0 {
+	margin-left: 15px;
+}
+.menu-structure-item-depth-1 {
+	margin-left: 30px;
+}
+.menu-structure-item-depth-2 {
+	margin-left: 45px;
+}
