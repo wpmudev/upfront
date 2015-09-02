@@ -66,13 +66,14 @@ define([
 					me.updateItemsPosition(ui.item);
 				},
 			});
+			this.disableSorting();
 		},
 
-		enableSorting: function(event) {
+		enableSorting: function() {
 			this.$el.sortable('enable');
 		},
 
-		disableSorting: function(event) {
+		disableSorting: function() {
 			this.$el.sortable('disable');
 		},
 
