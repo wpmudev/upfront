@@ -1,6 +1,7 @@
 define([
+	'scripts/upfront/settings/modules/menu-structure/menu-item-editor',
 	'text!scripts/upfront/settings/modules/menu-structure/menu-item.tpl'
-], function(tpl) {
+], function(MenuItemEditor, tpl) {
 	var MenuItem = Backbone.View.extend({
 		className: 'menu-structure-module-item',
 
@@ -27,22 +28,16 @@ define([
 
 		render: function() {
 			var me = this;
-			// menu-item-db-id: 586
-			// menu-item-object: "custom"
-			// menu-item-object-id: "586"
-			// menu-item-parent-id: "0"
-			// menu-item-position: 1
-			// menu-item-target: ""
-			// menu-item-title: "Home"
-			// menu-item-type: "custom"
-			// menu-item-url: "http://local.wordpress.dev/"
 			this.$el.html(_.template(tpl, {
 				title: this.model.get('menu-item-title'),
-				type:  this.model.get('menu-item-type')
+				type:  this.model.get('menu-item-type'),
 			}));
 			this.$el.data('menu-item-object-id', this.model.get('menu-item-object-id'));
 			this.$el.data('menu-item-depth', this.depth);
 			this.$el.addClass('menu-structure-item-depth-' + this.depth);
+
+			var editor = new MenuItemEditor({model: this.model});
+			this.$el.append(editor.render().el);
 
 			// Gotta let this.$el render to use $.after()
 			setTimeout(function() {

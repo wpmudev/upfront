@@ -219,7 +219,7 @@ define([
 
 		/* Rendering stuff below */
 		render: function() {
-			
+
 			var me = this;
 
 			var tplData = {
@@ -229,7 +229,7 @@ define([
 				button: this.button,
 				type: this.model.get('type')
 			};
-			
+
 
 			this.$el.html(this.tpl(tplData));
 

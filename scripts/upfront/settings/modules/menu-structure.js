@@ -9,6 +9,11 @@ define([
 		className: 'settings_module menu_structure_module clearfix',
 		handlesSaving: true,
 
+		events: {
+			'mouseenter .menu-item-header': 'enableSorting',
+			'mouseout .menu-item-header': 'disableSorting'
+		},
+
 		initialize: function(options) {
 			var me = this;
 			this.options = options || {};
@@ -61,6 +66,14 @@ define([
 					me.updateItemsPosition(ui.item);
 				},
 			});
+		},
+
+		enableSorting: function(event) {
+			this.$el.sortable('enable');
+		},
+
+		disableSorting: function(event) {
+			this.$el.sortable('disable');
 		},
 
 		watchItemDepth: function(movedItem) {
@@ -188,7 +201,7 @@ define([
 					items: changedItems,
 					menuId: this.menuId
 				}
-			})..fail(
+			}).fail(
 					function(response) {
 						Upfront.Util.log('Failed saving menu items.');
 					}

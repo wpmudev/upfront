@@ -5017,6 +5017,21 @@ a.upfront-region-name-edit-trigger:before {
 .menu-structure-item-depth-2 {
   margin-left: 45px; }
 
+.menu-item-editor {
+  background: #ccc;
+  font-size: 12px;
+  line-height: 16px;
+  padding: 10px; }
+
+.menu-item-editor input, .menu-item-editor label {
+  display: block; }
+
+.menu-item-editor input {
+  background: white; }
+
+.menu-item-header {
+  background: yellow; }
+
 /* ----- Save As dialog ----- */
 #upfront-save-dialog-background {
   background: rgba(31, 48, 63, 0.8);
