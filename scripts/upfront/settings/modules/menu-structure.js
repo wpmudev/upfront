@@ -21,13 +21,7 @@ define([
 			this.menu = MenuUtil.getMenuById(this.menuId);
 			this.menuItems = [];
 			this.menuItemViews = [];
-			// Menu item properties:
-			// name: "top-nav-menu"
-			// parent: "0"
-			// slug: "top-nav-menu"
-			// taxonomy: "nav_menu"
-			// term_id: "9"
-			// term_taxonomy_id: "9"
+
 			Upfront.Util.post({"action": "upfront_new_load_menu_array", "data": this.menuId})
 				.success(function (response) {
 					me.menuItems = response.data || [];
@@ -47,7 +41,7 @@ define([
 		render: function() {
 			var me = this;
 
-			this.$el.html('');
+			this.$el.html('<div class="menu-structure-header"><span class="upfront-settings-item-title">MENU STRUCTURE</span><span class="add-menu-item">Add item</span></div>');
 
 			if (_.isEmpty(this.menuItems)) {
 				this.$el.html('Loading...');

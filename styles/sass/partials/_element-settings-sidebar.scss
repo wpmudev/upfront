@@ -227,3 +227,19 @@
 .menu-item-editor .menu-item-type-editor {
 	margin-top: 5px;
 }
+.menu-structure-header {
+	margin: 15px 15px 0 10px;
+	line-height: 26px!important;
+}
+.menu-structure-header span {
+	line-height: 26px;
+}
+.menu-structure-header .add-menu-item {
+	float: right;
+	line-height: 24px;
+	color: #6486a6;
+	padding: 0 15px;
+	border-radius: 3px;
+	border: 1px solid #a2bfda;
+	cursor: pointer;
+}
