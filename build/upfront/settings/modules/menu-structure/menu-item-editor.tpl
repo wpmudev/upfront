@@ -9,5 +9,9 @@
 		{[if(type == 'entry') { ]}
 			<a class="menu-item-entry-input" title="{{Upfront.Settings.l10n.global.content.change_link}}"  href="#">{{(!url || url=='' || url=='http://') ? 'Select' : url}}</a>
 		{[ } ]}
+		{[if(type == 'anchor') { ]}
+		<div class="anchor-selector">
+		</div>
+		{[ } ]}
 	</div>
 </form>
