@@ -2,8 +2,9 @@
 define([
 	'scripts/upfront/element-settings/settings-container',
 	'scripts/upfront/element-settings/root-panel-mixin',
-	'scripts/upfront/settings/field-factory'
-], function (SettingsContainer, RootPanelMixin, FieldFactory) {
+	'scripts/upfront/settings/field-factory',
+	'scripts/upfront/settings/module-factory'
+], function (SettingsContainer, RootPanelMixin, FieldFactory, ModuleFactory) {
 	var l10n = Upfront.Settings && Upfront.Settings.l10n
 		? Upfront.Settings.l10n.global.views
 		: Upfront.mainData.l10n.global.views
@@ -18,12 +19,19 @@ define([
 			this.settings = _(this.settings);
 
 			this.settings.each(function(settingOptions){
-				var setting = new Upfront.Views.Editor.Settings.Item({
-					title: settingOptions.title,
-					model: me.model,
-					className: settingOptions.className,
-					fields: []
-				});
+				var setting;
+				if (settingOptions.type === 'SettingsItem') {
+					setting = new Upfront.Views.Editor.Settings.Item({
+						title: settingOptions.title,
+						model: me.model,
+						className: settingOptions.className,
+						fields: []
+					});
+				} else {
+					setting = ModuleFactory.createModule(
+						settingOptions.type, settingOptions || {}, me.model
+					);
+				}
 
 				_.each(settingOptions.fields, function(fieldOptions) {
 					var field;
