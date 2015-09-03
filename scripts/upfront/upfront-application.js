@@ -1260,6 +1260,7 @@ var Application = new (Backbone.Router.extend({
 		if(this.loadingLayout)
 			this.loadingLayout.abort();
 
+
 		this.loadingLayout = Upfront.Util.post(request_data)
 			.success(function (response) {
 				app.set_layout_up(response);
@@ -1304,6 +1305,8 @@ var Application = new (Backbone.Router.extend({
 		if(this.loadingLayout)
 			this.loadingLayout.abort();
 
+		console.log(request_data);
+		
 		this.loadingLayout = Upfront.Util.post(request_data)
 			.success(function (response) {
 				app.set_layout_up(response);

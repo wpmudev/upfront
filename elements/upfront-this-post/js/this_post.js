@@ -221,7 +221,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			hide_featured_image: this.property('hide_featured_image'),
 			full_featured_image: this.property('full_featured_image')
 		};
-		console.log('two');
+		
 		this.loadingMarkup = Upfront.Util.post({
 				action: "this_post-get_markup",
 				data: JSON.stringify({

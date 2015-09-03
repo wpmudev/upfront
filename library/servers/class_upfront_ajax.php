@@ -243,7 +243,10 @@ class Upfront_Ajax extends Upfront_Server {
 					$post = $posts[0];
 			}
 		}
-
+		
+		if(!$layout->get('layout'))
+			$layout->set('layout', $layout_ids);
+		
 		$response = array(
 			'post' => $post,
 			'layout' => $layout->to_php(),

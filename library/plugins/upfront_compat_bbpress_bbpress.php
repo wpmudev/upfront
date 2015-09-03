@@ -47,7 +47,7 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
                     'type' => 'single',
                     'item' => "bbpress-single-forum",
                     'specificity' => "bbpress-noedit-single-forum"
-                ),
+                )
             );
 
        
