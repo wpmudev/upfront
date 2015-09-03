@@ -4891,7 +4891,7 @@ a.upfront-region-name-edit-trigger:before {
   position: fixed;
   top: 46px;
   left: 0;
-  z-index: 100000000000000000;
+  z-index: 10000000;
   bottom: 0;
   background-color: #334454;
   border-right: 1px solid #334454;
@@ -5030,6 +5030,8 @@ a.upfront-region-name-edit-trigger:before {
   border: 1px solid #b8cfe6;
   border-radius: 2px;
   border-top: 0 none;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
   display: none; }
 
 .menu-item-editor input, .menu-item-editor label {
@@ -5046,6 +5048,11 @@ a.upfront-region-name-edit-trigger:before {
   color: #2f475f;
   border-radius: 2px;
   position: relative; }
+
+.menu-item-expanded .menu-item-header {
+  border-bottom: 0 none;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0; }
 
 .menu-item-header:before {
   content: '';
@@ -5110,6 +5117,20 @@ a.upfront-region-name-edit-trigger:before {
   border-radius: 3px;
   border: 1px solid #a2bfda;
   cursor: pointer; }
+
+.menu-item-editor .menu-item-entry-display {
+  display: block; }
+
+.menu-item-editor .menu-item-entry-input {
+  color: #00dc8d;
+  line-height: 17px;
+  padding: 0 8px;
+  cursor: pointer;
+  border-radius: 2px;
+  background: #2f475f; }
+
+.menu-item-target-label {
+  margin-top: 17px; }
 
 /* ----- Save As dialog ----- */
 #upfront-save-dialog-background {

@@ -7,7 +7,8 @@
 			<input type="text" class="menu-item-external-input" value="{{url}}" placeholder="Type link URL" >
 		{[ } ]}
 		{[if(type == 'entry') { ]}
-			<a class="menu-item-entry-input" title="{{Upfront.Settings.l10n.global.content.change_link}}"  href="#">{{(!url || url=='' || url=='http://') ? 'Select' : url}}</a>
+			<span class="menu-item-entry-display">{{url}}</span>
+			<span class="menu-item-entry-input" >Edit Link</span>
 		{[ } ]}
 		{[if(type == 'anchor') { ]}
 		<div class="anchor-selector">
@@ -25,6 +26,9 @@
 						<label>Create lightbox</label>
 						<input type="text" name="menu-item-lightbox-input" class="menu-item-lightbox-input upfront-field upfront-field-text upfront-field-empty" value="" placeholder="{{Upfront.Settings.l10n.global.content.lightbox_name}}" />
 				</div>
+		{[ } ]}
+		{[if(type !== 'lightbox' && type !== 'anchor') { ]}
+			<label class="menu-item-target-label">Link Opens In:</label>
 		{[ } ]}
 	</div>
 </form>

@@ -93,6 +93,10 @@ define([
 				this.renderLightBoxesSelect();
 			}
 
+			if (this.type !== 'anchor' && this.type !== 'anchor') {
+				this.renderLinkTargetSelect();
+			}
+
 			return this;
 		},
 
@@ -117,6 +121,24 @@ define([
 			this.$el.find('.item-links-to-label').after(this.typeSelect.el);
 		},
 
+		renderLinkTargetSelect: function() {
+			var me = this;
+
+			var targetSelect = new Upfront.Views.Editor.Field.Select({
+				label: '',
+				values: [
+					{ value: '', label: 'Same Browser Tab' },
+					{ value: '_blank', label: 'New Browser Tab' }
+				],
+				default_value: this.model.get('menu-item-target'),
+				change: function (value) {
+					me.onTargetChange(value);
+				}
+			});
+
+			targetSelect.render();
+			this.$el.find('.menu-item-target-label').after(targetSelect.el);
+		},
 
 		/**
 		 * Determine proper link type select value/label based on link type. Used
@@ -161,7 +183,6 @@ define([
 			);
 		},
 
-
 		saveItem: function() {
 			Upfront.Util.post({
 				action: 'upfront_update_single_menu_item',
@@ -181,6 +202,11 @@ define([
 				this.showPagePostSelector();
 			}
 			this.$el.parent().find('.menu-item-type').first().text(this.getLinkTypeLabel(value));
+		},
+
+		onTargetChange: function(value) {
+			this.model.set({'menu-item-target': value});
+			this.saveItem();
 		},
 
 		renderAnchorSelect: function() {
