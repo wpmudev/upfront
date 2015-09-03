@@ -457,7 +457,7 @@ define([
 				img;
 
 			this.setupBySize();
-
+			
 			if(!this.temporaryProps || !this.temporaryProps.size) {
 				this.temporaryProps = {
 					size: props.size,
@@ -513,6 +513,12 @@ define([
 				size = props.size;
 				img = render.find('img');
 				props = this.temporaryProps;
+				
+				var newElementSize = this.update_style();
+			
+				if(newElementSize) {
+					elementSize = newElementSize;
+				}
 
 				// Let's load the full image to improve resizing
 				render.find('.upfront-image-container').css({
@@ -540,6 +546,25 @@ define([
 
 			return rendered;
 		},
+		
+		update_style: function() {
+			var elementSize = this.property('element_size'),
+				$container = this.$el.find('.upfront-image-container'),
+				props = this.get_preset_properties();
+			
+			if(props.imagestyle === "square") {
+				elementSize = {
+					height: elementSize.width,
+					width: elementSize.width
+				};
+				
+				this.property('element_size', elementSize);
+				
+				return elementSize;
+			}
+			
+			return false;
+		},
 
 		on_render: function() {
 			var me = this,
@@ -559,6 +584,12 @@ define([
 				this.$('a').addClass('js-uimage-open-lightbox');
 			}
 
+			var newElementSize = this.update_style();
+			
+			if(newElementSize) {
+				elementSize = newElementSize;
+			}
+			
 			if (this.isThemeImage() && !Upfront.themeExporter) {
 				this.$el.addClass('image-from-theme');
 				this.$el.find('b.upfront-entity_meta').after('<div class="swap-image-overlay"><p class="upfront-icon upfront-icon-swap-image"><span>Click to </span>Swap Image</p></div>');
@@ -579,8 +610,7 @@ define([
 				}
 				return;
 			}
-
-
+			
 			if (this.property('quick_swap')) { // Do not show image controls for swappable images.
 				return false;
 			}

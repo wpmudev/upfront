@@ -44,10 +44,11 @@ define([
 								custom_class: 'image_style',
 								label: l10n.settings.image_style_info,
 								fields: {
-									name: 'image-style'
+									name: 'imagestyle'
 								},
 								values: [
-									{ label: "Default", value: 'default', icon: 'contact-above-field' },
+									{ label: "Default", value: 'default' },
+									{ label: "Square", value: 'square' },
 								]
 							}
 						},
