@@ -29,6 +29,8 @@ define([
 					'use_captions': '',
 					'caption-position-value': 'nocaption',
 					'caption-trigger': 'hover_show',
+					'caption-position': 'over_image',
+					'caption-alignment': 'bottom',
 					'id': 'default',
 					'name': l10n.default_preset
 				},
