@@ -48,3 +48,5 @@ div.nav-preset-<?php echo $properties['id'] ?> ul.menu > li.menu-item > a:focus 
 		<?php if(!empty($properties['static-line-height'])) { ?>line-height: <?php echo $properties['static-line-height']  ?>;<?php } ?>
 	<?php } ?>
 }
+
+<?php if(!empty($properties['preset_style'])) { ?><?php echo $properties['preset_style'] ?><?php } ?>
