@@ -99,6 +99,7 @@ text!scripts/upfront/settings/modules/menu-structure/menu-item-editor.tpl
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/settings/modules/menu-structure/menu-item-editor.js
 text!scripts/upfront/settings/modules/menu-structure/menu-item.tpl
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/settings/modules/menu-structure/menu-item.js
+text!scripts/upfront/settings/modules/menu-structure/menu-structure.tpl
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/settings/modules/menu-structure.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/elements/upfront-newnavigation/js/settings/menu-style.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/settings/module-factory.js

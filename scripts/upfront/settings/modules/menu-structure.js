@@ -1,8 +1,9 @@
 (function ($) {
 define([
 	'elements/upfront-newnavigation/js/menu-util',
-	'scripts/upfront/settings/modules/menu-structure/menu-item'
-], function(MenuUtil, MenuStructureItem) {
+	'scripts/upfront/settings/modules/menu-structure/menu-item',
+	'text!scripts/upfront/settings/modules/menu-structure/menu-structure.tpl'
+], function(MenuUtil, MenuStructureItem, tpl) {
 	var l10n = Upfront.Settings.l10n.preset_manager;
 
 	var MenuStructureModule = Backbone.View.extend({
@@ -11,7 +12,8 @@ define([
 
 		events: {
 			'mouseenter .menu-item-header': 'enableSorting',
-			'mouseout .menu-item-header': 'disableSorting'
+			'mouseout .menu-item-header': 'disableSorting',
+			'click .add-menu-item': 'addItem'
 		},
 
 		initialize: function(options) {
@@ -21,6 +23,19 @@ define([
 			this.menu = MenuUtil.getMenuById(this.menuId);
 			this.menuItems = [];
 			this.menuItemViews = [];
+
+			this.$el.sortable({
+				axis: "y",
+				items: '.menu-structure-module-item',
+				start: function(event, ui) {
+					me.watchItemDepth(ui.item);
+				},
+				stop: function(event, ui) {
+					me.stopWatchingItemDepth(ui.item);
+					me.updateItemsPosition(ui.item);
+				},
+			});
+			this.disableSorting();
 
 			Upfront.Util.post({"action": "upfront_new_load_menu_array", "data": this.menuId})
 				.success(function (response) {
@@ -38,32 +53,18 @@ define([
 				})
 			;
 		},
+
 		render: function() {
-			var me = this;
+			var me = this,
+				$body;
 
-			this.$el.html('<div class="menu-structure-header"><span class="upfront-settings-item-title">MENU STRUCTURE</span><span class="add-menu-item">Add item</span></div>');
+			this.$el.html(tpl);
 
-			if (_.isEmpty(this.menuItems)) {
-				this.$el.html('Loading...');
-				return;
-			}
+			$body = this.$el.find('.menu-structure-body');
 
 			_.each(this.menuItemViews, function(view) {
-				this.$el.append(view.render().el);
-			}, this);
-
-			this.$el.sortable({
-				axis: "y",
-				items: '.menu-structure-module-item',
-				start: function(event, ui) {
-					me.watchItemDepth(ui.item);
-				},
-				stop: function(event, ui) {
-					me.stopWatchingItemDepth(ui.item);
-					me.updateItemsPosition(ui.item);
-				},
+				$body.append(view.render().el);
 			});
-			this.disableSorting();
 		},
 
 		enableSorting: function() {
@@ -204,6 +205,47 @@ define([
 						Upfront.Util.log('Failed saving menu items.');
 					}
 				);
+		},
+
+		addItem: function() {
+			var me = this,
+				newItem = {
+					'menu-item-object': 'custom',
+					'menu-item-parent-id': 0,
+					'menu-item-position': 1,
+					'menu-item-target': '',
+					'menu-item-title': 'New Item',
+					'menu-item-type': 'custom',
+					'menu-item-url': ''
+				};
+
+			Upfront.Util.post({
+				action: 'upfront_update_single_menu_item',
+				menuId: this.menuId,
+				menuItemData: newItem
+			}).done(
+					function(response) {
+						newItem['menu-item-db-id'] = response.data.itemId;
+						newItem['menu-item-object-id'] = response.data.itemId + '';
+						me.menuItemViews.unshift(new MenuStructureItem({
+							model: new Backbone.Model(newItem),
+							menuId: me.menuId
+						}));
+						me.render();
+
+						// Gotta do this to save item now with id to make it published
+						Upfront.Util.post({
+							action: 'upfront_update_single_menu_item',
+							menuId: me.menuId,
+							menuItemData: newItem
+						});
+					}
+				).fail(
+					function(response) {
+						Upfront.Util.log('Failed saving menu items.');
+					}
+				);
+
 		},
 
 		save_fields: function() {

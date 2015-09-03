@@ -526,8 +526,10 @@ class Upfront_newMenuSetting extends Upfront_Server {
 			$this->_out(new Upfront_JsonResponse_Error('cant update item'));
 		}
 
-		wp_update_nav_menu_item($menuId, $item_data['menu-item-db-id'], $item_data);
-		$this->_out(new Upfront_JsonResponse_Success('success'));
+		if (!isset($item_data['menu-item-db-id'])) $item_data['menu-item-db-id'] = 0;
+
+		$itemId = wp_update_nav_menu_item($menuId, $item_data['menu-item-db-id'], $item_data);
+		$this->_out(new Upfront_JsonResponse_Success(array('itemId' => $itemId)));
 	}
 }
 
