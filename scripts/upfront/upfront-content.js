@@ -158,9 +158,9 @@ define("content", deps, function(postTpl, ContentTools) {
 				}
 			;
 
-			_.each(wrappers, function(wrapper){
+			_.each(wrappers, function(wrapper, w){
 				wrapper.objectsLength = wrapper.objects.length;
-				_.each(wrapper.objects, function(object){
+				_.each(wrapper.objects, function(object, o){
 
 					var attributes = options && options[object.slug] && options[object.slug].attributes ? options[object.slug].attributes : {},
 						attrs = ''
@@ -172,8 +172,13 @@ define("content", deps, function(postTpl, ContentTools) {
 					layout.attributes[object.slug] = attrs;
 					layout.extraClasses[object.slug] = options && options[object.slug] && options[object.slug].extraClasses ? options[object.slug].extraClasses : '';
 
-					if ( object.slug in me.parts.classes && me.parts.classes[object.slug] && me.parts.classes[object.slug].length )
+					if ( object.slug in me.parts.classes && me.parts.classes[object.slug] && me.parts.classes[object.slug].length ) {
 						layout.extraClasses[object.slug] = me.parts.classes[object.slug].join(' ');
+					}
+					
+					if ( object.classes.indexOf('part-module-' + object.slug) === -1 ) {
+						object.classes += ' part-module-' + object.slug;
+					}
 
 					object.markup = markupper.markup(object.slug, me.parts.replacements, me.getTemplate(object.slug));
 				});
