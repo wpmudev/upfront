@@ -45,7 +45,7 @@ define([
 	"text!upfront/templates/edit_background_area.html",
 	"text!upfront/templates/sidebar_settings_lock_area.html",
 	"text!upfront/templates/sidebar_settings_background.html",
-	"text!upfront/templates/popup.html",
+	"text!upfront/templates/modals_layout.html",
 	"text!upfront/templates/region_add_panel.html",
 	"text!upfront/templates/region_edit_panel.html",
 	"text!upfront/templates/sidebar_settings_theme_colors.html",
@@ -60,7 +60,7 @@ define([
 		"text!upfront/templates/edit_background_area.html",
 		"text!upfront/templates/sidebar_settings_lock_area.html",
 		"text!upfront/templates/sidebar_settings_background.html",
-		"text!upfront/templates/popup.html",
+		"text!upfront/templates/modals_layout.html",
 		"text!upfront/templates/region_add_panel.html",
 		"text!upfront/templates/region_edit_panel.html",
 		"text!upfront/templates/sidebar_settings_theme_colors.html",
@@ -3184,7 +3184,7 @@ define([
 
 	var ContentEditorSearch = Backbone.View.extend({
 		id: "upfront-entity_list-search",
-		searchTpl: _.template($(_Upfront_Templates.popup).find('#upfront-search-tpl').html()),
+		searchTpl: _.template($(_Upfront_Templates.modals_layout).find('#upfront-search-tpl').html()),
 		events: {
 			"click #upfront-search_action": "dispatch_search_click",
 			"keydown #upfront-list-search_input": "dispatch_search_enter"
@@ -3213,7 +3213,7 @@ define([
 	});
 
 	var ContentEditorPagination = Backbone.View.extend({
-		paginationTpl: _.template($(_Upfront_Templates.popup).find('#upfront-pagination-tpl').html()),
+		paginationTpl: _.template($(_Upfront_Templates.modals_layout).find('#upfront-pagination-tpl').html()),
 		events: {
 			"click .upfront-pagination_page-item": "handle_pagination_request",
 			"click .upfront-pagination_item-next": "handle_next",
@@ -3287,9 +3287,9 @@ define([
 
 	var ContentEditorPosts = Backbone.View.extend({
 		className: "upfront-entity_list-posts bordered-bottom",
-		postListTpl: _.template($(_Upfront_Templates.popup).find('#upfront-post-list-tpl').html()),
-		postSingleTpl: _.template($(_Upfront_Templates.popup).find('#upfront-post-single-tpl').html()),
-		paginationTpl: _.template($(_Upfront_Templates.popup).find('#upfront-pagination-tpl').html()),
+		postListTpl: _.template($(_Upfront_Templates.modals_layout).find('#upfront-post-list-tpl').html()),
+		postSingleTpl: _.template($(_Upfront_Templates.modals_layout).find('#upfront-post-single-tpl').html()),
+		paginationTpl: _.template($(_Upfront_Templates.modals_layout).find('#upfront-pagination-tpl').html()),
 		events: {
 			"click #upfront-list-meta .upfront-list_item-component": "handle_sort_request",
 			//"click .editaction.edit": "handle_post_edit",
@@ -3410,9 +3410,9 @@ define([
 			"click .editaction.view": "handle_post_view",
 		},
 		currentPage: false,
-		pageListTpl: _.template($(_Upfront_Templates.popup).find('#upfront-page-list-tpl').html()),
-		pageListItemTpl: _.template($(_Upfront_Templates.popup).find('#upfront-page-list-item-tpl').html()),
-		pagePreviewTpl: _.template($(_Upfront_Templates.popup).find('#upfront-page-preview-tpl').html()),
+		pageListTpl: _.template($(_Upfront_Templates.modals_layout).find('#upfront-page-list-tpl').html()),
+		pageListItemTpl: _.template($(_Upfront_Templates.modals_layout).find('#upfront-page-list-item-tpl').html()),
+		pagePreviewTpl: _.template($(_Upfront_Templates.modals_layout).find('#upfront-page-preview-tpl').html()),
 		allTemplates: [],
 		render: function () {
 			var pages = this.collection.getPage(this.collection.pagination.currentPage);//this.collection.where({'post_parent': 0});
@@ -3570,8 +3570,8 @@ define([
 			"click .comment-edit-box": "stop_propagation"
 		},
 		excerptLength: 60,
-		commentsTpl: _.template($(_Upfront_Templates.popup).find('#upfront-comments-tpl').html()),
-		commentTpl: _.template($(_Upfront_Templates.popup).find('#upfront-comment-single-tpl').html()),
+		commentsTpl: _.template($(_Upfront_Templates.modals_layout).find('#upfront-comments-tpl').html()),
+		commentTpl: _.template($(_Upfront_Templates.modals_layout).find('#upfront-comment-single-tpl').html()),
 		initialize: function(options){
 			this.collection.on('change', this.renderComment, this);
 			this.collection.on('add', this.addComment, this);
@@ -5943,7 +5943,7 @@ var ThemeFontListItem = Backbone.View.extend({
 		'click': 'on_click',
 		'click .delete': 'on_delete'
 	},
-	template: $(_Upfront_Templates.popup).find('#theme-font-list-item').html(),
+	template: $(_Upfront_Templates.modals_layout).find('#theme-font-list-item').html(),
 	render: function() {
 		this.$el.html(_.template(this.template, {
 			family: this.model.get('font').family,
@@ -5966,7 +5966,7 @@ var ThemeFontListItem = Backbone.View.extend({
 
 var ThemeFontsPanel = Backbone.View.extend({
 	className: 'theme-fonts-panel panel',
-	template: _.template($(_Upfront_Templates.popup).find('#theme-fonts-panel').html()),
+	template: _.template($(_Upfront_Templates.modals_layout).find('#theme-fonts-panel').html()),
 	initialize: function(options) {
 		this.options = options || {};
 		this.listenTo(this.collection, 'add remove', this.update_stats);
@@ -6053,7 +6053,7 @@ var Font_Variants_Preview = Backbone.View.extend({
 var Icon_Fonts_Manager = Backbone.View.extend({
 	id: 'icon-fonts-manager',
 	className: 'clearfix',
-	template: _.template($(_Upfront_Templates.popup).find('#icon-fonts-manager-tpl').html()),
+	template: _.template($(_Upfront_Templates.modals_layout).find('#icon-fonts-manager-tpl').html()),
 
 	events: {
 		'click .upload-icon-font': 'triggerFileChooser',
@@ -6187,7 +6187,7 @@ var Icon_Fonts_Manager = Backbone.View.extend({
 var Text_Fonts_Manager = Backbone.View.extend({
 	id: 'text-fonts-manager',
 	className: 'clearfix',
-	template: _.template($(_Upfront_Templates.popup).find('#text-fonts-manager-tpl').html()),
+	template: _.template($(_Upfront_Templates.modals_layout).find('#text-fonts-manager-tpl').html()),
 	events: {
 		'click .add-font-button': 'add_font',
 		'click .preview-size-p': 'on_p_click',
@@ -6467,7 +6467,7 @@ var Insert_Font_Widget = Backbone.View.extend({
 var CSSEditor = Backbone.View.extend({
 	className: 'upfront-ui',
 	id: 'upfront-csseditor',
-	tpl: _.template($(_Upfront_Templates.popup).find('#csseditor-tpl').html()),
+	tpl: _.template($(_Upfront_Templates.modals_layout).find('#csseditor-tpl').html()),
 	prepareAce: false,
 	ace: false,
 	events: {
@@ -7253,7 +7253,7 @@ var CSSEditor = Backbone.View.extend({
 var GeneralCSSEditor = Backbone.View.extend({
 	className: 'upfront-ui',
 	id: 'upfront-general-csseditor',
-	tpl: _.template($(_Upfront_Templates.popup).find('#csseditor-tpl').html()),
+	tpl: _.template($(_Upfront_Templates.modals_layout).find('#csseditor-tpl').html()),
 	prepareAce: false,
 	ace: false,
 	events: {
@@ -7724,7 +7724,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		timer: false,
 		timeoutTime: 5000,
 		$notice: false,
-		tpl: _.template($(_Upfront_Templates.popup).find('#upfront-notifier-tpl').html()),
+		tpl: _.template($(_Upfront_Templates.modals_layout).find('#upfront-notifier-tpl').html()),
 		initialize: function(options){
 			this.notices.on('add', this.messageAdded, this);
 			this.notices.on('remove', this.messageRemoved, this);
@@ -7809,8 +7809,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 	});
 
 	var PostSelector = Backbone.View.extend({
-		postTypeTpl: _.template($(_Upfront_Templates.popup).find('#selector-post_type-tpl').html()),
-		postListTpl: _.template($(_Upfront_Templates.popup).find('#selector-post-tpl').html()),
+		postTypeTpl: _.template($(_Upfront_Templates.modals_layout).find('#selector-post_type-tpl').html()),
+		postListTpl: _.template($(_Upfront_Templates.modals_layout).find('#selector-post-tpl').html()),
 		postType: 'post',
 		posts: [],
 		pagination: false,

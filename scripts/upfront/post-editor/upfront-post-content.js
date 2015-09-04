@@ -212,7 +212,7 @@ var PostContentEditor = Backbone.View.extend({
 			datepickerData.currentHour = date.getHours();
 			datepickerData.currentMinute = date.getHours();
 
-			this.datepickerTpl = _.template($(Upfront.data.tpls.popup).find('#datepicker-tpl').html());
+			this.datepickerTpl = _.template($(Upfront.data.tpls.modals_layout).find('#datepicker-tpl').html());
 			this.$el.prepend(this.datepickerTpl(datepickerData));
 
 			this.datepicker = this.$('.upfront-bar-datepicker');
@@ -810,7 +810,7 @@ var MicroSelect = Backbone.View.extend({
             return this.tpl;
 
         if(Upfront.data && Upfront.data.tpls)
-            return _.template($(Upfront.data.tpls.popup).find('#microselect-tpl').html());
+            return _.template($(Upfront.data.tpls.modals_layout).find('#microselect-tpl').html());
         return false;
     }
 });

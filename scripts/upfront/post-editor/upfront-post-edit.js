@@ -31,7 +31,7 @@ var Box = Backbone.View.extend({
         this.urlEditor = new PostUrlEditor( { post: this.post } );
 
         this.tpl = _.template($(editionBox_tpl).find("#ueditor-box-main").html());
-        this.datepickerTpl = _.template($(Upfront.data.tpls.popup).find('#datepicker-tpl').html());
+        this.datepickerTpl = _.template($(Upfront.data.tpls.modals_layout).find('#datepicker-tpl').html());
         Upfront.Events.trigger('upfront:element:edit:start', 'write', this.post);
 
         Upfront.Events.on("upfront:element:edit:stop", this.element_stop_prop, this);

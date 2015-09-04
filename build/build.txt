@@ -49,7 +49,7 @@ text!upfront/templates/overlay_grid.html
 text!upfront/templates/edit_background_area.html
 text!upfront/templates/sidebar_settings_lock_area.html
 text!upfront/templates/sidebar_settings_background.html
-text!upfront/templates/popup.html
+text!upfront/templates/modals_layout.html
 text!upfront/templates/region_add_panel.html
 text!upfront/templates/region_edit_panel.html
 text!upfront/templates/sidebar_settings_theme_colors.html
