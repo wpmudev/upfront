@@ -369,7 +369,9 @@ class Upfront_ThisPostView extends Upfront_Object {
 				if (empty($layout['wrappers'][$i]['classes'])) $layout['wrappers'][$i]['classes'] = '';
 				$layout['wrappers'][$i]['classes'] .= ' ' . join(' ', $markups['classes']);
 				
-				$layout['wrappers'][$i]['objects'][$k]['classes'] .= ' part-module-' . $o['slug'];
+				if (strpos($layout['wrappers'][$i]['objects'][$k]['classes'], 'part-module-' . $o['slug']) === false) {
+					$layout['wrappers'][$i]['objects'][$k]['classes'] .= ' part-module-' . $o['slug'];
+				}
 				
 				$attributes = '';
 				if(isset($opts['attributes'])){
