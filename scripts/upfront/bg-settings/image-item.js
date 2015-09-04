@@ -33,6 +33,7 @@ define([
 					bg_style: new Upfront.Views.Editor.Field.Select({
 						model: this.model,
 						label: l10n.image_type,
+						className: 'upfront-field-wrap upfront-field-wrap-select background-image-field',
 						property: 'background_style',
 						use_breakpoint_property: true,
 						default_value: 'full',

@@ -3775,6 +3775,9 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-region-bg-slider-image:hover .upfront-region-bg-slider-delete-image {
   display: block; }
 
+.background-type-field .upfront-field-select, .background-image-field .upfront-field-select {
+  max-width: 130px; }
+
 #settings {
   position: fixed;
   left: 0;
