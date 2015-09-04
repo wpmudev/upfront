@@ -550,8 +550,8 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 			});
 
 			if (wrapper) {
-				//wrapper.objects.push(object);
-				wrapper.objects = [object];
+				wrapper.objects.push(object);
+				//wrapper.objects = [object];
 			} else {
 				wrapper = {objects: [object]};
 				layout.push(wrapper);
