@@ -19,10 +19,13 @@ define([
 		initialize: function(options) {
 			var me = this;
 			this.options = options || {};
-			this.menuId = this.model.get_property_value_by_name('menu_id');
-			this.menu = MenuUtil.getMenuById(this.menuId);
-			this.menuItems = [];
-			this.menuItemViews = [];
+
+			this.listenTo(this.model.get('properties'), 'change', function() {
+				me.setup();
+				me.render();
+			});
+
+			this.setup();
 
 			this.$el.sortable({
 				axis: "y",
@@ -36,6 +39,15 @@ define([
 				},
 			});
 			this.disableSorting();
+		},
+
+		setup: function() {
+			var me = this;
+
+			this.menuId = this.model.get_property_value_by_name('menu_id');
+			this.menu = MenuUtil.getMenuById(this.menuId);
+			this.menuItems = [];
+			this.menuItemViews = [];
 
 			Upfront.Util.post({"action": "upfront_new_load_menu_array", "data": this.menuId})
 				.success(function (response) {
