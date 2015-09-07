@@ -307,23 +307,24 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		}
 		$content_settings = json_encode($content_settings);
 
-        /**
-         * Redactor font icons
-         *
-         *
-         */
+		/**
+		 * Redactor font icons
+		 *
+		 *
+		 */
 
-        // get default font
-        $redactor_font_icons = $this->_get_default_font_icons();
+		// get default font
+		$redactor_font_icons = $this->_get_default_font_icons();
 
-        $redactor_font_icons = apply_filters(
-            'upfront_get_editor_font_icons',
-            $redactor_font_icons,
-            array(
-                'json' => true
-            )
-        );
+		$redactor_font_icons = apply_filters(
+			'upfront_get_editor_font_icons',
+			$redactor_font_icons,
+			array(
+				'json' => true
+			)
+		);
 
+		$menus = json_encode(wp_get_nav_menus());
 
 		$main = <<<EOMainJs
 // Set up the global namespace
@@ -356,7 +357,8 @@ Upfront.mainData = {
 	content: {$content},
 	content_settings: {$content_settings},
 	l10n: {$l10n},
-	font_icons: {$redactor_font_icons}
+	font_icons: {$redactor_font_icons},
+	menus: {$menus}
 };
 EOMainJs;
 		$this->_out(new Upfront_JavascriptResponse_Success($main));

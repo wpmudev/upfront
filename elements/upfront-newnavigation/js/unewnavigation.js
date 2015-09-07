@@ -41,9 +41,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		this.listenTo(this.model, "preset:updated", this.preset_updated);
 
 		// get all menus
-		this.getMenus();
 		var menu_id = this.model.get_property_value_by_name('menu_id');
-		MenuUtil.set({model_true:false, menu_id: menu_id});
 
 		// call this function on allow_new_pages change
 		if (!!this.model.get_property_by_name('allow_new_pages')) {
@@ -359,24 +357,6 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			);
 		}
 	},
-	getMenus: function(){
-		var me = this;
-		// Ajax call for Menu list
-		//console.log('ajax call to get list of menus');
-		Upfront.Util.post({"action": "upfront_new_load_menu_list"})
-			.success(function (ret) {
-				me.existingMenus = ret.data;
-				var values = _.map(ret.data, function (each, index) {
-					return  {label: each.name, value: each.term_id};
-				});
-				MenuUtil.setMenuList(values);
-				if(!me.property('menu_id')) me.display_menu_list();
-			})
-			.error(function (ret) {
-				Upfront.Util.log("Error loading menu list");
-			})
-		;
-	},
 	display_menu_list: function () {
 		var me = this,
 			menuItemsValues = [{label:l10n.choose_existing_menu, value: 0}],
@@ -453,8 +433,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			me.$el.parent().parent().parent().draggable('enable');
 			if(me.$el.find('div.upfront-object-content > div.existing_menu_list input:checked').val() != 0) {
 				var id = me.$el.find('div.upfront-object-content > div.existing_menu_list input:checked').val();
-				me.property('menu_id', id);
-				me.property('menu_slug', _.findWhere(me.existingMenus, {term_id: id}).slug, true);
+				me.property('menu_id', id, true);
+				me.property('menu_slug', MenuUtil.getMenuSlugById(id));
 			}
 		});
 	},
@@ -464,7 +444,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		var newMenu = Upfront.Util.post({"action": "upfront_new_create_menu", "menu_name": MenuName})
 			.success(function (ret) {
 				me.property('menu_slug', ret.data.slug, true);
-				me.property('menu_id', ret.data.id);
+				me.property('menu_id', ret.data.term_id);
 				Upfront.Events.trigger("menu_element:menu_created", ret.data);
 			})
 			.error(function (ret) {

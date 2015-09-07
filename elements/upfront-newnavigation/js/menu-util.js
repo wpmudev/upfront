@@ -1,64 +1,33 @@
 define([], function () {
 	var l10n = Upfront.Settings.l10n.newnavigation_element;
 
-	var CurrentMenuItemData = Backbone.Model.extend({
-		defaults: {
-			'id':  false,
-			'name':  false,
-			'url':  false,
-			'model_true':  true,
-			"menu_id":     false,
-			"menuList":    false
-		}
-	});
-
 	var MenuUtil = function() {
 		var self = this;
-		var currentMenuItemData = new CurrentMenuItemData();
-		var menus;
+		// Array of wp menus with all data
+		var menus = Upfront.mainData.menus;
+		// Array of {label: "Menu Name", value: "42"} items
+		var menuList = _.map(menus, function (menu, index) {
+			return  {label: menu.name, value: menu.term_id};
+		});
 
 		Upfront.Events.on('menu_element:menu_created', function(menuData) {
-			menus.push({name: menuData.slug, term_id: menuData.id});
-			var menuList = currentMenuItemData.get('menuList');
-			menuList.push({label: menuData.slug, value: menuData.id});
+			menuData.term_id = menuData.term_id + '';
+			menus.push(menuData);
+			menuList.unshift({label: menuData.slug, value: menuData.term_id});
 		});
-
-		// Initialize menu list
-		Upfront.Util.post({"action": "upfront_new_load_menu_list"})
-			.success(function (ret) {
-				menus = ret.data;
-				var values = _.map(ret.data, function (menu, index) {
-					return  {label: menu.name, value: menu.term_id};
-				});
-				self.setMenuList(values);
-			})
-		.error(function (ret) {
-			Upfront.Util.log("Error loading menu list");
-		});
-
-		this.setMenus = function(newMenus) {
-			menus = newMenus;
-		},
-
-		this.getMenuSlugById = function(id) {
-			return _.findWhere(menus, {term_id: id}).slug;
-		};
 
 		this.getMenuById = function(id) {
-			return _.findWhere(menus, {term_id: id});
+			var menu = _.findWhere(menus, {term_id: id});
+			if (_.isUndefined(menu)) _.findWhere(menus, {term_id: id + ''})
+			return menu;
+		};
+
+		this.getMenuSlugById = function(id) {
+			return this.getMenuById(id).slug;
 		};
 
 		this.getMenuList = function() {
-			var menuList = currentMenuItemData.get('menuList');
 			return menuList;
-		};
-
-		this.setMenuList = function(values) {
-			currentMenuItemData.set({menuList: values});
-		};
-
-		this.set = function(options) {
-			currentMenuItemData.set(options);
 		};
 	};
 
