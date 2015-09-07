@@ -8545,6 +8545,10 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap {
 .upfront-image_module .ulinkpanel-dark, .upfront-gallery .ulinkpanel-dark, .upfront-slider_module .ulinkpanel-dark {
   min-width: 180px; }
 
+.link-panel-lightbox-trigger {
+  color: #00db8f;
+  font-size: 12px; }
+
 /* ----- New Editor bar ----- */
 .upfront-postcontent-editor {
   z-index: 3; }

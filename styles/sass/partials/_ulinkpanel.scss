@@ -186,7 +186,7 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 	float: none;
 }
 
-.ulinkpanel form > :first-child, 
+.ulinkpanel form > :first-child,
 .ulinkpanel-dark form > :first-child {
 	margin-top: 0;
 }
@@ -223,4 +223,8 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 .upfront-gallery .ulinkpanel-dark,
 .upfront-slider_module .ulinkpanel-dark {
 	min-width:180px;
+}
+.link-panel-lightbox-trigger {
+	color: #00db8f;
+	font-size: 12px;
 }

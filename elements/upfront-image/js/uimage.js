@@ -35,7 +35,6 @@ define([
 				'click a.upfront-image-select': 'openImageSelector',
 				'click div.upfront-quick-swap': 'openImageSelector',
 				'dblclick .wp-caption': 'editCaption',
-				'click .js-uimage-open-lightbox': 'openLightboxRegion',
 				'click .swap-image-overlay': 'openImageSelector'
 			});
 			this.delegateEvents();
@@ -460,7 +459,7 @@ define([
 			props.gifImage = '';
 			props.gifLeft = 0;
 			props.gifTop = 0;
-			
+
 			/* Commented to allow caption below image to have background
 			if (props.caption_position === 'below_image') {
 				props.captionBackground = false;
@@ -756,14 +755,14 @@ define([
 			});
 			this.$('.uimage').css('min-height', 'auto');
 		},
-		
+
 		updateBreakpointPadding: function(breakpointColumnPadding) {
 			var image_el = this.$el.find('.upfront-image');
-			
+
 			if(image_el.css("padding") !== "") {
 				return parseInt(image_el.css("padding"), 10);
 			}
-			
+
 			return breakpointColumnPadding;
 		},
 
@@ -1068,7 +1067,7 @@ define([
 			}
 
 		},
-		
+
 		applyElementSize: function () {
 			var me = this,
 				parent = this.parent_module_view.$('.upfront-editable_entity:first'),
@@ -1089,7 +1088,7 @@ define([
 		openImageSelector: function(e){
 			var me = this;
 			if (e && e.preventDefault) e.preventDefault();
-			
+
 			Upfront.Views.Editor.ImageSelector.open({
 				multiple_sizes: false,
 			}).done(function(images){
@@ -1223,22 +1222,6 @@ define([
 					}
 				})
 			;
-		},
-
-		openLightboxRegion: function(e){
-			if(e) {
-				e.preventDefault();
-			}
-
-			var link = e.currentTarget,
-				href = link.href.split('#')
-			;
-
-			if(href.length !== 2) {
-				return;
-			}
-
-			Upfront.Application.LayoutEditor.openLightboxRegion(href[1]);
 		},
 
 		cleanup: function(){
