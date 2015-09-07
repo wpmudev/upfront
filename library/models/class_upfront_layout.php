@@ -68,8 +68,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 	}
 
 	public static function from_php ($data, $storage_key = '') {
-		if ( isset($data['layout']) )
-			self::$cascade = $data['layout'];
+		if ( isset($data['layout']) ) self::$cascade = $data['layout'];
 		self::set_storage_key($storage_key);
 		return new self($data);
 	}
@@ -116,6 +115,9 @@ class Upfront_Layout extends Upfront_JsonModel {
 		return self::from_php($data, $storage_key);
 	}
 
+	/**
+	 * Load up a theme layout from files, and also go with a fallback.
+	 */
 	public static function from_files ($data, $cascade, $storage_key=false) {
 		$new_data = apply_filters('upfront_override_layout_data', $data, $cascade);
 		if ((empty($new_data) && empty($data)) || json_encode($new_data) == json_encode($data)) {
@@ -147,6 +149,13 @@ class Upfront_Layout extends Upfront_JsonModel {
 		// is to fix augment_regions to not re-import images every time page reloads.
 		if (!function_exists('upfront_exporter_is_running') || !upfront_exporter_is_running()) {
 		  $data = apply_filters('upfront_augment_theme_layout', $data);
+		}
+
+		// Loading from files should be the only place where we deal with data from exporter files,
+		// which means this is where we expand exporter macros.
+		if (!empty($data)) {
+			$codec = new Upfront_MacroCodec_LayoutData();
+			$data = $codec->expand_all($data);
 		}
 
 		return self::from_php($data, $storage_key);
@@ -185,6 +194,13 @@ class Upfront_Layout extends Upfront_JsonModel {
 		// is to fix augment_regions to not re-import images every time page reloads.
 		if (!function_exists('upfront_exporter_is_running') || !upfront_exporter_is_running()) {
 		  $data = apply_filters('upfront_augment_theme_layout', $data);
+		}
+
+		// Loading from files should be the only place where we deal with data from exporter files,
+		// which means this is where we expand exporter macros.
+		if (!empty($data)) {
+			$codec = new Upfront_MacroCodec_LayoutData();
+			$data = $codec->expand_all($data);
 		}
 
 		return self::from_php($data, $storage_key);
@@ -257,7 +273,6 @@ class Upfront_Layout extends Upfront_JsonModel {
 		);
 		return self::from_php(apply_filters('upfront_create_default_layout', $data, $layout_ids, self::$cascade));
 	}
-
 
 	/**
 	 * Returns a list of default, generic layouts - the predefined ones.
@@ -417,7 +432,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 	}
 
 	public function save () {
-		$key = apply_filters('upfront-model-save_key', $this->get_id(), $this);
+		$key = $this->get_id();
 
 		$scopes = array();
 		foreach ( $this->_data['regions'] as $region ){
@@ -459,14 +474,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 		}
 
 		update_option($key, $this->to_json());
-/*
-		$storage_key = self::get_storage_key();
 
-		//if layout is applied to all posts, it should be saved to the db, even though the current layout is specific to the post
-		if($storage_key . '-' . $this->_data['preferred_layout'] != $key) {
-			update_option($storage_key . '-' . $this->_data['preferred_layout'], $this->to_json());
-		}
-*/
 		return $key;
 	}
 
@@ -489,8 +497,8 @@ class Upfront_Layout extends Upfront_JsonModel {
 		return self::get_element($id, $this->_data, 'layout');
 	}
 
-	/*
-	Update an element that is already in the layout
+	/**
+	 * Update an element that is already in the layout
 	 */
 	public function set_element_data($data, $path = false){
 		$element_id = self::get_element_id($data);
@@ -512,8 +520,9 @@ class Upfront_Layout extends Upfront_JsonModel {
 
 		return $this->set_element_by_path($current['path'], $data);
 	}
-	/*
-	The path is an array with the position of the element inside the data array (region, module, object)
+	
+	/**
+	 * The path is an array with the position of the element inside the data array (region, module, object)
 	 */
 	private function get_element_by_path($path){
 		$path_size = sizeof($path);
