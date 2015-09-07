@@ -461,12 +461,10 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	create_new_menu: function(MenuName) {
 		var me = this;
 		// Ajax call for creating menu
-		//console.log('ajax call to create a menu');
 		var newMenu = Upfront.Util.post({"action": "upfront_new_create_menu", "menu_name": MenuName})
 			.success(function (ret) {
 				me.property('menu_slug', ret.data.slug, true);
 				me.property('menu_id', ret.data.id);
-				me.getMenus();
 				Upfront.Events.trigger("menu_element:menu_created", ret.data);
 			})
 			.error(function (ret) {

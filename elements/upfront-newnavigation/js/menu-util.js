@@ -20,7 +20,7 @@ define([], function () {
 		Upfront.Events.on('menu_element:menu_created', function(menuData) {
 			menus.push({name: menuData.slug, term_id: menuData.id});
 			var menuList = currentMenuItemData.get('menuList');
-			//menuList.push({label: menuData.slug, value: menuData.id});
+			menuList.push({label: menuData.slug, value: menuData.id});
 		});
 
 		// Initialize menu list
@@ -50,7 +50,6 @@ define([], function () {
 
 		this.getMenuList = function() {
 			var menuList = currentMenuItemData.get('menuList');
-			//menuList.push({label: l10n.create_new, value: -1});
 			return menuList;
 		};
 

@@ -45,9 +45,11 @@ define([
 			var me = this;
 
 			this.menuId = this.model.get_property_value_by_name('menu_id');
-			this.menu = MenuUtil.getMenuById(this.menuId);
 			this.menuItems = [];
 			this.menuItemViews = [];
+			this.menu = MenuUtil.getMenuById(this.menuId);
+
+			if (this.menuId === false) return;
 
 			Upfront.Util.post({"action": "upfront_new_load_menu_array", "data": this.menuId})
 				.success(function (response) {
@@ -71,6 +73,8 @@ define([
 				$body;
 
 			this.$el.html(tpl);
+
+			if (this.menuId === false) return;
 
 			$body = this.$el.find('.menu-structure-body');
 

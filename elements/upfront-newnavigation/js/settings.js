@@ -13,7 +13,7 @@ define([
 			var me = this;
 			this.constructor.__super__.initialize.call(this, options);
 			Upfront.Events.on('menu_element:menu_created', function(menuData) {
-				me.settings._wrapped[0].fields._wrapped[0].options.values = MenuUtil.getMenuList();
+				me.settings._wrapped[0].fields._wrapped[0].options.values = _.union([{label: l10n.create_new, value: -1}], MenuUtil.getMenuList());
 				me.settings._wrapped[0].fields._wrapped[0].render();
 				me.settings._wrapped[0].fields._wrapped[0].set_value(menuData.id);
 			});
@@ -28,11 +28,11 @@ define([
 						property: 'menu_id',
 						label: l10n.mnu.load,
 						className: 'select-menu-field',
-						values: MenuUtil.getMenuList(),
+						values: _.union([{label: l10n.create_new, value: -1}], MenuUtil.getMenuList()),
 						change: function(value, me) {
 							if (value == -1) {
 								MenuUtil.set({menu_id: false, menu_slug: false});
-								me.model.set_property('menu_slug', false);
+								me.model.set_property('menu_slug', false, true);
 								me.model.set_property('menu_id', false);
 								return;
 							}
