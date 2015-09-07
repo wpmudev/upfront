@@ -21,12 +21,13 @@ define([
 		settings: [
 			{
 				type: 'SettingsItem',
-				title: l10n.mnu.load,
+				className: 'select-menu-box select-presets',
 				fields: [
 					{
 						type: 'Select',
 						property: 'menu_id',
-						label: "",
+						label: l10n.mnu.load,
+						className: 'select-menu-field',
 						values: MenuUtil.getMenuList(),
 						change: function(value, me) {
 							if (value == -1) {
