@@ -5047,7 +5047,8 @@ a.upfront-region-name-edit-trigger:before {
   padding: 0 18px 0 8px;
   color: #2f475f;
   border-radius: 2px;
-  position: relative; }
+  position: relative;
+  cursor: pointer; }
 
 .menu-item-expanded .menu-item-header {
   border-bottom: 0 none;

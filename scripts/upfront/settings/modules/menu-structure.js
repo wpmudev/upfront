@@ -12,7 +12,7 @@ define([
 
 		events: {
 			'mouseenter .menu-item-header': 'enableSorting',
-			'mouseout .menu-item-header': 'disableSorting',
+			'mouseleave .menu-item-header': 'disableSorting',
 			'click .add-menu-item': 'addItem'
 		},
 
