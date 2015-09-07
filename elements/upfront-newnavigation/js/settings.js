@@ -37,6 +37,7 @@ define([
 							}
 							// Menu slug is dependent on menu id, update it here
 							var slug = MenuUtil.getMenuSlugById(value);
+							me.model.set_property('menu_id', value, true);
 							me.model.set_property('menu_slug', slug);
 						}
 					}
