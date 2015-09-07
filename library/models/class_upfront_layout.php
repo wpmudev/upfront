@@ -68,7 +68,8 @@ class Upfront_Layout extends Upfront_JsonModel {
 	}
 
 	public static function from_php ($data, $storage_key = '') {
-		if ( isset($data['layout']) ) self::$cascade = $data['layout'];
+		if ( isset($data['layout']) )
+			self::$cascade = $data['layout'];
 		self::set_storage_key($storage_key);
 		return new self($data);
 	}
@@ -115,9 +116,6 @@ class Upfront_Layout extends Upfront_JsonModel {
 		return self::from_php($data, $storage_key);
 	}
 
-	/**
-	 * Load up a theme layout from files, and also go with a fallback.
-	 */
 	public static function from_files ($data, $cascade, $storage_key=false) {
 		$new_data = apply_filters('upfront_override_layout_data', $data, $cascade);
 		if ((empty($new_data) && empty($data)) || json_encode($new_data) == json_encode($data)) {
@@ -149,13 +147,6 @@ class Upfront_Layout extends Upfront_JsonModel {
 		// is to fix augment_regions to not re-import images every time page reloads.
 		if (!function_exists('upfront_exporter_is_running') || !upfront_exporter_is_running()) {
 		  $data = apply_filters('upfront_augment_theme_layout', $data);
-		}
-
-		// Loading from files should be the only place where we deal with data from exporter files,
-		// which means this is where we expand exporter macros.
-		if (!empty($data)) {
-			$codec = new Upfront_MacroCodec_LayoutData();
-			$data = $codec->expand_all($data);
 		}
 
 		return self::from_php($data, $storage_key);
@@ -194,13 +185,6 @@ class Upfront_Layout extends Upfront_JsonModel {
 		// is to fix augment_regions to not re-import images every time page reloads.
 		if (!function_exists('upfront_exporter_is_running') || !upfront_exporter_is_running()) {
 		  $data = apply_filters('upfront_augment_theme_layout', $data);
-		}
-
-		// Loading from files should be the only place where we deal with data from exporter files,
-		// which means this is where we expand exporter macros.
-		if (!empty($data)) {
-			$codec = new Upfront_MacroCodec_LayoutData();
-			$data = $codec->expand_all($data);
 		}
 
 		return self::from_php($data, $storage_key);
@@ -273,6 +257,180 @@ class Upfront_Layout extends Upfront_JsonModel {
 		);
 		return self::from_php(apply_filters('upfront_create_default_layout', $data, $layout_ids, self::$cascade));
 	}
+
+/* --- Snip, snip. These 3 are to be removed --- */
+
+	public static function list_theme_layouts() {
+		$theme_slug = $_POST['stylesheet'];
+		$theme_directory = trailingslashit(get_theme_root($theme_slug)) . $theme_slug;
+		$templates_directory = trailingslashit($theme_directory) . 'layouts/';
+		// Exclude header and footer
+		$layout_files = array_diff(scandir($templates_directory), array('header.php', 'footer.php'));
+
+		$layouts = array();
+		// Classify theme layout files into layouts
+		foreach($layout_files as $layout) {
+			// We only want to use php files (excludes: ., .., .DS_STORE, etc)
+			if (strpos($layout, '.php') === false) continue;
+
+			$layout_id = str_replace('.php', '', $layout);
+			$properties = array(
+				'label' => $layout_id // provide default label
+			);
+			$properties['layout'] = array(
+				'item' => $layout_id
+			);
+
+			switch ($layout_id) {
+			case 'archive':
+				$properties['label'] = 'Archive';
+				$properties['layout']['type'] = 'archive';
+				break;
+			case 'home':
+			case 'archive-home':
+				$properties['label'] = 'Home';
+				$properties['layout']['type'] = 'archive';
+				break;
+			case 'index':
+				$properties['label'] = 'Index page';
+				$properties['layout']['type'] = 'single';
+				break;
+			case 'single-page':
+				$properties['label'] = 'Single page';
+				$properties['layout']['type'] = 'single';
+				break;
+			case 'single-post':
+				$properties['label'] = 'Single post';
+				$properties['layout']['type'] = 'single';
+				break;
+			case 'single':
+				$properties['label'] = 'Single';
+				$properties['layout']['type'] = 'single';
+				break;
+			}
+
+			if ($layout_id !== 'single' && strpos($layout_id, 'single') !== false ) {
+				$layout = str_replace('single-', '', $layout_id);
+				$properties['label'] = 'Single ' . $layout;
+				$properties['layout']['type'] = 'single';
+			}
+
+			if ($layout_id !== 'archive' && strpos($layout_id, 'archive') !== false ) {
+				$layout = str_replace('archive-', '', $layout_id);
+				$properties['label'] = 'Archive ' . $layout;
+				$properties['layout']['type'] = 'archive';
+			}
+
+			$layouts[$layout_id] = $properties;
+		}
+
+		return $layouts;
+	}
+
+	public static function list_available_layout () {
+		$saved = self::list_saved_layout();
+		$saved_keys = array_keys($saved);
+		$list = array(
+			'archive-home' => array(
+				'layout' => array(
+					'item' => 'archive-home',
+					'type' => 'archive'
+				)
+			),
+			'archive' => array(
+				'layout' => array(
+					'type' => 'archive'
+				)
+			),
+			'archive-search' => array(
+				'layout' => array(
+					'item' => 'archive-search',
+					'type' => 'archive'
+				)
+			),
+			'404' => array(
+				'layout' => array(
+					'specificity' => 'single-404_page',
+					'item' => 'single-page',
+					'type' => 'single',
+				)
+			),
+		);
+		// add singular post type
+		foreach ( get_post_types(array('public' => true, 'show_ui' => true), 'objects') as $post_type ){
+			$query = new WP_Query(array(
+				'post_type' => $post_type->name,
+				'post_status' => 'publish'
+			));
+			$query->parse_query();
+			$post = $query->post_count > 0 ?  $query->next_post() : false;
+
+			if ( $post_type->name == 'post' )
+				$list['single'] = array(
+					'layout' => array(
+						'type' => 'single'
+					),
+					'latest_post' => is_object( $post ) ?  $post->ID : null
+				);
+			else
+				$list['single-' . $post_type->name] = array(
+					'layout' => array(
+						'item' => 'single-' . $post_type->name,
+						'type' => 'single'
+					),
+					'latest_post' => is_object( $post ) ?  $post->ID : ""
+				);
+		}
+		// add taxonomy archive
+		foreach ( get_taxonomies(array('public' => true, 'show_ui' => true), 'objects') as $taxonomy ){
+			$list['archive-' . $taxonomy->name] = array(
+				'layout' => array(
+					'item' => 'archive-' . $taxonomy->name,
+					'type' => 'archive'
+				)
+			);
+		}
+		foreach ( $list as $i => $li ){
+			$list[$i]['label'] = Upfront_EntityResolver::layout_to_name($li['layout']);
+			$list[$i]['saved'] = in_array($i, $saved_keys);
+		}
+		return $list;
+	}
+
+	public static function list_saved_layout ($storage_key = '') {
+		global $wpdb;
+		self::set_storage_key($storage_key);
+		$storage_key = self::get_storage_key();
+		$layouts = $wpdb->get_results("SELECT * FROM $wpdb->options WHERE ( `option_name` LIKE '{$storage_key}-single%' OR `option_name` LIKE '{$storage_key}-archive%' )");
+		$return = array();
+		foreach ( $layouts as $layout ){
+			if ( preg_match("/^{$storage_key}-([^-]+)(-([^-]+)|)(-([^-]+)|)$/", $layout->option_name, $match) ){
+				$ids = array();
+				if ( !empty($match[3]) && !empty($match[5]) )
+					$ids['specificity'] = $match[1] . '-' . $match[3] . '-' . $match[5];
+				if ( $match[3] )
+					$ids['item'] = $match[1] . '-' . $match[3];
+				$ids['type'] = $match[1];
+				$layout_id = ( !empty($ids['specificity']) ? $ids['specificity'] : ( $ids['item'] ? $ids['item'] : $ids['type'] ) );
+				$return[$layout_id] = array(
+					'layout' => $ids,
+					'label' => Upfront_EntityResolver::layout_to_name($ids)
+				);
+				if ( $ids['type'] == 'single' ){
+					$query = new WP_Query(array(
+						'post_type' => $post_type->name,
+						'post_status' => 'publish'
+					));
+					$query->parse_query();
+					$post = $query->next_post();
+					$return[$layout_id]['latest_post'] = $post->ID;
+				}
+			}
+		}
+		return $return;
+	}
+
+/* --- Remove up to here --- */
 
 	/**
 	 * Returns a list of default, generic layouts - the predefined ones.
@@ -432,7 +590,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 	}
 
 	public function save () {
-		$key = $this->get_id();
+		$key = apply_filters('upfront-model-save_key', $this->get_id(), $this);
 
 		$scopes = array();
 		foreach ( $this->_data['regions'] as $region ){
@@ -474,7 +632,14 @@ class Upfront_Layout extends Upfront_JsonModel {
 		}
 
 		update_option($key, $this->to_json());
+/*
+		$storage_key = self::get_storage_key();
 
+		//if layout is applied to all posts, it should be saved to the db, even though the current layout is specific to the post
+		if($storage_key . '-' . $this->_data['preferred_layout'] != $key) {
+			update_option($storage_key . '-' . $this->_data['preferred_layout'], $this->to_json());
+		}
+*/
 		return $key;
 	}
 
@@ -497,8 +662,8 @@ class Upfront_Layout extends Upfront_JsonModel {
 		return self::get_element($id, $this->_data, 'layout');
 	}
 
-	/**
-	 * Update an element that is already in the layout
+	/*
+	Update an element that is already in the layout
 	 */
 	public function set_element_data($data, $path = false){
 		$element_id = self::get_element_id($data);
@@ -520,9 +685,8 @@ class Upfront_Layout extends Upfront_JsonModel {
 
 		return $this->set_element_by_path($current['path'], $data);
 	}
-	
-	/**
-	 * The path is an array with the position of the element inside the data array (region, module, object)
+	/*
+	The path is an array with the position of the element inside the data array (region, module, object)
 	 */
 	private function get_element_by_path($path){
 		$path_size = sizeof($path);
