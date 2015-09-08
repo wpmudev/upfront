@@ -4,31 +4,15 @@ define([], function () {
 	var MenuUtil = function() {
 		var self = this;
 		// Array of wp menus with all data
-		var menus = Upfront.mainData.menus;
+		var wpMenus = Upfront.mainData.menus;
 		// Array of {label: "Menu Name", value: "42"} items
-		var menuList = _.map(menus, function (menu, index) {
+		var selectMenuOptions = _.map(wpMenus, function (menu, index) {
 			return  {label: menu.name, value: menu.term_id};
 		});
 
-		Upfront.Events.on('menu_element:menu_created', function(menuData) {
-			menuData.term_id = menuData.term_id + '';
-			menus.push(menuData);
-			menuList.unshift({label: menuData.slug, value: menuData.term_id});
-		});
-		
-		Upfront.Events.on('menu_element:delete', function(menu_id) {
-			var index;
-			_.each(menuList, function(storedMenus, menuIndex) {
-				if (storedMenus.value === menu_id) {
-					index = menuIndex;
-				}
-			});
-			menuList.splice(index, 1);
-		});
-
 		this.getMenuById = function(id) {
-			var menu = _.findWhere(menus, {term_id: id});
-			if (_.isUndefined(menu)) _.findWhere(menus, {term_id: id + ''})
+			var menu = _.findWhere(wpMenus, {term_id: id});
+			if (_.isUndefined(menu)) _.findWhere(wpMenus, {term_id: id + ''})
 			return menu;
 		};
 
@@ -36,9 +20,32 @@ define([], function () {
 			return this.getMenuById(id).slug;
 		};
 
-		this.getMenuList = function() {
-			return menuList;
+		this.getSelectMenuOptions = function() {
+			return selectMenuOptions;
 		};
+
+		this.addMenu = function(menuData) {
+			menuData.term_id = menuData.term_id + '';
+			wpMenus.push(menuData);
+			selectMenuOptions.unshift({label: menuData.slug, value: menuData.term_id});
+		};
+
+		this.deleteMenu = function(menuId) {
+			selectMenuOptions = _.reject(selectMenuOptions, function(option) {
+				return option.value === menuId;
+			});
+			wpMenus = _.reject(wpMenus, function(menu) {
+				return menu['term_id'] === menuId;
+			});
+		};
+
+		Upfront.Events.on('menu_element:menu_created', function(menuData) {
+			self.addMenu(menuData);
+		});
+
+		Upfront.Events.on('menu_element:delete', function(menuId) {
+			self.deleteMenu(menuId);
+		});
 	};
 
 	var menuUtil = new MenuUtil();

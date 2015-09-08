@@ -361,7 +361,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	display_menu_list: function () {
 		var me = this,
 			menuItemsValues = [{label:l10n.choose_existing_menu, value: 0}],
-			menuList = MenuUtil.getMenuList()
+			menuList = MenuUtil.getSelectMenuOptions()
 		;
 		var clubbedvalues = [];
 		if(typeof(menuList) != 'undefined'){

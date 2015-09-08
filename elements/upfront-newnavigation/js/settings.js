@@ -6,8 +6,8 @@ define([
 ], function(ElementSettings, RootSettingsPanel, AppearancePanel, MenuUtil) {
 	var l10n = Upfront.Settings.l10n.newnavigation_element;
 
-	var getMenuList = function() {
-		return _.union([{label: l10n.create_new, value: -1}], MenuUtil.getMenuList());
+	var getSelectMenuOptions = function() {
+		return _.union([{label: l10n.create_new, value: -1}], MenuUtil.getSelectMenuOptions());
 	};
 
 	var Menu_Panel = RootSettingsPanel.extend({
@@ -32,7 +32,8 @@ define([
 						property: 'menu_id',
 						label: l10n.mnu.load,
 						className: 'select-menu-field',
-						values: getMenuList,
+						identifier: 'selectMenuField',
+						values: getSelectMenuOptions,
 						change: function(value, me) {
 							if (value == -1) {
 								me.model.set_property('menu_slug', false, true);
