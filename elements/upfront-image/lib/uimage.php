@@ -52,9 +52,14 @@ class Upfront_UimageView extends Upfront_Object {
 		$data['cover_caption'] = $data['caption_position'] != 'below_image'; // array_search($data['caption_alignment'], array('fill', 'fill_bottom', 'fill_middle')) !== FALSE;
 
 		$data['placeholder_class'] = !empty($data['src']) ? '' : 'uimage-placeholder';
-
+		
+		/*
+		* Commented this line because sets background color for captions under image to be always white
+		* If this functionallity is needed, we will restore it
+		*
 		if ($data['caption_position'] === 'below_image') $data['captionBackground'] = false;
-
+		*/
+		
 		if (!isset($data['link_target'])) $data['link_target'] = false; // Initialize array member to prevent notices
 		// We could really go with wp_parge_args here...
 

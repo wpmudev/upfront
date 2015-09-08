@@ -419,6 +419,9 @@
 .upfront-module-group .upfront-editable_entities_container .ui-resizable-handle {
   visibility: hidden;
 }
+.upfront-module-group .upfront-editable_entities_container .uslider .ui-resizable-handle {
+  visibility: visible;
+}
 .upfront-module-group-on-edit > .ui-resizable-handle,
 .upfront-module-group-on-edit > .upfront-entity_meta > .upfront-icon-button {
   visibility: hidden !important;

@@ -53,14 +53,17 @@
 </div>
 
 <style type="text/css">
+	<?php if($captionUseBackground) { ?>
+	.uslide .uslide-caption {
+		padding: 5px 15px;
+	}
+	<?php } ?>
 	#uslider-<?php echo $element_id ?> {
 		width: 100%;
 	}
 	#uslider-<?php echo $element_id ?> .uslide-caption {
 		width: <?php echo $textWidth ?>;
-		<?php echo $captionUseBackground ? 'padding: 5px 15px;' : '' ?>
 	}
-
 	#uslider-<?php echo $element_id ?> .uslide-right .uslide-caption {
 		margin-left: <?php echo $imageWidth ?>;
 	}

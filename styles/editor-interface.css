@@ -3770,6 +3770,9 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-region-bg-slider-image:hover .upfront-region-bg-slider-delete-image {
   display: block; }
 
+.background-type-field .upfront-field-select, .background-image-field .upfront-field-select {
+  max-width: 130px; }
+
 #settings {
   position: fixed;
   left: 0;
@@ -4157,6 +4160,9 @@ a.upfront-region-name-edit-trigger:before {
 
 .upfront-module-group .upfront-editable_entities_container .ui-resizable-handle {
   visibility: hidden; }
+
+.upfront-module-group .upfront-editable_entities_container .uslider .ui-resizable-handle {
+  visibility: visible; }
 
 .upfront-module-group-on-edit > .ui-resizable-handle, .upfront-module-group-on-edit > .upfront-entity_meta > .upfront-icon-button {
   visibility: hidden !important; }
@@ -8825,6 +8831,10 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap {
 /* Image / Gallery / Slider Panels */
 .upfront-image_module .ulinkpanel-dark, .upfront-gallery .ulinkpanel-dark, .upfront-slider_module .ulinkpanel-dark {
   min-width: 180px; }
+
+.link-panel-lightbox-trigger {
+  color: #00db8f;
+  font-size: 12px; }
 
 /* ----- New Editor bar ----- */
 .upfront-postcontent-editor {

@@ -269,7 +269,7 @@ class Upfront_ElementStyles extends Upfront_Server {
  * Takes care of dependency minification.
  */
 class Upfront_MinificationServer implements IUpfront_Server {
-	
+
 	public static function serve () {
 		$me = new self;
 		$me->_add_hooks();
@@ -310,7 +310,7 @@ class Upfront_MinificationServer implements IUpfront_Server {
 	 */
 	public function minify_js ($what) {
 		if (!Upfront_Behavior::compression()->has_experiments()) return $what; // Only do this within the compression mode ON
-		
+
 		require_once dirname(dirname(__FILE__)) . '/external/jshrink/src/JShrink/Minifier.php';
 		return JShrink_Minifier::minify($what);
 	}
@@ -344,7 +344,7 @@ class Upfront_SmushServer implements IUpfront_Server {
 		if (!is_callable(array($WpSmush, 'do_smushit'))) return false;
 
 		$res = $WpSmush->do_smushit($path, $url);
-		
+
 		return $res;
 	}
 }
