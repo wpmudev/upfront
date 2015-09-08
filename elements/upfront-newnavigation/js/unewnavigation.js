@@ -889,6 +889,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		//console.log('ajax call to save menu ordering');
 		Upfront.Util.post({"action": "upfront_new_update_menu_order", "menu_items": me.new_menu_order()})
 			.success(function (ret) {
+				Upfront.Events.trigger("menu_element:edit");
 			})
 			.error(function (ret) {
 				Upfront.Util.log("Error updating menu");

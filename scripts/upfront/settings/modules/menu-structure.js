@@ -25,6 +25,11 @@ define([
 				me.render();
 			});
 
+			Upfront.Events.on('menu_element:edit', function(menuData) {
+				me.setup();
+				me.render();
+			});
+
 			this.setup();
 
 			this.$el.sortable({

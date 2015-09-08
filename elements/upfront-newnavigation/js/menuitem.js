@@ -6,7 +6,7 @@ return (function ($) {
 		tagName: 'li',
 		contextmenuContext: [],
 		removeContexts: true,
-		
+
 		events: {
 			'click i.delete_menu_item' : 'deleteMenuItem',
 			'click i.navigation-add-item': 'addMenuItem',
@@ -95,9 +95,9 @@ return (function ($) {
 			}
 		},
 		on_click: function(e) {
-			
+
 			//e.preventDefault();
-			
+
 			var linkitem = $(e.target).parent('li.menu-item');
 			//console.log(linkitem);
 			//console.log(linkitem.closest('.upfront-output-unewnavigation').data('style'))
@@ -113,21 +113,21 @@ return (function ($) {
 				var menucontainer = linkitem.closest('div.upfront-output-unewnavigation');
 
 				if(menucontainer.data('burger_over') == 'pushes' && (menucontainer.data('burger_alignment') == 'top' || menucontainer.data('burger_alignment') == 'whole')) {
-		
+
 					$('section.upfront-layout').css('margin-top', menu.height());
-			
+
 
 					var topbar_height = $('div#upfront-ui-topbar').outerHeight();
 					var ruler_height = $('.upfront-ruler-container').outerHeight();
 					menu.offset({top:topbar_height+ruler_height, left:$('section.upfront-layout').offset().left});
-					
+
 
 				}
 			}
 		},
 		on_context_menu: function(e) {
 			if (Upfront.Settings.Application.no_context_menu) return;
-			
+
 			e.stopPropagation();
 			if(this.parent_view.$el.find('ul.menu').hasClass('edit_mode')) return;
 
@@ -168,12 +168,12 @@ return (function ($) {
 			event.preventDefault();
 			this.toggleLinkPanel();
 		},
-		
+
 		onOpenPanelSubMenuClick: function(event) {
 			//event.preventDefault();
 			this.onOpenPanelSubMenu();
 		},
-		
+
 		onOpenPanelSubMenu: function() {
 			var me = this;
 			if (this.$el.hasClass('ui-sortable-handle') && this.$el.children('ul').children('li').hasClass('controls-visible')) {
@@ -219,7 +219,7 @@ return (function ($) {
 			if(me.newitem) content = content + ' new_menu_item menu_item_placeholder';
 
 			content = content+'" >'+this.model['menu-item-title']+'</a><i class="delete_menu_item">x</i><span class="open-item-controls"></span>';
-			
+
 			if(this.model['menu-item-url'].indexOf('#ltb-') > -1 && !Upfront.Util.checkLightbox(this.model['menu-item-url']))
 					content = content + '<span class="missing-lightbox-warning"></span>';
 
@@ -290,7 +290,7 @@ return (function ($) {
 					me.model['menu-item-type'] = "post_type";
 				else
 					me.model['menu-item-type'] = "custom";
-				
+
 
 				me.saveLink();
 			});
@@ -441,6 +441,7 @@ return (function ($) {
 			Upfront.Util.post(postdata)
 				.success(function (ret) {
 					me.model['menu-item-db-id'] = ret.data;
+					Upfront.Events.trigger("menu_element:edit");
 				})
 				.error(function (ret) {
 					Upfront.Util.log("Error updating menu item");
