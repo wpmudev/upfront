@@ -26,7 +26,9 @@ define([
 						className: 'delete_preset',
 						compact: true,
 						on_click: function() {
-							me.deletePreset();
+							if (confirm('Are you sure to delete this preset?')) {
+								me.deletePreset();
+							}
 						}
 					})
 				];

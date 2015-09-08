@@ -52,14 +52,16 @@ define([
 						label: l10n.mnu.delete_menu,
 						className: 'delete-menu-button delete_preset',
 						on_click: function() {
-							//Remove navigation
-							var menu_id = this.model.get_property_value_by_name('menu_id');
-							Upfront.Events.trigger("menu_element:delete", menu_id);
-							
-							//Re-render select field
-							this.panel.settings._wrapped[0].fields._wrapped[0].options.values = getMenuList();
-							this.panel.settings._wrapped[0].fields._wrapped[0].render();
-							this.panel.settings._wrapped[0].fields._wrapped[0].set_value('-1');
+							if (confirm('Are you sure to delete this menu?')) {
+								//Remove navigation
+								var menu_id = this.model.get_property_value_by_name('menu_id');
+								Upfront.Events.trigger("menu_element:delete", menu_id);
+								
+								//Re-render select field
+								this.panel.settings._wrapped[0].fields._wrapped[0].options.values = getMenuList();
+								this.panel.settings._wrapped[0].fields._wrapped[0].render();
+								this.panel.settings._wrapped[0].fields._wrapped[0].set_value('-1');
+							}
 						}
 					}
 				]
