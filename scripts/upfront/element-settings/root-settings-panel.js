@@ -33,6 +33,11 @@ define([
 					);
 				}
 
+				if(settingOptions.identifier) {
+					// Use for selecting settings instead crawling DOM
+					setting.identifier = settingOptions.identifier;
+				}
+
 				_.each(settingOptions.fields, function(fieldOptions) {
 					var field;
 
@@ -71,6 +76,11 @@ define([
 					}
 
 					field = FieldFactory.createField(fieldOptions.type, _.extend({ model: me.model }, _.omit(fieldOptions, ['type'])));
+
+					if(fieldOptions.identifier) {
+						// Use for selecting field instead crawling DOM
+						field.identifier = fieldOptions.identifier;
+					}
 
 					setting.fields.push(field);
 				});

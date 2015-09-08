@@ -17,14 +17,30 @@ define([
 			var me = this;
 			this.constructor.__super__.initialize.call(this, options);
 			Upfront.Events.on('menu_element:menu_created', function(menuData) {
-				me.settings._wrapped[0].fields._wrapped[0].options.values = getMenuList();
-				me.settings._wrapped[0].fields._wrapped[0].render();
-				me.settings._wrapped[0].fields._wrapped[0].set_value(menuData.term_id);
-			}); 
+				var selectMenuField = me.getSelectMenuField();
+				selectMenuField.options.values = getSelectMenuOptions();
+				selectMenuField.render();
+				selectMenuField.set_value(menuData.term_id);
+			});
+			this.listenTo(this.model.get('properties'), 'change', function(property) {
+				if (!property) return;
+				if (property.get('name') !== 'menu_slug' && property.get('name') !== 'menu_id') {
+					return;
+				}
+				var selectMenuField = me.getSelectMenuField();
+				selectMenuField.set_value(me.model.get('properties').findWhere({'name': 'menu_id'}).get('value'));
+			});
 		},
+
+		getSelectMenuField: function() {
+				var selectMenuModule = this.settings.findWhere({identifier: 'selectMenuModule'});
+				return selectMenuModule.fields.findWhere({identifier: 'selectMenuField'});
+		},
+
 		settings: [
 			{
 				type: 'SettingsItem',
+				identifier: 'selectMenuModule',
 				className: 'select-menu-box select-presets',
 				fields: [
 					{
@@ -57,24 +73,28 @@ define([
 								//Remove navigation
 								var menu_id = this.model.get_property_value_by_name('menu_id');
 								Upfront.Events.trigger("menu_element:delete", menu_id);
-								
+
 								//Re-render select field
-								this.panel.settings._wrapped[0].fields._wrapped[0].options.values = getMenuList();
-								this.panel.settings._wrapped[0].fields._wrapped[0].render();
-								this.panel.settings._wrapped[0].fields._wrapped[0].set_value('-1');
+								var selectMenuField = this.panel.getSelectMenuField();
+								selectMenuField.options.values = getSelectMenuOptions();
+								selectMenuField.render();
+								selectMenuField.set_value('-1');
 							}
 						}
 					}
 				]
 			},
 			{
-				type: 'MenuStructure'
+				type: 'MenuStructure',
+				identifier: 'menuStructureModule'
 			}
 		],
+
 		save_settings: function(){
 			Menu_Panel.__super__.save_settings.apply(this, arguments);
 			this.model.set_property('menu_items', false, true);
 		},
+
 		on_save: function() {
 			//TODO this needs to be re-written to catch values from settings not from fields
 			return;
