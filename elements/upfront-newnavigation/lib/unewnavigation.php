@@ -170,6 +170,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 				'label' => __('Menu', 'upfront'),
 				'title' => __('General Settings', 'upfront'),
 				'load' => __('Select Menu to Use', 'upfront'),
+				'delete_menu' => __('Delete', 'upfront'),
 				'create' => __('or Create New', 'upfront'),
 				'use' => __('Use', 'upfront'),
 				'btn' => __('button to open menu', 'upfront'),
@@ -227,6 +228,7 @@ class Upfront_newMenuSetting extends Upfront_Server {
 		upfront_add_ajax('upfront_new_update_menu_order', array($this, "update_menu_order"));
 		upfront_add_ajax('upfront_new_create_menu', array($this, "create_menu"));
 		upfront_add_ajax('upfront_new_rename_menu', array($this, "rename_menu"));
+		upfront_add_ajax('upfront_new_delete_menu', array($this, "delete_menu"));
 
 		upfront_add_ajax('upfront_new_update_menu_item', array($this, "update_menu_item"));
 		upfront_add_ajax('upfront_new_update_auto_add_pages', array($this, "update_auto_add_pages"));
@@ -423,6 +425,16 @@ class Upfront_newMenuSetting extends Upfront_Server {
 		$menu_id = isset($_POST['menu_id']) ? $_POST['menu_id'] : false;
 		if ( $menu_id && $new_menu_name ){
 			$response = wp_update_nav_menu_object($menu_id, array('menu-name' => $new_menu_name));
+			$this->_out(new Upfront_JsonResponse_Success($response));
+		}
+		$this->_out(new Upfront_JsonResponse_Error(Upfront_UnewnavigationView::_get_l10n('cant_create')));
+
+	}
+	
+	public function delete_menu() {
+		$menu_id = isset($_POST['menu_id']) ? $_POST['menu_id'] : false;
+		if ( $menu_id ){
+			$response = wp_delete_nav_menu($menu_id);
 			$this->_out(new Upfront_JsonResponse_Success($response));
 		}
 		$this->_out(new Upfront_JsonResponse_Error(Upfront_UnewnavigationView::_get_l10n('cant_create')));

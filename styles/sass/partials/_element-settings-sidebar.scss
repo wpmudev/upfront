@@ -266,3 +266,16 @@
 .menu-item-target-label {
 	margin-top: 17px;
 }
+#settings .select-menu-field,
+#settings .select-menu-field .upfront-field-select {
+	width: 173px;
+	overflow: hidden;
+}
+#settings .create-new .select-menu-field ,
+#settings .create-new .select-menu-field .upfront-field-select {
+	width: 227px;
+}
+#settings .delete-menu-button label,
+#settings .create-new .delete-menu-button {
+	display: none;
+}

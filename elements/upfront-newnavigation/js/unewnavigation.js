@@ -37,6 +37,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		});
 
 		this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
+		this.listenTo(Upfront.Events, "menu_element:delete", this.delete_menu, this);
 
 		this.listenTo(this.model, "preset:updated", this.preset_updated);
 
@@ -449,6 +450,18 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			})
 			.error(function (ret) {
 				Upfront.Util.log("Error creating menu");
+			})
+		;
+	},
+	delete_menu: function(menu_id) {
+		var me = this;
+		// Ajax call for delete menu by ID
+		var newMenu = Upfront.Util.post({"action": "upfront_new_delete_menu", "menu_id": menu_id})
+			.success(function (ret) {
+				Upfront.Events.trigger("menu_element:menu_deleted", ret.data);
+			})
+			.error(function (ret) {
+				Upfront.Util.log("Error deleting menu");
 			})
 		;
 	},

@@ -15,6 +15,16 @@ define([], function () {
 			menus.push(menuData);
 			menuList.unshift({label: menuData.slug, value: menuData.term_id});
 		});
+		
+		Upfront.Events.on('menu_element:delete', function(menu_id) {
+			var index;
+			_.each(menuList, function(storedMenus, menuIndex) {
+				if (storedMenus.value === menu_id) {
+					index = menuIndex;
+				}
+			});
+			menuList.splice(index, 1);
+		});
 
 		this.getMenuById = function(id) {
 			var menu = _.findWhere(menus, {term_id: id});

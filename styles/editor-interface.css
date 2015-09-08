@@ -5133,6 +5133,16 @@ a.upfront-region-name-edit-trigger:before {
 .menu-item-target-label {
   margin-top: 17px; }
 
+#settings .select-menu-field, #settings .select-menu-field .upfront-field-select {
+  width: 173px;
+  overflow: hidden; }
+
+#settings .create-new .select-menu-field, #settings .create-new .select-menu-field .upfront-field-select {
+  width: 227px; }
+
+#settings .delete-menu-button label, #settings .create-new .delete-menu-button {
+  display: none; }
+
 /* ----- Save As dialog ----- */
 #upfront-save-dialog-background {
   background: rgba(31, 48, 63, 0.8);
@@ -13184,12 +13194,12 @@ div.preset-manager-panel .hover_preset, div.preset-manager-panel .state_settings
   display: inline;
   margin-right: 5px; }
 
-div.preset-manager-panel .hover_preset input, div.preset-manager-panel .state_settings_button input, div.preset-manager-panel .static_preset input, div.preset-manager-panel .delete_preset input {
+div.preset-manager-panel .hover_preset input, div.preset-manager-panel .state_settings_button input, div.preset-manager-panel .static_preset input, div.preset-manager-panel .delete_preset input, #settings .delete-menu-button input {
   font-size: 12px;
   padding: 0px 5px 2px;
   border-radius: 5px; }
 
-div.preset-manager-panel .delete_preset input {
+div.preset-manager-panel .delete_preset input, #settings .delete-menu-button input {
   font-size: 13px;
   padding: 1px 5px 1px; }
 
@@ -13221,7 +13231,7 @@ div.preset-manager-panel .state_settings_button.active input {
   color: #86a3c3;
   border-color: #e5eef8; }
 
-div.preset-manager-panel .delete_preset input {
+div.preset-manager-panel .delete_preset input, #settings .delete-menu-button input {
   background-color: #d86c6b !important;
   color: #fff;
   float: right;
@@ -13243,7 +13253,12 @@ div.preset-manager-panel .upfront-settings-css {
 div.preset-manager-panel .delete_preset {
   position: relative;
   z-index: 9;
-  top: -9px; }
+  top: -19px; }
+
+#settings .delete-menu-button input {
+  position: relative;
+  z-index: 9;
+  top: 3px; }
 
 div.preset-manager-panel div.preset_specific {
   background: #fff;

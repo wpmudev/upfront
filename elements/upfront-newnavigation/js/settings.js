@@ -20,7 +20,7 @@ define([
 				me.settings._wrapped[0].fields._wrapped[0].options.values = getMenuList();
 				me.settings._wrapped[0].fields._wrapped[0].render();
 				me.settings._wrapped[0].fields._wrapped[0].set_value(menuData.term_id);
-			});
+			}); 
 		},
 		settings: [
 			{
@@ -37,12 +37,29 @@ define([
 							if (value == -1) {
 								me.model.set_property('menu_slug', false, true);
 								me.model.set_property('menu_id', false);
+								me.$el.find('.select-menu-box').addClass('create-new');
 								return;
 							}
+							me.$el.find('.select-menu-box').removeClass('create-new');
 							// Menu slug is dependent on menu id, update it here
 							var slug = MenuUtil.getMenuSlugById(value);
 							me.model.set_property('menu_id', value, true);
 							me.model.set_property('menu_slug', slug);
+						}
+					},
+					{
+						type: 'Button',
+						label: l10n.mnu.delete_menu,
+						className: 'delete-menu-button delete_preset',
+						on_click: function() {
+							//Remove navigation
+							var menu_id = this.model.get_property_value_by_name('menu_id');
+							Upfront.Events.trigger("menu_element:delete", menu_id);
+							
+							//Re-render select field
+							this.panel.settings._wrapped[0].fields._wrapped[0].options.values = getMenuList();
+							this.panel.settings._wrapped[0].fields._wrapped[0].render();
+							this.panel.settings._wrapped[0].fields._wrapped[0].set_value('-1');
 						}
 					}
 				]
