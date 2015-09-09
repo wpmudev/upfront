@@ -94,6 +94,7 @@ define([
 							state: 'hover',
 							toggle: true,
 							prepend: 'hover-',
+							prefix: 'static',
 							fields: {
 								use: 'hover-use-typography',
 								typeface: 'hover-font-family',
@@ -114,6 +115,7 @@ define([
 							single: true,
 							toggle: true,
 							prepend: 'hover-',
+							prefix: 'static',
 							fields: {
 								use: 'hover-use-color',
 							},
@@ -134,6 +136,7 @@ define([
 							state: 'focus',
 							toggle: true,
 							prepend: 'focus-',
+							prefix: 'static',
 							fields: {
 								use: 'focus-use-typography',
 								typeface: 'focus-font-family',
@@ -154,6 +157,7 @@ define([
 							single: true,
 							toggle: true,
 							prepend: 'focus-',
+							prefix: 'static',
 							fields: {
 								use: 'focus-use-color',
 							},

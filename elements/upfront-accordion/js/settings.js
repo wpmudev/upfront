@@ -148,6 +148,7 @@ define([
 								title: l10n.colors_label,
 								toggle: true,
 								prepend: 'hover-',
+								prefix: 'static',
 								fields: {
 									use: 'hover-use-colors'
 								},
@@ -169,6 +170,7 @@ define([
 								state: 'hover',
 								toggle: true,
 								prepend: 'hover-',
+								prefix: 'static',
 								title: l10n.typography_tab_label,
 								fields: {
 									use: 'hover-use-typography',
@@ -188,6 +190,7 @@ define([
 								state: 'hover',
 								title: '',
 								prepend: 'hover-',
+								prefix: 'static',
 								fields: {
 									use: 'hover-useborder',
 									width: 'hover-borderwidth',
@@ -217,6 +220,7 @@ define([
 								title: l10n.colors_label,
 								toggle: true,
 								prepend: 'active-',
+								prefix: 'static',
 								fields: {
 									use: 'active-use-color'
 								},
@@ -238,6 +242,7 @@ define([
 								state: 'active',
 								toggle: true,
 								prepend: 'active-',
+								prefix: 'static',
 								title: l10n.typography_tab_label,
 								fields: {
 									use: 'active-use-typography',
@@ -257,6 +262,7 @@ define([
 								state: 'active',
 								title: '',
 								prepend: 'active-',
+								prefix: 'static',
 								fields: {
 									use: 'active-useborder',
 									width: 'active-borderwidth',

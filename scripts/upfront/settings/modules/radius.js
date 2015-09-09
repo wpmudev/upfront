@@ -262,15 +262,20 @@ define([
 		},
 		
 		get_static_field_values: function(value, prepend) {
-			var settings = {};
+			var settings = {},
+				prefix = '';
 			
-			settings.lock = this.model.get(this.clear_prepend(this.options.fields.lock, prepend)) || '';
-			settings.radius = this.model.get(this.clear_prepend(this.options.fields.radius, prepend)) || '';
-			settings.radius_number = this.model.get(this.clear_prepend(this.options.fields.radius_number, prepend)) || '';
-			settings.radius1 = this.model.get(this.clear_prepend(this.options.fields.radius1, prepend)) || '';
-			settings.radius2 = this.model.get(this.clear_prepend(this.options.fields.radius2, prepend)) || '';
-			settings.radius3 = this.model.get(this.clear_prepend(this.options.fields.radius3, prepend)) || '';
-			settings.radius4 = this.model.get(this.clear_prepend(this.options.fields.radius4, prepend)) || '';
+			if(typeof this.options.prefix !== "undefined") {
+				prefix = this.options.prefix + '-';
+			}
+			
+			settings.lock = this.model.get(this.clear_prepend(prefix + this.options.fields.lock, prepend)) || '';
+			settings.radius = this.model.get(this.clear_prepend(prefix + this.options.fields.radius, prepend)) || '';
+			settings.radius_number = this.model.get(this.clear_prepend(prefix + this.options.fields.radius_number, prepend)) || '';
+			settings.radius1 = this.model.get(this.clear_prepend(prefix + this.options.fields.radius1, prepend)) || '';
+			settings.radius2 = this.model.get(this.clear_prepend(prefix + this.options.fields.radius2, prepend)) || '';
+			settings.radius3 = this.model.get(this.clear_prepend(prefix + this.options.fields.radius3, prepend)) || '';
+			settings.radius4 = this.model.get(this.clear_prepend(prefix + this.options.fields.radius4, prepend)) || '';
 			
 			return settings;
 		},

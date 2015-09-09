@@ -154,11 +154,16 @@ define([
 		},
 
 		get_static_field_values: function(value, prepend) {
-			var settings = {};
+			var settings = {},
+				prefix = '';
+			
+			if(typeof this.options.prefix !== "undefined") {
+				prefix = this.options.prefix + '-';
+			}
 
-			settings.width = this.model.get(this.clear_prepend(this.options.fields.width, prepend)) || '';
-			settings.type = this.model.get(this.clear_prepend(this.options.fields.type, prepend)) || '';
-			settings.color = this.model.get(this.clear_prepend(this.options.fields.color, prepend)) || '';
+			settings.width = this.model.get(this.clear_prepend(prefix + this.options.fields.width, prepend)) || '';
+			settings.type = this.model.get(this.clear_prepend(prefix + this.options.fields.type, prepend)) || '';
+			settings.color = this.model.get(this.clear_prepend(prefix + this.options.fields.color, prepend)) || '';
 
 			return settings;
 		},
