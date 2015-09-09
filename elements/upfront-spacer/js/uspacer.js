@@ -23,6 +23,13 @@
 			this.listenTo(Upfront.Events, 'upfront:wrappers:before_fix_height', this.before_apply_height_from_wrapper);
 			this.listenTo(Upfront.Events, 'upfront:wrappers:after_fix_height', this.apply_height_from_wrapper);
 		},
+		// Don't have any controls
+		getControlItems: function () {
+			return _([]);
+		},
+		createControls: function () {
+			return false;
+		},
 		before_apply_height_from_wrapper: function (from_view) {
 			if ( !this.parent_module_view || !this.parent_module_view.parent_view || this.parent_module_view.parent_view != from_view ) {
 				return;
