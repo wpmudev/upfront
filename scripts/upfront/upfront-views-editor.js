@@ -10314,7 +10314,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				$sub_bottom = $container.find('.upfront-region-side-bottom');
 			if ( ( !$main.hasClass('upfront-region-editing') && !$main.hasClass('upfront-region-fixed-editing') ) || !$container.hasClass('upfront-region-container-active') )
 				return;
-			var	offset = $region.offset(),
+			var me = this,
+				offset = $region.offset(),
 				top = offset.top,
 				bottom = top + $region.outerHeight(),
 				top_height = $sub_top.length ? $sub_top.outerHeight() : 0,
@@ -10381,7 +10382,10 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				}
 			});
 
-			this.update_padding();
+			setTimeout( 
+				function () { me.update_padding() }
+				, 300 
+			);
 		},
 		update_padding: function () {
 			var props = {},
