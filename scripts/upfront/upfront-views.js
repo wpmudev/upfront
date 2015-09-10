@@ -2055,7 +2055,8 @@ define([
 						var view = Upfront.data.module_views[module.cid],
 							module_class = module.get_property_value_by_name('class'),
 							module_top = ed.get_class_num(module_class, ed.grid.top_margin_class),
-							module_left = ed.get_class_num(module_class, ed.grid.left_margin_class);
+							module_left = ed.get_class_num(module_class, ed.grid.left_margin_class),
+							wrapper_id = module.get_wrapper_id();
 						if ( i == 0 )
 							module.replace_class(ed.grid.top_margin_class + (module_top+top));
 						module.replace_class(ed.grid.left_margin_class + (module_left+left));
