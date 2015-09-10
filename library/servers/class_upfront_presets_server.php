@@ -91,6 +91,20 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 		$this->_out(new Upfront_JsonResponse_Success($resetpreset));
 	}
+	
+	public function replace_new_lines($presets) {
+		$new_presets = array();
+		
+		foreach($presets as $preset) {
+			if(isset($preset['preset_style']) && !empty($preset['preset_style'])) {
+				$preset['preset_style'] = str_replace("@n", "\n", $preset['preset_style']);
+			}
+			
+			$new_presets[] = $preset;
+		}
+		
+		return $new_presets;
+	}
 
 	/**
 	 * @return array saved presets
@@ -106,6 +120,8 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 				'as_array' => true
 			)
 		);
+		
+		$presets = $this->replace_new_lines($presets);
 
 		// Fail-safe
 		if (is_array($presets) === false) {
@@ -248,6 +264,8 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			}
 			$updatedPresets[] = $preset;
 		}
+
+		$updatedPresets = $this->replace_new_lines($updatedPresets);
 
 		$updatedPresets = json_encode($updatedPresets);
 
