@@ -1753,10 +1753,11 @@ define([
 							me.fields.color.update_input_border_color(me.colors[value]);
 						}
 					}),
-					typeface: new Field_Chosen_Select({
+					typeface: new Field_Typeface_Chosen_Select({
 						label: l10n.typeface,
 						values: theme_fonts_collection.get_fonts_for_select(),
 						default_value: me.typefaces['h1'],
+						select_width: '225px',
 						change: function () {
 							var value = this.get_value(),
 							element = me.current_element;
@@ -1840,17 +1841,19 @@ define([
 		 */
 		update_styles_field: function() {
 			this.fields.style.remove();
-			this.fields.style = this.get_styles_field();
+			this.fields.style = this.get_styles_field(this.typefaces[this.current_element]);
 			this.fields.style.render();
 			this.fields.style.delegateEvents();
 			$('.upfront-typography-fields-left').prepend(this.fields.style.el);
 		},
-		get_styles_field: function() {
+		get_styles_field: function(typeface) {
 			var me = this;
-			return new Field_Select({
+			return new Field_Typeface_Style_Chosen_Select({
 					label: l10n.weight_style,
 					values: this.get_styles(),
 					default_value: me.get_styles_field_default_value(),
+					font_family: typeface,
+					select_width: '120px',
 					change: function () {
 						var value = this.get_value(),
 							element = me.current_element;
@@ -1858,6 +1861,9 @@ define([
 							me.styles[element] = value;
 							me.update_typography();
 						}
+					},
+					show: function (value) {
+						me.fields.style.set_option_font(value);
 					}
 			});
 		},
@@ -4852,7 +4858,7 @@ var Field_ToggleableText = Field_Text.extend({
 			this.set_option_font(this.get_value());
 		},
 		set_option_font: function(value) {
-			var font_family = this.$el.parent().find('.upfront-chosen-select-typeface').val();
+			var font_family = this.$el.parent().parent().find('.upfront-chosen-select-typeface').val();
 			var parsed_variant = Upfront.Views.Font_Model.parse_variant(value);
 			this.$el.find('.chosen-single').css( {"font-family": font_family, "font-weight": parsed_variant.weight, "font-style": parsed_variant.style });
 		},
