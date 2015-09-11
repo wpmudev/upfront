@@ -183,6 +183,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 				'right' => __('Right', 'upfront'),
 				'horiz' => __('Horizontal', 'upfront'),
 				'vert' => __('Vertical', 'upfront'),
+				'triggered' => __('Triggered', 'upfront'),
 				'right' => __('Right', 'upfront'),
 				'top' => __('Top', 'upfront'),
 				'whole' => __('Whole', 'upfront'),

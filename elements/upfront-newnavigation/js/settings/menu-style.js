@@ -23,9 +23,18 @@ define(function() {
 					values: [
 						{ label: l10n.mnu.horiz, value: 'horizontal' },
 						{ label: l10n.mnu.vert, value: 'vertical' },
+						{ label: l10n.mnu.triggered, value: 'triggered' },
 					],
 					change: function(value) {
 						me.model.set('menu_style', value);
+					},
+					show: function(value, $el) {
+						console.log($el.find('.burger_alingment'));
+						if(value === "triggered") {
+							$el.parent().find('.burger_alingment').show();
+						} else {
+							$el.parent().find('.burger_alingment').hide();
+						}
 					}
 				}),
 				new Upfront.Views.Editor.Field.Select({
