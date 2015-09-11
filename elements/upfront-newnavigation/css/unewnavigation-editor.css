@@ -464,7 +464,7 @@ div.preset-manager-panel .menustyle_settings_item {
 	padding-top: 15px;
 }
 
-div.preset-manager-panel .menustyle_settings_item label {
+div.preset-manager-panel .menustyle_settings_item .upfront-field-label {
 	font-weight: normal;
 	position: relative;
 	top: 5px;
