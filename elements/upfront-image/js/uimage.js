@@ -1055,8 +1055,8 @@ define([
 				parent = this.parent_module_view.$('.upfront-editable_entity:first'),
 				resizer = parent,
 				captionHeight = this.property('caption_position') === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
-				// padding = this.property('no_padding') == 1 ? 0 : breakpointColumnPadding,
-				elementSize = {width: resizer.width()/* - (2 * padding)*/, height: resizer.height()/* - (2 * padding)*/ - captionHeight}
+				padding = this.property('no_padding') == 1 ? 0 : breakpointColumnPadding,
+				elementSize = {width: resizer.width() - (2 * padding), height: resizer.height() - (2 * padding) - captionHeight}
 			;
 			this.property('element_size', elementSize);
 			this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
