@@ -178,7 +178,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		var me = this;
 
 		setTimeout( function() {
-			var slider = me.$el.find('[id^="uslider-"]'),
+			var slider = me.$el.find('.upfront-output-uslider'),
 			options = slider.find('.uslider').data();
 
 			slider.find('.uslides').upfront_default_slider(options);
@@ -191,6 +191,10 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				var slide = $(this);
 				slide.find('.uslide-caption').remove().prependTo(slide);
 			});
+			slider.find('.uslide-bottomOver, .uslide-middleCover, .uslide-bottomCover, .uslide-topCover').each(function() {
+				var slide = $(this);
+				slide.find('.uslide-caption').remove().prependTo(slide.find('.uslide-image'));
+			})
 			me.prepareSlider();
 		}, 100);
 

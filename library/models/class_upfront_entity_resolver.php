@@ -168,39 +168,55 @@ abstract class Upfront_EntityResolver {
 		$type = $layout_ids['type'];
 		$item = !empty($layout_ids['item']) ? preg_replace("/^{$type}-/", "", $layout_ids['item']) : "";
 		$specificity = !empty($layout_ids['specificity']) ? preg_replace("/^{$type}-{$item}-/", "", $layout_ids['specificity']) : "";
-		if ( $type == 'single' ){
+
+		if ('single' === $type) {
+			if ('404_page' === $item || 'single-404_page' === $specificity) {
+				// 404 page layout
+				return __('404 Page', 'upfront');
+			}
 			$post_type = get_post_type_object($item ? $item : 'post');
-			$name = is_object($post_type->labels) ? $post_type->labels->singular_name : $post_type->labels['singular_name'];
-			if ( $specificity )
-				return sprintf("Single %s: %s", $name, $specificity);
-			return sprintf("Single %s", $name);
-		}
-		else if ( $type == 'archive' ){
-			if ( $item == 'home' ){
+			$name = false;
+
+			if (empty($post_type) && preg_match('/^page-/', $item)) {
+				// Singular named pages
+				$post_type = get_post_type_object('page');
+			}
+
+			$name = is_object($post_type->labels)
+				? $post_type->labels->singular_name 
+				: $post_type->labels['singular_name']
+			;
+			
+			return !empty($specificity)
+				? sprintf("Single %s: %s", $name, $specificity)
+				: sprintf("Single %s", $name)
+			;
+		} else if ('archive' === $type) {
+			if ('home' === $item) {
 				return __("Home Page");
-			}
-			else if ( $item == 'date' || empty($item) ){
-				if ( $specificity )
-					return sprintf("Archive: %s", jdmonthname($specificity, CAL_MONTH_GREGORIAN_LONG));
-				return __("Archive");
-			}
-			else if ( $item == 'search' ){
-				if ( $specificity )
-					return sprintf("Search term: %s", $specificity);
-				return __("Search");
-			}
-			else if ( $item == 'author' ){
-				if ( $specificity )
-					return sprintf("Author: %s", $specificity);
-				return __("Author");
-			}
-			else {
+			} else if ('date' === $item || empty($item)) {
+				return !empty($specificity) && is_numeric($specificity)
+					? sprintf("Archive: %s", jdmonthname($specificity, CAL_MONTH_GREGORIAN_LONG))
+					: __("Archive")
+				;
+			} else if ('search' === $item) {
+				return !empty($specificity)
+					? sprintf("Search term: %s", $specificity)
+					: __("Search")
+				;
+			} else if ('author' === $item) {
+				return !empty($specificity)
+					? sprintf("Author: %s", $specificity)
+					: __("Author")
+				;
+			} else {
 				// means this is taxonomy
 				$taxonomy = get_taxonomy($item);
 				$name = is_object($taxonomy->labels) ? $taxonomy->labels->singular_name : $taxonomy->labels['singular_name'];
-				if ( $specificity )
-					return sprintf("%s: %s", $name, $specificity);
-				return $name;
+				return !empty($specificity)
+					? sprintf("%s: %s", $name, $specificity)
+					: $name
+				;
 			}
 		}
 	}

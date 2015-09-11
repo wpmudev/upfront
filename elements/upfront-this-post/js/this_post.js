@@ -163,6 +163,11 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			this.editor.setElement( contents[0] );
 		}
 
+		// Let's not render min-height (remove it)
+		this.$el.find('> .upfront-object').css('min-height', '');
+		this.parent_module_view.$el.find('> .upfront-module').css('min-height', '');
+		this.add_region_class('upfront-region-container-has-this_post', true);
+
 		//this.editor.render();
 		this.trigger('rendered');
 	},
@@ -317,6 +322,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			this.editor.remove();
 			this.editor = false;
 		}
+		this.remove_region_class('upfront-region-container-has-this_post', true);
 	}
 });
 

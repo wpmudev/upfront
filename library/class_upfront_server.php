@@ -28,15 +28,34 @@ abstract class Upfront_Server implements IUpfront_Server {
 		return class_exists($valid) ? $valid : false;
 	}
 
-	protected function _out (Upfront_HttpResponse $out) {
+	/**
+	 * Server output handler
+	 *
+	 * @param Upfront_HttpResponse $out One of the known response objects
+	 * @param bool $cacheable Whether this request can be cached
+	 */
+	protected function _out (Upfront_HttpResponse $out, $cacheable=false) {
 		if (!Upfront_Behavior::debug()->is_active(Upfront_Behavior::debug()->constant('RESPONSE')) && extension_loaded('zlib') && Upfront_Behavior::compression()->has_compression()) {
 			ob_start('ob_gzhandler');
 		}
 		status_header($out->get_status());
 		header("Content-type: " . $out->get_content_type() . "; charset=utf-8");
+
+		if ($cacheable && Upfront_Behavior::compression()->has_experiments()) {
+			$offset = is_numeric($cacheable) ? (int)$cacheable : (DAY_IN_SECONDS * 365);
+			header('Expires: ' . gmdate( "D, d M Y H:i:s", time() + $offset ) . ' GMT');
+			header("Cache-Control: private, max-age={$offset}");
+			header("Pragma: cache");
+		}
+
 		die($out->get_output());
 	}
 
+	/**
+	 * Quick request rejection handler
+	 *
+	 * @param string $reason Optional reason for request rejection
+	 */
 	protected function _reject ($reason=false) {
 		$reason = $reason ? $reason : self::REJECT_NOT_ALLOWED;
 		$msg = new Upfront_JsonResponse_Error($reason);

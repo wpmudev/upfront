@@ -1,40 +1,66 @@
 <div class=" upfront-contact-form">
-	<?php if($form_add_title){ ?>
+<?php if ($form_add_title) { ?>
 	<div class="upfront-contact-form-title"><?php echo $form_title ?></div>
-	<?php } ?>
+<?php } ?>
 	<form action="" method="POST">
 		<div class="ucontact-message-container">
-			<?php if($message){ ?>
+		<?php if ($message) { ?>
 			<div class="ucontact-msg msg <?php echo $message_class ?>"><?php echo $message ?></div>
-			<?php } ?>
+		<?php } ?>
 		</div>
 		<input type="hidden" name="ucontact" value="sent">
 		<input type="hidden" name="contactformid" value="<?php echo $element_id ?>">
 		<input type="hidden" name="entity_ids" value='<?php echo $entity_id ?>'>
-		<div class="upfront-field-container <?php echo $field_classes ?>">
-			<label for="sendername"><?php echo $form_name_label ?></label>
-			<input type="text" class="text-field <?php echo $validate ?> ucontact-input" name="sendername" value="<?php echo $values['name'] ?>" <?php echo $placeholders['name'] ?> />
+		<div class="upfront-field-container upfront-field-name-container <?php echo $field_classes ?>">
+			<label for="<?php echo $ids['name'] ?>"><?php echo $form_name_label ?></label>
+			<input type="text" 
+				class="text-field <?php echo $validate ?> ucontact-input" 
+				name="sendername" 
+				value="<?php echo $values['name'] ?>" 
+				<?php echo $placeholders['name'] ?> 
+				id="<?php echo $ids['name'] ?>" 
+			/>
 		</div>
-		<div class="upfront-field-container <?php echo $field_classes ?>">
-			<label for="senderemail"><?php echo $form_email_label ?></label>
-			<input type="email" class="email-field <?php echo $validate ?> ucontact-input" name="senderemail" value="<?php echo $values['email'] ?>" <?php echo $placeholders['email'] ?> />
+		<div class="upfront-field-container upfront-field-email-container <?php echo $field_classes ?>">
+			<label for="<?php echo $ids['email'] ?>"><?php echo $form_email_label ?></label>
+			<input type="email" 
+				class="email-field <?php echo $validate ?> ucontact-input" 
+				name="senderemail" 
+				value="<?php echo $values['email'] ?>" 
+				<?php echo $placeholders['email'] ?> 
+				id="<?php echo $ids['email'] ?>" 
+			/>
 		</div>
-		<?php if($show_subject){ ?>
-		<div class="upfront-field-container <?php echo $field_classes ?>">
-			<label for="subject"><?php echo $form_subject_label ?></label>
-			<input type="text" class="text-field <?php echo $validate ?> ucontact-input" name="subject" value="<?php echo $values['subject'] ?>" <?php echo $placeholders['subject'] ?> />
+	<?php if ($show_subject) { ?>
+		<div class="upfront-field-container upfront-field-subject-container <?php echo $field_classes ?>">
+			<label for="<?php echo $ids['subject'] ?>"><?php echo $form_subject_label ?></label>
+			<input type="text" 
+				class="text-field <?php echo $validate ?> ucontact-input" 
+				name="subject" 
+				value="<?php echo $values['subject'] ?>" 
+				<?php echo $placeholders['subject'] ?> 
+				id="<?php echo $ids['subject'] ?>" 
+			/>
 		</div>
-		<?php } ?>
-		<div class="upfront-field-container <?php echo $field_classes ?>">
-			<label for="sendermessage"><?php echo $form_message_label ?></label>
-			<textarea class="textarea-field <?php echo $validate ?> ucontact-input" name="sendermessage" <?php echo $placeholders['message'] ?>><?php echo $values['message'] ?></textarea>
+	<?php } ?>
+		<div class="upfront-field-container upfront-field-message-container <?php echo $field_classes ?>">
+			<label for="<?php echo $ids['message'] ?>"><?php echo $form_message_label ?></label>
+			<textarea 
+				class="textarea-field <?php echo $validate ?> ucontact-input" 
+				name="sendermessage" <?php echo $placeholders['message'] ?> 
+				id="<?php echo $ids['message'] ?>"><?php echo $values['message'] ?></textarea>
 		</div>
-		<?php if($show_captcha){ ?>
-		<div class="upfront-field-container <?php echo $field_classes ?>">
-			<label for="realPerson"><?php echo $form_captcha_label ?></label>
-			<input type="text" class="text-field <?php echo $validate ?> ucontact-input" name="realPerson" <?php echo $placeholders['captcha'] ?> />
+	<?php if ($show_captcha) { ?>
+		<div class="upfront-field-container upfront-field-captcha-container <?php echo $field_classes ?>">
+			<label for="<?php echo $ids['captcha'] ?>"><?php echo $form_captcha_label ?></label>
+			<input type="text" 
+				class="text-field <?php echo $validate ?> ucontact-input" 
+				name="realPerson" 
+				<?php echo $placeholders['captcha'] ?> 
+				id="<?php echo $ids['captcha'] ?>" 
+			/>
 		</div>
-		<?php } ?>
+	<?php } ?>
 		<div class="upfront-field-container upfront-submit-container <?php echo $field_classes ?>">
 			<button type="submit" name="send" class="button submit-field"><span><?php echo $form_button_text ?></span></button>
 		</div>

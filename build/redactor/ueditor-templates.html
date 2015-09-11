@@ -143,30 +143,37 @@
 </script>
 
 <script type="text/template" id="upfront-formatting">
-    <ul class="tag-list">
-        <li>
-            <a href="#" data-tag="h1" class="tag-list-tag-h1"></a>
+    <ul class="upfront-redactor-tag-list">
+        <li class="tag-list-section-title">
+            {{standard_formatting}}
         </li>
         <li>
-            <a href="#" data-tag="h2" class="tag-list-tag-h2"></a>
+            <p  data-tag="p" class="tag-list-tag-p tag-list-tag">{{paragraph}}</p>
         </li>
         <li>
-            <a href="#" data-tag="h3" class="tag-list-tag-h3"></a>
+            <h1  data-tag="h1" class="tag-list-tag-h1 tag-list-tag">{{heading_01}}</h1>
         </li>
         <li>
-            <a href="#" data-tag="h4" class="tag-list-tag-h4"></a>
+            <h2 data-tag="h2" class="tag-list-tag-h2 tag-list-tag">{{heading_02}}</h2>
         </li>
         <li>
-            <a href="#" data-tag="h5" class="tag-list-tag-h5"></a>
+            <h3  data-tag="h3" class="tag-list-tag-h3 tag-list-tag">{{heading_03}}</h3>
         </li>
         <li>
-            <a href="#" data-tag="h6" class="tag-list-tag-h6"></a>
+            <h4 data-tag="h4" class="tag-list-tag-h4 tag-list-tag">{{heading_04}}</h4>
         </li>
         <li>
-            <a href="#" data-tag="p" class="tag-list-tag-p"></a>
+            <h5 data-tag="h5" class="tag-list-tag-h5 tag-list-tag">{{heading_05}}</h5>
         </li>
         <li>
-            <a href="#" data-tag="pre" class="tag-list-tag-pre"></a>
+            <h6 data-tag="h6" class="tag-list-tag-h6 tag-list-tag">{{heading_06}}</h6>
+        </li>
+
+        <li>
+            <pre data-tag="pre" class="tag-list-tag-pre tag-list-tag">{{preformatted}}</pre>
+        </li>
+        <li>
+            <blockquote data-tag="blockquote" class="tag-list-tag-blockquote tag-list-tag">{{blockquote}}</blockquote>
         </li>
         <!--<li>-->
             <!--<a href="#" data-tag="blockquote">"</a>-->
