@@ -537,12 +537,9 @@ define([
 				this.$el.addClass('image-from-theme');
 				this.$el.find('b.upfront-entity_meta').after('<div class="swap-image-overlay"><p class="upfront-icon upfront-icon-swap-image"><span>Click to </span>Swap Image</p></div>');
 			} else {
-				var resizeHint = $('<div>').addClass('upfront-ui uimage-resize-hint' + onTop).html(this.sizehintTpl({
-					width: elementSize.width,
-					height: elementSize.height,
-					l10n: l10n.template
-				}));
+				var resizeHint = $('<div>').addClass('upfront-ui uimage-resize-hint' + onTop);
 				this.$el.append(resizeHint);
+				this.applyElementSize();
 			}
 
 			if(this.property('image_status') !== 'ok') {
@@ -775,12 +772,7 @@ define([
 
 			data.elementSize = {width: attr.width - (2 * padding), height: attr.height - (2 * padding) - captionHeight};
 
-			this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
-					width: data.elementSize.width,
-					height: data.elementSize.height,
-					l10n: l10n.template
-				})
-			);
+			this.applyElementSize();
 
 			if(starting.length){
 				return starting.outerHeight(data.elementSize.height);
@@ -1063,8 +1055,8 @@ define([
 				parent = this.parent_module_view.$('.upfront-editable_entity:first'),
 				resizer = parent,
 				captionHeight = this.property('caption_position') === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
-				padding = this.property('no_padding') == 1 ? 0 : breakpointColumnPadding,
-				elementSize = {width: resizer.width() - (2 * padding), height: resizer.height() - (2 * padding) - captionHeight}
+				// padding = this.property('no_padding') == 1 ? 0 : breakpointColumnPadding,
+				elementSize = {width: resizer.width()/* - (2 * padding)*/, height: resizer.height()/* - (2 * padding)*/ - captionHeight}
 			;
 			this.property('element_size', elementSize);
 			this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
