@@ -33,6 +33,7 @@ define([
 					bg_style: new Upfront.Views.Editor.Field.Select({
 						model: this.model,
 						label: l10n.image_type,
+						className: 'upfront-field-wrap upfront-field-wrap-select background-image-field',
 						property: 'background_style',
 						use_breakpoint_property: true,
 						default_value: 'full',
@@ -40,7 +41,8 @@ define([
 						values: [
 							{ label: l10n.full_width_bg, value: 'full', icon: 'bg-image-full' },
 							{ label: l10n.tiled_pattern, value: 'tile', icon: 'bg-image-tile' },
-							{ label: l10n.fixed_position, value: 'fixed', icon: 'bg-image-fixed' }
+							{ label: l10n.fixed_position, value: 'fixed', icon: 'bg-image-fixed' },
+							{ label: l10n.parallax, value: 'parallax', icon: 'bg-image-full' }
 						],
 						change: function () {
 							var value = this.get_value();
@@ -220,6 +222,9 @@ define([
 					this.model.set_breakpoint_property('background_style', 'fixed');
 					this.model.set_breakpoint_property('background_repeat', 'no-repeat');
 					this.model.set_breakpoint_property('background_position', pos_x + '% ' + pos_y + '%');
+				}
+				else {
+					this.model.set_breakpoint_property('background_style', style);
 				}
 			}
 		}

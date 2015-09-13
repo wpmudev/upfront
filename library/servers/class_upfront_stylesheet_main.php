@@ -86,6 +86,13 @@ class Upfront_StylesheetMain extends Upfront_Server {
 			$cache->set($ckey, $style);
 		}
 
+		/**
+		 * Filter the styles just before we use them
+		 *
+		 * @param string $style Gathered styles
+		 */
+		$style = apply_filters('upfront-dependencies-main-styles', $style);
+
 		$this->_out(new Upfront_CssResponse_Success($style), !$bootable); // Serve cacheable styles for visitors
 	}
 

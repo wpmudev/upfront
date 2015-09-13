@@ -61,11 +61,14 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 	trimListTitle: function() {
 		var me = this;
 		var props = this.extract_properties();
-		$.each(props.multiple_videos, function(index, video) {
-			if (video.title) {
-				video.title = video.title.substring(0, me.property('multiple_title_length'));
-			}
-		});
+		
+		if(props.multiple_videos !== null && typeof props.multiple_videos === 'object') {
+			$.each(props.multiple_videos, function(index, video) {
+				if (video.title) {
+					video.title = video.title.substring(0, me.property('multiple_title_length'));
+				}
+			});
+		}
 	},
 
 	extract_properties: function() {
