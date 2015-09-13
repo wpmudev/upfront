@@ -89,11 +89,6 @@ define(function() {
 
 		post: function (data, data_type) {
 			var request = (_.isObject(data) && data.action) ? data : {"action": "upfront_request", "data": data};
-			
-			if(data.action == "this_post-get_markup") {
-				console.log(Upfront.Application.current_subapplication.layout);
-				
-			}
 
 			// @TODO need a better way to attach upfront layout data on request?
 			if ( Upfront.Application.current_subapplication.layout ) {

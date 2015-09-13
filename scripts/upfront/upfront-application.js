@@ -1315,8 +1315,6 @@ var Application = new (Backbone.Router.extend({
 		//If we are already loading a layout, abort the load
 		if(this.loadingLayout)
 			this.loadingLayout.abort();
-
-		console.log(request_data);
 		
 		this.loadingLayout = Upfront.Util.post(request_data)
 			.success(function (response) {
