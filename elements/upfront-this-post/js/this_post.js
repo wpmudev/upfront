@@ -44,7 +44,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 
 		this.postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
 		
-		if(Upfront.Application.current_subapplication.get_layout_data().layout.specificity && Upfront.Application.current_subapplication.get_layout_data().layout.specificity.indexOf('noedit') > -1) {
+		if(Upfront.Application.current_subapplication.get_layout_data().layout.noedit) {
 			this.noedit=true; //to enable loading of non-editable content for plugins when ID is not available
 		}
 

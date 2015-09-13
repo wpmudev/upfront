@@ -1,4 +1,3 @@
-
 <?php
 
 class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
@@ -41,15 +40,155 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
      */
     public function augment_default_layouts ($layouts) {
        
-        $layouts["bbpress"] = array(
-                'label' => "BBPress Forum",
-                'layout' => array(
-                    'type' => 'single',
-                    'item' => "bbpress-single-forum",
-                    'specificity' => "bbpress-noedit-single-forum"
-                )
-            );
+        $layouts["bbpress-single-forum"] = array(
+            'label' => "BBPress Single Forum",
+            'layout' => array(
+                'type' => 'single',
+                'item' => "bbpress-single-forum",
+                'specificity' => "bbpress-single-forum",
+                'noedit' => 'noedit'
+            )
+        );
 
+        $layouts["bbpress-single-topic"] = array(
+            'label' => "BBPress Single Topic",
+            'layout' => array(
+                'type' => 'single',
+                'item' => "bbpress-single-topic",
+                'specificity' => "bbpress-single-topic",
+                'noedit' => 'noedit'
+            )
+        );
+
+        $layouts["bbpress-topic-split"] = array(
+            'label' => "BBPress Topic Split",
+            'layout' => array(
+                'type' => 'single',
+                'item' => "bbpress-topic-split",
+                'specificity' => "bbpress-topic-split",
+                'noedit' => 'noedit'
+            )
+        );
+
+        $layouts["bbpress-reply-edit"] = array(
+            'label' => "BBPress Reply Edit",
+            'layout' => array(
+                'type' => 'single',
+                'item' => "bbpress-reply-edit",
+                'specificity' => "bbpress-reply-edit",
+                'noedit' => 'noedit'
+            )
+        );
+
+        $layouts["bbpress-reply-move"] = array(
+            'label' => "BBPress Reply Move",
+            'layout' => array(
+                'type' => 'single',
+                'item' => "bbpress-reply-move",
+                'specificity' => "bbpress-reply-move",
+                'noedit' => 'noedit'
+            )
+        );
+
+        $layouts["bbpress-topic-tag"] = array(
+            'label' => "BBPress Topic Tag",
+            'layout' => array(
+                'type' => 'single',
+                'item' => "bbpress-topic-tag",
+                'specificity' => "bbpress-topic-tag",
+                'noedit' => 'noedit'
+            )
+        );
+
+        $layouts["bbpress-topic-tag-edit"] = array(
+            'label' => "BBPress Topic Tag Edit",
+            'layout' => array(
+                'type' => 'single',
+                'item' => "bbpress-topic-tag-edit",
+                'specificity' => "bbpress-topic-tag-edit",
+                'noedit' => 'noedit'
+            )
+        );
+
+        
+        $layouts["bbpress-user-home"] = array(
+            'label' => "BBPress User Home",
+            'layout' => array(
+                'type' => 'single',
+                'item' => "bbpress-user-home",
+                'specificity' => "bbpress-user-home",
+                'noedit' => 'noedit'
+            )
+        );
+
+        $layouts["bbpress-topics-created"] = array(
+            'label' => "BBPress User Topics",
+            'layout' => array(
+                'type' => 'single',
+                'item' => "bbpress-topics-created",
+                'specificity' => "bbpress-topics-created",
+                'noedit' => 'noedit'
+            )
+        );
+
+        $layouts["bbpress-replies-created"] = array(
+            'label' => "BBPress User Replies",
+            'layout' => array(
+                'type' => 'single',
+                'item' => "bbpress-replies-created",
+                'specificity' => "bbpress-replies-created",
+                'noedit' => 'noedit'
+            )
+        );
+
+        $layouts["bbpress-user-home"] = array(
+            'label' => "BBPress User Favorites",
+            'layout' => array(
+                'type' => 'single',
+                'item' => "bbpress-favorites",
+                'specificity' => "bbpress-favorites",
+                'noedit' => 'noedit'
+            )
+        );
+
+        $layouts["bbpress-user-subscriptions"] = array(
+            'label' => "BBPress User Subscriptions",
+            'layout' => array(
+                'type' => 'single',
+                'item' => "bbpress-subscriptions",
+                'specificity' => "bbpress-subscriptions",
+                'noedit' => 'noedit'
+            )
+        );
+
+
+        $layouts["bbpress-user-edit"] = array(
+            'label' => "BBPress User Edit",
+            'layout' => array(
+                'type' => 'single',
+                'item' => "bbpress-user-home-edit",
+                'specificity' => "bbpress-user-home-edit",
+                'noedit' => 'noedit'
+            )
+        );
+
+
+        $layouts["bbpress-forum-archive"] = array(
+            'label' => "BBPress Forums Archive",
+            'layout' => array(
+                'type' => 'archive',
+                'item' => "bbpress-forum-archive",
+                'noedit' => 'noedit'
+            )
+        );
+        $layouts["bbpress-topic-archive"] = array(
+            'label' => "BBPress Topics Archive",
+            'layout' => array(
+                'type' => 'archive',
+                'item' => "bbpress-topic-archive",
+                'noedit' => 'noedit'
+            )
+        );
        
         return $layouts;
     }
@@ -207,7 +346,8 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
             $cascade['item'] = "bbpress-{$item}"; 
             $cascade['type'] = $type;
             //if (!empty($spec)) {
-                $cascade['specificity'] = "bbpress-noedit-{$item}".((!empty($spec))?"-{$spec}":"");
+                $cascade['specificity'] = "bbpress-{$item}".((!empty($spec))?"-{$spec}":"");
+                $cascade['noedit'] = 'noedit';
             //}
             
         }
