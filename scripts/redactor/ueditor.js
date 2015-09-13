@@ -1039,7 +1039,8 @@ Ueditor.prototype = {
 		});
 
 		$(document).one('mouseup', function(e){
-
+            if(!me.redactor)
+                return;
 			//var is_selection = ((Math.abs(e.pageX-me.lastmousedown.x) + Math.abs(e.pageY-me.lastmousedown.y)) > 2);
             var is_selection = !!me.redactor.selection.getText();
 			if((is_selection || me.clickcount > 1) && me.redactor && me.redactor.waitForMouseUp && me.redactor.selection.getText()){
