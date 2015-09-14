@@ -189,10 +189,12 @@ define([
 				nextDepth < itemDepth // This is the last submenu item, allow any decrease
 			){
 				if (item.hasClass('menu-structure-module-item')) {
+					if (item.data('menuItemDepth') === 0) return; // Do not allow decrease below 0
 					this.decreaseItemDepth(item);
 					return;
 				}
 
+				if (item.children().first().data('menuItemDepth') === 0) return; // Do not allow decrease below 0
 				item.children().each(function() {
 					me.decreaseItemDepth($(this));
 				});
