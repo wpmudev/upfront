@@ -5029,6 +5029,15 @@ a.upfront-region-name-edit-trigger:before {
 .menu-structure-item-depth-2 {
   margin-left: 45px; }
 
+.menu-structure-item-depth-3 {
+  margin-left: 60px; }
+
+.menu-structure-item-depth-4 {
+  margin-left: 75px; }
+
+.menu-structure-item-depth-5 {
+  margin-left: 90px; }
+
 .menu-item-editor {
   background: #f5f9ff;
   line-height: 16px;

@@ -144,51 +144,71 @@ define([
 					mouseX = event.pageX;
 					return;
 				}
-				me.updateItemDepth(mouseX, event.pageX, movedItem);
+				me.updateSortableDepth(mouseX, event.pageX, movedItem);
 
 				mouseX = event.pageX;
 			});
 		},
 
-		updateItemDepth: function(oldX, newX, item) {
+		updateSortableDepth: function(oldX, newX, item) {
 			// Decrease item depth
-			var itemDepth = item.data('menu-item-depth'),
+			var itemDepth = item.hasClass('menu-structure-module-item') ?
+					item.data('menuItemDepth') : item.children().first().data('menu-item-depth'),
 				prevDepth = item.prev().data('menu-item-depth'),
-				nextDepth = item.nextAll().not('.ui-sortable-placeholder').first().data('menu-item-depth'),
-				newDepth = itemDepth;
+				nextDepth = item.nextAll().not('.ui-sortable-placeholder').first().data('menu-item-depth');
 
 			if (oldX > newX) {
-				this.decreaseItemDepth(newDepth - 1, itemDepth, prevDepth, nextDepth, item);
+				this.decreaseGroupDepth(itemDepth, prevDepth, nextDepth, item);
 			}
 			// Increase item depth
 			if (oldX < newX) {
-				this.increaseItemDepth(newDepth + 1, itemDepth, prevDepth, nextDepth, item);
+				this.increaseGroupDepth(itemDepth, prevDepth, nextDepth, item);
 			}
 		},
 
-		decreaseItemDepth: function(newDepth, itemDepth, prevDepth, nextDepth, item) {
-			if (prevDepth < itemDepth && nextDepth < itemDepth) {
-				item.data('menu-item-depth', newDepth);
-				item.removeClass('menu-structure-item-depth-' + itemDepth);
-				item.addClass('menu-structure-item-depth-' + newDepth);
-			}
-			if (prevDepth === itemDepth && nextDepth < itemDepth) {
-				item.data('menu-item-depth', newDepth);
-				item.removeClass('menu-structure-item-depth-' + itemDepth);
-				item.addClass('menu-structure-item-depth-' + newDepth);
+		decreaseItemDepth: function(item) {
+			item.removeClass('menu-structure-item-depth-' + item.data('menuItemDepth'));
+			item.data('menu-item-depth', item.data('menuItemDepth') - 1);
+			item.addClass('menu-structure-item-depth-' + item.data('menuItemDepth'));
+		},
+
+		increaseItemDepth: function(item) {
+			item.removeClass('menu-structure-item-depth-' + item.data('menuItemDepth'));
+			item.data('menuItemDepth', item.data('menuItemDepth') + 1);
+			item.addClass('menu-structure-item-depth-' + item.data('menuItemDepth'));
+		},
+
+		decreaseGroupDepth: function(itemDepth, prevDepth, nextDepth, item) {
+			var me = this;
+
+			if (
+				(prevDepth < itemDepth && nextDepth < itemDepth) ||
+				(prevDepth === itemDepth && nextDepth < itemDepth)
+			){
+				if (item.hasClass('menu-structure-module-item')) {
+					this.decreaseItemDepth(item);
+					return;
+				}
+				item.children().each(function() {
+					me.decreaseItemDepth($(this));
+				});
 			}
 		},
 
-		increaseItemDepth: function(newDepth, itemDepth, prevDepth, nextDepth, item) {
-			if (prevDepth >= itemDepth) {
-				item.data('menu-item-depth', newDepth);
-				item.removeClass('menu-structure-item-depth-' + itemDepth);
-				item.addClass('menu-structure-item-depth-' + newDepth);
-			}
-			if (prevDepth === itemDepth && nextDepth < itemDepth) {
-				item.data('menu-item-depth', newDepth);
-				item.removeClass('menu-structure-item-depth-' + itemDepth);
-				item.addClass('menu-structure-item-depth-' + newDepth);
+		increaseGroupDepth: function(itemDepth, prevDepth, nextDepth, item) {
+			var me = this;
+
+			if (
+				(prevDepth >= itemDepth) ||
+				(prevDepth === itemDepth && nextDepth < itemDepth)
+			){
+				if (item.hasClass('menu-structure-module-item')) {
+					this.increaseItemDepth(item);
+					return;
+				}
+				item.children().each(function() {
+					me.increaseItemDepth($(this));
+				});
 			}
 		},
 
