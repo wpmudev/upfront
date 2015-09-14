@@ -1145,6 +1145,7 @@ define([
 				this.listenTo(Upfront.Events, 'entity:drag_start', this.close_settings);
 				this.listenTo(Upfront.Events, 'upfront:element:edit:start', this.on_element_edit_start);
 				this.listenTo(Upfront.Events, 'upfront:element:edit:stop', this.on_element_edit_stop);
+				this.listenTo(Upfront.Events, 'entity:module:update', this.on_module_update);
 				this.listenTo(Upfront.Events, 'layout:after_render', this.on_after_layout_render);
 				this.listenTo(Upfront.Events, 'layout:after_render', this.checkUiOffset);
 
@@ -1482,6 +1483,12 @@ define([
 			on_after_layout_render: function () {
 
 			},
+			on_module_update: function (view) {
+				if ( !this.parent_module_view || this.parent_module_view != view ) return;
+				if ( this.display_size_hint ) {
+					this.update_size_hint();
+				}
+			},
 			on_change_breakpoint: function (breakpoint) {
 				var theme_style = this.model.get_breakpoint_property_value('theme_style', true),
 					$obj = this.$el.find('.upfront-object');
@@ -1742,6 +1749,7 @@ define([
 				else if ( prop.id == 'breakpoint' ){
 					this.update_position();
 				}
+				Upfront.Events.trigger('entity:module:update', this, this.model);
 			},
 			update_position: function () {
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
@@ -1752,7 +1760,6 @@ define([
 				;
 				this.apply_breakpoint_position($module, $toggle);
 				Upfront.Events.trigger('entity:module:update_position', this, this.model);
-				
 			},
 			render_object: function () {
 				var objects_view = this._objects_view || new Objects({"model": this.model.get("objects")});
