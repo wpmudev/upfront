@@ -229,7 +229,7 @@ define([
 			return allItems;
 		},
 
-		updateItemsPosition: function(movedItem) {
+		updateItemsPosition: function() {
 			var me = this;
 			// Flatten items
 			var oldItems = [];
@@ -246,6 +246,8 @@ define([
 			var prevItemId = 0;
 			var position = 1;
 			var currentDepth = 0;
+			var depthChange;
+			var i;
 			$items.each(function() {
 				var itemData = _.findWhere(
 					oldItems, {'menu-item-object-id': $(this).data('menuItemObjectId')}
@@ -259,9 +261,12 @@ define([
 				} else if (itemDepth === currentDepth) {
 					// do nothing
 				} else if (itemDepth < currentDepth) {
-					// Drop one level if depth decreased
-					parentItem = _.initial(parentItem);
-					currentDepth = currentDepth - 1;
+					// Drop levels if depth decreased
+					depthChange = currentDepth - itemDepth;
+					for (i = 0; i < depthChange; i++) {
+						parentItem = _.initial(parentItem);
+					}
+					currentDepth = itemDepth;
 				}
 
 				changedItems.push(_.extend(itemData, {
