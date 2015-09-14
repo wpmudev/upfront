@@ -12,7 +12,7 @@ define([
 
 		events: {
 			'mouseenter .menu-item-header': 'enableSorting',
-			'mouseleave .menu-item-header': 'disableSorting',
+			'mouseleave .menu-item-header': 'disableSortingOnHeaderLeave',
 			'click .add-menu-item': 'addItem'
 		},
 
@@ -116,13 +116,22 @@ define([
 				axis: "y",
 				items: '.menu-structure-sortable-item',
 				start: function(event, ui) {
+					me.sortingInProggres = true;
 					me.watchItemDepth(ui.item);
 				},
 				stop: function(event, ui) {
-				me.stopWatchingItemDepth(ui.item);
+					me.stopWatchingItemDepth(ui.item);
 					me.updateItemsPosition(ui.item);
+					me.sortingInProggres = false;
 				},
 			});
+		},
+
+		// Disable on mouse header leave only if sorting is not in progress,
+		// otherwise sortable with break.
+		disableSortingOnHeaderLeave: function() {
+			if (this.sortingInProggres === true) return;
+			this.disableSorting();
 		},
 
 		disableSorting: function() {
