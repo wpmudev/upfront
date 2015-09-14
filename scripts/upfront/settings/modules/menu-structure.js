@@ -153,6 +153,10 @@ define([
 					mouseX = event.pageX;
 					return;
 				}
+
+				// Increase tolerance for movement
+				if (Math.abs(mouseX - event.pageX) < 15) return;
+
 				me.updateSortableDepth(mouseX, event.pageX, movedItem);
 
 				mouseX = event.pageX;
