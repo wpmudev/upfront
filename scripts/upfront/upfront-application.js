@@ -550,9 +550,10 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 				object.slug = me.propertiesToObject(o.properties).postPart;
 			});
 
-			if(wrapper)
+			if (wrapper) {
 				wrapper.objects.push(object);
-			else{
+				//wrapper.objects = [object];
+			} else {
 				wrapper = {objects: [object]};
 				layout.push(wrapper);
 				wrapperIds[props.wrapper_id] = wrapper;
@@ -776,8 +777,12 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 	},
 
 	preparePostRegion: function(region){
+		var max_col = region.model.get_property_value_by_name('col'),
+			grid = Upfront.Settings.LayoutEditor.Grid
+		;
 		this.regionView = region;
-		this.regionContainer = region.$el.closest('.upfront-region-container').detach();
+		this.regionContainerView = region.parent_view.get_container_view(region.model);
+		this.regionContainer = this.regionContainerView.$el.detach();
 		this.postWrapper = this.postView.$el.closest('.upfront-wrapper');
 
 		if(this.elementType == 'archive'){
@@ -787,9 +792,15 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 			this.postWrapper.hide().after(this.regionContainer);
 		}
 
-		this.regionContainer.removeClass('c24');
-		if(!this.postRegionClass)
+		// Hack into region container columns to render correctly
+		this.regionContainerView.$layout.removeClass(grid.class + this.regionContainerView.max_col);
+		this.regionContainerView.max_col = max_col;
+		this.regionContainerView.$layout.addClass(grid.class + max_col);
+		this.regionView.update();
+		
+		if(!this.postRegionClass) {
 			this.postRegionClass = this.regionContainer.attr('class');
+		}
 		this.regionContainer.attr('class', this.postRegionClass + ' ' + this.postView.parent_module_view.model.get_property_value_by_name('class'));
 
 		//The post region should be the only available for dropping
@@ -1046,9 +1057,9 @@ var ThemeEditor = new (LayoutEditorSubapplication.extend({
 		}
 		this.listenToOnce(Upfront.Events, 'layout:render', Upfront.Behaviors.GridEditor.apply_grid);
 		this.listenToOnce(Upfront.Events, 'command:layout:save_done', Upfront.Behaviors.LayoutEditor.first_save_dialog);
-		this.listenTo(Upfront.Events, "command:layout:create", Upfront.Behaviors.LayoutEditor.create_layout_dialog);
+		this.listenTo(Upfront.Events, "command:layout:create", Upfront.Behaviors.LayoutEditor.create_layout_dialog); // DEPRECATED
 		this.listenTo(Upfront.Events, "command:themefontsmanager:open", Upfront.Behaviors.LayoutEditor.open_theme_fonts_manager);
-		this.listenTo(Upfront.Events, "command:layout:browse", Upfront.Behaviors.LayoutEditor.browse_layout_dialog);
+		this.listenTo(Upfront.Events, "command:layout:browse", Upfront.Behaviors.LayoutEditor.browse_layout_dialog); // DEPRECATED
 		this.listenTo(Upfront.Events, "command:layout:edit_structure", Upfront.Behaviors.GridEditor.edit_structure);
 		this.listenTo(Upfront.Events, "command:layout:export_theme", Upfront.Behaviors.LayoutEditor.export_dialog);
 		this.listenTo(Upfront.Events, "builder:load_theme", Upfront.Behaviors.LayoutEditor.load_theme);
@@ -1074,7 +1085,7 @@ var ResponsiveEditor = new (LayoutEditorSubapplication.extend({
     	this.topbar = new Upfront.Views.Editor.Topbar.Topbar();
     	this.topbar.start();
 		this.set_up_event_plumbing_after_render();
-		this.listenTo(Upfront.Events, "command:layout:browse", Upfront.Behaviors.LayoutEditor.browse_layout_dialog);
+		this.listenTo(Upfront.Events, "command:layout:browse", Upfront.Behaviors.LayoutEditor.browse_layout_dialog); // DEPRECATED
 
 		$("html").removeClass("upfront-edit-content upfront-edit-theme upfront-edit-postlayout upfront-edit-layout").addClass("upfront-edit-responsive");
 	},
@@ -1697,6 +1708,21 @@ var Application = new (Backbone.Router.extend({
 					styleNode.prop('disabled', true);
 			});
 		});
+	},
+	
+	adjust_grid_padding_settings: function(region) {
+		//Handle region top/bottom padding and move grid rulers
+		$region = $(region).parent(),
+			padding_top = parseInt($region.css('padding-top')),
+			padding_bottom = parseInt($region.css('padding-bottom'));
+
+		if(padding_top > 0) {
+			$region.find('.upfront-overlay-grid').css("top", padding_top * -1);
+		}
+		
+		if(padding_bottom > 0) {
+			$region.find('.upfront-overlay-grid').css("bottom", padding_bottom * -1);
+		}
 	},
 
 	fetchLayout: function(path, urlParams){

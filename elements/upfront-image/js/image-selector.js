@@ -9,7 +9,7 @@ define([
 		progressTpl: _.template($(editorTpl).find('#progress-tpl').html()),
 		formTpl: _.template($(editorTpl).find('#upload-form-tpl').html()),
 		deferred: $.Deferred(),
-		defaultOptions: {multiple: false, preparingText: l10n.sel.preparing},
+		defaultOptions: {multiple: false, multiple_sizes: true, preparingText: l10n.sel.preparing},
 		options: {},
 
 
@@ -323,29 +323,35 @@ define([
 			;
 		},
 		openMediaGallery: function(e) {
-			var me = this;
-			e.preventDefault();
-			Upfront.Media.Manager.open({
-				multiple_selection: this.options.multiple,
-				media_type:['images']
-			}).done(function(popup, result){
-				if(result && result.length > 0){
-					var ids = [];
-					result.each(function(image){
-						ids.push(image.get('ID'));
-					});
-					// We really should be having the element_id in our context by now...
-					Upfront.Views.Editor.ImageEditor.getImageData(ids, me.options.customImageSize, me.options.element_id)
-						.done(function(response){
-							me.deferred.resolve(response.data.images, response);
-						})
-					;
-
-					me.openProgress(function(){
-						$('#upfront-image-uploading h2').html(me.options.preparingText);
-					});
+			var me = this,
+				opts = {
+					multiple_selection: this.options.multiple,
+					multiple_sizes: this.options.multiple_sizes,
+					media_type:['images']
 				}
-			});
+			;
+			e.preventDefault();
+
+			Upfront.Media.Manager.open(opts)
+				.done(function(popup, result){
+					if(result && result.length > 0){
+						var ids = [];
+						result.each(function(image){
+							ids.push(image.get('ID'));
+						});
+						// We really should be having the element_id in our context by now...
+						Upfront.Views.Editor.ImageEditor.getImageData(ids, me.options.customImageSize, me.options.element_id)
+							.done(function(response){
+								me.deferred.resolve(response.data.images, response);
+							})
+						;
+
+						me.openProgress(function(){
+							$('#upfront-image-uploading h2').html(me.options.preparingText);
+						});
+					}
+				})
+			;
 		},
 		openFileBrowser: function(e){
 			e.preventDefault();

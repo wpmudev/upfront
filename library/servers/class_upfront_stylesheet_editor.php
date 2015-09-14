@@ -48,6 +48,13 @@ class Upfront_StylesheetEditor extends Upfront_Server {
 			$style = $preprocessor->get_grid();
 		}
 
+		/**
+		 * Filter the styles just before we use them
+		 *
+		 * @param string $style Gathered styles
+		 */
+		$style = apply_filters('upfront-dependencies-grid-styles', $style);
+
 		$this->_out(new Upfront_CssResponse_Success($style), !Upfront_Permissions::current(Upfront_Permissions::BOOT)); // Serve cacheable styles for visitors
 	}
 }

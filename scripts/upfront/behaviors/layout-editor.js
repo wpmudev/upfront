@@ -655,6 +655,9 @@ var LayoutEditor = {
 		});
 	},
 
+	/**
+	 * DEPRECATED
+	 */
 	create_layout_dialog: function() {
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.LayoutEditor,
@@ -800,6 +803,9 @@ var LayoutEditor = {
 		});
 	},
 
+	/**
+	 * DEPRECATED
+	 */
 	browse_layout_dialog: function () {
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.LayoutEditor,
@@ -1032,6 +1038,9 @@ var LayoutEditor = {
 		}, ed);
 	},
 
+	/**
+	 * DEPRECATED
+	 */
 	_get_saved_layout: function (){
 		var me = this,
 			deferred = new $.Deferred();

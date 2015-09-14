@@ -38,7 +38,6 @@ define([
 				'click a.upfront-image-select': 'openImageSelector',
 				'click div.upfront-quick-swap': 'openImageSelector',
 				'dblclick .wp-caption': 'editCaption',
-				'click .js-uimage-open-lightbox': 'openLightboxRegion',
 				'click .swap-image-overlay': 'openImageSelector'
 			});
 			this.delegateEvents();
@@ -463,7 +462,7 @@ define([
 			props.gifImage = '';
 			props.gifLeft = 0;
 			props.gifTop = 0;
-			
+
 			/* Commented to allow caption below image to have background
 			if (props.caption_position === 'below_image') {
 				props.captionBackground = false;
@@ -711,6 +710,16 @@ define([
 				this.render();
 			}
 		},
+		
+		updateBreakpointPadding: function(breakpointColumnPadding) {
+			var image_el = this.$el.find('.upfront-image');
+
+			if(image_el.css("padding") !== "") {
+				return parseInt(image_el.css("padding"), 10);
+			}
+
+			return breakpointColumnPadding;
+		},
 
 		/***************************************************************************/
 		/*           Handling element resize events (jQuery resizeable)            */
@@ -767,7 +776,7 @@ define([
 				data = this.resizingData.data,
 				img = this.resizingData.img,
 				captionHeight = this.property('caption_position') === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
-				// padding = this.property('no_padding') == 1 ? 0 : breakpointColumnPadding,
+				// padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding),
 				column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
 				hPadding = parseInt( this.model.get_breakpoint_property_value('left_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('right_padding_num') || column_padding ),
 				vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
@@ -821,7 +830,7 @@ define([
 				img = this.resizingData.img,
 				imgSize = {width: img.width(), height: img.height()},
 				imgPosition = img.position(),
-				padding = this.property('no_padding') == 1 ? 0 : breakpointColumnPadding;
+				padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding);
 
 			if(starting.length){
 				this.elementSize = {
@@ -1036,7 +1045,7 @@ define([
 			var me = this,
 				parent = this.parent_module_view.$('.upfront-editable_entity:first'),
 				resizer = ui ? $('.upfront-resize') : parent,
-				padding = this.property('no_padding') == 1 ? 0 : breakpointColumnPadding
+				padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding)
 			;
 
 			me.elementSize = {
@@ -1053,13 +1062,12 @@ define([
 			}
 
 		},
-		
 		applyElementSize: function (width, height) {
 			var me = this,
 				parent = this.parent_module_view.$('.upfront-editable_entity:first'),
 				resizer = parent,
 				captionHeight = this.property('caption_position') === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
-				// padding = this.property('no_padding') == 1 ? 0 : breakpointColumnPadding,
+				// padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding),
 				column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
 				hPadding = parseInt( this.model.get_breakpoint_property_value('left_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('right_padding_num') || column_padding ),
 				vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
@@ -1077,10 +1085,11 @@ define([
 
 		openImageSelector: function(e){
 			var me = this;
-			if(e) {
-				e.preventDefault();
-			}
-			Upfront.Views.Editor.ImageSelector.open().done(function(images){
+			if (e && e.preventDefault) e.preventDefault();
+
+			Upfront.Views.Editor.ImageSelector.open({
+				multiple_sizes: false,
+			}).done(function(images){
 				var sizes = {};
 				_.each(images, function(image, id){
 					sizes = image;
@@ -1211,22 +1220,6 @@ define([
 					}
 				})
 			;
-		},
-
-		openLightboxRegion: function(e){
-			if(e) {
-				e.preventDefault();
-			}
-
-			var link = e.currentTarget,
-				href = link.href.split('#')
-			;
-
-			if(href.length !== 2) {
-				return;
-			}
-
-			Upfront.Application.LayoutEditor.openLightboxRegion(href[1]);
 		},
 
 		cleanup: function(){

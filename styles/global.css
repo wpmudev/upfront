@@ -161,7 +161,8 @@ h2, h3 { page-break-after: avoid; }
     right: 0;
     z-index: -1;
 }
-.upfront-output-bg-overlay {
+.upfront-output-bg-overlay,
+.upfront-output-bg-overlay > .upfront-bg-image {
 	position: absolute;
 	top: 0;
 	bottom: 0;
@@ -169,6 +170,12 @@ h2, h3 { page-break-after: avoid; }
 	right: 0;
 	z-index: 0;
 	display: none;
+}
+.upfront-output-bg-overlay {
+	overflow: hidden;
+}
+.upfront-output-bg-overlay > .upfront-bg-image {
+	display: block;
 }
 .upfront-output-layout {
 	background-attachment: fixed;

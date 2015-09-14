@@ -14,14 +14,6 @@ class Upfront_Ajax extends Upfront_Server {
 		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
 			upfront_add_ajax('upfront_load_layout', array($this, "load_layout"));
 			upfront_add_ajax('upfront_create_layout', array($this, "create_layout"));
-			
-			/* --- These 3 are to be removed --- */
-
-			upfront_add_ajax('upfront_list_available_layout', array($this, "list_available_layout"));
-			upfront_add_ajax('upfront_list_theme_layouts', array($this, "list_theme_layouts"));
-			upfront_add_ajax('upfront_list_saved_layout', array($this, "list_saved_layout"));
-
-			/* --- Remove up to here --- */
             
             upfront_add_ajax('upfront_list_scoped_regions', array($this, "list_scoped_regions"));
             upfront_add_ajax('upfront_get_scoped_regions', array($this, "get_scoped_regions"));
@@ -35,8 +27,6 @@ class Upfront_Ajax extends Upfront_Server {
 			upfront_add_ajax('upfront_reset_cache', array($this, "reset_cache"));
 			upfront_add_ajax('upfront_reset_all_from_db', array($this, "reset_all_from_db"));
 			upfront_add_ajax('upfront_update_layout_element', array($this, "update_layout_element"));
-
-			//upfront_add_ajax('upfront_build_preview', array($this, "build_preview")); // No more previews building
 
 			upfront_add_ajax('upfront_update_insertcount', array($this, "update_insertcount"));
 		}
@@ -286,23 +276,7 @@ class Upfront_Ajax extends Upfront_Server {
 
 		$this->_out(new Upfront_JsonResponse_Success($key));
 	}
-/* --- Snip, snip. These three are to be removed --- */
-	function list_available_layout () {
-		$layouts = Upfront_Layout::list_available_layout();
-		$this->_out(new Upfront_JsonResponse_Success($layouts));
-	}
 
-	function list_theme_layouts() {
-		$layouts = Upfront_Layout::list_theme_layouts();
-		$this->_out( new Upfront_JsonResponse_Success($layouts) );
-	}
-
-	function list_saved_layout () {
-		$storage_key = $_POST['storage_key'];
-		$layouts = Upfront_Layout::list_saved_layout($storage_key);
-		$this->_out(new Upfront_JsonResponse_Success($layouts));
-	}
-/* --- Remove up to here --- */
     function list_scoped_regions () {
         $storage_key = $_POST['storage_key'];
         $scope = $_POST['scope'];
@@ -360,8 +334,18 @@ class Upfront_Ajax extends Upfront_Server {
 
 	private function _reset_cache () {
 		global $wpdb;
-		$sql = "DELETE FROM {$wpdb->options} WHERE option_name REGEXP '_transient(_timeout)?_(js|css|grid)(_uf_)?[a-f0-9]+'";
-		return $wpdb->query($sql);
+
+		$keys = array(
+			'js',
+			'css',
+			'grid',
+			'grid_front_response',
+			'styles_main',
+		);
+		$rx = '_transient(_timeout)?_(' . join("|", $keys) . ')(_uf_)?[a-f0-9]+';
+		
+		$sql = "DELETE FROM {$wpdb->options} WHERE option_name REGEXP %s";
+		return $wpdb->query($wpdb->prepare($sql, $rx));
 	}
 
 	function reset_all_from_db () {

@@ -44,7 +44,7 @@
 	left: 0;
 	right: 0;
 	bottom: 0;
-	z-index: 0;
+	z-index: 1;
 	visibility: hidden;
 	opacity: 0;
 	background: -webkit-linear-gradient(bottom, rgba(100,255,255,.3) 1px, transparent 1px, transparent);
@@ -423,6 +423,9 @@
 }
 .upfront-module-group .upfront-editable_entities_container .ui-resizable-handle {
   visibility: hidden;
+}
+.upfront-module-group .upfront-editable_entities_container .uslider .ui-resizable-handle {
+  visibility: visible;
 }
 .upfront-module-group-on-edit > .ui-resizable-handle,
 .upfront-module-group-on-edit > .upfront-entity_meta > .upfront-icon-button {

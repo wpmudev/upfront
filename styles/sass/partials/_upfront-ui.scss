@@ -36,6 +36,30 @@
 	border: none;
 	outline: none;
 }
+.upfront-object-content .ueditor-box-wrapper h1, 
+.upfront-object-content .ueditor-box-wrapper h2,
+.upfront-object-content .ueditor-box-wrapper h3, 
+.upfront-object-content .ueditor-box-wrapper h4,
+.upfront-object-content .ueditor-box-wrapper h5,
+.upfront-object-content .ueditor-box-wrapper h6,
+.upfront-object-content .ueditor-box-wrapper p,
+.upfront-object-content .ueditor-box-wrapper a,
+.upfront-object-content .ueditor-box-wrapper a:hover,
+.upfront-object-content .ueditor-box-wrapper ul,
+.upfront-object-content .ueditor-box-wrapper ol,
+.upfront-object-content .ueditor-box-wrapper blockquote, .upfront-object-content .ueditor-box-wrapper  blockquote p,
+.upfront-object-content .ueditor-box-wrapper blockquote.upfront-quote-alternative {
+	font-family: 'Source Sans Pro';
+	text-decoration: none;
+	font-style: normal;
+	font-weight: normal;
+	font-size: 15px;
+}
+.upfront-object-content .ueditor-box-wrapper ul,
+.upfront-object-content .ueditor-box-wrapper ol {
+	margin: 0;
+	padding: 0;
+}
 .upfront-ui a,
 .upfront-ui button,
 .upfront-ui input {

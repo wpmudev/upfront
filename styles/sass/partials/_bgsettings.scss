@@ -191,6 +191,11 @@
   display: block;
 }
 
+.background-type-field .upfront-field-select, 
+.background-image-field .upfront-field-select {
+  max-width: 130px;
+}
+
 /* Padding Settings */
 .upfront-region-bg-setting-padding {
   background: none;

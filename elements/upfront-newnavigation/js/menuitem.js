@@ -6,10 +6,13 @@ return (function ($) {
 		tagName: 'li',
 		contextmenuContext: [],
 		removeContexts: true,
+		
 		events: {
 			'click i.delete_menu_item' : 'deleteMenuItem',
 			'click i.navigation-add-item': 'addMenuItem',
 			"contextmenu a.menu_item": "on_context_menu",
+			"click a.menu_item": "on_click",
+			"touchstart a.menu_item": "on_click",
 			'click a.redactor_act': 'onOpenPanelClick',
 			'click .sub-menu': 'onOpenPanelSubMenu',
 			'click .upfront-save_settings': 'onOpenPanelSubMenu',
@@ -19,6 +22,7 @@ return (function ($) {
 		initialize: function(options) {
 			this.parent_view = options.parent_view;
 			this.newitem = options.newitem;
+			this.level = options.level;
 			var me = this;
 			_.bindAll(this, 'render');
 
@@ -91,7 +95,40 @@ return (function ($) {
 				this.loadContexts(menu);
 			}
 		},
+		on_click: function(e) {
+			
+			//e.preventDefault();
+			
+			var linkitem = $(e.target).parent('li.menu-item');
+			//console.log(linkitem);
+			//console.log(linkitem.closest('.upfront-output-unewnavigation').data('style'))
+			if(linkitem.hasClass('parent') && linkitem.closest('.upfront-output-unewnavigation').data('style') == 'burger') {
+				e.stopPropagation();
+
+				if(linkitem.hasClass('burger_sub_display'))
+					linkitem.removeClass('burger_sub_display');
+				else
+					linkitem.addClass('burger_sub_display');
+
+				var menu = linkitem.closest('ul.menu');
+				var menucontainer = linkitem.closest('div.upfront-output-unewnavigation');
+
+				if(menucontainer.data('burger_over') == 'pushes' && (menucontainer.data('burger_alignment') == 'top' || menucontainer.data('burger_alignment') == 'whole')) {
+		
+					$('section.upfront-layout').css('margin-top', menu.height());
+			
+
+					var topbar_height = $('div#upfront-ui-topbar').outerHeight();
+					var ruler_height = $('.upfront-ruler-container').outerHeight();
+					menu.offset({top:topbar_height+ruler_height, left:$('section.upfront-layout').offset().left});
+					
+
+				}
+			}
+		},
 		on_context_menu: function(e) {
+			if (Upfront.Settings.Application.no_context_menu) return;
+			
 			e.stopPropagation();
 			if(this.parent_view.$el.find('ul.menu').hasClass('edit_mode')) return;
 
@@ -187,7 +224,8 @@ return (function ($) {
 			if(this.model['menu-item-url'].indexOf('#ltb-') > -1 && !Upfront.Util.checkLightbox(this.model['menu-item-url']))
 					content = content + '<span class="missing-lightbox-warning"></span>';
 
-			$(this.el).html(content);
+			$(this.el).html(content).addClass('menu-item-depth-'+me.level);
+			$(this.el).data('depth', me.level);
 			this.createInlineControlPanel();
 
 			$(this.el).data('backboneview', me).addClass('menu-item');

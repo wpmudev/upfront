@@ -14,7 +14,10 @@ define([], function() {
 			var current_set_over = this.settings._wrapped[1].fields._wrapped[1].$el.find('input:checked').val();
 			var current_set_style = this.settings._wrapped[2].fields._wrapped[0].$el.find('input:checked').val();
 			var current_set_menu_alignment = this.settings._wrapped[3].fields._wrapped[0].$el.find('input:checked').val();
-
+			var current_set_is_floating = this.settings._wrapped[4].fields._wrapped[1].$el.find('input:checked').val();
+			if(typeof(current_set_is_floating) == 'undefined')
+				current_set_is_floating = 'no';
+			
 			model_breakpoint = Upfront.Util.clone(this.model.get_property_value_by_name('breakpoint') || {});
 
 			if ( breakpoint && !breakpoint.default ){
@@ -25,6 +28,7 @@ define([], function() {
 				breakpoint_data.burger_over = current_set_over;
 				breakpoint_data.menu_style = current_set_style;
 				breakpoint_data.menu_alignment = current_set_menu_alignment;
+				breakpoint_data.is_floating = current_set_is_floating;
 
 				if(this.model.get_property_value_by_name('burger_menu') == 'yes') {
 					this.settings._wrapped[0].fields._wrapped[1].$el.find('input').attr("checked", 'checked');
@@ -40,6 +44,9 @@ define([], function() {
 
 				this.settings._wrapped[3].fields._wrapped[0].$el.find('input').removeAttr("checked");
 				this.settings._wrapped[3].fields._wrapped[0].$el.find('input[value="'+this.model.get_property_value_by_name('menu_alignment')+'"]').attr("checked", 'checked');
+
+				this.settings._wrapped[4].fields._wrapped[1].$el.find('input').removeAttr("checked");
+				this.settings._wrapped[4].fields._wrapped[1].$el.find('input[value="'+this.model.get_property_value_by_name('is_floating')+'"]').attr("checked", 'checked');
 
 				this.settings._wrapped[1].fields._wrapped[1].$el.find('input').removeAttr("checked");
 				this.settings._wrapped[1].fields._wrapped[1].$el.find('input[value="'+this.model.get_property_value_by_name('burger_over')+'"]').attr("checked", 'checked');
@@ -78,6 +85,9 @@ define([], function() {
 
 						if(!breakpoint_data.menu_alignment)
 							breakpoint_data.menu_alignment = current_set_menu_alignment;
+
+						if(!breakpoint_data.is_floating)
+							breakpoint_data.is_floating = current_set_is_floating;
 
 						if(!breakpoint_data.burger_over)
 							breakpoint_data.burger_over = current_set_over;
@@ -136,8 +146,16 @@ define([], function() {
 						}
 					}
 
+					if(breakpoint_data.is_floating) {
+						item = this.panels._wrapped[0].settings._wrapped[4].fields._wrapped[1];
+						if (item && item.$el && item.$el.length) {
+							item.$el.find('input').removeAttr("checked");
+							item.$el.find('input[value="'+breakpoint_data.is_floating+'"]').attr("checked", 'checked');
+						}
+					}
+
 					if(breakpoint_data.burger_over) {
-						item = this.panels._wrapped[0].settings._wrapped[2].fields._wrapped[1];
+						item = this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[1];
 						if (item && item.$el && item.$el.length) {
 							item.$el.find('input').removeAttr("checked");
 							item.$el.find('input[value="'+breakpoint_data.burger_over+'"]').attr("checked", 'checked');
@@ -191,6 +209,9 @@ define([], function() {
 			if(this.panels._wrapped[0].settings._wrapped[0].fields._wrapped[1].$el.find('input:checked').length > 0) {
 				this.panels._wrapped[0].settings._wrapped[1].$el.css('display', 'block');
 				this.panels._wrapped[0].settings._wrapped[2].$el.css('display', 'none');
+
+				if(this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[0].get_value() == "left" || this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[0].get_value() == "right" || this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[0].get_value() == "whole")
+					this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[1].$el.hide();
 			}
 			else {
 				this.panels._wrapped[0].settings._wrapped[1].$el.css('display', 'none');
@@ -268,7 +289,17 @@ define([], function() {
 										{ label: l10n.mnu.right, value: 'right', icon: 'burger-right'},
 										{ label: l10n.mnu.top, value: 'top', icon: 'burger-top'},
 										{ label: l10n.mnu.whole, value: 'whole', icon: 'burger-whole'}
-									]
+									],
+									change: function() {
+										var value = this.get_value();
+										if(value == 'left' || value == 'right' || value == 'whole') {
+											me.panels._wrapped[0].settings._wrapped[1].fields._wrapped[1].$el.hide();
+											me.panels._wrapped[0].settings._wrapped[1].fields._wrapped[1].set_value("over");
+										}
+										else {
+											me.panels._wrapped[0].settings._wrapped[1].fields._wrapped[1].$el.show();	
+										}
+									}
 								}),
 								new Upfront.Views.Editor.Field.Radios({
 									model: this.model,
