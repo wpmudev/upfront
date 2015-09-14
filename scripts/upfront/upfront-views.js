@@ -619,8 +619,8 @@ define([
 					return;
 				var $el = this.$size_hint.parent(),
 					column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
-					hPadding = ( this.model.get_breakpoint_property_value('left_padding_num') || column_padding ) + ( this.model.get_breakpoint_property_value('right_padding_num') || column_padding ),
-					vPadding = ( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + ( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
+					hPadding = parseInt( this.model.get_breakpoint_property_value('left_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('right_padding_num') || column_padding ),
+					vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
 					width = width ? width - hPadding : $el.width() - hPadding,
 					height = height ? height - vPadding : $el.height() - vPadding,
 					hint = '<b>w:</b>' + width + 'px <b>h:</b>' + height + 'px';

@@ -539,7 +539,7 @@ define([
 			} else {
 				var resizeHint = $('<div>').addClass('upfront-ui uimage-resize-hint' + onTop);
 				this.$el.append(resizeHint);
-				this.applyElementSize();
+				this.applyElementSize(elementSize.width, elementSize.height);
 			}
 
 			if(this.property('image_status') !== 'ok') {
@@ -767,10 +767,14 @@ define([
 				data = this.resizingData.data,
 				img = this.resizingData.img,
 				captionHeight = this.property('caption_position') === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
-				padding = this.property('no_padding') == 1 ? 0 : breakpointColumnPadding,
+				// padding = this.property('no_padding') == 1 ? 0 : breakpointColumnPadding,
+				column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
+				hPadding = parseInt( this.model.get_breakpoint_property_value('left_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('right_padding_num') || column_padding ),
+				vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
 				ratio;
 
-			data.elementSize = {width: attr.width - (2 * padding), height: attr.height - (2 * padding) - captionHeight};
+			// data.elementSize = {width: attr.width - (2 * padding), height: attr.height - (2 * padding) - captionHeight};
+			data.elementSize = {width: parseInt(attr.width) - hPadding, height: parseInt(attr.height) - vPadding - captionHeight};
 
 			this.applyElementSize();
 
@@ -1050,13 +1054,17 @@ define([
 
 		},
 		
-		applyElementSize: function () {
+		applyElementSize: function (width, height) {
 			var me = this,
 				parent = this.parent_module_view.$('.upfront-editable_entity:first'),
 				resizer = parent,
 				captionHeight = this.property('caption_position') === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
-				padding = this.property('no_padding') == 1 ? 0 : breakpointColumnPadding,
-				elementSize = {width: resizer.width() - (2 * padding), height: resizer.height() - (2 * padding) - captionHeight}
+				// padding = this.property('no_padding') == 1 ? 0 : breakpointColumnPadding,
+				column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
+				hPadding = parseInt( this.model.get_breakpoint_property_value('left_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('right_padding_num') || column_padding ),
+				vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
+				// elementSize = {width: resizer.width() - (2 * padding), height: resizer.height() - (2 * padding) - captionHeight}
+				elementSize = {width: ( width && !isNaN(width) ? width : resizer.width() ) - hPadding, height: ( height && !isNaN(height) ? height : resizer.height() ) - vPadding - captionHeight}
 			;
 			this.property('element_size', elementSize);
 			this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
