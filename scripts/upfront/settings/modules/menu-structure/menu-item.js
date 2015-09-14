@@ -16,11 +16,8 @@ define([
 			var sub = this.model.get('sub');
 
 			if (sub) {
-				sub = _.sortBy(sub, function(i) {
-					return parseInt(i['menu-item-position'], 10);
-				});
 				_.each(sub, function(itemOptions) {
-					this.subViews.push(
+					this.subViews.unshift(
 						new MenuItem({
 							model: new Backbone.Model(itemOptions),
 							depth: this.depth + 1,
