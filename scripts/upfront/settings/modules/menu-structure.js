@@ -179,29 +179,20 @@ define([
 			}
 		},
 
-		decreaseItemDepth: function(item) {
-			item.removeClass('menu-structure-item-depth-' + item.data('menuItemDepth'));
-			item.data('menu-item-depth', item.data('menuItemDepth') - 1);
-			item.addClass('menu-structure-item-depth-' + item.data('menuItemDepth'));
-		},
-
-		increaseItemDepth: function(item) {
-			item.removeClass('menu-structure-item-depth-' + item.data('menuItemDepth'));
-			item.data('menuItemDepth', item.data('menuItemDepth') + 1);
-			item.addClass('menu-structure-item-depth-' + item.data('menuItemDepth'));
-		},
-
 		decreaseGroupDepth: function(itemDepth, prevDepth, nextDepth, item) {
 			var me = this;
 
 			if (
 				(prevDepth < itemDepth && nextDepth < itemDepth) ||
-				(prevDepth === itemDepth && nextDepth < itemDepth)
+				(prevDepth === itemDepth && nextDepth < itemDepth) ||
+				_.isUndefined(nextDepth) || // This is the last item in menu, allow any decrease
+				nextDepth < itemDepth // This is the last submenu item, allow any decrease
 			){
 				if (item.hasClass('menu-structure-module-item')) {
 					this.decreaseItemDepth(item);
 					return;
 				}
+
 				item.children().each(function() {
 					me.decreaseItemDepth($(this));
 				});
@@ -223,6 +214,18 @@ define([
 					me.increaseItemDepth($(this));
 				});
 			}
+		},
+
+		decreaseItemDepth: function(item) {
+			item.removeClass('menu-structure-item-depth-' + item.data('menuItemDepth'));
+			item.data('menu-item-depth', item.data('menuItemDepth') - 1);
+			item.addClass('menu-structure-item-depth-' + item.data('menuItemDepth'));
+		},
+
+		increaseItemDepth: function(item) {
+			item.removeClass('menu-structure-item-depth-' + item.data('menuItemDepth'));
+			item.data('menuItemDepth', item.data('menuItemDepth') + 1);
+			item.addClass('menu-structure-item-depth-' + item.data('menuItemDepth'));
 		},
 
 		stopWatchingItemDepth: function() {
