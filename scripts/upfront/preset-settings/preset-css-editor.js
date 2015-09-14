@@ -159,8 +159,8 @@ define([
 				
 				rules = _.map(rules, function(rule){return $.trim(rule);});
 				rules.pop();
-
-				styles_with_selector = preset_class + rules.join('\n}' + preset_class) + '\n}';
+				
+				styles_with_selector = me.stylesAddSelector($.trim(editor.getValue()), me.get_css_selector());
 
 				me.$style.html(styles_with_selector);
 				me.trigger('change', styles_with_selector);
@@ -437,7 +437,7 @@ define([
 			this.options.preset.set('preset_style', data.styles);
 			
 			this.trigger('upfront:presets:update', this.options.preset.toJSON());
-			
+
 			return Upfront.Views.Editor.notify(l10n.preset_style_saved.replace(/%s/,  this.elementType.id));
 
 		},

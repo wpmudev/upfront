@@ -95,12 +95,14 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 	public function replace_new_lines($presets) {
 		$new_presets = array();
 		
-		foreach($presets as $preset) {
-			if(isset($preset['preset_style']) && !empty($preset['preset_style'])) {
-				$preset['preset_style'] = str_replace("@n", "\n", $preset['preset_style']);
+		if(!empty($presets)) {
+			foreach($presets as $preset) {
+				if(isset($preset['preset_style']) && !empty($preset['preset_style'])) {
+					$preset['preset_style'] = str_replace("@n", "\n", $preset['preset_style']);
+				}
+				
+				$new_presets[] = $preset;
 			}
-			
-			$new_presets[] = $preset;
 		}
 		
 		return $new_presets;
@@ -120,7 +122,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 				'as_array' => true
 			)
 		);
-		
+
 		$presets = $this->replace_new_lines($presets);
 
 		// Fail-safe
