@@ -31,19 +31,6 @@ define([
 			});
 
 			this.setup();
-
-			this.$el.sortable({
-				axis: "y",
-				items: '.menu-structure-module-item',
-				start: function(event, ui) {
-					me.watchItemDepth(ui.item);
-				},
-				stop: function(event, ui) {
-					me.stopWatchingItemDepth(ui.item);
-					me.updateItemsPosition(ui.item);
-				},
-			});
-			this.disableSorting();
 		},
 
 		setup: function() {
@@ -88,12 +75,64 @@ define([
 			});
 		},
 
-		enableSorting: function() {
-			this.$el.sortable('enable');
+		enableSorting: function(event) {
+			// highlight all sortables
+			var $items = this.$el.find('.menu-structure-module-item'),
+				hoveredItem = $(event.target).parent(),
+				addedChildren = false,
+				me = this,
+				hoveredItemDepth;
+
+			// First add sortable class to all items
+			$items.addClass('menu-structure-sortable-item');
+
+			// Leave only items that are not children of current item sortable
+			// Than make a group that is wrapped with sortable from hovered item
+			// and its children.
+			$items.each(function() {
+				if (addedChildren) {
+					return;
+				}
+				if (!_.isUndefined(hoveredItemDepth) && $(this).data('menuItemDepth') <= hoveredItemDepth) {
+					addedChildren = true;
+					return;
+				}
+
+				if (!_.isUndefined(hoveredItemDepth) && $(this).data('menuItemDepth') > hoveredItemDepth) {
+					$(this).addClass('hovered-item-group-member');
+					$(this).removeClass('menu-structure-sortable-item');
+					return;
+				}
+
+				if (_.isUndefined(hoveredItemDepth) && $(this).is(hoveredItem)) {
+					hoveredItemDepth = $(this).data('menuItemDepth');
+					$(this).addClass('hovered-item-group-member');
+					$(this).removeClass('menu-structure-sortable-item');
+				}
+			});
+			this.$el.find('.hovered-item-group-member').wrapAll('<div class="menu-structure-sortable-item"></div>');
+
+			this.$el.sortable({
+				axis: "y",
+				items: '.menu-structure-sortable-item',
+				start: function(event, ui) {
+					me.watchItemDepth(ui.item);
+				},
+				stop: function(event, ui) {
+				me.stopWatchingItemDepth(ui.item);
+					me.updateItemsPosition(ui.item);
+				},
+			});
 		},
 
 		disableSorting: function() {
-			this.$el.sortable('disable');
+			var $items = this.$el.find('.menu-structure-module-item'),
+				$hoveredItems = this.$el.find('.hovered-item-group-member');
+
+			$hoveredItems.unwrap();
+			$hoveredItems.removeClass('hovered-item-group-member');
+			$items.removeClass('menu-structure-sortable-item');
+			this.$el.sortable('destroy');
 		},
 
 		watchItemDepth: function(movedItem) {
