@@ -94,6 +94,8 @@ define([
 					this.unsetMobileMode();
 				}
 			});
+
+			this.listenTo(Upfront.Events, 'entity:module:update', this.on_uimage_update);
 		},
 
 		setDefaults: function(){
@@ -538,7 +540,10 @@ define([
 			} else {
 				var resizeHint = $('<div>').addClass('upfront-ui uimage-resize-hint' + onTop);
 				this.$el.append(resizeHint);
-				this.applyElementSize(elementSize.width, elementSize.height);
+				// this.applyElementSize(elementSize.width, elementSize.height)
+				setTimeout( function () { 
+					me.applyElementSize();
+				}, 300 );
 			}
 
 			if(this.property('image_status') !== 'ok') {
@@ -863,6 +868,12 @@ define([
 
 			this.resizingData = {};
 			this.showCaption();
+		},
+
+		on_uimage_update: function (view) {
+			if ( !this.parent_module_view || this.parent_module_view != view ) return;
+			
+			this.applyElementSize();
 		},
 
 		showCaption: function() {
@@ -1334,3 +1345,4 @@ define([
 
 });
 })(jQuery);
+//@ sourceURL=uimage.js
