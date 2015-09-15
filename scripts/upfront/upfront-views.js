@@ -871,7 +871,6 @@ define([
 						$modules.each(function(){
 							if ( $(this).is(':visible') ) visible = true;
 						});
-						return true;
 						return visible;
 					})
 					.each(function(){
@@ -1699,7 +1698,8 @@ define([
 				this.listenTo(Upfront.Events, "entity:wrapper:update_position", this.on_wrapper_update);
 			},
 			render: function () {
-				var props = {},
+				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+					props = {},
 					is_parent_group = ( typeof this.group_view != 'undefined' ),
 					run = this.model.get("properties").each(function (prop) {
 						props[prop.get("name")] = prop.get("value");
@@ -1714,6 +1714,9 @@ define([
 
 				//console.log('-- Module render ' + this.cid);
 				this.$el.html(template);
+				if ( breakpoint && !breakpoint.default ) {
+					this.update_position();
+				}
 
 				if ( this.model.get("shadow") ){
 					this.$el.find('>.upfront-editable_entity:first').attr("data-shadow", this.model.get("shadow"));
@@ -4727,9 +4730,14 @@ define([
 				this.listenTo(Upfront.Events, 'upfront:wrappers:after_fix_height', this.on_apply_height);
 			},
 			render: function () {
-				var template = _.template(_Upfront_Templates["wrapper"]);
+				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+					template = _.template(_Upfront_Templates["wrapper"])
+				;
 				Upfront.Events.trigger('entity:wrapper:before_render', this, this.model);
 				this.$el.html(template);
+				if ( breakpoint && !breakpoint.default ) {
+					this.update_position();
+				}
 				Upfront.Events.trigger('entity:wrapper:after_render', this, this.model);
 			},
 			update: function (prop, options) {
@@ -4784,12 +4792,14 @@ define([
 				e.preventDefault();
 				this.add_spacer(position);
 			},
-			add_spacer: function (position, spacer_col) {
+			add_spacer: function (position, spacer_col, current_col) {
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
 					ed = Upfront.Behaviors.GridEditor,
 					col_class = Upfront.Settings.LayoutEditor.Grid.class,
 					spacer_col = spacer_col > 0 ? spacer_col : 1,
-					current_col = Upfront.Util.width_to_col(this.$el.width()),
+					current_col = _.isNumber(current_col) && current_col > spacer_col 
+						? current_col 
+						: Upfront.Util.width_to_col(this.$el.width()),
 					new_col = current_col-spacer_col,
 					$rsz_wrapper = ( new_col > 0 ? this.$el : ( this._find_closest_wrapper(position == 'left', spacer_col) ) )
 				;
