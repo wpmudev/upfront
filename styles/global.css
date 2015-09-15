@@ -313,7 +313,8 @@ h2, h3 { page-break-after: avoid; }
 }
 
 .upfront-output-image .upfront-image-container img {
-    max-width: 100%;
+    /*max-width: 100%;*/
+    max-width: none;
 }
 
 .uf-responsive #page .post_content > * {
