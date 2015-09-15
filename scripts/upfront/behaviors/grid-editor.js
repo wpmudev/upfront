@@ -1739,7 +1739,7 @@ var GridEditor = {
 
 				// If this is placed on the side, let's add spacer
 				if ( !also_model && ( first_in_row || last_in_row ) && max_col-rsz_col > 0 ) {
-					view.add_spacer( ( first_in_row ? 'left' : 'right' ), max_col-rsz_col );
+					view.add_spacer( ( first_in_row ? 'left' : 'right' ), max_col-rsz_col, max_col );
 				}
 				else {
 					// Else if rsz_col is 0, remove model, otherwise update model
