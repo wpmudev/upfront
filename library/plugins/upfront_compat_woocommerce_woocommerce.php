@@ -109,6 +109,7 @@ class Upfront_Compat_Woocommerce_Woocommerce extends Upfront_Server {
 				'layout' => array(
 					'type' => 'single',
 					'item' => $item,
+					'noedit' => 'noedit'
 				),
 			);
 		}
@@ -118,6 +119,7 @@ class Upfront_Compat_Woocommerce_Woocommerce extends Upfront_Server {
 				'layout' => array(
 					'type' => 'archive',
 					'item' => $item,
+					'noedit' => 'noedit'
 				),
 			);
 		}
