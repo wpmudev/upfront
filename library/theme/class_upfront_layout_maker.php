@@ -11,6 +11,7 @@ class Upfront_Layout_Maker {
 		$post_main = false;
 		// Track added regions cause lightboxes might be included multiple times
 		$added_regions = array();
+
 		foreach($this->regions as $r){
 			$region = $r->get_data();
 

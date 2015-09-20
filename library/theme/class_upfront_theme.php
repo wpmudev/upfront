@@ -82,8 +82,9 @@ class Upfront_Theme {
 
 	public function get_default_layout($cascade, $layout_slug = "", $add_global_regions = false) {
 		$regions = new Upfront_Layout_Maker();
-
+		
 		$template_path = $this->find_default_layout($cascade, $layout_slug);
+
 		$current_theme = Upfront_ChildTheme::get_instance();
 
 		if ($add_global_regions && $current_theme && $current_theme->has_global_region('header')) {
@@ -95,7 +96,7 @@ class Upfront_Theme {
 		if ($add_global_regions && $current_theme && $current_theme->has_global_region('footer')) {
 			include(get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'global-regions' . DIRECTORY_SEPARATOR . 'footer.php');
 		}
-
+				
 		$layout = $regions->create_layout();
 
 		return $layout;
@@ -103,6 +104,11 @@ class Upfront_Theme {
 
 	protected function find_default_layout($cascade, $layout_slug = "") {
 		$filenames = array();
+		
+		// in case it is a plugin specific layout, it will pick default layout for plugins, which are generally named as single-noedit.php and archive-noedit.php
+		if(isset($cascade['noedit']))
+			$layout_slug = "noedit";
+
 		$order = array('theme_defined', 'specificity', 'item', 'type');
 		foreach($order as $o){
 			if(isset($cascade[$o])){

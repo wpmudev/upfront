@@ -368,7 +368,6 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
         $has_forum_spec = !empty($data['layout']['specificity']) && !(strpos($data['layout']['specificity'], 'bbpress') === false);
 
 
-
         if (!$has_forum_item && !$has_forum_spec) return false;
 
         $this->_out(new Upfront_JsonResponse_Success(array(

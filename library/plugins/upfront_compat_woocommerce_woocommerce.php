@@ -16,6 +16,7 @@ class Upfront_Compat_Woocommerce_Woocommerce extends Upfront_Server {
 
 		// Deal with editor
 		add_action('wp_ajax_upfront_posts-load', array($this, "load_posts"), 9); // Bind this early to override the default Posts element action
+		add_action('wp_ajax_this_post-get_markup', array($this, "load_markup"), 9);
 		//add_filter('upfront_data', array($this, 'override_data'), 99); // Bind this late to make sure the posts data is already injected
 	}
 
@@ -95,11 +96,11 @@ class Upfront_Compat_Woocommerce_Woocommerce extends Upfront_Server {
 			'woocommerce-checkout' => __('Woo Checkout page', 'upfront'),
 			'woocommerce-payment' => __('Woo Payment page', 'upfront'),
 			'woocommerce-account' => __('Woo Account page', 'upfront'),
+			'woocommerce-product' => __('Woo Product', 'upfront'),
 		);
 		// This is where we replace the Posts element with our custom Woo output element
 		$archives = array(
 			'woocommerce-shop' => __('Woo Shop page', 'upfront'),
-			'woocommerce-product' => __('Woo Product', 'upfront'),
 			'woocommerce-product_tax' => __('Woo Product taxonomy', 'upfront'),
 		);
 
@@ -109,6 +110,7 @@ class Upfront_Compat_Woocommerce_Woocommerce extends Upfront_Server {
 				'layout' => array(
 					'type' => 'single',
 					'item' => $item,
+					'specificity' => $item,
 					'noedit' => 'noedit'
 				),
 			);
@@ -129,14 +131,30 @@ class Upfront_Compat_Woocommerce_Woocommerce extends Upfront_Server {
 		return $layouts;
 	}
 
-	public function load_posts () {
+
+	public function load_markup () {
 		$data = stripslashes_deep($_POST);
+		
 		if (empty($data['layout']['item']) && empty($data['layout']['specificity'])) return false; // Don't deal with this if we don't know what it is
 
 		$has_woo_item = !empty($data['layout']['item']) && (bool)preg_match('/^woocommerce/', $data['layout']['item']);
 		$has_woo_spec = !empty($data['layout']['specificity']) && (bool)preg_match('/^woocommerce/', $data['layout']['specificity']);
 
 		if (!$has_woo_item && !$has_woo_spec) return false;
+
+		$this->_out(new Upfront_JsonResponse_Success(array(
+            "filtered" => '<div class="upfront-woocommerce_compat upfront-plugin_compat"><p>WooCommerce specific content</p></div>'
+        )));
+		
+	}
+
+	public function load_posts () {
+		$data = stripslashes_deep($_POST);
+		if (empty($data['layout']['item'])) return false; // Don't deal with this if we don't know what it is
+
+		$has_woo_item = !empty($data['layout']['item']) && (bool)preg_match('/^woocommerce/', $data['layout']['item']);
+
+		if (!$has_woo_item) return false;
 
 		$this->_out(new Upfront_JsonResponse_Success(array(
 			'posts' => '<div class="upfront-woocommerce_compat upfront-plugin_compat"><p>WooCommerce specific content</p></div>',

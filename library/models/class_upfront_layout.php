@@ -208,6 +208,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 
 	public static function get_regions_data ($add_global_regions = false) {
 		$regions_data = self::_get_regions($add_global_regions);
+
 		$regions_added = array();
 		$regions = array();
 		foreach ( $regions_data as $i => $region ) {
@@ -265,12 +266,14 @@ class Upfront_Layout extends Upfront_JsonModel {
 	public static function create_layout ($layout_ids = array(), $layout_slug = '') {
 		self::$layout_slug = $layout_slug;
 		self::$cascade = $layout_ids;
+
 		$data = array(
 			"name" => "Default Layout",
 			"properties" => self::get_layout_properties(),
 			"regions" => self::get_regions_data(true),
 			"layout_slug" => self::$layout_slug
 		);
+
 		return self::from_php(apply_filters('upfront_create_default_layout', $data, $layout_ids, self::$cascade));
 	}
 
