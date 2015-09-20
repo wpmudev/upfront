@@ -60,6 +60,7 @@ class Upfront_Compat_Woocommerce_Woocommerce extends Upfront_Server {
 		
 		$cascade["type"] = "archive";
 		$cascade['item'] = "woocommerce-{$item}"; 
+		$cascade["plugin"] = "plugin";
 		if (!empty($spec)) $cascade['specificity'] = "woocommerce-{$item}-{$spec}"; 
 
 		return $cascade;
@@ -111,7 +112,7 @@ class Upfront_Compat_Woocommerce_Woocommerce extends Upfront_Server {
 					'type' => 'single',
 					'item' => $item,
 					'specificity' => $item,
-					'noedit' => 'noedit'
+					'plugin' => 'plugin'
 				),
 			);
 		}
@@ -121,7 +122,7 @@ class Upfront_Compat_Woocommerce_Woocommerce extends Upfront_Server {
 				'layout' => array(
 					'type' => 'archive',
 					'item' => $item,
-					'noedit' => 'noedit'
+					'plugin' => 'plugin'
 				),
 			);
 		}

@@ -105,9 +105,9 @@ class Upfront_Theme {
 	protected function find_default_layout($cascade, $layout_slug = "") {
 		$filenames = array();
 		
-		// in case it is a plugin specific layout, it will pick default layout for plugins, which are generally named as single-noedit.php and archive-noedit.php
-		if(isset($cascade['noedit']))
-			$layout_slug = "noedit";
+		// in case it is a plugin specific layout, it will pick default layout for plugins, which are generally named as single-plugin.php and archive-plugin.php
+		if(isset($cascade['plugin']))
+			$layout_slug = "plugin";
 
 		$order = array('theme_defined', 'specificity', 'item', 'type');
 		foreach($order as $o){
@@ -123,6 +123,11 @@ class Upfront_Theme {
 		}
 		$filenames[] = 'layouts/index.php';
 
+ob_start();
+			var_dump($filenames);
+
+
+		file_put_contents("debugg.txt", ob_get_clean());
 		return function_exists('upfront_locate_template')
 			? upfront_locate_template($filenames)
 			: locate_template($filenames)

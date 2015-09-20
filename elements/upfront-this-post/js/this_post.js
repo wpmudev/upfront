@@ -25,7 +25,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 	loading: false,
 	postId: false,
 	editor: false,
-	noedit: false,
+	plugin: false,
 	initialize: function(options){
 		var me = this;
 		if(! (this.model instanceof ThisPostModel)){
@@ -44,18 +44,18 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 
 		this.postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
 		
-		if(Upfront.Application.current_subapplication.get_layout_data().layout.noedit) {
-			this.noedit=true; //to enable loading of non-editable content for plugins when ID is not available
+		if(Upfront.Application.current_subapplication.get_layout_data().layout.plugin) {
+			this.plugin=true; //to enable loading of non-editable content for plugins when ID is not available
 		}
 
-		if(this.noedit || this.postId){
+		if(this.plugin || this.postId){
 			this.refreshMarkup().then(function(){
 				if(me.postId)
 					me.prepareEditor();
 			});
 			//let's also start the editor before getting the markup
 			//so its load will be faster
-			if(!this.noedit)
+			if(!this.plugin)
 				me.prepareEditor();
 		} else if ("themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.THEME) {
 			// We're dealing with a theme exporter request
@@ -204,7 +204,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		if(this.loadingMarkup)
 			return this.loadingMarkup;
 
-		if(this.postId === false && !this.noedit)
+		if(this.postId === false && !this.plugin)
 			return new $.Deferred().resolve({data:{filtered: 'Error'}});
 
 		var node = $('#' + me.property('element_id')).find(".upfront-object-content"),

@@ -46,7 +46,7 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
                 'type' => 'single',
                 'item' => "bbpress-single-forum",
                 'specificity' => "bbpress-single-forum",
-                'noedit' => 'noedit'
+                'plugin' => 'plugin'
             )
         );
 
@@ -56,7 +56,7 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
                 'type' => 'single',
                 'item' => "bbpress-single-topic",
                 'specificity' => "bbpress-single-topic",
-                'noedit' => 'noedit'
+                'plugin' => 'plugin'
             )
         );
 
@@ -66,7 +66,7 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
                 'type' => 'single',
                 'item' => "bbpress-topic-split",
                 'specificity' => "bbpress-topic-split",
-                'noedit' => 'noedit'
+                'plugin' => 'plugin'
             )
         );
 
@@ -76,7 +76,7 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
                 'type' => 'single',
                 'item' => "bbpress-reply-edit",
                 'specificity' => "bbpress-reply-edit",
-                'noedit' => 'noedit'
+                'plugin' => 'plugin'
             )
         );
 
@@ -86,7 +86,7 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
                 'type' => 'single',
                 'item' => "bbpress-reply-move",
                 'specificity' => "bbpress-reply-move",
-                'noedit' => 'noedit'
+                'plugin' => 'plugin'
             )
         );
 
@@ -96,7 +96,7 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
                 'type' => 'single',
                 'item' => "bbpress-topic-tag",
                 'specificity' => "bbpress-topic-tag",
-                'noedit' => 'noedit'
+                'plugin' => 'plugin'
             )
         );
 
@@ -106,7 +106,7 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
                 'type' => 'single',
                 'item' => "bbpress-topic-tag-edit",
                 'specificity' => "bbpress-topic-tag-edit",
-                'noedit' => 'noedit'
+                'plugin' => 'plugin'
             )
         );
 
@@ -117,7 +117,7 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
                 'type' => 'single',
                 'item' => "bbpress-user-home",
                 'specificity' => "bbpress-user-home",
-                'noedit' => 'noedit'
+                'plugin' => 'plugin'
             )
         );
 
@@ -127,7 +127,7 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
                 'type' => 'single',
                 'item' => "bbpress-topics-created",
                 'specificity' => "bbpress-topics-created",
-                'noedit' => 'noedit'
+                'plugin' => 'plugin'
             )
         );
 
@@ -137,7 +137,7 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
                 'type' => 'single',
                 'item' => "bbpress-replies-created",
                 'specificity' => "bbpress-replies-created",
-                'noedit' => 'noedit'
+                'plugin' => 'plugin'
             )
         );
 
@@ -147,7 +147,7 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
                 'type' => 'single',
                 'item' => "bbpress-favorites",
                 'specificity' => "bbpress-favorites",
-                'noedit' => 'noedit'
+                'plugin' => 'plugin'
             )
         );
 
@@ -157,7 +157,7 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
                 'type' => 'single',
                 'item' => "bbpress-subscriptions",
                 'specificity' => "bbpress-subscriptions",
-                'noedit' => 'noedit'
+                'plugin' => 'plugin'
             )
         );
 
@@ -168,7 +168,7 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
                 'type' => 'single',
                 'item' => "bbpress-user-home-edit",
                 'specificity' => "bbpress-user-home-edit",
-                'noedit' => 'noedit'
+                'plugin' => 'plugin'
             )
         );
 
@@ -178,7 +178,7 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
             'layout' => array(
                 'type' => 'archive',
                 'item' => "bbpress-forum-archive",
-                'noedit' => 'noedit'
+                'plugin' => 'plugin'
             )
         );
         $layouts["bbpress-topic-archive"] = array(
@@ -186,7 +186,7 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
             'layout' => array(
                 'type' => 'archive',
                 'item' => "bbpress-topic-archive",
-                'noedit' => 'noedit'
+                'plugin' => 'plugin'
             )
         );
        
@@ -347,7 +347,7 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
             $cascade['type'] = $type;
             //if (!empty($spec)) {
                 $cascade['specificity'] = "bbpress-{$item}".((!empty($spec))?"-{$spec}":"");
-                $cascade['noedit'] = 'noedit';
+                $cascade['plugin'] = 'plugin';
             //}
             
         }
