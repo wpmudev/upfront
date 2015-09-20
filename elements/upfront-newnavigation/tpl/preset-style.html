@@ -2,6 +2,9 @@ div.nav-preset-<?php echo $properties['id'] ?> ul.menu {
 	<?php if(!empty($properties['static-nav-bg'])) { ?>
 	background: <?php echo $properties['static-nav-bg'] ?>;
 	<?php } ?>
+	<?php if(!empty($properties['menu_alignment'])) { ?>
+		text-align: <?php echo $properties['menu_alignment'] ?>!important;
+	<?php } ?>
 }
 
 div.nav-preset-<?php echo $properties['id'] ?> ul.menu > li.menu-item > a {
