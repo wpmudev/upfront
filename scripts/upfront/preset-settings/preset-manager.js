@@ -49,14 +49,19 @@ define([
 
 				Upfront.mainData[this.mainDataCollection].unshift(this.getPresetDefaults('default'));
 			}
-			
+
+
 			this.presets = new Backbone.Collection(Upfront.mainData[this.mainDataCollection] || []);
-			
+
 			this.setupItems();
 		},
 
 		setupItems: function() {
-			var preset = this.property('preset') ? this.clear_preset_name(this.property('preset')) : 'default';
+			var preset = this.property('preset') ? this.clear_preset_name(this.property('preset')) : 'default',
+				presetModel = this.presets.findWhere({id: preset}),
+				currentBreakpoint,
+				breakpointsData,
+				breakpointData;
 
 			// Add items
 			this.selectPresetModule = new SelectPresetModule({
@@ -64,14 +69,33 @@ define([
 				presets: this.presets
 			});
 
+			// Setup preseet model so that it uses breakpoint values
+			if (this.options.hasBreakpointSettings === true) {
+				currentBreakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
+				// Keep desktop settings preserved
+				this.desktopSettings = [];
+				if (currentBreakpoint && !currentBreakpoint.default) {
+					breakpointsData = presetModel.get('breakpoint') || {};
+					breakpointData = breakpointsData[currentBreakpoint.id] || {};
+					_.each(this.options.breakpointSpecificPresetSettings, function(settingOptions) {
+						this.desktopSettings[settingOptions.name] = presetModel.get(settingOptions.name);
+						if (!_.isUndefined(breakpointData[settingOptions.name])) {
+							var data = {};
+							data[settingOptions.name] = breakpointData[settingOptions.name];
+							presetModel.set(data, {silent: true});
+						}
+					}, this);
+				}
+			}
+
 			this.editPresetModule = new EditPresetModule({
-				model: this.presets.findWhere({id: preset}),
+				model: presetModel,
 				stateModules: this.stateModules
 			});
 
 			this.presetCssModule = new PresetCssModule({
 				model: this.model,
-				preset: this.presets.findWhere({id: preset}),
+				preset: presetModel
 			});
 
 			this.listenTo(this.selectPresetModule, 'upfront:presets:new', this.createPreset);
@@ -101,7 +125,25 @@ define([
 
 		updatePreset: function(properties) {
 			var index,
-				styleElementId;
+				styleElementId,
+			  currentBreakpoint,
+				breakpointsData;
+
+			// Setup model so that it saves breakpoint values to breakpoint property
+			if (this.hasBreakpointSettings === true) {
+				currentBreakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
+				if (currentBreakpoint && !currentBreakpoint.default) {
+					breakpointsData = properties.breakpoint || {};
+					breakpointsData[currentBreakpoint.id] = {};
+					_.each(this.breakpointSpecificPresetSettings, function(settingOptions) {
+						breakpointsData[currentBreakpoint.id][settingOptions.name] = properties[settingOptions.name];
+						// Restore desktop value before saving the model
+						properties[settingOptions.name] = this.desktopSettings[settingOptions.name];
+					}, this);
+					// Finally update breakpoints in model
+					properties.breakpoint = breakpointsData;
+				}
+			}
 
 			Util.updatePresetStyle(this.styleElementPrefix.replace(/-preset/, ''), properties, this.styleTpl);
 			Upfront.Util.post({

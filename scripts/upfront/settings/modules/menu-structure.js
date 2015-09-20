@@ -164,12 +164,12 @@ define([
 		},
 
 		updateSortableDepth: function(oldX, newX, item) {
-			// Decrease item depth
 			var itemDepth = item.hasClass('menu-structure-module-item') ?
 					item.data('menuItemDepth') : item.children().first().data('menu-item-depth'),
 				prevDepth = item.prev().data('menu-item-depth'),
 				nextDepth = item.nextAll().not('.ui-sortable-placeholder').first().data('menu-item-depth');
 
+			// Decrease item depth
 			if (oldX > newX) {
 				this.decreaseGroupDepth(itemDepth, prevDepth, nextDepth, item);
 			}
