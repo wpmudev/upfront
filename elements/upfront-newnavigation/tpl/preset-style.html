@@ -1,6 +1,6 @@
 div.nav-preset-<?php echo $properties['id'] ?> ul.menu {
 	<?php if(!empty($properties['static-nav-bg'])) { ?>
-	background: <?php echo $properties['static-nav-bg'] ?>; 
+	background: <?php echo $properties['static-nav-bg'] ?>;
 	<?php } ?>
 }
 
@@ -49,4 +49,15 @@ div.nav-preset-<?php echo $properties['id'] ?> ul.menu > li.menu-item > a:focus 
 	<?php } ?>
 }
 
+<?php if(!empty($properties['tablet'])) { ?>
+.tablet-breakpoint div.nav-preset-<?php echo $properties['id'] ?> ul.menu {
+	<?php if(!empty($properties['tablet']['menu_alignment'])) { ?>text-align: <?php echo $properties['tablet']['menu_alignment'] ?>!important;<?php } ?>
+}
+<?php } ?>
+
+<?php if(!empty($properties['mobile'])) { ?>
+.mobile-breakpoint div.nav-preset-<?php echo $properties['id'] ?> ul.menu {
+	<?php if(!empty($properties['mobile']['menu_alignment'])) { ?>text-align: <?php echo $properties['mobile']['menu_alignment'] ?>!important;<?php } ?>
+}
+<?php } ?>
 <?php if(!empty($properties['preset_style'])) { ?><?php echo $properties['preset_style'] ?><?php } ?>
