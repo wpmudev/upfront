@@ -18,12 +18,41 @@ define([
 		initialize: function(opts) {
 			this.options = opts;
 			var me = this,
-				panels = {};
+				panels = {},
+				currentBreakpoint,
+				breakpointsData,
+				breakpointData;
+
+			// Setup model so that it uses breakpoint values
+			if (this.hasBreakpointSettings === true) {
+				currentBreakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
+				// Keep desktop settings preserved
+				this.desktopSettings = [];
+				if (currentBreakpoint && !currentBreakpoint.default) {
+					breakpointsData = this.model.get_property_value_by_name('breakpoint') || {};
+					breakpointData = breakpointsData[currentBreakpoint.id] || {};
+					_.each(this.breakpointSpecificSettings, function(settingOptions) {
+						this.desktopSettings[settingOptions.name] = this.model.get_property_value_by_name(settingOptions.name);
+						if (!_.isUndefined(breakpointData[settingOptions.name])) {
+							this.model.set_property(settingOptions.name, breakpointData[settingOptions.name], true);
+						}
+					}, this);
+				}
+			}
 
 			// Instantiate panels
 			_.each(this.panels, function(panel, index) {
 				if (index === 'Appearance') {
-					panels.Appearance = new PresetManager(_.extend({}, panel, { model: this.model }));
+					panels.Appearance = new PresetManager(
+					_.extend(
+							{
+								hasBreakpointSettings: this.hasBreakpointSettings,
+								breakpointSpecificPresetSettings: this.breakpointSpecificPresetSettings,
+								model: this.model
+							},
+							panel
+						)
+					);
 					return;
 				}
 				panels[index] = new panel({ model: this.model });
@@ -42,6 +71,25 @@ define([
 		},
 
 		saveSettings: function() {
+			var currentBreakpoint,
+				breakpointsData;
+
+			// Setup model so that it saves breakpoint values to breakpoint property
+			if (this.hasBreakpointSettings === true) {
+				currentBreakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
+				if (currentBreakpoint && !currentBreakpoint.default) {
+					breakpointsData = this.model.get_property_value_by_name('breakpoint') || {};
+					breakpointsData[currentBreakpoint.id] = {};
+					_.each(this.breakpointSpecificSettings, function(settingOptions) {
+						breakpointsData[currentBreakpoint.id] = this.model.get_property_value_by_name(settingOptions.name);
+						// Restore desktop value before saving the model
+						this.model.set_property(settingOptions.name, this.desktopSettings[settingOptions.name], true);
+						console.log('restoring desktop ' + settingOptions.name + ' value from ' + this.model.get_property_value_by_name(settingOptions.name) + ' to ' + this.desktopSettings[settingOptions.name]);
+					}, this);
+					// Finally update breakpoints in model
+					this.model.set_property('breakpoint', breakpointsData, true);
+				}
+			}
 			_.each(this.panels, function(panel){
 				panel.save_settings();
 			});
@@ -56,7 +104,7 @@ define([
 
 			if (this.onSaveSettings) this.onSaveSettings();
 		},
-		
+
 		cancelSettings: function() {
 			Upfront.Events.trigger("element:settings:canceled");
 		},
