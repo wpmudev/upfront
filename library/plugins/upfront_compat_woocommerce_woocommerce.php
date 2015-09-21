@@ -36,9 +36,8 @@ class Upfront_Compat_Woocommerce_Woocommerce extends Upfront_Server {
 	}
 
 	public function override_view ($view_class) {
-		if ('Upfront_PostsView' === $view_class) return 'Upfront_WooView';
-
-		return $view_class;
+		if ('Upfront_ThisPostView' === $view_class || 'Upfront_PostsView' === $view_class) return 'Upfront_WooView';
+        return $view_class;
 	}
 
 	public function resolve_template ($tpl) {
@@ -80,6 +79,9 @@ class Upfront_Compat_Woocommerce_Woocommerce extends Upfront_Server {
 
 		if (!empty($spec)) $cascade['specificity'] = "woocommerce-{$item}-{$spec}"; 
 
+		$cascade['item'] = "woocommerce-{$item}";
+		
+		$cascade["plugin"] = "plugin";
 		return $cascade;
 	}
 

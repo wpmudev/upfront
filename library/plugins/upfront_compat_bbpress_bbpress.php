@@ -24,7 +24,7 @@ class Upfront_Compat_Bbpress_Bbpress extends Upfront_Server {
     public function detect_virtual_page () {
 
         if(is_bbpress()) { // if it is a bbPress page
-            //add_filter('template_include', array($this, 'resolve_template'), 99);
+            
             add_filter('upfront-views-view_class', array($this, 'override_view'));
             add_filter('upfront-entity_resolver-entity_ids', array($this, 'resolve_entity_ids'));
         }

@@ -123,11 +123,6 @@ class Upfront_Theme {
 		}
 		$filenames[] = 'layouts/index.php';
 
-ob_start();
-			var_dump($filenames);
-
-
-		file_put_contents("debugg.txt", ob_get_clean());
 		return function_exists('upfront_locate_template')
 			? upfront_locate_template($filenames)
 			: locate_template($filenames)
