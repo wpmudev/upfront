@@ -3097,6 +3097,7 @@ define([
 					col = this.model.get_property_value_by_name('col');
 					width = this.model.get_property_value_by_name('width');
 					this.col = col || ( width ? Upfront.Util.width_to_col(width) : grid.size );
+					if ( this.col > grid.size ) this.col = grid.size;
 				}
 				classes.push('upfront-region');
 				classes.push('upfront-region-' + name);
@@ -3653,17 +3654,26 @@ define([
 						width: width || 225,
 						minHeight: height || 225
 					};
-				if ( !width )
+				if ( !width ) {
 					this.model.set_property('width', 225, true);
-				if ( !col )
-					this.model.set_property('col', Upfront.Util.width_to_col(css.width), true)
-				if ( !height )
+				}
+				if ( !col ) {
+					col = Upfront.Util.width_to_col(css.width);
+					col = ( col <= grid.size ) ? col : grid.size;
+					this.model.set_property('col', col, true)
+				}
+				else {
+					col = ( col <= grid.size ) ? col : grid.size;
+				}
+				if ( !height ) {
 					this.model.set_property('height', 225, true);
+				}
 				if ( is_top || !is_bottom ){
 					css.top = is_top ? top : 30;
 					css.bottom = '';
-					if ( !is_top )
+					if ( !is_top ) {
 						this.model.set_property('top', 30, true);
+					}
 				}
 				else {
 					css.bottom = bottom;
@@ -3672,20 +3682,22 @@ define([
 				if ( is_left || !is_right ){
 					css.left = ( is_left ? left : 30 ) + ( restrict ? 0 : $main.offset().left );
 					css.right = '';
-					if ( !is_left )
+					if ( !is_left ) {
 						this.model.set_property('left', 30, true);
+					}
 				}
 				else {
 					css.right = right;
 					css.left = '';
 				}
 				this.$el.find('.upfront-modules_container').css( {
-					width: Math.floor(css.width/grid.column_width) * grid.column_width,
+					width: ( col * grid.column_width ),
 					minHeight: css.minHeight
 				});
 				this.$el.css(css);
-				if ( this.edit_position )
+				if ( this.edit_position ) {
 					this.edit_position.update_fields();
+				}
 				this.update_size_hint(css.width, css.minHeight);
 				this.update_position_hint(css);
 				this.update_position_scroll();

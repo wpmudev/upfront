@@ -113,6 +113,9 @@ h2, h3 { page-break-after: avoid; }
   position: fixed;
   z-index: 25;
 }
+.upfront-output-region.upfront-region-fixed .upfront-region-wrapper {
+  margin: 0 auto;
+}
 
 .upfront-module {}
 
