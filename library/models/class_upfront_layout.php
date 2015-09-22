@@ -1,6 +1,8 @@
 <?php
 
 class Upfront_Layout extends Upfront_JsonModel {
+	
+	protected static $version = '1.0.0';
 
 	protected static $cascade;
 	protected static $layout_slug;
@@ -70,7 +72,9 @@ class Upfront_Layout extends Upfront_JsonModel {
 	public static function from_php ($data, $storage_key = '') {
 		if ( isset($data['layout']) ) self::$cascade = $data['layout'];
 		self::set_storage_key($storage_key);
-		return new self($data);
+		$layout = new self($data);
+		$layout->convert_layout();
+		return $layout;
 	}
 
 	public static function from_json ($json, $storage_key = '') {
@@ -591,5 +595,17 @@ class Upfront_Layout extends Upfront_JsonModel {
 			$i++;
 		}
 		return $value;
+	}
+	
+	/**
+	 * Backward compatibility conversion
+	 */
+	protected function convert_layout () {
+		$layout_version = $this->get_property_value('version');
+		if (!$layout_version) $layout_version = '0.0.0';
+		if (version_compare($layout_version, self::$version) === -1) {
+			$converter = new Upfront_Compat_LayoutConverter($this, $layout_version, self::$version);
+			$converter->convert();
+		}
 	}
 }
