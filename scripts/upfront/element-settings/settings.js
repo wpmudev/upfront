@@ -21,13 +21,7 @@ define([
 				panels = {},
 				currentBreakpoint,
 				breakpointsData,
-				breakpointData,
-				preset;
-
-			if (this.panels.Appearance && !(this instanceof PresetManager)) {
-				this.presetCollectionSlug = this.panels.Appearance.mainDataCollection;
-				this.presets = new Backbone.Collection(Upfront.mainData[this.presetCollectionSlug] || []);
-			}
+				breakpointData;
 
 			// Setup model so that it uses breakpoint values
 			if (this.hasBreakpointSettings === true) {
@@ -38,13 +32,6 @@ define([
 				_.each(this.breakpointSpecificSettings, function(settingOptions) {
 					if (!_.isUndefined(breakpointData[settingOptions.name])) {
 						this.model.set_property(settingOptions.name, breakpointData[settingOptions.name], true);
-					}
-				}, this);
-				// Breakpoint preset specific settings
-				preset = _.findWhere(Upfront.mainData[this.presetCollectionSlug], {'id':this.model.get_property_value_by_name('preset')});
-				_.each(this.breakpointSpecificPresetSettings, function(settingOptions) {
-					if (!_.isUndefined(preset[settingOptions.name])) {
-						this.model.set_property(settingOptions.name, preset[settingOptions.name], true);
 					}
 				}, this);
 			}
@@ -81,8 +68,7 @@ define([
 
 		saveSettings: function() {
 			var currentBreakpoint,
-				breakpointsData,
-				preset;
+				breakpointsData;
 
 			// Setup model so that it saves breakpoint values to breakpoint property
 			if (this.hasBreakpointSettings === true) {
@@ -91,10 +77,6 @@ define([
 				breakpointsData[currentBreakpoint.id] = {};
 				_.each(this.breakpointSpecificSettings, function(settingOptions) {
 					breakpointsData[currentBreakpoint.id][settingOptions.name] = this.model.get_property_value_by_name(settingOptions.name);
-				}, this);
-				preset = _.findWhere(Upfront.mainData[this.presetCollectionSlug], {'id':this.model.get_property_value_by_name('preset')});
-				_.each(this.breakpointSpecificPresetSettings, function(settingOptions) {
-					breakpointsData[currentBreakpoint.id][settingOptions.name] = preset[settingOptions.name];
 				}, this);
 				// Finally update breakpoints in model
 				this.model.set_property('breakpoint', breakpointsData, true);
