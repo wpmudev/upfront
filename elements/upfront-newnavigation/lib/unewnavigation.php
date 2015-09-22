@@ -28,22 +28,22 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 				$breakpoint_data[$data['id']]['width'] = $data['width'];
 			}
 		}
-		$burgermenu_desktop =  $this->_get_property('burger_menu');
-		$breakpoint_data['desktop']['burger_menu'] = is_array( $burgermenu_desktop ) && isset( $burgermenu_desktop[0] ) ? $burgermenu_desktop[0] : $burgermenu_desktop ;
-		$breakpoint_data['desktop']['burger_alignment'] = $properties['burger_alignment'];
-		$breakpoint_data['desktop']['burger_over'] = $this->_get_property('burger_over');
-		$breakpoint_data['desktop']['is_floating'] = $this->_get_property('is_floating');
-		//$breakpoint_data['desktop']['menu_style'] = 'horizontal';
+
+		$breakpoint_data['desktop']['burger_menu'] = isset($properties['menu_style']) && $properties['menu_style'] === 'triggered' ? true :  false;
+		$breakpoint_data['desktop']['burger_alignment'] = isset($properties['menu_alignment']) ? $properties['menu_alignment'] :  false;
+		$breakpoint_data['desktop']['burger_over'] = isset($properties['menu_over']) ? $properties['menu_over'] :  false;
+		$breakpoint_data['desktop']['is_floating'] = isset($properties['is_floating']) ? $properties['is_floating'] :  false;
 
 		$breakpoint_data = json_encode($breakpoint_data);
 
-		$menu_aliment = $properties['menu_alingment'];
+		$menu_alignment = $properties['menu_alingment'];
 		$sub_navigation = $this->_get_property('allow_sub_nav');
 		$is_floating = $this->_get_property('is_floating');
 
+		$menu_style = $menu_style === 'triggered' ? 'burger' : $menu_style;
 		$menu_style = $menu_style ? "data-style='{$menu_style}' data-stylebk='{$menu_style}'" : "";
 		$breakpoint_data = $breakpoint_data ? "data-breakpoints='{$breakpoint_data}'" : "";
-		$menu_aliment = $menu_aliment ? "data-aliment='{$menu_aliment}' data-alimentbk='{$menu_aliment}'" : "";
+		$menu_alignment = $menu_alignment ? "data-alignment='{$menu_alignment}' data-alignment='{$menu_alignment}'" : "";
 		$sub_navigation = $sub_navigation ? "data-allow-sub-nav='yes'" : "data-allow-sub-nav='no'";
 
 		$float_class = $is_floating ? 'upfront-navigation-float' : '';
@@ -74,10 +74,10 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 				'walker' => new upfront_nav_walker(),
 			));
 		} else {
-			return "<div class='nav-preset-{$preset} {$float_class} upfront-navigation' {$menu_style} {$menu_aliment} {$breakpoint_data} {$sub_navigation}>" . self::_get_l10n('select_menu') . "</div>";
+			return "<div class='nav-preset-{$preset} {$float_class} upfront-navigation' {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . self::_get_l10n('select_menu') . "</div>";
 		}
 
-		return "<div class='nav-preset-{$preset} {$float_class} upfront-navigation' {$menu_style} {$menu_aliment} {$breakpoint_data} {$sub_navigation}>" . $menu . "</div>";
+		return "<div class='nav-preset-{$preset} {$float_class} upfront-navigation' {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . $menu . "</div>";
 	}
 
 	public static function add_js_defaults($data){
@@ -109,12 +109,12 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 	public static  function add_styles_scripts() {
 		//upfront_add_element_style('upfront_navigation', array('css/unewnavigation-style.css', dirname(__FILE__)));
 		wp_enqueue_style('upfront_navigation', upfront_element_url('css/unewnavigation-style.css', dirname(__FILE__)));
-		
+
 		if (is_user_logged_in()) {
 			upfront_add_element_style('upfront_navigation_editor', array('css/unewnavigation-editor.css', dirname(__FILE__)));
 		}
-		
-		
+
+
 		/*
 		if (is_user_logged_in()) {
 			wp_enqueue_style('unewnavigation_editor', upfront_element_url('css/unewnavigation-editor.css', dirname(__FILE__)));
@@ -432,7 +432,7 @@ class Upfront_newMenuSetting extends Upfront_Server {
 		$this->_out(new Upfront_JsonResponse_Error(Upfront_UnewnavigationView::_get_l10n('cant_create')));
 
 	}
-	
+
 	public function delete_menu() {
 		$menu_id = isset($_POST['menu_id']) ? $_POST['menu_id'] : false;
 		if ( $menu_id ){

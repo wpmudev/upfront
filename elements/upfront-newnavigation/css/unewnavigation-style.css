@@ -49,14 +49,14 @@ div.upfront-navigation ul.menu li {
   position: relative;
 }
 div.upfront-navigation ul.sub-menu > li {
-	min-width:176px;	
+	min-width:176px;
 }
 
-div.upfront-navigation div[data-aliment="center"] ul.menu {
+div.upfront-navigation div[data-alignment="center"] ul.menu {
 	text-align: center;
 }
 
-div.upfront-navigation div[data-aliment="right"] ul.menu  {
+div.upfront-navigation div[data-alignment="right"] ul.menu  {
 	text-align: right;
 }
 div.upfront-navigation li.menu-item:before,
@@ -164,7 +164,7 @@ div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] 
 
 
 div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] ul.menu {
-	height: 100%;	
+	height: 100%;
 }
 
 
@@ -181,7 +181,7 @@ div.upfront-navigation div[data-style="burger"][ data-burger_alignment="right"] 
 }
 
 div.upfront-newnavigation_module:hover  div[data-style="burger"] div.responsive_nav_toggler {
-	margin-right:20px;	
+	margin-right:20px;
 }
 
 .responsive_nav_toggler {
@@ -225,7 +225,7 @@ div.upfront-newnavigation_module:hover  div[data-style="burger"] div.responsive_
 }
 
 div.upfront-navigation div[data-style="burger"] ul.menu li {
-	padding: 0;	
+	padding: 0;
 }
 
 div.upfront-navigation div[data-style="burger"] ul.menu > li {
@@ -244,13 +244,13 @@ div[data-style="burger"] a {
   border:none;
 }
 
-div[data-style="burger"][data-aliment="left"] ul li ul {
+div[data-style="burger"][data-alignment="left"] ul li ul {
   padding-left:15px;
 }
-div[data-style="burger"][data-aliment="right"] ul li ul {
+div[data-style="burger"][data-alignment="right"] ul li ul {
   padding-right:15px;
 }
-div[data-style="burger"][data-aliment="center"] ul li ul {
+div[data-style="burger"][data-alignment="center"] ul li ul {
   padding:10px;
 }
 

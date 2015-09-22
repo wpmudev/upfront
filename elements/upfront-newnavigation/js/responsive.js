@@ -75,12 +75,12 @@ jQuery(document).ready(function($) {
 
 		var dispatch_movement = function () {
 			var top = $win.scrollTop();
-			
+
 			if (top > (start_position.top-adminbarheight) && !$root.is('[data-already_floating="yes"]')) start_floating();
 			else if (top <= (start_position.top-adminbarheight) && $root.is('[data-already_floating="yes"]')) stop_floating();
 		};
 
-		var destroy = function () {		
+		var destroy = function () {
 			start_position = {
 				top: 0,
 				left: 0
@@ -94,7 +94,7 @@ jQuery(document).ready(function($) {
 		};
 
 		var init = function () {
-			
+
 			start_position = $root.offset();
 			start_size = {width: $root.width(), height: $root.height()};
 			$win
@@ -118,11 +118,11 @@ jQuery(document).ready(function($) {
 				$toggler = $me.children('.responsive_nav_toggler');
 				$toggler.attr('id', $me.attr('id')+'-toggler');
 				if (_cache[$toggler.attr("id")]) _cache[$toggler.attr("id")].destroy();
-				
+
 			}
 			else {
 				if (_cache[$me.attr("id")]) _cache[$me.attr("id")].destroy();
-				
+
 			}
 		});
 
@@ -133,7 +133,7 @@ jQuery(document).ready(function($) {
 				$toggler = $me.children('.responsive_nav_toggler');
 				$toggler.attr('id', $me.attr('id')+'-toggler');
 				//if (_cache[$toggler.attr("id")]) _cache[$toggler.attr("id")].destroy();
-				_cache[$toggler.attr("id")] = new FloatNav($toggler);	
+				_cache[$toggler.attr("id")] = new FloatNav($toggler);
 			}
 			else {
 				//if (_cache[$me.attr("id")]) _cache[$me.attr("id")].destroy();
@@ -168,18 +168,18 @@ jQuery(document).ready(function($) {
 			if($(this).parent().data('burger_over') != 'pushes' && $(this).parent().data('burger_alignment') != 'whole') {
 				$('<div class="burger_overlay"></div>').insertBefore($(this).parent().find('ul.menu'));
 			}
-	
+
 			$(this).parent().find('ul.menu').show();
 			//$(this).parent().find('ul.sub-menu').show();
 
 			if($(this).parent().data('burger_over') == 'pushes' && $(this).parent().data('burger_alignment') == 'top') {
-		
+
 				$('div#page').css('margin-top', $(this).parent().find('ul.menu').height());
-		
+
 
 				//var topbar_height = $('div#upfront-ui-topbar').outerHeight();
 				var adminbar_height = ($('div#wpadminbar').length > 0)?$('div#wpadminbar').outerHeight():0;
-				
+
 				$(this).parent().find('ul.menu').offset({top:adminbar_height, left:$('div').offset().left});
 				$(this).parent().find('ul.menu').width($('div#page').width());
 
@@ -202,7 +202,7 @@ jQuery(document).ready(function($) {
 				pushContent($(this).parent());
 			*/
 
-			
+
 
 			$(this).closest('.upfront-output-region-container').each(function() {
 				$(this).addClass('upfront-region-container-has-nav');
@@ -220,7 +220,7 @@ jQuery(document).ready(function($) {
 			$('i.burger_nav_close').parent('li.wrap_burger_nav_close').remove();
 
 			$(this).closest('div.upfront-output-wrapper').removeClass('on_the_top');
-			
+
 			/*
 			if($(this).parent().data('burger_over') == 'pushes')
 				pullContent($(this).parent());
@@ -280,7 +280,7 @@ jQuery(document).ready(function($) {
 					if(bparray[key]['burger_menu'] == 'yes') {
 
 						$(this).attr('data-style', 'burger');
-						$(this).attr('data-aliment', ( bparray[key]['menu_alignment'] ? bparray[key]['menu_alignment'] : $(this).data('alimentbk') ));
+						$(this).attr('data-alignment', ( bparray[key]['menu_alignment'] ? bparray[key]['menu_alignment'] : $(this).data('alignmentbk') ));
 						$(this).attr('data-burger_alignment', bparray[key]['burger_alignment']);
 						$(this).attr('data-burger_over', bparray[key]['burger_over']);
 
@@ -314,7 +314,7 @@ jQuery(document).ready(function($) {
 					}
 					else {
 						$(this).attr('data-style', ( bparray[key]['menu_style'] ? bparray[key]['menu_style'] : $(this).data('stylebk') ));
-						$(this).attr('data-aliment', ( bparray[key]['menu_alignment'] ? bparray[key]['menu_alignment'] : $(this).data('alimentbk') ));
+						$(this).attr('data-alignment', ( bparray[key]['menu_alignment'] ? bparray[key]['menu_alignment'] : $(this).data('alignmentbk') ));
 						$(this).removeAttr('data-burger_alignment','');
 						$(this).removeAttr('data-burger_over', '');
 
@@ -347,7 +347,7 @@ jQuery(document).ready(function($) {
 		});
 	}
 	roll_responsive_nav(".upfront-output-unewnavigation > .upfront-navigation");
-	
+
 	$(window).smartresize(function() {
 		$('div#page').css('margin-top', '');
 		$('.responsive_nav_toggler').css({position: '', left: '', top: ''});
@@ -369,16 +369,16 @@ jQuery(document).ready(function($) {
 			});
 		} else {
 			$(window).resize(_.debounce(function() {
-				
+
 				$('.responsive_nav_toggler').css({position: '', left: '', top: ''});
 				$('ul.menu').css('padding-top', '');
 				$('.burger_nav_close').remove();
 				roll_responsive_nav(".upfront-output-unewnavigation > .upfront-navigation");
 			}, 500));
 		}
-		
+
 	});
-*/	
+*/
 	$(document).on('changed_breakpoint', function(e) {
 		roll_responsive_nav( e.selector, e.width);
 	});

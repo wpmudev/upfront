@@ -23,7 +23,7 @@ define(function() {
 					values: [
 						{ label: l10n.mnu.horiz, value: 'horizontal' },
 						{ label: l10n.mnu.vert, value: 'vertical' },
-						{ label: l10n.mnu.triggered, value: 'triggered' },
+						{ label: l10n.mnu.triggered, value: 'triggered' }, // this is actually 'burger' style
 					],
 					change: function(value) {
 						me.model.set('menu_style', value);

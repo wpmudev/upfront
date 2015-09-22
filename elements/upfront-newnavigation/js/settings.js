@@ -197,8 +197,6 @@ define([
 			{
 				name: 'menu_alignment'
 			},
-		],
-		breakpointSpecificSettings: [
 			{
 				name: 'burger_alignment'
 			},
@@ -209,10 +207,12 @@ define([
 				name: 'burger_over'
 			},
 			{
-				name: 'is_floating'
-			},
-			{
 				name: 'menu_style'
+			},
+		],
+		breakpointSpecificSettings: [
+			{
+				name: 'is_floating'
 			},
 			{
 				name: 'width'
