@@ -286,16 +286,12 @@ jQuery(document).ready(function($) {
 				//offset a bit if admin bar or side bar is present
 				if($('div#wpadminbar').length && $('div#wpadminbar').css('display') == 'block') {
 					$(this).find('ul.menu').css('margin-top', $('div#wpadminbar').outerHeight());
-					//$(this).find('div.responsive_nav_toggler').css('margin-top', $('div#wpadminbar').outerHeight());
 				}
 
-				if($(this).hasClass('upfront-output-unewnavigation')) {
-
+				if ($(this).hasClass('upfront-output-unewnavigation')) {
 					$('head').find('style#responsive_nav_sidebar_offset').remove();
 					var responsive_css = 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"] ul.menu, div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] ul.menu {left:'+parseInt($('div.upfront-regions').offset().left)+'px !important; right:'+parseInt(($(window).width()-currentwidth-$('div#sidebar-ui').outerWidth()) / 2)+'px !important; } ';
-
 					responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="left"] ul.menu {left:'+parseInt($('div.upfront-regions').offset().left)+'px !important; right:inherit !important; width:'+parseInt(30/100*$('div.upfront-regions').outerWidth())+'px !important;} ';
-
 					responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="right"] ul.menu {left:inherit !important; right:'+parseInt(($(window).width()-currentwidth-$('div#sidebar-ui').outerWidth()) / 2)+'px !important; width:'+parseInt(30/100*$('div.upfront-regions').outerWidth())+'px !important; } ';
 					responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"] ul.menu {top:'+parseInt($('div#upfront-ui-topbar').outerHeight())+'px !important; } ';
 
@@ -331,10 +327,10 @@ jQuery(document).ready(function($) {
 				$(this).closest('div.upfront-newnavigation_module').css('z-index', '');
 			}
 
-					if(preset.is_floating && preset.is_floating == 'yes')
-						$(this).addClass('upfront-navigation-float');
-					else
-						$(this).removeClass('upfront-navigation-float');
+			if(preset.is_floating && preset.is_floating == 'yes')
+				$(this).addClass('upfront-navigation-float');
+			else
+				$(this).removeClass('upfront-navigation-float');
 
 		});
 	}
