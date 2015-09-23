@@ -77,6 +77,8 @@ define([
 				breakpointsData[currentBreakpoint.id] = {};
 				_.each(this.breakpointSpecificSettings, function(settingOptions) {
 					breakpointsData[currentBreakpoint.id][settingOptions.name] = this.model.get_property_value_by_name(settingOptions.name);
+					// Always save width to breakpoint, comes handy in public scripts
+					breakpointsData[currentBreakpoint.id].width = currentBreakpoint.get('width');
 				}, this);
 				// Finally update breakpoints in model
 				this.model.set_property('breakpoint', breakpointsData, true);

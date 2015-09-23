@@ -25,14 +25,12 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 
 		$preset_props = Upfront_Nav_Presets_Server::get_instance()->get_preset_properties($preset);
 		$breakpoint_data = $this->_get_property('breakpoint');
-		$breakpoint_data = array_merge_recursive(
-			$breakpoint_data,
-			$preset_props['breakpoint']
-		);
+		$breakpoint_data['preset'] = $preset_props['breakpoint'];
 
 		$desktop = $breakpoint_data['desktop'];
-		$menu_style = isset($desktop['menu_style']) ? $desktop['menu_style'] :  'horizontal';
-		$menu_alignment = $desktop['menu_alignment'];
+		$desktopPreset = $breakpoint_data['preset']['desktop'];
+		$menu_style = isset($desktopPreset['menu_style']) ? $desktopPreset['menu_style'] :  'horizontal';
+		$menu_alignment = $desktopPreset['menu_alignment'];
 		$sub_navigation = $this->_get_property('allow_sub_nav');
 		$is_floating = $this->_get_property('is_floating');
 
@@ -44,9 +42,6 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 
 		$float_class = $is_floating ? 'upfront-navigation-float' : '';
 
-		if ($is_floating) {
-			upfront_add_element_script('unewnavigation', array('js/public.js', dirname(__FILE__)));
-		}
 		upfront_add_element_script('unewnavigation_responsive', array('js/responsive.js', dirname(__FILE__)));
 
 		if($menu_slug) {

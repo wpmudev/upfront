@@ -213,9 +213,6 @@ define([
 		breakpointSpecificSettings: [
 			{
 				name: 'is_floating'
-			},
-			{
-				name: 'width'
 			}
 		],
 		panels: {
