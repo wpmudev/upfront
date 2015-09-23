@@ -694,46 +694,38 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		else
 			view = $(e.target).closest('.responsive_nav_toggler').data('view');
 
-		var region_container = $(this).closest('.upfront-region-container');
+		var region_container = this.$el.closest('.upfront-region-container');
 		var $menu = this.$el.find('ul.menu');
-		if($menu.css('display') == 'none' && typeof(e) != 'undefined') {
-
+		if ($menu.css('display') == 'none' && typeof(e) != 'undefined') {
 			view.showMenu($menu);
 			var offset = $menu.position();
+			var data = this.$el.find('.upfront-output-unewnavigation').data();
 
 			var close_icon = $('<i class="burger_nav_close"></i>');
 			$menu.prepend($('<li>').addClass('wrap_burger_nav_close').append(close_icon));
 
 			close_icon.bind('touchstart click', function() {
 				$(e.target).closest('.responsive_nav_toggler').data('view', view).trigger('click');
+				if(data.burger_alignment == 'top' || data.burger_alignment == 'whole') {
+					$('section.upfront-layout').css('margin-top', 0);
+				}
 			});
 			region_container.addClass('upfront-region-container-has-nav');
 
-			if(this.$el.data('burger_over') == 'pushes' && (this.$el.data('burger_alignment') == 'top' || this.$el.data('burger_alignment') == 'whole')) {
-
+			if(data.burger_alignment == 'top' || data.burger_alignment == 'whole') {
 				$('section.upfront-layout').css('margin-top', $menu.height());
-
 
 				var topbar_height = $('div#upfront-ui-topbar').outerHeight();
 				var ruler_height = $('.upfront-ruler-container').outerHeight();
 				$menu.offset({top:topbar_height+ruler_height, left:$('section.upfront-layout').offset().left});
-
-
 			}
 		} else {
-
 			view.hideMenu($menu);
-
-
 			this.$el.find('i.burger_nav_close').parent('li.wrap_burger_nav_close').remove();
 
 			this.$el.find('ul.sub-menu').css('display', '');
 			if(this.$el.find('ul.sub-menu').length < 1 )
 				region_container.removeClass('upfront-region-container-has-nav');
-
-			if(this.$el.data('burger_over') == 'pushes') {
-				$('section.upfront-layout').css('margin-top', '');
-			}
 		}
 	},
 
