@@ -9,55 +9,44 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 	public function get_markup () {
 		$menu_id = $this->_get_property('menu_id');
 		$menu_slug = $this->_get_property('menu_slug');
-		$preset = $this->_get_property('preset');
 
-		if (!isset($preset)) {
-			$preset = 'default';
-		}
-
-		$properties = Upfront_Nav_Presets_Server::get_instance()->get_preset_properties($preset);
-
-		$layout_settings = json_decode($this->_get_property('layout_setting'));
-
-		$menu_style = $properties['menu_style'];
-		$breakpoint_data = $this->_get_property('breakpoint');
-		$breakpoints = Upfront_Grid::get_grid()->get_breakpoints();
-		foreach ($breakpoints as $name => $point) {
+		$activeBreakpoints = Upfront_Grid::get_grid()->get_breakpoints();
+		foreach ($activeBreakpoints as $name => $point) {
 			$data = $point->get_data();
 			if(!empty($data['enabled'])) {
 				$breakpoint_data[$data['id']]['width'] = $data['width'];
 			}
 		}
 
-		$breakpoint_data['desktop']['burger_menu'] = isset($properties['menu_style']) && $properties['menu_style'] === 'triggered' ? true :  false;
-		$breakpoint_data['desktop']['burger_alignment'] = isset($properties['menu_alignment']) ? $properties['menu_alignment'] :  false;
-		$breakpoint_data['desktop']['burger_over'] = isset($properties['menu_over']) ? $properties['menu_over'] :  false;
-		$breakpoint_data['desktop']['is_floating'] = isset($properties['is_floating']) ? $properties['is_floating'] :  false;
+		$preset = $this->_get_property('preset');
+		if (!isset($preset)) {
+			$preset = 'default';
+		}
 
-		$breakpoint_data = json_encode($breakpoint_data);
+		$preset_props = Upfront_Nav_Presets_Server::get_instance()->get_preset_properties($preset);
+		$breakpoint_data = $this->_get_property('breakpoint');
+		$breakpoint_data = array_merge_recursive(
+			$breakpoint_data,
+			$preset_props['breakpoint']
+		);
 
-		$menu_alignment = $properties['menu_alingment'];
+		$desktop = $breakpoint_data['desktop'];
+		$menu_style = isset($desktop['menu_style']) ? $desktop['menu_style'] :  'horizontal';
+		$menu_alignment = $desktop['menu_alignment'];
 		$sub_navigation = $this->_get_property('allow_sub_nav');
 		$is_floating = $this->_get_property('is_floating');
 
 		$menu_style = $menu_style === 'triggered' ? 'burger' : $menu_style;
-		$menu_style = $menu_style ? "data-style='{$menu_style}' data-stylebk='{$menu_style}'" : "";
-		$breakpoint_data = $breakpoint_data ? "data-breakpoints='{$breakpoint_data}'" : "";
+		$menu_style = "data-style='{$menu_style}' data-stylebk='{$menu_style}'";
+		$breakpoint_data = "data-breakpoints='" . json_encode($breakpoint_data) . "'" ;
 		$menu_alignment = $menu_alignment ? "data-alignment='{$menu_alignment}' data-alignment='{$menu_alignment}'" : "";
 		$sub_navigation = $sub_navigation ? "data-allow-sub-nav='yes'" : "data-allow-sub-nav='no'";
 
 		$float_class = $is_floating ? 'upfront-navigation-float' : '';
 
-		 // upfront_add_element_style('unewnavigation', array('css/unewnavigation-style.css', dirname(__FILE__)));
-		//    if (is_user_logged_in()) {
-		//      upfront_add_element_style('unewnavigation_editor', array('css/unewnavigation-editor.css', dirname(__FILE__)));
-		//  }
 		if ($is_floating) {
-			//wp_enqueue_script('unewnavigation', upfront_element_url('js/public.js', dirname(__FILE__)));
 			upfront_add_element_script('unewnavigation', array('js/public.js', dirname(__FILE__)));
 		}
-
-		//wp_enqueue_script('unewnavigation_responsive', upfront_element_url('js/responsive.js', dirname(__FILE__)));
 		upfront_add_element_script('unewnavigation_responsive', array('js/responsive.js', dirname(__FILE__)));
 
 		if($menu_slug) {
@@ -99,8 +88,6 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 			'menu_items' => array(),
 			'preset' => 'default',
 
-			'menu_style' => 'horizontal', // horizontal | vertical
-			'menu_alignment' => 'left', // left | center | right
 			'allow_sub_nav' => array('no'), // array('no') | array ('yes')
 			'allow_new_pages' => array('no'), // array('no') | array('yes')
 		);
