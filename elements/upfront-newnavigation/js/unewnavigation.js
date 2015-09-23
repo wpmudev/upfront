@@ -33,7 +33,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			'click a.menu_item' : 'exitEditMode',
 			'dblclick a.menu_item' : 'editMenuItem',
 			'click a.newnavigation-add-item': 'addPrimaryMenuItem',
-
+			'click .responsive_nav_toggler': 'toggle_responsive_nav'
 		});
 
 		this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
@@ -695,48 +695,48 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			view = $(e.target).closest('.responsive_nav_toggler').data('view');
 
 		var region_container = $(this).closest('.upfront-region-container');
-		if($(this).parent().find('ul.menu').css('display') == 'none' && typeof(e) != 'undefined') {
+		var $menu = this.$el.find('ul.menu');
+		if($menu.css('display') == 'none' && typeof(e) != 'undefined') {
 
-			view.showMenu($(this).parent().find('ul.menu'));
-			var offset = $(this).parent().find('ul.menu').position();
+			view.showMenu($menu);
+			var offset = $menu.position();
 
 			var close_icon = $('<i class="burger_nav_close"></i>');
-			//$(this).parent().append(close_icon);
-			$(this).parent().find('ul.menu').prepend($('<li>').addClass('wrap_burger_nav_close').append(close_icon));
+			$menu.prepend($('<li>').addClass('wrap_burger_nav_close').append(close_icon));
 
 			close_icon.bind('touchstart click', function() {
 				$(e.target).closest('.responsive_nav_toggler').data('view', view).trigger('click');
 			});
-			//close_icon.css({position: 'fixed', left: offset.left+$(this).parent().find('ul.menu').width()-close_icon.width()-10, top: offset.top+10});
 			region_container.addClass('upfront-region-container-has-nav');
 
-			if($(this).parent().data('burger_over') == 'pushes' && ($(this).parent().data('burger_alignment') == 'top' || $(this).parent().data('burger_alignment') == 'whole')) {
+			if(this.$el.data('burger_over') == 'pushes' && (this.$el.data('burger_alignment') == 'top' || this.$el.data('burger_alignment') == 'whole')) {
 
-				$('section.upfront-layout').css('margin-top', $(this).parent().find('ul.menu').height());
+				$('section.upfront-layout').css('margin-top', $menu.height());
 
 
 				var topbar_height = $('div#upfront-ui-topbar').outerHeight();
 				var ruler_height = $('.upfront-ruler-container').outerHeight();
-				$(this).parent().find('ul.menu').offset({top:topbar_height+ruler_height, left:$('section.upfront-layout').offset().left});
+				$menu.offset({top:topbar_height+ruler_height, left:$('section.upfront-layout').offset().left});
 
 
 			}
 		} else {
 
-			view.hideMenu($(this).parent().find('ul.menu'));
+			view.hideMenu($menu);
 
 
-			$(this).parent().find('i.burger_nav_close').parent('li.wrap_burger_nav_close').remove();
+			this.$el.find('i.burger_nav_close').parent('li.wrap_burger_nav_close').remove();
 
-			$(this).parent().find('ul.sub-menu').css('display', '');
-			if($(this).parent().find('ul.sub-menu').length < 1 )
+			this.$el.find('ul.sub-menu').css('display', '');
+			if(this.$el.find('ul.sub-menu').length < 1 )
 				region_container.removeClass('upfront-region-container-has-nav');
 
-			if($(this).parent().data('burger_over') == 'pushes') {
+			if(this.$el.data('burger_over') == 'pushes') {
 				$('section.upfront-layout').css('margin-top', '');
 			}
 		}
 	},
+
 	generate_menu: function() {
 		var me = this;
 		var menu_id = this.model.get_property_value_by_name('menu_id');
