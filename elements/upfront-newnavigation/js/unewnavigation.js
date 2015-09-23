@@ -530,50 +530,30 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		if(me.roll_responsive_settings) {
 
 			setTimeout(function() {
-				var model_breakpoint = me.model.get_property_value_by_name('breakpoint');
-				if(model_breakpoint) {
-					var enabled_breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled();
+				var breakpointsData = me.model.get_property_value_by_name('breakpoint'),
+					key,
+					default_breakpoint,
+					is_burger_menu,
+					currentBreakpoint;
 
-					for(key in enabled_breakpoints) {
-						if(typeof(model_breakpoint[enabled_breakpoints[key].id]) != 'undefined') {
-							model_breakpoint[enabled_breakpoints[key].id].width = enabled_breakpoints[key].attributes.width;
-						}
-					}
+				if (breakpointsData) {
+					breakpointsData.preset = _.findWhere(Upfront.mainData.navPresets, {id: me.model.get_property_value_by_name('preset')});
+					$upfrontObjectContent.attr('data-breakpoints', JSON.stringify(breakpointsData));
 
-					//manually add values for desktop
-					var default_breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_default();
-					var is_burger_menu = me.property('burger_menu');
-					model_breakpoint[default_breakpoint.attributes.id] = {};
-					model_breakpoint[default_breakpoint.attributes.id].burger_menu = ( is_burger_menu instanceof Array ) ? is_burger_menu[0] : is_burger_menu;
-					model_breakpoint[default_breakpoint.attributes.id].burger_alignment = props.burger_alignment;
-					model_breakpoint[default_breakpoint.attributes.id].burger_over = me.property('burger_over');
-					model_breakpoint[default_breakpoint.attributes.id].menu_style = me.property('menu_style');
-					model_breakpoint[default_breakpoint.attributes.id].menu_alignment = me.property('menu_alignment');
-					model_breakpoint[default_breakpoint.attributes.id].is_floating = me.property('is_floating');
-					model_breakpoint[default_breakpoint.attributes.id].width = default_breakpoint.attributes.width;
+					currentBreakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active();
 
-					$upfrontObjectContent.attr('data-breakpoints',	JSON.stringify(model_breakpoint));
-
-					var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint, width;
-					if(!breakpoint) {
-						width = default_breakpoint.attributes.width;
-					} else width = breakpoint.width;
 					// To roll responsive nav settings into action
 					setTimeout( function() {
-						me.activate_responsive_nav($upfrontObjectContent, width);
+						me.activate_responsive_nav($upfrontObjectContent, currentBreakpoint.get('width'));
 					}, 100);
 
 				}
 				me.roll_responsive_settings = true;
 			}, 300);
 		}
-		$upfrontObjectContent.attr('data-style',(menuStyle ? menuStyle : 'horizontal'));
 		$upfrontObjectContent.attr('data-stylebk',(menuStyle ? menuStyle : 'horizontal'));
 		$upfrontObjectContent.attr('data-isfloating',(isFloating ? isFloating : 'no'));
 		$upfrontObjectContent.attr('data-allow-sub-nav',(allowSubNav.length !== 0 && allowSubNav[0] == 'yes' ? allowSubNav[0] : 'no'));
-
-
-
 
 		setTimeout(function() {
 			if(me.$el.height() < 80) {
@@ -604,6 +584,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			selector.attr('data-style', 'burger');
 			selector.attr('data-burger_alignment', preset.breakpoint[currentBreakpoint.id]['burger_alignment']);
 			selector.attr('data-burger_over', preset.breakpoint[currentBreakpoint.id]['burger_over']);
+			selector.attr('data-alignment', preset.breakpoint[currentBreakpoint.id]['menu_alignment']);
 
 			// Add responsive nav toggler
 			if(!selector.find('div.responsive_nav_toggler').length)
@@ -635,12 +616,11 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 			me.hideMenu(selector.find('ul.menu'));
 		} else {
-			//selector.attr('data-style', selector.data('stylebk'))
 			selector.attr('data-style', preset.breakpoint[currentBreakpoint.id]['menu_style']);
 			selector.attr('data-alignment', preset.breakpoint[currentBreakpoint.id]['menu_alignment']);
 
-			selector.removeAttr('data-burger_alignment','');
-			selector.removeAttr('data-burger_over', '');
+			selector.removeAttr('data-burger_alignment');
+			selector.removeAttr('data-burger_over');
 
 			// Remove responsive nav toggler
 			selector.find('div.responsive_nav_toggler').remove();
@@ -666,7 +646,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			selector.closest('div.upfront-newnavigation_module').css('z-index', '');
 		}
 
-		selector.attr('data-isfloating', preset.breakpoint[currentBreakpoint.id]['is_floating']);
+		selector.attr('data-isfloating', preset.breakpoint[currentBreakpoint.id].is_floating);
 	},
 	hideMenu: function(menu) {
 		menu.hide();
