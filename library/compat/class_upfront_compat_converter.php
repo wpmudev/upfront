@@ -17,7 +17,8 @@ class Upfront_Compat_LayoutConverter {
 	
 	public function convert () {
 		while ( $this->convert_from($this->current_version) ) {
-			continue;
+			$this->layout->set_property_value('version', $this->current_version);
+			if ( version_compare($this->current_version, $this->to_version) !== -1 ) break;
 		}
 	}
 	
@@ -61,7 +62,7 @@ abstract class Upfront_Compat_LayoutConverter_Ver {
 class Upfront_Compat_LayoutConverter_Ver_1_0_0 extends Upfront_Compat_LayoutConverter_Ver {
 	
 	public function convert () {
-		timer_start();
+		//timer_start();
 		
 		$breakpoints = $this->parser->get_breakpoints();
 		foreach ( $this->regions as $r => $region ) {

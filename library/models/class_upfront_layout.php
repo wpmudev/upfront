@@ -604,8 +604,17 @@ class Upfront_Layout extends Upfront_JsonModel {
 		$layout_version = $this->get_property_value('version');
 		if (!$layout_version) $layout_version = '0.0.0';
 		if (version_compare($layout_version, self::$version) === -1) {
-			$converter = new Upfront_Compat_LayoutConverter($this, $layout_version, self::$version);
-			$converter->convert();
+			$transient_key = $this->get_id() . '_ver' . self::$version;
+			$cache = get_transient($transient_key);
+			if ( !empty($cache) ) {
+				$this->_data = json_decode($cache, true);
+			}
+			else {
+				$converter = new Upfront_Compat_LayoutConverter($this, $layout_version, self::$version);
+				$converter->convert();
+				set_transient($transient_key, $this->to_json(), 120); // set to 120 second for now
+			}
 		}
+		
 	}
 }
