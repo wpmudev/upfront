@@ -73,7 +73,9 @@ class Upfront_Layout extends Upfront_JsonModel {
 		if ( isset($data['layout']) ) self::$cascade = $data['layout'];
 		self::set_storage_key($storage_key);
 		$layout = new self($data);
-		$layout->convert_layout();
+		if ( !$layout->is_empty() ){
+			$layout->convert_layout();
+		}
 		return $layout;
 	}
 
@@ -603,6 +605,14 @@ class Upfront_Layout extends Upfront_JsonModel {
 	protected function convert_layout () {
 		$layout_version = $this->get_property_value('version');
 		if (!$layout_version) $layout_version = '0.0.0';
+		// @TODO quick query var to check original version, remove these code after stable
+		if (isset($_GET['original']) && $_GET['original'] == 0) {
+			setcookie('original', '', time()-3600, COOKIEPATH, COOKIE_DOMAIN);
+		}
+		else if ((isset($_GET['original']) && $_GET['original'] == 1) || (isset($_COOKIE['original']) && $_COOKIE['original'] == 1)) {
+			setcookie('original', 1, time()+3600, COOKIEPATH, COOKIE_DOMAIN);
+			return;
+		}
 		if (version_compare($layout_version, self::$version) === -1) {
 			$transient_key = $this->get_id() . '_ver' . self::$version;
 			$cache = get_transient($transient_key);
