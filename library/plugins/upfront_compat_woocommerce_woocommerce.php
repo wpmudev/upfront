@@ -21,12 +21,14 @@ class Upfront_Compat_Woocommerce_Woocommerce extends Upfront_Server {
 	}
 
 	public function detect_virtual_page () {
+
 		if (!is_woocommerce() && !is_cart() && !is_checkout() && !is_account_page()) return false;
 
-		add_filter('template_include', array($this, 'resolve_template'), 99);
+		
 		
 		
 		if (is_woocommerce()) { // Virtual pages only
+			add_filter('template_include', array($this, 'resolve_template'), 99);
 			add_filter('upfront-entity_resolver-entity_ids', array('Upfront_Compat_Woocommerce_Woocommerce', 'augment_virtual_pages'));
 			add_filter('upfront-views-view_class', array($this, 'override_view'));
 		} else {
@@ -53,11 +55,16 @@ class Upfront_Compat_Woocommerce_Woocommerce extends Upfront_Server {
 		$item = 'generic';
 		if (is_shop()) $item = 'shop';
 		if (is_product_taxonomy()) $item = 'product_tax';
-		if (is_product()) $item = 'product';
-
-		$spec = false;
-		
 		$cascade["type"] = "archive";
+		$spec = false;
+
+		if (is_product()) {
+			$item = 'product';
+			$cascade["type"] = "single";
+			$spec = get_queried_object_id();
+		}
+		
+		
 		$cascade['item'] = "woocommerce-{$item}"; 
 		$cascade["plugin"] = "plugin";
 		if (!empty($spec)) $cascade['specificity'] = "woocommerce-{$item}-{$spec}"; 
@@ -71,6 +78,7 @@ class Upfront_Compat_Woocommerce_Woocommerce extends Upfront_Server {
 		if (is_checkout()) $item = 'checkout';
 		if (is_checkout_pay_page()) $item = 'payment';
 		if (is_account_page()) $item = 'account';
+		
 
 		$spec = get_queried_object_id();
 		if (is_view_order_page()) $spec = 'view_order';
