@@ -81,23 +81,19 @@ class Upfront_Compat_LayoutConverter_Ver_1_0_0 extends Upfront_Compat_LayoutConv
 					// Add new spacer module and wrapper
 					$wrapper_index = $wrapper['index'];
 					$module_index = $modules[0]['index'];
-					if ( !empty($converted['wrappers'][0]) ) {
+					if ( !empty($converted['left']) ) {
 						if ( !isset($add_wrappers[$wrapper_index]) ) $add_wrappers[$wrapper_index] = array();
-						$add_wrappers[$wrapper_index][] = $converted['wrappers'][0];
+						if ( !isset($add_modules[$module_index]) ) $add_modules[$module_index] = array();
+						$add_wrappers[$wrapper_index][] = $converted['left']['wrapper'];
+						$add_modules[$module_index][] = $converted['left']['module'];
+					}
+					if ( !empty($converted['right']) ) {
 						$wrapper_index++;
-					}
-					if ( !empty($converted['wrappers'][1]) ) {
-						if ( !isset($add_wrappers[$wrapper_index]) ) $add_wrappers[$wrapper_index] = array();
-						$add_wrappers[$wrapper_index][] = $converted['wrappers'][1];
-					}
-					if ( !empty($converted['modules'][0]) ) {
-						if ( !isset($add_modules[$module_index]) ) $add_modules[$module_index] = array();
-						$add_modules[$module_index][] = $converted['modules'][0];
 						$module_index += count($modules);
-					}
-					if ( !empty($converted['modules'][1]) ) {
+						if ( !isset($add_wrappers[$wrapper_index]) ) $add_wrappers[$wrapper_index] = array();
 						if ( !isset($add_modules[$module_index]) ) $add_modules[$module_index] = array();
-						$add_modules[$module_index][] = $converted['modules'][1];
+						$add_wrappers[$wrapper_index][] = $converted['right']['wrapper'];
+						$add_modules[$module_index][] = $converted['right']['module'];
 					}
 					/*var_dump(array('first' => $first, 'last' => $last));
 					unset($wrapper['wrapper']);
@@ -138,8 +134,6 @@ class Upfront_Compat_LayoutConverter_Ver_1_0_0 extends Upfront_Compat_LayoutConv
 	}
 	
 	protected function _convert_margin (&$region, $wrapper, $modules, $breakpoint, $first = false, $last = false) {
-		$new_wrappers = array();
-		$new_modules = array();
 		$wrapper_col = 0;
 		$left_space = $wrapper['max_col'];
 		$right_space = $last ? $this->parser->remaining_col() : 0;
@@ -150,8 +144,6 @@ class Upfront_Compat_LayoutConverter_Ver_1_0_0 extends Upfront_Compat_LayoutConv
 		// Add left spacer
 		if ( $left_space > 0 ) {
 			$left_spacer = $this->_create_spacer($left_space, $first, $breakpoint);
-			$new_wrappers[] = $left_spacer['wrapper'];
-			$new_modules[] = $left_spacer['module'];
 		}
 		// Edit current wrapper and module
 		$wrapper_index = $wrapper['index'];
@@ -200,8 +192,8 @@ class Upfront_Compat_LayoutConverter_Ver_1_0_0 extends Upfront_Compat_LayoutConv
 		}
 		//var_dump(array('col' => $wrapper_col, 'left' => $left_space, 'right' => $right_space, 'wrappers' => $new_wrappers, 'modules' => $new_modules));
 		return array(
-			'wrappers' => $new_wrappers,
-			'modules' => $new_modules
+			'left' => isset($left_spacer) ? $left_spacer : false,
+			'right' => isset($right_spacer) ? $right_spacer : false
 		);
 	}
 	
