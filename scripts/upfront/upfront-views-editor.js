@@ -4734,19 +4734,24 @@ var Field_ToggleableText = Field_Text.extend({
 
 			//Close dropdown on parent scroll
 			$('.sidebar-panel-content, #sidebar-scroll-wrapper').on('scroll', this, this.closeChosen);
-			
+
 			//Disable scroll when chosen is opened
 			$('.sidebar-panel-content .sidebar-tab-content').bind('mousewheel', function() {
 				 return false
 			});
-			
+
 			me.$el.find('select').on("chosen:hiding_dropdown", this, this.closeChosen);
 		},
 		closeChosen: function(e) {
 			var me = e.data;
-			me.$el.find('.chosen-drop').css('display', 'none');
+			var in_sidebar = me.$el.parents('#sidebar-ui').length,
+				in_settings = me.$el.parents('#element-settings-sidebar').length;
+
+			if(in_sidebar == 1 || in_settings == 1) {
+				me.$el.find('.chosen-drop').css('display', 'none');
+			}
 			me.$el.find('select').trigger("chosen:close");
-			
+
 			//Enable scroll when chosen is closed
 			$('.sidebar-panel-content .sidebar-tab-content').unbind('mousewheel');
 		}
