@@ -1728,10 +1728,12 @@ define([
 				local_view.render();
 				this.$el.append(local_view.el);
 
-				if ( ! this._modules_view )
+				if ( ! this._modules_view ) {
 					this._modules_view = local_view;
-				else
+				}
+				else {
 					this._modules_view.delegateEvents();
+				}
 				
 				this.createInlineControlPanel();
 				
@@ -4141,16 +4143,19 @@ define([
 					container_view.render();
 					//container_view.bind("activate_region", this.activate_region_container, this);
 					this.listenTo(container_view, "activate_region", this.activate_region_container);
-					if ( index >= 0 )
+					if ( index >= 0 ){
 						this.$el.find('.upfront-region').eq(index).closest('.upfront-region-container').before(container_view.el);
-					else
+					}
+					else {
 						this.$el.append(container_view.el);
+					}
 					if ( !this.container_views[region.cid] ){
 						this.container_views[region.cid] = container_view;
 					}
 					else {
 						container_view.delegateEvents();
 					}
+					Upfront.Events.trigger("entity:regions:render_container", container_view, container_view.model);
 					return container_view;
 				}
 			},
@@ -4212,8 +4217,10 @@ define([
 				else {
 					container_view.$layout.append(local_view.el);
 				}
-				if ( region.get("default") )
+				if ( region.get("default") ) {
 					local_view.trigger("activate_region", local_view);
+				}
+				Upfront.Events.trigger("entity:regions:render_region", local_view, local_view.model);
 				return local_view;
 			},
 			create_container_instance: function (model) {
