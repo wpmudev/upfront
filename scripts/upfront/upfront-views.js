@@ -1648,7 +1648,16 @@ define([
 						icon: 'link',
 						tooltip: 'link',
 						id: 'link'
-					});
+					}),
+					ungroupControl = new Upfront.Views.Editor.InlinePanels.Control({
+						label: l10n.ungroup,
+						className: 'upfront-inline-panel-item ungroup-control'
+					}),
+					editControl = new Upfront.Views.Editor.InlinePanels.Control({
+						label: l10n.edit_elements,
+						className: 'upfront-inline-panel-item edit-elements-control'
+					})
+				;
 
 				me = this;				
 				
@@ -1657,10 +1666,19 @@ define([
 					this.model.set_property('href', data.url);
 					this.model.set_property('linkTarget', data.target);
 				});
+				this.listenTo(ungroupControl, 'click', function (e) {
+					me.on_ungroup();
+				});
+				this.listenTo(editControl, 'click', function (e) {
+					me.onOpenItemControlsClick();
+					me.on_edit();
+				});
 
 				panel.items = _([
 					linkPanelControl,
-					visitLinkControl
+					visitLinkControl,
+					ungroupControl,
+					editControl
 				]);
 
 				var imageControlsTpl = '<div class="uimage-controls image-element-controls upfront-ui"></div>';
