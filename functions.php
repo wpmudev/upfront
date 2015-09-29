@@ -313,12 +313,14 @@ add_filter("shortcode_atts_caption", 'uf_shortcode_atts_caption', 10, 3);
 function uf_shortcode_atts_caption(  $out, $pairs, $atts ){
 
     if( isset( $atts['show_caption'] ) && $atts['show_caption'] == "0" )
-        $out['caption'] = "";
+        $out['caption'] = "&nbsp;";
 
     return $out;
 }
+
+
 /**
- * Filters image caption shortcode to generate uf caption spefic markup
+ * Filters image caption shortcode to generate uf caption specific markup
  *
  */
 add_filter("img_caption_shortcode", "uf_image_caption_shortcode", 10, 3);
