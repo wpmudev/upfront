@@ -132,7 +132,7 @@ var PostImageInsert_Manager = base.ImageInsertBase.extend({
             },
             style: {
                 caption:{
-                    show: true
+                    show: parseInt( shortcode_data.get("show_caption"), 10 )
                 },
                 wrapper: {
                     alignment: shortcode_data.get("align"),
