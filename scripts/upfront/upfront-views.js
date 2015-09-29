@@ -1636,7 +1636,8 @@ define([
 					property_url = "";
 				}
 
-				var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
+				var me = this,
+					panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
 					visitLinkControl = new Upfront.Views.Editor.InlinePanels.Controls.VisitLink({
 						url: property_url
 					}),
@@ -1657,9 +1658,7 @@ define([
 						label: l10n.edit_elements,
 						className: 'upfront-inline-panel-item edit-elements-control'
 					})
-				;
-
-				me = this;				
+				;			
 				
 				this.listenTo(linkPanelControl, 'change change:target', function(data) {
 					visitLinkControl.setLink(data.url);
@@ -1729,8 +1728,6 @@ define([
 				local_view.render();
 				this.$el.append(local_view.el);
 
-				Upfront.Events.trigger("entity:module_group:after_render", this, this.model);
-
 				if ( ! this._modules_view )
 					this._modules_view = local_view;
 				else
@@ -1739,6 +1736,8 @@ define([
 				this.createInlineControlPanel();
 				
 				this.create_size_hint(this.$el);
+
+				Upfront.Events.trigger("entity:module_group:after_render", this, this.model);
 			},
 			update: function () {
 				var prop_class = this.model.get_property_value_by_name('class'),
