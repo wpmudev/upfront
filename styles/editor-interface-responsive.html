@@ -1,4 +1,4 @@
-<script type="text/responsive_css" data-bind=".upfront-module" data-min-height="30px" data-max-height="70px">
+<script type="text/responsive_css" data-bind=".upfront-module:not([data-shadow])" data-min-height="30px" data-max-height="70px">
 	(this) .upfront-icon-button {
 		width: 18px;
 		height: 18px;
@@ -30,7 +30,7 @@
 	}
 </script>
 
-<script type="text/responsive_css" data-bind=".upfront-module" data-min-height="60px" data-max-height="125px">
+<script type="text/responsive_css" data-bind=".upfront-module:not([data-shadow])" data-min-height="60px" data-max-height="125px">
 	(this) .upfront-object > .upfront-entity_meta_extra {
 		display: none;
 		top: 100%;
@@ -91,7 +91,7 @@
 	}
 </script>
 
-<script type="text/responsive_css" data-bind=".upfront-module" data-max-width="90px">
+<script type="text/responsive_css" data-bind=".upfront-module:not([data-shadow])" data-max-width="90px">
 	(this) > .upfront-resize-handle-s:before {
 		width: 25px;
 	}
@@ -103,21 +103,34 @@
 	}
 </script>
 
-<script type="text/responsive_css" data-bind=".upfront-region" data-min-height="60px" data-max-height="219px">
+<script type="text/responsive_css" data-bind=".upfront-module-group" data-max-height="90px">
+	(this) > .upfront-module-group-toggle-edit-container {
+		display: none;
+	}
+</script>
+
+<script type="text/responsive_css" data-bind=".upfront-module-group" data-min-height="91px">
+	(this) .upfront-inline-panel-item.ungroup-control,
+	(this) .upfront-inline-panel-item.edit-elements-control {
+		display: none;
+	}
+</script>
+
+<script type="text/responsive_css" data-bind=".upfront-region:not(#region-shadow)" data-min-height="60px" data-max-height="219px">
 	(this) > .upfront-entity_meta {
 		top: 5px;
 		right: 15px;
 	}
 </script>
 
-<script type="text/responsive_css" data-bind=".upfront-region" data-max-height="159px">
+<script type="text/responsive_css" data-bind=".upfront-region:not(#region-shadow)" data-max-height="159px">
 	(this) > .upfront-entity_meta > .upfront-icon-button {
 		float: right;
 		margin: 0 0 0 5px;
 	}
 </script>
 
-<script type="text/responsive_css" data-bind=".upfront-region-container" data-max-height="99px">
+<script type="text/responsive_css" data-bind=".upfront-region-container:not(#region-container-shadow)" data-max-height="99px">
 	(this) .upfront-region-size-hint.upfront-ui,
 	(this) .upfront-region > .upfront-entity_meta.upfront-ui {
 		top: 0;
@@ -130,7 +143,7 @@
 	}
 </script>
 
-<script type="text/responsive_css" data-bind=".upfront-region-container" data-min-height="100px">
+<script type="text/responsive_css" data-bind=".upfront-region-container:not(#region-container-shadow)" data-min-height="100px">
 	.upfront-region-editing (this) .upfront-region > .responsive-item-controls {
 		display: none;
 	}
