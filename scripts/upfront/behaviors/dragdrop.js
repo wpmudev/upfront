@@ -918,7 +918,7 @@ DragDrop.prototype = {
 		}
 
 		if ( this.is_group ) {
-			var original_col = model.get_property_value_by_name('original_col');
+			var original_col = this.model.get_property_value_by_name('original_col');
 			if ( _.isNumber(original_col) && original_col > col ) {
 				col = original_col;
 			}
