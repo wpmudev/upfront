@@ -1,9 +1,24 @@
 define([
 	'scripts/upfront/inline-panels/control'
 ], function (Control) {
+	var l10n = Upfront.Settings && Upfront.Settings.l10n
+		? Upfront.Settings.l10n.global.content
+		: Upfront.mainData.l10n.global.content
+	;
+	
 	var VisitLinkControl = Control.extend({
+		className: 'upfront-inline-panel-item visit-link-control',
 		initialize: function(options) {
 			this.constructor.__super__.initialize.call(this, options);
+			this.linkLabel = _.extend({
+				unlink: l10n.not_linked,
+				lightbox: l10n.open_lightbox,
+				anchor: l10n.scroll_to_anchor,
+				entry: l10n.go_to_post,
+				external: l10n.open_ext_link,
+				email: l10n.send_email
+			}, (options.linkLabel || {}));
+			this.hideIfUnlink = ( options.hideIfUnlink === true );
 			this.setOptions(this.options.url);
 		},
 
@@ -24,22 +39,18 @@ define([
 			this.setOptions(url);
 			this.render();
 		},
+		
+		on_render: function () {
+			if (this.hideIfUnlink && Upfront.Util.guessLinkType(this.url) == 'unlink') {
+				this.$el.hide();
+			}
+			else if (!this.$el.is(':visible')) {
+				this.$el.show();
+			}
+		},
 
 		getTextByLinkType: function(linktype) {
-			switch(linktype) {
-				case 'unlink':
-					return 'Not Linked';
-				case 'lightbox':
-					return 'Open Lightbox';
-				case 'anchor':
-					return 'Scroll to Anchor';
-				case 'entry':
-					return 'Go To Post / Page';
-				case 'external':
-					return 'Open Ext. Link';
-				case 'email':
-						return 'Send Email';
-			};
+			return this.linkLabel[linktype];
 		},
 
 	});

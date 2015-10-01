@@ -97,6 +97,7 @@ define([
 			this.linkTypes = _.extend({}, this.defaultLinkTypes, options.linkTypes || {});
 			this.theme = options.theme || 'dark';
 			this.button = options.button || false;
+			this.title = options.title || Upfront.Settings.l10n.global.content.links_to;
 
 			this.model = new LinkModel({
 				type: options.linkType || 'unlink',
@@ -112,7 +113,10 @@ define([
 			this.listenTo(this.model, 'change:target', function() {
 				me.trigger('change:target', me.model.toJSON());
 			});
-			this.listenTo(this.model, 'change:type', this.handleTypeChange);
+			this.listenTo(this.model, 'change:type', function () {
+				me.handleTypeChange();
+				me.trigger('change:type', me.model.toJSON());
+			});
 		},
 
 		onOkClick: function() {
@@ -223,6 +227,7 @@ define([
 			var me = this;
 
 			var tplData = {
+				title: this.title,
 				link: this.model.toJSON(),
 				checked: 'checked="checked"',
 				lightboxes: getLightBoxes(),

@@ -10,9 +10,10 @@ define([
 	'scripts/upfront/inline-panels/dialog-control',
 	'scripts/upfront/inline-panels/collapsed-multi-control',
 	'scripts/upfront/inline-panels/controls/visit-link',
-	'scripts/upfront/inline-panels/controls/link-panel'
+	'scripts/upfront/inline-panels/controls/link-panel',
+	'scripts/upfront/inline-panels/controls/group-link-panel'
 ], function (Panels, Panel, Item, ItemMulti, Control, MultiControl, TooltipControl,
-	ControlPanel, DialogControl, CollapsedMultiControl, VisitLinkControl, LinkPanelControl) {
+	ControlPanel, DialogControl, CollapsedMultiControl, VisitLinkControl, LinkPanelControl, GroupLinkPanelControl) {
 	return {
 		Panels: Panels,
 		Panel: Panel,
@@ -26,7 +27,8 @@ define([
 		CollapsedMultiControl: CollapsedMultiControl,
 		Controls: {
 			VisitLink: VisitLinkControl,
-			LinkPanel: LinkPanelControl
+			LinkPanel: LinkPanelControl,
+			GroupLinkPanel: GroupLinkPanelControl
 		}
 	};
 });
