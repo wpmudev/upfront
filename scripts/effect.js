@@ -259,8 +259,9 @@
 					position: 'fixed',
 					top: 0,
 					left: 0,
-					zIndex: -1,
-					display: 'block'
+					zIndex: 0,
+					display: 'block',
+					pointerEvents: 'none'
 				});
 				$('.upfront-output-layout, .upfront-layout').append(this.canvas);
 			}

@@ -144,6 +144,7 @@ h2, h3 { page-break-after: avoid; }
 
 .upfront-output-region-container {
 	position: relative;
+	z-index: 1;
 }
 .upfront-output-region-sub-container {
 	position: relative;

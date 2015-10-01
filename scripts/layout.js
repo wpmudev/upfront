@@ -145,32 +145,35 @@ jQuery(document).ready(function($){
 			});
 			if ( $overlay.attr('data-bg-parallax') ) {
 				setTimeout(function () { // Zero timeout to shift it out
-					var $next = $overlay
-									.closest('.upfront-output-region-container')
-									.next('.upfront-output-region-container')
-									.find('.upfront-region-container-bg'),
-						$prev = $overlay
-									.closest('.upfront-output-region-container')
-									.prev('.upfront-output-region-container')
-									.find('.upfront-region-container-bg'),
-						next_bg_color = $next.css('background-color'),
-						next_type = $next.attr('data-bg-type-' + breakpoint),
-						prev_bg_color = $prev.css('background-color'),
-						prev_type = $prev.attr('data-bg-type-' + breakpoint),
-						has_alpha = function (color) {
-							if (!color) return false;
-							var matches = color.match(/(rgba|hsla)\(.*?,.*?,.*?,.*?([\d.]+).*?\)/);
-							if (matches && matches[2] && parseFloat(matches[2]) < 1) return true;
-							return false;
-						},
-						overflow_top = ( $prev.length > 0 && prev_type == 'color' && prev_bg_color && has_alpha(prev_bg_color) ? 0 : false ),
-						overflow_bottom = ( $next.length > 0 && next_type == 'color' && next_bg_color && has_alpha(next_bg_color) ? 0 : false )
-					;
-					$overlay.uparallax({
-						element: $overlay.attr('data-bg-parallax')
-					});
-					if (false !== overflow_top) $overlay.uparallax('setOption', 'overflowTop', overflow_top);
-					if (false !== overflow_bottom) $overlay.uparallax('setOption', 'overflowBottom', overflow_bottom);
+					var $container = $overlay.closest('.upfront-output-region-container');
+					if ( $container.length ) {
+						var $next = $container
+										.next('.upfront-output-region-container')
+										.find('.upfront-region-container-bg'),
+							$prev = $container
+										.prev('.upfront-output-region-container')
+										.find('.upfront-region-container-bg'),
+							next_bg_color = $next.css('background-color'),
+							next_type = $next.attr('data-bg-type-' + breakpoint),
+							prev_bg_color = $prev.css('background-color'),
+							prev_type = $prev.attr('data-bg-type-' + breakpoint),
+							has_alpha = function (color) {
+								if (!color) return false;
+								var matches = color.match(/(rgba|hsla)\(.*?,.*?,.*?,.*?([\d.]+).*?\)/);
+								if (matches && matches[2] && parseFloat(matches[2]) < 1) return true;
+								return false;
+							},
+							overflow_top = ( $prev.length > 0 && prev_type == 'color' && prev_bg_color && has_alpha(prev_bg_color) ? 0 : false ),
+							overflow_bottom = ( $next.length > 0 && next_type == 'color' && next_bg_color && has_alpha(next_bg_color) ? 0 : false )
+						;
+						$overlay.uparallax({
+							element: $overlay.attr('data-bg-parallax')
+						});
+						if (false === overflow_top && $prev.length > 0 && $prev.height() < 100) overflow_top = $prev.height();
+						if (false === overflow_bottom && $next.length > 0 && $next.height() < 100) overflow_bottom = $next.height();
+						if (false !== overflow_top) $overlay.uparallax('setOption', 'overflowTop', overflow_top);
+						if (false !== overflow_bottom) $overlay.uparallax('setOption', 'overflowBottom', overflow_bottom);
+					}
 				}, 0);
 			}
 			if ( type == 'image' || type == 'featured' ) {

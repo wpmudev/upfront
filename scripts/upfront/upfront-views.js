@@ -190,7 +190,7 @@ define([
 						$overlay.uparallax('destroy');
 					}
 					if ( style == 'full' || style == 'parallax' ){
-						var size = this._get_full_size_el($type, data.ratio, false);
+						var size = this._get_full_size_el((is_layout ? $(window) : $type), data.ratio, false);
 						$type.data('bg-position-y', size[3]);
 						$type.data('bg-position-x', size[2]);
 						$type.css({

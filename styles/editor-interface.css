@@ -3776,7 +3776,7 @@ a.upfront-region-name-edit-trigger:before {
   display: block; }
 
 .background-type-field .upfront-field-select, .background-image-field .upfront-field-select {
-  max-width: 130px; }
+  max-width: 140px; }
 
 #settings {
   position: fixed;
