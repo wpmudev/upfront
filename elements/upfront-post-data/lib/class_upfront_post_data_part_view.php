@@ -30,10 +30,10 @@ abstract class Upfront_Post_Data_PartView extends Upfront_PostPart_View {
 		$this->_post = $post;
 
 		$post_parts = self::get_default_parts($this->_data);
-		$enabled_post_parts = $this->_get_parts_from_objects();
+		$disabled_post_parts = !empty($this->_data['hidden_parts']) ? $this->_data['hidden_parts'] : array();
 		$parts = array();
 		foreach ($post_parts as $part) {
-			if (!in_array($part, $enabled_post_parts)) continue;
+			if (in_array($part, $disabled_post_parts)) continue;
 			$method = "expand_{$part}_template";
 			if (method_exists($this, $method)) $parts[$part] = $this->$method();
 			else $parts[$part] = apply_filters('upfront_postdata-' . $method, '', $post);
@@ -66,21 +66,6 @@ abstract class Upfront_Post_Data_PartView extends Upfront_PostPart_View {
 	 */
 	protected function _get_template ($slug) {
 		return Upfront_Post_Data_Data::get_template($slug, $this->_data);
-	}
-	
-	/**
-	 * Find post parts from each child object
-	 * @return array Array of post part type (string)
-	 */
-	protected function _get_parts_from_objects () {
-		if ( empty($this->_data['objects']) )
-			return array();
-		$parts = array();
-		foreach ( $this->_data['objects'] as $object ) {
-			$part = upfront_get_property_value('part_type', $object);
-			$parts[] = $part;
-		}
-		return $parts;
 	}
 
 	/**

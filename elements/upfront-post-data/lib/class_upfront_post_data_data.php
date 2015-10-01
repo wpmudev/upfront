@@ -15,6 +15,45 @@ class Upfront_Post_Data_Data {
 	);
 
 	/**
+	 * Preset ID getter
+	 *
+	 * @param array $data Data to parse for preset
+	 *
+	 * @return string Preset ID, or default
+	 */
+	public static function get_preset_id ($data) {
+		if (empty($data['preset'])) $data['preset'] = 'default';
+		return $data['preset'];
+	}
+
+	/**
+	 * Augment parsed data with preset info
+	 *
+	 * @param array $data Data hash
+	 *
+	 * @return array Augmented data
+	 */
+	public static function apply_preset ($data) {
+		$data['preset'] = self::get_preset_id($data);
+
+		if (!empty($data['preset']) && !empty($data['data_type'])) {
+			$pserver = Upfront_PostData_Elements_Server::get_instance($data['data_type']);
+			$preset = !empty($pserver)
+				? $pserver->get_preset_by_id($data['preset'])
+				: false
+			;
+			if (!empty($preset)) {
+				foreach ($preset as $idx => $value) {
+					if ("name" === $idx || "id" === $idx) continue;
+					$data[$idx] = $value;
+				}
+			}
+		}
+
+		return $data;
+	}
+
+	/**
 	 * Fetch all default values for properties.
 	 * @return array Default element properties
 	 */
@@ -78,7 +117,10 @@ class Upfront_Post_Data_Data {
 				$key = self::_slug_to_part_key($part);
 				$defaults[$key] = self::get_template($part);
 			}
+
 		}
+
+		$defaults = self::apply_preset($defaults);
 
 		return $defaults;
 	}
@@ -151,6 +193,10 @@ class Upfront_Post_Data_Data {
 		$data['upfront_post_data_part'] = self::get_part_defaults();
 
 		return $data;
+	}
+
+	public static function get_data_types () {
+		return self::$data_types;
 	}
 
 	public static function add_l10n_strings ($strings) {

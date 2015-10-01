@@ -77,6 +77,7 @@ class Upfront_PostDataPartView extends Upfront_Object {
 	
 	private $_part_type;
 	private $_part_view;
+	private $_preset_id;
 	
 	private $_markup = array();
 	
@@ -92,6 +93,9 @@ class Upfront_PostDataPartView extends Upfront_Object {
 			? upfront_properties_to_array($parent_data['properties'])
 			: Upfront_Post_Data_Data::get_defaults()
 		;
+
+		$props = Upfront_Post_Data_Data::apply_preset($props);
+		$this->_preset_id = Upfront_Post_Data_Data::get_preset_id($props);
 
 		$view_class = Upfront_Post_Data_PartView::_get_view_class($props);
 		$this->_part_view = new $view_class(array_merge(
@@ -117,7 +121,11 @@ class Upfront_PostDataPartView extends Upfront_Object {
 	}
 
 	public function get_propagated_classes () {
-		return $this->_part_view->get_propagated_classes();
+		$cls = $this->_part_view->get_propagated_classes();
+		$cls[] = $this->get_part_type();
+		if (!empty($this->_preset_id)) $cls[] = 'preset-' . esc_attr($this->_preset_id);
+
+		return $cls;
 	}
 
 	/**

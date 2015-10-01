@@ -24,7 +24,8 @@ class Upfront_Post_Data_PartView_Post_data extends Upfront_Post_Data_PartView {
         	? (int)$this->_data['content_length']
         	: (int)Upfront_Posts_PostsData::get_default('content_length')
         ;
-		$this->_data['content'] = !empty($this->_data['content']) ? $this->_data['content'] : 'content'; // Make sure it's the content we're dealing with
+		//$this->_data['content'] = !empty($this->_data['content']) ? $this->_data['content'] : 'content'; // Make sure it's the content we're dealing with
+		$this->_data['content'] = !empty($length) ? 'excerpt' : 'content';
 		$content = $this->_get_content_value($length);
 
 		$allow_splitting = !empty($this->_data['allow_splitting'])

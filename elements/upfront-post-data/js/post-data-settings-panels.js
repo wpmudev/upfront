@@ -1,87 +1,111 @@
-(function ($) {
 define([
-	'text!elements/upfront-post-data/tpl/views.html',
-	'elements/upfront-post-data/js/post-data-settings-parts'
-], function(tpl, Parts) {
+	'scripts/upfront/preset-settings/preset-manager',
+	
+	'elements/upfront-post-data/js/modules-post_data',
+	'elements/upfront-post-data/js/modules-author',
+	'elements/upfront-post-data/js/modules-featured_image',
+	'elements/upfront-post-data/js/modules-taxonomies',
+	'elements/upfront-post-data/js/modules-comments'
+], function (
+	PresetManager,
+	Modules_PostData,
+	Modules_Author,
+	Modules_FeaturedImage,
+	Modules_Taxonomies,
+	Modules_Comments
+) {
 
-var l10n = Upfront.Settings.l10n.post_data_element;
-var $template = $(tpl);
+	var Templates = {
+		post_data: Modules_PostData.template,
+		author: Modules_Author.template,
+		featured_image: Modules_FeaturedImage.template,
+		taxonomy: Modules_Taxonomies.template,
+		comments: Modules_Comments.template,
+	};
 
-var Panels = {};
+
+	var Modules = _.extend(
+		{}, 
+		_.omit(Modules_PostData, 'template'),
+		_.omit(Modules_Author, 'template'),
+		_.omit(Modules_FeaturedImage, 'template'),
+		_.omit(Modules_Taxonomies, 'template'),
+		_.omit(Modules_Comments, 'template')
+	);
 
 
-Panels.PostParts = Upfront.Views.Editor.Settings.Panel.extend({
 
-	initialize: function (opts) {
-		this.options = opts;
-		var me = this,
-			data_type = this.model.get_property_value_by_name('data_type'),
-			parts = _.map(Upfront.data['upfront_post_data_' + data_type].type_parts, function (part) {
-				return {label: l10n['part_' + part], value: part}
-			}),
-			part_settings = new PartSettings({
-				model: this.model
-			}),
-			autorefresh = function (value) {
-				this.model.set_property(this.options.property, this.get_value());
-				this.model.set_property("post_parts", this.get_value(), false);
-				me.trigger("settings:dispatched");
-			}
-		;
-		this.settings = _([
-			part_settings
-		]);
-	},
+	var Main = PresetManager.extend({
+		initialize: function () {
+			var data_type_idx = 'upfront_post_data_' + this.data_type,
+				data_type_defaults = {}
+			;
 
-	get_label: function () {
-		return l10n.post_parts;
-	},
+			// Set up data type specific defaults, to use as default preset
+			_(_.omit(Upfront.data[data_type_idx], ['class', 'data_type', 'has_settings', 'id_slug', 'type', 'type_parts', 'view_class'])).each(function (property, key) {
+				data_type_defaults[key] = property;
+			});
 
-	get_title: function () {
-		return l10n.post_parts;
+			_.extend(this, {
+				mainDataCollection: this.data_type + '_elementPresets',
+				styleElementPrefix: this.data_type,
+				ajaxActionSlug: this.data_type + '_element',
+				styleTpl: Templates[this.data_type],
+				presetDefaults: _.extend(data_type_defaults, {
+					id: "default",
+					name: "Default"
+				})
+			});
+
+			PresetManager.prototype.initialize.apply(this, arguments);
+
+			this.listenTo(this.model, 'preset:updated', function () {
+				this.model.get("objects").trigger("change");
+			}, this);
+
+			// HACK!!! Force element type so the css editor works
+			Upfront.Application.cssEditor.elementTypes.PostDataModel = Upfront.Application.cssEditor.elementTypes.PostDataModel || {id: this.data_type, label: this.data_type};
+		},
+		setupItems: function () {
+			var preset = this.property('preset') ? this.clear_preset_name(this.property('preset')) : 'default';
+			PresetManager.prototype.setupItems.apply(this, arguments);
+
+			_.each(this.part_panels, function (panel, idx) {
+				var preset_model = this.presets.findWhere({id: preset});
+				var pnl = new panel({
+					model: preset_model
+				});
+
+				var me = this;
+				this.listenTo(pnl, "part:hide:toggle", function () {
+					this.updatePreset(preset_model.toJSON());
+				}, this);
+
+				this.settings.push(pnl);
+			}, this);
+		},
+		getTitle: function() {
+			return 'Presets';
+		}
+	});
+
+
+	return {
+		get_panel: function (data_type) {
+			var pnls = {};
+			_.each(Upfront.data['upfront_post_data_' + data_type].type_parts, function (part) {
+				var part_name = 'part_' + part,
+					option = Modules[part_name] ? Modules[part_name] : false
+				;
+				if (!option) return;
+
+				pnls[part] = option;
+			});
+
+			var overall = Main.extend({part_panels: pnls, data_type: data_type});
+
+			return {stuff: overall};
+		}
 	}
-});
-
-var PostPartsPickerSettings = Upfront.Views.Editor.Settings.Item.extend({
-	className: 'uposts-parts-picker-setting'
-});
-
-var PartSettings = Upfront.Views.Editor.Settings.Item.extend({
-	group: false,
-	initialize: function (opts) {
-		this.options = opts;
-		this.fields = _([
-			new PartSettings_Part({
-				model: this.model,
-				name: "post_parts",
-				label: "Data Components"
-			})
-		]);
-	}
-});
-
-var PartSettings_Part = Upfront.Views.Editor.Field.Hidden.extend({
-	render: function () {
-		Upfront.Views.Editor.Field.Hidden.prototype.render.apply(this);
-		this.$el.append('<ul class="postdata_parts"></ul>');
-		var me = this,
-			data_type = this.model.get_property_value_by_name('data_type'),
-			parts = Upfront.data['upfront_post_data_' + data_type].type_parts,
-			$parent = this.$el.find("ul.postdata_parts")
-		;
-
-		_.each(parts, function (part, idx) {
-			var pt = Parts.get_part(part, me.model);
-			pt.render();
-			$parent.append(pt.$el);
-		});
-	},
-	get_value: function () {
-		return this.model.get_property_value_by_name(this.options.property);
-	}
-});
-
-return Panels;
 
 });
-})(jQuery);

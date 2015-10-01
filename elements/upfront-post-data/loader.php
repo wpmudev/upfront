@@ -41,7 +41,10 @@ class Upfront_Post_Data extends Upfront_Server {
 		require_once (dirname(__FILE__) . '/lib/class_upfront_post_data_model.php');
 		require_once (dirname(__FILE__) . '/lib/class_upfront_post_data_data.php');
 		require_once (dirname(__FILE__) . '/lib/class_upfront_post_data_part_view.php');
+		require_once (dirname(__FILE__) . '/lib/class_upfront_post_data_presets_server.php');
 		require_once (dirname(__FILE__) . '/lib/class_upfront_post_data_frontend_view.php');
+
+		Upfront_PostData_Elements_Server::serve();
 
 		upfront_add_layout_editor_entity('upostdata', upfront_relative_element_url('js/post-data', __FILE__));
 		upfront_add_element_style('upfront-post-data', array('css/public.css', __FILE__));
@@ -65,6 +68,8 @@ class Upfront_Post_Data extends Upfront_Server {
 		// Handle legacy element parsing
 		//add_filter('upfront-virtual_region-object_defaults-fallback', array($this, 'handle_legacy_data'), 10, 2);
 		//add_filter('upfront-output-get_markup-fallback', array($this, 'handle_legacy_output'), 10, 2);
+
+
 	}
 
 	public function handle_legacy_data ($data, $type) {
@@ -79,6 +84,8 @@ class Upfront_Post_Data extends Upfront_Server {
 		if (!empty($request['author_id'])) $data['author_id'] = $request['author_id'];
 		if (!empty($request['post_date'])) $data['post_date'] = $request['post_date'];
 		if (!empty($request['objects'])) $data['objects'] = $request['objects'];
+
+		$data = Upfront_Post_Data_Data::apply_preset($data);
 
 		$post = Upfront_Post_Data_Model::spawn_post($data);
 		$view_class = Upfront_Post_Data_PartView::_get_view_class($data);

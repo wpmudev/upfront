@@ -107,6 +107,20 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	},
 
 	render_view: function (type) {
+		var preset = this.model.get_property_value_by_name('preset'),
+			classes = this.$el.attr('class'),
+			existing_preset_class = classes.match(/preset-[^ ]+/g),
+			me = this
+		;
+		if (preset) {
+			if (existing_preset_class && existing_preset_class.length) {
+				_.each(existing_preset_class, function (cls) {
+					me.$el.removeClass($.trim(cls));
+				});
+			}
+			this.$el.addClass('preset-' + preset);
+		}
+		
 		if ( this.child_view ) {
 			this.child_view.render();
 			return;
@@ -120,7 +134,9 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		view.element = this;
 		view.render();
 		this.child_view = view;
+
 		this.$el.find(".upfront-object-group-default").append(view.$el);
+
 	},
 	
 	prepare_editor: function () {

@@ -1,0 +1,62 @@
+<?php if (!empty($properties['static-author-use-typography'])) { ?>
+
+.preset-<?php echo $properties['id'] ?> .upfront-post-data-part .author, .upfront-post-data-part .author a {
+
+	<?php if (!empty($properties['static-author-font-family'])) { ?>
+		font-family: <?php echo $properties['static-author-font-family'] ?>;
+	<?php } ?>
+	
+	<?php if (!empty($properties['static-author-style'])) { ?>
+		font-style: <?php echo $properties['static-author-style'] ?>;
+	<?php } ?>	
+	
+	<?php if (!empty($properties['static-author-weight'])) { ?>
+		font-weight: <?php echo $properties['static-author-weight'] ?>;
+	<?php } ?>	
+
+	<?php if (!empty($properties['static-author-font-size'])) { ?>
+		font-size: <?php echo $properties['static-author-font-size'] ?>px;
+	<?php } ?>
+
+	<?php if (!empty($properties['static-author-font-color'])) { ?>
+		color: <?php echo $properties['static-author-font-color'] ?>;
+	<?php } ?>
+
+	<?php if (!empty($properties['static-author-line-height'])) { ?>
+		line-height: <?php echo $properties['static-author-line-height'] ?>;
+	<?php } ?>
+
+}
+
+<?php } ?>
+
+
+
+.preset-<?php echo $properties['id'] ?> .upfront-post-data-part .gravatar img.avatar {
+
+	<?php if (!empty($properties['static-gravatar-use-border'])) { ?>
+
+		<?php if (!empty($properties['static-gravatar-border-width'])) { ?>
+			border-width: <?php echo $properties['static-gravatar-border-width'] ?>px;
+		<?php } ?>
+
+		<?php if (!empty($properties['static-gravatar-border-type'])) { ?>
+			border-style: <?php echo $properties['static-gravatar-border-type'] ?>;
+		<?php } ?>
+
+		<?php if (!empty($properties['static-gravatar-border-color'])) { ?>
+			border-color: <?php echo $properties['static-gravatar-border-color'] ?>;
+		<?php } ?>
+
+	<?php } ?>
+
+	<?php if (!empty($properties['static-gravatar-use-radius'])) { ?>
+
+		border-radius: <?php echo $properties['static-gravatar-radius1'] ? $properties['static-gravatar-radius1'] : 0 ?>px
+			<?php echo $properties['static-gravatar-radius2'] ? $properties['static-gravatar-radius2'] : 0 ?>px
+			<?php echo $properties['static-gravatar-radius3'] ? $properties['static-gravatar-radius3'] : 0 ?>px
+			<?php echo $properties['static-gravatar-radius4'] ? $properties['static-gravatar-radius4'] : 0 ?>px
+		;
+
+	<?php } ?>
+}
