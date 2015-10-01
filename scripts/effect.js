@@ -259,7 +259,7 @@
 					position: 'fixed',
 					top: 0,
 					left: 0,
-					zIndex: 0,
+					zIndex: -1,
 					display: 'block',
 					pointerEvents: 'none'
 				});

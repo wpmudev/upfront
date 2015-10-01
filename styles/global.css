@@ -144,7 +144,6 @@ h2, h3 { page-break-after: avoid; }
 
 .upfront-output-region-container {
 	position: relative;
-	z-index: 1;
 }
 .upfront-output-region-sub-container {
 	position: relative;
@@ -180,9 +179,6 @@ h2, h3 { page-break-after: avoid; }
 }
 .upfront-output-bg-overlay > .upfront-bg-image {
 	display: block;
-}
-.upfront-output-layout {
-	background-attachment: fixed;
 }
 .upfront-output-layout > .upfront-output-bg-overlay {
 	position: fixed;
