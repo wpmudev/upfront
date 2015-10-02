@@ -106,21 +106,25 @@ class Upfront_Compat_LayoutConverter_Ver_1_0_0 extends Upfront_Compat_LayoutConv
 			}
 			$new_wrappers = array();
 			$new_modules = array();
-			foreach ( $region['wrappers'] as $w => $wrapper ) {
+			for ( $w = 0; $w <= count($region['wrappers']); $w++ ) {
 				if ( isset($add_wrappers[$w]) && is_array($add_wrappers[$w]) ) {
 					foreach ( $add_wrappers[$w] as $add_wrapper ) {
 						$new_wrappers[] = $add_wrapper;
 					}
 				}
-				$new_wrappers[] = $wrapper;
+				if ( isset($region['wrappers'][$w]) ) {
+					$new_wrappers[] = $region['wrappers'][$w];
+				}
 			}
-			foreach ( $region['modules'] as $m => $module ) {
+			for ( $m = 0; $m <= count($region['modules']); $m++ ) {
 				if ( isset($add_modules[$m]) && is_array($add_modules[$m]) ) {
 					foreach ( $add_modules[$m] as $add_module ) {
 						$new_modules[] = $add_module;
 					}
 				}
-				$new_modules[] = $module;
+				if ( isset($region['modules'][$m]) ) {
+					$new_modules[] = $region['modules'][$m];
+				}
 			}
 			$region['wrappers'] = $new_wrappers;
 			$region['modules'] = $new_modules;
@@ -237,13 +241,18 @@ class Upfront_Compat_LayoutConverter_Ver_1_0_0 extends Upfront_Compat_LayoutConv
 	protected function _add_padding (&$module, $module_data, $wrapper_col, $left_space, $breakpoint) {
 		$column_width = $breakpoint->get_column_width();
 		$column_padding = $breakpoint->get_column_padding();
-		$top_padding = ( $module_data['top'] * $breakpoint->get_baseline() );
+		$baseline = $breakpoint->get_baseline();
+		$top_padding = ( $module_data['top'] * $baseline );
 		$left_padding = ( ( $module_data['left'] - $left_space) * $column_width );
 		$right_padding = ( ( $wrapper_col + $left_space - $module_data['total_col'] ) * $column_width );
 		if ( $breakpoint->is_default() ) {
 			if ( $top_padding > 0 ) {
 				upfront_set_property_value('top_padding_use', true, $module['objects'][0]);
 				upfront_set_property_value('top_padding_num', $top_padding + $column_padding, $module['objects'][0]);
+				$row = upfront_get_property_value('row', $module['objects'][0]);
+				if ( !empty($row) ) {
+					upfront_set_property_value('row', $row + ($top_padding/$baseline), $module['objects'][0]);
+				}
 			}
 			if ( $left_padding > 0 ) {
 				upfront_set_property_value('left_padding_use', true, $module['objects'][0]);
@@ -258,6 +267,10 @@ class Upfront_Compat_LayoutConverter_Ver_1_0_0 extends Upfront_Compat_LayoutConv
 			if ( $top_padding > 0 ) {
 				upfront_set_breakpoint_property_value('top_padding_use', true, $module['objects'][0], $breakpoint);
 				upfront_set_breakpoint_property_value('top_padding_num', $top_padding + $column_padding, $module['objects'][0], $breakpoint);
+				$row = upfront_get_breakpoint_property_value('row', $module['objects'][0], $breakpoint);
+				if ( !empty($row) ) {
+					upfront_set_breakpoint_property_value('row', $row + ($top_padding/$baseline), $module['objects'][0], $breakpoint);
+				}
 			}
 			if ( $left_padding > 0 ) {
 				upfront_set_breakpoint_property_value('left_padding_use', true, $module['objects'][0], $breakpoint);

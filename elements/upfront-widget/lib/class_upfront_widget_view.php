@@ -28,7 +28,7 @@ class Upfront_UwidgetView extends Upfront_Object {
 			$instance[$name] = $this->_get_property($name);
 		}
 
-		return "<div class=' upfront-widget' {$element_id}>" .
+		return "<div class=' upfront-widget'>" .
 			$widget->get_widget_markup($instance) .
 		"</div>";
 	}
