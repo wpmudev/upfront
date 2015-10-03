@@ -176,13 +176,13 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		$styles = '';
 		foreach ($presets as $preset) {
 			if (isset($preset['breakpoint']) && isset($preset['breakpoint']['tablet'])) {
-				$preset['tablet'] = [];
+				$preset['tablet'] = array();
 				foreach($preset['breakpoint']['tablet'] as $name=>$property) {
 					$preset['tablet'][$name] = $property;
 				};
 			}
 			if (isset($preset['breakpoint']) && isset($preset['breakpoint']['mobile'])) {
-				$preset['mobile'] = [];
+				$preset['mobile'] = array();
 				foreach($preset['breakpoint']['mobile'] as $name=>$property) {
 					$preset['mobile'][$name] = $property;
 				};
