@@ -131,3 +131,56 @@
 	right: 0;
 	bottom: 0;
 }
+
+
+
+/* --- New Stuff, this should be refactored! --- */
+
+.upfront-post_data-part.part-module-panel {
+	border: 1px solid rgb(229, 236, 244);
+	margin: 10px;
+}
+.upfront-post_data-part.part-module-panel .upfront-settings-item-title {
+	text-transform: none;
+	background: rgb(230, 242, 255);
+}
+.upfront-post_data-part.part-module-panel .upfront-settings-item-title .toggle {
+	position: absolute;
+	top: 0;
+	right: 0;
+	background: rgb(247, 251, 255);
+	display: block;
+	height: 24px;
+	width: 24px;
+	text-align: center;
+	line-height: 24px;
+	z-index: 2;
+	color: transparent;
+	/* background-image: set via JS hack in panel-abstractions.js; */
+	background-position: -818px -38px;
+}
+.upfront-post_data-part.part-module-panel .upfront-settings-item-title .toggle:hover {
+	background-position: -818px -70px;
+}
+.upfront-post_data-part.part-module-panel .upfront-settings-item-title .upfront-field-wrap-checkboxes {
+	margin-top: 0;
+	margin-right: 0;
+	padding: 7px 5px 5px 5px;
+}
+.upfront-post_data-part.part-module-panel .upfront-settings-item-title .upfront-field-wrap-checkboxes label {
+	margin-left: 10px;
+}
+
+.upfront-post_data-part.part-module-panel .upfront-settings-item-title .upfront-field-wrap-checkboxes .upfront-field-multiple {
+	background: transparent;
+	margin-bottom: 0;
+}
+.upfront-post_data-part.part-module-panel .upfront-settings-item-title .upfront-field-wrap-checkboxes label span {
+	background: transparent;
+}
+#settings .upfront-post_data-part.part-module-panel .upfront-settings-item-content .upfront-settings-item-content {
+	padding: 2px 0;
+}
+div.preset-manager-panel .upfront-post_data-part.part-module-panel .typography_settings_item .chosen-container {
+	width: 200px !important;
+}
