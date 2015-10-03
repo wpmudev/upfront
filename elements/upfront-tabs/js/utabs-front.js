@@ -12,8 +12,8 @@
       $tab.siblings().removeClass('tabs-tab-active');
 
       contentId = $tab.data('content-id');
-      $('#' + contentId).addClass('tab-content-active')
-        .siblings().removeClass('tab-content-active');
+      $('#' + contentId).addClass('utab-content-active')
+        .siblings().removeClass('utab-content-active');
     });
   });
 })(jQuery);

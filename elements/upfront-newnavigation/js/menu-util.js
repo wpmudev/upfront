@@ -1,62 +1,51 @@
 define([], function () {
 	var l10n = Upfront.Settings.l10n.newnavigation_element;
 
-	var CurrentMenuItemData = Backbone.Model.extend({
-		defaults: {
-			'id':  false,
-			'name':  false,
-			'url':  false,
-			'model_true':  true,
-			"menu_id":     false,
-			"menuList":    false
-		}
-	});
-
 	var MenuUtil = function() {
 		var self = this;
-		var currentMenuItemData = new CurrentMenuItemData();
-		var menus;
-
-		Upfront.Events.on('menu_element:menu_created', function(menuData) {
-			menus.push({name: menuData.slug, term_id: menuData.id});
-			var menuList = currentMenuItemData.get('menuList');
-			//menuList.push({label: menuData.slug, value: menuData.id});
+		// Array of wp menus with all data
+		var wpMenus = Upfront.mainData.menus;
+		// Array of {label: "Menu Name", value: "42"} items
+		var selectMenuOptions = _.map(wpMenus, function (menu, index) {
+			return  {label: menu.name, value: menu.term_id};
 		});
 
-		// Initialize menu list
-		Upfront.Util.post({"action": "upfront_new_load_menu_list"})
-			.success(function (ret) {
-				menus = ret.data;
-				var values = _.map(ret.data, function (menu, index) {
-					return  {label: menu.name, value: menu.term_id};
-				});
-				self.setMenuList(values);
-			})
-		.error(function (ret) {
-			Upfront.Util.log("Error loading menu list");
-		});
-
-		this.setMenus = function(newMenus) {
-			menus = newMenus;
-		},
+		this.getMenuById = function(id) {
+			var menu = _.findWhere(wpMenus, {term_id: id});
+			if (_.isUndefined(menu)) _.findWhere(wpMenus, {term_id: id + ''})
+			return menu;
+		};
 
 		this.getMenuSlugById = function(id) {
-			return _.findWhere(menus, {term_id: id}).slug;
+			return this.getMenuById(id).slug;
 		};
 
-		this.getMenuList = function() {
-			var menuList = currentMenuItemData.get('menuList');
-			//menuList.push({label: l10n.create_new, value: -1});
-			return menuList;
+		this.getSelectMenuOptions = function() {
+			return selectMenuOptions;
 		};
 
-		this.setMenuList = function(values) {
-			currentMenuItemData.set({menuList: values});
+		this.addMenu = function(menuData) {
+			menuData.term_id = menuData.term_id + '';
+			wpMenus.push(menuData);
+			selectMenuOptions.unshift({label: menuData.slug, value: menuData.term_id});
 		};
 
-		this.set = function(options) {
-			currentMenuItemData.set(options);
+		this.deleteMenu = function(menuId) {
+			selectMenuOptions = _.reject(selectMenuOptions, function(option) {
+				return option.value === menuId;
+			});
+			wpMenus = _.reject(wpMenus, function(menu) {
+				return menu['term_id'] === menuId;
+			});
 		};
+
+		Upfront.Events.on('menu_element:menu_created', function(menuData) {
+			self.addMenu(menuData);
+		});
+
+		Upfront.Events.on('menu_element:delete', function(menuId) {
+			self.deleteMenu(menuId);
+		});
 	};
 
 	var menuUtil = new MenuUtil();

@@ -159,8 +159,8 @@ define([
 				
 				rules = _.map(rules, function(rule){return $.trim(rule);});
 				rules.pop();
-
-				styles_with_selector = preset_class + rules.join('\n}' + preset_class) + '\n}';
+				
+				styles_with_selector = me.stylesAddSelector($.trim(editor.getValue()), me.get_css_selector());
 
 				me.$style.html(styles_with_selector);
 				me.trigger('change', styles_with_selector);
@@ -433,27 +433,11 @@ define([
 				elementType: this.elementType.id,
 				global: this.global
 			};
-			
-			// If in exporter mode, export instead of saving
-			if (Upfront.Application.is_builder()) {
-				data.stylename = this.get_style_id();
-				if (this.is_global_stylesheet) {
-					var props = Upfront.Application.current_subapplication.layout.get('properties'),
-						layout_styles = props && props.findWhere ? props.findWhere({name: 'layout_style'}) : false
-					;
-					if (layout_styles && layout_styles.set) layout_styles.set({'value': styles});
-					else {
-						props.add({name: "layout_style", value: styles});
-					}
-				}
-				Upfront.Behaviors.LayoutEditor.export_element_styles(data);
-				return;
-			}
-			
+
 			this.options.preset.set('preset_style', data.styles);
 			
 			this.trigger('upfront:presets:update', this.options.preset.toJSON());
-			
+
 			return Upfront.Views.Editor.notify(l10n.preset_style_saved.replace(/%s/,  this.elementType.id));
 
 		},

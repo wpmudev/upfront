@@ -304,13 +304,13 @@ div.upfront-navigation div[data-style="burger"] i.delete_menu_item  {
 /*div.upfront-navigation div[data-style="burger"] i.edit_link  {
   right:60px !important
 }*/
-div.upfront-navigation div[data-style="burger"][data-aliment="left"] i.navigation-add-item,
-div.upfront-navigation div[data-style="burger"][data-aliment="center"] i.navigation-add-item {
+div.upfront-navigation div[data-style="burger"][data-alignment="left"] i.navigation-add-item,
+div.upfront-navigation div[data-style="burger"][data-alignment="center"] i.navigation-add-item {
   left:inherit !important;
   margin-right:50px;
 }
 
-div.upfront-navigation div[data-style="burger"][data-aliment="right"] i.navigation-add-item {
+div.upfront-navigation div[data-style="burger"][data-alignment="right"] i.navigation-add-item {
   right: inherit;
   margin-left: 10px;
 }
@@ -464,7 +464,7 @@ div.preset-manager-panel .menustyle_settings_item {
 	padding-top: 15px;
 }
 
-div.preset-manager-panel .menustyle_settings_item label {
+div.preset-manager-panel .menustyle_settings_item .upfront-field-label {
 	font-weight: normal;
 	position: relative;
 	top: 5px;

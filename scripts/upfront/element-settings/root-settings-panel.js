@@ -2,8 +2,9 @@
 define([
 	'scripts/upfront/element-settings/settings-container',
 	'scripts/upfront/element-settings/root-panel-mixin',
-	'scripts/upfront/settings/field-factory'
-], function (SettingsContainer, RootPanelMixin, FieldFactory) {
+	'scripts/upfront/settings/field-factory',
+	'scripts/upfront/settings/module-factory'
+], function (SettingsContainer, RootPanelMixin, FieldFactory, ModuleFactory) {
 	var l10n = Upfront.Settings && Upfront.Settings.l10n
 		? Upfront.Settings.l10n.global.views
 		: Upfront.mainData.l10n.global.views
@@ -18,12 +19,24 @@ define([
 			this.settings = _(this.settings);
 
 			this.settings.each(function(settingOptions){
-				var setting = new Upfront.Views.Editor.Settings.Item({
-					title: settingOptions.title,
-					model: me.model,
-					className: settingOptions.className,
-					fields: []
-				});
+				var setting;
+				if (settingOptions.type === 'SettingsItem') {
+					setting = new Upfront.Views.Editor.Settings.Item({
+						title: settingOptions.title,
+						model: me.model,
+						className: settingOptions.className,
+						fields: []
+					});
+				} else {
+					setting = ModuleFactory.createModule(
+						settingOptions.type, settingOptions || {}, me.model
+					);
+				}
+
+				if(settingOptions.identifier) {
+					// Use for selecting settings instead crawling DOM
+					setting.identifier = settingOptions.identifier;
+				}
 
 				_.each(settingOptions.fields, function(fieldOptions) {
 					var field;
@@ -45,8 +58,29 @@ define([
 							fieldOptions.change = fieldOptions.preservedChangeCallback;
 						});
 					}
+					if ("show" in fieldOptions) {
+						if (!fieldOptions.preservedShowCallback) {
+							// Store the callback
+							fieldOptions.preservedShowCallback = fieldOptions.show;
+						}
+
+						// Proxy the stored callback to provide context
+						fieldOptions.show = function (value) {
+							fieldOptions.preservedShowCallback(value, me);
+						};
+
+						// Reset show callback to avoid zombies
+						Upfront.Events.once('entity:settings:deactivate', function() {
+							fieldOptions.show = fieldOptions.preservedShowCallback;
+						});
+					}
 
 					field = FieldFactory.createField(fieldOptions.type, _.extend({ model: me.model }, _.omit(fieldOptions, ['type'])));
+
+					if(fieldOptions.identifier) {
+						// Use for selecting field instead crawling DOM
+						field.identifier = fieldOptions.identifier;
+					}
 
 					setting.fields.push(field);
 				});

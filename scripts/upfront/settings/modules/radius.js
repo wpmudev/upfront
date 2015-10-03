@@ -39,6 +39,7 @@ define([
 					],
 					change: function(value) {
 						me.model.set(me.options.fields.use, value);
+						me.reset_fields(value);
 					},
 					show: function(value, $el) {
 						var stateSettings = $el.closest('.state_modules');
@@ -238,7 +239,58 @@ define([
 
 
 			]);
-		}
+		},
+		reset_fields: function(value) {
+			if(typeof value !== "undefined" && value === "yes") {
+				var settings = this.get_static_field_values(value, this.options.prepend);
+				this.update_fields(value, settings);
+				this.save_static_values(value, settings);
+				this.$el.empty();
+				this.render();
+			}
+		},
+		
+		save_static_values: function(value, settings) {
+			//Save preset values from static state
+			this.model.set(this.options.fields.lock, settings.lock);
+			this.model.set(this.options.fields.radius, settings.radius);
+			this.model.set(this.options.fields.radius_number, settings.radius_number);
+			this.model.set(this.options.fields.radius1, settings.radius1);
+			this.model.set(this.options.fields.radius2, settings.radius2);
+			this.model.set(this.options.fields.radius3, settings.radius3);
+			this.model.set(this.options.fields.radius4, settings.radius4);
+		},
+		
+		get_static_field_values: function(value, prepend) {
+			var settings = {},
+				prefix = '';
+			
+			if(typeof this.options.prefix !== "undefined") {
+				prefix = this.options.prefix + '-';
+			}
+			
+			settings.lock = this.model.get(this.clear_prepend(prefix + this.options.fields.lock, prepend)) || '';
+			settings.radius = this.model.get(this.clear_prepend(prefix + this.options.fields.radius, prepend)) || '';
+			settings.radius_number = this.model.get(this.clear_prepend(prefix + this.options.fields.radius_number, prepend)) || '';
+			settings.radius1 = this.model.get(this.clear_prepend(prefix + this.options.fields.radius1, prepend)) || '';
+			settings.radius2 = this.model.get(this.clear_prepend(prefix + this.options.fields.radius2, prepend)) || '';
+			settings.radius3 = this.model.get(this.clear_prepend(prefix + this.options.fields.radius3, prepend)) || '';
+			settings.radius4 = this.model.get(this.clear_prepend(prefix + this.options.fields.radius4, prepend)) || '';
+			
+			return settings;
+		},
+		
+		clear_prepend: function(field, prepend) {
+			return field.replace(prepend, '');
+		},
+		
+		update_fields: function(value, settings) {
+			//Update slider value
+			s = this.fields._wrapped[2];
+			s.$el.find('#'+s.get_field_id()).slider('value', settings.radius);
+			s.get_field().val(settings.radius);
+			s.trigger('changed');
+		},
 	});
 
 	return RadiusSettingsModule;

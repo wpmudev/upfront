@@ -254,13 +254,18 @@ define([
 		},
 		
 		get_static_field_values: function(value, prepend) {
-			var settings = {};
+			var settings = {},
+				prefix = '';
 			
-			settings.typeface = this.model.get(this.clear_prepend(this.options.fields.typeface, prepend)) || '';
-			settings.fontstyle = this.model.get(this.clear_prepend(this.options.fields.fontstyle, prepend)) || '';
-			settings.fontsize = this.model.get(this.clear_prepend(this.options.fields.size, prepend)) || '';
-			settings.line_height = this.model.get(this.clear_prepend(this.options.fields.line_height, prepend)) || '';
-			settings.color = this.model.get(this.clear_prepend(this.options.fields.color, prepend)) || '';
+			if(typeof this.options.prefix !== "undefined") {
+				prefix = this.options.prefix + '-';
+			}
+
+			settings.typeface = this.model.get(this.clear_prepend(prefix + this.options.fields.typeface, prepend)) || '';
+			settings.fontstyle = this.model.get(this.clear_prepend(prefix + this.options.fields.fontstyle, prepend)) || '';
+			settings.fontsize = this.model.get(this.clear_prepend(prefix + this.options.fields.size, prepend)) || '';
+			settings.line_height = this.model.get(this.clear_prepend(prefix + this.options.fields.line_height, prepend)) || '';
+			settings.color = this.model.get(this.clear_prepend(prefix + this.options.fields.color, prepend)) || '';
 			
 			return settings;
 		},

@@ -148,6 +148,7 @@ define([
 								single: true,
 								toggle: true,
 								prepend: 'hover-',
+								prefix: 'static',
 								fields: {
 									use: 'hover-use-color',
 								},
@@ -166,6 +167,7 @@ define([
 								state: 'hover',
 								toggle: true,
 								prepend: 'hover-',
+								prefix: 'static',
 								fields: {
 									use: 'hover-use-typography',
 									typeface: 'hover-font-family',
@@ -184,6 +186,7 @@ define([
 								state: 'hover',
 								title: '',
 								prepend: 'hover-',
+								prefix: 'static',
 								fields: {
 									use: 'hover-useborder',
 									width: 'hover-borderwidth',
@@ -216,6 +219,7 @@ define([
 								single: true,
 								toggle: true,
 								prepend: 'active-',
+								prefix: 'static',
 								fields: {
 									use: 'active-use-color',
 							},
@@ -234,6 +238,7 @@ define([
 								state: 'active',
 								toggle: true,
 								prepend: 'active-',
+								prefix: 'static',
 								fields: {
 									use: 'active-use-typography',
 									typeface: 'active-font-family',
@@ -252,6 +257,7 @@ define([
 								state: 'active',
 								title: '',
 								prepend: 'active-',
+								prefix: 'static',
 								fields: {
 									use: 'active-useborder',
 									width: 'active-borderwidth',

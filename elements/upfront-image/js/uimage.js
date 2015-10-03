@@ -37,7 +37,6 @@ define([
 				'click a.upfront-image-select': 'openImageSelector',
 				'click div.upfront-quick-swap': 'openImageSelector',
 				'dblclick .wp-caption': 'editCaption',
-				'click .js-uimage-open-lightbox': 'openLightboxRegion',
 				'click .swap-image-overlay': 'openImageSelector'
 			});
 			this.delegateEvents();
@@ -457,7 +456,7 @@ define([
 				img;
 
 			this.setupBySize();
-
+			
 			if(!this.temporaryProps || !this.temporaryProps.size) {
 				this.temporaryProps = {
 					size: props.size,
@@ -489,7 +488,7 @@ define([
 			props.gifImage = '';
 			props.gifLeft = 0;
 			props.gifTop = 0;
-			
+
 			/* Commented to allow caption below image to have background
 			if (props.caption_position === 'below_image') {
 				props.captionBackground = false;
@@ -513,6 +512,12 @@ define([
 				size = props.size;
 				img = render.find('img');
 				props = this.temporaryProps;
+				
+				var newElementSize = this.update_style();
+			
+				if(newElementSize) {
+					elementSize = newElementSize;
+				}
 
 				// Let's load the full image to improve resizing
 				render.find('.upfront-image-container').css({
@@ -540,6 +545,25 @@ define([
 
 			return rendered;
 		},
+		
+		update_style: function() {
+			var elementSize = this.property('element_size'),
+				$container = this.$el.find('.upfront-image-container'),
+				props = this.get_preset_properties();
+			
+			if(props.imagestyle === "square") {
+				elementSize = {
+					height: elementSize.width,
+					width: elementSize.width
+				};
+				
+				this.property('element_size', elementSize);
+				
+				return elementSize;
+			}
+			
+			return false;
+		},
 
 		on_render: function() {
 			var me = this,
@@ -559,6 +583,12 @@ define([
 				this.$('a').addClass('js-uimage-open-lightbox');
 			}
 
+			var newElementSize = this.update_style();
+			
+			if(newElementSize) {
+				elementSize = newElementSize;
+			}
+			
 			if (this.isThemeImage() && !Upfront.themeExporter) {
 				this.$el.addClass('image-from-theme');
 				this.$el.find('b.upfront-entity_meta').after('<div class="swap-image-overlay"><p class="upfront-icon upfront-icon-swap-image"><span>Click to </span>Swap Image</p></div>');
@@ -579,8 +609,7 @@ define([
 				}
 				return;
 			}
-
-
+			
 			if (this.property('quick_swap')) { // Do not show image controls for swappable images.
 				return false;
 			}
@@ -787,6 +816,16 @@ define([
 			this.$('.uimage').css('min-height', 'auto');
 		},
 
+		updateBreakpointPadding: function(breakpointColumnPadding) {
+			var image_el = this.$el.find('.upfront-image');
+
+			if(image_el.css("padding") !== "") {
+				return parseInt(image_el.css("padding"), 10);
+			}
+
+			return breakpointColumnPadding;
+		},
+
 		onElementResizing: function() {
 			if(this.mobileMode) {
 				return;
@@ -797,7 +836,7 @@ define([
 				data = resizingData.data,
 				img = resizingData.img,
 				captionHeight = this.property('caption_position') === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
-				padding = this.property('no_padding') == 1 ? 0 : breakpointColumnPadding,
+				padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding),
 				ratio;
 
 			if(!resizer){
@@ -856,7 +895,7 @@ define([
 				img = resizingData.img,
 				imgSize = {width: img.width(), height: img.height()},
 				imgPosition = img.position(),
-				padding = this.property('no_padding') == 1 ? 0 : breakpointColumnPadding;
+				padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding);
 
 			if(starting.length){
 				this.elementSize = {
@@ -1071,7 +1110,7 @@ define([
 			var me = this,
 				parent = this.parent_module_view.$('.upfront-editable_entity:first'),
 				resizer = ui ? $('.upfront-resize') : parent,
-				padding = this.property('no_padding') == 1 ? 0 : breakpointColumnPadding
+				padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding)
 			;
 
 			me.elementSize = {
@@ -1088,13 +1127,13 @@ define([
 			}
 
 		},
-		
+
 		applyElementSize: function () {
 			var me = this,
 				parent = this.parent_module_view.$('.upfront-editable_entity:first'),
 				resizer = parent,
 				captionHeight = this.property('caption_position') === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
-				padding = this.property('no_padding') == 1 ? 0 : breakpointColumnPadding,
+				padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding),
 				elementSize = {width: resizer.width() - (2 * padding), height: resizer.height() - (2 * padding) - captionHeight}
 			;
 			this.property('element_size', elementSize);
@@ -1109,7 +1148,7 @@ define([
 		openImageSelector: function(e){
 			var me = this;
 			if (e && e.preventDefault) e.preventDefault();
-			
+
 			Upfront.Views.Editor.ImageSelector.open({
 				multiple_sizes: false,
 			}).done(function(images){
@@ -1243,22 +1282,6 @@ define([
 					}
 				})
 			;
-		},
-
-		openLightboxRegion: function(e){
-			if(e) {
-				e.preventDefault();
-			}
-
-			var link = e.currentTarget,
-				href = link.href.split('#')
-			;
-
-			if(href.length !== 2) {
-				return;
-			}
-
-			Upfront.Application.LayoutEditor.openLightboxRegion(href[1]);
 		},
 
 		cleanup: function(){

@@ -88,8 +88,13 @@
 					})
 					.on('stop', function(){
 						var ed = me.$el.find('.upfront-object-content').data("ueditor"),
-							text = ''
-						;
+							tag = ed.redactor.$element[0].firstChild.tagName,
+							text = '';
+							
+						if(tag === "PRE") {
+							//Remove markers markup leaking in PRE element
+							ed.redactor.selection.removeMarkers();
+						}
 						
 						text = ed.getValue(true);
 						me.model.set_content(text);

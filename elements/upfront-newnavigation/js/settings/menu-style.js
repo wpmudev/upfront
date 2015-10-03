@@ -1,6 +1,6 @@
-define(function() {	
+define(function() {
 	var l10n = Upfront.Settings.l10n.newnavigation_element;
-	
+
 	var MenuStyle = Upfront.Views.Editor.Settings.Item.extend({
 		className: 'settings_module menustyle_settings_item clearfix',
 		group: true,
@@ -9,7 +9,7 @@ define(function() {
 		},
 		initialize: function(options) {
 			this.options = options || {};
-						
+
 			var me = this,
 				state = this.options.state;
 
@@ -23,16 +23,23 @@ define(function() {
 					values: [
 						{ label: l10n.mnu.horiz, value: 'horizontal' },
 						{ label: l10n.mnu.vert, value: 'vertical' },
+						{ label: l10n.mnu.triggered, value: 'triggered' }, // this is actually 'burger' style
 					],
 					change: function(value) {
 						me.model.set('menu_style', value);
+					},
+					show: function(value, $el) {
+						if(value === "triggered") {
+							$el.parent().find('.burger_alingment').show();
+						} else {
+							$el.parent().find('.burger_alingment').hide();
+						}
 					}
 				}),
 				new Upfront.Views.Editor.Field.Select({
 					model: this.model,
 					className: state + '-select select-module menu_alingment',
-					name: 'menu_alingment',
-					default_value: 'center',
+					name: 'menu_alignment',
 					label: l10n.mnu.alingment,
 					values: [
 						{ label: l10n.mnu.left, value: 'left' },
@@ -40,7 +47,7 @@ define(function() {
 						{ label: l10n.mnu.right, value: 'right' },
 					],
 					change: function(value) {
-						me.model.set('menu_alingment', value);
+						me.model.set('menu_alignment', value);
 					}
 				}),
 				new Upfront.Views.Editor.Field.Select({

@@ -92,6 +92,22 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		$this->_out(new Upfront_JsonResponse_Success($resetpreset));
 	}
 
+	public function replace_new_lines($presets) {
+		$new_presets = array();
+
+		if(!empty($presets)) {
+			foreach($presets as $preset) {
+				if(isset($preset['preset_style']) && !empty($preset['preset_style'])) {
+					$preset['preset_style'] = str_replace("@n", "\n", $preset['preset_style']);
+				}
+
+				$new_presets[] = $preset;
+			}
+		}
+
+		return $new_presets;
+	}
+
 	/**
 	 * @return array saved presets
 	 */
@@ -106,6 +122,8 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 				'as_array' => true
 			)
 		);
+
+		$presets = $this->replace_new_lines($presets);
 
 		// Fail-safe
 		if (is_array($presets) === false) {
@@ -157,6 +175,18 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 		$styles = '';
 		foreach ($presets as $preset) {
+			if (isset($preset['breakpoint']) && isset($preset['breakpoint']['tablet'])) {
+				$preset['tablet'] = [];
+				foreach($preset['breakpoint']['tablet'] as $name=>$property) {
+					$preset['tablet'][$name] = $property;
+				};
+			}
+			if (isset($preset['breakpoint']) && isset($preset['breakpoint']['mobile'])) {
+				$preset['mobile'] = [];
+				foreach($preset['breakpoint']['mobile'] as $name=>$property) {
+					$preset['mobile'][$name] = $property;
+				};
+			}
 			$args = array('properties' => $preset);
 			extract($args);
 			ob_start();
@@ -202,17 +232,17 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 		return false;
 	}
-	
+
 	public function get_preset_by_id($preset_id) {
-		$presets = $this->get_presets();	
-		
+		$presets = $this->get_presets();
+
 		foreach($presets as $preset) {
 			if($preset['id'] == $preset_id) {
 				return $preset;
 			}
 		}
 	}
-	
+
 
 	public function get_presets_javascript_server() {
 		$presets = get_option('upfront_' . get_stylesheet() . '_' . $this->elementName . '_presets');
@@ -248,6 +278,8 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			}
 			$updatedPresets[] = $preset;
 		}
+
+		$updatedPresets = $this->replace_new_lines($updatedPresets);
 
 		$updatedPresets = json_encode($updatedPresets);
 

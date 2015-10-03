@@ -18,12 +18,37 @@ define([
 		initialize: function(opts) {
 			this.options = opts;
 			var me = this,
-				panels = {};
+				panels = {},
+				currentBreakpoint,
+				breakpointsData,
+				breakpointData;
+
+			// Setup model so that it uses breakpoint values
+			if (this.hasBreakpointSettings === true) {
+				currentBreakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active();
+				breakpointsData = this.model.get_property_value_by_name('breakpoint') || {};
+				breakpointData = breakpointsData[currentBreakpoint.id] || {};
+				// Breakpoint specific settings
+				_.each(this.breakpointSpecificSettings, function(settingOptions) {
+					if (!_.isUndefined(breakpointData[settingOptions.name])) {
+						this.model.set_property(settingOptions.name, breakpointData[settingOptions.name], true);
+					}
+				}, this);
+			}
 
 			// Instantiate panels
 			_.each(this.panels, function(panel, index) {
 				if (index === 'Appearance') {
-					panels.Appearance = new PresetManager(_.extend({}, panel, { model: this.model }));
+					panels.Appearance = new PresetManager(
+					_.extend(
+							{
+								hasBreakpointSettings: this.hasBreakpointSettings,
+								breakpointSpecificPresetSettings: this.breakpointSpecificPresetSettings,
+								model: this.model
+							},
+							panel
+						)
+					);
 					return;
 				}
 				panels[index] = new panel({ model: this.model });
@@ -42,6 +67,22 @@ define([
 		},
 
 		saveSettings: function() {
+			var currentBreakpoint,
+				breakpointsData;
+
+			// Setup model so that it saves breakpoint values to breakpoint property
+			if (this.hasBreakpointSettings === true) {
+				currentBreakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active();
+				breakpointsData = this.model.get_property_value_by_name('breakpoint') || {};
+				breakpointsData[currentBreakpoint.id] = {};
+				_.each(this.breakpointSpecificSettings, function(settingOptions) {
+					breakpointsData[currentBreakpoint.id][settingOptions.name] = this.model.get_property_value_by_name(settingOptions.name);
+					// Always save width to breakpoint, comes handy in public scripts
+					breakpointsData[currentBreakpoint.id].width = currentBreakpoint.get('width');
+				}, this);
+				// Finally update breakpoints in model
+				this.model.set_property('breakpoint', breakpointsData, true);
+			}
 			_.each(this.panels, function(panel){
 				panel.save_settings();
 			});
@@ -56,7 +97,7 @@ define([
 
 			if (this.onSaveSettings) this.onSaveSettings();
 		},
-		
+
 		cancelSettings: function() {
 			Upfront.Events.trigger("element:settings:canceled");
 		},

@@ -36,9 +36,9 @@ define([
 				'click .add-item': 'addTab',
 				'click .tabs-tab': 'onTabClick',
 				'keydown .tabs-tab[contenteditable=true]': 'onTabKeydown',
-				'click .tab-content-active': 'onContentClick',
+				'click .utab-content-active': 'onContentClick',
 				'click i': 'deleteTab',
-				'dblclick .tab-content:not(.redactor-editor)': 'startContentEditor'
+				'dblclick .utab-content:not(.redactor-editor)': 'startContentEditor'
 			});
 			this.delegateEvents();
 
@@ -90,7 +90,7 @@ define([
 			var contentId;
 
 			// Stop tab content editor on switching tabs, always
-			this.$el.find('.tab-content').each(function () {
+			this.$el.find('.utab-content').each(function () {
 				var ed = $(this).data('ueditor');
 				if(ed && ed.active) {
 					ed.stop();
@@ -120,8 +120,8 @@ define([
 				.siblings().removeClass('tabs-tab-active').end()
 				.addClass('tabs-tab-active');
 			$('#' + $tab.data('content-id'))
-				.siblings().removeClass('tab-content-active').end()
-				.addClass('tab-content-active');
+				.siblings().removeClass('utab-content-active').end()
+				.addClass('utab-content-active');
 		},
 
 		saveTabContent: function($content) {
@@ -141,7 +141,7 @@ define([
 		},
 
 		stopEdit: function(event) {
-			var $content = this.$el.find('.tab-content-active'),
+			var $content = this.$el.find('.utab-content-active'),
 				ed = $content.data('ueditor');
 
 			if (ed && ed.active) {
@@ -231,7 +231,7 @@ define([
 
 			});
 
-			$tabs = this.$el.find('.tab-content');
+			$tabs = this.$el.find('.utab-content');
 
 			$tabs.each(function () {
 				me.initializeContentEditor($(this));
@@ -242,10 +242,10 @@ define([
 				$('<b class="upfront-entity_meta upfront-ui add_item"><a href="" class="upfront-icon-button add-item"></a></b>').insertBefore($upfrontObjectContent);
 			}
 
-			this.$el.find('div#'+ this.currentTabId).addClass('tab-content-active').siblings().removeClass('tab-content-active');
+			this.$el.find('div#'+ this.currentTabId).addClass('utab-content-active').siblings().removeClass('utab-content-active');
 
 			this.$el.find('.tabs-tab').removeClass('tabs-tab-active');
-			this.$el.find('div.tabs-tab[data-content-id="' + this.$el.find('div.tab-content-active').attr('id')+'"]').addClass('tabs-tab-active');
+			this.$el.find('div.tabs-tab[data-content-id="' + this.$el.find('div.utab-content-active').attr('id')+'"]').addClass('tabs-tab-active');
 		},
 
 		startContentEditor: function(event) {
@@ -310,10 +310,10 @@ define([
 			'.upfront-tabs-container .tabs-menu-wrapper': {label: l10n.css.menu_label, info: l10n.css.menu_info},
 			'.upfront-tabs-container .tabs-tab .inner-box': {label: l10n.css.tabs_label, info: l10n.css.tabs_info},
 			'.upfront-tabs-container .tabs-tab-active .inner-box' : {label: l10n.css.active_tab_label, info: l10n.css.active_tab_info},
-			'.upfront-tabs-container .tabs-content': {label: l10n.css.tab_content_label, info: l10n.css.tab_content_info},
-			'.upfront-tabs-container .tabs-content p': {label: l10n.css.tab_p_label, info: l10n.css.tab_p_info},
-			'.upfront-tabs-container .tab-content-active': {label: l10n.css.active_content_label, info: l10n.css.active_content_info},
-			'.upfront-tabs-container .tab-content-active p': {label: l10n.css.active_p_label, info: l10n.css.active_p_info}
+			'.upfront-tabs-container .utabs-content': {label: l10n.css.tab_content_label, info: l10n.css.tab_content_info},
+			'.upfront-tabs-container .utabs-content p': {label: l10n.css.tab_p_label, info: l10n.css.tab_p_info},
+			'.upfront-tabs-container .utab-content-active': {label: l10n.css.active_content_label, info: l10n.css.active_content_info},
+			'.upfront-tabs-container .utab-content-active p': {label: l10n.css.active_p_label, info: l10n.css.active_p_info}
 		},
 		cssSelectorsId: Upfront.data.utabs.defaults.type
 	});

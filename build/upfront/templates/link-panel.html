@@ -15,19 +15,16 @@
 	<a title="{{Upfront.Settings.l10n.global.content.change_link}}" class="ulinkpanel-entry-url js-ulinkpanel-input-url js-ulinkpanel-input-entry" href="#">{{(!link.url || link.url=='' || link.url=='http://')?'Select':link.url}}</a>
 </div>
 {[ } ]}
-{[if(type == 'anchor') { ]}
-<div class="anchor-selector">
-</div>
-{[ } ]}
 {[if(type == 'lightbox') { ]}
 <div class="js-ulinkpanel-input-url js-ulinkpanel-input-lightbox clearfix">
 	{[ if(lightboxes.length) { ]}
 		<div class="lightbox-selector">
 		</div>
+		<a href="{{link.url}}" class="link-panel-lightbox-trigger">Open lightbox</a>
 	{[ } else { ]}
 
 	{[ } ]}
-    
+
     <div class="js-ulinkpanel-new-lightbox ulinkpanel-new-lightbox">
         <div class="ulinkpanel-title">Create lightbox</div>
         <input type="text" name="new_lightbox" class="upfront-field upfront-field-text upfront-field-empty ulinkpanel-lightbox-input js-ulinkpanel-lightbox-input" value="" placeholder="{{Upfront.Settings.l10n.global.content.lightbox_name}}" />

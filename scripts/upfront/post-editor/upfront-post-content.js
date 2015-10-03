@@ -1450,8 +1450,11 @@ var PostContentEditorLegacy = Backbone.View.extend(_.extend({}, PostContentEdito
 						var editor = $(me.currentContent).data('ueditor');
 
                         // cleanup inserts markup
-                        me.$el.find(".upfront-inline-panel").remove();
-                        me.$el.find(".ueditor-insert-remove").remove();
+                        if ('publish' === e) {
+                        	// We only close interface for publish event, so only do this then
+                        	me.$el.find(".upfront-inline-panel").remove();
+                        	me.$el.find(".ueditor-insert-remove").remove();
+                        }
 
 						results.content = $.trim( editor.getValue() );
 						results.content = results.content.replace(/(\n)*?<br\s*\/?>\n*/g, "<br/>");
