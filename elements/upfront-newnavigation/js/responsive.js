@@ -267,11 +267,11 @@ jQuery(document).ready(function($) {
 
 			var order = {'mobile':'', 'tablet':'', 'desktop':''};
 			for (key in order) {
-				if (parseInt(currentwidth) >= parseInt(breakpoints[key].width)) {
+				if (parseInt(currentwidth) >= parseInt((breakpoints[key] || {}).width, 10)) {
 					currentKey = key;
 				}
 			}
-			preset = breakpoints.preset[currentKey];
+			preset = (breakpoints.preset || {})[currentKey] || {};
 
 			if (preset.menu_style == 'triggered') {
 				$(this).attr('data-style', 'burger');

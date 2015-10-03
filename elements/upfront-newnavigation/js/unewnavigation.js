@@ -516,7 +516,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			this.display_menu_list();
 		}
 
-		var menuStyle = props.breakpoint.desktop.menu_style,
+		var menuStyle = ((((props || {breakpoint: false}).breakpoint || {desktop: false}) || {desktop: false}).desktop || {menu_style: false}).menu_style,
 			allowSubNav = this.property("allow_sub_nav"),
 			isFloating = this.property("is_floating"),
 			$upfrontObjectContent
@@ -580,7 +580,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			currentBreakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active(),
 			currentwidth = (typeof(bpwidth) != 'undefined') ? parseInt(bpwidth) : $(window).width();
 
-		if(preset.breakpoint[currentBreakpoint.id]['menu_style'] == 'triggered') {
+		if( (((preset || {breakpoint: {}}).breakpoint[currentBreakpoint.id]) || {menu_style: false})['menu_style'] == 'triggered') {
 			selector.attr('data-style', 'burger');
 			selector.attr('data-burger_alignment', preset.breakpoint[currentBreakpoint.id]['burger_alignment']);
 			selector.attr('data-burger_over', preset.breakpoint[currentBreakpoint.id]['burger_over']);
@@ -616,8 +616,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 			me.hideMenu(selector.find('ul.menu'));
 		} else {
-			selector.attr('data-style', preset.breakpoint[currentBreakpoint.id]['menu_style']);
-			selector.attr('data-alignment', preset.breakpoint[currentBreakpoint.id]['menu_alignment']);
+			selector.attr('data-style', (((preset || {breakpoint: {}}).breakpoint[currentBreakpoint.id]) || {menu_style: false})['menu_style']);
+			selector.attr('data-alignment', (((preset || {breakpoint: {}}).breakpoint[currentBreakpoint.id]) || {menu_style: false})['menu_alignment']);
 
 			selector.removeAttr('data-burger_alignment');
 			selector.removeAttr('data-burger_over');
@@ -646,7 +646,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			selector.closest('div.upfront-newnavigation_module').css('z-index', '');
 		}
 
-		selector.attr('data-isfloating', preset.breakpoint[currentBreakpoint.id].is_floating);
+		selector.attr('data-isfloating', (((preset || {breakpoint: {}}).breakpoint[currentBreakpoint.id]) || {is_floating: false}).is_floating);
 	},
 	hideMenu: function(menu) {
 		menu.hide();
