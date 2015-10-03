@@ -176,7 +176,11 @@ define([
 			this.$el.find(".upfront-settings-item-title")
 				.empty()
 				.append(check.$el)
+				.append('<a href="#toggle" class="toggle">&times;</a>')
 			;
+
+			// temporary style hack
+			this.$el.find(".upfront-settings-item-title .toggle").css('background-image', 'url(' + Upfront.Settings.root_url.replace(/\/$/, '') + '/img/uf-ui-sprite.svg)')
 		}
 	});
 

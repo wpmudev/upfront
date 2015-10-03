@@ -61,5 +61,20 @@ define([
 		}
 	});
 
+	(function ($) {
+		$(document).on('click', '.upfront-post_data-part.part-module-panel .upfront-settings-item-title .toggle', function (e) {
+			if (e.preventDefault) e.preventDefault();
+			if (e.stopPropagation) e.stopPropagation();
+
+			var $me = $(this),
+				$content = $me.closest('.part-module-panel').find('.upfront-settings-item-content:first, .state_modules')
+			;
+			if ($content.is(":visible")) $content.hide();
+			else $content.show();
+
+			return false;
+		});
+	})(jQuery);
+
 	return PostDataSettings;
 });
