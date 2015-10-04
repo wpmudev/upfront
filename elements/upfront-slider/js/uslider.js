@@ -135,6 +135,14 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		props.properties = this.get_preset_properties();
 
+		// Overwrite properties with preset properties
+		if (props.properties.primaryStyle) {
+			props.primaryStyle = props.properties.primaryStyle;
+		}
+		if (props.properties.captionBackground) {
+			props.captionBackground = props.properties.captionBackground;
+		}
+
 		//Stop autorotate
 		props.rotate = false;
 
@@ -221,7 +229,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			slider.find('.uslide-bottomOver, .uslide-middleCover, .uslide-bottomCover, .uslide-topCover').each(function() {
 				var slide = $(this);
 				slide.find('.uslide-caption').remove().prependTo(slide.find('.uslide-image'));
-			})
+			});
 			me.prepareSlider();
 		}, 100);
 
