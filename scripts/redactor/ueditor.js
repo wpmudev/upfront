@@ -568,7 +568,6 @@ UeditorEvents.on("ueditor:key:up", function(redactor){
 });
 
 
-
 Ueditor.prototype = {
 	disableStop: false,
 	mouseupListener: false,
@@ -616,6 +615,9 @@ Ueditor.prototype = {
 				}
 			});
 
+            // Expand known text patterns
+            if (32 === e.keyCode) self.expand_known_text_patterns();
+
 			if(e.keyCode != 37 && e.keyCode != 39) {
 				var current = $(self.redactor.selection.getCurrent());
 				if(current.hasClass('uf_font_icon')) {
@@ -655,6 +657,82 @@ Ueditor.prototype = {
 				this.stop();
 			}
 	},
+
+    /**
+     * Expand the known text patterns in current block element
+     */
+    expand_known_text_patterns: function () {
+        var redactor = this.redactor,
+            rpl = {
+                '##': {tag: 'h2'},
+                '###': {tag: 'h3'},
+                '####': {tag: 'h4'},
+                '#####': {tag: 'h5'},
+                '######': {tag: 'h6'},
+                '>': {tag: 'blockquote'},
+                '-': {tag: 'ul', nest: 'li'},
+                '*': {tag: 'ul', nest: 'li'},
+                '1.': {tag: 'ol', nest: 'li'},
+                '1)': {tag: 'ol', nest: 'li'}
+            }
+        ;
+        if (!redactor) return;
+
+        redactor.selection.get();
+
+        var node = redactor.selection.getBlock(),
+            caret, $el, check
+        ;
+        if (!node) return;
+
+        caret = redactor.caret.getOffsetOfElement(node);
+        if (!caret) return;
+        
+        $el = $(node).clone();
+        check = $el.text().substr(0, caret);
+
+        if (!check) return;
+
+        $.each(rpl, function (src, target) {
+            if (src !== check) return true;
+
+            var $node = $(node),
+                rx = new RegExp('^' + src.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1") + ' ?'),
+                text = $node.text().replace(rx, '')
+            ;
+
+            // Let's not do nested lists
+            // or expansion within lists in general
+            // or in PRE tags
+            if ($node.is("li,ul,ol,pre")) return false;
+
+            // Replace the selection tag with the one from the replacement map
+            if ("nest" in target && target.nest) {
+                $node.html(
+                    '<div><' + target.tag + '><' + target.nest + '>' + 
+                        text + 
+                    '</' + target.nest + '></' + target.tag + '></div>'
+                );
+            } else {
+                $node.html(
+                    '<div><' + target.tag + '>' + 
+                        text + 
+                    '</' + target.tag + '></div>'
+                );
+            }
+
+            // Set caret position to end of the target
+            redactor.caret.setEnd(
+                "nest" in target && target.nest
+                    ? $node.find(target.nest).last().get()
+                    : $node.find(target.tag).get()
+            );
+            redactor.code.sync();
+
+            return false;
+        });
+    },
+
 	stop: function(){
 		if(this.redactor){
 			UeditorEvents.trigger('ueditor:stop', this.redactor);
@@ -961,7 +1039,8 @@ Ueditor.prototype = {
 		});
 
 		$(document).one('mouseup', function(e){
-
+            if(!me.redactor)
+                return;
 			//var is_selection = ((Math.abs(e.pageX-me.lastmousedown.x) + Math.abs(e.pageY-me.lastmousedown.y)) > 2);
             var is_selection = !!me.redactor.selection.getText();
 			if((is_selection || me.clickcount > 1) && me.redactor && me.redactor.waitForMouseUp && me.redactor.selection.getText()){

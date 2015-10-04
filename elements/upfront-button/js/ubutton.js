@@ -38,7 +38,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		});
 
 		this.on('deactivated', function() {
-			this.onOpenItemControlsClick();
+			//this.onOpenItemControlsClick(); // Don't auto-pop open the linking panel on deactivation
 			Upfront.Events.trigger('upfront:element:edit:stop');
 		}, this);
 //		Upfront.Events.on("entity:deactivated", this.stopEdit, this);

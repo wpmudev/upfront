@@ -39,6 +39,7 @@ text!scripts/upfront/inline-panels/templates/panel-control-template.html
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/inline-panels/dialog-control.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/inline-panels/controls/visit-link.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/inline-panels/controls/link-panel.js
+/home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/inline-panels/controls/group-link-panel.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/inline-panels/inline-panels.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/link-model.js
 text!scripts/upfront/templates/link-panel.html
@@ -147,6 +148,7 @@ text!elements/upfront-maps/css/edit.css
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/elements/upfront-newnavigation/js/model.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/elements/upfront-newnavigation/js/element.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/elements/upfront-newnavigation/js/settings.js
+/home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/elements/upfront-newnavigation/js/floating.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/elements/upfront-newnavigation/js/unewnavigation.js
 text!elements/upfront-button/tpl/ubutton.html
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/elements/upfront-button/js/ubutton.js

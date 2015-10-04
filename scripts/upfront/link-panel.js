@@ -96,6 +96,7 @@ define([
 			this.linkTypes = _.extend({}, this.defaultLinkTypes, options.linkTypes || {});
 			this.theme = options.theme || 'dark';
 			this.button = options.button || false;
+			this.title = options.title || Upfront.Settings.l10n.global.content.links_to;
 
 			if (typeof options.model === 'undefined') {
 				// Make sure app does not fail if there is no model.
@@ -231,6 +232,7 @@ define([
 				return;
 			}
 			var tplData = {
+				title: this.title,
 				link: this.model.toJSON(),
 				checked: 'checked="checked"',
 				lightboxes: getLightBoxes(),

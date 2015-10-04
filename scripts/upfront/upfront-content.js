@@ -158,9 +158,9 @@ define("content", deps, function(postTpl, ContentTools) {
 				}
 			;
 
-			_.each(wrappers, function(wrapper){
+			_.each(wrappers, function(wrapper, w){
 				wrapper.objectsLength = wrapper.objects.length;
-				_.each(wrapper.objects, function(object){
+				_.each(wrapper.objects, function(object, o){
 
 					var attributes = options && options[object.slug] && options[object.slug].attributes ? options[object.slug].attributes : {},
 						attrs = ''
@@ -172,8 +172,13 @@ define("content", deps, function(postTpl, ContentTools) {
 					layout.attributes[object.slug] = attrs;
 					layout.extraClasses[object.slug] = options && options[object.slug] && options[object.slug].extraClasses ? options[object.slug].extraClasses : '';
 
-					if ( object.slug in me.parts.classes && me.parts.classes[object.slug] && me.parts.classes[object.slug].length )
+					if ( object.slug in me.parts.classes && me.parts.classes[object.slug] && me.parts.classes[object.slug].length ) {
 						layout.extraClasses[object.slug] = me.parts.classes[object.slug].join(' ');
+					}
+					
+					if ( object.classes.indexOf('part-module-' + object.slug) === -1 ) {
+						object.classes += ' part-module-' + object.slug;
+					}
 
 					object.markup = markupper.markup(object.slug, me.parts.replacements, me.getTemplate(object.slug));
 				});
@@ -268,7 +273,7 @@ define("content", deps, function(postTpl, ContentTools) {
 			this.listenTo(this.contentEditor, 'cancel', this.cancelChanges);
 			this.listenTo(this.contentEditor, 'publish', this.publish);
 			this.listenTo(this.contentEditor, 'draft', this.saveDraft);
-			this.listenTo(this.contentEditor, 'auto-draft', this.saveDraft);
+			this.listenTo(this.contentEditor, 'auto-draft', this.saveAutoDraft);
 			this.listenTo(this.contentEditor, 'trash', this.trash);
 
 			// So let's focus on title
@@ -294,7 +299,7 @@ define("content", deps, function(postTpl, ContentTools) {
 		saveDraft:function(results){
 			this.save(results, 'draft', Upfront.Settings.l10n.global.content.saving.replace(/%s/, this.post.get('post_type')), Upfront.Settings.l10n.global.content.drafted.replace(/%s/, this.capitalize(this.post.get('post_type'))));
 		},
-        saveDraft:function(results){
+        saveAutoDraft:function(results){
             this.save(results, 'auto-draft');
         },
 		trash: function(){
@@ -337,11 +342,11 @@ define("content", deps, function(postTpl, ContentTools) {
 				postUpdated = false
 			;
 
-            if( !is_auto_draft ){
+            if (!is_auto_draft && status !== 'draft') {
                 loading.render();
                 this.$el.append(loading.$el);
                 this.contentEditor.box.$el.hide();
-            }else{
+            } else {
                 status = "draft";
             }
 
@@ -387,7 +392,7 @@ define("content", deps, function(postTpl, ContentTools) {
                         Upfront.Views.Editor.notify(successMsg);
                     }
 					me.fetchPostLayout().then(function(){
-                        if( !is_auto_draft ) {
+                        if (!is_auto_draft && 'draft' !== status) {
                             me.stopEditContents();
                             me.render();
                         }

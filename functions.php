@@ -201,7 +201,11 @@ class Upfront {
 		wp_enqueue_script('jquery');
 		
 		//Basic styles for upfront to work are always loaded.
-		wp_enqueue_style('upfront-global', self::get_root_url() . '/styles/global.css', array(), Upfront_ChildTheme::get_version());
+		$global_style = Upfront_Behavior::compression()->has_experiments()
+			? '/styles/global.min.css'
+			: '/styles/global.css'
+		;
+		wp_enqueue_style('upfront-global', self::get_root_url() . $global_style, array(), Upfront_ChildTheme::get_version());
         
         if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
             // Don't queue the front grid if has permission to boot Upfront, queue editor grid instead
