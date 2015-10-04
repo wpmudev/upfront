@@ -96,22 +96,22 @@ define([
 
 			this.listenTo(this.model, "preset:updated", this.preset_updated);
 		},
-		
+
 		get_preset_properties: function() {
 			var preset = this.model.get_property_value_by_name("preset"),
 				props = PresetUtil.getPresetProperties('image', preset) || {};
-				
-			return props;	
+
+			return props;
 		},
-		
+
 		preset_updated: function() {
 			this.render();
 		},
-		
+
 		update_colors: function () {
-			
+
 			var props = this.get_preset_properties();
-			
+
 			if (_.size(props) <= 0) return false; // No properties, carry on
 
 			PresetUtil.updatePresetStyle('gallery', props, settingsStyleTpl);
@@ -456,18 +456,18 @@ define([
 				img;
 
 			this.setupBySize();
-			
+
 			if(!this.temporaryProps || !this.temporaryProps.size) {
 				this.temporaryProps = {
 					size: props.size,
 					position: props.position
 				};
 			}
-			
+
 			var props = this.extract_properties();
-		
+
 			props.properties = this.get_preset_properties();
-			
+
 			props.url = this.property('when_clicked') ? this.property('image_link') : false;
 			props.size = this.temporaryProps.size;
 			props.position = this.temporaryProps.position;
@@ -512,9 +512,9 @@ define([
 				size = props.size;
 				img = render.find('img');
 				props = this.temporaryProps;
-				
+
 				var newElementSize = this.update_style();
-			
+
 				if(newElementSize) {
 					elementSize = newElementSize;
 				}
@@ -545,23 +545,38 @@ define([
 
 			return rendered;
 		},
-		
+
 		update_style: function() {
 			var elementSize = this.property('element_size'),
 				$container = this.$el.find('.upfront-image-container'),
-				props = this.get_preset_properties();
-			
-			if(props.imagestyle === "square") {
-				elementSize = {
-					height: elementSize.width,
-					width: elementSize.width
-				};
-				
-				this.property('element_size', elementSize);
-				
-				return elementSize;
+				props = this.get_preset_properties(),
+				newSize = {};
+
+			if (props.imagestyle === "square") {
+				newSize.height = elementSize.width;
+				newSize.width = elementSize.width;
+
+				if (elementSize.width !== elementSize.height) {
+					// Keep old height in case style switches to default
+					newSize.defaultHeight = elementSize.height;
+				} else if (elementSize.defaultHeight) {
+					newSize.defaultHeight = elementSize.defaultHeight;
+				}
+
+				this.property('element_size', newSize);
+
+				return newSize;
+			} else {
+				if (elementSize.defaultHeight) {
+					newSize = {
+						width: elementSize.width,
+						height: elementSize.defaultHeight
+					};
+					this.property('element_size', newSize);
+					return newSize;
+				}
 			}
-			
+
 			return false;
 		},
 
@@ -584,11 +599,11 @@ define([
 			}
 
 			var newElementSize = this.update_style();
-			
+
 			if(newElementSize) {
 				elementSize = newElementSize;
 			}
-			
+
 			if (this.isThemeImage() && !Upfront.themeExporter) {
 				this.$el.addClass('image-from-theme');
 				this.$el.find('b.upfront-entity_meta').after('<div class="swap-image-overlay"><p class="upfront-icon upfront-icon-swap-image"><span>Click to </span>Swap Image</p></div>');
@@ -609,7 +624,7 @@ define([
 				}
 				return;
 			}
-			
+
 			if (this.property('quick_swap')) { // Do not show image controls for swappable images.
 				return false;
 			}
