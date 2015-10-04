@@ -516,11 +516,24 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			this.display_menu_list();
 		}
 
-		var menuStyle = props.breakpoint.desktop.menu_style,
+		var menuStyle,
 			allowSubNav = this.property("allow_sub_nav"),
 			isFloating = this.property("is_floating"),
 			$upfrontObjectContent
 		;
+
+		if (_.isUndefined(props.breakpoint)) {
+			props.breakpoint = {
+				desktop: {},
+				tablet: {},
+				mobile: {}
+			};
+		}
+		if (_.isUndefined(props.breakpoint.desktop)) {
+			props.breakpoint.desktop = {};
+		}
+
+		menuStyle = props.breakpoint.desktop.menu_style;
 
 		$upfrontObjectContent = this.$el.find('.upfront-object-content');
 		if(this.$el.find('a.newnavigation-add-item').length < 1) {
@@ -579,6 +592,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			breakpoint = breakpoints[Upfront.Views.breakpoints_storage.get_breakpoints().get_active().get('id')],
 			currentBreakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active(),
 			currentwidth = (typeof(bpwidth) != 'undefined') ? parseInt(bpwidth) : $(window).width();
+
+		if (_.isUndefined(preset)) return;
 
 		if(preset.breakpoint[currentBreakpoint.id]['menu_style'] == 'triggered') {
 			selector.attr('data-style', 'burger');
