@@ -4692,6 +4692,18 @@ var Field_ToggleableText = Field_Text.extend({
 			'click .chosen-container .chosen-single': 'openOptions'
 		},
 		multiple: false,
+
+		initialize: function(options) {
+			Field.prototype.initialize.call(this, options);
+			//Close dropdown on parent scroll
+			$('.sidebar-panel-content, #sidebar-scroll-wrapper').on('scroll', this, this.closeChosen);
+
+			//Disable scroll when chosen is opened
+			$('.sidebar-panel-content .sidebar-tab-content').bind('mousewheel', function() {
+				 return false
+			});
+		},
+
 		get_field_html: function() {
 			var multiple = this.multiple ? 'multiple' : '';
 			return ['<select class="upfront-chosen-select"' , multiple, ' data-placeholder="', this.options.placeholder,  '">', this.get_values_html(), '</select>'].join('');
@@ -4732,15 +4744,7 @@ var Field_ToggleableText = Field_Text.extend({
 				}
 			}, 20);
 
-			//Close dropdown on parent scroll
-			$('.sidebar-panel-content, #sidebar-scroll-wrapper').on('scroll', this, this.closeChosen);
-
-			//Disable scroll when chosen is opened
-			$('.sidebar-panel-content .sidebar-tab-content').bind('mousewheel', function() {
-				 return false
-			});
-
-			me.$el.find('select').on("chosen:hiding_dropdown", this, this.closeChosen);
+			me.$el.find('.chosen-drop').show();
 		},
 		closeChosen: function(e) {
 			var me = e.data;
