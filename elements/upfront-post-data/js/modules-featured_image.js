@@ -82,6 +82,7 @@ define([
 				moduleType: 'Border',
 				options: {
 					toggle: true,
+					state: 'static',
 					fields: {
 						use: name('use-border'),
 						width: name('border-width'),
@@ -95,6 +96,7 @@ define([
 				moduleType: 'Radius',
 				options: {
 					toggle: true,
+					state: 'static',
 					fields: {
 						use: name('use-radius'),
 						lock: name('lock'),

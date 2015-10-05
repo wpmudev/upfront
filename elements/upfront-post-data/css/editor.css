@@ -137,12 +137,15 @@
 /* --- New Stuff, this should be refactored! --- */
 
 .upfront-post_data-part.part-module-panel {
-	border: 1px solid rgb(229, 236, 244);
+	border: 1px solid rgb(162, 191, 218);
 	margin: 10px;
 }
 .upfront-post_data-part.part-module-panel .upfront-settings-item-title {
 	text-transform: none;
 	background: rgb(230, 242, 255);
+}
+.upfront-post_data-part.part-module-panel .upfront-settings-item-title.inactive {
+	background: transparent;
 }
 .upfront-post_data-part.part-module-panel .upfront-settings-item-title .toggle {
 	position: absolute;
@@ -183,4 +186,15 @@
 }
 div.preset-manager-panel .upfront-post_data-part.part-module-panel .typography_settings_item .chosen-container {
 	width: 200px !important;
+}
+
+div.preset-manager-panel .upfront-post_data-part.part-module-panel .typography_settings_item .lineHeight.element-toggled {
+	width: 100px;
+}
+div.preset-manager-panel .upfront-post_data-part.part-module-panel .typography_settings_item .fontColor.element-toggled {
+	margin-left: 10px;
+}
+
+div.preset-manager-panel .upfront-post_data-part.part-module-panel .edit_preset_label .upfront-field-button {
+	visibility: hidden;
 }

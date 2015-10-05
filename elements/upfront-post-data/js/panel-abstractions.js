@@ -86,6 +86,7 @@ define([
 				moduleType: 'Typography',
 				options: {
 					toggle: true,
+					state: 'static',
 					fields: {
 						use: name('use-typography'),
 						typeface: name('font-family'),
@@ -138,6 +139,11 @@ define([
 	});
 
 	var ToggleableOptions = OptionsModule.extend({
+		events: function () {
+			return _.extend({}, OptionsModule.prototype.events, {
+				'click .upfront-settings-item-title .toggle': 'toggle_box',
+			});
+		},
 		render: function () {
 			var me = this,
 				value = { label: this.title, value: '1' },
@@ -157,14 +163,24 @@ define([
 						pos = hidden_parts.indexOf(me.data_part)
 					;
 
+					// Set up parts
 					if (value && value.length && pos >= 0) {
 						hidden_parts.splice(pos, 1);
 					} else if (pos < 0) {
 						hidden_parts.push(me.data_part);
 					}
-					console.log(hidden_parts);
 					me.model.set("hidden_parts", hidden_parts);
+					
+					// Set up appearances
+					if (value && value.length) {
+						me.$el.find(".upfront-settings-item-title").removeClass("inactive");
+						me.show_content();
+					} else {
+						me.$el.find(".upfront-settings-item-title").addClass("inactive");
+						me.hide_content();
+					}
 
+					// Do other stuff
 					me.trigger("part:hide:toggle", me.data_part);
 				}
 			});
@@ -181,6 +197,24 @@ define([
 
 			// temporary style hack
 			this.$el.find(".upfront-settings-item-title .toggle").css('background-image', 'url(' + Upfront.Settings.root_url.replace(/\/$/, '') + '/img/uf-ui-sprite.svg)')
+		},
+		toggle_box: function (e) {
+			if (e.preventDefault) e.preventDefault();
+			if (e.stopPropagation) e.stopPropagation();
+
+			var $content = this.$el.find('.upfront-settings-item-content:first, .state_modules');
+			if ($content.is(":visible")) this.hide_content();
+			else this.show_content();
+
+			return false;
+		},
+		hide_content: function () {
+			var $content = this.$el.find('.upfront-settings-item-content:first, .state_modules');
+			return $content.hide();
+		},
+		show_content: function () {
+			var $content = this.$el.find('.upfront-settings-item-content:first, .state_modules');
+			return $content.show();
 		}
 	});
 
