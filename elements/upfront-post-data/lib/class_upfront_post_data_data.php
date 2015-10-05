@@ -244,12 +244,20 @@ class Upfront_Post_Data_Data {
 				'title_info' => __('Post title part', 'upfront'),
 			),
 
+			'elements' => array(
+				'post_data' => __('Post Data', 'upfront'),
+				'author' => __('Author', 'upfront'),
+				'taxonomy' => __('Categories &amp; Tags', 'upfront'),
+				'featured_image' => __('Featured Image', 'upfront'),
+				'comments' => __('Comments', 'upfront'),
+			),
+
 			'part_date_posted' => __('Date posted', 'upfront'),
-			'part_author' => __('Author', 'upfront'),
+			'part_author' => __('Name', 'upfront'),
 			'part_gravatar' => __('Gravatar', 'upfront'),
 			'part_author_email' => __('Email', 'upfront'),
-			'part_author_url' => __('URL', 'upfront'),
-			'part_author_bio' => __('Bio', 'upfront'),
+			'part_author_url' => __('Website', 'upfront'),
+			'part_author_bio' => __('Biography', 'upfront'),
 			'part_comment_count' => __('Comment count', 'upfront'),
 			'part_comment_form' => __('Comment form', 'upfront'),
 			'part_comments' => __('Comments', 'upfront'),
