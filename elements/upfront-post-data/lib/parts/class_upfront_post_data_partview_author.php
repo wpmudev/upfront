@@ -9,6 +9,73 @@ class Upfront_Post_Data_PartView_Author extends Upfront_Post_Data_PartView {
 		4 => 'author_bio',
 	);
 
+
+	/**
+	 * Converts the author part into markup.
+	 *
+	 * Supported macros:
+	 *    {{name}} - Author's `display_name`
+	 *    {{url}} - Author's posts URL (link to the author archive on local site)
+	 *    {{target}} - Target for the URL
+	 *
+	 * Part template: post-data-author
+	 *
+	 * @return string
+	 */
+	public function expand_author_template () {
+		if (empty($this->_post->post_author)) return '';
+
+		$author = $this->_post->post_author;
+
+		$name = get_the_author_meta('display_name', $author);
+		if (!empty($this->_data['display_name'])) {	
+			if ('first_last' === $this->_data['display_name'] || 'last_first' === $this->_data['display_name']) {
+				$first = get_the_author_meta('first_name', $author);
+				$last = get_the_author_meta('last_name', $author);
+				if (!empty($first) && !empty($last)) {
+					$name = 'first_last' === $this->_data['display_name']
+						? "{$first} {$last}"
+						: "{$last} {$first}"
+					;
+				}
+			}
+			
+			if ('nickname' === $this->_data['display_name']) {
+				$nick = get_the_author_meta('nickname', $author);
+				if (!empty($nick)) $name = $nick;
+			}
+
+			if ('username' === $this->_data['display_name']) {
+				$nick = get_the_author_meta('username', $author);
+				if (!empty($nick)) $name = $nick;
+			}
+		}
+
+		$url = ''; //
+		if (!empty($this->_data['link'])) {
+			if ('author' === $this->_data['link']) {
+				$url = get_author_posts_url($author);
+			}
+			if ('website' === $this->_data['link']) {
+				$link = get_the_author_meta('url', $author);
+				if (!empty($link)) $url = $link;
+			}
+		}
+
+		$target = '';
+		if (!empty($this->_data['target'][0])) {
+			$target = '_blank';
+		}
+
+		$out = $this->_get_template('author');
+
+		$out = Upfront_Codec::get()->expand($out, "name", esc_html($name));
+		$out = Upfront_Codec::get()->expand($out, "url", esc_url($url));
+		$out = Upfront_Codec::get()->expand($out, "target", esc_attr($target));
+
+		return $out;
+	}
+
 	/**
 	 * Converts the email part into markup.
 	 *
@@ -24,6 +91,7 @@ class Upfront_Post_Data_PartView_Author extends Upfront_Post_Data_PartView {
 		if (empty($this->_post->post_author)) return '';
 
 		$author = $this->_post->post_author;
+
 		$name = get_the_author_meta('display_name', $author);
 		$email = sanitize_email(get_the_author_meta('user_email', $author));
 

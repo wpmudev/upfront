@@ -6,7 +6,45 @@ define([
 	var Modules = {};
 	Modules.template = template;
 
-	Modules.part_author = Panel.Toggleable.extend({ title: "Author", data_part: 'author' });
+	Modules.part_author = Panel.Toggleable.extend({
+		title: "Author",
+		data_part: 'author',
+		get_fields: function () {
+			return [
+				{
+					type: 'Select',
+					label: 'Display',
+					label_style: 'inline',
+					property: 'display_name',
+					values: [
+						{label: 'Display Name', value: 'display_name'},
+						{label: 'First &amp; Last Name', value: 'first_last'},
+						{label: 'Last &amp; First Name', value: 'last_first'},
+						{label: 'Nickname', value: 'nickname'},
+						{label: 'Username', value: 'username'},
+					]
+				},
+				{
+					type: 'Select',
+					label: 'Link To',
+					label_style: 'inline',
+					property: 'link',
+					values: [
+						{label: 'Website', value: 'website'},
+						{label: 'Author page', value: 'author'}
+					]
+				},
+				{
+					type: 'Checkboxes',
+					property: 'target',
+					values: [
+						{label: 'New Tab', value: '_blank'}
+					]
+				}
+			];
+		}
+	});
+	
 	Modules.part_author_email = Panel.Toggleable.extend({ title: "Email", data_part: 'author_email' });
 	Modules.part_author_url = Panel.Toggleable.extend({ title: "URL", data_part: 'author_url' });
 	Modules.part_author_bio = Panel.Toggleable.extend({ title: "Biography", data_part: 'author_bio' });
