@@ -7,7 +7,7 @@
     <?php if(!empty($properties['field-labels-static-line-height'])) { ?>line-height: <?php echo $properties['field-labels-static-line-height']  ?>;<?php } ?>
 	<?php if(!empty($properties['field-labels-static-font-color'])) { ?>color: <?php echo $properties['field-labels-static-font-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['hover-use-transition']) && !empty($properties['hover-transition-duration']) && !empty($properties['hover-transition-easing'] )) { ?>
-		transition: all <?php echo $properties['hover-transition-duration'] ?>s <?php echo $properties['hover-transition-easing']  ?>; 
+		transition: all <?php echo $properties['hover-transition-duration'] ?>s <?php echo $properties['hover-transition-easing']  ?>;
 	<?php } ?>
 }
 
@@ -20,7 +20,7 @@
     <?php if(!empty($properties['field-values-static-line-height'])) { ?>line-height: <?php echo $properties['field-values-static-line-height']  ?>;<?php } ?>
 	<?php if(!empty($properties['field-values-static-font-color'])) { ?>color: <?php echo $properties['field-values-static-font-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['hover-use-transition']) && !empty($properties['hover-transition-duration']) && !empty($properties['hover-transition-easing'] )) { ?>
-		transition: all <?php echo $properties['hover-transition-duration'] ?>s <?php echo $properties['hover-transition-easing']  ?>; 
+		transition: all <?php echo $properties['hover-transition-duration'] ?>s <?php echo $properties['hover-transition-easing']  ?>;
 	<?php } ?>
 }
 
@@ -32,7 +32,7 @@
     <?php if(!empty($properties['button-static-line-height'])) { ?>line-height: <?php echo $properties['button-static-line-height']  ?>;<?php } ?>
 	<?php if(!empty($properties['button-static-font-color'])) { ?>color: <?php echo $properties['button-static-font-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['hover-use-transition']) && !empty($properties['hover-transition-duration']) && !empty($properties['hover-transition-easing'] )) { ?>
-		transition: all <?php echo $properties['hover-transition-duration'] ?>s <?php echo $properties['hover-transition-easing']  ?>; 
+		transition: all <?php echo $properties['hover-transition-duration'] ?>s <?php echo $properties['hover-transition-easing']  ?>;
 	<?php } ?>
 }
 
@@ -150,7 +150,7 @@
 .contact-preset-<?php echo $properties['id'] ?> .upfront-field-container.contact-form-field textarea {
 	<?php if(!empty($properties['static-field-bg'])) { ?>background: <?php echo $properties['static-field-bg']  ?>;<?php } ?>
 	<?php if(!empty($properties['hover-use-transition']) && !empty($properties['hover-transition-duration']) && !empty($properties['hover-transition-easing'] )) { ?>
-		transition: all <?php echo $properties['hover-transition-duration'] ?>s <?php echo $properties['hover-transition-easing']  ?>; 
+		transition: all <?php echo $properties['hover-transition-duration'] ?>s <?php echo $properties['hover-transition-easing']  ?>;
 	<?php } ?>
 }
 
@@ -175,7 +175,7 @@
 .upfront-contact-form.contact-preset-<?php echo $properties['id'] ?> .upfront-field-container.contact-form-button .button {
 	<?php if(!empty($properties['static-button-bg'])) { ?> background: <?php echo $properties['static-button-bg']  ?>;<?php } ?>
 	<?php if(!empty($properties['hover-use-transition']) && !empty($properties['hover-transition-duration']) && !empty($properties['hover-transition-easing'] )) { ?>
-		transition: all <?php echo $properties['hover-transition-duration'] ?>s <?php echo $properties['hover-transition-easing']  ?>; 
+		transition: all <?php echo $properties['hover-transition-duration'] ?>s <?php echo $properties['hover-transition-easing']  ?>;
 	<?php } ?>
 }
 
@@ -198,7 +198,7 @@
 /* Borders Module */
 
 /* Fields & Button */
-
+<?php if(!empty($properties['tagsToApply']) && $properties['tagsToApply'] == 'field-button') { ?>
 .contact-preset-<?php echo $properties['id'] ?> .upfront-field-container.contact-form-field input,
 .contact-preset-<?php echo $properties['id'] ?> .upfront-field-container.contact-form-field textarea,
 .contact-preset-<?php echo $properties['id'] ?> .upfront-field-container.contact-form-button .button {
@@ -225,7 +225,7 @@
 		<?php } ?>
 	<?php } else { ?>
 		border: none;
-	<?php } ?>	
+	<?php } ?>
 <?php } ?>
 }
 
@@ -243,12 +243,14 @@
 		<?php } ?>
 	<?php } else { ?>
 		border: none;
-	<?php } ?>	
+	<?php } ?>
 <?php } ?>
 }
 
+<?php } ?>
 
 /* Fields */
+<?php if(!empty($properties['tagsToApply']) && $properties['tagsToApply'] == 'field') { ?>
 
 .contact-preset-<?php echo $properties['id'] ?> .upfront-field-container.contact-form-field input,
 .contact-preset-<?php echo $properties['id'] ?> .upfront-field-container.contact-form-field textarea {
@@ -274,7 +276,7 @@
 		<?php } ?>
 	<?php } else { ?>
 		border: none;
-	<?php } ?>	
+	<?php } ?>
 <?php } ?>
 }
 
@@ -291,12 +293,14 @@
 		<?php } ?>
 	<?php } else { ?>
 		border: none;
-	<?php } ?>	
+	<?php } ?>
 <?php } ?>
 }
 
+<?php } ?>
 
 /* Button */
+<?php if(!empty($properties['tagsToApply']) && $properties['tagsToApply'] == 'button') { ?>
 
 .contact-preset-<?php echo $properties['id'] ?> .upfront-field-container.contact-form-button .button {
 <?php if(!empty($properties['static-useborder']) && $properties['static-useborder'] == 'yes') { ?>
@@ -320,7 +324,7 @@
 		<?php } ?>
 	<?php } else { ?>
 		border: none;
-	<?php } ?>	
+	<?php } ?>
 <?php } ?>
 }
 
@@ -336,9 +340,10 @@
 		<?php } ?>
 	<?php } else { ?>
 		border: none;
-	<?php } ?>	
+	<?php } ?>
 <?php } ?>
 }
+<?php } ?>
 
 /* Custom CSS */
 <?php if(!empty($properties['preset_style'])) { ?><?php echo $properties['preset_style'] ?><?php } ?>

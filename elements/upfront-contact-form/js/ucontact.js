@@ -5,9 +5,10 @@ define([
 	'upfront-data',
 	'elements/upfront-contact-form/js/settings',
 	'text!elements/upfront-contact-form/templates/preset-style.html',
-], function (upfront_data, Settings, settingsStyleTpl) {
-var template = upfront_data.data && upfront_data.data.ucontact && upfront_data.data.ucontact.template
-	? upfront_data.data.ucontact.template
+	'scripts/upfront/preset-settings/util',
+], function (upfront_data, Settings, settingsStyleTpl, PresetUtil) {
+var template = upfront_data.data && upfront_data.data.ucontact && upfront_data.data.ucontact.template ?
+	upfront_data.data.ucontact.template
 	: 'elements/upfront-contact-form/templates/ucontact.html'
 ;
 require(['text!' + template], function(tpl){
