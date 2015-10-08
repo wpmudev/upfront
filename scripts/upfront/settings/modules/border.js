@@ -75,11 +75,13 @@ define([
 						{ label: "", value: '1' }
 					],
 					change: function(value) {
+						me.model.set(me.currentElement + me.options.fields.width, value);
 						if (typeof me.options.elements !== "undefined") {
 							_.each(me.options.elements, function(element) {
-								me.model.set(element.value + me.options.fields.width, value);
+								me.model.set(element.value + '-' + me.options.fields.width, value);
 							});
 						}
+						this.trigger('change');
 					}
 				}),
 				new Upfront.Views.Editor.Field.Select({
@@ -115,6 +117,7 @@ define([
 						change: function(value) {
 							if (!value) return false;
 							var c = value.get_is_theme_color() !== false ? value.theme_color : value.toRgbString();
+							me.model.set(me.currentElement + me.options.fields.color, c);
 							if (typeof me.options.elements !== "undefined") {
 								_.each(me.options.elements, function(element) {
 									me.model.set(element.value + '-' + me.options.fields.color, c);
@@ -124,6 +127,7 @@ define([
 						move: function(value) {
 							if (!value) return false;
 							var c = value.get_is_theme_color() !== false ? value.theme_color : value.toRgbString();
+							me.model.set(me.currentElement + me.options.fields.color, c);
 							if (typeof me.options.elements !== "undefined") {
 								_.each(me.options.elements, function(element) {
 									me.model.set(element.value + '-' + me.options.fields.color, c);
