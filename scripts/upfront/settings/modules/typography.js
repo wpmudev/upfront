@@ -37,7 +37,7 @@ define([
 			if(typeof this.options.default_element !== "undefined") {
 				this.currentElement = this.options.default_element + '-';
 			}
-			
+
 			//Set saved element to default element
 			if(typeof this.model.get(state + '-element-type') !== "undefined" && typeof this.options.elements !== "undefined") {
 				this.currentElement = this.model.get(state + '-element-type') + '-';
@@ -47,7 +47,7 @@ define([
 				this.fieldCounter++;
 				toggleClass = 'element-toggled';
 			}
-			
+
 			this.fields = _([
 				new Upfront.Views.Editor.Field.Typeface_Chosen_Select({
 					name: this.currentElement + this.options.fields.typeface,
@@ -105,7 +105,7 @@ define([
 					show: function(value) {
 						if(value !== null) {
 							me.fields._wrapped[1 + me.fieldCounter].set_option_font(value);
-							
+
 						}
 					}
 				}),
@@ -174,7 +174,6 @@ define([
 						className: state + '-select-element selectElement ' + toggleClass,
 						values: me.options.elements,
 						change: function (value) {
-							var value = this.get_value();
 							//Update element type value to keep it on typography re-render
 							me.model.set(state + '-element-type', value);
 							me.$el.empty();
@@ -188,7 +187,7 @@ define([
 					})
 				);
 			}
-			
+
 			//Add toggle typography checkbox
 			if(this.options.toggle === true) {
 				this.group = false;
@@ -204,6 +203,7 @@ define([
 							{ label: l10n.typography, value: 'yes' }
 						],
 						change: function(value) {
+							console.log('triggered change on checkbox');
 							me.model.set(me.options.fields.use, value);
 							me.reset_fields(value);
 						},
@@ -230,7 +230,7 @@ define([
 				);
 			}
 		},
-		
+
 		reset_fields: function(value) {
 			if(typeof value !== "undefined" && value === "yes") {
 				var settings = this.get_static_field_values(value, this.options.prepend);
@@ -240,7 +240,7 @@ define([
 				this.render();
 			}
 		},
-		
+
 		save_static_values: function(value, settings) {
 			//Save preset values from static state
 			var parsed_variant = Upfront.Views.Font_Model.parse_variant(settings.fontstyle);
@@ -252,11 +252,11 @@ define([
 			this.model.set(this.currentElement + this.options.fields.line_height, settings.line_height);
 			this.model.set(this.currentElement + this.options.fields.color, settings.color);
 		},
-		
+
 		get_static_field_values: function(value, prepend) {
 			var settings = {},
 				prefix = '';
-			
+
 			if(typeof this.options.prefix !== "undefined") {
 				prefix = this.options.prefix + '-';
 			}
@@ -266,14 +266,14 @@ define([
 			settings.fontsize = this.model.get(this.clear_prepend(prefix + this.options.fields.size, prepend)) || '';
 			settings.line_height = this.model.get(this.clear_prepend(prefix + this.options.fields.line_height, prepend)) || '';
 			settings.color = this.model.get(this.clear_prepend(prefix + this.options.fields.color, prepend)) || '';
-			
+
 			return settings;
 		},
-		
+
 		clear_prepend: function(field, prepend) {
 			return field.replace(prepend, '');
 		},
-		
+
 		get_field_values: function(value) {
 			var settings = {};
 			//Get stored values else load from Global Typography settings
@@ -291,13 +291,12 @@ define([
 				settings.line_height = this.model.get(this.currentElement + this.options.fields.line_height) || '';
 				settings.color = this.model.get(this.currentElement + this.options.fields.color) || '';
 			}
-			
+
 			return settings;
 		},
-		
+
 		update_fields: function(value, settings) {
 			//Update selected element
-			this.fields._wrapped[this.fieldCounter -1].set_value(value);
 
 			//Update typography fields for selected element
 			this.fields._wrapped[this.fieldCounter].set_value(settings.typeface);
@@ -310,7 +309,7 @@ define([
 			this.fields._wrapped[this.fieldCounter + 4].set_value(settings.color);
 			this.fields._wrapped[this.fieldCounter + 4].update_input_border_color(settings.color);
 		},
-		
+
 		normalize_elements_selector: function(value) {
 			if(value === 'a-hover') {
 				return 'a:hover';
