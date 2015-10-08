@@ -105,7 +105,6 @@ define([
 				});
 				this.property('link', this.link.toJSON());
 			} else {
-				console.log('init link from link prop', this.property('link'));
 				this.link = new LinkModel(this.property('link'));
 			}
 
