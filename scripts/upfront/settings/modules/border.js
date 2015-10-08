@@ -75,7 +75,11 @@ define([
 						{ label: "", value: '1' }
 					],
 					change: function(value) {
-						me.model.set(me.currentElement + me.options.fields.width, value);
+						if (typeof me.options.elements !== "undefined") {
+							_.each(me.options.elements, function(element) {
+								me.model.set(element.value + me.options.fields.width, value);
+							});
+						}
 					}
 				}),
 				new Upfront.Views.Editor.Field.Select({
@@ -90,6 +94,11 @@ define([
 					],
 					change: function(value) {
 						me.model.set(me.currentElement + me.options.fields.type, value);
+						if (typeof me.options.elements !== "undefined") {
+							_.each(me.options.elements, function(element) {
+								me.model.set(element.value + '-' + me.options.fields.type, value);
+							});
+						}
 					}
 				}),
 
@@ -106,30 +115,37 @@ define([
 						change: function(value) {
 							if (!value) return false;
 							var c = value.get_is_theme_color() !== false ? value.theme_color : value.toRgbString();
-							me.model.set(me.currentElement + me.options.fields.color, c);
+							if (typeof me.options.elements !== "undefined") {
+								_.each(me.options.elements, function(element) {
+									me.model.set(element.value + '-' + me.options.fields.color, c);
+								});
+							}
 						},
 						move: function(value) {
 							if (!value) return false;
 							var c = value.get_is_theme_color() !== false ? value.theme_color : value.toRgbString();
-							me.model.set(me.currentElement + me.options.fields.color, c);
+							if (typeof me.options.elements !== "undefined") {
+								_.each(me.options.elements, function(element) {
+									me.model.set(element.value + '-' + me.options.fields.color, c);
+								});
+							}
 						}
 					}
 				})
 			]);
 
 			//Add fields select box
-			if(typeof me.options.elements !== "undefined") {
+			if (typeof me.options.elements !== "undefined") {
 				this.fields.unshift(
 					new Upfront.Views.Editor.Field.Select({
 						className: state + '-border-select-element border_selectElement',
+						name: 'tagsToApply',
+						default_value: me.model.get('tagsToApply') || 'field-button',
 						values: me.options.elements,
 						change: function () {
 							var value = this.get_value();
+							me.model.set({'tagsToApply': value});
 							me.currentElement = value + '-';
-							me.fields._wrapped[me.fieldCounter + 1].set_value(me.model.get(me.currentElement + me.options.fields.width));
-							me.fields._wrapped[me.fieldCounter + 2].set_value(me.model.get(me.currentElement + me.options.fields.type));
-							me.fields._wrapped[me.fieldCounter + 3].set_value(me.model.get(me.currentElement + me.options.fields.color));
-							me.fields._wrapped[me.fieldCounter + 3].update_input_border_color(me.model.get(me.currentElement + me.options.fields.color));
 						}
 					})
 				);
@@ -156,7 +172,7 @@ define([
 		get_static_field_values: function(value, prepend) {
 			var settings = {},
 				prefix = '';
-			
+
 			if(typeof this.options.prefix !== "undefined") {
 				prefix = this.options.prefix + '-';
 			}
