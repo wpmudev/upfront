@@ -1435,6 +1435,7 @@ RedactorPlugins.upfrontFormatting = function() {
                     this.$(".tags-list li *").removeClass("dropact");
                     this.$("[data-tag='" + tag + "']").addClass("dropact");
                 }
+                this.redactor.selection.save();
             },
             set_previously_selected_class: function(){
                 var self = this,
@@ -1461,7 +1462,7 @@ RedactorPlugins.upfrontFormatting = function() {
                 e.preventDefault();
                 this.redactor.buffer.set();
                 this.redactor.$editor.focus();
-
+                this.redactor.selection.restore();
                 var tag = $(e.target).data("tag");
 
                 if (!this.redactor.utils.browser('msie')) this.redactor.$editor.focus();
