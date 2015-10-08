@@ -39,6 +39,7 @@ text!scripts/upfront/inline-panels/templates/panel-control-template.html
 /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/scripts/upfront/inline-panels/dialog-control.js
 /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/scripts/upfront/inline-panels/controls/visit-link.js
 /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/scripts/upfront/inline-panels/controls/link-panel.js
+/Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/scripts/upfront/inline-panels/controls/group-link-panel.js
 /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/scripts/upfront/inline-panels/inline-panels.js
 text!scripts/upfront/templates/link-panel.html
 /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/scripts/upfront/link-panel.js

@@ -2711,7 +2711,7 @@ var GridEditor = {
 			$me.resizable('option', 'disabled', false);
 			return false;
 		}
-		$me.append('<span class="upfront-icon-control upfront-icon-control-resize-nw upfront-resize-handle-nw ui-resizable-handle ui-resizable-nw"></span>');
+		$me.append('<span class="upfront-icon-control upfront-icon-control-resize-nw upfront-resize-handle-nw"></span>');
 		$me.append('<span class="upfront-icon-control upfront-icon-control-resize-se upfront-resize-handle-se ui-resizable-handle ui-resizable-se"></span>');
 		$me.resizable({
 			containment: "document",
