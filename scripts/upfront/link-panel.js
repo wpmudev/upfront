@@ -235,7 +235,7 @@ define([
 			var me = this;
 
 			if (!this.model) {
-			this.$el.html('lsdfjslfjs');
+			this.$el.html('Error occurred, link panel switch to new style.');
 				return;
 			}
 			var tplData = {
