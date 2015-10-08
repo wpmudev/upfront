@@ -91,6 +91,7 @@ define([
 				throw 'Provide "imageUrl" if "linkTypes" option has { image: true } when initializing LinkPanel.';
 			}
 
+
 			var me = this;
 			this.options = options || {};
 			this.linkTypes = _.extend({}, this.defaultLinkTypes, options.linkTypes || {});
@@ -104,11 +105,17 @@ define([
 				return;
 			}
 
+			// Rewrite anchor url to new style (to include full url)
+			var pageUrl = document.location.origin + document.location.pathname;
+			if (this.model.get('type') === 'anchor' && this.model.get('url').match(/^#/) !== null) {
+				this.model.set({'url' : pageUrl + this.model.get('url')}, {silent:true});
+			}
+
 			this.listenTo(this.model, 'change:type', this.handleTypeChange);
 		},
 
 		onOkClick: function() {
-			if(this.model.get('type') == 'lightbox' && this.$el.find('.js-ulinkpanel-lightbox-input').val() != '') {
+			if (this.model.get('type') == 'lightbox' && this.$el.find('.js-ulinkpanel-lightbox-input').val() !== '') {
 				this.createLightBox();
 			} else {
 				this.close();
