@@ -29,7 +29,6 @@ define([
 					'static-useborder': '',
 					'static-borderwidth': 1,
 					'static-bordertype': 'solid',
-					'static-bordercolor': 'rgb(0, 0, 0)',
 					'hover-bordercolor': 'rgb(0, 0, 0)',
 					'hover-font-size': 14,
 					'hover-font-family': 'Arial',
@@ -42,7 +41,6 @@ define([
 					'hover-useborder': '',
 					'hover-borderwidth': 1,
 					'hover-bordertype': 'solid',
-					'hover-bordercolor': 'rgb(0, 0, 0)',
 					'hover-transition-duration': 0.3,
 					'hover-transition-easing': 'ease-in-out',
 					'active-bordercolor': 'rgb(0, 0, 0)',
@@ -57,7 +55,6 @@ define([
 					'active-useborder': '',
 					'active-borderwidth': 1,
 					'active-bordertype': 'solid',
-					'active-bordercolor': 'rgb(0, 0, 0)',
 					'id': 'default',
 					'name': l10n.default_preset
 				},
