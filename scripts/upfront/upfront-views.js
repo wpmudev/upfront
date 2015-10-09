@@ -1678,7 +1678,7 @@ define([
 				;
 
 				this.listenTo(linkPanelControl, 'change change:target', function(data) {
-					visitLinkControl.setLink(data.url);
+					visitLinkControl.setLink(data.url, data.type);
 					this.model.set_property('href', data.url);
 					this.model.set_property('linkTarget', data.target);
 				});

@@ -36,7 +36,8 @@ define([
 				me.render_label();
 				this.trigger('change', {
 					url: link.get('url'),
-					target: link.get('target')
+					target: link.get('target'),
+					type: link.get('type')
 				});
 			});
 		},
