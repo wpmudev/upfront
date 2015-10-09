@@ -703,7 +703,7 @@ define([
 				.find('img')
 					.css({
 						position: 'static',
-						width: '100%',
+						maxWidth: '100%',
 						height: 'auto'
 					})
 					.attr('src', this.property('src'))

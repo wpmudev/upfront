@@ -57,10 +57,16 @@ class Upfront_CodeView extends Upfront_Object {
 
 	private function _to_valid_html ($raw) {
 		if (class_exists('DOMDocument') && class_exists('DOMXpath')) {
+			// So this is just wrong on so many levels, but apparently necessary... 
+			// Force the content type header, so that DOMDocument encoding doesn't default to latin-1 -.-
+			// As per: http://stackoverflow.com/questions/3523409/domdocument-encoding-problems-characters-transformed
+			$raw = "<head><meta http-equiv='Content-type' content='text/html; charset=UTF-8' /></head><body>{$raw}</body>";
+			
 			$doc = new DOMDocument();
 			if (function_exists('libxml_use_internal_errors')) libxml_use_internal_errors(true);
 			$doc->loadHTML($raw);
 			$parsed = $doc->saveHTML();
+
 			if (function_exists('libxml_use_internal_errors')) libxml_use_internal_errors(false);
 			$raw = !empty($parsed)
 				? preg_replace('/^.*<body>/ms', '', preg_replace('/<\/body>.*$/ms', '', $parsed))
