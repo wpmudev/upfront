@@ -54,8 +54,8 @@ define([
 						className: 'contact_label_position',
 						layout: "vertical",
 						label: l10n.fields.label_localtion,
-						change : function(e){
-							this.model.set_property("form_label_position", this.get_value());
+						change : function(value, parent){
+							parent.model.set_property("form_label_position", value);
 						},
 						property: 'form_label_position',
 						values: [

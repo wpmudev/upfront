@@ -56,7 +56,6 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 		this.delegateEvents();
 
 		this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
-
 	},
 
 	update_colors: function () {

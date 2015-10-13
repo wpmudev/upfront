@@ -5024,6 +5024,7 @@ var Field_ToggleableText = Field_Text.extend({
 			}
 
 			$('#settings').height(this.panel.$('.upfront-settings_panel').outerHeight());
+			this.model.set_property(this.options.property, this.get_value());
 		}
 	});
 
