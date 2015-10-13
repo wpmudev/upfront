@@ -11,10 +11,3 @@
 		{{content}}
 	</div>
 </div>
-<style id="style-{{properties.element_id}}">
-	{[ _.each(breakpoints, function(breakpoint) { ]}
-	#page.upfront-layout-view.{{breakpoint.id}}-breakpoint #{{properties.element_id}}.upfront-object {
-		padding: {{top_paddings[breakpoint.id]}}px {{right_paddings[breakpoint.id]}}px {{bottom_paddings[breakpoint.id]}}px {{left_paddings[breakpoint.id]}}px;
-	}
-	{[ }) ]}
-</style>

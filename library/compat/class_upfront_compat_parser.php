@@ -9,16 +9,20 @@ class Upfront_Compat_LayoutParser extends Upfront_Grid {
 	protected $next_wrapper;
 	protected $max_col;
 	protected $line_col;
+
+	protected $level = 0;
+	protected $level_data;
 	
 	public function __construct () {
 		parent::__construct();
 	}
 	
-	public function parse_region ($region, $regions) {
+	public function parse_region ($region, $region_name, $regions = false) {
 		$breakpoints = $this->get_breakpoints();
 		$modules = $region['modules'];
 		$wrappers = $region['wrappers'];
 		$region_data = array(
+			'region_name' => $region_name,
 			'region' => $region
 		);
 		$wrappers_data = array();
@@ -67,7 +71,7 @@ class Upfront_Compat_LayoutParser extends Upfront_Grid {
 
 			$wrapper_data['modules'] = $modules_data;
 			foreach ( $breakpoints as $context => $breakpoint ) {
-				$col = $this->_get_class_col($wrapper, $breakpoint);
+				$col = intval($this->_get_class_col($wrapper, $breakpoint));
 				$clear = $this->_get_property_clear($wrapper, $breakpoint);
 				$order = $wrapper_order;
 				if ( !$breakpoint->is_default() ) {
@@ -94,16 +98,20 @@ class Upfront_Compat_LayoutParser extends Upfront_Grid {
 		$container = !empty($region['container']) ? $region['container'] : $region['name'];
 		$region_data['wrappers'] = $wrappers_data;
 		foreach ( $breakpoints as $context => $breakpoint ) {
-			if ( !empty($region['sub']) && ( 'top' == $region['sub'] || 'bottom' == $region['sub'] ) ) {
-				$col = $breakpoint->get_columns();
+			if ( $regions === false ) {
+				$col = intval($this->_get_class_col($region, $breakpoint));
 			}
 			else {
-				$col = $this->_get_property_col($region, $breakpoint);
+				if (!empty($region['sub']) && ('top' == $region['sub'] || 'bottom' == $region['sub'])) {
+					$col = $breakpoint->get_columns();
+				} else {
+					$col = $this->_get_property_col($region, $breakpoint);
+				}
+				if (!$col) {
+					$col = $this->_get_available_container_col($container, $regions, $breakpoint);
+				}
 			}
-			if ( !$col ) {
-				$col = $this->_get_available_container_col($container, $regions, $breakpoint);
-			}
-			$row = $this->_get_property_row($region, $breakpoint);
+			$row = intval($this->_get_property_row($region, $breakpoint));
 			$region_data['breakpoints'][$context] = array(
 				'col' => $col,
 				'row' => $row
@@ -112,10 +120,16 @@ class Upfront_Compat_LayoutParser extends Upfront_Grid {
 		return $region_data;
 	}
 
-	public function prepare_walk ($region, $regions, $breakpoint) {
+	public function prepare_walk ($region, $breakpoint, $regions = false) {
 		$this->current_breakpoint = $breakpoint;
-		if ( empty($this->current_region_data) || $this->current_region_data['region']['name'] != $region['name'] ){
-			$this->current_region_data = $this->parse_region($region, $regions);
+		if ( $regions === false && empty($region['name']) ) { // should be group, try element id
+			$element_id = upfront_get_property_value('element_id', $region);
+			if ( empty($this->current_region_data) || $this->current_region_data['region_name'] != $element_id ) {
+				$this->current_region_data = $this->parse_region($region, $element_id);
+			}
+		}
+		if ( empty($this->current_region_data) || $this->current_region_data['region_name'] != $region['name'] ){
+			$this->current_region_data = $this->parse_region($region, $region['name'], $regions);
 		}
 		usort($this->current_region_data['wrappers'], array($this, '_sort_cb'));
 		$this->current_walk = 0;

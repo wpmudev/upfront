@@ -4059,8 +4059,9 @@ a.upfront-region-name-edit-trigger:before {
   box-shadow: inset 0px 0px 3px 0px rgba(60, 82, 103, 0.15);
   /*z-index: 40;*/ }
 
-.upfront-module-active, .upfront-module-active:hover {
-  box-shadow: inset 0px 0px 0px 2px #6fbcf8; }
+.upfront-module-active, .upfront-module-active:hover, .upfront-module-group-active {
+  box-shadow: inset 0px 0px 0px 2px #6fbcf8;
+  z-index: 4; }
 
 .upfront-module-disabled-all:hover, .upfront-module-editing:hover {
   outline: none; }
@@ -8531,10 +8532,10 @@ div.sp-replacer:before {
   opacity: 1;
   z-index: 0; }
 
-.upfront-wrapper:not(.ui-resizable-resizing) .upfront-module.upfront-module-active:not(.ui-resizable-resizing) .upfront-element-controls {
+.upfront-wrapper:not(.ui-resizable-resizing) .upfront-module.upfront-module-active:not(.ui-resizable-resizing) > .upfront-element-controls, .upfront-wrapper:not(.ui-resizable-resizing) .upfront-module-group.upfront-module-group-active:not(.ui-resizable-resizing):not(.upfront-module-group-on-edit) > .upfront-element-controls {
   display: block; }
 
-.upfront-module .upfront-element-controls {
+.upfront-module > .upfront-element-controls, .upfront-module-group > .upfront-element-controls {
   display: none; }
 
 .upfront-element-controls .upfront-inline-panel {
@@ -11701,7 +11702,7 @@ div.upfront-region-container:hover > a.feature_image_selector {
   display: block; }
 
 /* Flexbox */
-.flexbox-support .upfront-modules_container > .upfront-editable_entities_container, .flexbox-support .upfront-module-group > .upfront-editable_entities_container, .flexbox-support .upfront-editable_entities_container > .upfront-wrapper, .flexbox-support .upfront-wrapper > .upfront-module-view, .flexbox-support .upfront-grid-layout, .flexbox-support .upfront-region, .flexbox-support .upfront-region > .upfront-region-wrapper, .flexbox-support .upfront-modules_container {
+.flexbox-support .upfront-modules_container > .upfront-editable_entities_container, .flexbox-support .upfront-editable_entities_container > .upfront-wrapper, .flexbox-support .upfront-wrapper > .upfront-module-view, .flexbox-support .upfront-grid-layout, .flexbox-support .upfront-region, .flexbox-support .upfront-region > .upfront-region-wrapper, .flexbox-support .upfront-module-group, .flexbox-support .upfront-modules_container {
   display: -webkit-flex;
   display: flex;
   -webkit-flex-direction: row;
@@ -11713,7 +11714,7 @@ div.upfront-region-container:hover > a.feature_image_selector {
   -webkit-align-content: flex-start;
   align-content: flex-start; }
 
-.flexbox-support .upfront-grid-layout {
+.flexbox-support .upfront-grid-layout, .flexbox-support .upfront-module-group {
   -webkit-align-items: stretch;
   align-items: stretch; }
 
@@ -11729,7 +11730,7 @@ div.upfront-region-container:hover > a.feature_image_selector {
 .flexbox-support .upfront-grid-layout:before, .flexbox-support .upfront-grid-layout:after, .flexbox-support .upfront-wrapper:before, .flexbox-support .upfront-wrapper:after {
   content: none; }
 
-.flexbox-support .upfront-modules_container > .upfront-editable_entities_container > .upfront-wrapper, .flexbox-support .upfront-module-group > .upfront-editable_entities_container > .upfront-wrapper, .flexbox-support .upfront-editable_entities_container > .upfront-wrapper > .upfront-module-view {
+.flexbox-support .upfront-modules_container > .upfront-editable_entities_container > .upfront-wrapper, .flexbox-support .upfront-editable_entities_container > .upfront-wrapper > .upfront-module-view {
   -webkit-order: 0;
   order: 0; }
 

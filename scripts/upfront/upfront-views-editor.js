@@ -5344,7 +5344,7 @@ var Field_ToggleableText = Field_Text.extend({
 				view_pos = $view.offset(),
 				view_outer_width = $view.outerWidth(),
 				view_pos_right = view_pos.left + view_outer_width,
-				$button = me.for_view.$el.closest('.upfront-module').find(".upfront-icon-region-settings"),
+				$button = ($view.hasClass('upfront-object') ? $view.closest('.upfront-module') : $view).find("> .upfront-element-controls .upfront-icon-region-settings"),
 				button_pos = $button.offset(),
 				button_pos_right = button_pos.left + $button.outerWidth(),
 				$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
@@ -5524,6 +5524,7 @@ var _Settings_Padding = SettingsItem.extend({
 	className: 'upfront-settings-padding',
 	initialize: function(options) {
 		var column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
+			is_group = this.model instanceof Upfront.Models.ModuleGroup,
 			top_padding_use = new Field_Checkboxes({
 				model: this.model,
 				use_breakpoint_property: true,
@@ -5641,143 +5642,158 @@ var _Settings_Padding = SettingsItem.extend({
 					this.model.set_breakpoint_property('bottom_padding_slider', value, true);
 					bottom_padding_slider.$el.find('#'+bottom_padding_slider.get_field_id()).slider('value', value);
 				}
-			}),
-			left_padding_use = new Field_Checkboxes({
-				model: this.model,
-				use_breakpoint_property: true,
-				property: 'left_padding_use',
-				label: '',
-				multiple: false,
-				values: [{ label: l10n.left_padding, value: 'yes' }],
-				default_value: this.model.get_breakpoint_property_value('left_padding_use') || false,
-				change: function () {
-					var value = this.get_value();
-
-					this.model.set_breakpoint_property('left_padding_use', value ? value : 0);
-				},
-				show: function (value, $el) {
-					if(value === 'yes') {
-						$(left_padding_slider.$el).css('display', 'inline-block'); 
-						$(left_padding_num.$el).css('display', 'inline-block'); 
-					}
-					else {
-						$(left_padding_slider.$el).hide(); 
-						$(left_padding_num.$el).hide(); 
-					}
-				}
-			}),
-			left_padding_slider = new Field_Slider({
-				model: this.model,
-				use_breakpoint_property: true,
-				property: 'left_padding_slider',
-				label: '',
-				default_value: this.model.get_breakpoint_property_value('left_padding_slider') || column_padding,
-				min: 0,
-				max: 200,
-				step: 5,
-				valueTextFilter: function () {return '';},
-				change: function () {
-					var value = this.get_value();
-
-					this.model.set_breakpoint_property('left_padding_slider', value);
-					left_padding_num.get_field().val(value);
-					this.model.set_breakpoint_property('left_padding_num', value, true);
-				}
-			}),
-			left_padding_num = new Field_Number({
-				model: this.model,
-				use_breakpoint_property: true,
-				property: 'left_padding_num',
-				label: '',
-				default_value: this.model.get_breakpoint_property_value('left_padding_num') || column_padding,
-				suffix: 'px',
-				min: 0,
-				step: 5,
-				change: function () {
-					var value = this.get_value();
-
-					this.model.set_breakpoint_property('left_padding_num', value);
-					this.model.set_breakpoint_property('left_padding_slider', value, true);
-					left_padding_slider.$el.find('#'+left_padding_slider.get_field_id()).slider('value', value);
-				}
-			}),
-			right_padding_use = new Field_Checkboxes({
-				model: this.model,
-				use_breakpoint_property: true,
-				property: 'right_padding_use',
-				label: '',
-				multiple: false,
-				values: [{ label: l10n.right_padding, value: 'yes' }],
-				default_value: this.model.get_breakpoint_property_value('right_padding_use') || false,
-				change: function () {
-					var value = this.get_value();
-
-					this.model.set_breakpoint_property('right_padding_use', value ? value : 0);
-				},
-				show: function (value, $el) {
-					if(value === 'yes') {
-						$(right_padding_slider.$el).css('display', 'inline-block'); 
-						$(right_padding_num.$el).css('display', 'inline-block'); 
-					}
-					else {
-						$(right_padding_slider.$el).hide(); 
-						$(right_padding_num.$el).hide(); 
-					}
-				}
-			}),
-			right_padding_slider = new Field_Slider({
-				model: this.model,
-				use_breakpoint_property: true,
-				property: 'right_padding_slider',
-				label: '',
-				default_value: this.model.get_breakpoint_property_value('right_padding_slider') || column_padding,
-				min: 0,
-				max: 200,
-				step: 5,
-				valueTextFilter: function () {return '';},
-				change: function () {
-					var value = this.get_value();
-
-					this.model.set_breakpoint_property('right_padding_slider', value);
-					right_padding_num.get_field().val(value);
-					this.model.set_breakpoint_property('right_padding_num', value, true);
-				}
-			}),
-			right_padding_num = new Field_Number({
-				model: this.model,
-				use_breakpoint_property: true,
-				property: 'right_padding_num',
-				label: '',
-				default_value: this.model.get_breakpoint_property_value('right_padding_num') || column_padding,
-				suffix: 'px',
-				min: 0,
-				step: 5,
-				change: function () {
-					var value = this.get_value();
-
-					this.model.set_breakpoint_property('right_padding_num', value);
-					this.model.set_breakpoint_property('right_padding_slider', value, true);
-					right_padding_slider.$el.find('#'+right_padding_slider.get_field_id()).slider('value', value);
-				}
 			})
 		;
+		if ( !is_group ) {
+			var	left_padding_use = new Field_Checkboxes({
+					model: this.model,
+					use_breakpoint_property: true,
+					property: 'left_padding_use',
+					label: '',
+					multiple: false,
+					values: [{ label: l10n.left_padding, value: 'yes' }],
+					default_value: this.model.get_breakpoint_property_value('left_padding_use') || false,
+					change: function () {
+						var value = this.get_value();
+
+						this.model.set_breakpoint_property('left_padding_use', value ? value : 0);
+					},
+					show: function (value, $el) {
+						if(value === 'yes') {
+							$(left_padding_slider.$el).css('display', 'inline-block');
+							$(left_padding_num.$el).css('display', 'inline-block');
+						}
+						else {
+							$(left_padding_slider.$el).hide();
+							$(left_padding_num.$el).hide();
+						}
+					}
+				}),
+				left_padding_slider = new Field_Slider({
+					model: this.model,
+					use_breakpoint_property: true,
+					property: 'left_padding_slider',
+					label: '',
+					default_value: this.model.get_breakpoint_property_value('left_padding_slider') || column_padding,
+					min: 0,
+					max: 200,
+					step: 5,
+					valueTextFilter: function () {return '';},
+					change: function () {
+						var value = this.get_value();
+
+						this.model.set_breakpoint_property('left_padding_slider', value);
+						left_padding_num.get_field().val(value);
+						this.model.set_breakpoint_property('left_padding_num', value, true);
+					}
+				}),
+				left_padding_num = new Field_Number({
+					model: this.model,
+					use_breakpoint_property: true,
+					property: 'left_padding_num',
+					label: '',
+					default_value: this.model.get_breakpoint_property_value('left_padding_num') || column_padding,
+					suffix: 'px',
+					min: 0,
+					step: 5,
+					change: function () {
+						var value = this.get_value();
+
+						this.model.set_breakpoint_property('left_padding_num', value);
+						this.model.set_breakpoint_property('left_padding_slider', value, true);
+						left_padding_slider.$el.find('#'+left_padding_slider.get_field_id()).slider('value', value);
+					}
+				}),
+				right_padding_use = new Field_Checkboxes({
+					model: this.model,
+					use_breakpoint_property: true,
+					property: 'right_padding_use',
+					label: '',
+					multiple: false,
+					values: [{ label: l10n.right_padding, value: 'yes' }],
+					default_value: this.model.get_breakpoint_property_value('right_padding_use') || false,
+					change: function () {
+						var value = this.get_value();
+
+						this.model.set_breakpoint_property('right_padding_use', value ? value : 0);
+					},
+					show: function (value, $el) {
+						if(value === 'yes') {
+							$(right_padding_slider.$el).css('display', 'inline-block');
+							$(right_padding_num.$el).css('display', 'inline-block');
+						}
+						else {
+							$(right_padding_slider.$el).hide();
+							$(right_padding_num.$el).hide();
+						}
+					}
+				}),
+				right_padding_slider = new Field_Slider({
+					model: this.model,
+					use_breakpoint_property: true,
+					property: 'right_padding_slider',
+					label: '',
+					default_value: this.model.get_breakpoint_property_value('right_padding_slider') || column_padding,
+					min: 0,
+					max: 200,
+					step: 5,
+					valueTextFilter: function () {return '';},
+					change: function () {
+						var value = this.get_value();
+
+						this.model.set_breakpoint_property('right_padding_slider', value);
+						right_padding_num.get_field().val(value);
+						this.model.set_breakpoint_property('right_padding_num', value, true);
+					}
+				}),
+				right_padding_num = new Field_Number({
+					model: this.model,
+					use_breakpoint_property: true,
+					property: 'right_padding_num',
+					label: '',
+					default_value: this.model.get_breakpoint_property_value('right_padding_num') || column_padding,
+					suffix: 'px',
+					min: 0,
+					step: 5,
+					change: function () {
+						var value = this.get_value();
+
+						this.model.set_breakpoint_property('right_padding_num', value);
+						this.model.set_breakpoint_property('right_padding_slider', value, true);
+						right_padding_slider.$el.find('#'+right_padding_slider.get_field_id()).slider('value', value);
+					}
+				})
+			;
+		}
 
 		SettingsItem.prototype.initialize.call(this, options);
 
-		this.fields = _([
-			top_padding_use,
-			top_padding_slider,
-			top_padding_num,
-			bottom_padding_use,
-			bottom_padding_slider,
-			bottom_padding_num,
-			left_padding_use,
-			left_padding_slider,
-			left_padding_num,
-			right_padding_use,
-			right_padding_slider,
-			right_padding_num
-		]);
+		if ( !is_group ){
+			this.fields = _([
+				top_padding_use,
+				top_padding_slider,
+				top_padding_num,
+				bottom_padding_use,
+				bottom_padding_slider,
+				bottom_padding_num,
+				left_padding_use,
+				left_padding_slider,
+				left_padding_num,
+				right_padding_use,
+				right_padding_slider,
+				right_padding_num
+			]);
+		}
+		else {
+			this.fields = _([
+				top_padding_use,
+				top_padding_slider,
+				top_padding_num,
+				bottom_padding_use,
+				bottom_padding_slider,
+				bottom_padding_num
+			]);
+		}
 	}
 });
 

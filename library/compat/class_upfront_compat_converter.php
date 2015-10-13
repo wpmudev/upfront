@@ -67,67 +67,7 @@ class Upfront_Compat_LayoutConverter_Ver_1_0_0 extends Upfront_Compat_LayoutConv
 		$breakpoints = $this->parser->get_breakpoints();
 		foreach ( $this->regions as $r => $region ) {
 			//if ( $region['name'] != 'testing' ) continue;
-			$add_wrappers = array();
-			$add_modules = array();
-			foreach ( $breakpoints as $context => $breakpoint ) {
-				if (!$breakpoint->is_default()) continue;
-				$this->parser->prepare_walk($region, $this->regions, $breakpoint);
-				while ( $this->parser->walk() ) {
-					$wrapper = $this->parser->get_wrapper();
-					$modules = $this->parser->get_modules();
-					$first = $this->parser->first_in_line();
-					$last = $this->parser->last_in_line();
-					$converted = $this->_convert_margin($region, $wrapper, $modules, $breakpoint, $first, $last);
-					// Add new spacer module and wrapper
-					$wrapper_index = $wrapper['index'];
-					$module_index = $modules[0]['index'];
-					if ( !empty($converted['left']) ) {
-						if ( !isset($add_wrappers[$wrapper_index]) ) $add_wrappers[$wrapper_index] = array();
-						if ( !isset($add_modules[$module_index]) ) $add_modules[$module_index] = array();
-						$add_wrappers[$wrapper_index][] = $converted['left']['wrapper'];
-						$add_modules[$module_index][] = $converted['left']['module'];
-					}
-					if ( !empty($converted['right']) ) {
-						$wrapper_index++;
-						$module_index += count($modules);
-						if ( !isset($add_wrappers[$wrapper_index]) ) $add_wrappers[$wrapper_index] = array();
-						if ( !isset($add_modules[$module_index]) ) $add_modules[$module_index] = array();
-						$add_wrappers[$wrapper_index][] = $converted['right']['wrapper'];
-						$add_modules[$module_index][] = $converted['right']['module'];
-					}
-					/*var_dump(array('first' => $first, 'last' => $last));
-					unset($wrapper['wrapper']);
-					print_r($wrapper);
-					foreach ( $modules as $module ) {
-						unset($module['module']);
-						print_r($module);
-					}/**/
-				}
-			}
-			$new_wrappers = array();
-			$new_modules = array();
-			for ( $w = 0; $w <= count($region['wrappers']); $w++ ) {
-				if ( isset($add_wrappers[$w]) && is_array($add_wrappers[$w]) ) {
-					foreach ( $add_wrappers[$w] as $add_wrapper ) {
-						$new_wrappers[] = $add_wrapper;
-					}
-				}
-				if ( isset($region['wrappers'][$w]) ) {
-					$new_wrappers[] = $region['wrappers'][$w];
-				}
-			}
-			for ( $m = 0; $m <= count($region['modules']); $m++ ) {
-				if ( isset($add_modules[$m]) && is_array($add_modules[$m]) ) {
-					foreach ( $add_modules[$m] as $add_module ) {
-						$new_modules[] = $add_module;
-					}
-				}
-				if ( isset($region['modules'][$m]) ) {
-					$new_modules[] = $region['modules'][$m];
-				}
-			}
-			$region['wrappers'] = $new_wrappers;
-			$region['modules'] = $new_modules;
+			$this->_convert_region($region, $this->parser, $this->regions);
 			//print_r($region);
 			$regions[$r] = $region;
 		}
@@ -136,11 +76,81 @@ class Upfront_Compat_LayoutConverter_Ver_1_0_0 extends Upfront_Compat_LayoutConv
 		
 		return true;
 	}
+
+	protected function _convert_region (&$region, &$parser, $regions = false) {
+		$breakpoints = $parser->get_breakpoints();
+		$add_wrappers = array();
+		$add_modules = array();
+		foreach ( $breakpoints as $context => $breakpoint ) {
+			if (!$breakpoint->is_default()) continue;
+			$parser->prepare_walk($region, $breakpoint, $regions);
+			while ( $parser->walk() ) {
+				$wrapper = $parser->get_wrapper();
+				$modules = $parser->get_modules();
+				$first = $parser->first_in_line();
+				$last = $parser->last_in_line();
+				$converted = $this->_convert_margin($region, $wrapper, $modules, $breakpoint, $parser, $first, $last);
+				// Add new spacer module and wrapper
+				$wrapper_index = $wrapper['index'];
+				$module_index = $modules[0]['index'];
+				if ( !empty($converted['left']) ) {
+					if ( !isset($add_wrappers[$wrapper_index]) ) $add_wrappers[$wrapper_index] = array();
+					if ( !isset($add_modules[$module_index]) ) $add_modules[$module_index] = array();
+					$add_wrappers[$wrapper_index][] = $converted['left']['wrapper'];
+					$add_modules[$module_index][] = $converted['left']['module'];
+				}
+				if ( !empty($converted['right']) ) {
+					$wrapper_index++;
+					$module_index += count($modules);
+					if ( !isset($add_wrappers[$wrapper_index]) ) $add_wrappers[$wrapper_index] = array();
+					if ( !isset($add_modules[$module_index]) ) $add_modules[$module_index] = array();
+					$add_wrappers[$wrapper_index][] = $converted['right']['wrapper'];
+					$add_modules[$module_index][] = $converted['right']['module'];
+				}
+				/*var_dump(array('first' => $first, 'last' => $last));
+				unset($wrapper['wrapper']);
+				print_r($wrapper);
+				foreach ( $modules as $module ) {
+					unset($module['module']);
+					print_r($module);
+				}/**/
+			}
+		}
+		$new_wrappers = array();
+		$new_modules = array();
+		for ( $w = 0; $w <= count($region['wrappers']); $w++ ) {
+			if ( isset($add_wrappers[$w]) && is_array($add_wrappers[$w]) ) {
+				foreach ( $add_wrappers[$w] as $add_wrapper ) {
+					$new_wrappers[] = $add_wrapper;
+				}
+			}
+			if ( isset($region['wrappers'][$w]) ) {
+				$new_wrappers[] = $region['wrappers'][$w];
+			}
+		}
+		for ( $m = 0; $m <= count($region['modules']); $m++ ) {
+			if ( isset($add_modules[$m]) && is_array($add_modules[$m]) ) {
+				foreach ( $add_modules[$m] as $add_module ) {
+					$new_modules[] = $add_module;
+				}
+			}
+			if ( isset($region['modules'][$m]) ) {
+				// If this is group, let's convert the modules inside too
+				if ( !empty($region['modules'][$m]['modules']) ) {
+					$this->_convert_region($region['modules'][$m], $parser);
+				}
+				$new_modules[] = $region['modules'][$m];
+			}
+		}
+		$region['wrappers'] = $new_wrappers;
+		$region['modules'] = $new_modules;
+		return $region;
+	}
 	
-	protected function _convert_margin (&$region, $wrapper, $modules, $breakpoint, $first = false, $last = false) {
+	protected function _convert_margin (&$region, $wrapper, $modules, $breakpoint, &$parser, $first = false, $last = false) {
 		$wrapper_col = 0;
 		$left_space = $wrapper['max_col'];
-		$right_space = $last ? $this->parser->remaining_col() : 0;
+		$right_space = $last ? $parser->remaining_col() : 0;
 		foreach ( $modules as $module ) {
 			$wrapper_col = ( $wrapper_col < $module['col'] ) ? $module['col'] : $wrapper_col;
 			$left_space = ( $left_space < $module['left'] ) ? $left_space : $module['left'];
@@ -171,7 +181,12 @@ class Upfront_Compat_LayoutConverter_Ver_1_0_0 extends Upfront_Compat_LayoutConv
 				$module_classes = upfront_replace_class_num($top_class, 0, $module_classes);
 				upfront_set_property_value('class', $module_classes, $region['modules'][$module_index]);
 				// Change margin to padding
-				$this->_add_padding($region['modules'][$module_index], $module, $wrapper_col, $left_space, $breakpoint);
+				if ( !empty($region['modules'][$module_index]['modules']) ) { // This is group
+					$this->_add_padding($region['modules'][$module_index], $module, $wrapper_col, $left_space, $breakpoint);
+				}
+				else { // This is element
+					$this->_add_padding($region['modules'][$module_index]['objects'][0], $module, $wrapper_col, $left_space, $breakpoint);
+				}
 			}
 		}
 		else {
@@ -185,7 +200,12 @@ class Upfront_Compat_LayoutConverter_Ver_1_0_0 extends Upfront_Compat_LayoutConv
 				upfront_set_breakpoint_property_value('col', $wrapper_col, $region['modules'][$module_index], $breakpoint);
 				upfront_set_breakpoint_property_value('left', 0, $region['modules'][$module_index], $breakpoint);
 				// Change margin to padding
-				$this->_add_padding($region['modules'][$module_index], $module, $wrapper_col, $left_space, $breakpoint);
+				if ( !empty($region['modules'][$module_index]['modules']) ) { // This is group
+					$this->_add_padding($region['modules'][$module_index], $module, $wrapper_col, $left_space, $breakpoint);
+				}
+				else { // This is element
+					$this->_add_padding($region['modules'][$module_index]['objects'][0], $module, $wrapper_col, $left_space, $breakpoint);
+				}
 			}
 		}
 		// Add right spacer
@@ -238,7 +258,7 @@ class Upfront_Compat_LayoutConverter_Ver_1_0_0 extends Upfront_Compat_LayoutConv
 		);
 	}
 
-	protected function _add_padding (&$module, $module_data, $wrapper_col, $left_space, $breakpoint) {
+	protected function _add_padding (&$object, $module_data, $wrapper_col, $left_space, $breakpoint) {
 		$column_width = $breakpoint->get_column_width();
 		$column_padding = $breakpoint->get_column_padding();
 		$baseline = $breakpoint->get_baseline();
@@ -247,41 +267,41 @@ class Upfront_Compat_LayoutConverter_Ver_1_0_0 extends Upfront_Compat_LayoutConv
 		$right_padding = ( ( $wrapper_col + $left_space - $module_data['total_col'] ) * $column_width );
 		if ( $breakpoint->is_default() ) {
 			if ( $top_padding > 0 ) {
-				upfront_set_property_value('top_padding_use', true, $module['objects'][0]);
-				upfront_set_property_value('top_padding_num', $top_padding + $column_padding, $module['objects'][0]);
-				$row = upfront_get_property_value('row', $module['objects'][0]);
+				upfront_set_property_value('top_padding_use', true, $object);
+				upfront_set_property_value('top_padding_num', $top_padding + $column_padding, $object);
+				$row = upfront_get_property_value('row', $object);
 				if ( !empty($row) ) {
-					upfront_set_property_value('row', $row + ($top_padding/$baseline), $module['objects'][0]);
+					upfront_set_property_value('row', $row + ($top_padding/$baseline), $object);
 				}
 			}
 			if ( $left_padding > 0 ) {
-				upfront_set_property_value('left_padding_use', true, $module['objects'][0]);
-				upfront_set_property_value('left_padding_num', $left_padding + $column_padding, $module['objects'][0]);
+				upfront_set_property_value('left_padding_use', true, $object);
+				upfront_set_property_value('left_padding_num', $left_padding + $column_padding, $object);
 			}
 			if ( $right_padding > 0 ) {
-				upfront_set_property_value('right_padding_use', true, $module['objects'][0]);
-				upfront_set_property_value('right_padding_num', $right_padding + $column_padding, $module['objects'][0]);
+				upfront_set_property_value('right_padding_use', true, $object);
+				upfront_set_property_value('right_padding_num', $right_padding + $column_padding, $object);
 			}
 		}
 		else {
 			if ( $top_padding > 0 ) {
-				upfront_set_breakpoint_property_value('top_padding_use', true, $module['objects'][0], $breakpoint);
-				upfront_set_breakpoint_property_value('top_padding_num', $top_padding + $column_padding, $module['objects'][0], $breakpoint);
-				$row = upfront_get_breakpoint_property_value('row', $module['objects'][0], $breakpoint);
+				upfront_set_breakpoint_property_value('top_padding_use', true, $object, $breakpoint);
+				upfront_set_breakpoint_property_value('top_padding_num', $top_padding + $column_padding, $object, $breakpoint);
+				$row = upfront_get_breakpoint_property_value('row', $object, $breakpoint);
 				if ( !empty($row) ) {
-					upfront_set_breakpoint_property_value('row', $row + ($top_padding/$baseline), $module['objects'][0], $breakpoint);
+					upfront_set_breakpoint_property_value('row', $row + ($top_padding/$baseline), $object, $breakpoint);
 				}
 			}
 			if ( $left_padding > 0 ) {
-				upfront_set_breakpoint_property_value('left_padding_use', true, $module['objects'][0], $breakpoint);
-				upfront_set_breakpoint_property_value('left_padding_num', $left_padding + $column_padding, $module['objects'][0], $breakpoint);
+				upfront_set_breakpoint_property_value('left_padding_use', true, $object, $breakpoint);
+				upfront_set_breakpoint_property_value('left_padding_num', $left_padding + $column_padding, $object, $breakpoint);
 			}
 			if ( $right_padding > 0 ) {
-				upfront_set_breakpoint_property_value('right_padding_use', true, $module['objects'][0], $breakpoint);
-				upfront_set_breakpoint_property_value('right_padding_num', $right_padding + $column_padding, $module['objects'][0], $breakpoint);
+				upfront_set_breakpoint_property_value('right_padding_use', true, $object, $breakpoint);
+				upfront_set_breakpoint_property_value('right_padding_num', $right_padding + $column_padding, $object, $breakpoint);
 			}
 		}
-		return $module;
+		return $object;
 	}
 }
 

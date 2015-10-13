@@ -120,6 +120,7 @@ define([
 				this.$el.append(paddingControl);
 			}
 
+			paddingControl.html('');
 			this.paddingTop.render();
 			paddingTopContainer.append(this.paddingTop.$el);
 			paddingControl.append(paddingTopContainer);

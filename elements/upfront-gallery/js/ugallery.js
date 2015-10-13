@@ -243,7 +243,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		e.gallerySelected = true;
 	},
 
-	createControls: function(image) {
+	createControlsEach: function(image) {
 		var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel();
 
 		panel.items = _([
@@ -502,7 +502,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			_.each(items, function(item) {
 				var $item = $(item),
 					image = me.images.get($item.attr('rel')),
-					controls = me.createControls(image),
+					controls = me.createControlsEach(image),
 					title = $item.find('.ugallery-thumb-title');
 
 				controls.setWidth($item.width());

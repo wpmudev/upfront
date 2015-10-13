@@ -1,11 +1,11 @@
 /* Flexbox */
 .flexbox-support .upfront-modules_container > .upfront-editable_entities_container,
-.flexbox-support .upfront-module-group > .upfront-editable_entities_container,
 .flexbox-support .upfront-editable_entities_container > .upfront-wrapper,
 .flexbox-support .upfront-wrapper > .upfront-module-view,
 .flexbox-support .upfront-grid-layout,
 .flexbox-support .upfront-region,
 .flexbox-support .upfront-region > .upfront-region-wrapper,
+.flexbox-support .upfront-module-group,
 .flexbox-support .upfront-modules_container
  {
  	display: -webkit-flex;
@@ -19,7 +19,8 @@
 	-webkit-align-content: flex-start;
 	align-content: flex-start;
 }
-.flexbox-support .upfront-grid-layout {
+.flexbox-support .upfront-grid-layout,
+.flexbox-support .upfront-module-group {
 	-webkit-align-items: stretch;
 	align-items: stretch;
 }
@@ -42,7 +43,6 @@
 	content: none;
 }
 .flexbox-support .upfront-modules_container > .upfront-editable_entities_container > .upfront-wrapper,
-.flexbox-support .upfront-module-group > .upfront-editable_entities_container > .upfront-wrapper,
 .flexbox-support .upfront-editable_entities_container > .upfront-wrapper > .upfront-module-view {
 	-webkit-order: 0;
 	order: 0;
