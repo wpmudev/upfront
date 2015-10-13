@@ -54,6 +54,16 @@ define([
 			this.presets = new Backbone.Collection(Upfront.mainData[this.mainDataCollection] || []);
 
 			this.setupItems();
+
+			var savePreset = function(properties) {
+				Upfront.Util.post({
+					action: 'upfront_save_' + this.ajaxActionSlug + '_preset',
+					data: properties
+				});
+			};
+
+			// Let's not flood server on some nuber property firing changes like crazy
+			this.debouncedSavePreset = _.debounce(savePreset, 5000);
 		},
 
 		setupItems: function() {
@@ -139,10 +149,8 @@ define([
 			}
 
 			Util.updatePresetStyle(this.styleElementPrefix.replace(/-preset/, ''), properties, this.styleTpl);
-			Upfront.Util.post({
-				action: 'upfront_save_' + this.ajaxActionSlug + '_preset',
-				data: properties
-			});
+
+			this.debouncedSavePreset(properties);
 
 			_.each(Upfront.mainData[this.mainDataCollection], function(preset, presetIndex) {
 				if (preset.id === properties.id) {
