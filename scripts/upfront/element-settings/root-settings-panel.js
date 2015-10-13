@@ -94,12 +94,13 @@ define([
 		},
 
 		getBody: function () {
-			var $body = $('<div />');
+			var $body = $('<div />'),
+				me = this;
 
 			this.settings.each(function (setting) {
 				if ( ! setting.panel ) setting.panel = me;
 				setting.render();
-				$body.append(setting.el)
+				$body.append(setting.el);
 			});
 
 			return $body;
