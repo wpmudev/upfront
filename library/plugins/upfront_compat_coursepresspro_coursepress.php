@@ -8,26 +8,25 @@ class Upfront_Compat_Coursepresspro_Coursepress extends Upfront_Server {
     }
 
     private function _add_hooks () {
-        //add_theme_support( 'bbpress' );
         
         add_action('wp', array($this, 'detect_virtual_page'));
         
-       // add_action('wp_ajax_upfront_posts-load', array($this, "load_posts"), 9);
+        add_action('wp_ajax_upfront_posts-load', array($this, "load_posts"), 9);
         
-        //add_action('wp_ajax_this_post-get_markup', array($this, "load_markup"), 9);  
+        add_action('wp_ajax_this_post-get_markup', array($this, "load_markup"), 9);  
 
-        
 
-        // exporter, BBPress specific layouts
+        //exporter, CoursePress specific layouts
         //add_filter('upfront-core-default_layouts', array($this, 'augment_default_layouts'));
     }
+
 
     public function detect_virtual_page () {
 
        
 		if ( class_exists( 'CoursePress' ) ) {
-			add_filter('upfront-views-view_class', array($this, 'override_view'));
-           add_filter('upfront-entity_resolver-entity_ids', array($this, 'resolve_entity_ids'));
+            add_filter('upfront-views-view_class', array($this, 'override_view'));
+            add_filter('upfront-entity_resolver-entity_ids', array($this, 'resolve_entity_ids'));
         }
             
     }
@@ -200,47 +199,140 @@ class Upfront_Compat_Coursepresspro_Coursepress extends Upfront_Server {
     }
 
     public function resolve_entity_ids ($cascade) {
-        
+        global $coursepress;
+        $url = trim( parse_url( $_SERVER[ 'REQUEST_URI' ], PHP_URL_PATH ), '/' );
     	$item = false;
         $type = false;
+        $content_type = false;
 
-        $item = get_post_type();//self::_get_post_type();
+        $item = get_post_type();
         $spec = get_queried_object_id();
-
         $type = 'single';
-       
+        $content_type = get_query_var('post_type');
+
+        if($content_type == 'course') {
+            $item = 'course';
+
+            if(empty(get_query_var('course'))) {
+                $type = 'archive';
+            }
+            else {
+                $type = 'single';
+            }
+        }
+        elseif($content_type == 'unit') {
+            
+
+            if ( preg_match( '/' . $coursepress->get_units_slug() . '/', $url ) ) {
+                $item = 'units';
+            }
+            elseif ( preg_match( '/' . $coursepress->get_workbook_slug() . '/', $url ) ) {
+                $item = 'workbook';
+            }
+            elseif ( preg_match( '/' . $coursepress->get_grades_slug() . '/', $url ) ) {
+                $item = 'grades';
+            }
+
+            $meta_query = get_query_var('meta_query');
+
+            if(is_array($meta_query) && isset($meta_query[0]) && isset($meta_query[0]['value']))
+                $spec = $meta_query[0]['value'];
+
+
+            $type = 'single';
+        }
+        elseif($content_type == 'discussions') {
+            $type = 'single';
+            $item = $content_type;
+            $spec = get_query_var('meta_value');
+        }
+        elseif($content_type == 'notifications') {
+            $type = 'single';
+            $item = $content_type;
+
+            $meta_query = get_query_var('meta_query');
+
+            if(is_array($meta_query) && isset($meta_query[0]) && isset($meta_query[0]['value']))
+                $spec = $meta_query[0]['value'];
+        }
+        elseif(!empty(get_query_var('unitname'))) {
+            //it is a single unit
+            $type = 'single';
+            $item = 'unit';
+
+            //lets find its id
+           $args=array(
+              'name' => get_query_var('unitname'),
+              'post_type' => 'unit',
+                'post_status' => 'publish',
+              'showposts' => 1,
+              'caller_get_posts'=> 1
+            );
+            $my_posts = get_posts($args);
+            if( $my_posts )
+                $spec = $my_posts[0]->ID;
+        
+        }
+        elseif ( preg_match( '/' . $coursepress->get_inbox_slug() . '/', $url ) ) {
+            $item = 'messages-inbox';
+        }
+
+        elseif ( preg_match( '/' . $coursepress->get_new_message_slug() . '/', $url ) ) {
+            $item = 'messages-new';
+        }
+
+        elseif ( preg_match( '/' . $coursepress->get_sent_messages_slug() . '/', $url ) ) {
+            $item = 'messages-sent';
+        }
+
 
         if (!empty($item)) {
             $cascade['item'] = "coursepress-{$item}"; 
             $cascade['type'] = $type;
-            //if (!empty($spec)) {
+            if (!empty($spec))
                 $cascade['specificity'] = "coursepress-{$item}".((!empty($spec))?"-{$spec}":"");
-                $cascade['plugin'] = 'plugin';
-            //}
+            
+            $cascade['plugin'] = 'plugin';
+            
             
         }
-		
+		ob_start();
+
+            global $wp_query;
+
+            var_dump($wp_query->query_vars);
+            /*var_dump($_SERVER['QUERY_STRING']);*/
+            //var_dump($qvars);
+           /* echo "\n\r......................................................\n\r";
+            echo get_the_ID();
+            echo "\n\r......................................................\n\r";
+            echo get_queried_object_id();
+            */
+            /**/
+            //echo $spec;
+            //echo empty(get_query_var('course'));
+            var_dump($cascade);
+        file_put_contents("debugg.txt", ob_get_clean());
         return $cascade;
 
     }
     public function load_markup () {
 
         $data = stripslashes_deep($_POST);
-        
-      
+
         if (empty($data['layout']['item']) && empty($data['layout']['specificity'])) return false; // Don't deal with this if we don't know what it is
 
 
 
-        $has_forum_item = !empty($data['layout']['item']) && !(strpos($data['layout']['item'], 'bbpress') === false);
-        $has_forum_spec = !empty($data['layout']['specificity']) && !(strpos($data['layout']['specificity'], 'bbpress') === false);
+        $has_course_item = !empty($data['layout']['item']) && !(strpos($data['layout']['item'], 'coursepress') === false);
+        $has_course_spec = !empty($data['layout']['specificity']) && !(strpos($data['layout']['specificity'], 'coursepress') === false);
 
 
-        if (!$has_forum_item && !$has_forum_spec) return false;
+        if (!$has_course_item && !$has_course_spec) return false;
 
         $this->_out(new Upfront_JsonResponse_Success(array(
-                "filtered" => '<div class="upfront-bbpress_compat upfront-plugin_compat"><p>BBPress specific content</p></div>'
-            )));
+            "filtered" => '<div class="upfront-coursepress_compat upfront-plugin_compat"><p>CoursePress specific content</p></div>'
+        )));
        
 
     }
@@ -251,19 +343,14 @@ class Upfront_Compat_Coursepresspro_Coursepress extends Upfront_Server {
 
         if (empty($data['layout']['item'])) return false; // Don't deal with this if we don't know what it is
 
+        $has_course_item = !(strpos($data['layout']['item'], 'coursepress') === false);
 
-
-        $has_forum_item = !(strpos($data['layout']['item'], 'bbpress') === false);
-        //$has_forum_spec = !empty($data['layout']['specificity']) && (bool)strpos($data['layout']['specificity'], 'bbpress');
-
-
-
-        if (!$has_forum_item )//&& !$has_forum_spec) return false;
+        if (!$has_course_item )
             return false;
   
         
         $this->_out(new Upfront_JsonResponse_Success(array(
-            'posts' => '<div class="upfront-bbpress_compat upfront-plugin_compat"><p>BBPress specific content</p></div>',
+            'posts' => '<div class="upfront-coursepress_compat upfront-plugin_compat"><p>CoursePress specific content</p></div>',
             'pagination' => '',
         )));
     }
