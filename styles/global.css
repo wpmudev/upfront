@@ -113,6 +113,9 @@ h2, h3 { page-break-after: avoid; }
   position: fixed;
   z-index: 25;
 }
+.upfront-output-region.upfront-region-fixed .upfront-region-wrapper {
+  margin: 0 auto;
+}
 
 .upfront-module {}
 
@@ -176,9 +179,6 @@ h2, h3 { page-break-after: avoid; }
 }
 .upfront-output-bg-overlay > .upfront-bg-image {
 	display: block;
-}
-.upfront-output-layout {
-	background-attachment: fixed;
 }
 .upfront-output-layout > .upfront-output-bg-overlay {
 	position: fixed;
@@ -338,6 +338,9 @@ h2, h3 { page-break-after: avoid; }
     margin-top: 0;
     width: auto;
     float: none;
+}
+.uf-responsive .upfront-image-caption-container {
+    width: 100%;
 }
 
 /* Flexbox experiments *//* */

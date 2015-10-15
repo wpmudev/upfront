@@ -937,3 +937,72 @@ figure.gallery-labels-figure img.mfp-img {
 .mobile-breakpoint .ugallery[data-thumb-proportions="1.33"] .ugallery_item img {
 	height: 101px !important;
 }
+
+/* Lightbox stuff */
+#gallery-lb-settings-button.upfront-icon-button-setting {
+	opacity: 1;
+	visibility: visible;
+	position: absolute;
+	top: 94px;
+	right: 56px;
+}
+#gallery-lb-settings {
+	width: 335px;
+	top: 96px;
+	bottom: auto;
+	left: auto;
+	right: 80px;
+	display: none;
+	cursor: default;
+	text-align: left;
+}
+#gallery-lb-settings .gallery-lb-show_close,
+#gallery-lb-settings .gallery-lb-show_image_count {
+	float: left;
+}
+#gallery-lb-settings .gallery-lb-show_close {
+	margin-right: 30px;
+}
+.edit-lightbox-css {
+	line-height: 15px;
+}
+.edit-lightbox-css span {
+	vertical-align: middle;
+}
+.edit-lightbox-css:before {
+	content: "";
+	display: inline-block;
+	background: url(../../../img/uf-core-el-sprite.svg);
+	margin: 0 !important;
+	vertical-align: middle;
+}
+
+.glb-caption-container {
+	position: relative;
+}
+
+[class*=gallery-ugallery-object] .mfp-image-holder .mfp-close {
+	width: auto;
+	height: auto;
+	top: -25px;
+	right: 0;
+	padding: 0;
+	text-align: right;
+	line-height: 1;
+}
+[class*=gallery-ugallery-object] .mfp-image-holder .mfp-counter {
+	white-space: nowrap;
+}
+[class*=gallery-ugallery-object] figure {
+	margin: 0;
+}
+.glb-image-container img.mfp-img {
+	padding: 0;
+}
+.glb-content-container {
+	padding: 10px;
+}
+.glb-caption-container {
+	margin-top: 10px;
+	min-height: 1em;
+}

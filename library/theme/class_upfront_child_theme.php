@@ -3,15 +3,15 @@
 abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 	const THEME_BASE_URL_MACRO = 'UPFRONT_THEME_BASE';
-	
+
 	/**
 	 * Constant-like file exclusion pattern.
 	 *
 	 * @var array
 	 */
 	private static $_EXCLUDED_FILES = array(
-		".", 
-		"..", 
+		".",
+		"..",
 		".DS_Store",
 	);
 
@@ -169,6 +169,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			$menu_items = array();
 			foreach($menu['items'] as $menu_item) {
 				$menu_item['url'] = str_replace('%siteurl%', home_url(), $menu_item['url']);
+				$menu_item['url'] = str_replace('{{upfront:home_url}}', home_url(), $menu_item['url']);
 				$menu_items[$menu_item['menu_item_parent']][] = $menu_item;
 			}
 			foreach($menu_items[0] as $menu_item) {

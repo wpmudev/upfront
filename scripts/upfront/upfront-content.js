@@ -386,7 +386,11 @@ define("content", deps, function(postTpl, ContentTools) {
 					this.post.set('post_password', results.pass);
 			}
 
-			this.post.set('post_status', status);
+			if(results.visibility == 'private')
+				this.post.set('post_status', 'private');
+			else
+				this.post.set('post_status', status);
+
 			this.post.save().done(function(result){
                 if( me.post.is_new && post_name.length){
                     me.post.set("post_name", post_name).save();

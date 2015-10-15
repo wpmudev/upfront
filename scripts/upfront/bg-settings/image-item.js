@@ -38,12 +38,7 @@ define([
 						use_breakpoint_property: true,
 						default_value: 'full',
 						icon_class: 'upfront-region-field-icon',
-						values: [
-							{ label: l10n.full_width_bg, value: 'full', icon: 'bg-image-full' },
-							{ label: l10n.tiled_pattern, value: 'tile', icon: 'bg-image-tile' },
-							{ label: l10n.fixed_position, value: 'fixed', icon: 'bg-image-fixed' },
-							{ label: l10n.parallax, value: 'parallax', icon: 'bg-image-full' }
-						],
+						values: this.get_bg_style_values(),
 						change: function () {
 							var value = this.get_value();
 							if ( value == 'tile' ){
@@ -227,6 +222,17 @@ define([
 					this.model.set_breakpoint_property('background_style', style);
 				}
 			}
+		},
+		get_bg_style_values: function () {
+			var values = [
+				{ label: l10n.full_width_bg, value: 'full', icon: 'bg-image-full' },
+				{ label: l10n.tiled_pattern, value: 'tile', icon: 'bg-image-tile' },
+				{ label: l10n.fixed_position, value: 'fixed', icon: 'bg-image-fixed' }
+			];
+			if ( this.model instanceof Upfront.Models.Region ) {
+				values.push({ label: l10n.parallax, value: 'parallax', icon: 'bg-image-full' });
+			}
+			return values;
 		}
 	}));
 

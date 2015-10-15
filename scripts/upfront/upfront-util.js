@@ -28,6 +28,15 @@ define(function() {
 		
 		if(typeof window.location.origin !== "undefined") {
 			if(url.substring(0, window.location.origin.length) == window.location.origin) {
+				if(
+					typeof window.location.pathname !== "undefined"
+					&&
+					url.substring(window.location.origin.length, window.location.origin.length+window.location.pathname.length) == window.location.pathname
+					&&
+					url.substring(window.location.origin.length+window.location.pathname.length)[0] == '#'
+				) {
+					return 'anchor';
+				}
 				return 'entry';
 			}
 		}
@@ -671,7 +680,8 @@ define(function() {
 			var linktype = guessLinkType(url),
 				regions,
 				lightbox,
-				regionview;
+				regionview,
+				selector;
 
 			if (linktype === 'lightbox') {
 				regions = Upfront.Application.layout.get('regions');
@@ -687,8 +697,9 @@ define(function() {
 					regionview.show();
 				}
 			} else if (linktype == 'anchor') {
-				if ($(url).length > 0) {
-					$('html,body').animate({scrollTop: $(url).offset().top},'slow');
+				selector = url.replace(/^.*?#/, '#');
+				if ($(selector).length > 0) {
+					$('html,body').animate({scrollTop: $(selector).offset().top},'slow');
 				} else {
 					console.log('obselete anchor');
 				}

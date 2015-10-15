@@ -650,6 +650,7 @@ var PostContentEditor = Backbone.View.extend({
 		_.each(events, function(e){
 			me.listenTo(me.box, e, function(){
 				var results = {};
+				
 				if(e=='publish' || e=='draft' || e=='auto-draft'){
 					//if(me.parts.titles) results.title = $.trim(me.parts.titles.html());
 					if(me.parts.titles) results.title = $.trim(me.parts.titles.text());
@@ -668,6 +669,7 @@ var PostContentEditor = Backbone.View.extend({
 						results.inserts = editor.getInsertsData();
 						results.author = me.postAuthor;
 					}
+
 					if(me.selectedDate)
 						results.date = me.selectedDate;
 					if(me.postStatus)
