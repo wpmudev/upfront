@@ -233,6 +233,7 @@ define([
 			},
 			update_background_featured: function ($type, $overlay) {
 				var me = this;
+				var $bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el;
 				this.update_background_color();
 
 				if(me.$el.children('.feature_image_selector').length < 1) {
