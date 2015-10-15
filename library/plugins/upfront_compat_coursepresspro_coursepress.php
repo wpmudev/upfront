@@ -32,7 +32,7 @@ class Upfront_Compat_Coursepresspro_Coursepress extends Upfront_Server {
     }
 
     /**
-     * Augments the available layouts list by adding some BBPress-specific ones.
+     * Augments the available layouts list by adding some CoursePress-specific ones.
      *
      * @param array $layouts Predefined Upfront layouts
      *
@@ -40,156 +40,114 @@ class Upfront_Compat_Coursepresspro_Coursepress extends Upfront_Server {
      */
     public function augment_default_layouts ($layouts) {
        
-        $layouts["bbpress-single-forum"] = array(
-            'label' => "BBPress Single Forum",
-            'layout' => array(
-                'type' => 'single',
-                'item' => "bbpress-single-forum",
-                'specificity' => "bbpress-single-forum",
-                'plugin' => 'plugin'
-            )
-        );
-
-        $layouts["bbpress-single-topic"] = array(
-            'label' => "BBPress Single Topic",
-            'layout' => array(
-                'type' => 'single',
-                'item' => "bbpress-single-topic",
-                'specificity' => "bbpress-single-topic",
-                'plugin' => 'plugin'
-            )
-        );
-
-        $layouts["bbpress-topic-split"] = array(
-            'label' => "BBPress Topic Split",
-            'layout' => array(
-                'type' => 'single',
-                'item' => "bbpress-topic-split",
-                'specificity' => "bbpress-topic-split",
-                'plugin' => 'plugin'
-            )
-        );
-
-        $layouts["bbpress-reply-edit"] = array(
-            'label' => "BBPress Reply Edit",
-            'layout' => array(
-                'type' => 'single',
-                'item' => "bbpress-reply-edit",
-                'specificity' => "bbpress-reply-edit",
-                'plugin' => 'plugin'
-            )
-        );
-
-        $layouts["bbpress-reply-move"] = array(
-            'label' => "BBPress Reply Move",
-            'layout' => array(
-                'type' => 'single',
-                'item' => "bbpress-reply-move",
-                'specificity' => "bbpress-reply-move",
-                'plugin' => 'plugin'
-            )
-        );
-
-        $layouts["bbpress-topic-tag"] = array(
-            'label' => "BBPress Topic Tag",
-            'layout' => array(
-                'type' => 'single',
-                'item' => "bbpress-topic-tag",
-                'specificity' => "bbpress-topic-tag",
-                'plugin' => 'plugin'
-            )
-        );
-
-        $layouts["bbpress-topic-tag-edit"] = array(
-            'label' => "BBPress Topic Tag Edit",
-            'layout' => array(
-                'type' => 'single',
-                'item' => "bbpress-topic-tag-edit",
-                'specificity' => "bbpress-topic-tag-edit",
-                'plugin' => 'plugin'
-            )
-        );
-
-        
-        $layouts["bbpress-user-home"] = array(
-            'label' => "BBPress User Home",
-            'layout' => array(
-                'type' => 'single',
-                'item' => "bbpress-user-home",
-                'specificity' => "bbpress-user-home",
-                'plugin' => 'plugin'
-            )
-        );
-
-        $layouts["bbpress-topics-created"] = array(
-            'label' => "BBPress User Topics",
-            'layout' => array(
-                'type' => 'single',
-                'item' => "bbpress-topics-created",
-                'specificity' => "bbpress-topics-created",
-                'plugin' => 'plugin'
-            )
-        );
-
-        $layouts["bbpress-replies-created"] = array(
-            'label' => "BBPress User Replies",
-            'layout' => array(
-                'type' => 'single',
-                'item' => "bbpress-replies-created",
-                'specificity' => "bbpress-replies-created",
-                'plugin' => 'plugin'
-            )
-        );
-
-        $layouts["bbpress-user-home"] = array(
-            'label' => "BBPress User Favorites",
-            'layout' => array(
-                'type' => 'single',
-                'item' => "bbpress-favorites",
-                'specificity' => "bbpress-favorites",
-                'plugin' => 'plugin'
-            )
-        );
-
-        $layouts["bbpress-user-subscriptions"] = array(
-            'label' => "BBPress User Subscriptions",
-            'layout' => array(
-                'type' => 'single',
-                'item' => "bbpress-subscriptions",
-                'specificity' => "bbpress-subscriptions",
-                'plugin' => 'plugin'
-            )
-        );
-
-
-        $layouts["bbpress-user-edit"] = array(
-            'label' => "BBPress User Edit",
-            'layout' => array(
-                'type' => 'single',
-                'item' => "bbpress-user-home-edit",
-                'specificity' => "bbpress-user-home-edit",
-                'plugin' => 'plugin'
-            )
-        );
-
-
-        $layouts["bbpress-forum-archive"] = array(
-            'label' => "BBPress Forums Archive",
+        $layouts["coursepress-course-archive"] = array(
+            'label' => "CoursePress Course Archive",
             'layout' => array(
                 'type' => 'archive',
-                'item' => "bbpress-forum-archive",
+                'item' => "coursepress-course",
                 'plugin' => 'plugin'
             )
         );
-        $layouts["bbpress-topic-archive"] = array(
-            'label' => "BBPress Topics Archive",
+
+        $layouts["coursepress-course"] = array(
+            'label' => "CoursePress Course",
             'layout' => array(
-                'type' => 'archive',
-                'item' => "bbpress-topic-archive",
+                'type' => 'single',
+                'item' => "coursepress-course",
+                'specificity' => "coursepress-course",
+                'plugin' => 'plugin'
+            )
+        );
+
+        $layouts["coursepress-units"] = array(
+            'label' => "CoursePress Course Units",
+            'layout' => array(
+                'type' => 'single',
+                'item' => "coursepress-units",
+                'specificity' => "coursepress-units",
+                'plugin' => 'plugin'
+            )
+        );
+
+        $layouts["coursepress-unit"] = array(
+            'label' => "CoursePress Unit",
+            'layout' => array(
+                'type' => 'single',
+                'item' => "coursepress-unit",
+                'specificity' => "coursepress-unit",
+                'plugin' => 'plugin'
+            )
+        );
+
+        $layouts["coursepress-workbook"] = array(
+            'label' => "CoursePress Workbook",
+            'layout' => array(
+                'type' => 'single',
+                'item' => "coursepress-workbook",
+                'specificity' => "coursepress-workbook",
                 'plugin' => 'plugin'
             )
         );
        
+        $layouts["coursepress-grades"] = array(
+            'label' => "CoursePress Grades",
+            'layout' => array(
+                'type' => 'single',
+                'item' => "coursepress-grades",
+                'specificity' => "coursepress-grades",
+                'plugin' => 'plugin'
+            )
+        );
+
+        $layouts["coursepress-discussions"] = array(
+            'label' => "CoursePress Discussions",
+            'layout' => array(
+                'type' => 'single',
+                'item' => "coursepress-discussions",
+                'specificity' => "coursepress-discussions",
+                'plugin' => 'plugin'
+            )
+        );
+        
+        $layouts["coursepress-notifications"] = array(
+            'label' => "CoursePress Notifications",
+            'layout' => array(
+                'type' => 'single',
+                'item' => "coursepress-notifications",
+                'specificity' => "coursepress-notifications",
+                'plugin' => 'plugin'
+            )
+        );
+
+        $layouts["coursepress-messages-inbox"] = array(
+            'label' => "CoursePress Messages Inbox",
+            'layout' => array(
+                'type' => 'archive',
+                'item' => "coursepress-messages-inbox",
+                'plugin' => 'plugin'
+            )
+        );
+
+         $layouts["coursepress-messages-new"] = array(
+            'label' => "CoursePress Messages New",
+            'layout' => array(
+                'type' => 'archive',
+                'item' => "coursepress-messages-new",
+                'plugin' => 'plugin'
+            )
+        );
+
+        $layouts["coursepress-messages-sent"] = array(
+            'label' => "CoursePress Messages Sent",
+            'layout' => array(
+                'type' => 'archive',
+                'item' => "coursepress-messages-sent",
+                'plugin' => 'plugin'
+            )
+        );
+
+
+
         return $layouts;
     }
 
@@ -275,14 +233,17 @@ class Upfront_Compat_Coursepresspro_Coursepress extends Upfront_Server {
         }
         elseif ( preg_match( '/' . $coursepress->get_inbox_slug() . '/', $url ) ) {
             $item = 'messages-inbox';
+            $type = 'archive';
         }
 
         elseif ( preg_match( '/' . $coursepress->get_new_message_slug() . '/', $url ) ) {
             $item = 'messages-new';
+            $type = 'archive';
         }
 
         elseif ( preg_match( '/' . $coursepress->get_sent_messages_slug() . '/', $url ) ) {
             $item = 'messages-sent';
+            $type = 'archive';
         }
 
 
@@ -294,25 +255,8 @@ class Upfront_Compat_Coursepresspro_Coursepress extends Upfront_Server {
             
             $cascade['plugin'] = 'plugin';
             
-            
         }
-		ob_start();
-
-            global $wp_query;
-
-            var_dump($wp_query->query_vars);
-            /*var_dump($_SERVER['QUERY_STRING']);*/
-            //var_dump($qvars);
-           /* echo "\n\r......................................................\n\r";
-            echo get_the_ID();
-            echo "\n\r......................................................\n\r";
-            echo get_queried_object_id();
-            */
-            /**/
-            //echo $spec;
-            //echo empty(get_query_var('course'));
-            var_dump($cascade);
-        file_put_contents("debugg.txt", ob_get_clean());
+		
         return $cascade;
 
     }
