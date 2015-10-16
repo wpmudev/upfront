@@ -18,6 +18,8 @@ class Upfront_UimageView extends Upfront_Object {
 			$link = $data['link'];
 		}
 
+		if (!isset($data['link_target'])) $data['link_target'] = '';
+
 		if($link['type'] == 'image'){
 			//wp_enqueue_style('magnific');
 			upfront_add_element_style('magnific', array('/scripts/magnific-popup/magnific-popup.css', false));
