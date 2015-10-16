@@ -222,7 +222,7 @@ return (function ($) {
 
 		render: function (event) {
 			var me = this;
-			var content = '<a class="menu_item';
+			var content = '<a class="menu_item uf-click-to-edit-text';
 
 			if(me.newitem) content = content + ' new_menu_item menu_item_placeholder';
 

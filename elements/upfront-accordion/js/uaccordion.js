@@ -193,7 +193,8 @@ define([
 					})
 					.on('blur', function() {
 						$content.data('ueditor').stop();
-					});
+					})
+					.addClass('uf-click-to-edit-text');
 
 				$(this).data('ueditor').stop();
 				count++;

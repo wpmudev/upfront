@@ -755,6 +755,7 @@ Ueditor.prototype = {
 
 		me.$el.addClass('ueditable-inactive')
 			.attr('title', 'Double click to edit the text')
+            .addClass('uf-click-to-edit-text')
 			.one('dblclick', function(e){
 				e.preventDefault();
 				e.stopPropagation();
