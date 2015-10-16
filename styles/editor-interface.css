@@ -2447,14 +2447,14 @@ div.uinsert-selector a:hover {
   width: auto;
   height: auto;
   z-index: 9997;
-  cursor: s-resize;
+  cursor: ns-resize;
   display: block;
   visibility: hidden; }
 
 .upfront-region-resize-handle-n {
   top: -14px;
   bottom: auto;
-  cursor: n-resize; }
+  cursor: ns-resize; }
 
 .upfront-region-resize-handle-e {
   top: 0;
@@ -2462,7 +2462,7 @@ div.uinsert-selector a:hover {
   left: auto;
   right: -13px;
   width: 24px;
-  cursor: e-resize; }
+  cursor: ew-resize; }
 
 .upfront-region-resize-handle-w {
   top: 0;
@@ -2470,7 +2470,7 @@ div.uinsert-selector a:hover {
   left: -13px;
   right: auto;
   width: 24px;
-  cursor: w-resize; }
+  cursor: ew-resize; }
 
 .upfront-region-editing .upfront-region-container-active > .upfront-region-resize-handle, .upfront-region-editing .upfront-region-container-active .upfront-region-side-left > .upfront-region-resize-handle-e, .upfront-region-editing .upfront-region-container-active .upfront-region-side-right > .upfront-region-resize-handle-w, .upfront-region-editing .upfront-region-container-active .upfront-region-sub-container > .upfront-region-resize-handle, .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region > .upfront-region-resize-handle-s, .upfront-region-fixed-editing .upfront-region-side-fixed .upfront-region-resize-handle {
   visibility: visible;
