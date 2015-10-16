@@ -6811,10 +6811,14 @@ var CSSEditor = Backbone.View.extend({
 			topHeight = me.$('.upfront-css-top').outerHeight(),
 			$selectors = me.$('.upfront-css-selectors'),
 			$saveform = me.$('.upfront-css-save-form'),
+			$rsz = this.$('.upfront-css-resizable'),
 			onResize = function(e, ui){
 				var height = ui ? ui.size.height : me.$('.upfront-css-resizable').height(),
 					bodyHeight = height  - topHeight;
 				$cssbody.height(bodyHeight);
+				
+				$rsz.css('width', ''); // Do NOT do horizontal resize
+
 				if(me.editor)
 					me.editor.resize();
 				$selectors.outerHeight(bodyHeight - $saveform.outerHeight());
@@ -6822,7 +6826,7 @@ var CSSEditor = Backbone.View.extend({
 			}
 		;
 		onResize();
-		this.$('.upfront-css-resizable').resizable({
+		$rsz.resizable({
 			handles: {n: '.upfront-css-top'},
 			resize: onResize,
 			minHeight: 200,
