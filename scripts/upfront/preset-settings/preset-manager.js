@@ -30,6 +30,7 @@ define([
 		className: 'uf-settings-panel upfront-settings_panel preset-manager-panel',
 
 		initialize: function (options) {
+			var me = this;
 			this.options = options;
 			_.each(this.options, function(option, index) {
 				this[index] = option;
@@ -59,11 +60,13 @@ define([
 				Upfront.Util.post({
 					action: 'upfront_save_' + this.ajaxActionSlug + '_preset',
 					data: properties
+				}).done( function() {
+					me.model.trigger("preset:updated");
 				});
 			};
 
 			// Let's not flood server on some nuber property firing changes like crazy
-			this.debouncedSavePreset = _.debounce(savePreset, 5000);
+			this.debouncedSavePreset = _.debounce(savePreset, 1000);
 		},
 
 		setupItems: function() {
@@ -162,8 +165,6 @@ define([
 				Upfront.mainData[this.mainDataCollection].splice(index, 1);
 			}
 			Upfront.mainData[this.mainDataCollection].push(properties);
-
-			this.model.trigger("preset:updated");
 		},
 
 		createPreset: function(presetName) {
