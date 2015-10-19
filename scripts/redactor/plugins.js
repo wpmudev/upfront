@@ -768,7 +768,7 @@ RedactorPlugins.upfrontLink = function() {
 					href = $(this.selectedLink).attr('href');
 					target = $(this.selectedLink).attr('target');
 
-					if ($(this.selectedLink).attr('data-upfront-link-type').length) {
+					if (!_.isUndefined($(this.selectedLink).attr('data-upfront-link-type'))) {
 						// New linking is used, there is exact value
 						type = $(this.selectedLink).attr('data-upfront-link-type');
 					} else {
