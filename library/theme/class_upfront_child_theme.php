@@ -3,15 +3,15 @@
 abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 	const THEME_BASE_URL_MACRO = 'UPFRONT_THEME_BASE';
-	
+
 	/**
 	 * Constant-like file exclusion pattern.
 	 *
 	 * @var array
 	 */
 	private static $_EXCLUDED_FILES = array(
-		".", 
-		"..", 
+		".",
+		"..",
 		".DS_Store",
 	);
 
@@ -261,6 +261,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 				}
 				$style_content = file_get_contents($styles_root . DIRECTORY_SEPARATOR . $type . DIRECTORY_SEPARATOR . $style);
 				$style_content = $this->_expand_passive_relative_url($style_content);
+				$style_content = str_replace('#page', 'div#page .upfront-output-region-container .upfront-output-module', $style_content);
 				$out .= $style_content;
 			}
 		}
@@ -610,7 +611,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		$button_presets = $this->get_theme_settings()->get('button_presets');
 		if (isset($args['json']) && $args['json']) return $button_presets;
-		
+
 		$as_array = false;
 		if (isset($args['as_array']) && $args['as_array']) {
 			$as_array = true;
@@ -646,7 +647,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		return json_decode($presets, $as_array);
 	}
-	
+
 	public function getContactPresets($presets, $args) {
 		if (empty($presets) === false) return $presets;
 
@@ -660,7 +661,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		return json_decode($presets, $as_array);
 	}
-	
+
 	public function getGalleryPresets($presets, $args) {
 		if (empty($presets) === false) return $presets;
 
@@ -674,7 +675,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		return json_decode($presets, $as_array);
 	}
-	
+
 	public function getImagePresets($presets, $args) {
 		if (empty($presets) === false) return $presets;
 
@@ -688,7 +689,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		return json_decode($presets, $as_array);
 	}
-	
+
 	public function getNavPresets($presets, $args) {
 		if (empty($presets) === false) return $presets;
 
@@ -702,7 +703,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		return json_decode($presets, $as_array);
 	}
-	
+
 	public function getSliderPresets($presets, $args) {
 		if (empty($presets) === false) return $presets;
 
@@ -716,7 +717,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		return json_decode($presets, $as_array);
 	}
-	
+
 	public function getTextPresets($presets, $args) {
 		if (empty($presets) === false) return $presets;
 
@@ -730,7 +731,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		return json_decode($presets, $as_array);
 	}
-	
+
 	public function getPostImageVariants($image_variants, $args) {
 	  if (empty($image_variants) === false) return $image_variants;
 

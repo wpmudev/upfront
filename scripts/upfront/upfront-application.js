@@ -1584,12 +1584,14 @@ var Application = new (Backbone.Router.extend({
 					style = Upfront.Util.colors.convert_string_ufc_to_color(style);
 					Upfront.data.styles[elementType].push(name);
 					var styleNode = $('#'+name);
+					// Increase element style priority over preset styles
+					var styleOutput = style.replace(/#page/g, 'div#page .upfront-region-container .upfront-module');
 					if(!styleNode.length){
-						styleNode = $('<style id="' + name + '">' + style + '</style>');
+						styleNode = $('<style id="' + name + '">' + styleOutput + '</style>');
 						$('body').append(styleNode);
 					}
 					else {
-						styleNode.html(style);
+						styleNode.html(styleOutput);
 					}
 				});
 			});
