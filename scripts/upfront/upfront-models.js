@@ -44,6 +44,13 @@ var _alpha = "alpha",
 				this.set("properties", args[0].properties);
 			} else this.set("properties", new Properties([]));
 			if (this.init) this.init();
+
+			// Take care of old preset API
+			if (this.get_property_value_by_name('currentpreset')) {
+			// Unset currentpreset property and set preset to correct value
+				this.set_property('preset', this.get_property_value_by_name('currentpreset'), true);
+				this.set_property('currentpreset', false, true);
+			}
 		},
 	// ----- Object interface ----- */
 		get_view_class: function () {

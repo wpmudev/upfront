@@ -14,7 +14,7 @@ class Upfront_Output {
 	public function __construct ($layout, $post) {
 		$this->_layout = $layout;
 		$this->_debugger = Upfront_Debug::get_debugger();
-		
+
 		self::$grid = Upfront_Grid::get_grid();
 	}
 	public static function get_post_id () {
@@ -173,7 +173,7 @@ class Upfront_Output {
 
 
 abstract class Upfront_Entity {
-    
+
     protected static $_video_index = 0;
 
 	protected $_data;
@@ -229,7 +229,7 @@ abstract class Upfront_Entity {
 	public function get_attr () {
 		return '';
 	}
-	
+
 	public function get_id () {
 		return $this->_get_property('element_id');
 	}
@@ -237,7 +237,7 @@ abstract class Upfront_Entity {
 	protected function _get_property ($prop) {
 		return upfront_get_property_value($prop, $this->_data);
 	}
-	
+
 	protected function _get_breakpoint_property ($prop, $id) {
 		$breakpoint = $this->_get_property('breakpoint');
 		if ( !empty($breakpoint[$id]) && isset($breakpoint[$id][$prop]) )
@@ -275,7 +275,7 @@ abstract class Upfront_Entity {
 		}
 		return $type;
 	}
-	
+
 	protected function _is_background_overlay ($breakpoint_id = '') {
 		$type = $this->get_background_type($breakpoint_id);
 		$background_style = $this->_get_breakpoint_property('background_style', $breakpoint_id);
@@ -283,7 +283,7 @@ abstract class Upfront_Entity {
 		if ( 'parallax' != $background_style && ( 'image' == $type || 'featured' == $type ) ) return false;
 		return true;
 	}
-	
+
 	protected function _get_background_image_css ($background_image, $lazy_loading = false, $breakpoint_id = '') {
 		$css = array();
 		$background_repeat = $this->_get_breakpoint_property('background_repeat', $breakpoint_id);
@@ -305,7 +305,7 @@ abstract class Upfront_Entity {
 		}
 		return !empty($css) ? implode('; ', $css) : '';
 	}
-	
+
 	protected function _get_background_css ($is_layout = false, $lazy_loading = false, $breakpoint_id = '') {
 		$type = $this->get_background_type($breakpoint_id);
 		$default_type = $this->get_background_type();
@@ -535,7 +535,7 @@ abstract class Upfront_Container extends Upfront_Entity {
 					}
 					$slug = upfront_get_property_value('id_slug', $child);
 					if($slug === 'ucomment' && is_single() && !comments_open())
-						return $html; 
+						return $html;
 
 					$classes = $this->_get_property('class');
 					$column = upfront_get_class_num('c', $classes);
@@ -617,7 +617,7 @@ class Upfront_Layout_View extends Upfront_Container {
 		$css = '';
 		return $css;
 	}
-    
+
     public function get_css_class () {
         $classes = parent::get_css_class();
         $classes .= ' upfront-image-lazy upfront-image-lazy-bg';
@@ -631,7 +631,7 @@ class Upfront_Layout_View extends Upfront_Container {
 		}
 		return $attr;
 	}
-	
+
 	public function get_style_for ($point, $scope) {
 		$css = '';
 		$is_overlay = $this->_is_background_overlay($point->get_id());
@@ -711,7 +711,7 @@ class Upfront_Region_Container extends Upfront_Container {
 		}
 		return $attr;
 	}
-	
+
 	public function get_id () {
 		return 'upfront-region-container-' . strtolower(str_replace(" ", "-", $this->get_name()));
 	}
@@ -860,7 +860,7 @@ class Upfront_Region extends Upfront_Container {
 		}
 		return $attr;
 	}
-	
+
 	public function get_id () {
 		return 'upfront-region-' . strtolower(str_replace(" ", "-", $this->get_name()));
 	}
@@ -1015,7 +1015,7 @@ class Upfront_Module_Group extends Upfront_Container {
 		if (!empty($anchor)) $pre .= '<a id="' . esc_attr($anchor) . '" data-is-anchor="1"></a>';
 		return $pre . parent::get_markup();
 	}
-	
+
 	public function wrap ($out) {
 		$overlay = '';
 		$bg_attr = '';
@@ -1027,7 +1027,7 @@ class Upfront_Module_Group extends Upfront_Container {
 		$bg_node_end = "</div>";
 		return parent::wrap( "{$out}\n{$bg_node_start}{$overlay}{$bg_node_end}" );
 	}
-	
+
 	public function get_css_class () {
 		$classes = parent::get_css_class();
 		$classes .= ' upfront-module-group';
@@ -1036,7 +1036,7 @@ class Upfront_Module_Group extends Upfront_Container {
 			$classes .= ' ' . strtolower($theme_style);
 		return $classes;
 	}
-	
+
 	public function get_attr () {
 		$theme_style = $this->_get_property('theme_style');
 		$link = $this->_get_property('href');
@@ -1047,7 +1047,7 @@ class Upfront_Module_Group extends Upfront_Container {
 		foreach ( Upfront_Output::$grid->get_breakpoints(true) as $breakpoint ) {
 		$theme_styles[$breakpoint->get_id()] = $this->_get_breakpoint_property('theme_style', $breakpoint->get_id());
 		}
-				
+
 		$link_attributes = '';
 		if(!empty($link)) {
 			$link_attributes = "data-group-link='".$link."'";
@@ -1055,10 +1055,10 @@ class Upfront_Module_Group extends Upfront_Container {
 				$link_attributes .= "data-group-target='".$linkTarget."'";
 			}
 		}
-	
+
 		return " data-theme-styles='" . json_encode($theme_styles) . "' ".$link_attributes;
 	}
-	
+
 	public function get_style_for ($point, $scope) {
 		$css = '';
 		$is_overlay = $this->_is_background_overlay($point->get_id());
@@ -1131,7 +1131,7 @@ class Upfront_Module extends Upfront_Container {
 		$wrapper_id = $this->_get_property('wrapper_id');
 		return Upfront_Wrapper::get_instance($wrapper_id, $this->_parent_data);
 	}
-    
+
     public function get_css_class () {
         $classes = parent::get_css_class();
         $more_classes = array();
@@ -1148,6 +1148,15 @@ class Upfront_Object extends Upfront_Entity {
 	public function __construct ($data) {
 		//Make sure all the properties are initialized
 		$data['properties'] = $this->merge_default_properties($data);
+
+		// Take care of old preset API
+		$currentpreset = upfront_get_property_value('currentpreset', $data);
+		if ($currentpreset) {
+			// Unset currentpreset property and set preset to correct value
+			$data = upfront_set_property_value('preset', $currentpreset, $data);
+			$data = upfront_set_property_value('currentpreset', false, $data);
+		}
+
 		parent::__construct($data);
 		Upfront_Output::$current_object = $this;
 	}
