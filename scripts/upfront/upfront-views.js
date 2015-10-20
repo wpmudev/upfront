@@ -632,6 +632,12 @@ define([
 				return false; // Stop propagation in order not to cause error with missing sortables etc
 			},
 			on_context_menu: function(e) {
+				
+				if($(e.target).closest('.redactor-editor').length > 0) {
+					e.stopPropagation();
+					return;
+				}
+				
 				if (Upfront.Settings.Application.no_context_menu) return;
 				
 				e.stopPropagation();

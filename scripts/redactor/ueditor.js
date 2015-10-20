@@ -411,6 +411,7 @@ var hackRedactor = function(){
         italic: l10n.italic,
     });
 
+
 };
 
 var Ueditor = function($el, options) {
@@ -1044,7 +1045,8 @@ Ueditor.prototype = {
                 return;
 			//var is_selection = ((Math.abs(e.pageX-me.lastmousedown.x) + Math.abs(e.pageY-me.lastmousedown.y)) > 2);
             var is_selection = !!me.redactor.selection.getText();
-			if((is_selection || me.clickcount > 1) && me.redactor && me.redactor.waitForMouseUp && me.redactor.selection.getText()){
+
+			if(((is_selection && me.clickcount != 1) || me.clickcount > 1) && me.redactor && me.redactor.waitForMouseUp && me.redactor.selection.getText()){
 				me.redactor.airShow(e);
 				me.redactor.$element.trigger('mouseup.redactor');
 			}
