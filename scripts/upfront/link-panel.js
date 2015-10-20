@@ -6,7 +6,7 @@ define([
 
 	var getAnchors = function() {
 		var regions = Upfront.Application.layout.get("regions"),
-			anchors = [],
+			anchors = [{id: '#page', label: 'Back To Top'}],
 			find;
 
 		find = function (modules) {
