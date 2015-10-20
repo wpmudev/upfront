@@ -711,15 +711,15 @@ Ueditor.prototype = {
             // Replace the selection tag with the one from the replacement map
             if ("nest" in target && target.nest) {
                 $node.html(
-                    '<div><' + target.tag + '><' + target.nest + '>' + 
+                    '<' + target.tag + '><' + target.nest + '>' +
                         text + 
-                    '</' + target.nest + '></' + target.tag + '></div>'
+                    '</' + target.nest + '></' + target.tag + '>'
                 );
             } else {
                 $node.html(
-                    '<div><' + target.tag + '>' + 
+                    '<' + target.tag + '>' +
                         text + 
-                    '</' + target.tag + '></div>'
+                    '</' + target.tag + '>'
                 );
             }
 
