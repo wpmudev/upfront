@@ -29,6 +29,124 @@
 
 jQuery(document).ready(function($) {
 
+	var $win = $(window),
+		_cache = {}
+	;
+	var FloatNav = function ($el) {
+		var adminbarheight = ($('div#wpadminbar').length > 0)?$('div#wpadminbar').outerHeight():0;
+		var start_position = {
+			top: 0,
+			left: 0
+		};
+		var start_size = {
+			width: 0,
+			height: 0
+		};
+		var $root = $el;
+
+		var start_floating = function () {
+
+			$current_offset = $root.offset();
+
+			$root.attr("data-already_floating", "yes");
+
+			$root.closest('.upfront-output-wrapper').css('z-index', 999);
+			$root.closest('.upfront-output-region-container').css('z-index', 999);
+
+			if($root.hasClass('responsive_nav_toggler'))
+				$root.offset($current_offset);
+			else
+				$root.css(start_size);
+
+			if(adminbarheight > 0)
+				$root.css('margin-top', adminbarheight);
+		};
+
+		var stop_floating = function () {
+			$root
+				.attr("style", "")
+				.attr("data-already_floating", "no")
+			;
+			$root.closest('.upfront-output-wrapper').css('z-index', '');
+			$root.closest('.upfront-output-region-container').css('z-index', '');
+			if(adminbarheight > 0)
+				$root.css('margin-top', '');
+		}
+
+		var dispatch_movement = function () {
+			var top = $win.scrollTop();
+			
+			if (top > (start_position.top-adminbarheight) && !$root.is('[data-already_floating="yes"]')) start_floating();
+			else if (top <= (start_position.top-adminbarheight) && $root.is('[data-already_floating="yes"]')) stop_floating();
+		};
+
+		var destroy = function () {		
+			start_position = {
+				top: 0,
+				left: 0
+			};
+			start_size = {
+				width: 0,
+				height: 0
+			};
+			$root = false;
+			$win.off("scroll", dispatch_movement);
+		};
+
+		var init = function () {
+			
+			start_position = $root.offset();
+			start_size = {width: $root.width(), height: $root.height()};
+			$win
+				.off("scroll", dispatch_movement)
+				.on("scroll", dispatch_movement)
+			;
+		};
+		init();
+
+		return {
+			destroy: destroy
+		}
+	};
+
+	function floatInit () {
+		//lets do the clean up first
+		$(".upfront-navigation").each(function () {
+			var $me = $(this);
+
+			if($me.data('style') == 'burger') {
+				$toggler = $me.children('.responsive_nav_toggler');
+				$toggler.attr('id', $me.attr('id')+'-toggler');
+				if (_cache[$toggler.attr("id")]) _cache[$toggler.attr("id")].destroy();
+				
+			}
+			else {
+				if (_cache[$me.attr("id")]) _cache[$me.attr("id")].destroy();
+				
+			}
+		});
+
+		$(".upfront-navigation.upfront-navigation-float").each(function () {
+			var $me = $(this);
+
+			if($me.data('style') == 'burger') {
+				$toggler = $me.children('.responsive_nav_toggler');
+				$toggler.attr('id', $me.attr('id')+'-toggler');
+				//if (_cache[$toggler.attr("id")]) _cache[$toggler.attr("id")].destroy();
+				_cache[$toggler.attr("id")] = new FloatNav($toggler);	
+			}
+			else {
+				//if (_cache[$me.attr("id")]) _cache[$me.attr("id")].destroy();
+				_cache[$me.attr("id")] = new FloatNav($me);
+			}
+		});
+	}
+
+	$win
+		.load(floatInit);
+		//.smartresize(function() {console.log('wassup'); init();});
+	;
+
 	//Work around for having the region container have a higher z-index if it contains the nav, so that the dropdowns, if overlapping to the following regions should not loose "hover" when the mouse travels down to the next region.
 	$('div.upfront-navigation').each(function() {
 		if($(this).find('ul.sub-menu').length > 0) {
@@ -46,8 +164,27 @@ jQuery(document).ready(function($) {
 		e.preventDefault();
 		if($(this).parent().find('ul.menu').css('display') == 'none') {
 			$(this).closest('div.upfront-output-wrapper').addClass('on_the_top');
+
+			if($(this).parent().data('burger_over') != 'pushes' && $(this).parent().data('burger_alignment') != 'whole') {
+				$('<div class="burger_overlay"></div>').insertBefore($(this).parent().find('ul.menu'));
+			}
+	
 			$(this).parent().find('ul.menu').show();
-			$(this).parent().find('ul.sub-menu').show();
+			//$(this).parent().find('ul.sub-menu').show();
+
+			if($(this).parent().data('burger_over') == 'pushes' && $(this).parent().data('burger_alignment') == 'top') {
+		
+				$('div#page').css('margin-top', $(this).parent().find('ul.menu').height());
+		
+
+				//var topbar_height = $('div#upfront-ui-topbar').outerHeight();
+				var adminbar_height = ($('div#wpadminbar').length > 0)?$('div#wpadminbar').outerHeight():0;
+				
+				$(this).parent().find('ul.menu').offset({top:adminbar_height, left:$('div').offset().left});
+				$(this).parent().find('ul.menu').width($('div#page').width());
+
+			}
+
 
 			var offset = $(this).parent().find('ul.menu').position();
 
@@ -55,29 +192,43 @@ jQuery(document).ready(function($) {
 			//$(this).parent().find('ul.menu').css('padding-top', '60px');
 			var close_icon = $('<i class="burger_nav_close"></i>');
 
-			$(this).parent().find('ul.menu').parent().append(close_icon);
+			$(this).parent().find('ul.menu').prepend($('<li>').addClass('wrap_burger_nav_close').append(close_icon));
 
-			close_icon.css({position: 'fixed', left: offset.left+$(this).parent().find('ul.menu').width()-close_icon.width()-10, top: offset.top+(($('div#wpadminbar').length && $('div#wpadminbar').css('display') == 'block')?$('div#wpadminbar').outerHeight():0) + 10});
+			//close_icon.css({position: 'fixed', left: offset.left+$(this).parent().find('ul.menu').width()-close_icon.width()-10, top: offset.top+(($('div#wpadminbar').length && $('div#wpadminbar').css('display') == 'block')?$('div#wpadminbar').outerHeight():0) + 10});
+
+			/*
 
 			if($(this).parent().data('burger_over') == 'pushes')
 				pushContent($(this).parent());
+			*/
+
+			
 
 			$(this).closest('.upfront-output-region-container').each(function() {
 				$(this).addClass('upfront-region-container-has-nav');
 			});
+
 		}
 		else {
 			$(this).parent().find('ul.menu').hide();
-			$(this).parent().find('ul.sub-menu').hide();
+			$(this).parent().find('ul.menu').siblings('.burger_overlay').remove();
+			//$(this).parent().find('ul.sub-menu').hide();
 
 			//$(e.target).closest('.responsive_nav_toggler').css({position: '', left: '', top: ''});
 			//$(this).parent().find('ul.menu').css('padding-top', '');
 
-			$('i.burger_nav_close').remove();
+			$('i.burger_nav_close').parent('li.wrap_burger_nav_close').remove();
 
 			$(this).closest('div.upfront-output-wrapper').removeClass('on_the_top');
+			
+			/*
 			if($(this).parent().data('burger_over') == 'pushes')
 				pullContent($(this).parent());
+			*/
+
+			if($(this).parent().data('burger_over') == 'pushes')
+				$('div#page').css('margin-top', '');
+
 
 			$(this).closest('.upfront-output-region-container').each(function() {
 				$(this).removeClass('upfront-region-container-has-nav');
@@ -158,7 +309,7 @@ jQuery(document).ready(function($) {
 						//Z-index the container module to always be on top, in the layout edit mode
 						$(this).closest('div.upfront-newnavigation_module').css('z-index', 3);
 
-
+						$(this).find('ul.menu').siblings('.burger_overlay').remove();
 						$(this).find('ul.menu').hide();
 					}
 					else {
@@ -186,6 +337,11 @@ jQuery(document).ready(function($) {
 						$(this).closest('div.upfront-newnavigation_module').css('z-index', '');
 					}
 
+					if(bparray[key]['is_floating'] && bparray[key]['is_floating'] == 'yes')
+						$(this).addClass('upfront-navigation-float');
+					else
+						$(this).removeClass('upfront-navigation-float');
+
 				}
 			}
 		});
@@ -193,10 +349,12 @@ jQuery(document).ready(function($) {
 	roll_responsive_nav(".upfront-output-unewnavigation > .upfront-navigation");
 	
 	$(window).smartresize(function() {
+		$('div#page').css('margin-top', '');
 		$('.responsive_nav_toggler').css({position: '', left: '', top: ''});
 		$('ul.menu').css('padding-top', '');
-		$('.burger_nav_close').remove();
+		$('.burger_nav_close').parent('li.wrap_burger_nav_close').remove();
 		roll_responsive_nav(".upfront-output-unewnavigation > .upfront-navigation");
+		floatInit();
 	});
 
 /*

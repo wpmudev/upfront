@@ -372,6 +372,10 @@ class Upfront_ThisPostView extends Upfront_Object {
 				if (empty($layout['wrappers'][$i]['classes'])) $layout['wrappers'][$i]['classes'] = '';
 				$layout['wrappers'][$i]['classes'] .= ' ' . join(' ', $markups['classes']);
 				
+				if (strpos($layout['wrappers'][$i]['objects'][$k]['classes'], 'part-module-' . $o['slug']) === false) {
+					$layout['wrappers'][$i]['objects'][$k]['classes'] .= ' part-module-' . $o['slug'];
+				}
+				
 				$attributes = '';
 				if(isset($opts['attributes'])){
 					foreach($opts['attributes'] as $key => $value)
@@ -401,11 +405,15 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 		if ($found && !empty($found['postLayout'])) {
 			foreach ($found['postLayout'] as $idx => $wrapper) {
-				$obj = !empty($wrapper['objects']) ? end($wrapper['objects']) : false;
-				if ($obj && !empty($obj['slug'])) {
-					if (empty($wrapper['classes'])) $wrapper['classes'] = '';
-					$found['postLayout'][$idx]['classes'] = $wrapper['classes'] . ' part-' . $obj['slug'];
+				if (empty($wrapper['classes'])) $wrapper['classes'] = '';
+				if (!empty($wrapper['objects'])) {
+					foreach ($wrapper['objects'] as $obj) {
+						if ($obj && !empty($obj['slug']) && strpos($wrapper['classes'], 'part-' . $obj['slug']) === false) {
+							$wrapper['classes'] .= ' part-' . $obj['slug'];
+						}
+					}
 				}
+				$found['postLayout'][$idx]['classes'] = $wrapper['classes'];
 			}
 		}
 

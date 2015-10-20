@@ -25,9 +25,11 @@
 					Upfront.Events.on("layout:after_render", function(){
 						apply_binding_all();
 					});
-					Upfront.Events.on("entity:module:after_render", apply_binding_view);
-					Upfront.Events.on("entity:region:after_render", apply_binding_view);
-					Upfront.Events.on("entity:resize_stop", apply_binding_view);
+					Upfront.Events.on("entity:modules:render_module", apply_binding_view);
+					Upfront.Events.on("entity:regions:render_region", apply_binding_view);
+					Upfront.Events.on("entity:regions:render_container", apply_binding_view);
+					Upfront.Events.on("entity:resize_stop", apply_binding_view_region);
+					Upfront.Events.on("entity:drag_stop", apply_binding_view_region);
 					Upfront.Events.on("entity:region_container:resize_stop", apply_binding_view);
 					Upfront.Events.on("upfront:editor:image_on", function(sel){
 						apply_binding_all();
@@ -38,33 +40,57 @@
 				}
 			});
 			function apply_binding_all (sel) {
-				var $sel = _.isString(sel) ? $(sel) :  $('body');
+				var $sel = _.isString(sel) && sel != '' ? $(sel) :  $('.upfront-layout');
 				return apply_binding($sel);
 			}
 			function apply_binding_view (view) {
 				return apply_binding(view.$el.parent());
 			}
+			function apply_binding_view_region (view) {
+				if ( bind.match(/\.upfront-region-container/) ) {
+					apply_binding_all();
+				}
+				else {
+					var $region = view.$el.closest('.upfront-region');
+					apply_binding( bind.match(/\.upfront-region/) ? $region.parent() : $region );
+				}
+			}
 			function apply_binding ($sel, single) {
-				var $style = $('#'+r_id);
+				var $style = $('#'+r_id),
+					changed = false
+				;
 				$sel.find(bind).each(function(){
 					var $el = single ? $(this).closest('.upfront-module') : $(this)
 						id = $(this).attr('id') || 'bind-'+(Math.floor(Math.random()*100000)),
-						width = $el.outerWidth(),
-						height = $el.outerHeight(),
-						bind_styles = styles.replace(/\( ?this ?\)/igm, '#'+id);
-					if ( ! $(this).attr('id') )
+						width = parseFloat($el.css('width')),
+						height = parseFloat($el.css('height'))
+					;
+					if ( ! $(this).attr('id') ) {
 						$(this).attr('id', id);
+					}
 					var matched = (
 						( (min_width && width >= min_width) || !min_width ) &&
 						( (max_width && width <= max_width) || !max_width ) &&
 						( (min_height && height >= min_height) || !min_height ) &&
 						( (max_height && height <= max_height) || !max_height )
 					);
-					if ( matched )
-						applied_styles[id] = bind_styles;
-					else
+					if ( typeof applied_styles[id] == 'undefined' ) {
 						applied_styles[id] = '';
+					}
+					if ( matched ) {
+						if ( applied_styles[id] == '' ) {
+							applied_styles[id] = styles.replace(/\( ?this ?\)/igm, '#'+id);
+							changed = true;
+						}
+					}
+					else {
+						if ( applied_styles[id] != '' ) {
+							applied_styles[id] = '';
+							changed = true;
+						}
+					}
 				});
+				if ( !changed ) return;
 				var styles_all = $.map(applied_styles, function(style, id){
 					return style;
 				});

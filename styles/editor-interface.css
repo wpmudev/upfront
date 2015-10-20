@@ -133,6 +133,17 @@
   outline: none; }
 
 /* line 41, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/upfront-ui */
+.upfront-object-content .ueditor-box-wrapper h1, .upfront-object-content .ueditor-box-wrapper h2, .upfront-object-content .ueditor-box-wrapper h3, .upfront-object-content .ueditor-box-wrapper h4, .upfront-object-content .ueditor-box-wrapper h5, .upfront-object-content .ueditor-box-wrapper h6, .upfront-object-content .ueditor-box-wrapper p, .upfront-object-content .ueditor-box-wrapper a, .upfront-object-content .ueditor-box-wrapper a:hover, .upfront-object-content .ueditor-box-wrapper ul, .upfront-object-content .ueditor-box-wrapper ol, .upfront-object-content .ueditor-box-wrapper blockquote, .upfront-object-content .ueditor-box-wrapper blockquote p, .upfront-object-content .ueditor-box-wrapper blockquote.upfront-quote-alternative {
+  font-family: 'Source Sans Pro';
+  text-decoration: none;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 15px; }
+
+.upfront-object-content .ueditor-box-wrapper ul, .upfront-object-content .ueditor-box-wrapper ol {
+  margin: 0;
+  padding: 0; }
+
 .upfront-ui a, .upfront-ui button, .upfront-ui input {
   -webkit-transition: color, background-color, border, opacity 0.25s;
   -o-transition: color, background-color, border, opacity 0.25s;
@@ -183,6 +194,9 @@ em {
 /* line 22, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/general-stuff */
 [contenteditable=true]:focus {
   outline: none; }
+
+.upfront-edit-layout .uf-click-to-edit-text {
+  cursor: url(../img/edit_txt.svg), auto; }
 
 /* Let's have a standard class for common button, text, etc */
 /* line 2, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/button */
@@ -1217,17 +1231,16 @@ span.draggable-post-element:hover, span.draggable-post-element.element-dragging 
 
 /* Scrollbar */
 /* line 933, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/sidebar-ui */
-#sidebar-ui .sidebar-panel-content::-webkit-scrollbar, .upfront-scroll-panel::-webkit-scrollbar, .upfront-settings_panel_scroll::-webkit-scrollbar, .upfront-field-select-options::-webkit-scrollbar, .upfront-suggest-lists::-webkit-scrollbar, .upfront-additive_multiselection .labels_list ul::-webkit-scrollbar, .upfront-media_collection::-webkit-scrollbar, .upfront-item-control::-webkit-scrollbar, .upfront-filter-control::-webkit-scrollbar, #upfront-csseditor .ace_scrollbar-inner::-webkit-scrollbar, #upfront-csseditor .ace_scrollbar::-webkit-scrollbar, #upfront-general-csseditor .ace_scrollbar-inner::-webkit-scrollbar, #upfront-general-csseditor .ace_scrollbar::-webkit-scrollbar, .upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar, .upfront_code-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar, .redactor-dropdown-box-upfrontIcons div.icons::-webkit-scrollbar, .redactor-dropdown-box-upfrontFormatting::-webkit-scrollbar {
+#sidebar-ui .sidebar-panel-content::-webkit-scrollbar, .upfront-scroll-panel::-webkit-scrollbar, .upfront-settings_panel_scroll::-webkit-scrollbar, .upfront-field-select-options::-webkit-scrollbar, .upfront-suggest-lists::-webkit-scrollbar, .upfront-additive_multiselection .labels_list ul::-webkit-scrollbar, .upfront-media_collection::-webkit-scrollbar, .upfront-item-control::-webkit-scrollbar, .upfront-filter-control::-webkit-scrollbar, #upfront-csseditor .ace_scrollbar-inner::-webkit-scrollbar, #upfront-csseditor .ace_scrollbar::-webkit-scrollbar, #upfront-general-csseditor .ace_scrollbar-inner::-webkit-scrollbar, #upfront-general-csseditor .ace_scrollbar::-webkit-scrollbar, .upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar, .upfront_code-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar, .redactor-dropdown-box-upfrontIcons div.icons::-webkit-scrollbar, .redactor-dropdown-box-upfrontFormatting::-webkit-scrollbar, .upfront_map-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar, .upfront_map-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar {
   background: none;
   width: 5px; }
 
 /* overwriting Ace editor scrollbar */
-/* line 941, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/sidebar-ui */
-#upfront-csseditor .ace_scrollbar, #upfront-general-csseditor .ace_scrollbar, .upfront_code-editor-complex-wrapper .ace_scrollbar {
+
+#upfront-csseditor .ace_scrollbar, #upfront-general-csseditor .ace_scrollbar, .upfront_code-editor-complex-wrapper .ace_scrollbar, .upfront_map-editor-complex-wrapper .ace_scrollbar {
   width: 5px !important; }
 
-/* line 979, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/sidebar-ui */
-#sidebar-ui .sidebar-panel-content::-webkit-scrollbar-thumb, .upfront-scroll-panel::-webkit-scrollbar-thumb, .upfront-settings_panel_scroll::-webkit-scrollbar-thumb, .upfront-field-select-options::-webkit-scrollbar-thumb, .upfront-suggest-lists::-webkit-scrollbar-thumb, .upfront-additive_multiselection .labels_list ul::-webkit-scrollbar-thumb, .upfront-media_collection::-webkit-scrollbar-thumb, .upfront-item-control::-webkit-scrollbar-thumb, .upfront-filter-control::-webkit-scrollbar-thumb, #upfront-csseditor .ace_scrollbar-inner::-webkit-scrollbar-thumb, #upfront-csseditor .ace_scrollbar::-webkit-scrollbar-thumb, #upfront-general-csseditor .ace_scrollbar-inner::-webkit-scrollbar-thumb, #upfront-general-csseditor .ace_scrollbar::-webkit-scrollbar-thumb, .upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar-thumb, .upfront_code-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar-thumb, .redactor-dropdown-box-upfrontIcons div.icons::-webkit-scrollbar-thumb, .redactor-dropdown-box-upfrontFormatting::-webkit-scrollbar-thumb {
+#sidebar-ui .sidebar-panel-content::-webkit-scrollbar-thumb, .upfront-scroll-panel::-webkit-scrollbar-thumb, .upfront-settings_panel_scroll::-webkit-scrollbar-thumb, .upfront-field-select-options::-webkit-scrollbar-thumb, .upfront-suggest-lists::-webkit-scrollbar-thumb, .upfront-additive_multiselection .labels_list ul::-webkit-scrollbar-thumb, .upfront-media_collection::-webkit-scrollbar-thumb, .upfront-item-control::-webkit-scrollbar-thumb, .upfront-filter-control::-webkit-scrollbar-thumb, #upfront-csseditor .ace_scrollbar-inner::-webkit-scrollbar-thumb, #upfront-csseditor .ace_scrollbar::-webkit-scrollbar-thumb, #upfront-general-csseditor .ace_scrollbar-inner::-webkit-scrollbar-thumb, #upfront-general-csseditor .ace_scrollbar::-webkit-scrollbar-thumb, .upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar-thumb, .upfront_code-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar-thumb, .redactor-dropdown-box-upfrontIcons div.icons::-webkit-scrollbar-thumb, .redactor-dropdown-box-upfrontFormatting::-webkit-scrollbar-thumb, .upfront_map-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar-thumb, .upfront_map-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar-thumb, .redactor-dropdown-box-upfrontIcons div.icons::-webkit-scrollbar-thumb {
   border-right: 5px solid #1fcd8f; }
 
 /* Corrections for create theme mode sidebar */
@@ -2162,7 +2175,8 @@ input.upfront-field-text:hover, .upfront-field-text:focus {
   height: 12px;
   border-radius: 6px;
   position: absolute;
-  top: -5px; }
+  top: -5px;
+  cursor: pointer; }
 
 /* line 673, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/fields */
 .upfront-field-slider-vertical .ui-slider-handle {
@@ -2249,6 +2263,17 @@ div.upfront-date_picker td a {
   text-align: center; }
 
 /* line 1, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/ueditor-inserts */
+.upfront-field-wrap-checkboxes .checkbox-info:before {
+  display: inline-block;
+  content: "";
+  width: 15px;
+  height: 15px;
+  background-image: url('../img/uf-core-el-sprite.svg');
+  background-position: -483px -141px;
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-bottom: -4px; }
+
 .ueditor-datepicker-buttons {
   border-top: 1px solid #accae6;
   padding: 5px 10px;
@@ -2732,6 +2757,9 @@ div.uinsert-selector a:hover {
   width: 100%; }
 
 /* line 17, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/region */
+.upfront-region-container-has-posts .upfront-region, .upfront-region-container-has-this_post .upfront-region {
+  min-height: 0 !important; }
+
 .upfront-region-current {
   z-index: 10; }
 
@@ -2799,6 +2827,9 @@ div.uinsert-selector a:hover {
   bottom: 0; }
 
 /* line 83, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/region */
+.upfront-region-bg-overlay {
+  overflow: hidden; }
+
 .upfront-region-bg-map {
   position: absolute !important; }
 
@@ -3003,7 +3034,7 @@ div.uinsert-selector a:hover {
   width: auto;
   height: auto;
   z-index: 9997;
-  cursor: s-resize;
+  cursor: ns-resize;
   display: block;
   visibility: hidden; }
 
@@ -3011,7 +3042,7 @@ div.uinsert-selector a:hover {
 .upfront-region-resize-handle-n {
   top: -14px;
   bottom: auto;
-  cursor: n-resize; }
+  cursor: ns-resize; }
 
 /* line 304, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/region */
 .upfront-region-resize-handle-e {
@@ -3020,7 +3051,7 @@ div.uinsert-selector a:hover {
   left: auto;
   right: -13px;
   width: 24px;
-  cursor: e-resize; }
+  cursor: ew-resize; }
 
 /* line 312, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/region */
 .upfront-region-resize-handle-w {
@@ -3029,7 +3060,7 @@ div.uinsert-selector a:hover {
   left: -13px;
   right: auto;
   width: 24px;
-  cursor: w-resize; }
+  cursor: ew-resize; }
 
 /* line 325, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/region */
 .upfront-region-editing .upfront-region-container-active > .upfront-region-resize-handle, .upfront-region-editing .upfront-region-container-active .upfront-region-side-left > .upfront-region-resize-handle-e, .upfront-region-editing .upfront-region-container-active .upfront-region-side-right > .upfront-region-resize-handle-w, .upfront-region-editing .upfront-region-container-active .upfront-region-sub-container > .upfront-region-resize-handle, .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region > .upfront-region-resize-handle-s, .upfront-region-fixed-editing .upfront-region-side-fixed .upfront-region-resize-handle {
@@ -3073,6 +3104,12 @@ div.uinsert-selector a:hover {
   z-index: 9999; }
 
 /* line 375, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/region */
+.upfront-region-editing-modal {
+  z-index: 999999999; }
+
+.upfront-region-editing-modal .upfront-entity_meta {
+  display: none !important; }
+
 .upfront-region-editing .upfront-region-container-active .upfront-region-active-overlay, .upfront-region-editing .upfront-region-active .upfront-region-active-overlay, .upfront-region-side-left.upfront-add-region-ani:after, .upfront-region-side-right.upfront-add-region-ani:after {
   border-top: 3px solid #2f3a44;
   border-bottom: 3px solid #2f3a44;
@@ -4216,7 +4253,148 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-region-editing .upfront-region-bg-setting-open .upfront-region-panel-item-add-region, .upfront-region-editing .upfront-region-bg-setting-open .upfront-icon-control-region-resize-e:before, .upfront-region-editing .upfront-region-bg-setting-open .upfront-icon-control-region-resize-w:before {
   display: none; }
 
+<<<<<<< HEAD
 /* line 2, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/bgsettings */
+=======
+.upfront_map-editor {
+  position: fixed;
+  width: 100%;
+  cursor: auto;
+  right: 0;
+  bottom: 0;
+  z-index: 10000000;
+  min-height: 200px;
+  display: none; }
+
+.upfront_map-editor button {
+  background: #2ecc90;
+  color: #fff;
+  position: absolute;
+  bottom: 10px;
+  right: 25px;
+  padding: 5px 10px;
+  border: 0;
+  border-radius: 0;
+  font-size: 14px;
+  z-index: 2; }
+
+.upfront_map-editor button:hover {
+  background: #3ea; }
+
+/* Simple */
+.upfront_map-editor.upfront_map-editor-simple {
+  padding: 10px; }
+
+.upfront_map-editor.upfront_map-editor-simple h3 {
+  margin: 0;
+  text-transform: none; }
+
+.upfront_map-editor-simple textarea {
+  min-height: 80px; }
+
+/* Complex */
+.upfront_map-editor.upfront_map-editor-complex textarea {
+  color: white;
+  background: #454e58;
+  border: none;
+  outline: none; }
+
+.upfront_map-editor .upfront_map-editor-complex-wrapper {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  left: 0;
+  background: #3d5266;
+  min-height: 200px; }
+
+.upfront_map-switches {
+  margin: 2px 15px 0 20px;
+  float: left; }
+
+.upfront_map-switch {
+  color: #cbe5ff;
+  float: left;
+  padding: 2px 10px;
+  margin: 2px 5px 0 0;
+  cursor: pointer; }
+
+.upfront_map-switch:hover {
+  color: #dae6f2;
+  background: #2E3D4C; }
+
+.upfront_map-switch.active {
+  background: #26333F; }
+
+.upfront_map-jsalert {
+  display: inline-block;
+  margin: 0 5px 0;
+  padding: 0 5px;
+  color: #444d56;
+  display: none;
+  float: left; }
+
+.upfront_map-jsalert .upfront-icon-button:before {
+  background-position: -482px -205px;
+  margin-top: 7px; }
+
+.upfront_map-editor-section {
+  height: 100%; }
+
+.upfront_map-editor.upfront_map-editor-complex .upfront_map-editor-complex-wrapper .upfront_map-editor-section {
+  display: none; }
+
+.upfront_map-editor.upfront_map-editor-complex .upfront_map-editor-complex-wrapper .upfront_map-editor-section.active {
+  display: block; }
+
+.upfront_map-editor.upfront_map-editor-complex .handle.ui-resizable-handle.ui-resizable-s {
+  text-align: center;
+  font-size: 18px;
+  line-height: 7px;
+  bottom: 5px; }
+
+.ace_editor.upfront_map-ace {
+  height: 100%;
+  width: 100%; }
+
+/* Missing defaults */
+.upfront-map_element-module button.embed, .upfront-map_element-module button.create, .upfront_map-editor-simple button {
+  border: 0;
+  border-radius: 2px;
+  padding: 10px 30px;
+  cursor: pointer; }
+
+.upfront_map-editor-simple textarea {
+  width: 98%; }
+
+.upfront_map-editor .upfront-css-top {
+  border-bottom: none; }
+
+.upfront_map-editor .upfront-icon-info {
+  padding: 0 20px;
+  float: left;
+  line-height: 34px; }
+
+.upfront_map-editor .upfront-icon-info:before {
+  display: inline-block;
+  content: "";
+  width: 15px;
+  height: 15px;
+  background-image: url("../img/uf-core-el-sprite.svg");
+  background-position: -483px -141px;
+  margin-left: 5px;
+  margin-right: 15px;
+  margin-bottom: -4px; }
+
+.upfront_map-editor .upfront_map-custom_map_code {
+  display: inline-block;
+  padding: 0 10px;
+  color: #2ecc90;
+  font-weight: bold;
+  background-color: #2C3E50;
+  height: 34px;
+  line-height: 34px;
+  float: left; }
+
 .uf-bgsettings-item .upfront-field-wrap .upfront-field-label-block, .upfront-region-bg-setting-tab-primary .upfront-field-wrap .upfront-field-label-block {
   color: #3f617f;
   font-family: 'Source Sans Pro', sans-serif;
@@ -4337,7 +4515,7 @@ a.upfront-region-name-edit-trigger:before {
   width: auto; }
 
 /* line 104, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/bgsettings */
-.uf-bgsettings-map-show-marker {
+.uf-bgsettings-map-custom-map-code, .uf-bgsettings-map-show-marker {
   clear: both;
   float: left;
   width: 100%; }
@@ -4437,6 +4615,9 @@ a.upfront-region-name-edit-trigger:before {
   display: block; }
 
 /* line 1, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/layout-grid-module-object */
+.background-type-field .upfront-field-select, .background-image-field .upfront-field-select {
+  max-width: 140px; }
+
 #settings {
   position: fixed;
   left: 0;
@@ -4490,7 +4671,7 @@ a.upfront-region-name-edit-trigger:before {
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 0;
+  z-index: 1;
   visibility: hidden;
   opacity: 0;
   background: -webkit-linear-gradient(bottom, rgba(100, 255, 255, 0.3) 1px, transparent 1px, transparent);
@@ -4848,6 +5029,9 @@ a.upfront-region-name-edit-trigger:before {
   cursor: move; }
 
 /* line 378, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/layout-grid-module-object */
+.ui-draggable-disabled {
+  cursor: default; }
+
 .ui-selectable-helper {
   position: absolute;
   z-index: 100;
@@ -4896,7 +5080,10 @@ a.upfront-region-name-edit-trigger:before {
   visibility: hidden; }
 
 /* line 423, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/layout-grid-module-object */
-.upfront-module-group-on-edit > .ui-resizable-handle, .upfront-module-group-on-edit > .upfront-entity_meta > .upfront-icon-button {
+.upfront-module-group .upfront-editable_entities_container .uslider .ui-resizable-handle {
+  visibility: visible; }
+
+.upfront-module-group-on-edit > .ui-resizable-handle, .upfront-module-group-on-edit > .upfront-entity_meta > .upfront-icon-button, .upfront-module-group.controls-visible > .upfront-entity_meta > .upfront-icon-button {
   visibility: hidden !important; }
 
 /* line 426, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/layout-grid-module-object */
@@ -5084,38 +5271,56 @@ a.upfront-region-name-edit-trigger:before {
 
 /* Group Element Link Panel Style */
 /* line 606, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/layout-grid-module-object */
-.upfront-module-group > .uimage-controls.image-element-controls .upfront-inline-panel .upfront-inline-panel-item.labeled {
+.upfront-module-group > .upfront-module-group-controls .upfront-inline-panel .upfront-inline-panel-item {
+  display: block;
+  float: none;
+  background: none;
+  border: none;
+  color: #97b8da;
   width: auto !important;
   min-width: 0px !important;
-  line-height: inherit !important;
-  padding-left: 0; }
+  line-height: inherit !important; }
 
-/* line 612, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/layout-grid-module-object */
-.upfront-module-group > .uimage-controls.image-element-controls .upfront-inline-panel .upfront-inline-panel-item.labeled i {
+.upfront-module-group > .upfront-module-group-controls .upfront-inline-panel .upfront-inline-panel-item:hover {
+  background: #466381; }
+
+.upfront-module-group > .upfront-module-group-controls .upfront-inline-panel .upfront-inline-panel-item.labeled i {
   display: inline-block; }
 
-/* line 615, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/layout-grid-module-object */
-.upfront-module-group > .uimage-controls.image-element-controls .upfront-inline-panel .upfront-inline-panel-item.labeled span {
-  display: inline-block;
-  width: auto !important; }
+.upfront-module-group > .upfront-module-group-controls .upfront-inline-panel .upfront-inline-panel-item.visit-link-control i {
+  float: right;
+  margin-left: 10px;
+  margin-right: -15px; }
 
-/* line 619, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/layout-grid-module-object */
-.upfront-module-group > .uimage-controls.image-element-controls {
+.upfront-module-group > .upfront-module-group-controls .upfront-inline-panel .upfront-inline-panel-item-label {
+  display: inline-block;
+  width: auto !important;
+  font: 16px/24px 'Source Sans Pro', sans-serif; }
+
+.upfront-module-group > .upfront-module-group-controls {
   display: block;
   visibility: hidden;
-  bottom: -30px;
-  left: 0; }
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 200px; }
 
-/* line 625, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/layout-grid-module-object */
-.upfront-module-group > .uimage-controls.image-element-controls .upfront-inline-panel {
-  visibility: hidden; }
+.upfront-module-group > .upfront-module-group-controls .upfront-inline-panel {
+  visibility: hidden;
+  background: #152845;
+  box-shadow: none;
+  padding-top: 2px;
+  width: auto !important;
+  height: auto !important;
+  top: 0;
+  left: 0;
+  z-index: 2001;
+  /* A Space Odyssey */ }
 
-/* line 628, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/layout-grid-module-object */
-.upfront-module-group.controls-visible > .uimage-controls.image-element-controls {
+.upfront-module-group.controls-visible > .upfront-module-group-controls {
   visibility: visible; }
 
-/* line 631, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/layout-grid-module-object */
-.upfront-module-group.controls-visible > .uimage-controls.image-element-controls .upfront-inline-panel {
+.upfront-module-group.controls-visible > .upfront-module-group-controls .upfront-inline-panel {
   visibility: visible; }
 
 /* line 634, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/layout-grid-module-object */
@@ -5159,6 +5364,22 @@ a.upfront-region-name-edit-trigger:before {
   background-image: linear-gradient(-179deg, #2F445D 0%, #152841 100%);
   -moz-box-shadow: inset 0px -1px 0px 0px #43607A, inset 0px 1px 0px 0px #26394A;
   box-shadow: inset 0px -1px 0px 0px #43607A, inset 0px 1px 0px 0px #26394A; }
+.upfront-module-group.upfront-module-group-on-edit > .open-item-controls {
+  display: none; }
+
+.upfront-module-group > .upfront-module-group-controls .inline-panel-control-dialog {
+  min-width: 190px;
+  top: -2px;
+  background: #152845; }
+
+.upfront-module-group.control-dialog-open > .upfront-module-group-controls .upfront-inline-panel-item.upfront-control-dialog-open {
+  display: block; }
+
+.upfront-module-group.control-dialog-open > .upfront-module-group-controls .upfront-inline-panel-item {
+  display: none; }
+
+.upfront-module-group > .upfront-module-group-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-control-dialog-open:first-child {
+  height: 31px !important; }
 
 /* Collapsed control */
 /* line 672, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/layout-grid-module-object */
@@ -5177,7 +5398,7 @@ a.upfront-region-name-edit-trigger:before {
   position: absolute; }
 
 /* line 686, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/layout-grid-module-object */
-.upfront-module-group > .uimage-controls a {
+.upfront-module-group > .upfront-module-group-controls a {
   padding: 0;
   font-size: 13px;
   margin-bottom: 2px; }
@@ -9555,7 +9776,7 @@ License: MIT
   float: left;
   position: relative;
   padding: 10px;
-  /*    padding-bottom: 300px; 
+  /*    padding-bottom: 300px;
     margin-bottom: -290px;*/ }
 
 /* line 326, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/color-picker */
@@ -10181,6 +10402,10 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap {
 /* line 224, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/ulinkpanel */
 .upfront-image_module .ulinkpanel-dark, .upfront-gallery .ulinkpanel-dark, .upfront-slider_module .ulinkpanel-dark {
   min-width: 180px; }
+
+.link-panel-lightbox-trigger {
+  color: #00db8f;
+  font-size: 12px; }
 
 /* ----- New Editor bar ----- */
 /* line 2, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/editor-bar */
@@ -13231,16 +13456,19 @@ a.upfront-css-edit:before, a.upfront-preset-edit:before, a.upfront-region-name-e
 
 /* line 119, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/responsive-ui */
 #sidebar-ui .sidebar-commands-responsive-control .exit-responsive {
-  position: absolute;
-  top: 613px;
-  left: 15px;
-  margin: 0;
-  border: 3px solid #263a4d;
+  margin-top: 10px;
   padding: 2px 5px;
-  height: 33px;
-  max-width: 121px;
+  width: 100%;
+  max-width: 120px;
   overflow: hidden;
-  white-space: nowrap; }
+  white-space: nowrap;
+  line-height: 34px;
+  font-size: 15px;
+  height: 36px;
+  opacity: .8;
+  background: #54708C;
+  box-shadow: 0px 1px 0px 0px #2F3E4D, inset 0px 2px 0px 0px rgba(255, 255, 255, 0.1);
+  text-align: center; }
 
 /* line 132, C:/xampp/htdocs/upfront/wp-content/themes/upfront/styles/sass/partials/responsive-ui */
 #sidebar-ui .command-browse-layout-responsive {
@@ -14372,7 +14600,7 @@ div.upfront-regions a#no_region_add_one {
   margin: 20px 30px;
   width: 50px; }
 
-/* hack to fix empty paragraphs collapsing on each other 
+/* hack to fix empty paragraphs collapsing on each other
    note: Commented out since redactor no longer has that bug,
    so this fix is now redundant...
 

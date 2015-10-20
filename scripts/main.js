@@ -20,6 +20,7 @@ require(['backbone'], function (Backbone) {
 		// Shims and stubs
 		_.extend(Upfront.Events, Backbone.Events);
 		Upfront.Settings = {
+			"ace_url": "//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js",
 			"root_url": Upfront.mainData.root,
 			"ajax_url": Upfront.mainData.ajax,
 			"admin_url": Upfront.mainData.admin,

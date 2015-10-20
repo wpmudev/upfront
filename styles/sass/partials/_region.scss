@@ -14,6 +14,11 @@
 	width: 100%;
 }
 
+.upfront-region-container-has-posts .upfront-region,
+.upfront-region-container-has-this_post .upfront-region {
+  min-height: 0 !important;
+}
+
 .upfront-region-current {
 	z-index: 10;
 }
@@ -79,6 +84,9 @@
 	left: 0;
 	right: 0;
 	bottom: 0;
+}
+.upfront-region-bg-overlay {
+  overflow: hidden;
 }
 .upfront-region-bg-map {
 	position: absolute !important;
@@ -292,14 +300,14 @@
 	width: auto;
 	height: auto;
 	z-index: 9997;
-	cursor: s-resize;
+	cursor: ns-resize;
 	display: block;
 	visibility: hidden;
 }
 .upfront-region-resize-handle-n {
   top: -14px;
   bottom: auto;
-  cursor: n-resize;
+  cursor: ns-resize;
 }
 .upfront-region-resize-handle-e {
 	top: 0;
@@ -307,7 +315,7 @@
 	left: auto;
 	right: -13px;
 	width: 24px;
-	cursor: e-resize;
+	cursor: ew-resize;
 }
 .upfront-region-resize-handle-w {
 	top: 0;
@@ -315,7 +323,7 @@
 	left: -13px;
 	right: auto;
 	width: 24px;
-	cursor: w-resize;
+	cursor: ew-resize;
 }
 .upfront-region-editing .upfront-region-container-active > .upfront-region-resize-handle,
 .upfront-region-editing .upfront-region-container-active .upfront-region-side-left > .upfront-region-resize-handle-e,
@@ -368,6 +376,12 @@
 }
 .upfront-region-editing .upfront-region-container-active .upfront-region-sub-container-active {
     z-index: 9999;
+}
+.upfront-region-editing-modal {
+	z-index: 999999999;
+}
+.upfront-region-editing-modal .upfront-entity_meta{
+	display: none !important;
 }
 .upfront-region-editing .upfront-region-container-active .upfront-region-active-overlay,
 .upfront-region-editing .upfront-region-active .upfront-region-active-overlay,

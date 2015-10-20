@@ -35,7 +35,7 @@ jQuery(function($){
 });
 
 jQuery(function($){
-	$('[id^="uslider-"]').each( function() {
+	$('.upfront-output-uslider').each( function() {
 		var slider = $(this),
 			options = slider.find('.uslider').data();
 
@@ -48,6 +48,10 @@ jQuery(function($){
 		slider.find('.uslide-left').each(function(){
 			var slide = $(this);
 			slide.find('.uslide-caption').remove().prependTo(slide);
+		});
+		slider.find('.uslide-bottomOver, .uslide-middleCover, .uslide-bottomCover, .uslide-topCover').each(function() {
+			var slide = $(this);
+			slide.find('.uslide-caption').remove().prependTo(slide.find('.uslide-image'));
 		});
 	});
 });

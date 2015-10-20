@@ -668,6 +668,7 @@ var PostContentEditor = Backbone.View.extend({
 		_.each(events, function(e){
 			me.listenTo(me.box, e, function(){
 				var results = {};
+				
 				if(e=='publish' || e=='draft' || e=='auto-draft'){
 					//if(me.parts.titles) results.title = $.trim(me.parts.titles.html());
 					if(me.parts.titles) results.title = $.trim(me.parts.titles.text());
@@ -675,8 +676,11 @@ var PostContentEditor = Backbone.View.extend({
 						var editor = $(me.currentContent).data('ueditor');
 
                         // cleanup inserts markup
-                        me.$el.find(".upfront-inline-panel").remove();
-                        me.$el.find(".ueditor-insert-remove").remove();
+                        if ('publish' === e) {
+                        	// We only close interface for publish event, so only do this then
+                        	me.$el.find(".upfront-inline-panel").remove();
+                        	me.$el.find(".ueditor-insert-remove").remove();
+                        }
 
 						// replace image inserts with their shortcodes
 						me.$(".upfront-inserted_image-wrapper").each(function(){
@@ -691,6 +695,7 @@ var PostContentEditor = Backbone.View.extend({
 						results.inserts = editor.getInsertsData();
 						results.author = me.postAuthor;
 					}
+
 					if(me.selectedDate)
 						results.date = me.selectedDate;
 					if(me.postStatus)

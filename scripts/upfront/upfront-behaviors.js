@@ -655,6 +655,9 @@ var LayoutEditor = {
 		});
 	},
 
+	/**
+	 * DEPRECATED
+	 */
 	create_layout_dialog: function() {
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.LayoutEditor,
@@ -800,6 +803,9 @@ var LayoutEditor = {
 		});
 	},
 
+	/**
+	 * DEPRECATED
+	 */
 	browse_layout_dialog: function () {
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.LayoutEditor,
@@ -1032,6 +1038,9 @@ var LayoutEditor = {
 		}, ed);
 	},
 
+	/**
+	 * DEPRECATED
+	 */
 	_get_saved_layout: function (){
 		var me = this,
 			deferred = new $.Deferred();
@@ -3478,11 +3487,15 @@ var GridEditor = {
 
 					//if ( drop_row >= drop_top+me.row )
 					//	adjust_bottom = true;
-
+				
+					if ( !region ) {
+						region = ed.get_region($('.upfront-region-drag-active'));
+					}
+					var preview_offset = region ? (region.position.left-ed.grid_layout.left)%ed.col_size : 0;
+					preview_offset = preview_offset < Math.round(ed.col_size/2) ? preview_offset : preview_offset - ed.col_size;
 					$('#upfront-drop-preview').css({
 						top: (ed.drop.top+drop_priority_top+drop_top-1) * ed.baseline,
-						left: (ed.drop.left+drop_priority_left+drop_left-1) * ed.col_size + (ed.grid_layout.left-ed.grid_layout.layout_left)//Lightbox region having odd number of cols requires to offset the preview by half of the column width
-						+(ed.lightbox_cols?(ed.lightbox_cols%2)*ed.col_size/2:0),
+						left: (ed.drop.left+drop_priority_left+drop_left-1) * ed.col_size + (ed.grid_layout.left-ed.grid_layout.layout_left) + preview_offset,
 						width: drop_col*ed.col_size,
 						height: height
 					});

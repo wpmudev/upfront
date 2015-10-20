@@ -2,6 +2,7 @@
 
 class Upfront_CompressionBehavior {
 
+	const LEVEL_HARDCORE = 'hardcore';
 	const LEVEL_AGGRESSIVE = 'aggressive';
 	const LEVEL_DEFAULT = 'default';
 	const LEVEL_LOW = 'low';
