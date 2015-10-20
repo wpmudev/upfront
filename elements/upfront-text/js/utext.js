@@ -95,8 +95,26 @@
 						me.render();
 					})
 					.on('syncAfter', function(){
-						var text = $.trim($(this).html());
-						me.model.set_content($(text).html(), {silent: true});
+						var ed = me.$el.find('.upfront-object-content').data("ueditor"),
+							text = ed.getValue(true)
+						;
+						if (!text.match(/[<>]/)) {
+							text = ed.redactor.paragraphize.load(text);
+							ed.redactor.code.set(text);
+
+							// Now, set the caret at the end
+							ed.redactor.selection.selectAll();
+							var blocks = ed.redactor.selection.getBlocks(),
+								block = blocks.pop()
+							;
+							ed.redactor.selection.remove();
+							if (block) {
+								ed.redactor.caret.setAfter(block);
+							}
+							// done
+						}
+
+						me.model.set_content(ed.getValue(true), {silent: true});
 					})
 				;
 				
