@@ -297,11 +297,6 @@ class Upfront_Compat_Coursepresspro_Coursepress extends Upfront_Server {
             
         }
 
-        ob_start();
-
-        var_dump($cascade);
-        file_put_contents("debugg.txt", ob_get_clean());
-
         return $cascade;
 
     }
