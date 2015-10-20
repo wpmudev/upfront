@@ -17,18 +17,27 @@ class Upfront_Compat_Coursepresspro_Coursepress extends Upfront_Server {
 
 
         //exporter, CoursePress specific layouts
-        //add_filter('upfront-core-default_layouts', array($this, 'augment_default_layouts'));
+        add_filter('upfront-core-default_layouts', array($this, 'augment_default_layouts'));
     }
 
+    
 
     public function detect_virtual_page () {
-
-       
+        
 		if ( class_exists( 'CoursePress' ) ) {
-            add_filter('upfront-views-view_class', array($this, 'override_view'));
+            add_action( 'pre_get_posts', array($this, "remove_category_filter") );
             add_filter('upfront-entity_resolver-entity_ids', array($this, 'resolve_entity_ids'));
+            add_filter('upfront-views-view_class', array($this, 'override_view'));
         }
             
+    }
+
+    public function remove_category_filter() {
+        global $coursepress;
+        remove_filter( 'the_content', array(
+            $coursepress,
+            'add_custom_before_course_single_content_course_category_archive'
+        ), 1 );
     }
 
     /**
@@ -44,7 +53,16 @@ class Upfront_Compat_Coursepresspro_Coursepress extends Upfront_Server {
             'label' => "CoursePress Course Archive",
             'layout' => array(
                 'type' => 'archive',
-                'item' => "coursepress-course",
+                'item' => "coursepress-courses",
+                'plugin' => 'plugin'
+            )
+        );
+
+        $layouts["coursepress-category-archive"] = array(
+            'label' => "CoursePress Category Archive",
+            'layout' => array(
+                'type' => 'single',
+                'item' => "coursepress-category",
                 'plugin' => 'plugin'
             )
         );
@@ -146,7 +164,15 @@ class Upfront_Compat_Coursepresspro_Coursepress extends Upfront_Server {
             )
         );
 
-
+        $layouts["coursepress-instructor"] = array(
+            'label' => "CoursePress Instructor",
+            'layout' => array(
+                'type' => 'single',
+                'item' => "coursepress-instructor",
+                'specificity' => "coursepress-instructor",
+                'plugin' => 'plugin'
+            )
+        );
 
         return $layouts;
     }
@@ -169,14 +195,21 @@ class Upfront_Compat_Coursepresspro_Coursepress extends Upfront_Server {
         $content_type = get_query_var('post_type');
 
         if($content_type == 'course') {
-            $item = 'course';
-
             if(empty(get_query_var('course'))) {
                 $type = 'archive';
+                $item = 'courses';
             }
             else {
                 $type = 'single';
+                $item = 'course';
             }
+        }
+        if (!empty(get_query_var('course_category'))) {
+            $item = 'category';
+            $type = 'single';
+            //lets find term id and make it the spec
+            $term = get_term_by( 'slug', get_query_var('course_category'), 'course_category');
+            $spec = $term->term_id;  
         }
         elseif($content_type == 'unit') {
             
@@ -219,7 +252,7 @@ class Upfront_Compat_Coursepresspro_Coursepress extends Upfront_Server {
             $item = 'unit';
 
             //lets find its id
-           $args=array(
+            $args=array(
               'name' => get_query_var('unitname'),
               'post_type' => 'unit',
                 'post_status' => 'publish',
@@ -245,6 +278,13 @@ class Upfront_Compat_Coursepresspro_Coursepress extends Upfront_Server {
             $item = 'messages-sent';
             $type = 'archive';
         }
+        elseif(!empty(get_query_var('instructor_username'))) {
+            $type = 'single';
+            $item = 'instructor';
+            $user = get_userdatabylogin(get_query_var('instructor_username'));
+            if($user && isset($user->ID))
+                $spec = $user->ID;
+        }
 
 
         if (!empty($item)) {
@@ -256,7 +296,12 @@ class Upfront_Compat_Coursepresspro_Coursepress extends Upfront_Server {
             $cascade['plugin'] = 'plugin';
             
         }
-		
+
+        ob_start();
+
+        var_dump($cascade);
+        file_put_contents("debugg.txt", ob_get_clean());
+
         return $cascade;
 
     }
@@ -305,26 +350,45 @@ class Upfront_Compat_Coursepresspro_Coursepress extends Upfront_Server {
 class Upfront_CoursePressView extends Upfront_Object {
 
     public function get_markup () {
+    	global $coursepress;
 
-    	
-        rewind_posts();
-
-
-        ob_start();
+        require_once( $coursepress->plugin_dir.'themes/coursepress/inc/template-tags.php' );
         
-		if ( have_posts() ) {
-			while ( have_posts() ) {
-				the_post(); 
-				the_content();
-				//
-				// Post Content here
-				//
-			} // end while
-		} // end if
-		else {
-			the_content();
-		}
+        ob_start();
 
+        if(is_single()) {
+
+            include $coursepress->plugin_dir.'themes/coursepress/content-single.php';
+
+            coursepress_post_nav();
+
+            /* looks like the comments would be in the upfront element
+            if ( comments_open() || '0' != get_comments_number() ) :
+                comments_template();
+            endif;
+            */
+
+        }
+        else {
+            if ( have_posts() ) :
+
+                // Start the Loop
+                while ( have_posts() ) : the_post();
+
+                    include $coursepress->plugin_dir.'themes/coursepress/content.php';
+
+                endwhile;
+
+                coursepress_paging_nav();
+
+            else :
+
+                include $coursepress->plugin_dir.'themes/coursepress/content-none.php';
+
+            endif;
+
+        }
+        
         return ob_get_clean();
 
     }
