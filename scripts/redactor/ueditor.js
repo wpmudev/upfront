@@ -663,7 +663,7 @@ Ueditor.prototype = {
     /**
      * Expand the known text patterns in current block element
      */
-    expand_known_text_patterns: function () {
+    expand_known_text_patterns: function (e) {
         var redactor = this.redactor,
             rpl = {
                 '##': {tag: 'h2'},
@@ -716,20 +716,27 @@ Ueditor.prototype = {
                     '</' + target.nest + '></' + target.tag + '>'
                 );
             } else {
-                $node.html(
-                    '<' + target.tag + '>' +
-                        text + 
-                    '</' + target.tag + '>'
-                );
+                var _node = document.createElement(target.tag);
+                _node.innerHTML = text;
+                $node.replaceWith( _node );
+
             }
 
             // Set caret position to end of the target
             redactor.caret.setEnd(
                 "nest" in target && target.nest
                     ? $node.find(target.nest).last().get()
-                    : $node.find(target.tag).get()
+                    : _node
             );
+
             redactor.code.sync();
+            /**
+             * Make sure the created node doesn't contain the space created by the spacebar!
+             */
+            _.delay( function(){
+               $(redactor.selection.getBlock()).html(text);
+            }, 3 );
+
 
             return false;
         });
