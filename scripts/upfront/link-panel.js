@@ -6,7 +6,7 @@ define([
 
 	var getAnchors = function() {
 		var regions = Upfront.Application.layout.get("regions"),
-			anchors = [],
+			anchors = [{id: '#page', label: Upfront.Settings.l10n.global.views.back_to_top}],
 			find;
 
 		find = function (modules) {
@@ -205,7 +205,7 @@ define([
 		createLightBox: function() {
 			var name = $.trim(this.$('.js-ulinkpanel-lightbox-input').val());
 			if (!name) {
-				Upfront.Views.Editor.notify(l10n.ltbox_empty_name_nag, 'error');
+				Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.views.ltbox_empty_name_nag, 'error');
 				return false;
 			}
 
