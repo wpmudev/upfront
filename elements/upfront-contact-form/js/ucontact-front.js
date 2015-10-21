@@ -22,7 +22,16 @@ if(!String.prototype.trim){
 	}
 }
 jQuery(function($){
-	$('[name="realPerson"]').realperson();
+	
+	// Boot realperson with proper options
+	$('[name="realPerson"]').each(function () {
+		var $me = $(this),
+			refresh = $me.attr('data-string'),
+			opts = {}
+		;
+		if (refresh) opts.regenerate = refresh;
+		$me.realperson(opts);
+	});
 
 	var $form = $('div.upfront-contact-form');
 	$form.on('blur', '.ucontact-validate-field', function(e){
@@ -31,24 +40,25 @@ jQuery(function($){
 			field = $elem.attr('name'),
 			errors = []
 		;
+		
 		switch(field){
 			case 'sendername':
-				error = $elem.val().trim() ? false : 'You must write your name.';
+				error = $elem.val().trim() ? false : ($elem.attr('data-string') || 'You must write your name.');
 				break;
 			case 'senderemail':
-				error = check_email($elem.val().trim()) ? false : 'The email address is not valid.';
+				error = check_email($elem.val().trim()) ? false : ($elem.attr('data-string') || 'The email address is not valid.');
 				break;
 			case 'subject':
-				error = $elem.val().trim() ? false : 'You must write a subject for the message.';
+				error = $elem.val().trim() ? false : ($elem.attr('data-string') || 'You must write a subject for the message.');
 				break;
 			case 'sendermessage':
-				error = $elem.val().trim() ? false : 'You forgot to write a message.'
+				error = $elem.val().trim() ? false : ($elem.attr('data-string') || 'You forgot to write a message.')
 		}
-		if(error){
+		
+		if (error){
 			$elem.addClass('ucontact-field-error');
 			show_message($container, error);
-		}
-		else{
+		} else{
 			$elem.removeClass('ucontact-field-error');
 			hide_message($container);
 		}
@@ -66,20 +76,27 @@ jQuery(function($){
 			errors = []
 		;
 
-		if(!name.val().trim())
-			add_error('You must write your name.', errors, name);
-		if(!check_email(email.val().trim()))
-			add_error('The email address is not valid.', errors, email);
-		if(subject.length > 0 && !subject.val().trim())
-			add_error('You must write a subject for the message.', errors, subject);
-		if(!message.val().trim())
-			add_error('You forgot to write a message.', errors, message);
+		if (!name.val().trim()) add_error(
+			(name.attr("data-string") || 'You must write your name.'), 
+			errors, name
+		);
+		if (!check_email(email.val().trim())) add_error(
+			(email.attr("data-string") || 'The email address is not valid.'), 
+			errors, email
+		);
+		if (subject.length > 0 && !subject.val().trim()) add_error(
+			(subject.attr("data-string") || 'You must write a subject for the message.'), 
+			errors, subject
+		);
+		if(!message.val().trim()) add_error(
+			(message.attr("data-string") || 'You forgot to write a message.'), 
+			errors, message
+		);
 
-		if(errors.length > 0){
+		if (errors.length > 0){
 			//Stop sending
 			show_message($this.parent(), errors.join('<br />'));
-		}
-		else{
+		} else{
 			//Everything ok, try to send it via ajax
 			$.ajax({
 				url: ajax_url,
@@ -127,12 +144,6 @@ jQuery(function($){
 				},
 				error: function(error){
 					var response = JSON.parse(error.responseText);
-					/*
-					if(response.error == 'Unknown contact form.'){
-						//$this.off('submit').submit(); //Submit no ajax // <-- DO NOT!!! Do this
-					}
-					else
-					*/
 					show_message($this, response.error);
 				}
 			});
