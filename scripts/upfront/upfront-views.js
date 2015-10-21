@@ -4552,6 +4552,8 @@ define([
 				this.$el.addClass('upfront-layout-view');
 				this.$el.html(this.tpl(this.model.toJSON()));
 				this.$layout = this.$(".upfront-layout");
+				this.remove_selections();
+
 				if (!this.local_view) {
 					this.local_view = new Regions({"model": this.model.get("regions")});
 					this.local_view.render();
@@ -4606,10 +4608,7 @@ define([
 				if ( $(e.target).hasClass('upfront-region-editing-overlay') && !$('.upfront-region-bg-setting-open').length ){
 					Upfront.Events.trigger("entity:region:deactivated");
 				}
-				// Unselect selection
-				if ( !Upfront.Behaviors.LayoutEditor.selecting ){
-					Upfront.Events.trigger("command:selection:remove");
-				}
+				this.remove_selections();
 				// Deactiving group reorder on clicking anywhere
 				if ( !$(e.target).closest('.upfront-module-group-on-edit').length ){
 					Upfront.Events.trigger("command:module_group:finish_edit");
@@ -4753,6 +4752,12 @@ define([
 			},
 			fix_height: function () {
 				this.$('.upfront-layout').css('min-height', $(window).height());
+			},
+			remove_selections: function () {
+				// Unselect selection
+				if ( !Upfront.Behaviors.LayoutEditor.selecting ){
+					Upfront.Events.trigger("command:selection:remove");
+				}
 			}
 		})
 	;
