@@ -366,24 +366,28 @@ var LayoutEditor = {
 	},
 
 	refresh_mergeable: function () {
+		this.remove_selections();
 		$(".ui-selectable").each(function () {
 			$(this).selectable("refresh");
 		});
 	},
 
 	enable_mergeable: function () {
+		this.remove_selections();
 		$(".ui-selectable").each(function () {
 			$(this).selectable("enable");
 		});
 	},
 
 	disable_mergeable: function () {
+		this.remove_selections();
 		$(".ui-selectable").each(function () {
 			$(this).selectable("disable");
 		});
 	},
 
 	destroy_mergeable: function () {
+		this.remove_selections();
 		$(".ui-selectable").each(function () {
 			$(this).selectable("destroy");
 		});
