@@ -66,7 +66,7 @@ abstract class Upfront_VirtualPage extends Upfront_Server {
 				if ($subpage->get_slug() !== $request[1]) continue;
 				status_header(200);
 				if ($render) {
-					if (false !== strpos($_REQUEST['q'], "style"))
+					if (isset($_REQUEST['q']) && false !== strpos($_REQUEST['q'], "style"))
 						header("Content-type: text/css; charset=UTF-8");
 					$subpage->render($request);
 				}else{

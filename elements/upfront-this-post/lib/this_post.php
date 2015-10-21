@@ -689,8 +689,8 @@ class Upfront_ThisPostView extends Upfront_Object {
 		$padding_left = $padding_right = 0;
 		$col_size = isset($layout_data['colSize']) ? $layout_data['colSize'] : 45;
 		if(isset($options['contents'])){
-			$padding_left = $options['contents']['padding_left'] * $col_size;
-			$padding_right = $options['contents']['padding_right'] * $col_size;
+			$padding_left = $options['contents']['padding_left'];
+			$padding_right = $options['contents']['padding_right'];
 		}
 
 		if ($style_variant && isset( $style_variant->group ) && isset( $style_variant->group->float )) {
