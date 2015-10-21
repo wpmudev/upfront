@@ -237,12 +237,26 @@ class Upfront_UcontactView extends Upfront_Object {
 			if ($this->msg) {
 				$this->msg_class = 'error';
 			} else if (!empty($emailto)) {
+				// Let's first force mail callbacks	
+				if (!empty($name)) {
+					$email_callback = create_function('$email', "return '{$email}';");
+					$name_callback = create_function('$name', "return '{$name}';");
+					add_filter('wp_mail_from', $email_callback, 99);
+					add_filter('wp_mail_from_name', $name_callback, 99);
+				}
+				
+				// ... then send email
 				if (!wp_mail($emailto, $subject, $message, $headers)) {
 					$this->msg = self::_get_l10n('error_sending');
 					$this->msg_class = 'error';
+				} else $this->msg = self::_get_l10n('mail_sent');
+
+				// ... and clean up afterwards
+				if (!empty($name)) {
+					remove_filter('wp_mail_from_name', $name_callback, 99);
+					remove_filter('wp_mail_from', $email_callback, 99);
 				}
-				else
-					$this->msg = self::_get_l10n('mail_sent');
+			
 			} else {
 				$this->msg = self::_get_l10n('mail_sent');
 			}
