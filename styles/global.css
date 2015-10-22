@@ -113,6 +113,9 @@ h2, h3 { page-break-after: avoid; }
   position: fixed;
   z-index: 25;
 }
+.upfront-output-region.upfront-region-fixed .upfront-region-wrapper {
+  margin: 0 auto;
+}
 
 .upfront-module {}
 
@@ -161,7 +164,8 @@ h2, h3 { page-break-after: avoid; }
     right: 0;
     z-index: -1;
 }
-.upfront-output-bg-overlay {
+.upfront-output-bg-overlay,
+.upfront-output-bg-overlay > .upfront-bg-image {
 	position: absolute;
 	top: 0;
 	bottom: 0;
@@ -170,8 +174,11 @@ h2, h3 { page-break-after: avoid; }
 	z-index: 0;
 	display: none;
 }
-.upfront-output-layout {
-	background-attachment: fixed;
+.upfront-output-bg-overlay {
+	overflow: hidden;
+}
+.upfront-output-bg-overlay > .upfront-bg-image {
+	display: block;
 }
 .upfront-output-layout > .upfront-output-bg-overlay {
 	position: fixed;
@@ -213,7 +220,7 @@ h2, h3 { page-break-after: avoid; }
 
 .ueditor-insert {
   margin-bottom: 15px;
-  max-width: 100%;
+  /*max-width: 100%;*/
   padding-left: 0px !important;
   padding-right: 0px !important;
 }
@@ -234,8 +241,8 @@ h2, h3 { page-break-after: avoid; }
 .alignleft,
 .alignright,
 .alignfull {
-  padding-left: 0 !important;
-  padding-right: 0 !important;
+  /*padding-left: 0 !important;*/
+  /*padding-right: 0 !important;*/
 }
 
 .alignfull{
@@ -331,6 +338,9 @@ h2, h3 { page-break-after: avoid; }
     margin-top: 0;
     width: auto;
     float: none;
+}
+.uf-responsive .upfront-image-caption-container {
+    width: 100%;
 }
 
 /* Flexbox experiments *//* */

@@ -110,7 +110,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			props.preset = props.currentpreset;
 			this.model.set_property('preset', props.currentpreset)
 		}
-		
+	
 		props.preset = props.preset || 'default';
 		
 		props.preset = this.clear_preset_name(props.preset);
@@ -143,7 +143,6 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 	onOpenItemControlsClick: function() {
 		this.$el.toggleClass('controls-visible');
 		if (this.$el.hasClass('controls-visible')) {
-			$('.upfront-button.controls-visible').removeClass('controls-visible');
 			this.$el.addClass('controls-visible');
 			this.controlsVisible = true;
 		} else {
@@ -154,12 +153,10 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 	createInlineControlPanel: function() {
 		var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
 			visitLinkControl = new Upfront.Views.Editor.InlinePanels.Controls.VisitLink({
-				url: this.property('href')
+				url: this.link.get('url')
 			}),
 			linkPanelControl = new Upfront.Views.Editor.InlinePanels.Controls.LinkPanel({
-				linkUrl: this.property('href'),
-				linkType: Upfront.Util.guessLinkType(this.property('href')),
-				linkTarget: this.property('linkTarget'),
+				model: this.link,
 				button: false,
 				icon: 'link',
 				tooltip: 'link',
@@ -167,10 +164,8 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			});
 			me = this;
 
-		this.listenTo(linkPanelControl, 'change change:target', function(data) {
-			visitLinkControl.setLink(data.url);
-			this.property('href', data.url);
-			this.property('linkTarget', data.target);
+		this.listenTo(this.link, 'change', function() {
+			visitLinkControl.setLink(me.link.get('url'));
 		});
 
 		panel.items = _([

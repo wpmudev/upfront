@@ -98,6 +98,13 @@ var GlobalSettings_View = Backbone.View.extend({
 	events: {
 		"click a.settings": "popup_open"
 	},
+	initialize: function() {
+		Upfront.Events.on("popup:closed", this.onPopupClosed, this);
+	},
+	onPopupClosed: function() {
+		//Remove discussion-settings-wrapper when dicussion settings popup is closed
+		$('#upfront-popup-content').removeClass('discussion-settings-wrapper');
+	},
 	render: function () {
 		this.$el.empty().append('<a href="#" class="settings">' + this.label + '</a>');
 	},

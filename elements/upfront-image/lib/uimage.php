@@ -8,15 +8,26 @@ class Upfront_UimageView extends Upfront_Object {
 		$data = $this->properties_to_array();
 
 		$data['in_editor'] = false;
+		if (!isset($data['link'])) {
+			$link = array(
+				'type' => $data['when_clicked'],
+				'target' => isset($data['link_target']) ? $data['link_target'] : '_self',
+				'url' => $data['image_link']
+			);
+		} else {
+			$link = $data['link'];
+		}
 
-		if($data['when_clicked'] == 'show_larger_image'){
+		if (!isset($data['link_target'])) $data['link_target'] = '';
+
+		if($link['type'] == 'image'){
 			//wp_enqueue_style('magnific');
 			upfront_add_element_style('magnific', array('/scripts/magnific-popup/magnific-popup.css', false));
 			//wp_enqueue_script('magnific');
 			upfront_add_element_script('magnific', array('/scripts/magnific-popup/magnific-popup.min.js', false));
 		}
 
-		$data['url'] = $data['when_clicked'] == 'do_nothing' ? false : $data['image_link'];
+		$data['url'] = $link['type'] == 'unlink' ? false : $link['url'];
 
 		$data['wrapper_id'] = str_replace('image-object-', 'wrapper-', $data['element_id']);
 
@@ -47,15 +58,21 @@ class Upfront_UimageView extends Upfront_Object {
 
 		$data['placeholder_class'] = !empty($data['src']) ? '' : 'uimage-placeholder';
 
+		/*
+		* Commented this line because sets background color for captions under image to be always white
+		* If this functionallity is needed, we will restore it
+		*
 		if ($data['caption_position'] === 'below_image') $data['captionBackground'] = false;
 
-		if (!isset($data['link_target'])) $data['link_target'] = false; // Initialize array member to prevent notices
-		// We could really go with wp_parge_args here...
+		$data['link_target'] = $link['target'];
+		*/
+
+		if (!empty($data['src'])) $data['src'] = preg_replace('/^https?:/', '', trim($data['src']));
 
 
 		$markup = '<div>' . upfront_get_template('uimage', $data, dirname(dirname(__FILE__)) . '/tpl/image.html') . '</div>';
 
-		if($data['when_clicked'] == 'image'){
+		if($link['type'] == 'image'){
 			//Lightbox
 			//wp_enqueue_style('magnific');
 			upfront_add_element_style('magnific', array('/scripts/magnific-popup/magnific-popup.css', false));
@@ -96,8 +113,6 @@ class Upfront_UimageView extends Upfront_Object {
 			'srcOriginal' => false,
 			'image_title' => '',
 			'alternative_text' => '',
-			'when_clicked' => false, // false | external | entry | anchor | image | lightbox
-			'image_link' => '',
 			'include_image_caption' => false,
 			'image_caption' => self::_get_l10n('image_caption'),
 			'caption_position' => false,
@@ -125,7 +140,11 @@ class Upfront_UimageView extends Upfront_Object {
 			'view_class' => 'UimageView',
 			'has_settings' => 1,
 			'class' =>  'upfront-image',
-			'id_slug' => 'image'
+			'id_slug' => 'image',
+
+			'when_clicked' => false, // false | external | entry | anchor | image | lightbox
+			'image_link' => '',
+			'link' => false
 		);
 	}
 
@@ -293,7 +312,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 				$resize = isset($imageData['resize']) ? $imageData['resize'] : false;
 				$crop = isset($imageData['crop']) ? $imageData['crop'] : false;
 
-				$images[$imageData['id']] = $this->resize_image($imageData);
+				$images[$imageData['id']] = self::resize_image($imageData);
 			}
 		}
 		return $this->_out(new Upfront_JsonResponse_Success(array('images' => $images)));
@@ -326,13 +345,11 @@ class Upfront_Uimage_Server extends Upfront_Server {
 		$data = stripslashes_deep($_POST);
 
 		$item_id = !empty($data['item_id']) ? $data['item_id'] : false;
-		if (!$item_id)
-			$this->_out(new Upfront_JsonResponse_Error(Upfront_UimageView::_get_l10n('invalid_id')));
+		if (!$item_id) $this->_out(new Upfront_JsonResponse_Error(Upfront_UimageView::_get_l10n('invalid_id')));
 
 		$ids = json_decode($item_id);
 
-		if(is_null($ids) || !is_array($ids))
-			$this->_out(new Upfront_JsonResponse_Error(Upfront_UimageView::_get_l10n('invalid_id')));
+		if (is_null($ids) || !is_array($ids)) $this->_out(new Upfront_JsonResponse_Error(Upfront_UimageView::_get_l10n('invalid_id')));
 
 		$custom_size = isset($data['customSize']) && is_array($data['customSize']);
 
@@ -359,7 +376,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 				}
 			}
 			$ids = $image_ids;
-			if(empty($ids)) {
+			if (empty($ids)) {
 				$this->_out(new Upfront_JsonResponse_Error(Upfront_UimageView::_get_l10n('Images have not been found in local WordPress.')));
 			}
 		}
@@ -368,16 +385,15 @@ class Upfront_Uimage_Server extends Upfront_Server {
 		$images = array();
 		$intermediate_sizes = get_intermediate_image_sizes();
 		$intermediate_sizes[] = 'full';
-		foreach($ids as $id){
+		foreach ($ids as $id) {
 			$sizes = array();
 			foreach ( $intermediate_sizes as $size ) {
-			$image = wp_get_attachment_image_src( $id, $size);
-			if($image)
-				$sizes[$size] = $image;
-		}
+				$image = wp_get_attachment_image_src( $id, $size);
+				if ($image) $sizes[$size] = $image;
+			}
 
 		if($custom_size){
-			$image_custom_size = $this->calculate_image_resize_data($data['customSize'], array('width' => $sizes['full'][1], 'height' => $sizes['full'][2]));
+			$image_custom_size = self::calculate_image_resize_data($data['customSize'], array('width' => $sizes['full'][1], 'height' => $sizes['full'][2]));
 			$image_custom_size['id'] = $id;
 			if (!empty($data['element_id'])) $image_custom_size['element_id'] = $data['element_id'];
 			$sizes['custom'] = $this->resize_image($image_custom_size);
@@ -385,79 +401,106 @@ class Upfront_Uimage_Server extends Upfront_Server {
 		}
 		else
 			$sizes['custom'] = $custom_size ? $data['customSize'] : array();
+//=======
+//			if ($custom_size) {
+//				$image_custom_size = $this->calculate_image_resize_data($data['customSize'], array('width' => $sizes['full'][1], 'height' => $sizes['full'][2]));
+//				$image_custom_size['id'] = $id;
+//				if (!empty($data['element_id'])) {
+//					$image_custom_size['element_id'] = $data['element_id'];
+//				}
+//				$sizes['custom'] = $this->resize_image($image_custom_size);
+//				$sizes['custom']['editdata'] = $image_custom_size;
+//			} else {
+//				$sizes['custom'] = $custom_size ? $data['customSize'] : array();
+//			}
+//>>>>>>> master
 
-		if(sizeof($sizes) != 0)
-			$images[$id] = $sizes;
+			if (sizeof($sizes) != 0) $images[$id] = $sizes;
 		}
 
-			if(sizeof($images) == 0)
-				$this->_out(new Upfront_JsonResponse_Error(Upfront_UimageView::_get_l10n('no_id')));
+		if (0 === sizeof($images)) $this->_out(new Upfront_JsonResponse_Error(Upfront_UimageView::_get_l10n('no_id')));
 
-			$result = array(
-				'given' => sizeof($ids),
-				'returned' => sizeof($ids),
-				'images' => $images
+		$result = array(
+			'given' => sizeof($ids),
+			'returned' => sizeof($ids),
+			'images' => $images
 		);
 
 		return $this->_out(new Upfront_JsonResponse_Success($result));
 	}
 
-	function resize_image($imageData) {
+	public static function resize_image($imageData) {
 		$rotate = isset($imageData['rotate']) && is_numeric($imageData['rotate']) ? $imageData['rotate'] : false;
 		$resize = isset($imageData['resize']) ? $imageData['resize'] : false;
 		$crop = isset($imageData['crop']) ? $imageData['crop'] : false;
 
-		if(!$rotate && !$resize && !$crop)
-			return array('error' => true, 'msg' => Upfront_UimageView::_get_l10n('not_modifications'));
+		if (!$rotate && !$resize && !$crop) {
+			return array(
+				'error' => true,
+				'msg' => Upfront_UimageView::_get_l10n('not_modifications')
+			);
+		}
+
 		$image_path = isset($imageData['image_path']) ? $imageData['image_path'] : _load_image_to_edit_path( $imageData['id'] );
 		$image_editor = wp_get_image_editor( $image_path );
 
-			if ( is_wp_error( $image_editor ) )
-			return array('error' => true, 'msg' => Upfront_UimageView::_get_l10n('invalid_id'));
+		if (is_wp_error($image_editor)) {
+			return array(
+				'error' => true,
+				'msg' => Upfront_UimageView::_get_l10n('invalid_id')
+			);
+		}
 
 
-		if($rotate && !$image_editor->rotate(-$rotate))
-			return array('error' => true, 'msg' => Upfront_UimageView::_get_l10n('edit_error'));
+		if ($rotate && !$image_editor->rotate(-$rotate)) return array(
+			'error' => true,
+			'msg' => Upfront_UimageView::_get_l10n('edit_error')
+		);
 
 		$full_size = $image_editor->get_size();
 		//Cropping for resizing allows to make the image bigger
-		if($resize && !$image_editor->crop(0, 0, $full_size['width'], $full_size['height'], $resize['width'], $resize['height'], false))
-			return array('error' => true, 'msg' => Upfront_UimageView::_get_l10n('edit_error'));
+		if ($resize && !$image_editor->crop(0, 0, $full_size['width'], $full_size['height'], $resize['width'], $resize['height'], false)) {
+			return array(
+				'error' => true,
+				'msg' => Upfront_UimageView::_get_l10n('edit_error')
+			);
+		}
 
 		//$cropped = array(round($crop['left']), round($crop['top']), round($crop['width']), round($crop['height']));
 
 		//Don't let the crop be bigger than the size
 		$size = $image_editor->get_size();
-		$crop = array('top' => round($crop['top']), 'left' => round($crop['left']), 'width' => round($crop['width']), 'height' => round($crop['height']));
+		$crop = array(
+			'top' => round($crop['top']),
+			'left' => round($crop['left']),
+			'width' => round($crop['width']),
+			'height' => round($crop['height'])
+		);
 
-		if($crop['top'] < 0){
+		if ($crop['top'] < 0) {
 			$crop['height'] -= $crop['top'];
 			$crop['top'] = 0;
 		}
-		if($crop['left'] < 0){
+		if ($crop['left'] < 0) {
 			$crop['width'] -= $crop['left'];
 			$crop['left'] = 0;
 		}
 
-		if($size['height'] < $crop['height'])
-			$crop['height'] = $size['height'];
-		if($size['width'] < $crop['width'])
-			$crop['width'] = $size['width'];
+		if ($size['height'] < $crop['height']) $crop['height'] = $size['height'];
+		if ($size['width'] < $crop['width']) $crop['width'] = $size['width'];
 
 
-		if($crop && !$image_editor->crop($crop['left'], $crop['top'], $crop['width'], $crop['height'])) {
+		if ($crop && !$image_editor->crop($crop['left'], $crop['top'], $crop['width'], $crop['height'])) {
 		//if($crop && !$image_editor->crop($cropped[0], $cropped[1], $cropped[2], $cropped[3]))
 			return $this->_out(new Upfront_JsonResponse_Error(Upfront_UimageView::_get_l10n('edit_error')));
 		}
-
 
 		// generate new filename
 		$path = $image_path;
 		$path_parts = pathinfo( $path );
 
 		$filename = $path_parts['filename'] . '-' . $image_editor->get_suffix();
-		if(!isset($imageData['skip_random_filename']))
-			$filename .=  '-' . rand(1000, 9999);
+		if (!isset($imageData['skip_random_filename'])) $filename .=  '-' . rand(1000, 9999);
 
 		$imagepath = $path_parts['dirname'] . '/' . $filename . '.' . $path_parts['extension'];
 
@@ -467,22 +510,27 @@ class Upfront_Uimage_Server extends Upfront_Server {
 		if (is_wp_error( $saved )) {
 			return array(
 				'error' => true,
-			 	'msg' => 'If images are moved from standard storage (e.g. via plugin that stores uploads to S3) Upfront does not have access. (' . implode('; ', $saved->get_error_messages()) . ')');
+				'msg' => 'If images are moved from standard storage (e.g. via plugin that stores uploads to S3) Upfront does not have access. (' . implode('; ', $saved->get_error_messages()) . ')'
+			);
 		}
 
-		if ( is_wp_error( $image_editor ) || empty($imageData['id']) )
-			return array('error' => true, 'msg' => Upfront_UimageView::_get_l10n('error_save'));
+		if (is_wp_error($image_editor) || empty($imageData['id'])) {
+			return array(
+				'error' => true,
+				'msg' => Upfront_UimageView::_get_l10n('error_save')
+			);
+		}
 
 		$urlOriginal = wp_get_attachment_image_src($imageData['id'], 'full');
 		$urlOriginal = $urlOriginal[0];
 		$url  = str_replace($path_parts['basename'], $saved['file'], $urlOriginal);
 
-		if($rotate){
+		if ($rotate) {
 			//We must do a rotated version of the full size image
 			$fullsizename = $path_parts['filename'] . '-r' . $rotate ;
 			$fullsizepath = $path_parts['dirname'] . '/' . $fullsizename . '.' . $path_parts['extension'];
-			if(!file_exists($fullsizepath)){
-				$full = wp_get_image_editor( _load_image_to_edit_path( $imageData['id'] ) );
+			if (!file_exists($fullsizepath)) {
+				$full = wp_get_image_editor(_load_image_to_edit_path($imageData['id']));
 				$full->rotate(-$rotate);
 				$full->set_quality(90);
 				$savedfull = $full->save($fullsizepath);
@@ -506,6 +554,17 @@ class Upfront_Uimage_Server extends Upfront_Server {
 		update_post_meta($imageData['id'], 'upfront_used_image_sizes', $used);
 // *** Flags updated, files clear. Moving on
 
+		if (!empty($imagepath) && !empty($url)) {
+			/**
+			 * Image has been successfully changed. Trigger any post-processing hook.
+			 *
+			 * @param string $imagepath Path to the newly created image
+			 * @param string $url Newly changed image URL
+			 * @param array $saved Processing data
+			 */
+			do_action('upfront-media-images-image_changed', $imagepath, $url, $saved);
+		}
+
 		return array(
 			'error' => false,
 			'url' => $url,
@@ -515,7 +574,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 		);
 	}
 
-	function calculate_image_resize_data($custom, $full) {
+	public static function calculate_image_resize_data($custom, $full) {
 		$image_factor = $full['width'] / $full['height'];
 		$custom_factor =  $custom['width'] / $custom['height'];
 

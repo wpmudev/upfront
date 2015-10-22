@@ -24,6 +24,12 @@ Upfront_Behavior::debug()->set_baseline();
 
 
 class Upfront {
+
+    /**
+     * string theme text domain
+     */
+    const TextDomain = "upfront";
+
 	public static $Excluded_Files = array(".", "..", ".DS_Store");
 	private $_servers = array(
 		'ajax',
@@ -194,6 +200,10 @@ class Upfront {
 			wp_enqueue_script('jquery-ui-datepicker');
 		}
 
+		/**
+		 * Todo Sam: make it cleaner
+		 */
+		wp_enqueue_script("wp_shortcode", "/wp-includes/js/shortcode.js", array("jquery", "underscore"));
 	}
 
 	function inject_global_dependencies () {
@@ -201,7 +211,11 @@ class Upfront {
 		wp_enqueue_script('jquery');
 		
 		//Basic styles for upfront to work are always loaded.
-		wp_enqueue_style('upfront-global', self::get_root_url() . '/styles/global.css', array(), Upfront_ChildTheme::get_version());
+		$global_style = Upfront_Behavior::compression()->has_experiments()
+			? '/styles/global.min.css'
+			: '/styles/global.css'
+		;
+		wp_enqueue_style('upfront-global', self::get_root_url() . $global_style, array(), Upfront_ChildTheme::get_version());
         
         if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
             // Don't queue the front grid if has permission to boot Upfront, queue editor grid instead
@@ -236,7 +250,11 @@ class Upfront {
 
 	function inject_upfront_dependencies () {
 		
-		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) return false; // Do not inject for users that can't use this
+		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
+			do_action('upfront-core-inject_dependencies'); // Also trigger the dependencies injection hook
+			return false; // Do not inject for users that can't use this
+		}
+		
 		$url = self::get_root_url();
 		//Boot Edit Mode if the querystring contains the editmode param
 		if (isset($_GET['editmode']))
@@ -286,3 +304,65 @@ EOAdditivemarkup;
 
 }
 add_action('init', array('Upfront', 'serve'), 0);
+
+/**
+ * filters wp caption atts to hide the caption in case show_caption is equal  to "0"
+ */
+add_filter("shortcode_atts_caption", 'uf_shortcode_atts_caption', 10, 3);
+
+/**
+ * Filters wp captions atts to remove the caption in case show_caption is equal to "0"
+ *
+ * @param $out
+ * @param $pairs
+ * @param $atts
+ * @return mixed
+ */
+function uf_shortcode_atts_caption(  $out, $pairs, $atts ){
+
+    if( isset( $atts['show_caption'] ) && $atts['show_caption'] == "0" )
+        $out['caption'] = "&nbsp;";
+
+    return $out;
+}
+
+
+/**
+ * Filters image caption shortcode to generate uf caption specific markup
+ *
+ */
+add_filter("img_caption_shortcode", "uf_image_caption_shortcode", 10, 3);
+/**
+ * Uses img_caption_shortcode to add support for UF image variants
+ *
+ * @param $out
+ * @param $attr
+ * @param $content
+ *
+ * @return string|void
+ */
+function uf_image_caption_shortcode( $out, $attr, $content ){
+
+	$is_wp_cation = strpos($attr["id"], "uinsert-" ) === false;
+
+	if( $is_wp_cation ) return; // returning null let's wp do it's own logic and rendering for caption shortcode
+
+//		$html = '<img class="" src="http://images.dressale.hk/images/320x480/201301/B/petite-girl-s-favorite-a-line-graduation-dress-with-empire-waist_1358440282519.jpg" alt="" width="320" height="480" /> Petite Girl';
+	$image_reg = preg_match('/src="([^"]+)"/', $content, $image_arr);
+	$href_reg = preg_match('/href="([^"]+)"/', $content, $anchor_arr);
+
+	$data = (object) shortcode_atts( array(
+		'id'	  => '',
+		'caption' => '',
+		'class'   => '',
+		'uf_variant' => '',
+		'uf_isLocal' => true,
+		'uf_show_caption' => true,
+		'image' => $image_reg ? $image_arr[1] : "",
+		'linkUrl' => $href_reg ? $anchor_arr[1] : "",
+
+	), $attr, 'caption' );
+
+	 return Upfront_ThisPostView::get_post_image_markup($data);
+
+}

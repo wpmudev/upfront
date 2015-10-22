@@ -8,6 +8,11 @@ class Upfront_UcontactView extends Upfront_Object {
 
 	public function get_markup () {
 
+		$element_id = $this->_get_property('element_id');
+		
+		$template = self::_get_l10n('template');
+		if (is_array($template)) $template = array_map('esc_attr', $template);
+
 		//Check if the form has been sent
 		//$this->check_form_received(); // Do NOT just send out form data.
 		$args = array_merge($this->properties_to_array(), array(
@@ -25,12 +30,19 @@ class Upfront_UcontactView extends Upfront_Object {
 				'message' => $this->get_placeholder($this->_get_property('form_message_label'))
 			),
 			'values' => array(
-				'name' => $this->get_post('sendername'),
-				'email' => $this->get_post('senderemail'),
-				'subject' => $this->get_post('subject'),
-				'captcha' => $this->get_post('subject'),
-				'message' => $this->get_post('sendermessage')
-			)
+				'name' => esc_attr($this->get_post('sendername')),
+				'email' => esc_attr($this->get_post('senderemail')),
+				'subject' => esc_attr($this->get_post('subject')),
+				'message' => esc_textarea($this->get_post('sendermessage')),
+			),
+			'ids' => array(
+				'name' => esc_attr("name-{$element_id}"),
+				'email' => esc_attr("email-{$element_id}"),
+				'subject' => esc_attr("subject-{$element_id}"),
+				'message' => esc_attr("message-{$element_id}"),
+				'captcha' => esc_attr("captcha-{$element_id}"),
+			),
+			'l10n' => $template,
 		));
 
 		$args['show_subject'] = $args['show_subject'] && sizeof($args['show_subject']);
@@ -46,22 +58,23 @@ class Upfront_UcontactView extends Upfront_Object {
 			</script>';
 	}
 
-	private function properties_to_array(){
+	private function properties_to_array (){
 		$out = array();
-		foreach($this->_data['properties'] as $prop)
+		foreach ($this->_data['properties'] as $prop) {
 			$out[$prop['name']] = $prop['value'];
+		}
 		return $out;
 	}
 
-	public function add_js_defaults($data){
+	public function add_js_defaults ($data){
 		$data['ucontact'] = array(
 			'defaults' => self::default_properties(),
-			'template' => upfront_get_template_url('ucontact', upfront_element_url('templates/ucontact.html', dirname(__FILE__)))
+			'template' => upfront_get_template_url('ucontact', upfront_element_url('templates/ucontact.html', dirname(__FILE__))),
 		);
 		return $data;
 	}
 
-	public static function default_properties(){
+	public static function default_properties () {
 		return array(
 			'form_add_title' => array(),
 			'form_title' => self::_get_l10n('contact_form'),
@@ -83,7 +96,7 @@ class Upfront_UcontactView extends Upfront_Object {
 			'view_class' => "UcontactView",
 			"class" => "c24 upfront-contact-form",
 			'has_settings' => 1,
-			'id_slug' => 'ucontact'
+			'id_slug' => 'ucontact',
 		);
 	}
 
@@ -104,13 +117,11 @@ class Upfront_UcontactView extends Upfront_Object {
 			'message' => self::_get_l10n('unknown_form'),
 		);
 
-		if(!$settings)
-			return $unknown_form_error;
+		if (!$settings) return $unknown_form_error;
 
 		$form = new Upfront_UcontactView($settings);
 
-		if(!$form)
-			return $unknown_form_error;
+		if (!$form) return $unknown_form_error;
 
 		$form->check_form_received();
 
@@ -121,43 +132,49 @@ class Upfront_UcontactView extends Upfront_Object {
 	}
 
 	public static function store () {
-		if(!$_POST['data'] || !$_POST['data']['properties'])
+		if (!$_POST['data'] || !$_POST['data']['properties']) {
 			return array(
 				'error' => true,
-				'message' => self::_get_l10n('invalid_data')
+				'message' => self::_get_l10n('invalid_data'),
 			);
+		}
 
 		$contact_form = array();
 		$data = $_POST['data']['properties'];
-		foreach($data as $prop){
+		foreach ($data as $prop) {
 			$contact_form[$prop['name']] = $prop['value'];
 		}
-		if(!$contact_form['element_id'])
+		
+		if (!$contact_form['element_id']) {
 			return array(
 				'error' => true,
-				'message' => self::_get_l10n('unknown_form')
+				'message' => self::_get_l10n('unknown_form'),
 			);
+		}
 
-		if(update_option($contact_form['element_id'], $_POST['data']))
+		if (update_option($contact_form['element_id'], $_POST['data'])) {
 			return array(
 				'error' => false,
-				'message' => self::_get_l10n('settings_stored')
+				'message' => self::_get_l10n('settings_stored'),
 			);
+		}
+
 		return array(
 			'error' => true,
-			'message' => self::_get_l10n('store_error')
+			'message' => self::_get_l10n('store_error'),
 		);
 	}
 
 	private static function json_response ($data) {
 		header("Content-type: application/json; charset=utf-8");
-		if($data instanceof Upfront_HttpResponse)
+		if ($data instanceof Upfront_HttpResponse) {
 			die($data->get_output());
+		}
 		die(json_encode($data));
 	}
 
 	private function check_form_received () {
-		if(isset($_POST['ucontact']) && $_POST['ucontact'] == 'sent' && $_POST['contactformid'] == $this->_get_property('element_id')){
+		if (isset($_POST['ucontact']) && $_POST['ucontact'] == 'sent' && $_POST['contactformid'] == $this->_get_property('element_id')) {
 			//Get all the needed fields and sanitize them
 			$_POST = stripslashes_deep( $_POST );
 			$name = preg_replace('/\n\r/', ' ', sanitize_text_field($_POST['sendername']));
@@ -165,15 +182,14 @@ class Upfront_UcontactView extends Upfront_Object {
 			$show_subject = $this->_get_property('show_subject');
 			$show_captcha = $this->_get_property('show_captcha');
 
-			if($show_subject && $show_subject != 'false'){
+			if ($show_subject && $show_subject != 'false') {
 				$subject = sanitize_text_field($_POST['subject']);
-			}
-			else{
+			} else {
 				$show_subject = false;
 				$subject = $this->_get_property('form_default_subject');
 			}
 
-			if($show_captcha && $show_captcha != 'false'){
+			if ($show_captcha && $show_captcha != 'false') {
 				$real_person = $_POST['realPerson'];
 				$real_person_hash = $_POST['realPersonHash'];
 
@@ -221,19 +237,33 @@ class Upfront_UcontactView extends Upfront_Object {
 			if ($this->msg) {
 				$this->msg_class = 'error';
 			} else if (!empty($emailto)) {
+				// Let's first force mail callbacks	
+				if (!empty($name)) {
+					$email_callback = create_function('$email', "return '{$email}';");
+					$name_callback = create_function('$name', "return '{$name}';");
+					add_filter('wp_mail_from', $email_callback, 99);
+					add_filter('wp_mail_from_name', $name_callback, 99);
+				}
+				
+				// ... then send email
 				if (!wp_mail($emailto, $subject, $message, $headers)) {
 					$this->msg = self::_get_l10n('error_sending');
 					$this->msg_class = 'error';
+				} else $this->msg = self::_get_l10n('mail_sent');
+
+				// ... and clean up afterwards
+				if (!empty($name)) {
+					remove_filter('wp_mail_from_name', $name_callback, 99);
+					remove_filter('wp_mail_from', $email_callback, 99);
 				}
-				else
-					$this->msg = self::_get_l10n('mail_sent');
+			
 			} else {
 				$this->msg = self::_get_l10n('mail_sent');
 			}
 		}
 	}
 
-	public function get_post($param){
+	public function get_post ($param){
 		return isset($_POST[$param]) ? $_POST[$param] : '';
 	}
 
@@ -245,22 +275,22 @@ class Upfront_UcontactView extends Upfront_Object {
 	 * @param  String $message Message sent by the user
 	 * @return String|Boolean          A message with the error or false if no errors.
 	 */
-	private function check_fields($name, $email, $subject, $message){
+	private function check_fields ($name, $email, $subject, $message){
 		if (empty($name)) return self::_get_l10n('missing_name');
 		if (empty($email)) return self::_get_l10n('invalid_email');
-		if($this->_get_property('show_subject') && empty($subject)) return self::_get_l10n('missing_subject');
-		if(empty($message)) return self::_get_l10n('missing_message');
+		if ($this->_get_property('show_subject') && empty($subject)) return self::_get_l10n('missing_subject');
+		if (empty($message)) return self::_get_l10n('missing_message');
 		return false;
 	}
 
 	/**
 	 * Parses the PHP file output to a variable
 	 */
-	private function get_template($templatename, $args = array()){
+	private function get_template ($templatename, $args = array()){
 		return upfront_get_template('ucontact', $args, dirname(dirname(__FILE__)) . '/templates/ucontact.html');
 	}
 
-	public function get_entity_ids_value() {
+	public function get_entity_ids_value () {
 		$entities = array();
 		$entities = Upfront_Layout::get_parsed_cascade();
 
@@ -272,11 +302,11 @@ class Upfront_UcontactView extends Upfront_Object {
 		return base64_encode(json_encode($entities));
 	}
 
-	private function get_settings_from_ajax(){
+	private function get_settings_from_ajax (){
 		$entity_ids = array();
-		try{
+		try {
 			$entity_ids = (array)json_decode(base64_decode($_POST['entity_ids']));
-		} catch(Exception $e) {
+		} catch (Exception $e) {
 			return false;
 		}
 
@@ -287,23 +317,23 @@ class Upfront_UcontactView extends Upfront_Object {
 		}
 		$layout = Upfront_Layout::from_entity_ids($entity_ids, $storage_key);
 
-		if($layout instanceof Upfront_Layout)
+		if ($layout instanceof Upfront_Layout) {
 			$layout = $layout->to_php();
-		else
+		} else {
 			return false;
+		}
 
 		$settings = array();
 
-		if(is_array($layout['regions'])){
-			foreach($layout['regions'] as $region){
-				if(sizeof($region['modules'])){
-					foreach($region['modules'] as $module){
-						if(sizeof($module['objects'])){
-							foreach($module['objects'] as $object){
-								if(sizeof($object['properties'])){
-									foreach($object['properties'] as $prop){
-										if($prop['name'] == 'element_id' && $prop['value'] == $_POST['contactformid'])
-											return $object;
+		if (is_array($layout['regions'])) {
+			foreach ($layout['regions'] as $region) {
+				if (sizeof($region['modules'])) {
+					foreach ($region['modules'] as $module) {
+						if (sizeof($module['objects'])) {
+							foreach ($module['objects'] as $object) {
+								if (sizeof($object['properties'])) {
+									foreach ($object['properties'] as $prop) {
+										if ($prop['name'] == 'element_id' && $prop['value'] == $_POST['contactformid']) return $object;
 									}
 								}
 							}
@@ -315,13 +345,14 @@ class Upfront_UcontactView extends Upfront_Object {
 		return false;
 	}
 
-	private function get_field_classes(){
+	private function get_field_classes () {
 		return 'ucontact-label-' . $this->_get_property('form_label_position');
 	}
 
-	public function get_placeholder($label){
-		if($this->_get_property('form_label_position') == 'over')
-			return 'placeholder="' . preg_replace('/<span[^<]+<\/span>/i', '', $label) . '"';
+	public function get_placeholder ($label) {
+		if ('over' === $this->_get_property('form_label_position')) {
+			return 'placeholder="' . esc_attr(preg_replace('/<span[^<]+<\/span>/i', '', $label)) . '"';
+		}
 		return '';
 	}
 
@@ -395,6 +426,13 @@ class Upfront_UcontactView extends Upfront_Object {
 				'inline' => __('Inline with field', 'upfront'),
 			),
 			'settings' => __('Contact form settings', 'upfront'),
+			'template' => array(
+				'missing_name' => __('You must write your name.', 'upfront'),
+				'invalid_email' => __('The email address is not valid.', 'upfront'),
+				'missing_subject' => __('You must write a subject for the message.', 'upfront'),
+				'missing_body' => __('You forgot to write a message.', 'upfront'),
+				'realperson_regenerate' => __('Click to change', 'upfront'),
+			)
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)
@@ -423,9 +461,10 @@ class Ucontact_Server extends Upfront_Server {
 
 	}
 	protected function send_results ($results) {
-		if($results['error'])
+		if ($results['error']) {
 			$this->_out(new Upfront_JsonResponse_Error($results['message']));
-		else
+		} else {
 			$this->_out(new Upfront_JsonResponse_Success($results));
+		}
 	}
 }

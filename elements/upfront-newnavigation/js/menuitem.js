@@ -1,4 +1,6 @@
-define(function() {
+define([
+	"scripts/upfront/link-model"
+], function(LinkModel) {
 return (function ($) {
 	var l10n = Upfront.Settings.l10n.newnavigation_element;
 
@@ -6,20 +8,36 @@ return (function ($) {
 		tagName: 'li',
 		contextmenuContext: [],
 		removeContexts: true,
+
 		events: {
 			'click i.delete_menu_item' : 'deleteMenuItem',
 			'click i.navigation-add-item': 'addMenuItem',
 			"contextmenu a.menu_item": "on_context_menu",
+			"click a.menu_item": "on_click",
+			"touchstart a.menu_item": "on_click",
 			'click a.redactor_act': 'onOpenPanelClick',
 			'click .sub-menu': 'onOpenPanelSubMenu',
 			'click .upfront-save_settings': 'onOpenPanelSubMenu',
-			'click .upfront-save_settings': 'processPanelsonsave',
+			'click .upfront-save_settings': 'processPanelsOnSave',
 			'click > .open-item-controls': 'onOpenItemControlsClick'
 		},
 		initialize: function(options) {
+			var me = this;
+
+			// Ensure that there is a link property
+			if (typeof options.model.link === 'undefined') {
+				options.model.link = {
+					'type': Upfront.Util.guessLinkType(this.model['menu-item-url']),
+					'url': this.model['menu-item-url'],
+					'target': this.model['menu-item-target']
+				};
+			}
+
+			this.link = new LinkModel(this.model.link);
+
 			this.parent_view = options.parent_view;
 			this.newitem = options.newitem;
-			var me = this;
+			this.level = options.level;
 			_.bindAll(this, 'render');
 
 			var ContextMenuList = Upfront.Views.ContextMenuList.extend({
@@ -29,7 +47,7 @@ return (function ($) {
 					this.menuitems = _([
 						new Upfront.Views.ContextMenuItem({
 							get_label: function() {
-								var linktype = Upfront.Util.guessLinkType(me.model['menu-item-url']);
+								var linktype = me.model.link.type;
 								if(linktype == 'lightbox')
 									return 'Open Lightbox';
 								else if(linktype == 'anchor')
@@ -40,7 +58,7 @@ return (function ($) {
 									return 'Visit Link';
 							},
 							action: function() {
-								Upfront.Util.visitLink(me.model['menu-item-url']);
+								Upfront.Util.visitLink(me.model.link.url);
 							}
 						}),
 						new Upfront.Views.ContextMenuItem({
@@ -48,8 +66,8 @@ return (function ($) {
 								return l10n.edit_url;
 							},
 							action: function() {
-				 				me.removeContexts = false;
-							 	me.parent_view.editMenuItem(me.$el.find('a.menu_item'));
+								me.removeContexts = false;
+								me.editMenuItem();
 							}
 						}),
 						new Upfront.Views.ContextMenuItem({
@@ -91,7 +109,40 @@ return (function ($) {
 				this.loadContexts(menu);
 			}
 		},
+		on_click: function(e) {
+
+			//e.preventDefault();
+
+			var linkitem = $(e.target).parent('li.menu-item');
+			//console.log(linkitem);
+			//console.log(linkitem.closest('.upfront-output-unewnavigation').data('style'))
+			if(linkitem.hasClass('parent') && linkitem.closest('.upfront-output-unewnavigation').data('style') == 'burger') {
+				e.stopPropagation();
+
+				if(linkitem.hasClass('burger_sub_display'))
+					linkitem.removeClass('burger_sub_display');
+				else
+					linkitem.addClass('burger_sub_display');
+
+				var menu = linkitem.closest('ul.menu');
+				var menucontainer = linkitem.closest('div.upfront-output-unewnavigation');
+
+				if(menucontainer.data('burger_over') == 'pushes' && (menucontainer.data('burger_alignment') == 'top' || menucontainer.data('burger_alignment') == 'whole')) {
+
+					$('section.upfront-layout').css('margin-top', menu.height());
+
+
+					var topbar_height = $('div#upfront-ui-topbar').outerHeight();
+					var ruler_height = $('.upfront-ruler-container').outerHeight();
+					menu.offset({top:topbar_height+ruler_height, left:$('section.upfront-layout').offset().left});
+
+
+				}
+			}
+		},
 		on_context_menu: function(e) {
+			if (Upfront.Settings.Application.no_context_menu) return;
+
 			e.stopPropagation();
 			if(this.parent_view.$el.find('ul.menu').hasClass('edit_mode')) return;
 
@@ -132,12 +183,12 @@ return (function ($) {
 			event.preventDefault();
 			this.toggleLinkPanel();
 		},
-		
+
 		onOpenPanelSubMenuClick: function(event) {
 			//event.preventDefault();
 			this.onOpenPanelSubMenu();
 		},
-		
+
 		onOpenPanelSubMenu: function() {
 			var me = this;
 			if (this.$el.hasClass('ui-sortable-handle') && this.$el.children('ul').children('li').hasClass('controls-visible')) {
@@ -148,7 +199,7 @@ return (function ($) {
 				//this.$el.parent('ul').sortable('enable');
 			}
 		},
-		processPanelsonsave: function() {
+		processPanelsOnSave: function() {
 			this.parent_view.$el.find('ul.time_being_display').removeClass('time_being_display');
 			this.toggleLinkPanel();
 			this.$el.removeClass('controls-visible');
@@ -158,7 +209,7 @@ return (function ($) {
 			var me = this;
 			if (this.$el.hasClass('ui-sortable-handle')) {
 				this.$el.removeClass('ui-sortable-handle');
-				this.$el.addClass('stayOpen');
+				this.$el.addClass('stayOpen controls-visible');
 				this.$el.parents('.menu').sortable('disable');
 				this.$el.find('.linkingPanelGoesHere').show();
 			} else {
@@ -166,28 +217,22 @@ return (function ($) {
 				this.$el.removeClass('stayOpen');
 				this.$el.parents('.menu').sortable('enable');
 				this.$el.find('.linkingPanelGoesHere').hide();
-				// Model linkType won't set on time if this is not delayed
-				/*
-				// Commented, because hide Sub Navigation items after OK button
-				setTimeout(function() {
-					me.render();
-				}, 100);
-				*/
 			}
 		},
 
 		render: function (event) {
 			var me = this;
-			var content = '<a class="menu_item';
+			var content = '<a class="menu_item uf-click-to-edit-text';
 
 			if(me.newitem) content = content + ' new_menu_item menu_item_placeholder';
 
 			content = content+'" >'+this.model['menu-item-title']+'</a><i class="delete_menu_item">x</i><span class="open-item-controls"></span>';
-			
-			if(this.model['menu-item-url'].indexOf('#ltb-') > -1 && !Upfront.Util.checkLightbox(this.model['menu-item-url']))
+
+			if(this.model.link['url'].indexOf('#ltb-') > -1 && !Upfront.Util.checkLightbox(this.model.link['url']))
 					content = content + '<span class="missing-lightbox-warning"></span>';
 
-			$(this.el).html(content);
+			$(this.el).html(content).addClass('menu-item-depth-'+me.level);
+			$(this.el).data('depth', me.level);
 			this.createInlineControlPanel();
 
 			$(this.el).data('backboneview', me).addClass('menu-item');
@@ -227,12 +272,10 @@ return (function ($) {
 		createInlineControlPanel: function() {
 			var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
 				visitLinkControl = new Upfront.Views.Editor.InlinePanels.Controls.VisitLink({
-					url: this.model['menu-item-url']
+					url: this.model.link['url']
 				}),
 				linkPanelControl = new Upfront.Views.Editor.InlinePanels.Controls.LinkPanel({
-					linkUrl: this.model['menu-item-url'],
-					linkTarget: this.model['menu-item-target'],
-					linkType: Upfront.Util.guessLinkType(this.model['menu-item-url']),
+					model: this.link,
 					button: false,
 					icon: 'link',
 					tooltip: 'link',
@@ -240,18 +283,19 @@ return (function ($) {
 				}),
 				me = this;
 
-			this.listenTo(linkPanelControl, 'change', function(data) {
-				me.linkType = data.type;
-				visitLinkControl.setLink(data.url);
-				me.model['menu-item-url'] = data.url;
-				me.model['menu-item-target'] = data.target;
-				me.saveLink();
-			});
-
 			panel.items = _([
 				linkPanelControl,
 				visitLinkControl
 			]);
+
+			this.listenTo(this.link, 'change', function() {
+				me.model.link = me.link.toJSON();
+				me.model['menu-item-url'] = me.model.link.url;
+				me.model['menu-item-target'] = me.model.link.target;
+				visitLinkControl.setLink(me.model.link.url, me.model.link.type);
+				me.saveLink();
+			});
+
 			this.$el.data('linkpanel', linkPanelControl);
 			var imageControlsTpl = '<div class="uimage-controls image-element-controls upfront-ui"></div>';
 			this.$el.append(imageControlsTpl);
@@ -309,25 +353,9 @@ return (function ($) {
 
 		},
 
-		editMenuItem: function(e){
-			var target = typeof e.target == 'undefined' ? e : e.target,
-				linkType = 'external',
-				link = {url: this.model['menu-item-url']}
-			;
-
-			if(this.model['menu-item-type'] == 'post_type') linkType = 'entry';
-			else if(link.url.indexOf('#') > -1 && this.getCleanurl(link.url) == this.getCleanurl()) {
-				linkType = link.url.indexOf('#ltb-') > -1 ? 'lightbox' : 'anchor';
-			}
-
-			link.type = linkType;
-
-			this.linkPanel.model.set(link);
-			this.linkPanel.render();
-
-			this.openTooltip(this.linkPanel.el, $(target));
-
-			this.linkPanel.delegateEvents();
+		editMenuItem: function() {
+			console.log('toggleLinkPanel');
+			this.toggleLinkPanel();
 		},
 
 		getCleanurl: function(url) {
@@ -362,19 +390,24 @@ return (function ($) {
 
 			//me.parent_view.$el.find('ul.time_being_display').removeClass('time_being_display');
 
-			var menu_item = ($(this.el).children('a.menu_item').length > 0) ? $(this.el).children('a.menu_item'):$(this.el).children('div').children('a.menu_item');
+			var menu_item = ($(this.el).children('a.menu_item').length > 0) ?
+				$(this.el).children('a.menu_item'):$(this.el).children('div').children('a.menu_item');
 
-			if(!menu_item.hasClass('menu_item_placeholder') && menu_item.next('a.ueditor-placeholder').length < 1) this.model['menu-item-title'] = menu_item.text();
-			else this.model['menu-item-title'] = '';
+			if (!menu_item.hasClass('menu_item_placeholder') && menu_item.next('a.ueditor-placeholder').length < 1) {
+				this.model['menu-item-title'] = menu_item.text();
+			} else {
+				this.model['menu-item-title'] = '';
+			}
 
-			if($(this.el).children('div.redactor_box').length > 0) menu_item.blur();
+			if ($(this.el).children('div.redactor_box').length > 0) {
+				menu_item.blur();
+			}
 
-			if(me.model['menu-item-title'].trim() == '') {
-				if(typeof(keep) != 'undefined' && keep) {
+			if (me.model['menu-item-title'].trim() == '') {
+				if (typeof(keep) != 'undefined' && keep) {
 					var title_text = menu_item.next('a.ueditor-placeholder').text() || (menu_item.is("a.menu_item_placeholder") ? menu_item.text() : '');
 					me.model['menu-item-title'] = title_text;
-				}
-				else {
+				} else {
 					me.deleteMenuItem();
 					return;
 				}
@@ -386,7 +419,7 @@ return (function ($) {
 				'menu-item': this.model
 			}
 
-			if(typeof this.model['menu-item-db-id'] != 'undefined'){
+			if (typeof this.model['menu-item-db-id'] != 'undefined') {
 				postdata['menu-item-id'] = me.model['menu-item-db-id'];
 			}
 
@@ -399,9 +432,9 @@ return (function ($) {
 					Upfront.Util.log("Error updating menu item");
 				})
 			;
-
 		},
-		openTooltip: function(content, element){
+
+		openTooltip: function(content, element) {
 			var tooltip = $('#unewnavigation-tooltip'),
 				elementPosition = element.offset(),
 				tooltipPosition = {

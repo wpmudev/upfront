@@ -6,10 +6,14 @@ var l10n = Upfront.Settings && Upfront.Settings.l10n
 ;
 
 define([
-	'scripts/upfront/bg-settings/mixins'
-], function(Mixins) {
+	'scripts/upfront/bg-settings/mixins',
+	'scripts/upfront/inline-panels/map-editor'
+], function(Mixins, MapEditorView) {
 	
 	var MapItem = Upfront.Views.Editor.Settings.Item.extend(_.extend({}, Mixins, {
+		events: {
+			"click .open-map-code-panel-button": "init_code_panel"
+		},
 		group: false,
 		initialize: function (options) {
 			var me = this,
@@ -25,6 +29,7 @@ define([
 				this.model.init_property('background_map_style', "ROADMAP");
 				this.model.init_property('background_map_controls', "");
 				this.model.init_property('background_show_markers', "");
+				this.model.init_property('background_use_custom_map_code', "");
 			}
 			
 			var fields = {
@@ -119,6 +124,35 @@ define([
 							this.$el.addClass('uf-bgsettings-map-show-marker');
 						}
 					}),
+					custom_map_code: new Upfront.Views.Editor.Field.Checkboxes({
+						model: this.model,
+						label: l10n.custom_map_code,
+						property: "background_use_custom_map_code",
+						hide_label: true,
+						values: [{label: l10n.custom_map_code + '<span class="checkbox-info" title="' + l10n.custom_map_code_info + '"></span>', value: 1}],
+						multiple: false,
+						change: function () {
+							var value = this.get_value();
+
+							this.property.set({value: value});
+
+							if(value == 1) {
+								$('.open-map-code-panel-button', this.$el.parent()).show();
+							}
+							else {
+								$('.open-map-code-panel-button', this.$el.parent()).hide();
+							}
+						},
+						rendered: function () {
+							this.$el.addClass('uf-bgsettings-map-custom-map-code');
+						}
+					}),
+					open_map_code_panel: new Upfront.Views.Editor.Field.Button({
+						model: me.model,
+						label: l10n.open_map_code_panel,
+						className: "open-map-code-panel-button",
+						compact: true,
+					}),
 				};
 			
 			this.$el.addClass('uf-bgsettings-item uf-bgsettings-mapitem');
@@ -138,6 +172,10 @@ define([
 			this.bind_toggles();
 			this.constructor.__super__.initialize.call(this, options);
 		},
+		render: function () {
+			Upfront.Views.Editor.Settings.Item.prototype.render.call(this);
+			$('[name="background_use_custom_map_code"]', this.$el).trigger('change');
+		},
 		geocode_location: function () {
 			if ( this._geocoding == true || !this._location_changed )
 				return;
@@ -155,6 +193,10 @@ define([
 				me._geocoding = false;
 				me._location_changed = false;
 			});
+		},
+		init_code_panel: function () {
+			var view = new MapEditorView({model: this.model});
+			view.render();
 		}
 	}));
 

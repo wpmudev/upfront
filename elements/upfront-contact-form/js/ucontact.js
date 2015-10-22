@@ -180,12 +180,15 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 				subject: this.getPlaceholder('form_subject_label'),
 				message: this.getPlaceholder('form_message_label')
 			},*/
+			ids: {},
 			values: {}
 		});
 
 		args.show_subject = args.show_subject && args.show_subject.length;
 		args.show_captcha = args.show_captcha && args.show_captcha.length;
 		args.form_add_title = args.form_add_title && args.form_add_title.length;
+
+		args.l10n = l10n.template;
 
 		return this.tpl(args);
 	},

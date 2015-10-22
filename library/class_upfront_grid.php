@@ -7,6 +7,7 @@ class Upfront_Grid {
 	protected $_debugger;
 
 	protected $_current_breakpoint;
+	protected $_exceptions = array();
 
 	private $_max_columns = 0;
 
@@ -185,14 +186,19 @@ class Upfront_Grid {
 				$region_view = new Upfront_Region($region);
 				$name = strtolower(str_replace(" ", "-", $region_view->get_name()));
 				$point_css .= $region_view->get_style_for($point, $this->get_grid_scope());
+
+				$this->_exceptions = array();
+				$point_css .= $this->_apply_modules($region, $region_col, false);
 				$point_css .= $point->apply_col($region_col, $region, $this->get_grid_scope(), '#upfront-region-'.$name);
-				if ( $region_row )
-					$point_css .= $point->apply_row($region_row, $region, $this->get_grid_scope(), '#upfront-region-'.$name);
-				if ( !$point->is_default() && $region['sub'] == 'fixed' ) // @TODO we hide float region by default for responsive for now
+				if ( $region_row && !in_array('row', $this->_exceptions) ) {
+						$point_css .= $point->apply_row($region_row, $region, $this->get_grid_scope(), '#upfront-region-'.$name);
+				}
+				if ( !$point->is_default() && $region['sub'] == 'fixed' ) { // @TODO we hide float region by default for responsive for now
 					$region_hide = 1;
-				if ( $region_hide == 1 )
+				}
+				if ( $region_hide == 1 ) {
 					$point_css .= $point->apply_hide($region_hide, $region, $this->get_grid_scope(), '#upfront-region-'.$name);
-				$point_css .= $this->_apply_modules($region, $region_col);
+				}
 			}
 			if ($this->_debugger->is_active(Upfront_Debug::STYLE)) {
 				$point_css .= $point->get_debug_rule($this->get_grid_scope());
@@ -221,6 +227,35 @@ class Upfront_Grid {
 			$wrapper_index = array_search($wrapper_data, $wrappers);
 			$next_wrapper_id = false;
 			$next_wrapper_data = false;
+			$is_post_object = false;
+
+			if ( isset($module['modules']) && is_array($module['modules']) ){ // rendering module group
+				$module_view = new Upfront_Module_Group($module);
+				$point_css .= $module_view->get_style_for($breakpoint, $this->get_grid_scope());
+				$point_css .= $this->_apply_modules($module, $module_col, false);
+			}
+			else {
+				foreach ($module['objects'] as $object) {
+					// See if this is posts/this post element, then add 'row' to exceptions list and disable height rendering
+					$type = upfront_get_property_value('type', $object);
+					if ( preg_match("/(PostsModel|ThisPostModel|PostDataPartModel)/", $type) ) {
+						if ( 'PostDataPartModel' == $type ) {
+							$part_type = upfront_get_property_value('part_type', $object);
+							if ( 'content' == $part_type ) {
+								$is_post_object = true;
+							}
+						}
+						else {
+							$is_post_object = true;
+						}
+						if ( $is_post_object && !in_array('row', $this->_exceptions) ) {
+							$this->_exceptions[] = 'row';
+						}
+					}
+					$point_css .= $breakpoint->apply($object, $this->get_grid_scope(), 'element_id', $module_col, false, ($is_post_object ? $this->_exceptions : array()));
+				}
+			}
+
 			if ( !empty($wrapper_data) ) {
 				$wrapper_col = $this->_get_class_col($wrapper_data);
 				$wrapper_col = $wrapper_col > $col ? $col : $wrapper_col;
@@ -259,21 +294,10 @@ class Upfront_Grid {
 						$line_col = $col;
 					$rendered_wrappers[] = $wrapper_id;
 				}
-				$point_css .= $breakpoint->apply($module, $this->get_grid_scope(), 'element_id', $wrapper_col);
+				$point_css .= $breakpoint->apply($module, $this->get_grid_scope(), 'element_id', $wrapper_col, false, ($is_post_object ? $this->_exceptions : array()));
 			}
 			else {
-				$point_css .= $breakpoint->apply($module, $this->get_grid_scope(), 'element_id', $col);
-			}
-
-			if ( isset($module['modules']) && is_array($module['modules']) ){ // rendering module group
-				$module_view = new Upfront_Module_Group($module);
-				$point_css .= $module_view->get_style_for($breakpoint, $this->get_grid_scope());
-				$point_css .= $this->_apply_modules($module, $module_col);
-			}
-			else {
-				foreach ($module['objects'] as $object) {
-					$point_css .= $breakpoint->apply($object, $this->get_grid_scope(), 'element_id', $module_col);
-				}
+				$point_css .= $breakpoint->apply($module, $this->get_grid_scope(), 'element_id', $col, false, ($is_post_object ? $this->_exceptions : array()));
 			}
 		}
 		return $point_css;
@@ -507,6 +531,7 @@ class Upfront_GridBreakpoint {
             "#page.upfront-layout-view .upfront-module-group-bg-padding {margin: {$column_padding}px;}" . "\n" .
 			"#page.upfront-layout-view .plaintxt_padding {padding: {$type_padding}px;}" . "\n" .
 			"#page.upfront-layout-view .upfront-region-postlayouteditor {padding: {$column_padding}px 0;}" . "\n" .
+			"#page.upfront-layout-view #region-container-postlayouteditor {min-width: 0;}" . "\n" .
 		'';
 	}
 
@@ -517,12 +542,15 @@ class Upfront_GridBreakpoint {
 		$column_padding = $this->get_column_padding();
 		$type_padding = $this->get_type_padding();
 		$contained_width = $contained_width ? $contained_width : $width;
+		$styles = $this->get_styles();
 		return '' .
 			( $this->is_default() ? ".upfront-region-container-clip .upfront-region-container-bg {max-width: {$contained_width}px;}" . "\n" : "" ) .
+			( $this->is_default() ? ".upfront-region-fixed .upfront-region-wrapper {max-width: {$contained_width}px;}" . "\n" : "" ) .
 			".upfront-grid-layout {width: {$width}px;}" . "\n" .
 			( $this->is_default() ? ".upfront-output-object {padding: {$column_padding}px;}" . "\n" : "") .
 			( $this->is_default() ? ".upfront-inserted_image-wrapper .wp-caption-text, .uinsert-image-wrapper {padding: {$column_padding}px;}" . "\n" : "") .
 			( $this->is_default() ? ".plaintxt_padding {padding: {$type_padding}px;}" . "\n" : "") .
+			$styles .
 		'';
 	}
 
@@ -584,6 +612,10 @@ class Upfront_GridBreakpoint {
 
 	public function get_typography() {
 		return isset($this->_data['typography']) ? $this->_data['typography'] : array();
+	}
+
+	public function get_styles() {
+		return isset($this->_data['styles']) ? $this->_data['styles'] : '';
 	}
 
 	public function get_grid_width () {
@@ -666,7 +698,7 @@ class Upfront_GridBreakpoint {
 		return "{$media}{$rules}";
 	}
 
-	public function apply ($entity, $scope=false, $property='element_id', $max_columns=false, $fill_margin=false) {
+	public function apply ($entity, $scope=false, $property='element_id', $max_columns=false, $fill_margin=false, $exception=array()) {
 		$raw_classes = $this->_get_property('class', $entity);
 		$classes = array_map('trim', explode(' ', $raw_classes));
 		$selector = $this->_get_property($property, $entity);
@@ -708,7 +740,7 @@ class Upfront_GridBreakpoint {
 			$raw_styles[$selector][] = rtrim($style, ' ;') . ';';
 		}
 
-		if (!empty($row)){
+		if ( !in_array('row', $exception) && !empty($row) ){
 			$style = $this->_row_to_style($row);
 			$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
 			$raw_styles[$selector][] = rtrim($style, ';') . ';';

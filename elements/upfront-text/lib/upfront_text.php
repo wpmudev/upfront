@@ -9,29 +9,30 @@ class Upfront_PlainTxtView extends Upfront_Object {
 
 		$content = $this->_get_property('content');
 
-		$matches = array();
-		//$regex = '/<div class="plaintxt_padding([^>]*)>(.+?)<\/div>/s';
-		//preg_match($regex, $content, $matches);
-
-        //if (sizeof($matches) > 1) $content = $matches[2];
+		$matches = array();	
         
-        if ( preg_match('/<div class="plaintxt_padding([^>]*)>/s', $content) ){
+        if (preg_match('/<div class="plaintxt_padding([^>]*)>/s', $content)) {
             $doc = new DOMDocument();
             $clean_doc = new DOMDocument();
-            $doc->loadHTML($content);
+            // So this is just wrong on so many levels, but apparently necessary... 
+            // Force the content type header, so that DOMDocument encoding doesn't default to latin-1 -.-
+            // As per: http://stackoverflow.com/questions/3523409/domdocument-encoding-problems-characters-transformed
+            $raw = "<head><meta http-equiv='Content-type' content='text/html; charset=UTF-8' /></head><body>{$content}</body>";
+            $doc->loadHTML($raw);
             $divs = $doc->getElementsByTagName('div');
             $plaintxt_wrap = false;
-            foreach ( $divs as $div ){
-                if ( !$div->hasAttributes() )
-                    continue;
+            foreach ($divs as $div) {
+                if (!$div->hasAttributes()) continue;
+
                 $class = $div->attributes->getNamedItem('class');
-                if ( !is_null($class) && !empty($class->nodeValue) && strpos($class->nodeValue, 'plaintxt_padding') !== false ) {
+                if (!is_null($class) && !empty($class->nodeValue) && strpos($class->nodeValue, 'plaintxt_padding') !== false) {
                     $plaintxt_wrap = $div;
                     break;
                 }
             }
-            if ( $plaintxt_wrap !== false && $plaintxt_wrap->hasChildNodes() ) {
-                foreach ( $plaintxt_wrap->childNodes as $node ){
+            
+            if (false !== $plaintxt_wrap && $plaintxt_wrap->hasChildNodes()) {
+                foreach ($plaintxt_wrap->childNodes as $node) {
                     $import_node = $clean_doc->importNode($node, true);
                     $clean_doc->appendChild($import_node);
                 }
@@ -54,12 +55,13 @@ class Upfront_PlainTxtView extends Upfront_Object {
 	}
 
 	protected function _decorate_content ($content) {
+
 		if (defined('DOING_AJAX') && DOING_AJAX) return $content;
 		$do_processing = apply_filters(
 			'upfront-shortcode-enable_in_layout', 
 			(defined('UPFRONT_DISABLE_LAYOUT_TEXT_SHORTCODES') && UPFRONT_DISABLE_LAYOUT_TEXT_SHORTCODES ? false : true)
 		);
-		if ($do_processing) $content = do_shortcode($content);
+		if ($do_processing) $content = apply_filters("the_content", $content);
 		return Upfront_Codec::get('wordpress')->expand_all($content);
 	}
 

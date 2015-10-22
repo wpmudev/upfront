@@ -26,6 +26,8 @@
 #sidebar-ui .chosen-with-drop .chosen-single,
 #insert-font-widget .chosen-with-drop .chosen-single:hover,
 #sidebar-ui .chosen-with-drop .chosen-single:hover,
+#settings .chosen-with-drop .chosen-single,
+#settings .chosen-with-drop .chosen-single:hover,
 #upfront-popup .chosen-with-drop .chosen-single,
 #upfront-popup .chosen-with-drop .chosen-single:hover,
 .preset-manager-panel .chosen-with-drop .chosen-single,
@@ -47,6 +49,7 @@
 }
 #insert-font-widget .chosen-container-single .chosen-drop,
 #sidebar-ui .chosen-container-single .chosen-drop,
+#settings .chosen-container-single .chosen-drop,
 #upfront-popup .chosen-container-single .chosen-drop,
 .preset-manager-panel .chosen-container-single .chosen-drop,
 
@@ -86,6 +89,7 @@
 }
 #insert-font-widget .chosen-container-single .chosen-search,
 #sidebar-ui .chosen-container-single .chosen-search,
+#settings .chosen-container-single .chosen-search,
 #upfront-popup .chosen-container-single .chosen-search,
 .preset-manager-panel .chosen-container-single .chosen-search,
 
@@ -98,6 +102,7 @@
 }
 #insert-font-widget .chosen-container-single .chosen-search input[type=text],
 #sidebar-ui .chosen-container-single .chosen-search input[type=text],
+#settings .chosen-container-single .chosen-search input[type=text],
 #upfront-popup .chosen-container-single .chosen-search input[type=text],
 .preset-manager-panel .chosen-container-single .chosen-search input[type=text],
 
@@ -118,6 +123,7 @@
 }
 #insert-font-widget .chosen-container-single .chosen-results::-webkit-scrollbar,
 #sidebar-ui .chosen-container-single .chosen-results::-webkit-scrollbar,
+#settings .chosen-container-single .chosen-results::-webkit-scrollbar,
 #upfront-popup .chosen-container-single .chosen-results::-webkit-scrollbar,
 .preset-manager-panel .chosen-container-single .chosen-results::-webkit-scrollbar,
 
@@ -131,6 +137,7 @@
 }
 #insert-font-widget .chosen-container-single .chosen-results::-webkit-scrollbar-thumb,
 #sidebar-ui .chosen-container-single .chosen-results::-webkit-scrollbar-thumb,
+#settings .chosen-container-single .chosen-results::-webkit-scrollbar-thumb,
 #upfront-popup .chosen-container-single .chosen-results::-webkit-scrollbar-thumb,
 .preset-manager-panel .chosen-container-single .chosen-results::-webkit-scrollbar-thumb,
 

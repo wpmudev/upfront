@@ -4,11 +4,23 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 	const THEME_BASE_URL_MACRO = 'UPFRONT_THEME_BASE';
 
+	/**
+	 * Constant-like file exclusion pattern.
+	 *
+	 * @var array
+	 */
+	private static $_EXCLUDED_FILES = array(
+		".",
+		"..",
+		".DS_Store",
+	);
+
 
 	private $_version = false;
 	private $_required_pages = array();
-	private $_theme_settings;
 
+	private static $_theme_settings;
+	
 	protected static $instance;
 
 	public static function get_instance () {
@@ -62,9 +74,15 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		add_action('after_switch_theme', array($this, 'initial_theme_setup'));
 
+
         add_filter('upfront_get_editor_font_icons', array($this, 'get_editor_font_icons'), 10, 2);
 		$this->_set_up_required_pages_from_settings();
 
+		add_action('pre_update_option_stylesheet', array($this, 'update_prev_stylesheet'), 10, 2);
+		add_action('after_switch_theme', array($this, 'update_post_image_variants'), 10, 2);
+
+
+		$this->_set_up_required_pages_from_settings();
 		$this->checkMenusExist();
 		$this->initialize();
 	}
@@ -77,7 +95,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	 * @param Upfront_Theme_Settings $settings Theme settings object
 	 */
 	public function set_theme_settings (Upfront_Theme_Settings $settings) {
-		$this->_theme_settings = $settings;
+		self::$_theme_settings = $settings;
 	}
 
 	/**
@@ -87,7 +105,11 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	 * @return Upfront_Theme_Settings Current theme settings.
 	 */
 	public function get_theme_settings () {
-		return $this->_theme_settings;
+		return self::_get_theme_settings();
+	}
+
+	protected static function  _get_theme_settings(){
+		return self::$_theme_settings;
 	}
 
 	/**
@@ -158,6 +180,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			$menu_items = array();
 			foreach($menu['items'] as $menu_item) {
 				$menu_item['url'] = str_replace('%siteurl%', home_url(), $menu_item['url']);
+				$menu_item['url'] = str_replace('{{upfront:home_url}}', home_url(), $menu_item['url']);
 				$menu_items[$menu_item['menu_item_parent']][] = $menu_item;
 			}
 			foreach($menu_items[0] as $menu_item) {
@@ -215,7 +238,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		$styles_root = get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'element-styles';
 		// List subdirectories as element types
 		$element_types = is_dir($styles_root)
-			? array_diff(scandir($styles_root), Upfront::$Excluded_Files)
+			? array_diff(scandir($styles_root), self::$_EXCLUDED_FILES)
 			: array()
 		;
 
@@ -235,7 +258,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		}
 
 		foreach ($element_types as $type) {
-			$style_files = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), Upfront::$Excluded_Files);
+			$style_files = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), self::$_EXCLUDED_FILES);
 			foreach ($style_files as $style) {
 				// If region CSS, only load the one saved matched the layout_id
 				$style_rx = '/^(' . preg_quote("{$layout_id}", '/') . '|' . preg_quote("{$type}", '/') . (!empty($alternate_layout_id) ? '|' . preg_quote($alternate_layout_id, '/') : '') . ')/';
@@ -366,11 +389,11 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		if (file_exists($styles_root) === false) return $theme_styles;
 
 		// List subdirectories as element types
-		$element_types = array_diff(scandir($styles_root), Upfront::$Excluded_Files);
+		$element_types = array_diff(scandir($styles_root), self::$_EXCLUDED_FILES);
 
 		foreach($element_types as $type) {
 			$theme_styles[$type] = array();
-			$styles = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), Upfront::$Excluded_Files);
+			$styles = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), self::$_EXCLUDED_FILES);
 			foreach ($styles as $style) {
 				$style_content = file_get_contents($styles_root . DIRECTORY_SEPARATOR . $type . DIRECTORY_SEPARATOR . $style);
 				$style_content = $this->_expand_passive_relative_url($style_content);
@@ -454,10 +477,10 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		if (file_exists($styles_root) === false) return $elementTypes;
 
 		// List subdirectories as element types
-		$element_types = array_diff(scandir($styles_root), Upfront::$Excluded_Files);
+		$element_types = array_diff(scandir($styles_root), self::$_EXCLUDED_FILES);
 		foreach($element_types as $type) {
 			$elementTypes[$type] = array();
-			$styles = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), Upfront::$Excluded_Files);
+			$styles = array_diff(scandir($styles_root . DIRECTORY_SEPARATOR . $type), self::$_EXCLUDED_FILES);
 			foreach ($styles as $style) {
 				$elementTypes[$type][] = str_replace('.css', '', $style);
 			}
@@ -492,7 +515,8 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			// Default typography
 			$properties[] = array(
 				'name' => 'typography',
-				'value' => json_decode(stripslashes('{\"h1\":{\"weight\":\"100\",\"style\":\"normal\",\"size\":\"72\",\"line_height\":\"1\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\",\"color\":\"rgba(0,0,0,1)\"},\"h2\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"50\",\"line_height\":\"1\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h3\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"36\",\"line_height\":\"1.3\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h4\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"30\",\"line_height\":\"1.2\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\"},\"h5\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"25\",\"line_height\":\"1.2\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h6\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"22\",\"line_height\":\"1.3\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"p\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"18\",\"line_height\":\"1.4\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"a\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":false,\"line_height\":false,\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(0,206,141,1)\"},\"a:hover\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":false,\"line_height\":false,\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(0,165,113,1)\"},\"ul\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"16\",\"line_height\":\"1.5\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\",\"color\":\"rgba(0,0,0,1)\"},\"ol\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"16\",\"line_height\":\"1.5\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\"},\"blockquote\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"20\",\"line_height\":\"1.5\",\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(103,103,103,1)\"},\"blockquote.upfront-quote-alternative\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"20\",\"line_height\":\"1.5\",\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(103,103,103,1)\"}}'))
+				'value' => json_decode('{}'),
+				//'value' => json_decode(stripslashes('{\"h1\":{\"weight\":\"100\",\"style\":\"normal\",\"size\":\"72\",\"line_height\":\"1\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\",\"color\":\"rgba(0,0,0,1)\"},\"h2\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"50\",\"line_height\":\"1\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h3\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"36\",\"line_height\":\"1.3\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h4\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"30\",\"line_height\":\"1.2\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\"},\"h5\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"25\",\"line_height\":\"1.2\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h6\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"22\",\"line_height\":\"1.3\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"p\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"18\",\"line_height\":\"1.4\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"a\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":false,\"line_height\":false,\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(0,206,141,1)\"},\"a:hover\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":false,\"line_height\":false,\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(0,165,113,1)\"},\"ul\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"16\",\"line_height\":\"1.5\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\",\"color\":\"rgba(0,0,0,1)\"},\"ol\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"16\",\"line_height\":\"1.5\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\"},\"blockquote\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"20\",\"line_height\":\"1.5\",\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(103,103,103,1)\"},\"blockquote.upfront-quote-alternative\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"20\",\"line_height\":\"1.5\",\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(103,103,103,1)\"}}'))
 			);
 		}
 		if ($this->get_theme_settings()->get('layout_style')) {
@@ -629,28 +653,11 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		return json_decode($presets, $as_array);
 	}
 
-	public function getPostImageVariants($image_variants, $args) {
+	public static function getPostImageVariants($image_variants = null, $args = null) {
 	  if (empty($image_variants) === false) return $image_variants;
 
-	  $image_variants = $this->get_theme_settings()->get('post_image_variants');
-	  if( empty( $image_variants )){
-		$image_variants = <<< VRT
-		[
-		{"vid":"variant-1414082104315-1342","label":"Left","group":{"margin_left":"0","margin_right":"0","col":"12","row":"66","left":"0","float":"left","height":"300","width_cls":"c12","left_cls":"ml0","clear_cls":""},"image":{"order":"0","col":"24","top":"0","left":"0","row":"51","clear":"true","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"1","col":"12","top":"0","left":"0","row":"10","clear":"true","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}},
-		{"vid":"variant-1414082128389-1073","label":"Right","group":{"margin_left":"0","margin_right":"0","col":"12","row":"65","left":"0","float":"right","height":"300","width_cls":"c12","left_cls":"ml0","clear_cls":""},"image":{"order":"0","col":"24","top":"0","left":"0","row":"51","clear":"true","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"1","col":"13","top":"0","left":"0","row":"10","clear":"true","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}},
-		{"vid":"variant-1414082154417-1612","label":"Full Width","group":{"margin_left":"0","margin_right":"0","col":"24","row":"60","left":"0","float":"none","height":"300","width_cls":"c24","left_cls":"ml0","clear_cls":""},"image":{"order":"0","col":"24","top":"0","left":"0","row":"51","clear":"true","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"1","col":"24","top":"0","left":"0","row":"10","clear":"true","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}},
-		{"vid":"variant-1414082173807-1526","label":"Center","group":{"margin_left":"0","margin_right":"0","col":"16","row":"63","left":"4","float":"none","height":"300","width_cls":"c16","left_cls":"ml0","clear_cls":""},"image":{"order":"0","col":"24","top":"0","left":"0","row":"51","clear":"true","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"1","col":"16","top":"0","left":"0","row":"10","clear":"true","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}},
-		{"vid":"variant-1414082210132-1390","label":"Left caption right","group":{"margin_left":"0","margin_right":"0","col":"12","row":"47","left":"0","float":"left","height":"300","width_cls":"c12","left_cls":"ml0","clear_cls":""},"image":{"order":"0","col":"7","top":"0","left":"0","row":"47","clear":"true","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"1","col":"5","top":"10","left":"0","row":"10","clear":"false","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}},
-		{"vid":"variant-1414082243148-1249","label":"Right caption left","group":{"margin_left":"0","margin_right":"0","col":"12","row":"62","left":"0","float":"right","height":"300","width_cls":"c12","left_cls":"ml0","clear_cls":""},"image":{"order":"1","col":"8","top":"0","left":"-8","row":"051","clear":"false","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"0","col":"4","top":"1","left":"0","row":"10","clear":"true","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}},
-		{"vid":"variant-1414082289322-1599","label":"Full width caption above","group":{"margin_left":"0","margin_right":"0","col":"24","row":"60","left":"0","float":"none","height":"300","width_cls":"c24","left_cls":"ml0","clear_cls":""},"image":{"order":"1","col":"24","top":"0","left":"0","row":"51","clear":"true","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"0","col":"24","top":"0","left":"0","row":"10","clear":"true","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}}]
-VRT;
-		  $image_variants = <<< VRT
-		[
-		{"vid":"variant-1414082154417-1612","label":"Full Width","group":{"margin_left":"0","margin_right":"0","col":"24","row":"60","left":"0","float":"none","height":"300","width_cls":"c24","left_cls":"ml0","clear_cls":""},"image":{"order":"0","col":"24","top":"0","left":"0","row":"51","clear":"true","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"1","col":"24","top":"0","left":"0","row":"10","clear":"true","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}},
-		{"vid":"variant-1414082173807-1526","label":"Center","group":{"margin_left":"0","margin_right":"0","col":"16","row":"63","left":"4","float":"none","height":"300","width_cls":"c16","left_cls":"ml0","clear_cls":""},"image":{"order":"0","col":"24","top":"0","left":"0","row":"51","clear":"true","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"1","col":"16","top":"0","left":"0","row":"10","clear":"true","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}}
-		]
-VRT;
-	  }
+      $db_image_variants = self::get_post_image_variants_from_db();
+	  $image_variants = $db_image_variants ? $db_image_variants :  self::get_post_image_variants_from_settings();
 
 	  if (isset($args['json']) && $args['json']) return $image_variants;
 
@@ -664,7 +671,7 @@ VRT;
 	 */
 	protected function _get_page_default_layout ($cascade) {
 		$id = false;
-		if (!(defined('DOING_AJAX') && DOING_AJAX)) {
+		if (!(defined('DOING_AJAX') && DOING_AJAX) && !(!empty($cascade['item']) && 'archive-search' === $cascade['item'])) {
 			$id = get_post() // A bug in WP API - get_the_ID() is implemented *quite* poorly
 				? get_the_ID()
 				: false
@@ -672,7 +679,7 @@ VRT;
 		} else if (!empty($cascade['specificity'])) {
 			$id = intval(preg_replace('/^.*?(\d+)$/is', '\\1', $cascade['specificity']));
 		}
-		if($id){
+		if ($id) {
 			foreach ($this->get_required_pages() as $page) {
 				if ($page->get_id() == $id) return $page->get_layout_name();
 			}
@@ -909,6 +916,7 @@ VRT;
         return $attach_id;
     }
 
+
     /**
      * Returns theme font icons if specified
      *
@@ -926,4 +934,265 @@ VRT;
 
         return is_array( $theme_font_icons ) ? $theme_font_icons : json_decode( $theme_font_icons );
     }
+
+
+	/**
+	 * Finds image variant object using variant id
+     *
+     * If variant is not found within the current theme's variants, tries to find
+     * it from the previous themes' variants and  then find a match for it in the current theme
+     *
+	 *
+	 * @param string $vid variant id
+	 *
+	 * @return array
+	 */
+	public static function get_image_variant_by_id( $vid ){
+		$current_variants = self::getPostImageVariants();
+
+        /**
+         * If variant is found among the current theme's variants
+         */
+		foreach( $current_variants as $variant ){
+			if( $variant->vid == $vid ){
+				return $variant;
+			}
+		}
+
+        /**
+         * If variant is found in the prev theme's variants
+         */
+        $prev_variant = false;
+        $prev_variants = self::get_prev_post_image_variants();
+        if( $prev_variants ){
+            foreach( $prev_variants as $variant ){
+                if( $variant->vid == $vid ){
+                    $prev_variant =  $variant;
+                }
+            }
+        }
+
+        if( $prev_variant ){
+
+            /**
+             * Match current and prev variant labels, if found any match return as variant
+             */
+            foreach( $current_variants as $variant ){
+                if( trim( $variant->label ) == trim( $prev_variant->label ) ){
+                    return $variant;
+                }
+            }
+
+
+            /**
+             * Find a variant with matching group float
+             */
+            foreach( $current_variants as $variant ){
+                if( trim( $variant->group->float ) == trim( $prev_variant->group->float ) ){
+                    return $variant;
+                }
+            }
+
+
+        }
+
+        $all_other_themes_variants = self::get_all_other_theme_variants();
+        $old_theme_variant = false;
+        if( $all_other_themes_variants &&  array() !== $all_other_themes_variants  ){
+            foreach( $all_other_themes_variants as  $variant ){
+                if( $variant->vid ===  $vid)
+                    $old_theme_variant = $variant;
+            }
+
+            if( $old_theme_variant  ){
+                /**
+                 * Match current and prev variant labels, if found any match return as variant
+                 */
+                foreach( $current_variants as $variant ){
+                    if( trim( $variant->label ) == trim( $old_theme_variant->label ) ){
+                        return $variant;
+                    }
+                }
+
+
+                /**
+                 * Find a variant with matching group float
+                 */
+                foreach( $current_variants as $variant ){
+                    if( trim( $variant->group->float ) == trim( $old_theme_variant->group->float ) ){
+                        return $variant;
+                    }
+                }
+            }
+        }
+
+        /**
+         * Do not so desirable matching from the previous theme
+         */
+        if( $prev_variant ){
+            /**
+             * Find a variant with matching image left and top
+             */
+            foreach( $current_variants as $variant ){
+                if( trim( $variant->image->left ) == trim( $prev_variant->image->left ) && trim( $variant->image->top ) == trim( $prev_variant->image->top ) ){
+                    return $variant;
+                }
+            }
+
+            /**
+             * Find a variant with matching image order
+             */
+            foreach( $current_variants as $variant ){
+                if( trim( $variant->image->order ) == trim( $prev_variant->image->order )  ){
+                    return $variant;
+                }
+            }
+        }
+
+        /**
+         * Do not so desirable matching from all the previous uf themes
+         */
+        if( $old_theme_variant ){
+            /**
+             * Find a variant with matching image left and top
+             */
+            foreach( $current_variants as $variant ){
+                if( trim( $variant->image->left ) == trim( $old_theme_variant->image->left ) && trim( $variant->image->top ) == trim( $prev_variant->image->top ) ){
+                    return $variant;
+                }
+            }
+
+            /**
+             * Find a variant with matching image order
+             */
+            foreach( $current_variants as $variant ){
+                if( trim( $variant->image->order ) == trim( $old_theme_variant->image->order )  ){
+                    return $variant;
+                }
+            }
+        }
+
+		return array();
+	}
+
+    private static function _get_post_image_variant_key( $key = null ){
+        $theme = wp_get_theme();
+
+        return ( empty( $key ) ? $theme->get_stylesheet() : $key  ) . "-post_image_variants";
+    }
+
+    /**
+     * Gets post image variants from db
+     *
+     * @param null $key
+     * @return mixed|void
+     */
+    public static function get_post_image_variants_from_db( $key = null ){
+        return get_option( self::_get_post_image_variant_key( $key ) );
+    }
+
+    /**
+     * Gets post image variants from settings file
+     *
+     * @return string
+     */
+    public static function get_post_image_variants_from_settings(){
+        $image_variants = self::_get_theme_settings()->get('post_image_variants');
+        if( empty( $image_variants )){
+            $image_variants = <<< VRT
+		[
+		{"vid":"variant-1414082104315-1342","label":"Left","group":{"margin_left":"0","margin_right":"0","col":"12","row":"66","left":"0","float":"left","height":"300","width_cls":"c12","left_cls":"ml0","clear_cls":""},"image":{"order":"0","col":"24","top":"0","left":"0","row":"51","clear":"true","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"1","col":"12","top":"0","left":"0","row":"10","clear":"true","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}},
+		{"vid":"variant-1414082128389-1073","label":"Right","group":{"margin_left":"0","margin_right":"0","col":"12","row":"65","left":"0","float":"right","height":"300","width_cls":"c12","left_cls":"ml0","clear_cls":""},"image":{"order":"0","col":"24","top":"0","left":"0","row":"51","clear":"true","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"1","col":"13","top":"0","left":"0","row":"10","clear":"true","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}},
+		{"vid":"variant-1414082154417-1612","label":"Full Width","group":{"margin_left":"0","margin_right":"0","col":"24","row":"60","left":"0","float":"none","height":"300","width_cls":"c24","left_cls":"ml0","clear_cls":""},"image":{"order":"0","col":"24","top":"0","left":"0","row":"51","clear":"true","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"1","col":"24","top":"0","left":"0","row":"10","clear":"true","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}},
+		{"vid":"variant-1414082173807-1526","label":"Center","group":{"margin_left":"0","margin_right":"0","col":"16","row":"63","left":"4","float":"none","height":"300","width_cls":"c16","left_cls":"ml0","clear_cls":""},"image":{"order":"0","col":"24","top":"0","left":"0","row":"51","clear":"true","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"1","col":"16","top":"0","left":"0","row":"10","clear":"true","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}},
+		{"vid":"variant-1414082210132-1390","label":"Left caption right","group":{"margin_left":"0","margin_right":"0","col":"12","row":"47","left":"0","float":"left","height":"300","width_cls":"c12","left_cls":"ml0","clear_cls":""},"image":{"order":"0","col":"7","top":"0","left":"0","row":"47","clear":"true","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"1","col":"5","top":"10","left":"0","row":"10","clear":"false","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}},
+		{"vid":"variant-1414082243148-1249","label":"Right caption left","group":{"margin_left":"0","margin_right":"0","col":"12","row":"62","left":"0","float":"right","height":"300","width_cls":"c12","left_cls":"ml0","clear_cls":""},"image":{"order":"1","col":"8","top":"0","left":"-8","row":"051","clear":"false","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"0","col":"4","top":"1","left":"0","row":"10","clear":"true","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}},
+		{"vid":"variant-1414082289322-1599","label":"Full width caption above","group":{"margin_left":"0","margin_right":"0","col":"24","row":"60","left":"0","float":"none","height":"300","width_cls":"c24","left_cls":"ml0","clear_cls":""},"image":{"order":"1","col":"24","top":"0","left":"0","row":"51","clear":"true","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"0","col":"24","top":"0","left":"0","row":"10","clear":"true","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}}]
+VRT;
+            $image_variants = <<< VRT
+		[
+		{"vid":"variant-1414082154417-1612","label":"Full Width","group":{"margin_left":"0","margin_right":"0","col":"24","row":"60","left":"0","float":"none","height":"300","width_cls":"c24","left_cls":"ml0","clear_cls":""},"image":{"order":"0","col":"24","top":"0","left":"0","row":"51","clear":"true","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"1","col":"24","top":"0","left":"0","row":"10","clear":"true","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}},
+		{"vid":"variant-1414082173807-1526","label":"Center","group":{"margin_left":"0","margin_right":"0","col":"16","row":"63","left":"4","float":"none","height":"300","width_cls":"c16","left_cls":"ml0","clear_cls":""},"image":{"order":"0","col":"24","top":"0","left":"0","row":"51","clear":"true","height":"255","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"},"caption":{"show":"1","order":"1","col":"16","top":"0","left":"0","row":"10","clear":"true","height":"50","width_cls":"c24","left_cls":"ml0","clear_cls":"clr","top_cls":"mt0"}}
+		]
+VRT;
+        }
+
+        return $image_variants;
+    }
+    /**
+     * Updates previous theme's stylesheet name to db
+     *
+     * @uses pre_update_option_stylesheet hook
+     *
+     * @param string $value new theme stylesheet name
+     * @param string $old_value old theme stylesheet name
+     * @return string $value new theme stylesheet name
+     */
+    function update_prev_stylesheet($value, $old_value){
+        if( $value != $old_value ){
+            update_option("uf_prev_stylesheet", $old_value);
+        }
+        return $value;
+    }
+
+    /**
+     * Returns previous theme's stylesheet name
+     *
+     * @return mixed|void previous theme's stylesheet name | false
+     */
+    public static function get_prev_stylesheet(){
+        return get_option( 'uf_prev_stylesheet', false);
+    }
+
+
+    /**
+     * Updates post image variants
+     *
+     * @param $value new them stylesheet name
+     * @param $old_value old theme stylesheet name
+     * @return string $value new theme stylesheet name
+     */
+    function update_post_image_variants(){
+       update_option(self::_get_post_image_variant_key(), self::get_post_image_variants_from_settings() );
+    }
+
+    public static function get_prev_post_image_variants(){
+        $prev_theme = self::get_prev_stylesheet();
+
+        return $prev_theme ?  json_decode( self::get_post_image_variants_from_db( $prev_theme ) ) : false;
+    }
+
+    /**
+     * Returns all uf theme names
+     *
+     * @return array
+     */
+    public static function get_all_uf_theme_names(){
+        $theme_names = array();
+        foreach( wp_get_themes()   as $theme_name => $theme ){
+            if( ucfirst( $theme->Template ) === "Upfront" && ucfirst( $theme_name ) !== "Upfront" ){
+                $theme_names[] = $theme_name;
+            }
+        }
+        return $theme_names;
+    }
+
+    /**
+     * Gets all image variants from all other uf themes
+     *
+     * @return array
+     */
+    public static function get_all_other_theme_variants(){
+        $variants = array();
+
+        foreach( self::get_all_uf_theme_names()  as $theme_name ){
+            $theme_variants = self::get_post_image_variants_from_db( $theme_name );
+            if( $theme_variants  )
+                $variants = array_merge( $variants, $theme_variants );
+        }
+
+        return $variants;
+
+    }
+
 }

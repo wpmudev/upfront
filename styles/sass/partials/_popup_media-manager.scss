@@ -610,3 +610,15 @@
 	max-height: 450px;
 	overflow-y: scroll;
 }
+
+
+/* ----------- Insert Options -------- */
+.upfront-media-controls .insert_options{
+  border-bottom: 1px solid rgba(97, 128, 152, 0.2);
+  margin-bottom: 10px;
+  display: block;
+  min-height: 40px;
+}
+.upfront-media-controls .insert_options .upfront-field-wrap{
+  line-height: 40px;
+}

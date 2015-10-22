@@ -411,6 +411,7 @@ var hackRedactor = function(){
         italic: l10n.italic,
     });
 
+
 };
 
 var Ueditor = function($el, options) {
@@ -456,6 +457,7 @@ var Ueditor = function($el, options) {
             //cleanStyleOnEnter: false,
             //removeDataAttr: false,
             removeEmpty: false,
+            imageResizable: false,
             lang: 'upfront' // <-- This is IMPORTANT. See the l10n proxying bit in `hackRedactor`
 		}, options)
 	;
@@ -615,6 +617,9 @@ Ueditor.prototype = {
 				}
 			});
 
+            // Expand known text patterns
+            if (32 === e.keyCode) self.expand_known_text_patterns();
+
 			if(e.keyCode != 37 && e.keyCode != 39) {
 				var current = $(self.redactor.selection.getCurrent());
 				if(current.hasClass('uf_font_icon')) {
@@ -654,6 +659,89 @@ Ueditor.prototype = {
 				this.stop();
 			}
 	},
+
+    /**
+     * Expand the known text patterns in current block element
+     */
+    expand_known_text_patterns: function (e) {
+        var redactor = this.redactor,
+            rpl = {
+                '##': {tag: 'h2'},
+                '###': {tag: 'h3'},
+                '####': {tag: 'h4'},
+                '#####': {tag: 'h5'},
+                '######': {tag: 'h6'},
+                '>': {tag: 'blockquote'},
+                '-': {tag: 'ul', nest: 'li'},
+                '*': {tag: 'ul', nest: 'li'},
+                '1.': {tag: 'ol', nest: 'li'},
+                '1)': {tag: 'ol', nest: 'li'}
+            }
+        ;
+        if (!redactor) return;
+
+        redactor.selection.get();
+
+        var node = redactor.selection.getBlock(),
+            caret, $el, check
+        ;
+        if (!node) return;
+
+        caret = redactor.caret.getOffsetOfElement(node);
+        if (!caret) return;
+        
+        $el = $(node).clone();
+        check = $el.text().substr(0, caret);
+
+        if (!check) return;
+
+        $.each(rpl, function (src, target) {
+            if (src !== check) return true;
+
+            var $node = $(node),
+                rx = new RegExp('^' + src.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1") + ' ?'),
+                text = $node.text().replace(rx, '')
+            ;
+
+            // Let's not do nested lists
+            // or expansion within lists in general
+            // or in PRE tags
+            if ($node.is("li,ul,ol,pre")) return false;
+
+            // Replace the selection tag with the one from the replacement map
+            if ("nest" in target && target.nest) {
+                $node.html(
+                    '<' + target.tag + '><' + target.nest + '>' +
+                        text + 
+                    '</' + target.nest + '></' + target.tag + '>'
+                );
+            } else {
+                var _node = document.createElement(target.tag);
+                _node.innerHTML = text;
+                $node.replaceWith( _node );
+
+            }
+
+            // Set caret position to end of the target
+            redactor.caret.setEnd(
+                "nest" in target && target.nest
+                    ? $node.find(target.nest).last().get()
+                    : _node
+            );
+
+            redactor.code.sync();
+            /**
+             * Make sure the created node doesn't contain the space created by the spacebar!
+             */
+            _.delay( function(){
+               $(redactor.selection.getBlock()).html(text);
+            }, 3 );
+
+
+            return false;
+        });
+    },
+
 	stop: function(){
 		if(this.redactor){
 			UeditorEvents.trigger('ueditor:stop', this.redactor);
@@ -676,6 +764,7 @@ Ueditor.prototype = {
 
 		me.$el.addClass('ueditable-inactive')
 			.attr('title', 'Double click to edit the text')
+            .addClass('uf-click-to-edit-text')
 			.one('dblclick', function(e){
 				e.preventDefault();
 				e.stopPropagation();
@@ -960,9 +1049,12 @@ Ueditor.prototype = {
 		});
 
 		$(document).one('mouseup', function(e){
+            if(!me.redactor)
+                return;
+			//var is_selection = ((Math.abs(e.pageX-me.lastmousedown.x) + Math.abs(e.pageY-me.lastmousedown.y)) > 2);
+            var is_selection = !!me.redactor.selection.getText();
 
-			var is_selection = ((Math.abs(e.pageX-me.lastmousedown.x) + Math.abs(e.pageY-me.lastmousedown.y)) > 2);
-			if((is_selection || me.clickcount > 1) && me.redactor && me.redactor.waitForMouseUp && me.redactor.selection.getText()){
+			if(((is_selection && me.clickcount != 1) || me.clickcount > 1) && me.redactor && me.redactor.waitForMouseUp && me.redactor.selection.getText()){
 				me.redactor.airShow(e);
 				me.redactor.$element.trigger('mouseup.redactor');
 			}
@@ -1064,12 +1156,30 @@ var InsertManagerInserts = Backbone.View.extend({
             self = this
             ;
 
-        insert.start( this.$el )
-            .done(function(popup, results){
+        /**
+         * Todo Sam: remove __insert and try to find why sometimes insert doesn't get found inside the done event
+         */
+        this.__insert = insert;
+        insert.start( this.$el, this.redactor.$editor )
+            .done(function(args, resolved_insert){
 
-                if(!results) //Had to uncomment this because if we let it through with blank result, it inserts an empty wrapper which blocks the "inert/embed" button to appear again: Gagan
-                	return;
+                /**
+                 * Allows to get resolved insert from inserts with insert managers
+                 */
+                if(_.isArray(args) ){
+                    var popup = args[0],
+                        results = args[0],
+                        insert = resolved_insert;
+                }else{
+                    var popup = args,
+                        results = resolved_insert,
+                        insert = insert || self.__insert
+                    ;
 
+                }
+
+                // if(!results) Let's allow promises without result for now!
+                //	return;
                 self.inserts[insert.cid] = insert;
                 //Allow to undo
                 //this.trigger('insert:prechange'); // "this" is the embedded image object

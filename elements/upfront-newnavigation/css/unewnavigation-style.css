@@ -8,12 +8,31 @@ div.upfront-navigation ul.sub-menu {
   display: none;
   z-index:2;
 }
-div.upfront-navigation div[data-style="burger"] ul.sub-menu {
+ul.menu {
+  background-color:#333;
+}
+ul.sub-menu {
+  background-color:#262626;
+}
+ul.menu li a {
+  color:#fff;
+  font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+}
+
+/*div.upfront-navigation div[data-style="burger"] ul.sub-menu {
+  display: block;
+}*/
+
+div.upfront-navigation div[data-style="horizontal"]:not([data-style="burger"]) li.menu-item:hover > ul.sub-menu,
+div.upfront-navigation div[data-style="vertical"]:not([data-style="burger"]) li.menu-item:hover > ul.sub-menu {
   display: block;
 }
 
-div.upfront-navigation div[data-style="horizontal"] li.menu-item:hover > ul.sub-menu,
-div.upfront-navigation div[data-style="vertical"] li.menu-item:hover > ul.sub-menu {
+li.burger_sub_display > ul {
+  display: block !important;
+}
+
+div.upfront-navigation div[data-style="burger"] ul.sub-menu > li {
   display: block;
 }
 
@@ -49,32 +68,44 @@ div.upfront-navigation li.menu-item:after {
 /* Has sub-menu, indicator */
 
 
-li.menu-item-has-children > a:after {
+li.menu-item-has-children > a:after,
+li.menu-item.parent > a:after {
 	content:'';
 	width: 0;
 	height: 0;
 	border-left: 4px solid transparent;
 	border-right: 4px solid transparent;
-	border-top: 4px solid black;
+	border-top: 4px solid #999;
 	position: absolute;
 	right: 6px;
-	top:45%;
+	top: 45%;
 }
 
-li.menu-item-has-children:hover > a:after {
+li.menu-item-has-children:hover > a:after,
+li.parent:hover > a:after,
+li.menu-item.burger_sub_display > a:after
+{
 	border-top: 4px solid transparent;
 	border-bottom: 4px solid transparent;
-	border-left: 4px solid black;
-	top:40%;
+	border-left: 4px solid #999;
+	top: 40%;
 	right: 4px;
 }
 
-/* kill arrows for burger */
-div.upfront-navigation div[data-style="burger"] .menu-item-has-children > a:after,
-div.upfront-navigation div[data-style="burger"] .menu-item-has-children:hover > a:after {
-  border:none;
+div.upfront-navigation div[data-style="burger"] li.menu-item-has-children > a:after,
+div.upfront-navigation div[data-style="burger"] li.parent > a:after {
+  right: inherit;
+  margin-left:20px;
+  top: inherit;
+  margin-top:10px;
 }
 
+div.upfront-navigation div[data-style="burger"] li.menu-item-has-children:hover > a:after,
+div.upfront-navigation div[data-style="burger"] li.parent:hover > a:after,
+div.upfront-navigation div[data-style="burger"] li.menu-item-has-children.burger_sub_display > a:after,
+div.upfront-navigation div[data-style="burger"] li.parent.burger_sub_display > a:after {
+  margin-top:6px;
+}
 
 /* HORIZONTAL */
 
@@ -116,9 +147,13 @@ div.upfront-navigation div[data-style="burger"] ul.menu {
   position:fixed;
   top:0;
   z-index:2001;
-  background-color:rgba(255,255,255,.8);
   max-height: 100%;
   overflow-y: auto !important;
+}
+
+div.upfront-navigation div[data-style="burger"][data-burger_over="pushes"][data-burger_alignment="top"] ul.menu, div.upfront-navigation div[data-style="burger"][data-burger_over="pushes"][data-burger_alignment="whole"] ul.menu {
+  position: absolute;
+  max-height: inherit;
 }
 
 div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"] ul.menu,
@@ -126,9 +161,13 @@ div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] 
   left:0;
   right:0;
 }
+
+
 div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] ul.menu {
 	height: 100%;	
 }
+
+
 div.upfront-navigation div[data-style="burger"][ data-burger_alignment="left"] ul.menu {
   width:30%;
   height: 100%;
@@ -230,20 +269,48 @@ div[data-style="burger"][data-aliment="center"] ul li ul {
     z-index: 99999999;
 }
 
+div[data-style="burger"] div[data-already_floating="yes"] {
+    z-index: inherit;
+}
+
+div.upfront-navigation-float[data-style="burger"][data-burger_over="pushes"][data-burger_alignment="top"] ul.menu {
+    position:fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+}
+
+div.upfront-navigation div[data-isfloating="yes"][data-style="burger"][data-burger_over="pushes"][data-burger_alignment="top"] ul.menu {
+  position: fixed;
+  top: 0 !important;
+}
+
+li.wrap_burger_nav_close {
+  text-align:right;
+}
 i.burger_nav_close {
   z-index:2001;
   width:28px;
   height: 28px;
-  display: block;
-  border:2px #fff solid;
+  display: inline-block;
   border-radius: 50%;
   text-align: center;
   line-height: 28px;
-  font-size: 22px;
+  font-size: 28px;
   font-style: normal;
   cursor: pointer;
+  color:#fff;
 }
 
 i.burger_nav_close:before {
   content: '\00d7';
 }
+
+div.burger_overlay {
+  position: fixed;
+  background-color:rgba(0, 0, 0, 0.2);
+  width:100%;
+  height:100%;
+  top:0;
+  left:0;
+}
+

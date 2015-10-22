@@ -28,18 +28,31 @@ class Upfront_StylesheetMain extends Upfront_Server {
 	}
 
 	function load_styles () {
-		$grid = Upfront_Grid::get_grid();
 		$layout = apply_filters('upfront-style-base_layout', Upfront_Layout::get_instance());
-		$preprocessor = new Upfront_StylePreprocessor($grid, $layout);
 		$base_only = isset($_POST['base_only']) ? filter_var($_POST['base_only'], FILTER_VALIDATE_BOOLEAN) : false;
 
 		// Alright, so initialize the var first
 		$style = '';
+		$bootable = Upfront_Permissions::current(Upfront_Permissions::BOOT);
+		$cache = $ckey = false;
+		
+		/*
+		// Let's try to go with cached response first, if we can
+		if (!Upfront_Behavior::debug()->is_active(Upfront_Behavior::debug()->constant('STYLE'))) {
+			$cache = Upfront_Cache::get_instance(Upfront_Cache::TYPE_LONG_TERM);
+			$ckey = $cache->key('styles_main', array($layout, $bootable));
+			$style = $cache->get($ckey);
+			if (!empty($style)) $this->_out(new Upfront_CssResponse_Success($style), !$bootable);
+		}
+		*/
 
 		// Add typography styles - rearranging so the imports from Google fonts come first, if needed.
 		// When loading styles in editor mode don't include typography styles since they are generated
 		// by javascript
 		if (false === $base_only) {
+			$grid = Upfront_Grid::get_grid();
+			$preprocessor = new Upfront_StylePreprocessor($grid, $layout);
+			
 			$style = $this->prepare_typography_styles($layout, $grid);
 			$style .= $preprocessor->process();
 		}
@@ -68,7 +81,19 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		// Add elements presets styles
 		$style = apply_filters('get_element_preset_styles', $style);
 		$style = Upfront_UFC::init()->process_colors($style);
-		$this->_out(new Upfront_CssResponse_Success($style));
+
+		if (!empty($cache) && !empty($ckey)) { // make use of cache, if possible
+			$cache->set($ckey, $style);
+		}
+
+		/**
+		 * Filter the styles just before we use them
+		 *
+		 * @param string $style Gathered styles
+		 */
+		$style = apply_filters('upfront-dependencies-main-styles', $style);
+
+		$this->_out(new Upfront_CssResponse_Success($style), !$bootable); // Serve cacheable styles for visitors
 	}
 
 	function save_styles(){
@@ -257,6 +282,12 @@ class Upfront_StylesheetMain extends Upfront_Server {
 				}
 			}
 			foreach ( $typography as $element=>$properties ){
+				
+				// Explicitly support blockquote typo settings for child paragraphs
+				if (preg_match('/^blockquote\b/', $element)) {
+					$element .= ", {$element} p";
+				}
+
 				$properties = wp_parse_args($properties, array(
 					'font_face' => 'Arial',
 					'weight' => '400',
@@ -286,15 +317,28 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		// Include Google fonts
 		$faces = array_values(array_filter(array_unique($faces, SORT_REGULAR)));
 		$google_fonts = new Upfront_Model_GoogleFonts;
-		$imports = '';
+		//$imports = ''; // Skip this, we're not doing imports
+
+		$deps = Upfront_CoreDependencies_Registry::get_instance();
+
 		foreach ($faces as $face) {
+			// Yeah, let's not do the imports directly
+			// and fall back to just adding the fonts like we normally would
+			/*
 			if (!$google_fonts->is_from_google($face['face'])) continue;
 			$imports .= "@import \"https://fonts.googleapis.com/css?family=" .
 				preg_replace('/\s/', '+', $face['face']);
 			if (400 !== (int)$face['weight'] && 'inherit' !== $face['weight']) $imports .= ':' . $face['weight'];
 			$imports .= "\";\n";
+			*/
+			if (!$google_fonts->is_from_google($face['face'])) continue;
+			$variant = 400 !== (int)$face['weight'] && 'inherit' !== $face['weight']
+				? $face['weight']
+				: false
+			;
+			$deps->add_font($face['face'], $variant);
 		}
-		if (!empty($imports)) $out = "{$imports}\n\n{$out}";
+		//if (!empty($imports)) $out = "{$imports}\n\n{$out}"; // Skip this, we're not doing imports
 
 		$out = apply_filters('upfront_prepare_typography_styles', $out);
 
