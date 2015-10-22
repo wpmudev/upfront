@@ -1621,6 +1621,8 @@ define([
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 				this.listenTo(Upfront.Events, "command:module_group:finish_edit", this.on_finish);
 				this.listenTo(Upfront.Events, "command:module_group:close_panel", this.closeControlPanel);
+
+				this.editing = false;
 				
 				this.on('entity:resize', this.on_resize, this);
 			},
@@ -1979,17 +1981,19 @@ define([
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 				$main.addClass('upfront-module-group-editing');
 				this.$el.addClass('upfront-module-group-on-edit');
+				this.editing = true;
 				this.disable_interaction(false, false, false);
 				this.toggle_modules_interaction(true, true);
 				Upfront.Events.trigger('entity:module_group:edit', this, this.model);
 			},
 			on_finish: function () {
-				if ( !this.$el.hasClass('upfront-module-group-on-edit') ){
+				if ( !this.editing ){
 					return;
 				}
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 				$main.removeClass('upfront-module-group-editing');
 				this.$el.removeClass('upfront-module-group-on-edit');
+				this.editing = false;
 				this.enable_interaction();
 				this.toggle_modules_interaction(false);
 			},
@@ -2020,6 +2024,7 @@ define([
 				}
 			},
 			enable_interaction: function () {
+				if ( this.editing ) return; // Don't enable interaction if it's on editing
 				this.$el.removeClass('upfront-module-group-disabled');
 				if ( this.$el.data('ui-resizable') ) {
 					this.$el.resizable('option', 'disabled', false);
