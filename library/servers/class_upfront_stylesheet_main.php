@@ -282,6 +282,12 @@ class Upfront_StylesheetMain extends Upfront_Server {
 				}
 			}
 			foreach ( $typography as $element=>$properties ){
+				
+				// Explicitly support blockquote typo settings for child paragraphs
+				if (preg_match('/^blockquote\b/', $element)) {
+					$element .= ", {$element} p";
+				}
+
 				$properties = wp_parse_args($properties, array(
 					'font_face' => 'Arial',
 					'weight' => '400',
