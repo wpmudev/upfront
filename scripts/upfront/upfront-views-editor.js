@@ -4305,9 +4305,21 @@ var Field_ToggleableText = Field_Text.extend({
 				me.$(".sp-container").data("sp-options", me.options.spectrum );
 			};
 
+			/**
+			 * Wrap the hide callback so we can re-use it.
+			 */
+			var hide = function (color) {
+				if (me.options.spectrum && me.options.spectrum.hide) {
+					me.options.spectrum.hide(color);
+				}
+			};
+			// Add wrapped hide callback
+			spectrumOptions.hide = hide;
 			if( !spectrumOptions.autoHide  ){
 				spectrumOptions.hide = function(color){
 					me.color = color;
+					// And if we override the hide callback, re-apply it in overridden method
+					hide(color);
 					me.$(".sp-replacer").addClass("sp-active");
 					me.$(".sp-container").removeClass("sp-hidden");
 				};
