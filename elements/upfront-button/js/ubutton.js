@@ -3,10 +3,11 @@ define([
 	'elements/upfront-button/js/model',
 	'elements/upfront-button/js/element',
 	'elements/upfront-button/js/settings',
+	'scripts/upfront/link-model',
 	'scripts/upfront/preset-settings/util',
 	'text!elements/upfront-button/tpl/ubutton.html',
 	'text!elements/upfront-button/tpl/preset-style.html'
-], function(ButtonModel, ButtonElement, ButtonSettings, PresetUtil, buttonTpl, settingsStyleTpl) {
+], function(ButtonModel, ButtonElement, ButtonSettings, LinkModel, PresetUtil, buttonTpl, settingsStyleTpl) {
 
 var l10n = Upfront.Settings.l10n.button_element;
 
@@ -16,6 +17,8 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 	className: 'upfront-button',
 	buttonTpl: Upfront.Util.template(buttonTpl),
 	initialize: function() {
+		var me = this;
+		
 		if(! (this.model instanceof ButtonModel)){
 			this.model = new ButtonModel({properties: this.model.get('properties')});
 		}
@@ -35,7 +38,22 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 
 		Upfront.Events.on('entity:deactivated', this.stopEdit, this);
 
-		this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
+		this.listenTo(Upfront.Events, "theme_colors:update", this.render, this);
+
+		if (this.property('link') === false) {
+			this.link = new LinkModel({
+				type: Upfront.Util.guessLinkType(this.property('href')),
+				url: this.property('href'),
+				target: this.property('linkTarget')
+			});
+			this.property('link', this.link.toJSON());
+		} else {
+			this.link = new LinkModel(this.property('link'));
+		}
+
+		me.listenTo(this.link, 'change', function() {
+			me.property('link', me.link.toJSON());
+		});
 
 	},
 	
