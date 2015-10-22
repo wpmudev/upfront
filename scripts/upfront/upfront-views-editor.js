@@ -1162,6 +1162,7 @@ define([
 		render: function () {
 			this.fields[0].render();
 			this.$el.append(this.fields[0].el);
+			this.fields[0].delegateEvents();
 		},
 		on_click: function () {
 
