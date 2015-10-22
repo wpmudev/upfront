@@ -320,20 +320,10 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		// Include Google fonts
 		$faces = array_values(array_filter(array_unique($faces, SORT_REGULAR)));
 		$google_fonts = new Upfront_Model_GoogleFonts;
-		//$imports = ''; // Skip this, we're not doing imports
 
 		$deps = Upfront_CoreDependencies_Registry::get_instance();
 
 		foreach ($faces as $face) {
-			// Yeah, let's not do the imports directly
-			// and fall back to just adding the fonts like we normally would
-			/*
-			if (!$google_fonts->is_from_google($face['face'])) continue;
-			$imports .= "@import \"https://fonts.googleapis.com/css?family=" .
-				preg_replace('/\s/', '+', $face['face']);
-			if (400 !== (int)$face['weight'] && 'inherit' !== $face['weight']) $imports .= ':' . $face['weight'];
-			$imports .= "\";\n";
-			*/
 			if (!$google_fonts->is_from_google($face['face'])) continue;
 			$variant = 400 !== (int)$face['weight'] && 'inherit' !== $face['weight']
 				? $face['weight']
@@ -341,21 +331,29 @@ class Upfront_StylesheetMain extends Upfront_Server {
 			;
 			$deps->add_font($face['face'], $variant);
 		}
-		//if (!empty($imports)) $out = "{$imports}\n\n{$out}"; // Skip this, we're not doing imports
 
 		$out = apply_filters('upfront_prepare_typography_styles', $out);
 
 		return $out;
 	}
 
+	/**
+	 * Convert typography element to CSS selector
+	 *
+	 * @param string $element Typography element (h1,p, blockquote)
+	 *
+	 * @return string Final selector
+	 */
 	private function _typography_element_to_output_selector ($element) {
 		if (empty($element)) return false;
 
 		$selector = '.upfront-output-object ' . $element;
+		
 		// Explicitly support blockquote typo settings for child paragraphs
 		if (preg_match('/^blockquote\b/', $element)) {
-			$selector .= ', .upfront-output-object ' . $element . ' p';
+			$selector = "{$selector}, {$selector} p";
 		}
+		
 		return $selector;
 	}
 
