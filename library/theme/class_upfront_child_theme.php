@@ -671,7 +671,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	 */
 	protected function _get_page_default_layout ($cascade) {
 		$id = false;
-		if (!(defined('DOING_AJAX') && DOING_AJAX)) {
+		if (!(defined('DOING_AJAX') && DOING_AJAX) && !(!empty($cascade['item']) && 'archive-search' === $cascade['item'])) {
 			$id = get_post() // A bug in WP API - get_the_ID() is implemented *quite* poorly
 				? get_the_ID()
 				: false
@@ -679,7 +679,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		} else if (!empty($cascade['specificity'])) {
 			$id = intval(preg_replace('/^.*?(\d+)$/is', '\\1', $cascade['specificity']));
 		}
-		if($id){
+		if ($id) {
 			foreach ($this->get_required_pages() as $page) {
 				if ($page->get_id() == $id) return $page->get_layout_name();
 			}
