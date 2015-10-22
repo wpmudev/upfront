@@ -2297,6 +2297,12 @@ define([
                                     backgroundColor : color.toRgbString(),
                                     backgroundImage : "none"
                                 });
+                        	},
+                        	hide: function (color) {
+	                            picker.$(".sp-preview").css({
+                                    backgroundColor : color.toRgbString(),
+                                    backgroundImage : "none"
+                                });
                         	}
                         }
                     });
