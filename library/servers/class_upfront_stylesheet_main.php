@@ -231,7 +231,11 @@ class Upfront_StylesheetMain extends Upfront_Server {
 			);
 			if (!empty($face) && false !== strpos($face, ' '))  $face = '"' . $face . '"';
 			$font = $properties['font_face'] ? "{$face}, {$properties['font_family']}" : "inherit";
-			$out .= ".upfront-output-object $element {\n" .
+
+			$selector = $this->_typography_element_to_output_selector($element);
+			if (empty($selector)) continue;
+
+			$out .= "{$selector} {\n" .
 					"font-family: {$font};\n" .
 					( $properties['weight'] ? "font-weight: {$properties['weight']};\n" : "" ) .
 					( $properties['style'] ? "font-style: {$properties['style']};\n" : "" ) .
@@ -282,11 +286,6 @@ class Upfront_StylesheetMain extends Upfront_Server {
 				}
 			}
 			foreach ( $typography as $element=>$properties ){
-				
-				// Explicitly support blockquote typo settings for child paragraphs
-				if (preg_match('/^blockquote\b/', $element)) {
-					$element .= ", {$element} p";
-				}
 
 				$properties = wp_parse_args($properties, array(
 					'font_face' => 'Arial',
@@ -302,7 +301,11 @@ class Upfront_StylesheetMain extends Upfront_Server {
 					'weight' => $properties['weight']
 				);
 				$font = $properties['font_face'] ? "{$properties['font_face']}, {$properties['font_family']}" : "inherit";
-				$breakpoint_css .= ".upfront-output-object $element {\n" .
+
+				$selector = $this->_typography_element_to_output_selector($element);
+				if (empty($selector)) continue;
+
+				$breakpoint_css .= "{$selector} {\n" .
 						"font-family: {$font};\n" .
 						( $properties['weight'] ? "font-weight: {$properties['weight']};\n" : "" ) .
 						( $properties['style'] ? "font-style: {$properties['style']};\n" : "" ) .
@@ -343,6 +346,17 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$out = apply_filters('upfront_prepare_typography_styles', $out);
 
 		return $out;
+	}
+
+	private function _typography_element_to_output_selector ($element) {
+		if (empty($element)) return false;
+
+		$selector = '.upfront-output-object ' . $element;
+		// Explicitly support blockquote typo settings for child paragraphs
+		if (preg_match('/^blockquote\b/', $element)) {
+			$selector .= ', .upfront-output-object ' . $element . ' p';
+		}
+		return $selector;
 	}
 
     /**
