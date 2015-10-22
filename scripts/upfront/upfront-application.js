@@ -1623,7 +1623,7 @@ var Application = new (Backbone.Router.extend({
 						"	font-weight: normal;" +
 						"	font-style: normal;" +
 						"}" +
-						".uf_font_icon {" +
+						".uf_font_icon, .uf_font_icon * {" +
 						"	font-family: '" + font.family + "'!important;" +
 						"}";
 

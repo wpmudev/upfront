@@ -6234,7 +6234,7 @@ var Icon_Fonts_Manager = Backbone.View.extend({
 			"	font-weight: normal;" +
 			"	font-style: normal;" +
 			"}" +
-			".uf_font_icon {" +
+			".uf_font_icon, .uf_font_icon * {" +
 			"	font-family: '" + font.get('family') + "'!important;" +
 			"}";
 
