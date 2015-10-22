@@ -3845,7 +3845,9 @@ define([
 		},
 		dispatch_show: function () {
 			var me = this;
-			me.options.show(me.get_value(), me.$el);			
+			setTimeout(function() {
+				me.options.show(me.get_value(), me.$el);		
+			}, 100);	
 		},
 		get_name: function () {
 			return this.property ? this.property.get('name') : this.name;
