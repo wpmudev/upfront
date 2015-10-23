@@ -117,7 +117,14 @@
 			//	fbUrl = this.getGlobalFBUrl();
 
 			if(fbUrl){
-				var pageName = _.last(fbUrl.split('/'));
+				var splitted = fbUrl.split('/');
+				var pageName = _.last(splitted);
+				
+				if(_.isEmpty(pageName)) {
+					splitted.splice(splitted.length-1, 1);
+					pageName = _.last(splitted);
+				}
+				
 				var wide = 	this.model.get_property_value_by_name('element_size').width-22;
 				if(wide%53 > 0)
 					wide = parseInt(wide/53)*53+22;

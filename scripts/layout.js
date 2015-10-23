@@ -41,12 +41,12 @@ jQuery(document).ready(function($){
 			return breakpoint;
 		}
 	}
-	
+
 	/* Youtube API */
 	var youtube_api_loaded = false;
 	var youtube_api_ready = false;
 	var youtube_player_ids = [];
-	
+
 	function mute_youtube_video (id) {
 		youtube_player_ids.push(id);
 		if ( !youtube_api_loaded ){
@@ -64,7 +64,7 @@ jQuery(document).ready(function($){
 		if ( youtube_api_ready )
 			create_youtube_players();
 	}
-	
+
 	function create_youtube_players () {
 		for ( var i = 0; i < youtube_player_ids.length; i++ )
 			var player = new YT.Player(youtube_player_ids[i], {
@@ -77,18 +77,18 @@ jQuery(document).ready(function($){
 
 	function on_mute_youtube_ready (event) {
 		event.target.mute();
-		
+
 		var time, duration;
 		setInterval(function(){
 			time = event.target.getCurrentTime();
 			duration = event.target.getDuration();
 			if(time > duration - 0.5) {
-				event.target.seekTo(0); 
+				event.target.seekTo(0);
 				event.target.playVideo();
 			}
 		},200);
 	}
-	
+
 	/* Vimeo API */
 	var vimeo_listened  = false;
 	function mute_vimeo_video (id) {
@@ -100,7 +100,7 @@ jQuery(document).ready(function($){
 			vimeo_listened = true;
 		}
 	}
-	
+
 	function on_vimeo_message (e) {
 		if ( !e.origin.match(/vimeo\./) )
 			return;
@@ -145,32 +145,35 @@ jQuery(document).ready(function($){
 			});
 			if ( $overlay.attr('data-bg-parallax') ) {
 				setTimeout(function () { // Zero timeout to shift it out
-					var $next = $overlay
-									.closest('.upfront-output-region-container')
-									.next('.upfront-output-region-container')
-									.find('.upfront-region-container-bg'),
-						$prev = $overlay
-									.closest('.upfront-output-region-container')
-									.prev('.upfront-output-region-container')
-									.find('.upfront-region-container-bg'),
-						next_bg_color = $next.css('background-color'),
-						next_type = $next.attr('data-bg-type-' + breakpoint),
-						prev_bg_color = $prev.css('background-color'),
-						prev_type = $prev.attr('data-bg-type-' + breakpoint),
-						has_alpha = function (color) {
-							if (!color) return false;
-							var matches = color.match(/(rgba|hsla)\(.*?,.*?,.*?,.*?([\d.]+).*?\)/);
-							if (matches && matches[2] && parseFloat(matches[2]) < 1) return true;
-							return false;
-						},
-						overflow_top = ( $prev.length > 0 && prev_type == 'color' && prev_bg_color && has_alpha(prev_bg_color) ? 0 : false ),
-						overflow_bottom = ( $next.length > 0 && next_type == 'color' && next_bg_color && has_alpha(next_bg_color) ? 0 : false )
-					;
-					$overlay.uparallax({
-						element: $overlay.attr('data-bg-parallax')
-					});
-					if (false !== overflow_top) $overlay.uparallax('setOption', 'overflowTop', overflow_top);
-					if (false !== overflow_bottom) $overlay.uparallax('setOption', 'overflowBottom', overflow_bottom);
+					var $container = $overlay.closest('.upfront-output-region-container');
+					if ( $container.length ) {
+						var $next = $container
+										.next('.upfront-output-region-container')
+										.find('.upfront-region-container-bg'),
+							$prev = $container
+										.prev('.upfront-output-region-container')
+										.find('.upfront-region-container-bg'),
+							next_bg_color = $next.css('background-color'),
+							next_type = $next.attr('data-bg-type-' + breakpoint),
+							prev_bg_color = $prev.css('background-color'),
+							prev_type = $prev.attr('data-bg-type-' + breakpoint),
+							has_alpha = function (color) {
+								if (!color) return false;
+								var matches = color.match(/(rgba|hsla)\(.*?,.*?,.*?,.*?([\d.]+).*?\)/);
+								if (matches && matches[2] && parseFloat(matches[2]) < 1) return true;
+								return false;
+							},
+							overflow_top = ( $prev.length > 0 && prev_type == 'color' && prev_bg_color && has_alpha(prev_bg_color) ? 0 : false ),
+							overflow_bottom = ( $next.length > 0 && next_type == 'color' && next_bg_color && has_alpha(next_bg_color) ? 0 : false )
+						;
+						$overlay.uparallax({
+							element: $overlay.attr('data-bg-parallax')
+						});
+						if (false === overflow_top && $prev.length > 0 && $prev.height() < 100) overflow_top = $prev.height();
+						if (false === overflow_bottom && $next.length > 0 && $next.height() < 100) overflow_bottom = $next.height();
+						if (false !== overflow_top) $overlay.uparallax('setOption', 'overflowTop', overflow_top);
+						if (false !== overflow_bottom) $overlay.uparallax('setOption', 'overflowBottom', overflow_bottom);
+					}
 				}, 0);
 			}
 			if ( type == 'image' || type == 'featured' ) {
@@ -279,7 +282,7 @@ jQuery(document).ready(function($){
 					available_space = false,
 					original_space = false,
 					top_ref = 0;
-				
+
 				$wrappers.each(function(){
 					var $modules = $(this).find('> .upfront-output-module, > .upfront-output-module-group');
 					$modules.css('margin-top', '');
@@ -315,13 +318,13 @@ jQuery(document).ready(function($){
 					});
 					lines[line_index].wrappers.push(wrap_obj);
 				});
-				
+
 				$.each(lines, function(index, line){
 					total_height += line.height;
 				});
 				ori_bottom_space = original_height > total_height ? original_height-total_height : 0;
 				avail_bottom_space = height - original_height + ori_bottom_space;
-				
+
 				var count_space = function (from, until) {
 					var total_space = 0,
 						from = typeof from == "number" ? from : 0,
@@ -337,7 +340,7 @@ jQuery(document).ready(function($){
 					});
 					return total_space;
 				}
-				
+
 				$.each(lines, function(index, line){
 					var top_space = 0,
 						bottom_space = 0;
@@ -658,17 +661,44 @@ jQuery(document).ready(function($){
 		$(this).live( "click", function () {
 			var url = $(this).data("groupLink");
 			var target = $(this).data("groupTarget");
-			if(url.indexOf('#') >=0) {
+
+			if(url.indexOf('#') === -1) {
+				// Not an anchor, follow link
+				window.open(url, $(this).data("groupTarget"));
+				return;
+			}
+
+			// It is an anchor
+			if (url.match(/^#.*/) !== null) {
+				// Starts with #, it's safe to do the jQuery stuff
 				var nav = $('.upfront-output-region-container[data-sticky="1"], .upfront-output-region-sub-container[data-sticky="1"]').first();
 				var height = nav.height() ? nav.height() : 0;
-				//It is an anchor
 				$('html,body').animate({scrollTop: $(url).offset().top - height },'slow');
-			} else {
-				window.open(url, $(this).data("groupTarget"));
+				return;
 			}
+
+			// It's an absolute url with anchor
+			var urlParts = url.split('#');
+			if (urlParts[0] === location.origin + location.pathname) {
+				// Target is on the current page
+				var nav = $('.upfront-output-region-container[data-sticky="1"], .upfront-output-region-sub-container[data-sticky="1"]').first();
+				var height = nav.height() ? nav.height() : 0;
+				$('html,body').animate({scrollTop: $('#' + urlParts[1]).offset().top - height },'slow');
+				return;
+			}
+
+			// It's not on the current page
+			if ($(this).attr('target') === '_blank') {
+				// Open in a new window
+				window.open(url);
+				return;
+			}
+
+			// Open in this window
+			window.location = url;
 		});
 	});
-	
+
 	$(document).on('click', 'a', function(e) {
 		//If we are in the editor the lightbox is open using the region.
 		//if(typeof(Upfront) != 'undefined' && Upfront.Views)
@@ -707,6 +737,13 @@ jQuery(document).ready(function($){
 			return;
 		}
 
+		var url = $(this).attr('href');
+		if(!url) {
+			return;
+		}
+
+		if(url.indexOf('#') === -1) return;
+
 		if($(this).closest('div.upfront-navigation').data('style') == 'burger' && $(this).parent('li.menu-item.menu-item-has-children').length > 0) {
 			var linkitem = $(this).parent('li.menu-item.menu-item-has-children');
 
@@ -720,7 +757,7 @@ jQuery(document).ready(function($){
 			if(menucontainer.data('burger_over') == 'pushes' && menucontainer.data('burger_alignment') == 'top') {
 
 				$('div#page').css('margin-top', menu.height());
-		
+
 
 				//var topbar_height = $('div#upfront-ui-topbar').outerHeight();
 				var adminbar_height = $('div#wpadminbar').outerHeight();
@@ -730,77 +767,78 @@ jQuery(document).ready(function($){
 			}
 		}
 
-	  	var url = $(this).attr('href');
-	  	if(!url)
-	  		return;
-
-		if(url.indexOf('#') >=0) {
-		  
-		  var tempurl = url.split('#');
-		  if(tempurl[1].trim() != '')
-			if(tempurl[1].trim().indexOf('ltb-') == 0) {
-				var lightbox =  $('div.upfront-region-'+tempurl[1].trim());
-
-				overlay.css('background-color', lightbox .data('overlay')).insertBefore(lightbox);
-
-				if(lightbox.data('closeicon') == 'yes' || lightbox.data('addclosetext') == 'yes') {
-					lightbox.prepend(close);
-
-					if(lightbox.data('addclosetext') == 'yes') {
-						close.append($('<h3>'+lightbox.data('closetext')+'</h3>'));
-						if(lightbox.data('closeicon') == 'yes')
-							close.children('h3').css('margin-right', '40px');
-					}
-					if(lightbox.data('closeicon') == 'yes')
-						close.append(close_icon);
-
-					close.bind('click', function() {
-						lightboxhide();
-					});
-				}
-
-				if(lightbox.data('clickout') == 'yes')
-					overlay.bind('click', function() {
-						lightboxhide();
-					});
-				//translate width in columns to width in pixels as per the total width of upfront-grid-layout being 24 cols
-				lightbox.css('width', $('div.upfront-grid-layout').first().width()*lightbox.data('col')/24);
-				lightbox.show().css({'margin-left': -(parseInt(lightbox.width()/2)), 'margin-top': -(parseInt(lightbox.height()/2))});
-				$(document).trigger("upfront-lightbox-open");
-				e.preventDefault();
-				function lightboxhide() {
-					close.html('').remove()
-					overlay.remove();
-					lightbox.hide();
-				}
-			}
-			else {
-				
-				var nav = $('.upfront-output-region-container[data-sticky="1"], .upfront-output-region-sub-container[data-sticky="1"]').first();
-				var height = nav.height() ? nav.height() : 0;
-
-				var splitted, anchor;
-				if(url.indexOf('#') > 0) {
-					splitted = url.split('#');
-					anchor = '#'+splitted[1];
-				}
-				else if(url.indexOf('#') == 0) {
-					anchor = url;
-				}
-				
-				if($('a[data-is-anchor="1"]'+anchor).length > 0)
-					$('html,body').animate({scrollTop: $('a'+anchor).offset().top - height },'slow');
-				else //this link with a hash might be for another page
-					return;
-				
-			}
-			e.preventDefault();
+		e.preventDefault();
+		var tempurl = url.split('#');
+		if(tempurl[1].trim() === '') {
+			return;
 		}
+
+		if (tempurl[1].trim().indexOf('ltb-') == 0) {
+			var lightbox =  $('div.upfront-region-'+tempurl[1].trim());
+
+			overlay.css('background-color', lightbox .data('overlay')).insertBefore(lightbox);
+
+			if(lightbox.data('closeicon') == 'yes' || lightbox.data('addclosetext') == 'yes') {
+				lightbox.prepend(close);
+
+				if(lightbox.data('addclosetext') == 'yes') {
+					close.append($('<h3>'+lightbox.data('closetext')+'</h3>'));
+					if(lightbox.data('closeicon') == 'yes')
+						close.children('h3').css('margin-right', '40px');
+				}
+				if(lightbox.data('closeicon') == 'yes')
+					close.append(close_icon);
+
+				close.bind('click', function() {
+					lightboxhide();
+				});
+			}
+
+			if(lightbox.data('clickout') == 'yes') {
+				overlay.bind('click', function() {
+					lightboxhide();
+				});
+			}
+			//translate width in columns to width in pixels as per the total width of upfront-grid-layout being 24 cols
+			lightbox.css('width', $('div.upfront-grid-layout').first().width()*lightbox.data('col')/24);
+			lightbox.show().css({'margin-left': -(parseInt(lightbox.width()/2)), 'margin-top': -(parseInt(lightbox.height()/2))});
+			$(document).trigger("upfront-lightbox-open");
+			e.preventDefault();
+			function lightboxhide() {
+				close.html('').remove()
+				overlay.remove();
+				lightbox.hide();
+			}
+			return;
+		}
+
+		var nav = $('.upfront-output-region-container[data-sticky="1"], .upfront-output-region-sub-container[data-sticky="1"]').first();
+		var height = nav.height() ? nav.height() : 0;
+		//It is an anchor
+		// Starts with #, it's safe to do the jQuery stuff
+		if (url.match(/^#.*/) !== null) {
+			$('html,body').animate({scrollTop: $(url).offset().top - height },'slow');
+			return;
+		}
+
+		// It's an absolute url with anchor
+		var urlParts = url.split('#');
+		if (urlParts[0] === location.origin + location.pathname) {
+			// Target is on the current page
+			$('html,body').animate({scrollTop: $('#' + urlParts[1]).offset().top - height },'slow');
+			return;
+		}
+
+		// It's not on the current page
+		if ($(this).attr('target') === '_blank') {
+			// Open in a new window
+			window.open(url);
+			return;
+		}
+
+		// Open in this window
+		window.location = url;
 	});
-
-
-
-
 
 	/* Lazy loaded image */
 	var image_lazy_load_t;
@@ -1056,15 +1094,15 @@ jQuery(document).ready(function($){
 	update_responsive_class();
 	var lazyUpdateResponsiveClass = throttle(update_responsive_class, 100);
 	$(window).on('resize.uf_layout', lazyUpdateResponsiveClass);
-	
+
 	function remove_all_bound_events () {
 		$(window).off('resize.uf_layout');
 		$(window).off('scroll.uf_layout');
 		$(window).off('load.uf_layout');
 		// Also destroy parallax
-		$('.upfront-parallax').uparallax('destroy');
+		$('.upfront-output-layout .upfront-parallax').uparallax('destroy');
 	}
-	
+
 	$(document).on('upfront-load', function(){
 		Upfront.Events.once("application:mode:before_switch", remove_all_bound_events);
 		Upfront.Events.once("application:mode:before_switch", reset_responsive_class);

@@ -130,3 +130,21 @@ div.upfront-button:hover .redactor_air {
   font-size: 13px;
   margin-bottom: 2px;
 }
+
+.upfront_cta {
+	display: table-cell;
+	padding: 4px 5px;
+	text-decoration: none;
+	height: 100%;
+	vertical-align: middle;
+}
+
+.upfront-output-object.upfront-button {
+	display: table;	
+}
+
+.upfront-object-content.upfront-output-ubutton {
+	display: table-row;	
+	height: 100%;
+	width: 100%;
+}

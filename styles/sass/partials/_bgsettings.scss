@@ -190,3 +190,8 @@
 .upfront-region-bg-slider-image:hover .upfront-region-bg-slider-delete-image {
   display: block;
 }
+
+.background-type-field .upfront-field-select, 
+.background-image-field .upfront-field-select {
+	max-width: 140px;
+}

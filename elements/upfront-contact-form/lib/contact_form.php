@@ -9,6 +9,9 @@ class Upfront_UcontactView extends Upfront_Object {
 	public function get_markup () {
 
 		$element_id = $this->_get_property('element_id');
+		
+		$template = self::_get_l10n('template');
+		if (is_array($template)) $template = array_map('esc_attr', $template);
 
 		//Check if the form has been sent
 		//$this->check_form_received(); // Do NOT just send out form data.
@@ -39,6 +42,7 @@ class Upfront_UcontactView extends Upfront_Object {
 				'message' => esc_attr("message-{$element_id}"),
 				'captcha' => esc_attr("captcha-{$element_id}"),
 			),
+			'l10n' => $template,
 		));
 
 		$args['show_subject'] = $args['show_subject'] && sizeof($args['show_subject']);
@@ -233,12 +237,26 @@ class Upfront_UcontactView extends Upfront_Object {
 			if ($this->msg) {
 				$this->msg_class = 'error';
 			} else if (!empty($emailto)) {
+				// Let's first force mail callbacks	
+				if (!empty($name)) {
+					$email_callback = create_function('$email', "return '{$email}';");
+					$name_callback = create_function('$name', "return '{$name}';");
+					add_filter('wp_mail_from', $email_callback, 99);
+					add_filter('wp_mail_from_name', $name_callback, 99);
+				}
+				
+				// ... then send email
 				if (!wp_mail($emailto, $subject, $message, $headers)) {
 					$this->msg = self::_get_l10n('error_sending');
 					$this->msg_class = 'error';
+				} else $this->msg = self::_get_l10n('mail_sent');
+
+				// ... and clean up afterwards
+				if (!empty($name)) {
+					remove_filter('wp_mail_from_name', $name_callback, 99);
+					remove_filter('wp_mail_from', $email_callback, 99);
 				}
-				else
-					$this->msg = self::_get_l10n('mail_sent');
+			
 			} else {
 				$this->msg = self::_get_l10n('mail_sent');
 			}
@@ -408,6 +426,13 @@ class Upfront_UcontactView extends Upfront_Object {
 				'inline' => __('Inline with field', 'upfront'),
 			),
 			'settings' => __('Contact form settings', 'upfront'),
+			'template' => array(
+				'missing_name' => __('You must write your name.', 'upfront'),
+				'invalid_email' => __('The email address is not valid.', 'upfront'),
+				'missing_subject' => __('You must write a subject for the message.', 'upfront'),
+				'missing_body' => __('You forgot to write a message.', 'upfront'),
+				'realperson_regenerate' => __('Click to change', 'upfront'),
+			)
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)

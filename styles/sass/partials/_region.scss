@@ -300,14 +300,14 @@
 	width: auto;
 	height: auto;
 	z-index: 9997;
-	cursor: s-resize;
+	cursor: ns-resize;
 	display: block;
 	visibility: hidden;
 }
 .upfront-region-resize-handle-n {
   top: -14px;
   bottom: auto;
-  cursor: n-resize;
+  cursor: ns-resize;
 }
 .upfront-region-resize-handle-e {
 	top: 0;
@@ -315,7 +315,7 @@
 	left: auto;
 	right: -13px;
 	width: 24px;
-	cursor: e-resize;
+	cursor: ew-resize;
 }
 .upfront-region-resize-handle-w {
 	top: 0;
@@ -323,7 +323,7 @@
 	left: -13px;
 	right: auto;
 	width: 24px;
-	cursor: w-resize;
+	cursor: ew-resize;
 }
 .upfront-region-editing .upfront-region-container-active > .upfront-region-resize-handle,
 .upfront-region-editing .upfront-region-container-active .upfront-region-side-left > .upfront-region-resize-handle-e,

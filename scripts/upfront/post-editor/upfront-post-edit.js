@@ -187,6 +187,7 @@ var Box = Backbone.View.extend({
         $(".ueditor-display-block").removeClass("ueditor-display-block");
     },
     publish: function(e){
+
         /*
          if(this.currentStatus == 'draft') return this.saveDraft(e); // Why? This is just asking for problems...
          */
@@ -195,8 +196,10 @@ var Box = Backbone.View.extend({
         //this.destroy();
 
         this.post.trigger('editor:publish');
+
         this.trigger('publish');
 
+        
         Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
         Upfront.Events.trigger('upfront:post:edit:stop', 'write', this.post.toJSON());
         this.fadein_other_elements();

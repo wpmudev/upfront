@@ -411,6 +411,7 @@ var hackRedactor = function(){
         italic: l10n.italic,
     });
 
+
 };
 
 var Ueditor = function($el, options) {
@@ -456,6 +457,7 @@ var Ueditor = function($el, options) {
             //cleanStyleOnEnter: false,
             //removeDataAttr: false,
             removeEmpty: false,
+            imageResizable: false,
             lang: 'upfront' // <-- This is IMPORTANT. See the l10n proxying bit in `hackRedactor`
 		}, options)
 	;
@@ -661,7 +663,7 @@ Ueditor.prototype = {
     /**
      * Expand the known text patterns in current block element
      */
-    expand_known_text_patterns: function () {
+    expand_known_text_patterns: function (e) {
         var redactor = this.redactor,
             rpl = {
                 '##': {tag: 'h2'},
@@ -709,25 +711,32 @@ Ueditor.prototype = {
             // Replace the selection tag with the one from the replacement map
             if ("nest" in target && target.nest) {
                 $node.html(
-                    '<div><' + target.tag + '><' + target.nest + '>' + 
+                    '<' + target.tag + '><' + target.nest + '>' +
                         text + 
-                    '</' + target.nest + '></' + target.tag + '></div>'
+                    '</' + target.nest + '></' + target.tag + '>'
                 );
             } else {
-                $node.html(
-                    '<div><' + target.tag + '>' + 
-                        text + 
-                    '</' + target.tag + '></div>'
-                );
+                var _node = document.createElement(target.tag);
+                _node.innerHTML = text;
+                $node.replaceWith( _node );
+
             }
 
             // Set caret position to end of the target
             redactor.caret.setEnd(
                 "nest" in target && target.nest
                     ? $node.find(target.nest).last().get()
-                    : $node.find(target.tag).get()
+                    : _node
             );
+
             redactor.code.sync();
+            /**
+             * Make sure the created node doesn't contain the space created by the spacebar!
+             */
+            _.delay( function(){
+               $(redactor.selection.getBlock()).html(text);
+            }, 3 );
+
 
             return false;
         });
@@ -755,6 +764,7 @@ Ueditor.prototype = {
 
 		me.$el.addClass('ueditable-inactive')
 			.attr('title', 'Double click to edit the text')
+            .addClass('uf-click-to-edit-text')
 			.one('dblclick', function(e){
 				e.preventDefault();
 				e.stopPropagation();
@@ -1039,10 +1049,12 @@ Ueditor.prototype = {
 		});
 
 		$(document).one('mouseup', function(e){
-
+            if(!me.redactor)
+                return;
 			//var is_selection = ((Math.abs(e.pageX-me.lastmousedown.x) + Math.abs(e.pageY-me.lastmousedown.y)) > 2);
             var is_selection = !!me.redactor.selection.getText();
-			if((is_selection || me.clickcount > 1) && me.redactor && me.redactor.waitForMouseUp && me.redactor.selection.getText()){
+
+			if(((is_selection && me.clickcount != 1) || me.clickcount > 1) && me.redactor && me.redactor.waitForMouseUp && me.redactor.selection.getText()){
 				me.redactor.airShow(e);
 				me.redactor.$element.trigger('mouseup.redactor');
 			}
@@ -1144,12 +1156,30 @@ var InsertManagerInserts = Backbone.View.extend({
             self = this
             ;
 
-        insert.start( this.$el )
-            .done(function(popup, results){
+        /**
+         * Todo Sam: remove __insert and try to find why sometimes insert doesn't get found inside the done event
+         */
+        this.__insert = insert;
+        insert.start( this.$el, this.redactor.$editor )
+            .done(function(args, resolved_insert){
 
-                if(!results) //Had to uncomment this because if we let it through with blank result, it inserts an empty wrapper which blocks the "inert/embed" button to appear again: Gagan
-                	return;
+                /**
+                 * Allows to get resolved insert from inserts with insert managers
+                 */
+                if(_.isArray(args) ){
+                    var popup = args[0],
+                        results = args[0],
+                        insert = resolved_insert;
+                }else{
+                    var popup = args,
+                        results = resolved_insert,
+                        insert = insert || self.__insert
+                    ;
 
+                }
+
+                // if(!results) Let's allow promises without result for now!
+                //	return;
                 self.inserts[insert.cid] = insert;
                 //Allow to undo
                 //this.trigger('insert:prechange'); // "this" is the embedded image object

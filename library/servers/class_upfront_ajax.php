@@ -89,6 +89,7 @@ class Upfront_Ajax extends Upfront_Server {
 				'item'=> $post_type,
 				'specificity' => $post->ID
 			);
+
 			$layout_ids = Upfront_EntityResolver::get_entity_ids($cascade);
 		}
 		else {
