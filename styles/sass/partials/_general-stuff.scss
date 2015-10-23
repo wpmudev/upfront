@@ -28,6 +28,6 @@ em{
 }
 
 /* --- Turns Cursor to Text when Editing mode is ON --- */
-.upfront-edit-layout .upfront-module-editing .uf-click-to-edit-text {
+.upfront-edit-layout .upfront-module-editing .uf-click-to-edit-text, .redactor-box .uf-click-to-edit-text {
 	cursor: text;
 }
