@@ -1195,4 +1195,14 @@ VRT;
 
     }
 
+	/**
+	 * Import slider image from child theme.
+	 * This exposed import initiation from anywhere within Upfront.
+	 *
+	 * @return int
+	 */
+	public static function import_slider_image ($filepath) {
+		return self::$instance->_import_slider_image($filepath);
+	}
+
 }
