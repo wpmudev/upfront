@@ -11,6 +11,51 @@ class Upfront_Button_Presets_Server extends Upfront_Presets_Server {
 		$this->update_preset_values();
 	}
 	
+	public static function default_styles(){
+		return array(
+			'useborder'            => 'yes',
+			'bordertype'           => 'solid',
+			'borderwidth'          => 2,
+			'bordercolor' 	 	   => 'rgb(0, 0, 0)',
+			'useradius'  	 	   => 'yes',
+			'borderradiuslock' 	   => '',
+			'borderradius1' 	   => 0,
+			'borderradius2' 	   => 0,
+			'borderradius3'		   => 0,
+			'borderradius4'		   => 0,
+			'bgcolor' 			   => 'rgb(255, 255, 255)',
+			'fontsize' 			   => 14,
+			'fontface' 			   => 'Arial',
+			'fontstyle' 		   => '600 normal',
+			'fontstyle_weight'	   => '600',
+			'fontstyle_style' 	   => 'normal',
+			'lineheight' 		   => 2,
+			'color' 			   => 'rgb(0, 0, 0)',
+			'hov_useborder'	   	   => 'yes',
+			'hov_bordertype' 	   => 'solid',
+			'hov_borderwidth' 	   => 2,
+			'hov_bordercolor' 	   => 'rgb(0, 0, 0)',
+			'hov_borderradiuslock' => '',
+			'hov_borderradius1'    => 0,
+			'hov_borderradius2'    => 0,
+			'hov_borderradius3'    => 0,
+			'hov_borderradius4'    => 0,
+			'hov_usetypography'    => 'yes',
+			'hov_usebgcolor'       => 'yes',
+			'hov_bgcolor'		   => 'rgb(0, 0, 0)',
+			'hov_fontsize'	       => 14,
+			'hov_fontface'		   => 'Arial',
+			'hov_fontstyle'		   => '600 normal',
+			'hov_fontstyle_weight' => '600',
+			'hov_fontstyle_style'  => 'normal',
+			'hov_lineheight'	   => 2,
+			'hov_color'			   => 'rgb(255, 255, 255)',
+			'hov_duration'		   => 0.25,
+			'hov_transition'       => 'linear',
+			'id'				   => 'default',
+		);
+	}
+	
 	public function get_element_name() {
 		return 'button';
 	}
@@ -54,7 +99,18 @@ class Upfront_Button_Presets_Server extends Upfront_Presets_Server {
 		if (is_array($presets) === false) {
 			$presets = array();
 		}
-
+		
+		$default_preset = false;
+		foreach($presets as $preset) {
+			if($preset['id'] == "default") {
+				$default_preset = true;
+			}
+		}
+		
+		if( $default_preset == false ) {
+			$presets[] = $this->default_styles();
+		}
+		
 		return $presets;
 	}
 	

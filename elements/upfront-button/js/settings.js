@@ -34,7 +34,7 @@ define([
 			'bordertype': 'solid',
 			'borderwidth': 2,
 			'bordercolor': 'rgb(0, 0, 0)',
-			'useradius': 'yes',
+			'useradius': '',
 			'borderradiuslock': '',
 			'borderradius1': 0,
 			'borderradius2': 0,
