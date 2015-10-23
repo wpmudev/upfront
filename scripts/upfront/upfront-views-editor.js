@@ -1980,7 +1980,7 @@ define([
 				if ('blockquote' === element) {
 					selector = '.upfront-object-content blockquote, .upfront-object-content blockquote p';
 				} else if ('a' === element) {
-					selector = '.upfront-object-content a, .upfront-object-content a:link, .upfront-object-content a:visited';
+					selector = '.upfront-object-content:not(.upfront-output-button):not(.upfront-output-ubutton) a, .upfront-object-content:not(.upfront-output-button):not(.upfront-output-ubutton) a:link, .upfront-object-content:not(.upfront-output-button):not(.upfront-output-ubutton) a:visited';
 				} else {
 					selector = '.upfront-object-content ' + element  + ', .upfront-ui ' + element + '.tag-list-tag';
 				}
@@ -3824,6 +3824,8 @@ define([
 				this.init();
 			if ( this.options.change )
 				this.on('changed', this.options.change, this);
+			if ( this.options.show )
+				this.on('changed rendered', this.dispatch_show, this);
 			if ( this.options.focus )
 				this.on('focus', this.options.focus, this);
 			if ( this.options.blur )
@@ -3832,7 +3834,6 @@ define([
 				this.on('rendered', this.options.rendered, this);
 			if (this.options.on_click)
 				this['on_click'] = this.options.on_click;
-
 			this.once('rendered', function(){
 				var me = this;
 				this.get_field().on('focus', function(){
@@ -3841,6 +3842,12 @@ define([
 					me.trigger('blur');
 				});
 			}, this);
+		},
+		dispatch_show: function () {
+			var me = this;
+			setTimeout(function() {
+				me.options.show(me.get_value(), me.$el);		
+			}, 100);	
 		},
 		get_name: function () {
 			return this.property ? this.property.get('name') : this.name;
@@ -3879,7 +3886,7 @@ define([
 			return this.$el.find( '[name=' + this.get_field_name() + ']' + (this.selected_state ? ':'+this.selected_state : '') );
 		},
 		get_label_html: function () {
-      if (this.options.hide_label === true) return '';
+			if (this.options.hide_label === true) return '';
 			var attr = {
 				'for': this.get_field_id(),
 				'class': 'upfront-field-label ' + ( this.options.label_style == 'inline' ? 'upfront-field-label-inline' : 'upfront-field-label-block' )
@@ -5902,6 +5909,37 @@ var ThemeFontsCollection = Backbone.Collection.extend({
 		variants.unshift('inherit');
 		return variants;
 	},
+	
+	get_variants_for_select: function(font_family) {
+		var variants;
+		var typefaces_list = [];
+
+		_.each(system_fonts_storage.get_fonts().models, function(font) {
+			if (font_family === font.get('family')) {
+				_.each(font.get('variants'), function(font_style) {
+					typefaces_list.push({ label: font_style, value: font_style });
+				});
+			}
+		});
+		
+		_.each(Upfront.mainData.additionalFonts, function(font) {
+			if (font_family === font.family) {
+				_.each(font.variants, function(font_style) {
+					typefaces_list.push({ label: font_style, value: font_style });
+				});
+			}
+		});
+
+		_.each(theme_fonts_collection.models, function(theme_font) {
+			if (font_family === theme_font.get('font').family) {
+				var font_style = theme_font.get('displayVariant');
+				typefaces_list.push({ label: font_style, value: font_style });
+			}
+		});
+
+		return typefaces_list;
+	},
+
 
 	get_additional_font: function(font_family) {
 		var font = _.findWhere(Upfront.mainData.additionalFonts, {family: font_family});

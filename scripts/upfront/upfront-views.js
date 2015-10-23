@@ -499,6 +499,10 @@ define([
 				// If parallax, then run parallax first so it applies correct background size
 				if ( style == 'parallax' ) {
 					$overlay.uparallax('refresh');
+					setTimeout(function(){
+						// Do another refresh later to make sure it renders properly
+						$overlay.uparallax('refresh');
+					}, 2000);
 				}
 				if ( style == 'full' || style == 'parallax' ){
 					var size = this._get_full_size_el($type, data.ratio, false);

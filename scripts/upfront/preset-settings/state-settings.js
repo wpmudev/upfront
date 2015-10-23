@@ -8,25 +8,30 @@ function() {
 
 			this.$el.addClass('state_settings state_settings_' + this.options.state.toLowerCase());
 
-			var fields = [];
+			var fields = [],
+				me = this
+			;
 
-			_.each(this.options.fields, function(field) {
-				var fieldOnChangeCallback = field.options.change;
-				var me = this;
-				if (fieldOnChangeCallback) {
-					// Proxy change callback and tie to this
-					field.options.change = function(value) {
-						fieldOnChangeCallback(value, me);
-					};
+			// Proxy the `change` callbacks, and reset as needed
+			_.each(this.options.fields, function (field) {
+				if (("change" in field.options)) {
+					if (!field.options.preserved_preset_change) field.options.preserved_preset_change = field.options.change; // Store the old callback
+
+					// Actually proxy the stored callback and use this as the new one
+					field.options.change = function (value) {
+						field.options.preserved_preset_change(value, me);
+					};					
 				}
+
 				var stateField = new field.fieldClass(_.extend({
 						model: this.options.model
 					}, field.options)
 				);
-
+				
 				Upfront.Events.once('entity:settings:deactivate', function() {
 					// Reset change callback to avoid zombies
-					field.options.change = fieldOnChangeCallback;
+					field.options.change = field.options.preserved_preset_change;
+					//field.options.preserved_preset_change = false;
 				});
 
 				fields.push(stateField);

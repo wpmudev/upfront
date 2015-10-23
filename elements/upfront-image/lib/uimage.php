@@ -374,6 +374,12 @@ class Upfront_Uimage_Server extends Upfront_Server {
 				if (!is_null($image_id)) {
 					$image_ids[] = $image_id;
 				}
+				else {
+					$full_img_path = get_stylesheet_directory() . DIRECTORY_SEPARATOR . ltrim($id, '/');
+					if (file_exists($full_img_path)) {
+						$image_ids[] = Upfront_ChildTheme::import_slider_image($id);
+					}
+				}
 			}
 			$ids = $image_ids;
 			if (empty($ids)) {

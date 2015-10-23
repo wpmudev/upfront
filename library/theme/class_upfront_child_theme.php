@@ -616,12 +616,12 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		$button_presets = $this->get_theme_settings()->get('button_presets');
 		if (isset($args['json']) && $args['json']) return $button_presets;
-
+		
 		$as_array = false;
 		if (isset($args['as_array']) && $args['as_array']) {
 			$as_array = true;
 		}
-		
+
 		return json_decode($button_presets, $as_array);
 	}
 
@@ -1194,5 +1194,15 @@ VRT;
         return $variants;
 
     }
+
+	/**
+	 * Import slider image from child theme.
+	 * This exposed import initiation from anywhere within Upfront.
+	 *
+	 * @return int
+	 */
+	public static function import_slider_image ($filepath) {
+		return self::$instance->_import_slider_image($filepath);
+	}
 
 }

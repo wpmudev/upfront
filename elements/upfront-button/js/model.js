@@ -1,5 +1,5 @@
 define(function() {
-	var UbuttonModel = Upfront.Models.ObjectModel.extend({
+	var ButtonModel = Upfront.Models.ObjectModel.extend({
 		init: function () {
 			var properties = _.clone(Upfront.data.ubutton.defaults);
 
@@ -13,5 +13,5 @@ define(function() {
 		}
 	});
 
-	return UbuttonModel;
+	return ButtonModel;
 });
