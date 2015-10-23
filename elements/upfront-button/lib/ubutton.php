@@ -6,14 +6,14 @@ class Upfront_ButtonView extends Upfront_Object {
 		return array(
 			"content" => "Click here", 
 			"href" => "", 
-      "linkTarget" => "",
+			"linkTarget" => "",
 			"align" => "center", 
-			"type" => "UbuttonModel", 
+			"type" => "ButtonModel", 
 			"view_class" => "ButtonView",  
 			"class" => "c24 upfront-button", 
 			"has_settings" => 1, 
 			"id_slug" => "ubutton",
-			'preset' => 'default'
+			'preset' => ''
 		);
 	}
 	
@@ -39,19 +39,25 @@ class Upfront_ButtonView extends Upfront_Object {
 			return $properties;
 	}
 	
+	public function clear_preset($preset) {
+		$preset = str_replace(' ', '-', $preset);
+		return preg_replace('/[^A-Za-z0-9\-]/', '', $preset);
+	}
+	
 	public function get_markup () {
-			// This data is passed on to the template to precompile template
-			$data = $this->properties_to_array();
-			
-			//if(isset($data['currentpreset'])) { $data['preset'] = $data['currentpreset']; }
-			$data['preset'] = isset($data['preset']) ? $data['preset'] : 'default';
-      
-      $data['linkTarget'] = $this->_get_property('linkTarget');
+		// This data is passed on to the template to precompile template
+		$data = $this->properties_to_array();
+		if(isset($data['currentpreset']) && empty($data['preset'])) { 
+			$data['preset'] = $data['currentpreset']; 
+		}
+		$data['preset'] = isset($data['preset']) ? $this->clear_preset($data['preset']) : 'default';
+				
+		$data['linkTarget'] = $this->_get_property('linkTarget');
 
-			$markup = upfront_get_template('ubutton', $data, dirname(dirname(__FILE__)) . '/tpl/ubutton.html');
+		$markup = upfront_get_template('ubutton', $data, dirname(dirname(__FILE__)) . '/tpl/ubutton.html');
 
-			//upfront_add_element_script('ubutton_script', array('js/ubutton-front.js', dirname(__FILE__)));
-			return $markup;
+		//upfront_add_element_script('ubutton_script', array('js/ubutton-front.js', dirname(__FILE__)));
+		return $markup;
 	}
 	
 	public static function add_js_defaults($data){	
@@ -95,6 +101,23 @@ class Upfront_ButtonView extends Upfront_Object {
 			'color' => __('Color', 'upfront'),
 			'bg_color' => __('Background Color', 'upfront'),
 			'edit_text' => __('Edit Text', 'upfront'),
+			'default_preset' => __('Default', 'upfront'),
+			'border' => __('Border', 'upfront'),
+			'px' => __('px', 'upfront'),
+			'typeface' => __('Typeface:', 'upfront'),
+			'weight_style' => __('Weight/Style:', 'upfront'),
+			'size' => __('Size:', 'upfront'),
+			'line_height' => __('Line Height: ', 'upfront'),
+			'color' => __('Color:', 'upfront'),
+			'rounded_corners' => __('Rounded Corners', 'upfront'),
+			'typography' => __('Typography', 'upfront'),
+			'animate_hover_changes' => __('Animate Hover Changes:', 'upfront'),
+			'sec' => __('sec', 'upfront'),
+			'ease' => __('ease', 'upfront'),
+			'linear' => __('linear', 'upfront'),
+			'ease_in' => __('ease-in', 'upfront'),
+			'ease_out' => __('ease-out', 'upfront'),
+			'ease_in_out' => __('ease-in-out', 'upfront'),
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)

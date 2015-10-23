@@ -22,7 +22,9 @@ define([
 			'hover-transition-easing': 'ease-in-out',
 			'static-font-size': 14,
 			'static-font-family': 'Arial',
-			'static-font-color': 'rgb(0, 0, 0)'
+			'static-font-color': 'rgb(0, 0, 0)',
+			'id': 'default',
+			'name': l10n.default_preset
 		},
 		styleTpl: styleTpl,
 		stateFields: {
