@@ -5,20 +5,19 @@
 	height: 100%;
 	vertical-align: middle;
 	background: rgb(255, 255, 255);
-	color: rgb(66, 127, 237);
-	font-size: 16px;
+	color: rgb(0, 0, 0);
+	font-size: 14px;
 	font-style: normal;
 	font-weight: 600;
 	font-family: "Arial";
-	line-height: 3;
+	line-height: 2;
 	cursor: pointer;
-	border: 4px solid rgb(66, 127, 237);
-	border-radius: 100px 100px 100px 100px;
+	border: 2px solid rgb(0, 0, 0);
 	transition: all 0.25s linear;
 }
 
 .upfront_cta:hover {
-	background: rgb(66, 127, 237);
+	background: rgb(0, 0, 0);
 	color: rgb(255, 255, 255);
 }
 
