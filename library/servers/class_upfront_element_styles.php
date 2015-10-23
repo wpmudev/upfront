@@ -69,8 +69,6 @@ class Upfront_ElementStyles extends Upfront_Server {
 		
 		if (empty($cache)) {
 			foreach ($styles as $key => $frags) {
-				//$path = upfront_element_dir($frags[0], $frags[1]);
-				//if (file_exists($path)) $cache .= "/* {$key} */\n" . file_get_contents($path) . "\n";
 				if (empty($frags)) continue;
 				$style = $this->_get_style_contents($frags);
 				if (!empty($style))  $cache .= "/* {$key} */\n{$style}\n";
