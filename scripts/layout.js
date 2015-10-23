@@ -1100,7 +1100,7 @@ jQuery(document).ready(function($){
 		$(window).off('scroll.uf_layout');
 		$(window).off('load.uf_layout');
 		// Also destroy parallax
-		$('.upfront-parallax').uparallax('destroy');
+		$('.upfront-output-layout .upfront-parallax').uparallax('destroy');
 	}
 
 	$(document).on('upfront-load', function(){
