@@ -11769,7 +11769,7 @@ div.upfront-region-container:hover > a.feature_image_selector {
   width: 230px; }
 
 /* Chosen */
-#insert-font-widget .chosen-container-single .chosen-single, #sidebar-ui .chosen-container-single .chosen-single, #upfront-popup .chosen-container-single .chosen-single, .preset-manager-panel .chosen-container-single .chosen-single {
+#insert-font-widget .chosen-container-single .chosen-single, #sidebar-ui .chosen-container-single .chosen-single, #upfront-popup .chosen-container-single .chosen-single, #settings .chosen-container-single .chosen-single, .preset-manager-panel .chosen-container-single .chosen-single {
   margin: 0;
   text-decoration: none;
   background: #e6f3fe !important;
@@ -11781,7 +11781,7 @@ div.upfront-region-container:hover > a.feature_image_selector {
   border-radius: 3px;
   border: 1px solid #a3bfd9; }
 
-#insert-font-widget .chosen-container-single .chosen-single:hover, #sidebar-ui .chosen-container-single .chosen-single:hover, #upfront-popup .chosen-container-single .chosen-single:hover, .preset-manager-panel .chosen-container-single .chosen-single:hover {
+#insert-font-widget .chosen-container-single .chosen-single:hover, #sidebar-ui .chosen-container-single .chosen-single:hover, #upfront-popup .chosen-container-single .chosen-single:hover, #settings .chosen-container-single .chosen-single:hover, .preset-manager-panel .chosen-container-single .chosen-single:hover {
   border-color: #607f99; }
 
 #insert-font-widget .chosen-with-drop .chosen-single, #sidebar-ui .chosen-with-drop .chosen-single, #insert-font-widget .chosen-with-drop .chosen-single:hover, #sidebar-ui .chosen-with-drop .chosen-single:hover, #settings .chosen-with-drop .chosen-single, #settings .chosen-with-drop .chosen-single:hover, #upfront-popup .chosen-with-drop .chosen-single, #upfront-popup .chosen-with-drop .chosen-single:hover, .preset-manager-panel .chosen-with-drop .chosen-single, .preset-manager-panel .chosen-with-drop .chosen-single:hover {
