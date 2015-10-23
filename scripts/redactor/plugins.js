@@ -784,6 +784,8 @@ RedactorPlugins.upfrontLink = function() {
 				});
 
 				this.listenTo(this.linkModel, 'change', function () {
+                    me.redactor.buffer.set();
+                    me.redactor.selection.save();
 					if (me.linkModel.get('type') === 'unlink') {
 						me.unlink();
 					} else {
@@ -849,7 +851,7 @@ RedactorPlugins.upfrontLink = function() {
 			},
 
 			link: function () {
-				var selectedText;;
+				var selectedText;
 
 				if (typeof this.linkModel.get('url') === 'undefined') {
 					return;
