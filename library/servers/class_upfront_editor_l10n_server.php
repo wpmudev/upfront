@@ -248,6 +248,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
                 'link_image' => __('Link Image', Upfront::TextDomain),
                 'toggle_caption' => __('Toggle Caption', Upfront::TextDomain),
                 'formatting' => array(
+                    "title" => __("Format", 'upfront'),
                     "heading_01" => __("Heading 01", 'upfront'),
                     "heading_02" => __("Heading 02", 'upfront'),
                     "heading_03" => __("Heading 03", 'upfront'),

@@ -1396,7 +1396,7 @@ RedactorPlugins.upfrontFormatting = function() {
         init: function () {
 
             this.opts.buttonsCustom.upfrontFormatting = {
-                title: l10n.formatting,
+                title: l10n.formatting.title,
                 panel: this.upfrontFormatting.panel,
                 first: true
             };
@@ -1418,6 +1418,7 @@ RedactorPlugins.upfrontFormatting = function() {
                     custom_classes: this.custom_classes,
                     selected_class: this.selected_class
                 }, l10n.formatting) ));
+                return this;
             },
             open: function (e, redactor) {
                 this.redactor = redactor;
@@ -1464,7 +1465,6 @@ RedactorPlugins.upfrontFormatting = function() {
                 e.preventDefault();
                 this.redactor.buffer.set();
                 this.redactor.$editor.focus();
-                this.redactor.selection.restore();
                 var tag = $(e.target).data("tag");
 
                 if (!this.redactor.utils.browser('msie')) this.redactor.$editor.focus();
@@ -1485,6 +1485,7 @@ RedactorPlugins.upfrontFormatting = function() {
 
                 if (tag == 'p' || this.redactor.block.headTag) $formatted.find('p').contents().unwrap();
 
+                this.close();
                 this.redactor.dropdown.hideAll();
             },
             change_custom_class: function(e){
