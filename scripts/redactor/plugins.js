@@ -869,6 +869,8 @@ RedactorPlugins.upfrontLink = function() {
 					this.redactor.link.set(selectedText, this.linkModel.get('url'), this.linkModel.get('target'));
 					// Now select created link
 					this.selectedLink = this.redactor.utils.isCurrentOrParent('A');
+					// Update selection, new link is created it messes up selection
+					this.redactor.selection.save();
 				}
 
 				$(this.selectedLink).attr('data-upfront-link-type', this.linkModel.get('type'));
