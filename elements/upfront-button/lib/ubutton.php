@@ -1,27 +1,27 @@
 <?php
 
 class Upfront_ButtonView extends Upfront_Object {
-	
+
 	public static function default_properties(){
 		return array(
-			"content" => "Click here", 
-			"href" => "", 
+			"content" => "Click here",
+			"href" => "",
 			"linkTarget" => "",
-			"align" => "center", 
-			"type" => "ButtonModel", 
-			"view_class" => "ButtonView",  
-			"class" => "c24 upfront-button", 
-			"has_settings" => 1, 
+			"align" => "center",
+			"type" => "ButtonModel",
+			"view_class" => "ButtonView",
+			"class" => "c24 upfront-button",
+			"has_settings" => 1,
 			"id_slug" => "ubutton",
 			'preset' => ''
 		);
 	}
-	
+
 	function __construct($data) {
 			$data['properties'] = $this->merge_default_properties($data);
 			parent::__construct($data);
 	}
-	
+
 	protected function merge_default_properties($data){
 			$flat = array();
 			if(!isset($data['properties']))
@@ -35,23 +35,24 @@ class Upfront_ButtonView extends Upfront_Object {
 			$properties = array();
 			foreach($flat as $name => $value)
 					$properties[] = array('name' => $name, 'value' => $value);
-			
+
 			return $properties;
 	}
-	
+
 	public function clear_preset($preset) {
 		$preset = str_replace(' ', '-', $preset);
 		return preg_replace('/[^A-Za-z0-9\-]/', '', $preset);
 	}
-	
+
 	public function get_markup () {
 		// This data is passed on to the template to precompile template
 		$data = $this->properties_to_array();
-		if(isset($data['currentpreset']) && empty($data['preset'])) { 
-			$data['preset'] = $data['currentpreset']; 
+		$data['href'] = $data['link']['url'];
+		$data['linkTarget'] = $data['link']['target'];
+			$data['preset'] = $data['currentpreset'];
 		}
 		$data['preset'] = isset($data['preset']) ? $this->clear_preset($data['preset']) : 'default';
-				
+
 		$data['linkTarget'] = $this->_get_property('linkTarget');
 
 		$markup = upfront_get_template('ubutton', $data, dirname(dirname(__FILE__)) . '/tpl/ubutton.html');
@@ -59,15 +60,15 @@ class Upfront_ButtonView extends Upfront_Object {
 		//upfront_add_element_script('ubutton_script', array('js/ubutton-front.js', dirname(__FILE__)));
 		return $markup;
 	}
-	
-	public static function add_js_defaults($data){	
+
+	public static function add_js_defaults($data){
 		$data['ubutton'] = array(
 			'defaults' => self::default_properties(),
 			'template' => upfront_get_template_url('ubutton', upfront_element_url('tpl/ubutton.html', dirname(__FILE__)))
 		);
 		return $data;
 	}
-	
+
 	private function properties_to_array(){
 		$out = array();
 		foreach($this->_data['properties'] as $prop)
