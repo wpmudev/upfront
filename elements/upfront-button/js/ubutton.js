@@ -18,20 +18,20 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 	buttonTpl: Upfront.Util.template(buttonTpl),
 	initialize: function() {
 		var me = this;
-		
+
 		if(! (this.model instanceof ButtonModel)){
 			this.model = new ButtonModel({properties: this.model.get('properties')});
 		}
-    
+
 		this.events = _.extend({}, this.events, {
 			'click a.upfront_cta.ueditor-placeholder' : 'placeholderClick',
 			'click a.redactor_act': 'onOpenPanelClick',
 			'click .upfront-save_settings': 'onOpenPanelClick',
 			'click .open-item-controls': 'onOpenItemControlsClick'
 		});
-		
+
 		this.delegateEvents();
-		
+
 		this.model.get('properties').bind('change', this.render, this);
 		this.model.get('properties').bind('add', this.render, this);
 		this.model.get('properties').bind('remove', this.render, this);
@@ -56,7 +56,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		});
 
 	},
-	
+
 	getCleanurl: function(url) {
 		//this one removes any existing # anchor postfix from the url
 		var urlParts;
@@ -75,7 +75,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		else
 			return location.href.replace('?dev=true', '');
 	},
-	
+
 	getUrlanchor: function(url) {
 		// this does almost the opposite of the above function
 
@@ -86,7 +86,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			return tempurl[1];
 		} else return false;
 	},
-	
+
 	get_anchors: function () {
 		var regions = Upfront.Application.layout.get("regions"),
 			anchors = [];
@@ -107,35 +107,35 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			preset = this.model.get_property_value_by_name("preset"),
 			props = PresetUtil.getPresetProperties('button', preset) || {}
 		;
-		
+
 		if (_.size(props) <= 0) return false; // No properties, carry on
-		
+
 		PresetUtil.updatePresetStyle('button', props, settingsStyleTpl);
 
 	},
-	
+
 	clear_preset_name: function(preset) {
 		preset = preset.replace(' ', '-');
 		preset = preset.replace(/[^-a-zA-Z0-9]/, '');
 		return preset;
 	},
-		
+
 	get_content_markup: function () {
 		var props = this.extract_properties();
-		
+
 		//Check if preset is empty and set it to currentpreset (porting old data to new preset manager)
 		if(props.preset === "" && props.currentpreset != "") {
 			props.preset = props.currentpreset;
 			this.model.set_property('preset', props.currentpreset)
 		}
-	
+
 		props.preset = props.preset || 'default';
-		
+
 		props.preset = this.clear_preset_name(props.preset);
 
 		return this.buttonTpl(props);
 	},
-	
+
 	extract_properties: function() {
 		var props = {};
 		this.model.get('properties').each(function(prop){
@@ -143,16 +143,16 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		});
 		return props;
 	},
-		
+
 	saveTitle: function(target) {
 		this.property('content', target.html());
 	},
-	
+
 	is_edited: function () {
 		var is_edited = this.model.get_property_value_by_name('is_edited');
 		return is_edited ? true : false;
 	},
-  
+
 	onOpenPanelClick: function(event) {
 		event.preventDefault();
 		this.toggleLinkPanel();
@@ -180,7 +180,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 				tooltip: 'link',
 				id: 'link'
 			});
-			me = this;
+			var me = this;
 
 		this.listenTo(this.link, 'change', function() {
 			visitLinkControl.setLink(me.link.get('url'));
@@ -208,11 +208,11 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		}
 	},
 
-	
+
 	on_render: function() {
 		var me = this,
 		blurTimeout = false;
-		this.delegateEvents(); 
+		this.delegateEvents();
 		var $target = this.$el.find('.upfront-object-content a.upfront_cta');
 		  $target.ueditor({
 				linebreaks: true,
@@ -232,15 +232,15 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			.on('syncAfter', function(){
 				me.saveTitle($(this));
 			});
-      
-		this.createInlineControlPanel();     
+
+		this.createInlineControlPanel();
 	},
 	stopEdit: function() {
 		var $target = this.$el.find('.upfront-object-content a.upfront_cta');
 		$target.trigger('blur');
 		Upfront.Events.trigger('upfront:element:edit:stop');
 	},
-	
+
 	property: function(name, value, silent) {
 		if(typeof value != "undefined"){
 			if(typeof silent == "undefined")
