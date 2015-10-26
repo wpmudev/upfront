@@ -163,7 +163,6 @@
 	color: #28DC96;
 	font-family: 'Source Sans Pro';
 	font-size:18px;
-	width: 385px;
 	height: 228px;
 	background: #eeeff0;
 	text-align: left;
@@ -208,15 +207,15 @@ input.upfront-youtube-url::-webkit-input-placeholder {
 }
 
 input.upfront-youtube-url:-moz-placeholder { /* Firefox 18- */
-	color: #999;  
+	color: #999;
 }
 
 input.upfront-like-box_url::-moz-placeholder {  /* Firefox 19+ */
-	color: #999;  
+	color: #999;
 }
 
-input.upfront-like-box_url:-ms-input-placeholder {  
-	color: #99;  
+input.upfront-like-box_url:-ms-input-placeholder {
+	color: #99;
 }
 
 .upfront-youtube-button-wrapper {
