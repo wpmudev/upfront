@@ -270,6 +270,8 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		$data = stripslashes_deep($_POST);
 		$action = $data['model_action'];
 
+		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) $this->_reject();
+
 		if(!method_exists($this, $action))
 			$this->_out(new Upfront_JsonResponse_Error($action . ' not implemented.'));
 
