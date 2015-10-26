@@ -306,7 +306,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 				"	font-weight: normal;" .
 				"	font-style: normal;" .
 				"}" .
-				".uf_font_icon {" .
+				".upfront-output-layout .uf_font_icon, .upfront-output-layout .uf_font_icon * {" .
 				"	font-family: '" . $font['family'] . "'!important;" .
 				"}";
 			$out .= $this->_expand_passive_relative_url($icon_font_style) . "\n";
@@ -323,8 +323,8 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 					font-weight: normal;
 					font-style: normal;
 				}
-				.uf_font_icon {
-					font-family: 'icomoon';
+				.upfront-output-layout .uf_font_icon, .upfront-output-layout .uf_font_icon * {
+					font-family: 'icomoon' !important;
 					speak: none;
 					font-style: normal;
 					font-weight: normal;
