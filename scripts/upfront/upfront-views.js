@@ -178,16 +178,16 @@ define([
 				if ( data.image ){
 					$type.css('background-image', "url('" + data.image + "')");
 					// If parallax, then run parallax first so it applies correct background size
-					// If not, check if we need to destroy it
+					// Destroy old instance first if exists
+					if ( $overlay.data('uparallax') ) {
+						$overlay.uparallax('destroy');
+					}
 					if ( style == 'parallax' ) {
 						$overlay.uparallax({
 							element: $type,
 							overflowTop: 0,
 							overflowBottom: 0
 						});
-					}
-					else if ( $overlay.data('uparallax') ) {
-						$overlay.uparallax('destroy');
 					}
 					if ( style == 'full' || style == 'parallax' ){
 						var size = this._get_full_size_el((is_layout ? $(window) : $type), data.ratio, false);
