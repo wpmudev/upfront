@@ -56,8 +56,6 @@ class Upfront_ButtonView extends Upfront_Object {
 		}
 		$data['preset'] = isset($data['preset']) ? $this->clear_preset($data['preset']) : 'default';
 
-		$data['linkTarget'] = $this->_get_property('linkTarget');
-
 		$markup = upfront_get_template('ubutton', $data, dirname(dirname(__FILE__)) . '/tpl/ubutton.html');
 
 		//upfront_add_element_script('ubutton_script', array('js/ubutton-front.js', dirname(__FILE__)));

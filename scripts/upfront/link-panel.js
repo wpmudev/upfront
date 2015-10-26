@@ -303,7 +303,7 @@ define([
 					{ label: 'self', value: '_self' }
 				],
 				change: function () {
-					me.model.set({'target': this.get_value()}, {"silent": true});
+					me.model.set({'target': this.get_value()});
 				}
 			});
 
