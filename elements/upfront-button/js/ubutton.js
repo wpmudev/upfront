@@ -129,6 +129,9 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			this.model.set_property('preset', props.currentpreset)
 		}
 
+		props.href = this.link.get('url');
+		props.linkTarget = this.link.get('target');
+
 		props.preset = props.preset || 'default';
 
 		props.preset = this.clear_preset_name(props.preset);
@@ -184,6 +187,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 
 		this.listenTo(this.link, 'change', function() {
 			visitLinkControl.setLink(me.link.get('url'));
+			this.$el.find('a').attr('href', me.link.get('url'));
 		});
 
 		panel.items = _([
