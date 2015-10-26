@@ -422,10 +422,12 @@ class Upfront_MediaServer extends Upfront_Server {
 
 		$destination = $dirPath . $filename;
 		move_uploaded_file($file["tmp_name"], $destination);
-		$data = getimagesize($destination);
-		if (empty($data['mime']) || !preg_match('/^image\//i', $data['mime'])) {
-			@unlink($destination);
-			$this->_out(new Upfront_JsonResponse_Error("Not an image"));
+		if (!preg_match('/\.svg$/i', $filename)) {
+			$data = getimagesize($destination);
+			if (empty($data['mime']) || !preg_match('/^image\//i', $data['mime'])) {
+				@unlink($destination);
+				$this->_out(new Upfront_JsonResponse_Error("Not an image"));
+			}
 		}
 
 		$this->_out(new Upfront_JsonResponse_Success(array(
