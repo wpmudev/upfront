@@ -466,11 +466,12 @@ jQuery(document).ready(function($){
 			var height = $(this).height(),
 				width = $(this).width(),
 				$img = $(this).find('img'),
+				img = new Image,
 				img_h, img_w;
 			if ( $(this).attr('data-resize') == "1" ) {
-				$img.css({ height: "", width: "" });
-				img_h = $img.height();
-				img_w = $img.width();
+				img.src = $img.attr('src');
+				img_h = img.height;
+				img_w = img.width;
 				if ( height/width > img_h/img_w )
 					$img.css({ height: '100%', width: 'auto', marginLeft: (width-Math.round(height/img_h*img_w))/2, marginTop: "" });
 				else
