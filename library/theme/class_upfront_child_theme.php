@@ -307,7 +307,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 				"	font-style: normal;" .
 				"}" .
 				".upfront-output-layout .uf_font_icon, .upfront-output-layout .uf_font_icon * {" .
-				"	font-family: '" . $font['family'] . "'!important;" .
+				"	font-family: '" . $font['family'] . "'" .
 				"}";
 			$out .= $this->_expand_passive_relative_url($icon_font_style) . "\n";
 		} else {
