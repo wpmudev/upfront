@@ -218,21 +218,27 @@ class Upfront_Grid {
 
 		$line_col = $col; // keep track of how many column has been applied for each line
 		$rendered_wrappers = array(); // keep track of rendered wrappers to avoid render more than once
+		$spacer_col = 0; // keep track of spacer to render as margin
 		foreach ($modules as $m => $module) {
 			$module_col = $this->_get_class_col($module);
 			$module_col = $module_col > $col ? $col : $module_col;
-			$module_hide = ( !$breakpoint->is_default() ) ? $this->_get_breakpoint_data($module, 'hide') : false;
+			$module_default_hide = upfront_get_property_value('default_hide', $module);
+			$module_hide = ( $breakpoint->is_default() ) ? upfront_get_property_value('hide', $module) : $this->_get_breakpoint_data($module, 'hide');
+			$module_hide = $module_hide === false ? $module_default_hide : $module_hide;
+			$module_id = upfront_get_property_value('element_id', $module);
 			$wrapper_id = upfront_get_property_value('wrapper_id', $module);
 			$wrapper_data = $this->_find_wrapper($wrapper_id, $wrappers);
 			$wrapper_index = array_search($wrapper_data, $wrappers);
 			$next_wrapper_id = false;
 			$next_wrapper_data = false;
 			$is_post_object = false;
+			$is_spacer = false;
 
 			if ( isset($module['modules']) && is_array($module['modules']) ){ // rendering module group
 				$module_view = new Upfront_Module_Group($module);
 				$point_css .= $module_view->get_style_for($breakpoint, $this->get_grid_scope());
 				$point_css .= $this->_apply_modules($module, $module_col, false);
+				$point_css .= $breakpoint->apply_paddings($module, $this->get_grid_scope(), 'element_id');
 			}
 			else {
 				foreach ($module['objects'] as $object) {
@@ -252,8 +258,21 @@ class Upfront_Grid {
 							$this->_exceptions[] = 'row';
 						}
 					}
-					$point_css .= $breakpoint->apply($object, $this->get_grid_scope(), 'element_id', $module_col, false, ($is_post_object ? $this->_exceptions : array()));
+					else if ( 'UspacerModel' == $type ) {
+						$is_spacer = true;
+					}
+					if ( !$is_spacer ) {
+						$point_css .= $breakpoint->apply($object, $this->get_grid_scope(), 'element_id', $module_col, false, ($is_post_object ? $this->_exceptions : array()));
+						$point_css .= $breakpoint->apply_paddings($object, $this->get_grid_scope(), 'element_id', '#' . $module_id);
+					}
 				}
+			}
+
+			if ( $is_spacer ) {
+				if ( !$module_hide ) {
+					$spacer_col = $module_col;
+				}
+				continue;
 			}
 
 			if ( !empty($wrapper_data) ) {
@@ -261,13 +280,18 @@ class Upfront_Grid {
 				$wrapper_col = $wrapper_col > $col ? $col : $wrapper_col;
 				if ( ! in_array($wrapper_id, $rendered_wrappers) ){
 					if ( ! $breakpoint->is_default() ) { // find next wrapper based on the breakpoint order
-						if ( isset($wrappers[$wrapper_index+1]) )
+						if ( isset($wrappers[$wrapper_index+1]) ) {
 							$next_wrapper_data = $wrappers[$wrapper_index+1];
+						}
 					}
 					if ( empty($next_wrapper_data) ) { // find next wrapper based on the module order
 						$next_modules = array_slice($modules, $m+1);
 						if ( !empty($next_modules) ){
 							foreach ( $next_modules as $n => $mod ){
+								$mod_default_hide = upfront_get_property_value('default_hide', $mod);
+								$mod_hide = ( $breakpoint->is_default() ) ? upfront_get_property_value('hide', $mod) : $this->_get_breakpoint_data($mod, 'hide');
+								$mod_hide = $mod_hide === false ? $mod_default_hide : $mod_hide;
+								if ( $mod_hide ) continue;
 								$next_wrapper_id = upfront_get_property_value('wrapper_id', $mod);
 								if ( $next_wrapper_id != $wrapper_id ) {
 									$next_wrapper_data = $this->_find_wrapper($next_wrapper_id, $wrappers);
@@ -280,19 +304,38 @@ class Upfront_Grid {
 					if ( ! $breakpoint->is_default() && !empty($next_wrapper_data) ) {
 						$wrapper_order = $this->_get_breakpoint_order($wrapper_data);
 						$next_wrapper_order = $this->_get_breakpoint_order($next_wrapper_data);
-						if ( intval($next_wrapper_order) < intval($wrapper_order) )
+						if ( intval($next_wrapper_order) < intval($wrapper_order) ){
 							$next_wrapper_data = false;
+						}
 					}
-					if ( !$module_hide )
-						$line_col -= $wrapper_col;
+					$wrapper_modules = $this->_find_modules_with_wrapper($wrapper_id, $modules);
+					$wrapper_modules_hide = true;
+					foreach ( $wrapper_modules as $wm => $mod ) {
+						$mod_default_hide = upfront_get_property_value('default_hide', $mod);
+						$mod_hide = ( $breakpoint->is_default() ) ? upfront_get_property_value('hide', $mod) : $this->_get_breakpoint_data($mod, 'hide');
+						$mod_hide = $mod_hide === false ? $mod_default_hide : $mod_hide;
+						if ( !$mod_hide ) {
+							$wrapper_modules_hide = false;
+						}
+					}
+					if ( !$wrapper_modules_hide ) {
+						$line_col -= $wrapper_col + $spacer_col;
+					}
 					$next_clear = $this->_get_property_clear($next_wrapper_data);
 					$next_wrapper_col = $this->_get_class_col($next_wrapper_data);
 					$next_wrapper_col = $next_wrapper_col > $col ? $col : $next_wrapper_col;
 					$next_fill = $next_clear && $line_col > 0 ? $line_col : 0;
-					$point_css .= $breakpoint->apply($wrapper_data, $this->get_grid_scope(), 'wrapper_id', $col, $next_fill);
-					if ( !$module_hide && ( $next_clear || $line_col < $next_wrapper_col ) )
+					$fill_margin = array(
+						'left' => $spacer_col,
+						'right' => $next_fill
+					);
+					$point_css .= $breakpoint->apply($wrapper_data, $this->get_grid_scope(), 'wrapper_id', $col, $fill_margin);
+					//$point_css .= $breakpoint->apply_hide($wrapper_modules_hide, $wrapper_data, $this->get_grid_scope(), '#'.$wrapper_id);
+					if ( !$wrapper_modules_hide && ( $next_clear || $line_col < $next_wrapper_col ) ) {
 						$line_col = $col;
+					}
 					$rendered_wrappers[] = $wrapper_id;
+					$spacer_col = 0;
 				}
 				$point_css .= $breakpoint->apply($module, $this->get_grid_scope(), 'element_id', $wrapper_col, false, ($is_post_object ? $this->_exceptions : array()));
 			}
@@ -312,6 +355,18 @@ class Upfront_Grid {
 			}
 		}
 		return $wrapper_data;
+	}
+
+	protected function _find_modules_with_wrapper ($wrapper_id, $modules) {
+		$found = array();
+		$found_index = 0;
+		foreach ($modules as $m => $module) {
+			if ( $wrapper_id == upfront_get_property_value('wrapper_id', $module) && ($found_index == 0 || $found_index == $m-1) ) {
+				$found[] = $module;
+				$found_index = $m;
+			}
+		}
+		return $found;
 	}
 
 	protected function _get_available_container_col ($container, $regions, $breakpoint = false) {
@@ -385,9 +440,9 @@ class Upfront_Grid {
 		}
 	}
 
-	protected function _get_breakpoint_data ($data, $key, $breakpoint = false) {
+	protected function _get_breakpoint_data ($data, $key, $breakpoint = false, $return_default = false) {
 		$breakpoint = $breakpoint !== false ? $breakpoint : $this->_current_breakpoint;
-		return upfront_get_breakpoint_property_value($key, $data, $breakpoint);
+		return upfront_get_breakpoint_property_value($key, $data, $breakpoint, $return_default);
 	}
 
 	protected function _get_breakpoint_col ($data, $breakpoint = false) {
@@ -719,6 +774,11 @@ class Upfront_GridBreakpoint {
 				$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
 				$raw_styles[$selector][] = rtrim($style, ' ;') . ';';
 			}
+			$hide = $this->_get_property('default_hide', $entity);
+			if ( $hide == 1 ) {
+				$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
+				$raw_styles[$selector][] = 'display: none;';
+			}
 			$row = $this->_get_property('row', $entity);
 			$top_padding = $this->_get_property('top_padding_num', $entity);
 			$right_padding = $this->_get_property('right_padding_num', $entity);
@@ -740,44 +800,23 @@ class Upfront_GridBreakpoint {
 			if (!empty($breakpoint_data['left_padding_num'])) $left_padding = $breakpoint_data['left_padding_num'];
 		}
 
-		// Add margin right for flexbox clearing
-		if ( is_numeric($fill_margin) ){
-			if ( $this->is_default() ){
-				$style = $this->_map_class_to_style($this->_prefixes[self::PREFIX_MARGIN_RIGHT] . $fill_margin, $max_columns);
+		// Fill margin left or right
+		if ( is_array($fill_margin) ){
+			foreach ( $fill_margin as $dir => $val ) {
+				$prefix = ( 'left' == $dir ) ? $this->_prefixes[self::PREFIX_MARGIN_LEFT] : $this->_prefixes[self::PREFIX_MARGIN_RIGHT];
+				if ( $this->is_default() ){
+					$style = $this->_map_class_to_style($prefix . $val, $max_columns);
+				}
+				else {
+					$style = $this->_map_value_to_style($dir, $val, $max_columns);
+				}
+				$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
+				$raw_styles[$selector][] = rtrim($style, ' ;') . ';';
 			}
-			else {
-				$style = $this->_map_value_to_style('right', $fill_margin, $max_columns);
-			}
-			$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
-			$raw_styles[$selector][] = rtrim($style, ' ;') . ';';
 		}
 
 		if ( !in_array('row', $exception) && !empty($row) ){
 			$style = $this->_row_to_style($row);
-			$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
-			$raw_styles[$selector][] = rtrim($style, ';') . ';';
-		}
-
-		if ( !in_array('top_padding', $exception) && !empty($top_padding) ){
-			$style = $this->_top_padding_to_style($top_padding);
-			$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
-			$raw_styles[$selector][] = rtrim($style, ';') . ';';
-		}
-
-		if ( !in_array('right_padding', $exception) && !empty($right_padding) ){
-			$style = $this->_right_padding_to_style($right_padding);
-			$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
-			$raw_styles[$selector][] = rtrim($style, ';') . ';';
-		}
-
-		if ( !in_array('bottom_padding', $exception) && !empty($bottom_padding) ){
-			$style = $this->_bottom_padding_to_style($bottom_padding);
-			$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
-			$raw_styles[$selector][] = rtrim($style, ';') . ';';
-		}
-
-		if ( !in_array('left_padding', $exception) && !empty($left_padding) ){
-			$style = $this->_left_padding_to_style($left_padding);
 			$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
 			$raw_styles[$selector][] = rtrim($style, ';') . ';';
 		}
@@ -812,14 +851,66 @@ class Upfront_GridBreakpoint {
 		) . "\n";
 	}
 
-	public function apply_hide ($hide, $entity, $scope=false, $selector='') {
-		if ( $hide != 1 )
-			return '';
+	public function apply_hide ($hide, $entity, $scope=false, $selector='', $flex = false) {
 		return sprintf('%s %s {%s}',
 			'.' . ltrim($scope, '. '),
 			$selector,
-			"display: none;"
+			( $hide == 1 ? "display: none;" : "display: block;" . ( $flex ? " display: -webkit-flex; display: flex;" : "" ) )
 		) . "\n";
+	}
+
+	public function apply_paddings ($entity, $scope=false, $property='element_id', $selector = '', $exception=array()) {
+		$selector = $selector . ' #' . $this->_get_property($property, $entity);
+		$breakpoint = $this->_get_property('breakpoint', $entity);
+		$breakpoint_data = $breakpoint && !empty($breakpoint[$this->get_id()]) ? $breakpoint[$this->get_id()] : false;
+
+		$raw_styles = array();
+		if ( $this->is_default() ){
+			$top_padding = $this->_get_property('top_padding_num', $entity);
+			$right_padding = $this->_get_property('right_padding_num', $entity);
+			$bottom_padding = $this->_get_property('bottom_padding_num', $entity);
+			$left_padding = $this->_get_property('left_padding_num', $entity);
+		}
+		else if ($breakpoint_data){
+			if (!empty($breakpoint_data['top_padding_num'])) $top_padding = $breakpoint_data['top_padding_num'];
+			if (!empty($breakpoint_data['right_padding_num'])) $right_padding = $breakpoint_data['right_padding_num'];
+			if (!empty($breakpoint_data['bottom_padding_num'])) $bottom_padding = $breakpoint_data['bottom_padding_num'];
+			if (!empty($breakpoint_data['left_padding_num'])) $left_padding = $breakpoint_data['left_padding_num'];
+		}
+
+		if ( !in_array('top_padding', $exception) && !empty($top_padding) ){
+			$style = $this->_top_padding_to_style($top_padding);
+			$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
+			$raw_styles[$selector][] = rtrim($style, ';') . ';';
+		}
+
+		if ( !in_array('right_padding', $exception) && !empty($right_padding) ){
+			$style = $this->_right_padding_to_style($right_padding);
+			$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
+			$raw_styles[$selector][] = rtrim($style, ';') . ';';
+		}
+
+		if ( !in_array('bottom_padding', $exception) && !empty($bottom_padding) ){
+			$style = $this->_bottom_padding_to_style($bottom_padding);
+			$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
+			$raw_styles[$selector][] = rtrim($style, ';') . ';';
+		}
+
+		if ( !in_array('left_padding', $exception) && !empty($left_padding) ){
+			$style = $this->_left_padding_to_style($left_padding);
+			$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
+			$raw_styles[$selector][] = rtrim($style, ';') . ';';
+		}
+
+		$all_styles = '';
+		foreach ($raw_styles as $selector => $rules) {
+			$all_styles .= sprintf('%s %s {%s}',
+					'.' . ltrim($scope, '. '),
+					$selector,
+					join(' ', $rules)
+				) . "\n";
+		}
+		return $all_styles;
 	}
 
 	protected function _map_class_to_style ($class, $max_columns) {

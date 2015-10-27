@@ -82,7 +82,6 @@ class Upfront_Compat_LayoutConverter_Ver_1_0_0 extends Upfront_Compat_LayoutConv
 		$add_wrappers = array();
 		$add_modules = array();
 		foreach ( $breakpoints as $context => $breakpoint ) {
-			if (!$breakpoint->is_default()) continue;
 			$parser->prepare_walk($region, $breakpoint, $regions);
 			while ( $parser->walk() ) {
 				$wrapper = $parser->get_wrapper();
@@ -92,7 +91,10 @@ class Upfront_Compat_LayoutConverter_Ver_1_0_0 extends Upfront_Compat_LayoutConv
 				$converted = $this->_convert_margin($region, $wrapper, $modules, $breakpoint, $parser, $first, $last);
 				// Add new spacer module and wrapper
 				$wrapper_index = $wrapper['index'];
-				$module_index = $modules[0]['index'];
+				$module_index = false;
+				foreach ($modules as $module) {
+					$module_index = ( $module_index === false || $module['index'] < $module_index ) ? $module['index'] : $module_index;
+				}
 				if ( !empty($converted['left']) ) {
 					if ( !isset($add_wrappers[$wrapper_index]) ) $add_wrappers[$wrapper_index] = array();
 					if ( !isset($add_modules[$module_index]) ) $add_modules[$module_index] = array();
@@ -109,13 +111,18 @@ class Upfront_Compat_LayoutConverter_Ver_1_0_0 extends Upfront_Compat_LayoutConv
 				}
 				/*var_dump(array('first' => $first, 'last' => $last));
 				unset($wrapper['wrapper']);
+				var_dump('wrapper');
 				print_r($wrapper);
 				foreach ( $modules as $module ) {
 					unset($module['module']);
+					var_dump('module');
 					print_r($module);
-				}/**/
+				}
+				print_r($add_modules);
+				/**/
 			}
 		}
+
 		$new_wrappers = array();
 		$new_modules = array();
 		for ( $w = 0; $w <= count($region['wrappers']); $w++ ) {
@@ -157,7 +164,7 @@ class Upfront_Compat_LayoutConverter_Ver_1_0_0 extends Upfront_Compat_LayoutConv
 		}
 		// Add left spacer
 		if ( $left_space > 0 ) {
-			$left_spacer = $this->_create_spacer($left_space, $first, $breakpoint);
+			$left_spacer = $this->_create_spacer($left_space, $first, $wrapper['order'], $breakpoint);
 		}
 		// Edit current wrapper and module
 		$wrapper_index = $wrapper['index'];
@@ -210,7 +217,7 @@ class Upfront_Compat_LayoutConverter_Ver_1_0_0 extends Upfront_Compat_LayoutConv
 		}
 		// Add right spacer
 		if ( $right_space > 0 ) {
-			$right_spacer = $this->_create_spacer($right_space, false, $breakpoint);
+			$right_spacer = $this->_create_spacer($right_space, false, $wrapper['order'], $breakpoint);
 			$new_wrappers[] = $right_spacer['wrapper'];
 			$new_modules[] = $right_spacer['module'];
 		}
@@ -221,7 +228,7 @@ class Upfront_Compat_LayoutConverter_Ver_1_0_0 extends Upfront_Compat_LayoutConv
 		);
 	}
 	
-	protected function _create_spacer ($col, $clear, $breakpoint) {
+	protected function _create_spacer ($col, $clear, $order, $breakpoint) {
 		$column_class = $breakpoint->get_prefix(Upfront_GridBreakpoint::PREFIX_WIDTH);
 		$wrapper_id = upfront_get_unique_id('wrapper');
 		$object = array(
@@ -252,6 +259,13 @@ class Upfront_Compat_LayoutConverter_Ver_1_0_0 extends Upfront_Compat_LayoutConv
 				'class' => $column_class . $col . ( $clear ? ' clr' : '' ),
 			))
 		);
+		if ( !$breakpoint->is_default() ) {
+			upfront_set_breakpoint_property_value('clear', $clear, $wrapper, $breakpoint);
+			upfront_set_breakpoint_property_value('order', $order, $wrapper, $breakpoint);
+			upfront_set_breakpoint_property_value('hide', 0, $module, $breakpoint);
+			upfront_set_breakpoint_property_value('left', 0, $module, $breakpoint);
+			upfront_set_breakpoint_property_value('col', $col, $module, $breakpoint);
+		}
 		return array(
 			'module' => $module,
 			'wrapper' => $wrapper

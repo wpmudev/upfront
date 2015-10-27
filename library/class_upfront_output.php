@@ -520,15 +520,24 @@ abstract class Upfront_Container extends Upfront_Entity {
 				// Have wrapper? If so, then add wrappers
 				$wrapper = $child_view->get_wrapper();
 
-				if ( $wrapper && !$this->_wrapper )
+				if ( $wrapper && !$this->_wrapper ) {
 					$this->_wrapper = $wrapper;
+				}
 				if ( $wrapper && $this->_wrapper->get_wrapper_id() == $wrapper->get_wrapper_id() ){
 					$wrap .= $child_view->get_markup();
 				}
 				else if ( $wrapper ) {
-					$html .= $this->_wrapper->wrap($wrap);
-					$this->_wrapper = $wrapper;
-					$wrap = $child_view->get_markup();
+					// Check spacer and don't render wrapper if it is
+					if ( $child_view instanceof Upfront_Module && $child_view->is_spacer() ) {
+						$html .= $child_view->get_markup();
+						//$this->_wrapper = false;
+						//$wrap = '';
+					}
+					else {
+						$html .= $this->_wrapper->wrap($wrap);
+						$this->_wrapper = $wrapper;
+						$wrap = $child_view->get_markup();
+					}
 				}
 			}
 			// No wrapper, just appending html
@@ -556,14 +565,16 @@ abstract class Upfront_Container extends Upfront_Entity {
 					$class = $slug === "uposts" ?   "c" . $column . " uposts-object" : upfront_get_property_value('class', $child);
 					$html .= '<div class="upfront-output-object ' . $theme_style .' upfront-output-' . $slug . ' ' . $class . '" id="' . upfront_get_property_value('element_id', $child)  . '"' . $theme_styles_attr . '>' . $child_view->get_markup() . '</div>';
 				}
-				else
+				else{
 					$html .= $child_view->get_markup();
+				}
 			}
 		}
 
 		// Have wrapper, append the last one
-		if ( isset($wrapper) && $wrapper )
+		if ( isset($wrapper) && $wrapper && $this->_wrapper ) {
 			$html .= $this->_wrapper->wrap($wrap);
+		}
 		return $this->wrap($html);
 	}
 
@@ -1132,6 +1143,7 @@ class Upfront_Module extends Upfront_Container {
 	}
 
 	public function get_markup () {
+		if ($this->is_spacer()) return '<!-- Spacer -->';
 		$children = !empty($this->_data[$this->_children]) ? $this->_data[$this->_children] : array();
 		$pre = '';
 		if (!empty($children)) foreach ($children as $child) {
@@ -1154,6 +1166,15 @@ class Upfront_Module extends Upfront_Container {
         $more_classes[] = 'c' . $column;
         return $classes . ' ' . join(' ', $more_classes);
     }
+
+	public function is_spacer () {
+		$spacer_props = Upfront_UspacerView::default_properties();
+		$children = !empty($this->_data[$this->_children]) ? $this->_data[$this->_children] : array();
+		if (!empty($children)) {
+			$type = upfront_get_property_value('type', $children[0]);
+		}
+		return ($type == $spacer_props['type']);
+	}
 }
 
 class Upfront_Object extends Upfront_Entity {

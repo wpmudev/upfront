@@ -180,7 +180,10 @@ define([
 				if ( data.image ){
 					$type.css('background-image', "url('" + data.image + "')");
 					// If parallax, then run parallax first so it applies correct background size
-					// If not, check if we need to destroy it
+					// Destroy old instance first if exists
+					if ( $overlay.data('uparallax') ) {
+						$overlay.uparallax('destroy');
+					}
 					if ( style == 'parallax' ) {
 						$overlay.uparallax({
 							element: $type,
@@ -188,11 +191,8 @@ define([
 							overflowBottom: 0
 						});
 					}
-					else if ( $overlay.data('uparallax') ) {
-						$overlay.uparallax('destroy');
-					}
 					if ( style == 'full' || style == 'parallax' ){
-						var size = this._get_full_size_el($type, data.ratio, false);
+						var size = this._get_full_size_el((is_layout ? $(window) : $type), data.ratio, false);
 						$type.data('bg-position-y', size[3]);
 						$type.data('bg-position-x', size[2]);
 						$type.css({
@@ -235,6 +235,7 @@ define([
 			},
 			update_background_featured: function ($type, $overlay) {
 				var me = this;
+				var $bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el;
 				this.update_background_color();
 
 				if(me.$el.children('.feature_image_selector').length < 1) {
@@ -500,6 +501,10 @@ define([
 				// If parallax, then run parallax first so it applies correct background size
 				if ( style == 'parallax' ) {
 					$overlay.uparallax('refresh');
+					setTimeout(function(){
+						// Do another refresh later to make sure it renders properly
+						$overlay.uparallax('refresh');
+					}, 2000);
 				}
 				if ( style == 'full' || style == 'parallax' ){
 					var size = this._get_full_size_el($type, data.ratio, false);
@@ -777,7 +782,7 @@ define([
 					paddingRight: right_padding_use && right_padding_num !== false ? right_padding_num + 'px' : ''
 				});
 			},
-			updateControls: function($el) {
+			updateControls: function() {
 				var elementControlsTpl = '<div class="upfront-element-controls upfront-ui"></div>';
 
 				if(this.paddingControl && typeof this.paddingControl.isOpen !== 'undefined' && this.paddingControl.isOpen)	return;
@@ -789,9 +794,9 @@ define([
 				if (this.controls === false) return;
 
 				this.controls.render();
-				if ($el.find('>.upfront-element-controls').length === 0) {
-					$el.append(elementControlsTpl);
-					$el.find('>.upfront-element-controls').html('').append(this.controls.$el);
+				if (this.$control_el.find('>.upfront-element-controls').length === 0) {
+					this.$control_el.append(elementControlsTpl);
+					this.$control_el.find('>.upfront-element-controls').html('').append(this.controls.$el);
 				}
 				this.controls.delegateEvents();
 			},
@@ -1317,7 +1322,8 @@ define([
 				this.ensure_breakpoint_change_is_listened();
 				this.ensureUiOffsetCalls();
 
-				this.updateControls(this.parent_module_view.$('.upfront-module'));
+				this.$control_el = this.parent_module_view.$('.upfront-module');
+				this.updateControls();
 				setTimeout(function() {
 					if(me.paddingControl && typeof me.paddingControl.isOpen !== 'undefined' && !me.paddingControl.isOpen)	me.paddingControl.refresh();
 				}, 300);
@@ -1979,7 +1985,8 @@ define([
 				this.createInlineControlPanel();
 				
 				this.create_size_hint(this.$el);
-				this.updateControls(this.$el);
+				this.$control_el = this.$el;
+				this.updateControls();
 
 				setTimeout(function() {
 					if(me.paddingControl && typeof me.paddingControl.isOpen !== 'undefined' && !me.paddingControl.isOpen)	me.paddingControl.refresh();
