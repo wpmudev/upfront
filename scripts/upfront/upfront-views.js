@@ -2999,6 +2999,7 @@ define([
 				this.listenTo(Upfront.Events, "entity:region:removed", this.update_pos);
 				this.listenTo(Upfront.Events, "sidebar:toggle:done", this.update_pos);
 				this.listenTo(Upfront.Events, "application:mode:after_switch", this.update_pos);
+				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 				$(window).on('scroll.region_subcontainer_' + this.model.get('name'), this, this.on_scroll);
 				$(window).on('resize.region_subcontainer_' + this.model.get('name'), this, this.on_window_resize);
 			},
@@ -3030,6 +3031,14 @@ define([
 			on_scroll: function (e) {
 				var me = e.data;
 				me.update_pos();
+			},
+			on_window_resize: function (e) {
+				var me = e.data;
+				me.update_pos();
+			},
+			on_change_breakpoint:  function () {
+				this.update_pos();
+				//_.delay(this.update_pos.bind(this), 200);
 			},
 			update_pos: function () {
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
@@ -3084,6 +3093,9 @@ define([
 						this.$el.data('sticky-top', top-rel_top);
 					}
 				}
+
+				
+
 				// Sub-container behavior to stick when scroll
 				if ( scroll_top+rel_top >= container_offset.top && scroll_bottom <= container_bottom ){
 					css.position = 'fixed';
@@ -3098,6 +3110,18 @@ define([
 					css.left = main_off.left;
 					css.right = 0;
 					is_sticky = false;
+
+					var ref = $('.upfront-regions');//this.$el.closest('.upfront-region-container-bg');
+					var targ = this.$el.children('.upfront-region-container-bg').children('.upfront-grid-layout');
+					css.width = ref.width();
+					if(ref.offset())
+						css.left = ref.offset().left-$(document).scrollLeft();
+					/*console.log(ref.offset());
+					console.log($(document).scrollLeft());
+					if(ref.offset()) {
+						css.left-=(2*($(document).scrollLeft())-60);
+						//ref.offset().left-targ.offset({top: targ.offset().top, left: ref.offset.left});
+					}*/
 				}
 				if ( css.position && css.position == 'fixed' ) {
 					if ( this.$el.css('position') != css.position || this.$el.css('left') != css.left || this.$el.css('top') != css.top ) {
