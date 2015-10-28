@@ -1,12 +1,26 @@
-a.upfront_cta{
-	display :table-cell;
+.upfront_cta {
+	display: table-cell;
 	padding: 4px 5px;
 	text-decoration: none;
 	height: 100%;
 	vertical-align: middle;
+	background: rgb(255, 255, 255);
+	color: rgb(0, 0, 0);
+	font-size: 14px;
+	font-style: normal;
+	font-weight: 600;
+	font-family: "Arial";
+	line-height: 2;
+	cursor: pointer;
+	border: 2px solid rgb(0, 0, 0);
+	transition: all 0.25s linear;
 }
 
-div.upfront-output-button.upfront-output-object {
+.upfront_cta:hover {
+	background: rgb(0, 0, 0);
+	color: rgb(255, 255, 255);
+}
+
+.upfront-output-object.upfront-button {
 	display: table;	
 }
-

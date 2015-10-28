@@ -46,24 +46,26 @@ define([
 				//this is like initialize
 				panel = $(_.template(panelControlTemplate, {l10n: l10n.template, hideOkButton: this.hideOkButton}));
 				panel.addClass('inline-panel-control-dialog');
+				panel.addClass('inline-panel-control-dialog-' + this.id);
 				this.$el.append(panel);
 				panel.find('.uimage-control-panel-content').html('').append(this.view.$el);
 				this.panel = panel;
-				$(document).on('click', me.onDocumentClick);
+				$(document).on('click.dialog-control.'+me.cid, me, me.onDocumentClick);
 			}
 
 			return this;
 		},
 
 		remove: function() {
-			$(document).off('click', this.onDocumentClick);
+			$(document).off('click.dialog-control.'+this.cid);
 		},
 
 		onDocumentClick: function(e) {
-			var	target = $(e.target);
+			var	target = $(e.target),
+				me = e.data;
 
-			if(target.closest('#page').length && target[0] !== this.el && !target.closest(this.el).length && this.isopen) {
-				this.close();
+			if(target.closest('#page').length && target[0] !== me.el && !target.closest(me.el).length && me.isopen) {
+				me.close();
 			}
 		},
 

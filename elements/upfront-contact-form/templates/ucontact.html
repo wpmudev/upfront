@@ -17,6 +17,7 @@
 				class="text-field <?php echo $validate ?> ucontact-input" 
 				name="sendername" 
 				value="<?php echo $values['name'] ?>" 
+				data-string="<?php echo $l10n['missing_name'] ?>"
 				<?php echo $placeholders['name'] ?> 
 				id="<?php echo $ids['name'] ?>" 
 			/>
@@ -27,6 +28,7 @@
 				class="email-field <?php echo $validate ?> ucontact-input" 
 				name="senderemail" 
 				value="<?php echo $values['email'] ?>" 
+				data-string="<?php echo $l10n['invalid_email'] ?>"
 				<?php echo $placeholders['email'] ?> 
 				id="<?php echo $ids['email'] ?>" 
 			/>
@@ -38,6 +40,7 @@
 				class="text-field <?php echo $validate ?> ucontact-input" 
 				name="subject" 
 				value="<?php echo $values['subject'] ?>" 
+				data-string="<?php echo $l10n['missing_subject'] ?>"
 				<?php echo $placeholders['subject'] ?> 
 				id="<?php echo $ids['subject'] ?>" 
 			/>
@@ -47,6 +50,7 @@
 			<label for="<?php echo $ids['message'] ?>"><?php echo $form_message_label ?></label>
 			<textarea 
 				class="textarea-field <?php echo $validate ?> ucontact-input" 
+				data-string="<?php echo $l10n['missing_body'] ?>"
 				name="sendermessage" <?php echo $placeholders['message'] ?> 
 				id="<?php echo $ids['message'] ?>"><?php echo $values['message'] ?></textarea>
 		</div>
@@ -55,7 +59,8 @@
 			<label for="<?php echo $ids['captcha'] ?>"><?php echo $form_captcha_label ?></label>
 			<input type="text" 
 				class="text-field <?php echo $validate ?> ucontact-input" 
-				name="realPerson" 
+				name="realPerson"
+				data-string="<?php echo $l10n['realperson_regenerate'] ?>"
 				<?php echo $placeholders['captcha'] ?> 
 				id="<?php echo $ids['captcha'] ?>" 
 			/>

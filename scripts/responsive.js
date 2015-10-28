@@ -25,9 +25,9 @@
 					Upfront.Events.on("layout:after_render", function(){
 						apply_binding_all();
 					});
-					Upfront.Events.on("entity:module:after_render", apply_binding_view);
-					Upfront.Events.on("entity:module_group:after_render", apply_binding_view);
-					Upfront.Events.on("entity:region:after_render", apply_binding_view);
+					Upfront.Events.on("entity:modules:render_module", apply_binding_view);
+					Upfront.Events.on("entity:regions:render_region", apply_binding_view);
+					Upfront.Events.on("entity:regions:render_container", apply_binding_view);
 					Upfront.Events.on("entity:resize_stop", apply_binding_view_region);
 					Upfront.Events.on("entity:drag_stop", apply_binding_view_region);
 					Upfront.Events.on("upfront:wrappers:after_fix_height", apply_binding_view);

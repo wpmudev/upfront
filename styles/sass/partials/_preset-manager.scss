@@ -41,6 +41,25 @@ div.preset-manager-panel .delete_preset input {
 div.preset-manager-panel .delete_preset {
 	position: relative;
 	z-index: 99;
+	top: -22px;
+}
+div.preset-manager-panel div.preset_specific {
+	background: #e7f1fb; /* Old browsers */
+	background: -moz-linear-gradient(top,  #e7f1fb 0%, #f2f9ff 39%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e7f1fb), color-stop(39%,#f2f9ff)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #e7f1fb 0%,#f2f9ff 39%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #e7f1fb 0%,#f2f9ff 39%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #e7f1fb 0%,#f2f9ff 39%); /* IE10+ */
+	background: linear-gradient(to bottom,  #e7f1fb 0%,#f2f9ff 39%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e7f1fb', endColorstr='#f2f9ff',GradientType=0 ); /* IE6-9 */
+	margin-top: 10px;
+	padding: 1px 0px;
+}
+div.preset-manager-panel div.upfront-settings_panel_scroll {
+	padding: 15px 0px !important;
+}
+div.preset-manager-panel div.upfront-settings_panel_scroll .upfront-settings-item {
+	padding: 0px 5px;
 }
 div.preset-manager-panel div.preset_specific div.upfront-settings-item {
 	padding-top: 0;
@@ -50,6 +69,29 @@ div.preset-manager-panel div.preset_specific div.upfront-settings-item div.upfro
 }
 div.preset-manager-panel div.preset_specific div.upfront-settings-item div.upfront-settings-item-content {
 	margin-top: 10px;
+}
+div.preset-manager-panel div.preset_specific .upfront-settings-item-title {
+	display: none;
+}
+div.preset-manager-panel .upfront-preset-add {
+	display: block;
+	position: absolute;
+	border-left: 1px solid #a4bfd8;
+	width: 40px;
+	height: 23px;
+	top: 5px;
+	right: 6px;
+	background: #f1f8fe;
+	color: #4d6c8e;
+	text-align: center;
+}
+div.preset-manager-panel .chosen-search {
+	position: relative;
+}
+div.preset-manager-panel div.select-preset-field label {
+	font-weight: normal;
+	font-family: Tahoma;
+	margin-bottom: 3px;
 }
 div.preset-manager-panel div.preset_specific div.border_radius input,
 div.preset-manager-panel div.preset_specific div.inline-number input,
@@ -69,26 +111,32 @@ div.preset-manager-panel div.preset_specific div.border_radius1 label {
 }
 div.preset-manager-panel div.preset_specific div.border_radius {
 	display: inline-block;
-	margin-top: 35px;
 	position: relative;
+	margin-top: 0px;
 }
-div.preset-manager-panel div.preset_specific div.border_radius3, div.preset-manager-panel div.preset_specific div.border_radius4 {
-	top:-42px;
+div.preset-manager-panel div.preset_specific div.border_radius label {
+	display: none;
+}
+div.preset-manager-panel div.preset_specific div.border_radius1 {
+	
 }
 div.preset-manager-panel div.preset_specific div.border_radius2 {
-	left:30px;
+	left: 30px;
 }
 div.preset-manager-panel div.preset_specific div.border_radius3 {
-	left: -15px;
+	top: 50px;
+	left: -135px;
 }
 div.preset-manager-panel div.preset_specific div.border_radius4 {
-	left: -45px;
+	left: -13px;
+	top: 50px;
+	margin-bottom: 10px;
 }
-div.preset-manager-panel div.preset_specific div.border_radius4.hover {
-	left: 0;
-}
-div.preset-manager-panel div.preset_specific div.border_radius3.hover {
-	left: 30px;
+div.preset-manager-panel div.border_radius_lock {
+	position: relative;
+	margin-top: 0px;
+	top: -11px;
+	left: 2px;
 }
 div.preset-manager-panel div.preset_specific div.bg-color {
 	display: inline-block;
@@ -246,4 +294,107 @@ div.preset-manager-panel div.border_radius_lock input[type=checkbox]:checked:aft
 }
 .state_settings > .upfront-settings-item-content > div {
 	margin-top: 20px;
+}
+div.preset-manager-panel div.borderWidth, div.preset-manager-panel div.borderType, div.preset-manager-panel div.borderColor {
+	display: inline-block;
+	margin-top: 0px;
+}
+div.preset-manager-panel div.borderWidth {
+	position: relative;
+	top: -7px;
+}
+div.preset-manager-panel div.borderWidth input{
+	width: 50px;
+}
+div.preset-manager-panel div.borderWidth label {
+	display: none;
+}
+div.preset-manager-panel div.borderType {
+	width: 90px;
+	margin-left: 13px;
+	margin-right: 14px;
+}
+div.preset-manager-panel div.borderColor {
+	margin-top: -25px;
+}
+div.preset-manager-panel .backgroundColor {
+	padding-top: 8px;
+}
+div.preset-manager-panel .backgroundColor .sp-replacer  {
+	margin-top: -50px;
+	margin-left: 130px;
+}
+div.preset-manager-panel div.typeFace, div.preset-manager-panel div.weightStyle {
+	display: inline-block;
+	margin-top: 0px;
+}
+div.preset-manager-panel div.typeFace {
+	width: 115px;
+}
+div.preset-manager-panel div.weightStyle {
+	width: 98px;
+	margin-left: 10px;
+}
+div.preset-manager-panel .upfront-field-label-inline {
+	font-size: 11px;
+	display: block;
+	font-family: verdana, sans-serif;
+}
+div.preset-manager-panel .fontSize, div.preset-manager-panel .lineHeight, div.preset-manager-panel .fontColor {
+	display: inline-block;
+	margin-top: 0px;
+	margin-right: 18px;
+}
+div.preset-manager-panel .fontSize input {
+	width: 55px;
+}
+div.preset-manager-panel .lineHeight input {
+	width: 70px;
+}
+div.preset-manager-panel div.fontColor {
+	margin-top: -30px;
+	color: #000;
+	margin-right: 0px;
+}
+div.preset-manager-panel div.preset-separator {
+	border-bottom: 1px solid #e1edf8;
+	margin-top: 0px;
+}
+div.preset-manager-panel .separator-background {
+	position: relative;
+	top: -15px;
+}
+div.preset-manager-panel .separator-corners {
+	position: relative;
+	top: 0px;
+}
+div.preset-manager-panel .separator-corners-hov {
+	position: relative;
+	top: 2px;
+}
+div.preset-manager-panel .useRadius {
+	padding-top: 15px;
+}
+div.preset-manager-panel .typography-heading {
+	margin-top: 0px;
+}
+div.preset-manager-panel .useBorder {
+	margin-top: 19px;
+}
+div.preset-manager-panel .useBorderSeparator {
+	top: 8px;
+	position: relative;
+}
+div.preset-manager-panel .transition .upfront-field-select {
+	margin-top: -24px;
+}
+div.preset-manager-panel .transition .upfront-field-select-single .upfront-field-select-option-selected label:before {
+	left: 12px;
+	position: relative;
+}
+div.preset-manager-panel .border_radius_lock_hover {
+	margin-bottom: 50px;
+}
+div.preset-manager-panel .backgroundcolor-hover, div.preset-manager-panel .typography-hover {
+	padding-top: 11px;
 }

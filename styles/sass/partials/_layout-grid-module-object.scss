@@ -382,6 +382,9 @@
 .ui-draggable {
 	cursor: move;
 }
+.ui-draggable-disabled {
+  cursor: default;
+}
 .ui-selectable-helper {
 	position: absolute;
 	z-index: 100;
@@ -430,7 +433,8 @@
   visibility: visible;
 }
 .upfront-module-group-on-edit > .ui-resizable-handle,
-.upfront-module-group-on-edit > .upfront-entity_meta > .upfront-icon-button {
+.upfront-module-group-on-edit > .upfront-entity_meta > .upfront-icon-button,
+.upfront-module-group.controls-visible > .upfront-entity_meta > .upfront-icon-button {
   visibility: hidden !important;
 }
 .upfront-module-group-on-edit .upfront-editable_entities_container .upfront-editable_entity:hover > .ui-resizable-handle {
@@ -620,32 +624,55 @@
 
 
 /* Group Element Link Panel Style */
-.upfront-module-group > .uimage-controls.image-element-controls .upfront-inline-panel .upfront-inline-panel-item.labeled {
+.upfront-module-group > .upfront-module-group-controls .upfront-inline-panel .upfront-inline-panel-item {
+  display: block;
+  float: none;
+  background: none;
+  border: none;
+  color: #97b8da;
   width: auto!important;
   min-width: 0px!important;
   line-height: inherit!important;
-  padding-left: 0;
 }
-.upfront-module-group > .uimage-controls.image-element-controls .upfront-inline-panel .upfront-inline-panel-item.labeled i {
+.upfront-module-group > .upfront-module-group-controls .upfront-inline-panel .upfront-inline-panel-item:hover {
+  background: #466381;
+}
+.upfront-module-group > .upfront-module-group-controls .upfront-inline-panel .upfront-inline-panel-item.labeled i {
   display: inline-block;
 }
-.upfront-module-group > .uimage-controls.image-element-controls .upfront-inline-panel .upfront-inline-panel-item.labeled span {
+.upfront-module-group > .upfront-module-group-controls .upfront-inline-panel .upfront-inline-panel-item.visit-link-control i {
+  float: right;
+  margin-left: 10px;
+  margin-right: -15px;
+}
+.upfront-module-group > .upfront-module-group-controls .upfront-inline-panel .upfront-inline-panel-item-label {
   display: inline-block;
   width: auto!important;
+  font: 16px/24px 'Source Sans Pro', sans-serif;
 }
-.upfront-module-group > .uimage-controls.image-element-controls {
+.upfront-module-group > .upfront-module-group-controls {
   display: block;
   visibility: hidden;
-  bottom: -30px;
+  position: absolute;
+  top: 100%;
   left: 0;
+  min-width: 200px;
 }
-.upfront-module-group > .uimage-controls.image-element-controls .upfront-inline-panel {
+.upfront-module-group > .upfront-module-group-controls .upfront-inline-panel {
   visibility: hidden;
+  background: #152845;
+  box-shadow: none;
+  padding-top: 2px;
+  width: auto!important;
+  height: auto!important;
+  top: 0;
+  left: 0;
+	z-index: 2001; /* A Space Odyssey */
 }
-.upfront-module-group.controls-visible > .uimage-controls.image-element-controls {
+.upfront-module-group.controls-visible > .upfront-module-group-controls {
   visibility: visible;
 }
-.upfront-module-group.controls-visible > .uimage-controls.image-element-controls .upfront-inline-panel {
+.upfront-module-group.controls-visible > .upfront-module-group-controls .upfront-inline-panel {
   visibility: visible;
 }
 .upfront-module-group > .open-item-controls {
@@ -667,23 +694,22 @@
 .upfront-module-group.controls-visible > .open-item-controls {
   display: block;
 }
-.upfront-module-group > .uimage-controls .upfront-inline-panel {
-  background-image: none;
-  box-shadow: none;
-  width: 300px!important;
+.upfront-module-group.upfront-module-group-on-edit > .open-item-controls {
+  display: none;
 }
-.upfront-module-group > .uimage-controls .inline-panel-control-dialog {
+.upfront-module-group > .upfront-module-group-controls .inline-panel-control-dialog {
   min-width: 190px;
+  top: -2px;
+  background: #152845;
 }
-.upfront-module-group > .uimage-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-control-dialog-open:first-child {
+.upfront-module-group.control-dialog-open > .upfront-module-group-controls .upfront-inline-panel-item.upfront-control-dialog-open {
+  display: block;
+}
+.upfront-module-group.control-dialog-open > .upfront-module-group-controls .upfront-inline-panel-item {
+  display: none;
+}
+.upfront-module-group > .upfront-module-group-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-control-dialog-open:first-child {
   height: 31px!important;
-}
-.upfront-module-group > .uimage-controls .upfront-inline-panel .upfront-inline-panel-item {
-  background-image: -moz-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
-  background-image: -ms-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
-  background-image: linear-gradient(-179deg, #2F445D 0%, #152841 100%);
-  -moz-box-shadow: inset 0px -1px 0px 0px #43607A, inset 0px 1px 0px 0px #26394A;
-  box-shadow: inset 0px -1px 0px 0px #43607A, inset 0px 1px 0px 0px #26394A;
 }
 /* Collapsed control */
 .upfront-module-group > .open-item-controls:before {
@@ -700,7 +726,7 @@
   cursor: pointer;
   position: absolute;
 }
-.upfront-module-group > .uimage-controls a {
+.upfront-module-group > .upfront-module-group-controls a {
   padding: 0;
   font-size: 13px;
   margin-bottom: 2px;

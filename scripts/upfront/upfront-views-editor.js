@@ -37,7 +37,7 @@ define([
 	"chosen",
 	"scripts/upfront/global-event-handlers",
 	"scripts/upfront/inline-panels/inline-panels",
-	"scripts/upfront/link-panel", // If adding more arguments adjust _.rest in line 69
+	"scripts/upfront/link-panel", // If adding more arguments adjust _.rest in line 71
 	"text!upfront/templates/property.html",
 	"text!upfront/templates/properties.html",
 	"text!upfront/templates/property_edit.html",
@@ -753,6 +753,7 @@ define([
             this.$el.prop("title", l10n.toggle_grid);
 			this.listenTo(Upfront.Events, "entity:region:added", this.update_grid);
 			this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.update_grid);
+            this.listenTo(Upfront.Events, "grid:toggle", this.on_click);
 		},
 		on_click: function () {
 			$('.upfront-overlay-grid').size() || this.create_grid();
@@ -786,7 +787,7 @@ define([
 				var columns = grid.size,
 					template = _.template(_Upfront_Templates.overlay_grid, {columns: columns, size_class: grid.class, style: 'simple'});
 				$(this).prepend(template);
-				
+
 				//Adjust grid rulers position
 				Upfront.Application.adjust_grid_padding_settings(this);
 			});
@@ -1161,6 +1162,7 @@ define([
 		render: function () {
 			this.fields[0].render();
 			this.$el.append(this.fields[0].el);
+			this.fields[0].delegateEvents();
 		},
 		on_click: function () {
 
@@ -1978,7 +1980,7 @@ define([
 				if ('blockquote' === element) {
 					selector = '.upfront-object-content blockquote, .upfront-object-content blockquote p';
 				} else if ('a' === element) {
-					selector = '.upfront-object-content a, .upfront-object-content a:link, .upfront-object-content a:visited';
+					selector = '.upfront-object-content:not(.upfront-output-button):not(.upfront-output-ubutton) a, .upfront-object-content:not(.upfront-output-button):not(.upfront-output-ubutton) a:link, .upfront-object-content:not(.upfront-output-button):not(.upfront-output-ubutton) a:visited';
 				} else {
 					selector = '.upfront-object-content ' + element  + ', .upfront-ui ' + element + '.tag-list-tag';
 				}
@@ -2291,6 +2293,12 @@ define([
                                 self.update_colors(this, color, index);
                         	},
                             move: function (color) {
+	                            picker.$(".sp-preview").css({
+                                    backgroundColor : color.toRgbString(),
+                                    backgroundImage : "none"
+                                });
+                        	},
+                        	hide: function (color) {
 	                            picker.$(".sp-preview").css({
                                     backgroundColor : color.toRgbString(),
                                     backgroundImage : "none"
@@ -2701,7 +2709,7 @@ define([
 				roles = user.get('roles') || [],
 				tpl
 			;
-			tpl = '<div class="sidebar-profile-avatar"><img src="http://www.gravatar.com/avatar/{{ gravatar ? gravatar : "gravatar" }}?s=25" /></div>' +
+			tpl = '<div class="sidebar-profile-avatar"><img src="//www.gravatar.com/avatar/{{ gravatar ? gravatar : "gravatar" }}?s=25" /></div>' +
 				'<div class="sidebar-profile-detail"><span class="sidebar-profile-name">{{name}}</span><span class="sidebar-profile-role">{{role}}</span></div>' +
 				(roles.length ? '<div class="sidebar-profile-edit"><a class="upfront-icon upfront-icon-edit" data-bypass="true" title="'+  l10n.edit_profile +'" href="{{edit_url}}">' + l10n.edit_profile + '</a></div>' : '');
 			this.$el.html(_.template(tpl,
@@ -3095,12 +3103,12 @@ define([
 						}
 						//Check collection total elements
 						var collectionElements = collection.pagination.totalElements;
-						
+
 						//Compare total items, if same return cached panel
 						if(cachedElements == collectionElements) {
 							return me.render_panel(me.views[panel]);
 						}
-						
+
 						collection.on('reset sort', me.render_panel, me);
 						views = {
 							view: new ContentEditorPosts({collection: collection, $popup: me.$popup}),
@@ -3117,12 +3125,12 @@ define([
 						}
 						//Check collection total elements
 						var collectionElements = collection.pagination.totalElements;
-						
+
 						//Compare total items, if same return cached panel
 						if(cachedElements == collectionElements) {
 							return me.render_panel(me.views[panel]);
 						}
-						
+
 						collection.on('reset sort', me.render_panel, me);
 						views = {
 							view: new ContentEditorPages({collection: collection, $popup: me.$popup}),
@@ -3826,7 +3834,6 @@ define([
 				this.on('rendered', this.options.rendered, this);
 			if (this.options.on_click)
 				this['on_click'] = this.options.on_click;
-
 			this.once('rendered', function(){
 				var me = this;
 				this.get_field().on('focus', function(){
@@ -3838,7 +3845,9 @@ define([
 		},
 		dispatch_show: function () {
 			var me = this;
-			me.options.show(me.get_value(), me.$el);
+			setTimeout(function() {
+				me.options.show(me.get_value(), me.$el);		
+			}, 100);
 		},
 		get_name: function () {
 			return this.property ? this.property.get('name') : this.name;
@@ -3877,7 +3886,7 @@ define([
 			return this.$el.find( '[name=' + this.get_field_name() + ']' + (this.selected_state ? ':'+this.selected_state : '') );
 		},
 		get_label_html: function () {
-      if (this.options.hide_label === true) return '';
+			if (this.options.hide_label === true) return '';
 			var attr = {
 				'for': this.get_field_id(),
 				'class': 'upfront-field-label ' + ( this.options.label_style == 'inline' ? 'upfront-field-label-inline' : 'upfront-field-label-block' )
@@ -4309,9 +4318,21 @@ var Field_ToggleableText = Field_Text.extend({
 				me.$(".sp-container").data("sp-options", me.options.spectrum );
 			};
 
+			/**
+			 * Wrap the hide callback so we can re-use it.
+			 */
+			var hide = function (color) {
+				if (me.options.spectrum && me.options.spectrum.hide) {
+					me.options.spectrum.hide(color);
+				}
+			};
+			// Add wrapped hide callback
+			spectrumOptions.hide = hide;
 			if( !spectrumOptions.autoHide  ){
 				spectrumOptions.hide = function(color){
 					me.color = color;
+					// And if we override the hide callback, re-apply it in overridden method
+					hide(color);
 					me.$(".sp-replacer").addClass("sp-active");
 					me.$(".sp-container").removeClass("sp-hidden");
 				};
@@ -6185,6 +6206,37 @@ var ThemeFontsCollection = Backbone.Collection.extend({
 		variants.unshift('inherit');
 		return variants;
 	},
+	
+	get_variants_for_select: function(font_family) {
+		var variants;
+		var typefaces_list = [];
+
+		_.each(system_fonts_storage.get_fonts().models, function(font) {
+			if (font_family === font.get('family')) {
+				_.each(font.get('variants'), function(font_style) {
+					typefaces_list.push({ label: font_style, value: font_style });
+				});
+			}
+		});
+		
+		_.each(Upfront.mainData.additionalFonts, function(font) {
+			if (font_family === font.family) {
+				_.each(font.variants, function(font_style) {
+					typefaces_list.push({ label: font_style, value: font_style });
+				});
+			}
+		});
+
+		_.each(theme_fonts_collection.models, function(theme_font) {
+			if (font_family === theme_font.get('font').family) {
+				var font_style = theme_font.get('displayVariant');
+				typefaces_list.push({ label: font_style, value: font_style });
+			}
+		});
+
+		return typefaces_list;
+	},
+
 
 	get_additional_font: function(font_family) {
 		var font = _.findWhere(Upfront.mainData.additionalFonts, {family: font_family});
@@ -6479,7 +6531,7 @@ var Icon_Fonts_Manager = Backbone.View.extend({
 			"	font-weight: normal;" +
 			"	font-style: normal;" +
 			"}" +
-			".uf_font_icon {" +
+			".uf_font_icon, .uf_font_icon * {" +
 			"	font-family: '" + font.get('family') + "'!important;" +
 			"}";
 
@@ -6813,6 +6865,7 @@ var CSSEditor = Backbone.View.extend({
 		PlainTxtModel: {label: l10n.text, id:'plain_text'},
 		CodeModel: {label: l10n.code, id: 'upfront-code_element'},
 		Layout: {label: l10n.body, id: 'layout'},
+		GalleryLightbox: {label: l10n.body, id: 'gallery-lightbox'},
 		RegionContainer: {label: l10n.region, id: 'region-container'},
 		Region: {label: l10n.inner_region, id: 'region'},
 		RegionLightbox: {label: l10n.ltbox_region, id: 'region'},
@@ -7042,11 +7095,11 @@ var CSSEditor = Backbone.View.extend({
 				me.updateStyles(editor.getValue());
 			},800);
 			me.trigger('change', editor);
-						
+
 			if(typeof me.editor !== "undefined") {
 				var aceOuterWidth = $(me.editor.container).get(0).scrollWidth;
 				var aceInnerWidth = $(me.editor.container).find('.ace_content').innerWidth();
-				
+
 				if(aceOuterWidth < aceInnerWidth + 40) {
 					if(!scrollerDisplayed) {
 						me.startResizable();
@@ -7068,15 +7121,15 @@ var CSSEditor = Backbone.View.extend({
 		// Set up the proper vscroller width to go along with new change.
 		editor.renderer.scrollBar.width = 5;
 		editor.renderer.scroller.style.right = "5px";
-		
+
 		editor.focus();
 		this.editor = editor;
-		
+
 		if(me.timer) clearTimeout(me.timer);
 		me.timer = setTimeout(function(){
 			me.startResizable();
 		},300);
-		
+
 	},
 	prepareSpectrum: function(){
 		var me = this,
@@ -7113,18 +7166,27 @@ var CSSEditor = Backbone.View.extend({
 			topHeight = me.$('.upfront-css-top').outerHeight(),
 			$selectors = me.$('.upfront-css-selectors'),
 			$saveform = me.$('.upfront-css-save-form'),
+			$rsz = this.$('.upfront-css-resizable'),
 			onResize = function(e, ui){
 				var height = ui ? ui.size.height : me.$('.upfront-css-resizable').height(),
 					bodyHeight = height  - topHeight;
 				$cssbody.height(bodyHeight);
+
+				$rsz.css('width', ''); // Do NOT do horizontal resize
+
 				if(me.editor)
 					me.editor.resize();
 				$selectors.outerHeight(bodyHeight - $saveform.outerHeight());
 				$('#page').css('padding-bottom', height);
 			}
 		;
+		// Add appropriate handle classes
+		$rsz.find(".upfront-css-top")
+			.removeClass("ui-resizable-handle").addClass("ui-resizable-handle")
+			.removeClass("ui-resizable-n").addClass("ui-resizable-n")
+		;
 		onResize();
-		this.$('.upfront-css-resizable').resizable({
+		$rsz.resizable({
 			handles: {n: '.upfront-css-top'},
 			resize: onResize,
 			minHeight: 200,
@@ -7242,7 +7304,7 @@ var CSSEditor = Backbone.View.extend({
 					return true;
 			}
 			catch (err) {
-				
+
 			}
 			splitted.pop();
 		}
@@ -7573,8 +7635,8 @@ var GeneralCSSEditor = Backbone.View.extend({
 
 		this.options = options || {};
 		this.model = options.model;
-		this.sidebar = ( options.sidebar !== false );
-		this.global = ( options.global === true );
+		this.sidebar = options.sidebar !== false;
+		this.global = options.global === true;
 
 		this.prepareAce = deferred.promise();
 		require([Upfront.Settings.ace_url], function(){
@@ -7596,8 +7658,13 @@ var GeneralCSSEditor = Backbone.View.extend({
 			this.$style = $style
 		}
 
+		if (options.cssSelectors) {
+			this.selectors = options.cssSelectors;
+		}
+
 
 		if ( typeof options.change == 'function' ) this.listenTo(this, 'change', options.change);
+		if ( typeof options.onClose == 'function' ) this.listenTo(this, 'close', options.onClose);
 
 		this.render();
 
@@ -7673,6 +7740,13 @@ var GeneralCSSEditor = Backbone.View.extend({
 		var scope = new RegExp('\.' + this.options.page_class + '\s*', 'g'),
 			styles = this.model.get('styles') ? this.model.get('styles').replace(scope, '') : ''
 		;
+		var scope = new RegExp('\.' + this.options.page_class + '\s*', 'g');
+		var styles;
+		if (this.options.type === 'GalleryLightbox') {
+			styles = this.model.get('properties').get('styles').get('value').replace(scope, '');
+		} else {
+			styles = this.model.get('styles').replace(scope, '');
+		}
 		editor.setValue($.trim(styles), -1);
 
 		// Set up the proper vscroller width to go along with new change.
@@ -7736,6 +7810,7 @@ var GeneralCSSEditor = Backbone.View.extend({
 		});
 	},
 	remove: function() {
+		this.trigger('close');
 		Backbone.View.prototype.remove.call(this);
 		$(window).off('resize', this.resizeHandler);
 	},
@@ -7960,17 +8035,17 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		this.options = options || {};
 		this.listenTo(this.collection, 'add remove change:name change:width', this.render);
 	},
-	
+
 	render: function () {
 		var me = this;
 		this.$el.html('');
 		this.$el.append(_.template(this.template, this.options));
 		this.$el.addClass(' upfront-field-select-' + ( this.options.multiple ? 'multiple' : 'single' ));
-		
+
 		if (this.options.disabled) {
 			this.$el.addClass('upfront-field-select-disabled');
 		}
-		
+
 		if (this.options.style == 'zebra') {
 			this.$el.addClass('upfront-field-select-zebra');
 		}
@@ -7982,7 +8057,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			this.$el.find('ul').append(option.el);
 		}, this);
 	},
-	
+
 	onOptionClick: function (e) {
 		this.$el.toggleClass('compact-label-select-open');
 		Field_Select.prototype.onOptionClick.call(this, e);
@@ -8277,9 +8352,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		},
 		render: function () {
 			var me = this;
-			
+
 			this.$el.html('<div class="upfront-loading-ani" />');
-			
+
 			if (this.options.fixed) this.$el.addClass('upfront-loading-fixed');
 			if (this.options.loading_type) this.$el.addClass(this.options.loading_type);
 			if (this.options.loading)this.$el.append('<p class="upfront-loading-text">' + this.options.loading + '</p>');
@@ -9675,10 +9750,10 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				type: this.model.is_main() ? "RegionContainer" : (this.model.get('type') == 'lightbox')?"RegionLightbox":"Region",
 				element_id: this.model.is_main() ? "region-container-" + this.model.get('name') : "region-" + this.model.get('name')
 			});
-			
+
 			this.listenTo(Upfront.Application.cssEditor, 'updateStyles', this.adjust_grid_padding);
 		},
-		
+
 		adjust_grid_padding: function() {
 			var togglegrid = new Upfront.Views.Editor.Command_ToggleGrid();
 			togglegrid.update_grid();
@@ -11189,6 +11264,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			"RegionFixedPanels": RegionFixedPanels,
 			"RegionFixedEditPosition" : RegionFixedEditPosition,
 			"CSSEditor": CSSEditor,
+			"GeneralCSSEditor": GeneralCSSEditor,
 			"LinkPanel": LinkPanel
 		},
 		Mixins: {

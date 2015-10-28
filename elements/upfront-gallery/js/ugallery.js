@@ -4,13 +4,18 @@ define([
 	'text!elements/upfront-gallery/tpl/ugallery.html', // Front
 	'text!elements/upfront-gallery/tpl/sorting-style.html',
 	'text!elements/upfront-gallery/tpl/ugallery_editor.html',
+	'text!elements/upfront-gallery/tpl/lightbox_settings.html',
 	'elements/upfront-gallery/js/settings',
 	'elements/upfront-gallery/js/model',
 	'elements/upfront-gallery/js/label-editor',
-	'elements/upfront-gallery/js/element'
-], function(galleryTpl, sortingStyleTpl, editorTpl, UgallerySettings, UgalleryModel, LabelEditor, UgalleryElement) {
+	'elements/upfront-gallery/js/element',
+	"scripts/upfront/link-model"
+], function(galleryTpl, sortingStyleTpl, editorTpl, lightboxTpl, UgallerySettings, UgalleryModel, LabelEditor, UgalleryElement, LinkModel) {
 
 var l10n = Upfront.Settings.l10n.gallery_element;
+var globalL10n = Upfront.Settings && Upfront.Settings.l10n
+	? Upfront.Settings.l10n.global.views
+	: Upfront.mainData.l10n.global.views;
 
 var UgalleryImage = Backbone.Model.extend({
 	defaults: Upfront.data.ugallery.imageDefaults
@@ -57,12 +62,27 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			'click .ugallery_item': 'selectItem',
 			'click .upfront-quick-swap': 'openImageSelector',
 			'click': 'preventNavigation',
-			'dblclick .ugallery-thumb-title': 'startCaptionEditor'
+			'dblclick .ugallery-thumb-title': 'startCaptionEditor',
+      'click .ugallery_item_lightbox': 'openLightbox'
 		});
 
 		images = this.property('images');
 
+		// Ensure images are using new linking
+		_.each(images, function(image, index) {
+			if (image.imageLink === false || typeof image.imageLink === 'undefined') {
+				// Create imageLink from properties, backward compat
+				images[index]['imageLink'] = {
+					type: image.urlType,
+					url: image.url,
+					target: image.linkTarget
+				};
+			}
+		});
+
 		this.images = new UgalleryImages(images);
+
+
 		this.listenTo(this.images, 'add remove reset change', this.imagesChanged);
 		this.property('images', this.images.toJSON()); // Hack to add image defaults;
 
@@ -169,6 +189,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		this. debouncedRender = _.debounce(this.render, 300);
 	},
 
+	preventClose: function(event) {
+		event.stopPropagation();
+	},
+
 	// Remove default dblclick behavior because it messes up things
 	on_edit: function() {},
 
@@ -253,8 +277,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 		panel.items.push(this.createLabelControl(image));
 
-		if (image.get('urlType') === 'image') {
-			panel.items.push(this.createControl('fullscreen', l10n.ctrl.show_image, 'openLightbox'));
+		if (image.get('imageLink').type === 'image' || image.get('imageLink').type === 'lightbox') {
+			panel.items.push(this.createControl('fullscreen', l10n.ctrl.show_image, 'openImageLightbox'));
 		}
 
 		return panel;
@@ -312,22 +336,17 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 	createLinkControl: function(image){
 		var me = this,
-			linkControl = new Upfront.Views.Editor.InlinePanels.DialogControl();
+			linkControl = new Upfront.Views.Editor.InlinePanels.DialogControl(),
+			imageLink = new LinkModel(image.get('imageLink'));
 
 		linkControl.view = linkPanel = new Upfront.Views.Editor.LinkPanel({
-			linkType: image.get('urlType'),
-			linkUrl: image.get('url'),
-			linkTarget: image.get('linkTarget'),
+			model: imageLink,
 			linkTypes: { image: true },
 			imageUrl: image.get('srcFull')
 		});
 
-		me.listenTo(linkPanel, 'change change:target', function(data){
-			image.set({
-				urlType: data.type,
-				url: data.url,
-				linkTarget: data.target
-			});
+		this.listenTo(imageLink, 'change', function(){
+			image.set({'imageLink': imageLink.toJSON()});
 		});
 
 		this.listenTo(linkControl, 'panel:ok', function(){
@@ -348,10 +367,14 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		me.listenTo(linkControl, 'panel:close', function(){
 			linkControl.$el
 				.parents('.ugallery_item')
-					.removeClass('upfront-control-visible').end()
-				.closest('.ugallery_link')
-					.attr('href', image.get('url'))
-			;
+					.removeClass('upfront-control-visible');
+
+			setTimeout(function() {
+				linkControl.$el.closest('.ugallery-controls').siblings('.ugallery_link')
+					.attr('href', imageLink.get('url'))
+					.attr('target', imageLink.get('target'))
+					.attr('class', 'ugallery_link ugallery_link' + imageLink.get('type'));
+			}, 50);
 
 			me.$el.closest('.ui-draggable').draggable('enable');
 		});
@@ -363,8 +386,15 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		return linkControl;
 	},
 
-	openLightbox: function(e) {
+  openLightbox: function(event) {
+		var gallery, magOptions;
+			gallery = false;
+			magOptions = ugalleries[galleryId].magnific;
+  },
+
+	openImageLightbox: function(e) {
 		var me = this,
+			lightboxName,
 			item = $(e.target).closest('.ugallery_item'),
 			image = me.images.get(item.attr('rel')),
 			titleUpdated = false,
@@ -381,18 +411,36 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			}
 		;
 
+		if (image.get('imageLink').type === 'lightbox') {
+			lightboxName = image.get('imageLink').url.substring(1);
+			Upfront.Application.LayoutEditor.openLightboxRegion(lightboxName);
+			return;
+		}
+
 		$.magnificPopup.open({
 			items: {
 				src: item.find('.ugallery_link').attr('href') || item.find('.ugallery-image').attr('src')
 			},
 			type: 'image',
 			image: {
-				titleSrc: function(){
+				titleSrc: function() {
 					return image.get('caption');
 				},
 				markup: Upfront.data.ugallery.lightboxTpl
 			},
 			callbacks: {
+				open: function() {
+					me.setupLightbox();
+					me.createLightboxSettings();
+					// Prevent lightbox from closing when clicking on image or caption
+					$('.glb-content-container').click(me.preventClose);
+					$('.glb-image-container').click(me.preventClose);
+					$('.glb-caption-container').click(me.preventClose);
+					// Prevent magnific from capturing focus
+					setTimeout(function() {
+						$(document).off('focusin');
+					}, 500);
+				},
 				imageLoadComplete: function() {
 					var title = $(this.container).find('.mfp-title');
 
@@ -411,7 +459,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 							})
 						;
 					}
-
 				},
 				beforeClose: function() {
 					if (titleUpdated) {
@@ -421,6 +468,203 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 				resize: resizeWithText,
 				afterChange: resizeWithText
 			}
+		});
+	},
+
+	setupLightbox: function() {
+		var containerClass ='gallery-' + this.property('element_id') + '-lightbox',
+			currentLightbox;
+
+		$('.mfp-bg, .mfp-wrap').addClass(containerClass);
+
+		currentLightbox = $('.' + containerClass);
+
+		currentLightbox.find('.mfp-counter').html('1 of 2');
+
+		if (this.property('lightbox_show_close')[0] === 'true') {
+			currentLightbox.find('.mfp-close').show();
+		} else {
+			currentLightbox.find('.mfp-close').hide();
+		}
+
+		if (this.property('lightbox_show_image_count')[0] === 'true') {
+			currentLightbox.find('.mfp-counter').show();
+		} else {
+			currentLightbox.find('.mfp-counter').hide();
+		}
+
+		$('.glb-content-container').css({
+			'background': this.property('lightbox_active_area_bg')
+		});
+		$('.mfp-bg').css('background', this.property('lightbox_overlay_bg'));
+		$('.mfp-container').append('<button title="Previous (Left arrow key)" type="button" class="mfp-arrow mfp-arrow-left mfp-prevent-close"></button>');
+		$('.mfp-container').append('<button title="Next (Right arrow key)" type="button" class="mfp-arrow mfp-arrow-right mfp-prevent-close"></button>');
+
+		if ($('style#' + containerClass).length === 0) {
+			$('body').append('<style id="' + containerClass + '"></style>');
+		}
+		$('style#' + containerClass).html(this.property('styles'));
+	},
+
+	createLightboxSettings: function () {
+		$('.mfp-container').append(_.template(lightboxTpl, {
+			edit_lightbox_css: l10n.lightbox.edit_css,
+			lightbox_title: l10n.lightbox.title
+		}));
+
+		var $lightbox = $('.mfp-container').find('.upfront-region-bg-setting-lightbox-region');
+
+		var me = this,
+			fields;
+
+		fields = {
+			lightbox_click_out_close: new Upfront.Views.Editor.Field.Checkboxes({
+				model: this.model,
+				property: 'lightbox_click_out_close',
+				label: "",
+				values: [
+					{
+						label: globalL10n.click_close_ltbox,
+						value: 'true',
+						checked: this.model.get_property_value_by_name('lightbox_click_out_close')[0] === 'true' ? 'checked' : false
+					}
+				],
+				change: function(value) {
+					me.property('lightbox_click_out_close', value);
+					me.setupLightbox();
+				}
+			}),
+
+			lightbox_show_close: new Upfront.Views.Editor.Field.Checkboxes({
+				model: this.model,
+				className: 'gallery-lb-show_close upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-checkboxes',
+				property: 'lightbox_show_close',
+				label: "",
+				values: [
+					{
+						label: globalL10n.show_close_icon,
+						value: 'true',
+						checked: this.model.get_property_value_by_name('lightbox_show_close')[0] === 'true' ? 'checked' : false
+					}
+				],
+				change: function(value) {
+					me.property('lightbox_show_close', value);
+					me.setupLightbox();
+				}
+			}),
+
+			lightbox_show_image_count: new Upfront.Views.Editor.Field.Checkboxes({
+				model: this.model,
+				className: 'gallery-lb-show_image_count upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-checkboxes',
+				property: 'lightbox_show_image_count',
+				label: "",
+				values: [
+					{
+						label: l10n.lightbox.show_image_count,
+						value: 'true',
+						checked: this.model.get_property_value_by_name('lightbox_show_image_count')[0] === 'true' ? 'checked' : false
+					}
+				],
+				change: function(value) {
+					me.property('lightbox_show_image_count', value);
+					me.setupLightbox();
+				}
+			}),
+		};
+
+		fields.lightbox_active_area_bg = new Upfront.Views.Editor.Field.Color({
+			model: this.model,
+			property: 'lightbox_active_area_bg',
+			className: 'upfront-field-wrap upfront-field-wrap-color sp-cf overlay_color',
+			label: l10n.lightbox.active_area_bg + ":",
+			spectrum: {
+				move: function(color) {
+					me.property('lightbox_active_area_bg', color.toRgbString());
+					me.setupLightbox();
+				},
+				change: function(color) {
+					me.property('lightbox_active_area_bg', color.toRgbString());
+					me.setupLightbox();
+				}
+			}
+		});
+
+		fields.lightbox_overlay_bg = new Upfront.Views.Editor.Field.Color({
+			model: this.model,
+			property: 'lightbox_overlay_bg',
+			label: l10n.lightbox.overlay_bg + ":",
+			change: me.updateProperty,
+			spectrum: {
+				move: function(color) {
+					me.property('lightbox_overlay_bg', color.toRgbString());
+					me.setupLightbox();
+				},
+				change: function(color) {
+					me.property('lightbox_overlay_bg', color.toRgbString());
+					me.setupLightbox();
+				},
+			}
+		});
+
+		_.each(fields, function(field){
+			field.render();
+			field.delegateEvents();
+			$lightbox.append(field.$el);
+		});
+
+		$('#gallery-lb-settings-button').toggle(
+			function() {
+				$('#gallery-lb-settings').show();
+			},
+			function() {
+				$('#gallery-lb-settings').hide();
+			}
+		);
+
+		$('#gallery-lb-settings .upfront-inline-modal-save').click( function() {
+			$('#gallery-lb-settings-button').click();
+			if (me.galleryLightboxCssEditor) {
+				me.galleryLightboxCssEditor.close();
+			}
+		});
+
+		$('#gallery-lb-settings').click( function(event) {
+			event.stopPropagation();
+		});
+
+		$('#gallery-lb-settings').find('.edit-lightbox-css').click( function(event) {
+			me.galleryLightboxCssEditor = new Upfront.Views.Editor.GeneralCSSEditor({
+				model: me.model,
+				page_class: 'gallery-' + me.property('element_id') + '-lightbox',
+				type: "GalleryLightbox",
+				sidebar: true,
+				global: false,
+				cssSelectors: {
+					'.mfp-close': {label: l10n.css.lightbox_close, info: l10n.css.lightbox_close},
+					'.glb-content-container': {label: l10n.css.lightbox_content_wrapper, info: l10n.css.lightbox_content_wrapper_info},
+					'.glb-image-container': {label: l10n.css.lightbox_image_wrapper, info: l10n.css.lightbox_image_wrapper},
+					'.glb-caption-container': {label: l10n.css.lightbox_caption_wrapper, info: l10n.css.lightbox_caption_wrapper},
+					'.mfp-title': {label: l10n.css.lightbox_caption, info: l10n.css.lightbox_caption},
+					'.mfp-arrow-left:before': {label: l10n.css.lightbox_arrow_left, info: l10n.css.lightbox_arrow_left},
+					'.mfp-arrow-right:before': {label: l10n.css.lightbox_arrow_right, info: l10n.css.lightbox_arrow_right},
+					'.mfp-counter': {label: l10n.css.lightbox_image_count, info: l10n.css.lightbox_image_count},
+				},
+				change: function(content) {
+					me.property('styles', content);
+					me.setupLightbox();
+				},
+				onClose: function() {
+					$('.mfp-content').css({
+						'margin-bottom': 0,
+						'margin-top': 0
+					});
+				}
+			});
+			$('#upfront-general-csseditor').css('width', '100%');
+			$('.mfp-content').css({
+				'margin-bottom': 250,
+				'margin-top': 50
+			});
 		});
 	},
 
@@ -435,7 +679,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	},
 
 	openLightboxLabels: function(e){
-		this.openLightbox(e, true);
+		this.openImageLightbox(e, true);
 	},
 
 	getPropertiesForTemplate: function() {
@@ -447,6 +691,12 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		props.labels = this.labels;
 		props.labels_length = this.labels.length;
 		props.image_labels = this.imageLabels;
+
+		_.each(props.images, function(image, index) {
+			props.images[index]['imageLinkType'] = image.imageLink.type;
+			props.images[index]['imageLinkUrl'] = image.imageLink.url;
+			props.images[index]['imageLinkTarget'] = image.imageLink.target;
+		});
 
 		props.l10n = l10n.template;
 		props.in_editor = true;
@@ -528,6 +778,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			this.activateSortable();
 		} else {
 			this.cleanupSortable();
+		}
+
+		if (this.property('linkTo') === false) {
+			this.showSelectType();
 		}
 	},
 
@@ -660,7 +914,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 					loading: false,
 					status: 'ok',
 					element_id: element_id,
-					urlType: 'image',
+					urlType: me.property('linkTo'),
 					url: image.full[0]
 				})
 			);
@@ -681,6 +935,34 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		}
 
 		me.render();
+	},
+
+	showSelectType: function() {
+		var me = this,
+			selector = $('<div class="upfront-ui ugallery-onclick"><div class="ugallery-onclick-dialog"><span>' + l10n.thumbnail_clicked +
+				'</span><div class="ugallery-onclick-options"><a href="#" class="ugallery-lager_image" rel="image">' + l10n.show_larger +
+				'</a><a href="#" class="ugallery-linked_page" rel="external">' + l10n.go_to_linked + '</a></div></div></div>');
+
+		selector.on('click', 'a', function(e){
+			e.preventDefault();
+			var value = $(e.target).attr('rel');
+			me.property('linkTo', value, false);
+			_.each(me.images.models, function(image) {
+				image.set({'urlType': value}, {silent:true});
+			});
+			me.property('images', me.images.toJSON());
+
+
+			setTimeout(function(){
+				selector.fadeOut('fast', function(){
+					selector.remove();
+					me.render();
+				});
+			}, 100);
+		});
+
+		this.$('.ugallery').append(selector.hide());
+		selector.fadeIn();
 	},
 
 	getNewLabels: function(ids){

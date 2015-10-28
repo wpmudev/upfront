@@ -143,6 +143,24 @@ var PostContentEditor = Backbone.View.extend({
 			content = isExcerpt ? this.rawExcerpt: this.rawContent,
 			editorOptions = isExcerpt ? this.getExcerptEditorOptions() : this.getContentEditorOptions()
 			;
+
+            /**
+             * Replace wp captions from rawContent with their markup
+             */
+            //var $wp_captions = this.parts.contents.find("[id^='attachment'].wp-caption");
+
+            //content = wp.shortcode.replace("caption", content, function(caption){
+            //   var id = caption.get("id").toString();
+            //
+            //    var markup = $wp_captions.filter(function(){
+            //        return this.id == id;
+            //    }),
+            //    shortcode = "<div class='post-images-shortcode-wp'>" + caption.string() + "</div>";
+            //
+            //    return markup.length ? markup.append(shortcode)[0].outerHTML : "";
+            //});
+
+
 			this.onContentsEdited = _.bind(this.contentEdited, this);
 			this.editors = [];
 			this.parts.contents.html(content).ueditor(editorOptions);
@@ -650,6 +668,7 @@ var PostContentEditor = Backbone.View.extend({
 		_.each(events, function(e){
 			me.listenTo(me.box, e, function(){
 				var results = {};
+				
 				if(e=='publish' || e=='draft' || e=='auto-draft'){
 					//if(me.parts.titles) results.title = $.trim(me.parts.titles.html());
 					if(me.parts.titles) results.title = $.trim(me.parts.titles.text());
@@ -663,11 +682,20 @@ var PostContentEditor = Backbone.View.extend({
                         	me.$el.find(".ueditor-insert-remove").remove();
                         }
 
+						// replace image inserts with their shortcodes
+						me.$(".upfront-inserted_image-wrapper").each(function(){
+							var $this = $(this),
+								$shortcode = $this.find(".post-images-shortcode").length ? $this.find(".post-images-shortcode") : $this.find(".post-images-shortcode-wp"),
+								shortcode = $.trim( $shortcode.html().replace(/(\r\n|\n|\r)/gm,"") );
+							$this.replaceWith( shortcode );
+						});
+
 						results.content = $.trim( editor.getValue() );
 						results.content = results.content.replace(/(\n)*?<br\s*\/?>\n*/g, "<br/>");
 						results.inserts = editor.getInsertsData();
 						results.author = me.postAuthor;
 					}
+
 					if(me.selectedDate)
 						results.date = me.selectedDate;
 					if(me.postStatus)

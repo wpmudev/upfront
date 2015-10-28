@@ -638,6 +638,12 @@ define([
 				return false; // Stop propagation in order not to cause error with missing sortables etc
 			},
 			on_context_menu: function(e) {
+				
+				if($(e.target).closest('.redactor-editor').length > 0) {
+					e.stopPropagation();
+					return;
+				}
+				
 				if (Upfront.Settings.Application.no_context_menu) return;
 				
 				e.stopPropagation();
@@ -1837,11 +1843,12 @@ define([
 				"click > .upfront-module-group-toggle-container > .upfront-module-group-edit": "on_edit",
 				"click > .upfront-entity_meta > a.upfront-entity-hide_trigger": "on_hide_click",
 				"click > .upfront-module-hidden-toggle > a.upfront-entity-hide_trigger": "on_hide_click",
-				"click a.redactor_act": "onOpenPanelClick",
-				"click .upfront-save_settings": "onOpenPanelClick",
+				//"click a.redactor_act": "onOpenPanelClick",
+				//"click .upfront-save_settings": "onOpenPanelClick",
 				"click .open-item-controls": "onOpenItemControlsClick",
 				"click > .upfront-module-group-finish-edit": "on_finish",
-				"click": "on_click"
+				"click": "on_click",
+				"dblclick": "on_dblclick"
 			},
 			initialize: function () {
 				var callback = this.update || this.render;
@@ -1855,6 +1862,9 @@ define([
 
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 				this.listenTo(Upfront.Events, "command:module_group:finish_edit", this.on_finish);
+				this.listenTo(Upfront.Events, "command:module_group:close_panel", this.closeControlPanel);
+
+				this.editing = false;
 				
 				this.on('entity:resize_stop', this.on_resize, this);
 			},
@@ -1864,11 +1874,25 @@ define([
 			},
 
 			onOpenItemControlsClick: function() {
-				this.$el.toggleClass('controls-visible');
 				if (this.$el.hasClass('controls-visible')) {
-					this.controlsVisible = true;
+					this.closeControlPanel();
 				} else {
-					this.controlsVisible = false;
+					this.openControlPanel();
+				}
+			},
+			
+			openControlPanel: function () {
+				this.$el.addClass('controls-visible');
+				this.controlsVisible = true;
+				this.disable_interaction(false, false, false);
+			},
+			
+			closeControlPanel: function(enable) {
+				var enable = ( enable !== false );
+				this.$el.removeClass('controls-visible');
+				this.controlsVisible = false;
+				if (enable) {
+					this.enable_interaction();
 				}
 			},
 			
@@ -1879,18 +1903,20 @@ define([
 					property_url = "";
 				}
 
-				var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
+				var me = this,
+					panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
 					visitLinkControl = new Upfront.Views.Editor.InlinePanels.Controls.VisitLink({
-						url: property_url
+						url: property_url,
+						hideIfUnlink: true,
+						linkLabel: {
+							external: l10n.visit_link
+						}
 					}),
-					linkPanelControl = new Upfront.Views.Editor.InlinePanels.Controls.LinkPanel({
+					linkPanelControl = new Upfront.Views.Editor.InlinePanels.Controls.GroupLinkPanel({
 						linkUrl: property_url,
 						linkType: Upfront.Util.guessLinkType(property_url),
 						linkTarget: this.model.get_property_value_by_name("linkTarget"),
-						button: false,
-						icon: 'link',
-						tooltip: 'link',
-						id: 'link'
+						button: false
 					}),
 					ungroupControl = new Upfront.Views.Editor.InlinePanels.Control({
 						label: l10n.ungroup,
@@ -1900,46 +1926,44 @@ define([
 						label: l10n.edit_elements,
 						className: 'upfront-inline-panel-item edit-elements-control'
 					})
-				;
-
-				me = this;				
+				;			
 				
 				this.listenTo(linkPanelControl, 'change change:target', function(data) {
 					visitLinkControl.setLink(data.url);
 					this.model.set_property('href', data.url);
 					this.model.set_property('linkTarget', data.target);
 				});
+				this.listenTo(linkPanelControl, 'panel:open panel:close', function() {
+					me.toggleLinkPanel();
+				});
 				this.listenTo(ungroupControl, 'click', function (e) {
 					me.on_ungroup();
 				});
 				this.listenTo(editControl, 'click', function (e) {
-					me.onOpenItemControlsClick();
+					me.closeControlPanel(false);
 					me.on_edit();
 				});
 
 				panel.items = _([
 					linkPanelControl,
 					visitLinkControl,
-					ungroupControl,
-					editControl
+					editControl,
+					ungroupControl
 				]);
 
-				var imageControlsTpl = '<div class="uimage-controls image-element-controls upfront-ui"></div>';
-				this.$el.append(imageControlsTpl);
+				var $imageControlsTpl = $('<div class="upfront-module-group-controls upfront-ui"></div>');
+				this.$el.append($imageControlsTpl);
 				panel.render();
-				this.$el.find('.uimage-controls').last().append(panel.el);
+				$imageControlsTpl.append(panel.el);
 				panel.delegateEvents();
+				
+				this.panel = panel;
 			},
 
 			toggleLinkPanel: function() {
-				var me = this;
-				if (this.$el.hasClass('stayOpen')) {
-					this.$el.removeClass('stayOpen');
-					me.render();
-				} else {
-					this.$el.addClass('stayOpen');
-				}
+				this.$el.toggleClass('control-dialog-open');
 			},
+			
 			render: function () {
 				var me = this,
 					props = {},
@@ -1975,12 +1999,12 @@ define([
 
 				this.apply_paddings(this.$el.find('> .upfront-modules_container'));
 
-				Upfront.Events.trigger("entity:module_group:after_render", this, this.model);
-
-				if ( ! this._modules_view )
+				if ( ! this._modules_view ) {
 					this._modules_view = local_view;
-				else
+				}
+				else {
 					this._modules_view.delegateEvents();
+				}
 				
 				this.createInlineControlPanel();
 				
@@ -1991,6 +2015,8 @@ define([
 				setTimeout(function() {
 					if(me.paddingControl && typeof me.paddingControl.isOpen !== 'undefined' && !me.paddingControl.isOpen)	me.paddingControl.refresh();
 				}, 300);
+
+				Upfront.Events.trigger("entity:module_group:after_render", this, this.model);
 			},
 			update: function () {
 				var prop_class = this.model.get_property_value_by_name('class'),
@@ -2170,16 +2196,19 @@ define([
 				$main.addClass('upfront-module-group-editing');
 				this.$el.addClass('upfront-module-group-on-edit');
 				this.trigger('deactivated');
-				this.disable_interaction(false, false);
+				this.editing = true;
+				this.disable_interaction(false, false, false);
 				this.toggle_modules_interaction(true, true);
 				Upfront.Events.trigger('entity:module_group:edit', this, this.model);
 			},
 			on_finish: function () {
-				if ( !this.$el.hasClass('upfront-module-group-on-edit') )
+				if ( !this.editing ){
 					return;
+				}
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 				$main.removeClass('upfront-module-group-editing');
 				this.$el.removeClass('upfront-module-group-on-edit');
+				this.editing = false;
 				this.enable_interaction();
 				this.toggle_modules_interaction(false);
 			},
@@ -2193,16 +2222,31 @@ define([
 				});
 				this.update_size_hint();
 			},
-			disable_interaction: function (prevent_edit, drag) {
-				if ( prevent_edit )
+			on_dblclick: function (e) {
+				if ( this.$el.hasClass('upfront-module-group-on-edit') || this.$el.hasClass('upfront-module-group-disabled') ) return;
+				this.closeControlPanel(false);
+				this.on_edit();
+			},
+			disable_interaction: function (prevent_edit, resize, drag) {
+				if ( prevent_edit ) {
 					this.$el.addClass('upfront-module-group-disabled');
-				if ( !drag && this.$el.data('ui-draggable') )
+				}
+				if ( !resize && this.$el.data('ui-resizable') ) {
+					this.$el.resizable('option', 'disabled', true);
+				}
+				if ( !drag && this.$el.data('ui-draggable') ) {
 					this.$el.draggable('option', 'disabled', true);
+				}
 			},
 			enable_interaction: function () {
+				if ( this.editing ) return; // Don't enable interaction if it's on editing
 				this.$el.removeClass('upfront-module-group-disabled');
-				if ( this.$el.data('ui-draggable') )
+				if ( this.$el.data('ui-resizable') ) {
+					this.$el.resizable('option', 'disabled', false);
+				}
+				if ( this.$el.data('ui-draggable') ) {
 					this.$el.draggable('option', 'disabled', false);
+				}
 			},
 			toggle_modules_interaction: function (enable, can_edit) {
 				var can_edit = can_edit === true ? true : false;
@@ -2251,10 +2295,11 @@ define([
 				this.$el.addClass("upfront-module-group-active");
 			},
 			remove: function(){
-				if(this._modules_view)
+				if (this._modules_view) {
 					this._modules_view.remove();
+				}
 				var wrappers = this.model.get('wrappers');
-				if(wrappers)
+				if (wrappers) {
 					wrappers.each(function(wrapper){
 						var wrapperView = Upfront.data.wrapper_views[wrapper.cid];
 						if(wrapperView){
@@ -2262,6 +2307,11 @@ define([
 							delete Upfront.data.wrapper_views[wrapper.cid];
 						}
 					});
+				}
+				if (this.panel) {
+					this.panel.remove();
+					this.panel = false;
+				}
 				this.region_view = false;
 				this.region = false;
 				Backbone.View.prototype.remove.call(this);
@@ -2711,6 +2761,12 @@ define([
 								  		end_t = setTimeout(end, 2000);
 								  		view.$el.addClass("upfront-add-region-ani upfront-add-region-ani-" + prop_y + '-' + prop_x);
 										view.$el.one('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function () {
+											
+											//the following code makes sure that this function is executed only once, in case of more than one cross-browser events keep firing.
+											if(view.$el.data('animationended') == 1)
+												return;
+											view.$el.data('animationended', 1)
+											
 											end(view);
 											clearTimeout(end_t);
 										});
@@ -3204,6 +3260,7 @@ define([
 				this.listenTo(Upfront.Events, "entity:region:removed", this.update_pos);
 				this.listenTo(Upfront.Events, "sidebar:toggle:done", this.update_pos);
 				this.listenTo(Upfront.Events, "application:mode:after_switch", this.update_pos);
+				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 				$(window).on('scroll.region_subcontainer_' + this.model.get('name'), this, this.on_scroll);
 				$(window).on('resize.region_subcontainer_' + this.model.get('name'), this, this.on_window_resize);
 			},
@@ -3235,6 +3292,14 @@ define([
 			on_scroll: function (e) {
 				var me = e.data;
 				me.update_pos();
+			},
+			on_window_resize: function (e) {
+				var me = e.data;
+				me.update_pos();
+			},
+			on_change_breakpoint:  function () {
+				this.update_pos();
+				//_.delay(this.update_pos.bind(this), 200);
 			},
 			update_pos: function () {
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
@@ -3289,6 +3354,9 @@ define([
 						this.$el.data('sticky-top', top-rel_top);
 					}
 				}
+
+				
+
 				// Sub-container behavior to stick when scroll
 				if ( scroll_top+rel_top >= container_offset.top && scroll_bottom <= container_bottom ){
 					css.position = 'fixed';
@@ -3303,6 +3371,18 @@ define([
 					css.left = main_off.left;
 					css.right = 0;
 					is_sticky = false;
+
+					var ref = $('.upfront-regions');//this.$el.closest('.upfront-region-container-bg');
+					var targ = this.$el.children('.upfront-region-container-bg').children('.upfront-grid-layout');
+					css.width = ref.width();
+					if(ref.offset())
+						css.left = ref.offset().left-$(document).scrollLeft();
+					/*console.log(ref.offset());
+					console.log($(document).scrollLeft());
+					if(ref.offset()) {
+						css.left-=(2*($(document).scrollLeft())-60);
+						//ref.offset().left-targ.offset({top: targ.offset().top, left: ref.offset.left});
+					}*/
 				}
 				if ( css.position && css.position == 'fixed' ) {
 					if ( this.$el.css('position') != css.position || this.$el.css('left') != css.left || this.$el.css('top') != css.top ) {
@@ -4408,16 +4488,19 @@ define([
 					container_view.render();
 					//container_view.bind("activate_region", this.activate_region_container, this);
 					this.listenTo(container_view, "activate_region", this.activate_region_container);
-					if ( index >= 0 )
+					if ( index >= 0 ){
 						this.$el.find('.upfront-region').eq(index).closest('.upfront-region-container').before(container_view.el);
-					else
+					}
+					else {
 						this.$el.append(container_view.el);
+					}
 					if ( !this.container_views[region.cid] ){
 						this.container_views[region.cid] = container_view;
 					}
 					else {
 						container_view.delegateEvents();
 					}
+					Upfront.Events.trigger("entity:regions:render_container", container_view, container_view.model);
 					return container_view;
 				}
 			},
@@ -4479,8 +4562,10 @@ define([
 				else {
 					container_view.$layout.append(local_view.el);
 				}
-				if ( region.get("default") )
+				if ( region.get("default") ) {
 					local_view.trigger("activate_region", local_view);
+				}
+				Upfront.Events.trigger("entity:regions:render_region", local_view, local_view.model);
 				return local_view;
 			},
 			create_container_instance: function (model) {
@@ -4914,6 +4999,8 @@ define([
 				this.$el.addClass('upfront-layout-view');
 				this.$el.html(this.tpl(this.model.toJSON()));
 				this.$layout = this.$(".upfront-layout");
+				this.remove_selections();
+
 				if (!this.local_view) {
 					this.local_view = new Regions({"model": this.model.get("regions")});
 					this.local_view.render();
@@ -4946,8 +5033,9 @@ define([
 				//	return;
 				var currentEntity = Upfront.data.currentEntity;
 				// Deactivate settings on clicking anywhere in layout, but the settings button
-				if(!$(e.target).closest('.upfront-entity_meta').length && !$(e.target).closest('#upfront-csseditor').length)
+				if(!$(e.target).closest('.upfront-entity_meta').length && !$(e.target).closest('#upfront-csseditor').length){
 					Upfront.Events.trigger("entity:settings:deactivate");
+				}
 				Upfront.Events.trigger("entity:contextmenu:deactivate");
 				if(currentEntity){
 					//If the click has been made outside the currentEntity, deactivate it
@@ -4959,18 +5047,23 @@ define([
 					}
 				}
 				// Deactivate if clicked on blank area of region
-				if($(e.target).hasClass('upfront-editable_entities_container'))
+				if($(e.target).hasClass('upfront-editable_entities_container')){
 					Upfront.Events.trigger("entity:deactivated");
+				}
 
 				// Close region editing on click anywhere out the region
-				if ( $(e.target).hasClass('upfront-region-editing-overlay') && !$('.upfront-region-bg-setting-open').length )
+				if ( $(e.target).hasClass('upfront-region-editing-overlay') && !$('.upfront-region-bg-setting-open').length ){
 					Upfront.Events.trigger("entity:region:deactivated");
-				// Unselect selection
-				if ( !Upfront.Behaviors.LayoutEditor.selecting )
-					Upfront.Events.trigger("command:selection:remove");
+				}
+				this.remove_selections();
 				// Deactiving group reorder on clicking anywhere
-				if ( !$(e.target).closest('.upfront-module-group-on-edit').length )
+				if ( !$(e.target).closest('.upfront-module-group-on-edit').length ){
 					Upfront.Events.trigger("command:module_group:finish_edit");
+				}
+				// Close group inline panel on clicking anywhere
+				if ( !$(e.target).closest('.upfront-module-group.controls-visible').length ){
+					Upfront.Events.trigger("command:module_group:close_panel");
+				}
 			},
 			on_keydown: function (e) {
 				var currentEntity = Upfront.data.currentEntity;
@@ -5125,6 +5218,12 @@ define([
 			},
 			fix_height: function () {
 				this.$('.upfront-layout').css('min-height', $(window).height());
+			},
+			remove_selections: function () {
+				// Unselect selection
+				if ( !Upfront.Behaviors.LayoutEditor.selecting ){
+					Upfront.Events.trigger("command:selection:remove");
+				}
 			}
 		})
 	;

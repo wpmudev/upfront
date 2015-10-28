@@ -21,9 +21,23 @@ class Upfront_UgalleryView extends Upfront_Object {
 		$data['even_padding'] = isset($data['even_padding']) ? $data['even_padding'] : array('false');
 		$data['thumbPadding'] = isset($data['thumbPadding']) ? $data['thumbPadding'] : 15;
 
-		if (!empty($data['images'])) foreach($data['images'] as $im){
-			if (!empty($im['src'])) $im['src'] = preg_replace('/^https?:/', '', trim($im['src']));
-			$images[] = array_merge(self::image_defaults(), $im);
+		if (!empty($data['images'])) {
+			foreach($data['images'] as $im){
+				$images[] = array_merge(self::image_defaults(), $im);
+			}
+		}
+
+		// Ensure template backward compatibility
+		foreach($images as $index=>$image) {
+			if (isset($images[$index]['imageLink']) && $images[$index]['imageLink'] !== false) {
+				$images[$index]['imageLinkType'] = $image['imageLink']['type'];
+				$images[$index]['imageLinkUrl'] = $image['imageLink']['url'];
+				$images[$index]['imageLinkTarget'] = $image['imageLink']['target'];
+			} else {
+				$images[$index]['imageLinkType'] = $image['urlType'];
+				$images[$index]['imageLinkUrl'] = $image['url'];
+				$images[$index]['imageLinkTarget'] = $image['linkTarget'];
+			}
 		}
 		$data['images'] = $images;
 
@@ -208,7 +222,13 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'alt' => '',
 			'tags' => array(),
 			'margin' => array('left' => 0, 'top' => 0),
+
+			'imageLink' => false,
+
+			// Deprecated properties, leave for safety
 			'linkTarget' => '',
+			'link' => 'original',
+			'url' => '',
 		);
 	}
 
@@ -233,25 +253,32 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'captionUseBackground' => 0,
 			'captionBackground' => apply_filters('upfront_gallery_caption_background', '#000000'),
 			'showCaptionOnHover' => array( 'true' ),
-			'linkTo' => 'image', // 'url' | 'image'
+			'fitThumbCaptions' => array( 'true' ),
+			'thumbCaptionsHeight' => 30,
+			'linkTo' => false, // 'url' | 'image', false is special case meaning type is not selected yet
 			'even_padding' => array('false'),
 			'thumbPadding' => 15,
-			'fitThumbCaptions' => false,
-			'thumbCaptionsHeight' => 20
+
+			'lightbox_show_close' => array('true'),
+			'lightbox_show_image_count' => array('true'),
+			'lightbox_click_out_close' => array('true'),
+			'lightbox_active_area_bg' => 'rgba(255,255,255,1)',
+			'lightbox_overlay_bg' => 'rgba(0,0,0,0.2)',
+			'styles' => ''
 		);
 	}
 
 	public static function add_styles_scripts () {
 		//wp_enqueue_style('ugallery-style', upfront_element_url('css/ugallery.css', dirname(__FILE__)));
 		upfront_add_element_style('upfront_gallery', array('css/ugallery.css', dirname(__FILE__)));
-		
+
 		//Lightbox
 		//wp_enqueue_style('magnific');
 		upfront_add_element_style('magnific', array('/scripts/magnific-popup/magnific-popup.css', false));
 
 		//wp_enqueue_script('magnific');
 		upfront_add_element_script('magnific', array('/scripts/magnific-popup/magnific-popup.min.js', false));
-		
+
 		upfront_add_element_script('jquery-shuffle', array('js/jquery.shuffle.js', dirname(__FILE__)));
 
 		//Front script
@@ -281,6 +308,15 @@ class Upfront_UgalleryView extends Upfront_Object {
 				'lblcnt_info' => __('The wrapper of the image labels.', 'upfront'),
 				'labels_label' => __('Labels', 'upfront'),
 				'labels_info' => __('Labels for gallery items filtering.', 'upfront'),
+				'lightbox_close' => __('Close button', 'upfront'),
+				'lightbox_content_wrapper' => __('Content wrapper', 'upfront'),
+				'lightbox_content_wrapper_info' => __('Container that wraps image and caption.', 'upfront'),
+				'lightbox_image_wrapper' => __('Image wrapper', 'upfront'),
+				'lightbox_caption_wrapper' => __('Caption wrapper', 'upfront'),
+				'lightbox_caption' => __('Caption', 'upfront'),
+				'lightbox_arrow_left' => __('Arrow left', 'upfront'),
+				'lightbox_arrow_right' => __('Arrow right', 'upfront'),
+				'lightbox_image_count' => __('Image counter', 'upfront'),
 			),
 			'ctrl' => array(
 				'show_image' => __('Show image', 'upfront'),
@@ -297,7 +333,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'not_all_added' => __('Not all images could be added.', 'upfront'),
 			'thumbnail_clicked' => __('When a gallery thumbnail is clicked', 'upfront'),
 			'show_larger' => __('show larger image', 'upfront'),
-			'go_to_linked' => __('go to linked page', 'upfront'),
+			'go_to_linked' => __('assign links', 'upfront'),
 			'regenerating' => __('Regenerating images...', 'upfront'),
 			'regenerating_done' => __('Wow, those are cool!', 'upfront'),
 			'settings' => __('Gallery settings', 'upfront'),
@@ -351,6 +387,13 @@ class Upfront_UgalleryView extends Upfront_Object {
 				'add_new_label' => __('Add a new label', 'upfront'),
 				'label_sorting_nag' => __('Turn on \'Label Sorting\' in the settings to display gallery labels.', 'upfront'),
 				'add_label' => __('Add', 'upfront'),
+			),
+			'lightbox' => array(
+				'title' => 'Gallery Lightbox',
+				'edit_css' => 'Edit Lightbox CSS',
+				'show_image_count' => 'Show Image Count',
+				'active_area_bg' => 'Active Area BG',
+				'overlay_bg' => 'Overlay BG'
 			),
 		);
 		return !empty($key)

@@ -1,24 +1,58 @@
 define(function() {
-	var SelectPresetField = Upfront.Views.Editor.Field.Select.extend({
+	var l10n = Upfront.Settings.l10n.preset_manager;
+	
+	var SelectPresetField = Upfront.Views.Editor.Field.Chosen_Select.extend({
 		className: 'preset select-preset-field',
-
 		render: function() {
-			Upfront.Views.Editor.Field.Select.prototype.render.call(this);
+			Upfront.Views.Editor.Field.Chosen_Select.prototype.render.call(this);
 			var me = this;
-			var html = ['<a href="#" title="Edit preset" class="upfront-preset-edit">edit preset</a>'];
-			this.$el.append(html.join(''));
-
-			this.$el.on('click', '.upfront-preset-edit', function(event) {
+			var selectWidth = '';
+			var preset = this.$el.find('.upfront-chosen-select').val();
+			
+			if(preset == 'default') {
+				selectWidth = '230px';
+			} else {
+				selectWidth = '175px';
+			}
+			this.$el.find('.upfront-chosen-select').chosen({
+				width: selectWidth
+			});
+			
+			var html = ['<a href="#" title="'+ l10n.add_preset_label +'" class="upfront-preset-add">'+ l10n.add_label +'</a>'];
+			this.$el.find('.chosen-search').append(html.join(''));
+			
+			this.$el.on('click', '.upfront-preset-add', function(event) {
 				event.preventDefault();
-
-				if (me.get_value() === 'default') {
-					alert('Default preset can not be edited.');
+				
+				var preset_name = me.$el.find('.chosen-search input').val();
+				
+				if (preset_name.trim() === '') {
+					alert(l10n.not_empty_label);
 					return;
 				}
-				me.trigger('upfront:presets:edit', me.get_value());
+				if (preset_name.match(/[^A-Za-z0-9 ]/)) {
+					alert(l10n.special_character_label);
+					return;
+				}
+				
+				me.trigger('upfront:presets:new', preset_name.trim());
 			});
+			
 			return this;
-		}
+		},
+		
+		get_value_html: function (value, index) {
+			var selected = '';
+			var currentPreset = this.get_saved_value() ? this.get_saved_value() : 'default';
+			if (value.value === this.clear_preset_name(currentPreset)) selected = ' selected="selected"';
+			return ['<option value="', value.value, '"', selected, '>', value.label, '</option>'].join('');
+		},
+		
+		clear_preset_name: function(preset) {
+			preset = preset.replace(' ', '-');
+			preset = preset.replace(/[^-a-zA-Z0-9]/, '');
+			return preset;
+		},
 	});
 
 	return SelectPresetField;
