@@ -366,24 +366,28 @@ var LayoutEditor = {
 	},
 
 	refresh_mergeable: function () {
+		this.remove_selections();
 		$(".ui-selectable").each(function () {
 			$(this).selectable("refresh");
 		});
 	},
 
 	enable_mergeable: function () {
+		this.remove_selections();
 		$(".ui-selectable").each(function () {
 			$(this).selectable("enable");
 		});
 	},
 
 	disable_mergeable: function () {
+		this.remove_selections();
 		$(".ui-selectable").each(function () {
 			$(this).selectable("disable");
 		});
 	},
 
 	destroy_mergeable: function () {
+		this.remove_selections();
 		$(".ui-selectable").each(function () {
 			$(this).selectable("destroy");
 		});
@@ -1139,7 +1143,10 @@ var LayoutEditor = {
 				colors: Upfront.Views.Theme_Colors.colors.toJSON(),
 				range: Upfront.Views.Theme_Colors.range
 			},
-			button_presets: Upfront.Views.Editor.Button.Presets.toJSON(),
+			/*
+			 * Commented, because presets are update in settings.php on create/edit
+			 * button_presets: Upfront.Views.Editor.Button.Presets.toJSON(),
+			 */
 			post_image_variants: Upfront.Content.ImageVariants.toJSON()
 		};
 
