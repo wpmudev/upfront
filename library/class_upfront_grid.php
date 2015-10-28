@@ -219,6 +219,7 @@ class Upfront_Grid {
 		$line_col = $col; // keep track of how many column has been applied for each line
 		$rendered_wrappers = array(); // keep track of rendered wrappers to avoid render more than once
 		$spacer_col = 0; // keep track of spacer to render as margin
+		$spacer_clear = false;
 		foreach ($modules as $m => $module) {
 			$module_col = $this->_get_class_col($module);
 			$module_col = $module_col > $col ? $col : $module_col;
@@ -321,10 +322,32 @@ class Upfront_Grid {
 					if ( !$wrapper_modules_hide ) {
 						$line_col -= $wrapper_col + $spacer_col;
 					}
-					$next_clear = $this->_get_property_clear($next_wrapper_data);
-					$next_wrapper_col = $this->_get_class_col($next_wrapper_data);
-					$next_wrapper_col = $next_wrapper_col > $col ? $col : $next_wrapper_col;
-					$next_fill = $next_clear && $line_col > 0 ? $line_col : 0;
+					$next_is_spacer = false;
+					if ( $next_wrapper_data ) {
+						$next_wrapper_id = upfront_get_property_value('wrapper_id', $next_wrapper_data);
+						$next_wrapper_modules = $this->_find_modules_with_wrapper($next_wrapper_id, $modules);
+						foreach ( $next_wrapper_modules as $nwm => $mod ) {
+							foreach ($mod['objects'] as $obj) {
+								$type = upfront_get_property_value('type', $obj);
+								if ( 'UspacerModel' == $type ) {
+									$next_is_spacer = true;
+								}
+							}
+						}
+						$next_clear = $this->_get_property_clear($next_wrapper_data);
+						$next_wrapper_col = $this->_get_class_col($next_wrapper_data);
+						$next_wrapper_col = $next_wrapper_col > $col ? $col : $next_wrapper_col;
+					}
+					else {
+						$next_clear = false;
+						$next_wrapper_col = 0;
+					}
+					if ( $next_wrapper_col == $line_col && $next_is_spacer ) {
+						$next_fill = $next_wrapper_col;
+					}
+					else {
+						$next_fill = $next_clear && $line_col > 0 ? $line_col : 0;
+					}
 					$fill_margin = array(
 						'left' => $spacer_col,
 						'right' => $next_fill
