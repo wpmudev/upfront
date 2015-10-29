@@ -85,6 +85,13 @@ define([
 			}
 			$('style#' + styleElementId).text(css);
 			*/
+			
+			//var theme_style = this.model.property('theme_style');
+			var theme_style = this.model.get_property_value_by_name('theme_style');
+			if( theme_style ) {
+				properties.theme_style = theme_style;
+			}
+			
 			Util.updatePresetStyle(this.styleElementPrefix.replace(/-preset/, ''), properties, this.styleTpl);
 			Upfront.Util.post({
 				action: 'upfront_save_' + this.ajaxActionSlug + '_preset',
@@ -137,7 +144,6 @@ define([
 			this.showSelectPresetPanel(true);
 			
 			var current_preset = this.presets.findWhere({id: preset.get('value')});
-			console.log(current_preset);
 			if( current_preset ) {
 				theme_style = current_preset.attributes.theme_style;
 				this.model.set_property('theme_style', theme_style);
