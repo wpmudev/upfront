@@ -8,7 +8,7 @@ class Upfront_UimageView extends Upfront_Object {
 		$data = $this->properties_to_array();
 
 		$data['in_editor'] = false;
-		if (!isset($data['link'])) {
+		if (!isset($data['link']) || $data['link'] === false) {
 			$link = array(
 				'type' => $data['when_clicked'],
 				'target' => isset($data['link_target']) ? $data['link_target'] : '_self',
