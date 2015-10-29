@@ -135,6 +135,14 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		props.preset = props.preset || 'default';
 
 		props.preset = this.clear_preset_name(props.preset);
+		
+		var preset_props = Upfront.Views.Editor.Button.Presets.get(props.preset);
+		
+		//Check if theme_style already set and if we have preset properties
+		if(!this.property('theme_style') && preset_props) {
+			var theme_style = preset_props.attributes.theme_style || '_default';
+			this.property('theme_style', theme_style);
+		}
 
 		return this.buttonTpl(props);
 	},

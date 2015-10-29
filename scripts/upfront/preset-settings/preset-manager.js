@@ -135,6 +135,13 @@ define([
 			this.$el.empty();
 			this.selectPresetPanel.remove();
 			this.showSelectPresetPanel(true);
+			
+			var current_preset = this.presets.findWhere({id: preset.get('value')});
+			console.log(current_preset);
+			if( current_preset ) {
+				theme_style = current_preset.attributes.theme_style;
+				this.model.set_property('theme_style', theme_style);
+			}
 		},
 
 		get_title: function () {
