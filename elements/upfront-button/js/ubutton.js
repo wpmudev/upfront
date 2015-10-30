@@ -24,7 +24,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		}
 
 		this.events = _.extend({}, this.events, {
-			'click a.upfront_cta.ueditor-placeholder' : 'placeholderClick',
+			'click a.uf-click-to-edit-text' : 'placeholderClick',
 			'click a.redactor_act': 'onOpenPanelClick',
 			'click .upfront-save_settings': 'onOpenPanelClick',
 			'click .open-item-controls': 'onOpenItemControlsClick'
@@ -56,7 +56,11 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		});
 
 	},
-
+	
+	placeholderClick: function(e) {
+		e.preventDefault();
+	},
+	
 	getCleanurl: function(url) {
 		//this one removes any existing # anchor postfix from the url
 		var urlParts;
