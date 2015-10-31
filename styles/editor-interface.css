@@ -563,7 +563,8 @@ em {
   line-height: 27px; }
 
 #sidebar-ui .sidebar-commands-control .command-save:hover {
-  border-color: #1fcd8f; }
+  border-color: #3ea;
+  background: #3ea; }
 
 #sidebar-ui .sidebar-commands-control .command-edit-background-area {
   margin-bottom: 15px; }

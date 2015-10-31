@@ -203,7 +203,7 @@
 	height: 34px;
 	opacity:.8;
 	background: #54708C;
-	box-shadow: 0px 1px 0px 0px #2F3E4D, 
+	box-shadow: 0px 1px 0px 0px #2F3E4D,
 				inset 0px 2px 0px 0px rgba(255,255,255,0.10);
 }
 #sidebar-ui .sidebar-commands-primary .command-new-layout{
@@ -406,7 +406,8 @@
     line-height: 27px;
 }
 #sidebar-ui .sidebar-commands-control .command-save:hover {
-	border-color: #1fcd8f;
+	border-color: #3ea;
+	background: #3ea;
 }
 #sidebar-ui .sidebar-commands-control .command-edit-background-area {
 	margin-bottom: 15px;
