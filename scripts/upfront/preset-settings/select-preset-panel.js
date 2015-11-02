@@ -30,8 +30,13 @@ define([
 				this.selectPresetItem,
 				this.editPresetItem
 			]);
+			
+			this.on('upfront:settings:panel:saved', function() {
+				var preset_options = this.options.presets.findWhere({id: preset});
+				this.trigger('upfront:presets:update', preset_options.toJSON());
+			});
 		},
-		
+
 		clear_preset_name: function(preset) {
 			preset = preset.replace(' ', '-');
 			preset = preset.replace(/[^-a-zA-Z0-9]/, '');

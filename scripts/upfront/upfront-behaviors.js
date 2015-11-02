@@ -1144,7 +1144,7 @@ var LayoutEditor = {
 				range: Upfront.Views.Theme_Colors.range
 			},
 			/*
-			 * Commented, because presets are update in settings.php on create/edit
+			 * Commented, because presets are updated in settings.php on create/edit
 			 * button_presets: Upfront.Views.Editor.Button.Presets.toJSON(),
 			 */
 			post_image_variants: Upfront.Content.ImageVariants.toJSON()
