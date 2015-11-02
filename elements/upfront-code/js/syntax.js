@@ -56,11 +56,12 @@ var Checker_Js = _.extend({}, Checker, {
 var Checker_Html = _.extend({}, Checker, {
 	validate: function () {
 		var ret = true,
+			test = this._value.replace(/\r|\n/g, "\n"), // Normalize newlines
 			$div = $("<div />")
 		;
-		$div.html(this._value);
+		$div.html(test);
 		
-		if ($div.html().length != this._value.length) {
+		if ($div.html().length != test.length) {
 			this._message = l10n.errors.error_markup;
 			ret = false;
 		}
