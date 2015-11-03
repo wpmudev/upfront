@@ -30,8 +30,8 @@
 			get_preset_properties: function() {
 				var preset = this.model.get_property_value_by_name("preset"),
 					props = PresetUtil.getPresetProperties('text', preset) || {};
-					
-				return props;	
+
+				return props;
 			},
 			get_content_markup: function () {
 				var content = this.model.get_content(),
@@ -47,14 +47,11 @@
 				if($content.hasClass('plaintxt_padding')) {
 					content = $content.html();
 				}
-				
-				var preset = this.model.get_property_value_by_name("preset") || 'default';
 
 				var data = {
 					"content" : content,
 					"background_color" : this.model.get_property_value_by_name("background_color"),
-					"border" : this.model.get_property_value_by_name("border"),
-					"preset": preset
+					"border" : this.model.get_property_value_by_name("border")
 				};
 				var rendered = '';
 				rendered = _.template(textTpl, data);
@@ -90,15 +87,15 @@
 						var ed = me.$el.find('.upfront-object-content').data("ueditor"),
 							tag = ed.redactor.$element[0].firstChild.tagName,
 							text = '';
-							
+
 						if(tag === "PRE") {
 							//Remove markers markup leaking in PRE element
 							ed.redactor.selection.removeMarkers();
 						}
-						
+
 						text = ed.getValue(true);
 						me.model.set_content(text);
-						
+
 						Upfront.Events.trigger('upfront:element:edit:stop');
 						ed.redactor.events.trigger('cleanUpListeners');
 						me.render();
@@ -108,7 +105,7 @@
 						me.model.set_content($(text).html(), {silent: true});
 					})
 				;
-				
+
 				me.update_colors();
 			},
 			update_colors: function () {

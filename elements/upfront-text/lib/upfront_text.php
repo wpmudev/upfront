@@ -9,12 +9,6 @@ class Upfront_PlainTxtView extends Upfront_Object {
 
 		$content = $this->_get_property('content');
 
-		$preset = $this->_get_property('preset');
-
-		if(empty($preset)) {
-			$preset = 'default';
-		}
-
 		$matches = array();
 
 		if ( preg_match('/<div class="plaintxt_padding([^>]*)>/s', $content) ){
@@ -43,7 +37,7 @@ class Upfront_PlainTxtView extends Upfront_Object {
 
 		$content = $this->_decorate_content($content);
 
-		return "<div class='".$preset." plain-text-container plaintxt_padding'>". $content ."</div>";
+		return "<div class='plain-text-container plaintxt_padding'>". $content ."</div>";
 	}
 
 	protected function _decorate_content ($content) {
