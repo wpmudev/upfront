@@ -120,7 +120,8 @@ define([
 				name: this.stylename,
 				elementType: this.elementType.label,
 				selectors: this.selectors,
-				show_style_name: false
+				show_style_name: false,
+				showToolbar: true
 			}));
 
 			this.resizeHandler('.');
