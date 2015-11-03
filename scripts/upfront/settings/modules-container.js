@@ -12,6 +12,10 @@ define([
 			// Try to get from child class if there is none in options
 			if (_.isUndefined(modulesConfig)) modulesConfig = this.modules;
 
+			if (typeof this.getAdditionalModules === 'function') {
+				modulesConfig = this.getAdditionalModules(_.clone(modulesConfig));
+			}
+
 			// Create modules
 			_.each(modulesConfig, function (moduleConfig) {
 				moduleConfig.options = moduleConfig.options || {};

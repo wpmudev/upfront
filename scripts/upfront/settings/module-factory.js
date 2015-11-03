@@ -7,13 +7,14 @@ define([
 	'scripts/upfront/settings/modules/caption-location',
 	'scripts/upfront/settings/modules/gallery-caption-location',
 	'scripts/upfront/settings/modules/colors',
+	'scripts/upfront/settings/modules/element-style',
 	'scripts/upfront/settings/modules/padding',
 	'scripts/upfront/settings/modules/anchor',
 	'scripts/upfront/settings/modules/menu-structure',
 	'elements/upfront-newnavigation/js/settings/menu-style',
 ], function(TypographySettingsModule, BorderSettingsModule, HovAnimationSettingsModule, RadiusSettingsModule,
 			SelectboxSettingsModule, CaptionLocationSettingsModule, GalleryCaptionLocationSettingsModule,
-			ColorsSettingsModule, PaddingSettingsModule, AnchorSettingsModule, MenuStructureModule, MenuStyleModule) {
+			ColorsSettingsModule, ElementStyleModule, PaddingSettingsModule, AnchorSettingsModule, MenuStructureModule, MenuStyleModule) {
 	var ModuleFactory = function() {
 		var classes = {
 			'Typography': TypographySettingsModule,
@@ -24,6 +25,7 @@ define([
 			'CaptionLocation': CaptionLocationSettingsModule,
 			'GalleryCaptionLocation': GalleryCaptionLocationSettingsModule,
 			'Colors': ColorsSettingsModule,
+			'ElementStyle': ElementStyleModule,
 			'Padding': PaddingSettingsModule,
 			'Anchor': AnchorSettingsModule,
 			'MenuStructure': MenuStructureModule,

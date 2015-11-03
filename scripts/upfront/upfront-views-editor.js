@@ -6760,6 +6760,8 @@ var CSSEditor = Backbone.View.extend({
 
 		this.model = options.model;
 		this.sidebar = ( options.sidebar !== false );
+		this.toolbar = ( options.toolbar !== false );
+		this.readOnly = ( options.readOnly === true );
 		this.global = ( options.global === true );
 
 		this.modelType = options.type ? options.type : this.model.get_property_value_by_name('type');
@@ -6913,7 +6915,8 @@ var CSSEditor = Backbone.View.extend({
 			name: this.stylename,
 			elementType: this.elementType.label,
 			selectors: this.selectors,
-			show_style_name: this.is_region_style() === false && this.is_global_stylesheet === false && this.sidebar !== true
+			show_style_name: this.is_region_style() === false && this.is_global_stylesheet === false && this.sidebar !== true,
+			showToolbar: this.toolbar
 		}));
 
 		this.resizeHandler('.');
@@ -6942,6 +6945,8 @@ var CSSEditor = Backbone.View.extend({
 
 		session.setUseWorker(false);
 		editor.setShowPrintMargin(false);
+
+		editor.setReadOnly(this.readOnly);
 
 		session.setMode("ace/mode/css");
 		editor.setTheme('ace/theme/monokai');
