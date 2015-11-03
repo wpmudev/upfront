@@ -58,7 +58,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 				'walker' => new upfront_nav_walker(),
 			));
 		} else {
-			return "<div class='nav-preset-{$preset} {$float_class} upfront-navigation' {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . self::_get_l10n('select_menu') . "</div>";
+			return "<div class='{$preset} {$float_class} upfront-navigation' {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . self::_get_l10n('select_menu') . "</div>";
 		}
 
 		return "<div class='nav-preset-{$preset} {$float_class} upfront-navigation' {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . $menu . "</div>";
