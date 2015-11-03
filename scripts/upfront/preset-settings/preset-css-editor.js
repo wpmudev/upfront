@@ -58,7 +58,7 @@ define([
 			this.model = options.model;
 			this.sidebar = ( options.sidebar !== false );
 			this.global = ( options.global === true );
-			
+
 			this.prepareAce = deferred.promise();
 			require(['//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'], function(){
 				deferred.resolve();
@@ -69,11 +69,11 @@ define([
 			};
 
 			$(window).on('resize', this.resizeHandler);
-			
+
 			this.modelType = this.options.model.get_property_value_by_name('type');
 			this.elementType = this.elementTypes[this.modelType] || {label: 'Unknown', id: 'unknown'};
 
-			style_selector = this.elementType.id + '-' +this.options.preset.get('id') + '-breakpoint-style';
+			style_selector = this.options.preset.get('id');
 			$style = $('#' + style_selector);
 			if ($style.length === 0) {
 				this.$style = $('<style id="' + style_selector + '"></style>');
@@ -81,11 +81,11 @@ define([
 			} else {
 				this.$style = $style
 			}
-			
+
 			this.createSelectors(Upfront.Application.LayoutEditor.Objects);
-			
+
 			this.selectors = this.elementSelectors[this.modelType] || {};
-			
+
 			this.element_id = options.element_id ? options.element_id : this.model.get_property_value_by_name('element_id');
 
 			if ( typeof options.change == 'function' ) this.listenTo(this, 'change', options.change);
@@ -156,23 +156,24 @@ define([
 				if(typeof me.elementType.preset_container === "undefined") {
 					preset_class = preset_class + ' ';
 				}
-				
+
 				rules = _.map(rules, function(rule){return $.trim(rule);});
 				rules.pop();
-				
+
 				styles_with_selector = me.stylesAddSelector($.trim(editor.getValue()), me.get_css_selector());
 
 				me.$style.html(styles_with_selector);
 				me.trigger('change', styles_with_selector);
 			});
-			
+
 
 			var styles = this.options.preset.get('preset_style') ? this.options.preset.get('preset_style') : '';
-			
+
 			scope = new RegExp(this.get_css_selector() + '\\s*', 'g');
+			styles = styles.replace(new RegExp('#page ' + this.get_css_selector() + '\\s*', 'g'), '');
 			styles = styles.replace(scope, '');
-			
-			styles = Upfront.Util.colors.convert_string_color_to_ufc(styles);
+
+			styles = Upfront.Util.colors.convert_string_color_to_ufc(styles.replace(/div#page .upfront-region-container .upfront-module/g, '#page'));
 			editor.setValue($.trim(styles), -1);
 
 			// Set up the proper vscroller width to go along with new change.
@@ -290,11 +291,11 @@ define([
 			});
 		},
 		startInsertFontWidget: function() {
-			var insertFontWidget = new Preset_Insert_Font_Widget({ 
+			var insertFontWidget = new Preset_Insert_Font_Widget({
 				editor: this.editor,
 				collection: Upfront.Views.Editor.Fonts.theme_fonts_collection
 			});
-			
+
 			$('#insert-font-widget').html(insertFontWidget.render().el);
 		},
 		scrollToElement: function(){
@@ -313,9 +314,9 @@ define([
 			if(typeof this.elementType.preset_container === "undefined") {
 				preset_selector = preset_selector + ' ';
 			}
-			
+
 			var selector = preset_selector + $(e.target).data('selector');
-			
+
 			if(!selector.length)
 				return;
 			var element = $('#' + this.element_id);
@@ -328,9 +329,9 @@ define([
 			if(typeof this.elementType.preset_container === "undefined") {
 				preset_selector = preset_selector + ' ';
 			}
-			
+
 			var selector = preset_selector + $(e.target).data('selector');
-			
+
 			if(!selector.length)
 				return;
 			var element = $('#' + this.element_id);
@@ -343,7 +344,7 @@ define([
 		},
 		get_css_selector: function() {
 			if (this.is_global_stylesheet) return '';
-			return '.' + this.elementType.id + '-preset-' + this.options.preset.get('id');
+			return '.' + this.options.preset.get('id');
 		},
 		updateStyles: function(contents){
 			var $el = this.get_style_element();
@@ -352,7 +353,7 @@ define([
 			$el.html(
 				this.stylesAddSelector(
 					contents, (this.is_default_style ? '' : this.get_css_selector())
-				)
+					).replace(/#page/g, 'div#page .upfront-region-container .upfront-module')
 			);
 			this.trigger('updateStyles', this.element_id);
 		},
@@ -435,20 +436,20 @@ define([
 			};
 
 			this.options.preset.set('preset_style', data.styles);
-			
+
 			this.trigger('upfront:presets:update', this.options.preset.toJSON());
 
 			return Upfront.Views.Editor.notify(l10n.preset_style_saved.replace(/%s/,  this.elementType.id));
 
 		},
 	});
-	
+
 	var Preset_Insert_Font_Widget = Backbone.View.extend({
 		initialize: function(options) {
 			var me = this;
-			
+
 			this.editor = options.editor;
-			
+
 			this.fields = [
 				new Upfront.Views.Editor.Field.Typeface_Chosen_Select({
 					label: '',
@@ -585,7 +586,7 @@ define([
 			$('#insert-font-widget').html('<a class="upfront-css-font" href="#">' + l10n.insert_font + '</a>').removeClass('open');
 		}
 	});
-	
+
 	return PresetCSSEditor;
 });
 })(jQuery);

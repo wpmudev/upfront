@@ -54,8 +54,6 @@ define([
 
 			this.presets = new Backbone.Collection(Upfront.mainData[this.mainDataCollection] || []);
 
-			this.setupItems();
-
 			var savePreset = function(properties) {
 				Upfront.Util.post({
 					action: 'upfront_save_' + this.ajaxActionSlug + '_preset',
@@ -67,6 +65,58 @@ define([
 
 			// Let's not flood server on some nuber property firing changes like crazy
 			this.debouncedSavePreset = _.debounce(savePreset, 1000);
+
+			this.mergeElementStyle();
+			this.setupItems();
+		},
+
+		mergeElementStyle: function() {
+			// Simply add element style to preset css and name preset as element style was named.
+			// Only button, accordion and tabs had presets in old version, we won't merge those because that gets
+			// too complicated.
+			var hadPresets = _.contains(['UtabsView', 'UaccordionView', 'ButtonView'], this.property('view_class')),
+				elementStyleName,
+				newPresetName,
+				existingPreset,
+				style,
+				newPreset;
+
+			if (hadPresets) return;
+
+			elementStyleName = this.property('theme_style');
+
+			// If there is no element style assigned, bail out
+			if (!elementStyleName || elementStyleName === '_default') return;
+
+			Upfront.Application.cssEditor.init({
+				model: this.model,
+				stylename: elementStyleName,
+				no_render: true
+			});
+
+			// Add element style to preset model
+			newPresetName = elementStyleName;
+			existingPreset = this.presets.findWhere({id: newPresetName});
+
+			if (existingPreset) {
+				this.property('preset', existingPreset.id);
+				this.property('theme_style', '');
+				return;
+			}
+
+			style = $.trim(Upfront.Application.cssEditor.get_style_element().html().replace(/div#page .upfront-region-container .upfront-module/g, '#page'));
+			style = style.replace(new RegExp(elementStyleName, 'g'), newPresetName);
+
+			// Create new preset and assign style to preset
+			newPreset = new Backbone.Model(this.getPresetDefaults(newPresetName));
+			newPreset.set({
+				preset_style: style
+			});
+			// And remove element style
+			this.property('theme_style', '');
+			this.property('preset', newPreset.id);
+			this.presets.add(newPreset);
+			this.updatePreset(newPreset.toJSON());
 		},
 
 		setupItems: function() {
@@ -82,7 +132,7 @@ define([
 				presets: this.presets
 			});
 
-			// Setup preseet model so that it uses breakpoint values
+			// Setup preset model so that it uses breakpoint values
 			if (this.options.hasBreakpointSettings === true) {
 				currentBreakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active();
 				breakpointsData = presetModel.get('breakpoint') || {};

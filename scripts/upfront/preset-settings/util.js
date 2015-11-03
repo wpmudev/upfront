@@ -24,7 +24,7 @@ function() {
 	 */
 	var generateCss = function(properties, styleTpl) {
 		var tpl = Upfront.Util.template(styleTpl);
-		return tpl({properties: expandBreakpoints(properties)});
+		return tpl({properties: expandBreakpoints(properties)}).replace(/#page/g, 'div#page .upfront-region-container .upfront-module');
 	};
 
 	var Util = {
