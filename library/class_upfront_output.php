@@ -523,6 +523,7 @@ abstract class Upfront_Container extends Upfront_Entity {
 					$theme_style = upfront_get_property_value('theme_style', $child);
 					if($theme_style)
 						$theme_style = strtolower($theme_style);
+					$preset = upfront_get_property_value('preset', $child);
 					$breakpoint = upfront_get_property_value('breakpoint', $child);
 					$theme_styles = array( 'default' => $theme_style );
 					$theme_styles_attr = '';
@@ -540,7 +541,7 @@ abstract class Upfront_Container extends Upfront_Entity {
 					$classes = $this->_get_property('class');
 					$column = upfront_get_class_num('c', $classes);
 					$class = $slug === "uposts" ?   "c" . $column . " uposts-object" : upfront_get_property_value('class', $child);
-					$html .= '<div class="upfront-output-object ' . $theme_style .' upfront-output-' . $slug . ' ' . $class . '" id="' . upfront_get_property_value('element_id', $child)  . '"' . $theme_styles_attr . '>' . $child_view->get_markup() . '</div>';
+					$html .= '<div class="upfront-output-object ' . $theme_style . ' ' . $preset . ' upfront-output-' . $slug . ' ' . $class . '" id="' . upfront_get_property_value('element_id', $child)  . '"' . $theme_styles_attr . '>' . $child_view->get_markup() . '</div>';
 				}
 				else
 					$html .= $child_view->get_markup();

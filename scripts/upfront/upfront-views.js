@@ -1031,6 +1031,7 @@ define([
 					props.class += ' ' + theme_style.toLowerCase();
 					this._theme_style = theme_style;
 				}
+				props.preset = props.preset || '';
 
 				model = _.extend(this.model.toJSON(), {"properties": props, "buttons": buttons, "content": content, "height": height, "extra_buttons": extra_buttons});
 				template = _.template(_Upfront_Templates["object"], model);
