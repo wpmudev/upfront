@@ -5,6 +5,14 @@ class Upfront_LikeBoxView extends Upfront_Object {
 	public function get_markup () {
 		$element_size = $this->_get_property('element_size');
 		$url = $this->_get_property('facebook_url');
+
+		
+		$hide_cover = is_array($this->_get_property('hide_cover'))?'true':'false';
+		$show_friends = is_array($this->_get_property('show_friends'))?'true':'false';
+		$small_header = is_array($this->_get_property('small_header'))?'true':'false';
+		$show_posts = is_array($this->_get_property('show_posts'))?'true':'false';
+
+
 		$global_settings = Upfront_SocialMedia_Setting::get_globals();
 
 		if($url=='' && $global_settings){
@@ -30,7 +38,8 @@ class Upfront_LikeBoxView extends Upfront_Object {
 				else
 					$wide = $element_size['width'];
 			return $this->wrap(
-				"<iframe src='//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2F{$fbname}&amp;width={$wide}&amp;height={$element_size['height']}&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;show_border=true&amp;header=false' scrolling='no' frameborder='0' style='border:none; overflow:hidden; width:{$wide}px; height:{$element_size['height']}px;' allowTransparency='true'></iframe>"
+				//"<iframe src='//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2F{$fbname}&amp;width={$wide}&amp;height={$element_size['height']}&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;show_border=true&amp;header=false' scrolling='no' frameborder='0' style='border:none; overflow:hidden; width:{$wide}px; height:{$element_size['height']}px;' allowTransparency='true'></iframe>"
+				"<iframe src='//www.facebook.com/v2.5/plugins/page.php?adapt_container_width=true&amp;container_width={$wide}&amp;width={$wide}&amp;height={$element_size['height']}&amp;hide_cover={$hide_cover}&amp;href=https%3A%2F%2Fwww.facebook.com%2F{$fbname}&amp;show_facepile={$show_friends}&amp;show_posts={$show_posts}&amp;small_header={$small_header}' scrolling='no' frameborder='0' style='border:none; overflow:hidden; float:left; width:{$wide}px; height:{$element_size['height']}px;' allowTransparency='true'></iframe>"
 			);
 		}
 		else{
@@ -63,6 +72,10 @@ class Upfront_LikeBoxView extends Upfront_Object {
 			'view_class' => "LikeBoxView",
 			"class" => "c24 upfront-like-box",
 			'has_settings' => 1,
+			'hide_cover' =>array('no'),
+			'show_friends' =>array('yes'),
+			'small_header' =>array('no'),
+			'show_posts' =>array('yes'),
 			'element_size' => array(
 				'width' => 278,
 				'height' => 270
@@ -94,7 +107,12 @@ class Upfront_LikeBoxView extends Upfront_Object {
 				'url_sample' => __('https://www.facebook.com/YourPage', 'upfront'),
 				'back_to' => __('Back to your', 'upfront'),
 				'global_settings' => __('global settings', 'upfront'),
+				'show_friends' => __('Show Friend\'s Faces', 'upfront'),
+				'small_header' => __('Use Small Header', 'upfront'),
+				'hide_cover' => __('Hide Cover Photo', 'upfront'),
+				'show_posts' => __('Show Page Posts', 'upfront'),
 			),
+
 			'settings' => __('LikeBox settings', 'upfront'),
 		);
 		return !empty($key)
