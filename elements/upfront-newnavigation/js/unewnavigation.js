@@ -536,6 +536,10 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		menuStyle = props.breakpoint.desktop.menu_style;
 		menuStyle = menuStyle ? menuStyle : this.property('menu_style');
 
+		if (!props.breakpoint.desktop.menu_alignment) {
+			props.breakpoint.desktop.menu_alignment = this.property('menu_alignment');
+		}
+
 		$upfrontObjectContent = this.$el.find('.upfront-object-content');
 		if(this.$el.find('a.newnavigation-add-item').length < 1) {
 			$('<b class="upfront-entity_meta newnavigation_add add_item upfront-ui"><a href="#" class="upfront-icon-button newnavigation-add-item add-item"></a></b>').insertBefore($upfrontObjectContent);
@@ -567,6 +571,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		}
 		$upfrontObjectContent.attr('data-stylebk',(menuStyle ? menuStyle : 'horizontal'));
 		$upfrontObjectContent.attr('data-style',(menuStyle ? menuStyle : 'horizontal'));
+		$upfrontObjectContent.attr('data-alignment', props.breakpoint.desktop.menu_alignment);
 		$upfrontObjectContent.attr('data-isfloating',(isFloating ? isFloating : 'no'));
 		$upfrontObjectContent.attr('data-allow-sub-nav',(allowSubNav.length !== 0 && allowSubNav[0] == 'yes' ? allowSubNav[0] : 'no'));
 
