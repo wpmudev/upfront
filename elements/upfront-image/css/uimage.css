@@ -144,6 +144,9 @@
 
 .upfront-image-container {
 	position: relative;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 .upfront-image-starting-select {
