@@ -5202,7 +5202,7 @@ var Field_ToggleableText = Field_Text.extend({
 			var changed = _([]);
 			this.fields.each(function(field, index, list){
 				if (field.property) {
-					var value = field.get_value();
+					var value = field.get_value() || [];
 					var saved_value = field.get_saved_value();
 					if ( ! field.multiple && value != saved_value ) {
 						changed.push(field);
