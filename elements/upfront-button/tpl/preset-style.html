@@ -20,8 +20,11 @@
 
     <?php if(!empty($properties['bgcolor'])) { ?>background-color: <?php echo $properties['bgcolor'] ?>; <?php } ?>
 
-    <?php if(!empty($properties['hov_duration']) && !empty($properties['hov_transition'] )) { ?>transition: all <?php echo $properties['hov_duration'] ?>s <?php echo $properties['hov_transition']  ?>; <?php } ?>
-
+	<?php if(!empty($properties['hov_use_animation'])) { ?>
+		transition: all <?php echo $properties['hov_duration']  ?>s <?php echo $properties['hov_transition']  ?>;
+	<?php } else { ?>
+		transition: none;
+	<?php } ?>
 }
 
 #page .upfront-button .button-preset-<?php echo $properties['id']  ?>.upfront_cta:hover {
