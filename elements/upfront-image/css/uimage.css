@@ -734,6 +734,7 @@ a.image-edit-button.deactivated:hover {
 .upfront-field-icon-topOver:before {
 	background-position: -699px -520px!important;
 }
+.upfront-field-icon-showCaption:before,
 .upfront-field-icon-bottomOver:before {
 	background-position: -699px -488px!important;
 }

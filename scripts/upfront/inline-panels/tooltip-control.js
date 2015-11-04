@@ -74,6 +74,7 @@ define([
 					item.setIsSelected(false);
 				}
 				item.render();
+				item.$el.find('i').addClass('upfront-icon-region-caption');
 				captionControl.append(item.$el);
 				me.listenTo(item, 'click', me.selectItem);
 			});
@@ -85,7 +86,6 @@ define([
 							}else if( typeof selectedItem.label !== 'undefined' ){
 									this.$el.find('.tooltip-content').append( ': ' +  selectedItem.label );
 							}
-
 					}
 		},
 
@@ -120,7 +120,7 @@ define([
 			if (isDisabled) {
 				this.tooltip = l10n.ctrl.caption_position_disabled;
 			} else {
-				this.tooltip = l10n.ctrl.caption_position;
+				this.tooltip = l10n.ctrl.caption_display;
 			}
 		}
 	});

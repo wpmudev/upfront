@@ -138,32 +138,6 @@ define([
 			this.stoppedTimer  = false;
 		},
 
-		getSelectedAlignment: function(){
-			if(!this.property('include_image_caption') && this.property('caption_position') === false && this.property('caption_alignment') === false) {
-				return 'nocaption';
-			}
-			if(this.property('caption_position') === 'below_image') {
-				return 'below';
-			}
-
-			var align = this.property('caption_alignment');
-
-			switch(align){
-				case 'top':
-					return 'topOver';
-				case 'bottom':
-					return 'bottomOver';
-				case 'fill':
-					return 'topCover';
-				case 'fill_middle':
-					return 'middleCover';
-				case 'fill_bottom':
-					return 'bottomCover';
-			}
-
-			return 'nocaption';
-		},
-
 		isThemeImage: function() {
 			return this.property('srcFull') && this.property('srcFull').match('wp-content/themes/');
 		},
@@ -184,56 +158,16 @@ define([
 			}
 
 			captionControl.sub_items = {
-				topOver: this.createControl('topOver', l10n.ctrl.over_top),
-				bottomOver: this.createControl('bottomOver', l10n.ctrl.over_bottom),
-				topCover: this.createControl('topCover', l10n.ctrl.cover_top),
-				middleCover: this.createControl('middleCover', l10n.ctrl.cover_middle),
-				bottomCover: this.createControl('bottomCover', l10n.ctrl.cover_bottom),
-				below: this.createControl('below', l10n.ctrl.below),
-				nocaption: this.createControl('nocaption', l10n.ctrl.no_caption)
+				showCaption: this.createControl('showCaption', l10n.ctrl.show_caption),
+				nocaption: this.createControl('nocaption', l10n.ctrl.dont_show_caption)
 			};
 
 			captionControl.icon = 'caption';
-			captionControl.tooltip = l10n.ctrl.caption_position;
-			captionControl.selected = this.getSelectedAlignment();
+			captionControl.tooltip = l10n.ctrl.caption_display;
+			captionControl.selected = this.property('display_caption');
 
 			this.listenTo(captionControl, 'select', function(item){
-				switch(item){
-					case 'topOver':
-						me.property('include_image_caption', [1]);
-						me.property('caption_position', 'over_image');
-						me.property('caption_alignment', 'top');
-						break;
-					case 'bottomOver':
-						me.property('include_image_caption', [1]);
-						me.property('caption_position', 'over_image');
-						me.property('caption_alignment', 'bottom');
-						break;
-					case 'topCover':
-						me.property('include_image_caption', [1]);
-						me.property('caption_position', 'over_image');
-						me.property('caption_alignment', 'fill');
-						break;
-					case 'middleCover':
-						me.property('include_image_caption', [1]);
-						me.property('caption_position', 'over_image');
-						me.property('caption_alignment', 'fill_middle');
-						break;
-					case 'bottomCover':
-						me.property('include_image_caption', [1]);
-						me.property('caption_position', 'over_image');
-						me.property('caption_alignment', 'fill_bottom');
-						break;
-					case 'below':
-						me.property('include_image_caption', [1]);
-						me.property('caption_position', 'below_image');
-						me.property('caption_alignment', false);
-						break;
-					case 'nocaption':
-						me.property('include_image_caption', false);
-						me.property('caption_position', false);
-						me.property('caption_alignment', false);
-				}
+				me.property('display_caption', item);
 				me.render();
 			});
 
@@ -483,6 +417,8 @@ define([
 			} else {
 				props.imgWidth = props.size.width + 'px';
 			}
+
+			props.display_caption = this.property('display_caption') ? this.property('display_caption') : 'showCaption';
 
 			//Gif image handled as normal ones in the backend
 			props.gifImage = '';

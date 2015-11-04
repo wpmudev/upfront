@@ -12,7 +12,7 @@
 					<div class="upfront-image-starting_placeholder"><p>Image placeholder</p></div>
 				<?php } ?>
 
-			<?php if(!empty($properties['use_captions'])){// && $caption_position != 'below_image'){ ?>
+			<?php if(!empty($properties['use_captions'] && $display_caption === 'showCaption')) { ?>
 			<div class="wp-caption uimage-<?php echo $properties['caption-alignment'] ?> uimage-<?php echo $properties['caption-trigger'] ?> uimage-padded-caption">
 				<?php if($cover_caption) { ?>
 					<div class="uimage-caption-cover">

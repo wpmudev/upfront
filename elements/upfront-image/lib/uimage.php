@@ -52,14 +52,14 @@ class Upfront_UimageView extends Upfront_Object {
 		$data['cover_caption'] = $data['caption_position'] != 'below_image'; // array_search($data['caption_alignment'], array('fill', 'fill_bottom', 'fill_middle')) !== FALSE;
 
 		$data['placeholder_class'] = !empty($data['src']) ? '' : 'uimage-placeholder';
-		
+
 		/*
 		* Commented this line because sets background color for captions under image to be always white
 		* If this functionallity is needed, we will restore it
 		*
 		if ($data['caption_position'] === 'below_image') $data['captionBackground'] = false;
 		*/
-		
+
 		if (!isset($data['link_target'])) $data['link_target'] = false; // Initialize array member to prevent notices
 		// We could really go with wp_parge_args here...
 
@@ -134,6 +134,7 @@ class Upfront_UimageView extends Upfront_Object {
 			'gifImage' => 0,
 			'placeholder_class' => '',
 			'preset' => 'default',
+			'display_caption' => 'showCaption',
 
 			'type' => 'UimageModel',
 			'view_class' => 'UimageView',
@@ -184,7 +185,10 @@ class Upfront_UimageView extends Upfront_Object {
 			),
 			'ctrl' => array(
 				'caption_position' => __('Caption Location', 'upfront'),
+				'caption_display' => __('Caption visibility', 'upfront'),
 				'caption_position_disabled' => __('Caption is disabled for images smaller or narrower than 100px', 'upfront'),
+				'dont_show_caption' => __('Hide caption', 'upfront'),
+				'show_caption' => __('Show caption', 'upfront'),
 				'over_top' => __('Over image, top', 'upfront'),
 				'over_bottom' => __('Over image, bottom', 'upfront'),
 				'cover_top' => __('Covers image, top', 'upfront'),
