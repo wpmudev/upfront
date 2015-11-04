@@ -534,6 +534,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		}
 
 		menuStyle = props.breakpoint.desktop.menu_style;
+		menuStyle = menuStyle ? menuStyle : this.property('menu_style');
 
 		$upfrontObjectContent = this.$el.find('.upfront-object-content');
 		if(this.$el.find('a.newnavigation-add-item').length < 1) {
