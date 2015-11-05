@@ -18,7 +18,7 @@ define(function() {
 					model: this.model,
 					className: state + '-select select-module menu_style',
 					name: 'menu_style',
-					default_value: 'horizontal',
+					default_value: this.model.get('menu_style'),
 					label: l10n.mnu.style,
 					values: [
 						{ label: l10n.mnu.horiz, value: 'horizontal' },
@@ -40,6 +40,7 @@ define(function() {
 					model: this.model,
 					className: state + '-select select-module menu_alingment',
 					name: 'menu_alignment',
+					default_value: this.model.get('menu_alignment'),
 					label: l10n.mnu.alingment,
 					values: [
 						{ label: l10n.mnu.left, value: 'left' },
@@ -54,7 +55,7 @@ define(function() {
 					model: this.model,
 					className: state + '-select select-module burger_alingment',
 					name: 'burger_alignment',
-					default_value: 'left',
+					default_value: this.model.get('burger_alignment'),
 					label: l10n.mnu.show_on_click,
 					values: [
 						{ label: l10n.mnu.left, value: 'left', icon: 'burger-left'},

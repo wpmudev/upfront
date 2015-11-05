@@ -112,6 +112,20 @@ define([
 			newPreset.set({
 				preset_style: style
 			});
+			// Populate preset with old values
+			_.each(newPreset.attributes, function(value, name) {
+				var data,
+					oldValue = this.model.get_property_value_by_name(name);
+
+				if (name === 'id') return;
+				if (name === 'name') return;
+
+				if (typeof oldValue !== 'undefined' && oldValue !== false) {
+					data = {};
+					data[name] = this.model.get_property_value_by_name(name);
+					newPreset.set(data);
+				}
+			}, this);
 			// And remove element style
 			this.property('theme_style', '');
 			this.property('preset', newPreset.id);
