@@ -161,7 +161,7 @@ define([
 				rules = _.map(rules, function(rule){return $.trim(rule);});
 				rules.pop();
 
-				styles_with_selector = me.stylesAddSelector($.trim(editor.getValue()), me.get_css_selector());
+				styles_with_selector = me.stylesAddSelector($.trim(editor.getValue()), '#page ' + me.get_css_selector());
 
 				me.$style.html(styles_with_selector);
 				me.trigger('change', styles_with_selector);
@@ -173,6 +173,13 @@ define([
 			scope = new RegExp(this.get_css_selector() + '\\s*', 'g');
 			styles = styles.replace(new RegExp('#page ' + this.get_css_selector() + '\\s*', 'g'), '');
 			styles = styles.replace(scope, '');
+			// Unescape quotes a few times
+			styles = styles.replace(/\\'/g, "'");
+			styles = styles.replace(/\\'/g, "'");
+			styles = styles.replace(/\\'/g, "'");
+			styles = styles.replace(/\\"/g, '"');
+			styles = styles.replace(/\\"/g, '"');
+			styles = styles.replace(/\\"/g, '"');
 
 			styles = Upfront.Util.colors.convert_string_color_to_ufc(styles.replace(/div#page .upfront-region-container .upfront-module/g, '#page'));
 			editor.setValue($.trim(styles), -1);
@@ -353,7 +360,7 @@ define([
 			contents = Upfront.Util.colors.convert_string_ufc_to_color( contents);
 			$el.html(
 				this.stylesAddSelector(
-					contents, (this.is_default_style ? '' : this.get_css_selector())
+					contents, (this.is_default_style ? '' : '#page ' + this.get_css_selector())
 					).replace(/#page/g, 'div#page .upfront-region-container .upfront-module')
 			);
 			this.trigger('updateStyles', this.element_id);
