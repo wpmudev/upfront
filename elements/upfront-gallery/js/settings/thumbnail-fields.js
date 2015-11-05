@@ -3,12 +3,12 @@ define([
 ], function(RootSettingsPanel) {
 	var l10n = Upfront.Settings.l10n.gallery_element;
 
-	var updateFromSlider = function(model, value) {
-		model.set_property('thumbWidth', value);
-		model.trigger('change:thumbWidth');
+	var updateFromSlider = function(model, name, value, eventName) {
+		model.set_property(name, value);
+		model.trigger(eventName);
 	};
 
-	var debouncedUpdateFromSlider = _.debounce(updateFromSlider, 200);
+	var debouncedUpdateFromSlider = _.debounce(updateFromSlider, 1000);
 
 	var ThumbnailFields = RootSettingsPanel.extend({
 		className: 'ugallery-thumbnail-fields upfront-settings_panel',
@@ -69,7 +69,7 @@ define([
 						change: function(value, me) {
 							var f = me.settings._wrapped[1].fields._wrapped[1];
 							f.get_field().val(value);
-							debouncedUpdateFromSlider(me.model, value);
+							debouncedUpdateFromSlider(me.model, 'thumbWidth', value, 'change:thumbWidth');
 						}
 					},
 					{
@@ -96,8 +96,7 @@ define([
 							} else {
 								me.$el.find('.thumb-size-slider').css('opacity', 1);
 							}
-							me.model.set_property('thumbWidth', value);
-							me.model.trigger('change:thumbWidth');
+							debouncedUpdateFromSlider(me.model, 'thumbWidth', value, 'change:thumbWidth');
 						}
 					}
 				]
@@ -153,6 +152,8 @@ define([
 						change: function(value, me) {
 							var f = me.settings._wrapped[2].fields._wrapped[2];
 							f.get_field().val(value);
+							// me.model.set_property('thumbPaddingNumber', value);
+							debouncedUpdateFromSlider(me.model, 'thumbPadding', value, 'change:thumbPadding');
 						}
 					},
 					{
@@ -165,7 +166,7 @@ define([
 							var s = me.settings._wrapped[2].fields._wrapped[1];
 							s.$el.find('#'+s.get_field_id()).slider('value', value);
 							s.get_field().val(value);
-							s.trigger('changed');
+							s.trigger('changed', value);
 
 							var f = me.settings._wrapped[2].fields._wrapped[2];
 							f.get_field().val(value);
@@ -176,6 +177,8 @@ define([
 							} else {
 								me.$el.find('.thumb-padding-slider').css('opacity', 1);
 							}
+							// me.model.set_property('thumbPaddingNumber', value);
+							debouncedUpdateFromSlider(me.model, 'thumbPadding', value, 'change:thumbPadding');
 						}
 					},
 					{
@@ -189,6 +192,8 @@ define([
 						change: function(value, me) {
 							var f = me.settings._wrapped[2].fields._wrapped[4];
 							f.get_field().val(value);
+							// me.model.set_property('thumbSidePaddingNumber', value);
+							debouncedUpdateFromSlider(me.model, 'sidePadding', value, 'change:thumbPadding');
 						}
 					},
 					{
@@ -204,7 +209,7 @@ define([
 							var s = me.settings._wrapped[2].fields._wrapped[3];
 							s.$el.find('#'+s.get_field_id()).slider('value', value);
 							s.get_field().val(value);
-							s.trigger('changed');
+							s.trigger('changed', value);
 
 							//Lower opacity if value is bigger than the slider MAX_VALUE
 							if(value > 50) {
@@ -212,6 +217,8 @@ define([
 							} else {
 								me.$el.find('.thumb-side-padding-slider').css('opacity', 1);
 							}
+							// me.model.set_property('thumbSidePaddingNumber', value);
+							debouncedUpdateFromSlider(me.model, 'sidePadding', value, 'change:thumbPadding');
 						}
 					},
 					{
@@ -225,6 +232,8 @@ define([
 						change: function(value, me) {
 							var f = me.settings._wrapped[2].fields._wrapped[6];
 							f.get_field().val(value);
+							// me.model.set_property('thumbBottomPaddingNumber', value);
+							debouncedUpdateFromSlider(me.model, 'bottomPadding', value, 'change:thumbPadding');
 						}
 					},
 					{
@@ -240,7 +249,7 @@ define([
 							var s = me.settings._wrapped[2].fields._wrapped[5];
 							s.$el.find('#'+s.get_field_id()).slider('value', value);
 							s.get_field().val(value);
-							s.trigger('changed');
+							s.trigger('changed', value);
 
 							//Lower opacity if value is bigger than the slider MAX_VALUE
 							if(value > 50) {
@@ -248,6 +257,8 @@ define([
 							} else {
 								me.$el.find('.thumb-bottom-padding-slider').css('opacity', 1);
 							}
+							// me.model.set_property('thumbBottomPaddingNumber', value);
+							debouncedUpdateFromSlider(me.model, 'bottomPadding', value, 'change:thumbPadding');
 						}
 					}
 				]

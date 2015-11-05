@@ -237,6 +237,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	/****************************************************/
 	updateThumbPadding: function() {
 		this.$el.find('.ugallery').data('thumb-padding', this.property('thumbPadding'));
+		this.$el.find('.ugallery').data('thumb-bottom-padding', this.property('bottomPadding'));
+		this.$el.find('.ugallery').data('thumb-side-padding', this.property('sidePadding'));
 		this.debouncedRender();
 	},
 	updateCaptionType: function() {
