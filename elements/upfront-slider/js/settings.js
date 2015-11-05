@@ -62,6 +62,7 @@ define([
 		settings: [
 			{
 				type: 'SettingsItem',
+				triggerChange: true,
 				title: l10n.slider_behaviour,
 				group: true,
 				className: 'general_settings_item uslider-rotate-settings',

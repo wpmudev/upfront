@@ -71,7 +71,6 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		this.listenTo(this.model, 'addRequest', this.openImageSelector);
 
 		this.lastStyle = this.get_preset_properties().primaryStyle;
-		this.listenTo(this.model.get('properties'), 'change', this.checkStyles);
 
 		this.listenTo(this.model, 'background', function(rgba){
 			me.model.slideCollection.each(function(slide){
@@ -723,9 +722,11 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	},
 
 	onModelChange: function() {
-		this.stopListeningTo(this.model.slideCollection);
-		this.model.slideCollection = new Uslider_Slides(this.property('slides'));
-		this.listenTo(this.model.slideCollection, 'add remove reset change', this.onSlidesCollectionChange);
+		if (this.stopListeningTo) {
+			this.stopListeningTo(this.model.slideCollection);
+			this.model.slideCollection = new Uslider_Slides(this.property('slides'));
+			this.listenTo(this.model.slideCollection, 'add remove reset change', this.onSlidesCollectionChange);
+		}
 		this.render();
 	},
 
@@ -959,8 +960,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 	saveResizing: function(){
 		var me = this;
-		if(this.cropTimer){
-
+		if (this.cropTimer) {
 			this.saveTemporaryResizing().done(function(){
 				var saveData = {
 					element: JSON.stringify(Upfront.Util.model_to_json(me.model)),

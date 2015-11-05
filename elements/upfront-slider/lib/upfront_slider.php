@@ -26,7 +26,7 @@ class Upfront_UsliderView extends Upfront_Object {
 
 		$data['slidesLength'] = sizeof($slides);
 
-		$side_style = $data['properties']['primaryStyle'] == 'side';
+		$side_style = $data['properties']['primaryStyle'] === 'side';
 
 		$data['imageWidth'] = $side_style ? floor($data['rightImageWidth'] / $data['rightWidth'] * 100) . '%': '100%';
 		$data['textWidth'] =  $side_style ? floor(($data['rightWidth'] - $data['rightImageWidth']) / $data['rightWidth'] * 100) . '%' : '100%';
