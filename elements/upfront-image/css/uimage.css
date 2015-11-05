@@ -1129,7 +1129,10 @@ div.uimage-controls i.upfront-icon:before {
 
 .upfront-image-caption-container {
 	position: relative;
-	display: inline-block;
+	display: block;
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
 }
 
 .upfront-field-wrap.image-alternative-text {
@@ -1210,6 +1213,8 @@ div.uimage-controls i.upfront-icon:before {
 .upfront-image-container + .redactor-box,
 .upfront-image-container + .wp-caption {
 	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
 	line-height: normal;
 }
 
