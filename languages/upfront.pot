@@ -1142,11 +1142,11 @@ msgid "Height of captions (in px)."
 msgstr ""
 
 #: elements/upfront-gallery/lib/ugallery.php:345
-msgid "Captiong Text"
+msgid "Caption Text"
 msgstr ""
 
 #: elements/upfront-gallery/lib/ugallery.php:346
-msgid "Captiong BG"
+msgid "Caption BG"
 msgstr ""
 
 #: elements/upfront-gallery/lib/ugallery.php:349
