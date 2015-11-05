@@ -175,7 +175,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	},
 	
 	get_preset_properties: function() {
-		var preset = this.model.get_property_value_by_name("preset"),
+		var preset = this.model.get_property_value_by_name("preset") || 'default',
 			props = PresetUtil.getPresetProperties('gallery', preset) || {};
 			
 		return props;	
