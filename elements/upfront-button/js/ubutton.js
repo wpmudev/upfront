@@ -24,7 +24,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		}
 
 		this.events = _.extend({}, this.events, {
-			'click a.upfront_cta.ueditor-placeholder' : 'placeholderClick',
+			'click a.uf-click-to-edit-text' : 'placeholderClick',
 			'click a.redactor_act': 'onOpenPanelClick',
 			'click .upfront-save_settings': 'onOpenPanelClick',
 			'click .open-item-controls': 'onOpenItemControlsClick'
@@ -56,7 +56,11 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		});
 
 	},
-
+	
+	placeholderClick: function(e) {
+		e.preventDefault();
+	},
+	
 	getCleanurl: function(url) {
 		//this one removes any existing # anchor postfix from the url
 		var urlParts;
@@ -135,6 +139,14 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		props.preset = props.preset || 'default';
 
 		props.preset = this.clear_preset_name(props.preset);
+		
+		var preset_props = Upfront.Views.Editor.Button.Presets.get(props.preset);
+		
+		//Check if theme_style already set and if we have preset properties
+		if(!this.property('theme_style') && preset_props) {
+			var theme_style = preset_props.attributes.theme_style || '_default';
+			this.property('theme_style', theme_style);
+		}
 
 		return this.buttonTpl(props);
 	},
