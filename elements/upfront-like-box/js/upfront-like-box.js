@@ -126,16 +126,16 @@
 					pageName = _.last(splitted);
 				}
 				
-				var wide = 	this.model.get_property_value_by_name('element_size').width-22;
+				var wide = 	this.model.get_property_value_by_name('element_size').width-30;
 
 				if(wide>500)
 					wide=500;
 
-				if(wide%53 > 0)
+				/*if(wide%53 > 0)
 					wide = parseInt(wide/53)*53+22;
 				else
 					wide = this.model.get_property_value_by_name('element_size').width;
-
+				*/
 				//return '<iframe src="//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2F'+ (pageName ? pageName : 'wpmudev' )+'&amp;width='+wide+'&amp;height='+this.model.get_property_value_by_name('element_size').height+'&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;show_border=true&amp;header=false" scrolling="no" frameborder="0" style="border:none; overflow:hidden; float:left; width:'+wide+'px; height:'+this.model.get_property_value_by_name('element_size').height+'px;"" allowTransparency="true"></iframe><div class="upfront-like-box_overlay"></div>'+ (!pageName ? '<span class="alert-url">!</span>' : '' );
 
 

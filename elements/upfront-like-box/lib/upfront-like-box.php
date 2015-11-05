@@ -31,17 +31,17 @@ class Upfront_LikeBoxView extends Upfront_Object {
 			$parts = parse_url($url);
 			$fbname = end(explode('/', trim($parts['path'], '/')));
 			
-			$wide = intval($element_size['width'])-22;
+			$wide = intval($element_size['width'])-30;
 
 			if($wide > 500)
 				$wide=500;
 
 
-			if($wide%53 > 0)
+			/*if($wide%53 > 0)
 				$wide = intval($wide/53)*53+22;
 			else
 				$wide = $element_size['width'];
-
+			*/
 			
 			return "<iframe src='//www.facebook.com/v2.5/plugins/page.php?adapt_container_width=true&amp;container_width={$wide}&amp;width={$wide}&amp;height=".($element_size['height']-30)."&amp;hide_cover={$hide_cover}&amp;href=https%3A%2F%2Fwww.facebook.com%2F{$fbname}&amp;show_facepile={$show_friends}&amp;show_posts={$show_posts}&amp;small_header={$small_header}' scrolling='no' frameborder='0' style='border:none; display:block; overflow:hidden; margin: auto; width:{$wide}px; height:".($element_size['height']-30)."px;' allowTransparency='true'></iframe>";
 			/*return $this->wrap(
