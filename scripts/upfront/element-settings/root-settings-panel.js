@@ -77,6 +77,13 @@ define([
 
 					field = FieldFactory.createField(fieldOptions.type, _.extend({ model: me.model }, _.omit(fieldOptions, ['type'])));
 
+					if (settingOptions.triggerChange) {
+						me.listenTo(field, 'change changed', function() {
+							me.save_settings();
+							me.model.trigger('change');
+						});
+					}
+
 					if(fieldOptions.identifier) {
 						// Use for selecting field instead crawling DOM
 						field.identifier = fieldOptions.identifier;
