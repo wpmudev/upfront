@@ -497,11 +497,11 @@ define([
 			_refresh_background_image_from_data: function (data, $type, $overlay) {
 				var style = this.model.get_breakpoint_property_value('background_style', true);
 				// If parallax, then run parallax first so it applies correct background size
-				if ( style == 'parallax' ) {
+				if ( style == 'parallax' && $overlay.data('uparallax') ) {
 					$overlay.uparallax('refresh');
 					setTimeout(function(){
 						// Do another refresh later to make sure it renders properly
-						$overlay.uparallax('refresh');
+						if ( $overlay.data('uparallax') ) $overlay.uparallax('refresh');
 					}, 2000);
 				}
 				if ( style == 'full' || style == 'parallax' ){
