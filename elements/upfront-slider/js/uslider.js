@@ -123,10 +123,12 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 	get_content_markup: function() {
 		var me = this,
-			props = this.extract_properties(),
-			rendered = {}
-		;
+			props,
+			rendered = {};
 
+		this.checkStyles();
+
+		props = this.extract_properties();
 
 		if(!this.model.slideCollection.length){
 			this.startingHeight = this.startingHeight || 225;
