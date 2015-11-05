@@ -81,7 +81,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		this.listenTo(Upfront.Events, 'upfront:layout_size:change_breakpoint', this.rebindShuffle);
 
 		this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
-		
+
 		this.listenTo(this.model, "preset:updated", this.preset_updated);
 
 		this.lastThumbnailSize = {width: this.property('thumbWidth'), height: this.property('thumbHeight')};
@@ -135,6 +135,13 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			}
 		});
 
+		this.listenTo(this.model, 'change:thumbProportions', function() {
+			me.onThumbChangeProportions();
+		});
+		this.listenTo(this.model, 'change:thumbWidth', function() {
+			me.onThumbChangeSize();
+			me.render();
+		});
 		this.listenTo(this.model, 'change:thumbPadding', function() {
 			me.updateThumbPadding();
 		});
@@ -173,22 +180,49 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		});
 		this. debouncedRender = _.debounce(this.render, 300);
 	},
-	
+
+	onThumbChangeProportions: function(e) {
+		var factor = this.property('thumbProportions'),
+			width = this.property('thumbWidth');
+
+		if(factor === 'theme') {
+			factor = 1;
+		}
+
+		this.property('thumbProportions', factor);
+		this.onThumbChangeSize();
+
+		this.render();
+	},
+	onThumbChangeSize: function(){
+		var factor = this.property('thumbProportions'),
+			width = this.property('thumbWidth'),
+			height = Math.round(width / factor);
+
+		if(factor === 'theme') {
+			factor = 1;
+		}
+
+		this.property('thumbWidth', width, false);
+		this.property('thumbHeight', height);
+		this.checkRegenerateThumbs();
+	},
+
 	get_preset_properties: function() {
 		var preset = this.model.get_property_value_by_name("preset") || 'default',
 			props = PresetUtil.getPresetProperties('gallery', preset) || {};
-			
-		return props;	
+
+		return props;
 	},
-	
+
 	preset_updated: function() {
 		this.debouncedRender();
 	},
-	
+
 	update_colors: function () {
-		
+
 		var props = this.get_preset_properties();
-		
+
 		if (_.size(props) <= 0) return false; // No properties, carry on
 
 		PresetUtil.updatePresetStyle('gallery', props, settingsStyleTpl);
@@ -466,9 +500,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 	getPropertiesForTemplate: function() {
 		var props = this.extract_properties();
-		
+
 		props.properties = this.get_preset_properties();
-		
+
 		props.imagesLength = props.images.length;
 		props.editing = true;
 

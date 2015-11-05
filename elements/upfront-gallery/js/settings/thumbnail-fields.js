@@ -3,6 +3,13 @@ define([
 ], function(RootSettingsPanel) {
 	var l10n = Upfront.Settings.l10n.gallery_element;
 
+	var updateFromSlider = function(model, value) {
+		model.set_property('thumbWidth', value);
+		model.trigger('change:thumbWidth');
+	};
+
+	var debouncedUpdateFromSlider = _.debounce(updateFromSlider, 200);
+
 	var ThumbnailFields = RootSettingsPanel.extend({
 		className: 'ugallery-thumbnail-fields upfront-settings_panel',
 		settings: [
@@ -41,6 +48,7 @@ define([
 						],
 						change: function(value, me) {
 							me.model.set_property('thumbProportions', value);
+							me.model.trigger('change:thumbProportions');
 						}
 					}
 				]
@@ -61,6 +69,7 @@ define([
 						change: function(value, me) {
 							var f = me.settings._wrapped[1].fields._wrapped[1];
 							f.get_field().val(value);
+							debouncedUpdateFromSlider(me.model, value);
 						}
 					},
 					{
@@ -87,11 +96,9 @@ define([
 							} else {
 								me.$el.find('.thumb-size-slider').css('opacity', 1);
 							}
+							me.model.set_property('thumbWidth', value);
+							me.model.trigger('change:thumbWidth');
 						}
-					},
-					{
-						type: 'Hidden',
-						property: 'thumbHeight'
 					}
 				]
 			},
