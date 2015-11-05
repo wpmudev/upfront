@@ -13,6 +13,11 @@ class Upfront_UsliderView extends Upfront_Object {
 			$slides[] = array_merge(self::slide_defaults(), $slide);
 		}
 
+		if (!isset($data['preset'])) {
+			$data['preset'] = 'default';
+		}
+		$data['properties'] = Upfront_Slider_Presets_Server::get_instance()->get_preset_properties($data['preset']);
+
 		$data['slides'] = $slides;
 		$data['rotate'] = $data['rotate'] ? true : false;
 
@@ -21,7 +26,7 @@ class Upfront_UsliderView extends Upfront_Object {
 
 		$data['slidesLength'] = sizeof($slides);
 
-		$side_style = $data['primaryStyle'] == 'side';
+		$side_style = $data['properties']['primaryStyle'] == 'side';
 
 		$data['imageWidth'] = $side_style ? floor($data['rightImageWidth'] / $data['rightWidth'] * 100) . '%': '100%';
 		$data['textWidth'] =  $side_style ? floor(($data['rightWidth'] - $data['rightImageWidth']) / $data['rightWidth'] * 100) . '%' : '100%';
@@ -30,12 +35,6 @@ class Upfront_UsliderView extends Upfront_Object {
 
 		$data['production'] = true;
 		$data['startingSlide'] = 0;
-
-		if (!isset($data['preset'])) {
-			$data['preset'] = 'default';
-		}
-
-		$data['properties'] = Upfront_Slider_Presets_Server::get_instance()->get_preset_properties($data['preset']);
 
 		// Overwrite properties with preset properties
 		if (isset($data['properties']['primaryStyle'])) {

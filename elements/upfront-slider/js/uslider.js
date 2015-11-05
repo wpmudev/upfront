@@ -70,7 +70,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		this.listenTo(this.model, 'addRequest', this.openImageSelector);
 
-		this.lastStyle = this.property('primaryStyle');
+		this.lastStyle = this.get_preset_properties().primaryStyle;
 		this.listenTo(this.model.get('properties'), 'change', this.checkStyles);
 
 		this.listenTo(this.model, 'background', function(rgba){
@@ -339,13 +339,13 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			;
 		});
 
-		if(me.property('primaryStyle') == 'side'){
+		if(me.get_preset_properties().primaryStyle == 'side'){
 			me.setImageResizable();
 		}
 
 		//Adapt slider height to the image crop
 		if(typeof(currentSlide) != 'undefined') {
-			var textHeight = this.property('primaryStyle') == 'below' ? this.$('.uslide[rel=' + currentSlide.id + ']').find('.uslide-caption').outerHeight() : 0;
+			var textHeight = this.get_preset_properties().primaryStyle == 'below' ? this.$('.uslide[rel=' + currentSlide.id + ']').find('.uslide-caption').outerHeight() : 0;
 			me.$('.uslides').css({ 'padding-top' : wrapper.height() + textHeight});
 		}
 	},
@@ -377,7 +377,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 	checkStyles: function() {
 		var me = this,
-			primary = this.property('primaryStyle'),
+			primary = this.get_preset_properties().primaryStyle,
 			defaults = {
 				below: 'below',
 				over: 'bottomOver',
@@ -411,7 +411,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	},
 	firstImageSelection: function(e){
 		e.preventDefault();
-		var primaryStyle = this.$el.find('input:checked').val(),
+		var primaryStyle = this.get_preset_properties().primaryStyle,
 			style = 'nocaption'
 		;
 		if(primaryStyle == 'over')
@@ -421,7 +421,6 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		else if(primaryStyle == 'side')
 			style = 'right';
 
-		this.property('primaryStyle', primaryStyle);
 		this.property('style', style);
 
 		return this.openImageSelector();
@@ -541,10 +540,10 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				me.setCurrentSlide(index);
 				me.updateControls();
 				me.$('.uimage-controls').attr('rel', slide.attr('rel'));
-				if(me.property('primaryStyle') == 'side')
+				if(me.get_preset_properties().primaryStyle == 'side')
 					me.setImageResizable();
 
-				if(me.property('primaryStyle') == 'below'){
+				if(me.get_preset_properties().primaryStyle == 'below'){
 					//Adapt the height to take care of the caption
 					me.$('.uslides').css({ 'padding-top' : slide.find('.uslide-image').outerHeight() + slide.find('.uslide-caption').outerHeight()});
 				}
@@ -573,7 +572,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				left: ['left', l10n.at_left],
 				nocaption: ['nocaption', l10n.no_text]
 			},
-			primaryStyle = this.property('primaryStyle'),
+			primaryStyle = this.get_preset_properties().primaryStyle,
 			multiControls = {},
 			captionControl = new Upfront.Views.Editor.InlinePanels.TooltipControl(),
 			panelItems = [],
@@ -813,7 +812,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		var me = this,
 			mask = this.$('.upfront-default-slider-item-current').find('.uslide-image'),
 			currentSlide = this.model.slideCollection.at(this.getCurrentSlide()),
-			style = this.property('primaryStyle'),
+			style = this.get_preset_properties().primaryStyle,
 			resizer = $('.upfront-resize'),
 			text = style == 'below' ? this.$('.uslide-caption') : [],
 			textHeight = text.length ? text.outerHeight() : 0,
@@ -848,13 +847,13 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		var resizer = $('.upfront-resize'),
 			current = this.$('.upfront-default-slider-item-current'),
-			text = this.property('primaryStyle') == 'below' ? current.find('.uslide-caption') : [],
+			text = this.get_preset_properties().primaryStyle == 'below' ? current.find('.uslide-caption') : [],
 			textHeight = text.length ? text.outerHeight() : 0,
 			newElementSize = {width: resizer.outerWidth() - 30, height: resizer.outerHeight() - 30 - textHeight},
 			id = current.attr('rel'),
 			slide = this.model.slideCollection.get(id),
 			imageWrapper= current.find('.uslide-image'),
-			style = this.property('primaryStyle'),
+			style = this.get_preset_properties().primaryStyle,
 			wrapperSize = {width: style == 'side' ? imageWrapper.width() : newElementSize.width, height: newElementSize.height},
 			wrapperCss = {height: wrapperSize.height}
 		;
