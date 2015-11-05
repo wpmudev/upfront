@@ -2398,6 +2398,10 @@ define([
 
 			},
 			on_context_menu: function(e) {
+				if($(e.target).closest('.upfront-inline-modal-content').length > 0) {
+					e.stopPropagation();
+					return;
+				}
 				if (Upfront.Settings.Application.no_context_menu) return;
 
 				e.preventDefault();
