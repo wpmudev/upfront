@@ -162,6 +162,8 @@ define([
 				rules.pop();
 
 				styles_with_selector = me.stylesAddSelector($.trim(editor.getValue()), '#page ' + me.get_css_selector());
+				// Solve case of button loosing its styles
+				styles_with_selector = styles_with_selector.replace(new RegExp(me.get_css_selector() + ' .upfront-button', 'g'), me.get_css_selector() + '.upfront-button');
 
 				me.$style.html(styles_with_selector);
 				me.trigger('change', styles_with_selector);

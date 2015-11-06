@@ -187,6 +187,14 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 					$preset['mobile'][$name] = $property;
 				};
 			}
+
+			// Handle specific case for button where button has both preset classes and element class
+			if (isset($preset['id']) && isset($preset['preset_style']) && preg_match('#upfront\-button#', $preset['preset_style']) === 1) {
+				$preset['preset_style'] = preg_replace('#' . $preset['id'] . ' \.upfront-button#', $preset['id'] . '.upfront-button', $preset['preset_style']);
+				$preset['preset_style'] = str_replace('\"', '"', $preset['preset_style']);
+				$preset['preset_style'] = str_replace("\'", "'", $preset['preset_style']);
+			}
+
 			$args = array('properties' => $preset);
 			extract($args);
 			ob_start();

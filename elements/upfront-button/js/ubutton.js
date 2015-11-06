@@ -32,11 +32,16 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		this.model.get('properties').bind('change', this.render, this);
 		this.model.get('properties').bind('add', this.render, this);
 		this.model.get('properties').bind('remove', this.render, this);
+		this.listenTo(this.model, 'change:preset', this.updatePresetClass);
 
 		Upfront.Events.on('entity:deactivated', this.stopEdit, this);
 
 		this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
 
+	},
+
+	updatePresetClass: function() {
+		this.$el.addClass(this.property('preset'));
 	},
 
 	getCleanurl: function(url) {
@@ -220,6 +225,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			});
 
 		this.createInlineControlPanel();
+		this.$el.addClass(this.property('preset'));
 	},
 	stopEdit: function() {
 		var $target = this.$el.find('.upfront-object-content a.upfront_cta');
