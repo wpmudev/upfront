@@ -28,7 +28,7 @@ define([
 					'borderwidth': 1,
 					'bordercolor': 'rgb(0, 0, 0)',
 					'use_captions': '',
-					'captionType': 'none',
+					'captionType': 'below',
 					'showCaptionOnHover': 1,
 					'caption-height': 'auto',
 					'thumbCaptionsHeight': 20,
