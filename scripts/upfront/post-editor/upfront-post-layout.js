@@ -591,7 +591,7 @@ var TemplateEditor = Backbone.View.extend({
 
 		editor.detach();
 
-		resizable.html('<div class="upfront-css-top ui-resizable-handle ui-resizable-n"><span class="upfront-css-type">' + this.postPart + ' Part Template</span><a class="upfront-css-close" href="#">close</a></div>');
+		resizable.html('<div class="upfront-css-top"><span class="upfront-css-type">' + this.postPart + ' Part Template</span><a class="upfront-css-close" href="#">close</a></div>');
 		resizable.append('<div class="upfront-css-body"><div class="upfront_code-editor-section upfront_code-markup active"><div class="upfront-css-ace"></div></div><button>' + Upfront.Settings.l10n.global.content.save + '</button></div>');
 
 		this.resizeHandler = this.resizeHandler || function(){

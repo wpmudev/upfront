@@ -312,8 +312,9 @@
     max-width: 286px;
     overflow: hidden;
 }
-.upfront-save_settings:hover {
+.upfront-ui .upfront-save_settings:hover {
 	background: #3ea;
+	border: 1px solid #3ea;
 }
 /* @TODO still using font awesome icon, need add it to sprite instead */
 .upfront-save_settings i {

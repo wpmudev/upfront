@@ -404,9 +404,11 @@
 	font-size: 13px;
     max-width: 122px;
     line-height: 27px;
+    padding: 5px 0 0 ;
 }
 #sidebar-ui .sidebar-commands-control .command-save:hover {
-	border-color: #1fcd8f;
+	border-color: #3ea;
+	background: #3ea;
 }
 #sidebar-ui .sidebar-commands-control .command-edit-background-area {
 	margin-bottom: 15px;

@@ -41,6 +41,8 @@ define([
 				var module = ModuleFactory.createModule(
 					moduleConfig.moduleType, moduleConfig.options || {}, this.options.model
 				);
+
+				module.panel = this;
 				modules.push(module);
 			}, this);
 

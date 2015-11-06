@@ -75,6 +75,7 @@
 							height: size.row,
 						});
 					}
+
 				//}, 1000);
 			}
 		},
@@ -120,14 +121,34 @@
 			//	fbUrl = this.getGlobalFBUrl();
 
 			if(fbUrl){
-				var pageName = _.last(fbUrl.split('/'));
-				var wide = 	this.model.get_property_value_by_name('element_size').width-22;
-				if(wide%53 > 0)
+				var splitted = fbUrl.split('/');
+				var pageName = _.last(splitted);
+
+				if(_.isEmpty(pageName)) {
+					splitted.splice(splitted.length-1, 1);
+					pageName = _.last(splitted);
+				}
+
+				var wide = 	this.model.get_property_value_by_name('element_size').width-30;
+
+				if(wide>500)
+					wide=500;
+
+				/*if(wide%53 > 0)
 					wide = parseInt(wide/53)*53+22;
 				else
 					wide = this.model.get_property_value_by_name('element_size').width;
+				*/
+				//return '<iframe src="//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2F'+ (pageName ? pageName : 'wpmudev' )+'&amp;width='+wide+'&amp;height='+this.model.get_property_value_by_name('element_size').height+'&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;show_border=true&amp;header=false" scrolling="no" frameborder="0" style="border:none; overflow:hidden; float:left; width:'+wide+'px; height:'+this.model.get_property_value_by_name('element_size').height+'px;"" allowTransparency="true"></iframe><div class="upfront-like-box_overlay"></div>'+ (!pageName ? '<span class="alert-url">!</span>' : '' );
 
-				return '<iframe src="//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2F'+ (pageName ? pageName : 'wpmudev' )+'&amp;width='+wide+'&amp;height='+this.model.get_property_value_by_name('element_size').height+'&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;show_border=true&amp;header=false" scrolling="no" frameborder="0" style="border:none; overflow:hidden; float:left; width:'+wide+'px; height:'+this.model.get_property_value_by_name('element_size').height+'px;"" allowTransparency="true"></iframe><div class="upfront-like-box_overlay"></div>'+ (!pageName ? '<span class="alert-url">!</span>' : '' );
+
+				var hide_cover = this.model.get_property_value_by_name('hide_cover')=='yes'?'true':'false';
+				var show_friends = this.model.get_property_value_by_name('show_friends')=='yes'?'true':'false';
+				var small_header = this.model.get_property_value_by_name('small_header')=='yes'?'true':'false';
+				var show_posts = this.model.get_property_value_by_name('show_posts')=='yes'?'true':'false';
+
+				return '<iframe src="//www.facebook.com/v2.5/plugins/page.php?adapt_container_width=true&amp;container_width='+wide+'&amp;width='+wide+'&amp;height='+(this.model.get_property_value_by_name('element_size').height-30)+'&amp;hide_cover='+hide_cover+'&amp;href=https%3A%2F%2Fwww.facebook.com%2F'+ (pageName ? pageName : 'wpmudev' )+'&amp;show_facepile='+show_friends+'&amp;show_posts='+show_posts+'&amp;small_header='+small_header+'" scrolling="no" frameborder="0" style="border:none; display:block; overflow:hidden; margin:auto; width:'+wide+'px; height:'+(this.model.get_property_value_by_name('element_size').height-30)+'px;"" allowTransparency="true"></iframe><div class="upfront-like-box_overlay"></div>'+ (!pageName ? '<span class="alert-url">!</span>' : '' );
+
 			}else{
 				this.model.set_property('facebook_url', '', true);
 				return '<div class="upfront-like-box_placeholder">' +

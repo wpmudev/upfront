@@ -88,9 +88,12 @@ define([
 		onPanelTitleClick: function(event) {
 			var $panelTitle = $(event.currentTarget);
 			if($panelTitle.parent().hasClass('accordion-panel-active')) {
-				if($panelTitle.data('ueditor')) {
-					$panelTitle.data('ueditor').start();
+				var titleUeditor = $panelTitle.data('ueditor');
+				if(titleUeditor) {
+					if(!titleUeditor.active)
+						titleUeditor.start();
 				}
+				
 			} else {
 				this.$el.find('.accordion-panel-content').each(function () {
 					var ed = $(this).data('ueditor');
@@ -98,8 +101,10 @@ define([
 						ed.stop();
 					}
 				});
+
 				$panelTitle.parent().addClass('accordion-panel-active').find('.accordion-panel-content').slideDown();
 				$panelTitle.parent().siblings().removeClass('accordion-panel-active').find('.accordion-panel-content').slideUp();
+
 			}
 		},
 
@@ -188,7 +193,8 @@ define([
 					})
 					.on('blur', function() {
 						$content.data('ueditor').stop();
-					});
+					})
+					.addClass('uf-click-to-edit-text');
 
 				$(this).data('ueditor').stop();
 				count++;

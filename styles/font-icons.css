@@ -9,7 +9,7 @@
 	font-weight: normal;
 	font-style: normal;
 }
-.uf_font_icon {
+.uf_font_icon, .uf_font_icon *{
 	font-family: 'icomoon';
 	speak: none;
 	font-style: normal;

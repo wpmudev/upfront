@@ -7,10 +7,11 @@ define([
 	'elements/upfront-image/js/image-selector',
 	'elements/upfront-image/js/image-editor',
 	'elements/upfront-image/js/image-element',
+	"scripts/upfront/link-model",
 	'elements/upfront-image/js/model',
 	'text!elements/upfront-image/tpl/preset-style.html',
 	'scripts/upfront/preset-settings/util',
-], function(imageTpl, editorTpl, ImageContextMenu, ImageSettings, ImageSelector, ImageEditor, ImageElement, UimageModel, settingsStyleTpl, PresetUtil) {
+], function(imageTpl, editorTpl, ImageContextMenu, ImageSettings, ImageSelector, ImageEditor, ImageElement, LinkModel, UimageModel, settingsStyleTpl, PresetUtil) {
 
 	var l10n = Upfront.Settings.l10n.image_element;
 	var breakpointColumnPadding = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().get('column_padding');
@@ -37,6 +38,7 @@ define([
 				'click a.upfront-image-select': 'openImageSelector',
 				'click div.upfront-quick-swap': 'openImageSelector',
 				'dblclick .wp-caption': 'editCaption',
+				'click a': 'handleLinkClick',
 				'click .swap-image-overlay': 'openImageSelector'
 			});
 			this.delegateEvents();
@@ -92,6 +94,22 @@ define([
 				} else {
 					this.unsetMobileMode();
 				}
+			});
+
+
+			if (this.property('link') === false) {
+				this.link = new LinkModel({
+					type: this.property('when_clicked'),
+					url: this.property('image_link'),
+					target: this.property('link_target'),
+				});
+				this.property('link', this.link.toJSON());
+			} else {
+				this.link = new LinkModel(this.property('link'));
+			}
+
+			me.listenTo(this.link, 'change', function() {
+				me.property('link', me.link.toJSON());
 			});
 
 			this.listenTo(this.model, "preset:updated", this.preset_updated);
@@ -186,9 +204,7 @@ define([
 				linkPanel;
 
 			control.view = linkPanel = new Upfront.Views.Editor.LinkPanel({
-				linkType: this.property('when_clicked'),
-				linkUrl: this.property('image_link'),
-				linkTarget: this.property('link_target'),
+				model: this.link,
 				linkTypes: { image: true },
 				imageUrl: this.property('srcFull')
 			});
@@ -198,6 +214,7 @@ define([
 					linkPanel.createLightBox();
 				}
 				control.close();
+				this.render();
 			});
 
 			this.listenTo(control, 'panel:open', function() {
@@ -212,25 +229,11 @@ define([
 				me.$el.closest('.ui-draggable').draggable('enable');
 			});
 
-			me.listenTo(linkPanel, 'change', me.updateLink);
-			me.listenTo(linkPanel, 'change:target', function(data) {
-				me.property('link_target', data.target);
-				me.$el.find('a').attr('target', data.target);
-			});
-
 			control.icon = 'link';
 			control.tooltip = l10n.ctrl.image_link;
 			control.id = 'link';
 
 			return control;
-		},
-
-		updateLink: function(data) {
-			this.property('when_clicked', data.type);
-			this.property('image_link', data.url);
-			this.property('link_target', data.target);
-
-			this.render();
 		},
 
 		postTypes: function(){
@@ -403,10 +406,11 @@ define([
 			props.properties = this.get_preset_properties();
 
 			props.url = this.property('when_clicked') ? this.property('image_link') : false;
+			props.url = this.link.get('type') !== 'unlink' ? this.link.get('url') : false;
+			props.link_target = this.link.get('target');
 			props.size = this.temporaryProps.size;
 			props.position = this.temporaryProps.position;
 			props.marginTop = Math.max(0, -props.position.top);
-			props.link_target = props.link_target || '_self';
 
 			props.in_editor = true;
 
@@ -708,7 +712,7 @@ define([
 				.find('img')
 					.css({
 						position: 'static',
-						width: '100%',
+						maxWidth: '100%',
 						height: 'auto'
 					})
 					.attr('src', this.property('src'))
@@ -1235,14 +1239,28 @@ define([
 			;
 		},
 
+		handleLinkClick: function(event){
+			var lightboxName;
+
+
+			if (this.link.get('type') !== 'lightbox') {
+				return;
+			}
+
+			event.preventDefault();
+
+			lightboxName = this.link.get('url').substring(1);
+			Upfront.Application.LayoutEditor.openLightboxRegion(lightboxName);
+		},
+
 		cleanup: function(){
-			//the default images on a new theme installation do not have controlls created, so putting a check here.
+			// The default images on a new theme installation do not have controlls created, so putting a check here.
 			if(this.controls)
 				this.controls.remove();
 			// if(this.bodyEventHandlers){
-			// 	_.each(this.bodyEventHandlers, function(f, ev){
-			// 		$('body').off(ev, f);
-			// 	});
+			//  _.each(this.bodyEventHandlers, function(f, ev){
+			//    $('body').off(ev, f);
+			//  });
 			// }
 		},
 

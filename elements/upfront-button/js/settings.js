@@ -216,7 +216,7 @@ define([
 									easing: 'hov_transition',
 								}
 							}
-						}	
+						}
 					],
 					Focus: [
 						{

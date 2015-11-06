@@ -50,12 +50,14 @@ class Upfront_ButtonView extends Upfront_Object {
 	public function get_markup () {
 		// This data is passed on to the template to precompile template
 		$data = $this->properties_to_array();
+		if (isset($data['link'])) {
+			$data['href'] = $data['link']['url'];
+			$data['linkTarget'] = $data['link']['target'];
+		}
 		if(isset($data['currentpreset']) && empty($data['preset'])) {
 			$data['preset'] = $data['currentpreset'];
 		}
 		$data['preset'] = isset($data['preset']) ? $this->clear_preset($data['preset']) : 'default';
-
-		$data['linkTarget'] = $this->_get_property('linkTarget');
 
 		$markup = upfront_get_template('ubutton', $data, dirname(dirname(__FILE__)) . '/tpl/ubutton.html');
 

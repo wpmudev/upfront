@@ -39,6 +39,8 @@ text!scripts/upfront/inline-panels/templates/panel-control-template.html
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/inline-panels/dialog-control.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/inline-panels/controls/visit-link.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/inline-panels/controls/link-panel.js
+/home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/link-model.js
+/home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/inline-panels/controls/group-link-panel.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/inline-panels/inline-panels.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/element-settings/sidebar.js
 text!scripts/upfront/templates/link-panel.html
@@ -65,6 +67,7 @@ responsive.js
 findandreplace/findAndReplaceDOMText.js
 upfront/objects/loading.js
 upfront/upfront-objects.js
+/home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/upfront-media/insert-options-item-control.js
 upfront/upfront-media.js
 upfront/upfront-content.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/bg-settings/mixins.js
@@ -125,8 +128,12 @@ text!elements/upfront-accordion/tpl/uaccordion.html
 redactor/redactor.js
 text!scripts/redactor/ueditor-templates.html
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/redactor/ueditor-insert.js
+/home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/redactor/ueditor-insert-utils.js
+/home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/redactor/ueditor-image-insert-base.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/redactor/ueditor-image-insert.js
+/home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/redactor/ueditor-image-insert-post.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/redactor/ueditor-embed-insert.js
+/home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/redactor/ueditor-post-image-insert-manager.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/redactor/ueditor-inserts.js
 redactor/plugins.js
 redactor/ueditor.js
@@ -145,6 +152,7 @@ text!elements/upfront-contact-form/templates/preset-style.html
 text!elements/upfront-gallery/tpl/ugallery.html
 text!elements/upfront-gallery/tpl/sorting-style.html
 text!elements/upfront-gallery/tpl/ugallery_editor.html
+text!elements/upfront-gallery/tpl/lightbox_settings.html
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/elements/upfront-gallery/js/settings/thumbnail-fields.js
 text!elements/upfront-gallery/tpl/preset-style.html
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/elements/upfront-gallery/js/settings.js
@@ -209,9 +217,6 @@ text!elements/upfront-tabs/tpl/utabs.html
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/elements/upfront-tabs/js/utabs.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/elements/upfront-this-post/js/this_post.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/elements/upfront-this-page/js/this_page.js
-/home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/elements/upfront-widget/js/model.js
-/home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/elements/upfront-widget/js/element.js
-/home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/elements/upfront-widget/js/settings.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/elements/upfront-widget/js/uwidget.js
 text!elements/upfront-youtube/tpl/youtube.html
 text!elements/upfront-youtube/tpl/clonevideo.html

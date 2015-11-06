@@ -754,6 +754,7 @@ define([
             this.$el.prop("title", l10n.toggle_grid);
 			this.listenTo(Upfront.Events, "entity:region:added", this.update_grid);
 			this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.update_grid);
+            this.listenTo(Upfront.Events, "grid:toggle", this.on_click);
 		},
 		on_click: function () {
 			$('.upfront-overlay-grid').size() || this.create_grid();
@@ -1162,6 +1163,7 @@ define([
 		render: function () {
 			this.fields[0].render();
 			this.$el.append(this.fields[0].el);
+			this.fields[0].delegateEvents();
 		},
 		on_click: function () {
 
@@ -1615,7 +1617,7 @@ define([
 		},
 		on_render: function () {
 			var me = this,
-				styles_list = [] // this will change with every font family change
+				styles_list = [], // this will change with every font family change
 				$wrap_left = $('<div class="upfront-typography-fields-left" />'),
 				$wrap_right = $('<div class="upfront-typography-fields-right" />'),
 				typography = this.model.get_property_value_by_name('typography'),
@@ -1681,8 +1683,9 @@ define([
 			var showChooseFontsButton = (currentMode === builderMode && !doneIntro) ||
 				(currentMode !== builderMode && theme_fonts_collection.length === 0 && !doneIntro);
 
+			var chooseButton;
 			if (showChooseFontsButton) {
-				var chooseButton = new Field_Button({
+				chooseButton = new Field_Button({
 					label: l10n.select_fonts_to_use,
 					compact: true,
 					classname: 'open-theme-fonts-manager',
@@ -1692,7 +1695,7 @@ define([
 					}
 				});
 			} else {
-				var chooseButton = new Command_OpenFontManager();
+				chooseButton = new Command_OpenFontManager();
 			}
 
 			if (theme_fonts_collection.length === 0 && Upfront.mainData.userDoneFontsIntro === false) {
@@ -1818,7 +1821,7 @@ define([
 						}
 					})
 				};
-			};
+			}
 			this.$el.html('');
 			this.$el.addClass('typography-panel');
 			_.each( this.fields, function(field){
@@ -1988,9 +1991,9 @@ define([
 				if ('blockquote' === element) {
 					selector = '.upfront-object-content blockquote, .upfront-object-content blockquote p';
 				} else if ('a' === element) {
-					selector = '.upfront-object-content:not(.upfront-output-ubutton) a, .upfront-object-content:not(.upfront-output-ubutton) a:link, .upfront-object-content:not(.upfront-output-ubutton) a:visited';
+					selector = '.upfront-object-content:not(.upfront-output-button):not(.upfront-output-ubutton) a, .upfront-object-content:not(.upfront-output-button):not(.upfront-output-ubutton) a:link, .upfront-object-content:not(.upfront-output-button):not(.upfront-output-ubutton) a:visited';
 				} else {
-					selector = '.upfront-object-content:not(.upfront-output-ubutton) ' + element;
+					selector = '.upfront-object-content ' + element  + ', .upfront-ui ' + element + '.tag-list-tag';
 				}
 				css.push(selector + '{ ' + rules.join("; ") + '; }');
 
@@ -2048,7 +2051,9 @@ define([
 				$style = $("style#typography-colors");
 			}
 			_.each(this.elements, function (element) {
-				if (me.colors[element]) css.push('.upfront-object-content:not(.upfront-output-button) ' + element + '{ color:' + Upfront.Util.colors.to_color_value(me.colors[element]) + '; }');
+				if (me.colors[element]) {
+                    css.push('.upfront-object-content ' + element + '{ color:' + Upfront.Util.colors.to_color_value(me.colors[element]) + '; }');
+                }
 			});
 			$style.empty().append(css.join("\n"));
 		}
@@ -2299,6 +2304,12 @@ define([
                                 self.update_colors(this, color, index);
                         	},
                             move: function (color) {
+	                            picker.$(".sp-preview").css({
+                                    backgroundColor : color.toRgbString(),
+                                    backgroundImage : "none"
+                                });
+                        	},
+                        	hide: function (color) {
 	                            picker.$(".sp-preview").css({
                                     backgroundColor : color.toRgbString(),
                                     backgroundImage : "none"
@@ -2709,7 +2720,7 @@ define([
 				roles = user.get('roles') || [],
 				tpl
 			;
-			tpl = '<div class="sidebar-profile-avatar"><img src="http://www.gravatar.com/avatar/{{ gravatar ? gravatar : "gravatar" }}?s=25" /></div>' +
+			tpl = '<div class="sidebar-profile-avatar"><img src="//www.gravatar.com/avatar/{{ gravatar ? gravatar : "gravatar" }}?s=25" /></div>' +
 				'<div class="sidebar-profile-detail"><span class="sidebar-profile-name">{{name}}</span><span class="sidebar-profile-role">{{role}}</span></div>' +
 				(roles.length ? '<div class="sidebar-profile-edit"><a class="upfront-icon upfront-icon-edit" data-bypass="true" title="'+  l10n.edit_profile +'" href="{{edit_url}}">' + l10n.edit_profile + '</a></div>' : '');
 			this.$el.html(_.template(tpl,
@@ -3845,7 +3856,7 @@ define([
 		},
 		dispatch_show: function () {
 			var me = this;
-			setTimeout(function(){
+			setTimeout(function() {
 				me.options.show(me.get_value(), me.$el);
 			}, 100);
 		},
@@ -4318,9 +4329,21 @@ var Field_ToggleableText = Field_Text.extend({
 				me.$(".sp-container").data("sp-options", me.options.spectrum );
 			};
 
+			/**
+			 * Wrap the hide callback so we can re-use it.
+			 */
+			var hide = function (color) {
+				if (me.options.spectrum && me.options.spectrum.hide) {
+					me.options.spectrum.hide(color);
+				}
+			};
+			// Add wrapped hide callback
+			spectrumOptions.hide = hide;
 			if( !spectrumOptions.autoHide  ){
 				spectrumOptions.hide = function(color){
 					me.color = color;
+					// And if we override the hide callback, re-apply it in overridden method
+					hide(color);
 					me.$(".sp-replacer").addClass("sp-active");
 					me.$(".sp-container").removeClass("sp-hidden");
 				};
@@ -6391,7 +6414,7 @@ var Icon_Fonts_Manager = Backbone.View.extend({
 			"	font-weight: normal;" +
 			"	font-style: normal;" +
 			"}" +
-			".uf_font_icon {" +
+			".uf_font_icon, .uf_font_icon * {" +
 			"	font-family: '" + font.get('family') + "'!important;" +
 			"}";
 
@@ -6727,6 +6750,7 @@ var CSSEditor = Backbone.View.extend({
 		PlainTxtModel: {label: l10n.text, id:'plain_text'},
 		CodeModel: {label: l10n.code, id: 'upfront-code_element'},
 		Layout: {label: l10n.body, id: 'layout'},
+		GalleryLightbox: {label: l10n.body, id: 'gallery-lightbox'},
 		RegionContainer: {label: l10n.region, id: 'region-container'},
 		Region: {label: l10n.inner_region, id: 'region'},
 		RegionLightbox: {label: l10n.ltbox_region, id: 'region'},
@@ -6958,7 +6982,7 @@ var CSSEditor = Backbone.View.extend({
 			},800);
 			me.trigger('change', editor);
 
-			if (typeof me.editor !== "undefined") {
+			if(typeof me.editor !== "undefined") {
 				var aceOuterWidth = $(me.editor.container).get(0).scrollWidth;
 				var aceInnerWidth = $(me.editor.container).find('.ace_content').innerWidth();
 
@@ -6987,7 +7011,7 @@ var CSSEditor = Backbone.View.extend({
 		editor.focus();
 		this.editor = editor;
 
-		if (me.timer) clearTimeout(me.timer);
+		if(me.timer) clearTimeout(me.timer);
 		me.timer = setTimeout(function(){
 			me.startResizable();
 		},300);
@@ -7028,19 +7052,27 @@ var CSSEditor = Backbone.View.extend({
 			topHeight = me.$('.upfront-css-top').outerHeight(),
 			$selectors = me.$('.upfront-css-selectors'),
 			$saveform = me.$('.upfront-css-save-form'),
+			$rsz = this.$('.upfront-css-resizable'),
 			onResize = function(e, ui){
 				var height = ui ? ui.size.height : me.$('.upfront-css-resizable').height(),
 					bodyHeight = height  - topHeight;
 				$cssbody.height(bodyHeight);
 
-				if (me.editor) me.editor.resize();
+				$rsz.css('width', ''); // Do NOT do horizontal resize
 
+				if(me.editor)
+					me.editor.resize();
 				$selectors.outerHeight(bodyHeight - $saveform.outerHeight());
 				$('#page').css('padding-bottom', height);
 			}
 		;
+		// Add appropriate handle classes
+		$rsz.find(".upfront-css-top")
+			.removeClass("ui-resizable-handle").addClass("ui-resizable-handle")
+			.removeClass("ui-resizable-n").addClass("ui-resizable-n")
+		;
 		onResize();
-		this.$('.upfront-css-resizable').resizable({
+		$rsz.resizable({
 			handles: {n: '.upfront-css-top'},
 			resize: onResize,
 			minHeight: 200,
@@ -7152,7 +7184,8 @@ var CSSEditor = Backbone.View.extend({
 			try{
 				if(!!$(selector + splitted.join(' ')).closest('#' + me.element_id).length)
 					return true;
-			} catch (err) {
+			}
+			catch (err) {
 
 			}
 			splitted.pop();
@@ -7490,8 +7523,8 @@ var GeneralCSSEditor = Backbone.View.extend({
 
 		this.options = options || {};
 		this.model = options.model;
-		this.sidebar = ( options.sidebar !== false );
-		this.global = ( options.global === true );
+		this.sidebar = options.sidebar !== false;
+		this.global = options.global === true;
 
 		this.prepareAce = deferred.promise();
 		require([Upfront.Settings.ace_url], function(){
@@ -7513,8 +7546,13 @@ var GeneralCSSEditor = Backbone.View.extend({
 			this.$style = $style
 		}
 
+		if (options.cssSelectors) {
+			this.selectors = options.cssSelectors;
+		}
+
 
 		if ( typeof options.change == 'function' ) this.listenTo(this, 'change', options.change);
+		if ( typeof options.onClose == 'function' ) this.listenTo(this, 'close', options.onClose);
 
 		this.render();
 
@@ -7590,6 +7628,13 @@ var GeneralCSSEditor = Backbone.View.extend({
 		var scope = new RegExp('\.' + this.options.page_class + '\s*', 'g'),
 			styles = this.model.get('styles') ? this.model.get('styles').replace(scope, '') : ''
 		;
+		var scope = new RegExp('\.' + this.options.page_class + '\s*', 'g');
+		var styles;
+		if (this.options.type === 'GalleryLightbox') {
+			styles = this.model.get('properties').get('styles').get('value').replace(scope, '');
+		} else {
+			styles = this.model.get('styles').replace(scope, '');
+		}
 		editor.setValue($.trim(styles), -1);
 
 		// Set up the proper vscroller width to go along with new change.
@@ -7653,6 +7698,7 @@ var GeneralCSSEditor = Backbone.View.extend({
 		});
 	},
 	remove: function() {
+		this.trigger('close');
 		Backbone.View.prototype.remove.call(this);
 		$(window).off('resize', this.resizeHandler);
 	},
@@ -10960,6 +11006,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			"RegionFixedEditPosition" : RegionFixedEditPosition,
 			"CSSEditor": CSSEditor,
 			"Insert_Font_Widget": Insert_Font_Widget,
+			"GeneralCSSEditor": GeneralCSSEditor,
 			"LinkPanel": LinkPanel
 		},
 		Mixins: {

@@ -1,20 +1,5 @@
 <?php
 
-/*
-abstract class Upfront_Endpoint extends Upfront_Server {
-
-	abstract public function create_endpoint ();
-	abstract public function apply_endpoint ();
-
-
-	protected function _add_hooks () {
-		add_action('init', array($this, "create_endpoint"));
-		add_action('template_redirect', array($this, "apply_endpoint"));
-	}
-
-}
-*/
-
 abstract class Upfront_VirtualPage extends Upfront_Server {
 
 	protected $_subpages = array();
@@ -33,8 +18,6 @@ abstract class Upfront_VirtualPage extends Upfront_Server {
 
 	public function intercept_page () {
 		if (!$this->_parse_request(true)) return false;
-		//if ($this->get_slug() != get_query_var('name')) return false;
-		//$this->render();
 	}
 
 	public function parse_page () {
@@ -64,20 +47,19 @@ abstract class Upfront_VirtualPage extends Upfront_Server {
 		if (!empty($request[1]) && !empty($this->_subpages)) {
 			foreach($this->_subpages as $subpage) {
 				if ($subpage->get_slug() !== $request[1]) continue;
+				
 				status_header(200);
-				if ($render)
-					$subpage->render($request);
-				else
-					$subpage->parse($request);
+				
+				if ($render) $subpage->render($request);
+				else $subpage->parse($request);
+
 				$this->_subpage = $subpage;
 				break;
 			}
 		} else {
 			status_header(200);
-			if ($render)
-				$this->render($request);
-			else
-				$this->parse($request);
+			if ($render) $this->render($request);
+			else $this->parse($request);
 		}
 		return true;
 	}
@@ -115,56 +97,6 @@ abstract class Upfront_VirtualSubpage {
 }
 
 // ----- Implementations
-
-// --- Creators
-
-/*
-class Upfront_NewPage_VirtualSubpage extends Upfront_VirtualSubpage {
-
-	public function get_slug () {
-		return 'page';
-	}
-
-	public function render ($request) {
-		$page = Upfront_PostModel::create('page', __('Change me, please', 'upfront'), __('Super awesome content', 'upfront'));
-		Upfront_VirtualPage::redirect('edit/page/' . $page->ID);
-	}
-}
-
-class Upfront_NewPost_VirtualSubpage extends Upfront_VirtualSubpage {
-
-	public function get_slug () {
-		return 'post';
-	}
-
-	public function render ($request) {
-		$page = Upfront_PostModel::create('post', __('I am a post title - change me, please', 'upfront'), __('Super awesome post content', 'upfront'));
-		Upfront_VirtualPage::redirect('edit/post/' . $page->ID);
-	}
-}
-class Upfront_ContentCreator_VirtualPage extends Virtual_Content_Page {
-
-	public static function serve () {
-		$me = new self;
-		$me->_add_hooks();
-	}
-
-	protected function _add_subpages () {
-		$this->_subpages = array(
-			new Upfront_NewPage_VirtualSubpage(),
-			new Upfront_NewPost_VirtualSubpage(),
-		);
-	}
-
-	public function get_slug () {
-		return 'create';
-	}
-
-	public function render ($request) {}
-
-}
-Upfront_ContentCreator_VirtualPage::serve();
-*/
 
 // --- Editors
 
@@ -222,7 +154,6 @@ class Upfront_EditPost_VirtualSubpage extends Upfront_VirtualSubpage {
 
 	public function render ($request) {
 		$this->parse($request);
-		//add_filter('wp_title', array($this, 'get_title'));
 		add_action('wp_footer', array($this, 'start_editor'), 999);
 		load_template(get_single_template());
 		die;
@@ -287,7 +218,6 @@ class Upfront_ContentEditor_VirtualPage extends Virtual_Content_Page {
 	public function render ($request) {}
 
 }
-//Upfront_ContentEditor_VirtualPage::serve();
 add_action('init', array('Upfront_ContentEditor_VirtualPage', 'serve'));
 
 // --- Save handlers
@@ -299,66 +229,48 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 	}
 
 	private function _add_hooks () {
-		//add_action('wp_ajax_upfront-edit-publish', array($this, "publish_post"));
 		upfront_add_ajax('upfront-edit-publish', array($this, "publish_post"));
 		
 		upfront_add_ajax('upfront-create-post_type', array($this, "create_post_type"));
 
-		//add_action('wp_ajax_upfront-edit-draft', array($this, "draft_post"));
 		upfront_add_ajax('upfront-edit-draft', array($this, "draft_post"));
 
-		//add_action('wp_ajax_upfront-post-get_taxonomy', array($this, "get_post_taxonomy"));
 		upfront_add_ajax('upfront-post-get_taxonomy', array($this, "get_post_taxonomy"));
 
-		//add_action('wp_ajax_upfront-post-create_term', array($this, "create_new_term"));
 		upfront_add_ajax('upfront-post-create_term', array($this, "create_new_term"));
 
-		//add_action('wp_ajax_upfront-post-update_terms', array($this, "update_post_terms"));
 		upfront_add_ajax('upfront-post-update_terms', array($this, "update_post_terms"));
 
-		//add_action('wp_ajax_upfront-get_page_data', array($this, "get_page_data"));
-		//add_action('wp_ajax_upfront-get_post_data', array($this, "get_post_data"));
-
-		//add_action('wp_ajax_upfront-post-update_slug', array($this, "update_post_slug"));
 		upfront_add_ajax('upfront-post-update_slug', array($this, "update_post_slug"));
 
-		//add_action('wp_ajax_upfront-post-update_status', array($this, "update_post_status"));
 		upfront_add_ajax('upfront-post-update_status', array($this, "update_post_status"));
 
-		//add_action('wp_ajax_upfront-post-update_password', array($this, "update_post_password"));
 		upfront_add_ajax('upfront-post-update_password', array($this, "update_post_password"));
 
-		//add_action('wp_ajax_upfront-comments-approve', array($this, "approve_comment"));
 		upfront_add_ajax('upfront-comments-approve', array($this, "approve_comment"));
 
-		//add_action('wp_ajax_upfront-comments-unapprove', array($this, "unapprove_comment"));
 		upfront_add_ajax('upfront-comments-unapprove', array($this, "unapprove_comment"));
 
-		//add_action('wp_ajax_upfront-comments-thrash', array($this, "thrash_comment"));
 		upfront_add_ajax('upfront-comments-thrash', array($this, "thrash_comment"));
 
-		//add_action('wp_ajax_upfront-comments-unthrash', array($this, "unthrash_comment"));
 		upfront_add_ajax('upfront-comments-unthrash', array($this, "unthrash_comment"));
 
-		//add_action('wp_ajax_upfront-comments-spam', array($this, "spam_comment"));
 		upfront_add_ajax('upfront-comments-spam', array($this, "spam_comment"));
 
-		//add_action('wp_ajax_upfront-comments-unspam', array($this, "unthrash_comment"));
 		upfront_add_ajax('upfront-comments-unspam', array($this, "unthrash_comment"));
 
-		//add_action('wp_ajax_upfront-comments-reply_to', array($this, "post_comment"));
 		upfront_add_ajax('upfront-comments-reply_to', array($this, "post_comment"));
 
-		//add_action('wp_ajax_upfront-comments-update_comment', array($this, "update_comment"));
 		upfront_add_ajax('upfront-comments-update_comment', array($this, "update_comment"));
 
-		//add_action('wp_ajax_upfront-wp-model', array($this, "handle_model_request"));
 		upfront_add_ajax('upfront-wp-model', array($this, "handle_model_request"));
 	}
 
 	function handle_model_request(){
 		$data = stripslashes_deep($_POST);
 		$action = $data['model_action'];
+
+		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) $this->_reject();
 
 		if(!method_exists($this, $action))
 			$this->_out(new Upfront_JsonResponse_Error($action . ' not implemented.'));
@@ -989,7 +901,6 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		return $post;
 	}
 }
-//Upfront_Editor_Ajax::serve();
 add_action('init', array('Upfront_Editor_Ajax', 'serve'));
 
 
@@ -1048,101 +959,4 @@ class Upfront_ElementDependencies_VirtualPage extends Upfront_VirtualPage {
 	public function render ($request) { die; }
 
 }
-//Upfront_ElementDependencies_VirtualPage::serve();
 add_action('init', array('Upfront_ElementDependencies_VirtualPage', 'serve'));
-
-if (!(defined('UF_THX_TMP_SWITCH') && UF_THX_TMP_SWITCH)) {
-/**
- * Create new endpoint
- */
-class Upfront_CreateNew_Theme_VirtualSubpage extends Upfront_VirtualSubpage {
-
-	public function get_slug () { return 'theme'; }
-
-	public function parse ($request) {
-		upfront_switch_stylesheet('upfront');
-		add_filter('upfront-storage-key', array($this, 'storage_key_filter'));
-		add_filter('upfront-data-storage-key', array($this, 'storage_key_filter'));
-		add_filter('upfront-enable-dev-saving', '__return_false');
-		query_posts('');
-	}
-
-	public function render ($request) {
-		$this->parse($request);
-		add_action('wp_footer', array($this, 'start_editor'), 999);
-		load_template(get_home_template());
-		die;
-	}
-
-	public function get_title () {
-		return 'Create New Theme';
-	}
-
-	public function storage_key_filter ($key) {
-		return $key . '_new';
-	}
-
-	public function template_filter () {
-		return 'upfront';
-	}
-
-	public function stylesheet_filter () {
-		return 'upfront';
-	}
-
-	public function start_editor () {
-		echo upfront_boot_editor_trigger('theme');
-	}
-}
-
-class Upfront_Builder_VirtualSubpage extends Upfront_CreateNew_Theme_VirtualSubpage {
-	public function __construct($stylesheet) {
-		$this->slug = $stylesheet;
-		$this->stylesheet = $stylesheet;
-		$this->storage_key = $stylesheet;
-	}
-	public function get_slug () {
-		return $this->slug;
- 	}
-	public function parse ($request) {
-		upfront_switch_stylesheet($this->stylesheet);
-		add_filter('upfront-storage-key', array($this, 'storage_key_filter'));
-		add_filter('upfront-data-storage-key', array($this, 'storage_key_filter'));
-		add_filter('upfront-enable-dev-saving', '__return_false');
-		query_posts('');
-	}
-	public function storage_key_filter ($key) {
-		return $this->storage_key;
-	}
-
-}
-
-class Upfront_CreateNew_VirtualPage extends Upfront_VirtualPage {
-	public static function serve () {
-		$me = new self;
-		$me->_add_hooks();
-	}
-
-	protected function _add_subpages () {
-		$subpages = array(
-			new Upfront_CreateNew_Theme_VirtualSubpage(),
-		);
-
-		// Add all Upfront child themes
-		// TODO add grandchild themes
-		foreach(wp_get_themes() as $stylesheet=>$theme) {
-			if ($theme->get('Template') !== 'upfront') continue;
-			$subpages[] =  new Upfront_Builder_VirtualSubpage($stylesheet);
-		}
-		$this->_subpages = $subpages;
-	}
-
-	public function get_slug () { return 'create_new'; }
-
-	public function parse ($request) { }
-	public function render ($request) { die; }
-
-}
-//Upfront_CreateNew_VirtualPage::serve();
-add_action('init', array('Upfront_CreateNew_VirtualPage', 'serve'));
-}

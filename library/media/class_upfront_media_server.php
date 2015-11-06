@@ -107,6 +107,9 @@ class Upfront_MediaServer extends Upfront_Server {
 			'media_labels' => __('Media Labels', 'upfront'),
 			'media_label' => __('Media Label', 'upfront'),
 			'disabled' => __('This functionality has been disabled', 'upfront'),
+			'insert_options' => __('Insert Options', 'upfront'),
+			'image_inserts' => __('Image Inserts', 'upfront'),
+			'wp_default' => __('WP Default', 'upfront'),
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)
@@ -297,7 +300,6 @@ class Upfront_MediaServer extends Upfront_Server {
 	}
 
 	public function embed_media () {
-		//if (!Upfront_Permissions::current(Upfront_Permissions::EMBED)) $this->_out(new Upfront_JsonResponse_Error("Nope, bye"));
 		if (!$this->_check_valid_request_level(Upfront_Permissions::EMBED)) $this->_out(new Upfront_JsonResponse_Error("You can't do this."));
 		$data = stripslashes_deep($_POST);
 		$media = !empty($data['media']) ? $data['media'] : false;
@@ -418,7 +420,15 @@ class Upfront_MediaServer extends Upfront_Server {
 		$dirPath = trailingslashit(trailingslashit(get_stylesheet_directory()) . $relpath);
 		$dirUrl = trailingslashit(get_stylesheet_directory_uri()) . trailingslashit($relpath);
 
-		move_uploaded_file($file["tmp_name"], $dirPath . $filename);
+		$destination = $dirPath . $filename;
+		move_uploaded_file($file["tmp_name"], $destination);
+		if (!preg_match('/\.svg$/i', $filename)) {
+			$data = getimagesize($destination);
+			if (empty($data['mime']) || !preg_match('/^image\//i', $data['mime'])) {
+				@unlink($destination);
+				$this->_out(new Upfront_JsonResponse_Error("Not an image"));
+			}
+		}
 
 		$this->_out(new Upfront_JsonResponse_Success(array(
 			'ID' => rand(1111,9999), //Whatever high number is ok
@@ -527,17 +537,12 @@ class Upfront_MediaServer extends Upfront_Server {
 		return Upfront_Permissions::is_nonce($level, $ref);
 	}
 }
-//Upfront_MediaServer::serve();
 add_action('init', array('Upfront_MediaServer', 'serve'));
 
 function upfront_media_file_upload () {
 	if (!Upfront_Permissions::current(Upfront_Permissions::UPLOAD)) return false; // Do not inject for users that can't use this
 	$base_url = Upfront::get_root_url();
 
-/*
-	wp_enqueue_script('fileupload', "{$base_url}/scripts/file_upload/jquery.fileupload.js", array('jquery'));
-	wp_enqueue_script('fileupload-iframe', "{$base_url}/scripts/file_upload/jquery.iframe-transport.js", array('fileupload'));
-*/
 	$deps = Upfront_CoreDependencies_Registry::get_instance();
 	$deps->add_script("{$base_url}/scripts/file_upload/jquery.fileupload.js");
 	$deps->add_script("{$base_url}/scripts/file_upload/jquery.iframe-transport.js");

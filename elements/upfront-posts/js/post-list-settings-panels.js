@@ -375,7 +375,8 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 			label: l10n.term,
 			compact: true,
 			property: "term",
-			values: terms
+			values: terms,
+			default_value: this.model.get_property_value_by_name('term')
 		});
 		this.fields._wrapped[4] = field;
 		this.$el.empty();

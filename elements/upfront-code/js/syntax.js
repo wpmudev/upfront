@@ -59,8 +59,8 @@ var Checker_Html = _.extend({}, Checker, {
 			$div = $("<div />")
 		;
 		$div.html(this._value);
-
-		if ($div.html() !== this._value) {
+		
+		if ($div.html().length != this._value.length) {
 			this._message = l10n.errors.error_markup;
 			ret = false;
 		}

@@ -214,7 +214,6 @@ define([
 				// Finally update breakpoints in model
 				properties.breakpoint = breakpointsData;
 			}
-
 			Util.updatePresetStyle(this.styleElementPrefix.replace(/-preset/, ''), properties, this.styleTpl);
 
 			this.debouncedSavePreset(properties);

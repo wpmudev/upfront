@@ -2,18 +2,16 @@
 .uf-button {
 	display: inline-block;
 	background: rgb(255, 255, 255);
-	padding: 5px 20px 0 20px;
-	color: rgb(66, 127, 237);
-	font-size: 16px;
-	font-family: "Helvetica";
+	color: rgb(0, 0, 0);
+	font-size: 14px;
+	font-family: "Arial";
 	height: 40px;
-	line-height: 24px;
+	line-height: 1.3;
 	cursor: pointer;
 	border: 4px solid rgb(66, 127, 237);
-	border-radius: 100px 100px 100px 100px;
 	transition: all 0.25 linear;
 }
 .uf-button:hover {
-	background: rgb(66, 127, 237);
+	background: rgb(0, 0, 0);
 	color: rgb(255, 255, 255);
 }

@@ -10,7 +10,6 @@ class Upfront_Button_Presets_Server extends Upfront_Presets_Server {
 
 		$this->update_preset_values();
 	}
-
 	public function get_element_name() {
 		return 'button';
 	}

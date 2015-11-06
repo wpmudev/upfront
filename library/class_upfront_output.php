@@ -663,6 +663,12 @@ class Upfront_Layout_View extends Upfront_Container {
 		}
 		return $css;
 	}
+	
+	protected function _is_background_overlay ($breakpoint_id = '') {
+		$type = $this->get_background_type($breakpoint_id);
+		if ( !$type || 'color' == $type ) return false;
+		return true;
+	}
 
 }
 

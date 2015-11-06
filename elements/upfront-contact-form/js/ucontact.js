@@ -212,6 +212,8 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 		args.show_captcha = args.show_captcha && args.show_captcha.length;
 		args.form_add_title = args.form_add_title && args.form_add_title.length;
 
+		args.l10n = l10n.template;
+
 		return this.tpl(args);
 	},
 	/**
