@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Upfront 0.4.1\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/support/theme/style\n"
-"POT-Creation-Date: 2015-11-06 02:28:06+00:00\n"
+"POT-Creation-Date: 2015-11-06 10:38:42+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -214,8 +214,8 @@ msgstr ""
 #: elements/upfront-tabs/lib/utabs.php:142 functions.php:91
 #: library/servers/class_upfront_editor_l10n_server.php:145
 #: library/servers/class_upfront_editor_l10n_server.php:408
-#: library/servers/class_upfront_presets_server.php:313
-#: library/servers/class_upfront_presets_server.php:324
+#: library/servers/class_upfront_presets_server.php:319
+#: library/servers/class_upfront_presets_server.php:330
 msgid "Default"
 msgstr ""
 
@@ -306,7 +306,7 @@ msgstr ""
 #: elements/upfront-newnavigation/lib/unewnavigation.php:186
 #: elements/upfront-text/lib/upfront_text.php:97
 #: library/servers/class_upfront_editor_l10n_server.php:383
-#: library/servers/class_upfront_presets_server.php:333
+#: library/servers/class_upfront_presets_server.php:339
 msgid "Typography"
 msgstr ""
 
@@ -316,8 +316,8 @@ msgstr ""
 
 #: elements/upfront-button/lib/upfront_button.php:118
 #: elements/upfront-text/lib/upfront_text.php:72
-#: library/servers/class_upfront_presets_server.php:315
-#: library/servers/class_upfront_presets_server.php:325
+#: library/servers/class_upfront_presets_server.php:321
+#: library/servers/class_upfront_presets_server.php:331
 msgid "Border"
 msgstr ""
 
@@ -329,32 +329,32 @@ msgstr ""
 #: elements/upfront-text/lib/upfront_text.php:73
 #: library/media/class_upfront_media_server.php:55
 #: library/servers/class_upfront_editor_l10n_server.php:317
-#: library/servers/class_upfront_presets_server.php:316
+#: library/servers/class_upfront_presets_server.php:322
 msgid "None"
 msgstr ""
 
 #: elements/upfront-button/lib/upfront_button.php:120
 #: elements/upfront-text/lib/upfront_text.php:74
-#: library/servers/class_upfront_presets_server.php:317
+#: library/servers/class_upfront_presets_server.php:323
 msgid "Solid"
 msgstr ""
 
 #: elements/upfront-button/lib/upfront_button.php:121
 #: elements/upfront-text/lib/upfront_text.php:75
-#: library/servers/class_upfront_presets_server.php:318
+#: library/servers/class_upfront_presets_server.php:324
 msgid "Dashed"
 msgstr ""
 
 #: elements/upfront-button/lib/upfront_button.php:122
 #: elements/upfront-text/lib/upfront_text.php:76
-#: library/servers/class_upfront_presets_server.php:319
+#: library/servers/class_upfront_presets_server.php:325
 msgid "Dotted"
 msgstr ""
 
 #: elements/upfront-button/lib/upfront_button.php:123
 #: elements/upfront-text/lib/upfront_text.php:77
 #: library/servers/class_upfront_editor_l10n_server.php:505
-#: library/servers/class_upfront_presets_server.php:320
+#: library/servers/class_upfront_presets_server.php:326
 msgid "Width"
 msgstr ""
 
@@ -362,21 +362,21 @@ msgstr ""
 #: elements/upfront-text/lib/upfront_text.php:78
 #: library/servers/class_upfront_editor_l10n_server.php:231
 #: library/servers/class_upfront_editor_l10n_server.php:379
-#: library/servers/class_upfront_presets_server.php:321
+#: library/servers/class_upfront_presets_server.php:327
 msgid "Color"
 msgstr ""
 
 #: elements/upfront-button/lib/upfront_button.php:125
 #: elements/upfront-text/lib/upfront_text.php:79
 #: library/servers/class_upfront_editor_l10n_server.php:528
-#: library/servers/class_upfront_presets_server.php:322
+#: library/servers/class_upfront_presets_server.php:328
 msgid "Background Color"
 msgstr ""
 
 #: elements/upfront-button/lib/upfront_button.php:126
 #: elements/upfront-text/lib/upfront_text.php:80
 #: elements/upfront-youtube/lib/uyoutube.php:136
-#: library/servers/class_upfront_presets_server.php:323
+#: library/servers/class_upfront_presets_server.php:329
 msgid "Edit Text"
 msgstr ""
 
@@ -1393,7 +1393,7 @@ msgstr ""
 
 #: elements/upfront-gallery/lib/ugallery.php:418
 #: library/servers/class_upfront_editor_l10n_server.php:400
-#: library/servers/class_upfront_presets_server.php:310
+#: library/servers/class_upfront_presets_server.php:316
 msgid "Add"
 msgstr ""
 
@@ -2247,7 +2247,7 @@ msgstr ""
 #: elements/upfront-newnavigation/lib/unewnavigation.php:159
 #: library/media/class_upfront_media_server.php:57
 #: library/servers/class_upfront_editor_l10n_server.php:336
-#: library/servers/class_upfront_presets_server.php:309
+#: library/servers/class_upfront_presets_server.php:315
 msgid "Delete"
 msgstr ""
 
@@ -4995,7 +4995,7 @@ msgid "Edit Element CSS"
 msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:311
-#: library/servers/class_upfront_presets_server.php:342
+#: library/servers/class_upfront_presets_server.php:348
 msgid "Custom CSS"
 msgstr ""
 
@@ -5174,7 +5174,7 @@ msgid "Select fonts to use"
 msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:364
-#: library/servers/class_upfront_presets_server.php:327
+#: library/servers/class_upfront_presets_server.php:333
 msgid "Type Element:"
 msgstr ""
 
@@ -6069,79 +6069,79 @@ msgstr ""
 msgid "Please, select an area"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:307
+#: library/servers/class_upfront_presets_server.php:313
 msgid "Select Preset"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:308
+#: library/servers/class_upfront_presets_server.php:314
 msgid "Choose or Create Preset:"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:311
+#: library/servers/class_upfront_presets_server.php:317
 msgid "Preset name can not be empty."
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:312
+#: library/servers/class_upfront_presets_server.php:318
 msgid "Preset name can contain only numbers, letters and spaces."
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:314
+#: library/servers/class_upfront_presets_server.php:320
 msgid "Add Preset"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:326
+#: library/servers/class_upfront_presets_server.php:332
 msgid "px"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:328
+#: library/servers/class_upfront_presets_server.php:334
 msgid "Typeface:"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:329
+#: library/servers/class_upfront_presets_server.php:335
 msgid "Weight/Style:"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:330
+#: library/servers/class_upfront_presets_server.php:336
 msgid "Size:"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:331
+#: library/servers/class_upfront_presets_server.php:337
 msgid "Line Height: "
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:332
+#: library/servers/class_upfront_presets_server.php:338
 msgid "Round Corners"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:334
+#: library/servers/class_upfront_presets_server.php:340
 msgid "Animate State Changes"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:335
+#: library/servers/class_upfront_presets_server.php:341
 msgid "sec"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:336
+#: library/servers/class_upfront_presets_server.php:342
 msgid "ease"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:337
+#: library/servers/class_upfront_presets_server.php:343
 msgid "linear"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:338
+#: library/servers/class_upfront_presets_server.php:344
 msgid "ease-in"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:339
+#: library/servers/class_upfront_presets_server.php:345
 msgid "ease-out"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:340
+#: library/servers/class_upfront_presets_server.php:346
 msgid "ease-in-out"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:341
+#: library/servers/class_upfront_presets_server.php:347
 msgid "Edit Preset CSS"
 msgstr ""
 
