@@ -1129,7 +1129,7 @@ div.uimage-controls i.upfront-icon:before {
 
 .upfront-image-caption-container {
 	position: relative;
-	display: block;
+	display: inline-block;
 	box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
