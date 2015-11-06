@@ -201,6 +201,8 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			include $this->get_style_template_path();
 			$styles .= ob_get_clean();
 		}
+		
+		$styles = stripslashes($styles);
 
 		return $styles;
 	}
