@@ -175,17 +175,9 @@ background-position: -699px -646px;
 	margin-bottom: 15px;
 }
 
-.uslider-starting-options  label {
-	font-family: verdana;
-	font-size: 11px;
-}
-
-.uslider-starting-options  .upfront-field-multiple{
-	margin: 0 5px;
-}
-
 .uslider-starting-centered {
 	margin: 15px;
+	padding-top: 10%;
 }
 
 .uslider-starting-centered .upfront-image-select{

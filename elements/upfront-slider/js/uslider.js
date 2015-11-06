@@ -59,8 +59,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		this.events = _.extend({}, this.events, {
 			'click .upfront-image-select': 'firstImageSelection',
 			'click .upfront-icon-next': 'nextSlide',
-			'click .upfront-icon-prev': 'prevSlide',
-			'click .uslider-starting-options': 'checkStartingInputClick'
+			'click .upfront-icon-prev': 'prevSlide'
 		});
 
 		this.model.slideCollection = new Uslider_Slides(this.property('slides'));
@@ -405,10 +404,6 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			this.onSlidesCollectionChange();
 		}
 
-	},
-	checkStartingInputClick: function(e){
-		//Hack to make the radio buttons work in the starting layout
-		e.stopPropagation(); //This is not a good practice
 	},
 	firstImageSelection: function(e){
 		e.preventDefault();
