@@ -113,7 +113,7 @@ define([
 				panelTitle: l10n.settings,
 				presetDefaults: {
 					'static-field-bg': 'rgb(255,255,255)',
-					'static-button-bg': 'rgb(0,0,0)',
+					'static-button-bg': 'rgb(17,210,85)',
 					'static-font-size': 14,
 					'static-font-family': 'Arial',
 					'static-font-color': 'rgb(96, 96, 96)',
