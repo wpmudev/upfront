@@ -3137,7 +3137,7 @@ var GridEditor = {
 				drop_change = function () {
 					Upfront.Events.trigger("entity:drag:drop_change", view, view.model);
 				},
-				$insert_rel = drop.type == 'inside' ? drop.insert[1].parent() : drop.insert[1],
+				$insert_rel = ( drop.type == 'inside' && !drop.insert[1].hasClass('upfront-module-group') ) ? drop.insert[1].parent() : drop.insert[1],
 				insert_order = drop.insert[1].data('breakpoint_order') || 0,
 				ani_width = me.width,
 				ani_height = me.height;
