@@ -231,7 +231,11 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 	public function get_theme_preset_by_id($preset) {
 		$theme_presets = $this->get_theme_presets();
-
+		
+		if(empty($theme_preset)) {
+			return false;
+		}
+		
 		foreach($theme_presets as $tpreset) {
 			if($tpreset['id'] == $preset) {
 				return $tpreset;
