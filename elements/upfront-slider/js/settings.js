@@ -13,7 +13,7 @@ define([
 		panelTitle: l10n.settings,
 		presetDefaults: {
 			'primaryStyle': 'notext',
-			'captionBackground': 'rgb(222, 222, 222)',
+			'captionBackground': 'rgb(255, 255, 255, 0.8)',
 			'id': 'default',
 			'name': l10n.default_preset
 		},
@@ -73,6 +73,7 @@ define([
 						layout: 'horizontal-inline',
 						className: 'rotate',
 						multiple: true,
+						default_value: 0,
 						values: [ { label: l10n.rotate_every, value: 'true' } ],
 						change: function(value, parent) {
 							if(value[0] === 'true') {
@@ -98,6 +99,7 @@ define([
 						layout: 'horizontal-inline',
 						icon_class: 'upfront-region-field-icon',
 						className: 'uslider-transition-setting rotate-effect',
+						default_value: 'crossfade',
 						values: [
 							{ label: l10n.slide_down, value: 'slide-down', icon: 'bg-slider-slide-down' },
 							{ label: l10n.slide_up, value: 'slide-up', icon: 'bg-slider-slide-up' },
@@ -118,6 +120,7 @@ define([
 						label: l10n.slider_controls_style,
 						className: 'slider-contrls-style',
 						property: 'controls',
+						default_value: 'arrows',
 						values: [
 							{label: l10n.dots, value: 'dots'},
 							{label: l10n.arrows, value: 'arrows'},
@@ -128,6 +131,7 @@ define([
 						type: 'Radios',
 						property: 'controlsWhen',
 						layout: 'horizontal-inline',
+						default_value: 'hover',
 						className: 'uslider-controlswhen-setting upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios',
 						values: [
 							{ label: l10n.on_hover, value: 'hover' },

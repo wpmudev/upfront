@@ -269,18 +269,23 @@ define([
 				data: preset.toJSON(),
 				action: 'upfront_reset_' + this.ajaxActionSlug + '_preset'
 			}).success(function (ret) {
+				var resetPreset = ret.data;
+				if(_.isEmpty(ret.data) || ret.data === false) {
+					resetPreset = me.getPresetDefaults('default');
+				}
+
 				//Update preset CSS with reset properties
-				Util.updatePresetStyle(me.styleElementPrefix.replace(/-preset/, ''), ret.data, me.styleTpl);
+				Util.updatePresetStyle(me.styleElementPrefix.replace(/-preset/, ''), resetPreset, me.styleTpl);
 
 				_.each(Upfront.mainData[me.mainDataCollection], function(preset, presetIndex) {
-					if (preset.id === ret.data.id) {
+					if (preset.id === resetPreset.id) {
 						index = presetIndex;
 					}
 				});
 				if (_.isUndefined(index) === false) {
 					Upfront.mainData[me.mainDataCollection].splice(index, 1);
 				}
-				Upfront.mainData[me.mainDataCollection].push(ret.data);
+				Upfront.mainData[me.mainDataCollection].push(resetPreset);
 
 				me.presets = new Backbone.Collection(Upfront.mainData[me.mainDataCollection] || []);
 

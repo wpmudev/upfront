@@ -59,8 +59,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		this.events = _.extend({}, this.events, {
 			'click .upfront-image-select': 'firstImageSelection',
 			'click .upfront-icon-next': 'nextSlide',
-			'click .upfront-icon-prev': 'prevSlide',
-			'click .uslider-starting-options': 'checkStartingInputClick'
+			'click .upfront-icon-prev': 'prevSlide'
 		});
 
 		this.model.slideCollection = new Uslider_Slides(this.property('slides'));
@@ -405,10 +404,6 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			this.onSlidesCollectionChange();
 		}
 
-	},
-	checkStartingInputClick: function(e){
-		//Hack to make the radio buttons work in the starting layout
-		e.stopPropagation(); //This is not a good practice
 	},
 	firstImageSelection: function(e){
 		e.preventDefault();
@@ -799,7 +794,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	},
 
 	calculateColumnWidth: function(){
-		return (this.colWidth = this.get_element_max_columns_px() / this.get_element_max_columns());
+		return (this.colWidth = Upfront.Behaviors.GridEditor.col_size);
 	},
 
 	onElementResize: function(e, ui){
@@ -820,7 +815,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			text = style == 'below' ? this.$('.uslide-caption') : [],
 			textHeight = text.length ? text.outerHeight() : 0,
 			newElementSize = {width: resizer.outerWidth() - 30, height: resizer.outerHeight() - 30 - textHeight},
-			elementColumns = this.get_element_columns(),
+			elementColumns = Upfront.Util.width_to_col(resizer.outerWidth()),
 			imageColumns = Math.max(3, Math.round(this.property('rightImageWidth') * elementColumns / this.property('rightWidth'))),
 			sideImageWidth = imageColumns * this.calculateColumnWidth()
 		;

@@ -24,6 +24,7 @@ define([
 						property: 'thumbProportions',
 						label: l10n.thumb.ratio,
 						layout: 'vertical',
+						default_value: '1',
 						values: [
 							{
 								label: l10n.thumb.theme,
@@ -66,7 +67,9 @@ define([
 						max: 250,
 						step: 5,
 						label: l10n.thumb.size,
-						change: function(value, me) {
+						default_value: 150,
+						change: function(value, me)
+						{
 							var f = me.settings._wrapped[1].fields._wrapped[1];
 							f.get_field().val(value);
 							debouncedUpdateFromSlider(me.model, 'thumbWidth', value, 'change:thumbWidth');
@@ -111,7 +114,7 @@ define([
 						className: 'gallery-padding-lock',
 						property: 'lockPadding',
 						label: "",
-						default_value: 0,
+						default_value: 1,
 						multiple: false,
 						values: [
 							{ label: '', value: 'yes' }
@@ -146,6 +149,7 @@ define([
 						max: 50,
 						step: 1,
 						label: l10n.thumb.spacing,
+						default_value: 15,
 						valueTextFilter: function(value){
 							return value + 'px';
 						},
@@ -160,7 +164,7 @@ define([
 						type: 'Number',
 						className: 'thumb-padding-number',
 						property: 'thumbPaddingNumber',
-						default_value: 0,
+						default_value: 15,
 						change: function(value, me) {
 							//Update slider value
 							var s = me.settings._wrapped[2].fields._wrapped[1];
