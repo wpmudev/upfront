@@ -799,7 +799,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	},
 
 	calculateColumnWidth: function(){
-		return (this.colWidth = this.get_element_max_columns_px() / this.get_element_max_columns());
+		return (this.colWidth = Upfront.Behaviors.GridEditor.col_size);
 	},
 
 	onElementResize: function(e, ui){
@@ -820,7 +820,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			text = style == 'below' ? this.$('.uslide-caption') : [],
 			textHeight = text.length ? text.outerHeight() : 0,
 			newElementSize = {width: resizer.outerWidth() - 30, height: resizer.outerHeight() - 30 - textHeight},
-			elementColumns = this.get_element_columns(),
+			elementColumns = Upfront.Util.width_to_col(resizer.outerWidth()),
 			imageColumns = Math.max(3, Math.round(this.property('rightImageWidth') * elementColumns / this.property('rightWidth'))),
 			sideImageWidth = imageColumns * this.calculateColumnWidth()
 		;
