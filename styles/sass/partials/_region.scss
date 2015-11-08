@@ -377,9 +377,15 @@
 .upfront-region-editing .upfront-region-container-active .upfront-region-sub-container-active {
     z-index: 9999;
 }
+
 .upfront-region-editing-modal {
 	z-index: 999999999;
 }
+
+.upfront-region-sub-container-top {
+	z-index:13;
+}
+
 .upfront-region-editing-modal .upfront-entity_meta{
 	display: none !important;
 }
