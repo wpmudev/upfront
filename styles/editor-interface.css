@@ -2609,6 +2609,9 @@ div.uinsert-selector a:hover {
 .upfront-region-editing-modal {
   z-index: 999999999; }
 
+.upfront-region-sub-container-top {
+  z-index: 13; }
+
 .upfront-region-editing-modal .upfront-entity_meta {
   display: none !important; }
 
