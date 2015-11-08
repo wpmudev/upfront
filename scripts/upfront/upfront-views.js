@@ -1503,8 +1503,6 @@ define([
 				var $el = this.$el.find('.upfront-editable_entity:first');
 				if ( prevent_edit && prevent_button )
 					$el.addClass('upfront-module-disabled-all');
-				console.log(prevent_edit);
-				console.log($el);
 				if ( prevent_edit )
 					$el.addClass('upfront-module-disabled-edit');
 				if ( prevent_button )
