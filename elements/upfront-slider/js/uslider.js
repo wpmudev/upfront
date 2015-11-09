@@ -611,8 +611,6 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
     	panelItems.push(this.createLinkControl(slide));
 
-		if(_.indexOf(['notext', 'onlytext'], primaryStyle) == -1)
-			panelItems.push(captionControl);
 		panelItems.push(this.createControl('remove', l10n.remove_slide, 'onRemoveSlide'));
 
 		panel.items = _(panelItems);
