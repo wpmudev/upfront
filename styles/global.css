@@ -154,7 +154,7 @@ h2, h3 { page-break-after: avoid; }
 }
 .upfront-output-module-group {
     position: relative;
-    z-index: 0;
+    z-index: 1;
 }
 .upfront-output-module-group > .upfront-module-group-bg {
     position: absolute;
