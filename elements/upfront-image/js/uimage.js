@@ -457,6 +457,7 @@ define([
 
 				if(newElementSize) {
 					elementSize = newElementSize;
+					size = this.temporaryProps.size;
 				}
 
 				// Let's load the full image to improve resizing
@@ -486,9 +487,8 @@ define([
 			return rendered;
 		},
 
-		update_style: function() {
-			var elementSize = this.property('element_size'),
-				$container = this.$el.find('.upfront-image-container'),
+		getElementShapeSize: function (elementSize) {
+			var $container = this.$el.find('.upfront-image-container'),
 				props = this.get_preset_properties(),
 				newSize = {};
 
@@ -503,8 +503,6 @@ define([
 					newSize.defaultHeight = elementSize.defaultHeight;
 				}
 
-				this.property('element_size', newSize);
-
 				return newSize;
 			} else {
 				if (elementSize.defaultHeight) {
@@ -512,9 +510,26 @@ define([
 						width: elementSize.width,
 						height: elementSize.defaultHeight
 					};
-					this.property('element_size', newSize);
 					return newSize;
 				}
+			}
+
+			return false;
+		},
+
+		update_style: function() {
+			var elementSize = this.property('element_size'),
+				newSize = this.getElementShapeSize(elementSize)
+			;
+
+			if ( false !== newSize ) {
+				if ( elementSize.width != newSize.width || elementSize.height != newSize.height ) {
+					if ( ! this.resizeImage(newSize) ) {
+						// Can't resize? At least set the element_size
+						this.property('element_size', newSize);
+					}
+				}
+				return newSize;
 			}
 
 			return false;
@@ -792,13 +807,18 @@ define([
 				img = resizingData.img,
 				captionHeight = this.property('caption_position') === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
 				padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding),
-				ratio;
+				ratio,
+				newSize;
 
 			if(!resizer){
 				resizer = $('html').find('.upfront-resize');
 				resizingData.resizer = resizer;
 			}
 			data.elementSize = {width: resizer.width() - (2 * padding), height: resizer.height() - (2 * padding) - captionHeight};
+			newSize = this.getElementShapeSize(data.elementSize);
+			if ( false !== newSize ) {
+				data.elementSize = newSize;
+			}
 
 			this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
 					width: data.elementSize.width,
@@ -1059,6 +1079,62 @@ define([
 					Upfront.Util.post(saveData);
 				});
 			}
+		},
+
+		resizeImage: function (size) {
+			var img = this.$('img'),
+				data,
+				imgSize,
+				imgPosition
+			;
+
+			if ( img.length > 0 ) {
+				data = {
+					position: this.property('position'),
+					size: this.property('size'),
+					stretch: this.property('stretch'),
+					vstretch: this.property('vstretch'),
+					elementSize: size
+				};
+
+				if(data.stretch && !data.vstretch){
+					this.resizingH(img, data, true);
+					this.resizingV(img, data);
+				} else if(!data.stretch && data.vstretch){
+					this.resizingV(img, data, true);
+					this.resizingH(img, data);
+				} else {
+					//Both stretching or not stretching, calculate ratio difference
+					ratio = data.size.width / data.size.height - data.elementSize.width / data.elementSize.height;
+
+					//Depending on the difference of ratio, the resizing is made horizontally or vertically
+					if(ratio > 0 && data.stretch || ratio < 0 && ! data.stretch){
+						this.resizingV(img, data, true);
+						this.resizingH(img, data);
+					}
+					else {
+						this.resizingH(img, data, true);
+						this.resizingV(img, data);
+					}
+				}
+
+				imgSize = {width: img.width(), height: img.height()};
+				imgPosition = img.position();
+
+				// Change the sign
+				imgPosition.top = -imgPosition.top;
+				imgPosition.left = -imgPosition.left;
+
+				this.temporaryProps = {
+					size: imgSize,
+					position: imgPosition
+				};
+				console.log(img, imgSize, imgPosition, data);
+				this.property('element_size', size);
+				this.saveTemporaryResizing();
+				return true;
+			}
+			return false;
 		},
 
 		setElementSize: function(ui) {
