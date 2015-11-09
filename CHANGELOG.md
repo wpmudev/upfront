@@ -1,6 +1,17 @@
 Change Log
 ============
 
+0.4.1.1 - 2015-11-09
+-------------------------------------------------------------------------------
+- Fix: image links issues.
+- Fix: button in group is opening url instead of edit text.
+- Fix: syntax checks in code elements.
+- Fix: parallax refresh error when rapidly change background style.
+- Fix: parallax affects full width background.
+- Fix: module group output z-index.
+- Fix: enable region resizing after adding region.
+- Add: content type macro to content expansion in posts element.
+
 0.4.1 - 2015-10-26
 -------------------------------------------------------------------------------
 - Fix: redactor issue with icons in editor vs live.
