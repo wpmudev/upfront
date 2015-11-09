@@ -1371,7 +1371,7 @@ RedactorPlugins.upfrontColor = function() {
                     html = this.redactor.selection.getHtml();
 
                 //if( html.replace(/(\r\n|\n|\r)/gm,"").trim() === $(current).html().replace(/(\r\n|\n|\r)/gm,"").trim() && !_.isEmpty( current.style.color ) ){
-                    this.redactor.inline.removeFormat("color");
+                    this.redactor.inline.remboldoveFormat("color");
                 //}else{
                 //}
                 $(this.redactor.selection.getCurrent()).find("font").each(function(){
