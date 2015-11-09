@@ -19,16 +19,17 @@
 	min-height: 200px;
 }
 
-.upfront-css-top{
+.upfront-css-top.ui-resizable-handle.ui-resizable-n {
 	border-bottom: 1px solid #26333F;
 	border-top: 1px solid #26333F;
 	color: #dae6f2;
 	font-size: 14px;
-	height:34px;
+	height: 34px;
 	position: static;
+	background-color: #4E677F;
 }
 
-.upfront-css-ace{
+.upfront-css-ace {
 	height: 100%;
 	width: 75%;
 	float: left;
