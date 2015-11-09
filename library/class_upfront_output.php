@@ -237,7 +237,17 @@ abstract class Upfront_Entity {
 	protected function _get_property ($prop) {
 		return upfront_get_property_value($prop, $this->_data);
 	}
-	
+
+	/**
+	 * Retrieves translated property
+	 *
+	 * @param $prop
+	 * @return string|void
+	 */
+	protected function _get_property_t($prop) {
+		return __($this->_get_property( $prop ), "upfront");
+	}
+
 	protected function _get_breakpoint_property ($prop, $id) {
 		$breakpoint = $this->_get_property('breakpoint');
 		if ( !empty($breakpoint[$id]) && isset($breakpoint[$id][$prop]) )

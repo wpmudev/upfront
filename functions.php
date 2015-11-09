@@ -52,6 +52,7 @@ class Upfront {
 		$me = new self;
 		$me->_add_hooks();
 		$me->_add_supports();
+
 	}
 
 	private function _add_hooks () {
@@ -66,12 +67,14 @@ class Upfront {
 			require_once(dirname(__FILE__) . '/library/servers/class_upfront_admin.php');
 			if (class_exists('Upfront_Server_Admin')) Upfront_Server_Admin::serve();
 		}
-		
-		$this->_load_textdomain();
+
+
+
 	}
 	
-	private function _load_textdomain () {
+	function load_textdomain () {
 		$path = untrailingslashit(self::get_root_dir()) . '/languages';
+
 		load_theme_textdomain('upfront', $path);
 		
 		// Now let's try the child theme...
@@ -83,6 +86,7 @@ class Upfront {
 		if (!empty($child_domain) && 'upfront' !== $child_domain) {
 			load_child_theme_textdomain($child_domain, get_stylesheet_directory() . '/languages');
 		}
+
 	}
 
 	private function _add_supports () {
@@ -304,6 +308,7 @@ EOAdditivemarkup;
 
 }
 add_action('init', array('Upfront', 'serve'), 0);
+add_action('after_setup_theme', array('Upfront', "load_textdomain"));
 
 /**
  * filters wp caption atts to hide the caption in case show_caption is equal  to "0"
