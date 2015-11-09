@@ -2618,6 +2618,9 @@ div.uinsert-selector a:hover {
 .upfront-region-editing-modal {
   z-index: 999999999; }
 
+.upfront-region-sub-container-top {
+  z-index: 13; }
+
 .upfront-region-editing-modal .upfront-entity_meta {
   display: none !important; }
 
@@ -10958,13 +10961,14 @@ div.inline-number.plaintext-settings input {
   left: 0;
   min-height: 200px; }
 
-.upfront-css-top {
+.upfront-css-top.ui-resizable-handle.ui-resizable-n {
   border-bottom: 1px solid #26333F;
   border-top: 1px solid #26333F;
   color: #dae6f2;
   font-size: 14px;
   height: 34px;
-  position: static; }
+  position: static;
+  background-color: #4E677F; }
 
 .upfront-css-ace {
   height: 100%;
