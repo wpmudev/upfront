@@ -7049,7 +7049,7 @@ var CSSEditor = Backbone.View.extend({
 		// Save the fetching inside the resize
 		var me = this,
 			$cssbody = me.$('.upfront-css-body'),
-			topHeight = me.$('.upfront-css-top').outerHeight(),
+			topHeight = 0,
 			$selectors = me.$('.upfront-css-selectors'),
 			$saveform = me.$('.upfront-css-save-form'),
 			$rsz = this.$('.upfront-css-resizable'),
@@ -7057,12 +7057,16 @@ var CSSEditor = Backbone.View.extend({
 				var height = ui ? ui.size.height : me.$('.upfront-css-resizable').height(),
 					bodyHeight = height  - topHeight;
 				$cssbody.height(bodyHeight);
-
-				$rsz.css('width', ''); // Do NOT do horizontal resize
-
 				if(me.editor)
 					me.editor.resize();
 				$selectors.outerHeight(bodyHeight - $saveform.outerHeight());
+				// Clean unneeded CSS
+				$rsz.css({
+					width: "",
+					height: "",
+					left: "",
+					top: ""
+				});
 				$('#page').css('padding-bottom', height);
 			}
 		;
@@ -7071,6 +7075,7 @@ var CSSEditor = Backbone.View.extend({
 			.removeClass("ui-resizable-handle").addClass("ui-resizable-handle")
 			.removeClass("ui-resizable-n").addClass("ui-resizable-n")
 		;
+		topHeight = me.$('.upfront-css-top').outerHeight();
 		onResize();
 		$rsz.resizable({
 			handles: {n: '.upfront-css-top'},

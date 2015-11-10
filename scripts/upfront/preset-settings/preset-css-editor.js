@@ -242,9 +242,10 @@ define([
 			// Save the fetching inside the resize
 			var me = this,
 				$cssbody = me.$('.upfront-css-body'),
-				topHeight = me.$('.upfront-css-top').outerHeight(),
+				topHeight = 0,
 				$selectors = me.$('.upfront-css-selectors'),
 				$saveform = me.$('.upfront-css-save-form'),
+				$rsz = this.$('.upfront-css-resizable'),
 				onResize = function(e, ui){
 					var height = ui ? ui.size.height : me.$('.upfront-css-resizable').height(),
 						bodyHeight = height  - topHeight;
@@ -252,11 +253,24 @@ define([
 					if(me.editor)
 						me.editor.resize();
 					$selectors.height(bodyHeight - $saveform.outerHeight());
+					// Clean unneeded CSS
+					$rsz.css({
+						width: "",
+						height: "",
+						left: "",
+						top: ""
+					});
 					$('#page').css('padding-bottom', height);
 				}
 			;
+			// Add appropriate handle classes
+			$rsz.find(".upfront-css-top")
+				.removeClass("ui-resizable-handle").addClass("ui-resizable-handle")
+				.removeClass("ui-resizable-n").addClass("ui-resizable-n")
+			;
+			topHeight = me.$('.upfront-css-top').outerHeight();
 			onResize();
-			this.$('.upfront-css-resizable').resizable({
+			$rsz.resizable({
 				handles: {n: '.upfront-css-top'},
 				resize: onResize,
 				minHeight: 200,
