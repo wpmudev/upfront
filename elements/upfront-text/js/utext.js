@@ -4,8 +4,9 @@
 		'elements/upfront-text/js/element',
 		'elements/upfront-text/js/settings',
 		'elements/upfront-text/js/menu',
-		'text!elements/upfront-text/tpl/utext.html'
-	], function(UtextModel, TextElement, TextSettings, TextMenu, textTpl) {
+		'text!elements/upfront-text/tpl/utext.html',
+		'scripts/upfront/preset-settings/util'
+	], function(UtextModel, TextElement, TextSettings, TextMenu, textTpl, PresetUtil) {
 
 		var l10n = Upfront.Settings.l10n.text_element;
 
@@ -49,9 +50,7 @@
 				}
 
 				var data = {
-					"content" : content,
-					"background_color" : this.model.get_property_value_by_name("background_color"),
-					"border" : this.model.get_property_value_by_name("border")
+					"content" : content
 				};
 				var rendered = '';
 				rendered = _.template(textTpl, data);
