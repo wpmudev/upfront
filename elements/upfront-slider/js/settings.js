@@ -112,6 +112,7 @@ define([
 			},
 			{
 				type: 'SettingsItem',
+				triggerChange: true,
 				title: l10n.slider_controls,
 				className: 'general_settings_item',
 				fields: [
