@@ -2,8 +2,9 @@
 
 define([
 	'text!elements/upfront-slider/tpls/uslider.html',
-	'text!elements/upfront-slider/tpls/backend.html'
-], function(sliderTpl, editorTpl){
+	'text!elements/upfront-slider/tpls/backend.html',
+	"scripts/upfront/link-model",
+], function(sliderTpl, editorTpl, LinkModel){
 
 var l10n = Upfront.Settings.l10n.slider_element;
 
@@ -297,7 +298,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 						// Trigger cleanup if possible
 						var ed = $(this).data('ueditor');
 						if (ed.redactor) ed.redactor.events.trigger('cleanUpListeners');
-						
+
 						me.render();
 					});
 				})
@@ -578,7 +579,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		}
 
 		panelItems.push(this.createControl('crop', l10n.edit_img, 'imageEditMask'));
-    	
+
     	panelItems.push(this.createLinkControl(slide));
 
 		if(_.indexOf(['notext', 'onlytext'], primaryStyle) == -1)
@@ -606,12 +607,24 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 	createLinkControl: function(slide) {
 		var me = this,
-			control = new Upfront.Views.Editor.InlinePanels.DialogControl();
+			control = new Upfront.Views.Editor.InlinePanels.DialogControl(),
+			link;
 
+		if (this.currentSlideLink) {
+			this.stopListening(this.currentSlideLink);
+		}
+
+		if (typeof slide.get('link') !== undefined) {
+			link = new LinkModel(slide.get('link'));
+		} else {
+			link = new LinkModel({
+				type: slide?slide.get('urlType'):'',
+				url: slide?slide.get('url'):'',
+				target: slide?slide.get('linkTarget'):''
+			});
+		}
 		control.view = linkPanel = new Upfront.Views.Editor.LinkPanel({
-			linkType: slide?slide.get('urlType'):'',
-			linkUrl: slide?slide.get('url'):'',
-			linkTarget: slide?slide.get('linkTarget'):'',
+			model: link,
 			linkTypes: { image: true },
 			imageUrl: slide?slide.get('srcFull'):''
 		});
@@ -643,23 +656,38 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			me.$el.closest('.ui-draggable').draggable('enable');
 		});
 
-		me.listenTo(linkPanel, 'change', function(data) {
+		me.listenTo(link, 'change', function(data) {
+			slide.set({link: data.toJSON()}, {silent:true});
+			// Rather than changing template rendering set properties that tempalte uses also
 			slide.set({
-				urlType: data.type,
-				url: data.url,
-				linkTarget: data.target
-			});
+				urlType: data.get('type'),
+				url: data.get('url'),
+				linkTarget: data.get('target')
+			}, {silent:true});
+
+			me.property('slides', slideCollection.toJSON(), true);
 		});
 
-		me.listenTo(linkPanel, 'change:target', function(data) {
-			slide.set({linkTarget: data.target});
+		me.listenTo(link, 'change:target', function(data) {
+			slide.set({link: data.toJSON()}, {silent:true});
+			// Rather than changing template rendering set properties that tempalte uses also
+			slide.set({
+				urlType: data.get('type'),
+				url: data.get('url'),
+				linkTarget: data.get('target')
+			}, {silent:true});
+
+			me.property('slides', slideCollection.toJSON(), true);
+
 			me.$el.find('.upfront-default-slider-item-current a')
-				.attr('target', data.target);
+				.attr('target', data.get('target'));
 		});
+		this.currentSlideLink = link;
 
 		control.icon = 'link';
 		control.tooltip = l10n.img_link;
 		control.id = 'link';
+
 
 		return control;
 	},
