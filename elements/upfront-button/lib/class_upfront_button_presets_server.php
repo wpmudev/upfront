@@ -48,6 +48,8 @@ class Upfront_Button_Presets_Server extends Upfront_Presets_Server {
 				'as_array' => true
 			)
 		);
+		
+		$presets = $this->replace_new_lines($presets);
 
 		// Fail-safe
 		if (is_array($presets) === false) {
