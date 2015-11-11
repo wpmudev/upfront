@@ -38,6 +38,8 @@ class Upfront_UimageView extends Upfront_Object {
 		else
 			$data['imgWidth'] = '';
 
+		$data['containerWidth'] = min($data['size']['width'], $data['element_size']['width']);
+
 		if($data['vstretch'])
 			$data['marginTop'] = 0;
 

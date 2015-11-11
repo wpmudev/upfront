@@ -5,7 +5,7 @@
 			<a href="<?php echo $url ?>" target="<?php echo $link_target ?>">
 			<?php } ?>
 				<?php if($src){ ?>
-				<div class="upfront-image-container">
+				<div class="upfront-image-container" <?php if ($containerWidth) { ?>style="width:<?php echo $containerWidth ?>px;"<?php } ?>>
 					<img src="<?php echo $src ?>" alt="<?php echo $alternative_text ?>" title="<?php echo $image_title ?>" <?php if($imgWidth) { ?>style="width:<?php echo $imgWidth ?>;"<?php } ?>/>
 				</div>
 				<?php } else { ?>
