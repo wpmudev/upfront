@@ -10011,8 +10011,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				//model.set_property('row', Math.ceil(height/baseline), true);
 				view.$el.removeClass(ani_class);
 				// enable edit and activate the new region
-				Upfront.Events.trigger('command:region:edit_toggle', false);
-				Upfront.Events.trigger('command:region:fixed_edit_toggle', false);
+				Upfront.Events.trigger('command:region:edit_toggle', true);
+				Upfront.Events.trigger('command:region:fixed_edit_toggle', true);
 				view.trigger("activate_region", view);
 			}
 		}

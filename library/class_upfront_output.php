@@ -238,6 +238,16 @@ abstract class Upfront_Entity {
 		return upfront_get_property_value($prop, $this->_data);
 	}
 
+	/**
+	 * Retrieves translated property
+	 *
+	 * @param $prop
+	 * @return string|void
+	 */
+	protected function _get_property_t($prop) {
+		return __($this->_get_property( $prop ), "upfront");
+	}
+
 	protected function _get_breakpoint_property ($prop, $id) {
 		$breakpoint = $this->_get_property('breakpoint');
 		if ( !empty($breakpoint[$id]) && isset($breakpoint[$id][$prop]) )
@@ -663,7 +673,7 @@ class Upfront_Layout_View extends Upfront_Container {
 		}
 		return $css;
 	}
-	
+
 	protected function _is_background_overlay ($breakpoint_id = '') {
 		$type = $this->get_background_type($breakpoint_id);
 		if ( !$type || 'color' == $type ) return false;

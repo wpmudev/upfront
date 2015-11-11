@@ -21,13 +21,13 @@ class Upfront_UcontactView extends Upfront_Object {
 			'message' => isset($this->msg) ? $this->msg : false,
 			'message_class' => isset($this->msg_class) ? $this->msg_class : 'error',
 			'entity_id' => $this->get_entity_ids_value(),
-			'form_button_text' => $this->_get_property('form_button_text'),
+			'form_button_text' => $this->_get_property_t('form_button_text'),
 			'placeholders' => array(
-				'name' => $this->get_placeholder($this->_get_property('form_name_label')),
-				'email' => $this->get_placeholder($this->_get_property('form_email_label')),
-				'subject' => $this->get_placeholder($this->_get_property('form_subject_label')),
-				'captcha' => $this->get_placeholder($this->_get_property('form_captcha_label')),
-				'message' => $this->get_placeholder($this->_get_property('form_message_label'))
+				'name' => $this->get_placeholder($this->_get_property_t('form_name_label')),
+				'email' => $this->get_placeholder($this->_get_property_t('form_email_label')),
+				'subject' => $this->get_placeholder($this->_get_property_t('form_subject_label')),
+				'captcha' => $this->get_placeholder($this->_get_property_t('form_captcha_label')),
+				'message' => $this->get_placeholder($this->_get_property_t('form_message_label'))
 			),
 			'values' => array(
 				'name' => esc_attr($this->get_post('sendername')),

@@ -178,6 +178,52 @@ var hackRedactor = function(){
 
 	hackedRedactor = true;
 
+    /**
+     * Overrides Redactor internal methods
+     *
+     * Override redactor methods by adding them in here and then change the body of method
+     *
+     * @type {{inline: {format: Overriden_Methods.inline.format}}}
+     */
+    var Overriden_Methods = {
+        inline: {
+            format: function(tag, type, value)
+            {
+                // Stop formatting pre and headers
+                //if (this.utils.isCurrentOrParent('PRE') || this.utils.isCurrentOrParentHeader()) return;
+
+                var tags = ['b', 'bold', 'i', 'italic', 'underline', 'strikethrough', 'deleted', 'superscript', 'subscript'];
+                var replaced = ['strong', 'strong', 'em', 'em', 'u', 'del', 'del', 'sup', 'sub'];
+
+                for (var i = 0; i < tags.length; i++)
+                {
+                    if (tag == tags[i]) tag = replaced[i];
+                }
+
+                this.inline.type = type || false;
+                this.inline.value = value || false;
+
+                this.buffer.set();
+
+                if (!this.utils.browser('msie'))
+                {
+                    this.$editor.focus();
+                }
+
+                this.selection.get();
+
+                if (this.range.collapsed)
+                {
+                    this.inline.formatCollapsed(tag);
+                }
+                else
+                {
+                    this.inline.formatMultiple(tag);
+                }
+            }
+        }
+    };
+
 	$.Redactor.prototype.events = UeditorEvents;
 
 	// This method is only triggered via keyboard shortcuts, so override this
@@ -190,6 +236,7 @@ var hackRedactor = function(){
 	$.Redactor.prototype.placeholderStart = function (html) {
 		console.log('do nothing');
 	};
+
 	$.Redactor.prototype.button = function() {
 		return {
             build: function(btnName, btnObject)
@@ -394,7 +441,30 @@ var hackRedactor = function(){
                 this.button.get(key).remove();
             }
         };
-	}
+	};
+
+
+    $.Redactor.prototype.bindModuleMethods =  function(module)
+    {
+
+        if (typeof this[module] == 'undefined') return;
+
+        // init module
+        this[module] = this[module]();
+
+        var methods = this.getModuleMethods(this[module]);
+        var len = methods.length;
+
+        // bind methods
+        for (var z = 0; z < len; z++)
+        {
+            var method = this[module][methods[z]];
+            if( Overriden_Methods[module] && Overriden_Methods[module][methods[z]] )
+                method =  Overriden_Methods[module][methods[z]];
+
+            this[module][methods[z]] = method.bind(this);
+        }
+    };
 
     var l10n = Upfront.Settings && Upfront.Settings.l10n
         ? Upfront.Settings.l10n.global.ueditor
@@ -408,7 +478,7 @@ var hackRedactor = function(){
      */
     $.Redactor.opts.langs['upfront'] = $.extend({}, $.Redactor.opts.langs['en'], {
         bold: l10n.bold,
-        italic: l10n.italic,
+        italic: l10n.italic
     });
 
 

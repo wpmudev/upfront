@@ -72,8 +72,8 @@ class Upfront_UimageView extends Upfront_Object {
 		*
 		if ($data['caption_position'] === 'below_image') $data['captionBackground'] = false;
 
-		$data['link_target'] = $link['target'];
 		*/
+		$data['link_target'] = $link['target'];
 
 		if (!empty($data['src'])) $data['src'] = preg_replace('/^https?:/', '', trim($data['src']));
 
