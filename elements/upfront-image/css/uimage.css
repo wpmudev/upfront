@@ -1133,6 +1133,7 @@ div.uimage-controls i.upfront-icon:before {
 	box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
+	max-width: 100%;
 }
 
 .upfront-field-wrap.image-alternative-text {
