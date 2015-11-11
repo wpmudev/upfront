@@ -3,17 +3,6 @@
 	position: relative;
 	padding: 7px 15px;
 }
-#page .upfront-accordion-container .accordion-panel {
-	position: relative;
-}
-#page .upfront-accordion-container .accordion-panel-title {
-	border-top: 2px #000 solid;
-}
-
-.upfront-accordion-wrap {
-	border-bottom: 2px #000 solid;
-}
-
 #page .upfront-accordion-container .accordion-panel-title:after,
 #page .upfront-accordion-container .accordion-panel-active .accordion-panel-title:after {
   border:5px solid transparent;
