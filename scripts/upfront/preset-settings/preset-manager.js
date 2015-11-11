@@ -85,8 +85,7 @@ define([
 
 			elementStyleName = this.property('theme_style');
 
-			// If there is no element style assigned, bail out
-			if (!elementStyleName || elementStyleName === '_default') return;
+			if (!elementStyleName) elementStyleName = '_default';
 
 			Upfront.Application.cssEditor.init({
 				model: this.model,
@@ -95,7 +94,7 @@ define([
 			});
 
 			// Add element style to preset model
-			newPresetName = elementStyleName;
+			newPresetName = elementStyleName === '_default' ? 'defaultPreset' : elementStyleName;
 			existingPreset = this.presets.findWhere({id: newPresetName});
 
 			if (existingPreset) {
