@@ -278,5 +278,8 @@ define([
 		title: 'Accordion Settings'
 	});
 
+	// Generate presets styles to page
+	Util.generatePresetsToPage('accordion', styleTpl);
+
 	return AccordionSettings;
 });
