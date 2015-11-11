@@ -126,6 +126,7 @@ define([
 			this.$el.find('.state_settings_button_' + state).addClass('active');
 			this.$el.find('.state_settings').hide();
 			this.$el.find('.state_settings_' + state).show();
+			this.trigger('upfront:presets:state_show', state);
 		}
 	});
 

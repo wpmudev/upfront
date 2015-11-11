@@ -174,6 +174,7 @@ define([
 			this.listenTo(this.editPresetModule, 'upfront:presets:delete', this.deletePreset);
 			this.listenTo(this.editPresetModule, 'upfront:presets:reset', this.resetPreset);
 			this.listenTo(this.editPresetModule, 'upfront:presets:update', this.updatePreset);
+			this.listenTo(this.editPresetModule, 'upfront:presets:state_show', this.stateShow);
 			this.listenTo(this.presetCssModule, 'upfront:presets:update', this.updatePreset);
 
 			this.settings = _([
@@ -304,6 +305,10 @@ define([
 			this.stopListening();
 			this.setupItems();
 			this.render();
+		},
+		
+		stateShow: function(state) {
+			this.trigger('upfront:presets:state_show', state);
 		},
 
 		getBody: function () {

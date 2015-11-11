@@ -39,7 +39,7 @@ define([
 			// Instantiate panels
 			_.each(this.panels, function(panel, index) {
 				if (index === 'Appearance') {
-					panels.Appearance = new PresetManager(
+					this.appearancePanel = new PresetManager(
 					_.extend(
 							{
 								hasBreakpointSettings: this.hasBreakpointSettings,
@@ -49,6 +49,10 @@ define([
 							panel
 						)
 					);
+					
+					this.listenTo(this.appearancePanel, 'upfront:presets:state_show', this.stateShow);
+					
+					panels.Appearance = this.appearancePanel;
 					return;
 				}
 				panels[index] = new panel({ model: this.model });
@@ -69,6 +73,8 @@ define([
 		saveSettings: function() {
 			var currentBreakpoint,
 				breakpointsData;
+				
+			this.removePreviewClasses();	
 
 			// Setup model so that it saves breakpoint values to breakpoint property
 			if (this.hasBreakpointSettings === true) {
@@ -99,7 +105,23 @@ define([
 		},
 
 		cancelSettings: function() {
+			this.removePreviewClasses();
 			Upfront.Events.trigger("element:settings:canceled");
+		},
+		
+		stateShow: function(state) {
+			var elementContainer = this.for_view.$el.find('.upfront-object');
+			if(state !== "static") {
+				this.removePreviewClasses();
+				elementContainer.addClass('live-preview-' + state);
+			} else {
+				this.removePreviewClasses();
+			}
+		},
+		
+		removePreviewClasses: function() {
+			var elementContainer = this.for_view.$el.find('.upfront-object');
+			elementContainer.removeClass('live-preview-hover live-preview-focus live-preview-active');
 		},
 
 		render: function () {
