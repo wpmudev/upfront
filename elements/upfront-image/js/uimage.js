@@ -422,6 +422,8 @@ define([
 				props.imgWidth = props.size.width + 'px';
 			}
 
+			props.containerWidth = Math.min(props.size.width, elementSize.width);
+
 			props.display_caption = this.property('display_caption') ? this.property('display_caption') : 'showCaption';
 
 			//Gif image handled as normal ones in the backend
