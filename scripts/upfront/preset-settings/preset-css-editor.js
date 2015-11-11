@@ -333,33 +333,25 @@ define([
 			this.blink($element, 4);
 		},
 		hiliteElement: function(e){
-			var preset_selector = this.get_css_selector();
-
-			if(typeof this.elementType.preset_container === "undefined") {
-				preset_selector = preset_selector + ' ';
-			}
+			var preset_selector = this.get_css_selector() + ' ';
 
 			var selector = preset_selector + $(e.target).data('selector');
 
 			if(!selector.length)
 				return;
-			var element = $('#' + this.element_id);
-			element.find(selector).addClass('upfront-css-hilite');
+			var element = $('#' + this.element_id + selector);
+			element.addClass('upfront-css-hilite');
 		},
 
 		unhiliteElement: function(e){
-			var preset_selector = this.get_css_selector();
-
-			if(typeof this.elementType.preset_container === "undefined") {
-				preset_selector = preset_selector + ' ';
-			}
+			var preset_selector = this.get_css_selector() + ' ';
 
 			var selector = preset_selector + $(e.target).data('selector');
 
 			if(!selector.length)
 				return;
-			var element = $('#' + this.element_id);
-			element.find(selector).removeClass('upfront-css-hilite');
+			var element = $('#' + this.element_id + selector);
+			element.removeClass('upfront-css-hilite');
 		},
 		addSelector: function(e) {
 			var selector = $(e.target).data('selector');
