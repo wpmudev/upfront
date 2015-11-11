@@ -114,22 +114,19 @@ jQuery(document).ready(function($) {
 		$(".upfront-navigation").each(function () {
 			var $me = $(this);
 
-			if ($me.data('style') == 'triggered') {
+			if ($me.data('style') == 'triggered' || $me.data('style') === 'burger') {
 				$toggler = $me.children('.responsive_nav_toggler');
 				$toggler.attr('id', $me.attr('id')+'-toggler');
 				if (_cache[$toggler.attr("id")]) _cache[$toggler.attr("id")].destroy();
-
-			}
-			else {
+			} else {
 				if (_cache[$me.attr("id")]) _cache[$me.attr("id")].destroy();
-
 			}
 		});
 
 		$(".upfront-navigation.upfront-navigation-float").each(function () {
 			var $me = $(this);
 
-			if($me.data('style') == 'burger') {
+			if($me.data('style') == 'burger' || $me.data('style') == 'triggered') {
 				$toggler = $me.children('.responsive_nav_toggler');
 				$toggler.attr('id', $me.attr('id')+'-toggler');
 				//if (_cache[$toggler.attr("id")]) _cache[$toggler.attr("id")].destroy();
@@ -257,83 +254,169 @@ jQuery(document).ready(function($) {
 
 		var elements = (typeof(selector) == 'object')?selector:$(selector);
 		elements.each(function () {
-			var key;
-			var currentKey = 'desktop';
-			var preset;
 
 			var breakpoints = $(this).data('breakpoints');
 
 			var currentwidth = (typeof(bpwidth) != 'undefined') ? parseInt(bpwidth) : $(window).width();
 
-			var order = {'mobile':'', 'tablet':'', 'desktop':''};
-			for (key in order) {
-				breakpoints[key] = breakpoints[key] || {};
-				if (parseInt(currentwidth) >= parseInt(breakpoints[key].width)) {
-					currentKey = key;
-				}
-			}
-			breakpoints.preset = breakpoints.preset || {};
-			preset = breakpoints.preset[currentKey] || {};
+			var key;
+			var currentKey = 'desktop';
+			var preset;
+			var responsive_css;
 
-			if (preset.menu_style == 'triggered') {
-				$(this).attr('data-style', 'burger');
-				$(this).attr('data-alignment', ( preset.menu_alignment ? preset.menu_alignment : $(this).data('alignmentbk') ));
-				$(this).attr('data-burger_alignment', preset.burger_alignment);
-				$(this).attr('data-burger_over', preset.burger_over);
-
-				// Add responsive nav toggler
-				if(!$(this).find('div.responsive_nav_toggler').length)
-					$(this).prepend($('<div class="responsive_nav_toggler"><div></div><div></div><div></div></div>'));
-
-				//offset a bit if admin bar or side bar is present
-				if($('div#wpadminbar').length && $('div#wpadminbar').css('display') == 'block') {
-					$(this).find('ul.menu').css('margin-top', $('div#wpadminbar').outerHeight());
+			if (breakpoints.preset) {
+				var order = {'mobile':'', 'tablet':'', 'desktop':''};
+				for (key in order) {
+					breakpoints[key] = breakpoints[key] || {};
+					if (parseInt(currentwidth) >= parseInt(breakpoints[key].width)) {
+						currentKey = key;
+					}
 				}
 
-				if ($(this).hasClass('upfront-output-unewnavigation')) {
-					$('head').find('style#responsive_nav_sidebar_offset').remove();
-					var responsive_css = 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"] ul.menu, div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] ul.menu {left:'+parseInt($('div.upfront-regions').offset().left)+'px !important; right:'+parseInt(($(window).width()-currentwidth-$('div#sidebar-ui').outerWidth()) / 2)+'px !important; } ';
-					responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="left"] ul.menu {left:'+parseInt($('div.upfront-regions').offset().left)+'px !important; right:inherit !important; width:'+parseInt(30/100*$('div.upfront-regions').outerWidth())+'px !important;} ';
-					responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="right"] ul.menu {left:inherit !important; right:'+parseInt(($(window).width()-currentwidth-$('div#sidebar-ui').outerWidth()) / 2)+'px !important; width:'+parseInt(30/100*$('div.upfront-regions').outerWidth())+'px !important; } ';
-					responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"] ul.menu {top:'+parseInt($('div#upfront-ui-topbar').outerHeight())+'px !important; } ';
+				breakpoints.preset = breakpoints.preset || {};
+				preset = breakpoints.preset[currentKey] || {};
 
-					$('head').append($('<style id="responsive_nav_sidebar_offset">'+responsive_css+'</style>'));
+				if (preset.menu_style == 'triggered') {
+					$(this).attr('data-style', 'burger');
+					$(this).attr('data-alignment', ( preset.menu_alignment ? preset.menu_alignment : $(this).data('alignmentbk') ));
+					$(this).attr('data-burger_alignment', preset.burger_alignment);
+					$(this).attr('data-burger_over', preset.burger_over);
+
+					// Add responsive nav toggler
+					if(!$(this).find('div.responsive_nav_toggler').length)
+						$(this).prepend($('<div class="responsive_nav_toggler"><div></div><div></div><div></div></div>'));
+
+					//offset a bit if admin bar or side bar is present
+					if($('div#wpadminbar').length && $('div#wpadminbar').css('display') == 'block') {
+						$(this).find('ul.menu').css('margin-top', $('div#wpadminbar').outerHeight());
+					}
+
+					if ($(this).hasClass('upfront-output-unewnavigation')) {
+						$('head').find('style#responsive_nav_sidebar_offset').remove();
+						responsive_css = 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"] ul.menu, div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] ul.menu {left:'+parseInt($('div.upfront-regions').offset().left)+'px !important; right:'+parseInt(($(window).width()-currentwidth-$('div#sidebar-ui').outerWidth()) / 2)+'px !important; } ';
+						responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="left"] ul.menu {left:'+parseInt($('div.upfront-regions').offset().left)+'px !important; right:inherit !important; width:'+parseInt(30/100*$('div.upfront-regions').outerWidth())+'px !important;} ';
+						responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="right"] ul.menu {left:inherit !important; right:'+parseInt(($(window).width()-currentwidth-$('div#sidebar-ui').outerWidth()) / 2)+'px !important; width:'+parseInt(30/100*$('div.upfront-regions').outerWidth())+'px !important; } ';
+						responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"] ul.menu {top:'+parseInt($('div#upfront-ui-topbar').outerHeight())+'px !important; } ';
+
+						$('head').append($('<style id="responsive_nav_sidebar_offset">'+responsive_css+'</style>'));
+					}
+					//Z-index the container module to always be on top, in the layout edit mode
+					$(this).closest('div.upfront-newnavigation_module').css('z-index', 3);
+
+					$(this).find('ul.menu').siblings('.burger_overlay').remove();
+					$(this).find('ul.menu').hide();
+				} else {
+					$(this).attr('data-style', ( preset.menu_style ? preset.menu_style : $(this).data('stylebk') ));
+					$(this).attr('data-alignment', ( preset.menu_alignment ? preset.menu_alignment : $(this).data('alignmentbk') ));
+					$(this).removeAttr('data-burger_alignment','');
+					$(this).removeAttr('data-burger_over', '');
+
+					// Remove responsive nav toggler
+					$(this).find('div.responsive_nav_toggler').remove();
+					$(this).find('ul.menu').show();
+
+					//remove any display:block|none specifications from the sub-menus
+					$(this).find('ul.menu, ul.sub-menu').each(function() {
+						$(this).css('display', '');
+					});
+
+					// remove any adjustments done because of the sidebar or the adminbar
+					if($('div#wpadminbar').length) {
+						$(this).find('ul.menu').css('margin-top', '');
+					}
+
+
+					//remove the z-index from the container module
+					$(this).closest('div.upfront-newnavigation_module').css('z-index', '');
 				}
-				//Z-index the container module to always be on top, in the layout edit mode
-				$(this).closest('div.upfront-newnavigation_module').css('z-index', 3);
 
-				$(this).find('ul.menu').siblings('.burger_overlay').remove();
-				$(this).find('ul.menu').hide();
+				if(preset.is_floating && preset.is_floating == 'yes')
+					$(this).addClass('upfront-navigation-float');
+				else
+					$(this).removeClass('upfront-navigation-float');
 			} else {
-				$(this).attr('data-style', ( preset.menu_style ? preset.menu_style : $(this).data('stylebk') ));
-				$(this).attr('data-alignment', ( preset.menu_alignment ? preset.menu_alignment : $(this).data('alignmentbk') ));
-				$(this).removeAttr('data-burger_alignment','');
-				$(this).removeAttr('data-burger_over', '');
+				// Leave old code for backward compatibility
+				var bparray = [];
+				for (key in breakpoints) {
+					bparray.push(breakpoints[key]);
+				}
 
-				// Remove responsive nav toggler
-				$(this).find('div.responsive_nav_toggler').remove();
-				$(this).find('ul.menu').show();
-
-				//remove any display:block|none specifications from the sub-menus
-				$(this).find('ul.menu, ul.sub-menu').each(function() {
-					$(this).css('display', '');
+				bparray.sort(function(a, b) {
+					if (a && b && a.width && b.width) {
+						return a.width - b.width;
+					}
+					return 0;
 				});
 
-				// remove any adjustments done because of the sidebar or the adminbar
-				if($('div#wpadminbar').length) {
-					$(this).find('ul.menu').css('margin-top', '');
+				for (key in bparray) {
+					if(bparray[key] && bparray[key]['width'] && parseInt(currentwidth) >= parseInt(bparray[key]['width'])) {
+
+						if(bparray[key]['burger_menu'] == 'yes') {
+
+							$(this).attr('data-style', 'burger');
+							$(this).attr('data-aliment', ( bparray[key]['menu_alignment'] ? bparray[key]['menu_alignment'] : $(this).data('alimentbk') ));
+							$(this).attr('data-burger_alignment', bparray[key]['burger_alignment']);
+							$(this).attr('data-burger_over', bparray[key]['burger_over']);
+
+							// Add responsive nav toggler
+							if(!$(this).find('div.responsive_nav_toggler').length)
+								$(this).prepend($('<div class="responsive_nav_toggler"><div></div><div></div><div></div></div>'));
+
+							//offset a bit if admin bar or side bar is present
+							if($('div#wpadminbar').length && $('div#wpadminbar').css('display') == 'block') {
+								$(this).find('ul.menu').css('margin-top', $('div#wpadminbar').outerHeight());
+								//$(this).find('div.responsive_nav_toggler').css('margin-top', $('div#wpadminbar').outerHeight());
+							}
+
+							if($(this).hasClass('upfront-output-unewnavigation')) {
+
+								$('head').find('style#responsive_nav_sidebar_offset').remove();
+								responsive_css = 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"] ul.menu, div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] ul.menu {left:'+parseInt($('div.upfront-regions').offset().left)+'px !important; right:'+parseInt(($(window).width()-currentwidth-$('div#sidebar-ui').outerWidth()) / 2)+'px !important; } ';
+
+								responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="left"] ul.menu {left:'+parseInt($('div.upfront-regions').offset().left)+'px !important; right:inherit !important; width:'+parseInt(30/100*$('div.upfront-regions').outerWidth())+'px !important;} ';
+
+								responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="right"] ul.menu {left:inherit !important; right:'+parseInt(($(window).width()-currentwidth-$('div#sidebar-ui').outerWidth()) / 2)+'px !important; width:'+parseInt(30/100*$('div.upfront-regions').outerWidth())+'px !important; } ';
+								responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"] ul.menu {top:'+parseInt($('div#upfront-ui-topbar').outerHeight())+'px !important; } ';
+
+								$('head').append($('<style id="responsive_nav_sidebar_offset">'+responsive_css+'</style>'));
+							}
+							//Z-index the container module to always be on top, in the layout edit mode
+							$(this).closest('div.upfront-newnavigation_module').css('z-index', 3);
+
+							$(this).find('ul.menu').siblings('.burger_overlay').remove();
+							$(this).find('ul.menu').hide();
+						}
+						else {
+							$(this).attr('data-style', ( bparray[key]['menu_style'] ? bparray[key]['menu_style'] : $(this).data('stylebk') ));
+							$(this).attr('data-aliment', ( bparray[key]['menu_alignment'] ? bparray[key]['menu_alignment'] : $(this).data('alimentbk') ));
+							$(this).removeAttr('data-burger_alignment','');
+							$(this).removeAttr('data-burger_over', '');
+
+							// Remove responsive nav toggler
+							$(this).find('div.responsive_nav_toggler').remove();
+							$(this).find('ul.menu').show();
+
+							//remove any display:block|none specifications from the sub-menus
+							$(this).find('ul.menu, ul.sub-menu').each(function() {
+								$(this).css('display', '');
+							});
+
+							// remove any adjustments done because of the sidebar or the adminbar
+							if($('div#wpadminbar').length) {
+								$(this).find('ul.menu').css('margin-top', '');
+							}
+
+							//remove the z-index from the container module
+							$(this).closest('div.upfront-newnavigation_module').css('z-index', '');
+						}
+
+						if(bparray[key]['is_floating'] && bparray[key]['is_floating'] == 'yes')
+							$(this).addClass('upfront-navigation-float');
+						else
+							$(this).removeClass('upfront-navigation-float');
+					}
 				}
-
-
-				//remove the z-index from the container module
-				$(this).closest('div.upfront-newnavigation_module').css('z-index', '');
 			}
-
-			if(preset.is_floating && preset.is_floating == 'yes')
-				$(this).addClass('upfront-navigation-float');
-			else
-				$(this).removeClass('upfront-navigation-float');
-
 		});
 	}
 	roll_responsive_nav(".upfront-output-unewnavigation > .upfront-navigation");
