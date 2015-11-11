@@ -5068,7 +5068,15 @@ define([
 			on_keydown: function (e) {
 				var currentEntity = Upfront.data.currentEntity;
 
-				if (!currentEntity instanceof ObjectView || typeof currentEntity === 'undefined' || !currentEntity.paddingControl) 	return;
+				if (
+					typeof currentEntity === 'undefined' || 
+					!currentEntity || 
+					!currentEntity instanceof ObjectView || 
+					currentEntity.$el.find( '.redactor-box' ).length > 0 ||
+					!currentEntity.paddingControl
+				) {
+					return;
+				}
 
 				if (e.keyCode === 38 || e.keyCode === 40) {
 					e.preventDefault();
