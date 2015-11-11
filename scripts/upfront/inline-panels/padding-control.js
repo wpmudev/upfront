@@ -60,13 +60,13 @@ define([
 
 		render: function() {
 			var me = this,
-				paddingControl = this.$('.upfront-padding-control'),
+				$paddingControl = me.$('.upfront-padding-control'),
 				paddingTopContainer = $('<div class="upfront-padding-container">' + l10n.top_padding_short + '<span class="upfront-padding-value"></span></div>'),
 				paddingBottomContainer = $('<div class="upfront-padding-container">' + l10n.bottom_padding_short + '<span class="upfront-padding-value"></span></div>'),
 				column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding
 			;
 
-			this.paddingTop = new Upfront.Views.Editor.Field.Slider({
+			me.paddingTop = new Upfront.Views.Editor.Field.Slider({
 				model: this.model,
 				use_breakpoint_property: true,
 				property: 'top_padding_num',
@@ -87,7 +87,7 @@ define([
 					this.model.set_breakpoint_property('top_padding_slider', value);
 				}
 			});
-			this.paddingBottom = new Upfront.Views.Editor.Field.Slider({
+			me.paddingBottom = new Upfront.Views.Editor.Field.Slider({
 				model: this.model,
 				use_breakpoint_property: true,
 				property: 'bottom_padding_num',
@@ -109,24 +109,24 @@ define([
 				}
 			});
 
-			Item.prototype.render.call(this, arguments);
+			Item.prototype.render.call(me, arguments);
 
-			if(!this.$el.hasClass('upfront-padding-control-item')) {
-				this.$el.addClass('upfront-padding-control-item');
+			if(!me.$el.hasClass('upfront-padding-control-item')) {
+				me.$el.addClass('upfront-padding-control-item');
 			}
 
-			if(!paddingControl.length){
-				paddingControl = $('<div class="upfront-padding-control inline-panel-control-dialog"></div>');
-				this.$el.append(paddingControl);
+			if($paddingControl.length === 0){
+				$paddingControl = $('<div class="upfront-padding-control inline-panel-control-dialog"></div>');
+				me.$el.append($paddingControl);
 			}
 
-			paddingControl.html('');
-			this.paddingTop.render();
-			paddingTopContainer.append(this.paddingTop.$el);
-			paddingControl.append(paddingTopContainer);
-			this.paddingBottom.render();
-			paddingBottomContainer.append(this.paddingBottom.$el);
-			paddingControl.append(paddingBottomContainer);
+			$paddingControl.html('');
+			me.paddingTop.render();
+			paddingTopContainer.append(me.paddingTop.$el);
+			$paddingControl.append(paddingTopContainer);
+			me.paddingBottom.render();
+			paddingBottomContainer.append(me.paddingBottom.$el);
+			$paddingControl.append(paddingBottomContainer);
 		},
 		refresh: function() {
 			var column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
