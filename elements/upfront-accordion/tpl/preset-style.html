@@ -74,7 +74,7 @@
     <?php } ?>
 	transition: none;
 }
-.upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-content {
+#page .upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-content {
 	background: <?php echo $properties['active-content-bg-color'] ?>;
 	<?php if(!empty($properties['global-useborder'])) { ?>
         <?php if(!empty($properties['global-borderwidth']) && !empty($properties['global-bordertype']) && !empty($properties['global-bordercolor'])) { ?>border: <?php echo $properties['global-borderwidth'] ?>px <?php echo $properties['global-bordertype'] ?> <?php echo $properties['global-bordercolor'] ?>;<?php } ?>
@@ -82,11 +82,11 @@
         border: none;
     <?php } ?>
 }
-.upfront-accordion-container.upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title:after {
+#page .upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title:after {
 	border-top-color: <?php echo $properties['static-triangle-icon-color'] ?>;
 	border-left-color: transparent;
 }
-.upfront-accordion-container.upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title:hover:after {
+#page .upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title:hover:after {
 	<?php if(!empty($properties['hover-use-colors'])) { ?>
 	border-top-color: <?php echo $properties['hover-triangle-icon-color'] ?>;
 	<?php } else { ?>
@@ -94,7 +94,7 @@
 	<?php } ?>
 	border-left-color: transparent;
 }
-.upfront-accordion-container.upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-active .accordion-panel-title:after {
+#page .upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-active .accordion-panel-title:after {
 	border-top-color: transparent;
 	<?php if(!empty($properties['active-use-color'])) { ?>
 		border-left-color: <?php echo $properties['active-triangle-icon-color'] ?>;
