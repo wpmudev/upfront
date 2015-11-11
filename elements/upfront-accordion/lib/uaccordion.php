@@ -5,11 +5,11 @@
 class Upfront_UaccordionView extends Upfront_Object {
 	public static function default_properties() {
 		$defaultPanel = new StdClass();
-		$defaultPanel->title = '';//self::_get_l10n('default_panel_title');
+		$defaultPanel->title = self::_get_l10n('default_panel_title');
 		$defaultPanel->content = self::_get_l10n('default_panel_content');
 		$secondPanel = new StdClass();
-		$secondPanel->title = '';
-		$secondPanel->content = "Panel 2 content";
+		$secondPanel->title = self::_get_l10n('panel_label').' 2';
+		$secondPanel->content = self::_get_l10n('content_label');
 		return array(
 			'type' => 'UaccordionModel',
 			'view_class' => 'UaccordionView',
