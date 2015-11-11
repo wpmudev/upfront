@@ -1976,6 +1976,7 @@ define([
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 				$main.addClass('upfront-module-group-editing');
 				this.$el.addClass('upfront-module-group-on-edit');
+				this.editing = true;
 				this.disable_interaction(false, false);
 				this.toggle_modules_interaction(true, false);
 				Upfront.Events.trigger('entity:module_group:edit', this, this.model);
@@ -2059,6 +2060,7 @@ define([
 				else {
 					this.$el.removeClass('upfront-module-group-reorder-mode');
 				}
+				this.on_finish(); // make sure to close editing
 				this.update_position();
 				this.update_background();
 			},
