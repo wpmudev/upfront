@@ -61,8 +61,8 @@ define([
 		render: function() {
 			var me = this,
 				$paddingControl = me.$('.upfront-padding-control'),
-				paddingTopContainer = $('<div class="upfront-padding-container">' + l10n.top_padding_short + '<span class="upfront-padding-value"></span></div>'),
-				paddingBottomContainer = $('<div class="upfront-padding-container">' + l10n.bottom_padding_short + '<span class="upfront-padding-value"></span></div>'),
+				$paddingTopContainer = $('<div class="upfront-padding-container">' + l10n.top_padding_short + '<span class="upfront-padding-value"></span></div>'),
+				$paddingBottomContainer = $('<div class="upfront-padding-container">' + l10n.bottom_padding_short + '<span class="upfront-padding-value"></span></div>'),
 				column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding
 			;
 
@@ -122,11 +122,11 @@ define([
 
 			$paddingControl.html('');
 			me.paddingTop.render();
-			paddingTopContainer.append(me.paddingTop.$el);
-			$paddingControl.append(paddingTopContainer);
+			$paddingTopContainer.append(me.paddingTop.$el);
+			$paddingControl.append($paddingTopContainer);
 			me.paddingBottom.render();
-			paddingBottomContainer.append(me.paddingBottom.$el);
-			$paddingControl.append(paddingBottomContainer);
+			$paddingBottomContainer.append(me.paddingBottom.$el);
+			$paddingControl.append($paddingBottomContainer);
 		},
 		refresh: function() {
 			var column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
@@ -176,3 +176,5 @@ define([
 	return PaddingControl;
 });
 })(jQuery);
+
+//@ sourceURL=padding-control.js
