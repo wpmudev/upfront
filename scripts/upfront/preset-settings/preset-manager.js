@@ -82,6 +82,7 @@ define([
 				newPreset;
 
 			if (hadPresets) return;
+			if(this.property('preset')) return;
 
 			elementStyleName = this.property('theme_style');
 
@@ -306,7 +307,7 @@ define([
 			this.setupItems();
 			this.render();
 		},
-		
+
 		stateShow: function(state) {
 			this.trigger('upfront:presets:state_show', state);
 		},
