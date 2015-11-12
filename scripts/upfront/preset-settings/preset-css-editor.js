@@ -165,7 +165,7 @@ define([
 				rules = _.map(rules, function(rule){return $.trim(rule);});
 				rules.pop();
 
-				styles_with_selector = me.stylesAddSelector($.trim(editor.getValue()), '#page ' + me.get_css_selector());
+				styles_with_selector = me.stylesAddSelector($.trim(editor.getValue()), 'div#page.upfront-layout-view .upfront-editable_entity.upfront-module ' + me.get_css_selector());
 				// Solve case of button loosing its styles
 				styles_with_selector = styles_with_selector.replace(new RegExp(me.get_css_selector() + ' .upfront-button', 'g'), me.get_css_selector() + '.upfront-button');
 
