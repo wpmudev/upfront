@@ -60,7 +60,7 @@ define([
 
 		render: function() {
 			var me = this,
-				$paddingControl = me.$('.upfront-padding-control'),
+				// $paddingControl = me.$('.upfront-padding-control'),
 				$paddingTopContainer = $('<div class="upfront-padding-container">' + l10n.top_padding_short + '<span class="upfront-padding-value"></span></div>'),
 				$paddingBottomContainer = $('<div class="upfront-padding-container">' + l10n.bottom_padding_short + '<span class="upfront-padding-value"></span></div>'),
 				column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding
@@ -115,9 +115,12 @@ define([
 				me.$el.addClass('upfront-padding-control-item');
 			}
 
-			if($paddingControl.length === 0){
+			if(this.$('.upfront-padding-control').length === 0){
 				$paddingControl = $('<div class="upfront-padding-control inline-panel-control-dialog"></div>');
 				me.$el.append($paddingControl);
+			}
+			else {
+				$paddingControl = this.$('.upfront-padding-control');
 			}
 
 			$paddingControl.html('');
