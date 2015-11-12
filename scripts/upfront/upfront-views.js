@@ -1035,6 +1035,22 @@ define([
 					props[prop.get("name")] = prop.get("value");
 				});
 
+				// Check if theme_style was removed and remove class from element,
+				// this happens when element style is migrated to preset
+				var oldThemeStyle = '';
+				_.each(this.model._previousAttributes.properties, function(property) {
+					if (typeof property === 'undefined') return;
+					if (property.name === 'theme_style') {
+						oldThemeStyle = property.value;
+					}
+				});
+				// And now update classes properly (because template re-render does not affect this)
+				if (oldThemeStyle && props.theme_style === '') {
+					this.$el.removeClass(oldThemeStyle);
+					this.$el.addClass(props.preset);
+				}
+
+
 				var row = this.model.get_breakpoint_property_value('row', true);
 				height = ( row ) ? row * Upfront.Settings.LayoutEditor.Grid.baseline : 0;
 

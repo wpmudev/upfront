@@ -82,10 +82,11 @@ define([
 				newPreset;
 
 			if (hadPresets) return;
-			if(this.property('preset')) return;
+			if(this.property('preset') && this.property('preset') !== 'default') return;
 
 			elementStyleName = this.property('theme_style');
 
+			// We need to set to _default first so that css editor can get style properly
 			if (!elementStyleName) elementStyleName = '_default';
 
 			Upfront.Application.cssEditor.init({
@@ -94,8 +95,8 @@ define([
 				no_render: true
 			});
 
-			// Add element style to preset model
-			newPresetName = elementStyleName === '_default' ? 'defaultPreset' : elementStyleName;
+			// Add element style to preset model. Now change _default to new name
+			newPresetName = elementStyleName === '_default' ? 'theme-style' : elementStyleName + '-m';
 			existingPreset = this.presets.findWhere({id: newPresetName});
 
 			if (existingPreset) {
@@ -131,6 +132,9 @@ define([
 			this.property('preset', newPreset.id);
 			this.presets.add(newPreset);
 			this.updatePreset(newPreset.toJSON());
+			// Trigger change so that whole element re-renders again.
+			// (to replace element style class with preset class, look upfront-views.js
+			this.model.get('properties').trigger('change');
 		},
 
 		setupItems: function() {

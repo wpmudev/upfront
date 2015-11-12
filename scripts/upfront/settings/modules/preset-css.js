@@ -21,7 +21,7 @@ define([
 					compact: true,
 					label: l10n.edit_preset_label,
 				}),
-				
+
 				new Upfront.Views.Editor.Field.Button({
 					model: me.model,
 					className: 'edit_preset_css',
@@ -36,7 +36,12 @@ define([
 			this.trigger('upfront:presets:update', preset);
 		},
 
+		updateCss: function(preset, newCss) {
+			preset.set({'preset_style': newCss});
+		},
+
 		openEditor: function(e){
+			var me = this;
 			e.preventDefault();
 
 			Upfront.Events.trigger("entity:settings:beforedeactivate");
@@ -50,7 +55,12 @@ define([
 				stylename: styleName
 			});
 
+			var updateCssDebounced = _.debounce(this.updateCss, 1000);
+
 			this.listenTo(this.presetCSSEditor, 'upfront:presets:update', this.onPresetUpdate);
+			this.listenTo(this.presetCSSEditor, 'change', function(newCss) {
+				updateCssDebounced(me.options.preset, newCss);
+			});
 
 			Upfront.Events.trigger("entity:settings:deactivate");
 
