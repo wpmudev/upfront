@@ -67,6 +67,10 @@ define([
 			this.resizeHandler = this.resizeHandler || function(){
 				me.$el.width($(window).width() - $('#sidebar-ui').width() -1);
 			};
+			
+			//Destroy editor when Cancel or Save button is clicked
+			Upfront.Events.on('element:settings:saved', this.close, this);
+			Upfront.Events.on('element:settings:canceled', this.close, this);
 
 			$(window).on('resize', this.resizeHandler);
 
