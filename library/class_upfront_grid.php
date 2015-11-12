@@ -327,10 +327,12 @@ class Upfront_Grid {
 						$next_wrapper_id = upfront_get_property_value('wrapper_id', $next_wrapper_data);
 						$next_wrapper_modules = $this->_find_modules_with_wrapper($next_wrapper_id, $modules);
 						foreach ( $next_wrapper_modules as $nwm => $mod ) {
-							foreach ($mod['objects'] as $obj) {
-								$type = upfront_get_property_value('type', $obj);
-								if ( 'UspacerModel' == $type ) {
-									$next_is_spacer = true;
+							if( ! empty( $mod['objects'] ) ) {								
+								foreach ($mod['objects'] as $obj) {
+									$type = upfront_get_property_value('type', $obj);
+									if ( 'UspacerModel' == $type ) {
+										$next_is_spacer = true;
+									}
 								}
 							}
 						}
