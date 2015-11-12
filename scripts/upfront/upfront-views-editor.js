@@ -2963,13 +2963,21 @@ define([
 			var me = this;
 			if(!this.visible){
 				$('#sidebar-ui').removeClass('collapsed').stop().animate({width: '260px'}, 300);
+				//Remove collapsed class always after region editor is closed
+				$('#element-settings-sidebar').removeClass('collapsed');
+				
+				//Bring back element-settings only if it was opened before
+				if($('#element-settings-sidebar').contents().length !== 0) {
+					$('#element-settings-sidebar').removeClass('collapsed').stop().animate({width: '260px'}, 300);
+				}
+				
 				$('#page').animate({'margin-left': '260px'}, 300, function(){ Upfront.Events.trigger('sidebar:toggle:done', me.visible); });
 				this.$('#sidebar-ui-toggler-handle').removeClass().addClass('sidebar-ui-hide');
 				this.visible = 1;
 			}
 			else {
-				$('#sidebar-ui').stop().animate({width: '0px'}, 300, function(){
-					$('#sidebar-ui').addClass('collapsed');
+				$('#sidebar-ui, #element-settings-sidebar').stop().animate({width: '0px'}, 300, function(){
+					$('#sidebar-ui, #element-settings-sidebar').addClass('collapsed');
 				});
 				$('#page').animate({'margin-left': '0px'}, 300, function(){ Upfront.Events.trigger('sidebar:toggle:done', me.visible); });
 				this.$('#sidebar-ui-toggler-handle').removeClass().addClass('sidebar-ui-show');
