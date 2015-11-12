@@ -682,7 +682,18 @@ var _alpha = "alpha",
 
             if( _.indexOf(dates, attr) !== -1 ){
                 //return new Date( value  ); // <-- Breaks in FF
-                return new Date(Date.parse(value.replace(/ /, 'T'))); // <-- We need this to instantiate Date object in Firefox. @See "batman bug" in Asana.
+                var raw_offset = (new Date()).getTimezoneOffset(), 
+                	tz_offset = raw_offset / 60,
+                	offset = tz_offset > 0 ? '-' : '+', // Reversed because Date.getTimezoneOffset() returns reversed values...
+                	hours = parseInt(Math.abs(tz_offset), 10),
+                	mins = parseInt((Math.abs(tz_offset) - hours) * 60, 10),
+                	timestamp = value.replace(/ /, 'T')
+                ;
+                hours = hours > 10 ? '' + hours : '0' + hours;
+                mins = mins > 10 ? '' + mins : '0' + mins;
+                if (timestamp && hours.length && mins.length) timestamp += offset + hours + mins;
+
+                return new Date(Date.parse(timestamp)); // <-- We need this to instantiate Date object in Firefox. @See "batman bug" in Asana.
             }
 			return this.attributes[attr];
 		},
