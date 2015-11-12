@@ -58,13 +58,22 @@ define([
 			this.$el.closest('.upfront-inline-panel-item-open').removeClass('upfront-inline-panel-item-open');
 		},
 
-		render: function() {
+		on_render: function() {
 			var me = this,
-				// $paddingControl = me.$('.upfront-padding-control'),
+				$paddingControl = me.$('.upfront-padding-control'),
 				$paddingTopContainer = $('<div class="upfront-padding-container">' + l10n.top_padding_short + '<span class="upfront-padding-value"></span></div>'),
 				$paddingBottomContainer = $('<div class="upfront-padding-container">' + l10n.bottom_padding_short + '<span class="upfront-padding-value"></span></div>'),
 				column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding
 			;
+
+			if(!me.$el.hasClass('upfront-padding-control-item')) {
+				me.$el.addClass('upfront-padding-control-item');
+			}
+
+			if($paddingControl.length === 0){
+				$paddingControl = $('<div class="upfront-padding-control inline-panel-control-dialog"></div>');
+				me.$el.append($paddingControl);
+			}
 
 			me.paddingTop = new Upfront.Views.Editor.Field.Slider({
 				model: this.model,
@@ -108,20 +117,6 @@ define([
 					this.model.set_breakpoint_property('bottom_padding_slider', value);
 				}
 			});
-
-			Item.prototype.render.call(me, arguments);
-
-			if(!me.$el.hasClass('upfront-padding-control-item')) {
-				me.$el.addClass('upfront-padding-control-item');
-			}
-
-			if(this.$('.upfront-padding-control').length === 0){
-				$paddingControl = $('<div class="upfront-padding-control inline-panel-control-dialog"></div>');
-				me.$el.append($paddingControl);
-			}
-			else {
-				$paddingControl = this.$('.upfront-padding-control');
-			}
 
 			$paddingControl.html('');
 			me.paddingTop.render();
