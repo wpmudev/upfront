@@ -183,7 +183,7 @@ define([
 			styles = styles.replace(/\\"/g, '"');
 			styles = styles.replace(/\\"/g, '"');
 
-			styles = Upfront.Util.colors.convert_string_color_to_ufc(styles.replace(/div#page .upfront-region-container .upfront-module/g, '#page'));
+			styles = Upfront.Util.colors.convert_string_color_to_ufc(styles.replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
 			editor.setValue($.trim(styles), -1);
 
 			// Set up the proper vscroller width to go along with new change.
@@ -369,7 +369,7 @@ define([
 			$el.html(
 				this.stylesAddSelector(
 					contents, (this.is_default_style ? '' : '#page ' + this.get_css_selector())
-					).replace(/#page/g, 'div#page .upfront-region-container .upfront-module')
+					).replace(/#page/g, 'div#page.upfront-layout-view .upfront-editable_entity.upfront-module')
 			);
 			this.trigger('updateStyles', this.element_id);
 		},

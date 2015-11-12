@@ -1585,7 +1585,7 @@ var Application = new (Backbone.Router.extend({
 					Upfront.data.styles[elementType].push(name);
 					var styleNode = $('#'+name);
 					// Increase element style priority over preset styles
-					var styleOutput = style.replace(/#page/g, 'div#page .upfront-region-container .upfront-module');
+					var styleOutput = style.replace(/#page/g, 'div#page.upfront-layout-view .upfront-editable_entity.upfront-module');
 					if(!styleNode.length){
 						styleNode = $('<style id="' + name + '">' + styleOutput + '</style>');
 						$('body').append(styleNode);

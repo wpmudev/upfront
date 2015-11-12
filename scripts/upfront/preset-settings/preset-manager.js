@@ -103,7 +103,7 @@ define([
 				return;
 			}
 
-			style = $.trim(Upfront.Application.cssEditor.get_style_element().html().replace(/div#page .upfront-region-container .upfront-module/g, '#page'));
+			style = $.trim(Upfront.Application.cssEditor.get_style_element().html().replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
 			style = style.replace(new RegExp(elementStyleName, 'g'), newPresetName);
 
 			// Create new preset and assign style to preset

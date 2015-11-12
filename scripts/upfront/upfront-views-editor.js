@@ -6833,7 +6833,7 @@ var CSSEditor = Backbone.View.extend({
 				setTimeout(function () {
 					var styles = Upfront.Util.Transient.pop('css-' + me.element_id);
 					if (styles) {
-						me.get_style_element().html(styles.replace(/#page/g, 'div#page .upfront-region-container .upfront-module'));
+						me.get_style_element().html(styles.replace(/#page/g, 'div#page.upfront-layout-view .upfront-editable_entity.upfront-module'));
 						me.render();
 					}
 				}, 200);
@@ -7005,7 +7005,7 @@ var CSSEditor = Backbone.View.extend({
 			}
 		});
 
-		styles = Upfront.Util.colors.convert_string_color_to_ufc(this.get_style_element().html().replace(/div#page .upfront-region-container .upfront-module/g, '#page'));
+		styles = Upfront.Util.colors.convert_string_color_to_ufc(this.get_style_element().html().replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
 		if (this.is_global_stylesheet === false) {
 			scope = new RegExp(this.get_css_selector() + '\\s*', 'g');
 			styles = styles.replace(scope, '');
@@ -7149,7 +7149,7 @@ var CSSEditor = Backbone.View.extend({
 		$el.html(
 			this.stylesAddSelector(
 				contents, (this.is_default_style ? '' : this.get_css_selector())
-			).replace(/#page/g, 'div#page .upfront-region-container .upfront-module')
+			).replace(/#page/g, 'div#page.upfront-layout-view .upfront-editable_entity.upfront-module')
 		);
 		this.trigger('updateStyles', this.element_id);
 	},
