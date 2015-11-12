@@ -1660,6 +1660,8 @@ var Application = new (Backbone.Router.extend({
 
 		if (Upfront.Application.current_subapplication.layout && !$('style#layout-style').length) {
 			style = Upfront.Application.current_subapplication.layout.get('properties').findWhere({name: 'layout_style'}) ?  Upfront.Application.current_subapplication.layout.get('properties').findWhere({name: 'layout_style'}).get('value') : "";
+			// Make sure we also properly pre-process the layout styles:
+			if (style && style.length) style = Upfront.Util.colors.convert_string_ufc_to_color(style);
 			$('body').append('<style id="layout-style">' + style + '</style>');
 		}
 	},
