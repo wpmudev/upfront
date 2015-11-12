@@ -689,8 +689,8 @@ var _alpha = "alpha",
                 	mins = parseInt((Math.abs(tz_offset) - hours) * 60, 10),
                 	timestamp = value.replace(/ /, 'T')
                 ;
-                hours = hours > 10 ? '' + hours : '0' + hours;
-                mins = mins > 10 ? '' + mins : '0' + mins;
+                hours = hours >= 10 ? '' + hours : '0' + hours;
+                mins = mins >= 10 ? '' + mins : '0' + mins;
                 if (timestamp && hours.length && mins.length) timestamp += offset + hours + mins;
 
                 return new Date(Date.parse(timestamp)); // <-- We need this to instantiate Date object in Firefox. @See "batman bug" in Asana.
