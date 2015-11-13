@@ -2519,17 +2519,13 @@ define([
 				 				 	if(!$main.hasClass('upfront-region-fixed-editing'))
 								  		me.trigger_edit_fixed(me.event);
 								  	function run_animation(view, model){
+										var ani_event_end = 'animationend.fixed_region_ani webkitAnimationEnd.fixed_region_ani MSAnimationEnd.fixed_region_ani oAnimationEnd.fixed_region_ani';
 								  		end_t = setTimeout(end, 2000);
 								  		view.$el.addClass("upfront-add-region-ani upfront-add-region-ani-" + prop_y + '-' + prop_x);
-										view.$el.one('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function () {
-
-											//the following code makes sure that this function is executed only once, in case of more than one cross-browser events keep firing.
-											if(view.$el.data('animationended') == 1)
-												return;
-											view.$el.data('animationended', 1)
-
+										view.$el.one(ani_event_end, function () {
 											end(view);
 											clearTimeout(end_t);
+											view.$el.off(ani_event_end); // Make sure to remove any remaining unfired event
 										});
 								  	}
 									function end (view) {
