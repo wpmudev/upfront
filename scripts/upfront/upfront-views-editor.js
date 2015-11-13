@@ -9722,12 +9722,17 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		run_animation: function (view, model) {
 			var to = this.options.to,
 				ani_class = 'upfront-add-region-ani upfront-add-region-ani-' + to,
-				end_t = setTimeout(end, 500);
-			view.$el.one('animationstart webkitAnimationStart MSAnimationStart oAnimationStart', function () {
+				end_t = setTimeout(end, 500),
+				ani_event_start = 'animationstart.region_ani webkitAnimationStart.region_ani MSAnimationStart.region_ani oAnimationStart.region_ani',
+				ani_event_end = 'animationend.region_ani webkitAnimationEnd.region_ani MSAnimationEnd.region_ani oAnimationEnd.region_ani'
+			;
+			view.$el.one(ani_event_start, function () {
 				clearTimeout(end_t);
+				view.$el.off(ani_event_start); // Make sure to remove any remaining unfired event
 			});
-			view.$el.one('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function () {
+			view.$el.one(ani_event_end, function () {
 				end();
+				view.$el.off(ani_event_end); // Make sure to remove any remaining unfired event
 			});
 			// add animation class to trigger css animation
 			view.$el.addClass(ani_class);
