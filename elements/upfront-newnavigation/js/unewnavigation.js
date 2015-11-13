@@ -602,7 +602,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		if (_.isUndefined(preset)) return;
 
-		if(preset.breakpoint[currentBreakpoint.id]['menu_style'] == 'triggered') {
+		if(!_.isUndefined(preset.breakpoint[currentBreakpoint.id]) && preset.breakpoint[currentBreakpoint.id]['menu_style'] == 'triggered') {
 			selector.attr('data-style', 'burger');
 			selector.attr('data-burger_alignment', preset.breakpoint[currentBreakpoint.id]['burger_alignment']);
 			selector.attr('data-burger_over', preset.breakpoint[currentBreakpoint.id]['burger_over']);

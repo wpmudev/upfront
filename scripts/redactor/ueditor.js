@@ -50,7 +50,16 @@ $.fn.ueditor = function(options){
 };
 
 var hackRedactor = function(){
+    
+    // These lines override the Redactor's prefFormatting
+    var clean = $.Redactor.prototype.clean();
+    
+    clean.savePreFormatting = function(html) {
+        return html;
+    };
 
+    $.Redactor.prototype.clean = function () { return clean };
+    
 	// Make click consistent
 	$.Redactor.prototype.airBindHide = function () {
 		if (!this.opts.air || !this.$toolbar) return;
