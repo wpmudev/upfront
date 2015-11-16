@@ -1,6 +1,12 @@
 Change Log
 ============
 
+0.4.1.2 - 2015-11-16
+-------------------------------------------------------------------------------
+- Fix: like box  height snapping and centralized content.
+- Fix: like box iframe going out of bounds width-wise.
+- Fix: namespacing the cross-browser animation event.
+
 0.4.1.1 - 2015-11-09
 -------------------------------------------------------------------------------
 - Fix: image links issues.
