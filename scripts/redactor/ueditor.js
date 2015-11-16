@@ -732,6 +732,16 @@ Ueditor.prototype = {
 
 		this.active = true;
 
+        this.$el.on('keyup', function(e) {
+            /**
+             * Make sure return doesn't delete the last charactor
+             */
+            if (13 === e.keyCode ) {
+                self.redactor.utils.removeEmpty();
+                $(self.redactor.selection.getCurrent()).append("&nbsp;")
+            }
+        });
+
 	},
 	stopOnEscape: function(e) {
 			if(e.keyCode === 27 && !( $(".upfront-content-marker-contents").length && $(".upfront-content-marker-contents").data("ueditor") ) ){
