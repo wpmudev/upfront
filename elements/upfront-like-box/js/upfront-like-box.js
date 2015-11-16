@@ -1,5 +1,5 @@
 (function ($) {
-  define(function() {
+  define(['elements/upfront-like-box/js/settings'], function(LikeBoxSettings) {
 
 	var l10n = Upfront.Settings.l10n.like_box_element;
 
@@ -72,6 +72,7 @@
 							height: size.row,
 						});
 					}
+					
 				//}, 1000);
 			}
 		},
@@ -125,13 +126,26 @@
 					pageName = _.last(splitted);
 				}
 				
-				var wide = 	this.model.get_property_value_by_name('element_size').width-22;
-				if(wide%53 > 0)
+				var wide = 	this.model.get_property_value_by_name('element_size').width-30;
+
+				if(wide>500)
+					wide=500;
+
+				/*if(wide%53 > 0)
 					wide = parseInt(wide/53)*53+22;
 				else
 					wide = this.model.get_property_value_by_name('element_size').width;
+				*/
+				//return '<iframe src="//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2F'+ (pageName ? pageName : 'wpmudev' )+'&amp;width='+wide+'&amp;height='+this.model.get_property_value_by_name('element_size').height+'&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;show_border=true&amp;header=false" scrolling="no" frameborder="0" style="border:none; overflow:hidden; float:left; width:'+wide+'px; height:'+this.model.get_property_value_by_name('element_size').height+'px;"" allowTransparency="true"></iframe><div class="upfront-like-box_overlay"></div>'+ (!pageName ? '<span class="alert-url">!</span>' : '' );
 
-				return '<iframe src="//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2F'+ (pageName ? pageName : 'wpmudev' )+'&amp;width='+wide+'&amp;height='+this.model.get_property_value_by_name('element_size').height+'&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;show_border=true&amp;header=false" scrolling="no" frameborder="0" style="border:none; overflow:hidden; float:left; width:'+wide+'px; height:'+this.model.get_property_value_by_name('element_size').height+'px;"" allowTransparency="true"></iframe><div class="upfront-like-box_overlay"></div>'+ (!pageName ? '<span class="alert-url">!</span>' : '' );
+
+				var hide_cover = this.model.get_property_value_by_name('hide_cover')=='yes'?'true':'false';
+				var show_friends = this.model.get_property_value_by_name('show_friends')=='yes'?'true':'false';
+				var small_header = this.model.get_property_value_by_name('small_header')=='yes'?'true':'false';
+				var show_posts = this.model.get_property_value_by_name('show_posts')=='yes'?'true':'false';
+
+				return '<iframe src="//www.facebook.com/v2.5/plugins/page.php?adapt_container_width=true&amp;container_width='+wide+'&amp;width='+wide+'&amp;height='+(this.model.get_property_value_by_name('element_size').height-30)+'&amp;hide_cover='+hide_cover+'&amp;href=https%3A%2F%2Fwww.facebook.com%2F'+ (pageName ? pageName : 'wpmudev' )+'&amp;show_facepile='+show_friends+'&amp;show_posts='+show_posts+'&amp;small_header='+small_header+'" scrolling="no" frameborder="0" style="border:none; display:block; overflow:hidden; margin:auto; width:'+wide+'px; height:'+(this.model.get_property_value_by_name('element_size').height-30)+'px;"" allowTransparency="true"></iframe><div class="upfront-like-box_overlay"></div>'+ (!pageName ? '<span class="alert-url">!</span>' : '' );
+
 			}else{
 				this.model.set_property('facebook_url', '', true);
 				return '<div class="upfront-like-box_placeholder">' +
@@ -199,97 +213,8 @@
 	});
 
 
-	// ----- Settings API -----
-	// We'll be working from the bottom up here.
-	// We will first define settings panels, and items for each panel.
-	// Then we'll slot in the panels in a settings instance.
 
-	/**
-	 * Layout Style settings - Facebook Page URL item
-	 * @type {Upfront.Views.Editor.Settings.Item}
-	 */
-
-	var Field_Text = Upfront.Views.Editor.Field.Text.extend({});
-
-	var Field_Button = Upfront.Views.Editor.Field.Field.extend({
-		events: {
-			'click a': 'buttonClicked'
-		},
-		render: function() {
-			this.$el.html(this.get_field_html());
-		},
-		get_field_html: function() {
-			return '<i class="upfront-field-icon upfront-field-icon-social-back"></i><span class="upfront-back-global-settings-info">' + this.options.info + ' <a href="#">' + this.options.label + '</a></span>';
-		},
-		buttonClicked: function(e) {
-			if(this.options.on_click)
-				this.options.on_click(e);
-		},
-		isProperty: false
-	});
-
-// --- Tie the settings together ---
-
-	/**
-	 * Social Media settings hub, populated with the panels we'll be showing.
-	 * @type {Upfront.Views.Editor.Settings.Settings}
-	 */
-	var LikeBoxSettings = Upfront.Views.Editor.Settings.Settings.extend({
-		/**
-		 * Bootstrap the object - populate the internal
-		 * panels array with the panel instances we'll be showing.
-		 */
-		 getGlobalFBUrl: function(){
-			if(!Upfront.data.usocial.globals)
-				return false;
-			var services = Upfront.data.usocial.globals.services,
-				url = false;
-
-			_(services).each( function( s ) {
-				if(s.id == 'facebook')
-					url = s.url;
-			});
-
-			return url;
-		},
-
-		initialize: function (opts) {
-			this.options = opts;
-			this.has_tabs = false;
-			this.panel = new Upfront.Views.Editor.Settings.Panel({
-
-					model: this.model,
-					label: l10n.opts.style_label,
-					title: l10n.opts.style_title,
-					settings: [
-						new Upfront.Views.Editor.Settings.Item({
-							className: 'upfront-social-services-item',
-							model: this.model,
-							title: l10n.opts.page_url,
-							fields: [
-								new Field_Text({
-									model: this.model,
-									property: 'facebook_url',
-									label: l10n.opts.url_sample,
-									compact: true
-								})
-							]
-						})
-
-					]
-				});
-			this.panels = _([this.panel]);
-		},
-		/**
-		 * Get the title (goes into settings title area)
-		 * @return {string} Title
-		 */
-		get_title: function () {
-			return l10n.settings;
-		}
-	});
-
-
+	
 
 // ----- Bringing everything together -----
 // The definitions part is over.
