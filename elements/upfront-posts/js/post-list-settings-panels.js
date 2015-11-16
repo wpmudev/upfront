@@ -19,9 +19,7 @@ var Panels = {
 	_initial: {}
 };
 
-Panels.General = RootSettingsPanel.extend({
-	title: l10n.general_settings,
-	
+Panels.General = RootSettingsPanel.extend({	
 	initialize: function (opts) {
 		this.options = opts;
 		var me = this,
@@ -75,14 +73,8 @@ Panels.General = RootSettingsPanel.extend({
 			query
 		]);
 	},
-
-	get_label: function () {
-		return l10n.general;
-	},
-
-	get_title: function () {
-		return l10n.general;
-	}
+	
+	title: l10n.general_settings
 });
 
 var CustomSelectorField =  Upfront.Views.Editor.Field.Hidden.extend({
@@ -424,14 +416,6 @@ Panels.PostParts = RootSettingsPanel.extend({
 			sorter
 		]);
 	},
-
-	get_label: function () {
-		return l10n.post_parts;
-	},
-
-	get_title: function () {
-		return l10n.post_parts;
-	}
 });
 
 var PostPartsPickerSettings = Upfront.Views.Editor.Settings.Item.extend({
