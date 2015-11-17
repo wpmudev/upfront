@@ -55,6 +55,7 @@ define([
 			this.presets = new Backbone.Collection(Upfront.mainData[this.mainDataCollection] || []);
 
 			var savePreset = function(properties) {
+				console.log('saving preset', properties.breakpoint);
 				Upfront.Util.post({
 					action: 'upfront_save_' + this.ajaxActionSlug + '_preset',
 					data: properties
@@ -113,11 +114,44 @@ define([
 			newPreset.set({
 				preset_style: style
 			});
-			// Populate preset with old values
+
+			this.migratePresetProperties(newPreset);
+
+			// And remove element style
+			this.property('theme_style', '');
+			this.property('preset', newPreset.id);
+			this.presets.add(newPreset);
+			var properties = newPreset.toJSON();
+			Util.updatePresetStyle(this.styleElementPrefix.replace(/-preset/, ''), properties, this.styleTpl);
+
+			this.debouncedSavePreset(properties);
+
+			_.each(Upfront.mainData[this.mainDataCollection], function(preset, presetIndex) {
+				if (preset.id === properties.id) {
+					index = presetIndex;
+				}
+			});
+
+			if (_.isUndefined(index) === false) {
+				Upfront.mainData[this.mainDataCollection].splice(index, 1);
+			}
+			Upfront.mainData[this.mainDataCollection].push(properties);
+			// Trigger change so that whole element re-renders again.
+			// (to replace element style class with preset class, look upfront-views.js
+			this.model.get('properties').trigger('change');
+		},
+
+		/**
+		 * Allow element appearance panels to migrate properties from old type of settings
+		 * to new preset based settings.
+		 */
+		migratePresetProperties: function(newPreset) {
+			// Generic populating  of preset with old values
 			_.each(newPreset.attributes, function(value, name) {
 				var data,
 					oldValue = this.model.get_property_value_by_name(name);
 
+				// Do not overwrite identifiers
 				if (name === 'id') return;
 				if (name === 'name') return;
 
@@ -127,14 +161,6 @@ define([
 					newPreset.set(data);
 				}
 			}, this);
-			// And remove element style
-			this.property('theme_style', '');
-			this.property('preset', newPreset.id);
-			this.presets.add(newPreset);
-			this.updatePreset(newPreset.toJSON());
-			// Trigger change so that whole element re-renders again.
-			// (to replace element style class with preset class, look upfront-views.js
-			this.model.get('properties').trigger('change');
 		},
 
 		setupItems: function() {
@@ -207,11 +233,11 @@ define([
 				breakpointsData;
 
 			// Setup model so that it saves breakpoint values to breakpoint property
-			if (this.hasBreakpointSettings === true) {
+			if (this.options.hasBreakpointSettings === true) {
 				currentBreakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active();
 				breakpointsData = properties.breakpoint || {};
-				breakpointsData[currentBreakpoint.id] = {};
-				_.each(this.breakpointSpecificPresetSettings, function(settingOptions) {
+				breakpointsData[currentBreakpoint.id] = breakpointsData[currentBreakpoint.id] || {};
+				_.each(this.options.breakpointSpecificPresetSettings, function(settingOptions) {
 					breakpointsData[currentBreakpoint.id][settingOptions.name] = properties[settingOptions.name];
 					// Delete property from root properties so that model remians clean (these properties should only be saved in breakpoint data)
 					delete properties[settingOptions.name];
@@ -336,6 +362,7 @@ define([
 			preset = preset.replace(/[^-a-zA-Z0-9]/, '');
 			return preset;
 		},
+
 		property: function(name, value, silent) {
 			if(typeof value != "undefined"){
 				if(typeof silent == "undefined")
@@ -343,6 +370,10 @@ define([
 				return this.model.set_property(name, value, silent);
 			}
 			return this.model.get_property_value_by_name(name);
+		},
+
+		save_settings: function() {
+			// Deliberately disable save_settings, preset manager saves preset as it changes
 		}
 	});
 

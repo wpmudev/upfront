@@ -29,6 +29,10 @@ function() {
 			// Solve case of button loosing its styles
 			.replace(new RegExp(properties.id + ' .upfront-button', 'g'), properties.id + '.upfront-button')
 			.replace(/\\'/g, "'")
+			.replace(/\\'/g, "'")
+			.replace(/\\'/g, "'")
+			.replace(/\\"/g, '"')
+			.replace(/\\"/g, '"')
 			.replace(/\\"/g, '"');
 	};
 
