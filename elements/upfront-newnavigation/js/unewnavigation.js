@@ -186,7 +186,6 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				}
 				else if (e.which == 27) {
 					if(target.hasClass('new_menu_item')) {
-						//target.closest('li').data('backboneview').closeTooltip();
 						target.closest('li').data('backboneview').saveLink(true);
 					}
 				}
@@ -243,15 +242,6 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			currentcontext.addClass('time_being_display');
 			currentcontext = currentcontext.parent().parent('ul');
 		}
-		/*if(target.hasClass('new_menu_item') ) {
-			if($('div#unewnavigation-tooltip').length <1 || $('div#unewnavigation-tooltip').css('display') == 'none') {
-				_.delay(function(self) {
-
-					var view = target.closest('li').data('backboneview');
-					if (view && view.editMenuItem) view.editMenuItem(e);
-				}, 30, this);
-			}
-		}*/
 	},
 	editModeOn: function(e) {
 		this.$el.find('.upfront-object-content ul').each(function() {
@@ -759,10 +749,15 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	},
 
 	hideMenu: function(menu) {
+		var $nav = this.$el.find('.upfront-output-unewnavigation');
 		menu.hide();
-		if(menu.siblings('.burger_overlay').length > 0) {
+
+		if (menu.siblings('.burger_overlay').length > 0) {
 			var burger_overlay = menu.siblings('.burger_overlay');
 			burger_overlay.hide();
+		}
+		if($nav.attr('data-burger_alignment') === 'top' || $nav.attr('data-burger_alignment') === 'whole') {
+			$('section.upfront-layout').css('margin-top', 0);
 		}
 	},
 
@@ -778,26 +773,26 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 	toggle_responsive_nav: function(e) {
 		var me = this;
-
 		var region_container = this.$el.closest('.upfront-region-container');
 		var $menu = this.$el.find('ul.menu');
+		var $nav = this.$el.find('.upfront-output-unewnavigation');
+
 		if ($menu.css('display') == 'none' && typeof(e) != 'undefined') {
 			this.showMenu($menu);
 			var offset = $menu.position();
-			var data = this.$el.find('.upfront-output-unewnavigation').data();
 
 			var close_icon = $('<i class="burger_nav_close"></i>');
 			$menu.prepend($('<li>').addClass('wrap_burger_nav_close').append(close_icon));
 
 			close_icon.bind('touchstart click', function() {
-				$(e.target).closest('.responsive_nav_toggler').data('view', view).trigger('click');
-				if(data.burger_alignment == 'top' || data.burger_alignment == 'whole') {
+				$(e.target).closest('.responsive_nav_toggler').trigger('click');
+				if ($nav.attr('data-burger_alignment') === 'top' || $nav.attr('data-burger_alignment') === 'whole') {
 					$('section.upfront-layout').css('margin-top', 0);
 				}
 			});
 			region_container.addClass('upfront-region-container-has-nav');
 
-			if(data.burger_alignment == 'top' || data.burger_alignment == 'whole') {
+			if($nav.attr('data-burger_over') === 'pushes' && $nav.attr('data-burger_alignment') === 'top' || $nav.attr('data-burger_alignment') === 'whole') {
 				$('section.upfront-layout').css('margin-top', $menu.height());
 
 				var topbar_height = $('div#upfront-ui-topbar').outerHeight();
@@ -811,6 +806,10 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			this.$el.find('ul.sub-menu').css('display', '');
 			if(this.$el.find('ul.sub-menu').length < 1 )
 				region_container.removeClass('upfront-region-container-has-nav');
+
+			if($nav.attr('data-burger_over') === 'pushes') {
+				$('section.upfront-layout').css('margin-top', '');
+			}
 		}
 	},
 
@@ -863,6 +862,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		if (!breakpoint || breakpoint.default) {
 			if (
 				presetProperties.breakpoint.desktop.menu_style === 'triggered' &&
+				presetProperties.breakpoint.desktop.burger_over !== 'pushes' &&
 				presetProperties.breakpoint.desktop.burger_alignment !== 'whole'
 			) {
 				this.$el.find('.upfront-object-content').append($('<div class="burger_overlay"></div>'));
@@ -877,7 +877,11 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		} else {
 			breakpoint_data = presetProperties.breakpoint[breakpoint.id];
 
-			if(breakpoint_data && breakpoint_data.menu_style ===  'triggered' && breakpoint_data.burger_alignment !== 'whole') {
+			if (
+				breakpoint_data && breakpoint_data.menu_style ===  'triggered' &&
+				breakpoint_data.burger_over !== 'pushes' &&
+				breakpoint_data.burger_alignment !== 'whole'
+			) {
 				this.$el.find('.upfront-object-content').append($('<div class="burger_overlay"></div>'));
 			}
 			if(breakpoint_data && breakpoint_data.menu_style === 'triggered') {

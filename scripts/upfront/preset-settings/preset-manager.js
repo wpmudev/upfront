@@ -55,7 +55,6 @@ define([
 			this.presets = new Backbone.Collection(Upfront.mainData[this.mainDataCollection] || []);
 
 			var savePreset = function(properties) {
-				console.log('saving preset', properties.breakpoint);
 				Upfront.Util.post({
 					action: 'upfront_save_' + this.ajaxActionSlug + '_preset',
 					data: properties
