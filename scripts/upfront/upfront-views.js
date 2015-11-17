@@ -935,20 +935,23 @@ define([
 			},
 			
 			fix_wrapper_height: function ($el) {
+				Upfront.Behaviors.GridEditor.time_start('fn fix_wrapper_height');
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
-					off = $el.offset(),
-					width = $el.width(),
 					prevs = [],
 					apply_height = function (wraps) {
+						Upfront.Behaviors.GridEditor.time_start('fn fix_wrapper_height::apply_height');
 						// Reset height first
 						_.each(wraps, function ($wrap) {
 							$wrap.css('min-height', '');
 						});
 						// Find max height and apply to all
-						var max_wrap = _.max(wraps, function ($wrap) {
-								return $wrap.height();
+						var wraps_height = _.map(wraps, function($wrap){
+								return parseFloat($wrap.css('height'));
 							}),
-							height = max_wrap.height();
+							height = _.max(wraps_height, function(h){
+								return h;
+							})
+						;
 						_.each(wraps, function ($wrap, index) {
 							$wrap.removeAttr('data-first-in-row');
 							$wrap.removeAttr('data-last-in-row');
@@ -956,6 +959,7 @@ define([
 							if ( index == wraps.length-1 ) $wrap.attr('data-last-in-row', '1');
 							$wrap.css('min-height', height);
 						});
+						Upfront.Behaviors.GridEditor.time_end('fn fix_wrapper_height::apply_height');
 					};
 				Upfront.Events.trigger('upfront:wrappers:before_fix_height', this);
 				Upfront.Util.find_sorted($el, '> .upfront-wrapper')
@@ -992,6 +996,7 @@ define([
 					apply_height(prevs);
 				}
 				Upfront.Events.trigger('upfront:wrappers:after_fix_height', this);
+				Upfront.Behaviors.GridEditor.time_end('fn fix_wrapper_height');
 			},
 		}),
 
@@ -2333,15 +2338,10 @@ define([
 				this.stopListening(this.model, 'remove', this.render);
 				this.listenTo(this.model, 'remove', this.on_remove);
 				this.listenTo(this.model, 'reset', this.on_reset);
-				
-				this.listenTo(Upfront.Events, "entity:drag_stop", this.apply_flexbox_clear);
-				this.listenTo(Upfront.Events, "entity:drag_stop", this.apply_wrapper_height);
-				this.listenTo(Upfront.Events, "entity:drag_stop", this.apply_adapt_to_breakpoints);
-				this.listenTo(Upfront.Events, "entity:resized", this.apply_flexbox_clear);
-				this.listenTo(Upfront.Events, "entity:resized", this.apply_wrapper_height);
-				this.listenTo(Upfront.Events, "entity:resized", this.apply_adapt_to_breakpoints);
-				this.listenTo(Upfront.Events, "entity:wrapper:resized", this.apply_wrapper_height);
-				this.listenTo(Upfront.Events, "entity:wrapper:resized", this.apply_adapt_to_breakpoints);
+
+				this.listenTo(Upfront.Events, "entity:drag_stop", this.on_drop);
+				this.listenTo(Upfront.Events, "entity:resized", this.on_resize);
+				this.listenTo(Upfront.Events, "entity:wrapper:resized", this.on_wrapper_resize);
 				this.listenTo(Upfront.Events, "entity:wrappers:update", this.on_wrappers_update);
 				this.listenTo(Upfront.Events, "entity:module_group:group", this.on_group);
 				this.listenTo(Upfront.Events, "entity:module_group:ungroup", this.on_ungroup);
@@ -2351,7 +2351,7 @@ define([
 			},
 			on_entity_remove: function(e, view) {
 				Upfront.Events.trigger("entity:removed:before");
-				var wrapper_id = view.model.get_wrapper_id(),
+				var wrapper_id = view.model.get_wrapper_id(),gi
 					me = this;
 				if ( wrapper_id ){
 					var wrappers = this.region_view.model.get('wrappers'),
@@ -2489,6 +2489,24 @@ define([
 				this.apply_flexbox_clear();
 				this.apply_wrapper_height();
 			},
+			on_drop: function (view, model) {
+				if ( view.parent_view && view.parent_view != this ) return;
+				//this.apply_flexbox_clear();
+				this.apply_wrapper_height();
+				this.apply_adapt_to_breakpoints();
+			},
+			on_resize: function (view, model) {
+				if ( view.parent_view && view.parent_view != this ) return;
+				//this.apply_flexbox_clear();
+				this.apply_wrapper_height();
+				this.apply_adapt_to_breakpoints();
+			},
+			on_wrapper_resize: function (view, model) {
+				if ( view.parent_view && view.parent_view != this ) return;
+				//this.apply_flexbox_clear();
+				this.apply_wrapper_height();
+				this.apply_adapt_to_breakpoints();
+			},
 			on_add: function (model, collection, options) {
 				this.current_wrapper_id = this.current_wrapper_el = null;
 				this.render_module(model, options);
@@ -2531,6 +2549,7 @@ define([
 				this.fix_flexbox_clear(this.$el);
 			},
 			apply_wrapper_height: function () {
+				if ( !document.body.contains(this.el) ) return;
 				this.model.each(function (module) {
 					var local_view = Upfront.data.module_views[module.cid];
 					if ( !local_view || !local_view._modules_view ) return;
