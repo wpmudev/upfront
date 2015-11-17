@@ -19,6 +19,12 @@ var Panels = {
 	_initial: {}
 };
 
+RootSettingsPanel = RootSettingsPanel.extend({
+	is_active: function () {
+		return this.$el.find(".upfront-settings-item-content").is(":visible");
+	}
+});
+
 Panels.General = RootSettingsPanel.extend({	
 	initialize: function (opts) {
 		this.options = opts;
