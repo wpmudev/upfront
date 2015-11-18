@@ -1197,7 +1197,7 @@ DragDrop.prototype = {
 							var wrap_model = wrappers.get_by_wrapper_id(row_wrap.$el.attr('id')),
 								this_model = ed.get_el_model($(this));
 							wrappers.remove(wrap_model);
-							that.model.collection.remove(this_model);
+							that.model.collection.remove(this_model, {update: false});
 						});
 					});
 				}

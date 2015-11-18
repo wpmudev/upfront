@@ -51,7 +51,7 @@ var GridEditor = {
 	resize_instances: {},
 	wrapper_resize_instances: {},
 
-	show_debug_element: true,//false,
+	show_debug_element: false,
 
 	resizing: false,
 

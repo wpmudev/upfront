@@ -2508,22 +2508,27 @@ define([
 				this.apply_adapt_to_breakpoints();
 			},
 			on_add: function (model, collection, options) {
+				var update = typeof options.update != 'undefined' ? options.update : true;
 				this.current_wrapper_id = this.current_wrapper_el = null;
 				this.render_module(model, options);
-				this.apply_flexbox_clear();
-				this.apply_wrapper_height();
-				this.apply_adapt_to_breakpoints();
+				if ( update ) {
+					//this.apply_flexbox_clear();
+					this.apply_wrapper_height();
+					this.apply_adapt_to_breakpoints();
+				}
 				Upfront.Events.trigger("entity:added:after");
 			},
-			on_remove: function (model) {
+			on_remove: function (model, collection, options) {
+				var update = typeof options.update != 'undefined' ? options.update : true;
 				this.remove_model(model);
-				this.apply_wrapper_height();
-				this.apply_adapt_to_breakpoints();
+				if ( update ) {
+					this.apply_wrapper_height();
+					this.apply_adapt_to_breakpoints();
+				}
 			},
 			remove_model: function (model) {
 				var view = Upfront.data.module_views[model.cid];
-				if ( !view )
-					return;
+				if ( !view ) return;
 				view.unbind();
 				view.remove();
 				delete Upfront.data.module_views[model.cid];
