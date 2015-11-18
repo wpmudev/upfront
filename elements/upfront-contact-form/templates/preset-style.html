@@ -197,66 +197,12 @@
 
 /* Borders Module */
 
-/* Fields & Button */
-<?php if(!empty($properties['tagsToApply']) && $properties['tagsToApply'] == 'field-button') { ?>
-.<?php echo $properties['id'] ?> .upfront-field-container input,
-.<?php echo $properties['id'] ?> .upfront-field-container textarea,
-.<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button {
-<?php if(!empty($properties['static-useborder']) && $properties['static-useborder'] == 'yes') { ?>
-	<?php if(!empty($properties['field-button-static-borderwidth']) && !empty($properties['field-button-static-bordertype']) && !empty($properties['field-button-static-bordercolor'])) { ?>
-		border: <?php echo $properties['field-button-static-borderwidth'] ?>px <?php echo $properties['field-button-static-bordertype'] ?> <?php echo $properties['field-button-static-bordercolor'] ?>;
-	<?php } ?>
-<?php } else { ?>
-		border: none;
-<?php } ?>
-}
-
-.<?php echo $properties['id'] ?> .upfront-field-container input:hover,
-.<?php echo $properties['id'] ?> .upfront-field-container textarea:hover,
-.<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button:hover {
-<?php if(!empty($properties['hover-useborder']) && $properties['hover-useborder'] == 'yes') { ?>
-	<?php if(!empty($properties['field-button-hover-borderwidth']) && !empty($properties['field-button-hover-bordertype']) && !empty($properties['field-button-hover-bordercolor'])) { ?>
-		border: <?php echo $properties['field-button-hover-borderwidth'] ?>px <?php echo $properties['field-button-hover-bordertype'] ?> <?php echo $properties['field-button-hover-bordercolor'] ?>;
-	<?php } ?>
-<?php } else { ?>
-	<?php if(!empty($properties['hover-useborder'])) { ?>
-		<?php if(!empty($properties['field-button-static-borderwidth']) && !empty($properties['field-button-static-bordertype']) && !empty($properties['field-button-static-bordercolor'])) { ?>
-			border: <?php echo $properties['field-button-static-borderwidth'] ?>px <?php echo $properties['field-button-static-bordertype'] ?> <?php echo $properties['field-button-static-bordercolor'] ?>;
-		<?php } ?>
-	<?php } else { ?>
-		border: none;
-	<?php } ?>
-<?php } ?>
-}
-
-.<?php echo $properties['id'] ?> .upfront-field-container input:focus,
-.<?php echo $properties['id'] ?> .upfront-field-container textarea:focus,
-.<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button:focus {
-<?php if(!empty($properties['focus-useborder']) && $properties['focus-useborder'] == 'yes') { ?>
-	<?php if(!empty($properties['field-button-focus-borderwidth']) && !empty($properties['field-button-focus-bordertype']) && !empty($properties['field-button-focus-bordercolor'])) { ?>
-		border: <?php echo $properties['field-button-focus-borderwidth'] ?>px <?php echo $properties['field-button-focus-bordertype'] ?> <?php echo $properties['field-button-focus-bordercolor'] ?>;
-	<?php } ?>
-<?php } else { ?>
-	<?php if(!empty($properties['focus-useborder'])) { ?>
-		<?php if(!empty($properties['field-button-static-borderwidth']) && !empty($properties['field-button-static-bordertype']) && !empty($properties['field-button-static-bordercolor'])) { ?>
-			border: <?php echo $properties['field-button-static-borderwidth'] ?>px <?php echo $properties['field-button-static-bordertype'] ?> <?php echo $properties['field-button-static-bordercolor'] ?>;
-		<?php } ?>
-	<?php } else { ?>
-		border: none;
-	<?php } ?>
-<?php } ?>
-}
-
-<?php } ?>
-
 /* Fields */
-<?php if(!empty($properties['tagsToApply']) && $properties['tagsToApply'] == 'field') { ?>
-
 .<?php echo $properties['id'] ?> .upfront-field-container input,
 .<?php echo $properties['id'] ?> .upfront-field-container textarea {
-<?php if(!empty($properties['static-useborder']) && $properties['static-useborder'] == 'yes') { ?>
-	<?php if(!empty($properties['field-static-borderwidth']) && !empty($properties['field-static-bordertype']) && !empty($properties['field-static-bordercolor'])) { ?>
-		border: <?php echo $properties['field-static-borderwidth'] ?>px <?php echo $properties['field-static-bordertype'] ?> <?php echo $properties['field-static-bordercolor'] ?>;
+<?php if(!empty($properties['static-fields-useborder']) && $properties['static-fields-useborder'] == 'yes') { ?>
+	<?php if(!empty($properties['static-fields-borderwidth']) && !empty($properties['static-fields-bordertype']) && !empty($properties['static-fields-bordercolor'])) { ?>
+		border: <?php echo $properties['static-fields-borderwidth'] ?>px <?php echo $properties['static-fields-bordertype'] ?> <?php echo $properties['static-fields-bordercolor'] ?>;
 	<?php } ?>
 <?php } else { ?>
 		border: none;
@@ -265,14 +211,14 @@
 
 .<?php echo $properties['id'] ?> .upfront-field-container input:hover,
 .<?php echo $properties['id'] ?> .upfront-field-container textarea:hover {
-<?php if(!empty($properties['hover-useborder']) && $properties['hover-useborder'] == 'yes') { ?>
-	<?php if(!empty($properties['field-hover-borderwidth']) && !empty($properties['field-hover-bordertype']) && !empty($properties['field-hover-bordercolor'])) { ?>
-		border: <?php echo $properties['field-hover-borderwidth'] ?>px <?php echo $properties['field-hover-bordertype'] ?> <?php echo $properties['field-hover-bordercolor'] ?>;
+<?php if(!empty($properties['hover-fields-useborder']) && $properties['hover-fields-useborder'] == 'yes') { ?>
+	<?php if(!empty($properties['hover-fields-borderwidth']) && !empty($properties['hover-fields-bordertype']) && !empty($properties['hover-fields-bordercolor'])) { ?>
+		border: <?php echo $properties['hover-fields-borderwidth'] ?>px <?php echo $properties['hover-fields-bordertype'] ?> <?php echo $properties['hover-fields-bordercolor'] ?>;
 	<?php } ?>
 <?php } else { ?>
-	<?php if(!empty($properties['hover-useborder'])) { ?>
-		<?php if(!empty($properties['field-static-borderwidth']) && !empty($properties['field-static-bordertype']) && !empty($properties['field-static-bordercolor'])) { ?>
-			border: <?php echo $properties['field-static-borderwidth'] ?>px <?php echo $properties['field-static-bordertype'] ?> <?php echo $properties['field-static-bordercolor'] ?>;
+	<?php if(!empty($properties['static-fields-useborder'])) { ?>
+		<?php if(!empty($properties['static-fields-borderwidth']) && !empty($properties['static-fields-bordertype']) && !empty($properties['static-fields-bordercolor'])) { ?>
+			border: <?php echo $properties['static-fields-borderwidth'] ?>px <?php echo $properties['static-fields-bordertype'] ?> <?php echo $properties['field-static-bordercolor'] ?>;
 		<?php } ?>
 	<?php } else { ?>
 		border: none;
@@ -282,14 +228,14 @@
 
 .<?php echo $properties['id'] ?> .upfront-field-container input:focus,
 .<?php echo $properties['id'] ?> .upfront-field-container textarea:focus {
-<?php if(!empty($properties['focus-useborder']) && $properties['focus-useborder'] == 'yes') { ?>
-	<?php if(!empty($properties['field-focus-borderwidth']) && !empty($properties['field-focus-bordertype']) && !empty($properties['field-focus-bordercolor'])) { ?>
-		border: <?php echo $properties['field-focus-borderwidth'] ?>px <?php echo $properties['field-focus-bordertype'] ?> <?php echo $properties['field-focus-bordercolor'] ?>;
+<?php if(!empty($properties['focus-fields-useborder']) && $properties['focus-fields-useborder'] == 'yes') { ?>
+	<?php if(!empty($properties['focus-fields-borderwidth']) && !empty($properties['focus-fields-bordertype']) && !empty($properties['focus-fields-bordercolor'])) { ?>
+		border: <?php echo $properties['focus-fields-borderwidth'] ?>px <?php echo $properties['focus-fields-bordertype'] ?> <?php echo $properties['focus-fields-bordercolor'] ?>;
 	<?php } ?>
 <?php } else { ?>
-	<?php if(!empty($properties['focus-useborder'])) { ?>
-		<?php if(!empty($properties['field-static-borderwidth']) && !empty($properties['field-static-bordertype']) && !empty($properties['field-static-bordercolor'])) { ?>
-			border: <?php echo $properties['field-static-borderwidth'] ?>px <?php echo $properties['field-static-bordertype'] ?> <?php echo $properties['field-static-bordercolor'] ?>;
+	<?php if(!empty($properties['static-fields-useborder'])) { ?>
+		<?php if(!empty($properties['static-fields-borderwidth']) && !empty($properties['static-fields-bordertype']) && !empty($properties['static-fields-bordercolor'])) { ?>
+			border: <?php echo $properties['static-fields-borderwidth'] ?>px <?php echo $properties['static-fields-bordertype'] ?> <?php echo $properties['static-fields-bordercolor'] ?>;
 		<?php } ?>
 	<?php } else { ?>
 		border: none;
@@ -297,15 +243,12 @@
 <?php } ?>
 }
 
-<?php } ?>
-
 /* Button */
-<?php if(!empty($properties['tagsToApply']) && $properties['tagsToApply'] == 'button') { ?>
 
 .<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button {
-<?php if(!empty($properties['static-useborder']) && $properties['static-useborder'] == 'yes') { ?>
-	<?php if(!empty($properties['button-static-borderwidth']) && !empty($properties['button-static-bordertype']) && !empty($properties['button-static-bordercolor'])) { ?>
-		border: <?php echo $properties['button-static-borderwidth'] ?>px <?php echo $properties['button-static-bordertype'] ?> <?php echo $properties['button-static-bordercolor'] ?>;
+<?php if(!empty($properties['static-button-useborder']) && $properties['static-button-useborder'] == 'yes') { ?>
+	<?php if(!empty($properties['static-button-borderwidth']) && !empty($properties['static-button-bordertype']) && !empty($properties['static-button-bordercolor'])) { ?>
+		border: <?php echo $properties['static-button-borderwidth'] ?>px <?php echo $properties['static-button-bordertype'] ?> <?php echo $properties['static-button-bordercolor'] ?>;
 	<?php } ?>
 <?php } else { ?>
 		border: none;
@@ -313,14 +256,14 @@
 }
 
 .<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button:hover {
-<?php if(!empty($properties['hover-useborder']) && $properties['hover-useborder'] == 'yes') { ?>
-	<?php if(!empty($properties['button-hover-borderwidth']) && !empty($properties['button-hover-bordertype']) && !empty($properties['button-hover-bordercolor'])) { ?>
-		border: <?php echo $properties['button-hover-borderwidth'] ?>px <?php echo $properties['button-hover-bordertype'] ?> <?php echo $properties['button-hover-bordercolor'] ?>;
+<?php if(!empty($properties['hover-button-useborder']) && $properties['hover-button-useborder'] == 'yes') { ?>
+	<?php if(!empty($properties['hover-button-borderwidth']) && !empty($properties['hover-button-bordertype']) && !empty($properties['hover-button-bordercolor'])) { ?>
+		border: <?php echo $properties['hover-button-borderwidth'] ?>px <?php echo $properties['hover-button-bordertype'] ?> <?php echo $properties['hover-button-bordercolor'] ?>;
 	<?php } ?>
 <?php } else { ?>
-	<?php if(!empty($properties['hover-useborder'])) { ?>
-		<?php if(!empty($properties['button-static-borderwidth']) && !empty($properties['button-static-bordertype']) && !empty($properties['button-static-bordercolor'])) { ?>
-			border: <?php echo $properties['button-static-borderwidth'] ?>px <?php echo $properties['button-static-bordertype'] ?> <?php echo $properties['button-static-bordercolor'] ?>;
+	<?php if(!empty($properties['static-button-useborder'])) { ?>
+		<?php if(!empty($properties['static-button-borderwidth']) && !empty($properties['static-button-bordertype']) && !empty($properties['static-button-bordercolor'])) { ?>
+			border: <?php echo $properties['static-button-borderwidth'] ?>px <?php echo $properties['static-button-bordertype'] ?> <?php echo $properties['static-button-bordercolor'] ?>;
 		<?php } ?>
 	<?php } else { ?>
 		border: none;
@@ -329,21 +272,20 @@
 }
 
 .<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button:focus {
-<?php if(!empty($properties['focus-useborder']) && $properties['focus-useborder'] == 'yes') { ?>
-	<?php if(!empty($properties['button-focus-borderwidth']) && !empty($properties['button-focus-bordertype']) && !empty($properties['button-focus-bordercolor'])) { ?>
-		border: <?php echo $properties['button-focus-borderwidth'] ?>px <?php echo $properties['button-focus-bordertype'] ?> <?php echo $properties['button-focus-bordercolor'] ?>;
+<?php if(!empty($properties['focus-button-useborder']) && $properties['focus-button-useborder'] == 'yes') { ?>
+	<?php if(!empty($properties['focus-button-borderwidth']) && !empty($properties['focus-button-bordertype']) && !empty($properties['focus-button-bordercolor'])) { ?>
+		border: <?php echo $properties['focus-button-borderwidth'] ?>px <?php echo $properties['focus-button-bordertype'] ?> <?php echo $properties['focus-button-bordercolor'] ?>;
 	<?php } ?>
 <?php } else { ?>
-	<?php if(!empty($properties['focus-useborder'])) { ?>
-		<?php if(!empty($properties['button-static-borderwidth']) && !empty($properties['button-static-bordertype']) && !empty($properties['button-static-bordercolor'])) { ?>
-			border: <?php echo $properties['button-static-borderwidth'] ?>px <?php echo $properties['button-static-bordertype'] ?> <?php echo $properties['button-static-bordercolor'] ?>;
+	<?php if(!empty($properties['static-button-useborder'])) { ?>
+		<?php if(!empty($properties['static-button-borderwidth']) && !empty($properties['static-button-bordertype']) && !empty($properties['static-button-bordercolor'])) { ?>
+			border: <?php echo $properties['static-button-borderwidth'] ?>px <?php echo $properties['static-button-bordertype'] ?> <?php echo $properties['static-button-bordercolor'] ?>;
 		<?php } ?>
 	<?php } else { ?>
 		border: none;
 	<?php } ?>
 <?php } ?>
 }
-<?php } ?>
 
 /* Custom CSS */
 <?php if(!empty($properties['preset_style'])) { ?><?php echo $properties['preset_style'] ?><?php } ?>

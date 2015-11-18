@@ -41,7 +41,7 @@ define([
 					default_value: 1,
 					multiple: false,
 					values: [
-						{ label: l10n.border, value: 'yes' }
+						{ label: me.options.label || l10n.border, value: 'yes' }
 					],
 					change: function(value) {
 						me.model.set(me.options.fields.use, value);

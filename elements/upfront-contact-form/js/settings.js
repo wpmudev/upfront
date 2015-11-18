@@ -121,10 +121,6 @@ define([
 					'static-weight': 400,
 					'static-style': 'normal',
 					'static-line-height': 1,
-					'static-useborder': '',
-					'static-borderwidth': 1,
-					'static-bordertype': 'solid',
-					'static-bordercolor': 'rgb(0, 0, 0)',
 					'static-field-labels-font-size': 12,
 					'static-field-labels-font-family': 'Arial',
 					'static-field-labels-font-color': 'rgb(0, 0, 0)',
@@ -197,10 +193,6 @@ define([
 					'hover-weight': 400,
 					'hover-style': 'normal',
 					'hover-line-height': 1,
-					'hover-useborder': '',
-					'hover-borderwidth': 1,
-					'hover-bordertype': 'solid',
-					'hover-bordercolor': 'rgb(0, 0, 0)',
 					'hover-transition-duration': 0.3,
 					'hover-transition-easing': 'ease-in-out',
 					'focus-field-bg': 'rgb(255,255,255)',
@@ -212,34 +204,18 @@ define([
 					'focus-weight': 400,
 					'focus-style': 'normal',
 					'focus-line-height': 1,
-					'focus-useborder': '',
-					'focus-borderwidth': 1,
-					'focus-bordertype': 'solid',
-					'focus-bordercolor': 'rgb(0, 0, 0)',
-					'static-field-button-useborder': '',
-					'static-field-button-borderwidth': 1,
-					'static-field-button-bordertype': 'solid',
-					'static-field-button-bordercolor': 'rgb(0, 0, 0)',
-					'hover-field-button-useborder': '',
-					'hover-field-button-borderwidth': 1,
-					'hover-field-button-bordertype': 'solid',
-					'hover-field-button-bordercolor': 'rgb(0, 0, 0)',
-					'focus-field-button-useborder': '',
-					'focus-field-button-borderwidth': 1,
-					'focus-field-button-bordertype': 'solid',
-					'focus-field-button-bordercolor': 'rgb(0, 0, 0)',
-					'static-field-useborder': '',
-					'static-field-borderwidth': 1,
-					'static-field-bordertype': 'solid',
-					'static-field-bordercolor': 'rgb(0, 0, 0)',
-					'hover-field-useborder': '',
-					'hover-field-borderwidth': 1,
-					'hover-field-bordertype': 'solid',
-					'hover-field-bordercolor': 'rgb(0, 0, 0)',
-					'focus-field-useborder': '',
-					'focus-field-borderwidth': 1,
-					'focus-field-bordertype': 'solid',
-					'focus-field-bordercolor': 'rgb(0, 0, 0)',
+					'static-fields-useborder': '',
+					'static-fields-borderwidth': 1,
+					'static-fields-bordertype': 'solid',
+					'static-fields-bordercolor': 'rgb(0, 0, 0)',
+					'hover-fields-useborder': '',
+					'hover-fields-borderwidth': 1,
+					'hover-fields-bordertype': 'solid',
+					'hover-fields-bordercolor': 'rgb(0, 0, 0)',
+					'focus-fields-useborder': '',
+					'focus-fields-borderwidth': 1,
+					'focus-fields-bordertype': 'solid',
+					'focus-fields-bordercolor': 'rgb(0, 0, 0)',
 					'static-button-useborder': '',
 					'static-button-borderwidth': 1,
 					'static-button-bordertype': 'solid',
@@ -302,20 +278,29 @@ define([
 						{
 							moduleType: 'Border',
 							options: {
-								state: 'static',
+								state: 'static-fields',
 								title: '',
+								label: 'Fields Border',
 								fields: {
-									use: 'static-useborder',
-									width: 'static-borderwidth',
-									type: 'static-bordertype',
-									color: 'static-bordercolor',
+									use: 'static-fields-useborder',
+									width: 'static-fields-borderwidth',
+									type: 'static-fields-bordertype',
+									color: 'static-fields-bordercolor',
 								},
-								default_element: 'field-button',
-								elements: [
-									{label: l10n.field_button_label, value: 'field-button'},
-									{label: l10n.field_label, value: 'field'},
-									{label: l10n.button_label, value: 'button'}
-								]
+							}
+						},
+						{
+							moduleType: 'Border',
+							options: {
+								state: 'static-button',
+								title: '',
+								label: 'Button Border',
+								fields: {
+									use: 'static-button-useborder',
+									width: 'static-button-borderwidth',
+									type: 'static-button-bordertype',
+									color: 'static-button-bordercolor',
+								},
 							}
 						}
 					],
@@ -374,22 +359,33 @@ define([
 						{
 							moduleType: 'Border',
 							options: {
-								state: 'hover',
+								state: 'hover-fields',
 								title: '',
+								label: 'Fields Border',
 								prepend: 'hover-',
 								prefix: 'static',
 								fields: {
-									use: 'hover-useborder',
-									width: 'hover-borderwidth',
-									type: 'hover-bordertype',
-									color: 'hover-bordercolor',
+									use: 'hover-fields-useborder',
+									width: 'hover-fields-borderwidth',
+									type: 'hover-fields-bordertype',
+									color: 'hover-fields-bordercolor',
 								},
-								default_element: 'field-button',
-								elements: [
-									{label: l10n.field_button_label, value: 'field-button'},
-									{label: l10n.field_label, value: 'field'},
-									{label: l10n.button_label, value: 'button'}
-								]
+							}
+						},
+						{
+							moduleType: 'Border',
+							options: {
+								state: 'hover-button',
+								title: '',
+								label: 'Button Border',
+								prepend: 'hover-',
+								prefix: 'static',
+								fields: {
+									use: 'hover-button-useborder',
+									width: 'hover-button-borderwidth',
+									type: 'hover-button-bordertype',
+									color: 'hover-button-bordercolor',
+								},
 							}
 						},
 						{
@@ -460,22 +456,33 @@ define([
 						{
 							moduleType: 'Border',
 							options: {
-								state: 'focus',
+								state: 'focus-fields',
 								title: '',
+								label: 'Fields Border',
 								prepend: 'focus-',
 								prefix: 'static',
 								fields: {
-									use: 'focus-useborder',
-									width: 'focus-borderwidth',
-									type: 'focus-bordertype',
-									color: 'focus-bordercolor',
+									use: 'focus-fields-useborder',
+									width: 'focus-fields-borderwidth',
+									type: 'focus-fields-bordertype',
+									color: 'focus-fields-bordercolor',
 								},
-								default_element: 'field-button',
-								elements: [
-									{label: l10n.field_button_label, value: 'field-button'},
-									{label: l10n.field_label, value: 'field'},
-									{label: l10n.button_label, value: 'button'}
-								]
+							}
+						},
+						{
+							moduleType: 'Border',
+							options: {
+								state: 'focus-button',
+								title: '',
+								label: 'Button Border',
+								prepend: 'focus-',
+								prefix: 'static',
+								fields: {
+									use: 'focus-button-useborder',
+									width: 'focus-button-borderwidth',
+									type: 'focus-button-bordertype',
+									color: 'focus-button-bordercolor',
+								},
 							}
 						}
 					]
