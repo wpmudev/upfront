@@ -11,7 +11,7 @@
 				}
 			}
 		    
-			var videoUrl =  'http://www.youtube.com/embed/' + $(this).data('video-id') + '?modestbranding=1';
+			var videoUrl =  'https://www.youtube.com/embed/' + $(this).data('video-id') + '?modestbranding=1';
 			$(this).parent().prev().find('iframe').attr('src', videoUrl);
 			$(this).parent().prev().find('h3').html($(this).find('h4').html());
 
