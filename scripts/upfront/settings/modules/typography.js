@@ -182,7 +182,7 @@ define([
 						show: function(value) {
 							me.currentElement = value + '-';
 							var settings = me.get_field_values(value);
-							me.update_fields(value, settings);
+							me.update_fields(settings);
 						}
 					})
 				);
