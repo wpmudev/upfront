@@ -680,16 +680,20 @@ RedactorPlugins.upfrontIcons = function() {
                     "font-size": fontSize + "px",
                     "top": top + "px"
                 });
-                var inserted = this.redactor.insert.html($icon[0].outerHTML, false); //inserted false instead of true to retain the selected content
+                var html = $icon[0].outerHTML;
+                //var inserted = this.redactor.insert.html($icon[0].outerHTML); //inserted false instead of true to retain the selected content
+                /**
+                 * insert.html may use document's insertHtml command which may result in the $icon to lose the uf_font_icon
+                 * and that's why we're using insert.execHtml from now on
+                 */
+                 this.redactor.insert.execHtml(html);
+
                 this.redactor.code.sync();
 
-                //var offset = this.redactor.caret.getOffset(); //existing caret position
 
                 this.redactor.selection.restore();
 
                 this.closeToolbar();
-                this.redactor.caret.setAfter($(inserted));
-                //this.redactor.caret.setOffset(100);
             },
             input_change: function(e){
                 var $sel = this.$sel;
