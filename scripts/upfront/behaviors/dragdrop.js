@@ -705,7 +705,7 @@ DragDrop.prototype = {
 			max_height = ed.max_row*ed.baseline,
 			draggable = $me.data('ui-draggable'),
 			cursor_top = this.event.pageY - me_offset.top,
-			area = ( this.is_parent_group ? ed.get_el(this.view.group_view.$el) : ed.get_region(this.$region) ),
+			area = ( this.is_parent_group ? ed.get_position(this.view.group_view.$el) : ed.get_region(this.$region) ),
 			drop_areas = false
 		;
 
@@ -725,6 +725,8 @@ DragDrop.prototype = {
 		$helper.css('margin-left', $me.css('margin-left')); // fix error with the percentage margin applied
 
 		if ( this.is_parent_group ) {
+			area.region = this.$region.data('name');
+			area.group = this.view.group_view.$el.attr('id');
 			this.drop_areas = [ area ];
 		}
 		else if ( breakpoint && !breakpoint.default ) {
