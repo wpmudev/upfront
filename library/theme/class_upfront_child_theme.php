@@ -63,6 +63,12 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		add_filter('upfront_get_button_presets', array($this, 'getButtonPresets'), 10, 2);
 		add_filter('upfront_get_tab_presets', array($this, 'getTabPresets'), 10, 2);
 		add_filter('upfront_get_accordion_presets', array($this, 'getAccordionPresets'), 10, 2);
+		add_filter('upfront_get_contact_presets', array($this, 'getContactPresets'), 10, 2);
+		add_filter('upfront_get_gallery_presets', array($this, 'getGalleryPresets'), 10, 2);
+		add_filter('upfront_get_image_presets', array($this, 'getImagePresets'), 10, 2);
+		add_filter('upfront_get_nav_presets', array($this, 'getNavPresets'), 10, 2);
+		add_filter('upfront_get_slider_presets', array($this, 'getSliderPresets'), 10, 2);
+		add_filter('upfront_get_text_presets', array($this, 'getTextPresets'), 10, 2);
 		add_filter('upfront_get_theme_styles', array($this, 'getThemeStyles'));
 		add_filter('upfront_get_global_regions', array($this, 'getGlobalRegions'));
 		add_filter('upfront_get_responsive_settings', array($this, 'getResponsiveSettings'));
@@ -267,6 +273,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 				}
 				$style_content = file_get_contents($styles_root . DIRECTORY_SEPARATOR . $type . DIRECTORY_SEPARATOR . $style);
 				$style_content = $this->_expand_passive_relative_url($style_content);
+				$style_content = str_replace('#page', 'div#page .upfront-output-region-container .upfront-output-module', $style_content);
 				$out .= $style_content;
 			}
 		}
@@ -616,7 +623,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		$button_presets = $this->get_theme_settings()->get('button_presets');
 		if (isset($args['json']) && $args['json']) return $button_presets;
-		
+
 		$as_array = false;
 		if (isset($args['as_array']) && $args['as_array']) {
 			$as_array = true;
@@ -643,6 +650,90 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		if (empty($presets) === false) return $presets;
 
 		$presets = $this->get_theme_settings()->get('accordion_presets');
+		if (isset($args['json']) && $args['json']) return $presets;
+
+		$as_array = false;
+		if (isset($args['as_array']) && $args['as_array']) {
+			$as_array = true;
+		}
+
+		return json_decode($presets, $as_array);
+	}
+
+	public function getContactPresets($presets, $args) {
+		if (empty($presets) === false) return $presets;
+
+		$presets = $this->get_theme_settings()->get('contact_presets');
+		if (isset($args['json']) && $args['json']) return $presets;
+
+		$as_array = false;
+		if (isset($args['as_array']) && $args['as_array']) {
+			$as_array = true;
+		}
+
+		return json_decode($presets, $as_array);
+	}
+
+	public function getGalleryPresets($presets, $args) {
+		if (empty($presets) === false) return $presets;
+
+		$presets = $this->get_theme_settings()->get('gallery_presets');
+		if (isset($args['json']) && $args['json']) return $presets;
+
+		$as_array = false;
+		if (isset($args['as_array']) && $args['as_array']) {
+			$as_array = true;
+		}
+
+		return json_decode($presets, $as_array);
+	}
+
+	public function getImagePresets($presets, $args) {
+		if (empty($presets) === false) return $presets;
+
+		$presets = $this->get_theme_settings()->get('image_presets');
+		if (isset($args['json']) && $args['json']) return $presets;
+
+		$as_array = false;
+		if (isset($args['as_array']) && $args['as_array']) {
+			$as_array = true;
+		}
+
+		return json_decode($presets, $as_array);
+	}
+
+	public function getNavPresets($presets, $args) {
+		if (empty($presets) === false) return $presets;
+
+		$presets = $this->get_theme_settings()->get('nav_presets');
+		if (isset($args['json']) && $args['json']) return $presets;
+
+		$as_array = false;
+		if (isset($args['as_array']) && $args['as_array']) {
+			$as_array = true;
+		}
+
+		return json_decode($presets, $as_array);
+	}
+
+	public function getSliderPresets($presets, $args) {
+		if (empty($presets) === false) return $presets;
+
+		$presets = $this->get_theme_settings()->get('slider_presets');
+		if (isset($args['json']) && $args['json']) return $presets;
+
+		$as_array = false;
+		if (isset($args['as_array']) && $args['as_array']) {
+			$as_array = true;
+		}
+
+		return json_decode($presets, $as_array);
+	}
+
+	public function getTextPresets($presets, $args) {
+		if (empty($presets) === false) return $presets;
+
+		$presets = $this->get_theme_settings()->get('text_presets');
 		if (isset($args['json']) && $args['json']) return $presets;
 
 		$as_array = false;

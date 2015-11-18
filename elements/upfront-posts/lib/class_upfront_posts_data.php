@@ -171,7 +171,9 @@ class Upfront_Posts_PostsData {
 			'select_custom_post' => __('Select custom post', 'upfront'),
 			'add_custom_post' => __('Add a custom post', 'upfront'),
             'resize_featured' => __('Re-size featured image to fit container', 'upfront'),
-
+			'general_settings' => __('General Settings', 'upfront'),
+			'post_part_settings' => __('Post Parts Settings', 'upfront'),
+			
 			'css' => array(
 				'container_label' => __('Element container', 'upfront'),
 				'container_info' => __('The container for all posts', 'upfront'),

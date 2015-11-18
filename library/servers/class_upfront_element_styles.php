@@ -38,7 +38,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 	 */
 	public function load_styles () {
 		$raw_cache_key = $this->_get_cached_styles();
-		if (!empty($raw_cache_key)) wp_enqueue_style('upfront-element-styles', $this->_get_enqueueing_url(self::TYPE_STYLE, $raw_cache_key), array(), $this->_get_enqueue_version()); // But let's do pretty instead
+		wp_enqueue_style('upfront-element-styles', $this->_get_enqueueing_url(self::TYPE_STYLE, $raw_cache_key), array(), $this->_get_enqueue_version()); // But let's do pretty instead
 	}
 
 	/**
@@ -66,9 +66,11 @@ class Upfront_ElementStyles extends Upfront_Server {
 
 		$raw_cache_key = $ckey->get_hash();
 		$cache = $this->_debugger->is_active() ? false : $this->_cache->get($ckey);
-		
+
 		if (empty($cache)) {
 			foreach ($styles as $key => $frags) {
+				//$path = upfront_element_dir($frags[0], $frags[1]);
+				//if (file_exists($path)) $cache .= "/* {$key} */\n" . file_get_contents($path) . "\n";
 				if (empty($frags)) continue;
 				$style = $this->_get_style_contents($frags);
 				if (!empty($style))  $cache .= "/* {$key} */\n{$style}\n";
@@ -84,7 +86,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 			 * @param string $raw_cache_key Cache key used for storage
 			 */
 			$cache = apply_filters('upfront-dependencies-cache-styles', $cache, $raw_cache_key);
-			
+
 			$this->_cache->set($ckey, $cache);
 		}
 
@@ -144,7 +146,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 	 */
 	public function load_scripts () {
 		$raw_cache_key = $this->_get_cached_scripts();
-		if (!empty($raw_cache_key)) wp_enqueue_script('upfront-element-scripts', $this->_get_enqueueing_url(self::TYPE_SCRIPT, $raw_cache_key), array('jquery'), $this->_get_enqueue_version(), true); // Scripts go into footer
+		wp_enqueue_script('upfront-element-scripts', $this->_get_enqueueing_url(self::TYPE_SCRIPT, $raw_cache_key), array('jquery'), $this->_get_enqueue_version(), true); // Scripts go into footer
 	}
 
 	/**
@@ -165,7 +167,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 	private function _get_cached_scripts () {
 		$hub = Upfront_PublicScripts_Registry::get_instance();
 		$scripts = $hub->get_all();
-		if (empty($scripts)) return isset( $urls ) ? $urls : false; // Todo Ve: where does this $url come from?
+		if (empty($scripts)) return false;
 
 		$ckey = $this->_cache->key(self::TYPE_SCRIPT, $scripts);
 
@@ -267,7 +269,7 @@ class Upfront_ElementStyles extends Upfront_Server {
  * Takes care of dependency minification.
  */
 class Upfront_MinificationServer implements IUpfront_Server {
-	
+
 	public static function serve () {
 		$me = new self;
 		$me->_add_hooks();
@@ -308,7 +310,7 @@ class Upfront_MinificationServer implements IUpfront_Server {
 	 */
 	public function minify_js ($what) {
 		if (!Upfront_Behavior::compression()->has_experiments()) return $what; // Only do this within the compression mode ON
-		
+
 		require_once dirname(dirname(__FILE__)) . '/external/jshrink/src/JShrink/Minifier.php';
 		return JShrink_Minifier::minify($what);
 	}
@@ -342,7 +344,7 @@ class Upfront_SmushServer implements IUpfront_Server {
 		if (!is_callable(array($WpSmush, 'do_smushit'))) return false;
 
 		$res = $WpSmush->do_smushit($path, $url);
-		
+
 		return $res;
 	}
 }

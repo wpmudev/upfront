@@ -1,5 +1,8 @@
 (function ($) {
-  define(['elements/upfront-like-box/js/settings'], function(LikeBoxSettings) {
+  define([
+		'scripts/upfront/element-settings/settings',
+		'scripts/upfront/element-settings/root-settings-panel'
+	], function(ElementSettings, RootSettingsPanel) {
 
 	var l10n = Upfront.Settings.l10n.like_box_element;
 
@@ -72,7 +75,7 @@
 							height: size.row,
 						});
 					}
-					
+
 				//}, 1000);
 			}
 		},
@@ -120,12 +123,12 @@
 			if(fbUrl){
 				var splitted = fbUrl.split('/');
 				var pageName = _.last(splitted);
-				
+
 				if(_.isEmpty(pageName)) {
 					splitted.splice(splitted.length-1, 1);
 					pageName = _.last(splitted);
 				}
-				
+
 				var wide = 	this.model.get_property_value_by_name('element_size').width-30;
 
 				if(wide>500)
@@ -213,8 +216,51 @@
 	});
 
 
+	// ----- Settings API -----
+	// We'll be working from the bottom up here.
+	// We will first define settings panels, and items for each panel.
+	// Then we'll slot in the panels in a settings instance.
 
-	
+	/**
+	 * Layout Style settings - Facebook Page URL item
+	 * @type {Upfront.Views.Editor.Settings.Item}
+	 */
+
+	/**
+	 * Social Media settings hub, populated with the panels we'll be showing.
+	 * @type {Upfront.Views.Editor.Settings.Settings}
+	 */
+	var GeneralPanel = RootSettingsPanel.extend({
+		settings: [
+			{
+				type: 'SettingsItem',
+				className: 'upfront-social-services-item general_settings_item',
+				title: l10n.facebook_account,
+				label: l10n.opts.page_url,
+				fields: [
+					{
+						type: 'Text',
+						className: 'facebook-url',
+						property: 'facebook_url',
+						label: l10n.opts.url_sample,
+						compact: true
+					},
+					{
+						type: 'Settings_CSS'
+					}
+				]
+			}
+		],
+		title: 'General Settings'
+	});
+	var LikeBoxSettings = ElementSettings.extend({
+		panels: {
+			'General': GeneralPanel
+		},
+		title: l10n.settings
+	});
+
+
 
 // ----- Bringing everything together -----
 // The definitions part is over.

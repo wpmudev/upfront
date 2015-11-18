@@ -38,6 +38,8 @@ class Upfront_UimageView extends Upfront_Object {
 		else
 			$data['imgWidth'] = '';
 
+		$data['containerWidth'] = min($data['size']['width'], $data['element_size']['width']);
+
 		if($data['vstretch'])
 			$data['marginTop'] = 0;
 
@@ -53,6 +55,12 @@ class Upfront_UimageView extends Upfront_Object {
 			'height'=> $data['vstretch'] ? '100%' : $data['size']['height'] . 'px',
 			'bottom' => $data['vstretch'] ? '100%' : ($data['element_size']['height'] + $data['position']['top'] - $data['size']['height']) . 'px'
 		);
+
+		if(!isset($data['preset'])) {
+			$data['preset'] = 'default';
+		}
+
+		$data['properties'] = Upfront_Image_Presets_Server::get_instance()->get_preset_properties($data['preset']);
 
 		$data['cover_caption'] = $data['caption_position'] != 'below_image'; // array_search($data['caption_alignment'], array('fill', 'fill_bottom', 'fill_middle')) !== FALSE;
 
@@ -135,6 +143,8 @@ class Upfront_UimageView extends Upfront_Object {
 			'quick_swap' => false,
 			'gifImage' => 0,
 			'placeholder_class' => '',
+			'preset' => 'default',
+			'display_caption' => 'showCaption',
 
 			'type' => 'UimageModel',
 			'view_class' => 'UimageView',
@@ -188,8 +198,11 @@ class Upfront_UimageView extends Upfront_Object {
 				'wrapper_info' => __('Image container', 'upfront'),
 			),
 			'ctrl' => array(
-				'caption_position' => __('Caption position', 'upfront'),
+				'caption_position' => __('Caption Location', 'upfront'),
+				'caption_display' => __('Caption visibility', 'upfront'),
 				'caption_position_disabled' => __('Caption is disabled for images smaller or narrower than 100px', 'upfront'),
+				'dont_show_caption' => __('Hide caption', 'upfront'),
+				'show_caption' => __('Show caption', 'upfront'),
 				'over_top' => __('Over image, top', 'upfront'),
 				'over_bottom' => __('Over image, bottom', 'upfront'),
 				'cover_top' => __('Covers image, top', 'upfront'),
@@ -212,7 +225,7 @@ class Upfront_UimageView extends Upfront_Object {
 				'label' => __('Image settings', 'upfront'),
 				'alt' => __('Alternative Text', 'upfront'),
 				'caption' => __('Caption Settings:', 'upfront'),
-				'show_caption' => __('Show Caption:', 'upfront'),
+				'show_caption' => __('Show Captions', 'upfront'),
 				'always' => __('Always', 'upfront'),
 				'hover' => __('On Hover', 'upfront'),
 				'caption_bg' => __('Caption Background', 'upfront'),
@@ -221,6 +234,11 @@ class Upfront_UimageView extends Upfront_Object {
 				'ok' => __('Ok', 'upfront'),
 				'padding' => __('Padding Settings:', 'upfront'),
 				'no_padding' => __('Do not use theme padding', 'upfront'),
+				'image_style_label' => __('Image Style', 'upfront'),
+				'image_style_info' => __('Image Element Shape:', 'upfront'),
+				'content_area_colors_label' => __('Colors', 'upfront'),
+				'caption_text_label' => __('Caption Text', 'upfront'),
+				'caption_bg_label' => __('Caption BG', 'upfront'),
 			),
 			'btn' => array(
 				'fit_label' => __('Fit to Element', 'upfront'),
@@ -407,7 +425,6 @@ class Upfront_Uimage_Server extends Upfront_Server {
 		}
 		else
 			$sizes['custom'] = $custom_size ? $data['customSize'] : array();
-//=======
 //			if ($custom_size) {
 //				$image_custom_size = $this->calculate_image_resize_data($data['customSize'], array('width' => $sizes['full'][1], 'height' => $sizes['full'][2]));
 //				$image_custom_size['id'] = $id;
@@ -419,7 +436,6 @@ class Upfront_Uimage_Server extends Upfront_Server {
 //			} else {
 //				$sizes['custom'] = $custom_size ? $data['customSize'] : array();
 //			}
-//>>>>>>> master
 
 			if (sizeof($sizes) != 0) $images[$id] = $sizes;
 		}

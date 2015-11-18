@@ -144,6 +144,9 @@
 
 .upfront-image-container {
 	position: relative;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 .upfront-image-starting-select {
@@ -724,6 +727,59 @@ a.image-edit-button.deactivated:hover {
 	right: 0px;
 }
 
+/* Select box icons */
+.upfront-field-icon-nocaption:before {
+	background-position: -700px -455px!important;
+}
+.upfront-field-icon-topOver:before {
+	background-position: -699px -520px!important;
+}
+.upfront-field-icon-showCaption:before,
+.upfront-field-icon-bottomOver:before {
+	background-position: -699px -488px!important;
+}
+.upfront-field-icon-topCover:before {
+	background-position: -699px -552px!important;
+}
+.upfront-field-icon-middleCover:before {
+	background-position: -699px -584px!important;
+}
+.upfront-field-icon-bottomCover:before {
+	background-position: -699px -616px!important;
+}
+
+div.preset-manager-panel .caption_location {
+	padding-top: 15px;
+}
+div.preset-manager-panel .caption_select {
+	margin-top: 5px;
+	width: 215px;
+}
+div.preset-manager-panel .caption_select, div.preset-manager-panel .field-caption_trigger {
+	border-left: 2px solid #dae6f2;
+	padding: 5px 0px 5px 10px;
+	position: relative;
+	top: 0px;
+}
+div.preset-manager-panel .caption_select label, div.preset-manager-panel .field-caption_trigger label {
+	font-weight: normal;
+}
+div.preset-manager-panel .field-caption_trigger {
+	margin-top: 0px;
+	padding-top: 10px;
+	position: relative;
+    top: 0px;
+}
+div.preset-manager-panel .image-caption-location .field-caption_trigger {
+	top: 5px;
+}
+
+div.preset-manager-panel .image_style .upfront-field-label,
+div.preset-manager-panel .caption_select .upfront-field-label {
+	top: 4px;
+	position: relative;
+}
+
 /* Controls */
 
 div.uimage-controls i.upfront-icon:before {
@@ -1074,6 +1130,10 @@ div.uimage-controls i.upfront-icon:before {
 .upfront-image-caption-container {
 	position: relative;
 	display: inline-block;
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	max-width: 100%;
 }
 
 .upfront-field-wrap.image-alternative-text {
@@ -1154,6 +1214,8 @@ div.uimage-controls i.upfront-icon:before {
 .upfront-image-container + .redactor-box,
 .upfront-image-container + .wp-caption {
 	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
 	line-height: normal;
 }
 

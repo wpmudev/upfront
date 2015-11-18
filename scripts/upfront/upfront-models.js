@@ -44,6 +44,13 @@ var _alpha = "alpha",
 				this.set("properties", args[0].properties);
 			} else this.set("properties", new Properties([]));
 			if (this.init) this.init();
+
+			// Take care of old preset API
+			if (this.get_property_value_by_name('currentpreset')) {
+			// Unset currentpreset property and set preset to correct value
+				this.set_property('preset', this.get_property_value_by_name('currentpreset'), true);
+				this.set_property('currentpreset', false, true);
+			}
 		},
 	// ----- Object interface ----- */
 		get_view_class: function () {
@@ -283,7 +290,7 @@ var _alpha = "alpha",
 				;
 				this.set("properties", args[0]["properties"]);
 			} else this.set("properties", new Properties([]));
-			
+
 			this.init_property('has_settings', 1);
 			this.init_property('type', 'ModuleGroup');
 			if (this.init) this.init();
@@ -463,7 +470,7 @@ var _alpha = "alpha",
 				});
 			return collection.length;
 		},
-		
+
 		get_new_title: function (prefix, start) {
 			var title = (prefix + start).replace(/[^A-Za-z0-9\s_-]/g, ''),
 				name = title.toLowerCase().replace(/\s/g, '-');
@@ -675,7 +682,18 @@ var _alpha = "alpha",
 
             if( _.indexOf(dates, attr) !== -1 ){
                 //return new Date( value  ); // <-- Breaks in FF
-                return new Date(Date.parse(value.replace(/ /, 'T'))); // <-- We need this to instantiate Date object in Firefox. @See "batman bug" in Asana.
+                var raw_offset = (new Date()).getTimezoneOffset(), 
+                	tz_offset = raw_offset / 60,
+                	offset = tz_offset > 0 ? '-' : '+', // Reversed because Date.getTimezoneOffset() returns reversed values...
+                	hours = parseInt(Math.abs(tz_offset), 10),
+                	mins = parseInt((Math.abs(tz_offset) - hours) * 60, 10),
+                	timestamp = value.replace(/ /, 'T')
+                ;
+                hours = hours >= 10 ? '' + hours : '0' + hours;
+                mins = mins >= 10 ? '' + mins : '0' + mins;
+                if (timestamp && hours.length && mins.length) timestamp += offset + hours + mins;
+
+                return new Date(Date.parse(timestamp)); // <-- We need this to instantiate Date object in Firefox. @See "batman bug" in Asana.
             }
 			return this.attributes[attr];
 		},
@@ -1537,77 +1555,77 @@ var _alpha = "alpha",
 		}
 	}),
 
-    ImageVariant = Backbone.Model.extend({
-        defaults : function () {
-        	return {
-	            vid   : "",
-	            label : "Variant Label",
-	            group : {
-					margin_left: 0,
-					margin_right: 0,
-	                col: 24,
-	                row: 50,
-	                left: 0,
-	                float: "none"
-	            },
-	            image : {
-	            	order: 0,
-	            	col: 24,
-	            	top: 0,
-	            	left: 0,
-	            	row: 40,
-	            	clear: true
-	            },
-	            caption : {
-	                show: 1,
-	                order: 1,
-	                col: 24,
-	                top: 0,
-	                left: 0,
-	                row: 10,
-	                clear: true
-	            }
-        	};
-        }
-    }),
-    ImageVariants = Backbone.Collection.extend({
-        model : ImageVariant
-    }),
-_omega = 'omega';
+		ImageVariant = Backbone.Model.extend({
+			defaults : function () {
+				return {
+					vid   : "",
+					label : "Variant Label",
+					group : {
+						margin_left: 0,
+						margin_right: 0,
+						col: 24,
+						row: 50,
+						left: 0,
+						float: "none"
+					},
+					image : {
+						order: 0,
+						col: 24,
+						top: 0,
+						left: 0,
+						row: 40,
+						clear: true
+					},
+					caption : {
+						show: 1,
+						order: 1,
+						col: 24,
+						top: 0,
+						left: 0,
+						row: 10,
+						clear: true
+					}
+				};
+			}
+		}),
+		ImageVariants = Backbone.Collection.extend({
+			model : ImageVariant
+		}),
+	_omega = 'omega';
 
-return {
-    "Models": {
-      "Property": Property,
-      "ObjectModel": ObjectModel,
-      "Module": Module,
-      "ModuleGroup": ModuleGroup,
-      "Region": Region,
-      "Wrapper": Wrapper,
-      "Layout": Layout,
-      "Taxonomy": Taxonomy,
-      "Post": Post,
-      "Posts": Posts,
-      "Pages": Pages,
-      "Comment": Comment,
-      "Comments": Comments,
-      "Meta": Meta,
-      "Term": Term,
-      "User": User,
-      "ImageVariant" : ImageVariant
-    },
-    "Collections": {
-      "Properties": Properties,
-      "Objects": Objects,
-      "Modules": Modules,
-      "Regions": Regions,
-      "Wrappers": Wrappers,
-      "CommentList": CommentList,
-      "MetaList": MetaList,
-      "PostList": PostList,
-      "TermList": TermList,
-      "ImageVariants" : ImageVariants
-    }
-  };
+	return {
+		"Models": {
+			"Property": Property,
+			"ObjectModel": ObjectModel,
+			"Module": Module,
+			"ModuleGroup": ModuleGroup,
+			"Region": Region,
+			"Wrapper": Wrapper,
+			"Layout": Layout,
+			"Taxonomy": Taxonomy,
+			"Post": Post,
+			"Posts": Posts,
+			"Pages": Pages,
+			"Comment": Comment,
+			"Comments": Comments,
+			"Meta": Meta,
+			"Term": Term,
+			"User": User,
+			"ImageVariant" : ImageVariant
+		},
+		"Collections": {
+			"Properties": Properties,
+			"Objects": Objects,
+			"Modules": Modules,
+			"Regions": Regions,
+			"Wrappers": Wrappers,
+			"CommentList": CommentList,
+			"MetaList": MetaList,
+			"PostList": PostList,
+			"TermList": TermList,
+			"ImageVariants" : ImageVariants
+		}
+	};
 });
 
 })(jQuery);

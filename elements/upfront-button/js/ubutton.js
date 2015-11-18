@@ -35,8 +35,11 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		this.model.get('properties').bind('change', this.render, this);
 		this.model.get('properties').bind('add', this.render, this);
 		this.model.get('properties').bind('remove', this.render, this);
+		this.listenTo(this.model, 'change:preset', this.updatePresetClass);
 
 		Upfront.Events.on('entity:deactivated', this.stopEdit, this);
+
+		this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
 
 		this.listenTo(Upfront.Events, "theme_colors:update", this.render, this);
 
@@ -56,11 +59,15 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		});
 
 	},
-	
+
 	placeholderClick: function(e) {
 		e.preventDefault();
 	},
-	
+
+	updatePresetClass: function() {
+		this.$el.addClass(this.property('preset'));
+	},
+
 	getCleanurl: function(url) {
 		//this one removes any existing # anchor postfix from the url
 		var urlParts;
@@ -139,14 +146,8 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		props.preset = props.preset || 'default';
 
 		props.preset = this.clear_preset_name(props.preset);
-		
+
 		var preset_props = Upfront.Views.Editor.Button.Presets.get(props.preset);
-		
-		//Check if theme_style already set and if we have preset properties
-		if(!this.property('theme_style') && preset_props) {
-			var theme_style = preset_props.attributes.theme_style || '_default';
-			this.property('theme_style', theme_style);
-		}
 
 		return this.buttonTpl(props);
 	},
@@ -250,6 +251,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			});
 
 		this.createInlineControlPanel();
+		this.$el.addClass(this.property('preset'));
 	},
 	stopEdit: function() {
 		var $target = this.$el.find('.upfront-object-content a.upfront_cta');
@@ -299,7 +301,7 @@ Upfront.Application.LayoutEditor.add_object("Button", {
 	"Element": ButtonElement,
 	"Settings": ButtonSettings,
 	cssSelectors: {
-		'.upfront-button': {label: l10n.css.container_label, info: l10n.css.container_info}
+		'.upfront_cta': {label: l10n.css.container_label, info: l10n.css.container_info}
 	},
 	cssSelectorsId: Upfront.data.ubutton.defaults.type
 });

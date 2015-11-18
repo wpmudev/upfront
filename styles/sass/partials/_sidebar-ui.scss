@@ -927,6 +927,8 @@ span.draggable-post-element.element-dragging
 .upfront-filter-control::-webkit-scrollbar,
 #upfront-csseditor .ace_scrollbar-inner::-webkit-scrollbar,
 #upfront-csseditor .ace_scrollbar::-webkit-scrollbar,
+.upfront-inserts-markup .ace_scrollbar-inner::-webkit-scrollbar,
+.upfront-inserts-markup .ace_scrollbar::-webkit-scrollbar,
 #upfront-general-csseditor .ace_scrollbar-inner::-webkit-scrollbar,
 #upfront-general-csseditor .ace_scrollbar::-webkit-scrollbar,
 .upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar,
@@ -934,7 +936,8 @@ span.draggable-post-element.element-dragging
 .redactor-dropdown-box-upfrontIcons div.icons::-webkit-scrollbar,
 .redactor-dropdown-box-upfrontFormatting::-webkit-scrollbar,
 .upfront_map-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar,
-.upfront_map-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar
+.upfront_map-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar,
+#element-settings-sidebar #settings #sidebar-scroll-wrapper::-webkit-scrollbar
 {
 	background: none;
 	width: 5px;
@@ -963,7 +966,8 @@ span.draggable-post-element.element-dragging
 .upfront_code-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar-track,
 .upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar-track
 .upfront_map-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar-track,
-.upfront_map-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar-track
+.upfront_map-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar-track,
+#element-settings-sidebar #settings #sidebar-scroll-wrapper::-webkit-scrollbar-track
 {
 }
 
@@ -986,7 +990,8 @@ span.draggable-post-element.element-dragging
 .redactor-dropdown-box-upfrontFormatting::-webkit-scrollbar-thumb,
 .upfront_map-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar-thumb,
 .upfront_map-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar-thumb,
-.redactor-dropdown-box-upfrontIcons div.icons::-webkit-scrollbar-thumb
+.redactor-dropdown-box-upfrontIcons div.icons::-webkit-scrollbar-thumb,
+#element-settings-sidebar #settings #sidebar-scroll-wrapper::-webkit-scrollbar-thumb
 {
 	border-right: 5px solid #1fcd8f;
 }

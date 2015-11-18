@@ -4,8 +4,9 @@
 		'elements/upfront-text/js/element',
 		'elements/upfront-text/js/settings',
 		'elements/upfront-text/js/menu',
-		'text!elements/upfront-text/tpl/utext.html'
-	], function(UtextModel, TextElement, TextSettings, TextMenu, textTpl) {
+		'text!elements/upfront-text/tpl/utext.html',
+		'scripts/upfront/preset-settings/util'
+	], function(UtextModel, TextElement, TextSettings, TextMenu, textTpl, PresetUtil) {
 
 		var l10n = Upfront.Settings.l10n.text_element;
 
@@ -27,6 +28,12 @@
 				//}, this);
 				this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
 			},
+			get_preset_properties: function() {
+				var preset = this.model.get_property_value_by_name("preset"),
+					props = PresetUtil.getPresetProperties('text', preset) || {};
+
+				return props;
+			},
 			get_content_markup: function () {
 				var content = this.model.get_content(),
 					$content;
@@ -43,9 +50,7 @@
 				}
 
 				var data = {
-					"content" : content,
-					"background_color" : this.model.get_property_value_by_name("background_color"),
-					"border" : this.model.get_property_value_by_name("border")
+					"content" : content
 				};
 				var rendered = '';
 				rendered = _.template(textTpl, data);
@@ -81,15 +86,15 @@
 						var ed = me.$el.find('.upfront-object-content').data("ueditor"),
 							tag = ed.redactor.$element[0].firstChild.tagName,
 							text = '';
-							
+
 						if(tag === "PRE") {
 							//Remove markers markup leaking in PRE element
 							ed.redactor.selection.removeMarkers();
 						}
-						
+
 						text = ed.getValue(true);
 						me.model.set_content(text);
-						
+
 						Upfront.Events.trigger('upfront:element:edit:stop');
 						ed.redactor.events.trigger('cleanUpListeners');
 						me.render();
@@ -117,7 +122,7 @@
 						me.model.set_content(ed.getValue(true), {silent: true});
 					})
 				;
-				
+
 				me.update_colors();
 			},
 			update_colors: function () {
@@ -152,8 +157,8 @@
 			"Settings": TextSettings,
 			"ContextMenu": TextMenu,
 			cssSelectors: {
-				'.upfront-plain_txt': {label: l10n.css.container_label, info: l10n.css.container_info},
-				'.upfront-plain_txt p': {label: l10n.css.p_label, info: l10n.css.p_info},
+				'.plain-text-container': {label: l10n.css.container_label, info: l10n.css.container_info},
+				'.plain-text-container p': {label: l10n.css.p_label, info: l10n.css.p_info},
 			},
 			cssSelectorsId: 'PlainTxtModel'
 		});
