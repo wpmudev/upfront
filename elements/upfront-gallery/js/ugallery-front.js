@@ -124,6 +124,18 @@ jQuery(function($){
 		Upfront.frontFunctions.galleryBindShuffle = bindShuffle;
 	});
 
+	/** 
+		The following is being done so that the gallery 
+		items inside a lightbox can shuffle after 
+		the lightbox shows up, in order to expand 
+		around in the available space
+	**/
+	$(document).on('upfront-lightbox-open', function() {
+		setTimeout(function(){
+			$(window).trigger('resize');
+		}, 300);
+	});
+
 	if (typeof ugalleries !== 'undefined') {
 		var titleSrc = function(item) {
 			var itemId = item.el.closest('.ugallery_item').attr('rel'),
