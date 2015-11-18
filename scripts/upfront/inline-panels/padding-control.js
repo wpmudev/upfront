@@ -174,5 +174,3 @@ define([
 	return PaddingControl;
 });
 })(jQuery);
-
-//@ sourceURL=padding-control.js

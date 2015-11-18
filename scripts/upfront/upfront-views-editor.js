@@ -11276,3 +11276,5 @@ var Field_Compact_Label_Select = Field_Select.extend({
 	};
 });
 })(jQuery);
+
+//@ sourceURL=upfront-views-editor.js
