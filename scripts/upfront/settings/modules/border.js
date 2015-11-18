@@ -157,23 +157,34 @@ define([
 		},
 
 		reset_fields: function(value) {
+			var settings,
+				me = this;
 			if(typeof value !== "undefined" && value === "yes") {
-				var settings = this.get_static_field_values(value, this.options.prepend);
-				this.update_fields(value, settings);
-				this.save_static_values(value, settings);
+				if(typeof this.options.elements !== "undefined") {
+					_.each(this.options.elements, function(element) {
+						var currentElementValue = element.value + '-';
+						settings = me.get_static_field_values(me.options.prepend, currentElementValue);
+						me.update_fields(settings);
+						me.save_static_values(settings, currentElementValue);
+					});
+				} else {
+					settings = this.get_static_field_values(this.options.prepend, '');
+					this.update_fields(settings);
+					this.save_static_values(settings, '');
+				}
 				this.$el.empty();
 				this.render();
 			}
 		},
 
-		save_static_values: function(value, settings) {
+		save_static_values: function(settings, element) {
 			//Save preset values from static state
-			this.model.set(this.currentElement + this.options.fields.width, settings.width);
-			this.model.set(this.currentElement + this.options.fields.type, settings.type);
-			this.model.set(this.currentElement + this.options.fields.color, settings.color);
+			this.model.set(element + this.options.fields.width, settings.width);
+			this.model.set(element + this.options.fields.type, settings.type);
+			this.model.set(element + this.options.fields.color, settings.color);
 		},
 
-		get_static_field_values: function(value, prepend) {
+		get_static_field_values: function(prepend, element) {
 			var settings = {},
 				prefix = '';
 
@@ -181,9 +192,9 @@ define([
 				prefix = this.options.prefix + '-';
 			}
 
-			settings.width = this.model.get(this.clear_prepend(prefix + this.options.fields.width, prepend)) || '';
-			settings.type = this.model.get(this.clear_prepend(prefix + this.options.fields.type, prepend)) || '';
-			settings.color = this.model.get(this.clear_prepend(prefix + this.options.fields.color, prepend)) || '';
+			settings.width = this.model.get(this.clear_prepend(element + prefix + this.options.fields.width, prepend)) || '';
+			settings.type = this.model.get(this.clear_prepend(element + prefix + this.options.fields.type, prepend)) || '';
+			settings.color = this.model.get(this.clear_prepend(element + prefix + this.options.fields.color, prepend)) || '';
 
 			return settings;
 		},
@@ -192,7 +203,7 @@ define([
 			return field.replace(prepend, '');
 		},
 
-		update_fields: function(value, settings) {
+		update_fields: function(settings) {
 			//Update selected element
 			this.fields._wrapped[this.fieldCounter + 1].set_value(settings.width);
 			this.fields._wrapped[this.fieldCounter + 2].set_value(settings.type);
