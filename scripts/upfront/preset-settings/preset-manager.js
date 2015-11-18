@@ -96,7 +96,7 @@ define([
 			});
 
 			// Add element style to preset model. Now change _default to new name
-			newPresetName = elementStyleName === '_default' ? 'theme-style' : elementStyleName + '-m';
+			newPresetName = elementStyleName === '_default' ? this.styleElementPrefix.replace('-preset', '') + '-theme-style' : elementStyleName + '-m';
 			existingPreset = this.presets.findWhere({id: newPresetName});
 
 			if (existingPreset) {
