@@ -20,6 +20,10 @@ License: MIT
     position: relative;
 }
 
+#element-settings-sidebar .sp-container {
+	position: fixed !important;
+}
+
 /* http://ansciath.tumblr.com/post/7347495869/css-aspect-ratio */
 .sp-top {
   position:relative;
@@ -382,43 +386,38 @@ License: MIT
     *zoom: 1;
     *display: inline;
     vertical-align: middle;
-    padding: 3px;
-    border-radius: 3px;
-    border: 1px #A8C4DE solid;
     position: relative;
 }
 div.sp-replacer:before {
-  content: '';
-  display: block;
-  height: 22px;
-  width: 22px;
-  position: absolute;
-  left:2px;
-  top: 2px;
-  
-  border: 1px #000 solid;
-background-color: #D3DDEB;
-      background-image: -webkit-linear-gradient(45deg, #F2F9FF 25%, transparent 25%, transparent 75%, #F2F9FF 75%, #F2F9FF), -webkit-linear-gradient(45deg, #F2F9FF 25%, transparent 25%, transparent 75%, #F2F9FF 75%, #F2F9FF);
-      background-image: -moz-linear-gradient(45deg, #F2F9FF 25%, transparent 25%, transparent 75%, #F2F9FF 75%, #F2F9FF), -webkit-linear-gradient(45deg, #F2F9FF 25%, transparent 25%, transparent 75%, #F2F9FF 75%, #F2F9FF);
-      background-image: -ms-linear-gradient(45deg, #F2F9FF 25%, transparent 25%, transparent 75%, #F2F9FF 75%, #F2F9FF), -webkit-linear-gradient(45deg, #F2F9FF 25%, transparent 25%, transparent 75%, #F2F9FF 75%, #F2F9FF);
-      background-image: -o-linear-gradient(45deg, #F2F9FF 25%, transparent 25%, transparent 75%, #F2F9FF 75%, #F2F9FF), -webkit-linear-gradient(45deg, #F2F9FF 25%, transparent 25%, transparent 75%, #F2F9FF 75%, #F2F9FF);
-      background-image: linear-gradient(45deg, #F2F9FF 25%, transparent 25%, transparent 75%, #F2F9FF 75%, #F2F9FF), -webkit-linear-gradient(45deg, #F2F9FF 25%, transparent 25%, transparent 75%, #F2F9FF 75%, #F2F9FF);
-      -webkit-background-size: 16px 16px;
-      -moz-background-size: 16px 16px;
-      -ms-background-size: 16px 16px;
-      -o-background-size: 16px 16px;
-      background-size: 16px 16px;
-      -webkit-background-size: 16px 16px;
-      -moz-background-size: 16px 16px;
-      -ms-background-size: 16px 16px;
-      -o-background-size: 16px 16px;
-      background-size: 16px 16px;
-      -webkit-background-size: 16px 16px;
-      -moz-background-size: 16px 16px;
-      -ms-background-size: 16px 16px;
-      -o-background-size: 16px 16px;
-      background-size: 16px 16px;
-      background-position: 8px 8px, 0px 0px;
+	content: '';
+	display: block;
+	position: absolute;
+	box-sizing: border-box;
+	width:18px;
+	height:18px;
+	display:block;
+	overflow:hidden;
+	position: relative;
+	border-radius:50%;
+	/* magic happens below */    
+	background-color: #DFE9F2;
+	background-image: 
+	-webkit-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), 
+	-webkit-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+	background-image: 
+	-moz-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), 
+	-moz-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+	background-image: 
+	-o-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), 
+	-o-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+	background-image: 
+	linear-gradient(to top right, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), 
+	linear-gradient(to top right, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+
+	-webkit-background-size: 8px 8px;
+	-moz-background-size: 8px 8px;
+	background-size: 8px 8px;
+	background-position: 2px 0px, 6px 4px;  
 }
 
 
@@ -433,7 +432,7 @@ background-color: #D3DDEB;
 }
 .sp-dd {
     position: absolute;
-    display: block;
+    display: none;
     top: -1px;
     right: -1px;
     font-size: 6px;
@@ -444,8 +443,9 @@ background-color: #D3DDEB;
     width: 14px;
     border: 1px #A8C4DE solid;
 }
-
-
+.sp-alpha-lower-opacity {
+	opacity: 0.2;
+}
 .sp-palette
 {
     *width: 220px;

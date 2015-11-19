@@ -1,8 +1,10 @@
 <div
-	class="ugallery ugallery_publish <?php if(!empty($in_editor)) { ?>ugallery-in-editor<?php } ?> <?php if($even_padding[0] === 'true') { ?>even_padding<?php } ?>"
-	data-even-padding="<?php echo $even_padding[0] ?>"
-	data-thumb-padding="<?php echo $thumbPadding ?>",
+	class="<?php echo $preset ?> ugallery ugallery_publish <?php if(!empty($in_editor)) { ?>ugallery-in-editor<?php } ?>"
+	data-thumb-padding="<?php echo $thumbPadding ?>"
+	data-thumb-side-padding="<?php echo $sidePadding ?>"
+	data-thumb-bottom-padding="<?php echo $bottomPadding ?>"
 	data-thumb-proportions="<?php echo $thumbProportions ?>"
+	data-thumb-lock-padding="<?php echo $lockPadding ?>"
 	data-lightbox-show-close="<?php echo $lightbox_show_close ? 'true' : 'false' ?>"
 	data-lightbox-click-out-close="<?php echo $lightbox_click_out_close ? 'true' : 'false' ?>"
 	data-lightbox-show-image-count="<?php echo $lightbox_show_image_count ? 'true' : 'false' ?>"
@@ -29,8 +31,8 @@
 				<?php if(!empty($in_editor)) { ?>
 				<i class="remove-image"></i>
 				<?php } ?>
-			<?php if($captionType != 'none' || !empty($in_editor)) { ?>
-			<div class="ugallery-thumb-title <?php if($captionType === 'over') { ?>ugallery-caption-on-hover-<?php echo $showCaptionOnHover['length'] ?><?php } ?> ugallery-caption-<?php echo $captionType ?><?php echo $captionUseBackground ? ' ugallery-padded-caption' : '' ?>"><?php echo $images[$i]['title'] ?></div>
+			<?php if(($properties['captionType'] != 'none' || !empty($in_editor)) && !empty($properties['use_captions'])) { ?>
+			<div class="ugallery-thumb-title <?php if($properties['captionType'] === 'over') { ?>ugallery-caption-on-hover-<?php echo $properties['showCaptionOnHover'] ?><?php } ?> ugallery-caption-<?php echo $properties['captionType'] ?>"><?php echo $images[$i]['title'] ?></div>
 			<?php } ?>
 			<?php if($linkTo == 'image'){ ?>
 			<div class="ugallery_lb_text" rel="<?php echo $images[$i]['id'] ?>"><?php if (!$editing && $images[$i]['caption'] != 'Image description') { ?><?php echo $images[$i]['caption'] ?><?php } ?></div>
@@ -54,14 +56,3 @@
 	<?php } ?>
 <?php } ?>
 </div>
-
-<style>
-	#<?php echo $element_id ?> .ugallery-thumb-title {
-		background: <?php echo  $captionBackground ?>;
-		<?php if($fitThumbCaptions[0] === 'true') { ?>
-			overflow: hidden;
-			height: <?php echo $thumbCaptionsHeight ?>px;
-		<?php } ?>
-	}
-
-</style>

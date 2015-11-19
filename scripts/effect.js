@@ -225,7 +225,9 @@
 		reset: function () {
 			this.$moveElement.css({
 				transform: '',
-				opacity: ''
+				opacity: '',
+				top: '',
+				bottom: ''
 			});
 		},
 		destroy: function () {

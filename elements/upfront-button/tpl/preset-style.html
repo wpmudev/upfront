@@ -1,14 +1,9 @@
-.upfront-button .button-preset-<?php echo $properties['id'] ?>.upfront_cta {
+#page .upfront-button .button-preset-<?php echo $properties['id'] ?>.upfront_cta {
     <?php if(!empty($properties['color'])) { ?>color: <?php echo $properties['color']  ?>; <?php } ?>
-
     <?php if(!empty($properties['fontface'])) { ?>font-family: <?php echo $properties['fontface']  ?>; <?php } ?>
-
     <?php if(!empty($properties['fontsize'])) { ?>font-size: <?php echo $properties['fontsize']  ?>px; <?php } ?>
-
     <?php if(!empty($properties['fontstyle_weight'])) { ?>font-weight: <?php echo $properties['fontstyle_weight']  ?>;<?php } ?>
-
     <?php if(!empty($properties['fontstyle_style'])) { ?>font-style: <?php echo $properties['fontstyle_style']  ?>;<?php } ?>
-
     <?php if(!empty($properties['lineheight'])) { ?>line-height: <?php echo $properties['lineheight']  ?>;<?php } ?>
 
     <?php if(!empty($properties['useborder'])) { ?>
@@ -25,39 +20,28 @@
 
     <?php if(!empty($properties['bgcolor'])) { ?>background-color: <?php echo $properties['bgcolor'] ?>; <?php } ?>
 
-    <?php if(!empty($properties['hov_duration']) && !empty($properties['hov_transition'] )) { ?>transition: all <?php echo $properties['hov_duration'] ?>s <?php echo $properties['hov_transition']  ?>; <?php } ?>
-
+	<?php if(!empty($properties['hov_use_animation'])) { ?>
+		transition: all <?php echo $properties['hov_duration']  ?>s <?php echo $properties['hov_transition']  ?>;
+	<?php } else { ?>
+		transition: none;
+	<?php } ?>
 }
 
-.upfront-button .button-preset-<?php echo $properties['id']  ?>.upfront_cta:hover {
+#page .upfront-button .button-preset-<?php echo $properties['id']  ?>.upfront_cta:hover, #page .upfront-button.<?php echo $properties['id']  ?>.live-preview-hover .upfront_cta {
     <?php if(!empty($properties['hov_usetypography']) && $properties['hov_usetypography'] == 'yes') { ?>
-
         <?php if(!empty($properties['hov_color'])) { ?>color: <?php echo $properties['hov_color']  ?>; <?php } ?>
-
         <?php if(!empty($properties['hov_fontface'])) { ?>font-family: <?php echo $properties['hov_fontface']  ?>; <?php } ?>
-
         <?php if(!empty($properties['hov_fontsize'])) { ?>font-size: <?php echo $properties['hov_fontsize']  ?>px; <?php } ?>
-
         <?php if(!empty($properties['hov_lineheight'])) { ?>line-height: <?php echo $properties['hov_lineheight']  ?>;<?php } ?>
-
         <?php if(!empty($properties['hov_fontstyle_weight'])) { ?>font-weight: <?php echo $properties['hov_fontstyle_weight']  ?>;<?php } ?>
-
         <?php if(!empty($properties['hov_fontstyle_style'])) { ?>font-style: <?php echo $properties['hov_fontstyle_style']  ?>;<?php } ?>
-
     <?php } else { ?>
-
         <?php if(!empty($properties['color'])) { ?>color: <?php echo $properties['color']  ?>; <?php } ?>
-
         <?php if(!empty($properties['fontface'])) { ?>font-family: <?php echo $properties['fontface']  ?>; <?php } ?>
-
         <?php if(!empty($properties['fontsize'])) { ?>font-size: <?php echo $properties['fontsize']  ?>px; <?php } ?>
-
         <?php if(!empty($properties['fontstyle_weight'])) { ?>font-weight: <?php echo $properties['fontstyle_weight']  ?>;<?php } ?>
-
         <?php if(!empty($properties['fontstyle_style'])) { ?>font-style: <?php echo $properties['fontstyle_style']  ?>;<?php } ?>
-
         <?php if(!empty($properties['lineheight'])) { ?>line-height: <?php echo $properties['lineheight']  ?>;<?php } ?>
-
     <?php } ?>
 
     <?php if(!empty($properties['hov_useborder']) && $properties['hov_useborder'] == 'yes') { ?>
@@ -85,5 +69,50 @@
     <?php } else { ?>
         <?php if(!empty($properties['bgcolor'])) { ?>background-color: <?php echo $properties['bgcolor'] ?>; <?php } ?>
     <?php } ?>
-
 }
+
+#page .upfront-button .button-preset-<?php echo $properties['id']  ?>.upfront_cta:focus, #page .upfront-button.<?php echo $properties['id']  ?>.live-preview-focus .upfront_cta {
+    <?php if(!empty($properties['focus_usetypography']) && $properties['focus_usetypography'] == 'yes') { ?>
+        <?php if(!empty($properties['focus_color'])) { ?>color: <?php echo $properties['focus_color']  ?>; <?php } ?>
+        <?php if(!empty($properties['focus_fontface'])) { ?>font-family: <?php echo $properties['focus_fontface']  ?>; <?php } ?>
+        <?php if(!empty($properties['focus_fontsize'])) { ?>font-size: <?php echo $properties['focus_fontsize']  ?>px; <?php } ?>
+        <?php if(!empty($properties['focus_lineheight'])) { ?>line-height: <?php echo $properties['focus_lineheight']  ?>;<?php } ?>
+        <?php if(!empty($properties['focus_fontstyle_weight'])) { ?>font-weight: <?php echo $properties['focus_fontstyle_weight']  ?>;<?php } ?>
+        <?php if(!empty($properties['focus_fontstyle_style'])) { ?>font-style: <?php echo $properties['focus_fontstyle_style']  ?>;<?php } ?>
+    <?php } else { ?>
+        <?php if(!empty($properties['color'])) { ?>color: <?php echo $properties['color']  ?>; <?php } ?>
+        <?php if(!empty($properties['fontface'])) { ?>font-family: <?php echo $properties['fontface']  ?>; <?php } ?>
+        <?php if(!empty($properties['fontsize'])) { ?>font-size: <?php echo $properties['fontsize']  ?>px; <?php } ?>
+        <?php if(!empty($properties['fontstyle_weight'])) { ?>font-weight: <?php echo $properties['fontstyle_weight']  ?>;<?php } ?>
+        <?php if(!empty($properties['fontstyle_style'])) { ?>font-style: <?php echo $properties['fontstyle_style']  ?>;<?php } ?>
+        <?php if(!empty($properties['lineheight'])) { ?>line-height: <?php echo $properties['lineheight']  ?>;<?php } ?>
+    <?php } ?>
+
+    <?php if(!empty($properties['focus_useborder']) && $properties['focus_useborder'] == 'yes') { ?>
+        <?php if(!empty($properties['focus_borderwidth']) && !empty($properties['focus_bordertype']) && !empty($properties['focus_bordercolor'])) { ?>border: <?php echo $properties['focus_borderwidth'] ?>px <?php echo $properties['focus_bordertype'] ?> <?php echo $properties['focus_bordercolor'] ?>;<?php } ?>
+    <?php } else { ?>
+        <?php if(!empty($properties['useborder'])) { ?>
+            <?php if(!empty($properties['borderwidth']) && !empty($properties['bordertype']) && !empty($properties['bordercolor'])) { ?>border: <?php echo $properties['borderwidth'] ?>px <?php echo $properties['bordertype'] ?> <?php echo $properties['bordercolor'] ?>;<?php } ?>
+        <?php } else { ?>
+            border: none;
+        <?php } ?>
+    <?php } ?>
+
+    <?php if(!empty($properties['focus_useradius']) && $properties['focus_useradius'] == 'yes') { ?>
+        border-radius: <?php echo !empty($properties['focus_borderradius1']) ? $properties['focus_borderradius1'] : 0 ?>px <?php echo !empty($properties['focus_borderradius2']) ? $properties['focus_borderradius2'] : 0 ?>px <?php echo !empty($properties['focus_borderradius4']) ? $properties['focus_borderradius4'] : 0 ?>px <?php echo !empty($properties['focus_borderradius3']) ? $properties['focus_borderradius3'] : 0 ?>px;
+    <?php } else { ?>
+        <?php if(!empty($properties['useradius'])) { ?>
+            border-radius: <?php echo $properties['borderradius1'] ? $properties['borderradius1'] : 0 ?>px <?php echo $properties['borderradius2'] ? $properties['borderradius2'] : 0 ?>px <?php echo $properties['borderradius4'] ? $properties['borderradius4'] : 0 ?>px <?php echo $properties['borderradius3'] ? $properties['borderradius3'] : 0 ?>px;
+        <?php } else { ?>
+            border-radius: 0px;
+        <?php } ?>
+    <?php } ?>
+
+    <?php if(!empty($properties['focus_usebgcolor']) && $properties['focus_usebgcolor'] == 'yes') { ?>
+        <?php if(!empty($properties['focus_bgcolor'])) { ?>background-color: <?php echo $properties['focus_bgcolor'] ?>; <?php } ?>
+    <?php } else { ?>
+        <?php if(!empty($properties['bgcolor'])) { ?>background-color: <?php echo $properties['bgcolor'] ?>; <?php } ?>
+    <?php } ?>
+}
+
+<?php if(!empty($properties['preset_style'])) { ?><?php echo $properties['preset_style'] ?><?php } ?>

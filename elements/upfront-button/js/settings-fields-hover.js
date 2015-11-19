@@ -1,6 +1,6 @@
 define(function() {
 	var l10n = Upfront.Settings.l10n.button_element;
-	
+
 	var FieldSeparator = Upfront.Views.Editor.Field.Text.extend({
 	  get_field_html: function () {
 		return '';
@@ -12,7 +12,7 @@ define(function() {
 		return '';
 	  }
 	});
-	
+
 	var ButtonSettingsHover = Upfront.Views.Editor.Settings.Item.extend({
 		className: 'button_settings_hover',
 		group: false,
@@ -24,7 +24,7 @@ define(function() {
 				state = this.options.state;
 
 			this.fields = _([
-				
+
 				new Upfront.Views.Editor.Field.Checkboxes({
 					model: this.model,
 					name: 'hov_usebgcolor',
@@ -36,7 +36,7 @@ define(function() {
 					],
 					change: function(value) {
 						me.model.set({'hov_usebgcolor': value});
-						
+
 						if(value === "yes") {
 							var bgcolor = me.model.get('bgcolor');
 							me.model.set('hov_bgcolor', bgcolor);
@@ -53,7 +53,7 @@ define(function() {
 						}
 					}
 				}),
-				
+
 				new Upfront.Views.Editor.Field.Color({
 					model: this.model,
 					className: 'upfront-field-wrap upfront-field-wrap-color backgroundColor bgcolor-hover sp-cf',
@@ -75,12 +75,12 @@ define(function() {
 						}
 					}
 				}),
-				
+
 				new FieldSeparator({
 					className: 'preset-separator',
 					name: 'presetseparator'
 				}),
-				
+
 				new Upfront.Views.Editor.Field.Checkboxes({
 					model: this.model,
 					name: 'hov_usetypography',
@@ -129,7 +129,7 @@ define(function() {
 						}
 					}
 				}),
-				
+
 				new FieldHeading({
 					className: 'typography-heading typography-heading-hover',
 					name: 'typography-heading',
@@ -165,7 +165,7 @@ define(function() {
 						me.render();
 					}
 				}),
-				
+
 				new Upfront.Views.Editor.Field.Select({
 					model: this.model,
 					name: 'hov_fontstyle',
@@ -181,7 +181,7 @@ define(function() {
 						me.model.set({'hov_fontstyle_style': parsed_variant.style});
 					}
 				}),
-				
+
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					className: 'hover fontSize fontsize-hover',
@@ -194,7 +194,7 @@ define(function() {
 						me.model.set({'hov_fontsize': value});
 					}
 				}),
-				
+
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					className: 'hover lineHeight lineheight-hover',
@@ -208,7 +208,7 @@ define(function() {
 						me.model.set({'hov_lineheight': value});
 					}
 				}),
-				
+
 				new Upfront.Views.Editor.Field.Color({
 					model: this.model,
 					className: 'upfront-field-wrap upfront-field-wrap-color sp-cf fontColor fontcolor-hover',
@@ -231,7 +231,7 @@ define(function() {
 						}
 					}
 				}),
-				
+
 				new FieldSeparator({
 					className: 'preset-separator',
 					name: 'presetseparator'
@@ -248,7 +248,7 @@ define(function() {
 					],
 					change: function(value) {
 						me.model.set({'hov_useborder': value});
-						
+
 						if(value === "yes") {
 							var borderwidth = me.model.get('borderwidth');
 							var bordertype = me.model.get('bordertype');
@@ -274,7 +274,7 @@ define(function() {
 						}
 					}
 				}),
-				
+
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					className: 'static borderWidth borderwidth-hover borderwidth-hover',
@@ -289,7 +289,7 @@ define(function() {
 						me.model.set({'hov_borderwidth': value});
 					}
 				}),
-				
+
 				new Upfront.Views.Editor.Field.Select({
 					model: this.model,
 					className: 'static borderType bordertype-hover bordertype-hover',
@@ -307,7 +307,7 @@ define(function() {
 						me.model.set({'hov_bordertype': value});
 					}
 				}),
-				
+
 				new Upfront.Views.Editor.Field.Color({
 					model: this.model,
 					className: 'upfront-field-wrap upfront-field-wrap-color sp-cf borderColor bordercolor-hover bordercolor-hover hover',
@@ -329,12 +329,12 @@ define(function() {
 						}
 					}
 				}),
-				
+
 				new FieldSeparator({
 					className: 'preset-separator separator-corners-hov',
 					name: 'presetseparator'
 				}),
-				
+
 				new Upfront.Views.Editor.Field.Checkboxes({
 					model: this.model,
 					name: 'hov_useradius',
@@ -364,7 +364,7 @@ define(function() {
 					},
 					show: function(value, $el) {
 						var stateSettings = $el.closest('.state_settings');
-						
+
 						if(value == "yes") {
 							stateSettings.find('.border_radius1_hover').show();
 							stateSettings.find('.border_radius2_hover').show();
@@ -380,7 +380,7 @@ define(function() {
 						}
 					}
 				}),
-				
+
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					className: 'border_radius border_radius1 border_radius1_hover hover',
@@ -398,10 +398,10 @@ define(function() {
 							me.model.set('hov_borderradius3', value);
 							me.model.set('hov_borderradius4', value);
 							me.$el.find("input[name*=hov_borderradius]").val(value);
-						}	
+						}
 					}
 				}),
-				
+
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					className: 'border_radius border_radius2 border_radius2_hover hover',
@@ -419,10 +419,10 @@ define(function() {
 							me.model.set('hov_borderradius3', value);
 							me.model.set('hov_borderradius4', value);
 							me.$el.find("input[name*=hov_borderradius]").val(value);
-						}	
+						}
 					}
 				}),
-				
+
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					className: 'border_radius border_radius4 border_radius4_hover hover',
@@ -440,10 +440,10 @@ define(function() {
 							me.model.set('hov_borderradius2', value);
 							me.model.set('hov_borderradius3', value);
 							me.$el.find("input[name*=hov_borderradius]").val(value);
-						}	
+						}
 					}
 				}),
-				
+
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					className: 'border_radius border_radius3 border_radius3_hover hover',
@@ -461,10 +461,10 @@ define(function() {
 							me.model.set('hov_borderradius2', value);
 							me.model.set('hov_borderradius4', value);
 							me.$el.find("input[name*=hov_borderradius]").val(value);
-						}	
+						}
 					}
 				}),
-				
+
 				new Upfront.Views.Editor.Field.Checkboxes({
 					model: this.model,
 					className: 'border_radius_lock border_radius_lock_hover hover',
@@ -477,22 +477,22 @@ define(function() {
 					],
 					change: function(value) {
 						me.model.set({'hov_borderradiuslock': value});
-						
+
 						if(typeof value !== "undefined" && value.length > 0) {
 							var firstRadio = me.model.get('hov_borderradius1');
 							me.model.set('hov_borderradius2', firstRadio);
 							me.model.set('hov_borderradius3', firstRadio);
 							me.model.set('hov_borderradius4', firstRadio);
 							me.$el.find("input[name*=hov_borderradius]").val(firstRadio);
-						}	
+						}
 					}
 				}),
-				
+
 				new FieldSeparator({
 					className: 'preset-separator',
 					name: 'presetseparator'
 				}),
-				
+
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					className: 'duration',
@@ -507,7 +507,7 @@ define(function() {
 						me.model.set({'hov_duration': value});
 					}
 				}),
-				
+
 				new Upfront.Views.Editor.Field.Select({
 					model: this.model,
 					name: 'hov_transition',
@@ -536,7 +536,7 @@ define(function() {
 					//update field value
 					var value = field.model.get(field.name);
 					field.set_value(value);
-					
+
 					//update field value if color field
 					if(typeof field.rgba !== "undefined") {
 						field.update_input_border_color(Upfront.Util.colors.to_color_value(value));

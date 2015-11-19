@@ -81,6 +81,7 @@ class Upfront_UwidgetView extends Upfront_Object {
 			'done' => __('Done!', 'upfront'),
 			'widget' => __('Widget', 'upfront'),
 			'settings' => __('Widget settings', 'upfront'),
+			'general_settings' => __('General Settings', 'upfront'),
 			'widget_select' => __('Select Widget', 'upfront'),
 			'select_widget' => __('Please select widget in settings', 'upfront'),
 			'select_one' => __('Please select widget', 'upfront'),

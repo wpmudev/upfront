@@ -60,7 +60,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			"objects" => "scripts/upfront/upfront-objects",
 			"media" => "scripts/upfront/upfront-media",
 			"content" => "scripts/upfront/upfront-content",
-            "bg-settings" => "scripts/upfront/bg-settings/bg-settings",
+			"bg-settings" => "scripts/upfront/bg-settings/bg-settings",
 			"spectrum" => "scripts/spectrum/spectrum",
 			"responsive" => "scripts/responsive",
 			"redactor_plugins" => 'scripts/redactor/plugins',
@@ -73,15 +73,15 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		);
 		$paths = apply_filters('upfront-settings-requirement_paths', $paths + $registered);
 
-	    $shim = array(
-	      'underscore' => array('exports' => '_'),
-	      'redactor' => array('redactor_plugins'),
-	      'jquery-df' => array('jquery'),
-		   'chosen' => array(
+		$shim = array(
+			'underscore' => array('exports' => '_'),
+			'redactor' => array('redactor_plugins'),
+			'jquery-df' => array('jquery'),
+			'chosen' => array(
 				'deps' => array('jquery'),
 				'exports' => 'jQuery.fn.chosen'
-		   ),
-	    );
+			),
+		);
 
 		$require_config = array(
 			'baseUrl' => "{$root}",
@@ -223,7 +223,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 
 		$registry = Upfront_PresetServer_Registry::get_instance();
 		$preset_servers = $registry->get_all();
-		
+
 		$presets = '';
 		foreach ($preset_servers as $key => $server) {
 			$element_server = $server::get_instance();
@@ -307,23 +307,24 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		}
 		$content_settings = json_encode($content_settings);
 
-        /**
-         * Redactor font icons
-         *
-         *
-         */
+		/**
+		 * Redactor font icons
+		 *
+		 *
+		 */
 
-        // get default font
-        $redactor_font_icons = $this->_get_default_font_icons();
+		// get default font
+		$redactor_font_icons = $this->_get_default_font_icons();
 
-        $redactor_font_icons = apply_filters(
-            'upfront_get_editor_font_icons',
-            $redactor_font_icons,
-            array(
-                'json' => true
-            )
-        );
+		$redactor_font_icons = apply_filters(
+			'upfront_get_editor_font_icons',
+			$redactor_font_icons,
+			array(
+				'json' => true
+			)
+		);
 
+		$menus = json_encode(wp_get_nav_menus());
 
 		$main = <<<EOMainJs
 // Set up the global namespace
@@ -356,7 +357,8 @@ Upfront.mainData = {
 	content: {$content},
 	content_settings: {$content_settings},
 	l10n: {$l10n},
-	font_icons: {$redactor_font_icons}
+	font_icons: {$redactor_font_icons},
+	menus: {$menus}
 };
 EOMainJs;
 		$this->_out(new Upfront_JavascriptResponse_Success($main));

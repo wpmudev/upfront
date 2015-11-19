@@ -1,12 +1,17 @@
 (function ($) {
-define(function () {
+define([
+	'scripts/upfront/element-settings/settings',
+	'scripts/upfront/element-settings/root-settings-panel'
+], function (ElementSettings, RootSettingsPanel) {
 	var l10n = Upfront.Settings.l10n.widget_element;
-	
+
 	// Settings - load widget list first before adding object
 	var WidgetSpecific_Settings = Upfront.Views.Editor.Settings.Item.extend({
 		/**
 		 * Set up setting item appearance.
 		 */
+
+		className: 'general_settings_item widget_settings_item',
 
 		get_title: function () {
 			var selected = this.model.get_property_value_by_name('selected_widget');
@@ -24,7 +29,7 @@ define(function () {
 			var self = this,
 				data = {"action": "uwidget_get_widget_admin_form", "data": JSON.stringify({"widget": widget})}
 			;
-			
+
 			this.$el.empty().append('<p>' + l10n.loading + '</p>');
 
 			Upfront.Util.post(data)
@@ -44,7 +49,6 @@ define(function () {
 
 		initialize: function () {
 			var widget = this.model.get_property_value_by_name('widget');
-
 			// Check legacy mode
 			// And internally convert accordingly
 			for (i in Upfront.data.uwidget.widgets) {
@@ -123,7 +127,7 @@ define(function () {
 	});
 
 
-	var Settings = Upfront.Views.Editor.Settings.Settings.extend({
+	var Settings = ElementSettings.extend({
 
 		initialize: function (opts) {
 			this.has_tabs = false;
@@ -133,13 +137,13 @@ define(function () {
 				return each.admin;
 			})).map(function (each) {
 				return { label: each.name, value: each.key };
-			});
+			})
 			widget_values.unshift({label: l10n.select_one, value: ''});
 
-			var panel = new Upfront.Views.Editor.Settings.Panel({
+			var panel = new RootSettingsPanel({
 				model: this.model,
 				label: l10n.widget,
-				title: l10n.settings,
+				title: l10n.general_settings,
 				min_height: '200px'
 			});
 
@@ -149,12 +153,13 @@ define(function () {
 
 			var settings_item1 = new Upfront.Views.Editor.Settings.Item({
 				model: this.model,
-				title: l10n.widget_select,
+				group: false,
+				className: 'select-widget-panel',
 				fields: [
 					new Upfront.Views.Editor.Field.Select({
 						model: this.model,
 						property: 'widget',
-						label: "",
+						label: l10n.widget_select,
 						values: widget_values,
 						change: function() {
 							var $checked = this.$el.find('.upfront-field-select-option input:checked');
@@ -165,14 +170,14 @@ define(function () {
 					})
 				]
 			});
-			panel.settings = _([settings_item1, dynamic_settings]);
+			
+			var css_settings = new Upfront.Views.Editor.Settings.Settings_CSS({model: this.model });
+			panel.settings = _([settings_item1, dynamic_settings, css_settings]);
 
-			this.panels = _([panel]);
+			this.panels = [panel];
 		},
 
-		get_title: function () {
-			return l10n.settings;
-		}
+		title: l10n.settings
 	});
 
 	return Settings;
