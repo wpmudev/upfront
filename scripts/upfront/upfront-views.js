@@ -2182,7 +2182,7 @@ define([
 				}
 				this.region.get('modules').remove(this.model);
 				//this.remove();
-				ed.update_position_data();
+				ed.update_position_data($wrap.closest('.upfront-editable_entities_container'));
 				ed.update_wrappers(region);
 				Upfront.Events.trigger("entity:module_group:ungroup", modules_arr, region);
 			},

@@ -354,7 +354,7 @@ var LayoutEditor = {
 					});
 
 					// now normalize the wrappers
-					grid_ed.update_position_data();
+					grid_ed.update_position_data($region.find('.upfront-editable_entities_container:first'));
 					grid_ed.update_wrappers(region);
 
 					$(this).remove();
