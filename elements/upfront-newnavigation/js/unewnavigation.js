@@ -531,6 +531,11 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				setTimeout( function() {
 					me.activate_responsive_nav($upfrontObjectContent, currentBreakpoint.get('width'));
 				}, 100);
+			} else if (me.property('preset') && me.property('preset') !== 'default') {
+				$upfrontObjectContent.attr('data-breakpoints', JSON.stringify(props.breakpoint));
+				setTimeout( function() {
+					me.activate_responsive_nav($upfrontObjectContent, currentBreakpoint.get('width'));
+				}, 100);
 			}
 		}, 300);
 
