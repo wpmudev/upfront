@@ -177,9 +177,11 @@ DragDrop.prototype = {
 		
 		// Add drop animation
 		var $me = this.is_group ? this.view.$el : this.view.$el.find('.upfront-editable_entity:first');
-		$me.one('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function(){
+		var ani_event_end = 'animationend.drop_ani webkitAnimationEnd.drop_ani MSAnimationEnd.drop_ani oAnimationEnd.drop_ani';
+		$me.one(ani_event_end, function(){
 			$(this).removeClass('upfront-dropped');
 			Upfront.Events.trigger("entity:drag_animate_stop", that.view, that.model);
+			$me.off(ani_event_end); // Make sure to remove any remaining unfired event
 		}).addClass('upfront-dropped');
 		
 		
@@ -636,7 +638,7 @@ DragDrop.prototype = {
 			drop_change = function () {
 				Upfront.Events.trigger("entity:drag:drop_change", that.view, that.model);
 			},
-			$insert_rel = drop.type == 'inside' && !this.is_group ?  drop.insert[1].parent() : drop.insert[1],
+			$insert_rel = ( drop.type == 'inside' && !drop.insert[1].hasClass('upfront-module-group') ) ?  drop.insert[1].parent() : drop.insert[1],
 			insert_order = drop.insert[1].data('breakpoint_order') || 0,
 			ani_width = me.width,
 			ani_height = me.height

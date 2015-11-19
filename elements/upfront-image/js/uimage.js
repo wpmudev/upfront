@@ -159,6 +159,32 @@ define([
 			this.stoppedTimer  = false;
 		},
 
+		getSelectedAlignment: function(){
+			if(!this.property('include_image_caption') && this.property('caption_position') === false && this.property('caption_alignment') === false) {
+				return 'nocaption';
+			}
+			if(this.property('caption_position') === 'below_image') {
+				return 'below';
+			}
+
+			var align = this.property('caption_alignment');
+
+			switch(align){
+				case 'top':
+					return 'topOver';
+				case 'bottom':
+					return 'bottomOver';
+				case 'fill':
+					return 'topCover';
+				case 'fill_middle':
+					return 'middleCover';
+				case 'fill_bottom':
+					return 'bottomCover';
+			}
+
+			return 'nocaption';
+		},
+
 		isThemeImage: function() {
 			return this.property('srcFull') && this.property('srcFull').match('wp-content/themes/');
 		},
