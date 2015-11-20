@@ -531,6 +531,11 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				setTimeout( function() {
 					me.activate_responsive_nav($upfrontObjectContent, currentBreakpoint.get('width'));
 				}, 100);
+			} else if (me.property('preset') && me.property('preset') !== 'default') {
+				$upfrontObjectContent.attr('data-breakpoints', JSON.stringify(props.breakpoint));
+				setTimeout( function() {
+					me.activate_responsive_nav($upfrontObjectContent, currentBreakpoint.get('width'));
+				}, 100);
 			}
 		}, 300);
 
@@ -565,6 +570,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			currentwidth = typeof breakpoint.width !== 'undefined' ? parseInt(breakpoint.width, 10) : $(window).width();
 
 		if (breakpoint.menu_style === 'triggered') {
+			selector.addClass('triggered-menu');
 			selector.attr('data-style', 'burger');
 			selector.attr('data-burger_alignment', breakpoint.burger_alignment);
 			selector.attr('data-burger_over', breakpoint.burger_over);
@@ -599,6 +605,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 			me.hideMenu(selector.find('ul.menu'));
 		} else {
+			selector.removeClass('triggered-menu');
 			selector.attr('data-style', breakpoint.menu_style);
 			selector.attr('data-alignment', breakpoint.menu_alignment);
 
@@ -674,7 +681,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			if(parseInt(currentwidth) >= parseInt(bparray[key]['width'])) {
 
 				if(bparray[key]['burger_menu'] == 'yes') {
-
+					selector.addClass('triggered-menu');
 					selector.attr('data-style', 'burger')
 					selector.attr('data-burger_alignment', bparray[key]['burger_alignment']);
 					selector.attr('data-burger_over', bparray[key]['burger_over']);
@@ -709,7 +716,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					me.hideMenu(selector.find('ul.menu'));
 				}
 				else {
-					//selector.attr('data-style', selector.data('stylebk'))
+					selector.removeClass('triggered-menu');
 					selector.attr('data-style', bparray[key]['menu_style']);
 					selector.attr('data-aliment', bparray[key]['menu_alignment']);
 

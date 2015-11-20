@@ -4062,6 +4062,7 @@ define([
 				}
 
 				this.$el.show();
+				Upfront.Events.trigger('upfront:lightbox:show');
 			},
 			hide:function () {
 				this.$el.hide();

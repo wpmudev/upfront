@@ -732,6 +732,7 @@ jQuery(document).ready(function($){
 						});
 						var regionview = Upfront.data.region_views[region.cid];
 						regionview.show();
+
 					}
 				}
 
@@ -803,7 +804,14 @@ jQuery(document).ready(function($){
 			//translate width in columns to width in pixels as per the total width of upfront-grid-layout being 24 cols
 			lightbox.css('width', $('div.upfront-grid-layout').first().width()*lightbox.data('col')/24);
 			lightbox.show().css({'margin-left': -(parseInt(lightbox.width()/2)), 'margin-top': -(parseInt(lightbox.height()/2))});
-			$(document).trigger("upfront-lightbox-open");
+			
+			/* elements can subscribe to the following event to
+			 * to render their content based 
+			 * on the dimensions of the lightbox 
+			 * itself, such elements are gallery and slider
+			*/
+			$(document).trigger("upfront-lightbox-open", lightbox);
+
 			e.preventDefault();
 			function lightboxhide() {
 				close.html('').remove()

@@ -187,7 +187,7 @@ div.upfront-newnavigation_module:hover  div[data-style="burger"] div.responsive_
 .responsive_nav_toggler {
   float:right;
   position:relative;
-  z-index: 2000;
+  z-index: 2000!important;
   width:40px;
   height:40px;
   border:1px solid #d8d8d8;
@@ -314,3 +314,10 @@ div.burger_overlay {
   left:0;
 }
 
+
+.triggered-menu li.menu-item .uimage-controls.image-element-controls,
+.triggered-menu .delete_menu_item,
+.triggered-menu .navigation-add-item,
+.triggered-menu li.menu-item .open-item-controls {
+	display: none!important;
+}
