@@ -660,8 +660,13 @@ DragDrop.prototype = {
 			$drop.css('width', (drop.right-drop.left+1)*ed.col_size);
 			// Add height too in case of full region drop
 			if ( !drop.priority || drop.is_me ) {
-				$drop.css('height', (drop.bottom-drop.top+1)*ed.baseline);
-				if ( drop.is_me ) $drop.css('margin-top', me.height*-1);
+				if ( drop.is_me ) {
+					$drop.css('margin-top', me.height*-1);
+					$drop.css('height', me.height);
+				}
+				else {
+					$drop.css('height', (drop.bottom-drop.top+1)*ed.baseline);
+				}
 			}
 		}
 		else if ( drop.type == 'side-before' || drop.type == 'side-after' ) {
