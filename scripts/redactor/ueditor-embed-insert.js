@@ -257,7 +257,9 @@ var EmbedManager = Backbone.View.extend({
 
 		$("body").append(this.$el);
 		main.boot_editor();
-
+		
+		//Set correct width without sidebar
+		this.$el.width($(window).width() - $('#sidebar-ui').width() -1);
 		bar.on("insert", function (stuff) {
 			main.insert(stuff);
 		});

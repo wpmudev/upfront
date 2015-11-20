@@ -24,7 +24,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		}
 
 		this.events = _.extend({}, this.events, {
-			'click a.upfront_cta.ueditor-placeholder' : 'placeholderClick',
+			'click a.uf-click-to-edit-text' : 'placeholderClick',
 			'click a.redactor_act': 'onOpenPanelClick',
 			'click .upfront-save_settings': 'onOpenPanelClick',
 			'click .open-item-controls': 'onOpenItemControlsClick'
@@ -35,8 +35,11 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		this.model.get('properties').bind('change', this.render, this);
 		this.model.get('properties').bind('add', this.render, this);
 		this.model.get('properties').bind('remove', this.render, this);
+		this.listenTo(this.model, 'change:preset', this.updatePresetClass);
 
 		Upfront.Events.on('entity:deactivated', this.stopEdit, this);
+
+		this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
 
 		this.listenTo(Upfront.Events, "theme_colors:update", this.render, this);
 
@@ -55,6 +58,14 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			me.property('link', me.link.toJSON());
 		});
 
+	},
+
+	placeholderClick: function(e) {
+		e.preventDefault();
+	},
+
+	updatePresetClass: function() {
+		this.$el.addClass(this.property('preset'));
 	},
 
 	getCleanurl: function(url) {
@@ -135,6 +146,8 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		props.preset = props.preset || 'default';
 
 		props.preset = this.clear_preset_name(props.preset);
+
+		var preset_props = Upfront.Views.Editor.Button.Presets.get(props.preset);
 
 		return this.buttonTpl(props);
 	},
@@ -238,6 +251,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			});
 
 		this.createInlineControlPanel();
+		this.$el.addClass(this.property('preset'));
 	},
 	stopEdit: function() {
 		var $target = this.$el.find('.upfront-object-content a.upfront_cta');
@@ -287,7 +301,7 @@ Upfront.Application.LayoutEditor.add_object("Button", {
 	"Element": ButtonElement,
 	"Settings": ButtonSettings,
 	cssSelectors: {
-		'.upfront-button': {label: l10n.css.container_label, info: l10n.css.container_info}
+		'.upfront_cta': {label: l10n.css.container_label, info: l10n.css.container_info}
 	},
 	cssSelectorsId: Upfront.data.ubutton.defaults.type
 });

@@ -20,7 +20,6 @@
 .panel-setting-dialog-region:before, .panel-setting-dialog-info:before,
 .position-select-wrap .position-select:checked,
 .upfront-field-checkbox:checked,
-.upfront-field-select-single .upfront-field-select-option-selected label:before,
 .upfront-ui .upfront-region-field-icon:before,
 #upfront-popup-top.upfront-popup-meta .upload:before,
 .upfront-icon-button-hide:before,
@@ -446,12 +445,6 @@
 }
 .upfront-field-checkbox:checked {
 	background-position: -46px -353px;
-}
-.upfront-field-select-single .upfront-field-select-option-selected label:before {
-	width: 11px;
-	height: 8px;
-	margin: 7px 12px 0 -5px;
-	background-position: -46px -354px;
 }
 .region-lock-switch:before {
 	width: 22px;

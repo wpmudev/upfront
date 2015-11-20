@@ -8,10 +8,10 @@ define([
 	'elements/upfront-image/js/image-editor',
 	'elements/upfront-image/js/image-element',
 	"scripts/upfront/link-model",
-	'elements/upfront-image/js/model'
-], function(imageTpl, editorTpl, ImageContextMenu, ImageSettings, ImageSelector, ImageEditor,
-		ImageElement,  LinkModel, UimageModel
-	) {
+	'elements/upfront-image/js/model',
+	'text!elements/upfront-image/tpl/preset-style.html',
+	'scripts/upfront/preset-settings/util',
+], function(imageTpl, editorTpl, ImageContextMenu, ImageSettings, ImageSelector, ImageEditor, ImageElement, LinkModel, UimageModel, settingsStyleTpl, PresetUtil) {
 
 	var l10n = Upfront.Settings.l10n.image_element;
 	var breakpointColumnPadding = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().get('column_padding');
@@ -115,6 +115,28 @@ define([
 			});
 
 			this.listenTo(Upfront.Events, 'entity:module:update', this.on_uimage_update);
+			this.listenTo(this.model, "preset:updated", this.preset_updated);
+		},
+
+		get_preset_properties: function() {
+			var preset = this.model.get_property_value_by_name("preset"),
+				props = PresetUtil.getPresetProperties('image', preset) || {};
+
+			return props;
+		},
+
+		preset_updated: function() {
+			this.render();
+		},
+
+		update_colors: function () {
+
+			var props = this.get_preset_properties();
+
+			if (_.size(props) <= 0) return false; // No properties, carry on
+
+			PresetUtil.updatePresetStyle('gallery', props, settingsStyleTpl);
+
 		},
 
 		setDefaults: function(){
@@ -243,7 +265,7 @@ define([
 		// 	]);
 
 		// 	return panel;
-		// },
+		// },]
 
 		createLinkControl: function(){
 			var me = this,
@@ -448,6 +470,11 @@ define([
 				};
 			}
 
+			var props = this.extract_properties();
+
+			props.properties = this.get_preset_properties();
+
+			props.url = this.property('when_clicked') ? this.property('image_link') : false;
 			props.url = this.link.get('type') !== 'unlink' ? this.link.get('url') : false;
 			props.link_target = this.link.get('target');
 			props.size = this.temporaryProps.size;
@@ -463,6 +490,10 @@ define([
 			} else {
 				props.imgWidth = props.size.width + 'px';
 			}
+
+			props.containerWidth = Math.min(props.size.width, elementSize.width);
+
+			props.display_caption = this.property('display_caption') ? this.property('display_caption') : 'showCaption';
 
 			//Gif image handled as normal ones in the backend
 			props.gifImage = '';
@@ -493,6 +524,13 @@ define([
 				img = render.find('img');
 				props = this.temporaryProps;
 
+				var newElementSize = this.update_style();
+
+				if(newElementSize) {
+					elementSize = newElementSize;
+					size = this.temporaryProps.size;
+				}
+
 				// Let's load the full image to improve resizing
 				render.find('.upfront-image-container').css({
 					overflow: 'hidden',
@@ -520,6 +558,54 @@ define([
 			return rendered;
 		},
 
+		getElementShapeSize: function (elementSize) {
+			var $container = this.$el.find('.upfront-image-container'),
+				props = this.get_preset_properties(),
+				newSize = {};
+
+			if (props.imagestyle === "square") {
+				newSize.height = elementSize.width;
+				newSize.width = elementSize.width;
+
+				if (elementSize.width !== elementSize.height) {
+					// Keep old height in case style switches to default
+					newSize.defaultHeight = elementSize.height;
+				} else if (elementSize.defaultHeight) {
+					newSize.defaultHeight = elementSize.defaultHeight;
+				}
+
+				return newSize;
+			} else {
+				if (elementSize.defaultHeight) {
+					newSize = {
+						width: elementSize.width,
+						height: elementSize.defaultHeight
+					};
+					return newSize;
+				}
+			}
+
+			return false;
+		},
+
+		update_style: function() {
+			var elementSize = this.property('element_size'),
+				newSize = this.getElementShapeSize(elementSize)
+			;
+
+			if ( false !== newSize ) {
+				if ( elementSize.width != newSize.width || elementSize.height != newSize.height ) {
+					if ( ! this.resizeImage(newSize) ) {
+						// Can't resize? At least set the element_size
+						this.property('element_size', newSize);
+					}
+				}
+				return newSize;
+			}
+
+			return false;
+		},
+
 		on_render: function() {
 			var me = this,
 				onTop = ['bottom', 'fill_bottom'].indexOf(this.property('caption_alignment')) !== -1 || this.property('caption_position') === 'below_image' ? ' sizehint-top' : '',
@@ -536,6 +622,12 @@ define([
 
 			if(this.property('when_clicked') === 'lightbox') {
 				this.$('a').addClass('js-uimage-open-lightbox');
+			}
+
+			var newElementSize = this.update_style();
+
+			if(newElementSize) {
+				elementSize = newElementSize;
 			}
 
 			if (this.isThemeImage() && !Upfront.themeExporter) {
@@ -558,7 +650,6 @@ define([
 				}
 				return;
 			}
-
 
 			if (this.property('quick_swap')) { // Do not show image controls for swappable images.
 				return false;
@@ -642,6 +733,7 @@ define([
 			this.model.get('properties').each(function(prop){
 				props[prop.get('name')] = prop.get('value');
 			});
+			props.preset = props.preset || 'default';
 			return props;
 		},
 
@@ -789,10 +881,15 @@ define([
 				column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
 				hPadding = parseInt( this.model.get_breakpoint_property_value('left_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('right_padding_num') || column_padding ),
 				vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
-				ratio;
+				ratio,
+				newSize;
 
 			// data.elementSize = {width: attr.width - (2 * padding), height: attr.height - (2 * padding) - captionHeight};
 			data.elementSize = {width: parseInt(attr.width) - hPadding, height: parseInt(attr.height) - vPadding - captionHeight};
+			newSize = this.getElementShapeSize(data.elementSize);
+			if ( false !== newSize ) {
+				data.elementSize = newSize;
+			}
 
 			this.applyElementSize();
 
@@ -1054,6 +1151,62 @@ define([
 					Upfront.Util.post(saveData);
 				});
 			}
+		},
+
+		resizeImage: function (size) {
+			var img = this.$('img'),
+				data,
+				imgSize,
+				imgPosition
+			;
+
+			if ( img.length > 0 ) {
+				data = {
+					position: this.property('position'),
+					size: this.property('size'),
+					stretch: this.property('stretch'),
+					vstretch: this.property('vstretch'),
+					elementSize: size
+				};
+
+				if(data.stretch && !data.vstretch){
+					this.resizingH(img, data, true);
+					this.resizingV(img, data);
+				} else if(!data.stretch && data.vstretch){
+					this.resizingV(img, data, true);
+					this.resizingH(img, data);
+				} else {
+					//Both stretching or not stretching, calculate ratio difference
+					ratio = data.size.width / data.size.height - data.elementSize.width / data.elementSize.height;
+
+					//Depending on the difference of ratio, the resizing is made horizontally or vertically
+					if(ratio > 0 && data.stretch || ratio < 0 && ! data.stretch){
+						this.resizingV(img, data, true);
+						this.resizingH(img, data);
+					}
+					else {
+						this.resizingH(img, data, true);
+						this.resizingV(img, data);
+					}
+				}
+
+				imgSize = {width: img.width(), height: img.height()};
+				imgPosition = img.position();
+
+				// Change the sign
+				imgPosition.top = -imgPosition.top;
+				imgPosition.left = -imgPosition.left;
+
+				this.temporaryProps = {
+					size: imgSize,
+					position: imgPosition
+				};
+				console.log(img, imgSize, imgPosition, data);
+				this.property('element_size', size);
+				this.saveTemporaryResizing();
+				return true;
+			}
+			return false;
 		},
 
 		setElementSize: function(ui) {
@@ -1349,7 +1502,7 @@ define([
 		'Settings': ImageSettings,
 		'ContextMenu': ImageContextMenu,
 		cssSelectors: {
-			'.upfront-image': {label: l10n.css.image_label, info: l10n.css.image_info},
+			'.upfront-image-wrapper': {label: l10n.css.image_label, info: l10n.css.image_info},
 			'.wp-caption': {label: l10n.css.caption_label, info: l10n.css.caption_info},
 			'.upfront-image-container': {label: l10n.css.wrapper_label, info: l10n.css.wrapper_info}
 		},

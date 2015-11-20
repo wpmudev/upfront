@@ -5,11 +5,11 @@
 class Upfront_UaccordionView extends Upfront_Object {
 	public static function default_properties() {
 		$defaultPanel = new StdClass();
-		$defaultPanel->title = '';//self::_get_l10n('default_panel_title');
+		$defaultPanel->title = self::_get_l10n('default_panel_title');
 		$defaultPanel->content = self::_get_l10n('default_panel_content');
 		$secondPanel = new StdClass();
-		$secondPanel->title = '';
-		$secondPanel->content = "Panel 2 content";
+		$secondPanel->title = self::_get_l10n('panel_label').' 2';
+		$secondPanel->content = self::_get_l10n('content_label');
 		return array(
 			'type' => 'UaccordionModel',
 			'view_class' => 'UaccordionView',
@@ -147,6 +147,12 @@ class Upfront_UaccordionView extends Upfront_Object {
 			'header_bg' => __('Header Background:', 'upfront'),
 			'header_border' => __('Header Border:', 'upfront'),
 			'default_preset' => __('Default', 'upfront'),
+			'content_area_colors_label' => __('Content Area Colors', 'upfront'),
+			'content_area_bg_label' => __('Content Area BG', 'upfront'),
+			'colors_label' => __('Colors', 'upfront'),
+			'header_bg_label' => __('Header BG', 'upfront'),
+			'triangle_icon_label' => __('Triangle Icon', 'upfront'),
+			'typography_tab_label' => __('Tab Label Typography', 'upfront'),
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)

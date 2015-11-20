@@ -1,6 +1,34 @@
 Change Log
 ============
 
+0.4.1.1 - 2015-11-09
+-------------------------------------------------------------------------------
+- Fix: image links issues.
+- Fix: button in group is opening url instead of edit text.
+- Fix: syntax checks in code elements.
+- Fix: parallax refresh error when rapidly change background style.
+- Fix: parallax affects full width background.
+- Fix: module group output z-index.
+- Fix: enable region resizing after adding region.
+- Add: content type macro to content expansion in posts element.
+
+0.4.1 - 2015-10-26
+-------------------------------------------------------------------------------
+- Fix: redactor issue with icons in editor vs live.
+- Fix: YouTube element issues.
+- Fix: paralax mode issues with responsive and image selection.
+- Fix: redactor text selection issues.
+- Fix: like box trailing slash issue.
+- Fix: responsive mode selection clearing and active break point issues.
+- Fix: hadcoded gravatar protocol in sidebar.
+- Fix: contact form name and l10n.
+- Fix: text encoding issues in code and text element sanitization.
+- Add: custom cursor for editing areas.
+- Add: formatting via inline text expansion.
+- Add: choice between theme layout and WP image inserts.
+- Add: button element improvements.
+- Add: new linking API.
+
 0.4 - 2015-08-28
 -------------------------------------------------------------------------------
 - Fix: shortcodes in tabs/accordion elements.

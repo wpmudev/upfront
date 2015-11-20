@@ -354,7 +354,7 @@ var LayoutEditor = {
 					});
 
 					// now normalize the wrappers
-					grid_ed.update_position_data();
+					grid_ed.update_position_data($region.find('.upfront-editable_entities_container:first'));
 					grid_ed.update_wrappers(region);
 
 					$(this).remove();
@@ -536,7 +536,7 @@ var LayoutEditor = {
 	},
 
 	create_undo: function () {
-		this.layout.store_undo_state();
+		//this.layout.store_undo_state();
 	},
 	apply_history_change: function () {
 		var regions = Upfront.Application.layout.get("regions"),
@@ -1144,7 +1144,7 @@ var LayoutEditor = {
 				range: Upfront.Views.Theme_Colors.range
 			},
 			/*
-			 * Commented, because presets are update in settings.php on create/edit
+			 * Commented, because presets are updated in settings.php on create/edit
 			 * button_presets: Upfront.Views.Editor.Button.Presets.toJSON(),
 			 */
 			post_image_variants: Upfront.Content.ImageVariants.toJSON()

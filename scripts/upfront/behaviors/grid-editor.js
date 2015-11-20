@@ -85,39 +85,36 @@ var GridEditor = {
 	get_position: function(el){
 		var ed = Upfront.Behaviors.GridEditor,
 			$el = $(el),
-			width = $el.outerWidth(),
-			height = $el.outerHeight(),
-			top = $el.offset().top,
-			left = $el.offset().left,
-			outer_width = $el.outerWidth(true),
-			outer_height = $el.outerHeight(true),
-			outer_top = top-parseFloat($el.css('margin-top')),
-			outer_left = left-parseFloat($el.css('margin-left')),
+			width = parseFloat($el.css('width')),
+			height = parseFloat($el.css('height')),
+			offset = $el.offset(),
+			top = offset.top,
+			left = offset.left,
 			grid = ed.get_grid(left, top),
-			outer_grid = ed.get_grid(outer_left, outer_top),
 			col = Math.round(width/ed.col_size),
-			outer_col = Math.round(outer_width/ed.col_size),
 			row = Math.ceil(height/ed.baseline),
-			outer_row = Math.ceil(outer_height/ed.baseline),
-			$region = $el.closest('.upfront-region'),
-			region = $region.data('name'),
-			$group = $el.closest('.upfront-module-group'),
-			group = $group.length > 0 ? $group.attr('id') : false;
+			//$region = $el.closest('.upfront-region'),
+			//region = $region.data('name'),
+			//$group = $el.closest('.upfront-module-group'),
+			//group = $group.length > 0 ? $group.attr('id') : false,
+			position = {
+				top: Math.round(top),
+				left: Math.round(left),
+				bottom: Math.round(top+height),
+				right: Math.round(left+width)
+			},
+			pos_grid = {
+				top: grid.y,
+				left: grid.x,
+				right: grid.x+col-1,
+				bottom: grid.y+row-1
+			}
+		;
 		return {
 			$el: $el,
 			_id: ed._new_id(),
-			position: {
-				top: top,
-				left: left,
-				bottom: top+height,
-				right: left+width
-			},
-			outer_position: {
-				top: Math.round(outer_top),
-				left: Math.round(outer_left),
-				bottom: Math.round(outer_top+outer_height),
-				right: Math.round(outer_left+outer_width)
-			},
+			position: position,
+			outer_position: position, // Backward compatibility, to be deprecated
 			width: width,
 			height: height,
 			center: {
@@ -126,24 +123,14 @@ var GridEditor = {
 			},
 			col: col,
 			row: row,
-			grid: {
-				top: grid.y,
-				left: grid.x,
-				right: grid.x+col-1,
-				bottom: grid.y+row-1
-			},
-			outer_grid: {
-				top: outer_grid.y,
-				left: outer_grid.x,
-				right: outer_grid.x+outer_col-1,
-				bottom: outer_grid.y+outer_row-1
-			},
+			grid: pos_grid,
+			outer_grid: pos_grid, // Backward compatibility, to be deprecated
 			grid_center: {
 				y: grid.y+(row/2)-1,
 				x: grid.x+(col/2)-1
 			},
-			region: region,
-			group: group
+			//region: region,
+			//group: group
 		};
 	},
 
@@ -896,26 +883,52 @@ var GridEditor = {
 				right: containment_grid.x+containment_col-1
 			}
 		};
-		ed.update_position_data();
+		ed.update_position_data($containment);
 		this.time_end('fn start');
 	},
 
 	/**
 	 * Update position data
 	 */
-	update_position_data: function () {
+	update_position_data: function ($containment, update_regions) {
 		this.time_start('fn update_position_data');
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.GridEditor,
 			$layout = ed.main.$el.find('.upfront-layout'),
 			is_object = ( ed.el_selector == '.upfront-object' ),
-			$els = is_object ? ed.containment.$el.find('.upfront-object') : $layout.find('.upfront-module, .upfront-module-group'),
-			$wraps = $layout.find('.upfront-wrapper'),
-			$regions = $layout.find('.upfront-region').not('.upfront-region-locked');
+			$els = is_object
+				? $containment.find('.upfront-object')
+				: $containment.find('> .upfront-wrapper > .upfront-module-view > .upfront-module, > .upfront-wrapper > .upfront-module-group, > .upfront-module-view > .upfront-module'),
+			$wraps = $containment.find('> .upfront-wrapper'),
+			$regions = $layout.find('.upfront-region').not('.upfront-region-locked'),
+			$region = $containment.closest('.upfront-region'),
+			region_name = $region.data('name'),
+			$group = $containment.closest('.upfront-module-group'),
+			group_id = $group.length > 0 ? $group.attr('id') : false
+		;
+		// If region isn't shadow, we ignore not-visible elements
+		if ( region_name !== 'shadow' ) {
+			$els = $els.filter(':visible');
+			$wraps = $wraps.filter(':visible');
+		}
 		ed.els = _.map($els, ed.get_position ); // Generate elements position data
-		_.each(ed.els, function(el){ ed.init_margin(el); }); // Generate margin data
+		_.each(ed.els, function(el){
+			el.region = region_name;
+			el.group = group_id;
+			ed.init_margin(el); // Generate margin data
+		});
 		ed.wraps = _.map($wraps, ed.get_position ); // Generate wrappers position data
-		ed.regions = _.map($regions, ed.get_region_position ); // Generate regions position data
+		_.each(ed.wraps, function(wrap){
+			wrap.region = region_name;
+			wrap.group = group_id;
+		});
+		if ( false !== update_regions ) {
+			ed.regions = _.map($regions, ed.get_region_position ); // Generate regions position data
+			_.each(ed.regions, function(region){
+				region.region = region.$el.closest('.upfront-region').data('name');
+				region.group = false;
+			});
+		}
 		this.time_end('fn update_position_data');
 	},
 
@@ -1084,7 +1097,7 @@ var GridEditor = {
 					ed.wraps[index] = ed.get_position(each.$el);
 				});
 				ed.normalize(ed.els, ed.wraps);
-				ed.update_position_data();
+				ed.update_position_data(ed.containment.$el);
 				// Clear margin and assign an absolute position, hack into the resizable instance as well
 				var me_pos = $me.position(),
 					rsz_pos = {
@@ -1273,7 +1286,7 @@ var GridEditor = {
 					ed.update_wrappers(region, $region);
 
 				// Let's normalize
-				ed.update_position_data();
+				ed.update_position_data(ed.containment.$el);
 				ed.normalize(ed.els, ed.wraps);
 
 				$me.removeData('resize-col');
@@ -1344,7 +1357,7 @@ var GridEditor = {
 				region_model = reg;
 		});
 		ed.normalize(ed.els, ed.wraps);
-		ed.update_position_data();
+		ed.update_position_data(ed.containment.$el);
 		if ( axis == 'nw' ){
 			margin.current.left = margin.original.left - (col-me.col);
 			margin.current.top = margin.original.top - (row-me.row);
@@ -1489,10 +1502,10 @@ var GridEditor = {
 				$('body').append($resize);
 				$also_resize = false;
 				if ( axis == 'w' && me.outer_grid.left > ed.containment.grid.left ) {
-					$also_resize = Upfront.Util.find_from_elements($wrappers, $me, '.upfront-wrapper', true).first();
+					$also_resize = Upfront.Util.find_from_elements($wrappers, $me, '.upfront-wrapper:visible', true).first();
 				}
 				else if ( axis == 'e' && me.outer_grid.right < ed.containment.grid.right ) {
-					$also_resize = Upfront.Util.find_from_elements($wrappers, $me, '.upfront-wrapper', false).first();
+					$also_resize = Upfront.Util.find_from_elements($wrappers, $me, '.upfront-wrapper:visible', false).first();
 				}
 				if ( $also_resize && $also_resize.length ) {
 					also_resize = ed.get_wrap($also_resize);
@@ -1572,7 +1585,7 @@ var GridEditor = {
 					ed.wraps[index] = ed.get_position(each.$el);
 				});
 				ed.normalize(ed.els, ed.wraps);
-				ed.update_position_data();
+				ed.update_position_data(ed.containment.$el);
 				// Clear margin and assign an absolute position, hack into the resizable instance as well
 				var me_pos = $me.position(),
 					also_resize_pos = ( $also_resize ? $also_resize.position() : false );
@@ -1793,7 +1806,7 @@ var GridEditor = {
 				}
 
 				// Let's normalize
-				ed.update_position_data();
+				ed.update_position_data(ed.containment.$el);
 				ed.normalize(ed.els, ed.wraps);
 
 				$me.removeData('resize-col');
