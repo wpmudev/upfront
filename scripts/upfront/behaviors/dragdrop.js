@@ -46,6 +46,7 @@ DragDrop.prototype = {
 	drop_left: 0,
 	drop_top: 0,
 	area_col: 0,
+	current_area_col: 0,
 	current_row_wraps: false,
 	wrapper_id: false,
 	wrap_only: false,
@@ -225,8 +226,6 @@ DragDrop.prototype = {
 			row = me.row > ed.max_row ? ed.max_row : me.row,
 			is_spacer = me.$el.hasClass('upfront-module-spacer')
 		;
-
-		this.current_row_wraps = false;
 
 		var $sibling_els = Upfront.Util.find_sorted(me.$el.closest('.upfront-wrapper')),
 			has_siblings = $sibling_els.length > 1,
@@ -726,10 +725,12 @@ DragDrop.prototype = {
 		$helper.css('max-height', max_height);
 		$helper.css('margin-left', $me.css('margin-left')); // fix error with the percentage margin applied
 
+		this.area_col = area.col;
 		if ( this.is_parent_group ) {
 			area.region = this.$region.data('name');
 			area.group = this.view.group_view.$el.attr('id');
 			this.drop_areas = [ area ];
+			this.current_area_col = area.col;
 		}
 		else if ( breakpoint && !breakpoint.default ) {
 			this.drop_areas = [ area ];
@@ -757,8 +758,9 @@ DragDrop.prototype = {
 				this.drop_areas = ed.regions;
 			}
 		}
-		this.area_col = area.col;
 
+
+		this.current_row_wraps = false;
 
 		this.create_drop_point();
 
@@ -939,7 +941,7 @@ DragDrop.prototype = {
 		}
 		else {
 			if ( drop.type == 'side-before' || drop.type == 'side-after' ) {
-				var distribute = this.find_column_distribution(drop.row_wraps, (drop.me_in_row && wrap_only), true, this.area_col, false);
+				var distribute = this.find_column_distribution(drop.row_wraps, (drop.me_in_row && wrap_only), true, this.current_area_col, false);
 				this.drop_col = distribute.apply_col;
 			}
 			else {
@@ -1037,6 +1039,9 @@ DragDrop.prototype = {
 			: this.current_region.$el.find('.upfront-modules_container > .upfront-editable_entities_container:first')
 		;
 		this.move_region = ( this.region._id != this.current_region._id );
+		if ( !this.is_parent_group ) {
+			this.current_area_col = this.current_region.col;
+		}
 	},
 	
 	get_area_compared: function (compare) {
@@ -1146,7 +1151,7 @@ DragDrop.prototype = {
 			&& 
 			( this.drop.type == 'side-before' || this.drop.type == 'side-after' ) 
 		) {
-			var distribute = this.find_column_distribution(this.drop.row_wraps, false, true, this.area_col, false),
+			var distribute = this.find_column_distribution(this.drop.row_wraps, false, true, this.current_area_col, false),
 				remaining_col = distribute.remaining_col - (this.drop_col-distribute.apply_col);
 			_.each(this.drop.row_wraps, function (row_wrap) {
 				row_wrap.$el.find(that.module_selector).each(function () {
