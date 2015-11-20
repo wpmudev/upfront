@@ -353,12 +353,18 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	},
 
 	updateControls: function(){
-		this.controls.remove();
+		if(typeof(this.controls) !== 'undefined') {
+			this.controls.remove();
+		}
 
 		var controls = this.createControls();
 		controls.render();
 
-		this.$('.uimage-controls').append(controls.$el).attr('rel', this.model.slideCollection.at(this.getCurrentSlide()).id);
+		this.$('.uimage-controls').append(controls.$el);
+
+		if(typeof(this.model.slideCollection.at(this.getCurrentSlide())) !== 'undefined') {
+			this.$('.uimage-controls').attr('rel', this.model.slideCollection.at(this.getCurrentSlide()).id);
+		}
 
 		this.controls = controls;
 	},
@@ -647,7 +653,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			this.stopListening(this.currentSlideLink);
 		}
 
-		if (typeof slide.get('link') !== undefined) {
+		if (typeof(slide) !== 'undefined' && typeof(slide.get('link')) !== 'undefined') {
 			link = new LinkModel(slide.get('link'));
 		} else {
 			link = new LinkModel({
@@ -683,7 +689,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				.closest('.uimage-controls')
 					.removeClass('upfront-control-visible').end()
 				.closest('.uslider-link')
-					.attr('href', slide.get('url'))
+					.attr('href', typeof(slide) !== 'undefined' ? slide.get('url') : '')
 			;
 
 			me.$el.closest('.ui-draggable').draggable('enable');
