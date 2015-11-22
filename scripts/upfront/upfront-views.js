@@ -755,7 +755,7 @@ define([
 					this.$el.css('order', '');
 					$el.removeData('breakpoint_order');
 				}
-				this.apply_paddings($el);
+				//this.apply_paddings($el);
 			},
 			apply_paddings: function ($el) {
 				var top_padding_use = this.model.get_breakpoint_property_value('top_padding_use', true),
@@ -1384,6 +1384,7 @@ define([
 				var $object = this.$el.find('> .upfront-editable_entity:first'),
 					$toggle = this.$el.find('> .upfront-object-hidden-toggle')
 				;
+				this.apply_paddings($object);
 				this.apply_breakpoint_position($object, $toggle);
 				if ( this.display_size_hint ) {
 					this.update_size_hint();
@@ -2058,7 +2059,6 @@ define([
 
 				this.$bg.toggleClass('upfront-module-group-bg-padding', use_padding ? true : false);
 
-				this.apply_paddings(this.$el.find('> .upfront-modules_container'));
 				this.update_position();
 				this.update_background();
 				Upfront.Events.trigger('entity:module_group:update', this, this.model);
@@ -2069,6 +2069,7 @@ define([
 				if ( ! breakpoint ) return;
 				var $toggle = this.$el.find('> .upfront-module-hidden-toggle');
 
+				this.apply_paddings(this.$el.find('> .upfront-modules_container'));
 				this.apply_breakpoint_position(this.$el, $toggle);
 
 				var theme_style = this.model.get_breakpoint_property_value('theme_style', true);

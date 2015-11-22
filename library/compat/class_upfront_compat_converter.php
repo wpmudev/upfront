@@ -275,9 +275,11 @@ class Upfront_Compat_LayoutConverter_Ver_1_0_0 extends Upfront_Compat_LayoutConv
 		if ( !$breakpoint->is_default() ) {
 			upfront_set_breakpoint_property_value('clear', $clear, $wrapper, $breakpoint);
 			upfront_set_breakpoint_property_value('order', $order, $wrapper, $breakpoint);
+			upfront_set_breakpoint_property_value('edited', true, $wrapper, $breakpoint);
 			upfront_set_breakpoint_property_value('hide', 0, $module, $breakpoint);
 			upfront_set_breakpoint_property_value('left', 0, $module, $breakpoint);
 			upfront_set_breakpoint_property_value('col', $col, $module, $breakpoint);
+			upfront_set_breakpoint_property_value('edited', true, $module, $breakpoint);
 		}
 		return array(
 			'module' => $module,
