@@ -213,23 +213,29 @@ class Upfront_Grid {
 		$point_css = '';
 		$wrappers = $data['wrappers'];
 		$modules = $data['modules'];
-		if ( !$breakpoint->is_default() )
+		if ( !$breakpoint->is_default() ) {
+			foreach ($wrappers as $w => $wrapper) {
+				$wrappers[$w]['_order'] = $w;
+			}
 			usort($wrappers, array($this, '_sort_cb'));
+		}
 
 		$line_col = $col; // keep track of how many column has been applied for each line
 		$rendered_wrappers = array(); // keep track of rendered wrappers to avoid render more than once
+		$rendered_spacers = array(); // keep track of rendered spacers to avoid render more than once
 		$spacer_col = 0; // keep track of spacer to render as margin
+		$spacer_id = false; // keep track of spacer to render as margin
 		$spacer_clear = false;
 		foreach ($modules as $m => $module) {
 			$module_col = $this->_get_class_col($module);
 			$module_col = $module_col > $col ? $col : $module_col;
-			$module_default_hide = upfront_get_property_value('default_hide', $module);
-			$module_hide = ( $breakpoint->is_default() ) ? upfront_get_property_value('hide', $module) : $this->_get_breakpoint_data($module, 'hide');
-			$module_hide = $module_hide === false ? $module_default_hide : $module_hide;
+			$module_hide = $this->_is_module_hidden($module);
 			$module_id = upfront_get_property_value('element_id', $module);
 			$wrapper_id = upfront_get_property_value('wrapper_id', $module);
 			$wrapper_data = $this->_find_wrapper($wrapper_id, $wrappers);
 			$wrapper_index = array_search($wrapper_data, $wrappers);
+			$prev_wrapper_id = false;
+			$prev_wrapper_data = false;
 			$next_wrapper_id = false;
 			$next_wrapper_data = false;
 			$is_post_object = false;
@@ -270,9 +276,6 @@ class Upfront_Grid {
 			}
 
 			if ( $is_spacer ) {
-				if ( !$module_hide ) {
-					$spacer_col = $module_col;
-				}
 				continue;
 			}
 
@@ -280,19 +283,50 @@ class Upfront_Grid {
 				$wrapper_col = $this->_get_class_col($wrapper_data);
 				$wrapper_col = $wrapper_col > $col ? $col : $wrapper_col;
 				if ( ! in_array($wrapper_id, $rendered_wrappers) ){
-					if ( ! $breakpoint->is_default() ) { // find next wrapper based on the breakpoint order
-						if ( isset($wrappers[$wrapper_index+1]) ) {
-							$next_wrapper_data = $wrappers[$wrapper_index+1];
+					if ( ! $breakpoint->is_default() ) { // find prev/next wrapper based on the breakpoint order
+						$prev_wrappers = array_reverse(array_slice($wrappers, 0, $wrapper_index));
+						if ( !empty($prev_wrappers) ) {
+							foreach ( $prev_wrappers as $w => $wrp ) {
+								$prev_wrapper_id = upfront_get_property_value('wrapper_id', $wrp);
+								$prev_wrapper_modules = $this->_find_modules_with_wrapper($prev_wrapper_id, $modules);
+								foreach ( $prev_wrapper_modules as $nwm => $mod ) {
+									if ( $this->_is_module_hidden($mod) ) continue;
+									$prev_wrapper_data = $wrp;
+									break;
+								}
+								if ( !empty($prev_wrapper_data) ) break;
+							}
+						}
+						$next_wrappers = array_slice($wrappers, $wrapper_index+1);
+						if ( !empty($next_wrappers) ) {
+							foreach ( $next_wrappers as $w => $wrp ) {
+								$next_wrapper_id = upfront_get_property_value('wrapper_id', $wrp);
+								$next_wrapper_modules = $this->_find_modules_with_wrapper($next_wrapper_id, $modules);
+								foreach ( $next_wrapper_modules as $nwm => $mod ) {
+									if ( $this->_is_module_hidden($mod) ) continue;
+									$next_wrapper_data = $wrp;
+									break;
+								}
+								if ( !empty($next_wrapper_data) ) break;
+							}
 						}
 					}
-					if ( empty($next_wrapper_data) ) { // find next wrapper based on the module order
+					if ( empty($next_wrapper_data) ) { // find prev/next wrapper based on the module order
+						$prev_modules = array_reverse(array_slice($modules, 0, $m));
+						if ( !empty($prev_modules) ){
+							foreach ( $prev_modules as $n => $mod ){
+								if ( $this->_is_module_hidden($mod) ) continue;
+								$prev_wrapper_id = upfront_get_property_value('wrapper_id', $mod);
+								if ( $prev_wrapper_id != $wrapper_id ) {
+									$prev_wrapper_data = $this->_find_wrapper($prev_wrapper_id, $wrappers);
+									break;
+								}
+							}
+						}
 						$next_modules = array_slice($modules, $m+1);
 						if ( !empty($next_modules) ){
 							foreach ( $next_modules as $n => $mod ){
-								$mod_default_hide = upfront_get_property_value('default_hide', $mod);
-								$mod_hide = ( $breakpoint->is_default() ) ? upfront_get_property_value('hide', $mod) : $this->_get_breakpoint_data($mod, 'hide');
-								$mod_hide = $mod_hide === false ? $mod_default_hide : $mod_hide;
-								if ( $mod_hide ) continue;
+								if ( $this->_is_module_hidden($mod) ) continue;
 								$next_wrapper_id = upfront_get_property_value('wrapper_id', $mod);
 								if ( $next_wrapper_id != $wrapper_id ) {
 									$next_wrapper_data = $this->_find_wrapper($next_wrapper_id, $wrappers);
@@ -312,17 +346,34 @@ class Upfront_Grid {
 					$wrapper_modules = $this->_find_modules_with_wrapper($wrapper_id, $modules);
 					$wrapper_modules_hide = true;
 					foreach ( $wrapper_modules as $wm => $mod ) {
-						$mod_default_hide = upfront_get_property_value('default_hide', $mod);
-						$mod_hide = ( $breakpoint->is_default() ) ? upfront_get_property_value('hide', $mod) : $this->_get_breakpoint_data($mod, 'hide');
-						$mod_hide = $mod_hide === false ? $mod_default_hide : $mod_hide;
-						if ( !$mod_hide ) {
+						if ( !$this->_is_module_hidden($mod) ) {
 							$wrapper_modules_hide = false;
 						}
 					}
-					if ( !$wrapper_modules_hide ) {
-						$line_col -= $wrapper_col + $spacer_col;
-					}
+					$prev_is_spacer = false;
+					$prev_spacer_id = false;
 					$next_is_spacer = false;
+					$next_spacer_id = false;
+					if ( $prev_wrapper_data ) {
+						$prev_wrapper_id = upfront_get_property_value('wrapper_id', $prev_wrapper_data);
+						$prev_wrapper_modules = $this->_find_modules_with_wrapper($prev_wrapper_id, $modules);
+						foreach ( $prev_wrapper_modules as $nwm => $mod ) {
+							if( ! empty( $mod['objects'] ) ) {
+								foreach ($mod['objects'] as $obj) {
+									$type = upfront_get_property_value('type', $obj);
+									if ( 'UspacerModel' == $type ) {
+										$prev_is_spacer = true;
+									}
+								}
+							}
+							if ( $prev_is_spacer ) {
+								$prev_spacer_id = upfront_get_property_value('element_id', $mod);
+								if ( !in_array($prev_spacer_id, $rendered_spacers) ) {
+									$spacer_col = $this->_get_class_col($mod);
+								}
+							}
+						}
+					}
 					if ( $next_wrapper_data ) {
 						$next_wrapper_id = upfront_get_property_value('wrapper_id', $next_wrapper_data);
 						$next_wrapper_modules = $this->_find_modules_with_wrapper($next_wrapper_id, $modules);
@@ -335,6 +386,9 @@ class Upfront_Grid {
 									}
 								}
 							}
+							if ( $next_is_spacer ) {
+								$next_spacer_id = upfront_get_property_value('element_id', $mod);
+							}
 						}
 						$next_clear = $this->_get_property_clear($next_wrapper_data);
 						$next_wrapper_col = $this->_get_class_col($next_wrapper_data);
@@ -344,8 +398,15 @@ class Upfront_Grid {
 						$next_clear = false;
 						$next_wrapper_col = 0;
 					}
+					if ( $prev_is_spacer && $spacer_col > 0 ) {
+						$rendered_spacers[] = $prev_spacer_id;
+					}
+					if ( !$wrapper_modules_hide ) {
+						$line_col -= $wrapper_col + $spacer_col;
+					}
 					if ( $next_wrapper_col == $line_col && $next_is_spacer ) {
 						$next_fill = $next_wrapper_col;
+						$rendered_spacers[] = $next_spacer_id;
 					}
 					else {
 						$next_fill = $next_clear && $line_col > 0 ? $line_col : 0;
@@ -361,6 +422,7 @@ class Upfront_Grid {
 					}
 					$rendered_wrappers[] = $wrapper_id;
 					$spacer_col = 0;
+					$spacer_id = false;
 				}
 				$point_css .= $breakpoint->apply($module, $this->get_grid_scope(), 'element_id', $wrapper_col, false, ($is_post_object ? $this->_exceptions : array()));
 			}
@@ -392,6 +454,14 @@ class Upfront_Grid {
 			}
 		}
 		return $found;
+	}
+
+	protected function _is_module_hidden ($module, $breakpoint = false) {
+		$breakpoint = $breakpoint !== false ? $breakpoint : $this->_current_breakpoint;
+		$module_default_hide = upfront_get_property_value('default_hide', $module);
+		$module_hide = ( $breakpoint->is_default() ) ? upfront_get_property_value('hide', $module) : $this->_get_breakpoint_data($module, 'hide');
+		$module_hide = $module_hide === false ? $module_default_hide : $module_hide;
+		return $module_hide;
 	}
 
 	protected function _get_available_container_col ($container, $regions, $breakpoint = false) {
@@ -482,13 +552,12 @@ class Upfront_Grid {
 
 	protected function _sort_cb ($a, $b) {
 		$cmp_a = intval($this->_get_breakpoint_order($a));
+		$cmp_a_2 = intval($a['_order']);
 		$cmp_b = intval($this->_get_breakpoint_order($b));
-		if ( $cmp_a > $cmp_b)
-			return 1;
-		else if( $cmp_a < $cmp_b )
-			return -1;
-		else
-			return 0;
+		$cmp_b_2 = intval($b['_order']);
+		if ( $cmp_a > $cmp_b) return 1;
+		else if( $cmp_a < $cmp_b ) return -1;
+		else return ( $cmp_a_2 < $cmp_b_2 ? -1 : 1 );
 	}
 }
 

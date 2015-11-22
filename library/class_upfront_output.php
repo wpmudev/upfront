@@ -508,65 +508,67 @@ abstract class Upfront_Container extends Upfront_Entity {
 	protected $_children;
 	protected $_child_view_class;
 	protected $_wrapper;
+	protected $_wrapper_is_spacer;
 
-	public function get_markup () {
-		$html='';
-		$wrap='';
+	public function get_markup ()
+	{
+		$html = '';
+		$wrap = '';
 
-		if (!empty($this->_data[$this->_children])) foreach ($this->_data[$this->_children] as $idx => $child) {
-			$child_view = $this->instantiate_child($child, $idx);
-			if ($child_view instanceof Upfront_Container){
-				// Have wrapper? If so, then add wrappers
-				$wrapper = $child_view->get_wrapper();
+		if (!empty($this->_data[$this->_children])) {
+			foreach ($this->_data[$this->_children] as $idx => $child) {
+				$child_view = $this->instantiate_child($child, $idx);
+				if ($child_view instanceof Upfront_Container) {
+					// Have wrapper? If so, then add wrappers
+					$wrapper = $child_view->get_wrapper();
+					$wrapper_is_spacer = ($child_view instanceof Upfront_Module && $child_view->is_spacer());
 
-				if ( $wrapper && !$this->_wrapper ) {
-					$this->_wrapper = $wrapper;
-				}
-				if ( $wrapper && $this->_wrapper->get_wrapper_id() == $wrapper->get_wrapper_id() ){
-					$wrap .= $child_view->get_markup();
-				}
-				else if ( $wrapper ) {
-					// Check spacer and don't render wrapper if it is
-					if ( $child_view instanceof Upfront_Module && $child_view->is_spacer() ) {
-						$html .= $child_view->get_markup();
-						//$this->_wrapper = false;
-						//$wrap = '';
-					}
-					else {
-						$html .= $this->_wrapper->wrap($wrap);
+					if ($wrapper && !$this->_wrapper) {
 						$this->_wrapper = $wrapper;
+						$this->_wrapper_is_spacer = $wrapper_is_spacer;
+					}
+					if ($wrapper && $this->_wrapper->get_wrapper_id() == $wrapper->get_wrapper_id()) {
+						$wrap .= $child_view->get_markup();
+					} else if ($wrapper) {
+						// Check spacer and don't render wrapper if it is
+						if ($this->_wrapper_is_spacer) {
+							$html .= $wrap;
+						} else {
+							$html .= $this->_wrapper->wrap($wrap);
+						}
+						$this->_wrapper = $wrapper;
+						$this->_wrapper_is_spacer = $wrapper_is_spacer;
 						$wrap = $child_view->get_markup();
 					}
 				}
-			}
-			// No wrapper, just appending html
-			if ( !isset($wrapper) || !$wrapper ){
-				if($this->_child_view_class == 'Upfront_Object'){
-					$theme_style = upfront_get_property_value('theme_style', $child);
-					if($theme_style)
-						$theme_style = strtolower($theme_style);
-					$preset = upfront_get_property_value('preset', $child);
-					$breakpoint = upfront_get_property_value('breakpoint', $child);
-					$theme_styles = array( 'default' => $theme_style );
-					$theme_styles_attr = '';
-					if ( $breakpoint ) {
-						foreach ( $breakpoint as $id => $props ){
-							if ( !empty($props['theme_style']) )
-								$theme_styles[$id] = strtolower($props['theme_style']);
+				// No wrapper, just appending html
+				if (!isset($wrapper) || !$wrapper) {
+					if ($this->_child_view_class == 'Upfront_Object') {
+						$theme_style = upfront_get_property_value('theme_style', $child);
+						if ($theme_style)
+							$theme_style = strtolower($theme_style);
+						$preset = upfront_get_property_value('preset', $child);
+						$breakpoint = upfront_get_property_value('breakpoint', $child);
+						$theme_styles = array('default' => $theme_style);
+						$theme_styles_attr = '';
+						if ($breakpoint) {
+							foreach ($breakpoint as $id => $props) {
+								if (!empty($props['theme_style']))
+									$theme_styles[$id] = strtolower($props['theme_style']);
+							}
+							$theme_styles_attr = " data-theme-styles='" . json_encode($theme_styles) . "'";
 						}
-						$theme_styles_attr = " data-theme-styles='" . json_encode($theme_styles) . "'";
-					}
-					$slug = upfront_get_property_value('id_slug', $child);
-					if($slug === 'ucomment' && is_single() && !comments_open())
-						return $html;
+						$slug = upfront_get_property_value('id_slug', $child);
+						if ($slug === 'ucomment' && is_single() && !comments_open())
+							return $html;
 
-					$classes = $this->_get_property('class');
-					$column = upfront_get_class_num('c', $classes);
-					$class = $slug === "uposts" ?   "c" . $column . " uposts-object" : upfront_get_property_value('class', $child);
-					$html .= '<div class="upfront-output-object ' . $theme_style . ' ' . $preset . ' upfront-output-' . $slug . ' ' . $class . '" id="' . upfront_get_property_value('element_id', $child)  . '"' . $theme_styles_attr . '>' . $child_view->get_markup() . '</div>';
-				}
-				else{
-					$html .= $child_view->get_markup();
+						$classes = $this->_get_property('class');
+						$column = upfront_get_class_num('c', $classes);
+						$class = $slug === "uposts" ? "c" . $column . " uposts-object" : upfront_get_property_value('class', $child);
+						$html .= '<div class="upfront-output-object ' . $theme_style . ' ' . $preset . ' upfront-output-' . $slug . ' ' . $class . '" id="' . upfront_get_property_value('element_id', $child) . '"' . $theme_styles_attr . '>' . $child_view->get_markup() . '</div>';
+					} else {
+						$html .= $child_view->get_markup();
+					}
 				}
 			}
 		}
@@ -1149,7 +1151,13 @@ class Upfront_Module extends Upfront_Container {
 	}
 
 	public function get_markup () {
-		if ($this->is_spacer()) return '<!-- Spacer -->';
+		if ($this->is_spacer()) {
+			return '<!-- Spacer data '. "\n" .
+				'class: ' . upfront_get_property_value('class', $this->_data) . "\n" .
+				'default: ' . upfront_get_property_value('hide', $this->_data) . "\n" .
+				'breakpoint: ' . json_encode(upfront_get_property_value('breakpoint', $this->_data)) . "\n" .
+			' -->';
+		}
 		$children = !empty($this->_data[$this->_children]) ? $this->_data[$this->_children] : array();
 		$pre = '';
 		if (!empty($children)) foreach ($children as $child) {

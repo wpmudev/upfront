@@ -3117,7 +3117,7 @@ define([
 				}
 				var $regions = this.$el.find('.upfront-region-center, .upfront-region-side-left, .upfront-region-side-right'),
 					$sub = this.$el.find('.upfront-region-side-top, .upfront-region-side-bottom'),
-					$container = $regions.find('.upfront-modules_container'),
+					$container = $regions.find('> .upfront-region-wrapper > .upfront-modules_container'),
 					height = 0;
 				$regions.add($container).css({
 					minHeight: "",
@@ -3126,7 +3126,7 @@ define([
 				});
 				this.set_full_screen();
 				$sub.each(function(){
-					$(this).find('.upfront-modules_container').css('min-height', $(this).outerHeight());
+					$(this).find('> .upfront-region-wrapper > .upfront-modules_container').css('min-height', $(this).outerHeight());
 				});
 				$regions.each(function(){
 					var h = $(this).outerHeight();
@@ -3597,7 +3597,7 @@ define([
 				var local_view = this._modules_view || new Modules({"model": this.model.get("modules")});
 				local_view.region_view = this;
 				local_view.render();
-				this.$el.find('.upfront-modules_container').append(local_view.el);
+				this.$el.find('> .upfront-region-wrapper > .upfront-modules_container').append(local_view.el);
 				this.render_panels();
 				this.render_bg_setting();
 				//if ( this._is_clipped() )
@@ -3687,7 +3687,7 @@ define([
 					row = this.model.get_property_value_by_name('row'),
 					breakpoint_data = data[breakpoint.id],
 					container_view = this.parent_view.get_container_view(this.model),
-					$container = this.$el.find('.upfront-modules_container'),
+					$container = this.$el.find('> .upfront-region-wrapper > .upfront-modules_container'),
 					$toggle = this.$el.find('.upfront-region-hidden-toggle'),
 					$regions = container_view.$el.find('.upfront-region-center, .upfront-region-side-left, .upfront-region-side-right'),
 					$hide_trigger = this.$el.find('> .upfront-entity_meta > a.upfront-entity-hide_trigger'),
@@ -3784,7 +3784,7 @@ define([
 				if(Upfront.Application.get_current() != "theme" || this.$el.hasClass('upfront-region-floating') || this.$el.hasClass('upfront-region-lightbox') || this.$el.attr('id')=='region-shadow')
 					return
 
-				if(this.$el.find('.upfront-modules_container .upfront-wrapper').size() < 1) {
+				if(this.$el.find('> .upfront-region-wrapper > .upfront-modules_container .upfront-wrapper').size() < 1) {
 					this.$el.addClass('empty_in_theme_mode');
 				}
 				else {
@@ -4098,7 +4098,7 @@ define([
 					css.right = right;
 					css.left = '';
 				}
-				this.$el.find('.upfront-modules_container').css( {
+				this.$el.find('> .upfront-region-wrapper > .upfront-modules_container').css( {
 					width: ( col * grid.column_width ),
 					minHeight: css.minHeight
 				});
@@ -4266,7 +4266,7 @@ define([
 				e.stopPropagation();
 			},
 			check_modules: function () {
-				var total = this.$el.find('.upfront-modules_container > .upfront-editable_entities_container').find('.upfront-module').size();
+				var total = this.$el.find('> .upfront-region-wrapper > .upfront-modules_container > .upfront-editable_entities_container').find('.upfront-module').size();
 				if ( total == 0 ){
 					this.$el.removeClass('upfront-region-has-modules');
 					this.$el.addClass('upfront-region-empty');
@@ -4434,7 +4434,7 @@ define([
 				css['margin-left'] = parseInt(-(width/2)+$('#sidebar-ui').width()/2);
 				css['margin-top'] = parseInt(-(height/2));
 
-				this.$el.find('.upfront-modules_container').css( {
+				this.$el.find('> .upfront-region-wrapper > .upfront-modules_container').css( {
 					width: Math.floor(css.width/grid.column_width) * grid.column_width,
 					'minHeight': css.minHeight
 				});
@@ -4474,7 +4474,7 @@ define([
 				e.stopPropagation();
 			},
 			check_modules: function () {
-				var total = this.$el.find('.upfront-modules_container > .upfront-editable_entities_container').find('.upfront-module').size();
+				var total = this.$el.find('> .upfront-region-wrapper > .upfront-modules_container > .upfront-editable_entities_container').find('.upfront-module').size();
 				if ( total == 0 ){
 					this.$el.removeClass('upfront-region-has-modules');
 					this.$el.addClass('upfront-region-empty');

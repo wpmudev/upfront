@@ -1275,6 +1275,7 @@ DragDrop.prototype = {
 			}
 			$els.each(function(){
 				var each_el = is_drop_wrapper ? ed.get_wrap($(this)) : ed.get_el($(this));
+				if ( !each_el ) return; // Doesn't exists, means it's not relevant to current breakpoint
 				if ( insert_index === index ) index++;
 				if ( !that.drop.is_me && that.drop.insert[0] == 'append' ) {
 					if ( !is_drop_wrapper && insert_index === false && $(this).closest('.upfront-wrapper').get(0) == that.drop.insert[1].get(0) ){

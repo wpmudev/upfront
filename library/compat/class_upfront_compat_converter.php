@@ -125,7 +125,13 @@ class Upfront_Compat_LayoutConverter_Ver_1_0_0 extends Upfront_Compat_LayoutConv
 
 		$new_wrappers = array();
 		$new_modules = array();
-		for ( $w = 0; $w <= count($region['wrappers']); $w++ ) {
+		if ( !empty($add_wrappers) ) {
+			$max_index = max(array_keys($add_wrappers));
+		}
+		else {
+			$max_index = count($region['wrappers']);
+		}
+		for ( $w = 0; $w <= $max_index; $w++ ) {
 			if ( isset($add_wrappers[$w]) && is_array($add_wrappers[$w]) ) {
 				foreach ( $add_wrappers[$w] as $add_wrapper ) {
 					$new_wrappers[] = $add_wrapper;
@@ -135,7 +141,13 @@ class Upfront_Compat_LayoutConverter_Ver_1_0_0 extends Upfront_Compat_LayoutConv
 				$new_wrappers[] = $region['wrappers'][$w];
 			}
 		}
-		for ( $m = 0; $m <= count($region['modules']); $m++ ) {
+		if ( !empty($add_modules) ) {
+			$max_index = max(array_keys($add_modules));
+		}
+		else {
+			$max_index = count($region['modules']);
+		}
+		for ( $m = 0; $m <= $max_index; $m++ ) {
 			if ( isset($add_modules[$m]) && is_array($add_modules[$m]) ) {
 				foreach ( $add_modules[$m] as $add_module ) {
 					$new_modules[] = $add_module;
@@ -206,6 +218,7 @@ class Upfront_Compat_LayoutConverter_Ver_1_0_0 extends Upfront_Compat_LayoutConv
 				$module_index = $module['index'];
 				upfront_set_breakpoint_property_value('col', $wrapper_col, $region['modules'][$module_index], $breakpoint);
 				upfront_set_breakpoint_property_value('left', 0, $region['modules'][$module_index], $breakpoint);
+				upfront_set_breakpoint_property_value('top', 0, $region['modules'][$module_index], $breakpoint);
 				// Change margin to padding
 				if ( !empty($region['modules'][$module_index]['modules']) ) { // This is group
 					$this->_add_padding($region['modules'][$module_index], $module, $wrapper_col, $left_space, $breakpoint);
@@ -279,10 +292,11 @@ class Upfront_Compat_LayoutConverter_Ver_1_0_0 extends Upfront_Compat_LayoutConv
 		$top_padding = ( $module_data['top'] * $baseline );
 		$left_padding = ( ( $module_data['left'] - $left_space) * $column_width );
 		$right_padding = ( ( $wrapper_col + $left_space - $module_data['total_col'] ) * $column_width );
+		$is_group = ( !empty($object['modules']) );
 		if ( $breakpoint->is_default() ) {
 			if ( $top_padding > 0 ) {
 				upfront_set_property_value('top_padding_use', true, $object);
-				upfront_set_property_value('top_padding_num', $top_padding + $column_padding, $object);
+				upfront_set_property_value('top_padding_num', ( $is_group ? $top_padding : $top_padding + $column_padding ), $object);
 				$row = upfront_get_property_value('row', $object);
 				if ( !empty($row) ) {
 					upfront_set_property_value('row', $row + ($top_padding/$baseline), $object);
@@ -290,17 +304,17 @@ class Upfront_Compat_LayoutConverter_Ver_1_0_0 extends Upfront_Compat_LayoutConv
 			}
 			if ( $left_padding > 0 ) {
 				upfront_set_property_value('left_padding_use', true, $object);
-				upfront_set_property_value('left_padding_num', $left_padding + $column_padding, $object);
+				upfront_set_property_value('left_padding_num', ( $is_group ? $left_padding : $left_padding + $column_padding ), $object);
 			}
 			if ( $right_padding > 0 ) {
 				upfront_set_property_value('right_padding_use', true, $object);
-				upfront_set_property_value('right_padding_num', $right_padding + $column_padding, $object);
+				upfront_set_property_value('right_padding_num', ( $is_group ? $right_padding : $right_padding + $column_padding ), $object);
 			}
 		}
 		else {
 			if ( $top_padding > 0 ) {
 				upfront_set_breakpoint_property_value('top_padding_use', true, $object, $breakpoint);
-				upfront_set_breakpoint_property_value('top_padding_num', $top_padding + $column_padding, $object, $breakpoint);
+				upfront_set_breakpoint_property_value('top_padding_num', ( $is_group ? $top_padding : $top_padding + $column_padding ), $object, $breakpoint);
 				$row = upfront_get_breakpoint_property_value('row', $object, $breakpoint);
 				if ( !empty($row) ) {
 					upfront_set_breakpoint_property_value('row', $row + ($top_padding/$baseline), $object, $breakpoint);
@@ -308,11 +322,11 @@ class Upfront_Compat_LayoutConverter_Ver_1_0_0 extends Upfront_Compat_LayoutConv
 			}
 			if ( $left_padding > 0 ) {
 				upfront_set_breakpoint_property_value('left_padding_use', true, $object, $breakpoint);
-				upfront_set_breakpoint_property_value('left_padding_num', $left_padding + $column_padding, $object, $breakpoint);
+				upfront_set_breakpoint_property_value('left_padding_num', ( $is_group ? $left_padding : $left_padding + $column_padding ), $object, $breakpoint);
 			}
 			if ( $right_padding > 0 ) {
 				upfront_set_breakpoint_property_value('right_padding_use', true, $object, $breakpoint);
-				upfront_set_breakpoint_property_value('right_padding_num', $right_padding + $column_padding, $object, $breakpoint);
+				upfront_set_breakpoint_property_value('right_padding_num', ( $is_group ? $right_padding : $right_padding + $column_padding ), $object, $breakpoint);
 			}
 		}
 		return $object;

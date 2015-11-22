@@ -622,7 +622,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 			else {
 				$converter = new Upfront_Compat_LayoutConverter($this, $layout_version, self::$version);
 				$converter->convert();
-				set_transient($transient_key, $this->to_json(), 120); // set to 120 second for now
+				set_transient($transient_key, $this->to_json(), 10); // set to 120 second for now
 			}
 		}
 		
