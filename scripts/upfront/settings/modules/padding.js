@@ -53,7 +53,7 @@ define([
 					model: this.model,
 					className: 'padding-lock',
 					use_breakpoint_property: true,
-					name: 'lock_padding',
+					property: 'lock_padding',
 					label: "",
 					default_value: 0,
 					multiple: false,
@@ -101,17 +101,22 @@ define([
 					min: 1,
 					max: 250,
 					change: function (value) {
+						//Update all padding values
 						me.model.set_property('padding_slider', value);
 						me.model.set_property('padding_number', value, true);
 						me.model.set_property('left_padding_num', value, true);
 						me.model.set_property('top_padding_num', value, true);
 						me.model.set_property('right_padding_num', value, true);
 						me.model.set_property('bottom_padding_num', value, true);
+						
 						locked_num.get_field().val(value);
 						padding_left.get_field().val(value);
 						padding_top.get_field().val(value);
 						padding_right.get_field().val(value);
 						padding_bottom.get_field().val(value);
+						
+						//Enable padding fields
+						me.enable_lock_padding();
 					},
 					show: function() {
 						var value = me.model.get('padding_number');
@@ -139,6 +144,8 @@ define([
 						me.model.set_property('padding_slider', value);
 						me.model.set_property('padding_number', value);
 						locked_slider.$el.find('#'+locked_slider.get_field_id()).slider('value', value);
+						
+						//Update all padding values
 						me.model.set_property('left_padding_num', value, true);
 						me.model.set_property('top_padding_num', value, true);
 						me.model.set_property('right_padding_num', value, true);
@@ -147,6 +154,10 @@ define([
 						padding_top.get_field().val(value);
 						padding_right.get_field().val(value);
 						padding_bottom.get_field().val(value);
+						
+						//Enable padding fields
+						me.enable_lock_padding();
+						
 						//Lower opacity if value is bigger than the slider MAX_VALUE
 						if(value > 250) {
 							me.$el.find('.padding-slider').css('opacity', 0.6);
@@ -165,6 +176,7 @@ define([
 					default_value: 0,
 					change: function(value) {
 						me.model.set_property('top_padding_num', value);
+						me.enable_padding('top_padding_num');
 					},
 					focus: function() {
 						me.$el.find('.padding-bottom label').css('border-top', '3px solid #7bebc6');
@@ -183,6 +195,7 @@ define([
 					default_value: 0,
 					change: function(value) {
 						me.model.set_property('left_padding_num', value);
+						me.enable_padding('left_padding_num');
 					},
 					focus: function() {
 						me.$el.find('.padding-bottom label').css('border-left', '3px solid #7bebc6');
@@ -201,6 +214,7 @@ define([
 					default_value: 0,
 					change: function(value) {
 						me.model.set_property('right_padding_num', value);
+						me.enable_padding('right_padding_num');
 					},
 					focus: function() {
 						me.$el.find('.padding-bottom label').css('border-right', '3px solid #7bebc6');
@@ -219,6 +233,7 @@ define([
 					default_value: 0,
 					change: function(value) {
 						me.model.set_property('bottom_padding_num', value);
+						me.enable_padding('bottom_padding_num');
 					},
 					focus: function() {
 						me.$el.find('.padding-bottom label').css('border-bottom', '3px solid #7bebc6');
@@ -230,6 +245,21 @@ define([
 
 			]);
 		},
+		
+		enable_padding: function(field) {
+			this.model.set_breakpoint_property(field, 'yes');
+		},
+		
+		enable_lock_padding: function() {
+			var is_group = this.model instanceof Upfront.Models.ModuleGroup;
+			
+			this.enable_padding('top_padding_use');
+			this.enable_padding('bottom_padding_use');
+			if( ! is_group ) {
+				this.enable_padding('left_padding_use');
+				this.enable_padding('right_padding_use');
+			}
+		}
 	});
 
 	return PaddingSettingsModule;
