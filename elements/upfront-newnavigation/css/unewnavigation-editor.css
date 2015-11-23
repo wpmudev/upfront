@@ -104,10 +104,10 @@ div.upfront-navigation.upfront-editable_entity ul.menu li:not(.edit_mode):hover 
 	content:'';
 	display:block;
 	position:absolute;
-	height:100%;
-	width:100%;
 	top:0;
 	left:0;
+	bottom: 0;
+	right: 0;
 	border:1px #ddd dotted;
 
 }

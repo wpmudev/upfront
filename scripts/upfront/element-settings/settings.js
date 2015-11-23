@@ -49,9 +49,9 @@ define([
 							panel
 						)
 					);
-					
+
 					this.listenTo(this.appearancePanel, 'upfront:presets:state_show', this.stateShow);
-					
+
 					panels.Appearance = this.appearancePanel;
 					return;
 				}
@@ -73,14 +73,14 @@ define([
 		saveSettings: function() {
 			var currentBreakpoint,
 				breakpointsData;
-				
-			this.removePreviewClasses();	
+
+			this.removePreviewClasses();
 
 			// Setup model so that it saves breakpoint values to breakpoint property
-			if (this.hasBreakpointSettings === true) {
+			if (this.hasBreakpointSettings === true && this.breakpointSpecificSettings) {
 				currentBreakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active();
 				breakpointsData = this.model.get_property_value_by_name('breakpoint') || {};
-				breakpointsData[currentBreakpoint.id] = {};
+				breakpointsData[currentBreakpoint.id] = breakpointsData[currentBreakpoint.id] || {};
 				_.each(this.breakpointSpecificSettings, function(settingOptions) {
 					breakpointsData[currentBreakpoint.id][settingOptions.name] = this.model.get_property_value_by_name(settingOptions.name);
 					// Always save width to breakpoint, comes handy in public scripts
@@ -108,7 +108,7 @@ define([
 			this.removePreviewClasses();
 			Upfront.Events.trigger("element:settings:canceled");
 		},
-		
+
 		stateShow: function(state) {
 			var elementContainer = this.for_view.$el.find('.upfront-object');
 			if(state !== "static") {
@@ -118,7 +118,7 @@ define([
 				this.removePreviewClasses();
 			}
 		},
-		
+
 		removePreviewClasses: function() {
 			var elementContainer = this.for_view.$el.find('.upfront-object');
 			elementContainer.removeClass('live-preview-hover live-preview-focus live-preview-active');

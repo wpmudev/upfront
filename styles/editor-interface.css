@@ -1111,6 +1111,8 @@ span.draggable-post-element.element-dragging {
 .upfront-filter-control::-webkit-scrollbar,
 #upfront-csseditor .ace_scrollbar-inner::-webkit-scrollbar,
 #upfront-csseditor .ace_scrollbar::-webkit-scrollbar,
+.upfront-inserts-markup .ace_scrollbar-inner::-webkit-scrollbar,
+.upfront-inserts-markup .ace_scrollbar::-webkit-scrollbar,
 #upfront-general-csseditor .ace_scrollbar-inner::-webkit-scrollbar,
 #upfront-general-csseditor .ace_scrollbar::-webkit-scrollbar,
 .upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar,
@@ -13475,43 +13477,52 @@ html {
   width: 100%;
   position: fixed;
   bottom: 0;
-  left: 0;
+  right: 0;
   z-index: 2001; }
 
 .upfront-inserts-markup-bar {
   float: left; }
 
 .upfront-inserts-markup-bar ul {
-  list-style-type: none; }
+  list-style-type: none;
+  margin-left: 20px; }
 
 .upfront-inserts-markup-bar ul li {
   float: left;
   height: 32px;
+  font-size: 15px;
   line-height: 32px;
-  margin-right: 2em; }
+  margin-right: 10px;
+  padding: 0px 10px; }
 
 .upfront-inserts-markup-bar ul li:hover {
-  background: #d8edff; }
+  background: #2e3d4c; }
 
 .upfront-inserts-markup-bar ul li a {
   color: #d8edff; }
 
 .upfront-inserts-markup-bar ul li:hover a {
-  color: #3c5267; }
+  color: #d8edff; }
 
 .upfront-inserts-markup-apply {
   position: absolute;
-  background: none repeat scroll 0 0 #1ecd8e;
-  height: 50px;
-  min-width: 130px;
-  text-align: center;
-  right: 0;
-  top: -18px;
+  right: 20px;
+  bottom: 18px;
   z-index: 101; }
 
 .upfront-inserts-markup-apply a {
+  background: none repeat scroll 0 0 #1ecd8e;
   color: white;
-  line-height: 50px; }
+  line-height: 40px;
+  display: block;
+  height: 40px;
+  min-width: 130px;
+  text-align: center; }
+
+.upfront-inserts-markup-apply a:hover {
+  background: none repeat scroll 0 0 #33eeaa;
+  color: white;
+  line-height: 40px; }
 
 .upfront-embed_editor {
   clear: both; }

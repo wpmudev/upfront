@@ -788,6 +788,18 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			;
 		}
 
+		/** 
+			The following is being done so that the gallery 
+			items inside a lightbox can shuffle after 
+			the lightbox shows up, in order to expand 
+			around in the available space
+		**/
+		Upfront.Events.on('upfront:lightbox:show', function(e) {
+			setTimeout(function(){
+				$(window).trigger('resize');
+			}, 300);
+		});
+
 		this.images.each(function(image) {
 			if(image.get('loading')){
 				me.$('.ugallery_item[rel="' + image.id  + '"]')

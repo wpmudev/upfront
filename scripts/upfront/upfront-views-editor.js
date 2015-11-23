@@ -462,8 +462,9 @@ define([
 		on_click: function () {
 			if ( _upfront_post_data.layout.specificity && _upfront_post_data.layout.item && !_upfront_post_data.layout.item.match(/-page/) )
 				Upfront.Events.trigger("command:layout:save_as");
-			else
+			else {
 				Upfront.Events.trigger("command:layout:save");
+			}
 		}
 
 	});
@@ -1134,15 +1135,6 @@ define([
 		on_click: function () {
 			$('li.desktop-breakpoint-activate').trigger('click');
 			Upfront.Application.start(Upfront.Application.mode.last);
-		}
-	});
-
-	var Command_SaveResponsive = Command.extend({
-		"className": "command-save",
-		render: function () {
-			this.$el.addClass('upfront-icon upfront-icon-save');
-			this.$el.html(l10n.save);
-            this.$el.prop("title", l10n.save);
 		}
 	});
 
@@ -2965,12 +2957,12 @@ define([
 				$('#sidebar-ui').removeClass('collapsed').stop().animate({width: '260px'}, 300);
 				//Remove collapsed class always after region editor is closed
 				$('#element-settings-sidebar').removeClass('collapsed');
-				
+
 				//Bring back element-settings only if it was opened before
 				if($('#element-settings-sidebar').contents().length !== 0) {
 					$('#element-settings-sidebar').removeClass('collapsed').stop().animate({width: '260px'}, 300);
 				}
-				
+
 				$('#page').animate({'margin-left': '260px'}, 300, function(){ Upfront.Events.trigger('sidebar:toggle:done', me.visible); });
 				this.$('#sidebar-ui-toggler-handle').removeClass().addClass('sidebar-ui-hide');
 				this.visible = 1;
@@ -9989,12 +9981,17 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		run_animation: function (view, model) {
 			var to = this.options.to,
 				ani_class = 'upfront-add-region-ani upfront-add-region-ani-' + to,
-				end_t = setTimeout(end, 500);
-			view.$el.one('animationstart webkitAnimationStart MSAnimationStart oAnimationStart', function () {
+				end_t = setTimeout(end, 500),
+				ani_event_start = 'animationstart.region_ani webkitAnimationStart.region_ani MSAnimationStart.region_ani oAnimationStart.region_ani',
+				ani_event_end = 'animationend.region_ani webkitAnimationEnd.region_ani MSAnimationEnd.region_ani oAnimationEnd.region_ani'
+			;
+			view.$el.one(ani_event_start, function () {
 				clearTimeout(end_t);
+				view.$el.off(ani_event_start); // Make sure to remove any remaining unfired event
 			});
-			view.$el.one('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function () {
+			view.$el.one(ani_event_end, function () {
 				end();
+				view.$el.off(ani_event_end); // Make sure to remove any remaining unfired event
 			});
 			// add animation class to trigger css animation
 			view.$el.addClass(ani_class);

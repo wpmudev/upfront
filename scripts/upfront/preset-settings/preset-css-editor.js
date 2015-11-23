@@ -51,8 +51,7 @@ define([
 		initialize: function(options) {
 			var me = this,
 				deferred = $.Deferred(),
-				style_selector,
-				$style;
+				style_selector;
 
 			this.options = options || {};
 			this.model = options.model;
@@ -67,7 +66,7 @@ define([
 			this.resizeHandler = this.resizeHandler || function(){
 				me.$el.width($(window).width() - $('#sidebar-ui').width() -1);
 			};
-			
+
 			//Destroy editor when Cancel or Save button is clicked
 			Upfront.Events.on('element:settings:saved', this.close, this);
 			Upfront.Events.on('element:settings:canceled', this.close, this);
@@ -78,13 +77,14 @@ define([
 			this.elementType = this.elementTypes[this.modelType] || {label: 'Unknown', id: 'unknown'};
 
 			style_selector = this.options.preset.get('id');
-			$style = $('#' + style_selector);
-			if ($style.length === 0) {
-				this.$style = $('<style id="' + style_selector + '"></style>');
-				$('body').append(this.$style);
-			} else {
-				this.$style = $style
-			}
+			// DO NOT DO THIS!!! DELEGATE STYLE RENDERING TO PRESET (look at preset-css module
+			// $style = $('#' + style_selector);
+			// if ($style.length === 0) {
+				// this.$style = $('<style id="' + style_selector + '"></style>');
+				// $('body').append(this.$style);
+			// } else {
+				// this.$style = $style;
+			// }
 
 			this.createSelectors(Upfront.Application.LayoutEditor.Objects);
 
@@ -167,9 +167,10 @@ define([
 
 				styles_with_selector = me.stylesAddSelector($.trim(editor.getValue()), '#page ' + me.get_css_selector());
 				// Solve case of button loosing its styles
-				styles_with_selector = styles_with_selector.replace(new RegExp(me.get_css_selector() + ' .upfront-button', 'g'), me.get_css_selector() + '.upfront-button');
+				styles_with_selector = Upfront.Util.colors.convert_string_ufc_to_color(styles_with_selector.replace(new RegExp(me.get_css_selector() + ' .upfront-button', 'g'), me.get_css_selector() + '.upfront-button'));
 
-				me.$style.html(styles_with_selector);
+				// DO NOT DO THIS!!! DELEGATE STYLE RENDERING TO PRESET (look at preset-css module
+				// me.$style.html(styles_with_selector);
 				me.trigger('change', styles_with_selector);
 			});
 
@@ -448,19 +449,7 @@ define([
 			if(!styles)
 				return Upfront.Views.Editor.notify(l10n.style_empty_nag, 'error');
 
-			styles = this.stylesAddSelector(styles, (this.is_default_style ? '' : this.get_css_selector()));
-			data = {
-				styles: styles,
-				elementType: this.elementType.id,
-				global: this.global
-			};
-
-			this.options.preset.set('preset_style', data.styles);
-
-			this.trigger('upfront:presets:update', this.options.preset.toJSON());
-
 			return Upfront.Views.Editor.notify(l10n.preset_style_saved.replace(/%s/,  this.elementType.id));
-
 		},
 	});
 

@@ -12,13 +12,17 @@ define([
 
 		initialize: function(options) {
 			this.options = options || {};
-
+			this.fieldCounter = 0;
 			var me = this,
 				state = this.options.state,
 				per_row = 'single',
 				toggleClass = 'no-toggle',
 				fields = [];
-
+			
+			if(this.options.toggle === true) {
+				this.fieldCounter++;
+			}
+			
 			if(this.options.single !== true) {
 				per_row = 'two';
 			}
@@ -69,6 +73,7 @@ define([
 						],
 						change: function(value) {
 							me.model.set(me.options.fields.use, value);
+							me.reset_fields(value);
 						},
 						show: function(value, $el) {
 							var stateSettings = $el.closest('.state_modules');
@@ -82,6 +87,48 @@ define([
 					})
 				);
 			}
+		},
+		reset_fields: function(value) {
+			var me = this;
+			if(typeof value !== "undefined" && value === "yes") {
+				_.each(this.options.abccolors, function(color) {
+					var settings = me.get_static_field_value(color, me.options.prepend);
+					me.update_field(color, settings);
+					me.save_static_value(color, settings);
+					this.fieldCounter++;
+				});
+				
+				this.$el.empty();
+				this.render();
+			}
+		},
+
+		save_static_value: function(color, settings) {
+			//Save preset values from static state
+			this.model.set(color.name, settings.color);
+		},
+
+		get_static_field_value: function(color, prepend) {
+			var settings = {},
+				prefix = '';
+
+			if(typeof this.options.prefix !== "undefined") {
+				prefix = this.options.prefix + '-';
+			}
+
+			settings.color = this.model.get(this.clear_prepend(prefix + color.name, prepend)) || '';
+
+			return settings;
+		},
+
+		clear_prepend: function(field, prepend) {
+			return field.replace(prepend, '');
+		},
+
+		update_field: function(color, settings) {
+			//Update selected element
+			this.fields._wrapped[this.fieldCounter].set_value(settings.color);
+			this.fields._wrapped[this.fieldCounter].update_input_border_color(settings.color);
 		},
 		render: function() {
 			var me = this;

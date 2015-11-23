@@ -27,6 +27,12 @@ define(function() {
 					],
 					change: function(value) {
 						me.model.set('menu_style', value);
+						if (value !== 'triggered') {
+							me.fields._wrapped[3].$el.hide();
+							me.fields._wrapped[3].set_value('over');
+						} else if (me.model.get('burger_alignment') === 'top') {
+							me.fields._wrapped[3].$el.show();
+						}
 					},
 					show: function(value, $el) {
 						if(value === "triggered") {
@@ -65,9 +71,45 @@ define(function() {
 					],
 					change: function(value) {
 						me.model.set('burger_alignment', value);
+						if(value === 'left' || value === 'right' || value === 'whole') {
+							me.fields._wrapped[3].$el.hide();
+							me.fields._wrapped[3].set_value('over');
+						}
+						else {
+							me.fields._wrapped[3].$el.show();
+						}
+					}
+				}),
+				new Upfront.Views.Editor.Field.Radios({
+					model: this.model,
+					default_value: this.model.get('burger_over'),
+					name: 'burger_over',
+					label: "",
+					layout: "vertical",
+					values: [
+						{ label: l10n.mnu.over, value: 'over' },
+						{ label: l10n.mnu.push, value: 'pushes' }
+					],
+					change: function(value) {
+						me.model.set('burger_over', value);
 					}
 				})
 			]);
+			this.listenTo(this, 'rendered', function() {
+				var alignment = me.model.get('burger_alignment');
+				if(alignment === 'left' || alignment === 'right' || alignment === 'whole') {
+					me.fields._wrapped[3].$el.hide();
+					me.fields._wrapped[3].set_value('over');
+				}
+				else {
+					me.fields._wrapped[3].$el.show();
+				}
+				var style = me.model.get('menu_style');
+				if (style !== 'triggered') {
+					me.fields._wrapped[3].$el.hide();
+					me.fields._wrapped[3].set_value('over');
+				}
+			});
 		},
 	});
 

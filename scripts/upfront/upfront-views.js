@@ -1035,6 +1035,22 @@ define([
 					props[prop.get("name")] = prop.get("value");
 				});
 
+				// Check if theme_style was removed and remove class from element,
+				// this happens when element style is migrated to preset
+				var oldThemeStyle = '';
+				_.each(this.model._previousAttributes.properties, function(property) {
+					if (typeof property === 'undefined') return;
+					if (property.name === 'theme_style') {
+						oldThemeStyle = property.value;
+					}
+				});
+				// And now update classes properly (because template re-render does not affect this)
+				if (oldThemeStyle && props.theme_style === '') {
+					this.$el.removeClass(oldThemeStyle);
+					this.$el.addClass(props.preset);
+				}
+
+
 				var row = this.model.get_breakpoint_property_value('row', true);
 				height = ( row ) ? row * Upfront.Settings.LayoutEditor.Grid.baseline : 0;
 
@@ -2503,17 +2519,13 @@ define([
 				 				 	if(!$main.hasClass('upfront-region-fixed-editing'))
 								  		me.trigger_edit_fixed(me.event);
 								  	function run_animation(view, model){
+										var ani_event_end = 'animationend.fixed_region_ani webkitAnimationEnd.fixed_region_ani MSAnimationEnd.fixed_region_ani oAnimationEnd.fixed_region_ani';
 								  		end_t = setTimeout(end, 2000);
 								  		view.$el.addClass("upfront-add-region-ani upfront-add-region-ani-" + prop_y + '-' + prop_x);
-										view.$el.one('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function () {
-
-											//the following code makes sure that this function is executed only once, in case of more than one cross-browser events keep firing.
-											if(view.$el.data('animationended') == 1)
-												return;
-											view.$el.data('animationended', 1)
-
+										view.$el.one(ani_event_end, function () {
 											end(view);
 											clearTimeout(end_t);
+											view.$el.off(ani_event_end); // Make sure to remove any remaining unfired event
 										});
 								  	}
 									function end (view) {
@@ -4050,6 +4062,7 @@ define([
 				}
 
 				this.$el.show();
+				Upfront.Events.trigger('upfront:lightbox:show');
 			},
 			hide:function () {
 				this.$el.hide();

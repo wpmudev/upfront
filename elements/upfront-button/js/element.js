@@ -19,7 +19,7 @@ define([
 						{"name": "align", "value": "center"},
 						{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
 						{"name": "class", "value": "c4 button-style"},
-						{"name": "row", "value": Upfront.Util.height_to_row(75)},
+						{"name": "row", "value": Upfront.Util.height_to_row(55)},
 						{"name": "has_settings", "value": 0}
 					],
 					"objects": [

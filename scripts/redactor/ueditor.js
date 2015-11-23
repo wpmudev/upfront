@@ -50,7 +50,16 @@ $.fn.ueditor = function(options){
 };
 
 var hackRedactor = function(){
+    
+    // These lines override the Redactor's prefFormatting
+    var clean = $.Redactor.prototype.clean();
+    
+    clean.savePreFormatting = function(html) {
+        return html;
+    };
 
+    $.Redactor.prototype.clean = function () { return clean };
+    
 	// Make click consistent
 	$.Redactor.prototype.airBindHide = function () {
 		if (!this.opts.air || !this.$toolbar) return;
@@ -723,6 +732,16 @@ Ueditor.prototype = {
 
 		this.active = true;
 
+        this.$el.on('keyup', function(e) {
+            /**
+             * Make sure return doesn't delete the last charactor
+             */
+            if (13 === e.keyCode ) {
+                self.redactor.utils.removeEmpty();
+                $(self.redactor.selection.getCurrent()).append("&nbsp;")
+            }
+        });
+
 	},
 	stopOnEscape: function(e) {
 			if(e.keyCode === 27 && !( $(".upfront-content-marker-contents").length && $(".upfront-content-marker-contents").data("ueditor") ) ){
@@ -1124,7 +1143,7 @@ Ueditor.prototype = {
 			//var is_selection = ((Math.abs(e.pageX-me.lastmousedown.x) + Math.abs(e.pageY-me.lastmousedown.y)) > 2);
             var is_selection = !!me.redactor.selection.getText();
 
-			if(((is_selection && me.clickcount != 1) || me.clickcount > 1) && me.redactor && me.redactor.waitForMouseUp && me.redactor.selection.getText()){
+			if((is_selection || me.clickcount > 1) && me.redactor && me.redactor.waitForMouseUp && me.redactor.selection.getText()){
 				me.redactor.airShow(e);
 				me.redactor.$element.trigger('mouseup.redactor');
 			}
