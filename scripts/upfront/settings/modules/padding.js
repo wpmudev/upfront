@@ -13,7 +13,8 @@ define([
 				new Upfront.Views.Editor.Field.Checkboxes({
 					model: this.model,
 					className: 'use-padding checkbox-title',
-					name: 'use_padding',
+					use_breakpoint_property: true,
+					property: 'use_padding',
 					label: '',
 					default_value: 1,
 					multiple: false,
@@ -21,7 +22,7 @@ define([
 						{ label: 'Customize Padding', value: 'yes' }
 					],
 					change: function(value) {
-						me.model.set('use_padding', value);
+						me.model.set_property('use_padding', value);
 					},
 					show: function(value, $el) {
 						var stateSettings = $el.closest('.upfront-settings-item-content');
@@ -48,9 +49,10 @@ define([
 					}
 				}),
 
-				new Upfront.Views.Editor.Field.Checkboxes({
+				lock_padding = new Upfront.Views.Editor.Field.Checkboxes({
 					model: this.model,
 					className: 'padding-lock',
+					use_breakpoint_property: true,
 					name: 'lock_padding',
 					label: "",
 					default_value: 0,
@@ -59,7 +61,7 @@ define([
 						{ label: '', value: 'yes' }
 					],
 					show: function(value) {
-						me.model.set('lock_padding', value);
+						me.model.set_property('lock_padding', value);
 
 						var stateSettings = me.$el;
 						var usePadding = me.model.get('use_padding');
@@ -84,20 +86,32 @@ define([
 						}
 					},
 					change: function(value) {
-						me.model.set('lock_padding', value);
+						me.model.set_property('lock_padding', value);
 					}
 				}),
 
 
-				new Upfront.Views.Editor.Field.Slider({
+				locked_slider = new Upfront.Views.Editor.Field.Slider({
 					className: 'padding-slider upfront-field-wrap',
 					model: this.model,
-					name: 'padding',
+					use_breakpoint_property: true,
+					property: 'padding_slider',
+					default_value: this.model.get_breakpoint_property_value('padding_slider'),
 					suffix: l10n.px,
 					min: 1,
 					max: 250,
 					change: function (value) {
-						me.model.set('padding', value);
+						me.model.set_property('padding_slider', value);
+						me.model.set_property('padding_number', value, true);
+						me.model.set_property('left_padding_num', value, true);
+						me.model.set_property('top_padding_num', value, true);
+						me.model.set_property('right_padding_num', value, true);
+						me.model.set_property('bottom_padding_num', value, true);
+						locked_num.get_field().val(value);
+						padding_left.get_field().val(value);
+						padding_top.get_field().val(value);
+						padding_right.get_field().val(value);
+						padding_bottom.get_field().val(value);
 					},
 					show: function() {
 						var value = me.model.get('padding_number');
@@ -109,10 +123,12 @@ define([
 					}
 				}),
 
-				new Upfront.Views.Editor.Field.Number({
-					model: this.model,
+				locked_num = new Upfront.Views.Editor.Field.Number({
 					className: 'padding-number',
-					name: 'padding_number',
+					model: this.model,
+					use_breakpoint_property: true,
+					property: 'padding_number',
+					default_value: this.model.get_breakpoint_property_value('padding_number'),
 					label: '',
 					default_value: 0,
 					values: [
@@ -120,13 +136,17 @@ define([
 					],
 					change: function(value) {
 						me.model.set('padding_number', value);
-
-						//Update slider value
-						s = me.fields._wrapped[2];
-						s.$el.find('#'+s.get_field_id()).slider('value', value);
-						s.get_field().val(value);
-						s.trigger('changed');
-
+						me.model.set_property('padding_slider', value);
+						me.model.set_property('padding_number', value);
+						locked_slider.$el.find('#'+locked_slider.get_field_id()).slider('value', value);
+						me.model.set_property('left_padding_num', value, true);
+						me.model.set_property('top_padding_num', value, true);
+						me.model.set_property('right_padding_num', value, true);
+						me.model.set_property('bottom_padding_num', value, true);
+						padding_left.get_field().val(value);
+						padding_top.get_field().val(value);
+						padding_right.get_field().val(value);
+						padding_bottom.get_field().val(value);
 						//Lower opacity if value is bigger than the slider MAX_VALUE
 						if(value > 250) {
 							me.$el.find('.padding-slider').css('opacity', 0.6);
@@ -136,14 +156,15 @@ define([
 					}
 				}),
 
-				new Upfront.Views.Editor.Field.Number({
+				padding_top = new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					className: 'padding-top',
-					name: 'padding_top',
+					use_breakpoint_property: true,
+					property: 'top_padding_num',
 					label: '',
 					default_value: 0,
 					change: function(value) {
-						me.model.set('padding_top', value);
+						me.model.set_property('top_padding_num', value);
 					},
 					focus: function() {
 						me.$el.find('.padding-bottom label').css('border-top', '3px solid #7bebc6');
@@ -153,14 +174,15 @@ define([
 					}
 				}),
 
-				new Upfront.Views.Editor.Field.Number({
+				padding_left = new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					className: 'padding-left',
-					name: 'padding_left',
+					use_breakpoint_property: true,
+					property: 'left_padding_num',
 					label: '',
 					default_value: 0,
 					change: function(value) {
-						me.model.set('padding_left', value);
+						me.model.set_property('left_padding_num', value);
 					},
 					focus: function() {
 						me.$el.find('.padding-bottom label').css('border-left', '3px solid #7bebc6');
@@ -170,14 +192,15 @@ define([
 					}
 				}),
 
-				new Upfront.Views.Editor.Field.Number({
+				padding_right = new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					className: 'padding-right',
-					name: 'padding_right',
+					use_breakpoint_property: true,
+					property: 'right_padding_num',
 					label: '',
 					default_value: 0,
 					change: function(value) {
-						me.model.set('padding_right', value);
+						me.model.set_property('right_padding_num', value);
 					},
 					focus: function() {
 						me.$el.find('.padding-bottom label').css('border-right', '3px solid #7bebc6');
@@ -187,14 +210,15 @@ define([
 					}
 				}),
 
-				new Upfront.Views.Editor.Field.Number({
+				padding_bottom = new Upfront.Views.Editor.Field.Number({
 					model: this.model,
 					className: 'padding-bottom',
-					name: 'padding_bottom',
+					use_breakpoint_property: true,
+					property: 'bottom_padding_num',
 					label: '',
 					default_value: 0,
 					change: function(value) {
-						me.model.set('padding_bottom', value);
+						me.model.set_property('bottom_padding_num', value);
 					},
 					focus: function() {
 						me.$el.find('.padding-bottom label').css('border-bottom', '3px solid #7bebc6');
