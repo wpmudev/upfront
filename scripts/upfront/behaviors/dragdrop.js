@@ -50,6 +50,7 @@ DragDrop.prototype = {
 	current_row_wraps: false,
 	wrapper_id: false,
 	wrap_only: false,
+	new_wrap_view: false,
 	move_region: false,
 
 	current_grid: false,
@@ -1104,6 +1105,7 @@ DragDrop.prototype = {
 					$drop.nextAll('.upfront-wrapper').eq(0).removeClass('clr');
 				}
 				$drop.before(wrap_view.$el);
+				this.new_wrap_view = wrap_view;
 				Upfront.data.wrapper_views[wrap_model.cid] = wrap_view;
 			}
 			else {
@@ -1148,7 +1150,7 @@ DragDrop.prototype = {
 		
 		ed.update_model_margin_classes( $me, [ed.grid.class + this.drop_col] );
 		
-		// If the drop is to side, also update the elements inside
+		// If the drop is to side, also update the elements on the same row
 		if ( 
 			!this.drop.is_me 
 			&& 
@@ -1157,7 +1159,11 @@ DragDrop.prototype = {
 			( this.drop.type == 'side-before' || this.drop.type == 'side-after' ) 
 		) {
 			var distribute = this.find_column_distribution(this.drop.row_wraps, false, true, this.current_area_col, false),
-				remaining_col = distribute.remaining_col - (this.drop_col-distribute.apply_col);
+				remaining_col = distribute.remaining_col - (this.drop_col-distribute.apply_col),
+				apply_index = 0,
+				first_is_spacer = false,
+				me_clear = false
+			;
 			_.each(this.drop.row_wraps, function (row_wrap) {
 				row_wrap.$el.find(that.module_selector).each(function () {
 					if ( $(this).hasClass('upfront-module-spacer') ) {
@@ -1165,6 +1171,13 @@ DragDrop.prototype = {
 							this_model = ed.get_el_model($(this));
 						wrappers.remove(wrap_model);
 						that.model.collection.remove(this_model);
+						if ( apply_index == 0 ) {
+							first_is_spacer = true;
+							if ( that.drop.type == 'side-after' && that.drop.insert[1].get(0) == row_wrap.$el.get(0) ) {
+								// First is removed spacer and we drop after that spacer, means we now drop to the first
+								me_clear = true;
+							}
+						}
 					}
 					else {
 						var apply_col = distribute.apply_col;
@@ -1173,10 +1186,29 @@ DragDrop.prototype = {
 							apply_col += 1;
 							remaining_col -= 1;
 						}
-						ed.update_model_margin_classes( $(this), [ed.grid.class + apply_col] );	
+						ed.update_model_margin_classes( $(this), [ed.grid.class + apply_col] );
+						if ( apply_index == 1 && first_is_spacer ) {
+							if ( that.drop.type == 'side-before' && that.drop.insert[1].get(0) == row_wrap.$el.get(0) ) {
+								// First is removed spacer and we drop before the first element, means we now drop to the first
+								me_clear = true;
+							}
+							else {
+								// First is removed spacer and now this wrapper is the first instead
+								row_wrap.$el.data('clear', 'clear');
+							}
+						}
 					}
+					apply_index++;
 				});
 			});
+			if ( me_clear ) {
+				if ( that.new_wrap_view !== false ) {
+					that.new_wrap_view.$el.data('clear', 'clear');
+				}
+				else {
+					that.$wrap.data('clear', 'clear');
+				}
+			}
 		}
 		
 		// Also try to distribute columns if the element was moved away and leave empty spaces in previous place
