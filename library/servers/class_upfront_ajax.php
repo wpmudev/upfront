@@ -5,8 +5,17 @@
  */
 class Upfront_Ajax extends Upfront_Server {
 
+	private static $_instance;
+
+	public static function get_instance () {
+		if (!self::$_instance) {
+			self::$_instance = new self;
+		}
+		return self::$_instance;
+	}
+
 	public static function serve () {
-		$me = new self;
+		$me = self::get_instance();
 		$me->_add_hooks();
 	}
 
