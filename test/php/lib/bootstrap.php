@@ -7,6 +7,12 @@ if ( ! $_tests_dir ) {
 
 require_once $_tests_dir . '/includes/functions.php';
 
+
+/**
+ * Say we're testing
+ */
+if (!defined('IS_UPFRONT_TESTING_ENVIRONMENT')) define('IS_UPFRONT_TESTING_ENVIRONMENT', true);
+
 /**
  * Set active template
  */
@@ -33,3 +39,5 @@ function _manually_register_theme() {
 tests_add_filter( 'muplugins_loaded', '_manually_register_theme' );
 
 require $_tests_dir . '/includes/bootstrap.php';
+
+require (dirname(__FILE__) . '/class_upfront_tests.php');
