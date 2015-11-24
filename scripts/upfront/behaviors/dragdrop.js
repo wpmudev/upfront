@@ -1385,6 +1385,7 @@ DragDrop.prototype = {
 		if ( this.move_region ){
 			view.region = this.current_region_model;
 			view.region_view = Upfront.data.region_views[view.region.cid];
+			view.parent_view = view.region_view._modules_view;
 			if ( !_.isUndefined(view._modules_view) ) { // this is grouped modules, also fix the child views
 				view._modules_view.region_view = view.region_view;
 				if ( !_.isUndefined(model.get('modules')) ){

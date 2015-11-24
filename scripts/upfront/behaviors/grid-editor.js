@@ -1333,10 +1333,13 @@ var GridEditor = {
 			expand_lock = $region.hasClass('upfront-region-expand-lock'),
 			aff_els = wrap ? ed.get_affected_wrapper_els(wrap, ed.wraps, [], true) : ed.get_affected_els(me, ed.els, [], true),
 			max = ed.get_max_size(me, ed.els, region, axis),
+			is_parent_group = ( typeof view.group_view != 'undefined' ),
+			group_model = is_parent_group ? view.group_view.model : false,
 			regions = app.layout.get('regions'),
-			region_model,
-			col = col ? ( col > max.col ? max.col : col ) : me.col,
-			row = row ? ( max.row && row > max.row ? max.row : row ) : me.row
+			region_model = regions.get_by_name($region.data('name')),
+			wrappers = ( is_parent_group ? group_model : region_model ).get('wrappers'),
+			wrap_model = wrappers.get_by_wrapper_id($wrap.attr('id')),
+			wrap_view = Upfront.data.wrapper_views[wrap_model.cid]
 		;
 
 		if ( col < 1 || row < 1 )
@@ -1352,40 +1355,12 @@ var GridEditor = {
 		}
 
 
-		regions.each(function(reg){
-			if ( reg.get('modules') == model.collection )
-				region_model = reg;
-		});
+		col = col ? ( col > max.col ? max.col : col ) : me.col;
+		row = row ? ( max.row && row > max.row ? max.row : row ) : me.row;
+
 		ed.normalize(ed.els, ed.wraps);
 		ed.update_position_data(ed.containment.$el);
-		if ( axis == 'nw' ){
-			margin.current.left = margin.original.left - (col-me.col);
-			margin.current.top = margin.original.top - (row-me.row);
-			$me.data('margin', margin);
-			ed.update_margin_classes($me);
-		}
-		else if ( axis == 'se' && wrap ){
-			ed.adjust_affected_right(wrap, aff_els.right, [me], me.grid.left+col-1, true);
-			if ( expand_lock )
-				ed.adjust_affected_bottom(wrap, aff_els.bottom, [me], me.grid.top+row-1, true);
-		}
-		else if ( axis == 'all' ){
-			var max_se = ed.get_max_size(me, ed.els, region, 'se'),
-				col_se = col > max_se.col ? max_se.col : col,
-				row_se = max_se.row ? ( row > max_se.row ? max_se.row : row ) : false;
-			if ( wrap ){
-				ed.adjust_affected_right(wrap, aff_els.right, [me], me.grid.left+col_se-1, true);
-				if ( expand_lock && row_se )
-					ed.adjust_affected_bottom(wrap, aff_els.bottom, [me], me.grid.top+row_se-1, true);
-			}
-			margin.current.left = margin.original.left - (col-col_se);
-			if ( row_se )
-				margin.current.top = margin.original.top - (row-row_se);
-			$me.data('margin', margin);
-			ed.update_margin_classes($me);
-		}
 		ed.update_class($me, ed.grid.class, col);
-		ed.update_wrappers(region_model, region.$el);
 		model.set_property('row', row);
 		// Also resize containing object if it's only one object
 		var objects = model.get('objects');
@@ -1398,13 +1373,19 @@ var GridEditor = {
 		if ( axis != 'se' ){
 			model.replace_class([
 				ed.grid.class+col,
-				ed.grid.left_margin_class+margin.current.left,
-				ed.grid.top_margin_class+margin.current.top
+				//ed.grid.left_margin_class+margin.current.left,
+				//ed.grid.top_margin_class+margin.current.top
 			].join(' '));
 		}
 		else{
 			model.replace_class(ed.grid.class+col);
-			ed.update_model_margin_classes($layout.find('.upfront-module, .upfront-module-group').not($me));
+			//ed.update_model_margin_classes($layout.find('.upfront-module, .upfront-module-group').not($me));
+		}
+		if ( typeof view.group_view != 'undefined' ) {
+			ed.update_wrappers(view.group_view.model, view.group_view.$el);
+		}
+		else {
+			ed.update_wrappers(region_model, region.$el);
 		}
 
 		view.trigger('entity:resize_stop', {row: row, col: col}, view, view.model);

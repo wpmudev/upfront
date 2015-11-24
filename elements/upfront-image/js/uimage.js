@@ -1310,13 +1310,12 @@ define([
 
 			this.property('gifImage', result.gif);
 
+			this.temporaryProps = false;
+			this.render();
 
 			if(result.elementSize){
 				this.set_element_size(result.elementSize.columns, result.elementSize.rows, 'all', true);
 			}
-
-			this.temporaryProps = false;
-			this.render();
 		},
 
 		editRequest: function () {
