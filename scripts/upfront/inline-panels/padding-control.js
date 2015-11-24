@@ -21,6 +21,8 @@ define([
 					me.close();
 				}
 			});
+
+			this.listenTo(Upfront.Events, "upfront:paddings:updated", this.refresh);
 		},
 
 		onClickControl: function(e){
@@ -94,6 +96,7 @@ define([
 					this.model.set_breakpoint_property('top_padding_use', 'yes');
 					this.model.set_breakpoint_property('top_padding_num', value);
 					this.model.set_breakpoint_property('top_padding_slider', value);
+					Upfront.Events.trigger("upfront:paddings:updated");
 				}
 			});
 			me.paddingBottom = new Upfront.Views.Editor.Field.Slider({
@@ -115,6 +118,7 @@ define([
 					this.model.set_breakpoint_property('bottom_padding_use', 'yes');
 					this.model.set_breakpoint_property('bottom_padding_num', value);
 					this.model.set_breakpoint_property('bottom_padding_slider', value);
+					Upfront.Events.trigger("upfront:paddings:updated");
 				}
 			});
 

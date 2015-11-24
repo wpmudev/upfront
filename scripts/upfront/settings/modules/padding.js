@@ -9,6 +9,8 @@ define([
 			this.options = options || {};
 			var me = this;
 
+			this.listenTo(Upfront.Events, "upfront:paddings:updated", this.refresh);
+
 			this.fields = _([
 				new Upfront.Views.Editor.Field.Checkboxes({
 					model: this.model,
@@ -246,8 +248,16 @@ define([
 			]);
 		},
 		
+		refresh: function() {
+			var topPadding = this.model.get_property_value_by_name('top_padding_num');
+			var bottomPadding = this.model.get_property_value_by_name('bottom_padding_num');
+			this.fields._wrapped[4].get_field().val(topPadding);
+			this.fields._wrapped[7].get_field().val(bottomPadding);
+		},
+		
 		enable_padding: function(field) {
 			this.model.set_breakpoint_property(field, 'yes');
+			Upfront.Events.trigger("upfront:paddings:updated");
 		},
 		
 		enable_lock_padding: function() {
