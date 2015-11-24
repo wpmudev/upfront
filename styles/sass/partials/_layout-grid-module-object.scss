@@ -581,11 +581,14 @@
 .upfront-wrapper-meta:hover > .upfront-icon-button {
   display: block;
 }
+.upfront-wrapper-spacer > .upfront-wrapper-meta > .upfront-icon-button,
+.upfront-wrapper[data-prev-spacer="1"] > .upfront-wrapper-meta-left > .upfront-icon-button,
+.upfront-wrapper[data-next-spacer="1"] > .upfront-wrapper-meta-right > .upfront-icon-button,
 .upfront-wrapper[data-first-in-row="1"] > .upfront-wrapper-meta-left > .upfront-icon-button,
 .upfront-wrapper[data-last-in-row="1"] > .upfront-wrapper-meta-right > .upfront-icon-button {
   display: none;
 }
-.upfront-wrapper.upfront-wrapper-spacer[data-first-in-row="1"] > .upfront-wrapper-meta-left {
+.upfront-wrapper.upfront-wrapper-spacer[data-first-in-row="1"] > .upfront-wrapper-meta-left, {
   display: none !important;
 }
 .upfront-wrapper.upfront-wrapper-spacer[data-last-in-row="1"] > .upfront-wrapper-meta-right {

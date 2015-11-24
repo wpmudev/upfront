@@ -34,6 +34,8 @@
 			if ( !this.parent_module_view || !this.parent_module_view.parent_view || this.parent_module_view.parent_view != from_view ) {
 				return;
 			}
+			var $wrap = this.$el.closest('.upfront-wrapper');
+			$wrap.addClass('upfront-wrapper-spacer');
 			this.$el.find('>.upfront-object').css('min-height', '');
 		},
 		apply_height_from_wrapper: function (from_view) {
@@ -41,7 +43,6 @@
 				return;
 			}
 			var $wrap = this.$el.closest('.upfront-wrapper');
-			$wrap.addClass('upfront-wrapper-spacer');
 			this.$el.find('>.upfront-object').css('min-height', $wrap.height());
 		}
 	});

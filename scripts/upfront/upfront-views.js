@@ -939,10 +939,15 @@ define([
 							})
 						;
 						_.each(wraps, function ($wrap, index) {
+							var prev_is_spacer = index > 0 ? wraps[index-1].hasClass('upfront-wrapper-spacer') : false,
+								next_is_spacer = index < wraps.length-1 ? wraps[index+1].hasClass('upfront-wrapper-spacer') : false
+							;
 							$wrap.removeAttr('data-first-in-row');
 							$wrap.removeAttr('data-last-in-row');
 							if ( index == 0 ) $wrap.attr('data-first-in-row', '1');
 							if ( index == wraps.length-1 ) $wrap.attr('data-last-in-row', '1');
+							if ( prev_is_spacer ) $wrap.attr('data-prev-spacer', '1');
+							if ( next_is_spacer ) $wrap.attr('data-next-spacer', '1');
 							$wrap.css('min-height', height);
 						});
 						Upfront.Behaviors.GridEditor.time_end('fn fix_wrapper_height::apply_height');
