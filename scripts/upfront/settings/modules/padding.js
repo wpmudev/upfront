@@ -67,6 +67,7 @@ define([
 
 						var stateSettings = me.$el;
 						var usePadding = me.model.get('use_padding');
+						var padding = me.model.get_property_value_by_name('padding_number');
 
 						//Toggle border radius fields
 						if(value == "yes" && usePadding == "yes") {
@@ -76,6 +77,15 @@ define([
 							stateSettings.find('.padding-bottom').hide();
 							stateSettings.find('.padding-left').hide();
 							stateSettings.find('.padding-right').hide();
+							
+							me.model.set_property('left_padding_num', padding);
+							me.model.set_property('top_padding_num', padding);
+							me.model.set_property('right_padding_num', padding);
+							me.model.set_property('bottom_padding_num', padding);
+							padding_left.get_field().val(padding);
+							padding_top.get_field().val(padding);
+							padding_right.get_field().val(padding);
+							padding_bottom.get_field().val(padding);
 						} else {
 							if(usePadding == "yes") {
 								stateSettings.find('.padding-slider').hide();
