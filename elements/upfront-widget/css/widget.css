@@ -29,3 +29,8 @@
     border-right: 5px solid transparent;
     border-bottom: 5px solid #f7fbff;
 }
+
+.no-widget-notice {
+    display: block;
+    text-align: center;
+}

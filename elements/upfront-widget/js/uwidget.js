@@ -47,7 +47,7 @@ define([
 			var widget = this.model.get_property_value_by_name('widget');
 				me = this;
 
-				if ( !widget ) {
+				if ( !widget || widget === '') {
 					return '<span class="no-widget-notice">' + l10n.select_widget + '</span>';
 				}
 

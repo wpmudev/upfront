@@ -21,7 +21,10 @@ define([
 				if(Upfront.data.uwidget.widgets[i].key === this.model.get_property_value_by_name('selected_widget'))
 					return Upfront.data.uwidget.widgets[i].name
 			}
-			return this.model.get_property_value_by_name('widget');
+			if(this.model.get_property_value_by_name('widget'))
+				return this.model.get_property_value_by_name('widget');
+			else
+				return '';
 		},
 		update_settings: function(widget, parent) {
 			var self = this,
@@ -111,8 +114,10 @@ define([
 	var UwidgetSettings = ElementSettings.extend({
 
 		initialize: function (opts) {
-			this.has_tabs = false;
-			this.options= opts;
+			//this.has_tabs = false;
+			//this.options= opts;
+
+			this.constructor.__super__.initialize.call(this, opts);
 
 			var widget_values = _(_.filter(Upfront.data.uwidget.widgets, function (each) {
 				return each.admin;
@@ -120,9 +125,11 @@ define([
 				return { label: each.name, value: each.key };
 			});
 
+			// Add a default 'select' value
+			widget_values.unshift({label: "Select  a widget", value: ''});
+
 			var panel = new RootSettingsPanel({
 				className: 'upfront-settings_panel_wrap widget-settings',
-				label: l10n.widget,
 				title: l10n.settings,
 			});
 
@@ -137,17 +144,23 @@ define([
 						property: 'widget',
 						values: widget_values,
 						change: function(value) {
-						
-							if(this.model.get_property_value_by_name('selected_widget') !== value)	
+							if( this.model.get_property_value_by_name('selected_widget') !== value )	
 								dynamic_settings.update_settings(value, this);
+
 						}
 					})
 				]
 			});
 
-			panel.settings = _([static_settings, dynamic_settings]);
+			var css_settings = new Upfront.Views.Editor.Settings.Settings_CSS({
+				model: this.model,
+				title: 'hey there'
+			})
 
-			this.panels = {"General Panel": panel, };
+
+			panel.settings = _([static_settings, dynamic_settings, css_settings]);
+
+			this.panels = _.extend({General: panel}, this.panels);
 		},
 		
 		title: l10n.settings
