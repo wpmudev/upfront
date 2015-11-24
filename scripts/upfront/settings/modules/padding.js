@@ -178,7 +178,7 @@ define([
 					default_value: 0,
 					change: function(value) {
 						me.model.set_property('top_padding_num', value);
-						me.enable_padding('top_padding_num');
+						me.enable_padding('top_padding_use');
 					},
 					focus: function() {
 						me.$el.find('.padding-bottom label').css('border-top', '3px solid #7bebc6');
@@ -197,7 +197,7 @@ define([
 					default_value: 0,
 					change: function(value) {
 						me.model.set_property('left_padding_num', value);
-						me.enable_padding('left_padding_num');
+						me.enable_padding('left_padding_use');
 					},
 					focus: function() {
 						me.$el.find('.padding-bottom label').css('border-left', '3px solid #7bebc6');
@@ -216,7 +216,7 @@ define([
 					default_value: 0,
 					change: function(value) {
 						me.model.set_property('right_padding_num', value);
-						me.enable_padding('right_padding_num');
+						me.enable_padding('right_padding_use');
 					},
 					focus: function() {
 						me.$el.find('.padding-bottom label').css('border-right', '3px solid #7bebc6');
@@ -235,7 +235,7 @@ define([
 					default_value: 0,
 					change: function(value) {
 						me.model.set_property('bottom_padding_num', value);
-						me.enable_padding('bottom_padding_num');
+						me.enable_padding('bottom_padding_use');
 					},
 					focus: function() {
 						me.$el.find('.padding-bottom label').css('border-bottom', '3px solid #7bebc6');
