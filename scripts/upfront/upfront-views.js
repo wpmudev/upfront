@@ -944,6 +944,8 @@ define([
 							;
 							$wrap.removeAttr('data-first-in-row');
 							$wrap.removeAttr('data-last-in-row');
+							$wrap.removeAttr('data-prev-spacer');
+							$wrap.removeAttr('data-next-spacer');
 							if ( index == 0 ) $wrap.attr('data-first-in-row', '1');
 							if ( index == wraps.length-1 ) $wrap.attr('data-last-in-row', '1');
 							if ( prev_is_spacer ) $wrap.attr('data-prev-spacer', '1');

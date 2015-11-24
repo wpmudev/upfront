@@ -268,11 +268,13 @@ DragDrop.prototype = {
 					prev_wrap = $prev_wrap ? ed.get_wrap($prev_wrap) : false,
 					prev_wrap_clr = ( prev_wrap && prev_wrap.grid.left == area.grid.left ),
 					is_prev_me = ( prev_wrap && me_wrap && prev_wrap._id == me_wrap._id ),
+					is_prev_wrap_spacer = $prev_wrap ? ( $prev_wrap.find('> .upfront-module-view > .upfront-module-spacer').length > 0 ) : false,
 					prev_me_only = ( is_prev_me && $prev_wrap.find(that.module_selector).size() == 1 ),
 					$next_wrap = $wraps[index+1] ? $wraps.eq(index+1) : false,
 					next_wrap = $next_wrap ? ed.get_wrap($next_wrap) : false,
 					next_wrap_clr = ( next_wrap && next_wrap.grid.left == area.grid.left ),
 					is_next_me = ( next_wrap && me_wrap && next_wrap._id == me_wrap._id ),
+					is_next_wrap_spacer = $next_wrap ? ( $next_wrap.find('> .upfront-module-view > .upfront-module-spacer').length > 0 ) : false,
 					next_me_only = ( is_next_me && $next_wrap.find(that.module_selector).size() == 1 ),
 					$next_clr = Upfront.Util.find_from_elements($wraps, $wrap, first_cb, false),
 					next_clr = $next_clr.size() > 0 ? ed.get_wrap($next_clr) : false,
@@ -426,7 +428,19 @@ DragDrop.prototype = {
 				}
 				// Check to see if the right side on wrapper has enough column to add droppable
 				if ( 
-					( !is_spacer || ( is_spacer && wrap_me_in_row ) )
+					( // Check if it's spacer, if it is, only allow drop if between 2 non-spacer elements
+						!is_spacer
+						||
+						(
+							( is_spacer && wrap_me_in_row )
+							&&
+							(
+								wrap_me_only
+								||
+								( !is_wrap_spacer && ( !next_wrap || next_wrap_clr || !is_next_wrap_spacer ) )
+							)
+						)
+					)
 					&&
 					( !next_wrap || next_wrap_clr )
 					&&
@@ -474,7 +488,19 @@ DragDrop.prototype = {
 				}
 				// Now check the left side, finding spaces between wrapper and inner modules
 				if ( 
-					( !is_spacer || ( is_spacer && wrap_me_in_row ) )
+					( // Check if it's spacer, if it is, only allow drop if between 2 non-spacer elements
+						!is_spacer
+						||
+						(
+							( is_spacer && wrap_me_in_row )
+							&&
+							(
+								wrap_me_only
+								||
+								( !is_wrap_spacer && ( wrap_clr || !is_prev_wrap_spacer ) )
+							)
+						)
+					)
 					&&
 					( !wrap_me_only || ( next_wrap && !next_wrap_clr ) )
 					&&
