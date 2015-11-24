@@ -328,7 +328,7 @@ define([
 
 			if(!stretch){
 				maskSize = {
-					width: Math.min(current.columns, elementSize.columns) * elementSize.columnWidth - (2 * breakpointColumnPadding),
+					width: Math.max(current.columns, elementSize.columns) * elementSize.columnWidth - (2 * breakpointColumnPadding),
 					height: (Math.min(current.rows, elementSize.rows) - 2) * breakpointColumnPadding
 				};
 			}
@@ -764,6 +764,10 @@ define([
 				var maskHeight = fullGrid.height;
 				maskSize = {columns: this.elementSize.maxColumns, rows: Math.ceil(maskHeight / this.elementSize.rowHeight) + 2};
 			}
+
+			// Don't allow changing width mask size anymore
+			maskSize.columns = this.elementSize.maxColumns;
+
 			if(maskSize.columns !== this.elementSize.columns || maskSize.rows !== this.elementSize.rows) {
 				this.resizeMask(maskSize.columns, maskSize.rows);
 			} else{

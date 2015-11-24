@@ -930,6 +930,9 @@ define([
 			if(this.mobileMode) {
 				return;
 			}
+			if(!this.resizingData || !this.resizingData.img || !this.resizingData.img.length) {
+				return;
+			}
 
 			var starting = this.resizingData.starting,
 				me = this,
