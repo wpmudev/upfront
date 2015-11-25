@@ -144,6 +144,9 @@
 
 .upfront-image-container {
 	position: relative;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 .upfront-image-starting-select {
@@ -731,6 +734,7 @@ a.image-edit-button.deactivated:hover {
 .upfront-field-icon-topOver:before {
 	background-position: -699px -520px!important;
 }
+.upfront-field-icon-showCaption:before,
 .upfront-field-icon-bottomOver:before {
 	background-position: -699px -488px!important;
 }
@@ -1126,6 +1130,10 @@ div.uimage-controls i.upfront-icon:before {
 .upfront-image-caption-container {
 	position: relative;
 	display: inline-block;
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	max-width: 100%;
 }
 
 .upfront-field-wrap.image-alternative-text {
@@ -1206,6 +1214,8 @@ div.uimage-controls i.upfront-icon:before {
 .upfront-image-container + .redactor-box,
 .upfront-image-container + .wp-caption {
 	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
 	line-height: normal;
 }
 

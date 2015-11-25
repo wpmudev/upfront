@@ -342,16 +342,18 @@
 
 <script id="csseditor-tpl" type="text/template">
 	<div class="upfront-css-resizable">
-		<div class="upfront-css-top ui-resizable-handle ui-resizable-n">
+		<div class="upfront-css-top">
       {[ if (elementType) { ]}
 			<span class="upfront-css-type">{{ elementType }} Element</span>
       {[ } ]}
+			{[ if (showToolbar) { ]}
 			<div id="insert-font-widget" class="upfront-icon">
 				<a class="upfront-css-font" href="#">{{Upfront.Settings.l10n.global.content.insert_font}}</a>
 			</div>
 			<a class="upfront-css-theme_image upfront-css-image" href="#">{{Upfront.Settings.l10n.global.content.insert_theme_image}}</a>
 			<a class="upfront-css-media_image upfront-css-image" href="#">{{Upfront.Settings.l10n.global.content.insert_image}}</a>
 			<span class="upfront-css-color"></span>
+      {[ } ]}
 			<a class="upfront-css-close" href="#">close</a>
 		</div>
 		<div class="upfront-css-body">

@@ -24,7 +24,16 @@ function() {
 	 */
 	var generateCss = function(properties, styleTpl) {
 		var tpl = Upfront.Util.template(styleTpl);
-		return tpl({properties: expandBreakpoints(properties)});
+		return tpl({properties: expandBreakpoints(properties)})
+			.replace(/#page/g, 'div#page.upfront-layout-view')
+			// Solve case of button loosing its styles
+			.replace(new RegExp(properties.id + ' .upfront-button', 'g'), properties.id + '.upfront-button')
+			.replace(/\\'/g, "'")
+			.replace(/\\'/g, "'")
+			.replace(/\\'/g, "'")
+			.replace(/\\"/g, '"')
+			.replace(/\\"/g, '"')
+			.replace(/\\"/g, '"');
 	};
 
 	var Util = {

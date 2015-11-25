@@ -7,10 +7,11 @@ define([
 	'elements/upfront-image/js/image-selector',
 	'elements/upfront-image/js/image-editor',
 	'elements/upfront-image/js/image-element',
+	"scripts/upfront/link-model",
 	'elements/upfront-image/js/model',
 	'text!elements/upfront-image/tpl/preset-style.html',
 	'scripts/upfront/preset-settings/util',
-], function(imageTpl, editorTpl, ImageContextMenu, ImageSettings, ImageSelector, ImageEditor, ImageElement, UimageModel, settingsStyleTpl, PresetUtil) {
+], function(imageTpl, editorTpl, ImageContextMenu, ImageSettings, ImageSelector, ImageEditor, ImageElement, LinkModel, UimageModel, settingsStyleTpl, PresetUtil) {
 
 	var l10n = Upfront.Settings.l10n.image_element;
 	var breakpointColumnPadding = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().get('column_padding');
@@ -37,6 +38,7 @@ define([
 				'click a.upfront-image-select': 'openImageSelector',
 				'click div.upfront-quick-swap': 'openImageSelector',
 				'dblclick .wp-caption': 'editCaption',
+				'click a': 'handleLinkClick',
 				'click .swap-image-overlay': 'openImageSelector'
 			});
 			this.delegateEvents();
@@ -94,24 +96,40 @@ define([
 				}
 			});
 
+
+			if (this.property('link') === false) {
+				this.link = new LinkModel({
+					type: this.property('when_clicked'),
+					url: this.property('image_link'),
+					target: this.property('link_target'),
+				});
+				this.property('link', this.link.toJSON());
+			} else {
+				this.link = new LinkModel(this.property('link'));
+			}
+
+			me.listenTo(this.link, 'change', function() {
+				me.property('link', me.link.toJSON());
+			});
+
 			this.listenTo(this.model, "preset:updated", this.preset_updated);
 		},
-		
+
 		get_preset_properties: function() {
 			var preset = this.model.get_property_value_by_name("preset"),
 				props = PresetUtil.getPresetProperties('image', preset) || {};
-				
-			return props;	
+
+			return props;
 		},
-		
+
 		preset_updated: function() {
 			this.render();
 		},
-		
+
 		update_colors: function () {
-			
+
 			var props = this.get_preset_properties();
-			
+
 			if (_.size(props) <= 0) return false; // No properties, carry on
 
 			PresetUtil.updatePresetStyle('gallery', props, settingsStyleTpl);
@@ -138,32 +156,6 @@ define([
 			this.stoppedTimer  = false;
 		},
 
-		getSelectedAlignment: function(){
-			if(!this.property('include_image_caption') && this.property('caption_position') === false && this.property('caption_alignment') === false) {
-				return 'nocaption';
-			}
-			if(this.property('caption_position') === 'below_image') {
-				return 'below';
-			}
-
-			var align = this.property('caption_alignment');
-
-			switch(align){
-				case 'top':
-					return 'topOver';
-				case 'bottom':
-					return 'bottomOver';
-				case 'fill':
-					return 'topCover';
-				case 'fill_middle':
-					return 'middleCover';
-				case 'fill_bottom':
-					return 'bottomCover';
-			}
-
-			return 'nocaption';
-		},
-
 		isThemeImage: function() {
 			return this.property('srcFull') && this.property('srcFull').match('wp-content/themes/');
 		},
@@ -184,56 +176,16 @@ define([
 			}
 
 			captionControl.sub_items = {
-				topOver: this.createControl('topOver', l10n.ctrl.over_top),
-				bottomOver: this.createControl('bottomOver', l10n.ctrl.over_bottom),
-				topCover: this.createControl('topCover', l10n.ctrl.cover_top),
-				middleCover: this.createControl('middleCover', l10n.ctrl.cover_middle),
-				bottomCover: this.createControl('bottomCover', l10n.ctrl.cover_bottom),
-				below: this.createControl('below', l10n.ctrl.below),
-				nocaption: this.createControl('nocaption', l10n.ctrl.no_caption)
+				showCaption: this.createControl('showCaption', l10n.ctrl.show_caption),
+				nocaption: this.createControl('nocaption', l10n.ctrl.dont_show_caption)
 			};
 
 			captionControl.icon = 'caption';
-			captionControl.tooltip = l10n.ctrl.caption_position;
-			captionControl.selected = this.getSelectedAlignment();
+			captionControl.tooltip = l10n.ctrl.caption_display;
+			captionControl.selected = this.property('display_caption');
 
 			this.listenTo(captionControl, 'select', function(item){
-				switch(item){
-					case 'topOver':
-						me.property('include_image_caption', [1]);
-						me.property('caption_position', 'over_image');
-						me.property('caption_alignment', 'top');
-						break;
-					case 'bottomOver':
-						me.property('include_image_caption', [1]);
-						me.property('caption_position', 'over_image');
-						me.property('caption_alignment', 'bottom');
-						break;
-					case 'topCover':
-						me.property('include_image_caption', [1]);
-						me.property('caption_position', 'over_image');
-						me.property('caption_alignment', 'fill');
-						break;
-					case 'middleCover':
-						me.property('include_image_caption', [1]);
-						me.property('caption_position', 'over_image');
-						me.property('caption_alignment', 'fill_middle');
-						break;
-					case 'bottomCover':
-						me.property('include_image_caption', [1]);
-						me.property('caption_position', 'over_image');
-						me.property('caption_alignment', 'fill_bottom');
-						break;
-					case 'below':
-						me.property('include_image_caption', [1]);
-						me.property('caption_position', 'below_image');
-						me.property('caption_alignment', false);
-						break;
-					case 'nocaption':
-						me.property('include_image_caption', false);
-						me.property('caption_position', false);
-						me.property('caption_alignment', false);
-				}
+				me.property('display_caption', item);
 				me.render();
 			});
 
@@ -252,9 +204,7 @@ define([
 				linkPanel;
 
 			control.view = linkPanel = new Upfront.Views.Editor.LinkPanel({
-				linkType: this.property('when_clicked'),
-				linkUrl: this.property('image_link'),
-				linkTarget: this.property('link_target'),
+				model: this.link,
 				linkTypes: { image: true },
 				imageUrl: this.property('srcFull')
 			});
@@ -264,6 +214,7 @@ define([
 					linkPanel.createLightBox();
 				}
 				control.close();
+				this.render();
 			});
 
 			this.listenTo(control, 'panel:open', function() {
@@ -278,25 +229,11 @@ define([
 				me.$el.closest('.ui-draggable').draggable('enable');
 			});
 
-			me.listenTo(linkPanel, 'change', me.updateLink);
-			me.listenTo(linkPanel, 'change:target', function(data) {
-				me.property('link_target', data.target);
-				me.$el.find('a').attr('target', data.target);
-			});
-
 			control.icon = 'link';
 			control.tooltip = l10n.ctrl.image_link;
 			control.id = 'link';
 
 			return control;
-		},
-
-		updateLink: function(data) {
-			this.property('when_clicked', data.type);
-			this.property('image_link', data.url);
-			this.property('link_target', data.target);
-
-			this.render();
 		},
 
 		postTypes: function(){
@@ -456,23 +393,24 @@ define([
 				img;
 
 			this.setupBySize();
-			
+
 			if(!this.temporaryProps || !this.temporaryProps.size) {
 				this.temporaryProps = {
 					size: props.size,
 					position: props.position
 				};
 			}
-			
+
 			var props = this.extract_properties();
-		
+
 			props.properties = this.get_preset_properties();
-			
+
 			props.url = this.property('when_clicked') ? this.property('image_link') : false;
+			props.url = this.link.get('type') !== 'unlink' ? this.link.get('url') : false;
+			props.link_target = this.link.get('target');
 			props.size = this.temporaryProps.size;
 			props.position = this.temporaryProps.position;
 			props.marginTop = Math.max(0, -props.position.top);
-			props.link_target = props.link_target || '_self';
 
 			props.in_editor = true;
 
@@ -483,6 +421,10 @@ define([
 			} else {
 				props.imgWidth = props.size.width + 'px';
 			}
+
+			props.containerWidth = Math.min(props.size.width, elementSize.width);
+
+			props.display_caption = this.property('display_caption') ? this.property('display_caption') : 'showCaption';
 
 			//Gif image handled as normal ones in the backend
 			props.gifImage = '';
@@ -512,11 +454,12 @@ define([
 				size = props.size;
 				img = render.find('img');
 				props = this.temporaryProps;
-				
+
 				var newElementSize = this.update_style();
-			
+
 				if(newElementSize) {
 					elementSize = newElementSize;
+					size = this.temporaryProps.size;
 				}
 
 				// Let's load the full image to improve resizing
@@ -545,23 +488,52 @@ define([
 
 			return rendered;
 		},
-		
+
+		getElementShapeSize: function (elementSize) {
+			var $container = this.$el.find('.upfront-image-container'),
+				props = this.get_preset_properties(),
+				newSize = {};
+
+			if (props.imagestyle === "square") {
+				newSize.height = elementSize.width;
+				newSize.width = elementSize.width;
+
+				if (elementSize.width !== elementSize.height) {
+					// Keep old height in case style switches to default
+					newSize.defaultHeight = elementSize.height;
+				} else if (elementSize.defaultHeight) {
+					newSize.defaultHeight = elementSize.defaultHeight;
+				}
+
+				return newSize;
+			} else {
+				if (elementSize.defaultHeight) {
+					newSize = {
+						width: elementSize.width,
+						height: elementSize.defaultHeight
+					};
+					return newSize;
+				}
+			}
+
+			return false;
+		},
+
 		update_style: function() {
 			var elementSize = this.property('element_size'),
-				$container = this.$el.find('.upfront-image-container'),
-				props = this.get_preset_properties();
-			
-			if(props.imagestyle === "square") {
-				elementSize = {
-					height: elementSize.width,
-					width: elementSize.width
-				};
-				
-				this.property('element_size', elementSize);
-				
-				return elementSize;
+				newSize = this.getElementShapeSize(elementSize)
+			;
+
+			if ( false !== newSize ) {
+				if ( elementSize.width != newSize.width || elementSize.height != newSize.height ) {
+					if ( ! this.resizeImage(newSize) ) {
+						// Can't resize? At least set the element_size
+						this.property('element_size', newSize);
+					}
+				}
+				return newSize;
 			}
-			
+
 			return false;
 		},
 
@@ -584,11 +556,11 @@ define([
 			}
 
 			var newElementSize = this.update_style();
-			
+
 			if(newElementSize) {
 				elementSize = newElementSize;
 			}
-			
+
 			if (this.isThemeImage() && !Upfront.themeExporter) {
 				this.$el.addClass('image-from-theme');
 				this.$el.find('b.upfront-entity_meta').after('<div class="swap-image-overlay"><p class="upfront-icon upfront-icon-swap-image"><span>Click to </span>Swap Image</p></div>');
@@ -609,7 +581,7 @@ define([
 				}
 				return;
 			}
-			
+
 			if (this.property('quick_swap')) { // Do not show image controls for swappable images.
 				return false;
 			}
@@ -757,7 +729,7 @@ define([
 				.find('img')
 					.css({
 						position: 'static',
-						width: '100%',
+						maxWidth: '100%',
 						height: 'auto'
 					})
 					.attr('src', this.property('src'))
@@ -837,13 +809,18 @@ define([
 				img = resizingData.img,
 				captionHeight = this.property('caption_position') === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
 				padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding),
-				ratio;
+				ratio,
+				newSize;
 
 			if(!resizer){
 				resizer = $('html').find('.upfront-resize');
 				resizingData.resizer = resizer;
 			}
 			data.elementSize = {width: resizer.width() - (2 * padding), height: resizer.height() - (2 * padding) - captionHeight};
+			newSize = this.getElementShapeSize(data.elementSize);
+			if ( false !== newSize ) {
+				data.elementSize = newSize;
+			}
 
 			this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
 					width: data.elementSize.width,
@@ -1106,6 +1083,62 @@ define([
 			}
 		},
 
+		resizeImage: function (size) {
+			var img = this.$('img'),
+				data,
+				imgSize,
+				imgPosition
+			;
+
+			if ( img.length > 0 ) {
+				data = {
+					position: this.property('position'),
+					size: this.property('size'),
+					stretch: this.property('stretch'),
+					vstretch: this.property('vstretch'),
+					elementSize: size
+				};
+
+				if(data.stretch && !data.vstretch){
+					this.resizingH(img, data, true);
+					this.resizingV(img, data);
+				} else if(!data.stretch && data.vstretch){
+					this.resizingV(img, data, true);
+					this.resizingH(img, data);
+				} else {
+					//Both stretching or not stretching, calculate ratio difference
+					ratio = data.size.width / data.size.height - data.elementSize.width / data.elementSize.height;
+
+					//Depending on the difference of ratio, the resizing is made horizontally or vertically
+					if(ratio > 0 && data.stretch || ratio < 0 && ! data.stretch){
+						this.resizingV(img, data, true);
+						this.resizingH(img, data);
+					}
+					else {
+						this.resizingH(img, data, true);
+						this.resizingV(img, data);
+					}
+				}
+
+				imgSize = {width: img.width(), height: img.height()};
+				imgPosition = img.position();
+
+				// Change the sign
+				imgPosition.top = -imgPosition.top;
+				imgPosition.left = -imgPosition.left;
+
+				this.temporaryProps = {
+					size: imgSize,
+					position: imgPosition
+				};
+				console.log(img, imgSize, imgPosition, data);
+				this.property('element_size', size);
+				this.saveTemporaryResizing();
+				return true;
+			}
+			return false;
+		},
+
 		setElementSize: function(ui) {
 			var me = this,
 				parent = this.parent_module_view.$('.upfront-editable_entity:first'),
@@ -1284,14 +1317,28 @@ define([
 			;
 		},
 
+		handleLinkClick: function(event){
+			var lightboxName;
+
+
+			if (this.link.get('type') !== 'lightbox') {
+				return;
+			}
+
+			event.preventDefault();
+
+			lightboxName = this.link.get('url').substring(1);
+			Upfront.Application.LayoutEditor.openLightboxRegion(lightboxName);
+		},
+
 		cleanup: function(){
-			//the default images on a new theme installation do not have controlls created, so putting a check here.
+			// The default images on a new theme installation do not have controlls created, so putting a check here.
 			if(this.controls)
 				this.controls.remove();
 			// if(this.bodyEventHandlers){
-			// 	_.each(this.bodyEventHandlers, function(f, ev){
-			// 		$('body').off(ev, f);
-			// 	});
+			//  _.each(this.bodyEventHandlers, function(f, ev){
+			//    $('body').off(ev, f);
+			//  });
 			// }
 		},
 

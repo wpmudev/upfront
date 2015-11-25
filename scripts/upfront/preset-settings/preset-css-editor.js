@@ -51,14 +51,13 @@ define([
 		initialize: function(options) {
 			var me = this,
 				deferred = $.Deferred(),
-				style_selector,
-				$style;
+				style_selector;
 
 			this.options = options || {};
 			this.model = options.model;
 			this.sidebar = ( options.sidebar !== false );
 			this.global = ( options.global === true );
-			
+
 			this.prepareAce = deferred.promise();
 			require(['//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'], function(){
 				deferred.resolve();
@@ -68,24 +67,29 @@ define([
 				me.$el.width($(window).width() - $('#sidebar-ui').width() -1);
 			};
 
+			//Destroy editor when Cancel or Save button is clicked
+			Upfront.Events.on('element:settings:saved', this.close, this);
+			Upfront.Events.on('element:settings:canceled', this.close, this);
+
 			$(window).on('resize', this.resizeHandler);
-			
+
 			this.modelType = this.options.model.get_property_value_by_name('type');
 			this.elementType = this.elementTypes[this.modelType] || {label: 'Unknown', id: 'unknown'};
 
-			style_selector = this.elementType.id + '-' +this.options.preset.get('id') + '-breakpoint-style';
-			$style = $('#' + style_selector);
-			if ($style.length === 0) {
-				this.$style = $('<style id="' + style_selector + '"></style>');
-				$('body').append(this.$style);
-			} else {
-				this.$style = $style
-			}
-			
+			style_selector = this.options.preset.get('id');
+			// DO NOT DO THIS!!! DELEGATE STYLE RENDERING TO PRESET (look at preset-css module
+			// $style = $('#' + style_selector);
+			// if ($style.length === 0) {
+				// this.$style = $('<style id="' + style_selector + '"></style>');
+				// $('body').append(this.$style);
+			// } else {
+				// this.$style = $style;
+			// }
+
 			this.createSelectors(Upfront.Application.LayoutEditor.Objects);
-			
+
 			this.selectors = this.elementSelectors[this.modelType] || {};
-			
+
 			this.element_id = options.element_id ? options.element_id : this.model.get_property_value_by_name('element_id');
 
 			if ( typeof options.change == 'function' ) this.listenTo(this, 'change', options.change);
@@ -120,7 +124,8 @@ define([
 				name: this.stylename,
 				elementType: this.elementType.label,
 				selectors: this.selectors,
-				show_style_name: false
+				show_style_name: false,
+				showToolbar: true
 			}));
 
 			this.resizeHandler('.');
@@ -156,23 +161,34 @@ define([
 				if(typeof me.elementType.preset_container === "undefined") {
 					preset_class = preset_class + ' ';
 				}
-				
+
 				rules = _.map(rules, function(rule){return $.trim(rule);});
 				rules.pop();
-				
-				styles_with_selector = me.stylesAddSelector($.trim(editor.getValue()), me.get_css_selector());
 
-				me.$style.html(styles_with_selector);
+				styles_with_selector = me.stylesAddSelector($.trim(editor.getValue()), '#page ' + me.get_css_selector());
+				// Solve case of button loosing its styles
+				styles_with_selector = Upfront.Util.colors.convert_string_ufc_to_color(styles_with_selector.replace(new RegExp(me.get_css_selector() + ' .upfront-button', 'g'), me.get_css_selector() + '.upfront-button'));
+
+				// DO NOT DO THIS!!! DELEGATE STYLE RENDERING TO PRESET (look at preset-css module
+				// me.$style.html(styles_with_selector);
 				me.trigger('change', styles_with_selector);
 			});
-			
+
 
 			var styles = this.options.preset.get('preset_style') ? this.options.preset.get('preset_style') : '';
-			
+
 			scope = new RegExp(this.get_css_selector() + '\\s*', 'g');
+			styles = styles.replace(new RegExp('#page ' + this.get_css_selector() + '\\s*', 'g'), '');
 			styles = styles.replace(scope, '');
-			
-			styles = Upfront.Util.colors.convert_string_color_to_ufc(styles);
+			// Unescape quotes a few times
+			styles = styles.replace(/\\'/g, "'");
+			styles = styles.replace(/\\'/g, "'");
+			styles = styles.replace(/\\'/g, "'");
+			styles = styles.replace(/\\"/g, '"');
+			styles = styles.replace(/\\"/g, '"');
+			styles = styles.replace(/\\"/g, '"');
+
+			styles = Upfront.Util.colors.convert_string_color_to_ufc(styles.replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
 			editor.setValue($.trim(styles), -1);
 
 			// Set up the proper vscroller width to go along with new change.
@@ -231,9 +247,10 @@ define([
 			// Save the fetching inside the resize
 			var me = this,
 				$cssbody = me.$('.upfront-css-body'),
-				topHeight = me.$('.upfront-css-top').outerHeight(),
+				topHeight = 0,
 				$selectors = me.$('.upfront-css-selectors'),
 				$saveform = me.$('.upfront-css-save-form'),
+				$rsz = this.$('.upfront-css-resizable'),
 				onResize = function(e, ui){
 					var height = ui ? ui.size.height : me.$('.upfront-css-resizable').height(),
 						bodyHeight = height  - topHeight;
@@ -241,11 +258,24 @@ define([
 					if(me.editor)
 						me.editor.resize();
 					$selectors.height(bodyHeight - $saveform.outerHeight());
+					// Clean unneeded CSS
+					$rsz.css({
+						width: "",
+						height: "",
+						left: "",
+						top: ""
+					});
 					$('#page').css('padding-bottom', height);
 				}
 			;
+			// Add appropriate handle classes
+			$rsz.find(".upfront-css-top")
+				.removeClass("ui-resizable-handle").addClass("ui-resizable-handle")
+				.removeClass("ui-resizable-n").addClass("ui-resizable-n")
+			;
+			topHeight = me.$('.upfront-css-top').outerHeight();
 			onResize();
-			this.$('.upfront-css-resizable').resizable({
+			$rsz.resizable({
 				handles: {n: '.upfront-css-top'},
 				resize: onResize,
 				minHeight: 200,
@@ -290,11 +320,11 @@ define([
 			});
 		},
 		startInsertFontWidget: function() {
-			var insertFontWidget = new Preset_Insert_Font_Widget({ 
+			var insertFontWidget = new Preset_Insert_Font_Widget({
 				editor: this.editor,
 				collection: Upfront.Views.Editor.Fonts.theme_fonts_collection
 			});
-			
+
 			$('#insert-font-widget').html(insertFontWidget.render().el);
 		},
 		scrollToElement: function(){
@@ -308,33 +338,25 @@ define([
 			this.blink($element, 4);
 		},
 		hiliteElement: function(e){
-			var preset_selector = this.get_css_selector();
+			var preset_selector = this.get_css_selector() + ' ';
 
-			if(typeof this.elementType.preset_container === "undefined") {
-				preset_selector = preset_selector + ' ';
-			}
-			
 			var selector = preset_selector + $(e.target).data('selector');
-			
+
 			if(!selector.length)
 				return;
-			var element = $('#' + this.element_id);
-			element.find(selector).addClass('upfront-css-hilite');
+			var element = $('#' + this.element_id + selector);
+			element.addClass('upfront-css-hilite');
 		},
 
 		unhiliteElement: function(e){
-			var preset_selector = this.get_css_selector();
+			var preset_selector = this.get_css_selector() + ' ';
 
-			if(typeof this.elementType.preset_container === "undefined") {
-				preset_selector = preset_selector + ' ';
-			}
-			
 			var selector = preset_selector + $(e.target).data('selector');
-			
+
 			if(!selector.length)
 				return;
-			var element = $('#' + this.element_id);
-			element.find(selector).removeClass('upfront-css-hilite');
+			var element = $('#' + this.element_id + selector);
+			element.removeClass('upfront-css-hilite');
 		},
 		addSelector: function(e) {
 			var selector = $(e.target).data('selector');
@@ -343,7 +365,7 @@ define([
 		},
 		get_css_selector: function() {
 			if (this.is_global_stylesheet) return '';
-			return '.' + this.elementType.id + '-preset-' + this.options.preset.get('id');
+			return '.' + this.options.preset.get('id');
 		},
 		updateStyles: function(contents){
 			var $el = this.get_style_element();
@@ -351,8 +373,8 @@ define([
 			contents = Upfront.Util.colors.convert_string_ufc_to_color( contents);
 			$el.html(
 				this.stylesAddSelector(
-					contents, (this.is_default_style ? '' : this.get_css_selector())
-				)
+					contents, (this.is_default_style ? '' : '#page ' + this.get_css_selector())
+					).replace(/#page/g, 'div#page.upfront-layout-view .upfront-editable_entity.upfront-module')
 			);
 			this.trigger('updateStyles', this.element_id);
 		},
@@ -427,28 +449,16 @@ define([
 			if(!styles)
 				return Upfront.Views.Editor.notify(l10n.style_empty_nag, 'error');
 
-			styles = this.stylesAddSelector(styles, (this.is_default_style ? '' : this.get_css_selector()));
-			data = {
-				styles: styles,
-				elementType: this.elementType.id,
-				global: this.global
-			};
-
-			this.options.preset.set('preset_style', data.styles);
-			
-			this.trigger('upfront:presets:update', this.options.preset.toJSON());
-
 			return Upfront.Views.Editor.notify(l10n.preset_style_saved.replace(/%s/,  this.elementType.id));
-
 		},
 	});
-	
+
 	var Preset_Insert_Font_Widget = Backbone.View.extend({
 		initialize: function(options) {
 			var me = this;
-			
+
 			this.editor = options.editor;
-			
+
 			this.fields = [
 				new Upfront.Views.Editor.Field.Typeface_Chosen_Select({
 					label: '',
@@ -585,7 +595,7 @@ define([
 			$('#insert-font-widget').html('<a class="upfront-css-font" href="#">' + l10n.insert_font + '</a>').removeClass('open');
 		}
 	});
-	
+
 	return PresetCSSEditor;
 });
 })(jQuery);

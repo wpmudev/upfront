@@ -84,7 +84,10 @@ define([
 										name: 'bgcolor',
 										label: l10n.settings.button_bg_label
 									},
-								]
+								],
+								fields: {
+									use: 'usebgcolor'
+								}
 							}
 						},
 						{
@@ -201,6 +204,19 @@ define([
 									width: 'hov_borderwidth',
 									type: 'hov_bordertype',
 									color: 'hov_bordercolor',
+								}
+							}
+						},
+						{
+							moduleType: 'HovAnimation',
+							options: {
+								state: 'hover',
+								title: '',
+								toggle: true,
+								fields: {
+									use: 'hov_use_animation',
+									duration: 'hov_duration',
+									easing: 'hov_transition',
 								}
 							}
 						}

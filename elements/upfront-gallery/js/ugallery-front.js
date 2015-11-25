@@ -124,8 +124,20 @@ jQuery(function($){
 		Upfront.frontFunctions.galleryBindShuffle = bindShuffle;
 	});
 
+	/** 
+		The following is being done so that the gallery 
+		items inside a lightbox can shuffle after 
+		the lightbox shows up, in order to expand 
+		around in the available space
+	**/
+	$(document).on('upfront-lightbox-open', function() {
+		setTimeout(function(){
+			$(window).trigger('resize');
+		}, 300);
+	});
+
 	if (typeof ugalleries !== 'undefined') {
-		var titleSrc = function(item){
+		var titleSrc = function(item) {
 			var itemId = item.el.closest('.ugallery_item').attr('rel'),
 				text = gallery.find('.ugallery_lb_text[rel=' + itemId + ']')
 			;
@@ -148,7 +160,7 @@ jQuery(function($){
 		};
 
 		/**
-		 * re-Resize Magnific Popup 100ms after MFP open (iPhone issue) 
+		 * re-Resize Magnific Popup 100ms after MFP open (iPhone issue)
 		 */
 		var resizeMFP = function() {
 			if(/i(Pad|Phone|Pod)/g.test(navigator.userAgent))
@@ -157,7 +169,35 @@ jQuery(function($){
 				}, 500);
 		};
 
-		var gallery, magOptions;
+		var setupLightbox = function(galleryId) {
+			var data = $('#' + galleryId).find('.ugallery').data();
+			var containerClass ='gallery-' + galleryId + '-lightbox';
+
+			if (data.lightboxShowClose === true) {
+				$('.mfp-close').show();
+			} else {
+				$('.mfp-close').hide();
+			}
+
+			if (data.lightboxShowImageCount === true) {
+				$('.mfp-counter').show();
+			} else {
+				$('.mfp-counter').hide();
+			}
+
+			$('.mfp-content').css('background', data.lightboxActiveAreaBg);
+			$('.mfp-bg').css('background', data.lightboxOverlayBg);
+
+			$('.mfp-wrap, .mfp-bg').addClass(containerClass);
+
+			if ($('style#' + containerClass).length === 0) {
+				$('body').append('<style id="' + containerClass + '"></style>');
+			}
+			$('style#' + containerClass).html(data.styles);
+		};
+
+		var markup, gallery, magOptions;
+		markup = '<div class="mfp-close">&times;</div><div class="glb-content-container"><figure class="glb-image-container"><div class="mfp-img"></div></figure><div class="glb-caption-container"><div class="mfp-title"></div><div class="mfp-counter"></div></div></div>';
 		for (var galleryId in ugalleries) {
 			gallery = false;
 			magOptions = ugalleries[galleryId].magnific;
@@ -169,11 +209,19 @@ jQuery(function($){
 				});
 				if (ugalleries[galleryId].useLightbox) {
 					magOptions.image = {
-						titleSrc: titleSrc
+						titleSrc: titleSrc,
+						markup: markup
 					};
 				}
 
-				magOptions.callbacks = {resize: resizeWithText, afterChange: resizeWithText, open: resizeMFP};
+				magOptions.callbacks = {
+					resize: resizeWithText,
+					afterChange: resizeWithText,
+					open: function() {
+						setupLightbox(galleryId);
+						resizeMFP();
+					}
+				};
 				gallery.magnificPopup(magOptions);
 			} else {
 				gallery = $('#' + galleryId).find('.ugallery_lightbox_link');
@@ -190,7 +238,14 @@ jQuery(function($){
 						titleSrc: 'title',
 						verticalFit: true
 					},
-					callbacks: {resize: resizeWithText, afterChange: resizeWithText, open: resizeMFP}
+					callbacks: {
+						resize: resizeWithText,
+						afterChange: resizeWithText,
+						open: function() {
+							setupLightbox(galleryId);
+							resizeMFP();
+						}
+					}
 				};
 				gallery.magnificPopup(magOptions);
 			}

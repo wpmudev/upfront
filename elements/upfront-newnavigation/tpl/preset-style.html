@@ -1,4 +1,4 @@
-div.nav-preset-<?php echo $properties['id'] ?> ul.menu {
+div.<?php echo $properties['id'] ?> ul.menu {
 	<?php if(!empty($properties['static-nav-bg'])) { ?>
 	background: <?php echo $properties['static-nav-bg'] ?>;
 	<?php } ?>
@@ -7,7 +7,7 @@ div.nav-preset-<?php echo $properties['id'] ?> ul.menu {
 	<?php } ?>
 }
 
-div.nav-preset-<?php echo $properties['id'] ?> ul.menu > li.menu-item > a {
+div.<?php echo $properties['id'] ?> ul.menu > li.menu-item > a {
 	<?php if(!empty($properties['static-font-color'])) { ?>color: <?php echo $properties['static-font-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['static-font-family'])) { ?>font-family: <?php echo $properties['static-font-family']  ?>; <?php } ?>
 	<?php if(!empty($properties['static-font-size'])) { ?>font-size: <?php echo $properties['static-font-size']  ?>px; <?php } ?>
@@ -16,7 +16,7 @@ div.nav-preset-<?php echo $properties['id'] ?> ul.menu > li.menu-item > a {
 	<?php if(!empty($properties['static-line-height'])) { ?>line-height: <?php echo $properties['static-line-height']  ?>;<?php } ?>
 }
 
-div.nav-preset-<?php echo $properties['id'] ?> ul.menu > li.menu-item > a:hover {
+div.<?php echo $properties['id'] ?> ul.menu > li.menu-item > a:hover, div.upfront-navigation.<?php echo $properties['id']  ?>.live-preview-hover ul.menu > li.menu-item > a {
 	<?php if(!empty($properties['hover-use-typography'])) { ?>
 		<?php if(!empty($properties['hover-font-color'])) { ?>color: <?php echo $properties['hover-font-color']  ?>; <?php } ?>
 		<?php if(!empty($properties['hover-font-family'])) { ?>font-family: <?php echo $properties['hover-font-family']  ?>; <?php } ?>
@@ -34,7 +34,7 @@ div.nav-preset-<?php echo $properties['id'] ?> ul.menu > li.menu-item > a:hover 
 	<?php } ?>
 }
 
-div.nav-preset-<?php echo $properties['id'] ?> ul.menu > li.menu-item > a:focus {
+div.<?php echo $properties['id'] ?> ul.menu > li.menu-item > a:focus, div.upfront-navigation.<?php echo $properties['id']  ?>.live-preview-focus ul.menu > li.menu-item > a {
 	<?php if(!empty($properties['focus-use-typography'])) { ?>
 		<?php if(!empty($properties['focus-font-color'])) { ?>color: <?php echo $properties['focus-font-color']  ?>; <?php } ?>
 		<?php if(!empty($properties['focus-font-family'])) { ?>font-family: <?php echo $properties['focus-font-family']  ?>; <?php } ?>
@@ -53,13 +53,13 @@ div.nav-preset-<?php echo $properties['id'] ?> ul.menu > li.menu-item > a:focus 
 }
 
 <?php if(!empty($properties['tablet'])) { ?>
-.tablet-breakpoint div.nav-preset-<?php echo $properties['id'] ?> ul.menu {
+.tablet-breakpoint div.<?php echo $properties['id'] ?> ul.menu {
 	<?php if(!empty($properties['tablet']['menu_alignment'])) { ?>text-align: <?php echo $properties['tablet']['menu_alignment'] ?>!important;<?php } ?>
 }
 <?php } ?>
 
 <?php if(!empty($properties['mobile'])) { ?>
-.mobile-breakpoint div.nav-preset-<?php echo $properties['id'] ?> ul.menu {
+.mobile-breakpoint div.<?php echo $properties['id'] ?> ul.menu {
 	<?php if(!empty($properties['mobile']['menu_alignment'])) { ?>text-align: <?php echo $properties['mobile']['menu_alignment'] ?>!important;<?php } ?>
 }
 <?php } ?>

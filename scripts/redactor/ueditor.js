@@ -50,7 +50,16 @@ $.fn.ueditor = function(options){
 };
 
 var hackRedactor = function(){
+    
+    // These lines override the Redactor's prefFormatting
+    var clean = $.Redactor.prototype.clean();
+    
+    clean.savePreFormatting = function(html) {
+        return html;
+    };
 
+    $.Redactor.prototype.clean = function () { return clean };
+    
 	// Make click consistent
 	$.Redactor.prototype.airBindHide = function () {
 		if (!this.opts.air || !this.$toolbar) return;
@@ -178,6 +187,52 @@ var hackRedactor = function(){
 
 	hackedRedactor = true;
 
+    /**
+     * Overrides Redactor internal methods
+     *
+     * Override redactor methods by adding them in here and then change the body of method
+     *
+     * @type {{inline: {format: Overriden_Methods.inline.format}}}
+     */
+    var Overriden_Methods = {
+        inline: {
+            format: function(tag, type, value)
+            {
+                // Stop formatting pre and headers
+                //if (this.utils.isCurrentOrParent('PRE') || this.utils.isCurrentOrParentHeader()) return;
+
+                var tags = ['b', 'bold', 'i', 'italic', 'underline', 'strikethrough', 'deleted', 'superscript', 'subscript'];
+                var replaced = ['strong', 'strong', 'em', 'em', 'u', 'del', 'del', 'sup', 'sub'];
+
+                for (var i = 0; i < tags.length; i++)
+                {
+                    if (tag == tags[i]) tag = replaced[i];
+                }
+
+                this.inline.type = type || false;
+                this.inline.value = value || false;
+
+                this.buffer.set();
+
+                if (!this.utils.browser('msie'))
+                {
+                    this.$editor.focus();
+                }
+
+                this.selection.get();
+
+                if (this.range.collapsed)
+                {
+                    this.inline.formatCollapsed(tag);
+                }
+                else
+                {
+                    this.inline.formatMultiple(tag);
+                }
+            }
+        }
+    };
+
 	$.Redactor.prototype.events = UeditorEvents;
 
 	// This method is only triggered via keyboard shortcuts, so override this
@@ -190,6 +245,7 @@ var hackRedactor = function(){
 	$.Redactor.prototype.placeholderStart = function (html) {
 		console.log('do nothing');
 	};
+
 	$.Redactor.prototype.button = function() {
 		return {
             build: function(btnName, btnObject)
@@ -394,7 +450,30 @@ var hackRedactor = function(){
                 this.button.get(key).remove();
             }
         };
-	}
+	};
+
+
+    $.Redactor.prototype.bindModuleMethods =  function(module)
+    {
+
+        if (typeof this[module] == 'undefined') return;
+
+        // init module
+        this[module] = this[module]();
+
+        var methods = this.getModuleMethods(this[module]);
+        var len = methods.length;
+
+        // bind methods
+        for (var z = 0; z < len; z++)
+        {
+            var method = this[module][methods[z]];
+            if( Overriden_Methods[module] && Overriden_Methods[module][methods[z]] )
+                method =  Overriden_Methods[module][methods[z]];
+
+            this[module][methods[z]] = method.bind(this);
+        }
+    };
 
     var l10n = Upfront.Settings && Upfront.Settings.l10n
         ? Upfront.Settings.l10n.global.ueditor
@@ -408,8 +487,9 @@ var hackRedactor = function(){
      */
     $.Redactor.opts.langs['upfront'] = $.extend({}, $.Redactor.opts.langs['en'], {
         bold: l10n.bold,
-        italic: l10n.italic,
+        italic: l10n.italic
     });
+
 
 };
 
@@ -456,6 +536,7 @@ var Ueditor = function($el, options) {
             //cleanStyleOnEnter: false,
             //removeDataAttr: false,
             removeEmpty: false,
+            imageResizable: false,
             lang: 'upfront' // <-- This is IMPORTANT. See the l10n proxying bit in `hackRedactor`
 		}, options)
 	;
@@ -651,6 +732,16 @@ Ueditor.prototype = {
 
 		this.active = true;
 
+        this.$el.on('keyup', function(e) {
+            /**
+             * Make sure return doesn't delete the last charactor
+             */
+            if (13 === e.keyCode ) {
+                self.redactor.utils.removeEmpty();
+                $(self.redactor.selection.getCurrent()).append("&nbsp;")
+            }
+        });
+
 	},
 	stopOnEscape: function(e) {
 			if(e.keyCode === 27 && !( $(".upfront-content-marker-contents").length && $(".upfront-content-marker-contents").data("ueditor") ) ){
@@ -661,7 +752,7 @@ Ueditor.prototype = {
     /**
      * Expand the known text patterns in current block element
      */
-    expand_known_text_patterns: function () {
+    expand_known_text_patterns: function (e) {
         var redactor = this.redactor,
             rpl = {
                 '##': {tag: 'h2'},
@@ -709,25 +800,32 @@ Ueditor.prototype = {
             // Replace the selection tag with the one from the replacement map
             if ("nest" in target && target.nest) {
                 $node.html(
-                    '<div><' + target.tag + '><' + target.nest + '>' + 
+                    '<' + target.tag + '><' + target.nest + '>' +
                         text + 
-                    '</' + target.nest + '></' + target.tag + '></div>'
+                    '</' + target.nest + '></' + target.tag + '>'
                 );
             } else {
-                $node.html(
-                    '<div><' + target.tag + '>' + 
-                        text + 
-                    '</' + target.tag + '></div>'
-                );
+                var _node = document.createElement(target.tag);
+                _node.innerHTML = text;
+                $node.replaceWith( _node );
+
             }
 
             // Set caret position to end of the target
             redactor.caret.setEnd(
                 "nest" in target && target.nest
                     ? $node.find(target.nest).last().get()
-                    : $node.find(target.tag).get()
+                    : _node
             );
+
             redactor.code.sync();
+            /**
+             * Make sure the created node doesn't contain the space created by the spacebar!
+             */
+            _.delay( function(){
+               $(redactor.selection.getBlock()).html(text);
+            }, 3 );
+
 
             return false;
         });
@@ -755,6 +853,7 @@ Ueditor.prototype = {
 
 		me.$el.addClass('ueditable-inactive')
 			.attr('title', 'Double click to edit the text')
+            .addClass('uf-click-to-edit-text')
 			.one('dblclick', function(e){
 				e.preventDefault();
 				e.stopPropagation();
@@ -1039,9 +1138,11 @@ Ueditor.prototype = {
 		});
 
 		$(document).one('mouseup', function(e){
-
+            if(!me.redactor)
+                return;
 			//var is_selection = ((Math.abs(e.pageX-me.lastmousedown.x) + Math.abs(e.pageY-me.lastmousedown.y)) > 2);
             var is_selection = !!me.redactor.selection.getText();
+
 			if((is_selection || me.clickcount > 1) && me.redactor && me.redactor.waitForMouseUp && me.redactor.selection.getText()){
 				me.redactor.airShow(e);
 				me.redactor.$element.trigger('mouseup.redactor');
@@ -1144,12 +1245,30 @@ var InsertManagerInserts = Backbone.View.extend({
             self = this
             ;
 
-        insert.start( this.$el )
-            .done(function(popup, results){
+        /**
+         * Todo Sam: remove __insert and try to find why sometimes insert doesn't get found inside the done event
+         */
+        this.__insert = insert;
+        insert.start( this.$el, this.redactor.$editor )
+            .done(function(args, resolved_insert){
 
-                if(!results) //Had to uncomment this because if we let it through with blank result, it inserts an empty wrapper which blocks the "inert/embed" button to appear again: Gagan
-                	return;
+                /**
+                 * Allows to get resolved insert from inserts with insert managers
+                 */
+                if(_.isArray(args) ){
+                    var popup = args[0],
+                        results = args[0],
+                        insert = resolved_insert;
+                }else{
+                    var popup = args,
+                        results = resolved_insert,
+                        insert = insert || self.__insert
+                    ;
 
+                }
+
+                // if(!results) Let's allow promises without result for now!
+                //	return;
                 self.inserts[insert.cid] = insert;
                 //Allow to undo
                 //this.trigger('insert:prechange'); // "this" is the embedded image object

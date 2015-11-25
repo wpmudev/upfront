@@ -5,9 +5,10 @@ define([
 	'upfront-data',
 	'elements/upfront-contact-form/js/settings',
 	'text!elements/upfront-contact-form/templates/preset-style.html',
-], function (upfront_data, Settings, settingsStyleTpl) {
-var template = upfront_data.data && upfront_data.data.ucontact && upfront_data.data.ucontact.template
-	? upfront_data.data.ucontact.template
+	'scripts/upfront/preset-settings/util',
+], function (upfront_data, Settings, settingsStyleTpl, PresetUtil) {
+var template = upfront_data.data && upfront_data.data.ucontact && upfront_data.data.ucontact.template ?
+	upfront_data.data.ucontact.template
 	: 'elements/upfront-contact-form/templates/ucontact.html'
 ;
 require(['text!' + template], function(tpl){
@@ -55,7 +56,6 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 		this.delegateEvents();
 
 		this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
-
 	},
 
 	update_colors: function () {
@@ -211,6 +211,8 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 		args.show_subject = args.show_subject && args.show_subject.length;
 		args.show_captcha = args.show_captcha && args.show_captcha.length;
 		args.form_add_title = args.form_add_title && args.form_add_title.length;
+
+		args.l10n = l10n.template;
 
 		return this.tpl(args);
 	},

@@ -366,24 +366,28 @@ var LayoutEditor = {
 	},
 
 	refresh_mergeable: function () {
+		this.remove_selections();
 		$(".ui-selectable").each(function () {
 			$(this).selectable("refresh");
 		});
 	},
 
 	enable_mergeable: function () {
+		this.remove_selections();
 		$(".ui-selectable").each(function () {
 			$(this).selectable("enable");
 		});
 	},
 
 	disable_mergeable: function () {
+		this.remove_selections();
 		$(".ui-selectable").each(function () {
 			$(this).selectable("disable");
 		});
 	},
 
 	destroy_mergeable: function () {
+		this.remove_selections();
 		$(".ui-selectable").each(function () {
 			$(this).selectable("destroy");
 		});
@@ -1139,7 +1143,10 @@ var LayoutEditor = {
 				colors: Upfront.Views.Theme_Colors.colors.toJSON(),
 				range: Upfront.Views.Theme_Colors.range
 			},
-			button_presets: Upfront.Views.Editor.Button.Presets.toJSON(),
+			/*
+			 * Commented, because presets are updated in settings.php on create/edit
+			 * button_presets: Upfront.Views.Editor.Button.Presets.toJSON(),
+			 */
 			post_image_variants: Upfront.Content.ImageVariants.toJSON()
 		};
 
@@ -3159,7 +3166,7 @@ var GridEditor = {
 				drop_change = function () {
 					Upfront.Events.trigger("entity:drag:drop_change", view, view.model);
 				},
-				$insert_rel = drop.type == 'inside' ? drop.insert[1].parent() : drop.insert[1],
+				$insert_rel = ( drop.type == 'inside' && !drop.insert[1].hasClass('upfront-module-group') ) ? drop.insert[1].parent() : drop.insert[1],
 				insert_order = drop.insert[1].data('breakpoint_order') || 0,
 				ani_width = me.width,
 				ani_height = me.height;
@@ -3518,11 +3525,15 @@ var GridEditor = {
 
 					//if ( drop_row >= drop_top+me.row )
 					//	adjust_bottom = true;
-
+				
+					if ( !region ) {
+						region = ed.get_region($('.upfront-region-drag-active'));
+					}
+					var preview_offset = region ? (region.position.left-ed.grid_layout.left)%ed.col_size : 0;
+					preview_offset = preview_offset < Math.round(ed.col_size/2) ? preview_offset : preview_offset - ed.col_size;
 					$('#upfront-drop-preview').css({
 						top: (ed.drop.top+drop_priority_top+drop_top-1) * ed.baseline,
-						left: (ed.drop.left+drop_priority_left+drop_left-1) * ed.col_size + (ed.grid_layout.left-ed.grid_layout.layout_left)//Lightbox region having odd number of cols requires to offset the preview by half of the column width
-						+(ed.lightbox_cols?(ed.lightbox_cols%2)*ed.col_size/2:0),
+						left: (ed.drop.left+drop_priority_left+drop_left-1) * ed.col_size + (ed.grid_layout.left-ed.grid_layout.layout_left) + preview_offset,
 						width: drop_col*ed.col_size,
 						height: height
 					});
@@ -3915,9 +3926,11 @@ var GridEditor = {
 
 					// Add drop animation
 					$me = is_group ? view.$el : view.$el.find('.upfront-editable_entity:first');
-					$me.one('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function(){
+					var ani_event_end = 'animationend.drop_ani webkitAnimationEnd.drop_ani MSAnimationEnd.drop_ani oAnimationEnd.drop_ani';
+					$me.one(ani_event_end, function(){
 						$(this).removeClass('upfront-dropped');
 						Upfront.Events.trigger("entity:drag_animate_stop", view, view.model);
+						$me.off(ani_event_end); // Make sure to remove any remaining unfired event
 					}).addClass('upfront-dropped');
 
 					$container.find('.upfront-module, .upfront-object').css('max-height', '');

@@ -27,10 +27,13 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 		$breakpoint_data = $this->_get_property('breakpoint');
 		$breakpoint_data['preset'] = $preset_props['breakpoint'];
 
+		$menu_style = $this->_get_property('menu_style');
+		$menu_alignment = $this->_get_property('menu_alignment');
+
 		$desktop = $breakpoint_data['desktop'];
 		$desktopPreset = $breakpoint_data['preset']['desktop'];
-		$menu_style = isset($desktopPreset['menu_style']) ? $desktopPreset['menu_style'] :  'horizontal';
-		$menu_alignment = $desktopPreset['menu_alignment'];
+		$menu_style = isset($desktopPreset['menu_style']) ? $desktopPreset['menu_style'] :  $menu_style;
+		$menu_alignment = isset($desktopPreset['menu_alignment']) ? $desktopPreset['menu_alignment'] : $menu_alignment;
 		$sub_navigation = $this->_get_property('allow_sub_nav');
 		$is_floating = $this->_get_property('is_floating');
 
@@ -58,7 +61,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 				'walker' => new upfront_nav_walker(),
 			));
 		} else {
-			return "<div class='nav-preset-{$preset} {$float_class} upfront-navigation' {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . self::_get_l10n('select_menu') . "</div>";
+			return "<div class='{$preset} {$float_class} upfront-navigation' {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . self::_get_l10n('select_menu') . "</div>";
 		}
 
 		return "<div class='nav-preset-{$preset} {$float_class} upfront-navigation' {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . $menu . "</div>";
@@ -513,9 +516,7 @@ Upfront_newMenuSetting::serve();
 
 class upfront_nav_walker extends Walker_Nav_Menu
 {
-
-
-    public function start_el( &$output, $item, $depth = 0, $args = array(), $id = 0 ) {
+	public function start_el( &$output, $item, $depth = 0, $args = array(), $id = 0 ) {
 		$indent = ( $depth ) ? str_repeat( "\t", $depth ) : '';
 
 		$classes = empty( $item->classes ) ? array() : (array) $item->classes;
@@ -526,11 +527,11 @@ class upfront_nav_walker extends Walker_Nav_Menu
 
 		//this code is why all this function has been overriden, this one checks if the link is anchor and removes the current-menu-item class
 		if(strpos($item->url, '#')) {
-           	foreach($classes as $index => $class_item) {
-           		if($class_item == 'current-menu-item')
-           			unset($classes[$index]);
-           	}
-        }
+			foreach($classes as $index => $class_item) {
+				if($class_item == 'current-menu-item')
+					unset($classes[$index]);
+			}
+		}
 
 		$classes[] = 'menu-item-' . $item->ID;
 		$classes[] = 'menu-item-depth-' . $depth;
@@ -602,7 +603,7 @@ class upfront_nav_walker extends Walker_Nav_Menu
 		$item_output = $args->before;
 		$item_output .= '<a'. $attributes .'>';
 		/** This filter is documented in wp-includes/post-template.php */
-		$item_output .= $args->link_before . apply_filters( 'the_title', $item->title, $item->ID ) . $args->link_after;
+		$item_output .= $args->link_before . apply_filters( 'the_title', $item->title, $item->ID, true ) . $args->link_after;
 		$item_output .= '</a>';
 		$item_output .= $args->after;
 

@@ -812,7 +812,7 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 		this.regionContainerView.max_col = max_col;
 		this.regionContainerView.$layout.addClass(grid.class + max_col);
 		this.regionView.update();
-		
+
 		if(!this.postRegionClass) {
 			this.postRegionClass = this.regionContainer.attr('class');
 		}
@@ -1119,7 +1119,7 @@ var Application = new (Backbone.Router.extend({
 	ThemeEditor: ThemeEditor,
 	PostLayoutEditor: PostLayoutEditor,
 	PostContentEditor: PostContentEditor,
-    ResponsiveEditor: ResponsiveEditor,
+	ResponsiveEditor: ResponsiveEditor,
 
 	actions: {
 		"save": "upfront_save_layout",
@@ -1139,27 +1139,27 @@ var Application = new (Backbone.Router.extend({
 		THEME: "theme",
 		POST: 'post layout',
 		POSTCONTENT: "post content",
-        RESPONSIVE: "responsive"
-    },
+		RESPONSIVE: "responsive"
+	},
 
 	mode: {
 		last: false,
 		current: false
 	},
-    set_post_content_style: function(mode){
-        var mode = typeof mode === "undefined" ? true : mode;
-        this.MODE.POSTCONTENT_STYLE = mode;
-        return true;
-    },
-    is_post_content_style: function(){
-      return this.MODE.POSTCONTENT_STYLE;
-    },
-    is_builder: function(){
-        return this.mode.current === this.MODE.THEME || this.mode.last === this.MODE.THEME;
-    },
-    is_editor: function(){
-        return !this.is_builder();
-    },
+	set_post_content_style: function(mode){
+		mode = typeof mode === "undefined" ? true : mode;
+		this.MODE.POSTCONTENT_STYLE = mode;
+		return true;
+	},
+	is_post_content_style: function(){
+		return this.MODE.POSTCONTENT_STYLE;
+	},
+	is_builder: function(){
+		return this.mode.current === this.MODE.THEME || this.mode.last === this.MODE.THEME;
+	},
+	is_editor: function(){
+		return !this.is_builder();
+	},
 	urlCache: {},
 
 	current_subapplication: false,
@@ -1175,21 +1175,6 @@ var Application = new (Backbone.Router.extend({
 			//$(".upfront-editable_trigger").hide();
 			//app.go("layout");
 
-			// Main stylesheet needs to be loaded without element styles
-			// which will be edited in upfront.
-			Upfront.Util.post({
-				action: 'upfront_load_styles',
-				layout: {
-					item: 'archive-home',
-					type: 'archive'
-				},
-				base_only: true // flag for w/o element styles
-			})
-				.success(function(response) {
-					// Switch styles
-					$('#upfront-main-css').after('<style id="upfront-main-base-css">' + response.data.styles + '</style>');
-					$('#upfront-main-css').remove();
-				});
 			me.start();
 			return false;
 		});
@@ -1197,6 +1182,22 @@ var Application = new (Backbone.Router.extend({
 	},
 
 	start: function (mode) {
+		// Main stylesheet needs to be loaded without element styles
+		// which will be edited in upfront.
+		Upfront.Util.post({
+			action: 'upfront_load_styles',
+			layout: {
+				item: 'archive-home',
+				type: 'archive'
+			},
+			base_only: true // flag for w/o element styles
+		})
+			.success(function(response) {
+				// Switch styles
+				$('#upfront-main-css').after('<style id="upfront-main-base-css">' + response.data.styles + '</style>');
+				$('#upfront-main-css').remove();
+			});
+
 		if (!mode) mode = this.MODE.DEFAULT;
 		if (this.mode.current == mode) return false;
 
@@ -1596,12 +1597,14 @@ var Application = new (Backbone.Router.extend({
 					style = Upfront.Util.colors.convert_string_ufc_to_color(style);
 					Upfront.data.styles[elementType].push(name);
 					var styleNode = $('#'+name);
+					// Increase element style priority over preset styles
+					var styleOutput = style.replace(/#page/g, 'div#page.upfront-layout-view .upfront-editable_entity.upfront-module');
 					if(!styleNode.length){
-						styleNode = $('<style id="' + name + '">' + style + '</style>');
+						styleNode = $('<style id="' + name + '">' + styleOutput + '</style>');
 						$('body').append(styleNode);
 					}
 					else {
-						styleNode.html(style);
+						styleNode.html(styleOutput);
 					}
 				});
 			});
@@ -1639,7 +1642,7 @@ var Application = new (Backbone.Router.extend({
 						"	font-weight: normal;" +
 						"	font-style: normal;" +
 						"}" +
-						".uf_font_icon {" +
+						".uf_font_icon, .uf_font_icon * {" +
 						"	font-family: '" + font.family + "'!important;" +
 						"}";
 
@@ -1670,6 +1673,8 @@ var Application = new (Backbone.Router.extend({
 
 		if (Upfront.Application.current_subapplication.layout && !$('style#layout-style').length) {
 			style = Upfront.Application.current_subapplication.layout.get('properties').findWhere({name: 'layout_style'}) ?  Upfront.Application.current_subapplication.layout.get('properties').findWhere({name: 'layout_style'}).get('value') : "";
+			// Make sure we also properly pre-process the layout styles:
+			if (style && style.length) style = Upfront.Util.colors.convert_string_ufc_to_color(style);
 			$('body').append('<style id="layout-style">' + style + '</style>');
 		}
 	},
@@ -1693,7 +1698,7 @@ var Application = new (Backbone.Router.extend({
 			});
 		});
 	},
-	
+
 	adjust_grid_padding_settings: function(region) {
 		//Handle region top/bottom padding and move grid rulers
 		$region = $(region).parent(),
@@ -1703,7 +1708,7 @@ var Application = new (Backbone.Router.extend({
 		if(padding_top > 0) {
 			$region.find('.upfront-overlay-grid').css("top", padding_top * -1);
 		}
-		
+
 		if(padding_bottom > 0) {
 			$region.find('.upfront-overlay-grid').css("bottom", padding_bottom * -1);
 		}

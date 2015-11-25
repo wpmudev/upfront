@@ -319,8 +319,10 @@ var ContentSettings = PostPartSettings.extend({
 			right = this.$('input[name=padding_right]').val() || 0,
 			_left = left * col_size,
 			_right = right * col_size,
-			$el = $(".upfront-region-postlayouteditor .upfront-output-PostPart_contents"),
-			current_width = _.isUndefined( $el.data("width") ) ?  $el.width() : $el.data("width");
+			$el = $(".upfront-region-postlayouteditor .Postpart_contents"),
+			current_width = _.isUndefined( $el.data("width") ) ?  $el.width() : $el.data("width"),
+			avail_col = 0,
+			changed = false
 			;
 
 		$el.data("width", current_width);
@@ -330,12 +332,22 @@ var ContentSettings = PostPartSettings.extend({
 		 */
 		if( ( current_width - _left - _right ) < ( 10 * col_size ) ){
 			if( input.name === "padding_left" ){
-				input.value = _.isUndefined( $el.css("padding-left") ) ? 15 : parseInt( $el.css("padding-left").replace("px", "") ) / col_size;
+				avail_col = Math.max(0, Math.floor((current_width - _right) / col_size) - 10);
+				input.value = left > avail_col ? avail_col : left;
+				if ( input.value != left) {
+					left = input.value;
+					changed = true;
+				}
 			}
 			if( input.name === "padding_right" ){
-				input.value = _.isUndefined( $el.css("padding-right") ) ? 15 : parseInt( $el.css("padding-right").replace("px", "") ) / col_size;
+				avail_col = Math.max(0, Math.floor((current_width - _left) / col_size) - 10);
+				input.value = right > avail_col ? avail_col : right;
+				if ( input.value != right ) {
+					right = input.value;
+					changed = true;
+				}
 			}
-			return false;
+			if ( !changed ) return false;
 		}
 
 		if(this.for_view)
@@ -591,7 +603,7 @@ var TemplateEditor = Backbone.View.extend({
 
 		editor.detach();
 
-		resizable.html('<div class="upfront-css-top ui-resizable-handle ui-resizable-n"><span class="upfront-css-type">' + this.postPart + ' Part Template</span><a class="upfront-css-close" href="#">close</a></div>');
+		resizable.html('<div class="upfront-css-top"><span class="upfront-css-type">' + this.postPart + ' Part Template</span><a class="upfront-css-close" href="#">close</a></div>');
 		resizable.append('<div class="upfront-css-body"><div class="upfront_code-editor-section upfront_code-markup active"><div class="upfront-css-ace"></div></div><button>' + Upfront.Settings.l10n.global.content.save + '</button></div>');
 
 		this.resizeHandler = this.resizeHandler || function(){

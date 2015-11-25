@@ -404,9 +404,11 @@
 	font-size: 13px;
     max-width: 122px;
     line-height: 27px;
+    padding: 5px 0 0 ;
 }
 #sidebar-ui .sidebar-commands-control .command-save:hover {
-	border-color: #1fcd8f;
+	border-color: #3ea;
+	background: #3ea;
 }
 #sidebar-ui .sidebar-commands-control .command-edit-background-area {
 	margin-bottom: 15px;
@@ -927,6 +929,8 @@ span.draggable-post-element.element-dragging
 .upfront-filter-control::-webkit-scrollbar,
 #upfront-csseditor .ace_scrollbar-inner::-webkit-scrollbar,
 #upfront-csseditor .ace_scrollbar::-webkit-scrollbar,
+.upfront-inserts-markup .ace_scrollbar-inner::-webkit-scrollbar,
+.upfront-inserts-markup .ace_scrollbar::-webkit-scrollbar,
 #upfront-general-csseditor .ace_scrollbar-inner::-webkit-scrollbar,
 #upfront-general-csseditor .ace_scrollbar::-webkit-scrollbar,
 .upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar,

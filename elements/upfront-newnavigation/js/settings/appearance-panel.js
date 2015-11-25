@@ -11,34 +11,34 @@ define([
 			panelTitle: l10n.settings,
 			presetDefaults: {
 				'menu_style': 'horizontal',
-				'menu_alingment': 'center',
+				'menu_alignment': 'left',
 				'burger_alignment': 'left',
-				'static-font-size': 14,
+				'static-font-size': 16,
 				'static-font-family': 'Arial',
-				'static-font-color': 'rgb(0, 0, 0)',
+				'static-font-color': 'rgba(0, 0, 0, 1)',
 				'static-font-style': '400 normal',
 				'static-weight': 400,
 				'static-style': 'normal',
-				'static-line-height': 1,
-				'static-nav-bg': 'rgb(255, 255, 255)',
-				'hover-font-size': 14,
+				'static-line-height': 1.6,
+				'static-nav-bg': 'rgba(255, 255, 255, 0)',
+				'hover-font-size': 16,
 				'hover-font-family': 'Arial',
-				'hover-font-color': 'rgb(0, 0, 0)',
+				'hover-font-color': 'rgba(26, 124, 252, 1)',
 				'hover-font-style': '400 normal',
 				'hover-weight': 400,
 				'hover-style': 'normal',
-				'hover-line-height': 1,
+				'hover-line-height': 1.6,
 				'hover-transition-duration': 0.3,
 				'hover-transition-easing': 'ease-in-out',
-				'hover-nav-bg': 'rgb(255, 255, 255)',
-				'focus-font-size': 14,
+				'hover-nav-bg': 'rgba(255, 255, 255, 0)',
+				'focus-font-size': 16,
 				'focus-font-family': 'Arial',
-				'focus-font-color': 'rgb(0, 0, 0)',
+				'focus-font-color': 'rgba(26, 124, 252, 1)',
 				'focus-font-style': '400 normal',
 				'focus-weight': 400,
 				'focus-style': 'normal',
-				'focus-line-height': 1,
-				'focus-nav-bg': 'rgb(255, 255, 255)',
+				'focus-line-height': 1.6,
+				'focus-nav-bg': 'rgba(255, 255, 255, 0)',
 				'id': 'default',
 				'name': l10n.default_preset
 			},
@@ -170,6 +170,45 @@ define([
 						}
 					},
 				],
+			},
+
+			migratePresetProperties: function(newPreset) {
+				var props = {};
+
+				this.model.get('properties').each( function(prop) {
+					props[prop.get('name')] = prop.get('value');
+				});
+
+				if (props.breakpoint) {
+					// Convert "burger_menu" and "menu_style" properties to "menu_style" property
+					if (props.breakpoint.desktop) {
+						if (props.breakpoint.desktop.burger_menu === 'yes') {
+							props.breakpoint.desktop.menu_style = 'triggered';
+						}
+						delete props.breakpoint.desktop.burger_menu;
+					}
+					if (props.breakpoint.tablet) {
+						if (props.breakpoint.tablet.burger_menu === 'yes') {
+							props.breakpoint.tablet.menu_style = 'triggered';
+						}
+						delete props.breakpoint.tablet.burger_menu;
+					}
+					if (props.breakpoint.mobile) {
+						if (props.breakpoint.mobile.burger_menu === 'yes') {
+							props.breakpoint.mobile.menu_style = 'triggered';
+						}
+						delete props.breakpoint.mobile.burger_menu;
+					}
+				} else {
+					props.breakpoint = {
+						desktop: {},
+						tablet: {},
+						mobile: {}
+					};
+				}
+
+				// Setup breakpoint property for preset
+				newPreset.set({'breakpoint': props.breakpoint});
 			}
 		};
 

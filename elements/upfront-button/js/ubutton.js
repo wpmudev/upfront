@@ -3,10 +3,11 @@ define([
 	'elements/upfront-button/js/model',
 	'elements/upfront-button/js/element',
 	'elements/upfront-button/js/settings',
+	'scripts/upfront/link-model',
 	'scripts/upfront/preset-settings/util',
 	'text!elements/upfront-button/tpl/ubutton.html',
 	'text!elements/upfront-button/tpl/preset-style.html'
-], function(ButtonModel, ButtonElement, ButtonSettings, PresetUtil, buttonTpl, settingsStyleTpl) {
+], function(ButtonModel, ButtonElement, ButtonSettings, LinkModel, PresetUtil, buttonTpl, settingsStyleTpl) {
 
 var l10n = Upfront.Settings.l10n.button_element;
 
@@ -16,12 +17,14 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 	className: 'upfront-button',
 	buttonTpl: Upfront.Util.template(buttonTpl),
 	initialize: function() {
+		var me = this;
+
 		if(! (this.model instanceof ButtonModel)){
 			this.model = new ButtonModel({properties: this.model.get('properties')});
 		}
 
 		this.events = _.extend({}, this.events, {
-			'click a.upfront_cta.ueditor-placeholder' : 'placeholderClick',
+			'click a.uf-click-to-edit-text' : 'placeholderClick',
 			'click a.redactor_act': 'onOpenPanelClick',
 			'click .upfront-save_settings': 'onOpenPanelClick',
 			'click .open-item-controls': 'onOpenItemControlsClick'
@@ -32,11 +35,37 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		this.model.get('properties').bind('change', this.render, this);
 		this.model.get('properties').bind('add', this.render, this);
 		this.model.get('properties').bind('remove', this.render, this);
+		this.listenTo(this.model, 'change:preset', this.updatePresetClass);
 
 		Upfront.Events.on('entity:deactivated', this.stopEdit, this);
 
 		this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
 
+		this.listenTo(Upfront.Events, "theme_colors:update", this.render, this);
+
+		if (this.property('link') === false) {
+			this.link = new LinkModel({
+				type: Upfront.Util.guessLinkType(this.property('href')),
+				url: this.property('href'),
+				target: this.property('linkTarget')
+			});
+			this.property('link', this.link.toJSON());
+		} else {
+			this.link = new LinkModel(this.property('link'));
+		}
+
+		me.listenTo(this.link, 'change', function() {
+			me.property('link', me.link.toJSON());
+		});
+
+	},
+
+	placeholderClick: function(e) {
+		e.preventDefault();
+	},
+
+	updatePresetClass: function() {
+		this.$el.addClass(this.property('preset'));
 	},
 
 	getCleanurl: function(url) {
@@ -111,9 +140,14 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			this.model.set_property('preset', props.currentpreset)
 		}
 
+		props.href = this.link.get('url');
+		props.linkTarget = this.link.get('target');
+
 		props.preset = props.preset || 'default';
 
 		props.preset = this.clear_preset_name(props.preset);
+
+		var preset_props = Upfront.Views.Editor.Button.Presets.get(props.preset);
 
 		return this.buttonTpl(props);
 	},
@@ -153,23 +187,20 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 	createInlineControlPanel: function() {
 		var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
 			visitLinkControl = new Upfront.Views.Editor.InlinePanels.Controls.VisitLink({
-				url: this.property('href')
+				url: this.link.get('url')
 			}),
 			linkPanelControl = new Upfront.Views.Editor.InlinePanels.Controls.LinkPanel({
-				linkUrl: this.property('href'),
-				linkType: Upfront.Util.guessLinkType(this.property('href')),
-				linkTarget: this.property('linkTarget'),
+				model: this.link,
 				button: false,
 				icon: 'link',
 				tooltip: 'link',
 				id: 'link'
 			});
-			me = this;
+			var me = this;
 
-		this.listenTo(linkPanelControl, 'change change:target', function(data) {
-			visitLinkControl.setLink(data.url);
-			this.property('href', data.url);
-			this.property('linkTarget', data.target);
+		this.listenTo(this.link, 'change', function() {
+			visitLinkControl.setLink(me.link.get('url'));
+			this.$el.find('a').attr('href', me.link.get('url'));
 		});
 
 		panel.items = _([
@@ -220,6 +251,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			});
 
 		this.createInlineControlPanel();
+		this.$el.addClass(this.property('preset'));
 	},
 	stopEdit: function() {
 		var $target = this.$el.find('.upfront-object-content a.upfront_cta');

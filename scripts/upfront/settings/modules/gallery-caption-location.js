@@ -48,20 +48,32 @@ define([
 					model: this.model,
 					className: state + '-caption-select caption_select',
 					name: 'captionType',
-					default_value: 'nocaption',
+					default_value: 'below',
 					label: l10n.panel.caption_location,
 					values: [
-						{value: 'none', label: l10n.panel.none, icon: 'none'},
 						{value: 'over', label: l10n.panel.over, icon: 'over'},
 						{value: 'below', label: l10n.panel.under, icon: 'below'}
 					],
 					change: function(value) {
 						me.model.set('captionType', value);
+						
+						//If caption below image, we should set captionOnHover to false
+						if(value == "below") {
+							me.model.set('showCaptionOnHover', '0');
+						}
+					},
+					show: function(value, $el) {
+						var stateSettings = $el.closest('.state_modules');
+						if(value == "below") {
+							stateSettings.find('.gallery-caption-on-hover').hide();
+						} else {
+							stateSettings.find('.gallery-caption-on-hover').show();
+						}
 					}
 				}),
 
 				new Upfront.Views.Editor.Field.Radios({
-					className: state + '-caption-trigger field-caption_trigger upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios over_image_field',
+					className: state + '-caption-trigger field-caption_trigger gallery-caption-on-hover upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios over_image_field',
 					model: this.model,
 					name: 'showCaptionOnHover',
 					label: '',

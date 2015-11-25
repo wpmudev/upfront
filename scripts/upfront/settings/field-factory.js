@@ -21,7 +21,7 @@ define([
 			}
 
 			return new fieldClass(options);
-		}
+		};
 	};
 
 	fieldFactory = new FieldFactory();

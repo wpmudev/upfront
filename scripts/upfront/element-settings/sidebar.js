@@ -38,6 +38,7 @@ define([], function () {
 		the_settings_view.render();
 		$('#element-settings-sidebar').html(the_settings_view.el);
 		$('#element-settings-sidebar').width(260);
+		$('.uf-settings-panel--expanded:not(:first)').toggleClass('uf-settings-panel--expanded').find('.uf-settings-panel__body').toggle();
 
 		Upfront.Events.on('element:settings:saved', destroySettings);
 	};

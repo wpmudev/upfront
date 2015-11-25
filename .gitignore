@@ -1,3 +1,6 @@
 .agignore
 .jshintrc
 node_modules
+languages/fa_IR.mo
+languages/fa_IR.po
+phpunit.bat

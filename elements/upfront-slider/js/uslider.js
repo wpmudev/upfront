@@ -4,8 +4,9 @@ define([
 	'text!elements/upfront-slider/tpl/uslider.html',
 	'text!elements/upfront-slider/tpl/backend.html',
 	'elements/upfront-slider/js/settings',
-	'scripts/upfront/preset-settings/util'
-], function(sliderTpl, editorTpl, SliderSettings, PresetUtil){
+	'scripts/upfront/preset-settings/util',
+	"scripts/upfront/link-model",
+], function(sliderTpl, editorTpl, SliderSettings, PresetUtil, LinkModel){
 
 var l10n = Upfront.Settings.l10n.slider_element;
 
@@ -70,8 +71,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		this.listenTo(this.model, 'addRequest', this.openImageSelector);
 
-		this.lastStyle = this.property('primaryStyle');
-		this.listenTo(this.model.get('properties'), 'change', this.checkStyles);
+		this.lastStyle = this.get_preset_properties().primaryStyle;
 
 		this.listenTo(this.model, 'background', function(rgba){
 			me.model.slideCollection.each(function(slide){
@@ -123,10 +123,12 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 	get_content_markup: function() {
 		var me = this,
-			props = this.extract_properties(),
-			rendered = {}
-		;
+			props,
+			rendered = {};
 
+		this.checkStyles();
+
+		props = this.extract_properties();
 
 		if(!this.model.slideCollection.length){
 			this.startingHeight = this.startingHeight || 225;
@@ -134,6 +136,14 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		}
 
 		props.properties = this.get_preset_properties();
+
+		// Overwrite properties with preset properties
+		if (props.properties.primaryStyle) {
+			props.primaryStyle = props.properties.primaryStyle;
+		}
+		if (props.properties.captionBackground) {
+			props.captionBackground = props.properties.captionBackground;
+		}
 
 		//Stop autorotate
 		props.rotate = false;
@@ -221,7 +231,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			slider.find('.uslide-bottomOver, .uslide-middleCover, .uslide-bottomCover, .uslide-topCover').each(function() {
 				var slide = $(this);
 				slide.find('.uslide-caption').remove().prependTo(slide.find('.uslide-image'));
-			})
+			});
 			me.prepareSlider();
 		}, 100);
 
@@ -331,13 +341,13 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			;
 		});
 
-		if(me.property('primaryStyle') == 'side'){
+		if(me.get_preset_properties().primaryStyle == 'side'){
 			me.setImageResizable();
 		}
 
 		//Adapt slider height to the image crop
 		if(typeof(currentSlide) != 'undefined') {
-			var textHeight = this.property('primaryStyle') == 'below' ? this.$('.uslide[rel=' + currentSlide.id + ']').find('.uslide-caption').outerHeight() : 0;
+			var textHeight = this.get_preset_properties().primaryStyle == 'below' ? this.$('.uslide[rel=' + currentSlide.id + ']').find('.uslide-caption').outerHeight() : 0;
 			me.$('.uslides').css({ 'padding-top' : wrapper.height() + textHeight});
 		}
 	},
@@ -369,7 +379,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 	checkStyles: function() {
 		var me = this,
-			primary = this.property('primaryStyle'),
+			primary = this.get_preset_properties().primaryStyle,
 			defaults = {
 				below: 'below',
 				over: 'bottomOver',
@@ -403,7 +413,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	},
 	firstImageSelection: function(e){
 		e.preventDefault();
-		var primaryStyle = this.$el.find('input:checked').val(),
+		var primaryStyle = this.get_preset_properties().primaryStyle,
 			style = 'nocaption'
 		;
 		if(primaryStyle == 'over')
@@ -413,7 +423,6 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		else if(primaryStyle == 'side')
 			style = 'right';
 
-		this.property('primaryStyle', primaryStyle);
 		this.property('style', style);
 
 		return this.openImageSelector();
@@ -533,10 +542,10 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				me.setCurrentSlide(index);
 				me.updateControls();
 				me.$('.uimage-controls').attr('rel', slide.attr('rel'));
-				if(me.property('primaryStyle') == 'side')
+				if(me.get_preset_properties().primaryStyle == 'side')
 					me.setImageResizable();
 
-				if(me.property('primaryStyle') == 'below'){
+				if(me.get_preset_properties().primaryStyle == 'below'){
 					//Adapt the height to take care of the caption
 					me.$('.uslides').css({ 'padding-top' : slide.find('.uslide-image').outerHeight() + slide.find('.uslide-caption').outerHeight()});
 				}
@@ -565,7 +574,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				left: ['left', l10n.at_left],
 				nocaption: ['nocaption', l10n.no_text]
 			},
-			primaryStyle = this.property('primaryStyle'),
+			primaryStyle = this.get_preset_properties().primaryStyle,
 			multiControls = {},
 			captionControl = new Upfront.Views.Editor.InlinePanels.TooltipControl(),
 			panelItems = [],
@@ -608,8 +617,6 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
     	panelItems.push(this.createLinkControl(slide));
 
-		if(_.indexOf(['notext', 'onlytext'], primaryStyle) == -1)
-			panelItems.push(captionControl);
 		panelItems.push(this.createControl('remove', l10n.remove_slide, 'onRemoveSlide'));
 
 		panel.items = _(panelItems);
@@ -633,12 +640,24 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 	createLinkControl: function(slide) {
 		var me = this,
-			control = new Upfront.Views.Editor.InlinePanels.DialogControl();
+			control = new Upfront.Views.Editor.InlinePanels.DialogControl(),
+			link;
 
+		if (this.currentSlideLink) {
+			this.stopListening(this.currentSlideLink);
+		}
+
+		if (typeof slide.get('link') !== undefined) {
+			link = new LinkModel(slide.get('link'));
+		} else {
+			link = new LinkModel({
+				type: slide?slide.get('urlType'):'',
+				url: slide?slide.get('url'):'',
+				target: slide?slide.get('linkTarget'):''
+			});
+		}
 		control.view = linkPanel = new Upfront.Views.Editor.LinkPanel({
-			linkType: slide?slide.get('urlType'):'',
-			linkUrl: slide?slide.get('url'):'',
-			linkTarget: slide?slide.get('linkTarget'):'',
+			model: link,
 			linkTypes: { image: true },
 			imageUrl: slide?slide.get('srcFull'):''
 		});
@@ -670,23 +689,38 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			me.$el.closest('.ui-draggable').draggable('enable');
 		});
 
-		me.listenTo(linkPanel, 'change', function(data) {
+		me.listenTo(link, 'change', function(data) {
+			slide.set({link: data.toJSON()}, {silent:true});
+			// Rather than changing template rendering set properties that tempalte uses also
 			slide.set({
-				urlType: data.type,
-				url: data.url,
-				linkTarget: data.target
-			});
+				urlType: data.get('type'),
+				url: data.get('url'),
+				linkTarget: data.get('target')
+			}, {silent:true});
+
+			me.property('slides', slideCollection.toJSON(), true);
 		});
 
-		me.listenTo(linkPanel, 'change:target', function(data) {
-			slide.set({linkTarget: data.target});
+		me.listenTo(link, 'change:target', function(data) {
+			slide.set({link: data.toJSON()}, {silent:true});
+			// Rather than changing template rendering set properties that tempalte uses also
+			slide.set({
+				urlType: data.get('type'),
+				url: data.get('url'),
+				linkTarget: data.get('target')
+			}, {silent:true});
+
+			me.property('slides', slideCollection.toJSON(), true);
+
 			me.$el.find('.upfront-default-slider-item-current a')
-				.attr('target', data.target);
+				.attr('target', data.get('target'));
 		});
+		this.currentSlideLink = link;
 
 		control.icon = 'link';
 		control.tooltip = l10n.img_link;
 		control.id = 'link';
+
 
 		return control;
 	},
@@ -714,9 +748,11 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	},
 
 	onModelChange: function() {
-		this.stopListeningTo(this.model.slideCollection);
-		this.model.slideCollection = new Uslider_Slides(this.property('slides'));
-		this.listenTo(this.model.slideCollection, 'add remove reset change', this.onSlidesCollectionChange);
+		if (this.stopListeningTo) {
+			this.stopListeningTo(this.model.slideCollection);
+			this.model.slideCollection = new Uslider_Slides(this.property('slides'));
+			this.listenTo(this.model.slideCollection, 'add remove reset change', this.onSlidesCollectionChange);
+		}
 		this.render();
 	},
 
@@ -789,7 +825,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	},
 
 	calculateColumnWidth: function(){
-		return (this.colWidth = this.get_element_max_columns_px() / this.get_element_max_columns());
+		return (this.colWidth = Upfront.Behaviors.GridEditor.col_size);
 	},
 
 	onElementResize: function(e, ui){
@@ -805,12 +841,12 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		var me = this,
 			mask = this.$('.upfront-default-slider-item-current').find('.uslide-image'),
 			currentSlide = this.model.slideCollection.at(this.getCurrentSlide()),
-			style = this.property('primaryStyle'),
+			style = this.get_preset_properties().primaryStyle,
 			resizer = $('.upfront-resize'),
 			text = style == 'below' ? this.$('.uslide-caption') : [],
 			textHeight = text.length ? text.outerHeight() : 0,
 			newElementSize = {width: resizer.outerWidth() - 30, height: resizer.outerHeight() - 30 - textHeight},
-			elementColumns = this.get_element_columns(),
+			elementColumns = Upfront.Util.width_to_col(resizer.outerWidth()),
 			imageColumns = Math.max(3, Math.round(this.property('rightImageWidth') * elementColumns / this.property('rightWidth'))),
 			sideImageWidth = imageColumns * this.calculateColumnWidth()
 		;
@@ -840,13 +876,13 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		var resizer = $('.upfront-resize'),
 			current = this.$('.upfront-default-slider-item-current'),
-			text = this.property('primaryStyle') == 'below' ? current.find('.uslide-caption') : [],
+			text = this.get_preset_properties().primaryStyle == 'below' ? current.find('.uslide-caption') : [],
 			textHeight = text.length ? text.outerHeight() : 0,
 			newElementSize = {width: resizer.outerWidth() - 30, height: resizer.outerHeight() - 30 - textHeight},
 			id = current.attr('rel'),
 			slide = this.model.slideCollection.get(id),
 			imageWrapper= current.find('.uslide-image'),
-			style = this.property('primaryStyle'),
+			style = this.get_preset_properties().primaryStyle,
 			wrapperSize = {width: style == 'side' ? imageWrapper.width() : newElementSize.width, height: newElementSize.height},
 			wrapperCss = {height: wrapperSize.height}
 		;
@@ -950,8 +986,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 	saveResizing: function(){
 		var me = this;
-		if(this.cropTimer){
-
+		if (this.cropTimer) {
 			this.saveTemporaryResizing().done(function(){
 				var saveData = {
 					element: JSON.stringify(Upfront.Util.model_to_json(me.model)),

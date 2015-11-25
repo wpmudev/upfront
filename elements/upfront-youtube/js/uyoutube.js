@@ -48,7 +48,7 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 
 		rendered = this.youtubeTpl(this.extract_properties());
 
-		if(this.property('youtube_status') === 'starting'){
+		if(this.property('youtube_status') === 'starting' && !props.multiple_videos){
 		rendered += '<div class="upfront-youtube-starting-select" style="min-height:' + this.elementSize.height + 'px">' +
 			'<div class="upfront-youtube-starting-text">'+ l10n.enter_url +'</div>'+
 			'<div class="upfront-youtube-box-wrapper"><input type="text" class="upfront-youtube-url" placeholder="'+ l10n.url_placeholder +'" /></div>' +
@@ -62,11 +62,12 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 	trimListTitle: function() {
 		var me = this;
 		var props = this.extract_properties();
-		
+
 		if(props.multiple_videos !== null && typeof props.multiple_videos === 'object') {
 			$.each(props.multiple_videos, function(index, video) {
-				if (video.title) {
-					video.title = video.title.substring(0, me.property('multiple_title_length'));
+				if (video.title && !video.original_title) video.original_title = video.title;
+				if (video.title && video.original_title) {
+					video.title = video.original_title.substring(0, me.property('multiple_title_length'));
 				}
 			});
 		}
@@ -445,6 +446,8 @@ var YoutubeSettings = ElementSettings.extend({
 		'Behavior': BehaviorPanel
 	},
 	events: {
+		'click .upfront-save_settings' : 'saveSettings',
+		'click .upfront-cancel_settings' : 'cancelSettings',
 		'change .multiple_sources': 'multipleVideos',
 	},
 
@@ -469,16 +472,17 @@ var YoutubeSettings = ElementSettings.extend({
 			var elementId = index + 1;
 			//Get video settings
 			var videoId;
+			var videoMatch;
 			if(videoUrl) {
 				if (videoUrl.match(/youtu\.be/)) {
-					var videoMatch = videoUrl.match(/^(https?:\/\/)?youtu.be\/([0-9a-zA-Z\-_]{11})/);
+					videoMatch = videoUrl.match(/^(https?:\/\/)?youtu.be\/([0-9a-zA-Z\-_]{11})/);
 					if(videoMatch !== null && videoMatch.length > 0) {
 						videoId = videoMatch[2];
 					} else {
 						Upfront.Views.Editor.notify(l10n.validMessage);
 					}
 				} else {
-					var videoMatch = videoUrl.match(/^(https?:\/\/(www\.)?)?youtube\.com\/watch\?v=([0-9a-zA-Z\-_]{11}).*/);
+					videoMatch = videoUrl.match(/^(https?:\/\/(www\.)?)?youtube\.com\/watch\?v=([0-9a-zA-Z\-_]{11}).*/);
 					if(videoMatch !== null && videoMatch.length > 0) {
 						videoId = videoMatch[3];
 					} else {
@@ -503,7 +507,7 @@ var YoutubeSettings = ElementSettings.extend({
 					})
 					.done(function () {
 						if(videoCounter == videoFields.length) {
-							multiple_videos_array.sort(function(a,b) { return a.order - b.order; })
+							multiple_videos_array.sort(function(a,b) { return a.order - b.order; });
 							me.for_view.model.set_property('multiple_videos', multiple_videos_array, false);
 						}
 					})

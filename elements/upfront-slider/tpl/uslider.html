@@ -1,4 +1,4 @@
-<div class="slider-preset-<?php echo $preset ?> uslider uslider-<?php echo $controlsWhen ?> uslider-<?php echo $style ?> uslider-<?php echo $transition ?> <?php echo $captionUseBackground == '1' ? 'uslider-caption-background' : '' ?>"
+<div class="uslider slider-preset-<?php echo $preset ?> uslider-<?php echo $controlsWhen ?> uslider-<?php echo $style ?> uslider-<?php echo $transition ?> <?php echo $captionUseBackground == '1' ? 'uslider-caption-background' : '' ?>"
   id="uslider-<?php echo $element_id ?>"
   data-item=".uslide"
   data-auto="<?php echo $rotate ?>"
@@ -93,9 +93,5 @@
 		height: <?php echo $imageHeight ?>px;
 		position: relative;
 		overflow: hidden;
-	}
-
-	#uslider-<?php echo $element_id ?> .uslide-caption {
-		background-color:<?php echo $captionUseBackground == '1' ? $captionBackground : 'transparent' ?>;
 	}
 </style>

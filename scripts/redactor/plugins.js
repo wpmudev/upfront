@@ -1,15 +1,13 @@
 ;(function($){
+var l10n = Upfront.Settings && Upfront.Settings.l10n
+	? Upfront.Settings.l10n.global.ueditor
+	: Upfront.mainData.l10n.global.ueditor
+;
 
-    var deps = [
-        'text!scripts/redactor/ueditor-templates.html'
-    ];
-
-    var l10n = Upfront.Settings && Upfront.Settings.l10n
-        ? Upfront.Settings.l10n.global.ueditor
-        : Upfront.mainData.l10n.global.ueditor
-    ;
-
-define("redactor_plugins", deps, function(tpl){
+define("redactor_plugins", [
+	'text!scripts/redactor/ueditor-templates.html',
+	"scripts/upfront/link-model"
+], function(tpl, LinkModel) {
 
 var UeditorEvents = _.extend({}, Backbone.Events);
     /* Panel helper
@@ -682,16 +680,20 @@ RedactorPlugins.upfrontIcons = function() {
                     "font-size": fontSize + "px",
                     "top": top + "px"
                 });
-                var inserted = this.redactor.insert.html($icon[0].outerHTML, false); //inserted false instead of true to retain the selected content
+                var html = $icon[0].outerHTML;
+                //var inserted = this.redactor.insert.html($icon[0].outerHTML); //inserted false instead of true to retain the selected content
+                /**
+                 * insert.html may use document's insertHtml command which may result in the $icon to lose the uf_font_icon
+                 * and that's why we're using insert.execHtml from now on
+                 */
+                 this.redactor.insert.execHtml(html);
+
                 this.redactor.code.sync();
 
-                //var offset = this.redactor.caret.getOffset(); //existing caret position
 
                 this.redactor.selection.restore();
 
                 this.closeToolbar();
-                this.redactor.caret.setAfter($(inserted));
-                //this.redactor.caret.setOffset(100);
             },
             input_change: function(e){
                 var $sel = this.$sel;
@@ -748,12 +750,62 @@ RedactorPlugins.upfrontLink = function() {
 			events: {
 				open: 'open'
 			},
+
 			initialize: function () {
 				UeditorPanel.prototype.initialize.apply(this, arguments);
 			},
-			render: function (options) {
-				var linkTypes = {};
-				options = options || {};
+
+			open: function (e, redactor) {
+				this.redactor = redactor;
+				redactor.selection.save();
+
+				var me = this,
+					// Defaults
+					href = '',
+					type = 'external',
+					target = '_self';
+
+				this.selectedLink = redactor.utils.isCurrentOrParent('A');
+
+				if (this.selectedLink) {
+					// Get values from existing link
+					href = $(this.selectedLink).attr('href');
+					target = $(this.selectedLink).attr('target');
+
+					if (!_.isUndefined($(this.selectedLink).attr('data-upfront-link-type'))) {
+						// New linking is used, there is exact value
+						type = $(this.selectedLink).attr('data-upfront-link-type');
+					} else {
+						// Old linking, guess link type
+						type = this.guessLinkType(href);
+					}
+				}
+
+				this.linkModel = new LinkModel({
+					type: type,
+					url: href,
+					target: target
+				});
+
+				this.listenTo(this.linkModel, 'change', function () {
+                    me.redactor.buffer.set();
+                    me.redactor.selection.save();
+					if (me.linkModel.get('type') === 'unlink') {
+						me.unlink();
+					} else {
+						me.link();
+					}
+
+					// me.closeToolbar(); // should we do this?
+				});
+
+
+				this.render();
+			},
+
+			render: function () {
+				var linkTypes = {},
+					me = this;
 
 				if (this.redactor.$element.hasClass('mfp-title')) {
 					linkTypes = {
@@ -765,50 +817,26 @@ RedactorPlugins.upfrontLink = function() {
 				}
 
 				this.linkPanel = new Upfront.Views.Editor.LinkPanel({
-					linkUrl: options.url,
-					linkType: options.link || this.guessLinkType(options.url),
-					linkTarget: options.target || '_self',
+					model: this.linkModel,
 					linkTypes: linkTypes,
 					button: true
 				});
 
-				this.listenTo(this.linkPanel, 'change change:target', function (data) {
-					if (data.type == 'unlink') {
-						this.unlink();
-					} else {
-						this.link(data.url, data.type, data.target);
-					}
-
-					this.closeToolbar();
+				// Close on panel ok
+				this.listenTo(this.linkPanel, 'linkpanel:close', function() {
+					// Didn't find any function to do this, so go raw
+					$('a.re-upfrontLink').click().removeClass('dropact redactor_act');
 				});
 
 				this.linkPanel.render();
 				this.$el.html(this.linkPanel.el);
 				this.linkPanel.delegateEvents();
 			},
-			open: function (e, redactor) {
-				this.redactor = redactor;
-				redactor.selection.save();
-				var link = redactor.utils.isCurrentOrParent('A');
-				var url = false;
 
-				if (link || url) {
-					this.render({
-						url: link ? $(link).attr('href') : url,
-						link: this.guessLinkType(link ? $(link).attr('href') : url),
-						target: $(link).attr('target')
-					});//this.render({url: $(link).attr('href'), link: $(link).attr('rel') || 'external'});
-				} else {
-					this.render({
-						url: '',
-						link: 'external',
-						target: '_blank'
-					});
-				}
-			},
 			close: function (e, redactor) {
 				redactor.selection.restore();
 			},
+
 			unlink: function (e) {
 				if (e) {
 					e.preventDefault();
@@ -821,31 +849,40 @@ RedactorPlugins.upfrontLink = function() {
 				} else {
 					this.redactor.link.unlink();
 				}
+
 				this.redactor.$element.focus();
-                this.updateMissingLightboxFlag();
+				this.updateMissingLightboxFlag();
 			},
-			link: function (url, type, target) {
-				this.redactor.selection.restore();
-				if (url) {
-					var caption = $(this.redactor.selection.getCurrent()).last().hasClass("uf_font_icon") ? this.redactor.selection.getCurrent().outerHTML :  this.redactor.selection.getHtml() ;
-					var link = this.redactor.utils.isCurrentOrParent('A');
-					if (link) {
-						$(link).attr('href', url).attr('rel', type).attr('target', target);
-					} else {
-                        var $link = $("<a>");
-                        // allow caption to be html to the contrary to this.redactor.link.set(caption, url, target) which needs the caption to be text
-                        $link.html( caption )
-                            .attr("rel", type)
-                            .attr("href", url)
-                            .attr("target", target);
-                        this.redactor.insert.html($link[0].outerHTML, false);
 
-					}
-					this.redactor.$element.focus();
+			link: function () {
+				var selectedText;
+
+				if (typeof this.linkModel.get('url') === 'undefined') {
+					return;
 				}
-                this.updateMissingLightboxFlag();
-				this.redactor.code.sync();
 
+				this.redactor.selection.restore();
+
+				if (this.selectedLink) {
+					// Update selected link
+					$(this.selectedLink).attr('href', this.linkModel.get('url'))
+						.attr('target', this.linkModel.get('target'));
+				} else {
+					// Create new link
+					selectedText = this.redactor.selection.getHtml();
+					this.redactor.link.set(selectedText, this.linkModel.get('url'), this.linkModel.get('target'));
+					// Now select created link
+					this.selectedLink = this.redactor.utils.isCurrentOrParent('A');
+					// Update selection, new link is created it messes up selection
+					this.redactor.selection.save();
+				}
+
+				$(this.selectedLink).attr('data-upfront-link-type', this.linkModel.get('type'));
+
+				// Do redactor stuff
+				this.redactor.$element.focus();
+				this.updateMissingLightboxFlag();
+				this.redactor.code.sync();
 			},
 			bindEvents: function () {
 			},
@@ -1338,7 +1375,7 @@ RedactorPlugins.upfrontColor = function() {
                     html = this.redactor.selection.getHtml();
 
                 //if( html.replace(/(\r\n|\n|\r)/gm,"").trim() === $(current).html().replace(/(\r\n|\n|\r)/gm,"").trim() && !_.isEmpty( current.style.color ) ){
-                    this.redactor.inline.removeFormat("color");
+                this.redactor.inline.removeFormat("color");
                 //}else{
                 //}
                 $(this.redactor.selection.getCurrent()).find("font").each(function(){
@@ -1365,7 +1402,7 @@ RedactorPlugins.upfrontFormatting = function() {
         init: function () {
 
             this.opts.buttonsCustom.upfrontFormatting = {
-                title: l10n.formatting,
+                title: l10n.formatting.title,
                 panel: this.upfrontFormatting.panel,
                 first: true
             };
@@ -1387,6 +1424,7 @@ RedactorPlugins.upfrontFormatting = function() {
                     custom_classes: this.custom_classes,
                     selected_class: this.selected_class
                 }, l10n.formatting) ));
+                return this;
             },
             open: function (e, redactor) {
                 this.redactor = redactor;
@@ -1406,6 +1444,7 @@ RedactorPlugins.upfrontFormatting = function() {
                     this.$(".tags-list li *").removeClass("dropact");
                     this.$("[data-tag='" + tag + "']").addClass("dropact");
                 }
+                this.redactor.selection.save();
             },
             set_previously_selected_class: function(){
                 var self = this,
@@ -1432,7 +1471,6 @@ RedactorPlugins.upfrontFormatting = function() {
                 e.preventDefault();
                 this.redactor.buffer.set();
                 this.redactor.$editor.focus();
-
                 var tag = $(e.target).data("tag");
 
                 if (!this.redactor.utils.browser('msie')) this.redactor.$editor.focus();
@@ -1453,6 +1491,7 @@ RedactorPlugins.upfrontFormatting = function() {
 
                 if (tag == 'p' || this.redactor.block.headTag) $formatted.find('p').contents().unwrap();
 
+                this.close();
                 this.redactor.dropdown.hideAll();
             },
             change_custom_class: function(e){

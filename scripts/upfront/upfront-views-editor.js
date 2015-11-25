@@ -462,8 +462,9 @@ define([
 		on_click: function () {
 			if ( _upfront_post_data.layout.specificity && _upfront_post_data.layout.item && !_upfront_post_data.layout.item.match(/-page/) )
 				Upfront.Events.trigger("command:layout:save_as");
-			else
+			else {
 				Upfront.Events.trigger("command:layout:save");
+			}
 		}
 
 	});
@@ -754,6 +755,7 @@ define([
             this.$el.prop("title", l10n.toggle_grid);
 			this.listenTo(Upfront.Events, "entity:region:added", this.update_grid);
 			this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.update_grid);
+            this.listenTo(Upfront.Events, "grid:toggle", this.on_click);
 		},
 		on_click: function () {
 			$('.upfront-overlay-grid').size() || this.create_grid();
@@ -1136,15 +1138,6 @@ define([
 		}
 	});
 
-	var Command_SaveResponsive = Command.extend({
-		"className": "command-save",
-		render: function () {
-			this.$el.addClass('upfront-icon upfront-icon-save');
-			this.$el.html(l10n.save);
-            this.$el.prop("title", l10n.save);
-		}
-	});
-
 	var Command_BreakpointDropdown = Command.extend({
 		className: 'activate-breakpoints-dropdown',
 		enabled: true,
@@ -1162,6 +1155,7 @@ define([
 		render: function () {
 			this.fields[0].render();
 			this.$el.append(this.fields[0].el);
+			this.fields[0].delegateEvents();
 		},
 		on_click: function () {
 
@@ -1291,7 +1285,6 @@ define([
 			return '';
 		},
 		render: function () {
-			var me = this;
 			if(this.active)
 				this.$el.addClass('active');
 			else
@@ -1299,27 +1292,11 @@ define([
 			this.$el.html('<h3 class="sidebar-panel-title">' + this.get_title() + '</h3>');
 			this.$el.append('<div class="sidebar-panel-content" />');
 			this.stop_scroll_propagation(this.$el.find('.sidebar-panel-content'));
-			
-			if( this.sections){
-				me.$el.find('.sidebar-panel-title').after("<ul class='sidebar-panel-tabspane'></ul>");
-				this.sections.each(function (section) {
-					section.render();
-					me.$el.find('.sidebar-panel-tabspane').append( "<li data-target='" + section.cid +  "' class='sidebar-panel-tab'>" +  section.get_title() +  "</li>");
-					me.$el.find('.sidebar-panel-content').append("<div class='sidebar-tab-content' id='" + section.cid +"'></div>");
-					me.$el.find(".sidebar-panel-content").find(".sidebar-tab-content").last().html(section.el);
-				});
-			}
-			
 			if ( this.on_render ) this.on_render();
 			// Make first tab active
 			this.$el.find(".sidebar-panel-tab").first().addClass("active");
 			// show first tab content
 			this.$el.find(".sidebar-tab-content").first().show();
-		},
-		get_section: function (name) {
-			if ( !this.sections )
-				return false;
-			return this.sections.find(function(section){ return section.get_name() == name; });
 		},
 		on_click: function () {
 			$('.sidebar-panel').not(this.$el).removeClass('expanded');
@@ -1327,7 +1304,7 @@ define([
 
 			// take care of tabs if any
 			$('.sidebar-panel').not(this.$el).find(".sidebar-panel-tabspane").hide();
-			this.$el.find(".sidebar-panel-tabspane").not(".sidebar-panel-tabspane-hidden").show();
+			this.$el.find(".sidebar-panel-tabspane").show();
 		},
 		show_tab : function( e ){
 			var tab = "#" + $(e.target).data("target");
@@ -1339,35 +1316,6 @@ define([
 			this.$el.find(tab).show();
 		}
 	}));
-
-	var SidebarPanel_Settings_Item = Backbone.View.extend({
-		"tagName": "div",
-		"className": "panel-setting upfront-no-select",
-		render: function () {
-			if ( this.on_render ) this.on_render();
-		}
-	});
-
-	var SidebarPanel_Settings_Section = Backbone.View.extend({
-		"tagName": "div",
-		"className": "panel-section",
-		initialize: function () {
-			this.settings = _([]);
-		},
-		get_title: function () {},
-		render: function () {
-			var me = this;
-//			this.$el.html('<h4 class="panel-section-title">' + this.get_title() + '</h4>');
-            this.$el.html("");
-			this.$el.append('<div class="panel-section-content" />');
-			this.settings.each(function (setting) {
-				setting.render();
-				setting.delegateEvents();
-				me.$el.find('.panel-section-content').append(setting.el);
-			});
-			if ( this.on_render ) this.on_render();
-		}
-	});
 
 	var DraggableElement = Backbone.View.extend({
 		"tagName": "span",
@@ -1398,12 +1346,6 @@ define([
 		"className": "sidebar-panel sidebar-panel-elements",
 		initialize: function () {
 			this.active = true;
-			this.sections = _([
-				new SidebarPanel_Settings_Section_LayoutElements({"model": this.model}),
-				new SidebarPanel_Settings_Section_DataElements({"model": this.model}),
-				new SidebarPanel_Settings_Section_PluginsElements({"model": this.model})
-			]);
-			
 			this.elements = _([]);
 			Upfront.Events.on("command:layout:save", this.on_save, this);
 			Upfront.Events.on("command:layout:save_as", this.on_save, this);
@@ -1428,6 +1370,7 @@ define([
 			Upfront.Events.on("command:redo", this.reset_modules, this);
 		},
 		on_render: function () {
+			this.elements.each(this.render_element, this);
 			this.reset_modules();
 			if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.THEME )
 				this.$el.find('.sidebar-panel-title').trigger('click');
@@ -1439,43 +1382,10 @@ define([
 			else
 				this.reset_modules();
 		},
-		get_elements: function () {
-			var elements = [];
-			if ( this.sections ){
-				this.sections.each(function(section){
-					if ( section.elements )
-						elements.push(section.elements.value());
-				});
-			}
-			return _( _.flatten(elements) );
-		},
-		update_sections: function () {
-			if ( ! this.sections )
-				return;
-			var me = this,
-				section_have_els = 0;
-			this.sections.each(function(section){
-				if ( section.elements && section.elements.size() > 0 ){
-					section_have_els++;
-				}
-				else {
-					me.$el.find('.sidebar-panel-tabspane [data-target='+section.cid+']').hide();
-					me.$el.find('.sidebar-panel-content #'+section.cid).hide();
-				}
-			});
-			if ( section_have_els <= 1 ){
-				this.$el.find('.sidebar-panel-tabspane').addClass('sidebar-panel-tabspane-hidden');
-			}
-			else {
-				this.$el.find('.sidebar-panel-tabspane').removeClass('sidebar-panel-tabspane-hidden');
-			}
-		},
 		reset_modules: function () {
 			var regions = this.model.get("regions"),
-				region = regions ? regions.get_by_name('shadow') : false,
-				elements = this.get_elements()
+				region = regions ? regions.get_by_name('shadow') : false
 			;
-			this.update_sections();
 			if (!regions) return false;
 			if ( ! region ){
 				region = new Upfront.Models.Region({
@@ -1485,10 +1395,9 @@ define([
 				});
 				this.model.get('regions').add( region );
 			}
-			//console.log(elements.value())
-			if ( region.get("modules").length != elements.size() ) {
+			if ( region.get("modules").length != this.elements.size() ) {
 				var modules = region.get("modules");
-				elements.each(function (element) {
+				this.elements.each(function (element) {
 					var found = false;
 					modules.forEach(function(module){
 						if ( module.get('shadow') == element.shadow_id )
@@ -1499,23 +1408,7 @@ define([
 					}
 				}, this);
 			}
-		}
-	});
-	
-	var SidebarPanel_Settings_Section_LayoutElements = SidebarPanel_Settings_Section.extend({
-		initialize: function () {
-			this.settings = _([]);
-			this.elements = _([]);
 		},
-		get_name: function () {
-			return 'layout';
-		},
-		get_title: function () {
-			return "Layout";
-		},
-		on_render: function () {
-			this.elements.each(this.render_element, this)
-		},		
 		render_element: function (element) {
 			if(! element.draggable)
 				return;
@@ -1524,7 +1417,7 @@ define([
 				me = this;
 			element.remove();
 			element.render();
-			this.$el.find('.panel-section-content').append(element.el);
+			this.$el.find('.sidebar-panel-content').append(element.el);
 			element.$el.on('mousedown', function (e) {
 				// Trigger shadow element drag
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
@@ -1588,25 +1481,6 @@ define([
 					$element_drag_wrapper.remove();
 				});
 			});
-		}
-	});
-	
-	
-	var SidebarPanel_Settings_Section_DataElements = SidebarPanel_Settings_Section_LayoutElements.extend({
-		get_name: function () {
-			return 'data';
-		},
-		get_title: function () {
-			return "Data";
-		}
-	});
-	
-	var SidebarPanel_Settings_Section_PluginsElements = SidebarPanel_Settings_Section_LayoutElements.extend({
-		get_name: function () {
-			return 'plugins';
-		},
-		get_title: function () {
-			return "Plugins";
 		}
 	});
 
@@ -1681,6 +1555,35 @@ define([
 		}
 	});
 
+	var SidebarPanel_Settings_Item = Backbone.View.extend({
+		"tagName": "div",
+		"className": "panel-setting upfront-no-select",
+		render: function () {
+			if ( this.on_render ) this.on_render();
+		}
+	});
+
+	var SidebarPanel_Settings_Section = Backbone.View.extend({
+		"tagName": "div",
+		"className": "panel-section",
+		initialize: function () {
+			this.settings = _([]);
+		},
+		get_title: function () {},
+		render: function () {
+			var me = this;
+//			this.$el.html('<h4 class="panel-section-title">' + this.get_title() + '</h4>');
+            this.$el.html("");
+			this.$el.append('<div class="panel-section-content" />');
+			this.settings.each(function (setting) {
+				setting.render();
+				setting.delegateEvents();
+				me.$el.find('.panel-section-content').append(setting.el);
+			});
+			if ( this.on_render ) this.on_render();
+		}
+	});
+
 	var SidebarPanel_Settings_Item_Typography_Editor = SidebarPanel_Settings_Item.extend({
 		fields: {},
 		current_element: 'h1',
@@ -1706,7 +1609,7 @@ define([
 		},
 		on_render: function () {
 			var me = this,
-				styles_list = [] // this will change with every font family change
+				styles_list = [], // this will change with every font family change
 				$wrap_left = $('<div class="upfront-typography-fields-left" />'),
 				$wrap_right = $('<div class="upfront-typography-fields-right" />'),
 				typography = this.model.get_property_value_by_name('typography'),
@@ -1772,8 +1675,9 @@ define([
 			var showChooseFontsButton = (currentMode === builderMode && !doneIntro) ||
 				(currentMode !== builderMode && theme_fonts_collection.length === 0 && !doneIntro);
 
+			var chooseButton;
 			if (showChooseFontsButton) {
-				var chooseButton = new Field_Button({
+				chooseButton = new Field_Button({
 					label: l10n.select_fonts_to_use,
 					compact: true,
 					classname: 'open-theme-fonts-manager',
@@ -1783,7 +1687,7 @@ define([
 					}
 				});
 			} else {
-				var chooseButton = new Command_OpenFontManager();
+				chooseButton = new Command_OpenFontManager();
 			}
 
 			if (theme_fonts_collection.length === 0 && Upfront.mainData.userDoneFontsIntro === false) {
@@ -1909,7 +1813,7 @@ define([
 						}
 					})
 				};
-			};
+			}
 			this.$el.html('');
 			this.$el.addClass('typography-panel');
 			_.each( this.fields, function(field){
@@ -2079,9 +1983,9 @@ define([
 				if ('blockquote' === element) {
 					selector = '.upfront-object-content blockquote, .upfront-object-content blockquote p';
 				} else if ('a' === element) {
-					selector = '.upfront-object-content:not(.upfront-output-ubutton) a, .upfront-object-content:not(.upfront-output-ubutton) a:link, .upfront-object-content:not(.upfront-output-ubutton) a:visited';
+					selector = '.upfront-object-content:not(.upfront-output-button):not(.upfront-output-ubutton) a, .upfront-object-content:not(.upfront-output-button):not(.upfront-output-ubutton) a:link, .upfront-object-content:not(.upfront-output-button):not(.upfront-output-ubutton) a:visited';
 				} else {
-					selector = '.upfront-object-content:not(.upfront-output-ubutton) ' + element;
+					selector = '.upfront-object-content ' + element  + ', .upfront-ui ' + element + '.tag-list-tag';
 				}
 				css.push(selector + '{ ' + rules.join("; ") + '; }');
 
@@ -2139,7 +2043,9 @@ define([
 				$style = $("style#typography-colors");
 			}
 			_.each(this.elements, function (element) {
-				if (me.colors[element]) css.push('.upfront-object-content:not(.upfront-output-button) ' + element + '{ color:' + Upfront.Util.colors.to_color_value(me.colors[element]) + '; }');
+				if (me.colors[element]) {
+                    css.push('.upfront-object-content ' + element + '{ color:' + Upfront.Util.colors.to_color_value(me.colors[element]) + '; }');
+                }
 			});
 			$style.empty().append(css.join("\n"));
 		}
@@ -2394,6 +2300,12 @@ define([
                                     backgroundColor : color.toRgbString(),
                                     backgroundImage : "none"
                                 });
+                        	},
+                        	hide: function (color) {
+	                            picker.$(".sp-preview").css({
+                                    backgroundColor : color.toRgbString(),
+                                    backgroundImage : "none"
+                                });
                         	}
                         }
                     });
@@ -2573,6 +2485,15 @@ define([
 		},
 		on_render: function () {
 			var me = this;
+			if( this.sections){
+					me.$el.find('.sidebar-panel-title').after("<ul class='sidebar-panel-tabspane'></ul>");
+			}
+			this.sections.each(function (section) {
+					section.render();
+					me.$el.find('.sidebar-panel-tabspane').append( "<li data-target='" + section.cid +  "' class='sidebar-panel-tab'>" +  section.get_title() +  "</li>");
+					me.$el.find('.sidebar-panel-content').append("<div class='sidebar-tab-content' id='" + section.cid +"'></div>");
+					me.$el.find(".sidebar-panel-content").find(".sidebar-tab-content").last().html(section.el);
+			});
 			if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.THEME )
 				this.$el.find('.sidebar-panel-title').trigger('click');
 		}
@@ -2791,7 +2712,7 @@ define([
 				roles = user.get('roles') || [],
 				tpl
 			;
-			tpl = '<div class="sidebar-profile-avatar"><img src="http://www.gravatar.com/avatar/{{ gravatar ? gravatar : "gravatar" }}?s=25" /></div>' +
+			tpl = '<div class="sidebar-profile-avatar"><img src="//www.gravatar.com/avatar/{{ gravatar ? gravatar : "gravatar" }}?s=25" /></div>' +
 				'<div class="sidebar-profile-detail"><span class="sidebar-profile-name">{{name}}</span><span class="sidebar-profile-role">{{role}}</span></div>' +
 				(roles.length ? '<div class="sidebar-profile-edit"><a class="upfront-icon upfront-icon-edit" data-bypass="true" title="'+  l10n.edit_profile +'" href="{{edit_url}}">' + l10n.edit_profile + '</a></div>' : '');
 			this.$el.html(_.template(tpl,
@@ -3034,13 +2955,21 @@ define([
 			var me = this;
 			if(!this.visible){
 				$('#sidebar-ui').removeClass('collapsed').stop().animate({width: '260px'}, 300);
+				//Remove collapsed class always after region editor is closed
+				$('#element-settings-sidebar').removeClass('collapsed');
+
+				//Bring back element-settings only if it was opened before
+				if($('#element-settings-sidebar').contents().length !== 0) {
+					$('#element-settings-sidebar').removeClass('collapsed').stop().animate({width: '260px'}, 300);
+				}
+
 				$('#page').animate({'margin-left': '260px'}, 300, function(){ Upfront.Events.trigger('sidebar:toggle:done', me.visible); });
 				this.$('#sidebar-ui-toggler-handle').removeClass().addClass('sidebar-ui-hide');
 				this.visible = 1;
 			}
 			else {
-				$('#sidebar-ui').stop().animate({width: '0px'}, 300, function(){
-					$('#sidebar-ui').addClass('collapsed');
+				$('#sidebar-ui, #element-settings-sidebar').stop().animate({width: '0px'}, 300, function(){
+					$('#sidebar-ui, #element-settings-sidebar').addClass('collapsed');
 				});
 				$('#page').animate({'margin-left': '0px'}, 300, function(){ Upfront.Events.trigger('sidebar:toggle:done', me.visible); });
 				this.$('#sidebar-ui-toggler-handle').removeClass().addClass('sidebar-ui-show');
@@ -3927,7 +3856,7 @@ define([
 		},
 		dispatch_show: function () {
 			var me = this;
-			setTimeout(function(){
+			setTimeout(function() {
 				me.options.show(me.get_value(), me.$el);
 			}, 100);
 		},
@@ -4400,9 +4329,21 @@ var Field_ToggleableText = Field_Text.extend({
 				me.$(".sp-container").data("sp-options", me.options.spectrum );
 			};
 
+			/**
+			 * Wrap the hide callback so we can re-use it.
+			 */
+			var hide = function (color) {
+				if (me.options.spectrum && me.options.spectrum.hide) {
+					me.options.spectrum.hide(color);
+				}
+			};
+			// Add wrapped hide callback
+			spectrumOptions.hide = hide;
 			if( !spectrumOptions.autoHide  ){
 				spectrumOptions.hide = function(color){
 					me.color = color;
+					// And if we override the hide callback, re-apply it in overridden method
+					hide(color);
 					me.$(".sp-replacer").addClass("sp-active");
 					me.$(".sp-container").removeClass("sp-hidden");
 				};
@@ -4774,6 +4715,18 @@ var Field_ToggleableText = Field_Text.extend({
 			'click .chosen-container .chosen-single': 'openOptions'
 		},
 		multiple: false,
+
+		initialize: function(options) {
+			Field.prototype.initialize.call(this, options);
+			//Close dropdown on parent scroll
+			$('.sidebar-panel-content, #sidebar-scroll-wrapper').on('scroll', this, this.closeChosen);
+
+			//Disable scroll when chosen is opened
+			$('.sidebar-panel-content .sidebar-tab-content').bind('mousewheel', function() {
+				 return false
+			});
+		},
+
 		get_field_html: function() {
 			var multiple = this.multiple ? 'multiple' : '';
 			return ['<select class="upfront-chosen-select"' , multiple, ' data-placeholder="', this.options.placeholder,  '">', this.get_values_html(), '</select>'].join('');
@@ -4814,15 +4767,7 @@ var Field_ToggleableText = Field_Text.extend({
 				}
 			}, 20);
 
-			//Close dropdown on parent scroll
-			$('.sidebar-panel-content, #sidebar-scroll-wrapper').on('scroll', this, this.closeChosen);
-
-			//Disable scroll when chosen is opened
-			$('.sidebar-panel-content .sidebar-tab-content').bind('mousewheel', function() {
-				 return false
-			});
-
-			me.$el.find('select').on("chosen:hiding_dropdown", this, this.closeChosen);
+			me.$el.find('.chosen-drop').show();
 		},
 		closeChosen: function(e) {
 			var me = e.data;
@@ -5102,6 +5047,7 @@ var Field_ToggleableText = Field_Text.extend({
 			}
 
 			$('#settings').height(this.panel.$('.upfront-settings_panel').outerHeight());
+			this.model.set_property(this.options.property, this.get_value());
 		}
 	});
 
@@ -5279,7 +5225,7 @@ var Field_ToggleableText = Field_Text.extend({
 			var changed = _([]);
 			this.fields.each(function(field, index, list){
 				if (field.property) {
-					var value = field.get_value();
+					var value = field.get_value() || [];
 					var saved_value = field.get_saved_value();
 					if ( ! field.multiple && value != saved_value ) {
 						changed.push(field);
@@ -5807,7 +5753,7 @@ var _Settings_CSS = SettingsItem.extend({
 
 		this.fields = _([
 			new Upfront.Views.Editor.Field.Button({
-				model: me.model,
+				model: this.model,
 				className: 'edit-preset-css-label',
 				compact: true,
 				label: l10n.edit_css_label,
@@ -6468,7 +6414,7 @@ var Icon_Fonts_Manager = Backbone.View.extend({
 			"	font-weight: normal;" +
 			"	font-style: normal;" +
 			"}" +
-			".uf_font_icon {" +
+			".uf_font_icon, .uf_font_icon * {" +
 			"	font-family: '" + font.get('family') + "'!important;" +
 			"}";
 
@@ -6804,6 +6750,7 @@ var CSSEditor = Backbone.View.extend({
 		PlainTxtModel: {label: l10n.text, id:'plain_text'},
 		CodeModel: {label: l10n.code, id: 'upfront-code_element'},
 		Layout: {label: l10n.body, id: 'layout'},
+		GalleryLightbox: {label: l10n.body, id: 'gallery-lightbox'},
 		RegionContainer: {label: l10n.region, id: 'region-container'},
 		Region: {label: l10n.inner_region, id: 'region'},
 		RegionLightbox: {label: l10n.ltbox_region, id: 'region'},
@@ -6837,6 +6784,8 @@ var CSSEditor = Backbone.View.extend({
 
 		this.model = options.model;
 		this.sidebar = ( options.sidebar !== false );
+		this.toolbar = ( options.toolbar !== false );
+		this.readOnly = ( options.readOnly === true );
 		this.global = ( options.global === true );
 
 		this.modelType = options.type ? options.type : this.model.get_property_value_by_name('type');
@@ -6876,7 +6825,7 @@ var CSSEditor = Backbone.View.extend({
 				setTimeout(function () {
 					var styles = Upfront.Util.Transient.pop('css-' + me.element_id);
 					if (styles) {
-						me.get_style_element().html(styles);
+						me.get_style_element().html(styles.replace(/#page/g, 'div#page.upfront-layout-view .upfront-editable_entity.upfront-module'));
 						me.render();
 					}
 				}, 200);
@@ -6990,7 +6939,8 @@ var CSSEditor = Backbone.View.extend({
 			name: this.stylename,
 			elementType: this.elementType.label,
 			selectors: this.selectors,
-			show_style_name: this.is_region_style() === false && this.is_global_stylesheet === false && this.sidebar !== true
+			show_style_name: this.is_region_style() === false && this.is_global_stylesheet === false && this.sidebar !== true,
+			showToolbar: this.toolbar
 		}));
 
 		this.resizeHandler('.');
@@ -7020,6 +6970,8 @@ var CSSEditor = Backbone.View.extend({
 		session.setUseWorker(false);
 		editor.setShowPrintMargin(false);
 
+		editor.setReadOnly(this.readOnly);
+
 		session.setMode("ace/mode/css");
 		editor.setTheme('ace/theme/monokai');
 
@@ -7030,7 +6982,7 @@ var CSSEditor = Backbone.View.extend({
 			},800);
 			me.trigger('change', editor);
 
-			if (typeof me.editor !== "undefined") {
+			if(typeof me.editor !== "undefined") {
 				var aceOuterWidth = $(me.editor.container).get(0).scrollWidth;
 				var aceInnerWidth = $(me.editor.container).find('.ace_content').innerWidth();
 
@@ -7045,7 +6997,7 @@ var CSSEditor = Backbone.View.extend({
 			}
 		});
 
-		styles = Upfront.Util.colors.convert_string_color_to_ufc(this.get_style_element().html());
+		styles = Upfront.Util.colors.convert_string_color_to_ufc(this.get_style_element().html().replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
 		if (this.is_global_stylesheet === false) {
 			scope = new RegExp(this.get_css_selector() + '\\s*', 'g');
 			styles = styles.replace(scope, '');
@@ -7059,7 +7011,7 @@ var CSSEditor = Backbone.View.extend({
 		editor.focus();
 		this.editor = editor;
 
-		if (me.timer) clearTimeout(me.timer);
+		if(me.timer) clearTimeout(me.timer);
 		me.timer = setTimeout(function(){
 			me.startResizable();
 		},300);
@@ -7097,22 +7049,35 @@ var CSSEditor = Backbone.View.extend({
 		// Save the fetching inside the resize
 		var me = this,
 			$cssbody = me.$('.upfront-css-body'),
-			topHeight = me.$('.upfront-css-top').outerHeight(),
+			topHeight = 0,
 			$selectors = me.$('.upfront-css-selectors'),
 			$saveform = me.$('.upfront-css-save-form'),
+			$rsz = this.$('.upfront-css-resizable'),
 			onResize = function(e, ui){
 				var height = ui ? ui.size.height : me.$('.upfront-css-resizable').height(),
 					bodyHeight = height  - topHeight;
 				$cssbody.height(bodyHeight);
-
-				if (me.editor) me.editor.resize();
-
+				if(me.editor)
+					me.editor.resize();
 				$selectors.outerHeight(bodyHeight - $saveform.outerHeight());
+				// Clean unneeded CSS
+				$rsz.css({
+					width: "",
+					height: "",
+					left: "",
+					top: ""
+				});
 				$('#page').css('padding-bottom', height);
 			}
 		;
+		// Add appropriate handle classes
+		$rsz.find(".upfront-css-top")
+			.removeClass("ui-resizable-handle").addClass("ui-resizable-handle")
+			.removeClass("ui-resizable-n").addClass("ui-resizable-n")
+		;
+		topHeight = me.$('.upfront-css-top').outerHeight();
 		onResize();
-		this.$('.upfront-css-resizable').resizable({
+		$rsz.resizable({
 			handles: {n: '.upfront-css-top'},
 			resize: onResize,
 			minHeight: 200,
@@ -7176,7 +7141,7 @@ var CSSEditor = Backbone.View.extend({
 		$el.html(
 			this.stylesAddSelector(
 				contents, (this.is_default_style ? '' : this.get_css_selector())
-			)
+			).replace(/#page/g, 'div#page.upfront-layout-view .upfront-editable_entity.upfront-module')
 		);
 		this.trigger('updateStyles', this.element_id);
 	},
@@ -7224,7 +7189,8 @@ var CSSEditor = Backbone.View.extend({
 			try{
 				if(!!$(selector + splitted.join(' ')).closest('#' + me.element_id).length)
 					return true;
-			} catch (err) {
+			}
+			catch (err) {
 
 			}
 			splitted.pop();
@@ -7562,8 +7528,8 @@ var GeneralCSSEditor = Backbone.View.extend({
 
 		this.options = options || {};
 		this.model = options.model;
-		this.sidebar = ( options.sidebar !== false );
-		this.global = ( options.global === true );
+		this.sidebar = options.sidebar !== false;
+		this.global = options.global === true;
 
 		this.prepareAce = deferred.promise();
 		require([Upfront.Settings.ace_url], function(){
@@ -7585,8 +7551,13 @@ var GeneralCSSEditor = Backbone.View.extend({
 			this.$style = $style
 		}
 
+		if (options.cssSelectors) {
+			this.selectors = options.cssSelectors;
+		}
+
 
 		if ( typeof options.change == 'function' ) this.listenTo(this, 'change', options.change);
+		if ( typeof options.onClose == 'function' ) this.listenTo(this, 'close', options.onClose);
 
 		this.render();
 
@@ -7662,6 +7633,13 @@ var GeneralCSSEditor = Backbone.View.extend({
 		var scope = new RegExp('\.' + this.options.page_class + '\s*', 'g'),
 			styles = this.model.get('styles') ? this.model.get('styles').replace(scope, '') : ''
 		;
+		var scope = new RegExp('\.' + this.options.page_class + '\s*', 'g');
+		var styles;
+		if (this.options.type === 'GalleryLightbox') {
+			styles = this.model.get('properties').get('styles').get('value').replace(scope, '');
+		} else {
+			styles = this.model.get('styles').replace(scope, '');
+		}
 		editor.setValue($.trim(styles), -1);
 
 		// Set up the proper vscroller width to go along with new change.
@@ -7725,6 +7703,7 @@ var GeneralCSSEditor = Backbone.View.extend({
 		});
 	},
 	remove: function() {
+		this.trigger('close');
 		Backbone.View.prototype.remove.call(this);
 		$(window).off('resize', this.resizeHandler);
 	},
@@ -10002,12 +9981,17 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		run_animation: function (view, model) {
 			var to = this.options.to,
 				ani_class = 'upfront-add-region-ani upfront-add-region-ani-' + to,
-				end_t = setTimeout(end, 500);
-			view.$el.one('animationstart webkitAnimationStart MSAnimationStart oAnimationStart', function () {
+				end_t = setTimeout(end, 500),
+				ani_event_start = 'animationstart.region_ani webkitAnimationStart.region_ani MSAnimationStart.region_ani oAnimationStart.region_ani',
+				ani_event_end = 'animationend.region_ani webkitAnimationEnd.region_ani MSAnimationEnd.region_ani oAnimationEnd.region_ani'
+			;
+			view.$el.one(ani_event_start, function () {
 				clearTimeout(end_t);
+				view.$el.off(ani_event_start); // Make sure to remove any remaining unfired event
 			});
-			view.$el.one('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function () {
+			view.$el.one(ani_event_end, function () {
 				end();
+				view.$el.off(ani_event_end); // Make sure to remove any remaining unfired event
 			});
 			// add animation class to trigger css animation
 			view.$el.addClass(ani_class);
@@ -10032,8 +10016,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				//model.set_property('row', Math.ceil(height/baseline), true);
 				view.$el.removeClass(ani_class);
 				// enable edit and activate the new region
-				Upfront.Events.trigger('command:region:edit_toggle', false);
-				Upfront.Events.trigger('command:region:fixed_edit_toggle', false);
+				Upfront.Events.trigger('command:region:edit_toggle', true);
+				Upfront.Events.trigger('command:region:fixed_edit_toggle', true);
 				view.trigger("activate_region", view);
 			}
 		}
@@ -11032,6 +11016,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			"RegionFixedEditPosition" : RegionFixedEditPosition,
 			"CSSEditor": CSSEditor,
 			"Insert_Font_Widget": Insert_Font_Widget,
+			"GeneralCSSEditor": GeneralCSSEditor,
 			"LinkPanel": LinkPanel
 		},
 		Mixins: {

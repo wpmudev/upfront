@@ -187,12 +187,28 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 					$preset['mobile'][$name] = $property;
 				};
 			}
+
+			// Handle specific case for button where button has both preset classes and element class
+			if (isset($preset['id']) && isset($preset['preset_style']) && preg_match('#upfront\-button#', $preset['preset_style']) === 1) {
+				$preset['preset_style'] = preg_replace('#' . $preset['id'] . ' \.upfront-button#', $preset['id'] . '.upfront-button', $preset['preset_style']);
+			}
+			if (isset($preset['preset_style'])) {
+				$preset['preset_style'] = str_replace('\"', '"', $preset['preset_style']);
+				$preset['preset_style'] = str_replace('\"', '"', $preset['preset_style']);
+				$preset['preset_style'] = str_replace('\"', '"', $preset['preset_style']);
+				$preset['preset_style'] = str_replace("\'", "'", $preset['preset_style']);
+				$preset['preset_style'] = str_replace("\'", "'", $preset['preset_style']);
+				$preset['preset_style'] = str_replace("\'", "'", $preset['preset_style']);
+			}
+
 			$args = array('properties' => $preset);
 			extract($args);
 			ob_start();
 			include $this->get_style_template_path();
 			$styles .= ob_get_clean();
 		}
+
+		$styles = stripslashes($styles);
 
 		return $styles;
 	}
@@ -223,6 +239,10 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 	public function get_theme_preset_by_id($preset) {
 		$theme_presets = $this->get_theme_presets();
+
+		if(empty($theme_preset)) {
+			return false;
+		}
 
 		foreach($theme_presets as $tpreset) {
 			if($tpreset['id'] == $preset) {

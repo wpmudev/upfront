@@ -248,12 +248,17 @@
 	margin-top: 5px;
 }
 
-.general_settings_item .slider-contrls-style label,
-.general_settings_item .rotate-effect label,
-.general_settings_item .thumb-propostions label {
+.general_settings_item .slider-contrls-style .upfront-field-label,
+.general_settings_item .rotate-effect .upfront-field-label,
+.general_settings_item .thumb-propostions .upfront-field-label {
 	position: relative;
 	top: 5px;
 	margin-top: -5px;
+}
+
+#settings .upfront-field-icon {
+	position: relative;
+	top: -3px;
 }
 
 .general_settings_item .thumb-propostions {
@@ -307,8 +312,9 @@
     max-width: 286px;
     overflow: hidden;
 }
-.upfront-save_settings:hover {
+.upfront-ui .upfront-save_settings:hover {
 	background: #3ea;
+	border: 1px solid #3ea;
 }
 /* @TODO still using font awesome icon, need add it to sprite instead */
 .upfront-save_settings i {
