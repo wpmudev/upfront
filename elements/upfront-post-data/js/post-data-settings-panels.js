@@ -68,10 +68,19 @@ define([
 		},
 		setupItems: function () {
 			var preset = this.property('preset') ? this.clear_preset_name(this.property('preset')) : 'default';
+			var preset_model = this.presets.findWhere({id: preset});
+
+			// So what do we do when we don't have the appropriate preset model?
+			if (!preset_model) {
+				// Why, spawn the default, of course!
+				preset = 'default';
+				this.property('preset', preset);
+				preset_model = this.presets.findWhere({id: preset});
+			}
+			
 			PresetManager.prototype.setupItems.apply(this, arguments);
 
 			_.each(this.part_panels, function (panel, idx) {
-				var preset_model = this.presets.findWhere({id: preset});
 				var pnl = new panel({
 					model: preset_model
 				});
