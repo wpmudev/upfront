@@ -62,17 +62,13 @@ abstract class Upfront_Compat_LayoutConverter_Ver {
 class Upfront_Compat_LayoutConverter_Ver_1_0_0 extends Upfront_Compat_LayoutConverter_Ver {
 	
 	public function convert () {
-		//timer_start();
 		
 		$breakpoints = $this->parser->get_breakpoints();
 		foreach ( $this->regions as $r => $region ) {
-			//if ( $region['name'] != 'testing' ) continue;
 			$this->_convert_region($region, $this->parser, $this->regions);
-			//print_r($region);
 			$regions[$r] = $region;
 		}
 		$this->layout->set('regions', $regions);
-		//var_dump(timer_stop());
 		
 		return true;
 	}
@@ -81,6 +77,12 @@ class Upfront_Compat_LayoutConverter_Ver_1_0_0 extends Upfront_Compat_LayoutConv
 		$breakpoints = $parser->get_breakpoints();
 		$add_wrappers = array();
 		$add_modules = array();
+
+		// Check region version to make sure we don't convert already converted region
+		// Could happen with global region
+		$version = upfront_get_property_value('version', $region);
+		if ( version_compare($version, '1.0.0') !== -1 ) return;
+
 		foreach ( $breakpoints as $context => $breakpoint ) {
 			$parser->prepare_walk($region, $breakpoint, $regions);
 			while ( $parser->walk() ) {
@@ -163,6 +165,8 @@ class Upfront_Compat_LayoutConverter_Ver_1_0_0 extends Upfront_Compat_LayoutConv
 		}
 		$region['wrappers'] = $new_wrappers;
 		$region['modules'] = $new_modules;
+
+		upfront_set_property_value('version', '1.0.0', $region);
 		return $region;
 	}
 	
