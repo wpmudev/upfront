@@ -1451,11 +1451,11 @@ var GridEditor = {
 					data = $(this).data('ui-resizable'),
 					$wrappers = Upfront.Util.find_sorted($me.parent(), '> .upfront-wrapper'),
 					aff_els = ed.get_affected_els(me, ed.wraps, [], true),
-					resize_limit = ed.get_resize_limit(aff_els, ed.containment),
-					also_resize;
+					also_resize
+				;
 					
 				axis = data.axis ? data.axis : 'e';
-				max_col = me.col + ( axis == 'w' ? me.grid.left-resize_limit[0] : resize_limit[1]-me.grid.right );
+				max_col = me.col;
 				min_col = ed.min_col;
 				also_min_col = ed.min_col;
 				is_spacer = ( $me.find('> .upfront-module-view > .upfront-module-spacer').length > 0 );
@@ -1493,6 +1493,7 @@ var GridEditor = {
 					also_is_spacer = ( $also_resize.find('> .upfront-module-view > .upfront-module-spacer').length > 0 );
 					also_model = model.collection.get_by_wrapper_id($also_resize.attr('id'));
 					also_view = Upfront.data.wrapper_views[also_model.cid];
+					max_col = me.col + also_resize.col;
 					if ( !is_spacer && !also_is_spacer ) {
 						max_col -= min_col;
 					}
