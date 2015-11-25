@@ -18,7 +18,13 @@ define([], function () {
 	var showSettings = function(view) {
 		var current_object_proto, settings_obj_view;
 
-		if (the_settings_view) return destroySettings();
+		if (the_settings_view) {
+			/** triggering the event instead of directly calling the destroy function,
+				so that elements can subscribe to this event even when executed by virtue
+				of toggling the settings button **/
+			Upfront.Events.trigger("element:settings:canceled");
+			return;
+		}
 
 		current_object_proto = _(Upfront.Application.LayoutEditor.Objects).reduce(function (obj, current) {
 			if (view instanceof current.View) {
