@@ -2073,10 +2073,13 @@ define([
 			update_position: function () {
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
 					grid = Upfront.Settings.LayoutEditor.Grid;
-				if ( ! breakpoint ) return;
-				var $toggle = this.$el.find('> .upfront-module-hidden-toggle');
 
 				this.apply_paddings(this.$el.find('> .upfront-modules_container'));
+
+				if ( ! breakpoint ) return;
+
+				var $toggle = this.$el.find('> .upfront-module-hidden-toggle');
+
 				this.apply_breakpoint_position(this.$el, $toggle);
 
 				var theme_style = this.model.get_breakpoint_property_value('theme_style', true);

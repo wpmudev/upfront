@@ -10817,19 +10817,19 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				? breakpoint_obj.top_bg_padding_num
 				: (typeof props.top_bg_padding_num !== 'undefined')
 					? props.top_bg_padding_num
-					: 0
+					: false
 			;
 
 			bottom_padding = (typeof breakpoint_obj.bottom_bg_padding_num !== 'undefined')
 				? breakpoint_obj.bottom_bg_padding_num
 				: (typeof props.bottom_bg_padding_num !== 'undefined')
 					? props.bottom_bg_padding_num
-					: 0
+					: false
 			;
 
 			$region.css({
-				'padding-top': top_padding + 'px',
-				'padding-bottom': bottom_padding + 'px'
+				'padding-top': ( false === top_padding ? '' : top_padding + 'px' ),
+				'padding-bottom': ( false === bottom_padding ? '' : bottom_padding + 'px' )
 			});
 		},
 		add_responsive_items: function() {

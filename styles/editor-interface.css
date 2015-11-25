@@ -4321,13 +4321,13 @@ a.upfront-region-name-edit-trigger:before {
   display: block;
   z-index: 10; }
 
-.upfront-ui-selected .upfront-selected-border, .ui-selecting .upfront-selected-border, .upfront-module-group:hover .upfront-selected-border, .upfront-dragging .upfront-module-group .upfront-selected-border {
+.upfront-ui-selected .upfront-selected-border, .ui-selecting .upfront-selected-border, .upfront-module-group-active > .upfront-selected-border, .upfront-module-group:hover > .upfront-selected-border, .upfront-dragging .upfront-module-group > .upfront-selected-border {
   display: block; }
 
-.upfront-module-group.upfront-module-group-disabled .upfront-selected-border {
+.upfront-module-group.upfront-module-group-disabled > .upfront-selected-border {
   display: none; }
 
-.upfront-module-group.upfront-module-group-edit-mode:hover .upfront-selected-border, .upfront-module-group.upfront-module-group-on-edit .upfront-selected-border {
+.upfront-module-group.upfront-module-group-edit-mode:hover > .upfront-selected-border, .upfront-module-group.upfront-module-group-on-edit > .upfront-selected-border {
   display: block; }
 
 .upfront-module-group .upfront-editable_entities_container .ui-resizable-handle {
@@ -4501,7 +4501,7 @@ a.upfront-region-name-edit-trigger:before {
   color: #ADC3D8; }
 
 /* .upfront-editable_entity:hover > .upfront-entity-size-hint, */
-.upfront-editable_entity.ui-resizable-resizing > .upfront-entity-size-hint, .upfront-module:not(.upfront-module-active):hover .upfront-entity-size-hint, .upfront-wrapper.ui-resizable-resizing .upfront-editable_entity > .upfront-entity-size-hint, .upfront-module.ui-resizable-resizing > .upfront-objects_container > .upfront-editable_entities_container > .upfront-object-view > .upfront-entity-size-hint, .upfront-wrapper.ui-resizable-resizing .upfront-module > .upfront-objects_container > .upfront-editable_entities_container > .upfront-object-view > .upfront-entity-size-hint {
+.upfront-editable_entity.ui-resizable-resizing > .upfront-entity-size-hint, .upfront-module:not(.upfront-module-active):hover .upfront-entity-size-hint, .upfront-module-group:not(.upfront-module-group-active):hover > .upfront-entity-size-hint, .upfront-wrapper.ui-resizable-resizing .upfront-editable_entity > .upfront-entity-size-hint, .upfront-module.ui-resizable-resizing > .upfront-objects_container > .upfront-editable_entities_container > .upfront-object-view > .upfront-entity-size-hint, .upfront-wrapper.ui-resizable-resizing .upfront-module > .upfront-objects_container > .upfront-editable_entities_container > .upfront-object-view > .upfront-entity-size-hint {
   display: block; }
 
 .upfront-module-group-on-edit > .upfront-entity-size-hint, .upfront-module-group-on-edit:hover > .upfront-entity-size-hint {
