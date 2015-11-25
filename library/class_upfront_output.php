@@ -510,10 +510,9 @@ abstract class Upfront_Container extends Upfront_Entity {
 	protected $_wrapper;
 	protected $_wrapper_is_spacer;
 
-	public function get_markup ()
-	{
-		$html = '';
-		$wrap = '';
+	public function get_markup () {
+		$html='';
+		$wrap='';
 
 		if (!empty($this->_data[$this->_children])) {
 			foreach ($this->_data[$this->_children] as $idx => $child) {

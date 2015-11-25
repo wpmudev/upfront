@@ -84,7 +84,10 @@ define([
 										name: 'bgcolor',
 										label: l10n.settings.button_bg_label
 									},
-								]
+								],
+								fields: {
+									use: 'usebgcolor'
+								}
 							}
 						},
 						{

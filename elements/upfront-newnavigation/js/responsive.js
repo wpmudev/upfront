@@ -267,14 +267,13 @@ jQuery(document).ready(function($) {
 			if (breakpoints.preset) {
 				var order = {'mobile':'', 'tablet':'', 'desktop':''};
 				for (key in order) {
-					breakpoints[key] = breakpoints[key] || {};
-					if (parseInt(currentwidth) >= parseInt(breakpoints[key].width)) {
+					breakpoints.preset[key] = breakpoints.preset[key] || {};
+					if (parseInt(currentwidth) >= parseInt(breakpoints.preset[key].width)) {
 						currentKey = key;
 					}
 				}
 
-				breakpoints.preset = breakpoints.preset || {};
-				preset = breakpoints.preset[currentKey] || {};
+				preset = breakpoints.preset[currentKey];
 
 				if (preset.menu_style == 'triggered') {
 					$(this).attr('data-style', 'burger');

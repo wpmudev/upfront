@@ -30,8 +30,8 @@ It might be necessary to do some post-install steps, such as adjusting your ABSP
 ## Running tests
 
 - To run both JS and PHP tests: `npm test`
-- To run both JS tests only: `npm run test-js`
-- To run both PHP tests only: `npm run test-php`
+- To run JS tests only: `npm run test-js`
+- To run PHP tests only: `npm run test-php`
 
 If you installed PHP tests in a place other than default, you will need to set the `WP_TESTS_DIR` environment variable before issuing the command. Example for Windows:
 

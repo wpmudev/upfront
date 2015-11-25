@@ -11,7 +11,7 @@ define([
 			panelTitle: l10n.settings,
 			presetDefaults: {
 				'menu_style': 'horizontal',
-				'menu_alingment': 'left',
+				'menu_alignment': 'left',
 				'burger_alignment': 'left',
 				'static-font-size': 16,
 				'static-font-family': 'Arial',
@@ -170,6 +170,45 @@ define([
 						}
 					},
 				],
+			},
+
+			migratePresetProperties: function(newPreset) {
+				var props = {};
+
+				this.model.get('properties').each( function(prop) {
+					props[prop.get('name')] = prop.get('value');
+				});
+
+				if (props.breakpoint) {
+					// Convert "burger_menu" and "menu_style" properties to "menu_style" property
+					if (props.breakpoint.desktop) {
+						if (props.breakpoint.desktop.burger_menu === 'yes') {
+							props.breakpoint.desktop.menu_style = 'triggered';
+						}
+						delete props.breakpoint.desktop.burger_menu;
+					}
+					if (props.breakpoint.tablet) {
+						if (props.breakpoint.tablet.burger_menu === 'yes') {
+							props.breakpoint.tablet.menu_style = 'triggered';
+						}
+						delete props.breakpoint.tablet.burger_menu;
+					}
+					if (props.breakpoint.mobile) {
+						if (props.breakpoint.mobile.burger_menu === 'yes') {
+							props.breakpoint.mobile.menu_style = 'triggered';
+						}
+						delete props.breakpoint.mobile.burger_menu;
+					}
+				} else {
+					props.breakpoint = {
+						desktop: {},
+						tablet: {},
+						mobile: {}
+					};
+				}
+
+				// Setup breakpoint property for preset
+				newPreset.set({'breakpoint': props.breakpoint});
 			}
 		};
 

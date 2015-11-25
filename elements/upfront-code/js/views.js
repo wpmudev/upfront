@@ -435,9 +435,9 @@ define([
 
 					//url = url.replace(document.location.origin, ''); // Let's not do this
 
-					if(currentSyntax == 'style')
+					if('style' === currentSyntax) {
 						me.currentEditor.insert('url("' + url + '")');
-					else {
+					} else if ('markup' === currentSyntax) {
 						//Add the selected size
 						var urlParts = url.split('.'),
 							ext = urlParts[urlParts.length - 1],
@@ -447,7 +447,7 @@ define([
 							url = url.replace(new RegExp('.' + ext + '$'), '-' + size + '.' + ext);
 						}
 
-						me.currentEditor.insert('<img src="' + url + '" >');
+						me.currentEditor.insert('<img src="' + url + '">');
 					}
 
 					me.currentEditor.focus();
