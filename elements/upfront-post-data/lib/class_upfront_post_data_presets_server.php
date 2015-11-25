@@ -38,7 +38,7 @@ class Upfront_PostData_Elements_Server implements IUpfront_Server {
 		if (empty($type)) return false;
 		$class_name = join('', array_filter(array_map('trim', array_map('ucfirst', explode('_', $type)))));
 
-		return 'Upfront_' . preg_Replace('/[^a-z0-9]/i', '', $class_name) . '_Presets_Server';
+		return 'Upfront_' . preg_replace('/[^a-z0-9]/i', '', $class_name) . '_Presets_Server';
 	}
 
 	private function _get_servers () {
@@ -78,11 +78,13 @@ abstract class Upfront_DataElement_Preset_Server extends Upfront_Presets_Server 
 
 	/**
 	 * Sanitize here, because original method doesn't :/
-	 *
-	 * @return [type] [description]
 	 */
 	public function save () {
-		if (isset($_POST['data'])) $_POST['data'] = stripslashes_deep($_POST['data']);
+		if (isset($_POST['data'])) {
+			$data = stripslashes_deep($_POST['data']);
+			if (!empty($data['preset']) && !empty($data['id'])) $data['preset'] = $data['id']; // Also override whatever preset we're seding
+			$_POST['data'] = $data;
+		}
 		parent::save();
 	}
 }
