@@ -786,6 +786,9 @@ define([
 				if (this.controls === false) return;
 
 				this.controls.render();
+				if (!this.$control_el || this.$control_el.length === 0) {
+					this.$control_el = this.$el;
+				}
 				if (this.$control_el.find('>.upfront-element-controls').length === 0) {
 					this.$control_el.append(elementControlsTpl);
 					this.$control_el.find('>.upfront-element-controls').html('').append(this.controls.$el);
@@ -1345,11 +1348,13 @@ define([
 				this.ensure_breakpoint_change_is_listened();
 				this.ensureUiOffsetCalls();
 
-				this.$control_el = this.parent_module_view.$('.upfront-module');
-				this.updateControls();
-				setTimeout(function() {
-					if(me.paddingControl && typeof me.paddingControl.isOpen !== 'undefined' && !me.paddingControl.isOpen)	me.paddingControl.refresh();
-				}, 300);
+				if ( this.parent_module_view ) {
+					this.$control_el = this.parent_module_view.$('.upfront-module');
+					this.updateControls();
+					setTimeout(function() {
+						if(me.paddingControl && typeof me.paddingControl.isOpen !== 'undefined' && !me.paddingControl.isOpen)	me.paddingControl.refresh();
+					}, 300);
+				}
 			},
 			update: function (prop, options) {
 				if (typeof prop === 'undefined')	return;
