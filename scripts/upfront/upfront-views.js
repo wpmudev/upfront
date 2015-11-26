@@ -1357,7 +1357,7 @@ define([
 				}
 			},
 			update: function (prop, options) {
-				if (typeof prop === 'undefined')	return;
+				if (typeof prop === 'undefined') return this.render();
 
 				// var prev_value = prop._previousAttributes.value,
 				var value = prop.get('value'),
@@ -1428,6 +1428,7 @@ define([
 				this.window_resize_offset_check_set = true;
 			},
 			checkUiOffset: function() {
+				if (!this.parent_module_view) return;
 				var $parentRegionEl = this.parent_module_view.region_view && this.parent_module_view.region_view.$el;
 
 				if (!$parentRegionEl) {
