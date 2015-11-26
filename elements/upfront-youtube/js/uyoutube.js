@@ -112,7 +112,8 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 
 				//Delay events else values are empty
 				setTimeout(function(){
-					me.$(".upfront-entity-settings_trigger").click();
+					// Trigger settings
+					me.on_settings_click();
 
 					//Trigger event for adding videos to array
 					Upfront.Events.trigger("upfront:youtube:added");
