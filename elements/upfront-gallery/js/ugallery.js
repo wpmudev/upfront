@@ -915,6 +915,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	},
 
 	preventNavigation: function(e){
+		this.constructor.__super__.constructor.__super__.on_click.call(this, e);
 		if(e.target.tagName.toUpperCase() === 'INPUT') {
 			return;
 		}
