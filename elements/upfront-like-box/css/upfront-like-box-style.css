@@ -69,4 +69,5 @@ div.upfront-like-box_placeholder_guide {
   width: 95%;
   background-color:transparent;
   top: 4%;
+  z-index: 1;
 }

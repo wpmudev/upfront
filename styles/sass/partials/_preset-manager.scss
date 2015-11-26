@@ -348,6 +348,10 @@ div.preset-manager-panel div.or_divider div.upfront-settings-item-title > span {
 div.preset-manager-panel div.upfront-settings-common_panel {
 	padding-bottom: 15px;
 }
+div.preset-manager-panel div.upfront-settings-padding_panel {
+	border-bottom: 1px solid #a3bfd9;
+	padding-bottom: 0;
+}
 div.preset-manager-panel div.border_radius_lock input[type=checkbox] {
 	position: relative;
 	left: 36px;

@@ -36,8 +36,10 @@ class Upfront_UtabsView extends Upfront_Object {
 		if(!isset($data['properties']))
 				return $flat;
 
-		foreach($data['properties'] as $prop)
-				$flat[$prop['name']] = $prop['value'];
+		foreach($data['properties'] as $prop) {
+			if (isset($prop['value']) === false) continue;
+			$flat[$prop['name']] = $prop['value'];
+		}
 
 		$flat = array_merge(self::default_properties(), $flat);
 

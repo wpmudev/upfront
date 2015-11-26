@@ -17,7 +17,7 @@ function upfront_get_property_value ($prop, $data) {
 	return $value;
 }
 
-function upfront_set_property_value ($prop, $value, $data) {
+function upfront_set_property_value ($prop, $value, &$data) {
 	$properties = !empty($data['properties']) ? $data['properties'] : array();
 	$updated = false;
 
@@ -72,21 +72,36 @@ function upfront_array_to_properties ($the_array, $map=null) {
 function upfront_get_breakpoint_property_value ($prop, $data, $breakpoint, $return_default = false) {
 	$model_breakpoint = upfront_get_property_value('breakpoint', $data);
 	$breakpoint_data = $model_breakpoint && !empty($model_breakpoint[$breakpoint->get_id()]) ? $model_breakpoint[$breakpoint->get_id()] : false;
-	if ( $breakpoint_data && isset($breakpoint_data[$prop]) )
+	if ( $breakpoint_data && isset($breakpoint_data[$prop]) ){
 		return $breakpoint_data[$prop];
-	if ( $return_default )
+	}
+	if ( $return_default ) {
 		return upfront_get_property_value($prop, $data);
+	}
 	return false;
+}
+
+function upfront_set_breakpoint_property_value ($prop, $value, &$data, $breakpoint) {
+	$model_breakpoint = upfront_get_property_value('breakpoint', $data);
+	$breakpoint_data = $model_breakpoint && !empty($model_breakpoint[$breakpoint->get_id()]) ? $model_breakpoint[$breakpoint->get_id()] : array();
+	$breakpoint_data[$prop] = $value;
+	$model_breakpoint[$breakpoint->get_id()] = $breakpoint_data;
+	upfront_set_property_value('breakpoint', $model_breakpoint, $data);
+	return $data;
 }
 
 function upfront_get_class_num ($classname, $classes) {
 	$classes = array_map('trim', explode(' ', $classes));
 	$rx = '^' . preg_quote($classname, '/') . '(\d+)$';
 	foreach ($classes as $class) {
-		if (preg_match("/{$rx}/", $class, $matches))
-			return intval($matches[1]);
+		if (preg_match("/{$rx}/", $class, $matches)) return intval($matches[1]);
 	}
 	return false;
+}
+
+function upfront_replace_class_num ($classname, $val, $classes) {
+	$rx = preg_quote($classname, '/') . '\d+';
+	return preg_replace("/{$rx}/", $classname . $val, $classes);
 }
 
 function upfront_element_relative_path ($relpath, $filepath) {

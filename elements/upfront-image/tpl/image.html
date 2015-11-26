@@ -33,16 +33,16 @@
 
 <?php if($gifImage){ ?>
 <style>
-	#<?php echo $element_id ?>.uimage-gif .upfront-image-container {
+	#<?php echo $element_id ?> .uimage-gif .upfront-image-container {
 		height: <?php echo $element_size['height'] ?>px;
 		width: <?php echo $element_size['width'] ?>px;
 	}
 
-	#<?php echo $element_id ?>.uimage-gif img {
+	#<?php echo $element_id ?> .uimage-gif img {
 		height: <?php echo $size['height'] ?>px;
 		width: <?php echo $size['width'] ?>px !important;
 		margin-top: <?php echo $gifTop ?>;
-		margin-left: -<?php echo $gifLeft ?>;
+		margin-left: <?php echo $gifLeft ?>;
 	}
 </style>
 <?php } ?>

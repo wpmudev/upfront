@@ -1,4 +1,4 @@
-<script type="text/responsive_css" data-bind=".upfront-module:not([data-shadow])" data-min-height="30px" data-max-height="70px">
+<script type="text/responsive_css" data-editor="1" data-bind=".upfront-module:not(.upfront-module-spacer,[data-shadow])" data-min-height="30px" data-max-height="70px">
 	(this) .upfront-icon-button {
 		width: 18px;
 		height: 18px;
@@ -15,6 +15,10 @@
 		top: 23px;
 		right: 0px;
 	}
+	.offset-ui-from-right-top (this) > .upfront-entity_meta,
+	.offset-ui-from-right-top (this) .upfront-object > .upfront-entity_meta {
+		right: 50px;
+	}
 	(this) .upfront-entity_meta .upfront-icon-button {
 		margin-bottom: 3px;
 	}
@@ -26,7 +30,7 @@
 	}
 </script>
 
-<script type="text/responsive_css" data-bind=".upfront-module:not([data-shadow])" data-min-height="60px" data-max-height="125px">
+<script type="text/responsive_css" data-editor="1" data-bind=".upfront-module:not(.upfront-module-spacer,[data-shadow])" data-min-height="60px" data-max-height="125px">
 	(this) .upfront-object > .upfront-entity_meta_extra {
 		display: none;
 		top: 100%;
@@ -87,35 +91,46 @@
 	}
 </script>
 
+<script type="text/responsive_css" data-editor="1" data-bind=".upfront-module:not(.upfront-module-spacer,[data-shadow])" data-max-width="90px">
+	(this) > .upfront-resize-handle-s:before {
+		width: 25px;
+	}
+</script>
 
-<script type="text/responsive_css" data-bind=".upfront-module-group" data-max-height="90px">
+<script type="text/responsive_css" data-editor="1" data-bind=".upfront-wrapper" data-max-height="100px">
+	(this) > .upfront-wrapper-meta {
+		padding-top: 0;
+	}
+</script>
+
+<script type="text/responsive_css" data-editor="1" data-bind=".upfront-module-group" data-max-height="90px">
 	(this) > .upfront-module-group-toggle-edit-container {
 		display: none;
 	}
 </script>
 
-<script type="text/responsive_css" data-bind=".upfront-module-group" data-min-height="91px">
+<script type="text/responsive_css" data-editor="1" data-bind=".upfront-module-group" data-min-height="91px">
 	(this) .upfront-inline-panel-item.ungroup-control,
 	(this) .upfront-inline-panel-item.edit-elements-control {
 		display: none;
 	}
 </script>
 
-<script type="text/responsive_css" data-bind=".upfront-region:not(#region-shadow)" data-min-height="60px" data-max-height="219px">
+<script type="text/responsive_css" data-editor="1" data-bind=".upfront-region:not(#region-shadow)" data-min-height="60px" data-max-height="219px">
 	(this) > .upfront-entity_meta {
 		top: 5px;
 		right: 15px;
 	}
 </script>
 
-<script type="text/responsive_css" data-bind=".upfront-region:not(#region-shadow)" data-max-height="159px">
+<script type="text/responsive_css" data-editor="1" data-bind=".upfront-region:not(#region-shadow)" data-max-height="159px">
 	(this) > .upfront-entity_meta > .upfront-icon-button {
 		float: right;
 		margin: 0 0 0 5px;
 	}
 </script>
 
-<script type="text/responsive_css" data-bind=".upfront-region-container:not(#region-container-shadow)" data-max-height="99px">
+<script type="text/responsive_css" data-editor="1" data-bind=".upfront-region-container:not(#region-container-shadow)" data-max-height="99px">
 	(this) .upfront-region-size-hint.upfront-ui,
 	(this) .upfront-region > .upfront-entity_meta.upfront-ui {
 		top: 0;
@@ -128,13 +143,13 @@
 	}
 </script>
 
-<script type="text/responsive_css" data-bind=".upfront-region-container:not(#region-container-shadow)" data-min-height="100px">
+<script type="text/responsive_css" data-editor="1" data-bind=".upfront-region-container:not(#region-container-shadow)" data-min-height="100px">
 	.upfront-region-editing (this) .upfront-region > .responsive-item-controls {
 		display: none;
 	}
 </script>
 
-<script type="text/responsive_css" data-bind="#upfront-image-details" data-max-width="540px">
+<script type="text/responsive_css" data-editor="1" data-bind="#upfront-image-details" data-max-width="540px">
 	(this) .upfront-image-orientation {
 		float: none;
 		width: auto;
@@ -152,7 +167,7 @@
 </script>
 
 <!-- Swap Image Overlay Rules -->
-<script type="text/responsive_css" data-bind=".upfront-image" data-max-width="225px">
+<script type="text/responsive_css" data-editor="1" data-bind=".upfront-image" data-max-width="225px">
 	(this) .swap-image-overlay p.upfront-icon-swap-image {
 		max-width:140px;
 		font-size:15px;
@@ -163,7 +178,7 @@
 	}
 </script>
 
-<script type="text/responsive_css" data-bind=".upfront-image" data-max-width="189px">
+<script type="text/responsive_css" data-editor="1" data-bind=".upfront-image" data-max-width="189px">
 	(this) .swap-image-overlay p.upfront-icon-swap-image {
 		width:100%;
 		height:100%;

@@ -29,7 +29,8 @@ class Upfront_LikeBoxView extends Upfront_Object {
 		}
 		if($url) {
 			$parts = parse_url($url);
-			$fbname = end(explode('/', trim($parts['path'], '/')));
+			$path = explode('/', trim($parts['path'], '/'));
+			$fbname = end($path);
 
 			$wide = intval($element_size['width'])-30;
 
