@@ -28,7 +28,7 @@ define([
 					},
 					show: function(value, $el) {
 						var stateSettings = $el.closest('.upfront-settings-item-content');
-						var lock = me.model.get('padding_lock');
+						var lock = me.model.get_property_value_by_name('lock_padding');
 						//Toggle padding fields
 						if(value == "yes") {
 							if(lock == "yes") {
@@ -66,7 +66,7 @@ define([
 						me.model.set_property('lock_padding', value);
 
 						var stateSettings = me.$el;
-						var usePadding = me.model.get('use_padding');
+						var usePadding = me.model.get_property_value_by_name('use_padding');
 						var padding = me.model.get_property_value_by_name('padding_number');
 
 						//Toggle border radius fields
@@ -132,7 +132,7 @@ define([
 						me.enable_lock_padding();
 					},
 					show: function() {
-						var value = me.model.get('padding_number');
+						var value = me.model.get_property_value_by_name('padding_number');
 						if(value > 250) {
 							me.$el.find('.padding-slider').css('opacity', 0.6);
 						} else {
