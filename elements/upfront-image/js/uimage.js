@@ -76,7 +76,7 @@ define([
 
 			this.listenTo(this.model, 'uimage:edit', this.editRequest);
 
-			this.controls = this.createControls();
+			//this.controls = this.createControls();
 
 			if(this.property('image_status') !== 'ok' || this.property('quick_swap') || (this.isThemeImage() && !Upfront.themeExporter)) {
 				this.property('has_settings', 0);

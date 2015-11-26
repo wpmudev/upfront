@@ -73,12 +73,12 @@ define([
 			
 			this.$el.siblings('.upfront-control-dialog-open').removeClass('upfront-control-dialog-open');
 
-			e.preventDefault();
-
 			if(!$(e.target).closest('.upfront-icon').length || $(e.target).closest('upfront-icon-media-label-delete').length) {
 				e.stopPropagation();
 				return;
 			}
+
+			e.preventDefault();
 
 			this.clicked(e);
 
