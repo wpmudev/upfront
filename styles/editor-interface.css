@@ -4076,7 +4076,7 @@ a.upfront-region-name-edit-trigger:before {
   position: relative; }
 
 .upfront-wrapper.upfront-wrapper-active {
-  z-index: 3; }
+  z-index: 30; }
 
 .upfront-wrapper-content {
   width: 100%; }
