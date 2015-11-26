@@ -284,7 +284,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	prepareSlider: function(){
 		var me = this,
 			wrapper = me.$('.uslide-image'),
-			controls = me.createControls(),
+			controls = me.createSlideControls(),
 			text = me.$('.uslide-editable-text'),
 			currentSlide = this.model.slideCollection.at(this.getCurrentSlide())
 		;
@@ -352,12 +352,12 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		}
 	},
 
-	updateControls: function(){
+	updateSlideControls: function(){
 		if(typeof(this.controls) !== 'undefined') {
 			this.controls.remove();
 		}
 
-		var controls = this.createControls();
+		var controls = this.createSlideControls();
 		controls.render();
 
 		this.$('.uimage-controls').append(controls.$el);
@@ -546,7 +546,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		this.$('.uslides').on('slidein', function(e, slide, index){
 			if(slide){
 				me.setCurrentSlide(index);
-				me.updateControls();
+				me.updateSlideControls();
 				me.$('.uimage-controls').attr('rel', slide.attr('rel'));
 				if(me.get_preset_properties().primaryStyle == 'side')
 					me.setImageResizable();
@@ -559,7 +559,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		});
 	},
 
-	createControls: function() {
+	createSlideControls: function() {
 		var me = this,
 			panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
 			multiBelow = {
