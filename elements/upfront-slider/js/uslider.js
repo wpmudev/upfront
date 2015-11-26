@@ -218,6 +218,9 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			var slider = me.$el.find('.upfront-output-uslider'),
 			options = slider.find('.uslider').data();
 
+			slider.find('.uslides').on('rendered', function(){
+				Upfront.Events.trigger('entity:object:refresh', me);
+			});
 			slider.find('.uslides').upfront_default_slider(options);
 
 			slider.find('.uslide-above').each(function(){

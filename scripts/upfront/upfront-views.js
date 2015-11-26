@@ -2381,6 +2381,7 @@ define([
 				this.listenTo(Upfront.Events, "entity:resized", this.on_resize);
 				this.listenTo(Upfront.Events, "entity:wrapper:resized", this.on_wrapper_resize);
 				this.listenTo(Upfront.Events, "entity:wrappers:update", this.on_wrappers_update);
+				this.listenTo(Upfront.Events, "entity:object:refresh", this.on_object_refresh);
 				this.listenTo(Upfront.Events, "entity:module_group:group", this.on_group);
 				this.listenTo(Upfront.Events, "entity:module_group:ungroup", this.on_ungroup);
 				this.listenTo(Upfront.Events, "layout:render", this.on_after_layout_render);
@@ -2543,6 +2544,11 @@ define([
 				//this.apply_flexbox_clear();
 				this.apply_wrapper_height();
 				this.apply_adapt_to_breakpoints();
+			},
+			on_object_refresh: function (view) {
+				if ( !view.parent_module_view ) return;
+				if ( view.parent_module_view.parent_view && view.parent_module_view.parent_view != this ) return;
+				this.apply_wrapper_height();
 			},
 			on_add: function (model, collection, options) {
 				var update = typeof options.update != 'undefined' ? options.update : true;
