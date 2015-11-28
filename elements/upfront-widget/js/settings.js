@@ -1,8 +1,10 @@
 (function ($) {
 define([
 	'scripts/upfront/element-settings/settings',
-	'scripts/upfront/element-settings/root-settings-panel'
-], function (ElementSettings, RootSettingsPanel) {
+	'scripts/upfront/element-settings/root-settings-panel',
+	'scripts/upfront/preset-settings/util',
+	'text!elements/upfront-widget/tpl/preset-style.html'
+], function (ElementSettings, RootSettingsPanel, Util, styleTpl) {
 	var l10n = Upfront.Settings.l10n.widget_element;
 
 	var current_widget = false, 
@@ -122,14 +124,30 @@ define([
 		clear_cache: function() { Upfront.data.uwidget.widgets_cache = {}; }
 	});
 
+
 	/**
 	 * Widget settings to be returned. Contains logic to populate widget types dropdown list
 	 * and triggers the instance dynamic_settings to re-render with new settings for the specific widget type selected.
 	 */
 	var UwidgetSettings = ElementSettings.extend({
+		panels: {
+			// only this one will be instantiated the API way
+			Appearance: {
+				mainDataCollection: 'widgetPresets',
+				styleElementPrefix: 'widget-preset',
+				ajaxActionSlug: 'widget',
+				panelTitle: l10n.settings,
+				presetDefaults: {
+					'id': 'default',
+					'name': l10n.default_preset,
+				},
+				styleTpl: styleTpl,
+			}
+		},
 
 		initialize: function (opts) {
 
+			// Call the super constructor here, so that the appearance panel is instantiated
 			this.constructor.__super__.initialize.call(this, opts);
 			
 			var widget_values = _(_.filter(Upfront.data.uwidget.widgets, function (each) {
@@ -142,6 +160,7 @@ define([
 			widget_values.unshift({label: l10n.widget_select, value: ''});
 
 			var panel = new RootSettingsPanel({
+				model: this.model,
 				className: 'upfront-settings_panel_wrap widget-settings',
 				title: l10n.settings,
 			});
@@ -171,12 +190,8 @@ define([
 				]
 			});
 
-			var css_settings = new Upfront.Views.Editor.Settings.Settings_CSS({
-				model: this.model
-			})
-
-			panel.settings = _([static_settings, dynamic_settings, css_settings]);
-
+			panel.settings = _([static_settings, dynamic_settings]);
+			
 			this.panels = _.extend({General: panel}, this.panels);
 			
 
@@ -210,7 +225,8 @@ define([
 		
 	});
 
-
+	// Generate presets styles to page
+	Util.generatePresetsToPage('widget', styleTpl);
 	return UwidgetSettings;
 });
 })(jQuery);
