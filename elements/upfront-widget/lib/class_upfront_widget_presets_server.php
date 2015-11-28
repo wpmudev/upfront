@@ -8,7 +8,7 @@ class Upfront_Widget_Presets_Server extends Upfront_Presets_Server {
 	private static $instance;
 
 	public function get_element_name() {
-		return 'text';
+		return 'widget';
 	}
 
 	public static function serve () {
