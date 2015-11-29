@@ -134,6 +134,9 @@ div.upfront-navigation div[data-style="burger"] ul.menu {
   padding-bottom: 20px;
   overflow-y: auto !important;
 }
+div.upfront-navigation div[data-style="burger"][data-burger_over="pushes"] ul.menu {
+  padding-bottom: 0px;
+}
 div.upfront-navigation div[data-style="burger"][data-burger_over="pushes"][data-burger_alignment="top"] ul.menu, div.upfront-navigation div[data-style="burger"][data-burger_over="pushes"][data-burger_alignment="whole"] ul.menu {
   position: absolute;
   max-height: inherit;
