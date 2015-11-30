@@ -60,6 +60,9 @@ define(function() {
 	};
 
 	var Util = {
+		isRtl: function(){
+			return $("body").hasClass("rtl");
+		},
 		model_to_json: function (model) {
 			if (!model) return {};
 			var raw = (model && model.toJSON ? model.toJSON() : model),

@@ -70,7 +70,7 @@ var UeditorPanel = Backbone.View.extend({
     appendOkButton: function(text){
         var me = this;
         if(!me.$el.siblings('.ueditor-ok').length){
-            text = text || 'Ok';
+            text = text || Upfront.Settings.l10n.global.content.ok;
             var button = $('<a class="ueditor-ok">' + text + '</a>').on('click', function(e){
                 me.$el.trigger('ok');
             });
@@ -1028,7 +1028,7 @@ RedactorPlugins.upfrontColor = function() {
                             palette: theme_colors,
                             maxSelectionSize: 10,
                             preferredFormat: "hex",
-                            chooseText: "Ok",
+                            chooseText: Upfront.Settings.l10n.global.content.ok,
                             showInput: true,
                             allowEmpty: true,
                             change: function (color) {
@@ -1050,7 +1050,7 @@ RedactorPlugins.upfrontColor = function() {
                             localStorageKey: "spectrum.recent_bgs",
                             maxSelectionSize: 10,
                             preferredFormat: "hex",
-                            chooseText: "Ok",
+                            chooseText: Upfront.Settings.l10n.global.content.ok,
                             showInput: true,
                             allowEmpty: true,
                             change: function (color) {
