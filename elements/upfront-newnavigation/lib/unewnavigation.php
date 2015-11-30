@@ -162,7 +162,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 				'btn' => __('button to open menu', 'upfront'),
 				'appearance' => __('Revealed Menu Appearance', 'upfront'),
 				'show_on_click' => __('Show on click menu location:', 'upfront'),
-				'alingment' => __('Alingment:', 'upfront'),
+				'alignment' => __('Alignment:', 'upfront'),
 				'aligh' => __('Menu Item Alignment', 'upfront'),
 				'left' => __('Left', 'upfront'),
 				'right' => __('Right', 'upfront'),

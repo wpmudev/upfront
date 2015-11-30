@@ -47,7 +47,7 @@ define(function() {
 					className: state + '-select select-module menu_alingment',
 					name: 'menu_alignment',
 					default_value: this.model.get('menu_alignment'),
-					label: l10n.mnu.alingment,
+					label: l10n.mnu.alignment,
 					values: [
 						{ label: l10n.mnu.left, value: 'left' },
 						{ label: l10n.mnu.center, value: 'center' },
