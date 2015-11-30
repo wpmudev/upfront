@@ -1270,6 +1270,7 @@ var Application = new (Backbone.Router.extend({
 				"upfront-social_media",
 				"utabs",
 				"this_post",
+				"upostdata",
 				"this_page",
 				"uwidget",
 				"uyoutube",
