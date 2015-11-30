@@ -39,7 +39,7 @@ class Upfront_PostDataView extends Upfront_Object_Group {
 	private function _properties_to_array(){
 		$out = array();
 		foreach($this->_data['properties'] as $prop) {
-			$out[$prop['name']] = $prop['value'];
+			$out[$prop['name']] = !empty($prop['value']) ? $prop['value'] : '';
 		}
 		return $out;
 	}

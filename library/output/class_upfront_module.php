@@ -14,6 +14,13 @@ class Upfront_Module extends Upfront_Container {
 	}
 
 	public function get_markup () {
+		if ($this->is_spacer()) {
+			return '<!-- Spacer data '. "\n" .
+				'class: ' . upfront_get_property_value('class', $this->_data) . "\n" .
+				'default: ' . upfront_get_property_value('hide', $this->_data) . "\n" .
+				'breakpoint: ' . json_encode(upfront_get_property_value('breakpoint', $this->_data)) . "\n" .
+			' -->';
+		}
 		$children = !empty($this->_data[$this->_children]) ? $this->_data[$this->_children] : array();
 		$pre = '';
 		if (!empty($children)) foreach ($children as $child) {
@@ -59,5 +66,14 @@ class Upfront_Module extends Upfront_Container {
 		$this->_child_instances[$key] = new $view($child_data);
 
 		return $this->_child_instances[$key];
+	}
+
+	public function is_spacer () {
+		$spacer_props = Upfront_UspacerView::default_properties();
+		$children = !empty($this->_data[$this->_children]) ? $this->_data[$this->_children] : array();
+		if (!empty($children)) {
+			$type = upfront_get_property_value('type', $children[0]);
+		}
+		return ($type == $spacer_props['type']);
 	}
 }
