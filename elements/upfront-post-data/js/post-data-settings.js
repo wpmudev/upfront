@@ -1,8 +1,7 @@
 define([
 	'scripts/upfront/element-settings/settings',
-	'scripts/upfront/preset-settings/util',
 	'elements/upfront-post-data/js/post-data-settings-panels'
-], function(ElementSettings, Util, Panels) {
+], function(ElementSettings, Panels) {
 
 	var PostDataSettings = ElementSettings.extend({
 		initialize: function () {

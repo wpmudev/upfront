@@ -1,5 +1,6 @@
 define([
 	'scripts/upfront/preset-settings/preset-manager',
+	'scripts/upfront/preset-settings/util',
 	
 	'elements/upfront-post-data/js/modules-post_data',
 	'elements/upfront-post-data/js/modules-author',
@@ -8,6 +9,8 @@ define([
 	'elements/upfront-post-data/js/modules-comments'
 ], function (
 	PresetManager,
+	Util,
+
 	Modules_PostData,
 	Modules_Author,
 	Modules_FeaturedImage,
@@ -98,6 +101,11 @@ define([
 		}
 	});
 
+	// Boot up preset styles
+	_.each(Templates, function (tpl, el) {
+		var element = el + '_element';
+		Util.generatePresetsToPage(element, tpl);
+	});
 
 	return {
 		get_panel: function (data_type) {
