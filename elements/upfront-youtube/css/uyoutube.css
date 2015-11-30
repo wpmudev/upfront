@@ -18,6 +18,7 @@
 .uyoutube-main-video iframe {
     background: black;
     border: 0 none;
+	max-width: 100%;
 }
 
 .upfront-output-uyoutube {
