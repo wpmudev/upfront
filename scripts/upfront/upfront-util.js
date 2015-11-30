@@ -60,8 +60,8 @@ define(function() {
 	};
 
 	var Util = {
-		isRtl: function(){
-			return $("body").hasClass("rtl");
+		isRTL: function(){
+			return !!Upfront.mainData.isRTL;
 		},
 		model_to_json: function (model) {
 			if (!model) return {};
