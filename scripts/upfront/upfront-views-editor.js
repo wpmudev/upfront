@@ -4462,6 +4462,11 @@ var Field_ToggleableText = Field_Text.extend({
 					}
 				});
 
+				/**
+				 * Translate the ok button
+				 */
+				me.$(".sp-container").find(".sp-choose").text( Upfront.Settings.l10n.global.content.ok );
+
 			});
 
 		},
@@ -4681,9 +4686,13 @@ var Field_ToggleableText = Field_Text.extend({
 						dropDownTop = select.offset().top - $('#element-settings-sidebar').offset().top;
 						dropDownTop = dropDownTop + settingsTitleHeight;
 
+
 					select_dropdown.css("width", select.width() + 3);
 					select_dropdown.css('top', dropDownTop + "px");
-					select_dropdown.css('left', select.offset().left + "px");
+					if( Upfront.Util.isRtl() )
+						select_dropdown.css('right',  ( $(window).width() - select.offset().left - select.width() ) + "px");
+					else
+						select_dropdown.css('left',  select.offset().left + "px");
 					select_dropdown.css('display', 'block');
 				}
 			}, 10);
@@ -7424,7 +7433,7 @@ var CSSEditor = Backbone.View.extend({
 				maxSelectionSize: 9,
 				localStorageKey: "spectrum.recent_bgs",
 				preferredFormat: "hex",
-				chooseText: "Ok",
+				chooseText: Upfront.Settings.l10n.global.content.ok,
 				showInput: true,
 				allowEmpty:true,
 				autohide: false,
@@ -8602,7 +8611,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			this.fetch({});
 
 			this.$('#upfront-popup-bottom')
-				.html('<div class="use_selection_container inactive"><a href="#use" class="use">Ok</a></div><div class="search_container clearfix"><input type="text" placeholder="' + l10n.search + '" value=""><div class="search upfront-icon upfront-icon-popup-search" id="upfront-search_action"></div></div>')
+				.html('<div class="use_selection_container inactive"><a href="#use" class="use">'+ Upfront.Settings.l10n.global.content.ok +'</a></div><div class="search_container clearfix"><input type="text" placeholder="' + l10n.search + '" value=""><div class="search upfront-icon upfront-icon-popup-search" id="upfront-search_action"></div></div>')
 				.append(this.pagination.$el)
 			;
 			$('#upfront-popup').addClass('upfront-postselector-popup');
@@ -8770,7 +8779,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		initialize: function (opts) {
 			this.options = opts;
 			this.$to = opts.to;
-			this.button_text = opts.button_text ? opts.button_text : "Ok";
+			this.button_text = opts.button_text ? opts.button_text : Upfront.Settings.l10n.global.content.ok;
 			this.button = typeof opts.button != 'undefined' ? opts.button : true;
 			this.width = typeof opts.width != 'undefined' ? opts.width : '50%';
 			this.top = typeof opts.top != 'undefined' ? opts.top : -1;

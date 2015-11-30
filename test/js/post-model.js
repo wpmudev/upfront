@@ -108,7 +108,7 @@ describe('Models', function () {
 			 * Assigns whatever gets defined to the Testable object
 			 */
 			global.define = function () {
-				var args = Array.prototype.slice.call(arguments)
+				var args = Array.prototype.slice.call(arguments),
 					cback = args.pop()
 				;
 				Testable = cback.apply(this, [Backbone]);
