@@ -200,7 +200,7 @@ input.upfront-youtube-url {
 	display: block;
 	background-color:transparent;
 	font-size: 14px;
-	height: 18px !important;
+	height: 38px !important;
 }
 
 input.upfront-youtube-url::-webkit-input-placeholder {
