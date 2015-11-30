@@ -278,6 +278,16 @@ define(function() {
 
 			Upfront.data.region_views[region.cid].show();
 		},
+		
+		/**
+		 * Sorted find 
+		 */
+		find_sorted: function ($el, selector) {
+			return $el.find(selector)
+				.each(Upfront.Util.normalize_sort_elements_cb)
+				.sort(Upfront.Util.sort_elements_cb)
+			;
+		},
 
 		/**
 		 * Callback to sort jQuery elements

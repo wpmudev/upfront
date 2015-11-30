@@ -218,6 +218,9 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			var slider = me.$el.find('.upfront-output-uslider'),
 			options = slider.find('.uslider').data();
 
+			slider.find('.uslides').on('rendered', function(){
+				Upfront.Events.trigger('entity:object:refresh', me);
+			});
 			slider.find('.uslides').upfront_default_slider(options);
 
 			slider.find('.uslide-above').each(function(){
@@ -284,7 +287,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	prepareSlider: function(){
 		var me = this,
 			wrapper = me.$('.uslide-image'),
-			controls = me.createControls(),
+			controls = me.createSlideControls(),
 			text = me.$('.uslide-editable-text'),
 			currentSlide = this.model.slideCollection.at(this.getCurrentSlide())
 		;
@@ -352,13 +355,19 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		}
 	},
 
-	updateControls: function(){
-		this.controls.remove();
+	updateSlideControls: function(){
+		if(typeof(this.controls) !== 'undefined') {
+			this.controls.remove();
+		}
 
-		var controls = this.createControls();
+		var controls = this.createSlideControls();
 		controls.render();
 
-		this.$('.uimage-controls').append(controls.$el).attr('rel', this.model.slideCollection.at(this.getCurrentSlide()).id);
+		this.$('.uimage-controls').append(controls.$el);
+
+		if(typeof(this.model.slideCollection.at(this.getCurrentSlide())) !== 'undefined') {
+			this.$('.uimage-controls').attr('rel', this.model.slideCollection.at(this.getCurrentSlide()).id);
+		}
 
 		this.controls = controls;
 	},
@@ -540,7 +549,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		this.$('.uslides').on('slidein', function(e, slide, index){
 			if(slide){
 				me.setCurrentSlide(index);
-				me.updateControls();
+				me.updateSlideControls();
 				me.$('.uimage-controls').attr('rel', slide.attr('rel'));
 				if(me.get_preset_properties().primaryStyle == 'side')
 					me.setImageResizable();
@@ -553,7 +562,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		});
 	},
 
-	createControls: function() {
+	createSlideControls: function() {
 		var me = this,
 			panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
 			multiBelow = {
@@ -647,7 +656,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			this.stopListening(this.currentSlideLink);
 		}
 
-		if (typeof slide.get('link') !== undefined) {
+		if (typeof(slide) !== 'undefined' && typeof(slide.get('link')) !== 'undefined') {
 			link = new LinkModel(slide.get('link'));
 		} else {
 			link = new LinkModel({
@@ -683,7 +692,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				.closest('.uimage-controls')
 					.removeClass('upfront-control-visible').end()
 				.closest('.uslider-link')
-					.attr('href', slide.get('url'))
+					.attr('href', typeof(slide) !== 'undefined' ? slide.get('url') : '')
 			;
 
 			me.$el.closest('.ui-draggable').draggable('enable');

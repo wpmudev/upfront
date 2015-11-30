@@ -602,6 +602,7 @@ a.image-edit-button.deactivated:hover {
 	position: absolute;
 	bottom: 0;
 	z-index: 2001;
+	display: none;
 }
 
 .uimage-controls .upfront-inline-panel {
@@ -630,7 +631,7 @@ a.image-edit-button.deactivated:hover {
 	display: none;
 }
 
-.ui-resizable-autohide .upfront-active_entity .uimage-controls .upfront-inline-panel-top,
+.upfront-active_entity .uimage-controls .upfront-inline-panel-top,
 .uimage-controls .upfront-inline-panel-top {
 	-webkit-transform: translate(0,0);
 	display: block;
@@ -640,11 +641,9 @@ a.image-edit-button.deactivated:hover {
 	-webkit-transform: translate(0,0);
 }
 
-.ui-resizable-autohide .uimage-controls {
-	display: none;
-}
-
-.ui-resizable-autohide .uimage-controls.upfront-control-visible {
+.upfront-module:hover .uimage-controls,
+.upfront-module-active .uimage-controls,
+.uimage-controls.upfront-control-visible {
 	display: block;
 }
 
@@ -781,8 +780,8 @@ div.preset-manager-panel .caption_select .upfront-field-label {
 }
 
 /* Controls */
-
-div.uimage-controls i.upfront-icon:before {
+div.uimage-controls i.upfront-icon:before,
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item i.upfront-icon:before {
 	background-image: url(../../../img/uf-core-el-sprite.svg);
 }
 
@@ -1035,8 +1034,14 @@ div.uimage-controls i.upfront-icon:before {
     top: 0;
 }
 
-.ui-resizable-autohide .uimage-resize-hint {
+.uimage-resize-hint {
 	display: none;
+}
+.upfront-wrapper.ui-resizable-resizing .uimage-resize-hint, 
+.upfront-module.ui-resizable-resizing:hover .uimage-resize-hint, 
+.upfront-module:not(.upfront-module-active):hover .uimage-resize-hint,
+.upfront-module-active.ui-resizable-resizing .uimage-resize-hint {
+	display: block;
 }
 
 .upfront-ui .uimage-sizehint-small {

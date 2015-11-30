@@ -46,6 +46,7 @@ div.uslide-text-current {
 
 .uslider .uimage-controls {
 	z-index: 4;
+	bottom: 30px;
 }
 
 .upfront-default-slider-nav,

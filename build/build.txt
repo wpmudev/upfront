@@ -22,6 +22,7 @@ text!upfront/templates/module.html
 text!upfront/templates/module_group.html
 text!upfront/templates/region_container.html
 text!upfront/templates/region.html
+text!upfront/templates/wrapper.html
 text!upfront/templates/layout.html
 upfront/upfront-views.js
 chosen/chosen.jquery.min.js
@@ -33,6 +34,7 @@ chosen/chosen.jquery.min.js
 /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/scripts/upfront/inline-panels/control.js
 /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/scripts/upfront/inline-panels/multi-control.js
 /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/scripts/upfront/inline-panels/tooltip-control.js
+/Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/scripts/upfront/inline-panels/padding-control.js
 /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/scripts/upfront/inline-panels/collapsed-multi-control.js
 /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/scripts/upfront/inline-panels/control-panel.js
 text!scripts/upfront/inline-panels/templates/panel-control-template.html
@@ -59,6 +61,10 @@ text!upfront/templates/sidebar_settings_theme_colors.html
 text!upfront/templates/color_picker.html
 spectrum/spectrum.js
 upfront/upfront-views-editor.js
+/Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/scripts/upfront/behaviors/layout-editor.js
+/Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/scripts/upfront/behaviors/dragdrop.js
+/Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/scripts/upfront/behaviors/resize.js
+/Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/scripts/upfront/behaviors/grid-editor.js
 upfront/upfront-behaviors.js
 jquery/jquery-dateFormat.min.js
 jquery/jquery.simulate.js
@@ -217,6 +223,7 @@ text!elements/upfront-tabs/tpl/utabs.html
 /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/elements/upfront-tabs/js/utabs.js
 /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/elements/upfront-this-post/js/this_post.js
 /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/elements/upfront-this-page/js/this_page.js
+text!elements/upfront-widget/tpl/preset-style.html
 /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/elements/upfront-widget/js/settings.js
 /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/elements/upfront-widget/js/uwidget.js
 text!elements/upfront-youtube/tpl/youtube.html
@@ -229,6 +236,7 @@ text!elements/upfront-code/tpl/editor.html
 /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/elements/upfront-code/js/model.js
 /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/elements/upfront-code/js/element.js
 /Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/elements/upfront-code/js/upfront_code.js
+/Users/gsgoraya/work/htdocs/incsub/wp-content/themes/upfront/elements/upfront-spacer/js/uspacer.js
 upfront/upfront-application.js
 upfront/upfront-util.js
 main.js

@@ -21,10 +21,12 @@ define([
 			if(! (this.model instanceof UwidgetModel)){
 				this.model = new UwidgetModel({properties: this.model.get('properties')});
 			}
+			
+			// copy values from saved ones to the realtime rendering ones in the editor
+			this.model.set_property('current_widget', this.model.get_property_value_by_name('widget'), true);
+			this.model.set_property('current_widget_specific_settings', this.model.get_property_value_by_name('widget_specific_fields'), true);
 
 			this.constructor.__super__.initialize.call(this, [options]);
-
-
 
 		},
 
@@ -39,12 +41,12 @@ define([
 		},
 
 		clear_cache: function() {
-			Upfront.data.uwidget.widgets_cache[this.model.get_property_value_by_name('widget')+this.cid] = null;
+			Upfront.data.uwidget.widgets_cache[this.model.get_property_value_by_name('current_widget')+this.cid] = null;
 		},
 
 		get_content_markup: function () {
-
-			var widget = this.model.get_property_value_by_name('widget');
+			
+			var widget = this.model.get_property_value_by_name('current_widget');
 				me = this;
 
 				if ( !widget || widget === '') {
@@ -62,7 +64,7 @@ define([
 
 		on_render: function () {
 
-			var widget = this.model.get_property_value_by_name('widget');
+			var widget = this.model.get_property_value_by_name('current_widget');
 			if ( !widget ) {
 				return;
 			}
@@ -86,7 +88,7 @@ define([
 			var me = this;
 			//prepare instance
 
-			var specific_fields = this.model.get_property_value_by_name('widget_specific_fields')
+			var specific_fields = this.model.get_property_value_by_name('current_widget_specific_fields')
 
 			var instance = {};
 

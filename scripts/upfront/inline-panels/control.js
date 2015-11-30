@@ -1,3 +1,4 @@
+(function ($) {
 define([
 	'scripts/upfront/inline-panels/item'
 ], function (Item) {
@@ -13,11 +14,16 @@ define([
 		},
 
 		clicked: function(e){
+			var target = $(e.target);
+
 			e.preventDefault();
 			e.stopPropagation();
 			this.$el
 				.siblings('.upfront-inline-panel-subitem-active')
 				.removeClass('upfront-inline-panel-subitem-active');
+
+			if(!target.closest('.upfront-inline-panel-item').hasClass('upfront-control-dialog-open'))	target.closest('.upfront-wrapper').addClass('upfront-inline-panel-item-open');
+			else	target.closest('.upfront-wrapper').removeClass('upfront-inline-panel-item-open');
 
 			this.trigger('click', e);
 		},
@@ -34,3 +40,4 @@ define([
 
 	return Control;
 });
+})(jQuery);

@@ -18,14 +18,17 @@ define([
 	breakpointColumnPadding = parseInt(breakpointColumnPadding, 10);
 	breakpointColumnPadding = _.isNaN(breakpointColumnPadding) ? 15 : breakpointColumnPadding;
 
-	// Variable used to speed resizing up;
-	var resizingData = {};
-
 	var UimageView = Upfront.Views.ObjectView.extend({
 		model: UimageModel,
 		imageTpl: Upfront.Util.template(imageTpl),
 		sizehintTpl: _.template($(editorTpl).find('#sizehint-tpl').html()),
 		cropTimeAfterResize: 1,// making this longer makes image resize not save
+		
+		// Disable size hint as image element already has it's own
+		display_size_hint: false,
+		
+		// Property used to speed resizing up;
+		resizingData: {},
 
 		initialize: function() {
 			var me = this;
@@ -67,13 +70,13 @@ define([
 				this.property('srcFull', this.property('src'));
 			}
 
-			this.listenTo(this.model.get('properties'), 'change', this.render);
-			this.listenTo(this.model.get('properties'), 'add', this.render);
-			this.listenTo(this.model.get('properties'), 'remove', this.render);
+			this.listenTo(this.model.get('properties'), 'change', this.update);
+			this.listenTo(this.model.get('properties'), 'add', this.update);
+			this.listenTo(this.model.get('properties'), 'remove', this.update);
 
 			this.listenTo(this.model, 'uimage:edit', this.editRequest);
 
-			this.controls = this.createControls();
+			//this.controls = this.createControls();
 
 			if(this.property('image_status') !== 'ok' || this.property('quick_swap') || (this.isThemeImage() && !Upfront.themeExporter)) {
 				this.property('has_settings', 0);
@@ -96,7 +99,6 @@ define([
 				}
 			});
 
-
 			if (this.property('link') === false) {
 				this.link = new LinkModel({
 					type: this.property('when_clicked'),
@@ -112,6 +114,7 @@ define([
 				me.property('link', me.link.toJSON());
 			});
 
+			this.listenTo(Upfront.Events, 'entity:module:update', this.on_uimage_update);
 			this.listenTo(this.model, "preset:updated", this.preset_updated);
 		},
 
@@ -156,6 +159,32 @@ define([
 			this.stoppedTimer  = false;
 		},
 
+		getSelectedAlignment: function(){
+			if(!this.property('include_image_caption') && this.property('caption_position') === false && this.property('caption_alignment') === false) {
+				return 'nocaption';
+			}
+			if(this.property('caption_position') === 'below_image') {
+				return 'below';
+			}
+
+			var align = this.property('caption_alignment');
+
+			switch(align){
+				case 'top':
+					return 'topOver';
+				case 'bottom':
+					return 'bottomOver';
+				case 'fill':
+					return 'topCover';
+				case 'fill_middle':
+					return 'middleCover';
+				case 'fill_bottom':
+					return 'bottomCover';
+			}
+
+			return 'nocaption';
+		},
+
 		isThemeImage: function() {
 			return this.property('srcFull') && this.property('srcFull').match('wp-content/themes/');
 		},
@@ -164,39 +193,79 @@ define([
 			this.openImageSelector();
 		},
 
-		createControls: function() {
-			var me = this,
-				panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
-				captionControl = new Upfront.Views.Editor.InlinePanels.TooltipControl()
-			;
+		// createControls: function() {
+		// 	var me = this,
+		// 		panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
+		// 		captionControl = new Upfront.Views.Editor.InlinePanels.TooltipControl()
+		// 	;
 
-			// Do not allow editing of theme images if not in builder
-			if (this.isThemeImage() && !Upfront.themeExporter) {
-				return false;
-			}
+		// 	// Do not allow editing of theme images if not in builder
+		// 	if (this.isThemeImage() && !Upfront.themeExporter) {
+		// 		return false;
+		// 	}
 
-			captionControl.sub_items = {
-				showCaption: this.createControl('showCaption', l10n.ctrl.show_caption),
-				nocaption: this.createControl('nocaption', l10n.ctrl.dont_show_caption)
-			};
+		// 	captionControl.sub_items = {
+		// 		topOver: this.createControl('topOver', l10n.ctrl.over_top),
+		// 		bottomOver: this.createControl('bottomOver', l10n.ctrl.over_bottom),
+		// 		topCover: this.createControl('topCover', l10n.ctrl.cover_top),
+		// 		middleCover: this.createControl('middleCover', l10n.ctrl.cover_middle),
+		// 		bottomCover: this.createControl('bottomCover', l10n.ctrl.cover_bottom),
+		// 		below: this.createControl('below', l10n.ctrl.below),
+		// 		nocaption: this.createControl('nocaption', l10n.ctrl.no_caption)
+		// 	};
 
-			captionControl.icon = 'caption';
-			captionControl.tooltip = l10n.ctrl.caption_display;
-			captionControl.selected = this.property('display_caption');
+		// 	captionControl.icon = 'caption';
+		// 	captionControl.tooltip = l10n.ctrl.caption_position;
+		// 	captionControl.selected = this.getSelectedAlignment();
 
-			this.listenTo(captionControl, 'select', function(item){
-				me.property('display_caption', item);
-				me.render();
-			});
+		// 	this.listenTo(captionControl, 'select', function(item){
+		// 		switch(item){
+		// 			case 'topOver':
+		// 				me.property('include_image_caption', [1]);
+		// 				me.property('caption_position', 'over_image');
+		// 				me.property('caption_alignment', 'top');
+		// 				break;
+		// 			case 'bottomOver':
+		// 				me.property('include_image_caption', [1]);
+		// 				me.property('caption_position', 'over_image');
+		// 				me.property('caption_alignment', 'bottom');
+		// 				break;
+		// 			case 'topCover':
+		// 				me.property('include_image_caption', [1]);
+		// 				me.property('caption_position', 'over_image');
+		// 				me.property('caption_alignment', 'fill');
+		// 				break;
+		// 			case 'middleCover':
+		// 				me.property('include_image_caption', [1]);
+		// 				me.property('caption_position', 'over_image');
+		// 				me.property('caption_alignment', 'fill_middle');
+		// 				break;
+		// 			case 'bottomCover':
+		// 				me.property('include_image_caption', [1]);
+		// 				me.property('caption_position', 'over_image');
+		// 				me.property('caption_alignment', 'fill_bottom');
+		// 				break;
+		// 			case 'below':
+		// 				me.property('include_image_caption', [1]);
+		// 				me.property('caption_position', 'below_image');
+		// 				me.property('caption_alignment', false);
+		// 				break;
+		// 			case 'nocaption':
+		// 				me.property('include_image_caption', false);
+		// 				me.property('caption_position', false);
+		// 				me.property('caption_alignment', false);
+		// 		}
+		// 		me.render();
+		// 	});
 
-			panel.items = _([
-				this.createControl('crop', l10n.ctrl.edit_image, 'editRequest'),
-				this.createLinkControl(),
-				captionControl
-			]);
+		// 	panel.items = _([
+		// 		this.createControl('crop', l10n.ctrl.edit_image, 'editRequest'),
+		// 		this.createLinkControl(),
+		// 		captionControl
+		// 	]);
 
-			return panel;
-		},
+		// 	return panel;
+		// },]
 
 		createLinkControl: function(){
 			var me = this,
@@ -351,8 +420,8 @@ define([
 
 		isSmallImage: function() {
 			var elementSize = this.property('element_size');
-			if (resizingData.data && resizingData.data.elementSize) {
-				elementSize = resizingData.data.elementSize;
+			if (this.resizingData.data && this.resizingData.data.elementSize) {
+				elementSize = this.resizingData.data.elementSize;
 			}
 			return elementSize.width < 100 || elementSize.height < 50;
 		},
@@ -545,9 +614,9 @@ define([
 			//Bind resizing events
 			if (!this.parent_module_view.$el.data('resizeHandling')) {
 				this.parent_module_view.$el
-					.on('resizestart', $.proxy(this.onElementResizeStart, this))
-					.on('resize', $.proxy(this.onElementResizing, this))
-					.on('resizestop', $.proxy(this.onElementResizeStop, this))
+					//.on('resizestart', $.proxy(this.onElementResizeStart, this))
+					//.on('resize', $.proxy(this.onElementResizing, this))
+					//.on('resizestop', $.proxy(this.onElementResizeStop, this))
 					.data('resizeHandling', true);
 			}
 
@@ -565,12 +634,12 @@ define([
 				this.$el.addClass('image-from-theme');
 				this.$el.find('b.upfront-entity_meta').after('<div class="swap-image-overlay"><p class="upfront-icon upfront-icon-swap-image"><span>Click to </span>Swap Image</p></div>');
 			} else {
-				var resizeHint = $('<div>').addClass('upfront-ui uimage-resize-hint' + onTop).html(this.sizehintTpl({
-					width: elementSize.width,
-					height: elementSize.height,
-					l10n: l10n.template
-				}));
+				var resizeHint = $('<div>').addClass('upfront-ui uimage-resize-hint' + onTop);
 				this.$el.append(resizeHint);
+				// this.applyElementSize(elementSize.width, elementSize.height)
+				setTimeout( function () { 
+					me.applyElementSize();
+				}, 300 );
 			}
 
 			if(this.property('image_status') !== 'ok') {
@@ -587,7 +656,7 @@ define([
 			}
 
 			setTimeout(function() {
-				me.updateControls(elementSize.width, elementSize.height);
+				me.updateControls();
 				me.$el.removeClass('upfront-editing');
 
 				me.editCaption();
@@ -633,27 +702,27 @@ define([
 			}
 		},
 
-		updateControls: function(width, height) {
-			var imageControlsTpl = '<div class="uimage-controls image-element-controls upfront-ui"></div>';
+		// updateControls: function(width, height) {
+		// 	var imageControlsTpl = '<div class="uimage-controls image-element-controls upfront-ui"></div>';
 
-			this.controls = this.createControls();
+		// 	this.controls = this.createControls();
 
-			if (this.controls === false) {
-				return;
-			}
+		// 	if (this.controls === false) {
+		// 		return;
+		// 	}
 
-			this.controls.setWidth({
-				width: width,
-				height:height
-			});
-			this.controls.render();
+		// 	this.controls.setWidth({
+		// 		width: width,
+		// 		height:height
+		// 	});
+		// 	this.controls.render();
 
-			if (this.parent_module_view.$('.upfront-module').find('.uimage-controls').length === 0) {
-				this.parent_module_view.$('.upfront-module').append(imageControlsTpl);
-			}
-			this.parent_module_view.$('.upfront-module').find('.uimage-controls').html('').append(this.controls.$el);
-			this.controls.delegateEvents();
-		},
+		// 	if (this.parent_module_view.$('.upfront-module').find('.uimage-controls').length === 0) {
+		// 		this.parent_module_view.$('.upfront-module').append(imageControlsTpl);
+		// 	}
+		// 	this.parent_module_view.$('.upfront-module').find('.uimage-controls').html('').append(this.controls.$el);
+		// 	this.controls.delegateEvents();
+		// },
 
 		on_edit: function(){
 			return false;
@@ -742,11 +811,22 @@ define([
 				this.render();
 			}
 		},
+		
+		updateBreakpointPadding: function(breakpointColumnPadding) {
+			var image_el = this.$el.find('.upfront-image');
+
+			if(image_el.css("padding") !== "") {
+				return parseInt(image_el.css("padding"), 10);
+			}
+
+			return breakpointColumnPadding;
+		},
 
 		/***************************************************************************/
 		/*           Handling element resize events (jQuery resizeable)            */
 		/***************************************************************************/
-		onElementResizeStart: function() {
+		
+		on_element_resize_start: function(attr) {
 			if(this.mobileMode) {
 				return;
 			}
@@ -758,7 +838,7 @@ define([
 			}
 
 			// Store variables used in resize event handlers
-			resizingData = {
+			this.resizingData = {
 				starting: starting,
 				data: {
 					position: this.property('position'),
@@ -788,46 +868,30 @@ define([
 			this.$('.uimage').css('min-height', 'auto');
 		},
 
-		updateBreakpointPadding: function(breakpointColumnPadding) {
-			var image_el = this.$el.find('.upfront-image');
-
-			if(image_el.css("padding") !== "") {
-				return parseInt(image_el.css("padding"), 10);
-			}
-
-			return breakpointColumnPadding;
-		},
-
-		onElementResizing: function() {
+		on_element_resizing: function(attr) {
 			if(this.mobileMode) {
 				return;
 			}
 
-			var starting = resizingData.starting,
-				resizer = resizingData.resizer,
-				data = resizingData.data,
-				img = resizingData.img,
+			var starting = this.resizingData.starting,
+				data = this.resizingData.data,
+				img = this.resizingData.img,
 				captionHeight = this.property('caption_position') === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
-				padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding),
+				// padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding),
+				column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
+				hPadding = parseInt( this.model.get_breakpoint_property_value('left_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('right_padding_num') || column_padding ),
+				vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
 				ratio,
 				newSize;
 
-			if(!resizer){
-				resizer = $('html').find('.upfront-resize');
-				resizingData.resizer = resizer;
-			}
-			data.elementSize = {width: resizer.width() - (2 * padding), height: resizer.height() - (2 * padding) - captionHeight};
+			// data.elementSize = {width: attr.width - (2 * padding), height: attr.height - (2 * padding) - captionHeight};
+			data.elementSize = {width: parseInt(attr.width) - hPadding, height: parseInt(attr.height) - vPadding - captionHeight};
 			newSize = this.getElementShapeSize(data.elementSize);
 			if ( false !== newSize ) {
 				data.elementSize = newSize;
 			}
 
-			this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
-					width: data.elementSize.width,
-					height: data.elementSize.height,
-					l10n: l10n.template
-				})
-			);
+			this.applyElementSize();
 
 			if(starting.length){
 				return starting.outerHeight(data.elementSize.height);
@@ -858,26 +922,29 @@ define([
 				}
 			}
 
-			this.updateControls(data.elementSize.width, data.elementSize.height);
+			this.updateControls();
 			this.setupBySize();
 		},
 
-		onElementResizeStop: function() {
+		on_element_resize: function(attr) {
 			if(this.mobileMode) {
 				return;
 			}
+			if(!this.resizingData || !this.resizingData.img || !this.resizingData.img.length) {
+				return;
+			}
 
-			var starting = resizingData.starting,
+			var starting = this.resizingData.starting,
 				me = this,
-				img = resizingData.img,
+				img = this.resizingData.img,
 				imgSize = {width: img.width(), height: img.height()},
 				imgPosition = img.position(),
 				padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding);
 
 			if(starting.length){
 				this.elementSize = {
-					height: $('.upfront-resize').height() - (2 * padding),
-					width: $('.upfront-resize').width() - (2 * padding)
+					height: attr.height - (2 * padding),
+					width: attr.width - (2 * padding)
 				};
 				this.property('element_size', this.elementSize);
 				return;
@@ -886,7 +953,7 @@ define([
 			}
 
 			// Save resizing, be sure we have the good dimensions
-			this.onElementResizing();
+			this.on_element_resizing(attr);
 
 			// Change the sign
 			imgPosition.top = -imgPosition.top;
@@ -897,14 +964,20 @@ define([
 				position: imgPosition
 			};
 
-			this.property('element_size', resizingData.data.elementSize);
+			this.property('element_size', this.resizingData.data.elementSize);
 
 			this.cropTimer = setTimeout(function(){
 				me.saveTemporaryResizing();
 			}, this.cropTimeAfterResize);
 
-			resizingData = {};
+			this.resizingData = {};
 			this.showCaption();
+		},
+
+		on_uimage_update: function (view) {
+			if ( !this.parent_module_view || this.parent_module_view != view ) return;
+			
+			this.applyElementSize();
 		},
 
 		showCaption: function() {
@@ -1160,14 +1233,17 @@ define([
 			}
 
 		},
-
-		applyElementSize: function () {
+		applyElementSize: function (width, height) {
 			var me = this,
 				parent = this.parent_module_view.$('.upfront-editable_entity:first'),
 				resizer = parent,
 				captionHeight = this.property('caption_position') === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
-				padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding),
-				elementSize = {width: resizer.width() - (2 * padding), height: resizer.height() - (2 * padding) - captionHeight}
+				// padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding),
+				column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
+				hPadding = parseInt( this.model.get_breakpoint_property_value('left_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('right_padding_num') || column_padding ),
+				vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
+				// elementSize = {width: resizer.width() - (2 * padding), height: resizer.height() - (2 * padding) - captionHeight}
+				elementSize = {width: ( width && !isNaN(width) ? width : resizer.width() ) - hPadding, height: ( height && !isNaN(height) ? height : resizer.height() ) - vPadding - captionHeight}
 			;
 			this.property('element_size', elementSize);
 			this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
@@ -1234,13 +1310,12 @@ define([
 
 			this.property('gifImage', result.gif);
 
+			this.temporaryProps = false;
+			this.render();
 
 			if(result.elementSize){
 				this.set_element_size(result.elementSize.columns, result.elementSize.rows, 'all', true);
 			}
-
-			this.temporaryProps = false;
-			this.render();
 		},
 
 		editRequest: function () {
@@ -1350,6 +1425,75 @@ define([
 				return this.model.set_property(name, value, silent);
 			}
 			return this.model.get_property_value_by_name(name);
+		},
+
+		getControlItems: function(){
+			var me = this,
+				panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
+				captionControl = new Upfront.Views.Editor.InlinePanels.TooltipControl()
+			;
+
+			captionControl.sub_items = {
+				topOver: this.createControl('topOver', l10n.ctrl.over_top),
+				bottomOver: this.createControl('bottomOver', l10n.ctrl.over_bottom),
+				topCover: this.createControl('topCover', l10n.ctrl.cover_top),
+				middleCover: this.createControl('middleCover', l10n.ctrl.cover_middle),
+				bottomCover: this.createControl('bottomCover', l10n.ctrl.cover_bottom),
+				below: this.createControl('below', l10n.ctrl.below),
+				nocaption: this.createControl('nocaption', l10n.ctrl.no_caption)
+			};
+
+			captionControl.icon = 'caption';
+			captionControl.tooltip = l10n.ctrl.caption_position;
+			captionControl.selected = this.getSelectedAlignment();
+
+			this.listenTo(captionControl, 'select', function(item){
+				switch(item){
+					case 'topOver':
+						me.property('include_image_caption', [1]);
+						me.property('caption_position', 'over_image');
+						me.property('caption_alignment', 'top');
+						break;
+					case 'bottomOver':
+						me.property('include_image_caption', [1]);
+						me.property('caption_position', 'over_image');
+						me.property('caption_alignment', 'bottom');
+						break;
+					case 'topCover':
+						me.property('include_image_caption', [1]);
+						me.property('caption_position', 'over_image');
+						me.property('caption_alignment', 'fill');
+						break;
+					case 'middleCover':
+						me.property('include_image_caption', [1]);
+						me.property('caption_position', 'over_image');
+						me.property('caption_alignment', 'fill_middle');
+						break;
+					case 'bottomCover':
+						me.property('include_image_caption', [1]);
+						me.property('caption_position', 'over_image');
+						me.property('caption_alignment', 'fill_bottom');
+						break;
+					case 'below':
+						me.property('include_image_caption', [1]);
+						me.property('caption_position', 'below_image');
+						me.property('caption_alignment', false);
+						break;
+					case 'nocaption':
+						me.property('include_image_caption', false);
+						me.property('caption_position', false);
+						me.property('caption_alignment', false);
+				}
+				me.render();
+			});
+
+			return _([
+				this.createControl('crop', l10n.ctrl.edit_image, 'editRequest'),
+				this.createLinkControl(),
+				captionControl,
+				this.createPaddingControl(),
+				this.createControl('settings', Upfront.Settings.l10n.global.views.settings, 'on_settings_click')
+			]);
 		}
 	});
 
@@ -1374,3 +1518,4 @@ define([
 
 });
 })(jQuery);
+//@ sourceURL=uimage.js

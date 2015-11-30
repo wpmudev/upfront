@@ -75,12 +75,12 @@ define([
 			},
 
 			on_render: function () {
-				this.$el.find(".upfront-entity_meta").append('<a href="#" class="upfront-icon-button re-edit">...</a>');
+				// this.$el.find(".upfront-entity_meta").append('<a href="#" class="upfront-icon-button re-edit">...</a>');
 				var me = this;
-				this.$el.find(".upfront-entity_meta .re-edit").on("click", function (e) {
-					e.preventDefault();
-					me.start_markup_editor();
-				});
+				// this.$el.find(".upfront-entity_meta .re-edit").on("click", function (e) {
+				// 	e.preventDefault();
+				// 	me.start_markup_editor();
+				// });
 				if (
 					!this.property('markup') &&
 					!this.property('style') &&
@@ -503,6 +503,13 @@ define([
 					return this.model.set_property(name, value, silent);
 				}
 				return this.model.get_property_value_by_name(name);
+			},
+
+			getControlItems: function(){
+				return _([
+					this.createPaddingControl(),
+					this.createControl('edit', l10n.edit, 'start_markup_editor')
+				]);
 			}
 		}),
 
@@ -527,12 +534,12 @@ define([
 			},
 
 			on_render: function () {
-				this.$el.find(".upfront-entity_meta").append('<a href="#" class="upfront-icon-button re-edit">...</a>');
+				// this.$el.find(".upfront-entity_meta").append('<a href="#" class="upfront-icon-button re-edit">...</a>');
 				var me = this;
-				this.$el.find(".upfront-entity_meta .re-edit").on("click", function (e) {
-					e.preventDefault();
-					me.on_edit();
-				});
+				// this.$el.find(".upfront-entity_meta .re-edit").on("click", function (e) {
+				// 	e.preventDefault();
+				// 	me.on_edit();
+				// });
 				if (!this.model.get_property_value_by_name('markup')) {
 					setTimeout(function () {
 						me.on_edit();
@@ -580,6 +587,13 @@ define([
 			fallback: function(attribute){
 				return this.model.get_property_value_by_name(attribute) || Upfront.data.upfront_code.defaults.fallbacks[attribute];
 			},
+
+			getControlItems: function(){
+				return _([
+					this.createPaddingControl(),
+					this.createControl('edit', l10n.edit, 'on_edit')
+				]);
+			}
 		})
 	};
 

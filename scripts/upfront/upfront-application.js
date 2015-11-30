@@ -151,6 +151,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		this.listenTo(Upfront.Events, "entity:module:after_render", Upfront.Behaviors.GridEditor.create_draggable);
 		this.listenTo(Upfront.Events, "entity:module_group:after_render", Upfront.Behaviors.GridEditor.create_resizable);
 		this.listenTo(Upfront.Events, "entity:module_group:after_render", Upfront.Behaviors.GridEditor.create_draggable);
+		this.listenTo(Upfront.Events, "entity:wrapper:after_render", Upfront.Behaviors.GridEditor.create_wrapper_resizable);
 		this.listenTo(Upfront.Events, "entity:object:after_render", Upfront.Behaviors.GridEditor.create_resizable);
 		this.listenTo(Upfront.Events, "entity:object:after_render", Upfront.Behaviors.GridEditor.create_draggable);
 		// Enable resizables and draggables
@@ -1243,7 +1244,38 @@ var Application = new (Backbone.Router.extend({
 		app.create_sidebar();
 
 		require(
-			["objects", 'media', 'content', 'bg-settings', 'spectrum', 'responsive', "uaccordion", 'redactor', 'ueditor', 'utext', "ucomment", "ucontact", "ugallery", "uimage", "upfront-like-box", "upfront_login", "upfront_maps", "unewnavigation", "ubutton", "upostdata", "uposts", "usearch", "upfront_slider", "upfront-social_media", "utabs", "this_post", "this_page", "uwidget", "uyoutube", "upfront_code"],
+			[
+				"objects",
+				'media',
+				'content',
+				'bg-settings',
+				'spectrum',
+				'responsive',
+				"uaccordion",
+				'redactor',
+				'ueditor',
+				'utext',
+				"ucomment",
+				"ucontact",
+				"ugallery",
+				"uimage",
+				"upfront-like-box",
+				"upfront_login",
+				"upfront_maps",
+				"unewnavigation",
+				"ubutton",
+				"uposts",
+				"usearch",
+				"upfront_slider",
+				"upfront-social_media",
+				"utabs",
+				"this_post",
+				"this_page",
+				"uwidget",
+				"uyoutube",
+				"upfront_code",
+				"uspacer"
+			],
 			function (objects) {
 				app.currentUrl = window.location.pathname + window.location.search;
 				app.saveCache = true;

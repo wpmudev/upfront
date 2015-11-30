@@ -43,6 +43,7 @@
         "this_page": "../elements/upfront-this-page/js/this_page",
         "uwidget": "../elements/upfront-widget/js/uwidget",
         "uyoutube": "../elements/upfront-youtube/js/uyoutube",
+        "uspacer": "../elements/upfront-spacer/js/uspacer",
         "ueditor_inserts": "redactor/ueditor-inserts",
         "redactor": "redactor/redactor",
 				"redactor_plugins": "redactor/plugins",
