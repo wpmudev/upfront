@@ -73,6 +73,14 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 	trigger_edit: function () {
 		if ( !PostDataEditor.contentEditor || !PostDataEditor.contentEditor._editing ) return;
 		this.editor_view.editContent();
+	},
+
+	/**
+	 * Nerf default settings click and propagate further up the chain
+	 * The next stop is the actual view implementation.
+	 */
+	on_settings_click: function(event) {
+		this.trigger("settings:propagate");
 	}
 });
 
@@ -133,10 +141,21 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		;
 		view.element = this;
 		view.render();
+		
+		try { this.stopListening("settings:propagate"); } catch (e) {}
+		this.listenTo(view, "settings:propagate", this.propagate_settings);
+		
 		this.child_view = view;
 
 		this.$el.find(".upfront-object-group-default").append(view.$el);
 
+	},
+
+	/**
+	 * Finally catch propagated settings click event and act on it
+	 */
+	propagate_settings: function () {
+		Upfront.Events.trigger("element:settings:activate", this);
 	},
 	
 	prepare_editor: function () {

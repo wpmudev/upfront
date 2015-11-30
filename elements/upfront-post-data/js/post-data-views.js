@@ -85,13 +85,24 @@ var Views = {
 		 */
 		render_object_view: function (data, only_objects) {
 			if ( ! _.isArray(only_objects) ) only_objects = [];
+			var me = this;
+			try { me.stopListening("settings:propagate"); } catch (e) {}
 			this.model.get('objects').each(function(object){
 				var view = Upfront.data.object_views[object.cid],
 					type = object.get_property_value_by_name('part_type');
 				if ( only_objects.length > 0 && ! _.contains(only_objects, type) ) return;
 				if ( !view || !type || !data[type] ) return;
 				view.render_view(data[type]);
+				// Listen to setting propagation for each child event
+				me.listenTo(view, "settings:propagate", me.propagate_settings);
 			});
+		},
+
+		/**
+		 * Propagate settings click up the queue, to object *group* implementation
+		 */
+		propagate_settings: function () {
+			this.trigger("settings:propagate");
 		},
 		
 		tpl: {
