@@ -1,4 +1,8 @@
 (function ($) {
+	/**
+	 * Overriding jquery.ui.slider to make it work for rtl languages
+	 * This is done as of jquery ui 1.11.4
+	 */
 	if( Upfront.mainData.isRTL ) {
 		$.widget("ui.slider", $.ui.slider, {
 			_handleEvents: {
@@ -110,11 +114,8 @@
 				if (percentMouse < 0) {
 					percentMouse = 0;
 				}
-				//if (this.orientation === "vertical") {
-					percentMouse = 1 - percentMouse;
-				//}
 
-				//percentMouse = 1 - percentMouse;
+				percentMouse = 1 - percentMouse; // modified
 
 				valueTotal = this._valueMax() - this._valueMin();
 				valueMouse = this._valueMin() + percentMouse * valueTotal;
@@ -169,9 +170,9 @@
 							0;
 					var _valPercent = valPercent;
 					if (this.orientation === "horizontal")
-						var _valPercent = 100 - valPercent;
+						_valPercent = 100 - valPercent;
 
-					_set[this.orientation === "horizontal" ? "left" : "bottom"] = _valPercent + "%";
+					_set[this.orientation === "horizontal" ? "left" : "bottom"] = _valPercent + "%"; // modified
 					this.handle.stop(1, 1)[animate ? "animate" : "css"](_set, o.animate);
 
 					if (oRange === "min" && this.orientation === "horizontal") {
