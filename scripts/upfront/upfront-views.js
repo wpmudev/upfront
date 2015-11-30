@@ -2110,11 +2110,14 @@ define([
 				Upfront.Events.trigger("entity:settings:activate", this, BgSettings);
 			},
 			on_ungroup: function () {
-				var ed = Upfront.Behaviors.GridEditor,
+				var me = this,
+					ed = Upfront.Behaviors.GridEditor,
 					col = ed.get_class_num(this.$el, ed.grid.class),
-					top = ed.get_class_num(this.$el, ed.grid.top_margin_class),
-					left = ed.get_class_num(this.$el, ed.grid.left_margin_class),
+					top_padding_use = this.model.get_breakpoint_property_value('top_padding_use', true),
+					top_padding_num = this.model.get_breakpoint_property_value('top_padding_num', true),
+					top = top_padding_use && top_padding_num !== false ? top_padding_num : 0,
 					$wrap = this.$el.closest('.upfront-wrapper'),
+					$wraps = Upfront.Util.find_sorted($wrap.parent(), '> .upfront-wrapper:visible'),
 					is_clr = $wrap.hasClass('clr'),
 					wrapper_id = this.model.get_wrapper_id(),
 					modules = this.model.get('modules'),
@@ -2123,8 +2126,8 @@ define([
 					region_modules = this.region_view.model.get('modules'),
 					region_wrappers = this.region_view.model.get('wrappers'),
 					index = region_modules.indexOf(this.model),
-					$prev_wrap = $wrap.prev('.upfront-wrapper'),
-					$next_wrap = $wrap.next('.upfront-wrapper'),
+					$prev_wrap = Upfront.Util.find_from_elements($wraps, $wrap, '.upfront-wrapper', true).first(),
+					$next_wrap = Upfront.Util.find_from_elements($wraps, $wrap, '.upfront-wrapper', false).first(),
 					modules_arr = modules.map(function(module){ return module; }),
 					wrappers_arr = wrappers.map(function(wrapper){ return wrapper; }),
 					is_combine_wrap = false,
@@ -2158,13 +2161,11 @@ define([
 				if ( is_combine_wrap ){
 					_.each(modules_arr, function(module, i){
 						var view = Upfront.data.module_views[module.cid],
-							module_class = module.get_property_value_by_name('class'),
-							module_top = ed.get_class_num(module_class, ed.grid.top_margin_class),
-							module_left = ed.get_class_num(module_class, ed.grid.left_margin_class),
-							wrapper_id = module.get_wrapper_id();
-						if ( i == 0 )
-							module.replace_class(ed.grid.top_margin_class + (module_top+top));
-						module.replace_class(ed.grid.left_margin_class + (module_left+left));
+							object = module.get('objects').first()
+						;
+						if ( i == 0 ) {
+							me._update_top_padding(object, top);
+						}
 						module.set_property('wrapper_id', wrapper_id);
 						delete view.group_view;
 						modules.remove(module, {silent: true});
@@ -2183,10 +2184,9 @@ define([
 							wrapper = region_wrappers.get_by_wrapper_id(wrapper_id),
 							wrapper_class = wrapper ? wrapper.get_property_value_by_name('class') : false,
 							wrapper_col = ed.get_class_num(wrapper_class, ed.grid.class),
-							module_class = module.get_property_value_by_name('class'),
-							module_top = ed.get_class_num(module_class, ed.grid.top_margin_class),
-							module_left = ed.get_class_num(module_class, ed.grid.left_margin_class),
-							is_wrapper_clr = false;
+							is_wrapper_clr = false,
+							object = module.get('objects').first()
+						;
 						if ( current_wrapper_id != wrapper_id ){
 							wrapper_index++;
 							is_wrapper_clr = ( line_col+wrapper_col > col || wrapper_class.match(/clr/) );
@@ -2199,17 +2199,19 @@ define([
 							}
 						}
 						else {
-							is_wrapper_clr = ( line_col+left == wrapper_col || wrapper_class.match(/clr/) );
+							is_wrapper_clr = ( line_col == wrapper_col || wrapper_class.match(/clr/) );
 						}
 						if ( wrapper_index == 1 || is_wrapper_clr ){
-							if ( is_clr && wrapper_index == 1 )
+							if ( is_clr && wrapper_index == 1 ) {
 								wrapper.add_class('clr');
-							if ( current_wrapper_id != wrapper_id )
-								wrapper.replace_class(ed.grid.class + (wrapper_col+left));
-							module.replace_class(ed.grid.left_margin_class + (module_left+left));
+							}
+							if ( current_wrapper_id != wrapper_id ) {
+								wrapper.replace_class(ed.grid.class + wrapper_col);
+							}
 						}
-						if ( line == 1 && current_wrapper_id != wrapper_id )
-							module.replace_class(ed.grid.top_margin_class + (module_top+top));
+						if ( line == 1 && current_wrapper_id != wrapper_id ) {
+							me._update_top_padding(object, top);
+						}
 						current_wrapper_id = wrapper_id;
 						delete view.group_view;
 						modules.remove(module, {silent: true});
@@ -2221,6 +2223,19 @@ define([
 				ed.update_position_data($wrap.closest('.upfront-editable_entities_container'));
 				ed.update_wrappers(region);
 				Upfront.Events.trigger("entity:module_group:ungroup", modules_arr, region);
+			},
+			_update_top_padding: function (object, add_top) {
+				var top_padding_use = object.get_breakpoint_property_value('top_padding_use', true),
+					top_padding_num = object.get_breakpoint_property_value('top_padding_num', true),
+					column_padding = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().get('column_padding')
+				;
+				if ( top_padding_use && top_padding_num !== false) {
+					object.set_breakpoint_property('top_padding_num', top_padding_num + add_top);
+				}
+				else {
+					object.set_breakpoint_property('top_padding_use', 'yes');
+					object.set_breakpoint_property('top_padding_num', parseInt(column_padding, 10) + add_top);
+				}
 			},
 			on_reorder: function () {
 				Upfront.Events.trigger("command:module_group:finish_edit"); // close other reorder first
@@ -2390,7 +2405,7 @@ define([
 			},
 			on_entity_remove: function(e, view) {
 				Upfront.Events.trigger("entity:removed:before");
-				var wrapper_id = view.model.get_wrapper_id(),gi
+				var wrapper_id = view.model.get_wrapper_id(),
 					me = this;
 				if ( wrapper_id ){
 					var wrappers = this.region_view.model.get('wrappers'),
