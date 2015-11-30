@@ -372,10 +372,6 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		this.controls = controls;
 	},
 
-	get_buttons: function(){
-		return this.property('slides').length ? '<a href="#" class="upfront-icon-button upfront-icon-button-nav upfront-icon-next"></a><a href="#" class="upfront-icon-button upfront-icon-button-nav upfront-icon-prev"></a>' : '';
-	},
-
 	nextSlide: function(e){
 		e.preventDefault();
 		this.$('.uslides').upfront_default_slider('next');
