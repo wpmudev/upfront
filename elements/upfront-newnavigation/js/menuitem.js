@@ -19,7 +19,9 @@ return (function ($) {
 			'click .sub-menu': 'onOpenPanelSubMenu',
 			'click .upfront-save_settings': 'onOpenPanelSubMenu',
 			'click .upfront-save_settings': 'processPanelsOnSave',
-			'click > .open-item-controls': 'onOpenItemControlsClick'
+			'click > .open-item-controls': 'onOpenItemControlsClick',
+			'mouseover': 'onItemOver',
+			'mouseout': 'onItemOut'
 		},
 		initialize: function(options) {
 			var me = this;
@@ -485,6 +487,14 @@ return (function ($) {
 			setTimeout(function(){
 				tooltip.remove();
 			}, 100);
+		},
+
+		onItemOver: function(){
+			this.$el.parents('.upfront-module').find('.upfront-resize-handle-s').addClass('active-menu-item');
+		},
+
+		onItemOut: function(){
+			this.$el.parents('.upfront-module').find('.upfront-resize-handle-s').removeClass('active-menu-item');
 		},
 	});
 
