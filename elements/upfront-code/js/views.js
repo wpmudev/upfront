@@ -307,6 +307,12 @@ define([
 				var editorTop = $editor.find('.upfront-css-top'),
 					editorBody = $editor.find('.upfront-css-body')
 				;
+				
+				//Enable only height resize
+				editorTop
+					.removeClass("ui-resizable-handle").addClass("ui-resizable-handle")
+					.removeClass("ui-resizable-n").addClass("ui-resizable-n")
+				;
 
 				//Start resizable
 				editorBody.height(this.MIN_HEIGHT - editorTop.outerHeight());
