@@ -71,3 +71,7 @@ div.upfront-like-box_placeholder_guide {
   top: 4%;
   z-index: 1;
 }
+
+.upfront-output-Like-box-object iframe {
+	max-width: 100%;	
+}

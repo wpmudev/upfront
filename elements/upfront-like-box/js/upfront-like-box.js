@@ -41,7 +41,6 @@
 
 			this.listenTo(Upfront.Events, 'entity:resize_start', this.hideFrame);
 			this.listenTo(Upfront.Events, 'entity:resize_stop', this.onElementResize);
-
 		},
 
 		setUrl: function(){
@@ -57,8 +56,8 @@
 			if (!$frame.is(":visible")) $frame.show();
 		},
 		onElementResize: function(view, model){
-			if (this.parent_module_view == view) this.setElementSize();
-			else this.showFrame();
+			this.setElementSize();
+			this.showFrame();
 		},
 		setElementSize: function(){
 			var me = this,
@@ -68,6 +67,9 @@
 				this.elementSize.height = parent.height();
 				//setTimeout(function(){
 					var size = me.get_element_size_px(false);
+					if(size.row === 0) {
+						size.row = parent.height();
+					}
 
 					if(size.col != 0){
 						me.property('element_size', {
@@ -160,6 +162,8 @@
 
 		on_render: function(){
 			var parent = this.parent_module_view, me = this;
+			
+			this.setElementSize();
 
 			//Prevent iframe hijacking of events when dragging
 			if(!parent.$el.data('dragHandler')){
@@ -204,7 +208,7 @@
 						{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
 						{"name": "class", "value": "c7 upfront-like-box_module"},
 						{"name": "has_settings", "value": 0},
-						{"name": "row", "value": Upfront.Util.height_to_row(90)}
+						{"name": "row", "value": Upfront.Util.height_to_row(200)}
 					],
 					"objects": [
 						object // The anonymous module will contain our search object model
