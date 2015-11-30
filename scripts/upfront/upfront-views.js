@@ -2229,11 +2229,12 @@ define([
 					top_padding_num = object.get_breakpoint_property_value('top_padding_num', true),
 					column_padding = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().get('column_padding')
 				;
-				if ( top_padding_use && top_padding_num !== false) {
+				if ( add_top === 0 ) return;
+				object.set_breakpoint_property('top_padding_use', 'yes');
+				if ( top_padding_num !== false) {
 					object.set_breakpoint_property('top_padding_num', top_padding_num + add_top);
 				}
 				else {
-					object.set_breakpoint_property('top_padding_use', 'yes');
 					object.set_breakpoint_property('top_padding_num', parseInt(column_padding, 10) + add_top);
 				}
 			},
