@@ -2,10 +2,16 @@
 	width: 100%;
 }
 
+.upfront-like-box, .upfront-output-Like-box-object {
+	min-height: 200px;
+}
+
+.upfront-likebox-overlay {
+	border: 1px #dddddd solid;
+}
+
 .upfront-like-box_placeholder {
-  background-color:#eeeff0;
   padding: 15px;
-  border: 1px #dddddd solid;
 }
 
 .upfront-like-box_url_wrapper {
