@@ -315,9 +315,9 @@ div.burger_overlay {
 }
 
 
-.triggered-menu li.menu-item .uimage-controls.image-element-controls,
-.triggered-menu .delete_menu_item,
-.triggered-menu .navigation-add-item,
-.triggered-menu li.menu-item .open-item-controls {
+.burger-menu li.menu-item .uimage-controls.image-element-controls,
+.burger-menu .delete_menu_item,
+.burger-menu .navigation-add-item,
+.burger-menu li.menu-item .open-item-controls {
 	display: none!important;
 }
