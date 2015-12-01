@@ -13471,6 +13471,17 @@ div.upfront-regions a#no_region_add_one {
 .upfront-region-editing .empty_in_theme_mode:before {
   display: none; }
 
+.upfront-initial-overlay-wrapper {
+  background: #e3e3dc;
+  margin: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  text-align: center;
+  line-height: 80%; }
+
 /* Inserts padding fix */
 .ueditor-insert {
   padding-left: 0 !important;
