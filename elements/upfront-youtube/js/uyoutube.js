@@ -40,6 +40,17 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 		this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.onResizeStop);
 
 	},
+	
+	on_element_resize_start: function (attr) {
+		//Append overlay div to prevent Iframe hijack drag event
+		this.$el.find('.upfront-object-content').append('<div class="object-view-overlay" />');
+	},
+	
+	on_element_resize: function (attr) {
+		//Remove overlay div
+		this.$el.find('.object-view-overlay').remove();
+	},
+	
 	get_content_markup: function () {
 		var rendered,
 		props = this.extract_properties();

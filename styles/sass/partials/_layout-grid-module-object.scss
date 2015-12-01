@@ -737,3 +737,13 @@
   font-size: 13px;
   margin-bottom: 2px;
 }
+.upfront-object-view .object-view-overlay {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0px;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	z-index: 999999999;
+}
