@@ -10,6 +10,7 @@ define([
 		title: "Feature Image", 
 		data_part: 'featured_image',
 		get_fields: function () {
+			var me = this;
 			return [
 				{
 					type: "Checkboxes",
@@ -34,9 +35,25 @@ define([
 					label: "Fallback Color"
 				},
 				{
-					type: "Text",
+					type: "Button",
+					compact: true,
 					property: "fallback_image",
-					label: "Fallback Image"
+					label: "Choose",
+					on_click: function () {
+						console.log(this.model.get("fallback_image"));
+						Upfront.Media.Manager.open({
+							multiple_selection: false,
+							media_type:['images']
+						}).done(function(popup, result) {
+							if (!result.length) return false;
+							var imageModel = result.models[0],
+								img = imageModel.get('image') ? imageModel.get('image') : result.models[0],
+								url = 'src' in img ? img.src : ('get' in img ? img.get('original_url') : false)
+							;
+							if (!url) return false;
+							me.model.set("fallback_image", url);
+						});
+					}
 				},
 			];
 		},
