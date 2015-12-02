@@ -171,10 +171,11 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 
 		$button = this.$el.find('button.submit-field > span');
 		var ueditor = $button.data('ueditor');
-
-		ueditor.start();
-
-
+		
+		//Check if ueditor is defined ( prevent JS error when double click for select all )
+		if(typeof ueditor !== "undefined") {
+			ueditor.start();
+		}
 	},
 	editLabeltext: function(e) {
 		e.preventDefault();
