@@ -1,22 +1,14 @@
+.upfront-output-ugallery {
+	min-height: 240px;
+}
+
+.ugallery-starting-container {
+	height: 50px;
+}
+
 .ugallery-starting-wrapper {
-	min-height: 200px;
-	width: 100%;
-	height: 100%;
-	position: relative;
-	box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
-	color: #273A4C;
-	font-family: 'Source Sans Pro';
-	font-size: 18px;
-	width: 100%;
-	background: #eeeff0;
-	text-align: center;
-	padding: 0;
-	position: relative;
 	overflow: hidden;
 	border: 1px solid #ddd;
-	display: table;
 }
 
 .ugallery-starting-wrapper .upfront-image-starting-select {
@@ -490,8 +482,9 @@ div.preset-manager-panel .caption-height-number input {
 	height: 100%;
 	top:0;
 	left:0;
+	bottom: 0;
 	text-align: center;
-	z-index: 60;
+	z-index: 10;
 }
 
 .ugallery-onclick a,
@@ -534,14 +527,17 @@ a.ugallery-linked_page:hover:before {
 .upfront-ui .ugallery-onclick-dialog {
 	background: rgb(242, 249, 255);
 	width: 300px;
-	margin: 10px auto;
+	margin: auto;
 	padding: 20px;
+	bottom:0;
 	top:0;
 	left:0;
 	right: 0;
+	height: 180px;
 	color: #4F6477;
 	box-shadow: 0 0 20px #000;
 	border-radius: 10px;
+	position: absolute;
 }
 
 .upfront-gallery:hover .upfront-quick-swap {
