@@ -63,8 +63,11 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			}, 100);
 		});
 
-		this.listenTo(Upfront.Events, 'entity:resize_stop', this.onElementResize);
 		this.listenTo(Upfront.Events, 'entity:drag_stop', this.onElementReposition);
+	},
+	
+	on_element_resize: function (attr) {
+		this.processFloatStatus();
 	},
 
 	get_preset_properties: function() {
@@ -88,12 +91,10 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 	},
 
-	onElementResize: function() {
-		this.processFloatStatus();
-	},
 	onElementReposition: function() {
 		this.processFloatStatus();
 	},
+
 	processFloatStatus: function() {
 		if (this.floating_cache) this.floating_cache.destroy();
 		$upfrontObjectContent = this.$el.find('.upfront-object-content');
