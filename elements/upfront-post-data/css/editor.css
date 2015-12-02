@@ -198,3 +198,20 @@ div.preset-manager-panel .upfront-post_data-part.part-module-panel .typography_s
 div.preset-manager-panel .upfront-post_data-part.part-module-panel .edit_preset_label .upfront-field-button {
 	visibility: hidden;
 }
+
+/* Parts styles! */
+
+	/* Post Data - Date */
+	div.preset-manager-panel .upfront-post_data-part.part-module-panel .php_date_format {
+		float: left;
+		width: 50%;
+	}
+	div.preset-manager-panel .upfront-post_data-part.part-module-panel .php_date_reference {
+		float: left;
+		width: 50%;
+		padding-top: 30px;
+		padding-left: 10px;
+		text-decoration: underline;
+		color: rgb(0, 206, 141);
+		font-size: 13px;
+	}
