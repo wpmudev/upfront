@@ -8,6 +8,63 @@ class Upfront_Post_Data_PartView_Post_data extends Upfront_Post_Data_PartView {
 	);
 
 	/**
+	 * Converts the date posted part into markup.
+	 *
+	 * Supported macros:
+	 *    {{timestamp}} - Raw timestamp (UNIX timestamp)
+	 *    {{wp_date}} - Date formatted according to raw WP setting
+	 *    {{wp_time}} - Date formatted according to raw WP setting
+	 *    {{date}} - Date in selected format
+	 *    {{date_<N>}} - (where N=1,2,3...) Date part formatted by the portion of format indicated by N. Format is split on whitespace (` `).
+	 *
+	 * Part template: post-data-date_posted
+	 *
+	 * @return string
+	 */
+	public function expand_date_posted_template () {
+		if (empty($this->_post->post_date)) return '';
+
+		$time = strtotime($this->_post->post_date);
+		if (empty($time)) return '';
+
+		$predefined_format = !empty($this->_data['predefined_date_format'])
+			? $this->_data['predefined_date_format']
+			: false
+		;
+
+		$wp_date = get_option('date_format');
+		$wp_time = get_option('time_format');
+		$date_format = false;
+		if (!empty($predefined_format)) {
+			$date_format = $predefined_format;
+			$date_format = preg_replace('/(^|\b)wp_date(\b|$)/', $wp_date, $date_format);
+			$date_format = preg_replace('/(^|\b)wp_time(\b|$)/', $wp_time, $date_format);
+		} else {
+			$date_format = !empty($this->_data['date_posted_format'])
+				? $this->_data['date_posted_format']
+				: Upfront_Posts_PostsData::get_default('date_posted_format')
+			;
+		}
+		$format = explode(' ', $date_format);
+
+		$out = $this->_get_template('date_posted');
+
+		$part = 1;
+		foreach ($format as $fmt) {
+			$out = Upfront_Codec::get()->expand($out, "date_{$part}", date($fmt, $time));
+			$part++;
+		}
+		$out = Upfront_Codec::get()->expand($out, "timestamp", $time);
+		$out = Upfront_Codec::get()->expand($out, "date", date_i18n($date_format, $time));
+		$out = Upfront_Codec::get()->expand($out, "time", date_i18n($wp_time, $time));
+
+		$out = Upfront_Codec::get()->expand($out, "wp_date", date_i18n($wp_date, $time));
+		$out = Upfront_Codec::get()->expand($out, "wp_time", date_i18n($wp_time, $time));
+
+		return $out;
+	}
+
+	/**
 	 * Converts the content part of the main post data part into markup.
 	 *
 	 * Allows for optional content splitting.

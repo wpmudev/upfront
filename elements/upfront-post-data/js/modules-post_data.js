@@ -10,13 +10,72 @@ define([
 		title: "Date posted",
 		data_part: 'date_posted',
 		get_fields: function () {
-			return [{
-				type: "Text",
-				label: "Format",
-				label_style: 'inline',
-				property: "date_posted_format"
-			}];
+			return [
+				{
+					type: "Select",
+					label: "Date Format",
+					multiple: false,
+					property: "predefined_date_format",
+					values: [
+						{ label: "WordPress date", value: "wp_date" },
+						{ label: "30 Jan 2015", value: "d M Y" },
+						{ label: "Jan 30 2015", value: "M d Y" },
+						{ label: "30 01 2015", value: "d m Y" },
+						{ label: "01 30 2015", value: "m d Y" },
+						{ label: "Custom PHP Format", value: "0" },
+					],
+					default_value: "wp_date"
+				},
+				{
+					type: "Text",
+					label: "PHP Format",
+					className: 'php_date_format',
+					label_style: 'inline',
+					property: "date_posted_format"
+				},
+				{
+					type: "Button",
+					label: "Reference",
+					className: 'php_date_reference',
+					compact: true,
+					on_click: function (e) {
+						if (e && e.preventDefault) e.preventDefault();
+						if (e && e.stopPropagation) e.stopPropagation();
+
+						var win = window.open('https://codex.wordpress.org/Formatting_Date_and_Time', '_blank');
+						win.focus();
+
+						return false;
+					}
+				},
+			];
 		},
+		render: function () {
+			Panel.Toggleable.prototype.render.apply(this);
+
+			if (!this._field_fmt_select || !this._field_fmt || !this._field_fmt_ref) {
+				var fields = this.fields.toArray();
+				this._field_fmt_select = fields[0];
+				this._field_fmt = fields[1];
+				this._field_fmt_ref = fields[2];
+
+				if (this._field_fmt_select) this.listenTo(this._field_fmt_select, "changed", this.update_fields);
+			}
+
+			this.update_fields();
+		},
+		update_fields: function () {
+			if (!this._field_fmt_select) return false;
+			var fmt = this._field_fmt_select.get_value();
+
+			if ("0" !== fmt) {
+				this._field_fmt.$el.hide();
+				this._field_fmt_ref.$el.hide();
+			} else {
+				this._field_fmt.$el.show();
+				this._field_fmt_ref.$el.show();
+			}
+		}
 	});
 
 	Modules.part_title = Panel.Toggleable.extend({ title: "Title", data_part: 'title' });
