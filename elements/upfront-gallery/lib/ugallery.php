@@ -356,6 +356,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'regenerating' => __('Regenerating images...', 'upfront'),
 			'regenerating_done' => __('Wow, those are cool!', 'upfront'),
 			'settings' => __('Gallery settings', 'upfront'),
+			'toggle_dnd' => __('Toggle drag\'n\'drop sorting of images', 'upfront'),
 			'panel' => array(
 				'sort' => __('Enable label sorting', 'upfront'),
 				'even_padding' => __('Even padding'),

@@ -811,15 +811,15 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			me.$('.upfront-gallery').append('<div class="upfront-quick-swap"><p>' + l10n.personalize + '</p></div>');
 		}
 
-		if (this.images && this.images.length) {
-			var $upfrontObjectContent = this.$el.find('.upfront-object-content');
-			if (this.$el.find('a.toggle-sorting').length < 1) {
-				$('<b class="upfront-entity_meta upfront-ui toggle_sorting" title="Toggle drag\'n\'drop sorting of images"><a href="" class="upfront-icon-button toggle-sorting"></a></b>').insertBefore($upfrontObjectContent);
-			}
-			if (this.$el.find('a.add-item').length < 1) {
-				$('<b class="upfront-entity_meta upfront-ui add_item"><a href="" class="upfront-icon-button add-item"></a></b>').insertBefore($upfrontObjectContent);
-			}
-		}
+		// if (this.images && this.images.length) {
+		// 	var $upfrontObjectContent = this.$el.find('.upfront-object-content');
+		// 	if (this.$el.find('a.toggle-sorting').length < 1) {
+		// 		$('<b class="upfront-entity_meta upfront-ui toggle_sorting" title="Toggle drag\'n\'drop sorting of images"><a href="" class="upfront-icon-button toggle-sorting"></a></b>').insertBefore($upfrontObjectContent);
+		// 	}
+		// 	if (this.$el.find('a.add-item').length < 1) {
+		// 		$('<b class="upfront-entity_meta upfront-ui add_item"><a href="" class="upfront-icon-button add-item"></a></b>').insertBefore($upfrontObjectContent);
+		// 	}
+		// }
 
 		setTimeout(function() {
 			me.rebindShuffle();
@@ -906,6 +906,12 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		this.isSortingActive = !this.isSortingActive;
 		this.itemsInRow = this.$el.find('.ugallery_item').filter(function(){ return $(this).css('top') === '0px'; }).length;
 		this.render();
+		if(this.isSortingActive) {
+			this.controls.$el.find('.upfront-icon-region-toggle-sorting').addClass('upfront-icon-region-sorting-active');
+		}
+		else {
+			this.controls.$el.find('.upfront-icon-region-toggle-sorting').removeClass('upfront-icon-region-sorting-active');
+		}
 	},
 
 	rebindShuffle: function() {
@@ -1596,6 +1602,15 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			return;
 		}
 		return this.model.get_property_value_by_name(name);
+	},
+
+	getControlItems: function(){
+		return _([
+			this.createControl('add', l10n.template.add_img, 'openImageSelector'),
+			this.createControl('toggle-sorting', l10n.toggle_dnd, 'toggleSorting'),
+			this.createPaddingControl(),
+			this.createControl('settings', l10n.settings, 'on_settings_click')
+		]);
 	}
 });
 

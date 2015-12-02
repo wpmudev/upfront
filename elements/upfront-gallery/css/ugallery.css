@@ -432,15 +432,12 @@ div.ugallery-controls i.upfront-icon:before {
 	background-position: -808px -775px;
 }
 
-.upfront-inline-panel div.upfront-inline-panel-item i.upfront-icon.upfront-icon-region-remove:before {
+/*.upfront-inline-panel div.upfront-inline-panel-item i.upfront-icon.upfront-icon-region-remove:before {
 	background-image: url(../../../img/uf-ui-sprite.svg);
-}
+}*/
 
 .upfront-ui .upfront-icon-region-remove:before {
-	background-position: -1229px -154px;
-}
-.upfront-ui .upfront-icon-region-remove:hover:before {
-	background-position: -731px -231px;
+	background-position: -261px -282px;
 }
 .upfront-ui .upfront-icon-region-remove-active:before {
 	background-position: -1229px -154px;
@@ -454,6 +451,13 @@ div.ugallery-controls i.upfront-icon:before {
 }
 .upfront-ui .upfront-icon-region-edit-labels-no-labels:before {
 	background-position: -479px -201px;
+}
+
+.upfront-icon-region-toggle-sorting:before {
+	background-position: -261px -311px;
+}
+.upfront-icon-region-toggle-sorting.upfront-icon-region-sorting-active:before {
+	background-position: -291px -311px;
 }
 
 div.preset-manager-panel .field-caption-height {
