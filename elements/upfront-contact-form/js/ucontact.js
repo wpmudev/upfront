@@ -202,7 +202,13 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 				subject: this.getPlaceholder('form_subject_label'),
 				message: this.getPlaceholder('form_message_label')
 			},*/
-			ids: {},
+			ids: {
+				name: 'sendername',
+				email:  'senderemail',
+				message: 'sendermessage',
+				subject: 'subject',
+				captcha: 'realPerson'
+			},
 			values: {}
 		});
 
