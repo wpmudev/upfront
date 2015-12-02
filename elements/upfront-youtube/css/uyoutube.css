@@ -6,7 +6,7 @@
 	min-height: inherit;
 }
 
-.uyoutube-single iframe {
+.uyoutube-single iframe, .uyoutube-multiple-gallery iframe {
 	width: 100% !important;
 	min-height: inherit;
 }

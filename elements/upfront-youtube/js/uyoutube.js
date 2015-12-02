@@ -35,8 +35,6 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 		this.model.get("properties").bind("add", this.render, this);
 		this.model.get("properties").bind("remove", this.render, this);
 
-		Upfront.Events.on("entity:resize_stop", this.onResizeStop, this);
-
 		this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.onResizeStop);
 
 	},
@@ -49,6 +47,9 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 	on_element_resize: function (attr) {
 		//Remove overlay div
 		this.$el.find('.object-view-overlay').remove();
+		
+		//Update player size on resize
+		this.onResizeStop(this);
 	},
 	
 	get_content_markup: function () {
