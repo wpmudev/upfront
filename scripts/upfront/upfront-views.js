@@ -774,6 +774,50 @@ define([
 					paddingRight: right_padding_use && right_padding_num !== false ? right_padding_num + 'px' : ''
 				});
 			},
+			show_top_padding_hint: function () {
+				var me               = this,
+					top_padding_num  = this.model.get_breakpoint_property_value('top_padding_num', true),
+					top_padding_hint = this.$el.find('.upfront-entity-top-padding-hint')
+				;
+				if(!top_padding_hint.length) {
+					top_padding_hint = $('<div class="upfront-ui upfront-entity-padding-hint upfront-entity-top-padding-hint"></div>').appendTo(this.$el);
+				}
+				top_padding_hint.css({
+					height: top_padding_num + 'px',
+					opacity: 1
+				});
+				clearTimeout(this.top_padding_hint_timer);
+				this.top_padding_hint_timer = setTimeout(function() {
+					me.hide_top_padding_hint();
+				}, 1000);
+			},
+			hide_top_padding_hint: function () {
+				this.$el.find('.upfront-entity-top-padding-hint').css({
+					opacity: 0
+				});
+			},
+			show_bottom_padding_hint: function () {
+				var me                  = this,
+					bottom_padding_num  = this.model.get_breakpoint_property_value('bottom_padding_num', true),
+					bottom_padding_hint = this.$el.find('.upfront-entity-bottom-padding-hint')
+				;
+				if(!bottom_padding_hint.length) {
+					bottom_padding_hint = $('<div class="upfront-ui upfront-entity-padding-hint upfront-entity-bottom-padding-hint"></div>').appendTo(this.$el);
+				}
+				bottom_padding_hint.css({
+					height: bottom_padding_num + 'px',
+					opacity: 1
+				});
+				clearTimeout(this.bottom_padding_hint_timer);
+				this.bottom_padding_hint_timer = setTimeout(function() {
+					me.hide_bottom_padding_hint();
+				}, 1000);
+			},
+			hide_bottom_padding_hint: function () {
+				this.$el.find('.upfront-entity-bottom-padding-hint').css({
+					opacity: 0
+				});
+			},
 			updateControls: function() {
 				var elementControlsTpl = '<div class="upfront-element-controls upfront-ui"></div>';
 
@@ -1384,11 +1428,18 @@ define([
 				}
 				else if ( prop.id.match(/(top|bottom|left|right)_padding_(use|num|slider)/) ) {
 					this.apply_paddings($me);
+					if ( prop.id.match(/top_padding_num/) ) {
+						this.show_top_padding_hint();
+					}
+					if ( prop.id.match(/bottom_padding_num/) ) {
+						this.show_bottom_padding_hint();
+					}
 				}
 				else {
 					this.render();
 				}
 				Upfront.Events.trigger('entity:object:update', this, this.model);
+
 			},
 			update_position: function () {
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;

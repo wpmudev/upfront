@@ -14398,6 +14398,27 @@ a.upfront-css-edit:before, a.upfront-preset-edit:before, a.upfront-region-name-e
   position: absolute;
   z-index: 1; }
 
+/* Padding Hint */
+/* line 105, sass/partials/_padding-settings.scss */
+.upfront-entity-padding-hint {
+  display: block;
+  position: absolute;
+  top: auto;
+  bottom: auto;
+  left: 0;
+  right: 0;
+  transition: opacity 200ms ease-out; }
+
+/* line 114, sass/partials/_padding-settings.scss */
+.upfront-entity-top-padding-hint {
+  top: 2px;
+  background: transparent url(../img/top-padding-hint.png) center bottom scroll repeat; }
+
+/* line 118, sass/partials/_padding-settings.scss */
+.upfront-entity-bottom-padding-hint {
+  bottom: 2px;
+  background: transparent url(../img/bottom-padding-hint.png) center bottom scroll repeat; }
+
 /* Posts settings */
 /* line 2, sass/partials/_post-settings.scss */
 .posts-settings-query {
