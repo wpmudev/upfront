@@ -902,7 +902,11 @@ class Upfront_GridBreakpoint {
 		// Fill margin left or right
 		if ( is_array($fill_margin) ){
 			foreach ( $fill_margin as $dir => $val ) {
-				$prefix = ( 'left' == $dir ) ? $this->_prefixes[self::PREFIX_MARGIN_LEFT] : $this->_prefixes[self::PREFIX_MARGIN_RIGHT];
+				if( is_rtl() )
+					$prefix = ( 'left' == $dir ) ?  $this->_prefixes[self::PREFIX_MARGIN_RIGHT] : $this->_prefixes[self::PREFIX_MARGIN_LEFT] ;
+				else
+					$prefix = ( 'left' == $dir ) ? $this->_prefixes[self::PREFIX_MARGIN_LEFT] : $this->_prefixes[self::PREFIX_MARGIN_RIGHT];
+
 				if ( $this->is_default() ){
 					$style = $this->_map_class_to_style($prefix . $val, $max_columns);
 				}
