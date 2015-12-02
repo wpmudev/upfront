@@ -66,6 +66,13 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 			this._editor_prepared = true;
 		}
 	},
+
+	/**
+	 * Part objects do *NOT* get individual control items - parent group does
+	 */
+	getControlItems: function () {
+		return _([]);
+	},
 	
 	/**
 	 * Trigger edit if it's in the middle of editing (re-rendering whie editing)
@@ -73,14 +80,6 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 	trigger_edit: function () {
 		if ( !PostDataEditor.contentEditor || !PostDataEditor.contentEditor._editing ) return;
 		this.editor_view.editContent();
-	},
-
-	/**
-	 * Nerf default settings click and propagate further up the chain
-	 * The next stop is the actual view implementation.
-	 */
-	on_settings_click: function(event) {
-		this.trigger("settings:propagate");
 	}
 });
 
@@ -112,6 +111,15 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	on_render: function () {
 		var type = this.model.get_property_value_by_name("data_type");
 		this.render_view(type);
+
+		if ( this.parent_module_view ) {
+			this.$control_el = this.$el;
+			this.updateControls();
+			var me = this;
+			setTimeout(function() {
+				if(me.paddingControl && typeof me.paddingControl.isOpen !== 'undefined' && !me.paddingControl.isOpen)	me.paddingControl.refresh();
+			}, 300);
+		}
 	},
 
 	render_view: function (type) {
@@ -142,20 +150,10 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		view.element = this;
 		view.render();
 		
-		try { this.stopListening("settings:propagate"); } catch (e) {}
-		this.listenTo(view, "settings:propagate", this.propagate_settings);
-		
 		this.child_view = view;
 
 		this.$el.find(".upfront-object-group-default").append(view.$el);
 
-	},
-
-	/**
-	 * Finally catch propagated settings click event and act on it
-	 */
-	propagate_settings: function () {
-		Upfront.Events.trigger("element:settings:activate", this);
 	},
 	
 	prepare_editor: function () {
@@ -368,7 +366,10 @@ var PostDataElement_Author = PostDataElement.extend({
 	},
 	_post_parts: [
 		'author',
-		'gravatar'
+		'gravatar',
+		'author_email',
+		'author_url',
+		'author_bio'
 	]
 });
 
@@ -407,6 +408,7 @@ var PostDataElement_Comments = PostDataElement.extend({
 	_post_parts: [
 		'comment_count',
 		'comments',
+		'comments_pagination',
 		'comment_form'
 	]
 });
