@@ -78,7 +78,9 @@ var GridEditor = {
 	 */
 	get_grid: function(x, y){
 		var	ed = Upfront.Behaviors.GridEditor,
-			grid_x = Math.round((x-ed.grid_layout.left)/ed.col_size)+1,
+			grid_x = !Upfront.Util.isRTL()
+				? Math.round((x-ed.grid_layout.left)/ed.col_size)+1
+				: Math.round((ed.grid_layout.right-x)/ed.col_size)+1,
 			grid_y = Math.ceil((y-ed.grid_layout.top)/ed.baseline)+1;
 		return {x: grid_x, y: grid_y};
 	},
@@ -95,7 +97,9 @@ var GridEditor = {
 			height = parseFloat($el.css('height')),
 			offset = $el.offset(),
 			top = offset.top,
-			left = offset.left,
+			bottom = top + height,
+			left = !Upfront.Util.isRTL() ? offset.left : offset.left + width,
+			right = !Upfront.Util.isRTL() ? left + width : left - width,
 			grid = ed.get_grid(left, top),
 			col = ($el.data('current_col') ? $el.data('current_col') : Math.round(width/ed.col_size)),
 			row = Math.floor(height/ed.baseline),
@@ -106,8 +110,8 @@ var GridEditor = {
 			position = {
 				top: Math.round(top),
 				left: Math.round(left),
-				bottom: Math.round(top+height),
-				right: Math.round(left+width)
+				bottom: Math.round(bottom),
+				right: Math.round(right)
 			},
 			pos_grid = {
 				top: grid.y,
@@ -125,7 +129,7 @@ var GridEditor = {
 			height: height,
 			center: {
 				y: Math.round(top+(height/2)),
-				x: Math.round(left+(width/2))
+				x: !Upfront.Util.isRTL() ? Math.round(left+(width/2)) : Math.round(left-(width/2))
 			},
 			col: col,
 			row: row,
