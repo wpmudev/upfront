@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Upfront\n"
 "POT-Creation-Date: 2015-11-29 11:14+0330\n"
-"PO-Revision-Date: 2015-11-29 11:14+0330\n"
+"PO-Revision-Date: 2015-12-02 11:37+0330\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fa\n"
@@ -196,7 +196,7 @@ msgstr ""
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:212
 #: elements/upfront-tabs/lib/utabs.php:121
 msgid "Content"
-msgstr ""
+msgstr "محتوا"
 
 #: elements/upfront-accordion/lib/uaccordion.php:145
 #: elements/upfront-contact-form/lib/contact_form.php:433
@@ -230,7 +230,7 @@ msgstr ""
 #: elements/upfront-gallery/lib/ugallery.php:380
 #: elements/upfront-tabs/lib/utabs.php:143
 msgid "Content Area Colors"
-msgstr ""
+msgstr "رنگ های بخش محتوا"
 
 #: elements/upfront-accordion/lib/uaccordion.php:151
 #: elements/upfront-tabs/lib/utabs.php:144
@@ -767,11 +767,11 @@ msgstr "تماس"
 
 #: elements/upfront-contact-form/lib/contact_form.php:376
 msgid "Contact form"
-msgstr ""
+msgstr "فرم تماس"
 
 #: elements/upfront-contact-form/lib/contact_form.php:377
 msgid "Contact Details"
-msgstr ""
+msgstr "جزئیات تماس"
 
 #: elements/upfront-contact-form/lib/contact_form.php:378
 msgid "Name:"
@@ -2416,7 +2416,7 @@ msgstr "لیست نوشته ها"
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:149
 msgid "Continue"
-msgstr ""
+msgstr "ادامه"
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:150
 #: elements/upfront-social-media/lib/upfront-social-media.php:232
@@ -2438,7 +2438,7 @@ msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:154
 msgid "What should the element display?"
-msgstr ""
+msgstr "این عنصر چه چیزی باید نمایش دهد؟"
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:155
 msgid "How to display post(s):"
