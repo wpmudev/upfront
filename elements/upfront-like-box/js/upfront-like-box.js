@@ -42,6 +42,14 @@
 			this.listenTo(Upfront.Events, 'entity:resize_start', this.hideFrame);
 			this.listenTo(Upfront.Events, 'entity:resize_stop', this.onElementResize);
 		},
+		
+		on_element_resize_start: function (attr) {
+			this.hideFrame(this, this.model);
+		},
+		
+		on_element_resize: function (attr) {
+			this.onElementResize(this, this.model);
+		},
 
 		setUrl: function(){
 			this.property('facebook_url' , Upfront.data.social.panel.model.get_property_value_by_name('global_social_media_services-facebook-url'));
