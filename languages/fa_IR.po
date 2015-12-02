@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Upfront\n"
 "POT-Creation-Date: 2015-11-29 11:14+0330\n"
-"PO-Revision-Date: 2015-12-02 11:37+0330\n"
+"PO-Revision-Date: 2015-12-02 12:39+0330\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fa\n"
@@ -4582,7 +4582,7 @@ msgstr ""
 #: library/servers/class_upfront_editor_l10n_server.php:169
 #: library/servers/class_upfront_editor_l10n_server.php:280
 msgid "Save Element"
-msgstr ""
+msgstr "ذخیره عنصر"
 
 #: library/servers/class_upfront_editor_l10n_server.php:170
 msgid "Loading fonts..."
