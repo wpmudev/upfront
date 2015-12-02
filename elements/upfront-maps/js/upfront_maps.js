@@ -225,8 +225,8 @@ define([
 			;
 			if (!$location.length) {
 				this.$el.append(
-					'<div id="upfront_map-location_overlay-wrapper">' +
-						'<div id="upfront_map-location_overlay" class="uf_el_map_initial-overlay">' +
+					'<div id="upfront_map-location_overlay-wrapper" class="upfront-initial-overlay-wrapper">' +
+						'<div id="upfront_map-location_overlay" class="uf_el_map_initial-overlay upfront-initial-overlay-wrapper">' +
 							'<p id="upfront_map-location_overlay-instruction">' + l10n.instructions + '</p>' +
 							'<div id="upfront_map-location_overlay-address" class="upfront-ui uf-address">' +
 								'<input type="text" id="upfront_map-location_overlay-location" placeholder="' + l10n.placeholder + '" />' +

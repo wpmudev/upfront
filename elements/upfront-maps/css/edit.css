@@ -165,13 +165,6 @@ border-width: 11px;
 
 #upfront_map-location_overlay-wrapper,
 .uf_el_map_initial-overlay {
-	background:rgb(227, 227, 220);
-	color:#fff;
-	margin: auto;
-	position: absolute;
-	top: 0; left: 0; bottom: 0; right: 0;
-	text-align:center;
-	line-height: 80%;
 	font-weight: 300;
 	font-size:20px;
 }

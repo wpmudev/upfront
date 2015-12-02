@@ -153,10 +153,11 @@
 
 			}else{
 				this.model.set_property('facebook_url', '', true);
-				return '<div class="upfront-like-box_placeholder">' +
+				return '<div class="upfront-likebox-overlay upfront-initial-overlay-wrapper" style="min-height: 200px;">' +
+						'<div class="upfront-like-box_placeholder upfront-initial-overlay-wrapper" style="height: 150px;">' +
 						'<div class="upfront-like-box_placeholder_guide">'+l10n.placeholder_guide+'</div>' +
 						'<div class="upfront-like-box_url_wrapper"><input type="text" class="upfront-like-box_url" placeholder="' + l10n.placeholder + '" /></div>' +
-						'<button type="button" class="upfront-like-box_button">'+l10n.ok+'</button></div>';
+						'<button type="button" class="upfront-like-box_button">'+l10n.ok+'</button></div></div>';
 			}
 		},
 

@@ -101,7 +101,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		if(isFloating && isFloating == 'yes') {
 			if (this.property('preset') && this.property('preset') !== 'default') {
-				if (this.get_preset_properties().breakpoint[Upfront.Views.breakpoints_storage.get_breakpoints().get_active().id].menu_style === 'triggered') {
+				if (this.get_preset_properties().breakpoint[Upfront.Views.breakpoints_storage.get_breakpoints().get_active().id].menu_style === 'burger') {
 					this.floating_cache = new  NavigationFloating($upfrontObjectContent.children('.responsive_nav_toggler'));
 				} else {
 					this.floating_cache = new  NavigationFloating($upfrontObjectContent);
@@ -569,8 +569,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			breakpoint = this.get_preset_properties().breakpoint[currentBreakpoint.id],
 			currentwidth = typeof breakpoint.width !== 'undefined' ? parseInt(breakpoint.width, 10) : $(window).width();
 
-		if (breakpoint.menu_style === 'triggered') {
-			selector.addClass('triggered-menu');
+		if (breakpoint.menu_style === 'burger') {
+			selector.addClass('burger-menu');
 			selector.attr('data-style', 'burger');
 			selector.attr('data-burger_alignment', breakpoint.burger_alignment);
 			selector.attr('data-burger_over', breakpoint.burger_over);
@@ -605,7 +605,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 			me.hideMenu(selector.find('ul.menu'));
 		} else {
-			selector.removeClass('triggered-menu');
+			selector.removeClass('burger-menu');
 			selector.attr('data-style', breakpoint.menu_style);
 			selector.attr('data-alignment', breakpoint.menu_alignment);
 
@@ -681,7 +681,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			if(parseInt(currentwidth) >= parseInt(bparray[key]['width'])) {
 
 				if(bparray[key]['burger_menu'] == 'yes') {
-					selector.addClass('triggered-menu');
+					selector.addClass('burger-menu');
 					selector.attr('data-style', 'burger')
 					selector.attr('data-burger_alignment', bparray[key]['burger_alignment']);
 					selector.attr('data-burger_over', bparray[key]['burger_over']);
@@ -716,7 +716,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					me.hideMenu(selector.find('ul.menu'));
 				}
 				else {
-					selector.removeClass('triggered-menu');
+					selector.removeClass('burger-menu');
 					selector.attr('data-style', bparray[key]['menu_style']);
 					selector.attr('data-aliment', bparray[key]['menu_alignment']);
 
@@ -868,15 +868,15 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		presetProperties.breakpoint = presetProperties.breakpoint || {desktop:{},tablet:{},mobile:{}};
 		if (!breakpoint || breakpoint.default) {
 			if (
-				presetProperties.breakpoint.desktop.menu_style === 'triggered' &&
+				presetProperties.breakpoint.desktop.menu_style === 'burger' &&
 				presetProperties.breakpoint.desktop.burger_over !== 'pushes' &&
 				presetProperties.breakpoint.desktop.burger_alignment !== 'whole'
 			) {
 				this.$el.find('.upfront-object-content').append($('<div class="burger_overlay"></div>'));
 			}
 			if (
-				presetProperties.breakpoint.desktop.menu_style === 'triggered' &&
-				presetProperties.breakpoint.desktop.menu_style === 'triggered'
+				presetProperties.breakpoint.desktop.menu_style === 'burger' &&
+				presetProperties.breakpoint.desktop.menu_style === 'burger'
 			) {
 				container.prepend($('<div>').addClass("responsive_nav_toggler").data('view', me).append('<div></div><div></div><div></div>'));
 				me.hideMenu(this.$el.find('ul.menu'));
@@ -885,13 +885,13 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			breakpoint_data = presetProperties.breakpoint[breakpoint.id];
 
 			if (
-				breakpoint_data && breakpoint_data.menu_style ===  'triggered' &&
+				breakpoint_data && breakpoint_data.menu_style ===  'burger' &&
 				breakpoint_data.burger_over !== 'pushes' &&
 				breakpoint_data.burger_alignment !== 'whole'
 			) {
 				this.$el.find('.upfront-object-content').append($('<div class="burger_overlay"></div>'));
 			}
-			if(breakpoint_data && breakpoint_data.menu_style === 'triggered') {
+			if(breakpoint_data && breakpoint_data.menu_style === 'burger') {
 				container.prepend($('<div>').addClass("responsive_nav_toggler").data('view', me).append('<div></div><div></div><div></div>'));
 				me.hideMenu(this.$el.find('ul.menu'));
 			}

@@ -114,7 +114,7 @@ jQuery(document).ready(function($) {
 		$(".upfront-navigation").each(function () {
 			var $me = $(this);
 
-			if ($me.data('style') == 'triggered' || $me.data('style') === 'burger') {
+			if ($me.data('style') === 'burger') {
 				$toggler = $me.children('.responsive_nav_toggler');
 				$toggler.attr('id', $me.attr('id')+'-toggler');
 				if (_cache[$toggler.attr("id")]) _cache[$toggler.attr("id")].destroy();
@@ -126,7 +126,7 @@ jQuery(document).ready(function($) {
 		$(".upfront-navigation.upfront-navigation-float").each(function () {
 			var $me = $(this);
 
-			if($me.data('style') == 'burger' || $me.data('style') == 'triggered') {
+			if($me.data('style') == 'burger') {
 				$toggler = $me.children('.responsive_nav_toggler');
 				$toggler.attr('id', $me.attr('id')+'-toggler');
 				//if (_cache[$toggler.attr("id")]) _cache[$toggler.attr("id")].destroy();
@@ -250,8 +250,40 @@ jQuery(document).ready(function($) {
 		$('div#page').css('minWidth', '');
 	}
 
-	function roll_responsive_nav(selector, bpwidth) {
+	// the following is used to find the current breakpoint on resize
+	var previous_breakpoint = '';
+	var current_breakpoint = '';
 
+	function get_breakpoint(){
+		if (!window.getComputedStyle) {
+				window.getComputedStyle = function(el, pseudo) {
+				this.el = el;
+				this.getPropertyValue = function(prop) {
+					var re = /(\-([a-z]){1})/g;
+					if (prop == 'float') prop = 'styleFloat';
+					if (re.test(prop)) {
+						prop = prop.replace(re, function () {
+							return arguments[2].toUpperCase();
+						});
+					}
+					return el.currentStyle[prop] ? el.currentStyle[prop] : null;
+				}
+				return this;
+			}
+		}
+		var breakpoint = window.getComputedStyle(document.body,':after').getPropertyValue('content');
+		if(breakpoint) {
+			breakpoint = breakpoint.replace(/['"]/g, '')
+			if (current_breakpoint != breakpoint) {
+				previous_breakpoint = current_breakpoint;
+				current_breakpoint = breakpoint;
+			}
+			return breakpoint;
+		}
+	}
+
+
+	function roll_responsive_nav(selector, bpwidth) {
 		var elements = (typeof(selector) == 'object')?selector:$(selector);
 		elements.each(function () {
 
@@ -259,23 +291,16 @@ jQuery(document).ready(function($) {
 
 			var currentwidth = (typeof(bpwidth) != 'undefined') ? parseInt(bpwidth) : $(window).width();
 
-			var key;
-			var currentKey = 'desktop';
-			var preset;
-			var responsive_css;
+			var currentKey, preset, responsive_css;
 
 			if (breakpoints.preset) {
-				var order = {'mobile':'', 'tablet':'', 'desktop':''};
-				for (key in order) {
-					breakpoints.preset[key] = breakpoints.preset[key] || {};
-					if (parseInt(currentwidth) >= parseInt(breakpoints.preset[key].width)) {
-						currentKey = key;
-					}
-				}
+				currentKey = get_breakpoint();
+				if(currentKey === '')
+					currentKey = 'desktop';
 
 				preset = breakpoints.preset[currentKey];
 
-				if (preset.menu_style == 'triggered') {
+				if (preset.menu_style == 'burger') {
 					$(this).attr('data-style', 'burger');
 					$(this).attr('data-alignment', ( preset.menu_alignment ? preset.menu_alignment : $(this).data('alignmentbk') ));
 					$(this).attr('data-burger_alignment', preset.burger_alignment);
