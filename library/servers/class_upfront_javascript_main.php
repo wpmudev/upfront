@@ -337,7 +337,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		);
 
 		$menus = json_encode(wp_get_nav_menus());
-		$is_rtl = is_rtl();
+		$is_rtl = (int) is_rtl();
 		$main = <<<EOMainJs
 // Set up the global namespace
 var Upfront = window.Upfront || {};
