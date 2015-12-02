@@ -205,3 +205,8 @@ background-position: -699px -646px;
 	width: 225px;
 	margin-top: 10px;
 }
+.upfront-ui .upfront-icon-region-add:before {
+	background-position: -261px -191px;
+	width: 18px;
+	height: 18px;
+}

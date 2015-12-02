@@ -287,21 +287,21 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	prepareSlider: function(){
 		var me = this,
 			wrapper = me.$('.uslide-image'),
-			controls = me.createSlideControls(),
+			//controls = me.createSlideControls(),
 			text = me.$('.uslide-editable-text'),
 			currentSlide = this.model.slideCollection.at(this.getCurrentSlide())
 		;
 
-		controls.setWidth(wrapper.width());
-		controls.render();
-		if(typeof(currentSlide) != 'undefined') {
-			me.$('.uslides').append(
-				$('<div class="uimage-controls upfront-ui" rel="' + currentSlide.id + '"></div>').append(controls.$el)
-			);
-		}
+		// controls.setWidth(wrapper.width());
+		// controls.render();
+		// if(typeof(currentSlide) != 'undefined') {
+		// 	me.$('.uslides').append(
+		// 		$('<div class="uimage-controls upfront-ui" rel="' + currentSlide.id + '"></div>').append(controls.$el)
+		// 	);
+		// }
 		me.onSlideShow();
 
-		this.controls = controls;
+		// this.controls = controls;
 
 		me.$('.uslide').css({height: 'auto'});
 
@@ -356,20 +356,30 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	},
 
 	updateSlideControls: function(){
+		// if(typeof(this.controls) !== 'undefined') {
+		// 	this.controls.remove();
+		// }
+
+		// var controls = this.createSlideControls();
+		// controls.render();
+
+		// this.$('.uimage-controls').append(controls.$el);
+
+		// if(typeof(this.model.slideCollection.at(this.getCurrentSlide())) !== 'undefined') {
+		// 	this.$('.uimage-controls').attr('rel', this.model.slideCollection.at(this.getCurrentSlide()).id);
+		// }
+
+		// this.controls = controls;
+		
+		if(typeof(this.$control_el) !== 'undefined') {
+			this.$control_el.find('.upfront-element-controls').remove();
+		}
+		
 		if(typeof(this.controls) !== 'undefined') {
-			this.controls.remove();
+			this.controls = undefined;
 		}
 
-		var controls = this.createSlideControls();
-		controls.render();
-
-		this.$('.uimage-controls').append(controls.$el);
-
-		if(typeof(this.model.slideCollection.at(this.getCurrentSlide())) !== 'undefined') {
-			this.$('.uimage-controls').attr('rel', this.model.slideCollection.at(this.getCurrentSlide()).id);
-		}
-
-		this.controls = controls;
+		this.updateControls();
 	},
 
 	nextSlide: function(e){
@@ -558,76 +568,76 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		});
 	},
 
-	createSlideControls: function() {
-		var me = this,
-			panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
-			multiBelow = {
-				above: ['above', l10n.above_img],
-				below: ['below', l10n.below_img],
-				nocaption: ['nocaption', l10n.no_text]
-			},
-			multiOver = {
-				topOver: ['topOver', l10n.over_top],
-				bottomOver: ['bottomOver', l10n.over_bottom],
-				topCover: ['topCover', l10n.cover_top],
-				middleCover: ['middleCover', l10n.cover_mid],
-				bottomCover: ['bottomCover', l10n.cover_bottom],
-				nocaption: ['nocaption', l10n.no_text]
-			},
-			multiSide = {
-				right: ['right', l10n.at_right],
-				left: ['left', l10n.at_left],
-				nocaption: ['nocaption', l10n.no_text]
-			},
-			primaryStyle = this.get_preset_properties().primaryStyle,
-			multiControls = {},
-			captionControl = new Upfront.Views.Editor.InlinePanels.TooltipControl(),
-			panelItems = [],
-			slide = this.model.slideCollection.at(this.getCurrentSlide())
-		;
+	// createSlideControls: function() {
+	// 	var me = this,
+	// 		panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
+	// 		multiBelow = {
+	// 			above: ['above', l10n.above_img],
+	// 			below: ['below', l10n.below_img],
+	// 			nocaption: ['nocaption', l10n.no_text]
+	// 		},
+	// 		multiOver = {
+	// 			topOver: ['topOver', l10n.over_top],
+	// 			bottomOver: ['bottomOver', l10n.over_bottom],
+	// 			topCover: ['topCover', l10n.cover_top],
+	// 			middleCover: ['middleCover', l10n.cover_mid],
+	// 			bottomCover: ['bottomCover', l10n.cover_bottom],
+	// 			nocaption: ['nocaption', l10n.no_text]
+	// 		},
+	// 		multiSide = {
+	// 			right: ['right', l10n.at_right],
+	// 			left: ['left', l10n.at_left],
+	// 			nocaption: ['nocaption', l10n.no_text]
+	// 		},
+	// 		primaryStyle = this.get_preset_properties().primaryStyle,
+	// 		multiControls = {},
+	// 		captionControl = new Upfront.Views.Editor.InlinePanels.TooltipControl(),
+	// 		panelItems = [],
+	// 		slide = this.model.slideCollection.at(this.getCurrentSlide())
+	// 	;
 
-		captionControl.sub_items = {};
-		if(primaryStyle == 'below')
-			multiControls = multiBelow;
-		else if(primaryStyle == 'over')
-			multiControls = multiOver;
-		else if(primaryStyle == 'side')
-			multiControls = multiSide;
-		else
-			multiControls = false;
-		if(multiControls){
-			_.each(multiControls, function(opts, key){
-				captionControl.sub_items[key] = me.createControl(opts[0], opts[1]);
-			});
+	// 	captionControl.sub_items = {};
+	// 	if(primaryStyle == 'below')
+	// 		multiControls = multiBelow;
+	// 	else if(primaryStyle == 'over')
+	// 		multiControls = multiOver;
+	// 	else if(primaryStyle == 'side')
+	// 		multiControls = multiSide;
+	// 	else
+	// 		multiControls = false;
+	// 	if(multiControls){
+	// 		_.each(multiControls, function(opts, key){
+	// 			captionControl.sub_items[key] = me.createControl(opts[0], opts[1]);
+	// 		});
 
-			captionControl.icon = 'caption';
-			captionControl.tooltip = l10n.cap_position;
-			captionControl.selected = multiControls[slide.get('style')] ? slide.get('style') : 'nocaption';
-			this.listenTo(captionControl, 'select', function(item){
-				var previousStyle = slide.get('style');
-				slide.set('style', item);
-				me.onSlidesCollectionChange();
-				if(primaryStyle == 'side' && previousStyle == 'nocaption' || item == 'nocaption'){
-					//give time to the element to render
-					setTimeout(function(){
-						var wrap = me.$('.upfront-default-slider-item-current').find('.uslide-image');
-						me.imageProps[slide.id] = me.calculateImageResize({width: wrap.width(), height: wrap.height()}, slide);
-						me.setTimer();
-					}, 100);
-				}
-			});
-		}
+	// 		captionControl.icon = 'caption';
+	// 		captionControl.tooltip = l10n.cap_position;
+	// 		captionControl.selected = multiControls[slide.get('style')] ? slide.get('style') : 'nocaption';
+	// 		this.listenTo(captionControl, 'select', function(item){
+	// 			var previousStyle = slide.get('style');
+	// 			slide.set('style', item);
+	// 			me.onSlidesCollectionChange();
+	// 			if(primaryStyle == 'side' && previousStyle == 'nocaption' || item == 'nocaption'){
+	// 				//give time to the element to render
+	// 				setTimeout(function(){
+	// 					var wrap = me.$('.upfront-default-slider-item-current').find('.uslide-image');
+	// 					me.imageProps[slide.id] = me.calculateImageResize({width: wrap.width(), height: wrap.height()}, slide);
+	// 					me.setTimer();
+	// 				}, 100);
+	// 			}
+	// 		});
+	// 	}
 
-		panelItems.push(this.createControl('crop', l10n.edit_img, 'imageEditMask'));
+	// 	panelItems.push(this.createControl('crop', l10n.edit_img, 'imageEditMask'));
 
-    	panelItems.push(this.createLinkControl(slide));
+ 	//    	// panelItems.push(this.createLinkControl(slide));
 
-		panelItems.push(this.createControl('remove', l10n.remove_slide, 'onRemoveSlide'));
+	// 	panelItems.push(this.createControl('remove', l10n.remove_slide, 'onRemoveSlide'));
 
-		panel.items = _(panelItems);
+	// 	panel.items = _(panelItems);
 
-		return panel;
-	},
+	// 	return panel;
+	// },
 
 	createControl: function(icon, tooltip, click){
 		var me = this,
@@ -643,8 +653,9 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		return item;
 	},
 
-	createLinkControl: function(slide) {
+	createLinkControl: function() {
 		var me = this,
+			slide = this.model.slideCollection.at(this.getCurrentSlide()),
 			control = new Upfront.Views.Editor.InlinePanels.DialogControl(),
 			link;
 
@@ -703,7 +714,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				linkTarget: data.get('target')
 			}, {silent:true});
 
-			me.property('slides', slideCollection.toJSON(), true);
+			me.property('slides', me.model.slideCollection.toJSON(), true);
 		});
 
 		me.listenTo(link, 'change:target', function(data) {
@@ -715,7 +726,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				linkTarget: data.get('target')
 			}, {silent:true});
 
-			me.property('slides', slideCollection.toJSON(), true);
+			me.property('slides', me.model.slideCollection.toJSON(), true);
 
 			me.$el.find('.upfront-default-slider-item-current a')
 				.attr('target', data.get('target'));
@@ -1028,7 +1039,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	imageEditMask: function(e) {
 		var me = this,
 			item = $(e.target).closest('.uimage-controls'),
-			slide = this.model.slideCollection.get(item.attr('rel')),
+			currentSlide = this.model.slideCollection.at(this.getCurrentSlide()),
+			slide = this.model.slideCollection.get(currentSlide.id),
 			editorOpts = this.getEditorOptions(slide)
 		;
 
@@ -1145,6 +1157,17 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			return this.model.set_property(name, value, silent);
 		}
 		return this.model.get_property_value_by_name(name);
+	},
+
+	getControlItems: function(){
+		return _([
+			this.createControl('add', l10n.add_slide, 'openImageSelector'),
+			this.createControl('crop', l10n.edit_img, 'imageEditMask'),
+    		this.createLinkControl(),
+			this.createControl('remove', l10n.remove_slide, 'onRemoveSlide'),
+			this.createPaddingControl(),
+			this.createControl('settings', l10n.settings, 'on_settings_click')
+		]);
 	}
 });
 

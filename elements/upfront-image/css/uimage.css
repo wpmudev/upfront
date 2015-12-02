@@ -785,17 +785,11 @@ div.uimage-controls i.upfront-icon:before,
 }
 
 .upfront-ui .upfront-icon-region-crop:before {
-	background-position: -700px -392px;
-}
-.upfront-ui .upfront-icon-region-crop:hover:before {
-	background-position: -808px -392px;
+	background-position: -261px -221px;
 }
 
 .upfront-ui .upfront-icon-region-link:before {
-	background-position: -700px -424px;
-}
-.upfront-ui .upfront-icon-region-link:hover:before {
-	background-position: -808px -424px;
+	background-position: -260px -250px;
 }
 
 .upfront-ui .upfront-icon-region-nocaption:before {

@@ -27,7 +27,8 @@
     width:100%;
     font-size: 0.8em;
     padding: 5px 20px 10px 10px;
-    background: #E8E8E8;
+    margin-top: 8px;
+    background: #F5F5F5;
     box-shadow: 0px 1px 2px #ADADAD;
     color: #ADADAD;
 }
@@ -39,6 +40,7 @@
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon {
     opacity: 0.75;
 }
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-control-dialog-open .upfront-icon,
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon:hover {
     opacity: 1;
 }
