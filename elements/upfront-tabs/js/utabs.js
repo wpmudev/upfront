@@ -46,8 +46,6 @@ define([
 			this.model.get('properties').bind('add', this.render, this);
 			this.model.get('properties').bind('remove', this.render, this);
 
-			Upfront.Events.on('entity:resize_stop', this.onResizeStop, this);
-
 			this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
 		},
 
