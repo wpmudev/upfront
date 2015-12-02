@@ -241,7 +241,7 @@ div.preset-manager-panel div.global_modules{
     padding-right: 15px;
 }
 div.preset-manager-panel .settings_module{
-    padding-right: 15px;
+    padding-right: 10px;
     padding-left: auto;
 }
 div.preset-manager-panel .module-color-field .sp-replacer{
@@ -311,4 +311,43 @@ li.activate-breakpoints-dropdown{
 .upfront-field-wrap-multiple{
     margin-left: -15px;
     margin-right: auto;
+}
+/*Element Setting*/
+#element-settings-sidebar .padding-settings .padding-right{
+    right:112px;
+    left: auto;
+}
+#element-settings-sidebar .padding-settings .padding-top,
+#element-settings-sidebar .padding-settings .padding-bottom{
+    padding-left: inherit;
+    padding-right:60px;
+}
+#element-settings-sidebar .padding-lock{
+    right: 165px;
+    left: auto;
+}
+#element-settings-sidebar .padding-bottom label{
+    right: 10px;
+    left: auto;
+}
+.upfront-settings-item-title span, .upfront-global-social-settings .upfront-settings-item-title span{
+    margin-right: 10px;
+    margin-left: auto;
+}
+.upfront-settings-padding .upfront-settings-item-title:before{
+    left: 16px;
+    right: auto;
+}
+.upfront-settings-padding .upfront-settings-item-title:after{
+    left: 11px;
+    right: auto;
+}
+
+/*CSS Editor*/
+#upfront-csseditor, #upfront-general-csseditor{
+    left: 0;
+    right: auto;
+}
+.ace_content{
+    direction: ltr;
 }
