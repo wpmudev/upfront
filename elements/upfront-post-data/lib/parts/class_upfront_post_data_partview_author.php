@@ -91,8 +91,10 @@ class Upfront_Post_Data_PartView_Author extends Upfront_Post_Data_PartView {
 		if (empty($this->_post->post_author)) return '';
 
 		$author = $this->_post->post_author;
-
-		$name = get_the_author_meta('display_name', $author);
+		$name = !empty($this->_data['email_link_text'])
+			? esc_html(sanitize_text_field($this->_data['email_link_text']))
+			: get_the_author_meta('display_name', $author)
+		;
 		$email = sanitize_email(get_the_author_meta('user_email', $author));
 
 		if (!is_email($email)) $email = '';
@@ -120,7 +122,10 @@ class Upfront_Post_Data_PartView_Author extends Upfront_Post_Data_PartView {
 		if (empty($this->_post->post_author)) return '';
 
 		$author = $this->_post->post_author;
-		$name = get_the_author_meta('display_name', $author);
+		$name = !empty($this->_data['link_text'])
+			? esc_html(sanitize_text_field($this->_data['link_text']))
+			: get_the_author_meta('display_name', $author)
+		;
 		
 		$author_url = get_author_posts_url($author);
 		$url = get_the_author_meta('url', $author);

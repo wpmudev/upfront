@@ -44,9 +44,45 @@ define([
 			];
 		}
 	});
+
+	Modules.part_author_email = Panel.Toggleable.extend({
+		title: "Email",
+		data_part: 'author_email',
+		get_fields: function () {
+			return [
+				{
+					type: 'Text',
+					label: 'Email Text Label',
+					label_style: 'inline',
+					property: 'email_link_text'
+				}
+			];
+		}
+	});
 	
-	Modules.part_author_email = Panel.Toggleable.extend({ title: "Email", data_part: 'author_email' });
-	Modules.part_author_url = Panel.Toggleable.extend({ title: "URL", data_part: 'author_url' });
+	Modules.part_author_url = Panel.Toggleable.extend({
+		title: "URL", 
+		data_part: 'author_url',
+		get_fields: function () {
+			return [
+				{
+					type: 'Text',
+					label: 'Link Text',
+					label_style: 'inline',
+					property: 'link_text'
+				},
+				{
+					type: 'Checkboxes',
+					property: 'target',
+					values: [
+						{label: 'New Tab', value: '_blank'}
+					]
+				}
+			];
+		}
+	});
+
+
 	Modules.part_author_bio = Panel.Toggleable.extend({ title: "Biography", data_part: 'author_bio' });
 	Modules.part_gravatar = Panel.Toggleable.extend({
 		title: "Gravatar",

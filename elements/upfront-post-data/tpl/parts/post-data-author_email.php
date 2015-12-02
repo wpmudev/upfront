@@ -1,3 +1,3 @@
 <div class="upostdata-part author author-email">
-	<a href="mailto:{{email}}">{{email}}</a>
+	<a href="mailto:{{email}}">{{name}}</a>
 </div>

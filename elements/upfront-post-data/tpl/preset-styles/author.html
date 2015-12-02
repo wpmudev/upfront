@@ -60,3 +60,102 @@
 
 	<?php } ?>
 }
+
+
+<?php if (!empty($properties['static-author_email-use-typography'])) { ?>
+
+.preset-<?php echo $properties['id'] ?> .upfront-post-data-part .author-email, .upfront-post-data-part .author-email a {
+
+	<?php if (!empty($properties['static-author_email-font-family'])) { ?>
+		font-family: <?php echo $properties['static-author_email-font-family'] ?>;
+	<?php } ?>
+	
+	<?php if (!empty($properties['static-author_email-style'])) { ?>
+		font-style: <?php echo $properties['static-author_email-style'] ?>;
+	<?php } ?>	
+	
+	<?php if (!empty($properties['static-author_email-weight'])) { ?>
+		font-weight: <?php echo $properties['static-author_email-weight'] ?>;
+	<?php } ?>	
+
+	<?php if (!empty($properties['static-author_email-font-size'])) { ?>
+		font-size: <?php echo $properties['static-author_email-font-size'] ?>px;
+	<?php } ?>
+
+	<?php if (!empty($properties['static-author_email-font-color'])) { ?>
+		color: <?php echo $properties['static-author_email-font-color'] ?>;
+	<?php } ?>
+
+	<?php if (!empty($properties['static-author_email-line-height'])) { ?>
+		line-height: <?php echo $properties['static-author_email-line-height'] ?>;
+	<?php } ?>
+
+}
+
+<?php } ?>
+
+
+<?php if (!empty($properties['static-author_url-use-typography'])) { ?>
+
+.preset-<?php echo $properties['id'] ?> .upfront-post-data-part .author-url, .upfront-post-data-part .author-url a {
+
+	<?php if (!empty($properties['static-author_url-font-family'])) { ?>
+		font-family: <?php echo $properties['static-author_url-font-family'] ?>;
+	<?php } ?>
+	
+	<?php if (!empty($properties['static-author_url-style'])) { ?>
+		font-style: <?php echo $properties['static-author_url-style'] ?>;
+	<?php } ?>	
+	
+	<?php if (!empty($properties['static-author_url-weight'])) { ?>
+		font-weight: <?php echo $properties['static-author_url-weight'] ?>;
+	<?php } ?>	
+
+	<?php if (!empty($properties['static-author_url-font-size'])) { ?>
+		font-size: <?php echo $properties['static-author_url-font-size'] ?>px;
+	<?php } ?>
+
+	<?php if (!empty($properties['static-author_url-font-color'])) { ?>
+		color: <?php echo $properties['static-author_url-font-color'] ?>;
+	<?php } ?>
+
+	<?php if (!empty($properties['static-author_url-line-height'])) { ?>
+		line-height: <?php echo $properties['static-author_url-line-height'] ?>;
+	<?php } ?>
+
+}
+
+<?php } ?>
+
+
+<?php if (!empty($properties['static-author_bio-use-typography'])) { ?>
+
+.preset-<?php echo $properties['id'] ?> .upfront-post-data-part .author-bio, .upfront-post-data-part .author-bio a {
+
+	<?php if (!empty($properties['static-author_bio-font-family'])) { ?>
+		font-family: <?php echo $properties['static-author_bio-font-family'] ?>;
+	<?php } ?>
+	
+	<?php if (!empty($properties['static-author_bio-style'])) { ?>
+		font-style: <?php echo $properties['static-author_bio-style'] ?>;
+	<?php } ?>	
+	
+	<?php if (!empty($properties['static-author_bio-weight'])) { ?>
+		font-weight: <?php echo $properties['static-author_bio-weight'] ?>;
+	<?php } ?>	
+
+	<?php if (!empty($properties['static-author_bio-font-size'])) { ?>
+		font-size: <?php echo $properties['static-author_bio-font-size'] ?>px;
+	<?php } ?>
+
+	<?php if (!empty($properties['static-author_bio-font-color'])) { ?>
+		color: <?php echo $properties['static-author_bio-font-color'] ?>;
+	<?php } ?>
+
+	<?php if (!empty($properties['static-author_bio-line-height'])) { ?>
+		line-height: <?php echo $properties['static-author_bio-line-height'] ?>;
+	<?php } ?>
+
+}
+
+<?php } ?>
