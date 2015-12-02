@@ -60,11 +60,12 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 		rendered = this.youtubeTpl(this.extract_properties());
 
 		if(this.property('youtube_status') === 'starting' && !props.multiple_videos){
-		rendered += '<div class="upfront-youtube-starting-select" style="min-height:' + this.elementSize.height + 'px">' +
+		rendered += '<div class="upfront-youtube-starting-select upfront-initial-overlay-wrapper">' +
+			'<div class="upfront-youtube-starting-wrapper upfront-initial-overlay-wrapper" style="height: 110px;">' +
 			'<div class="upfront-youtube-starting-text">'+ l10n.enter_url +'</div>'+
 			'<div class="upfront-youtube-box-wrapper"><input type="text" class="upfront-youtube-url" placeholder="'+ l10n.url_placeholder +'" /></div>' +
 			'<div class="upfront-youtube-button-wrapper"><button type="button" class="upfront-youtube-button">'+ l10n.submit_button +'</button></div>'+
-			'</div>';
+			'</div></div>';
 		}
 
 		return rendered;

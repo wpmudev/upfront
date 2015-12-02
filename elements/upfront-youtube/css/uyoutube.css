@@ -22,7 +22,9 @@
 }
 
 .upfront-output-uyoutube {
-	min-height: inherit;
+	max-height: 100%;
+	overflow: hidden;
+	min-height: 225px;
 }
 
 .uyoutube-gallery-item {
@@ -164,10 +166,12 @@
 	color: #28DC96;
 	font-family: 'Source Sans Pro';
 	font-size:18px;
-	height: 228px;
-	background: #eeeff0;
 	text-align: left;
-	padding: 70px 15px 0;
+	min-height: 225px;
+}
+
+.upfront-youtube-starting-wrapper {
+	padding: 15px;
 }
 
 .upfront-youtube-resizing-icons {
@@ -187,7 +191,7 @@
 	border: 1px solid #ccc;
 	padding: 0 10px;
 	margin-bottom: 10px;
-	width: 63%;
+	width: 69%;
 	display: block;
 	float: left;
 }
