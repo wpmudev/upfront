@@ -13,6 +13,12 @@
 }
 
 /*-------------- General --------------*/
+.js-ulinkpanel-input-url{
+    direction: ltr;
+}
+.upfront-field-multiple-horizontal-inline{
+    margin: 0 0 0 15px;
+}
 .upfront-field-wrap-color .sp-replacer{
     height: 19px;
 }
@@ -350,4 +356,23 @@ li.activate-breakpoints-dropdown{
 }
 .ace_content{
     direction: ltr;
+}
+
+/*Slider El*/
+.upfront-default-slider-nav-prev{
+    right:50px;
+    left: auto;
+}
+.upfront-default-slider-nav-next{
+    right: auto;
+    left: 50px;
+}
+.uimage-control-panel .upfront-field-wrap{
+    margin-left: auto;
+}
+.ulinkpanel .upfront-field-wrap-radios > label, .ulinkpanel-dark .upfront-field-wrap-radios > label{
+    margin: 0 0 0 15px;
+}
+.uslider-slides-setting .upfront-region-bg-slider-add-image{
+    float: right;
 }
