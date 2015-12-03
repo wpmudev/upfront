@@ -30,8 +30,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		this.events = _.extend({}, this.events, {
 			'click a.menu_item' : 'exitEditMode',
-			'dblclick a.menu_item' : 'editMenuItem',
-			'click a.newnavigation-add-item': 'addPrimaryMenuItem'
+			'dblclick a.menu_item' : 'editMenuItem'/*,
+			'click a.newnavigation-add-item': 'addPrimaryMenuItem'*/
 		});
 
 		this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
@@ -516,9 +516,9 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		}
 
 		$upfrontObjectContent = this.$el.find('.upfront-object-content');
-		if(this.$el.find('a.newnavigation-add-item').length < 1) {
-			$('<b class="upfront-entity_meta newnavigation_add add_item upfront-ui"><a href="#" class="upfront-icon-button newnavigation-add-item add-item"></a></b>').insertBefore($upfrontObjectContent);
-		}
+		// if(this.$el.find('a.newnavigation-add-item').length < 1) {
+		// 	$('<b class="upfront-entity_meta newnavigation_add add_item upfront-ui"><a href="#" class="upfront-icon-button newnavigation-add-item add-item"></a></b>').insertBefore($upfrontObjectContent);
+		// }
 
 		setTimeout(function() {
 			var breakpointsData = me.model.get_property_value_by_name('breakpoint');
@@ -843,7 +843,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			container.append(this.renderMenu(this.property('menu_items'), 'menu'));
 
 			setTimeout(function() {
-				me.$el.find('a.newnavigation-add-item').trigger('click');
+				// me.$el.find('a.newnavigation-add-item').trigger('click');
+				me.$el.closest('.upfront-module').find('i.upfront-icon-region-add').trigger('click');
 			}, 200);
 		}
 
@@ -1053,6 +1054,14 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			}
 		}
 		me.editMenuItem(me.$el.find('a.new_menu_item').removeClass('new_menu_item')); //linkPanel does not popup on new menu creation because of this class being removed
+	},
+
+	getControlItems: function(){
+		return _([
+			this.createControl('add', l10n.add_item, 'addPrimaryMenuItem'),
+			this.createPaddingControl(),
+			this.createControl('settings', l10n.settings, 'on_settings_click')
+		]);
 	}
 
 });
