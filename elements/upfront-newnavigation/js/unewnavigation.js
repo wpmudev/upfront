@@ -568,7 +568,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			ruler_height = $('.upfront-ruler-container').outerHeight(),
 			currentBreakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active(),
 			breakpoint = this.get_preset_properties().breakpoint[currentBreakpoint.id],
-			currentwidth = typeof breakpoint.width !== 'undefined' ? parseInt(breakpoint.width, 10) : $(window).width();
+			breakpointWidth = currentBreakpoint.get_property_value_by_name('width');
+			currentwidth = typeof breakpointWidth !== 'undefined' ? parseInt(breakpointWidth, 10) : $(window).width();
 
 		if (breakpoint.menu_style === 'burger') {
 			selector.addClass('burger-menu');
@@ -591,12 +592,13 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				}
 			});
 
+
 			if (selector.hasClass('upfront-output-unewnavigation')) {
 				$('head').find('style#responsive_nav_sidebar_offset').remove();
 				var responsive_css = 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"][data-burger_over="over"] ul.menu, div.upfront-navigation div[data-style="burger"][data-burger_over="over"][data-burger_alignment="whole"] ul.menu {left:'+parseInt(regions_off.left, 10)+'px !important;} ';
 				responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"] ul.menu, div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] ul.menu {right: inherit; width:'+((parseInt(currentwidth) < parseInt(win_width-sidebar_width))?parseInt(currentwidth):parseInt(win_width-sidebar_width)) +'px !important; } ';
 				responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="left"] ul.menu {left:'+parseInt(regions_off.left)+'px !important; right:inherit !important; width:'+parseInt(30/100*regions_width)+'px !important;} ';
-				responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="right"] ul.menu {left:inherit !important; right:'+((parseInt((win_width-currentwidth-sidebar_width) / 2 - 30) > 0)?parseInt((win_width-currentwidth-sidebar_width) / 2 - 30):0)+'px !important; width:'+parseInt(30/100*regions_width)+'px !important; } ';
+				responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="right"] ul.menu {left:inherit !important; right:'+((parseInt((win_width-currentwidth-sidebar_width) / 2) > 0)?parseInt((win_width-currentwidth-sidebar_width) / 2 -(($(document).width() > (win_width+6))?30:0)):0)+'px !important; width:'+parseInt(30/100*regions_width)+'px !important; } ';
 				responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][data-burger_over="over"] ul.menu {top:'+(parseInt(topbar_height) + parseInt(ruler_height))+'px !important; } ';
 
 				$('head').append($('<style id="responsive_nav_sidebar_offset">'+responsive_css+'</style>'));

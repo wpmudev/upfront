@@ -438,6 +438,7 @@
 .upfront-module-group.controls-visible > .upfront-entity_meta > .upfront-icon-button {
   visibility: hidden !important;
 }
+.upfront-module-group-on-edit .upfront-editable_entities_container .upfront-wrapper > .ui-resizable-handle,
 .upfront-module-group-on-edit .upfront-editable_entities_container .upfront-editable_entity:hover > .ui-resizable-handle {
   visibility: visible;
 }
@@ -567,6 +568,12 @@
 .upfront-wrapper:not(.upfront-inline-panel-item-open):hover > .upfront-wrapper-meta,
 /* .upfront-wrapper.not:hover > .upfront-wrapper-meta, */
 .upfront-wrapper.ui-resizable-resizing > .upfront-wrapper-meta {
+  display: block !important;
+}
+.upfront-module-group-editing .upfront-wrapper > .upfront-wrapper-meta {
+  display: none !important;
+}
+.upfront-module-group-editing .upfront-module-group-on-edit .upfront-wrapper:hover > .upfront-wrapper-meta {
   display: block !important;
 }
 .upfront-wrapper-meta-left {
