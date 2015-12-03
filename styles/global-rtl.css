@@ -13,6 +13,20 @@
 }
 
 /*-------------- General --------------*/
+div.preset-manager-panel .color-module.two{
+    float: right;
+}
+.colors_settings_item .upfront-field-wrap-color{
+    margin-left: 10px;
+    margin-right: auto;
+}
+.upfront-field-select-option label{
+    padding: 2px 10px 2px 20px;
+}
+.upfront-field-select-option-selected label{
+    padding-left: 4px;
+    padding-right: 10px;
+}
 .js-ulinkpanel-input-url{
     direction: ltr;
 }
@@ -375,4 +389,13 @@ li.activate-breakpoints-dropdown{
 }
 .uslider-slides-setting .upfront-region-bg-slider-add-image{
     float: right;
+}
+
+/*uGallery*/
+#element-settings-sidebar .padding-settings .padding-top,
+#element-settings-sidebar .padding-settings .padding-bottom,
+#element-settings-sidebar .padding-settings .padding-left
+{
+    border-right:2px solid #dae6f2 ;
+    border-left: none;
 }
