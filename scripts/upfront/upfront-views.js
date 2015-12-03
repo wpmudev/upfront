@@ -2170,74 +2170,93 @@ define([
 					$wrap = this.$el.closest('.upfront-wrapper'),
 					$wraps = Upfront.Util.find_sorted($wrap.parent(), '> .upfront-wrapper:visible'),
 					is_clr = $wrap.hasClass('clr'),
-					wrapper_id = this.model.get_wrapper_id(),
+					group_wrapper_id = this.model.get_wrapper_id(),
 					modules = this.model.get('modules'),
 					wrappers = this.model.get('wrappers'),
 					region = this.region,
 					region_modules = this.region_view.model.get('modules'),
 					region_wrappers = this.region_view.model.get('wrappers'),
+					group_wrapper = region_wrappers.get_by_wrapper_id(group_wrapper_id),
 					index = region_modules.indexOf(this.model),
 					$prev_wrap = Upfront.Util.find_from_elements($wraps, $wrap, '.upfront-wrapper', true).first(),
+					prev_wrapper = $prev_wrap.length > 0 ? region_wrappers.get_by_wrapper_id($prev_wrap.attr('id')) : false,
+					is_prev_wrap_clr = $prev_wrap.length > 0 ? $prev_wrap.hasClass('clr') : false,
+					is_prev_wrap_spacer = $prev_wrap.length > 0 ? ( $prev_wrap.find('> .upfront-module-view > .upfront-module-spacer').length > 0 ) : false,
+					prev_spacer_col = is_prev_wrap_spacer ? ed.get_class_num($prev_wrap, ed.grid.class) : 0,
+					$prev_module = $prev_wrap.length > 0 ? $prev_wrap.find('> .upfront-module-view > .upfront-module') : false,
+					prev_module = $prev_module && $prev_module.length > 0 ? region_modules.get_by_element_id($prev_module.attr('id')) : false,
 					$next_wrap = Upfront.Util.find_from_elements($wraps, $wrap, '.upfront-wrapper', false).first(),
+					next_wrapper = $next_wrap.length > 0 ? region_wrappers.get_by_wrapper_id($next_wrap.attr('id')) : false,
+					is_next_wrap_clr = $next_wrap.length > 0 ? $next_wrap.hasClass('clr') : false,
+					is_next_wrap_spacer = $next_wrap.length > 0 ? ( $next_wrap.find('> .upfront-module-view > .upfront-module-spacer').length > 0 ) : false,
+					next_spacer_col = is_next_wrap_spacer ? ed.get_class_num($next_wrap, ed.grid.class) : 0,
+					$next_module = $next_wrap.length > 0 ? $next_wrap.find('> .upfront-module-view > .upfront-module') : false,
+					next_module = $next_module && $next_module.length > 0 ? region_modules.get_by_element_id($next_module.attr('id')) : false,
+					$row_wrap_first = !is_clr ? Upfront.Util.find_from_elements($wraps, $wrap, '.clr', true).first() : $wrap,
+					$row_wraps_next = Upfront.Util.find_from_elements($wraps, $row_wrap_first, '.upfront-wrapper', false, '.clr'),
+					$row_wraps = $(_.union([$row_wrap_first], $row_wraps_next.map(function(){ return $(this); }).get())),
+					$row_wraps_spacer = $row_wraps.filter(function(){ return $(this).find('> .upfront-module-view > .upfront-module-spacer').length > 0; }),
 					modules_arr = modules.map(function(module){ return module; }),
 					wrappers_arr = wrappers.map(function(wrapper){ return wrapper; }),
 					is_combine_wrap = false,
 					line_col = 0,
-					current_wrapper_id;
+					current_wrapper_id
+				;
 				ed.start(this, this.model);
+				// Let's check if we need to combine wrapper
+				// Do that when group is trapped between elements
 				if (
 					$wrap.find('>.upfront-module-view, >.upfront-module-group').length > 1 ||
-					( $next_wrap.length > 0 && !$next_wrap.hasClass('clr') ) ||
-					( $prev_wrap.length > 0 && !is_clr )
+					( $row_wraps.length - $row_wraps_spacer.length > 1 )
 				) {
 					is_combine_wrap = true;
-					_.each(modules_arr, function(module, i){
+					/*_.each(modules_arr, function(module, i){
 						var wrapper_id = module.get_wrapper_id();
-						if ( current_wrapper_id == wrapper_id )
-							return;
+						if ( current_wrapper_id == wrapper_id ) return;
 						var wrapper = wrappers.get_by_wrapper_id(wrapper_id),
 							wrapper_class = wrapper ? wrapper.get_property_value_by_name('class') : false,
 							wrapper_col = ed.get_class_num(wrapper_class, ed.grid.class);
 						current_wrapper_id = wrapper_id;
 						if ( line_col+wrapper_col <= col ){
-							if ( line_col > 0 )
+							if ( line_col > 0 ) {
 								is_combine_wrap = false;
+							}
 							line_col += wrapper_col;
 						}
 						else {
 							line_col = 0;
 						}
-					});
+					});*/
 				}
-				if ( is_combine_wrap ){
-					_.each(modules_arr, function(module, i){
-						var view = Upfront.data.module_views[module.cid],
-							object = module.get('objects').first()
-						;
-						if ( i == 0 ) {
-							me._update_top_padding(object, top);
-						}
-						module.set_property('wrapper_id', wrapper_id);
-						delete view.group_view;
-						modules.remove(module, {silent: true});
-						module.add_to(region_modules, index+i);
-					});
-				}
-				else {
-					var line = 0,
-						wrapper_index = 0;
-					current_wrapper_id = false;
-					wrappers.remove(wrappers_arr, {silent: true});
-					region_wrappers.add(wrappers_arr, {silent: true});
-					_.each(modules_arr, function(module, i){
-						var view = Upfront.data.module_views[module.cid],
-							wrapper_id = module.get_wrapper_id(),
-							wrapper = region_wrappers.get_by_wrapper_id(wrapper_id),
-							wrapper_class = wrapper ? wrapper.get_property_value_by_name('class') : false,
-							wrapper_col = ed.get_class_num(wrapper_class, ed.grid.class),
-							is_wrapper_clr = false,
-							object = module.get('objects').first()
-						;
+				var line = 0,
+					module_index = 0,
+					wrapper_index = 0,
+					add_spacer_queue = [],
+					pv_is_spacer = false,
+					pv_wrapper_col = 0,
+					pv_module, pv_wrapper, pv_wrapper_view;
+				current_wrapper_id = false;
+				// Iterate through each module and add to region as necessary
+				_.each(modules_arr, function(module, i){
+					var view = Upfront.data.module_views[module.cid],
+						$view_el = view.$el.find('> .upfront-editable_entity'),
+						is_spacer = $view_el.hasClass('upfront-module-spacer'),
+						is_visible = $view_el.is(':visible'),
+						wrapper_id = module.get_wrapper_id(),
+						wrapper = wrappers.get_by_wrapper_id(wrapper_id),
+						wrapper_view = wrapper ? Upfront.data.wrapper_views[wrapper.cid] : false,
+						wrapper_class = wrapper ? wrapper.get_property_value_by_name('class') : false,
+						wrapper_col = wrapper_view ? Math.round(parseInt(wrapper_view.$el.css('width'), 10)/ed.col_size) : col,
+						is_wrapper_clr = false,
+						object = module.get('objects').first(),
+						remove_module = false
+					;
+					// If not visible, let's remove it
+					if ( !is_visible ) {
+						remove_module = true;
+					}
+					else {
+						// Keep track of columns and see if the wrapper is the first one in line
 						if ( current_wrapper_id != wrapper_id ){
 							wrapper_index++;
 							is_wrapper_clr = ( line_col+wrapper_col > col || wrapper_class.match(/clr/) );
@@ -2252,41 +2271,127 @@ define([
 						else {
 							is_wrapper_clr = ( line_col == wrapper_col || wrapper_class.match(/clr/) );
 						}
-						if ( wrapper_index == 1 || is_wrapper_clr ){
-							if ( is_clr && wrapper_index == 1 ) {
-								wrapper.add_class('clr');
+						// If combine wrap, remove all spacer and set the group wrapper_id
+						// Otherwise, normalize spacers and add needed class
+						if ( is_combine_wrap ) {
+							if ( is_spacer ) {
+								remove_module = true;
 							}
-							if ( current_wrapper_id != wrapper_id ) {
-								wrapper.replace_class(ed.grid.class + wrapper_col);
+							else {
+								ed.update_model_margin_classes( $view_el, [ed.grid.class + col] );
+								module.set_property('wrapper_id', group_wrapper_id);
+							}
+						}
+						else {
+							if ( wrapper_index == 1 || is_wrapper_clr ){
+								// Add clr class as this is the first in row
+								if ( is_clr && wrapper_index == 1 ) {
+									wrapper.add_class('clr');
+								}
+								// Add previous spacer
+								if ( is_prev_wrap_spacer && is_prev_wrap_clr ) {
+									if ( is_spacer ) {
+										module.replace_class(ed.grid.class + (wrapper_col+prev_spacer_col));
+										wrapper.replace_class(ed.grid.class + (wrapper_col+prev_spacer_col));
+									}
+									else {
+										add_spacer_queue.push({
+											view: wrapper_view,
+											position: 'left',
+											col: prev_spacer_col,
+											wrapper_col: wrapper_col+prev_spacer_col
+										});
+									}
+								}
+								// Add next spacer
+								if ( pv_wrapper && is_next_wrap_spacer && !is_next_wrap_clr ) {
+									if ( pv_is_spacer ) {
+										pv_module.replace_class(ed.grid.class + (pv_wrapper_col+next_spacer_col));
+										pv_wrapper.replace_class(ed.grid.class + (pv_wrapper_col+next_spacer_col));
+									}
+									else {
+										add_spacer_queue.push({
+											view: pv_wrapper_view,
+											position: 'right',
+											col: next_spacer_col,
+											wrapper_col: pv_wrapper_col+next_spacer_col
+										});
+									}
+								}
 							}
 						}
 						if ( line == 1 && current_wrapper_id != wrapper_id ) {
-							me._update_top_padding(object, top);
+							me._update_padding('top', object, top);
 						}
 						current_wrapper_id = wrapper_id;
-						delete view.group_view;
+					}
+					delete view.group_view;
+					if ( remove_module ) {
+						modules.remove(module);
+					}
+					else {
+						wrappers.remove(wrapper, {silent: true});
+						if ( !is_combine_wrap ) {
+							region_wrappers.add(wrapper, {silent: true});
+						}
 						modules.remove(module, {silent: true});
-						module.add_to(region_modules, index+i);
+						module.add_to(region_modules, index+module_index);
+						module_index++;
+						pv_module = module;
+						pv_wrapper = wrapper;
+						pv_wrapper_view = wrapper_view;
+						pv_is_spacer = is_spacer;
+						pv_wrapper_col = wrapper_col;
+					}
+				});
+				if ( !is_combine_wrap ) {
+					region_wrappers.remove(group_wrapper);
+					// Also remove prev/next spacer if exists
+					if ( is_prev_wrap_spacer && is_prev_wrap_clr) {
+						region_wrappers.remove(prev_wrapper);
+						region_modules.remove(prev_module);
+					}
+					if ( is_next_wrap_spacer && !is_next_wrap_clr ) {
+						region_wrappers.remove(next_wrapper);
+						region_modules.remove(next_module);
+					}
+					// Add last spacer
+					if ( pv_wrapper && is_next_wrap_spacer && !is_next_wrap_clr ) {
+						if ( pv_is_spacer ) {
+							pv_module.replace_class(ed.grid.class + (pv_wrapper_col+next_spacer_col));
+							pv_wrapper.replace_class(ed.grid.class + (pv_wrapper_col+next_spacer_col));
+						}
+						else {
+							add_spacer_queue.push({
+								view: pv_wrapper_view,
+								position: 'right',
+								col: next_spacer_col,
+								wrapper_col: pv_wrapper_col+next_spacer_col
+							});
+						}
+					}
+					_.each(add_spacer_queue, function(add){
+						add.view.add_spacer(add.position, add.col, add.wrapper_col);
 					});
 				}
-				this.region.get('modules').remove(this.model);
+				region_modules.remove(this.model);
 				//this.remove();
 				ed.update_position_data($wrap.closest('.upfront-editable_entities_container'));
 				ed.update_wrappers(region);
 				Upfront.Events.trigger("entity:module_group:ungroup", modules_arr, region);
 			},
-			_update_top_padding: function (object, add_top) {
-				var top_padding_use = object.get_breakpoint_property_value('top_padding_use', true),
-					top_padding_num = object.get_breakpoint_property_value('top_padding_num', true),
+			_update_padding: function (dir, object, add) {
+				var padding_use = object.get_breakpoint_property_value(dir+'_padding_use', true),
+					padding_num = object.get_breakpoint_property_value(dir+'_padding_num', true),
 					column_padding = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().get('column_padding')
 				;
-				if ( add_top === 0 ) return;
-				object.set_breakpoint_property('top_padding_use', 'yes');
-				if ( top_padding_num !== false) {
-					object.set_breakpoint_property('top_padding_num', top_padding_num + add_top);
+				if ( add === 0 ) return;
+				object.set_breakpoint_property(dir+'_padding_use', 'yes');
+				if ( padding_num !== false) {
+					object.set_breakpoint_property(dir+'_padding_num', parseInt(padding_num, 10) + add);
 				}
 				else {
-					object.set_breakpoint_property('top_padding_num', parseInt(column_padding, 10) + add_top);
+					object.set_breakpoint_property(dir+'_padding_num', parseInt(column_padding, 10) + add);
 				}
 			},
 			on_reorder: function () {
@@ -5395,3 +5500,4 @@ define([
 });
 
 })(jQuery);
+//@ sourceURL=upfront-views.js

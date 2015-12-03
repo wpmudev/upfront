@@ -514,30 +514,34 @@ var GridEditor = {
 		$els.each(function(){
 			var $el = $(this),
 				margin = $el.data('margin'),
-				classes, data;
+				classes, data, margin_top, margin_left;
 			if (
 				( margin && ( margin.original.left != margin.current.left || margin.original.top != margin.current.top ) ) ||
 				more_classes
 			){
+				margin_top = margin ? margin.current.top : 0;
+				margin_left = margin ? margin.current.left : 0;
 				if ( !breakpoint || breakpoint.default ){
 					classes = [
-						ed.grid.left_margin_class+margin.current.left,
-						ed.grid.top_margin_class+margin.current.top
+						ed.grid.left_margin_class+margin_left,
+						ed.grid.top_margin_class+margin_top
 					];
-					if ( more_classes )
+					if ( more_classes ) {
 						classes = _.union(classes, more_classes);
+					}
 					ed.update_model_classes($el, classes);
 				}
 				else {
 					data = {
-						left: margin.current.left,
-						top: margin.current.top
+						left: margin_left,
+						top: margin_top
 					};
 					if ( more_classes )
 						_.each(more_classes, function(classname){
 							var parse = classname.match(/^([A-Za-z])(\d+)$/);
-							if ( parse && parse[1] == ed.grid.class )
+							if ( parse && parse[1] == ed.grid.class ) {
 								data.col = parseInt(parse[2]);
+							}
 						});
 					ed.update_model_breakpoint($el, data);
 				}
@@ -969,15 +973,14 @@ var GridEditor = {
 			var child_els = _.map(children, function($el){
 					return {
 						$el: $el,
-						col: ( !breakpoint || breakpoint.default ) ? ed.get_class_num($el, ed.grid.class) : $el.data('breakpoint_col'),
-						margin: $el.data('margin')
+						col: ( !breakpoint || breakpoint.default ) ? ed.get_class_num($el, ed.grid.class) : $el.data('breakpoint_col')
 					};
 				}),
 				max = _.max(child_els, function(each){
 					if ( !each ) return;
-					return each.col + each.margin.current.left;
+					return each.col;
 				}),
-				wrap_col = max.col+max.margin.current.left,
+				wrap_col = max.col,
 				wrap_breakpoint, breakpoint_data;
 			ed.update_class($wrap, ed.grid.class, wrap_col);
 			if ( !breakpoint || breakpoint.default ){
