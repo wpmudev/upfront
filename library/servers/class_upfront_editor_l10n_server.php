@@ -547,6 +547,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'right' => __('Right', 'upfront'),
 				'col_width' => __('Width(Cols)', 'upfront'),
 				'px_height' => __('Height(px)', 'upfront'),
+				'px' => __('px', 'upfront'),
 				'click_close_ltbox' => __('Clicking outside Active Area closes lightbox', 'upfront'),
 				'show_close_icon' => __('Show Close Icon', 'upfront'),
 				'add_close_text' => __('Add Close Text', 'upfront'),

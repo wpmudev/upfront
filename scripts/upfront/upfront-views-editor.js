@@ -1993,7 +1993,7 @@ define([
 						label: l10n.size,
 						min: 0,
 						max: 100,
-						suffix: 'px',
+						suffix: l10n.px,
 						default_value: me.sizes['h1'],
 						change: function () {
 							var value = this.get_value(),
@@ -6114,7 +6114,7 @@ var _Settings_Padding = SettingsItem.extend({
 				property: 'top_padding_num',
 				label: '',
 				default_value: this.model.get_breakpoint_property_value('top_padding_num') || column_padding,
-				suffix: 'px',
+				suffix: l10n.px,
 				min: 0,
 				step: 5,
 				change: function () {
@@ -6173,7 +6173,7 @@ var _Settings_Padding = SettingsItem.extend({
 				property: 'bottom_padding_num',
 				label: '',
 				default_value: this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding,
-				suffix: 'px',
+				suffix: l10n.px,
 				min: 0,
 				step: 5,
 				change: function () {
@@ -6234,7 +6234,7 @@ var _Settings_Padding = SettingsItem.extend({
 					property: 'left_padding_num',
 					label: '',
 					default_value: this.model.get_breakpoint_property_value('left_padding_num') || column_padding,
-					suffix: 'px',
+					suffix: l10n.px,
 					min: 0,
 					step: 5,
 					change: function () {
@@ -6293,7 +6293,7 @@ var _Settings_Padding = SettingsItem.extend({
 					property: 'right_padding_num',
 					label: '',
 					default_value: this.model.get_breakpoint_property_value('right_padding_num') || column_padding,
-					suffix: 'px',
+					suffix: l10n.px,
 					min: 0,
 					step: 5,
 					change: function () {
@@ -9323,7 +9323,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					min: grid.size*grid.column_width,
 					max: 5120,
 					step: 1,
-					suffix: 'px',
+					suffix: l10n.px,
 					change: function () {
 						var value = this.get_value();
 						value = ( value < this.options.min ) ? this.options.min : value;
@@ -9576,7 +9576,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					label: '',
 					default_value: this.model.get_breakpoint_property_value('top_bg_padding_num') || 0,
 					prefix: l10n.bottom_padding,
-					suffix: 'px',
+					suffix: l10n.px,
 					min: 0,
 					step: 5,
 					change: function () {
@@ -9611,7 +9611,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					property: 'bottom_bg_padding_num',
 					label: '',
 					default_value: this.model.get_breakpoint_property_value('bottom_bg_padding_num') || 0,
-					suffix: 'px',
+					suffix: l10n.px,
 					min: 0,
 					step: 5,
 					change: function () {
@@ -9654,7 +9654,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					property: 'bg_padding_num',
 					label: '',
 					default_value: this.model.get_breakpoint_property_value('bg_padding_num') || 0,
-					suffix: 'px',
+					suffix: l10n.px,
 					min: 0,
 					step: 5,
 					change: function () {
@@ -11627,7 +11627,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				className: 'inline-number plaintext-settings',
 				min: 1,
 				label: l10n.viewport_width,
-				suffix: "px",
+				suffix: l10n.px,
 				default_value: this.active_breakpoint.get('width')
 			});
 
@@ -11649,7 +11649,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			'<div>' +
 			'<label for="breakpoint-name">' + l10n.name + ':</label><input type="text" value="{{ name }}" placeholder="' + l10n.custom_breakpoint_placeholder + '" id="breakpoint-name" />' +
 			'</div><div>' +
-			'<label for="breakpoint-width">' + l10n.width + ':</label><input type="number" min="240" max="1080" value="{{ width }}" id="breakpoint-width" /><label>px</label>' +
+			'<label for="breakpoint-width">' + l10n.width + ':</label><input type="number" min="240" max="1080" value="{{ width }}" id="breakpoint-width" /><label>' + l10n.px + '</label>' +
 			'<label for="breakpoint-columns">' + l10n.number_of_columns + ':</label><input min="5" max="24" type="number" value="{{ columns }}" id="breakpoint-columns" />' +
 			'</div>',
 		events: {
