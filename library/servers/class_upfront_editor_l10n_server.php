@@ -238,7 +238,17 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'edit' => __('Edit', 'upfront'),
 				'draft' => __('Draft', 'upfront'),
 				'items' => __('items', 'upfront'),
-				'ok' => __('Ok', 'upfront')
+				'ok' => __('Ok', 'upfront'),
+				'open_lightbox' => __('Open lightbox', 'upfront'),
+				'create_lightbox' => __('Create lightbox', 'upfront'),
+				'select' => __('Select', 'upfront'),
+				'type_link_url' => __('Type link URL:', 'upfront'),
+				'link_opens_in' => __('Link Opens In:', 'upfront'),
+				'edit_link' => __('Edit Link', 'upfront'),
+				'menu_item_label' => __('Menu Item Label:', 'upfront'),
+				'target' => __('Target:', 'upfront'),
+				'blank' => __('Blank', 'upfront'),
+				'self' => __('Self', 'upfront')
 			),
 			'ueditor' => array(
 				'text_align' => __('Text alignment', 'upfront'),
