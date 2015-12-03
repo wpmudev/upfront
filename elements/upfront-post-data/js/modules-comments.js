@@ -1,6 +1,6 @@
 define([
 	'elements/upfront-post-data/js/panel-abstractions',
-	'text!elements/upfront-post-data/tpl/preset-styles/author.html',
+	'text!elements/upfront-post-data/tpl/preset-styles/comments.html',
 ], function (Panel, template) {
 
 	var Modules = {};
