@@ -13,12 +13,59 @@
 }
 
 /*-------------- General --------------*/
+div.preset-manager-panel div.preset_specific div.border_radius1{
+    padding: 7px 10px 0px 10px;
+}
+div.preset-manager-panel div.preset_specific div.border_radius2{
+    right: 15px;
+    left: auto;
+}
+div.preset-manager-panel div.preset_specific div.border_radius4{
+    left: auto;
+    right: -30px;
+}
+div.preset-manager-panel div.preset_specific div.border_radius3{
+    left: auto;
+    right: -147px;
+}
+.upfront-region-bg-setting-name-edit .upfront-field-wrap{
+    float: right;
+}
+.upfront-region-bg-setting-name-edit .upfront-field-wrap-text{
+    margin-left:10px;
+    margin-right: auto;
+}
+.upfront-region-bg-setting-name-edit .upfront-field-wrap.upfront-region-bg-setting-name-save{
+    float: left;
+}
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-padding-control span.upfront-padding-value{
+    padding-right: 5px;
+    padding-left: 0;
+}
+.upfront_code-editor{
+    left: 0;
+    right: auto;
+}
+div.preset-manager-panel .typography_settings_item .element-toggled.selectElement, div.preset-manager-panel .typography_settings_item .element-toggled.typeFace, div.preset-manager-panel .typography_settings_item .element-toggled.weightStyle, div.preset-manager-panel .typography_settings_item .element-toggled.fontSize, div.preset-manager-panel .hov_animation_settings_item .element-toggled.duration, div.preset-manager-panel .colors_settings_item .element-toggled.single, div.preset-manager-panel .colors_settings_item .element-toggled.two:nth-child(even){
+    padding: 5px 10px 5px 0;
+    border-left: none;
+    border-right: 2px solid #dae6f2;
+}
+.chosen-container-multi .chosen-choices li.search-choice{
+    margin: 3px 5px 3px 0;
+    padding: 3px 5px 3px 20px;
+}
+.chosen-container-multi .chosen-choices li.search-choice .search-choice-close{
+    left: 3px;
+    right: auto;
+}
 div.preset-manager-panel .color-module.two{
     float: right;
 }
 .colors_settings_item .upfront-field-wrap-color{
     margin-left: 10px;
     margin-right: auto;
+    float: right;
 }
 .upfront-field-select-option label{
     padding: 2px 10px 2px 20px;
@@ -27,8 +74,24 @@ div.preset-manager-panel .color-module.two{
     padding-left: 4px;
     padding-right: 10px;
 }
-.js-ulinkpanel-input-url{
+.js-ulinkpanel-input-url,
+.upfront-like-box_url{
     direction: ltr;
+}
+::-webkit-input-placeholder {
+    direction: rtl;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+    direction: rtl;
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+    direction: rtl;
+}
+
+:-ms-input-placeholder {
+    direction: rtl;
 }
 .upfront-field-multiple-horizontal-inline{
     margin: 0 0 0 15px;
@@ -246,9 +309,10 @@ a.upfront-region-name-edit-trigger{
     padding-right: 15px;
 }
 #element-settings-sidebar .uf-settings-panel__title:before{
-    left: auto;
-    right: 16px;
+    /*left: auto;*/
+    /*right: 16px;*/
 }
+#element-settings-sidebar .uf-settings-panel__title:before,
 #element-settings-sidebar .uf-settings-panel--expanded .uf-settings-panel__title:before{
     left: 15px;
     right: auto;
@@ -371,7 +435,9 @@ li.activate-breakpoints-dropdown{
 .ace_content{
     direction: ltr;
 }
-
+.ace_line{
+    /*text-align: left;*/
+}
 /*Slider El*/
 .upfront-default-slider-nav-prev{
     right:50px;
@@ -383,6 +449,7 @@ li.activate-breakpoints-dropdown{
 }
 .uimage-control-panel .upfront-field-wrap{
     margin-left: auto;
+    text-align: right;
 }
 .ulinkpanel .upfront-field-wrap-radios > label, .ulinkpanel-dark .upfront-field-wrap-radios > label{
     margin: 0 0 0 15px;
@@ -398,4 +465,71 @@ li.activate-breakpoints-dropdown{
 {
     border-right:2px solid #dae6f2 ;
     border-left: none;
+}
+
+/*uImage El*/
+.uimage-control-panel-content{
+    text-align: right;
+}
+
+/*umenu*/
+.menu-structure-header .add-menu-item{
+    float: left;
+}
+.menu-item-header .menu-item-type{
+    float: left;
+}
+/*umap*/
+.uf_el_map_initial-overlay button{
+    left: 0;
+    right: auto;
+}
+.upfront_map-editor{
+    left: 0;
+    right: auto;
+}
+/*tabs*/
+.tabs-tab{
+    float: right;
+}
+/*code el*/
+.code-element-choose{
+    direction: ltr;
+}
+.upfront_code-editor .upfront-css-color{
+    float: left;
+}
+
+/*contact el*/
+div.preset-manager-panel div.preset_specific div.transition{
+    margin-right: 80px;
+    margin-left: auto;
+}
+/*uyoutube*/
+.upfront-youtube-box-wrapper{
+    float: right;
+}
+.upfront-youtube-starting-text{
+    text-align: right;
+}
+.upfront-youtube-url,
+.multiple_video_section input[type="text"]{
+    direction: ltr;
+}
+.upfront-youtube-url::-webkit-input-placeholder ,
+.upfront-youtube-url::-moz-placeholder,
+.upfront-youtube-url:-ms-input-placeholder,
+.upfront-youtube-url:-moz-placeholder {
+    direction: rtl;
+}
+
+/*login el*/
+div.upfront-output-upfront-login_element form#loginform p{
+    text-align: right;
+}
+/*accordion el*/
+#page .upfront-accordion-container .accordion-panel-active .accordion-panel-title:after,
+#page .upfront-accordion-container .accordion-panel-title:after{
+    left: 22px;
+    right: auto;
 }

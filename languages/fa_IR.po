@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Upfront\n"
 "POT-Creation-Date: 2015-12-02 18:16+0330\n"
-"PO-Revision-Date: 2015-12-03 13:57+0330\n"
+"PO-Revision-Date: 2015-12-03 19:16+0330\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fa\n"
@@ -1362,7 +1362,7 @@ msgstr ""
 
 #: elements/upfront-gallery/lib/ugallery.php:404
 msgid "media gallery"
-msgstr ""
+msgstr "گالری رسانه ها"
 
 #: elements/upfront-gallery/lib/ugallery.php:405
 #: elements/upfront-image/lib/uimage.php:268
@@ -1669,7 +1669,7 @@ msgstr "بارگذاری فایل"
 
 #: elements/upfront-image/lib/uimage.php:267
 msgid "Media Gallery"
-msgstr ""
+msgstr "گالری رسانه ها"
 
 #: elements/upfront-image/lib/uimage.php:269
 #: library/servers/class_upfront_editor_l10n_server.php:177
@@ -2582,7 +2582,7 @@ msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:189
 msgid "Post categories list part"
-msgstr ""
+msgstr "بخش نوشته"
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:190
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:209
@@ -3247,11 +3247,11 @@ msgstr ""
 
 #: elements/upfront-social-media/lib/upfront-social-media.php:220
 msgid "Youtube box"
-msgstr ""
+msgstr "جعبه یوتیوب"
 
 #: elements/upfront-social-media/lib/upfront-social-media.php:221
 msgid "The box that contains Youtube button"
-msgstr ""
+msgstr "جعبه حاوی دکمه یوتیوب"
 
 #: elements/upfront-social-media/lib/upfront-social-media.php:223
 msgid "What an awesome stuff! "
@@ -3653,11 +3653,11 @@ msgstr "یوتیوب"
 
 #: elements/upfront-youtube/lib/uyoutube.php:104
 msgid "Enter YouTube video URL"
-msgstr ""
+msgstr "لینک ویدئوی یوتیوب را وارد کنید"
 
 #: elements/upfront-youtube/lib/uyoutube.php:105
 msgid "YouTube URL"
-msgstr ""
+msgstr "لینک یوتیوب"
 
 #: elements/upfront-youtube/lib/uyoutube.php:106
 msgid "Go"
@@ -3665,7 +3665,7 @@ msgstr ""
 
 #: elements/upfront-youtube/lib/uyoutube.php:107
 msgid "YouTube settings"
-msgstr ""
+msgstr "تنظیمات یوتیوب"
 
 #: elements/upfront-youtube/lib/uyoutube.php:108
 msgid "APPEARANCE"
@@ -3710,7 +3710,7 @@ msgstr ""
 #: elements/upfront-youtube/lib/uyoutube.php:119
 #: elements/upfront-youtube/lib/uyoutube.php:127
 msgid "YouTube Video URL"
-msgstr ""
+msgstr "آدرس فیلم یوتیوب"
 
 #: elements/upfront-youtube/lib/uyoutube.php:120
 msgid "Add Another Video"
@@ -5378,7 +5378,7 @@ msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:429
 msgid "Padding Top: "
-msgstr ""
+msgstr "فاصله از بالا:"
 
 #: library/servers/class_upfront_editor_l10n_server.php:430
 msgid "Bottom Padding"
@@ -5386,7 +5386,7 @@ msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:431
 msgid "Padding Btm: "
-msgstr ""
+msgstr "فاصله از پایین:"
 
 #: library/servers/class_upfront_editor_l10n_server.php:432
 msgid "Left Padding"
@@ -5673,7 +5673,7 @@ msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:525
 msgid "Make Global"
-msgstr ""
+msgstr "تبدیل به ناحیه سراسری"
 
 #: library/servers/class_upfront_editor_l10n_server.php:526
 msgid "Localize Region"
@@ -6234,7 +6234,7 @@ msgstr ""
 
 #: library/servers/class_upfront_presets_server.php:338
 msgid "px"
-msgstr ""
+msgstr "پیکسل"
 
 #: library/servers/class_upfront_presets_server.php:340
 msgid "Typeface:"
