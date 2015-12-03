@@ -22,8 +22,10 @@ define([
 				.siblings('.upfront-inline-panel-subitem-active')
 				.removeClass('upfront-inline-panel-subitem-active');
 
-			if(!target.closest('.upfront-inline-panel-item').hasClass('upfront-control-dialog-open'))	target.closest('.upfront-wrapper').addClass('upfront-inline-panel-item-open');
-			else	target.closest('.upfront-wrapper').removeClass('upfront-inline-panel-item-open');
+			if(!target.hasClass('upfront-icon-region-settings')){			
+				if(!target.closest('.upfront-inline-panel-item').hasClass('upfront-control-dialog-open'))	target.closest('.upfront-wrapper').addClass('upfront-inline-panel-item-open');
+				else	target.closest('.upfront-wrapper').removeClass('upfront-inline-panel-item-open');
+			}
 
 			this.trigger('click', e);
 		},
