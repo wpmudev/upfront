@@ -1035,3 +1035,30 @@ figure.gallery-labels-figure img.mfp-img {
 	margin-top: 10px;
 	min-height: 1em;
 }
+
+.image-sorting-active .ugallery_item img {
+	-webkit-animation: webkitrumble .20s infinite;
+	animation: rumble .20s infinite;
+}
+
+@-webkit-keyframes webkitrumble {
+  0% {
+    transform: rotate(-1deg);
+    animation-timing-function: ease-in;
+  }
+  50% {
+    transform: rotate(1.5deg);
+    animation-timing-function: ease-out;
+  }
+}
+
+@keyframes rumble {
+  0% {
+    transform: rotate(-1deg);
+    animation-timing-function: ease-in;
+  }
+  50% {
+    transform: rotate(1.5deg);
+    animation-timing-function: ease-out;
+  }
+}
