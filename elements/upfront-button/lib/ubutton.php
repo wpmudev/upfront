@@ -95,6 +95,8 @@ class Upfront_ButtonView extends Upfront_Object {
 				'p_label' => __('Text paragragh', 'upfront'),
 				'p_info' => __('The paragragh that contains all the text of the element.', 'upfront'),
 			),
+			'edit_link' => __('Edit link', 'upfront'),
+			'visit_link' => __('Visit link', 'upfront'),
 			'dbl_click' => __('Click here', 'upfront'),
 			'appearance' => __('Textbox Appearance', 'upfront'),
 			'settings' => array(
