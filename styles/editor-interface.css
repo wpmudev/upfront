@@ -4390,6 +4390,10 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-region-editing .upfront-region-bg-setting-open .upfront-icon-control-region-resize-w:before {
   display: none; }
 
+/* line 1379, sass/partials/_region.scss */
+.upfront-ui .upfront-region-panel-item-add-region .upfront-icon-region-add:before {
+  background-position: -260px -130px; }
+
 /* line 2, sass/partials/_map-editor.scss */
 .upfront_map-editor {
   position: fixed;
