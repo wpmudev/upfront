@@ -1046,7 +1046,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				$(e.target).parent('li').parent('ul').addClass('time_being_display');
 			}
 			if($(e.target).parent('li').length == 0) {
-				$(e.target).closest('div.upfront-navigation').find('ul.menu').append(this.renderMenuItem(menu_item, true));
+				$(e.target).closest('div.upfront-module').find('ul.menu').append(this.renderMenuItem(menu_item, true));
 			}
 			else {
 				$(e.target).parent('li').parent('ul').append(this.renderMenuItem(menu_item, true, 0));
