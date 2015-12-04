@@ -75,7 +75,6 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 	
 	clearPresetClass: function($el) {
 		$el.removeClass();
-		console.log(this.elementClasses);
 		$el.addClass(this.elementClasses);
 	},
 
