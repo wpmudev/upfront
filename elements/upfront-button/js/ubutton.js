@@ -12,12 +12,16 @@ define([
 var l10n = Upfront.Settings.l10n.button_element;
 
 var singleclickcount = 0;
+var elementClasses = '';
 var ButtonView = Upfront.Views.ObjectView.extend({
 	model: ButtonModel,
 	className: 'upfront-button',
 	buttonTpl: Upfront.Util.template(buttonTpl),
 	initialize: function() {
 		var me = this;
+
+		//Get all element classes without preset
+		this.elementClasses = this.$el.attr('class');
 
 		if(! (this.model instanceof ButtonModel)){
 			this.model = new ButtonModel({properties: this.model.get('properties')});
@@ -65,7 +69,14 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 	},
 
 	updatePresetClass: function() {
+		this.clearPresetClass(this.$el);
 		this.$el.addClass(this.property('preset'));
+	},
+	
+	clearPresetClass: function($el) {
+		$el.removeClass();
+		console.log(this.elementClasses);
+		$el.addClass(this.elementClasses);
 	},
 
 	getCleanurl: function(url) {
@@ -251,6 +262,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			});
 
 		// this.createInlineControlPanel();
+		this.clearPresetClass(this.$el);
 		this.$el.addClass(this.property('preset'));
 	},
 	stopEdit: function() {
