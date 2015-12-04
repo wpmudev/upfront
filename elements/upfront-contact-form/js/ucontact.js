@@ -49,6 +49,7 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 
 		this.events = _.extend({}, this.events, {
 			'click button.submit-field' : 'handleButtonclick',
+			'click .upfront-field-container label': 'handleButtonclick',
 			'dblclick button.submit-field' : 'editButtontext',
 			'dblclick .upfront-field-container > label' : 'editLabeltext'
 		});
