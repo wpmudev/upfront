@@ -17,11 +17,15 @@ var l10n = Upfront.Settings.l10n.newnavigation_element;
  * @type {Upfront.Views.ObjectView}
  */
 var singleclickcount = 0;
+var elementClasses = '';
 var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	elementSize: {width: 0, height: 0},
 
 	initialize: function(options){
 		var me = this;
+
+		//Get all element classes without preset
+		this.elementClasses = this.$el.attr('class');
 
 		if(!(this.model instanceof UnewnavigationModel)){
 			this.model = new UnewnavigationModel({properties: this.model.get('properties')});
@@ -852,6 +856,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		var presetProperties = this.get_preset_properties();
 
 		setTimeout(function() {
+			me.clearPresetClass(me.$el);
 			me.$el.addClass(me.property('theme_style'));
 			me.$el.addClass(preset);
 		}, 50);
@@ -906,6 +911,10 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		this.makeSortable();
 
 		this.processFloatStatus();
+	},
+	clearPresetClass: function($el) {
+		$el.removeClass();
+		$el.addClass(this.elementClasses);
 	},
 	makeSortable: function() {
 		var me = this;
