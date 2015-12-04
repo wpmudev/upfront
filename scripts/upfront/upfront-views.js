@@ -5214,10 +5214,22 @@ define([
 						]
 					}),
 					$child = this.$el.find("> .upfront-module-view > .upfront-module, > .upfront-module-group"),
+/*
 					$target_child = ( position == 'right' ? $child.last() : $child.first() ),
 					target_model = ed.get_el_model($target_child),
 					index = target_model.collection.indexOf(target_model)
 				;
+*/
+// Let's do this instead
+					$target_child,
+					target_model,
+					index
+				;
+					$child = $child.length ? $child : this.$el.closest(".upfront-module");
+					$target_child = ( position == 'right' ? $child.last() : $child.first() ),
+					target_model = ed.get_el_model($target_child),
+					index = target_model.collection.indexOf(target_model)
+// Up to here
 				
 				if ( !rsz_model ) return;
 				

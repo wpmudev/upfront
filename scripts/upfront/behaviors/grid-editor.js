@@ -44,7 +44,7 @@ var GridEditor = {
 
 	drop: null,
 
-	el_selector: '.upfront-module, .upfront-module-group',
+	el_selector: '.upfront-module, .upfront-module-group, .upfront-object-group',
 	_id: 0,
 	
 	drag_instances: {},

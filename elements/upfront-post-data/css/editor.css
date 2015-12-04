@@ -136,6 +136,15 @@
 
 /* --- New Stuff, this should be refactored! --- */
 
+
+/* Make the object group rightmost handler a bit padded so it can be grabbed */
+.upfront-object-group .upfront-objects_container.upfront-output-post-data .upfront-wrapper-meta.upfront-wrapper-meta-right {
+	margin-right: 7px;
+}
+
+
+
+
 .upfront-post_data-part.part-module-panel {
 	border: 1px solid rgb(162, 191, 218);
 	margin: 10px;
