@@ -156,8 +156,8 @@ var LayoutEditorSubapplication = Subapplication.extend({
 
 	set_up_event_plumbing_after_render: function () {
 		// Set up properties
-		this.listenTo(Upfront.Events, "entity:activated", this.create_properties);
-		this.listenTo(Upfront.Events, "entity:deactivated", this.destroy_properties);
+		//this.listenTo(Upfront.Events, "entity:activated", this.create_properties);
+		//this.listenTo(Upfront.Events, "entity:deactivated", this.destroy_properties);
 
 		// Layout manipulation
 		this.listenTo(Upfront.Events, "command:exit", this.destroy_editor);
@@ -1670,6 +1670,7 @@ var Application = new (Backbone.Router.extend({
 			});
 
 			if (_upfront_post_data.layout) me.apply_region_css();
+			Upfront.Events.trigger("upfront:csseditor:ready");
 		});
 
 		cssEditor.createSelectors(Upfront.Application.LayoutEditor.Objects);
@@ -1840,3 +1841,4 @@ $(function () {
 })
 
 })(jQuery);
+//@ sourceURL=upfront-application.js

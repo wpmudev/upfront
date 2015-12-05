@@ -969,38 +969,10 @@ define([
 			
 			fix_wrapper_height: function ($el) {
 				Upfront.Behaviors.GridEditor.time_start('fn fix_wrapper_height');
-				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
-					prevs = [],
-					apply_height = function (wraps) {
-						Upfront.Behaviors.GridEditor.time_start('fn fix_wrapper_height::apply_height');
-						// Reset height first
-						_.each(wraps, function ($wrap) {
-							$wrap.css('min-height', '');
-						});
-						// Find max height and apply to all
-						var wraps_height = _.map(wraps, function($wrap){
-								return parseFloat($wrap.css('height'));
-							}),
-							height = _.max(wraps_height, function(h){
-								return h;
-							})
-						;
-						_.each(wraps, function ($wrap, index) {
-							var prev_is_spacer = index > 0 ? wraps[index-1].hasClass('upfront-wrapper-spacer') : false,
-								next_is_spacer = index < wraps.length-1 ? wraps[index+1].hasClass('upfront-wrapper-spacer') : false
-							;
-							$wrap.removeAttr('data-first-in-row');
-							$wrap.removeAttr('data-last-in-row');
-							$wrap.removeAttr('data-prev-spacer');
-							$wrap.removeAttr('data-next-spacer');
-							if ( index == 0 ) $wrap.attr('data-first-in-row', '1');
-							if ( index == wraps.length-1 ) $wrap.attr('data-last-in-row', '1');
-							if ( prev_is_spacer ) $wrap.attr('data-prev-spacer', '1');
-							if ( next_is_spacer ) $wrap.attr('data-next-spacer', '1');
-							$wrap.css('min-height', height);
-						});
-						Upfront.Behaviors.GridEditor.time_end('fn fix_wrapper_height::apply_height');
-					};
+				var me = this,
+					breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+					prevs = []
+				;
 				Upfront.Events.trigger('upfront:wrappers:before_fix_height', this);
 				Upfront.Util.find_sorted($el, '> .upfront-wrapper')
 					.filter(function(){
@@ -1027,17 +999,47 @@ define([
 								( breakpoint && !breakpoint.default && clear)
 							)
 						){
-							apply_height(prevs);
+							me._apply_wrapper_height(prevs);
 							prevs = [];
 						}
 						prevs.push($(this));
 					});
 				if ( prevs.length > 0 ) {
-					apply_height(prevs);
+					me._apply_wrapper_height(prevs);
 				}
 				Upfront.Events.trigger('upfront:wrappers:after_fix_height', this);
 				Upfront.Behaviors.GridEditor.time_end('fn fix_wrapper_height');
 			},
+			_apply_wrapper_height: function (wraps) {
+				Upfront.Behaviors.GridEditor.time_start('fn _apply_wrapper_height');
+				// Reset height first
+				_.each(wraps, function ($wrap) {
+					$wrap.css('min-height', '');
+				});
+				// Find max height and apply to all
+				var wraps_height = _.map(wraps, function($wrap){
+						return parseFloat($wrap.css('height'));
+					}),
+					height = _.max(wraps_height, function(h){
+						return h;
+					})
+				;
+				_.each(wraps, function ($wrap, index) {
+					var prev_is_spacer = index > 0 ? wraps[index-1].hasClass('upfront-wrapper-spacer') : false,
+							next_is_spacer = index < wraps.length-1 ? wraps[index+1].hasClass('upfront-wrapper-spacer') : false
+							;
+					$wrap.removeAttr('data-first-in-row');
+					$wrap.removeAttr('data-last-in-row');
+					$wrap.removeAttr('data-prev-spacer');
+					$wrap.removeAttr('data-next-spacer');
+					if ( index == 0 ) $wrap.attr('data-first-in-row', '1');
+					if ( index == wraps.length-1 ) $wrap.attr('data-last-in-row', '1');
+					if ( prev_is_spacer ) $wrap.attr('data-prev-spacer', '1');
+					if ( next_is_spacer ) $wrap.attr('data-next-spacer', '1');
+					$wrap.css('min-height', height);
+				});
+				Upfront.Behaviors.GridEditor.time_end('fn _apply_wrapper_height');
+			}
 		}),
 
 		ContextMenuItem = Backbone.View.extend({
@@ -2556,8 +2558,8 @@ define([
 				this.listenTo(Upfront.Events, "entity:object:refresh", this.on_object_refresh);
 				this.listenTo(Upfront.Events, "entity:module_group:group", this.on_group);
 				this.listenTo(Upfront.Events, "entity:module_group:ungroup", this.on_ungroup);
-				this.listenTo(Upfront.Events, "layout:render", this.on_after_layout_render);
-				this.listenTo(Upfront.Events, "layout:after_render", this.apply_flexbox_clear);
+				this.listenTo(Upfront.Events, "layout:after_render", this.on_after_layout_render);
+				this.listenTo(Upfront.Events, "upfront:csseditor:ready", this.on_csseditor_ready);
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 			},
 			on_entity_remove: function(e, view) {
@@ -2764,6 +2766,9 @@ define([
 				this.apply_flexbox_clear();
 				this.apply_wrapper_height();
 				this.apply_adapt_to_breakpoints();
+			},
+			on_csseditor_ready: function () {
+				this.apply_wrapper_height();
 			},
 			apply_flexbox_clear: function () {
 				this.fix_flexbox_clear(this.$el);
@@ -5195,8 +5200,8 @@ define([
 			},
 			on_apply_height: function (from_view) {
 				if ( !this.parent_view || this.parent_view != from_view ) return;
-				var height = this.$el.height();
-				if ( height <= 0 ) {
+				var visible = ( parseInt(this.$el.css('height'), 10) > 0 );
+				if ( !visible ) {
 					this.$el.css('display', 'none');
 				}
 				else {

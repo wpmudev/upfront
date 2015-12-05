@@ -955,7 +955,8 @@ define(function() {
 				_layout_data.layout = _upfront_post_data.layout;
 				_layout_data.preferred_layout = _layout.get("current_layout");
 
-				_layout_data = JSON.stringify(_layout_data, undefined, 2);
+				//_layout_data = JSON.stringify(_layout_data, undefined, 2);
+				_layout_data = JSON.stringify(_layout_data);
 			},
 			save = function () {
 				if (_saving_flag) return false;

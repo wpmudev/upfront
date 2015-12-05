@@ -30,6 +30,9 @@
 		createControls: function () {
 			return false;
 		},
+		apply_paddings: function () {
+			return false;
+		},
 		before_apply_height_from_wrapper: function (from_view) {
 			if ( !this.parent_module_view || !this.parent_module_view.parent_view || this.parent_module_view.parent_view != from_view ) {
 				return;
