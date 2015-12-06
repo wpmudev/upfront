@@ -1125,6 +1125,7 @@ DragDrop.prototype = {
 				}
 				this.current_wrappers.add(wrap_model);
 				wrap_view.parent_view = this.view.parent_view;
+				this.view.wrapper_view = wrap_view;
 				wrap_view.render();
 				wrap_view.$el.append(this.view.$el);
 				if ( this.drop.type == 'side-before' && this.drop.is_clear ) {

@@ -950,13 +950,13 @@ var GridEditor = {
 			$layout = $main.find('.upfront-layout'),
 			wraps = parent_model.get('wrappers'),
 			modules = parent_model.get('modules');
-		($parent ? $parent : $layout).find('.upfront-wrapper').each(function(){
+		($parent ? $parent : $layout).find('.upfront-wrapper:visible').each(function(){
 			var $wrap = $(this),
 				wrap_id = $wrap.attr('id'),
 				wrap_model = wraps.get_by_wrapper_id(wrap_id),
 				clear = $wrap.data('clear'),
-				children = _.map($wrap.children(), function (each) {
-					var $el = $(each).hasClass('upfront-module-group') ? $(each) : $(each).find('>.upfront-editable_entity:first');
+				children = _.map($wrap.find('> .upfront-module-view > .upfront-module, > .upfront-module-group'), function (each) {
+					var $el = $(each);
 					if ( !$el || !$el.length ) return false;
 					return $el;
 				}).filter(function (each) {
@@ -968,9 +968,10 @@ var GridEditor = {
 				return;
 			}
 			if ( $wrap.hasClass('upfront-wrapper-preview') ) return;
-			if ( !$wrap.is(':visible') || $wrap.height() <= 0 ) return;
+			if ( $wrap.height() <= 0 ) return;
 			if ( ! wrap_model ) return;
-			var child_els = _.map(children, function($el){
+			var current_col = ( !breakpoint || breakpoint.default ) ? ed.get_class_num($wrap, ed.grid.class) : $wrap.data('breakpoint_col'),
+				child_els = _.map(children, function($el){
 					return {
 						$el: $el,
 						col: ( !breakpoint || breakpoint.default ) ? ed.get_class_num($el, ed.grid.class) : $el.data('breakpoint_col')
@@ -984,30 +985,37 @@ var GridEditor = {
 				wrap_breakpoint, breakpoint_data;
 			ed.update_class($wrap, ed.grid.class, wrap_col);
 			if ( !breakpoint || breakpoint.default ){
-				wrap_model.replace_class(ed.grid.class+wrap_col);
-				if ( (clear && clear == 'clear') || (!clear && $wrap.hasClass('clr')) )
+				if ( current_col != wrap_col ) {
+					wrap_model.replace_class(ed.grid.class+wrap_col);
+				}
+				if ( (clear && clear == 'clear') || (!clear && $wrap.hasClass('clr')) ) {
 					wrap_model.add_class('clr');
-				else
+				}
+				else {
 					wrap_model.remove_class('clr');
+				}
 			}
 			else {
 				wrap_breakpoint = Upfront.Util.clone(wrap_model.get_property_value_by_name('breakpoint') || {});
-				if ( !_.isObject(wrap_breakpoint[breakpoint.id]) )
+				if ( !_.isObject(wrap_breakpoint[breakpoint.id]) ) {
 					wrap_breakpoint[breakpoint.id] = {};
+				}
 				wrap_breakpoint[breakpoint.id].col = wrap_col;
-				if ( clear )
+				if ( clear ) {
 					wrap_breakpoint[breakpoint.id].clear = (clear == 'clear');
+				}
 				wrap_model.set_property('breakpoint', wrap_breakpoint);
 			}
-			$wrap.stop().css({
+			/*$wrap.stop().css({
 				position: '',
 				left: '',
 				right: ''
-			});
+			});*/
 		});
 		wraps.each(function(wrap){
-			if ( $('#'+wrap.get_wrapper_id()).size() == 0 )
+			if ( $('#'+wrap.get_wrapper_id()).size() == 0 ) {
 				wraps.remove(wrap);
+			}
 		});
 		Upfront.Events.trigger("entity:wrappers:update", parent_model);
 		this.time_end('fn update_wrappers');
@@ -1024,7 +1032,7 @@ var GridEditor = {
 		var app = this,
 			ed = Upfront.Behaviors.GridEditor,
 			is_group = view.$el.hasClass('upfront-module-group'),
-			$me = is_group ? view.$el : view.$el.find('.upfront-editable_entity:first'),
+			$me = is_group ? view.$el : view.$el.find('>.upfront-editable_entity'),
 			is_parent_group = ( typeof view.group_view != 'undefined' ),
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
 			$layout = $main.find('.upfront-layout'),

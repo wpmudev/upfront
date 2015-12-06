@@ -1154,6 +1154,8 @@ var Application = new (Backbone.Router.extend({
 	sidebar: false,
 	layout: false,
 
+	layout_ready: false,
+
 	responsiveMode: false,
 
 	boot: function () {
@@ -1402,20 +1404,22 @@ var Application = new (Backbone.Router.extend({
 
 		window._upfront_post_data.layout = layoutData.data.cascade;
 
+		Upfront.Events.trigger("upfront:layout:loaded");
+		if (me.current_subapplication && me.current_subapplication.start)
+			me.current_subapplication.start();
+
+		else Upfront.Util.log("No current subapplication");
+
+		//if (!me.layout_view) {
+		me.layout_view = new Upfront.Views.Layout({
+			"model": me.layout,
+			"el": $(Upfront.Settings.LayoutEditor.Selectors.main)
+		});
+		Upfront.Events.trigger("layout:render", me.current_subapplication);
+		me.layout_ready = true;
+		//}
+
 		Upfront.Application.loading.done(function () {
-			Upfront.Events.trigger("upfront:layout:loaded");
-			if (me.current_subapplication && me.current_subapplication.start)
-				me.current_subapplication.start();
-
-			else Upfront.Util.log("No current subapplication");
-
-			//if (!me.layout_view) {
-			me.layout_view = new Upfront.Views.Layout({
-				"model": me.layout,
-				"el": $(Upfront.Settings.LayoutEditor.Selectors.main)
-			});
-			Upfront.Events.trigger("layout:render", me.current_subapplication);
-			//}
 
 			Upfront.PreviewUpdate.run(me.layout);
 
@@ -1455,6 +1459,7 @@ var Application = new (Backbone.Router.extend({
 			//Destroy
 			this.layout_view.remove();
 			this.layout_view = false;
+			this.layout_ready = false;
 
 			//Restore tag attributes
 			newElement.attr({
