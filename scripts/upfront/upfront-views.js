@@ -4549,6 +4549,13 @@ define([
 				}
 
 				this.$el.show();
+
+				/** Because it is a lightbox, the following rendering specific function 
+					should be applied on the modules once the contents of the lightbox show up 
+				**/
+				this._modules_view.apply_flexbox_clear();
+				this._modules_view.apply_wrapper_height();
+				
 				Upfront.Events.trigger('upfront:lightbox:show');
 			},
 			hide:function () {
