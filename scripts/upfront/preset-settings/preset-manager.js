@@ -66,11 +66,11 @@ define([
 			// Let's not flood server on some nuber property firing changes like crazy
 			this.debouncedSavePreset = _.debounce(savePreset, 1000);
 
-			this.mergeElementStyle();
+			this.migrateElementToPreset();
 			this.setupItems();
 		},
 
-		mergeElementStyle: function() {
+		migrateElementToPreset: function() {
 			// Simply add element style to preset css and name preset as element style was named.
 			// Only button, accordion and tabs had presets in old version, we won't merge those because that gets
 			// too complicated.
@@ -81,7 +81,10 @@ define([
 				style,
 				newPreset;
 
-			if (hadPresets) return;
+			if (hadPresets) {
+				this.migrateExistingPresets();
+				return;
+			}
 			if(this.property('preset') && this.property('preset') !== 'default') return;
 
 			elementStyleName = this.property('theme_style');
@@ -161,6 +164,52 @@ define([
 					newPreset.set(data);
 				}
 			}, this);
+		},
+
+		migrateExistingPresets: function() {
+			var elementStyleName = this.property('theme_style');
+			var preset = this.presets.findWhere({id: this.property('preset')});
+			var presetStyle = preset.get('preset_style');
+
+			if (preset.get('migrated') === true) return;
+			preset.set({'migrated': true});
+
+			// We need to set to _default first so that css editor can get style properly
+			if (!elementStyleName) elementStyleName = '_default';
+
+			Upfront.Application.cssEditor.init({
+				model: this.model,
+				stylename: elementStyleName,
+				no_render: true
+			});
+
+			style = $.trim(Upfront.Application.cssEditor.get_style_element().html().replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
+			style = style.replace(new RegExp(elementStyleName, 'g'), preset.get('name'));
+
+			preset.set({
+				preset_style: style
+			});
+
+			this.property('theme_style', '');
+
+			var properties = preset.toJSON();
+			Util.updatePresetStyle(this.styleElementPrefix.replace(/-preset/, ''), properties, this.styleTpl);
+
+			this.debouncedSavePreset(properties);
+
+			_.each(Upfront.mainData[this.mainDataCollection], function(preset, presetIndex) {
+				if (preset.id === properties.id) {
+					index = presetIndex;
+				}
+			});
+
+			if (_.isUndefined(index) === false) {
+				Upfront.mainData[this.mainDataCollection].splice(index, 1);
+			}
+			Upfront.mainData[this.mainDataCollection].push(properties);
+			// Trigger change so that whole element re-renders again.
+			// (to replace element style class with preset class, look upfront-views.js
+			this.model.get('properties').trigger('change');
 		},
 
 		setupItems: function() {

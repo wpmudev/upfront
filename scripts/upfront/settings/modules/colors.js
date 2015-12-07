@@ -18,15 +18,14 @@ define([
 				per_row = 'single',
 				toggleClass = 'no-toggle',
 				fields = [];
-			
+
 			if(this.options.toggle === true) {
 				this.fieldCounter++;
 			}
-			
+
 			if(this.options.single !== true) {
 				per_row = 'two';
 			}
-			// TODO: investigate why theme colors aren't pre-selected??
 			_.each(this.options.abccolors, function(color) {
 				if(me.options.toggle === true) {
 					toggleClass = 'element-toggled';
@@ -34,8 +33,9 @@ define([
 				var colorField = new Upfront.Views.Editor.Field.Color({
 					className: state + '-color-field upfront-field-wrap-color color-module module-color-field ' + toggleClass + ' ' + per_row,
 					blank_alpha : 0,
-					model: this.model,
+					model: me.model,
 					name: color.name,
+					default_value: me.model.get(color.name),
 					label_style: 'inline',
 					label: color.label,
 					spectrum: {
@@ -57,7 +57,7 @@ define([
 
 			this.fields = _(fields);
 
-			//Add toggle typography checkbox
+			//Add toggle colors checkbox
 			if(this.options.toggle === true) {
 				this.group = false;
 				this.fields.unshift(
@@ -66,10 +66,13 @@ define([
 						className: 'useColors checkbox-title',
 						name: me.options.fields.use,
 						label: '',
-						default_value: 1,
 						multiple: false,
 						values: [
-							{ label: l10n.color, value: 'yes' }
+							{
+								label: l10n.color,
+								value: 'yes',
+								checked: this.model.get(me.options.fields.use)
+							}
 						],
 						change: function(value) {
 							me.model.set(me.options.fields.use, value);
@@ -88,6 +91,7 @@ define([
 				);
 			}
 		},
+
 		reset_fields: function(value) {
 			var me = this;
 			if(typeof value !== "undefined" && value === "yes") {
@@ -97,7 +101,7 @@ define([
 					me.save_static_value(color, settings);
 					this.fieldCounter++;
 				});
-				
+
 				this.$el.empty();
 				this.render();
 			}
@@ -139,7 +143,7 @@ define([
 					field.set_value(color);
 					field.update_input_border_color(Upfront.Util.colors.to_color_value(color));
 				}
-            });
+      });
 		}
 	});
 

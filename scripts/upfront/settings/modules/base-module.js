@@ -18,7 +18,7 @@ define([
 			this.$el.html('');
 			if (this.options.title && this.options.toggle !== true) {
 				this.$el.append('<div class="upfront-settings-item-title">' + this.options.title + '</div>');
-			};
+			}
 			this.$el.append('<div class="upfront-settings-item-content"></div>');
 
 			var $content = this.$el.find('.upfront-settings-item-content');
@@ -40,7 +40,7 @@ define([
 					if ( ! field.multiple && value != saved_value ){
 						changed.push(field);
 					}
-					else if ( field.multiple && (value.length != saved_value.length || _.difference(value, saved_value).length != 0) ) {
+					else if ( field.multiple && (value.length != saved_value.length || _.difference(value, saved_value).length !== 0) ) {
 						changed.push(field);
 					}
 				}

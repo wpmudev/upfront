@@ -58,7 +58,7 @@ function() {
 			$.each(presets, function (idx, preset) {
 				if (!(preset && preset.id && preset_id === preset.id)) return true;
 				props = _.extend({}, preset);
-			})
+			});
 			return props;
 		},
 
