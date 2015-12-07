@@ -3197,15 +3197,17 @@ define([
 					right: ''
 				});
 			},
-			trigger_edit_lightbox: function() {
+			trigger_edit_lightbox: function(e) {
 				if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.CONTENT )
 					return false;
 				var me = this,
 					$main = $(Upfront.Settings.LayoutEditor.Selectors.main);
+
 				if ( $main.hasClass('upfront-region-editing') )
 					this.close_edit();
 
 				$main.addClass('upfront-region-lightbox-editing');
+
 				this.trigger('activate_region', this);
 				Upfront.Events.trigger("command:region:fixed_edit_toggle", true);
 				//if ( Upfront.Application.sidebar.visible )
@@ -4126,6 +4128,9 @@ define([
 				if(this.model.get('type') == 'lightbox') {
 					this.bg_setting.right =  80;
 					this.bg_setting.top = setting_offset.top;
+
+					var container_view = this.parent_view.get_container_view(this.model);
+					container_view.trigger_edit_lightbox(e);
 				}
 				else {
 					if ( this.bg_setting.width < setting_offset.left - 10 ) {
@@ -4517,6 +4522,7 @@ define([
 			},
 			init: function () {
 				this.constructor.__super__.init.call(this);
+			
 				this.listenTo(Upfront.Events, 'sidebar:toggle:done', this.update_region_position);
 				this.listenTo(Upfront.Events, "entity:drag_stop", this.update_region_position);
 				this.listenTo(Upfront.Events, "entity:drag_stop", this.check_modules);
@@ -4540,10 +4546,11 @@ define([
 			render_bg_setting: function () {
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 				this.bg_setting = new Upfront.Views.Editor.ModalBgSetting({model: this.model, to: $main, width: 420});
+				this.bg_setting.for_view = this;
 				this.bg_setting.render();
 				$main.append(this.bg_setting.el);
 				this.listenTo(this.bg_setting, "modal:open", this.on_modal_open);
-				this.listenTo(this.bg_setting, "modal:close", this.on_modal_close);
+				this.listenTo(this.bg_setting, "modal:close", this.close_edit);
 			},
 			show:function () {
 				Upfront.Events.trigger('upfront:element:edit:stop');
@@ -4669,8 +4676,6 @@ define([
 					hint += ' <b>right:</b>' + pos.right;
 				( $helper ? $helper : this.$el ).find('.upfront-region-position-hint').html(hint);
 			},*/
-			render_panels: function () {
-			},
 			render_edit_position: function () {
 				this.edit_position = new Upfront.Views.Editor.RegionFixedEditPosition({model: this.model});
 				this.edit_position.render();
@@ -4678,16 +4683,14 @@ define([
 			},
 			trigger_edit: function (e) {
 				this.on_settings_click();
-				/*
-				var container_view = this.parent_view.get_container_view(this.model);
-				container_view.trigger_edit_lightbox();
 				e.stopPropagation();
-				*/
+				
 			},
 			close_edit: function (e) {
 				var container_view = this.parent_view.get_container_view(this.model);
 				container_view.close_edit();
-				e.stopPropagation();
+				if(typeof(e) !== 'undefined')
+					e.stopPropagation();
 			},
 			check_modules: function () {
 				var total = this.$el.find('> .upfront-region-wrapper > .upfront-modules_container > .upfront-editable_entities_container').find('.upfront-module').size();
@@ -5031,6 +5034,9 @@ define([
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 				this.listenTo(Upfront.Events, 'entity:module:update_position', this.on_module_update);
 				this.listenTo(Upfront.Events, 'layout:render', this.toggle_wrapper_visibility);
+
+				// this one to do fix the wrapper visibility for elements inside a lightbox
+				this.listenTo(Upfront.Events, 'upfront:lightbox:show', this.toggle_wrapper_visibility);
 			},
 			render: function () {
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
