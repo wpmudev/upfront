@@ -891,6 +891,7 @@ define([
 			this.$el.find('.switch-off').addClass('active');
 			this.$el.find('.switch-on').removeClass('active');
 			$main.removeClass('upfront-region-editing');
+			$main.removeClass('upfront-region-lightbox-editing');
 			Upfront.Events.trigger("command:region:edit_toggle", false);
 		}
 	});
@@ -10705,8 +10706,10 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				$region = this.$el.closest('.upfront-region'),
 				$sub_top = $container.find('.upfront-region-side-top'),
 				$sub_bottom = $container.find('.upfront-region-side-bottom');
-			if ( ( !$main.hasClass('upfront-region-editing') && !$main.hasClass('upfront-region-fixed-editing') ) || !$container.hasClass('upfront-region-container-active') )
+
+			if ( ( !$main.hasClass('upfront-region-editing') && !$main.hasClass('upfront-region-fixed-editing') && !$main.hasClass('upfront-region-lightbox-editing') ) || !$container.hasClass('upfront-region-container-active') )
 				return;
+
 			var me = this,
 				offset = $region.offset(),
 				top = offset.top,
@@ -10774,7 +10777,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					});
 				}
 			});
-
+	
 			setTimeout( 
 				function () { me.update_padding() }
 				, 300 
