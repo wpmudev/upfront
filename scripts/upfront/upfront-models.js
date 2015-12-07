@@ -546,7 +546,7 @@ var _alpha = "alpha",
 			}
 		},
 		get_current_state: function () {
-			return Upfront.Util.model_to_json(this.get("regions"));
+			return revision = Upfront.PreviewUpdate.get_revision();
 		},
 		has_undo_states: function () {
 			return !!Upfront.Util.Transient.length("undo");
@@ -555,7 +555,10 @@ var _alpha = "alpha",
 			return !!Upfront.Util.Transient.length("redo");
 		},
 		store_undo_state: function () {
-			Upfront.Util.Transient.push("undo", this.get_current_state());
+			var state = this.get_current_state(),
+				all = Upfront.Util.Transient.get_all()
+			;
+			if (all.indexOf(state) < 0) Upfront.Util.Transient.push("undo", state);
 		},
 		restore_undo_state: function () {
 			if (!this.has_undo_states()) return false;
@@ -567,15 +570,17 @@ var _alpha = "alpha",
 		},
 		restore_state_from_stack: function (stack) {
 			var other = ("undo" == stack ? "redo" : "undo"),
-				state = Upfront.Util.Transient.pop(stack)
+				revision = Upfront.Util.Transient.pop(stack)
 			;
-			if (!state) {
-				Upfront.Util.log("Invalid " + stack + " state");
+			if (!revision) {
+				Upfront.Util.log("Invalid " + revision + " state");
 				return false;
 			}
 
 			Upfront.Util.Transient.push(other, this.get_current_state());
-			this.get("regions").reset(state);
+			// ... 1. get the state that corresponds to this revision
+			// ... 2. do this:
+			//this.get("regions").reset(state);
 		}
 	}),
 
