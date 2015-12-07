@@ -55,6 +55,8 @@ define([
 					'active-borderwidth': 1,
 					'active-bordertype': 'solid',
 					'active-bordercolor': 'rgbа(0, 0, 0, 0.5)',
+					'active-use-color': 1,
+					'active-use-typography': 1,
 					'global-useborder': '',
 					'global-borderwidth': 2,
 					'global-bordertype': 'solid',

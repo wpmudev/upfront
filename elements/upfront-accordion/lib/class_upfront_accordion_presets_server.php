@@ -20,10 +20,29 @@ class Upfront_Accordion_Presets_Server extends Upfront_Presets_Server {
 	public static function get_instance() {
 		return self::$instance;
 	}
-	
+
 	public function get_preset_styles_filter($style) {
 		$style .= self::$instance->get_presets_styles();
 		return $style;
+	}
+
+	/**
+	 * @return array saved presets
+	 */
+	public function get_presets() {
+		$presets = parent::get_presets();
+
+		// Fix migration style issue
+		foreach($presets as $index=>$preset) {
+			if (isset($preset['active-use-color']) === false) {
+				$presets[$index]['active-use-color'] = 1;
+			}
+			if (isset($preset['active-use-typography']) === false) {
+				$presets[$index]['active-use-typography'] = 1;
+			}
+		}
+
+		return $presets;
 	}
 
 	protected function get_style_template_path() {
