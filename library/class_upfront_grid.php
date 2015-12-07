@@ -972,25 +972,25 @@ class Upfront_GridBreakpoint {
 			if (!empty($breakpoint_data['left_padding_num'])) $left_padding = $breakpoint_data['left_padding_num'];
 		}
 
-		if ( !in_array('top_padding', $exception) && !empty($top_padding) ){
+		if ( !in_array('top_padding', $exception) && isset($top_padding) && is_numeric($top_padding) ){
 			$style = $this->_top_padding_to_style($top_padding);
 			$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
 			$raw_styles[$selector][] = rtrim($style, ';') . ';';
 		}
 
-		if ( !in_array('right_padding', $exception) && !empty($right_padding) ){
+		if ( !in_array('right_padding', $exception) && isset($right_padding) && is_numeric($right_padding) ){
 			$style = $this->_right_padding_to_style($right_padding);
 			$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
 			$raw_styles[$selector][] = rtrim($style, ';') . ';';
 		}
 
-		if ( !in_array('bottom_padding', $exception) && !empty($bottom_padding) ){
+		if ( !in_array('bottom_padding', $exception) && isset($bottom_padding) && is_numeric($bottom_padding) ){
 			$style = $this->_bottom_padding_to_style($bottom_padding);
 			$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
 			$raw_styles[$selector][] = rtrim($style, ';') . ';';
 		}
 
-		if ( !in_array('left_padding', $exception) && !empty($left_padding) ){
+		if ( !in_array('left_padding', $exception) && isset($left_padding) && is_numeric($left_padding) ){
 			$style = $this->_left_padding_to_style($left_padding);
 			$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
 			$raw_styles[$selector][] = rtrim($style, ';') . ';';
