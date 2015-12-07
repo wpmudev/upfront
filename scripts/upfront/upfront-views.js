@@ -792,9 +792,11 @@ define([
 				}, 1000);
 			},
 			hide_top_padding_hint: function () {
-				this.$el.find('.upfront-entity-top-padding-hint').css({
-					opacity: 0
-				});
+				if(!this.padding_hint_locked) {				
+					this.$el.find('.upfront-entity-top-padding-hint').css({
+						opacity: 0
+					});
+				}
 			},
 			show_bottom_padding_hint: function () {
 				var me                  = this,
@@ -814,9 +816,11 @@ define([
 				}, 1000);
 			},
 			hide_bottom_padding_hint: function () {
-				this.$el.find('.upfront-entity-bottom-padding-hint').css({
-					opacity: 0
-				});
+				if(!this.padding_hint_locked) {				
+					this.$el.find('.upfront-entity-bottom-padding-hint').css({
+						opacity: 0
+					});
+				}
 			},
 			updateControls: function() {
 				var elementControlsTpl = '<div class="upfront-element-controls upfront-ui"></div>';

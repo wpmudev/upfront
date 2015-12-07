@@ -21,6 +21,20 @@ define([
 					me.close();
 				}
 			});
+			$(document).mouseup(function(e){
+				var	target = $(e.target)
+					currentEntity = Upfront.data.currentEntity;
+
+				if (target.closest('#page').length && target[0] !== me.el && !target.closest(me.el).length && typeof(currentEntity) !== 'undefined' && typeof(currentEntity.padding_hint_locked) !== 'undefined' && currentEntity.padding_hint_locked) {
+					currentEntity.padding_hint_locked = false;
+					currentEntity.top_padding_hint_timer = setTimeout(function() {
+						currentEntity.hide_top_padding_hint();
+					}, 1000);
+					currentEntity.bottom_padding_hint_timer = setTimeout(function() {
+						currentEntity.hide_bottom_padding_hint();
+					}, 1000);
+				}
+			});
 
 			this.listenTo(Upfront.Events, "upfront:paddings:updated", this.refresh);
 		},
@@ -99,6 +113,7 @@ define([
 					Upfront.Events.trigger("upfront:paddings:updated", this.model);
 				}
 			});
+
 			me.paddingBottom = new Upfront.Views.Editor.Field.Slider({
 				model: this.model,
 				use_breakpoint_property: true,
@@ -129,7 +144,30 @@ define([
 			me.paddingBottom.render();
 			$paddingBottomContainer.append(me.paddingBottom.$el);
 			$paddingControl.append($paddingBottomContainer);
+
+			$paddingTopContainer.on('mousedown', function() {
+				Upfront.data.currentEntity.padding_hint_locked = true;
+			}).on('mouseup', function() {
+				var currentEntity = Upfront.data.currentEntity;
+
+				currentEntity.padding_hint_locked = false;
+				currentEntity.top_padding_hint_timer = setTimeout(function() {
+					currentEntity.hide_top_padding_hint();
+				}, 1000);
+			});
+
+			$paddingBottomContainer.on('mousedown', function() {
+				Upfront.data.currentEntity.padding_hint_locked = true;
+			}).on('mouseup', function() {
+				var currentEntity = Upfront.data.currentEntity;
+
+				currentEntity.padding_hint_locked = false;
+				currentEntity.bottom_padding_hint_timer = setTimeout(function() {
+					currentEntity.hide_bottom_padding_hint();
+				}, 1000);
+			});
 		},
+
 		refresh: function(model) {
 			if ( model && model !== this.model ) return;
 			var column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
