@@ -199,10 +199,13 @@ define([
 						className: 'useTypography checkbox-title ' + toggleClass,
 						name: me.options.fields.use,
 						label: '',
-						default_value: 1,
 						multiple: false,
 						values: [
-							{ label: l10n.typography, value: 'yes' }
+							{
+								label: l10n.typography,
+								value: 'yes',
+								checked: this.model.get(me.options.fields.use)
+							}
 						],
 						change: function(value) {
 							console.log('triggered change on checkbox');

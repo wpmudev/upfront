@@ -57,7 +57,7 @@ define([
 
 			this.fields = _(fields);
 
-			//Add toggle typography checkbox
+			//Add toggle colors checkbox
 			if(this.options.toggle === true) {
 				this.group = false;
 				this.fields.unshift(
@@ -66,10 +66,13 @@ define([
 						className: 'useColors checkbox-title',
 						name: me.options.fields.use,
 						label: '',
-						default_value: 1,
 						multiple: false,
 						values: [
-							{ label: l10n.color, value: 'yes' }
+							{
+								label: l10n.color,
+								value: 'yes',
+								checked: this.model.get(me.options.fields.use)
+							}
 						],
 						change: function(value) {
 							me.model.set(me.options.fields.use, value);
@@ -88,6 +91,7 @@ define([
 				);
 			}
 		},
+
 		reset_fields: function(value) {
 			var me = this;
 			if(typeof value !== "undefined" && value === "yes") {
@@ -139,7 +143,7 @@ define([
 					field.set_value(color);
 					field.update_input_border_color(Upfront.Util.colors.to_color_value(color));
 				}
-            });
+      });
 		}
 	});
 

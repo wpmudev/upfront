@@ -4997,7 +4997,7 @@ var Field_ToggleableText = Field_Text.extend({
 			} else if ( ! this.multiple && saved_value == value.value ) {
 				attr.checked = 'checked';
 			}
-      if (value.checked) attr.checked = 'checked';
+			if (value.checked) attr.checked = 'checked';
 			if ( attr.checked ) {
 				classes += ' upfront-field-multiple-selected';
 			}
@@ -5774,12 +5774,12 @@ var _Settings_Padding = SettingsItem.extend({
 				},
 				show: function (value, $el) {
 					if(value === 'yes') {
-						$(top_padding_slider.$el).css('display', 'inline-block'); 
-						$(top_padding_num.$el).css('display', 'inline-block'); 
+						$(top_padding_slider.$el).css('display', 'inline-block');
+						$(top_padding_num.$el).css('display', 'inline-block');
 					}
 					else {
-						$(top_padding_slider.$el).hide(); 
-						$(top_padding_num.$el).hide(); 
+						$(top_padding_slider.$el).hide();
+						$(top_padding_num.$el).hide();
 					}
 				}
 			}),
@@ -5833,12 +5833,12 @@ var _Settings_Padding = SettingsItem.extend({
 				},
 				show: function (value, $el) {
 					if(value === 'yes') {
-						$(bottom_padding_slider.$el).css('display', 'inline-block'); 
-						$(bottom_padding_num.$el).css('display', 'inline-block'); 
+						$(bottom_padding_slider.$el).css('display', 'inline-block');
+						$(bottom_padding_num.$el).css('display', 'inline-block');
 					}
 					else {
-						$(bottom_padding_slider.$el).hide(); 
-						$(bottom_padding_num.$el).hide(); 
+						$(bottom_padding_slider.$el).hide();
+						$(bottom_padding_num.$el).hide();
 					}
 				}
 			}),
@@ -9228,14 +9228,14 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					},
 					show: function (value, $el) {
 						if(value === 'varied') {
-							$('.upfront-region-bg-setting-padding-top', $content).show(); 
-							$('.upfront-region-bg-setting-padding-bottom', $content).show(); 
-							$('.upfront-region-bg-setting-equal-padding', $content).hide(); 
+							$('.upfront-region-bg-setting-padding-top', $content).show();
+							$('.upfront-region-bg-setting-padding-bottom', $content).show();
+							$('.upfront-region-bg-setting-equal-padding', $content).hide();
 						}
 						else {
-							$('.upfront-region-bg-setting-equal-padding', $content).show(); 
-							$('.upfront-region-bg-setting-padding-top', $content).hide(); 
-							$('.upfront-region-bg-setting-padding-bottom', $content).hide(); 
+							$('.upfront-region-bg-setting-equal-padding', $content).show();
+							$('.upfront-region-bg-setting-padding-top', $content).hide();
+							$('.upfront-region-bg-setting-padding-bottom', $content).hide();
 						}
 					}
 				}),
@@ -10777,10 +10777,10 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					});
 				}
 			});
-	
-			setTimeout( 
+
+			setTimeout(
 				function () { me.update_padding() }
-				, 300 
+				, 300
 			);
 		},
 		update_padding: function () {
@@ -10802,10 +10802,10 @@ var Field_Compact_Label_Select = Field_Select.extend({
 
 			var breakpoint_obj = (
 						typeof props.breakpoint !== 'undefined'
-						&& typeof props.breakpoint[current_breakpoint_id] !== 'undefined' 
+						&& typeof props.breakpoint[current_breakpoint_id] !== 'undefined'
 					)
 					? props.breakpoint[current_breakpoint_id]
-					: false						
+					: false
 			;
 
 			top_padding = (typeof breakpoint_obj.top_bg_padding_num !== 'undefined')
