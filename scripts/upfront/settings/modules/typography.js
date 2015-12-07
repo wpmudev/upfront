@@ -48,7 +48,6 @@ define([
 				toggleClass = 'element-toggled';
 			}
 
-			debugger;
 			this.fields = _([
 				new Upfront.Views.Editor.Field.Typeface_Chosen_Select({
 					name: this.currentElement + this.options.fields.typeface,
