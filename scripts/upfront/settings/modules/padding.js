@@ -7,7 +7,8 @@ define([
 
 		initialize: function(options) {
 			this.options = options || {};
-			var me = this;
+			var me = this,
+				column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding;
 
 			this.listenTo(Upfront.Events, "upfront:paddings:updated", this.refresh);
 
@@ -188,7 +189,7 @@ define([
 					property: 'top_padding_num',
 					label: '',
 					step: 5,
-					default_value: 0,
+					default_value: this.model.get_breakpoint_property_value('top_padding_num') || column_padding,
 					change: function(value) {
 						me.model.set_property('top_padding_num', value);
 						me.enable_padding('top_padding_use');
@@ -208,7 +209,7 @@ define([
 					property: 'left_padding_num',
 					label: '',
 					step: 5,
-					default_value: 0,
+					default_value: this.model.get_breakpoint_property_value('left_padding_num') || column_padding,
 					change: function(value) {
 						me.model.set_property('left_padding_num', value);
 						me.enable_padding('left_padding_use');
@@ -228,7 +229,7 @@ define([
 					property: 'right_padding_num',
 					label: '',
 					step: 5,
-					default_value: 0,
+					default_value: this.model.get_breakpoint_property_value('right_padding_num') || column_padding,
 					change: function(value) {
 						me.model.set_property('right_padding_num', value);
 						me.enable_padding('right_padding_use');
@@ -248,7 +249,7 @@ define([
 					property: 'bottom_padding_num',
 					label: '',
 					step: 5,
-					default_value: 0,
+					default_value: this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding,
 					change: function(value) {
 						me.model.set_property('bottom_padding_num', value);
 						me.enable_padding('bottom_padding_use');
@@ -267,7 +268,11 @@ define([
 		refresh: function() {
 			var topPadding = this.model.get_property_value_by_name('top_padding_num');
 			var bottomPadding = this.model.get_property_value_by_name('bottom_padding_num');
+			var leftPadding = this.model.get_property_value_by_name('left_padding_num');
+			var rightPadding = this.model.get_property_value_by_name('right_padding_num');
 			this.fields._wrapped[4].get_field().val(topPadding);
+			this.fields._wrapped[5].get_field().val(leftPadding);
+			this.fields._wrapped[6].get_field().val(rightPadding);
 			this.fields._wrapped[7].get_field().val(bottomPadding);
 		},
 		
