@@ -536,7 +536,7 @@ var LayoutEditor = {
 	},
 
 	create_undo: function () {
-		//this.layout.store_undo_state();
+		this.layout.store_undo_state();
 	},
 	apply_history_change: function () {
 		var regions = Upfront.Application.layout.get("regions"),

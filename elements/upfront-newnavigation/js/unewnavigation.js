@@ -644,6 +644,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		}
 
 		selector.attr('data-isfloating', breakpoint.is_floating);
+		Upfront.Events.trigger('entity:object:refresh', this);
 	},
 
 	activate_responsive_nav: function(selector, bpwidth) {
@@ -760,6 +761,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 			}
 		}
+		Upfront.Events.trigger('entity:object:refresh', this);
 	},
 
 	hideMenu: function(menu) {

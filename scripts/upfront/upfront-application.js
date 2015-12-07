@@ -175,11 +175,16 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		this.listenTo(Upfront.Events, "command:selection:remove", Upfront.Behaviors.LayoutEditor.remove_selections);
 
 		// Undo / Redo
+/*
+// Don't listen to undo events separately, as we'll be using the previews data instead
 		this.listenTo(Upfront.Events, "entity:activated", Upfront.Behaviors.LayoutEditor.create_undo);
 		this.listenTo(Upfront.Events, "entity:resize_start", Upfront.Behaviors.LayoutEditor.create_undo);
 		this.listenTo(Upfront.Events, "entity:drag_start", Upfront.Behaviors.LayoutEditor.create_undo);
 		this.listenTo(Upfront.Events, "entity:removed:before", Upfront.Behaviors.LayoutEditor.create_undo);
 		this.listenTo(Upfront.Events, "entity:region:activated", Upfront.Behaviors.LayoutEditor.create_undo);
+*/
+// Like this:
+		this.listenTo(Upfront.Events, "preview:build:stop", Upfront.Behaviors.LayoutEditor.create_undo);
 
 		this.listenTo(Upfront.Events, "command:undo", Upfront.Behaviors.LayoutEditor.apply_history_change);
 		this.listenTo(Upfront.Events, "command:redo", Upfront.Behaviors.LayoutEditor.apply_history_change);
@@ -200,18 +205,25 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		var loading = false,
 			start = function () {
 				loading = new Upfront.Views.Editor.Loading({
-					loading: "Saving...",
-					done: "All done!",
+					loading: Upfront.Settings.l10n.global.application.saving,
+					done: Upfront.Settings.l10n.global.application.saving_success,
 					fixed: true
 				});
 				loading.render();
 				$('body').append(loading.$el);
 			},
 			stop = function (success) {
+				if (!success) {
+					loading.update_loading_text(Upfront.Settings.l10n.global.application.saving_error);
+				}
 				loading.on_finish(function(){
 					Upfront.Events.trigger("command:layout:save_done", success);
 				});
-				loading.done();
+				if (!success) {
+					loading.done(false, Upfront.Settings.l10n.global.application.saving_error);
+				} else {
+					loading.done();
+				}
 			}
 		;
 		this.listenTo(Upfront.Events, "command:layout:save_start", start);
@@ -1154,6 +1166,8 @@ var Application = new (Backbone.Router.extend({
 	sidebar: false,
 	layout: false,
 
+	layout_ready: false,
+
 	responsiveMode: false,
 
 	boot: function () {
@@ -1402,20 +1416,22 @@ var Application = new (Backbone.Router.extend({
 
 		window._upfront_post_data.layout = layoutData.data.cascade;
 
+		Upfront.Events.trigger("upfront:layout:loaded");
+		if (me.current_subapplication && me.current_subapplication.start)
+			me.current_subapplication.start();
+
+		else Upfront.Util.log("No current subapplication");
+
+		//if (!me.layout_view) {
+		me.layout_view = new Upfront.Views.Layout({
+			"model": me.layout,
+			"el": $(Upfront.Settings.LayoutEditor.Selectors.main)
+		});
+		Upfront.Events.trigger("layout:render", me.current_subapplication);
+		me.layout_ready = true;
+		//}
+
 		Upfront.Application.loading.done(function () {
-			Upfront.Events.trigger("upfront:layout:loaded");
-			if (me.current_subapplication && me.current_subapplication.start)
-				me.current_subapplication.start();
-
-			else Upfront.Util.log("No current subapplication");
-
-			//if (!me.layout_view) {
-			me.layout_view = new Upfront.Views.Layout({
-				"model": me.layout,
-				"el": $(Upfront.Settings.LayoutEditor.Selectors.main)
-			});
-			Upfront.Events.trigger("layout:render", me.current_subapplication);
-			//}
 
 			Upfront.PreviewUpdate.run(me.layout);
 
@@ -1455,6 +1471,7 @@ var Application = new (Backbone.Router.extend({
 			//Destroy
 			this.layout_view.remove();
 			this.layout_view = false;
+			this.layout_ready = false;
 
 			//Restore tag attributes
 			newElement.attr({

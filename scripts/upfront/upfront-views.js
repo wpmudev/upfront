@@ -711,7 +711,7 @@ define([
 				if ( !hide ) $el.show();
 				else $el.hide();
 				if ( $toggle && $toggle.length > 0 ) {
-					if ( !toggle_hide || !hide ) $toggle.hide();
+					if ( ( toggle_hide !== false && toggle_hide == 0 )|| !hide ) $toggle.hide();
 					else if ( hide ) $toggle.show();
 				}
 				if ( breakpoint_data && typeof breakpoint_data.col == 'number' ) {
@@ -974,18 +974,7 @@ define([
 					prevs = []
 				;
 				Upfront.Events.trigger('upfront:wrappers:before_fix_height', this);
-				Upfront.Util.find_sorted($el, '> .upfront-wrapper')
-					.filter(function(){
-						var $modules = $(this).find('> .upfront-module-view > .upfront-module, > .upfront-module-group'),
-							visible = false
-						;
-						if ( $modules.length == 0 ) return false;
-						$(this).css('display', '');
-						$modules.each(function(){
-							if ( $(this).is(':visible') ) visible = true;
-						});
-						return visible;
-					})
+				Upfront.Util.find_sorted($el, '> .upfront-wrapper:visible')
 					.each(function(){
 						var order = $(this).data('breakpoint_order') || 0,
 							clear = $(this).data('breakpoint_clear')
@@ -1011,7 +1000,6 @@ define([
 				Upfront.Behaviors.GridEditor.time_end('fn fix_wrapper_height');
 			},
 			_apply_wrapper_height: function (wraps) {
-				Upfront.Behaviors.GridEditor.time_start('fn _apply_wrapper_height');
 				// Reset height first
 				_.each(wraps, function ($wrap) {
 					$wrap.css('min-height', '');
@@ -1038,7 +1026,6 @@ define([
 					if ( next_is_spacer ) $wrap.attr('data-next-spacer', '1');
 					$wrap.css('min-height', height);
 				});
-				Upfront.Behaviors.GridEditor.time_end('fn _apply_wrapper_height');
 			}
 		}),
 
@@ -1755,6 +1742,8 @@ define([
 
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 				this.listenTo(Upfront.Events, "entity:wrapper:update_position", this.on_wrapper_update);
+
+				this.listenTo(Upfront.Events, "layout:render", this.on_after_layout_render);
 			},
 			render: function () {
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
@@ -1815,8 +1804,8 @@ define([
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
 					grid = Upfront.Settings.LayoutEditor.Grid;
 				if ( ! breakpoint ) return;
-				var $module = this.$el.find('.upfront-module'),
-					$toggle = this.$el.find('.upfront-module-hidden-toggle')
+				var $module = this.$el.find('> .upfront-module'),
+					$toggle = this.$el.find('> .upfront-module-hidden-toggle')
 				;
 				this.apply_breakpoint_position($module, $toggle);
 				Upfront.Events.trigger('entity:module:update_position', this, this.model);
@@ -1894,9 +1883,7 @@ define([
 				}
 			},
 			on_wrapper_update: function (wrapper, wrapper_model) {
-				if ( wrapper_model.get_wrapper_id() != this.model.get_wrapper_id() ) {
-					return;
-				}
+				if ( wrapper != this.wrapper_view ) return;
 				this.update_position();
 			},
 			on_change_breakpoint: function (breakpoint) {
@@ -1911,7 +1898,9 @@ define([
 					$delete.show();
 					$hide.hide();
 				}
-				this.update_position();
+				//this.update_position();
+			},
+			on_after_layout_render: function () {
 			},
 			remove: function(){
 				if(this._objects_view)
@@ -2621,8 +2610,9 @@ define([
 					local_view.parent_view = this;
 					local_view.region_view = this.region_view;
 					local_view.region = this.region_view.model;
-					if ( this.group_view )
+					if ( this.group_view ) {
 						local_view.group_view = this.group_view;
+					}
 					if ( !wrapper ){
 						local_view.render();
 						if ( index === -2 )
@@ -2647,6 +2637,7 @@ define([
 								wrapper_view.parent_view = this;
 							}
 							wrapper_el = wrapper_view.el;
+							local_view.wrapper_view = wrapper_view;
 						}
 						this.current_wrapper_id = wrapper_id;
 						this.current_wrapper_el = wrapper_el;
@@ -2664,14 +2655,18 @@ define([
 							$(wrapper_el).append(local_view.el);
 						}
 						if ( wrapper_view ){
-							if ( index === -2 )
+							if ( index === -2 ) {
 								$el.append(wrapper_el);
-							else if ( index === -1 )
+							}
+							else if ( index === -1 ) {
 								$el.prepend(wrapper_el);
-							else
+							}
+							else {
 								$el_index.closest('.upfront-wrapper').after(wrapper_el);
-							if ( ! Upfront.data.wrapper_views[wrapper.cid] )
+							}
+							if ( ! Upfront.data.wrapper_views[wrapper.cid] ) {
 								Upfront.data.wrapper_views[wrapper.cid] = wrapper_view;
+							}
 						}
 					}
 					if ( ! Upfront.data.module_views[module.cid] ){
@@ -2690,12 +2685,10 @@ define([
 				Upfront.Events.trigger('entity:modules:render_module', local_view, local_view.model, this, this.model);
 			},
 			on_wrappers_update: function (parent_model) {
-				if ( _.isObject(parent_model) && parent_model.get('modules') != this.model )
-					return;
+				if ( _.isObject(parent_model) && parent_model.get('modules') != this.model ) return;
 				this.model.each(function(module){
 					var local_view = Upfront.data.module_views[module.cid];
-					if ( ! local_view )
-						return;
+					if ( ! local_view ) return;
 					local_view.update_position();
 				});
 				this.apply_flexbox_clear();
@@ -2764,17 +2757,20 @@ define([
 			},
 			on_after_layout_render: function () {
 				this.apply_flexbox_clear();
-				this.apply_wrapper_height();
 				this.apply_adapt_to_breakpoints();
+				var me = this;
+				setTimeout(function(){
+					me.apply_wrapper_height();
+				}, 1000); // Wait for other positioning finished
 			},
 			on_csseditor_ready: function () {
-				this.apply_wrapper_height();
+				//this.apply_wrapper_height();
 			},
 			apply_flexbox_clear: function () {
 				this.fix_flexbox_clear(this.$el);
 			},
 			apply_wrapper_height: function () {
-				if ( !document.body.contains(this.el) ) return;
+				if ( !Upfront.Application.layout_ready ) return;
 				this.model.each(function (module) {
 					var local_view = Upfront.data.module_views[module.cid];
 					if ( !local_view || !local_view._modules_view ) return;
@@ -5024,7 +5020,8 @@ define([
 				this.listenTo(this.model, 'remove', this.on_remove);
 				
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
-				this.listenTo(Upfront.Events, 'upfront:wrappers:after_fix_height', this.on_apply_height);
+				this.listenTo(Upfront.Events, 'entity:module:update_position', this.on_module_update);
+				this.listenTo(Upfront.Events, 'layout:render', this.toggle_wrapper_visibility);
 			},
 			render: function () {
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
@@ -5202,21 +5199,24 @@ define([
 				;
 				return find_2.first();
 			},
+			toggle_wrapper_visibility: function () {
+				var visible = ( parseInt(this.$el.css('height'), 10) > 0 );
+				if ( !visible && this.$el.css('display') != 'none' ) {
+					this.$el.css('display', 'none');
+				}
+				else if ( visible ) {
+					this.$el.css('display', '');
+				}
+			},
 			on_change_breakpoint: function () {
 				this.$el.css({
 					display: ''
 				});
 				this.update_position();
 			},
-			on_apply_height: function (from_view) {
-				if ( !this.parent_view || this.parent_view != from_view ) return;
-				var visible = ( parseInt(this.$el.css('height'), 10) > 0 );
-				if ( !visible ) {
-					this.$el.css('display', 'none');
-				}
-				else {
-					this.$el.css('display', '');
-				}
+			on_module_update: function (from_view) {
+				if ( !from_view.wrapper_view || from_view.wrapper_view != this ) return;
+				this.toggle_wrapper_visibility();
 			},
 			on_mouse_up: function (e) {
 				$('.upfront-wrapper-active').not(this.$el).removeClass('upfront-wrapper-active');
@@ -5258,6 +5258,7 @@ define([
 
 				if (!this.local_view) {
 					this.local_view = new Regions({"model": this.model.get("regions")});
+					this.$layout.append(this.local_view.el);
 					this.local_view.render();
 				}
 				else {
@@ -5265,8 +5266,6 @@ define([
 					this.local_view.delegateEvents();
 				}
 
-
-				this.$layout.append(this.local_view.el);
 				this.update();
 
 				this.bg_setting = new Upfront.Views.Editor.ModalBgSetting({model: this.model, to: this.$el, width: 420});
