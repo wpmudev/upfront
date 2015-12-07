@@ -5022,6 +5022,9 @@ define([
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 				this.listenTo(Upfront.Events, 'entity:module:update_position', this.on_module_update);
 				this.listenTo(Upfront.Events, 'layout:render', this.toggle_wrapper_visibility);
+
+				// this one to do fix the wrapper visibility for elements inside a lightbox
+				this.listenTo(Upfront.Events, 'upfront:lightbox:show', this.toggle_wrapper_visibility);
 			},
 			render: function () {
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
