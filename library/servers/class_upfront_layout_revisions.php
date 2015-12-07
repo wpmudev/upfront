@@ -247,6 +247,7 @@ class Upfront_Server_LayoutRevisions extends Upfront_Server {
 		), $current_url));
 		$this->_out(new Upfront_JsonResponse_Success(array(
 			'html' => $preview_url,
+			'idx' => $layout_id_key,
 			'concurrent_users' => $concurrent_users,
 		)));
 	}
