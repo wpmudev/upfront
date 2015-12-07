@@ -28,10 +28,14 @@ define([
 				if (target.closest('#page').length && target[0] !== me.el && !target.closest(me.el).length && typeof(currentEntity) !== 'undefined' && typeof(currentEntity.padding_hint_locked) !== 'undefined' && currentEntity.padding_hint_locked) {
 					currentEntity.padding_hint_locked = false;
 					currentEntity.top_padding_hint_timer = setTimeout(function() {
-						currentEntity.hide_top_padding_hint();
+						if(typeof(currentEntity.hide_top_padding_hint) === 'function'){
+							currentEntity.hide_top_padding_hint();
+						}
 					}, 1000);
 					currentEntity.bottom_padding_hint_timer = setTimeout(function() {
-						currentEntity.hide_bottom_padding_hint();
+						if(typeof(currentEntity.hide_bottom_padding_hint) === 'function'){
+							currentEntity.hide_bottom_padding_hint();
+						}
 					}, 1000);
 				}
 			});
