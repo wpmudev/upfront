@@ -872,6 +872,7 @@ define(function() {
 			_saving_flag = false,
 			_is_dirty = false,
 			_preview_url = false,
+			_revision_idx = false,
 			run = function (layout) {
 				if (!!Upfront.Settings.Application.PERMS.REVISIONS) { // Only rebind stuff when revisions listening is enabled.
 					if (Upfront.Application.mode.current === Upfront.Application.MODE.THEME) {
@@ -971,6 +972,7 @@ define(function() {
 						var data = response.data || {};
 						if ("html" in data && data.html) {
 							_preview_url = data.html;
+							_revision_idx = data.idx;
 						} else {
 							Upfront.Util.log("Invalid response");
 						}
@@ -1004,11 +1006,15 @@ define(function() {
 			},
 			get_preview_url = function () {
 				return _preview_url;
+			},
+			get_revision = function () {
+				return _revision_idx;
 			}
 		;
 		return {
 			run: run,
 			preview_url: get_preview_url,
+			get_revision: get_revision,
 			rebind_events: rebind_events
 		}
 
