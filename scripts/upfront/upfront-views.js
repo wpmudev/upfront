@@ -779,6 +779,10 @@ define([
 					top_padding_num  = this.model.get_breakpoint_property_value('top_padding_num', true),
 					top_padding_hint = this.$el.find('.upfront-entity-top-padding-hint')
 				;
+				if(!this.top_padding_hint_flag) {
+					this.top_padding_hint_flag = true;
+					return;
+				}
 				if(!top_padding_hint.length) {
 					top_padding_hint = $('<div class="upfront-ui upfront-entity-padding-hint upfront-entity-top-padding-hint"></div>').appendTo(this.$el);
 				}
@@ -803,6 +807,10 @@ define([
 					bottom_padding_num  = this.model.get_breakpoint_property_value('bottom_padding_num', true),
 					bottom_padding_hint = this.$el.find('.upfront-entity-bottom-padding-hint')
 				;
+				if(!this.bottom_padding_hint_flag) {
+					this.bottom_padding_hint_flag = true;
+					return;
+				}
 				if(!bottom_padding_hint.length) {
 					bottom_padding_hint = $('<div class="upfront-ui upfront-entity-padding-hint upfront-entity-bottom-padding-hint"></div>').appendTo(this.$el);
 				}
