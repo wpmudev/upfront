@@ -18,15 +18,14 @@ define([
 				per_row = 'single',
 				toggleClass = 'no-toggle',
 				fields = [];
-			
+
 			if(this.options.toggle === true) {
 				this.fieldCounter++;
 			}
-			
+
 			if(this.options.single !== true) {
 				per_row = 'two';
 			}
-			// TODO: investigate why theme colors aren't pre-selected??
 			_.each(this.options.abccolors, function(color) {
 				if(me.options.toggle === true) {
 					toggleClass = 'element-toggled';
@@ -34,8 +33,9 @@ define([
 				var colorField = new Upfront.Views.Editor.Field.Color({
 					className: state + '-color-field upfront-field-wrap-color color-module module-color-field ' + toggleClass + ' ' + per_row,
 					blank_alpha : 0,
-					model: this.model,
+					model: me.model,
 					name: color.name,
+					default_value: me.model.get(color.name),
 					label_style: 'inline',
 					label: color.label,
 					spectrum: {
@@ -97,7 +97,7 @@ define([
 					me.save_static_value(color, settings);
 					this.fieldCounter++;
 				});
-				
+
 				this.$el.empty();
 				this.render();
 			}
