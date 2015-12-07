@@ -200,18 +200,25 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		var loading = false,
 			start = function () {
 				loading = new Upfront.Views.Editor.Loading({
-					loading: "Saving...",
-					done: "All done!",
+					loading: Upfront.Settings.l10n.global.application.saving,
+					done: Upfront.Settings.l10n.global.application.saving_success,
 					fixed: true
 				});
 				loading.render();
 				$('body').append(loading.$el);
 			},
 			stop = function (success) {
+				if (!success) {
+					loading.update_loading_text(Upfront.Settings.l10n.global.application.saving_error);
+				}
 				loading.on_finish(function(){
 					Upfront.Events.trigger("command:layout:save_done", success);
 				});
-				loading.done();
+				if (!success) {
+					loading.done(false, Upfront.Settings.l10n.global.application.saving_error);
+				} else {
+					loading.done();
+				}
 			}
 		;
 		this.listenTo(Upfront.Events, "command:layout:save_start", start);
