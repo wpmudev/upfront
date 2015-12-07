@@ -19,13 +19,28 @@ define([
 					use_breakpoint_property: true,
 					property: 'use_padding',
 					label: '',
-					default_value: 1,
+					default_value: this.model.get_breakpoint_property_value('top_padding_use') || this.model.get_breakpoint_property_value('bottom_padding_use') || this.model.get_breakpoint_property_value('left_padding_use') || this.model.get_breakpoint_property_value('right_padding_use'),
 					multiple: false,
 					values: [
 						{ label: 'Customize Padding', value: 'yes' }
 					],
 					change: function(value) {
 						me.model.set_property('use_padding', value);
+						
+						if(typeof value === "undefined") {
+							//Disable custom padding, update to theme default padding
+							me.model.set_property('left_padding_num', column_padding, true);
+							me.model.set_property('top_padding_num', column_padding, true);
+							me.model.set_property('right_padding_num', column_padding, true);
+							me.model.set_property('bottom_padding_num', column_padding, true);
+							padding_left.get_field().val(column_padding);
+							padding_top.get_field().val(column_padding);
+							padding_right.get_field().val(column_padding);
+							padding_bottom.get_field().val(column_padding);
+							
+							//Disable paddings
+							me.disable_paddings();
+						}
 					},
 					show: function(value, $el) {
 						var stateSettings = $el.closest('.upfront-settings-item-content');
@@ -266,10 +281,15 @@ define([
 		},
 		
 		refresh: function() {
+			//Check use_padding when default settings are overwriten
+			this.model.set_property('use_padding', 'yes');
+
+			//Update fields when element padding is changed
 			var topPadding = this.model.get_property_value_by_name('top_padding_num');
 			var bottomPadding = this.model.get_property_value_by_name('bottom_padding_num');
 			var leftPadding = this.model.get_property_value_by_name('left_padding_num');
 			var rightPadding = this.model.get_property_value_by_name('right_padding_num');
+
 			this.fields._wrapped[4].get_field().val(topPadding);
 			this.fields._wrapped[5].get_field().val(leftPadding);
 			this.fields._wrapped[6].get_field().val(rightPadding);
@@ -277,7 +297,18 @@ define([
 		},
 		
 		enable_padding: function(field) {
+			//Enable padding when settings is changed
 			this.model.set_breakpoint_property(field, 'yes');
+			
+			Upfront.Events.trigger("upfront:paddings:updated");
+		},
+		
+		disable_paddings: function() {
+			//Enable padding when settings is changed
+			this.model.set_breakpoint_property('top_padding_use', '');
+			this.model.set_breakpoint_property('bottom_padding_use', '');
+			this.model.set_breakpoint_property('left_padding_use', '');
+			this.model.set_breakpoint_property('right_padding_use', '');
 			Upfront.Events.trigger("upfront:paddings:updated");
 		},
 		
