@@ -608,6 +608,9 @@ div.ugallery-magnific-labels {
 	text-align: center;
 }
 
+.mfp-title{
+	color: #343434;
+}
 .upfront-ui .ugallery-magnific-toggle:hover {
 	opacity: 1;
 }

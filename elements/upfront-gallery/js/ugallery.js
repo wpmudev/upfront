@@ -338,7 +338,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 		panel.items.push(this.createLabelControl(image));
 
-		if (image.get('imageLink').type === 'image' || image.get('imageLink').type === 'lightbox') {
+		if (image.get('imageLink').type === 'image' || image.get('imageLink').type === 'lightbox' || -1 !== ['image', 'lightbox'].indexOf( this.property( "linkTo" ) ) ) {
 			panel.items.push(this.createControl('fullscreen', l10n.ctrl.show_image, 'openImageLightbox'));
 		}
 
