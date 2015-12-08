@@ -1283,6 +1283,8 @@ var Application = new (Backbone.Router.extend({
 				app.load_layout(_upfront_post_data.layout);
 				//app.load_layout(window.location.pathname + window.location.search);
 				app.start_navigation();
+				
+				app.migrateStylesToPreset();
 
 				app.create_cssEditor();
 
@@ -1617,6 +1619,80 @@ var Application = new (Backbone.Router.extend({
 		}
 		//this.sidebar.render(); <-- Subapplications do this
 	},
+	
+	updatePreset: function(properties, slug) {
+		Upfront.Util.post({
+			action: 'upfront_save_' + slug + '_preset',
+			data: properties
+		}).done( function() { });
+	},
+	
+	deleteMigratedStyles: function(elementType, styleName) {
+		var deleteData = {
+			elementType: elementType,
+			styleName: styleName,
+			action: 'upfront_delete_styles'
+		};
+
+		Upfront.Util.post(deleteData)
+			.done(function(){
+				var styleIndex = Upfront.data.styles[elementType].indexOf(styleName);
+
+				//Remove the styles from the available styles
+				if(styleIndex != -1)
+					Upfront.data.styles[elementType].splice(styleIndex, 1);
+
+				//Remove the styles from the dom
+				$('#' + styleName).remove();
+			});
+	},
+	
+	migrateStylesToPreset: function() {
+		var me = this,
+			cssEditor = new Upfront.Views.Editor.CSSEditor(),
+			presetElements = ['image', 'uaccordion', 'plain_text', 'ubutton', 'ucontact', 'ugallery', 'uslider', 'utabs', 'unewnavigation'];
+			
+		Upfront.data.styles = {};
+
+		cssEditor.fetchThemeStyles(true).done(function(styles){
+			Upfront.data.styles = {};
+			_.each(styles, function(elementStyles, elementType){
+				
+				Upfront.data.styles[elementType] = [];
+
+				var presetElement = elementType.replace(/^u+/, "");
+
+				if(presetElement === "plain_text") { presetElement = 'text'; }
+				if(presetElement === "newnavigation") { presetElement = 'nav'; }
+				if(presetElement === "tabs") { presetElement = 'tab'; }
+				
+				var presets = new Backbone.Collection(Upfront.mainData[presetElement + 'Presets'] || []),
+					preset = presets.findWhere({id: 'default'});
+
+				_.each(elementStyles, function(style, name) {
+					var havePreset = _.contains(presetElements, elementType);
+					
+					if(havePreset && name.indexOf('_default') > -1 && typeof preset !== "undefined") {
+						
+						//Set preset style with preset classes
+						preset.set({
+							preset_style: cssEditor.stylesAddSelector($.trim(style), '#page .' + preset.get('id'))
+						});
+						
+						var properties = preset.toJSON();
+						
+						//Save preset to DB
+						me.updatePreset(properties, presetElement);
+						
+						//Delete style
+						me.deleteMigratedStyles(elementType, name);
+					}
+					
+					Upfront.data.styles[elementType].push(name);
+				});
+			});
+		});		
+	},
 
 	create_cssEditor: function(){
 		var me = this,
@@ -1625,13 +1701,10 @@ var Application = new (Backbone.Router.extend({
 			longSrc = '';
 
 		cssEditor.fetchThemeStyles(true).done(function(styles){
-			Upfront.data.styles = {};
+			
 			_.each(styles, function(elementStyles, elementType){
-
-				Upfront.data.styles[elementType] = [];
 				_.each(elementStyles, function(style, name){
 					style = Upfront.Util.colors.convert_string_ufc_to_color(style);
-					Upfront.data.styles[elementType].push(name);
 					var styleNode = $('#'+name);
 					// Increase element style priority over preset styles
 					var styleOutput = style.replace(/#page/g, 'div#page.upfront-layout-view .upfront-editable_entity.upfront-module');
