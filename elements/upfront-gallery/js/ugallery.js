@@ -410,7 +410,11 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 
 
+
 		this.listenTo(linkPanel.model, "change", function( model ){
+			/**
+			 * Response properly when selected link type is a post or page ( entry )
+			 */
 			if( 'entry' ===  model.get("type") ){
 				setTimeout(function() {
 					var $item = linkControl.$el.closest(".ugallery_item");
@@ -451,6 +455,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 					var $item = linkControl.$el.closest(".ugallery_item");
 
+				/**
+				 * Refresh the controlls when Ok is clicked
+				 */
 					me.add_controls_to_item( image, $item );
 			}, 50);
 
@@ -1622,6 +1629,13 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			this.createControl('settings', l10n.settings, 'on_settings_click')
 		]);
 	},
+	/**
+	 * Adds proper controll panel to the image
+	 *
+	 * @param image BB-model, one single image
+	 * @param $item jQuery object of a single image
+	 * @returns controls of of the single image
+	 */
 	add_controls_to_item: function(image, $item){
 		var controls = this.createControlsEach(image);
 		controls.render();
