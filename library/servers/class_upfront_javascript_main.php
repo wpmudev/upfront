@@ -223,13 +223,18 @@ class Upfront_JavascriptMain extends Upfront_Server {
 
 		$registry = Upfront_PresetServer_Registry::get_instance();
 		$preset_servers = $registry->get_all();
-
+		$preset_defaults = array();
 		$presets = '';
 		foreach ($preset_servers as $key => $server) {
 			$element_server = $server::get_instance();
 			$element_presets = $element_server->get_presets_javascript_server();
 			$presets .= "{$key}Presets: {$element_presets}, \n";
+			
+			//Get preset defaults
+			$preset_defaults[$key] = $element_server->get_preset_defaults();
 		}
+		
+		$preset_defaults = json_encode($preset_defaults);
 
 		$debug = array(
 			"transients" => $this->_debugger->is_active(Upfront_Debug::JS_TRANSIENTS),
@@ -352,6 +357,7 @@ Upfront.mainData = {
 	additionalFonts: {$additional_fonts},
 	userDoneFontsIntro: {$user_done_font_intro},
 	{$presets}
+	presetDefaults: {$preset_defaults},
 	themeColors: {$theme_colors},
 	postImageVariants: {$post_image_variants},
 	content: {$content},

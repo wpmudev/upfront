@@ -313,6 +313,14 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		$strings['preset_manager'] = self::_get_l10n();
 		return $strings;
 	}
+	
+	public static function get_preset_defaults () {
+		return array();
+	}
+	
+	public static function get_l10n ($key) {
+		return self::_get_l10n($key);
+	}
 
 	private static function _get_l10n ($key=false) {
 		$l10n = array(
