@@ -6,7 +6,8 @@ define([
 	'elements/upfront-slider/js/settings',
 	'scripts/upfront/preset-settings/util',
 	"scripts/upfront/link-model",
-], function(sliderTpl, editorTpl, SliderSettings, PresetUtil, LinkModel){
+	'text!elements/upfront-slider/tpl/preset-style.html',
+], function(sliderTpl, editorTpl, SliderSettings, PresetUtil, LinkModel, settingsStyleTpl){
 
 var l10n = Upfront.Settings.l10n.slider_element;
 
