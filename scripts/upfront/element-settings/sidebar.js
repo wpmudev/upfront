@@ -38,7 +38,8 @@ define([], function () {
 
 		the_settings_view = new settings_obj_view({
 			model: view.model,
-			anchor: ( current_object_proto ? current_object_proto.anchor : false )
+			anchor: ( current_object_proto ? current_object_proto.anchor : false ),
+			elementView: view
 		});
 		the_settings_view.for_view = view;
 		the_settings_view.render();
@@ -50,10 +51,10 @@ define([], function () {
 	};
 
 	Upfront.Events.on('element:settings:activate', showSettings);
-	
+
 	//Destroy settings when element is removed
 	Upfront.Events.on("entity:removed:after", destroySettings);
-	
+
 	//Destroy settings when Cancel button is clicked
 	Upfront.Events.on('element:settings:canceled', destroySettings);
 

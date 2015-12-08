@@ -138,7 +138,7 @@ define([
 				Upfront.mainData[this.mainDataCollection].splice(index, 1);
 			}
 			Upfront.mainData[this.mainDataCollection].push(properties);
-			
+
 			// Trigger change so that whole element re-renders again.
 			// (to replace element style class with preset class, look upfront-views.js
 			this.model.get('properties').trigger('change');
@@ -241,7 +241,8 @@ define([
 
 			this.editPresetModule = new EditPresetModule({
 				model: presetModel,
-				stateModules: this.stateModules
+				stateModules: this.stateModules,
+				elementView: this.elementView
 			});
 
 			this.presetCssModule = new PresetCssModule({

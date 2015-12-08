@@ -11,6 +11,7 @@ define(function() {
 
 		on_click: function() {
 			this.trigger('upfront:presets:state_show', this.options.state.toLowerCase());
+			this.model.trigger('change');// Some woodoo to make css overridden check works when state tabs are switched
 		}
 	});
 

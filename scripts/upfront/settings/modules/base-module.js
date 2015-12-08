@@ -12,6 +12,7 @@ define([
 					field.trigger('panel:set');
 				});
 			});
+			this.listenForCssOverrides();
 		},
 
 		render: function () {
@@ -28,7 +29,46 @@ define([
 				$content.append(field.el);
 			});
 
+			if (this.isCssOverridden()) {
+				this.showOverriddenOverlay();
+			}
+
+			// I don't have time to find where css for this.$el is, so here it goes
+			this.$el.css('position', 'relative');
 			this.trigger('rendered');
+		},
+
+		listenForCssOverrides: function() {
+			// Listen to changes of properties and toggle css overridden overlay if needed
+			var view = this.options.elementView;
+			var selectors = this.options.selectorsForCssCheck;
+
+			// If module is not supposed to listen for overrides don't do this
+			if (typeof view === 'undefined' || typeof selectors === 'undefined') return;
+
+			this.listenTo(this.model, 'change', function() {
+				if (this.isCssOverridden()) {
+					this.showOverriddenOverlay();
+				} else {
+					this.hideOverriddenOverlay();
+				}
+			});
+		},
+
+		/**
+		 * Allow child classes to specify if css is over ridden somewhere in manual css.
+		 */
+		isCssOverridden: function() {
+			return false;
+		},
+
+		showOverriddenOverlay: function() {
+			if (this.$el.find('.overridden-overlay').length > 0) return;
+			this.$el.append('<p class="overridden-overlay" style="position:absolute; top:0; bottom:0; left:0;right:0; background: rgba(0,0,0,0.5);color: white;">CSS is overridden</p>');
+		},
+
+		hideOverriddenOverlay: function() {
+			this.$el.find('.overridden-overlay').remove();
 		},
 
 		save_fields: function () {

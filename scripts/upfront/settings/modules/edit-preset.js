@@ -55,7 +55,8 @@ define([
 					var stateSettings = new StateSettings({
 						model: this.model,
 						modules: stateModules,
-						state: state
+						state: state,
+						elementView: this.options.elementView
 					});
 					fields.push(stateSettings);
 				}
@@ -65,7 +66,8 @@ define([
 			_.each(this.options.stateModules, function(stateModules, state) {
 				if(state !== "Global") {
 					var showStateButton = new ShowStateSettingsButton({
-						state: state
+						state: state,
+						model: this.model
 					});
 					fields.push(showStateButton);
 					this.listenTo(showStateButton, 'upfront:presets:state_show', this.showState);
@@ -82,7 +84,8 @@ define([
 					var stateSettings = new StateSettings({
 						model: this.model,
 						modules: stateModules,
-						state: state
+						state: state,
+						elementView: this.options.elementView
 					});
 					fields.push(stateSettings);
 					if (!firstStateSettings) {

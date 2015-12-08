@@ -44,7 +44,9 @@ define([
 							{
 								hasBreakpointSettings: this.hasBreakpointSettings,
 								breakpointSpecificPresetSettings: this.breakpointSpecificPresetSettings,
-								model: this.model
+								model: this.model,
+								// Reference to element view so we can check if appearance modules are over ridden by manual css
+								elementView: this.options.elementView
 							},
 							panel
 						)

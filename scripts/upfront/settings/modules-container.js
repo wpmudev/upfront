@@ -19,6 +19,7 @@ define([
 			// Create modules
 			_.each(modulesConfig, function (moduleConfig) {
 				moduleConfig.options = moduleConfig.options || {};
+				moduleConfig.options.elementView = this.options.elementView;
 
 				// Proxy the 'change' callback, and revert when finished
 				if (("change" in moduleConfig.options)) {
