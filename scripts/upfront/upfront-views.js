@@ -1554,11 +1554,21 @@ define([
 			},
 			
 			activate: function () {
+				// We don't want to activate the element when Settings sidebar is open
+				if($('#element-settings-sidebar').html() !== '') return;
+				// Deactivate previous ObjectView
+				if(typeof(Upfront.Views.PrevObjectView) !== 'undefined' && Upfront.Views.PrevObjectView !== false) {
+					Upfront.Views.PrevObjectView.deactivate();
+				}
+				Upfront.Views.PrevObjectView = this;
 				_Upfront_EditableEntity.prototype.activate.call(this);
 				if ( !this.parent_module_view ) return;
 				this.parent_module_view.$el.find('>.upfront-module').addClass('upfront-module-active');
 			},
 			deactivate: function () {
+				// We don't want to deactivate the element when Settings sidebar is open
+				if($('#element-settings-sidebar').html() !== '') return;
+				Upfront.Views.PrevObjectView = false;
 				_Upfront_EditableEntity.prototype.deactivate.call(this);
 				if ( !this.parent_module_view ) return;
 				this.parent_module_view.$el.find('>.upfront-module').removeClass('upfront-module-active');
