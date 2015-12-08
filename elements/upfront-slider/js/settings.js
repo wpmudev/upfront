@@ -11,12 +11,7 @@ define([
 		styleElementPrefix: 'slider-preset',
 		ajaxActionSlug: 'slider',
 		panelTitle: l10n.settings,
-		presetDefaults: {
-			'primaryStyle': 'notext',
-			'captionBackground': 'rgb(255, 255, 255, 0.8)',
-			'id': 'default',
-			'name': l10n.default_preset
-		},
+		presetDefaults: Upfront.mainData.presetDefaults.slider,
 		styleTpl: styleTpl,
 		stateModules: {
 			Global: [
