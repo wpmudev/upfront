@@ -2123,7 +2123,7 @@ define([
             if( this.get("selected") !== "" ){
                 return  this.get( self.get("selected") );
             }
-            return this.get( "color" );
+            return this.get("color") === '#000000' && this.get("alpha") == 0 ? 'inherit' : this.get("color");
         }
     });
     var Theme_Colors_Collection = Backbone.Collection.extend({
@@ -2165,7 +2165,7 @@ define([
         color_to_hex : function(color) {
         	if( typeof tinycolor === "function" ){
         		color = tinycolor(color);
-            	return color.toHexString();
+                return color.toHexString() === '#000000' && color.alpha == 0 ? 'inherit' : color.toHexString();
         	}
 
             if (color.substr(0, 1) === '#') {
@@ -2227,13 +2227,14 @@ define([
             this.styles = "";
             var self = this;
             Theme_Colors.colors.each(function( item, index ){
-                self.styles += " .upfront_theme_color_" + index +"{ color: " + item.get("color") + ";}";
+                var color = item.get("color") === '#000000' && item.get("alpha") == 0 ? 'inherit' : item.get("color");
+                self.styles += " .upfront_theme_color_" + index +"{ color: " + color + ";}";
                 self.styles += " a .upfront_theme_color_" + index +":hover{ color: " + item.get_hover_color() + ";}";
                 self.styles += " button .upfront_theme_color_" + index +":hover{ color: " + item.get_hover_color() + ";}";
-                self.styles += " .upfront_theme_bg_color_" + index +"{ background-color: " + item.get("color") + ";}";
+                self.styles += " .upfront_theme_bg_color_" + index +"{ background-color: " + color + ";}";
                 self.styles += " a .upfront_theme_bg_color_" + index +":hover{ background-color: " + item.get_hover_color() + ";}";
                 self.styles += " button .upfront_theme_bg_color_" + index +":hover{ background-color: " + item.get_hover_color() + ";}";
-				Upfront.Util.colors.update_colors_in_dom(item.get("prev"), item.get("color"), index);
+				Upfront.Util.colors.update_colors_in_dom(item.get("prev"), color, index);
             });
             $("#upfront_theme_colors_dom_styles").remove();
             $("<style id='upfront_theme_colors_dom_styles' type='text/css'>" + this.styles + "</style>").appendTo("body");
@@ -2288,6 +2289,7 @@ define([
                 var picker = this,
                     $this = $(this),
                     color = $this.data("color"),
+                    model = self.theme_colors.colors.at(index),
                     picker = new Field_Color({
                         className : 'upfront-field-wrap upfront-field-wrap-color sp-cf theme_color_swatch',
                         hide_label : true,
@@ -2315,8 +2317,15 @@ define([
                     backgroundColor : color,
                     backgroundImage : "none"
                 });
+                if( model.get( 'color' ) === '#000000' && model.get( 'alpha' ) == 0 ) {
+                    picker.$(".sp-preview").addClass( 'uf-unset-color' );
+                }
+                else {
+                    picker.$(".sp-preview").removeClass( 'uf-unset-color' );            
+                }
                 $this.html( picker.$el );
-            });
+                $this.prepend('<span class="theme-colors-color-name">ufc' + index + '</span>')
+           });
         },
         add_new_color : function( color ){
                 var percentage = parseInt( Theme_Colors.range, 10) / 100 || 0;
@@ -2345,6 +2354,13 @@ define([
                                         backgroundImage : "none"
                                     });
                                     this.default_value = color.toRgbString();
+		                            if( color.toHexString() === '#000000' && color.alpha == 0 ) {
+		                                $(this).parent().find(".sp-preview").addClass( 'uf-unset-color' );
+		                            }
+		                            else {
+		                                $(this).parent().find(".sp-preview").removeClass( 'uf-unset-color' );                                
+		                            }
+		                            this.default_value = color.toRgbString();
                                     self.render_bottom();
                                 }
                             }
@@ -2355,6 +2371,12 @@ define([
                 backgroundColor : color.toRgbString(),
                 backgroundImage : "none"
             });
+            if( color.toHexString() === '#000000' && color.alpha == 0 ) {
+                new_color_picker.$(".sp-preview").addClass( 'uf-unset-color' );
+            }
+            else {
+                new_color_picker.$(".sp-preview").removeClass( 'uf-unset-color' );
+            }
             this.$(".theme_colors_empty_picker").before(new_color_picker.$el);
 
             if ( Theme_Colors.colors.length === 10 ) {
@@ -2362,7 +2384,7 @@ define([
             }
             this.$("#theme-colors-no-color-notice").parent().hide();
             this.render_bottom();
-						this.on_save();
+			this.on_save();
         },
         render_bottom : function(){
 			return;
@@ -2452,6 +2474,12 @@ define([
                     backgroundColor : color.toRgbString(),
                     backgroundImage : "none"
                 });
+                if( color.toHexString() === '#000000' && color.alpha == 0 ) {
+                    $(picker).parent().find(".sp-preview").addClass( 'uf-unset-color' );
+                }
+                else {
+                    $(picker).parent().find(".sp-preview").removeClass( 'uf-unset-color' );
+                }
                 picker.default_value = color.toRgbString();
                 this.render_bottom();
             }
