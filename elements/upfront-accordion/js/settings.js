@@ -77,7 +77,13 @@ define([
 										name: 'active-content-bg-color',
 										label: l10n.content_area_bg_label
 									},
-								]
+								],
+								selectorsForCssCheck: {
+									'active-content-bg-color': {
+										selector: '.accordion-panel-content',
+										cssProperty: 'background-color'
+									}
+								}
 							}
 						},
 						{
@@ -90,6 +96,9 @@ define([
 									width: 'global-borderwidth',
 									type: 'global-bordertype',
 									color: 'global-bordercolor',
+								},
+								selectorsForCssCheck: {
+									all: '.accordion-panel-content'
 								}
 							}
 						}
@@ -109,7 +118,16 @@ define([
 										name: 'static-triangle-icon-color',
 										label: l10n.triangle_icon_label
 									}
-								]
+								],
+								selectorsForCssCheck: {
+									'static-header-bg-color': {
+										selector: '.accordion-panel:not(.accordion-panel-active) .accordion-panel-title',
+										cssProperty: 'background-color'
+									},
+									'static-triangle-icon-color': {
+										skipCheck: true
+									}
+								}
 							}
 						},
 						{
@@ -126,6 +144,11 @@ define([
 									size: 'static-font-size',
 									line_height: 'static-line-height',
 									color: 'static-font-color',
+								},
+								selectorsForCssCheck: {
+									'all': {
+										selector: '.accordion-panel:not(.accordion-panel-active) .accordion-panel-title'
+									}
 								}
 							}
 						},
@@ -139,6 +162,9 @@ define([
 									width: 'static-borderwidth',
 									type: 'static-bordertype',
 									color: 'static-bordercolor',
+								},
+								selectorsForCssCheck: {
+									all: '.accordion-panel-title'
 								}
 							}
 						}
@@ -163,7 +189,16 @@ define([
 										name: 'hover-triangle-icon-color',
 										label: l10n.triangle_icon_label
 									}
-								]
+								],
+								selectorsForCssCheck: {
+									'hover-header-bg-color': {
+										selector: '.live-preview-hover .accordion-panel-title',
+										cssProperty: 'background-color'
+									},
+									'hover-triangle-icon-color': {
+										skipCheck: true
+									}
+								}
 							}
 						},
 						{
@@ -183,6 +218,11 @@ define([
 									size: 'hover-font-size',
 									line_height: 'hover-line-height',
 									color: 'hover-font-color',
+								},
+								selectorsForCssCheck: {
+									'all': {
+										selector: '.live-preview-hover .accordion-panel-title'
+									}
 								}
 							}
 						},
@@ -198,6 +238,9 @@ define([
 									width: 'hover-borderwidth',
 									type: 'hover-bordertype',
 									color: 'hover-bordercolor',
+								},
+								selectorsForCssCheck: {
+									all: '.live-preview-hover .accordion-panel-title'
 								}
 							}
 						},
@@ -235,7 +278,16 @@ define([
 										name: 'active-triangle-icon-color',
 										label: l10n.triangle_icon_label
 									}
-								]
+								],
+								selectorsForCssCheck: {
+									'active-header-bg-color': {
+										selector: '.accordion-panel-active .accordion-panel-title',
+										cssProperty: 'background-color'
+									},
+									'active-triangle-icon-color': {
+										skipCheck: true
+									}
+								}
 							}
 						},
 						{
@@ -255,6 +307,11 @@ define([
 									size: 'active-font-size',
 									line_height: 'active-line-height',
 									color: 'active-font-color',
+								},
+								selectorsForCssCheck: {
+									'all': {
+										selector: '.accordion-panel-active .accordion-panel-title'
+									}
 								}
 							}
 						},
@@ -270,6 +327,9 @@ define([
 									width: 'active-borderwidth',
 									type: 'active-bordertype',
 									color: 'active-bordercolor',
+								},
+								selectorsForCssCheck: {
+									all: '.accordion-panel-active .accordion-panel-title'
 								}
 							}
 						}
