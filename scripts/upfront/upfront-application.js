@@ -1667,13 +1667,21 @@ var Application = new (Backbone.Router.extend({
 				if(presetElement === "tabs") { presetElement = 'tab'; }
 				
 				var presets = new Backbone.Collection(Upfront.mainData[presetElement + 'Presets'] || []),
-					preset = presets.findWhere({id: 'default'});
+					presetDefaults = Upfront.mainData.presetDefaults[presetElement] || [];
 
 				_.each(elementStyles, function(style, name) {
-					var havePreset = _.contains(presetElements, elementType);
-					
-					if(havePreset && name.indexOf('_default') > -1 && typeof preset !== "undefined") {
-						
+					var havePreset = _.contains(presetElements, elementType),
+						preset = presets.findWhere({id: 'default'});
+
+					if(havePreset && name.indexOf('_default') > -1) {
+						if(typeof preset === "undefined") {
+							Upfront.mainData[presetElement + 'Presets'] = _.isArray(Upfront.mainData[presetElement + 'Presets']) ? Upfront.mainData[presetElement + 'Presets'] : [];
+							Upfront.mainData[presetElement + 'Presets'].unshift(presetDefaults);
+							
+							presets = new Backbone.Collection(Upfront.mainData[presetElement + 'Presets'] || []);
+							preset = presets.findWhere({id: 'default'});
+						}
+
 						//Set preset style with preset classes
 						preset.set({
 							preset_style: cssEditor.stylesAddSelector($.trim(style), '#page .' + preset.get('id'))
