@@ -11,6 +11,17 @@
 define([
 	'scripts/upfront/settings/modules/base-module'
 ], function(BaseModule) {
+	var hexToRgb = function (color) {
+		if (!/^#[0-9A-F]{6}$/i.test(color)) {
+			return color;
+		}
+		var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(color);
+		return result ? 'rgb('+ parseInt(result[1], 16) + ', '+
+				parseInt(result[2], 16) + ', ' +
+				parseInt(result[3], 16) + ')'
+				: color;
+	};
+
 	var l10n = Upfront.Settings.l10n.preset_manager;
 	var TypographySettingsItem = BaseModule.extend({
 		className: 'settings_module typography_settings_item',
@@ -234,6 +245,51 @@ define([
 					})
 				);
 			}
+
+			this.listenForCssOverrides();
+		},
+
+		isCssOverridden: function() {
+			var view = this.options.elementView;
+			var selectors = this.options.selectorsForCssCheck;
+			if (typeof view === 'undefined' || typeof selectors === 'undefined') return false;
+
+			// Don't check if border is not used
+			if (this.options.toggle && !this.model.get(this.options.fields.use)) return false;
+
+			// Check overrides
+			if (this.model.get(this.currentElement + this.options.fields.typeface) !==
+				 view.$el.find(selectors.all.selector).css('font-family')) {
+				return true;
+			}
+			// Font style is very complicated to check, skipping for now
+			// var fontstyle = this.model.get(this.currentElement + this.options.fields.fontstyle);
+			// if (typeof fontstyle !== 'undefined' && fontstyle !== '' &&
+				// fontstyle !== view.$el.find(selectors.all.selector).css('font-style')) {
+				// return true;
+			// }
+			if (parseInt(this.model.get(this.currentElement + this.options.fields.size), 10) !==
+				 parseInt(view.$el.find(selectors.all.selector).css('font-size'), 10)) {
+				return true;
+			}
+			var lineHeight = this.model.get(this.currentElement + this.options.fields.line_height);
+			if (typeof lineHeight !== 'undefined' && lineHeight !== '' &&
+				parseInt(lineHeight, 10) !== parseInt(view.$el.find(selectors.all.selector).css('line-height'), 10)) {
+				return true;
+			}
+
+			var convertedColor = hexToRgb(
+				Upfront.Util.colors.to_color_value(
+					this.model.get(this.currentElement + this.options.fields.color)
+				)
+			);
+
+			if (convertedColor !==
+				 view.$el.find(selectors.all.selector).css('color')) {
+				return true;
+			}
+
+			return false;
 		},
 
 		reset_fields: function(value) {

@@ -1,6 +1,17 @@
 define([
 	'scripts/upfront/settings/modules/base-module'
 ], function(BaseModule) {
+	var hexToRgb = function (color) {
+		if (!/^#[0-9A-F]{6}$/i.test(color)) {
+			return color;
+		}
+		var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(color);
+		return result ? 'rgb('+ parseInt(result[1], 16) + ', '+
+				parseInt(result[2], 16) + ', ' +
+				parseInt(result[3], 16) + ')'
+				: color;
+	};
+
 	var l10n = Upfront.Settings.l10n.preset_manager;
 	var ColorsSettingsModule = BaseModule.extend({
 		className: 'settings_module colors_settings_item clearfix',
@@ -90,6 +101,37 @@ define([
 					})
 				);
 			}
+
+			this.listenForCssOverrides();
+		},
+
+		isCssOverridden: function() {
+			var view = this.options.elementView;
+			var selectors = this.options.selectorsForCssCheck;
+			if (typeof view === 'undefined' || typeof selectors === 'undefined') return false;
+
+			// Don't check if border is not used
+			if (this.options.toggle && !this.model.get(this.options.fields.use)) return false;
+
+			var isOverridden = false;
+
+			_.each(this.options.abccolors, function(color) {
+				// Some colors are for pseudo elements which can't be accessed with JavaScript, allow module definitiions
+				// to skip check for those
+				if (selectors[color.name].skipCheck === true) return;
+
+				var convertedColor = hexToRgb(
+					Upfront.Util.colors.to_color_value(
+						this.model.get(color.name)
+					)
+				);
+				var elementColor = view.$el.find(selectors[color.name].selector).css(selectors[color.name].cssProperty);
+				if (convertedColor !== elementColor) {
+					isOverridden = true;
+				}
+			}, this);
+
+			return isOverridden;
 		},
 
 		reset_fields: function(value) {

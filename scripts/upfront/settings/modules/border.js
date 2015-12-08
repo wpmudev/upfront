@@ -154,6 +154,34 @@ define([
 					})
 				);
 			}
+
+			this.listenForCssOverrides();
+		},
+
+		isCssOverridden: function() {
+			var view = this.options.elementView;
+			var selectors = this.options.selectorsForCssCheck;
+			if (typeof view === 'undefined' || typeof selectors === 'undefined') return false;
+
+			// Don't check if border is not used
+			if (this.options.toggle && !this.model.get(this.options.fields.use)) return false;
+
+			// Check overrides
+			if (parseInt(this.model.get(this.currentElement + this.options.fields.width), 10) !==
+				parseInt(view.$el.find(selectors.all).css('border-top-width'), 10)) {
+				return true;
+			}
+			if (this.model.get(this.currentElement + this.options.fields.type) !==
+				view.$el.find(selectors.all).css('border-top-style')) {
+					return true;
+			}
+
+			if (this.model.get(this.currentElement + this.options.fields.color) !==
+			view.$el.find(selectors.all).css('border-top-color')) {
+				return true;
+			}
+
+			return false;
 		},
 
 		reset_fields: function(value) {
