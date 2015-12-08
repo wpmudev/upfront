@@ -9,8 +9,9 @@
             {[ if (colors.length){ ]}
             <div id="theme-colors-swatches">
                 <span class="theme-colors-swatch"></span>
+                <p class="theme-colors-explanation">{{Upfront.Settings.l10n.global.views.theme_colors_explanation}} <span class="theme-colors-eg-attribute">color:</span> <span class="theme-colors-eg-sharp">#</span><span class="theme-colors-eg-value">ufc2</span><span class="theme-colors-eg-semicolon">;</span></p>
                 {[ _.each(colors, function (color, idx){ ]}
-								<span class="theme-colors-color-picker color-{{idx}}" data-index="{{idx}}" data-color="{{color.color}}"></span>
+                                <span class="theme-colors-color-picker color-{{idx}}" data-index="{{idx}}" data-color="{{color.color}}"></span>
                 {[ }); ]}
                 {[ if (colors.length < 10){ ]}
                  <span class="theme_colors_empty_picker"></span>
@@ -25,27 +26,27 @@
     <!--<div class="panel-setting-theme-colors-bottom">-->
         <!--<div class="panel-setting-theme-colors-shades-wrap">-->
             <!--{[ if( colors.length ){ ]}-->
-						<!--{{Upfront.Settings.l10n.global.views.define_swatch_hovers}}-->
+                        <!--{{Upfront.Settings.l10n.global.views.define_swatch_hovers}}-->
             <!--<label id="panel-setting-theme-colors-shades-label"  for="panel-setting-theme-colors-shades-range">-->
-							<!--Color change value (<span class="panel-setting-theme-colors-shades-range-number">{{range}}</span>)-->
-						<!--</label>-->
-						<!--<div class="upfront-field upfront-field-slider panel-setting-theme-colors-shades-range"></div>-->
-						<!--<ul class="panel-setting-theme-colors-shades-range-labels">-->
-								<!--<li>0</li>-->
-								<!--<li>50</li>-->
-						<!--</ul>-->
+                            <!--Color change value (<span class="panel-setting-theme-colors-shades-range-number">{{range}}</span>)-->
+                        <!--</label>-->
+                        <!--<div class="upfront-field upfront-field-slider panel-setting-theme-colors-shades-range"></div>-->
+                        <!--<ul class="panel-setting-theme-colors-shades-range-labels">-->
+                                <!--<li>0</li>-->
+                                <!--<li>50</li>-->
+                        <!--</ul>-->
             <!--<div class="panel-setting-theme-colors-meta">-->
                 <!--{{Upfront.Settings.l10n.global.views.click_hilite_shade}}-->
-								<!--<p class="swatch-title">{{Upfront.Settings.l10n.global.views.hilite}}:</p>-->
+                                <!--<p class="swatch-title">{{Upfront.Settings.l10n.global.views.hilite}}:</p>-->
                 <!--<div class="panel-setting-theme-colors-highlights">-->
                     <!--{[ _.each(colors, function (color, idx){ ]}-->
-										<!--<span class="theme-colors-color-box theme-colors-highlight{[ if(color.selected === 'highlight') { ]} theme-colors-color-box-selected{[ } ]} {{color.luminance}} color-{{idx}}" style="background-color: {{color.highlight}}" data-color="{{color.highlight}}" data-index="{{idx}}" data-type="highlight"></span>-->
+                                        <!--<span class="theme-colors-color-box theme-colors-highlight{[ if(color.selected === 'highlight') { ]} theme-colors-color-box-selected{[ } ]} {{color.luminance}} color-{{idx}}" style="background-color: {{color.highlight}}" data-color="{{color.highlight}}" data-index="{{idx}}" data-type="highlight"></span>-->
                     <!--{[ }); ]}-->
                 <!--</div>-->
                 <!--<p class="swatch-title">Shade:</p>-->
                 <!--<div class="panel-setting-theme-colors-shades">-->
                     <!--{[ _.each(colors, function (color, idx){ ]}-->
-										<!--<span class="theme-colors-color-box theme-colors-shade{[ if(color.selected === 'shade') { ]} theme-colors-color-box-selected{[ } ]} {{color.luminance}} color-{{idx}}"  style="background-color: {{color.shade}}" data-index="{{idx}}" data-color="{{color.shade}}" data-type="shade"></span>-->
+                                        <!--<span class="theme-colors-color-box theme-colors-shade{[ if(color.selected === 'shade') { ]} theme-colors-color-box-selected{[ } ]} {{color.luminance}} color-{{idx}}"  style="background-color: {{color.shade}}" data-index="{{idx}}" data-color="{{color.shade}}" data-type="shade"></span>-->
                     <!--{[ }); ]}-->
                 <!--</div>-->
             <!--</div>-->
