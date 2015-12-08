@@ -504,7 +504,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 		$.magnificPopup.open({
 			items: {
-				src: item.find('.ugallery_link').attr('href') || item.find('.ugallery-image').attr('src')
+				src: image.get("srcFull")
 			},
 			type: 'image',
 			image: {
