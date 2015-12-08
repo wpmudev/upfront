@@ -663,8 +663,8 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 					$presetsArray[$index]['active-use-typography'] = 1;
 				}
 			}
+			$presets = json_encode($presetsArray);
 		}
-		$presets = json_encode($presetsArray);
 		// End migration juggle
 
 		if (isset($args['json']) && $args['json']) return $presets;
