@@ -336,7 +336,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			this.createLinkControl(image)
 		]);
 
-		panel.items.push(this.createLabelControl(image));
+		if (this.property('labelFilters')[0] === 'true') {
+			panel.items.push(this.createLabelControl(image));
+		}
 
 		if (image.get('imageLink').type === 'image' || image.get('imageLink').type === 'lightbox' || -1 !== ['image', 'lightbox'].indexOf( this.property( "linkTo" ) ) ) {
 			panel.items.push(this.createControl('fullscreen', l10n.ctrl.show_image, 'openImageLightbox'));
@@ -406,6 +408,17 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			imageUrl: image.get('srcFull')
 		});
 
+
+
+		this.listenTo(linkPanel.model, "change", function( model ){
+			if( 'entry' ===  model.get("type") ){
+				setTimeout(function() {
+					var $item = linkControl.$el.closest(".ugallery_item");
+					me.add_controls_to_item( image, $item );
+				}, 50);
+			}
+		});
+
 		this.listenTo(imageLink, 'change', function(){
 			image.set({'imageLink': imageLink.toJSON()});
 		});
@@ -425,7 +438,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			me.$el.closest('.ui-draggable').draggable('disable');
 		});
 
-		me.listenTo(linkControl, 'panel:close', function(){
+		me.listenTo(linkControl, 'panel:ok', function(){
 			linkControl.$el
 				.parents('.ugallery_item')
 					.removeClass('upfront-control-visible');
@@ -435,6 +448,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 					.attr('href', imageLink.get('url'))
 					.attr('target', imageLink.get('target'))
 					.attr('class', 'ugallery_link ugallery_link' + imageLink.get('type'));
+
+					var $item = linkControl.$el.closest(".ugallery_item");
+
+					me.add_controls_to_item( image, $item );
 			}, 50);
 
 			me.$el.closest('.ui-draggable').draggable('enable');
@@ -827,12 +844,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			_.each(items, function(item) {
 				var $item = $(item),
 					image = me.images.get($item.attr('rel')),
-					controls = me.createControlsEach(image),
-					title = $item.find('.ugallery-thumb-title');
-
-				controls.setWidth($item.width());
-				controls.render();
-				$item.append($('<div class="ugallery-controls upfront-ui"></div>').append(controls.$el));
+					title = $item.find('.ugallery-thumb-title'),
+					controls = me.add_controls_to_item( image, $item)
+						.setWidth( $item.width() );
 
 				me.ensureCaptionEditorExists(title, image);
 
@@ -841,11 +855,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 				}
 				image.controls = controls;
 			});
-			if (me.property('labelFilters')[0] === 'true') {
-				me.$el.find('.ugallery-magnific-labels').parents('.upfront-inline-panel-item').show();
-			} else {
-				me.$el.find('.ugallery-magnific-labels').parents('.upfront-inline-panel-item').hide();
-			}
+
 
 		}, 300);
 
@@ -1611,6 +1621,14 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			this.createPaddingControl(),
 			this.createControl('settings', l10n.settings, 'on_settings_click')
 		]);
+	},
+	add_controls_to_item: function(image, $item){
+		var controls = this.createControlsEach(image);
+		controls.render();
+		$item.find('.ugallery-controls').remove();
+		$item.append($('<div class="ugallery-controls upfront-ui"></div>').append(controls.$el));
+
+		return controls;
 	}
 });
 

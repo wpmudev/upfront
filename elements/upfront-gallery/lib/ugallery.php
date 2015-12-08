@@ -296,7 +296,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 		if (is_user_logged_in()) {
 			upfront_add_element_style('ugallery-style-editor', array('css/ugallery-editor.css', dirname(__FILE__)));
 		}
-		
+
 		//wp_enqueue_script('magnific');
 		upfront_add_element_script('magnific', array('/scripts/magnific-popup/magnific-popup.min.js', false));
 
