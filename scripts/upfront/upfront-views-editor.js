@@ -2116,7 +2116,8 @@ define([
             highlight : "",
             shade : "",
             selected : "",
-            luminance : ""
+            luminance : "",
+            alpha: 1
         },
         get_hover_color : function(){
             var self = this;
@@ -2352,7 +2353,8 @@ define([
                     color : color.toHexString(),
                     prev : color.toHexString(),
                     highlight : self.color_luminance( color.toHex(), percentage ),
-                    shade : self.color_luminance( color.toHex(), (percentage * -1) )
+                    shade : self.color_luminance( color.toHex(), (percentage * -1) ),
+                    alpha: color.alpha
                 }),
                 new_color_picker = new Field_Color({
                     className : 'upfront-field-wrap upfront-field-wrap-color sp-cf theme_color_swatch theme-colors-color-picker',
@@ -2364,7 +2366,8 @@ define([
                         model.set({
                             color : color.toHexString(),
                             highlight : self.color_luminance( color.toHex(), percentage ),
-                            shade : self.color_luminance( color.toHex(), (percentage * -1) )
+                            shade : self.color_luminance( color.toHex(), (percentage * -1) ),
+                            alpha: color.alpha
                         });
                         $(this).parent().find(".sp-preview").css({
                             backgroundColor : color.toRgbString(),
@@ -2489,7 +2492,8 @@ define([
                     color : color.toHexString(),
                     prev : model.get("color"),
                     highlight : this.color_luminance( color.toHex(), percentage ),
-                    shade : this.color_luminance( color.toHex(), (percentage * -1) )
+                    shade : this.color_luminance( color.toHex(), (percentage * -1) ),
+                    alpha : color.alpha
                 });
                 $(picker).parent().find(".sp-preview").css({
                     backgroundColor : color.toRgbString(),
