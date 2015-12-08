@@ -35,6 +35,7 @@ define([
 					me.render();
 				}
 			});
+			this.model.get('properties').bind('change', this.handle_visual_padding_hint, this);
 		},
 
 		render: function () {
