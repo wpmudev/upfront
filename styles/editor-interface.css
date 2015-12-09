@@ -13737,7 +13737,7 @@ i.visit_link {
   z-index: 10000 !important;
   top: -5px;
   right: -5px;
-  display: none;
+  display: block !important;
   cursor: pointer; }
 
 i.visit_link:before {
@@ -13776,7 +13776,8 @@ i.visit_link:after {
   z-index: 9;
   color: rgba(255, 255, 255, 0.6);
   border-radius: 9px;
-  display: none; }
+  display: none;
+  text-indent: initial; }
 
 i.visit_link.visit_link_unlink {
   display: none !important; }
@@ -13791,19 +13792,22 @@ i.upfront-icon-region-visit-link-anchor:before, i.visit_link.visit_link_anchor:b
   background-position: -910px -42px; }
 
 i.visit_link.visit_link_external:after {
-  content: 'Open Ext. Link'; }
+  content: 'Open Ext. Link';
+  width: 100px; }
 
 i.upfront-icon-region-visit-link-external:before, i.visit_link.visit_link_external:before {
   background-position: -910px -74px; }
 
 i.visit_link.visit_link_entry:after {
-  content: 'Visit Post/Page'; }
+  content: 'Visit Post/Page';
+  width: 100px; }
 
 i.upfront-icon-region-visit-link-entry:before, i.visit_link.visit_link_entry:before {
   background-position: -910px -106px; }
 
 i.visit_link.visit_link_lightbox:after {
-  content: 'Open Lightbox'; }
+  content: 'Open Lightbox';
+  width: 100px; }
 
 i.upfront-icon-region-visit-link-lightbox:before, i.visit_link.visit_link_lightbox:before {
   background-position: -910px -138px; }
@@ -13813,6 +13817,9 @@ i.visit_link.visit_link_unlink:after {
 
 i.upfront-icon-region-visit-link-unlink:before, i.visit_link.visit_link_unlink:before {
   background-position: -910px -203px; }
+
+i.visit_link:after {
+  display: block; }
 
 i.visit_link:hover:after {
   display: block; }
