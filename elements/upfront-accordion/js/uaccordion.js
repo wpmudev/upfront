@@ -21,7 +21,7 @@ define([
 				this.model = new UaccordionModel({properties: this.model.get('properties')});
 			}
 			this.events = _.extend({}, this.events, {
-				'click .accordion-add-panel': 'addPanel',
+				// 'click .accordion-add-panel': 'addPanel',
 				'click .accordion-panel-title': 'onPanelTitleClick',
 				'dblclick .accordion-panel-active .accordion-panel-content': 'onContentDblclick',
 				'click i': 'deletePanel'
@@ -257,6 +257,14 @@ define([
 				return this.model.set_property(name, value, silent);
 			}
 			return this.model.get_property_value_by_name(name);
+		},
+
+		getControlItems: function(){
+			return _([
+				this.createControl('add', l10n.add_panel, 'addPanel'),
+				this.createPaddingControl(),
+				this.createControl('settings', l10n.settings, 'on_settings_click')
+			]);
 		}
 	});
 
