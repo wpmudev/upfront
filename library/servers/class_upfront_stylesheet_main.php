@@ -18,6 +18,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 
 		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
 			upfront_add_ajax('upfront_theme_styles', array($this, "theme_styles"));
+			upfront_add_ajax('upfront_theme_styles_options', array($this, "theme_styles_options"));
 		}
 		if (Upfront_Permissions::current(Upfront_Permissions::SAVE)) {
 			upfront_add_ajax('upfront_save_styles', array($this, "save_styles"));
@@ -154,7 +155,10 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$storage_key = Upfront_Layout::get_storage_key();
 		if (isset($_POST['dev']) && $_POST['dev'] === 'true' && strpos($storage_key, '_dev') === false) $storage_key = $storage_key . '_dev';
 		$styles = get_option($storage_key . '_' . get_stylesheet() . '_styles');
-		$styles = apply_filters('upfront_get_theme_styles', $styles);
+		
+		if(!isset($_POST['only_db_options']) || (isset($_POST['only_db_options']) && $_POST['only_db_options'] != "true")) {
+			$styles = apply_filters('upfront_get_theme_styles', $styles);
+		}
 
 		$this->_out(new Upfront_JsonResponse_Success(array(
 			'styles' => $styles
