@@ -140,7 +140,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$current_styles = get_option($db_option);
 
 		if(!$current_styles || !isset($current_styles[$elementType]) || !isset($current_styles[$elementType][$styleName]))
-			$this->_out(new Upfront_JsonResponse_Error("The style doesn\'t exist."));
+			$this->_out(new Upfront_JsonResponse_Success("The style doesn\'t exist."));
 
 		unset($current_styles[$elementType][$styleName]);
 
