@@ -141,6 +141,7 @@ class Upfront_UtabsView extends Upfront_Object {
 				'active_p_info' => __('The paragraph that contains active tab content', 'upfront'),
 			),
 			'settings' => __('Tabs settings', 'upfront'),
+			'add_tab' => __('Add a Tab', 'upfront'),
 			'default_preset' => __('Default', 'upfront'),
 			'content_area_colors_label' => __('Content Area Colors', 'upfront'),
 			'content_area_bg_label' => __('Content Area BG', 'upfront'),
