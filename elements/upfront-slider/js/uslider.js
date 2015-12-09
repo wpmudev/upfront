@@ -1023,7 +1023,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	removeSlide: function() {
 		this.startingHeight = this.$('.upfront-slider').height();
 
-		if (confirm('Are you sure to delete this slide?')) {
+		if (confirm(l10n.delete_slide_confirm)) {
 			// It's very important that next line goes before removing slide from collection
 			var currentSlide = this.getCurrentSlide();
 			this.setCurrentSlide( currentSlide > 0 ? currentSlide - 1 : 0 );

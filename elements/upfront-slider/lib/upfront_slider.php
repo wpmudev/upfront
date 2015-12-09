@@ -218,6 +218,7 @@ class Upfront_UsliderView extends Upfront_Object {
 			'txt_only' => __('txt / widget only', 'upfront'),
 			'choose_img' => __('Choose Images', 'upfront'),
 			'slide_desc' => __('Slide description', 'upfront'),
+			'delete_slide_confirm' => __('Are you sure to delete this slide?', 'upfront'),
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)
