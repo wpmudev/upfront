@@ -68,6 +68,11 @@ define([
 
 			this.migrateElementToPreset();
 			this.setupItems();
+			this.listenToOnce(Upfront.Events, 'element:settings:canceled', this.cancelPresetChanges);
+		},
+
+		cancelPresetChanges: function() {
+			this.updatePreset(this.presetBackup);
 		},
 
 		migrateElementToPreset: function() {
@@ -220,6 +225,9 @@ define([
 				currentBreakpoint,
 				breakpointsData,
 				breakpointData;
+
+			// Backup preset model properties for later use in reset (on settings cancel)
+			this.presetBackup = presetModel.toJSON();
 
 			// Add items
 			this.selectPresetModule = new SelectPresetModule({
