@@ -1015,17 +1015,19 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	},
 
 	onRemoveSlide: function(e) {
-		var item = $(e.target).closest('.uimage-controls');
-		this.removeSlide(item);
+		// var item = $(e.target).closest('.uimage-controls');
+		this.removeSlide(/*item*/);
 	},
 
-	removeSlide: function(item) {
+	// removeSlide: function(item) {
+	removeSlide: function() {
 		this.startingHeight = this.$('.upfront-slider').height();
 
 		if (confirm('Are you sure to delete this slide?')) {
 			// It's very important that next line goes before removing slide from collection
-			this.setCurrentSlide( this.getCurrentSlide() > 0 ? this.getCurrentSlide() - 1 : 0 );
-			this.model.slideCollection.remove(item.attr('rel'));
+			var currentSlide = this.getCurrentSlide();
+			this.setCurrentSlide( currentSlide > 0 ? currentSlide - 1 : 0 );
+			this.model.slideCollection.remove(this.model.slideCollection.at(currentSlide).id);
 		}
 	},
 
