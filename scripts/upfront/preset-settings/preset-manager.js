@@ -85,7 +85,8 @@ define([
 				this.migrateExistingPresets();
 				return;
 			}
-			if(this.property('preset') && this.property('preset') !== 'default') return;
+
+			if (this.property('preset')) return;
 
 			elementStyleName = this.property('theme_style');
 
@@ -138,7 +139,7 @@ define([
 				Upfront.mainData[this.mainDataCollection].splice(index, 1);
 			}
 			Upfront.mainData[this.mainDataCollection].push(properties);
-			
+
 			// Trigger change so that whole element re-renders again.
 			// (to replace element style class with preset class, look upfront-views.js
 			this.model.get('properties').trigger('change');
@@ -213,6 +214,7 @@ define([
 		},
 
 		setupItems: function() {
+			this.trigger('upfront:presets:setup-items', this);
 			var preset = this.property('preset') ? this.clear_preset_name(this.property('preset')) : 'default',
 				presetModel = this.presets.findWhere({id: preset}),
 				currentBreakpoint,
@@ -276,6 +278,7 @@ define([
 		},
 
 		updatePreset: function(properties) {
+
 			var index,
 				styleElementId,
 			  currentBreakpoint,
@@ -308,6 +311,7 @@ define([
 				Upfront.mainData[this.mainDataCollection].splice(index, 1);
 			}
 			Upfront.mainData[this.mainDataCollection].push(properties);
+
 		},
 
 		createPreset: function(presetName) {

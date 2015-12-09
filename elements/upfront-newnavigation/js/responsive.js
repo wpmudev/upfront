@@ -300,7 +300,7 @@ jQuery(document).ready(function($) {
 
 				preset = breakpoints.preset[currentKey];
 
-				if (preset.menu_style == 'burger') {
+				if (preset.menu_style === 'burger') {
 					$(this).attr('data-style', 'burger');
 					$(this).attr('data-alignment', ( preset.menu_alignment ? preset.menu_alignment : $(this).data('alignmentbk') ));
 					$(this).attr('data-burger_alignment', preset.burger_alignment);
@@ -327,7 +327,7 @@ jQuery(document).ready(function($) {
 					//Z-index the container module to always be on top, in the layout edit mode
 					$(this).closest('div.upfront-newnavigation_module').css('z-index', 3);
 
-					$(this).find('ul.menu').siblings('.burger_overlay').remove();
+					
 					$(this).find('ul.menu').hide();
 				} else {
 					$(this).attr('data-style', ( preset.menu_style ? preset.menu_style : $(this).data('stylebk') ));
@@ -353,6 +353,8 @@ jQuery(document).ready(function($) {
 					//remove the z-index from the container module
 					$(this).closest('div.upfront-newnavigation_module').css('z-index', '');
 				}
+				
+				$(this).find('ul.menu').siblings('.burger_overlay').remove();
 
 				if(preset.is_floating && preset.is_floating == 'yes')
 					$(this).addClass('upfront-navigation-float');
@@ -450,6 +452,7 @@ jQuery(document).ready(function($) {
 		$('.responsive_nav_toggler').css({position: '', left: '', top: ''});
 		$('ul.menu').css('padding-top', '');
 		$('.burger_nav_close').parent('li.wrap_burger_nav_close').remove();
+		
 		roll_responsive_nav(".upfront-output-unewnavigation > .upfront-navigation");
 		floatInit();
 	});
