@@ -583,16 +583,13 @@ define([
 			$('body').append(loading.$el);
 			loading.done(function () {
 				setTimeout(function () {
-					me.model.restore_undo_state();
-					Upfront.Events.trigger("command:undo")
-					me.render();
+					var dfr = me.model.restore_undo_state();
+					if (dfr && dfr.done) dfr.done(function () {
+						Upfront.Events.trigger("command:undo");
+						me.render();
+					});
 				}, 100); // Need the timeout to start loading first
 			});
-			/*
-			this.model.restore_undo_state();
-			Upfront.Events.trigger("command:undo")
-			this.render();
-			*/
 		}
 	});
 
@@ -629,16 +626,13 @@ define([
 			$('body').append(loading.$el);
 			loading.done(function () {
 				setTimeout(function () {
-					me.model.restore_redo_state();
-					Upfront.Events.trigger("command:redo")
-					me.render();
+					var dfr = me.model.restore_redo_state();
+					if (dfr && dfr.done) dfr.done(function () {
+						Upfront.Events.trigger("command:redo");
+						me.render();
+					});
 				}, 100); // Need the timeout to start loading first
 			});
-			/*
-			this.model.restore_redo_state();
-			Upfront.Events.trigger("command:redo")
-			this.render();
-			*/
 		}
 	});
 
