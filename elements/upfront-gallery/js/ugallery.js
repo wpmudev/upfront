@@ -582,8 +582,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			'background': this.property('lightbox_active_area_bg')
 		});
 		$('.mfp-bg').css('background', this.property('lightbox_overlay_bg'));
-		$('.mfp-container').append('<button title="Previous (Left arrow key)" type="button" class="mfp-arrow mfp-arrow-left mfp-prevent-close"></button>');
-		$('.mfp-container').append('<button title="Next (Right arrow key)" type="button" class="mfp-arrow mfp-arrow-right mfp-prevent-close"></button>');
+		if( $('.mfp-container').find('.mfp-arrow.mfp-arrow-left.mfp-prevent-close').length === 0 )
+			$('.mfp-container').append('<button title="Previous (Left arrow key)" type="button" class="mfp-arrow mfp-arrow-left mfp-prevent-close"></button>');
+		if( $('.mfp-container').find('.mfp-arrow.mfp-arrow-right.mfp-prevent-close').length === 0 )
+			$('.mfp-container').append('<button title="Next (Right arrow key)" type="button" class="mfp-arrow mfp-arrow-right mfp-prevent-close"></button>');
 
 		if ($('style#' + containerClass).length === 0) {
 			$('body').append('<style id="' + containerClass + '"></style>');
@@ -687,14 +689,15 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 				change: function(color) {
 					me.property('lightbox_overlay_bg', color.toRgbString());
 					me.setupLightbox();
-				},
+				}
 			}
 		});
 
 		_.each(fields, function(field){
 			field.render();
 			field.delegateEvents();
-			$lightbox.append(field.$el);
+			if( $lightbox.find( field.$el).length === 0 )
+				$lightbox.append(field.$el);
 		});
 
 		$('#gallery-lb-settings-button').toggle(
@@ -724,6 +727,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 				type: "GalleryLightbox",
 				sidebar: true,
 				global: false,
+				toolbar: true,
 				cssSelectors: {
 					'.mfp-close': {label: l10n.css.lightbox_close, info: l10n.css.lightbox_close},
 					'.glb-content-container': {label: l10n.css.lightbox_content_wrapper, info: l10n.css.lightbox_content_wrapper_info},
@@ -745,7 +749,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 					});
 				}
 			});
-			$('#upfront-general-csseditor').css('width', '100%');
 			$('.mfp-content').css({
 				'margin-bottom': 250,
 				'margin-top': 50
@@ -825,13 +828,13 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		});
 
 		this.images.each(function(image) {
-			if(image.get('loading')){
+			if(image.get('loading') && 0 === me.$('.ugallery_item[rel="' + image.id  + '"]').find( '.ugallery-image-loading').length ){
 				me.$('.ugallery_item[rel="' + image.id  + '"]')
 					.append('<p class="ugallery-image-loading">' + l10n.loading + '</p>');
 			}
 		});
 
-		if(_.indexOf(['ok', 'starting'], me.property('status')) === -1) {
+		if(_.indexOf(['ok', 'starting'], me.property('status')) === -1 && 0 === me.$('.upfront-gallery').find( '.upfront-quick-swap').length ) {
 			me.$('.upfront-gallery').append('<div class="upfront-quick-swap"><p>' + l10n.personalize + '</p></div>');
 		}
 
@@ -1060,7 +1063,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			}, 100);
 		});
 
-		this.$('.ugallery').append(selector.hide());
+		if( 0 === this.$( '.ugallery').find( ".upfront-ui.ugallery-onclick").length )
+			this.$('.ugallery').append(selector.hide());
+
 		selector.fadeIn();
 	},
 
@@ -1161,7 +1166,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 				})
 			;
 			loading.render();
-			this.parent_module_view.$el.append(loading.$el);
+			if( 0 === this.parent_module_view.$el.find( loading.$el) )
+				this.parent_module_view.$el.append(loading.$el);
 
 			Upfront.Util.post(editOptions).done(function(response) {
 				loading.done();

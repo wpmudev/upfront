@@ -7899,7 +7899,7 @@ var GeneralCSSEditor = Backbone.View.extend({
 		this.model = options.model;
 		this.sidebar = options.sidebar !== false;
 		this.global = options.global === true;
-
+		this.toolbar = ( options.toolbar !== false );
 		this.prepareAce = deferred.promise();
 		require([Upfront.Settings.ace_url], function(){
 			deferred.resolve();
@@ -7957,7 +7957,8 @@ var GeneralCSSEditor = Backbone.View.extend({
 		this.$el.html(this.tpl({
 			selectors: this.selectors,
 			elementType: false,
-			show_style_name: false
+			show_style_name: false,
+			showToolbar: this.toolbar
 		}));
 
 		this.resizeHandler('.');

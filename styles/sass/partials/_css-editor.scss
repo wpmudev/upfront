@@ -6,10 +6,15 @@
 	bottom: 0;
 	right: 0;
 	width: 100%;
-	z-index: 90;
+	z-index: 2000;
 	display: none;
 }
-
+.upfront-css-top{
+  height: 30px;
+}
+#upfront-general-csseditor{
+  //left: 260px;
+}
 .upfront-css-resizable {
 	background: #3d5266;
 	position: absolute;
