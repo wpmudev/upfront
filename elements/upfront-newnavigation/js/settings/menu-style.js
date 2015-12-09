@@ -8,8 +8,9 @@ define(function() {
 			return this.options.title;
 		},
 		initialize: function(options) {
-			this.options = options || {};
 
+			this.options = options || {};
+			
 			var me = this,
 				state = this.options.state;
 

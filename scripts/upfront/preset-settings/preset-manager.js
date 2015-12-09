@@ -214,6 +214,7 @@ define([
 		},
 
 		setupItems: function() {
+			this.trigger('upfront:presets:setup-items', this);
 			var preset = this.property('preset') ? this.clear_preset_name(this.property('preset')) : 'default',
 				presetModel = this.presets.findWhere({id: preset}),
 				currentBreakpoint,
@@ -277,6 +278,7 @@ define([
 		},
 
 		updatePreset: function(properties) {
+
 			var index,
 				styleElementId,
 			  currentBreakpoint,
@@ -309,6 +311,7 @@ define([
 				Upfront.mainData[this.mainDataCollection].splice(index, 1);
 			}
 			Upfront.mainData[this.mainDataCollection].push(properties);
+
 		},
 
 		createPreset: function(presetName) {

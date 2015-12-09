@@ -11,12 +11,11 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 		$menu_slug = $this->_get_property('menu_slug');
 
 		$activeBreakpoints = Upfront_Grid::get_grid()->get_breakpoints();
-		foreach ($activeBreakpoints as $name => $point) {
-			$data = $point->get_data();
-			if(!empty($data['enabled'])) {
-				$breakpoint_data[$data['id']]['width'] = $data['width'];
-			}
-		}
+		
+			
+		
+		
+		
 
 		$preset = $this->_get_property('preset');
 		if (!isset($preset)) {
@@ -27,6 +26,25 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 		$breakpoint_data = $this->_get_property('breakpoint');
 		$breakpoint_data['preset'] = $preset_props['breakpoint'];
 
+		// if a breakpoint does not have info to render menu style, copy it from one higher
+		if(is_array($breakpoint_data['preset'])) {
+			$higher_name = '';
+			foreach ($activeBreakpoints as $name => $point) {
+				$data = $point->get_data();
+
+				if(!array_key_exists($name, $breakpoint_data['preset']) && $higher_name != '')
+					$breakpoint_data['preset'][$name] = $breakpoint_data['preset'][$higher_name];
+				
+				$higher_name = $name;
+			}
+
+			/** if breakpoint has menu_style set to burger, but no
+				burger_alignment is defined, set it to default
+			**/
+			if($breakpoint_data['preset'][$name]['menu_style'] === 'burger' && !isset($breakpoint_data['preset'][$name]['burger_alignment']) ) {
+				$breakpoint_data['preset'][$name]['burger_alignment'] = 'left';
+			}
+		}
 		$menu_style = $this->_get_property('menu_style');
 		$menu_alignment = $this->_get_property('menu_alignment');
 
