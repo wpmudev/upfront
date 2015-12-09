@@ -4,8 +4,9 @@ define([
 	'scripts/upfront/settings/modules/select-preset',
 	'scripts/upfront/settings/modules/edit-preset',
 	'scripts/upfront/settings/modules/preset-css',
-	'scripts/upfront/preset-settings/util'
-], function(RootSettingsPanel, SelectPresetModule, EditPresetModule, PresetCssModule, Util) {
+	'scripts/upfront/preset-settings/util',
+	'scripts/upfront/preset-settings/preset-css-editor'
+], function(RootSettingsPanel, SelectPresetModule, EditPresetModule, PresetCssModule, Util, PresetCSSEditor) {
 	/**
 	 * Handles presets: load, edit, delete and update for elements.
 	 *
@@ -192,6 +193,16 @@ define([
 			style = $.trim(Upfront.Application.cssEditor.get_style_element().html().replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
 			style = style.replace(new RegExp(elementStyleName, 'g'), preset.get('name'));
 
+			var presetCssEditor = new PresetCSSEditor({
+				model: this.model,
+				preset: preset,
+				stylename: elementStyleName,
+				doNotRender: true
+			});
+
+			style = presetCssEditor.cleanUpStyles(style);
+			style = presetCssEditor.renderCss(style);
+
 			preset.set({
 				preset_style: style
 			});
@@ -199,7 +210,6 @@ define([
 			this.property('theme_style', '');
 
 			var properties = preset.toJSON();
-			Util.updatePresetStyle(this.styleElementPrefix.replace(/-preset/, ''), properties, this.styleTpl);
 
 			this.debouncedSavePreset(properties);
 
@@ -213,6 +223,7 @@ define([
 				Upfront.mainData[this.mainDataCollection].splice(index, 1);
 			}
 			Upfront.mainData[this.mainDataCollection].push(properties);
+			Util.updatePresetStyle(this.styleElementPrefix.replace(/-preset/, ''), properties, this.styleTpl);
 			// Trigger change so that whole element re-renders again.
 			// (to replace element style class with preset class, look upfront-views.js
 			this.model.get('properties').trigger('change');
