@@ -1647,37 +1647,15 @@ var Application = new (Backbone.Router.extend({
 			});
 	},
 	
-	fetchDBThemeStyles: function(separately){
-		var fetchData = {
-				action:'upfront_theme_styles',
-				separately: separately,
-				only_db_options: true,
-			},
-			deferred = $.Deferred()
-		;
-
-		Upfront.Util.post(fetchData)
-			.success(function(response){
-				deferred.resolve(response.data.styles);
-			});
-		return deferred.promise();
-	},
-	
 	migrateStylesToPreset: function() {
 		var me = this,
 			cssEditor = new Upfront.Views.Editor.CSSEditor(),
 			presetElements = ['image', 'plain_text', 'ucontact', 'ugallery', 'uslider', 'unewnavigation'];
 			
-		Upfront.data.stylesdb = {};
-		
-		this.fetchDBThemeStyles(true).done(function(styles) {
-			Upfront.data.stylesdb = styles;
-		});
+		Upfront.data.styles = {};
 
 		cssEditor.fetchThemeStyles(true).done(function(styles){
-			
 			Upfront.data.styles = {};
-			
 			_.each(styles, function(elementStyles, elementType){
 				
 				Upfront.data.styles[elementType] = [];
@@ -1693,7 +1671,6 @@ var Application = new (Backbone.Router.extend({
 
 				_.each(elementStyles, function(style, name) {
 					var havePreset = _.contains(presetElements, elementType),
-						haveStyle = _.contains(Upfront.data.stylesdb, elementType),
 						preset = presets.findWhere({id: 'default'});
 
 					if(havePreset && name.indexOf('_default') > -1) {
@@ -1715,10 +1692,8 @@ var Application = new (Backbone.Router.extend({
 						//Save preset to DB
 						me.updatePreset(properties, presetElement);
 						
-						//Delete style if exist
-						if(haveStyle) {
-							me.deleteMigratedStyles(elementType, name);
-						}
+						//Delete style
+						me.deleteMigratedStyles(elementType, name);
 					}
 					
 					Upfront.data.styles[elementType].push(name);

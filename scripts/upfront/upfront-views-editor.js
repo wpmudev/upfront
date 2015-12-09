@@ -7716,8 +7716,7 @@ var CSSEditor = Backbone.View.extend({
 	fetchThemeStyles: function(separately){
 		var fetchData = {
 				action:'upfront_theme_styles',
-				separately: separately,
-				only_db_options: false,
+				separately: separately
 			},
 			deferred = $.Deferred()
 		;
