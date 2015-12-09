@@ -42,7 +42,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	imageLabels: {},
 
 	reopenSettings: false,
-
 	initialize: function(options){
 		var me = this,
 			elementId = this.property('element_id'),
@@ -503,6 +502,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		}
 
 		$.magnificPopup.open({
+			closeOnBgClick: _.isTrue( this.model.get_property_value_by_name('lightbox_click_out_close')[0] ),
 			items: {
 				src: image.get("srcFull")
 			},
@@ -618,6 +618,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 				],
 				change: function(value) {
 					me.property('lightbox_click_out_close', value);
+					this.model.set('lightbox_click_out_close', value, true);
 					me.setupLightbox();
 				}
 			}),

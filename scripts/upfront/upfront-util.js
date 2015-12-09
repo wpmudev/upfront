@@ -2,7 +2,18 @@
 
 window.empty = function (what) { return "undefined" === typeof what ? true : !what; };
 window.count = function (what) { return "undefined" === typeof what ? 0 : (what && what.length ? what.length : 0); };
+_.mixin({
+	isTrue: function( val ) {
+		if( typeof val === "undefined")
+			return false;
 
+		if( _.isString( val ) )
+			return val.toLowerCase() === "true";
+
+		if(_.isNumber( val ) )
+			return 0 !== val;
+	}
+});
 
 //requestFrameAnimation polyfill
 var rAFPollyfill = function(callback){
