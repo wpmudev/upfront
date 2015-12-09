@@ -558,7 +558,11 @@ var _alpha = "alpha",
 			var state = this.get_current_state(),
 				all = Upfront.Util.Transient.get_all()
 			;
-			if (all.indexOf(state) < 0) Upfront.Util.Transient.push("undo", state);
+			if (all.indexOf(state) >= 0) return false;
+
+			Upfront.Util.Transient.push("undo", state);
+
+			Upfront.Events.trigger("upfront:undo:state_stored");
 		},
 		restore_undo_state: function () {
 			if (!this.has_undo_states()) return false;
