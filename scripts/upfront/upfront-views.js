@@ -1565,10 +1565,10 @@ define([
 				// We don't want to activate the element when Settings sidebar is open
 				if($('#element-settings-sidebar').html() !== '') return;
 				// Deactivate previous ObjectView
-				if(typeof(Upfront.Views.PrevObjectView) !== 'undefined' && Upfront.Views.PrevObjectView !== false) {
-					Upfront.Views.PrevObjectView.deactivate();
+				if(typeof(Upfront.data.prevEntity) !== 'undefined' && Upfront.data.prevEntity !== false) {
+					Upfront.data.prevEntity.deactivate();
 				}
-				Upfront.Views.PrevObjectView = this;
+				Upfront.data.prevEntity = this;
 				_Upfront_EditableEntity.prototype.activate.call(this);
 				if ( !this.parent_module_view ) return;
 				this.parent_module_view.$el.find('>.upfront-module').addClass('upfront-module-active');
@@ -1576,7 +1576,7 @@ define([
 			deactivate: function () {
 				// We don't want to deactivate the element when Settings sidebar is open
 				if($('#element-settings-sidebar').html() !== '') return;
-				Upfront.Views.PrevObjectView = false;
+				Upfront.data.prevEntity = false;
 				_Upfront_EditableEntity.prototype.deactivate.call(this);
 				if ( !this.parent_module_view ) return;
 				this.parent_module_view.$el.find('>.upfront-module').removeClass('upfront-module-active');
@@ -2580,6 +2580,9 @@ define([
 				this.update_background();
 			},
 			deactivate: function () {
+				// We don't want to deactivate the Group when Settings sidebar is open
+				if($('#element-settings-sidebar').html() !== '') return;
+				Upfront.data.prevEntity = false;
 				this.$el.removeClass("upfront-module-group-active");
 				this.check_deactivated();
 				this.trigger("upfront:entity:deactivate", this);
@@ -2588,10 +2591,17 @@ define([
 				var me= this,
 					currentEntity = Upfront.data.currentEntity
 				;
+				// We don't want to activate the Group when Settings sidebar is open
+				if($('#element-settings-sidebar').html() !== '') return;
+				// Deactivate previous ObjectView
+				if(typeof(Upfront.data.prevEntity) !== 'undefined' && Upfront.data.prevEntity !== false) {
+					Upfront.data.prevEntity.deactivate();
+				}
+				Upfront.data.prevEntity = this;
 				if (this.activate_condition && !this.activate_condition()) return false;
 				if (currentEntity && currentEntity == this) return false;
 				if (currentEntity && currentEntity != this) {
-					Upfront.data.currentEntity.trigger('deactivated');
+					currentEntity.trigger('deactivated');
 				}
 
 				Upfront.data.currentEntity = this;
