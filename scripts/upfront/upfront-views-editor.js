@@ -583,16 +583,13 @@ define([
 			$('body').append(loading.$el);
 			loading.done(function () {
 				setTimeout(function () {
-					me.model.restore_undo_state();
-					Upfront.Events.trigger("command:undo")
-					me.render();
+					var dfr = me.model.restore_undo_state();
+					if (dfr && dfr.done) dfr.done(function () {
+						Upfront.Events.trigger("command:undo");
+						me.render();
+					});
 				}, 100); // Need the timeout to start loading first
 			});
-			/*
-			this.model.restore_undo_state();
-			Upfront.Events.trigger("command:undo")
-			this.render();
-			*/
 		}
 	});
 
@@ -629,16 +626,13 @@ define([
 			$('body').append(loading.$el);
 			loading.done(function () {
 				setTimeout(function () {
-					me.model.restore_redo_state();
-					Upfront.Events.trigger("command:redo")
-					me.render();
+					var dfr = me.model.restore_redo_state();
+					if (dfr && dfr.done) dfr.done(function () {
+						Upfront.Events.trigger("command:redo");
+						me.render();
+					});
 				}, 100); // Need the timeout to start loading first
 			});
-			/*
-			this.model.restore_redo_state();
-			Upfront.Events.trigger("command:redo")
-			this.render();
-			*/
 		}
 	});
 
@@ -2116,14 +2110,15 @@ define([
             highlight : "",
             shade : "",
             selected : "",
-            luminance : ""
+            luminance : "",
+            alpha: 1
         },
         get_hover_color : function(){
             var self = this;
             if( this.get("selected") !== "" ){
                 return  this.get( self.get("selected") );
             }
-            return this.get( "color" );
+            return this.get("color") === '#000000' && this.get("alpha") == 0 ? 'inherit' : this.get("color");
         }
     });
     var Theme_Colors_Collection = Backbone.Collection.extend({
@@ -2165,7 +2160,7 @@ define([
         color_to_hex : function(color) {
         	if( typeof tinycolor === "function" ){
         		color = tinycolor(color);
-            	return color.toHexString();
+                return color.toHexString() === '#000000' && color.alpha == 0 ? 'inherit' : color.toHexString();
         	}
 
             if (color.substr(0, 1) === '#') {
@@ -2227,13 +2222,14 @@ define([
             this.styles = "";
             var self = this;
             Theme_Colors.colors.each(function( item, index ){
-                self.styles += " .upfront_theme_color_" + index +"{ color: " + item.get("color") + ";}";
+                var color = item.get("color") === '#000000' && item.get("alpha") == 0 ? 'inherit' : item.get("color");
+                self.styles += " .upfront_theme_color_" + index +"{ color: " + color + ";}";
                 self.styles += " a .upfront_theme_color_" + index +":hover{ color: " + item.get_hover_color() + ";}";
                 self.styles += " button .upfront_theme_color_" + index +":hover{ color: " + item.get_hover_color() + ";}";
-                self.styles += " .upfront_theme_bg_color_" + index +"{ background-color: " + item.get("color") + ";}";
+                self.styles += " .upfront_theme_bg_color_" + index +"{ background-color: " + color + ";}";
                 self.styles += " a .upfront_theme_bg_color_" + index +":hover{ background-color: " + item.get_hover_color() + ";}";
                 self.styles += " button .upfront_theme_bg_color_" + index +":hover{ background-color: " + item.get_hover_color() + ";}";
-				Upfront.Util.colors.update_colors_in_dom(item.get("prev"), item.get("color"), index);
+				Upfront.Util.colors.update_colors_in_dom(item.get("prev"), color, index);
             });
             $("#upfront_theme_colors_dom_styles").remove();
             $("<style id='upfront_theme_colors_dom_styles' type='text/css'>" + this.styles + "</style>").appendTo("body");
@@ -2244,7 +2240,8 @@ define([
 
         },
         on_render : function(){
-            var self = this;
+            var self = this,
+                unset_color_index;
             this.theme_colors = Theme_Colors,
             this.theme_color_range = Theme_Colors.range;
             this.$el.html( this.template({
@@ -2253,17 +2250,23 @@ define([
             } ) );
 
             if( this.theme_colors.colors.length < 10 ){
-                this.add_empty_picker();
+                this.add_empty_picker(this.theme_colors.colors.length);
+            }
+            unset_color_index = this.theme_colors.colors.length + 1;
+            while( unset_color_index < 10 ){
+                this.add_unset_color(unset_color_index);
+                unset_color_index++;
             }
             this.add_previous_pickers();
             this.add_slider();
         },
-        add_empty_picker : function(){
+        add_empty_picker : function(index){
             var self = this,
                 empty_picker = new Field_Color({
                 className : 'upfront-field-wrap upfront-field-wrap-color sp-cf theme_color_swatch theme_color_swatch_empty',
                 hide_label : true,
                 default_value: '#ffffff',
+                blank_alpha: 0,
                 spectrum: {
                     choose: function (color) {
                     	if (!_.isObject(color)) return false;
@@ -2280,7 +2283,16 @@ define([
                 }
             });
             empty_picker.render();
-            this.$(".theme_colors_empty_picker").html(empty_picker.$el);
+            this.$(".theme_colors_empty_picker").html(empty_picker.$el)
+                .prepend('<span class="theme-colors-color-name">ufc' + index + '</span>');
+        },
+        add_unset_color : function(index){
+            this.$('#theme-colors-swatches').append(
+                '<span class="theme_colors_unset_color">' + 
+                    '<span class="theme-colors-color-name">ufc' + index + '</span>' + 
+                    '<span class="theme-colors-color-no-color"><span></span></span>' + 
+                '</span>'
+            );
         },
         add_previous_pickers : function(){
             var self = this;
@@ -2288,10 +2300,12 @@ define([
                 var picker = this,
                     $this = $(this),
                     color = $this.data("color"),
+                    model = self.theme_colors.colors.at(index),
                     picker = new Field_Color({
                         className : 'upfront-field-wrap upfront-field-wrap-color sp-cf theme_color_swatch',
                         hide_label : true,
                         default_value: color,
+                        blank_alpha: 0,
                         spectrum: {
                         	change: function (color) {
                                 self.update_colors(this, color, index);
@@ -2315,54 +2329,80 @@ define([
                     backgroundColor : color,
                     backgroundImage : "none"
                 });
+                if( model.get( 'color' ) === '#000000' && model.get( 'alpha' ) == 0 ) {
+                    picker.$(".sp-preview").addClass( 'uf-unset-color' );
+                }
+                else {
+                    picker.$(".sp-preview").removeClass( 'uf-unset-color' );            
+                }
                 $this.html( picker.$el );
-            });
+                $this.prepend('<span class="theme-colors-color-name">ufc' + index + '</span>')
+           });
         },
         add_new_color : function( color ){
-                var percentage = parseInt( Theme_Colors.range, 10) / 100 || 0;
+            var percentage = parseInt( Theme_Colors.range, 10) / 100 || 0;
 
-                var self = this,
-                    model = this.theme_colors.colors.add({
-                        color : color.toHexString(),
-                        prev : color.toHexString(),
-                        highlight : self.color_luminance( color.toHex(), percentage ),
-                        shade : self.color_luminance( color.toHex(), (percentage * -1) )
-                    }),
-                    new_color_picker = new Field_Color({
+            var self = this,
+                model = this.theme_colors.colors.add({
+                    color : color.toHexString(),
+                    prev : color.toHexString(),
+                    highlight : self.color_luminance( color.toHex(), percentage ),
+                    shade : self.color_luminance( color.toHex(), (percentage * -1) ),
+                    alpha: color.alpha
+                }),
+                new_color_picker = new Field_Color({
                     className : 'upfront-field-wrap upfront-field-wrap-color sp-cf theme_color_swatch theme-colors-color-picker',
                     hide_label : true,
                     default_value: color.toRgbString(),
-                    spectrum: {
-                            change: function (color){
-                                    var percentage = parseInt( Theme_Colors.range, 10) / 100 || 0;
-                                    model.set({
-                                        color : color.toHexString(),
-                                        highlight : self.color_luminance( color.toHex(), percentage ),
-                                        shade : self.color_luminance( color.toHex(), (percentage * -1) )
-                                    });
-                                    $(this).parent().find(".sp-preview").css({
-                                        backgroundColor : color.toRgbString(),
-                                        backgroundImage : "none"
-                                    });
-                                    this.default_value = color.toRgbString();
-                                    self.render_bottom();
-                                }
-                            }
-                    });
+                    blank_alpha: 0,
+                    change: function (color){
+                        var percentage = parseInt( Theme_Colors.range, 10) / 100 || 0;
+                        model.set({
+                            color : color.toHexString(),
+                            highlight : self.color_luminance( color.toHex(), percentage ),
+                            shade : self.color_luminance( color.toHex(), (percentage * -1) ),
+                            alpha: color.alpha
+                        });
+                        $(this).parent().find(".sp-preview").css({
+                            backgroundColor : color.toRgbString(),
+                            backgroundImage : "none"
+                        });
+                        this.default_value = color.toRgbString();
+                        self.render_bottom();
+                    }
+                }),
+                colorIndex = Theme_Colors.colors.length - 1,
+                $wrapper = $('<span class="theme-colors-color-picker color-' + colorIndex + '" data-index="' + colorIndex + '" data-color="' + color.toHexString() + '"><span class="theme-colors-color-name">ufc' + colorIndex + '</span></span>')
+            ;
 
             new_color_picker.render();
             new_color_picker.$(".sp-preview").css({
                 backgroundColor : color.toRgbString(),
                 backgroundImage : "none"
             });
-            this.$(".theme_colors_empty_picker").before(new_color_picker.$el);
+            if( color.toHexString() === '#000000' && color.alpha == 0 ) {
+                new_color_picker.$(".sp-preview").addClass( 'uf-unset-color' );
+            }
+            else {
+                new_color_picker.$(".sp-preview").removeClass( 'uf-unset-color' );
+            }
+            $wrapper.append(new_color_picker.$el);
+
+            this.$(".theme_colors_empty_picker").before($wrapper);
+            this.$(".theme_colors_empty_picker").next().remove();
+
+            this.$(".theme_colors_empty_picker").find('.theme-colors-color-name').html( 'ufc' + ( colorIndex + 1 ) );
+
+            this.$(".theme_colors_empty_picker").find('.sp-preview').css({
+                backgroundColor: 'inherit'
+            });
 
             if ( Theme_Colors.colors.length === 10 ) {
                 this.$(".theme_colors_empty_picker").remove();
             }
             this.$("#theme-colors-no-color-notice").parent().hide();
             this.render_bottom();
-						this.on_save();
+			this.on_save();
         },
         render_bottom : function(){
 			return;
@@ -2446,12 +2486,19 @@ define([
                     color : color.toHexString(),
                     prev : model.get("color"),
                     highlight : this.color_luminance( color.toHex(), percentage ),
-                    shade : this.color_luminance( color.toHex(), (percentage * -1) )
+                    shade : this.color_luminance( color.toHex(), (percentage * -1) ),
+                    alpha : color.alpha
                 });
                 $(picker).parent().find(".sp-preview").css({
                     backgroundColor : color.toRgbString(),
                     backgroundImage : "none"
                 });
+                if( color.toHexString() === '#000000' && color.alpha == 0 ) {
+                    $(picker).parent().find(".sp-preview").addClass( 'uf-unset-color' );
+                }
+                else {
+                    $(picker).parent().find(".sp-preview").removeClass( 'uf-unset-color' );
+                }
                 picker.default_value = color.toRgbString();
                 this.render_bottom();
             }
@@ -4417,13 +4464,21 @@ var Field_ToggleableText = Field_Text.extend({
 			return ' <input ' + this.get_field_attr_html(attr) + ' /> ' + (this.options.suffix ? this.options.suffix : '');
 		},
 		update_input_border_color : function(rgb){
+            var spPreview = this.$el.find(".sp-preview");
 			$(".sp-input").css({
 				borderColor : rgb
 			});
 
-			this.$el.find(".sp-preview").css({
-				backgroundColor:rgb
-			});
+            spPreview.css({
+                backgroundColor: rgb
+            })
+
+            if( rgb !== 'rgba(0, 0, 0, 0)' ) {
+                spPreview.removeClass('uf-unset-color');
+            }
+            else {
+                spPreview.addClass('uf-unset-color');;
+            }
 		},
 		update_input_val : function(hex){
 			this.$(".sp-input").val(hex);
@@ -4475,7 +4530,7 @@ var Field_ToggleableText = Field_Text.extend({
 			this.update_input_border_color(color.toRgbString);
 		},
 		set_to_blank : function(){
-			var blank_color = 'rgba(0, 0, 0, ' + this.options.blank_alpha + ')',
+            var blank_color = 'rgba(0, 0, 0, ' + ( _.isUndefined( this.options.blank_alpha ) ? 1 : this.options.blank_alpha ) + ')',
 				color = tinycolor(blank_color);
 			color.reset = true;
 			this.rgba = {r: 0, g: 0, b:0, a: 0};

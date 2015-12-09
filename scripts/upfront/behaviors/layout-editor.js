@@ -543,6 +543,7 @@ var LayoutEditor = {
 			region = regions ? regions.get_by_name('shadow') : false
 		;
 		if (regions && region) { regions.remove(region); region = false; }
+		Upfront.Application.layout_view.local_view = false;
 		Upfront.Application.layout_view.render();
 	},
 

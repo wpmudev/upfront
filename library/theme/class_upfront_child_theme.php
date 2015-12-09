@@ -652,18 +652,20 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		$presets = $this->get_theme_settings()->get('accordion_presets');
 
-    // Juggle the presets to add some defaults because presets migration to new settings
+		// Juggle the presets to add some defaults because presets migration to new settings
 		$presetsArray = json_decode($presets, true);
-    foreach($presetsArray as $index=>$preset) {
-      if (isset($preset['active-use-color']) === false) {
-        $presetsArray[$index]['active-use-color'] = 1;
-      }
-      if (isset($preset['active-use-typography']) === false) {
-        $presetsArray[$index]['active-use-typography'] = 1;
-      }
-    }
-    $presets = json_encode($presetsArray);
-    // End migration juggle
+		if (is_array($presetsArray)) {
+			foreach($presetsArray as $index=>$preset) {
+				if (isset($preset['active-use-color']) === false) {
+					$presetsArray[$index]['active-use-color'] = 1;
+				}
+				if (isset($preset['active-use-typography']) === false) {
+					$presetsArray[$index]['active-use-typography'] = 1;
+				}
+			}
+			$presets = json_encode($presetsArray);
+		}
+		// End migration juggle
 
 		if (isset($args['json']) && $args['json']) return $presets;
 

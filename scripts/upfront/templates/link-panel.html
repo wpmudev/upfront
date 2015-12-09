@@ -15,6 +15,10 @@
 	<a title="{{Upfront.Settings.l10n.global.content.change_link}}" class="ulinkpanel-entry-url js-ulinkpanel-input-url js-ulinkpanel-input-entry" href="#">{{(!link.url || link.url=='' || link.url=='http://')?'Select':link.url}}</a>
 </div>
 {[ } ]}
+{[if(type == 'anchor') { ]}
+<div class="anchor-selector">
+</div>
+{[ } ]}
 {[if(type == 'lightbox') { ]}
 <div class="js-ulinkpanel-input-url js-ulinkpanel-input-lightbox clearfix">
 	{[ if(lightboxes.length) { ]}

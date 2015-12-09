@@ -588,9 +588,12 @@ define(function() {
 			get_color: function(ufc){
 				if(_.isEmpty(ufc)) return false;
 
-				var	theme_colors = Upfront.Views.Theme_Colors.colors.pluck("color");
+                var theme_colors = Upfront.Views.Theme_Colors.colors.pluck("color"),
+                    theme_alphas = Upfront.Views.Theme_Colors.colors.pluck("alpha"),
+                    color_index = parseInt(ufc.replace("ufc", "").replace("#", ""), 10),
+                    theme_color = theme_colors[color_index] === '#000000' && theme_alphas[color_index] === 0 ? 'inherit' : theme_colors[color_index];
 
-				return theme_colors[ parseInt(ufc.replace("ufc", "").replace("#", ""), 10) ];
+                return theme_color;
 			},
 			/**
 			 * Looks for ufc instances in a string and replaces them with actual color
@@ -599,10 +602,13 @@ define(function() {
 			convert_string_ufc_to_color: function( string, include_ufc_as_comment ){
 				if(_.isEmpty(string)) return string;
 				include_ufc_as_comment = typeof include_ufc_as_comment === "undefined" ? true : include_ufc_as_comment;
-				var	theme_colors = Upfront.Views.Theme_Colors.colors.pluck("color");
+                var theme_colors = Upfront.Views.Theme_Colors.colors.pluck("color"),
+                    theme_alphas = Upfront.Views.Theme_Colors.colors.pluck("alpha");
 				for(var _i in theme_colors){
 					var pattern = new RegExp("#ufc" + _i,"g"),
-						theme_color = include_ufc_as_comment ? "/*" + "#ufc" + _i + "*/" + theme_colors[_i]:  theme_colors[_i];
+                        theme_color;
+                    theme_color = theme_colors[_i] === '#000000' && theme_alphas[_i] === 0 ? 'inherit' : theme_colors[_i];
+                    theme_color = include_ufc_as_comment ? "/*" + "#ufc" + _i + "*/" + theme_color : theme_color;
 					string = string.replace(pattern, theme_color );
 				}
 				return string;

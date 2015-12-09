@@ -30,6 +30,8 @@ class Upfront_Server_LayoutRevisions extends Upfront_Server {
 		upfront_add_ajax('upfront_build_preview', array($this, "build_preview"));
 
 		upfront_add_ajax('upfront_list_revisions', array($this, "list_revisions"));
+		
+		upfront_add_ajax('upfront_get_revision', array($this, "get_revision"));
 
 		// This goes before the `is_admin` check, because it fires in AJAX
 		add_action('upfront-style-base_layout', array($this, 'intercept_style_loading'));
@@ -169,6 +171,8 @@ class Upfront_Server_LayoutRevisions extends Upfront_Server {
 	 * Outputs revisions JSON data, or JSON error.
 	 */
 	public function list_revisions () {
+		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE_REVISION)) $this->_out(new Upfront_JsonResponse_Error("No way"));
+
 		$data = stripslashes_deep($_POST);
 		$cascade = !empty($data['cascade']) ? $data['cascade'] : false;
 		if (empty($cascade)) $this->_out(new Upfront_JsonResponse_Error("No data received"));
@@ -200,6 +204,24 @@ class Upfront_Server_LayoutRevisions extends Upfront_Server {
 			);
 		}
 		$this->_out(new Upfront_JsonResponse_Success($out));
+	}
+
+	/**
+	 * Outputs a single revision as JSON data, or JSON error
+	 */
+	public function get_revision () {
+		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE_REVISION)) $this->_out(new Upfront_JsonResponse_Error("No way"));
+		
+		$data = stripslashes_deep($_POST);
+		$rvsn_id = !empty($data['revision']) ? $data['revision'] : false;
+		if (empty($rvsn_id)) $this->_out(new Upfront_JsonResponse_Error("No data received"));
+
+		$revision = $this->_data->get_revision($rvsn_id);
+		if (empty($revision)) $this->_out(new Upfront_JsonResponse_Error("No data found"));
+
+		$this->_out(new Upfront_JsonResponse_Success(array(
+			'revision' => $revision,
+		)));
 	}
 
 	/**

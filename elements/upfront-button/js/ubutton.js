@@ -37,6 +37,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		this.delegateEvents();
 
 		this.model.get('properties').bind('change', this.render, this);
+		this.model.get('properties').bind('change', this.handle_visual_padding_hint, this);
 		this.model.get('properties').bind('add', this.render, this);
 		this.model.get('properties').bind('remove', this.render, this);
 		this.listenTo(this.model, 'change:preset', this.updatePresetClass);
