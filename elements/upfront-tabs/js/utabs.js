@@ -33,7 +33,7 @@ define([
 			this.property('tabs', tabs);
 
 			this.events = _.extend({}, this.events, {
-				'click .add-item': 'addTab',
+				// 'click .add-item': 'addTab',
 				'click .tabs-tab': 'onTabClick',
 				'keydown .tabs-tab[contenteditable=true]': 'onTabKeydown',
 				'click .utab-content-active': 'onContentClick',
@@ -43,6 +43,7 @@ define([
 			this.delegateEvents();
 
 			this.model.get('properties').bind('change', this.render, this);
+			this.model.get('properties').bind('change', this.handle_visual_padding_hint, this);
 			this.model.get('properties').bind('add', this.render, this);
 			this.model.get('properties').bind('remove', this.render, this);
 
@@ -236,9 +237,9 @@ define([
 			});
 
 			var $upfrontObjectContent = this.$el.find('.upfront-object-content');
-			if(this.$el.find('a.add-item').length < 1) {
-				$('<b class="upfront-entity_meta upfront-ui add_item"><a href="" class="upfront-icon-button add-item"></a></b>').insertBefore($upfrontObjectContent);
-			}
+			// if(this.$el.find('a.add-item').length < 1) {
+			// 	$('<b class="upfront-entity_meta upfront-ui add_item"><a href="" class="upfront-icon-button add-item"></a></b>').insertBefore($upfrontObjectContent);
+			// }
 
 			this.$el.find('div#'+ this.currentTabId).addClass('utab-content-active').siblings().removeClass('utab-content-active');
 
@@ -292,6 +293,14 @@ define([
 				return this.model.set_property(name, value, silent);
 			}
 			return this.model.get_property_value_by_name(name);
+		},
+
+		getControlItems: function(){
+			return _([
+				this.createControl('add', l10n.add_tab, 'addTab'),
+				this.createPaddingControl(),
+				this.createControl('settings', l10n.settings, 'on_settings_click')
+			]);
 		}
 	});
 

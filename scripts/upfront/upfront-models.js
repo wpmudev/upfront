@@ -546,7 +546,7 @@ var _alpha = "alpha",
 			}
 		},
 		get_current_state: function () {
-			return revision = Upfront.PreviewUpdate.get_revision();
+			return Upfront.PreviewUpdate.get_revision();
 		},
 		has_undo_states: function () {
 			return !!Upfront.Util.Transient.length("undo");
@@ -558,15 +558,19 @@ var _alpha = "alpha",
 			var state = this.get_current_state(),
 				all = Upfront.Util.Transient.get_all()
 			;
-			if (all.indexOf(state) < 0) Upfront.Util.Transient.push("undo", state);
+			if (all.indexOf(state) >= 0) return false;
+
+			Upfront.Util.Transient.push("undo", state);
+
+			Upfront.Events.trigger("upfront:undo:state_stored");
 		},
 		restore_undo_state: function () {
 			if (!this.has_undo_states()) return false;
-			this.restore_state_from_stack("undo");
+			return this.restore_state_from_stack("undo");
 		},
 		restore_redo_state: function () {
 			if (!this.has_redo_states()) return false;
-			this.restore_state_from_stack("redo");
+			return this.restore_state_from_stack("redo");
 		},
 		restore_state_from_stack: function (stack) {
 			var other = ("undo" == stack ? "redo" : "undo"),
@@ -576,11 +580,23 @@ var _alpha = "alpha",
 				Upfront.Util.log("Invalid " + revision + " state");
 				return false;
 			}
-
 			Upfront.Util.Transient.push(other, this.get_current_state());
 			// ... 1. get the state that corresponds to this revision
-			// ... 2. do this:
-			//this.get("regions").reset(state);
+			var me = this,
+				dfr = new $.Deferred()
+			;
+			Upfront.Util.post({
+				action: 'upfront_get_revision',
+				revision: revision
+			}).done(function (response) {
+				if ("revision" in response.data) {
+					// ... 2. do this:
+					me.get("regions").reset(Upfront.Util.model_to_json(response.data.revision.regions));
+					dfr.resolve();
+				}
+			});
+
+			return dfr.promise();
 		}
 	}),
 

@@ -175,16 +175,11 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		this.listenTo(Upfront.Events, "command:selection:remove", Upfront.Behaviors.LayoutEditor.remove_selections);
 
 		// Undo / Redo
-/*
-// Don't listen to undo events separately, as we'll be using the previews data instead
 		this.listenTo(Upfront.Events, "entity:activated", Upfront.Behaviors.LayoutEditor.create_undo);
 		this.listenTo(Upfront.Events, "entity:resize_start", Upfront.Behaviors.LayoutEditor.create_undo);
 		this.listenTo(Upfront.Events, "entity:drag_start", Upfront.Behaviors.LayoutEditor.create_undo);
 		this.listenTo(Upfront.Events, "entity:removed:before", Upfront.Behaviors.LayoutEditor.create_undo);
 		this.listenTo(Upfront.Events, "entity:region:activated", Upfront.Behaviors.LayoutEditor.create_undo);
-*/
-// Like this:
-		this.listenTo(Upfront.Events, "preview:build:stop", Upfront.Behaviors.LayoutEditor.create_undo);
 
 		this.listenTo(Upfront.Events, "command:undo", Upfront.Behaviors.LayoutEditor.apply_history_change);
 		this.listenTo(Upfront.Events, "command:redo", Upfront.Behaviors.LayoutEditor.apply_history_change);

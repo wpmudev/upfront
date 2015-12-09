@@ -1,8 +1,8 @@
 <div class="upfront-accordion-container accordion-preset-<?php echo $preset ?>">
 	<div class="upfront-accordion-wrap">
-        <b class="upfront-entity_meta upfront-ui">
+        <!-- <b class="upfront-entity_meta upfront-ui">
             <a href="#" class="upfront-icon-button upfront-icon-button-accordion-add-panel accordion-add-panel"></a>
-        </b>
+        </b> -->
         <?php for ($i = 0; $i < $accordion_count; $i++) { ?>
         <div class="accordion-panel <?php if($i === 0) { ?>accordion-panel-active<?php } ?>">
             <div class="accordion-panel-title" id="title_<?php echo $element_id ?>-<?php echo $i ?>"><?php echo $accordion[$i]['title'] ?></div>

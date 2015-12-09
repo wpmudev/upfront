@@ -1429,17 +1429,33 @@ define([
 				}
 				else if ( prop.id.match(/(top|bottom|left|right)_padding_(use|num|slider)/) ) {
 					this.apply_paddings($me);
-					if ( prop.id.match(/top_padding_num/) ) {
-						this.show_top_padding_hint();
-					}
-					if ( prop.id.match(/bottom_padding_num/) ) {
-						this.show_bottom_padding_hint();
-					}
+					this.handle_visual_padding_hint(prop);
+				}
+				else if ( prop.id.match(/padding_slider/) ) {
+					this.render();
+					this.handle_visual_padding_hint(prop);
 				}
 				else {
 					this.render();
 				}
 				Upfront.Events.trigger('entity:object:update', this, this.model);
+
+			},
+			handle_visual_padding_hint: function (prop) {
+				if (typeof prop === 'undefined') return;
+
+				if ( prop.id.match(/(top|bottom)_padding_(num|slider)/) ) {
+					if ( prop.id.match(/top_padding_(num|slider)/) ) {
+						this.show_top_padding_hint();
+					}
+					if ( prop.id.match(/bottom_padding_(num|slider)/) ) {
+						this.show_bottom_padding_hint();
+					}
+				}
+				else if ( prop.id.match(/padding_slider/) ) {
+					this.show_top_padding_hint();
+					this.show_bottom_padding_hint();
+				}
 
 			},
 			update_position: function () {
@@ -1557,10 +1573,10 @@ define([
 				// We don't want to activate the element when Settings sidebar is open
 				if($('#element-settings-sidebar').html() !== '') return;
 				// Deactivate previous ObjectView
-				if(typeof(Upfront.Views.PrevObjectView) !== 'undefined' && Upfront.Views.PrevObjectView !== false) {
-					Upfront.Views.PrevObjectView.deactivate();
+				if(typeof(Upfront.data.prevEntity) !== 'undefined' && Upfront.data.prevEntity !== false) {
+					Upfront.data.prevEntity.deactivate();
 				}
-				Upfront.Views.PrevObjectView = this;
+				Upfront.data.prevEntity = this;
 				_Upfront_EditableEntity.prototype.activate.call(this);
 				if ( !this.parent_module_view ) return;
 				this.parent_module_view.$el.find('>.upfront-module').addClass('upfront-module-active');
@@ -1568,7 +1584,7 @@ define([
 			deactivate: function () {
 				// We don't want to deactivate the element when Settings sidebar is open
 				if($('#element-settings-sidebar').html() !== '') return;
-				Upfront.Views.PrevObjectView = false;
+				Upfront.data.prevEntity = false;
 				_Upfront_EditableEntity.prototype.deactivate.call(this);
 				if ( !this.parent_module_view ) return;
 				this.parent_module_view.$el.find('>.upfront-module').removeClass('upfront-module-active');
@@ -1956,6 +1972,7 @@ define([
 			initialize: function () {
 				var callback = this.update || this.render;
 				this.listenTo(this.model.get("properties"), 'change', callback);
+				this.listenTo(this.model.get("properties"), 'change', this.handle_visual_padding_hint);
 				this.listenTo(this.model.get("properties"), 'add', callback);
 				this.listenTo(this.model.get("properties"), 'remove', callback);
 				this._prev_class = this.model.get_property_value_by_name('class');
@@ -1969,6 +1986,75 @@ define([
 
 				this.editing = false;
 				this.on('entity:resize_stop', this.on_resize, this);
+			},
+			handle_visual_padding_hint: function (prop) {
+				if (typeof prop === 'undefined') return;
+
+				if ( prop.id.match(/(top|bottom)_padding_(num|slider)/) ) {
+					if ( prop.id.match(/top_padding_(num|slider)/) ) {
+						this.show_top_padding_hint();
+					}
+					if ( prop.id.match(/bottom_padding_(num|slider)/) ) {
+						this.show_bottom_padding_hint();
+					}
+				}
+
+			},
+			show_top_padding_hint: function () {
+				var me               = this,
+					top_padding_num  = this.model.get_breakpoint_property_value('top_padding_num', true),
+					top_padding_hint = this.$el.find('.upfront-entity-top-padding-hint')
+				;
+				if(!this.top_padding_hint_flag) {
+					this.top_padding_hint_flag = true;
+					return;
+				}
+				if(!top_padding_hint.length) {
+					top_padding_hint = $('<div class="upfront-ui upfront-entity-padding-hint upfront-entity-top-padding-hint"></div>').appendTo(this.$el);
+				}
+				top_padding_hint.css({
+					height: top_padding_num + 'px',
+					opacity: 1
+				});
+				clearTimeout(this.top_padding_hint_timer);
+				this.top_padding_hint_timer = setTimeout(function() {
+					me.hide_top_padding_hint();
+				}, 1000);
+			},
+			hide_top_padding_hint: function () {
+				if(!this.padding_hint_locked) {				
+					this.$el.find('.upfront-entity-top-padding-hint').css({
+						opacity: 0
+					});
+				}
+			},
+			show_bottom_padding_hint: function () {
+				var me                  = this,
+					bottom_padding_num  = this.model.get_breakpoint_property_value('bottom_padding_num', true),
+					bottom_padding_hint = this.$el.find('.upfront-entity-bottom-padding-hint')
+				;
+				if(!this.bottom_padding_hint_flag) {
+					this.bottom_padding_hint_flag = true;
+					return;
+				}
+				if(!bottom_padding_hint.length) {
+					bottom_padding_hint = $('<div class="upfront-ui upfront-entity-padding-hint upfront-entity-bottom-padding-hint"></div>').appendTo(this.$el);
+				}
+				bottom_padding_hint.css({
+					height: bottom_padding_num + 'px',
+					opacity: 1
+				});
+				clearTimeout(this.bottom_padding_hint_timer);
+				this.bottom_padding_hint_timer = setTimeout(function() {
+					me.hide_bottom_padding_hint();
+				}, 1000);
+			},
+			hide_bottom_padding_hint: function () {
+				if(!this.padding_hint_locked) {				
+					this.$el.find('.upfront-entity-bottom-padding-hint').css({
+						opacity: 0
+					});
+				}
 			},
 			onOpenPanelClick: function(event) {
 				event.preventDefault();
@@ -2281,9 +2367,6 @@ define([
 								line_col += wrapper_col;
 							}
 						}
-						else {
-							is_wrapper_clr = ( line_col == wrapper_col || wrapper_class.match(/clr/) );
-						}
 						// If combine wrap, remove all spacer and set the group wrapper_id
 						// Otherwise, normalize spacers and add needed class
 						if ( is_combine_wrap ) {
@@ -2296,7 +2379,7 @@ define([
 							}
 						}
 						else {
-							if ( wrapper_index == 1 || is_wrapper_clr ){
+							if ( wrapper && ( wrapper_index == 1 || is_wrapper_clr ) ){
 								// Add clr class as this is the first in row
 								if ( is_clr && wrapper_index == 1 ) {
 									wrapper.add_class('clr');
@@ -2502,6 +2585,9 @@ define([
 				this.update_background();
 			},
 			deactivate: function () {
+				// We don't want to deactivate the Group when Settings sidebar is open
+				if($('#element-settings-sidebar').html() !== '') return;
+				Upfront.data.prevEntity = false;
 				this.$el.removeClass("upfront-module-group-active");
 				this.check_deactivated();
 				this.trigger("upfront:entity:deactivate", this);
@@ -2510,10 +2596,17 @@ define([
 				var me= this,
 					currentEntity = Upfront.data.currentEntity
 				;
+				// We don't want to activate the Group when Settings sidebar is open
+				if($('#element-settings-sidebar').html() !== '') return;
+				// Deactivate previous ObjectView
+				if(typeof(Upfront.data.prevEntity) !== 'undefined' && Upfront.data.prevEntity !== false) {
+					Upfront.data.prevEntity.deactivate();
+				}
+				Upfront.data.prevEntity = this;
 				if (this.activate_condition && !this.activate_condition()) return false;
 				if (currentEntity && currentEntity == this) return false;
 				if (currentEntity && currentEntity != this) {
-					Upfront.data.currentEntity.trigger('deactivated');
+					currentEntity.trigger('deactivated');
 				}
 
 				Upfront.data.currentEntity = this;
@@ -5043,10 +5136,11 @@ define([
 				
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 				this.listenTo(Upfront.Events, 'entity:module:update_position', this.on_module_update);
-				this.listenTo(Upfront.Events, 'layout:render', this.toggle_wrapper_visibility);
+				this.listenTo(Upfront.Events, 'entity:modules:render_module', this.on_module_update);
+				this.listenTo(Upfront.Events, 'layout:after_render', this.on_layout_after_render);
 
 				// this one to do fix the wrapper visibility for elements inside a lightbox
-				this.listenTo(Upfront.Events, 'upfront:lightbox:show', this.toggle_wrapper_visibility);
+				this.listenTo(Upfront.Events, 'upfront:lightbox:show', this.on_lightbox_show);
 			},
 			render: function () {
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
@@ -5194,8 +5288,10 @@ define([
 				
 				// Add the spacer element
 				if ( breakpoint && !breakpoint.default ) {
+					wrapper.set_breakpoint_property('edited', true, true);
 					wrapper.set_breakpoint_property('clear', ( is_clr && position == 'left' ), true);
 					wrapper.set_breakpoint_property('order', this.model.get_breakpoint_property_value('order'));
+					module.set_breakpoint_property('edited', true, true);
 					module.set_breakpoint_property('hide', 0, true);
 					module.set_breakpoint_property('left', 0, true);
 					module.set_breakpoint_property('col', spacer_col);
@@ -5241,6 +5337,15 @@ define([
 			},
 			on_module_update: function (from_view) {
 				if ( !from_view.wrapper_view || from_view.wrapper_view != this ) return;
+				if ( from_view instanceof Upfront.Views.ModuleGroup ) return;
+				this.toggle_wrapper_visibility();
+			},
+			on_layout_after_render: function () {
+				if ( this.$el.find('> .upfront-module-group').length > 0 ) return; // Don't update for group
+				this.toggle_wrapper_visibility();
+			},
+			on_lightbox_show: function () {
+				if ( this.$el.find('> .upfront-module-group').length > 0 ) return; // Don't update for group
 				this.toggle_wrapper_visibility();
 			},
 			on_mouse_up: function (e) {

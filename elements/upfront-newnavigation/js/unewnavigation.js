@@ -59,7 +59,6 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		this.on('deactivated', this.onDeactivate, this);
 		this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", function(current, previous) {
-
 			me.render();
 
 			setTimeout( function() {
@@ -77,7 +76,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	get_preset_properties: function() {
 		var preset = this.model.get_property_value_by_name("preset"),
 			props = PresetUtil.getPresetProperties('nav', preset) || {};
-
+			
 		return props;
 	},
 
@@ -570,11 +569,42 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			sidebar_width = $('div#sidebar-ui').outerWidth(),
 			topbar_height = $('div#upfront-ui-topbar').outerHeight(),
 			ruler_height = $('.upfront-ruler-container').outerHeight(),
-			currentBreakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active(),
-			breakpoint = this.get_preset_properties().breakpoint[currentBreakpoint.id],
+			allBreakpoints = Upfront.Views.breakpoints_storage.get_breakpoints(),
+			currentBreakpoint = allBreakpoints.get_active(),
+			breakpoints = this.get_preset_properties().breakpoint,
+			breakpoint = breakpoints[currentBreakpoint.id],
 			breakpointWidth = currentBreakpoint.get_property_value_by_name('width');
 			currentwidth = typeof breakpointWidth !== 'undefined' ? parseInt(breakpointWidth, 10) : $(window).width();
 
+		
+		/** if breakpoint data is not available, use data from 
+			the wider breakpoint that has data available.
+		**/
+		if(!breakpoint || !breakpoint.menu_style) {
+			var higherBPs = _.filter(allBreakpoints.models, function(breakpoint) {
+				return breakpoint.get('width') > currentBreakpoint.get('width');
+			});
+
+			higherBPs = _.sortBy(higherBPs, function(item) {
+				return item.get('width');
+			});
+
+			for(var i = 0; i < higherBPs.length; i++) { 
+				breakpoint = breakpoints[higherBPs[i].id];
+				
+				if(breakpoint) {
+					break;
+				}
+			}
+
+		}
+		/** if breakpoint has menu_style set to burger, but no
+			burger_alignment is defined, set it to default
+		**/
+		if(breakpoint.menu_style === 'burger' && !breakpoint.burger_alignment ) {
+			breakpoint.burger_alignment= 'left';
+		}
+		
 		if (breakpoint.menu_style === 'burger') {
 			selector.addClass('burger-menu');
 			selector.attr('data-style', 'burger');
@@ -599,11 +629,11 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 			if (selector.hasClass('upfront-output-unewnavigation')) {
 				$('head').find('style#responsive_nav_sidebar_offset').remove();
-				var responsive_css = 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"][data-burger_over="over"] ul.menu, div.upfront-navigation div[data-style="burger"][data-burger_over="over"][data-burger_alignment="whole"] ul.menu {left:'+parseInt(regions_off.left, 10)+'px !important;} ';
+				var responsive_css = 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"] ul.menu, div.upfront-navigation div[data-style="burger"][data-burger_alignment="whole"] ul.menu {left:'+parseInt(regions_off.left, 10)+'px !important;} ';
 				responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"] ul.menu, div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] ul.menu {right: inherit; width:'+((parseInt(currentwidth) < parseInt(win_width-sidebar_width))?parseInt(currentwidth):parseInt(win_width-sidebar_width)) +'px !important; } ';
 				responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="left"] ul.menu {left:'+parseInt(regions_off.left)+'px !important; right:inherit !important; width:'+parseInt(30/100*regions_width)+'px !important;} ';
 				responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="right"] ul.menu {left:inherit !important; right:'+((parseInt((win_width-currentwidth-sidebar_width) / 2) > 0)?parseInt((win_width-currentwidth-sidebar_width) / 2 -(($(document).width() > (win_width+6))?30:0)):0)+'px !important; width:'+parseInt(30/100*regions_width)+'px !important; } ';
-				responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][data-burger_over="over"] ul.menu {top:'+(parseInt(topbar_height) + parseInt(ruler_height))+'px !important; } ';
+				responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"]:not([data-burger_over="pushes"]) ul.menu {top:'+(parseInt(topbar_height) + parseInt(ruler_height))+'px !important; } ';
 
 				$('head').append($('<style id="responsive_nav_sidebar_offset">'+responsive_css+'</style>'));
 			}
