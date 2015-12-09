@@ -1676,6 +1676,9 @@ var Application = new (Backbone.Router.extend({
 							presets = new Backbone.Collection(Upfront.mainData[presetElement + 'Presets'] || []);
 							preset = presets.findWhere({id: 'default'});
 						}
+						
+						//Convert UFC colors to real colors
+						style = Upfront.Util.colors.convert_string_ufc_to_color(style);
 
 						//Set preset style with preset classes
 						preset.set({
