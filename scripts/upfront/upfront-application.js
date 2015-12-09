@@ -1666,7 +1666,7 @@ var Application = new (Backbone.Router.extend({
 	migrateStylesToPreset: function() {
 		var me = this,
 			cssEditor = new Upfront.Views.Editor.CSSEditor(),
-			presetElements = ['image', 'uaccordion', 'plain_text', 'ubutton', 'ucontact', 'ugallery', 'uslider', 'utabs', 'unewnavigation'];
+			presetElements = ['image', 'plain_text', 'ucontact', 'ugallery', 'uslider', 'unewnavigation'];
 			
 		Upfront.data.stylesdb = {};
 		
