@@ -1431,6 +1431,10 @@ define([
 					this.apply_paddings($me);
 					this.handle_visual_padding_hint(prop);
 				}
+				else if ( prop.id.match(/padding_slider/) ) {
+					this.render();
+					this.handle_visual_padding_hint(prop);
+				}
 				else {
 					this.render();
 				}
@@ -1440,13 +1444,17 @@ define([
 			handle_visual_padding_hint: function (prop) {
 				if (typeof prop === 'undefined') return;
 
-				if ( prop.id.match(/(top|bottom)_padding_num/) ) {
-					if ( prop.id.match(/top_padding_num/) ) {
+				if ( prop.id.match(/(top|bottom)_padding_(num|slider)/) ) {
+					if ( prop.id.match(/top_padding_(num|slider)/) ) {
 						this.show_top_padding_hint();
 					}
-					if ( prop.id.match(/bottom_padding_num/) ) {
+					if ( prop.id.match(/bottom_padding_(num|slider)/) ) {
 						this.show_bottom_padding_hint();
 					}
+				}
+				else if ( prop.id.match(/padding_slider/) ) {
+					this.show_top_padding_hint();
+					this.show_bottom_padding_hint();
 				}
 
 			},
