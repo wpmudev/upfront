@@ -8,7 +8,7 @@ i.visit_link {
   top:-5px;
   right:-5px;
 
-  display:block!important;
+  display:none;
   cursor: pointer;
 
 }
@@ -52,7 +52,6 @@ i.visit_link:after {
   padding-left:20px;
   padding-right:5px;
   background-color:#2C3E50;
-  display:block;
   position:absolute;
   z-index:9;
   color:rgba(255,255,255,.6);
@@ -107,7 +106,7 @@ i.visit_link.visit_link_unlink:before {
 	background-position:-910px -203px;
 }
 i.visit_link:after {
-  display:block;
+  display:none;
 }
 i.visit_link:hover:after {
   display:block;
