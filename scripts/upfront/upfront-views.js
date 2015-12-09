@@ -5137,10 +5137,10 @@ define([
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 				this.listenTo(Upfront.Events, 'entity:module:update_position', this.on_module_update);
 				this.listenTo(Upfront.Events, 'entity:modules:render_module', this.on_module_update);
-				this.listenTo(Upfront.Events, 'layout:after_render', this.toggle_wrapper_visibility);
+				this.listenTo(Upfront.Events, 'layout:after_render', this.on_layout_after_render);
 
 				// this one to do fix the wrapper visibility for elements inside a lightbox
-				this.listenTo(Upfront.Events, 'upfront:lightbox:show', this.toggle_wrapper_visibility);
+				this.listenTo(Upfront.Events, 'upfront:lightbox:show', this.on_lightbox_show);
 			},
 			render: function () {
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
@@ -5337,6 +5337,15 @@ define([
 			},
 			on_module_update: function (from_view) {
 				if ( !from_view.wrapper_view || from_view.wrapper_view != this ) return;
+				if ( from_view instanceof Upfront.Views.ModuleGroup ) return;
+				this.toggle_wrapper_visibility();
+			},
+			on_layout_after_render: function () {
+				if ( this.$el.find('> .upfront-module-group').length > 0 ) return; // Don't update for group
+				this.toggle_wrapper_visibility();
+			},
+			on_lightbox_show: function () {
+				if ( this.$el.find('> .upfront-module-group').length > 0 ) return; // Don't update for group
 				this.toggle_wrapper_visibility();
 			},
 			on_mouse_up: function (e) {
