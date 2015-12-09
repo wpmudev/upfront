@@ -85,7 +85,8 @@ define([
 				this.migrateExistingPresets();
 				return;
 			}
-			if(this.property('preset') && this.property('preset') !== 'default') return;
+
+			if (this.property('preset')) return;
 
 			elementStyleName = this.property('theme_style');
 
@@ -138,7 +139,7 @@ define([
 				Upfront.mainData[this.mainDataCollection].splice(index, 1);
 			}
 			Upfront.mainData[this.mainDataCollection].push(properties);
-			
+
 			// Trigger change so that whole element re-renders again.
 			// (to replace element style class with preset class, look upfront-views.js
 			this.model.get('properties').trigger('change');
