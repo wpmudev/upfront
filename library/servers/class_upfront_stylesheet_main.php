@@ -18,7 +18,6 @@ class Upfront_StylesheetMain extends Upfront_Server {
 
 		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
 			upfront_add_ajax('upfront_theme_styles', array($this, "theme_styles"));
-			upfront_add_ajax('upfront_theme_styles_options', array($this, "theme_styles_options"));
 		}
 		if (Upfront_Permissions::current(Upfront_Permissions::SAVE)) {
 			upfront_add_ajax('upfront_save_styles', array($this, "save_styles"));
