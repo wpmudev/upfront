@@ -2367,9 +2367,6 @@ define([
 								line_col += wrapper_col;
 							}
 						}
-						else {
-							is_wrapper_clr = ( line_col == wrapper_col || wrapper_class.match(/clr/) );
-						}
 						// If combine wrap, remove all spacer and set the group wrapper_id
 						// Otherwise, normalize spacers and add needed class
 						if ( is_combine_wrap ) {
@@ -2382,7 +2379,7 @@ define([
 							}
 						}
 						else {
-							if ( wrapper_index == 1 || is_wrapper_clr ){
+							if ( wrapper && ( wrapper_index == 1 || is_wrapper_clr ) ){
 								// Add clr class as this is the first in row
 								if ( is_clr && wrapper_index == 1 ) {
 									wrapper.add_class('clr');
@@ -5139,6 +5136,7 @@ define([
 				
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 				this.listenTo(Upfront.Events, 'entity:module:update_position', this.on_module_update);
+				this.listenTo(Upfront.Events, 'entity:modules:render_module', this.on_module_update);
 				this.listenTo(Upfront.Events, 'layout:after_render', this.toggle_wrapper_visibility);
 
 				// this one to do fix the wrapper visibility for elements inside a lightbox
@@ -5290,8 +5288,10 @@ define([
 				
 				// Add the spacer element
 				if ( breakpoint && !breakpoint.default ) {
+					wrapper.set_breakpoint_property('edited', true, true);
 					wrapper.set_breakpoint_property('clear', ( is_clr && position == 'left' ), true);
 					wrapper.set_breakpoint_property('order', this.model.get_breakpoint_property_value('order'));
+					module.set_breakpoint_property('edited', true, true);
 					module.set_breakpoint_property('hide', 0, true);
 					module.set_breakpoint_property('left', 0, true);
 					module.set_breakpoint_property('col', spacer_col);

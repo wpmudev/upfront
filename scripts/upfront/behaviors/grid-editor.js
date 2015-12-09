@@ -797,6 +797,10 @@ var GridEditor = {
 				move.model.add_to(move.collection, move.index);
 			});
 		}
+		// Clean clear data attribute
+		_.each(wraps, function(wrap){
+			wrap.$el.removeData('clear');
+		});
 		this.time_end('fn normalize');
 	},
 
@@ -1854,162 +1858,242 @@ var GridEditor = {
 	},
 
 	/**
+	 * Parse modules collection into the correct order by breakpoint
+	 */
+	parse_modules_to_lines: function (modules, wrappers, breakpoint_id, col) {
+		var ed = Upfront.Behaviors.GridEditor,
+			all_wrappers = {},
+			sorted_wrappers = [],
+			lines = [],
+			line_col = 0,
+			line = 0
+		;
+		modules.each(function(module, i){
+			var wrapper_id = module.get_wrapper_id(),
+				wrapper = wrappers.get_by_wrapper_id(wrapper_id),
+				wrapper_breakpoint = wrapper.get_property_value_by_name('breakpoint'),
+				wrapper_breakpoint_data = ( wrapper_breakpoint && breakpoint_id in wrapper_breakpoint ) ? wrapper_breakpoint[breakpoint_id] : {},
+				wrapper_class = wrapper.get_property_value_by_name('class'),
+				wrapper_col = ed.get_class_num(wrapper_class, ed.grid.class),
+				is_clear = !!wrapper_class.match(/clr/),
+				breakpoint = module.get_property_value_by_name('breakpoint'),
+				breakpoint_data = ( breakpoint && breakpoint_id in breakpoint ) ? breakpoint[breakpoint_id] : {},
+				default_hide = module.get_property_value_by_name('default_hide'),
+				hide = module.get_property_value_by_name('hide'),
+				module_class = module.get_property_value_by_name('class'),
+				module_col = ed.get_class_num(module_class, ed.grid.class),
+				is_spacer = !!module_class.match(/upfront-module-spacer/),
+				order = i,
+				wrapper_order = i,
+				module_obj = {}
+			;
+			if ( breakpoint_id != 'desktop' ) {
+				hide = ( "hide" in breakpoint_data ) ? breakpoint_data.hide : default_hide;
+				module_col = ( "col" in breakpoint_data ) ? breakpoint_data.col : module_col;
+				order = ( "order" in breakpoint_data ) ? breakpoint_data.order * 10000 + order : order;
+				wrapper_col = ( "col" in wrapper_breakpoint_data ) ? wrapper_breakpoint_data.col : wrapper_col;
+				wrapper_order = ( "order" in wrapper_breakpoint_data ) ? wrapper_breakpoint_data.order * 10000 + wrapper_order : wrapper_order;
+				is_clear = ( "clear" in wrapper_breakpoint_data ) ? wrapper_breakpoint_data.clear : is_clear;
+			}
+			if ( hide === false ) hide = default_hide;
+			if ( hide ) return;
+			module_obj = {
+				model: module,
+				col: module_col,
+				order: order,
+				spacer: is_spacer
+			};
+			if ( module_col > wrapper_col ) wrapper_col = module_col;
+			if ( wrapper_col > col ) wrapper_col = col;
+			if ( wrapper_id in all_wrappers ) {
+				all_wrappers[wrapper_id].modules.push(module_obj);
+				all_wrappers[wrapper_id].col = wrapper_col;
+			}
+			else {
+				all_wrappers[wrapper_id] = {
+					model: wrapper,
+					modules: [module_obj],
+					order: wrapper_order,
+					col: wrapper_col,
+					clear: is_clear,
+					spacer: is_spacer
+				};
+			}
+		});
+		sorted_wrappers = _.sortBy(all_wrappers, function(wrapper, i){
+			return wrapper.order;
+		});
+		_.each(sorted_wrappers, function(wrapper, i){
+			if ( ( i > 0 && wrapper.clear ) || ( line_col > 0 && line_col + wrapper.col > col ) ) { // this is new line
+				lines[line].col = line_col;
+				line++;
+				line_col = 0;
+			}
+			if ( _.isUndefined(lines[line]) ) {
+				lines[line] = {
+					wrappers: [],
+					col: 0
+				};
+			}
+			line_col += wrapper.col;
+			lines[line].wrappers.push(wrapper);
+			lines[line].col = line_col;
+		});
+		console.log(lines)
+		return lines;
+	},
+
+	/**
 	 * Call this to normalize module placement on remove
 	 */
 	normalize_module_remove: function (view, module, modules, wrapper, wrappers) {
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.GridEditor,
 			index = modules.indexOf(module),
-			prev_module = modules.at(index-1),
-			next_module = modules.at(index+1),
-			next_module_class, next_module_left,
-			prev_wrapper, prev_wrapper_class,
-			next_wrapper, next_wrapper_class, next_wrapper_col
+			breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled()
 		;
-		if (!next_module && !prev_module) return false;
-		var module_class = module.get_property_value_by_name('class'),
-			wrapper_class = wrapper.get_property_value_by_name('class'),
-			wrapper_col = ed.get_class_num(wrapper_class, ed.grid.class),
-			i = 0,
-			split_prev = false,
-			split_next = false,
-			adjust_next = false,
-			prev_modules = [],
-			next_modules = [];
-		if ( next_module ){
-			next_module_class = next_module.get_property_value_by_name('class');
-			next_module_left = ed.get_class_num(next_module_class, ed.grid.left_margin_class);
-			next_wrapper = wrappers.get_by_wrapper_id(next_module.get_wrapper_id());
-			next_wrapper_class = next_wrapper.get_property_value_by_name('class');
-			next_wrapper_col = ed.get_class_num(next_wrapper_class, ed.grid.class);
-			if ( !next_wrapper_class.match(/clr/g) ){
-				/*next_wrapper.replace_class(
-					ed.grid.class + (next_wrapper_col+wrapper_col) +
-					( wrapper_class.match(/clr/g) ? ' clr' : '' )
-				);
-				adjust_next = true;*/ // @TODO Experiment: no adjusting next wrapper for now
-				split_next = true;
-			}
-		}
-		if ( prev_module ) {
-			prev_wrapper = wrappers.get_by_wrapper_id(prev_module.get_wrapper_id());
-			prev_wrapper_class = prev_wrapper.get_property_value_by_name('class');
-			if ( prev_wrapper_class.match(/clr/g) && !split_next )
-				split_prev = true;
-		}
-		// Adjust remaining modules in equal columns
-		var all_modules = [],
-			all_wrappers = [],
-			spacer_wrappers = []
-		;
-		while ( modules.at(i) ) {
-			var this_module = modules.at(i),
-				this_module_class = this_module.get_property_value_by_name('class'),
-				this_wrapper = wrappers.get_by_wrapper_id(this_module.get_wrapper_id()),
-				this_wrapper_class = this_wrapper.get_property_value_by_name('class')
+		_.each(breakpoints, function(each){
+			var breakpoint = each.toJSON(),
+				lines = ed.parse_modules_to_lines(modules, wrappers, breakpoint.id, breakpoint.columns),
+				split_prev = false,
+				split_next = false,
+				all_wrappers = [],
+				spacer_wrappers = [],
+				line, my_wrapper, prev_wrapper, next_wrapper,
+				prev_wrapper_class, next_wrapper_class
 			;
-			if ( i == 0 || this_wrapper_class.match(/clr/g) ) {
-				if ( i > index ) break;
-				all_wrappers = [];
-				spacer_wrappers = [];
-				all_modules = [];
-			}
-			if ( i == index ) {
-				i++;
-				continue;
-			}
-			if ( !_.contains(all_wrappers, this_wrapper) ) {
-				all_wrappers.push(this_wrapper);
-				if ( this_module_class.match(/upfront-module-spacer/) ) {
-					spacer_wrappers.push(this_wrapper);
+			_.each(lines, function (each) {
+				if ( line ) return;
+				prev_wrapper = false;
+				next_wrapper = false;
+				_.each(each.wrappers, function (w) {
+					if ( my_wrapper && !next_wrapper ) next_wrapper = w;
+					_.each(w.modules, function (m) {
+						if ( module == m.model ) {
+							my_wrapper = w;
+							line = each;
+						}
+					});
+					if ( !my_wrapper ) prev_wrapper = w;
+				});
+			});
+			if ( !line ) return;
+			if ( next_wrapper ) {
+				next_wrapper_class = next_wrapper.model.get_property_value_by_name('class');
+				if ( !next_wrapper_class.match(/clr/g) ){
+					split_next = true;
 				}
 			}
-			all_modules.push(this_module);
-			i++;
-		}
-		if ( all_wrappers.length >= 2 ) {
-			split_next = false;
-		}
-		if ( !_.contains(all_wrappers, wrapper) ) {
-			var total_col = wrapper_col,
-				new_col = 0,
-				remaining_col = 0;
-			_.each(all_wrappers, function (each_wrapper) {
-				if ( _.contains(spacer_wrappers, each_wrapper) ) return;
-				var each_wrapper_class = each_wrapper.get_property_value_by_name('class'),
-					each_wrapper_col = ed.get_class_num(each_wrapper_class, ed.grid.class)
+			if ( prev_wrapper ) {
+				prev_wrapper_class = prev_wrapper.model.get_property_value_by_name('class');
+				if ( prev_wrapper_class.match(/clr/g) && !split_next ) {
+					split_prev = true;
+				}
+			}
+			_.each(line.wrappers, function (w) {
+				if ( w == my_wrapper ) return;
+				all_wrappers.push(w);
+				if ( w.spacer ) spacer_wrappers.push(w);
+			});
+			if ( all_wrappers.length >= 2 ) {
+				split_next = false;
+			}
+
+			if ( my_wrapper.modules.length == 1 ) {
+				var total_col = my_wrapper.col,
+					new_col = 0,
+					remaining_col = 0
 				;
-				total_col += each_wrapper_col;
-			});
-			if ( all_wrappers.length == spacer_wrappers.length ) {
-				// All wrappers is spacers, just remove them as we don't need it anymore
-				_.each(all_wrappers, function (each_wrapper, id) {
-					_.each(all_modules, function (each_module) {
-						if ( each_module.get_wrapper_id() == each_wrapper.get_wrapper_id() ) {
-							modules.remove(each_module);
-						}
-					});
-					wrappers.remove(each_wrapper);
-				});
-			}
-			else {
-				// Otherwise split columns evenly and ignore spacer columns
-				new_col = Math.floor(total_col/(all_wrappers.length-spacer_wrappers.length));
-				remaining_col = total_col - ((all_wrappers.length-spacer_wrappers.length) * new_col);
-				// Apply the new col
-				_.each(all_wrappers, function (each_wrapper, id) {
+				_.each(all_wrappers, function (each_wrapper) {
 					if ( _.contains(spacer_wrappers, each_wrapper) ) return;
-					var each_wrapper_class = each_wrapper.get_property_value_by_name('class'),
-						apply_col =  new_col
-					;
-					// Distribute remaining_col
-					if ( remaining_col > 0 ) {
-						apply_col += 1;
-						remaining_col -= 1;
-					}
-					each_wrapper.replace_class(
-						ed.grid.class + apply_col +
-						( id == 0 && !each_wrapper_class.match(/clr/g) ? ' clr' : '' )
-					);
-					_.each(all_modules, function (each_module) {
-						if ( each_module.get_wrapper_id() == each_wrapper.get_wrapper_id() ) {
-							each_module.replace_class(ed.grid.class + apply_col);
+					total_col += each_wrapper.col;
+				});
+				if ( all_wrappers.length == spacer_wrappers.length ) {
+					// All wrappers is spacers, just remove them as we don't need it anymore
+					_.each(all_wrappers, function (each_wrapper, id) {
+						_.each(each_wrapper.modules, function (each_module) {
+							modules.remove(each_module.model);
+						});
+						wrappers.remove(each_wrapper.model);
+					});
+				}
+				else {
+					// Otherwise split columns evenly and ignore spacer columns
+					new_col = Math.floor(total_col/(all_wrappers.length-spacer_wrappers.length));
+					remaining_col = total_col - ((all_wrappers.length-spacer_wrappers.length) * new_col);
+					// Apply the new col
+					_.each(all_wrappers, function (each_wrapper, id) {
+						if ( _.contains(spacer_wrappers, each_wrapper) ) return;
+						var each_wrapper_class = each_wrapper.model.get_property_value_by_name('class'),
+							each_wrapper_breakpoint = each_wrapper.model.get_property_value_by_name('breakpoint'),
+							each_wrapper_breakpoint_data = ( each_wrapper_breakpoint && breakpoint.id in each_wrapper_breakpoint ) ? each_wrapper_breakpoint[breakpoint.id] : {},
+							apply_col =  new_col
+						;
+						// Distribute remaining_col
+						if ( remaining_col > 0 ) {
+							apply_col += 1;
+							remaining_col -= 1;
+						}
+						if ( breakpoint.default ) {
+							each_wrapper.model.replace_class(
+								ed.grid.class + apply_col +
+								( id == 0 && !each_wrapper_class.match(/clr/g) ? ' clr' : '' )
+							);
+							_.each(each_wrapper.modules, function (each_module) {
+								each_module.model.replace_class(ed.grid.class + apply_col);
+							});
+						}
+						else {
+							each_wrapper_breakpoint_data.col = apply_col;
+							if ( id == 0 && !each_wrapper_breakpoint_data.clear ) {
+								each_wrapper_breakpoint_data.clear = true;
+							}
+							each_wrapper.model.set_property('breakpoint', Upfront.Util.clone(each_wrapper_breakpoint));
+							_.each(each_wrapper.modules, function (each_module) {
+								var each_module_breakpoint = each_module.model.get_property_value_by_name('breakpoint'),
+									each_module_breakpoint_data = ( each_module_breakpoint && breakpoint.id in each_module_breakpoint ) ? each_module_breakpoint[breakpoint.id] : {}
+								;
+								each_module_breakpoint_data.col = apply_col;
+								each_module.model.set_property('breakpoint', Upfront.Util.clone(each_module_breakpoint));
+							});
 						}
 					});
+				}
+			}
+			if ( !breakpoint.default ) return;
+			if ( split_prev || split_next ){
+				var current_wrapper = false;
+				_.each(( split_prev ? prev_wrapper.modules : next_wrapper.modules ), function (each_module, id) {
+					var each_module_class = each_module.model.get_property_value_by_name('class'),
+						each_module_col = ed.get_class_num(each_module_class, ed.grid.class),
+						each_module_view = Upfront.data.module_views[each_module.model.cid],
+						each_wrapper = split_prev ? prev_wrapper : next_wrapper,
+						each_wrapper_view = Upfront.data.wrapper_views[each_wrapper.model.cid],
+						current_wrapper_view = current_wrapper ? Upfront.data.wrapper_views[current_wrapper.cid] : each_wrapper_view
+					;
+					if ( id > 0 ){
+						var wrapper_id = Upfront.Util.get_unique_id("wrapper");
+							wrap_model = new Upfront.Models.Wrapper({
+								"name": "",
+								"properties": [
+									{"name": "wrapper_id", "value": wrapper_id},
+									{"name": "class", "value": ed.grid.class+(each_module_col) + ' clr'}
+								]
+							}),
+							wrap_view = new Upfront.Views.Wrapper({model: wrap_model})
+						;
+						wrappers.add(wrap_model);
+						wrap_view.parent_view = each_module_view.parent_view;
+						wrap_view.render();
+						wrap_view.$el.append(each_module_view.$el);
+						current_wrapper_view.$el.after(wrap_view.$el);
+						Upfront.data.wrapper_views[wrap_model.cid] = wrap_view;
+						each_module.model.set_property('wrapper_id', wrapper_id, true);
+						current_wrapper = wrap_model;
+					}
 				});
 			}
-		}
-		if ( split_prev || split_next ){
-			var current_wrapper = false;
-			_.each(( split_prev ? prev_modules : next_modules ), function (each_module, id) {
-				var each_module_class = each_module.get_property_value_by_name('class'),
-					each_module_left = ed.get_class_num(each_module_class, ed.grid.left_margin_class),
-					each_module_col = ed.get_class_num(each_module_class, ed.grid.class),
-					each_module_view = Upfront.data.module_views[each_module.cid],
-					each_wrapper = wrappers.get_by_wrapper_id(each_module.get_wrapper_id()),
-					each_wrapper_view = Upfront.data.wrapper_views[each_wrapper.cid],
-					current_wrapper_view = current_wrapper ? Upfront.data.wrapper_views[current_wrapper.cid] : each_wrapper_view;
-				if ( id > 0 ){
-					var wrapper_id = Upfront.Util.get_unique_id("wrapper");
-						wrap_model = new Upfront.Models.Wrapper({
-							"name": "",
-							"properties": [
-								{"name": "wrapper_id", "value": wrapper_id},
-								{"name": "class", "value": ed.grid.class+(each_module_left+each_module_col) + ' clr'}
-							]
-						}),
-						wrap_view = new Upfront.Views.Wrapper({model: wrap_model});
-					wrappers.add(wrap_model);
-					wrap_view.parent_view = each_module_view.parent_view;
-					wrap_view.render();
-					wrap_view.$el.append(each_module_view.$el);
-					current_wrapper_view.$el.after(wrap_view.$el);
-					Upfront.data.wrapper_views[wrap_model.cid] = wrap_view;
-					each_module.set_property('wrapper_id', wrapper_id, true);
-					current_wrapper = wrap_model;
-				}
-			});
-		}
+		});
 	},
 
 	/**
@@ -2019,7 +2103,7 @@ var GridEditor = {
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.GridEditor,
 			line_col = 0,
-			line = -1;
+			line = -1,
 			lines = [],
 			modules_data = [],
 			set_wrappers_col = {}, // keep track of set wrappers col
@@ -2050,6 +2134,7 @@ var GridEditor = {
 			module_col = module_col > parent_col ? parent_col : module_col;
 			lines[line].push({
 				clear: is_clear,
+				spacer: !!module_class.match(/upfront-module-spacer/),
 				module: module,
 				col: module_col,
 				left: 0, // Elements in a line have to fit the whole region now
@@ -2063,7 +2148,13 @@ var GridEditor = {
 					return data.col; // Elements in a line have to fit the whole region now
 				}).reduce(function(sum, col){ 
 					return sum + col;
-				});
+				}),
+				spacer_col = _.map(line_modules, function(data){
+					return data.spacer ? data.col : 0;
+				}).reduce(function(sum, col){
+					return sum + col;
+				})
+			;
 			_.each(line_modules, function(data, index){
 				var new_col = 0,
 					wrapper_col = 0;
