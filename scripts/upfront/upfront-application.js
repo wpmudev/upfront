@@ -1641,16 +1641,83 @@ var Application = new (Backbone.Router.extend({
 				$('#' + styleName).remove();
 			});
 	},
+
+	fetchThemeStylesMigrate: function(separately){
+		var fetchData = {
+				action:'upfront_theme_styles',
+				separately: separately
+			},
+			deferred = $.Deferred()
+		;
+
+		Upfront.Util.post(fetchData)
+			.success(function(response){
+				deferred.resolve(response.data.styles);
+			});
+		return deferred.promise();
+	},
+	
+	recursiveExistenceMigration: function(selector, clean_selector) {
+		var splitted = clean_selector.split(' ');
+		var me = this;
+		while(splitted.length > 0) {
+			try{
+				if(!!$(selector + splitted.join(' ')).closest('#' + me.element_id).length)
+					return true;
+			}
+			catch (err) {
+
+			}
+			splitted.pop();
+		}
+
+		return false;
+	},
+	
+	stylesAddSelectorMigration: function(contents, selector) {
+		if (this.is_global_stylesheet && empty(selector)) return contents;
+
+		var me = this,
+			rules = contents.split('}'),
+			processed = ''
+		;
+
+		_.each(rules, function (rl) {
+			var src = $.trim(rl).split('{');
+
+			if (src.length != 2) return true; // wtf
+
+			var individual_selectors = src[0].split(','),
+				processed_selectors = []
+			;
+			_.each(individual_selectors, function (sel) {
+				sel = $.trim(sel);
+				var clean_selector = sel.replace(/:[^\s]+/, ''); // Clean up states states such as :hover, so as to not mess up the matching
+				var	is_container = clean_selector[0] === '@' || me.recursiveExistenceMigration(selector, clean_selector),
+					spacer = is_container
+						? '' // This is not a descentent selector - used for containers
+						: ' ' // This is a descentent selector
+				;
+
+				processed_selectors.push('' +
+					selector + spacer + sel +
+				'');
+			});
+			processed += processed_selectors.join(', ') + ' {' +
+				src[1] + // Actual rule
+			'\n}\n';
+		});
+		return processed;
+	},
 	
 	migrateStylesToPreset: function() {
 		var me = this,
-			cssEditor = new Upfront.Views.Editor.CSSEditor(),
 			presetElements = ['image', 'plain_text', 'ucontact', 'ugallery', 'uslider', 'unewnavigation'];
 
-		cssEditor.fetchThemeStyles(true).done(function(styles){
+		this.fetchThemeStylesMigrate(true).done(function(styles){
 			Upfront.data.styles = {};
 			_.each(styles, function(elementStyles, elementType){
-				
+
 				Upfront.data.styles[elementType] = [];
 
 				var presetElement = elementType.replace(/^u+/, "");
@@ -1681,7 +1748,7 @@ var Application = new (Backbone.Router.extend({
 
 						//Set preset style with preset classes
 						preset.set({
-							preset_style: cssEditor.stylesAddSelector($.trim(style), '#page .' + preset.get('id'))
+							preset_style: me.stylesAddSelectorMigration($.trim(style), '#page .' + preset.get('id'))
 						});
 						
 						var properties = preset.toJSON();
