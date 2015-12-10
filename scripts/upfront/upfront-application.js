@@ -1646,8 +1646,6 @@ var Application = new (Backbone.Router.extend({
 		var me = this,
 			cssEditor = new Upfront.Views.Editor.CSSEditor(),
 			presetElements = ['image', 'plain_text', 'ucontact', 'ugallery', 'uslider', 'unewnavigation'];
-			
-		Upfront.data.styles = {};
 
 		cssEditor.fetchThemeStyles(true).done(function(styles){
 			Upfront.data.styles = {};
@@ -1665,10 +1663,11 @@ var Application = new (Backbone.Router.extend({
 					presetDefaults = Upfront.mainData.presetDefaults[presetElement] || [];
 
 				_.each(elementStyles, function(style, name) {
-					var havePreset = _.contains(presetElements, elementType),
-						preset = presets.findWhere({id: 'default'});
+					var havePreset = _.contains(presetElements, elementType);
 
 					if(havePreset && name.indexOf('_default') > -1) {
+						var preset = presets.findWhere({id: 'default'});
+					
 						if(typeof preset === "undefined") {
 							Upfront.mainData[presetElement + 'Presets'] = _.isArray(Upfront.mainData[presetElement + 'Presets']) ? Upfront.mainData[presetElement + 'Presets'] : [];
 							Upfront.mainData[presetElement + 'Presets'].unshift(presetDefaults);
@@ -1693,8 +1692,6 @@ var Application = new (Backbone.Router.extend({
 						//Delete style
 						me.deleteMigratedStyles(elementType, name);
 					}
-					
-					Upfront.data.styles[elementType].push(name);
 				});
 			});
 		});		
@@ -1705,10 +1702,14 @@ var Application = new (Backbone.Router.extend({
 			cssEditor = new Upfront.Views.Editor.CSSEditor(),
 			icon_font_style,
 			longSrc = '';
-
-		cssEditor.fetchThemeStyles(true).done(function(styles){
 			
+		Upfront.data.styles = {};
+		
+		cssEditor.fetchThemeStyles(true).done(function(styles){
 			_.each(styles, function(elementStyles, elementType){
+				
+				Upfront.data.styles[elementType] = [];
+				
 				_.each(elementStyles, function(style, name){
 					style = Upfront.Util.colors.convert_string_ufc_to_color(style);
 					var styleNode = $('#'+name);
@@ -1721,6 +1722,8 @@ var Application = new (Backbone.Router.extend({
 					else {
 						styleNode.html(styleOutput);
 					}
+					
+					Upfront.data.styles[elementType].push(name);
 				});
 			});
 
