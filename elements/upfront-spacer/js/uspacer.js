@@ -65,6 +65,7 @@ define([
 
 				// Make sure module class is added
 				this.parent_module_view.$el.find('> .upfront-module').addClass('upfront-module-spacer');
+				this.parent_module_view.model.add_class('upfront-module-spacer');
 			}
 
 			this.$el.html(template);
