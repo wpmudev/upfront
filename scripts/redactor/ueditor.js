@@ -677,12 +677,25 @@ Ueditor.prototype = {
 		this.mouseupListener = $.proxy(this.listenForMouseUp, this);
 		this.$el.on('mousedown', this.mouseupListener);
 
+
 		this.$el.on('keydown', function(e){
 			self.cmdKeyA = false;
 			self.cmdKey = false;
 
+            /**
+             * Clearn unverified spans and remove their style attr
+             */
+            _.delay(function() {
+                if (e.keyCode === 8) {
+                    self.redactor.clean.clearUnverified();
+                    self.redactor.$editor.find('span').not('[data-verified="redactor"]').removeAttr('style');
+                }
+            }, 2);
 
 			setTimeout(function(){
+                //if(e.keyCode === 8  ) {
+                //    self.redactor.clean.clearUnverified();
+                //}
 				if(e.keyCode === 65 && e.metaKey ){
 					self.cmdKeyA = true;
 				}
