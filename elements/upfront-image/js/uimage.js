@@ -331,8 +331,10 @@ define([
 
 			captionEl.ueditor({
 					autostart: false,
+					focus: false,
 					upfrontMedia: false,
 					upfrontImages: false,
+					linebreaks: false,
 					airButtons: ['upfrontFormatting', 'bold', 'italic', 'stateAlign', 'upfrontLink', 'upfrontColor', 'upfrontIcons']
 				})
 				.on('start', function(){
@@ -1204,7 +1206,6 @@ define([
 					size: imgSize,
 					position: imgPosition
 				};
-				console.log(img, imgSize, imgPosition, data);
 				this.property('element_size', size);
 				this.saveTemporaryResizing();
 				return true;
