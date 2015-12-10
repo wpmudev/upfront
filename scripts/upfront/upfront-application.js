@@ -1712,7 +1712,7 @@ var Application = new (Backbone.Router.extend({
 	
 	migrateStylesToPreset: function() {
 		var me = this,
-			presetElements = ['image', 'plain_text', 'ucontact', 'ugallery', 'uslider', 'unewnavigation'];
+			presetElements = ['image', 'plain_text', 'ucontact', 'ugallery', 'uslider', 'unewnavigation', 'uwidget'];
 
 		this.fetchThemeStylesMigrate(true).done(function(styles){
 			Upfront.data.styles = {};
