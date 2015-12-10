@@ -1122,7 +1122,7 @@ define([
 				var imageData = results.data.images[imageId];
 
 				if(imageData.error){
-					Upfront.Views.Editor.notify('Image failed to process.', 'error');
+					Upfront.Views.Editor.notify(l10n.process_error, 'error');
 					return;
 				}
 
@@ -1278,10 +1278,17 @@ define([
 						id: me.imageId
 					}
 				;
-				$('<img>').attr('src', imageInfo.srcFull).load(function(){
-					Upfront.Views.Editor.ImageSelector.close();
-					me.openEditor(true, imageInfo);
-				});
+				$('<img>')
+					.load(function(){
+						Upfront.Views.Editor.ImageSelector.close();
+						me.openEditor(true, imageInfo);
+					})
+					.on("error", function () {
+						Upfront.Views.Editor.ImageSelector.close();
+						Upfront.Views.Editor.notify(l10n.process_error, 'error');
+					})
+					.attr('src', imageInfo.srcFull)
+				;
 			});
 		},
 

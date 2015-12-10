@@ -4,6 +4,8 @@ define([], function () {
 	$('body').append('<div id="element-settings-sidebar" />');
 	$('#element-settings-sidebar').width(0);
 	var the_settings_view;
+	var model;
+	var oldData;
 
 	var destroySettings = function() {
 		//If settings are opened, destroy
@@ -12,7 +14,13 @@ define([], function () {
 			the_settings_view = false;
 			$('#element-settings-sidebar').width(0).html('');
 			Upfront.Events.off('element:settings:saved', destroySettings);
+			Upfront.Events.off('element:settings:cancel', resetModel);
 		}
+	};
+
+	var resetModel = function() {
+		model.set('properties', new Upfront.Collections.Properties(oldData.properties));
+		destroySettings();
 	};
 
 	var showSettings = function(view) {
@@ -47,15 +55,15 @@ define([], function () {
 		$('.uf-settings-panel--expanded:not(:first)').toggleClass('uf-settings-panel--expanded').find('.uf-settings-panel__body').toggle();
 
 		Upfront.Events.on('element:settings:saved', destroySettings);
+
+		model = view.model;
+		oldData = Upfront.Util.model_to_json(view.model);
+		Upfront.Events.once('element:settings:canceled', resetModel);
 	};
 
 	Upfront.Events.on('element:settings:activate', showSettings);
-	
+
 	//Destroy settings when element is removed
 	Upfront.Events.on("entity:removed:after", destroySettings);
-	
-	//Destroy settings when Cancel button is clicked
-	Upfront.Events.on('element:settings:canceled', destroySettings);
-
 });
 })(jQuery);

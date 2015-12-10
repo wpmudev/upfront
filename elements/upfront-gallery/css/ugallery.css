@@ -1024,7 +1024,9 @@ figure.gallery-labels-figure img.mfp-img {
 }
 [class*=gallery-ugallery-object] .mfp-image-holder .mfp-counter {
 	white-space: nowrap;
+	color: #343434;
 }
+
 [class*=gallery-ugallery-object] figure {
 	margin: 0;
 }

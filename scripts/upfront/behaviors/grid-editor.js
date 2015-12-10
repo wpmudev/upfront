@@ -92,7 +92,7 @@ var GridEditor = {
 			left = offset.left,
 			grid = ed.get_grid(left, top),
 			col = Math.round(width/ed.col_size),
-			row = Math.ceil(height/ed.baseline),
+			row = Math.floor(height/ed.baseline),
 			//$region = $el.closest('.upfront-region'),
 			//region = $region.data('name'),
 			//$group = $el.closest('.upfront-module-group'),
@@ -1423,6 +1423,8 @@ var GridEditor = {
 			$me = view.$el,
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
 			$layout = $main.find('.upfront-layout'),
+			has_group,
+			also_has_group,
 			$resize,
 			$resize_placeholder,
 			$also_resize,
@@ -1470,10 +1472,31 @@ var GridEditor = {
 				;
 					
 				axis = data.axis ? data.axis : 'e';
+				has_group = ( $me.find('> .upfront-module-group').length > 0 );
 				max_col = me.col;
 				min_col = ed.min_col;
 				also_min_col = ed.min_col;
 				is_spacer = ( $me.find('> .upfront-module-view > .upfront-module-spacer').length > 0 );
+
+				child_els = [];
+				$me.find('> .upfront-module-view > .upfront-module, > .upfront-module-group').each(function () {
+					var child_model = ed.get_el_model($(this)),
+						child_view = Upfront.data.module_views[child_model.cid]
+					;
+					if ( !child_view ) return;
+					child_els.push({
+						view: child_view,
+						is_group: $(this).hasClass('upfront-module-group'),
+						el: ed.get_el($(this))
+					});
+				});
+				if ( has_group ) {
+					_.each(child_els, function (child) {
+						if ( !child.is_group ) return;
+						var child_min_col = ed._get_group_min_col(child.view);
+						min_col = child_min_col > min_col ? child_min_col : min_col;
+					});
+				}
 				
 				$resize = $('<div class="upfront-resize" style="height:'+me.height+'px;"></div>');
 				$resize.css({
@@ -1497,6 +1520,7 @@ var GridEditor = {
 				}
 				$('body').append($resize);
 				$also_resize = false;
+				also_child_els = [];
 				if ( axis == 'w' && me.outer_grid.left > ed.containment.grid.left ) {
 					$also_resize = Upfront.Util.find_from_elements($wrappers, $me, '.upfront-wrapper:visible', true).first();
 				}
@@ -1506,14 +1530,35 @@ var GridEditor = {
 				if ( $also_resize && $also_resize.length ) {
 					also_resize = ed.get_wrap($also_resize);
 					also_is_spacer = ( $also_resize.find('> .upfront-module-view > .upfront-module-spacer').length > 0 );
+					also_has_group = ( $also_resize.find('> .upfront-module-group').length > 0 ),
 					also_model = model.collection.get_by_wrapper_id($also_resize.attr('id'));
 					also_view = Upfront.data.wrapper_views[also_model.cid];
+
+					$also_resize.find('> .upfront-module-view > .upfront-module, > .upfront-module-group').each(function () {
+						var child_model = ed.get_el_model($(this)),
+							child_view = Upfront.data.module_views[child_model.cid]
+						;
+						if ( !child_view ) return;
+						also_child_els.push({
+							view: child_view,
+							is_group: $(this).hasClass('upfront-module-group'),
+							el: ed.get_el($(this))
+						});
+					});
+					if ( also_has_group ) {
+						_.each(also_child_els, function (child) {
+							if ( !child.is_group ) return;
+							var child_min_col = ed._get_group_min_col(child.view);
+							also_min_col = child_min_col > also_min_col ? child_min_col : also_min_col;
+						});
+					}
+
 					max_col = me.col + also_resize.col;
 					if ( !is_spacer && !also_is_spacer ) {
-						max_col -= min_col;
+						max_col -= also_min_col;
 					}
 					else if ( is_spacer ) {
-						max_col -= min_col;
+						max_col -= also_min_col;
 						min_col = 0;
 					}
 					if ( also_is_spacer ) {
@@ -1526,31 +1571,6 @@ var GridEditor = {
 					also_model = false;
 					also_view = false;
 					also_is_spacer = false;
-				}
-				
-				child_els = [];
-				also_child_els = [];
-				$me.find('> .upfront-module-view > .upfront-module, > .upfront-module-group').each(function () {
-					var child_model = ed.get_el_model($(this)),
-						child_view = Upfront.data.module_views[child_model.cid]
-					;
-					if ( !child_view ) return;
-					child_els.push({
-						view: child_view,
-						el: ed.get_el($(this))
-					});
-				});
-				if ( $also_resize ) {
-					$also_resize.find('> .upfront-module-view > .upfront-module, > .upfront-module-group').each(function () {
-						var child_model = ed.get_el_model($(this)),
-							child_view = Upfront.data.module_views[child_model.cid]
-						;
-						if ( !child_view ) return;
-						also_child_els.push({
-							view: child_view,
-							el: ed.get_el($(this))
-						});
-					});
 				}
 				
 				$resize_placeholder = $('<div class="upfront-resize-placeholder"></div>');
@@ -1631,9 +1651,9 @@ var GridEditor = {
 					me = ed.get_wrap($me),
 					also_resize = ( $also_resize ? ed.get_wrap($also_resize) : false ),
 					region = ed.get_region($region),
-					current_col = Math.round(ui.size.width/ed.col_size),
 					min_w = min_col*ed.col_size,
 					w = ( current_col > max_col ? Math.round(max_col*ed.col_size) : ( min_w > ui.size.width ? min_w : ui.size.width ) ),
+					current_col = Math.round(w/ed.col_size),
 					h = ( (ui.size.height > 15 ? ui.size.height : 0) || ui.originalSize.height ),
 					l = ( axis == 'w' ? ui.originalPosition.left+ui.originalSize.width-w : ui.position.left ),
 					rsz_col = ( current_col > max_col ? max_col : current_col ),
@@ -1832,6 +1852,26 @@ var GridEditor = {
 		});
 	},
 
+	_get_group_min_col: function (group_view) {
+		var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+			ed = Upfront.Behaviors.GridEditor,
+			modules = group_view.model.get('modules'),
+			wrappers = group_view.model.get('wrappers'),
+			col = ( !breakpoint || breakpoint.default ) ? ed.get_class_num(group_view.$el, ed.grid.class) : group_view.$el.data('breakpoint_col'),
+			lines = ed.parse_modules_to_lines(modules, wrappers, ( breakpoint ? breakpoint.id : 'desktop' ), col),
+			min_col = ed.min_col
+		;
+		_.each(lines, function (line) {
+			var line_min_col = 0;
+			_.each(line.wrappers, function (w) {
+				if (w.spacer ) line_min_col += 1; // Spacer minimum column is 1
+				else line_min_col += ed.min_col; // Element minimum column depend to ed.min_col
+			});
+			if ( line_min_col > min_col ) min_col = line_min_col;
+		});
+		return min_col;
+	},
+
 	/**
 	 * Create draggable
 	 *
@@ -1939,7 +1979,6 @@ var GridEditor = {
 			lines[line].wrappers.push(wrapper);
 			lines[line].col = line_col;
 		});
-		console.log(lines)
 		return lines;
 	},
 
