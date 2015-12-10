@@ -578,6 +578,16 @@ var Ueditor = function($el, options) {
 
 	//this.startPlaceholder();
 	this.options.pasteCallback = function (html) {
+
+        /** 
+         * When pasting unformatted text with line breaks, the lines get wrapped
+         * in DIV tags. This is due to browser's handling of pasted content inside
+         * div having contenteditable=true. For our requirement, we have to replace
+         * it with P tags instead.
+         */
+        html = html.replace(/<div>/g, "<p>").replace(/<\/div>/g,"</p>");
+        
+
 		/**
 		 * If a font icon is copied to clipboard, paste it
 		 */
