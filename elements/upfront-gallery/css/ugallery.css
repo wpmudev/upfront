@@ -557,7 +557,9 @@ a.ugallery-linked_page:hover:before {
 .mfp-figure figure {
 	position: relative;
 }
-
+.mfp-bg{
+	opacity: 1;
+}
 div.ugallery-magnific-labels {
 	color: #A1C5E6;
 	font-size: 13px;
@@ -1024,7 +1026,9 @@ figure.gallery-labels-figure img.mfp-img {
 }
 [class*=gallery-ugallery-object] .mfp-image-holder .mfp-counter {
 	white-space: nowrap;
+	color: #343434;
 }
+
 [class*=gallery-ugallery-object] figure {
 	margin: 0;
 }

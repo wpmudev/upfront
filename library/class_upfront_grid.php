@@ -407,6 +407,7 @@ class Upfront_Grid {
 					if ( $next_wrapper_col == $line_col && $next_is_spacer ) {
 						$next_fill = $next_wrapper_col;
 						$rendered_spacers[] = $next_spacer_id;
+						$line_col -= $next_wrapper_col;
 					}
 					else {
 						$next_fill = $next_clear && $line_col > 0 ? $line_col : 0;

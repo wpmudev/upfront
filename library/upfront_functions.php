@@ -379,3 +379,20 @@ function upfront_left_shift32($number, $steps) {
 		-(pow(2, 31) - bindec(substr($binary, 1))));
 }
 
+/**
+ * Return the maximum allowed upload size, in bytes
+ *
+ * @return int
+ */
+function upfront_max_upload_size () {
+	return wp_max_upload_size();
+}
+
+/**
+ * Returns the human-friendly version of maximum upload size.
+ *
+ * @return string
+ */
+function upfront_max_upload_size_human () {
+	return size_format(upfront_max_upload_size());
+}

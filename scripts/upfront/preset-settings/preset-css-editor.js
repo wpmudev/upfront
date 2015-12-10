@@ -94,8 +94,9 @@ define([
 
 			if ( typeof options.change == 'function' ) this.listenTo(this, 'change', options.change);
 
-			this.render();
+			if (this.options.doNotRender === true) return;
 
+			this.render();
 			this.startResizable();
 		},
 		close: function(event) {
@@ -141,6 +142,36 @@ define([
 
 			this.$el.show();
 		},
+		renderCss: function(rawCss) {
+			var styles_with_selector;
+			var preset_class = '\n\n' + this.get_css_selector();
+
+			if(typeof this.elementType.preset_container === "undefined") {
+				preset_class = preset_class + ' ';
+			}
+
+			styles_with_selector = this.stylesAddSelector($.trim(rawCss), '#page ' + this.get_css_selector());
+			// Solve case of button loosing its styles
+			styles_with_selector = Upfront.Util.colors.convert_string_ufc_to_color(styles_with_selector.replace(new RegExp(this.get_css_selector() + ' .upfront-button', 'g'), this.get_css_selector() + '.upfront-button'));
+
+			return styles_with_selector;
+		},
+		cleanUpStyles: function(styles) {
+			var scope = new RegExp(this.get_css_selector() + '\\s*', 'g');
+			styles = styles.replace(new RegExp('#page ' + this.get_css_selector() + '\\s*', 'g'), '');
+			styles = styles.replace(scope, '');
+			// Unescape quotes a few times
+			styles = styles.replace(/\\'/g, "'");
+			styles = styles.replace(/\\'/g, "'");
+			styles = styles.replace(/\\'/g, "'");
+			styles = styles.replace(/\\"/g, '"');
+			styles = styles.replace(/\\"/g, '"');
+			styles = styles.replace(/\\"/g, '"');
+
+			styles = Upfront.Util.colors.convert_string_color_to_ufc(styles.replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
+
+			return styles;
+		},
 		startAce: function() {
 			var me = this,
 				editor = ace.edit(this.$('.upfront-css-ace')[0]),
@@ -154,21 +185,7 @@ define([
 			editor.setTheme('ace/theme/monokai');
 
 			editor.on('change', function(event){
-				var styles_with_selector;
-				var rules = editor.getValue().split('}');
-				var preset_class = '\n\n' + me.get_css_selector();
-
-				if(typeof me.elementType.preset_container === "undefined") {
-					preset_class = preset_class + ' ';
-				}
-
-				rules = _.map(rules, function(rule){return $.trim(rule);});
-				rules.pop();
-
-				styles_with_selector = me.stylesAddSelector($.trim(editor.getValue()), '#page ' + me.get_css_selector());
-				// Solve case of button loosing its styles
-				styles_with_selector = Upfront.Util.colors.convert_string_ufc_to_color(styles_with_selector.replace(new RegExp(me.get_css_selector() + ' .upfront-button', 'g'), me.get_css_selector() + '.upfront-button'));
-
+				var styles_with_selector = me.renderCss(editor.getValue());
 				// DO NOT DO THIS!!! DELEGATE STYLE RENDERING TO PRESET (look at preset-css module
 				// me.$style.html(styles_with_selector);
 				me.trigger('change', styles_with_selector);
@@ -176,19 +193,7 @@ define([
 
 
 			var styles = this.options.preset.get('preset_style') ? this.options.preset.get('preset_style') : '';
-
-			scope = new RegExp(this.get_css_selector() + '\\s*', 'g');
-			styles = styles.replace(new RegExp('#page ' + this.get_css_selector() + '\\s*', 'g'), '');
-			styles = styles.replace(scope, '');
-			// Unescape quotes a few times
-			styles = styles.replace(/\\'/g, "'");
-			styles = styles.replace(/\\'/g, "'");
-			styles = styles.replace(/\\'/g, "'");
-			styles = styles.replace(/\\"/g, '"');
-			styles = styles.replace(/\\"/g, '"');
-			styles = styles.replace(/\\"/g, '"');
-
-			styles = Upfront.Util.colors.convert_string_color_to_ufc(styles.replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
+			styles = this.cleanUpStyles(styles);
 			editor.setValue($.trim(styles), -1);
 
 			// Set up the proper vscroller width to go along with new change.

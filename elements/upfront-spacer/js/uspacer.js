@@ -28,10 +28,10 @@ define([
 		},
 		render: function () {
 			var props = {},
-					me = this,
-					column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
-					model, template
-					;
+				me = this,
+				column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
+				model, template
+			;
 			// Force add upfront-object-view class as element object can override the view and left without this class
 			this.$el.addClass('upfront-object-view');
 
@@ -62,6 +62,10 @@ define([
 
 				this.stopListening((this._previous_parent_module_view || this.parent_module_view), 'entity:drop');
 				this.listenTo(this.parent_module_view, 'entity:drop', this.on_element_drop);
+
+				// Make sure module class is added
+				this.parent_module_view.$el.find('> .upfront-module').addClass('upfront-module-spacer');
+				this.parent_module_view.model.add_class('upfront-module-spacer');
 			}
 
 			this.$el.html(template);

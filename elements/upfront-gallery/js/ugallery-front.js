@@ -198,9 +198,12 @@ jQuery(function($){
 
 		var markup, gallery, magOptions;
 		markup = '<div class="mfp-close">&times;</div><div class="glb-content-container"><figure class="glb-image-container"><div class="mfp-img"></div></figure><div class="glb-caption-container"><div class="mfp-title"></div><div class="mfp-counter"></div></div></div>';
+
 		for (var galleryId in ugalleries) {
-			gallery = false;
-			magOptions = ugalleries[galleryId].magnific;
+			var data = $('#' + galleryId).find('.ugallery').data(),
+				gallery = false,
+				magOptions = ugalleries[galleryId].magnific
+				;
 			if (magOptions){
 				gallery = $('#' + galleryId).find('.ugallery_item_image');
 				$.each(gallery, function() {
@@ -222,10 +225,12 @@ jQuery(function($){
 						resizeMFP();
 					}
 				};
+				magOptions.closeOnBgClick = data.lightboxClickOutClose;
 				gallery.magnificPopup(magOptions);
 			} else {
-				gallery = $('#' + galleryId).find('.ugallery_lightbox_link');
+				var gallery = $('#' + galleryId).find('.ugallery_lightbox_link'),
 				magOptions = {
+					closeOnBgClick: data.lightboxClickOutClose,
 					type: 'image',
 					gallery: {
 						enabled: 'true',

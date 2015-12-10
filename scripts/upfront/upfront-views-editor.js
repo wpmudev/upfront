@@ -7899,7 +7899,7 @@ var GeneralCSSEditor = Backbone.View.extend({
 		this.model = options.model;
 		this.sidebar = options.sidebar !== false;
 		this.global = options.global === true;
-
+		this.toolbar = ( options.toolbar !== false );
 		this.prepareAce = deferred.promise();
 		require([Upfront.Settings.ace_url], function(){
 			deferred.resolve();
@@ -7957,7 +7957,8 @@ var GeneralCSSEditor = Backbone.View.extend({
 		this.$el.html(this.tpl({
 			selectors: this.selectors,
 			elementType: false,
-			show_style_name: false
+			show_style_name: false,
+			showToolbar: this.toolbar
 		}));
 
 		this.resizeHandler('.');
@@ -8774,7 +8775,10 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				$content = this.$el.find('.upfront-inline-modal-content'),
 				$button = $('<button type="button" class="upfront-inline-modal-save">' + this.button_text + '</button>'),
 				css = {},
-				height, parent_height;
+				height, parent_height,
+				is_lightbox = context && context.for_view && context.for_view.$el.hasClass('upfront-region-side-lightbox');
+				
+
 			this._deferred = $.Deferred();
 			this.$el.show();
 			render_callback.apply(context, [$content, this.$el]);
@@ -8784,8 +8788,10 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			// this.listenTo(Upfront.Events, "entity:region:deactivated", function(){
 				// me.close(false);
 			// });
+
 			css.width = this.width;
-			if ( this.top >= 0 ) {
+			// if it is a lightbox, it is going to be a fixed position, no need to take scroll into calcs
+			if (!is_lightbox && this.top >= 0 ) {
 				css.top = this.top;
 				css.bottom = 'auto';
 			}
@@ -8793,9 +8799,15 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				parent_height = this.$el.height() > $(window).height() ? $(window).height() : this.$el.height();
 				height = $content.outerHeight();
 				this.top = parent_height-height > 0 ? (parent_height-height)/2 : 0;
+
+				// if it is a lightbox, just add manual margin from top, rest is static.
+				if(is_lightbox)
+					this.top = 22;
+				
 				css.top = this.top;
 				css.bottom = 'auto';
 			}
+			
 			if ( this.left >= 0 ) {
 				css.left = this.left;
 				css.right = 'auto';

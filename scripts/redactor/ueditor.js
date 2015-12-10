@@ -677,10 +677,20 @@ Ueditor.prototype = {
 		this.mouseupListener = $.proxy(this.listenForMouseUp, this);
 		this.$el.on('mousedown', this.mouseupListener);
 
+
 		this.$el.on('keydown', function(e){
 			self.cmdKeyA = false;
 			self.cmdKey = false;
 
+            /**
+             * Clean unverified spans and remove their style attr
+             */
+            _.delay(function() {
+                if (e.keyCode === 8) {
+                    self.redactor.clean.clearUnverified();
+                    self.redactor.$editor.find('span').not('[data-verified="redactor"]').removeAttr('style');
+                }
+            }, 2);
 
 			setTimeout(function(){
 				if(e.keyCode === 65 && e.metaKey ){
@@ -894,7 +904,7 @@ Ueditor.prototype = {
 			if($(this).find('i.visit_link').length > 0 || !$(this).attr('href') || $(this).text().trim() == '')
 				return;
 			$(this).css('position', 'relative');
-			$(this).append('<i class="visit_link visit_link_'+me.guessLinkType($(this).attr('href'))+'" data-href="'+$(this).attr('href')+'"></i>');
+			$(this).append('<i class="visit_link visit_link_'+me.guessLinkTypeTag($(this))+'" data-href="'+$(this).attr('href')+'"></i>');
 			$(this).removeAttr('href');
 			//$(this).attr('onclick', 'return false;');
 		});
@@ -932,12 +942,30 @@ Ueditor.prototype = {
 		else
 			window.open(url);
 	},
+    /*validateEmail: function (email) {
+        var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+    },*/
+    guessLinkTypeTag: function(item){
+        return item.data('upfront-link-type');
+    },
 	guessLinkType: function(url){
-
+        var anchor = false;
 		if(!$.trim(url) || $.trim(url) == '#')
 			return 'unlink';
-		if(url.length && url[0] == '#')
-			return url.indexOf('#ltb-') > -1 ? 'lightbox' : 'anchor';
+
+        if(url.indexOf('#') > -1) {
+            anchor =this.getUrlanchor(url);
+        }
+
+		if(anchor) {
+			return url.indexOf('ltb-') > -1 ? 'lightbox' : 'anchor';
+        }
+        // is it an email.
+        if(url.indexOf('mailto:') === 0) {
+            return 'email';
+        }
+
 		if(url.substring(0, location.origin.length) == location.origin)
 			return 'entry';
 

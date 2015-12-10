@@ -403,7 +403,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 				'add_images' => __('Add Images to the Gallery', 'upfront'),
 				'drop_images' => __('Drop images here', 'upfront'),
 				'select_images' => __('Select images', 'upfront'),
-				'max_upload_size' => __('Maximum upload file size: 32MB', 'upfront'),
+				'max_upload_size' => sprintf(__('Maximum upload file size: %s', 'upfront'), upfront_max_upload_size_human()),
 				'or_browse' => __('or browse your', 'upfront'),
 				'media_gallery' => __('media gallery', 'upfront'),
 				'uploading' => __('Uploading...', 'upfront'),

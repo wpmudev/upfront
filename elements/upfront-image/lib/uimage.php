@@ -188,6 +188,7 @@ class Upfront_UimageView extends Upfront_Object {
 			'not_modifications' => __('Not modifications', 'upfront'), // wtf?
 			'edit_error' => __('There was an error editing the image', 'upfront'),
 			'save_error' => __('There was an error saving the edited image', 'upfront'),
+			'process_error' => __('Image failed to process.', 'upfront'),
 			'image_caption' => __('My awesome image caption', 'upfront'),
 			'css' => array(
 				'image_label' => __('Image element', 'upfront'),
@@ -262,7 +263,7 @@ class Upfront_UimageView extends Upfront_Object {
 			'template' => array(
 				'drop_files' => __('Drop files here to upload', 'upfront'),
 				'select_files' => __('Upload File', 'upfront'),
-				'max_file_size' => __('Maximum upload file size: 32MB', 'upfront'),
+				'max_file_size' => sprintf(__('Maximum upload file size: %s', 'upfront'), upfront_max_upload_size_human()),
 				'or_browse' => __('or browse your', 'upfront'),
 				'media_gallery' => __('Media Gallery', 'upfront'),
 				'uploading' => __('Uploading...', 'upfront'),
