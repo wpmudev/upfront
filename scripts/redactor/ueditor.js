@@ -683,7 +683,7 @@ Ueditor.prototype = {
 			self.cmdKey = false;
 
             /**
-             * Clearn unverified spans and remove their style attr
+             * Clean unverified spans and remove their style attr
              */
             _.delay(function() {
                 if (e.keyCode === 8) {
@@ -693,9 +693,6 @@ Ueditor.prototype = {
             }, 2);
 
 			setTimeout(function(){
-                //if(e.keyCode === 8  ) {
-                //    self.redactor.clean.clearUnverified();
-                //}
 				if(e.keyCode === 65 && e.metaKey ){
 					self.cmdKeyA = true;
 				}
