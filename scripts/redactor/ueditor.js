@@ -1193,7 +1193,10 @@ Ueditor.prototype = {
 		if(this.insertManager)
 			html = this.insertManager.insertExport(html, is_simple_element);
 
-		return html;
+        /**
+         * Make sure the wrapping .plain-text-container is not being returned as html
+         */
+        return $.trim( $("<div>").html(html).find(".plain-text-container").last().html() );
 	},
 	getInsertsData: function(){
 		var insertsData = {};
