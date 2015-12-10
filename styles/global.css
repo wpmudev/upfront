@@ -472,3 +472,15 @@ div.upfront-region-lightbox .upfront-icon-popup-close, div.upfront-region-side-l
 
 .upfront-navigation li { display: inline-block;  list-style:none; }
 
+.close_lightbox > .upfront-icon-popup-close {
+    
+    font: 100 30px/16px Helvetica Neue, Helvetica, sans-serif; */
+    color: #FFF;
+}
+.close_lightbox > .upfront-icon-popup-close:before {
+    content:"\00d7";
+    font-size:40px;
+    font-weight:normal;
+    color:#fff;
+    text-shadow:0 1px 1px rgba(0,0,0,.1);
+}
