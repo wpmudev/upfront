@@ -236,9 +236,11 @@ define([
 				currentBreakpoint,
 				breakpointsData,
 				breakpointData;
-
-			// Backup preset model properties for later use in reset (on settings cancel)
-			this.presetBackup = presetModel.toJSON();
+			
+			if(typeof presetModel !== "undefined") {
+				// Backup preset model properties for later use in reset (on settings cancel)
+				this.presetBackup = presetModel.toJSON();
+			}
 
 			// Add items
 			this.selectPresetModule = new SelectPresetModule({
