@@ -68,7 +68,7 @@
 	padding-bottom: 3px;
 }
 
-#upfront-list #upfront-list-meta.upfront-list_item.upfront-comments.upfront-header .upfront-list_item-component.active {
+#upfront-list #upfront-list-meta.upfront-list_item.upfront-comments-count.upfront-header .upfront-list_item-component.active {
 	padding-bottom: 3px;
 }
 
@@ -120,7 +120,7 @@
 .upfront-list_item-component.upfront-author {
 	width: 15%;
 }
-.upfront-list_item-component.upfront-comments {
+.upfront-list_item-component.upfront-comments-count {
 	width: 10%;
 }
 
@@ -191,7 +191,7 @@ a.editaction.trash {
 	margin-right:0;
 }
 
-.upfront-list_item-component.upfront-comments.upfront-header i.icon-post-comments {
+.upfront-list_item-component.upfront-comments-count.upfront-header i.icon-post-comments {
 	display: inline-block !important;
 	height: 14px;
 	width: 14px;
@@ -203,7 +203,7 @@ a.editaction.trash {
 }
 
 .upfront-list_item-post.upfront-list_item:hover .upfront-list_item-component.upfront-author,
-.upfront-list_item-post.upfront-list_item:hover .upfront-list_item-component.upfront-comments,
+.upfront-list_item-post.upfront-list_item:hover .upfront-list_item-component.upfront-comments-count,
 .upfront-list_item-post.status-trash {
 	display:none;
 }

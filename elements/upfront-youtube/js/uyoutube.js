@@ -103,36 +103,52 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 			this.property('player_width', width, false);
 		}
 	},
+	
+	addVideo: function(videoInput) {
+		me.property('youtube_status', 'ok');
+		//Add first video
+		me.property('multiple_source_1', videoInput);
+
+		Upfront.Events.trigger("entity:settings:activate", me);
+
+		//Call resize function to match player width with object width
+		me.onResizeStop();
+
+		//Delay events else values are empty
+		setTimeout(function(){
+			// Trigger settings
+			me.on_settings_click();
+
+			//Trigger event for adding videos to array
+			Upfront.Events.trigger("upfront:youtube:added");
+
+		}, 50);
+	},
 
 	on_render: function() {
 		me = this;
 
 		this.$el.find('.upfront-youtube-button').on('click', function(e) {
-			me.property('youtube_status', 'ok');
 
 			var videoInput = $(this).parents().find('input.upfront-youtube-url').val();
-
-			//Check if Video Input field is empty
-			if(videoInput == "") {
-				Upfront.Views.Editor.notify(l10n.validMessage);
-			} else {
-				//Add first video
-				me.property('multiple_source_1', videoInput);
-
-				Upfront.Events.trigger("entity:settings:activate", me);
-
-				//Call resize function to match player width with object width
-				me.onResizeStop();
-
-				//Delay events else values are empty
-				setTimeout(function(){
-					// Trigger settings
-					me.on_settings_click();
-
-					//Trigger event for adding videos to array
-					Upfront.Events.trigger("upfront:youtube:added");
-
-				}, 50);
+			
+			//Check if video is valid
+			if(videoInput) {
+				if (videoInput.match(/youtu\.be/)) {
+					videoMatch = videoInput.match(/^(https?:\/\/)?youtu.be\/([0-9a-zA-Z\-_]{11})/);
+					if(videoMatch !== null && videoMatch.length > 0) {
+						me.addVideo(videoInput);
+					} else {
+						Upfront.Views.Editor.notify(l10n.validMessage);
+					}
+				} else {
+					videoMatch = videoInput.match(/^(https?:\/\/(www\.)?)?youtube\.com\/watch\?v=([0-9a-zA-Z\-_]{11}).*/);
+					if(videoMatch !== null && videoMatch.length > 0) {
+						me.addVideo(videoInput);
+					} else {
+						Upfront.Views.Editor.notify(l10n.validMessage);
+					}
+				}
 			}
 
 		});
