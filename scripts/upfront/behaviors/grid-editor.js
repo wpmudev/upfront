@@ -667,9 +667,6 @@ var GridEditor = {
 							last_index = collection.indexOf(last_model),
 							margin_top = wrap_el.grid.top - bottom_wrap.outer_grid.bottom;
 
-						margin.current.top = margin_top;
-						margin.current.left = wrap_el.grid.left-region.grid.left;
-						ed.update_model_margin_classes(wrap_el.$el);
 						wrap_top = wrap_el.grid.top - margin_top + 1;
 						wrap_left = region.grid.left;
 						wrap_cleared = true;
@@ -698,7 +695,7 @@ var GridEditor = {
 									}
 								});
 							}
-							if ( aff_wraps.right.length > 0 ) {
+							/*if ( aff_wraps.right.length > 0 ) {
 								var right_wrap = _.min(aff_wraps.right, function(each){ return each.outer_grid.left; }),
 									right_wrap_els = ed.get_wrap_els(right_wrap);
 								_.each(right_wrap_els, function(each){
@@ -706,7 +703,7 @@ var GridEditor = {
 									each_margin.current.left = each.grid.left-wrap_el.outer_grid.left;
 									ed.update_model_margin_classes(each.$el);
 								});
-							}
+							}*/
 						}
 						if ( is_parent_group )
 							groups_need_update.push($parent_group);
@@ -715,8 +712,6 @@ var GridEditor = {
 					}
 				}
 				else if ( wrap_cleared ){
-					margin.current.left = wrap_el.grid.left-region.grid.left;
-					ed.update_model_margin_classes(wrap_el.$el);
 					if ( !is_responsive && insert_index !== false ){
 						var model = ed.get_el_model(wrap_el.$el),
 							collection = model.collection;
@@ -763,7 +758,6 @@ var GridEditor = {
 						wrap_el.$el.closest('.upfront-wrapper').before(wrap_view.$el);
 						wrap_view.$el.append(wrap_el_view.$el);
 						wrap_el_model.set_property('wrapper_id', wrapper_id, true);
-						wrap_el_model.replace_class(ed.grid.left_margin_class+(wrap_el.grid.left-parent_el.grid.left));
 						Upfront.data.wrapper_views[wrap_model.cid] = wrap_view;
 						ed.init_margin(wrap_el);
 						if ( is_parent_group )

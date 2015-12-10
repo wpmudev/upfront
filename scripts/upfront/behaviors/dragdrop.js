@@ -1200,8 +1200,8 @@ DragDrop.prototype = {
 						that.model.collection.remove(this_model);
 						if ( apply_index == 0 ) {
 							first_is_spacer = true;
-							if ( that.drop.type == 'side-after' && that.drop.insert[1].get(0) == row_wrap.$el.get(0) ) {
-								// First is removed spacer and we drop after that spacer, means we now drop to the first
+							if ( ( that.drop.type == 'side-after' || that.drop.type == 'side-before' ) && that.drop.insert[1].get(0) == row_wrap.$el.get(0) ) {
+								// First is removed spacer and we drop before/after that spacer, means we now drop to the first
 								me_clear = true;
 							}
 						}
@@ -1219,8 +1219,8 @@ DragDrop.prototype = {
 								// First is removed spacer and we drop before the first element, means we now drop to the first
 								me_clear = true;
 							}
-							else {
-								// First is removed spacer and now this wrapper is the first instead
+							else if ( !me_clear ) {
+								// First is removed spacer and now this wrapper is the first instead, if we don't drop to the first
 								row_wrap.$el.data('clear', 'clear');
 							}
 						}
