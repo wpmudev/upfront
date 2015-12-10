@@ -292,14 +292,17 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		;
 
 		this.listenTo(this.link, 'change', function() {
-			this.visitLinkControl.setLink(me.link.get('url'));
+			//Hide LinkTo button
+			//this.visitLinkControl.setLink(me.link.get('url'));
 			this.$el.find('a').attr('href', me.link.get('url'));
 		});
 
 
 		return linkPanelControl;
 	},
-
+	
+	/* Hide LinkTo button */
+	/*
 	createVisitLinkControl: function() {
 		var me = this,
 			visitLinkControl = new Upfront.Views.Editor.InlinePanels.Controls.VisitLink({
@@ -322,11 +325,12 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 
 		return visitLinkControl;
 	},
+	*/
 
 	getControlItems: function(){
 		return _([
 			this.createLinkControl(),
-			this.createVisitLinkControl(),
+			//this.createVisitLinkControl(),
 			this.createPaddingControl(),
 			this.createControl('settings', l10n.settings.label, 'on_settings_click')
 		]);
