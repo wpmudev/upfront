@@ -262,7 +262,7 @@ class Upfront_UimageView extends Upfront_Object {
 			'template' => array(
 				'drop_files' => __('Drop files here to upload', 'upfront'),
 				'select_files' => __('Upload File', 'upfront'),
-				'max_file_size' => __('Maximum upload file size: 32MB', 'upfront'),
+				'max_file_size' => sprintf(__('Maximum upload file size: %s', 'upfront'), upfront_max_upload_size_human()),
 				'or_browse' => __('or browse your', 'upfront'),
 				'media_gallery' => __('Media Gallery', 'upfront'),
 				'uploading' => __('Uploading...', 'upfront'),
