@@ -295,6 +295,7 @@ define([
 			//Get stored values else load from Global Typography settings
 			if(typeof this.options.global_typography !== "undefined" && this.options.global_typography === true) {
 				var font_settings = Upfront.mainData.global_typography[this.normalize_elements_selector(value)];
+				font_settings = font_settings || {};
 				settings.typeface = this.model.get(this.currentElement + this.options.fields.typeface) || font_settings.font_face || '';
 				settings.fontstyle = this.model.get(this.currentElement + this.options.fields.fontstyle) || font_settings.weight + ' ' + font_settings.style || '';
 				settings.fontsize = this.model.get(this.currentElement + this.options.fields.size) || font_settings.size || '';
