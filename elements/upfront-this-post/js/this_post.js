@@ -1,5 +1,8 @@
 (function ($) {
-define(function() {
+define([
+	'scripts/upfront/element-settings/settings',
+	'scripts/upfront/element-settings/root-settings-panel',
+], function(ElementSettings, RootSettingsPanel) {
 
 var l10n = Upfront.Settings.l10n.this_post_element;
 
@@ -387,64 +390,48 @@ var Settings_PostPanel_PostData = Upfront.Views.Editor.Settings.Item.extend({
 	}
 });
 
-var Settings_PostPanel = Upfront.Views.Editor.Settings.Panel.extend({
+var Settings_PostPanel = RootSettingsPanel.extend({
 	label: l10n.element_name,
-	initialize: function (opts) {
-		this.options = opts;
-
-		var hide_featured = new Upfront.Views.Editor.Field.Checkboxes({
-				model: this.model,
-				property: "hide_featured_image",
-				multiple: false,
-				values: [{ label: l10n.hide_featured_image, value: '1' }],
-				change: function () {
-					var value = this.get_value();
-					if ( value == '1' )
-						full_featured.get_field().prop(this.selected_state, false);
+	settings: [
+		{
+			type: 'SettingsItem',
+			title: l10n.featured_image_option,
+			fields: [
+				{
+					type: 'Checkboxes',
+					property: "hide_featured_image",
+					multiple: false,
+					values: [{ label: l10n.hide_featured_image, value: '1' }],
+					change: function (value, me) {
+						if (value === '1')
+							me.model.set_property('hide_featured_image', 1);
+						else
+							me.model.set_property('hide_featured_image', false);
+					}
+				},
+				{
+					type: 'Checkboxes',
+					property: "full_featured_image",
+					multiple: false,
+					values: [{ label: l10n.full_featured_image, value: '1' }],
+					change: function (value, me) {
+						if (value === '1')
+							me.model.set_property('full_featured_image', 1);
+						else
+							me.model.set_property('full_featured_image', false);
+					}
 				}
-			}),
-			full_featured = new Upfront.Views.Editor.Field.Checkboxes({
-				model: this.model,
-				property: "full_featured_image",
-				multiple: false,
-				values: [{ label: l10n.full_featured_image, value: '1' }],
-				change: function () {
-					var value = this.get_value();
-					if ( value == '1' )
-						hide_featured.get_field().prop(this.selected_state, false);
-				}
-			});
-
-		this.settings = _([
-			new Upfront.Views.Editor.Settings.Item({
-				model: this.model,
-				title: l10n.featured_image_option,
-				fields: [ hide_featured, full_featured ]
-			}),
-			//new Settings_PostPanel_PostData({model: this.model})
-		]);
-	},
-
-	get_label: function () {
-		return this.label;
-	},
-
-	get_title: function () {
-		return l10n.post_settings;
-	}
+			]
+		}
+	],
+	title: l10n.post_settings
 });
 
-var Settings = Upfront.Views.Editor.Settings.Settings.extend({
-	initialize: function (opts) {
-		this.options = opts;
-		this.panels = _([
-			new Settings_PostPanel({model: this.model})
-		]);
+var Settings = ElementSettings.extend({
+	panels: {
+		General: Settings_PostPanel
 	},
-
-	get_title: function () {
-		return l10n.post_settings;
-	}
+	title: l10n.post_settings
 });
 
 // ----- Bringing everything together -----
