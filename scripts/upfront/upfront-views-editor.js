@@ -8777,7 +8777,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				css = {},
 				height, parent_height,
 				is_lightbox = context && context.for_view && context.for_view.$el.hasClass('upfront-region-side-lightbox');
-				$trigger_button = context.for_view.$el.children('.upfront-entity_meta').children('.upfront-entity-settings_trigger');
+				
 
 			this._deferred = $.Deferred();
 			this.$el.show();
