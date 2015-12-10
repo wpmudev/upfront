@@ -8776,7 +8776,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				$button = $('<button type="button" class="upfront-inline-modal-save">' + this.button_text + '</button>'),
 				css = {},
 				height, parent_height,
-				is_lightbox = context.for_view.$el.hasClass('upfront-region-side-lightbox');
+				is_lightbox = context && context.for_view && context.for_view.$el.hasClass('upfront-region-side-lightbox');
 				$trigger_button = context.for_view.$el.children('.upfront-entity_meta').children('.upfront-entity-settings_trigger');
 
 			this._deferred = $.Deferred();
