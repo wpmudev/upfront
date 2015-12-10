@@ -11573,7 +11573,7 @@ div.inline-number.plaintext-settings input {
   bottom: 0;
   right: 0;
   width: 100%;
-  z-index: 2000;
+  z-index: 10001001;
   display: none; }
 
 .upfront-css-top {
