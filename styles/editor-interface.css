@@ -14287,6 +14287,7 @@ i.visit_link:before {
   top: 0;
   background-position: -910px -42px; }
 
+i.upfront-icon-region-visit-link-homepage:before,
 i.upfront-icon-region-visit-link-email:before,
 i.upfront-icon-region-visit-link-unlink:before,
 i.upfront-icon-region-visit-link-external:before,
@@ -14319,11 +14320,22 @@ i.visit_link:after {
 i.visit_link.visit_link_unlink {
   display: none !important; }
 
-i.upfront-icon-region-visit-link-email:before {
-  background-position: -910px -234px; }
+i.visit_link.visit_link_homepage:after {
+  content: 'Goto Home'; }
+
+i.visit_link.visit_link_email:after {
+  content: 'Send Email'; }
 
 i.visit_link.visit_link_anchor:after {
   content: 'Scroll to Anchor'; }
+
+i.upfront-icon-region-visit-link-homepage:before,
+i.visit_link.visit_link_homepage:before {
+  background-position: -910px -267px; }
+
+i.upfront-icon-region-visit-link-email:before,
+i.visit_link.visit_link_email:before {
+  background-position: -910px -234px; }
 
 i.upfront-icon-region-visit-link-anchor:before,
 i.visit_link.visit_link_anchor:before {
