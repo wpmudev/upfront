@@ -127,7 +127,7 @@ define([
 					default_value: this.model.get_breakpoint_property_value('padding_slider'),
 					suffix: l10n.px,
 					step: 5,
-					min: 1,
+					min: 0,
 					max: 250,
 					change: function (value) {
 						//Update all padding values
@@ -165,6 +165,7 @@ define([
 					default_value: this.model.get_breakpoint_property_value('padding_number'),
 					label: '',
 					step: 5,
+					min: 0,
 					default_value: 0,
 					values: [
 						{ label: "", value: '0' }
@@ -204,6 +205,7 @@ define([
 					property: 'top_padding_num',
 					label: '',
 					step: 5,
+					min: 0,
 					default_value: this.model.get_breakpoint_property_value('top_padding_num') || column_padding,
 					change: function(value) {
 						me.model.set_property('top_padding_num', value);
@@ -224,6 +226,7 @@ define([
 					property: 'left_padding_num',
 					label: '',
 					step: 5,
+					min: 0,
 					default_value: this.model.get_breakpoint_property_value('left_padding_num') || column_padding,
 					change: function(value) {
 						me.model.set_property('left_padding_num', value);
@@ -244,6 +247,7 @@ define([
 					property: 'right_padding_num',
 					label: '',
 					step: 5,
+					min: 0,
 					default_value: this.model.get_breakpoint_property_value('right_padding_num') || column_padding,
 					change: function(value) {
 						me.model.set_property('right_padding_num', value);
@@ -264,6 +268,7 @@ define([
 					property: 'bottom_padding_num',
 					label: '',
 					step: 5,
+					min: 0,
 					default_value: this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding,
 					change: function(value) {
 						me.model.set_property('bottom_padding_num', value);
