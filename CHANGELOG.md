@@ -1,6 +1,11 @@
 Change Log
 ============
 
+0.4.1.3 - 2015-12-11
+-------------------------------------------------------------------------------
+- Fix: YouTube element protocol issue.
+- Fix: WP 4.4 screen class issue with post element.
+
 0.4.1.2 - 2015-11-16
 -------------------------------------------------------------------------------
 - Fix: like box  height snapping and centralized content.
