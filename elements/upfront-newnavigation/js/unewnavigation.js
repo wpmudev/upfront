@@ -601,7 +601,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		/** if breakpoint has menu_style set to burger, but no
 			burger_alignment is defined, set it to default
 		**/
-		if(breakpoint && breakpoint.menu_style === 'burger' && !breakpoint.burger_alignment ) {
+		if(breakpoint && (breakpoint.menu_style === 'burger' || breakpoint.menu_style === 'triggered') && !breakpoint.burger_alignment ) {
 			breakpoint.burger_alignment= 'left';
 		}
 		

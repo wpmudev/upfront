@@ -41,7 +41,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 			/** if breakpoint has menu_style set to burger, but no
 				burger_alignment is defined, set it to default
 			**/
-			if(isset($breakpoint_data['preset'][$name]) && isset($breakpoint_data['preset'][$name]['menu_style']) && $breakpoint_data['preset'][$name]['menu_style'] === 'burger' && !isset($breakpoint_data['preset'][$name]['burger_alignment']) ) {
+			if(isset($breakpoint_data['preset'][$name]) && isset($breakpoint_data['preset'][$name]['menu_style']) && ($breakpoint_data['preset'][$name]['menu_style'] === 'burger' || $breakpoint_data['preset'][$name]['menu_style'] === 'triggered') && !isset($breakpoint_data['preset'][$name]['burger_alignment']) ) {
 				$breakpoint_data['preset'][$name]['burger_alignment'] = 'left';
 			}
 		}
