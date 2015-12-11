@@ -89,7 +89,7 @@ define([
 		visit_lightbox: function(e) {
 			e.preventDefault();
 			var url = $(e.target).attr('href');
-			
+
 			// if there is no url defined, no point going forward
 			if(!url || url==='')
 				return;
@@ -105,7 +105,7 @@ define([
 				var regionview = Upfront.data.region_views[region.cid];
 				regionview.show();
 			}
-			
+
 		},
 		getUrlanchor: function(url) {
 			if(typeof(url) == 'undefined') var url = $(location).attr('href');
@@ -136,12 +136,34 @@ define([
 			}
 
 			// Rewrite anchor url to new style (to include full url)
-			var pageUrl = document.location.origin + document.location.pathname;
 			if (this.model.get('type') === 'anchor' && this.model.get('url').match(/^#/) !== null) {
-				this.model.set({'url' : pageUrl + this.model.get('url')}, {silent:true});
+				this.model.set({'url' : this.getPageUrl() + this.model.get('url')}, {silent:true});
 			}
 
 			this.listenTo(this.model, 'change:type', this.handleTypeChange);
+		},
+
+		// We will use macros since that's the cool stuff :D
+		getPageUrl: function() {
+			var pageUrl = '{upfront:home_url}' + document.location.pathname;
+			var layout = Upfront.themeExporter ? Upfront.themeExporter.current_layout_label : false;
+			layout = layout || Upfront.Application.layout.get("current_layout") || Upfront.Application.layout.get("layout");
+			var info = _.isObject(layout) ? (layout.specificity || layout.item || layout.type) : layout;
+			console.log(pageUrl, layout, info);
+
+			if (_.isObject(layout) && layout.item === 'single-page' && layout.specificity.match(/single-page-\d+/) !== null) {
+				var postData = {
+					action: 'upfront_get_post_permalink',
+					post_id: layout.specificity.match(/\d+/)[0]
+				};
+
+				Upfront.Util.post(postData)
+					.success(function(response){
+						console.log(response.data.permalink);
+					});
+			}
+
+			return pageUrl;
 		},
 
 		onOkClick: function() {
@@ -343,7 +365,7 @@ define([
 
 		renderAnchorSelect: function() {
 			var model = this.model,
-				pageUrl = document.location.origin + document.location.pathname;
+				pageUrl = this.getPageUrl();
 
 			var anchorValues = [{label: 'Choose Anchor...', value: ''}];
 			_.each(getAnchors(), function(anchor) {

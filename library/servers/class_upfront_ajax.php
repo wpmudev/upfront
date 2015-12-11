@@ -23,11 +23,12 @@ class Upfront_Ajax extends Upfront_Server {
 		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
 			upfront_add_ajax('upfront_load_layout', array($this, "load_layout"));
 			upfront_add_ajax('upfront_create_layout', array($this, "create_layout"));
-            
-            upfront_add_ajax('upfront_list_scoped_regions', array($this, "list_scoped_regions"));
-            upfront_add_ajax('upfront_get_scoped_regions', array($this, "get_scoped_regions"));
-            upfront_add_ajax('upfront_delete_scoped_regions', array($this, "delete_scoped_regions"));
+
+			upfront_add_ajax('upfront_list_scoped_regions', array($this, "list_scoped_regions"));
+			upfront_add_ajax('upfront_get_scoped_regions', array($this, "get_scoped_regions"));
+			upfront_add_ajax('upfront_delete_scoped_regions', array($this, "delete_scoped_regions"));
 			upfront_add_ajax('upfront_user_done_font_intro', array($this, "user_done_font_intro"));
+			upfront_add_ajax('upfront_get_post_permalink', array($this, "get_post_permalink"));
 		}
 
 		if (Upfront_Permissions::current(Upfront_Permissions::SAVE)) {
@@ -46,6 +47,17 @@ class Upfront_Ajax extends Upfront_Server {
 		$current_user = wp_get_current_user();
 		if (!in_array($current_user->user_login, $users)) $users[] = $current_user->user_login;
 		update_option('upfront_users_done_font_intro', $users);
+	}
+
+	public function get_post_permalink() {
+		$post_id = intval($_POST['post_id']);
+		$this->_out(new Upfront_JsonResponse_Success(
+			array(
+				'permalink' => get_permalink($post_id),
+				// If post is not published permalink will be something like ?page_id=3333 (so not usable for linking)
+				'published' => get_post_status($post_id) === 'publish'
+			)
+		));
 	}
 
 	// STUB LOADING
@@ -134,7 +146,7 @@ class Upfront_Ajax extends Upfront_Server {
 			} else if($_POST['post_id']){
 				$posts = get_posts(array('include' => $_POST['post_id'], 'suppress_filters' => false));
 				if(sizeof($posts)) $post = $posts[0];
-				
+
 				// Deal with page templates
 				$template = get_post_meta((int)$_POST['post_id'], '_wp_page_template', true);
 				$theme = Upfront_ChildTheme::get_instance();
@@ -353,7 +365,7 @@ class Upfront_Ajax extends Upfront_Server {
 			'styles_main',
 		);
 		$rx = '_transient(_timeout)?_(' . join("|", $keys) . ')(_uf_)?[a-f0-9]+';
-		
+
 		$sql = "DELETE FROM {$wpdb->options} WHERE option_name REGEXP %s";
 		return $wpdb->query($wpdb->prepare($sql, $rx));
 	}
@@ -387,7 +399,7 @@ class Upfront_Ajax extends Upfront_Server {
 		}
 
 		$this->_reset_cache(); // When resetting all, also do cache.
-		
+
 		$this->_out(new Upfront_JsonResponse_Success("All is well"));
 	}
 
