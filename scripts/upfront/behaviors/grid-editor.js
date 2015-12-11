@@ -898,9 +898,7 @@ var GridEditor = {
 			ed = Upfront.Behaviors.GridEditor,
 			$layout = ed.main.$el.find('.upfront-layout'),
 			is_object = ( ed.el_selector == '.upfront-object' ),
-			$els = is_object
-				? $containment.find('.upfront-object')
-				: $containment.find('> .upfront-wrapper > .upfront-module-view > .upfront-module, > .upfront-wrapper > .upfront-module-group, > .upfront-module-view > .upfront-module'),
+			$els = false,
 			$wraps = $containment.find('> .upfront-wrapper'),
 			$regions = $layout.find('.upfront-region').not('.upfront-region-locked'),
 			$region = $containment.closest('.upfront-region'),
@@ -910,8 +908,13 @@ var GridEditor = {
 		;
 		// If region isn't shadow, we ignore not-visible elements
 		if ( region_name !== 'shadow' ) {
-			$els = $els.filter(':visible');
 			$wraps = $wraps.filter(':visible');
+			$els = is_object
+				? $wraps.find('.upfront-object')
+				: $wraps.find('> .upfront-module-view > .upfront-module, > .upfront-module-group');
+		}
+		else {
+			$els = $containment.find('> .upfront-module-view > .upfront-module');
 		}
 		ed.els = _.map($els, ed.get_position ); // Generate elements position data
 		_.each(ed.els, function(el){
