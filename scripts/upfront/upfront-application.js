@@ -1712,7 +1712,7 @@ var Application = new (Backbone.Router.extend({
 	
 	migrateStylesToPreset: function() {
 		var me = this,
-			presetElements = ['image', 'plain_text', 'ucontact', 'ugallery', 'uslider', 'unewnavigation', 'uwidget'];
+			presetElements = ['image', 'ubutton', 'uaccordion', 'utabs', 'plain_text', 'ucontact', 'ugallery', 'uslider', 'unewnavigation', 'uwidget'];
 
 		this.fetchThemeStylesMigrate(true).done(function(styles){
 			Upfront.data.styles = {};
@@ -1731,10 +1731,8 @@ var Application = new (Backbone.Router.extend({
 
 				_.each(elementStyles, function(style, name) {
 					var havePreset = _.contains(presetElements, elementType);
-
 					if(havePreset && name.indexOf('_default') > -1) {
 						var preset = presets.findWhere({id: 'default'});
-					
 						if(typeof preset === "undefined") {
 							Upfront.mainData[presetElement + 'Presets'] = _.isArray(Upfront.mainData[presetElement + 'Presets']) ? Upfront.mainData[presetElement + 'Presets'] : [];
 							Upfront.mainData[presetElement + 'Presets'].unshift(presetDefaults);
