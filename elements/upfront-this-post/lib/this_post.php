@@ -535,8 +535,11 @@ class Upfront_ThisPostView extends Upfront_Object {
 		//We need to cheat telling WP we are not in admin area
 		// to get the same output than in the frontend
 		global $current_screen;
-		require_once(ABSPATH . '/wp-admin/includes/screen.php');
-		$current_screen = WP_Screen::get('front');
+		if (!class_exists('WP_Screen')) {
+			if (file_exists(ABSPATH . '/wp-admin/includes/class-wp-screen.php')) require_once(ABSPATH . '/wp-admin/includes/class-wp-screen.php');
+			else if (file_exists(ABSPATH . '/wp-admin/includes/screen.php')) require_once(ABSPATH . '/wp-admin/includes/screen.php');
+		}
+		if (class_exists('WP_Screen')) $current_screen = WP_Screen::get('front');
 
 		global $post;
 		$post = $this_post;
