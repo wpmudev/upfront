@@ -7620,9 +7620,6 @@ var CSSEditor = Backbone.View.extend({
 		if (this.is_global_stylesheet === false && this.stylename === this.get_temp_stylename())
 			return notifier.addMessage(l10n.style_name_nag, 'error');
 
-		if(!styles)
-			return notifier.addMessage(l10n.style_empty_nag, 'error');
-
 		styles = this.stylesAddSelector(styles, (this.is_default_style ? '' : this.get_css_selector()));
 		data = {
 			styles: styles,
@@ -7678,10 +7675,6 @@ var CSSEditor = Backbone.View.extend({
 		var me = this,
 			styles = $.trim(this.get_style_element().html()),
 			data;
-
-		if (!styles) {
-			return notify ? notifier.addMessage(l10n.style_empty_nag, 'error') : false;
-		}
 
 		data = {
 			styles: styles,
