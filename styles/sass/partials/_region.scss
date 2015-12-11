@@ -332,9 +332,10 @@
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region > .upfront-region-resize-handle-s,
 .upfront-region-fixed-editing .upfront-region-side-fixed .upfront-region-resize-handle {
 	visibility: visible;
-	z-index: 9997;
+	/*z-index: 9997;*/
+	z-index: 2000000;
 }
-.responsive-breakpoint.upfront-region-editing .upfront-region-container-active > .upfront-region-resize-handle,
+/*.responsive-breakpoint.upfront-region-editing .upfront-region-container-active > .upfront-region-resize-handle,*/
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region-side-left > .upfront-region-resize-handle-e,
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region-side-right > .upfront-region-resize-handle-w,
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region-hidden > .upfront-region-resize-handle-s,

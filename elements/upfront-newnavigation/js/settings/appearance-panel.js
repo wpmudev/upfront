@@ -151,19 +151,19 @@ define([
 					// Convert "burger_menu" and "menu_style" properties to "menu_style" property
 					if (props.breakpoint.desktop) {
 						if (props.breakpoint.desktop.burger_menu === 'yes') {
-							props.breakpoint.desktop.menu_style = 'burger';
+							props.breakpoint.desktop.menu_style = 'triggered';
 						}
 						delete props.breakpoint.desktop.burger_menu;
 					}
 					if (props.breakpoint.tablet) {
 						if (props.breakpoint.tablet.burger_menu === 'yes') {
-							props.breakpoint.tablet.menu_style = 'burger';
+							props.breakpoint.tablet.menu_style = 'triggered';
 						}
 						delete props.breakpoint.tablet.burger_menu;
 					}
 					if (props.breakpoint.mobile) {
 						if (props.breakpoint.mobile.burger_menu === 'yes') {
-							props.breakpoint.mobile.menu_style = 'burger';
+							props.breakpoint.mobile.menu_style = 'triggered';
 						}
 						delete props.breakpoint.mobile.burger_menu;
 					}

@@ -91,7 +91,7 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 					text = ''
 				;
 
-			try { text = ed.getValue(true); } catch (e) { text = ''; }
+			try { text = $button.text(); } catch (e) { text = ''; }
 
 			if (text) me.model.set_property('form_button_text', text, true);
 		})
@@ -133,14 +133,10 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 				}
 				else {
 
-					try { text = ed.getValue(true); } catch (e) { text = ''; }
+					try { text = $label.text() } catch (e) { text = ''; }
 				}
 
-
 				var targetproperty = false;
-
-
-
 
 				if($label.attr('for') == 'sendername')
 					targetproperty = 'form_name_label';

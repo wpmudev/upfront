@@ -43,6 +43,10 @@ var Views = {
 		dispatch: function (e) {
 			e.preventDefault();
 			e.stopPropagation();
+
+			var has_type = !!this.model.get_property_value_by_name('display_type');
+			if (!has_type) return false;
+
 			this.model.trigger("change");
 		},
 	}),

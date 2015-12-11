@@ -59,6 +59,9 @@ define([], function () {
 		model = view.model;
 		oldData = Upfront.Util.model_to_json(view.model);
 		Upfront.Events.once('element:settings:canceled', resetModel);
+		setTimeout(function() { // Remove collapsed class, but allow a bit time for some animation handled elsewhere that does not work always
+			$('#element-settings-sidebar').removeClass('collapsed');
+		}, 500);
 	};
 
 	Upfront.Events.on('element:settings:activate', showSettings);

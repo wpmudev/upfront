@@ -191,7 +191,7 @@ define([
 			});
 
 			style = $.trim(Upfront.Application.cssEditor.get_style_element().html().replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
-			style = style.replace(new RegExp(elementStyleName, 'g'), preset.get('name'));
+			style = style.replace(new RegExp(elementStyleName, 'g'), preset.get('id'));
 
 			var presetCssEditor = new PresetCSSEditor({
 				model: this.model,
@@ -236,6 +236,10 @@ define([
 				currentBreakpoint,
 				breakpointsData,
 				breakpointData;
+
+			if(typeof presetModel === "undefined") {
+				presetModel = this.presets.findWhere({id: 'default'})
+			}
 
 			// Backup preset model properties for later use in reset (on settings cancel)
 			this.presetBackup = presetModel.toJSON();

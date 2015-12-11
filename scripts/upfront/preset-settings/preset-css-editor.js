@@ -451,9 +451,6 @@ define([
 			if (this.is_global_stylesheet === false && this.stylename === this.get_temp_stylename())
 				return Upfront.Views.Editor.notify(l10n.style_name_nag, 'error');
 
-			if(!styles)
-				return Upfront.Views.Editor.notify(l10n.style_empty_nag, 'error');
-
 			return Upfront.Views.Editor.notify(l10n.preset_style_saved.replace(/%s/,  this.elementType.id));
 		},
 	});

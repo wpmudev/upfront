@@ -196,7 +196,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 		return $date;
 	}
-	
+
 	protected static  function excerpt( $limit ) {
         $excerpt = explode(' ', get_the_excerpt(), $limit);
         if (count($excerpt)>=$limit) {
@@ -251,8 +251,8 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 		if(isset($options['contents'])){
 			$col_size = isset($properties['colSize']) ? $properties['colSize'] : 45;
-			$paddingLeft = $options['contents']['padding_left'] * $col_size;
-			$paddingRight = $options['contents']['padding_right'] * $col_size;
+			$paddingLeft = isset($options['contents']['padding_left']) ? $options['contents']['padding_left'] * $col_size : 0;
+			$paddingRight = isset($options['contents']['padding_right']) ? $options['contents']['padding_right'] * $col_size : 0;
 			$rules = '#' . $properties['element_id'] . ' .post_content>* { padding-left: ' . $paddingLeft . 'px; padding-right: ' . $paddingRight . 'px; }';
 		}
 
@@ -368,14 +368,14 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 				if (empty($markups['classes'])) $markups['classes'] = array();
 				$layout['extraClasses'][$o['slug']] .= ' ' . join(' ', $markups['classes']);
-				
+
 				if (empty($layout['wrappers'][$i]['classes'])) $layout['wrappers'][$i]['classes'] = '';
 				$layout['wrappers'][$i]['classes'] .= ' ' . join(' ', $markups['classes']);
-				
+
 				if (strpos($layout['wrappers'][$i]['objects'][$k]['classes'], 'part-module-' . $o['slug']) === false) {
 					$layout['wrappers'][$i]['objects'][$k]['classes'] .= ' part-module-' . $o['slug'];
 				}
-				
+
 				$attributes = '';
 				if(isset($opts['attributes'])){
 					foreach($opts['attributes'] as $key => $value)
@@ -535,8 +535,11 @@ class Upfront_ThisPostView extends Upfront_Object {
 		//We need to cheat telling WP we are not in admin area
 		// to get the same output than in the frontend
 		global $current_screen;
-		require_once(ABSPATH . '/wp-admin/includes/screen.php');
-		$current_screen = WP_Screen::get('front');
+		if (!class_exists('WP_Screen')) {
+			if (file_exists(ABSPATH . '/wp-admin/includes/class-wp-screen.php')) require_once(ABSPATH . '/wp-admin/includes/class-wp-screen.php');
+			else if (file_exists(ABSPATH . '/wp-admin/includes/screen.php')) require_once(ABSPATH . '/wp-admin/includes/screen.php');
+		}
+		if (class_exists('WP_Screen')) $current_screen = WP_Screen::get('front');
 
 		global $post;
 		$post = $this_post;
@@ -993,7 +996,7 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 
 		if(!$post_type || !$type || !$id || !$post_id)
 			$this->_out(new Upfront_JsonResponse_Error('No post_type, type or id sent.'));
-			
+
 		if (!empty($post_id)) {
 			$post_type = get_post_type($post_id);
 		}

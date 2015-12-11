@@ -202,15 +202,10 @@ abstract class Upfront_Entity {
 		"} {$post}") . "\n";
 	}
 
-	public function get_front_context () {
-		return 'default';
-	}
-
 	public function get_css_class () {
 		$type = strtolower(str_replace("_", "-", $this->_type));
 		$classes = array(
-			"upfront-output-" . $type,
-			$this->get_front_context()
+			"upfront-output-" . $type
 		);
 		$name = $this->get_name();
 		if ( $name != 'anonymous' )

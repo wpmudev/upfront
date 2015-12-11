@@ -93,6 +93,7 @@
 						}
 
 						text = ed.getValue(true);
+						if (text === '' && arguments[0] && arguments[0].currentTarget) text = arguments[0].currentTarget.innerHTML;
 						me.model.set_content(text);
 
 						Upfront.Events.trigger('upfront:element:edit:stop');
@@ -103,6 +104,7 @@
 						var ed = me.$el.find('.upfront-object-content').data("ueditor"),
 							text = ed.getValue(true)
 						;
+						if (text === '' && typeof arguments[1] === 'string' && arguments[1] !== '') text = arguments[1];
 						if (!text.match(/[<>]/)) {
 							text = ed.redactor.paragraphize.load(text);
 							ed.redactor.code.set(text);
@@ -119,7 +121,7 @@
 							// done
 						}
 
-						me.model.set_content(ed.getValue(true), {silent: true});
+						me.model.set_content(ed.getValue(true) || text, {silent: true});
 					})
 				;
 

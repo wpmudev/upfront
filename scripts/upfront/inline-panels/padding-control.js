@@ -156,7 +156,9 @@ define([
 
 				currentEntity.padding_hint_locked = false;
 				currentEntity.top_padding_hint_timer = setTimeout(function() {
-					currentEntity.hide_top_padding_hint();
+					if(typeof(currentEntity.hide_top_padding_hint) === 'function'){
+						currentEntity.hide_top_padding_hint();
+					}
 				}, 1000);
 			});
 
@@ -167,7 +169,9 @@ define([
 
 				currentEntity.padding_hint_locked = false;
 				currentEntity.bottom_padding_hint_timer = setTimeout(function() {
-					currentEntity.hide_bottom_padding_hint();
+					if(typeof(currentEntity.hide_bottom_padding_hint) === 'function'){
+						currentEntity.hide_bottom_padding_hint();
+					}
 				}, 1000);
 			});
 		},
