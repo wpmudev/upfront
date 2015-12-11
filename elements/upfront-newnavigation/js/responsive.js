@@ -114,7 +114,7 @@ jQuery(document).ready(function($) {
 		$(".upfront-navigation").each(function () {
 			var $me = $(this);
 
-			if ($me.data('style') === 'burger') {
+			if ($me.data('style') == 'triggered' || $me.data('style') === 'burger') {
 				$toggler = $me.children('.responsive_nav_toggler');
 				$toggler.attr('id', $me.attr('id')+'-toggler');
 				if (_cache[$toggler.attr("id")]) _cache[$toggler.attr("id")].destroy();
@@ -126,7 +126,7 @@ jQuery(document).ready(function($) {
 		$(".upfront-navigation.upfront-navigation-float").each(function () {
 			var $me = $(this);
 
-			if($me.data('style') == 'burger') {
+			if($me.data('style') == 'burger' || $me.data('style') == 'triggered') {
 				$toggler = $me.children('.responsive_nav_toggler');
 				$toggler.attr('id', $me.attr('id')+'-toggler');
 				//if (_cache[$toggler.attr("id")]) _cache[$toggler.attr("id")].destroy();
@@ -300,7 +300,7 @@ jQuery(document).ready(function($) {
 
 				preset = breakpoints.preset[currentKey];
 
-				if (preset.menu_style === 'burger') {
+				if (preset.menu_style == 'triggered') {
 					$(this).attr('data-style', 'burger');
 					$(this).attr('data-alignment', ( preset.menu_alignment ? preset.menu_alignment : $(this).data('alignmentbk') ));
 					$(this).attr('data-burger_alignment', preset.burger_alignment);

@@ -322,3 +322,7 @@ div.burger_overlay {
 .burger-menu li.menu-item .open-item-controls {
 	display: none!important;
 }
+
+div.upfront-navigation div[data-style="burger"] ul.sub-menu {
+  display:block;
+}

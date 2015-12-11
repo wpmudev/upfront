@@ -24,11 +24,11 @@ define(function() {
 					values: [
 						{ label: l10n.mnu.horiz, value: 'horizontal' },
 						{ label: l10n.mnu.vert, value: 'vertical' },
-						{ label: l10n.mnu.burger, value: 'burger' }, // this is actually 'burger' style
+						{ label: l10n.mnu.triggered, value: 'triggered' }, // this is actually 'burger' style
 					],
 					change: function(value) {
 						me.model.set('menu_style', value);
-						if (value !== 'burger') {
+						if (value !== 'triggered') {
 							me.fields._wrapped[3].$el.hide();
 							me.fields._wrapped[3].set_value('over');
 						} else if (me.model.get('burger_alignment') === 'top') {
@@ -36,7 +36,7 @@ define(function() {
 						}
 					},
 					show: function(value, $el) {
-						if(value === "burger") {
+						if(value === "triggered") {
 							$el.parent().find('.burger_alingment').show();
 						} else {
 							$el.parent().find('.burger_alingment').hide();
@@ -106,7 +106,7 @@ define(function() {
 					me.fields._wrapped[3].$el.show();
 				}
 				var style = me.model.get('menu_style');
-				if (style !== 'burger') {
+				if (style !== 'triggered') {
 					me.fields._wrapped[3].$el.hide();
 					me.fields._wrapped[3].set_value('over');
 				}
