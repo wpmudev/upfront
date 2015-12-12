@@ -622,7 +622,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 		
 		// WARNING! This needs sanity checking to make sure it doesn't mess with anything else:
 		// Don't do any of this if exporter is running
-		if (upfront_exporter_is_running()) return false;
+		if (function_exists('upfront_exporter_is_running') && upfront_exporter_is_running()) return false;
 		// This is to prevent layout conversion from eating up the changes
 		// made within the exporter.
 		// Should be okay though... Just another set of eyes would be cool
