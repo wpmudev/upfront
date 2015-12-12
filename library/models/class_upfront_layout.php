@@ -619,6 +619,15 @@ class Upfront_Layout extends Upfront_JsonModel {
 	 * Backward compatibility conversion
 	 */
 	protected function convert_layout () {
+		
+		// WARNING! This needs sanity checking to make sure it doesn't mess with anything else:
+		// Don't do any of this if exporter is running
+		if (upfront_exporter_is_running()) return false;
+		// This is to prevent layout conversion from eating up the changes
+		// made within the exporter.
+		// Should be okay though... Just another set of eyes would be cool
+
+
 		$layout_version = $this->get_property_value('version');
 		if (!$layout_version) $layout_version = '0.0.0';
 		// @TODO quick query var to check original version, remove these code after stable
