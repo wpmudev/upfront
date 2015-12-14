@@ -139,14 +139,14 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 					if(videoMatch !== null && videoMatch.length > 0) {
 						me.addVideo(videoInput);
 					} else {
-						Upfront.Views.Editor.notify(l10n.validMessage);
+						Upfront.Views.Editor.notify(l10n.validMessage, 'error');
 					}
 				} else {
 					videoMatch = videoInput.match(/^(https?:\/\/(www\.)?)?youtube\.com\/watch\?v=([0-9a-zA-Z\-_]{11}).*/);
 					if(videoMatch !== null && videoMatch.length > 0) {
 						me.addVideo(videoInput);
 					} else {
-						Upfront.Views.Editor.notify(l10n.validMessage);
+						Upfront.Views.Editor.notify(l10n.validMessage, 'error');
 					}
 				}
 			}
@@ -510,14 +510,14 @@ var YoutubeSettings = ElementSettings.extend({
 					if(videoMatch !== null && videoMatch.length > 0) {
 						videoId = videoMatch[2];
 					} else {
-						Upfront.Views.Editor.notify(l10n.validMessage);
+						Upfront.Views.Editor.notify(l10n.validMessage, 'error');
 					}
 				} else {
 					videoMatch = videoUrl.match(/^(https?:\/\/(www\.)?)?youtube\.com\/watch\?v=([0-9a-zA-Z\-_]{11}).*/);
 					if(videoMatch !== null && videoMatch.length > 0) {
 						videoId = videoMatch[3];
 					} else {
-						Upfront.Views.Editor.notify(l10n.validMessage);
+						Upfront.Views.Editor.notify(l10n.validMessage, 'error');
 					}
 				}
 				var data = {'video_id': videoUrl};
