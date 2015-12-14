@@ -38,10 +38,16 @@ class Upfront_Button_Presets_Server extends Upfront_Presets_Server {
 	}
 
 	public function get_presets($element = false) {
-		$presets = json_decode(get_option($this->db_key, '[]'), true);
+		if(!$element) {
+			$element = $this->elementName;
+		}
+
+		$db_key = 'upfront_' . get_stylesheet() . '_' . $element . '_presets';
+		
+		$presets = json_decode(get_option($db_key, '[]'), true);
 
 		$presets = apply_filters(
-			'upfront_get_' . $this->elementName . '_presets',
+			'upfront_get_' . $element . '_presets',
 			$presets,
 			array(
 				'json' => false,
