@@ -197,8 +197,8 @@
 .upfront-module-group-toggle-edit-container {
   height: 82px;
 }
-.upfront-module-group:hover .upfront-module-group-toggle-edit-container,
-.upfront-module-group-reorder-mode:hover .upfront-module-group-toggle-reorder-container {
+.upfront-module-group-active.upfront-module-group:hover .upfront-module-group-toggle-edit-container,
+.upfront-module-group-active.upfront-module-group-reorder-mode:hover .upfront-module-group-toggle-reorder-container {
 	display: block;
 }
 .upfront-module-group-reorder-mode:hover .upfront-module-group-toggle-edit-container {
