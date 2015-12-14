@@ -37,7 +37,7 @@ class Upfront_Button_Presets_Server extends Upfront_Presets_Server {
 		$this->_out(new Upfront_JsonResponse_Success($this->get_presets(true)));
 	}
 
-	public function get_presets() {
+	public function get_presets($element = false) {
 		$presets = json_decode(get_option($this->db_key, '[]'), true);
 
 		$presets = apply_filters(

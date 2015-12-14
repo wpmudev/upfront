@@ -21,6 +21,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			upfront_add_ajax('upfront_get_' . $this->elementName . '_presets', array($this, 'get'));
 		}
 		if (Upfront_Permissions::current(Upfront_Permissions::SAVE)) {
+			upfront_add_ajax('upfront_migrate_default_presets', array($this, 'migrate_defaults'));
 			upfront_add_ajax('upfront_save_' . $this->elementName . '_preset', array($this, 'save'));
 			upfront_add_ajax('upfront_delete_' . $this->elementName . '_preset', array($this, 'delete'));
 			upfront_add_ajax('upfront_reset_' . $this->elementName . '_preset', array($this, 'reset'));
@@ -111,11 +112,18 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 	/**
 	 * @return array saved presets
 	 */
-	public function get_presets() {
-		$presets = json_decode(get_option($this->db_key, '[]'), true);
+	public function get_presets($element = false) {
+		
+		if(!$element) {
+			$element = $this->elementName;
+		}
+		
+		$db_key = 'upfront_' . get_stylesheet() . '_' . $element . '_presets';
 
+		$presets = json_decode(get_option($db_key, '[]'), true);
+		
 		$presets = apply_filters(
-			'upfront_get_' . $this->elementName . '_presets',
+			'upfront_get_' . $element . '_presets',
 			$presets,
 			array(
 				'json' => false,
@@ -135,6 +143,49 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 	protected function update_presets($presets = array()) {
 		update_option($this->db_key, json_encode($presets));
+	}
+	
+	protected function migrate_presets($db_key, $presets = array()) {
+		update_option($db_key, json_encode($presets));
+	}
+	
+	public function migrate_defaults() {
+		if (!isset($_POST['data'])) {
+			return;
+		}
+
+		$migrated_presets = $_POST['data'];
+
+		do_action('upfront_migrate_default_presets', $migrated_presets);
+
+		if (!has_action('upfront_migrate_default_presets')) {
+			
+			foreach($migrated_presets as $element=>$properties) {
+				$db_key = 'upfront_' . get_stylesheet() . '_' . $element . '_presets';
+				
+				$presets = $this->get_presets($element);
+
+				$result = array();
+
+				foreach ($presets as $preset) {
+					if ($preset['id'] === $properties['id']) {
+						continue;
+					}
+					$result[] = $preset;
+				}
+
+				$result[] = $properties;
+				
+				print_r($presets);
+				
+				print_r($result);
+
+				$this->migrate_presets($db_key, $result);
+			
+			}
+		}
+
+		$this->_out(new Upfront_JsonResponse_Success('Migrated default presets, yay.'));
 	}
 
 	public function save() {

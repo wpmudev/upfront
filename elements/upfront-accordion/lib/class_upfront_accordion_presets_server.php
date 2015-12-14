@@ -29,7 +29,7 @@ class Upfront_Accordion_Presets_Server extends Upfront_Presets_Server {
 	/**
 	 * @return array saved presets
 	 */
-	public function get_presets() {
+	public function get_presets($element = false) {
 		$presets = parent::get_presets();
 
 		// Fix migration style issue

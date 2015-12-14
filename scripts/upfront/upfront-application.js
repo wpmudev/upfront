@@ -1615,11 +1615,15 @@ var Application = new (Backbone.Router.extend({
 		//this.sidebar.render(); <-- Subapplications do this
 	},
 	
-	updatePreset: function(properties, slug) {
+	updatePreset: function(presets, elements) {
 		Upfront.Util.post({
-			action: 'upfront_save_' + slug + '_preset',
-			data: properties
-		}).done( function() { });
+			action: 'upfront_migrate_default_presets',
+			data: presets
+		}).done( function() { 
+			console.log(Upfront.mainData);
+			//Delete style
+			//me.deleteMigratedStyles(elementType, name);
+		});
 	},
 	
 	deleteMigratedStyles: function(elementType, styleName) {
@@ -1712,7 +1716,8 @@ var Application = new (Backbone.Router.extend({
 	
 	migrateStylesToPreset: function() {
 		var me = this,
-			presetElements = ['image', 'ubutton', 'uaccordion', 'utabs', 'plain_text', 'ucontact', 'ugallery', 'uslider', 'unewnavigation', 'uwidget'];
+			presetElements = ['image', 'ubutton', 'uaccordion', 'utabs', 'plain_text', 'ucontact', 'ugallery', 'uslider', 'unewnavigation', 'uwidget'],
+			preset_properties = {};
 
 		this.fetchThemeStylesMigrate(true).done(function(styles){
 			Upfront.data.styles = {};
@@ -1725,7 +1730,7 @@ var Application = new (Backbone.Router.extend({
 				if(presetElement === "plain_text") { presetElement = 'text'; }
 				if(presetElement === "newnavigation") { presetElement = 'nav'; }
 				if(presetElement === "tabs") { presetElement = 'tab'; }
-				
+
 				var presets = new Backbone.Collection(Upfront.mainData[presetElement + 'Presets'] || []),
 					presetDefaults = Upfront.mainData.presetDefaults[presetElement] || [];
 
@@ -1750,15 +1755,14 @@ var Application = new (Backbone.Router.extend({
 						});
 						
 						var properties = preset.toJSON();
-						
-						//Save preset to DB
-						me.updatePreset(properties, presetElement);
-						
-						//Delete style
-						me.deleteMigratedStyles(elementType, name);
+
+						preset_properties[presetElement] = properties;
 					}
 				});
 			});
+			
+			//Save preset to DB
+			me.updatePreset(preset_properties);
 		});		
 	},
 
