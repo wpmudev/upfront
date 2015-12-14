@@ -117,7 +117,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		if(!$element) {
 			$element = $this->elementName;
 		}
-		
+
 		$db_key = 'upfront_' . get_stylesheet() . '_' . $element . '_presets';
 
 		$presets = json_decode(get_option($db_key, '[]'), true);
@@ -162,7 +162,6 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			
 			foreach($migrated_presets as $element=>$properties) {
 				$db_key = 'upfront_' . get_stylesheet() . '_' . $element . '_presets';
-				
 				$presets = $this->get_presets($element);
 
 				$result = array();
@@ -175,10 +174,6 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 				}
 
 				$result[] = $properties;
-				
-				print_r($presets);
-				
-				print_r($result);
 
 				$this->migrate_presets($db_key, $result);
 			
