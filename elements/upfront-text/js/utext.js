@@ -11,7 +11,7 @@
 		var l10n = Upfront.Settings.l10n.text_element;
 
 		var TextView = Upfront.Views.ObjectView.extend({
-			className: 'upfront-plain_txt',
+			// className: 'upfront-plain_txt', THIS ONE TRIPLICATES CLASSNAME MAKING CSS A HELL
 			initialize: function() {
 				this.constructor.__super__.initialize.apply(this, arguments);
 
@@ -65,7 +65,7 @@
 				blurTimeout = false;
 
 				this.$el.find('.upfront-object-content')
-					.addClass('upfront-plain_txt')
+					// .addClass('upfront-plain_txt') // WHY DO THIS, IT MESSES UP THE CSS LOGIC SINCE THAN WE HAVE DUPLICATED CLASS
 					.ueditor({
 						linebreaks: false,
 						//airButtons : ["upfrontFormatting"],
