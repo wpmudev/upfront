@@ -102,6 +102,8 @@ define([
 							padding_top.get_field().val(padding);
 							padding_right.get_field().val(padding);
 							padding_bottom.get_field().val(padding);
+
+							Upfront.Events.trigger("upfront:paddings:updated");
 						} else {
 							if(usePadding == "yes") {
 								stateSettings.find('.padding-slider').hide();
@@ -290,11 +292,16 @@ define([
 			this.model.set_property('use_padding', 'yes');
 
 			//Update fields when element padding is changed
-			var topPadding = this.model.get_property_value_by_name('top_padding_num');
-			var bottomPadding = this.model.get_property_value_by_name('bottom_padding_num');
-			var leftPadding = this.model.get_property_value_by_name('left_padding_num');
-			var rightPadding = this.model.get_property_value_by_name('right_padding_num');
+			var lockPadding      = this.model.get_property_value_by_name('lock_padding'),
+				lockPaddingField = this.fields._wrapped[1].get_field(),
+				topPadding       = this.model.get_property_value_by_name('top_padding_num'),
+				bottomPadding    = this.model.get_property_value_by_name('bottom_padding_num'),
+				leftPadding      = this.model.get_property_value_by_name('left_padding_num'),
+				rightPadding     = this.model.get_property_value_by_name('right_padding_num')
+			;
 
+			lockPadding ? lockPaddingField.attr('checked', 'checked') : lockPaddingField.removeAttr('checked');
+			lockPaddingField.trigger('change');
 			this.fields._wrapped[4].get_field().val(topPadding);
 			this.fields._wrapped[5].get_field().val(leftPadding);
 			this.fields._wrapped[6].get_field().val(rightPadding);

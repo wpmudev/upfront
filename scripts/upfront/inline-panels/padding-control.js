@@ -111,6 +111,7 @@ define([
 				change: function () {
 					var value = this.get_value();
 
+					this.model.set_breakpoint_property('lock_padding', '', true);
 					this.model.set_breakpoint_property('top_padding_use', 'yes');
 					this.model.set_breakpoint_property('top_padding_num', value);
 					this.model.set_breakpoint_property('top_padding_slider', value, true); // silent, don't need to trigger update again
@@ -134,6 +135,7 @@ define([
 				change: function () {
 					var value = this.get_value();
 
+					this.model.set_breakpoint_property('lock_padding', '', true);
 					this.model.set_breakpoint_property('bottom_padding_use', 'yes');
 					this.model.set_breakpoint_property('bottom_padding_num', value);
 					this.model.set_breakpoint_property('bottom_padding_slider', value, true); // silent, don't need to trigger update again
