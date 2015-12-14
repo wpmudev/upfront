@@ -92,7 +92,7 @@ define([
 				return;
 			}
 
-			if (this.property('preset')) return;
+			if (this.property('preset') && this.property('preset') !== 'default') return;
 
 			elementStyleName = this.property('theme_style');
 
