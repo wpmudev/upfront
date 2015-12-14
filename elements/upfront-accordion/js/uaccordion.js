@@ -118,7 +118,8 @@ define([
 		},
 
 		saveTitle: function(target) {
-			var id = target.closest('div.accordion-panel').index()-1;
+			//var id = target.closest('div.accordion-panel').index()-1;
+			var id = target.closest('div.accordion-panel').index(); // Index is zero-based!!! https://api.jquery.com/index/
 			this.property('accordion')[id].title = target.html();
 		},
 

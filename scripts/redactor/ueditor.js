@@ -1206,7 +1206,12 @@ Ueditor.prototype = {
         /**
          * Make sure the wrapping .plain-text-container is not being returned as html
          */
-        return $.trim( $("<div>").html(html).find(".plain-text-container").last().html() );
+        return $.trim(
+            // Conditionally nuke the wrapper - only if we actually have it
+            $(html).find(".plain-text-container").length
+                ? $("<div>").html(html).find(".plain-text-container").last().html()
+                : html
+        );
 	},
 	getInsertsData: function(){
 		var insertsData = {};

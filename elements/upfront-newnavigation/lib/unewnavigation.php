@@ -24,7 +24,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 
 		$preset_props = Upfront_Nav_Presets_Server::get_instance()->get_preset_properties($preset);
 		$breakpoint_data = $this->_get_property('breakpoint');
-		$breakpoint_data['preset'] = $preset_props['breakpoint'];
+		$breakpoint_data['preset'] = isset($preset_props['breakpoint'])?$preset_props['breakpoint']:false;
 
 		// if a breakpoint does not have info to render menu style, copy it from one higher
 		if(is_array($breakpoint_data['preset'])) {
@@ -49,8 +49,10 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 		$menu_alignment = $this->_get_property('menu_alignment');
 
 		$desktop = $breakpoint_data['desktop'];
-		$desktopPreset = $breakpoint_data['preset']['desktop'];
-		$menu_style = isset($desktopPreset['menu_style']) ? $desktopPreset['menu_style'] :  $menu_style;
+		
+		$desktopPreset = (is_array($breakpoint_data['preset']) && isset($breakpoint_data['preset']['desktop']))?$breakpoint_data['preset']['desktop']:false;
+
+		$menu_style = (is_array($desktopPreset['menu_style']) && isset($desktopPreset['menu_style'])) ? $desktopPreset['menu_style'] :  $menu_style;
 		$menu_alignment = isset($desktopPreset['menu_alignment']) ? $desktopPreset['menu_alignment'] : $menu_alignment;
 		$sub_navigation = $this->_get_property('allow_sub_nav');
 		$is_floating = $this->_get_property('is_floating');
