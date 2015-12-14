@@ -1462,26 +1462,31 @@ define([
 						me.property('include_image_caption', [1]);
 						me.property('caption_position', 'over_image');
 						me.property('caption_alignment', 'top');
+						me.property('cover_caption',  false);
 						break;
 					case 'bottomOver':
 						me.property('include_image_caption', [1]);
 						me.property('caption_position', 'over_image');
 						me.property('caption_alignment', 'bottom');
+						me.property('cover_caption',  false);
 						break;
 					case 'topCover':
 						me.property('include_image_caption', [1]);
 						me.property('caption_position', 'over_image');
 						me.property('caption_alignment', 'fill');
+						me.property('cover_caption',  [1]);
 						break;
 					case 'middleCover':
 						me.property('include_image_caption', [1]);
 						me.property('caption_position', 'over_image');
 						me.property('caption_alignment', 'fill_middle');
+						me.property('cover_caption',  [1]);
 						break;
 					case 'bottomCover':
 						me.property('include_image_caption', [1]);
 						me.property('caption_position', 'over_image');
 						me.property('caption_alignment', 'fill_bottom');
+						me.property('cover_caption',  [1]);
 						break;
 					case 'below':
 						me.property('include_image_caption', [1]);
@@ -1492,6 +1497,8 @@ define([
 						me.property('include_image_caption', false);
 						me.property('caption_position', false);
 						me.property('caption_alignment', false);
+						me.property('cover_caption',  false);
+
 				}
 				me.render();
 			});
