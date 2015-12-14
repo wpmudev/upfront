@@ -94,11 +94,9 @@ define([
 			}
 
 			thisPreset = this.property('preset');
-			console.log(thisPreset);
 			if (thisPreset && thisPreset !== 'default') return;
 
 			elementStyleName = this.property('theme_style');
-			console.log(elementStyleName);
 
 			// We need to set to _default first so that css editor can get style properly
 			if (!elementStyleName) elementStyleName = '_default';
@@ -110,22 +108,20 @@ define([
 			});
 
 			style = $.trim(Upfront.Application.cssEditor.get_style_element().html().replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
-			style = style.replace(new RegExp(elementStyleName, 'g'), newPresetName);
 
 			var properties;
 			// If we have default preset and default style just add default style to preset
 			if (thisPreset === 'default' && elementStyleName === 'default') {
-				console.log('default default');
 				existingPreset = this.presets.findWhere({id: 'default'});
 
 				// If some other instance has already migrated the default style just delete theme style property on model and return
 				this.property('theme_style', '');
 				if (thisPreset.get('migrated') === true) {
-					console.log('already migrated');
 					this.model.get('properties').trigger('change');
 					return;
 				}
 
+				style = style.replace(new RegExp(elementStyleName, 'g'), '');
 				thisPreset.set({
 					preset_style: style,
 					migrated: true
@@ -142,6 +138,8 @@ define([
 					this.model.get('properties').trigger('change');
 					return;
 				}
+
+				style = style.replace(new RegExp(elementStyleName, 'g'), newPresetName);
 
 				// Create new preset and assign style to preset
 				newPreset = new Backbone.Model(this.getPresetDefaults(newPresetName));
