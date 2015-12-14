@@ -588,6 +588,8 @@ define([
 				return '';
 			},
 			on_click: function () {
+				// We don't want to activate the element when Settings sidebar is open
+				if($('#element-settings-sidebar').html() !== '' || $('#settings').html() !== '') return false;
 				this.activate();
 				Upfront.Events.trigger("entity:contextmenu:deactivate", this);
 				//return false;
@@ -897,6 +899,8 @@ define([
 				"dblclick": "on_edit"
 			},
 			on_edit: function () {
+				// We don't want to activate the Entity when Settings sidebar is open
+				if($('#element-settings-sidebar').html() !== '' || $('#settings').html() !== '') return false;
 				var contentEditable = this.$el.find('[contenteditable]');
 				if (contentEditable.length > 0) {
 					contentEditable[0].focus();
@@ -1570,8 +1574,6 @@ define([
 			},
 			
 			activate: function () {
-				// We don't want to activate the element when Settings sidebar is open
-				if($('#element-settings-sidebar').html() !== '') return;
 				// Deactivate previous ObjectView
 				if(typeof(Upfront.data.prevEntity) !== 'undefined' && Upfront.data.prevEntity !== false) {
 					Upfront.data.prevEntity.deactivate();
@@ -1583,7 +1585,7 @@ define([
 			},
 			deactivate: function () {
 				// We don't want to deactivate the element when Settings sidebar is open
-				if($('#element-settings-sidebar').html() !== '') return;
+				if($('#element-settings-sidebar').html() !== '' || $('#settings').html() !== '') return false;
 				Upfront.data.prevEntity = false;
 				_Upfront_EditableEntity.prototype.deactivate.call(this);
 				if ( !this.parent_module_view ) return;
@@ -2615,6 +2617,8 @@ define([
 				this.update_size_hint();
 			},
 			on_dblclick: function (e) {
+				// We don't want to activate the Group when Settings sidebar is open
+				if($('#element-settings-sidebar').html() !== '' || $('#settings').html() !== '') return false;
 				if ( this.$el.hasClass('upfront-module-group-on-edit') || this.$el.hasClass('upfront-module-group-disabled') ) return;
 				this.closeControlPanel(false);
 				this.on_edit();
@@ -2668,7 +2672,7 @@ define([
 			},
 			deactivate: function () {
 				// We don't want to deactivate the Group when Settings sidebar is open
-				if($('#element-settings-sidebar').html() !== '') return;
+				if($('#element-settings-sidebar').html() !== '' || $('#settings').html() !== '') return false;
 				Upfront.data.prevEntity = false;
 				this.$el.removeClass("upfront-module-group-active");
 				this.check_deactivated();
@@ -2678,8 +2682,6 @@ define([
 				var me= this,
 					currentEntity = Upfront.data.currentEntity
 				;
-				// We don't want to activate the Group when Settings sidebar is open
-				if($('#element-settings-sidebar').html() !== '') return;
 				// Deactivate previous ObjectView
 				if(typeof(Upfront.data.prevEntity) !== 'undefined' && Upfront.data.prevEntity !== false) {
 					Upfront.data.prevEntity.deactivate();
