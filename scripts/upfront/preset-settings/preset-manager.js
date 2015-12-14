@@ -94,6 +94,7 @@ define([
 			}
 
 			thisPreset = this.property('preset');
+			if (thisPreset === false) thisPreset = 'default';
 			if (thisPreset && thisPreset !== 'default') return;
 
 			elementStyleName = this.property('theme_style');
@@ -111,22 +112,23 @@ define([
 
 			var properties;
 			// If we have default preset and default style just add default style to preset
-			if (thisPreset === 'default' && elementStyleName === 'default') {
+			if (thisPreset === 'default' && elementStyleName === '_default') {
 				existingPreset = this.presets.findWhere({id: 'default'});
 
+				this.property('preset', 'default');
 				// If some other instance has already migrated the default style just delete theme style property on model and return
 				this.property('theme_style', '');
-				if (thisPreset.get('migrated') === true) {
+				if (existingPreset.get('migrated') === true || existingPreset.get('migrated') === 'true') {
 					this.model.get('properties').trigger('change');
 					return;
 				}
 
 				style = style.replace(new RegExp(elementStyleName, 'g'), '');
-				thisPreset.set({
+				existingPreset.set({
 					preset_style: style,
 					migrated: true
 				});
-				properties = newPreset.toJSON();
+				properties = existingPreset.toJSON();
 			} else {
 				// Add element style to preset model. Now change _default to new name
 				newPresetName = elementStyleName === '_default' ? this.styleElementPrefix.replace('-preset', '') + '-theme-style' : elementStyleName + '-m';
@@ -202,7 +204,7 @@ define([
 			var preset = this.presets.findWhere({id: this.property('preset')});
 			var presetStyle = preset.get('preset_style');
 
-			if (preset.get('migrated') === true) return;
+			if (preset.get('migrated') === true || preset.get('migrated') === 'true') return;
 			preset.set({'migrated': true});
 
 			// We need to set to _default first so that css editor can get style properly

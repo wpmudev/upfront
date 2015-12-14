@@ -63,8 +63,6 @@ define([
 			});
 
 			Upfront.Events.trigger("entity:settings:deactivate");
-
-			//$('#settings').find('.upfront-save_settings').click();
 		}
 	});
 
