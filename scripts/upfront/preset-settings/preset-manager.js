@@ -85,16 +85,20 @@ define([
 				newPresetName,
 				existingPreset,
 				style,
-				newPreset;
+				newPreset,
+				thisPreset;
 
 			if (hadPresets) {
 				this.migrateExistingPresets();
 				return;
 			}
 
-			if (this.property('preset') && this.property('preset') !== 'default') return;
+			thisPreset = this.property('preset');
+			console.log(thisPreset);
+			if (thisPreset && thisPreset !== 'default') return;
 
 			elementStyleName = this.property('theme_style');
+			console.log(elementStyleName);
 
 			// We need to set to _default first so that css editor can get style properly
 			if (!elementStyleName) elementStyleName = '_default';
@@ -105,32 +109,54 @@ define([
 				no_render: true
 			});
 
-			// Add element style to preset model. Now change _default to new name
-			newPresetName = elementStyleName === '_default' ? this.styleElementPrefix.replace('-preset', '') + '-theme-style' : elementStyleName + '-m';
-			existingPreset = this.presets.findWhere({id: newPresetName});
-
-			if (existingPreset) {
-				this.property('preset', existingPreset.id);
-				this.property('theme_style', '');
-				return;
-			}
-
 			style = $.trim(Upfront.Application.cssEditor.get_style_element().html().replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
 			style = style.replace(new RegExp(elementStyleName, 'g'), newPresetName);
 
-			// Create new preset and assign style to preset
-			newPreset = new Backbone.Model(this.getPresetDefaults(newPresetName));
-			newPreset.set({
-				preset_style: style
-			});
+			var properties;
+			// If we have default preset and default style just add default style to preset
+			if (thisPreset === 'default' && elementStyleName === 'default') {
+				console.log('default default');
+				existingPreset = this.presets.findWhere({id: 'default'});
 
-			this.migratePresetProperties(newPreset);
+				// If some other instance has already migrated the default style just delete theme style property on model and return
+				this.property('theme_style', '');
+				if (thisPreset.get('migrated') === true) {
+					console.log('already migrated');
+					this.model.get('properties').trigger('change');
+					return;
+				}
 
-			// And remove element style
-			this.property('theme_style', '');
-			this.property('preset', newPreset.id);
-			this.presets.add(newPreset);
-			var properties = newPreset.toJSON();
+				thisPreset.set({
+					preset_style: style,
+					migrated: true
+				});
+				properties = newPreset.toJSON();
+			} else {
+				// Add element style to preset model. Now change _default to new name
+				newPresetName = elementStyleName === '_default' ? this.styleElementPrefix.replace('-preset', '') + '-theme-style' : elementStyleName + '-m';
+				existingPreset = this.presets.findWhere({id: newPresetName});
+
+				if (existingPreset) {
+					this.property('preset', existingPreset.id);
+					this.property('theme_style', '');
+					this.model.get('properties').trigger('change');
+					return;
+				}
+
+				// Create new preset and assign style to preset
+				newPreset = new Backbone.Model(this.getPresetDefaults(newPresetName));
+				newPreset.set({
+					preset_style: style
+				});
+
+				this.migratePresetProperties(newPreset);
+
+				// And remove element style
+				this.property('theme_style', '');
+				this.property('preset', newPreset.id);
+				this.presets.add(newPreset);
+				properties = newPreset.toJSON();
+			}
 			Util.updatePresetStyle(this.styleElementPrefix.replace(/-preset/, ''), properties, this.styleTpl);
 
 			this.debouncedSavePreset(properties);
@@ -330,7 +356,7 @@ define([
 				}
 			});
 
-			if (_.isUndefined(index) === false) {
+			if (typeof index !== 'undefined') {
 				Upfront.mainData[this.mainDataCollection].splice(index, 1);
 			}
 			Upfront.mainData[this.mainDataCollection].push(properties);
