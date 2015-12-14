@@ -1071,7 +1071,7 @@ div.uimage-controls i.upfront-icon:before,
 }
 .upfront-ui .uimage-caption-control {
 	display: none;
-	min-width: 120px;
+	min-width: 60px;
 	line-height: 0px;
 	margin-top:0;
 }
