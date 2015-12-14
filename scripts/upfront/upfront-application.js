@@ -1620,7 +1620,21 @@ var Application = new (Backbone.Router.extend({
 			action: 'upfront_migrate_default_presets',
 			data: presets
 		}).done( function() { 
-			console.log(Upfront.mainData);
+			_.each(presets, function(element, properties) {
+				//Update mainData because already loaded
+				_.each(Upfront.mainData[element + 'Presets'], function(preset, presetIndex) {
+					if (preset.id === properties.id) {
+						index = presetIndex;
+					}
+				});
+
+				if (_.isUndefined(index) === false) {
+					Upfront.mainData[element + 'Presets'].splice(index, 1);
+				}
+				
+				Upfront.mainData[element + 'Presets'].push(properties);
+			});
+
 			//Delete style
 			//me.deleteMigratedStyles(elementType, name);
 		});
