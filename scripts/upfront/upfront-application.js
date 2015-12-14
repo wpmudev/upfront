@@ -1616,10 +1616,25 @@ var Application = new (Backbone.Router.extend({
 	},
 	
 	updatePreset: function(presets, elements) {
+		var me = this;
+		
 		Upfront.Util.post({
 			action: 'upfront_migrate_default_presets',
 			data: presets
 		}).done( function() { 
+			var presetElements = {
+				'image': 'image', 
+				'button': 'ubutton', 
+				'accordion': 'uaccordion', 
+				'tab': 'utabs', 
+				'text': 'plain_text', 
+				'contact': 'ucontact', 
+				'gallery': 'ugallery', 
+				'slider': 'uslider', 
+				'nav': 'unewnavigation', 
+				'widget': 'uwidget'
+			};
+
 			_.each(presets, function(properties, element) {
 				//Update mainData because already loaded
 				_.each(Upfront.mainData[element + 'Presets'], function(preset, presetIndex) {
@@ -1633,10 +1648,14 @@ var Application = new (Backbone.Router.extend({
 				}
 
 				Upfront.mainData[element + 'Presets'].push(properties);
+				
+				_.each(presetElements, function(elementType, index) {
+					if(element === index) {
+						var style = elementType + '_default';
+						me.deleteMigratedStyles(elementType, style);
+					}
+				});
 			});
-
-			//Delete style
-			//me.deleteMigratedStyles(elementType, name);
 		});
 	},
 	
