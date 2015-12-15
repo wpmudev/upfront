@@ -88,15 +88,23 @@ var Box = Backbone.View.extend({
     renderTaxonomyEditor: function($el, tax){
         var self = this,
             tax = typeof tax === "undefined" ? "category" : tax,
-            termsList = new Upfront.Collections.TermList([], {postId: this.post.id, taxonomy: tax});
+            termsList = new Upfront.Collections.TermList([], {postId: this.post.id, taxonomy: tax})
+        ;
+
+        if (!this._post_type_has_taxonomy(tax)) {
+            // Post type doesn't support this taxonomy. Bail out
+            $el.hide();
+            return false;
+        }
+
         termsList.fetch({allTerms: true}).done(function(response){
             var tax_view_constructor = response.data.taxonomy.hierarchical ? ContentEditorTaxonomy_Hierarchical : ContentEditorTaxonomy_Flat,
                 tax_view = self.taxSections[tax] = new tax_view_constructor({collection: termsList, tax: tax})
-                ;
+            ;
 
             tax_view.allTerms = new Upfront.Collections.TermList(response.data.allTerms);
             tax_view.render();
-            $el.html( tax_view.$el );
+            $el.html(tax_view.$el);
         });
 
     },
@@ -107,8 +115,23 @@ var Box = Backbone.View.extend({
 
         this.$(".misc-pub-section.misc-pub-post-url").html( this.urlEditor.$el  );
 
-        this.renderTaxonomyEditor( this.$(".misc-pub-post-category"), "category");
-        this.renderTaxonomyEditor( this.$(".misc-pub-post-tags"), "post_tag");
+        this.renderTaxonomyEditor(this.$(".misc-pub-post-category"), "category");
+        this.renderTaxonomyEditor(this.$(".misc-pub-post-tags"), "post_tag");
+    },
+
+    /**
+     * Helper method to determine if a currently edited post type supports a taxonomy.
+     *
+     * Currently very simplistic
+     *
+     * @param {String} tax Taxonomy to check for
+     *
+     * @return {Boolean}
+     */
+    _post_type_has_taxonomy: function (tax) {
+        if (!tax) return true;
+        var type = this.post.get("post_type") || 'post';
+        return "page" !== type;
     },
 
     getButtonText: function(){
