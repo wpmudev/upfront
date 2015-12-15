@@ -11,11 +11,11 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 		$menu_slug = $this->_get_property('menu_slug');
 
 		$activeBreakpoints = Upfront_Grid::get_grid()->get_breakpoints();
-		
-			
-		
-		
-		
+
+
+
+
+
 
 		$preset = $this->_get_property('preset');
 		if (!isset($preset)) {
@@ -34,7 +34,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 
 				if(!array_key_exists($name, $breakpoint_data['preset']) && $higher_name != '')
 					$breakpoint_data['preset'][$name] = $breakpoint_data['preset'][$higher_name];
-				
+
 				$higher_name = $name;
 			}
 
@@ -48,8 +48,6 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 		$menu_style = $this->_get_property('menu_style');
 		$menu_alignment = $this->_get_property('menu_alignment');
 
-		$desktop = $breakpoint_data['desktop'];
-		
 		$desktopPreset = (is_array($breakpoint_data['preset']) && isset($breakpoint_data['preset']['desktop']))?$breakpoint_data['preset']['desktop']:false;
 
 		$menu_style = (is_array($desktopPreset['menu_style']) && isset($desktopPreset['menu_style'])) ? $desktopPreset['menu_style'] :  $menu_style;
