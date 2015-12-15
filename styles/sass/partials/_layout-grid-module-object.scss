@@ -206,7 +206,7 @@
 }
 .upfront-module-group.upfront-module-group-disabled .upfront-module-group-toggle-edit-container,
 .upfront-module-group.upfront-module-group-on-edit .upfront-module-group-toggle-container {
-	display: none;
+	display: none !important;
 }
 .upfront-module-group-toggle {
 	position: relative;
