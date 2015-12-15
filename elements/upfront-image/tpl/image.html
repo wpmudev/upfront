@@ -3,32 +3,32 @@
 		<div class="upfront-image-caption-container" style="margin-top:<?php echo $marginTop ?>px">
 			<?php if($url && !$in_editor) { ?>
 			<a href="<?php echo $url ?>" target="<?php echo $link_target ?>">
-			<?php } ?>
+				<?php } ?>
 				<?php if($src){ ?>
 				<div class="upfront-image-container" <?php if ($containerWidth) { ?>style="width:<?php echo $containerWidth ?>px;"<?php } ?>>
-					<img src="<?php echo $src ?>" alt="<?php echo $alternative_text ?>" title="<?php echo $image_title ?>" <?php if($imgWidth) { ?>style="width:<?php echo $imgWidth ?>;"<?php } ?>/>
-				</div>
-				<?php } else { ?>
-					<div class="upfront-image-starting_placeholder"><p>Image placeholder</p></div>
-				<?php } ?>
+				<img src="<?php echo $src ?>" alt="<?php echo $alternative_text ?>" title="<?php echo $image_title ?>" <?php if($imgWidth) { ?>style="width:<?php echo $imgWidth ?>;"<?php } ?>/>
+		</div>
+		<?php } else { ?>
+		<div class="upfront-image-starting_placeholder"><p>Image placeholder</p></div>
+		<?php } ?>
 
-			<?php if( !empty($properties['use_captions']) && $display_caption === 'showCaption' )  { ?>
-			<div class="wp-caption uimage-<?php echo $properties['caption-alignment'] ?> uimage-<?php echo $properties['caption-trigger'] ?> uimage-padded-caption">
-				<?php if($cover_caption) { ?>
-					<div class="uimage-caption-cover">
+		<?php if( !empty($properties['use_captions']) && $display_caption === 'showCaption' )  { ?>
+		<div class="wp-caption uimage-<?php echo $properties['caption-alignment'] ?> uimage-<?php echo $properties['caption-trigger'] ?> uimage-padded-caption">
+			<?php if($cover_caption) { ?>
+			<div class="uimage-caption-cover">
 				<?php } ?>
-						<?php echo $image_caption ?>
+				<?php echo $image_caption ?>
 				<?php if($cover_caption) { ?>
-					</div>
-				<?php } ?>
 			</div>
 			<?php } ?>
-
-			<?php if($url && !$in_editor) { ?>
-			</a>
-			<?php } ?>
 		</div>
+		<?php } ?>
+
+		<?php if($url && !$in_editor) { ?>
+		</a>
+		<?php } ?>
 	</div>
+</div>
 </div>
 
 <?php if($gifImage){ ?>
@@ -39,10 +39,10 @@
 	}
 
 	#<?php echo $element_id ?> .uimage-gif img {
-		height: <?php echo $size['height'] ?>px;
-		width: <?php echo $size['width'] ?>px !important;
-		margin-top: <?php echo $gifTop ?>;
-		margin-left: <?php echo $gifLeft ?>;
-	}
+		   height: <?php echo $size['height'] ?>px;
+		   width: <?php echo $size['width'] ?>px !important;
+		   margin-top: <?php echo $gifTop ?>;
+		   margin-left: <?php echo $gifLeft ?>;
+	   }
 </style>
 <?php } ?>

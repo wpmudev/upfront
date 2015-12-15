@@ -193,80 +193,6 @@ define([
 			this.openImageSelector();
 		},
 
-		// createControls: function() {
-		// 	var me = this,
-		// 		panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
-		// 		captionControl = new Upfront.Views.Editor.InlinePanels.TooltipControl()
-		// 	;
-
-		// 	// Do not allow editing of theme images if not in builder
-		// 	if (this.isThemeImage() && !Upfront.themeExporter) {
-		// 		return false;
-		// 	}
-
-		// 	captionControl.sub_items = {
-		// 		topOver: this.createControl('topOver', l10n.ctrl.over_top),
-		// 		bottomOver: this.createControl('bottomOver', l10n.ctrl.over_bottom),
-		// 		topCover: this.createControl('topCover', l10n.ctrl.cover_top),
-		// 		middleCover: this.createControl('middleCover', l10n.ctrl.cover_middle),
-		// 		bottomCover: this.createControl('bottomCover', l10n.ctrl.cover_bottom),
-		// 		below: this.createControl('below', l10n.ctrl.below),
-		// 		nocaption: this.createControl('nocaption', l10n.ctrl.no_caption)
-		// 	};
-
-		// 	captionControl.icon = 'caption';
-		// 	captionControl.tooltip = l10n.ctrl.caption_position;
-		// 	captionControl.selected = this.getSelectedAlignment();
-
-		// 	this.listenTo(captionControl, 'select', function(item){
-		// 		switch(item){
-		// 			case 'topOver':
-		// 				me.property('include_image_caption', [1]);
-		// 				me.property('caption_position', 'over_image');
-		// 				me.property('caption_alignment', 'top');
-		// 				break;
-		// 			case 'bottomOver':
-		// 				me.property('include_image_caption', [1]);
-		// 				me.property('caption_position', 'over_image');
-		// 				me.property('caption_alignment', 'bottom');
-		// 				break;
-		// 			case 'topCover':
-		// 				me.property('include_image_caption', [1]);
-		// 				me.property('caption_position', 'over_image');
-		// 				me.property('caption_alignment', 'fill');
-		// 				break;
-		// 			case 'middleCover':
-		// 				me.property('include_image_caption', [1]);
-		// 				me.property('caption_position', 'over_image');
-		// 				me.property('caption_alignment', 'fill_middle');
-		// 				break;
-		// 			case 'bottomCover':
-		// 				me.property('include_image_caption', [1]);
-		// 				me.property('caption_position', 'over_image');
-		// 				me.property('caption_alignment', 'fill_bottom');
-		// 				break;
-		// 			case 'below':
-		// 				me.property('include_image_caption', [1]);
-		// 				me.property('caption_position', 'below_image');
-		// 				me.property('caption_alignment', false);
-		// 				break;
-		// 			case 'nocaption':
-		// 				me.property('include_image_caption', false);
-		// 				me.property('caption_position', false);
-		// 				me.property('caption_alignment', false);
-		// 		}
-		// 		me.render();
-		// 	});
-
-		// 	panel.items = _([
-		// 		this.createControl('crop', l10n.ctrl.edit_image, 'editRequest'),
-		// 		this.createLinkControl(),
-		// 		captionControl
-		// 	]);
-
-		// 	return panel;
-		// },]
-
 		createLinkControl: function(){
 			var me = this,
 				control = new Upfront.Views.Editor.InlinePanels.DialogControl(),
@@ -331,8 +257,10 @@ define([
 
 			captionEl.ueditor({
 					autostart: false,
+					focus: false,
 					upfrontMedia: false,
 					upfrontImages: false,
+					linebreaks: false,
 					airButtons: ['upfrontFormatting', 'bold', 'italic', 'stateAlign', 'upfrontLink', 'upfrontColor', 'upfrontIcons']
 				})
 				.on('start', function(){
@@ -1204,7 +1132,6 @@ define([
 					size: imgSize,
 					position: imgPosition
 				};
-				console.log(img, imgSize, imgPosition, data);
 				this.property('element_size', size);
 				this.saveTemporaryResizing();
 				return true;
@@ -1442,55 +1369,22 @@ define([
 			;
 
 			captionControl.sub_items = {
-				topOver: this.createControl('topOver', l10n.ctrl.over_top),
-				bottomOver: this.createControl('bottomOver', l10n.ctrl.over_bottom),
-				topCover: this.createControl('topCover', l10n.ctrl.cover_top),
-				middleCover: this.createControl('middleCover', l10n.ctrl.cover_middle),
-				bottomCover: this.createControl('bottomCover', l10n.ctrl.cover_bottom),
-				below: this.createControl('below', l10n.ctrl.below),
-				nocaption: this.createControl('nocaption', l10n.ctrl.no_caption)
+				nocaption: this.createControl('nocaption', l10n.ctrl.no_caption),
+				showCaption: this.createControl('showCaption', l10n.ctrl.show_caption)
 			};
 
 			captionControl.icon = 'caption';
 			captionControl.tooltip = l10n.ctrl.caption_position;
-			captionControl.selected = this.getSelectedAlignment();
+			captionControl.selected = this.property("display_caption");
 
 			this.listenTo(captionControl, 'select', function(item){
 				switch(item){
-					case 'topOver':
-						me.property('include_image_caption', [1]);
-						me.property('caption_position', 'over_image');
-						me.property('caption_alignment', 'top');
+					case 'showCaption':
+						me.property('display_caption', 'showCaption');
 						break;
-					case 'bottomOver':
-						me.property('include_image_caption', [1]);
-						me.property('caption_position', 'over_image');
-						me.property('caption_alignment', 'bottom');
+					default:
+						me.property('display_caption', "nocaption");
 						break;
-					case 'topCover':
-						me.property('include_image_caption', [1]);
-						me.property('caption_position', 'over_image');
-						me.property('caption_alignment', 'fill');
-						break;
-					case 'middleCover':
-						me.property('include_image_caption', [1]);
-						me.property('caption_position', 'over_image');
-						me.property('caption_alignment', 'fill_middle');
-						break;
-					case 'bottomCover':
-						me.property('include_image_caption', [1]);
-						me.property('caption_position', 'over_image');
-						me.property('caption_alignment', 'fill_bottom');
-						break;
-					case 'below':
-						me.property('include_image_caption', [1]);
-						me.property('caption_position', 'below_image');
-						me.property('caption_alignment', false);
-						break;
-					case 'nocaption':
-						me.property('include_image_caption', false);
-						me.property('caption_position', false);
-						me.property('caption_alignment', false);
 				}
 				me.render();
 			});

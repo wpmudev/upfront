@@ -1491,6 +1491,7 @@ RedactorPlugins.upfrontFormatting = function() {
 
                 if (tag == 'p' || this.redactor.block.headTag) $formatted.find('p').contents().unwrap();
 
+                this.redactor.code.sync();
                 this.close();
                 this.redactor.dropdown.hideAll();
             },

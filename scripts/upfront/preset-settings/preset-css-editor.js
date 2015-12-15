@@ -144,13 +144,8 @@ define([
 		},
 		renderCss: function(rawCss) {
 			var styles_with_selector;
-			var preset_class = '\n\n' + this.get_css_selector();
-
-			if(typeof this.elementType.preset_container === "undefined") {
-				preset_class = preset_class + ' ';
-			}
-
-			styles_with_selector = this.stylesAddSelector($.trim(rawCss), '#page ' + this.get_css_selector());
+			var preset_class = this.get_css_selector();
+			styles_with_selector = this.stylesAddSelector($.trim(rawCss), '#page ' + preset_class);
 			// Solve case of button loosing its styles
 			styles_with_selector = Upfront.Util.colors.convert_string_ufc_to_color(styles_with_selector.replace(new RegExp(this.get_css_selector() + ' .upfront-button', 'g'), this.get_css_selector() + '.upfront-button'));
 
@@ -370,7 +365,14 @@ define([
 		},
 		get_css_selector: function() {
 			if (this.is_global_stylesheet) return '';
-			return '.' + this.options.preset.get('id');
+
+			var preset_class = '.' + this.options.preset.get('id');
+
+			if(typeof this.elementType.preset_container === "undefined") {
+				preset_class = preset_class + ' ';
+			}
+
+			return preset_class;
 		},
 		updateStyles: function(contents){
 			var $el = this.get_style_element();

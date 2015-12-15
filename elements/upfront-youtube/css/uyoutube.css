@@ -224,7 +224,7 @@ input.upfront-like-box_url:-ms-input-placeholder {
 }
 
 .upfront-youtube-button-wrapper {
-	width: 30.8%;
+	width: 25%;
 	display: block;
 	float: left;
 }
@@ -236,7 +236,7 @@ input.upfront-like-box_url:-ms-input-placeholder {
 	background-color: #00ce8d;
 	color: #fff;
 	text-align: center;
-	height: 40px;
+	height: 60px;
 }
 
 .multiple_sources {
