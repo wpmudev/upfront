@@ -69,6 +69,11 @@ var Box = Backbone.View.extend({
 
         postData.cid = this.cid;
 
+        extraData.post_type_conditional_box_title = this._post_type_has_taxonomy('post_tag') && this._post_type_has_taxonomy('category')
+            ? Upfront.Settings.l10n.global.content.tags_cats_url
+            : Upfront.Settings.l10n.global.content.no_tax_url
+        ;
+
         this.$el.html(this.tpl(_.extend({}, postData, extraData) ));
         this.populateSections();
         return this;

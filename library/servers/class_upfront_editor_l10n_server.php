@@ -216,6 +216,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'edit_html_tpl' => __('Edit HTML template', 'upfront'),
 				'save_layout_nag' => __('Do you wish to save layout just for this post or apply it to all posts?', 'upfront'),
 				'tags_cats_url' => __('Categories, Tags & URL', 'upfront'),
+				'no_tax_url' => __('Edit URL', 'upfront'),
 				'visibility' => __('Visibility:', 'upfront'),
 				'sticky_post_label' => __('Stick this post to the front page', 'upfront'),
 				'password_protected' => __('Password protected', 'upfront'),
