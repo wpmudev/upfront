@@ -2393,23 +2393,25 @@ define([
 					( $row_wraps.length - $row_wraps_spacer.length > 1 )
 				) {
 					is_combine_wrap = true;
-					/*_.each(modules_arr, function(module, i){
-						var wrapper_id = module.get_wrapper_id();
-						if ( current_wrapper_id == wrapper_id ) return;
-						var wrapper = wrappers.get_by_wrapper_id(wrapper_id),
-							wrapper_class = wrapper ? wrapper.get_property_value_by_name('class') : false,
-							wrapper_col = ed.get_class_num(wrapper_class, ed.grid.class);
-						current_wrapper_id = wrapper_id;
-						if ( line_col+wrapper_col <= col ){
-							if ( line_col > 0 ) {
-								is_combine_wrap = false;
+					if ( $wrap.find('>.upfront-module-view, >.upfront-module-group').length == 1 ) {
+						_.each(modules_arr, function(module, i){
+							var wrapper_id = module.get_wrapper_id();
+							if ( current_wrapper_id == wrapper_id ) return;
+							var wrapper = wrappers.get_by_wrapper_id(wrapper_id),
+								wrapper_class = wrapper ? wrapper.get_property_value_by_name('class') : false,
+								wrapper_col = ed.get_class_num(wrapper_class, ed.grid.class);
+							current_wrapper_id = wrapper_id;
+							if ( line_col+wrapper_col <= col ){
+								if ( line_col > 0 ) {
+									is_combine_wrap = false;
+								}
+								line_col += wrapper_col;
 							}
-							line_col += wrapper_col;
-						}
-						else {
-							line_col = 0;
-						}
-					});*/
+							else {
+								line_col = 0;
+							}
+						});
+					}
 				}
 				var line = 0,
 					module_index = 0,
@@ -2417,7 +2419,8 @@ define([
 					add_spacer_queue = [],
 					pv_is_spacer = false,
 					pv_wrapper_col = 0,
-					pv_module, pv_wrapper, pv_wrapper_view;
+					pv_module, pv_wrapper, pv_wrapper_id, pv_wrapper_view;
+				line_col = 0;
 				current_wrapper_id = false;
 				// Iterate through each module and add to region as necessary
 				_.each(modules_arr, function(module, i){
@@ -2518,10 +2521,13 @@ define([
 						module.add_to(region_modules, index+module_index);
 						module_index++;
 						pv_module = module;
-						pv_wrapper = wrapper;
-						pv_wrapper_view = wrapper_view;
-						pv_is_spacer = is_spacer;
-						pv_wrapper_col = wrapper_col;
+						if ( pv_wrapper_id != wrapper_id ) {
+							pv_wrapper = wrapper;
+							pv_wrapper_id = wrapper_id;
+							pv_wrapper_view = wrapper_view;
+							pv_is_spacer = is_spacer;
+							pv_wrapper_col = wrapper_col;
+						}
 					}
 				});
 				if ( !is_combine_wrap ) {
