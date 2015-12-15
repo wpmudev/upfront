@@ -26,12 +26,8 @@ class Upfront_Accordion_Presets_Server extends Upfront_Presets_Server {
 		return $style;
 	}
 
-	/**
-	 * @return array saved presets
-	 */
-	public function get_presets() {
-		$presets = parent::get_presets();
 
+	protected function migrate_presets($presets) {
 		// Fix migration style issue
 		foreach($presets as $index=>$preset) {
 			if (isset($preset['active-use-color']) === false) {
@@ -43,6 +39,15 @@ class Upfront_Accordion_Presets_Server extends Upfront_Presets_Server {
 		}
 
 		return $presets;
+	}
+
+	/**
+	 * @return array saved presets
+	 */
+	public function get_presets() {
+		$presets = parent::get_presets();
+
+		return $this->migrate_presets($presets);
 	}
 
 	protected function get_style_template_path() {
