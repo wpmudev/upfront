@@ -789,14 +789,14 @@ div.uimage-controls i.upfront-icon:before,
 }
 
 .upfront-ui .upfront-icon-region-link:before {
-	background-position: -260px -250px;
+	background-position: -260px -249px;
 }
 
 .upfront-ui .upfront-icon-region-nocaption:before {
-	background-position: -700px -455px!important;
+	background-position: -700px -456px!important;
 }
 .upfront-ui .upfront-icon-region-nocaption:hover:before {
-	background-position: -808px -455px!important;
+	background-position: -808px -456px!important;
 }
 .upfront-ui .upfront-icon-region-nocaption-active:before {
 	background-position: -700px -455px!important;
