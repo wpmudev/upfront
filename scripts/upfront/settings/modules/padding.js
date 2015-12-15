@@ -103,7 +103,9 @@ define([
 							padding_right.get_field().val(padding);
 							padding_bottom.get_field().val(padding);
 
-							Upfront.Events.trigger("upfront:paddings:updated");
+							if(typeof(Upfront.data.currentEntity.paddingControl) !== 'undefined') {
+								Upfront.data.currentEntity.paddingControl.refresh();
+							}
 						} else {
 							if(usePadding == "yes") {
 								stateSettings.find('.padding-slider').hide();
@@ -126,7 +128,7 @@ define([
 					model: this.model,
 					use_breakpoint_property: true,
 					property: 'padding_slider',
-					default_value: this.model.get_breakpoint_property_value('padding_slider'),
+					default_value: this.model.get_breakpoint_property_value('padding_slider') || column_padding,
 					suffix: l10n.px,
 					step: 5,
 					min: 0,
@@ -148,6 +150,8 @@ define([
 						
 						//Enable padding fields
 						me.enable_lock_padding();
+						
+						me.re_render_entity();
 					},
 					show: function() {
 						var value = me.model.get_property_value_by_name('padding_number');
@@ -164,14 +168,10 @@ define([
 					model: this.model,
 					use_breakpoint_property: true,
 					property: 'padding_number',
-					default_value: this.model.get_breakpoint_property_value('padding_number'),
+					default_value: this.model.get_breakpoint_property_value('padding_number') || column_padding,
 					label: '',
 					step: 5,
 					min: 0,
-					default_value: 0,
-					values: [
-						{ label: "", value: '0' }
-					],
 					change: function(value) {
 						me.model.set('padding_number', value);
 						me.model.set_property('padding_slider', value);
@@ -190,6 +190,8 @@ define([
 						
 						//Enable padding fields
 						me.enable_lock_padding();
+									
+						me.re_render_entity();
 						
 						//Lower opacity if value is bigger than the slider MAX_VALUE
 						if(value > 250) {
@@ -333,6 +335,14 @@ define([
 				this.enable_padding('left_padding_use');
 				this.enable_padding('right_padding_use');
 			}
+		},
+
+		re_render_entity: function() {							
+			var currentEntity = Upfront.data.currentEntity;
+			clearTimeout(this.refresh_timer);
+			this.refresh_timer = setTimeout(function() {
+				if(typeof(currentEntity.render) === 'function') currentEntity.render();
+			}, 200);
 		}
 	});
 
