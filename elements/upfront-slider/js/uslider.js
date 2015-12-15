@@ -315,7 +315,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 					autostart: false,
 					upfrontMedia: false,
 					upfrontImages: false,
-					placeholder: l10n.slide_desc
+					placeholder: l10n.slide_desc,
+					linebreaks: false,
 				})
 				.on('start', function() {
 					var id = $(this).closest('.uslide').attr('rel'),

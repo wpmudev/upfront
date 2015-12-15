@@ -200,7 +200,8 @@ h2, h3 { page-break-after: avoid; }
 .upfront-output-object>*:last-child,
 .plain-text-container>*:last-child,
 .upfront-image-caption-container .wp-caption div>*:last-child,
-.upfront-output-object .wp-caption div>*:last-child {
+.upfront-output-object .wp-caption div>*:last-child,
+.upfront-default-slider .uslide-caption div>*:last-child{
   margin-bottom: 0;
 }
 
