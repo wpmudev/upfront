@@ -167,7 +167,7 @@ define([
 				}
 			});
 
-			if (_.isUndefined(index) === false) {
+			if (typeof index !== 'undefined') {
 				Upfront.mainData[this.mainDataCollection].splice(index, 1);
 			}
 			Upfront.mainData[this.mainDataCollection].push(properties);
@@ -245,7 +245,7 @@ define([
 				}
 			});
 
-			if (_.isUndefined(index) === false) {
+			if (typeof index !== 'undefined') {
 				Upfront.mainData[this.mainDataCollection].splice(index, 1);
 			}
 			Upfront.mainData[this.mainDataCollection].push(properties);
@@ -415,7 +415,7 @@ define([
 						index = presetIndex;
 					}
 				});
-				if (_.isUndefined(index) === false) {
+				if (typeof index !== 'undefined') {
 					Upfront.mainData[me.mainDataCollection].splice(index, 1);
 				}
 				Upfront.mainData[me.mainDataCollection].push(resetPreset);
