@@ -198,7 +198,9 @@ h2, h3 { page-break-after: avoid; }
   margin-top: 0;
 }
 .upfront-output-object>*:last-child,
-.plain-text-container>*:last-child{
+.plain-text-container>*:last-child,
+.upfront-image-caption-container .wp-caption div>*:last-child,
+.upfront-output-object .wp-caption div>*:last-child {
   margin-bottom: 0;
 }
 
