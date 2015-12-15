@@ -88,6 +88,7 @@ class Upfront_Button_Presets_Server extends Upfront_Presets_Server {
 				$preset_options['hov_useborder'] = 'yes';
 				$preset_options['hov_useradius'] = 'yes';
 				$preset_options['hov_usebgcolor'] = 'yes';
+				$preset_options['hov_use_animation'] = 'yes';
 				$preset_options['lineheight'] = 1;
 				$count++;
 			}
