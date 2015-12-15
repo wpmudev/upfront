@@ -776,20 +776,19 @@ define([
 					paddingRight: right_padding_use && right_padding_num !== false ? right_padding_num + 'px' : ''
 				});
 			},
-			show_top_padding_hint: function () {
+			show_top_padding_hint: function (value) {
 				var me               = this,
-					top_padding_num  = this.model.get_breakpoint_property_value('top_padding_num', true),
-					top_padding_hint = this.$el.find('.upfront-entity-top-padding-hint')
+					top_padding_hint = this.$el.parents('.upfront-module').find('.upfront-entity-top-padding-hint')
 				;
 				if(!this.top_padding_hint_flag) {
 					this.top_padding_hint_flag = true;
 					return;
 				}
 				if(!top_padding_hint.length) {
-					top_padding_hint = $('<div class="upfront-ui upfront-entity-padding-hint upfront-entity-top-padding-hint"></div>').appendTo(this.$el);
+					top_padding_hint = $('<div class="upfront-ui upfront-entity-padding-hint upfront-entity-top-padding-hint"></div>').appendTo(this.$el.parents('.upfront-module'));
 				}
 				top_padding_hint.css({
-					height: top_padding_num + 'px',
+					height: value + 'px',
 					opacity: 1
 				});
 				clearTimeout(this.top_padding_hint_timer);
@@ -799,7 +798,7 @@ define([
 			},
 			hide_top_padding_hint: function () {
 				if(!this.padding_hint_locked) {				
-					this.$el.find('.upfront-entity-top-padding-hint').css({
+					this.$el.parents('.upfront-module').find('.upfront-entity-top-padding-hint').css({
 						opacity: 0
 					});
 				}
@@ -807,14 +806,14 @@ define([
 			show_bottom_padding_hint: function () {
 				var me                  = this,
 					bottom_padding_num  = this.model.get_breakpoint_property_value('bottom_padding_num', true),
-					bottom_padding_hint = this.$el.find('.upfront-entity-bottom-padding-hint')
+					bottom_padding_hint = this.$el.parents('.upfront-module').find('.upfront-entity-bottom-padding-hint')
 				;
 				if(!this.bottom_padding_hint_flag) {
 					this.bottom_padding_hint_flag = true;
 					return;
 				}
 				if(!bottom_padding_hint.length) {
-					bottom_padding_hint = $('<div class="upfront-ui upfront-entity-padding-hint upfront-entity-bottom-padding-hint"></div>').appendTo(this.$el);
+					bottom_padding_hint = $('<div class="upfront-ui upfront-entity-padding-hint upfront-entity-bottom-padding-hint"></div>').appendTo(this.$el.parents('.upfront-module'));
 				}
 				bottom_padding_hint.css({
 					height: bottom_padding_num + 'px',
@@ -827,7 +826,7 @@ define([
 			},
 			hide_bottom_padding_hint: function () {
 				if(!this.padding_hint_locked) {				
-					this.$el.find('.upfront-entity-bottom-padding-hint').css({
+					this.$el.parents('.upfront-module').find('.upfront-entity-bottom-padding-hint').css({
 						opacity: 0
 					});
 				}
@@ -1448,17 +1447,19 @@ define([
 			handle_visual_padding_hint: function (prop) {
 				if (typeof prop === 'undefined') return;
 
+				var value = prop.get('value');
+
 				if ( prop.id.match(/(top|bottom)_padding_(num|slider)/) ) {
 					if ( prop.id.match(/top_padding_(num|slider)/) ) {
-						this.show_top_padding_hint();
+						this.show_top_padding_hint(value);
 					}
 					if ( prop.id.match(/bottom_padding_(num|slider)/) ) {
-						this.show_bottom_padding_hint();
+						this.show_bottom_padding_hint(value);
 					}
 				}
 				else if ( prop.id.match(/padding_slider/) ) {
-					this.show_top_padding_hint();
-					this.show_bottom_padding_hint();
+					this.show_top_padding_hint(value);
+					this.show_bottom_padding_hint(value);
 				}
 
 			},
@@ -1992,19 +1993,20 @@ define([
 			handle_visual_padding_hint: function (prop) {
 				if (typeof prop === 'undefined') return;
 
+				var value = prop.get('value');
+
 				if ( prop.id.match(/(top|bottom)_padding_(num|slider)/) ) {
 					if ( prop.id.match(/top_padding_(num|slider)/) ) {
-						this.show_top_padding_hint();
+						this.show_top_padding_hint(value);
 					}
 					if ( prop.id.match(/bottom_padding_(num|slider)/) ) {
-						this.show_bottom_padding_hint();
+						this.show_bottom_padding_hint(value);
 					}
 				}
 
 			},
-			show_top_padding_hint: function () {
+			show_top_padding_hint: function (value) {
 				var me               = this,
-					top_padding_num  = this.model.get_breakpoint_property_value('top_padding_num', true),
 					top_padding_hint = this.$el.find('.upfront-entity-top-padding-hint')
 				;
 				if(!this.top_padding_hint_flag) {
@@ -2015,7 +2017,7 @@ define([
 					top_padding_hint = $('<div class="upfront-ui upfront-entity-padding-hint upfront-entity-top-padding-hint"></div>').appendTo(this.$el);
 				}
 				top_padding_hint.css({
-					height: top_padding_num + 'px',
+					height: value + 'px',
 					opacity: 1
 				});
 				clearTimeout(this.top_padding_hint_timer);
