@@ -3,8 +3,9 @@ define([
 	'text!elements/upfront-login/css/edit.css',
 	'text!elements/upfront-login/css/public.css',
 	'scripts/upfront/element-settings/settings',
-	'scripts/upfront/element-settings/root-settings-panel'
-], function (editor_style, public_style, ElementSettings, RootSettingsPanel) {
+	'scripts/upfront/element-settings/root-settings-panel',
+	'scripts/upfront/element-settings/advanced-settings'
+], function (editor_style, public_style, ElementSettings, RootSettingsPanel, AdvancedSettings) {
 
 	$("head").append("<style>" + editor_style + "</style>");
 	$("head").append("<style>" + public_style + "</style>");
@@ -139,7 +140,8 @@ define([
 			this.options = opts;
 			var panel = new LoginSettings_Panel({model: this.model});
 			this.panels = [
-				panel
+				panel,
+				new AdvancedSettings({model: this.model})
 			];
 		},
 		
