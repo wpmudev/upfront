@@ -149,9 +149,9 @@ define([
 				this.createLightBox();
 			} else {
 				this.close();
+				this.model.trigger("change")
 			}
-			this.trigger('change', this.model);
-			this.model.trigger("change");
+			//this.trigger('change', this.model);
 		},
 
 		close: function() {
@@ -241,8 +241,16 @@ define([
 			}
 
 			this.model.set({
-				url: '#' + Upfront.Application.LayoutEditor.createLightboxRegion(name)
+				url: '#' + Upfront.Application.LayoutEditor.getLightboxSafeName(name)
 			});
+
+			Upfront.Application.LayoutEditor.createLightboxRegion(name);
+			// this is required to send a 'dontflag' to the editor, 
+			// because the lightbox is created
+			// after the link is saved in the text.
+			// triggering the change again will refresh the editor's state 
+			// and get rid of missing link flag
+			this.model.trigger("change", true); 
 			this.render();
 		},
 

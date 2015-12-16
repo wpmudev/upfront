@@ -4767,6 +4767,7 @@ define([
 				this._modules_view.apply_wrapper_height();
 				
 				Upfront.Events.trigger('upfront:lightbox:show');
+				
 			},
 			hide:function () {
 				this.$el.hide();

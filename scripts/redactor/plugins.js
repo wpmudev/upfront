@@ -787,13 +787,13 @@ RedactorPlugins.upfrontLink = function() {
 					target: target
 				});
 
-				this.listenTo(this.linkModel, 'change', function () {
+				this.listenTo(this.linkModel, 'change', function (dontflag) {
                     me.redactor.buffer.set();
                     me.redactor.selection.save();
 					if (me.linkModel.get('type') === 'unlink') {
 						me.unlink();
 					} else {
-						me.link();
+						me.link(dontflag);
 					}
 
 					// me.closeToolbar(); // should we do this?
@@ -854,7 +854,7 @@ RedactorPlugins.upfrontLink = function() {
 				this.updateMissingLightboxFlag();
 			},
 
-			link: function () {
+			link: function (dontflag) {
 				var selectedText;
 
 				if (typeof this.linkModel.get('url') === 'undefined') {
@@ -881,8 +881,11 @@ RedactorPlugins.upfrontLink = function() {
 
 				// Do redactor stuff
 				this.redactor.$element.focus();
-				this.updateMissingLightboxFlag();
+                // dontflag is sent while creation of lightbox from link-panel.js
+                if(typeof(dontflag) === 'undefined')
+				    this.updateMissingLightboxFlag();
 				this.redactor.code.sync();
+
 			},
 			bindEvents: function () {
 			},
