@@ -56,13 +56,13 @@ div.<?php echo $properties['id'] ?> ul.menu > li.menu-item > a:focus, div.upfron
 .tablet-breakpoint div.<?php echo $properties['id'] ?> ul.menu {
 	<?php if(!empty($properties['tablet']['menu_alignment'])) { ?>text-align: <?php echo $properties['tablet']['menu_alignment'] ?>!important;<?php } ?>
 }
+<?php if(!empty($properties['tablet']['preset_style'])) { ?><?php echo $properties['tablet']['preset_style'] ?><?php } ?>
 <?php } ?>
 
 <?php if(!empty($properties['mobile'])) { ?>
 .mobile-breakpoint div.<?php echo $properties['id'] ?> ul.menu {
 	<?php if(!empty($properties['mobile']['menu_alignment'])) { ?>text-align: <?php echo $properties['mobile']['menu_alignment'] ?>!important;<?php } ?>
 }
+<?php if(!empty($properties['mobile']['preset_style'])) { ?><?php echo $properties['mobile']['preset_style'] ?><?php } ?>
 <?php } ?>
 <?php if(!empty($properties['preset_style'])) { ?><?php echo $properties['preset_style'] ?><?php } ?>
-<?php if(!empty($properties['tablet']['preset_style'])) { ?><?php echo $properties['tablet']['preset_style'] ?><?php } ?>
-<?php if(!empty($properties['mobile']['preset_style'])) { ?><?php echo $properties['mobile']['preset_style'] ?><?php } ?>
