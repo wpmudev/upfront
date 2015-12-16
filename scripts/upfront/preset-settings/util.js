@@ -24,6 +24,13 @@ function() {
 	 */
 	var generateCss = function(properties, styleTpl) {
 		var tpl = Upfront.Util.template(styleTpl);
+		
+		//Increase preset_style css specificity
+		if(typeof properties.preset_style !== "undefined") {
+			properties.preset_style = properties.preset_style
+			.replace(/#page/g, '#page.upfront-layout-view .upfront-editable_entity.upfront-module');
+		}
+		
 		return tpl({properties: expandBreakpoints(properties)})
 			.replace(/#page/g, 'div#page.upfront-layout-view')
 			// Solve case of button loosing its styles
