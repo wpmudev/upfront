@@ -1031,7 +1031,10 @@ define([
 				crop = {},
 				imageId = me.property('image_id'),
 				resize = me.temporaryProps.size,
-				position = me.temporaryProps.position
+				position = me.temporaryProps.position,
+				deferred = $.Deferred(),
+				import_deferred = $.Deferred(),
+				import_promise = import_deferred.promise()
 			;
 
 
@@ -1041,31 +1044,44 @@ define([
 			crop.width = Math.min(elementSize.width, resize.width);
 			crop.height = Math.min(elementSize.height, resize.height);
 
-			var promise = Upfront.Views.Editor.ImageEditor.saveImageEdition(
-				imageId,
-				me.property('rotation'),
-				resize,
-				crop
-			).done(function(results){
-				var imageData = results.data.images[imageId];
+			import_promise.done(function(){
+				imageId = me.property('image_id');
+				Upfront.Views.Editor.ImageEditor.saveImageEdition(
+					imageId,
+					me.property('rotation'),
+					resize,
+					crop
+				).done(function(results){
+					var imageData = results.data.images[imageId];
 
-				if(imageData.error){
-					Upfront.Views.Editor.notify(l10n.process_error, 'error');
-					return;
-				}
+					if(imageData.error){
+						Upfront.Views.Editor.notify(l10n.process_error, 'error');
+						return;
+					}
 
-				me.property('size', resize);
-				me.property('position', position);
-				me.property('src', imageData.url);
-				me.property('srcFull', imageData.urlOriginal, false);
-				me.property('stretch', resize.width >= elementSize.width);
-				me.property('vstretch', resize.height >= elementSize.height);
-				me.property('gifImage', imageData.gif);
-				clearTimeout(me.cropTimer);
-				me.cropTimer = false;
+					me.property('size', resize);
+					me.property('position', position);
+					me.property('src', imageData.url);
+					me.property('srcFull', imageData.urlOriginal, false);
+					me.property('stretch', resize.width >= elementSize.width);
+					me.property('vstretch', resize.height >= elementSize.height);
+					me.property('gifImage', imageData.gif);
+					clearTimeout(me.cropTimer);
+					me.cropTimer = false;
+					deferred.resolve();
+				});
 			});
 
-			return promise;
+			if ( this.isThemeImage && 'themeExporter' in Upfront ) {
+				this.importImage().always(function(){
+					import_deferred.resolve();
+				});
+			}
+			else {
+				import_deferred.resolve();
+			}
+
+			return deferred.promise();
 		},
 
 		saveResizing: function() {
@@ -1254,8 +1270,17 @@ define([
 		},
 
 		editRequest: function () {
+			var me = this;
 			if(this.property('image_status') === 'ok' && this.property('image_id')) {
-				return this.openEditor();
+				if (this.isThemeImage() && 'themeExporter' in Upfront) {
+					this.importImage().always(function(){
+						me.openEditor();
+					});
+				}
+				else {
+					this.openEditor();
+				}
+				return;
 			}
 
 			Upfront.Views.Editor.notify(l10n.external_nag, 'error');
@@ -1339,6 +1364,43 @@ define([
 
 			lightboxName = this.link.get('url').substring(1);
 			Upfront.Application.LayoutEditor.openLightboxRegion(lightboxName);
+		},
+
+		importImage: function () {
+			var me = this,
+				image_id = this.property('image_id'),
+				opts = {
+					action: 'upfront-media-image-import',
+					images: [{
+						element_id: this.property('element_id'),
+						id: image_id,
+						src: this.property('srcFull')
+					}]
+				},
+				deferred = $.Deferred()
+			;
+			Upfront.Util.post(opts).done(function(response){
+				var images = response.data.images;
+				if ( image_id in images ) {
+					var status = images[image_id].status;
+					if ( status == 'imported') {
+						me.property('image_id', images[image_id].id);
+						me.property('srcFull', images[image_id].src);
+						me.property('srcOriginal', images[image_id].src);
+					}
+					else if ( status == 'exists' ) {
+						me.property('image_id', images[image_id].id);
+					}
+					else if ( status == 'fail' ) {
+						deferred.reject();
+						return;
+					}
+					deferred.resolve(me.property('image_id'));
+					return;
+				}
+				deferred.reject();
+			});
+			return deferred.promise();
 		},
 
 		cleanup: function(){
