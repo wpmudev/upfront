@@ -109,8 +109,11 @@ define([
 			});
 
 			style = $.trim(Upfront.Application.cssEditor.get_style_element().html().replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
+			//Apply style only for the current preset
+			style = Upfront.Application.stylesAddSelectorMigration($.trim(style), '#page .' + thisPreset);
 
-			var properties;
+			var properties,
+				presetOptions;
 			// If we have default preset and default style just add default style to preset
 			if (thisPreset === 'default' && elementStyleName === '_default') {
 				existingPreset = this.presets.findWhere({id: 'default'});
@@ -124,10 +127,12 @@ define([
 				}
 
 				style = style.replace(new RegExp(elementStyleName, 'g'), '');
+
 				existingPreset.set({
 					preset_style: style,
 					migrated: true
 				});
+				presetOptions = existingPreset;
 				properties = existingPreset.toJSON();
 			} else {
 				// Add element style to preset model. Now change _default to new name
@@ -155,9 +160,14 @@ define([
 				this.property('theme_style', '');
 				this.property('preset', newPreset.id);
 				this.presets.add(newPreset);
+				presetOptions = newPreset;
 				properties = newPreset.toJSON();
 			}
-			Util.updatePresetStyle(this.styleElementPrefix.replace(/-preset/, ''), properties, this.styleTpl);
+
+			//Update styles to fix css specificity
+			var specificityProperties = this.updateMigratedPresetStyles(presetOptions, style);
+			
+			Util.updatePresetStyle(this.styleElementPrefix.replace(/-preset/, ''), specificityProperties, this.styleTpl);
 
 			this.debouncedSavePreset(properties);
 
@@ -252,7 +262,7 @@ define([
 			
 			//Update styles to fix css specificity
 			properties = this.updateMigratedPresetStyles(preset, style);
-			
+
 			Util.updatePresetStyle(this.styleElementPrefix.replace(/-preset/, ''), properties, this.styleTpl);
 			// Trigger change so that whole element re-renders again.
 			// (to replace element style class with preset class, look upfront-views.js
