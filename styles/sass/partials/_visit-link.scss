@@ -66,13 +66,15 @@ i.visit_link.visit_link_unlink {
   display:none !important;
 }
 i.visit_link.visit_link_homepage:after {
-  content:'Goto Home';
+  content:'Go to Homepage';
+  width:100px;
 }
 i.visit_link.visit_link_email:after {
   content:'Send Email';
 }
 i.visit_link.visit_link_anchor:after {
 	content:'Scroll to Anchor';
+  width:100px;
 }
 i.upfront-icon-region-visit-link-homepage:before,
 i.visit_link.visit_link_homepage:before {
