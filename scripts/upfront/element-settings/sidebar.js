@@ -19,7 +19,9 @@ define([], function () {
 	};
 
 	var resetModel = function() {
-		model.set('properties', new Upfront.Collections.Properties(oldData.properties));
+		var newProperties = new Upfront.Collections.Properties(oldData.properties);
+		newProperties._events = model.get('properties')._events;
+		model.set('properties', newProperties);
 		destroySettings();
 	};
 
