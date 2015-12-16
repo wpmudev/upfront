@@ -163,6 +163,10 @@ define([
 			styles = styles.replace(/\\"/g, '"');
 			styles = styles.replace(/\\"/g, '"');
 
+			styles = styles.replace(/\.tablet-breakpoint/g, '');
+			styles = styles.replace(/\.mobile-breakpoint/g, '');
+			styles = styles.replace(/#page/g, '');
+
 			styles = Upfront.Util.colors.convert_string_color_to_ufc(styles.replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
 
 			return styles;

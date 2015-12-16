@@ -36,7 +36,19 @@ define([
 			this.trigger('upfront:presets:update', preset);
 		},
 
-		updateCss: function(preset, newCss) {
+		updateCss: function(preset, newCss, me) {
+			// EXTREMLY HACKY WAY OF ADDING BREAKPOINT CLASS TO NAVIGATION STYLES
+			if (me.model.get_property_value_by_name('view_class') === 'UnewnavigationView') {
+				// Check which breakpoint is on
+				var active = Upfront.Views.breakpoints_storage.get_breakpoints().get_active();
+				if (active.id === 'tablet') {
+					newCss = newCss.replace(/#page/g, '#page.tablet-breakpoint');
+				}
+				if (active.id === 'mobile') {
+					newCss = newCss.replace(/#page/g, '#page.mobile-breakpoint');
+				}
+			}
+			newCss.replace(/'/g, '"');
 			preset.set({'preset_style': newCss});
 		},
 
@@ -59,7 +71,7 @@ define([
 
 			this.listenTo(this.presetCSSEditor, 'upfront:presets:update', this.onPresetUpdate);
 			this.listenTo(this.presetCSSEditor, 'change', function(newCss) {
-				updateCssDebounced(me.options.preset, newCss);
+				updateCssDebounced(me.options.preset, newCss, me);
 			});
 
 			Upfront.Events.trigger("entity:settings:deactivate");
