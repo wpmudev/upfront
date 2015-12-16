@@ -950,6 +950,11 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			});
 		}
 
+		// Re-adjust wrappers! They're only being adjusted for the currently active slide
+		img.closest(".uslide-image")
+			.width(Math.min(img.width(), wrapperSize.width))
+			.height(Math.min(img.height(), wrapperSize.height))
+		;
 
 		return {
 			size: {width: img.width(), height: img.height()},
