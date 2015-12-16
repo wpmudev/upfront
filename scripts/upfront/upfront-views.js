@@ -797,7 +797,7 @@ define([
 				}, 1000);
 			},
 			hide_top_padding_hint: function () {
-				if(!this.padding_hint_locked) {				
+				if(!this.padding_hint_locked) {
 					this.$el.parents('.upfront-module').find('.upfront-entity-top-padding-hint').css({
 						opacity: 0
 					});
@@ -824,7 +824,7 @@ define([
 				}, 1000);
 			},
 			hide_bottom_padding_hint: function () {
-				if(!this.padding_hint_locked) {				
+				if(!this.padding_hint_locked) {
 					this.$el.parents('.upfront-module').find('.upfront-entity-bottom-padding-hint').css({
 						opacity: 0
 					});
@@ -980,7 +980,7 @@ define([
 					$prev = $(this);
 				});*/
 			},
-			
+
 			fix_wrapper_height: function ($el) {
 				Upfront.Behaviors.GridEditor.time_start('fn fix_wrapper_height');
 				var me = this,
@@ -994,7 +994,7 @@ define([
 							clear = $(this).data('breakpoint_clear')
 						;
 						if (
-							prevs.length > 0 
+							prevs.length > 0
 							&&
 							(
 								( ( !breakpoint || breakpoint.default ) && $(this).hasClass('clr') )
@@ -1385,7 +1385,7 @@ define([
 				//setTimeout(function() {
 				//	me.checkUiOffset();
 				//}, 300);
-				
+
 				if ( this.display_size_hint ) {
 					this.create_size_hint(this.$el);
 				}
@@ -1530,8 +1530,8 @@ define([
 					this.parent_module_view.disable_interaction(false);
 				}
 			},
-			on_element_edit_stop: function (edit, post) {
-				if (this.parent_module_view && this.parent_module_view.enable_interaction){
+			on_element_edit_stop: function (edit, post, saving_draft) {
+				if (this.parent_module_view && this.parent_module_view.enable_interaction && saving_draft !== true){
 					this.parent_module_view.$el.find('>.upfront-module').removeClass('upfront-module-editing')
 					this.parent_module_view.enable_interaction(false);
 				}
@@ -1572,7 +1572,7 @@ define([
 				this.update_position();
 				this.checkUiOffset();
 			},
-			
+
 			activate: function () {
 				// Deactivate previous ObjectView
 				if(typeof(Upfront.data.prevEntity) !== 'undefined' && Upfront.data.prevEntity !== false) {
@@ -2025,7 +2025,7 @@ define([
 				}, 1000);
 			},
 			hide_top_padding_hint: function () {
-				if(!this.padding_hint_locked) {				
+				if(!this.padding_hint_locked) {
 					this.$el.find('.upfront-entity-top-padding-hint').css({
 						opacity: 0
 					});
@@ -2052,7 +2052,7 @@ define([
 				}, 1000);
 			},
 			hide_bottom_padding_hint: function () {
-				if(!this.padding_hint_locked) {				
+				if(!this.padding_hint_locked) {
 					this.$el.find('.upfront-entity-bottom-padding-hint').css({
 						opacity: 0
 					});
@@ -4717,7 +4717,7 @@ define([
 			},
 			init: function () {
 				this.constructor.__super__.init.call(this);
-			
+
 				this.listenTo(Upfront.Events, 'sidebar:toggle:done', this.update_region_position);
 				this.listenTo(Upfront.Events, "entity:drag_stop", this.update_region_position);
 				this.listenTo(Upfront.Events, "entity:drag_stop", this.check_modules);
@@ -4760,14 +4760,14 @@ define([
 
 				this.$el.show();
 
-				/** Because it is a lightbox, the following rendering specific function 
-					should be applied on the modules once the contents of the lightbox show up 
+				/** Because it is a lightbox, the following rendering specific function
+					should be applied on the modules once the contents of the lightbox show up
 				**/
 				this._modules_view.apply_flexbox_clear();
 				this._modules_view.apply_wrapper_height();
-				
+
 				Upfront.Events.trigger('upfront:lightbox:show');
-				
+
 			},
 			hide:function () {
 				this.$el.hide();
@@ -4880,7 +4880,7 @@ define([
 			trigger_edit: function (e) {
 				this.on_settings_click();
 				e.stopPropagation();
-				
+
 			},
 			close_edit: function (e) {
 				var container_view = this.parent_view.get_container_view(this.model);
@@ -5226,7 +5226,7 @@ define([
 				this.listenTo(this.model.get("properties"), 'change', this.update);
 				// this.model.bind("remove", this.on_remove, this);
 				this.listenTo(this.model, 'remove', this.on_remove);
-				
+
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 				this.listenTo(Upfront.Events, 'entity:module:update_position', this.on_module_update);
 				this.listenTo(Upfront.Events, 'entity:modules:render_module', this.on_module_update);
@@ -5303,8 +5303,8 @@ define([
 					ed = Upfront.Behaviors.GridEditor,
 					col_class = Upfront.Settings.LayoutEditor.Grid.class,
 					spacer_col = spacer_col > 0 ? spacer_col : 1,
-					current_col = _.isNumber(current_col) && current_col > spacer_col 
-						? current_col 
+					current_col = _.isNumber(current_col) && current_col > spacer_col
+						? current_col
 						: Upfront.Util.width_to_col(this.$el.width()),
 					new_col = current_col-spacer_col,
 					$rsz_wrapper = ( new_col > 0 ? this.$el : ( this._find_closest_wrapper(position == 'left', spacer_col) ) )
@@ -5349,9 +5349,9 @@ define([
 					target_model = ed.get_el_model($target_child),
 					index = target_model.collection.indexOf(target_model)
 				;
-				
+
 				if ( !rsz_model ) return;
-				
+
 				// Change the columns of current/closest wrapper and the containing models
 				$rsz_wrapper.find("> .upfront-module-view > .upfront-module, > .upfront-module-group").each(function () {
 					var child = ed.get_el_model($(this));
@@ -5378,7 +5378,7 @@ define([
 				else {
 					rsz_model.replace_class(col_class+new_col);
 				}
-				
+
 				// Add the spacer element
 				if ( breakpoint && !breakpoint.default ) {
 					wrapper.set_breakpoint_property('edited', true, true);
@@ -5546,9 +5546,9 @@ define([
 				var currentEntity = Upfront.data.currentEntity;
 
 				if (
-					typeof currentEntity === 'undefined' || 
-					!currentEntity || 
-					!currentEntity instanceof ObjectView || 
+					typeof currentEntity === 'undefined' ||
+					!currentEntity ||
+					!currentEntity instanceof ObjectView ||
 					currentEntity.$el.find( '.redactor-box' ).length > 0 ||
 					!currentEntity.paddingControl
 				) {
@@ -5560,7 +5560,7 @@ define([
 					e.stopPropagation();
 
 					switch (e.keyCode) {
-						case 38: 
+						case 38:
 							currentEntity.paddingControl.on_up_arrow_click();
 							break;
 						case 40:
