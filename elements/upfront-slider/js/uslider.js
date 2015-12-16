@@ -847,11 +847,10 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	},
 
 	onElementResize: function(e, ui){
-		if(ui.element.hasClass('uslide-image'))
-			return;
+		if (ui.element.hasClass('uslide-image')) return;
 
 		var starting = this.$('.upfront-image-starting-select');
-		if(starting.length){
+		if (starting.length) {
 			this.startingHeight = $('.upfront-resize').height() - 30;
 			return;
 		}
@@ -869,7 +868,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			sideImageWidth = imageColumns * this.calculateColumnWidth()
 		;
 
-		this.model.slideCollection.each(function(slide){
+		this.model.slideCollection.each(function (slide) {
 			var imageSize = {height: newElementSize.height};
 			imageSize.width = style == 'side' && slide.get('style') != 'nocaption' ? sideImageWidth : newElementSize.width;
 			me.imageProps[slide.id] = me.calculateImageResize(imageSize, slide);
@@ -877,20 +876,19 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		me.cropHeight = newElementSize.height;
 
-		if(style == 'side')
+		if (style == 'side') {
 			this.property('rightImageWidth', imageColumns);
+		}
 		this.property('rightWidth', elementColumns);
 
 		me.setTimer();
 	},
 
 	onElementResizing: function(e, ui){
-		if(ui.element.hasClass('uslide-image'))
-			return;
+		if (ui.element.hasClass('uslide-image')) return;
 
 		var starting = this.$('.upfront-image-starting-select');
-		if(starting.length)
-			return starting.outerHeight($('.upfront-resize').height() - 30);
+		if (starting.length) return starting.outerHeight($('.upfront-resize').height() - 30);
 
 		var resizer = $('.upfront-resize'),
 			current = this.$('.upfront-default-slider-item-current'),
@@ -905,10 +903,11 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			wrapperCss = {height: wrapperSize.height}
 		;
 
-		if(style == 'side')
+		if (style == 'side') {
 			current.find('.uslide-caption').height(newElementSize.height);
-		else
+		} else {
 			wrapperCss.width = wrapperSize.width;
+		}
 
 		//newElementSize.width = current.width();
 		imageWrapper.css(wrapperCss)
