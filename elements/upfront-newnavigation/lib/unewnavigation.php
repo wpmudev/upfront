@@ -56,6 +56,11 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 		$is_floating = $this->_get_property('is_floating');
 
 		$menu_style = $menu_style === 'triggered' ? 'burger' : $menu_style;
+
+		if(empty($menu_style)) {
+			$menu_style = 'horizontal';
+		}
+
 		$menu_style = "data-style='{$menu_style}' data-stylebk='{$menu_style}'";
 		$breakpoint_data = "data-breakpoints='" . json_encode($breakpoint_data) . "'" ;
 		$menu_alignment = $menu_alignment ? "data-alignment='{$menu_alignment}' data-alignment='{$menu_alignment}'" : "";
