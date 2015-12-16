@@ -28,6 +28,7 @@ class Upfront_Accordion_Presets_Server extends Upfront_Presets_Server {
 
 
 	protected function migrate_presets($presets) {
+		if ( !is_array($presets) ) return $presets;
 		// Fix migration style issue
 		foreach($presets as $index=>$preset) {
 			if (isset($preset['active-use-color']) === false) {
