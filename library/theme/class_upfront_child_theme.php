@@ -829,7 +829,12 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		if($layoutId){
 			$theme = Upfront_Theme::get_instance();
 			$ids['theme_defined'] = $layoutId;
-			$data['regions'] = $theme->get_default_layout($ids, $layoutId);
+			$layout = $theme->get_default_layout($ids, $layoutId);
+			$data['regions'] = $layout['regions'];
+			$data['properties'] = array();
+			if ( false !== $layout['version'] ) {
+				upfront_set_property_value('version', $layout['version'], $data);
+			}
 		}
 		return $data;
 	}

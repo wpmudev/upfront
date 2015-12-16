@@ -2,11 +2,13 @@
 
 class Upfront_Layout extends Upfront_JsonModel {
 	
-	protected static $version = '1.0.0';
+	public static $version = '1.0.0';
 
 	protected static $cascade;
 	protected static $layout_slug;
 	protected static $scope_data = array();
+
+	protected static $_layout_default_version = false;
 
 	public static function from_entity_ids ($cascade, $storage_key = '', $dev_first = false) {
 		$layout = array();
@@ -242,7 +244,10 @@ class Upfront_Layout extends Upfront_JsonModel {
 		);
 
 		// Make sure version is from layout, instead of global
-		if ( !empty($data) ) {
+		if ( false !== self::$_layout_default_version ) {
+			upfront_set_property_value('version', self::$_layout_default_version, $new_data);
+		}
+		else if ( !empty($data) ) {
 			$version = upfront_get_property_value('version', $data);
 			if ( false === $version ) { // No version, remove version from properties
 				upfront_set_property_value('version', '', $new_data);
@@ -411,8 +416,9 @@ class Upfront_Layout extends Upfront_JsonModel {
 	protected static function _get_regions ($add_global_regions = false) {
 		$regions = array();
 		do_action('upfront_get_regions', self::$cascade);
-		$regions = upfront_get_default_layout(self::$cascade, self::$layout_slug, $add_global_regions);
-		return apply_filters('upfront_regions', $regions, self::$cascade);
+		$layout = upfront_get_default_layout(self::$cascade, self::$layout_slug, $add_global_regions);
+		self::$_layout_default_version = $layout['version'];
+		return apply_filters('upfront_regions', $layout['regions'], self::$cascade);
 	}
 
 	protected static function _get_scope_id ($scope) {
@@ -619,15 +625,6 @@ class Upfront_Layout extends Upfront_JsonModel {
 	 * Backward compatibility conversion
 	 */
 	protected function convert_layout () {
-		
-		// WARNING! This needs sanity checking to make sure it doesn't mess with anything else:
-		// Don't do any of this if exporter is running
-		if (function_exists('upfront_exporter_is_running') && upfront_exporter_is_running()) return false;
-		// This is to prevent layout conversion from eating up the changes
-		// made within the exporter.
-		// Should be okay though... Just another set of eyes would be cool
-
-
 		$layout_version = $this->get_property_value('version');
 		if (!$layout_version) $layout_version = '0.0.0';
 		// @TODO quick query var to check original version, remove these code after stable
