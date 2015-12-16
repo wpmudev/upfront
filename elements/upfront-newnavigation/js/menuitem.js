@@ -244,6 +244,10 @@ return (function ($) {
 		},
 
 		onOpenItemControlsClick: function() {
+			var parent = this.$el.parent('ul');
+			if(typeof parent !== "undefined" && parent.hasClass('time_being_display')) {
+				parent.removeClass('time_being_display');
+			}
 			this.$el.toggleClass('controls-visible');
 			this.setItemControlsState();
 		},
