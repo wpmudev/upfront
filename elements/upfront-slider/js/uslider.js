@@ -931,17 +931,25 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			other = pivot == 'height' ? 'width' : 'height'
 		;
 
-		if(pivot == 'height' && wrapperSize.height > imgSize.height)
-			img.css({width: 'auto', height: '100%', top: 0, left: Math.min(0, Math.max(imgPosition.left, wrapperSize.width - imgSize.width))});
-		else if(pivot == 'width' && wrapperSize.width > imgSize.width)
-			img.css({width: '100%',	height: 'auto',	left: 0, top: Math.min(0, Math.max(imgPosition.top, wrapperSize.height - imgSize.height))});
-		else
+		if (pivot == 'height' && wrapperSize.height > imgSize.height) {
+// Old style, using CSS
+//img.css({width: 'auto', height: '100%', top: 0, left: Math.min(0, Math.max(imgPosition.left, wrapperSize.width - imgSize.width))});
+			var final_width = wrapperSize.height / imgSize.height * imgSize.width;
+			img.css({width: final_width, height: wrapperSize.height, top: 0, left: Math.min(0, Math.max(imgPosition.left, wrapperSize.width - imgSize.width))});
+		} else if (pivot == 'width' && wrapperSize.width > imgSize.width) {
+// Old style, using CSS
+//img.css({width: '100%',	height: 'auto',	left: 0, top: Math.min(0, Math.max(imgPosition.top, wrapperSize.height - imgSize.height))});
+			var final_height = wrapperSize.width / imgSize.width * imgSize.height;
+			img.css({width: wrapperSize.width,	height: final_height,	left: 0, top: Math.min(0, Math.max(imgPosition.top, wrapperSize.height - imgSize.height))});
+		} else {
 			img.css({
 				height: imgSize.height,
 				width: imgSize.width,
 				top: Math.max(imgPosition.top, wrapperSize.height - imgSize.height),
 				left: Math.max(imgPosition.left, wrapperSize.width - imgSize.width)
 			});
+		}
+
 
 		return {
 			size: {width: img.width(), height: img.height()},
