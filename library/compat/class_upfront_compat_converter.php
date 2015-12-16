@@ -120,18 +120,17 @@ class Upfront_Compat_LayoutConverter_Ver_1_0_0 extends Upfront_Compat_LayoutConv
 					var_dump('module');
 					print_r($module);
 				}
-				print_r($add_modules);
+				//print_r($add_modules);
 				/**/
 			}
 		}
 
 		$new_wrappers = array();
 		$new_modules = array();
+		$max_index = count($region['wrappers']);
 		if ( !empty($add_wrappers) ) {
-			$max_index = max(array_keys($add_wrappers));
-		}
-		else {
-			$max_index = count($region['wrappers']);
+			$max_add_index = max(array_keys($add_wrappers));
+			$max_index = $max_add_index > $max_index ? $max_add_index : $max_index;
 		}
 		for ( $w = 0; $w <= $max_index; $w++ ) {
 			if ( isset($add_wrappers[$w]) && is_array($add_wrappers[$w]) ) {
@@ -143,11 +142,10 @@ class Upfront_Compat_LayoutConverter_Ver_1_0_0 extends Upfront_Compat_LayoutConv
 				$new_wrappers[] = $region['wrappers'][$w];
 			}
 		}
+		$max_index = count($region['modules']);
 		if ( !empty($add_modules) ) {
-			$max_index = max(array_keys($add_modules));
-		}
-		else {
-			$max_index = count($region['modules']);
+			$max_add_index = max(array_keys($add_modules));
+			$max_index = $max_add_index > $max_index ? $max_add_index : $max_index;
 		}
 		for ( $m = 0; $m <= $max_index; $m++ ) {
 			if ( isset($add_modules[$m]) && is_array($add_modules[$m]) ) {
