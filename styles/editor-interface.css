@@ -14307,30 +14307,29 @@ div.ueditable-inactive a i.visit_link {
 i.visit_link:after {
   font: normal 10px/18px Verdana, sans-serif !important;
   text-transform: none !important;
-  width: 84px;
   padding-left: 20px;
-  padding-right: 5px;
+  padding-right: 20px;
   background-color: #2C3E50;
   position: absolute;
   z-index: 9;
   color: rgba(255, 255, 255, 0.6);
   border-radius: 9px;
   display: none;
-  text-indent: initial; }
+  text-indent: initial;
+  margin-left: -6px;
+  height: 18px; }
 
 i.visit_link.visit_link_unlink {
   display: none !important; }
 
 i.visit_link.visit_link_homepage:after {
-  content: 'Go to Homepage';
-  width: 100px; }
+  content: 'Go to Homepage'; }
 
 i.visit_link.visit_link_email:after {
   content: 'Send Email'; }
 
 i.visit_link.visit_link_anchor:after {
-  content: 'Scroll to Anchor';
-  width: 100px; }
+  content: 'Scroll to Anchor'; }
 
 i.upfront-icon-region-visit-link-homepage:before,
 i.visit_link.visit_link_homepage:before {
@@ -14345,24 +14344,21 @@ i.visit_link.visit_link_anchor:before {
   background-position: -910px -42px; }
 
 i.visit_link.visit_link_external:after {
-  content: 'Open Ext. Link';
-  width: 100px; }
+  content: 'Open Ext. Link'; }
 
 i.upfront-icon-region-visit-link-external:before,
 i.visit_link.visit_link_external:before {
   background-position: -910px -74px; }
 
 i.visit_link.visit_link_entry:after {
-  content: 'Visit Post/Page';
-  width: 100px; }
+  content: 'Visit Post/Page'; }
 
 i.upfront-icon-region-visit-link-entry:before,
 i.visit_link.visit_link_entry:before {
   background-position: -910px -106px; }
 
 i.visit_link.visit_link_lightbox:after {
-  content: 'Open Lightbox';
-  width: 100px; }
+  content: 'Open Lightbox'; }
 
 i.upfront-icon-region-visit-link-lightbox:before,
 i.visit_link.visit_link_lightbox:before {
@@ -14379,7 +14375,8 @@ i.visit_link:after {
   display: none; }
 
 i.visit_link:hover:after {
-  display: block; }
+  display: inline-block;
+  white-space: nowrap; }
 
 span.missing-lightbox-warning, a.missing-lightbox-warning:before {
   content: '';
