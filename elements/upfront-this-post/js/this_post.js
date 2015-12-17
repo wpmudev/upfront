@@ -293,8 +293,8 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		}
 	},
 
-	on_element_edit_stop: function (edit, post) {
-		if(this.parent_module_view){
+	on_element_edit_stop: function (edit, post, saving_draft) {
+		if(this.parent_module_view && saving_draft !== true){
 			this.parent_module_view.$el.find('.upfront-module').removeClass('upfront-module-editing');
 			this.parent_module_view.enable_interaction(false);
 		}

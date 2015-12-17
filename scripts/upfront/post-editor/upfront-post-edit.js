@@ -43,7 +43,7 @@ var Box = Backbone.View.extend({
             &&
             Upfront.Application.current_subapplication.contentEditor
         ) $('.upfront-module').each(function(){
-        	if ( $(this).is('.ui-draggable') ) 
+        	if ( $(this).is('.ui-draggable') )
 				$(this).draggable('disable');
 			if ( $(this).is('.ui-resizable') )
 				$(this).resizable('disable');
@@ -176,7 +176,7 @@ var Box = Backbone.View.extend({
         });
 
     },
-    
+
     toggleRegionClass: function (show) {
         this.$el.closest('.upfront-region-container').toggleClass('upfront-region-container-editing-post', show);
     },
@@ -227,13 +227,13 @@ var Box = Backbone.View.extend({
 
         this.trigger('publish');
 
-        
+
         Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
         Upfront.Events.trigger('upfront:post:edit:stop', 'write', this.post.toJSON());
         this.fadein_other_elements();
         this._stop_overlay();
         //$(".editing-overlay").remove();
-        
+
         Upfront.Application.sidebar.toggleSidebar();
         this.toggleRegionClass(false);
 
@@ -247,7 +247,7 @@ var Box = Backbone.View.extend({
 
         this.post.trigger('editor:draft');
         this.trigger('draft');
-        Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
+        Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post, true);// last true means 'saving draft'
     },
 
     trash: function(e){

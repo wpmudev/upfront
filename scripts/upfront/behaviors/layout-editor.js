@@ -22,7 +22,7 @@ var LayoutEditor = {
 					// make sure it's in the same region
 					$region = $(ed.selection[0]).closest('.upfront-region');
 					if ( $el.closest('.upfront-region').get(0) != $region.get(0) ) return;
-					ed._add_selections( $region.find('.ui-selecting'), $region.find('.upfront-module').not('.upfront-ui-selected, .upfront-module-parent-group') );
+					ed._add_selections( $region.find('.ui-selecting'), $region.find('.upfront-module').not('.upfront-ui-selected, .upfront-module-parent-group'), $region.find('.upfront-module-group') );
 				}
 				else {
 					ed._add_selection(ui.selecting);
@@ -31,50 +31,20 @@ var LayoutEditor = {
 			},
 			unselecting: function (e, ui) {
 				var $el = $(ui.unselecting),
-					$region, $selected, $affected, group;
+					$region, $selected
+				;
 				if ( ed.selection.length > 0 ){
 					$region = $(ed.selection[0]).closest('.upfront-region');
-					// we have 2 different behavior to solve conflict, we used the 2nd one in the mean time
-					/*if ( !Upfront.data.include_affected_selection ){
-						// 1. make sure to not include selection that can lead to conflict with other elements
-						// on unselecting, we'll remove selection one by one until there's no conflict
-						$selected = $(ed.selection).filter('.ui-selecting');
-						for ( var s = ed.selection.length-1; s > 0; s-- ){
-							$selected = $selected.not( ed.selection[s] );
-							group = ed._get_group_position( $selected );
-							$affected = ed._find_affected_el( $(_.rest(ed.selection, s)), group.element );
-							if ( $affected === false ){
-								_.each( _.rest(ed.selection, s), function(sel){
-									ed._remove_selection(sel);
-								} );
-								break;
-							}
-						}
-					}
-					else {*/
-						// 2. include all affected elements to selection automatically
-						// on unselecting, we'll only remove selection that's not in conflict anymore
-						$selected = $(ed.selection).filter('.ui-selecting');
-						group = ed._get_group_position( $selected );
-						$affected = ed._find_affected_el( $(ed.selection).not('.ui-selecting'), group.element );
-						_.each(ed.selection, function(sel){
-							var is_affected = false;
-							if ( $(sel).hasClass('ui-selecting') )
-								return;
-							if ( $affected !== false && $affected.length > 0 ){
-								$affected.each(function(){
-									if ( this == sel )
-										is_affected = true;
-								});
-							}
-							if ( is_affected )
-								return;
-							ed._remove_selection(sel);
-						});
+					if ( $el.closest('.upfront-region').get(0) != $region.get(0) ) return;
+					$('.upfront-ui-selected').each(function(){
+						ed._remove_selection(this);
+					});
+					$selected = $region.find('.ui-selecting');
+					ed._add_selection($selected.get(0));
+					ed._add_selections( $selected, $region.find('.upfront-module').not('.upfront-ui-selected, .upfront-module-parent-group'), $region.find('.upfront-module-group') );
 
-						ed._update_selection_outline();
-						return;
-					/*}*/
+					ed._update_selection_outline();
+					return;
 				}
 				ed._remove_selection(ui.unselecting);
 			},
@@ -89,6 +59,7 @@ var LayoutEditor = {
 			},
 			start: function (e, ui) {
 				// reset selection on start
+				ed.remove_selections();
 				ed.selection = [];
 				ed.selecting = true;
 			},
@@ -300,6 +271,7 @@ var LayoutEditor = {
 
 					$(this).remove();
 					$('#upfront-group-selection').remove();
+					ed.selection = [];
 				});
 			}
 		});
@@ -395,7 +367,7 @@ var LayoutEditor = {
 					region_wrappers.remove(w.model);
 				}
 			});
-			if ( 'bottom_wrappers' in l && l.bottom_wrappers.length > 0 ) {
+			if ( 'bottom_wrappers' in l && l.bottom_wrappers.length > 1 ) {
 				// Has bottom wrappers, let's group that too
 				if ( do_split ) {
 					ed._do_split(l.bottom_wrappers, region);
@@ -407,7 +379,7 @@ var LayoutEditor = {
 					}], region);
 				}
 			}
-			if ( 'top_wrappers' in l && l.top_wrappers.length > 0 ) {
+			if ( 'top_wrappers' in l && l.top_wrappers.length > 1 ) {
 				// Has top wrappers, let's group that too, create new wrapper instead
 				if ( do_split ) {
 					// We don't actually split the top wrappers, the group will be render below that
@@ -588,8 +560,7 @@ var LayoutEditor = {
 	},
 
 	_find_affected_el: function ($els, pos) {
-		if ( this.selection.length == 0 )
-			return false;
+		if ( this.selection.length == 0 ) return false;
 		var $affected = false;
 		$els.each(function(){
 			var off = $(this).offset(),
@@ -634,51 +605,39 @@ var LayoutEditor = {
 	/**
 	 * Automatically resolve conflict on adding multiple selections
 	 */
-	_add_selections: function ($selecting, $affected_els, include) {
+	_add_selections: function ($selecting, $affected_els, $restrict_els) {
 		var ed = this,
-			selected = false,
-			include = include ? include : 1,
-			total = $selecting.length;
-		// we have 2 different behavior to solve conflict, we used 2nd one in the mean time
-		/*if ( !Upfront.data.include_affected_selection ){
-			// 1. make sure to not include selection that can lead to conflict with other elements
-			$selecting.each(function(index){
-				if ( selected !== false || index + include > total )
-					return;
-				var sels = [this],
-					group, $affected;
-				if ( include > 1 ) {
-					for ( var i = index+1; i < index+include; i++ ){
-						sels.push( $selecting.get(i) );
-					}
-				}
-				group = ed._get_group_position( $(ed.selection).add(sels) ),
-				$affected = ed._find_affected_el( $affected_els.not(sels), group.element );
-				if ( $affected === false ){
-					selected = [];
-					_.each(sels, function(sel){
-						ed._add_selection(sel);
-						selected.push(sel);
-					});
-				}
-			});
-			if ( selected !== false )
-				return ed._add_selections( $selecting.not(selected), $affected_els.not(selected), include );
-			if ( include+1 <= total )
-				return ed._add_selections( $selecting, $affected_els, include+1 );
-		}
-		else {*/
-			// 2. include all affected elements to selection automatically
-			var group = ed._get_group_position( $selecting ),
-				$affected = ed._find_affected_el( $affected_els, group.element)
+			selected = [],
+			group,
+			$affected,
+			$restricted
+		;
+		// Add selection one-by-one
+		$selecting.each(function () {
+			var el = this,
+				find = _.find(ed.selection, function(sel){ return (sel == el); }),
+				$affected_els_tmp = $($affected_els)
 			;
+			if ( find ) return;
+			selected = [];
+			group = ed._get_group_position( $(ed.selection).add(this) );
+			$affected = ed._find_affected_el( $affected_els_tmp, group.element);
+			// Find all affected elements by this selection
 			while ( $affected !== false ) {
-				$affected.each(function(){ ed._add_selection(this); });
-				$affected_els = $affected_els.not($affected);
-				group = ed._get_group_position( $(this.selection) );
-				$affected = ed._find_affected_el( $affected_els, group.element );
+				$affected.each(function(){ selected.push(this); });
+				$affected_els_tmp = $affected_els_tmp.not($affected);
+				group = ed._get_group_position( $(ed.selection).add(selected) );
+				$affected = ed._find_affected_el( $affected_els_tmp, group.element );
 			}
-		/*}*/
+			// Make sure no restricted element is on the way
+			$restricted = ed._find_affected_el( $restrict_els, group.element );
+			if ( $restricted !== false ) return;
+			// Safe, now properly add selection
+			_.each(selected, function (sel) {
+				ed._add_selection(sel);
+			});
+		});
+
 		return;
 	},
 
@@ -690,8 +649,8 @@ var LayoutEditor = {
 
 	remove_selections: function () {
 		var ed = Upfront.Behaviors.LayoutEditor;
-		_.each(ed.selection, function(sel){
-			ed._remove_selection(sel);
+		$('.upfront-ui-selected').each(function(){
+			ed._remove_selection(this);
 		});
 		ed._update_selection_outline();
 		$('.upfront-module-group-group').remove();

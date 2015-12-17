@@ -244,27 +244,95 @@
 	 * @type {Upfront.Views.Editor.Settings.Settings}
 	 */
 	var GeneralPanel = RootSettingsPanel.extend({
-		settings: [
-			{
-				type: 'SettingsItem',
-				className: 'upfront-social-services-item general_settings_item',
-				title: l10n.facebook_account,
-				label: l10n.opts.page_url,
-				fields: [
-					{
-						type: 'Text',
-						className: 'facebook-url',
-						property: 'facebook_url',
-						label: l10n.opts.url_sample,
-						compact: true
-					},
-					{
-						type: 'Settings_CSS'
-					}
-				]
-			}
-		],
-		title: 'General Settings'
+		className: 'uyoutube-settings',
+		tabbed: false,
+		title: l10n.general_settings,
+		initialize: function (opts) {
+			this.options = opts;
+			
+			me = this,
+			SettingsItem =  Upfront.Views.Editor.Settings.Item,
+			Fields = Upfront.Views.Editor.Field
+			;
+
+			this.settings = _([
+				new SettingsItem({
+					className: 'upfront-social-services-item general_settings_item',
+					title: l10n.facebook_account,
+					label: l10n.opts.page_url,
+					fields: [
+						new Fields.Text({
+							model: this.model,
+							className: 'facebook-url',
+							property: 'facebook_url',
+							label: l10n.opts.url_sample,
+							compact: true,
+							change: function(value) {
+								this.model.set_property('facebook_url', value);
+							}
+						}),
+
+						new Fields.Checkboxes({
+							model: this.model,
+							className: 'show-friends',
+							property: 'show_friends',
+							label: "",
+							values: [
+								{ label: l10n.opts.show_friends, value: 'yes' }
+							],
+							change: function(value) {
+								this.model.set_property('show_friends', value);
+							}
+						}),
+
+						new Fields.Checkboxes({
+							model: this.model,
+							className: 'small-header',
+							property: 'small_header',
+							label: "",
+							values: [
+								{ label: l10n.opts.small_header, value: 'yes' }
+							],
+							change: function(value) {
+								this.model.set_property('small_header', value);
+							}
+						}),
+
+						new Fields.Checkboxes({
+							model: this.model,
+							className: 'hide-cover',
+							property: 'hide_cover',
+							label: "",
+							values: [
+								{ label: l10n.opts.hide_cover, value: 'yes' }
+							],
+							change: function(value) {
+								this.model.set_property('hide_cover', value);
+							}
+						}),
+
+						new Fields.Checkboxes({
+							model: this.model,
+							className: 'show-posts',
+							property: 'show_posts',
+							label: "",
+							values: [
+								{ label: l10n.opts.show_posts, value: 'yes' }
+							],
+							change: function(value) {
+								this.model.set_property('show_posts', value);
+							}
+						}),
+
+						new Upfront.Views.Editor.Settings.Settings_CSS({model: this.model }),
+					]
+				})
+			]);
+		},
+
+		get_title: function () {
+			return l10n.general_settings;
+		},
 	});
 	var LikeBoxSettings = ElementSettings.extend({
 		panels: {

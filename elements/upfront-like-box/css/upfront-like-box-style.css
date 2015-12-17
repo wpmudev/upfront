@@ -2,6 +2,10 @@
 	width: 100%;
 }
 
+.upfront-settings-item .show-friends {
+	margin-top: 15px;
+}
+
 .upfront-like-box, .upfront-output-Like-box-object {
 	min-height: 200px;
 }

@@ -27,6 +27,15 @@
 				//	Upfront.Events.trigger('upfront:element:edit:stop');
 				//}, this);
 				this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
+				this.listenTo(Upfront.Events, 'upfront:lightbox:show', this.on_lightbox_show);
+			},
+			on_lightbox_show: function() {
+				// Turn off the editor, hide the redactor bars, clean up the view
+				ed = this.$el.find('.upfront-object-content').data("ueditor");
+
+				if(!ed.options.autostart && ed.redactor){
+					ed.stop();
+				}
 			},
 			get_preset_properties: function() {
 				var preset = this.model.get_property_value_by_name("preset"),
@@ -93,6 +102,7 @@
 						}
 
 						text = ed.getValue(true);
+
 						if (text === '' && arguments[0] && arguments[0].currentTarget) text = arguments[0].currentTarget.innerHTML;
 						me.model.set_content(text);
 

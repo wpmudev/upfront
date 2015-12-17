@@ -276,4 +276,17 @@ jQuery(function($){
 	}, 100);
 
 	$(window).on('resize', lazyBindShuffle);
+
+	// Properly bind caption hover events, as they don't even work otherwise
+	$(document)
+		.on("mouseenter", ".ugallery_item a", function (e) {
+			var $title = $(this).find(".ugallery-thumb-title.ugallery-caption-over");
+			if ($title.length && $title.is(".ugallery-caption-on-hover-1")) $title.toggle();
+		})
+		.on("mouseleave", ".ugallery_item a", function (e) {
+			var $title = $(this).find(".ugallery-thumb-title.ugallery-caption-over");
+			if ($title.length && $title.is(".ugallery-caption-on-hover-1")) $title.toggle();
+		})
+	;
+
 });

@@ -38,10 +38,10 @@ class Upfront_MediaItem extends Upfront_Media {
 			'post_content' => $this->_post->post_content ? $this->_post->post_content : false,
 			'post_excerpt' => $this->_post->post_excerpt ? $this->_post->post_excerpt : false,
 			'original_url' => get_post_meta($this->_post->ID, 'original_url', true),
-			'document_url' => wp_get_attachment_url($this->_post->ID),
+			'document_url' => esc_url(wp_get_attachment_url($this->_post->ID)),
 			'labels' => $labels,
 			'image' => array(
-				"src" => $image_data[0],
+				"src" => esc_url($image_data[0]),
 				"width" => $image_data[1],
 				"height" => $image_data[2],
 				"resized" => $image_data[3],

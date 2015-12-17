@@ -335,9 +335,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 
 		Upfront.data.region_views[region.cid].show();
 	},
-
-	createLightboxRegion: function(regionName){
-
+	getLightboxSafeName: function(regionName) {
 		var regions = (this.layout && this.layout.get ? this.layout.get('regions') : Upfront.Application.current_subapplication.layout.get('regions')),
 			region = regions ? regions.get_by_name('lightbox') : false;
 
@@ -350,7 +348,23 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			region.add_to(regions, regions.length-1);
 		}
 
-		var	safeName = 'ltb-' + regionName.toLowerCase().replace(/\s/g, '-') + (regions.length+1),
+		return 'ltb-' + regionName.toLowerCase().replace(/\s/g, '-') + (regions.length+1);
+	},
+	createLightboxRegion: function(regionName){
+
+		var regions = (this.layout && this.layout.get ? this.layout.get('regions') : Upfront.Application.current_subapplication.layout.get('regions'));
+		//	region = regions ? regions.get_by_name('lightbox') : false;
+
+		/*if ( ! region ){
+			region = new Upfront.Models.Region({
+				"name": "lightbox",
+				"container": "lightbox",
+				"title": "lightbox Region"
+			});
+			region.add_to(regions, regions.length-1);
+		}*/
+
+		var	safeName = this.getLightboxSafeName(regionName),
 			lightbox = new Upfront.Models.Region(_.extend({}, Upfront.data.region_default_args, {
 				name: safeName,
 				container: 'lightbox',

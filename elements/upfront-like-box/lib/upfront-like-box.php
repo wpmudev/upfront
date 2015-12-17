@@ -120,7 +120,7 @@ class Upfront_LikeBoxView extends Upfront_Object {
 				'hide_cover' => __('Hide Cover Photo', 'upfront'),
 				'show_posts' => __('Show Page Posts', 'upfront'),
 			),
-
+			'general_settings' => __('General Settings', 'upfront'),
 			'settings' => __('LikeBox settings', 'upfront'),
 		);
 		return !empty($key)

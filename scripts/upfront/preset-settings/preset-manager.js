@@ -109,8 +109,6 @@ define([
 			});
 
 			style = $.trim(Upfront.Application.cssEditor.get_style_element().html().replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
-			//Apply style only for the current preset
-			style = Upfront.Application.stylesAddSelectorMigration($.trim(style), '#page .' + thisPreset);
 
 			var properties,
 				presetOptions;
@@ -126,6 +124,8 @@ define([
 					return;
 				}
 
+				//Apply style only for the current preset
+				style = Upfront.Application.stylesAddSelectorMigration($.trim(style), '#page .' + thisPreset);
 				style = style.replace(new RegExp(elementStyleName, 'g'), '');
 
 				existingPreset.set({

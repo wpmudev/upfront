@@ -91,7 +91,7 @@ define([
 		],
 
 		save_settings: function(){
-			
+
 			Upfront.Events.trigger("menu_element:settings:saving");
 			Menu_Panel.__super__.save_settings.apply(this, arguments);
 			this.model.set_property('menu_items', false, true);
@@ -104,9 +104,9 @@ define([
 			var me = this;
 
 
-			/** before the appearance pannel settings for the menu are being rendered 
+			/** before the appearance pannel settings for the menu are being rendered
 				for a particular breakpoint, check, if a preset already exists for that
-				particular breakpoint. If not, copy one from the preset for the next 
+				particular breakpoint. If not, copy one from the preset for the next
 				higher breakpoint.
 			**/
 
@@ -118,9 +118,9 @@ define([
 				currentBreakpoint = allBreakpoints.get_active(),
 				breakpointsData = presetModel.get('breakpoint') || {},
 				changed = false;
-				
+
 				if(!breakpointsData[currentBreakpoint.id] || !breakpointsData[currentBreakpoint.id].menu_style) {
-					
+
 					var higherBPs = _.filter(allBreakpoints.models, function(breakpoint) {
 						return breakpoint.get('width') > currentBreakpoint.get('width');
 					});
@@ -129,7 +129,7 @@ define([
 						return item.get('width');
 					});
 
-					for(var i = 0; i < higherBPs.length; i++) { 
+					for(var i = 0; i < higherBPs.length; i++) {
 						breakpointsData[currentBreakpoint.id] = _.clone(breakpointsData[higherBPs[i].id]);
 						if(breakpointsData[currentBreakpoint.id]) {
 							console.log("from "+higherBPs[i].id+" to "+currentBreakpoint.id);
@@ -142,11 +142,11 @@ define([
 						changed = true;
 					}
 
-					
+
 				}
 
 
-				/** when a preset is being saved with menu_style set to burger, 
+				/** when a preset is being saved with menu_style set to burger,
 					make sure that it saves burger_alignment as well
 				**/
 
@@ -154,14 +154,14 @@ define([
 					breakpointsData[currentBreakpoint.id].burger_alignment = 'left';
 					changed = true;
 				}
-				
+
 				if(changed) {
 					presetModel.set('breakpoint', breakpointsData);
 				}
-				
+
 			});
 
-		
+
 
 		},
 		hasBreakpointSettings: true,
@@ -184,13 +184,16 @@ define([
 			{
 				name: 'width'
 			},
+			{
+				name: 'preset_style'
+			}
 		],
 		panels: {
 			General: Menu_Panel,
 			Appearance: AppearancePanel
 		},
 		onSaveSettings: function() {
-				
+
 			// Update slug because it's depending on id and has to be updated properly
 			var themenu = _.findWhere(this.for_view.existingMenus, {term_id: this.model.get_property_value_by_name('menu_id')});
 			if(themenu)

@@ -1,8 +1,9 @@
 (function ($) {
 define([
 	'elements/upfront-posts/js/post-list-settings-panels',
-	'scripts/upfront/element-settings/settings'
-], function(Panels, ElementSettings) {
+	'scripts/upfront/element-settings/settings',
+	'scripts/upfront/element-settings/advanced-settings'
+], function(Panels, ElementSettings, AdvancedSettings) {
 
 var l10n = Upfront.Settings.l10n.posts_element;
 
@@ -21,7 +22,8 @@ var PostsSettings = ElementSettings.extend({
 		post_parts.on("settings:dispatched", this.rerender, this);
 		this.panels = [
 			general,
-			post_parts
+			post_parts,
+			new AdvancedSettings({model: this.model})
 		];
 	},
 

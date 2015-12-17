@@ -987,10 +987,12 @@ Ueditor.prototype = {
 		;
 		regions.each(function (r) {
 			r.get("modules").each(function (module) {
-				module.get("objects").each(function (object) {
-					var anchor = object.get_property_value_by_name("anchor");
-					if (anchor && anchor.length) anchors[anchor] = object;
-				});
+				if(module.get("objects")) {
+                    module.get("objects").each(function (object) {
+    					var anchor = object.get_property_value_by_name("anchor");
+    					if (anchor && anchor.length) anchors[anchor] = object;
+    				});
+                }
 			});
 		});
 		return anchors;

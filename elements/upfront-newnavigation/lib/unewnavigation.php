@@ -62,7 +62,8 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 		}
 
 		$menu_style = "data-style='{$menu_style}' data-stylebk='{$menu_style}'";
-		$breakpoint_data = "data-breakpoints='" . json_encode($breakpoint_data) . "'" ;
+		$breakpoint_data = "data-breakpoints='" . preg_replace("#'#", '"', json_encode($breakpoint_data)) . "'" ;
+		$breakpoint_data = preg_replace('#\\\\"#', '"', $breakpoint_data);
 		$menu_alignment = $menu_alignment ? "data-alignment='{$menu_alignment}' data-alignment='{$menu_alignment}'" : "";
 		$sub_navigation = $sub_navigation ? "data-allow-sub-nav='yes'" : "data-allow-sub-nav='no'";
 
