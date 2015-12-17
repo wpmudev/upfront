@@ -6,7 +6,6 @@
                 {{Upfront.Settings.l10n.global.views.no_colors_click_plus}}
             </div>
             {[ } ]}
-            {[ if (colors.length){ ]}
             <div id="theme-colors-swatches">
                 <span class="theme-colors-swatch"></span>
                 <p class="theme-colors-explanation">{{Upfront.Settings.l10n.global.views.theme_colors_explanation}} <span class="theme-colors-eg-attribute">color:</span> <span class="theme-colors-eg-sharp">#</span><span class="theme-colors-eg-value">ufc2</span><span class="theme-colors-eg-semicolon">;</span></p>
@@ -17,11 +16,7 @@
                  <span class="theme_colors_empty_picker"></span>
                 {[ } ]}
             </div>
-            {[ } ]}
         </div>
-        {[ if (!colors.length){ ]}
-        <span class="theme_colors_empty_picker"></span>
-        {[ } ]}
     </div>
     <!--<div class="panel-setting-theme-colors-bottom">-->
         <!--<div class="panel-setting-theme-colors-shades-wrap">-->

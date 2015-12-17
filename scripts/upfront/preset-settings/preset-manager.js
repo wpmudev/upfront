@@ -68,7 +68,7 @@ define([
 			this.debouncedSavePreset = _.debounce(savePreset, 1000);
 
 			this.migrateElementToPreset();
-			this.setupItems();
+			//this.setupItems(); // called in render -> getBody
 			this.listenToOnce(Upfront.Events, 'element:settings:canceled', this.cancelPresetChanges);
 		},
 
@@ -168,6 +168,16 @@ define([
 
 			this.debouncedSavePreset(properties);
 
+			this.updateMainDataCollectionPreset(properties);
+
+			// Trigger change so that whole element re-renders again.
+			// (to replace element style class with preset class, look upfront-views.js
+			this.model.get('properties').trigger('change');
+		},
+
+		updateMainDataCollectionPreset: function(properties) {
+			var index;
+
 			_.each(Upfront.mainData[this.mainDataCollection], function(preset, presetIndex) {
 				if (preset.id === properties.id) {
 					index = presetIndex;
@@ -175,13 +185,10 @@ define([
 			});
 
 			if (typeof index !== 'undefined') {
-				Upfront.mainData[this.mainDataCollection].splice(index, 1);
+				Upfront.mainData[this.mainDataCollection][index] = properties;
+			} else {
+				Upfront.mainData[this.mainDataCollection].push(properties);
 			}
-			Upfront.mainData[this.mainDataCollection].push(properties);
-
-			// Trigger change so that whole element re-renders again.
-			// (to replace element style class with preset class, look upfront-views.js
-			this.model.get('properties').trigger('change');
 		},
 
 		/**
@@ -246,16 +253,7 @@ define([
 
 			this.debouncedSavePreset(properties);
 
-			_.each(Upfront.mainData[this.mainDataCollection], function(preset, presetIndex) {
-				if (preset.id === properties.id) {
-					index = presetIndex;
-				}
-			});
-
-			if (typeof index !== 'undefined') {
-				Upfront.mainData[this.mainDataCollection].splice(index, 1);
-			}
-			Upfront.mainData[this.mainDataCollection].push(properties);
+			this.updateMainDataCollectionPreset(properties);
 
 			Util.updatePresetStyle(this.styleElementPrefix.replace(/-preset/, ''), properties, this.styleTpl);
 			// Trigger change so that whole element re-renders again.
@@ -272,13 +270,17 @@ define([
 				breakpointData;
 
 			if(typeof presetModel === "undefined") {
-				presetModel = this.presets.findWhere({id: 'default'})
+				presetModel = this.presets.findWhere({id: 'default'});
 			}
 
 			// Backup preset model properties for later use in reset (on settings cancel)
 			this.presetBackup = presetModel.toJSON();
 
 			// Add items
+			if (this.selectPresetModule && this.selectPresetModule.stopListening) {
+				this.selectPresetModule.stopListening();
+				this.stopListening(this.selectPresetModule);
+			}
 			this.selectPresetModule = new SelectPresetModule({
 				model: this.model,
 				presets: this.presets
@@ -298,11 +300,19 @@ define([
 				}, this);
 			}
 
+			if (this.editPresetModule && this.editPresetModule.stopListening) {
+				this.editPresetModule.stopListening();
+				this.stopListening(this.editPresetModule);
+			}
 			this.editPresetModule = new EditPresetModule({
 				model: presetModel,
 				stateModules: this.stateModules
 			});
 
+			if (this.presetCssModule && this.presetCssModule.stopListening) {
+				this.presetCssModule.stopListening();
+				this.stopListening(this.presetCssModule);
+			}
 			this.presetCssModule = new PresetCssModule({
 				model: this.model,
 				preset: presetModel
@@ -358,17 +368,7 @@ define([
 
 			this.debouncedSavePreset(properties);
 
-			_.each(Upfront.mainData[this.mainDataCollection], function(preset, presetIndex) {
-				if (preset.id === properties.id) {
-					index = presetIndex;
-				}
-			});
-
-			if (typeof index !== 'undefined') {
-				Upfront.mainData[this.mainDataCollection].splice(index, 1);
-			}
-			Upfront.mainData[this.mainDataCollection].push(properties);
-
+			this.updateMainDataCollectionPreset(properties);
 		},
 
 		createPreset: function(presetName) {
@@ -418,15 +418,7 @@ define([
 				//Update preset CSS with reset properties
 				Util.updatePresetStyle(me.styleElementPrefix.replace(/-preset/, ''), resetPreset, me.styleTpl);
 
-				_.each(Upfront.mainData[me.mainDataCollection], function(preset, presetIndex) {
-					if (preset.id === resetPreset.id) {
-						index = presetIndex;
-					}
-				});
-				if (typeof index !== 'undefined') {
-					Upfront.mainData[me.mainDataCollection].splice(index, 1);
-				}
-				Upfront.mainData[me.mainDataCollection].push(resetPreset);
+				me.updateMainDataCollectionPreset(resetPreset);
 
 				me.presets = new Backbone.Collection(Upfront.mainData[me.mainDataCollection] || []);
 
@@ -444,7 +436,7 @@ define([
 		changePreset: function(preset) {
 			// Add items
 			this.stopListening();
-			this.setupItems();
+			//this.setupItems(); // called in render -> getBody
 			this.render();
 		},
 

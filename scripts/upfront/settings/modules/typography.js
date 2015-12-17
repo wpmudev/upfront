@@ -60,6 +60,7 @@ define([
 					className: state + '-font-face static typeFace ' + toggleClass,
 					change: function(value) {
 						me.model.set(me.currentElement + me.options.fields.typeface, value);
+						me.fields._wrapped[1 + me.fieldCounter].stopListening();
 						me.fields._wrapped[1 + me.fieldCounter] = new Upfront.Views.Editor.Field.Typeface_Style_Chosen_Select({
 							model: this.model,
 							name: me.currentElement + me.options.fields.fontstyle,
@@ -72,9 +73,11 @@ define([
 							change: function(value) {
 								//Explode Font style and font weight and save them as separate values
 								var parsed_variant = Upfront.Views.Font_Model.parse_variant(value);
-								me.model.set(me.currentElement + me.options.fields.fontstyle, value);
-								me.model.set(me.currentElement + me.options.fields.weight, parsed_variant.weight);
-								me.model.set(me.currentElement + me.options.fields.style, parsed_variant.style);
+								var data = {};
+								data[me.currentElement + me.options.fields.fontstyle] = value;
+								data[me.currentElement + me.options.fields.weight] = parsed_variant.weight;
+								data[me.currentElement + me.options.fields.style] = parsed_variant.style;
+								me.model.set(data);
 							},
 							show: function(value) {
 								if(value !== null) {
