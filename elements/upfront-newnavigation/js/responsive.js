@@ -148,6 +148,9 @@ jQuery(document).ready(function($) {
 			$(this).closest('.upfront-output-region-container, .upfront-output-region-sub-container').each(function() {
 				$(this).addClass('upfront-region-container-has-nav');
 			});
+			
+			//Make sure parent wrapper have higher z-index
+			$(this).closest('.upfront-output-module').css({'z-index': '9999', position: 'relative'})
 		}
 	});
 
