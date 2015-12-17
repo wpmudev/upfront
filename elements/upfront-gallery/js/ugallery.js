@@ -783,8 +783,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		props.labels_length = this.labels.length;
 		props.image_labels = this.imageLabels;
 
+		// In case the image doesn't have the `imageLink` populated, use the element-wide fallback as default
+		var fallback_type = this.property('linkTo');
 		_.each(props.images, function(image, index) {
-			props.images[index]['imageLinkType'] = image.imageLink.type;
+			props.images[index]['imageLinkType'] = image.imageLink.type || fallback_type;
 			props.images[index]['imageLinkUrl'] = image.imageLink.url;
 			props.images[index]['imageLinkTarget'] = image.imageLink.target;
 		});
@@ -1005,22 +1007,27 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		this.getNewLabels(_.keys(images));
 
 		_.each(images, function(image, id) {
-			models.push(
-				new UgalleryImage({
-					id: id,
-					srcFull: image.full[0],
-					sizes: image,
-					size: image.custom.editdata.resize,
-					cropSize: image.custom.crop,
-					cropOffset: image.custom.editdata.crop,
-					src: image.custom.url,
-					loading: false,
-					status: 'ok',
-					element_id: element_id,
-					urlType: me.property('linkTo'),
-					url: image.full[0]
-				})
-			);
+			var model = new UgalleryImage({
+				id: id,
+				srcFull: image.full[0],
+				sizes: image,
+				size: image.custom.editdata.resize,
+				cropSize: image.custom.crop,
+				cropOffset: image.custom.editdata.crop,
+				src: image.custom.url,
+				loading: false,
+				status: 'ok',
+				element_id: element_id,
+				urlType: me.property('linkTo'),
+				url: image.full[0],
+			});
+			// Also initialize image link defaults here
+			model.set('imageLink', {
+				type: me.property('linkTo'),
+				url: model.get("url"),
+				target: model.get("linkTarget")
+			});
+			models.push(model);
 		});
 
 		if (me.property('status') !== 'ok') {
@@ -1036,7 +1043,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		} else {
 			me.images.add(models);
 		}
-
+		
 		me.render();
 	},
 
