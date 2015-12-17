@@ -65,4 +65,9 @@ div.<?php echo $properties['id'] ?> ul.menu > li.menu-item > a:focus, div.upfron
 }
 <?php if(!empty($properties['mobile']['preset_style'])) { ?><?php echo $properties['mobile']['preset_style'] ?><?php } ?>
 <?php } ?>
-<?php if(!empty($properties['preset_style'])) { ?><?php echo $properties['preset_style'] ?><?php } ?>
+
+<?php if(!empty($properties['breakpoint']['desktop']['preset_style'])) { ?>
+	<?php if(!empty($properties['breakpoint']['desktop']['preset_style'])) { ?><?php echo $properties['breakpoint']['desktop']['preset_style'] ?><?php } ?>
+<?php } else { ?>
+	<?php if(!empty($properties['preset_style'])) { ?><?php echo $properties['preset_style'] ?><?php } ?>
+<?php } ?>
