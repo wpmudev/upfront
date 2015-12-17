@@ -493,7 +493,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		if(!this.property('menu_id')) {
 			this.display_menu_list();
 		}
-
+		
 		var menuStyle,
 			allowSubNav = this.property("allow_sub_nav"),
 			isFloating = this.property("is_floating"),
@@ -541,6 +541,10 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					me.activate_responsive_nav($upfrontObjectContent, currentBreakpoint.get('width'));
 				}, 100);
 			}
+			
+			//Make sure parent module have high z-index to prevent dropdown under elements
+			me.$el.closest('.upfront-module').css({'z-index': '9999', position: 'relative'});
+			
 		}, 300);
 
 		$upfrontObjectContent.attr('data-stylebk',(menuStyle ? menuStyle : 'horizontal'));
