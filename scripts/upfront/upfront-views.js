@@ -2209,12 +2209,19 @@ define([
 				Upfront.Events.trigger("entity:module_group:after_render", this, this.model);
 			},
 			update: function (prop) {
-				var prop_class = this.model.get_property_value_by_name('class'),
+				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+					prop_class = this.model.get_property_value_by_name('class'),
 					row = this.model.get_property_value_by_name('row'),
 					use_padding = this.model.get_breakpoint_property_value('use_padding', true),
 					theme_style = this.model.get_breakpoint_property_value('theme_style', true),
-					grid = Upfront.Settings.LayoutEditor.Grid
+					grid = Upfront.Settings.LayoutEditor.Grid,
+					ed = Upfront.Behaviors.GridEditor,
+					prev_col, col
 				;
+				if ( Upfront.Application.layout_ready ) {
+					prev_col = ( !breakpoint || breakpoint.default ) ? ed.get_class_num(this._prev_class, grid.class) : this.$el.data('breakpoint_col');
+					col = ( !breakpoint || breakpoint.default ) ? ed.get_class_num(prop_class, grid.class) : this.model.get_breakpoint_property_value('col');
+				}
 				this.$el.removeClass(this._prev_class).addClass(prop_class);
 				this._prev_class = prop_class;
 				if(theme_style){
@@ -2228,8 +2235,8 @@ define([
 				this.update_position();
 				this.update_background();
 				// Check if width is changed, if it did, let's normalize child modules
-				if ( Upfront.Application.layout_ready && prop && ( prop.id == 'class' || prop.id == 'breakpoint' ) ) {
-					this.normalize_child_modules();
+				if ( Upfront.Application.layout_ready && prop && ( prop.id == 'class' || prop.id == 'breakpoint' ) && prev_col != col ) {
+					this.normalize_child_modules(prev_col);
 				}
 				Upfront.Events.trigger('entity:module_group:update', this, this.model);
 			},
@@ -2256,15 +2263,14 @@ define([
 				this.update_size_hint();
 				Upfront.Events.trigger('entity:module_group:update_position', this, this.model);
 			},
-			normalize_child_modules: function () {
+			normalize_child_modules: function (prev_col) {
 				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					me = this,
 					ed = Upfront.Behaviors.GridEditor,
 					modules = this.model.get('modules'),
 					wrappers = this.model.get('wrappers'),
 					col = ( !breakpoint || breakpoint.default ) ? ed.get_class_num(this.$el, ed.grid.class) : this.$el.data('breakpoint_col'),
-					original_col = this.model.get_property_value_by_name('original_col'),
-					use_col = _.isNumber(original_col) ? original_col : col,
+					use_col = _.isNumber(prev_col) ? prev_col : col,
 					lines = ed.parse_modules_to_lines(modules, wrappers, ( breakpoint ? breakpoint.id : 'desktop' ), use_col)
 				;
 				_.each(lines, function (line) {
@@ -2468,8 +2474,9 @@ define([
 						else {
 							if ( wrapper && ( wrapper_index == 1 || is_wrapper_clr ) ){
 								// Add clr class as this is the first in row
-								if ( is_clr && wrapper_index == 1 ) {
-									wrapper.add_class('clr');
+								if ( wrapper_index == 1 ) {
+									if ( is_clr ) wrapper.add_class('clr');
+									else wrapper.remove_class('clr');
 								}
 								// Add previous spacer
 								if ( is_prev_wrap_spacer && is_prev_wrap_clr ) {
