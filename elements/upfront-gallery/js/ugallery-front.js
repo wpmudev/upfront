@@ -280,16 +280,12 @@ jQuery(function($){
 	// Properly bind caption hover events, as they don't even work otherwise
 	$(document)
 		.on("mouseenter", ".ugallery_item a", function (e) {
-			$(this).find(".ugallery-thumb-title.ugallery-caption-over")
-				.removeClass("ugallery-caption-on-hover-1")
-				.addClass("ugallery-caption-on-hover-0")
-			;
+			var $title = $(this).find(".ugallery-thumb-title.ugallery-caption-over");
+			if ($title.length && $title.is(".ugallery-caption-on-hover-1")) $title.toggle();
 		})
 		.on("mouseleave", ".ugallery_item a", function (e) {
-			$(this).find(".ugallery-thumb-title.ugallery-caption-over")
-				.removeClass("ugallery-caption-on-hover-0")
-				.addClass("ugallery-caption-on-hover-1")
-			;
+			var $title = $(this).find(".ugallery-thumb-title.ugallery-caption-over");
+			if ($title.length && $title.is(".ugallery-caption-on-hover-1")) $title.toggle();
 		})
 	;
 
