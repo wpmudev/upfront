@@ -2415,7 +2415,7 @@ define([
             if ( Theme_Colors.colors.length === 10 ) {
                 this.$(".theme_colors_empty_picker").remove();
             }
-            this.$("#theme-colors-no-color-notice").parent().hide();
+            this.$("#theme-colors-no-color-notice").hide();
             this.render_bottom();
 			this.on_save();
         },
