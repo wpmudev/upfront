@@ -116,9 +116,7 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 
 		//Delay events else values are empty
 		setTimeout(function(){
-			// Trigger settings
 			me.on_settings_click();
-
 			//Trigger event for adding videos to array
 			Upfront.Events.trigger("upfront:youtube:added");
 
@@ -278,7 +276,10 @@ var BehaviorPanel = RootSettingsPanel.extend({
 					label: "",
 					values: [
 						{ label: "", value: 'multiple_show_title' },
-					]
+					],
+					change: function(value) {
+						this.model.set_property('multiple_show_title', value);
+					}
 				}),
 				new Fields.Number({
 					model: this.model,
@@ -289,7 +290,10 @@ var BehaviorPanel = RootSettingsPanel.extend({
 					min: 50,
 					max: 100,
 					step: 1,
-					default_value: 100
+					default_value: 100,
+					change: function(value) {
+						this.model.set_property('multiple_title_length', value);
+					}
 				}),
 
 				new Fields.Slider({
@@ -378,11 +382,11 @@ var BehaviorPanel = RootSettingsPanel.extend({
 
 	toggleMultipleSettings: function() {
 		//If multiple videos added show multiple videos settings
-		var videosCount = $('[name^="multiple_source_"]').length;
+		var videosCount = this.$el.find('[name^="multiple_source_"]').length;
 		if(videosCount > 1) {
-			$('.field-display_style, .first-video-to-thumbnails, .thumbnails-width').show();
+			this.$el.find('.field-display_style, .first-video-to-thumbnails, .thumbnails-width').show();
 		} else {
-			$('.field-display_style, .first-video-to-thumbnails, .thumbnails-width').hide();
+			this.$el.find('.field-display_style, .first-video-to-thumbnails, .thumbnails-width').hide();
 		}
 	},
 
@@ -462,8 +466,8 @@ var BehaviorPanel = RootSettingsPanel.extend({
 
 	//Adding new set of fields from template
 	cloneMultipleVideo: function() {
-		var panel_count = $('.multiple_video_section .upfront-settings-item').length;
-		$('.multiple_video_section').append(_.template(cloneTpl, {
+		var panel_count = this.$el.find('.multiple_video_section .upfront-settings-item').length;
+		this.$el.find('.multiple_video_section').append(_.template(cloneTpl, {
 			cloneId: panel_count + 1,
 			videoUrl: '',
 			l10n: l10n.template
@@ -496,7 +500,8 @@ var YoutubeSettings = ElementSettings.extend({
 		var me = this;
 		var multiple_videos_array = [];
 		var videoCounter = 0;
-		var videoFields = $('[name^="multiple_source_"]');
+		var videoFields = this.$el.find('[name^="multiple_source_"]');
+
 		//Get all videos urls
 		videoFields.each(function( index, element ) {
 			var videoUrl = $(element).val();
