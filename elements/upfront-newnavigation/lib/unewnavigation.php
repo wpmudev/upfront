@@ -50,7 +50,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 
 		$desktopPreset = (is_array($breakpoint_data['preset']) && isset($breakpoint_data['preset']['desktop']))?$breakpoint_data['preset']['desktop']:false;
 
-		$menu_style = (is_array($desktopPreset['menu_style']) && isset($desktopPreset['menu_style'])) ? $desktopPreset['menu_style'] :  $menu_style;
+		$menu_style = isset($desktopPreset['menu_style']) && is_array($desktopPreset['menu_style']) ? $desktopPreset['menu_style'] :  $menu_style;
 		$menu_alignment = isset($desktopPreset['menu_alignment']) ? $desktopPreset['menu_alignment'] : $menu_alignment;
 		$sub_navigation = $this->_get_property('allow_sub_nav');
 		$is_floating = $this->_get_property('is_floating');
