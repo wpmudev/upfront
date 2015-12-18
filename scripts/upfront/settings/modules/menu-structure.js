@@ -34,8 +34,6 @@ define([
 		},
 
 		setup: function() {
-			var me = this;
-
 			this.menuId = this.model.get_property_value_by_name('menu_id');
 			this.menuItems = [];
 			this.menuItemViews = [];
@@ -43,7 +41,65 @@ define([
 
 			if (this.menuId === false) return;
 
-			Upfront.Util.post({"action": "upfront_new_load_menu_array", "data": this.menuId})
+			this._load_items();
+		},
+
+		/**
+		 * Check if we have a promise queued in
+		 *
+		 * @param {Object} args_obj The raw key used for promise - will be stringified before checking
+		 *
+		 * @return {Boolean}
+		 */
+		_has_promise: function (args_obj) {
+			var key = JSON.stringify(args_obj);
+			return !!(this._promises || {})[key];
+		},
+
+		/**
+		 * Queue up a promise
+		 *
+		 * @param {Object} args_obj The raw key used for promise - will be stringified before checking
+		 * @param {$.Deferred} promise Promise to queue up
+		 */
+		_add_promise: function (args_obj, promise) {
+			var key = JSON.stringify(args_obj);
+			this._promises = this._promises || {};
+			this._promises[key] = promise;
+			return true;
+		},
+
+		/**
+		 * Drops a promise from the queue
+		 *
+		 * @param {Object} args_obj The raw key used for promise - will be stringified before checking
+		 */
+		_drop_promise: function (args_obj) {
+			var key = JSON.stringify(args_obj);
+			this._promises = this._promises || {};
+			this._promises[key] = false;
+			return true;
+		},
+
+		/**
+		 * Loads the menu items.
+		 *
+		 * Also hooks up to promise response and sets up `this.menuItemViews` collection.
+		 */
+		_load_items: function () {
+			var me = this,
+				args = {
+					action: "upfront_new_load_menu_array", 
+					"data": this.menuId + ''
+				},
+				promise
+			;
+			if (this._has_promise(args)) return true; // We're already waiting for this
+
+			promise = Upfront.Util.post(_.extend({}, args));
+			this._add_promise(args, promise); // So, stack up this promise
+
+			promise
 				.success(function (response) {
 					me.menuItems = response.data || [];
 					_.each(me.menuItems, function(itemOptions) {
@@ -53,11 +109,13 @@ define([
 						}));
 					});
 					me.render();
+					me._drop_promise(args); // And pop it off the stack once we're done
 				})
 				.error(function (response) {
 					Upfront.Util.log("Error loading menu items");
 				})
 			;
+			return true;
 		},
 
 		render: function() {
