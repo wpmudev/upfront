@@ -2,14 +2,32 @@
 	width: 230px;
 }
 
+.ulinpanel-dark {
+	background: initial !important;
+	text-transform: initial !important;
+	font: normal 13px/16px Verdana, sans-serif !important;
+}
+
+.ulinkpanel .upfront-field-select-value {
+	color: #2F475F !important;
+    font-size: 11px !important;
+    font-family: Verdana, sans-serif !important;
+    line-height: 22px !important;
+	text-transform: initial !important;
+}
+
 .ulinkpanel-title {
 	margin-bottom: 10px;
 	line-height: 1em;
 }
 
 .ulinkpanel .upfront-field-wrap {
-	margin: 0 0 10px;
+	margin: 5px 0px 5px 0px !important;
 	float: left;
+}
+
+.ulinkpanel-dark .upfront-field-wrap {
+	margin: 5px 0px 5px 0px !important;
 }
 
 .ulinkpanel .ulinkpanel-external-wrap {
@@ -60,9 +78,9 @@
 
 a.ulinkpanel-entry-url,
 a.ulinkpanel-entry-url:link {
-	display: block;
+	display: block !important;
 	width: 100%;
-	margin-bottom: 2px;
+	margin-bottom: 5px !important;
 	font-size: 13px;
 	float: left;
 	line-height: 1em;
@@ -146,11 +164,16 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 }
 
 .ulinkpanel-dark a.ulinkpanel-entry-url, .ulinkpanel-dark a.ulinkpanel-entry-url:link {
-	color: rgb(0, 219, 143);
+	background: initial !important;
+	padding: initial !important;
+	text-transform: initial !important;
+	margin: initial !important;
+	font: normal 13px/16px Verdana, sans-serif !important;
+	color: rgb(0, 219, 143) !important;
 }
 
 .ulinkpanel-dark a.ulinkpanel-entry-url:hover {
-	color: #3ea;
+	color: #3ea !important;
 }
 
 .ulinkpanel-dark .upfront-field-radio {
@@ -164,8 +187,18 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 
 .ulinkpanel-dark .ulinkpanel-title {
 	color: #97B8DA;
-	font: normal 13px/16px Verdana, sans-serif;
 	margin-bottom:3px;
+	background: initial !important;
+	padding: initial !important;
+	text-transform: initial !important;
+	margin: initial !important;
+	font: normal 13px/16px Verdana, sans-serif !important;
+}
+
+.upfront-ui.uimage-control-panel label {
+	background: initial !important;
+	text-transform: initial !important;
+	font: normal 13px/16px Verdana, sans-serif !important;
 }
 
 .ulinkpanel-dark .upfront-settings-button_panel{
