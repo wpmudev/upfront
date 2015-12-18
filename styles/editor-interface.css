@@ -15116,7 +15116,10 @@ div.upfront-region-container:hover > a.feature_image_selector {
 .colors-panel-section .sp-preview.uf-unset-color,
 #sidebar-ui #theme-colors-swatches .sp-replacer .sp-preview.uf-unset-color {
   box-shadow: 0 0 0 3px #AFC8DF;
-  background-color: transparent !important; }
+  background-color: transparent !important;
+  width: 14px !important;
+  height: 14px !important;
+  margin: 2px; }
 
 /* 
 #sidebar-ui .theme_colors_unset_color span.theme-colors-color-no-color span,
@@ -15125,7 +15128,7 @@ div.upfront-region-container:hover > a.feature_image_selector {
     background-position: -1364px -108px;
 }
 */
-/* line 52, sass/partials/_theme-colors-ui.scss */
+/* line 55, sass/partials/_theme-colors-ui.scss */
 .colors-panel-section span.theme-colors-color-no-color:after,
 .colors-panel-section .sp-preview.uf-unset-color:after {
   content: '';
@@ -15137,11 +15140,11 @@ div.upfront-region-container:hover > a.feature_image_selector {
   top: -1px;
   left: 6px; }
 
-/* line 65, sass/partials/_theme-colors-ui.scss */
+/* line 68, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui .panel-setting-theme-colors-shades-range a {
   margin: 0; }
 
-/* line 68, sass/partials/_theme-colors-ui.scss */
+/* line 71, sass/partials/_theme-colors-ui.scss */
 .theme-colors-color-box {
   display: inline-block;
   width: 20px;
@@ -15149,83 +15152,83 @@ div.upfront-region-container:hover > a.feature_image_selector {
   border: 1px solid black;
   cursor: pointer; }
 
-/* line 75, sass/partials/_theme-colors-ui.scss */
+/* line 78, sass/partials/_theme-colors-ui.scss */
 .panel-setting-theme-colors-shades-range {
   width: 100%; }
 
-/* line 78, sass/partials/_theme-colors-ui.scss */
+/* line 81, sass/partials/_theme-colors-ui.scss */
 #panel-setting-theme-colors-shades-label {
   font: bold 11px verdana, sans-serif; }
 
-/* line 81, sass/partials/_theme-colors-ui.scss */
+/* line 84, sass/partials/_theme-colors-ui.scss */
 .panel-setting-theme-colors-shades-wrap p {
   margin: 0;
   margin-top: 10px; }
 
-/* line 85, sass/partials/_theme-colors-ui.scss */
+/* line 88, sass/partials/_theme-colors-ui.scss */
 .panel-setting-theme-colors-meta p {
   color: #263A4D; }
 
-/* line 88, sass/partials/_theme-colors-ui.scss */
+/* line 91, sass/partials/_theme-colors-ui.scss */
 .theme-colors-color-box-selected {
   background-image: url("../img/uf-core-el-sprite.svg"); }
 
-/* line 91, sass/partials/_theme-colors-ui.scss */
+/* line 94, sass/partials/_theme-colors-ui.scss */
 .theme-colors-color-box-selected.dark {
   background-position: -809px -201px; }
 
-/* line 94, sass/partials/_theme-colors-ui.scss */
+/* line 97, sass/partials/_theme-colors-ui.scss */
 .theme-colors-color-box-selected.light {
   background-position: -809px -169px; }
 
-/* line 97, sass/partials/_theme-colors-ui.scss */
+/* line 100, sass/partials/_theme-colors-ui.scss */
 .panel-setting-theme-colors .upfront-field-slider .ui-slider-handle {
   background-color: #1fcd8f;
   border-width: 4px; }
 
 /* Colors panel */
-/* line 103, sass/partials/_theme-colors-ui.scss */
+/* line 106, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui .colors-panel-section {
   padding-top: 0;
   margin: 0; }
 
-/* line 107, sass/partials/_theme-colors-ui.scss */
+/* line 110, sass/partials/_theme-colors-ui.scss */
 #theme-colors-swatches {
   padding: 0 15px;
   width: 255px; }
 
-/* line 111, sass/partials/_theme-colors-ui.scss */
+/* line 114, sass/partials/_theme-colors-ui.scss */
 #theme-colors-swatches {
   padding: 0;
   width: 255px; }
 
-/* line 115, sass/partials/_theme-colors-ui.scss */
+/* line 118, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui #theme-colors-swatches {
   width: 100%;
   height: 100%;
   overflow: hidden; }
 
-/* line 120, sass/partials/_theme-colors-ui.scss */
+/* line 123, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui #theme-colors-swatches .theme-colors-explanation {
   font: normal 11px/1.5 Verdana, sans-serif;
   padding: 15px;
   color: #607F99; }
 
-/* line 125, sass/partials/_theme-colors-ui.scss */
+/* line 128, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui #theme-colors-swatches .theme-colors-eg-attribute {
   font-family: monospace;
   color: #22384B; }
 
-/* line 130, sass/partials/_theme-colors-ui.scss */
+/* line 133, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui #theme-colors-swatches .theme-colors-eg-value {
   color: #85A9CC; }
 
-/* line 133, sass/partials/_theme-colors-ui.scss */
+/* line 136, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui #theme-colors-swatches .theme-colors-eg-semicolon {
   font-weight: bold;
   color: #2652A4; }
 
-/* line 137, sass/partials/_theme-colors-ui.scss */
+/* line 140, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui #theme-colors-swatches span.theme-colors-color-picker,
 #sidebar-ui #theme-colors-swatches span.theme_colors_empty_picker,
 #sidebar-ui #theme-colors-swatches span.theme_colors_unset_color {
@@ -15237,7 +15240,7 @@ div.upfront-region-container:hover > a.feature_image_selector {
   border-bottom: 1px solid #C8DFF2;
   border-right: 1px solid #C8DFF2; }
 
-/* line 148, sass/partials/_theme-colors-ui.scss */
+/* line 151, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui #theme-colors-swatches span.theme-colors-color-picker.color-0,
 #sidebar-ui #theme-colors-swatches span.theme-colors-color-picker.color-1,
 #sidebar-ui #theme-colors-swatches span.theme-colors-color-picker.color-2,
@@ -15245,7 +15248,7 @@ div.upfront-region-container:hover > a.feature_image_selector {
 #sidebar-ui #theme-colors-swatches span.theme-colors-color-picker.color-4 {
   border-top: 1px solid #C8DFF2; }
 
-/* line 156, sass/partials/_theme-colors-ui.scss */
+/* line 159, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui #theme-colors-swatches span.theme-colors-color-name {
   position: relative;
   top: -8px;
@@ -15256,50 +15259,53 @@ div.upfront-region-container:hover > a.feature_image_selector {
   color: #85A9CC;
   font-family: verdana, arial, sans-serif; }
 
-/* line 166, sass/partials/_theme-colors-ui.scss */
+/* line 169, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui #theme-colors-swatches .upfront-field-wrap {
   margin: -35px 0 0px 5px !important;
   height: 14px;
   line-height: 14px; }
 
-/* line 171, sass/partials/_theme-colors-ui.scss */
+/* line 174, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui #theme-colors-swatches .sp-replacer {
   border: 1px solid #AFC8DF;
   border-radius: 50%; }
 
-/* line 175, sass/partials/_theme-colors-ui.scss */
+/* line 178, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui #theme-colors-swatches .sp-replacer:before {
   border: none;
   background: none; }
 
-/* line 179, sass/partials/_theme-colors-ui.scss */
+/* line 182, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui #theme-colors-swatches .sp-replacer .sp-dd {
   display: none; }
 
-/* line 182, sass/partials/_theme-colors-ui.scss */
+/* line 185, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui .theme_colors_unset_color span.theme-colors-color-no-color span {
   display: block; }
 
-/* line 185, sass/partials/_theme-colors-ui.scss */
+/* line 188, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui .theme_colors_unset_color span.theme-colors-color-no-color span,
 #sidebar-ui #theme-colors-swatches .sp-replacer .sp-preview {
   border: none;
   box-shadow: none;
   border-radius: 50%;
-  width: 14px !important;
-  height: 14px !important;
-  margin: 2px; }
+  width: 16px !important;
+  height: 16px !important;
+  margin: 1px; }
 
-/* line 194, sass/partials/_theme-colors-ui.scss */
+/* line 197, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui #theme-colors-swatches .theme_color_swatch_empty .sp-preview {
   background-position: -1365px -173px;
-  border: 1px solid #7595B2; }
+  border: 1px solid #7595B2;
+  margin: 2px;
+  width: 14px !important;
+  height: 14px !important; }
 
-/* line 198, sass/partials/_theme-colors-ui.scss */
+/* line 204, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui #theme-colors-swatches .theme_color_swatch_empty .sp-replacer.sp-light {
   background-color: #7595B2; }
 
-/* line 201, sass/partials/_theme-colors-ui.scss */
+/* line 207, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui .panel-setting-theme-colors-bottom {
   margin: 0 15px;
   font-size: 11px;
@@ -15307,53 +15313,53 @@ div.upfront-region-container:hover > a.feature_image_selector {
   padding-top: 3px;
   line-height: 32px; }
 
-/* line 208, sass/partials/_theme-colors-ui.scss */
+/* line 214, sass/partials/_theme-colors-ui.scss */
 #panel-setting-theme-colors-shades-label {
   font-weight: bold;
   margin-bottom: 7px;
   display: block; }
 
-/* line 213, sass/partials/_theme-colors-ui.scss */
+/* line 219, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui .panel-setting-theme-colors-bottom .hovers {
   font-family: "Courier New", monospace;
   font-weight: bold;
   font-size: 12px; }
 
-/* line 218, sass/partials/_theme-colors-ui.scss */
+/* line 224, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui #theme-colors-swatches .theme-colors-color-picker.color-0 .upfront-field-wrap {
   margin-left: 0; }
 
-/* line 221, sass/partials/_theme-colors-ui.scss */
+/* line 227, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui #theme-colors-swatches .upfront-field-wrap {
   margin: 0; }
 
-/* line 224, sass/partials/_theme-colors-ui.scss */
+/* line 230, sass/partials/_theme-colors-ui.scss */
 .panel-setting-theme-colors-meta {
   margin-top: 15px;
   line-height: 13px; }
 
-/* line 228, sass/partials/_theme-colors-ui.scss */
+/* line 234, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui .swatch-title {
   margin-top: 9px;
   color: #263a4d; }
 
-/* line 233, sass/partials/_theme-colors-ui.scss */
+/* line 239, sass/partials/_theme-colors-ui.scss */
 .panel-setting-theme-colors-highlights,
 .panel-setting-theme-colors-shades {
   text-align: justify; }
 
-/* line 237, sass/partials/_theme-colors-ui.scss */
+/* line 243, sass/partials/_theme-colors-ui.scss */
 .panel-setting-theme-colors-highlights:after,
 .panel-setting-theme-colors-shades:after {
   content: '';
   display: inline-block;
   width: 100%; }
 
-/* line 244, sass/partials/_theme-colors-ui.scss */
+/* line 250, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui .panel-setting-theme-colors-highlights + .swatch-title {
   margin-top: 4px; }
 
-/* line 247, sass/partials/_theme-colors-ui.scss */
+/* line 253, sass/partials/_theme-colors-ui.scss */
 .theme-colors-color-box:first-child {
   margin-left: 0; }
 

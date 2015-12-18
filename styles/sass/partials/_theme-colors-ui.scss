@@ -40,7 +40,10 @@
 .colors-panel-section .sp-preview.uf-unset-color,
 #sidebar-ui #theme-colors-swatches .sp-replacer .sp-preview.uf-unset-color {
     box-shadow: 0 0 0 3px #AFC8DF;
-    background-color: rgba(0, 0, 0, 0) !important;
+    background-color: transparent !important;
+    width: 14px !important;
+    height: 14px !important;
+    margin: 2px;
 }
 /* 
 #sidebar-ui .theme_colors_unset_color span.theme-colors-color-no-color span,
@@ -187,13 +190,16 @@
     border: none;
     box-shadow: none;
     border-radius: 50%;
-    width: 14px !important;
-    height: 14px !important;
-    margin: 2px;
+    width: 16px !important;
+    height: 16px !important;
+    margin: 1px;
 }
 #sidebar-ui #theme-colors-swatches .theme_color_swatch_empty .sp-preview {
     background-position: -1365px -173px;
     border: 1px solid #7595B2;
+    margin: 2px;
+    width: 14px !important;
+    height: 14px !important;
 }
 #sidebar-ui #theme-colors-swatches .theme_color_swatch_empty .sp-replacer.sp-light {
     background-color: #7595B2;
