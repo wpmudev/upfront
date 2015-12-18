@@ -92,6 +92,13 @@ class Upfront_Button_Presets_Server extends Upfront_Presets_Server {
 				$preset_options['lineheight'] = 1;
 				$count++;
 			}
+			
+			//Enable Use Animation
+			if(!isset($preset_options['focus_borderradiuslock'])) {
+				$preset_options['hov_use_animation'] = 'yes';
+				$preset_options['focus_borderradiuslock'] = 'yes';
+				$count++;
+			}
 
 			$update_settings[] = $preset_options;
 		}
