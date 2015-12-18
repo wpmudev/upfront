@@ -121,7 +121,17 @@ define([
 				}
 			}
 		},
-		clear_cache: function() { Upfront.data.uwidget.widgets_cache = {}; }
+		clear_cache: function (value) {
+			Upfront.data.uwidget.widgets_cache = {};
+			var property = (this.options || {}).property,
+				current = this.model.get_property_value_by_name('current_widget_specific_fields')
+			;
+			_.each(current, function (prop, idx) {
+				if (property === (prop || {}).name) {
+					this.model.set_property(property, value);
+				}
+			}, this);
+		}
 	});
 
 
