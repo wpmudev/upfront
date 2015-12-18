@@ -69,7 +69,7 @@ define([
 						label: l10n.mnu.delete_menu,
 						className: 'delete-menu-button delete_preset',
 						on_click: function() {
-							if (confirm('Are you sure to delete this menu?')) {
+							if (confirm(l10n.are_you_sure_nag)) {
 								//Remove navigation
 								var menu_id = this.model.get_property_value_by_name('menu_id');
 								Upfront.Events.trigger("menu_element:delete", menu_id);
