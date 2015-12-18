@@ -2827,12 +2827,15 @@ define([
 					}
 					if ( !wrapper ){
 						local_view.render();
-						if ( index === -2 )
+						if ( index === -2 ) {
 							$el.append(local_view.el);
-						else if ( index === -1 )
+						}
+						else if ( index === -1 ) {
 							$el.prepend(local_view.el);
-						else
+						}
+						else {
 							$el_index.parent().after(local_view.el);
+						}
 					}
 					else {
 						if ( this.current_wrapper_id == wrapper_id ){
@@ -3992,12 +3995,12 @@ define([
 				return ( !this.model.is_main() && ( !sub || (sub != 'top' && sub != 'bottom') ) );
 			},
 			render: function () {
-
 				var container = this.model.get("container"),
 					name = this.model.get("name"),
 					template = _.template(_Upfront_Templates["region"], this.model.toJSON()),
 					$edit = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-small upfront-ui" title="Edit region"><i class="upfront-icon upfront-icon-region-edit"></i></div>'),
-					$size = $('<div class="upfront-region-size-hint upfront-ui"></div>');
+					$size = $('<div class="upfront-region-size-hint upfront-ui"></div>')
+				;
 				Upfront.Events.trigger("entity:region:before_render", this, this.model);
 				this.$el.html(template);
 				this.$el.append('<div class="upfront-debug-info"/>');
@@ -4008,8 +4011,8 @@ define([
 
 				var local_view = this._modules_view || new Modules({"model": this.model.get("modules")});
 				local_view.region_view = this;
-				local_view.render();
 				this.$el.find('> .upfront-region-wrapper > .upfront-modules_container').append(local_view.el);
+				local_view.render();
 				this.render_panels();
 				this.render_bg_setting();
 				//if ( this._is_clipped() )
@@ -4951,8 +4954,6 @@ define([
 				if ( region.is_main() || (container == 'lightbox' && !this.container_views[region.cid])) {
 					var container_view = this.container_views[region.cid] || this.create_container_instance(region);
 					container_view.parent_view = this;
-					container_view.render();
-					//container_view.bind("activate_region", this.activate_region_container, this);
 					this.listenTo(container_view, "activate_region", this.activate_region_container);
 					if ( index >= 0 ){
 						this.$el.find('.upfront-region').eq(index).closest('.upfront-region-container').before(container_view.el);
@@ -4960,6 +4961,7 @@ define([
 					else {
 						this.$el.append(container_view.el);
 					}
+					container_view.render();
 					if ( !this.container_views[region.cid] ){
 						this.container_views[region.cid] = container_view;
 					}
@@ -4974,9 +4976,40 @@ define([
 				var local_view = Upfront.data.region_views[region.cid] || this.create_region_instance(region),
 					container_view = this.get_container_view(region),
 					sub = sub ? sub : region.get('sub'),
-					sub_container_view;
-				if ( !container_view )
-					return;
+					sub_container_view
+				;
+				if ( !container_view ) return;
+
+				if ( sub == 'top' || sub == 'bottom' ){
+					sub_container_view = this.sub_container_views[region.cid] || new RegionSubContainer({"model": region});
+					if ( sub == 'top' ) {
+						container_view.$layout.before(sub_container_view.el);
+					}
+					else {
+						container_view.$layout.after(sub_container_view.el);
+					}
+					sub_container_view.parent_view = this;
+					sub_container_view.listenTo(container_view.model.get('properties'), 'change', sub_container_view.update);
+					sub_container_view.render();
+					local_view.sub_container_view = sub_container_view;
+					sub_container_view.$layout.append(local_view.el);
+					if ( !this.sub_container_views[region.cid] ){
+						this.sub_container_views[region.cid] = sub_container_view;
+					}
+					else {
+						sub_container_view.delegateEvents();
+					}
+				}
+				else if ( sub == 'left' ) {
+					container_view.$layout.prepend(local_view.el);
+				}
+				else if ( sub == 'fixed' ) {
+					container_view.$el.append(local_view.el);
+				}
+				else {
+					container_view.$layout.append(local_view.el);
+				}
+
 				if ( !Upfront.data.region_views[region.cid] ){
 					local_view.parent_view = this;
 					container_view.listenTo(local_view, "region_render", container_view.on_region_render);
@@ -5000,33 +5033,6 @@ define([
 				else {
 					local_view.render();
 					local_view.delegateEvents();
-				}
-				if ( sub == 'top' || sub == 'bottom' ){
-					sub_container_view = this.sub_container_views[region.cid] || new RegionSubContainer({"model": region});
-					sub_container_view.parent_view = this;
-					sub_container_view.listenTo(container_view.model.get('properties'), 'change', sub_container_view.update);
-					sub_container_view.render();
-					local_view.sub_container_view = sub_container_view;
-					sub_container_view.$layout.append(local_view.el);
-					if ( sub == 'top' )
-						container_view.$layout.before(sub_container_view.el);
-					else
-						container_view.$layout.after(sub_container_view.el);
-					if ( !this.sub_container_views[region.cid] ){
-						this.sub_container_views[region.cid] = sub_container_view;
-					}
-					else {
-						sub_container_view.delegateEvents();
-					}
-				}
-				else if ( sub == 'left' ) {
-					container_view.$layout.prepend(local_view.el);
-				}
-				else if ( sub == 'fixed' ) {
-					container_view.$el.append(local_view.el);
-				}
-				else {
-					container_view.$layout.append(local_view.el);
 				}
 				if ( region.get("default") ) {
 					local_view.trigger("activate_region", local_view);
