@@ -155,6 +155,7 @@ class Upfront_Posts_PostView {
         	? (int)$this->_data['resize_featured']
         	: (int)Upfront_Posts_PostsData::get_default('resize_featured')
         ;
+        $resize_featured = $resize_featured ? 0 : 1; // Reverse the logic, as per: https://app.asana.com/0/11140166463836/75256787123017
 
 		$out = $this->_get_template('featured_image');
 
