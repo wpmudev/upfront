@@ -1314,6 +1314,7 @@ VRT;
 
         foreach( self::get_all_uf_theme_names()  as $theme_name ){
             $theme_variants = self::get_post_image_variants_from_db( $theme_name );
+            $theme_variants = is_array($theme_variants) ? $theme_variants : array();
             if( $theme_variants  )
                 $variants = array_merge( $variants, $theme_variants );
         }
