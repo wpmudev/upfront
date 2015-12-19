@@ -176,8 +176,22 @@ var EmbedInsert = Insert.UeditorInsert.extend({
 			manager.remove();
 			deferred.resolve();
 		});
+
+		this.get_manager = function () {
+			return manager;
+		}
+
 		return deferred;
 	},
+
+	/**
+	 * Gets internal manager object.
+	 *
+	 * See `start()` method for how this gets monkeypatched
+	 *
+	 * @return {Object} Internal EmbedManager object
+	 */
+	get_manager: function () { return {}; }, // Default to passthrough
 
 	render: function () {
 		var me = this,
