@@ -28,17 +28,29 @@ var PostsSettings = ElementSettings.extend({
 	},
 
 	rerender: function () {
-		var active_panel = false,
+		var active_panel = -1,
 			panels = _(this.panels)
 		;
 		panels.each(function (pl, idx) {
-			if (pl.is_active()) active_panel = idx;
+			if (pl && pl.is_active && pl.is_active()) active_panel = idx;
 		});
 		this.initialize(this.options);
 		this.$el.empty();
 		this.render();
-		if (active_panel && this.toggle_panel) this.toggle_panel(panels.compact()[active_panel]);
-//else console.log(this.toggle_panel, this)
+		if (active_panel >= 0 && this.toggle_panel) this.toggle_panel(active_panel);
+	},
+
+	/**
+	 * Toggles the active panel on
+	 *
+	 * @param {Int} panel_idx Panel index to toggle on
+	 */
+	toggle_panel: function (panel_idx) {
+		if (panel_idx < 0) return false;
+		_.each(this.panels, function (panel, idx) {
+			if (panel_idx === idx && (panel || {}).showBody) panel.showBody();
+			else if ((panel || {}).hideBody) panel.hideBody();
+		});
 	},
 	
 	title: l10n.posts_settings,
