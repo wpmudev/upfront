@@ -263,11 +263,16 @@ var EmbedManager = Backbone.View.extend({
 		bar.on("insert", function (stuff) {
 			main.insert(stuff);
 		});
-		ok.on("done", function () {
-			var value = main.get_value();
-			me.trigger("done", value);
-		});
+
+		this._main = main;
+
+		ok.on("done", this.done, this);
 		this.trigger("render", main, bar, ok);
+	},
+	done: function () {
+		if (!(this._main && this._main.get_value)) return false;
+		var value = this._main.get_value();
+		this.trigger("done", value);		
 	}
 });
 
