@@ -125,6 +125,12 @@ define([
 			return props;
 		},
 
+		get_preset_property: function(prop_name) {
+			var preset = this.model.get_property_value_by_name("preset"),
+				props = PresetUtil.getPresetProperties('image', preset) || {};
+
+			return props[prop_name];
+		},
 		preset_updated: function() {
 			this.render();
 		},
@@ -1435,6 +1441,7 @@ define([
 				showCaption: this.createControl('showCaption', l10n.ctrl.show_caption)
 			};
 
+
 			captionControl.icon = 'caption';
 			captionControl.tooltip = l10n.ctrl.caption_position;
 			captionControl.selected = this.property("display_caption");
@@ -1451,13 +1458,18 @@ define([
 				me.render();
 			});
 
-			return _([
+			var controlls =  _([
 				this.createControl('crop', l10n.ctrl.edit_image, 'editRequest'),
 				this.createLinkControl(),
 				captionControl,
 				this.createPaddingControl(),
 				this.createControl('settings', Upfront.Settings.l10n.global.views.settings, 'on_settings_click')
 			]);
+
+		if( "yes" !== this.get_preset_property("use_captions") )
+			controlls = _( controlls.without( captionControl ) );
+
+		return controlls;
 		}
 	});
 

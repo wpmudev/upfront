@@ -227,7 +227,7 @@ RedactorPlugins.stateAlignment = function() {
                             return $parent.length && $parent.css('text-align') == 'left';
                         },
                         callback: function(name, el , button){
-                            self.alignment.left();
+                            self.alignment.set('left');
                         }
                     },
                     center: {
