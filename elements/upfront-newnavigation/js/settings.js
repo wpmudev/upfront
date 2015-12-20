@@ -182,9 +182,6 @@ define([
 			},
 			{
 				name: 'width'
-			},
-			{
-				name: 'preset_style'
 			}
 		],
 		panels: {

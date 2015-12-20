@@ -128,6 +128,7 @@ define([
 				style = Upfront.Application.stylesAddSelectorMigration($.trim(style), '#page .' + thisPreset);
 				style = style.replace(new RegExp(elementStyleName, 'g'), '');
 
+				style = this.migrateElementStyle(style);
 				existingPreset.set({
 					preset_style: style,
 					migrated: true
@@ -148,6 +149,7 @@ define([
 
 				style = style.replace(new RegExp(elementStyleName, 'g'), newPresetName);
 
+				style = this.migrateElementStyle(style);
 				// Create new preset and assign style to preset
 				newPreset = new Backbone.Model(this.getPresetDefaults(newPresetName));
 				newPreset.set({
@@ -189,6 +191,13 @@ define([
 			} else {
 				Upfront.mainData[this.mainDataCollection].push(properties);
 			}
+		},
+
+		/**
+		 * Allow element to migrate style
+		 */
+		migrateElementStyle: function(style) {
+			return style;
 		},
 
 		/**

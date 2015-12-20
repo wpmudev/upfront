@@ -37,18 +37,7 @@ define([
 		},
 
 		updateCss: function(preset, newCss, me) {
-			// EXTREMLY HACKY WAY OF ADDING BREAKPOINT CLASS TO NAVIGATION STYLES
-			if (me.model.get_property_value_by_name('view_class') === 'UnewnavigationView') {
-				// Check which breakpoint is on
-				var active = Upfront.Views.breakpoints_storage.get_breakpoints().get_active();
-				if (active.id === 'tablet') {
-					newCss = newCss.replace(/#page/g, '#page.tablet-breakpoint');
-				}
-				if (active.id === 'mobile') {
-					newCss = newCss.replace(/#page/g, '#page.mobile-breakpoint');
-				}
-			}
-			newCss.replace(/'/g, '"');
+			newCss.replace(/'/g, '"'); // Force double quotes, menu el. uses singlequotes to surround value of an attribute, if single quote slips in it will break the elelent
 			preset.set({'preset_style': newCss});
 		},
 

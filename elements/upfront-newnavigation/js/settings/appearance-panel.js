@@ -209,6 +209,13 @@ define([
 
 				// Setup breakpoint property for preset
 				newPreset.set({'breakpoint': props.breakpoint});
+			},
+
+			migrateElementStyle: function(style) {
+				var migratedStyle = style.replace(/burger'/g, 'triggered\'');
+				migratedStyle = migratedStyle.replace(/burger"/g, 'triggered"');
+				console.log(style, '\n\n\n\n\n', migratedStyle);
+				return migratedStyle;
 			}
 		};
 
