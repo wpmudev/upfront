@@ -125,7 +125,7 @@ class Upfront {
 		$item = array(
 			'id' => 'upfront-edit_layout',
 			'title' => __('Upfront', 'upfront'),
-			'href' => (is_admin() ? home_url('/?editmode=true') : '#'),
+			'href' => (is_admin() ? home_url('/?editmode=true', is_ssl() ? "https" : null) : '#'),
 			'meta' => array(
 				'class' => 'upfront-edit_layout upfront-editable_trigger'
 			),
