@@ -43,6 +43,9 @@ define([
 				menuId: this.options.menuId
 			});
 			this.$el.append(editor.render().el);
+			this.listenTo(editor, 'change', function() {
+				me.trigger('change', me.model.toJSON());
+			});
 
 			// Gotta let this.$el render to use $.after()
 			setTimeout(function() {

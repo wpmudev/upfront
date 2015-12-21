@@ -102,11 +102,16 @@ define([
 			promise
 				.success(function (response) {
 					me.menuItems = response.data || [];
-					_.each(me.menuItems, function(itemOptions) {
-						me.menuItemViews.push(new MenuStructureItem({
+					_.each(me.menuItems, function(itemOptions, index) {
+						var menuStructureItem = new MenuStructureItem({
 							model: new Backbone.Model(itemOptions),
 							menuId: me.menuId
-						}));
+						});
+						me.menuItemViews.push(menuStructureItem);
+						me.listenTo(menuStructureItem, 'change', function(data) {
+							me.menuItems[index] = data;
+							me.model.trigger('change');
+						});
 					});
 					me.model.set_property('menu_items', response.data, true);
 					me.model.trigger('change'); // do not trigger change on this.model.get('properties') it will cause endless recursion

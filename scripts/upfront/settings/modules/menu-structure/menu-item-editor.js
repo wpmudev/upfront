@@ -184,10 +184,13 @@ define([
 		},
 
 		saveItem: function() {
+			var me = this;
 			Upfront.Util.post({
 				action: 'upfront_update_single_menu_item',
 				menuId: this.options.menuId,
 				menuItemData: this.model.toJSON()
+			}).done( function() {
+				me.trigger('change');
 			});
 		},
 
