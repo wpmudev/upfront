@@ -51,6 +51,8 @@ define([
 				});
 			}, 100);
 
+			this.delegateEvents();
+
 			return this;
 		},
 
