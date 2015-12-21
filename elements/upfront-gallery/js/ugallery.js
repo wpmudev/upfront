@@ -1161,50 +1161,57 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 	checkRegenerateThumbs: function(e, imageIds){
 		var me = this;
-		if(imageIds || this.lastThumbnailSize.width !== this.property('thumbWidth') || this.lastThumbnailSize.height !== this.property('thumbHeight')){
+		if (!(
+			imageIds
+			|| 
+			this.lastThumbnailSize.width !== this.property('thumbWidth') 
+			|| 
+			this.lastThumbnailSize.height !== this.property('thumbHeight')
+		)) return false;
 
-			var editOptions = {
-					images: this.getRegenerateData(imageIds),
-					action: 'upfront-media-image-create-size'
-				},
-				loading = new Upfront.Views.Editor.Loading({
-					loading: l10n.regenerating,
-					done: l10n.regenerating_done,
-					fixed: false
-				})
+		var editOptions = {
+				images: this.getRegenerateData(imageIds),
+				action: 'upfront-media-image-create-size'
+			},
+			loading = new Upfront.Views.Editor.Loading({
+				loading: l10n.regenerating,
+				done: l10n.regenerating_done,
+				fixed: false
+			})
+		;
+
+		loading.render();
+		if (!this.parent_module_view.$el.find( loading.$el).length) {
+			this.parent_module_view.$el.append(loading.$el);
+		}
+
+		Upfront.Util.post(editOptions).done(function(response) {
+			loading.done();
+			var images = response.data.images,
+				models = []
 			;
-			loading.render();
-			if( 0 === this.parent_module_view.$el.find( loading.$el) )
-				this.parent_module_view.$el.append(loading.$el);
 
-			Upfront.Util.post(editOptions).done(function(response) {
-				loading.done();
-				var images = response.data.images,
-					models = []
+			_.each(editOptions.images, function(image){
+				var model = me.images.get(image.id),
+					changes = images[image.id]
 				;
 
-				_.each(editOptions.images, function(image){
-					var model = me.images.get(image.id),
-						changes = images[image.id]
-					;
-
-					if(!changes.error){
-						model.set({
-							src: changes.url,
-							srcFull: changes.urlOriginal,
-							size: image.resize,
-							cropPosition: {top: image.crop.top, left: image.crop.left}
-						}, {silent: true});
-					}
-					models.push(model);
-				});
-
-				me.images.set(models, {remove: false});
-				me.imagesChanged();
-				me.render();
-				me.lastThumbnailSize = {width: me.property('thumbWidth'), height: me.property('thumbHeight')};
+				if(!changes.error){
+					model.set({
+						src: changes.url,
+						srcFull: changes.urlOriginal,
+						size: image.resize,
+						cropPosition: {top: image.crop.top, left: image.crop.left}
+					}, {silent: true});
+				}
+				models.push(model);
 			});
-		}
+
+			me.images.set(models, {remove: false});
+			me.imagesChanged();
+			me.render();
+			me.lastThumbnailSize = {width: me.property('thumbWidth'), height: me.property('thumbHeight')};
+		});
 	},
 
 	getRegenerateData: function(imageIds){
