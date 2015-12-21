@@ -89,7 +89,7 @@ define([
 		_load_items: function () {
 			var me = this,
 				args = {
-					action: "upfront_new_load_menu_array", 
+					action: "upfront_new_load_menu_array",
 					"data": this.menuId + ''
 				},
 				promise
@@ -388,17 +388,15 @@ define([
 					function(response) {
 						newItem['menu-item-db-id'] = response.data.itemId;
 						newItem['menu-item-object-id'] = response.data.itemId + '';
-						me.menuItemViews.unshift(new MenuStructureItem({
-							model: new Backbone.Model(newItem),
-							menuId: me.menuId
-						}));
-						me.render();
 
 						// Gotta do this to save item now with id to make it published
 						Upfront.Util.post({
 							action: 'upfront_update_single_menu_item',
 							menuId: me.menuId,
 							menuItemData: newItem
+						}).done(function() {
+							me.model.get_property_value_by_name('menu_items').unshift(newItem);
+							me.model.get('properties').trigger('change');
 						});
 					}
 				).fail(
