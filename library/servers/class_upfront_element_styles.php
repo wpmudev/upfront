@@ -72,7 +72,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 			foreach ($styles as $key => $frags) {
 				if (empty($frags)) continue;
 				$style = $this->_get_style_contents($frags);
-				if (!empty($style))  $cache .= "/* {$key} */\n{$style}\n";
+				if (!empty($style))  $cache .= "/* ~~~~~ [STYLE DEBUG]: {$key} ~~~~~ */\n{$style}\n";
 			}
 			if (!$this->_debugger->is_active(Upfront_Debug::STYLE)) {
 				$cache = Upfront_StylePreprocessor::compress($cache);
