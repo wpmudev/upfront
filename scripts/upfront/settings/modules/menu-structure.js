@@ -108,6 +108,9 @@ define([
 							menuId: me.menuId
 						}));
 					});
+					me.model.set_property('menu_items', response.data, true);
+					me.model.trigger('change'); // do not trigger change on this.model.get('properties') it will cause endless recursion
+																			// this is needed for menu element to re-render on item position change
 					me.render();
 					me._drop_promise(args); // And pop it off the stack once we're done
 				})
@@ -361,11 +364,16 @@ define([
 					items: changedItems,
 					menuId: this.menuId
 				}
-			}).fail(
-					function(response) {
-						Upfront.Util.log('Failed saving menu items.');
-					}
-				);
+				}
+			).done(
+				function() {
+					me.setup();
+				}
+			).fail(
+				function(response) {
+					Upfront.Util.log('Failed saving menu items.');
+				}
+			);
 		},
 
 		addItem: function() {
