@@ -13815,7 +13815,7 @@ i.visit_link:before {
   background-image: url('../img/uf-ui-sprite.svg');
   position: absolute;
   z-index: 10;
-  left: -5px;
+  left: 0;
   top: 0;
   background-position: -910px -42px; }
 
@@ -13823,13 +13823,14 @@ i.upfront-icon-region-visit-link-homepage:before, i.upfront-icon-region-visit-li
   background-image: url('../img/uf-ui-sprite.svg') !important; }
 
 div.ueditable-inactive a:hover i.visit_link {
-  display: block; }
+  display: block;
+  text-align: left; }
 
 div.ueditable-inactive a i.visit_link {
   display: none; }
 
 i.visit_link:after {
-  font: normal 10px/18px Verdana, sans-serif !important;
+  font: normal 11px/18px Verdana, sans-serif !important;
   text-transform: none !important;
   padding-left: 20px;
   padding-right: 10px;
@@ -13840,7 +13841,6 @@ i.visit_link:after {
   border-radius: 9px;
   display: none;
   text-indent: initial;
-  margin-left: -6px;
   height: 18px; }
 
 i.visit_link.visit_link_unlink {
