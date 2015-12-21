@@ -54,6 +54,18 @@ define([
 					}
 				},
 			]
+		},
+		migratePresetProperties: function(newPreset) {
+			var props = {};
+
+			this.model.get('properties').each( function(prop) {
+				props[prop.get('name')] = prop.get('value');
+			});
+
+			newPreset.set({
+				'captionBackground': props.captionBackground,
+				'primaryStyle' : props.primaryStyle
+			});
 		}
 	};
 

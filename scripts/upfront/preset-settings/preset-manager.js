@@ -133,6 +133,7 @@ define([
 					preset_style: style,
 					migrated: true
 				});
+				this.migratePresetProperties(existingPreset);
 				presetOptions = existingPreset;
 				properties = existingPreset.toJSON();
 			} else {
