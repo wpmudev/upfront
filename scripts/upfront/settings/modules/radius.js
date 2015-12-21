@@ -188,6 +188,8 @@ define([
 					className: state + '-radius-slider-number border_radius_number',
 					name: me.options.fields.radius_number,
 					label: '',
+					min: 0,
+					max: me.options.max_value,
 					default_value: 0,
 					values: [
 						{ label: "", value: '0' }
@@ -200,6 +202,8 @@ define([
 					className: state + '-radius1 border_radius border_radius1',
 					name: me.options.fields.radius1,
 					label: '',
+					min: 0,
+					max: me.options.max_value,
 					default_value: 0,
 					values: [
 						{ label: "", value: '0' }
@@ -214,6 +218,8 @@ define([
 					className: state + '-radius2 border_radius border_radius2 border_radius2_static',
 					name: me.options.fields.radius2,
 					label: '',
+					min: 0,
+					max: me.options.max_value,
 					default_value: 0,
 					values: [
 						{ label: "", value: '0' }
@@ -228,6 +234,8 @@ define([
 					className: state + '-radius4 border_radius border_radius4',
 					name: me.options.fields.radius4,
 					label: '',
+					min: 0,
+					max: me.options.max_value,
 					default_value: 0,
 					values: [
 						{ label: "", value: '0' }
@@ -242,6 +250,8 @@ define([
 					className: state + '-radius3 border_radius border_radius3',
 					name: me.options.fields.radius3,
 					label: '',
+					min: 0,
+					max: me.options.max_value,
 					default_value: 0,
 					values: [
 						{ label: "", value: '0' }
