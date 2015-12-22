@@ -33,20 +33,23 @@ var LayoutEditor = {
 				var $el = $(ui.unselecting),
 					$region, $selected
 				;
-				if ( ed.selection.length > 0 ){
+				if ( ed.selection.length > 1 ){
 					$region = $(ed.selection[0]).closest('.upfront-region');
 					if ( $el.closest('.upfront-region').get(0) != $region.get(0) ) return;
 					$('.upfront-ui-selected').each(function(){
 						ed._remove_selection(this);
 					});
 					$selected = $region.find('.ui-selecting');
-					ed._add_selection($selected.get(0));
-					ed._add_selections( $selected, $region.find('.upfront-module').not('.upfront-ui-selected, .upfront-module-parent-group'), $region.find('.upfront-module-group') );
+					if ( $selected.length > 0 ) {
+						ed._add_selection($selected.get(0));
+						ed._add_selections( $selected, $region.find('.upfront-module').not('.upfront-ui-selected, .upfront-module-parent-group'), $region.find('.upfront-module-group') );
+					}
 
 					ed._update_selection_outline();
 					return;
 				}
 				ed._remove_selection(ui.unselecting);
+				ed._update_selection_outline();
 			},
 			/*selected: function (e, ui) {
 				var $el = $(ui.selected);
@@ -450,7 +453,6 @@ var LayoutEditor = {
 				}
 			}
 		}
-		console.log('try combining', wrappers_col, wrappers_combine, can_combine);
 		if ( !can_combine ) return false;
 		_.each(wrappers_combine, function (combine) {
 			var add_index = 0,
@@ -496,7 +498,6 @@ var LayoutEditor = {
 			region_modules = region.get("modules"),
 			region_wrappers = region.get("wrappers")
 		;
-		console.log('split modules to their own wrapper', wrappers);
 		_.each(wrappers, function (w, wi) {
 			var new_wrapper = new Upfront.Models.Wrapper({}),
 				new_wrapper_id = Upfront.Util.get_unique_id("wrapper")
