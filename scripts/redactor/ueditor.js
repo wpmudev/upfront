@@ -583,10 +583,30 @@ var Ueditor = function($el, options) {
          * When pasting unformatted text with line breaks, the lines get wrapped
          * in DIV tags. This is due to browser's handling of pasted content inside
          * div having contenteditable=true. For our requirement, we have to replace
-         * it with P tags instead.
+         * it with P tags instead, in addition we have to make custom replacements
+         * for different use cases.
          */
         html = html.replace(/<div>/g, "<p>").replace(/<\/div>/g,"</p>");
-        
+
+        // release br caught within empty p tags
+        html = html.replace(/<p><br><\/p>/g, "<br>");
+        html = html.replace(/<p ([^>]*)><br><\/p>/g, "<br>");
+
+        // if two consecutive paragraphs without a line break inbetween
+        // merge the paragraphs and sepearate text with a br
+        html = html.replace(/<\/p><p>/g, "<br>");
+        html = html.replace(/<\/p><p ([^>]*)>/g, "<br>");
+
+        // if a single line break between two paragraph
+        // take out the line break
+        html = html.replace(/<\/p><br><p>/g, "</p><p>");
+        html = html.replace(/<\/p><br><p ([^>]*)>/g, "</p><p $1>");
+
+        // if multile breaks between 2 paragraphs, replace with blank paragraph
+        html = html.replace(/<\/p>([<br>])*<p>/g, "</p><p></p><p>");
+        html = html.replace(/<\/p>([<br>])*<p ([^>]*)>/g, "</p><p></p><p $1>");
+
+    
 
 		/**
 		 * If a font icon is copied to clipboard, paste it
@@ -596,6 +616,8 @@ var Ueditor = function($el, options) {
 		}
 		return html;
 	};
+
+
 
     // Enter callback inside lists 
     this.options.enterCallback = function (e) { 
