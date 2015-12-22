@@ -981,35 +981,23 @@ define([
 				});*/
 			},
 
-			fix_wrapper_height: function ($el) {
+			fix_wrapper_height: function (modules, wrappers, col) {
 				Upfront.Behaviors.GridEditor.time_start('fn fix_wrapper_height');
 				var me = this,
-					breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
-					prevs = []
+					ed = Upfront.Behaviors.GridEditor,
+					breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
+					lines = ed.parse_modules_to_lines(modules, wrappers, breakpoint.id, _.isNumber(col) ? col : breakpoint.columns)
 				;
 				Upfront.Events.trigger('upfront:wrappers:before_fix_height', this);
-				Upfront.Util.find_sorted($el, '> .upfront-wrapper:visible')
-					.each(function(){
-						var order = $(this).data('breakpoint_order') || 0,
-							clear = $(this).data('breakpoint_clear')
-						;
-						if (
-							prevs.length > 0
-							&&
-							(
-								( ( !breakpoint || breakpoint.default ) && $(this).hasClass('clr') )
-								||
-								( breakpoint && !breakpoint.default && clear)
-							)
-						){
-							me._apply_wrapper_height(prevs);
-							prevs = [];
-						}
-						prevs.push($(this));
+				_.each(lines, function (l) {
+					var wraps = [];
+					_.each(l.wrappers, function (w) {
+						var wrapper_view = Upfront.data.wrapper_views[w.model.cid];
+						if ( !wrapper_view ) return;
+						wraps.push(wrapper_view.$el);
 					});
-				if ( prevs.length > 0 ) {
-					me._apply_wrapper_height(prevs);
-				}
+					me._apply_wrapper_height(wraps);
+				});
 				Upfront.Events.trigger('upfront:wrappers:after_fix_height', this);
 				Upfront.Behaviors.GridEditor.time_end('fn fix_wrapper_height');
 			},
@@ -1028,8 +1016,8 @@ define([
 				;
 				_.each(wraps, function ($wrap, index) {
 					var prev_is_spacer = index > 0 ? wraps[index-1].hasClass('upfront-wrapper-spacer') : false,
-							next_is_spacer = index < wraps.length-1 ? wraps[index+1].hasClass('upfront-wrapper-spacer') : false
-							;
+						next_is_spacer = index < wraps.length-1 ? wraps[index+1].hasClass('upfront-wrapper-spacer') : false
+					;
 					$wrap.removeAttr('data-first-in-row');
 					$wrap.removeAttr('data-last-in-row');
 					$wrap.removeAttr('data-prev-spacer');
@@ -2352,6 +2340,7 @@ define([
 			on_ungroup: function () {
 				var me = this,
 					ed = Upfront.Behaviors.GridEditor,
+					breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					col = ed.get_class_num(this.$el, ed.grid.class),
 					top_padding_use = this.model.get_breakpoint_property_value('top_padding_use', true),
 					top_padding_num = this.model.get_breakpoint_property_value('top_padding_num', true),
@@ -2366,206 +2355,223 @@ define([
 					region_modules = this.region_view.model.get('modules'),
 					region_wrappers = this.region_view.model.get('wrappers'),
 					group_wrapper = region_wrappers.get_by_wrapper_id(group_wrapper_id),
+					group_wrapper_view = Upfront.data.wrapper_views[group_wrapper.cid],
 					index = region_modules.indexOf(this.model),
-					$prev_wrap = Upfront.Util.find_from_elements($wraps, $wrap, '.upfront-wrapper', true).first(),
-					prev_wrapper = $prev_wrap.length > 0 ? region_wrappers.get_by_wrapper_id($prev_wrap.attr('id')) : false,
-					is_prev_wrap_clr = $prev_wrap.length > 0 ? $prev_wrap.hasClass('clr') : false,
-					is_prev_wrap_spacer = $prev_wrap.length > 0 ? ( $prev_wrap.find('> .upfront-module-view > .upfront-module-spacer').length > 0 ) : false,
-					prev_spacer_col = is_prev_wrap_spacer ? ed.get_class_num($prev_wrap, ed.grid.class) : 0,
-					$prev_module = $prev_wrap.length > 0 ? $prev_wrap.find('> .upfront-module-view > .upfront-module') : false,
-					prev_module = $prev_module && $prev_module.length > 0 ? region_modules.get_by_element_id($prev_module.attr('id')) : false,
-					$next_wrap = Upfront.Util.find_from_elements($wraps, $wrap, '.upfront-wrapper', false).first(),
-					next_wrapper = $next_wrap.length > 0 ? region_wrappers.get_by_wrapper_id($next_wrap.attr('id')) : false,
-					is_next_wrap_clr = $next_wrap.length > 0 ? $next_wrap.hasClass('clr') : false,
-					is_next_wrap_spacer = $next_wrap.length > 0 ? ( $next_wrap.find('> .upfront-module-view > .upfront-module-spacer').length > 0 ) : false,
-					next_spacer_col = is_next_wrap_spacer ? ed.get_class_num($next_wrap, ed.grid.class) : 0,
-					$next_module = $next_wrap.length > 0 ? $next_wrap.find('> .upfront-module-view > .upfront-module') : false,
-					next_module = $next_module && $next_module.length > 0 ? region_modules.get_by_element_id($next_module.attr('id')) : false,
-					$row_wrap_first = !is_clr ? Upfront.Util.find_from_elements($wraps, $wrap, '.clr', true).first() : $wrap,
-					$row_wraps_next = Upfront.Util.find_from_elements($wraps, $row_wrap_first, '.upfront-wrapper', false, '.clr'),
-					$row_wraps = $(_.union([$row_wrap_first], $row_wraps_next.map(function(){ return $(this); }).get())),
-					$row_wraps_spacer = $row_wraps.filter(function(){ return $(this).find('> .upfront-module-view > .upfront-module-spacer').length > 0; }),
+					region_lines = ed.parse_modules_to_lines(region_modules, region_wrappers, breakpoint.id, breakpoint.columns),
+					group_lines = ed.parse_modules_to_lines(modules, wrappers, breakpoint.id, col),
 					modules_arr = modules.map(function(module){ return module; }),
-					wrappers_arr = wrappers.map(function(wrapper){ return wrapper; }),
+					line_spacers = [],
+					line,
+					my_wrapper, prev_wrapper, next_wrapper,
+					module_index = 0,
+					add_spacer_queue = [],
 					is_combine_wrap = false,
-					line_col = 0,
-					current_wrapper_id
+					combine_left_spacers = [],
+					combine_right_spacers = [],
+					combine_left_spacer = 0,
+					combine_right_spacer = 0
 				;
 				ed.start(this, this.model);
-				// Let's check if we need to combine wrapper
-				// Do that when group is trapped between elements
-				if (
-					$wrap.find('>.upfront-module-view, >.upfront-module-group').length > 1 ||
-					( $row_wraps.length - $row_wraps_spacer.length > 1 )
-				) {
-					is_combine_wrap = true;
-					if ( $wrap.find('>.upfront-module-view, >.upfront-module-group').length == 1 ) {
-						_.each(modules_arr, function(module, i){
-							var wrapper_id = module.get_wrapper_id();
-							if ( current_wrapper_id == wrapper_id ) return;
-							var wrapper = wrappers.get_by_wrapper_id(wrapper_id),
-								wrapper_class = wrapper ? wrapper.get_property_value_by_name('class') : false,
-								wrapper_col = ed.get_class_num(wrapper_class, ed.grid.class);
-							current_wrapper_id = wrapper_id;
-							if ( line_col+wrapper_col <= col ){
-								if ( line_col > 0 ) {
-									is_combine_wrap = false;
-								}
-								line_col += wrapper_col;
-							}
-							else {
-								line_col = 0;
+				// Find previous and next wrapper
+				_.each(region_lines, function (l) {
+					if ( line ) return;
+					prev_wrapper = false;
+					next_wrapper = false;
+					_.each(l.wrappers, function (w) {
+						if ( my_wrapper && !next_wrapper ) next_wrapper = w;
+						_.each(w.modules, function (m) {
+							if ( me.model == m.model ) {
+								my_wrapper = w;
+								line = l;
 							}
 						});
+						if ( !my_wrapper ) prev_wrapper = w;
+					});
+				});
+				if ( !line ) return;
+				// Find how many spacer is in the line
+				_.each(line.wrappers, function (w) {
+					if ( w.spacer ) {
+						line_spacers.push(w);
+					}
+				});
+				// Let's check if we need to combine wrapper
+				// Do that when group is trapped between elements or when there is other element in the same wrapper
+				if ( my_wrapper.modules.length > 1 || ( line.wrappers.length - line_spacers.length > 1 ) ) {
+					is_combine_wrap = true;
+					if ( my_wrapper.modules.length == 1 && group_lines.length == 1 ) {
+						is_combine_wrap = false;
 					}
 				}
-				var line = 0,
-					module_index = 0,
-					wrapper_index = 0,
-					add_spacer_queue = [],
-					pv_is_spacer = false,
-					pv_wrapper_col = 0,
-					pv_module, pv_wrapper, pv_wrapper_id, pv_wrapper_view;
-				line_col = 0;
-				current_wrapper_id = false;
-				// Iterate through each module and add to region as necessary
-				_.each(modules_arr, function(module, i){
-					var view = Upfront.data.module_views[module.cid],
-						$view_el = view.$el.find('> .upfront-editable_entity'),
-						is_spacer = $view_el.hasClass('upfront-module-spacer'),
-						is_visible = $view_el.is(':visible'),
-						wrapper_id = module.get_wrapper_id(),
-						wrapper = wrappers.get_by_wrapper_id(wrapper_id),
-						wrapper_view = wrapper ? Upfront.data.wrapper_views[wrapper.cid] : false,
-						wrapper_class = wrapper ? wrapper.get_property_value_by_name('class') : false,
-						wrapper_col = wrapper_view ? Math.round(parseInt(wrapper_view.$el.css('width'), 10)/ed.col_size) : col,
-						is_wrapper_clr = false,
-						object = module.get('objects').first(),
-						remove_module = false
-					;
-					// If not visible, let's remove it
-					if ( !is_visible ) {
-						remove_module = true;
-					}
-					else {
-						// Keep track of columns and see if the wrapper is the first one in line
-						if ( current_wrapper_id != wrapper_id ){
-							wrapper_index++;
-							is_wrapper_clr = ( line_col+wrapper_col > col || wrapper_class.match(/clr/) );
-							if ( i == 0 || is_wrapper_clr ) { // this module appear in a new line
-								line++;
-								line_col = wrapper_col;
+				// Find left/right spacer if combined
+				if ( is_combine_wrap && my_wrapper.modules.length == 1 ) {
+					_.each(group_lines, function (l, li) {
+						_.each(l.wrappers, function (w, wi) {
+							if ( wi == 0 ) {
+								if ( w.spacer ) combine_left_spacers.push(w.col);
+								else combine_left_spacers.push(0);
 							}
-							else {
-								line_col += wrapper_col;
+							if ( wi == l.wrappers.length-1 ) {
+								if ( w.spacer ) combine_right_spacers.push(w.col);
+								else combine_right_spacers.push(0);
 							}
-						}
-						// If combine wrap, remove all spacer and set the group wrapper_id
-						// Otherwise, normalize spacers and add needed class
-						if ( is_combine_wrap ) {
-							if ( is_spacer ) {
+						});
+					});
+					combine_left_spacer = _.min(combine_left_spacers);
+					combine_right_spacer = _.min(combine_right_spacers);
+				}
+				// Iterate through group
+				_.each(group_lines, function (l, li) {
+					_.each(l.wrappers, function (w, wi) {
+						var wrapper_view = Upfront.data.wrapper_views[w.model.cid],
+							remove_modules = [],
+							move_modules = []
+						;
+						_.each(w.modules, function (m, mi) {
+							var view = Upfront.data.module_views[m.model.cid],
+								$view_el = view.$el.find('> .upfront-editable_entity'),
+								is_visible = $view_el.is(':visible'),
+								object = m.model.get('objects').first(),
+								module_col = col,
+								remove_module = false
+							;
+							// If not visible, let's remove it
+							if ( !is_visible ) {
 								remove_module = true;
 							}
 							else {
-								ed.update_model_margin_classes( $view_el, [ed.grid.class + col] );
-								module.set_property('wrapper_id', group_wrapper_id);
-							}
-						}
-						else {
-							if ( wrapper && ( wrapper_index == 1 || is_wrapper_clr ) ){
-								// Add clr class as this is the first in row
-								if ( wrapper_index == 1 ) {
-									if ( is_clr ) wrapper.add_class('clr');
-									else wrapper.remove_class('clr');
+								// If combine wrap, remove all spacer and set the group wrapper_id
+								if ( is_combine_wrap ) {
+									if ( m.spacer ) {
+										remove_module = true;
+									}
+									else {
+										if ( combine_left_spacer > 0 && prev_wrapper && prev_wrapper.spacer ) {
+											module_col -= combine_left_spacer;
+										}
+										if ( combine_right_spacer > 0 && next_wrapper && next_wrapper.spacer ) {
+											module_col -= combine_right_spacer;
+										}
+										ed.update_model_margin_classes( $view_el, [ed.grid.class + module_col] );
+										m.model.set_property('wrapper_id', group_wrapper_id);
+									}
 								}
+								if ( li == 0 && mi == 0 && !m.spacer ) {
+									me._update_padding('top', object, top);
+								}
+							}
+							delete view.group_view;
+							if ( remove_module ) {
+								remove_modules.push({
+									model: m.model
+								});
+							}
+							else {
+								move_modules.push({
+									model: m.model,
+									index: index+module_index
+								});
+								module_index++;
+							}
+						});
+
+						// If combined, try to see spacer we can add
+						// Otherwise, normalize spacers and add needed class
+						if ( !is_combine_wrap ) {
+							if ( wi == 0 ){
+								// Add/remove clr class as this is the first in row
+								if ( is_clr ) w.model.add_class('clr');
+								else w.model.remove_class('clr');
 								// Add previous spacer
-								if ( is_prev_wrap_spacer && is_prev_wrap_clr ) {
-									if ( is_spacer ) {
-										module.replace_class(ed.grid.class + (wrapper_col+prev_spacer_col));
-										wrapper.replace_class(ed.grid.class + (wrapper_col+prev_spacer_col));
+								if ( prev_wrapper && prev_wrapper.spacer ) {
+									if ( w.spacer ) {
+										w.modules[0].model.replace_class(ed.grid.class + (w.col+prev_wrapper.col));
+										w.model.replace_class(ed.grid.class + (w.col+prev_wrapper.col));
 									}
 									else {
 										add_spacer_queue.push({
 											view: wrapper_view,
 											position: 'left',
-											col: prev_spacer_col,
-											wrapper_col: wrapper_col+prev_spacer_col
+											col: prev_wrapper.col,
+											wrapper_col: w.col+prev_wrapper.col
 										});
 									}
 								}
+							}
+							if ( wi == l.wrappers.length-1 ) {
 								// Add next spacer
-								if ( pv_wrapper && is_next_wrap_spacer && !is_next_wrap_clr ) {
-									if ( pv_is_spacer ) {
-										pv_module.replace_class(ed.grid.class + (pv_wrapper_col+next_spacer_col));
-										pv_wrapper.replace_class(ed.grid.class + (pv_wrapper_col+next_spacer_col));
+								if ( next_wrapper && next_wrapper.spacer ) {
+									if ( w.spacer ) {
+										w.modules[0].model.replace_class(ed.grid.class + (w.col+next_wrapper.col));
+										w.model.replace_class(ed.grid.class + (w.col+next_wrapper.col));
 									}
 									else {
 										add_spacer_queue.push({
-											view: pv_wrapper_view,
+											view: wrapper_view,
 											position: 'right',
-											col: next_spacer_col,
-											wrapper_col: pv_wrapper_col+next_spacer_col
+											col: next_wrapper.col,
+											wrapper_col: w.col+next_wrapper.col
 										});
 									}
 								}
 							}
 						}
-						if ( line == 1 && current_wrapper_id != wrapper_id ) {
-							me._update_padding('top', object, top);
-						}
-						current_wrapper_id = wrapper_id;
-					}
-					delete view.group_view;
-					if ( remove_module ) {
-						modules.remove(module);
-					}
-					else {
-						wrappers.remove(wrapper, {silent: true});
-						if ( !is_combine_wrap ) {
-							region_wrappers.add(wrapper, {silent: true});
-						}
-						modules.remove(module, {silent: true});
-						module.add_to(region_modules, index+module_index);
-						module_index++;
-						pv_module = module;
-						if ( pv_wrapper_id != wrapper_id ) {
-							pv_wrapper = wrapper;
-							pv_wrapper_id = wrapper_id;
-							pv_wrapper_view = wrapper_view;
-							pv_is_spacer = is_spacer;
-							pv_wrapper_col = wrapper_col;
-						}
-					}
-				});
-				if ( !is_combine_wrap ) {
-					region_wrappers.remove(group_wrapper);
-					// Also remove prev/next spacer if exists
-					if ( is_prev_wrap_spacer && is_prev_wrap_clr) {
-						region_wrappers.remove(prev_wrapper);
-						region_modules.remove(prev_module);
-					}
-					if ( is_next_wrap_spacer && !is_next_wrap_clr ) {
-						region_wrappers.remove(next_wrapper);
-						region_modules.remove(next_module);
-					}
-					// Add last spacer
-					if ( pv_wrapper && is_next_wrap_spacer && !is_next_wrap_clr ) {
-						if ( pv_is_spacer ) {
-							pv_module.replace_class(ed.grid.class + (pv_wrapper_col+next_spacer_col));
-							pv_wrapper.replace_class(ed.grid.class + (pv_wrapper_col+next_spacer_col));
-						}
-						else {
-							add_spacer_queue.push({
-								view: pv_wrapper_view,
-								position: 'right',
-								col: next_spacer_col,
-								wrapper_col: pv_wrapper_col+next_spacer_col
+
+						_.each(remove_modules, function (m) {
+							modules.remove(m.model);
+						});
+
+						wrappers.remove(w.model, {silent: true});
+
+						if ( move_modules.length > 0 ) {
+							if ( !is_combine_wrap ) {
+								region_wrappers.add(w.model, {silent: true});
+							}
+							_.each(move_modules, function(m){
+								modules.remove(m.model, {silent: true});
+								m.model.add_to(region_modules, m.index, {update: false});
 							});
 						}
+					});
+				});
+
+				if ( is_combine_wrap ) {
+					// Let's add the left and right spacer
+					if ( combine_left_spacer > 0 ) {
+						if ( prev_wrapper && prev_wrapper.spacer ) {
+							prev_wrapper.modules[0].model.replace_class(ed.grid.class + (prev_wrapper.col+combine_left_spacer));
+							prev_wrapper.model.replace_class(ed.grid.class + (prev_wrapper.col+combine_left_spacer));
+						}
+						else {
+							group_wrapper_view.add_spacer('left', combine_left_spacer, col);
+						}
 					}
+					if ( combine_right_spacer > 0 ) {
+						if ( next_wrapper && next_wrapper.spacer ) {
+							next_wrapper.modules[0].model.replace_class(ed.grid.class + (next_wrapper.col+combine_right_spacer));
+							next_wrapper.model.replace_class(ed.grid.class + (next_wrapper.col+combine_right_spacer));
+						}
+						else {
+							group_wrapper_view.add_spacer('right', combine_right_spacer, col-combine_left_spacer);
+						}
+					}
+				}
+				else {
+					// Also remove prev/next spacer if exists
+					if ( prev_wrapper && prev_wrapper.spacer ) {
+						region_wrappers.remove(prev_wrapper.model);
+						region_modules.remove(prev_wrapper.modules[0].model, {update: false});
+					}
+					if ( next_wrapper && next_wrapper.spacer ) {
+						region_wrappers.remove(next_wrapper.model);
+						region_modules.remove(next_wrapper.modules[0].model, {update: false});
+					}
+					// Add the queued spacers
 					_.each(add_spacer_queue, function(add){
 						add.view.add_spacer(add.position, add.col, add.wrapper_col);
 					});
+					// As this isn't combined, we remove the group wrapper
+					region_wrappers.remove(group_wrapper);
 				}
 				region_modules.remove(this.model);
 				//this.remove();
@@ -2581,10 +2587,10 @@ define([
 				if ( add === 0 ) return;
 				object.set_breakpoint_property(dir+'_padding_use', 'yes');
 				if ( padding_num !== false) {
-					object.set_breakpoint_property(dir+'_padding_num', parseInt(padding_num, 10) + add);
+					object.set_breakpoint_property(dir+'_padding_num', parseInt(padding_num, 10) + parseInt(add, 10));
 				}
 				else {
-					object.set_breakpoint_property(dir+'_padding_num', parseInt(column_padding, 10) + add);
+					object.set_breakpoint_property(dir+'_padding_num', parseInt(column_padding, 10) + parseInt(add, 10));
 				}
 			},
 			on_reorder: function () {
@@ -2988,12 +2994,21 @@ define([
 			},
 			apply_wrapper_height: function () {
 				if ( !Upfront.Application.layout_ready ) return;
+				if ( this.region_view.model.get('name') == 'shadow' ) return;
+				var ed = Upfront.Behaviors.GridEditor,
+					breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
+					is_group = !_.isUndefined(this.group_view),
+					wrappers = ( is_group ? this.group_view : this.region_view ).model.get('wrappers'),
+					col = breakpoint.default
+						? ed.get_class_num(( is_group ? this.group_view : this.region_view ).$el, ed.grid.class)
+						: ( is_group ? this.group_view : this.region_view ).model.get_breakpoint_property_value('col')
+				;
 				this.model.each(function (module) {
 					var local_view = Upfront.data.module_views[module.cid];
 					if ( !local_view || !local_view._modules_view ) return;
 					local_view._modules_view.apply_wrapper_height();
 				});
-				this.fix_wrapper_height(this.$el);
+				this.fix_wrapper_height(this.model, wrappers, col);
 			},
 			apply_adapt_to_breakpoints: function () {
 				var current_breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;

@@ -1908,9 +1908,9 @@ var GridEditor = {
 		modules.each(function(module, i){
 			var wrapper_id = module.get_wrapper_id(),
 				wrapper = wrappers.get_by_wrapper_id(wrapper_id),
-				wrapper_breakpoint = wrapper.get_property_value_by_name('breakpoint'),
+				wrapper_breakpoint = wrapper ? wrapper.get_property_value_by_name('breakpoint') : false,
 				wrapper_breakpoint_data = ( wrapper_breakpoint && breakpoint_id in wrapper_breakpoint ) ? wrapper_breakpoint[breakpoint_id] : {},
-				wrapper_class = wrapper.get_property_value_by_name('class'),
+				wrapper_class = wrapper ? wrapper.get_property_value_by_name('class') : '',
 				wrapper_col = ed.get_class_num(wrapper_class, ed.grid.class),
 				is_clear = !!wrapper_class.match(/clr/),
 				breakpoint = module.get_property_value_by_name('breakpoint'),
@@ -1924,6 +1924,7 @@ var GridEditor = {
 				wrapper_order = i,
 				module_obj = {}
 			;
+			if ( !wrapper ) return;
 			if ( breakpoint_id != 'desktop' ) {
 				hide = ( "hide" in breakpoint_data ) ? breakpoint_data.hide : default_hide;
 				module_col = ( "col" in breakpoint_data ) ? breakpoint_data.col : module_col;

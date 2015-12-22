@@ -139,6 +139,7 @@ DragDrop.prototype = {
 	},
 	
 	on_drag: function (e, ui) {
+		var that = this;
 		this.event = e;
 		this.ui = ui;
 		
@@ -146,7 +147,7 @@ DragDrop.prototype = {
 
 		// change drop point on timeout
 		clearTimeout(this._t);
-		this._t = setTimeout($.proxy(this.update_drop_timeout, this), this.ed.timeout);
+		this._t = setTimeout(function(){ that.update_drop_timeout(); }, this.ed.timeout);
 
 		this.update_drop_position();
 
@@ -1141,6 +1142,8 @@ DragDrop.prototype = {
 				$drop.before(this.view.$el);
 			}
 			this.wrapper_id = wrapper_id;
+			this.model.set_property('wrapper_id', this.wrapper_id, true);
+
 			if ( this.$wrap.find(this.module_selector).length == 0 ){
 				if ( this.wrap && this.wrap.grid.left == this.current_region.grid.left ) {
 					this.$wrap.nextAll('.upfront-wrapper').eq(0).addClass('clr');
@@ -1288,10 +1291,6 @@ DragDrop.prototype = {
 		}
 
 		if ( !breakpoint || breakpoint.default ){
-			if ( this.wrapper_id ) {
-				this.model.set_property('wrapper_id', this.wrapper_id, true);
-			}
-
 			if ( !this.move_region ){
 				this.view.resort_bound_collection();
 			}
