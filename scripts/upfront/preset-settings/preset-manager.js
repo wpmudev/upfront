@@ -226,6 +226,11 @@ define([
 		migrateExistingPresets: function() {
 			var elementStyleName = this.property('theme_style');
 			var preset = this.presets.findWhere({id: this.property('preset')});
+
+			// no point in continuing if the preset does not exist at the first place
+			if(!preset) 
+				return;
+
 			var presetStyle = preset.get('preset_style');
 
 			if (preset.get('migrated') === true || preset.get('migrated') === 'true') return;
