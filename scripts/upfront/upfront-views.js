@@ -2994,7 +2994,7 @@ define([
 			},
 			apply_wrapper_height: function () {
 				if ( !Upfront.Application.layout_ready ) return;
-				if ( this.region_view.model.get('name') == 'shadow' ) return;
+				if ( !this.region_view || this.region_view.model.get('name') == 'shadow' ) return;
 				var ed = Upfront.Behaviors.GridEditor,
 					breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					is_group = !_.isUndefined(this.group_view),
