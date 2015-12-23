@@ -228,7 +228,7 @@ define([
 			var preset = this.presets.findWhere({id: this.property('preset')});
 
 			// no point in continuing if the preset does not exist at the first place
-			if(!preset) 
+			if(typeof(preset) === 'undefined') 
 				return;
 
 			var presetStyle = preset.get('preset_style');
