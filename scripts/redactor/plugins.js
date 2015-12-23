@@ -868,8 +868,17 @@ RedactorPlugins.upfrontLink = function() {
 					$(this.selectedLink).attr('href', this.linkModel.get('url'))
 						.attr('target', this.linkModel.get('target'));
 				} else {
+                    /*
 					// Create new link
-					selectedText = this.redactor.selection.getHtml();
+                    selectedText = this.redactor.selection.getHtml();
+                    */
+                    
+                    // ^ instead of the HTML approach above, go with getText()
+                    // this is because redactor will try to destroy HTML tags in link text
+                    // - see redactor.js:5418 for more info
+					selectedText = this.redactor.selection.getText();
+                    this.redactor.selection.replaceWithHtml(selectedText); // Also reset the selection to the text-only representation
+                    
 					this.redactor.link.set(selectedText, this.linkModel.get('url'), this.linkModel.get('target'));
 					// Now select created link
 					this.selectedLink = this.redactor.utils.isCurrentOrParent('A');
