@@ -44,6 +44,7 @@ class Upfront_Compat implements IUpfront_Server {
 	 */
 	private function _check_v1_transition () {
 		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) return false; // We don't care, not editable
+		if (function_exists('upfront_exporter_is_running') && upfront_exporter_is_running()) return false; // Not in exporter
 		if (version_compare(self::get_upfront_child_version(), '1.0', 'ge')) return false; // Child is at or above v1 - good
 
 		Upfront_CoreDependencies_Registry::get_instance()->add_script(
