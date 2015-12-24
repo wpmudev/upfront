@@ -148,7 +148,9 @@ div.upfront-button:hover .redactor_air {
 	height: 100%;
 	width: 100%;
 }
+/*
+//this css is conflicting with the visitlink icons in the link panel
 i.upfront-icon-region-visit-link-entry:before {
 	background-image: url(../../../img/uf-core-el-sprite.svg)!important;
 	background-position: -703px -169px!important;	
-}
+}*/
