@@ -587,9 +587,11 @@ define([
 			get_settings: function () {
 				return '';
 			},
-			on_click: function () {
+			on_click: function (e) {
 				// We don't want to activate the element when Settings sidebar is open
-				if($('#element-settings-sidebar').html() !== '' || $('#settings').html() !== '') return false;
+				if ($('#element-settings-sidebar').html() !== '' || $('#settings').html() !== '') return false;
+				// Let's not activate if shift key is hold
+				if (e && e.shiftKey) return;
 				this.activate();
 				Upfront.Events.trigger("entity:contextmenu:deactivate", this);
 				//return false;
@@ -1880,8 +1882,67 @@ define([
 				this.lock_interaction = false;
 			},
 			on_click: function (e) {
+				var me = this,
+					ed = Upfront.Behaviors.LayoutEditor,
+					clean_selection = false,
+					$module = this.$el.find('>.upfront-module'),
+					currentEntity = Upfront.data.currentEntity,
+					$current = currentEntity ? currentEntity.$el.closest('.upfront-module') : false,
+					$selected, $selectable, $restricted
+				;
 				if ( this.interaction ) {
-					this.constructor.__super__.on_click.call(this, e);
+					// Check if shift key is pressed, if it does, try to do selection
+					if ( e && e.shiftKey && this.region_view ) {
+						// Clean selection if any of the selection is on different region
+						// We can't group element that wasn't in the same region
+						_.each(ed.selection, function (sel) {
+							if ( !clean_selection ) {
+								clean_selection = ( $(sel).closest('.upfront-region').get(0) != me.region_view.$el.get(0) );
+							}
+						});
+						if ( clean_selection ) ed.remove_selections();
+						// Do selecting
+						// We'll add our module to existing selection
+						// If no existing selection, we select the active module + this module
+						// Or just this module if no active, or active is the same as this module
+						$selectable = this.region_view.$el.find('.upfront-module').not('.upfront-ui-selected, .upfront-module-parent-group');
+						$restricted = this.region_view.$el.find('.upfront-module-group');
+						if ( ed.selection.length > 0 ) {
+							$selected = this.region_view.$el.find('.upfront-ui-selected');
+							ed._add_selections($selected.add($module), $selectable, $restricted);
+						}
+						else {
+							if ( $current !== false && $current.length > 0 ) {
+								ed._add_selection($current.get(0));
+								$selected = $current;
+								if ( $current.get(0) != $module.get(0) ) {
+									$selected = $selected.add($module);
+								}
+								if ( $selected.length > 1 ) {
+									ed._add_selections($selected, $selectable, $restricted);
+								}
+							}
+							else {
+								ed._add_selection($module.get(0));
+							}
+						}
+						ed._update_selection_outline();
+						if ( ed.selection.length > 1 ) {
+							ed.parse_selections();
+						}
+						// Let's deactivate active element too
+						if ( currentEntity ){
+							currentEntity.trigger('deactivated', e);
+							currentEntity.$el.removeClass("upfront-active_entity");
+							Upfront.Events.trigger("entity:deactivated", e);
+							Upfront.data.currentEntity = false;
+						}
+						e.stopPropagation();
+					}
+					else {
+						ed.remove_selections();
+						this.constructor.__super__.on_click.call(this, e);
+					}
 				} else {
 					e.stopPropagation();
 				}
@@ -2371,6 +2432,8 @@ define([
 					combine_left_spacer = 0,
 					combine_right_spacer = 0
 				;
+				// Make sure module interaction is enabled first to prevent issue after ungroup
+				this.toggle_modules_interaction(true, true);
 				ed.start(this, this.model);
 				// Find previous and next wrapper
 				_.each(region_lines, function (l) {
