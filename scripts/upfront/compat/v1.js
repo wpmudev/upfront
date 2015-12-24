@@ -28,8 +28,9 @@ function application_override () {
 	    			'</div>' +
 	    		'</div>' +
 	    	'',
-	    	type: 'inline'
-	  	}
+	    	type: 'inline',
+	  	},
+	    mainClass: 'uf-upgrade-notice'
 	});
 	$(".upfront-version_compatibility-nag")
 		.find('a[href="#boot"]')

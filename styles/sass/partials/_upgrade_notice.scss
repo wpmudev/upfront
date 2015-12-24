@@ -1,0 +1,48 @@
+/**
+ * Compatibility issue nag popup, v1 check
+ */
+.upfront-version_compatibility-nag {
+	font-size: 16px;
+	margin: 0 auto;
+	width: 90%;
+	max-width: 600px;
+	background: #fff;
+	text-align: center;
+	padding: 20px;
+	box-shadow: 0 0 15px 5px #222;
+}
+.upfront-version_compatibility-nag p {
+	text-align: center;
+	font-size: 16px;
+	margin-bottom: 2em;
+	line-height: 1.8em;
+}
+.upfront-version_compatibility-nag a {
+	font-size: 16px;
+	width: 40%;
+	border-radius: 4px;
+	margin: 0 10px;
+	text-decoration: none;
+	display: inline-block;
+	padding: 10px 0;
+}
+.upfront-version_compatibility-nag a.update {
+	background: rgb(29, 195, 136);
+	color: #fff;
+
+	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(31, 205, 143)), to(rgb(29, 195, 136)));
+	background: -webkit-linear-gradient(top, rgb(31, 205, 143), rgb(29, 195, 136));
+	background: -moz-linear-gradient(top, rgb(31, 205, 143), rgb(29, 195, 136));
+	background: -ms-linear-gradient(top, rgb(31, 205, 143), rgb(29, 195, 136));
+	background: -o-linear-gradient(top, rgb(31, 205, 143), rgb(29, 195, 136));
+}
+.upfront-version_compatibility-nag a.boot {
+	background: rgb(238, 238, 238);
+	color: rgb(119, 125, 170);
+
+	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(228, 228, 228)), to(rgb(228, 228, 228)));
+	background: -webkit-linear-gradient(top, rgb(238, 238, 238), rgb(228, 228, 228));
+	background: -moz-linear-gradient(top, rgb(238, 238, 238), rgb(228, 228, 228));
+	background: -ms-linear-gradient(top, rgb(238, 238, 238), rgb(228, 228, 228));
+	background: -o-linear-gradient(top, rgb(238, 238, 238), rgb(228, 228, 228));
+}
