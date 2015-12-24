@@ -163,6 +163,12 @@
 	float: left;
 	position: relative;
 }
+.upfront-module-group > .upfront-modules_container {
+	z-index: 5;
+}
+.upfront-module-group-on-edit > .upfront-modules_container {
+	z-index: auto;
+}
 .upfront-layout-view .upfront-module-group:after,
 .upfront-module-group-bg {
 	content: " ";
@@ -570,7 +576,7 @@
 .upfront-wrapper.ui-resizable-resizing > .upfront-wrapper-meta {
   display: block !important;
 }
-.upfront-module-group-editing .upfront-wrapper > .upfront-wrapper-meta {
+.upfront-module-group-editing .upfront-wrapper.upfront-wrapper-active > .upfront-wrapper-meta {
   display: none !important;
 }
 .upfront-module-group-editing .upfront-module-group-on-edit .upfront-wrapper:hover > .upfront-wrapper-meta {
