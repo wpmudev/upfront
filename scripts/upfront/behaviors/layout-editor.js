@@ -359,7 +359,7 @@ var LayoutEditor = {
 					if ( add_index === false ) {
 						add_index = index;
 					}
-					m.model.set_property('wrapper_id', new_wrapper_id);
+					m.model.set_property('wrapper_id', new_wrapper_id, true);
 					region_modules.remove(m.model, {silent: true});
 					view.$el.detach(); // Detach element from DOM, will render later with group render
 					if ( !has_top_modules && !has_bottom_modules ) {
@@ -404,9 +404,11 @@ var LayoutEditor = {
 							region_modules.remove(m.model, {silent: true});
 							top_add_index++;
 							m.model.add_to(region_modules, top_add_index);
-							add_index++;
 						});
 					});
+					if ( top_add_index !== false ) {
+						add_index = top_add_index+1;
+					}
 					add_wrapper = true;
 				}
 				else {
@@ -490,7 +492,7 @@ var LayoutEditor = {
 				}
 				else {
 					_.each(w.modules, function (m, mi) {
-						m.model.set_property('wrapper_id', wrapper_id);
+						m.model.set_property('wrapper_id', wrapper_id, true);
 						region_modules.remove(m.model, {silent: true});
 						add_index++;
 						m.model.add_to(region_modules, add_index);
@@ -516,7 +518,7 @@ var LayoutEditor = {
 			region_wrappers.add(new_wrapper);
 			_.each(w.modules, function (m, mi) {
 				var index = region_modules.indexOf(m.model);
-				m.model.set_property('wrapper_id', new_wrapper_id);
+				m.model.set_property('wrapper_id', new_wrapper_id, true);
 				region_modules.remove(m.model, {silent: true});
 				m.model.add_to(region_modules, index);
 			});
