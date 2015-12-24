@@ -868,20 +868,46 @@ RedactorPlugins.upfrontLink = function() {
 					$(this.selectedLink).attr('href', this.linkModel.get('url'))
 						.attr('target', this.linkModel.get('target'));
 				} else {
-                    /*
-					// Create new link
+// Origin story, Episode #0 - In The Beginning
+// This does not work because redactor will try to destroy HTML tags in link text
+// - see redactor.js:5418 for more info
+/*
+                    // Create new link
                     selectedText = this.redactor.selection.getHtml();
-                    */
-                    
+*/
+
+// Fix approach, Episode #1 - Nuclear Wasteland (drop all HTML)
+/*
                     // ^ instead of the HTML approach above, go with getText()
-                    // this is because redactor will try to destroy HTML tags in link text
-                    // - see redactor.js:5418 for more info
 					selectedText = this.redactor.selection.getText();
                     this.redactor.selection.replaceWithHtml(selectedText); // Also reset the selection to the text-only representation
+*/
+
+// Fix approach, Episode #2 - Lizard Spooks Spock (camouflage the HTML)
+                    selectedText = this.redactor.selection.getHtml(); // Get HTML, yeah
+                    // Now, let's nerf the HTML stuff
+                    selectedText = selectedText
+                        // Clever, ain't it?
+                        .replace(/</g, '{{UPFRONT_OPEN_TAG_MARK}}')
+                        .replace(/>/g, '{{UPFRONT_CLOSE_TAG_MARK}}')
+                    ;
+                    this.redactor.selection.replaceWithHtml(selectedText);
+
                     
 					this.redactor.link.set(selectedText, this.linkModel.get('url'), this.linkModel.get('target'));
 					// Now select created link
 					this.selectedLink = this.redactor.utils.isCurrentOrParent('A');
+
+// Episode #2a, The Sad Saga of Spock's Debilitating Phobia Continues (de-camo the HTML)
+                    selectedText = this.redactor.selection.getHtml(); // Get the HTML once more, it's now fake HTML
+                    // Now, let's de-camouflage it
+                    selectedText = selectedText
+                        .replace(/\{\{UPFRONT_OPEN_TAG_MARK\}\}/g, '<')
+                        .replace(/\{\{UPFRONT_CLOSE_TAG_MARK\}\}/g, '>')
+                    ;
+                    this.redactor.selection.replaceWithHtml(selectedText);
+// Episode #2 concludes, Spock dies in the end :(
+
 					// Update selection, new link is created it messes up selection
 					this.redactor.selection.save();
 				}
