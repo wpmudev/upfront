@@ -1,48 +1,53 @@
 /**
  * Compatibility issue nag popup, v1 check
  */
+
+.mfp-bg.uf-upgrade-notice {
+	background:#fff;
+	background:rgba(255,255,255,.75);
+}
+
+.uf-upgrade-notice .mfp-close {
+	display:none;
+}
+
 .upfront-version_compatibility-nag {
-	font-size: 16px;
 	margin: 0 auto;
 	width: 90%;
 	max-width: 600px;
 	background: #fff;
 	text-align: center;
-	padding: 20px;
-	box-shadow: 0 0 15px 5px #222;
+	padding: 40px;
+	box-shadow: 0 0 20px 0px rgba(0,0,0,.15);
+	box-sizing: border-box;
 }
 .upfront-version_compatibility-nag p {
-	text-align: center;
-	font-size: 16px;
+	font:normal 100 22px/1.7 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif; 
 	margin-bottom: 2em;
-	line-height: 1.8em;
+	color:#777D82;
 }
 .upfront-version_compatibility-nag a {
-	font-size: 16px;
-	width: 40%;
-	border-radius: 4px;
-	margin: 0 10px;
+	font:normal 100 18px 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif; 
+	border-radius: 5px;
+	margin: 10px 20px;
 	text-decoration: none;
 	display: inline-block;
-	padding: 10px 0;
+	padding: 10px 25px;
+	background-image: linear-gradient(-180deg, rgba(0,0,0,0.00) 0%, rgba(0,0,0,0.05) 100%);
+	box-shadow: 0px 1px 0px 0px rgba(0,0,0,0.10);
 }
 .upfront-version_compatibility-nag a.update {
-	background: rgb(29, 195, 136);
 	color: #fff;
+	background: #1FCD8F;
+	padding: 15px 30px;
 
-	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(31, 205, 143)), to(rgb(29, 195, 136)));
-	background: -webkit-linear-gradient(top, rgb(31, 205, 143), rgb(29, 195, 136));
-	background: -moz-linear-gradient(top, rgb(31, 205, 143), rgb(29, 195, 136));
-	background: -ms-linear-gradient(top, rgb(31, 205, 143), rgb(29, 195, 136));
-	background: -o-linear-gradient(top, rgb(31, 205, 143), rgb(29, 195, 136));
 }
 .upfront-version_compatibility-nag a.boot {
-	background: rgb(238, 238, 238);
-	color: rgb(119, 125, 170);
+	color: #777D82;
+	background: #F0F0F0;
+}
 
-	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(228, 228, 228)), to(rgb(228, 228, 228)));
-	background: -webkit-linear-gradient(top, rgb(238, 238, 238), rgb(228, 228, 228));
-	background: -moz-linear-gradient(top, rgb(238, 238, 238), rgb(228, 228, 228));
-	background: -ms-linear-gradient(top, rgb(238, 238, 238), rgb(228, 228, 228));
-	background: -o-linear-gradient(top, rgb(238, 238, 238), rgb(228, 228, 228));
+.upfront-version_compatibility-nag a.update:hover, 
+.upfront-version_compatibility-nag a.boot:hover {
+	background-image: linear-gradient(-180deg, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.00) 100%);
 }
