@@ -234,6 +234,7 @@ class Upfront_Grid {
 			$wrapper_id = upfront_get_property_value('wrapper_id', $module);
 			$wrapper_data = $this->_find_wrapper($wrapper_id, $wrappers);
 			$wrapper_index = array_search($wrapper_data, $wrappers);
+			$is_clear = $this->_get_property_clear($wrapper_data);
 			$prev_wrapper_id = false;
 			$prev_wrapper_data = false;
 			$next_wrapper_id = false;
@@ -366,7 +367,7 @@ class Upfront_Grid {
 									}
 								}
 							}
-							if ( $prev_is_spacer ) {
+							if ( $prev_is_spacer && !$is_clear ) {
 								$prev_spacer_id = upfront_get_property_value('element_id', $mod);
 								if ( !in_array($prev_spacer_id, $rendered_spacers) ) {
 									$spacer_col = $this->_get_class_col($mod);
@@ -402,6 +403,9 @@ class Upfront_Grid {
 						$rendered_spacers[] = $prev_spacer_id;
 					}
 					if ( !$wrapper_modules_hide ) {
+						if ( $is_clear ) {
+							$line_col = $col;
+						}
 						$line_col -= $wrapper_col + $spacer_col;
 					}
 					if ( $next_wrapper_col == $line_col && $next_is_spacer ) {
