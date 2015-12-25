@@ -104,6 +104,16 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		return props;
 	},
 
+	/**
+	 * Returns preset propery value
+	 * @param key
+	 * @returns {boolean}
+     */
+	get_preset_property: function(key){
+		var preset_props = this.get_preset_properties();
+		return preset_props[key] ? preset_props[key] : false;
+	},
+
 	preset_updated: function() {
 		this.render();
 	},
@@ -260,8 +270,22 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				me.on_render();
 			}, 100);
 		}
+
+
+		this.update_caption_controls();
 	},
 
+	update_caption_controls: function(){
+		var me = this,
+			panel = new Upfront.Views.Editor.InlinePanels.Panel()
+			;
+
+		panel.items = this.getControlItems();
+		panel.render();
+		_.delay( function(){
+			me.controls.$el.html( panel.$el )
+		}, 400);
+	},
 	hideSliderNavigation: function(){
 		this.$('.upfront-default-slider-nav').hide();
 		this.$('.upfront-default-slider-nav-prev').hide();
@@ -1176,14 +1200,82 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	},
 
 	getControlItems: function(){
-		return _([
+		if( !this.model.slideCollection.length ) return _([]); // We need no controls when there is no slide
+		var me = this,
+			captionControl = new Upfront.Views.Editor.InlinePanels.TooltipControl(),
+			slideCollection = this.model.slideCollection;
+			multiBelow = {
+				above: ['above', l10n.above_img],
+				below: ['below', l10n.below_img],
+				nocaption: ['nocaption', l10n.no_text]
+			},
+				multiOver = {
+					topOver: ['topOver', l10n.over_top],
+					bottomOver: ['bottomOver', l10n.over_bottom],
+					topCover: ['topCover', l10n.cover_top],
+					middleCover: ['middleCover', l10n.cover_mid],
+					bottomCover: ['bottomCover', l10n.cover_bottom],
+					nocaption: ['nocaption', l10n.no_text]
+				},
+				multiSide = {
+					right: ['right', l10n.at_right],
+					left: ['left', l10n.at_left],
+					nocaption: ['nocaption', l10n.no_text]
+				},
+				primaryStyle = this.get_preset_property('primaryStyle'),
+				multiControls = {},
+				captionControl = new Upfront.Views.Editor.InlinePanels.TooltipControl(),
+				slide = slideCollection.at(this.getCurrentSlide())
+			;
+
+
+		captionControl.sub_items = {};
+		if(primaryStyle == 'below')
+			multiControls = multiBelow;
+		else if(primaryStyle == 'over')
+			multiControls = multiOver;
+		else if(primaryStyle == 'side')
+			multiControls = multiSide;
+		else
+			multiControls = false;
+		if(multiControls){
+			_.each(multiControls, function(opts, key){
+				captionControl.sub_items[key] = me.createControl(opts[0], opts[1]);
+			});
+
+			captionControl.icon = 'caption';
+			captionControl.tooltip = l10n.cap_position;
+			captionControl.selected = multiControls[slide.get('style')] ? slide.get('style') : 'nocaption';
+			this.listenTo(captionControl, 'select', function(item){
+				var previousStyle = slide.get('style');
+				slide.set('style', item);
+				me.onSlidesCollectionChange();
+				if(primaryStyle == 'side' && previousStyle == 'nocaption' || item == 'nocaption'){
+					//give time to the element to render
+					setTimeout(function(){
+						var wrap = me.$('.upfront-default-slider-item-current').find('.uslide-image');
+						me.imageProps[slide.id] = me.calculateImageResize({width: wrap.width(), height: wrap.height()}, slide);
+						me.setTimer();
+					}, 100);
+				}
+			});
+		}
+
+		var controls = _([
 			this.createControl('add', l10n.add_slide, 'openImageSelector'),
 			this.createControl('crop', l10n.edit_img, 'imageEditMask'),
-    		this.createLinkControl(),
+			this.createLinkControl(),
 			this.createControl('remove', l10n.remove_slide, 'onRemoveSlide'),
+			captionControl,
 			this.createPaddingControl(),
 			this.createControl('settings', l10n.settings, 'on_settings_click')
 		]);
+
+		if( !multiControls ){
+			controls = controls.without( captionControl );
+		}
+
+		return controls;
 	}
 });
 
