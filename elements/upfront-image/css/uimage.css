@@ -871,10 +871,10 @@ div.uimage-controls i.upfront-icon:before,
 }
 
 .upfront-ui .upfront-icon-region-above:before {
-	background-position: -699px -680px!important;
+	background-position: -699px -682px!important;
 }
 .upfront-ui .upfront-icon-region-above:hover:before {
-	background-position: -807px -680px!important;
+	background-position: -807px -682px!important;
 }
 .upfront-ui .upfront-icon-region-above-active:before {
 	background-position: -699px -680px!important;
@@ -884,10 +884,10 @@ div.uimage-controls i.upfront-icon:before,
 }
 
 .upfront-ui .upfront-icon-region-below:before {
-	background-position: -699px -646px!important;
+	background-position: -699px -650px!important;
 }
 .upfront-ui .upfront-icon-region-below:hover:before {
-	background-position: -807px -646px!important;
+	background-position: -807px -650px!important;
 }
 .upfront-ui .upfront-icon-region-below-active:before {
 	background-position: -699px -646px!important;

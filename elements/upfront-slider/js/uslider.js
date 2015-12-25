@@ -1272,7 +1272,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		]);
 
 		if( !multiControls ){
-			controls = controls.without( captionControl );
+			controls = _( controls.without( captionControl ) );
 		}
 
 		return controls;
