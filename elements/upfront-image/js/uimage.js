@@ -10,7 +10,7 @@ define([
 	"scripts/upfront/link-model",
 	'elements/upfront-image/js/model',
 	'text!elements/upfront-image/tpl/preset-style.html',
-	'scripts/upfront/preset-settings/util',
+	'scripts/upfront/preset-settings/util'
 ], function(imageTpl, editorTpl, ImageContextMenu, ImageSettings, ImageSelector, ImageEditor, ImageElement, LinkModel, UimageModel, settingsStyleTpl, PresetUtil) {
 
 	var l10n = Upfront.Settings.l10n.image_element;
@@ -491,7 +491,17 @@ define([
 
 			return rendered;
 		},
+		toggle_caption_controls: function(){
+			var me = this,
+				panel = new Upfront.Views.Editor.InlinePanels.Panel()
+				;
 
+			panel.items = this.getControlItems();
+			panel.render();
+			_.delay( function(){
+				me.controls.$el.html( panel.$el )
+			}, 400);
+		},
 		getElementShapeSize: function (elementSize) {
 			var $container = this.$el.find('.upfront-image-container'),
 				props = this.get_preset_properties(),
@@ -617,6 +627,8 @@ define([
 			setTimeout(function() {
 				me.toggleResizableHandles();
 			}, 100);
+
+			this.toggle_caption_controls();
 		},
 
 		toggleResizableHandles: function() {

@@ -67,215 +67,7 @@ var LayoutEditor = {
 				ed.selecting = true;
 			},
 			stop: function (e, ui) {
-				if ( !$(".upfront-ui-selected").length )
-					return false;
-				var me = this,
-					$region = $(".upfront-ui-selected:first").closest('.upfront-region'),
-					region = regions.get_by_name($region.data('name')),
-					region_modules = (region ? region.get("modules") : false),
-					region_wrappers = (region ? region.get("wrappers") : false),
-					unselect = function(){
-						$(this).find('.upfront-selected-border').remove();
-						$(this).removeClass('upfront-ui-selected ui-selected');
-					},
-					$selected = $('.upfront-ui-selected');
-				if ($selected.length < 2){
-					$selected.each(function(){
-						ed._remove_selection(this);
-					});
-					$('#upfront-group-selection').remove();
-					return false;
-				};
-				$('.upfront-module-group-group').remove();
-				var $group = $('<div class="upfront-module-group-toggle upfront-module-group-group">' + Upfront.Settings.l10n.global.behaviors.group + '</div>'),
-					sel_top = sel_left = sel_right = sel_bottom = false,
-					wrap_top = wrap_left = wrap_right = wrap_bottom = false,
-					group_top = group_left = 0;
-				$('body').append($group);
-				$selected.each(function(){
-					var off = $(this).offset(),
-						width = $(this).outerWidth(),
-						height = $(this).outerHeight(),
-						$wrap = $(this).closest('.upfront-wrapper'),
-						wrap_off = $wrap.offset(),
-						wrap_width = $wrap.outerWidth(),
-						wrap_height = $wrap.outerHeight();
-					off.right = off.left + width;
-					off.bottom = off.top + height;
-					sel_top = ( sel_top === false || off.top < sel_top ) ? off.top : sel_top;
-					sel_bottom = ( sel_bottom === false || off.bottom > sel_bottom ) ? off.bottom : sel_bottom;
-					sel_left = ( sel_left === false || off.left < sel_left ) ? off.left : sel_left;
-					sel_right = ( sel_right === false || off.right > sel_right ) ? off.right : sel_right;
-					wrap_off.right = wrap_off.left + wrap_width;
-					wrap_off.bottom = wrap_off.top + wrap_height;
-					wrap_top = ( wrap_top === false || wrap_off.top < wrap_top ) ? wrap_off.top : wrap_top;
-					wrap_bottom = ( wrap_bottom === false || wrap_off.bottom > wrap_bottom ) ? wrap_off.bottom : wrap_bottom;
-					wrap_left = ( wrap_left === false || wrap_off.left < wrap_left ) ? wrap_off.left : wrap_left;
-					wrap_right = ( wrap_right === false || wrap_off.right > wrap_right ) ? wrap_off.right : wrap_right;
-				});
-				group_top = sel_top + Math.round( (sel_bottom-sel_top)/2 ) - Math.round( $group.outerHeight()/2 );
-				group_left = sel_left + Math.round( (sel_right-sel_left)/2 ) - Math.round( $group.outerWidth()/2 );
-				$group.css({
-					position: 'absolute',
-					zIndex: 999999,
-					top: group_top,
-					left: group_left
-				});
-				setTimeout(function(){ ed.selecting = false; }, 1000);
-				$group.on('click', function () {
-					var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
-						grid_ed = Upfront.Behaviors.GridEditor,
-						first_module_view = false,
-						max_col = Math.round((wrap_right-wrap_left)/grid_ed.grid.column_width),
-						lines = grid_ed.parse_modules_to_lines(region_modules, region_wrappers, breakpoint.id, breakpoint.columns),
-						group_lines = [],
-						prev_group_lines = [],
-						next_group_lines = [],
-						is_prev_group_combine = false,
-						is_next_group_combine = false,
-						group_col = 0,
-						prev_group_col = 0,
-						next_group_col = 0,
-						do_split = false
-					;
-					// Parse the lines into groups
-					_.each(lines, function (l) {
-						var wrappers = [],
-							prev_wrappers = [],
-							next_wrappers = [],
-							top_wrappers = [],
-							bottom_wrappers = [],
-							line_col = 0,
-							prev_line_col = 0,
-							next_line_col = 0
-						;
-						_.each(l.wrappers, function (w) {
-							var modules = [],
-								top_modules = [],
-								bottom_modules = []
-							;
-							_.each(w.modules, function (m) {
-								var found = false;
-								$selected.each(function () {
-									var element_id = $(this).attr('id'),
-										index;
-									if ( m.model.get_element_id() == element_id ) {
-										if ( first_module_view === false ) {
-											first_module_view = Upfront.data.module_views[m.model.cid];
-										}
-										modules.push(m);
-										found = true;
-									}
-								});
-								if ( !found ) {
-									if ( modules.length == 0 ) {
-										top_modules.push(m);
-									}
-									else {
-										bottom_modules.push(m);
-									}
-								}
-							});
-							if ( modules.length > 0 ) {
-								wrappers.push({
-									modules: modules,
-									top_modules: top_modules,
-									bottom_modules: bottom_modules,
-									model: w.model,
-									col: w.col,
-									clear: w.clear,
-									spacer: w.spacer,
-									order: w.order
-								});
-								line_col += w.col;
-								if ( top_modules.length ) {
-									top_wrappers.push({
-										modules: top_modules,
-										model: w.model,
-										col: w.col,
-										clear: w.clear,
-										spacer: w.spacer,
-										order: w.order
-									});
-								}
-								if ( bottom_modules.length ) {
-									bottom_wrappers.push({
-										modules: bottom_modules,
-										model: w.model,
-										col: w.col,
-										clear: w.clear,
-										spacer: w.spacer,
-										order: w.order
-									});
-								}
-							}
-							else {
-								( wrappers.length == 0 ? prev_wrappers : next_wrappers ).push({
-									modules: w.modules,
-									model: w.model,
-									col: w.col,
-									clear: w.clear,
-									spacer: w.spacer,
-									order: w.order
-								});
-								if ( wrappers.length == 0 ) prev_line_col += w.col;
-								else next_line_col += w.col;
-							}
-						});
-						if ( wrappers.length > 0 ) {
-							group_lines.push({
-								wrappers: wrappers,
-								top_wrappers: top_wrappers,
-								bottom_wrappers: bottom_wrappers,
-								col: line_col
-							});
-							group_col = line_col > group_col ? line_col : group_col;
-							if ( prev_wrappers.length > 0 ) {
-								prev_group_lines.push({
-									wrappers: prev_wrappers,
-									col: prev_line_col
-								});
-								prev_group_col = prev_line_col > prev_group_col ? prev_line_col : prev_group_col;
-							}
-							if ( next_wrappers.length > 0 ) {
-								next_group_lines.push({
-									wrappers: next_wrappers,
-									col: next_line_col
-								});
-								next_group_col = next_line_col > next_group_col ? next_line_col : next_group_col;
-							}
-						}
-					});
-					grid_ed.start(first_module_view, first_module_view.model);
-
-					// Grouping!
-					// Try to see if previous elements qualify to be grouped/combined (that is if it has > 1 line)
-					if ( prev_group_lines.length > 1 ) {
-						if ( !ed._do_combine(prev_group_lines, region) ) {
-							ed._do_group(prev_group_lines, region);
-						}
-					}
-					// If we don't have affected previous/next elements, we'll split non-selected element outside group
-					// Otherwise, it creates another group
-					if ( prev_group_lines.length == 0 && next_group_lines.length == 0 ) {
-						do_split = true;
-					}
-					ed._do_group(group_lines, region, false, do_split);
-					// Try to see if next elements qualify to be grouped/combined (that is if it has > 1 line)
-					if ( next_group_lines.length > 1 ) {
-						if ( !ed._do_combine(next_group_lines, region) ) {
-							ed._do_group(next_group_lines, region);
-						}
-					}
-
-					// now normalize the wrappers
-					grid_ed.update_position_data($region.find('.upfront-editable_entities_container:first'));
-					grid_ed.update_wrappers(region);
-
-					$(this).remove();
-					$('#upfront-group-selection').remove();
-					ed.selection = [];
-				});
+				ed.parse_selections();
 			}
 		});
 	},
@@ -307,6 +99,221 @@ var LayoutEditor = {
 			$(this).selectable("destroy");
 		});
 	},
+
+	parse_selections: function () {
+		if ( !$(".upfront-ui-selected").length )
+			return false;
+		var ed = this,
+			regions = Upfront.Application.layout.get('regions'),
+			$region = $(".upfront-ui-selected:first").closest('.upfront-region'),
+			region = regions.get_by_name($region.data('name')),
+			region_modules = (region ? region.get("modules") : false),
+			region_wrappers = (region ? region.get("wrappers") : false),
+			unselect = function(){
+				$(this).find('.upfront-selected-border').remove();
+				$(this).removeClass('upfront-ui-selected ui-selected');
+			},
+			$selected = $('.upfront-ui-selected');
+		if ($selected.length < 2){
+			$selected.each(function(){
+				ed._remove_selection(this);
+			});
+			$('#upfront-group-selection').remove();
+			return false;
+		};
+		$('.upfront-module-group-group').remove();
+		var $group = $('<div class="upfront-module-group-toggle upfront-module-group-group">' + Upfront.Settings.l10n.global.behaviors.group + '</div>'),
+			sel_top = sel_left = sel_right = sel_bottom = false,
+			wrap_top = wrap_left = wrap_right = wrap_bottom = false,
+			group_top = group_left = 0;
+		$('body').append($group);
+		$selected.each(function(){
+			var off = $(this).offset(),
+				width = $(this).outerWidth(),
+				height = $(this).outerHeight(),
+				$wrap = $(this).closest('.upfront-wrapper'),
+				wrap_off = $wrap.offset(),
+				wrap_width = $wrap.outerWidth(),
+				wrap_height = $wrap.outerHeight()
+			;
+			off.right = off.left + width;
+			off.bottom = off.top + height;
+			sel_top = ( sel_top === false || off.top < sel_top ) ? off.top : sel_top;
+			sel_bottom = ( sel_bottom === false || off.bottom > sel_bottom ) ? off.bottom : sel_bottom;
+			sel_left = ( sel_left === false || off.left < sel_left ) ? off.left : sel_left;
+			sel_right = ( sel_right === false || off.right > sel_right ) ? off.right : sel_right;
+			wrap_off.right = wrap_off.left + wrap_width;
+			wrap_off.bottom = wrap_off.top + wrap_height;
+			wrap_top = ( wrap_top === false || wrap_off.top < wrap_top ) ? wrap_off.top : wrap_top;
+			wrap_bottom = ( wrap_bottom === false || wrap_off.bottom > wrap_bottom ) ? wrap_off.bottom : wrap_bottom;
+			wrap_left = ( wrap_left === false || wrap_off.left < wrap_left ) ? wrap_off.left : wrap_left;
+			wrap_right = ( wrap_right === false || wrap_off.right > wrap_right ) ? wrap_off.right : wrap_right;
+		});
+		group_top = sel_top + Math.round( (sel_bottom-sel_top)/2 ) - Math.round( $group.outerHeight()/2 );
+		group_left = sel_left + Math.round( (sel_right-sel_left)/2 ) - Math.round( $group.outerWidth()/2 );
+		$group.css({
+			position: 'absolute',
+			zIndex: 999999,
+			top: group_top,
+			left: group_left
+		});
+		setTimeout(function(){ ed.selecting = false; }, 1000);
+		$group.on('click', function () {
+			var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
+				grid_ed = Upfront.Behaviors.GridEditor,
+				first_module_view = false,
+				max_col = Math.round((wrap_right-wrap_left)/grid_ed.grid.column_width),
+				lines = grid_ed.parse_modules_to_lines(region_modules, region_wrappers, breakpoint.id, breakpoint.columns),
+				group_lines = [],
+				prev_group_lines = [],
+				next_group_lines = [],
+				is_prev_group_combine = false,
+				is_next_group_combine = false,
+				group_col = 0,
+				prev_group_col = 0,
+				next_group_col = 0,
+				do_split = false
+				;
+			// Parse the lines into groups
+			_.each(lines, function (l) {
+				var wrappers = [],
+					prev_wrappers = [],
+					next_wrappers = [],
+					top_wrappers = [],
+					bottom_wrappers = [],
+					line_col = 0,
+					prev_line_col = 0,
+					next_line_col = 0
+					;
+				_.each(l.wrappers, function (w) {
+					var modules = [],
+						top_modules = [],
+						bottom_modules = []
+						;
+					_.each(w.modules, function (m) {
+						var found = false;
+						$selected.each(function () {
+							var element_id = $(this).attr('id'),
+								index;
+							if ( m.model.get_element_id() == element_id ) {
+								if ( first_module_view === false ) {
+									first_module_view = Upfront.data.module_views[m.model.cid];
+								}
+								modules.push(m);
+								found = true;
+							}
+						});
+						if ( !found ) {
+							if ( modules.length == 0 ) {
+								top_modules.push(m);
+							}
+							else {
+								bottom_modules.push(m);
+							}
+						}
+					});
+					if ( modules.length > 0 ) {
+						wrappers.push({
+							modules: modules,
+							top_modules: top_modules,
+							bottom_modules: bottom_modules,
+							model: w.model,
+							col: w.col,
+							clear: w.clear,
+							spacer: w.spacer,
+							order: w.order
+						});
+						line_col += w.col;
+						if ( top_modules.length ) {
+							top_wrappers.push({
+								modules: top_modules,
+								model: w.model,
+								col: w.col,
+								clear: w.clear,
+								spacer: w.spacer,
+								order: w.order
+							});
+						}
+						if ( bottom_modules.length ) {
+							bottom_wrappers.push({
+								modules: bottom_modules,
+								model: w.model,
+								col: w.col,
+								clear: w.clear,
+								spacer: w.spacer,
+								order: w.order
+							});
+						}
+					}
+					else {
+						( wrappers.length == 0 ? prev_wrappers : next_wrappers ).push({
+							modules: w.modules,
+							model: w.model,
+							col: w.col,
+							clear: w.clear,
+							spacer: w.spacer,
+							order: w.order
+						});
+						if ( wrappers.length == 0 ) prev_line_col += w.col;
+						else next_line_col += w.col;
+					}
+				});
+				if ( wrappers.length > 0 ) {
+					group_lines.push({
+						wrappers: wrappers,
+						top_wrappers: top_wrappers,
+						bottom_wrappers: bottom_wrappers,
+						col: line_col
+					});
+					group_col = line_col > group_col ? line_col : group_col;
+					if ( prev_wrappers.length > 0 ) {
+						prev_group_lines.push({
+							wrappers: prev_wrappers,
+							col: prev_line_col
+						});
+						prev_group_col = prev_line_col > prev_group_col ? prev_line_col : prev_group_col;
+					}
+					if ( next_wrappers.length > 0 ) {
+						next_group_lines.push({
+							wrappers: next_wrappers,
+							col: next_line_col
+						});
+						next_group_col = next_line_col > next_group_col ? next_line_col : next_group_col;
+					}
+				}
+			});
+			grid_ed.start(first_module_view, first_module_view.model);
+
+			// Grouping!
+			// Try to see if previous elements qualify to be grouped/combined (that is if it has > 1 line)
+			if ( prev_group_lines.length > 1 ) {
+				if ( !ed._do_combine(prev_group_lines, region) ) {
+					ed._do_group(prev_group_lines, region);
+				}
+			}
+			// If we don't have affected previous/next elements, we'll split non-selected element outside group
+			// Otherwise, it creates another group
+			if ( prev_group_lines.length == 0 && next_group_lines.length == 0 ) {
+				do_split = true;
+			}
+			ed._do_group(group_lines, region, false, do_split);
+			// Try to see if next elements qualify to be grouped/combined (that is if it has > 1 line)
+			if ( next_group_lines.length > 1 ) {
+				if ( !ed._do_combine(next_group_lines, region) ) {
+					ed._do_group(next_group_lines, region);
+				}
+			}
+
+			// now normalize the wrappers
+			grid_ed.update_position_data($region.find('.upfront-editable_entities_container:first'));
+			grid_ed.update_wrappers(region);
+
+			$(this).remove();
+			$('#upfront-group-selection').remove();
+			ed.selection = [];
+		});
+	},
+
 	_do_group: function (lines, region, force_add_wrapper, do_split)  {
 		var ed = this,
 			grid_ed = Upfront.Behaviors.GridEditor,
@@ -352,7 +359,7 @@ var LayoutEditor = {
 					if ( add_index === false ) {
 						add_index = index;
 					}
-					m.model.set_property('wrapper_id', new_wrapper_id);
+					m.model.set_property('wrapper_id', new_wrapper_id, true);
 					region_modules.remove(m.model, {silent: true});
 					view.$el.detach(); // Detach element from DOM, will render later with group render
 					if ( !has_top_modules && !has_bottom_modules ) {
@@ -397,9 +404,11 @@ var LayoutEditor = {
 							region_modules.remove(m.model, {silent: true});
 							top_add_index++;
 							m.model.add_to(region_modules, top_add_index);
-							add_index++;
 						});
 					});
+					if ( top_add_index !== false ) {
+						add_index = top_add_index+1;
+					}
 					add_wrapper = true;
 				}
 				else {
@@ -427,6 +436,7 @@ var LayoutEditor = {
 		group.add_to(region_modules, add_index);
 		Upfront.Events.trigger("entity:module_group:group", group, region);
 	},
+
 	_do_combine: function (lines, region) {
 		var ed = this,
 			grid_ed = Upfront.Behaviors.GridEditor,
@@ -482,7 +492,7 @@ var LayoutEditor = {
 				}
 				else {
 					_.each(w.modules, function (m, mi) {
-						m.model.set_property('wrapper_id', wrapper_id);
+						m.model.set_property('wrapper_id', wrapper_id, true);
 						region_modules.remove(m.model, {silent: true});
 						add_index++;
 						m.model.add_to(region_modules, add_index);
@@ -492,6 +502,7 @@ var LayoutEditor = {
 		});
 		return true;
 	},
+
 	_do_split: function (wrappers, region) {
 		var ed = this,
 			grid_ed = Upfront.Behaviors.GridEditor,
@@ -507,13 +518,14 @@ var LayoutEditor = {
 			region_wrappers.add(new_wrapper);
 			_.each(w.modules, function (m, mi) {
 				var index = region_modules.indexOf(m.model);
-				m.model.set_property('wrapper_id', new_wrapper_id);
+				m.model.set_property('wrapper_id', new_wrapper_id, true);
 				region_modules.remove(m.model, {silent: true});
 				m.model.add_to(region_modules, index);
 			});
 		});
 		return true;
 	},
+
 	_get_group_position: function ($selected) {
 		var sel_top = sel_left = sel_right = sel_bottom = false,
 			wrap_top = wrap_left = wrap_right = wrap_bottom = false
