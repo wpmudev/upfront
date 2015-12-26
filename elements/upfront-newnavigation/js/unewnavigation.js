@@ -43,10 +43,6 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		this.listenTo(this.model, "preset:updated", this.preset_updated);
 
-		this.$el.on('click', '.responsive_nav_toggler', function(event) {
-			me.toggle_responsive_nav(event);
-		});
-
 		// get all menus
 		var menu_id = this.model.get_property_value_by_name('menu_id');
 
@@ -562,6 +558,11 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			}
 
 		}, 200);
+
+		this.$el.off('click', '.responsive_nav_toggler');
+		this.$el.on('click', '.responsive_nav_toggler', function(event) {
+			me.toggle_responsive_nav(event);
+		});
 
 	},
 
