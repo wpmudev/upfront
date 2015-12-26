@@ -884,15 +884,24 @@ RedactorPlugins.upfrontLink = function() {
 */
 
 // Fix approach, Episode #2 - Lizard Spooks Spock (camouflage the HTML)
+                    // Somewhere along the line, the non-printable chars, spaces and stuff get all normalized,
+                    // hence the printable default/fallback string
+                    // Downside: if something goes wrong, it won't be a pretty sight at all :/
+                    var rx_special = /[-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, // This will be used to encode regex special chars
+                        rx_replacement = '\\$&', // Second part of regex special chars encoding (result)
+                        otm = ((Upfront.Settings || {}).Editor || {}).OPEN_TAG_RPL_MARK || '{{UPFRONT_OPEN_TAG_MARK}}', // Open Tag Mark - either from settings or fallback
+                        ctm = ((Upfront.Settings || {}).Editor || {}).CLOSE_TAG_RPL_MARK || '{{UPFRONT_CLOSE_TAG_MARK}}', // Close Tag Mark - either from settings or fallback
+                        rx_otm = new RegExp(otm.replace(rx_special, rx_replacement), 'g'), // OTM regex representation - note the "g" parameter
+                        rx_ctm = new RegExp(ctm.replace(rx_special, rx_replacement), 'g') // CTM regex representation - note the "g" parameter
+                    ;
                     selectedText = this.redactor.selection.getHtml(); // Get HTML, yeah
                     // Now, let's nerf the HTML stuff
                     selectedText = selectedText
                         // Clever, ain't it?
-                        .replace(/</g, '{{UPFRONT_OPEN_TAG_MARK}}')
-                        .replace(/>/g, '{{UPFRONT_CLOSE_TAG_MARK}}')
+                        .replace(/</g, otm)
+                        .replace(/>/g, ctm)
                     ;
                     this.redactor.selection.replaceWithHtml(selectedText);
-
                     
 					this.redactor.link.set(selectedText, this.linkModel.get('url'), this.linkModel.get('target'));
 					// Now select created link
@@ -902,8 +911,8 @@ RedactorPlugins.upfrontLink = function() {
                     selectedText = this.redactor.selection.getHtml(); // Get the HTML once more, it's now fake HTML
                     // Now, let's de-camouflage it
                     selectedText = selectedText
-                        .replace(/\{\{UPFRONT_OPEN_TAG_MARK\}\}/g, '<')
-                        .replace(/\{\{UPFRONT_CLOSE_TAG_MARK\}\}/g, '>')
+                        .replace(rx_otm, '<')
+                        .replace(rx_ctm, '>')
                     ;
                     this.redactor.selection.replaceWithHtml(selectedText);
 // Episode #2 concludes, Spock dies in the end :(
