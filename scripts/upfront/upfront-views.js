@@ -4253,7 +4253,9 @@ define([
 					top_padding = parseInt(this.$el.css('padding-top'), 10);
 					bottom_padding = parseInt(this.$el.css('padding-bottom'), 10);
 					this.$el.css('min-height', height + 'px');
-					$container.css('min-height', (height-top_padding-bottom_padding) + 'px');
+					height -= top_padding + bottom_padding;
+					height = height > 0 ? height : 0;
+					$container.css('min-height', height + 'px');
 				}
 				else {
 					this.$el.css('min-height', '');
