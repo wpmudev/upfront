@@ -4181,7 +4181,7 @@ define([
 				}
 				this.update_position();
 				this.update_buttons();
-				this.update_size_hint(this.col * grid.column_width, this.$el.height());
+				this.update_size_hint(this.col * grid.column_width, parseInt(this.$el.css('height'), 10));
 				this.trigger("region_update", this);
 			},
 			update_position: function () {
@@ -4199,7 +4199,10 @@ define([
 					$regions = container_view.$el.find('.upfront-region-center, .upfront-region-side-left, .upfront-region-side-right'),
 					$hide_trigger = this.$el.find('> .upfront-entity_meta > a.upfront-entity-hide_trigger'),
 					height = 0,
-					width = 0;
+					width = 0,
+					top_padding = 0,
+					bottom_padding = 0
+				;
 				if ( ! breakpoint_data || ! breakpoint_data.hide ){
 					$container.show();
 					$toggle.hide();
@@ -4247,8 +4250,10 @@ define([
 					this.$el.removeData('breakpoint_row');
 				}
 				if ( height > 0 ){
+					top_padding = parseInt(this.$el.css('padding-top'), 10);
+					bottom_padding = parseInt(this.$el.css('padding-bottom'), 10);
 					this.$el.css('min-height', height + 'px');
-					$container.css('min-height', height + 'px');
+					$container.css('min-height', (height-top_padding-bottom_padding) + 'px');
 				}
 				else {
 					this.$el.css('min-height', '');
@@ -4271,6 +4276,7 @@ define([
 				else {
 					$delete_trigger.hide();
 				}
+				this.update_size_hint(parseInt(this.$el.css('width'), 10), parseInt(this.$el.css('height'), 10));
 			},
 			update_size_hint: function (width, height, $helper) {
 				var hint = '<b>w:</b>' + width + 'px <b>h:</b>' + height + 'px';
@@ -4299,7 +4305,7 @@ define([
 				}
 			},
 			on_layout_render: function () {
-				this.update_size_hint(this.$el.width(), this.$el.height());
+				this.update_size_hint(parseInt(this.$el.css('width'), 10), parseInt(this.$el.css('height'), 10));
 				this.refresh_background();
 			},
 			remove: function() {
@@ -4500,7 +4506,7 @@ define([
 					$hide.hide();
 				}
 				this.update_position();
-				this.update_size_hint(this.$el.width(), this.$el.height());
+				this.update_size_hint(parseInt(this.$el.css('width'), 10), parseInt(this.$el.css('height'), 10));
 				if ( this._is_clipped() )
 					this.update_background();
 			}
