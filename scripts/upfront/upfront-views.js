@@ -2107,6 +2107,20 @@ define([
 					});
 				}
 			},
+
+			createPaddingControl: function(){
+				this.paddingControl = new Upfront.Views.Editor.InlinePanels.PaddingControl({
+					model: this.model
+				});
+
+				this.paddingControl.icon = 'padding';
+				this.paddingControl.tooltip = l10n.padding_settings;
+				this.paddingControl.default_padding.top = 0;
+				this.paddingControl.default_padding.bottom = 0;
+
+				return this.paddingControl;
+			},
+
 			onOpenPanelClick: function(event) {
 				event.preventDefault();
 				this.toggleLinkPanel();

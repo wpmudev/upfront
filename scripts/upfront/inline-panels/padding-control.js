@@ -40,6 +40,11 @@ define([
 				}
 			});
 
+			this.default_padding = {
+				top: false,
+				bottom: false
+			}
+
 			this.listenTo(Upfront.Events, "upfront:paddings:updated", this.refresh);
 		},
 
@@ -95,12 +100,19 @@ define([
 				me.$el.append($paddingControl);
 			}
 
+			if(me.default_padding.top === false) {
+				me.default_padding.top = column_padding;
+			}
+			if(me.default_padding.bottom === false){
+				me.default_padding.bottom = column_padding;
+			}
+
 			me.paddingTop = new Upfront.Views.Editor.Field.Slider({
 				model: this.model,
 				use_breakpoint_property: true,
 				property: 'top_padding_num',
 				label: '',
-				default_value: this.model.get_breakpoint_property_value('top_padding_num') || column_padding,
+				default_value: this.model.get_breakpoint_property_value('top_padding_num') || me.default_padding.top,
 				min: 0,
 				max: 200,
 				step: 5,
@@ -124,7 +136,7 @@ define([
 				use_breakpoint_property: true,
 				property: 'bottom_padding_num',
 				label: '',
-				default_value: this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding,
+				default_value: this.model.get_breakpoint_property_value('bottom_padding_num') || me.default_padding.bottom,
 				min: 0,
 				max: 200,
 				step: 5,
@@ -183,9 +195,18 @@ define([
 			var column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
 				top_padding_use = this.model.get_breakpoint_property_value('top_padding_use', true),
 				bottom_padding_use = this.model.get_breakpoint_property_value('bottom_padding_use', true),
-				padding_top_val = top_padding_use ? this.model.get_breakpoint_property_value('top_padding_num', true) : column_padding,
-				padding_bottom_val = bottom_padding_use ? this.model.get_breakpoint_property_value('bottom_padding_num', true) : column_padding
+				padding_top_val, padding_bottom_val
 			;
+
+			if(this.default_padding.top === false) {
+				this.default_padding.top = column_padding;
+			}
+			if(this.default_padding.bottom === false){
+				this.default_padding.bottom = column_padding;
+			}
+			padding_top_val = top_padding_use ? this.model.get_breakpoint_property_value('top_padding_num', true) : this.default_padding.top;
+			padding_bottom_val = bottom_padding_use ? this.model.get_breakpoint_property_value('bottom_padding_num', true) : this.default_padding.bottom;
+
 
 			if(typeof this.paddingTop !== 'undefined') {
 				this.paddingTop.get_field().val(padding_top_val);
