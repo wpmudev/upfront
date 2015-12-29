@@ -43,7 +43,13 @@ define([
 										name: 'bg_color',
 										label: l10n.settings.content_area_bg
 									},
-								]
+								],
+								selectorsForCssCheck: {
+									bg_color: {
+										selector: '.plain-text-container',
+										cssProperty: 'background-color'
+									}
+								}
 							}
 						},
 						{
@@ -56,6 +62,9 @@ define([
 									width: 'border_width',
 									type: 'border_style',
 									color: 'border_color',
+								},
+								selectorsForCssCheck: {
+									all: '.plain-text-container'
 								}
 							}
 						},
@@ -92,6 +101,11 @@ define([
 									{ label: l10n.bq, value: "blockquote" },
 									{ label: l10n.bqalt, value: "blockquote-alternative" },
 								],
+								selectorsForCssCheck: {
+									all: {
+										selector: '.plain-text-container'
+									}
+								}
 							}
 						},
 					]
