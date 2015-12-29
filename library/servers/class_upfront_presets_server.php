@@ -189,6 +189,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 	public function get_presets_styles() {
 		$presets = $this->get_presets();
+		$presets = $this->_expand_passive_relative_url($presets);
 
 		if (empty($presets)) {
 			return '';
