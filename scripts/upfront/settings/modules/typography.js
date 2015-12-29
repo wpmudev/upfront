@@ -250,17 +250,23 @@ define([
 		},
 
 		isCssOverridden: function() {
-			var view = this.options.elementView;
-			var selectors = this.options.selectorsForCssCheck;
+			var view = this.options.elementView,
+				selectors = this.options.selectorsForCssCheck,
+				expected,
+				actual
+			;
 			if (typeof view === 'undefined' || typeof selectors === 'undefined') return false;
 
 			// Don't check if border is not used
 			if (this.options.toggle && !this.model.get(this.options.fields.use)) return false;
 
 			// Check overrides
-			if (this.model.get(this.currentElement + this.options.fields.typeface) !==
-				 view.$el.find(selectors.all.selector).css('font-family')) {
-				return true;
+			expected = this.model.get(this.currentElement + this.options.fields.typeface);
+			actual = view.$el.find(selectors.all.selector).css('font-family');
+			if (!!expected && !(expected === actual || '"' + expected + '"' === actual || "'" + expected + "'" === actual)) {
+				// Okay, so they differ. Is the actual style inherited? (could be, let's check)
+				var parent = view.$el.find(selectors.all.selector).parent().css('font-family');
+				if (parent !== actual) return true; // Nope. Let's bail out now
 			}
 			// Font style is very complicated to check, skipping for now
 			// var fontstyle = this.model.get(this.currentElement + this.options.fields.fontstyle);
@@ -268,24 +274,25 @@ define([
 				// fontstyle !== view.$el.find(selectors.all.selector).css('font-style')) {
 				// return true;
 			// }
-			if (parseInt(this.model.get(this.currentElement + this.options.fields.size), 10) !==
-				 parseInt(view.$el.find(selectors.all.selector).css('font-size'), 10)) {
+			
+			expected = parseInt(this.model.get(this.currentElement + this.options.fields.size), 10);
+			actual = parseInt(view.$el.find(selectors.all.selector).css('font-size'), 10);
+			if (!!expected && expected !== actual) {
 				return true;
 			}
-			var lineHeight = this.model.get(this.currentElement + this.options.fields.line_height);
-			if (typeof lineHeight !== 'undefined' && lineHeight !== '' &&
-				parseInt(lineHeight, 10) !== parseInt(view.$el.find(selectors.all.selector).css('line-height'), 10)) {
+			expected = parseInt(this.model.get(this.currentElement + this.options.fields.line_height), 10);
+			actual = parseInt(view.$el.find(selectors.all.selector).css('line-height'), 10);
+			if (!!expected && expected !== actual) {
 				return true;
 			}
 
-			var convertedColor = hexToRgb(
+			expected = hexToRgb(
 				Upfront.Util.colors.to_color_value(
 					this.model.get(this.currentElement + this.options.fields.color)
 				)
 			);
-
-			if (convertedColor !==
-				 view.$el.find(selectors.all.selector).css('color')) {
+			actual = view.$el.find(selectors.all.selector).css('color');
+			if (!!expected && expected !== actual) {
 				return true;
 			}
 
