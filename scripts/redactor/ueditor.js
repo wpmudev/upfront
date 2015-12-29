@@ -1225,16 +1225,18 @@ Ueditor.prototype = {
 	getValue: function(is_simple_element){
 		var html = this.redactor.$element.html();
 		if(this.insertManager)
-			html = this.insertManager.insertExport(html, is_simple_element);
+			html = this.insertManager.insertExport(html, is_simple_element),
+            $html =  $("<div>").html( html );
 
+        $html.find(".redactor-selection-marker").remove();
         /**
          * Make sure the wrapping .plain-text-container is not being returned as html
          */
         return $.trim(
             // Conditionally nuke the wrapper - only if we actually have it
             $(html).find(".plain-text-container").length
-                ? $("<div>").html(html).find(".plain-text-container").last().html()
-                : html
+                ? $html.find(".plain-text-container").last().html()
+                : $html.html()
         );
 	},
 	getInsertsData: function(){
