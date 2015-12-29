@@ -55,7 +55,10 @@ class Upfront_PlainTxtView extends Upfront_Object {
 			$content = wptexturize($content);
 			$content = convert_smilies($content);
 			$content = convert_chars($content);
-			$content = wpautop($content);
+			/**
+			 * removing it for now to prevent it from adding excessive p tags since the markup and content is already made and confirmed in the text el via ueditor
+			 */
+//			$content = wpautop($content);
 			$content = shortcode_unautop($content);
 		}
 
