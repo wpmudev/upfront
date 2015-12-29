@@ -114,7 +114,7 @@ jQuery(document).ready(function($) {
 		$(".upfront-navigation").each(function () {
 			var $me = $(this);
 
-			if ($me.data('style') == 'triggered' || $me.data('style') === 'burger') {
+			if ($me.data('style') === 'burger' || $me.data('style') === 'burger') {
 				$toggler = $me.children('.responsive_nav_toggler');
 				$toggler.attr('id', $me.attr('id')+'-toggler');
 				if (_cache[$toggler.attr("id")]) _cache[$toggler.attr("id")].destroy();
@@ -126,7 +126,7 @@ jQuery(document).ready(function($) {
 		$(".upfront-navigation.upfront-navigation-float").each(function () {
 			var $me = $(this);
 
-			if($me.data('style') == 'burger' || $me.data('style') == 'triggered') {
+			if($me.data('style') === 'burger' || $me.data('style') == 'burger') {
 				$toggler = $me.children('.responsive_nav_toggler');
 				$toggler.attr('id', $me.attr('id')+'-toggler');
 				//if (_cache[$toggler.attr("id")]) _cache[$toggler.attr("id")].destroy();
@@ -148,7 +148,7 @@ jQuery(document).ready(function($) {
 			$(this).closest('.upfront-output-region-container, .upfront-output-region-sub-container').each(function() {
 				$(this).addClass('upfront-region-container-has-nav');
 			});
-			
+
 			//Make sure parent wrapper have higher z-index
 			$(this).closest('.upfront-output-module').css({'z-index': '9999', position: 'relative'})
 		}
@@ -285,8 +285,19 @@ jQuery(document).ready(function($) {
 		}
 	}
 
+	var upfrontIsLoaded = function() {
+		// Check if cssEditor is defined, than we have Upfront loaded
+		if (typeof Upfront !== 'undefined' && typeof Upfront.Application !== 'undefined' && typeof Upfront.Application.cssEditor !== 'undefined') {
+			return true;
+		}
+
+		return false;
+	};
+
 
 	function roll_responsive_nav(selector, bpwidth) {
+		if (upfrontIsLoaded()) return;
+
 		var elements = (typeof(selector) == 'object')?selector:$(selector);
 		elements.each(function () {
 
@@ -303,8 +314,9 @@ jQuery(document).ready(function($) {
 
 				preset = breakpoints.preset[currentKey];
 
-				if (preset.menu_style == 'triggered') {
+				if (preset.menu_style == 'burger') {
 					$(this).attr('data-style', 'burger');
+					$(this).attr('data-stylebk', 'burger');
 					$(this).attr('data-alignment', ( preset.menu_alignment ? preset.menu_alignment : $(this).data('alignmentbk') ));
 					$(this).attr('data-burger_alignment', preset.burger_alignment);
 					$(this).attr('data-burger_over', preset.burger_over);
@@ -330,7 +342,7 @@ jQuery(document).ready(function($) {
 					//Z-index the container module to always be on top, in the layout edit mode
 					$(this).closest('div.upfront-newnavigation_module').css('z-index', 3);
 
-					
+
 					$(this).find('ul.menu').hide();
 				} else {
 					$(this).attr('data-style', ( preset.menu_style ? preset.menu_style : $(this).data('stylebk') ));
@@ -356,7 +368,7 @@ jQuery(document).ready(function($) {
 					//remove the z-index from the container module
 					$(this).closest('div.upfront-newnavigation_module').css('z-index', '');
 				}
-				
+
 				$(this).find('ul.menu').siblings('.burger_overlay').remove();
 
 				if(preset.is_floating && preset.is_floating == 'yes')
@@ -367,7 +379,7 @@ jQuery(document).ready(function($) {
 				// Leave old code for backward compatibility
 				var bparray = [];
 				for (key in breakpoints) {
-					bparray.push(breakpoints[key]);
+					if (key !== 'preset') bparray.push(breakpoints[key]);
 				}
 
 				bparray.sort(function(a, b) {
@@ -383,7 +395,7 @@ jQuery(document).ready(function($) {
 						if(bparray[key]['burger_menu'] == 'yes') {
 
 							$(this).attr('data-style', 'burger');
-							$(this).attr('data-aliment', ( bparray[key]['menu_alignment'] ? bparray[key]['menu_alignment'] : $(this).data('alimentbk') ));
+							$(this).attr('data-alignment', ( bparray[key]['menu_alignment'] ? bparray[key]['menu_alignment'] : $(this).data('alignmentbk') ));
 							$(this).attr('data-burger_alignment', bparray[key]['burger_alignment']);
 							$(this).attr('data-burger_over', bparray[key]['burger_over']);
 
@@ -417,7 +429,7 @@ jQuery(document).ready(function($) {
 						}
 						else {
 							$(this).attr('data-style', ( bparray[key]['menu_style'] ? bparray[key]['menu_style'] : $(this).data('stylebk') ));
-							$(this).attr('data-aliment', ( bparray[key]['menu_alignment'] ? bparray[key]['menu_alignment'] : $(this).data('alimentbk') ));
+							$(this).attr('data-alignment', ( bparray[key]['menu_alignment'] ? bparray[key]['menu_alignment'] : $(this).data('alignmentbk') ));
 							$(this).removeAttr('data-burger_alignment','');
 							$(this).removeAttr('data-burger_over', '');
 
@@ -455,7 +467,7 @@ jQuery(document).ready(function($) {
 		$('.responsive_nav_toggler').css({position: '', left: '', top: ''});
 		$('ul.menu').css('padding-top', '');
 		$('.burger_nav_close').parent('li.wrap_burger_nav_close').remove();
-		
+
 		roll_responsive_nav(".upfront-output-unewnavigation > .upfront-navigation");
 		floatInit();
 	});

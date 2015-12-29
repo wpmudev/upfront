@@ -149,7 +149,7 @@ define([
 					make sure that it saves burger_alignment as well
 				**/
 
-				if (breakpointsData[currentBreakpoint.id] && (breakpointsData[currentBreakpoint.id].menu_style === 'burger' || breakpointsData[currentBreakpoint.id].menu_style === 'triggered') && !breakpointsData[currentBreakpoint.id].burger_alignment ) {
+				if (breakpointsData[currentBreakpoint.id] && breakpointsData[currentBreakpoint.id].menu_style === 'burger' && !breakpointsData[currentBreakpoint.id].burger_alignment ) {
 					breakpointsData[currentBreakpoint.id].burger_alignment = 'left';
 					changed = true;
 				}

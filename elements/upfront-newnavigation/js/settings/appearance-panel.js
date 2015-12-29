@@ -183,19 +183,19 @@ define([
 					// Convert "burger_menu" and "menu_style" properties to "menu_style" property
 					if (props.breakpoint.desktop) {
 						if (props.breakpoint.desktop.burger_menu === 'yes') {
-							props.breakpoint.desktop.menu_style = 'triggered';
+							props.breakpoint.desktop.menu_style = 'burger';
 						}
 						delete props.breakpoint.desktop.burger_menu;
 					}
 					if (props.breakpoint.tablet) {
 						if (props.breakpoint.tablet.burger_menu === 'yes') {
-							props.breakpoint.tablet.menu_style = 'triggered';
+							props.breakpoint.tablet.menu_style = 'burger';
 						}
 						delete props.breakpoint.tablet.burger_menu;
 					}
 					if (props.breakpoint.mobile) {
 						if (props.breakpoint.mobile.burger_menu === 'yes') {
-							props.breakpoint.mobile.menu_style = 'triggered';
+							props.breakpoint.mobile.menu_style = 'burger';
 						}
 						delete props.breakpoint.mobile.burger_menu;
 					}
@@ -209,13 +209,8 @@ define([
 
 				// Setup breakpoint property for preset
 				newPreset.set({'breakpoint': props.breakpoint});
-			},
-
-			migrateElementStyle: function(style) {
-				var migratedStyle = style.replace(/burger'/g, 'triggered\'');
-				migratedStyle = migratedStyle.replace(/burger"/g, 'triggered"');
-				return migratedStyle;
 			}
+
 		};
 
 		// Generate presets styles to page

@@ -10,7 +10,7 @@ define(function() {
 		initialize: function(options) {
 
 			this.options = options || {};
-			
+
 			var me = this,
 				state = this.options.state;
 
@@ -24,11 +24,11 @@ define(function() {
 					values: [
 						{ label: l10n.mnu.horiz, value: 'horizontal' },
 						{ label: l10n.mnu.vert, value: 'vertical' },
-						{ label: l10n.mnu.triggered, value: 'triggered' }, // this is actually 'burger' style
+						{ label: l10n.mnu.triggered, value: 'burger' }
 					],
 					change: function(value) {
 						me.model.set('menu_style', value);
-						if (value !== 'triggered') {
+						if (value !== 'burger') {
 							me.fields._wrapped[3].$el.hide();
 							me.fields._wrapped[3].set_value('over');
 						} else if (me.model.get('burger_alignment') === 'top') {
@@ -36,16 +36,16 @@ define(function() {
 						}
 					},
 					show: function(value, $el) {
-						if(value === "triggered") {
-							$el.parent().find('.burger_alingment').show();
+						if(value === "burger") {
+							$el.parent().find('.burger_alignment').show();
 						} else {
-							$el.parent().find('.burger_alingment').hide();
+							$el.parent().find('.burger_alignment').hide();
 						}
 					}
 				}),
 				new Upfront.Views.Editor.Field.Select({
 					model: this.model,
-					className: state + '-select select-module menu_alingment',
+					className: state + '-select select-module menu_alignment',
 					name: 'menu_alignment',
 					default_value: this.model.get('menu_alignment'),
 					label: l10n.mnu.alignment,
@@ -60,7 +60,7 @@ define(function() {
 				}),
 				new Upfront.Views.Editor.Field.Select({
 					model: this.model,
-					className: state + '-select select-module burger_alingment',
+					className: state + '-select select-module burger_alignment',
 					name: 'burger_alignment',
 					default_value: this.model.get('burger_alignment'),
 					label: l10n.mnu.show_on_click,
@@ -106,7 +106,7 @@ define(function() {
 					me.fields._wrapped[3].$el.show();
 				}
 				var style = me.model.get('menu_style');
-				if (style !== 'triggered') {
+				if (style !== 'burger') {
 					me.fields._wrapped[3].$el.hide();
 					me.fields._wrapped[3].set_value('over');
 				}

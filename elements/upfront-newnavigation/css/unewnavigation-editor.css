@@ -298,7 +298,7 @@ div.upfront-navigation div[data-style="burger"] i.navigation-add-item {
   display: block !important;
   top: 2px !important;
 }
-div.upfront-navigation div[data-style="burger"] i.delete_menu_item  {
+div.upfront-navigation div[data-style="burger"] i.delete_menu_item {
   right:100px !important
 }
 /*div.upfront-navigation div[data-style="burger"] i.edit_link  {
@@ -474,14 +474,14 @@ div.preset-manager-panel .menustyle_settings_item .menu_style {
 	width: 110px;
 }
 
-div.preset-manager-panel .menustyle_settings_item .menu_alingment {
+div.preset-manager-panel .menustyle_settings_item .menu_alignment {
 	width: 90px;
 	margin-top: -45px;
 	position: relative;
 	left: 125px;
 }
 
-div.preset-manager-panel .menustyle_settings_item  .burger_alingment {
+div.preset-manager-panel .menustyle_settings_item  .burger_alignment {
 	margin-top: 5px;
 	width: 215px;
 }

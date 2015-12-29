@@ -557,10 +557,10 @@ define([
 			//Upfront.Events.on("entity:deactivated", this.deactivate, this);
 			Upfront.Events.on("command:undo", this.render, this);
 			Upfront.Events.on("command:redo", this.render, this);
-			
+
 			// Re-activate on stored state
 			Upfront.Events.on("upfront:undo:state_stored", this.render, this);
-			
+
 			this.deactivate();
 		},
 		render: function () {
@@ -573,7 +573,7 @@ define([
 		activate: function () {
 			this.$el.css("opacity", 1);
 		},
-		deactivate: function () {	
+		deactivate: function () {
 			this.$el.css("opacity", 0.5);
 		},
 		on_click: function () {
@@ -1993,7 +1993,7 @@ define([
 				if ('blockquote' === element) {
 					selector = '.upfront-object-content blockquote, .upfront-object-content blockquote p';
 				} else if ('a' === element) {
-					selector = '.upfront-object-content:not(.upfront-output-button):not(.upfront-output-ubutton) a, .upfront-object-content:not(.upfront-output-button):not(.upfront-output-ubutton) a:link, .upfront-object-content:not(.upfront-output-button):not(.upfront-output-ubutton) a:visited';
+					selector = '.upfront-object-content:not(.upfront-output-button):not(.upfront-output-ubutton):not(.upfront-output-unewnavigation) a, .upfront-object-content:not(.upfront-output-button):not(.upfront-output-ubutton):not(.upfront-output-unewnavigation) a:link, .upfront-object-content:not(.upfront-output-button):not(.upfront-output-ubutton):not(.upfront-output-unewnavigation) a:visited';
 				} else {
 					selector = '.upfront-object-content ' + element  + ', .upfront-ui ' + element + '.tag-list-tag';
 				}
@@ -2032,7 +2032,7 @@ define([
 				if ( $('#' + styleId).length ) {
 					$('#' + styleId).html(cssText);
 				} else {
-					$('body').append('<style id="' + styleId + '">' + cssText + '</style>');
+					$('body').find('style').first().before('<style id="' + styleId + '">' + cssText + '</style>');
 				}
 			} else {
 				if ( $('head').find('#upfront-default-typography-inline').length ) {
@@ -2303,9 +2303,9 @@ define([
         },
         add_unset_color : function(index){
             this.$('#theme-colors-swatches').append(
-                '<span class="theme_colors_unset_color">' + 
-                    '<span class="theme-colors-color-name">ufc' + index + '</span>' + 
-                    '<span class="theme-colors-color-no-color"><span></span></span>' + 
+                '<span class="theme_colors_unset_color">' +
+                    '<span class="theme-colors-color-name">ufc' + index + '</span>' +
+                    '<span class="theme-colors-color-no-color"><span></span></span>' +
                 '</span>'
             );
         },
@@ -2348,7 +2348,7 @@ define([
                     picker.$(".sp-preview").addClass( 'uf-unset-color' );
                 }
                 else {
-                    picker.$(".sp-preview").removeClass( 'uf-unset-color' );            
+                    picker.$(".sp-preview").removeClass( 'uf-unset-color' );
                 }
                 $this.html( picker.$el );
                 $this.prepend('<span class="theme-colors-color-name">ufc' + index + '</span>')
@@ -8774,7 +8774,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				css = {},
 				height, parent_height,
 				is_lightbox = context && context.for_view && context.for_view.$el.hasClass('upfront-region-side-lightbox');
-				
+
 
 			this._deferred = $.Deferred();
 			this.$el.show();
@@ -8800,11 +8800,11 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				// if it is a lightbox, just add manual margin from top, rest is static.
 				if(is_lightbox)
 					this.top = 22;
-				
+
 				css.top = this.top;
 				css.bottom = 'auto';
 			}
-			
+
 			if ( this.left >= 0 ) {
 				css.left = this.left;
 				css.right = 'auto';
