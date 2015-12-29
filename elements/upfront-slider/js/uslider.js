@@ -1262,8 +1262,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		}
 
 		var controls = _([
-			this.createControl('next', l10n.css.next_label, 'nextSlide'),
-			this.createControl('prev', l10n.css.prev_label, 'prevSlide'),
+			//this.createControl('next', l10n.css.next_label, 'nextSlide'),
+			//this.createControl('prev', l10n.css.prev_label, 'prevSlide'),
 			this.createControl('add', l10n.add_slide, 'openImageSelector'),
 			this.createControl('crop', l10n.edit_img, 'imageEditMask'),
 			this.createLinkControl(),
