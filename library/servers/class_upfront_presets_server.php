@@ -109,6 +109,26 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 	}
 
 	/**
+	 * Expand the URLs in preset style
+	 *
+	 * @param array $presets Presets to expand
+	 *
+	 * @return array Processed presets
+	 */
+	private function _expand_passive_relative_url ($presets) {
+		if (empty($presets) || !is_array($presets)) return $presets;
+		$contextless_uri = preg_replace('/^https?:/', '', get_stylesheet_directory_uri());
+		foreach ($presets as $idx => $preset) {
+			if (empty($preset['preset_style'])) continue;
+
+			$preset['preset_style'] = preg_replace('/' . preg_quote(Upfront_ChildTheme::THEME_BASE_URL_MACRO, '/') . '/', $contextless_uri, $preset['preset_style']);
+			$presets[$idx] = $preset;
+		}
+
+		return $presets;
+	}
+
+	/**
 	 * @return array saved presets
 	 */
 	public function get_presets() {
@@ -124,6 +144,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		);
 
 		$presets = $this->replace_new_lines($presets);
+		$presets = $this->_expand_passive_relative_url($presets);
 
 		// Fail-safe
 		if (is_array($presets) === false) {
@@ -311,6 +332,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		$updatedPresets = $this->replace_new_lines(
 			$this->migrate_presets($updatedPresets)
 		);
+		$updatedPresets = $this->_expand_passive_relative_url($updatedPresets);
 
 		$updatedPresets = json_encode($updatedPresets);
 
