@@ -142,6 +142,7 @@ define([
 		},
 
 		enableSorting: function(event) {
+			if (this.sortingInProggres === true) return;
 			// highlight all sortables
 			var $items = this.$el.find('.menu-structure-module-item'),
 				hoveredItem = $(event.target).parent(),
