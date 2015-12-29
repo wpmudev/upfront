@@ -12,7 +12,7 @@ define([
 
 	var DEFAULTS = {
 		OPTIMUM_MAP_HEIGHT: 300,
-		center: [10.722250, 106.730762],
+		center: [-37.8180, 144.9760],
 		zoom: 10,
 		style: 'ROADMAP',
 		use_custom_map_code: false,
