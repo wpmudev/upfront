@@ -5516,7 +5516,8 @@ var Field_ToggleableText = Field_Text.extend({
 			if (this.hide_common_fields === false) {
 				this.$el.find('.upfront-settings_panel_scroll').after('<div class="upfront-settings-common_panel"></div>');
 				$common_panel = this.$el.find(".upfront-settings-common_panel");
-				if (typeof this.cssEditor == 'undefined' || this.cssEditor) {
+				// Let's disable CSS settings panel as this is not used anymore
+				/*if (typeof this.cssEditor == 'undefined' || this.cssEditor) {
 					// Adding CSS item
 					var css_settings = new _Settings_CSS({
 						model: this.model,
@@ -5525,12 +5526,15 @@ var Field_ToggleableText = Field_Text.extend({
 					css_settings.panel = me;
 					css_settings.render();
 					$common_panel.append(css_settings.el);
-				}
+				}*/
 				// Adding anchor trigger
 				//todo should add this check again// if (this.options.anchor && this.options.anchor.is_target) {
 
 				if (this.hide_common_anchors === false) {
-					var anchor_settings = new _Settings_AnchorSetting({model: this.model});
+					var anchor_settings = new _Settings_AnchorSetting({
+						model: this.model,
+						title: l10n.anchor_settings
+					});
 					anchor_settings.panel = me;
 					anchor_settings.render();
 					$common_panel.append(anchor_settings.el);
@@ -5578,13 +5582,13 @@ var Field_ToggleableText = Field_Text.extend({
 			var me = this;
 			var panel = this.$el.find('.upfront-settings-common_panel');
 			panel.toggleClass('open');
-			if(panel.is('.open')) {
+			/*if(panel.is('.open')) {
 				this.$el.find('.upfront-settings-common_panel .upfront-settings-item-title span').first().html(l10n.element_css_styles);
 			} else {
 				this.$el.find('.upfront-settings-common_panel .upfront-settings-item-title span').first().html(
 					(false === me.hide_common_anchors ? l10n.css_and_anchor : l10n.css_styles)
 				);
-			}
+			}*/
 		},
 
 		on_toggle_padding: function () {
@@ -8159,7 +8163,7 @@ var GeneralCSSEditor = Backbone.View.extend({
 
 var _Settings_AnchorSetting = SettingsItem.extend({
 	className: "upfront-settings-item-anchor",
-	group: false,
+	//group: false,
 	initialize: function (opts) {
 		this.options = opts;
 		SettingsItem.prototype.initialize.call(this, this.options);
