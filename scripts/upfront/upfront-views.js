@@ -2327,6 +2327,7 @@ define([
 				Upfront.Events.trigger('entity:module_group:update_position', this, this.model);
 			},
 			normalize_child_modules: function (prev_col) {
+				if ( !this._modules_view ) return;
 				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					ed = Upfront.Behaviors.GridEditor,
 					col = ( !breakpoint || breakpoint.default ) ? ed.get_class_num(this.$el, ed.grid.class) : this.$el.data('breakpoint_col')
@@ -4321,6 +4322,7 @@ define([
 				this.refresh_background();
 			},
 			normalize_child_modules: function (prev_col) {
+				if ( !this._modules_view ) return;
 				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					ed = Upfront.Behaviors.GridEditor,
 					col = ( !breakpoint || breakpoint.default ) ? ed.get_class_num(this.$el, ed.grid.class) : this.$el.data('breakpoint_col')
@@ -5258,16 +5260,7 @@ define([
 				view.unbind();
 				view.remove();
 				if ( container_view){
-					if ( container_view.sub_model.length == 0 ){
-						delete this.container_views[container_view.model.cid];
-						if ( container_view.region_fixed_panels ){
-							container_view.region_fixed_panels.unbind();
-							container_view.region_fixed_panels.remove();
-						}
-						container_view.unbind();
-						container_view.remove();
-					}
-					else {
+					if ( container_view.sub_model.length > 0 ) {
 						var main_view = Upfront.data.region_views[container_view.model.cid];
 						_.each(container_view.sub_model, function(sub, i){
 							if ( sub == model ){
@@ -5279,6 +5272,15 @@ define([
 							}
 						});
 						if ( main_view ) main_view.update();
+					}
+					if ( container_view.sub_model.length == 0 ){
+						delete this.container_views[container_view.model.cid];
+						if ( container_view.region_fixed_panels ){
+							container_view.region_fixed_panels.unbind();
+							container_view.region_fixed_panels.remove();
+						}
+						container_view.unbind();
+						container_view.remove();
 					}
 				}
 				if ( sub_container_view ){
@@ -5615,6 +5617,7 @@ define([
 					this.local_view.render();
 				}
 				else {
+					this.$layout.append(this.local_view.el);
 					this.local_view.render();
 					this.local_view.delegateEvents();
 				}
