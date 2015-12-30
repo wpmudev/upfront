@@ -284,6 +284,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		panel.render();
 		_.delay( function(){
 			me.controls.$el.html( panel.$el )
+			me.controls.$el.css("width", "auto");
 		}, 400);
 	},
 	hideSliderNavigation: function(){
