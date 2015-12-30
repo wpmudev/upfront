@@ -159,25 +159,57 @@ define([
 		},
 
 		isCssOverridden: function() {
-			var view = this.options.elementView;
-			var selectors = this.options.selectorsForCssCheck;
+			var view = this.options.elementView,
+				selectors = this.options.selectorsForCssCheck,
+				expected,
+				actual,
+				parent,
+				no_width,
+				no_style
+			;
 			if (typeof view === 'undefined' || typeof selectors === 'undefined') return false;
 
 			// Don't check if border is not used
 			if (this.options.toggle && !this.model.get(this.options.fields.use)) return false;
 
 			// Check overrides
-			if (parseInt(this.model.get(this.currentElement + this.options.fields.width), 10) !==
-				parseInt(view.$el.find(selectors.all).css('border-top-width'), 10)) {
-				return true;
-			}
-			if (this.model.get(this.currentElement + this.options.fields.type) !==
-				view.$el.find(selectors.all).css('border-top-style')) {
-					return true;
+			expected = parseInt(this.model.get(this.currentElement + this.options.fields.width), 10);
+			actual = parseInt(view.$el.find(selectors.all).css('border-top-width'), 10);
+			if (expected !== actual) {
+				if (0 === actual) {
+					no_width = !!expected;
+					// If the expected and actual values differ and actual is not set, check actual's parent
+					// to estimate if actual has been explicitly declared to not have borders
+					parent = parseInt(view.$el.find(selectors.all).parent().css('border-top-width'), 10);
+					if (parent !== actual && parent !== expected) return true; // Bad
+				} else return true; // We have actual borders that's different from expected
 			}
 
-			if (this.model.get(this.currentElement + this.options.fields.color) !==
-			view.$el.find(selectors.all).css('border-top-color')) {
+			expected = this.model.get(this.currentElement + this.options.fields.type);
+			actual = view.$el.find(selectors.all).css('border-top-style');
+			if (expected !== actual) {
+				if (!actual || "none" === actual) {
+					no_style = !!expected;
+					// If the expected and actual values differ and actual is not set, check actual's parent
+					// to estimate if actual has been explicitly declared to not have borders
+					parent = view.$el.find(selectors.all).parent().css('border-top-style');
+					if (parent !== actual && parent !== expected) return true;
+				} else return true; // We have actual borders that's different from expected
+			}
+
+			// No width or no style set in either expected or actual
+			// We can just leave now
+			if (no_width || no_style) {
+				return false;
+			}
+
+			expected = this.model.get(this.currentElement + this.options.fields.color);
+			actual = view.$el.find(selectors.all).css('border-top-color');
+			if (expected !== actual && !(no_width || no_style)) {
+				// If the expected and actual values differ and actual is not set, check actual's parent
+				// to estimate if actual has been explicitly declared to not have borders
+				parent = view.$el.find(selectors.all).parent().css('border-top-color');
+				if (parent !== actual) return true; // Bad
 				return true;
 			}
 

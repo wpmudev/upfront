@@ -43,19 +43,20 @@ define([
 										name: 'bg_color',
 										label: l10n.settings.content_area_bg
 									},
-								],
+								]/*,
 								selectorsForCssCheck: {
 									bg_color: {
-										selector: '.plain-text-container',
+										selector: '.upfront-plain_txt',
 										cssProperty: 'background-color'
 									}
-								}
+								}*/
 							}
 						},
 						{
 							moduleType: 'Border',
 							options: {
 								state: 'static',
+								toggle: true,
 								title: '',
 								fields: {
 									use: 'useborder',
@@ -64,7 +65,7 @@ define([
 									color: 'border_color',
 								},
 								selectorsForCssCheck: {
-									all: '.plain-text-container'
+									all: '.upfront-plain_txt'
 								}
 							}
 						},

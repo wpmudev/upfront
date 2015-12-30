@@ -118,15 +118,20 @@ define([
 			_.each(this.options.abccolors, function(color) {
 				// Some colors are for pseudo elements which can't be accessed with JavaScript, allow module definitiions
 				// to skip check for those
-				if (selectors[color.name].skipCheck === true) return;
-
 				var convertedColor = hexToRgb(
 					Upfront.Util.colors.to_color_value(
 						this.model.get(color.name)
 					)
 				);
+
+				// So apparently we have RGBA format in the model that's named RGB :/
+				// How the hell this happens???
+				if (convertedColor.match(/rgb\((\d+,\s?){3}\s?\d+\)/)) {
+					convertedColor = convertedColor.replace(/^rgb/, 'rgba');
+				}
+
 				var elementColor = view.$el.find(selectors[color.name].selector).css(selectors[color.name].cssProperty);
-				if (convertedColor !== elementColor) {
+				if (elementColor && convertedColor !== elementColor) {
 					isOverridden = true;
 				}
 			}, this);
