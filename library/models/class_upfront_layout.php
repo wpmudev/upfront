@@ -91,6 +91,9 @@ class Upfront_Layout extends Upfront_JsonModel {
 		$data = json_decode( get_option($id, json_encode(array())), true );
 
 		if ( ! empty($data) ) {
+			// Make sure default theme version is cleared if we load from db
+			self::$_layout_default_version = false;
+
 			$regions = array();
 			$regions_added = array();
 			foreach ( $data['regions'] as $i => $region ) {
