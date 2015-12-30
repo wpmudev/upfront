@@ -1488,7 +1488,7 @@ RedactorPlugins.upfrontFormatting = function() {
                 var tag = $(this.redactor.selection.getBlock()).length ? $(this.redactor.selection.getBlock())[0].tagName : false;
                 if (tag) {
                     tag = tag.toLowerCase();
-                    this.$(".tags-list li *").removeClass("dropact");
+                    this.$("[data-tag]").removeClass("dropact");
                     this.$("[data-tag='" + tag + "']").addClass("dropact");
                 }
                 this.redactor.selection.save();
