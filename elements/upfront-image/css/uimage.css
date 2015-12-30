@@ -1224,6 +1224,11 @@ div.uimage-controls i.upfront-icon:before,
 .upfront-image-container + .wp-caption * {
 	-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
 }
+.wp-caption p:last-child,
+.upfront-object-content p:last-child{
+	margin-bottom: 0;
+	padding-bottom: 0;
+}
 .upfront-image-container {
 	overflow: hidden;
 }
