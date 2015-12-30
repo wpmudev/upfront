@@ -107,6 +107,10 @@ define([
 				if ( type != 'featured' && me.$el.children('.feature_image_selector').length > 0 ) {
 					me.$el.children('.feature_image_selector').remove();
 				}
+				// Destroy parallax first if exists
+				if ( $overlay.data('uparallax') ) {
+					$overlay.uparallax('destroy');
+				}
 				if ( !type || type == 'color') {
 					this.update_background_color();
 					if ( $overlay.length ) {
@@ -173,10 +177,6 @@ define([
 				if ( data.image ){
 					$type.css('background-image', "url('" + data.image + "')");
 					// If parallax, then run parallax first so it applies correct background size
-					// Destroy old instance first if exists
-					if ( $overlay.data('uparallax') ) {
-						$overlay.uparallax('destroy');
-					}
 					if ( style == 'parallax' ) {
 						$overlay.uparallax({
 							element: $type,

@@ -383,6 +383,7 @@
 			requestAnimationFrame($.proxy(this.draw, this));
 		},
 		draw: function (time) {
+			if ( !(this.id in Upfront_Parallax.instances) ) return;
 			var offsetTop = this.cache.offsetTop,
 				offsetBottom = this.cache.offsetBottom,
 				height = this.cache.height,
