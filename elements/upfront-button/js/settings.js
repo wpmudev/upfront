@@ -85,6 +85,12 @@ define([
 										label: l10n.settings.button_bg_label
 									},
 								],
+								selectorsForCssCheck: {
+									'bgcolor': {
+										selector: '.upfront_cta',
+										cssProperty: 'background-color'
+									}
+								},
 								fields: {
 									use: 'usebgcolor'
 								}
@@ -103,6 +109,11 @@ define([
 									size: 'fontsize',
 									line_height: 'lineheight',
 									color: 'color',
+								},
+								selectorsForCssCheck: {
+									'all': {
+										selector: '.upfront_cta'
+									}
 								}
 							}
 						},
@@ -120,6 +131,11 @@ define([
 									radius2: 'borderradius2',
 									radius3: 'borderradius3',
 									radius4: 'borderradius4'
+								},
+								selectorsForCssCheck: {
+									'all': {
+										selector: '.upfront_cta'
+									}
 								}
 							}
 						},
@@ -132,6 +148,9 @@ define([
 									width: 'borderwidth',
 									type: 'bordertype',
 									color: 'bordercolor',
+								},
+								selectorsForCssCheck: {
+									all: '.upfront_cta'
 								}
 							}
 						}
@@ -154,6 +173,12 @@ define([
 								],
 								fields: {
 									use: 'hov_usebgcolor'
+								},
+								selectorsForCssCheck: {
+									'hov_usebgcolor': {
+										selector: '.live-preview-hover .upfront_cta',
+										cssProperty: 'background-color'
+									}
 								}
 							}
 						},
@@ -173,6 +198,11 @@ define([
 									line_height: 'hov_lineheight',
 									color: 'hov_color',
 									use: 'hov_usetypography'
+								},
+								selectorsForCssCheck: {
+									'all': {
+										selector: '.live-preview-hover .upfront_cta'
+									}
 								}
 							}
 						},
@@ -191,6 +221,11 @@ define([
 									radius2: 'hov_borderradius2',
 									radius3: 'hov_borderradius3',
 									radius4: 'hov_borderradius4'
+								},
+								selectorsForCssCheck: {
+									'all': {
+										selector: '.live-preview-hover .upfront_cta'
+									}
 								}
 							}
 						},
@@ -204,6 +239,9 @@ define([
 									width: 'hov_borderwidth',
 									type: 'hov_bordertype',
 									color: 'hov_bordercolor',
+								},
+								selectorsForCssCheck: {
+									all: '.live-preview-hover .upfront_cta'
 								}
 							}
 						},
@@ -239,6 +277,12 @@ define([
 								],
 								fields: {
 									use: 'focus_usebgcolor'
+								},
+								selectorsForCssCheck: {
+									'focus_bgcolor': {
+										selector: '.live-preview-focus .upfront_cta',
+										cssProperty: 'background-color'
+									}
 								}
 							}
 						},
@@ -258,6 +302,11 @@ define([
 									line_height: 'focus_lineheight',
 									color: 'focus_color',
 									use: 'focus_usetypography'
+								},
+								selectorsForCssCheck: {
+									'all': {
+										selector: '.live-preview-focus .upfront_cta'
+									}
 								}
 							}
 						},
@@ -276,6 +325,11 @@ define([
 									radius2: 'focus_borderradius2',
 									radius3: 'focus_borderradius3',
 									radius4: 'focus_borderradius4'
+								},
+								selectorsForCssCheck: {
+									'all': {
+										selector: '.live-preview-focus .upfront_cta'
+									}
 								}
 							}
 						},
@@ -289,6 +343,9 @@ define([
 									width: 'focus_borderwidth',
 									type: 'focus_bordertype',
 									color: 'focus_bordercolor',
+								},
+								selectorsForCssCheck: {
+									all: '.live-preview-focus .upfront_cta'
 								}
 							}
 						}
