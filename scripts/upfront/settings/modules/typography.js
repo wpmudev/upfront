@@ -253,7 +253,8 @@ define([
 			var view = this.options.elementView,
 				selectors = this.options.selectorsForCssCheck,
 				expected,
-				actual
+				actual,
+				font_size
 			;
 			if (typeof view === 'undefined' || typeof selectors === 'undefined') return false;
 
@@ -277,13 +278,15 @@ define([
 			
 			expected = parseInt(this.model.get(this.currentElement + this.options.fields.size), 10);
 			actual = parseInt(view.$el.find(selectors.all.selector).css('font-size'), 10);
+			font_size = actual;
 			if (!!expected && expected !== actual) {
 				return true;
 			}
 			expected = parseInt(this.model.get(this.currentElement + this.options.fields.line_height), 10);
 			actual = parseInt(view.$el.find(selectors.all.selector).css('line-height'), 10);
 			if (!!expected && expected !== actual) {
-				return true;
+				if (!font_size) return true;
+				if (!!font_size && actual/font_size !== expected) return true; // Line height can be also expressed in pixels by the browser, so let's keep up
 			}
 
 			expected = hexToRgb(
