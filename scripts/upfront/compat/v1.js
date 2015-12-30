@@ -39,7 +39,11 @@ function application_override () {
 				if (e.preventDefault) e.preventDefault();
 				if (e.stopPropagation) e.stopPropagation();
 				
-				$.magnificPopup.close()
+				$.magnificPopup.close();
+				// Shim the start method back in
+				Upfront.Application.start = _start;
+
+				// Don't forget to actually boot :)
 				_start.apply(Upfront.Application);
 				
 				return false;
