@@ -300,6 +300,60 @@ define([
 			s.get_field().val(settings.radius);
 			s.trigger('changed');
 		},
+
+		/**
+		 * Checks if CSS properties within module have been overridden by the
+		 * custom CSS of some sorts.
+		 *
+		 * @return {Boolean}
+		 */
+		isCssOverridden: function () {
+			var view = this.options.elementView,
+				selectors = this.options.selectorsForCssCheck,
+				expected,
+				actual
+			;
+			if (typeof view === 'undefined' || typeof selectors === 'undefined') return false;
+			if (!this.model.get(this.options.fields.use)) return false;
+
+			return this._is_separate_overridden(view, (selectors || {}).all);
+		},
+
+		/**
+		 * Perform separated radius checks
+		 *
+		 * @param {Object} view View object
+		 * @param {Object} selectors Selector to check against
+		 *
+		 * @return {Boolean}
+		 */
+		_is_separate_overridden: function (view, check) {
+			if (!(view || {}).$el || !(check || {}).selector) return false; // wut
+
+			var is_overridden = false,
+				rads = _(['radius1', 'radius2', 'radius3', 'radius4']),
+				radius_map = {
+					radius1: 'border-top-left-radius',
+					radius2: 'border-top-right-radius',
+					radius3: 'border-bottom-right-radius',
+					radius4: 'border-bottom-left-radius'
+				},
+				me = this,
+				overridden = function (field, property) {
+					var expected = parseInt(me.model.get(field), 10),
+						actual = parseInt(view.$el.find(check.selector).css(property), 10)
+					;
+					return expected && actual && expected !== actual;
+				}
+			;
+			rads.each(function (rad) {
+				if (overridden(this.options.fields[rad], radius_map[rad])) is_overridden = true;
+			}, this);
+
+			return is_overridden;
+		},
+
+
 	});
 
 	return RadiusSettingsModule;
