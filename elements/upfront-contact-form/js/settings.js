@@ -249,7 +249,17 @@ define([
 										name: 'static-button-bg',
 										label: l10n.button_bg_label
 									},
-								]
+								],
+								selectorsForCssCheck: {
+									'static-field-bg': {
+										selector: '.upfront-field-container textarea',
+										cssProperty: 'background-color'
+									},
+									'static-button-bg': {
+										selector: '.upfront-field-container.upfront-submit-container .button',
+										cssProperty: 'background-color'
+									}
+								},
 							}
 						},
 						{
@@ -273,6 +283,11 @@ define([
 									{ label: l10n.field_values_label, value: "field-values" },
 									{ label: l10n.button_label, value: "button" },
 								],
+								selectorsForCssCheck: {
+									'all': {
+										selector: '.upfront-field-container label'
+									}
+								}
 							}
 						},
 						{
@@ -287,6 +302,9 @@ define([
 									type: 'static-fields-bordertype',
 									color: 'static-fields-bordercolor',
 								},
+								selectorsForCssCheck: {
+									all: '.upfront-field-container input, .upfront-field-container textarea'
+								}
 							}
 						},
 						{
@@ -301,6 +319,9 @@ define([
 									type: 'static-button-bordertype',
 									color: 'static-button-bordercolor',
 								},
+								selectorsForCssCheck: {
+									all: '.upfront-field-container.upfront-submit-container .button'
+								}
 							}
 						}
 					],
