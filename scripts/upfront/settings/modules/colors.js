@@ -131,11 +131,11 @@ define([
 				}
 
 				var elementColor = view.$el.find(selectors[color.name].selector).css(selectors[color.name].cssProperty);
-				if (elementColor && convertedColor !== elementColor) {
+				if (elementColor && convertedColor.replace(/\s+/g, '') !== elementColor.replace(/\s+/g, '')) {
 					isOverridden = true;
 				}
-			}, this);
 
+			}, this);
 			return isOverridden;
 		},
 
