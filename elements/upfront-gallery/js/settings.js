@@ -52,6 +52,11 @@ define([
 									radius2: 'borderradius2',
 									radius3: 'borderradius3',
 									radius4: 'borderradius4'
+								},
+								selectorsForCssCheck: {
+									'all': {
+										selector: '.ugallery_item_image'
+									}
 								}
 							}
 						},
@@ -70,7 +75,17 @@ define([
 										name: 'caption-bg',
 										label: l10n.panel.caption_bg_label
 									},
-								]
+								],
+								selectorsForCssCheck: {
+									'caption-text': {
+										selector: '.ugallery-thumb-title',
+										cssProperty: 'color'
+									},
+									'caption-bg': {
+										selector: '.ugallery-thumb-title',
+										cssProperty: 'background-color'
+									},
+								}
 							}
 						},
 						{
@@ -92,6 +107,9 @@ define([
 									width: 'borderwidth',
 									type: 'bordertype',
 									color: 'bordercolor',
+								},
+								selectorsForCssCheck: {
+									all: '.ugallery_item_image'
 								}
 							}
 						}

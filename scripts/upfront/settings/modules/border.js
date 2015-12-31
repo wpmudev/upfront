@@ -203,6 +203,9 @@ define([
 				return false;
 			}
 
+// ... oh crap, what about the color approximations, e.g.
+// rgba(0, 0, 0, 0.5) vs rgba(0, 0, 0, 0.498039) ?
+// Yeah... @TODO
 			expected = this.model.get(this.currentElement + this.options.fields.color);
 			actual = view.$el.find(selectors.all).css('border-top-color');
 			if (expected !== actual && !(no_width || no_style)) {
