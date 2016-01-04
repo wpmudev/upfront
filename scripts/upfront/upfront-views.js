@@ -1572,6 +1572,8 @@ define([
 				_Upfront_EditableEntity.prototype.activate.call(this);
 				if ( !this.parent_module_view ) return;
 				this.parent_module_view.$el.find('>.upfront-module').addClass('upfront-module-active');
+				if ( !this.parent_module_view.wrapper_view ) return;
+				this.parent_module_view.wrapper_view.$el.addClass('upfront-wrapper-active');
 			},
 			deactivate: function () {
 				// We don't want to deactivate the element when Settings sidebar is open
@@ -1580,6 +1582,8 @@ define([
 				_Upfront_EditableEntity.prototype.deactivate.call(this);
 				if ( !this.parent_module_view ) return;
 				this.parent_module_view.$el.find('>.upfront-module').removeClass('upfront-module-active');
+				if ( !this.parent_module_view.wrapper_view ) return;
+				this.parent_module_view.wrapper_view.$el.removeClass('upfront-wrapper-active');
 			},
 
 			toggle_region_class: function (classname, add, container) {
@@ -5572,11 +5576,6 @@ define([
 			on_lightbox_show: function () {
 				if ( this.$el.find('> .upfront-module-group').length > 0 ) return; // Don't update for group
 				this.toggle_wrapper_visibility();
-			},
-			on_mouse_up: function (e) {
-				$('.upfront-wrapper-active').not(this.$el).removeClass('upfront-wrapper-active');
-				if ( !this.$el.hasClass('upfront-wrapper-active') )
-					this.$el.addClass('upfront-wrapper-active');
 			},
 			on_remove: function () {
 				this.unbind();

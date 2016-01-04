@@ -539,7 +539,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			}
 
 			//Make sure parent module have high z-index to prevent dropdown under elements
-			me.$el.closest('.upfront-module').css({'z-index': '9999', position: 'relative'});
+			me.$el.closest('.upfront-module').addClass('upfront-module-has-nav');
 
 		}, 300);
 
