@@ -1106,33 +1106,29 @@ jQuery(document).ready(function($){
 
 
 
-/**
- * Swap preset classes per breakpoint
- */
-function propagate_responsive_presets () {
-	var breakpoint = get_breakpoint() || 'desktop';
+	/**
+	 * Swap preset classes per breakpoint
+	 * for each of the object elements
+	 */
+	function propagate_responsive_presets () {
+		var breakpoint = get_breakpoint() || 'desktop';
 
-	if (!breakpoint) return;
+		if (!breakpoint) return;
 
-	$("[data-preset_map]").each(function () {
-		var $me = $(this),
-			rmap = $me.attr("data-preset_map"),
-			map = rmap ? JSON.parse(rmap) : {}
-		;
-		$.each(map, function (bp, preset) {
-			$me.removeClass(preset);
-			if (bp === breakpoint) $me.addClass(preset);
+		$("[data-preset_map]").each(function () {
+			var $me = $(this),
+				rmap = $me.attr("data-preset_map"),
+				map = rmap ? JSON.parse(rmap) : {}
+			;
+			$.each(map, function (bp, preset) {
+				$me.removeClass(preset);
+				if (bp === breakpoint) $me.addClass(preset);
+			});
 		});
-	});
-}
-propagate_responsive_presets();
-var lazypropagate_responsive_presets = throttle(propagate_responsive_presets, 100);
-$(window).on('resize.uf_layout', lazypropagate_responsive_presets);
-
-
-
-
-
+	}
+	propagate_responsive_presets();
+	var lazypropagate_responsive_presets = throttle(propagate_responsive_presets, 100);
+	$(window).on('resize.uf_layout', lazypropagate_responsive_presets);
 
 
 	function remove_all_bound_events () {
