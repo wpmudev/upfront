@@ -70,11 +70,11 @@ var _alpha = "alpha",
 		has_property_value: function (property, value) {
 			return (value == this.get_property_value_by_name(property));
 		},
-		decode_preset: function () {
+		decode_preset: function (breakpoint_id) {
+			breakpoint_id = breakpoint_id || (Upfront.Views.breakpoints_storage.get_breakpoints().get_active() || {}).id;
 			var current = this.get_property_value_by_name('preset') || 'default',
 				model = this.get_property_value_by_name("breakpoint_presets") || {},
-				breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active() || {},
-				breakpoint_preset = (model[breakpoint.id] || {}).preset,
+				breakpoint_preset = (model[breakpoint_id] || {}).preset,
 				actual = breakpoint_preset || current
 			;
 			this.set_property('preset', actual, false);

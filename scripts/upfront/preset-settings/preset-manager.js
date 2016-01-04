@@ -281,7 +281,8 @@ define([
 
 		setupItems: function() {
 			this.trigger('upfront:presets:setup-items', this);
-			var preset = this.clear_preset_name(this.model.decode_preset() || 'default'),
+			var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active() || {},
+				preset = this.clear_preset_name(this.model.decode_preset(breakpoint.id) || 'default'),
 				presetModel = this.presets.findWhere({id: preset}),
 				currentBreakpoint,
 				breakpointsData,
