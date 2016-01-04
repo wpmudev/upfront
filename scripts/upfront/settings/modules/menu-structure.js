@@ -387,7 +387,6 @@ define([
 				newItem = {
 					'menu-item-object': 'custom',
 					'menu-item-parent-id': 0,
-					'menu-item-position': 1,
 					'menu-item-target': '',
 					'menu-item-title': 'New Item',
 					'menu-item-type': 'custom',
