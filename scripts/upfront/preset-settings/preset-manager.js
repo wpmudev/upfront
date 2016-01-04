@@ -281,7 +281,7 @@ define([
 
 		setupItems: function() {
 			this.trigger('upfront:presets:setup-items', this);
-			var preset = this.property('preset') ? this.clear_preset_name(this.property('preset')) : 'default',
+			var preset = this.clear_preset_name(this.model.decode_preset() || 'default'),
 				presetModel = this.presets.findWhere({id: preset}),
 				currentBreakpoint,
 				breakpointsData,
@@ -454,6 +454,7 @@ define([
 		changePreset: function(preset) {
 			// Add items
 			this.stopListening();
+			this.model.encode_preset(preset)
 			//this.setupItems(); // called in render -> getBody
 			this.render();
 		},
