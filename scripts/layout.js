@@ -1120,6 +1120,11 @@ jQuery(document).ready(function($){
 				rmap = $me.attr("data-preset_map"),
 				map = rmap ? JSON.parse(rmap) : {}
 			;
+			
+			// Edge case, for when we don't have a preset for this
+			// breakpoint in an element - it should retain its classes
+			if (!map[breakpoint]) return true;
+
 			$.each(map, function (bp, preset) {
 				$me.removeClass(preset);
 				if (bp === breakpoint) $me.addClass(preset);
