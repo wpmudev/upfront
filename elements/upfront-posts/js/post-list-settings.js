@@ -2,15 +2,32 @@
 define([
 	'elements/upfront-posts/js/post-list-settings-panels',
 	'scripts/upfront/element-settings/settings',
-	'scripts/upfront/element-settings/advanced-settings'
-], function(Panels, ElementSettings, AdvancedSettings) {
+	'scripts/upfront/element-settings/advanced-settings',
+	'scripts/upfront/preset-settings/util',
+	'text!elements/upfront-widget/tpl/preset-style.html'
+], function(Panels, ElementSettings, AdvancedSettings, Util, styleTpl) {
 
 var l10n = Upfront.Settings.l10n.posts_element;
 
-
 var PostsSettings = ElementSettings.extend({
+	panels: {
+		Appearance: {
+			mainDataCollection: 'postsPresets',
+			styleElementPrefix: 'posts-preset',
+			ajaxActionSlug: 'posts',
+			panelTitle: l10n.settings,
+			presetDefaults: {
+				'id': 'default',
+				'name': l10n.default_preset,
+			},
+			styleTpl: styleTpl,
+		},
+	},
 
 	initialize: function (opts) {
+		// Call the super constructor here, so that the appearance panel is instantiated
+		this.constructor.__super__.initialize.call(this, opts);
+		
 		this.options = opts;
 		var me = this,
 			general = new Panels.General({model: this.model}),
@@ -20,11 +37,8 @@ var PostsSettings = ElementSettings.extend({
 		general.on("post:removed", this.rerender, this);
 		general.on("post:added", this.rerender, this);
 		post_parts.on("settings:dispatched", this.rerender, this);
-		this.panels = [
-			general,
-			post_parts,
-			new AdvancedSettings({model: this.model})
-		];
+
+		this.panels = _.extend({ general, post_parts }, this.panels);
 	},
 
 	rerender: function () {
@@ -59,6 +73,9 @@ var PostsSettings = ElementSettings.extend({
 		return l10n.settings;
 	}
 });
+
+// Generate presets styles to page
+Util.generatePresetsToPage('posts', styleTpl);
 
 return PostsSettings;
 
