@@ -2,7 +2,9 @@
 define([
 	'scripts/upfront/element-settings/settings',
 	'scripts/upfront/element-settings/root-settings-panel',
-], function(ElementSettings, RootSettingsPanel) {
+	'scripts/upfront/preset-settings/util',
+	'text!elements/upfront-widget/tpl/preset-style.html'
+], function(ElementSettings, RootSettingsPanel, Util, styleTpl) {
 
 var l10n = Upfront.Settings.l10n.this_post_element;
 
@@ -429,10 +431,35 @@ var Settings_PostPanel = RootSettingsPanel.extend({
 
 var Settings = ElementSettings.extend({
 	panels: {
-		General: Settings_PostPanel
+		General: Settings_PostPanel,
+		Appearance: {
+			mainDataCollection: 'thispostPresets',
+			styleElementPrefix: 'thispost-preset',
+			ajaxActionSlug: 'thispost',
+			panelTitle: l10n.settings,
+			presetDefaults: {
+				'id': 'default',
+				'name': l10n.default_preset,
+			},
+			styleTpl: styleTpl,
+		},
 	},
+	
+	initialize: function (opts) {
+		//If editor show only general preset
+		if( Upfront.Application.get_current() !== Upfront.Application.MODE.THEME ) {
+			this.panels = { General: Settings_PostPanel };
+		}
+		
+		// Call the super constructor here, so that the appearance panel is instantiated
+		this.constructor.__super__.initialize.call(this, opts);
+	},
+
 	title: l10n.post_settings
 });
+
+// Generate presets styles to page
+Util.generatePresetsToPage('thispost', styleTpl);
 
 // ----- Bringing everything together -----
 // The definitions part is over.
