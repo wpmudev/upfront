@@ -1104,6 +1104,37 @@ jQuery(document).ready(function($){
 	var lazyUpdateResponsiveClass = throttle(update_responsive_class, 100);
 	$(window).on('resize.uf_layout', lazyUpdateResponsiveClass);
 
+
+
+/**
+ * Swap preset classes per breakpoint
+ */
+function propagate_responsive_presets () {
+	var breakpoint = get_breakpoint() || 'desktop';
+
+	if (!breakpoint) return;
+
+	$("[data-preset_map]").each(function () {
+		var $me = $(this),
+			rmap = $me.attr("data-preset_map"),
+			map = rmap ? JSON.parse(rmap) : {}
+		;
+		$.each(map, function (bp, preset) {
+			$me.removeClass(preset);
+			if (bp === breakpoint) $me.addClass(preset);
+		});
+	});
+}
+propagate_responsive_presets();
+var lazypropagate_responsive_presets = throttle(propagate_responsive_presets, 100);
+$(window).on('resize.uf_layout', lazypropagate_responsive_presets);
+
+
+
+
+
+
+
 	function remove_all_bound_events () {
 		$(window).off('resize.uf_layout');
 		$(window).off('scroll.uf_layout');
