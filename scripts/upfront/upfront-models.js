@@ -80,13 +80,16 @@ var _alpha = "alpha",
 			this.set_property('preset', actual, false);
 			return actual;
 		},
-		encode_preset: function (preset_id) {
-			var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active() || {},
-				data = this.get_property_value_by_name("breakpoint_presets") || {}
-			;
-			data[breakpoint.id] = {preset: preset_id};
+		encode_preset: function (preset_id, breakpoint_id) {
+			breakpoint_id = breakpoint_id || (Upfront.Views.breakpoints_storage.get_breakpoints().get_active() || {}).id;
+			var	data = this.get_property_value_by_name("breakpoint_presets") || {};
+			
+			data[breakpoint_id] = {preset: preset_id};
 			this.set_property("breakpoint_presets", data, true);
+
+			return data;
 		},
+
 		add_property: function (name, value, silent) {
 			if (!silent) silent = false;
 			this.get("properties").add(new Upfront.Models.Property({"name": name, "value": value}), {"silent": silent});
