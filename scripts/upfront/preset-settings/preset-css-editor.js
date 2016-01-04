@@ -342,19 +342,30 @@ define([
 			this.blink($element, 4);
 		},
 		hiliteElement: function(e){
-			var preset_selector = this.get_css_selector() + ' ';
+			var preset_selector = this.get_css_selector();
+			
+			//Do not add empty space for posts element
+			if(this.elementType.id !== "posts") {
+				preset_selector = preset_selector + ' ';
+			}
 
 			var selector = preset_selector + $(e.target).data('selector');
 
 			if(!selector.length)
 				return;
 			var element = $('#' + this.element_id + selector);
+
 			element.addClass('upfront-css-hilite');
 		},
 
 		unhiliteElement: function(e){
-			var preset_selector = this.get_css_selector() + ' ';
+			var preset_selector = this.get_css_selector();
 
+			//Do not add empty space for posts element
+			if(this.elementType.id !== "posts") {
+				preset_selector = preset_selector + ' ';
+			}
+			
 			var selector = preset_selector + $(e.target).data('selector');
 
 			if(!selector.length)

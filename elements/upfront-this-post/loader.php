@@ -32,6 +32,8 @@ function this_post_initialize () {
 
 	// Include the backend support stuff
 	require_once (dirname(__FILE__) . '/lib/this_post.php');
+	
+	require_once (dirname(__FILE__) . '/lib/class_upfront_the_post_presets_server.php');
 
 	// Add element defaults to data object
 	add_action('upfront_data', array('Upfront_ThisPostView', 'add_js_defaults'));
