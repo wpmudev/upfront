@@ -38,7 +38,7 @@ var PostsSettings = ElementSettings.extend({
 		general.on("post:added", this.rerender, this);
 		post_parts.on("settings:dispatched", this.rerender, this);
 
-		this.panels = _.extend({ general, post_parts }, this.panels);
+		this.panels = _.extend({ General: general, PostParts: post_parts }, this.panels);
 	},
 
 	rerender: function () {
