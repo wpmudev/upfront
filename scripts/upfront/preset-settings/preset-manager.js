@@ -70,6 +70,9 @@ define([
 			this.migrateElementToPreset();
 			//this.setupItems(); // called in render -> getBody
 			this.listenToOnce(Upfront.Events, 'element:settings:canceled', this.cancelPresetChanges);
+
+			// Listen to breakpoint change and close off the interface
+			this.listenToOnce(Upfront.Events, 'upfront:layout_size:change_breakpoint', this.cancelPresetChanges);
 		},
 
 		cancelPresetChanges: function() {

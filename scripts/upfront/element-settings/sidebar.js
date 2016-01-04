@@ -70,5 +70,8 @@ define([], function () {
 
 	//Destroy settings when element is removed
 	Upfront.Events.on("entity:removed:after", destroySettings);
+
+	// Also destroy settings when breakpoint is toggled
+	Upfront.Events.on('upfront:layout_size:change_breakpoint', destroySettings);
 });
 })(jQuery);
