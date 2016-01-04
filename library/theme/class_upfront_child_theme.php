@@ -70,6 +70,8 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		add_filter('upfront_get_slider_presets', array($this, 'getSliderPresets'), 10, 2);
 		add_filter('upfront_get_text_presets', array($this, 'getTextPresets'), 10, 2);
 		add_filter('upfront_get_widget_presets', array($this, 'getWidgetPresets'), 10, 2);
+		add_filter('upfront_get_posts_presets', array($this, 'getPostsPresets'), 10, 2);
+		add_filter('upfront_get_the_post_presets', array($this, 'getPostPresets'), 10, 2);
 		add_filter('upfront_get_theme_styles', array($this, 'getThemeStyles'));
 		add_filter('upfront_get_global_regions', array($this, 'getGlobalRegions'));
 		add_filter('upfront_get_responsive_settings', array($this, 'getResponsiveSettings'));
@@ -637,6 +639,34 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		if (empty($presets) === false) return $presets;
 
 		$presets = $this->get_theme_settings()->get('tab_presets');
+		if (isset($args['json']) && $args['json']) return $presets;
+
+		$as_array = false;
+		if (isset($args['as_array']) && $args['as_array']) {
+			$as_array = true;
+		}
+
+		return json_decode($presets, $as_array);
+	}
+	
+	public function getPostsPresets($presets, $args) {
+		if (empty($presets) === false) return $presets;
+
+		$presets = $this->get_theme_settings()->get('posts_presets');
+		if (isset($args['json']) && $args['json']) return $presets;
+
+		$as_array = false;
+		if (isset($args['as_array']) && $args['as_array']) {
+			$as_array = true;
+		}
+
+		return json_decode($presets, $as_array);
+	}
+	
+	public function getPostPresets($presets, $args) {
+		if (empty($presets) === false) return $presets;
+
+		$presets = $this->get_theme_settings()->get('the_post_presets');
 		if (isset($args['json']) && $args['json']) return $presets;
 
 		$as_array = false;
