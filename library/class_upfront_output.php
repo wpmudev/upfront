@@ -539,15 +539,24 @@ abstract class Upfront_Container extends Upfront_Entity {
 				if (!isset($wrapper) || !$wrapper) {
 					if ($this->_child_view_class == 'Upfront_Object') {
 						$theme_style = upfront_get_property_value('theme_style', $child);
-						if ($theme_style)
+						if ($theme_style) {
 							$theme_style = strtolower($theme_style);
+						}
+
+						// So let's map out the breakpoints/presets map
+						$preset_map = array();
+						$raw_preset_map = upfront_get_property_value('breakpoint_presets', $child);
+						if (!empty($raw_preset_map)) foreach ($raw_preset_map as $bp => $pst) {
+							if (empty($pst['preset'])) continue;
+							$preset_map[$bp] = esc_js($pst['preset']);
+						}
+						// Now we have a map of breakpoint/presets we can encode as the attribute
+						// This will be used for the breakpoint preset toggling
+						
+						// We also preserve the current preset class, so it all
+						// just works without JS requirement on client
 						$preset = upfront_get_property_value('preset', $child);
-$preset_map = array();
-$raw_preset_map = upfront_get_property_value('breakpoint_presets', $child);
-if (!empty($raw_preset_map)) foreach ($raw_preset_map as $bp => $pres) {
-	if (empty($pres['preset'])) continue;
-	$preset_map[$bp] = esc_js($pres['preset']);
-}
+
 						$breakpoint = upfront_get_property_value('breakpoint', $child);
 						$theme_styles = array('default' => $theme_style);
 						$theme_styles_attr = '';
@@ -565,8 +574,9 @@ if (!empty($raw_preset_map)) foreach ($raw_preset_map as $bp => $pres) {
 						$classes = $this->_get_property('class');
 						$column = upfront_get_class_num('c', $classes);
 						$class = $slug === "uposts" ? "c" . $column . " uposts-object" : upfront_get_property_value('class', $child);
-						//$html .= '<div class="upfront-output-object ' . $theme_style . ' ' . $preset . ' upfront-output-' . $slug . ' ' . $class . '" id="' . upfront_get_property_value('element_id', $child) . '"' . $theme_styles_attr . '>' . $child_view->get_markup() . '</div>';
-$html .= '<div data-preset_map="' . esc_attr(!empty($preset_map) ? json_encode($preset_map) : '') . '" class="upfront-output-object ' . $theme_style . ' ' . $preset . ' upfront-output-' . $slug . ' ' . $class . '" id="' . upfront_get_property_value('element_id', $child) . '"' . $theme_styles_attr . '>' . $child_view->get_markup() . '</div>';
+
+						// Augment the output with preset map, in addition to other stuff going on in there
+						$html .= '<div data-preset_map="' . esc_attr(!empty($preset_map) ? json_encode($preset_map) : '') . '" class="upfront-output-object ' . $theme_style . ' ' . $preset . ' upfront-output-' . $slug . ' ' . $class . '" id="' . upfront_get_property_value('element_id', $child) . '"' . $theme_styles_attr . '>' . $child_view->get_markup() . '</div>';
 					} else {
 						$html .= $child_view->get_markup();
 					}

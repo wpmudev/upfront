@@ -454,7 +454,10 @@ define([
 		changePreset: function(preset) {
 			// Add items
 			this.stopListening();
+
+			// Make sure we don't lose our current preset
 			this.model.encode_preset(preset)
+			
 			//this.setupItems(); // called in render -> getBody
 			this.render();
 		},
