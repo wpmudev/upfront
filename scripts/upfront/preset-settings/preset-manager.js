@@ -363,11 +363,11 @@ define([
 		},
 
 		updatePreset: function(properties) {
-
 			var index,
 				styleElementId,
-			  currentBreakpoint,
-				breakpointsData;
+			 	currentBreakpoint,
+				breakpointsData
+			;
 
 			// Setup model so that it saves breakpoint values to breakpoint property
 			if (this.options.hasBreakpointSettings === true) {
@@ -395,6 +395,10 @@ define([
 			this.presets.add(preset);
 			this.model.set_property('preset', preset.id);
 			this.updatePreset(preset);
+
+			// Make sure we don't lose our current preset
+			this.model.encode_preset(preset.id);
+
 			this.render();
 		},
 
@@ -414,6 +418,7 @@ define([
 			Upfront.mainData[this.mainDataCollection].splice(index, 1);
 
 			this.model.set_property('preset', 'default');
+			this.model.encode_preset('default');
 
 			this.presets.remove(preset);
 
@@ -456,7 +461,7 @@ define([
 			this.stopListening();
 
 			// Make sure we don't lose our current preset
-			this.model.encode_preset(preset)
+			this.model.encode_preset(preset);
 			
 			//this.setupItems(); // called in render -> getBody
 			this.render();
