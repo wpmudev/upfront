@@ -15267,10 +15267,20 @@ div.upfront-region-container:hover > a.feature_image_selector {
 #sidebar-ui #theme-colors-swatches span.theme-colors-color-picker.color-1,
 #sidebar-ui #theme-colors-swatches span.theme-colors-color-picker.color-2,
 #sidebar-ui #theme-colors-swatches span.theme-colors-color-picker.color-3,
-#sidebar-ui #theme-colors-swatches span.theme-colors-color-picker.color-4 {
+#sidebar-ui #theme-colors-swatches span.theme-colors-color-picker.color-4,
+#sidebar-ui #theme-colors-swatches span.theme_colors_empty_picker:nth-child(3),
+#sidebar-ui #theme-colors-swatches span.theme_colors_empty_picker:nth-child(4),
+#sidebar-ui #theme-colors-swatches span.theme_colors_empty_picker:nth-child(5),
+#sidebar-ui #theme-colors-swatches span.theme_colors_empty_picker:nth-child(6),
+#sidebar-ui #theme-colors-swatches span.theme_colors_empty_picker:nth-child(7),
+#sidebar-ui #theme-colors-swatches span.theme_colors_unset_color:nth-child(3),
+#sidebar-ui #theme-colors-swatches span.theme_colors_unset_color:nth-child(4),
+#sidebar-ui #theme-colors-swatches span.theme_colors_unset_color:nth-child(5),
+#sidebar-ui #theme-colors-swatches span.theme_colors_unset_color:nth-child(6),
+#sidebar-ui #theme-colors-swatches span.theme_colors_unset_color:nth-child(7) {
   border-top: 1px solid #C8DFF2; }
 
-/* line 159, sass/partials/_theme-colors-ui.scss */
+/* line 169, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui #theme-colors-swatches span.theme-colors-color-name {
   position: relative;
   top: -8px;
@@ -15281,31 +15291,31 @@ div.upfront-region-container:hover > a.feature_image_selector {
   color: #85A9CC;
   font-family: verdana, arial, sans-serif; }
 
-/* line 169, sass/partials/_theme-colors-ui.scss */
+/* line 179, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui #theme-colors-swatches .upfront-field-wrap {
   margin: -35px 0 0px 5px !important;
   height: 14px;
   line-height: 14px; }
 
-/* line 174, sass/partials/_theme-colors-ui.scss */
+/* line 184, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui #theme-colors-swatches .sp-replacer {
   border: 1px solid #AFC8DF;
   border-radius: 50%; }
 
-/* line 178, sass/partials/_theme-colors-ui.scss */
+/* line 188, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui #theme-colors-swatches .sp-replacer:before {
   border: none;
   background: none; }
 
-/* line 182, sass/partials/_theme-colors-ui.scss */
+/* line 192, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui #theme-colors-swatches .sp-replacer .sp-dd {
   display: none; }
 
-/* line 185, sass/partials/_theme-colors-ui.scss */
+/* line 195, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui .theme_colors_unset_color span.theme-colors-color-no-color span {
   display: block; }
 
-/* line 188, sass/partials/_theme-colors-ui.scss */
+/* line 198, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui .theme_colors_unset_color span.theme-colors-color-no-color span,
 #sidebar-ui #theme-colors-swatches .sp-replacer .sp-preview {
   border: none;
@@ -15315,7 +15325,7 @@ div.upfront-region-container:hover > a.feature_image_selector {
   height: 16px !important;
   margin: 1px; }
 
-/* line 197, sass/partials/_theme-colors-ui.scss */
+/* line 207, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui #theme-colors-swatches .theme_color_swatch_empty .sp-preview {
   background-position: -262px -192px;
   margin: 1px;
@@ -15325,7 +15335,7 @@ div.upfront-region-container:hover > a.feature_image_selector {
 /* #sidebar-ui #theme-colors-swatches .theme_color_swatch_empty .sp-replacer.sp-light {
     background-color: #7595B2;
 } */
-/* line 206, sass/partials/_theme-colors-ui.scss */
+/* line 216, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui .panel-setting-theme-colors-bottom {
   margin: 0 15px;
   font-size: 11px;
@@ -15333,53 +15343,53 @@ div.upfront-region-container:hover > a.feature_image_selector {
   padding-top: 3px;
   line-height: 32px; }
 
-/* line 213, sass/partials/_theme-colors-ui.scss */
+/* line 223, sass/partials/_theme-colors-ui.scss */
 #panel-setting-theme-colors-shades-label {
   font-weight: bold;
   margin-bottom: 7px;
   display: block; }
 
-/* line 218, sass/partials/_theme-colors-ui.scss */
+/* line 228, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui .panel-setting-theme-colors-bottom .hovers {
   font-family: "Courier New", monospace;
   font-weight: bold;
   font-size: 12px; }
 
-/* line 223, sass/partials/_theme-colors-ui.scss */
+/* line 233, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui #theme-colors-swatches .theme-colors-color-picker.color-0 .upfront-field-wrap {
   margin-left: 0; }
 
-/* line 226, sass/partials/_theme-colors-ui.scss */
+/* line 236, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui #theme-colors-swatches .upfront-field-wrap {
   margin: 0; }
 
-/* line 229, sass/partials/_theme-colors-ui.scss */
+/* line 239, sass/partials/_theme-colors-ui.scss */
 .panel-setting-theme-colors-meta {
   margin-top: 15px;
   line-height: 13px; }
 
-/* line 233, sass/partials/_theme-colors-ui.scss */
+/* line 243, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui .swatch-title {
   margin-top: 9px;
   color: #263a4d; }
 
-/* line 238, sass/partials/_theme-colors-ui.scss */
+/* line 248, sass/partials/_theme-colors-ui.scss */
 .panel-setting-theme-colors-highlights,
 .panel-setting-theme-colors-shades {
   text-align: justify; }
 
-/* line 242, sass/partials/_theme-colors-ui.scss */
+/* line 252, sass/partials/_theme-colors-ui.scss */
 .panel-setting-theme-colors-highlights:after,
 .panel-setting-theme-colors-shades:after {
   content: '';
   display: inline-block;
   width: 100%; }
 
-/* line 249, sass/partials/_theme-colors-ui.scss */
+/* line 259, sass/partials/_theme-colors-ui.scss */
 #sidebar-ui .panel-setting-theme-colors-highlights + .swatch-title {
   margin-top: 4px; }
 
-/* line 252, sass/partials/_theme-colors-ui.scss */
+/* line 262, sass/partials/_theme-colors-ui.scss */
 .theme-colors-color-box:first-child {
   margin-left: 0; }
 
