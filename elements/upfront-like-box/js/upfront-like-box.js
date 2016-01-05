@@ -191,6 +191,10 @@
 			});
 		},
 
+		on_after_layout_render: function () {
+			this.setElementSize();
+		},
+
 		//Prevent iframe hijacking of events when dragging
 		coverIframe: function(e, ui){
 			ui.helper.append('<div class="upfront-iframe-draggable" style="width:100%;height:100%;position:absolute;top:0;left:0:z-index:1"></div>');
