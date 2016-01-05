@@ -42,6 +42,16 @@ jQuery(document).ready(function($){
 		}
 	}
 
+	/**
+	 * Get the previously used breakpoint
+	 *
+	 * @return {String} Previous breakpoint
+	 */
+	function get_previous_breakpoint () {
+		get_breakpoint();
+		return previous_breakpoint;
+	}
+
 	/* Youtube API */
 	var youtube_api_loaded = false;
 	var youtube_api_ready = false;
@@ -1135,6 +1145,19 @@ jQuery(document).ready(function($){
 	var lazypropagate_responsive_presets = throttle(propagate_responsive_presets, 100);
 	$(window).on('resize.uf_layout', lazypropagate_responsive_presets);
 
+	/**
+	 * Trigger DOM event on breakpoint change,
+	 * so elements can subscribe to it
+	 */
+	function propagate_breakpoint_change () {
+		var breakpoint = get_breakpoint() || 'desktop',
+			previous = get_previous_breakpoint() || 'desktop'
+		;
+		if (breakpoint !== previous) $(document).trigger("upfront-breakpoint-change", breakpoint);
+	}
+	var lazy_propagate_breakpoint_change = throttle(propagate_breakpoint_change, 200, {trailing: false});
+	$(window).on('resize.uf_layout', lazy_propagate_breakpoint_change);
+	// done propagating breakpoint change
 
 	function remove_all_bound_events () {
 		$(window).off('resize.uf_layout');
