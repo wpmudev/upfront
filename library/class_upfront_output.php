@@ -1059,8 +1059,12 @@ class Upfront_Module_Group extends Upfront_Container {
 		$classes = parent::get_css_class();
 		$classes .= ' upfront-module-group';
 		$theme_style = $this->_get_property('theme_style');
-		if($theme_style)
+		if ($theme_style) {
 			$classes .= ' ' . strtolower($theme_style);
+		}
+		$prop_class = $this->_get_property('class');
+		$column = upfront_get_class_num('c', $prop_class);
+		$classes .= ' c' . $column;
 		return $classes;
 	}
 
