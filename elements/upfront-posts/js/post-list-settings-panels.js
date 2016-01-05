@@ -21,7 +21,7 @@ var Panels = {
 
 RootSettingsPanel = RootSettingsPanel.extend({
 	is_active: function () {
-		return this.$el.find(".upfront-settings-item-content").is(":visible");
+		return this.$el.find(".uf-settings-panel__body").is(":visible");
 	}
 });
 
