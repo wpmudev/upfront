@@ -151,6 +151,9 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		this.listenTo(Upfront.Events, "entity:region_container:after_render", Upfront.Behaviors.GridEditor.create_region_container_resizable);
 		this.listenTo(Upfront.Events, "entity:region_sub_container:after_render", Upfront.Behaviors.GridEditor.create_region_container_resizable);
 
+		if ( !Upfront.Behaviors.GridEditor.grid ) {
+			Upfront.Behaviors.GridEditor.init();
+		}
 		this.listenTo(Upfront.Events, "layout:after_render", Upfront.Behaviors.GridEditor.init);
 	},
 

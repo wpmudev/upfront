@@ -205,6 +205,7 @@ text!elements/upfront-posts/tpl/views.html
 /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/elements/upfront-posts/js/post-list-meta-views.js
 /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/elements/upfront-posts/js/post-list-settings-parts.js
 /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/elements/upfront-posts/js/post-list-settings-panels.js
+text!elements/upfront-widget/tpl/preset-style.html
 /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/elements/upfront-posts/js/post-list-settings.js
 /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/elements/upfront-posts/js/posts-list.js
 text!elements/upfront-search/tpl/usearch.html
@@ -223,7 +224,6 @@ text!elements/upfront-tabs/tpl/utabs.html
 /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/elements/upfront-tabs/js/utabs.js
 /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/elements/upfront-this-post/js/this_post.js
 /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/elements/upfront-this-page/js/this_page.js
-text!elements/upfront-widget/tpl/preset-style.html
 /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/elements/upfront-widget/js/settings.js
 /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/elements/upfront-widget/js/uwidget.js
 text!elements/upfront-youtube/tpl/youtube.html

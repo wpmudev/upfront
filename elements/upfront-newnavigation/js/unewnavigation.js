@@ -539,7 +539,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			}
 
 			//Make sure parent module have high z-index to prevent dropdown under elements
-			me.$el.closest('.upfront-module').css({'z-index': '9999', position: 'relative'});
+			me.$el.closest('.upfront-module').addClass('upfront-module-has-nav');
 
 		}, 300);
 
@@ -684,8 +684,16 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	},
 
 	activate_responsive_nav: function(selector, bpwidth) {
+
 		// If there is preset setup use new rendering
+		
+		/** IGNORE THIS STATEMENT ATM, STILL WORKING ON A PROPER FIX
+		 * Even the new Reesponsive Nav comes with 'default' presets
+		 * so, it should be allowed to use the new rendering technique
+		 */
+
 		if (this.property('preset') && this.property('preset') !== 'default') {
+		//if (this.property('preset')) {
 			this.renderResponsiveNavigation(selector);
 			return;
 		}
