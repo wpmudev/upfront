@@ -2372,6 +2372,7 @@ define([
                     blank_alpha: 0,
                     change: function (color){
                         var percentage = parseInt( Theme_Colors.range, 10) / 100 || 0;
+                        color = tinycolor( color );
                         model.set({
                             color : color.toHexString(),
                             highlight : self.color_luminance( color.toHex(), percentage ),
@@ -4562,6 +4563,16 @@ var Field_ToggleableText = Field_Text.extend({
 			// Trigger change event
 			if(this.options.spectrum && typeof this.options.spectrum.change === "function"){
 				this.options.spectrum.change(color);
+			}
+
+			// Trigger move event in Theme Color Swatches
+			if(this.options && typeof this.options.move === "function"){
+				this.options.move(color);
+			}
+
+			// Trigger change event in Theme Color Swatches
+			if(this.options && typeof this.options.change === "function"){
+				this.options.change(color);
 			}
 		},
 		get_value : function() {
