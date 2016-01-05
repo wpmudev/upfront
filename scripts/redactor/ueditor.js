@@ -219,7 +219,8 @@ var hackRedactor = function(){
                     this.$editor.focus();
                 }
 
-                this.selection.get();
+                 this.selection.get();
+                var sel = $(this.selection.getCurrent());
 
                 if (this.range.collapsed)
                 {
@@ -228,6 +229,14 @@ var hackRedactor = function(){
                 else
                 {
                     this.inline.formatMultiple(tag);
+                }
+
+                if( tag &&  "em" === tag.toLowerCase() ){
+                        this.selection.selectElement( $(this.selection.getInlines()).find("em") );
+                }
+
+                if( tag && "strong" === tag.toLowerCase() ){
+                    this.selection.selectElement( $(this.selection.getInlines()).find("strong") );
                 }
             }
         }
