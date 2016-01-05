@@ -692,8 +692,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		 * so, it should be allowed to use the new rendering technique
 		 */
 
-		//if (this.property('preset') && this.property('preset') !== 'default') {
-		if (this.property('preset')) {
+		if (this.property('preset') && this.property('preset') !== 'default') {
+		//if (this.property('preset')) {
 			this.renderResponsiveNavigation(selector);
 			return;
 		}
