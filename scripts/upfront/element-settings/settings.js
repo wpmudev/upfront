@@ -55,7 +55,9 @@ define([
 					panels.Appearance = this.appearancePanel;
 					return;
 				}
-				panels[index] = new panel({ model: this.model });
+				if(_.isFunction(panel)) {
+					panels[index] = new panel({ model: this.model });
+				}
 			}, this);
 
 			// Hard wiring here instead having every element define advanced panel
