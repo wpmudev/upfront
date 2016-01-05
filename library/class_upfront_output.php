@@ -17,9 +17,11 @@ class Upfront_Output {
 
 		self::$grid = Upfront_Grid::get_grid();
 	}
+
 	public static function get_post_id () {
 		return is_singular() ? get_the_ID() : false;
 	}
+
 	public static function get_layout ($layout_ids, $apply = false) {
 		$layout = Upfront_Layout::from_entity_ids($layout_ids);
 
@@ -556,6 +558,17 @@ abstract class Upfront_Container extends Upfront_Entity {
 						// We also preserve the current preset class, so it all
 						// just works without JS requirement on client
 						$preset = upfront_get_property_value('preset', $child);
+
+						// Also, if we have a preset map and a default grid breakpoint
+						// mapped, let's try to use this as default preset
+						if (!empty($preset_map)) {
+							$default_bp = Upfront_Output::$grid->get_default_breakpoint();
+							if ($default_bp && is_callable(array($default_bp, 'get_id'))) {
+								$bp = $default_bp->get_id();
+								if (!empty($preset_map[$bp])) $preset = $preset_map[$bp];
+							}
+						}
+
 
 						$breakpoint = upfront_get_property_value('breakpoint', $child);
 						$theme_styles = array('default' => $theme_style);
