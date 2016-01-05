@@ -227,7 +227,11 @@ RedactorPlugins.stateAlignment = function() {
                             return $parent.length && $parent.css('text-align') == 'left';
                         },
                         callback: function(name, el , button){
-                            self.alignment.set('left');
+                            if( !self.utils.isCurrentOrParent("li") ){
+                                self.alignment.set('left');
+                            }else{
+                                $(self.selection.getCurrent()).css('text-align', "left");
+                            }
                         }
                     },
                     center: {
@@ -239,7 +243,11 @@ RedactorPlugins.stateAlignment = function() {
                             return $parent.length && $parent.css('text-align') == 'center';
                         },
                         callback: function(name, el , button){
-                            self.alignment.center();
+                            if( !self.utils.isCurrentOrParent("li") ){
+                                self.alignment.center();
+                            }else{
+                                $(self.selection.getCurrent()).css('text-align', "center");
+                            }
                         }
                     },
                     right: {
@@ -251,7 +259,11 @@ RedactorPlugins.stateAlignment = function() {
                             return $parent.length && $parent.css('text-align') == 'right';
                         },
                         callback: function(name, el , button){
-                            self.alignment.right();
+                            if( !self.utils.isCurrentOrParent("li") ){
+                                self.alignment.right();
+                            }else{
+                                $(self.selection.getCurrent()).css('text-align', "right");
+                            }
                         }
                     },
                     justify: {
@@ -263,7 +275,13 @@ RedactorPlugins.stateAlignment = function() {
                             return $parent.length && $parent.css('text-align') == 'justify';
                         },
                         callback: function(name, el , button){
-                            self.alignment.justify();
+                            if( !self.utils.isCurrentOrParent("li") ){
+                                self.alignment.justify();
+                            }else{
+                                $(self.selection.getCurrent()).css('text-align', "justify");
+                            }
+
+
                         }
                     }
                 }

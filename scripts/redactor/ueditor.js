@@ -220,7 +220,6 @@ var hackRedactor = function(){
                 }
 
                  this.selection.get();
-                var sel = $(this.selection.getCurrent());
 
                 if (this.range.collapsed)
                 {
@@ -231,11 +230,11 @@ var hackRedactor = function(){
                     this.inline.formatMultiple(tag);
                 }
 
-                if( tag &&  "em" === tag.toLowerCase() ){
+                if( tag && -1 !== _.indexOf( ["em", "italic"],tag.toLowerCase() ) ){ // add fix for em to make it work with list tags
                         this.selection.selectElement( $(this.selection.getInlines()).find("em") );
                 }
 
-                if( tag && "strong" === tag.toLowerCase() ){
+                if( tag &&  -1 !== _.indexOf( ["strong", "bold"], tag.toLowerCase() )  ){ //  add fix for strong to make it work with list tags
                     this.selection.selectElement( $(this.selection.getInlines()).find("strong") );
                 }
             }
