@@ -281,11 +281,11 @@ jQuery(function($){
 	$(document)
 		.on("mouseenter", ".ugallery_item a", function (e) {
 			var $title = $(this).find(".ugallery-thumb-title.ugallery-caption-over");
-			if ($title.length && $title.is(".ugallery-caption-on-hover-1")) $title.toggle();
+			if ($title.length && $title.is(".ugallery-caption-on-hover-1")) $title.show();
 		})
 		.on("mouseleave", ".ugallery_item a", function (e) {
 			var $title = $(this).find(".ugallery-thumb-title.ugallery-caption-over");
-			if ($title.length && $title.is(".ugallery-caption-on-hover-1")) $title.toggle();
+			if ($title.length && $title.is(".ugallery-caption-on-hover-1") && $title.closest('.redactor-box').length === 0) $title.hide();
 		})
 	;
 
