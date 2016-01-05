@@ -4681,7 +4681,7 @@ a.upfront-region-name-edit-trigger:before {
   height: auto;
   width: 14px;
   padding-top: 15px;
-  z-index: 10;
+  z-index: 70;
   display: none !important; }
 
 .upfront-wrapper-meta:before {
@@ -12981,7 +12981,17 @@ div.upfront-region-container:hover > a.feature_image_selector {
 #sidebar-ui #theme-colors-swatches span.theme-colors-color-picker.color-1,
 #sidebar-ui #theme-colors-swatches span.theme-colors-color-picker.color-2,
 #sidebar-ui #theme-colors-swatches span.theme-colors-color-picker.color-3,
-#sidebar-ui #theme-colors-swatches span.theme-colors-color-picker.color-4 {
+#sidebar-ui #theme-colors-swatches span.theme-colors-color-picker.color-4,
+#sidebar-ui #theme-colors-swatches span.theme_colors_empty_picker:nth-child(3),
+#sidebar-ui #theme-colors-swatches span.theme_colors_empty_picker:nth-child(4),
+#sidebar-ui #theme-colors-swatches span.theme_colors_empty_picker:nth-child(5),
+#sidebar-ui #theme-colors-swatches span.theme_colors_empty_picker:nth-child(6),
+#sidebar-ui #theme-colors-swatches span.theme_colors_empty_picker:nth-child(7),
+#sidebar-ui #theme-colors-swatches span.theme_colors_unset_color:nth-child(3),
+#sidebar-ui #theme-colors-swatches span.theme_colors_unset_color:nth-child(4),
+#sidebar-ui #theme-colors-swatches span.theme_colors_unset_color:nth-child(5),
+#sidebar-ui #theme-colors-swatches span.theme_colors_unset_color:nth-child(6),
+#sidebar-ui #theme-colors-swatches span.theme_colors_unset_color:nth-child(7) {
   border-top: 1px solid #C8DFF2; }
 
 #sidebar-ui #theme-colors-swatches span.theme-colors-color-name {
