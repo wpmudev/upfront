@@ -643,7 +643,7 @@ DragDrop.prototype = {
 	
 	select_drop_point: function (drop) {
 		var ed = this.ed;
-		if ( drop.is_use ){
+		if ( !drop || drop.is_use ){
 			return;
 		}
 		ed.time_start('fn select_drop');
@@ -957,6 +957,7 @@ DragDrop.prototype = {
 	},
 	
 	update_drop_position: function () {
+		if ( !this.drop ) return;
 		var ed = this.ed,
 			drop = this.drop,
 			col = this.current_region ? this.current_region.col : this.me.col,
