@@ -148,11 +148,21 @@
     border-bottom: 1px solid #C8DFF2;
     border-right: 1px solid #C8DFF2;
 }
-#sidebar-ui #theme-colors-swatches span.theme-colors-color-picker.color-0,
-#sidebar-ui #theme-colors-swatches span.theme-colors-color-picker.color-1,
-#sidebar-ui #theme-colors-swatches span.theme-colors-color-picker.color-2,
-#sidebar-ui #theme-colors-swatches span.theme-colors-color-picker.color-3,
-#sidebar-ui #theme-colors-swatches span.theme-colors-color-picker.color-4 {
+#sidebar-ui #theme-colors-swatches span.theme-colors-color-picker.color-0, 
+#sidebar-ui #theme-colors-swatches span.theme-colors-color-picker.color-1, 
+#sidebar-ui #theme-colors-swatches span.theme-colors-color-picker.color-2, 
+#sidebar-ui #theme-colors-swatches span.theme-colors-color-picker.color-3, 
+#sidebar-ui #theme-colors-swatches span.theme-colors-color-picker.color-4,
+#sidebar-ui #theme-colors-swatches span.theme_colors_empty_picker:nth-child(3), 
+#sidebar-ui #theme-colors-swatches span.theme_colors_empty_picker:nth-child(4), 
+#sidebar-ui #theme-colors-swatches span.theme_colors_empty_picker:nth-child(5), 
+#sidebar-ui #theme-colors-swatches span.theme_colors_empty_picker:nth-child(6), 
+#sidebar-ui #theme-colors-swatches span.theme_colors_empty_picker:nth-child(7),
+#sidebar-ui #theme-colors-swatches span.theme_colors_unset_color:nth-child(3), 
+#sidebar-ui #theme-colors-swatches span.theme_colors_unset_color:nth-child(4), 
+#sidebar-ui #theme-colors-swatches span.theme_colors_unset_color:nth-child(5), 
+#sidebar-ui #theme-colors-swatches span.theme_colors_unset_color:nth-child(6), 
+#sidebar-ui #theme-colors-swatches span.theme_colors_unset_color:nth-child(7) {
     border-top: 1px solid #C8DFF2;
 }
 

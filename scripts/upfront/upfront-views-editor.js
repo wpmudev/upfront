@@ -4491,8 +4491,8 @@ var Field_ToggleableText = Field_Text.extend({
             if( rgb !== 'rgba(0, 0, 0, 0)' ) {
                 spPreview.removeClass('uf-unset-color');
             }
-            else {
-                spPreview.addClass('uf-unset-color');;
+            else if( spPreview.closest( '.theme_colors_empty_picker' ).length === 0 ) {
+                spPreview.addClass('uf-unset-color');
             }
 		},
 		update_input_val : function(hex){
