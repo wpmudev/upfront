@@ -1142,8 +1142,9 @@ jQuery(document).ready(function($){
 		});
 	}
 	propagate_responsive_presets();
-	var lazypropagate_responsive_presets = throttle(propagate_responsive_presets, 100);
-	$(window).on('resize.uf_layout', lazypropagate_responsive_presets);
+	var lazy_propagate_responsive_presets = throttle(propagate_responsive_presets, 200, {trailing: false});
+	$(window).on('resize.uf_layout', lazy_propagate_responsive_presets);
+	// done propagating presets
 
 	/**
 	 * Trigger DOM event on breakpoint change,
