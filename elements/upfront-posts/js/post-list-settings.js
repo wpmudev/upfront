@@ -43,15 +43,23 @@ var PostsSettings = ElementSettings.extend({
 
 	rerender: function () {
 		var active_panel = -1,
-			panels = _(this.panels)
+			panels = _(this.panels);
+			me = this,
+			general = new Panels.General({model: this.model}),
+			post_parts = new Panels.PostParts({model: this.model})
 		;
+		
 		panels.each(function (pl, idx) {
 			if (pl && pl.is_active && pl.is_active()) active_panel = idx;
 		});
-		this.initialize(this.options);
+
 		this.$el.empty();
+		
+		this.initialize(this.options);
+
 		this.render();
-		if (active_panel >= 0 && this.toggle_panel) this.toggle_panel(active_panel);
+
+		if (active_panel.length >= 0 && this.toggle_panel) this.toggle_panel(active_panel);		
 	},
 
 	/**
