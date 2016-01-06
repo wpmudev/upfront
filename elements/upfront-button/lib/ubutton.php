@@ -61,7 +61,7 @@ class Upfront_ButtonView extends Upfront_Object {
 
 		$markup = upfront_get_template('ubutton', $data, dirname(dirname(__FILE__)) . '/tpl/ubutton.html');
 
-		//upfront_add_element_script('ubutton_script', array('js/ubutton-front.js', dirname(__FILE__)));
+		upfront_add_element_script('ubutton_script', array('js/ubutton-front.js', dirname(__FILE__)));
 		return $markup;
 	}
 
