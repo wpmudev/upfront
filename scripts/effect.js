@@ -276,7 +276,8 @@
 			this.canvas.height = $(window).height();
 		},
 		removeCanvas: function () {
-			this.canvas.remove();
+			// this.canvas.remove(); // This does not work on IE11 and crash the UF editor
+			$(this.canvas).remove();
 		},
 		prepareImage: function () {
 			if (this.cache.img) {
