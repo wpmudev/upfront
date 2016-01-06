@@ -68,12 +68,26 @@ define([
 			this.debouncedSavePreset = _.debounce(savePreset, 1000);
 
 			this.migrateElementToPreset();
-			//this.setupItems(); // called in render -> getBody
-			this.listenToOnce(Upfront.Events, 'element:settings:canceled', this.cancelPresetChanges);
+			
+			this.createBackup();
+
+			this.listenToOnce(Upfront.Events, 'element:settings:canceled', function() {
+				this.updateCanceledPreset(this.backupPreset);
+			});
 		},
 
-		cancelPresetChanges: function() {
-			this.updatePreset(this.presetBackup);
+		createBackup: function() {
+			var preset = this.property('preset') ? this.clear_preset_name(this.property('preset')) : 'default',
+				backupModel = this.presets.findWhere({id: preset});
+
+			if(typeof backupModel === "undefined") {
+				backupModel = this.presets.findWhere({id: 'default'});
+			}
+
+			// Backup preset model properties for later use in reset (on settings cancel)
+			if(typeof this.backupPreset === "undefined") {
+				this.backupPreset = Upfront.Util.clone(backupModel.toJSON());
+			}
 		},
 
 		migrateElementToPreset: function() {
@@ -288,9 +302,6 @@ define([
 				presetModel = this.presets.findWhere({id: 'default'});
 			}
 
-			// Backup preset model properties for later use in reset (on settings cancel)
-			this.presetBackup = presetModel.toJSON();
-
 			// Add items
 			if (this.selectPresetModule && this.selectPresetModule.stopListening) {
 				this.selectPresetModule.stopListening();
@@ -358,6 +369,14 @@ define([
 				name: presetName
 			});
 		},
+		
+		updateCanceledPreset: function(properties) {
+			Util.updatePresetStyle(this.styleElementPrefix.replace(/-preset/, ''), properties, this.styleTpl);
+
+			this.debouncedSavePreset(properties);
+
+			this.updateMainDataCollectionPreset(properties);
+		},
 
 		updatePreset: function(properties) {
 
@@ -372,11 +391,9 @@ define([
 				breakpointsData = properties.breakpoint || {};
 				breakpointsData[currentBreakpoint.id] = breakpointsData[currentBreakpoint.id] || {};
 				_.each(this.options.breakpointSpecificPresetSettings, function(settingOptions) {
-					if(typeof properties[settingOptions.name] !== "undefined") {
-						breakpointsData[currentBreakpoint.id][settingOptions.name] = properties[settingOptions.name];
-						// Delete property from root properties so that model remians clean (these properties should only be saved in breakpoint data)
-						delete properties[settingOptions.name];
-					}
+					breakpointsData[currentBreakpoint.id][settingOptions.name] = properties[settingOptions.name];
+					// Delete property from root properties so that model remians clean (these properties should only be saved in breakpoint data)
+					delete properties[settingOptions.name];
 				}, this);
 				// Finally update breakpoints in model
 				properties.breakpoint = breakpointsData;
