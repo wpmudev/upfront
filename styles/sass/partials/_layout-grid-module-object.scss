@@ -238,9 +238,6 @@
 	position: relative;
 	z-index: 2;
 }
-.upfront-module-has-nav {
-	z-index: 50;
-}
 #page.upfront-layout-view .upfront-module.upfront-module-disabled-all {
 	opacity: 0.5;
 }
@@ -270,6 +267,13 @@
 .upfront-module-group-active {
 	box-shadow: inset 0px 0px 0px 2px rgba(111, 188, 248, 1);
 	z-index: 4;
+}
+.upfront-module-has-nav,
+.upfront-module-active.upfront-module-has-nav {
+	z-index: 50;
+}
+.upfront-module-has-nav.upfront-module-nav-open {
+	z-index: 90;
 }
 .upfront-module-disabled-all:hover,
 .upfront-module-editing:hover {

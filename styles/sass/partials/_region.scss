@@ -163,7 +163,11 @@
 .upfront-region-fixed-editing .upfront-region-container:hover .upfront-region-edit-trigger,
 .upfront-edit-responsive .upfront-region-hidden > .upfront-region-edit-trigger,
 .upfront-edit-responsive .upfront-region-editing.responsive-breakpoint .upfront-region:hover > .upfront-region-edit-trigger-small,
-.upfront-edit-responsive .responsive-breakpoint .upfront-region-hidden:hover > .upfront-region-edit-trigger-small {
+.upfront-edit-responsive .responsive-breakpoint .upfront-region-hidden:hover > .upfront-region-edit-trigger-small,
+.upfront-region-container.upfront-region-container-nav-open .upfront-region-edit-trigger,
+.upfront-region-container.upfront-region-container-nav-open:hover .upfront-region-edit-trigger,
+.upfront-edit-responsive .upfront-region-container.upfront-region-container-nav-open .upfront-region-edit-trigger,
+.upfront-edit-responsive .upfront-region-container.upfront-region-container-nav-open:hover .upfront-region-edit-trigger {
 	visibility: hidden;
 	opacity: 0;
 }
