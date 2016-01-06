@@ -70,9 +70,10 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	},
 
 	get_preset_properties: function() {
+
 		var preset = this.model.get_property_value_by_name("preset"),
 			props = PresetUtil.getPresetProperties('nav', preset) || {};
-
+			//console.log(preset);
 		return props;
 	},
 
@@ -576,8 +577,9 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			topbar_height = $('div#upfront-ui-topbar').outerHeight(),
 			ruler_height = $('.upfront-ruler-container').outerHeight(),
 			allBreakpoints = Upfront.Views.breakpoints_storage.get_breakpoints(),
-			currentBreakpoint = allBreakpoints.get_active(),
-			breakpoints = this.get_preset_properties().breakpoint,
+			currentBreakpoint = allBreakpoints.get_active();
+			//console.log(this.get_preset_properties());
+			var breakpoints = this.get_preset_properties().breakpoint,
 			breakpoint = breakpoints[currentBreakpoint.id],
 			breakpointWidth = currentBreakpoint.get_property_value_by_name('width');
 			currentwidth = typeof breakpointWidth !== 'undefined' ? parseInt(breakpointWidth, 10) : $(window).width();
