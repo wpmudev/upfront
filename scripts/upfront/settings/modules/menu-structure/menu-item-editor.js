@@ -66,6 +66,8 @@ define([
 			'keydown .menu-item-lightbox-input': 'onLightboxNameInputChange',
 			'keydown .menu-item-external-input': 'onUrlNameKeydown',
 			'change .menu-item-external-input': 'onUrlNameChange',
+			'keydown .menu-item-email-input': 'onEmailNameKeydown',
+			'change .menu-item-email-input': 'onEmailNameChange',
 			'keydown .menu-item-title': 'onItemNameKeydown',
 			'change .menu-item-title': 'onItemNameChange'
 		},
@@ -152,7 +154,7 @@ define([
 				case 'external':
 					return { value: 'external', label: contentL10n.url };
 				case 'email':
-					return { value: 'email', label: 'Email address' };
+					return { value: 'email', label: contentL10n.email_address };
 				case 'entry':
 					return { value: 'entry', label: contentL10n.post_or_page };
 				case 'anchor':
@@ -296,6 +298,20 @@ define([
 			});
 			this.saveItem();
 		},
+		
+		onEmailNameKeydown: function(event) {
+			if (event.which == 13) {
+				event.preventDefault();
+				this.onEmailNameChange();
+			}
+		},
+
+		onEmailNameChange: function() {
+			this.model.set({
+				'menu-item-url': 'mailto:' + $.trim(this.$el.find('.menu-item-email-input').val())
+			});
+			this.saveItem();
+		},
 
 		onItemNameKeydown: function(event) {
 			if (event.which == 13) {
@@ -321,7 +337,7 @@ define([
 				case 'external':
 					return contentL10n.url;
 				case 'email':
-					return 'Email address';
+					return contentL10n.email_address;
 				case 'entry':
 					return contentL10n.post_or_page;
 				case 'anchor':

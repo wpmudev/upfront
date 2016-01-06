@@ -9,7 +9,7 @@ module.exports = function(grunt) {
 		sass: {
 			options: {
 				sourceMap: true,
-				outputStyle: 'nested',
+				outputStyle: 'compressed',
 				sourceComments: false
 			},
 			dist: {
@@ -20,8 +20,11 @@ module.exports = function(grunt) {
 		},
 		cssmin: {
 			minify: {
-				src: 'styles/global.css',
-				dest: 'styles/global.min.css'
+				expand: true,
+				cwd: 'styles',
+				src: ['global.css', 'editor-interface.css'],
+				dest: 'styles',
+				ext: '.min.css'
 			}
 		},
 		watch: {
