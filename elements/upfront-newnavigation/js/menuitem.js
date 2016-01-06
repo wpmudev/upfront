@@ -357,6 +357,9 @@ return (function ($) {
 				;
 			}
 
+			setTimeout(function(){
+				Upfront.Events.trigger("menu_element:edit");
+			}, 100);
 		},
 
 		editMenuItem: function() {

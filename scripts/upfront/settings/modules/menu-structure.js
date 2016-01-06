@@ -21,16 +21,19 @@ define([
 			this.options = options || {};
 
 			this.listenTo(this.model.get('properties'), 'change', function() {
-				me.setup();
-				me.render();
+				me.reload_structure();
 			});
 
 			Upfront.Events.on('menu_element:edit', function(menuData) {
-				me.setup();
-				me.render();
+				me.reload_structure();
 			});
 
 			this.setup();
+		},
+		
+		reload_structure: function() {
+			this.setup();
+			this.render();
 		},
 
 		setup: function() {
