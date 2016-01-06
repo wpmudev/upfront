@@ -13,7 +13,7 @@ define([
 		events: {
 			'mouseenter .menu-item-header': 'enableSorting',
 			'mouseleave .menu-item-header': 'disableSortingOnHeaderLeave',
-			'click .add-menu-item': 'addItem'
+			'click .add-menu-item': 'addItem',
 		},
 
 		initialize: function(options) {
@@ -21,17 +21,17 @@ define([
 			this.options = options || {};
 
 			this.listenTo(this.model.get('properties'), 'change', function() {
-				me.reload_structure();
+				me.reloadItems();
 			});
 
 			Upfront.Events.on('menu_element:edit', function(menuData) {
-				me.reload_structure();
+				me.reloadItems();
 			});
 
 			this.setup();
 		},
 		
-		reload_structure: function() {
+		reloadItems: function() {
 			this.setup();
 			this.render();
 		},
