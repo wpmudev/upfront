@@ -307,8 +307,10 @@ div.ugallery-label-selector {
 }
 .upfront-object-content .ugallery-thumb-title p {
 	color: #fff;
-	margin-bottom: 0;
-	line-height: inherit;
+}
+.upfront-output-object .ugallery-thumb-title p {
+    margin-bottom: 0;
+    line-height: inherit;
 }
 .ugallery-controls,
 .ui-resizable-autohide .ugallery_item:hover .ugallery-controls {
