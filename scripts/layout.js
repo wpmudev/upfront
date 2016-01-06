@@ -1117,12 +1117,34 @@ jQuery(document).ready(function($){
 
 
 	/**
-	 * Swap preset classes per breakpoint
-	 * for each of the object elements
+	 * Trigger DOM event on breakpoint change,
+	 * so elements can subscribe to it
+	 *
+	 * Front-end responsive presets propagation depends on this
+	 * event being fired properly
 	 */
-	function propagate_responsive_presets () {
-		var breakpoint = get_breakpoint() || 'desktop';
+	function propagate_breakpoint_change () {
+		var breakpoint = get_breakpoint() || 'desktop',
+			previous = get_previous_breakpoint() || 'desktop'
+		;
+		if (breakpoint !== previous) {
+			/**
+			 * Trigger a DOM event on actual breakpoint change
+			 * Responsive presets propagation listens for this event
+			 */
+			$(document).trigger("upfront-breakpoint-change", breakpoint);
+		}
+	}
+	var lazy_propagate_breakpoint_change = throttle(propagate_breakpoint_change, 200, {trailing: false});
+	$(window).on('resize.uf_layout', lazy_propagate_breakpoint_change);
+	// done propagating breakpoint change
 
+	/**
+	 * Swap preset classes per breakpoint for each of the object elements
+	 * Happens only on breakpoint change event
+	 */
+	function propagate_responsive_presets (e, breakpoint) {
+		breakpoint = breakpoint || get_breakpoint() || 'desktop';
 		if (!breakpoint) return;
 
 		$("[data-preset_map]").each(function () {
@@ -1139,26 +1161,17 @@ jQuery(document).ready(function($){
 				$me.removeClass(preset);
 				if (bp === breakpoint) $me.addClass(preset);
 			});
+
+			/**
+			 * Trigger a DOM event on responsive presets change
+			 * The legacy preset elements (accordion, tabs, button) listen to this event
+			 */
+			$(document).trigger("upfront-responsive_presets-changed", breakpoint);
 		});
 	}
-	propagate_responsive_presets();
 	var lazy_propagate_responsive_presets = throttle(propagate_responsive_presets, 200, {trailing: false});
-	$(window).on('resize.uf_layout', lazy_propagate_responsive_presets);
+	$(document).on("upfront-breakpoint-change", lazy_propagate_responsive_presets);
 	// done propagating presets
-
-	/**
-	 * Trigger DOM event on breakpoint change,
-	 * so elements can subscribe to it
-	 */
-	function propagate_breakpoint_change () {
-		var breakpoint = get_breakpoint() || 'desktop',
-			previous = get_previous_breakpoint() || 'desktop'
-		;
-		if (breakpoint !== previous) $(document).trigger("upfront-breakpoint-change", breakpoint);
-	}
-	var lazy_propagate_breakpoint_change = throttle(propagate_breakpoint_change, 200, {trailing: false});
-	$(window).on('resize.uf_layout', lazy_propagate_breakpoint_change);
-	// done propagating breakpoint change
 
 	function remove_all_bound_events () {
 		$(window).off('resize.uf_layout');
