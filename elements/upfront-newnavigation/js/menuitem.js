@@ -433,7 +433,8 @@ return (function ($) {
 			Upfront.Util.post(postdata)
 				.success(function (ret) {
 					me.model['menu-item-db-id'] = ret.data;
-					Upfront.Events.trigger("menu_element:edit");
+					//Triggering this event is causing nav to re-render and hide Link Panel
+					//Upfront.Events.trigger("menu_element:edit");
 				})
 				.error(function (ret) {
 					Upfront.Util.log("Error updating menu item");
