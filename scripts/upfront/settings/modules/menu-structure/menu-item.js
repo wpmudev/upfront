@@ -76,7 +76,7 @@ define([
 				case 'external':
 					return contentL10n.url;
 				case 'email':
-					return 'Email address';
+					return contentL10n.email_address;
 				case 'entry':
 					return contentL10n.post_or_page;
 				case 'anchor':

@@ -14,6 +14,11 @@
 		<div class="anchor-selector">
 		</div>
 		{[ } ]}
+		{[if(type == 'email') { ]}
+		<div class="upfront-field-wrap ulinkpanel-external-wrap">
+			<input type="text" value="{{url}}" placeholder="johnsmith@example.com" class="menu-item-email-input">
+		</div>
+		{[ } ]}
 		{[if(type == 'lightbox') { ]}
 			{[ if(lightboxes.length) { ]}
 				<div class="lightbox-selector">
