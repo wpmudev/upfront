@@ -355,7 +355,7 @@ class Upfront_newMenuSetting extends Upfront_Server {
 	}
 
 	public function delete_menu_item () {
-
+		$messages = array();
 		$menu_item_id = isset($_POST['menu_item_id']) ? intval($_POST['menu_item_id']) : false;
 		$menu_items =  isset($_POST['new_menu_order']) ? $_POST['new_menu_order'] : false;
 		if ( $menu_item_id ){
