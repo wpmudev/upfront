@@ -372,9 +372,11 @@ define([
 				breakpointsData = properties.breakpoint || {};
 				breakpointsData[currentBreakpoint.id] = breakpointsData[currentBreakpoint.id] || {};
 				_.each(this.options.breakpointSpecificPresetSettings, function(settingOptions) {
-					breakpointsData[currentBreakpoint.id][settingOptions.name] = properties[settingOptions.name];
-					// Delete property from root properties so that model remians clean (these properties should only be saved in breakpoint data)
-					delete properties[settingOptions.name];
+					if(typeof properties[settingOptions.name] !== "undefined") {
+						breakpointsData[currentBreakpoint.id][settingOptions.name] = properties[settingOptions.name];
+						// Delete property from root properties so that model remians clean (these properties should only be saved in breakpoint data)
+						delete properties[settingOptions.name];
+					}
 				}, this);
 				// Finally update breakpoints in model
 				properties.breakpoint = breakpointsData;
