@@ -6,13 +6,15 @@ define([
 		className: 'menu-structure-module-item',
 
 		events: {
-			'click .menu-item-header': 'toggleEditor'
+			'click .menu-item-header': 'toggleEditor',
+			'click .menu-item-delete': 'deleteItem'
 		},
 
 		initialize: function(options) {
 			this.options = options || {};
 			this.subViews = [];
 			this.depth = this.options.depth || 0;
+			this.parent_view = options.parent_view;
 			var sub = this.model.get('sub');
 
 			if (sub) {
@@ -86,7 +88,26 @@ define([
 				case 'lightbox':
 					return contentL10n.lightbox;
 			}
-		}
+		},
+		
+		deleteItem: function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+
+			if(typeof this.model.get('menu-item-db-id') != 'undefined') {
+				Upfront.Util.post({"action": "upfront_new_delete_menu_item", "menu_item_id": this.model.get('menu-item-db-id')})
+					.success(function (ret) {
+					})
+					.error(function (ret) {
+						Upfront.Util.log("Error Deleting Menu Item");
+					})
+				;
+			}
+
+			setTimeout(function(){
+				Upfront.Events.trigger("menu_element:edit");
+			}, 100);
+		},
 	});
 
 	return MenuItem;

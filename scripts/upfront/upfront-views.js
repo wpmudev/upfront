@@ -3372,6 +3372,8 @@ define([
 				this.listenTo(Upfront.Events, "entity:drag_stop", this.fix_height);
 				this.listenTo(Upfront.Events, "entity:drag:drop_change", this.refresh_background);
 				this.listenTo(Upfront.Events, "sidebar:toggle:done", this.refresh_background);
+				this.listenTo(Upfront.Events, "entity:navigation:responsive_open", this.refresh_background);
+				this.listenTo(Upfront.Events, "entity:navigation:responsive_close", this.refresh_background);
 				this.listenTo(Upfront.Events, "entity:region:added", this.fix_height);
 				this.listenTo(Upfront.Events, "entity:region:removed", this.on_region_remove);
 				this.listenTo(Upfront.Events, "entity:region:hide_toggle", this.on_region_hide);
@@ -4070,6 +4072,8 @@ define([
 				this.listenTo(Upfront.Events, "entity:region_container:resize_stop", this.refresh_background);
 				this.listenTo(Upfront.Events, "entity:drag_stop", this.refresh_background);
 				this.listenTo(Upfront.Events, "entity:drag:drop_change", this.refresh_background);
+				this.listenTo(Upfront.Events, "entity:navigation:responsive_open", this.refresh_background);
+				this.listenTo(Upfront.Events, "entity:navigation:responsive_close", this.refresh_background);
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 				this.listenTo(Upfront.Events, "entity:region:hide_toggle", this.update_hide_toggle);
 				this.listenTo(Upfront.Events, "command:region:edit_toggle", this.update_buttons);
