@@ -20,8 +20,6 @@ module.exports = function(grunt) {
 		},
 		cssmin: {
 			minify: {
-				//src: 'styles/global.css',
-				//dest: 'styles/global.min.css'
 				expand: true,
 				cwd: 'styles',
 				src: ['global.css', 'editor-interface.css'],
