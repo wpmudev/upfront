@@ -5,7 +5,7 @@ define([
 	'text!scripts/upfront/settings/modules/menu-structure/menu-structure.tpl'
 ], function(MenuUtil, MenuStructureItem, tpl) {
 	var l10n = Upfront.Settings.l10n.preset_manager;
-
+	var scrollDown = false;
 	var MenuStructureModule = Backbone.View.extend({
 		className: 'settings_module menu_structure_module clearfix',
 		handlesSaving: true,
@@ -139,6 +139,21 @@ define([
 			_.each(this.menuItemViews, function(view) {
 				$body.append(view.render().el);
 			});
+			
+			/**
+			 * This will scroll the panel down to the position of the newly added menu item i.e., 
+			 * at the bottom of the list
+			 */
+			 
+			if(scrollDown) {
+
+				// Scroll down to where the new menu item has been added.
+				var menu_items_panel = me.$el.closest('.uf-settings-panel--expanded');
+				var scroll_wrap = menu_items_panel.closest('#sidebar-scroll-wrapper');
+				scroll_wrap.scrollTop(menu_items_panel.height()-175);
+				scrollDown = false;
+
+			}
 		},
 
 		enableSorting: function(event) {
@@ -387,7 +402,7 @@ define([
 				newItem = {
 					'menu-item-object': 'custom',
 					'menu-item-parent-id': 0,
-					'menu-item-position': -1,
+					//'menu-item-position': -1,
 					'menu-item-target': '',
 					'menu-item-title': 'New Item',
 					'menu-item-type': 'custom',
@@ -399,7 +414,9 @@ define([
 				menuId: this.menuId,
 				menuItemData: newItem
 			}).done(
+
 					function(response) {
+						
 						newItem['menu-item-db-id'] = response.data.itemId;
 						newItem['menu-item-object-id'] = response.data.itemId + '';
 
@@ -411,7 +428,15 @@ define([
 						}).done(function() {
 							me.model.get_property_value_by_name('menu_items').unshift(newItem);
 							me.model.get('properties').trigger('change');
+
+							/**
+							 * This will flag the settings panel to scroll down 
+							 * to the position of the newly added menu item i.e., 
+							 * at the bottom of the list
+							 */
+							scrollDown = true;
 						});
+
 					}
 				).fail(
 					function(response) {
