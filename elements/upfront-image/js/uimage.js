@@ -166,10 +166,10 @@ define([
 		},
 
 		getSelectedAlignment: function(){
-			if(!this.property('include_image_caption') && this.property('caption_position') === false && this.property('caption_alignment') === false) {
+			if(!this.property('include_image_caption') && this.get_preset_property("caption-position") === false && this.property('caption_alignment') === false) {
 				return 'nocaption';
 			}
-			if(this.property('caption_position') === 'below_image') {
+			if(this.get_preset_property("caption-position") === 'below_image') {
 				return 'below';
 			}
 
@@ -301,7 +301,7 @@ define([
 				starting = this.$('.upfront-image-starting-select'),
 				size = this.temporaryProps.size, //this.property('size'),
 				position = this.temporaryProps.position, //this.property('position'),
-				captionHeight = this.property('caption_position') === 'below_image' ? this.$('.wp-caption').outerHeight() : 0
+				captionHeight = this.get_preset_property("caption-position") === 'below_image' ? this.$('.wp-caption').outerHeight() : 0
 			;
 
 			if (starting.length) {
@@ -369,7 +369,7 @@ define([
 		},
 
 		hasCaptionPosition: function() {
-			return this.property('caption_position') !== false || this.property('caption_alignment') !== false;
+			return this.get_preset_property("caption-position") !== false || this.property('caption_alignment') !== false;
 		},
 
 		setupBySize: function() {
@@ -417,7 +417,7 @@ define([
 
 			props.in_editor = true;
 
-			props.cover_caption = props.caption_position !== 'below_image';
+			props.cover_caption = this.get_preset_property("caption-position") !== 'below_image';
 
 			if(props.stretch) {
 				props.imgWidth = '100%';
@@ -552,7 +552,7 @@ define([
 
 		on_render: function() {
 			var me = this,
-				onTop = ['bottom', 'fill_bottom'].indexOf(this.property('caption_alignment')) !== -1 || this.property('caption_position') === 'below_image' ? ' sizehint-top' : '',
+				onTop = ['bottom', 'fill_bottom'].indexOf(this.property('caption_alignment')) !== -1 || this.get_preset_property("caption-position") === 'below_image' ? ' sizehint-top' : '',
 				elementSize = this.property('element_size');
 
 			//Bind resizing events
@@ -779,7 +779,7 @@ define([
 
 			var starting = this.$('.upfront-image-starting-select'); // Add image panel
 
-			if(this.property('caption_position') !== 'below_image') {
+			if(this.get_preset_property("caption-position") !== 'below_image') {
 				this.$('.wp-caption').fadeOut('fast');
 			}
 
@@ -793,7 +793,7 @@ define([
 					vstretch: this.property('vstretch')
 				},
 				img: this.$('img'),
-				setTextHeight: this.property('caption_position') === 'below_image'
+				setTextHeight: this.get_preset_property("caption-position") === 'below_image'
 			};
 
 			if(this.cropTimer) {
@@ -822,7 +822,7 @@ define([
 			var starting = this.resizingData.starting,
 				data = this.resizingData.data,
 				img = this.resizingData.img,
-				captionHeight = this.property('caption_position') === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
+				captionHeight = this.get_preset_property("caption-position") === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
 				// padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding),
 				column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
 				hPadding = parseInt( this.model.get_breakpoint_property_value('left_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('right_padding_num') || column_padding ),
@@ -1185,7 +1185,7 @@ define([
 				height: resizer.height() - (2 * padding)
 			};
 
-			if(this.property('caption_position') === 'below_image') {
+			if(this.get_preset_property("caption-position") === 'below_image') {
 				this.elementSize.height -= parent.find('.wp-caption').outerHeight();
 			}
 
@@ -1198,7 +1198,7 @@ define([
 			var me = this,
 				parent = this.parent_module_view.$('.upfront-editable_entity:first'),
 				resizer = parent,
-				captionHeight = this.property('caption_position') === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
+				captionHeight = this.get_preset_property("caption-position") === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
 				// padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding),
 				borderWidth = parseInt(this.$el.find('.upfront-image-caption-container').css('borderWidth'), 10),
 				column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
