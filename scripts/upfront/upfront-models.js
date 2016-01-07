@@ -105,6 +105,8 @@ var _alpha = "alpha",
 		 *
 		 * The packed values will be decoded later on using the `decode_preset` method.
 		 * As a side-effect, we also update the model `breakpoint_presets` property.
+		 * As a side-effect #2, we also set whatever the current preset is (or default) as 
+		 * default breakpoint preset, if it's not already set.
 		 *
 		 * @param {String} preset_id Preset ID to pack
 		 * @param {String} breakpoint_id Breakpoint ID used to resolve the preset in storage 
@@ -115,8 +117,13 @@ var _alpha = "alpha",
 		encode_preset: function (preset_id, breakpoint_id) {
 			breakpoint_id = breakpoint_id || (Upfront.Views.breakpoints_storage.get_breakpoints().get_active() || {}).id;
 			var	data = this.get_property_value_by_name("breakpoint_presets") || {};
+				current = (this.get_property_by_name('preset').previousAttributes() || {value: 'default'}).value,
+				default_bp_id = (Upfront.Views.breakpoints_storage.get_breakpoints().findWhere({'default': true}) || {}).id
+			;
 			
 			data[breakpoint_id] = {preset: preset_id};
+			if (!data[default_bp_id]) data[default_bp_id] = {preset: current};
+
 			this.set_property("breakpoint_presets", data, true);
 
 			return data;
