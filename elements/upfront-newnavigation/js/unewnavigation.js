@@ -82,7 +82,6 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	get_preset_properties: function() {
 		var preset = this.model.get_property_value_by_name("preset"),
 			props = PresetUtil.getPresetProperties('nav', preset) || {};
-
 		return props;
 	},
 
@@ -589,7 +588,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			ruler_height = ( $('.upfront-ruler-container').length > 0 ? $('.upfront-ruler-container').outerHeight() : 0 ),
 			allBreakpoints = Upfront.Views.breakpoints_storage.get_breakpoints(),
 			currentBreakpoint = allBreakpoints.get_active(),
-			breakpoints = this.get_preset_properties().breakpoint,
+			breakpoints = this.get_preset_properties().breakpoint || {desktop: {}},
 			breakpoint = breakpoints[currentBreakpoint.id],
 			breakpointWidth = currentBreakpoint.get_property_value_by_name('width'),
 			currentwidth = typeof breakpointWidth !== 'undefined' && !currentBreakpoint.get('default') ? parseInt(breakpointWidth, 10) : $(window).width()
@@ -706,8 +705,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		 * so, it should be allowed to use the new rendering technique
 		 */
 
-		if (this.property('preset') && this.property('preset') !== 'default') {
-		//if (this.property('preset')) {
+		//if (this.property('preset') && this.property('preset') !== 'default') {
+		if (this.property('preset')) {
 			this.renderResponsiveNavigation(selector);
 			return;
 		}
