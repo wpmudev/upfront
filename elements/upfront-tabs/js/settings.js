@@ -72,7 +72,13 @@ define([
 										name: 'global-content-bg',
 										label: l10n.content_area_bg_label
 									},
-								]
+								],
+								selectorsForCssCheck: {
+									'global-content-bg': {
+										selector: '.utabs-content',
+										cssProperty: 'background-color'
+									}
+								}
 							}
 						},
 						{
@@ -85,6 +91,9 @@ define([
 									width: 'global-borderwidth',
 									type: 'global-bordertype',
 									color: 'global-bordercolor',
+								},
+								selectorsForCssCheck: {
+									all: '.utabs-content'
 								}
 							}
 						}
@@ -101,7 +110,13 @@ define([
 										name: 'static-tab-bg',
 										label: l10n.tab_bg_label
 									},
-								]
+								],
+								selectorsForCssCheck: {
+									'static-tab-bg': {
+										selector: '.tabs-tab .inner-box',
+										cssProperty: 'background-color'
+									}
+								}
 							}
 						},
 						{
@@ -118,6 +133,11 @@ define([
 									size: 'static-font-size',
 									line_height: 'static-line-height',
 									color: 'static-font-color',
+								},
+								selectorsForCssCheck: {
+									'all': {
+										selector: '.tabs-tab .inner-box'
+									}
 								}
 							}
 						},
@@ -131,6 +151,9 @@ define([
 									width: 'static-borderwidth',
 									type: 'static-bordertype',
 									color: 'static-bordercolor',
+								},
+								selectorsForCssCheck: {
+									all: '.tabs-tab'
 								}
 							}
 						}
@@ -154,7 +177,13 @@ define([
 										name: 'hover-tab-bg',
 										label: l10n.tab_bg_label
 									},
-								]
+								],
+								selectorsForCssCheck: {
+									'hover-tab-bg': {
+										selector: '.live-preview-hover .tabs-tab .inner-box',
+										cssProperty: 'background-color'
+									}
+								}
 							}
 						},
 						{
@@ -225,7 +254,13 @@ define([
 								name: 'active-tab-bg',
 								label: l10n.tab_bg_label
 							},
-						]
+						],
+						selectorsForCssCheck: {
+							'active-tab-bg': {
+								selector: '.live-preview-active .tabs-tab .inner-box',
+								cssProperty: 'background-color'
+							}
+						}
 					}
 				},
 						{
