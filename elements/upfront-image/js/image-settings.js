@@ -68,6 +68,11 @@ define([
 									radius2: 'borderradius2',
 									radius3: 'borderradius3',
 									radius4: 'borderradius4'
+								},
+								selectorsForCssCheck: {
+									'all': {
+										selector: '.upfront-image-caption-container'
+									}
 								}
 							}
 						},
@@ -95,7 +100,17 @@ define([
 										name: 'caption-bg',
 										label: l10n.settings.caption_bg_label
 									},
-								]
+								],
+								selectorsForCssCheck: {
+									'caption-text': {
+										selector: '.upfront-image-caption-container .wp-caption',
+										cssProperty: 'color'
+									},
+									'caption-bg': {
+										selector: '.upfront-image-caption-container .wp-caption',
+										cssProperty: 'background-color'
+									},
+								}
 							}
 						},
 						{
@@ -108,6 +123,9 @@ define([
 									width: 'borderwidth',
 									type: 'bordertype',
 									color: 'bordercolor',
+								},
+								selectorsForCssCheck: {
+									all: '.upfront-image-caption-container'
 								}
 							}
 						}
