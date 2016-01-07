@@ -68,6 +68,11 @@ define([
 								size: 'static-font-size',
 								line_height: 'static-line-height',
 								color: 'static-font-color',
+							},
+							selectorsForCssCheck: {
+								'all': {
+									selector: 'ul.menu > li.menu-item > a'
+								}
 							}
 						}
 					},
@@ -82,7 +87,13 @@ define([
 									name: 'static-nav-bg',
 									label: l10n.panel.background_label
 								},
-							]
+							],
+							selectorsForCssCheck: {
+								'static-nav-bg': {
+									selector: 'ul.menu',
+									cssProperty: 'background-color'
+								}
+							}
 						}
 					},
 				],
@@ -104,6 +115,11 @@ define([
 								size: 'hover-font-size',
 								line_height: 'hover-line-height',
 								color: 'hover-font-color',
+							},
+							selectorsForCssCheck: {
+								'all': {
+									selector: '.live-preview-hover ul.menu > li.menu-item > a'
+								}
 							}
 						}
 					},
@@ -146,6 +162,11 @@ define([
 								size: 'focus-font-size',
 								line_height: 'focus-line-height',
 								color: 'focus-font-color',
+							},
+							selectorsForCssCheck: {
+								'all': {
+									selector: '.live-preview-focus ul.menu > li.menu-item > a'
+								}
 							}
 						}
 					},
