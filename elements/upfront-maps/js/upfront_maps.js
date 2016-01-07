@@ -143,6 +143,11 @@ define([
 			this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.refresh_map);
 		},
 
+		on_element_resize: function (attr) {
+			//Refresh Map size when resize finish
+			this.refresh_map();
+		},
+
 		on_render: function () {
 			this.update_properties();
 			var me = this,
