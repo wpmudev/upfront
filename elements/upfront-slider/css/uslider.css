@@ -28,9 +28,18 @@ div.uslide-text-current {
 	overflow: hidden;
 }
 
-.uslide-caption {
+.uslide .uslide-caption {
 	position: relative;
 	padding: 15px;
+}
+
+.uslide .uslide-caption p {
+	line-height: inherit;
+	margin: 0;
+}
+
+.uslide .uslide-caption p:last-child {
+	padding-bottom: 0;
 }
 
 .uslide-topOver .uslide-caption,
@@ -67,7 +76,7 @@ div.uslide-text-current {
 }
 
 .uslide-nocaption .uslide-caption {
-	display: none;
+	display: none !important;
 }
 
 .uslide-bottomOver .uslide-caption{
