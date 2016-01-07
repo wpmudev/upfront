@@ -700,16 +700,16 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		// If there is preset setup use new rendering
 		
-		/** IGNORE THIS STATEMENT ATM, STILL WORKING ON A PROPER FIX
-		 * Even the new Reesponsive Nav comes with 'default' presets
+		/**
+		 * Even the new Responsive Nav comes with 'default' presets
 		 * so, it should be allowed to use the new rendering technique
 		 */
 
-		//if (this.property('preset') && this.property('preset') !== 'default') {
 		if (this.property('preset')) {
 			this.renderResponsiveNavigation(selector);
 			return;
 		}
+		
 		this.fallbackToOldResponsiveNav(selector, bpwidth);
 	},
 
