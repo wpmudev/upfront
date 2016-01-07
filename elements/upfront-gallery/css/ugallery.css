@@ -305,9 +305,9 @@ div.ugallery-label-selector {
 	word-wrap: break-word;
 	color: #fff;
 }
-.upfront-object-content .ugallery-thumb-title p {
+/*.upfront-object-content .ugallery-thumb-title p {
 	color: #fff;
-}
+}*/
 .upfront-output-object .ugallery-thumb-title p {
     margin-bottom: 0;
     line-height: inherit;
@@ -803,6 +803,7 @@ figure.gallery-labels-figure img.mfp-img {
 }
 
 .ugallery-caption-over,
+.ugallery-caption-below,
 .ugallery-padded-caption {
 	padding:5px;
 }
