@@ -29,7 +29,8 @@ div.uslide-text-current {
 }
 
 .uslide-caption {
-  position: relative;
+	position: relative;
+	padding: 15px;
 }
 
 .uslide-topOver .uslide-caption,
@@ -114,10 +115,10 @@ div.uslide-text-current {
 	vertical-align: top;
 }
 
-.uslide-right .uslide-caption,
+/*.uslide-right .uslide-caption,
 .uslide-left .uslide-caption {
 	padding: 0 15px;
-}
+}*/
 
 .uslide-image {
 	display:block;
