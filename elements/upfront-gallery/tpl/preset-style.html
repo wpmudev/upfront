@@ -15,10 +15,14 @@
 	overflow: hidden;
 }
 
+.upfront-output-ugallery .<?php echo $properties['id'] ?> .ugallery-thumb-title p,
 .upfront-output-ugallery .<?php echo $properties['id'] ?> .ugallery-thumb-title {
 	<?php if(!empty($properties['caption-text'])) { ?>
 	color: <?php echo $properties['caption-text']  ?>;
 	<?php } ?>
+}
+
+.upfront-output-ugallery .<?php echo $properties['id'] ?> .ugallery-thumb-title {
 	<?php if(!empty($properties['caption-bg'])) { ?>
 	background: <?php echo $properties['caption-bg'] ?>;
 	<?php } ?>
