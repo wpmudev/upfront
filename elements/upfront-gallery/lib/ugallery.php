@@ -214,6 +214,8 @@ class Upfront_UgalleryView extends Upfront_Object {
 	}
 
 	public static function image_defaults(){
+		$l10n = self::_get_l10n('template');
+
 		return array(
 			'id' => 0,
 			'src' => 'http//imgsrc.hubblesite.org/hu/db/images/hs-2013-12-a-small_web.jpg',
@@ -225,8 +227,8 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'rotation' => 0,
 			'link' => 'original',
 			'url' => '',
-			'title' => 'Image caption',
-			'caption' => 'Image description',
+			'title' => $l10n['image_caption'],
+			'caption' => $l10n['image_description'],
 			'alt' => '',
 			'tags' => array(),
 			'margin' => array('left' => 0, 'top' => 0),
@@ -413,6 +415,8 @@ class Upfront_UgalleryView extends Upfront_Object {
 				'edit_details' => __('Edit image details', 'upfront'),
 				'title' => __('Title', 'upfront'),
 				'caption' => __('Caption', 'upfront'),
+				'image_caption' => __('<p>Image caption</p>', 'upfront'),
+				'image_description' => __('Image description', 'upfront'),
 				'alt' => __('Alternative text', 'upfront'),
 				'ok' => __('Ok', 'upfront'),
 				'labels' => __('Labels', 'upfront'),
