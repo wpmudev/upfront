@@ -50,7 +50,13 @@ define([
 								name: 'captionBackground',
 								label: l10n.caption_bg
 							},
-						]
+						],
+						selectorsForCssCheck: {
+							'captionBackground': {
+								selector: '.uslide-caption',
+								cssProperty: 'background-color'
+							}
+						}
 					}
 				},
 			]
