@@ -258,7 +258,7 @@ define([
 			;
 			if (typeof view === 'undefined' || typeof selectors === 'undefined') return false;
 
-			// Don't check if border is not used
+			// Don't check if toggle is not used
 			if (this.options.toggle && !this.model.get(this.options.fields.use)) return false;
 
 			// Check overrides

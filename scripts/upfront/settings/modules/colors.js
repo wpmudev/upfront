@@ -131,12 +131,46 @@ define([
 				}
 
 				var elementColor = view.$el.find(selectors[color.name].selector).css(selectors[color.name].cssProperty);
-				if (elementColor && convertedColor.replace(/\s+/g, '') !== elementColor.replace(/\s+/g, '')) {
+				if (elementColor && this.to_normalized_color_comparison_string(convertedColor) !== this.to_normalized_color_comparison_string(elementColor)) {
 					isOverridden = true;
 				}
 
 			}, this);
 			return isOverridden;
+		},
+
+		/**
+		 * Attempt to make sure color representations are uniform.
+		 * Doesn't yield back the usable color, but rather a comparison string.
+		 *
+		 * @param {String} str Color representation in string form
+		 *
+		 * @return {String} Uniform color comparison string
+		 */
+		to_normalized_color_comparison_string: function (str) {
+			var color = hexToRgb(Upfront.Util.colors.to_color_value(str)),
+				bare = '',
+				parts = []
+			;
+			// So apparently we have RGBA format in the model that's named RGB :/
+			// How the hell this happens???
+			if (color.match(/rgb\((\d+,\s?){3}\s?\d+\)/)) {
+				color = color.replace(/^rgb/, 'rgba');
+			}
+			bare = color.replace(/\s+/, '').replace(/rgba?\(/, '').replace(/\)?$/, ''); // Remove all but comma-separated numbers
+			parts = bare.split(",");
+
+			// Something went wrong, bail out
+			if (!parts.length || parts.length < 3) return color;
+
+			if (parts.length < 4) parts[3] = parts[3] || "1"; // Force alpha
+
+			return JSON.stringify({
+				r: parseFloat(parts[0], 10),
+				g: parseFloat(parts[1], 10),
+				b: parseFloat(parts[2], 10),
+				a: parseFloat(parts[3], 10),
+			});
 		},
 
 		reset_fields: function(value) {
