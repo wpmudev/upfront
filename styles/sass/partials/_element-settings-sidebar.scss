@@ -194,6 +194,7 @@
 	cursor: pointer;
 }
 .menu-item-header .menu-item-delete {
+	display: none;
 	width: 16px;
 	height: 16px;
 	background-position: -483px -171px;
@@ -205,6 +206,9 @@
 	overflow: hidden;
 	text-indent: 100px;
 	line-height: 3em;
+}
+.menu-item-header:hover .menu-item-delete {
+	display:block;
 }
 .menu-item-expanded .menu-item-header {
 	border-bottom: 0 none;
