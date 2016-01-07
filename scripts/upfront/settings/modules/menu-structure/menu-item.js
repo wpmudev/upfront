@@ -97,6 +97,10 @@ define([
 			if(typeof this.model.get('menu-item-db-id') != 'undefined') {
 				Upfront.Util.post({"action": "upfront_new_delete_menu_item", "menu_item_id": this.model.get('menu-item-db-id')})
 					.success(function (ret) {
+						//Make sure deleted element is removed from the list
+						if(typeof this.$el !== "undefined") {
+							this.$el.remove();
+						}
 					})
 					.error(function (ret) {
 						Upfront.Util.log("Error Deleting Menu Item");
@@ -106,7 +110,7 @@ define([
 
 			setTimeout(function(){
 				Upfront.Events.trigger("menu_element:edit");
-			}, 100);
+			}, 200);
 		},
 	});
 
