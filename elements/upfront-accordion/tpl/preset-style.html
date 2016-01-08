@@ -1,4 +1,5 @@
-.upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title {
+.upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title,
+.upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title p {
 	<?php if(!empty($properties['static-header-bg-color'])) { ?>background: <?php echo $properties['static-header-bg-color'] ?>; <?php } ?>
 	<?php if(!empty($properties['static-font-color'])) { ?>color: <?php echo $properties['static-font-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['static-font-family'])) { ?>font-family: <?php echo $properties['static-font-family']  ?>; <?php } ?>
@@ -19,6 +20,7 @@
 }
 
 .upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title:hover,
+.upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title:hover p,
 .upfront-accordion.<?php echo $properties['id']  ?>.live-preview-hover .upfront-accordion-container .accordion-panel-title {
 	<?php if(!empty($properties['hover-use-colors'])) { ?>
 		<?php if(!empty($properties['hover-header-bg-color'])) { ?>background: <?php echo $properties['hover-header-bg-color'] ?>; <?php } ?>
@@ -48,6 +50,7 @@
 }
 
 .upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-active .accordion-panel-title,
+.upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-active .accordion-panel-title p,
 .upfront-accordion.<?php echo $properties['id']  ?>.live-preview-active .upfront-accordion-container .accordion-panel-title {
 	<?php if(!empty($properties['active-use-color'])) { ?>
 		<?php if(!empty($properties['active-header-bg-color'])) { ?>background: <?php echo $properties['active-header-bg-color'] ?>; <?php } ?>
@@ -76,7 +79,8 @@
     <?php } ?>
 	transition: none;
 }
-#page .upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-content {
+#page .upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-content,
+#page .upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-content p {
 	<?php if (!empty($properties['active-content-bg-color'])) { ?>
 		background: <?php echo $properties['active-content-bg-color'] ?>;
 	<?php } ?>

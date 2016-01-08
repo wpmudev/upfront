@@ -120,7 +120,7 @@ class Upfront_UaccordionView extends Upfront_Object {
 		$l10n = array(
 			'element_name' => __('Accordion', 'upfront'),
 			'default_panel_title' => __('Panel 1', 'upfront'),
-			'default_panel_content' => __('Click on active panel title to edit title. Confirm with Enter key.<br>Click on plus button [+] to add new panel.', 'upfront'),
+			'default_panel_content' => __('<p>Click on active panel title to edit title. Confirm with Enter key.</p><p>Click on plus button [+] to add new panel.</p>', 'upfront'),
 			'css' => array(
 				'containers_label' => __('Panel containers', 'upfront'),
 				'containers_info' => __('The wrapper layer of every panel.', 'upfront'),
@@ -144,7 +144,7 @@ class Upfront_UaccordionView extends Upfront_Object {
 			'settings' => __('Accordion settings', 'upfront'),
 			'panel_label'	=> __('Panel', 'upfront'),
 			'add_panel'	=> __('Add Panel', 'upfront'),
-			'content_label' => __('Content', 'upfront'),
+			'content_label' => __('<p>Content</p>', 'upfront'),
 			'appearance' => __('Appearance', 'upfront'),
 			'section_bg' => __('Section Background:', 'upfront'),
 			'header_bg' => __('Header Background:', 'upfront'),
