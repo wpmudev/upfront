@@ -210,8 +210,9 @@
 .upfront-module-group-active.upfront-module-group-reorder-mode:hover .upfront-module-group-toggle-reorder-container {
 	display: block;
 }
-.upfront-module-group-reorder-mode:hover .upfront-module-group-toggle-edit-container {
-  display: none;
+.upfront-module-group-reorder-mode:hover .upfront-module-group-toggle-edit-container,
+.upfront-module-group-reorder-mode .upfront-inline-panel-item.ungroup-control {
+  display: none !important;
 }
 .upfront-module-group.upfront-module-group-disabled .upfront-module-group-toggle-edit-container,
 .upfront-module-group.upfront-module-group-on-edit .upfront-module-group-toggle-container {
