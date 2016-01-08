@@ -220,8 +220,9 @@
                      */
                     self.$el.on("hover, click", function(e){
                         e.stopPropagation();
+                        var $ed = self.$editor.is(".redactor-editor") ? self.$editor :self.$editor.find('.upfront-object-content'); // select the correct editor
                         $caption.attr("contenteditable", true);
-                        self.$editor.attr("contenteditable", false);
+                        $ed.attr("contenteditable", false);
                         self.caption_active = true;
                     });
 
@@ -230,8 +231,9 @@
                      * Manage editability on $editor events
                      */
                     this.$editor.on("mouseenter, click", function(e){
+                        var $ed = $(this).is(".redactor-editor") ? $(this) :$(this).find('.upfront-object-content'); // select the correct editor
                         $caption.attr("contenteditable", false);
-                        $(this).attr("contenteditable", true);
+                        $ed.attr("contenteditable", true);
                         self.caption_active = false;
                     });
 
@@ -538,6 +540,7 @@
                     return imageData;
                 },
                 render_shortcode: function(data){
+                    if( this.caption_ueditor && !this.caption_ueditor.options.inserts.length ) return; // if "inserts" array is empty or not defined there is no need to render shortcode!
                     data = data instanceof Backbone.Model ? data.toJSON() : data;
 
                     var html = this.shortcode_tpl(data);
