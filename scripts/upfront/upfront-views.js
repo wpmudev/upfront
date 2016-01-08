@@ -1559,6 +1559,10 @@ define([
 					$obj.addClass(theme_style.toLowerCase());
 					this._theme_style = theme_style;
 				}
+				
+				// Deal with the preset classes change on breakpoint change
+				this.model.decode_preset(breakpoint.id);
+				
 				this.update_position();
 				this.checkUiOffset();
 			},

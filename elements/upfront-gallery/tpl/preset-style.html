@@ -28,7 +28,9 @@
 	<?php } ?>
 }
 
-.upfront-output-ugallery .<?php echo $properties['id'] ?> .ugallery-thumb-title {
+.upfront-output-ugallery.<?php echo $properties['id'] ?> .ugallery-thumb-title, 
+.upfront-object.upfront-gallery.<?php echo $properties['id'] ?> .ugallery-thumb-title
+{
 	<?php if($properties['caption-height'] == 'fixed' && !empty($properties['thumbCaptionsHeight'])) { ?>
 		overflow: hidden;
 		height: <?php echo $properties['thumbCaptionsHeight'] ?>px;

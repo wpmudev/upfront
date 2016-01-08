@@ -70,6 +70,65 @@ var _alpha = "alpha",
 		has_property_value: function (property, value) {
 			return (value == this.get_property_value_by_name(property));
 		},
+
+		/**
+		 * Resolve the preset value from wherever we might be having it stored
+		 *
+		 * Resolves the preset and, as a side-effect, sets the `preset` property
+		 * to the resolved value.
+		 * This way the `preset` property is now more of a transient, contextyally
+		 * dependent value - not fixed and given once by the mighty hand of god.
+		 *
+		 *  The value is resolved by first checking the passed breakpoint ID
+		 *  (which will default to currently active one) and, if that fails,
+		 *  will default to whatever the `preset` property says it should be.
+		 *  Failing all of that, it'll fall back to "default"
+		 *
+		 * @param {String} breakpoint_id Breakpoint ID used to resolve the preset from storage
+		 * *                               - will default to current one
+		 *
+		 * @return {String} Decoded preset ID
+		 */
+		decode_preset: function (breakpoint_id) {
+			breakpoint_id = breakpoint_id || (Upfront.Views.breakpoints_storage.get_breakpoints().get_active() || {}).id;
+			var current = this.get_property_value_by_name('preset') || 'default',
+				model = this.get_property_value_by_name("breakpoint_presets") || {},
+				breakpoint_preset = (model[breakpoint_id] || {}).preset,
+				actual = breakpoint_preset || current
+			;
+			this.set_property('preset', actual, false); // Do *not* be silent here, we do want repaint
+			return actual;
+		},
+
+		/**
+		 * Pack up the breakpoint preset values.
+		 *
+		 * The packed values will be decoded later on using the `decode_preset` method.
+		 * As a side-effect, we also update the model `breakpoint_presets` property.
+		 * As a side-effect #2, we also set whatever the current preset is (or default) as 
+		 * default breakpoint preset, if it's not already set.
+		 *
+		 * @param {String} preset_id Preset ID to pack
+		 * @param {String} breakpoint_id Breakpoint ID used to resolve the preset in storage 
+		 *                               - will default to current one
+		 *
+		 * @return {Object} Packed breakpoint presets
+		 */
+		encode_preset: function (preset_id, breakpoint_id) {
+			breakpoint_id = breakpoint_id || (Upfront.Views.breakpoints_storage.get_breakpoints().get_active() || {}).id;
+			var	data = this.get_property_value_by_name("breakpoint_presets") || {};
+				current = (this.get_property_by_name('preset').previousAttributes() || {value: 'default'}).value,
+				default_bp_id = (Upfront.Views.breakpoints_storage.get_breakpoints().findWhere({'default': true}) || {}).id
+			;
+			
+			data[breakpoint_id] = {preset: preset_id};
+			if (!data[default_bp_id]) data[default_bp_id] = {preset: current};
+
+			this.set_property("breakpoint_presets", data, true);
+
+			return data;
+		},
+
 		add_property: function (name, value, silent) {
 			if (!silent) silent = false;
 			this.get("properties").add(new Upfront.Models.Property({"name": name, "value": value}), {"silent": silent});
