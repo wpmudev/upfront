@@ -79,7 +79,7 @@ define([
 		deletePanel: function(event) {
 			var element = $(event.currentTarget);
 			var panel = element.parents('.accordion-panel');
-			var id = panel.index()-1;
+			var id = panel.index();
 			this.property('accordion').splice(id, 1);
 			this.property('accordion_count', this.property('accordion_count') - 1, false);
 		},
@@ -126,7 +126,7 @@ define([
 		savePanelContent: function() {
 			var panel = this.$el.find('.accordion-panel-active'),
 				$content = panel.find('.accordion-panel-content'),
-				panelId = panel.index()-1,
+				panelId = panel.index(),
 				ed = $content.data('ueditor'),
 				text = ''
 			;
