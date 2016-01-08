@@ -536,8 +536,10 @@ class Upfront_ThisPostView extends Upfront_Object {
 		// to get the same output than in the frontend
 		global $current_screen;
 		if (!class_exists('WP_Screen')) {
-			if (file_exists(ABSPATH . '/wp-admin/includes/class-wp-screen.php')) require_once(ABSPATH . '/wp-admin/includes/class-wp-screen.php');
-			else if (file_exists(ABSPATH . '/wp-admin/includes/screen.php')) require_once(ABSPATH . '/wp-admin/includes/screen.php');
+			if (file_exists(ABSPATH . '/wp-admin/includes/class-wp-screen.php')) {
+				require_once(ABSPATH . '/wp-admin/includes/class-wp-screen.php');
+				if (!function_exists('get_current_screen')) require_once(ABSPATH . '/wp-admin/includes/screen.php');
+			} else if (file_exists(ABSPATH . '/wp-admin/includes/screen.php')) require_once(ABSPATH . '/wp-admin/includes/screen.php');
 		}
 		if (class_exists('WP_Screen')) $current_screen = WP_Screen::get('front');
 
