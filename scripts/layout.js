@@ -183,6 +183,11 @@ jQuery(document).ready(function($){
 						if (false === overflow_bottom && $next.length > 0 && $next.height() < 100) overflow_bottom = $next.height();
 						if (false !== overflow_top) $overlay.uparallax('setOption', 'overflowTop', overflow_top);
 						if (false !== overflow_bottom) $overlay.uparallax('setOption', 'overflowBottom', overflow_bottom);
+						$(document).on('upfront-responsive-nav-open upfront-responsive-nav-close', function () {
+							if ( $overlay.data('uparallax') ) {
+								$overlay.uparallax('refresh');
+							}
+						});
 					}
 				}, 0);
 			}
