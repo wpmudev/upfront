@@ -571,6 +571,27 @@ define([
 
 				var me = e.data;
 				me.refresh_background();
+			},
+			/**
+			 * Adjusts inline control panel top position when top padding is changed or element dropped
+			 * Makes sure the top control panel is always visible and is not covering smaller elements
+			 *
+			 * @param model, either passed or existing in 'this'
+             * @param current_el, either passed or existing in 'this'
+			 *
+			 * @return void
+             */
+			adjust_top_settings_panel_position: function( model, current_el ){
+				var _model = model && ( model instanceof Backbone.Model ) ? model : this.model,
+					_current_el = current_el ? current_el : this,
+					_$control_el = current_el && current_el.$control_el ? current_el.$control_el : this.$control_el;
+					;
+				// if top padding is less than 30 and element has at least 30px margin from top of window
+				if(  parseInt( _model.get_breakpoint_property_value("top_padding_num", 0), 10 ) < 30 && _current_el.$el.offset().top >=30 ){
+					_$control_el.find(".upfront-inline-panel-top").css("top", "-30px");
+				}else{
+					_$control_el.find(".upfront-inline-panel-top").css("top", "0px");
+				}
 			}
 		})),
 
@@ -777,6 +798,7 @@ define([
 					paddingLeft: left_padding_use && left_padding_num !== false ? left_padding_num + 'px' : '',
 					paddingRight: right_padding_use && right_padding_num !== false ? right_padding_num + 'px' : ''
 				});
+
 			},
 			show_top_padding_hint: function (value) {
 				var me               = this,
@@ -852,6 +874,7 @@ define([
 					this.$control_el.find('>.upfront-element-controls').html('').append(this.controls.$el);
 				}
 				this.controls.delegateEvents();
+				this.adjust_top_settings_panel_position();
 			},
 			createControls: function() {
 				var me = this,
@@ -1353,9 +1376,11 @@ define([
 					this.listenTo(this.parent_module_view, 'entity:resizing', this.on_element_resizing);
 					this.stopListening((this._previous_parent_module_view || this.parent_module_view), 'entity:resize_stop');
 					this.listenTo(this.parent_module_view, 'entity:resize_stop', this.on_element_resize);
+					//this.listenTo(this.parent_module_view, 'entity:resize_stop', this.adjust_top_settings_panel_position);
 
 					this.stopListening((this._previous_parent_module_view || this.parent_module_view), 'entity:drop');
 					this.listenTo(this.parent_module_view, 'entity:drop', this.on_element_drop);
+					this.listenTo(this.parent_module_view, 'entity:drop', this.adjust_top_settings_panel_position);
 				}
 
 				this.$el.html(template);
@@ -2042,6 +2067,7 @@ define([
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 				this.listenTo(Upfront.Events, "command:module_group:finish_edit", this.on_finish);
 				this.listenTo(Upfront.Events, "command:module_group:close_panel", this.closeControlPanel);
+				this.listenTo(Upfront.Events, "upfront:paddings:updated", this.adjust_top_settings_panel_position);
 
 				this.editing = false;
 				this.on('entity:resize_stop', this.on_resize, this);
@@ -2609,6 +2635,7 @@ define([
 				else {
 					object.set_breakpoint_property(dir+'_padding_num', parseInt(column_padding, 10) + parseInt(add, 10));
 				}
+
 			},
 			on_reorder: function () {
 				Upfront.Events.trigger("command:module_group:finish_edit"); // close other reorder first
