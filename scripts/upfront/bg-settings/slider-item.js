@@ -158,16 +158,14 @@ define([
 					image_id = $image.data('image-id'),
 					slide_images = me.model.get_breakpoint_property_value('background_slider_images', true);
 
-				slide_images = _.map(slide_images, function(id){
-					return parseInt( id, 10 );
-				});
-
 				if (_.isString(image_id) && image_id.match(/^[0-9]+$/))
 					image_id = parseInt(image_id, 10);
 
 				slide_images = _.without(slide_images, image_id);
 				me.model.set_breakpoint_property('background_slider_images', slide_images);
 				$image.remove();
+				
+				me.update_slider_slides();
 			});
 			
 			this.on('show', function(){
