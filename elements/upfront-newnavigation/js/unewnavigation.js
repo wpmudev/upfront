@@ -871,7 +871,9 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			module.addClass('upfront-module-nav-open');
 
 			if($nav.attr('data-burger_over') === 'pushes' && $nav.attr('data-burger_alignment') === 'top' || $nav.attr('data-burger_alignment') === 'whole') {
-				$('section.upfront-layout').css('margin-top', $menu.height());
+				if ( $nav.attr('data-burger_alignment') === 'top' ) {
+					$('section.upfront-layout').css('margin-top', $menu.height());
+				}
 
 				var topbar_height = $('div#upfront-ui-topbar').outerHeight();
 				var ruler_height = $('.upfront-ruler-container').outerHeight();
