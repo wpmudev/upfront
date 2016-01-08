@@ -15,14 +15,19 @@
 	overflow: hidden;
 }
 
-.upfront-output-ugallery .<?php echo $properties['id'] ?> .ugallery-thumb-title p,
-.upfront-output-ugallery .<?php echo $properties['id'] ?> .ugallery-thumb-title {
+.upfront-output-ugallery.<?php echo $properties['id'] ?> .ugallery-thumb-title p,
+.upfront-output-ugallery.<?php echo $properties['id'] ?> .ugallery-thumb-title,
+.upfront-object.upfront-gallery.<?php echo $properties['id'] ?> .ugallery-thumb-title p,
+.upfront-object.upfront-gallery.<?php echo $properties['id'] ?> .ugallery-thumb-title
+{
 	<?php if(!empty($properties['caption-text'])) { ?>
 	color: <?php echo $properties['caption-text']  ?>;
 	<?php } ?>
 }
 
-.upfront-output-ugallery .<?php echo $properties['id'] ?> .ugallery-thumb-title {
+.upfront-output-ugallery.<?php echo $properties['id'] ?> .ugallery-thumb-title,
+.upfront-object.upfront-gallery.<?php echo $properties['id'] ?> .ugallery-thumb-title 
+{
 	<?php if(!empty($properties['caption-bg'])) { ?>
 	background: <?php echo $properties['caption-bg'] ?>;
 	<?php } ?>
