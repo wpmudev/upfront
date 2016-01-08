@@ -648,28 +648,6 @@ define([
 			}
 		},
 
-		// updateControls: function(width, height) {
-		// 	var imageControlsTpl = '<div class="uimage-controls image-element-controls upfront-ui"></div>';
-
-		// 	this.controls = this.createControls();
-
-		// 	if (this.controls === false) {
-		// 		return;
-		// 	}
-
-		// 	this.controls.setWidth({
-		// 		width: width,
-		// 		height:height
-		// 	});
-		// 	this.controls.render();
-
-		// 	if (this.parent_module_view.$('.upfront-module').find('.uimage-controls').length === 0) {
-		// 		this.parent_module_view.$('.upfront-module').append(imageControlsTpl);
-		// 	}
-		// 	this.parent_module_view.$('.upfront-module').find('.uimage-controls').html('').append(this.controls.$el);
-		// 	this.controls.delegateEvents();
-		// },
-
 		on_edit: function(){
 			return false;
 		},
@@ -1478,10 +1456,10 @@ define([
 				this.createControl('settings', Upfront.Settings.l10n.global.views.settings, 'on_settings_click')
 			]);
 
-		if( "yes" !== this.get_preset_property("use_captions") )
-			controlls = _( controlls.without( captionControl ) );
+			if( "yes" !== this.get_preset_property("use_captions") )
+				controlls = _( controlls.without( captionControl ) );
 
-		return controlls;
+			return controlls;
 		}
 	});
 
