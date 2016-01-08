@@ -170,19 +170,6 @@ jQuery(document).ready(function($) {
 			$(this).parent().find('ul.menu').show();
 			//$(this).parent().find('ul.sub-menu').show();
 
-			if($(this).parent().data('burger_over') == 'pushes' && $(this).parent().data('burger_alignment') == 'top') {
-
-				$('div#page').css('margin-top', $(this).parent().find('ul.menu').height());
-
-
-				//var topbar_height = $('div#upfront-ui-topbar').outerHeight();
-				var adminbar_height = ($('div#wpadminbar').length > 0)?$('div#wpadminbar').outerHeight():0;
-
-				$(this).parent().find('ul.menu').offset({top:adminbar_height, left:$('div').offset().left});
-				$(this).parent().find('ul.menu').width($('div#page').width());
-
-			}
-
 
 			var offset = $(this).parent().find('ul.menu').position();
 
@@ -201,10 +188,25 @@ jQuery(document).ready(function($) {
 			*/
 
 
+			if($(this).parent().data('burger_over') == 'pushes' && $(this).parent().data('burger_alignment') == 'top') {
+
+				$('div#page').css('margin-top', $(this).parent().find('ul.menu').height());
+
+
+				//var topbar_height = $('div#upfront-ui-topbar').outerHeight();
+				var adminbar_height = ($('div#wpadminbar').length > 0)?$('div#wpadminbar').outerHeight():0;
+
+				$(this).parent().find('ul.menu').offset({top:adminbar_height, left:$('div').offset().left});
+				$(this).parent().find('ul.menu').width($('div#page').width());
+
+			}
+
 
 			$(this).closest('.upfront-output-region-container').each(function() {
 				$(this).addClass('upfront-region-container-has-nav');
 			});
+
+			$(document).trigger('upfront-responsive-nav-open');
 
 		}
 		else {
@@ -231,6 +233,8 @@ jQuery(document).ready(function($) {
 			$(this).closest('.upfront-output-region-container').each(function() {
 				$(this).removeClass('upfront-region-container-has-nav');
 			});
+
+			$(document).trigger('upfront-responsive-nav-close');
 		}
 	});
 
