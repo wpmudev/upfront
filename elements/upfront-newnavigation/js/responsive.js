@@ -163,7 +163,7 @@ jQuery(document).ready(function($) {
 		if($(this).parent().find('ul.menu').css('display') == 'none') {
 			$(this).closest('div.upfront-output-wrapper').addClass('on_the_top');
 
-			if($(this).parent().data('burger_over') != 'pushes' && $(this).parent().data('burger_alignment') != 'whole') {
+			if($(this).parent().attr('data-burger_over') != 'pushes' && $(this).parent().attr('data-burger_alignment') != 'whole') {
 				$('<div class="burger_overlay"></div>').insertBefore($(this).parent().find('ul.menu'));
 			}
 
@@ -183,21 +183,21 @@ jQuery(document).ready(function($) {
 
 			/*
 
-			if($(this).parent().data('burger_over') == 'pushes')
+			if($(this).parent().attr('data-burger_over') == 'pushes')
 				pushContent($(this).parent());
 			*/
 
 
-			if($(this).parent().data('burger_over') == 'pushes' && $(this).parent().data('burger_alignment') == 'top') {
+			if($(this).parent().attr('data-burger_over') == 'pushes' && $(this).parent().attr('data-burger_alignment') == 'top') {
 
-				$('div#page').css('margin-top', $(this).parent().find('ul.menu').height());
+				$('div#page').css('margin-top', $(this).parent().find('ul.menu').outerHeight());
 
 
 				//var topbar_height = $('div#upfront-ui-topbar').outerHeight();
 				var adminbar_height = ($('div#wpadminbar').length > 0)?$('div#wpadminbar').outerHeight():0;
 
 				$(this).parent().find('ul.menu').offset({top:adminbar_height, left:$('div').offset().left});
-				$(this).parent().find('ul.menu').width($('div#page').width());
+				$(this).parent().find('ul.menu').css('width', $('div#page').width() + 'px');
 
 			}
 
@@ -215,18 +215,22 @@ jQuery(document).ready(function($) {
 			//$(this).parent().find('ul.sub-menu').hide();
 
 			//$(e.target).closest('.responsive_nav_toggler').css({position: '', left: '', top: ''});
-			//$(this).parent().find('ul.menu').css('padding-top', '');
+			$(this).parent().find('ul.menu').css({
+				top: '',
+				left: '',
+				width: ''
+			});
 
 			$('i.burger_nav_close').parent('li.wrap_burger_nav_close').remove();
 
 			$(this).closest('div.upfront-output-wrapper').removeClass('on_the_top');
 
 			/*
-			if($(this).parent().data('burger_over') == 'pushes')
+			if($(this).parent().attr('data-burger_over') == 'pushes')
 				pullContent($(this).parent());
 			*/
 
-			if($(this).parent().data('burger_over') == 'pushes')
+			if($(this).parent().attr('data-burger_over') == 'pushes')
 				$('div#page').css('margin-top', '');
 
 
