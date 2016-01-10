@@ -38,6 +38,13 @@ class Upfront_Post_Presets_Server extends Upfront_Presets_Server {
 	protected function get_style_template_path() {
 		return realpath(Upfront::get_root_dir() . '/elements/upfront-this-post/tpl/preset-style.html');
 	}
+	
+	public static function get_preset_defaults() {
+		return array(
+			'id' => 'default',
+			'name' => self::$instance->get_l10n('default_preset')
+		);
+	}
 }
 
 Upfront_Post_Presets_Server::serve();

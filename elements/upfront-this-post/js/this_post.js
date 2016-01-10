@@ -437,10 +437,7 @@ var Settings = ElementSettings.extend({
 			styleElementPrefix: 'thispost-preset',
 			ajaxActionSlug: 'thispost',
 			panelTitle: l10n.settings,
-			presetDefaults: {
-				'id': 'default',
-				'name': l10n.default_preset,
-			},
+			presetDefaults: Upfront.mainData.presetDefaults.thispost,
 			styleTpl: styleTpl,
 		},
 	},

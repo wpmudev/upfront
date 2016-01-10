@@ -35,6 +35,15 @@ class Upfront_Slider_Presets_Server extends Upfront_Presets_Server {
 
 		return $properties;
 	}
+	
+	public static function get_preset_defaults() {
+		return array(
+			'primaryStyle' => 'notext',
+			'captionBackground' => 'rgb(255, 255, 255, 0.8)',
+			'id' => 'default',
+			'name' => self::$instance->get_l10n('default_preset')
+		);
+	}
 }
 
 Upfront_Slider_Presets_Server::serve();
