@@ -1353,3 +1353,6 @@ div.uimage-controls i.upfront-icon:before,
 	margin-right:10px;
 }
 
+.upfront-editable_entity .uimage-below_image .upfront-image-caption-container {
+	overflow: visible !important;
+}
