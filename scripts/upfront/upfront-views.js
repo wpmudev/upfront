@@ -72,6 +72,8 @@ define([
 				this.options = opts;
 				this.listenTo(this.model, "change", this.render);
 				if (this.init) this.init();
+
+				this.listenTo(Upfront.Events, "upfront:paddings:updated", this.adjust_top_settings_panel_position);
 			},
 			_get_full_size_el: function ($el, ratio, inside) {
 				var width = $el.width(),
@@ -586,6 +588,7 @@ define([
 					_current_el = current_el ? current_el : this,
 					_$control_el = current_el && current_el.$control_el ? current_el.$control_el : this.$control_el;
 					;
+			
 				// if top padding is less than 30 and element has at least 30px margin from top of window
 				if(  parseInt( _model.get_breakpoint_property_value("top_padding_num", 0), 10 ) < 30 && _current_el.$el.offset().top >=30 ){
 					_$control_el.find(".upfront-inline-panel-top").css("top", "-30px");
@@ -905,7 +908,6 @@ define([
 
 				this.paddingControl.icon = 'padding';
 				this.paddingControl.tooltip = l10n.padding_settings;
-
 				return this.paddingControl;
 			},
 			getControlItems: function(){
@@ -1417,6 +1419,14 @@ define([
 						if(me.paddingControl && typeof me.paddingControl.isOpen !== 'undefined' && !me.paddingControl.isOpen)	me.paddingControl.refresh();
 					}, 300);
 				}
+
+				/**
+				 * Make sure it's rendered and then adjust top panel position
+				 */
+				setTimeout(function() {
+					me.adjust_top_settings_panel_position();
+				}, 150);
+
 			},
 			update: function (prop, options) {
 				if (typeof prop === 'undefined') return this.render();
@@ -2067,7 +2077,7 @@ define([
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 				this.listenTo(Upfront.Events, "command:module_group:finish_edit", this.on_finish);
 				this.listenTo(Upfront.Events, "command:module_group:close_panel", this.closeControlPanel);
-				this.listenTo(Upfront.Events, "upfront:paddings:updated", this.adjust_top_settings_panel_position);
+
 
 				this.editing = false;
 				this.on('entity:resize_stop', this.on_resize, this);
