@@ -648,6 +648,30 @@ define([
 			}
 		},
 
+		updateControls: function() {
+			var elementControlsTpl = '<div class="upfront-element-controls upfront-ui"></div>';
+
+			if(this.paddingControl && typeof this.paddingControl.isOpen !== 'undefined' && this.paddingControl.isOpen)	return;
+
+			// if (!this.controls) {
+				this.controls = this.createControls(); // It seems to be needed for image only so caption item shows up when it should
+			// }
+
+			if (this.controls === false) return;
+
+			this.controls.render();
+			if (!this.$control_el || this.$control_el.length === 0) {
+				this.$control_el = this.$el;
+			}
+			if (this.$control_el.find('>.upfront-element-controls').length === 0) {
+				this.$control_el.append(elementControlsTpl);
+				// this.$control_el.find('>.upfront-element-controls').html('').append(this.controls.$el);
+			}
+			this.$control_el.find('>.upfront-element-controls').html('').append(this.controls.$el); // we need to refresh controls because caption item has to be activated or deactivate depending on the `show caption`
+			this.controls.delegateEvents();
+		},
+
+
 		on_edit: function(){
 			return false;
 		},
@@ -1456,10 +1480,10 @@ define([
 				this.createControl('settings', Upfront.Settings.l10n.global.views.settings, 'on_settings_click')
 			]);
 
-			if( "yes" !== this.get_preset_property("use_captions") )
-				controlls = _( controlls.without( captionControl ) );
+		if( "yes" !== this.get_preset_property("use_captions") )
+			controlls = _( controlls.without( captionControl ) );
 
-			return controlls;
+		return controlls;
 		}
 	});
 
