@@ -588,12 +588,13 @@ define([
 					_current_el = current_el ? current_el : this,
 					_$control_el = current_el && current_el.$control_el ? current_el.$control_el : this.$control_el;
 					;
-			
+
+				if( !_current_el || !_$control_el || _$control_el.$el ) return;
 				// if top padding is less than 30 and element has at least 30px margin from top of window
-				if(  parseInt( _model.get_breakpoint_property_value("top_padding_num", 0), 10 ) < 30 && _current_el.$el.offset().top >=30 ){
-					_$control_el.find(".upfront-inline-panel-top").css("top", "-30px");
+				if(  parseInt( _model.get_breakpoint_property_value("top_padding_num", false, 0), 10 ) < 30 && _current_el.$el.offset().top >=30 ){
+					_$control_el.find(".upfront-inline-panel-top").first().css("top", "-30px");
 				}else{
-					_$control_el.find(".upfront-inline-panel-top").css("top", "0px");
+					_$control_el.find(".upfront-inline-panel-top").first().css("top", "0px");
 				}
 			}
 		})),
@@ -645,6 +646,7 @@ define([
 				this.listenToOnce(this, 'deactivated', this.deactivate);
 
 				this.$el.addClass("upfront-active_entity");
+				this.adjust_top_settings_panel_position();
 			},
 			// Stub handlers
 			on_meta_click: function () {},
@@ -859,7 +861,6 @@ define([
 			},
 			updateControls: function() {
 				var elementControlsTpl = '<div class="upfront-element-controls upfront-ui"></div>';
-
 				if(this.paddingControl && typeof this.paddingControl.isOpen !== 'undefined' && this.paddingControl.isOpen)	return;
 
 				if (!this.controls) {
@@ -877,7 +878,7 @@ define([
 					this.$control_el.find('>.upfront-element-controls').html('').append(this.controls.$el);
 				}
 				this.controls.delegateEvents();
-				this.adjust_top_settings_panel_position();
+
 			},
 			createControls: function() {
 				var me = this,
@@ -1378,7 +1379,6 @@ define([
 					this.listenTo(this.parent_module_view, 'entity:resizing', this.on_element_resizing);
 					this.stopListening((this._previous_parent_module_view || this.parent_module_view), 'entity:resize_stop');
 					this.listenTo(this.parent_module_view, 'entity:resize_stop', this.on_element_resize);
-					//this.listenTo(this.parent_module_view, 'entity:resize_stop', this.adjust_top_settings_panel_position);
 
 					this.stopListening((this._previous_parent_module_view || this.parent_module_view), 'entity:drop');
 					this.listenTo(this.parent_module_view, 'entity:drop', this.on_element_drop);
@@ -1420,12 +1420,12 @@ define([
 					}, 300);
 				}
 
-				/**
-				 * Make sure it's rendered and then adjust top panel position
-				 */
-				setTimeout(function() {
-					me.adjust_top_settings_panel_position();
-				}, 150);
+				///**
+				// * Make sure it's rendered and then adjust top panel position
+				// */
+				//setTimeout(function() {
+				//	me.adjust_top_settings_panel_position();
+				//}, 150);
 
 			},
 			update: function (prop, options) {
