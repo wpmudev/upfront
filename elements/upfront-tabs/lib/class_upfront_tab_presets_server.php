@@ -29,5 +29,54 @@ class Upfront_Tab_Presets_Server extends Upfront_Presets_Server {
 	protected function get_style_template_path() {
 		return realpath(Upfront::get_root_dir() . '/elements/upfront-tabs/tpl/preset-style.html');
 	}
+	
+	public static function get_preset_defaults() {
+		return array(
+			'global-content-bg' => 'rgba(255, 255, 255, 1)',
+			'global-useborder' => '',
+			'global-borderwidth' => 1,
+			'global-bordertype' => 'solid',
+			'static-bordercolor' => 'rgba(0, 0, 0, 0.5)',
+			'static-font-size' => 18,
+			'static-font-family' => 'Arial',
+			'static-font-color' => 'rgba(0, 0, 0, 0.6)',
+			'static-font-style' => '400 normal',
+			'static-weight' => 400,
+			'static-style' => 'normal',
+			'static-line-height' => 2,
+			'static-tab-bg' => 'rgba(255, 255, 255, .8)',
+			'static-useborder' => '',
+			'static-borderwidth' => 1,
+			'static-bordertype' => 'solid',
+			'hover-bordercolor' => 'rgba(0, 0, 0, 0.5)',
+			'hover-font-size' => 18,
+			'hover-font-family' => 'Arial',
+			'hover-font-color' => 'rgba(0, 0, 0, 0.6)',
+			'hover-font-style' => '400 normal',
+			'hover-weight' => 400,
+			'hover-style' => 'normal',
+			'hover-line-height' => 2,
+			'hover-tab-bg' => 'rgba(255, 255, 255, .8)',
+			'hover-useborder' => '',
+			'hover-borderwidth' => 1,
+			'hover-bordertype' => 'solid',
+			'hover-transition-duration' => 0.3,
+			'hover-transition-easing' => 'ease-in-out',
+			'active-bordercolor' => 'rgba(0, 0, 0, 0.5)',
+			'active-font-size' => 18,
+			'active-font-family' => 'Arial',
+			'active-font-color' => 'rgba(0, 0, 0, 0.6)',
+			'active-font-style' => '400 normal',
+			'active-weight' => 400,
+			'active-style' => 'normal',
+			'active-line-height' => 2,
+			'active-tab-bg' => 'rgba(255, 255, 255, .8)',
+			'active-useborder' => '',
+			'active-borderwidth' => 1,
+			'active-bordertype' => 'solid',
+			'id' => 'default',
+			'name' => self::$instance->get_l10n('default_preset')
+		);
+	}
 }
 Upfront_Tab_Presets_Server::serve();

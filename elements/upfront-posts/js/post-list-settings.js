@@ -16,10 +16,7 @@ var PostsSettings = ElementSettings.extend({
 			styleElementPrefix: 'posts-preset',
 			ajaxActionSlug: 'posts',
 			panelTitle: l10n.settings,
-			presetDefaults: {
-				'id': 'default',
-				'name': l10n.default_preset,
-			},
+			presetDefaults: Upfront.mainData.presetDefaults.posts,
 			styleTpl: styleTpl,
 		},
 	},

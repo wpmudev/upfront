@@ -541,7 +541,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				setTimeout( function() {
 					me.activate_responsive_nav($upfrontObjectContent, currentBreakpoint.get('width'));
 				}, 100);
-			} else if (me.property('preset') && me.property('preset') !== 'default') {
+			} else if (me.property('preset') /*&& me.property('preset') !== 'default'*/) {
 				$upfrontObjectContent.attr('data-breakpoints', JSON.stringify(props.breakpoint));
 				setTimeout( function() {
 					me.activate_responsive_nav($upfrontObjectContent, currentBreakpoint.get('width'));
@@ -588,7 +588,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			ruler_height = ( $('.upfront-ruler-container').length > 0 ? $('.upfront-ruler-container').outerHeight() : 0 ),
 			allBreakpoints = Upfront.Views.breakpoints_storage.get_breakpoints(),
 			currentBreakpoint = allBreakpoints.get_active(),
-			breakpoints = this.get_preset_properties().breakpoint || {desktop: {}},
+			breakpoints = this.get_preset_properties().breakpoint || this.fallbackBreakpointData(),
 			breakpoint = breakpoints[currentBreakpoint.id],
 			breakpointWidth = currentBreakpoint.get_property_value_by_name('width'),
 			currentwidth = typeof breakpointWidth !== 'undefined' && !currentBreakpoint.get('default') ? parseInt(breakpointWidth, 10) : $(window).width()
@@ -694,6 +694,24 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		selector.attr('data-isfloating', breakpoint.is_floating);
 		Upfront.Events.trigger('entity:object:refresh', this);
+	},
+
+	fallbackBreakpointData: function () {
+		var breakpoints = this.property('breakpoint');
+		if ( breakpoints !== false && _.isObject(breakpoints) && "desktop" in breakpoints ) {
+			for ( key in breakpoints ) {
+				if ( "burger_menu" in breakpoints[key] && breakpoints[key].burger_menu === 'yes' ) {
+					breakpoints[key].menu_style = 'burger';
+					delete breakpoints[key].burger_menu;
+				}
+			}
+			return breakpoints;
+		}
+		return {
+			desktop: {},
+			tablet: {},
+			mobile: {}
+		};
 	},
 
 	activate_responsive_nav: function(selector, bpwidth) {
@@ -849,6 +867,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	toggle_responsive_nav: function(e) {
 		var me = this;
 		var region_container = this.$el.closest('.upfront-region-container');
+		var group = this.$el.closest('.upfront-module-group');
 		var module = this.$el.closest('.upfront-module');
 		var $menu = this.$el.find('ul.menu');
 		var $nav = this.$el.find('.upfront-output-unewnavigation');
@@ -868,11 +887,14 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			});
 			region_container.addClass('upfront-region-container-has-nav');
 			region_container.addClass('upfront-region-container-nav-open');
+			if ( group.length > 0 ) {
+				group.addClass('upfront-module-group-nav-open');
+			}
 			module.addClass('upfront-module-nav-open');
 
 			if($nav.attr('data-burger_over') === 'pushes' && $nav.attr('data-burger_alignment') === 'top' || $nav.attr('data-burger_alignment') === 'whole') {
 				if ( $nav.attr('data-burger_alignment') === 'top' ) {
-					$('section.upfront-layout').css('margin-top', $menu.height());
+					$('section.upfront-layout').css('margin-top', $menu.outerHeight());
 				}
 
 				var topbar_height = $('div#upfront-ui-topbar').outerHeight();
@@ -889,6 +911,9 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				region_container.removeClass('upfront-region-container-has-nav');
 			}
 			region_container.removeClass('upfront-region-container-nav-open');
+			if ( group.length > 0 ) {
+				group.removeClass('upfront-module-group-nav-open');
+			}
 			module.removeClass('upfront-module-nav-open');
 
 			if($nav.attr('data-burger_over') === 'pushes') {
@@ -945,7 +970,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
 
-		presetProperties.breakpoint = presetProperties.breakpoint || {desktop:{},tablet:{},mobile:{}};
+		presetProperties.breakpoint = presetProperties.breakpoint || this.fallbackBreakpointData();
 		if (!breakpoint || breakpoint.default) {
 			if (
 				presetProperties.breakpoint.desktop.menu_style === 'burger'&&
