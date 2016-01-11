@@ -67,8 +67,6 @@ define([
 			// Let's not flood server on some nuber property firing changes like crazy
 			this.debouncedSavePreset = _.debounce(savePreset, 1000);
 
-			this.migrateElementToPreset();
-			
 			this.createBackup();
 
 			this.listenToOnce(Upfront.Events, 'element:settings:canceled', function() {
@@ -93,108 +91,6 @@ define([
 			}
 		},
 
-		migrateElementToPreset: function() {
-			// Simply add element style to preset css and name preset as element style was named.
-			// Only button, accordion and tabs had presets in old version, we won't merge those because that gets
-			// too complicated.
-			var hadPresets = _.contains(['UtabsView', 'UaccordionView', 'ButtonView'], this.property('view_class')),
-				elementStyleName,
-				newPresetName,
-				existingPreset,
-				style,
-				newPreset,
-				thisPreset;
-
-			if (hadPresets) {
-				this.migrateExistingPresets();
-				return;
-			}
-
-			thisPreset = this.property('preset');
-			if (thisPreset === false) thisPreset = 'default';
-			if (thisPreset && thisPreset !== 'default') return;
-
-			elementStyleName = this.property('theme_style');
-
-			// We need to set to _default first so that css editor can get style properly
-			if (!elementStyleName) elementStyleName = '_default';
-
-			Upfront.Application.cssEditor.init({
-				model: this.model,
-				stylename: elementStyleName,
-				no_render: true
-			});
-
-			style = $.trim(Upfront.Application.cssEditor.get_style_element().html().replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
-
-			var properties,
-				presetOptions;
-			// If we have default preset and default style just add default style to preset
-			if (thisPreset === 'default' && elementStyleName === '_default') {
-				existingPreset = this.presets.findWhere({id: 'default'});
-
-				this.property('preset', 'default');
-				// If some other instance has already migrated the default style just delete theme style property on model and return
-				this.property('theme_style', '');
-				if (existingPreset.get('migrated') === true || existingPreset.get('migrated') === 'true') {
-					this.model.get('properties').trigger('change');
-					return;
-				}
-
-				//Apply style only for the current preset
-				style = Upfront.Application.stylesAddSelectorMigration($.trim(style), '#page .' + thisPreset);
-				style = style.replace(new RegExp(elementStyleName, 'g'), '');
-
-				style = this.migrateElementStyle(style);
-				existingPreset.set({
-					preset_style: style,
-					migrated: true
-				});
-				this.migratePresetProperties(existingPreset);
-				presetOptions = existingPreset;
-				properties = existingPreset.toJSON();
-			} else {
-				// Add element style to preset model. Now change _default to new name
-				newPresetName = elementStyleName === '_default' ? this.styleElementPrefix.replace('-preset', '') + '-theme-style' : elementStyleName + '-m';
-				existingPreset = this.presets.findWhere({id: newPresetName});
-
-				if (existingPreset) {
-					this.property('preset', existingPreset.id);
-					this.property('theme_style', '');
-					this.model.get('properties').trigger('change');
-					return;
-				}
-
-				style = style.replace(new RegExp(elementStyleName, 'g'), newPresetName);
-
-				style = this.migrateElementStyle(style);
-				// Create new preset and assign style to preset
-				newPreset = new Backbone.Model(this.getPresetDefaults(newPresetName));
-				newPreset.set({
-					preset_style: style
-				});
-
-				this.migratePresetProperties(newPreset);
-
-				// And remove element style
-				this.property('theme_style', '');
-				this.property('preset', newPreset.id);
-				this.presets.add(newPreset);
-				presetOptions = newPreset;
-				properties = newPreset.toJSON();
-			}
-
-			Util.updatePresetStyle(this.styleElementPrefix.replace(/-preset/, ''), properties, this.styleTpl);
-
-			this.debouncedSavePreset(properties);
-
-			this.updateMainDataCollectionPreset(properties);
-
-			// Trigger change so that whole element re-renders again.
-			// (to replace element style class with preset class, look upfront-views.js
-			this.model.get('properties').trigger('change');
-		},
-
 		updateMainDataCollectionPreset: function(properties) {
 			var index;
 
@@ -212,85 +108,11 @@ define([
 		},
 
 		/**
-		 * Allow element to migrate style
-		 */
-		migrateElementStyle: function(style) {
-			return style;
-		},
-
-		/**
 		 * Allow element appearance panels to migrate properties from old type of settings
 		 * to new preset based settings.
 		 */
 		migratePresetProperties: function(newPreset) {
-			// Generic populating  of preset with old values
-			_.each(newPreset.attributes, function(value, name) {
-				var data,
-					oldValue = this.model.get_property_value_by_name(name);
-
-				// Do not overwrite identifiers
-				if (name === 'id') return;
-				if (name === 'name') return;
-
-				if (typeof oldValue !== 'undefined' && oldValue !== false) {
-					data = {};
-					data[name] = this.model.get_property_value_by_name(name);
-					newPreset.set(data);
-				}
-			}, this);
-		},
-
-		migrateExistingPresets: function() {
-			var elementStyleName = this.property('theme_style');
-			var preset = this.presets.findWhere({id: this.property('preset')});
-
-			// no point in continuing if the preset does not exist at the first place
-			if(typeof(preset) === 'undefined') 
-				return;
-
-			var presetStyle = preset.get('preset_style');
-
-			if (preset.get('migrated') === true || preset.get('migrated') === 'true') return;
-			preset.set({'migrated': true});
-
-			// We need to set to _default first so that css editor can get style properly
-			if (!elementStyleName) elementStyleName = '_default';
-
-			Upfront.Application.cssEditor.init({
-				model: this.model,
-				stylename: elementStyleName,
-				no_render: true
-			});
-
-			style = $.trim(Upfront.Application.cssEditor.get_style_element().html().replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
-			style = style.replace(new RegExp(elementStyleName, 'g'), preset.get('id'));
-
-			var presetCssEditor = new PresetCSSEditor({
-				model: this.model,
-				preset: preset,
-				stylename: elementStyleName,
-				doNotRender: true
-			});
-
-			style = presetCssEditor.cleanUpStyles(style);
-			style = presetCssEditor.renderCss(style);
-
-			preset.set({
-				preset_style: style
-			});
-
-			this.property('theme_style', '');
-
-			var properties = preset.toJSON();
-
-			this.debouncedSavePreset(properties);
-
-			this.updateMainDataCollectionPreset(properties);
-
-			Util.updatePresetStyle(this.styleElementPrefix.replace(/-preset/, ''), properties, this.styleTpl);
-			// Trigger change so that whole element re-renders again.
-			// (to replace element style class with preset class, look upfront-views.js
-			this.model.get('properties').trigger('change');
+			return newPreset;
 		},
 
 		setupItems: function() {
@@ -354,6 +176,7 @@ define([
 			this.listenTo(this.editPresetModule, 'upfront:presets:update', this.updatePreset);
 			this.listenTo(this.editPresetModule, 'upfront:presets:state_show', this.stateShow);
 			this.listenTo(this.presetCssModule, 'upfront:presets:update', this.updatePreset);
+			this.listenTo(this.selectPresetModule, 'upfront:presets:migrate', this.migratePreset);
 
 			this.settings = _([
 				this.selectPresetModule,
@@ -406,6 +229,35 @@ define([
 			this.debouncedSavePreset(properties);
 
 			this.updateMainDataCollectionPreset(properties);
+		},
+		
+		migratePreset: function(presetName) {
+			var style = $.trim(Upfront.Application.cssEditor.get_style_element().html().replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
+
+			//style = this.migrateElementStyle(style);
+			// Create new preset and assign style to preset
+			newPreset = new Backbone.Model(this.getPresetDefaults(presetName));
+			newPreset.set({
+				preset_style: style
+			});
+
+			this.migratePresetProperties(newPreset);
+
+			// And remove element style
+			this.property('preset', newPreset.id);
+			this.presets.add(newPreset);
+			presetOptions = newPreset;
+			properties = newPreset.toJSON();
+
+			Util.updatePresetStyle(this.styleElementPrefix.replace(/-preset/, ''), properties, this.styleTpl);
+
+			this.debouncedSavePreset(properties);
+
+			this.updateMainDataCollectionPreset(properties);
+
+			// Trigger change so that whole element re-renders again.
+			// (to replace element style class with preset class, look upfront-views.js
+			this.model.get('properties').trigger('change');
 		},
 
 		createPreset: function(presetName) {
