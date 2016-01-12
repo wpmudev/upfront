@@ -1,0 +1,77 @@
+#element-settings-sidebar .migrate-preset-overlay {
+	padding: 40px 0px;
+}
+
+#element-settings-sidebar .migrate-preset-overlay .migrate-preset-info label {
+	font-size: 12px;
+	display: inline-block;
+	font-family: verdana, sans-serif;
+	text-align: center;
+	color: #596c7f;
+	position: relative;
+	font-weight: normal;
+	line-height: 1.4;
+	margin: 0px;
+}
+
+#element-settings-sidebar .migrate-preset-overlay .migrate-preset-info label strong {
+	font-weight: bold;
+}
+
+#element-settings-sidebar .migrate-preset-overlay .migrate-separator {
+	border-top: 1px solid #e2eaf2;
+	position: relative;
+	margin-left: -15px;
+	margin-right: -15px;
+	padding-left: 15px;
+	padding-right: 15px;
+	padding-top: 23px;
+}
+
+#element-settings-sidebar .migrate-preset-overlay .migrate-preset-button {
+	margin: 23px auto;
+	text-align: center;
+}
+
+#element-settings-sidebar .migrate-preset-overlay .migrate-preset-button input {
+	width: 198px;
+	height: 32px;
+	line-height: 32px;
+	background: #3d5266;
+	color: #fff;
+	text-align: center;
+	display: inline;
+}
+
+#element-settings-sidebar .migrate-preset-overlay .migrate-preset-button input:hover {
+	background: #5e758b;
+}
+
+#element-settings-sidebar .migrate-preset-overlay .select-preset-field-overlay,
+#element-settings-sidebar .migrate-preset-overlay .migrate-preset-apply {
+	display: inline-block;
+}
+
+#element-settings-sidebar .migrate-preset-overlay .migrate-preset-apply {
+	margin-left: 7px;
+}
+
+#element-settings-sidebar .migrate-preset-overlay .migrate-preset-apply input {
+	margin: 0;
+	text-decoration: none;
+	color: #4e4770;
+	font-size: 11px;
+	box-shadow: inset 0 2px 0 #f2f9ff;
+	font-family: Verdana, sans-serif;
+	line-height: 22px;
+	background: rgb(242, 249, 255);
+	border: 1px solid rgb(183, 201, 217);
+	border-radius: 3px;
+	height: 24px;
+	max-height: 24px;
+	padding: 0px 7px;
+}
+
+#element-settings-sidebar .migrate-preset-overlay .migrate-preset-apply input:hover {
+	border-color: rgb(96, 127, 153);
+}
