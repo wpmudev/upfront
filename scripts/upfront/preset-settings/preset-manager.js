@@ -184,7 +184,10 @@ define([
 			this.listenTo(this.editPresetModule, 'upfront:presets:state_show', this.stateShow);
 			this.listenTo(this.presetCssModule, 'upfront:presets:update', this.updatePreset);
 			this.listenTo(this.selectPresetModule, 'upfront:presets:migrate', this.migratePreset);
+			
+			//Migration listeners
 			this.listenTo(this.migratePresetModule, 'upfront:presets:preview', this.previewPreset);
+			this.listenTo(this.migratePresetModule, 'upfront:presets:change', this.changePreset);
 
 			this.settings = _([
 				this.selectPresetModule,

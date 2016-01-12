@@ -131,7 +131,7 @@ define([
 						className: 'migrate-preset-apply',
 						compact: true,
 						on_click: function() {
-							//Do something
+							me.trigger('upfront:presets:change', me.selectPresetField.get_value());
 						}
 					}),
 				]
