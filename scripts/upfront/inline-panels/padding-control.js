@@ -22,7 +22,7 @@ define([
 				}
 			});
 			$(document).mouseup(function(e){
-				var	target = $(e.target)
+				var	target = $(e.target),
 					currentEntity = Upfront.data.currentEntity;
 
 				if (target.closest('#page').length && target[0] !== me.el && !target.closest(me.el).length && typeof(currentEntity) !== 'undefined' && typeof(currentEntity.padding_hint_locked) !== 'undefined' && currentEntity.padding_hint_locked) {

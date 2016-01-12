@@ -1185,6 +1185,7 @@ var Application = new (Backbone.Router.extend({
 	boot: function () {
 		this.MODE = Upfront.Settings.Application.MODE;
 		var me = this;
+		$("body .upfront-edit_layout a").addClass('active');
 		$("body").off("click", ".upfront-edit_layout").on("click", ".upfront-edit_layout", function () {
 			//$(".upfront-editable_trigger").hide();
 			//app.go("layout");
@@ -1918,7 +1919,7 @@ return {
 $(function () {
 	$("body").on("click", ".upfront-edit_layout", function (e) {
 		e.preventDefault();
-		alert(_upfront_please_hold_on);
+		// alert(_upfront_please_hold_on);
 	});
 })
 

@@ -487,3 +487,23 @@ div.upfront-region-lightbox .upfront-icon-popup-close, div.upfront-region-side-l
     color:#fff;
     text-shadow:0 1px 1px rgba(0,0,0,.1);
 }
+
+/* Edior button faded out before editor is loaded */
+body .upfront-edit_layout a {
+  -webkit-transition: opacity 300ms ease-in !important;
+  transition: opacity 300ms ease-in !important;
+}
+body .upfront-edit_layout a:not(.active) {
+  opacity: 0.5;
+  cursor: default;
+}
+body .upfront-edit_layout:hover a:not(.active) {
+  color: inherit !important;
+  background-color: inherit !important;
+}
+
+/* Edior button faded in after editor is loaded */
+body .upfront-edit_layout a {
+  opacity: 1;
+  cursor: pointer;
+}
