@@ -24,7 +24,7 @@ define([
 
 					this.$el.find('.upfront-chosen-select').chosen({
 						search_contains: true,
-						width: '170px'
+						width: '172px'
 					});
 
 					return this;
@@ -66,12 +66,12 @@ define([
 				new SimpleTextField({
 					model: this.model,
 					label: l10n.select_preset_info,
-					className: 'migrate-preset-info',
+					className: 'migrate-separator migrate-preset-info',
 				}),
 
 				new SelectPresetField({
 					model: this.model,
-					label: l10n.select_preset_label,
+					label: '',
 					property: 'preset',
 					values: this.get_presets(),
 					change: function(value) {

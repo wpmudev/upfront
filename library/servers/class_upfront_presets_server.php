@@ -396,7 +396,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			'edit_preset_css' => __('Edit Preset CSS', 'upfront'),
 			'edit_preset_label' => __('Custom CSS', 'upfront'),
 			'convert_style_to_preset' => __('Convert Style to Preset', 'upfront'),
-			'convert_preset_info' => __('In order to edit the Appearance of this Element, you need to convert it to a Preset. Presets allow you to save and re-use styling across any element.', 'upfront'),
+			'convert_preset_info' => __('In order to edit the Appearance of this Element, you need to convert it to a <strong>Preset</strong>. Presets allow you to save and re-use styling across any element.', 'upfront'),
 			'select_preset_info' => __('Alternatively, pick from one of the existing presets below:', 'upfront'),
 		);
 		return !empty($key)
