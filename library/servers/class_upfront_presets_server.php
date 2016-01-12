@@ -362,6 +362,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			'select_preset_label' => __('Choose or Create Preset:', 'upfront'),
 			'delete_label' => __('Delete', 'upfront'),
 			'add_label' => __('Add', 'upfront'),
+			'apply_label' => __('Apply', 'upfront'),
 			'not_empty_label' => __('Preset name can not be empty.', 'upfront'),
 			'special_character_label' => __('Preset name can contain only numbers, letters and spaces.', 'upfront'),
 			'default_preset' => __('Default', 'upfront'),
@@ -393,7 +394,10 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			'ease_out' => __('ease-out', 'upfront'),
 			'ease_in_out' => __('ease-in-out', 'upfront'),
 			'edit_preset_css' => __('Edit Preset CSS', 'upfront'),
-			'edit_preset_label' => __('Custom CSS', 'upfront')
+			'edit_preset_label' => __('Custom CSS', 'upfront'),
+			'convert_style_to_preset' => __('Convert Style to Preset', 'upfront'),
+			'convert_preset_info' => __('In order to edit the Appearance of this Element, you need to convert it to a Preset. Presets allow you to save and re-use styling across any element.', 'upfront'),
+			'select_preset_info' => __('Alternatively, pick from one of the existing presets below:', 'upfront'),
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)
