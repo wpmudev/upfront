@@ -50,7 +50,7 @@ define([
 				new SimpleTextField({
 					model: this.model,
 					label: l10n.convert_preset_info,
-					className: 'migrate-preset-info',
+					className: 'migrate-preset-info migrate-info-icon',
 				}),
 				
 				new Upfront.Views.Editor.Field.Button({

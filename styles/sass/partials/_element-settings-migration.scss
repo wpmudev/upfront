@@ -1,5 +1,23 @@
 #element-settings-sidebar .migrate-preset-overlay {
-	padding: 40px 0px;
+	padding: 80px 0px;
+}
+
+#element-settings-sidebar .migrate-preset-overlay .migrate-info-icon {
+	position: relative;
+	padding-top: 40px;
+}
+
+#element-settings-sidebar .migrate-preset-overlay .migrate-info-icon:before {
+	content: '';
+	width: 20px;
+	height: 20px;
+	background-image: url('../img/uf-ui-sprite.svg');
+	background-position: -342px -111px;
+	left: 105px;
+	top: 0px;
+	opacity: .5;
+	position: absolute;
+	display: block;
 }
 
 #element-settings-sidebar .migrate-preset-overlay .migrate-preset-info label {
