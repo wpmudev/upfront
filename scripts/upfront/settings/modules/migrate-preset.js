@@ -134,7 +134,7 @@ define([
 			
 			setTimeout(function(){
 				me.hide_new_preset_fields();
-			}, 50);
+			}, 20);
 
 			this.fields =_(fields);
 		},
