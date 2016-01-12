@@ -26,7 +26,7 @@ define([
 
 					this.$el.find('.upfront-chosen-select').chosen({
 						search_contains: true,
-						width: '172px'
+						width: '171px'
 					});
 
 					return this;
@@ -43,10 +43,24 @@ define([
 					preset = preset.replace(' ', '-');
 					preset = preset.replace(/[^-a-zA-Z0-9]/, '');
 					return preset;
+				},
+				
+				on_change: function(e) {
+					this.trigger('change', this.get_value());
 				}
 			});
-
-			this.listenTo(this.model, 'change', this.onPresetUpdate);
+			
+			this.selectPresetField = new SelectPresetField({
+					model: this.model,
+					label: '',
+					property: 'preset',
+					values: this.get_presets(),
+					change: function(value) {
+						//me.model.set_property('preset', this.get_value());
+					}
+				}),
+			
+			this.listenTo(this.selectPresetField, 'change', this.previewPreset);
 
 			var fields = [
 				new Upfront.Views.Editor.Settings.Item({
@@ -109,15 +123,7 @@ define([
 						className: 'migrate-preset-info',
 					}),
 
-					new SelectPresetField({
-						model: this.model,
-						label: '',
-						property: 'preset',
-						values: this.get_presets(),
-						change: function(value) {
-							//me.model.set_property('preset', this.get_value());
-						}
-					}),
+					this.selectPresetField,
 					
 					new Upfront.Views.Editor.Field.Button({
 						model: this.model,
@@ -157,6 +163,10 @@ define([
 			me.$el.find('.migrate-preset-button').hide();
 			
 			me.$el.find('.existing-preset-module').append('<div class="existing-preset-overlay-layout">&nbsp;</div>');
+		},
+		
+		previewPreset: function(value) {
+			this.trigger('upfront:presets:preview', value);
 		},
 		
 		get_presets: function () {

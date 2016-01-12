@@ -3,10 +3,11 @@ define([
 	'scripts/upfront/element-settings/root-settings-panel',
 	'scripts/upfront/settings/modules/select-preset',
 	'scripts/upfront/settings/modules/edit-preset',
+	'scripts/upfront/settings/modules/migrate-preset',
 	'scripts/upfront/settings/modules/preset-css',
 	'scripts/upfront/preset-settings/util',
 	'scripts/upfront/preset-settings/preset-css-editor'
-], function(RootSettingsPanel, SelectPresetModule, EditPresetModule, PresetCssModule, Util, PresetCSSEditor) {
+], function(RootSettingsPanel, SelectPresetModule, EditPresetModule, MigratePresetModule, PresetCssModule, Util, PresetCSSEditor) {
 	/**
 	 * Handles presets: load, edit, delete and update for elements.
 	 *
@@ -168,6 +169,12 @@ define([
 				model: this.model,
 				preset: presetModel
 			});
+			
+			//When element is not migrated yet
+			this.migratePresetModule = new MigratePresetModule({
+				model: this.model,
+				presets: this.presets
+			});
 
 			this.listenTo(this.selectPresetModule, 'upfront:presets:new', this.createPreset);
 			this.listenTo(this.selectPresetModule, 'upfront:presets:change', this.changePreset);
@@ -177,6 +184,7 @@ define([
 			this.listenTo(this.editPresetModule, 'upfront:presets:state_show', this.stateShow);
 			this.listenTo(this.presetCssModule, 'upfront:presets:update', this.updatePreset);
 			this.listenTo(this.selectPresetModule, 'upfront:presets:migrate', this.migratePreset);
+			this.listenTo(this.migratePresetModule, 'upfront:presets:preview', this.previewPreset);
 
 			this.settings = _([
 				this.selectPresetModule,
@@ -337,6 +345,27 @@ define([
 			//this.setupItems(); // called in render -> getBody
 			this.render();
 		},
+		
+		previewPreset: function(preset) {
+			var element_id = this.property('element_id');
+			
+			//Remove original preset classes
+			$('#' + element_id).removeClass(this.getPresetClasses());
+
+			//Add preset class to element
+			$('#' + element_id).addClass(preset);
+			
+			//We still need to manage Tabs, Accordions & Buttons are they are using another classes for presets
+		},
+		
+		getPresetClasses: function() {
+			var presetClasses = '';
+			_.map(this.presets.models, function(model) {
+				presetClasses += model.get('id') + ' '; 
+			});
+			
+			return presetClasses;
+		},
 
 		stateShow: function(state) {
 			this.trigger('upfront:presets:state_show', state);
@@ -347,11 +376,16 @@ define([
 			var $body = $('<div />'),
 				me = this;
 
+			this.settings = _([
+				this.migratePresetModule
+			]);
+			
 			this.settings.each(function (setting) {
 				if ( ! setting.panel ) setting.panel = me;
 				setting.render();
 				$body.append(setting.el)
 			});
+			
 
 			return $body;
 		},
