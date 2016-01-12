@@ -73,7 +73,7 @@ define([
 				this.listenTo(this.model, "change", this.render);
 				if (this.init) this.init();
 
-				this.listenTo(Upfront.Events, "upfront:paddings:updated", this.adjust_top_settings_panel_position);
+				this.listenTo(Upfront.Events, "upfront:paddings:top:updated", this.adjust_top_settings_panel_position);
 			},
 			_get_full_size_el: function ($el, ratio, inside) {
 				var width = $el.width(),
