@@ -28,6 +28,8 @@ define([
 	 *
 	 * styleTpl - Upfront.Util.template parsed styles template
 	 */
+	var l10n = Upfront.Settings.l10n.preset_manager; 
+	 
 	var PresetManager = RootSettingsPanel.extend({
 		className: 'uf-settings-panel upfront-settings_panel preset-manager-panel',
 
@@ -347,6 +349,9 @@ define([
 			
 			//this.setupItems(); // called in render -> getBody
 			this.render();
+			
+			//Display notification
+			Upfront.Views.Editor.notify(l10n.preset_changed.replace(/%s/, preset));
 		},
 		
 		previewPreset: function(preset) {
