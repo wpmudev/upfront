@@ -1,5 +1,5 @@
-#page .upfront-tabs-container.tab-preset-<?php echo $properties['id']  ?> .tabs-tab:hover, 
-#page .upfront-tabs-container.tab-preset-<?php echo $properties['id']  ?> .tabs-tab:hover .inner-box,
+#page .upfront-tabs.<?php echo $properties['id']  ?> .tabs-tab:hover, 
+#page .upfront-tabs.<?php echo $properties['id']  ?> .tabs-tab:hover .inner-box,
 #page .upfront-tabs.<?php echo $properties['id']  ?>.live-preview-hover .tabs-tab,
 #page .upfront-tabs.<?php echo $properties['id']  ?>.live-preview-hover .tabs-tab .inner-box
 {
@@ -22,7 +22,7 @@
 		<?php if(!empty($properties['static-line-height'])) { ?>line-height: <?php echo $properties['static-line-height']  ?>;<?php } ?>
 	<?php } ?>
 }
-#page .upfront-tabs-container.tab-preset-<?php echo $properties['id']  ?> .tabs-tab:hover,
+#page .upfront-tabs.<?php echo $properties['id']  ?> .upfront-tabs-container .tabs-tab:hover,
 #page .upfront-tabs.<?php echo $properties['id']  ?>.live-preview-hover .tabs-tab {
 	<?php if(!empty($properties['hover-useborder'])) { ?>
         <?php if(!empty($properties['hover-borderwidth']) && !empty($properties['hover-bordertype']) && !empty($properties['hover-bordercolor'])) { ?>border: <?php echo $properties['hover-borderwidth'] ?>px <?php echo $properties['hover-bordertype'] ?> <?php echo $properties['hover-bordercolor'] ?>;<?php } ?>
@@ -30,8 +30,8 @@
         border: none;
     <?php } ?>
 }
-#page .upfront-tabs-container.tab-preset-<?php echo $properties['id']  ?> .tabs-tab.tabs-tab-active, 
-#page .upfront-tabs-container.tab-preset-<?php echo $properties['id']  ?> .tabs-tab.tabs-tab-active .inner-box,
+#page .upfront-tabs.<?php echo $properties['id']  ?> .upfront-tabs-container .tabs-tab.tabs-tab-active, 
+#page .upfront-tabs.<?php echo $properties['id']  ?> .upfront-tabs-container .tabs-tab.tabs-tab-active .inner-box,
 #page .upfront-tabs.<?php echo $properties['id']  ?>.live-preview-active .tabs-tab,
 #page .upfront-tabs.<?php echo $properties['id']  ?>.live-preview-active .tabs-tab .inner-box {
 	<?php if(!empty($properties['active-use-color'])) { ?>
@@ -54,7 +54,7 @@
 	<?php } ?>
 	transition: none;
 }
-#page .upfront-tabs-container.tab-preset-<?php echo $properties['id']  ?> .tabs-tab.tabs-tab-active,
+#page .upfront-tabs.<?php echo $properties['id']  ?> .upfront-tabs-container .tabs-tab.tabs-tab-active,
 #page .upfront-tabs.<?php echo $properties['id']  ?>.live-preview-active .tabs-tab {
 	<?php if(!empty($properties['active-useborder'])) { ?>
         <?php if(!empty($properties['active-borderwidth']) && !empty($properties['active-bordertype']) && !empty($properties['active-bordercolor'])) { ?>border: <?php echo $properties['active-borderwidth'] ?>px <?php echo $properties['active-bordertype'] ?> <?php echo $properties['active-bordercolor'] ?>;<?php } ?>
@@ -62,7 +62,7 @@
         border: none;
     <?php } ?>
 }
-#page .upfront-tabs-container.tab-preset-<?php echo $properties['id']  ?> .tabs-tab, #page .upfront-tabs-container.tab-preset-<?php echo $properties['id']  ?> .tabs-tab .inner-box {
+#page .upfront-tabs.<?php echo $properties['id']  ?> .upfront-tabs-container .tabs-tab, #page .upfront-tabs.<?php echo $properties['id']  ?> .upfront-tabs-container .tabs-tab .inner-box {
 	<?php if(!empty($properties['static-tab-bg'])) { ?>background: <?php echo $properties['static-tab-bg'] ?>; <?php } ?>
 	<?php if(!empty($properties['static-font-color'])) { ?>color: <?php echo $properties['static-font-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['static-font-family'])) { ?>font-family: <?php echo $properties['static-font-family']  ?>; <?php } ?>
@@ -76,7 +76,7 @@
 		transition: none;
 	<?php } ?>
 }
-#page .upfront-tabs-container.tab-preset-<?php echo $properties['id']  ?> .tabs-tab{
+#page .upfront-tabs.<?php echo $properties['id']  ?> .upfront-tabs-container .tabs-tab{
 	<?php if(!empty($properties['static-useborder'])) { ?>
         <?php if(!empty($properties['static-borderwidth']) && !empty($properties['static-bordertype']) && !empty($properties['static-bordercolor'])) { ?>border: <?php echo $properties['static-borderwidth'] ?>px <?php echo $properties['static-bordertype'] ?> <?php echo $properties['static-bordercolor'] ?>;<?php } ?>
     <?php } else { ?>
@@ -84,7 +84,7 @@
     <?php } ?>
 }
 
-.tab-preset-<?php echo $properties['id']  ?> .utabs-content {
+#page .upfront-tabs.<?php echo $properties['id']  ?> .utabs-content {
 	<?php if(!empty($properties['global-content-bg'])) { ?>background: <?php echo $properties['global-content-bg'] ?>; <?php } ?>
 	<?php if(!empty($properties['global-useborder'])) { ?>
         <?php if(!empty($properties['global-borderwidth']) && !empty($properties['global-bordertype']) && !empty($properties['global-bordercolor'])) { ?>border: <?php echo $properties['global-borderwidth'] ?>px <?php echo $properties['global-bordertype'] ?> <?php echo $properties['global-bordercolor'] ?>;<?php } ?>
