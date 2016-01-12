@@ -263,7 +263,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 
 		// this.createInlineControlPanel();
 		this.clearPresetClass(this.$el);
-		this.$el.addClass(this.property('preset'));
+		this.$el.find('.upfront-button').addClass(this.property('preset'));
 	},
 	stopEdit: function() {
 		var $target = this.$el.find('.upfront-object-content a.upfront_cta');
