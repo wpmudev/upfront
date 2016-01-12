@@ -9,6 +9,8 @@ define([
 		initialize: function(options) {
 			this.options = options || {};
 			
+			var me = this;
+			
 			var SimpleTextField = Upfront.Views.Editor.Field.Text.extend({
 				get_field_html: function () {
 					return '';
@@ -59,9 +61,39 @@ define([
 					className: 'migrate-preset-button',
 					compact: true,
 					on_click: function() {
+						me.show_new_preset_fields();
+					}
+				}),
+				
+				//New preset fields
+				
+				new Upfront.Views.Editor.Field.Button({
+					model: this.model,
+					label: l10n.cancel_label,
+					className: 'new-preset-button-cancel',
+					compact: true,
+					on_click: function() {
+						me.hide_new_preset_fields();
+					}
+				}),
+				
+				new Upfront.Views.Editor.Field.Text({
+					model: this.model,
+					label: '',
+					className: 'new-preset-button-input',
+				}),
+				
+				new Upfront.Views.Editor.Field.Button({
+					model: this.model,
+					label: l10n.ok_label,
+					className: 'new-preset-button-submit',
+					compact: true,
+					on_click: function() {
 						//Do something
 					}
 				}),
+				
+				//End new preset fields
 				
 				new SimpleTextField({
 					model: this.model,
@@ -89,8 +121,30 @@ define([
 					}
 				}),
 			];
+			
+			setTimeout(function(){
+				me.hide_new_preset_fields();
+			}, 50);
 
 			this.fields =_(fields);
+		},
+		
+		hide_new_preset_fields() {
+			var me = this;
+			me.$el.find('.new-preset-button-cancel').hide();
+			me.$el.find('.new-preset-button-input').hide();
+			me.$el.find('.new-preset-button-submit').hide();
+			
+			me.$el.find('.migrate-preset-button').show();
+		},
+		
+		show_new_preset_fields() {
+			var me = this;
+			me.$el.find('.new-preset-button-cancel').show();
+			me.$el.find('.new-preset-button-input').show();
+			me.$el.find('.new-preset-button-submit').show();
+			
+			me.$el.find('.migrate-preset-button').hide();
 		},
 		
 		get_presets: function () {

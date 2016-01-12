@@ -362,6 +362,8 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			'select_preset_label' => __('Choose or Create Preset:', 'upfront'),
 			'delete_label' => __('Delete', 'upfront'),
 			'add_label' => __('Add', 'upfront'),
+			'ok_label' => __('OK', 'upfront'),
+			'cancel_label' => __('Cancel', 'upfront'),
 			'apply_label' => __('Apply', 'upfront'),
 			'not_empty_label' => __('Preset name can not be empty.', 'upfront'),
 			'special_character_label' => __('Preset name can contain only numbers, letters and spaces.', 'upfront'),
