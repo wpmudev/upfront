@@ -3055,6 +3055,7 @@ define([
 					var diff_col = col - line.col,
 						total_diff = 0,
 						outstanding_diff = 0,
+						prev_outstanding_diff = 0,
 						outstanding_col = 0,
 						all_wrappers = [],
 						spacer_wrappers = [],
@@ -3084,12 +3085,15 @@ define([
 					if ( outstanding_diff != 0 ) {
 						outstanding_col = outstanding_diff > 0 ? -1 : 1;
 						while ( outstanding_diff != 0 ) {
+							prev_outstanding_diff = outstanding_diff;
 							_.each(diff_col > 0 ? _.union(el_wrappers, spacer_wrappers) : _.union(spacer_wrappers, el_wrappers), function (w) {
 								if ( outstanding_diff == 0 ) return;
 								if ( w.col + w.apply_diff + outstanding_col <= 0 ) return;
 								w.apply_diff += outstanding_col;
 								outstanding_diff += outstanding_col;
 							});
+							// No changes? Somethings wrong, let's break
+							if ( prev_outstanding_diff == outstanding_diff ) break;
 						}
 					}
 					_.each(all_wrappers, function (w) {
@@ -5487,11 +5491,12 @@ define([
 					current_col = _.isNumber(current_col) && current_col > spacer_col
 						? current_col
 						: Upfront.Util.width_to_col(this.$el.width()),
+					min_col = this._find_child_min_col(),
 					new_col = current_col-spacer_col,
-					$rsz_wrapper = ( new_col > 0 ? this.$el : ( this._find_closest_wrapper(position == 'left', spacer_col) ) )
+					$rsz_wrapper = ( new_col >= min_col ? this.$el : ( this._find_closest_wrapper(position == 'left', spacer_col) ) )
 				;
 				if ( !$rsz_wrapper.length ) return;
-				if ( new_col < 1 ) {
+				if ( new_col < min_col ) {
 					current_col = Upfront.Util.width_to_col($rsz_wrapper.width());
 					new_col = current_col-spacer_col;
 				}
@@ -5576,7 +5581,10 @@ define([
 			_find_closest_wrapper: function (reverse, min_col) {
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
 					$wrappers = this.$el.parent()
-						.children('.upfront-wrapper')
+						.children('.upfront-wrapper:visible')
+						.filter(function(){
+							return ( $(this).height() > 0 )
+						})
 						.each(Upfront.Util.normalize_sort_elements_cb)
 						.sort(Upfront.Util.sort_elements_cb),
 					index = $wrappers.index(this.$el),
@@ -5593,6 +5601,19 @@ define([
 					find_2 = ( !find_1.length ? Upfront.Util.find_from_elements($all, this.$el, find_cb, !reverse) : find_1 )
 				;
 				return find_2.first();
+			},
+			_find_child_min_col: function () {
+				var ed = Upfront.Behaviors.GridEditor,
+					min_col = 1
+				;
+				this.parent_view.model.each(function(module){
+					if ( !module.get('modules') ) return; // Not group, no min_col change
+					var module_view = Upfront.data.module_views[module.cid],
+						mod_min_col = module_view ? ed.get_group_min_col(module_view) : 1
+					;
+					min_col = Math.max(min_col, mod_min_col);
+				});
+				return min_col;
 			},
 			toggle_wrapper_visibility: function () {
 				var visible = ( parseInt(this.$el.css('height'), 10) > 0 );
