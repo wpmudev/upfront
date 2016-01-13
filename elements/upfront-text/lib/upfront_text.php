@@ -61,7 +61,18 @@ class Upfront_PlainTxtView extends Upfront_Object {
 			'upfront-shortcode-enable_in_layout', 
 			(defined('UPFRONT_DISABLE_LAYOUT_TEXT_SHORTCODES') && UPFRONT_DISABLE_LAYOUT_TEXT_SHORTCODES ? false : true)
 		);
-		if ($do_processing) $content = apply_filters("the_content", $content);
+
+		//Taking out the the_content filter application and manually applying the minimum required WP text processing functions
+		//if ($do_processing) $content = apply_filters("the_content", $content);
+		if($do_processing) {
+			$content = do_shortcode($content);
+			$content = wptexturize($content);
+			$content = convert_smilies($content);
+			$content = convert_chars($content);
+			$content = wpautop($content);
+			$content = shortcode_unautop($content);
+		}
+
 		return Upfront_Codec::get('wordpress')->expand_all($content);
 	}
 
