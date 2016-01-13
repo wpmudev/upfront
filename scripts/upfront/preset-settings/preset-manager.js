@@ -189,7 +189,7 @@ define([
 			
 			//Migration listeners
 			this.listenTo(this.migratePresetModule, 'upfront:presets:preview', this.previewPreset);
-			this.listenTo(this.migratePresetModule, 'upfront:presets:change', this.changePreset);
+			this.listenTo(this.migratePresetModule, 'upfront:presets:change', this.applyExistingPreset);
 
 			this.settings = _([
 				this.selectPresetModule,
@@ -338,6 +338,14 @@ define([
 				//Notify error
 				Upfront.Views.Editor.notify(ret);
 			});
+		},
+		
+		applyExistingPreset: function(preset) {
+			//Set existing preset
+			this.changePreset(preset);
+			
+			//Set element as already migrated
+			this.property('usingNewAppearance', true);
 		},
 
 		changePreset: function(preset) {
