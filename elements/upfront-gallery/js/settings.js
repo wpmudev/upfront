@@ -76,7 +76,35 @@ define([
 							}
 						}
 					]
-				}
+				},
+				
+				migratePresetProperties: function(newPreset) {
+					var props = {},
+						useCaption = '',
+						caption_height = 'auto';
+
+					this.model.get('properties').each( function(prop) {
+						props[prop.get('name')] = prop.get('value');
+					});
+					
+					if(typeof props.thumbCaptionsHeight !== "undefined") {
+						caption_height = 'fixed'
+					}
+					
+					if(typeof props.captionType !== "undefined") {
+						useCaption = 'yes';
+					}
+
+					newPreset.set({
+						'use_captions': useCaption,
+						'captionType': props.captionType,
+						'showCaptionOnHover': props.showCaptionOnHover,
+						'caption-height': caption_height,
+						'thumbCaptionsHeight': props.thumbCaptionsHeight,
+						'caption-bg': props.captionBackground,
+						'caption-text': props.captionColor
+					});
+				},
 			}
 		},
 		title: l10n.settings
