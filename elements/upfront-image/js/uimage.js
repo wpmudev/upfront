@@ -10,7 +10,7 @@ define([
 	"scripts/upfront/link-model",
 	'elements/upfront-image/js/model',
 	'text!elements/upfront-image/tpl/preset-style.html',
-	'scripts/upfront/preset-settings/util',
+	'scripts/upfront/preset-settings/util'
 ], function(imageTpl, editorTpl, ImageContextMenu, ImageSettings, ImageSelector, ImageEditor, ImageElement, LinkModel, UimageModel, settingsStyleTpl, PresetUtil) {
 
 	var l10n = Upfront.Settings.l10n.image_element;
@@ -125,6 +125,12 @@ define([
 			return props;
 		},
 
+		get_preset_property: function(prop_name) {
+			var preset = this.model.get_property_value_by_name("preset"),
+				props = PresetUtil.getPresetProperties('image', preset) || {};
+
+			return props[prop_name];
+		},
 		preset_updated: function() {
 			this.render();
 		},
@@ -160,10 +166,10 @@ define([
 		},
 
 		getSelectedAlignment: function(){
-			if(!this.property('include_image_caption') && this.property('caption_position') === false && this.property('caption_alignment') === false) {
+			if(!this.property('include_image_caption') && this.get_preset_property("caption-position") === false && this.property('caption_alignment') === false) {
 				return 'nocaption';
 			}
-			if(this.property('caption_position') === 'below_image') {
+			if(this.get_preset_property("caption-position") === 'below_image') {
 				return 'below';
 			}
 
@@ -192,80 +198,6 @@ define([
 		replaceImage: function() {
 			this.openImageSelector();
 		},
-
-		// createControls: function() {
-		// 	var me = this,
-		// 		panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
-		// 		captionControl = new Upfront.Views.Editor.InlinePanels.TooltipControl()
-		// 	;
-
-		// 	// Do not allow editing of theme images if not in builder
-		// 	if (this.isThemeImage() && !Upfront.themeExporter) {
-		// 		return false;
-		// 	}
-
-		// 	captionControl.sub_items = {
-		// 		topOver: this.createControl('topOver', l10n.ctrl.over_top),
-		// 		bottomOver: this.createControl('bottomOver', l10n.ctrl.over_bottom),
-		// 		topCover: this.createControl('topCover', l10n.ctrl.cover_top),
-		// 		middleCover: this.createControl('middleCover', l10n.ctrl.cover_middle),
-		// 		bottomCover: this.createControl('bottomCover', l10n.ctrl.cover_bottom),
-		// 		below: this.createControl('below', l10n.ctrl.below),
-		// 		nocaption: this.createControl('nocaption', l10n.ctrl.no_caption)
-		// 	};
-
-		// 	captionControl.icon = 'caption';
-		// 	captionControl.tooltip = l10n.ctrl.caption_position;
-		// 	captionControl.selected = this.getSelectedAlignment();
-
-		// 	this.listenTo(captionControl, 'select', function(item){
-		// 		switch(item){
-		// 			case 'topOver':
-		// 				me.property('include_image_caption', [1]);
-		// 				me.property('caption_position', 'over_image');
-		// 				me.property('caption_alignment', 'top');
-		// 				break;
-		// 			case 'bottomOver':
-		// 				me.property('include_image_caption', [1]);
-		// 				me.property('caption_position', 'over_image');
-		// 				me.property('caption_alignment', 'bottom');
-		// 				break;
-		// 			case 'topCover':
-		// 				me.property('include_image_caption', [1]);
-		// 				me.property('caption_position', 'over_image');
-		// 				me.property('caption_alignment', 'fill');
-		// 				break;
-		// 			case 'middleCover':
-		// 				me.property('include_image_caption', [1]);
-		// 				me.property('caption_position', 'over_image');
-		// 				me.property('caption_alignment', 'fill_middle');
-		// 				break;
-		// 			case 'bottomCover':
-		// 				me.property('include_image_caption', [1]);
-		// 				me.property('caption_position', 'over_image');
-		// 				me.property('caption_alignment', 'fill_bottom');
-		// 				break;
-		// 			case 'below':
-		// 				me.property('include_image_caption', [1]);
-		// 				me.property('caption_position', 'below_image');
-		// 				me.property('caption_alignment', false);
-		// 				break;
-		// 			case 'nocaption':
-		// 				me.property('include_image_caption', false);
-		// 				me.property('caption_position', false);
-		// 				me.property('caption_alignment', false);
-		// 		}
-		// 		me.render();
-		// 	});
-
-		// 	panel.items = _([
-		// 		this.createControl('crop', l10n.ctrl.edit_image, 'editRequest'),
-		// 		this.createLinkControl(),
-		// 		captionControl
-		// 	]);
-
-		// 	return panel;
-		// },]
 
 		createLinkControl: function(){
 			var me = this,
@@ -331,8 +263,10 @@ define([
 
 			captionEl.ueditor({
 					autostart: false,
+					focus: false,
 					upfrontMedia: false,
 					upfrontImages: false,
+					linebreaks: false,
 					airButtons: ['upfrontFormatting', 'bold', 'italic', 'stateAlign', 'upfrontLink', 'upfrontColor', 'upfrontIcons']
 				})
 				.on('start', function(){
@@ -367,7 +301,7 @@ define([
 				starting = this.$('.upfront-image-starting-select'),
 				size = this.temporaryProps.size, //this.property('size'),
 				position = this.temporaryProps.position, //this.property('position'),
-				captionHeight = this.property('caption_position') === 'below_image' ? this.$('.wp-caption').outerHeight() : 0
+				captionHeight = this.get_preset_property("caption-position") === 'below_image' ? this.$('.wp-caption').outerHeight() : 0
 			;
 
 			if (starting.length) {
@@ -435,7 +369,7 @@ define([
 		},
 
 		hasCaptionPosition: function() {
-			return this.property('caption_position') !== false || this.property('caption_alignment') !== false;
+			return this.get_preset_property("caption-position") !== false || this.property('caption_alignment') !== false;
 		},
 
 		setupBySize: function() {
@@ -483,7 +417,7 @@ define([
 
 			props.in_editor = true;
 
-			props.cover_caption = props.caption_position !== 'below_image';
+			props.cover_caption = this.get_preset_property("caption-position") !== 'below_image';
 
 			if(props.stretch) {
 				props.imgWidth = '100%';
@@ -557,7 +491,17 @@ define([
 
 			return rendered;
 		},
+		toggle_caption_controls: function(){
+			var me = this,
+				panel = new Upfront.Views.Editor.InlinePanels.Panel()
+				;
 
+			panel.items = this.getControlItems();
+			panel.render();
+			_.delay( function(){
+				me.controls.$el.html( panel.$el )
+			}, 400);
+		},
 		getElementShapeSize: function (elementSize) {
 			var $container = this.$el.find('.upfront-image-container'),
 				props = this.get_preset_properties(),
@@ -608,7 +552,7 @@ define([
 
 		on_render: function() {
 			var me = this,
-				onTop = ['bottom', 'fill_bottom'].indexOf(this.property('caption_alignment')) !== -1 || this.property('caption_position') === 'below_image' ? ' sizehint-top' : '',
+				onTop = ['bottom', 'fill_bottom'].indexOf(this.property('caption_alignment')) !== -1 || this.get_preset_property("caption-position") === 'below_image' ? ' sizehint-top' : '',
 				elementSize = this.property('element_size');
 
 			//Bind resizing events
@@ -683,6 +627,8 @@ define([
 			setTimeout(function() {
 				me.toggleResizableHandles();
 			}, 100);
+
+			this.toggle_caption_controls();
 		},
 
 		toggleResizableHandles: function() {
@@ -702,27 +648,29 @@ define([
 			}
 		},
 
-		// updateControls: function(width, height) {
-		// 	var imageControlsTpl = '<div class="uimage-controls image-element-controls upfront-ui"></div>';
+		updateControls: function() {
+			var elementControlsTpl = '<div class="upfront-element-controls upfront-ui"></div>';
 
-		// 	this.controls = this.createControls();
+			if(this.paddingControl && typeof this.paddingControl.isOpen !== 'undefined' && this.paddingControl.isOpen)	return;
 
-		// 	if (this.controls === false) {
-		// 		return;
-		// 	}
+			// if (!this.controls) {
+				this.controls = this.createControls(); // It seems to be needed for image only so caption item shows up when it should
+			// }
 
-		// 	this.controls.setWidth({
-		// 		width: width,
-		// 		height:height
-		// 	});
-		// 	this.controls.render();
+			if (this.controls === false) return;
 
-		// 	if (this.parent_module_view.$('.upfront-module').find('.uimage-controls').length === 0) {
-		// 		this.parent_module_view.$('.upfront-module').append(imageControlsTpl);
-		// 	}
-		// 	this.parent_module_view.$('.upfront-module').find('.uimage-controls').html('').append(this.controls.$el);
-		// 	this.controls.delegateEvents();
-		// },
+			this.controls.render();
+			if (!this.$control_el || this.$control_el.length === 0) {
+				this.$control_el = this.$el;
+			}
+			if (this.$control_el.find('>.upfront-element-controls').length === 0) {
+				this.$control_el.append(elementControlsTpl);
+				// this.$control_el.find('>.upfront-element-controls').html('').append(this.controls.$el);
+			}
+			this.$control_el.find('>.upfront-element-controls').html('').append(this.controls.$el); // we need to refresh controls because caption item has to be activated or deactivate depending on the `show caption`
+			this.controls.delegateEvents();
+		},
+
 
 		on_edit: function(){
 			return false;
@@ -833,7 +781,7 @@ define([
 
 			var starting = this.$('.upfront-image-starting-select'); // Add image panel
 
-			if(this.property('caption_position') !== 'below_image') {
+			if(this.get_preset_property("caption-position") !== 'below_image') {
 				this.$('.wp-caption').fadeOut('fast');
 			}
 
@@ -847,7 +795,7 @@ define([
 					vstretch: this.property('vstretch')
 				},
 				img: this.$('img'),
-				setTextHeight: this.property('caption_position') === 'below_image'
+				setTextHeight: this.get_preset_property("caption-position") === 'below_image'
 			};
 
 			if(this.cropTimer) {
@@ -876,7 +824,7 @@ define([
 			var starting = this.resizingData.starting,
 				data = this.resizingData.data,
 				img = this.resizingData.img,
-				captionHeight = this.property('caption_position') === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
+				captionHeight = this.get_preset_property("caption-position") === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
 				// padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding),
 				column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
 				hPadding = parseInt( this.model.get_breakpoint_property_value('left_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('right_padding_num') || column_padding ),
@@ -1103,7 +1051,10 @@ define([
 				crop = {},
 				imageId = me.property('image_id'),
 				resize = me.temporaryProps.size,
-				position = me.temporaryProps.position
+				position = me.temporaryProps.position,
+				deferred = $.Deferred(),
+				import_deferred = $.Deferred(),
+				import_promise = import_deferred.promise()
 			;
 
 
@@ -1113,31 +1064,44 @@ define([
 			crop.width = Math.min(elementSize.width, resize.width);
 			crop.height = Math.min(elementSize.height, resize.height);
 
-			var promise = Upfront.Views.Editor.ImageEditor.saveImageEdition(
-				imageId,
-				me.property('rotation'),
-				resize,
-				crop
-			).done(function(results){
-				var imageData = results.data.images[imageId];
+			import_promise.done(function(){
+				imageId = me.property('image_id');
+				Upfront.Views.Editor.ImageEditor.saveImageEdition(
+					imageId,
+					me.property('rotation'),
+					resize,
+					crop
+				).done(function(results){
+					var imageData = results.data.images[imageId];
 
-				if(imageData.error){
-					Upfront.Views.Editor.notify('Image failed to process.', 'error');
-					return;
-				}
+					if(imageData.error){
+						Upfront.Views.Editor.notify(l10n.process_error, 'error');
+						return;
+					}
 
-				me.property('size', resize);
-				me.property('position', position);
-				me.property('src', imageData.url);
-				me.property('srcFull', imageData.urlOriginal, false);
-				me.property('stretch', resize.width >= elementSize.width);
-				me.property('vstretch', resize.height >= elementSize.height);
-				me.property('gifImage', imageData.gif);
-				clearTimeout(me.cropTimer);
-				me.cropTimer = false;
+					me.property('size', resize);
+					me.property('position', position);
+					me.property('src', imageData.url);
+					me.property('srcFull', imageData.urlOriginal, false);
+					me.property('stretch', resize.width >= elementSize.width);
+					me.property('vstretch', resize.height >= elementSize.height);
+					me.property('gifImage', imageData.gif);
+					clearTimeout(me.cropTimer);
+					me.cropTimer = false;
+					deferred.resolve();
+				});
 			});
 
-			return promise;
+			if ( this.isThemeImage && 'themeExporter' in Upfront ) {
+				this.importImage().always(function(){
+					import_deferred.resolve();
+				});
+			}
+			else {
+				import_deferred.resolve();
+			}
+
+			return deferred.promise();
 		},
 
 		saveResizing: function() {
@@ -1204,7 +1168,6 @@ define([
 					size: imgSize,
 					position: imgPosition
 				};
-				console.log(img, imgSize, imgPosition, data);
 				this.property('element_size', size);
 				this.saveTemporaryResizing();
 				return true;
@@ -1224,7 +1187,7 @@ define([
 				height: resizer.height() - (2 * padding)
 			};
 
-			if(this.property('caption_position') === 'below_image') {
+			if(this.get_preset_property("caption-position") === 'below_image') {
 				this.elementSize.height -= parent.find('.wp-caption').outerHeight();
 			}
 
@@ -1237,13 +1200,14 @@ define([
 			var me = this,
 				parent = this.parent_module_view.$('.upfront-editable_entity:first'),
 				resizer = parent,
-				captionHeight = this.property('caption_position') === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
+				captionHeight = this.get_preset_property("caption-position") === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
 				// padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding),
+				borderWidth = parseInt(this.$el.find('.upfront-image-caption-container').css('borderWidth'), 10),
 				column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
 				hPadding = parseInt( this.model.get_breakpoint_property_value('left_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('right_padding_num') || column_padding ),
 				vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
 				// elementSize = {width: resizer.width() - (2 * padding), height: resizer.height() - (2 * padding) - captionHeight}
-				elementSize = {width: ( width && !isNaN(width) ? width : resizer.width() ) - hPadding, height: ( height && !isNaN(height) ? height : resizer.height() ) - vPadding - captionHeight}
+				elementSize = {width: ( width && !isNaN(width) ? width : resizer.width() ) - hPadding, height: ( height && !isNaN(height) ? height : resizer.height() ) - vPadding - captionHeight - (2 * borderWidth)}
 			;
 			this.property('element_size', elementSize);
 			this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
@@ -1278,10 +1242,17 @@ define([
 						id: me.imageId
 					}
 				;
-				$('<img>').attr('src', imageInfo.srcFull).load(function(){
-					Upfront.Views.Editor.ImageSelector.close();
-					me.openEditor(true, imageInfo);
-				});
+				$('<img>')
+					.load(function(){
+						Upfront.Views.Editor.ImageSelector.close();
+						me.openEditor(true, imageInfo);
+					})
+					.on("error", function () {
+						Upfront.Views.Editor.ImageSelector.close();
+						Upfront.Views.Editor.notify(l10n.process_error, 'error');
+					})
+					.attr('src', imageInfo.srcFull)
+				;
 			});
 		},
 
@@ -1319,8 +1290,17 @@ define([
 		},
 
 		editRequest: function () {
+			var me = this;
 			if(this.property('image_status') === 'ok' && this.property('image_id')) {
-				return this.openEditor();
+				if (this.isThemeImage() && 'themeExporter' in Upfront) {
+					this.importImage().always(function(){
+						me.openEditor();
+					});
+				}
+				else {
+					this.openEditor();
+				}
+				return;
 			}
 
 			Upfront.Views.Editor.notify(l10n.external_nag, 'error');
@@ -1406,6 +1386,43 @@ define([
 			Upfront.Application.LayoutEditor.openLightboxRegion(lightboxName);
 		},
 
+		importImage: function () {
+			var me = this,
+				image_id = this.property('image_id'),
+				opts = {
+					action: 'upfront-media-image-import',
+					images: [{
+						element_id: this.property('element_id'),
+						id: image_id,
+						src: this.property('srcFull')
+					}]
+				},
+				deferred = $.Deferred()
+			;
+			Upfront.Util.post(opts).done(function(response){
+				var images = response.data.images;
+				if ( image_id in images ) {
+					var status = images[image_id].status;
+					if ( status == 'imported') {
+						me.property('image_id', images[image_id].id);
+						me.property('srcFull', images[image_id].src);
+						me.property('srcOriginal', images[image_id].src);
+					}
+					else if ( status == 'exists' ) {
+						me.property('image_id', images[image_id].id);
+					}
+					else if ( status == 'fail' ) {
+						deferred.reject();
+						return;
+					}
+					deferred.resolve(me.property('image_id'));
+					return;
+				}
+				deferred.reject();
+			});
+			return deferred.promise();
+		},
+
 		cleanup: function(){
 			// The default images on a new theme installation do not have controlls created, so putting a check here.
 			if(this.controls)
@@ -1434,66 +1451,39 @@ define([
 			;
 
 			captionControl.sub_items = {
-				topOver: this.createControl('topOver', l10n.ctrl.over_top),
-				bottomOver: this.createControl('bottomOver', l10n.ctrl.over_bottom),
-				topCover: this.createControl('topCover', l10n.ctrl.cover_top),
-				middleCover: this.createControl('middleCover', l10n.ctrl.cover_middle),
-				bottomCover: this.createControl('bottomCover', l10n.ctrl.cover_bottom),
-				below: this.createControl('below', l10n.ctrl.below),
-				nocaption: this.createControl('nocaption', l10n.ctrl.no_caption)
+				nocaption: this.createControl('nocaption', l10n.ctrl.no_caption),
+				showCaption: this.createControl('showCaption', l10n.ctrl.show_caption)
 			};
+
 
 			captionControl.icon = 'caption';
 			captionControl.tooltip = l10n.ctrl.caption_position;
-			captionControl.selected = this.getSelectedAlignment();
+			captionControl.selected = this.property("display_caption");
 
 			this.listenTo(captionControl, 'select', function(item){
 				switch(item){
-					case 'topOver':
-						me.property('include_image_caption', [1]);
-						me.property('caption_position', 'over_image');
-						me.property('caption_alignment', 'top');
+					case 'showCaption':
+						me.property('display_caption', 'showCaption');
 						break;
-					case 'bottomOver':
-						me.property('include_image_caption', [1]);
-						me.property('caption_position', 'over_image');
-						me.property('caption_alignment', 'bottom');
+					default:
+						me.property('display_caption', "nocaption");
 						break;
-					case 'topCover':
-						me.property('include_image_caption', [1]);
-						me.property('caption_position', 'over_image');
-						me.property('caption_alignment', 'fill');
-						break;
-					case 'middleCover':
-						me.property('include_image_caption', [1]);
-						me.property('caption_position', 'over_image');
-						me.property('caption_alignment', 'fill_middle');
-						break;
-					case 'bottomCover':
-						me.property('include_image_caption', [1]);
-						me.property('caption_position', 'over_image');
-						me.property('caption_alignment', 'fill_bottom');
-						break;
-					case 'below':
-						me.property('include_image_caption', [1]);
-						me.property('caption_position', 'below_image');
-						me.property('caption_alignment', false);
-						break;
-					case 'nocaption':
-						me.property('include_image_caption', false);
-						me.property('caption_position', false);
-						me.property('caption_alignment', false);
 				}
 				me.render();
 			});
 
-			return _([
+			var controlls =  _([
 				this.createControl('crop', l10n.ctrl.edit_image, 'editRequest'),
 				this.createLinkControl(),
 				captionControl,
 				this.createPaddingControl(),
 				this.createControl('settings', Upfront.Settings.l10n.global.views.settings, 'on_settings_click')
 			]);
+
+		if( "yes" !== this.get_preset_property("use_captions") )
+			controlls = _( controlls.without( captionControl ) );
+
+		return controlls;
 		}
 	});
 

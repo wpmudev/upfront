@@ -139,6 +139,7 @@ DragDrop.prototype = {
 	},
 	
 	on_drag: function (e, ui) {
+		var that = this;
 		this.event = e;
 		this.ui = ui;
 		
@@ -146,7 +147,7 @@ DragDrop.prototype = {
 
 		// change drop point on timeout
 		clearTimeout(this._t);
-		this._t = setTimeout($.proxy(this.update_drop_timeout, this), this.ed.timeout);
+		this._t = setTimeout(function(){ that.update_drop_timeout(); }, this.ed.timeout);
 
 		this.update_drop_position();
 
@@ -642,7 +643,7 @@ DragDrop.prototype = {
 	
 	select_drop_point: function (drop) {
 		var ed = this.ed;
-		if ( drop.is_use ){
+		if ( !drop || drop.is_use ){
 			return;
 		}
 		ed.time_start('fn select_drop');
@@ -956,6 +957,7 @@ DragDrop.prototype = {
 	},
 	
 	update_drop_position: function () {
+		if ( !this.drop ) return;
 		var ed = this.ed,
 			drop = this.drop,
 			col = this.current_region ? this.current_region.col : this.me.col,
@@ -981,13 +983,13 @@ DragDrop.prototype = {
 			}
 		}
 
-		if ( this.is_group ) {
+		/*if ( this.is_group ) {
 			var original_col = this.model.get_property_value_by_name('original_col');
 			if ( _.isNumber(original_col) && original_col > col ) {
 				col = original_col;
 			}
 		}
-		this.drop_col = this.drop_col <= col ? this.drop_col : col;
+		this.drop_col = this.drop_col <= col ? this.drop_col : col;*/
 
 		//adjust_bottom = false;
 		adjust_bottom = true;
@@ -1125,6 +1127,7 @@ DragDrop.prototype = {
 				}
 				this.current_wrappers.add(wrap_model);
 				wrap_view.parent_view = this.view.parent_view;
+				this.view.wrapper_view = wrap_view;
 				wrap_view.render();
 				wrap_view.$el.append(this.view.$el);
 				if ( this.drop.type == 'side-before' && this.drop.is_clear ) {
@@ -1140,6 +1143,8 @@ DragDrop.prototype = {
 				$drop.before(this.view.$el);
 			}
 			this.wrapper_id = wrapper_id;
+			this.model.set_property('wrapper_id', this.wrapper_id, true);
+
 			if ( this.$wrap.find(this.module_selector).length == 0 ){
 				if ( this.wrap && this.wrap.grid.left == this.current_region.grid.left ) {
 					this.$wrap.nextAll('.upfront-wrapper').eq(0).addClass('clr');
@@ -1199,8 +1204,8 @@ DragDrop.prototype = {
 						that.model.collection.remove(this_model);
 						if ( apply_index == 0 ) {
 							first_is_spacer = true;
-							if ( that.drop.type == 'side-after' && that.drop.insert[1].get(0) == row_wrap.$el.get(0) ) {
-								// First is removed spacer and we drop after that spacer, means we now drop to the first
+							if ( ( that.drop.type == 'side-after' || that.drop.type == 'side-before' ) && that.drop.insert[1].get(0) == row_wrap.$el.get(0) ) {
+								// First is removed spacer and we drop before/after that spacer, means we now drop to the first
 								me_clear = true;
 							}
 						}
@@ -1218,8 +1223,8 @@ DragDrop.prototype = {
 								// First is removed spacer and we drop before the first element, means we now drop to the first
 								me_clear = true;
 							}
-							else {
-								// First is removed spacer and now this wrapper is the first instead
+							else if ( !me_clear ) {
+								// First is removed spacer and now this wrapper is the first instead, if we don't drop to the first
 								row_wrap.$el.data('clear', 'clear');
 							}
 						}
@@ -1287,10 +1292,6 @@ DragDrop.prototype = {
 		}
 
 		if ( !breakpoint || breakpoint.default ){
-			if ( this.wrapper_id ) {
-				this.model.set_property('wrapper_id', this.wrapper_id, true);
-			}
-
 			if ( !this.move_region ){
 				this.view.resort_bound_collection();
 			}

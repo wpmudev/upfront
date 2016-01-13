@@ -1,4 +1,5 @@
-.upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title {
+.upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title,
+.upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title p {
 	<?php if(!empty($properties['static-header-bg-color'])) { ?>background: <?php echo $properties['static-header-bg-color'] ?>; <?php } ?>
 	<?php if(!empty($properties['static-font-color'])) { ?>color: <?php echo $properties['static-font-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['static-font-family'])) { ?>font-family: <?php echo $properties['static-font-family']  ?>; <?php } ?>
@@ -18,7 +19,8 @@
 	<?php } ?>
 }
 
-.upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title:hover, 
+.upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title:hover,
+.upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title:hover p,
 .upfront-accordion.<?php echo $properties['id']  ?>.live-preview-hover .upfront-accordion-container .accordion-panel-title {
 	<?php if(!empty($properties['hover-use-colors'])) { ?>
 		<?php if(!empty($properties['hover-header-bg-color'])) { ?>background: <?php echo $properties['hover-header-bg-color'] ?>; <?php } ?>
@@ -48,6 +50,7 @@
 }
 
 .upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-active .accordion-panel-title,
+.upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-active .accordion-panel-title p,
 .upfront-accordion.<?php echo $properties['id']  ?>.live-preview-active .upfront-accordion-container .accordion-panel-title {
 	<?php if(!empty($properties['active-use-color'])) { ?>
 		<?php if(!empty($properties['active-header-bg-color'])) { ?>background: <?php echo $properties['active-header-bg-color'] ?>; <?php } ?>
@@ -76,13 +79,14 @@
     <?php } ?>
 	transition: none;
 }
-#page .upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-content {
-	background: <?php echo $properties['active-content-bg-color'] ?>;
+#page .upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-content,
+#page .upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-content p {
+	<?php if (!empty($properties['active-content-bg-color'])) { ?>
+		background: <?php echo $properties['active-content-bg-color'] ?>;
+	<?php } ?>
 	<?php if(!empty($properties['global-useborder'])) { ?>
         <?php if(!empty($properties['global-borderwidth']) && !empty($properties['global-bordertype']) && !empty($properties['global-bordercolor'])) { ?>border: <?php echo $properties['global-borderwidth'] ?>px <?php echo $properties['global-bordertype'] ?> <?php echo $properties['global-bordercolor'] ?>;<?php } ?>
-    <?php } else { ?>
-        border: none;
-    <?php } ?>
+	<?php } ?>
 }
 #page .upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title:after {
 	border-top-color: <?php echo $properties['static-triangle-icon-color'] ?>;
@@ -102,7 +106,7 @@
 		border-left-color: <?php echo $properties['active-triangle-icon-color'] ?>;
 	<?php } else { ?>
 		border-left-color: <?php echo $properties['static-triangle-icon-color'] ?>;
-	<?php } ?>	
+	<?php } ?>
 }
 
 <?php if(!empty($properties['preset_style'])) { ?><?php echo $properties['preset_style'] ?><?php } ?>

@@ -8,12 +8,16 @@ class Upfront_UploadHandler extends UploadHandler {
 
 	public function __construct () {
 		$uploads = wp_upload_dir();
-		parent::__construct(array(
+		$options = array(
 			'script_url' => self::get_action_url('upfront-media-upload'),
 			'upload_dir' => trailingslashit($uploads['path']),
 			'upload_url' => trailingslashit($uploads['url']),
 			'param_name' => 'media',
-		), false);
+		);
+		if (defined('UPFRONT_SKIP_IMAGE_EXIF_ORIENTATION') && UPFRONT_SKIP_IMAGE_EXIF_ORIENTATION) {
+			$options['orient_image'] = false;
+		}
+		parent::__construct($options, false);
 	}
 	protected function initialize() {
 		switch ($this->get_server_var('REQUEST_METHOD')) {
@@ -42,6 +46,20 @@ class Upfront_UploadHandler extends UploadHandler {
 
 	protected function generate_response ($content, $out=false) {
 		return $content;
+	}
+
+	/**
+	 * Override the image orientation and try to set memory limit high for this first.
+	 *
+	 * @param string $file_path
+	 *
+	 * @return bool
+	 */
+	protected function orient_image ($file_path) {
+		if (!(defined('UPFRONT_SKIP_MEMORY_LIMIT_ADJUSTMENT') && UPFRONT_SKIP_MEMORY_LIMIT_ADJUSTMENT)) {
+			@ini_set('memory_limit', '265M');
+		}
+		parent::orient_image($file_path);
 	}
 
 	public static function get_action_url ($action) {

@@ -1,4 +1,9 @@
-
+#page .upfront-accordion-wrap {
+	overflow-x: hidden;
+}
+#page .upfront-accordion-container .accordion-panel {
+	position: relative;
+}
 #page .upfront-accordion-container .accordion-panel-title {
 	position: relative;
 	padding: 7px 15px;

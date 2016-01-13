@@ -9,39 +9,7 @@ define([
 			styleElementPrefix: 'nav-preset',
 			ajaxActionSlug: 'nav',
 			panelTitle: l10n.settings,
-			presetDefaults: {
-				'menu_style': 'horizontal',
-				'menu_alignment': 'left',
-				'burger_alignment': 'left',
-				'static-font-size': 16,
-				'static-font-family': 'Arial',
-				'static-font-color': 'rgba(0, 0, 0, 1)',
-				'static-font-style': '400 normal',
-				'static-weight': 400,
-				'static-style': 'normal',
-				'static-line-height': 1.6,
-				'static-nav-bg': 'rgba(255, 255, 255, 0)',
-				'hover-font-size': 16,
-				'hover-font-family': 'Arial',
-				'hover-font-color': 'rgba(26, 124, 252, 1)',
-				'hover-font-style': '400 normal',
-				'hover-weight': 400,
-				'hover-style': 'normal',
-				'hover-line-height': 1.6,
-				'hover-transition-duration': 0.3,
-				'hover-transition-easing': 'ease-in-out',
-				'hover-nav-bg': 'rgba(255, 255, 255, 0)',
-				'focus-font-size': 16,
-				'focus-font-family': 'Arial',
-				'focus-font-color': 'rgba(26, 124, 252, 1)',
-				'focus-font-style': '400 normal',
-				'focus-weight': 400,
-				'focus-style': 'normal',
-				'focus-line-height': 1.6,
-				'focus-nav-bg': 'rgba(255, 255, 255, 0)',
-				'id': 'default',
-				'name': l10n.default_preset
-			},
+			presetDefaults: Upfront.mainData.presetDefaults.nav,
 			styleTpl: styleTpl,
 			stateModules: {
 				Global: [
@@ -183,19 +151,19 @@ define([
 					// Convert "burger_menu" and "menu_style" properties to "menu_style" property
 					if (props.breakpoint.desktop) {
 						if (props.breakpoint.desktop.burger_menu === 'yes') {
-							props.breakpoint.desktop.menu_style = 'triggered';
+							props.breakpoint.desktop.menu_style = 'burger';
 						}
 						delete props.breakpoint.desktop.burger_menu;
 					}
 					if (props.breakpoint.tablet) {
 						if (props.breakpoint.tablet.burger_menu === 'yes') {
-							props.breakpoint.tablet.menu_style = 'triggered';
+							props.breakpoint.tablet.menu_style = 'burger';
 						}
 						delete props.breakpoint.tablet.burger_menu;
 					}
 					if (props.breakpoint.mobile) {
 						if (props.breakpoint.mobile.burger_menu === 'yes') {
-							props.breakpoint.mobile.menu_style = 'triggered';
+							props.breakpoint.mobile.menu_style = 'burger';
 						}
 						delete props.breakpoint.mobile.burger_menu;
 					}
@@ -210,6 +178,7 @@ define([
 				// Setup breakpoint property for preset
 				newPreset.set({'breakpoint': props.breakpoint});
 			}
+
 		};
 
 		// Generate presets styles to page

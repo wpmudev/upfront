@@ -11,12 +11,11 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 		$menu_slug = $this->_get_property('menu_slug');
 
 		$activeBreakpoints = Upfront_Grid::get_grid()->get_breakpoints();
-		foreach ($activeBreakpoints as $name => $point) {
-			$data = $point->get_data();
-			if(!empty($data['enabled'])) {
-				$breakpoint_data[$data['id']]['width'] = $data['width'];
-			}
-		}
+
+
+
+
+
 
 		$preset = $this->_get_property('preset');
 		if (!isset($preset)) {
@@ -25,21 +24,46 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 
 		$preset_props = Upfront_Nav_Presets_Server::get_instance()->get_preset_properties($preset);
 		$breakpoint_data = $this->_get_property('breakpoint');
-		$breakpoint_data['preset'] = $preset_props['breakpoint'];
+		$breakpoint_data['preset'] = isset($preset_props['breakpoint'])?$preset_props['breakpoint']:false;
 
+		// if a breakpoint does not have info to render menu style, copy it from one higher
+		if(is_array($breakpoint_data['preset'])) {
+			$higher_name = '';
+			foreach ($activeBreakpoints as $name => $point) {
+				$data = $point->get_data();
+
+				if(!array_key_exists($name, $breakpoint_data['preset']) && $higher_name != '')
+					$breakpoint_data['preset'][$name] = $breakpoint_data['preset'][$higher_name];
+
+				$higher_name = $name;
+			}
+
+			/** if breakpoint has menu_style set to burger, but no
+				burger_alignment is defined, set it to default
+			**/
+			if(isset($breakpoint_data['preset'][$name]) && isset($breakpoint_data['preset'][$name]['menu_style']) && $breakpoint_data['preset'][$name]['menu_style'] && !isset($breakpoint_data['preset'][$name]['burger_alignment']) ) {
+				$breakpoint_data['preset'][$name]['burger_alignment'] = 'left';
+			}
+		}
 		$menu_style = $this->_get_property('menu_style');
 		$menu_alignment = $this->_get_property('menu_alignment');
 
-		$desktop = $breakpoint_data['desktop'];
-		$desktopPreset = $breakpoint_data['preset']['desktop'];
-		$menu_style = isset($desktopPreset['menu_style']) ? $desktopPreset['menu_style'] :  $menu_style;
+		$desktopPreset = (is_array($breakpoint_data['preset']) && isset($breakpoint_data['preset']['desktop']))?$breakpoint_data['preset']['desktop']:false;
+
+		$menu_style = isset($desktopPreset['menu_style']) && is_array($desktopPreset['menu_style']) ? $desktopPreset['menu_style'] :  $menu_style;
 		$menu_alignment = isset($desktopPreset['menu_alignment']) ? $desktopPreset['menu_alignment'] : $menu_alignment;
 		$sub_navigation = $this->_get_property('allow_sub_nav');
 		$is_floating = $this->_get_property('is_floating');
 
-		$menu_style = $menu_style === 'triggered' ? 'burger' : $menu_style;
+		$menu_style = $menu_style === 'burger' ? 'burger' : $menu_style;
+
+		if(empty($menu_style)) {
+			$menu_style = 'horizontal';
+		}
+
 		$menu_style = "data-style='{$menu_style}' data-stylebk='{$menu_style}'";
-		$breakpoint_data = "data-breakpoints='" . json_encode($breakpoint_data) . "'" ;
+		$breakpoint_data = "data-breakpoints='" . preg_replace("#'#", '"', json_encode($breakpoint_data)) . "'" ;
+		$breakpoint_data = preg_replace('#\\\\"#', '"', $breakpoint_data);
 		$menu_alignment = $menu_alignment ? "data-alignment='{$menu_alignment}' data-alignment='{$menu_alignment}'" : "";
 		$sub_navigation = $sub_navigation ? "data-allow-sub-nav='yes'" : "data-allow-sub-nav='no'";
 
@@ -128,6 +152,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 			'edit_url' => __('Edit URL', 'upfront'),
 			'create_dropdown' => __('Create Drop-Down', 'upfront'),
 			'choose_existing_menu' => __('Choose existing menu', 'upfront'),
+			'are_you_sure_nag' => __('Are you sure to delete this menu?', 'upfront'),
 			'css' => array(
 				'bar_label' => __('Menu Bar', 'upfront'),
 				'bar_info' => __('Menu Bar', 'upfront'),
@@ -162,7 +187,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 				'btn' => __('button to open menu', 'upfront'),
 				'appearance' => __('Revealed Menu Appearance', 'upfront'),
 				'show_on_click' => __('Show on click menu location:', 'upfront'),
-				'alingment' => __('Alingment:', 'upfront'),
+				'alignment' => __('Alignment:', 'upfront'),
 				'aligh' => __('Menu Item Alignment', 'upfront'),
 				'left' => __('Left', 'upfront'),
 				'right' => __('Right', 'upfront'),
@@ -188,6 +213,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 				'background_label' => __('Background', 'upfront'),
 			),
 			'settings' => __('Navigation settings', 'upfront'),
+			'add_item' => __('Add a menu item', 'upfront'),
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)
@@ -329,7 +355,7 @@ class Upfront_newMenuSetting extends Upfront_Server {
 	}
 
 	public function delete_menu_item () {
-
+		$messages = array();
 		$menu_item_id = isset($_POST['menu_item_id']) ? intval($_POST['menu_item_id']) : false;
 		$menu_items =  isset($_POST['new_menu_order']) ? $_POST['new_menu_order'] : false;
 		if ( $menu_item_id ){

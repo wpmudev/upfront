@@ -74,3 +74,7 @@
 .thumb-propostions {
 	margin-top: 10px;
 }
+.upfront-object-content .ugallery-thumb-title p {
+	margin-bottom: 0;
+	line-height: inherit;
+}

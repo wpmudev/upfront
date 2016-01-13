@@ -36,7 +36,8 @@ define([
 			this.trigger('upfront:presets:update', preset);
 		},
 
-		updateCss: function(preset, newCss) {
+		updateCss: function(preset, newCss, me) {
+			newCss.replace(/'/g, '"'); // Force double quotes, menu el. uses singlequotes to surround value of an attribute, if single quote slips in it will break the elelent
 			preset.set({'preset_style': newCss});
 		},
 
@@ -59,12 +60,10 @@ define([
 
 			this.listenTo(this.presetCSSEditor, 'upfront:presets:update', this.onPresetUpdate);
 			this.listenTo(this.presetCSSEditor, 'change', function(newCss) {
-				updateCssDebounced(me.options.preset, newCss);
+				updateCssDebounced(me.options.preset, newCss, me);
 			});
 
 			Upfront.Events.trigger("entity:settings:deactivate");
-
-			//$('#settings').find('.upfront-save_settings').click();
 		}
 	});
 

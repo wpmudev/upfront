@@ -109,6 +109,26 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 	}
 
 	/**
+	 * Expand the URLs in preset style
+	 *
+	 * @param array $presets Presets to expand
+	 *
+	 * @return array Processed presets
+	 */
+	private function _expand_passive_relative_url ($presets) {
+		if (empty($presets) || !is_array($presets)) return $presets;
+		$contextless_uri = preg_replace('/^https?:/', '', get_stylesheet_directory_uri());
+		foreach ($presets as $idx => $preset) {
+			if (empty($preset['preset_style'])) continue;
+
+			$preset['preset_style'] = preg_replace('/' . preg_quote(Upfront_ChildTheme::THEME_BASE_URL_MACRO, '/') . '/', $contextless_uri, $preset['preset_style']);
+			$presets[$idx] = $preset;
+		}
+
+		return $presets;
+	}
+
+	/**
 	 * @return array saved presets
 	 */
 	public function get_presets() {
@@ -124,6 +144,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		);
 
 		$presets = $this->replace_new_lines($presets);
+		$presets = $this->_expand_passive_relative_url($presets);
 
 		// Fail-safe
 		if (is_array($presets) === false) {
@@ -168,6 +189,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 	public function get_presets_styles() {
 		$presets = $this->get_presets();
+		$presets = $this->_expand_passive_relative_url($presets);
 
 		if (empty($presets)) {
 			return '';
@@ -216,9 +238,12 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 	}
 
 	public function get_theme_presets() {
-
+		$settings = Upfront_ChildTheme::get_settings();
 		//Get presets distributed with the theme
-		$theme_presets = json_decode(Upfront_ChildTheme::get_settings()->get($this->elementName . '_presets'), true);
+		$theme_presets = is_object($settings) && $settings instanceof Upfront_Theme_Settings
+			? json_decode($settings->get($this->elementName . '_presets'), true)
+			: false
+		;
 
 		return $theme_presets;
 	}
@@ -265,6 +290,12 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		}
 	}
 
+	/**
+	 * Allow child classes to update presets if needed.
+	 */
+	protected function migrate_presets($presets) {
+		return $presets;
+	}
 
 	public function get_presets_javascript_server() {
 		$presets = get_option('upfront_' . get_stylesheet() . '_' . $this->elementName . '_presets');
@@ -275,7 +306,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 				'json' => false,
 				'as_array' => true
 			)
-		);
+    );
 
 		if(!is_array($presets)) {
 			$presets = json_decode($presets, true);
@@ -288,7 +319,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		$theme_presets = $this->get_theme_presets_names();
 
 		if(empty($theme_presets)) {
-			return json_encode($presets);
+			return json_encode($this->migrate_presets($presets));
 		}
 
 		//Check if preset is distributed with the theme
@@ -301,7 +332,10 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			$updatedPresets[] = $preset;
 		}
 
-		$updatedPresets = $this->replace_new_lines($updatedPresets);
+		$updatedPresets = $this->replace_new_lines(
+			$this->migrate_presets($updatedPresets)
+		);
+		$updatedPresets = $this->_expand_passive_relative_url($updatedPresets);
 
 		$updatedPresets = json_encode($updatedPresets);
 
@@ -314,6 +348,14 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		if (!empty($strings['preset_manager'])) return $strings;
 		$strings['preset_manager'] = self::_get_l10n();
 		return $strings;
+	}
+	
+	public static function get_preset_defaults () {
+		return array();
+	}
+
+	public static function get_l10n ($key) {
+		return self::_get_l10n($key);
 	}
 
 	private static function _get_l10n ($key=false) {

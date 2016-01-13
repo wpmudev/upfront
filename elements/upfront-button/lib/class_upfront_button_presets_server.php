@@ -88,7 +88,15 @@ class Upfront_Button_Presets_Server extends Upfront_Presets_Server {
 				$preset_options['hov_useborder'] = 'yes';
 				$preset_options['hov_useradius'] = 'yes';
 				$preset_options['hov_usebgcolor'] = 'yes';
+				$preset_options['hov_use_animation'] = 'yes';
 				$preset_options['lineheight'] = 1;
+				$count++;
+			}
+			
+			//Enable Use Animation
+			if(!isset($preset_options['focus_borderradiuslock'])) {
+				$preset_options['hov_use_animation'] = 'yes';
+				$preset_options['focus_borderradiuslock'] = 'yes';
 				$count++;
 			}
 
@@ -118,6 +126,67 @@ class Upfront_Button_Presets_Server extends Upfront_Presets_Server {
 			$this->update_presets($result);
 			$presets = $result;
 		}
+	}
+
+	public static function get_preset_defaults() {
+		return array(
+			'useborder' => 'yes',
+			'bordertype' => 'solid',
+			'borderwidth' => 4,
+			'bordercolor' => 'rgb(66, 127, 237)',
+			'useradius' => 'yes',
+			'borderradiuslock' => 'yes',
+			'borderradius1' => 100,
+			'borderradius2' => 100,
+			'borderradius3' => 100,
+			'borderradius4' => 100,
+			'bgcolor' => 'rgb(255, 255, 255)',
+			'fontsize' => 16,
+			'fontface' => 'Arial',
+			'fontstyle' => '600 normal',
+			'fontstyle_weight' => '600',
+			'fontstyle_style' => 'normal',
+			'lineheight' => 3,
+			'color' => 'rgb(66, 127, 237)',
+			'hov_bordertype' => 'solid',
+			'hov_borderwidth' => 4,
+			'hov_bordercolor' => 'rgb(66, 127, 237)',
+			'hov_borderradiuslock' => 'yes',
+			'hov_borderradius1' => 100,
+			'hov_borderradius2' => 100,
+			'hov_borderradius3' => 100,
+			'hov_borderradius4' => 100,
+			'hov_bgcolor' => 'rgb(66, 127, 237)',
+			'hov_fontsize' => 16,
+			'hov_fontface' => 'Arial',
+			'hov_fontstyle' => '600 normal',
+			'hov_fontstyle_weight' => '600',
+			'hov_fontstyle_style' => 'normal',
+			'hov_lineheight' => 3,
+			'hov_color' => 'rgb(255, 255, 255)',
+			'hov_duration' => 0.25,
+			'hov_transition' => 'linear',
+			'hov_duration' => 0.3,
+			'hov_easing' => 'ease-in-out',
+			'focus_bordertype' => 'solid',
+			'focus_borderwidth' => 4,
+			'focus_bordercolor' => 'rgb(66, 127, 237)',
+			'focus_borderradiuslock' => 'yes',
+			'focus_borderradius1' => 100,
+			'focus_borderradius2' => 100,
+			'focus_borderradius3' => 100,
+			'focus_borderradius4' => 100,
+			'focus_bgcolor' => 'rgb(66, 127, 237)',
+			'focus_fontsize' => 16,
+			'focus_fontface' => 'Arial',
+			'focus_fontstyle' => '600 normal',
+			'focus_fontstyle_weight' => '600',
+			'focus_fontstyle_style' => 'normal',
+			'focus_lineheight' => 3,
+			'focus_color' => 'rgb(255, 255, 255)',
+			'id' => 'default',
+			'name' => self::$instance->get_l10n('default_preset')
+		);
 	}
 }
 

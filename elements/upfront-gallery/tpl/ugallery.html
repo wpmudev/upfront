@@ -1,5 +1,5 @@
 <div
-	class="<?php echo $preset ?> ugallery ugallery_publish <?php if(!empty($in_editor)) { ?>ugallery-in-editor<?php } ?>"
+	class="ugallery ugallery_publish <?php if(!empty($in_editor)) { ?>ugallery-in-editor<?php } ?>"
 	data-thumb-padding="<?php echo $thumbPadding ?>"
 	data-thumb-side-padding="<?php echo $sidePadding ?>"
 	data-thumb-bottom-padding="<?php echo $bottomPadding ?>"
@@ -47,8 +47,8 @@
 	<?php if(! $editing) { ?>
 		<?php echo $l10n['no_images'] ?>
 	<?php } else { ?>
-		<div class="ugallery-starting-wrapper upfront-ui">
-				<div class="uimage-centered">
+		<div class="ugallery-starting-wrapper upfront-ui upfront-initial-overlay-wrapper">
+				<div class="ugallery-starting-container upfront-initial-overlay-wrapper">
 					<span class="upfront-image-resizethiselement"><?php echo $l10n['add_img'] ?></span>
 					<div class=""><a class="upfront-image-select button" href="#" title="<?php echo $l10n['add_images'] ?>">+</a></div>
 				</div>

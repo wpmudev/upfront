@@ -234,6 +234,7 @@ class Upfront_Grid {
 			$wrapper_id = upfront_get_property_value('wrapper_id', $module);
 			$wrapper_data = $this->_find_wrapper($wrapper_id, $wrappers);
 			$wrapper_index = array_search($wrapper_data, $wrappers);
+			$is_clear = $this->_get_property_clear($wrapper_data);
 			$prev_wrapper_id = false;
 			$prev_wrapper_data = false;
 			$next_wrapper_id = false;
@@ -366,7 +367,7 @@ class Upfront_Grid {
 									}
 								}
 							}
-							if ( $prev_is_spacer ) {
+							if ( $prev_is_spacer && !$is_clear ) {
 								$prev_spacer_id = upfront_get_property_value('element_id', $mod);
 								if ( !in_array($prev_spacer_id, $rendered_spacers) ) {
 									$spacer_col = $this->_get_class_col($mod);
@@ -402,11 +403,15 @@ class Upfront_Grid {
 						$rendered_spacers[] = $prev_spacer_id;
 					}
 					if ( !$wrapper_modules_hide ) {
+						if ( $is_clear ) {
+							$line_col = $col;
+						}
 						$line_col -= $wrapper_col + $spacer_col;
 					}
 					if ( $next_wrapper_col == $line_col && $next_is_spacer ) {
 						$next_fill = $next_wrapper_col;
 						$rendered_spacers[] = $next_spacer_id;
+						$line_col -= $next_wrapper_col;
 					}
 					else {
 						$next_fill = $next_clear && $line_col > 0 ? $line_col : 0;
@@ -959,38 +964,51 @@ class Upfront_GridBreakpoint {
 		$breakpoint_data = $breakpoint && !empty($breakpoint[$this->get_id()]) ? $breakpoint[$this->get_id()] : false;
 
 		$raw_styles = array();
+		$top_padding_use = false;
+		$left_padding_use = false;
+		$bottom_padding_use = false;
+		$right_padding_use = false;
+
 		if ( $this->is_default() ){
 			$top_padding = $this->_get_property('top_padding_num', $entity);
+			$top_padding_use = $this->_get_property('top_padding_use', $entity);
 			$right_padding = $this->_get_property('right_padding_num', $entity);
+			$right_padding_use = $this->_get_property('right_padding_use', $entity);
 			$bottom_padding = $this->_get_property('bottom_padding_num', $entity);
+			$bottom_padding_use = $this->_get_property('bottom_padding_use', $entity);
 			$left_padding = $this->_get_property('left_padding_num', $entity);
+			$left_padding_use = $this->_get_property('left_padding_use', $entity);
 		}
 		else if ($breakpoint_data){
 			if (!empty($breakpoint_data['top_padding_num'])) $top_padding = $breakpoint_data['top_padding_num'];
+			if (!empty($breakpoint_data['top_padding_use'])) $top_padding_use = $breakpoint_data['top_padding_use'];
 			if (!empty($breakpoint_data['right_padding_num'])) $right_padding = $breakpoint_data['right_padding_num'];
+			if (!empty($breakpoint_data['right_padding_use'])) $right_padding_use = $breakpoint_data['right_padding_use'];
 			if (!empty($breakpoint_data['bottom_padding_num'])) $bottom_padding = $breakpoint_data['bottom_padding_num'];
+			if (!empty($breakpoint_data['bottom_padding_use'])) $bottom_padding_use = $breakpoint_data['bottom_padding_use'];
 			if (!empty($breakpoint_data['left_padding_num'])) $left_padding = $breakpoint_data['left_padding_num'];
+			if (!empty($breakpoint_data['left_padding_use'])) $left_padding = $breakpoint_data['left_padding_use'];
 		}
 
-		if ( !in_array('top_padding', $exception) && !empty($top_padding) ){
+		if ( !in_array('top_padding', $exception) && $top_padding_use && isset($top_padding) && is_numeric($top_padding) ){
 			$style = $this->_top_padding_to_style($top_padding);
 			$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
 			$raw_styles[$selector][] = rtrim($style, ';') . ';';
 		}
 
-		if ( !in_array('right_padding', $exception) && !empty($right_padding) ){
+		if ( !in_array('right_padding', $exception) && $right_padding_use && isset($right_padding) && is_numeric($right_padding) ){
 			$style = $this->_right_padding_to_style($right_padding);
 			$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
 			$raw_styles[$selector][] = rtrim($style, ';') . ';';
 		}
 
-		if ( !in_array('bottom_padding', $exception) && !empty($bottom_padding) ){
+		if ( !in_array('bottom_padding', $exception) && $bottom_padding_use && isset($bottom_padding) && is_numeric($bottom_padding) ){
 			$style = $this->_bottom_padding_to_style($bottom_padding);
 			$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
 			$raw_styles[$selector][] = rtrim($style, ';') . ';';
 		}
 
-		if ( !in_array('left_padding', $exception) && !empty($left_padding) ){
+		if ( !in_array('left_padding', $exception) && $left_padding_use && isset($left_padding) && is_numeric($left_padding) ){
 			$style = $this->_left_padding_to_style($left_padding);
 			$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
 			$raw_styles[$selector][] = rtrim($style, ';') . ';';

@@ -1,7 +1,11 @@
+.<?php echo $properties['id'] ?> .upfront-image-caption-container .wp-caption p,
 .<?php echo $properties['id'] ?> .upfront-image-caption-container .wp-caption {
 	<?php if(!empty($properties['caption-text'])) { ?>
 	color: <?php echo $properties['caption-text']  ?>;
 	<?php } ?>
+}
+
+.<?php echo $properties['id'] ?> .upfront-image-caption-container .wp-caption {
 	<?php if(!empty($properties['caption-bg'])) { ?>
 	background: <?php echo $properties['caption-bg'] ?>;
 	<?php } ?>

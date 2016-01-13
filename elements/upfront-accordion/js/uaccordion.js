@@ -21,7 +21,7 @@ define([
 				this.model = new UaccordionModel({properties: this.model.get('properties')});
 			}
 			this.events = _.extend({}, this.events, {
-				'click .accordion-add-panel': 'addPanel',
+				// 'click .accordion-add-panel': 'addPanel',
 				'click .accordion-panel-title': 'onPanelTitleClick',
 				'dblclick .accordion-panel-active .accordion-panel-content': 'onContentDblclick',
 				'click i': 'deletePanel'
@@ -29,6 +29,7 @@ define([
 			this.delegateEvents();
 
 			this.model.get('properties').bind('change', this.render, this);
+			this.model.get('properties').bind('change', this.handle_visual_padding_hint, this);
 			this.model.get('properties').bind('add', this.render, this);
 			this.model.get('properties').bind('remove', this.render, this);
 
@@ -78,7 +79,7 @@ define([
 		deletePanel: function(event) {
 			var element = $(event.currentTarget);
 			var panel = element.parents('.accordion-panel');
-			var id = panel.index()-1;
+			var id = panel.index();
 			this.property('accordion').splice(id, 1);
 			this.property('accordion_count', this.property('accordion_count') - 1, false);
 		},
@@ -117,14 +118,15 @@ define([
 		},
 
 		saveTitle: function(target) {
-			var id = target.closest('div.accordion-panel').index()-1;
+			//var id = target.closest('div.accordion-panel').index()-1;
+			var id = target.closest('div.accordion-panel').index(); // Index is zero-based!!! https://api.jquery.com/index/
 			this.property('accordion')[id].title = target.html();
 		},
 
 		savePanelContent: function() {
 			var panel = this.$el.find('.accordion-panel-active'),
 				$content = panel.find('.accordion-panel-content'),
-				panelId = panel.index()-1,
+				panelId = panel.index(),
 				ed = $content.data('ueditor'),
 				text = ''
 			;
@@ -256,6 +258,14 @@ define([
 				return this.model.set_property(name, value, silent);
 			}
 			return this.model.get_property_value_by_name(name);
+		},
+
+		getControlItems: function(){
+			return _([
+				this.createControl('add', l10n.add_panel, 'addPanel'),
+				this.createPaddingControl(),
+				this.createControl('settings', l10n.settings, 'on_settings_click')
+			]);
 		}
 	});
 

@@ -11,13 +11,17 @@ define([], function () {
 		});
 
 		this.getMenuById = function(id) {
-			var menu = _.findWhere(wpMenus, {term_id: id});
-			if (_.isUndefined(menu)) _.findWhere(wpMenus, {term_id: id + ''})
+			var id_str = id + '',
+				id_int = parseInt(id_str, 10),
+				menu = _.findWhere(wpMenus, {term_id: id_int})
+			;
+			if (_.isUndefined(menu)) 
+				menu = _.findWhere(wpMenus, {term_id: id_str})
 			return menu;
 		};
 
 		this.getMenuSlugById = function(id) {
-			return this.getMenuById(id).slug;
+			return (this.getMenuById(id) || {}).slug;
 		};
 
 		this.getSelectMenuOptions = function() {

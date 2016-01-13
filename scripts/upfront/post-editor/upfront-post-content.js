@@ -1458,14 +1458,13 @@ var PostContentEditorLegacy = Backbone.View.extend(_.extend({}, PostContentEdito
 		var me = this,
 			events = ['cancel', 'publish', 'draft', 'trash', 'auto-draft']
 		;
-		_.each(events, function(e){
-			me.listenTo(me.box, e, function(){
+		_.each(events, function (e) {
+			me.listenTo(me.box, e, function () {
 				var results = {};
 				
-				if(e=='publish' || e=='draft' || e=='auto-draft'){
-					//if(me.parts.titles) results.title = $.trim(me.parts.titles.html());
-					if(me.parts.titles) results.title = $.trim(me.parts.titles.text());
-					if(me.currentContent){
+				if ('publish' === e || 'draft' === e || 'auto-draft' === e) {
+					if (me.parts.titles) results.title = $.trim(me.parts.titles.text());
+					if (me.currentContent){
 						var editor = $(me.currentContent).data('ueditor');
 
                         // cleanup inserts markup
@@ -1476,10 +1475,11 @@ var PostContentEditorLegacy = Backbone.View.extend(_.extend({}, PostContentEdito
                         }
 
 						// replace image inserts with their shortcodes
-						me.$(".upfront-inserted_image-wrapper").each(function(){
+						me.$(".upfront-inserted_image-wrapper").each(function () {
 							var $this = $(this),
 								$shortcode = $this.find(".post-images-shortcode").length ? $this.find(".post-images-shortcode") : $this.find(".post-images-shortcode-wp"),
-								shortcode = $.trim( $shortcode.html().replace(/(\r\n|\n|\r)/gm,"") );
+								shortcode = $.trim( $shortcode.html().replace(/(\r\n|\n|\r)/gm,"") )
+							;
 							$this.replaceWith( shortcode );
 						});
 
@@ -1489,14 +1489,16 @@ var PostContentEditorLegacy = Backbone.View.extend(_.extend({}, PostContentEdito
 						results.author = me.postAuthor;
 					}
 
-					if(me.selectedDate)
-						results.date = me.selectedDate;
-					if(me.postStatus)
-						results.status = me.postStatus;
-					if(me.postVisibility)
-						results.visibility = me.postVisibility;
-					if(me.postPassword)
-						results.pass = me.postPassword;
+					if (me.selectedDate) results.date = me.selectedDate;
+					if (me.postStatus) results.status = me.postStatus;
+					if (me.postVisibility) results.visibility = me.postVisibility;
+					if (me.postPassword) results.pass = me.postPassword;
+
+					// Reset initiating element's markup so markup refresh is triggered
+					// Fixes: https://app.asana.com/0/11140166463836/75049103776979
+					if (me.postView && (me.postView || {}).markup) {
+						me.postView.markup = false;
+					}
 				}
 				me.trigger(e, results);
 			});

@@ -1,4 +1,4 @@
-.<?php echo $properties['id'] ?> .ugallery_item_image {
+.<?php echo $properties['id'] ?> .ugallery_item {
 	 <?php if(!empty($properties['useborder'])) { ?>
         <?php if(!empty($properties['borderwidth']) && !empty($properties['bordertype']) && !empty($properties['bordercolor'])) { ?>border: <?php echo $properties['borderwidth'] ?>px <?php echo $properties['bordertype'] ?> <?php echo $properties['bordercolor'] ?>;<?php } ?>
     <?php } else { ?>
@@ -6,7 +6,7 @@
     <?php } ?>
 }
 
-.<?php echo $properties['id'] ?> .ugallery_item_image {
+.<?php echo $properties['id'] ?> .ugallery_item {
 	<?php if(!empty($properties['useradius'])) { ?>
         border-radius: <?php echo $properties['borderradius1'] ? $properties['borderradius1'] : 0 ?>px <?php echo $properties['borderradius2'] ? $properties['borderradius2'] : 0 ?>px <?php echo $properties['borderradius4'] ? $properties['borderradius4'] : 0 ?>px <?php echo $properties['borderradius3'] ? $properties['borderradius3'] : 0 ?>px;
     <?php } else { ?>
@@ -15,16 +15,27 @@
 	overflow: hidden;
 }
 
-.upfront-output-ugallery .<?php echo $properties['id'] ?> .ugallery-thumb-title {
+.upfront-output-ugallery.<?php echo $properties['id'] ?> .ugallery-thumb-title p,
+.upfront-output-ugallery.<?php echo $properties['id'] ?> .ugallery-thumb-title,
+.upfront-object.upfront-gallery.<?php echo $properties['id'] ?> .ugallery-thumb-title p,
+.upfront-object.upfront-gallery.<?php echo $properties['id'] ?> .ugallery-thumb-title
+{
 	<?php if(!empty($properties['caption-text'])) { ?>
 	color: <?php echo $properties['caption-text']  ?>;
 	<?php } ?>
+}
+
+.upfront-output-ugallery.<?php echo $properties['id'] ?> .ugallery-thumb-title,
+.upfront-object.upfront-gallery.<?php echo $properties['id'] ?> .ugallery-thumb-title 
+{
 	<?php if(!empty($properties['caption-bg'])) { ?>
 	background: <?php echo $properties['caption-bg'] ?>;
 	<?php } ?>
 }
 
-.upfront-output-ugallery .<?php echo $properties['id'] ?> .ugallery-thumb-title {
+.upfront-output-ugallery.<?php echo $properties['id'] ?> .ugallery-thumb-title, 
+.upfront-object.upfront-gallery.<?php echo $properties['id'] ?> .ugallery-thumb-title
+{
 	<?php if($properties['caption-height'] == 'fixed' && !empty($properties['thumbCaptionsHeight'])) { ?>
 		overflow: hidden;
 		height: <?php echo $properties['thumbCaptionsHeight'] ?>px;

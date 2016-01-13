@@ -20,7 +20,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	private $_required_pages = array();
 
 	private static $_theme_settings;
-	
+
 	protected static $instance;
 
 	public static function get_instance () {
@@ -70,6 +70,8 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		add_filter('upfront_get_slider_presets', array($this, 'getSliderPresets'), 10, 2);
 		add_filter('upfront_get_text_presets', array($this, 'getTextPresets'), 10, 2);
 		add_filter('upfront_get_widget_presets', array($this, 'getWidgetPresets'), 10, 2);
+		add_filter('upfront_get_posts_presets', array($this, 'getPostsPresets'), 10, 2);
+		add_filter('upfront_get_thispost_presets', array($this, 'getPostPresets'), 10, 2);
 		add_filter('upfront_get_theme_styles', array($this, 'getThemeStyles'));
 		add_filter('upfront_get_global_regions', array($this, 'getGlobalRegions'));
 		add_filter('upfront_get_responsive_settings', array($this, 'getResponsiveSettings'));
@@ -647,11 +649,55 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		return json_decode($presets, $as_array);
 	}
+	
+	public function getPostsPresets($presets, $args) {
+		if (empty($presets) === false) return $presets;
+
+		$presets = $this->get_theme_settings()->get('posts_presets');
+		if (isset($args['json']) && $args['json']) return $presets;
+
+		$as_array = false;
+		if (isset($args['as_array']) && $args['as_array']) {
+			$as_array = true;
+		}
+
+		return json_decode($presets, $as_array);
+	}
+	
+	public function getPostPresets($presets, $args) {
+		if (empty($presets) === false) return $presets;
+
+		$presets = $this->get_theme_settings()->get('thispost_presets');
+		if (isset($args['json']) && $args['json']) return $presets;
+
+		$as_array = false;
+		if (isset($args['as_array']) && $args['as_array']) {
+			$as_array = true;
+		}
+
+		return json_decode($presets, $as_array);
+	}
 
 	public function getAccordionPresets($presets, $args) {
 		if (empty($presets) === false) return $presets;
 
 		$presets = $this->get_theme_settings()->get('accordion_presets');
+
+		// Juggle the presets to add some defaults because presets migration to new settings
+		$presetsArray = json_decode($presets, true);
+		if (is_array($presetsArray)) {
+			foreach($presetsArray as $index=>$preset) {
+				if (isset($preset['active-use-color']) === false) {
+					$presetsArray[$index]['active-use-color'] = 1;
+				}
+				if (isset($preset['active-use-typography']) === false) {
+					$presetsArray[$index]['active-use-typography'] = 1;
+				}
+			}
+			$presets = json_encode($presetsArray);
+		}
+		// End migration juggle
+
 		if (isset($args['json']) && $args['json']) return $presets;
 
 		$as_array = false;
@@ -814,7 +860,12 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		if($layoutId){
 			$theme = Upfront_Theme::get_instance();
 			$ids['theme_defined'] = $layoutId;
-			$data['regions'] = $theme->get_default_layout($ids, $layoutId);
+			$layout = $theme->get_default_layout($ids, $layoutId);
+			$data['regions'] = $layout['regions'];
+			$data['properties'] = array();
+			if ( false !== $layout['version'] ) {
+				upfront_set_property_value('version', $layout['version'], $data);
+			}
 		}
 		return $data;
 	}
@@ -1294,6 +1345,7 @@ VRT;
 
         foreach( self::get_all_uf_theme_names()  as $theme_name ){
             $theme_variants = self::get_post_image_variants_from_db( $theme_name );
+            $theme_variants = is_array($theme_variants) ? $theme_variants : array();
             if( $theme_variants  )
                 $variants = array_merge( $variants, $theme_variants );
         }

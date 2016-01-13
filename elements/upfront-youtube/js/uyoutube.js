@@ -32,14 +32,27 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 		this.delegateEvents();
 
 		this.model.get("properties").bind("change", this.render, this);
+		this.model.get('properties').bind('change', this.handle_visual_padding_hint, this);
 		this.model.get("properties").bind("add", this.render, this);
 		this.model.get("properties").bind("remove", this.render, this);
-
-		Upfront.Events.on("entity:resize_stop", this.onResizeStop, this);
 
 		this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.onResizeStop);
 
 	},
+	
+	on_element_resize_start: function (attr) {
+		//Append overlay div to prevent Iframe hijack drag event
+		this.$el.find('.upfront-object-content').append('<div class="object-view-overlay" />');
+	},
+	
+	on_element_resize: function (attr) {
+		//Remove overlay div
+		this.$el.find('.object-view-overlay').remove();
+		
+		//Update player size on resize
+		this.onResizeStop(this);
+	},
+	
 	get_content_markup: function () {
 		var rendered,
 		props = this.extract_properties();
@@ -49,11 +62,12 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 		rendered = this.youtubeTpl(this.extract_properties());
 
 		if(this.property('youtube_status') === 'starting' && !props.multiple_videos){
-		rendered += '<div class="upfront-youtube-starting-select" style="min-height:' + this.elementSize.height + 'px">' +
+		rendered += '<div class="upfront-youtube-starting-select upfront-initial-overlay-wrapper">' +
+			'<div class="upfront-youtube-starting-wrapper upfront-initial-overlay-wrapper" style="height: 110px;">' +
 			'<div class="upfront-youtube-starting-text">'+ l10n.enter_url +'</div>'+
 			'<div class="upfront-youtube-box-wrapper"><input type="text" class="upfront-youtube-url" placeholder="'+ l10n.url_placeholder +'" /></div>' +
 			'<div class="upfront-youtube-button-wrapper"><button type="button" class="upfront-youtube-button">'+ l10n.submit_button +'</button></div>'+
-			'</div>';
+			'</div></div>';
 		}
 
 		return rendered;
@@ -89,36 +103,50 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 			this.property('player_width', width, false);
 		}
 	},
+	
+	addVideo: function(videoInput) {
+		me.property('youtube_status', 'ok');
+		//Add first video
+		me.property('multiple_source_1', videoInput);
+
+		Upfront.Events.trigger("entity:settings:activate", me);
+
+		//Call resize function to match player width with object width
+		me.onResizeStop();
+
+		//Delay events else values are empty
+		setTimeout(function(){
+			me.on_settings_click();
+			//Trigger event for adding videos to array
+			Upfront.Events.trigger("upfront:youtube:added");
+
+		}, 50);
+	},
 
 	on_render: function() {
 		me = this;
 
 		this.$el.find('.upfront-youtube-button').on('click', function(e) {
-			me.property('youtube_status', 'ok');
 
 			var videoInput = $(this).parents().find('input.upfront-youtube-url').val();
-
-			//Check if Video Input field is empty
-			if(videoInput == "") {
-				Upfront.Views.Editor.notify(l10n.validMessage);
-			} else {
-				//Add first video
-				me.property('multiple_source_1', videoInput);
-
-				Upfront.Events.trigger("entity:settings:activate", me);
-
-				//Call resize function to match player width with object width
-				me.onResizeStop();
-
-				//Delay events else values are empty
-				setTimeout(function(){
-					// Trigger settings
-					me.on_settings_click();
-
-					//Trigger event for adding videos to array
-					Upfront.Events.trigger("upfront:youtube:added");
-
-				}, 50);
+			
+			//Check if video is valid
+			if(videoInput) {
+				if (videoInput.match(/youtu\.be/)) {
+					videoMatch = videoInput.match(/^(https?:\/\/)?youtu.be\/([0-9a-zA-Z\-_]{11})/);
+					if(videoMatch !== null && videoMatch.length > 0) {
+						me.addVideo(videoInput);
+					} else {
+						Upfront.Views.Editor.notify(l10n.validMessage, 'error');
+					}
+				} else {
+					videoMatch = videoInput.match(/^(https?:\/\/(www\.)?)?youtube\.com\/watch\?v=([0-9a-zA-Z\-_]{11}).*/);
+					if(videoMatch !== null && videoMatch.length > 0) {
+						me.addVideo(videoInput);
+					} else {
+						Upfront.Views.Editor.notify(l10n.validMessage, 'error');
+					}
+				}
 			}
 
 		});
@@ -248,7 +276,10 @@ var BehaviorPanel = RootSettingsPanel.extend({
 					label: "",
 					values: [
 						{ label: "", value: 'multiple_show_title' },
-					]
+					],
+					change: function(value) {
+						this.model.set_property('multiple_show_title', value);
+					}
 				}),
 				new Fields.Number({
 					model: this.model,
@@ -259,7 +290,10 @@ var BehaviorPanel = RootSettingsPanel.extend({
 					min: 50,
 					max: 100,
 					step: 1,
-					default_value: 100
+					default_value: 100,
+					change: function(value) {
+						this.model.set_property('multiple_title_length', value);
+					}
 				}),
 
 				new Fields.Slider({
@@ -348,11 +382,11 @@ var BehaviorPanel = RootSettingsPanel.extend({
 
 	toggleMultipleSettings: function() {
 		//If multiple videos added show multiple videos settings
-		var videosCount = $('[name^="multiple_source_"]').length;
+		var videosCount = this.$el.find('[name^="multiple_source_"]').length;
 		if(videosCount > 1) {
-			$('.field-display_style, .first-video-to-thumbnails, .thumbnails-width').show();
+			this.$el.find('.field-display_style, .first-video-to-thumbnails, .thumbnails-width').show();
 		} else {
-			$('.field-display_style, .first-video-to-thumbnails, .thumbnails-width').hide();
+			this.$el.find('.field-display_style, .first-video-to-thumbnails, .thumbnails-width').hide();
 		}
 	},
 
@@ -432,8 +466,8 @@ var BehaviorPanel = RootSettingsPanel.extend({
 
 	//Adding new set of fields from template
 	cloneMultipleVideo: function() {
-		var panel_count = $('.multiple_video_section .upfront-settings-item').length;
-		$('.multiple_video_section').append(_.template(cloneTpl, {
+		var panel_count = this.$el.find('.multiple_video_section .upfront-settings-item').length;
+		this.$el.find('.multiple_video_section').append(_.template(cloneTpl, {
 			cloneId: panel_count + 1,
 			videoUrl: '',
 			l10n: l10n.template
@@ -466,7 +500,8 @@ var YoutubeSettings = ElementSettings.extend({
 		var me = this;
 		var multiple_videos_array = [];
 		var videoCounter = 0;
-		var videoFields = $('[name^="multiple_source_"]');
+		var videoFields = this.$el.find('[name^="multiple_source_"]');
+
 		//Get all videos urls
 		videoFields.each(function( index, element ) {
 			var videoUrl = $(element).val();
@@ -480,14 +515,14 @@ var YoutubeSettings = ElementSettings.extend({
 					if(videoMatch !== null && videoMatch.length > 0) {
 						videoId = videoMatch[2];
 					} else {
-						Upfront.Views.Editor.notify(l10n.validMessage);
+						Upfront.Views.Editor.notify(l10n.validMessage, 'error');
 					}
 				} else {
 					videoMatch = videoUrl.match(/^(https?:\/\/(www\.)?)?youtube\.com\/watch\?v=([0-9a-zA-Z\-_]{11}).*/);
 					if(videoMatch !== null && videoMatch.length > 0) {
 						videoId = videoMatch[3];
 					} else {
-						Upfront.Views.Editor.notify(l10n.validMessage);
+						Upfront.Views.Editor.notify(l10n.validMessage, 'error');
 					}
 				}
 				var data = {'video_id': videoUrl};

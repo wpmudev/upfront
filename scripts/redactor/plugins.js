@@ -227,7 +227,11 @@ RedactorPlugins.stateAlignment = function() {
                             return $parent.length && $parent.css('text-align') == 'left';
                         },
                         callback: function(name, el , button){
-                            self.alignment.left();
+                            if( !self.utils.isCurrentOrParent("li") ){
+                                self.alignment.set('left');
+                            }else{
+                                $(self.selection.getCurrent()).css('text-align', "left");
+                            }
                         }
                     },
                     center: {
@@ -239,7 +243,11 @@ RedactorPlugins.stateAlignment = function() {
                             return $parent.length && $parent.css('text-align') == 'center';
                         },
                         callback: function(name, el , button){
-                            self.alignment.center();
+                            if( !self.utils.isCurrentOrParent("li") ){
+                                self.alignment.center();
+                            }else{
+                                $(self.selection.getCurrent()).css('text-align', "center");
+                            }
                         }
                     },
                     right: {
@@ -251,7 +259,11 @@ RedactorPlugins.stateAlignment = function() {
                             return $parent.length && $parent.css('text-align') == 'right';
                         },
                         callback: function(name, el , button){
-                            self.alignment.right();
+                            if( !self.utils.isCurrentOrParent("li") ){
+                                self.alignment.right();
+                            }else{
+                                $(self.selection.getCurrent()).css('text-align', "right");
+                            }
                         }
                     },
                     justify: {
@@ -263,7 +275,13 @@ RedactorPlugins.stateAlignment = function() {
                             return $parent.length && $parent.css('text-align') == 'justify';
                         },
                         callback: function(name, el , button){
-                            self.alignment.justify();
+                            if( !self.utils.isCurrentOrParent("li") ){
+                                self.alignment.justify();
+                            }else{
+                                $(self.selection.getCurrent()).css('text-align', "justify");
+                            }
+
+
                         }
                     }
                 }
@@ -787,13 +805,13 @@ RedactorPlugins.upfrontLink = function() {
 					target: target
 				});
 
-				this.listenTo(this.linkModel, 'change', function () {
+				this.listenTo(this.linkModel, 'change', function (dontflag) {
                     me.redactor.buffer.set();
                     me.redactor.selection.save();
 					if (me.linkModel.get('type') === 'unlink') {
 						me.unlink();
 					} else {
-						me.link();
+						me.link(dontflag);
 					}
 
 					// me.closeToolbar(); // should we do this?
@@ -854,7 +872,7 @@ RedactorPlugins.upfrontLink = function() {
 				this.updateMissingLightboxFlag();
 			},
 
-			link: function () {
+			link: function (dontflag) {
 				var selectedText;
 
 				if (typeof this.linkModel.get('url') === 'undefined') {
@@ -868,11 +886,55 @@ RedactorPlugins.upfrontLink = function() {
 					$(this.selectedLink).attr('href', this.linkModel.get('url'))
 						.attr('target', this.linkModel.get('target'));
 				} else {
-					// Create new link
-					selectedText = this.redactor.selection.getHtml();
+// Origin story, Episode #0 - In The Beginning
+// This does not work because redactor will try to destroy HTML tags in link text
+// - see redactor.js:5418 for more info
+/*
+                    // Create new link
+                    selectedText = this.redactor.selection.getHtml();
+*/
+
+// Fix approach, Episode #1 - Nuclear Wasteland (drop all HTML)
+/*
+                    // ^ instead of the HTML approach above, go with getText()
+					selectedText = this.redactor.selection.getText();
+                    this.redactor.selection.replaceWithHtml(selectedText); // Also reset the selection to the text-only representation
+*/
+
+// Fix approach, Episode #2 - Lizard Spooks Spock (camouflage the HTML)
+                    // Somewhere along the line, the non-printable chars, spaces and stuff get all normalized,
+                    // hence the printable default/fallback string
+                    // Downside: if something goes wrong, it won't be a pretty sight at all :/
+                    var rx_special = /[-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, // This will be used to encode regex special chars
+                        rx_replacement = '\\$&', // Second part of regex special chars encoding (result)
+                        otm = ((Upfront.Settings || {}).Editor || {}).OPEN_TAG_RPL_MARK || '{{UPFRONT_OPEN_TAG_MARK}}', // Open Tag Mark - either from settings or fallback
+                        ctm = ((Upfront.Settings || {}).Editor || {}).CLOSE_TAG_RPL_MARK || '{{UPFRONT_CLOSE_TAG_MARK}}', // Close Tag Mark - either from settings or fallback
+                        rx_otm = new RegExp(otm.replace(rx_special, rx_replacement), 'g'), // OTM regex representation - note the "g" parameter
+                        rx_ctm = new RegExp(ctm.replace(rx_special, rx_replacement), 'g') // CTM regex representation - note the "g" parameter
+                    ;
+                    selectedText = this.redactor.selection.getHtml(); // Get HTML, yeah
+                    // Now, let's nerf the HTML stuff
+                    selectedText = selectedText
+                        // Clever, ain't it?
+                        .replace(/</g, otm)
+                        .replace(/>/g, ctm)
+                    ;
+                    this.redactor.selection.replaceWithHtml(selectedText);
+                    
 					this.redactor.link.set(selectedText, this.linkModel.get('url'), this.linkModel.get('target'));
 					// Now select created link
 					this.selectedLink = this.redactor.utils.isCurrentOrParent('A');
+
+// Episode #2a, The Sad Saga of Spock's Debilitating Phobia Continues (de-camo the HTML)
+                    selectedText = this.redactor.selection.getHtml(); // Get the HTML once more, it's now fake HTML
+                    // Now, let's de-camouflage it
+                    selectedText = selectedText
+                        .replace(rx_otm, '<')
+                        .replace(rx_ctm, '>')
+                    ;
+                    this.redactor.selection.replaceWithHtml(selectedText);
+// Episode #2 concludes, Spock dies in the end :(
+
 					// Update selection, new link is created it messes up selection
 					this.redactor.selection.save();
 				}
@@ -881,8 +943,11 @@ RedactorPlugins.upfrontLink = function() {
 
 				// Do redactor stuff
 				this.redactor.$element.focus();
-				this.updateMissingLightboxFlag();
+                // dontflag is sent while creation of lightbox from link-panel.js
+                if(typeof(dontflag) === 'undefined')
+				    this.updateMissingLightboxFlag();
 				this.redactor.code.sync();
+
 			},
 			bindEvents: function () {
 			},
@@ -1441,7 +1506,7 @@ RedactorPlugins.upfrontFormatting = function() {
                 var tag = $(this.redactor.selection.getBlock()).length ? $(this.redactor.selection.getBlock())[0].tagName : false;
                 if (tag) {
                     tag = tag.toLowerCase();
-                    this.$(".tags-list li *").removeClass("dropact");
+                    this.$("[data-tag]").removeClass("dropact");
                     this.$("[data-tag='" + tag + "']").addClass("dropact");
                 }
                 this.redactor.selection.save();
@@ -1491,6 +1556,7 @@ RedactorPlugins.upfrontFormatting = function() {
 
                 if (tag == 'p' || this.redactor.block.headTag) $formatted.find('p').contents().unwrap();
 
+                this.redactor.code.sync();
                 this.close();
                 this.redactor.dropdown.hideAll();
             },

@@ -19,7 +19,9 @@ return (function ($) {
 			'click .sub-menu': 'onOpenPanelSubMenu',
 			'click .upfront-save_settings': 'onOpenPanelSubMenu',
 			'click .upfront-save_settings': 'processPanelsOnSave',
-			'click > .open-item-controls': 'onOpenItemControlsClick'
+			'click > .open-item-controls': 'onOpenItemControlsClick',
+			'mouseover': 'onItemOver',
+			'mouseout': 'onItemOut'
 		},
 		initialize: function(options) {
 			var me = this;
@@ -242,6 +244,10 @@ return (function ($) {
 		},
 
 		onOpenItemControlsClick: function() {
+			var parent = this.$el.parent('ul');
+			if(typeof parent !== "undefined" && parent.hasClass('time_being_display')) {
+				parent.removeClass('time_being_display');
+			}
 			this.$el.toggleClass('controls-visible');
 			this.setItemControlsState();
 		},
@@ -351,6 +357,9 @@ return (function ($) {
 				;
 			}
 
+			setTimeout(function(){
+				Upfront.Events.trigger("menu_element:edit");
+			}, 100);
 		},
 
 		editMenuItem: function() {
@@ -427,7 +436,8 @@ return (function ($) {
 			Upfront.Util.post(postdata)
 				.success(function (ret) {
 					me.model['menu-item-db-id'] = ret.data;
-					Upfront.Events.trigger("menu_element:edit");
+					//Triggering this event is causing nav to re-render and hide Link Panel
+					//Upfront.Events.trigger("menu_element:edit");
 				})
 				.error(function (ret) {
 					Upfront.Util.log("Error updating menu item");
@@ -485,6 +495,14 @@ return (function ($) {
 			setTimeout(function(){
 				tooltip.remove();
 			}, 100);
+		},
+
+		onItemOver: function(){
+			this.$el.parents('.upfront-module').find('.upfront-resize-handle-s').addClass('active-menu-item');
+		},
+
+		onItemOut: function(){
+			this.$el.parents('.upfront-module').find('.upfront-resize-handle-s').removeClass('active-menu-item');
 		},
 	});
 

@@ -43,7 +43,7 @@ var Box = Backbone.View.extend({
             &&
             Upfront.Application.current_subapplication.contentEditor
         ) $('.upfront-module').each(function(){
-        	if ( $(this).is('.ui-draggable') ) 
+        	if ( $(this).is('.ui-draggable') )
 				$(this).draggable('disable');
 			if ( $(this).is('.ui-resizable') )
 				$(this).resizable('disable');
@@ -69,6 +69,11 @@ var Box = Backbone.View.extend({
 
         postData.cid = this.cid;
 
+        extraData.post_type_conditional_box_title = this._post_type_has_taxonomy('post_tag') && this._post_type_has_taxonomy('category')
+            ? Upfront.Settings.l10n.global.content.tags_cats_url
+            : Upfront.Settings.l10n.global.content.no_tax_url
+        ;
+
         this.$el.html(this.tpl(_.extend({}, postData, extraData) ));
         this.populateSections();
         return this;
@@ -88,15 +93,23 @@ var Box = Backbone.View.extend({
     renderTaxonomyEditor: function($el, tax){
         var self = this,
             tax = typeof tax === "undefined" ? "category" : tax,
-            termsList = new Upfront.Collections.TermList([], {postId: this.post.id, taxonomy: tax});
+            termsList = new Upfront.Collections.TermList([], {postId: this.post.id, taxonomy: tax})
+        ;
+
+        if (!this._post_type_has_taxonomy(tax)) {
+            // Post type doesn't support this taxonomy. Bail out
+            $el.hide();
+            return false;
+        }
+
         termsList.fetch({allTerms: true}).done(function(response){
             var tax_view_constructor = response.data.taxonomy.hierarchical ? ContentEditorTaxonomy_Hierarchical : ContentEditorTaxonomy_Flat,
                 tax_view = self.taxSections[tax] = new tax_view_constructor({collection: termsList, tax: tax})
-                ;
+            ;
 
             tax_view.allTerms = new Upfront.Collections.TermList(response.data.allTerms);
             tax_view.render();
-            $el.html( tax_view.$el );
+            $el.html(tax_view.$el);
         });
 
     },
@@ -107,8 +120,23 @@ var Box = Backbone.View.extend({
 
         this.$(".misc-pub-section.misc-pub-post-url").html( this.urlEditor.$el  );
 
-        this.renderTaxonomyEditor( this.$(".misc-pub-post-category"), "category");
-        this.renderTaxonomyEditor( this.$(".misc-pub-post-tags"), "post_tag");
+        this.renderTaxonomyEditor(this.$(".misc-pub-post-category"), "category");
+        this.renderTaxonomyEditor(this.$(".misc-pub-post-tags"), "post_tag");
+    },
+
+    /**
+     * Helper method to determine if a currently edited post type supports a taxonomy.
+     *
+     * Currently very simplistic
+     *
+     * @param {String} tax Taxonomy to check for
+     *
+     * @return {Boolean}
+     */
+    _post_type_has_taxonomy: function (tax) {
+        if (!tax) return true;
+        var type = this.post.get("post_type") || 'post';
+        return "page" !== type;
     },
 
     getButtonText: function(){
@@ -148,7 +176,7 @@ var Box = Backbone.View.extend({
         });
 
     },
-    
+
     toggleRegionClass: function (show) {
         this.$el.closest('.upfront-region-container').toggleClass('upfront-region-container-editing-post', show);
     },
@@ -195,13 +223,13 @@ var Box = Backbone.View.extend({
 
         this.trigger('publish');
 
-        
+
         Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
         Upfront.Events.trigger('upfront:post:edit:stop', 'write', this.post.toJSON());
         this.fadein_other_elements();
         this._stop_overlay();
         //$(".editing-overlay").remove();
-        
+
         this.toggleRegionClass(false);
         this.remove();
 
@@ -215,7 +243,7 @@ var Box = Backbone.View.extend({
 
         this.post.trigger('editor:draft');
         this.trigger('draft');
-        Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
+        Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post, true);// last true means 'saving draft'
         this.remove();
     },
 

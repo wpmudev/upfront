@@ -150,6 +150,9 @@
 .upfront-wrapper.upfront-wrapper-active {
 	z-index: 30;
 }
+.upfront-wrapper.upfront-inline-panel-item-open {
+	z-index: 70;
+}
 
 .upfront-wrapper-content {
   width: 100%;
@@ -162,6 +165,12 @@
 .upfront-module-group {
 	float: left;
 	position: relative;
+}
+.upfront-module-group > .upfront-modules_container {
+	z-index: 5;
+}
+.upfront-module-group-on-edit > .upfront-modules_container {
+	z-index: auto;
 }
 .upfront-layout-view .upfront-module-group:after,
 .upfront-module-group-bg {
@@ -197,16 +206,17 @@
 .upfront-module-group-toggle-edit-container {
   height: 82px;
 }
-.upfront-module-group:hover .upfront-module-group-toggle-edit-container,
-.upfront-module-group-reorder-mode:hover .upfront-module-group-toggle-reorder-container {
+.upfront-module-group-active.upfront-module-group:hover .upfront-module-group-toggle-edit-container,
+.upfront-module-group-active.upfront-module-group-reorder-mode:hover .upfront-module-group-toggle-reorder-container {
 	display: block;
 }
-.upfront-module-group-reorder-mode:hover .upfront-module-group-toggle-edit-container {
-  display: none;
+.upfront-module-group-reorder-mode:hover .upfront-module-group-toggle-edit-container,
+.upfront-module-group-reorder-mode .upfront-inline-panel-item.ungroup-control {
+  display: none !important;
 }
 .upfront-module-group.upfront-module-group-disabled .upfront-module-group-toggle-edit-container,
 .upfront-module-group.upfront-module-group-on-edit .upfront-module-group-toggle-container {
-	display: none;
+	display: none !important;
 }
 .upfront-module-group-toggle {
 	position: relative;
@@ -258,6 +268,13 @@
 .upfront-module-group-active {
 	box-shadow: inset 0px 0px 0px 2px rgba(111, 188, 248, 1);
 	z-index: 4;
+}
+.upfront-module-has-nav,
+.upfront-module-active.upfront-module-has-nav {
+	z-index: 50;
+}
+.upfront-module-has-nav.upfront-module-nav-open {
+	z-index: 90;
 }
 .upfront-module-disabled-all:hover,
 .upfront-module-editing:hover {
@@ -438,12 +455,16 @@
 .upfront-module-group.controls-visible > .upfront-entity_meta > .upfront-icon-button {
   visibility: hidden !important;
 }
+.upfront-module-group-on-edit .upfront-editable_entities_container .upfront-wrapper > .ui-resizable-handle,
 .upfront-module-group-on-edit .upfront-editable_entities_container .upfront-editable_entity:hover > .ui-resizable-handle {
   visibility: visible;
 }
 .upfront-module-group-on-edit > .upfront-editable_entities_container {
   z-index: 2999999;
   position: relative;
+}
+.upfront-module-group-nav-open {
+	z-index: 80;
 }
 
 .upfront-entity_meta {
@@ -492,7 +513,7 @@
 
 
 .upfront-object > .upfront-entity_meta.add_item {
-	top: 51px;
+	top: 28px;
 }
 
 .upfront-edit-responsive .upfront-object > .upfront-entity_meta.add_item,
@@ -500,7 +521,7 @@
 	display: none;
 }
 .upfront-object > .upfront-entity_meta.toggle_sorting {
-	top: 75px
+	top: 52px
 }
 .upfront-object > .upfront-entity_meta.toggle_sorting a {
 	background: rgba(0, 0, 0, 0.5);
@@ -549,7 +570,7 @@
   height: auto;
   width: 14px;
   padding-top: 15px;
-  z-index: 10;
+  z-index: 70;
   display: none !important;
 }
 .upfront-wrapper-meta:before {
@@ -564,9 +585,15 @@
   box-shadow: 0px 0px 3px 0px rgba(36,57,77,0.2);
   z-index: -1;
 }
-/*.upfront-wrapper:not(.upfront-inline-panel-item-open):hover > .upfront-wrapper-meta,*/
-.upfront-wrapper:hover > .upfront-wrapper-meta,
+.upfront-wrapper:not(.upfront-inline-panel-item-open):hover > .upfront-wrapper-meta,
+/* .upfront-wrapper.not:hover > .upfront-wrapper-meta, */
 .upfront-wrapper.ui-resizable-resizing > .upfront-wrapper-meta {
+  display: block !important;
+}
+.upfront-module-group-editing .upfront-wrapper.upfront-wrapper-active > .upfront-wrapper-meta {
+  display: none !important;
+}
+.upfront-module-group-editing .upfront-module-group-on-edit .upfront-wrapper:hover > .upfront-wrapper-meta {
   display: block !important;
 }
 .upfront-wrapper-meta-left {
@@ -736,4 +763,14 @@
   padding: 0;
   font-size: 13px;
   margin-bottom: 2px;
+}
+.upfront-object-view .object-view-overlay {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0px;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	z-index: 999999999;
 }

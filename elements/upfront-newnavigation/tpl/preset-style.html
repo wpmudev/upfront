@@ -2,8 +2,14 @@ div.<?php echo $properties['id'] ?> ul.menu {
 	<?php if(!empty($properties['static-nav-bg'])) { ?>
 	background: <?php echo $properties['static-nav-bg'] ?>;
 	<?php } ?>
-	<?php if(!empty($properties['menu_alignment'])) { ?>
-		text-align: <?php echo $properties['menu_alignment'] ?>!important;
+	<?php if(!empty($properties['breakpoint']) && !empty($properties['breakpoint']['desktop']) && !empty($properties['breakpoint']['desktop']['menu_alignment'])) { ?>
+		text-align: <?php echo $properties['breakpoint']['desktop']['menu_alignment'] ?> !important;
+	<?php } else if(!empty($properties['breakpoint']) && !empty($properties['breakpoint']['table']) && !empty($properties['breakpoint']['table']['menu_alignment'])) { ?>
+		text-align: <?php echo $properties['breakpoint']['table']['menu_alignment'] ?> !important;
+	<?php } else if(!empty($properties['breakpoint']) && !empty($properties['breakpoint']['mobile']) && !empty($properties['breakpoint']['mobile']['menu_alignment'])) { ?>
+		text-align: <?php echo $properties['breakpoint']['mobile']['menu_alignment'] ?> !important;
+	<?php } else { ?>
+		text-align: <?php echo $properties['menu_alignment'] ?> !important;
 	<?php } ?>
 }
 
@@ -56,11 +62,18 @@ div.<?php echo $properties['id'] ?> ul.menu > li.menu-item > a:focus, div.upfron
 .tablet-breakpoint div.<?php echo $properties['id'] ?> ul.menu {
 	<?php if(!empty($properties['tablet']['menu_alignment'])) { ?>text-align: <?php echo $properties['tablet']['menu_alignment'] ?>!important;<?php } ?>
 }
+<?php if(!empty($properties['tablet']['preset_style'])) { ?><?php echo $properties['tablet']['preset_style'] ?><?php } ?>
 <?php } ?>
 
 <?php if(!empty($properties['mobile'])) { ?>
 .mobile-breakpoint div.<?php echo $properties['id'] ?> ul.menu {
 	<?php if(!empty($properties['mobile']['menu_alignment'])) { ?>text-align: <?php echo $properties['mobile']['menu_alignment'] ?>!important;<?php } ?>
 }
+<?php if(!empty($properties['mobile']['preset_style'])) { ?><?php echo $properties['mobile']['preset_style'] ?><?php } ?>
 <?php } ?>
-<?php if(!empty($properties['preset_style'])) { ?><?php echo $properties['preset_style'] ?><?php } ?>
+
+<?php if(!empty($properties['breakpoint']) && !empty($properties['breakpoint']['desktop']) && !empty($properties['breakpoint']['desktop']['preset_style'])) { ?>
+	<?php if(!empty($properties['breakpoint']['desktop']['preset_style'])) { ?><?php echo $properties['breakpoint']['desktop']['preset_style'] ?><?php } ?>
+<?php } else { ?>
+	<?php if(!empty($properties['preset_style'])) { ?><?php echo $properties['preset_style'] ?><?php } ?>
+<?php } ?>

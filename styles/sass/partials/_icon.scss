@@ -928,6 +928,13 @@ i.upfront-field-icon-burger-trigger {
 	opacity: 1;
 	visibility: visible;
 }
+.close_lightbox > .upfront-icon-popup-close:before {
+    content:"\00d7";
+    font-size:40px;
+    font-weight:normal;
+    color:#fff;
+    text-shadow:0 1px 1px rgba(0,0,0,.1);
+}
 .upfront-icon-button-delete {
 	box-shadow: inset 0 0 0 1px #cc423d;
 	background: #d94641 -moz-linear-gradient(-45deg, rgba(235,83,77,1) 0%, rgba(235,83,77,1) 50%, rgba(0,0,0,0) 51%, rgba(0,0,0,0) 100%); /* FF3.6+ */

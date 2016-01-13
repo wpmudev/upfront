@@ -70,6 +70,65 @@ var _alpha = "alpha",
 		has_property_value: function (property, value) {
 			return (value == this.get_property_value_by_name(property));
 		},
+
+		/**
+		 * Resolve the preset value from wherever we might be having it stored
+		 *
+		 * Resolves the preset and, as a side-effect, sets the `preset` property
+		 * to the resolved value.
+		 * This way the `preset` property is now more of a transient, contextyally
+		 * dependent value - not fixed and given once by the mighty hand of god.
+		 *
+		 *  The value is resolved by first checking the passed breakpoint ID
+		 *  (which will default to currently active one) and, if that fails,
+		 *  will default to whatever the `preset` property says it should be.
+		 *  Failing all of that, it'll fall back to "default"
+		 *
+		 * @param {String} breakpoint_id Breakpoint ID used to resolve the preset from storage
+		 * *                               - will default to current one
+		 *
+		 * @return {String} Decoded preset ID
+		 */
+		decode_preset: function (breakpoint_id) {
+			breakpoint_id = breakpoint_id || (Upfront.Views.breakpoints_storage.get_breakpoints().get_active() || {}).id;
+			var current = this.get_property_value_by_name('preset') || 'default',
+				model = this.get_property_value_by_name("breakpoint_presets") || {},
+				breakpoint_preset = (model[breakpoint_id] || {}).preset,
+				actual = breakpoint_preset || current
+			;
+			this.set_property('preset', actual, false); // Do *not* be silent here, we do want repaint
+			return actual;
+		},
+
+		/**
+		 * Pack up the breakpoint preset values.
+		 *
+		 * The packed values will be decoded later on using the `decode_preset` method.
+		 * As a side-effect, we also update the model `breakpoint_presets` property.
+		 * As a side-effect #2, we also set whatever the current preset is (or default) as 
+		 * default breakpoint preset, if it's not already set.
+		 *
+		 * @param {String} preset_id Preset ID to pack
+		 * @param {String} breakpoint_id Breakpoint ID used to resolve the preset in storage 
+		 *                               - will default to current one
+		 *
+		 * @return {Object} Packed breakpoint presets
+		 */
+		encode_preset: function (preset_id, breakpoint_id) {
+			breakpoint_id = breakpoint_id || (Upfront.Views.breakpoints_storage.get_breakpoints().get_active() || {}).id;
+			var	data = this.get_property_value_by_name("breakpoint_presets") || {};
+				current = (this.get_property_by_name('preset').previousAttributes() || {value: 'default'}).value,
+				default_bp_id = (Upfront.Views.breakpoints_storage.get_breakpoints().findWhere({'default': true}) || {}).id
+			;
+			
+			data[breakpoint_id] = {preset: preset_id};
+			if (!data[default_bp_id]) data[default_bp_id] = {preset: current};
+
+			this.set_property("breakpoint_presets", data, true);
+
+			return data;
+		},
+
 		add_property: function (name, value, silent) {
 			if (!silent) silent = false;
 			this.get("properties").add(new Upfront.Models.Property({"name": name, "value": value}), {"silent": silent});
@@ -155,8 +214,10 @@ var _alpha = "alpha",
 		is_visible: function () {
 			return this.get_property_value_by_name("visibility");
 		},
-		get_breakpoint_property_value: function (property, return_default) {
+		get_breakpoint_property_value: function (property, return_default, default_value) {
 			var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
+			default_value = typeof default_value === "undefined" ? false : default_value;
+
 			if ( !breakpoint || breakpoint.default )
 				return this.get_property_value_by_name(property);
 			var data = this.get_property_value_by_name('breakpoint');
@@ -164,7 +225,7 @@ var _alpha = "alpha",
 				return data[breakpoint.id][property];
 			if ( return_default )
 				return this.get_property_value_by_name(property);
-			return false;
+			return default_value;
 		},
 		set_breakpoint_property: function (property, value, silent) {
 			var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
@@ -584,7 +645,7 @@ var _alpha = "alpha",
 			}
 		},
 		get_current_state: function () {
-			return Upfront.Util.model_to_json(this.get("regions"));
+			return Upfront.PreviewUpdate.get_revision();
 		},
 		has_undo_states: function () {
 			return !!Upfront.Util.Transient.length("undo");
@@ -593,27 +654,48 @@ var _alpha = "alpha",
 			return !!Upfront.Util.Transient.length("redo");
 		},
 		store_undo_state: function () {
-			Upfront.Util.Transient.push("undo", this.get_current_state());
+			var state = this.get_current_state(),
+				all = Upfront.Util.Transient.get_all()
+			;
+			if (all.indexOf(state) >= 0) return false;
+
+			Upfront.Util.Transient.push("undo", state);
+
+			Upfront.Events.trigger("upfront:undo:state_stored");
 		},
 		restore_undo_state: function () {
 			if (!this.has_undo_states()) return false;
-			this.restore_state_from_stack("undo");
+			return this.restore_state_from_stack("undo");
 		},
 		restore_redo_state: function () {
 			if (!this.has_redo_states()) return false;
-			this.restore_state_from_stack("redo");
+			return this.restore_state_from_stack("redo");
 		},
 		restore_state_from_stack: function (stack) {
 			var other = ("undo" == stack ? "redo" : "undo"),
-				state = Upfront.Util.Transient.pop(stack)
+				revision = Upfront.Util.Transient.pop(stack)
 			;
-			if (!state) {
-				Upfront.Util.log("Invalid " + stack + " state");
+			if (!revision) {
+				Upfront.Util.log("Invalid " + revision + " state");
 				return false;
 			}
-
 			Upfront.Util.Transient.push(other, this.get_current_state());
-			this.get("regions").reset(state);
+			// ... 1. get the state that corresponds to this revision
+			var me = this,
+				dfr = new $.Deferred()
+			;
+			Upfront.Util.post({
+				action: 'upfront_get_revision',
+				revision: revision
+			}).done(function (response) {
+				if ("revision" in response.data) {
+					// ... 2. do this:
+					me.get("regions").reset(Upfront.Util.model_to_json(response.data.revision.regions));
+					dfr.resolve();
+				}
+			});
+
+			return dfr.promise();
 		}
 	}),
 

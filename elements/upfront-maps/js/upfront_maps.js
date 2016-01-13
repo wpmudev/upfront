@@ -12,7 +12,7 @@ define([
 
 	var DEFAULTS = {
 		OPTIMUM_MAP_HEIGHT: 300,
-		center: [10.722250, 106.730762],
+		center: [-37.8180, 144.9760],
 		zoom: 10,
 		style: 'ROADMAP',
 		use_custom_map_code: false,
@@ -143,6 +143,11 @@ define([
 			this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.refresh_map);
 		},
 
+		on_element_resize: function (attr) {
+			//Refresh Map size when resize finish
+			this.refresh_map();
+		},
+
 		on_render: function () {
 			this.update_properties();
 			var me = this,
@@ -225,8 +230,8 @@ define([
 			;
 			if (!$location.length) {
 				this.$el.append(
-					'<div id="upfront_map-location_overlay-wrapper">' +
-						'<div id="upfront_map-location_overlay" class="uf_el_map_initial-overlay">' +
+					'<div id="upfront_map-location_overlay-wrapper" class="upfront-initial-overlay-wrapper">' +
+						'<div id="upfront_map-location_overlay" class="uf_el_map_initial-overlay upfront-initial-overlay-wrapper">' +
 							'<p id="upfront_map-location_overlay-instruction">' + l10n.instructions + '</p>' +
 							'<div id="upfront_map-location_overlay-address" class="upfront-ui uf-address">' +
 								'<input type="text" id="upfront_map-location_overlay-location" placeholder="' + l10n.placeholder + '" />' +

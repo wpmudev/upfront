@@ -187,11 +187,28 @@
 	line-height: 24px;
 	background: #e6f2ff;
 	border: 1px solid #b8cfe6;
-	padding: 0 18px 0 8px;
+	padding: 0 28px 0 8px;
 	color: #2f475f;
 	border-radius: 2px;
 	position: relative;
 	cursor: pointer;
+}
+.menu-item-header .menu-item-delete {
+	display: none;
+	width: 16px;
+	height: 16px;
+	background-position: -483px -171px;
+	background-image: url('../img/uf-core-el-sprite.svg');
+	position: absolute;
+	right: -6px;
+	top: -8px;
+	cursor: pointer;
+	overflow: hidden;
+	text-indent: 100px;
+	line-height: 3em;
+}
+.menu-structure-module-item:hover .menu-item-delete {
+	display:block;
 }
 .menu-item-expanded .menu-item-header {
 	border-bottom: 0 none;
@@ -206,7 +223,7 @@
 	position: absolute;
 	z-index: 1;
 	top: 11px;
-	right: 7px;
+	right: 14px;
 	border-left: 4px solid transparent;
 	border-right: 4px solid transparent;
 	border-top: 4px solid #6a8db4;

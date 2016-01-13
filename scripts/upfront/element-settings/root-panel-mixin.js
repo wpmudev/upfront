@@ -23,9 +23,25 @@ define([
 			return $body;
 		},
 
-		toggleBody: function() {
+		toggleBody: function () {
 			this.$el.find('.uf-settings-panel__body').toggle();
 			this.$el.toggleClass('uf-settings-panel--expanded');
+		},
+
+		/**
+		 * Hides panel body
+		 */
+		hideBody: function () {
+			this.$el.find('.uf-settings-panel__body').hide();
+			this.$el.removeClass('uf-settings-panel--expanded');
+		},
+
+		/**
+		 * Shows panel body
+		 */
+		showBody: function () {
+			this.$el.find('.uf-settings-panel__body').show();
+			this.$el.addClass('uf-settings-panel--expanded');
 		},
 
 		render: function () {

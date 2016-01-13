@@ -12,12 +12,16 @@ define([
 var l10n = Upfront.Settings.l10n.button_element;
 
 var singleclickcount = 0;
+var elementClasses = '';
 var ButtonView = Upfront.Views.ObjectView.extend({
 	model: ButtonModel,
 	className: 'upfront-button',
 	buttonTpl: Upfront.Util.template(buttonTpl),
 	initialize: function() {
 		var me = this;
+
+		//Get all element classes without preset
+		this.elementClasses = this.$el.attr('class');
 
 		if(! (this.model instanceof ButtonModel)){
 			this.model = new ButtonModel({properties: this.model.get('properties')});
@@ -33,6 +37,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		this.delegateEvents();
 
 		this.model.get('properties').bind('change', this.render, this);
+		this.model.get('properties').bind('change', this.handle_visual_padding_hint, this);
 		this.model.get('properties').bind('add', this.render, this);
 		this.model.get('properties').bind('remove', this.render, this);
 		this.listenTo(this.model, 'change:preset', this.updatePresetClass);
@@ -65,7 +70,13 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 	},
 
 	updatePresetClass: function() {
+		this.clearPresetClass(this.$el);
 		this.$el.addClass(this.property('preset'));
+	},
+	
+	clearPresetClass: function($el) {
+		$el.removeClass();
+		$el.addClass(this.elementClasses);
 	},
 
 	getCleanurl: function(url) {
@@ -184,36 +195,36 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		}
 	},
 
-	createInlineControlPanel: function() {
-		var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
-			visitLinkControl = new Upfront.Views.Editor.InlinePanels.Controls.VisitLink({
-				url: this.link.get('url')
-			}),
-			linkPanelControl = new Upfront.Views.Editor.InlinePanels.Controls.LinkPanel({
-				model: this.link,
-				button: false,
-				icon: 'link',
-				tooltip: 'link',
-				id: 'link'
-			});
-			var me = this;
+	// createInlineControlPanel: function() {
+	// 	var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
+	// 		visitLinkControl = new Upfront.Views.Editor.InlinePanels.Controls.VisitLink({
+	// 			url: this.link.get('url')
+	// 		}),
+	// 		linkPanelControl = new Upfront.Views.Editor.InlinePanels.Controls.LinkPanel({
+	// 			model: this.link,
+	// 			button: false,
+	// 			icon: 'link',
+	// 			tooltip: 'link',
+	// 			id: 'link'
+	// 		});
+	// 		var me = this;
 
-		this.listenTo(this.link, 'change', function() {
-			visitLinkControl.setLink(me.link.get('url'));
-			this.$el.find('a').attr('href', me.link.get('url'));
-		});
+	// 	this.listenTo(this.link, 'change', function() {
+	// 		visitLinkControl.setLink(me.link.get('url'));
+	// 		this.$el.find('a').attr('href', me.link.get('url'));
+	// 	});
 
-		panel.items = _([
-			linkPanelControl,
-			visitLinkControl
-		]);
+	// 	panel.items = _([
+	// 		linkPanelControl,
+	// 		visitLinkControl
+	// 	]);
 
-		var imageControlsTpl = '<span class="open-item-controls"></span><div class="uimage-controls image-element-controls upfront-ui"></div>';
-		this.$el.append(imageControlsTpl);
-		panel.render();
-		this.$el.find('.uimage-controls').append(panel.el);
-		panel.delegateEvents();
-	},
+	// 	var imageControlsTpl = '<span class="open-item-controls"></span><div class="uimage-controls image-element-controls upfront-ui"></div>';
+	// 	this.$el.append(imageControlsTpl);
+	// 	panel.render();
+	// 	this.$el.find('.uimage-controls').append(panel.el);
+	// 	panel.delegateEvents();
+	// },
 
 	toggleLinkPanel: function() {
 		var me = this;
@@ -250,7 +261,8 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 				me.saveTitle($(this));
 			});
 
-		this.createInlineControlPanel();
+		// this.createInlineControlPanel();
+		this.clearPresetClass(this.$el);
 		this.$el.addClass(this.property('preset'));
 	},
 	stopEdit: function() {
@@ -266,6 +278,62 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			return this.model.set_property(name, value, silent);
 		}
 		return this.model.get_property_value_by_name(name);
+	},
+
+	createLinkControl: function() {
+		var me = this,
+			linkPanelControl = new Upfront.Views.Editor.InlinePanels.Controls.LinkPanel({
+				model: this.link,
+				button: false,
+				icon: 'link',
+				tooltip: l10n.edit_link,
+				id: 'link'
+			})
+		;
+
+		this.listenTo(this.link, 'change', function() {
+			//Hide LinkTo button
+			//this.visitLinkControl.setLink(me.link.get('url'));
+			this.$el.find('a').attr('href', me.link.get('url'));
+		});
+
+
+		return linkPanelControl;
+	},
+	
+	/* Hide LinkTo button */
+	/*
+	createVisitLinkControl: function() {
+		var me = this,
+			visitLinkControl = new Upfront.Views.Editor.InlinePanels.Controls.VisitLink({
+				url: this.link.get('url'),
+				icon: 'visit-link',
+				tooltip: l10n.visit_link,
+				id: 'visit-link',
+				linkLabel: {
+					unlink: '',
+					lightbox: '',
+					anchor: '',
+					entry: '',
+					external: '',
+					email: ''
+				}
+			})
+		;
+
+		this.visitLinkControl = visitLinkControl;
+
+		return visitLinkControl;
+	},
+	*/
+
+	getControlItems: function(){
+		return _([
+			this.createLinkControl(),
+			//this.createVisitLinkControl(),
+			this.createPaddingControl(),
+			this.createControl('settings', l10n.settings.label, 'on_settings_click')
+		]);
 	}
 });
 

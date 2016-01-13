@@ -49,6 +49,7 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 
 		this.events = _.extend({}, this.events, {
 			'click button.submit-field' : 'handleButtonclick',
+			'click .upfront-field-container label': 'handleButtonclick',
 			'dblclick button.submit-field' : 'editButtontext',
 			'dblclick .upfront-field-container > label' : 'editLabeltext'
 		});
@@ -90,7 +91,7 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 					text = ''
 				;
 
-			try { text = ed.getValue(true); } catch (e) { text = ''; }
+			try { text = $button.text(); } catch (e) { text = ''; }
 
 			if (text) me.model.set_property('form_button_text', text, true);
 		})
@@ -132,14 +133,10 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 				}
 				else {
 
-					try { text = ed.getValue(true); } catch (e) { text = ''; }
+					try { text = $label.text() } catch (e) { text = ''; }
 				}
 
-
 				var targetproperty = false;
-
-
-
 
 				if($label.attr('for') == 'sendername')
 					targetproperty = 'form_name_label';
@@ -171,10 +168,11 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 
 		$button = this.$el.find('button.submit-field > span');
 		var ueditor = $button.data('ueditor');
-
-		ueditor.start();
-
-
+		
+		//Check if ueditor is defined ( prevent JS error when double click for select all )
+		if(typeof ueditor !== "undefined") {
+			ueditor.start();
+		}
 	},
 	editLabeltext: function(e) {
 		e.preventDefault();
@@ -202,7 +200,13 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 				subject: this.getPlaceholder('form_subject_label'),
 				message: this.getPlaceholder('form_message_label')
 			},*/
-			ids: {},
+			ids: {
+				name: 'sendername',
+				email:  'senderemail',
+				message: 'sendermessage',
+				subject: 'subject',
+				captcha: 'realPerson'
+			},
 			values: {}
 		});
 

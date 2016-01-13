@@ -5,7 +5,7 @@ define([
 	'text!scripts/upfront/settings/modules/menu-structure/menu-structure.tpl'
 ], function(MenuUtil, MenuStructureItem, tpl) {
 	var l10n = Upfront.Settings.l10n.preset_manager;
-
+	var scrollDown = false;
 	var MenuStructureModule = Backbone.View.extend({
 		className: 'settings_module menu_structure_module clearfix',
 		handlesSaving: true,
@@ -13,7 +13,7 @@ define([
 		events: {
 			'mouseenter .menu-item-header': 'enableSorting',
 			'mouseleave .menu-item-header': 'disableSortingOnHeaderLeave',
-			'click .add-menu-item': 'addItem'
+			'click .add-menu-item': 'addItem',
 		},
 
 		initialize: function(options) {
@@ -21,21 +21,22 @@ define([
 			this.options = options || {};
 
 			this.listenTo(this.model.get('properties'), 'change', function() {
-				me.setup();
-				me.render();
+				me.reloadItems();
 			});
 
 			Upfront.Events.on('menu_element:edit', function(menuData) {
-				me.setup();
-				me.render();
+				me.reloadItems();
 			});
 
 			this.setup();
 		},
+		
+		reloadItems: function() {
+			this.setup();
+			this.render();
+		},
 
 		setup: function() {
-			var me = this;
-
 			this.menuId = this.model.get_property_value_by_name('menu_id');
 			this.menuItems = [];
 			this.menuItemViews = [];
@@ -43,21 +44,89 @@ define([
 
 			if (this.menuId === false) return;
 
-			Upfront.Util.post({"action": "upfront_new_load_menu_array", "data": this.menuId})
+			this._load_items();
+		},
+
+		/**
+		 * Check if we have a promise queued in
+		 *
+		 * @param {Object} args_obj The raw key used for promise - will be stringified before checking
+		 *
+		 * @return {Boolean}
+		 */
+		_has_promise: function (args_obj) {
+			var key = JSON.stringify(args_obj);
+			return !!(this._promises || {})[key];
+		},
+
+		/**
+		 * Queue up a promise
+		 *
+		 * @param {Object} args_obj The raw key used for promise - will be stringified before checking
+		 * @param {$.Deferred} promise Promise to queue up
+		 */
+		_add_promise: function (args_obj, promise) {
+			var key = JSON.stringify(args_obj);
+			this._promises = this._promises || {};
+			this._promises[key] = promise;
+			return true;
+		},
+
+		/**
+		 * Drops a promise from the queue
+		 *
+		 * @param {Object} args_obj The raw key used for promise - will be stringified before checking
+		 */
+		_drop_promise: function (args_obj) {
+			var key = JSON.stringify(args_obj);
+			this._promises = this._promises || {};
+			this._promises[key] = false;
+			return true;
+		},
+
+		/**
+		 * Loads the menu items.
+		 *
+		 * Also hooks up to promise response and sets up `this.menuItemViews` collection.
+		 */
+		_load_items: function () {
+			var me = this,
+				args = {
+					action: "upfront_new_load_menu_array",
+					"data": this.menuId + ''
+				},
+				promise
+			;
+			if (this._has_promise(args)) return true; // We're already waiting for this
+
+			promise = Upfront.Util.post(_.extend({}, args));
+			this._add_promise(args, promise); // So, stack up this promise
+
+			promise
 				.success(function (response) {
 					me.menuItems = response.data || [];
-					_.each(me.menuItems, function(itemOptions) {
-						me.menuItemViews.push(new MenuStructureItem({
+					_.each(me.menuItems, function(itemOptions, index) {
+						var menuStructureItem = new MenuStructureItem({
 							model: new Backbone.Model(itemOptions),
 							menuId: me.menuId
-						}));
+						});
+						me.menuItemViews.push(menuStructureItem);
+						me.listenTo(menuStructureItem, 'change', function(data) {
+							me.menuItems[index] = data;
+							me.model.trigger('change');
+						});
 					});
+					me.model.set_property('menu_items', response.data, true);
+					me.model.trigger('change'); // do not trigger change on this.model.get('properties') it will cause endless recursion
+																			// this is needed for menu element to re-render on item position change
 					me.render();
+					me._drop_promise(args); // And pop it off the stack once we're done
 				})
 				.error(function (response) {
 					Upfront.Util.log("Error loading menu items");
 				})
 			;
+			return true;
 		},
 
 		render: function() {
@@ -73,9 +142,25 @@ define([
 			_.each(this.menuItemViews, function(view) {
 				$body.append(view.render().el);
 			});
+			
+			/**
+			 * This will scroll the panel down to the position of the newly added menu item i.e., 
+			 * at the bottom of the list
+			 */
+			 
+			if(scrollDown) {
+
+				// Scroll down to where the new menu item has been added.
+				var menu_items_panel = me.$el.closest('.uf-settings-panel--expanded');
+				var scroll_wrap = menu_items_panel.closest('#sidebar-scroll-wrapper');
+				scroll_wrap.scrollTop(menu_items_panel.height()-175);
+				scrollDown = false;
+
+			}
 		},
 
 		enableSorting: function(event) {
+			if (this.sortingInProggres === true) return;
 			// highlight all sortables
 			var $items = this.$el.find('.menu-structure-module-item'),
 				hoveredItem = $(event.target).parent(),
@@ -303,11 +388,16 @@ define([
 					items: changedItems,
 					menuId: this.menuId
 				}
-			}).fail(
-					function(response) {
-						Upfront.Util.log('Failed saving menu items.');
-					}
-				);
+				}
+			).done(
+				function() {
+					me.setup();
+				}
+			).fail(
+				function(response) {
+					Upfront.Util.log('Failed saving menu items.');
+				}
+			);
 		},
 
 		addItem: function() {
@@ -315,7 +405,7 @@ define([
 				newItem = {
 					'menu-item-object': 'custom',
 					'menu-item-parent-id': 0,
-					'menu-item-position': 1,
+					//'menu-item-position': -1,
 					'menu-item-target': '',
 					'menu-item-title': 'New Item',
 					'menu-item-type': 'custom',
@@ -327,21 +417,29 @@ define([
 				menuId: this.menuId,
 				menuItemData: newItem
 			}).done(
+
 					function(response) {
+						
 						newItem['menu-item-db-id'] = response.data.itemId;
 						newItem['menu-item-object-id'] = response.data.itemId + '';
-						me.menuItemViews.unshift(new MenuStructureItem({
-							model: new Backbone.Model(newItem),
-							menuId: me.menuId
-						}));
-						me.render();
 
 						// Gotta do this to save item now with id to make it published
 						Upfront.Util.post({
 							action: 'upfront_update_single_menu_item',
 							menuId: me.menuId,
 							menuItemData: newItem
+						}).done(function() {
+							me.model.get_property_value_by_name('menu_items').unshift(newItem);
+							me.model.get('properties').trigger('change');
+
+							/**
+							 * This will flag the settings panel to scroll down 
+							 * to the position of the newly added menu item i.e., 
+							 * at the bottom of the list
+							 */
+							scrollDown = true;
 						});
+
 					}
 				).fail(
 					function(response) {

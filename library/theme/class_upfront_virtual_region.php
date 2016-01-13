@@ -549,14 +549,20 @@ class Upfront_Virtual_Region {
 			'rows' => 6,
 			'module_class' => $slug,
 			'module_id' => $slug,
-			'sticky' => false
+			'sticky' => false,
+			'default_hide' => 0,
+			'hide' => 0,
+			'toggle_hide' => 1
 		);
 		$module = array_merge($module, $options);
 		$opts['module'] = array(
 			'row' => $module['rows'],
 			'class' => $module['module_class'],
 			'element_id' => $module['module_id'],
-			'sticky' => $module['sticky']
+			'sticky' => $module['sticky'],
+			'default_hide' => $module['default_hide'],
+			'hide' => $module['hide'],
+			'toggle_hide' => $module['toggle_hide']
 		);
 		if (isset($module['disable_resize'])) {
 			$opts['module']['disable_resize'] = $module['disable_resize'];

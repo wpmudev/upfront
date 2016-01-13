@@ -80,11 +80,41 @@ define([
 			'keydown .js-ulinkpanel-lightbox-input': 'onLightboxNameInputChange',
 			'blur .js-ulinkpanel-input-external': 'onUrlInputBlur',
 			//'click .js-ulinkpanel-ok': 'onOkClick',
-			'click .upfront-save_settings': 'onOkClick'
+			'click .upfront-save_settings': 'onOkClick',
+			'click .link-panel-lightbox-trigger': 'visit_lightbox'
 		},
 
 		className: 'ulinkpanel-dark',
 
+		visit_lightbox: function(e) {
+			e.preventDefault();
+			var url = $(e.target).attr('href');
+			
+			// if there is no url defined, no point going forward
+			if(!url || url==='')
+				return;
+
+			var regions = Upfront.Application.layout.get('regions');
+			region = regions ? regions.get_by_name(this.getUrlanchor(url)) : false;
+			if(region){
+				//hide other lightboxes
+				_.each(regions.models, function(model) {
+					if(model.attributes.sub == 'lightbox')
+						Upfront.data.region_views[model.cid].hide();
+				});
+				var regionview = Upfront.data.region_views[region.cid];
+				regionview.show();
+			}
+			
+		},
+		getUrlanchor: function(url) {
+			if(typeof(url) == 'undefined') var url = $(location).attr('href');
+
+			if(url.indexOf('#') >=0) {
+				var tempurl = url.split('#');
+				return tempurl[1];
+			} else return false;
+		},
 		initialize: function(options) {
 			// Make sure we have large image url if 'image' is one of link types
 			if (options.linkTypes && options.linkTypes.image && options.linkTypes.image === true && _.isUndefined(options.imageUrl)) {
@@ -119,9 +149,9 @@ define([
 				this.createLightBox();
 			} else {
 				this.close();
+				this.model.trigger("change")
 			}
-			this.trigger('change', this.model);
-			this.model.trigger("change");
+			//this.trigger('change', this.model);
 		},
 
 		close: function() {
@@ -211,8 +241,16 @@ define([
 			}
 
 			this.model.set({
-				url: '#' + Upfront.Application.LayoutEditor.createLightboxRegion(name)
+				url: '#' + Upfront.Application.LayoutEditor.getLightboxSafeName(name)
 			});
+
+			Upfront.Application.LayoutEditor.createLightboxRegion(name);
+			// this is required to send a 'dontflag' to the editor, 
+			// because the lightbox is created
+			// after the link is saved in the text.
+			// triggering the change again will refresh the editor's state 
+			// and get rid of missing link flag
+			this.model.trigger("change", true); 
 			this.render();
 		},
 
@@ -353,6 +391,7 @@ define([
 				default_value: lightboxValue,
 				change: function () {
 					model.set({'url': this.get_value()});
+					$('.link-panel-lightbox-trigger').attr('href', this.get_value());
 				}
 			});
 			this.lightboxSelect.render();

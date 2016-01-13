@@ -41,7 +41,14 @@
 
 			this.listenTo(Upfront.Events, 'entity:resize_start', this.hideFrame);
 			this.listenTo(Upfront.Events, 'entity:resize_stop', this.onElementResize);
-
+		},
+		
+		on_element_resize_start: function (attr) {
+			this.hideFrame(this, this.model);
+		},
+		
+		on_element_resize: function (attr) {
+			this.onElementResize(this, this.model);
 		},
 
 		setUrl: function(){
@@ -57,8 +64,8 @@
 			if (!$frame.is(":visible")) $frame.show();
 		},
 		onElementResize: function(view, model){
-			if (this.parent_module_view == view) this.setElementSize();
-			else this.showFrame();
+			this.setElementSize();
+			this.showFrame();
 		},
 		setElementSize: function(){
 			var me = this,
@@ -68,6 +75,9 @@
 				this.elementSize.height = parent.height();
 				//setTimeout(function(){
 					var size = me.get_element_size_px(false);
+					if(size.row === 0) {
+						size.row = parent.height();
+					}
 
 					if(size.col != 0){
 						me.property('element_size', {
@@ -151,15 +161,18 @@
 
 			}else{
 				this.model.set_property('facebook_url', '', true);
-				return '<div class="upfront-like-box_placeholder">' +
+				return '<div class="upfront-likebox-overlay upfront-initial-overlay-wrapper" style="min-height: 200px;">' +
+						'<div class="upfront-like-box_placeholder upfront-initial-overlay-wrapper" style="height: 150px;">' +
 						'<div class="upfront-like-box_placeholder_guide">'+l10n.placeholder_guide+'</div>' +
 						'<div class="upfront-like-box_url_wrapper"><input type="text" class="upfront-like-box_url" placeholder="' + l10n.placeholder + '" /></div>' +
-						'<button type="button" class="upfront-like-box_button">'+l10n.ok+'</button></div>';
+						'<button type="button" class="upfront-like-box_button">'+l10n.ok+'</button></div></div>';
 			}
 		},
 
 		on_render: function(){
 			var parent = this.parent_module_view, me = this;
+			
+			this.setElementSize();
 
 			//Prevent iframe hijacking of events when dragging
 			if(!parent.$el.data('dragHandler')){
@@ -176,6 +189,10 @@
 					Upfront.Events.trigger("upfront:element:edit:stop");
 				}
 			});
+		},
+
+		on_after_layout_render: function () {
+			this.setElementSize();
 		},
 
 		//Prevent iframe hijacking of events when dragging
@@ -204,7 +221,7 @@
 						{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
 						{"name": "class", "value": "c7 upfront-like-box_module"},
 						{"name": "has_settings", "value": 0},
-						{"name": "row", "value": Upfront.Util.height_to_row(90)}
+						{"name": "row", "value": Upfront.Util.height_to_row(200)}
 					],
 					"objects": [
 						object // The anonymous module will contain our search object model
@@ -231,27 +248,95 @@
 	 * @type {Upfront.Views.Editor.Settings.Settings}
 	 */
 	var GeneralPanel = RootSettingsPanel.extend({
-		settings: [
-			{
-				type: 'SettingsItem',
-				className: 'upfront-social-services-item general_settings_item',
-				title: l10n.facebook_account,
-				label: l10n.opts.page_url,
-				fields: [
-					{
-						type: 'Text',
-						className: 'facebook-url',
-						property: 'facebook_url',
-						label: l10n.opts.url_sample,
-						compact: true
-					},
-					{
-						type: 'Settings_CSS'
-					}
-				]
-			}
-		],
-		title: 'General Settings'
+		className: 'uyoutube-settings',
+		tabbed: false,
+		title: l10n.general_settings,
+		initialize: function (opts) {
+			this.options = opts;
+			
+			me = this,
+			SettingsItem =  Upfront.Views.Editor.Settings.Item,
+			Fields = Upfront.Views.Editor.Field
+			;
+
+			this.settings = _([
+				new SettingsItem({
+					className: 'upfront-social-services-item general_settings_item',
+					title: l10n.facebook_account,
+					label: l10n.opts.page_url,
+					fields: [
+						new Fields.Text({
+							model: this.model,
+							className: 'facebook-url',
+							property: 'facebook_url',
+							label: l10n.opts.url_sample,
+							compact: true,
+							change: function(value) {
+								this.model.set_property('facebook_url', value);
+							}
+						}),
+
+						new Fields.Checkboxes({
+							model: this.model,
+							className: 'show-friends',
+							property: 'show_friends',
+							label: "",
+							values: [
+								{ label: l10n.opts.show_friends, value: 'yes' }
+							],
+							change: function(value) {
+								this.model.set_property('show_friends', value);
+							}
+						}),
+
+						new Fields.Checkboxes({
+							model: this.model,
+							className: 'small-header',
+							property: 'small_header',
+							label: "",
+							values: [
+								{ label: l10n.opts.small_header, value: 'yes' }
+							],
+							change: function(value) {
+								this.model.set_property('small_header', value);
+							}
+						}),
+
+						new Fields.Checkboxes({
+							model: this.model,
+							className: 'hide-cover',
+							property: 'hide_cover',
+							label: "",
+							values: [
+								{ label: l10n.opts.hide_cover, value: 'yes' }
+							],
+							change: function(value) {
+								this.model.set_property('hide_cover', value);
+							}
+						}),
+
+						new Fields.Checkboxes({
+							model: this.model,
+							className: 'show-posts',
+							property: 'show_posts',
+							label: "",
+							values: [
+								{ label: l10n.opts.show_posts, value: 'yes' }
+							],
+							change: function(value) {
+								this.model.set_property('show_posts', value);
+							}
+						}),
+
+						new Upfront.Views.Editor.Settings.Settings_CSS({model: this.model }),
+					]
+				})
+			]);
+		},
+
+		get_title: function () {
+			return l10n.general_settings;
+		},
 	});
 	var LikeBoxSettings = ElementSettings.extend({
 		panels: {

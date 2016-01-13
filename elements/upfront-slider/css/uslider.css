@@ -28,8 +28,18 @@ div.uslide-text-current {
 	overflow: hidden;
 }
 
-.uslide-caption {
-  position: relative;
+.uslide .uslide-caption {
+	position: relative;
+	padding: 15px;
+}
+
+.uslide .uslide-caption p {
+	line-height: inherit;
+	margin: 0;
+}
+
+.uslide .uslide-caption p:last-child {
+	padding-bottom: 0;
 }
 
 .uslide-topOver .uslide-caption,
@@ -66,7 +76,7 @@ div.uslide-text-current {
 }
 
 .uslide-nocaption .uslide-caption {
-	display: none;
+	display: none !important;
 }
 
 .uslide-bottomOver .uslide-caption{
@@ -114,10 +124,10 @@ div.uslide-text-current {
 	vertical-align: top;
 }
 
-.uslide-right .uslide-caption,
+/*.uslide-right .uslide-caption,
 .uslide-left .uslide-caption {
 	padding: 0 15px;
-}
+}*/
 
 .uslide-image {
 	display:block;

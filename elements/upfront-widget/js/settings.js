@@ -38,29 +38,28 @@ define([
 				data = {"action": "uwidget_get_widget_admin_form", "data": JSON.stringify({"widget": widget})}
 			;
 			Upfront.Util.post(data)
-			.success(function (ret) {
-				self.model.set_property('current_widget_specific_fields', ret.data);
+				.success(function (ret) {
+					self.model.set_property('current_widget_specific_fields', ret.data);
 								
-				self.$el.html('');
+					self.$el.html('');
 				
-				selected_widget = widget;
+					selected_widget = widget;
+					current_widget = widget;
 
-				current_widget = widget;
+					self.udpate_fields();
+					
+					self.render();
 
-				self.udpate_fields();
-				
-				self.render();
+					/** To enable for_view's re-rendering on widget selection from the drop down
+						This is set after the widget specific settings are available to provide their 
+						parameters to the rendering of the widget **/
+					parent.model.set_property('current_widget', widget);
 
-				/** To enable for_view's re-rendering on widget selection from the drop down
-					This is set after the widget specific settings are available to provide their 
-					parameters to the rendering of the widget **/
-				parent.model.set_property('current_widget', widget);
-
-			}).error(function (ret) {
-				console.log("error receiving widget specific settings");
-			});
-
-
+				})
+				.error(function (ret) {
+					console.log("error receiving widget specific settings");
+				})
+			;
 		},
 		initialize: function() {
 			selected_widget = current_widget;
@@ -121,7 +120,17 @@ define([
 				}
 			}
 		},
-		clear_cache: function() { Upfront.data.uwidget.widgets_cache = {}; }
+		clear_cache: function (value) {
+			Upfront.data.uwidget.widgets_cache = {};
+			var property = (this.options || {}).property,
+				current = this.model.get_property_value_by_name('current_widget_specific_fields')
+			;
+			_.each(current, function (prop, idx) {
+				if (property === (prop || {}).name) {
+					this.model.set_property(property, value);
+				}
+			}, this);
+		}
 	});
 
 
@@ -204,8 +213,6 @@ define([
 			Upfront.Events.off('element:settings:saved', saveWidgetSpecificFields);
 			// then subscribe
 			Upfront.Events.once('element:settings:saved', saveWidgetSpecificFields, this);
-
-
 
 			// so, if settings are cancelled, all live rendering settings should revert
 			var revertSettings = function() {

@@ -6,13 +6,15 @@ define([
 		className: 'menu-structure-module-item',
 
 		events: {
-			'click .menu-item-header': 'toggleEditor'
+			'click .menu-item-header': 'toggleEditor',
+			'click .menu-item-delete': 'deleteItem'
 		},
 
 		initialize: function(options) {
 			this.options = options || {};
 			this.subViews = [];
 			this.depth = this.options.depth || 0;
+			this.parent_view = options.parent_view;
 			var sub = this.model.get('sub');
 
 			if (sub) {
@@ -43,6 +45,9 @@ define([
 				menuId: this.options.menuId
 			});
 			this.$el.append(editor.render().el);
+			this.listenTo(editor, 'change', function() {
+				me.trigger('change', me.model.toJSON());
+			});
 
 			// Gotta let this.$el render to use $.after()
 			setTimeout(function() {
@@ -50,6 +55,8 @@ define([
 					me.$el.after(view.render().el);
 				});
 			}, 100);
+
+			this.delegateEvents();
 
 			return this;
 		},
@@ -71,7 +78,7 @@ define([
 				case 'external':
 					return contentL10n.url;
 				case 'email':
-					return 'Email address';
+					return contentL10n.email_address;
 				case 'entry':
 					return contentL10n.post_or_page;
 				case 'anchor':
@@ -81,7 +88,24 @@ define([
 				case 'lightbox':
 					return contentL10n.lightbox;
 			}
-		}
+		},
+		
+		deleteItem: function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+
+			if(typeof this.model.get('menu-item-db-id') != 'undefined') {
+				Upfront.Util.post({"action": "upfront_new_delete_menu_item", "menu_item_id": this.model.get('menu-item-db-id')})
+					.success(function (ret) {
+						//Make sure deleted element is removed from the list
+						Upfront.Events.trigger("menu_element:edit");
+					})
+					.error(function (ret) {
+						Upfront.Util.log("Error Deleting Menu Item");
+					})
+				;
+			}
+		},
 	});
 
 	return MenuItem;

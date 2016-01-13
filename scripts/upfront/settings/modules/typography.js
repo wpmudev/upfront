@@ -53,12 +53,14 @@ define([
 					name: this.currentElement + this.options.fields.typeface,
 					model: this.model,
 					values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_fonts_for_select(),
+					default_value: this.model.get(this.currentElement + this.options.fields.typeface),
 					label: l10n.typeface,
 					select_width: '225px',
 					label_style: 'inline',
 					className: state + '-font-face static typeFace ' + toggleClass,
 					change: function(value) {
 						me.model.set(me.currentElement + me.options.fields.typeface, value);
+						me.fields._wrapped[1 + me.fieldCounter].stopListening();
 						me.fields._wrapped[1 + me.fieldCounter] = new Upfront.Views.Editor.Field.Typeface_Style_Chosen_Select({
 							model: this.model,
 							name: me.currentElement + me.options.fields.fontstyle,
@@ -71,9 +73,11 @@ define([
 							change: function(value) {
 								//Explode Font style and font weight and save them as separate values
 								var parsed_variant = Upfront.Views.Font_Model.parse_variant(value);
-								me.model.set(me.currentElement + me.options.fields.fontstyle, value);
-								me.model.set(me.currentElement + me.options.fields.weight, parsed_variant.weight);
-								me.model.set(me.currentElement + me.options.fields.style, parsed_variant.style);
+								var data = {};
+								data[me.currentElement + me.options.fields.fontstyle] = value;
+								data[me.currentElement + me.options.fields.weight] = parsed_variant.weight;
+								data[me.currentElement + me.options.fields.style] = parsed_variant.style;
+								me.model.set(data);
 							},
 							show: function(value) {
 								if(value !== null) {
@@ -90,6 +94,7 @@ define([
 					model: this.model,
 					name: this.currentElement + this.options.fields.fontstyle,
 					values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants_for_select(me.model.get(this.currentElement + me.options.fields.typeface)),
+					default_value: this.model.get(this.currentElement + this.options.fields.fontstyle),
 					label: l10n.weight_style,
 					font_family: me.model.get(this.options.fields.typeface),
 					select_width: '225px',
@@ -114,10 +119,10 @@ define([
 					model: this.model,
 					className: state + '-font-size fontSize ' + toggleClass,
 					name: this.currentElement + this.options.fields.size,
+					default_value: this.model.get(this.currentElement + this.options.fields.size),
 					label: l10n.size,
 					label_style: 'inline',
 					suffix: l10n.px,
-					default_value: 12,
 					change: function(value) {
 						me.model.set(me.currentElement + me.options.fields.size, value);
 					}
@@ -129,7 +134,7 @@ define([
 					name: this.currentElement + this.options.fields.line_height,
 					label: l10n.line_height,
 					label_style: 'inline',
-					default_value: 1,
+					default_value: this.model.get(this.currentElement + this.options.fields.line_height),
 					min: 0,
 					step: 0.1,
 					change: function(value) {
@@ -141,8 +146,8 @@ define([
 					model: this.model,
 					className: state + '-font-color upfront-field-wrap upfront-field-wrap-color sp-cf fontColor ' + toggleClass,
 					name: this.currentElement + this.options.fields.color,
+					default_value: this.model.get(this.currentElement + this.options.fields.color),
 					blank_alpha : 0,
-					default_value: '#000',
 					label_style: 'inline',
 					label: l10n.color,
 					spectrum: {
@@ -197,10 +202,13 @@ define([
 						className: 'useTypography checkbox-title ' + toggleClass,
 						name: me.options.fields.use,
 						label: '',
-						default_value: 1,
 						multiple: false,
 						values: [
-							{ label: l10n.typography, value: 'yes' }
+							{
+								label: l10n.typography,
+								value: 'yes',
+								checked: this.model.get(me.options.fields.use)
+							}
 						],
 						change: function(value) {
 							console.log('triggered change on checkbox');
@@ -290,6 +298,7 @@ define([
 			//Get stored values else load from Global Typography settings
 			if(typeof this.options.global_typography !== "undefined" && this.options.global_typography === true) {
 				var font_settings = Upfront.mainData.global_typography[this.normalize_elements_selector(value)];
+				font_settings = font_settings || {};
 				settings.typeface = this.model.get(this.currentElement + this.options.fields.typeface) || font_settings.font_face || '';
 				settings.fontstyle = this.model.get(this.currentElement + this.options.fields.fontstyle) || font_settings.weight + ' ' + font_settings.style || '';
 				settings.fontsize = this.model.get(this.currentElement + this.options.fields.size) || font_settings.size || '';

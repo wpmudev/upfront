@@ -38,7 +38,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 	 */
 	public function load_styles () {
 		$raw_cache_key = $this->_get_cached_styles();
-		wp_enqueue_style('upfront-element-styles', $this->_get_enqueueing_url(self::TYPE_STYLE, $raw_cache_key), array(), $this->_get_enqueue_version()); // But let's do pretty instead
+		if (!empty($raw_cache_key)) wp_enqueue_style('upfront-element-styles', $this->_get_enqueueing_url(self::TYPE_STYLE, $raw_cache_key), array(), $this->_get_enqueue_version()); // But let's do pretty instead
 	}
 
 	/**
@@ -46,6 +46,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 	 */
 	public function add_style_load_url ($urls) {
 		$raw_cache_key = $this->_get_cached_styles();
+		if (empty($raw_cache_key)) return $urls;
 
 		$url = $this->_get_enqueueing_url(self::TYPE_STYLE, $raw_cache_key);
 		$urls[] = $url;
@@ -69,11 +70,9 @@ class Upfront_ElementStyles extends Upfront_Server {
 
 		if (empty($cache)) {
 			foreach ($styles as $key => $frags) {
-				//$path = upfront_element_dir($frags[0], $frags[1]);
-				//if (file_exists($path)) $cache .= "/* {$key} */\n" . file_get_contents($path) . "\n";
 				if (empty($frags)) continue;
 				$style = $this->_get_style_contents($frags);
-				if (!empty($style))  $cache .= "/* {$key} */\n{$style}\n";
+				if (!empty($style))  $cache .= "/* ~~~~~ [STYLE DEBUG]: {$key} ~~~~~ */\n{$style}\n";
 			}
 			if (!$this->_debugger->is_active(Upfront_Debug::STYLE)) {
 				$cache = Upfront_StylePreprocessor::compress($cache);
@@ -146,7 +145,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 	 */
 	public function load_scripts () {
 		$raw_cache_key = $this->_get_cached_scripts();
-		wp_enqueue_script('upfront-element-scripts', $this->_get_enqueueing_url(self::TYPE_SCRIPT, $raw_cache_key), array('jquery'), $this->_get_enqueue_version(), true); // Scripts go into footer
+		if (!empty($raw_cache_key)) wp_enqueue_script('upfront-element-scripts', $this->_get_enqueueing_url(self::TYPE_SCRIPT, $raw_cache_key), array('jquery'), $this->_get_enqueue_version(), true); // Scripts go into footer
 	}
 
 	/**
@@ -154,6 +153,8 @@ class Upfront_ElementStyles extends Upfront_Server {
 	 */
 	public function add_script_load_url ($urls) {
 		$raw_cache_key = $this->_get_cached_scripts();
+		if (empty($raw_cache_key)) return $urls;
+		
 		$url = $this->_get_enqueueing_url(self::TYPE_SCRIPT, $raw_cache_key);
 		$urls[] = $url;
 		return $urls;

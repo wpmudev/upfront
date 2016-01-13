@@ -214,6 +214,8 @@ class Upfront_UgalleryView extends Upfront_Object {
 	}
 
 	public static function image_defaults(){
+		$l10n = self::_get_l10n('template');
+
 		return array(
 			'id' => 0,
 			'src' => 'http//imgsrc.hubblesite.org/hu/db/images/hs-2013-12-a-small_web.jpg',
@@ -225,8 +227,8 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'rotation' => 0,
 			'link' => 'original',
 			'url' => '',
-			'title' => 'Image caption',
-			'caption' => 'Image description',
+			'title' => $l10n['image_caption'],
+			'caption' => $l10n['image_description'],
 			'alt' => '',
 			'tags' => array(),
 			'margin' => array('left' => 0, 'top' => 0),
@@ -285,18 +287,21 @@ class Upfront_UgalleryView extends Upfront_Object {
 
 	public static function add_styles_scripts () {
 		//wp_enqueue_style('ugallery-style', upfront_element_url('css/ugallery.css', dirname(__FILE__)));
-		upfront_add_element_style('upfront_gallery', array('css/ugallery.css', dirname(__FILE__)));
 
-		if (is_user_logged_in()) {
-			upfront_add_element_style('ugallery-style-editor', array('css/ugallery-editor.css', dirname(__FILE__)));
-		}
 
 		//Lightbox
 		//wp_enqueue_style('magnific');
 		upfront_add_element_style('magnific', array('/scripts/magnific-popup/magnific-popup.css', false));
 
+		// Place them under the magnific styles so that UF can override magnific
+		upfront_add_element_style('upfront_gallery', array('css/ugallery.css', dirname(__FILE__)));
+		if (is_user_logged_in()) {
+			upfront_add_element_style('ugallery-style-editor', array('css/ugallery-editor.css', dirname(__FILE__)));
+		}
+
 		//wp_enqueue_script('magnific');
 		upfront_add_element_script('magnific', array('/scripts/magnific-popup/magnific-popup.min.js', false));
+
 
 		upfront_add_element_script('jquery-shuffle', array('js/jquery.shuffle.js', dirname(__FILE__)));
 
@@ -356,6 +361,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'regenerating' => __('Regenerating images...', 'upfront'),
 			'regenerating_done' => __('Wow, those are cool!', 'upfront'),
 			'settings' => __('Gallery settings', 'upfront'),
+			'toggle_dnd' => __('Toggle drag\'n\'drop sorting of images', 'upfront'),
 			'panel' => array(
 				'sort' => __('Enable label sorting', 'upfront'),
 				'even_padding' => __('Even padding'),
@@ -399,7 +405,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 				'add_images' => __('Add Images to the Gallery', 'upfront'),
 				'drop_images' => __('Drop images here', 'upfront'),
 				'select_images' => __('Select images', 'upfront'),
-				'max_upload_size' => __('Maximum upload file size: 32MB', 'upfront'),
+				'max_upload_size' => sprintf(__('Maximum upload file size: %s', 'upfront'), upfront_max_upload_size_human()),
 				'or_browse' => __('or browse your', 'upfront'),
 				'media_gallery' => __('media gallery', 'upfront'),
 				'uploading' => __('Uploading...', 'upfront'),
@@ -409,6 +415,8 @@ class Upfront_UgalleryView extends Upfront_Object {
 				'edit_details' => __('Edit image details', 'upfront'),
 				'title' => __('Title', 'upfront'),
 				'caption' => __('Caption', 'upfront'),
+				'image_caption' => __('<p>Image caption</p>', 'upfront'),
+				'image_description' => __('Image description', 'upfront'),
 				'alt' => __('Alternative text', 'upfront'),
 				'ok' => __('Ok', 'upfront'),
 				'labels' => __('Labels', 'upfront'),

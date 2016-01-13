@@ -11,7 +11,7 @@
 		var l10n = Upfront.Settings.l10n.text_element;
 
 		var TextView = Upfront.Views.ObjectView.extend({
-			className: 'upfront-plain_txt',
+			// className: 'upfront-plain_txt', THIS ONE TRIPLICATES CLASSNAME MAKING CSS A HELL
 			initialize: function() {
 				this.constructor.__super__.initialize.apply(this, arguments);
 
@@ -27,6 +27,15 @@
 				//	Upfront.Events.trigger('upfront:element:edit:stop');
 				//}, this);
 				this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
+				this.listenTo(Upfront.Events, 'upfront:lightbox:show', this.on_lightbox_show);
+			},
+			on_lightbox_show: function() {
+				// Turn off the editor, hide the redactor bars, clean up the view
+				ed = this.$el.find('.upfront-object-content').data("ueditor");
+
+				if(!ed.options.autostart && ed.redactor){
+					ed.stop();
+				}
 			},
 			get_preset_properties: function() {
 				var preset = this.model.get_property_value_by_name("preset"),
@@ -65,7 +74,7 @@
 				blurTimeout = false;
 
 				this.$el.find('.upfront-object-content')
-					.addClass('upfront-plain_txt')
+					// .addClass('upfront-plain_txt') // WHY DO THIS, IT MESSES UP THE CSS LOGIC SINCE THAN WE HAVE DUPLICATED CLASS
 					.ueditor({
 						linebreaks: false,
 						//airButtons : ["upfrontFormatting"],
@@ -93,6 +102,8 @@
 						}
 
 						text = ed.getValue(true);
+
+						if (text === '' && arguments[0] && arguments[0].currentTarget) text = arguments[0].currentTarget.innerHTML;
 						me.model.set_content(text);
 
 						Upfront.Events.trigger('upfront:element:edit:stop');
@@ -103,6 +114,7 @@
 						var ed = me.$el.find('.upfront-object-content').data("ueditor"),
 							text = ed.getValue(true)
 						;
+						if (text === '' && typeof arguments[1] === 'string' && arguments[1] !== '') text = arguments[1];
 						if (!text.match(/[<>]/)) {
 							text = ed.redactor.paragraphize.load(text);
 							ed.redactor.code.set(text);
@@ -119,7 +131,7 @@
 							// done
 						}
 
-						me.model.set_content(ed.getValue(true), {silent: true});
+						me.model.set_content(ed.getValue(true) || text, {silent: true});
 					})
 				;
 

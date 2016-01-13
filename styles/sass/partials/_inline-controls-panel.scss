@@ -12,26 +12,30 @@
 }
 .upfront-element-controls .upfront-inline-panel {
 	z-index: 2000;
-    box-shadow: 0px 0px 2px #ADADAD;
+    //box-shadow: 0px 0px 2px #ADADAD;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item {
-    background: #F5F5F5;
+    background: #FFFFFF;
     border-bottom: 0;
     cursor: default;
+}
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-control-dialog-open .upfront-inline-panel-item{
+    background: #F5F5F5;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon {
     cursor: pointer;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-control-dialog-open,
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item:hover {
-    background: #E8E8E8;
+    background: #F5F5F5;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-padding-control {
     min-width: 140px;
     width:100%;
     font-size: 0.8em;
     padding: 5px 20px 10px 10px;
-    background: #E8E8E8;
+    margin-top: 8px;
+    background: #F5F5F5;
     box-shadow: 0px 1px 2px #ADADAD;
     color: #ADADAD;
 }
@@ -40,13 +44,23 @@
     font-weight: bold;
     padding-left: 5px
 }
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon {
+    opacity: 0.75;
+}
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-control-dialog-open .upfront-icon,
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon:hover {
+    opacity: 1;
+}
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-settings:before {
-    background-position: -818px -40px;
-    background-image: url("../img/uf-ui-sprite.svg")!important;
+    background-position: -261px -371px;
+    width: 18px;
+    height: 18px;
+    opacity: 0.75;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-padding:before {
-    background-position: -908px -296px;
-    background-image: url("../img/uf-ui-sprite.svg")!important;
+    background-position: -261px -341px;
+    width: 18px;
+    height: 18px;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-edit:before {
     background-position: -1333px -116px;

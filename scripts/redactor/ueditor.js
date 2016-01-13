@@ -219,7 +219,7 @@ var hackRedactor = function(){
                     this.$editor.focus();
                 }
 
-                this.selection.get();
+                 this.selection.get();
 
                 if (this.range.collapsed)
                 {
@@ -228,6 +228,14 @@ var hackRedactor = function(){
                 else
                 {
                     this.inline.formatMultiple(tag);
+                }
+
+                if( tag && -1 !== _.indexOf( ["em", "italic"],tag.toLowerCase() ) ){ // add fix for em to make it work with list tags
+                        this.selection.selectElement( $(this.selection.getInlines()).find("em") );
+                }
+
+                if( tag &&  -1 !== _.indexOf( ["strong", "bold"], tag.toLowerCase() )  ){ //  add fix for strong to make it work with list tags
+                    this.selection.selectElement( $(this.selection.getInlines()).find("strong") );
                 }
             }
         }
@@ -578,6 +586,36 @@ var Ueditor = function($el, options) {
 
 	//this.startPlaceholder();
 	this.options.pasteCallback = function (html) {
+
+        /** 
+         * When pasting unformatted text with line breaks, the lines get wrapped
+         * in DIV tags. This is due to browser's handling of pasted content inside
+         * div having contenteditable=true. For our requirement, we have to replace
+         * it with P tags instead, in addition we have to make custom replacements
+         * for different use cases.
+         */
+        html = html.replace(/<div>/g, "<p>").replace(/<\/div>/g,"</p>");
+
+        // release br caught within empty p tags
+        html = html.replace(/<p><br><\/p>/g, "<br>");
+        html = html.replace(/<p ([^>]*)><br><\/p>/g, "<br>");
+
+        // if two consecutive paragraphs without a line break inbetween
+        // merge the paragraphs and sepearate text with a br
+        html = html.replace(/<\/p><p>/g, "<br>");
+        html = html.replace(/<\/p><p ([^>]*)>/g, "<br>");
+
+        // if a single line break between two paragraph
+        // take out the line break
+        html = html.replace(/<\/p><br><p>/g, "</p><p>");
+        html = html.replace(/<\/p><br><p ([^>]*)>/g, "</p><p $1>");
+
+        // if multile breaks between 2 paragraphs, replace with blank paragraph
+        html = html.replace(/<\/p>([<br>])*<p>/g, "</p><p></p><p>");
+        html = html.replace(/<\/p>([<br>])*<p ([^>]*)>/g, "</p><p></p><p $1>");
+
+    
+
 		/**
 		 * If a font icon is copied to clipboard, paste it
 		 */
@@ -586,6 +624,8 @@ var Ueditor = function($el, options) {
 		}
 		return html;
 	};
+
+
 
     // Enter callback inside lists 
     this.options.enterCallback = function (e) { 
@@ -677,10 +717,20 @@ Ueditor.prototype = {
 		this.mouseupListener = $.proxy(this.listenForMouseUp, this);
 		this.$el.on('mousedown', this.mouseupListener);
 
+
 		this.$el.on('keydown', function(e){
 			self.cmdKeyA = false;
 			self.cmdKey = false;
 
+            /**
+             * Clean unverified spans and remove their style attr
+             */
+            _.delay(function() {
+                if (e.keyCode === 8) {
+                    self.redactor.clean.clearUnverified();
+                    self.redactor.$editor.find('span').not('[data-verified="redactor"]').removeAttr('style');
+                }
+            }, 2);
 
 			setTimeout(function(){
 				if(e.keyCode === 65 && e.metaKey ){
@@ -894,7 +944,7 @@ Ueditor.prototype = {
 			if($(this).find('i.visit_link').length > 0 || !$(this).attr('href') || $(this).text().trim() == '')
 				return;
 			$(this).css('position', 'relative');
-			$(this).append('<i class="visit_link visit_link_'+me.guessLinkType($(this).attr('href'))+'" data-href="'+$(this).attr('href')+'"></i>');
+			$(this).append('<i class="visit_link visit_link_'+me.guessLinkTypeTag($(this))+'" data-href="'+$(this).attr('href')+'"></i>');
 			$(this).removeAttr('href');
 			//$(this).attr('onclick', 'return false;');
 		});
@@ -932,12 +982,30 @@ Ueditor.prototype = {
 		else
 			window.open(url);
 	},
+    /*validateEmail: function (email) {
+        var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+    },*/
+    guessLinkTypeTag: function(item){
+        return item.data('upfront-link-type');
+    },
 	guessLinkType: function(url){
-
+        var anchor = false;
 		if(!$.trim(url) || $.trim(url) == '#')
 			return 'unlink';
-		if(url.length && url[0] == '#')
-			return url.indexOf('#ltb-') > -1 ? 'lightbox' : 'anchor';
+
+        if(url.indexOf('#') > -1) {
+            anchor =this.getUrlanchor(url);
+        }
+
+		if(anchor) {
+			return url.indexOf('ltb-') > -1 ? 'lightbox' : 'anchor';
+        }
+        // is it an email.
+        if(url.indexOf('mailto:') === 0) {
+            return 'email';
+        }
+
 		if(url.substring(0, location.origin.length) == location.origin)
 			return 'entry';
 
@@ -949,10 +1017,12 @@ Ueditor.prototype = {
 		;
 		regions.each(function (r) {
 			r.get("modules").each(function (module) {
-				module.get("objects").each(function (object) {
-					var anchor = object.get_property_value_by_name("anchor");
-					if (anchor && anchor.length) anchors[anchor] = object;
-				});
+				if(module.get("objects")) {
+                    module.get("objects").each(function (object) {
+    					var anchor = object.get_property_value_by_name("anchor");
+    					if (anchor && anchor.length) anchors[anchor] = object;
+    				});
+                }
 			});
 		});
 		return anchors;
@@ -1163,9 +1233,19 @@ Ueditor.prototype = {
 	getValue: function(is_simple_element){
 		var html = this.redactor.$element.html();
 		if(this.insertManager)
-			html = this.insertManager.insertExport(html, is_simple_element);
+			html = this.insertManager.insertExport(html, is_simple_element),
+            $html =  $("<div>").html( html );
 
-		return html;
+        $html.find(".redactor-selection-marker").remove();
+        /**
+         * Make sure the wrapping .plain-text-container is not being returned as html
+         */
+        return $.trim(
+            // Conditionally nuke the wrapper - only if we actually have it
+            $(html).find(".plain-text-container").length
+                ? $html.find(".plain-text-container").last().html()
+                : $html.html()
+        );
 	},
 	getInsertsData: function(){
 		var insertsData = {};

@@ -92,13 +92,12 @@ class Upfront_Uwidget {
 		ob_start();
 		call_user_func_array($callback, array($params));
 		$markup = ob_get_clean();
-
 		return $this->_get_fields_from_markup($markup);
 	}
 
 	private function _get_fields_from_markup ($markup) {
 		$form = new DOMDocument();
-		@$form->loadHTML($markup);
+		@$form->loadHTML('<?xml encoding="utf-8" ?>' .$markup);
 
 		$xpath = new DOMXPath($form);
 		$nodes = $xpath->query('/html/body//label | /html/body//input | /html/body//select | /html/body//textarea');

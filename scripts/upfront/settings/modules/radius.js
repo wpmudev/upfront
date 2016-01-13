@@ -49,8 +49,9 @@ define([
 			var throttledSliderOnChange = _.throttle(sliderOnChange, 16);
 
 			var radiusOnChange = function(value) {
+/*
+// --- Don't do any of this - it's duplicated code and will fail to update properly as a result ---
 				me.model.set(me.options.fields.radius_number, value);
-
 				//Update border radius
 				var data = {};
 				data[me.options.fields.radius1] = value;
@@ -65,12 +66,16 @@ define([
 				me.$el.find("input[name="+ me.options.fields.radius3 +"]").val(value);
 				me.$el.find("input[name="+ me.options.fields.radius4 +"]").val(value);
 				me.$el.find("input[name="+ me.options.fields.radius +"]").val(value);
-
+*/
+// --- Instead, just update slider value and deal with changes there ---
 				//Update slider value
 				s = me.fields._wrapped[2];
 				s.$el.find('#'+s.get_field_id()).slider('value', value);
 				s.get_field().val(value);
-
+				
+				// Now, once we updated the slider value, let that handler take care of it
+				sliderOnChange.apply(s);
+				
 				//Lower opacity if value is bigger than the slider MAX_VALUE
 				if(value > me.options.max_value) {
 					me.$el.closest('.state_modules').find('.'+ state +'-radius-slider').css('opacity', 0.6);
@@ -183,6 +188,8 @@ define([
 					className: state + '-radius-slider-number border_radius_number',
 					name: me.options.fields.radius_number,
 					label: '',
+					min: 0,
+					max: me.options.max_value,
 					default_value: 0,
 					values: [
 						{ label: "", value: '0' }
@@ -195,6 +202,8 @@ define([
 					className: state + '-radius1 border_radius border_radius1',
 					name: me.options.fields.radius1,
 					label: '',
+					min: 0,
+					max: me.options.max_value,
 					default_value: 0,
 					values: [
 						{ label: "", value: '0' }
@@ -209,6 +218,8 @@ define([
 					className: state + '-radius2 border_radius border_radius2 border_radius2_static',
 					name: me.options.fields.radius2,
 					label: '',
+					min: 0,
+					max: me.options.max_value,
 					default_value: 0,
 					values: [
 						{ label: "", value: '0' }
@@ -223,6 +234,8 @@ define([
 					className: state + '-radius4 border_radius border_radius4',
 					name: me.options.fields.radius4,
 					label: '',
+					min: 0,
+					max: me.options.max_value,
 					default_value: 0,
 					values: [
 						{ label: "", value: '0' }
@@ -237,6 +250,8 @@ define([
 					className: state + '-radius3 border_radius border_radius3',
 					name: me.options.fields.radius3,
 					label: '',
+					min: 0,
+					max: me.options.max_value,
 					default_value: 0,
 					values: [
 						{ label: "", value: '0' }

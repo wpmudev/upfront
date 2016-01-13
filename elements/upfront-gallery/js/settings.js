@@ -14,27 +14,7 @@ define([
 				styleElementPrefix: 'gallery-preset',
 				ajaxActionSlug: 'gallery',
 				panelTitle: l10n.settings,
-				presetDefaults: {
-					'useradius': '',
-					'borderradiuslock': 'yes',
-					'borderradius1': 5,
-					'borderradius2': 5,
-					'borderradius3': 5,
-					'borderradius4': 5,
-					'caption-text': 'rgba(0, 0, 0, 1)',
-					'caption-bg': 'rgba(255, 255, 255, 0.8)',
-					'useborder': '',
-					'bordertype': 'solid',
-					'borderwidth': 3,
-					'bordercolor': 'rgba(0, 0, 0, 0.5)',
-					'use_captions': '',
-					'captionType': 'over',
-					'showCaptionOnHover': 1,
-					'caption-height': 'auto',
-					'thumbCaptionsHeight': 20,
-					'id': 'default',
-					'name': l10n.default_preset
-				},
+				presetDefaults: Upfront.mainData.presetDefaults.gallery,
 				styleTpl: presetTpl,
 				stateModules: {
 					Global: [

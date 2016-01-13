@@ -45,7 +45,7 @@ class Upfront_UmapView extends Upfront_Object{
 			'id_slug' => 'upfront-map_element',
 
 			'controls' => array(),
-			'map_center' => array(10.72250, 106.730762),
+			'map_center' => array(-37.8180, 144.9760),
 			'zoom' => 10,
 			'style' => 'ROADMAP',
 			'styles' => false,

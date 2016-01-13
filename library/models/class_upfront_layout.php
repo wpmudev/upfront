@@ -2,11 +2,13 @@
 
 class Upfront_Layout extends Upfront_JsonModel {
 	
-	protected static $version = '1.0.0';
+	public static $version = '1.0.0';
 
 	protected static $cascade;
 	protected static $layout_slug;
 	protected static $scope_data = array();
+
+	protected static $_layout_default_version = false;
 
 	public static function from_entity_ids ($cascade, $storage_key = '', $dev_first = false) {
 		$layout = array();
@@ -89,6 +91,9 @@ class Upfront_Layout extends Upfront_JsonModel {
 		$data = json_decode( get_option($id, json_encode(array())), true );
 
 		if ( ! empty($data) ) {
+			// Make sure default theme version is cleared if we load from db
+			self::$_layout_default_version = false;
+
 			$regions = array();
 			$regions_added = array();
 			foreach ( $data['regions'] as $i => $region ) {
@@ -242,7 +247,10 @@ class Upfront_Layout extends Upfront_JsonModel {
 		);
 
 		// Make sure version is from layout, instead of global
-		if ( !empty($data) ) {
+		if ( false !== self::$_layout_default_version ) {
+			upfront_set_property_value('version', self::$_layout_default_version, $new_data);
+		}
+		else if ( !empty($data) ) {
 			$version = upfront_get_property_value('version', $data);
 			if ( false === $version ) { // No version, remove version from properties
 				upfront_set_property_value('version', '', $new_data);
@@ -289,10 +297,16 @@ class Upfront_Layout extends Upfront_JsonModel {
 		self::$cascade = $layout_ids;
 		$data = array(
 			"name" => "Default Layout",
-			"properties" => self::get_layout_properties(),
-			"regions" => self::get_regions_data(true),
 			"layout_slug" => self::$layout_slug
 		);
+		$data["regions"] = self::get_regions_data();
+		$data["properties"] = self::get_layout_properties();
+
+		if (!empty($data)) {
+			$codec = new Upfront_MacroCodec_LayoutData();
+			$data = $codec->expand_all($data);
+		}
+
 		return self::from_php(apply_filters('upfront_create_default_layout', $data, $layout_ids, self::$cascade));
 	}
 
@@ -377,15 +391,76 @@ class Upfront_Layout extends Upfront_JsonModel {
 		$storage_key = self::get_storage_key();
 		$region_scope_data = json_decode( get_option(self::_get_scope_id($scope), json_encode(array())), true );
 		$region_scope_data = apply_filters('upfront_get_global_regions', $region_scope_data, $scope);
-		$return = array();
-		foreach ( $region_scope_data as $region){
-			if ( isset($region['trashed']) && $region['trashed'] == 1 )
-				continue;
-			if ( $region['name'] != $name && $region['container'] != $name )
-				continue;
-			$return[] = $region;
+		$total = count($region_scope_data);
+
+		$regions = array();
+		foreach ( $region_scope_data as $r => $region){
+			if ( isset($region['trashed']) && $region['trashed'] == 1 ) continue;
+			if ( $region['name'] != $name ) continue;
+			// Check if this is main region and we should also return sub region
+			if ( $region['container'] == $name ) {
+				// Sub region should be rendered consecutively
+				$top = false;
+				$left = false;
+				$right = false;
+				$bottom = false;
+				if ( $r > 0 ) {
+					for ( $i = $r-1; $i >= 0; $i-- ) {
+						$reg = $region_scope_data[$i];
+						if ( $reg['container'] != $name ) break;
+						if ( $reg['sub'] == 'left' && !$left ) {
+							$regions[] = $reg;
+							$left = true;
+						}
+						if ( $reg['sub'] == 'top' && !$top ) {
+							$regions[] = $reg;
+							$top = true;
+						}
+					}
+				}
+				$regions[] = $region;
+				if ( $r < $total-1 ) {
+					for ( $i = $r+1; $i < $total-1; $i++ ) {
+						$reg = $region_scope_data[$i];
+						if ( $reg['container'] != $name ) break;
+						if ( $reg['sub'] == 'right' && !$right ) {
+							$regions[] = $reg;
+							$right = true;
+						}
+						if ( $reg['sub'] == 'bottom' && !$bottom ) {
+							$regions[] = $reg;
+							$bottom = true;
+						}
+						if ( $reg['sub'] == 'fixed' ) {
+							$regions[] = $reg;
+						}
+					}
+				}
+			}
+			else { // Otherwise, just return this region
+				$regions[] = $region;
+			}
+			break;
 		}
-		return $return;
+
+		// Simulate layout so we can use it for conversion
+		$data = array(
+			'regions' => $regions,
+			'layout' => array(
+				'type' => 'global_regions',
+				'item' => 'global_regions-' . $name
+			)
+		);
+
+		// Expand macro
+		if (!empty($data)) {
+			$codec = new Upfront_MacroCodec_LayoutData();
+			$data = $codec->expand_all($data);
+		}
+
+		$instance = self::from_php($data, $storage_key);
+
+		return $instance->get('regions');
 	}
 
 	public static function delete_scoped_regions ($name, $scope, $storage_key = '') {
@@ -411,8 +486,9 @@ class Upfront_Layout extends Upfront_JsonModel {
 	protected static function _get_regions ($add_global_regions = false) {
 		$regions = array();
 		do_action('upfront_get_regions', self::$cascade);
-		$regions = upfront_get_default_layout(self::$cascade, self::$layout_slug, $add_global_regions);
-		return apply_filters('upfront_regions', $regions, self::$cascade);
+		$layout = upfront_get_default_layout(self::$cascade, self::$layout_slug, $add_global_regions);
+		self::$_layout_default_version = $layout['version'];
+		return apply_filters('upfront_regions', $layout['regions'], self::$cascade);
 	}
 
 	protected static function _get_scope_id ($scope) {

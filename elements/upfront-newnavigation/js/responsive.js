@@ -114,7 +114,7 @@ jQuery(document).ready(function($) {
 		$(".upfront-navigation").each(function () {
 			var $me = $(this);
 
-			if ($me.data('style') == 'triggered' || $me.data('style') === 'burger') {
+			if ($me.data('style') === 'burger' || $me.data('style') === 'burger') {
 				$toggler = $me.children('.responsive_nav_toggler');
 				$toggler.attr('id', $me.attr('id')+'-toggler');
 				if (_cache[$toggler.attr("id")]) _cache[$toggler.attr("id")].destroy();
@@ -126,7 +126,7 @@ jQuery(document).ready(function($) {
 		$(".upfront-navigation.upfront-navigation-float").each(function () {
 			var $me = $(this);
 
-			if($me.data('style') == 'burger' || $me.data('style') == 'triggered') {
+			if($me.data('style') === 'burger' || $me.data('style') == 'burger') {
 				$toggler = $me.children('.responsive_nav_toggler');
 				$toggler.attr('id', $me.attr('id')+'-toggler');
 				//if (_cache[$toggler.attr("id")]) _cache[$toggler.attr("id")].destroy();
@@ -148,6 +148,9 @@ jQuery(document).ready(function($) {
 			$(this).closest('.upfront-output-region-container, .upfront-output-region-sub-container').each(function() {
 				$(this).addClass('upfront-region-container-has-nav');
 			});
+
+			//Make sure parent wrapper have higher z-index
+			$(this).closest('.upfront-output-module').css({'z-index': '9999', position: 'relative'})
 		}
 	});
 
@@ -160,25 +163,12 @@ jQuery(document).ready(function($) {
 		if($(this).parent().find('ul.menu').css('display') == 'none') {
 			$(this).closest('div.upfront-output-wrapper').addClass('on_the_top');
 
-			if($(this).parent().data('burger_over') != 'pushes' && $(this).parent().data('burger_alignment') != 'whole') {
+			if($(this).parent().attr('data-burger_over') != 'pushes' && $(this).parent().attr('data-burger_alignment') != 'whole') {
 				$('<div class="burger_overlay"></div>').insertBefore($(this).parent().find('ul.menu'));
 			}
 
 			$(this).parent().find('ul.menu').show();
 			//$(this).parent().find('ul.sub-menu').show();
-
-			if($(this).parent().data('burger_over') == 'pushes' && $(this).parent().data('burger_alignment') == 'top') {
-
-				$('div#page').css('margin-top', $(this).parent().find('ul.menu').height());
-
-
-				//var topbar_height = $('div#upfront-ui-topbar').outerHeight();
-				var adminbar_height = ($('div#wpadminbar').length > 0)?$('div#wpadminbar').outerHeight():0;
-
-				$(this).parent().find('ul.menu').offset({top:adminbar_height, left:$('div').offset().left});
-				$(this).parent().find('ul.menu').width($('div#page').width());
-
-			}
 
 
 			var offset = $(this).parent().find('ul.menu').position();
@@ -193,15 +183,30 @@ jQuery(document).ready(function($) {
 
 			/*
 
-			if($(this).parent().data('burger_over') == 'pushes')
+			if($(this).parent().attr('data-burger_over') == 'pushes')
 				pushContent($(this).parent());
 			*/
 
+
+			if($(this).parent().attr('data-burger_over') == 'pushes' && $(this).parent().attr('data-burger_alignment') == 'top') {
+
+				$('div#page').css('margin-top', $(this).parent().find('ul.menu').outerHeight());
+
+
+				//var topbar_height = $('div#upfront-ui-topbar').outerHeight();
+				var adminbar_height = ($('div#wpadminbar').length > 0)?$('div#wpadminbar').outerHeight():0;
+
+				$(this).parent().find('ul.menu').offset({top:adminbar_height, left:$('div').offset().left});
+				$(this).parent().find('ul.menu').css('width', $('div#page').width() + 'px');
+
+			}
 
 
 			$(this).closest('.upfront-output-region-container').each(function() {
 				$(this).addClass('upfront-region-container-has-nav');
 			});
+
+			$(document).trigger('upfront-responsive-nav-open');
 
 		}
 		else {
@@ -210,24 +215,30 @@ jQuery(document).ready(function($) {
 			//$(this).parent().find('ul.sub-menu').hide();
 
 			//$(e.target).closest('.responsive_nav_toggler').css({position: '', left: '', top: ''});
-			//$(this).parent().find('ul.menu').css('padding-top', '');
+			$(this).parent().find('ul.menu').css({
+				top: '',
+				left: '',
+				width: ''
+			});
 
 			$('i.burger_nav_close').parent('li.wrap_burger_nav_close').remove();
 
 			$(this).closest('div.upfront-output-wrapper').removeClass('on_the_top');
 
 			/*
-			if($(this).parent().data('burger_over') == 'pushes')
+			if($(this).parent().attr('data-burger_over') == 'pushes')
 				pullContent($(this).parent());
 			*/
 
-			if($(this).parent().data('burger_over') == 'pushes')
+			if($(this).parent().attr('data-burger_over') == 'pushes')
 				$('div#page').css('margin-top', '');
 
 
 			$(this).closest('.upfront-output-region-container').each(function() {
 				$(this).removeClass('upfront-region-container-has-nav');
 			});
+
+			$(document).trigger('upfront-responsive-nav-close');
 		}
 	});
 
@@ -250,7 +261,50 @@ jQuery(document).ready(function($) {
 		$('div#page').css('minWidth', '');
 	}
 
+	// the following is used to find the current breakpoint on resize
+	var previous_breakpoint = '';
+	var current_breakpoint = '';
+
+	function get_breakpoint(){
+		if (!window.getComputedStyle) {
+				window.getComputedStyle = function(el, pseudo) {
+				this.el = el;
+				this.getPropertyValue = function(prop) {
+					var re = /(\-([a-z]){1})/g;
+					if (prop == 'float') prop = 'styleFloat';
+					if (re.test(prop)) {
+						prop = prop.replace(re, function () {
+							return arguments[2].toUpperCase();
+						});
+					}
+					return el.currentStyle[prop] ? el.currentStyle[prop] : null;
+				}
+				return this;
+			}
+		}
+		var breakpoint = window.getComputedStyle(document.body,':after').getPropertyValue('content');
+		if(breakpoint) {
+			breakpoint = breakpoint.replace(/['"]/g, '')
+			if (current_breakpoint != breakpoint) {
+				previous_breakpoint = current_breakpoint;
+				current_breakpoint = breakpoint;
+			}
+			return breakpoint;
+		}
+	}
+
+	var upfrontIsLoaded = function() {
+		// Check if cssEditor is defined, than we have Upfront loaded
+		if (typeof Upfront !== 'undefined' && typeof Upfront.Application !== 'undefined' && typeof Upfront.Application.cssEditor !== 'undefined') {
+			return true;
+		}
+
+		return false;
+	};
+
+
 	function roll_responsive_nav(selector, bpwidth) {
+		if (upfrontIsLoaded()) return;
 
 		var elements = (typeof(selector) == 'object')?selector:$(selector);
 		elements.each(function () {
@@ -259,24 +313,18 @@ jQuery(document).ready(function($) {
 
 			var currentwidth = (typeof(bpwidth) != 'undefined') ? parseInt(bpwidth) : $(window).width();
 
-			var key;
-			var currentKey = 'desktop';
-			var preset;
-			var responsive_css;
+			var currentKey, preset, responsive_css;
 
 			if (breakpoints.preset) {
-				var order = {'mobile':'', 'tablet':'', 'desktop':''};
-				for (key in order) {
-					breakpoints.preset[key] = breakpoints.preset[key] || {};
-					if (parseInt(currentwidth) >= parseInt(breakpoints.preset[key].width)) {
-						currentKey = key;
-					}
-				}
+				currentKey = get_breakpoint();
+				if(currentKey === '')
+					currentKey = 'desktop';
 
 				preset = breakpoints.preset[currentKey];
 
-				if (preset.menu_style == 'triggered') {
+				if (preset.menu_style == 'burger') {
 					$(this).attr('data-style', 'burger');
+					$(this).attr('data-stylebk', 'burger');
 					$(this).attr('data-alignment', ( preset.menu_alignment ? preset.menu_alignment : $(this).data('alignmentbk') ));
 					$(this).attr('data-burger_alignment', preset.burger_alignment);
 					$(this).attr('data-burger_over', preset.burger_over);
@@ -302,7 +350,7 @@ jQuery(document).ready(function($) {
 					//Z-index the container module to always be on top, in the layout edit mode
 					$(this).closest('div.upfront-newnavigation_module').css('z-index', 3);
 
-					$(this).find('ul.menu').siblings('.burger_overlay').remove();
+
 					$(this).find('ul.menu').hide();
 				} else {
 					$(this).attr('data-style', ( preset.menu_style ? preset.menu_style : $(this).data('stylebk') ));
@@ -329,6 +377,8 @@ jQuery(document).ready(function($) {
 					$(this).closest('div.upfront-newnavigation_module').css('z-index', '');
 				}
 
+				$(this).find('ul.menu').siblings('.burger_overlay').remove();
+
 				if(preset.is_floating && preset.is_floating == 'yes')
 					$(this).addClass('upfront-navigation-float');
 				else
@@ -337,7 +387,7 @@ jQuery(document).ready(function($) {
 				// Leave old code for backward compatibility
 				var bparray = [];
 				for (key in breakpoints) {
-					bparray.push(breakpoints[key]);
+					if (key !== 'preset') bparray.push(breakpoints[key]);
 				}
 
 				bparray.sort(function(a, b) {
@@ -353,7 +403,7 @@ jQuery(document).ready(function($) {
 						if(bparray[key]['burger_menu'] == 'yes') {
 
 							$(this).attr('data-style', 'burger');
-							$(this).attr('data-aliment', ( bparray[key]['menu_alignment'] ? bparray[key]['menu_alignment'] : $(this).data('alimentbk') ));
+							$(this).attr('data-alignment', ( bparray[key]['menu_alignment'] ? bparray[key]['menu_alignment'] : $(this).data('alignmentbk') ));
 							$(this).attr('data-burger_alignment', bparray[key]['burger_alignment']);
 							$(this).attr('data-burger_over', bparray[key]['burger_over']);
 
@@ -387,7 +437,7 @@ jQuery(document).ready(function($) {
 						}
 						else {
 							$(this).attr('data-style', ( bparray[key]['menu_style'] ? bparray[key]['menu_style'] : $(this).data('stylebk') ));
-							$(this).attr('data-aliment', ( bparray[key]['menu_alignment'] ? bparray[key]['menu_alignment'] : $(this).data('alimentbk') ));
+							$(this).attr('data-alignment', ( bparray[key]['menu_alignment'] ? bparray[key]['menu_alignment'] : $(this).data('alignmentbk') ));
 							$(this).removeAttr('data-burger_alignment','');
 							$(this).removeAttr('data-burger_over', '');
 
@@ -425,6 +475,7 @@ jQuery(document).ready(function($) {
 		$('.responsive_nav_toggler').css({position: '', left: '', top: ''});
 		$('ul.menu').css('padding-top', '');
 		$('.burger_nav_close').parent('li.wrap_burger_nav_close').remove();
+
 		roll_responsive_nav(".upfront-output-unewnavigation > .upfront-navigation");
 		floatInit();
 	});

@@ -37,7 +37,7 @@ define([
 			UnewnavigationModel: {label: l10n.navigation, id: 'nav', preset_container: 'inline'},
 			ButtonModel: {label: l10n.button, id: 'button', preset_container: 'inline'},
 			//UpostsModel: {label: l10n.posts, id: 'uposts'},WW
-			PostsModel: {label: l10n.posts, id: 'posts'},
+			PostsModel: {label: l10n.posts, id: 'posts', preset_container: 'inline'},
 			UsearchModel: {label: l10n.search, id: 'search'},
 			USliderModel: {label: l10n.slider, id: 'slider'},
 			SocialMediaModel: {label: l10n.social, id: 'SocialMedia'},
@@ -94,8 +94,9 @@ define([
 
 			if ( typeof options.change == 'function' ) this.listenTo(this, 'change', options.change);
 
-			this.render();
+			if (this.options.doNotRender === true) return;
 
+			this.render();
 			this.startResizable();
 		},
 		close: function(event) {
@@ -141,6 +142,35 @@ define([
 
 			this.$el.show();
 		},
+		renderCss: function(rawCss) {
+			var styles_with_selector;
+			var preset_class = this.get_css_selector();
+			styles_with_selector = this.stylesAddSelector($.trim(rawCss), '#page ' + preset_class);
+			// Solve case of button loosing its styles
+			styles_with_selector = Upfront.Util.colors.convert_string_ufc_to_color(styles_with_selector.replace(new RegExp(this.get_css_selector() + ' .upfront-button', 'g'), this.get_css_selector() + '.upfront-button'));
+
+			return styles_with_selector;
+		},
+		cleanUpStyles: function(styles) {
+			var scope = new RegExp(this.get_css_selector() + '\\s*', 'g');
+			styles = styles.replace(new RegExp('#page ' + this.get_css_selector() + '\\s*', 'g'), '');
+			styles = styles.replace(scope, '');
+			// Unescape quotes a few times
+			styles = styles.replace(/\\'/g, "'");
+			styles = styles.replace(/\\'/g, "'");
+			styles = styles.replace(/\\'/g, "'");
+			styles = styles.replace(/\\"/g, '"');
+			styles = styles.replace(/\\"/g, '"');
+			styles = styles.replace(/\\"/g, '"');
+
+			styles = styles.replace(/\.tablet-breakpoint/g, '');
+			styles = styles.replace(/\.mobile-breakpoint/g, '');
+			styles = styles.replace(/#page/g, '');
+
+			styles = Upfront.Util.colors.convert_string_color_to_ufc(styles.replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
+
+			return styles;
+		},
 		startAce: function() {
 			var me = this,
 				editor = ace.edit(this.$('.upfront-css-ace')[0]),
@@ -154,21 +184,7 @@ define([
 			editor.setTheme('ace/theme/monokai');
 
 			editor.on('change', function(event){
-				var styles_with_selector;
-				var rules = editor.getValue().split('}');
-				var preset_class = '\n\n' + me.get_css_selector();
-
-				if(typeof me.elementType.preset_container === "undefined") {
-					preset_class = preset_class + ' ';
-				}
-
-				rules = _.map(rules, function(rule){return $.trim(rule);});
-				rules.pop();
-
-				styles_with_selector = me.stylesAddSelector($.trim(editor.getValue()), '#page ' + me.get_css_selector());
-				// Solve case of button loosing its styles
-				styles_with_selector = Upfront.Util.colors.convert_string_ufc_to_color(styles_with_selector.replace(new RegExp(me.get_css_selector() + ' .upfront-button', 'g'), me.get_css_selector() + '.upfront-button'));
-
+				var styles_with_selector = me.renderCss(editor.getValue());
 				// DO NOT DO THIS!!! DELEGATE STYLE RENDERING TO PRESET (look at preset-css module
 				// me.$style.html(styles_with_selector);
 				me.trigger('change', styles_with_selector);
@@ -176,19 +192,7 @@ define([
 
 
 			var styles = this.options.preset.get('preset_style') ? this.options.preset.get('preset_style') : '';
-
-			scope = new RegExp(this.get_css_selector() + '\\s*', 'g');
-			styles = styles.replace(new RegExp('#page ' + this.get_css_selector() + '\\s*', 'g'), '');
-			styles = styles.replace(scope, '');
-			// Unescape quotes a few times
-			styles = styles.replace(/\\'/g, "'");
-			styles = styles.replace(/\\'/g, "'");
-			styles = styles.replace(/\\'/g, "'");
-			styles = styles.replace(/\\"/g, '"');
-			styles = styles.replace(/\\"/g, '"');
-			styles = styles.replace(/\\"/g, '"');
-
-			styles = Upfront.Util.colors.convert_string_color_to_ufc(styles.replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
+			styles = this.cleanUpStyles(styles);
 			editor.setValue($.trim(styles), -1);
 
 			// Set up the proper vscroller width to go along with new change.
@@ -338,19 +342,30 @@ define([
 			this.blink($element, 4);
 		},
 		hiliteElement: function(e){
-			var preset_selector = this.get_css_selector() + ' ';
+			var preset_selector = this.get_css_selector();
+			
+			//Do not add empty space for posts element
+			if(this.elementType.id !== "posts") {
+				preset_selector = preset_selector + ' ';
+			}
 
 			var selector = preset_selector + $(e.target).data('selector');
 
 			if(!selector.length)
 				return;
 			var element = $('#' + this.element_id + selector);
+
 			element.addClass('upfront-css-hilite');
 		},
 
 		unhiliteElement: function(e){
-			var preset_selector = this.get_css_selector() + ' ';
+			var preset_selector = this.get_css_selector();
 
+			//Do not add empty space for posts element
+			if(this.elementType.id !== "posts") {
+				preset_selector = preset_selector + ' ';
+			}
+			
 			var selector = preset_selector + $(e.target).data('selector');
 
 			if(!selector.length)
@@ -365,7 +380,14 @@ define([
 		},
 		get_css_selector: function() {
 			if (this.is_global_stylesheet) return '';
-			return '.' + this.options.preset.get('id');
+
+			var preset_class = '.' + this.options.preset.get('id');
+
+			if(typeof this.elementType.preset_container === "undefined") {
+				preset_class = preset_class + ' ';
+			}
+
+			return preset_class;
 		},
 		updateStyles: function(contents){
 			var $el = this.get_style_element();
@@ -445,9 +467,6 @@ define([
 
 			if (this.is_global_stylesheet === false && this.stylename === this.get_temp_stylename())
 				return Upfront.Views.Editor.notify(l10n.style_name_nag, 'error');
-
-			if(!styles)
-				return Upfront.Views.Editor.notify(l10n.style_empty_nag, 'error');
 
 			return Upfront.Views.Editor.notify(l10n.preset_style_saved.replace(/%s/,  this.elementType.id));
 		},

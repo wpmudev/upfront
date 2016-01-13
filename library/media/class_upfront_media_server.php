@@ -10,6 +10,9 @@ class Upfront_MediaServer extends Upfront_Server {
 	private function _add_hooks () {
 		$this->augment_attachments();
 
+		// Fix WP srcset creation
+		add_filter('wp_calculate_image_srcset', array($this, 'fix_srcset'));
+
 		add_filter('upfront_l10n', array($this, 'add_l10n_strings'));
 
 		// Do not show media labels in posts taxonomy selection list
@@ -40,6 +43,25 @@ class Upfront_MediaServer extends Upfront_Server {
 			upfront_add_ajax('upfront-media-embed', array($this, "embed_media"));
 			upfront_add_ajax('upfront-media-get_embed_raw', array($this, "get_embed_raw"));
 		}
+	}
+
+	/**
+	 * Fix srcset sources not being escaped.
+	 *
+	 * @param array $sources Array of srcset sources, as exposed by `wp_calculate_image_srcset` filter
+	 *
+	 * @return array
+	 */
+	public function fix_srcset ($sources) {
+		if (empty($sources)) return $sources; // Short out if we can
+
+		foreach ($sources as $idx => $src) {
+			if (empty($src['url'])) continue;
+			$src['url'] = esc_url($src['url']);
+			$sources[$idx] = $src;
+		}
+
+		return $sources;
 	}
 
 	public function add_l10n_strings ($strings) {

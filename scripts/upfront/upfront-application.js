@@ -164,13 +164,16 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		this.listenTo(Upfront.Events, "entity:region_container:after_render", Upfront.Behaviors.GridEditor.create_region_container_resizable);
 		this.listenTo(Upfront.Events, "entity:region_sub_container:after_render", Upfront.Behaviors.GridEditor.create_region_container_resizable);
 
+		if ( !Upfront.Behaviors.GridEditor.grid ) {
+			Upfront.Behaviors.GridEditor.init();
+		}
 		this.listenTo(Upfront.Events, "layout:after_render", Upfront.Behaviors.GridEditor.init);
 	},
 
 	set_up_event_plumbing_after_render: function () {
 		// Set up properties
-		this.listenTo(Upfront.Events, "entity:activated", this.create_properties);
-		this.listenTo(Upfront.Events, "entity:deactivated", this.destroy_properties);
+		//this.listenTo(Upfront.Events, "entity:activated", this.create_properties);
+		//this.listenTo(Upfront.Events, "entity:deactivated", this.destroy_properties);
 
 		// Layout manipulation
 		this.listenTo(Upfront.Events, "command:exit", this.destroy_editor);
@@ -213,18 +216,25 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		var loading = false,
 			start = function () {
 				loading = new Upfront.Views.Editor.Loading({
-					loading: "Saving...",
-					done: "All done!",
+					loading: Upfront.Settings.l10n.global.application.saving,
+					done: Upfront.Settings.l10n.global.application.saving_success,
 					fixed: true
 				});
 				loading.render();
 				$('body').append(loading.$el);
 			},
 			stop = function (success) {
+				if (!success) {
+					loading.update_loading_text(Upfront.Settings.l10n.global.application.saving_error);
+				}
 				loading.on_finish(function(){
 					Upfront.Events.trigger("command:layout:save_done", success);
 				});
-				loading.done();
+				if (!success) {
+					loading.done(false, Upfront.Settings.l10n.global.application.saving_error);
+				} else {
+					loading.done();
+				}
 			}
 		;
 		this.listenTo(Upfront.Events, "command:layout:save_start", start);
@@ -341,9 +351,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 
 		Upfront.data.region_views[region.cid].show();
 	},
-
-	createLightboxRegion: function(regionName){
-
+	getLightboxSafeName: function(regionName) {
 		var regions = (this.layout && this.layout.get ? this.layout.get('regions') : Upfront.Application.current_subapplication.layout.get('regions')),
 			region = regions ? regions.get_by_name('lightbox') : false;
 
@@ -356,7 +364,23 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			region.add_to(regions, regions.length-1);
 		}
 
-		var	safeName = 'ltb-' + regionName.toLowerCase().replace(/\s/g, '-') + (regions.length+1),
+		return 'ltb-' + regionName.toLowerCase().replace(/\s/g, '-') + (regions.length+1);
+	},
+	createLightboxRegion: function(regionName){
+
+		var regions = (this.layout && this.layout.get ? this.layout.get('regions') : Upfront.Application.current_subapplication.layout.get('regions'));
+		//	region = regions ? regions.get_by_name('lightbox') : false;
+
+		/*if ( ! region ){
+			region = new Upfront.Models.Region({
+				"name": "lightbox",
+				"container": "lightbox",
+				"title": "lightbox Region"
+			});
+			region.add_to(regions, regions.length-1);
+		}*/
+
+		var	safeName = this.getLightboxSafeName(regionName),
 			lightbox = new Upfront.Models.Region(_.extend({}, Upfront.data.region_default_args, {
 				name: safeName,
 				container: 'lightbox',
@@ -1167,11 +1191,14 @@ var Application = new (Backbone.Router.extend({
 	sidebar: false,
 	layout: false,
 
+	layout_ready: false,
+
 	responsiveMode: false,
 
 	boot: function () {
 		this.MODE = Upfront.Settings.Application.MODE;
 		var me = this;
+		$("body .upfront-edit_layout a").addClass('active');
 		$("body").off("click", ".upfront-edit_layout").on("click", ".upfront-edit_layout", function () {
 			//$(".upfront-editable_trigger").hide();
 			//app.go("layout");
@@ -1416,20 +1443,22 @@ var Application = new (Backbone.Router.extend({
 
 		window._upfront_post_data.layout = layoutData.data.cascade;
 
+		Upfront.Events.trigger("upfront:layout:loaded");
+		if (me.current_subapplication && me.current_subapplication.start)
+			me.current_subapplication.start();
+
+		else Upfront.Util.log("No current subapplication");
+
+		//if (!me.layout_view) {
+		me.layout_view = new Upfront.Views.Layout({
+			"model": me.layout,
+			"el": $(Upfront.Settings.LayoutEditor.Selectors.main)
+		});
+		Upfront.Events.trigger("layout:render", me.current_subapplication);
+		me.layout_ready = true;
+		//}
+
 		Upfront.Application.loading.done(function () {
-			Upfront.Events.trigger("upfront:layout:loaded");
-			if (me.current_subapplication && me.current_subapplication.start)
-				me.current_subapplication.start();
-
-			else Upfront.Util.log("No current subapplication");
-
-			//if (!me.layout_view) {
-			me.layout_view = new Upfront.Views.Layout({
-				"model": me.layout,
-				"el": $(Upfront.Settings.LayoutEditor.Selectors.main)
-			});
-			Upfront.Events.trigger("layout:render", me.current_subapplication);
-			//}
 
 			Upfront.PreviewUpdate.run(me.layout);
 
@@ -1469,6 +1498,7 @@ var Application = new (Backbone.Router.extend({
 			//Destroy
 			this.layout_view.remove();
 			this.layout_view = false;
+			this.layout_ready = false;
 
 			//Restore tag attributes
 			newElement.attr({
@@ -1614,6 +1644,59 @@ var Application = new (Backbone.Router.extend({
 		}
 		//this.sidebar.render(); <-- Subapplications do this
 	},
+	
+	recursiveExistenceMigration: function(selector, clean_selector) {
+		var splitted = clean_selector.split(' ');
+		var me = this;
+		while(splitted.length > 0) {
+			try{
+				if(!!$(selector + splitted.join(' ')).closest('#' + me.element_id).length)
+					return true;
+			}
+			catch (err) {
+
+			}
+			splitted.pop();
+		}
+
+		return false;
+	},
+
+	stylesAddSelectorMigration: function(contents, selector) {
+		if (this.is_global_stylesheet && empty(selector)) return contents;
+
+		var me = this,
+			rules = contents.split('}'),
+			processed = ''
+		;
+
+		_.each(rules, function (rl) {
+			var src = $.trim(rl).split('{');
+
+			if (src.length != 2) return true; // wtf
+
+			var individual_selectors = src[0].split(','),
+				processed_selectors = []
+			;
+			_.each(individual_selectors, function (sel) {
+				sel = $.trim(sel);
+				var clean_selector = sel.replace(/:[^\s]+/, ''); // Clean up states states such as :hover, so as to not mess up the matching
+				var	is_container = clean_selector[0] === '@' || me.recursiveExistenceMigration(selector, clean_selector),
+					spacer = is_container
+						? '' // This is not a descentent selector - used for containers
+						: ' ' // This is a descentent selector
+				;
+
+				processed_selectors.push('' +
+					selector + spacer + sel +
+				'');
+			});
+			processed += processed_selectors.join(', ') + ' {' +
+				src[1] + // Actual rule
+			'\n}\n';
+		});
+		return processed;
+	},
 
 	create_cssEditor: function(){
 		var me = this,
@@ -1684,6 +1767,7 @@ var Application = new (Backbone.Router.extend({
 			});
 
 			if (_upfront_post_data.layout) me.apply_region_css();
+			Upfront.Events.trigger("upfront:csseditor:ready");
 		});
 
 		cssEditor.createSelectors(Upfront.Application.LayoutEditor.Objects);
@@ -1849,8 +1933,9 @@ return {
 $(function () {
 	$("body").on("click", ".upfront-edit_layout", function (e) {
 		e.preventDefault();
-		alert(_upfront_please_hold_on);
+		// alert(_upfront_please_hold_on);
 	});
 })
 
 })(jQuery);
+//@ sourceURL=upfront-application.js

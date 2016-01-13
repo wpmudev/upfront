@@ -100,3 +100,22 @@
   position: absolute;
   z-index: 1;
 }
+
+/* Padding Hint */
+.upfront-entity-padding-hint {
+  display: block;
+  position: absolute;
+  top: auto;
+  bottom: auto;
+  left: 0;
+  right: 0;
+  transition: opacity 200ms ease-out;
+}
+.upfront-entity-top-padding-hint {
+  top: 2px;
+  background: transparent url(../img/top-padding-hint.png) center bottom scroll repeat;
+}
+.upfront-entity-bottom-padding-hint {
+  bottom: 2px;
+  background: transparent url(../img/bottom-padding-hint.png) center bottom scroll repeat;
+}

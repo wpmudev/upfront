@@ -21,6 +21,29 @@ define([
 					me.close();
 				}
 			});
+			$(document).mouseup(function(e){
+				var	target = $(e.target),
+					currentEntity = Upfront.data.currentEntity;
+
+				if (target.closest('#page').length && target[0] !== me.el && !target.closest(me.el).length && typeof(currentEntity) !== 'undefined' && typeof(currentEntity.padding_hint_locked) !== 'undefined' && currentEntity.padding_hint_locked) {
+					currentEntity.padding_hint_locked = false;
+					currentEntity.top_padding_hint_timer = setTimeout(function() {
+						if(typeof(currentEntity.hide_top_padding_hint) === 'function'){
+							currentEntity.hide_top_padding_hint();
+						}
+					}, 1000);
+					currentEntity.bottom_padding_hint_timer = setTimeout(function() {
+						if(typeof(currentEntity.hide_bottom_padding_hint) === 'function'){
+							currentEntity.hide_bottom_padding_hint();
+						}
+					}, 1000);
+				}
+			});
+
+			this.default_padding = {
+				top: false,
+				bottom: false
+			}
 
 			this.listenTo(Upfront.Events, "upfront:paddings:updated", this.refresh);
 		},
@@ -77,12 +100,19 @@ define([
 				me.$el.append($paddingControl);
 			}
 
+			if(me.default_padding.top === false) {
+				me.default_padding.top = column_padding;
+			}
+			if(me.default_padding.bottom === false){
+				me.default_padding.bottom = column_padding;
+			}
+
 			me.paddingTop = new Upfront.Views.Editor.Field.Slider({
 				model: this.model,
 				use_breakpoint_property: true,
 				property: 'top_padding_num',
 				label: '',
-				default_value: this.model.get_breakpoint_property_value('top_padding_num') || column_padding,
+				default_value: this.model.get_breakpoint_property_value('top_padding_num') || me.default_padding.top,
 				min: 0,
 				max: 200,
 				step: 5,
@@ -93,18 +123,20 @@ define([
 				change: function () {
 					var value = this.get_value();
 
+					this.model.set_breakpoint_property('lock_padding', '', true);
 					this.model.set_breakpoint_property('top_padding_use', 'yes');
 					this.model.set_breakpoint_property('top_padding_num', value);
-					this.model.set_breakpoint_property('top_padding_slider', value);
-					Upfront.Events.trigger("upfront:paddings:updated");
+					this.model.set_breakpoint_property('top_padding_slider', value, true); // silent, don't need to trigger update again
+					Upfront.Events.trigger("upfront:paddings:updated", this.model, Upfront.data.currentEntity);
 				}
 			});
+
 			me.paddingBottom = new Upfront.Views.Editor.Field.Slider({
 				model: this.model,
 				use_breakpoint_property: true,
 				property: 'bottom_padding_num',
 				label: '',
-				default_value: this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding,
+				default_value: this.model.get_breakpoint_property_value('bottom_padding_num') || me.default_padding.bottom,
 				min: 0,
 				max: 200,
 				step: 5,
@@ -115,10 +147,11 @@ define([
 				change: function () {
 					var value = this.get_value();
 
+					this.model.set_breakpoint_property('lock_padding', '', true);
 					this.model.set_breakpoint_property('bottom_padding_use', 'yes');
 					this.model.set_breakpoint_property('bottom_padding_num', value);
-					this.model.set_breakpoint_property('bottom_padding_slider', value);
-					Upfront.Events.trigger("upfront:paddings:updated");
+					this.model.set_breakpoint_property('bottom_padding_slider', value, true); // silent, don't need to trigger update again
+					Upfront.Events.trigger("upfront:paddings:updated", this.model, Upfront.data.currentEntity);
 				}
 			});
 
@@ -129,14 +162,51 @@ define([
 			me.paddingBottom.render();
 			$paddingBottomContainer.append(me.paddingBottom.$el);
 			$paddingControl.append($paddingBottomContainer);
+
+			$paddingTopContainer.on('mousedown', function() {
+				Upfront.data.currentEntity.padding_hint_locked = true;
+			}).on('mouseup', function() {
+				var currentEntity = Upfront.data.currentEntity;
+
+				currentEntity.padding_hint_locked = false;
+				currentEntity.top_padding_hint_timer = setTimeout(function() {
+					if(typeof(currentEntity.hide_top_padding_hint) === 'function'){
+						currentEntity.hide_top_padding_hint();
+					}
+				}, 1000);
+			});
+
+			$paddingBottomContainer.on('mousedown', function() {
+				Upfront.data.currentEntity.padding_hint_locked = true;
+			}).on('mouseup', function() {
+				var currentEntity = Upfront.data.currentEntity;
+
+				currentEntity.padding_hint_locked = false;
+				currentEntity.bottom_padding_hint_timer = setTimeout(function() {
+					if(typeof(currentEntity.hide_bottom_padding_hint) === 'function'){
+						currentEntity.hide_bottom_padding_hint();
+					}
+				}, 1000);
+			});
 		},
-		refresh: function() {
+
+		refresh: function(model) {
+			if ( model && model !== this.model ) return;
 			var column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
 				top_padding_use = this.model.get_breakpoint_property_value('top_padding_use', true),
 				bottom_padding_use = this.model.get_breakpoint_property_value('bottom_padding_use', true),
-				padding_top_val = top_padding_use ? this.model.get_breakpoint_property_value('top_padding_num', true) : column_padding,
-				padding_bottom_val = bottom_padding_use ? this.model.get_breakpoint_property_value('bottom_padding_num', true) : column_padding
+				padding_top_val, padding_bottom_val
 			;
+
+			if(this.default_padding.top === false) {
+				this.default_padding.top = column_padding;
+			}
+			if(this.default_padding.bottom === false){
+				this.default_padding.bottom = column_padding;
+			}
+			padding_top_val = top_padding_use ? this.model.get_breakpoint_property_value('top_padding_num', true) : this.default_padding.top;
+			padding_bottom_val = bottom_padding_use ? this.model.get_breakpoint_property_value('bottom_padding_num', true) : this.default_padding.bottom;
+
 
 			if(typeof this.paddingTop !== 'undefined') {
 				this.paddingTop.get_field().val(padding_top_val);

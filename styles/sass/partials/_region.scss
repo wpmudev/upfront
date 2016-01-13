@@ -43,7 +43,7 @@
 }
 
 .upfront-region-container-sticky {
-	z-index: 2999999;
+	z-index: 99;
 }
 
 .upfront-region-hidden {
@@ -163,7 +163,11 @@
 .upfront-region-fixed-editing .upfront-region-container:hover .upfront-region-edit-trigger,
 .upfront-edit-responsive .upfront-region-hidden > .upfront-region-edit-trigger,
 .upfront-edit-responsive .upfront-region-editing.responsive-breakpoint .upfront-region:hover > .upfront-region-edit-trigger-small,
-.upfront-edit-responsive .responsive-breakpoint .upfront-region-hidden:hover > .upfront-region-edit-trigger-small {
+.upfront-edit-responsive .responsive-breakpoint .upfront-region-hidden:hover > .upfront-region-edit-trigger-small,
+.upfront-region-container.upfront-region-container-nav-open .upfront-region-edit-trigger,
+.upfront-region-container.upfront-region-container-nav-open:hover .upfront-region-edit-trigger,
+.upfront-edit-responsive .upfront-region-container.upfront-region-container-nav-open .upfront-region-edit-trigger,
+.upfront-edit-responsive .upfront-region-container.upfront-region-container-nav-open:hover .upfront-region-edit-trigger {
 	visibility: hidden;
 	opacity: 0;
 }
@@ -204,6 +208,9 @@
 .upfront-object-group-on-edit .upfront-object-group-finish-edit,
 .upfront-region-lightbox-editing .upfront-region-side-lightbox .upfront-region-finish-edit-lightbox {
 	display: block;
+}
+.upfront-module-group-nav-open.upfront-module-group-on-edit .upfront-module-group-finish-edit {
+	display: none;
 }
 .upfront-region-title {
 	position: absolute;
@@ -334,9 +341,10 @@
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region > .upfront-region-resize-handle-s,
 .upfront-region-fixed-editing .upfront-region-side-fixed .upfront-region-resize-handle {
 	visibility: visible;
-	z-index: 9997;
+	/*z-index: 9997;*/
+	z-index: 2000000;
 }
-.responsive-breakpoint.upfront-region-editing .upfront-region-container-active > .upfront-region-resize-handle,
+/*.responsive-breakpoint.upfront-region-editing .upfront-region-container-active > .upfront-region-resize-handle,*/
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region-side-left > .upfront-region-resize-handle-e,
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region-side-right > .upfront-region-resize-handle-w,
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region-hidden > .upfront-region-resize-handle-s,
@@ -908,7 +916,7 @@
 }
 .upfront-inline-panel-item .upfront-icon {
 	display: block;
-	padding: 4px 4px 0 4px;
+	padding: 6px 6px 0 6px;
 }
 .upfront-inline-panel-item.labeled{
     line-height: 40px !important;
@@ -1377,4 +1385,7 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-region-editing .upfront-region-bg-setting-open .upfront-icon-control-region-resize-e:before,
 .upfront-region-editing .upfront-region-bg-setting-open .upfront-icon-control-region-resize-w:before {
 	display:none;
+}
+.upfront-ui .upfront-region-panel-item-add-region .upfront-icon-region-add:before {
+	background-position: -260px -130px;
 }

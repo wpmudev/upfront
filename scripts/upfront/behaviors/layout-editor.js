@@ -16,15 +16,13 @@ var LayoutEditor = {
 				var $el = $(ui.selecting),
 					$region, $selected, $affected, group, do_select;
 				// make sure it's not inside module group
-				if ( $el.closest('.upfront-module-group').length > 0 )
-					return;
+				if ( $el.closest('.upfront-module-group').length > 0 ) return;
 				if ( ed.selection.length > 0 ){
 					// if we already have at least one selection, check if the next selection is mergeable or not
 					// make sure it's in the same region
 					$region = $(ed.selection[0]).closest('.upfront-region');
-					if ( $el.closest('.upfront-region').get(0) != $region.get(0) )
-						return;
-					ed._add_selections( $region.find('.ui-selecting'), $region.find('.upfront-module').not('.upfront-ui-selected, .upfront-module-parent-group') );
+					if ( $el.closest('.upfront-region').get(0) != $region.get(0) ) return;
+					ed._add_selections( $region.find('.ui-selecting'), $region.find('.upfront-module').not('.upfront-ui-selected, .upfront-module-parent-group'), $region.find('.upfront-module-group') );
 				}
 				else {
 					ed._add_selection(ui.selecting);
@@ -33,52 +31,25 @@ var LayoutEditor = {
 			},
 			unselecting: function (e, ui) {
 				var $el = $(ui.unselecting),
-					$region, $selected, $affected, group;
-				if ( ed.selection.length > 0 ){
+					$region, $selected
+				;
+				if ( ed.selection.length > 1 ){
 					$region = $(ed.selection[0]).closest('.upfront-region');
-					// we have 2 different behavior to solve conflict, we used the 2nd one in the mean time
-					/*if ( !Upfront.data.include_affected_selection ){
-						// 1. make sure to not include selection that can lead to conflict with other elements
-						// on unselecting, we'll remove selection one by one until there's no conflict
-						$selected = $(ed.selection).filter('.ui-selecting');
-						for ( var s = ed.selection.length-1; s > 0; s-- ){
-							$selected = $selected.not( ed.selection[s] );
-							group = ed._get_group_position( $selected );
-							$affected = ed._find_affected_el( $(_.rest(ed.selection, s)), group.element );
-							if ( $affected === false ){
-								_.each( _.rest(ed.selection, s), function(sel){
-									ed._remove_selection(sel);
-								} );
-								break;
-							}
-						}
+					if ( $el.closest('.upfront-region').get(0) != $region.get(0) ) return;
+					$('.upfront-ui-selected').each(function(){
+						ed._remove_selection(this);
+					});
+					$selected = $region.find('.ui-selecting');
+					if ( $selected.length > 0 ) {
+						ed._add_selection($selected.get(0));
+						ed._add_selections( $selected, $region.find('.upfront-module').not('.upfront-ui-selected, .upfront-module-parent-group'), $region.find('.upfront-module-group') );
 					}
-					else {*/
-						// 2. include all affected elements to selection automatically
-						// on unselecting, we'll only remove selection that's not in conflict anymore
-						$selected = $(ed.selection).filter('.ui-selecting');
-						group = ed._get_group_position( $selected );
-						$affected = ed._find_affected_el( $(ed.selection).not('.ui-selecting'), group.element );
-						_.each(ed.selection, function(sel){
-							var is_affected = false;
-							if ( $(sel).hasClass('ui-selecting') )
-								return;
-							if ( $affected !== false && $affected.length > 0 ){
-								$affected.each(function(){
-									if ( this == sel )
-										is_affected = true;
-								});
-							}
-							if ( is_affected )
-								return;
-							ed._remove_selection(sel);
-						});
 
-						ed._update_selection_outline();
-						return;
-					/*}*/
+					ed._update_selection_outline();
+					return;
 				}
 				ed._remove_selection(ui.unselecting);
+				ed._update_selection_outline();
 			},
 			/*selected: function (e, ui) {
 				var $el = $(ui.selected);
@@ -91,276 +62,12 @@ var LayoutEditor = {
 			},
 			start: function (e, ui) {
 				// reset selection on start
+				ed.remove_selections();
 				ed.selection = [];
 				ed.selecting = true;
 			},
 			stop: function (e, ui) {
-				if ( !$(".upfront-ui-selected").length )
-					return false;
-				var me = this,
-					$region = $(".upfront-ui-selected:first").closest('.upfront-region'),
-					region = regions.get_by_name($region.data('name')),
-					region_modules = (region ? region.get("modules") : false),
-					region_wrappers = (region ? region.get("wrappers") : false),
-					unselect = function(){
-						$(this).find('.upfront-selected-border').remove();
-						$(this).removeClass('upfront-ui-selected ui-selected');
-					},
-					$selected = $('.upfront-ui-selected');
-				if ($selected.length < 2){
-					$selected.each(function(){
-						ed._remove_selection(this);
-					});
-					$('#upfront-group-selection').remove();
-					return false;
-				};
-				$('.upfront-module-group-group').remove();
-				var $group = $('<div class="upfront-module-group-toggle upfront-module-group-group">' + Upfront.Settings.l10n.global.behaviors.group + '</div>'),
-					sel_top = sel_left = sel_right = sel_bottom = false,
-					wrap_top = wrap_left = wrap_right = wrap_bottom = false,
-					group_top = group_left = 0;
-				$('body').append($group);
-				$selected.each(function(){
-					var off = $(this).offset(),
-						width = $(this).outerWidth(),
-						height = $(this).outerHeight(),
-						$wrap = $(this).closest('.upfront-wrapper'),
-						wrap_off = $wrap.offset(),
-						wrap_width = $wrap.outerWidth(),
-						wrap_height = $wrap.outerHeight();
-					off.right = off.left + width;
-					off.bottom = off.top + height;
-					sel_top = ( sel_top === false || off.top < sel_top ) ? off.top : sel_top;
-					sel_bottom = ( sel_bottom === false || off.bottom > sel_bottom ) ? off.bottom : sel_bottom;
-					sel_left = ( sel_left === false || off.left < sel_left ) ? off.left : sel_left;
-					sel_right = ( sel_right === false || off.right > sel_right ) ? off.right : sel_right;
-					wrap_off.right = wrap_off.left + wrap_width;
-					wrap_off.bottom = wrap_off.top + wrap_height;
-					wrap_top = ( wrap_top === false || wrap_off.top < wrap_top ) ? wrap_off.top : wrap_top;
-					wrap_bottom = ( wrap_bottom === false || wrap_off.bottom > wrap_bottom ) ? wrap_off.bottom : wrap_bottom;
-					wrap_left = ( wrap_left === false || wrap_off.left < wrap_left ) ? wrap_off.left : wrap_left;
-					wrap_right = ( wrap_right === false || wrap_off.right > wrap_right ) ? wrap_off.right : wrap_right;
-				});
-				group_top = sel_top + Math.round( (sel_bottom-sel_top)/2 ) - Math.round( $group.outerHeight()/2 );
-				group_left = sel_left + Math.round( (sel_right-sel_left)/2 ) - Math.round( $group.outerWidth()/2 );
-				$group.css({
-					position: 'absolute',
-					zIndex: 999999,
-					top: group_top,
-					left: group_left
-				});
-				setTimeout(function(){ ed.selecting = false; }, 1000);
-				$group.on('click', function () {
-					var grid_ed = Upfront.Behaviors.GridEditor,
-						group_id = Upfront.Util.get_unique_id("module-group"),
-						group = new Upfront.Models.ModuleGroup(),
-						group_view = false,
-						group_modules = group.get('modules'),
-						group_wrappers = group.get('wrappers'),
-						group_wrapper_id = Upfront.Util.get_unique_id("wrapper"),
-						group_wrapper = new Upfront.Models.Wrapper(),
-						first_module_view = first_module_el = false,
-						first_module_grid = first_module_outer_grid = false,
-						affected_els = false,
-						combined_els = [],
-						modules = [],
-						max_col = Math.round((wrap_right-wrap_left)/grid_ed.grid.column_width),
-						last_index = 0,
-						module_index = false,
-						margin_top = false,
-						margin_left = false,
-						col = false,
-						line = 0,
-						line_col = 0,
-						wrapper_index = 0,
-						wrapper_col = 0,
-						current_wrapper_id, new_wrapper_id, new_wrapper,
-						group_wrapper_classes = [],
-						group_wrapper_col = 0;
-					$selected.each(function (i) {
-						var $node = $(this),
-							element_id = $node.attr("id"),
-							module = region_modules.get_by_element_id(element_id),
-							module_class = module.get_property_value_by_name('class'),
-							module_col = grid_ed.get_class_num(module_class, grid_ed.grid.class),
-							module_top = grid_ed.get_class_num(module_class, grid_ed.grid.top_margin_class),
-							module_left = grid_ed.get_class_num(module_class, grid_ed.grid.left_margin_class),
-							index = region_modules.indexOf(module),
-							is_next = ( index-last_index == 1 ),
-							wrapper_id = module.get_wrapper_id(),
-							is_current_wrapper = ( current_wrapper_id == wrapper_id ),
-							wrapper = region_wrappers.get_by_wrapper_id(wrapper_id),
-							wrapper_class = wrapper.get_property_value_by_name('class'),
-							wrapper_col = grid_ed.get_class_num(wrapper_class, grid_ed.grid.class),
-							position;
-						if ( module_index === false )
-							module_index = index;
-						if ( !is_current_wrapper )
-							wrapper_index++;
-						if ( !is_current_wrapper && ( i == 0 || !is_next || line_col+wrapper_col > max_col || wrapper_class.match(/clr/) ) ) { // this module appear in a new line
-							line++;
-							is_next = false;
-							line_col = wrapper_col;
-						}
-						else if ( !is_current_wrapper ) {
-							line_col += wrapper_col;
-						}
-						else {
-							is_next = ( line_col == wrapper_col || wrapper_class.match(/clr/) ) ? false : true;
-						}
-						modules.push({
-							model: module,
-							col: module_col,
-							is_next: is_next,
-							margin_top: module_top,
-							margin_left: module_left,
-							wrapper_class: wrapper_class,
-							wrapper_col: wrapper_col,
-							wrapper_id: wrapper_id,
-							line: line
-						});
-						if ( wrapper_index == 1 || !is_next || wrapper_class.match(/clr/) )
-							margin_left = ( margin_left === false || module_left < margin_left ) ? module_left : margin_left;
-						if ( line == 1 && !is_current_wrapper )
-							margin_top = ( margin_top === false || module_top < margin_top ) ? module_top : margin_top;
-						col = ( col === false || line_col > col ) ? line_col : col;
-						current_wrapper_id = wrapper_id;
-						last_index = index;
-					});
-
-					// initiate GridEditor start for the first module
-					first_module_view = Upfront.data.module_views[modules[0].model.cid];
-					grid_ed.start(first_module_view, first_module_view.model);
-					first_module_el = grid_ed.get_el(first_module_view.$el.find(".upfront-editable_entity:first"));
-					// modify the module el position to simulate the group position
-					first_module_grid = grid_ed.get_grid(sel_left, sel_top);
-					first_module_outer_grid = grid_ed.get_grid(wrap_left, wrap_top);
-					first_module_el.grid = {
-						top: first_module_grid.y,
-						left: first_module_grid.x,
-						right: first_module_grid.x + Math.round((sel_right-sel_left)/grid_ed.col_size) - 1,
-						bottom: first_module_grid.y + Math.round((sel_bottom-sel_top)/grid_ed.baseline) - 1
-					}
-					first_module_el.outer_grid = {
-						top: first_module_outer_grid.y,
-						left: first_module_outer_grid.x,
-						right: first_module_outer_grid.x + Math.round((wrap_right-wrap_left)/grid_ed.col_size) - 1,
-						bottom: first_module_outer_grid.y + Math.round((wrap_bottom-wrap_top)/grid_ed.baseline) - 1
-					}
-					// find affected els and look for affected els that must be combined in one wrapper
-					affected_els = grid_ed.get_affected_els(first_module_el, grid_ed.els, [first_module_el], false);
-					_.each(_.union(affected_els.left, affected_els.right), function(el){
-						var combined = false;
-						if ( _.isArray(combined_els) ) {
-							_.each(combined_els, function(comb, i){
-								if ( combined )
-									return;
-								if ( el.outer_grid.left < comb.right && el.outer_grid.right > comb.left && el.outer_grid.top >= comb.bottom ) {
-									comb.els.push(el);
-									comb.bottom = el.outer_grid.bottom;
-									comb.left = el.outer_grid.left < comb.left ? el.outer_grid.left : comb.left;
-									comb.right = el.outer_grid.right > comb.right ? el.outer_grid.right : comb.right;
-									combined = true;
-								}
-							});
-						}
-						if ( !combined ) {
-							combined_els.push({
-								top: el.outer_grid.top,
-								bottom: el.outer_grid.bottom,
-								left: el.outer_grid.left,
-								right: el.outer_grid.right,
-								els: [el]
-							});
-						}
-					});
-
-					// grouping!
-					margin_left = margin_left === false ? 0 : margin_left;
-					margin_top = margin_top === false ? 0 : margin_top;
-					col = col - margin_left;
-					group_wrapper_col = col + margin_left;
-					wrapper_index = 0;
-					current_wrapper_id = false;
-
-					_.each(modules, function(module, index){
-						var wrapper_id = module.wrapper_id,
-							new_classes = [];
-						if ( current_wrapper_id != wrapper_id ){
-							new_wrapper = new Upfront.Models.Wrapper({});
-							new_wrapper_id = Upfront.Util.get_unique_id("wrapper");
-							new_wrapper.set_property('wrapper_id', new_wrapper_id);
-							new_wrapper.set_property('class', module.wrapper_class);
-							group_wrappers.add(new_wrapper);
-							wrapper_col = 0;
-							wrapper_index++;
-						}
-						if ( wrapper_index == 1 || !module.is_next || module.wrapper_class.match(/clr/) ){
-							new_classes.push(grid_ed.grid.left_margin_class + (module.margin_left-margin_left));
-							wrapper_col = module.wrapper_col - margin_left;
-						}
-						else {
-							wrapper_col = module.wrapper_col;
-						}
-						if ( module.line == 1 && current_wrapper_id != wrapper_id )
-							new_classes.push(grid_ed.grid.top_margin_class + (module.margin_top-margin_top));
-						new_wrapper.replace_class(grid_ed.grid.class + wrapper_col);
-						current_wrapper_id = wrapper_id;
-						module.model.set_property('wrapper_id', new_wrapper_id);
-						module.model.replace_class(new_classes.join(" "));
-						region_modules.remove(module.model, {silent: true});
-						group_modules.add(module.model);
-					});
-					if ( wrapper_index > 1 ){
-						group_wrapper.set_property('wrapper_id', group_wrapper_id);
-						group_wrapper_classes.push(grid_ed.grid.class + group_wrapper_col);
-						if ( modules[0].wrapper_class.match(/clr/) )
-							group_wrapper_classes.push('clr');
-						group_wrapper.set_property('class', group_wrapper_classes.join(' '));
-						region_wrappers.add(group_wrapper);
-						group.set_property('wrapper_id', group_wrapper_id);
-					}
-					else {
-						group.set_property('wrapper_id', current_wrapper_id);
-					}
-					group.set_property('element_id', group_id);
-					group.replace_class( grid_ed.grid.class + col + " " + grid_ed.grid.top_margin_class + margin_top + " " + grid_ed.grid.left_margin_class + margin_left );
-					group.set_property('original_col', col);
-					group.add_to(region_modules, module_index);
-
-					// combine elements
-					_.each(combined_els, function(comb, i){
-						if ( comb.els.length <= 1 )
-							return;
-						var element_id = comb.els[0].$el.attr("id"),
-							model = region_modules.get_by_element_id(element_id),
-							index = region_modules.indexOf(model),
-							wrapper_id = model ? model.get_wrapper_id() : false,
-							wrap_model = wrapper_id ? region_wrappers.get_by_wrapper_id(wrapper_id) : false,
-							$wrap = comb.els[0].$el.closest('.upfront-wrapper');
-						if ( !model )
-							return;
-						_.each(_.rest(comb.els, 1), function(el, e){
-							var element_id = el.$el.attr("id"),
-								el_model = region_modules.get_by_element_id(element_id),
-								el_wrapper_id = el_model ? el_model.get_wrapper_id() : false;
-							if ( !el_model || el_wrapper_id == wrapper_id )
-								return;
-							el_model.set_property('wrapper_id', wrapper_id);
-							region_modules.remove(el_model, {silent: true});
-							el_model.add_to(region_modules, index+e+1);
-						});
-						wrap_model.replace_class(grid_ed.grid.class + (comb.right-comb.left+1));
-					});
-
-					// now normalize the wrappers
-					grid_ed.update_position_data($region.find('.upfront-editable_entities_container:first'));
-					grid_ed.update_wrappers(region);
-
-					$(this).remove();
-					$('#upfront-group-selection').remove();
-					Upfront.Events.trigger("entity:module_group:group", group, region);
-				});
+				ed.parse_selections();
 			}
 		});
 	},
@@ -393,9 +100,33 @@ var LayoutEditor = {
 		});
 	},
 
-	_get_group_position: function ($selected) {
-		var sel_top = sel_left = sel_right = sel_bottom = false,
-			wrap_top = wrap_left = wrap_right = wrap_bottom = false;
+	parse_selections: function () {
+		if ( !$(".upfront-ui-selected").length )
+			return false;
+		var ed = this,
+			regions = Upfront.Application.layout.get('regions'),
+			$region = $(".upfront-ui-selected:first").closest('.upfront-region'),
+			region = regions.get_by_name($region.data('name')),
+			region_modules = (region ? region.get("modules") : false),
+			region_wrappers = (region ? region.get("wrappers") : false),
+			unselect = function(){
+				$(this).find('.upfront-selected-border').remove();
+				$(this).removeClass('upfront-ui-selected ui-selected');
+			},
+			$selected = $('.upfront-ui-selected');
+		if ($selected.length < 2){
+			$selected.each(function(){
+				ed._remove_selection(this);
+			});
+			$('#upfront-group-selection').remove();
+			return false;
+		};
+		$('.upfront-module-group-group').remove();
+		var $group = $('<div class="upfront-module-group-toggle upfront-module-group-group">' + Upfront.Settings.l10n.global.behaviors.group + '</div>'),
+			sel_top = sel_left = sel_right = sel_bottom = false,
+			wrap_top = wrap_left = wrap_right = wrap_bottom = false,
+			group_top = group_left = 0;
+		$('body').append($group);
 		$selected.each(function(){
 			var off = $(this).offset(),
 				width = $(this).outerWidth(),
@@ -403,13 +134,421 @@ var LayoutEditor = {
 				$wrap = $(this).closest('.upfront-wrapper'),
 				wrap_off = $wrap.offset(),
 				wrap_width = $wrap.outerWidth(),
-				wrap_height = $wrap.outerHeight();
+				wrap_height = $wrap.outerHeight()
+			;
 			off.right = off.left + width;
 			off.bottom = off.top + height;
 			sel_top = ( sel_top === false || off.top < sel_top ) ? off.top : sel_top;
 			sel_bottom = ( sel_bottom === false || off.bottom > sel_bottom ) ? off.bottom : sel_bottom;
 			sel_left = ( sel_left === false || off.left < sel_left ) ? off.left : sel_left;
 			sel_right = ( sel_right === false || off.right > sel_right ) ? off.right : sel_right;
+			wrap_off.right = wrap_off.left + wrap_width;
+			wrap_off.bottom = wrap_off.top + wrap_height;
+			wrap_top = ( wrap_top === false || wrap_off.top < wrap_top ) ? wrap_off.top : wrap_top;
+			wrap_bottom = ( wrap_bottom === false || wrap_off.bottom > wrap_bottom ) ? wrap_off.bottom : wrap_bottom;
+			wrap_left = ( wrap_left === false || wrap_off.left < wrap_left ) ? wrap_off.left : wrap_left;
+			wrap_right = ( wrap_right === false || wrap_off.right > wrap_right ) ? wrap_off.right : wrap_right;
+		});
+		group_top = sel_top + Math.round( (sel_bottom-sel_top)/2 ) - Math.round( $group.outerHeight()/2 );
+		group_left = sel_left + Math.round( (sel_right-sel_left)/2 ) - Math.round( $group.outerWidth()/2 );
+		$group.css({
+			position: 'absolute',
+			zIndex: 999999,
+			top: group_top,
+			left: group_left
+		});
+		setTimeout(function(){ ed.selecting = false; }, 1000);
+		$group.on('click', function () {
+			var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
+				grid_ed = Upfront.Behaviors.GridEditor,
+				first_module_view = false,
+				max_col = Math.round((wrap_right-wrap_left)/grid_ed.grid.column_width),
+				lines = grid_ed.parse_modules_to_lines(region_modules, region_wrappers, breakpoint.id, breakpoint.columns),
+				group_lines = [],
+				prev_group_lines = [],
+				next_group_lines = [],
+				is_prev_group_combine = false,
+				is_next_group_combine = false,
+				group_col = 0,
+				prev_group_col = 0,
+				next_group_col = 0,
+				do_split = false
+				;
+			// Parse the lines into groups
+			_.each(lines, function (l) {
+				var wrappers = [],
+					prev_wrappers = [],
+					next_wrappers = [],
+					top_wrappers = [],
+					bottom_wrappers = [],
+					line_col = 0,
+					prev_line_col = 0,
+					next_line_col = 0
+					;
+				_.each(l.wrappers, function (w) {
+					var modules = [],
+						top_modules = [],
+						bottom_modules = []
+						;
+					_.each(w.modules, function (m) {
+						var found = false;
+						$selected.each(function () {
+							var element_id = $(this).attr('id'),
+								index;
+							if ( m.model.get_element_id() == element_id ) {
+								if ( first_module_view === false ) {
+									first_module_view = Upfront.data.module_views[m.model.cid];
+								}
+								modules.push(m);
+								found = true;
+							}
+						});
+						if ( !found ) {
+							if ( modules.length == 0 ) {
+								top_modules.push(m);
+							}
+							else {
+								bottom_modules.push(m);
+							}
+						}
+					});
+					if ( modules.length > 0 ) {
+						wrappers.push({
+							modules: modules,
+							top_modules: top_modules,
+							bottom_modules: bottom_modules,
+							model: w.model,
+							col: w.col,
+							clear: w.clear,
+							spacer: w.spacer,
+							order: w.order
+						});
+						line_col += w.col;
+						if ( top_modules.length ) {
+							top_wrappers.push({
+								modules: top_modules,
+								model: w.model,
+								col: w.col,
+								clear: w.clear,
+								spacer: w.spacer,
+								order: w.order
+							});
+						}
+						if ( bottom_modules.length ) {
+							bottom_wrappers.push({
+								modules: bottom_modules,
+								model: w.model,
+								col: w.col,
+								clear: w.clear,
+								spacer: w.spacer,
+								order: w.order
+							});
+						}
+					}
+					else {
+						( wrappers.length == 0 ? prev_wrappers : next_wrappers ).push({
+							modules: w.modules,
+							model: w.model,
+							col: w.col,
+							clear: w.clear,
+							spacer: w.spacer,
+							order: w.order
+						});
+						if ( wrappers.length == 0 ) prev_line_col += w.col;
+						else next_line_col += w.col;
+					}
+				});
+				if ( wrappers.length > 0 ) {
+					group_lines.push({
+						wrappers: wrappers,
+						top_wrappers: top_wrappers,
+						bottom_wrappers: bottom_wrappers,
+						col: line_col
+					});
+					group_col = line_col > group_col ? line_col : group_col;
+					if ( prev_wrappers.length > 0 ) {
+						prev_group_lines.push({
+							wrappers: prev_wrappers,
+							col: prev_line_col
+						});
+						prev_group_col = prev_line_col > prev_group_col ? prev_line_col : prev_group_col;
+					}
+					if ( next_wrappers.length > 0 ) {
+						next_group_lines.push({
+							wrappers: next_wrappers,
+							col: next_line_col
+						});
+						next_group_col = next_line_col > next_group_col ? next_line_col : next_group_col;
+					}
+				}
+			});
+			grid_ed.start(first_module_view, first_module_view.model);
+
+			// Grouping!
+			// Try to see if previous elements qualify to be grouped/combined (that is if it has > 1 line)
+			if ( prev_group_lines.length > 1 ) {
+				if ( !ed._do_combine(prev_group_lines, region) ) {
+					ed._do_group(prev_group_lines, region);
+				}
+			}
+			// If we don't have affected previous/next elements, we'll split non-selected element outside group
+			// Otherwise, it creates another group
+			if ( prev_group_lines.length == 0 && next_group_lines.length == 0 ) {
+				do_split = true;
+			}
+			ed._do_group(group_lines, region, false, do_split);
+			// Try to see if next elements qualify to be grouped/combined (that is if it has > 1 line)
+			if ( next_group_lines.length > 1 ) {
+				if ( !ed._do_combine(next_group_lines, region) ) {
+					ed._do_group(next_group_lines, region);
+				}
+			}
+
+			// now normalize the wrappers
+			grid_ed.update_position_data($region.find('.upfront-editable_entities_container:first'));
+			grid_ed.update_wrappers(region);
+
+			$(this).remove();
+			$('#upfront-group-selection').remove();
+			ed.selection = [];
+		});
+	},
+
+	_do_group: function (lines, region, force_add_wrapper, do_split)  {
+		var ed = this,
+			grid_ed = Upfront.Behaviors.GridEditor,
+			add_wrapper = (force_add_wrapper === true),
+			do_split = ( do_split === true ),
+			region_modules = region.get("modules"),
+			region_wrappers = region.get("wrappers"),
+			group_id = Upfront.Util.get_unique_id("module-group"),
+			group = new Upfront.Models.ModuleGroup(),
+			group_view = false,
+			group_modules = group.get('modules'),
+			group_wrappers = group.get('wrappers'),
+			group_wrapper_clear = false,
+			group_wrapper = false,
+			group_wrapper_id = false,
+			group_col = 0,
+			add_index = false,
+			top_add_index = false
+		;
+		_.each(lines, function (l, li) {
+			group_col = l.col > group_col ? l.col : group_col;
+			_.each(l.wrappers, function (w, wi) {
+				var new_wrapper = new Upfront.Models.Wrapper({}),
+					new_wrapper_id = Upfront.Util.get_unique_id("wrapper"),
+					wrapper_view = Upfront.data.wrapper_views[w.model.cid],
+					has_top_modules = ( 'top_modules' in w && w.top_modules.length > 0 ),
+					has_bottom_modules = ( 'bottom_modules' in w && w.bottom_modules.length > 0 )
+				;
+				new_wrapper.set_property('wrapper_id', new_wrapper_id);
+				new_wrapper.set_property('class', w.model.get_property_value_by_name('class'));
+				new_wrapper.replace_class(grid_ed.grid.class + w.col);
+				if ( wi == 0 ) {
+					new_wrapper.add_class('clr');
+					if ( li == 0 ) {
+						group_wrapper_clear = w.clear;
+					}
+				}
+				group_wrappers.add(new_wrapper);
+				_.each(w.modules, function (m, mi) {
+					var index = region_modules.indexOf(m.model),
+						view = Upfront.data.module_views[m.model.cid]
+					;
+					if ( add_index === false ) {
+						add_index = index;
+					}
+					m.model.set_property('wrapper_id', new_wrapper_id, true);
+					region_modules.remove(m.model, {silent: true});
+					view.$el.detach(); // Detach element from DOM, will render later with group render
+					if ( !has_top_modules && !has_bottom_modules ) {
+						wrapper_view.$el.detach(); // Detach wrapper view from DOM too
+					}
+					group_modules.add(m.model);
+				});
+				if ( li == 0 && wi == 0 ) {
+					// First wrapper is now used for group wrapper
+					group_wrapper_id = w.model.get_wrapper_id();
+					group_wrapper = w.model;
+				}
+				else if ( !has_top_modules ) {
+					// Unused wrapper, remove
+					region_wrappers.remove(w.model);
+				}
+			});
+			if ( 'bottom_wrappers' in l && l.bottom_wrappers.length > 1 ) {
+				// Has bottom wrappers, let's group that too
+				if ( do_split ) {
+					ed._do_split(l.bottom_wrappers, region);
+				}
+				else {
+					ed._do_group([{
+						wrappers: l.bottom_wrappers,
+						col: l.col
+					}], region);
+				}
+			}
+			if ( 'top_wrappers' in l && l.top_wrappers.length > 1 ) {
+				// Has top wrappers, let's group that too, create new wrapper instead
+				if ( do_split ) {
+					// We don't actually split the top wrappers, the group will be render below that
+					// But we need to fix the element position
+					_.each(l.top_wrappers, function (w, wi) {
+						_.each(w.modules, function (m, mi) {
+							var index = region_modules.indexOf(m.model);
+							if ( top_add_index === false ) {
+								top_add_index = index;
+								return;
+							}
+							region_modules.remove(m.model, {silent: true});
+							top_add_index++;
+							m.model.add_to(region_modules, top_add_index);
+						});
+					});
+					if ( top_add_index !== false ) {
+						add_index = top_add_index+1;
+					}
+					add_wrapper = true;
+				}
+				else {
+					ed._do_group([{
+						wrappers: l.top_wrappers,
+						col: l.col
+					}], region);
+				}
+			}
+		});
+		if ( add_wrapper ) {
+			group_wrapper = new Upfront.Models.Wrapper({});
+			group_wrapper_id = Upfront.Util.get_unique_id("wrapper");
+			region_wrappers.add(group_wrapper);
+		}
+		group_wrapper.set_property('wrapper_id', group_wrapper_id);
+		group_wrapper.replace_class(grid_ed.grid.class + group_col);
+		if ( group_wrapper_clear ){
+			group_wrapper.add_class('clr');
+		}
+		group.set_property('wrapper_id', group_wrapper_id);
+		group.set_property('element_id', group_id);
+		group.replace_class(grid_ed.grid.class + group_col);
+		group.set_property('original_col', group_col);
+		group.add_to(region_modules, add_index);
+		Upfront.Events.trigger("entity:module_group:group", group, region);
+	},
+
+	_do_combine: function (lines, region) {
+		var ed = this,
+			grid_ed = Upfront.Behaviors.GridEditor,
+			region_modules = region.get("modules"),
+			region_wrappers = region.get("wrappers"),
+			wrappers_col = [],
+			wrappers_combine = [],
+			can_combine = true
+		;
+		_.each(lines, function (l, li) {
+			if ( !(li in wrappers_col) ) wrappers_col[li] = [];
+			_.each(l.wrappers, function (w, wi) {
+				if ( !(wi in wrappers_combine) ) wrappers_combine[wi] = [];
+				wrappers_col[li][wi] = w.col;
+				wrappers_combine[wi].push(w);
+			});
+		});
+		// Check if it's possible to combine modules to the same wrapper
+		if ( wrappers_col.length > 1 ) {
+			for ( var i = 1; i < wrappers_col.length; i++ ) {
+				if ( !_.isEqual(wrappers_col[i-1], wrappers_col[i]) ) {
+					can_combine = false;
+					break;
+				}
+			}
+		}
+		if ( !can_combine ) return false;
+		_.each(wrappers_combine, function (combine) {
+			var add_index = 0,
+				spacers = _.filter(combine, function(w){ return w.spacer; }),
+				all_spacers = ( combine.length == spacers.length ),
+				wrapper_id
+			;
+			_.each(combine, function (w, wi) {
+				if ( wi == 0 ) {
+					// The first wrapper which we'll use for combine
+					wrapper_id = w.model.get_wrapper_id();
+					add_index = region_modules.indexOf(_.last(w.modules).model);
+					if ( w.spacer && !all_spacers ) {
+						// It's spacer but we have other element below, so just remove this spacer
+						_.each(w.modules, function (m) {
+							region_modules.remove(m.model);
+						});
+						add_index--;
+					}
+					return;
+				}
+				region_wrappers.remove(w.model);
+				if ( w.spacer ) {
+					_.each(w.modules, function (m) {
+						region_modules.remove(m.model);
+					});
+				}
+				else {
+					_.each(w.modules, function (m, mi) {
+						m.model.set_property('wrapper_id', wrapper_id, true);
+						region_modules.remove(m.model, {silent: true});
+						add_index++;
+						m.model.add_to(region_modules, add_index);
+					});
+				}
+			});
+		});
+		return true;
+	},
+
+	_do_split: function (wrappers, region) {
+		var ed = this,
+			grid_ed = Upfront.Behaviors.GridEditor,
+			region_modules = region.get("modules"),
+			region_wrappers = region.get("wrappers")
+		;
+		_.each(wrappers, function (w, wi) {
+			var new_wrapper = new Upfront.Models.Wrapper({}),
+				new_wrapper_id = Upfront.Util.get_unique_id("wrapper")
+			;
+			new_wrapper.set_property('wrapper_id', new_wrapper_id);
+			new_wrapper.set_property('class', w.model.get_property_value_by_name('class'));
+			region_wrappers.add(new_wrapper);
+			_.each(w.modules, function (m, mi) {
+				var index = region_modules.indexOf(m.model);
+				m.model.set_property('wrapper_id', new_wrapper_id, true);
+				region_modules.remove(m.model, {silent: true});
+				m.model.add_to(region_modules, index);
+			});
+		});
+		return true;
+	},
+
+	_get_group_position: function ($selected) {
+		var sel_top = sel_left = sel_right = sel_bottom = false,
+			wrap_top = wrap_left = wrap_right = wrap_bottom = false
+		;
+		$selected.each(function(){
+			var off = $(this).offset(),
+				width = Math.round(parseFloat($(this).css('width'))),
+				height = Math.round(parseFloat($(this).css('height'))),
+				$wrap = $(this).closest('.upfront-wrapper'),
+				wrap_off = $wrap.offset(),
+				wrap_width = Math.round(parseFloat($wrap.css('width'))),
+				wrap_height = Math.round(parseFloat($wrap.css('height')))
+			;
+			off.left = Math.round(off.left);
+			off.top = Math.round(off.top);
+			off.right = off.left + width;
+			off.bottom = off.top + height;
+			sel_top = ( sel_top === false || off.top < sel_top ) ? off.top : sel_top;
+			sel_bottom = ( sel_bottom === false || off.bottom > sel_bottom ) ? off.bottom : sel_bottom;
+			sel_left = ( sel_left === false || off.left < sel_left ) ? off.left : sel_left;
+			sel_right = ( sel_right === false || off.right > sel_right ) ? off.right : sel_right;
+			wrap_off.left = Math.round(wrap_off.left);
+			wrap_off.top = Math.round(wrap_off.top);
 			wrap_off.right = wrap_off.left + wrap_width;
 			wrap_off.bottom = wrap_off.top + wrap_height;
 			wrap_top = ( wrap_top === false || wrap_off.top < wrap_top ) ? wrap_off.top : wrap_top;
@@ -434,17 +573,20 @@ var LayoutEditor = {
 	},
 
 	_find_affected_el: function ($els, pos) {
-		if ( this.selection.length == 0 )
-			return false;
+		if ( this.selection.length == 0 ) return false;
 		var $affected = false;
 		$els.each(function(){
 			var off = $(this).offset(),
-				width = $(this).width(),
-				height = $(this).height(),
-				bottom = off.top + height,
-				right = off.left + width;
-			if ( pos.top < bottom && pos.bottom > off.top && pos.left < right && pos.right > off.left )
+				width = Math.round(parseFloat($(this).css('width'))),
+				height = Math.round(parseFloat($(this).css('height'))),
+				top = Math.round(off.top),
+				left = Math.round(off.left),
+				bottom = top + height,
+				right = left + width
+			;
+			if ( pos.top < bottom && pos.bottom > top && pos.left < right && pos.right > left ) {
 				$affected = $affected !== false ? $affected.add($(this)) : $(this);
+			}
 		})
 		return $affected;
 	},
@@ -467,8 +609,7 @@ var LayoutEditor = {
 
 	_add_selection: function (el) {
 		var find = _.find(this.selection, function(sel){ return (sel == el); });
-		if ( find )
-			return;
+		if ( find ) return;
 		this.selection.push(el);
 		$(el).addClass('upfront-ui-selected');
 		//$(el).prepend('<div class="upfront-selected-border" />');
@@ -477,46 +618,39 @@ var LayoutEditor = {
 	/**
 	 * Automatically resolve conflict on adding multiple selections
 	 */
-	_add_selections: function ($selecting, $affected_els, include) {
+	_add_selections: function ($selecting, $affected_els, $restrict_els) {
 		var ed = this,
-			selected = false,
-			include = include ? include : 1,
-			total = $selecting.length;
-		// we have 2 different behavior to solve conflict, we used 2nd one in the mean time
-		/*if ( !Upfront.data.include_affected_selection ){
-			// 1. make sure to not include selection that can lead to conflict with other elements
-			$selecting.each(function(index){
-				if ( selected !== false || index + include > total )
-					return;
-				var sels = [this],
-					group, $affected;
-				if ( include > 1 ) {
-					for ( var i = index+1; i < index+include; i++ ){
-						sels.push( $selecting.get(i) );
-					}
-				}
-				group = ed._get_group_position( $(ed.selection).add(sels) ),
-				$affected = ed._find_affected_el( $affected_els.not(sels), group.element );
-				if ( $affected === false ){
-					selected = [];
-					_.each(sels, function(sel){
-						ed._add_selection(sel);
-						selected.push(sel);
-					});
-				}
+			selected = [],
+			group,
+			$affected,
+			$restricted
+		;
+		// Add selection one-by-one
+		$selecting.each(function () {
+			var el = this,
+				find = _.find(ed.selection, function(sel){ return (sel == el); }),
+				$affected_els_tmp = $($affected_els)
+			;
+			if ( find ) return;
+			selected = [];
+			group = ed._get_group_position( $(ed.selection).add(this) );
+			$affected = ed._find_affected_el( $affected_els_tmp, group.element);
+			// Find all affected elements by this selection
+			while ( $affected !== false ) {
+				$affected.each(function(){ selected.push(this); });
+				$affected_els_tmp = $affected_els_tmp.not($affected);
+				group = ed._get_group_position( $(ed.selection).add(selected) );
+				$affected = ed._find_affected_el( $affected_els_tmp, group.element );
+			}
+			// Make sure no restricted element is on the way
+			$restricted = ed._find_affected_el( $restrict_els, group.element );
+			if ( $restricted !== false ) return;
+			// Safe, now properly add selection
+			_.each(selected, function (sel) {
+				ed._add_selection(sel);
 			});
-			if ( selected !== false )
-				return ed._add_selections( $selecting.not(selected), $affected_els.not(selected), include );
-			if ( include+1 <= total )
-				return ed._add_selections( $selecting, $affected_els, include+1 );
-		}
-		else {*/
-			// 2. include all affected elements to selection automatically
-			var group = ed._get_group_position( $selecting ),
-				$affected = ed._find_affected_el( $affected_els, group.element );
-			if ( $affected !== false )
-				$affected.each(function(){ ed._add_selection(this); });
-		/*}*/
+		});
+
 		return;
 	},
 
@@ -528,21 +662,22 @@ var LayoutEditor = {
 
 	remove_selections: function () {
 		var ed = Upfront.Behaviors.LayoutEditor;
-		_.each(ed.selection, function(sel){
-			ed._remove_selection(sel);
+		$('.upfront-ui-selected').each(function(){
+			ed._remove_selection(this);
 		});
 		ed._update_selection_outline();
 		$('.upfront-module-group-group').remove();
 	},
 
 	create_undo: function () {
-		//this.layout.store_undo_state();
+		this.layout.store_undo_state();
 	},
 	apply_history_change: function () {
 		var regions = Upfront.Application.layout.get("regions"),
 			region = regions ? regions.get_by_name('shadow') : false
 		;
 		if (regions && region) { regions.remove(region); region = false; }
+		//Upfront.Application.layout_view.local_view = false;
 		Upfront.Application.layout_view.render();
 	},
 
