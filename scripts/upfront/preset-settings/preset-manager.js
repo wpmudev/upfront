@@ -383,11 +383,13 @@ define([
 			this.setupItems();
 			var $body = $('<div />'),
 				me = this;
-
-			this.settings = _([
-				this.migratePresetModule
-			]);
 			
+			if(this.property('usingNewAppearance') !== true) {
+				this.settings = _([
+					this.migratePresetModule
+				]);
+			}
+
 			this.settings.each(function (setting) {
 				if ( ! setting.panel ) setting.panel = me;
 				setting.render();
