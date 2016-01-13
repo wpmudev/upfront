@@ -987,7 +987,7 @@ class Upfront_GridBreakpoint {
 			if (!empty($breakpoint_data['bottom_padding_num'])) $bottom_padding = $breakpoint_data['bottom_padding_num'];
 			if (!empty($breakpoint_data['bottom_padding_use'])) $bottom_padding_use = $breakpoint_data['bottom_padding_use'];
 			if (!empty($breakpoint_data['left_padding_num'])) $left_padding = $breakpoint_data['left_padding_num'];
-			if (!empty($breakpoint_data['left_padding_use'])) $left_padding = $breakpoint_data['left_padding_use'];
+			if (!empty($breakpoint_data['left_padding_use'])) $left_padding_use = $breakpoint_data['left_padding_use'];
 		}
 
 		if ( !in_array('top_padding', $exception) && $top_padding_use && isset($top_padding) && is_numeric($top_padding) ){
