@@ -190,6 +190,7 @@ define([
 			//Migration listeners
 			this.listenTo(this.migratePresetModule, 'upfront:presets:preview', this.previewPreset);
 			this.listenTo(this.migratePresetModule, 'upfront:presets:change', this.applyExistingPreset);
+			this.listenTo(this.migratePresetModule, 'upfront:presets:new', this.migratePreset);
 
 			this.settings = _([
 				this.selectPresetModule,
@@ -245,15 +246,41 @@ define([
 		},
 		
 		migratePreset: function(presetName) {
+			
+			//Check if preset already exist
+			var existingPreset = this.presets.findWhere({id: presetName});
+			if(typeof existingPreset !== "undefined") {
+				Upfront.Views.Editor.notify(l10n.preset_already_exist.replace(/%s/, presetName), 'error');
+				return;
+			}
+			
+			var elementStyleName = this.property('theme_style');
+	
+			// We need to set to _default first so that css editor can get style properly
+			if (!elementStyleName) elementStyleName = '_default';
+
+			// We need to initialize cssEditor to get element styles
+			Upfront.Application.cssEditor.init({
+				model: this.model,
+				stylename: elementStyleName,
+				no_render: true
+			});
+			
 			var style = $.trim(Upfront.Application.cssEditor.get_style_element().html().replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
 
+			//In case we need to migrate element styles
 			//style = this.migrateElementStyle(style);
-			// Create new preset and assign style to preset
+			
 			newPreset = new Backbone.Model(this.getPresetDefaults(presetName));
-			newPreset.set({
-				preset_style: style
-			});
-
+			
+			//Migrate element styles to preset
+			if(typeof style !== "undefined") {
+				newPreset.set({
+					preset_style: style
+				});
+			}
+			
+			//Migrate element properties to preset
 			this.migratePresetProperties(newPreset);
 
 			// And remove element style
@@ -261,11 +288,12 @@ define([
 			this.presets.add(newPreset);
 			presetOptions = newPreset;
 			properties = newPreset.toJSON();
-
+			
+			//Render new preset
 			Util.updatePresetStyle(this.styleElementPrefix.replace(/-preset/, ''), properties, this.styleTpl);
-
+			
+			//Save preset
 			this.debouncedSavePreset(properties);
-
 			this.updateMainDataCollectionPreset(properties);
 
 			// Trigger change so that whole element re-renders again.
