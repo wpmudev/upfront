@@ -295,6 +295,9 @@ define([
 			//Save preset
 			this.debouncedSavePreset(properties);
 			this.updateMainDataCollectionPreset(properties);
+			
+			//Set element as migrated
+			this.property('usingNewAppearance', true);
 
 			// Trigger change so that whole element re-renders again.
 			// (to replace element style class with preset class, look upfront-views.js

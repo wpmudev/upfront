@@ -40836,6 +40836,9 @@ define('scripts/upfront/preset-settings/preset-manager',[
 			//Save preset
 			this.debouncedSavePreset(properties);
 			this.updateMainDataCollectionPreset(properties);
+			
+			//Set element as migrated
+			this.property('usingNewAppearance', true);
 
 			// Trigger change so that whole element re-renders again.
 			// (to replace element style class with preset class, look upfront-views.js
@@ -56863,7 +56866,30 @@ define('elements/upfront-text/js/settings',[
 							}
 						},
 					]
-				}
+				},
+				
+				migratePresetProperties: function(newPreset) {
+					var props = {},
+						useBorder = '';
+
+					this.model.get('properties').each( function(prop) {
+						props[prop.get('name')] = prop.get('value');
+					});
+					
+					if(typeof props.border_width !== "undefined" &&
+						typeof props.border_style !== "undefined" &&
+						typeof props.border_style !== "undefined") {
+							useBorder = 'yes';
+						}
+
+					newPreset.set({
+						'useborder': useBorder,
+						'bg_color': props.background_color,
+						'border_width': props.border_width,
+						'border_style': props.border_style,
+						'border_color': props.border_color,
+					});
+				},
 			}
 		},
 		title: l10n.appearance
@@ -58808,7 +58834,35 @@ define('elements/upfront-gallery/js/settings',[
 							}
 						}
 					]
-				}
+				},
+				
+				migratePresetProperties: function(newPreset) {
+					var props = {},
+						useCaption = '',
+						caption_height = 'auto';
+
+					this.model.get('properties').each( function(prop) {
+						props[prop.get('name')] = prop.get('value');
+					});
+					
+					if(typeof props.thumbCaptionsHeight !== "undefined") {
+						caption_height = 'fixed'
+					}
+					
+					if(typeof props.captionType !== "undefined") {
+						useCaption = 'yes';
+					}
+
+					newPreset.set({
+						'use_captions': useCaption,
+						'captionType': props.captionType,
+						'showCaptionOnHover': props.showCaptionOnHover,
+						'caption-height': caption_height,
+						'thumbCaptionsHeight': props.thumbCaptionsHeight,
+						'caption-bg': props.captionBackground,
+						'caption-text': props.captionColor
+					});
+				},
 			}
 		},
 		title: l10n.settings
@@ -61027,13 +61081,19 @@ define('elements/upfront-image/js/image-settings',[
 				},
 				
 				migratePresetProperties: function(newPreset) {
-					var props = {};
+					var props = {},
+						useCaption = '';
 
 					this.model.get('properties').each( function(prop) {
 						props[prop.get('name')] = prop.get('value');
 					});
+					
+					if(props.caption_position && props.caption_trigger) {
+						useCaption = 'yes';
+					}
 
 					newPreset.set({
+						'use_captions': useCaption,
 						'caption-position-value': props.caption_position,
 						'caption-position': props.caption_position,
 						'caption-alignment': props.caption_alignment,
