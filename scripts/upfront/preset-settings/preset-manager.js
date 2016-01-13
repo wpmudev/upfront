@@ -274,6 +274,13 @@ define([
 		},
 
 		createPreset: function(presetName) {
+			//Check if preset already exist
+			var existingPreset = this.presets.findWhere({id: presetName});
+			if(typeof existingPreset !== "undefined") {
+				Upfront.Views.Editor.notify(l10n.preset_already_exist.replace(/%s/, presetName), 'error');
+				return;
+			}
+		
 			var preset = this.getPresetDefaults(presetName);
 
 			this.presets.add(preset);
@@ -341,11 +348,11 @@ define([
 		},
 		
 		applyExistingPreset: function(preset) {
-			//Set existing preset
-			this.changePreset(preset);
-			
 			//Set element as already migrated
 			this.property('usingNewAppearance', true);
+			
+			//Set existing preset
+			this.changePreset(preset);
 		},
 
 		changePreset: function(preset) {
