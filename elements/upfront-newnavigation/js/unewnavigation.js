@@ -570,7 +570,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		}, 200);
 
 		this.$el.off('click', '.responsive_nav_toggler');
-		this.$el.on('click', '.responsive_nav_toggler', function(event) {
+		this.$el.on('click', '.responsive_nav_toggler, .burger_overlay', function(event) {
 			me.toggle_responsive_nav(event);
 			event.stopPropagation();
 		});
@@ -885,6 +885,9 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					$('section.upfront-layout').css('margin-top', 0);
 				}
 			});
+
+			$nav.attr('data-burger_open', "1");
+
 			region_container.addClass('upfront-region-container-has-nav');
 			region_container.addClass('upfront-region-container-nav-open');
 			if ( group.length > 0 ) {
@@ -905,6 +908,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		} else {
 			this.hideMenu($menu);
 			this.$el.find('i.burger_nav_close').parent('li.wrap_burger_nav_close').remove();
+
+			$nav.removeAttr('data-burger_open');
 
 			this.$el.find('ul.sub-menu').css('display', '');
 			if(this.$el.find('ul.sub-menu').length < 1 ) {

@@ -146,7 +146,7 @@ div.upfront-navigation div[data-style="vertical"] ul.sub-menu > li > ul > li a {
 div.upfront-navigation div[data-style="burger"] ul.menu {
   position:fixed;
   top:0;
-  z-index:2001;
+  z-index:2020;
   max-height: 100%;
   overflow-y: auto !important;
   box-sizing: border-box;
@@ -316,6 +316,7 @@ div.burger_overlay {
   height:100%;
   top:0;
   left:0;
+  z-index: 2010;
 }
 
 
