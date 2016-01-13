@@ -1490,7 +1490,7 @@ var GridEditor = {
 				if ( has_group ) {
 					_.each(child_els, function (child) {
 						if ( !child.is_group ) return;
-						var child_min_col = ed._get_group_min_col(child.view);
+						var child_min_col = ed.get_group_min_col(child.view);
 						min_col = child_min_col > min_col ? child_min_col : min_col;
 					});
 				}
@@ -1545,7 +1545,7 @@ var GridEditor = {
 					if ( also_has_group ) {
 						_.each(also_child_els, function (child) {
 							if ( !child.is_group ) return;
-							var child_min_col = ed._get_group_min_col(child.view);
+							var child_min_col = ed.get_group_min_col(child.view);
 							also_min_col = child_min_col > also_min_col ? child_min_col : also_min_col;
 						});
 					}
@@ -1849,7 +1849,7 @@ var GridEditor = {
 		});
 	},
 
-	_get_group_min_col: function (group_view) {
+	get_group_min_col: function (group_view) {
 		var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
 			ed = Upfront.Behaviors.GridEditor,
 			modules = group_view.model.get('modules'),
