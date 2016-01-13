@@ -91,9 +91,32 @@ define([
 							}
 						}
 					]
-				}
+				},
+				
+				migratePresetProperties: function(newPreset) {
+					var props = {},
+						useCaption = '';
+
+					this.model.get('properties').each( function(prop) {
+						props[prop.get('name')] = prop.get('value');
+					});
+					
+					if(props.caption_position && props.caption_trigger) {
+						useCaption = 'yes';
+					}
+
+					newPreset.set({
+						'use_captions': useCaption,
+						'caption-position-value': props.caption_position,
+						'caption-position': props.caption_position,
+						'caption-alignment': props.caption_alignment,
+						'caption-trigger': props.caption_trigger,
+						'caption-bg' : props.background,
+					});
+				},
 			}
 		},
+		
 		title: l10n.settings.label
 	});
 
