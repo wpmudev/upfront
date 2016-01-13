@@ -79,7 +79,30 @@ define([
 							}
 						},
 					]
-				}
+				},
+				
+				migratePresetProperties: function(newPreset) {
+					var props = {},
+						useBorder = '';
+
+					this.model.get('properties').each( function(prop) {
+						props[prop.get('name')] = prop.get('value');
+					});
+					
+					if(typeof props.border_width !== "undefined" &&
+						typeof props.border_style !== "undefined" &&
+						typeof props.border_style !== "undefined") {
+							useBorder = 'yes';
+						}
+
+					newPreset.set({
+						'useborder': useBorder,
+						'bg_color': props.background_color,
+						'border_width': props.border_width,
+						'border_style': props.border_style,
+						'border_color': props.border_color,
+					});
+				},
 			}
 		},
 		title: l10n.appearance
