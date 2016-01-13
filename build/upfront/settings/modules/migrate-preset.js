@@ -107,7 +107,18 @@ define([
 						className: 'new-preset-button-submit',
 						compact: true,
 						on_click: function() {
-							//Do something
+							var preset_name = me.$el.find('.new-preset-button-input input').val();
+
+							if (preset_name.trim() === '') {
+								alert(l10n.not_empty_label);
+								return;
+							}
+							if (preset_name.match(/[^A-Za-z0-9 ]/)) {
+								alert(l10n.special_character_label);
+								return;
+							}
+
+							me.trigger('upfront:presets:new', preset_name.trim());
 						}
 					}),
 				]

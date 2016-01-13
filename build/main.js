@@ -39662,7 +39662,18 @@ define('scripts/upfront/settings/modules/migrate-preset',[
 						className: 'new-preset-button-submit',
 						compact: true,
 						on_click: function() {
-							//Do something
+							var preset_name = me.$el.find('.new-preset-button-input input').val();
+
+							if (preset_name.trim() === '') {
+								alert(l10n.not_empty_label);
+								return;
+							}
+							if (preset_name.match(/[^A-Za-z0-9 ]/)) {
+								alert(l10n.special_character_label);
+								return;
+							}
+
+							me.trigger('upfront:presets:new', preset_name.trim());
 						}
 					}),
 				]
@@ -40720,6 +40731,7 @@ define('scripts/upfront/preset-settings/preset-manager',[
 			//Migration listeners
 			this.listenTo(this.migratePresetModule, 'upfront:presets:preview', this.previewPreset);
 			this.listenTo(this.migratePresetModule, 'upfront:presets:change', this.applyExistingPreset);
+			this.listenTo(this.migratePresetModule, 'upfront:presets:new', this.migratePreset);
 
 			this.settings = _([
 				this.selectPresetModule,
@@ -40775,15 +40787,41 @@ define('scripts/upfront/preset-settings/preset-manager',[
 		},
 		
 		migratePreset: function(presetName) {
+			
+			//Check if preset already exist
+			var existingPreset = this.presets.findWhere({id: presetName});
+			if(typeof existingPreset !== "undefined") {
+				Upfront.Views.Editor.notify(l10n.preset_already_exist.replace(/%s/, presetName), 'error');
+				return;
+			}
+			
+			var elementStyleName = this.property('theme_style');
+	
+			// We need to set to _default first so that css editor can get style properly
+			if (!elementStyleName) elementStyleName = '_default';
+
+			// We need to initialize cssEditor to get element styles
+			Upfront.Application.cssEditor.init({
+				model: this.model,
+				stylename: elementStyleName,
+				no_render: true
+			});
+			
 			var style = $.trim(Upfront.Application.cssEditor.get_style_element().html().replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
 
+			//In case we need to migrate element styles
 			//style = this.migrateElementStyle(style);
-			// Create new preset and assign style to preset
+			
 			newPreset = new Backbone.Model(this.getPresetDefaults(presetName));
-			newPreset.set({
-				preset_style: style
-			});
-
+			
+			//Migrate element styles to preset
+			if(typeof style !== "undefined") {
+				newPreset.set({
+					preset_style: style
+				});
+			}
+			
+			//Migrate element properties to preset
 			this.migratePresetProperties(newPreset);
 
 			// And remove element style
@@ -40791,11 +40829,12 @@ define('scripts/upfront/preset-settings/preset-manager',[
 			this.presets.add(newPreset);
 			presetOptions = newPreset;
 			properties = newPreset.toJSON();
-
+			
+			//Render new preset
 			Util.updatePresetStyle(this.styleElementPrefix.replace(/-preset/, ''), properties, this.styleTpl);
-
+			
+			//Save preset
 			this.debouncedSavePreset(properties);
-
 			this.updateMainDataCollectionPreset(properties);
 
 			// Trigger change so that whole element re-renders again.
@@ -40804,6 +40843,13 @@ define('scripts/upfront/preset-settings/preset-manager',[
 		},
 
 		createPreset: function(presetName) {
+			//Check if preset already exist
+			var existingPreset = this.presets.findWhere({id: presetName});
+			if(typeof existingPreset !== "undefined") {
+				Upfront.Views.Editor.notify(l10n.preset_already_exist.replace(/%s/, presetName), 'error');
+				return;
+			}
+		
 			var preset = this.getPresetDefaults(presetName);
 
 			this.presets.add(preset);
@@ -40871,11 +40917,11 @@ define('scripts/upfront/preset-settings/preset-manager',[
 		},
 		
 		applyExistingPreset: function(preset) {
-			//Set existing preset
-			this.changePreset(preset);
-			
 			//Set element as already migrated
 			this.property('usingNewAppearance', true);
+			
+			//Set existing preset
+			this.changePreset(preset);
 		},
 
 		changePreset: function(preset) {
@@ -60978,21 +61024,24 @@ define('elements/upfront-image/js/image-settings',[
 							}
 						}
 					]
-				}
+				},
+				
+				migratePresetProperties: function(newPreset) {
+					var props = {};
+
+					this.model.get('properties').each( function(prop) {
+						props[prop.get('name')] = prop.get('value');
+					});
+
+					newPreset.set({
+						'caption-position-value': props.caption_position,
+						'caption-position': props.caption_position,
+						'caption-alignment': props.caption_alignment,
+						'caption-trigger': props.caption_trigger,
+						'caption-bg' : props.background,
+					});
+				},
 			}
-		},
-		
-		migratePresetProperties: function(newPreset) {
-			var props = {};
-
-			this.model.get('properties').each( function(prop) {
-				props[prop.get('name')] = prop.get('value');
-			});
-
-			newPreset.set({
-				'image-caption': props.caption_position,
-				'caption-bg' : props.primaryStyle
-			});
 		},
 		
 		title: l10n.settings.label
