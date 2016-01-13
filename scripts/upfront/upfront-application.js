@@ -605,8 +605,9 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 			options = this.postView.property('partOptions')
 		;
 
-		if(!layout)
+		if (!layout) {
 			return region;
+		}
 
 		_.each(layout, function(w){
 			var wrapperId =	Upfront.Util.get_unique_id("wrapper"),
@@ -676,7 +677,6 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 	},
 
 	prepareViews: function(){
-		console.log('Updating layout');
 		var me = this,
 			postView = this.postView,
 			region = this.importPostLayout(postView.postLayout),
@@ -1921,7 +1921,7 @@ $(function () {
 		e.preventDefault();
 		// alert(_upfront_please_hold_on);
 	});
-})
+});
 
 })(jQuery);
 //@ sourceURL=upfront-application.js
