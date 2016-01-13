@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Upfront\n"
 "POT-Creation-Date: 2016-01-14 00:23+0330\n"
-"PO-Revision-Date: 2016-01-14 00:28+0330\n"
+"PO-Revision-Date: 2016-01-14 00:44+0330\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fa\n"
@@ -5661,15 +5661,15 @@ msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:509
 msgid "New Region"
-msgstr ""
+msgstr "منطقه جدید"
 
 #: library/servers/class_upfront_editor_l10n_server.php:510
 msgid "Choose from Global Regions"
-msgstr ""
+msgstr "از بین منطقه های عمومی انتخاب کنید"
 
 #: library/servers/class_upfront_editor_l10n_server.php:511
 msgid "Make this a Global Region"
-msgstr ""
+msgstr "این منطقه عمومی است"
 
 #: library/servers/class_upfront_editor_l10n_server.php:512
 msgid "Select Global Region"
@@ -5689,7 +5689,7 @@ msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:517
 msgid "Type Region Name"
-msgstr ""
+msgstr "نام منطقه را وارد کنید"
 
 #: library/servers/class_upfront_editor_l10n_server.php:518
 msgid "Contained Region width:"

@@ -533,3 +533,25 @@ div.upfront-output-upfront-login_element form#loginform p{
     left: 22px;
     right: auto;
 }
+
+/*Regions*/
+.upfront-add-region-choice .upfront-field-multiple .upfront-field-radio {
+    right: 20px;
+    left: auto;
+}
+.upfront-add-region-choice .upfront-field-multiple {
+    padding-right: 37px;
+}
+.upfront-region-bg-setting-name-edit .upfront-region-bg-setting-localize:before {
+    left: -20px;
+    right: auto;
+}
+.uf-bgsettings-slideritem .uf-bgsettings-slider-time {
+    margin-right: 5px;
+    margin-left: auto;
+}
+.upfront-region-bg-slider-image,
+.upfront-region-bg-slider-add-image {
+    float: right;
+    margin: 0 7px 15px 7px;
+}
