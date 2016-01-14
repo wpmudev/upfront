@@ -1164,7 +1164,7 @@ var Application = new (Backbone.Router.extend({
 		return true;
 	},
 	is_post_content_style: function(){
-		return this.MODE.POSTCONTENT_STYLE;
+		return this.MODE.POSTCONTENT_STYLE === this.mode.current;
 	},
 	is_builder: function(){
 		return this.mode.current === this.MODE.THEME || this.mode.last === this.MODE.THEME;
