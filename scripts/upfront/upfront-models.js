@@ -237,10 +237,8 @@ var _alpha = "alpha",
 				if ( !_.isObject(data[breakpoint.id]) )
 					data[breakpoint.id] = {};
 				data[breakpoint.id][property] = value;
+				data.current_property = property;
 				this.set_property('breakpoint', data, silent);
-
-				if( property === 'top_padding_num' ) Upfront.data.currentEntity.show_top_padding_hint(value);
-				if( property === 'bottom_padding_num' ) Upfront.data.currentEntity.show_bottom_padding_hint(value);
 			}
 		},
 		add_to: function (collection, index, options) {
