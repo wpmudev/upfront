@@ -219,7 +219,41 @@ define([
 							}
 						}
 					]
-				}
+				},
+				
+				migratePresetProperties: function(newPreset) {
+					
+					var preset = this.property('preset') ? this.clear_preset_name(this.property('preset')) : 'default',
+						props = this.presets.findWhere({id: preset}),
+						obj = {};
+
+					_.each(props.attributes, function(preset_value, index) {
+						
+						if(index === 'id' || index === 'name' || index === 'theme_preset') {
+							return;
+						}
+						
+						obj[index] = preset_value;
+					});
+
+					//Migrate properties from existing preset
+					newPreset.set(obj);
+					
+					
+					newPreset.set({
+						'active-tab-bg': 'rgba(255,255,255, 0)',
+						'static-tab-bg': 'rgba(255,255,255, 0)',
+						'hover-tab-bg': 'rgba(255,255,255, 0)',
+						'static-useborder': '',
+						'hover-useborder': '',
+						'active-useborder': '',
+						'global-content-bg': 'rgba(255,255,255, 0)',
+						'global-useborder': '',
+						'static-line-height': '1',
+						'active-line-height': '1',
+						'hover-line-height': '1',
+					});
+				},
 			}
 		},
 		title: l10n.settings
