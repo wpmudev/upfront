@@ -95,7 +95,7 @@ define([
 				
 				migratePresetProperties: function(newPreset) {
 					var props = {},
-						useCaption = '';
+						useCaption = captionValue = '';
 
 					this.model.get('properties').each( function(prop) {
 						props[prop.get('name')] = prop.get('value');
@@ -104,10 +104,25 @@ define([
 					if(props.caption_position && props.caption_trigger) {
 						useCaption = 'yes';
 					}
+					
+					//Determinate caption value from settings
+					if(props.caption_position === 'over_image' && props.caption_alignment === 'top') {
+						captionValue = 'topOver';
+					} else if(props.caption_position === 'over_image' && props.caption_alignment === 'bottom') {
+						captionValue = 'bottomOver';
+					} else if(props.caption_position === 'over_image' && props.caption_alignment === 'fill') {
+						captionValue = 'topCover';
+					} else if(props.caption_position === 'over_image' && props.caption_alignment === 'fill_middle') {
+						captionValue = 'middleCover';
+					} else if(props.caption_position === 'below_image' && props.caption_alignment === 'fill_bottom') {
+						captionValue = 'bottomCover';
+					} else {
+						captionValue = 'below';
+					}
 
 					newPreset.set({
 						'use_captions': useCaption,
-						'caption-position-value': props.caption_position,
+						'caption-position-value': captionValue,
 						'caption-position': props.caption_position,
 						'caption-alignment': props.caption_alignment,
 						'caption-trigger': props.caption_trigger,
