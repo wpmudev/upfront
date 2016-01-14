@@ -45,7 +45,8 @@
 			},
 			get_content_markup: function () {
 				var content = this.model.get_content(),
-					$content;
+					$content,
+					data;
 
 				// Fix tagless content causes WSOD
 				try {
@@ -58,9 +59,17 @@
 					content = $content.html();
 				}
 
-				var data = {
-					"content" : content
-				};
+				if (this.model.get_property_value_by_name('usingNewAppearance') !== true || this.model.get_property_value_by_name('usingNewAppearance') !== 'true') {
+					data = {
+						"content" : content,
+						"background_color" : this.model.get_property_value_by_name("background_color"),
+						"border" : this.model.get_property_value_by_name("border")
+					};
+				} else {
+					data = {
+						"content" : content
+					};
+				}
 				var rendered = '';
 				rendered = _.template(textTpl, data);
 				return rendered + ( !this.is_edited() || $.trim(content) == '' ? '<div class="upfront-quick-swap"><p>' + l10n.dbl_click + '</p></div>' : '');
