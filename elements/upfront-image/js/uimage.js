@@ -23,10 +23,10 @@ define([
 		imageTpl: Upfront.Util.template(imageTpl),
 		sizehintTpl: _.template($(editorTpl).find('#sizehint-tpl').html()),
 		cropTimeAfterResize: 1,// making this longer makes image resize not save
-		
+
 		// Disable size hint as image element already has it's own
 		display_size_hint: false,
-		
+
 		// Property used to speed resizing up;
 		resizingData: {},
 
@@ -404,7 +404,7 @@ define([
 				};
 			}
 
-			var props = this.extract_properties();
+			props = this.extract_properties();
 
 			props.properties = this.get_preset_properties();
 
@@ -441,6 +441,8 @@ define([
 			*/
 
 			props.l10n = l10n.template;
+
+			props.usingNewAppearance = props.usingNewAppearance || false;
 
 			rendered = this.imageTpl(props);
 
@@ -581,7 +583,7 @@ define([
 				var resizeHint = $('<div>').addClass('upfront-ui uimage-resize-hint' + onTop);
 				this.$el.append(resizeHint);
 				// this.applyElementSize(elementSize.width, elementSize.height)
-				setTimeout( function () { 
+				setTimeout( function () {
 					me.applyElementSize();
 				}, 300 );
 			}
@@ -759,7 +761,7 @@ define([
 				this.render();
 			}
 		},
-		
+
 		updateBreakpointPadding: function(breakpointColumnPadding) {
 			var image_el = this.$el.find('.upfront-image');
 
@@ -773,7 +775,7 @@ define([
 		/***************************************************************************/
 		/*           Handling element resize events (jQuery resizeable)            */
 		/***************************************************************************/
-		
+
 		on_element_resize_start: function(attr) {
 			if(this.mobileMode) {
 				return;
@@ -924,7 +926,7 @@ define([
 
 		on_uimage_update: function (view) {
 			if ( !this.parent_module_view || this.parent_module_view != view ) return;
-			
+
 			this.applyElementSize();
 		},
 

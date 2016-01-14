@@ -7,6 +7,10 @@ class Upfront_UimageView extends Upfront_Object {
 	public function get_markup () {
 		$data = $this->properties_to_array();
 
+		if (isset($data['usingNewAppearance']) === false) {
+			$data['usingNewAppearance'] = false;
+		}
+
 		$data['in_editor'] = false;
 		if (!isset($data['link']) || $data['link'] === false) {
 			$link = array(
@@ -78,6 +82,7 @@ class Upfront_UimageView extends Upfront_Object {
 		if (!empty($data['src'])) $data['src'] = preg_replace('/^https?:/', '', trim($data['src']));
 
 
+		// print_r($data);die;
 		$markup = '<div>' . upfront_get_template('uimage', $data, dirname(dirname(__FILE__)) . '/tpl/image.html') . '</div>';
 
 		if($link['type'] == 'image'){
