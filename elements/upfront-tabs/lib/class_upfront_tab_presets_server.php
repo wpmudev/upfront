@@ -7,6 +7,12 @@ if (!class_exists('Upfront_Presets_Server')) {
 class Upfront_Tab_Presets_Server extends Upfront_Presets_Server {
 	private static $instance;
 
+	protected function __construct() {
+		parent::__construct();
+
+		$this->update_preset_values();
+	}
+
 	public function get_element_name() {
 		return 'tab';
 	}
@@ -28,6 +34,39 @@ class Upfront_Tab_Presets_Server extends Upfront_Presets_Server {
 
 	protected function get_style_template_path() {
 		return realpath(Upfront::get_root_dir() . '/elements/upfront-tabs/tpl/preset-style.html');
+	}
+	
+	public function update_preset_values() {
+		$presets = $this->get_presets();
+
+		$update_settings = array();
+		$result = array();
+
+		$count = 0;
+		//Check if old preset data and enable preset options
+		foreach($presets as $preset_options) {
+			//If empty preset continue
+			if(empty($preset_options['id'])) {
+				continue;
+			}
+
+			//Enable all checkboxes for tabs preset
+			if(!isset($preset_options['static-line-height'])) {
+				$preset_options['active-use-color'] = 'yes';
+				$preset_options['active-use-typography'] = 'yes';
+				$preset_options['hover-use-color'] = 'yes';
+				$preset_options['hover-use-typography'] = 'yes';
+				$preset_options['static-line-height'] = 1;
+				$count++;
+			}
+
+			$update_settings[] = $preset_options;
+		}
+
+		//If changed presets update database
+		if($count > 0 && !empty($update_settings)) {
+			$this->update_presets($update_settings);
+		}
 	}
 	
 	public static function get_preset_defaults() {
