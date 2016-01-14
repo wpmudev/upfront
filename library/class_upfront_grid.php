@@ -1002,7 +1002,7 @@ class Upfront_GridBreakpoint {
 				$left_padding = $breakpoint_data['left_padding_num'];
 			}
 			if (!empty($breakpoint_data['left_padding_use'])) {
-				$left_padding = $breakpoint_data['left_padding_use'];
+				$left_padding_use = $breakpoint_data['left_padding_use'];
 			}
 		}
 
