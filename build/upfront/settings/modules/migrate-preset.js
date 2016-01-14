@@ -98,6 +98,7 @@ define([
 					new Upfront.Views.Editor.Field.Text({
 						model: this.model,
 						label: '',
+						default_value: me.suggestPresetName(this.options.elementPreset),
 						className: 'new-preset-button-input',
 					}),
 					
@@ -154,6 +155,17 @@ define([
 			}, 20);
 
 			this.fields =_(fields);
+		},
+		
+		suggestPresetName: function(presetName) {
+			var preset = this.capitalisePreset(presetName.replace(/-preset/, '')),
+				name = preset + l10n.preset;
+			
+			return name
+		},
+		
+		capitalisePreset: function(preset) {
+			return preset.charAt(0).toUpperCase() + preset.slice(1).toLowerCase();
 		},
 		
 		hide_new_preset_fields() {

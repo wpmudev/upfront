@@ -39667,6 +39667,7 @@ define('scripts/upfront/settings/modules/migrate-preset',[
 					new Upfront.Views.Editor.Field.Text({
 						model: this.model,
 						label: '',
+						default_value: me.suggestPresetName(this.options.elementPreset),
 						className: 'new-preset-button-input',
 					}),
 					
@@ -39723,6 +39724,17 @@ define('scripts/upfront/settings/modules/migrate-preset',[
 			}, 20);
 
 			this.fields =_(fields);
+		},
+		
+		suggestPresetName: function(presetName) {
+			var preset = this.capitalisePreset(presetName.replace(/-preset/, '')),
+				name = preset + l10n.preset;
+			
+			return name
+		},
+		
+		capitalisePreset: function(preset) {
+			return preset.charAt(0).toUpperCase() + preset.slice(1).toLowerCase();
 		},
 		
 		hide_new_preset_fields() {
@@ -40590,6 +40602,7 @@ define('scripts/upfront/preset-settings/preset-manager',[
 
 		initialize: function (options) {
 			var me = this;
+
 			this.options = options;
 			_.each(this.options, function(option, index) {
 				this[index] = option;
@@ -40730,7 +40743,8 @@ define('scripts/upfront/preset-settings/preset-manager',[
 			//When element is not migrated yet
 			this.migratePresetModule = new MigratePresetModule({
 				model: this.model,
-				presets: this.presets
+				presets: this.presets,
+				elementPreset: this.styleElementPrefix
 			});
 
 			this.listenTo(this.selectPresetModule, 'upfront:presets:new', this.createPreset);
@@ -40804,6 +40818,7 @@ define('scripts/upfront/preset-settings/preset-manager',[
 			
 			//Check if preset already exist
 			var existingPreset = this.presets.findWhere({id: presetName});
+
 			if(typeof existingPreset !== "undefined") {
 				Upfront.Views.Editor.notify(l10n.preset_already_exist.replace(/%s/, presetName), 'error');
 				return;
@@ -41506,7 +41521,26 @@ define('elements/upfront-accordion/js/settings',[
 							}
 						}
 					]
-				}
+				},
+				
+				migratePresetProperties: function(newPreset) {
+					
+					var preset = this.property('preset') ? this.clear_preset_name(this.property('preset')) : 'default',
+						props = this.presets.findWhere({id: preset}),
+						obj = {};
+
+					_.each(props.attributes, function(preset_value, index) {
+						
+						if(index === 'id' || index === 'name' || index === 'theme_preset') {
+							return;
+						}
+						
+						obj[index] = preset_value;
+					});
+					
+					//Migrate properties from existing preset
+					newPreset.set(obj);
+				},
 			}
 		},
 		title: 'Accordion Settings'
@@ -68395,7 +68429,26 @@ define('elements/upfront-button/js/settings',[
 							}
 						}
 					]
-				}
+				},
+				
+				migratePresetProperties: function(newPreset) {
+					
+					var preset = this.property('preset') ? this.clear_preset_name(this.property('preset')) : 'default',
+						props = this.presets.findWhere({id: preset}),
+						obj = {};
+
+					_.each(props.attributes, function(preset_value, index) {
+						
+						if(index === 'id' || index === 'name' || index === 'theme_preset') {
+							return;
+						}
+						
+						obj[index] = preset_value;
+					});
+					
+					//Migrate properties from existing preset
+					newPreset.set(obj);
+				},
 			}
 		},
 		title: l10n.settings.label
@@ -73247,7 +73300,41 @@ define('elements/upfront-tabs/js/settings',[
 							}
 						}
 					]
-				}
+				},
+				
+				migratePresetProperties: function(newPreset) {
+					
+					var preset = this.property('preset') ? this.clear_preset_name(this.property('preset')) : 'default',
+						props = this.presets.findWhere({id: preset}),
+						obj = {};
+
+					_.each(props.attributes, function(preset_value, index) {
+						
+						if(index === 'id' || index === 'name' || index === 'theme_preset') {
+							return;
+						}
+						
+						obj[index] = preset_value;
+					});
+
+					//Migrate properties from existing preset
+					newPreset.set(obj);
+					
+					
+					newPreset.set({
+						'active-tab-bg': 'rgba(255,255,255, 0)',
+						'static-tab-bg': 'rgba(255,255,255, 0)',
+						'hover-tab-bg': 'rgba(255,255,255, 0)',
+						'static-useborder': '',
+						'hover-useborder': '',
+						'active-useborder': '',
+						'global-content-bg': 'rgba(255,255,255, 0)',
+						'global-useborder': '',
+						'static-line-height': '1',
+						'active-line-height': '1',
+						'hover-line-height': '1',
+					});
+				},
 			}
 		},
 		title: l10n.settings
