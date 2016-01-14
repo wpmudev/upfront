@@ -302,6 +302,8 @@ define([
 			// Trigger change so that whole element re-renders again.
 			// (to replace element style class with preset class, look upfront-views.js
 			this.model.get('properties').trigger('change');
+			
+			this.render();
 		},
 
 		createPreset: function(presetName) {
