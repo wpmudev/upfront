@@ -190,7 +190,7 @@ div.upfront-newnavigation_module:hover  div[data-style="burger"] div.responsive_
 .responsive_nav_toggler {
   float:right;
   position:relative;
-  z-index: 2000!important;
+  z-index: 2000;
   width:40px;
   height:40px;
   border:1px solid #d8d8d8;
@@ -204,6 +204,9 @@ div.upfront-newnavigation_module:hover  div[data-style="burger"] div.responsive_
   -ms-transition: border .25s;
   -o-transition: border .25s;
   transition: border .25s;
+}
+.upfront-module-disabled-edit .responsive_nav_toggler {
+  z-index: 2000 !important;
 }
 
 .responsive_nav_toggler:hover {

@@ -569,7 +569,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		}, 200);
 
-		this.$el.off('click', '.responsive_nav_toggler');
+		this.$el.off('click', '.responsive_nav_toggler, .burger_overlay');
 		this.$el.on('click', '.responsive_nav_toggler, .burger_overlay', function(event) {
 			me.toggle_responsive_nav(event);
 			event.stopPropagation();
