@@ -95,8 +95,9 @@
 		overflow: hidden;
 	}
 
-	/* No need it because we use presets instead */
-	/*#uslider-<?php echo $element_id ?> .uslide-caption {
+	<?php if ($usingNewAppearance === false) { ?>
+	#uslider-<?php echo $element_id ?> .uslide-caption {
 		background-color:<?php echo !empty($captionBackground) ? $captionBackground : 'transparent' ?>;
-	}*/
+	}
+	<?php } ?>
 </style>

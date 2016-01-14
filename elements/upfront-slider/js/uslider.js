@@ -184,6 +184,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		props.l10 = l10n;
 
+		props.usingNewAppearance = props.usingNewAppearance || false;
+
 		rendered = this.tpl(props);
 
 		var $rendered = $('<div></div>').append(rendered);
@@ -397,11 +399,11 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		// }
 
 		// this.controls = controls;
-		
+
 		if(typeof(this.$control_el) !== 'undefined') {
 			this.$control_el.find('.upfront-element-controls').remove();
 		}
-		
+
 		if(typeof(this.controls) !== 'undefined') {
 			this.controls = undefined;
 		}

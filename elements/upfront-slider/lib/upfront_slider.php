@@ -13,6 +13,10 @@ class Upfront_UsliderView extends Upfront_Object {
 			$slides[] = array_merge(self::slide_defaults(), $slide);
 		}
 
+		if (isset($data['usingNewAppearance']) === false) {
+			$data['usingNewAppearance'] = false;
+		}
+
 		if (!isset($data['preset'])) {
 			$data['preset'] = 'default';
 		}
