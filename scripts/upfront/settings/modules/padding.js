@@ -25,14 +25,14 @@ define([
 						{ label: 'Customize Padding', value: 'yes' }
 					],
 					change: function(value) {
-						me.model.set_property('use_padding', value);
+						me.model.set_breakpoint_property('use_padding', value);
 						
 						if(typeof value === "undefined") {
 							//Disable custom padding, update to theme default padding
-							me.model.set_property('left_padding_num', column_padding, true);
-							me.model.set_property('top_padding_num', column_padding, true);
-							me.model.set_property('right_padding_num', column_padding, true);
-							me.model.set_property('bottom_padding_num', column_padding, true);
+							me.model.set_breakpoint_property('left_padding_num', column_padding, true);
+							me.model.set_breakpoint_property('top_padding_num', column_padding, true);
+							me.model.set_breakpoint_property('right_padding_num', column_padding, true);
+							me.model.set_breakpoint_property('bottom_padding_num', column_padding, true);
 							padding_left.get_field().val(column_padding);
 							padding_top.get_field().val(column_padding);
 							padding_right.get_field().val(column_padding);
@@ -44,7 +44,7 @@ define([
 					},
 					show: function(value, $el) {
 						var stateSettings = $el.closest('.upfront-settings-item-content');
-						var lock = me.model.get_property_value_by_name('lock_padding');
+						var lock = me.model.get_breakpoint_property_value('lock_padding');
 						//Toggle padding fields
 						if(value == "yes") {
 							if(lock == "yes") {
@@ -79,11 +79,11 @@ define([
 						{ label: '', value: 'yes' }
 					],
 					show: function(value) {
-						me.model.set_property('lock_padding', value);
+						me.model.set_breakpoint_property('lock_padding', value);
 
 						var stateSettings = me.$el;
-						var usePadding = me.model.get_property_value_by_name('use_padding');
-						var padding = me.model.get_property_value_by_name('padding_number');
+						var usePadding = me.model.get_breakpoint_property_value('use_padding');
+						var padding = me.model.get_breakpoint_property_value('padding_number');
 
 						//Toggle border radius fields
 						if(value == "yes" && usePadding == "yes") {
@@ -94,10 +94,10 @@ define([
 							stateSettings.find('.padding-left').hide();
 							stateSettings.find('.padding-right').hide();
 							
-							me.model.set_property('left_padding_num', padding);
-							me.model.set_property('top_padding_num', padding);
-							me.model.set_property('right_padding_num', padding);
-							me.model.set_property('bottom_padding_num', padding);
+							me.model.set_breakpoint_property('left_padding_num', padding);
+							me.model.set_breakpoint_property('top_padding_num', padding);
+							me.model.set_breakpoint_property('right_padding_num', padding);
+							me.model.set_breakpoint_property('bottom_padding_num', padding);
 							padding_left.get_field().val(padding);
 							padding_top.get_field().val(padding);
 							padding_right.get_field().val(padding);
@@ -135,12 +135,12 @@ define([
 					max: 250,
 					change: function (value) {
 						//Update all padding values
-						me.model.set_property('padding_slider', value);
-						me.model.set_property('padding_number', value, true);
-						me.model.set_property('left_padding_num', value, true);
-						me.model.set_property('top_padding_num', value, true);
-						me.model.set_property('right_padding_num', value, true);
-						me.model.set_property('bottom_padding_num', value, true);
+						me.model.set_breakpoint_property('padding_slider', value);
+						me.model.set_breakpoint_property('padding_number', value, true);
+						me.model.set_breakpoint_property('left_padding_num', value, true);
+						me.model.set_breakpoint_property('top_padding_num', value, true);
+						me.model.set_breakpoint_property('right_padding_num', value, true);
+						me.model.set_breakpoint_property('bottom_padding_num', value, true);
 						
 						locked_num.get_field().val(value);
 						padding_left.get_field().val(value);
@@ -173,16 +173,16 @@ define([
 					step: 5,
 					min: 0,
 					change: function(value) {
-						me.model.set('padding_number', value);
-						me.model.set_property('padding_slider', value);
-						me.model.set_property('padding_number', value);
+						// me.model.set('padding_number', value);
+						me.model.set_breakpoint_property('padding_slider', value);
+						me.model.set_breakpoint_property('padding_number', value);
 						locked_slider.$el.find('#'+locked_slider.get_field_id()).slider('value', value);
 						
 						//Update all padding values
-						me.model.set_property('left_padding_num', value, true);
-						me.model.set_property('top_padding_num', value, true);
-						me.model.set_property('right_padding_num', value, true);
-						me.model.set_property('bottom_padding_num', value, true);
+						me.model.set_breakpoint_property('left_padding_num', value, true);
+						me.model.set_breakpoint_property('top_padding_num', value, true);
+						me.model.set_breakpoint_property('right_padding_num', value, true);
+						me.model.set_breakpoint_property('bottom_padding_num', value, true);
 						padding_left.get_field().val(value);
 						padding_top.get_field().val(value);
 						padding_right.get_field().val(value);
@@ -212,7 +212,7 @@ define([
 					min: 0,
 					default_value: this.model.get_breakpoint_property_value('top_padding_num') || column_padding,
 					change: function(value) {
-						me.model.set_property('top_padding_num', value);
+						me.model.set_breakpoint_property('top_padding_num', value);
 						me.enable_padding('top_padding_use');
 					},
 					focus: function() {
@@ -233,7 +233,7 @@ define([
 					min: 0,
 					default_value: this.model.get_breakpoint_property_value('left_padding_num') || column_padding,
 					change: function(value) {
-						me.model.set_property('left_padding_num', value);
+						me.model.set_breakpoint_property('left_padding_num', value);
 						me.enable_padding('left_padding_use');
 					},
 					focus: function() {
@@ -254,7 +254,7 @@ define([
 					min: 0,
 					default_value: this.model.get_breakpoint_property_value('right_padding_num') || column_padding,
 					change: function(value) {
-						me.model.set_property('right_padding_num', value);
+						me.model.set_breakpoint_property('right_padding_num', value);
 						me.enable_padding('right_padding_use');
 					},
 					focus: function() {
@@ -275,7 +275,7 @@ define([
 					min: 0,
 					default_value: this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding,
 					change: function(value) {
-						me.model.set_property('bottom_padding_num', value);
+						me.model.set_breakpoint_property('bottom_padding_num', value);
 						me.enable_padding('bottom_padding_use');
 					},
 					focus: function() {
@@ -291,15 +291,15 @@ define([
 		
 		refresh: function() {
 			//Check use_padding when default settings are overwriten
-			this.model.set_property('use_padding', 'yes');
+			this.model.set_breakpoint_property('use_padding', 'yes');
 
 			//Update fields when element padding is changed
-			var lockPadding      = this.model.get_property_value_by_name('lock_padding'),
+			var lockPadding      = this.model.get_breakpoint_property_value('lock_padding'),
 				lockPaddingField = this.fields._wrapped[1].get_field(),
-				topPadding       = this.model.get_property_value_by_name('top_padding_num'),
-				bottomPadding    = this.model.get_property_value_by_name('bottom_padding_num'),
-				leftPadding      = this.model.get_property_value_by_name('left_padding_num'),
-				rightPadding     = this.model.get_property_value_by_name('right_padding_num')
+				topPadding       = this.model.get_breakpoint_property_value('top_padding_num'),
+				bottomPadding    = this.model.get_breakpoint_property_value('bottom_padding_num'),
+				leftPadding      = this.model.get_breakpoint_property_value('left_padding_num'),
+				rightPadding     = this.model.get_breakpoint_property_value('right_padding_num')
 			;
 
 			lockPadding ? lockPaddingField.attr('checked', 'checked') : lockPaddingField.removeAttr('checked');

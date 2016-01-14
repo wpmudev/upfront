@@ -1453,6 +1453,17 @@ define([
 				}
 				else if ( prop.id == 'breakpoint' ){
 					this.update_position();
+
+					var current_property = value.current_property,
+						breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+						val = value[breakpoint.id] && value[breakpoint.id][current_property] ? value[breakpoint.id][current_property] : false;
+					;
+
+					if( current_property && val ) {
+						if( current_property === 'top_padding_num' ) this.show_top_padding_hint(val);
+						if( current_property === 'bottom_padding_num' ) this.show_bottom_padding_hint(val);
+					}
+
 				}
 				else if ( prop.id.match(/(top|bottom|left|right)_padding_(use|num|slider)/) ) {
 					this.apply_paddings($me);

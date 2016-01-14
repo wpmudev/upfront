@@ -980,14 +980,30 @@ class Upfront_GridBreakpoint {
 			$left_padding_use = $this->_get_property('left_padding_use', $entity);
 		}
 		else if ($breakpoint_data){
-			if (!empty($breakpoint_data['top_padding_num'])) $top_padding = $breakpoint_data['top_padding_num'];
-			if (!empty($breakpoint_data['top_padding_use'])) $top_padding_use = $breakpoint_data['top_padding_use'];
-			if (!empty($breakpoint_data['right_padding_num'])) $right_padding = $breakpoint_data['right_padding_num'];
-			if (!empty($breakpoint_data['right_padding_use'])) $right_padding_use = $breakpoint_data['right_padding_use'];
-			if (!empty($breakpoint_data['bottom_padding_num'])) $bottom_padding = $breakpoint_data['bottom_padding_num'];
-			if (!empty($breakpoint_data['bottom_padding_use'])) $bottom_padding_use = $breakpoint_data['bottom_padding_use'];
-			if (!empty($breakpoint_data['left_padding_num'])) $left_padding = $breakpoint_data['left_padding_num'];
-			if (!empty($breakpoint_data['left_padding_use'])) $left_padding = $breakpoint_data['left_padding_use'];
+			if (isset($breakpoint_data['top_padding_num']) && is_numeric($breakpoint_data['top_padding_num'])) {
+				$top_padding = $breakpoint_data['top_padding_num'];
+			}
+			if (!empty($breakpoint_data['top_padding_use'])) {
+				$top_padding_use = $breakpoint_data['top_padding_use'];
+			}
+			if (isset($breakpoint_data['right_padding_num']) && is_numeric($breakpoint_data['right_padding_num'])) {
+				$right_padding = $breakpoint_data['right_padding_num'];
+			}
+			if (!empty($breakpoint_data['right_padding_use'])) {
+				$right_padding_use = $breakpoint_data['right_padding_use'];
+			}
+			if (isset($breakpoint_data['bottom_padding_num']) && is_numeric($breakpoint_data['bottom_padding_num'])) {
+				$bottom_padding = $breakpoint_data['bottom_padding_num'];
+			}
+			if (!empty($breakpoint_data['bottom_padding_use'])) {
+				$bottom_padding_use = $breakpoint_data['bottom_padding_use'];
+			}
+			if (isset($breakpoint_data['left_padding_num']) && is_numeric($breakpoint_data['left_padding_num'])) {
+				$left_padding = $breakpoint_data['left_padding_num'];
+			}
+			if (!empty($breakpoint_data['left_padding_use'])) {
+				$left_padding_use = $breakpoint_data['left_padding_use'];
+			}
 		}
 
 		if ( !in_array('top_padding', $exception) && $top_padding_use && isset($top_padding) && is_numeric($top_padding) ){

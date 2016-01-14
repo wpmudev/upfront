@@ -237,6 +237,7 @@ var _alpha = "alpha",
 				if ( !_.isObject(data[breakpoint.id]) )
 					data[breakpoint.id] = {};
 				data[breakpoint.id][property] = value;
+				data.current_property = property;
 				this.set_property('breakpoint', data, silent);
 			}
 		},

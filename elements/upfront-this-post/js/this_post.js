@@ -88,6 +88,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 
                 });
             }
+
 		});
 
 		Upfront.Events.trigger('post:initialized', this);
@@ -158,8 +159,10 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			contents = this.$('.upfront-object-content').children()
 		;
 
-		if(contents[0] != this.editor.el){
+		// Make sure we have an element to swap with, first up
+		if(contents[0] && contents[0] != this.editor.el){
 			this.editor.setElement( contents[0] );
+			this.editor.render(); // ... and don't forget to re-render when swapping els
 		}
 
 		// Let's not render min-height (remove it)

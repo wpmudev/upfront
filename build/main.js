@@ -245,6 +245,7 @@ var _alpha = "alpha",
 				if ( !_.isObject(data[breakpoint.id]) )
 					data[breakpoint.id] = {};
 				data[breakpoint.id][property] = value;
+				data.current_property = property;
 				this.set_property('breakpoint', data, silent);
 			}
 		},
@@ -3506,6 +3507,17 @@ define('views',[
 				}
 				else if ( prop.id == 'breakpoint' ){
 					this.update_position();
+
+					var current_property = value.current_property,
+						breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+						val = value[breakpoint.id] && value[breakpoint.id][current_property] ? value[breakpoint.id][current_property] : false;
+					;
+
+					if( current_property && val ) {
+						if( current_property === 'top_padding_num' ) this.show_top_padding_hint(val);
+						if( current_property === 'bottom_padding_num' ) this.show_bottom_padding_hint(val);
+					}
+
 				}
 				else if ( prop.id.match(/(top|bottom|left|right)_padding_(use|num|slider)/) ) {
 					this.apply_paddings($me);
@@ -8756,10 +8768,11 @@ define('scripts/upfront/inline-panels/padding-control',[
 				change: function () {
 					var value = this.get_value();
 
+					this.model.set_breakpoint_property('use_padding', 'yes', true);
 					this.model.set_breakpoint_property('lock_padding', '', true);
-					this.model.set_breakpoint_property('top_padding_use', 'yes');
-					this.model.set_breakpoint_property('top_padding_num', value);
+					this.model.set_breakpoint_property('top_padding_use', 'yes', true);
 					this.model.set_breakpoint_property('top_padding_slider', value, true); // silent, don't need to trigger update again
+					this.model.set_breakpoint_property('top_padding_num', value);
 					Upfront.Events.trigger("upfront:paddings:updated", this.model, Upfront.data.currentEntity);
 				}
 			});
@@ -8780,10 +8793,11 @@ define('scripts/upfront/inline-panels/padding-control',[
 				change: function () {
 					var value = this.get_value();
 
+					this.model.set_breakpoint_property('use_padding', 'yes', true);
 					this.model.set_breakpoint_property('lock_padding', '', true);
-					this.model.set_breakpoint_property('bottom_padding_use', 'yes');
-					this.model.set_breakpoint_property('bottom_padding_num', value);
+					this.model.set_breakpoint_property('bottom_padding_use', 'yes', true);
 					this.model.set_breakpoint_property('bottom_padding_slider', value, true); // silent, don't need to trigger update again
+					this.model.set_breakpoint_property('bottom_padding_num', value);
 					Upfront.Events.trigger("upfront:paddings:updated", this.model, Upfront.data.currentEntity);
 				}
 			});
@@ -37473,14 +37487,14 @@ define('scripts/upfront/settings/modules/padding',[
 						{ label: 'Customize Padding', value: 'yes' }
 					],
 					change: function(value) {
-						me.model.set_property('use_padding', value);
+						me.model.set_breakpoint_property('use_padding', value);
 						
 						if(typeof value === "undefined") {
 							//Disable custom padding, update to theme default padding
-							me.model.set_property('left_padding_num', column_padding, true);
-							me.model.set_property('top_padding_num', column_padding, true);
-							me.model.set_property('right_padding_num', column_padding, true);
-							me.model.set_property('bottom_padding_num', column_padding, true);
+							me.model.set_breakpoint_property('left_padding_num', column_padding, true);
+							me.model.set_breakpoint_property('top_padding_num', column_padding, true);
+							me.model.set_breakpoint_property('right_padding_num', column_padding, true);
+							me.model.set_breakpoint_property('bottom_padding_num', column_padding, true);
 							padding_left.get_field().val(column_padding);
 							padding_top.get_field().val(column_padding);
 							padding_right.get_field().val(column_padding);
@@ -37492,7 +37506,7 @@ define('scripts/upfront/settings/modules/padding',[
 					},
 					show: function(value, $el) {
 						var stateSettings = $el.closest('.upfront-settings-item-content');
-						var lock = me.model.get_property_value_by_name('lock_padding');
+						var lock = me.model.get_breakpoint_property_value('lock_padding');
 						//Toggle padding fields
 						if(value == "yes") {
 							if(lock == "yes") {
@@ -37527,11 +37541,11 @@ define('scripts/upfront/settings/modules/padding',[
 						{ label: '', value: 'yes' }
 					],
 					show: function(value) {
-						me.model.set_property('lock_padding', value);
+						me.model.set_breakpoint_property('lock_padding', value);
 
 						var stateSettings = me.$el;
-						var usePadding = me.model.get_property_value_by_name('use_padding');
-						var padding = me.model.get_property_value_by_name('padding_number');
+						var usePadding = me.model.get_breakpoint_property_value('use_padding');
+						var padding = me.model.get_breakpoint_property_value('padding_number');
 
 						//Toggle border radius fields
 						if(value == "yes" && usePadding == "yes") {
@@ -37542,10 +37556,10 @@ define('scripts/upfront/settings/modules/padding',[
 							stateSettings.find('.padding-left').hide();
 							stateSettings.find('.padding-right').hide();
 							
-							me.model.set_property('left_padding_num', padding);
-							me.model.set_property('top_padding_num', padding);
-							me.model.set_property('right_padding_num', padding);
-							me.model.set_property('bottom_padding_num', padding);
+							me.model.set_breakpoint_property('left_padding_num', padding);
+							me.model.set_breakpoint_property('top_padding_num', padding);
+							me.model.set_breakpoint_property('right_padding_num', padding);
+							me.model.set_breakpoint_property('bottom_padding_num', padding);
 							padding_left.get_field().val(padding);
 							padding_top.get_field().val(padding);
 							padding_right.get_field().val(padding);
@@ -37583,12 +37597,12 @@ define('scripts/upfront/settings/modules/padding',[
 					max: 250,
 					change: function (value) {
 						//Update all padding values
-						me.model.set_property('padding_slider', value);
-						me.model.set_property('padding_number', value, true);
-						me.model.set_property('left_padding_num', value, true);
-						me.model.set_property('top_padding_num', value, true);
-						me.model.set_property('right_padding_num', value, true);
-						me.model.set_property('bottom_padding_num', value, true);
+						me.model.set_breakpoint_property('padding_slider', value);
+						me.model.set_breakpoint_property('padding_number', value, true);
+						me.model.set_breakpoint_property('left_padding_num', value, true);
+						me.model.set_breakpoint_property('top_padding_num', value, true);
+						me.model.set_breakpoint_property('right_padding_num', value, true);
+						me.model.set_breakpoint_property('bottom_padding_num', value, true);
 						
 						locked_num.get_field().val(value);
 						padding_left.get_field().val(value);
@@ -37621,16 +37635,16 @@ define('scripts/upfront/settings/modules/padding',[
 					step: 5,
 					min: 0,
 					change: function(value) {
-						me.model.set('padding_number', value);
-						me.model.set_property('padding_slider', value);
-						me.model.set_property('padding_number', value);
+						// me.model.set('padding_number', value);
+						me.model.set_breakpoint_property('padding_slider', value);
+						me.model.set_breakpoint_property('padding_number', value);
 						locked_slider.$el.find('#'+locked_slider.get_field_id()).slider('value', value);
 						
 						//Update all padding values
-						me.model.set_property('left_padding_num', value, true);
-						me.model.set_property('top_padding_num', value, true);
-						me.model.set_property('right_padding_num', value, true);
-						me.model.set_property('bottom_padding_num', value, true);
+						me.model.set_breakpoint_property('left_padding_num', value, true);
+						me.model.set_breakpoint_property('top_padding_num', value, true);
+						me.model.set_breakpoint_property('right_padding_num', value, true);
+						me.model.set_breakpoint_property('bottom_padding_num', value, true);
 						padding_left.get_field().val(value);
 						padding_top.get_field().val(value);
 						padding_right.get_field().val(value);
@@ -37660,7 +37674,7 @@ define('scripts/upfront/settings/modules/padding',[
 					min: 0,
 					default_value: this.model.get_breakpoint_property_value('top_padding_num') || column_padding,
 					change: function(value) {
-						me.model.set_property('top_padding_num', value);
+						me.model.set_breakpoint_property('top_padding_num', value);
 						me.enable_padding('top_padding_use');
 					},
 					focus: function() {
@@ -37681,7 +37695,7 @@ define('scripts/upfront/settings/modules/padding',[
 					min: 0,
 					default_value: this.model.get_breakpoint_property_value('left_padding_num') || column_padding,
 					change: function(value) {
-						me.model.set_property('left_padding_num', value);
+						me.model.set_breakpoint_property('left_padding_num', value);
 						me.enable_padding('left_padding_use');
 					},
 					focus: function() {
@@ -37702,7 +37716,7 @@ define('scripts/upfront/settings/modules/padding',[
 					min: 0,
 					default_value: this.model.get_breakpoint_property_value('right_padding_num') || column_padding,
 					change: function(value) {
-						me.model.set_property('right_padding_num', value);
+						me.model.set_breakpoint_property('right_padding_num', value);
 						me.enable_padding('right_padding_use');
 					},
 					focus: function() {
@@ -37723,7 +37737,7 @@ define('scripts/upfront/settings/modules/padding',[
 					min: 0,
 					default_value: this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding,
 					change: function(value) {
-						me.model.set_property('bottom_padding_num', value);
+						me.model.set_breakpoint_property('bottom_padding_num', value);
 						me.enable_padding('bottom_padding_use');
 					},
 					focus: function() {
@@ -37739,15 +37753,15 @@ define('scripts/upfront/settings/modules/padding',[
 		
 		refresh: function() {
 			//Check use_padding when default settings are overwriten
-			this.model.set_property('use_padding', 'yes');
+			this.model.set_breakpoint_property('use_padding', 'yes');
 
 			//Update fields when element padding is changed
-			var lockPadding      = this.model.get_property_value_by_name('lock_padding'),
+			var lockPadding      = this.model.get_breakpoint_property_value('lock_padding'),
 				lockPaddingField = this.fields._wrapped[1].get_field(),
-				topPadding       = this.model.get_property_value_by_name('top_padding_num'),
-				bottomPadding    = this.model.get_property_value_by_name('bottom_padding_num'),
-				leftPadding      = this.model.get_property_value_by_name('left_padding_num'),
-				rightPadding     = this.model.get_property_value_by_name('right_padding_num')
+				topPadding       = this.model.get_breakpoint_property_value('top_padding_num'),
+				bottomPadding    = this.model.get_breakpoint_property_value('bottom_padding_num'),
+				leftPadding      = this.model.get_breakpoint_property_value('left_padding_num'),
+				rightPadding     = this.model.get_breakpoint_property_value('right_padding_num')
 			;
 
 			lockPadding ? lockPaddingField.attr('checked', 'checked') : lockPaddingField.removeAttr('checked');
@@ -58207,8 +58221,6 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 		this.delegateEvents();
 
 		this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
-		
-		console.log(PresetUtil.getPresetProperties('contact', 'default'));
 	},
 
 	update_colors: function () {
@@ -61092,7 +61104,7 @@ define('elements/upfront-image/js/image-settings',[
 				
 				migratePresetProperties: function(newPreset) {
 					var props = {},
-						useCaption = '';
+						useCaption = captionValue = '';
 
 					this.model.get('properties').each( function(prop) {
 						props[prop.get('name')] = prop.get('value');
@@ -61101,10 +61113,25 @@ define('elements/upfront-image/js/image-settings',[
 					if(props.caption_position && props.caption_trigger) {
 						useCaption = 'yes';
 					}
+					
+					//Determinate caption value from settings
+					if(props.caption_position === 'over_image' && props.caption_alignment === 'top') {
+						captionValue = 'topOver';
+					} else if(props.caption_position === 'over_image' && props.caption_alignment === 'bottom') {
+						captionValue = 'bottomOver';
+					} else if(props.caption_position === 'over_image' && props.caption_alignment === 'fill') {
+						captionValue = 'topCover';
+					} else if(props.caption_position === 'over_image' && props.caption_alignment === 'fill_middle') {
+						captionValue = 'middleCover';
+					} else if(props.caption_position === 'below_image' && props.caption_alignment === 'fill_bottom') {
+						captionValue = 'bottomCover';
+					} else {
+						captionValue = 'below';
+					}
 
 					newPreset.set({
 						'use_captions': useCaption,
-						'caption-position-value': props.caption_position,
+						'caption-position-value': captionValue,
 						'caption-position': props.caption_position,
 						'caption-alignment': props.caption_alignment,
 						'caption-trigger': props.caption_trigger,
@@ -67427,8 +67454,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		}, 200);
 
-		this.$el.off('click', '.responsive_nav_toggler');
-		this.$el.on('click', '.responsive_nav_toggler', function(event) {
+		this.$el.off('click', '.responsive_nav_toggler, .burger_overlay');
+		this.$el.on('click', '.responsive_nav_toggler, .burger_overlay', function(event) {
 			me.toggle_responsive_nav(event);
 			event.stopPropagation();
 		});
@@ -67743,6 +67770,9 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					$('section.upfront-layout').css('margin-top', 0);
 				}
 			});
+
+			$nav.attr('data-burger_open', "1");
+
 			region_container.addClass('upfront-region-container-has-nav');
 			region_container.addClass('upfront-region-container-nav-open');
 			if ( group.length > 0 ) {
@@ -67763,6 +67793,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		} else {
 			this.hideMenu($menu);
 			this.$el.find('i.burger_nav_close').parent('li.wrap_burger_nav_close').remove();
+
+			$nav.removeAttr('data-burger_open');
 
 			this.$el.find('ul.sub-menu').css('display', '');
 			if(this.$el.find('ul.sub-menu').length < 1 ) {
@@ -73653,6 +73685,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 
                 });
             }
+
 		});
 
 		Upfront.Events.trigger('post:initialized', this);
@@ -73723,8 +73756,10 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			contents = this.$('.upfront-object-content').children()
 		;
 
-		if(contents[0] != this.editor.el){
+		// Make sure we have an element to swap with, first up
+		if(contents[0] && contents[0] != this.editor.el){
 			this.editor.setElement( contents[0] );
+			this.editor.render(); // ... and don't forget to re-render when swapping els
 		}
 
 		// Let's not render min-height (remove it)
@@ -76978,8 +77013,9 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 			options = this.postView.property('partOptions')
 		;
 
-		if(!layout)
+		if (!layout) {
 			return region;
+		}
 
 		_.each(layout, function(w){
 			var wrapperId =	Upfront.Util.get_unique_id("wrapper"),
@@ -77049,7 +77085,6 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 	},
 
 	prepareViews: function(){
-		console.log('Updating layout');
 		var me = this,
 			postView = this.postView,
 			region = this.importPostLayout(postView.postLayout),
@@ -77537,7 +77572,7 @@ var Application = new (Backbone.Router.extend({
 		return true;
 	},
 	is_post_content_style: function(){
-		return this.MODE.POSTCONTENT_STYLE;
+		return this.MODE.POSTCONTENT_STYLE === this.mode.current;
 	},
 	is_builder: function(){
 		return this.mode.current === this.MODE.THEME || this.mode.last === this.MODE.THEME;
@@ -78294,7 +78329,7 @@ $(function () {
 		e.preventDefault();
 		// alert(_upfront_please_hold_on);
 	});
-})
+});
 
 })(jQuery);
 //@ sourceURL=upfront-application.js
