@@ -302,7 +302,10 @@ define([
 			// Trigger change so that whole element re-renders again.
 			// (to replace element style class with preset class, look upfront-views.js
 			this.model.get('properties').trigger('change');
-			
+
+			//Notify preset is created
+			Upfront.Views.Editor.notify(l10n.preset_created.replace(/%s/, presetName));
+	
 			this.render();
 		},
 
@@ -322,6 +325,9 @@ define([
 
 			// Make sure we don't lose our current preset
 			this.model.encode_preset(preset.id);
+			
+			//Notify preset is created
+			Upfront.Views.Editor.notify(l10n.preset_created.replace(/%s/, presetName));
 
 			this.render();
 		},
@@ -370,7 +376,7 @@ define([
 				me.presets = new Backbone.Collection(Upfront.mainData[me.mainDataCollection] || []);
 
 				//Notify preset is reset
-				Upfront.Views.Editor.notify('Preset '+ preset.get('id') +' was reset');
+				Upfront.Views.Editor.notify(l10n.preset_reset.replace(/%s/, preset.get('id')));
 
 				me.$el.empty();
 				me.render();

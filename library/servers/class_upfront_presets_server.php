@@ -401,7 +401,9 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			'convert_preset_info' => __('In order to edit the Appearance of this Element, you need to convert it to a <strong>Preset</strong>. Presets allow you to save and re-use styling across any element.', 'upfront'),
 			'select_preset_info' => __('Alternatively, pick from one of the existing presets below:', 'upfront'),
 			'preset_changed' => __('Preset changed to %s', 'upfront'),
-			'preset_already_exist' => __('Preset %s already exist, use another name!')
+			'preset_already_exist' => __('Preset %s already exist, use another name!'),
+			'preset_created' => __('Preset %s created succesfully!'),
+			'preset_reset' => __('Preset %s was reset!')
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)
