@@ -35,6 +35,7 @@ define([
 
 		initialize: function (options) {
 			var me = this;
+
 			this.options = options;
 			_.each(this.options, function(option, index) {
 				this[index] = option;
@@ -175,7 +176,8 @@ define([
 			//When element is not migrated yet
 			this.migratePresetModule = new MigratePresetModule({
 				model: this.model,
-				presets: this.presets
+				presets: this.presets,
+				elementPreset: this.styleElementPrefix
 			});
 
 			this.listenTo(this.selectPresetModule, 'upfront:presets:new', this.createPreset);
