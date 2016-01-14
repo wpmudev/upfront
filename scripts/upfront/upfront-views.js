@@ -1460,8 +1460,8 @@ define([
 					;
 
 					if( current_property && val ) {
-						if( current_property === 'top_padding_num' ) Upfront.data.currentEntity.show_top_padding_hint(val);
-						if( current_property === 'bottom_padding_num' ) Upfront.data.currentEntity.show_bottom_padding_hint(val);
+						if( current_property === 'top_padding_num' ) this.show_top_padding_hint(val);
+						if( current_property === 'bottom_padding_num' ) this.show_bottom_padding_hint(val);
 					}
 
 				}
