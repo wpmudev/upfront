@@ -34,6 +34,10 @@ var PostPartView = Upfront.Views.ObjectView.extend({
 
 		this.listenTo(this.postView.model, 'template:' + postPart, this.refreshTemplate);
 
+		this.listenTo(Upfront.Events, "entity:modules:render_module", function () {
+			$(".upfront-wrapper:not(:visible)").filter('[class*="part-"]').show(); // Undo the wreckage caused by the views
+		});
+
 		if(_upfront_post_data)
 			this.post = Upfront.data.posts[_upfront_post_data.post_id];
 

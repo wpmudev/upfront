@@ -154,7 +154,7 @@ jQuery(document).ready(function($) {
 		}
 	});
 
-	$('body').on('touchstart click', '.burger_nav_close', null, function() {
+	$('body').on('touchstart click', '.burger_nav_close, .burger_overlay', null, function() {
 		$('div.responsive_nav_toggler').trigger('click');
 	});
 
@@ -166,6 +166,8 @@ jQuery(document).ready(function($) {
 			if($(this).parent().attr('data-burger_over') != 'pushes' && $(this).parent().attr('data-burger_alignment') != 'whole') {
 				$('<div class="burger_overlay"></div>').insertBefore($(this).parent().find('ul.menu'));
 			}
+
+			$(this).parent().attr('data-burger_open', "1");
 
 			$(this).parent().find('ul.menu').show();
 			//$(this).parent().find('ul.sub-menu').show();
@@ -213,6 +215,8 @@ jQuery(document).ready(function($) {
 			$(this).parent().find('ul.menu').hide();
 			$(this).parent().find('ul.menu').siblings('.burger_overlay').remove();
 			//$(this).parent().find('ul.sub-menu').hide();
+
+			$(this).parent().removeAttr('data-burger_open');
 
 			//$(e.target).closest('.responsive_nav_toggler').css({position: '', left: '', top: ''});
 			$(this).parent().find('ul.menu').css({
