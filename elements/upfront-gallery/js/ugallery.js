@@ -791,6 +791,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			props.images[index]['imageLinkTarget'] = image.imageLink.target;
 		});
 
+		props.usingNewAppearance = props.usingNewAppearance || false;
+
 		props.l10n = l10n.template;
 		props.in_editor = true;
 		if (!props.even_padding) {
@@ -818,10 +820,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			;
 		}
 
-		/** 
-			The following is being done so that the gallery 
-			items inside a lightbox can shuffle after 
-			the lightbox shows up, in order to expand 
+		/**
+			The following is being done so that the gallery
+			items inside a lightbox can shuffle after
+			the lightbox shows up, in order to expand
 			around in the available space
 		**/
 		Upfront.Events.on('upfront:lightbox:show', function(e) {
@@ -1043,7 +1045,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		} else {
 			me.images.add(models);
 		}
-		
+
 		me.render();
 	},
 
@@ -1163,9 +1165,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		var me = this;
 		if (!(
 			imageIds
-			|| 
-			this.lastThumbnailSize.width !== this.property('thumbWidth') 
-			|| 
+			||
+			this.lastThumbnailSize.width !== this.property('thumbWidth')
+			||
 			this.lastThumbnailSize.height !== this.property('thumbHeight')
 		)) return false;
 

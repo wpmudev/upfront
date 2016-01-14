@@ -16,6 +16,10 @@ class Upfront_UgalleryView extends Upfront_Object {
 		$data = $this->properties_to_array();
 		$images = array();
 
+		if (isset($data['usingNewAppearance']) === false) {
+			$data['usingNewAppearance'] = false;
+		}
+
 		// Flag for excluding stuff that is only for editor
 		$data['in_editor'] = false;
 		$data['even_padding'] = isset($data['even_padding']) ? $data['even_padding'] : array('false');
