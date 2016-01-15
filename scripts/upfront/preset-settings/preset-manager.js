@@ -410,6 +410,8 @@ define([
 			this.presets.remove(preset);
 
 			this.render();
+			
+			this.defaultOverlay();
 		},
 
 		resetPreset: function(preset) {
@@ -449,6 +451,8 @@ define([
 			
 			//Set existing preset
 			this.changePreset(preset);
+			
+			this.defaultOverlay();
 		},
 
 		changePreset: function(preset) {
@@ -460,6 +464,8 @@ define([
 			
 			//this.setupItems(); // called in render -> getBody
 			this.render();
+			
+			this.defaultOverlay();
 			
 			//Display notification
 			Upfront.Views.Editor.notify(l10n.preset_changed.replace(/%s/, preset));
