@@ -1643,7 +1643,7 @@ define([
 				;
 				if ( !region_view ) return;
 				if ( container ) {
-					container_view.$el.toggleClass(classname, add);
+					if ((container_view || {}).$el) container_view.$el.toggleClass(classname, add); // Make sure we have actual .$el to work with - `container_view` could be a boolean
 				} else {
 					region_view.$el.toggleClass(classname, add);
 				}
