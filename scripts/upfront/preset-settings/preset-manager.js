@@ -251,6 +251,7 @@ define([
 			
 			//Check if preset already exist
 			var existingPreset = this.presets.findWhere({id: presetName});
+
 			if(typeof existingPreset !== "undefined") {
 				Upfront.Views.Editor.notify(l10n.preset_already_exist.replace(/%s/, presetName), 'error');
 				return;
@@ -411,23 +412,50 @@ define([
 		},
 		
 		previewPreset: function(preset) {
-			var element_id = this.property('element_id');
-			
-			//Remove original preset classes
-			$('#' + element_id).removeClass(this.getPresetClasses());
+			var element_id = this.property('element_id'),
+				elementType = this.styleElementPrefix.replace(/-preset/, '');
+	
+			//We need to manage Tabs, Accordions & Buttons are they are using another classes for presets
+			if(elementType === "accordion") {
+				var $selector = $('#' + element_id).find(".upfront-accordion-container");
 
-			//Add preset class to element
-			$('#' + element_id).addClass(preset);
-			
-			//We still need to manage Tabs, Accordions & Buttons are they are using another classes for presets
+				$selector.removeClass(this.getPresetClasses(elementType));
+				$selector.addClass(elementType + '-preset-' + preset);
+
+			} else if(elementType === "tab") {
+				//Remove original preset classes
+				var $selector = $('#' + element_id).find(".upfront-tabs-container");
+				
+				$selector.removeClass(this.getPresetClasses(elementType));
+				$selector.addClass(elementType + '-preset-' + preset);
+
+			} else if(elementType === "button") {
+				var $selector = $('#' + element_id).find(".upfront_cta");
+				
+				$selector.removeClass(this.getPresetClasses(elementType));
+				$selector.addClass(elementType + '-preset-' + preset);
+
+			} else {
+				//Remove original preset classes
+				$('#' + element_id).removeClass(this.getPresetClasses());
+
+				//Add preset class to element
+				$('#' + element_id).addClass(preset);
+			}
+
 		},
 		
-		getPresetClasses: function() {
+		getPresetClasses: function(elementType) {
 			var presetClasses = '';
-			_.map(this.presets.models, function(model) {
-				presetClasses += model.get('id') + ' '; 
-			});
 			
+			_.map(this.presets.models, function(model) {
+				if(typeof elementType !== "undefined" && elementType) {
+					presetClasses += elementType + '-preset-' + model.get('id') + ' '; 
+				} else {
+					presetClasses += model.get('id') + ' '; 
+				}
+			});
+
 			return presetClasses;
 		},
 
