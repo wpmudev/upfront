@@ -191,6 +191,29 @@
 .upfront-module-group:hover {
 
 }
+.upfront-module-group-hidden {
+	height: auto !important;
+	min-height: 0 !important;
+	width: 100% !important;
+	padding: 0 !important;
+	margin: 0 !important;
+	border: none !important;
+	float: none;
+}
+.upfront-layout-view .upfront-module-group-hidden:after {
+	content: none;
+}
+.upfront-module-group-hidden .upfront-entity_meta,
+.upfront-module-group-hidden .upfront-selected-border,
+.upfront-module-group-hidden .upfront-module-group-toggle-container,
+.upfront-module-group-hidden .upfront-module-group-bg,
+.upfront-module-group-hidden .open-item-controls,
+.upfront-module-group-hidden .upfront-module-group-controls,
+.upfront-module-group-hidden .upfront-entity-size-hint,
+.upfront-module-group-hidden .upfront-modules_container,
+#page .upfront-module-group-hidden .ui-resizable-handle {
+	display: none !important;
+}
 .upfront-module-group-toggle-container {
 	position: absolute;
 	top: 0;
@@ -251,7 +274,8 @@
 	bottom: 0;
 	z-index: 1999;
 }
-.ui-resizable-disabled > .ui-resizable-handle {
+.ui-resizable-disabled > .ui-resizable-handle,
+.ui-resizable-disabled:hover > .ui-resizable-handle {
 	display: none !important;
 }
 .show-debug .upfront-module {
