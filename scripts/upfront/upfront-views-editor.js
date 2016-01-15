@@ -3375,7 +3375,7 @@ define([
 		paginationTpl: _.template($(_Upfront_Templates.popup).find('#upfront-pagination-tpl').html()),
 		events: {
 			"click #upfront-list-meta .upfront-list_item-component": "handle_sort_request",
-			//"click .editaction.edit": "handle_post_edit",
+			"click .editaction.edit": "handle_post_edit",
 			"click .editaction.view": "handle_post_view",
 			"click #upfront-list-page-path a.upfront-path-back": "handle_return_to_posts",
 			"click .editaction.trash": "trash_post",
@@ -3415,11 +3415,11 @@ define([
 			me.expand_post(me.collection.get(postId));
 		},
 */
-		/*handle_post_edit: function (e) {
+		handle_post_edit: function (e) {
 			e.preventDefault();
 			var postId = $(e.currentTarget).closest('.upfront-list_item-post').attr('data-post_id');
 			Upfront.Application.navigate('/edit/post/' + postId, {trigger: true});
-		},*/
+		},
 		handle_post_view: function (e) {
 			e.preventDefault();
 			var postId = $(e.currentTarget).closest('.upfront-list_item-post').attr('data-post_id');
