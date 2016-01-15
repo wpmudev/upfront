@@ -40692,6 +40692,9 @@ define('scripts/upfront/preset-settings/preset-manager',[
 				//Remove overlay div
 				me.$el.find('.default-overlay').remove();
 				
+				//Update wrapper min-height
+				me.$el.find('.default-overlay-wrapper').css('min-height', '30px');
+				
 				//Enable preset reset button
 				me.$el.find('.delete_preset input').prop('disabled', false);
 				me.$el.find('.delete_preset input').css({ opacity: 1 });
@@ -40974,6 +40977,8 @@ define('scripts/upfront/preset-settings/preset-manager',[
 			this.presets.remove(preset);
 
 			this.render();
+			
+			this.defaultOverlay();
 		},
 
 		resetPreset: function(preset) {
@@ -41013,6 +41018,8 @@ define('scripts/upfront/preset-settings/preset-manager',[
 			
 			//Set existing preset
 			this.changePreset(preset);
+			
+			this.defaultOverlay();
 		},
 
 		changePreset: function(preset) {
@@ -41024,6 +41031,8 @@ define('scripts/upfront/preset-settings/preset-manager',[
 			
 			//this.setupItems(); // called in render -> getBody
 			this.render();
+			
+			this.defaultOverlay();
 			
 			//Display notification
 			Upfront.Views.Editor.notify(l10n.preset_changed.replace(/%s/, preset));
