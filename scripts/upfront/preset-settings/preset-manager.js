@@ -125,6 +125,9 @@ define([
 				//Remove overlay div
 				me.$el.find('.default-overlay').remove();
 				
+				//Update wrapper min-height
+				me.$el.find('.default-overlay-wrapper').css('min-height', '30px');
+				
 				//Enable preset reset button
 				me.$el.find('.delete_preset input').prop('disabled', false);
 				me.$el.find('.delete_preset input').css({ opacity: 1 });
