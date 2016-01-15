@@ -308,6 +308,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'ltbox_close_icon_info' => __('Lightbox Close Icon.', 'upfront'),
 				'edit_ltbox' => __('Edit Lightbox', 'upfront'),
 				'show_element' => __('show element', 'upfront'),
+				'show_group' => __('show group', 'upfront'),
 				'show_region' => __('show region', 'upfront'),
 				'exiting_upfront' => __('Exiting upfront...', 'upfront'),
 				'exit_done' => __('Wow, those are cool!', 'upfront'),
