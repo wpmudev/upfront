@@ -221,6 +221,13 @@ define([
 					]
 				},
 				
+				migrateElementStyle: function(styles) {
+					//replace tab container which is one line with preset
+					styles = styles.replace(/.upfront-tabs-container/, '');
+					
+					return styles;
+				},
+				
 				migratePresetProperties: function(newPreset) {
 					
 					var preset = this.property('preset') ? this.clear_preset_name(this.property('preset')) : 'default',

@@ -154,6 +154,14 @@ define([
 		migratePresetProperties: function(newPreset) {
 			return newPreset;
 		},
+		
+		/**
+		 Migrate theme_style classes
+		 */
+		 
+		migrateElementStyle: function(styles) {
+			return styles;
+		}, 
 
 		setupItems: function() {
 			this.trigger('upfront:presets:setup-items', this);
@@ -307,8 +315,13 @@ define([
 			
 			var style = $.trim(Upfront.Application.cssEditor.get_style_element().html().replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
 
-			//In case we need to migrate element styles
-			//style = this.migrateElementStyle(style);
+			//Apply style only for the current preset
+			style = style.replace(new RegExp('.' + elementStyleName, 'g'), '');
+
+			style = Upfront.Application.stylesAddSelectorMigration($.trim(style), '');
+
+			//Migrate element styles
+			style = this.migrateElementStyle(style);
 			
 			newPreset = new Backbone.Model(this.getPresetDefaults(presetName));
 			
@@ -327,6 +340,8 @@ define([
 			this.presets.add(newPreset);
 			presetOptions = newPreset;
 			properties = newPreset.toJSON();
+			
+			this.property('theme_style', '');
 			
 			//Render new preset
 			Util.updatePresetStyle(this.styleElementPrefix.replace(/-preset/, ''), properties, this.styleTpl);

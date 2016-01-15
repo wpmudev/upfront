@@ -93,6 +93,13 @@ define([
 					]
 				},
 				
+				migrateElementStyle: function(styles) {
+					//replace image wrapper class
+					styles = styles.replace(/upfront-image/, 'upfront-image-wrapper');
+					
+					return styles;
+				},
+				
 				migratePresetProperties: function(newPreset) {
 					var props = {},
 						useCaption = captionValue = '';

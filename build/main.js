@@ -40721,6 +40721,14 @@ define('scripts/upfront/preset-settings/preset-manager',[
 		migratePresetProperties: function(newPreset) {
 			return newPreset;
 		},
+		
+		/**
+		 Migrate theme_style classes
+		 */
+		 
+		migrateElementStyle: function(styles) {
+			return styles;
+		}, 
 
 		setupItems: function() {
 			this.trigger('upfront:presets:setup-items', this);
@@ -40874,8 +40882,13 @@ define('scripts/upfront/preset-settings/preset-manager',[
 			
 			var style = $.trim(Upfront.Application.cssEditor.get_style_element().html().replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
 
-			//In case we need to migrate element styles
-			//style = this.migrateElementStyle(style);
+			//Apply style only for the current preset
+			style = style.replace(new RegExp('.' + elementStyleName, 'g'), '');
+
+			style = Upfront.Application.stylesAddSelectorMigration($.trim(style), '');
+
+			//Migrate element styles
+			style = this.migrateElementStyle(style);
 			
 			newPreset = new Backbone.Model(this.getPresetDefaults(presetName));
 			
@@ -40894,6 +40907,8 @@ define('scripts/upfront/preset-settings/preset-manager',[
 			this.presets.add(newPreset);
 			presetOptions = newPreset;
 			properties = newPreset.toJSON();
+			
+			this.property('theme_style', '');
 			
 			//Render new preset
 			Util.updatePresetStyle(this.styleElementPrefix.replace(/-preset/, ''), properties, this.styleTpl);
@@ -56987,6 +57002,13 @@ define('elements/upfront-text/js/settings',[
 					]
 				},
 				
+				migrateElementStyle: function(styles) {
+					//replace container class
+					styles = styles.replace(/upfront-plain_txt/, 'plain-text-container');
+					
+					return styles;
+				},
+				
 				migratePresetProperties: function(newPreset) {
 					var props = {},
 						useBorder = '';
@@ -61197,6 +61219,13 @@ define('elements/upfront-image/js/image-settings',[
 							}
 						}
 					]
+				},
+				
+				migrateElementStyle: function(styles) {
+					//replace image wrapper class
+					styles = styles.replace(/upfront-image/, 'upfront-image-wrapper');
+					
+					return styles;
 				},
 				
 				migratePresetProperties: function(newPreset) {
@@ -68494,6 +68523,13 @@ define('elements/upfront-button/js/settings',[
 					]
 				},
 				
+				migrateElementStyle: function(styles) {
+					//replace button class
+					styles = styles.replace(/upfront-button/, 'upfront_cta');
+					
+					return styles;
+				},
+				
 				migratePresetProperties: function(newPreset) {
 					
 					var preset = this.property('preset') ? this.clear_preset_name(this.property('preset')) : 'default',
@@ -69891,6 +69927,13 @@ var PostsSettings = ElementSettings.extend({
 			panelTitle: l10n.settings,
 			presetDefaults: Upfront.mainData.presetDefaults.posts,
 			styleTpl: styleTpl,
+			
+			migrateElementStyle: function(styles) {
+				//replace posts container which is one line with preset
+				styles = styles.replace(/.uposts-object/, '');
+				
+				return styles;
+			},
 		},
 	},
 
@@ -73363,6 +73406,13 @@ define('elements/upfront-tabs/js/settings',[
 							}
 						}
 					]
+				},
+				
+				migrateElementStyle: function(styles) {
+					//replace tab container which is one line with preset
+					styles = styles.replace(/.upfront-tabs-container/, '');
+					
+					return styles;
 				},
 				
 				migratePresetProperties: function(newPreset) {
