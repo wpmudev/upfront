@@ -721,3 +721,61 @@ div.preset-manager-panel .upfront-settings-css {
 div.preset-manager-panel .upfront-settings-item-title {
 	line-height: 16px;
 }
+
+/* Default overlay */
+
+div.preset-manager-panel .default-overlay-wrapper {
+	position: relative;
+}
+div.preset-manager-panel .default-overlay {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background-image: linear-gradient(-180deg, #FFFFFF 0%, rgba(255,255,255,0.85) 100%);
+	z-index: 999;
+	padding: 40px 15px;
+}
+
+div.preset-manager-panel .overlay-title:before {
+	content: '';
+	width: 20px;
+	height: 19px;
+	background-image: url('../img/uf-ui-sprite.svg');
+	background-position: -193px -247px;
+	left: 17px;
+	top: 41px;
+	opacity: .8;
+	position: absolute;
+	display: block;
+}
+
+div.preset-manager-panel .overlay-title {
+	padding-left: 30px;
+}
+
+div.preset-manager-panel .overlay-text p {
+	font-size: 12px;
+	display: inline-block;
+	font-family: verdana, sans-serif;
+	color: #596c7f;
+	position: relative;
+	font-weight: normal;
+	line-height: 1.4;
+	padding-top: 12px;
+}
+
+div.preset-manager-panel .overlay-button-input {
+	width: 160px;
+	height: 30px;
+	margin: 0px auto;
+	display: block;
+	background: #fff;
+	border: 2px solid rgba(151,163,174, 0.5);
+	margin-top: 20px;
+}
+
+div.preset-manager-panel .overlay-button-input:hover {
+	border: 2px solid rgba(151,163,174, 1);
+}
