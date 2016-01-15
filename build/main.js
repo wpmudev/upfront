@@ -3697,7 +3697,7 @@ define('views',[
 				;
 				if ( !region_view ) return;
 				if ( container ) {
-					container_view.$el.toggleClass(classname, add);
+					if ((container_view || {}).$el) container_view.$el.toggleClass(classname, add); // Make sure we have actual .$el to work with - `container_view` could be a boolean
 				} else {
 					region_view.$el.toggleClass(classname, add);
 				}
@@ -15375,7 +15375,7 @@ define('editor_views',[
 		paginationTpl: _.template($(_Upfront_Templates.popup).find('#upfront-pagination-tpl').html()),
 		events: {
 			"click #upfront-list-meta .upfront-list_item-component": "handle_sort_request",
-			//"click .editaction.edit": "handle_post_edit",
+			"click .editaction.edit": "handle_post_edit",
 			"click .editaction.view": "handle_post_view",
 			"click #upfront-list-page-path a.upfront-path-back": "handle_return_to_posts",
 			"click .editaction.trash": "trash_post",
@@ -15415,11 +15415,11 @@ define('editor_views',[
 			me.expand_post(me.collection.get(postId));
 		},
 */
-		/*handle_post_edit: function (e) {
+		handle_post_edit: function (e) {
 			e.preventDefault();
 			var postId = $(e.currentTarget).closest('.upfront-list_item-post').attr('data-post_id');
 			Upfront.Application.navigate('/edit/post/' + postId, {trigger: true});
-		},*/
+		},
 		handle_post_view: function (e) {
 			e.preventDefault();
 			var postId = $(e.currentTarget).closest('.upfront-list_item-post').attr('data-post_id');
@@ -40639,6 +40639,8 @@ define('scripts/upfront/preset-settings/preset-manager',[
 			this.debouncedSavePreset = _.debounce(savePreset, 1000);
 
 			this.createBackup();
+			
+			this.defaultOverlay();
 
 			this.listenToOnce(Upfront.Events, 'element:settings:canceled', function() {
 				this.updateCanceledPreset(this.backupPreset);
@@ -40660,6 +40662,40 @@ define('scripts/upfront/preset-settings/preset-manager',[
 			if(typeof this.backupPreset === "undefined") {
 				this.backupPreset = Upfront.Util.clone(backupModel.toJSON());
 			}
+		},
+		
+		defaultOverlay: function() {
+			var me = this,
+				preset = this.property('preset') ? this.clear_preset_name(this.property('preset')) : 'default';
+			
+			if(preset === "default") {
+				setTimeout( function() {
+					//Wrap settings and preset styles
+					me.$el.find('.preset_specific').next().andSelf().wrapAll('<div class="default-overlay-wrapper" />');
+					
+					//Append overlay div
+					me.$el.find('.default-overlay-wrapper').append('<div class="default-overlay">' + 
+					'<div class="overlay-title">' + l10n.default_overlay_title + '</div>' +
+					'<div class="overlay-text">' + l10n.default_overlay_text + '</div>' +
+					'<div class="overlay-button"><button type="button" class="overlay-button-input">'+ l10n.default_overlay_button +'</button></div>' +
+					'</div>');
+					
+					//Disable preset reset button
+					me.$el.find('.delete_preset input').prop('disabled', true);
+					me.$el.find('.delete_preset input').css({ opacity: 0.6 });
+				}, 100);
+			}
+			
+			this.$el.on('click', '.overlay-button-input', function(event) {
+				event.preventDefault();
+				
+				//Remove overlay div
+				me.$el.find('.default-overlay').remove();
+				
+				//Enable preset reset button
+				me.$el.find('.delete_preset input').prop('disabled', false);
+				me.$el.find('.delete_preset input').css({ opacity: 1 });
+			});
 		},
 
 		updateMainDataCollectionPreset: function(properties) {
