@@ -3,7 +3,7 @@ define([
 	'scripts/upfront/element-settings/settings',
 	'scripts/upfront/element-settings/root-settings-panel',
 	'scripts/upfront/preset-settings/util',
-	'text!elements/upfront-widget/tpl/preset-style.html'
+	'text!elements/upfront-this-post/tpl/preset-style.html'
 ], function(ElementSettings, RootSettingsPanel, Util, styleTpl) {
 
 var l10n = Upfront.Settings.l10n.this_post_element;
