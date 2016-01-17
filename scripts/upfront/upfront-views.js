@@ -1834,7 +1834,7 @@ define([
 				this.listenTo(Upfront.Events, 'command:region:edit_toggle', this.on_region_edit);
 				this.listenTo(Upfront.Events, 'command:region:fixed_edit_toggle', this.on_region_edit);
 
-				this.on('on_layout', this.render_object, this);
+				this.on('on_layout', this.render_new_object, this);
 				//this.on('entity:resize_stop', this.on_resize, this);
 				//this.on('entity:drop', this.on_drop, this);
 				this.on('region:updated', this.on_region_update, this);
@@ -1919,6 +1919,14 @@ define([
 				} else {
 					this._objects_view.delegateEvents();
 				}
+			},
+			render_new_object: function() {
+				this.render_object();
+				
+				//Add usingNewAppearance property
+				this.model.get('objects').each(function(object) { 
+					object.set_property('usingNewAppearance', true); 
+				})
 			},
 			disable_interaction: function (prevent_edit, prevent_button, resize, drag, lock) {
 				var $el = this.$el.find('.upfront-editable_entity:first');

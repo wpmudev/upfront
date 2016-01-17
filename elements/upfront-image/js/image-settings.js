@@ -91,9 +91,54 @@ define([
 							}
 						}
 					]
-				}
+				},
+				
+				migrateElementStyle: function(styles) {
+					//replace image wrapper class
+					styles = styles.replace(/upfront-image/, 'upfront-image-wrapper');
+					
+					return styles;
+				},
+				
+				migratePresetProperties: function(newPreset) {
+					var props = {},
+						useCaption = captionValue = '';
+
+					this.model.get('properties').each( function(prop) {
+						props[prop.get('name')] = prop.get('value');
+					});
+					
+					if(props.caption_position && props.caption_trigger) {
+						useCaption = 'yes';
+					}
+					
+					//Determinate caption value from settings
+					if(props.caption_position === 'over_image' && props.caption_alignment === 'top') {
+						captionValue = 'topOver';
+					} else if(props.caption_position === 'over_image' && props.caption_alignment === 'bottom') {
+						captionValue = 'bottomOver';
+					} else if(props.caption_position === 'over_image' && props.caption_alignment === 'fill') {
+						captionValue = 'topCover';
+					} else if(props.caption_position === 'over_image' && props.caption_alignment === 'fill_middle') {
+						captionValue = 'middleCover';
+					} else if(props.caption_position === 'below_image' && props.caption_alignment === 'fill_bottom') {
+						captionValue = 'bottomCover';
+					} else {
+						captionValue = 'below';
+					}
+
+					newPreset.set({
+						'use_captions': useCaption,
+						'caption-position-value': captionValue,
+						'caption-position': props.caption_position,
+						'caption-alignment': props.caption_alignment,
+						'caption-trigger': props.caption_trigger,
+						'caption-bg' : props.background,
+					});
+				},
 			}
 		},
+		
 		title: l10n.settings.label
 	});
 

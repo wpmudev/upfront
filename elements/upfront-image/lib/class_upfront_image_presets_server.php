@@ -52,7 +52,7 @@ class Upfront_Image_Presets_Server extends Upfront_Presets_Server {
 			'caption-text' => 'rgba(0, 0, 0, 0.9)',
 			'caption-bg' => 'rgba(255, 255, 255, 0.8)',
 			'use_captions' => '',
-			'caption-position-value' => 'nocaption',
+			'caption-position-value' => 'below',
 			'caption-trigger' => 'hover_show',
 			'caption-position' => 'over_image',
 			'caption-alignment' => 'bottom',

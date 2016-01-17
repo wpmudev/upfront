@@ -224,7 +224,26 @@ define([
 							}
 						}
 					]
-				}
+				},
+				
+				migratePresetProperties: function(newPreset) {
+					
+					var preset = this.property('preset') ? this.clear_preset_name(this.property('preset')) : 'default',
+						props = this.presets.findWhere({id: preset}),
+						obj = {};
+
+					_.each(props.attributes, function(preset_value, index) {
+						
+						if(index === 'id' || index === 'name' || index === 'theme_preset') {
+							return;
+						}
+						
+						obj[index] = preset_value;
+					});
+					
+					//Migrate properties from existing preset
+					newPreset.set(obj);
+				},
 			}
 		},
 		title: 'Accordion Settings'

@@ -18,6 +18,13 @@ var PostsSettings = ElementSettings.extend({
 			panelTitle: l10n.settings,
 			presetDefaults: Upfront.mainData.presetDefaults.posts,
 			styleTpl: styleTpl,
+			
+			migrateElementStyle: function(styles) {
+				//replace posts container which is one line with preset
+				styles = styles.replace(/.uposts-object/, '');
+				
+				return styles;
+			},
 		},
 	},
 
