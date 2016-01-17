@@ -65,7 +65,6 @@
 						"background_color" : this.model.get_property_value_by_name("background_color"),
 						"border" : this.model.get_property_value_by_name("border")
 					};
-					console.log('old appearance');
 				} else {
 					data = {
 						"content" : content

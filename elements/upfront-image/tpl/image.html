@@ -16,7 +16,7 @@
 		<div class="upfront-image-starting_placeholder"><p>Image placeholder</p></div>
 		<?php } ?>
 
-		<?php if($usingNewAppearance === false) { ?>
+		<?php if($usingNewAppearance !== true) { ?>
 			<?php if($include_image_caption) { ?>
 				<div class="wp-caption uimage-<?php echo $caption_alignment ?> uimage-<?php echo $caption_trigger ?> uimage-padded-caption" style="background:<?php echo $captionBackground == '1' ? $background : 'rgba(255, 255, 255, 0)' ?>; ">
 					<?php if($cover_caption) { ?>

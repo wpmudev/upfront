@@ -444,6 +444,10 @@ define([
 
 			props.usingNewAppearance = props.usingNewAppearance || false;
 
+			if (props.usingNewAppearance === false && props.image_caption === '<p>My awesome image caption</p>') {
+				props.include_image_caption = false;
+			}
+
 			rendered = this.imageTpl(props);
 
 			if (this.property('quick_swap')) {
