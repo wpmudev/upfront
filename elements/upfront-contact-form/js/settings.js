@@ -103,9 +103,127 @@ define([
 		]
 	});
 
+	var SMTPPanel = RootSettingsPanel.extend({
+		label: 'Empty label',
+		title: l10n.smtp.label,
+		settings: [
+			{
+				type: 'SettingsItem',
+				title: l10n.smtp.enable,
+				className: 'general_settings_item',
+				fields: [
+					{
+						type: 'Radios',
+						className: 'inline-radios plaintext-settings',
+						property: 'smtp_enable',
+						values: [
+							{
+								label: l10n.smtp.no,
+								value: 'no'
+							},
+							{
+								label: l10n.smtp.yes,
+								value: 'yes'
+							}
+						]
+					}
+				]
+			},
+			{
+				type: 'SettingsItem',
+				title: l10n.smtp.configuration,
+				className: 'general_settings_item',
+				fields: [
+					{
+						type: 'Email',
+						title: l10n.contact_details,
+						property: 'smtp_from_email',
+						label: l10n.smtp.from_email
+					},
+					{
+						type: 'Text',
+						property: 'smtp_from_name',
+						label: l10n.smtp.from_name
+					},
+					{
+						type: 'Text',
+						property: 'smtp_host',
+						label: l10n.smtp.host
+					},
+					{
+						type: 'Text',
+						property: 'smtp_port',
+						label: l10n.smtp.port
+					}
+				]
+			},
+
+			{
+				type: 'SettingsItem',
+				title: l10n.smtp.secure,
+				className: 'general_settings_item',
+				fields: [
+					{
+						type: 'Radios',
+						className: 'inline-radios plaintext-settings',
+						property: 'smtp_secure',
+						values: [
+							{
+								label: l10n.smtp.none,
+								value: 'none'
+							},
+							{
+								label: l10n.smtp.ssl,
+								value: 'SSL'
+							},
+							{
+								label: l10n.smtp.tls,
+								value: 'TLS'
+							}
+						]
+					}
+				]
+			},
+			{
+				type: 'SettingsItem',
+				title: l10n.smtp.authentication,
+				className: 'general_settings_item',
+				fields: [
+					{
+						type: 'Radios',
+						className: 'inline-radios plaintext-settings',
+						property: 'smtp_authentication',
+						values: [
+							{
+								label: l10n.smtp.no,
+								value: 'no'
+							},
+							{
+								label: l10n.smtp.yes,
+								value: 'yes'
+							}
+						]
+					},
+					{
+						type: 'Text',
+						property: 'smtp_username',
+						label: l10n.smtp.username
+					},
+					{
+						type: 'Text',
+						property: 'smtp_password',
+						label: l10n.smtp.password
+					}
+				]
+			},
+			
+		]
+	});
+
 	var ContactFormSettings = ElementSettings.extend({
 		panels: {
 			General: GeneralPanel,
+			SMTP: SMTPPanel,
 			Appearance: {
 				mainDataCollection: 'contactPresets',
 				styleElementPrefix: 'contact-preset',
