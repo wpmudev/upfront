@@ -53265,6 +53265,7 @@ var UeditorPanel = Backbone.View.extend({
         if( typeof this.init === "function" ){
             this.init();
         }
+
         this.render();
     },
 
@@ -54056,6 +54057,10 @@ RedactorPlugins.upfrontLink = function() {
 			},
 
 			render: function () {
+                // this function is better called in 'this.open()', no point having it executed without a linkModel.
+                if(typeof(this.linkModel) === 'undefined')
+                    return;
+                
 				var linkTypes = {},
 					me = this;
 
