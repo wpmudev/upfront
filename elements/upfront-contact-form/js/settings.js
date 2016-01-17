@@ -174,11 +174,11 @@ define([
 							},
 							{
 								label: l10n.smtp.ssl,
-								value: 'SSL'
+								value: 'ssl'
 							},
 							{
 								label: l10n.smtp.tls,
-								value: 'TLS'
+								value: 'tls'
 							}
 						]
 					}
