@@ -65,6 +65,7 @@
 						"background_color" : this.model.get_property_value_by_name("background_color"),
 						"border" : this.model.get_property_value_by_name("border")
 					};
+					console.log('old appearance');
 				} else {
 					data = {
 						"content" : content
@@ -145,6 +146,10 @@
 				;
 
 				me.update_colors();
+
+				if (this.model.get_property_value_by_name('preset')) {
+					this.$el.find('.upfront-output-plaintxt').addClass(this.model.get_property_value_by_name('preset'));
+				}
 			},
 			update_colors: function () {
 				var me = this;
@@ -152,7 +157,7 @@
 				var bg = me.model.get_property_value_by_name("background_color");
 				if (bg && Upfront.Util.colors.is_theme_color(bg)) {
 					bg = Upfront.Util.colors.get_color(bg);
-					me.$el.find(".plaintxt_padding").css("backgroundColor", bg);
+					// me.$el.find(".plaintxt_padding").css("backgroundColor", bg);
 
 					me.model.set_property("bg_color", bg);
 				}
@@ -163,7 +168,7 @@
 				if (border && matches && matches.length) {
 					var color = Upfront.Util.colors.get_color(matches[0]);
 					border = border.replace(new RegExp(matches[0]), color);
-					me.$el.find(".plaintxt_padding").css("border", border);
+					// me.$el.find(".plaintxt_padding").css("border", border);
 
 					me.model.set_property("border_color", color);
 				}
