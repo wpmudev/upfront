@@ -181,7 +181,7 @@ var hackRedactor = function(){
         this.$air.trigger('show');
         this.dropdown.hideAll();
         UeditorEvents.trigger("ueditor:air:show", this);
-        this.selection.restore();
+        this.selection.removeMarkers();
     };
 
 
