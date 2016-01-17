@@ -59,15 +59,17 @@
 					content = $content.html();
 				}
 
-				if (this.model.get_property_value_by_name('usingNewAppearance') !== true || this.model.get_property_value_by_name('usingNewAppearance') !== 'true') {
+				if (this.model.get_property_value_by_name('usingNewAppearance') !== true && this.model.get_property_value_by_name('usingNewAppearance') !== 'true') {
 					data = {
 						"content" : content,
 						"background_color" : this.model.get_property_value_by_name("background_color"),
-						"border" : this.model.get_property_value_by_name("border")
+						"border" : this.model.get_property_value_by_name("border"),
+						"usingNewAppearance": false
 					};
 				} else {
 					data = {
-						"content" : content
+						"content" : content,
+						usingNewAppearance: true
 					};
 				}
 				var rendered = '';
@@ -156,7 +158,6 @@
 				var bg = me.model.get_property_value_by_name("background_color");
 				if (bg && Upfront.Util.colors.is_theme_color(bg)) {
 					bg = Upfront.Util.colors.get_color(bg);
-					// me.$el.find(".plaintxt_padding").css("backgroundColor", bg);
 
 					me.model.set_property("bg_color", bg);
 				}
@@ -167,7 +168,6 @@
 				if (border && matches && matches.length) {
 					var color = Upfront.Util.colors.get_color(matches[0]);
 					border = border.replace(new RegExp(matches[0]), color);
-					// me.$el.find(".plaintxt_padding").css("border", border);
 
 					me.model.set_property("border_color", color);
 				}
