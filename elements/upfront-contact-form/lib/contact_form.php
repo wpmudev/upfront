@@ -287,7 +287,7 @@ class Upfront_UcontactView extends Upfront_Object {
 	}
 
 	public function kick_in_smtp($phpmailer){
-		
+
 		if( !is_email($this->_get_property_t('smtp_from_email')) || empty($this->_get_property_t('smtp_host')) ){
 			return;
 		}
@@ -304,6 +304,7 @@ class Upfront_UcontactView extends Upfront_Object {
 			$phpmailer->Username = $this->_get_property_t('smtp_username');
 			$phpmailer->Password = $this->_get_property_t('smtp_password');
 		}
+		
 	}
 
 	public function get_post ($param){
