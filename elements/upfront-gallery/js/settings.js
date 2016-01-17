@@ -77,7 +77,7 @@ define([
 						}
 					]
 				},
-				
+
 				migratePresetProperties: function(newPreset) {
 					var props = {},
 						useCaption = '',
@@ -86,11 +86,11 @@ define([
 					this.model.get('properties').each( function(prop) {
 						props[prop.get('name')] = prop.get('value');
 					});
-					
+
 					if(typeof props.thumbCaptionsHeight !== "undefined") {
 						caption_height = 'fixed'
 					}
-					
+
 					if(typeof props.captionType !== "undefined") {
 						useCaption = 'yes';
 					}
@@ -98,7 +98,7 @@ define([
 					newPreset.set({
 						'use_captions': useCaption,
 						'captionType': props.captionType,
-						'showCaptionOnHover': props.showCaptionOnHover,
+						'showCaptionOnHover': props.showCaptionOnHover && props.showCaptionOnHover[0] && props.showCaptionOnHover[0] === "true" ? '1' : '0',
 						'caption-height': caption_height,
 						'thumbCaptionsHeight': props.thumbCaptionsHeight,
 						'caption-bg': props.captionBackground,

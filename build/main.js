@@ -40657,8 +40657,8 @@ define('scripts/upfront/preset-settings/preset-manager',[
 	 *
 	 * styleTpl - Upfront.Util.template parsed styles template
 	 */
-	var l10n = Upfront.Settings.l10n.preset_manager; 
-	 
+	var l10n = Upfront.Settings.l10n.preset_manager;
+
 	var PresetManager = RootSettingsPanel.extend({
 		className: 'uf-settings-panel upfront-settings_panel preset-manager-panel',
 
@@ -40701,7 +40701,7 @@ define('scripts/upfront/preset-settings/preset-manager',[
 			this.debouncedSavePreset = _.debounce(savePreset, 1000);
 
 			this.createBackup();
-			
+
 			this.defaultOverlay();
 
 			this.listenToOnce(Upfront.Events, 'element:settings:canceled', function() {
@@ -40725,38 +40725,38 @@ define('scripts/upfront/preset-settings/preset-manager',[
 				this.backupPreset = Upfront.Util.clone(backupModel.toJSON());
 			}
 		},
-		
+
 		defaultOverlay: function() {
 			var me = this,
 				preset = this.property('preset') ? this.clear_preset_name(this.property('preset')) : 'default';
-			
+
 			if(preset === "default") {
 				setTimeout( function() {
 					//Wrap settings and preset styles
 					me.$el.find('.preset_specific').next().andSelf().wrapAll('<div class="default-overlay-wrapper" />');
-					
+
 					//Append overlay div
-					me.$el.find('.default-overlay-wrapper').append('<div class="default-overlay">' + 
+					me.$el.find('.default-overlay-wrapper').append('<div class="default-overlay">' +
 					'<div class="overlay-title">' + l10n.default_overlay_title + '</div>' +
 					'<div class="overlay-text">' + l10n.default_overlay_text + '</div>' +
 					'<div class="overlay-button"><button type="button" class="overlay-button-input">'+ l10n.default_overlay_button +'</button></div>' +
 					'</div>');
-					
+
 					//Disable preset reset button
 					me.$el.find('.delete_preset input').prop('disabled', true);
 					me.$el.find('.delete_preset input').css({ opacity: 0.6 });
 				}, 100);
 			}
-			
+
 			this.$el.on('click', '.overlay-button-input', function(event) {
 				event.preventDefault();
-				
+
 				//Remove overlay div
 				me.$el.find('.default-overlay').remove();
-				
+
 				//Update wrapper min-height
 				me.$el.find('.default-overlay-wrapper').css('min-height', '30px');
-				
+
 				//Enable preset reset button
 				me.$el.find('.delete_preset input').prop('disabled', false);
 				me.$el.find('.delete_preset input').css({ opacity: 1 });
@@ -40786,14 +40786,14 @@ define('scripts/upfront/preset-settings/preset-manager',[
 		migratePresetProperties: function(newPreset) {
 			return newPreset;
 		},
-		
+
 		/**
 		 Migrate theme_style classes
 		 */
-		 
+
 		migrateElementStyle: function(styles) {
 			return styles;
-		}, 
+		},
 
 		setupItems: function() {
 			this.trigger('upfront:presets:setup-items', this);
@@ -40848,7 +40848,7 @@ define('scripts/upfront/preset-settings/preset-manager',[
 				model: this.model,
 				preset: presetModel
 			});
-			
+
 			//When element is not migrated yet
 			this.migratePresetModule = new MigratePresetModule({
 				model: this.model,
@@ -40864,7 +40864,7 @@ define('scripts/upfront/preset-settings/preset-manager',[
 			this.listenTo(this.editPresetModule, 'upfront:presets:state_show', this.stateShow);
 			this.listenTo(this.presetCssModule, 'upfront:presets:update', this.updatePreset);
 			this.listenTo(this.selectPresetModule, 'upfront:presets:migrate', this.migratePreset);
-			
+
 			//Migration listeners
 			this.listenTo(this.migratePresetModule, 'upfront:presets:preview', this.previewPreset);
 			this.listenTo(this.migratePresetModule, 'upfront:presets:change', this.applyExistingPreset);
@@ -40887,7 +40887,7 @@ define('scripts/upfront/preset-settings/preset-manager',[
 				name: presetName
 			});
 		},
-		
+
 		updateCanceledPreset: function(properties) {
 			Util.updatePresetStyle(this.styleElementPrefix.replace(/-preset/, ''), properties, this.styleTpl);
 
@@ -40922,9 +40922,9 @@ define('scripts/upfront/preset-settings/preset-manager',[
 
 			this.updateMainDataCollectionPreset(properties);
 		},
-		
+
 		migratePreset: function(presetName) {
-			
+
 			//Check if preset already exist
 			var existingPreset = this.presets.findWhere({id: presetName});
 
@@ -40932,9 +40932,9 @@ define('scripts/upfront/preset-settings/preset-manager',[
 				Upfront.Views.Editor.notify(l10n.preset_already_exist.replace(/%s/, presetName), 'error');
 				return;
 			}
-			
+
 			var elementStyleName = this.property('theme_style');
-	
+
 			// We need to set to _default first so that css editor can get style properly
 			if (!elementStyleName) elementStyleName = '_default';
 
@@ -40944,7 +40944,7 @@ define('scripts/upfront/preset-settings/preset-manager',[
 				stylename: elementStyleName,
 				no_render: true
 			});
-			
+
 			var style = $.trim(Upfront.Application.cssEditor.get_style_element().html().replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
 
 			//Apply style only for the current preset
@@ -40954,16 +40954,16 @@ define('scripts/upfront/preset-settings/preset-manager',[
 
 			//Migrate element styles
 			style = this.migrateElementStyle(style);
-			
+
 			newPreset = new Backbone.Model(this.getPresetDefaults(presetName));
-			
+
 			//Migrate element styles to preset
 			if(typeof style !== "undefined") {
 				newPreset.set({
 					preset_style: style
 				});
 			}
-			
+
 			//Migrate element properties to preset
 			this.migratePresetProperties(newPreset);
 
@@ -40972,16 +40972,16 @@ define('scripts/upfront/preset-settings/preset-manager',[
 			this.presets.add(newPreset);
 			presetOptions = newPreset;
 			properties = newPreset.toJSON();
-			
+
 			this.property('theme_style', '');
-			
+
 			//Render new preset
 			Util.updatePresetStyle(this.styleElementPrefix.replace(/-preset/, ''), properties, this.styleTpl);
-			
+
 			//Save preset
 			this.debouncedSavePreset(properties);
 			this.updateMainDataCollectionPreset(properties);
-			
+
 			//Set element as migrated
 			this.property('usingNewAppearance', true);
 
@@ -40991,7 +40991,7 @@ define('scripts/upfront/preset-settings/preset-manager',[
 
 			//Notify preset is created
 			Upfront.Views.Editor.notify(l10n.preset_created.replace(/%s/, presetName));
-	
+
 			this.render();
 		},
 
@@ -41002,7 +41002,7 @@ define('scripts/upfront/preset-settings/preset-manager',[
 				Upfront.Views.Editor.notify(l10n.preset_already_exist.replace(/%s/, presetName), 'error');
 				return;
 			}
-		
+
 			var preset = this.getPresetDefaults(presetName);
 
 			this.presets.add(preset);
@@ -41011,7 +41011,7 @@ define('scripts/upfront/preset-settings/preset-manager',[
 
 			// Make sure we don't lose our current preset
 			this.model.encode_preset(preset.id);
-			
+
 			//Notify preset is created
 			Upfront.Views.Editor.notify(l10n.preset_created.replace(/%s/, presetName));
 
@@ -41039,7 +41039,7 @@ define('scripts/upfront/preset-settings/preset-manager',[
 			this.presets.remove(preset);
 
 			this.render();
-			
+
 			this.defaultOverlay();
 		},
 
@@ -41073,14 +41073,14 @@ define('scripts/upfront/preset-settings/preset-manager',[
 				Upfront.Views.Editor.notify(ret);
 			});
 		},
-		
+
 		applyExistingPreset: function(preset) {
 			//Set element as already migrated
 			this.property('usingNewAppearance', true);
-			
+
 			//Set existing preset
 			this.changePreset(preset);
-			
+
 			this.defaultOverlay();
 		},
 
@@ -41090,20 +41090,20 @@ define('scripts/upfront/preset-settings/preset-manager',[
 
 			// Make sure we don't lose our current preset
 			this.model.encode_preset(preset);
-			
+
 			//this.setupItems(); // called in render -> getBody
 			this.render();
-			
+
 			this.defaultOverlay();
-			
+
 			//Display notification
 			Upfront.Views.Editor.notify(l10n.preset_changed.replace(/%s/, preset));
 		},
-		
+
 		previewPreset: function(preset) {
 			var element_id = this.property('element_id'),
 				elementType = this.styleElementPrefix.replace(/-preset/, '');
-	
+
 			//We need to manage Tabs, Accordions & Buttons are they are using another classes for presets
 			if(elementType === "accordion") {
 				var $selector = $('#' + element_id).find(".upfront-accordion-container");
@@ -41114,13 +41114,13 @@ define('scripts/upfront/preset-settings/preset-manager',[
 			} else if(elementType === "tab") {
 				//Remove original preset classes
 				var $selector = $('#' + element_id).find(".upfront-tabs-container");
-				
+
 				$selector.removeClass(this.getPresetClasses(elementType));
 				$selector.addClass(elementType + '-preset-' + preset);
 
 			} else if(elementType === "button") {
 				var $selector = $('#' + element_id).find(".upfront_cta");
-				
+
 				$selector.removeClass(this.getPresetClasses(elementType));
 				$selector.addClass(elementType + '-preset-' + preset);
 
@@ -41133,15 +41133,15 @@ define('scripts/upfront/preset-settings/preset-manager',[
 			}
 
 		},
-		
+
 		getPresetClasses: function(elementType) {
 			var presetClasses = '';
-			
+
 			_.map(this.presets.models, function(model) {
 				if(typeof elementType !== "undefined" && elementType) {
-					presetClasses += elementType + '-preset-' + model.get('id') + ' '; 
+					presetClasses += elementType + '-preset-' + model.get('id') + ' ';
 				} else {
-					presetClasses += model.get('id') + ' '; 
+					presetClasses += model.get('id') + ' ';
 				}
 			});
 
@@ -41156,7 +41156,7 @@ define('scripts/upfront/preset-settings/preset-manager',[
 			this.setupItems();
 			var $body = $('<div />'),
 				me = this;
-			
+
 			if(this.property('usingNewAppearance') !== true) {
 				this.settings = _([
 					this.migratePresetModule
@@ -41168,7 +41168,7 @@ define('scripts/upfront/preset-settings/preset-manager',[
 				setting.render();
 				$body.append(setting.el)
 			});
-			
+
 
 			return $body;
 		},
@@ -57199,7 +57199,7 @@ define('elements/upfront-text/js/menu',[
 });
 
 
-define('text!elements/upfront-text/tpl/utext.html',[],function () { return '{[ if (usingNewAppearance == false) { ]}\n{[ if(background_color || border) { ]}<div class=\'plaintxt_padding\' style=\'background-color: {{background_color}}; border: {{border}};\'> {[ } ]}\n{[ } ]}\n<div class=\'plain-text-container\'>\n{{content}}\n</div>\n{[ if (usingNewAppearance == false) { ]}\n{[ if(background_color || border) { ]}</div> {[ } ]}\n{[ } ]}\n';});
+define('text!elements/upfront-text/tpl/utext.html',[],function () { return '{[ if (usingNewAppearance == false) { ]}\n{[ if(background_color || border) { ]}<div class=\'plaintxt_padding\' style=\'background-color: {{background_color}}; border: {{border}};\'> {[ } ]}\n{[ } else { ]}\n<div class=\'plaintxt_padding\'>\n{[ } ]}\n<div class=\'plain-text-container\'>\n{{content}}\n</div>\n</div>\n';});
 
 (function ($) {
 	define('utext',[
@@ -59088,7 +59088,7 @@ define('elements/upfront-gallery/js/settings',[
 						}
 					]
 				},
-				
+
 				migratePresetProperties: function(newPreset) {
 					var props = {},
 						useCaption = '',
@@ -59097,11 +59097,11 @@ define('elements/upfront-gallery/js/settings',[
 					this.model.get('properties').each( function(prop) {
 						props[prop.get('name')] = prop.get('value');
 					});
-					
+
 					if(typeof props.thumbCaptionsHeight !== "undefined") {
 						caption_height = 'fixed'
 					}
-					
+
 					if(typeof props.captionType !== "undefined") {
 						useCaption = 'yes';
 					}
@@ -59109,7 +59109,7 @@ define('elements/upfront-gallery/js/settings',[
 					newPreset.set({
 						'use_captions': useCaption,
 						'captionType': props.captionType,
-						'showCaptionOnHover': props.showCaptionOnHover,
+						'showCaptionOnHover': props.showCaptionOnHover && props.showCaptionOnHover[0] && props.showCaptionOnHover[0] === "true" ? '1' : '0',
 						'caption-height': caption_height,
 						'thumbCaptionsHeight': props.thumbCaptionsHeight,
 						'caption-bg': props.captionBackground,
