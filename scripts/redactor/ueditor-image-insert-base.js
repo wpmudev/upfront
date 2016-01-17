@@ -1,10 +1,11 @@
 ;(function($){
     define([
             "scripts/redactor/ueditor-insert",
+            "scripts/redactor/ueditor-inserts",
             'text!scripts/redactor/ueditor-templates.html',
             "scripts/redactor/ueditor-insert-utils"
         ],
-        function(Insert, tpls, utils){
+        function(Insert, Inserts, tpls, utils){
             var l10n = Upfront.Settings && Upfront.Settings.l10n
                     ? Upfront.Settings.l10n.global.ueditor
                     : Upfront.mainData.l10n.global.ueditor
@@ -12,13 +13,12 @@
             var ImageInsertBase = Insert.UeditorInsert.extend({
                 $editor: false,
                 caption_active: false,
-                type: 'image',
                 className: 'ueditor-insert upfront-inserted_image-wrapper',
                 tpl: _.template($(tpls).find('#image-insert-tpl').html()),
                 resizable: false,
                 defaultData: {
                     insert_type: "image_insert",
-                    caption: "Default caption",
+                    caption: "<p>Default caption</p>",
                     show_caption: 1,
                     imageFull: {src:'', width:100, height: 100},
                     imageThumb: {src:'', width:100, height: 100},
@@ -65,7 +65,7 @@
                 wp_defaults: {
                     insert_type: "wp_default",
                     attachment_id: "",
-                    caption: "Default caption",
+                    caption: "<p>Default caption</p>",
                     link_url: "",
                     image: {
                         src: "",
@@ -89,6 +89,29 @@
                 events:{
                     "click .ueditor-insert-remove": "click_remove",
                     "dragstart img": "on_image_dragstart"
+                },
+                /**
+                 * Checks if current insert is post image insert
+                 * @returns {boolean}
+                 */
+                is_post_image_insert: function(){
+                    return !this.is_image_insert();
+                },
+                /**
+                 * Checks if current insert is simple image insert
+                 */
+                is_image_insert: function(){
+                    return this.$editor.find(".plain-text-container").length;
+                },
+                /**
+                 * Returns type of current image insert
+                 * @returns {*}
+                 */
+                get_type: function(){
+                    if( this.$editor && this.$editor.data("ueditor") )
+                        return  _.contains( this.$editor.data("ueditor").options.inserts, "image" ) ? Inserts.NAMES.IMAGE : Inserts.NAMES.POSTIMAGE;
+                    else
+                        return false;
                 },
                 get_caption_state: function(){
                     if( this.data.get("show_caption")){
@@ -116,7 +139,7 @@
                         ;
 
                     if (!data) return false;
-                    if( !data.caption || !data.caption.show || this.$('.wp-caption-text').length === 0) return;
+                    if( !data.caption || !this.data.get("show_caption") || this.$('.wp-caption-text').length === 0) return;
 
 
                     //.attr('contenteditable', true)
@@ -275,6 +298,7 @@
                             new_state = 0;
 
                         this.data.set("show_caption", new_state);
+
                     });
 
                     this.listenTo(this.controls, 'control:click:change_image', this.change_image);
@@ -442,17 +466,20 @@
                     var me = this,
                         _inserts = {},
                         inserts_from_shortcode = {}// inserts created from caption shortcode
+                        remaining_images = contentElement.find('img');
                         ;
 
                     if( !contentElement.is(".wp-caption-text") ) this.$editor = contentElement;
 
-                    if( me.importFromShortcode ){
+                    if( me.importFromShortcode && this.is_post_image_insert() ){
                         inserts_from_shortcode = me.importFromShortcode(contentElement, insertsData, inserts);
                     }
 
-                    var remaining_images =  contentElement.find('img').filter( function() {
-                        return !$(this).closest(".ueditor-insert").length;
-                    } );
+                    if( this.is_post_image_insert() ){
+                        remaining_images =  contentElement.find('img').filter( function() {
+                            return !$(this).closest(".ueditor-insert").length;
+                        } );
+                    }
 
                     _.each(remaining_images, function( img ){
                         var insert = false;
