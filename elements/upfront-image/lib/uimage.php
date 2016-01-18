@@ -11,10 +11,6 @@ class Upfront_UimageView extends Upfront_Object {
 			$data['usingNewAppearance'] = false;
 		}
 
-		if ($data['usingNewAppearance'] === false && $data['image_caption'] === '<p>My awesome image caption</p>') {
-			$data['include_image_caption'] = false;
-		}
-
 		$data['in_editor'] = false;
 		if (!isset($data['link']) || $data['link'] === false) {
 			$link = array(

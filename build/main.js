@@ -63421,7 +63421,10 @@ define('uimage',[
 		},
 
 		hasCaptionPosition: function() {
-			return this.get_preset_property("caption-position") !== false || this.property('caption_alignment') !== false;
+			if (this.property('usingNewAppearance') === true) {
+				return this.get_preset_property("caption-position") !== false || this.property('caption_alignment') !== false;
+			}
+			return this.property('include_image_caption');
 		},
 
 		setupBySize: function() {
@@ -63495,10 +63498,6 @@ define('uimage',[
 			props.l10n = l10n.template;
 
 			props.usingNewAppearance = props.usingNewAppearance || false;
-
-			if (props.usingNewAppearance === false && props.image_caption === '<p>My awesome image caption</p>') {
-				props.include_image_caption = false;
-			}
 
 			rendered = this.imageTpl(props);
 
