@@ -110,6 +110,30 @@ define([
 						'border_color': props.border_color,
 					});
 				},
+				
+				getModifiedProperties: function() {
+					var props = {};
+
+					this.model.get('properties').each( function(prop) {
+						props[prop.get('name')] = prop.get('value');
+					});
+
+					if(typeof props.theme_style !== "undefined" && props.theme_style) {
+						return true;
+					}
+					
+					if((typeof props.border_color !== "undefined" && props.border_color !== "rgba(0, 0, 0, 0)") || 
+					   (typeof props.border_style !== "undefined" && props.border_style !== "none") || 
+					   (typeof props.border_width !== "undefined" && props.border_width !== 1)) {
+						return true;
+					}
+					
+					if(typeof props.bg_color !== "undefined" && props.bg_color !== "rgba(0, 0, 0, 0)") {
+						return true;
+					}
+
+					return false;
+				}
 			}
 		},
 		title: l10n.appearance
