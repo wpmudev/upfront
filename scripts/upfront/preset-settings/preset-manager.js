@@ -523,11 +523,40 @@ define([
 		stateShow: function(state) {
 			this.trigger('upfront:presets:state_show', state);
 		},
+		
+		/**
+		 * Allow element appearance panels to migrate properties from old type of settings
+		 * to new preset based settings.
+		 */
+		getModifiedProperties: function() {
+			return false;
+		},
+		
+		migrateToDefault: function() {
+			var needMigration = this.getModifiedProperties();
+			
+			if(!needMigration) {
+				//Set element as already migrated
+				this.property('usingNewAppearance', true);
+
+				//Set preset to default
+				this.property('preset', 'default');
+
+				this.defaultOverlay();
+			}
+			
+			return false;
+		},
 
 		getBody: function () {
 			this.setupItems();
 			var $body = $('<div />'),
 				me = this;
+			
+			/**
+			 *	Automatically migrate Text & Accordion elements to Default if no options are not modified.
+			 */
+			this.migrateToDefault();
 
 			if(this.property('usingNewAppearance') !== true) {
 				this.settings = _([
