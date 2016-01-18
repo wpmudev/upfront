@@ -297,7 +297,7 @@ define([
 		migratePreset: function(presetName) {
 
 			//Check if preset already exist
-			var existingPreset = this.presets.findWhere({id: presetName});
+			var existingPreset = this.presets.findWhere({id: presetName.toLowerCase().replace(/ /g, '-')});
 
 			if(typeof existingPreset !== "undefined") {
 				Upfront.Views.Editor.notify(l10n.preset_already_exist.replace(/%s/, presetName), 'error');
@@ -368,7 +368,8 @@ define([
 
 		createPreset: function(presetName) {
 			//Check if preset already exist
-			var existingPreset = this.presets.findWhere({id: presetName});
+
+			var existingPreset = this.presets.findWhere({id: presetName.toLowerCase().replace(/ /g, '-')});
 			if(typeof existingPreset !== "undefined") {
 				Upfront.Views.Editor.notify(l10n.preset_already_exist.replace(/%s/, presetName), 'error');
 				return;
