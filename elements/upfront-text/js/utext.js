@@ -149,7 +149,9 @@
 				me.update_colors();
 
 				if (this.model.get_property_value_by_name('preset')) {
+          // for some unknown reason there are two versions of text rendering, so cover both just in case
 					this.$el.find('.upfront-output-plaintxt').addClass(this.model.get_property_value_by_name('preset'));
+					this.$el.find('.upfront-output-plain_text').addClass(this.model.get_property_value_by_name('preset'));
 				}
 			},
 			update_colors: function () {
