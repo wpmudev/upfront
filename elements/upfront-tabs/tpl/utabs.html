@@ -1,21 +1,23 @@
 <div class="upfront-tabs-container tab-preset-<?php echo $preset ?>">
-  <div class="tabs-menu-wrapper">
-    <div class="tabs-menu">
-      <?php for ($i = 0; $i < $tabs_count; $i++) { ?>
-      <div class="tabs-tab  <?php if($i === 0) { ?>tabs-tab-active<?php } ?>" data-content-id="<?php echo $element_id ?>-<?php echo $i ?>">
-        <div class="inner-box">
-          <?php echo $tabs[$i]['title'] ?>
+  <div class="tabs-wrapper">
+    <div class="tabs-menu-wrapper">
+      <div class="tabs-menu">
+        <?php for ($i = 0; $i < $tabs_count; $i++) { ?>
+        <div class="tabs-tab  <?php if($i === 0) { ?>tabs-tab-active<?php } ?>" data-content-id="<?php echo $element_id ?>-<?php echo $i ?>">
+          <div class="inner-box">
+            <?php echo $tabs[$i]['title'] ?>
+          </div>
+          <?php if (!empty($show_remove)) { ?>
+          <i></i>
+          <?php } ?>
         </div>
-        <?php if (!empty($show_remove)) { ?>
-        <i></i>
         <?php } ?>
       </div>
+    </div>
+    <div class="utabs-content" >
+      <?php for ($i = 0; $i < $tabs_count; $i++) { ?>
+      <div id="<?php echo $element_id ?>-<?php echo $i ?>" class="utab-content <?php if($i === 0) { ?>utab-content-active<?php } ?>"><?php echo $tabs[$i]['content'] ?></div>
       <?php } ?>
     </div>
-  </div>
-  <div class="utabs-content" >
-    <?php for ($i = 0; $i < $tabs_count; $i++) { ?>
-    <div id="<?php echo $element_id ?>-<?php echo $i ?>" class="utab-content <?php if($i === 0) { ?>utab-content-active<?php } ?>"><?php echo $tabs[$i]['content'] ?></div>
-    <?php } ?>
   </div>
 </div>
