@@ -529,7 +529,7 @@ define([
 		 * to new preset based settings.
 		 */
 		getModifiedProperties: function() {
-			return false;
+			return true;
 		},
 		
 		migrateToDefault: function() {

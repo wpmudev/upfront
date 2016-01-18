@@ -41158,7 +41158,7 @@ define('scripts/upfront/preset-settings/preset-manager',[
 		 * to new preset based settings.
 		 */
 		getModifiedProperties: function() {
-			return false;
+			return true;
 		},
 		
 		migrateToDefault: function() {
@@ -57175,7 +57175,7 @@ define('elements/upfront-text/js/settings',[
 						props[prop.get('name')] = prop.get('value');
 					});
 
-					if(typeof props.theme_style !== "undefined" && props.theme_style) {
+					if(typeof props.theme_style !== "undefined" && props.theme_style !== "_default") {
 						return true;
 					}
 					
@@ -61440,7 +61440,7 @@ define('elements/upfront-image/js/image-settings',[
 						props[prop.get('name')] = prop.get('value');
 					});
 
-					if(typeof props.theme_style !== "undefined" && props.theme_style) {
+					if(typeof props.theme_style !== "undefined" && props.theme_style !== "_default") {
 						return true;
 					}
 					
