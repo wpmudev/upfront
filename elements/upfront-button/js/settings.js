@@ -237,14 +237,7 @@ define([
 						}
 					]
 				},
-				
-				migrateElementStyle: function(styles) {
-					//replace button class
-					styles = styles.replace(/upfront-button/, 'upfront_cta');
-					
-					return styles;
-				},
-				
+
 				migratePresetProperties: function(newPreset) {
 					
 					var preset = this.property('preset') ? this.clear_preset_name(this.property('preset')) : 'default',
