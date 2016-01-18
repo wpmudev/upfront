@@ -55096,7 +55096,7 @@ var hackRedactor = function(){
         this.$air.trigger('show');
         this.dropdown.hideAll();
         UeditorEvents.trigger("ueditor:air:show", this);
-        this.selection.restore();
+        this.selection.removeMarkers();
     };
 
 
@@ -55502,7 +55502,7 @@ var Ueditor = function($el, options) {
 	//this.startPlaceholder();
 	this.options.pasteCallback = function (html) {
 
-        /** 
+        /**
          * When pasting unformatted text with line breaks, the lines get wrapped
          * in DIV tags. This is due to browser's handling of pasted content inside
          * div having contenteditable=true. For our requirement, we have to replace
@@ -55529,7 +55529,7 @@ var Ueditor = function($el, options) {
         html = html.replace(/<\/p>([<br>])*<p>/g, "</p><p></p><p>");
         html = html.replace(/<\/p>([<br>])*<p ([^>]*)>/g, "</p><p></p><p $1>");
 
-    
+
 
 		/**
 		 * If a font icon is copied to clipboard, paste it
@@ -56157,7 +56157,7 @@ Ueditor.prototype = {
          */
         return $.trim(
             // Conditionally nuke the wrapper - only if we actually have it
-            $(html).find(".plain-text-container").length
+            $html.find(".plain-text-container").length
                 ? $html.find(".plain-text-container").last().html()
                 : $html.html()
         );
