@@ -136,6 +136,30 @@ define([
 						'caption-bg' : props.background,
 					});
 				},
+				
+				getModifiedProperties: function() {
+					var props = {};
+
+					this.model.get('properties').each( function(prop) {
+						props[prop.get('name')] = prop.get('value');
+					});
+
+					if(typeof props.theme_style !== "undefined" && props.theme_style) {
+						return true;
+					}
+					
+					if((typeof props.caption_position !== "undefined" && props.caption_position !== false) || 
+					   (typeof props.caption_alignment !== "undefined" && props.caption_alignment !== false) || 
+					   (typeof props.caption_trigger !== "undefined" && props.caption_trigger !== "always_show")) {
+						return true;
+					}
+					
+					if(typeof props.background !== "undefined" && props.background !== "#000000") {
+						return true;
+					}
+
+					return false;
+				}
 			}
 		},
 		
