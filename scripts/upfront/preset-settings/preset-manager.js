@@ -533,9 +533,10 @@ define([
 		},
 		
 		migrateToDefault: function() {
-			var needMigration = this.getModifiedProperties();
+			var needMigration = this.getModifiedProperties(),
+				alreadyMigrated = this.property('usingNewAppearance');
 			
-			if(!needMigration) {
+			if(!needMigration && !alreadyMigrated) {
 				//Set element as already migrated
 				this.property('usingNewAppearance', true);
 
