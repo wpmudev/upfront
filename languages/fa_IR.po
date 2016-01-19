@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Upfront\n"
 "POT-Creation-Date: 2016-01-14 00:23+0330\n"
-"PO-Revision-Date: 2016-01-14 00:44+0330\n"
+"PO-Revision-Date: 2016-01-19 21:43+0330\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fa\n"
@@ -103,7 +103,7 @@ msgstr "ٱکوردیون"
 
 #: elements/upfront-accordion/lib/uaccordion.php:122
 msgid "Panel 1"
-msgstr ""
+msgstr "قاب ۱"
 
 #: elements/upfront-accordion/lib/uaccordion.php:123
 msgid ""
@@ -113,7 +113,7 @@ msgstr ""
 
 #: elements/upfront-accordion/lib/uaccordion.php:125
 msgid "Panel containers"
-msgstr ""
+msgstr "دربرگیرنده قاب"
 
 #: elements/upfront-accordion/lib/uaccordion.php:126
 msgid "The wrapper layer of every panel."
@@ -121,7 +121,7 @@ msgstr ""
 
 #: elements/upfront-accordion/lib/uaccordion.php:127
 msgid "Panel header"
-msgstr ""
+msgstr "سر قاب"
 
 #: elements/upfront-accordion/lib/uaccordion.php:128
 msgid "The header title of every panel"
@@ -129,7 +129,7 @@ msgstr ""
 
 #: elements/upfront-accordion/lib/uaccordion.php:129
 msgid "Active Panel header"
-msgstr ""
+msgstr "سرقاب فعال"
 
 #: elements/upfront-accordion/lib/uaccordion.php:130
 msgid "The header title of active panel"
@@ -137,7 +137,7 @@ msgstr ""
 
 #: elements/upfront-accordion/lib/uaccordion.php:131
 msgid "Panel body"
-msgstr ""
+msgstr "محتوای قاب"
 
 #: elements/upfront-accordion/lib/uaccordion.php:132
 msgid "The content part of every panel."
@@ -145,7 +145,7 @@ msgstr ""
 
 #: elements/upfront-accordion/lib/uaccordion.php:133
 msgid "First Panel container"
-msgstr ""
+msgstr "دربرگیرنده قاب اول"
 
 #: elements/upfront-accordion/lib/uaccordion.php:134
 msgid "The wrapper layer of first panel."
@@ -153,7 +153,7 @@ msgstr ""
 
 #: elements/upfront-accordion/lib/uaccordion.php:135
 msgid "Last Panel container"
-msgstr ""
+msgstr "دربرگیرنده قاب پایانی"
 
 #: elements/upfront-accordion/lib/uaccordion.php:136
 msgid "The wrapper layer of last panel."
@@ -161,7 +161,7 @@ msgstr ""
 
 #: elements/upfront-accordion/lib/uaccordion.php:137
 msgid "Odd Panel containers"
-msgstr ""
+msgstr "دربرگیرنده قاب فرد"
 
 #: elements/upfront-accordion/lib/uaccordion.php:138
 msgid "The wrapper layer of odd panels."
@@ -169,7 +169,7 @@ msgstr ""
 
 #: elements/upfront-accordion/lib/uaccordion.php:139
 msgid "Even Panel containers"
-msgstr ""
+msgstr "دربرگیرنده قاب زوج"
 
 #: elements/upfront-accordion/lib/uaccordion.php:140
 msgid "The wrapper layer of even panels."
@@ -189,15 +189,15 @@ msgstr ""
 
 #: elements/upfront-accordion/lib/uaccordion.php:145
 msgid "Panel"
-msgstr ""
+msgstr "قاب"
 
 #: elements/upfront-accordion/lib/uaccordion.php:146
 msgid "Add Panel"
-msgstr ""
+msgstr "اضافه کردن قاب"
 
 #: elements/upfront-accordion/lib/uaccordion.php:147
 msgid "<p>Content</p>"
-msgstr ""
+msgstr "‏<p>متن</p>"
 
 #: elements/upfront-accordion/lib/uaccordion.php:148
 #: elements/upfront-contact-form/lib/contact_form.php:434
@@ -3500,7 +3500,7 @@ msgstr "متن"
 
 #: elements/upfront-text/lib/upfront_text.php:83
 msgid "<p>My awesome stub content goes here</p>"
-msgstr ""
+msgstr "‏<p>این هم از متن فوق العاده من</p>"
 
 #: elements/upfront-text/lib/upfront_text.php:84
 msgid "Double click to edit text"
