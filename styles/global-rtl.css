@@ -533,7 +533,10 @@ div.upfront-output-upfront-login_element form#loginform p{
     left: 22px;
     right: auto;
 }
-
+#page .upfront-accordion-container .accordion-panel>i { /* Direct descendents only */
+    right:auto;
+    left: 20px;
+}
 /*Regions*/
 .upfront-add-region-choice .upfront-field-multiple .upfront-field-radio {
     right: 20px;
@@ -555,3 +558,4 @@ div.upfront-output-upfront-login_element form#loginform p{
     float: right;
     margin: 0 7px 15px 7px;
 }
+
