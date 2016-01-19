@@ -13,6 +13,19 @@ div.<?php echo $properties['id'] ?> ul.menu {
 	<?php } ?>
 }
 
+div.<?php echo $properties['id'] ?> ul.menu:hover, div.<?php echo $properties['id'] ?>.live-preview-hover ul.menu {
+	<?php if(!empty($properties['hover-use-color']) && $properties['hover-use-color'] == 'yes' && !empty($properties['hover-nav-bg'])) { ?>
+	background: <?php echo $properties['hover-nav-bg'] ?>;
+	<?php } ?>
+}
+
+div.<?php echo $properties['id'] ?> ul.menu:active, div.<?php echo $properties['id'] ?>.live-preview-focus ul.menu {
+	<?php if(!empty($properties['focus-use-color']) && $properties['focus-use-color'] == 'yes' && !empty($properties['focus-nav-bg'])) { ?>
+	background: <?php echo $properties['focus-nav-bg'] ?>;
+	<?php } ?>
+}
+
+
 div.<?php echo $properties['id'] ?> ul.menu > li.menu-item > a {
 	<?php if(!empty($properties['static-font-color'])) { ?>color: <?php echo $properties['static-font-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['static-font-family'])) { ?>font-family: <?php echo $properties['static-font-family']  ?>; <?php } ?>

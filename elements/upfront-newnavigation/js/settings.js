@@ -195,6 +195,19 @@ define([
 				this.model.set_property('menu_slug', themenu.slug, true);
 			}
 		},
+		render: function () {
+			this.constructor.__super__.render.call(this);
+
+			var me = this;
+
+			this.currentState = '';
+			this.listenTo(this.appearancePanel, 'upfront:presets:state_show', function (state) {
+				me.currentState = state;
+			});
+			this.listenTo(this.for_view, 'rendered', function () {
+				if ( me.currentState ) me.stateShow(me.currentState);
+			});
+		},
 		/**
 		 * Get the title (goes into settings title area)
 		 * @return {string} Title

@@ -576,6 +576,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		});
 
 		this.$el.find('.upfront-output-unewnavigation').addClass('upfront-navigation');
+
+		this.trigger('rendered');
 	},
 
 	renderResponsiveNavigation: function(selector) {
