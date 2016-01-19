@@ -21,6 +21,7 @@ module.exports = function(grunt) {
 		cssmin: {
 			minify: {
 				expand: true,
+                sourceMap: true,
 				cwd: 'styles',
 				src: ['global.css', 'editor-interface.css'],
 				dest: 'styles',
