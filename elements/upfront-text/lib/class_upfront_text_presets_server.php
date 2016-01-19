@@ -32,7 +32,7 @@ class Upfront_Text_Presets_Server extends Upfront_Presets_Server {
 	
 	public static function get_preset_defaults() {
 		return array(
-			'bg_color' => 'rgb(0, 0, 0, 0)',
+			'bg_color' => 'rgba(0, 0, 0, 0)',
 			'useborder' => '',
 			'border_width' => 2,
 			'border_style' => 'solid',
