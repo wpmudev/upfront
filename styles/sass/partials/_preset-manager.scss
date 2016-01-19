@@ -736,7 +736,8 @@ div.preset-manager-panel .default-overlay {
 	right: 0;
 	background-image: linear-gradient(-180deg, #FFFFFF 0%, rgba(255,255,255,0.85) 100%);
 	z-index: 999;
-	padding: 40px 15px;
+	padding: 30px 15px;
+	font-family:Open Sans, Helvetica Neueu, Helvetica, Arial, sans-serif;
 }
 
 div.preset-manager-panel .overlay-title:before {
@@ -746,7 +747,7 @@ div.preset-manager-panel .overlay-title:before {
 	background-image: url('../img/uf-ui-sprite.svg');
 	background-position: -193px -247px;
 	left: 17px;
-	top: 41px;
+	top: 32px;
 	opacity: .8;
 	position: absolute;
 	display: block;
@@ -754,29 +755,35 @@ div.preset-manager-panel .overlay-title:before {
 
 div.preset-manager-panel .overlay-title {
 	padding-left: 30px;
+	color:rgba(47,71,95,.8);
+	font-size:14px;
+	font-weight:600;
 }
 
 div.preset-manager-panel .overlay-text p {
 	font-size: 12px;
 	display: inline-block;
-	font-family: verdana, sans-serif;
 	color: #596c7f;
 	position: relative;
 	font-weight: normal;
 	line-height: 1.4;
 	padding-top: 12px;
 }
+div.preset-manager-panel .overlay-text p strong {
+	font-weight:600;
+}
 
 div.preset-manager-panel .overlay-button-input {
-	width: 160px;
-	height: 30px;
-	margin: 0px auto;
+	width: 85%;
+	margin: 20px auto 0;
 	display: block;
-	background: #fff;
-	border: 2px solid rgba(151,163,174, 0.5);
-	margin-top: 20px;
+	border: 1px solid rgba(151,163,174, 0.5);
+	padding:6px;
+	font-size:14px;
+	color: rgba(47,71,95, .85);
 }
 
 div.preset-manager-panel .overlay-button-input:hover {
-	border: 2px solid rgba(151,163,174, 1);
+	border: 1px solid rgba(151,163,174, 1);
+	color: rgba(47,71,95, 1);
 }
