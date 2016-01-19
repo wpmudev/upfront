@@ -64,7 +64,7 @@ define([
 
 		showOverriddenOverlay: function() {
 			if (this.$el.find('.overridden-overlay').length > 0) return;
-			this.$el.append('<p class="overridden-overlay" style="display:none">&nbsp;</p>');
+			this.$el.append('<p class="overridden-overlay" style="position:absolute; top:0; bottom:0; left:0;right:0; background: rgba(0,0,0,0.5);color: white;">CSS is overridden</p>');
 		},
 
 		hideOverriddenOverlay: function() {
