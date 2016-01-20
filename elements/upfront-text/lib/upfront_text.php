@@ -124,7 +124,8 @@ class Upfront_PlainTxtView extends Upfront_Object {
 				'colors_label' => __('Colors', 'upfront'),
 				'content_area_bg' => __('Content Area BG', 'upfront'),
 				'typography_label' => __('Typography', 'upfront'),
-				'padding_label' => __('Additional Padding', 'upfront')
+				'padding_label' => __('Additional Padding', 'upfront'),
+				'tooltip_label' => __('Additional padding is handy when you have a border or BG Color set.', 'upfront')
 			)
 		);
 		return !empty($key)
