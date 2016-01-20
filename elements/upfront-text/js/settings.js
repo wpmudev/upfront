@@ -103,7 +103,8 @@ define([
 				
 				migratePresetProperties: function(newPreset) {
 					var props = {},
-						useBorder = '';
+						useBorder = '',
+						usePadding = '';
 
 					this.model.get('properties').each( function(prop) {
 						props[prop.get('name')] = prop.get('value');
@@ -113,7 +114,11 @@ define([
 						typeof props.border_style !== "undefined" &&
 						typeof props.border_style !== "undefined") {
 							useBorder = 'yes';
-						}
+					}
+					
+					if((typeof props.background_color !== "undefined" && props.background_color) || useBorder === 'yes') {
+						usePadding = 'yes';
+					}
 
 					newPreset.set({
 						'useborder': useBorder,
@@ -121,6 +126,7 @@ define([
 						'border_width': props.border_width,
 						'border_style': props.border_style,
 						'border_color': props.border_color,
+						'additional_padding': usePadding
 					});
 				},
 				
