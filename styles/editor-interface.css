@@ -5955,7 +5955,7 @@ a.upfront-region-name-edit-trigger:before {
 
 /* Existing preset apply button */
 #element-settings-sidebar .migrate-preset-overlay .migrate-preset-apply {
-  margin-left: 7px; }
+  margin-left: 5px; }
 
 #element-settings-sidebar .migrate-preset-overlay .migrate-preset-apply input {
   margin: 0;
@@ -6011,7 +6011,7 @@ a.upfront-region-name-edit-trigger:before {
   display: inline-block; }
 
 #element-settings-sidebar .migrate-preset-overlay .new-preset-button-input input {
-  width: 120px;
+  width: 117px;
   height: 30px;
   border: 1px solid #a2bfda;
   line-height: 30px;
