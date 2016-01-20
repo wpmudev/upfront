@@ -9673,7 +9673,8 @@ div.sp-replacer:before {
   display: none; }
 
 .upfront-element-controls .upfront-inline-panel {
-  z-index: 2000; }
+  z-index: 2000;
+  box-shadow: 0 0 3px 0 rgba(36, 57, 77, 0.3); }
 
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item {
   background: #FFFFFF;

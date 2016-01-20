@@ -211,6 +211,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 				'typography_label' => __('Typography', 'upfront'),
 				'colors_label' => __('Colors', 'upfront'),
 				'background_label' => __('Background', 'upfront'),
+				'item_background_label' => __('Item Background', 'upfront'),
 			),
 			'settings' => __('Navigation settings', 'upfront'),
 			'add_item' => __('Add a menu item', 'upfront'),
@@ -650,5 +651,9 @@ class upfront_nav_walker extends Walker_Nav_Menu
 		 * @param array  $args        An array of wp_nav_menu() arguments.
 		 */
 		$output .= apply_filters( 'walker_nav_menu_start_el', $item_output, $item, $depth, $args );
+	}
+
+	public function end_el( &$output, $item, $depth = 0, $args = array() ) {
+		$output .= "</li>";
 	}
 }

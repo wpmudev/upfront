@@ -1,7 +1,4 @@
 div.<?php echo $properties['id'] ?> ul.menu {
-	<?php if(!empty($properties['static-nav-bg'])) { ?>
-	background: <?php echo $properties['static-nav-bg'] ?>;
-	<?php } ?>
 	<?php if(!empty($properties['breakpoint']) && !empty($properties['breakpoint']['desktop']) && !empty($properties['breakpoint']['desktop']['menu_alignment'])) { ?>
 		text-align: <?php echo $properties['breakpoint']['desktop']['menu_alignment'] ?> !important;
 	<?php } else if(!empty($properties['breakpoint']) && !empty($properties['breakpoint']['table']) && !empty($properties['breakpoint']['table']['menu_alignment'])) { ?>
@@ -13,13 +10,19 @@ div.<?php echo $properties['id'] ?> ul.menu {
 	<?php } ?>
 }
 
-div.<?php echo $properties['id'] ?> ul.menu:hover, div.<?php echo $properties['id'] ?>.live-preview-hover ul.menu {
+div.<?php echo $properties['id'] ?> ul.menu > li.menu-item > a {
+	<?php if(!empty($properties['static-nav-bg'])) { ?>
+	background: <?php echo $properties['static-nav-bg'] ?>;
+	<?php } ?>
+}
+
+div.<?php echo $properties['id'] ?> ul.menu > li.menu-item > a:hover, div.<?php echo $properties['id'] ?>.live-preview-hover ul.menu > li.menu-item > a {
 	<?php if(!empty($properties['hover-use-color']) && $properties['hover-use-color'] == 'yes' && !empty($properties['hover-nav-bg'])) { ?>
 	background: <?php echo $properties['hover-nav-bg'] ?>;
 	<?php } ?>
 }
 
-div.<?php echo $properties['id'] ?> ul.menu:active, div.<?php echo $properties['id'] ?>.live-preview-focus ul.menu {
+div.<?php echo $properties['id'] ?> ul.menu > li.menu-item > a:active, div.<?php echo $properties['id'] ?>.live-preview-focus ul.menu > li.menu-item > a {
 	<?php if(!empty($properties['focus-use-color']) && $properties['focus-use-color'] == 'yes' && !empty($properties['focus-nav-bg'])) { ?>
 	background: <?php echo $properties['focus-nav-bg'] ?>;
 	<?php } ?>
