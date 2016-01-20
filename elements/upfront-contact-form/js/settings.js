@@ -103,398 +103,501 @@ define([
 		]
 	});
 
-	var SMTPPanel = RootSettingsPanel.extend({
-		label: 'Empty label',
-		title: l10n.smtp.label,
-		settings: [
+	
+
+	var smtp_enable = {
+		type: 'SettingsItem',
+		title: l10n.smtp.enable,
+		className: 'general_settings_item',
+		fields: [
 			{
-				type: 'SettingsItem',
-				title: l10n.smtp.enable,
-				className: 'general_settings_item',
-				fields: [
+				type: 'Radios',
+				className: 'inline-radios plaintext-settings',
+				property: 'smtp_enable',
+				values: [
 					{
-						type: 'Radios',
-						className: 'inline-radios plaintext-settings',
-						property: 'smtp_enable',
-						values: [
-							{
-								label: l10n.smtp.no,
-								value: 'no'
-							},
-							{
-								label: l10n.smtp.yes,
-								value: 'yes'
-							}
-						]
+						label: l10n.smtp.no,
+						value: 'no'
+					},
+					{
+						label: l10n.smtp.yes,
+						value: 'yes'
+					}
+				],
+				change: function(value) {
+
+				}
+			}
+		]
+	};
+
+	
+
+	var smtp_secure = {
+		type: 'SettingsItem',
+		title: l10n.smtp.secure,
+		className: 'general_settings_item',
+		fields: [
+			{
+				type: 'Radios',
+				className: 'inline-radios plaintext-settings',
+				property: 'smtp_secure',
+				values: [
+					{
+						label: l10n.smtp.none,
+						value: 'none'
+					},
+					{
+						label: l10n.smtp.ssl,
+						value: 'ssl'
+					},
+					{
+						label: l10n.smtp.tls,
+						value: 'tls'
+					}
+				]
+			}
+		]
+	};
+
+	var smtp_authentication = {
+		type: 'SettingsItem',
+		title: l10n.smtp.authentication,
+		className: 'general_settings_item',
+		fields: [
+			{
+				type: 'Radios',
+				className: 'inline-radios plaintext-settings',
+				property: 'smtp_authentication',
+				values: [
+					{
+						label: l10n.smtp.no,
+						value: 'no'
+					},
+					{
+						label: l10n.smtp.yes,
+						value: 'yes'
 					}
 				]
 			},
 			{
-				type: 'SettingsItem',
-				title: l10n.smtp.configuration,
-				className: 'general_settings_item',
-				fields: [
-					{
-						type: 'Email',
-						title: l10n.contact_details,
+				type: 'Text',
+				property: 'smtp_username',
+				label: l10n.smtp.username
+			},
+			{
+				type: 'Text',
+				property: 'smtp_password',
+				label: l10n.smtp.password
+			}
+		]
+	};
+
+	var AppearancePanel = {
+		mainDataCollection: 'contactPresets',
+		styleElementPrefix: 'contact-preset',
+		ajaxActionSlug: 'contact',
+		panelTitle: l10n.settings,
+		presetDefaults: Upfront.mainData.presetDefaults.contact,
+		styleTpl: styleTpl,
+		stateModules: {
+			Static: [
+				{
+					moduleType: 'Colors',
+					options: {
+						title: l10n.colors_label,
+						multiple: false,
+						single: false,
+						abccolors: [
+							{
+								name: 'static-field-bg',
+								label: l10n.field_bg_label
+							},
+							{
+								name: 'static-button-bg',
+								label: l10n.button_bg_label
+							},
+						]
+					}
+				},
+				{
+					moduleType: 'Typography',
+					options: {
+						title: l10n.typography_label,
+						state: 'static',
+						toggle: false,
+						fields: {
+							typeface: 'static-font-family',
+							fontstyle: 'static-font-style',
+							weight: 'static-weight',
+							style: 'static-style',
+							size: 'static-font-size',
+							line_height: 'static-line-height',
+							color: 'static-font-color',
+						},
+						default_element: "field-labels",
+						elements: [
+							{ label: l10n.field_labels_label, value: "field-labels" },
+							{ label: l10n.field_values_label, value: "field-values" },
+							{ label: l10n.button_label, value: "button" },
+						],
+					}
+				},
+				{
+					moduleType: 'Border',
+					options: {
+						state: 'static-fields',
+						title: '',
+						label: 'Fields Border',
+						fields: {
+							use: 'static-fields-useborder',
+							width: 'static-fields-borderwidth',
+							type: 'static-fields-bordertype',
+							color: 'static-fields-bordercolor',
+						},
+					}
+				},
+				{
+					moduleType: 'Border',
+					options: {
+						state: 'static-button',
+						title: '',
+						label: 'Button Border',
+						fields: {
+							use: 'static-button-useborder',
+							width: 'static-button-borderwidth',
+							type: 'static-button-bordertype',
+							color: 'static-button-bordercolor',
+						},
+					}
+				}
+			],
+
+			Hover: [
+				{
+					moduleType: 'Colors',
+					options: {
+						title: l10n.colors_label,
+						multiple: false,
+						single: false,
+						toggle: true,
+						prepend: 'hover-',
+						prefix: 'static',
+						fields: {
+							use: 'hover-use-color',
+						},
+						abccolors: [
+							{
+								name: 'hover-field-bg',
+								label: l10n.field_bg_label
+							},
+							{
+								name: 'hover-button-bg',
+								label: l10n.button_bg_label
+							},
+						]
+					}
+				},
+				{
+					moduleType: 'Typography',
+					options: {
+						title: l10n.typography_label,
+						state: 'hover',
+						toggle: true,
+						prepend: 'hover-',
+						prefix: 'static',
+						fields: {
+							use: 'hover-use-typography',
+							typeface: 'hover-font-family',
+							fontstyle: 'hover-font-style',
+							weight: 'hover-weight',
+							style: 'hover-style',
+							size: 'hover-font-size',
+							line_height: 'hover-line-height',
+							color: 'hover-font-color',
+						},
+						default_element: "field-labels",
+						elements: [
+							{ label: l10n.field_labels_label, value: "field-labels" },
+							{ label: l10n.field_values_label, value: "field-values" },
+							{ label: l10n.button_label, value: "button" },
+						],
+					}
+				},
+				{
+					moduleType: 'Border',
+					options: {
+						state: 'hover-fields',
+						title: '',
+						label: 'Fields Border',
+						prepend: 'hover-',
+						prefix: 'static',
+						fields: {
+							use: 'hover-fields-useborder',
+							width: 'hover-fields-borderwidth',
+							type: 'hover-fields-bordertype',
+							color: 'hover-fields-bordercolor',
+						},
+					}
+				},
+				{
+					moduleType: 'Border',
+					options: {
+						state: 'hover-button',
+						title: '',
+						label: 'Button Border',
+						prepend: 'hover-',
+						prefix: 'static',
+						fields: {
+							use: 'hover-button-useborder',
+							width: 'hover-button-borderwidth',
+							type: 'hover-button-bordertype',
+							color: 'hover-button-bordercolor',
+						},
+					}
+				},
+				{
+					moduleType: 'HovAnimation',
+					options: {
+						state: 'hover',
+						title: '',
+						toggle: true,
+						fields: {
+							use: 'hover-use-transition',
+							duration: 'hover-transition-duration',
+							easing: 'hover-transition-easing',
+						}
+					}
+				}
+			],
+
+			Focus: [
+				{
+					moduleType: 'Colors',
+					options: {
+						title: l10n.colors_label,
+						multiple: false,
+						single: false,
+						toggle: true,
+						prepend: 'focus-',
+						prefix: 'static',
+						fields: {
+							use: 'focus-use-color',
+						},
+						abccolors: [
+							{
+								name: 'focus-field-bg',
+								label: l10n.field_bg_label
+							},
+							{
+								name: 'focus-button-bg',
+								label: l10n.button_bg_label
+							},
+						]
+					}
+				},
+				{
+					moduleType: 'Typography',
+					options: {
+						title: l10n.typography_label,
+						state: 'focus',
+						prepend: 'focus-',
+						prefix: 'static',
+						toggle: true,
+						fields: {
+							use: 'focus-use-typography',
+							typeface: 'focus-font-family',
+							fontstyle: 'focus-font-style',
+							weight: 'focus-weight',
+							style: 'focus-style',
+							size: 'focus-font-size',
+							line_height: 'focus-line-height',
+							color: 'focus-font-color',
+						},
+						default_element: "field-labels",
+						elements: [
+							{ label: l10n.field_values_label, value: "field-values" },
+							{ label: l10n.button_label, value: "button" },
+						],
+					}
+				},
+				{
+					moduleType: 'Border',
+					options: {
+						state: 'focus-fields',
+						title: '',
+						label: 'Fields Border',
+						prepend: 'focus-',
+						prefix: 'static',
+						fields: {
+							use: 'focus-fields-useborder',
+							width: 'focus-fields-borderwidth',
+							type: 'focus-fields-bordertype',
+							color: 'focus-fields-bordercolor',
+						},
+					}
+				},
+				{
+					moduleType: 'Border',
+					options: {
+						state: 'focus-button',
+						title: '',
+						label: 'Button Border',
+						prepend: 'focus-',
+						prefix: 'static',
+						fields: {
+							use: 'focus-button-useborder',
+							width: 'focus-button-borderwidth',
+							type: 'focus-button-bordertype',
+							color: 'focus-button-bordercolor',
+						},
+					}
+				}
+			]
+		}
+	};
+
+	var SMTPSpecificSettings = Upfront.Views.Editor.Settings.Item.extend({
+		initialize: function(opts) {
+			this.udpate_fields();
+			this.constructor.__super__.initialize.call(this, opts);
+		},
+		udpate_fields: function() {
+			var me = this;
+			this.fields=_([]);
+
+			this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Radios({
+					model: this.model,
+					property: 'smtp_enable',
+					className: 'inline-radios plaintext-settings',
+					values: [
+						{
+							label: l10n.smtp.no,
+							value: 'no'
+						},
+						{
+							label: l10n.smtp.yes,
+							value: 'yes'
+						}
+					],
+					change: function(value) {
+						me.udpate_fields();
+					}
+				});
+			
+
+			/*if(this.model.get_property_value_by_name('smtp_enable') === 'yes') {
+				this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Email({
+						model: this.model,
 						property: 'smtp_from_email',
 						label: l10n.smtp.from_email
-					},
-					{
-						type: 'Text',
-						property: 'smtp_from_name',
-						label: l10n.smtp.from_name
-					},
-					{
-						type: 'Text',
-						property: 'smtp_host',
-						label: l10n.smtp.host
-					},
-					{
-						type: 'Text',
-						property: 'smtp_port',
-						label: l10n.smtp.port
-					}
-				]
-			},
-
-			{
-				type: 'SettingsItem',
-				title: l10n.smtp.secure,
-				className: 'general_settings_item',
-				fields: [
-					{
-						type: 'Radios',
-						className: 'inline-radios plaintext-settings',
-						property: 'smtp_secure',
-						values: [
-							{
-								label: l10n.smtp.none,
-								value: 'none'
-							},
-							{
-								label: l10n.smtp.ssl,
-								value: 'ssl'
-							},
-							{
-								label: l10n.smtp.tls,
-								value: 'tls'
-							}
-						]
-					}
-				]
-			},
-			{
-				type: 'SettingsItem',
-				title: l10n.smtp.authentication,
-				className: 'general_settings_item',
-				fields: [
-					{
-						type: 'Radios',
-						className: 'inline-radios plaintext-settings',
-						property: 'smtp_authentication',
-						values: [
-							{
-								label: l10n.smtp.no,
-								value: 'no'
-							},
-							{
-								label: l10n.smtp.yes,
-								value: 'yes'
-							}
-						]
-					},
-					{
-						type: 'Text',
-						property: 'smtp_username',
-						label: l10n.smtp.username
-					},
-					{
-						type: 'Text',
-						property: 'smtp_password',
-						label: l10n.smtp.password
-					}
-				]
-			},
-			
-		]
+					})
+				);
+			}*/
+		}
 	});
+
 
 	var ContactFormSettings = ElementSettings.extend({
 		panels: {
 			General: GeneralPanel,
-			SMTP: SMTPPanel,
-			Appearance: {
-				mainDataCollection: 'contactPresets',
-				styleElementPrefix: 'contact-preset',
-				ajaxActionSlug: 'contact',
-				panelTitle: l10n.settings,
-				presetDefaults: Upfront.mainData.presetDefaults.contact,
-				styleTpl: styleTpl,
-				stateModules: {
-					Static: [
-						{
-							moduleType: 'Colors',
-							options: {
-								title: l10n.colors_label,
-								multiple: false,
-								single: false,
-								abccolors: [
-									{
-										name: 'static-field-bg',
-										label: l10n.field_bg_label
-									},
-									{
-										name: 'static-button-bg',
-										label: l10n.button_bg_label
-									},
-								]
-							}
-						},
-						{
-							moduleType: 'Typography',
-							options: {
-								title: l10n.typography_label,
-								state: 'static',
-								toggle: false,
-								fields: {
-									typeface: 'static-font-family',
-									fontstyle: 'static-font-style',
-									weight: 'static-weight',
-									style: 'static-style',
-									size: 'static-font-size',
-									line_height: 'static-line-height',
-									color: 'static-font-color',
-								},
-								default_element: "field-labels",
-								elements: [
-									{ label: l10n.field_labels_label, value: "field-labels" },
-									{ label: l10n.field_values_label, value: "field-values" },
-									{ label: l10n.button_label, value: "button" },
-								],
-							}
-						},
-						{
-							moduleType: 'Border',
-							options: {
-								state: 'static-fields',
-								title: '',
-								label: 'Fields Border',
-								fields: {
-									use: 'static-fields-useborder',
-									width: 'static-fields-borderwidth',
-									type: 'static-fields-bordertype',
-									color: 'static-fields-bordercolor',
-								},
-							}
-						},
-						{
-							moduleType: 'Border',
-							options: {
-								state: 'static-button',
-								title: '',
-								label: 'Button Border',
-								fields: {
-									use: 'static-button-useborder',
-									width: 'static-button-borderwidth',
-									type: 'static-button-bordertype',
-									color: 'static-button-bordercolor',
-								},
-							}
-						}
-					],
+			Appearance: AppearancePanel
+		},
+		initialize: function (opts) {
+			var me = this;
+			// Call the super constructor here, so that the appearance panel is instantiated
+			this.constructor.__super__.initialize.call(this, opts);
 
-					Hover: [
-						{
-							moduleType: 'Colors',
-							options: {
-								title: l10n.colors_label,
-								multiple: false,
-								single: false,
-								toggle: true,
-								prepend: 'hover-',
-								prefix: 'static',
-								fields: {
-									use: 'hover-use-color',
-								},
-								abccolors: [
-									{
-										name: 'hover-field-bg',
-										label: l10n.field_bg_label
-									},
-									{
-										name: 'hover-button-bg',
-										label: l10n.button_bg_label
-									},
-								]
-							}
-						},
-						{
-							moduleType: 'Typography',
-							options: {
-								title: l10n.typography_label,
-								state: 'hover',
-								toggle: true,
-								prepend: 'hover-',
-								prefix: 'static',
-								fields: {
-									use: 'hover-use-typography',
-									typeface: 'hover-font-family',
-									fontstyle: 'hover-font-style',
-									weight: 'hover-weight',
-									style: 'hover-style',
-									size: 'hover-font-size',
-									line_height: 'hover-line-height',
-									color: 'hover-font-color',
-								},
-								default_element: "field-labels",
-								elements: [
-									{ label: l10n.field_labels_label, value: "field-labels" },
-									{ label: l10n.field_values_label, value: "field-values" },
-									{ label: l10n.button_label, value: "button" },
-								],
-							}
-						},
-						{
-							moduleType: 'Border',
-							options: {
-								state: 'hover-fields',
-								title: '',
-								label: 'Fields Border',
-								prepend: 'hover-',
-								prefix: 'static',
-								fields: {
-									use: 'hover-fields-useborder',
-									width: 'hover-fields-borderwidth',
-									type: 'hover-fields-bordertype',
-									color: 'hover-fields-bordercolor',
-								},
-							}
-						},
-						{
-							moduleType: 'Border',
-							options: {
-								state: 'hover-button',
-								title: '',
-								label: 'Button Border',
-								prepend: 'hover-',
-								prefix: 'static',
-								fields: {
-									use: 'hover-button-useborder',
-									width: 'hover-button-borderwidth',
-									type: 'hover-button-bordertype',
-									color: 'hover-button-bordercolor',
-								},
-							}
-						},
-						{
-							moduleType: 'HovAnimation',
-							options: {
-								state: 'hover',
-								title: '',
-								toggle: true,
-								fields: {
-									use: 'hover-use-transition',
-									duration: 'hover-transition-duration',
-									easing: 'hover-transition-easing',
-								}
-							}
-						}
-					],
+			var panel = new RootSettingsPanel({
+				model: this.model,
+				label: 'Empty label',
+				title: l10n.smtp.label,
+			});
 
-					Focus: [
-						{
-							moduleType: 'Colors',
-							options: {
-								title: l10n.colors_label,
-								multiple: false,
-								single: false,
-								toggle: true,
-								prepend: 'focus-',
-								prefix: 'static',
-								fields: {
-									use: 'focus-use-color',
-								},
-								abccolors: [
-									{
-										name: 'focus-field-bg',
-										label: l10n.field_bg_label
-									},
-									{
-										name: 'focus-button-bg',
-										label: l10n.button_bg_label
-									},
-								]
+			/*var smtp_configuration = new SMTPSpecificSettings({
+				model: this.model,
+				title: l10n.smtp.configuration,
+				className: 'general_settings_item',
+				fields: [
+					new Upfront.Views.Editor.Field.Email({
+						model: this.model,
+						property: 'smtp_from_email',
+						label: l10n.smtp.from_email
+					}),
+					new Upfront.Views.Editor.Field.Text({
+						model: this.model,
+						property: 'smtp_from_name',
+						label: l10n.smtp.from_name
+					}),
+					new Upfront.Views.Editor.Field.Text({
+						model: this.model,
+						property: 'smtp_host',
+						label: l10n.smtp.host
+					}),
+					new Upfront.Views.Editor.Field.Text({
+						model: this.model,
+						property: 'smtp_port',
+						label: l10n.smtp.port
+					})
+				]
+			});
+			
+			var smtp_enable = new Upfront.Views.Editor.Settings.Item({
+				model: this.model,
+				title: l10n.smtp.enable,
+				className: 'general_settings_item',
+				fields: [
+					new Upfront.Views.Editor.Field.Radios({
+						model: this.model,
+						property: 'smtp_enable',
+						className: 'inline-radios plaintext-settings',
+						values: [
+							{
+								label: l10n.smtp.no,
+								value: 'no'
+							},
+							{
+								label: l10n.smtp.yes,
+								value: 'yes'
 							}
-						},
-						{
-							moduleType: 'Typography',
-							options: {
-								title: l10n.typography_label,
-								state: 'focus',
-								prepend: 'focus-',
-								prefix: 'static',
-								toggle: true,
-								fields: {
-									use: 'focus-use-typography',
-									typeface: 'focus-font-family',
-									fontstyle: 'focus-font-style',
-									weight: 'focus-weight',
-									style: 'focus-style',
-									size: 'focus-font-size',
-									line_height: 'focus-line-height',
-									color: 'focus-font-color',
-								},
-								default_element: "field-labels",
-								elements: [
-									{ label: l10n.field_values_label, value: "field-values" },
-									{ label: l10n.button_label, value: "button" },
-								],
+						],
+						change: function(value) {
+							panel.settings = [smtp_enable];
+							if(value === 'yes') {
+								panel.settings.push(smtp_configuration);
 							}
-						},
-						{
-							moduleType: 'Border',
-							options: {
-								state: 'focus-fields',
-								title: '',
-								label: 'Fields Border',
-								prepend: 'focus-',
-								prefix: 'static',
-								fields: {
-									use: 'focus-fields-useborder',
-									width: 'focus-fields-borderwidth',
-									type: 'focus-fields-bordertype',
-									color: 'focus-fields-bordercolor',
-								},
-							}
-						},
-						{
-							moduleType: 'Border',
-							options: {
-								state: 'focus-button',
-								title: '',
-								label: 'Button Border',
-								prepend: 'focus-',
-								prefix: 'static',
-								fields: {
-									use: 'focus-button-useborder',
-									width: 'focus-button-borderwidth',
-									type: 'focus-button-bordertype',
-									color: 'focus-button-bordercolor',
-								},
-							}
+							panel.render();
 						}
-					]
-				},
-				
-				migrateDefaultStyle: function(styles) {
-					//replace image wrapper class
-					styles = styles.replace(/(div)?\.upfront-contact-form\s/g, '');
-					styles = styles.replace(/(div)?\.upfront-object\s/g, '');
 
-					return styles;
-				},
+					}),
+				]
+			});
+			*/
+			
+			var smtp_configuration = new SMTPSpecificSettings();
+
+			panel.settings = _([smtp_configuration]);
+
+			/*if(this.model.get_property_value_by_name('smtp_enable') === 'yes') {
+				panel.settings.push(smtp_configuration);
+
 			}
+			
+			this.panels = _.extend({SMTPPanel: panel}, this.panels);
+			*/
+			//smtp_enable
+
+			/*this.panels.SMTP.prototype.settings = [smtp_enable];
+
+			if(this.model.get_property_value_by_name('smtp_enable') === 'yes') {
+				this.panels.SMTP.prototype.settings.push(smtp_configuration);
+				this.panels.SMTP.prototype.settings.push(smtp_secure);
+				this.panels.SMTP.prototype.settings.push(smtp_authentication);
+			}
+
+			console.log(this.panels.SMTP.prototype.settings);
+			*/
+			
 		},
 		title: 'Contact Element'
 	});
