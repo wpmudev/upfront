@@ -702,6 +702,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		var breakpoints = this.property('breakpoint');
 		if ( breakpoints !== false && _.isObject(breakpoints) && "desktop" in breakpoints ) {
 			for ( key in breakpoints ) {
+				if ( !_.isObject(breakpoints[key]) ) continue;
 				if ( "burger_menu" in breakpoints[key] && breakpoints[key].burger_menu === 'yes' ) {
 					breakpoints[key].menu_style = 'burger';
 					delete breakpoints[key].burger_menu;
