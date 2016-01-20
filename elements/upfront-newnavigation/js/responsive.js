@@ -342,7 +342,7 @@ jQuery(document).ready(function($) {
 						$(this).find('ul.menu').css('margin-top', $('div#wpadminbar').outerHeight());
 					}
 
-					if ($(this).hasClass('upfront-output-unewnavigation')) {
+					/*if ($(this).hasClass('upfront-output-unewnavigation')) {
 						$('head').find('style#responsive_nav_sidebar_offset').remove();
 						responsive_css = 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"] ul.menu, div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] ul.menu {left:'+parseInt($('div.upfront-regions').offset().left)+'px !important; right:'+parseInt(($(window).width()-currentwidth-$('div#sidebar-ui').outerWidth()) / 2)+'px !important; } ';
 						responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="left"] ul.menu {left:'+parseInt($('div.upfront-regions').offset().left)+'px !important; right:inherit !important; width:'+parseInt(30/100*$('div.upfront-regions').outerWidth())+'px !important;} ';
@@ -352,7 +352,7 @@ jQuery(document).ready(function($) {
 						$('head').append($('<style id="responsive_nav_sidebar_offset">'+responsive_css+'</style>'));
 					}
 					//Z-index the container module to always be on top, in the layout edit mode
-					$(this).closest('div.upfront-newnavigation_module').css('z-index', 3);
+					$(this).closest('div.upfront-newnavigation_module').css('z-index', 3);*/
 
 
 					$(this).find('ul.menu').hide();
@@ -378,7 +378,7 @@ jQuery(document).ready(function($) {
 
 
 					//remove the z-index from the container module
-					$(this).closest('div.upfront-newnavigation_module').css('z-index', '');
+					//$(this).closest('div.upfront-newnavigation_module').css('z-index', '');
 				}
 
 				$(this).find('ul.menu').siblings('.burger_overlay').remove();

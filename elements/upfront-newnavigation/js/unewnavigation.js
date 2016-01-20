@@ -1200,9 +1200,9 @@ Upfront.Application.LayoutEditor.add_object("Unewnavigation", {
 
 
 		"[data-style='burger'] ul.menu": {label: l10n.css.responsive_bar_label, info: l10n.css.bar_info},
-		".upfront-output-unewnavigation .responsive_nav_toggler": {label: l10n.css.responsive_trigger, info: l10n.css.hover_info},
-		".upfront-output-unewnavigation div.responsive_nav_toggler > div": {label: l10n.css.responsive_trigger_bars, info: l10n.css.hover_info},
-		".upfront-output-unewnavigation i.burger_nav_close": {label: l10n.css.responsive_nav_close, info: l10n.css.close_info},
+		"[data-style='burger'] .responsive_nav_toggler": {label: l10n.css.responsive_trigger, info: l10n.css.hover_info},
+		"[data-style='burger'] div.responsive_nav_toggler > div": {label: l10n.css.responsive_trigger_bars, info: l10n.css.hover_info},
+		"[data-style='burger'] i.burger_nav_close": {label: l10n.css.responsive_nav_close, info: l10n.css.close_info},
 		"[data-style='burger'] ul.menu > li.menu-item > a": {label: l10n.css.responsive_item_label, info: l10n.css.item_info},
 		"[data-style='burger'] ul.menu > li.menu-item:hover > a": {label: l10n.css.responsive_hover_label, info: l10n.css.hover_info},
 		"[data-style='burger'] ul.sub-menu > li.menu-item > a": {label: l10n.css.responsive_subitem_label, info: l10n.css.subitem_info},
