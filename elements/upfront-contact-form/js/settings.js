@@ -105,34 +105,6 @@ define([
 
 	
 
-	var smtp_enable = {
-		type: 'SettingsItem',
-		title: l10n.smtp.enable,
-		className: 'general_settings_item',
-		fields: [
-			{
-				type: 'Radios',
-				className: 'inline-radios plaintext-settings',
-				property: 'smtp_enable',
-				values: [
-					{
-						label: l10n.smtp.no,
-						value: 'no'
-					},
-					{
-						label: l10n.smtp.yes,
-						value: 'yes'
-					}
-				],
-				change: function(value) {
-
-				}
-			}
-		]
-	};
-
-	
-
 	var smtp_secure = {
 		type: 'SettingsItem',
 		title: l10n.smtp.secure,
@@ -457,19 +429,115 @@ define([
 		}
 	};
 
-	var SMTPSpecificSettings = Upfront.Views.Editor.Settings.Item.extend({
+	var SMTPAuthenticationSettings = Upfront.Views.Editor.Settings.Item.extend({
 		initialize: function(opts) {
-			this.udpate_fields();
-			this.constructor.__super__.initialize.call(this, opts);
+			
+			this.update_fields();
+			//this.constructor.__super__.initialize.call(this, opts);
 		},
-		udpate_fields: function() {
+		get_title: function() {
+			return '';
+		},
+		update_fields: function(show) {
+			
 			var me = this;
 			this.fields=_([]);
+			
+			if(typeof(show) !== 'undefined' && show === 'yes') {
+				
 
-			this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Radios({
+				this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Text({
 					model: this.model,
-					property: 'smtp_enable',
+					property: 'smtp_username',
+					label: l10n.smtp.username
+				});
+
+				this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Text({
+					model: this.model,
+					property: 'smtp_password',
+					label: l10n.smtp.password
+				});
+
+	
+			}
+
+			if(typeof(show) !== 'undefined') {
+				me.$el.html('');
+				me.render();
+			}
+		}
+	});
+
+
+
+	var SMTPSpecificSettings = Upfront.Views.Editor.Settings.Item.extend({
+
+		initialize: function(opts) {
+			console.log('initializing');
+			this.authentication = opts.authentication;
+			this.update_fields();
+
+			//this.constructor.__super__.initialize.call(this, opts);
+		},
+		get_title: function() {
+			return '';
+		},
+		update_fields: function(show) {
+			console.log('update fields');
+			var me = this;
+			this.fields=_([]);
+			
+			if(typeof(show) !== 'undefined' && show === 'yes') {
+				this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Email({
+					model: this.model,
+					property: 'smtp_from_email',
+					label: l10n.smtp.from_email
+				});
+
+				this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Text({
+					model: this.model,
+					property: 'smtp_from_name',
+					label: l10n.smtp.from_name
+				});
+
+				this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Text({
+					model: this.model,
+					property: 'smtp_host',
+					label: l10n.smtp.host
+				});
+
+				this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Text({
+					model: this.model,
+					property: 'smtp_port',
+					label: l10n.smtp.port
+				});
+
+				this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Radios({
+					model: this.model,
 					className: 'inline-radios plaintext-settings',
+					property: 'smtp_secure',
+					label: l10n.smtp.secure,
+					values: [
+						{
+							label: l10n.smtp.none,
+							value: 'none'
+						},
+						{
+							label: l10n.smtp.ssl,
+							value: 'ssl'
+						},
+						{
+							label: l10n.smtp.tls,
+							value: 'tls'
+						}
+					]
+				});
+
+				this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Radios({
+					model: this.model,
+					className: 'inline-radios plaintext-settings',
+					property: 'smtp_authentication',
+					label: l10n.smtp.authentication,
 					values: [
 						{
 							label: l10n.smtp.no,
@@ -481,19 +549,16 @@ define([
 						}
 					],
 					change: function(value) {
-						me.udpate_fields();
+						me.authentication.update_fields(value);
 					}
 				});
-			
+	
+			}
 
-			/*if(this.model.get_property_value_by_name('smtp_enable') === 'yes') {
-				this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Email({
-						model: this.model,
-						property: 'smtp_from_email',
-						label: l10n.smtp.from_email
-					})
-				);
-			}*/
+			if(typeof(show) !== 'undefined') {
+				me.$el.html('');
+				me.render();
+			}
 		}
 	});
 
@@ -541,7 +606,13 @@ define([
 					})
 				]
 			});
+			*/
 			
+			
+			var smtp_authentication = new SMTPAuthenticationSettings({model: this.model});
+			var smtp_configuration = new SMTPSpecificSettings({model: this.model, authentication: smtp_authentication});
+
+
 			var smtp_enable = new Upfront.Views.Editor.Settings.Item({
 				model: this.model,
 				title: l10n.smtp.enable,
@@ -562,21 +633,17 @@ define([
 							}
 						],
 						change: function(value) {
-							panel.settings = [smtp_enable];
-							if(value === 'yes') {
-								panel.settings.push(smtp_configuration);
-							}
-							panel.render();
+							smtp_configuration.update_fields(value);
 						}
 
 					}),
 				]
 			});
-			*/
-			
-			var smtp_configuration = new SMTPSpecificSettings();
 
-			panel.settings = _([smtp_configuration]);
+			panel.settings = _([smtp_enable, smtp_configuration, smtp_authentication]);
+
+			console.log('adding to the panels');
+			this.panels = _.extend({SMTPPanel: panel}, this.panels);
 
 			/*if(this.model.get_property_value_by_name('smtp_enable') === 'yes') {
 				panel.settings.push(smtp_configuration);
