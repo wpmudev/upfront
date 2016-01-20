@@ -354,6 +354,8 @@ class Upfront_ThisPostView extends Upfront_Object {
 			$layout['wrappers'][$i]['objectsLength'] = sizeof($w['objects']);
 
 			foreach($w['objects'] as $k => $o){
+				$o['slug'] = isset($o['slug']) ? $o['slug'] : 'spacer';
+				$layout['wrappers'][$i]['objects'][$k]['slug'] = $o['slug'];
 
 				$opts = !empty($options[$o['slug']]) ? $options[$o['slug']] : array(); // This is for the layout
 				$opts['excerpt'] = $excerpt;
