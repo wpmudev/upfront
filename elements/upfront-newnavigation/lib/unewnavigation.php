@@ -211,6 +211,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 				'typography_label' => __('Typography', 'upfront'),
 				'colors_label' => __('Colors', 'upfront'),
 				'background_label' => __('Background', 'upfront'),
+				'item_background_label' => __('Item Background', 'upfront'),
 			),
 			'settings' => __('Navigation settings', 'upfront'),
 			'add_item' => __('Add a menu item', 'upfront'),

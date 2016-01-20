@@ -48,7 +48,7 @@ define([
 							abccolors: [
 								{
 									name: 'static-nav-bg',
-									label: l10n.panel.background_label
+									label: l10n.panel.item_background_label
 								},
 							]
 						}
@@ -90,7 +90,7 @@ define([
 							abccolors: [
 								{
 									name: 'hover-nav-bg',
-									label: l10n.panel.background_label
+									label: l10n.panel.item_background_label
 								},
 							]
 						}
@@ -132,7 +132,7 @@ define([
 							abccolors: [
 								{
 									name: 'focus-nav-bg',
-									label: l10n.panel.background_label
+									label: l10n.panel.item_background_label
 								},
 							]
 						}
