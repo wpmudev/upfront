@@ -1140,7 +1140,7 @@ var LayoutEditor = {
 
 		var layout_id = _upfront_post_data.layout.specificity || _upfront_post_data.layout.item || _upfront_post_data.layout.type; // Also make sure to include specificity first
 		loading.update_loading_text(Upfront.Settings.l10n.global.behaviors.exporting_layout + layout_id);
-
+		console.log('exporting single layout');
 		return ed._export_layout({ theme: theme_name }).done(function() {
 			loading.done(function() {
 				if (ed.export_modal) ed.export_modal.close(true);
