@@ -78,6 +78,19 @@ define([
 								],
 							}
 						},
+						
+						{
+							moduleType: 'Checkbox',
+							options: {
+								state: 'static',
+								label: l10n.settings.padding_label,
+								tooltip: true,
+								tooltip_label: l10n.settings.tooltip_label,
+								fields: {
+									checkbox: 'additional_padding'
+								}
+							}
+						},
 					]
 				},
 				
