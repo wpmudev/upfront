@@ -74,36 +74,13 @@
 					data = {
 						"content" : content,
 						usingNewAppearance: true,
-						"background_color" : this.check_alpha_value(this.get_preset_property('bg_color')),
-						"border" : this.get_preset_property('useborder'),
+						"additional_padding" : this.get_preset_property('additional_padding'),
 					};
 				}
 				var rendered = '';
 
 				rendered = _.template(textTpl, data);
 				return rendered + ( !this.is_edited() || $.trim(content) == '' ? '<div class="upfront-quick-swap"><p>' + l10n.dbl_click + '</p></div>' : '');
-			},
-			check_alpha_value: function(color) {
-				if(typeof color === "undefined") {
-					return false;
-				}
-				
-				if( color === "rgb(0, 0, 0, 0)") {
-					//Default value -> alpha is zero
-					return false;
-				} else if( color.indexOf('rgb(') === 0 ){
-					return true;
-				} else if( color.indexOf('rgba(') === 0 ){
-					var alpha = color.replace(/^.*,(.+)\)/,'$1')+'';
-					if(alpha > 0) {
-						return true; 
-					} else {
-						return false;
-					}
-				} else {
-					//color is not rgba -> alpha is 1
-					return true;
-				}
 			},
 			is_edited: function () {
 				var is_edited = this.model.get_property_value_by_name('is_edited');

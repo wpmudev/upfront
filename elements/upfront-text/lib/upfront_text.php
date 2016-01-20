@@ -124,6 +124,7 @@ class Upfront_PlainTxtView extends Upfront_Object {
 				'colors_label' => __('Colors', 'upfront'),
 				'content_area_bg' => __('Content Area BG', 'upfront'),
 				'typography_label' => __('Typography', 'upfront'),
+				'padding_label' => __('Additional Padding', 'upfront')
 			)
 		);
 		return !empty($key)
