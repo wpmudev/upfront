@@ -4,6 +4,7 @@ define([
 	'scripts/upfront/settings/modules/hov-animation',
 	'scripts/upfront/settings/modules/radius',
 	'scripts/upfront/settings/modules/selectbox',
+	'scripts/upfront/settings/modules/checkbox',
 	'scripts/upfront/settings/modules/caption-location',
 	'scripts/upfront/settings/modules/gallery-caption-location',
 	'scripts/upfront/settings/modules/colors',
@@ -13,7 +14,7 @@ define([
 	'scripts/upfront/settings/modules/menu-structure',
 	'elements/upfront-newnavigation/js/settings/menu-style',
 ], function(TypographySettingsModule, BorderSettingsModule, HovAnimationSettingsModule, RadiusSettingsModule,
-			SelectboxSettingsModule, CaptionLocationSettingsModule, GalleryCaptionLocationSettingsModule,
+			SelectboxSettingsModule, CheckboxSettingsModule, CaptionLocationSettingsModule, GalleryCaptionLocationSettingsModule,
 			ColorsSettingsModule, ElementStyleModule, PaddingSettingsModule, AnchorSettingsModule, MenuStructureModule, MenuStyleModule) {
 	var ModuleFactory = function() {
 		var classes = {
@@ -22,6 +23,7 @@ define([
 			'HovAnimation': HovAnimationSettingsModule,
 			'Radius': RadiusSettingsModule,
 			'Selectbox': SelectboxSettingsModule,
+			'Checkbox': CheckboxSettingsModule,
 			'CaptionLocation': CaptionLocationSettingsModule,
 			'GalleryCaptionLocation': GalleryCaptionLocationSettingsModule,
 			'Colors': ColorsSettingsModule,
