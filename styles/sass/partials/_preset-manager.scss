@@ -637,9 +637,11 @@ div.preset-manager-panel .selectbox_settings_item .upfront-field-label {
 div.preset-manager-panel .colors_settings_item, 
 div.preset-manager-panel .selectbox_settings_item, 
 div.preset-manager-panel .typography_settings_item, 
-div.preset-manager-panel .checkbox_settings_item, 
 div.preset-manager-panel .hov_animation_settings_item {
 	padding-top: 15px;
+}
+div.preset-manager-panel .checkbox_settings_item {
+	padding-bottom: 7px;
 }
 div.preset-manager-panel .typography_settings_item .element-toggled.selectElement,
 div.preset-manager-panel .typography_settings_item .element-toggled.typeFace, 
@@ -787,4 +789,19 @@ div.preset-manager-panel .overlay-button-input {
 div.preset-manager-panel .overlay-button-input:hover {
 	border: 1px solid rgba(151,163,174, 1);
 	color: rgba(47,71,95, 1);
+}
+
+div.preset-manager-panel .checkbox-module,
+div.preset-manager-panel .tooltip-icon {
+	display: inline-block;
+}
+
+div.preset-manager-panel .checkbox-tooltip {
+	position: relative;
+	top: 4px;
+	left: 8px;
+	opacity: .8;
+	width: 16px;
+	height: 14px;
+	background: url(../img/uf-core-el-sprite.svg) no-repeat -484px -300px;
 }
