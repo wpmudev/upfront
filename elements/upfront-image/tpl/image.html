@@ -1,4 +1,4 @@
-<div class="<?php echo $preset ?>">
+<div <?php if($usingNewAppearance === true) { ?>class="<?php echo $preset ?>"<?php } ?>>
 	<?php if($usingNewAppearance === false) { ?>
 	<div class="uimage uimage-<?php echo $caption_position ?> uimage-status-<?php echo $image_status ?> uimage-caption-<?php echo $caption_position ?>-<?php echo $caption_alignment ?><?php echo $gifImage ?> <?php echo $placeholder_class ?>" style="text-align: <?php echo $align ?>;">
 	<?php } else { ?>
