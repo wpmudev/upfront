@@ -2924,7 +2924,9 @@ define([
 				this.$el.html('');
 				var $el = this.$el,
 					me = this;
-				this.current_wrapper_id = this.current_wrapper_el = null;
+				this.current_wrapper_view = null;
+				this.current_wrapper_id = null;
+				this.current_wrapper_el = null
 				Upfront.Events.trigger("entity:modules:before_render", this, this.model);
 				if ( typeof Upfront.data.module_views == 'undefined' )
 					Upfront.data.module_views = {};
@@ -2985,10 +2987,13 @@ define([
 								wrapper_view.parent_view = this;
 							}
 							wrapper_el = wrapper_view.el;
-							local_view.wrapper_view = wrapper_view;
+							this.current_wrapper_view = wrapper_view;
 						}
 						this.current_wrapper_id = wrapper_id;
 						this.current_wrapper_el = wrapper_el;
+						if ( this.current_wrapper_view ) {
+							local_view.wrapper_view = this.current_wrapper_view;
+						}
 						if ( wrapper_view ){
 							if ( index === -2 ) {
 								$el.append(wrapper_el);
