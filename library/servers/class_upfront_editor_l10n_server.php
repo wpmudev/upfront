@@ -34,6 +34,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'saved_template' => __('Saved template for %s part.', 'upfront'),
 				'post_layout_editor' => __('Post Layout Editor', 'upfront'),
 				'loading' => __('Loading...', 'upfront'),
+				'convert_elements' => __('Converting elements for v1.0...', 'upfront'),
 				'saving' => __('Saving...', 'upfront'),
 				'saving_success' => __('All done!', 'upfront'),
 				'saving_error' => __('There has been an error saving your changes', 'upfront'),

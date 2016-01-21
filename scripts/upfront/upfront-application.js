@@ -1313,6 +1313,93 @@ var Application = new (Backbone.Router.extend({
 		var last = this.mode.last || this.MODE.DEFAULT;
 		this.start(last);
 	},
+	
+	check_image_element: function (model) {
+		var props = {};
+		
+		model.get('properties').each( function(prop) {
+			props[prop.get('name')] = prop.get('value');
+		});
+
+		if(typeof props.theme_style !== "undefined" && props.theme_style !== "_default") {
+			return true;
+		}
+		
+		if((typeof props.caption_position !== "undefined" && props.caption_position !== false) || 
+		   (typeof props.caption_alignment !== "undefined" && props.caption_alignment !== false) || 
+		   (typeof props.caption_trigger !== "undefined" && props.caption_trigger !== "always_show")) {
+			return true;
+		}
+		
+		if(typeof props.background !== "undefined" && props.background !== "#000000") {
+			return true;
+		}
+
+		return false;
+	},
+	
+	check_text_element: function (model) {
+		var props = {};
+		
+		model.get('properties').each( function(prop) {
+			props[prop.get('name')] = prop.get('value');
+		});
+
+		if(typeof props.theme_style !== "undefined" && props.theme_style !== "_default") {
+			return true;
+		}
+		
+		if((typeof props.border_color !== "undefined" && props.border_color !== "rgba(0, 0, 0, 0)") || 
+		   (typeof props.border_style !== "undefined" && props.border_style !== "none") || 
+		   (typeof props.border_width !== "undefined" && props.border_width !== 1)) {
+			return true;
+		}
+		
+		if(typeof props.bg_color !== "undefined" && props.bg_color !== "rgba(0, 0, 0, 0)") {
+			return true;
+		}
+
+		return false;
+	},
+	
+	auto_migration: function (layout) {
+		var app = this;
+
+		app.loading.update_loading_text(Upfront.Settings.l10n.global.application.convert_elements);
+		
+		var regions = Upfront.Application.layout.get('regions');
+		
+		_.each(regions.models, function(model) {
+			if(typeof model.get('modules').models !== "undefined") {
+				_.each(model.get('modules').models, function(module) {
+					if(typeof module.get('objects') !== "undefined" && typeof module.get('objects').models !== "undefined") {
+						_.each(module.get('objects').models, function(object) {
+							var type = object.get_property_value_by_name('type'),
+								needMigration = true,
+								alreadyMigrated = object.get_property_value_by_name('usingNewAppearance');
+
+							if(type === "UimageModel") {
+								needMigration = app.check_image_element(object);
+							}
+
+							if(type === "PlainTxtModel") {
+								needMigration = app.check_text_element(object);
+							}
+							
+							if(!needMigration && !alreadyMigrated) {
+								//Set element as already migrated
+								object.set_property('usingNewAppearance', true);
+
+								//Set preset to default
+								object.set_property('preset', 'default');
+							}
+						});
+					}
+				});
+			}
+		});
+
+	},
 
 	load_layout: function (layout_ids, additional) {
 		var app = this,
@@ -1335,7 +1422,7 @@ var Application = new (Backbone.Router.extend({
 			this.loadingLayout.abort();
 
 		this.loadingLayout = Upfront.Util.post(request_data)
-			.success(function (response) {
+			.success(function (response) {				
 				app.set_layout_up(response);
 				if(app.saveCache){
 					app.urlCache[app.currentUrl] = $.extend(true, {}, response);
@@ -1440,6 +1527,12 @@ var Application = new (Backbone.Router.extend({
 			"model": me.layout,
 			"el": $(Upfront.Settings.LayoutEditor.Selectors.main)
 		});
+		
+		/**
+		 * Automatic set useNewAppearance for Text & Image elements which have default settings
+		 */
+		me.auto_migration();
+		
 		Upfront.Events.trigger("layout:render", me.current_subapplication);
 		me.layout_ready = true;
 		//}
