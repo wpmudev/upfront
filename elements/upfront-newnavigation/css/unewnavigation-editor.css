@@ -371,9 +371,11 @@ li.menu-item .uimage-controls.image-element-controls .upfront-inline-panel .upfr
 }
 li.menu-item .uimage-controls.image-element-controls .upfront-inline-panel .upfront-inline-panel-item.labeled i {
 	display: inline-block;
+	vertical-align: middle;
 }
 li.menu-item .uimage-controls.image-element-controls .upfront-inline-panel .upfront-inline-panel-item.labeled span {
 	display: inline-block;
+	vertical-align: middle;
 	width: auto!important;
 }
 li.menu-item .uimage-controls.image-element-controls {

@@ -326,6 +326,13 @@ jQuery(document).ready(function($) {
 
 				preset = breakpoints.preset[currentKey];
 
+				/** if breakpoint has menu_style set to burger, but no
+				 burger_alignment is defined, set it to default
+				 **/
+				if(preset && preset.menu_style === 'burger' && !preset.burger_alignment ) {
+					preset.burger_alignment= 'left';
+				}
+
 				if (preset.menu_style == 'burger') {
 					$(this).attr('data-style', 'burger');
 					$(this).attr('data-stylebk', 'burger');

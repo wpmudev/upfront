@@ -776,7 +776,16 @@ var _alpha = "alpha",
                 mins = mins >= 10 ? '' + mins : '0' + mins;
                 if (timestamp && hours.length && mins.length) timestamp += offset + hours + mins;
 
-                return new Date(Date.parse(timestamp)); // <-- We need this to instantiate Date object in Firefox. @See "batman bug" in Asana.
+				
+				//return new Date(Date.parse(timestamp)); // <-- We need this to instantiate Date object in Firefox. @See "batman bug" in Asana.
+				
+				/** Have to do this in order to satisfy safari as well.
+				 * This works with Firefox and chrome too.
+				*/
+
+				var a = timestamp.split(/[^0-9]/);
+				return new Date (a[0],a[1]-1,a[2],a[3],a[4],a[5]); 
+                
             }
 			return this.attributes[attr];
 		},

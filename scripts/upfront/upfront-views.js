@@ -1331,6 +1331,13 @@ define([
 
 				if (this.init) this.init();
 			},
+			init_properties: function() {
+				var column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding;
+				
+				if(!this.model.get_property_value_by_name('padding_slider')) {
+					this.model.init_property('padding_slider', column_padding);
+				}
+			},
 			close_settings: function () {
 				Upfront.Events.trigger("entity:settings:deactivate");
 			},
@@ -1345,6 +1352,9 @@ define([
 				;
 				// Force add upfront-object-view class as element object can override the view and left without this class
 				this.$el.addClass('upfront-object-view');
+				
+				//Make sure padding properties are initialized
+				this.init_properties();
 
 				// Id the element by anchor, if anchor is defined
 				var the_anchor = this.model.get_property_value_by_name("anchor");
@@ -2924,7 +2934,9 @@ define([
 				this.$el.html('');
 				var $el = this.$el,
 					me = this;
-				this.current_wrapper_id = this.current_wrapper_el = null;
+				this.current_wrapper_view = null;
+				this.current_wrapper_id = null;
+				this.current_wrapper_el = null
 				Upfront.Events.trigger("entity:modules:before_render", this, this.model);
 				if ( typeof Upfront.data.module_views == 'undefined' )
 					Upfront.data.module_views = {};
@@ -2985,10 +2997,13 @@ define([
 								wrapper_view.parent_view = this;
 							}
 							wrapper_el = wrapper_view.el;
-							local_view.wrapper_view = wrapper_view;
+							this.current_wrapper_view = wrapper_view;
 						}
 						this.current_wrapper_id = wrapper_id;
 						this.current_wrapper_el = wrapper_el;
+						if ( this.current_wrapper_view ) {
+							local_view.wrapper_view = this.current_wrapper_view;
+						}
 						if ( wrapper_view ){
 							if ( index === -2 ) {
 								$el.append(wrapper_el);
