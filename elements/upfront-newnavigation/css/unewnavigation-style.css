@@ -225,7 +225,7 @@ div.upfront-newnavigation_module:hover  div[data-style="burger"] div.responsive_
   margin-bottom:4px;
   -webkit-transition: background .25s;
   -moz-transition: background .25s;
-  -ms-transition: background .25s;background
+  -ms-transition: background .25s;
   -o-transition: background .25s;
   transition: background .25s;
 }
