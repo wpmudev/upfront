@@ -321,7 +321,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		}
 
 		//Check if preset is distributed with the theme
-		foreach($presets as $preset) {
+		if (is_array($presets)) foreach($presets as $preset) {
 			if(in_array($preset['id'], $theme_presets)) {
 				$preset['theme_preset'] = true;
 			} else {
