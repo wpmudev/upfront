@@ -1331,6 +1331,13 @@ define([
 
 				if (this.init) this.init();
 			},
+			init_properties: function() {
+				var column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding;
+				
+				if(!this.model.get_property_value_by_name('padding_slider')) {
+					this.model.init_property('padding_slider', column_padding);
+				}
+			},
 			close_settings: function () {
 				Upfront.Events.trigger("entity:settings:deactivate");
 			},
@@ -1345,6 +1352,9 @@ define([
 				;
 				// Force add upfront-object-view class as element object can override the view and left without this class
 				this.$el.addClass('upfront-object-view');
+				
+				//Make sure padding properties are initialized
+				this.init_properties();
 
 				// Id the element by anchor, if anchor is defined
 				var the_anchor = this.model.get_property_value_by_name("anchor");
