@@ -9,7 +9,10 @@ div.upfront-navigation ul.sub-menu {
   z-index:2;
 }
 ul.menu {
-  background-color:#333;
+  background-color:transparent;
+}
+.triggered-menu ul.menu {
+  background: #333;
 }
 ul.sub-menu {
   background-color:#262626;
