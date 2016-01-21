@@ -319,9 +319,7 @@ define([
 			var style = $.trim(Upfront.Application.cssEditor.get_style_element().html().replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
 
 			//Apply style only for the current preset
-			style = style.replace(new RegExp('.' + elementStyleName, 'g'), '');
-
-			style = Upfront.Application.stylesAddSelectorMigration($.trim(style), '');
+			style = style.replace(new RegExp(elementStyleName, 'g'), presetName.toLowerCase());
 
 			//Migrate element styles
 			style = this.migrateElementStyle(style);
