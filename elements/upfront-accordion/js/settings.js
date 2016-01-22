@@ -242,7 +242,7 @@ define([
 
 					_.each(props.attributes, function(preset_value, index) {
 						
-						if(index === 'id' || index === 'name' || index === 'theme_preset') {
+						if(index === 'id' || index === 'name' || index === 'preset_style') {
 							return;
 						}
 						

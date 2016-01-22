@@ -242,6 +242,7 @@ define([
 					//replace image wrapper class
 					styles = styles.replace(/(div)?\.upfront-button\s/g, '');
 					styles = styles.replace(/(div)?\.upfront-object\s/g, '');
+					styles = styles.replace(/\a.upfront_cta/, '.upfront_cta');
 
 					return styles;
 				},
@@ -254,7 +255,7 @@ define([
 
 					_.each(props.attributes, function(preset_value, index) {
 						
-						if(index === 'id' || index === 'name' || index === 'theme_preset') {
+						if(index === 'id' || index === 'name' || index === 'preset_style') {
 							return;
 						}
 						
