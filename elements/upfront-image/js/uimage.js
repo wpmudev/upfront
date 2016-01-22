@@ -901,7 +901,9 @@ define([
 				};
 				this.property('element_size', this.elementSize);
 				return;
-			} else if (this.property('quick_swap')) {
+				
+			//} else if (this.property('quick_swap')) {
+			} else if (this.isThemeImage()) {
 				return;
 			}
 
