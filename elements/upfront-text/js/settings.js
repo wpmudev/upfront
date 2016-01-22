@@ -137,7 +137,7 @@ define([
 						props[prop.get('name')] = prop.get('value');
 					});
 
-					if(typeof props.theme_style !== "undefined" && props.theme_style !== "_default") {
+					if(typeof props.theme_style !== "undefined" && (props.theme_style !== "_default" && props.theme_style !== "" && props.theme_style !== " ")) {
 						return true;
 					}
 					
