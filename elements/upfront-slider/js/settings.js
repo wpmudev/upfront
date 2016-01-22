@@ -50,6 +50,15 @@ define([
 				},
 			]
 		},
+		
+		migrateDefaultStyle: function(styles) {
+			//replace default classes
+			styles = styles.replace(/(div)?\.upfront-uslider\s/g, '');
+			styles = styles.replace(/(div)?\.upfront-object\s/g, '');
+
+			return styles;
+		},
+
 		migratePresetProperties: function(newPreset) {
 			var props = {};
 

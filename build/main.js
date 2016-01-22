@@ -784,7 +784,16 @@ var _alpha = "alpha",
                 mins = mins >= 10 ? '' + mins : '0' + mins;
                 if (timestamp && hours.length && mins.length) timestamp += offset + hours + mins;
 
-                return new Date(Date.parse(timestamp)); // <-- We need this to instantiate Date object in Firefox. @See "batman bug" in Asana.
+				
+				//return new Date(Date.parse(timestamp)); // <-- We need this to instantiate Date object in Firefox. @See "batman bug" in Asana.
+				
+				/** Have to do this in order to satisfy safari as well.
+				 * This works with Firefox and chrome too.
+				*/
+
+				var a = timestamp.split(/[^0-9]/);
+				return new Date (a[0],a[1]-1,a[2],a[3],a[4],a[5]); 
+                
             }
 			return this.attributes[attr];
 		},
@@ -3385,6 +3394,13 @@ define('views',[
 
 				if (this.init) this.init();
 			},
+			init_properties: function() {
+				var column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding;
+				
+				if(!this.model.get_property_value_by_name('padding_slider')) {
+					this.model.init_property('padding_slider', column_padding);
+				}
+			},
 			close_settings: function () {
 				Upfront.Events.trigger("entity:settings:deactivate");
 			},
@@ -3399,6 +3415,9 @@ define('views',[
 				;
 				// Force add upfront-object-view class as element object can override the view and left without this class
 				this.$el.addClass('upfront-object-view');
+				
+				//Make sure padding properties are initialized
+				this.init_properties();
 
 				// Id the element by anchor, if anchor is defined
 				var the_anchor = this.model.get_property_value_by_name("anchor");
@@ -4978,7 +4997,9 @@ define('views',[
 				this.$el.html('');
 				var $el = this.$el,
 					me = this;
-				this.current_wrapper_id = this.current_wrapper_el = null;
+				this.current_wrapper_view = null;
+				this.current_wrapper_id = null;
+				this.current_wrapper_el = null
 				Upfront.Events.trigger("entity:modules:before_render", this, this.model);
 				if ( typeof Upfront.data.module_views == 'undefined' )
 					Upfront.data.module_views = {};
@@ -5039,10 +5060,13 @@ define('views',[
 								wrapper_view.parent_view = this;
 							}
 							wrapper_el = wrapper_view.el;
-							local_view.wrapper_view = wrapper_view;
+							this.current_wrapper_view = wrapper_view;
 						}
 						this.current_wrapper_id = wrapper_id;
 						this.current_wrapper_el = wrapper_el;
+						if ( this.current_wrapper_view ) {
+							local_view.wrapper_view = this.current_wrapper_view;
+						}
 						if ( wrapper_view ){
 							if ( index === -2 ) {
 								$el.append(wrapper_el);
@@ -40855,6 +40879,14 @@ define('scripts/upfront/preset-settings/preset-manager',[
 		migrateElementStyle: function(styles) {
 			return styles;
 		},
+		
+		/**
+		 Migrate _default classes
+		 */
+
+		migrateDefaultStyle: function(styles) {
+			return styles;
+		},
 
 		setupItems: function() {
 			this.trigger('upfront:presets:setup-items', this);
@@ -40987,7 +41019,8 @@ define('scripts/upfront/preset-settings/preset-manager',[
 		migratePreset: function(presetName) {
 
 			//Check if preset already exist
-			var existingPreset = this.presets.findWhere({id: presetName.toLowerCase().replace(/ /g, '-')});
+			var existingPreset = this.presets.findWhere({id: presetName.toLowerCase().replace(/ /g, '-')}),
+				default_style = '';
 
 			if(typeof existingPreset !== "undefined") {
 				Upfront.Views.Editor.notify(l10n.preset_already_exist.replace(/%s/, presetName), 'error');
@@ -40998,6 +41031,25 @@ define('scripts/upfront/preset-settings/preset-manager',[
 
 			// We need to set to _default first so that css editor can get style properly
 			if (!elementStyleName) elementStyleName = '_default';
+			
+			// If element style is not default we should add _default too
+			if(elementStyleName !== '_default') {
+				// We need to initialize cssEditor to get element styles
+				Upfront.Application.cssEditor.init({
+					model: this.model,
+					stylename: '_default',
+					no_render: true
+				});
+				
+				//Get _default styles
+				default_style = $.trim(Upfront.Application.cssEditor.get_style_element().html().replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
+				
+				//Normalize styles
+				default_style = this.migrateDefaultStyle(default_style);
+				
+				//Prepend styles with preset
+				default_style = Upfront.Application.stylesAddSelectorMigration($.trim(default_style), '#page .' + presetName.toLowerCase());
+			}
 
 			// We need to initialize cssEditor to get element styles
 			Upfront.Application.cssEditor.init({
@@ -41007,15 +41059,17 @@ define('scripts/upfront/preset-settings/preset-manager',[
 			});
 
 			var style = $.trim(Upfront.Application.cssEditor.get_style_element().html().replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
-
+			
 			//Apply style only for the current preset
-			style = style.replace(new RegExp('.' + elementStyleName, 'g'), '');
-
-			style = Upfront.Application.stylesAddSelectorMigration($.trim(style), '');
-
+			style = style.replace(new RegExp(elementStyleName, 'g'), presetName.toLowerCase());
+			
+			if(elementStyleName !== '_default') {
+				style = default_style + style;
+			}
+			
 			//Migrate element styles
 			style = this.migrateElementStyle(style);
-
+			
 			newPreset = new Backbone.Model(this.getPresetDefaults(presetName));
 
 			//Migrate element styles to preset
@@ -41764,6 +41818,14 @@ define('elements/upfront-accordion/js/settings',[
 					]
 				},
 				
+				migrateDefaultStyle: function(styles) {
+					//replace image wrapper class
+					styles = styles.replace(/(div)?\.upfront-accordion\s/g, '');
+					styles = styles.replace(/(div)?\.upfront-object\s/g, '');
+
+					return styles;
+				},
+				
 				migratePresetProperties: function(newPreset) {
 					
 					var preset = this.property('preset') ? this.clear_preset_name(this.property('preset')) : 'default',
@@ -41819,9 +41881,8 @@ define('uaccordion',[
 				this.model = new UaccordionModel({properties: this.model.get('properties')});
 			}
 			this.events = _.extend({}, this.events, {
-				// 'click .accordion-add-panel': 'addPanel',
 				'click .accordion-panel-title': 'onPanelTitleClick',
-				'dblclick .accordion-panel-active .accordion-panel-content': 'onContentDblclick',
+				'dblclick .accordion-panel-title': 'onPanelTitleDblClick',
 				'click i': 'deletePanel'
 			});
 			this.delegateEvents();
@@ -41831,8 +41892,6 @@ define('uaccordion',[
 			this.model.get('properties').bind('add', this.render, this);
 			this.model.get('properties').bind('remove', this.render, this);
 
-
-			//this.on('deactivated', this.onDeactivate, this);
 			Upfront.Events.on('entity:deactivated', this.stopEdit, this);
 
 			this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
@@ -41848,6 +41907,10 @@ define('uaccordion',[
 			PresetUtil.updatePresetStyle('accordion', props, settingsStyleTpl);
 
 		},
+
+		/**
+		 * Stops content editing for the active panel
+		 */
 		stopEdit: function() {
 			var $panelcontent = this.$el.find('.accordion-panel-active .accordion-panel-content');
 			$panelcontent.each(function () {
@@ -41859,8 +41922,15 @@ define('uaccordion',[
 				}
 			});
 
-			var $paneltitle = this.$el.find('.accordion-panel-active .accordion-panel-title:not(.ueditor-placeholder)');
-			$paneltitle.trigger('blur');
+			var $paneltitle = this.$el.find('.accordion-panel .accordion-panel-title');
+			$paneltitle.each(function () {
+				var $me = $(this),
+					editor = $me.data('ueditor');
+
+				if (editor && editor.stop) {
+					editor.stop();
+				}
+			});
 
 			Upfront.Events.trigger('upfront:element:edit:stop');
 
@@ -41882,18 +41952,16 @@ define('uaccordion',[
 			this.property('accordion_count', this.property('accordion_count') - 1, false);
 		},
 
-
-
+		/**
+		 * Toggle panels on title click
+		 *
+		 * @param {Object} event Event object
+		 */
 		onPanelTitleClick: function(event) {
-			var $panelTitle = $(event.currentTarget);
-			if($panelTitle.parent().hasClass('accordion-panel-active')) {
-				var titleUeditor = $panelTitle.data('ueditor');
-				if(titleUeditor) {
-					if(!titleUeditor.active)
-						titleUeditor.start();
-				}
-				
-			} else {
+			var $panelTitle = $(event.currentTarget),
+				$panel_wrapper = $panelTitle.closest(".accordion-panel")
+			;
+			if (!$panel_wrapper.hasClass('accordion-panel-active')) {
 				this.$el.find('.accordion-panel-content').each(function () {
 					var ed = $(this).data('ueditor');
 					if (ed) {
@@ -41901,26 +41969,39 @@ define('uaccordion',[
 					}
 				});
 
-				$panelTitle.parent().addClass('accordion-panel-active').find('.accordion-panel-content').slideDown();
-				$panelTitle.parent().siblings().removeClass('accordion-panel-active').find('.accordion-panel-content').slideUp();
-
+				$panel_wrapper.addClass('accordion-panel-active').find('.accordion-panel-content').slideDown();
+				$panel_wrapper.siblings().removeClass('accordion-panel-active').find('.accordion-panel-content').slideUp();
 			}
 		},
 
-		onContentDblclick: function(event) {
-			if($(event.target).data('ueditor')) {
-				$(event.target).data('ueditor').start();
-			} else {
-				event.stopPropagation();
+		/**
+		 * Activate title editor on panel double-click
+		 *
+		 * @param {Object} e Event object
+		 */
+		onPanelTitleDblClick: function (e) {
+			var $panel = this.$el.find('.accordion-panel-active'),
+				$title = $panel.find(".accordion-panel-title"),
+				ed = $title.data("ueditor")
+			;
+			if (ed && ed.start && !ed.active) ed.start();
+		},
+
+/*
+		saveTitle: function () {
+			var panel = this.$el.find('.accordion-panel-active'),
+				$content = panel.find('.accordion-panel-title'),
+				panelId = panel.index(),
+				ed = $content.data('ueditor'),
+				text = ''
+			;
+			try { text = ed.getValue(true); } catch (e) { text = ''; }
+
+			this.property('accordion')[panelId].title = text || $content.html();
+			if (text) {
+				this.render();
 			}
 		},
-
-		saveTitle: function(target) {
-			//var id = target.closest('div.accordion-panel').index()-1;
-			var id = target.closest('div.accordion-panel').index(); // Index is zero-based!!! https://api.jquery.com/index/
-			this.property('accordion')[id].title = target.html();
-		},
-
 		savePanelContent: function() {
 			var panel = this.$el.find('.accordion-panel-active'),
 				$content = panel.find('.accordion-panel-content'),
@@ -41934,6 +42015,29 @@ define('uaccordion',[
 			if (text) {
 				this.render();
 			}
+		},
+*/
+
+		/**
+		 * Save both the title and content of the edited panel
+		 *
+		 * This method is used instead of (and deprecates) the dedicated individuals methods above.
+		 */
+		save_panel_content: function () {
+			var $panel = this.$el.find('.accordion-panel-active'),
+				panelId = $panel.index(),
+				$content = $panel.find('.accordion-panel-content'),
+				$title = $panel.find('.accordion-panel-title'),
+				content_ed = $content.data('ueditor'),
+				title_ed = $title.data('ueditor'),
+				content = '',
+				title = ''
+			;
+			try { content = content_ed.getValue(true); } catch (e) { content = ''; }
+			try { title = title_ed.getValue(true); } catch (e) { title = ''; }
+
+			this.property('accordion')[panelId].content = content || $content.html();
+			this.property('accordion')[panelId].title = title || $title.html();
 		},
 
 
@@ -41955,48 +42059,45 @@ define('uaccordion',[
 			return props;
 		},
 
-		on_render: function() {
-			// Accordion won't be rendered in time if you do not delay.
-			//_.delay(function(self) {
-
-			//	, 10, this);
-			var count = 1;
-			var self = this;
-			this.$el.find('.accordion-panel-title').each(function() {
-				if ($(this).data('ueditor')) {
+		on_render: function () {
+			var count = 1,
+				self = this
+			;
+			this.$el.find('.accordion-panel-title').each(function () {
+				var $title = $(this);
+				if ($title.data('ueditor')) {
 					return true;
 				}
-				var $content = $(this);
-				$(this).ueditor({
-					linebreaks: true,
-					disableLineBreak: true,
-					airButtons: false,
-					allowedTags: ['h5'],
-					placeholder: 'Panel '+count
-				})
-					.on('start', function(){
-						self.$el.parent().parent().parent().draggable('disable');
+				$title
+					.ueditor({
+						linebreaks: false,
+						disableLineBreak: true,
+						airButtons: false,
+						placeholder: 'Panel '+count
+					})
+					.on('start', function () {
 						Upfront.Events.trigger('upfront:element:edit:start', 'text');
 					})
-					.on('stop', function(){
-						self.$el.parent().parent().parent().draggable('enable');
+					.on('stop', function () {
+						self.save_panel_content();
+						self.render();
 						Upfront.Events.trigger('upfront:element:edit:stop');
 					})
-					.on('syncAfter', function(){
-						self.saveTitle($(this));
-					})
-					.on('keydown', function(e){
+					.on('syncAfter', function () { self.save_panel_content(); })
+					.on('keydown', function (e) {
+						// ... so apparently, `linebreaks` argument above wreaks havoc on everything when set to `true`,
+						// and `disableLineBreak` does nothing.
+						// Very well then, do it ourselves.
+						if (13 === e.which) return false;
 						if (e.which === 9) {
 							e.preventDefault();
 							self.editContent();
 						}
 					})
-					.on('blur', function() {
-						$content.data('ueditor').stop();
-					})
-					.addClass('uf-click-to-edit-text');
+					.addClass('uf-click-to-edit-text')
+				;
 
-				$(this).data('ueditor').stop();
+				$title.data('ueditor').stop();
 				count++;
 			});
 			self.$el.find('.accordion-panel-content').each(function() {
@@ -42004,30 +42105,23 @@ define('uaccordion',[
 				if ($me.data('ueditor')) {
 					return true;
 				}
-				$me.ueditor({
+				$me
+					.ueditor({
 						linebreaks: false,
 						inserts: {},
 						autostart: false
-				})
-				.on('start', function(){
-					//self.$el.parent().parent().parent().draggable('enable');
-					Upfront.Events.trigger('upfront:element:edit:start', 'text');
-				})
-				.on('stop', function(){
-					//self.$el.parent().parent().parent().draggable('enable');
-					self.savePanelContent();
-					Upfront.Events.trigger('upfront:element:edit:stop');
-				})
-				.on('syncAfter', function(){
-					//console.log('edited');
-					//self.model.set_content($(this).html(), {silent: true});
-				})
-				.on('blur', function() {
-					//$(this).data('ueditor').stop();
-				});
+					})
+					.on('start', function(){
+						Upfront.Events.trigger('upfront:element:edit:start');
+					})
+					.on('syncAfter', function () { self.save_panel_content(); })
+					.on('stop', function(){
+						self.save_panel_content();
+						self.render();
+						Upfront.Events.trigger('upfront:element:edit:stop');
+					})
+				;
 			});
-			self.$el.find('.accordion-panel:not(.accordion-panel-active) .accordion-panel-content').hide();
-
 			this.$el.find('.accordion-panel:not(.accordion-panel-active) .accordion-panel-content').hide();
 
 		},
@@ -58530,7 +58624,15 @@ define('elements/upfront-contact-form/js/settings',[
 							}
 						}
 					]
-				}
+				},
+				
+				migrateDefaultStyle: function(styles) {
+					//replace image wrapper class
+					styles = styles.replace(/(div)?\.upfront-contact-form\s/g, '');
+					styles = styles.replace(/(div)?\.upfront-object\s/g, '');
+
+					return styles;
+				},
 			}
 		},
 		title: 'Contact Element'
@@ -58868,7 +58970,7 @@ Upfront.Views.UcontactView = UcontactView;
 })(jQuery);
 
 
-define('text!elements/upfront-gallery/tpl/ugallery.html',[],function () { return '<div\r\n\tclass="ugallery ugallery_publish <?php if(!empty($in_editor)) { ?>ugallery-in-editor<?php } ?>"\r\n\tdata-thumb-padding="<?php echo $thumbPadding ?>"\r\n\tdata-thumb-side-padding="<?php echo $sidePadding ?>"\r\n\tdata-thumb-bottom-padding="<?php echo $bottomPadding ?>"\r\n\tdata-thumb-proportions="<?php echo $thumbProportions ?>"\r\n\tdata-thumb-lock-padding="<?php echo $lockPadding ?>"\r\n\tdata-lightbox-show-close="<?php echo $lightbox_show_close ? \'true\' : \'false\' ?>"\r\n\tdata-lightbox-click-out-close="<?php echo $lightbox_click_out_close ? \'true\' : \'false\' ?>"\r\n\tdata-lightbox-show-image-count="<?php echo $lightbox_show_image_count ? \'true\' : \'false\' ?>"\r\n\tdata-lightbox-active-area-bg="<?php echo $lightbox_active_area_bg ?>"\r\n\tdata-lightbox-overlay-bg="<?php echo $lightbox_overlay_bg ?>"\r\n\tdata-styles="<?php echo $styles ?>"\r\n>\r\n<?php if ($labelFilters[\'length\'] || !empty($in_editor)){ ?>\r\n<div class="ugallery_labels <?php if($in_editor) { ?>ugallery_labels-enabled-<?php echo $labelFilters[\'length\'] ?><?php } ?>">\r\n\t<?php for($i=0; $i<$labels_length; $i++) { ?>\r\n\t\t<a href="#" class="ugallery_label_filter <?php echo $i == 0 ? \'filter_selected\' : \'\' ?>" rel="label_<?php echo $labels[$i][\'id\'] ?>"><?php echo $labels[$i][\'text\'] ?></a>\r\n\t<?php } ?>\r\n\t</div>\r\n<?php } ?>\r\n<?php if($imagesLength){ ?>\r\n\t<div class="ugallery_items ugallery_grid" rel="<?php echo $element_id ?>">\r\n\t<?php for($i=0; $i<$imagesLength; $i++) { ?>\r\n\t<div class="ugallery_item ugallery_item_<?php echo !empty($images[$i][\'imageLinkType\']) && $images[$i][\'imageLinkType\'] == \'image\' ? \'image\' : $images[$i][\'imageLinkType\'] ?> <?php if($captionType === \'over\') { ?>ugallery_caption_on_hover_<?php echo $showCaptionOnHover[\'length\'] ?><?php } ?>" style="position:relative; width:<?php echo $thumbWidth ?>px;" rel="<?php echo $images[$i][\'id\'] ?>" data-groups=\'[<?php echo $image_labels[$images[$i][\'id\']] ?>]\'>\r\n\t\t<?php $images[$i][\'imageLinkType\'] = !empty($images[$i][\'imageLinkType\']) ? $images[$i][\'imageLinkType\'] : false; ?>\r\n\t\t  <?php if ($images[$i][\'imageLinkType\'] !== \'unlink\') { ?>\r\n\t\t\t<a class="ugallery_link ugallery_link<?php echo !empty($images[$i][\'imageLinkType\']) && $images[$i][\'imageLinkType\'] == \'image\' ? \' ugallery_lightbox_link\' : $images[$i][\'imageLinkType\'] ?>" href="<?php echo $images[$i][\'imageLinkUrl\'] ?>" target="<?php echo $images[$i][\'imageLinkTarget\'] ?>" title="">\r\n\t\t\t<?php } ?>\r\n\t\t\t\t<img src="<?php echo $images[$i][\'src\'] ?>" alt="" class="ugallery-image" style="<?php echo !empty($images[$i][\'loading\']) && $images[$i][\'loading\'] ? \'display:none;\' : \'\' ?> margin-left:<?php echo $images[$i][\'margin\'][\'left\'] ?>px;  margin-top:<?php echo $images[$i][\'margin\'][\'top\'] ?>px;width:<?php echo $thumbWidth ?>px; height:<?php echo $thumbHeight ?>px">\r\n\t\t\t\t<?php if(!empty($in_editor)) { ?>\r\n\t\t\t\t<i class="remove-image"></i>\r\n\t\t\t\t<?php } ?>\r\n\r\n\t\t\t\t<?php if ($usingNewAppearance === false) { ?>\r\n\t\t\t\t\t<?php if($captionType != \'none\' || !empty($in_editor)) { ?>\r\n\t\t\t\t\t<div class="ugallery-thumb-title <?php if($captionType === \'over\') { ?>ugallery-caption-on-hover-<?php echo $showCaptionOnHover[\'length\'] ?><?php } ?> ugallery-caption-<?php echo $captionType ?><?php echo $captionUseBackground ? \' ugallery-padded-caption\' : \'\' ?>"><?php echo $images[$i][\'title\'] ?></div>\r\n\t\t\t\t\t<?php } ?>\r\n\t\t\t\t<?php } else { ?>\r\n\t\t\t\t\t<?php if(($properties[\'captionType\'] != \'none\' || !empty($in_editor)) && !empty($properties[\'use_captions\'])) { ?>\r\n\t\t\t\t\t<div class="ugallery-thumb-title <?php if($properties[\'captionType\'] === \'over\') { ?>ugallery-caption-on-hover-<?php echo $properties[\'showCaptionOnHover\'] ?><?php } ?> ugallery-caption-<?php echo $properties[\'captionType\'] ?>"><?php echo $images[$i][\'title\'] ?></div>\r\n\t\t\t\t\t<?php } ?>\r\n\t\t\t\t<?php } ?>\r\n\t\t\t<?php if($linkTo == \'image\'){ ?>\r\n\t\t\t<div class="ugallery_lb_text" rel="<?php echo $images[$i][\'id\'] ?>"><?php if (!$editing && $images[$i][\'caption\'] != \'Image description\') { ?><?php echo $images[$i][\'caption\'] ?><?php } ?></div>\r\n\t\t\t<?php } ?>\r\n\r\n\t\t\t<?php if ($images[$i][\'imageLinkType\'] !== \'unlink\') { ?>\r\n\t\t\t</a>\r\n\t\t\t<?php } ?>\r\n\t\t</div><?php } ?>\r\n\t</div>\r\n<?php } else { ?>\r\n\t<?php if(! $editing) { ?>\r\n\t\t<?php echo $l10n[\'no_images\'] ?>\r\n\t<?php } else { ?>\r\n\t\t<div class="ugallery-starting-wrapper upfront-ui upfront-initial-overlay-wrapper">\r\n\t\t\t\t<div class="ugallery-starting-container upfront-initial-overlay-wrapper">\r\n\t\t\t\t\t<span class="upfront-image-resizethiselement"><?php echo $l10n[\'add_img\'] ?></span>\r\n\t\t\t\t\t<div class=""><a class="upfront-image-select button" href="#" title="<?php echo $l10n[\'add_images\'] ?>">+</a></div>\r\n\t\t\t\t</div>\r\n\t\t</div>\r\n\t<?php } ?>\r\n<?php } ?>\r\n</div>\r\n<?php if ($usingNewAppearance === false) { ?>\r\n<style>\r\n#<?php echo $element_id ?> .ugallery-thumb-title {\r\n\tbackground: <?php echo  $captionBackground ?>;\r\n\t<?php if($fitThumbCaptions[0] === \'true\') { ?>\r\n\toverflow: hidden;\r\n\theight: <?php echo $thumbCaptionsHeight ?>px;\r\n\t<?php } ?>\r\n}\r\n</style>\r\n<?php } ?>\r\n';});
+define('text!elements/upfront-gallery/tpl/ugallery.html',[],function () { return '<div\r\n\tclass="ugallery ugallery_publish <?php if(!empty($in_editor)) { ?>ugallery-in-editor<?php } ?>"\r\n\tdata-thumb-padding="<?php echo $thumbPadding ?>"\r\n\tdata-thumb-side-padding="<?php echo $sidePadding ?>"\r\n\tdata-thumb-bottom-padding="<?php echo $bottomPadding ?>"\r\n\tdata-thumb-proportions="<?php echo $thumbProportions ?>"\r\n\tdata-thumb-lock-padding="<?php echo $lockPadding ?>"\r\n\tdata-lightbox-show-close="<?php echo $lightbox_show_close ? \'true\' : \'false\' ?>"\r\n\tdata-lightbox-click-out-close="<?php echo $lightbox_click_out_close ? \'true\' : \'false\' ?>"\r\n\tdata-lightbox-show-image-count="<?php echo $lightbox_show_image_count ? \'true\' : \'false\' ?>"\r\n\tdata-lightbox-active-area-bg="<?php echo $lightbox_active_area_bg ?>"\r\n\tdata-lightbox-overlay-bg="<?php echo $lightbox_overlay_bg ?>"\r\n\tdata-styles="<?php echo $styles ?>"\r\n>\r\n<?php if ($labelFilters === \'true\' || !empty($in_editor)){ ?>\r\n<div class="ugallery_labels <?php if($in_editor) { ?>ugallery_labels-enabled-<?php echo $labelFilters === \'true\' ? \'1\' : \'0\' ?><?php } ?>">\r\n\t<?php for($i=0; $i<$labels_length; $i++) { ?>\r\n\t\t<a href="#" class="ugallery_label_filter <?php echo $i == 0 ? \'filter_selected\' : \'\' ?>" rel="label_<?php echo $labels[$i][\'id\'] ?>"><?php echo $labels[$i][\'text\'] ?></a>\r\n\t<?php } ?>\r\n\t</div>\r\n<?php } ?>\r\n<?php if($imagesLength){ ?>\r\n\t<div class="ugallery_items ugallery_grid" rel="<?php echo $element_id ?>">\r\n\t<?php for($i=0; $i<$imagesLength; $i++) { ?>\r\n\t<div class="ugallery_item ugallery_item_<?php echo !empty($images[$i][\'imageLinkType\']) && $images[$i][\'imageLinkType\'] == \'image\' ? \'image\' : $images[$i][\'imageLinkType\'] ?> <?php if($captionType === \'over\') { ?>ugallery_caption_on_hover_<?php echo $showCaptionOnHover[\'length\'] ?><?php } ?>" style="position:relative; width:<?php echo $thumbWidth ?>px;" rel="<?php echo $images[$i][\'id\'] ?>" data-groups=\'[<?php echo $image_labels[$images[$i][\'id\']] ?>]\'>\r\n\t\t<?php $images[$i][\'imageLinkType\'] = !empty($images[$i][\'imageLinkType\']) ? $images[$i][\'imageLinkType\'] : false; ?>\r\n\t\t  <?php if ($images[$i][\'imageLinkType\'] !== \'unlink\') { ?>\r\n\t\t\t<a class="ugallery_link ugallery_link<?php echo !empty($images[$i][\'imageLinkType\']) && $images[$i][\'imageLinkType\'] == \'image\' ? \' ugallery_lightbox_link\' : $images[$i][\'imageLinkType\'] ?>" href="<?php echo $images[$i][\'imageLinkUrl\'] ?>" target="<?php echo $images[$i][\'imageLinkTarget\'] ?>" title="">\r\n\t\t\t<?php } ?>\r\n\t\t\t\t<img src="<?php echo $images[$i][\'src\'] ?>" alt="" class="ugallery-image" style="<?php echo !empty($images[$i][\'loading\']) && $images[$i][\'loading\'] ? \'display:none;\' : \'\' ?> margin-left:<?php echo $images[$i][\'margin\'][\'left\'] ?>px;  margin-top:<?php echo $images[$i][\'margin\'][\'top\'] ?>px;width:<?php echo $thumbWidth ?>px; height:<?php echo $thumbHeight ?>px">\r\n\t\t\t\t<?php if(!empty($in_editor)) { ?>\r\n\t\t\t\t<i class="remove-image"></i>\r\n\t\t\t\t<?php } ?>\r\n\r\n\t\t\t\t<?php if ($usingNewAppearance === false) { ?>\r\n\t\t\t\t\t<?php if($captionType != \'none\' || !empty($in_editor)) { ?>\r\n\t\t\t\t\t<div class="ugallery-thumb-title <?php if($captionType === \'over\') { ?>ugallery-caption-on-hover-<?php echo $showCaptionOnHover[\'length\'] ?><?php } ?> ugallery-caption-<?php echo $captionType ?><?php echo $captionUseBackground ? \' ugallery-padded-caption\' : \'\' ?>"><?php echo $images[$i][\'title\'] ?></div>\r\n\t\t\t\t\t<?php } ?>\r\n\t\t\t\t<?php } else { ?>\r\n\t\t\t\t\t<?php if(($properties[\'captionType\'] != \'none\' || !empty($in_editor)) && !empty($properties[\'use_captions\'])) { ?>\r\n\t\t\t\t\t<div class="ugallery-thumb-title <?php if($properties[\'captionType\'] === \'over\') { ?>ugallery-caption-on-hover-<?php echo $properties[\'showCaptionOnHover\'] ?><?php } ?> ugallery-caption-<?php echo $properties[\'captionType\'] ?>"><?php echo $images[$i][\'title\'] ?></div>\r\n\t\t\t\t\t<?php } ?>\r\n\t\t\t\t<?php } ?>\r\n\t\t\t<?php if($linkTo == \'image\'){ ?>\r\n\t\t\t<div class="ugallery_lb_text" rel="<?php echo $images[$i][\'id\'] ?>"><?php if (!$editing && $images[$i][\'caption\'] != \'Image description\') { ?><?php echo $images[$i][\'caption\'] ?><?php } ?></div>\r\n\t\t\t<?php } ?>\r\n\r\n\t\t\t<?php if ($images[$i][\'imageLinkType\'] !== \'unlink\') { ?>\r\n\t\t\t</a>\r\n\t\t\t<?php } ?>\r\n\t\t</div><?php } ?>\r\n\t</div>\r\n<?php } else { ?>\r\n\t<?php if(! $editing) { ?>\r\n\t\t<?php echo $l10n[\'no_images\'] ?>\r\n\t<?php } else { ?>\r\n\t\t<div class="ugallery-starting-wrapper upfront-ui upfront-initial-overlay-wrapper">\r\n\t\t\t\t<div class="ugallery-starting-container upfront-initial-overlay-wrapper">\r\n\t\t\t\t\t<span class="upfront-image-resizethiselement"><?php echo $l10n[\'add_img\'] ?></span>\r\n\t\t\t\t\t<div class=""><a class="upfront-image-select button" href="#" title="<?php echo $l10n[\'add_images\'] ?>">+</a></div>\r\n\t\t\t\t</div>\r\n\t\t</div>\r\n\t<?php } ?>\r\n<?php } ?>\r\n</div>\r\n<?php if ($usingNewAppearance === false) { ?>\r\n<style>\r\n#<?php echo $element_id ?> .ugallery-thumb-title {\r\n\tbackground: <?php echo  $captionBackground ?>;\r\n\t<?php if($fitThumbCaptions[0] === \'true\') { ?>\r\n\toverflow: hidden;\r\n\theight: <?php echo $thumbCaptionsHeight ?>px;\r\n\t<?php } ?>\r\n}\r\n</style>\r\n<?php } ?>\r\n';});
 
 
 define('text!elements/upfront-gallery/tpl/sorting-style.html',[],function () { return '<style id="sorting-style">\r\n\t#{{ element_id }} .ugallery_item {\r\n\t\tmargin-right: {{ thumbPadding }}px;\r\n\t\t{[ if (even_padding.length) { ]}\r\n\t\tmargin-bottom: {{ thumbPadding }}px;\r\n\t\t{[ } ]}\r\n\t}\r\n\t#{{ element_id }} .ugallery_item:nth-child({{ itemsInRow }}n) {\r\n\t\tmargin-right: 0;\r\n\t}\r\n</style>\r\n';});
@@ -59147,6 +59249,25 @@ define('elements/upfront-gallery/js/settings/thumbnail-fields',[
 						}
 					}
 				]
+			},
+      {
+				type: 'SettingsItem',
+				className: 'general_settings_item',
+				title: 'Label filters',
+				fields: [
+					{
+						type: 'Checkboxes',
+						property: 'labelFilters',
+						default_value: 0,
+						multiple: false,
+						values: [
+							{ label: 'Enable image filtering', value: ['true'] }
+						],
+						change: function(value, me) {
+							me.model.set_property('labelFilters', value);
+						}
+					}
+				]
 			}
 		],
 		title: 'General Settings'
@@ -59236,6 +59357,14 @@ define('elements/upfront-gallery/js/settings',[
 							}
 						}
 					]
+				},
+				
+				migrateDefaultStyle: function(styles) {
+					//replace image wrapper class
+					styles = styles.replace(/(div)?\.upfront-gallery\s/g, '');
+					styles = styles.replace(/(div)?\.upfront-object\s/g, '');
+
+					return styles;
 				},
 
 				migratePresetProperties: function(newPreset) {
@@ -59649,6 +59778,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			raw_labels,
 			images;
 
+		if (_.isArray(this.property('labelFilters')) && this.property('labelFilters')[0] === 'true') {
+			this.property('labelFilters', 'true', true);
+		}
 		if(! (this.model instanceof UgalleryModel)){
 			this.model = new UgalleryModel({properties: this.model.get('properties')});
 		}
@@ -59750,7 +59882,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 		this.listenTo(this.model, 'settings:closed', function(e){
 			me.checkRegenerateThumbs(e);
-			if (this.property('labelFilters').length) {
+			if (this.property('labelFilters') === 'true') {
 				Upfront.frontFunctions.galleryBindShuffle();
 			}
 		});
@@ -59905,7 +60037,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	},
 
 	updateShowFilters: function() {
-		if (this.property('labelFilters')[0] === 'true') {
+		if (this.property('labelFilters') === 'true') {
 			this.$el.find('.ugallery_labels').show();
 			this.$el.find('.ugallery-magnific-labels').parents('.upfront-inline-panel-item').show();
 			Upfront.frontFunctions.galleryBindShuffle();
@@ -59936,7 +60068,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			this.createLinkControl(image)
 		]);
 
-		if (this.property('labelFilters')[0] === 'true') {
+    if (this.property('labelFilters') === 'true') {
 			panel.items.push(this.createLabelControl(image));
 		}
 
@@ -59982,6 +60114,11 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		control.id = 'edit_labels';
 
 		me.listenTo(control, 'panel:open', function(){
+			me.lastOpenedControl = control;
+			setTimeout(function() {
+				// this is fine because gallery will re-render once panel is closed
+				me.$el.find('.ugallery_item').css('overflow', 'visible');
+			}, 10);
 			control.$el
 				.closest('.ugallery-controls')
 					.addClass('upfront-control-visible');
@@ -59991,6 +60128,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			control.$el
 				.closest('.ugallery-controls')
 					.removeClass('upfront-control-visible');
+			if (control === me.lastOpenedControl) {
+				me.render();
+			}
 		});
 
 
@@ -60398,6 +60538,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		props.in_editor = true;
 		if (!props.even_padding) {
 			props.even_padding = ['false'];
+		}
+
+		if (_.isArray(props.labelFilters) && props.labelFilters[0] === 'true') {
+			props.labelFilters = 'true';
 		}
 
 		return props;
@@ -60942,17 +61086,20 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	deleteLabel: function(labelId, imageId) {
 		var me = this,
 			deleteLabel = true;
+		var labelString = '"label_' + labelId + '"';
 
-		me.images.each(function(image){
+		this.imageLabels[imageId] = this.imageLabels[imageId].replace(new RegExp(labelString + ',*', 'g'), '');
+
+		this.images.each(function(image){
 			if(image.id !== imageId && me.imageLabels[image.id].indexOf('"label_' + labelId + '"') !== -1){
 				deleteLabel = false;
 			}
 		});
 
 		if(deleteLabel){
-			for(var idx in me.labels){
-				if(me.labels[idx] && me.labels[idx].id === labelId) {
-					me.labels.splice(idx, 1);
+			for(var idx in this.labels){
+				if(this.labels[idx] && this.labels[idx].id === labelId) {
+					this.labels.splice(idx, 1);
 				}
 			}
 		}
@@ -60976,15 +61123,18 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	},
 
 	associateLabelWithImage: function(imageId, labelId, label) {
-		var data;
+		var data,
+			added = false;
 
 		if (!this.imageLabels[imageId]) {
 			this.imageLabels[imageId] = labelId;
+			added = true;
+		} else if (this.imageLabels[imageId].indexOf(labelId) === -1) {
+			this.imageLabels[imageId] += ', ' + labelId;
+			added = true;
 		}
 
-		if (this.imageLabels[imageId].indexOf(labelId) === -1) {
-			this.imageLabels[imageId] += ', ' + labelId;
-		}
+		if (!added) return;
 
 		data = {
 			'action': 'upfront-media-associate_label',
@@ -60996,16 +61146,17 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 	addToGalleryLabels: function(label) {
 		var labelInGallery = false,
-			i = 0;
+			i = 0,
+		  labelIdAsInt = parseInt(label.id, 10); // if not done labels will be duplicated
 
 		while (i < this.labels.length && !labelInGallery) {
-			labelInGallery = this.labels[i].id === label.id;
+			labelInGallery = this.labels[i].id === labelIdAsInt;
 			i++;
 		}
 
 		if (!labelInGallery) {
 			this.labels.push({
-				id: label.id,
+				id: labelIdAsInt,
 				text: label.text
 			});
 		}
@@ -61296,7 +61447,7 @@ Upfront.Views.UgalleryView = UgalleryView;
 })(jQuery);
 
 
-define('text!elements/upfront-image/tpl/image.html',[],function () { return '<div class="<?php echo $preset ?>">\r\n\t<?php if($usingNewAppearance === false) { ?>\r\n\t<div class="uimage uimage-<?php echo $caption_position ?> uimage-status-<?php echo $image_status ?> uimage-caption-<?php echo $caption_position ?>-<?php echo $caption_alignment ?><?php echo $gifImage ?> <?php echo $placeholder_class ?>" style="text-align: <?php echo $align ?>;">\r\n\t<?php } else { ?>\r\n\t<div class="upfront-image-wrapper uimage uimage-<?php echo $properties[\'caption-position\'] ?> uimage-status-<?php echo $image_status ?> uimage-caption-<?php echo $properties[\'caption-position\'] ?>-<?php echo $properties[\'caption-alignment\'] ?><?php echo $gifImage ?> <?php echo $placeholder_class ?>" style="text-align: <?php echo $align ?>;">\r\n\t<?php } ?>\r\n\t\t<div class="upfront-image-caption-container" style="margin-top:<?php echo $marginTop ?>px">\r\n\t\t\t<?php if($url && !$in_editor) { ?>\r\n\t\t\t<a href="<?php echo $url ?>" target="<?php echo $link_target ?>">\r\n\t\t\t\t<?php } ?>\r\n\t\t\t\t<?php if($src){ ?>\r\n\t\t\t\t<div class="upfront-image-container" <?php if ($containerWidth) { ?>style="width:<?php echo $containerWidth ?>px;"<?php } ?>>\r\n\t\t\t\t<img src="<?php echo $src ?>" alt="<?php echo $alternative_text ?>" title="<?php echo $image_title ?>" <?php if($imgWidth) { ?>style="width:<?php echo $imgWidth ?>;"<?php } ?>/>\r\n\t\t</div>\r\n\t\t<?php } else { ?>\r\n\t\t<div class="upfront-image-starting_placeholder"><p>Image placeholder</p></div>\r\n\t\t<?php } ?>\r\n\r\n\t\t<?php if($usingNewAppearance !== true) { ?>\r\n\t\t\t<?php if($include_image_caption) { ?>\r\n\t\t\t\t<div class="wp-caption uimage-<?php echo $caption_alignment ?> uimage-<?php echo $caption_trigger ?> uimage-padded-caption" style="background:<?php echo $captionBackground == \'1\' ? $background : \'rgba(255, 255, 255, 0)\' ?>; ">\r\n\t\t\t\t\t<?php if($cover_caption) { ?>\r\n\t\t\t\t\t<div class="uimage-caption-cover">\r\n\t\t\t\t\t\t<?php } ?>\r\n\t\t\t\t\t\t<?php echo $image_caption ?>\r\n\t\t\t\t\t\t<?php if($cover_caption) { ?>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t\t<?php } ?>\r\n\t\t\t\t</div>\r\n\t\t\t<?php } ?>\r\n\t\t<?php } else { ?>\r\n\t\t<?php if( !empty($properties[\'use_captions\']) && $display_caption === \'showCaption\' )  { ?>\r\n\t\t<div class="wp-caption uimage-<?php echo $properties[\'caption-alignment\'] ?> uimage-<?php echo $properties[\'caption-trigger\'] ?> uimage-padded-caption">\r\n\t\t\t<?php if($cover_caption) { ?>\r\n\t\t\t<div class="uimage-caption-cover">\r\n\t\t\t\t<?php } ?>\r\n\t\t\t\t<?php echo $image_caption ?>\r\n\t\t\t\t<?php if($cover_caption) { ?>\r\n\t\t\t</div>\r\n\t\t\t<?php } ?>\r\n\t\t</div>\r\n\t\t<?php } ?>\r\n\t\t<?php } ?>\r\n\r\n\t\t<?php if($url && !$in_editor) { ?>\r\n\t\t</a>\r\n\t\t<?php } ?>\r\n\t</div>\r\n</div>\r\n</div>\r\n\r\n<?php if($gifImage){ ?>\r\n<style>\r\n\t#<?php echo $element_id ?> .uimage-gif .upfront-image-container {\r\n\t\theight: <?php echo $element_size[\'height\'] ?>px;\r\n\t\twidth: <?php echo $element_size[\'width\'] ?>px;\r\n\t}\r\n\r\n\t#<?php echo $element_id ?> .uimage-gif img {\r\n\t\t   height: <?php echo $size[\'height\'] ?>px;\r\n\t\t   width: <?php echo $size[\'width\'] ?>px !important;\r\n\t\t   margin-top: <?php echo $gifTop ?>;\r\n\t\t   margin-left: <?php echo $gifLeft ?>;\r\n\t   }\r\n</style>\r\n<?php } ?>\r\n';});
+define('text!elements/upfront-image/tpl/image.html',[],function () { return '<div <?php if($usingNewAppearance === true) { ?>class="<?php echo $preset ?>"<?php } ?>>\r\n\t<?php if($usingNewAppearance === false) { ?>\r\n\t<div class="uimage uimage-<?php echo $caption_position ?> uimage-status-<?php echo $image_status ?> uimage-caption-<?php echo $caption_position ?>-<?php echo $caption_alignment ?><?php echo $gifImage ?> <?php echo $placeholder_class ?>" style="text-align: <?php echo $align ?>;">\r\n\t<?php } else { ?>\r\n\t<div class="upfront-image-wrapper uimage uimage-<?php echo $properties[\'caption-position\'] ?> uimage-status-<?php echo $image_status ?> uimage-caption-<?php echo $properties[\'caption-position\'] ?>-<?php echo $properties[\'caption-alignment\'] ?><?php echo $gifImage ?> <?php echo $placeholder_class ?>" style="text-align: <?php echo $align ?>;">\r\n\t<?php } ?>\r\n\t\t<div class="upfront-image-caption-container" style="margin-top:<?php echo $marginTop ?>px">\r\n\t\t\t<?php if($url && !$in_editor) { ?>\r\n\t\t\t<a href="<?php echo $url ?>" target="<?php echo $link_target ?>">\r\n\t\t\t\t<?php } ?>\r\n\t\t\t\t<?php if($src){ ?>\r\n\t\t\t\t<div class="upfront-image-container" <?php if ($containerWidth) { ?>style="width:<?php echo $containerWidth ?>px;"<?php } ?>>\r\n\t\t\t\t<img src="<?php echo $src ?>" alt="<?php echo $alternative_text ?>" title="<?php echo $image_title ?>" <?php if($imgWidth) { ?>style="width:<?php echo $imgWidth ?>;"<?php } ?>/>\r\n\t\t</div>\r\n\t\t<?php } else { ?>\r\n\t\t<div class="upfront-image-starting_placeholder"><p>Image placeholder</p></div>\r\n\t\t<?php } ?>\r\n\r\n\t\t<?php if($usingNewAppearance !== true) { ?>\r\n\t\t\t<?php if($include_image_caption) { ?>\r\n\t\t\t\t<div class="wp-caption uimage-<?php echo $caption_alignment ?> uimage-<?php echo $caption_trigger ?> uimage-padded-caption" style="background:<?php echo $captionBackground == \'1\' ? $background : \'rgba(255, 255, 255, 0)\' ?>; ">\r\n\t\t\t\t\t<?php if($cover_caption) { ?>\r\n\t\t\t\t\t<div class="uimage-caption-cover">\r\n\t\t\t\t\t\t<?php } ?>\r\n\t\t\t\t\t\t<?php echo $image_caption ?>\r\n\t\t\t\t\t\t<?php if($cover_caption) { ?>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t\t<?php } ?>\r\n\t\t\t\t</div>\r\n\t\t\t<?php } ?>\r\n\t\t<?php } else { ?>\r\n\t\t<?php if( !empty($properties[\'use_captions\']) && $display_caption === \'showCaption\' )  { ?>\r\n\t\t<div class="wp-caption uimage-<?php echo $properties[\'caption-alignment\'] ?> uimage-<?php echo $properties[\'caption-trigger\'] ?> uimage-padded-caption">\r\n\t\t\t<?php if($cover_caption) { ?>\r\n\t\t\t<div class="uimage-caption-cover">\r\n\t\t\t\t<?php } ?>\r\n\t\t\t\t<?php echo $image_caption ?>\r\n\t\t\t\t<?php if($cover_caption) { ?>\r\n\t\t\t</div>\r\n\t\t\t<?php } ?>\r\n\t\t</div>\r\n\t\t<?php } ?>\r\n\t\t<?php } ?>\r\n\r\n\t\t<?php if($url && !$in_editor) { ?>\r\n\t\t</a>\r\n\t\t<?php } ?>\r\n\t</div>\r\n</div>\r\n</div>\r\n\r\n<?php if($gifImage){ ?>\r\n<style>\r\n\t#<?php echo $element_id ?> .uimage-gif .upfront-image-container {\r\n\t\theight: <?php echo $element_size[\'height\'] ?>px;\r\n\t\twidth: <?php echo $element_size[\'width\'] ?>px;\r\n\t}\r\n\r\n\t#<?php echo $element_id ?> .uimage-gif img {\r\n\t\t   height: <?php echo $size[\'height\'] ?>px;\r\n\t\t   width: <?php echo $size[\'width\'] ?>px !important;\r\n\t\t   margin-top: <?php echo $gifTop ?>;\r\n\t\t   margin-left: <?php echo $gifLeft ?>;\r\n\t   }\r\n</style>\r\n<?php } ?>\r\n';});
 
 
 define('text!elements/upfront-image/tpl/image_editor.html',[],function () { return '<div>\r\n<!--\r\n\tWrap everything in a div to convert this file\'s content in a jquery element\r\n\tso it is possible to use $.find.\r\n-->\r\n\r\n<script type="text/template" id="selector-tpl">\r\n\t<div id="upront-image-placeholder" class="upfront-image-section">\r\n\t\t<div class="upfront-image-selector-container">\r\n\r\n\t\t\t<h2>{{ l10n.drop_files }}</h2>\r\n\t\t\t<p>{{ l10n.max_file_size }}</p>\r\n\t\t\t<ul>\r\n\t\t\t\t<li>\r\n\t\t\t\t\t<a class="select-files" href="#">{{ l10n.select_files }}</a>\r\n\t\t\t\t</li>\r\n\t\t\t\t<!-- {{ l10n.or_browse }} -->\r\n\t\t\t\t<li>\r\n\t\t\t\t\t<a class="open-media-gallery" href="#">{{ l10n.media_gallery }}</a>\r\n\t\t\t\t</li>\r\n\t\t\t</ul>\r\n\t\t\t<!-- <span class="dragimagehand"></span> -->\r\n\r\n\t\t</div>\r\n\t</div>\r\n</div>\r\n</script>\r\n\r\n<script type="text/template" id="progress-tpl">\r\n\t<div id="upfront-image-uploading" class="upfront-image-section">\r\n\t\t<h2>{{ l10n.uploading }}</h2>\r\n\t\t<div class="upfront-progress-container">\r\n\t\t\t<div id="upfront-progress"></div>\r\n\t\t</div>\r\n\t</div>\r\n</script>\r\n\r\n<script type="text/template" id="editor-tpl">\r\n\t<div id="uimage-cover" style="position:absolute; top:{{maskOffset.top}}px; left:{{maskOffset.left}}px; height: {{maskSize.height}}px; width: {{maskSize.width}}px"></div>\r\n\t<div id="uimage-canvas" style="position:absolute; overflow:hidden; top:{{offset.top}}px; left:{{offset.left}}px; height: {{size.height}}px; width: {{size.width}}px">\r\n\t\t<img class="uimage-img {{ rotation }}" src="{{src}}" style="width:100%; height:100%; position:absolute">\r\n\t</div>\r\n\r\n\t<div id="uimage-mask" class="image-edit-mask" style="position:absolute; top:{{maskOffset.top}}px; left:{{maskOffset.left}}px; height: {{maskSize.height}}px; width: {{maskSize.width}}px"></div>\r\n\r\n\t<div id="uimage-drag-handle" style="width:{{size.width}}px; height:{{size.height}}px;position:absolute; top:{{offset.top}}px; left:{{offset.left}}px">\r\n\t\t<div class="image-edit-resize image-edit-control"><i class="ui-resizable-handle ui-resizable-handle-se"></i></div>\r\n\t\t<!-- <div class="image-edit-rotate image-edit-control"><i class=""></i></div> -->\r\n\t</div>\r\n\r\n\t<div id="image-edit-buttons" style="position: absolute; top:{{maskOffset.top}}px; left: {{maskOffset.left + maskSize.width + 5}}px;">\r\n\t\t{[ for (var i = 0; i < buttons.length; i++) { ]}\r\n\t\t<a class="image-edit-button" id="{{buttons[i].id}}" title="{{buttons[i].tooltip}}">{{buttons[i].text}}</a>\r\n\t\t{[ } ]}\r\n\t</div>\r\n\t<div id="image-edit-buttons-bottom" style="z-index: 11; position: absolute; top:{{maskSize.width < 200 ? maskOffset.top : maskOffset.top + maskSize.height + 5}}px; left:{{maskSize.width < 200 ? maskOffset.left - 205 : maskOffset.left}}px; width: 200px" class="{{maskSize.width < 200 ? \'image-edit-buttons-toleft\' : \'\' }}">\r\n\t\t<a class="image-edit-button" id="image-edit-button-swap" title="Use a different image">Change IMG</a>\r\n\t\t<a class="image-edit-button" id="image-edit-button-align" title="Align image" ></a>\r\n\t</div>\r\n</script>\r\n\r\n<script type="text/template" id="upload-form-tpl">\r\n<form id="upfront-upload-image" name="upfront-upload-image" enctype="multipart/form-data" method="post" action="{{url}}" data-url="{{url}}?action=upfront-media-upload">\r\n\t<input type="file" name="media" id="upfront-image-file-input" multiple >\r\n\t<input type="hidden" name="action" value="upfront-media-upload">\r\n\t<input type="submit" value="Upload">\r\n</form>\r\n</script>\r\n\r\n<script type="text/template" id="sizehint-tpl">\r\n\t<b>w:</b>{{width}}{[ if(width.toString().indexOf("%") === -1){ ]}px{[ } ]}\r\n\t<b>h:</b>{{height}}{[ if(height.toString().indexOf("%") === -1){ ]}px{[ } ]}\r\n</div>\r\n</script>\r\n\r\n<script type="text/template" id="fullwidth-alert-tpl">\r\n\t<div class="uimage-fullwidth-alert">\r\n\t\t<p>{{ l10n.move_image_nag }}</p>\r\n\t\t<div class="clearfix">\r\n\t\t\t<div class="uimage-fullwidth-info uimage-fullwidth-info-1"></div>\r\n\t\t\t<div class="uimage-fullwidth-info uimage-fullwidth-info-2"></div>\r\n\t\t\t<div class="uimage-fullwidth-info uimage-fullwidth-info-3"></div>\r\n\t\t</div>\r\n\t\t<div style="margin-top:10px">\r\n\t\t\t<input class="upfront-field-checkbox" type="checkbox" id="uimage-fullwidth-noalert" value="1">\r\n\t\t\t<label for="uimage-fullwidth-noalert">{{ l10n.dont_show_again }}</label>\r\n\t\t</div>\r\n\t</div>\r\n</div>\r\n</script>\r\n\r\n</div>\r\n';});
@@ -61486,8 +61637,17 @@ define('elements/upfront-image/js/image-settings',[
 				
 				migrateElementStyle: function(styles) {
 					//replace image wrapper class
-					styles = styles.replace(/upfront-image/, 'upfront-image-wrapper');
+					styles = styles.replace(/\.upfront-image/, 'upfront-image-wrapper');
+					styles = styles.replace(/\.upfront-image-wrapper-container/, 'upfront-image-container');
 					
+					return styles;
+				},
+				
+				migrateDefaultStyle: function(styles) {
+					//replace image wrapper class
+					styles = styles.replace(/(div)?\.upfront-image\s/g, '');
+					styles = styles.replace(/(div)?\.upfront-object\s/g, '');
+
 					return styles;
 				},
 				
@@ -64046,7 +64206,9 @@ define('uimage',[
 				};
 				this.property('element_size', this.elementSize);
 				return;
-			} else if (this.property('quick_swap')) {
+				
+			//} else if (this.property('quick_swap')) {
+			} else if (this.isThemeImage()) {
 				return;
 			}
 
@@ -66828,7 +66990,7 @@ define('elements/upfront-newnavigation/js/element',[
 	return UnewnavigationElement;
 });
 
-define('text!elements/upfront-newnavigation/tpl/preset-style.html',[],function () { return 'div.<?php echo $properties[\'id\'] ?> ul.menu {\r\n\t<?php if(!empty($properties[\'breakpoint\']) && !empty($properties[\'breakpoint\'][\'desktop\']) && !empty($properties[\'breakpoint\'][\'desktop\'][\'menu_alignment\'])) { ?>\r\n\t\ttext-align: <?php echo $properties[\'breakpoint\'][\'desktop\'][\'menu_alignment\'] ?> !important;\r\n\t<?php } else if(!empty($properties[\'breakpoint\']) && !empty($properties[\'breakpoint\'][\'table\']) && !empty($properties[\'breakpoint\'][\'table\'][\'menu_alignment\'])) { ?>\r\n\t\ttext-align: <?php echo $properties[\'breakpoint\'][\'table\'][\'menu_alignment\'] ?> !important;\r\n\t<?php } else if(!empty($properties[\'breakpoint\']) && !empty($properties[\'breakpoint\'][\'mobile\']) && !empty($properties[\'breakpoint\'][\'mobile\'][\'menu_alignment\'])) { ?>\r\n\t\ttext-align: <?php echo $properties[\'breakpoint\'][\'mobile\'][\'menu_alignment\'] ?> !important;\r\n\t<?php } else { ?>\r\n\t\ttext-align: <?php echo $properties[\'menu_alignment\'] ?> !important;\r\n\t<?php } ?>\r\n}\r\n\r\ndiv.<?php echo $properties[\'id\'] ?> ul.menu > li.menu-item > a {\r\n\t<?php if(!empty($properties[\'static-nav-bg\'])) { ?>\r\n\tbackground: <?php echo $properties[\'static-nav-bg\'] ?>;\r\n\t<?php } ?>\r\n}\r\n\r\ndiv.<?php echo $properties[\'id\'] ?> ul.menu > li.menu-item > a:hover, div.<?php echo $properties[\'id\'] ?>.live-preview-hover ul.menu > li.menu-item > a {\r\n\t<?php if(!empty($properties[\'hover-use-color\']) && $properties[\'hover-use-color\'] == \'yes\' && !empty($properties[\'hover-nav-bg\'])) { ?>\r\n\tbackground: <?php echo $properties[\'hover-nav-bg\'] ?>;\r\n\t<?php } ?>\r\n}\r\n\r\ndiv.<?php echo $properties[\'id\'] ?> ul.menu > li.menu-item > a:active, div.<?php echo $properties[\'id\'] ?>.live-preview-focus ul.menu > li.menu-item > a {\r\n\t<?php if(!empty($properties[\'focus-use-color\']) && $properties[\'focus-use-color\'] == \'yes\' && !empty($properties[\'focus-nav-bg\'])) { ?>\r\n\tbackground: <?php echo $properties[\'focus-nav-bg\'] ?>;\r\n\t<?php } ?>\r\n}\r\n\r\n\r\ndiv.<?php echo $properties[\'id\'] ?> ul.menu > li.menu-item > a {\r\n\t<?php if(!empty($properties[\'static-font-color\'])) { ?>color: <?php echo $properties[\'static-font-color\']  ?>; <?php } ?>\r\n\t<?php if(!empty($properties[\'static-font-family\'])) { ?>font-family: <?php echo $properties[\'static-font-family\']  ?>; <?php } ?>\r\n\t<?php if(!empty($properties[\'static-font-size\'])) { ?>font-size: <?php echo $properties[\'static-font-size\']  ?>px; <?php } ?>\r\n\t<?php if(!empty($properties[\'static-weight\'])) { ?>font-weight: <?php echo $properties[\'static-weight\']  ?>;<?php } ?>\r\n\t<?php if(!empty($properties[\'static-style\'])) { ?>font-style: <?php echo $properties[\'static-style\']  ?>;<?php } ?>\r\n\t<?php if(!empty($properties[\'static-line-height\'])) { ?>line-height: <?php echo $properties[\'static-line-height\']  ?>;<?php } ?>\r\n}\r\n\r\ndiv.<?php echo $properties[\'id\'] ?> ul.menu > li.menu-item > a:hover, div.upfront-navigation.<?php echo $properties[\'id\']  ?>.live-preview-hover ul.menu > li.menu-item > a {\r\n\t<?php if(!empty($properties[\'hover-use-typography\'])) { ?>\r\n\t\t<?php if(!empty($properties[\'hover-font-color\'])) { ?>color: <?php echo $properties[\'hover-font-color\']  ?>; <?php } ?>\r\n\t\t<?php if(!empty($properties[\'hover-font-family\'])) { ?>font-family: <?php echo $properties[\'hover-font-family\']  ?>; <?php } ?>\r\n\t\t<?php if(!empty($properties[\'hover-font-size\'])) { ?>font-size: <?php echo $properties[\'hover-font-size\']  ?>px; <?php } ?>\r\n\t\t<?php if(!empty($properties[\'hover-weight\'])) { ?>font-weight: <?php echo $properties[\'hover-weight\']  ?>;<?php } ?>\r\n\t\t<?php if(!empty($properties[\'hover-style\'])) { ?>font-style: <?php echo $properties[\'hover-style\']  ?>;<?php } ?>\r\n\t\t<?php if(!empty($properties[\'hover-line-height\'])) { ?>line-height: <?php echo $properties[\'hover-line-height\']  ?>;<?php } ?>\r\n\t<?php } else { ?>\r\n\t\t<?php if(!empty($properties[\'static-font-color\'])) { ?>color: <?php echo $properties[\'static-font-color\']  ?>; <?php } ?>\r\n\t\t<?php if(!empty($properties[\'static-font-family\'])) { ?>font-family: <?php echo $properties[\'static-font-family\']  ?>; <?php } ?>\r\n\t\t<?php if(!empty($properties[\'static-font-size\'])) { ?>font-size: <?php echo $properties[\'static-font-size\']  ?>px; <?php } ?>\r\n\t\t<?php if(!empty($properties[\'static-weight\'])) { ?>font-weight: <?php echo $properties[\'static-weight\']  ?>;<?php } ?>\r\n\t\t<?php if(!empty($properties[\'static-style\'])) { ?>font-style: <?php echo $properties[\'static-style\']  ?>;<?php } ?>\r\n\t\t<?php if(!empty($properties[\'static-line-height\'])) { ?>line-height: <?php echo $properties[\'static-line-height\']  ?>;<?php } ?>\r\n\t<?php } ?>\r\n}\r\n\r\ndiv.<?php echo $properties[\'id\'] ?> ul.menu > li.menu-item > a:focus, div.upfront-navigation.<?php echo $properties[\'id\']  ?>.live-preview-focus ul.menu > li.menu-item > a {\r\n\t<?php if(!empty($properties[\'focus-use-typography\'])) { ?>\r\n\t\t<?php if(!empty($properties[\'focus-font-color\'])) { ?>color: <?php echo $properties[\'focus-font-color\']  ?>; <?php } ?>\r\n\t\t<?php if(!empty($properties[\'focus-font-family\'])) { ?>font-family: <?php echo $properties[\'focus-font-family\']  ?>; <?php } ?>\r\n\t\t<?php if(!empty($properties[\'focus-font-size\'])) { ?>font-size: <?php echo $properties[\'focus-font-size\']  ?>px; <?php } ?>\r\n\t\t<?php if(!empty($properties[\'focus-weight\'])) { ?>font-weight: <?php echo $properties[\'focus-weight\']  ?>;<?php } ?>\r\n\t\t<?php if(!empty($properties[\'focus-style\'])) { ?>font-style: <?php echo $properties[\'focus-style\']  ?>;<?php } ?>\r\n\t\t<?php if(!empty($properties[\'focus-line-height\'])) { ?>line-height: <?php echo $properties[\'focus-line-height\']  ?>;<?php } ?>\r\n\t<?php } else { ?>\r\n\t\t<?php if(!empty($properties[\'static-font-color\'])) { ?>color: <?php echo $properties[\'static-font-color\']  ?>; <?php } ?>\r\n\t\t<?php if(!empty($properties[\'static-font-family\'])) { ?>font-family: <?php echo $properties[\'static-font-family\']  ?>; <?php } ?>\r\n\t\t<?php if(!empty($properties[\'static-font-size\'])) { ?>font-size: <?php echo $properties[\'static-font-size\']  ?>px; <?php } ?>\r\n\t\t<?php if(!empty($properties[\'static-weight\'])) { ?>font-weight: <?php echo $properties[\'static-weight\']  ?>;<?php } ?>\r\n\t\t<?php if(!empty($properties[\'static-style\'])) { ?>font-style: <?php echo $properties[\'static-style\']  ?>;<?php } ?>\r\n\t\t<?php if(!empty($properties[\'static-line-height\'])) { ?>line-height: <?php echo $properties[\'static-line-height\']  ?>;<?php } ?>\r\n\t<?php } ?>\r\n}\r\n\r\n<?php if(!empty($properties[\'tablet\'])) { ?>\r\n.tablet-breakpoint div.<?php echo $properties[\'id\'] ?> ul.menu {\r\n\t<?php if(!empty($properties[\'tablet\'][\'menu_alignment\'])) { ?>text-align: <?php echo $properties[\'tablet\'][\'menu_alignment\'] ?>!important;<?php } ?>\r\n}\r\n<?php if(!empty($properties[\'tablet\'][\'preset_style\'])) { ?><?php echo $properties[\'tablet\'][\'preset_style\'] ?><?php } ?>\r\n<?php } ?>\r\n\r\n<?php if(!empty($properties[\'mobile\'])) { ?>\r\n.mobile-breakpoint div.<?php echo $properties[\'id\'] ?> ul.menu {\r\n\t<?php if(!empty($properties[\'mobile\'][\'menu_alignment\'])) { ?>text-align: <?php echo $properties[\'mobile\'][\'menu_alignment\'] ?>!important;<?php } ?>\r\n}\r\n<?php if(!empty($properties[\'mobile\'][\'preset_style\'])) { ?><?php echo $properties[\'mobile\'][\'preset_style\'] ?><?php } ?>\r\n<?php } ?>\r\n\r\n<?php if(!empty($properties[\'breakpoint\']) && !empty($properties[\'breakpoint\'][\'desktop\']) && !empty($properties[\'breakpoint\'][\'desktop\'][\'preset_style\'])) { ?>\r\n\t<?php if(!empty($properties[\'breakpoint\'][\'desktop\'][\'preset_style\'])) { ?><?php echo $properties[\'breakpoint\'][\'desktop\'][\'preset_style\'] ?><?php } ?>\r\n<?php } else { ?>\r\n\t<?php if(!empty($properties[\'preset_style\'])) { ?><?php echo $properties[\'preset_style\'] ?><?php } ?>\r\n<?php } ?>';});
+define('text!elements/upfront-newnavigation/tpl/preset-style.html',[],function () { return 'div.<?php echo $properties[\'id\'] ?> ul.menu {\r\n\t<?php if(!empty($properties[\'breakpoint\']) && !empty($properties[\'breakpoint\'][\'desktop\']) && !empty($properties[\'breakpoint\'][\'desktop\'][\'menu_alignment\'])) { ?>\r\n\t\ttext-align: <?php echo $properties[\'breakpoint\'][\'desktop\'][\'menu_alignment\'] ?>;\r\n\t<?php } else if(!empty($properties[\'breakpoint\']) && !empty($properties[\'breakpoint\'][\'tablet\']) && !empty($properties[\'breakpoint\'][\'tablet\'][\'menu_alignment\'])) { ?>\r\n\t\ttext-align: <?php echo $properties[\'breakpoint\'][\'tablet\'][\'menu_alignment\'] ?>;\r\n\t<?php } else if(!empty($properties[\'breakpoint\']) && !empty($properties[\'breakpoint\'][\'mobile\']) && !empty($properties[\'breakpoint\'][\'mobile\'][\'menu_alignment\'])) { ?>\r\n\t\ttext-align: <?php echo $properties[\'breakpoint\'][\'mobile\'][\'menu_alignment\'] ?>;\r\n\t<?php } else { ?>\r\n\t\ttext-align: <?php echo $properties[\'menu_alignment\'] ?>;\r\n\t<?php } ?>\r\n}\r\n\r\n#page .<?php echo $properties[\'id\'] ?> ul.menu > li.menu-item > a {\r\n\t<?php if(!empty($properties[\'static-nav-bg\'])) { ?>\r\n\tbackground: <?php echo $properties[\'static-nav-bg\'] ?>;\r\n\t<?php } ?>\r\n}\r\n\r\n#page .<?php echo $properties[\'id\'] ?> ul.menu > li.menu-item > a:hover,\r\n#page .<?php echo $properties[\'id\'] ?>.live-preview-hover ul.menu > li.menu-item > a {\r\n\t<?php if(!empty($properties[\'hover-use-color\']) && $properties[\'hover-use-color\'] == \'yes\' && !empty($properties[\'hover-nav-bg\'])) { ?>\r\n\tbackground: <?php echo $properties[\'hover-nav-bg\'] ?>;\r\n\t<?php } ?>\r\n}\r\n\r\n#page .<?php echo $properties[\'id\'] ?> ul.menu > li.menu-item > a:focus,\r\n#page .<?php echo $properties[\'id\'] ?>.live-preview-focus ul.menu > li.menu-item > a {\r\n\t<?php if(!empty($properties[\'focus-use-color\']) && $properties[\'focus-use-color\'] == \'yes\' && !empty($properties[\'focus-nav-bg\'])) { ?>\r\n\tbackground: <?php echo $properties[\'focus-nav-bg\'] ?>;\r\n\t<?php } ?>\r\n}\r\n\r\n\r\n#page .<?php echo $properties[\'id\'] ?> ul.menu > li.menu-item > a,\r\n#page .<?php echo $properties[\'id\'] ?> ul.menu > li.menu-item > .redactor-box > a {\r\n\t<?php if(!empty($properties[\'static-font-color\'])) { ?>color: <?php echo $properties[\'static-font-color\']  ?>; <?php } ?>\r\n\t<?php if(!empty($properties[\'static-font-family\'])) { ?>font-family: <?php echo $properties[\'static-font-family\']  ?>; <?php } ?>\r\n\t<?php if(!empty($properties[\'static-font-size\'])) { ?>font-size: <?php echo $properties[\'static-font-size\']  ?>px; <?php } ?>\r\n\t<?php if(!empty($properties[\'static-weight\'])) { ?>font-weight: <?php echo $properties[\'static-weight\']  ?>;<?php } ?>\r\n\t<?php if(!empty($properties[\'static-style\'])) { ?>font-style: <?php echo $properties[\'static-style\']  ?>;<?php } ?>\r\n\t<?php if(!empty($properties[\'static-line-height\'])) { ?>line-height: <?php echo $properties[\'static-line-height\']  ?>;<?php } ?>\r\n}\r\n\r\n#page .<?php echo $properties[\'id\'] ?> ul.menu > li.menu-item > a:hover,\r\n#page .<?php echo $properties[\'id\']  ?>.upfront-navigation.live-preview-hover ul.menu > li.menu-item > a {\r\n\t<?php if(!empty($properties[\'hover-use-typography\'])) { ?>\r\n\t\t<?php if(!empty($properties[\'hover-font-color\'])) { ?>color: <?php echo $properties[\'hover-font-color\']  ?>; <?php } ?>\r\n\t\t<?php if(!empty($properties[\'hover-font-family\'])) { ?>font-family: <?php echo $properties[\'hover-font-family\']  ?>; <?php } ?>\r\n\t\t<?php if(!empty($properties[\'hover-font-size\'])) { ?>font-size: <?php echo $properties[\'hover-font-size\']  ?>px; <?php } ?>\r\n\t\t<?php if(!empty($properties[\'hover-weight\'])) { ?>font-weight: <?php echo $properties[\'hover-weight\']  ?>;<?php } ?>\r\n\t\t<?php if(!empty($properties[\'hover-style\'])) { ?>font-style: <?php echo $properties[\'hover-style\']  ?>;<?php } ?>\r\n\t\t<?php if(!empty($properties[\'hover-line-height\'])) { ?>line-height: <?php echo $properties[\'hover-line-height\']  ?>;<?php } ?>\r\n\t<?php } else { ?>\r\n\t\t<?php if(!empty($properties[\'static-font-color\'])) { ?>color: <?php echo $properties[\'static-font-color\']  ?>; <?php } ?>\r\n\t\t<?php if(!empty($properties[\'static-font-family\'])) { ?>font-family: <?php echo $properties[\'static-font-family\']  ?>; <?php } ?>\r\n\t\t<?php if(!empty($properties[\'static-font-size\'])) { ?>font-size: <?php echo $properties[\'static-font-size\']  ?>px; <?php } ?>\r\n\t\t<?php if(!empty($properties[\'static-weight\'])) { ?>font-weight: <?php echo $properties[\'static-weight\']  ?>;<?php } ?>\r\n\t\t<?php if(!empty($properties[\'static-style\'])) { ?>font-style: <?php echo $properties[\'static-style\']  ?>;<?php } ?>\r\n\t\t<?php if(!empty($properties[\'static-line-height\'])) { ?>line-height: <?php echo $properties[\'static-line-height\']  ?>;<?php } ?>\r\n\t<?php } ?>\r\n}\r\n\r\n#page .<?php echo $properties[\'id\'] ?> ul.menu > li.menu-item > a:focus,\r\n#page .<?php echo $properties[\'id\']  ?>.upfront-navigation.live-preview-focus ul.menu > li.menu-item > a {\r\n\t<?php if(!empty($properties[\'focus-use-typography\'])) { ?>\r\n\t\t<?php if(!empty($properties[\'focus-font-color\'])) { ?>color: <?php echo $properties[\'focus-font-color\']  ?>; <?php } ?>\r\n\t\t<?php if(!empty($properties[\'focus-font-family\'])) { ?>font-family: <?php echo $properties[\'focus-font-family\']  ?>; <?php } ?>\r\n\t\t<?php if(!empty($properties[\'focus-font-size\'])) { ?>font-size: <?php echo $properties[\'focus-font-size\']  ?>px; <?php } ?>\r\n\t\t<?php if(!empty($properties[\'focus-weight\'])) { ?>font-weight: <?php echo $properties[\'focus-weight\']  ?>;<?php } ?>\r\n\t\t<?php if(!empty($properties[\'focus-style\'])) { ?>font-style: <?php echo $properties[\'focus-style\']  ?>;<?php } ?>\r\n\t\t<?php if(!empty($properties[\'focus-line-height\'])) { ?>line-height: <?php echo $properties[\'focus-line-height\']  ?>;<?php } ?>\r\n\t<?php } else { ?>\r\n\t\t<?php if(!empty($properties[\'static-font-color\'])) { ?>color: <?php echo $properties[\'static-font-color\']  ?>; <?php } ?>\r\n\t\t<?php if(!empty($properties[\'static-font-family\'])) { ?>font-family: <?php echo $properties[\'static-font-family\']  ?>; <?php } ?>\r\n\t\t<?php if(!empty($properties[\'static-font-size\'])) { ?>font-size: <?php echo $properties[\'static-font-size\']  ?>px; <?php } ?>\r\n\t\t<?php if(!empty($properties[\'static-weight\'])) { ?>font-weight: <?php echo $properties[\'static-weight\']  ?>;<?php } ?>\r\n\t\t<?php if(!empty($properties[\'static-style\'])) { ?>font-style: <?php echo $properties[\'static-style\']  ?>;<?php } ?>\r\n\t\t<?php if(!empty($properties[\'static-line-height\'])) { ?>line-height: <?php echo $properties[\'static-line-height\']  ?>;<?php } ?>\r\n\t<?php } ?>\r\n}\r\n\r\n<?php if(!empty($properties[\'tablet\'])) { ?>\r\n.tablet-breakpoint div.<?php echo $properties[\'id\'] ?> ul.menu {\r\n\t<?php if(!empty($properties[\'tablet\'][\'menu_alignment\'])) { ?>text-align: <?php echo $properties[\'tablet\'][\'menu_alignment\'] ?>;<?php } ?>\r\n}\r\n<?php if(!empty($properties[\'tablet\'][\'preset_style\'])) { ?><?php echo $properties[\'tablet\'][\'preset_style\'] ?><?php } ?>\r\n<?php } ?>\r\n\r\n<?php if(!empty($properties[\'mobile\'])) { ?>\r\n.mobile-breakpoint div.<?php echo $properties[\'id\'] ?> ul.menu {\r\n\t<?php if(!empty($properties[\'mobile\'][\'menu_alignment\'])) { ?>text-align: <?php echo $properties[\'mobile\'][\'menu_alignment\'] ?>;<?php } ?>\r\n}\r\n<?php if(!empty($properties[\'mobile\'][\'preset_style\'])) { ?><?php echo $properties[\'mobile\'][\'preset_style\'] ?><?php } ?>\r\n<?php } ?>\r\n\r\n<?php if(!empty($properties[\'breakpoint\']) && !empty($properties[\'breakpoint\'][\'desktop\']) && !empty($properties[\'breakpoint\'][\'desktop\'][\'preset_style\'])) { ?>\r\n\t<?php if(!empty($properties[\'breakpoint\'][\'desktop\'][\'preset_style\'])) { ?><?php echo $properties[\'breakpoint\'][\'desktop\'][\'preset_style\'] ?><?php } ?>\r\n<?php } else { ?>\r\n\t<?php if(!empty($properties[\'preset_style\'])) { ?><?php echo $properties[\'preset_style\'] ?><?php } ?>\r\n<?php } ?>';});
 
 define('elements/upfront-newnavigation/js/settings/appearance-panel',[
 	'scripts/upfront/preset-settings/util',
@@ -66970,6 +67132,14 @@ define('elements/upfront-newnavigation/js/settings/appearance-panel',[
 						}
 					},
 				],
+			},
+			
+			migrateDefaultStyle: function(styles) {
+					//replace image wrapper class
+					styles = styles.replace(/(div)?\.upfront-navigation\s/g, '');
+					styles = styles.replace(/(div)?\.upfront-object\s/g, '');
+
+					return styles;
 			},
 
 			migratePresetProperties: function(newPreset) {
@@ -68034,6 +68204,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		var breakpoints = this.property('breakpoint');
 		if ( breakpoints !== false && _.isObject(breakpoints) && "desktop" in breakpoints ) {
 			for ( key in breakpoints ) {
+				if ( !_.isObject(breakpoints[key]) ) continue;
 				if ( "burger_menu" in breakpoints[key] && breakpoints[key].burger_menu === 'yes' ) {
 					breakpoints[key].menu_style = 'burger';
 					delete breakpoints[key].burger_menu;
@@ -68532,9 +68703,9 @@ Upfront.Application.LayoutEditor.add_object("Unewnavigation", {
 
 
 		"[data-style='burger'] ul.menu": {label: l10n.css.responsive_bar_label, info: l10n.css.bar_info},
-		".upfront-output-unewnavigation .responsive_nav_toggler": {label: l10n.css.responsive_trigger, info: l10n.css.hover_info},
-		".upfront-output-unewnavigation div.responsive_nav_toggler > div": {label: l10n.css.responsive_trigger_bars, info: l10n.css.hover_info},
-		".upfront-output-unewnavigation i.burger_nav_close": {label: l10n.css.responsive_nav_close, info: l10n.css.close_info},
+		"[data-style='burger'] .responsive_nav_toggler": {label: l10n.css.responsive_trigger, info: l10n.css.hover_info},
+		"[data-style='burger'] div.responsive_nav_toggler > div": {label: l10n.css.responsive_trigger_bars, info: l10n.css.hover_info},
+		"[data-style='burger'] i.burger_nav_close": {label: l10n.css.responsive_nav_close, info: l10n.css.close_info},
 		"[data-style='burger'] ul.menu > li.menu-item > a": {label: l10n.css.responsive_item_label, info: l10n.css.item_info},
 		"[data-style='burger'] ul.menu > li.menu-item:hover > a": {label: l10n.css.responsive_hover_label, info: l10n.css.hover_info},
 		"[data-style='burger'] ul.sub-menu > li.menu-item > a": {label: l10n.css.responsive_subitem_label, info: l10n.css.subitem_info},
@@ -68573,7 +68744,7 @@ define('elements/upfront-button/js/element',[
 	var l10n = Upfront.Settings.l10n.button_element;
 	
 	var ButtonElement = Upfront.Views.Editor.Sidebar.Element.extend({
-		priority: 260,
+		priority: 150,
 		render: function () {
 			this.$el.addClass('upfront-icon-element upfront-icon-element-button');
 			this.$el.html(l10n.element_name);
@@ -68844,6 +69015,14 @@ define('elements/upfront-button/js/settings',[
 							}
 						}
 					]
+				},
+				
+				migrateDefaultStyle: function(styles) {
+					//replace image wrapper class
+					styles = styles.replace(/(div)?\.upfront-button\s/g, '');
+					styles = styles.replace(/(div)?\.upfront-object\s/g, '');
+
+					return styles;
 				},
 
 				migratePresetProperties: function(newPreset) {
@@ -70244,6 +70423,14 @@ var PostsSettings = ElementSettings.extend({
 			presetDefaults: Upfront.mainData.presetDefaults.posts,
 			styleTpl: styleTpl,
 			
+			migrateDefaultStyle: function(styles) {
+					//replace image wrapper class
+					styles = styles.replace(/(div)?\.uposts-object\s/g, '');
+					styles = styles.replace(/(div)?\.upfront-object\s/g, '');
+
+					return styles;
+			},
+			
 			migrateElementStyle: function(styles) {
 				//replace posts container which is one line with preset
 				styles = styles.replace(/.uposts-object/, '');
@@ -70803,6 +70990,15 @@ define('elements/upfront-slider/js/settings',[
 				},
 			]
 		},
+		
+		migrateDefaultStyle: function(styles) {
+			//replace default classes
+			styles = styles.replace(/(div)?\.upfront-uslider\s/g, '');
+			styles = styles.replace(/(div)?\.upfront-object\s/g, '');
+
+			return styles;
+		},
+
 		migratePresetProperties: function(newPreset) {
 			var props = {};
 
@@ -71171,11 +71367,13 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		props.properties = this.get_preset_properties();
 
 		// Overwrite properties with preset properties
-		if (props.properties.primaryStyle) {
-			props.primaryStyle = props.properties.primaryStyle;
-		}
-		if (props.properties.captionBackground) {
-			props.captionBackground = props.properties.captionBackground;
+		if (this.property('usingNewAppearance')) {
+			if (props.properties.primaryStyle) {
+				props.primaryStyle = props.properties.primaryStyle;
+			}
+			if (props.properties.captionBackground) {
+				props.captionBackground = props.properties.captionBackground;
+			}
 		}
 
 		//Stop autorotate
@@ -71307,7 +71505,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		panel.items = this.getControlItems();
 		panel.render();
 		_.delay( function(){
-			me.controls.$el.html( panel.$el )
+			me.controls.$el.html( panel.$el );
 			me.controls.$el.css("width", "auto");
 		}, 400);
 	},
@@ -71366,6 +71564,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 					upfrontImages: false,
 					placeholder: l10n.slide_desc,
 					linebreaks: false,
+					inserts: []
 				})
 				.on('start', function() {
 					var id = $(this).closest('.uslide').attr('rel'),
@@ -73733,6 +73932,14 @@ define('elements/upfront-tabs/js/settings',[
 					return styles;
 				},
 				
+				migrateDefaultStyle: function(styles) {
+					//replace image wrapper class
+					styles = styles.replace(/(div)?\.upfront-tabs\s/g, '');
+					styles = styles.replace(/(div)?\.upfront-object\s/g, '');
+
+					return styles;
+				},
+				
 				migratePresetProperties: function(newPreset) {
 					
 					var preset = this.property('preset') ? this.clear_preset_name(this.property('preset')) : 'default',
@@ -75111,6 +75318,14 @@ define('elements/upfront-widget/js/settings',[
 					'name': l10n.default_preset,
 				},
 				styleTpl: styleTpl,
+				
+				migrateDefaultStyle: function(styles) {
+					//replace image wrapper class
+					styles = styles.replace(/(div)?\.upfront-widget\s/g, '');
+					styles = styles.replace(/(div)?\.upfront-object\s/g, '');
+
+					return styles;
+				},
 			}
 		},
 
@@ -75547,7 +75762,7 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 });
 
 var YoutubeElement = Upfront.Views.Editor.Sidebar.Element.extend({
-	priority: 110,
+	priority: 90,
 	render: function () {
 		this.$el.addClass('upfront-icon-element upfront-icon-element-youtube');
 		this.$el.html('YouTube');

@@ -237,6 +237,14 @@ define([
 						}
 					]
 				},
+				
+				migrateDefaultStyle: function(styles) {
+					//replace image wrapper class
+					styles = styles.replace(/(div)?\.upfront-button\s/g, '');
+					styles = styles.replace(/(div)?\.upfront-object\s/g, '');
+
+					return styles;
+				},
 
 				migratePresetProperties: function(newPreset) {
 					

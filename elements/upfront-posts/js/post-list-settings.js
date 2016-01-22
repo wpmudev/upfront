@@ -19,6 +19,14 @@ var PostsSettings = ElementSettings.extend({
 			presetDefaults: Upfront.mainData.presetDefaults.posts,
 			styleTpl: styleTpl,
 			
+			migrateDefaultStyle: function(styles) {
+					//replace image wrapper class
+					styles = styles.replace(/(div)?\.uposts-object\s/g, '');
+					styles = styles.replace(/(div)?\.upfront-object\s/g, '');
+
+					return styles;
+			},
+			
 			migrateElementStyle: function(styles) {
 				//replace posts container which is one line with preset
 				styles = styles.replace(/.uposts-object/, '');

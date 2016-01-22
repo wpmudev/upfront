@@ -149,11 +149,13 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		props.properties = this.get_preset_properties();
 
 		// Overwrite properties with preset properties
-		if (props.properties.primaryStyle) {
-			props.primaryStyle = props.properties.primaryStyle;
-		}
-		if (props.properties.captionBackground) {
-			props.captionBackground = props.properties.captionBackground;
+		if (this.property('usingNewAppearance')) {
+			if (props.properties.primaryStyle) {
+				props.primaryStyle = props.properties.primaryStyle;
+			}
+			if (props.properties.captionBackground) {
+				props.captionBackground = props.properties.captionBackground;
+			}
 		}
 
 		//Stop autorotate
@@ -285,7 +287,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		panel.items = this.getControlItems();
 		panel.render();
 		_.delay( function(){
-			me.controls.$el.html( panel.$el )
+			me.controls.$el.html( panel.$el );
 			me.controls.$el.css("width", "auto");
 		}, 400);
 	},
@@ -344,6 +346,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 					upfrontImages: false,
 					placeholder: l10n.slide_desc,
 					linebreaks: false,
+					inserts: []
 				})
 				.on('start', function() {
 					var id = $(this).closest('.uslide').attr('rel'),
