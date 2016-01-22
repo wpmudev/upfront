@@ -113,12 +113,39 @@ var hackRedactor = function(){
     	}
 
 
+        //var sel = Upfront.Util.clone(this.sel);
+        //var range = Upfront.Util.clone( this.range );
         $('.redactor_air').hide();
         this.selection.createMarkers();
+
+
+
         var width = this.$air.width(),
-            m1 = this.$editor.find('#selection-marker-1').offset(),
-            m2 = this.$editor.find('#selection-marker-2').offset()
+            node1 = this.$editor.find('span#selection-marker-1'),
+            node2 = this.$editor.find('span#selection-marker-2'),
+            m1 = node1.offset(),
+            m2 = node2.offset()
         ;
+
+        /**
+         * Restore selections in safari
+         */
+        if( this.utils.browser("safari")){
+            if (node1.length !== 0 && node2.length !== 0)
+            {
+                this.caret.set(node1, 0, node2, 0);
+            }
+            else if (node1.length !== 0)
+            {
+                this.caret.set(node1, 0, node1, 0);
+            }
+            else
+            {
+                this.$editor.focus();
+            }
+        }
+
+
         // Make sure we have both dimentions before proceeding
         if (!m1 || !m2) {
             return false;
