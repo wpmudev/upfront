@@ -6767,7 +6767,7 @@
                     this.selection.get();
 
                     var node1 = this.selection.getMarker(1);
-
+var sel = Upfront.Util.clone( this.sel );
                     this.selection.setMarker(this.range, node1, true);
 
                     if (this.range.collapsed === false)
@@ -6776,6 +6776,7 @@
                         this.selection.setMarker(this.range, node2, false);
                     }
 
+this.sel = sel;
                     this.savedSel = this.$editor.html();
                 },
                 getMarker: function(num)
