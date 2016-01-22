@@ -228,4 +228,5 @@ div.uslide-image img {
 	display: -ms-flexbox;
 	display: -webkit-flex;
 	display: flex;
+	width: 100%;
 }
