@@ -285,7 +285,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		panel.items = this.getControlItems();
 		panel.render();
 		_.delay( function(){
-			me.controls.$el.html( panel.$el )
+			me.controls.$el.html( panel.$el );
 			me.controls.$el.css("width", "auto");
 		}, 400);
 	},
@@ -344,6 +344,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 					upfrontImages: false,
 					placeholder: l10n.slide_desc,
 					linebreaks: false,
+					inserts: []
 				})
 				.on('start', function() {
 					var id = $(this).closest('.uslide').attr('rel'),
