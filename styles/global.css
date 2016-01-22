@@ -324,6 +324,9 @@ h2, h3 { page-break-after: avoid; }
 .uf-responsive .upfront-output-image .upfront-image-container {
     max-width: 100%;
 }
+.uf-responsive .upfront-output-image .upfront-image-container img {
+	max-width: 100%;
+}
 
 .uf-responsive #page .post_content > * {
     padding-left: 0;
