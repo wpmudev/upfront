@@ -326,6 +326,8 @@ jQuery(document).ready(function($) {
 
 				preset = breakpoints.preset[currentKey];
 
+				if (!preset) return;
+
 				/** if breakpoint has menu_style set to burger, but no
 				 burger_alignment is defined, set it to default
 				 **/
