@@ -99,7 +99,7 @@ define([
 						caption_height = 'fixed'
 					}
 
-					if(typeof props.captionType !== "undefined") {
+					if(typeof props.captionType !== "undefined" && props.captionType !== "none") {
 						useCaption = 'yes';
 					}
 
