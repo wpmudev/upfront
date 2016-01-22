@@ -149,11 +149,13 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		props.properties = this.get_preset_properties();
 
 		// Overwrite properties with preset properties
-		if (props.properties.primaryStyle) {
-			props.primaryStyle = props.properties.primaryStyle;
-		}
-		if (props.properties.captionBackground) {
-			props.captionBackground = props.properties.captionBackground;
+		if (this.property('usingNewAppearance')) {
+			if (props.properties.primaryStyle) {
+				props.primaryStyle = props.properties.primaryStyle;
+			}
+			if (props.properties.captionBackground) {
+				props.captionBackground = props.properties.captionBackground;
+			}
 		}
 
 		//Stop autorotate
