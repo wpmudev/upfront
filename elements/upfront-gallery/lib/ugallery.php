@@ -72,6 +72,10 @@ class Upfront_UgalleryView extends Upfront_Object {
 
 		$data['properties'] = Upfront_Gallery_Presets_Server::get_instance()->get_preset_properties($data['preset']);
 
+		if (is_array($data['labelFilters']) && $data['labelFilters'][0] === 'true') {
+			$data['labelFilters'] = 'true';
+		}
+
 		$lbTpl = upfront_get_template('ugallery', $data, dirname(dirname(__FILE__)) . '/tpl/lightbox.html');
 		$markup = upfront_get_template('ugallery', $data, dirname(dirname(__FILE__)) . '/tpl/ugallery.html');
 
@@ -84,8 +88,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 					labels: ' . json_encode($data['labels']) . ',
 					labels_length: ' . json_encode($data['labels_length']) . ',
 					image_labels: ' . json_encode($data['image_labels']) . ',
-					grid: ' . ($data['labelFilters']['length'] ? $data['labelFilters']['length'] : 0) . ',
-//                    grid: ' . $data['labelFilters']['length'] . ',
+					grid: ' . ($data['labelFilters'] === 'true' ? 1 : 0) . ',
 					useLightbox: '. ($data['linkTo'] == 'image' ? '1' : '0') . '
 				};
 			</script>
@@ -128,7 +131,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 		$all_labels = array();
 		foreach($images as $image){
 			$image_labels = '"label_0"';
-			$terms = get_the_terms($image['id'], 'media_label');
+			$terms = wp_get_object_terms(array($image['id']), array('media_label'));
 			// Add tags from uploaded images
 			if(is_array($terms)){
 				foreach($terms as $label){
