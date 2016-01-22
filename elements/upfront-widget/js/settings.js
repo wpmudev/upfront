@@ -151,6 +151,14 @@ define([
 					'name': l10n.default_preset,
 				},
 				styleTpl: styleTpl,
+				
+				migrateDefaultStyle: function(styles) {
+					//replace image wrapper class
+					styles = styles.replace(/(div)?\.upfront-widget\s/g, '');
+					styles = styles.replace(/(div)?\.upfront-object\s/g, '');
+
+					return styles;
+				},
 			}
 		},
 

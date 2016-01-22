@@ -95,9 +95,17 @@ define([
 				
 				migrateElementStyle: function(styles) {
 					//replace image wrapper class
-					styles = styles.replace(/upfront-image/, 'upfront-image-wrapper');
-					styles = styles.replace(/upfront-image-wrapper-container/, 'upfront-image-container');
+					styles = styles.replace(/\.upfront-image/, 'upfront-image-wrapper');
+					styles = styles.replace(/\.upfront-image-wrapper-container/, 'upfront-image-container');
 					
+					return styles;
+				},
+				
+				migrateDefaultStyle: function(styles) {
+					//replace image wrapper class
+					styles = styles.replace(/(div)?\.upfront-image\s/g, '');
+					styles = styles.replace(/(div)?\.upfront-object\s/g, '');
+
 					return styles;
 				},
 				

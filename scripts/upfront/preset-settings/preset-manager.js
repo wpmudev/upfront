@@ -165,6 +165,14 @@ define([
 		migrateElementStyle: function(styles) {
 			return styles;
 		},
+		
+		/**
+		 Migrate _default classes
+		 */
+
+		migrateDefaultStyle: function(styles) {
+			return styles;
+		},
 
 		setupItems: function() {
 			this.trigger('upfront:presets:setup-items', this);
@@ -297,7 +305,8 @@ define([
 		migratePreset: function(presetName) {
 
 			//Check if preset already exist
-			var existingPreset = this.presets.findWhere({id: presetName.toLowerCase().replace(/ /g, '-')});
+			var existingPreset = this.presets.findWhere({id: presetName.toLowerCase().replace(/ /g, '-')}),
+				default_style = '';
 
 			if(typeof existingPreset !== "undefined") {
 				Upfront.Views.Editor.notify(l10n.preset_already_exist.replace(/%s/, presetName), 'error');
@@ -308,6 +317,25 @@ define([
 
 			// We need to set to _default first so that css editor can get style properly
 			if (!elementStyleName) elementStyleName = '_default';
+			
+			// If element style is not default we should add _default too
+			if(elementStyleName !== '_default') {
+				// We need to initialize cssEditor to get element styles
+				Upfront.Application.cssEditor.init({
+					model: this.model,
+					stylename: '_default',
+					no_render: true
+				});
+				
+				//Get _default styles
+				default_style = $.trim(Upfront.Application.cssEditor.get_style_element().html().replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
+				
+				//Normalize styles
+				default_style = this.migrateDefaultStyle(default_style);
+				
+				//Prepend styles with preset
+				default_style = Upfront.Application.stylesAddSelectorMigration($.trim(default_style), '#page .' + presetName.toLowerCase());
+			}
 
 			// We need to initialize cssEditor to get element styles
 			Upfront.Application.cssEditor.init({
@@ -317,13 +345,17 @@ define([
 			});
 
 			var style = $.trim(Upfront.Application.cssEditor.get_style_element().html().replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
-
+			
 			//Apply style only for the current preset
 			style = style.replace(new RegExp(elementStyleName, 'g'), presetName.toLowerCase());
-
+			
+			if(elementStyleName !== '_default') {
+				style = default_style + style;
+			}
+			
 			//Migrate element styles
 			style = this.migrateElementStyle(style);
-
+			
 			newPreset = new Backbone.Model(this.getPresetDefaults(presetName));
 
 			//Migrate element styles to preset

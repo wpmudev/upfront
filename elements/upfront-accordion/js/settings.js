@@ -226,6 +226,14 @@ define([
 					]
 				},
 				
+				migrateDefaultStyle: function(styles) {
+					//replace image wrapper class
+					styles = styles.replace(/(div)?\.upfront-accordion\s/g, '');
+					styles = styles.replace(/(div)?\.upfront-object\s/g, '');
+
+					return styles;
+				},
+				
 				migratePresetProperties: function(newPreset) {
 					
 					var preset = this.property('preset') ? this.clear_preset_name(this.property('preset')) : 'default',
