@@ -45,7 +45,7 @@ define([
 			var presets = [];
 			
 			_.each(this.options.presets.models, function(model) {
-				if(typeof model.get('legacy') !== "undefined" && model.get('legacy') === true) {
+				if(typeof model.get('legacy') !== "undefined") {
 					return;
 				}
 				
