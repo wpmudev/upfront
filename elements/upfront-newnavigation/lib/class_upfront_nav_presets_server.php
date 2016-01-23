@@ -48,7 +48,7 @@ class Upfront_Nav_Presets_Server extends Upfront_Presets_Server {
 			'static-weight' => 400,
 			'static-style' => 'normal',
 			'static-line-height' => 1.6,
-			'static-nav-bg' => 'rgba(51, 51, 51, 1)',
+			'static-nav-bg' => 'rgba(51, 51, 51, 0)',
 			'hover-font-size' => 16,
 			'hover-font-family' => 'Arial',
 			'hover-font-color' => 'rgba(26, 124, 252, 1)',
