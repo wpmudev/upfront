@@ -256,7 +256,7 @@ define([
 					if(typeof props !== "undefined") {
 						_.each(props.attributes, function(preset_value, index) {
 							
-							if(index === 'id' || index === 'name' || index === 'preset_style') {
+							if(index === 'id' || index === 'name' || index === 'preset_style' || index === 'legacy') {
 								return;
 							}
 							

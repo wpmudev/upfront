@@ -193,13 +193,21 @@ define([
 		},
 		
 		get_presets: function () {
-			return _.map(this.options.presets.models, function(model) {
+			var presets = [];
+			
+			_.each(this.options.presets.models, function(model) {
+				if(typeof model.get('legacy') !== "undefined") {
+					return;
+				}
+
 				if('undefined' === typeof model.get('name')) {
-				  return { label: model.get('id'), value: model.get('id') };
+					presets.push({ label: model.get('id'), value: model.get('id') });
 				} else {
-				  return { label: model.get('name'), value: model.get('id') };
+					presets.push({ label: model.get('name'), value: model.get('id') });
 				}
 			});
+
+			return presets;
 		}
 	});
 
