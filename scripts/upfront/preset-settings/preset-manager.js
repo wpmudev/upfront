@@ -317,7 +317,7 @@ define([
 
 			// We need to set to _default first so that css editor can get style properly
 			if (!elementStyleName) elementStyleName = '_default';
-			
+
 			// If element style is not default we should add _default too
 			if(elementStyleName !== '_default') {
 				// We need to initialize cssEditor to get element styles
@@ -351,6 +351,10 @@ define([
 			
 			if(elementStyleName !== '_default') {
 				style = default_style + style;
+			} else {
+				//Normalize styles
+				style = this.migrateDefaultStyle(style);
+				style = Upfront.Application.stylesAddSelectorMigration($.trim(style), '#page .' + presetName.toLowerCase());
 			}
 			
 			//Migrate element styles
