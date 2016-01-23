@@ -424,8 +424,10 @@ define([
 
 			if(props.stretch) {
 				props.imgWidth = '100%';
+				props.stretchClass = ' uimage-stretch';
 			} else {
 				props.imgWidth = props.size.width + 'px';
+				props.stretchClass = '';
 			}
 
 			props.containerWidth = Math.min(props.size.width, elementSize.width);
@@ -742,6 +744,7 @@ define([
 		},
 
 		setMobileMode: function(){
+			var props = this.extract_properties();
 			this.mobileMode = true;
 			this.$el
 				.find('.uimage-resize-hint').hide().end()
@@ -752,6 +755,7 @@ define([
 					.css({
 						position: 'static',
 						maxWidth: '100%',
+						width: ( props.stretch ? '100%' : props.size.width ),
 						height: 'auto'
 					})
 					.attr('src', this.property('src'))

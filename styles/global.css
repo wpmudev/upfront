@@ -351,9 +351,12 @@ h2, h3 { page-break-after: avoid; }
     width: auto;
     float: none;
 }
-/*.uf-responsive .upfront-image-caption-container {
-    width: 100%;
-}*/
+.uf-responsive .uimage-stretch .upfront-image-caption-container {
+	width: 100%;
+}
+.uf-responsive .uimage-stretch .upfront-image-container {
+    width: 100% !important;
+}
 
 /* Flexbox experiments *//* */
 .flexbox-support .upfront-output-region,
