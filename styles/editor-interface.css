@@ -7139,7 +7139,10 @@ i.upfront-field-icon-burger-trigger {
     left: 50%; }
   #upfront-popup-content, #upfront-popup-top, #upfront-popup-bottom, #upfront-popup-close {
     position: relative;
-    left: -50%; } }
+    left: -50%; }
+  *::-ms-backdrop, #upfront-popup-close {
+    left: 45%; }
+  /* IE11 */ }
 
 #upfront-popup select {
   padding: 3px;
