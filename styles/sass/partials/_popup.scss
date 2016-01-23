@@ -32,6 +32,7 @@
 		position: relative;
 		left: -50%;
    }
+	*::-ms-backdrop, #upfront-popup-close { left: 45%; } /* IE11 */
 }
 
 #upfront-popup select{
