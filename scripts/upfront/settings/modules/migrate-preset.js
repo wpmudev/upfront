@@ -168,7 +168,7 @@ define([
 			return preset.charAt(0).toUpperCase() + preset.slice(1).toLowerCase();
 		},
 		
-		hide_new_preset_fields() {
+		hide_new_preset_fields: function () {
 			var me = this;
 			me.$el.find('.new-preset-button-cancel').hide();
 			me.$el.find('.new-preset-button-input').hide();
@@ -178,7 +178,7 @@ define([
 			me.$el.find('.existing-preset-overlay-layout').remove();
 		},
 		
-		show_new_preset_fields() {
+		show_new_preset_fields: function () {
 			var me = this;
 			me.$el.find('.new-preset-button-cancel').show();
 			me.$el.find('.new-preset-button-input').show();
