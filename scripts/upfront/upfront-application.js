@@ -1372,33 +1372,52 @@ var Application = new (Backbone.Router.extend({
 		_.each(regions.models, function(model) {
 			if(typeof model.get('modules').models !== "undefined") {
 				_.each(model.get('modules').models, function(module) {
+					//Groups
+					if ( module.get('modules') ) {
+						if(typeof module.get('modules') !== "undefined" && typeof module.get('modules').models !== "undefined") {
+							_.each(module.get('modules').models, function(group) {
+								if(typeof group.get('objects') !== "undefined" && typeof group.get('objects').models !== "undefined") {
+									_.each(group.get('objects').models, function(gobject) {
+										app.migrate_element(gobject);
+									});
+								}
+							});
+						}
+					}
+					
+					//Elements
 					if(typeof module.get('objects') !== "undefined" && typeof module.get('objects').models !== "undefined") {
 						_.each(module.get('objects').models, function(object) {
-							var type = object.get_property_value_by_name('type'),
-								needMigration = true,
-								alreadyMigrated = object.get_property_value_by_name('usingNewAppearance');
-
-							if(type === "UimageModel") {
-								needMigration = app.check_image_element(object);
-							}
-
-							if(type === "PlainTxtModel") {
-								needMigration = app.check_text_element(object);
-							}
-							
-							if(!needMigration && !alreadyMigrated) {
-								//Set element as already migrated
-								object.set_property('usingNewAppearance', true);
-
-								//Set preset to default
-								object.set_property('preset', 'default');
-							}
+							app.migrate_element(object);
 						});
 					}
 				});
 			}
 		});
 
+	},
+	
+	migrate_element: function(object) {
+		var app = this,
+			type = object.get_property_value_by_name('type'),
+			needMigration = true,
+			alreadyMigrated = object.get_property_value_by_name('usingNewAppearance');
+
+		if(type === "UimageModel") {
+			needMigration = app.check_image_element(object);
+		}
+
+		if(type === "PlainTxtModel") {
+			needMigration = app.check_text_element(object);
+		}
+		
+		if(!needMigration && !alreadyMigrated) {
+			//Set element as already migrated
+			object.set_property('usingNewAppearance', true);
+
+			//Set preset to default
+			object.set_property('preset', 'default');
+		}
 	},
 
 	load_layout: function (layout_ids, additional) {
