@@ -48,6 +48,17 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			raw_labels,
 			images;
 
+		if (this.property('thumbPadding') !== this.property('thumbPaddingNumber')) {
+			console.log('setting thumb padding number to lfkjsljfs');
+			this.property('thumbPaddingNumber', this.property('thumbPadding'), true);
+			this.property('thumbSidePaddingNumber', this.property('thumbPadding'), true);
+			this.property('sidePadding', this.property('thumbPadding'), true);
+			this.property('bottomPadding', this.property('thumbPadding'), true);
+			this.property('thumbSidePadding', this.property('thumbPadding'), true);
+			this.property('thumbBottomPaddingNumber', this.property('thumbPadding'), true);
+		}
+
+
 		if (_.isArray(this.property('labelFilters')) && this.property('labelFilters')[0] === 'true') {
 			this.property('labelFilters', 'true', true);
 		}
