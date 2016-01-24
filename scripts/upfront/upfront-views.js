@@ -1665,7 +1665,7 @@ define([
 				if ( !this.parent_module_view ) return;
 				this.parent_module_view.$el.find('>.upfront-module').removeClass('upfront-module-active');
 				if ( !this.parent_module_view.wrapper_view ) return;
-				this.parent_module_view.wrapper_view.$el.removeClass('upfront-wrapper-active');
+				this.parent_module_view.wrapper_view.$el.removeClass('upfront-wrapper-active upfront-inline-panel-item-open');
 			},
 
 			toggle_region_class: function (classname, add, container) {
