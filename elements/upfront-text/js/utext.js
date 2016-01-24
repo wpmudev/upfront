@@ -66,8 +66,8 @@
 				if (this.model.get_property_value_by_name('usingNewAppearance') !== true && this.model.get_property_value_by_name('usingNewAppearance') !== 'true') {
 					data = {
 						"content" : content,
-						"background_color" : this.model.get_property_value_by_name("background_color"),
-						"border" : this.model.get_property_value_by_name("border"),
+						"background_color" : Upfront.Util.colors.convert_string_ufc_to_color(this.model.get_property_value_by_name("background_color")),
+						"border" : Upfront.Util.colors.convert_string_ufc_to_color(this.model.get_property_value_by_name("border")),
 						"usingNewAppearance": false
 					};
 				} else {

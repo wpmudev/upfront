@@ -139,6 +139,14 @@ define([
 					},
 				],
 			},
+			
+			migrateDefaultStyle: function(styles) {
+					//replace image wrapper class
+					styles = styles.replace(/(div)?\.upfront-navigation\s/g, '');
+					styles = styles.replace(/(div)?\.upfront-object\s/g, '');
+
+					return styles;
+			},
 
 			migratePresetProperties: function(newPreset) {
 				var props = {};

@@ -37,10 +37,14 @@ class Upfront_UimageView extends Upfront_Object {
 
 		$data['wrapper_id'] = 'hello_up';
 
-		if($data['stretch'])
+		if($data['stretch']) {
 			$data['imgWidth'] = '100%';
-		else
+			$data['stretchClass'] = ' uimage-stretch';
+		}
+		else {
 			$data['imgWidth'] = '';
+			$data['stretchClass'] = '';
+		}
 
 		$data['containerWidth'] = min($data['size']['width'], $data['element_size']['width']);
 

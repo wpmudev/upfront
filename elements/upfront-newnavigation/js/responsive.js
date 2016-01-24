@@ -314,6 +314,8 @@ jQuery(document).ready(function($) {
 		elements.each(function () {
 
 			var breakpoints = $(this).data('breakpoints');
+			
+			var usingNewAppearance = $(this).data('new-appearance');
 
 			var currentwidth = (typeof(bpwidth) != 'undefined') ? parseInt(bpwidth) : $(window).width();
 
@@ -325,6 +327,8 @@ jQuery(document).ready(function($) {
 					currentKey = 'desktop';
 
 				preset = breakpoints.preset[currentKey];
+
+				if (!preset) return;
 
 				/** if breakpoint has menu_style set to burger, but no
 				 burger_alignment is defined, set it to default
@@ -364,8 +368,11 @@ jQuery(document).ready(function($) {
 
 					$(this).find('ul.menu').hide();
 				} else {
-					$(this).attr('data-style', ( preset.menu_style ? preset.menu_style : $(this).data('stylebk') ));
-					$(this).attr('data-alignment', ( preset.menu_alignment ? preset.menu_alignment : $(this).data('alignmentbk') ));
+					if(typeof usingNewAppearance !== "undefined" && usingNewAppearance) {
+						$(this).attr('data-style', ( preset.menu_style ? preset.menu_style : $(this).data('stylebk') ));
+						$(this).attr('data-alignment', ( preset.menu_alignment ? preset.menu_alignment : $(this).data('alignmentbk') ));
+					}
+
 					$(this).removeAttr('data-burger_alignment','');
 					$(this).removeAttr('data-burger_over', '');
 

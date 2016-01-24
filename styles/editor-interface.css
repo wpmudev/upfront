@@ -2618,6 +2618,9 @@ div.uinsert-selector a:hover {
   visibility: visible;
   opacity: 1; }
 
+.upfront-region-container.upfront-region-module-activated .upfront-region-edit-trigger,
+.upfront-region-container.upfront-region-module-activated:hover .upfront-region-edit-trigger,
+.upfront-region-container.upfront-region-module-activated .upfront-region:hover .upfront-region-edit-trigger,
 .upfront-region-editing .upfront-region-container .upfront-region-edit-trigger,
 .upfront-region-editing .upfront-region-container:hover .upfront-region-edit-trigger,
 .upfront-region-fixed-editing .upfront-region-container .upfront-region-edit-trigger,
@@ -7139,7 +7142,10 @@ i.upfront-field-icon-burger-trigger {
     left: 50%; }
   #upfront-popup-content, #upfront-popup-top, #upfront-popup-bottom, #upfront-popup-close {
     position: relative;
-    left: -50%; } }
+    left: -50%; }
+  *::-ms-backdrop, #upfront-popup-close {
+    left: 45%; }
+  /* IE11 */ }
 
 #upfront-popup select {
   padding: 3px;

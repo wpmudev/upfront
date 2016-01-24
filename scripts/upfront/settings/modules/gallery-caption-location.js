@@ -64,7 +64,7 @@ define([
 					},
 					show: function(value, $el) {
 						var stateSettings = $el.closest('.state_modules');
-						if(value == "below") {
+						if(value === "below" || typeof value === "undefined") {
 							stateSettings.find('.gallery-caption-on-hover').hide();
 						} else {
 							stateSettings.find('.gallery-caption-on-hover').show();
@@ -114,11 +114,15 @@ define([
 					},
 					show: function(value, $el) {
 						var stateSettings = $el.closest('.state_modules');
-						//Toggle color fields
-						if(value == "fixed") {
-							stateSettings.find('.'+ state +'-caption-height-number').show();
-						} else {
-							stateSettings.find('.'+ state +'-caption-height-number').hide();
+						
+						var use_captions = me.model.get('use_captions');
+						if(use_captions === "yes") {	
+							//Toggle color fields
+							if(value === "fixed") {
+								stateSettings.find('.'+ state +'-caption-height-number').show();
+							} else {
+								stateSettings.find('.'+ state +'-caption-height-number').hide();
+							}
 						}
 					}
 				}),

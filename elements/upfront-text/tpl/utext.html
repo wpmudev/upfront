@@ -1,13 +1,13 @@
 {[ if (usingNewAppearance == false) { ]}
 {[ if(background_color || border) { ]}<div class='plaintxt_padding' style='background-color: {{background_color}}; border: {{border}};'> {[ } ]}
 {[ } else { ]}
+<div class='plain-text-container'>
 {[ if(additional_padding) { ]}<div class='plaintxt_padding'>{[ } ]}
 {[ } ]}
-<div class='plain-text-container'>
 {{content}}
-</div>
 {[ if (usingNewAppearance == false) { ]}
 {[ if(background_color || border) { ]}</div>{[ } ]}
 {[ } else { ]}
 {[ if(additional_padding) { ]}</div>{[ } ]}
+</div>
 {[ } ]}

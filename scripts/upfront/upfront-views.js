@@ -586,12 +586,16 @@ define([
 			adjust_top_settings_panel_position: function( model, current_el ){
 				var _model = model && ( model instanceof Backbone.Model ) ? model : this.model,
 					_current_el = current_el ? current_el : this,
-					_$control_el = current_el && current_el.$control_el ? current_el.$control_el : this.$control_el;
-					;
+					_$control_el = current_el && current_el.$control_el ? current_el.$control_el : this.$control_el,
+					_$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
+					_main_offset, _offset
+				;
 
 				if( !_current_el || !_$control_el || _$control_el.$el ) return;
+				_main_offset = _$main.offset();
+				_offset = _current_el.$el.offset();
 				// if top padding is less than 30 and element has at least 30px margin from top of window
-				if(  parseInt( _model.get_breakpoint_property_value("top_padding_num", false, 0), 10 ) < 30 && _current_el.$el.offset().top >=30 ){
+				if(  parseInt( _model.get_breakpoint_property_value("top_padding_num", false, 0), 10 ) < 30 && _offset.top-_main_offset.top >=30 ){
 					_$control_el.find(".upfront-inline-panel-top").first().css("top", "-30px");
 				}else{
 					_$control_el.find(".upfront-inline-panel-top").first().css("top", "0px");
@@ -1645,6 +1649,8 @@ define([
 				}
 				Upfront.data.prevEntity = this;
 				_Upfront_EditableEntity.prototype.activate.call(this);
+				$('.upfront-region-module-activated').removeClass('.upfront-region-module-activated');
+				this.$el.closest('.upfront-region-container').addClass('upfront-region-module-activated');
 				if ( !this.parent_module_view ) return;
 				this.parent_module_view.$el.find('>.upfront-module').addClass('upfront-module-active');
 				if ( !this.parent_module_view.wrapper_view ) return;
@@ -1655,6 +1661,7 @@ define([
 				if($('#element-settings-sidebar').html() !== '' || $('#settings').html() !== '') return false;
 				Upfront.data.prevEntity = false;
 				_Upfront_EditableEntity.prototype.deactivate.call(this);
+				this.$el.closest('.upfront-region-container').removeClass('upfront-region-module-activated');
 				if ( !this.parent_module_view ) return;
 				this.parent_module_view.$el.find('>.upfront-module').removeClass('upfront-module-active');
 				if ( !this.parent_module_view.wrapper_view ) return;

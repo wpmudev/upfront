@@ -88,13 +88,12 @@ define([
 			var me = this;
 			//prepare instance
 
-			var specific_fields = this.model.get_property_value_by_name('current_widget_specific_fields')
+			var specific_fields = this.model.get_property_value_by_name('current_widget_specific_fields') || this.model.get_property_value_by_name('widget_specific_fields');
 
 			var instance = {};
 
-
 			for( key in specific_fields) {
-					instance[specific_fields[key]['name']] =  this.model.get_property_value_by_name(specific_fields[key]['name']);
+				instance[specific_fields[key]['name']] =  this.model.get_property_value_by_name(specific_fields[key]['name']);
 			}
 
 			Upfront.Util.post({"action": "uwidget_get_widget_markup", "data": JSON.stringify({"widget": widget, "instance": instance})})

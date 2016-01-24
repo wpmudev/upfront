@@ -223,8 +223,16 @@ define([
 				
 				migrateElementStyle: function(styles) {
 					//replace tab container which is one line with preset
-					styles = styles.replace(/.upfront-tabs-container/, '.tabs-wrapper');
+					styles = styles.replace(/\.upfront-tabs-container/, '.tabs-wrapper');
 					
+					return styles;
+				},
+				
+				migrateDefaultStyle: function(styles) {
+					//replace image wrapper class
+					styles = styles.replace(/(div)?\.upfront-tabs\s/g, '');
+					styles = styles.replace(/(div)?\.upfront-object\s/g, '');
+
 					return styles;
 				},
 				
@@ -233,15 +241,17 @@ define([
 					var preset = this.property('preset') ? this.clear_preset_name(this.property('preset')) : 'default',
 						props = this.presets.findWhere({id: preset}),
 						obj = {};
-
-					_.each(props.attributes, function(preset_value, index) {
-						
-						if(index === 'id' || index === 'name' || index === 'theme_preset') {
-							return;
-						}
-						
-						obj[index] = preset_value;
-					});
+					
+					if(typeof props !== "undefined") {
+						_.each(props.attributes, function(preset_value, index) {
+							
+							if(index === 'id' || index === 'name' || index === 'preset_style' || index === 'legacy') {
+								return;
+							}
+							
+							obj[index] = preset_value;
+						});
+					}
 
 					//Migrate properties from existing preset
 					newPreset.set(obj);
@@ -256,9 +266,6 @@ define([
 						'active-useborder': '',
 						'global-content-bg': 'rgba(255,255,255, 0)',
 						'global-useborder': '',
-						'static-line-height': '1',
-						'active-line-height': '1',
-						'hover-line-height': '1',
 					});
 				},
 			}

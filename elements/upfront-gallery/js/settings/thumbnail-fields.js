@@ -266,6 +266,25 @@ define([
 						}
 					}
 				]
+			},
+      {
+				type: 'SettingsItem',
+				className: 'general_settings_item',
+				title: 'Label filters',
+				fields: [
+					{
+						type: 'Checkboxes',
+						property: 'labelFilters',
+						default_value: 0,
+						multiple: false,
+						values: [
+							{ label: 'Enable image filtering', value: ['true'] }
+						],
+						change: function(value, me) {
+							me.model.set_property('labelFilters', value);
+						}
+					}
+				]
 			}
 		],
 		title: 'General Settings'

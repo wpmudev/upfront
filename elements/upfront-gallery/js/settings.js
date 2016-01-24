@@ -77,6 +77,14 @@ define([
 						}
 					]
 				},
+				
+				migrateDefaultStyle: function(styles) {
+					//replace image wrapper class
+					styles = styles.replace(/(div)?\.upfront-gallery\s/g, '');
+					styles = styles.replace(/(div)?\.upfront-object\s/g, '');
+
+					return styles;
+				},
 
 				migratePresetProperties: function(newPreset) {
 					var props = {},
@@ -91,7 +99,7 @@ define([
 						caption_height = 'fixed'
 					}
 
-					if(typeof props.captionType !== "undefined") {
+					if(typeof props.captionType !== "undefined" && props.captionType !== "none") {
 						useCaption = 'yes';
 					}
 

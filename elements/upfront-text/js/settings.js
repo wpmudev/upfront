@@ -96,7 +96,7 @@ define([
 				
 				migrateElementStyle: function(styles) {
 					//replace container class
-					styles = styles.replace(/upfront-plain_txt/, 'plain-text-container');
+					styles = styles.replace(/\.upfront-plain_txt/, ' .plain-text-container');
 					
 					return styles;
 				},
@@ -109,10 +109,10 @@ define([
 					this.model.get('properties').each( function(prop) {
 						props[prop.get('name')] = prop.get('value');
 					});
-					
-					if(typeof props.border_width !== "undefined" &&
-						typeof props.border_style !== "undefined" &&
-						typeof props.border_style !== "undefined") {
+
+					if((typeof props.border_color !== "undefined" && props.border_color !== "rgba(0, 0, 0, 0)") && 
+					   (typeof props.border_style !== "undefined" && props.border_style !== "none") && 
+					   (typeof props.border_width !== "undefined" && props.border_width !== 1)) {
 							useBorder = 'yes';
 					}
 					
@@ -137,7 +137,7 @@ define([
 						props[prop.get('name')] = prop.get('value');
 					});
 
-					if(typeof props.theme_style !== "undefined" && props.theme_style !== "_default") {
+					if(typeof props.theme_style !== "undefined" && (props.theme_style !== "_default" && props.theme_style !== "" && props.theme_style !== " ")) {
 						return true;
 					}
 					

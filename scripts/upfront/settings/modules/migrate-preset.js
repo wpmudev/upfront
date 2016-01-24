@@ -168,7 +168,7 @@ define([
 			return preset.charAt(0).toUpperCase() + preset.slice(1).toLowerCase();
 		},
 		
-		hide_new_preset_fields() {
+		hide_new_preset_fields: function () {
 			var me = this;
 			me.$el.find('.new-preset-button-cancel').hide();
 			me.$el.find('.new-preset-button-input').hide();
@@ -178,7 +178,7 @@ define([
 			me.$el.find('.existing-preset-overlay-layout').remove();
 		},
 		
-		show_new_preset_fields() {
+		show_new_preset_fields: function () {
 			var me = this;
 			me.$el.find('.new-preset-button-cancel').show();
 			me.$el.find('.new-preset-button-input').show();
@@ -193,13 +193,21 @@ define([
 		},
 		
 		get_presets: function () {
-			return _.map(this.options.presets.models, function(model) {
+			var presets = [];
+			
+			_.each(this.options.presets.models, function(model) {
+				if(typeof model.get('legacy') !== "undefined") {
+					return;
+				}
+
 				if('undefined' === typeof model.get('name')) {
-				  return { label: model.get('id'), value: model.get('id') };
+					presets.push({ label: model.get('id'), value: model.get('id') });
 				} else {
-				  return { label: model.get('name'), value: model.get('id') };
+					presets.push({ label: model.get('name'), value: model.get('id') });
 				}
 			});
+
+			return presets;
 		}
 	});
 

@@ -41,11 +41,13 @@ class Upfront_UsliderView extends Upfront_Object {
 		$data['startingSlide'] = 0;
 
 		// Overwrite properties with preset properties
-		if (isset($data['properties']['primaryStyle'])) {
-			$data['primaryStyle'] = $data['properties']['primaryStyle'];
-		}
-		if (isset($data['properties']['captionBackground'])) {
-			$data['captionBackground'] = $data['properties']['captionBackground'];
+		if ($data['usingNewAppearance'] !== false) {
+			if (isset($data['properties']['primaryStyle'])) {
+				$data['primaryStyle'] = $data['properties']['primaryStyle'];
+			}
+			if (isset($data['properties']['captionBackground'])) {
+				$data['captionBackground'] = $data['properties']['captionBackground'];
+			}
 		}
 
 
