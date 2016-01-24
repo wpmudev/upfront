@@ -260,7 +260,7 @@ define([
 			return 'Appearance';
 		},
 
-		getPresetDefaults: function(presetName) {
+		getPresetDefaultsMigration: function(presetName) {
 			var element = this.styleElementPrefix.replace(/-preset/, '');
 			
 			if(element === "tab" || element === "accordion" || element === "contact" || element === "button") {
@@ -274,6 +274,13 @@ define([
 					name: presetName
 				});
 			}
+		},
+		
+		getPresetDefaults: function(presetName) {
+			return _.extend(this.presetDefaults, {
+				id: presetName.toLowerCase().replace(/ /g, '-'),
+				name: presetName
+			});
 		},
 
 		updateCanceledPreset: function(properties) {
@@ -369,7 +376,7 @@ define([
 			//Migrate element styles
 			style = this.migrateElementStyle(style);
 			
-			newPreset = new Backbone.Model(this.getPresetDefaults(presetName));
+			newPreset = new Backbone.Model(this.getPresetDefaultsMigration(presetName));
 
 			//Migrate element styles to preset
 			if(typeof style !== "undefined") {
