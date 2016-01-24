@@ -266,9 +266,6 @@ define([
 						'active-useborder': '',
 						'global-content-bg': 'rgba(255,255,255, 0)',
 						'global-useborder': '',
-						'static-line-height': '1',
-						'active-line-height': '1',
-						'hover-line-height': '1',
 					});
 				},
 			}
