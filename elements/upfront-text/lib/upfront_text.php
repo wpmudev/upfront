@@ -14,6 +14,7 @@ class Upfront_PlainTxtView extends Upfront_Object {
 		if ( preg_match('/<div class="plaintxt_padding([^>]*)>/s', $content) ){
 			$doc = new DOMDocument();
 			$clean_doc = new DOMDocument();
+			$content = "<head><meta http-equiv='Content-type' content='text/html; charset=UTF-8' /></head><body>{$content}</body>";
 			$doc->loadHTML($content);
 			$divs = $doc->getElementsByTagName('div');
 			$plaintxt_wrap = false;

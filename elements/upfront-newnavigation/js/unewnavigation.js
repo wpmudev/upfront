@@ -150,9 +150,14 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		this.editModeOn(e);
 		var me = this;
-		var target;
+		var target, ueditor_target;
 		if(typeof e.target == 'undefined' || e.target.trim == '') target = $(e);
 		else target = $(e.target);
+
+		if (!target.hasClass('menu_item')) {
+			target = target.closest('a.menu_item');
+		}
+		if (target.length < 1) return;
 
 		if(target.closest('li').hasClass('edit_mode')) {
 			return;
@@ -166,12 +171,14 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		target.closest('li').addClass('edit_mode');
 
-		var ueditor = target.data('ueditor');
-		ueditor = null;
-		target.data('ueditor', '');
+		ueditor_target = target.children('.menu_item-ueditor');
 
-		if(!target.data('ueditor')) {
-			target.ueditor({
+		var ueditor = ueditor_target.data('ueditor');
+		ueditor = null;
+		ueditor_target.data('ueditor', '');
+
+		if(!ueditor_target.data('ueditor')) {
+			ueditor_target.ueditor({
 				linebreaks: true,
 				disableLineBreak: true,
 				focus: true,
@@ -181,16 +188,16 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				placeholder: 'Link Name',
 
 			}).on('start', function(e) {
-				target.attr('tabIndex', 1); // Necessary for IE before triggering focus event 
-				target.focus();
+				ueditor_target.attr('tabIndex', 1); // Necessary for IE before triggering focus event
+				ueditor_target.focus();
 			}).on('keydown', function(e){
 				if (e.which == 8) {
 					setTimeout(function() {
 
-						if(target.text() == '' && !target.hasClass('menu_item_placeholder')) {
+						if(ueditor_target.text() == '' && !target.hasClass('menu_item_placeholder')) {
 							var e = jQuery.Event("keydown");
 							e.which = 8;
-							target.trigger(e);
+							ueditor_target.trigger(e);
 						}
 					}, 100);
 				}
@@ -202,16 +209,17 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				else if (e.which == 9) {
 					e.preventDefault();
 					if(!target.hasClass('new_menu_item')) {
-					target.blur();
-					target.closest('ul').children('li:last').children('i.navigation-add-item').trigger('click');}
+						ueditor_target.blur();
+						target.closest('ul').children('li:last').children('i.navigation-add-item').trigger('click');
+					}
 				}
 				else if(e.which == 13) {
 
 					target.closest('li').data('backboneview').model['being-edited'] = false;
-					setTimeout(function() {target.blur();}, 100);
+					setTimeout(function() {ueditor_target.blur();}, 100);
 
 				}
-				if(target.text().trim() != '') target.removeClass('menu_item_placeholder');
+				if(ueditor_target.text().trim() != '') target.removeClass('menu_item_placeholder');
 				else target.addClass('menu_item_placeholder');
 			}).on('blur', function(e) {
 
@@ -226,7 +234,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 						return;
 					}
 
-					target.data('ueditor').stop();
+					ueditor_target.data('ueditor').stop();
 
 					target.closest('li').removeClass('edit_mode');
 					if(!target.hasClass('new_menu_item')) {
@@ -239,11 +247,11 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				me.editModeOff();
 			});
 
-			target.data('ueditor').start();
-			target.focus();
+			ueditor_target.data('ueditor').start();
+			ueditor_target.focus();
 		} else {
-			target.data('ueditor').start();
-			target.focus();
+			ueditor_target.data('ueditor').start();
+			ueditor_target.focus();
 		}
 
 		var currentcontext = target.closest('ul');
@@ -275,7 +283,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		if(this.$el.find('li.edit_mode').data('backboneview'))
 			this.$el.find('li.edit_mode').data('backboneview').model['being-edited']= false;
-		this.$el.find('li.edit_mode a.menu_item').blur();
+		this.$el.find('li.edit_mode a.menu_item .menu_item-ueditor').blur();
 		this.editModeOff();
 		if(!$('#upfront-popup').hasClass('upfront-postselector-popup') || !$('#upfront-popup').css('display')== 'block')
 			this.$el.find('.time_being_display').removeClass('time_being_display');

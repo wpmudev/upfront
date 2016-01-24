@@ -228,7 +228,7 @@ return (function ($) {
 
 			if(me.newitem) content = content + ' new_menu_item menu_item_placeholder';
 
-			content = content+'" >'+this.model['menu-item-title']+'</a><i class="delete_menu_item">x</i><span class="open-item-controls"></span>';
+			content = content+'" ><span class="menu_item-ueditor">'+this.model['menu-item-title']+'</span></a><i class="delete_menu_item">x</i><span class="open-item-controls"></span>';
 
 			if(this.model.link['url'].indexOf('#ltb-') > -1 && !Upfront.Util.checkLightbox(this.model.link['url']))
 					content = content + '<span class="missing-lightbox-warning"></span>';
@@ -503,7 +503,7 @@ return (function ($) {
 
 		onItemOut: function(){
 			this.$el.parents('.upfront-module').find('.upfront-resize-handle-s').removeClass('active-menu-item');
-		},
+		}
 	});
 
 	return MenuItemView;
