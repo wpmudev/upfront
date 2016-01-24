@@ -263,7 +263,7 @@ define([
 		getPresetDefaults: function(presetName) {
 			var element = this.styleElementPrefix.replace(/-preset/, '');
 			
-			if(element === "tab" || element === "accordion" || element === "contact") {
+			if(element === "tab" || element === "accordion" || element === "contact" || element === "button") {
 				return _.extend({}, {
 					id: presetName.toLowerCase().replace(/ /g, '-'),
 					name: presetName
