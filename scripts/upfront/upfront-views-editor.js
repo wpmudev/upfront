@@ -3904,6 +3904,9 @@ define([
 			}
 			this.name = this.options.name ? this.options.name : this.cid;
 			this.selected_state = this.selected_state ? this.selected_state : '';
+			if ( this.options.init )
+				this.options.init();
+
 			if ( this.init )
 				this.init();
 			if ( this.options.change )
@@ -3926,6 +3929,8 @@ define([
 					me.trigger('blur');
 				});
 			}, this);
+
+
 		},
 		dispatch_show: function () {
 			var me = this;
