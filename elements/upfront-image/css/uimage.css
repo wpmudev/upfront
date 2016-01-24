@@ -1225,7 +1225,7 @@ div.uimage-controls i.upfront-icon:before,
 	-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
 }
 .wp-caption p:last-child,
-.upfront-object-content p:last-child{
+.upfront-image p:last-child{
 	margin-bottom: 0;
 	padding-bottom: 0;
 }
