@@ -25,5 +25,6 @@
 #wpadminbar .upfront-edit_layout .ab-icon:before {
     font-family: icomoon;
     content: "\e900";
-    font-size: 16px;
+    font-size: 20px;
+    top: 1px;
 }
