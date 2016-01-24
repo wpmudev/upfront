@@ -81,7 +81,7 @@ class Upfront_Button_Presets_Server extends Upfront_Presets_Server {
 			}
 
 			//Enable all checkboxes for button preset
-			if(!isset($preset_options['migrated'])) {
+			if(!isset($preset_options['lineheight'])) {
 				$preset_options['useborder'] = 'yes';
 				$preset_options['useradius'] = 'yes';
 				$preset_options['hov_usetypography'] = 'yes';
@@ -89,7 +89,7 @@ class Upfront_Button_Presets_Server extends Upfront_Presets_Server {
 				$preset_options['hov_useradius'] = 'yes';
 				$preset_options['hov_usebgcolor'] = 'yes';
 				$preset_options['hov_use_animation'] = 'yes';
-				$preset_options['migrated'] = '1';
+				$preset_options['lineheight'] = 1;
 				$count++;
 			}
 			
