@@ -73,7 +73,8 @@
 	<?php if(!empty($properties['h6-lineheight'])) { ?>line-height: <?php echo $properties['h6-lineheight']  ?>;<?php } ?>
 }
 
-#page .upfront-object.<?php echo $properties['id'] ?> p, #page .upfront-output-object.<?php echo $properties['id'] ?> p {
+#page .upfront-object.<?php echo $properties['id'] ?> p, #page .upfront-output-object.<?php echo $properties['id'] ?> p,
+#page .upfront-object.<?php echo $properties['id'] ?> p a, #page .upfront-output-object.<?php echo $properties['id'] ?> p a {
 	<?php if(!empty($properties['p-color'])) { ?>color: <?php echo $properties['p-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['p-fontface'])) { ?>font-family: <?php echo $properties['p-fontface']  ?>; <?php } ?>
 	<?php if(!empty($properties['p-fontsize'])) { ?>font-size: <?php echo $properties['p-fontsize']  ?>px; <?php } ?>
@@ -118,7 +119,8 @@
 	<?php if(!empty($properties['ol-lineheight'])) { ?>line-height: <?php echo $properties['ol-lineheight']  ?>;<?php } ?>
 }
 
-#page .upfront-object.<?php echo $properties['id'] ?> blockquote, #page .upfront-output-object.<?php echo $properties['id'] ?> blockquote {
+#page .upfront-object.<?php echo $properties['id'] ?> blockquote, #page .upfront-output-object.<?php echo $properties['id'] ?> blockquote,
+#page .upfront-object.<?php echo $properties['id'] ?> blockquote a, #page .upfront-output-object.<?php echo $properties['id'] ?> blockquote a {
 	<?php if(!empty($properties['blockquote-color'])) { ?>color: <?php echo $properties['blockquote-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['blockquote-fontface'])) { ?>font-family: <?php echo $properties['blockquote-fontface']  ?>; <?php } ?>
 	<?php if(!empty($properties['blockquote-fontsize'])) { ?>font-size: <?php echo $properties['blockquote-fontsize']  ?>px; <?php } ?>
@@ -127,7 +129,8 @@
 	<?php if(!empty($properties['blockquote-lineheight'])) { ?>line-height: <?php echo $properties['blockquote-lineheight']  ?>;<?php } ?>
 }
 
-#page .upfront-object.<?php echo $properties['id'] ?> blockquote.upfront-quote-alternative, #page.upfront-output-object .<?php echo $properties['id'] ?> blockquote.upfront-quote-alternative {
+#page .upfront-object.<?php echo $properties['id'] ?> blockquote.upfront-quote-alternative, #page.upfront-output-object .<?php echo $properties['id'] ?> blockquote.upfront-quote-alternative,
+#page .upfront-object.<?php echo $properties['id'] ?> blockquote.upfront-quote-alternative a, #page.upfront-output-object .<?php echo $properties['id'] ?> blockquote.upfront-quote-alternative a {
 	<?php if(!empty($properties['blockquote-alternative-color'])) { ?>color: <?php echo $properties['blockquote-alternative-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['blockquote-alternative-fontface'])) { ?>font-family: <?php echo $properties['blockquote-alternative-fontface']  ?>; <?php } ?>
 	<?php if(!empty($properties['blockquote-alternative-fontsize'])) { ?>font-size: <?php echo $properties['blockquote-alternative-fontsize']  ?>px; <?php } ?>
