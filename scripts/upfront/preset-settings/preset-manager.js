@@ -261,10 +261,19 @@ define([
 		},
 
 		getPresetDefaults: function(presetName) {
-			return _.extend(this.presetDefaults, {
-				id: presetName.toLowerCase().replace(/ /g, '-'),
-				name: presetName
-			});
+			var element = this.styleElementPrefix.replace(/-preset/, '');
+			
+			if(element === "tab" || element === "accordion" || element === "contact") {
+				return _.extend({}, {
+					id: presetName.toLowerCase().replace(/ /g, '-'),
+					name: presetName
+				});
+			} else {
+				return _.extend(this.presetDefaults, {
+					id: presetName.toLowerCase().replace(/ /g, '-'),
+					name: presetName
+				});
+			}
 		},
 
 		updateCanceledPreset: function(properties) {
