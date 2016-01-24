@@ -51,12 +51,12 @@ class Upfront_Tab_Presets_Server extends Upfront_Presets_Server {
 			}
 
 			//Enable all checkboxes for tabs preset
-			if(!isset($preset_options['static-line-height'])) {
+			if(!isset($preset_options['migrated'])) {
 				$preset_options['active-use-color'] = 'yes';
 				$preset_options['active-use-typography'] = 'yes';
 				$preset_options['hover-use-color'] = 'yes';
 				$preset_options['hover-use-typography'] = 'yes';
-				$preset_options['static-line-height'] = 1;
+				$preset_options['migrated'] = 1;
 				$count++;
 			}
 
