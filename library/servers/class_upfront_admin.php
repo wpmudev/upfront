@@ -219,7 +219,7 @@ class Upfront_Server_Admin implements IUpfront_Server {
 		if ('themes' !== $screen->base) return false;
 
 		return sprintf(
-			__('Even though we have spent ages trying to make sure that Upgrade won’t alter the appearance of your existing site, we still highly recommend that you run a full back-up using our <a href="%s" target="_blank">Snapshot</a> plugin.', 'upfront'), 
+			__('Even though we have spent ages trying to make sure that Upfront Upgrade won’t alter the appearance of your existing site, we still highly recommend that you run a full back-up using our <a href="%s" target="_blank">Snapshot</a> plugin.', 'upfront'), 
 			'https://premium.wpmudev.org/project/snapshot/'
 		);
 	}
