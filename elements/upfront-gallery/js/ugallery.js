@@ -49,7 +49,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			images;
 
 		if (this.property('thumbPadding') !== this.property('thumbPaddingNumber')) {
-			console.log('setting thumb padding number to lfkjsljfs');
 			this.property('thumbPaddingNumber', this.property('thumbPadding'), true);
 			this.property('thumbSidePaddingNumber', this.property('thumbPadding'), true);
 			this.property('sidePadding', this.property('thumbPadding'), true);
