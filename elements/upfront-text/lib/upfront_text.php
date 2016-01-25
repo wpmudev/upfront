@@ -8,6 +8,14 @@ class Upfront_PlainTxtView extends Upfront_Object {
 		$element_id = $element_id ? "id='{$element_id}'" : '';
 
 		$content = $this->_get_property('content');
+		
+		$preset = $this->_get_property('preset');
+
+		if (!isset($preset)) {
+			$preset = 'default';
+		}
+		
+		$preset_props = Upfront_Text_Presets_Server::get_instance()->get_preset_properties($preset);
 
 		$matches = array();
 
@@ -52,8 +60,16 @@ class Upfront_PlainTxtView extends Upfront_Object {
 			return (sizeof($style)>0 ? "<div class='plaintxt_padding' style='".implode(';', $style)."'>": ''). $content .(sizeof($style)>0 ? "</div>": '');
 		}
 
-
-		return "<div class='plain-text-container'>". $content ."</div>";
+		// Render new appearance
+		$return_content = "<div class='plain-text-container'>";
+		if(isset($preset_props['additional_padding']) && $preset_props['additional_padding'] == "yes") {
+			$return_content .= "<div class='plaintxt_padding'>" . $content . "</div>";
+		} else {
+			$return_content .= $content;
+		}
+		$return_content .= "</div>";
+		
+		return $return_content;
 	}
 
 	protected function _decorate_content ($content) {

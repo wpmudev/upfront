@@ -30,6 +30,12 @@ class Upfront_Text_Presets_Server extends Upfront_Presets_Server {
 		return realpath(Upfront::get_root_dir() . '/elements/upfront-text/tpl/preset-style.html');
 	}
 	
+	public static function get_preset_properties($preset) {
+		$properties = self::$instance->get_preset_by_id($preset);
+
+		return $properties;
+	}
+	
 	public static function get_preset_defaults() {
 		return array(
 			'bg_color' => 'rgba(0, 0, 0, 0)',
