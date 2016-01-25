@@ -129,11 +129,11 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		if(!$(e.target).hasClass('ueditable')) {
 			var editablefound = false;
-			this.$el.find('a.ueditable').each(function() {
+			this.$el.find('li.edit_mode').each(function() {
 				try {
-					$(this).data('ueditor').stop();
-					$(this).closest('li').removeClass('edit_mode');
-					$(this).closest('li').data('backboneview').model['being-edited'] = false;
+					$(this).children('a.menu_item').find('.menu_item-ueditor').data('ueditor').stop();
+					$(this).removeClass('edit_mode');
+					$(this).data('backboneview').model['being-edited'] = false;
 				} catch (err) { }
 				editablefound = true;
 			});
