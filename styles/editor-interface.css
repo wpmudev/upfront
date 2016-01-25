@@ -12653,7 +12653,8 @@ a.upfront-css-edit:before, a.upfront-preset-edit:before, a.upfront-region-name-e
   bottom: auto;
   left: 0;
   right: 0;
-  transition: opacity 200ms ease-out; }
+  transition: opacity 200ms ease-out;
+  z-index: -1; }
 
 .upfront-entity-top-padding-hint {
   top: 2px;

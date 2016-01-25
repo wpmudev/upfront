@@ -110,6 +110,7 @@
   left: 0;
   right: 0;
   transition: opacity 200ms ease-out;
+  z-index: -1;
 }
 .upfront-entity-top-padding-hint {
   top: 2px;
