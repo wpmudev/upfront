@@ -4641,8 +4641,9 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-module-spacer > .upfront-entity_meta {
   display: none; }
 
-.upfront-force-module-delete .upfront-module > .upfront-entity_meta {
-  display: block; }
+.upfront-force-module-delete .upfront-module > .upfront-entity_meta,
+.upfront-force-module-delete .upfront-module > .upfront-entity_meta > .upfront-entity-delete_trigger {
+  display: block !important; }
 
 .upfront-object > .upfront-entity_meta {
   top: 28px;

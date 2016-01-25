@@ -1934,12 +1934,13 @@ var GridEditor = {
 				is_clear = ( "clear" in wrapper_breakpoint_data ) ? wrapper_breakpoint_data.clear : is_clear;
 			}
 			if ( hide === false ) hide = default_hide;
-			if ( hide ) return;
+			if ( hide && is_spacer ) return;
 			module_obj = {
 				model: module,
 				col: module_col,
 				order: order,
-				spacer: is_spacer
+				spacer: is_spacer,
+				hide: hide
 			};
 			if ( module_col > wrapper_col ) wrapper_col = module_col;
 			if ( wrapper_col > col ) wrapper_col = col;
@@ -1987,11 +1988,16 @@ var GridEditor = {
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.GridEditor,
 			index = modules.indexOf(module),
-			breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled()
+			breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled(),
+			is_group = !_.isUndefined(view.group_view)
 		;
 		_.each(breakpoints, function(each){
 			var breakpoint = each.toJSON(),
-				lines = ed.parse_modules_to_lines(modules, wrappers, breakpoint.id, breakpoint.columns),
+				_container_col = breakpoint.default
+					? ed.get_class_num(( is_group ? view.group_view : view.region_view ).$el, ed.grid.class)
+					: breakpoint.columns,
+				container_col = _container_col > breakpoint.columns ? breakpoint.columns : _container_col,
+				lines = ed.parse_modules_to_lines(modules, wrappers, breakpoint.id, container_col),
 				split_prev = false,
 				split_next = false,
 				all_wrappers = [],
@@ -2037,13 +2043,12 @@ var GridEditor = {
 			}
 
 			if ( my_wrapper.modules.length == 1 ) {
-				var total_col = my_wrapper.col,
+				var total_col = container_col,
 					new_col = 0,
 					remaining_col = 0
 				;
-				_.each(all_wrappers, function (each_wrapper) {
-					if ( _.contains(spacer_wrappers, each_wrapper) ) return;
-					total_col += each_wrapper.col;
+				_.each(spacer_wrappers, function (each_wrapper) {
+					total_col -= each_wrapper.col;
 				});
 				if ( all_wrappers.length == spacer_wrappers.length ) {
 					// All wrappers is spacers, just remove them as we don't need it anymore
