@@ -368,8 +368,8 @@ jQuery(document).ready(function($) {
 
 					$(this).find('ul.menu').hide();
 				} else {
+					$(this).attr('data-style', ( preset.menu_style ? preset.menu_style : $(this).data('stylebk') ));
 					if(typeof usingNewAppearance !== "undefined" && usingNewAppearance) {
-						$(this).attr('data-style', ( preset.menu_style ? preset.menu_style : $(this).data('stylebk') ));
 						$(this).attr('data-alignment', ( preset.menu_alignment ? preset.menu_alignment : $(this).data('alignmentbk') ));
 					}
 
