@@ -123,7 +123,7 @@ class Upfront_Compat implements IUpfront_Server {
 			'theme_url' => admin_url('themes.php'),
 		);
 
-		if ($this->_has_backup_notice) {
+		if (!empty($this->_has_backup_notice)) {
 			$data['Compat']['notice'] = __('Even though we have spent ages trying to make sure that Upfront Upgrade won’t alter the appearance of your existing site, we still highly recommend that you run a full back-up using our <b>Snapshot</b> plugin.', 'upfront');
 			$data['Compat']['snapshot_url'] = esc_url('https://premium.wpmudev.org/project/snapshot/');
 			$this->_dismiss_update_notice();
