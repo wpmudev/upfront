@@ -383,12 +383,16 @@ li.menu-item .uimage-controls.image-element-controls {
 	visibility: hidden;
 	bottom: -30px;
 	left: 0;
+	max-width: 100%;
+	overflow-x: hidden;
 }
 li.menu-item .uimage-controls.image-element-controls .upfront-inline-panel {
 	visibility: hidden;
 }
 li.menu-item.controls-visible > .uimage-controls.image-element-controls {
 	visibility: visible;
+	max-width: none;
+	overflow-x: visible;
 }
 li.menu-item.controls-visible > .uimage-controls.image-element-controls .upfront-inline-panel {
 	visibility: visible;

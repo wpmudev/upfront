@@ -3170,9 +3170,11 @@ define([
 
 				_.each(breakpoints, function(each) {
 					var breakpoint = each.toJSON(),
+						container_breakpoint = ( is_group ? me.group_view : me.region_view ).model.get_property_value_by_name('breakpoint'),
+						container_breakpoint_data = ( container_breakpoint && breakpoint.id in container_breakpoint ) ? container_breakpoint[breakpoint.id] : {}
 						_container_col = breakpoint.default
 							? ed.get_class_num(( is_group ? me.group_view : me.region_view ).$el, ed.grid.class)
-							: breakpoint.columns,
+							: ( _.isNumber(container_breakpoint_data.col) ? container_breakpoint_data.col : breakpoint.columns ),
 						container_col = _container_col > breakpoint.columns ? breakpoint.columns : _container_col,
 						lines = ed.parse_modules_to_lines(modules, wrappers, breakpoint.id, container_col),
 						changed = false
