@@ -605,7 +605,7 @@ a.image-edit-button.deactivated:hover {
 }
 
 .uimage-controls .upfront-inline-panel {
-	visibility: visible;0
+	visibility: visible;
 	background-image: -o-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
 	background-image: -moz-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
 	background-image: -ms-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
