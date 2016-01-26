@@ -95,8 +95,8 @@ define([
 						props[prop.get('name')] = prop.get('value');
 					});
 
-					if(typeof props.thumbCaptionsHeight !== "undefined") {
-						caption_height = 'fixed'
+					if(typeof props.fitThumbCaptions[0] !== "undefined" && props.fitThumbCaptions[0]) {
+						caption_height = 'fixed';
 					}
 
 					if(typeof props.captionType !== "undefined" && props.captionType !== "none") {
