@@ -49,7 +49,8 @@ define([
 
 	var getLightBoxes = function() {
 		var lightboxes = [],
-			regions = Upfront.Application.layout.get('regions');
+			regions = (Upfront.Application.layout || {}).get ? Upfront.Application.layout.get('regions') : []
+		;
 
 		_.each(regions.models, function(model) {
 			if(model.attributes.sub == 'lightbox') {
