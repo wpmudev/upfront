@@ -11,7 +11,7 @@ class Upfront_Compat implements IUpfront_Server {
 	 * @return mixed (string)Theme version number, or (bool)false on failure
 	 */
 	public static function get_upfront_core_version () {
-		wp_get_theme('upfront')->Version;
+		return wp_get_theme('upfront')->Version;
 	}
 
 	/**
