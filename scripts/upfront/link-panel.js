@@ -15,7 +15,7 @@ define([
 				if (group_anchor && group_anchor.length) {
 					anchors.push({id: '#' + group_anchor, label: group_anchor});
 				}
-				if (module.get("objects")) {
+				if (module.get("objects") && (module.get("objects") || {}).each) {
 					module.get("objects").each(function (object) {
 						var anchor = object.get_property_value_by_name("anchor");
 						if (anchor && anchor.length) {
