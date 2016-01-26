@@ -7,6 +7,56 @@
 var _start;
 
 /**
+ * Return backup notice popup string
+ *
+ * @return {String} Backup notice markup
+ */
+function get_backup_notice () {
+	var notice = ((Upfront.data || {}).Compat || {}).notice,
+		url = ((Upfront.data || {}).Compat || {}).snapshot_url
+	;
+	return '' + 
+		'<div class="upfront-version_compatibility-nag">' +
+			'<p>' + notice + '</p>' +
+			'<div>' +
+				'<a class="boot" href="#boot">Proceed to edit</a>' +
+				(url ? '<a class="update" href="' + url + '">Install Snapshot</a>' : '') +
+			'</div>' +
+		'</div>' +
+	'';
+}
+
+/**
+ * Return theme notice popup string
+ *
+ * @return {String} Theme notice markup
+ */
+function get_theme_notice () {
+	var theme = ((Upfront.data || {}).Compat || {}).theme || 'your current theme',
+		url = ((Upfront.data || {}).Compat || {}).theme_url
+	;
+	return '' + 
+		'<div class="upfront-version_compatibility-nag">' +
+			'<p>A new version of <b>' + theme + '</b> is available. We recommend you Update <b>' + theme + '</b> before making any edits.</p>' +
+			'<div>' +
+				'<a class="boot" href="#boot">Proceed to edit</a>' +
+				(url ? '<a class="update" href="' + url + '">Update ' + theme + '</a>' : '') +
+			'</div>' +
+		'</div>' +
+	'';
+}
+
+/**
+ * Dispatch the update screen version based on the snapshot URL presence
+ *
+ * @return {String} Popup markup
+ */
+function get_popup_markup () {
+	var url = ((Upfront.data || {}).Compat || {}).snapshot_url || false;
+	return url ? get_backup_notice() : get_theme_notice();
+}
+
+/**
  * Overridden Upfront.Application.start
  *
  * Actual application starting.
@@ -14,20 +64,10 @@ var _start;
  * @return {Boolean}
  */
 function application_override () {
-	var theme = ((Upfront.data || {}).Compat || {}).theme || 'your current theme',
-		url = ((Upfront.data || {}).Compat || {}).theme_url
-	;
+	
 	_nag = $.magnificPopup.open({
 		items: {
-	    	src: '' + 
-	    		'<div class="upfront-version_compatibility-nag">' +
-	    			'<p>A new version of <b>' + theme + '</b> is available. We recommend you Update <b>' + theme + '</b> before making any edits.</p>' +
-	    			'<div>' +
-	    				'<a class="boot" href="#boot">Proceed to edit</a>' +
-	    				(url ? '<a class="update" href="' + url + '">Update ' + theme + '</a>' : '') +
-	    			'</div>' +
-	    		'</div>' +
-	    	'',
+	    	src: get_popup_markup(),
 	    	type: 'inline',
 	  	},
 	    mainClass: 'uf-upgrade-notice'

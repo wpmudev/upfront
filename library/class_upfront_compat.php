@@ -36,6 +36,7 @@ class Upfront_Compat implements IUpfront_Server {
 	private function _add_hooks () {
 		if (!is_admin() || (defined('DOING_AJAX') && DOING_AJAX)) {
 			$this->_check_v1_transition();
+			$this->_check_v1_backup();
 		}
 	}
 
@@ -54,6 +55,21 @@ class Upfront_Compat implements IUpfront_Server {
 	}
 
 	/**
+	 * Add backup notice on the v1 first editor boot
+	 */
+	private function _check_v1_backup () {
+		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) return false; // We don't care, not editable
+		if (function_exists('upfront_exporter_is_running') && upfront_exporter_is_running()) return false; // Not in exporter
+		if ($this->_is_update_notice_dismissed()) return false; // We have notices dismissed for this version and below
+
+		$this->_has_backup_notice = true;
+
+		Upfront_CoreDependencies_Registry::get_instance()->add_script(
+			trailingslashit(Upfront::get_root_url()) . 'scripts/upfront/compat/v1.js'
+		);
+		add_filter('upfront_data', array($this, 'add_v1_transition_data'));
+	}
+
 	/**
 	 * Check if the update notice is already seen
 	 *
@@ -95,6 +111,7 @@ class Upfront_Compat implements IUpfront_Server {
 		return update_option('upfront-admin-update_notices-done', $version);
 	}
 
+	/**
 	 * Data filtering handler
 	 *
 	 * @param array $data
@@ -105,6 +122,13 @@ class Upfront_Compat implements IUpfront_Server {
 			'theme' => $current->Name,
 			'theme_url' => admin_url('themes.php'),
 		);
+
+		if ($this->_has_backup_notice) {
+			$data['Compat']['notice'] = __('Even though we have spent ages trying to make sure that Upfront Upgrade won’t alter the appearance of your existing site, we still highly recommend that you run a full back-up using our <b>Snapshot</b> plugin.', 'upfront');
+			$data['Compat']['snapshot_url'] = esc_url('https://premium.wpmudev.org/project/snapshot/');
+			$this->_dismiss_update_notice();
+		}
+
 		return $data;
 	}
 
