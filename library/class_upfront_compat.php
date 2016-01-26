@@ -54,6 +54,47 @@ class Upfront_Compat implements IUpfront_Server {
 	}
 
 	/**
+	/**
+	 * Check if the update notice is already seen
+	 *
+	 * @return bool
+	 */
+	private function _is_update_notice_dismissed () {
+		return $this->_is_update_notice_dismissed_for(self::get_upfront_core_version());
+	}
+
+	/**
+	 * Check if update notice for a particular core version has already been seen
+	 *
+	 * @param string $version Core version number
+	 *
+	 * @return bool
+	 */
+	private function _is_update_notice_dismissed_for ($version) {
+		$done = get_option('upfront-admin-update_notices-done', '0');
+		return version_compare($version, $done, 'le');
+	}
+
+	/**
+	 * Dismisses current version update notice
+	 *
+	 * @return bool
+	 */
+	private function _dismiss_update_notice () {
+		return $this->_dismiss_update_notice_for(self::get_upfront_core_version());
+	}
+
+	/**
+	 * Dismisses update notice for a particular core version
+	 *
+	 * @param string $version Core version number
+	 *
+	 * @return bool
+	 */
+	private function _dismiss_update_notice_for ($version) {
+		return update_option('upfront-admin-update_notices-done', $version);
+	}
+
 	 * Data filtering handler
 	 *
 	 * @param array $data
