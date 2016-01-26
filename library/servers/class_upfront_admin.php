@@ -12,10 +12,6 @@ class Upfront_Server_Admin implements IUpfront_Server {
 	private function _add_hooks () {
 		// Dispatch all notices
 		add_action('admin_notices', array($this, 'dispatch_notices'));
-
-		// Separately dispatch update notices
-		add_action('admin_notices', array($this, 'dispatch_update_notices'));
-		add_action('wp_ajax_upfront_dismiss_update_notice', array($this, 'json_dismiss_update_notices'));
 		
 		add_action('admin_notices', array($this, 'pagetemplate_notice'));
 
@@ -113,40 +109,6 @@ class Upfront_Server_Admin implements IUpfront_Server {
 	}
 
 	/**
-	 * The update notices dispatch hub method.
-	 */
-	public function dispatch_update_notices () {
-		// First up, let's check if we're dismissed for the version
-		$version = wp_get_theme('upfront')->Version;
-		$done = get_option('upfront-admin-update_notices-done', '0');
-		if (version_compare($version, $done, 'le')) return false; // We have notices dismissed for this version and below
-
-		// Okay, let's do this
-		$notices = array_filter(apply_filters('upfront-admin-update_notices', array(
-			$this->_v1_0_update_notice(),
-		)));
-		if (empty($notices)) return false;
-
-		wp_enqueue_script('upfront-admin-notices', trailingslashit(Upfront::get_root_url()) . 'scripts/upfront/compat/admin.js', array('jquery'));
-		echo '<div class="update-nag upfront-update"><p>' .
-			join('</p><p>', $notices) .
-		'</p><a href="#dismiss"><small>' . __('Dismiss', 'upfront') . '</small></a></div>';
-	}
-
-	/**
-	 * Update notices dismissal method.
-	 *
-	 * Dismisses all notices for a version by recording current version in options.
-	 */
-	public function json_dismiss_update_notices () {
-		if (!current_user_can('manage_options')) die;
-
-		update_option('upfront-admin-update_notices-done', wp_get_theme('upfront')->Version);
-
-		die;
-	}
-
-	/**
 	 * So, we can't deal with parent theme deletion because, apparently, 
 	 * that's voodoo: https://core.trac.wordpress.org/ticket/14955#comment:16
 	 */
@@ -203,25 +165,6 @@ class Upfront_Server_Admin implements IUpfront_Server {
 		if (!empty($parent)) return false; // Don't deal with child themes.
 		
 		return __('Please, activate one of the Upfront child themes.', 'upfront');
-	}
-
-	/**
-	 * Show updates nag for v1.0
-	 *
-	 * @return string Update nag message
-	 */
-	private function _v1_0_update_notice () {
-		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) return false; // We don't care, not editable
-		if (version_compare(wp_get_theme('upfront')->Version, '1.0-alpha-1', 'lt')) return false; // Before v1
-
-		$screen = get_current_screen();
-		if (empty($screen->base)) return false;
-		if ('themes' !== $screen->base) return false;
-
-		return sprintf(
-			__('Even though we have spent ages trying to make sure that Upfront Upgrade won’t alter the appearance of your existing site, we still highly recommend that you run a full back-up using our <a href="%s" target="_blank">Snapshot</a> plugin.', 'upfront'), 
-			'https://premium.wpmudev.org/project/snapshot/'
-		);
 	}
 
 	/**
