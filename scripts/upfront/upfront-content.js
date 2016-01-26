@@ -396,10 +396,10 @@ define("content", deps, function(postTpl, ContentTools) {
                         Upfront.Views.Editor.notify(successMsg);
                     }
 					me.fetchPostLayout().then(function(){
-                        if (!is_auto_draft && 'draft' !== status) {
+                        //if (!is_auto_draft && 'draft' !== status) { // let it stop editor to make image shortcodes look better
                             me.stopEditContents();
                             me.render();
-                        }
+                        //}
 					});
 				}
 
@@ -414,10 +414,10 @@ define("content", deps, function(postTpl, ContentTools) {
                             Upfront.Views.Editor.notify(successMsg);
                         }
 						me.fetchPostLayout().then(function(){
-                            if( !is_auto_draft ) {
+                            //if( !is_auto_draft ) { let it stop editor to make image shortcodes look better
                                 me.stopEditContents();
                                 me.render();
-                            }
+                            //}
 						});
 					}
 					metaUpdated = true;
