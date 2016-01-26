@@ -447,7 +447,7 @@ var Settings = ElementSettings.extend({
 	
 	initialize: function (opts) {
 		//If editor show only general preset
-		if( Upfront.Application.get_current() !== Upfront.Application.MODE.THEME ) {
+		if (location.pathname.indexOf('create_new') === -1) {// you are in exporter
 			this.panels = { General: Settings_PostPanel };
 		}
 		
