@@ -181,6 +181,9 @@ abstract class Upfront_MacroCodec {
 		if (empty($content)) return $content;
 		if (empty($tag)) return $content;
 
+		// At this point, `$value` must *not* contain back-references
+		$value = preg_replace('/\$/', '\\\$', $value); // Fixes: https://app.asana.com/0/11140166463836/79939381554738
+
 		$macro = $this->get_regex($tag);
 		if (empty($value)) {
 			$value = '$2'; // Use fallback in replacement if value is empty
