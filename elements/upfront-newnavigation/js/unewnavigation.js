@@ -79,6 +79,13 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		this.processFloatStatus();
 	},
 
+	on_after_layout_render: function () {
+		var me = this;
+		setTimeout(function(){
+			me.processFloatStatus();
+		}, 2000);
+	},
+
 	get_preset_properties: function() {
 		var preset = this.model.get_property_value_by_name("preset"),
 			props = PresetUtil.getPresetProperties('nav', preset) || {};
@@ -106,10 +113,12 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	processFloatStatus: function() {
 		if (this.floating_cache) this.floating_cache.destroy();
 		$upfrontObjectContent = this.$el.find('.upfront-object-content');
-		var isFloating = $upfrontObjectContent.data('isfloating');
+		var isFloating = $upfrontObjectContent.attr('data-isfloating'),
+			usingNewAppearance = this.property('usingNewAppearance')
+		;
 
 		if(isFloating && isFloating == 'yes') {
-			if (this.property('preset') && this.property('preset') !== 'default') {
+			if (usingNewAppearance) {
 				if (this.get_preset_properties().breakpoint[Upfront.Views.breakpoints_storage.get_breakpoints().get_active().id].menu_style === 'burger') {
 					this.floating_cache = new  NavigationFloating($upfrontObjectContent.children('.responsive_nav_toggler'));
 				} else {
@@ -596,9 +605,10 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			sidebar_width = $('div#sidebar-ui').outerWidth(),
 			topbar_height = ( $('div#upfront-ui-topbar').length > 0 ? $('div#upfront-ui-topbar').outerHeight() : 0 ),
 			ruler_height = ( $('.upfront-ruler-container').length > 0 ? $('.upfront-ruler-container').outerHeight() : 0 ),
+			usingNewAppearance = this.property('usingNewAppearance'),
 			allBreakpoints = Upfront.Views.breakpoints_storage.get_breakpoints(),
 			currentBreakpoint = allBreakpoints.get_active(),
-			breakpoints = this.get_preset_properties().breakpoint || this.fallbackBreakpointData(),
+			breakpoints = usingNewAppearance ? this.get_preset_properties().breakpoint : this.fallbackBreakpointData(),
 			breakpoint = breakpoints[currentBreakpoint.id],
 			breakpointWidth = currentBreakpoint.get_property_value_by_name('width'),
 			currentwidth = typeof breakpointWidth !== 'undefined' && !currentBreakpoint.get('default') ? parseInt(breakpointWidth, 10) : $(window).width()
