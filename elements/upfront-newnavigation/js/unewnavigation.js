@@ -667,7 +667,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 			if (selector.hasClass('upfront-output-unewnavigation')) {
 				$('head').find('style#responsive_nav_sidebar_offset').remove();
-				
+
 				var responsive_css = 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"] ul.menu, div.upfront-navigation div[data-style="burger"][data-burger_alignment="whole"] ul.menu {left:'+parseInt(regions_off.left, 10)+'px;} ';
 				responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"] ul.menu, div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] ul.menu {right: inherit; width:'+((parseInt(currentwidth) < parseInt(win_width-sidebar_width))?parseInt(currentwidth):parseInt(win_width-sidebar_width)) +'px !important; } ';
 				responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="left"] ul.menu {left:'+parseInt(regions_off.left)+'px !important; right:inherit !important; width:'+(parseInt(30/100*regions_width)+40)+'px !important;} ';
@@ -738,7 +738,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	activate_responsive_nav: function(selector, bpwidth) {
 
 		// If there is preset setup use new rendering
-		
+
 		/**
 		 * Even the new Responsive Nav comes with 'default' presets
 		 * so, it should be allowed to use the new rendering technique
@@ -748,7 +748,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			this.renderResponsiveNavigation(selector);
 			return;
 		}
-		
+
 		this.fallbackToOldResponsiveNav(selector, bpwidth);
 	},
 
@@ -980,7 +980,9 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		setTimeout(function() {
 			me.clearPresetClass(me.$el);
 			me.$el.addClass(me.property('theme_style'));
-			me.$el.addClass(preset);
+			if (me.property('usingNewAppearance')) {
+				me.$el.addClass(preset);
+			}
 		}, 50);
 
 		//Work around for having the region container have a higher z-index if it contains the nav, so that the dropdowns, if overlapping to the following regions should not loose "hover" when the mouse travels down to the next region.

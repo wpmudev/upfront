@@ -1337,7 +1337,7 @@ define([
 			},
 			init_properties: function() {
 				var column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding;
-				
+
 				if(!this.model.get_property_value_by_name('padding_slider')) {
 					this.model.init_property('padding_slider', column_padding);
 				}
@@ -1356,7 +1356,7 @@ define([
 				;
 				// Force add upfront-object-view class as element object can override the view and left without this class
 				this.$el.addClass('upfront-object-view');
-				
+
 				//Make sure padding properties are initialized
 				this.init_properties();
 
@@ -1397,6 +1397,9 @@ define([
 				props.preset = props.preset || '';
 
 				model = _.extend(this.model.toJSON(), {"properties": props, "buttons": buttons, "content": content, "height": height, "extra_buttons": extra_buttons});
+
+        if (typeof model.properties.usingNewAppearance === 'undefined') model.properties.preset = '';
+
 				template = _.template(_Upfront_Templates["object"], model);
 
 				Upfront.Events.trigger("entity:object:before_render", this, this.model);
@@ -1634,10 +1637,10 @@ define([
 					$obj.addClass(theme_style.toLowerCase());
 					this._theme_style = theme_style;
 				}
-				
+
 				// Deal with the preset classes change on breakpoint change
 				this.model.decode_preset(breakpoint.id);
-				
+
 				this.update_position();
 				this.checkUiOffset();
 			},
@@ -1939,10 +1942,10 @@ define([
 			},
 			render_new_object: function() {
 				this.render_object();
-				
+
 				//Add usingNewAppearance property
-				this.model.get('objects').each(function(object) { 
-					object.set_property('usingNewAppearance', true); 
+				this.model.get('objects').each(function(object) {
+					object.set_property('usingNewAppearance', true);
 				})
 			},
 			disable_interaction: function (prevent_edit, prevent_button, resize, drag, lock) {
