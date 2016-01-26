@@ -211,6 +211,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			}, 100);
 		});
 		this. debouncedRender = _.debounce(this.render, 300);
+		this.debouncedRebindShuffle = _.debounce(this.rebindShuffleForDebouncing, 500);
 	},
 
 	onThumbChangeProportions: function(e) {
@@ -964,10 +965,14 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		}
 	},
 
-	rebindShuffle: function() {
+	rebindShuffleForDebouncing: function() {
 		if (!this.isSortingActive) {
 			Upfront.frontFunctions.galleryBindShuffle(this.$el.find('.ugallery_grid'), true);
 		}
+	},
+
+	rebindShuffle: function() {
+		this.debouncedRebindShuffle();
 	},
 
 	preventNavigation: function(e){
