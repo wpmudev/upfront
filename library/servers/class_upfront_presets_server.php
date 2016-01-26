@@ -167,22 +167,20 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 		do_action('upfront_save_' . $this->elementName . '_preset', $properties, $this->elementName);
 
-		if (!has_action('upfront_save_' . $this->elementName . '_preset')) {
-			$presets = $this->get_presets();
+		$presets = $this->get_presets();
 
-			$result = array();
+		$result = array();
 
-			foreach ($presets as $preset) {
-				if ($preset['id'] === $properties['id']) {
-					continue;
-				}
-				$result[] = $preset;
+		foreach ($presets as $preset) {
+			if ($preset['id'] === $properties['id']) {
+				continue;
 			}
-
-			$result[] = $properties;
-
-			$this->update_presets($result);
+			$result[] = $preset;
 		}
+
+		$result[] = $properties;
+
+		$this->update_presets($result);
 
 		$this->_out(new Upfront_JsonResponse_Success('Saved ' . $this->elementName . ' preset, yay.'));
 	}
