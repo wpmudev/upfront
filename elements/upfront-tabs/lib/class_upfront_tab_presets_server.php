@@ -55,6 +55,7 @@ class Upfront_Tab_Presets_Server extends Upfront_Presets_Server {
 				$preset_options['active-use-color'] = 'yes';
 				$preset_options['active-use-typography'] = 'yes';
 				$preset_options['hover-use-color'] = 'yes';
+				$preset_options['hover-use-typography'] = 'yes';
 				$preset_options['hover-use-transition'] = 'yes';
 				$preset_options['migrated'] = 1;
 				$count++;
