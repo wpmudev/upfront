@@ -350,7 +350,7 @@ define([
 				default_style = this.migrateDefaultStyle(default_style);
 				
 				//Prepend styles with preset
-				default_style = Upfront.Application.stylesAddSelectorMigration($.trim(default_style), '#page .' + presetName.toLowerCase());
+				default_style = Upfront.Application.stylesAddSelectorMigration($.trim(default_style), '#page .' + presetName.toLowerCase().replace(/ /g, '-'));
 			}
 
 			// We need to initialize cssEditor to get element styles
@@ -363,14 +363,14 @@ define([
 			var style = $.trim(Upfront.Application.cssEditor.get_style_element().html().replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
 			
 			//Apply style only for the current preset
-			style = style.replace(new RegExp(elementStyleName, 'g'), presetName.toLowerCase());
+			style = style.replace(new RegExp(elementStyleName, 'g'), presetName.toLowerCase().replace(/ /g, '-'));
 			
 			if(elementStyleName !== '_default') {
 				style = default_style + style;
 			} else {
 				//Normalize styles
 				style = this.migrateDefaultStyle(style);
-				style = Upfront.Application.stylesAddSelectorMigration($.trim(style), '#page .' + presetName.toLowerCase());
+				style = Upfront.Application.stylesAddSelectorMigration($.trim(style), '#page .' + presetName.toLowerCase().replace(/ /g, '-'));
 			}
 			
 			//Migrate element styles
