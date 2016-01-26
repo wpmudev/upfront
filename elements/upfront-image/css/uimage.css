@@ -1188,7 +1188,7 @@ div.uimage-controls i.upfront-icon:before,
 	bottom: auto;
 	position: relative;
 	padding: 0;
-	margin: none;
+	margin: 0;
 }
 
 .uimage-fill_bottom .redactor_box,
