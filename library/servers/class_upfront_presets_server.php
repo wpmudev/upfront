@@ -221,6 +221,8 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 				$preset['preset_style'] = str_replace("\'", "'", $preset['preset_style']);
 				$preset['preset_style'] = str_replace("\'", "'", $preset['preset_style']);
 				$preset['preset_style'] = str_replace("\'", "'", $preset['preset_style']);
+				
+				$preset['preset_style'] = str_replace('#page', 'div#page .upfront-output-region-container .upfront-output-module', $preset['preset_style']);
 			}
 
 			$args = array('properties' => $preset);
