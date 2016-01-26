@@ -6,7 +6,7 @@ class Upfront_UcommentView extends Upfront_Object {
 		$element_id = $this->_get_property('element_id');
 		$element_id = $element_id ? "id='{$element_id}'" : '';
 
-		return "<div class=' upfront-comment-wrapper' {$element_id}>" .
+		return "<div class=' upfront-comment-wrapper'>" .
 			self::get_comment_markup(get_the_ID()) .
 		"</div>";
 	}
