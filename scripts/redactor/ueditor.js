@@ -913,7 +913,8 @@ Ueditor.prototype = {
 			UeditorEvents.trigger('ueditor:stop', this.redactor);
 			this.$el.trigger('stop');
 			this.restoreDraggable();
-			this.redactor.core.destroy();
+            if( this.redactor.$toolbar )
+			    this.redactor.core.destroy();
             this.$air.remove();
             this.$el.removeClass('ueditable');
             this.redactor = false;
