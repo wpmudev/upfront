@@ -743,8 +743,11 @@ var LayoutEditor = {
 		var me = {};
 		var textFontsManager = new Upfront.Views.Editor.Fonts.Text_Fonts_Manager({ collection: Upfront.Views.Editor.Fonts.theme_fonts_collection });
 		textFontsManager.render();
-		var iconFontsManager = new Upfront.Views.Editor.Fonts.Icon_Fonts_Manager({ collection: Upfront.Views.Editor.Fonts.icon_fonts_collection });
-		iconFontsManager.render();
+		// Only enable font icon manager on builder for now
+		if (Upfront.Application.mode.current === Upfront.Application.MODE.THEME) {
+			var iconFontsManager = new Upfront.Views.Editor.Fonts.Icon_Fonts_Manager({collection: Upfront.Views.Editor.Fonts.icon_fonts_collection});
+			iconFontsManager.render();
+		}
 
 		var popup = Upfront.Popup.open(
 			function (data, $top, $bottom) {
@@ -767,7 +770,7 @@ var LayoutEditor = {
 		me.$popup.top.html(
 			'<ul class="upfront-tabs">' +
 				'<li id="theme-text-fonts-tab" class="active">' + Upfront.Settings.l10n.global.behaviors.theme_text_fonts + '</li>' +
-				'<li id="theme-icon-fonts-tab">' + Upfront.Settings.l10n.global.behaviors.theme_icon_fonts + '</li>' +
+				(Upfront.Application.mode.current === Upfront.Application.MODE.THEME ? '<li id="theme-icon-fonts-tab">' + Upfront.Settings.l10n.global.behaviors.theme_icon_fonts + '</li>' : '') +
 			'</ul>' +
 			me.$popup.top.html()
 		);
