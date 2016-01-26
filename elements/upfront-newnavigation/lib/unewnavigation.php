@@ -49,6 +49,11 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 		$menu_alignment = $this->_get_property('menu_alignment');
 
 		$desktopPreset = (is_array($breakpoint_data['preset']) && isset($breakpoint_data['preset']['desktop']))?$breakpoint_data['preset']['desktop']:false;
+		
+		$sub_navigation = $this->_get_property('allow_sub_nav');
+		$is_floating = $this->_get_property('is_floating');
+		
+		$breakpoint_data['preset']['desktop']['is_floating'] = $is_floating ? $is_floating : '';
 
 		if ($this->_get_property('usingNewAppearance') == true) {
 			$menu_style = isset($desktopPreset['menu_style']) && is_array($desktopPreset['menu_style']) ? $desktopPreset['menu_style'] :  $menu_style;
@@ -61,12 +66,8 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 				$breakpoint_data['preset']['desktop']['menu_alignment'] = $menu_alignment;
 				$breakpoint_data['preset']['desktop']['burger_alignment'] = $this->_get_property('burger_alignment');
 				$breakpoint_data['preset']['desktop']['burger_over'] = $this->_get_property('burger_over');
-				$breakpoint_data['preset']['desktop']['is_floating'] = $this->_get_property('is_floating');
 			}
 		}
-
-		$sub_navigation = $this->_get_property('allow_sub_nav');
-		$is_floating = $this->_get_property('is_floating');
 
 		$menu_style = $menu_style === 'burger' ? 'burger' : $menu_style;
 
@@ -86,6 +87,11 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 		$float_class = $is_floating ? 'upfront-navigation-float' : '';
 
 		upfront_add_element_script('unewnavigation_responsive', array('js/responsive.js', dirname(__FILE__)));
+		
+		if ($is_floating) {
+			//wp_enqueue_script('unewnavigation', upfront_element_url('js/public.js', dirname(__FILE__)));
+			upfront_add_element_script('unewnavigation', array('js/public.js', dirname(__FILE__)));
+		}
 
 		if($menu_slug) {
 			$menu = wp_get_nav_menu_object($menu_slug);
