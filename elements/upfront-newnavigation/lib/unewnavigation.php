@@ -24,7 +24,23 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 
 		$preset_props = Upfront_Nav_Presets_Server::get_instance()->get_preset_properties($preset);
 		$breakpoint_data = $this->_get_property('breakpoint');
-		$breakpoint_data['preset'] = isset($preset_props['breakpoint'])?$preset_props['breakpoint']:false;
+		
+		if ($this->_get_property('usingNewAppearance') == true) {
+			$breakpoint_data['preset'] = isset($preset_props['breakpoint'])?$preset_props['breakpoint']:false;
+		} else {
+			foreach($this->_get_property('breakpoint') as $key=>$properties){
+				$breakpoint_data['preset'][$key] = $properties;
+
+				if(isset( $properties['burger_menu'] ) && isset( $properties['burger_menu'][0] )) {
+					$breakpoint_data['preset'][$key]['burger_menu'] = $properties['burger_menu'][0];
+					$breakpoint_data['preset'][$key]['menu_style'] = "burger";
+					$breakpoint_data['preset'][$key]['menu_alignment'] = $properties['menu_alignment'];
+					$breakpoint_data['preset'][$key]['burger_alignment'] = $properties['burger_alignment'];
+					$breakpoint_data['preset'][$key]['burger_over'] = $properties['burger_over'];
+				}
+			}
+			
+		}
 
 		// if a breakpoint does not have info to render menu style, copy it from one higher
 		if(is_array($breakpoint_data['preset'])) {
