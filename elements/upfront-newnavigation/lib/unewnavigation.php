@@ -53,6 +53,16 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 		if ($this->_get_property('usingNewAppearance') == true) {
 			$menu_style = isset($desktopPreset['menu_style']) && is_array($desktopPreset['menu_style']) ? $desktopPreset['menu_style'] :  $menu_style;
 			$menu_alignment = isset($desktopPreset['menu_alignment']) ? $desktopPreset['menu_alignment'] : $menu_alignment;
+		} else {
+			$burgermenu_desktop =  $this->_get_property('burger_menu');
+			if(is_array( $burgermenu_desktop ) && isset( $burgermenu_desktop[0] )) {
+				$breakpoint_data['preset']['desktop']['burger_menu'] = $burgermenu_desktop[0];
+				$breakpoint_data['preset']['desktop']['menu_style'] = "burger";
+				$breakpoint_data['preset']['desktop']['menu_alignment'] = $menu_alignment;
+				$breakpoint_data['preset']['desktop']['burger_alignment'] = $this->_get_property('burger_alignment');
+				$breakpoint_data['preset']['desktop']['burger_over'] = $this->_get_property('burger_over');
+				$breakpoint_data['preset']['desktop']['is_floating'] = $this->_get_property('is_floating');
+			}
 		}
 
 		$sub_navigation = $this->_get_property('allow_sub_nav');
