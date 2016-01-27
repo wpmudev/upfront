@@ -72,7 +72,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		add_filter('upfront_get_widget_presets', array($this, 'getWidgetPresets'), 10, 2);
 		add_filter('upfront_get_posts_presets', array($this, 'getPostsPresets'), 10, 2);
 		add_filter('upfront_get_thispost_presets', array($this, 'getPostPresets'), 10, 2);
-		add_filter('upfront_get_comment_presets', array($this, 'getCommentPresets'), 10, 2);
+		add_filter('upfront_get_ucomment_presets', array($this, 'getCommentPresets'), 10, 2);
 		add_filter('upfront_get_theme_styles', array($this, 'getThemeStyles'));
 		add_filter('upfront_get_global_regions', array($this, 'getGlobalRegions'));
 		add_filter('upfront_get_responsive_settings', array($this, 'getResponsiveSettings'));
@@ -677,7 +677,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		return json_decode($presets, $as_array);
 	}
-	
+
 	public function getCommentPresets($presets, $args) {
 		if (empty($presets) === false) return $presets;
 
