@@ -27,7 +27,7 @@ var PostsSettings = ElementSettings.extend({
 					return styles;
 			},
 			
-			migrateElementStyle: function(styles) {
+			migrateElementStyle: function(styles, selector) {
 				//replace posts container which is one line with preset
 				styles = styles.replace(/\.uposts-object/, '');
 				

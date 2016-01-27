@@ -94,7 +94,7 @@ define([
 					]
 				},
 				
-				migrateElementStyle: function(styles) {
+				migrateElementStyle: function(styles, selector) {
 					//replace container class
 					styles = styles.replace(/\.upfront-plain_txt/, ' .plain-text-container');
 					

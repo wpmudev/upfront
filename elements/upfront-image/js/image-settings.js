@@ -93,7 +93,7 @@ define([
 					]
 				},
 				
-				migrateElementStyle: function(styles) {
+				migrateElementStyle: function(styles, selector) {
 					//replace image wrapper class
 					styles = styles.replace(/\.upfront-image/, '.upfront-image-wrapper');
 					styles = styles.replace(/\.upfront-image-wrapper-container/, '.upfront-image-container');

@@ -162,7 +162,7 @@ define([
 		 Migrate theme_style classes
 		 */
 
-		migrateElementStyle: function(styles) {
+		migrateElementStyle: function(styles, selector) {
 			return styles;
 		},
 		
@@ -346,6 +346,9 @@ define([
 				//Get _default styles
 				default_style = $.trim(Upfront.Application.cssEditor.get_style_element().html().replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
 				
+				//Make sure we remove #page from default classes
+				default_style = default_style.replace(/#page/g, '');
+				
 				//Normalize styles
 				default_style = this.migrateDefaultStyle(default_style);
 				
@@ -374,7 +377,7 @@ define([
 			}
 			
 			//Migrate element styles
-			style = this.migrateElementStyle(style);
+			style = this.migrateElementStyle(style, '#page .' + presetName.toLowerCase().replace(/ /g, '-'));
 			
 			newPreset = new Backbone.Model(this.getPresetDefaultsMigration(presetName));
 
