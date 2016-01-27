@@ -3248,33 +3248,26 @@ define([
 		},
 		handle_next: function(e) {
 			var pagination = this.collection.pagination,
-				nextPage = pagination.currentPage == pagination.pages - 1 ? false : pagination.currentPage + 1;
+				nextPage = pagination.currentPage == pagination.pages - 1 ? false : pagination.currentPage + 1
+			;
 
-			if(nextPage)
-				this.handle_pagination_request(e, nextPage);
+			if (nextPage) this.handle_pagination_request(e, nextPage);
 		},
 		handle_prev: function(e) {
 			var pagination = this.collection.pagination,
-				prevPage = pagination.currentPage == 0 ? false : pagination.currentPage - 1;
+				prevPage = false
+			;
 
-			if(prevPage !== false)
-				this.handle_pagination_request(e, prevPage);
+			if (prevPage !== false) this.handle_pagination_request(e, prevPage);
 		},
 		set_page: function (e) {
 			e.preventDefault();
 			e.stopPropagation();
-			/*
-			var me = this;
-			this.collection.fetchPage($(e.target).data("idx")-1).
-				done(function(response){
-					me.collection.trigger('reset');
-				});
-			*/
+
 			var page = this.collection.pagination.pages - 1;
 			this.handle_pagination_request(e, page);
 		},
 		set_page_keypress: function (e) {
-			//var me = this;
 			e.stopPropagation();
 			if (13 !== e.which) return true;
 
@@ -3283,12 +3276,7 @@ define([
 			;
 			if (!num || num < 1) return false;
 			if (num > this.collection.pagination.pages) num = this.collection.pagination.pages;
-/*
-			this.collection.fetchPage(num-1).
-				done(function(response){
-					me.collection.trigger('reset');
-				});
-*/
+
 			this.handle_pagination_request(e, num-1);
 		}
 	});
@@ -3300,7 +3288,6 @@ define([
 		paginationTpl: _.template($(_Upfront_Templates.popup).find('#upfront-pagination-tpl').html()),
 		events: {
 			"click #upfront-list-meta .upfront-list_item-component": "handle_sort_request",
-			//"click .editaction.edit": "handle_post_edit",
 			"click .editaction.view": "handle_post_view",
 			"click #upfront-list-page-path a.upfront-path-back": "handle_return_to_posts",
 			"click .editaction.trash": "trash_post",
@@ -3316,7 +3303,6 @@ define([
 					order: this.collection.order
 				})
 			);
-			//this.mark_sort_order();
 		},
 
 		handle_sort_request: function (e) {
@@ -3329,17 +3315,7 @@ define([
 				this.collection.reSort(sortby, order);
 			}
 		},
-/*
-		handle_post_reveal: function (e) {
-			var me = this,
-				postId = $(e.currentTarget).closest('.upfront-list_item-post').attr('data-post_id');
 
-			e.preventDefault();
-
-			me.$('#upfront-list').after(me.postSingleTpl({post: me.collection.get(postId)}));
-			me.expand_post(me.collection.get(postId));
-		},
-*/
 		/*handle_post_edit: function (e) {
 			e.preventDefault();
 			var postId = $(e.currentTarget).closest('.upfront-list_item-post').attr('data-post_id');
