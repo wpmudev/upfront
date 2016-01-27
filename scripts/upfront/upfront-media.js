@@ -209,7 +209,7 @@ define([
 			this.max_items = max || 1;
 		},
 		prev_page: function () {
-			if (this.current_page > 1) return this.set_page(this.current_page-1);
+			return false;
 		},
 		next_page: function () {
 			if (this.current_page < this.max_pages) return this.set_page(this.current_page+1);
