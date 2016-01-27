@@ -609,7 +609,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			allBreakpoints = Upfront.Views.breakpoints_storage.get_breakpoints(),
 			currentBreakpoint = allBreakpoints.get_active(),
 			breakpoints = usingNewAppearance ? this.get_preset_properties().breakpoint : this.fallbackBreakpointData(),
-			breakpoint = breakpoints[currentBreakpoint.id],
+			breakpoint = (breakpoints || {})[currentBreakpoint.id] || {},
 			breakpointWidth = currentBreakpoint.get_property_value_by_name('width'),
 			currentwidth = typeof breakpointWidth !== 'undefined' && !currentBreakpoint.get('default') ? parseInt(breakpointWidth, 10) : $(window).width()
 		;
@@ -1002,13 +1002,13 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		if (!breakpoint || breakpoint.default) {
 			if (
-				presetProperties.breakpoint.desktop.menu_style === 'burger'&&
-				presetProperties.breakpoint.desktop.burger_over !== 'pushes' &&
-				presetProperties.breakpoint.desktop.burger_alignment !== 'whole'
+				((presetProperties.breakpoint || {}).desktop || {}).menu_style === 'burger'&&
+				((presetProperties.breakpoint || {}).desktop || {}).burger_over !== 'pushes' &&
+				((presetProperties.breakpoint || {}).desktop || {}).burger_alignment !== 'whole'
 			) {
 				this.$el.find('.upfront-object-content').append($('<div class="burger_overlay"></div>'));
 			}
-			if (presetProperties.breakpoint.desktop.menu_style === 'burger') {
+			if (((presetProperties.breakpoint || {}).desktop || {}).menu_style === 'burger') {
 				container.prepend($('<div>').addClass("responsive_nav_toggler").data('view', me).append('<div></div><div></div><div></div>'));
 				me.hideMenu(this.$el.find('ul.menu'));
 			}
