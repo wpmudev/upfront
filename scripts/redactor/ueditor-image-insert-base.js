@@ -1,10 +1,11 @@
 ;(function($){
     define([
             "scripts/redactor/ueditor-insert",
+            "scripts/redactor/ueditor-inserts",
             'text!scripts/redactor/ueditor-templates.html',
             "scripts/redactor/ueditor-insert-utils"
         ],
-        function(Insert, tpls, utils){
+        function(Insert, Inserts, tpls, utils){
             var l10n = Upfront.Settings && Upfront.Settings.l10n
                     ? Upfront.Settings.l10n.global.ueditor
                     : Upfront.mainData.l10n.global.ueditor
@@ -12,13 +13,12 @@
             var ImageInsertBase = Insert.UeditorInsert.extend({
                 $editor: false,
                 caption_active: false,
-                type: 'image',
                 className: 'ueditor-insert upfront-inserted_image-wrapper',
                 tpl: _.template($(tpls).find('#image-insert-tpl').html()),
                 resizable: false,
                 defaultData: {
                     insert_type: "image_insert",
-                    caption: "Default caption",
+                    caption: "<p>Default caption</p>",
                     show_caption: 1,
                     imageFull: {src:'', width:100, height: 100},
                     imageThumb: {src:'', width:100, height: 100},
@@ -65,7 +65,7 @@
                 wp_defaults: {
                     insert_type: "wp_default",
                     attachment_id: "",
-                    caption: "Default caption",
+                    caption: "<p>Default caption</p>",
                     link_url: "",
                     image: {
                         src: "",
@@ -89,6 +89,29 @@
                 events:{
                     "click .ueditor-insert-remove": "click_remove",
                     "dragstart img": "on_image_dragstart"
+                },
+                /**
+                 * Checks if current insert is post image insert
+                 * @returns {boolean}
+                 */
+                is_post_image_insert: function(){
+                    return !this.is_image_insert();
+                },
+                /**
+                 * Checks if current insert is simple image insert
+                 */
+                is_image_insert: function(){
+                    return this.$editor.find(".plain-text-container").length;
+                },
+                /**
+                 * Returns type of current image insert
+                 * @returns {*}
+                 */
+                get_type: function(){
+                    if( this.$editor && this.$editor.data("ueditor") )
+                        return  _.contains( this.$editor.data("ueditor").options.inserts, "image" ) ? Inserts.NAMES.IMAGE : Inserts.NAMES.POSTIMAGE;
+                    else
+                        return false;
                 },
                 get_caption_state: function(){
                     if( this.data.get("show_caption")){
@@ -116,7 +139,7 @@
                         ;
 
                     if (!data) return false;
-                    if( !data.caption || !data.caption.show || this.$('.wp-caption-text').length === 0) return;
+                    if( !data.caption || !this.data.get("show_caption") || this.$('.wp-caption-text').length === 0) return;
 
 
                     //.attr('contenteditable', true)
@@ -152,6 +175,8 @@
                     this.caption_ueditor.redactor.events.on("ueditor:change", function(e){
                         self.data.set('caption', self.caption_ueditor.$el.html(), {silent: true});
                         self.data.trigger('update');
+                        if( self.render_shortcode )
+                            self.render_shortcode( self.get_data_json() );
                     });
 
                     this.caption_ueditor.redactor.events.on('ueditor:focus', function(redactor){
@@ -220,8 +245,9 @@
                      */
                     self.$el.on("hover, click", function(e){
                         e.stopPropagation();
+                        var $ed = self.$editor.is(".redactor-editor") ? self.$editor :self.$editor.find('.upfront-object-content'); // select the correct editor
                         $caption.attr("contenteditable", true);
-                        self.$editor.attr("contenteditable", false);
+                        $ed.attr("contenteditable", false);
                         self.caption_active = true;
                     });
 
@@ -230,8 +256,9 @@
                      * Manage editability on $editor events
                      */
                     this.$editor.on("mouseenter, click", function(e){
+                        var $ed = $(this).is(".redactor-editor") ? $(this) :$(this).find('.upfront-object-content'); // select the correct editor
                         $caption.attr("contenteditable", false);
-                        $(this).attr("contenteditable", true);
+                        $ed.attr("contenteditable", true);
                         self.caption_active = false;
                     });
 
@@ -273,6 +300,7 @@
                             new_state = 0;
 
                         this.data.set("show_caption", new_state);
+
                     });
 
                     this.listenTo(this.controls, 'control:click:change_image', this.change_image);
@@ -440,17 +468,20 @@
                     var me = this,
                         _inserts = {},
                         inserts_from_shortcode = {}// inserts created from caption shortcode
+                        remaining_images = contentElement.find('img');
                         ;
 
                     if( !contentElement.is(".wp-caption-text") ) this.$editor = contentElement;
 
-                    if( me.importFromShortcode ){
+                    if( me.importFromShortcode && this.is_post_image_insert() ){
                         inserts_from_shortcode = me.importFromShortcode(contentElement, insertsData, inserts);
                     }
 
-                    var remaining_images =  contentElement.find('img').filter( function() {
-                        return !$(this).closest(".ueditor-insert").length;
-                    } );
+                    if( this.is_post_image_insert() ){
+                        remaining_images =  contentElement.find('img').filter( function() {
+                            return !$(this).closest(".ueditor-insert").length;
+                        } );
+                    }
 
                     _.each(remaining_images, function( img ){
                         var insert = false;
@@ -538,6 +569,7 @@
                     return imageData;
                 },
                 render_shortcode: function(data){
+                    if( this.$editor.data("ueditor") && !this.$editor.data("ueditor").options.inserts.length ) return; // if "inserts" array is empty or not defined there is no need to render shortcode!
                     data = data instanceof Backbone.Model ? data.toJSON() : data;
 
                     var html = this.shortcode_tpl(data);

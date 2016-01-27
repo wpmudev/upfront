@@ -1,99 +1,279 @@
 define([
-	'scripts/upfront/preset-settings/preset-manager',
+	'scripts/upfront/element-settings/settings',
 	'scripts/upfront/preset-settings/util',
 	'text!elements/upfront-button/tpl/preset-style.html',
-	'elements/upfront-button/js/settings-fields-static',
-	'elements/upfront-button/js/settings-fields-hover',
-], function(PresetManager, Util, styleTpl, ButtonSettingsStatic, ButtonSettingsHover) {
+], function(ElementSettings, Util, styleTpl) {
 	var l10n = Upfront.Settings.l10n.button_element;
-	
-	var me = this;
 
-	//Create new field type Separator
-	var FieldSeparator = Upfront.Views.Editor.Field.Text.extend({
-	  get_field_html: function () {
-		return '';
-	  }
-	});
+	var ButtonSettings = ElementSettings.extend({
+		panels: {
+			Appearance: {
+				mainDataCollection: 'buttonPresets',
+				styleElementPrefix: 'button-preset',
+				ajaxActionSlug: 'button',
+				panelTitle: l10n.settings,
+				styleTpl: styleTpl,
+				presetDefaults: Upfront.mainData.presetDefaults.button,
+				stateModules: {
+					Static: [
+						{
+							moduleType: 'Colors',
+							options: {
+								title: l10n.settings.colors_label,
+								multiple: false,
+								single: true,
+								abccolors: [
+									{
+										name: 'bgcolor',
+										label: l10n.settings.button_bg_label
+									},
+								],
+								fields: {
+									use: 'usebgcolor'
+								}
+							}
+						},
+						{
+							moduleType: 'Typography',
+							options: {
+								state: 'static',
+								title: l10n.settings.typography_label,
+								fields: {
+									typeface: 'fontface',
+									fontstyle: 'fontstyle',
+									weight: 'fontstyle_weight',
+									style: 'fontstyle_style',
+									size: 'fontsize',
+									line_height: 'lineheight',
+									color: 'color',
+								}
+							}
+						},
+						{
+							moduleType: 'Radius',
+							options: {
+								state: 'static',
+								max_value: 100,
+								fields: {
+									use: 'useradius',
+									lock: 'borderradiuslock',
+									radius: 'radius',
+									radius_number: 'radius_number',
+									radius1: 'borderradius1',
+									radius2: 'borderradius2',
+									radius3: 'borderradius3',
+									radius4: 'borderradius4'
+								}
+							}
+						},
+						{
+							moduleType: 'Border',
+							options: {
+								state: 'static',
+								fields: {
+									use: 'useborder',
+									width: 'borderwidth',
+									type: 'bordertype',
+									color: 'bordercolor',
+								}
+							}
+						}
+					],
+					Hover: [
+						{
+							moduleType: 'Colors',
+							options: {
+								state: 'hover',
+								title: l10n.settings.colors_label,
+								multiple: false,
+								toggle: true,
+								single: true,
+								prepend: 'hov_',
+								abccolors: [
+									{
+										name: 'hov_bgcolor',
+										label: l10n.settings.button_bg_label
+									},
+								],
+								fields: {
+									use: 'hov_usebgcolor'
+								}
+							}
+						},
+						{
+							moduleType: 'Typography',
+							options: {
+								state: 'hover',
+								title: l10n.settings.typography_label,
+								toggle: true,
+								prepend: 'hov_',
+								fields: {
+									typeface: 'hov_fontface',
+									fontstyle: 'hov_fontstyle',
+									weight: 'hov_fontstyle_weight',
+									style: 'hov_fontstyle_style',
+									size: 'hov_fontsize',
+									line_height: 'hov_lineheight',
+									color: 'hov_color',
+									use: 'hov_usetypography'
+								}
+							}
+						},
+						{
+							moduleType: 'Radius',
+							options: {
+								state: 'hover',
+								max_value: 100,
+								prepend: 'hov_',
+								fields: {
+									use: 'hov_useradius',
+									lock: 'hov_borderradiuslock',
+									radius: 'hov_radius',
+									radius_number: 'hov_radius_number',
+									radius1: 'hov_borderradius1',
+									radius2: 'hov_borderradius2',
+									radius3: 'hov_borderradius3',
+									radius4: 'hov_borderradius4'
+								}
+							}
+						},
+						{
+							moduleType: 'Border',
+							options: {
+								state: 'hover',
+								prepend: 'hov_',
+								fields: {
+									use: 'hov_useborder',
+									width: 'hov_borderwidth',
+									type: 'hov_bordertype',
+									color: 'hov_bordercolor',
+								}
+							}
+						},
+						{
+							moduleType: 'HovAnimation',
+							options: {
+								state: 'hover',
+								title: '',
+								toggle: true,
+								fields: {
+									use: 'hov_use_animation',
+									duration: 'hov_duration',
+									easing: 'hov_transition',
+								}
+							}
+						}
+					],
+					Focus: [
+						{
+							moduleType: 'Colors',
+							options: {
+								state: 'focus',
+								title: l10n.settings.colors_label,
+								multiple: false,
+								toggle: true,
+								single: true,
+								prepend: 'focus_',
+								abccolors: [
+									{
+										name: 'focus_bgcolor',
+										label: l10n.settings.button_bg_label
+									},
+								],
+								fields: {
+									use: 'focus_usebgcolor'
+								}
+							}
+						},
+						{
+							moduleType: 'Typography',
+							options: {
+								state: 'focus',
+								title: l10n.settings.typography_label,
+								toggle: true,
+								prepend: 'focus_',
+								fields: {
+									typeface: 'focus_fontface',
+									fontstyle: 'focus_fontstyle',
+									weight: 'focus_fontstyle_weight',
+									style: 'focus_fontstyle_style',
+									size: 'focus_fontsize',
+									line_height: 'focus_lineheight',
+									color: 'focus_color',
+									use: 'focus_usetypography'
+								}
+							}
+						},
+						{
+							moduleType: 'Radius',
+							options: {
+								state: 'focus',
+								max_value: 100,
+								prepend: 'focus_',
+								fields: {
+									use: 'focus_useradius',
+									lock: 'focus_borderradiuslock',
+									radius: 'focus_radius',
+									radius_number: 'focus_radius_number',
+									radius1: 'focus_borderradius1',
+									radius2: 'focus_borderradius2',
+									radius3: 'focus_borderradius3',
+									radius4: 'focus_borderradius4'
+								}
+							}
+						},
+						{
+							moduleType: 'Border',
+							options: {
+								state: 'focus',
+								prepend: 'focus_',
+								fields: {
+									use: 'focus_useborder',
+									width: 'focus_borderwidth',
+									type: 'focus_bordertype',
+									color: 'focus_bordercolor',
+								}
+							}
+						}
+					]
+				},
+				
+				migrateDefaultStyle: function(styles) {
+					//replace image wrapper class
+					styles = styles.replace(/(div)?\.upfront-button\s/g, '');
+					styles = styles.replace(/(div)?\.upfront-object\s/g, '');
+					styles = styles.replace(/\a.upfront_cta/, '.upfront_cta');
 
-	//Create new field type Heading
-	var FieldHeading = Upfront.Views.Editor.Field.Text.extend({
-	  get_field_html: function () {
-		return '';
-	  }
-	});
+					return styles;
+				},
 
-	var Settings = PresetManager.extend({
-		mainDataCollection: 'buttonPresets',
-		styleElementPrefix: 'button-preset',
-		ajaxActionSlug: 'button',
-		panelTitle: l10n.settings,
-		styleTpl: styleTpl,
-		presetDefaults: {
-			'useborder': 'yes',
-			'bordertype': 'solid',
-			'borderwidth': 2,
-			'bordercolor': 'rgb(0, 0, 0)',
-			'useradius': '',
-			'borderradiuslock': '',
-			'borderradius1': 0,
-			'borderradius2': 0,
-			'borderradius3': 0,
-			'borderradius4': 0,
-			'bgcolor': 'rgb(255, 255, 255)',
-			'fontsize': 14,
-			'fontface': 'Arial',
-			'fontstyle': '600 normal',
-			'fontstyle_weight': '600',
-			'fontstyle_style': 'normal',
-			'lineheight': 2,
-			'color': 'rgb(0, 0, 0)',
-			'hov_useborder': 'yes',
-			'hov_bordertype': 'solid',
-			'hov_borderwidth': 2,
-			'hov_bordercolor': 'rgb(0, 0, 0)',
-			'hov_borderradiuslock': '',
-			'hov_borderradius1': 0,
-			'hov_borderradius2': 0,
-			'hov_borderradius3': 0,
-			'hov_borderradius4': 0,
-			'hov_usetypography': 'yes',
-			'hov_usebgcolor': 'yes',
-			'hov_bgcolor': 'rgb(0, 0, 0)',
-			'hov_fontsize': 14,
-			'hov_fontface': 'Arial',
-			'hov_fontstyle': '600 normal',
-			'hov_fontstyle_weight': '600',
-			'hov_fontstyle_style': 'normal',
-			'hov_lineheight': 2,
-			'hov_color': 'rgb(255, 255, 255)',
-			'hov_duration': 0.25,
-			'hov_transition': 'linear',
-			'id': 'default',
-			'name': l10n.default_preset
+				migratePresetProperties: function(newPreset) {
+					
+					var preset = this.property('preset') ? this.clear_preset_name(this.property('preset')) : 'default',
+						props = this.presets.findWhere({id: preset}),
+						obj = {};
+
+					if(typeof props !== "undefined") {
+						_.each(props.attributes, function(preset_value, index) {
+							
+							if(index === 'id' || index === 'name' || index === 'preset_style' || index === 'legacy') {
+								return;
+							}
+							
+							obj[index] = preset_value;
+						});
+					}
+					
+					//Migrate properties from existing preset
+					newPreset.set(obj);
+				},
+			}
 		},
-		stateFields: {
-			Static: [
-				{
-					fieldClass: ButtonSettingsStatic,
-					options: {
-						state: 'static'
-					}
-				}
-			],
-			Hover: [
-				{
-					fieldClass: ButtonSettingsHover,
-					options: {
-						state: 'hover'
-					}
-				}
-			]
-		}
+		title: l10n.settings.label
 	});
-	
+
 	// Generate presets styles to page
 	Util.generatePresetsToPage('button', styleTpl);
 
-	return Settings;
+	return ButtonSettings;
 });

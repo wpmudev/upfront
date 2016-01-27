@@ -88,7 +88,7 @@
 }
 .uf-bgsettings-map-style .upfront-field-select,
 .uf-bgsettings-map-controls .upfront-field-select {
-  width: 100%;
+  width: 99%;
 }
 .uf-bgsettings-map-controls {
   width: 40%;
@@ -193,5 +193,51 @@
 
 .background-type-field .upfront-field-select, 
 .background-image-field .upfront-field-select {
-	max-width: 140px;
+  max-width: 140px;
+}
+
+/* Padding Settings */
+.upfront-region-bg-setting-padding {
+  background: none;
+  overflow: hidden;
+  position: relative;
+  padding: 16px 0;
+  top: 16px;
+  border-top: 1px solid #cce1f4;
+  clear: both;
+}
+.upfront-region-bg-setting-padding .upfront-field-select-single {
+  width: 215px;
+  display:inline-block;
+}
+.upfront-region-bg-setting-padding .upfront-settings-item-title span {
+  margin-top: 3px;
+  display: inline-block;
+}
+.upfront-region-bg-setting-padding .upfront-field-wrap-multiple:first-child {
+  margin-top: 0;
+}
+.upfront-region-bg-setting-padding .upfront-field-wrap-slider {
+  display: inline-block;
+  width: 63%;
+  margin: 0 5% 0 2%;
+  border-left: 2px solid #C2D5E6;
+  padding-left: 5%;
+  padding-top: 6px;
+  height: 30px;
+}
+.upfront-region-bg-setting-padding .upfront-field-wrap-number {
+  width: 30%;
+  display: inline-block;
+  padding-left: 5px;
+  margin: 0;
+  position: relative;
+  top: -10px;
+}
+.upfront-region-bg-setting-padding .upfront-field-wrap-number label {
+  margin: 0;
+}
+.upfront-region-bg-setting-padding .upfront-field-wrap-number .upfront-field-number {
+  width: 45px;
+  clear: both;
 }

@@ -13,7 +13,7 @@ class Upfront_ButtonView extends Upfront_Object {
 			"class" => "c24 upfront-button",
 			"has_settings" => 1,
 			"id_slug" => "ubutton",
-			'preset' => ''
+			"preset" => "default"
 		);
 	}
 
@@ -27,8 +27,11 @@ class Upfront_ButtonView extends Upfront_Object {
 			if(!isset($data['properties']))
 					return $flat;
 
-			foreach($data['properties'] as $prop)
-					$flat[$prop['name']] = $prop['value'];
+			foreach($data['properties'] as $prop) {
+				// Button throws some funny notice about missing value...
+				if (isset($prop['value']) === false) continue;
+				$flat[$prop['name']] = $prop['value'];
+			}
 
 			$flat = array_merge(self::default_properties(), $flat);
 
@@ -58,7 +61,7 @@ class Upfront_ButtonView extends Upfront_Object {
 
 		$markup = upfront_get_template('ubutton', $data, dirname(dirname(__FILE__)) . '/tpl/ubutton.html');
 
-		//upfront_add_element_script('ubutton_script', array('js/ubutton-front.js', dirname(__FILE__)));
+		upfront_add_element_script('ubutton_script', array('js/ubutton-front.js', dirname(__FILE__)));
 		return $markup;
 	}
 
@@ -92,34 +95,16 @@ class Upfront_ButtonView extends Upfront_Object {
 				'p_label' => __('Text paragragh', 'upfront'),
 				'p_info' => __('The paragragh that contains all the text of the element.', 'upfront'),
 			),
+			'edit_link' => __('Edit link', 'upfront'),
+			'visit_link' => __('Visit link', 'upfront'),
 			'dbl_click' => __('Click here', 'upfront'),
 			'appearance' => __('Textbox Appearance', 'upfront'),
-			'border' => __('Border', 'upfront'),
-			'none' => __('None', 'upfront'),
-			'solid' => __('Solid', 'upfront'),
-			'dashed' => __('Dashed', 'upfront'),
-			'dotted' => __('Dotted', 'upfront'),
-			'width' => __('Width', 'upfront'),
-			'color' => __('Color', 'upfront'),
-			'bg_color' => __('Background Color', 'upfront'),
-			'edit_text' => __('Edit Text', 'upfront'),
-			'default_preset' => __('Default', 'upfront'),
-			'border' => __('Border', 'upfront'),
-			'px' => __('px', 'upfront'),
-			'typeface' => __('Typeface:', 'upfront'),
-			'weight_style' => __('Weight/Style:', 'upfront'),
-			'size' => __('Size:', 'upfront'),
-			'line_height' => __('Line Height: ', 'upfront'),
-			'color' => __('Color:', 'upfront'),
-			'rounded_corners' => __('Rounded Corners', 'upfront'),
-			'typography' => __('Typography', 'upfront'),
-			'animate_hover_changes' => __('Animate Hover Changes:', 'upfront'),
-			'sec' => __('sec', 'upfront'),
-			'ease' => __('ease', 'upfront'),
-			'linear' => __('linear', 'upfront'),
-			'ease_in' => __('ease-in', 'upfront'),
-			'ease_out' => __('ease-out', 'upfront'),
-			'ease_in_out' => __('ease-in-out', 'upfront'),
+			'settings' => array(
+				'label' => __('Button settings', 'upfront'),
+				'colors_label' => __('Colors', 'upfront'),
+				'typography_label' => __('Typography', 'upfront'),
+				'button_bg_label' => __('Button Background', 'upfront'),
+			)
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)

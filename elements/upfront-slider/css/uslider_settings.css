@@ -45,15 +45,16 @@
 }
 
 .uslider_content_imgslide {
-	width:44%;
-	margin-left:5%;
+	width:31%;
+	margin-left:2%;
 	float:left;
-	height: 60px;
+	height: 49px;
 	margin-bottom: 10px;
 }
 
 .uslider_content_imgslide img{
 	width: 100%;
+	height: 45px;
 }
 
 .slide-selected {
@@ -75,12 +76,13 @@
 }
 
 .uslider-slides-setting .upfront-region-bg-slider-add-image {
-	width:44%;
-	margin-left:5%;
+	width:31%;
+	margin-left:2%;
+	margin-top: 2px;
 	float:left;
-	height: 60px;
+	height: 45px;
 	overflow: hidden;
-	padding-top: 10px;
+	padding-top: 5px;
 }
 
 .uslider-slides-setting .upfront-region-bg-slider-add-image:hover {
@@ -103,10 +105,10 @@
 }
 
 .upfront-ui .upfront-icon-region-right:before {
-	background-position: -699px -39px!important;
+	background-position: -699px -42px!important;
 }
 .upfront-ui .upfront-icon-region-right:hover:before {
-	background-position: -807px -39px!important;
+	background-position: -807px -42px!important;
 }
 .upfront-ui .upfront-icon-region-right-active:before {
 	background-position: -699px -39px!important;
@@ -116,10 +118,10 @@
 }
 
 .upfront-ui .upfront-icon-region-left:before {
-	background-position: -698px -807px!important;
+	background-position: -698px -810px!important;
 }
 .upfront-ui .upfront-icon-region-left:hover:before {
-	background-position: -806px -807px!important;
+	background-position: -806px -810px!important;
 }
 .upfront-ui .upfront-icon-region-left-active:before {
 	background-position: -698px -807px!important;
@@ -173,19 +175,6 @@ background-position: -699px -646px;
 	margin-bottom: 15px;
 }
 
-.uslider-starting-options  label {
-	font-family: verdana;
-	font-size: 11px;
-}
-
-.uslider-starting-options  .upfront-field-multiple{
-	margin: 0 5px;
-}
-
-.uslider-starting-centered {
-	margin: 15px;
-}
-
 .uslider-starting-centered .upfront-image-select{
 	font-size: 16px;
 	border-radius: 0;
@@ -205,4 +194,19 @@ background-position: -699px -646px;
 .uslides .uimage-controls .upfront-inline-panel-bottom-left {
 	bottom: 0;
 	left: 0;
+}
+.slide_style {
+	width: 215px;
+}
+.rotate, .rotate-time {
+	display: inline-block;
+}
+.rotate-effect, .slider-contrls-style {
+	width: 225px;
+	margin-top: 10px;
+}
+.upfront-ui .upfront-icon-region-add:before {
+	background-position: -261px -191px;
+	width: 18px;
+	height: 18px;
 }

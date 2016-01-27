@@ -1,19 +1,16 @@
-
-.upfront-accordion-container .accordion-panel-title {
+#page .upfront-accordion-wrap {
+	overflow-x: hidden;
+	overflow-y: hidden;
+}
+#page .upfront-accordion-container .accordion-panel {
 	position: relative;
+}
+#page .upfront-accordion-container .accordion-panel-title {
+	position: relative;
+}
+.upfront-accordion-container .accordion-panel-title {
 	padding: 7px 15px;
 }
-.upfront-accordion-container .accordion-panel {
-	position: relative;
-}
-.upfront-accordion-container .accordion-panel-title {
-	border-top: 2px #000 solid;
-}
-
-.upfront-accordion-wrap {
-	border-bottom: 2px #000 solid;
-}
-
 .upfront-accordion-container .accordion-panel-title:after,
 .upfront-accordion-container .accordion-panel-active .accordion-panel-title:after {
   border:5px solid transparent;
@@ -38,7 +35,7 @@
 	right: 22px;
 }
 
-.upfront-accordion-container .accordion-panel>i { /* Direct descendents only */
+#page .upfront-accordion-container .accordion-panel>i { /* Direct descendents only */
   display: block;
   width: 16px;
   height: 16px;
@@ -54,31 +51,31 @@
   z-index: 1;
 }
 
-.upfront-accordion_module .upfront-accordion-container .accordion-panel-active:hover i {
+#page .upfront-accordion_module .upfront-accordion-container .accordion-panel-active:hover i {
   visibility: visible;
 }
 
-.upfront-accordion-container .accordion-panel-content {
+#page .upfront-accordion-container .accordion-panel-content {
 	overflow: hidden;
 	padding: 7px 15px;
 }
 
 
-.upfront-accordion-container .upfront-entity_meta {
+#page .upfront-accordion-container .upfront-entity_meta {
 	top: 52px;
 	right: 5px;
 }
-.upfront-accordion-container {
+#page .upfront-accordion-container {
 	width: 100%;
 }
-.upfront-accordion-container .upfront-icon-button-accordion-add-panel:before {
+#page .upfront-accordion-container .upfront-icon-button-accordion-add-panel:before {
 background-position: -261px -132px;
 }
 .upfront-editable_entity:hover .upfront-entity_meta .upfront-icon-button-accordion-add-panel {
     opacity: 1;
 	visibility: visible;
 }
-.upfront-accordion-container .upfront-icon-button-accordion-add-panel
+#page .upfront-accordion-container .upfront-icon-button-accordion-add-panel
 {
 	box-shadow: inset 0 0 0 1px #e6ab2e;
 	background: #f2b530 -moz-linear-gradient(-45deg, rgba(255,190,51,1) 0%, rgba(255,190,51,1) 50%, rgba(0,0,0,0) 51%, rgba(0,0,0,0) 100%); /* FF3.6+ */

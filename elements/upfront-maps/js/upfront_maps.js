@@ -4,13 +4,15 @@
 // app setup maps will always we loaded before this script.
 define([
 	'maps_context_menu',
-	'scripts/upfront/inline-panels/map-editor',
-	'text!elements/upfront-maps/css/edit.css'
-], function (_ctx, MapEditorView, maps_style) {
+	'text!elements/upfront-maps/css/edit.css',
+	'scripts/upfront/element-settings/settings',
+	'scripts/upfront/element-settings/root-settings-panel',
+	'scripts/upfront/inline-panels/map-editor'
+], function (_ctx, maps_style, ElementSettings, RootSettingsPanel, MapEditorView) {
 
 	var DEFAULTS = {
 		OPTIMUM_MAP_HEIGHT: 300,
-		center: [10.722250, 106.730762],
+		center: [-37.8180, 144.9760],
 		zoom: 10,
 		style: 'ROADMAP',
 		use_custom_map_code: false,
@@ -64,7 +66,7 @@ define([
 	});
 
 	var Map_Fields_Simple_Location = Backbone.View.extend({
-		className: "upfront_map-fields-simple_location clearfix",
+		className: "upfront_map-fields-simple_location map_location clearfix",
 		events: {
 			keypress: "wait_for_enter"
 		},
@@ -139,6 +141,11 @@ define([
 
 		init: function () {
 			this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.refresh_map);
+		},
+
+		on_element_resize: function (attr) {
+			//Refresh Map size when resize finish
+			this.refresh_map();
 		},
 
 		on_render: function () {
@@ -223,8 +230,8 @@ define([
 			;
 			if (!$location.length) {
 				this.$el.append(
-					'<div id="upfront_map-location_overlay-wrapper">' +
-						'<div id="upfront_map-location_overlay" class="uf_el_map_initial-overlay">' +
+					'<div id="upfront_map-location_overlay-wrapper" class="upfront-initial-overlay-wrapper">' +
+						'<div id="upfront_map-location_overlay" class="uf_el_map_initial-overlay upfront-initial-overlay-wrapper">' +
 							'<p id="upfront_map-location_overlay-instruction">' + l10n.instructions + '</p>' +
 							'<div id="upfront_map-location_overlay-address" class="upfront-ui uf-address">' +
 								'<input type="text" id="upfront_map-location_overlay-location" placeholder="' + l10n.placeholder + '" />' +
@@ -269,20 +276,35 @@ define([
 						$(this).focus();
 					})
 				.end()
-				.find("#upfront_map-location_overlay-use_current").off("click").on("click", function () {
-					if (!(navigator && navigator.geolocation)) return false;
-					var markers = me.model.get_property_value_by_name("markers") || [];
-					navigator.geolocation.getCurrentPosition(function(position) {
-						markers.push({lat:position.coords.latitude, lng:position.coords.longitude});
-						me.model.set_property("markers", markers, true);
-						me.model.set_property("map_center", [position.coords.latitude, position.coords.longitude], false);
-					});
-				}).end()
 				.off("dblclick").on("dblclick", function (e) {
 					e.preventDefault();
 					e.stopPropagation();
 				})
 			;
+
+			var $current = $location.find("#upfront_map-location_overlay-use_current");
+			if (navigator && navigator.geolocation) {
+				$current.off("click").on("click", function () {
+					if (!(navigator && navigator.geolocation)) return false;
+					var markers = me.model.get_property_value_by_name("markers") || [];
+					navigator.geolocation.getCurrentPosition(
+						// Success!
+						function (position) {
+							markers.push({lat:position.coords.latitude, lng:position.coords.longitude});
+							me.model.set_property("markers", markers, true);
+							me.model.set_property("map_center", [position.coords.latitude, position.coords.longitude], false);
+						},
+						// Error, boo!
+						function () {
+							$current.closest(".uf-current-location").text(l10n.unable_to_geolocate);
+						}
+					);
+				});
+			} else {
+				// No geolocation, no link
+				$current.remove();
+			}
+
 			this.$el.find(".upfront-entity_meta").hide();
 		},
 
@@ -600,34 +622,17 @@ define([
 		}
 	});
 
-	var MapSettings = Upfront.Views.Editor.Settings.Settings.extend({
-		initialize: function (opts) {
-      this.has_tabs = false;
-			this.options = opts;
-			this.panels = _([
-				new MapSettings_Panel({model: this.model})
-			]);
-		},
-		get_title: function () {
-			return l10n.settings;
-		}
-	});
-
-	var MapSettings_Panel = Upfront.Views.Editor.Settings.Panel.extend({
+	var MapSettings_Panel = RootSettingsPanel.extend({
+		title: l10n.general_settings,
 		initialize: function (opts) {
 			this.options = opts;
 			this.settings = _([
 				new MapSettings_Field_Location({model: this.model}),
-				new MapSettings_Settings({model: this.model})
-				// new MapSettings_Field_Style({model: this.model}),
-				// new MapSettings_Field_Controls({model: this.model})
+				new MapSettings_Settings({model: this.model}),
+				new Upfront.Views.Editor.Settings.Settings_CSS({model: this.model }),
 			]);
 		},
-		render: function () {
-			Upfront.Views.Editor.Settings.Panel.prototype.render.call(this);
-			this.$el.addClass("ufpront-maps_element-settings_panel");
-			$('[name="use_custom_map_code"]', this.$el).trigger('change');
-		},
+
 		get_label: function () {
 			return l10n.label;
 		},
@@ -636,8 +641,15 @@ define([
 		}
 	});
 
+	var MapSettings = ElementSettings.extend({
+		panels: {
+			'Settings' : MapSettings_Panel
+		},
+		title: l10n.settings
+	});
+
 	var MapSettings_Field_Location = Upfront.Views.Editor.Settings.Item.extend({
-		className: "upfront-settings-item-maps_element-location",
+		className: "upfront-settings-item-maps_element-location general_settings_item",
 		initialize: function () {
 			this.fields = _([
 				new Map_Fields_Simple_Location({
@@ -656,6 +668,7 @@ define([
 		events: {
 			"click .open-map-code-panel-button": "init_code_panel"
 		},
+		className: "general_settings_item",
 		initialize: function () {
 			var zooms = [],
 				saved_zoom = this.model.get_property_value_by_name("zoom")
@@ -694,15 +707,17 @@ define([
 				new Upfront.Views.Editor.Field.Select({
 					model: this.model,
 					label: l10n.map_style,
+					className: 'map-style',
 					property: 'style',
 					values: styles,
 					change: function () { this.property.set({value: this.get_value()}); }
 				}),
-				new Upfront.Views.Editor.Field.Select({
+				new Upfront.Views.Editor.Field.Multiple_Chosen_Select({
 					model: this.model,
 					label: l10n.map_controls,
 					placeholder: "Choose map controls",
 					property: 'controls',
+					select_width: '225px',
 					multiple: true,
 					values: controls,
 					change: function () { this.property.set({value: this.get_value()}); }
@@ -711,6 +726,7 @@ define([
 					model: this.model,
 					label: l10n.draggable_map,
 					property: "draggable",
+					className: 'draggable-checkbox',
 					hide_label: true,
 					values: [{label: l10n.draggable_map, value: 1}],
 					multiple: false,
@@ -719,6 +735,7 @@ define([
 				new Upfront.Views.Editor.Field.Checkboxes({
 					model: this.model,
 					label: l10n.hide_markers,
+					className: 'markers-checkbox',
 					property: "hide_markers",
 					hide_label: true,
 					values: [{label: l10n.hide_markers, value: 1}],
@@ -729,6 +746,7 @@ define([
 					model: this.model,
 					label: l10n.use_custom_map_code,
 					property: "use_custom_map_code",
+					className: "upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-checkboxes custom-map-code",
 					hide_label: true,
 					values: [{label: l10n.use_custom_map_code + '<span class="checkbox-info" title="' + l10n.use_custom_map_code_info + '"></span>', value: 1}],
 					multiple: false,
@@ -736,12 +754,13 @@ define([
 						var value = this.get_value();
 
 						this.property.set({value: value});
-
+					},
+					show: function (value, $el) {
 						if(value == 1) {
-							$('.open-map-code-panel-button', this.$el.parent()).show();
+							$('.open-map-code-panel-button', $el.parent()).show();
 						}
 						else {
-							$('.open-map-code-panel-button', this.$el.parent()).hide();
+							$('.open-map-code-panel-button', $el.parent()).hide();
 						}
 					}
 				}),

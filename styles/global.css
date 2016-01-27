@@ -193,10 +193,15 @@ h2, h3 { page-break-after: avoid; }
   -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
 }
 
-.upfront-output-object>*:first-child{
+.upfront-output-object>*:first-child,
+.plain-text-container>*:first-child{
   margin-top: 0;
 }
-.upfront-output-object>*:last-child{
+.upfront-output-object>*:last-child,
+.plain-text-container>*:last-child,
+.upfront-image-caption-container .wp-caption div>*:last-child,
+.upfront-output-object .wp-caption div>*:last-child,
+.upfront-default-slider .uslide-caption div>*:last-child{
   margin-bottom: 0;
 }
 
@@ -313,7 +318,14 @@ h2, h3 { page-break-after: avoid; }
 }
 
 .upfront-output-image .upfront-image-container img {
+    /*max-width: 100%;*/
+    max-width: none;
+}
+.uf-responsive .upfront-output-image .upfront-image-container {
     max-width: 100%;
+}
+.uf-responsive .upfront-output-image .upfront-image-container img {
+	max-width: 100%;
 }
 
 .uf-responsive #page .post_content > * {
@@ -339,8 +351,11 @@ h2, h3 { page-break-after: avoid; }
     width: auto;
     float: none;
 }
-.uf-responsive .upfront-image-caption-container {
-    width: 100%;
+.uf-responsive .uimage-stretch .upfront-image-caption-container {
+	width: 100%;
+}
+.uf-responsive .uimage-stretch .upfront-image-container {
+    width: 100% !important;
 }
 
 /* Flexbox experiments *//* */
@@ -466,3 +481,35 @@ div.upfront-region-lightbox .upfront-icon-popup-close, div.upfront-region-side-l
 
 .upfront-navigation li { display: inline-block;  list-style:none; }
 
+.close_lightbox > .upfront-icon-popup-close {
+    
+    font: 100 30px/16px Helvetica Neue, Helvetica, sans-serif; */
+    color: #FFF;
+}
+.close_lightbox > .upfront-icon-popup-close:before {
+    content:"\00d7";
+    font-size:40px;
+    font-weight:normal;
+    color:#fff;
+    text-shadow:0 1px 1px rgba(0,0,0,.1);
+}
+
+/* Edior button faded out before editor is loaded */
+body .upfront-edit_layout a {
+  -webkit-transition: opacity 300ms ease-in !important;
+  transition: opacity 300ms ease-in !important;
+}
+body .upfront-edit_layout a:not(.active) {
+  opacity: 0.5;
+  cursor: default;
+}
+body .upfront-edit_layout:hover a:not(.active) {
+  color: inherit !important;
+  background-color: inherit !important;
+}
+
+/* Edior button faded in after editor is loaded */
+body .upfront-edit_layout a {
+  opacity: 1;
+  cursor: pointer;
+}

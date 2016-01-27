@@ -1,0 +1,8 @@
+.slider-preset-<?php echo $properties['id'] ?> .uslide-caption {
+	<?php if(!empty($properties['captionBackground'])) { ?>
+	background: <?php echo $properties['captionBackground'] ?>;
+	<?php } ?>
+}
+
+/* Custom CSS */
+<?php if(!empty($properties['preset_style'])) { ?><?php echo $properties['preset_style'] ?><?php } ?>

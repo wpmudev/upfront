@@ -1,101 +1,219 @@
 .upfront-settings-common_panel {
-  background: #dae7f2;
-  height: 35px;
-  overflow: hidden;
+	background: #f7fbff;
+	height: 35px;
+	overflow: hidden;
+	padding: 0 5px;
 }
 .upfront-settings-common_panel.open {
 	overflow: visible;
-  height: auto;
+	height: auto;
 }
 .upfront-settings-common_panel .upfront-settings-item {
-  padding: 0;
+	padding: 0;
 }
 .upfront-settings-common_panel.open .upfront-settings-item-title {
-  font-weight: bold;
-  padding-bottom: 9px;
+	font-weight: bold;
+	padding-bottom: 9px;
 }
 .upfront-settings-common_panel .upfront-settings-item-title {
-  cursor: pointer;
-  text-transform: none;
-  padding: 0 5px 12px;
-  font-weight: normal;
-  line-height: 28px;
+	cursor: pointer;
+	text-transform: none;
+	padding: 0 5px 12px;
+	font-weight: normal;
+	line-height: 28px;
 }
 
 .upfront-settings-common_panel .upfront-settings-item-title span {
-  background: none;
-  margin-left: 0;
+	background: none;
+	margin-left: 0;
 }
 
 
 /* CSS Styles settings */
 .upfront-settings-css {
-  padding: 0 5px;
+	padding: 0 5px;
 }
 .upfront-settings-css .upfront-field-select-single {
-  width: 215px;
-  display:inline-block;
+	width: 215px;
+	display:inline-block;
 }
-.upfront-settings-css .upfront-settings-item-title span {
-  margin-top: 3px;
-  display: inline-block;
+.upfront-settings-css .upfront-settings-item-title span,
+.upfront-settings-item-anchor .upfront-settings-item-title span {
+	margin-top: 3px;
+	display: inline-block;
 }
 .upfront-settings-css .upfront-field-wrap-select {
-  margin-top: 0;
+	margin-top: 0;
 }
-.upfront-settings-css .upfront-settings-item-title:after {
-  content: "";
-  border: 0 none;
-  width: 15px;
-  height: 15px;
-  background-color: #c3d7e6;
-  display: inline-block;
-  position: absolute;
-  right: 11px;
-  top: 10px;
-  border-radius: 50%;
+.upfront-settings-css .upfront-settings-item-title:after,
+.upfront-settings-item-anchor .upfront-settings-item-title:after {
+	content: "";
+	border: 0 none;
+	width: 15px;
+	height: 15px;
+	background-color: #c3d7e6;
+	display: inline-block;
+	position: absolute;
+	right: 11px;
+	top: 10px;
+	border-radius: 50%;
 }
-.upfront-settings-common_panel.open .upfront-settings-css .upfront-settings-item-title:before {
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 4px solid #273a4c;
-  border-bottom: 0 none;
-  top: 17px;
-  right: 15px;
+.upfront-settings-common_panel.open .upfront-settings-css .upfront-settings-item-title:before,
+.upfront-settings-common_panel.open .upfront-settings-item-anchor .upfront-settings-item-title:before{
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-top: 4px solid #273a4c;
+	border-bottom: 0 none;
+	top: 17px;
+	right: 15px;
 }
-.upfront-settings-css .upfront-settings-item-title:before {
-  content: '';
-  width: 0;
-  height: 0;
-  border-top: 4px solid transparent;
-  border-bottom: 4px solid transparent;
-  border-left: 4px solid #273a4c;
-  display: block;
-  top: 14px;
-  right: 16px;
-  position: absolute;
-  z-index: 1;
+.upfront-settings-css .upfront-settings-item-title:before,
+.upfront-settings-item-anchor .upfront-settings-item-title:before {
+	content: '';
+	width: 0;
+	height: 0;
+	border-top: 4px solid transparent;
+	border-bottom: 4px solid transparent;
+	border-left: 4px solid #273a4c;
+	display: block;
+	top: 14px;
+	right: 16px;
+	position: absolute;
+	z-index: 1;
 }
 /* Anchor settings */
+.padding-settings {
+	border-bottom: 1px solid #e5ecf4;
+	margin: 0px -15px;
+	position: relative;
+	margin-top: 10px;
+}
+
 .upfront-settings-item-anchor {
-  padding: 10px 5px 15px;
-  position: relative;
-  margin-top: 10px;
+	margin: 0px -15px;
+	position: relative;
+	margin-top: 10px;
 }
-.upfront-settings-item-anchor:before {
-  content: "";
-  display: block;
-  position: absolute;
-  border-top: 1px solid #a3bfd9;
-  left: 15px;
-  right: 15px;
-  top: 0;
+.upfront-settings-common_panel .upfront-settings-item-anchor {
+	margin: 0;
 }
-.upfront-settings-item-anchor .upfront-settings-item-title {
-  display: none;
+
+.padding-settings {
+	padding-bottom: 5px;
 }
+
+/*.upfront-settings-item-anchor .upfront-settings-item-title {
+	display: none;
+}*/
 
 .upfront-settings-item-anchor .upfront-embedded_toggleable {
-  margin-top: 10px;
+	margin-top: 5px;
+	border-left: 2px solid #dae6f2;
+	margin-left: -17px;
+	padding-left: 10px;
+	padding-top: 8px;
 }
 
+.upfront-settings-item-anchor .upfront-embedded_toggleable input {
+    width: 180px;
+}
+
+/* Padding Settings */
+
+#element-settings-sidebar .padding-lock input[type=checkbox] {
+    position: relative;
+    left: 36px;
+    top: 6px;
+}
+#element-settings-sidebar .padding-lock input[type=checkbox]:checked {
+    float:none !important;
+    left: 38px;
+    top: 7px;
+}
+#element-settings-sidebar .padding-lock input[type=checkbox]:after {
+    content: '';
+    display: block;
+    height: 15px;
+    width: 15px;
+    background-image: url('../img/uf-core-el-sprite.png');
+    background-image: url('../img/uf-core-el-sprite.svg'), none;
+    background-position: -661px -172px;
+    background-color: #f7fbff;
+    left: -3px;
+    top: -3px;
+    position: relative;
+}
+#element-settings-sidebar .padding-lock input[type=checkbox]:checked:after {
+    background-position: -661px -140px;
+}
+#element-settings-sidebar .padding-lock {
+    position: relative;
+    margin-top: -19px;
+    left: 110px;
+}
+
+#element-settings-sidebar .padding-settings input[type=number] {
+    width: 45px;
+    font-size: 12px;
+}
+#element-settings-sidebar .padding-settings .padding-top {
+    position: relative;
+    border-left: 2px solid #dae6f2;
+    padding: 1px 10px;
+    padding-left: 60px;
+    top: 2px;
+    z-index: 11;
+}
+#element-settings-sidebar .padding-settings .padding-left {
+    position: relative;
+    border-left: 2px solid #dae6f2;
+    padding: 1px 10px;
+    z-index: 15;
+}
+#element-settings-sidebar .padding-settings .padding-right {
+    position: relative;
+    margin-top: -39px;
+    left: 112px;
+    z-index: 15;
+}
+#element-settings-sidebar .padding-settings .padding-bottom {
+    position: relative;
+    border-left: 2px solid #dae6f2;
+    padding: 1px 10px;
+    padding-bottom: 5px;
+    padding-left: 60px;
+    margin-top: -18px;
+    z-index: 11;
+}
+
+#element-settings-sidebar .padding-bottom label {
+    display: block;
+    width: 25px;
+    height: 18px;
+    border: 1px dotted #7d99b3;
+    /* border-top: 3px solid #7bebc6; */
+    position: relative;
+    z-index: 10;
+    top: -7px;
+    left: 10px;
+}
+
+#element-settings-sidebar .padding-slider {
+    top: -11px;
+    padding-top: 10px;
+    padding-bottom: 17px;
+    position: relative;
+    border-left: 2px solid #dae6f2;
+    padding-left: 10px;
+    width: 130px;
+    float: left;
+}
+#element-settings-sidebar .padding-slider .upfront-field-slider-value {
+    display: none;
+}
+#element-settings-sidebar .padding-number, #element-settings-sidebar .padding-number input {
+    width: 60px;
+    float: left;
+    position: relative;
+    margin-left: 15px;
+}

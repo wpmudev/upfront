@@ -5,8 +5,17 @@
  */
 class Upfront_Ajax extends Upfront_Server {
 
+	private static $_instance;
+
+	public static function get_instance () {
+		if (!self::$_instance) {
+			self::$_instance = new self;
+		}
+		return self::$_instance;
+	}
+
 	public static function serve () {
-		$me = new self;
+		$me = self::get_instance();
 		$me->_add_hooks();
 	}
 
@@ -362,6 +371,20 @@ class Upfront_Ajax extends Upfront_Server {
 
 		$sql = $wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s", $stylesheet_key, $global_theme_key, $theme_key);
 		$wpdb->query($sql);
+
+		// Do menus
+		$child = Upfront_ChildTheme::get_instance();
+		if ($child instanceof Upfront_ChildTheme) {
+			$settings = $child->get_theme_settings();
+			if (is_callable(array($settings, 'get'))) {
+				// Get all theme-defined menus
+				$menus = json_decode($settings->get('menus'), true);
+				if (!empty($menus) && is_array($menus)) foreach ($menus as $menu) {
+					if (empty($menu['slug'])) continue; // We don't know what this is
+					wp_delete_nav_menu($menu['slug']);
+				}
+			}
+		}
 
 		$this->_reset_cache(); // When resetting all, also do cache.
 		

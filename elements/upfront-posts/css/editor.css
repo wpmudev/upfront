@@ -18,17 +18,11 @@
 }
 
 /* --- Initial screen --- */
-.upfront_posts-initial {
-    position: relative;
+.upfront-output-posts {
+	min-height: 220px;
 }
 .upfront_posts-initial-wrapper {
-    position: absolute;
-    top: 15px;
-    bottom: 15px;
-    left: 15px;
-    right: 15px;
-    background: #f9fdff;
-    border: 1px solid #87acd1;
+    height: 150px;
 }
 .upfront_posts-initial-content {
     position: absolute;

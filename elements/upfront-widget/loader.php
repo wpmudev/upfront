@@ -34,6 +34,7 @@ function uwidget_initialize () {
 	require_once (dirname(__FILE__) . '/lib/class_upfront_widget_view.php');
 	require_once (dirname(__FILE__) . '/lib/class_upfront_widget.php');
 	require_once (dirname(__FILE__) . '/lib/class_upfront_widget_server.php');
+	require_once (dirname(__FILE__) . '/lib/class_upfront_widget_presets_server.php');
 
 	// Add element defaults to data object
 	add_action('upfront_data', array('Upfront_UwidgetView', 'add_js_defaults'));

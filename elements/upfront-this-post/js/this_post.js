@@ -1,5 +1,10 @@
 (function ($) {
-define(function() {
+define([
+	'scripts/upfront/element-settings/settings',
+	'scripts/upfront/element-settings/root-settings-panel',
+	'scripts/upfront/preset-settings/util',
+	'text!elements/upfront-this-post/tpl/preset-style.html'
+], function(ElementSettings, RootSettingsPanel, Util, styleTpl) {
 
 var l10n = Upfront.Settings.l10n.this_post_element;
 
@@ -83,6 +88,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 
                 });
             }
+
 		});
 
 		Upfront.Events.trigger('post:initialized', this);
@@ -99,7 +105,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		}
 		return this.markup;
 	},
-	
+
 	reset_markup: function () {
 		var me = this,
 			props = ['hide_featured_image', 'full_featured_image'];
@@ -153,8 +159,10 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			contents = this.$('.upfront-object-content').children()
 		;
 
-		if(contents[0] != this.editor.el){
+		// Make sure we have an element to swap with, first up
+		if(contents[0] && contents[0] != this.editor.el){
 			this.editor.setElement( contents[0] );
+			this.editor.render(); // ... and don't forget to re-render when swapping els
 		}
 
 		// Let's not render min-height (remove it)
@@ -212,7 +220,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			loading.render();
 			node.append(loading.$el);
 		}
-		
+
 		this._properties = {
 			post_data: this.property("post_data"),
 			element_id: this.property('element_id'),
@@ -290,8 +298,8 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		}
 	},
 
-	on_element_edit_stop: function (edit, post) {
-		if(this.parent_module_view){
+	on_element_edit_stop: function (edit, post, saving_draft) {
+		if(this.parent_module_view && saving_draft !== true){
 			this.parent_module_view.$el.find('.upfront-module').removeClass('upfront-module-editing');
 			this.parent_module_view.enable_interaction(false);
 		}
@@ -387,65 +395,71 @@ var Settings_PostPanel_PostData = Upfront.Views.Editor.Settings.Item.extend({
 	}
 });
 
-var Settings_PostPanel = Upfront.Views.Editor.Settings.Panel.extend({
+var Settings_PostPanel = RootSettingsPanel.extend({
 	label: l10n.element_name,
-	initialize: function (opts) {
-		this.options = opts;
-		
-		var hide_featured = new Upfront.Views.Editor.Field.Checkboxes({
-				model: this.model,
-				property: "hide_featured_image",
-				multiple: false,
-				values: [{ label: l10n.hide_featured_image, value: '1' }],
-				change: function () {
-					var value = this.get_value();
-					if ( value == '1' )
-						full_featured.get_field().prop(this.selected_state, false);
+	settings: [
+		{
+			type: 'SettingsItem',
+			title: l10n.featured_image_option,
+			fields: [
+				{
+					type: 'Checkboxes',
+					property: "hide_featured_image",
+					multiple: false,
+					values: [{ label: l10n.hide_featured_image, value: '1' }],
+					change: function (value, me) {
+						if (value === '1')
+							me.model.set_property('hide_featured_image', 1);
+						else
+							me.model.set_property('hide_featured_image', false);
+					}
+				},
+				{
+					type: 'Checkboxes',
+					property: "full_featured_image",
+					multiple: false,
+					values: [{ label: l10n.full_featured_image, value: '1' }],
+					change: function (value, me) {
+						if (value === '1')
+							me.model.set_property('full_featured_image', 1);
+						else
+							me.model.set_property('full_featured_image', false);
+					}
 				}
-			}),
-			full_featured = new Upfront.Views.Editor.Field.Checkboxes({
-				model: this.model,
-				property: "full_featured_image",
-				multiple: false,
-				values: [{ label: l10n.full_featured_image, value: '1' }],
-				change: function () {
-					var value = this.get_value();
-					if ( value == '1' )
-						hide_featured.get_field().prop(this.selected_state, false);
-				}
-			});
-		
-		this.settings = _([
-			new Upfront.Views.Editor.Settings.Item({
-				model: this.model,
-				title: l10n.featured_image_option,
-				fields: [ hide_featured, full_featured ]
-			}),
-			//new Settings_PostPanel_PostData({model: this.model})
-		]);
-	},
-
-	get_label: function () {
-		return this.label;
-	},
-
-	get_title: function () {
-		return l10n.post_settings;
-	}
+			]
+		}
+	],
+	title: l10n.post_settings
 });
 
-var Settings = Upfront.Views.Editor.Settings.Settings.extend({
+var Settings = ElementSettings.extend({
+	panels: {
+		General: Settings_PostPanel,
+		Appearance: {
+			mainDataCollection: 'thispostPresets',
+			styleElementPrefix: 'thispost-preset',
+			ajaxActionSlug: 'thispost',
+			panelTitle: l10n.settings,
+			presetDefaults: Upfront.mainData.presetDefaults.thispost,
+			styleTpl: styleTpl,
+		},
+	},
+	
 	initialize: function (opts) {
-		this.options = opts;
-		this.panels = _([
-			new Settings_PostPanel({model: this.model})
-		]);
+		//If editor show only general preset
+		if (location.pathname.indexOf('create_new') === -1) {// you are in exporter
+			this.panels = { General: Settings_PostPanel };
+		}
+		
+		// Call the super constructor here, so that the appearance panel is instantiated
+		this.constructor.__super__.initialize.call(this, opts);
 	},
 
-	get_title: function () {
-		return l10n.post_settings;
-	}
+	title: l10n.post_settings
 });
+
+// Generate presets styles to page
+Util.generatePresetsToPage('thispost', styleTpl);
 
 // ----- Bringing everything together -----
 // The definitions part is over.

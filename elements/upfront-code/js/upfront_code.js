@@ -57,14 +57,31 @@ var CodeView = Upfront.Views.ObjectView.extend({
 		var view = new Views[type]({
 			model: this.model
 		});
-		view.render();
 
 		view.parent_view = this.parent_view;
 		view.parent_module_view = this.parent_module_view;
+		view.render();
 
 		view.on("code:model:updated", this.propagate_model_update, this);
 		this.$el.empty().append(view.$el);
+
+		// Dynamically bind settings click to view editing action
+		if (view.on_edit) {
+			this.on_settings_click = function () {
+				return view.on_edit();
+			}
+		}
+
 		return view;
+	},
+
+	/**
+	 * Override and intercept settings click.
+	 *
+	 * See CodeView::render_code_view() for how it's manipulated when a view is instantiated.
+	 */
+	on_settings_click: function () {
+		// noop
 	},
 
 	propagate_model_update: function () {

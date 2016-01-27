@@ -32,6 +32,7 @@ function ugallery_initialize () {
 	// Include the backend support stuff
 	$domain = 'ugallery';
 	require_once (dirname(__FILE__) . '/lib/' . $domain . '.php');
+	require_once (dirname(__FILE__) . '/lib/class_upfront_gallery_presets_server.php');
 
 	// Expose our JavaScript definitions to the Upfront API
 	upfront_add_layout_editor_entity('' . $domain . '', upfront_relative_element_url('js/' . $domain . '', __FILE__));

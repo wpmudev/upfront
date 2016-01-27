@@ -1,17 +1,67 @@
 
-.open-map-code-panel-button {
-	display: inline-block;
-	background: #e6f3ff;
-	height: 30px;
-	max-height: 30px;
-	border: 1px solid #a3bfd9;
-	border-radius: 3px;
-}
-
 .open-map-code-panel-button input {
-	color: #30475e;
+	display: inline-block;
+	height: 26px;
+	max-height: 26px;
+	border-radius: 3px;
 	font-size: 11px;
 	font-weight: normal;
 	font-family: verdana, sans-serif;
-	padding: 0 10px;
+	background-image: linear-gradient(-179deg, #fafdff 0%, #f3faff 100%);
+    border: 1px solid #a2bfda;
+    border-radius: 5px;
+    color: #6486a6;
+    padding: 4px 8px;
+    position: relative;
+}
+
+.open-map-code-panel-button input:hover {
+	border: 1px solid #a2bfda;
+}
+
+.draggable-checkbox, .markers-checkbox {
+	display: inline-block;
+	margin-top: 15px;
+}
+
+.draggable-checkbox {
+	margin-right: 25px;
+}
+
+.custom-map-code {
+	margin-top: -1px;
+}
+
+.map_location {
+	margin-top: 10px;
+}
+
+.map-style, .map-zoom-level {
+	width: 225px;
+}
+
+.open-map-code-panel-button {
+	margin-top: -5px;
+	padding: 5px 0px 5px 10px;
+	position: relative;
+	top: 0px;
+	border-left: 2px solid #dae6f2;
+}
+
+.upfront_map-fields-simple_location .upfront-field-wrap-refresh button {
+	background-image: linear-gradient(-179deg, #fafdff 0%, #f3faff 100%) !important;
+    border: 1px solid #a2bfda;
+	border-left: none;
+	height: 26px;
+	width: 30px;
+}
+
+.upfront_map-fields-simple_location .upfront-field-wrap-refresh button img {
+	opacity: 0.7;
+	width: 15px;
+	margin-top: 3px;
+}
+
+.upfront_map-fields-simple_location .upfront-field-wrap-text {
+	width: 84% !important;
 }

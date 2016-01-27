@@ -1,1 +1,36 @@
 /* Default editor styles go here */
+.select-widget-panel {
+	background: #dae6f2;
+	margin: -15px -10px 0px -5px;
+	padding: 5px 0px 10px 5px;
+}
+
+.select-widget-panel label {
+	font-weight: normal !important;
+}
+
+.widget_settings_item .upfront-field-wrap,
+.select-widget-panel .upfront-field-wrap {
+	width: 225px;
+}
+
+.widget_settings_item {
+	position: relative;
+}
+
+.widget_settings_item:before {
+    content: "";
+    position: absolute;
+    width: 0;
+    top: -5px;
+    left: 30px;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid #f7fbff;
+}
+
+.no-widget-notice {
+    display: block;
+    text-align: center;
+}

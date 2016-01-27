@@ -42,6 +42,16 @@ jQuery(document).ready(function($){
 		}
 	}
 
+	/**
+	 * Get the previously used breakpoint
+	 *
+	 * @return {String} Previous breakpoint
+	 */
+	function get_previous_breakpoint () {
+		get_breakpoint();
+		return previous_breakpoint;
+	}
+
 	/* Youtube API */
 	var youtube_api_loaded = false;
 	var youtube_api_ready = false;
@@ -173,6 +183,11 @@ jQuery(document).ready(function($){
 						if (false === overflow_bottom && $next.length > 0 && $next.height() < 100) overflow_bottom = $next.height();
 						if (false !== overflow_top) $overlay.uparallax('setOption', 'overflowTop', overflow_top);
 						if (false !== overflow_bottom) $overlay.uparallax('setOption', 'overflowBottom', overflow_bottom);
+						$(document).on('upfront-responsive-nav-open upfront-responsive-nav-close', function () {
+							if ( $overlay.data('uparallax') ) {
+								$overlay.uparallax('refresh');
+							}
+						});
 					}
 				}, 0);
 			}
@@ -732,6 +747,7 @@ jQuery(document).ready(function($){
 						});
 						var regionview = Upfront.data.region_views[region.cid];
 						regionview.show();
+
 					}
 				}
 
@@ -803,7 +819,14 @@ jQuery(document).ready(function($){
 			//translate width in columns to width in pixels as per the total width of upfront-grid-layout being 24 cols
 			lightbox.css('width', $('div.upfront-grid-layout').first().width()*lightbox.data('col')/24);
 			lightbox.show().css({'margin-left': -(parseInt(lightbox.width()/2)), 'margin-top': -(parseInt(lightbox.height()/2))});
-			$(document).trigger("upfront-lightbox-open");
+			
+			/* elements can subscribe to the following event to
+			 * to render their content based 
+			 * on the dimensions of the lightbox 
+			 * itself, such elements are gallery and slider
+			*/
+			$(document).trigger("upfront-lightbox-open", lightbox);
+
 			e.preventDefault();
 			function lightboxhide() {
 				close.html('').remove()
@@ -1095,6 +1118,75 @@ jQuery(document).ready(function($){
 	update_responsive_class();
 	var lazyUpdateResponsiveClass = throttle(update_responsive_class, 100);
 	$(window).on('resize.uf_layout', lazyUpdateResponsiveClass);
+
+
+
+	/**
+	 * Trigger DOM event on breakpoint change,
+	 * so elements can subscribe to it
+	 *
+	 * Front-end responsive presets propagation depends on this
+	 * event being fired properly
+	 */
+	function propagate_breakpoint_change () {
+		var breakpoint = get_breakpoint() || 'desktop',
+			previous = get_previous_breakpoint() || 'desktop'
+		;
+		if (breakpoint !== previous) {
+			/**
+			 * Trigger a DOM event on actual breakpoint change
+			 * Responsive presets propagation listens for this event
+			 */
+			$(document).trigger("upfront-breakpoint-change", breakpoint);
+		}
+	}
+	var lazy_propagate_breakpoint_change = throttle(propagate_breakpoint_change, 20, {trailing: false});
+	$(window).on('resize.uf_layout', lazy_propagate_breakpoint_change);
+	// done propagating breakpoint change
+
+	/**
+	 * Swap preset classes per breakpoint for each of the object elements
+	 * Happens only on breakpoint change event
+	 */
+	function propagate_responsive_presets (e, breakpoint) {
+		breakpoint = breakpoint || get_breakpoint() || 'desktop';
+		if (!breakpoint) return;
+
+		$("[data-preset_map]").each(function () {
+			var $me = $(this),
+				rmap = $me.attr("data-preset_map"),
+				map = rmap ? JSON.parse(rmap) : {},
+				final_preset_class
+			;
+
+			// Edge case, for when we don't have a preset for this
+			// breakpoint in an element - it should retain its classes
+			if (!map[breakpoint]) return true;
+
+			$.each(map, function (bp, preset) {
+				$me.removeClass(preset);
+				if (bp === breakpoint && !final_preset_class) final_preset_class = preset;
+			});
+
+			if (final_preset_class) {
+				$me.addClass(final_preset_class);
+			}
+
+		});
+
+		/**
+		 * Trigger a DOM event on responsive presets change
+		 * The legacy preset elements (accordion, tabs, button) listen to this event
+		 */
+		$(document).trigger("upfront-responsive_presets-changed", breakpoint);
+	}
+	var lazy_propagate_responsive_presets = throttle(propagate_responsive_presets, 200, {trailing: false});
+	$(document).on("upfront-breakpoint-change", lazy_propagate_responsive_presets);
+	// done propagating presets
+
+	// Make sure breakpoint change is propagated
+	propagate_breakpoint_change();
+	// end
 
 	function remove_all_bound_events () {
 		$(window).off('resize.uf_layout');

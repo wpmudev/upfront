@@ -20,7 +20,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	private $_required_pages = array();
 
 	private static $_theme_settings;
-	
+
 	protected static $instance;
 
 	public static function get_instance () {
@@ -63,6 +63,16 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		add_filter('upfront_get_button_presets', array($this, 'getButtonPresets'), 10, 2);
 		add_filter('upfront_get_tab_presets', array($this, 'getTabPresets'), 10, 2);
 		add_filter('upfront_get_accordion_presets', array($this, 'getAccordionPresets'), 10, 2);
+		add_filter('upfront_get_contact_presets', array($this, 'getContactPresets'), 10, 2);
+		add_filter('upfront_get_gallery_presets', array($this, 'getGalleryPresets'), 10, 2);
+		add_filter('upfront_get_image_presets', array($this, 'getImagePresets'), 10, 2);
+		add_filter('upfront_get_nav_presets', array($this, 'getNavPresets'), 10, 2);
+		add_filter('upfront_get_slider_presets', array($this, 'getSliderPresets'), 10, 2);
+		add_filter('upfront_get_text_presets', array($this, 'getTextPresets'), 10, 2);
+		add_filter('upfront_get_widget_presets', array($this, 'getWidgetPresets'), 10, 2);
+		add_filter('upfront_get_posts_presets', array($this, 'getPostsPresets'), 10, 2);
+		add_filter('upfront_get_thispost_presets', array($this, 'getPostPresets'), 10, 2);
+		add_filter('upfront_get_ucomment_presets', array($this, 'getCommentPresets'), 10, 2);
 		add_filter('upfront_get_theme_styles', array($this, 'getThemeStyles'));
 		add_filter('upfront_get_global_regions', array($this, 'getGlobalRegions'));
 		add_filter('upfront_get_responsive_settings', array($this, 'getResponsiveSettings'));
@@ -267,6 +277,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 				}
 				$style_content = file_get_contents($styles_root . DIRECTORY_SEPARATOR . $type . DIRECTORY_SEPARATOR . $style);
 				$style_content = $this->_expand_passive_relative_url($style_content);
+				$style_content = str_replace('#page', 'div#page .upfront-output-region-container .upfront-output-module', $style_content);
 				$out .= $style_content;
 			}
 		}
@@ -307,7 +318,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 				"	font-style: normal;" .
 				"}" .
 				".upfront-output-layout .uf_font_icon, .upfront-output-layout .uf_font_icon * {" .
-				"	font-family: '" . $font['family'] . "'!important;" .
+				"	font-family: '" . $font['family'] . "'!important" .
 				"}";
 			$out .= $this->_expand_passive_relative_url($icon_font_style) . "\n";
 		} else {
@@ -315,11 +326,11 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			$out .= "/* icomoon fonts */
 				@font-face {
 					font-family: 'icomoon';
-					src: url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.eot?-7vfzzg');
-					src: url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.eot?#iefix-7vfzzg') format('embedded-opentype'),
-					url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.woff?-7vfzzg') format('woff'),
-					url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.ttf?-7vfzzg') format('truetype'),
-					url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.svg?-7vfzzg#icomoon') format('svg');
+					src: url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.eot?taxgy5');
+					src: url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.eot?taxgy5#iefix') format('embedded-opentype'),
+					url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.woff?taxgy5') format('woff'),
+					url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.ttf?taxgy5') format('truetype'),
+					url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.svg?taxgy5#icomoon') format('svg');
 					font-weight: normal;
 					font-style: normal;
 				}
@@ -616,7 +627,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		$button_presets = $this->get_theme_settings()->get('button_presets');
 		if (isset($args['json']) && $args['json']) return $button_presets;
-		
+
 		$as_array = false;
 		if (isset($args['as_array']) && $args['as_array']) {
 			$as_array = true;
@@ -639,10 +650,166 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		return json_decode($presets, $as_array);
 	}
 
+	public function getPostsPresets($presets, $args) {
+		if (empty($presets) === false) return $presets;
+
+		$presets = $this->get_theme_settings()->get('posts_presets');
+		if (isset($args['json']) && $args['json']) return $presets;
+
+		$as_array = false;
+		if (isset($args['as_array']) && $args['as_array']) {
+			$as_array = true;
+		}
+
+		return json_decode($presets, $as_array);
+	}
+
+	public function getPostPresets($presets, $args) {
+		if (empty($presets) === false) return $presets;
+
+		$presets = $this->get_theme_settings()->get('thispost_presets');
+		if (isset($args['json']) && $args['json']) return $presets;
+
+		$as_array = false;
+		if (isset($args['as_array']) && $args['as_array']) {
+			$as_array = true;
+		}
+
+		return json_decode($presets, $as_array);
+	}
+
+	public function getCommentPresets($presets, $args) {
+		if (empty($presets) === false) return $presets;
+
+		$presets = $this->get_theme_settings()->get('ucomment_presets');
+		if (isset($args['json']) && $args['json']) return $presets;
+
+		$as_array = false;
+		if (isset($args['as_array']) && $args['as_array']) {
+			$as_array = true;
+		}
+
+		return json_decode($presets, $as_array);
+	}
+
 	public function getAccordionPresets($presets, $args) {
 		if (empty($presets) === false) return $presets;
 
 		$presets = $this->get_theme_settings()->get('accordion_presets');
+
+		// Juggle the presets to add some defaults because presets migration to new settings
+		$presetsArray = json_decode($presets, true);
+		if (is_array($presetsArray)) {
+			foreach($presetsArray as $index=>$preset) {
+				if (isset($preset['active-use-color']) === false) {
+					$presetsArray[$index]['active-use-color'] = 1;
+				}
+				if (isset($preset['active-use-typography']) === false) {
+					$presetsArray[$index]['active-use-typography'] = 1;
+				}
+			}
+			$presets = json_encode($presetsArray);
+		}
+		// End migration juggle
+
+		if (isset($args['json']) && $args['json']) return $presets;
+
+		$as_array = false;
+		if (isset($args['as_array']) && $args['as_array']) {
+			$as_array = true;
+		}
+
+		return json_decode($presets, $as_array);
+	}
+
+	public function getContactPresets($presets, $args) {
+		if (empty($presets) === false) return $presets;
+
+		$presets = $this->get_theme_settings()->get('contact_presets');
+		if (isset($args['json']) && $args['json']) return $presets;
+
+		$as_array = false;
+		if (isset($args['as_array']) && $args['as_array']) {
+			$as_array = true;
+		}
+
+		return json_decode($presets, $as_array);
+	}
+
+	public function getGalleryPresets($presets, $args) {
+		if (empty($presets) === false) return $presets;
+
+		$presets = $this->get_theme_settings()->get('gallery_presets');
+		if (isset($args['json']) && $args['json']) return $presets;
+
+		$as_array = false;
+		if (isset($args['as_array']) && $args['as_array']) {
+			$as_array = true;
+		}
+
+		return json_decode($presets, $as_array);
+	}
+
+	public function getImagePresets($presets, $args) {
+		if (empty($presets) === false) return $presets;
+
+		$presets = $this->get_theme_settings()->get('image_presets');
+		if (isset($args['json']) && $args['json']) return $presets;
+
+		$as_array = false;
+		if (isset($args['as_array']) && $args['as_array']) {
+			$as_array = true;
+		}
+
+		return json_decode($presets, $as_array);
+	}
+
+	public function getNavPresets($presets, $args) {
+		if (empty($presets) === false) return $presets;
+
+		$presets = $this->get_theme_settings()->get('nav_presets');
+		if (isset($args['json']) && $args['json']) return $presets;
+
+		$as_array = false;
+		if (isset($args['as_array']) && $args['as_array']) {
+			$as_array = true;
+		}
+
+		return json_decode($presets, $as_array);
+	}
+
+	public function getSliderPresets($presets, $args) {
+		if (empty($presets) === false) return $presets;
+
+		$presets = $this->get_theme_settings()->get('slider_presets');
+		if (isset($args['json']) && $args['json']) return $presets;
+
+		$as_array = false;
+		if (isset($args['as_array']) && $args['as_array']) {
+			$as_array = true;
+		}
+
+		return json_decode($presets, $as_array);
+	}
+
+	public function getTextPresets($presets, $args) {
+		if (empty($presets) === false) return $presets;
+
+		$presets = $this->get_theme_settings()->get('text_presets');
+		if (isset($args['json']) && $args['json']) return $presets;
+
+		$as_array = false;
+		if (isset($args['as_array']) && $args['as_array']) {
+			$as_array = true;
+		}
+
+		return json_decode($presets, $as_array);
+	}
+
+	public function getWidgetPresets($presets, $args) {
+		if (empty($presets) === false) return $presets;
+
+		$presets = $this->get_theme_settings()->get('widget_presets');
 		if (isset($args['json']) && $args['json']) return $presets;
 
 		$as_array = false;
@@ -707,7 +874,12 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		if($layoutId){
 			$theme = Upfront_Theme::get_instance();
 			$ids['theme_defined'] = $layoutId;
-			$data['regions'] = $theme->get_default_layout($ids, $layoutId);
+			$layout = $theme->get_default_layout($ids, $layoutId);
+			$data['regions'] = $layout['regions'];
+			$data['properties'] = array();
+			if ( false !== $layout['version'] ) {
+				upfront_set_property_value('version', $layout['version'], $data);
+			}
 		}
 		return $data;
 	}
@@ -1187,6 +1359,7 @@ VRT;
 
         foreach( self::get_all_uf_theme_names()  as $theme_name ){
             $theme_variants = self::get_post_image_variants_from_db( $theme_name );
+            $theme_variants = is_array($theme_variants) ? $theme_variants : array();
             if( $theme_variants  )
                 $variants = array_merge( $variants, $theme_variants );
         }

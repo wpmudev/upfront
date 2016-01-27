@@ -46,6 +46,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 	 */
 	public function add_style_load_url ($urls) {
 		$raw_cache_key = $this->_get_cached_styles();
+		if (empty($raw_cache_key)) return $urls;
 
 		$url = $this->_get_enqueueing_url(self::TYPE_STYLE, $raw_cache_key);
 		$urls[] = $url;
@@ -66,12 +67,12 @@ class Upfront_ElementStyles extends Upfront_Server {
 
 		$raw_cache_key = $ckey->get_hash();
 		$cache = $this->_debugger->is_active() ? false : $this->_cache->get($ckey);
-		
+
 		if (empty($cache)) {
 			foreach ($styles as $key => $frags) {
 				if (empty($frags)) continue;
 				$style = $this->_get_style_contents($frags);
-				if (!empty($style))  $cache .= "/* {$key} */\n{$style}\n";
+				if (!empty($style))  $cache .= "/* ~~~~~ [STYLE DEBUG]: {$key} ~~~~~ */\n{$style}\n";
 			}
 			if (!$this->_debugger->is_active(Upfront_Debug::STYLE)) {
 				$cache = Upfront_StylePreprocessor::compress($cache);
@@ -84,7 +85,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 			 * @param string $raw_cache_key Cache key used for storage
 			 */
 			$cache = apply_filters('upfront-dependencies-cache-styles', $cache, $raw_cache_key);
-			
+
 			$this->_cache->set($ckey, $cache);
 		}
 
@@ -152,6 +153,8 @@ class Upfront_ElementStyles extends Upfront_Server {
 	 */
 	public function add_script_load_url ($urls) {
 		$raw_cache_key = $this->_get_cached_scripts();
+		if (empty($raw_cache_key)) return $urls;
+		
 		$url = $this->_get_enqueueing_url(self::TYPE_SCRIPT, $raw_cache_key);
 		$urls[] = $url;
 		return $urls;
@@ -165,7 +168,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 	private function _get_cached_scripts () {
 		$hub = Upfront_PublicScripts_Registry::get_instance();
 		$scripts = $hub->get_all();
-		if (empty($scripts)) return isset( $urls ) ? $urls : false; // Todo Ve: where does this $url come from?
+		if (empty($scripts)) return false;
 
 		$ckey = $this->_cache->key(self::TYPE_SCRIPT, $scripts);
 
@@ -267,7 +270,7 @@ class Upfront_ElementStyles extends Upfront_Server {
  * Takes care of dependency minification.
  */
 class Upfront_MinificationServer implements IUpfront_Server {
-	
+
 	public static function serve () {
 		$me = new self;
 		$me->_add_hooks();
@@ -308,7 +311,7 @@ class Upfront_MinificationServer implements IUpfront_Server {
 	 */
 	public function minify_js ($what) {
 		if (!Upfront_Behavior::compression()->has_experiments()) return $what; // Only do this within the compression mode ON
-		
+
 		require_once dirname(dirname(__FILE__)) . '/external/jshrink/src/JShrink/Minifier.php';
 		return JShrink_Minifier::minify($what);
 	}
@@ -342,7 +345,7 @@ class Upfront_SmushServer implements IUpfront_Server {
 		if (!is_callable(array($WpSmush, 'do_smushit'))) return false;
 
 		$res = $WpSmush->do_smushit($path, $url);
-		
+
 		return $res;
 	}
 }

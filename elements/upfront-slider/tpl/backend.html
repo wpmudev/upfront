@@ -1,0 +1,26 @@
+<div>
+<script type="text/template" id="slides-setting-tpl">
+<div class="uslider-slides-setting">
+{[ slides.each(function(slide){ ]}
+<div class="uslider_content_imgslide uslider_content_slide" rel="{{slide.id}}">
+		<img src="{{slide.get('src')}}" />
+		<span class="remove-slide"></span>
+	</div>
+{[ }) ]}
+<div class="uslider-add upfront-region-bg-slider-add-image upfront-icon upfront-icon-region-add-slide">{{l10n.add_slide}}</div>
+</div>
+</script>
+
+
+<script type="text/template" id="startingTpl">
+	<div class="upfront-image-starting-select upfront-ui upfront-initial-overlay-wrapper" style="min-height:{{startingHeight}}px">
+		<div class="uslider-starting-centered upfront-initial-overlay-wrapper" style="height: 100px">
+			<div class="uslider-starting-title">{{l10n.choose_type}}</div>
+			<div class="uslider-starting-info">{{l10n.can_change}}</div>
+			<a href="#" class="button upfront-image-select">{{l10n.choose_img}}</a>
+		</div>
+	</div>
+</script>
+
+
+</div>

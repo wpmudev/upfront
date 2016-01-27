@@ -6,7 +6,7 @@
 	min-height: inherit;
 }
 
-.uyoutube-single iframe {
+.uyoutube-single iframe, .uyoutube-multiple-gallery iframe {
 	width: 100% !important;
 	min-height: inherit;
 }
@@ -18,10 +18,13 @@
 .uyoutube-main-video iframe {
     background: black;
     border: 0 none;
+	max-width: 100%;
 }
 
 .upfront-output-uyoutube {
-	min-height: inherit;
+	max-height: 100%;
+	overflow: hidden;
+	min-height: 225px;
 }
 
 .uyoutube-gallery-item {
@@ -163,11 +166,12 @@
 	color: #28DC96;
 	font-family: 'Source Sans Pro';
 	font-size:18px;
-	width: 385px;
-	height: 228px;
-	background: #eeeff0;
 	text-align: left;
-	padding: 70px 15px 0;
+	min-height: 225px;
+}
+
+.upfront-youtube-starting-wrapper {
+	padding: 15px;
 }
 
 .upfront-youtube-resizing-icons {
@@ -187,7 +191,7 @@
 	border: 1px solid #ccc;
 	padding: 0 10px;
 	margin-bottom: 10px;
-	width: 70%;
+	width: 69%;
 	display: block;
 	float: left;
 }
@@ -200,7 +204,10 @@ input.upfront-youtube-url {
 	display: block;
 	background-color:transparent;
 	font-size: 14px;
-	height: 38px !important;
+/* `!important`s here because of the child theme styles conflict */
+	height: 58px !important;
+	line-height: 58px !important;
+	box-sizing: border-box !important;
 }
 
 input.upfront-youtube-url::-webkit-input-placeholder {
@@ -208,19 +215,19 @@ input.upfront-youtube-url::-webkit-input-placeholder {
 }
 
 input.upfront-youtube-url:-moz-placeholder { /* Firefox 18- */
-	color: #999;  
+	color: #999;
 }
 
 input.upfront-like-box_url::-moz-placeholder {  /* Firefox 19+ */
-	color: #999;  
+	color: #999;
 }
 
-input.upfront-like-box_url:-ms-input-placeholder {  
-	color: #99;  
+input.upfront-like-box_url:-ms-input-placeholder {
+	color: #99;
 }
 
 .upfront-youtube-button-wrapper {
-	width: 30%;
+	width: 25%;
 	display: block;
 	float: left;
 }
@@ -232,21 +239,35 @@ input.upfront-like-box_url:-ms-input-placeholder {
 	background-color: #00ce8d;
 	color: #fff;
 	text-align: center;
-	height: 40px;
+	height: 60px;
+}
+
+.multiple_sources {
+	margin-top: 7px !important;
+	position: relative;
+}
+
+.multiple_sources input {
+	width: 96% !important;
+}
+
+.upfront-add-another  {
+	margin: 10px 0px;
 }
 
 .upfront-add-another input {
-	border: 1px solid #a1c4e5;
-	background: #e5f3ff;
 	display: inline-block;
-	padding: 3px 8px;
-	border-radius: 4px;
+	background-image: linear-gradient(-179deg, #fafdff 0%, #f3faff 100%);
+	border: 1px solid #a2bfda;
+	border-radius: 2px;
 	font-size: 13px;
+	color: #7c86a6;
+	padding: 4px 8px;
 }
 
 .upfront-add-another input:hover {
-	background: #d4e9fb;
-	border: 1px solid #a1c4e5;
+	background-image: linear-gradient(-179deg, #fafdff 0%, #f3faff 100%);
+	border: 1px solid #607f99;
 }
 
 .upfront-add-another-wrapper .upfront-settings-item-title {
@@ -254,3 +275,25 @@ input.upfront-like-box_url:-ms-input-placeholder {
 }
 
 .uyoutube-gallery-item { margin-left:0 !important; }
+
+.thumbnails-width {
+	clear: both;
+	margin-top: 10px;
+	width: 225px;
+}
+
+.thumbnails-width .upfront-field-slider-value {
+	font-size: 11px;
+}
+
+.multiple_sources label {
+	margin-bottom: 3px;
+}
+
+.multiple_video_section .upfront-settings-item {
+	padding-top: 10px;
+}
+
+.multiple_video_section .upfront-settings-item-title {
+	margin-top: -10px;
+}

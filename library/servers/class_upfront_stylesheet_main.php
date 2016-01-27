@@ -74,12 +74,14 @@ class Upfront_StylesheetMain extends Upfront_Server {
 			return;
 		}
 
-		//Add theme styles
-		$style .= $this->prepare_theme_styles();
 		// Add theme colors styles
 		$style .= $this->_get_theme_colors_styles();
 		// Add elements presets styles
 		$style = apply_filters('get_element_preset_styles', $style);
+		
+		//Add theme styles
+		$style .= $this->prepare_theme_styles();
+		
 		$style = Upfront_UFC::init()->process_colors($style);
 
 		if (!empty($cache) && !empty($ckey)) { // make use of cache, if possible
@@ -193,6 +195,8 @@ class Upfront_StylesheetMain extends Upfront_Server {
 			  $style_rx = '/^(' . preg_quote("{$layout_id}", '/') . '|' . preg_quote("{$type}", '/') . ')/';
 			  if ( preg_match('/^region(-container|)$/', $type) && !preg_match($style_rx, $name) )
 				continue;
+			
+			  $content = str_replace('#page', 'div#page .upfront-output-region-container .upfront-output-module', $content);
 			  $out .= $content;
 			  if ( $type == 'layout' && $name == 'layout-style' )
 			  	$layout_style_loaded = true;

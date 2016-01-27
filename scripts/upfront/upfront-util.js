@@ -2,7 +2,18 @@
 
 window.empty = function (what) { return "undefined" === typeof what ? true : !what; };
 window.count = function (what) { return "undefined" === typeof what ? 0 : (what && what.length ? what.length : 0); };
+_.mixin({
+	isTrue: function( val ) {
+		if( typeof val === "undefined")
+			return false;
 
+		if( _.isString( val ) )
+			return val.toLowerCase() === "true";
+
+		if(_.isNumber( val ) )
+			return 0 !== val;
+	}
+});
 
 //requestFrameAnimation polyfill
 var rAFPollyfill = function(callback){
@@ -277,6 +288,16 @@ define(function() {
 			});
 
 			Upfront.data.region_views[region.cid].show();
+		},
+		
+		/**
+		 * Sorted find 
+		 */
+		find_sorted: function ($el, selector) {
+			return $el.find(selector)
+				.each(Upfront.Util.normalize_sort_elements_cb)
+				.sort(Upfront.Util.sort_elements_cb)
+			;
 		},
 
 		/**
@@ -578,9 +599,12 @@ define(function() {
 			get_color: function(ufc){
 				if(_.isEmpty(ufc)) return false;
 
-				var	theme_colors = Upfront.Views.Theme_Colors.colors.pluck("color");
+                var theme_colors = Upfront.Views.Theme_Colors.colors.pluck("color"),
+                    theme_alphas = Upfront.Views.Theme_Colors.colors.pluck("alpha"),
+                    color_index = parseInt(ufc.replace("ufc", "").replace("#", ""), 10),
+                    theme_color = theme_colors[color_index] === '#000000' && theme_alphas[color_index] === 0 ? 'inherit' : theme_colors[color_index];
 
-				return theme_colors[ parseInt(ufc.replace("ufc", "").replace("#", ""), 10) ];
+                return theme_color;
 			},
 			/**
 			 * Looks for ufc instances in a string and replaces them with actual color
@@ -589,10 +613,13 @@ define(function() {
 			convert_string_ufc_to_color: function( string, include_ufc_as_comment ){
 				if(_.isEmpty(string)) return string;
 				include_ufc_as_comment = typeof include_ufc_as_comment === "undefined" ? true : include_ufc_as_comment;
-				var	theme_colors = Upfront.Views.Theme_Colors.colors.pluck("color");
+                var theme_colors = Upfront.Views.Theme_Colors.colors.pluck("color"),
+                    theme_alphas = Upfront.Views.Theme_Colors.colors.pluck("alpha");
 				for(var _i in theme_colors){
 					var pattern = new RegExp("#ufc" + _i,"g"),
-						theme_color = include_ufc_as_comment ? "/*" + "#ufc" + _i + "*/" + theme_colors[_i]:  theme_colors[_i];
+                        theme_color;
+                    theme_color = theme_colors[_i] === '#000000' && theme_alphas[_i] === 0 ? 'inherit' : theme_colors[_i];
+                    theme_color = include_ufc_as_comment ? "/*" + "#ufc" + _i + "*/" + theme_color : theme_color;
 					string = string.replace(pattern, theme_color );
 				}
 				return string;
@@ -862,6 +889,7 @@ define(function() {
 			_saving_flag = false,
 			_is_dirty = false,
 			_preview_url = false,
+			_revision_idx = false,
 			run = function (layout) {
 				if (!!Upfront.Settings.Application.PERMS.REVISIONS) { // Only rebind stuff when revisions listening is enabled.
 					if (Upfront.Application.mode.current === Upfront.Application.MODE.THEME) {
@@ -945,7 +973,8 @@ define(function() {
 				_layout_data.layout = _upfront_post_data.layout;
 				_layout_data.preferred_layout = _layout.get("current_layout");
 
-				_layout_data = JSON.stringify(_layout_data, undefined, 2);
+				//_layout_data = JSON.stringify(_layout_data, undefined, 2);
+				_layout_data = JSON.stringify(_layout_data);
 			},
 			save = function () {
 				if (_saving_flag) return false;
@@ -960,6 +989,7 @@ define(function() {
 						var data = response.data || {};
 						if ("html" in data && data.html) {
 							_preview_url = data.html;
+							_revision_idx = data.idx;
 						} else {
 							Upfront.Util.log("Invalid response");
 						}
@@ -993,11 +1023,15 @@ define(function() {
 			},
 			get_preview_url = function () {
 				return _preview_url;
+			},
+			get_revision = function () {
+				return _revision_idx;
 			}
 		;
 		return {
 			run: run,
 			preview_url: get_preview_url,
+			get_revision: get_revision,
 			rebind_events: rebind_events
 		}
 

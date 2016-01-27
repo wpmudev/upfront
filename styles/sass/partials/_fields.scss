@@ -108,8 +108,8 @@ input.upfront-field-text:hover,
 }
 /* end chrome input[type=number] styling */
 .upfront-field-select, .upfront-field-select-options {
-	background: #e6f3fe;
-	border: 1px solid rgb(163, 191, 217);
+	background: rgb(242, 249, 255);
+	border: 1px solid rgb(183, 201, 217);
 	border-radius: 3px;
 }
 .upfront-field-select {
@@ -117,9 +117,9 @@ input.upfront-field-text:hover,
 	height: 26px;
 	max-height: 26px;
 	margin: 0;
-	color: rgb(96, 127, 153);
+	color: #2F475F;
 	font-size: 11px;
-	font-family: verdana, sans-serif;
+	font-family: Verdana, sans-serif;
 	line-height: 22px;
 	position: relative;
 	overflow: hidden;
@@ -200,8 +200,9 @@ input.upfront-field-text:hover,
 .upfront-field-select-options {
 	list-style: none;
 	/*float: left;*/
+	background: #fafdff;
 	box-shadow: 0 0 3px rgba(96, 127, 153, 0.5);
-	border-color: rgb(96, 127, 153);
+	border-color: #7d99b3;
 	padding: 5px 0 !important;
 	margin: 10px -1px 0 !important;
 	position: relative;
@@ -223,6 +224,11 @@ input.upfront-field-text:hover,
 	right: 0;
 	max-height: 142px;
 	z-index: 21;
+}
+#sidebar-ui .upfront-field-select-expanded .upfront-field-select-options,
+#element-settings-sidebar .upfront-field-select-expanded .upfront-field-select-options {
+	position: fixed;
+	display: none;
 }
 .upfront-field-select-option {
 	margin: 0 10px 0 0 !important;
@@ -260,8 +266,8 @@ input.upfront-field-text:hover,
 }
 .upfront-object-content div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap ul .upfront-field-select-option:hover label,
 .upfront-field-select-option:hover {
-	background: rgb(96, 127, 153);
-	color: rgb(238, 247, 255);
+	background: rgb(212, 222, 232);
+	color: rgb(0, 0, 0);
 }
 .upfront-field-select-option label {
 	display: block;
@@ -271,6 +277,7 @@ input.upfront-field-text:hover,
 }
 .upfront-field-select-option-selected label {
   padding-right: 4px;
+  color: #46cd99;
 }
 .upfront-field-select-option label .upfront-field-icon {
 	margin-top: 0;
@@ -403,7 +410,7 @@ input.upfront-field-text:hover,
 .upfront-field-icon {
 	display: inline-block;
 	vertical-align: middle;
-	margin: 1px 5px 0 0;
+	margin: 1px 5px 0 5px;
 }
 .upfront-field-multiple-vertical .upfront-field-icon {
 	margin: 0 auto;
@@ -625,12 +632,15 @@ input.upfront-field-text:hover,
 
 .upfront-field-wrap-color .sp-preview {
 	display: inline-block;
-	width:20px;
-	height:20px;
-	border:1px solid #fff;
+	width:18px;
+	height:18px;
 	vertical-align: bottom;
   	margin: 0;
-  	border-radius: 0;
+	border-radius:50%;
+	top: 0px;
+	position: absolute;
+	border:1px solid #A2BFDA;
+	box-shadow: inset 0 0 0 1px #fff;
 }
 
 .upfront-field-wrap-color .sp-replacer {
@@ -645,6 +655,7 @@ input.upfront-field-text:hover,
 	height:2px;
 	background: #C2D5E6;
 	position: relative;
+	cursor: pointer;
 }
 .upfront-field-slider-vertical {
 	height: 100px;

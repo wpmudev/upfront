@@ -104,10 +104,10 @@ div.upfront-navigation.upfront-editable_entity ul.menu li:not(.edit_mode):hover 
 	content:'';
 	display:block;
 	position:absolute;
-	height:100%;
-	width:100%;
 	top:0;
 	left:0;
+	bottom: 0;
+	right: 0;
 	border:1px #ddd dotted;
 
 }
@@ -131,6 +131,16 @@ div.upfront-navigation.upfront-editable_entity ul.time_being_display {
 div.upfront-navigation.upfront-editable_entity a.menu_item.menu_item_placeholder {
 	min-width: 92px;
 }
+
+/* This is being done to keep the placeholder on a new nav item, or an existing nav item, in position */
+span.menu_item-ueditor.redactor-placeholder,
+span.menu_item-ueditor.ueditor-placeholder {
+  position: inherit !important;
+  top: inherit !important;
+  left: inherit !important;
+  right: inherit !important;
+}
+
 div.upfront-navigation.upfront-editable_entity  div.existing_menu_list ul li:before, div.upfront-navigation.upfront-editable_entity  div.existing_menu_list li label:before {
 	display: none !important;
 }
@@ -298,19 +308,19 @@ div.upfront-navigation div[data-style="burger"] i.navigation-add-item {
   display: block !important;
   top: 2px !important;
 }
-div.upfront-navigation div[data-style="burger"] i.delete_menu_item  {
+div.upfront-navigation div[data-style="burger"] i.delete_menu_item {
   right:100px !important
 }
 /*div.upfront-navigation div[data-style="burger"] i.edit_link  {
   right:60px !important
 }*/
-div.upfront-navigation div[data-style="burger"][data-aliment="left"] i.navigation-add-item,
-div.upfront-navigation div[data-style="burger"][data-aliment="center"] i.navigation-add-item {
+div.upfront-navigation div[data-style="burger"][data-alignment="left"] i.navigation-add-item,
+div.upfront-navigation div[data-style="burger"][data-alignment="center"] i.navigation-add-item {
   left:inherit !important;
   margin-right:50px;
 }
 
-div.upfront-navigation div[data-style="burger"][data-aliment="right"] i.navigation-add-item {
+div.upfront-navigation div[data-style="burger"][data-alignment="right"] i.navigation-add-item {
   right: inherit;
   margin-left: 10px;
 }
@@ -337,7 +347,7 @@ div.upfront-navigation div[data-style="burger"] ul.sub-menu {
 
 .newnavigation_squished .upfront-object > .upfront-entity_meta.newnavigation_add {
 	top: 5px !important;
-	right: 51px !important;
+	right: 30px !important;
 }
 
 .upfront-settings-item div.menu_style > span {
@@ -371,9 +381,11 @@ li.menu-item .uimage-controls.image-element-controls .upfront-inline-panel .upfr
 }
 li.menu-item .uimage-controls.image-element-controls .upfront-inline-panel .upfront-inline-panel-item.labeled i {
 	display: inline-block;
+	vertical-align: middle;
 }
 li.menu-item .uimage-controls.image-element-controls .upfront-inline-panel .upfront-inline-panel-item.labeled span {
 	display: inline-block;
+	vertical-align: middle;
 	width: auto!important;
 }
 li.menu-item .uimage-controls.image-element-controls {
@@ -381,12 +393,16 @@ li.menu-item .uimage-controls.image-element-controls {
 	visibility: hidden;
 	bottom: -30px;
 	left: 0;
+	max-width: 100%;
+	overflow-x: hidden;
 }
 li.menu-item .uimage-controls.image-element-controls .upfront-inline-panel {
 	visibility: hidden;
 }
 li.menu-item.controls-visible > .uimage-controls.image-element-controls {
 	visibility: visible;
+	max-width: none;
+	overflow-x: visible;
 }
 li.menu-item.controls-visible > .uimage-controls.image-element-controls .upfront-inline-panel {
 	visibility: visible;
@@ -458,4 +474,30 @@ div.upfront-navigation li.menu-item .uimage-controls a {
 
 .upfront-editable_entity.upfront-navigation:hover .responsive_nav_toggler {
 	right:15px;
+}
+
+div.preset-manager-panel .menustyle_settings_item {
+	padding-top: 15px;
+}
+
+div.preset-manager-panel .menustyle_settings_item .upfront-field-label {
+	font-weight: normal;
+	position: relative;
+	top: 5px;
+}
+
+div.preset-manager-panel .menustyle_settings_item .menu_style {
+	width: 110px;
+}
+
+div.preset-manager-panel .menustyle_settings_item .menu_alignment {
+	width: 90px;
+	margin-top: -45px;
+	position: relative;
+	left: 125px;
+}
+
+div.preset-manager-panel .menustyle_settings_item  .burger_alignment {
+	margin-top: 5px;
+	width: 215px;
 }

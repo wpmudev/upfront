@@ -83,6 +83,8 @@
 		this.update_auto_slide();
 
 		this.bind_events();
+
+		this.$slider.trigger('rendered');
 	};
 
 	JQueryUslider.prototype = {

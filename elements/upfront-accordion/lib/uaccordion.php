@@ -5,11 +5,11 @@
 class Upfront_UaccordionView extends Upfront_Object {
 	public static function default_properties() {
 		$defaultPanel = new StdClass();
-		$defaultPanel->title = '';//self::_get_l10n('default_panel_title');
+		$defaultPanel->title = self::_get_l10n('default_panel_title');
 		$defaultPanel->content = self::_get_l10n('default_panel_content');
 		$secondPanel = new StdClass();
-		$secondPanel->title = '';
-		$secondPanel->content = "Panel 2 content";
+		$secondPanel->title = self::_get_l10n('panel_label').' 2';
+		$secondPanel->content = self::_get_l10n('content_label');
 		return array(
 			'type' => 'UaccordionModel',
 			'view_class' => 'UaccordionView',
@@ -33,8 +33,10 @@ class Upfront_UaccordionView extends Upfront_Object {
 		if(!isset($data['properties']))
 			return $flat;
 
-		foreach($data['properties'] as $prop)
+		foreach($data['properties'] as $prop) {
+			if (isset($prop['value']) === false) continue;
 			$flat[$prop['name']] = $prop['value'];
+		}
 
 		$flat = array_merge(self::default_properties(), $flat);
 
@@ -118,7 +120,7 @@ class Upfront_UaccordionView extends Upfront_Object {
 		$l10n = array(
 			'element_name' => __('Accordion', 'upfront'),
 			'default_panel_title' => __('Panel 1', 'upfront'),
-			'default_panel_content' => __('Click on active panel title to edit title. Confirm with Enter key.<br>Click on plus button [+] to add new panel.', 'upfront'),
+			'default_panel_content' => __('<p>Click on active panel title to edit title. Confirm with Enter key.</p><p>Click on plus button [+] to add new panel.</p>', 'upfront'),
 			'css' => array(
 				'containers_label' => __('Panel containers', 'upfront'),
 				'containers_info' => __('The wrapper layer of every panel.', 'upfront'),
@@ -141,12 +143,19 @@ class Upfront_UaccordionView extends Upfront_Object {
 			),
 			'settings' => __('Accordion settings', 'upfront'),
 			'panel_label'	=> __('Panel', 'upfront'),
-			'content_label' => __('Content', 'upfront'),
+			'add_panel'	=> __('Add Panel', 'upfront'),
+			'content_label' => __('<p>Content</p>', 'upfront'),
 			'appearance' => __('Appearance', 'upfront'),
 			'section_bg' => __('Section Background:', 'upfront'),
 			'header_bg' => __('Header Background:', 'upfront'),
 			'header_border' => __('Header Border:', 'upfront'),
 			'default_preset' => __('Default', 'upfront'),
+			'content_area_colors_label' => __('Content Area Colors', 'upfront'),
+			'content_area_bg_label' => __('Content Area BG', 'upfront'),
+			'colors_label' => __('Colors', 'upfront'),
+			'header_bg_label' => __('Header BG', 'upfront'),
+			'triangle_icon_label' => __('Triangle Icon', 'upfront'),
+			'typography_tab_label' => __('Tab Label Typography', 'upfront'),
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)

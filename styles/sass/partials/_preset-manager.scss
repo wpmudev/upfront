@@ -8,15 +8,21 @@ div.preset-manager-panel .hover_preset,
 div.preset-manager-panel .state_settings_button,
 div.preset-manager-panel .static_preset {
 	display: inline;
-	margin-right: 15px;
+	margin-right: 5px;
 }
 div.preset-manager-panel .hover_preset input,
 div.preset-manager-panel .state_settings_button input,
 div.preset-manager-panel .static_preset input,
-div.preset-manager-panel .delete_preset input{
-	font-size: 13px;
-	padding: 1px 5px 2px;
+div.preset-manager-panel .delete_preset input,
+#settings .delete-menu-button input {
+	font-size: 12px;
+	padding: 0px 5px 2px;
 	border-radius: 5px;
+}
+div.preset-manager-panel .delete_preset input,
+#settings .delete-menu-button input {
+	font-size: 13px;
+	padding: 1px 5px 1px;
 }
 div.preset-manager-panel .hover_preset input,
 div.preset-manager-panel .state_settings_button input,
@@ -28,35 +34,101 @@ div.preset-manager-panel .static_preset input {
 div.preset-manager-panel .hover_preset.active input,
 div.preset-manager-panel .state_settings_button.active input,
 div.preset-manager-panel .static_preset.active input{
-	background-color:#84a8ce !important;
+	background-color:#84a8ce;
 	color:#fff;
 	text-decoration: none;
 }
-div.preset-manager-panel .delete_preset input {
-	background-color:#d71b12 !important;
+div.preset-manager-panel .state_settings {
+	padding-bottom: 10px;
+}
+div.preset-manager-panel .state_settings_button input {
+	background: #e9f1fa;
+	color: #90a3c3;
+	border: 1px solid #e9f1fa;
+	border-bottom: none;
+	text-decoration: none;
+	border-radius: 0 !important;
+	position: relative;
+	bottom: -2px;
+}
+div.preset-manager-panel .state_settings_button.active input {
+	background: #fff;
+	color: #86a3c3;
+	border-color: #e5eef8;
+}
+div.preset-manager-panel .delete_preset input,
+#settings .delete-menu-button input {
+	background-color: #d86c6b !important;
 	color:#fff;
 	float: right;
 	margin-top: -25px;
 }
+#settings div.preset-manager-panel .upfront-settings_panel,
+#settings div.preset-manager-panel .select-presets,
+#settings .select-presets {
+	background: #dae6f2;
+}
+#settings .select-presets {
+	padding-bottom: 10px;
+}
+#settings .select-presets .upfront-settings-item-title {
+	display: none;
+}
+div.preset-manager-panel .upfront-settings-css {
+	padding: 0px;
+	background: #f7fbff;
+}
 div.preset-manager-panel .delete_preset {
 	position: relative;
-	z-index: 99;
-	top: -22px;
+	z-index: 9;
+	top: -19px;
+}
+#settings .delete-menu-button input {
+	position: relative;
+	z-index: 9;
+	top: 3px;
 }
 div.preset-manager-panel div.preset_specific {
-	background: #e7f1fb; /* Old browsers */
-	background: -moz-linear-gradient(top,  #e7f1fb 0%, #f2f9ff 39%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e7f1fb), color-stop(39%,#f2f9ff)); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top,  #e7f1fb 0%,#f2f9ff 39%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top,  #e7f1fb 0%,#f2f9ff 39%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top,  #e7f1fb 0%,#f2f9ff 39%); /* IE10+ */
-	background: linear-gradient(to bottom,  #e7f1fb 0%,#f2f9ff 39%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e7f1fb', endColorstr='#f2f9ff',GradientType=0 ); /* IE6-9 */
-	margin-top: 10px;
-	padding: 1px 0px;
+	background: #fff;
+	padding-top: 10px;
+	padding: 0px;
+	position: relative;
+}
+div.preset-manager-panel div.global_modules {
+	margin: -2px -15px;
+	padding-left: 15px;
+	background: #f7fbff;
+}
+div.preset-manager-panel div.state_settings_button_wrapper {
+	background: #f7fbff;
+	margin: -3px -15px;
+	padding-top: 5px;
+	padding-left: 15px;
+	border-bottom: 1px solid #e5eef8;
+}
+div.preset-manager-panel div.state_settings div.upfront-settings-item {
+	padding: 0px;
+}
+#settings .menu_structure_module {
+	position: relative;
+}
+div.preset-manager-panel div.preset_specific:before,
+#settings .menu_structure_module:before {
+	content: "";
+	position: absolute;
+	width: 0; 
+	top: -5px;
+	left: 30px;
+	height: 0; 
+	border-left: 5px solid transparent;
+	border-right: 5px solid transparent;
+	border-bottom: 5px solid #f7fbff;
+}
+#settings .menu_structure_module:before {
+	top: -20px;
 }
 div.preset-manager-panel div.upfront-settings_panel_scroll {
-	padding: 15px 0px !important;
+	padding: 0px !important;
 }
 div.preset-manager-panel div.upfront-settings_panel_scroll .upfront-settings-item {
 	padding: 0px 5px;
@@ -73,6 +145,16 @@ div.preset-manager-panel div.preset_specific div.upfront-settings-item div.upfro
 div.preset-manager-panel div.preset_specific .upfront-settings-item-title {
 	display: none;
 }
+div.preset-manager-panel div.preset_specific .upfront-settings-item-title span {
+	background: none !important;
+	margin-left: 0px;
+	padding: 0px;
+}
+div.preset-manager-panel div.preset_specific .upfront-settings-item-content .upfront-settings-item-title {
+	display: block;
+	color: #2f475f;
+	margin-bottom: 5px;
+}
 div.preset-manager-panel .upfront-preset-add {
 	display: block;
 	position: absolute;
@@ -88,10 +170,16 @@ div.preset-manager-panel .upfront-preset-add {
 div.preset-manager-panel .chosen-search {
 	position: relative;
 }
-div.preset-manager-panel div.select-preset-field label {
+div.preset-manager-panel div.select-preset-field {
+	padding-bottom: 9px;
+}
+div.preset-manager-panel div.select-preset-field label,
+#settings .select-menu-field label {
 	font-weight: normal;
+	color: #7d99b3;
 	font-family: Tahoma;
 	margin-bottom: 3px;
+	padding-left: 2px;
 }
 div.preset-manager-panel div.preset_specific div.border_radius input,
 div.preset-manager-panel div.preset_specific div.inline-number input,
@@ -101,13 +189,8 @@ div.preset-manager-panel div.preset_specific div.duration input
 	width: 45px;
 	font-size: 12px;
 }
-div.preset-manager-panel div.preset_specific div.border_radius1 {
-	position: relative;
-}
-div.preset-manager-panel div.preset_specific div.border_radius1 label {
-	position: absolute;
-	top: -20px;
-	width: 150px;
+div.preset-manager-panel .settings_module.corner_radius_settings_item {
+	padding-bottom: 11px;
 }
 div.preset-manager-panel div.preset_specific div.border_radius {
 	display: inline-block;
@@ -118,31 +201,64 @@ div.preset-manager-panel div.preset_specific div.border_radius label {
 	display: none;
 }
 div.preset-manager-panel div.preset_specific div.border_radius1 {
-	
+	top: -6px;
+	padding: 7px 0px 0px 10px;
+	position: relative;
+	border-left: 2px solid #dae6f2;
+}
+div.preset-manager-panel div.preset_specific div.border_radius1 label {
+	position: absolute;
+	top: -20px;
+	width: 150px;
 }
 div.preset-manager-panel div.preset_specific div.border_radius2 {
-	left: 30px;
+	left: 15px;
+	top: -6px;
 }
 div.preset-manager-panel div.preset_specific div.border_radius3 {
-	top: 50px;
-	left: -135px;
+	padding: 15px 0px 9px 10px;
+	position: relative;
+	border-left: 2px solid #dae6f2;
+	left: -147px;
+	top: 39px;
+	margin-bottom: 39px;
 }
 div.preset-manager-panel div.preset_specific div.border_radius4 {
-	left: -13px;
-	top: 50px;
+	left: -30px;
+	top: 39px;
+	position: relative;
 	margin-bottom: 10px;
 }
 div.preset-manager-panel div.border_radius_lock {
 	position: relative;
-	margin-top: 0px;
+	margin-top: -19px;
+	left: 85px;
+}
+div.preset-manager-panel div.radius-slider {
 	top: -11px;
-	left: 2px;
+	padding-top: 10px;
+	padding-bottom: 17px;
+	position: relative;
+	border-left: 2px solid #dae6f2;
+	padding-left: 10px;
+	width: 130px;
+	float: left;
+}
+div.preset-manager-panel div.radius-slider .upfront-field-slider-value {
+	display: none;
+}
+div.preset-manager-panel div.border_radius_number, div.preset-manager-panel div.border_radius_number input {
+	width: 60px;
+	float: left;
+	position: relative;
+	margin-left: 15px;
 }
 div.preset-manager-panel div.preset_specific div.bg-color {
 	display: inline-block;
 	vertical-align: text-bottom;
 	margin-left: 70px;
 	margin-bottom: -2px;
+	position: relative;
 }
 div.preset-manager-panel div.preset_specific div.border-color {
 	margin-left: 28px;
@@ -167,11 +283,12 @@ div.preset-manager-panel div.preset_specific div.font_color {
 	margin-top: -30px;
 }
 div.preset-manager-panel div.preset_specific div.duration {
-	margin-top: 15px;
+	margin-top: 5px;
 }
 div.preset-manager-panel div.preset_specific div.transition{
-	margin-top: -28px;
-	margin-left:80px;
+	margin-top: -27px;
+	margin-left: 80px;
+	width: 135px;
 }
 div.preset-manager-panel div.preset_specific div.font_face > label,
 div.preset-manager-panel div.preset_specific div.transition label {
@@ -182,6 +299,13 @@ div.preset-manager-panel div.preset_specific div.transition label {
 div.preset-manager-panel div.preset_specific div.transition > label {
 	margin-left:-30px;
 	margin-right: 10px;
+}
+div.preset-manager-panel div.preset_specific div.transition.element-toggled > label {
+	margin-left:-20px;
+	margin-right: 30px;
+}
+div.preset-manager-panel div.preset_specific div.transition .upfront-field-select-single {
+	margin-left: 10px;
 }
 div.preset-manager-panel div.preset_specific div.font_face > label {
 	position: relative;
@@ -204,7 +328,7 @@ div.preset-manager-panel div.new_preset {
 	margin-top: 10px;
 }
 div.preset-manager-panel div.preset {
-	margin-top: 10px;
+	margin-top: 8px;
 }
 div.preset-manager-panel div.or_divider div.upfront-settings-item-title {
 	text-align: center;
@@ -224,6 +348,10 @@ div.preset-manager-panel div.or_divider div.upfront-settings-item-title > span {
 div.preset-manager-panel div.upfront-settings-common_panel {
 	padding-bottom: 15px;
 }
+div.preset-manager-panel div.upfront-settings-padding_panel {
+	border-bottom: 1px solid #a3bfd9;
+	padding-bottom: 0;
+}
 div.preset-manager-panel div.border_radius_lock input[type=checkbox] {
 	position: relative;
 	left: 36px;
@@ -242,7 +370,7 @@ div.preset-manager-panel div.border_radius_lock input[type=checkbox]:after {
 	background-image: url('../img/uf-core-el-sprite.png');
 	background-image: url('../img/uf-core-el-sprite.svg'), none;
 	background-position: -661px -172px;
-	background-color: rgb(242, 249, 255);
+	background-color: rgb(255, 255, 255);
 	left: -3px;
 	top: -3px;
 	position: relative;
@@ -293,25 +421,31 @@ div.preset-manager-panel div.border_radius_lock input[type=checkbox]:checked:aft
 }
 div.preset-manager-panel div.borderWidth, div.preset-manager-panel div.borderType, div.preset-manager-panel div.borderColor {
 	display: inline-block;
-	margin-top: 0px;
+	margin-top: 5px;
 }
 div.preset-manager-panel div.borderWidth {
+	padding: 5px 0px 5px 10px;
 	position: relative;
-	top: -7px;
+	top: 0px;
+	border-left: 2px solid #dae6f2;
 }
 div.preset-manager-panel div.borderWidth input{
-	width: 50px;
+	width: 40px;
 }
 div.preset-manager-panel div.borderWidth label {
 	display: none;
 }
 div.preset-manager-panel div.borderType {
-	width: 90px;
+	width: 70px;
 	margin-left: 13px;
 	margin-right: 14px;
 }
+div.preset-manager-panel div.borderType .upfront-field-select {
+	position: relative;
+	top: 7px;
+}
 div.preset-manager-panel div.borderColor {
-	margin-top: -25px;
+	margin-top: -32px;
 }
 div.preset-manager-panel .backgroundColor {
 	padding-top: 8px;
@@ -319,17 +453,6 @@ div.preset-manager-panel .backgroundColor {
 div.preset-manager-panel .backgroundColor .sp-replacer  {
 	margin-top: -50px;
 	margin-left: 130px;
-}
-div.preset-manager-panel div.typeFace, div.preset-manager-panel div.weightStyle {
-	display: inline-block;
-	margin-top: 0px;
-}
-div.preset-manager-panel div.typeFace {
-	width: 115px;
-}
-div.preset-manager-panel div.weightStyle {
-	width: 98px;
-	margin-left: 10px;
 }
 div.preset-manager-panel .upfront-field-label-inline {
 	font-size: 11px;
@@ -339,18 +462,25 @@ div.preset-manager-panel .upfront-field-label-inline {
 div.preset-manager-panel .fontSize, div.preset-manager-panel .lineHeight, div.preset-manager-panel .fontColor {
 	display: inline-block;
 	margin-top: 0px;
-	margin-right: 18px;
+	margin-right: 12px;
 }
 div.preset-manager-panel .fontSize input {
-	width: 55px;
+	width: 50px;
 }
 div.preset-manager-panel .lineHeight input {
-	width: 70px;
+	width: 60px;
 }
 div.preset-manager-panel div.fontColor {
 	margin-top: -30px;
 	color: #000;
 	margin-right: 0px;
+}
+div.preset-manager-panel div.fontColor label,
+div.preset-manager-panel div.borderColor label {
+	position: relative;
+	top: 25px !important;
+	left: 25px;
+	color: #7d99b6;
 }
 div.preset-manager-panel div.preset-separator {
 	border-bottom: 1px solid #e1edf8;
@@ -374,8 +504,14 @@ div.preset-manager-panel .useRadius {
 div.preset-manager-panel .typography-heading {
 	margin-top: 0px;
 }
+div.preset-manager-panel .selectElement {
+	width: 225px;
+}
+div.preset-manager-panel .selectElement.element-toggled {
+	margin-top: 5px;
+}
 div.preset-manager-panel .useBorder {
-	margin-top: 19px;
+	margin-top: 15px;
 }
 div.preset-manager-panel .useBorderSeparator {
 	top: 8px;
@@ -388,9 +524,284 @@ div.preset-manager-panel .transition .upfront-field-select-single .upfront-field
 	left: 12px;
 	position: relative;
 }
-div.preset-manager-panel .border_radius_lock_hover {
-	margin-bottom: 50px;
-}
 div.preset-manager-panel .backgroundcolor-hover, div.preset-manager-panel .typography-hover {
 	padding-top: 11px;
+}
+#element-settings-sidebar .upfront-css-edit,
+div.preset-manager-panel .edit_preset_css {
+	position: relative;
+	margin-top: -12px;
+	left: 90px;
+}
+#element-settings-sidebar .edit-preset-css-label,
+div.preset-manager-panel .edit_preset_label {
+	font-weight: bold;
+	font-size: 13px;
+	color: #2f475f;
+	text-transform: uppercase;
+}
+#element-settings-sidebar .edit-preset-css-label input,
+div.preset-manager-panel .edit_preset_label input {
+	cursor: default;
+	position: relative;
+	top: 15px;
+}
+#element-settings-sidebar .upfront-css-edit {
+	position: relative;
+}
+.edit_preset_css input,
+#element-settings-sidebar .upfront-css-edit input {
+	background-image: linear-gradient(-179deg, #fafdff 0%, #f3faff 100%);
+	border: 1px solid #a2bfda;
+	border-radius: 2px;
+	font-size: 14px;
+	color: #7c86a6;
+	padding: 4px 8px;
+	position: relative;
+	padding-left: 32px;
+}
+.edit_preset_css input:hover,
+#element-settings-sidebar .upfront-css-edit input:hover {
+	border: 1px solid #607f99;
+}
+#element-settings-sidebar .upfront-css-edit {
+	margin-bottom: 10px;
+}
+.upfront-settings-css .upfront-settings-item-content {
+	padding-left: 10px !important;
+}
+.upfront-social-services-item .upfront-settings-css {
+	margin-left: -15px;
+}
+div.preset-manager-panel .edit_preset_css:before,
+#element-settings-sidebar .upfront-css-edit:before {
+	background-image: url(../img/uf-core-el-sprite.svg);
+	background-position: -660px -44px;
+	width: 18px;
+	height: 15px;
+	content: "";
+    display: block;
+	position: absolute;
+	z-index: 11;
+	top: 6px;
+	left: 8px;
+}
+div.preset-manager-panel .module-color-field {
+	padding-top: 5px;
+	height: 25px;
+}
+div.preset-manager-panel .module-color-field .upfront-field-label-inline {
+	font-size: 11px;
+	display: inline;
+	font-family: verdana, sans-serif;
+	text-align: left;
+	color: #7d99b3;
+	position: relative;
+	top: -5px;
+	padding-left: 5px;
+}
+div.preset-manager-panel .module-color-field .sp-replacer {
+	float: left;
+}
+div.preset-manager-panel .color-module.two {
+	width: 45%;
+	float: left;
+	margin-bottom: 2px;
+}
+div.preset-manager-panel .color-module.single {
+	width: 100%;
+	margin-top: -3px;
+}
+div.preset-manager-panel .checkbox-title span,
+#element-settings-sidebar .checkbox-title span {
+	text-transform: uppercase;
+	font-weight: bold;
+	margin: 0px;
+}
+div.preset-manager-panel .settings_module {
+	border-bottom: 1px solid #e5ecf4;
+	margin: 0px -15px;
+	padding-left: 15px;
+	padding-bottom: 15px;
+}
+div.preset-manager-panel .colors_settings_item {
+	padding-bottom: 12px;
+}
+div.preset-manager-panel .image_style {
+	width: 215px;
+}
+div.preset-manager-panel .selectbox_settings_item .upfront-field-label {
+	font-weight: normal;
+	margin-top: 10px;
+}
+div.preset-manager-panel .colors_settings_item, 
+div.preset-manager-panel .selectbox_settings_item, 
+div.preset-manager-panel .typography_settings_item, 
+div.preset-manager-panel .hov_animation_settings_item {
+	padding-top: 15px;
+}
+div.preset-manager-panel .checkbox_settings_item {
+	padding-bottom: 7px;
+}
+div.preset-manager-panel .typography_settings_item .element-toggled.selectElement,
+div.preset-manager-panel .typography_settings_item .element-toggled.typeFace, 
+div.preset-manager-panel .typography_settings_item .element-toggled.weightStyle,
+div.preset-manager-panel .typography_settings_item .element-toggled.fontSize,
+div.preset-manager-panel .hov_animation_settings_item .element-toggled.duration,
+div.preset-manager-panel .colors_settings_item .element-toggled.single,
+div.preset-manager-panel .colors_settings_item .element-toggled.two:nth-child(even) {
+	border-left: 2px solid #dae6f2;
+	padding: 5px 0px 5px 10px;
+}
+div.preset-manager-panel .typography_settings_item .element-toggled.lineHeight,
+div.preset-manager-panel .typography_settings_item .element-toggled.fontColor,
+div.preset-manager-panel .typography_settings_item .element-toggled.selectElement,
+div.preset-manager-panel .typography_settings_item .element-toggled.typeFace, 
+div.preset-manager-panel .typography_settings_item .element-toggled.weightStyle,
+div.preset-manager-panel .typography_settings_item .element-toggled.fontSize,
+div.preset-manager-panel .hov_animation_settings_item .element-toggled.duration,
+div.preset-manager-panel .colors_settings_item .element-toggled.single,
+div.preset-manager-panel .colors_settings_item .element-toggled.two:nth-child(even),
+div.preset-manager-panel .colors_settings_item .element-toggled.two  {
+	top: 5px;
+	position: relative;
+}
+div.preset-manager-panel .typography_settings_item .element-toggled.fontColor {
+	top: 11px;
+}
+div.preset-manager-panel .typography_settings_item .element-toggled .upfront-field-label-inline {
+	margin-top: -10px;
+}
+div.preset-manager-panel .colors_settings_item .element-toggled.single,
+div.preset-manager-panel .colors_settings_item .element-toggled.two {
+	margin-top: 0px;
+	padding-bottom: 5px;
+}
+div.preset-manager-panel .colors_settings_item .element-toggled.two:nth-child(even) { 
+	clear: left;
+}
+div.preset-manager-panel .typography_settings_item .element-toggled.typeFace .chosen-container, 
+div.preset-manager-panel .typography_settings_item .element-toggled.weightStyle .chosen-container {
+	width: 213px !important;
+}
+div.preset-manager-panel .typography_settings_item .upfront-settings-item-content .upfront-field-label-inline {
+	position: relative;
+	top: 5px;
+	color: #7d99b6;
+}
+div.preset-manager-panel .typography_settings_item .upfront-settings-item-content {
+	margin-top: -6px !important;
+}
+div.preset-manager-panel .typography_settings_item .useTypography label {
+	color: #2f475f;
+	top: 0px;
+	margin-top: 6px;
+}
+div.preset-manager-panel .typography_settings_item .upfront-settings-item-title {
+	margin-top: -3px;
+}
+div.preset-manager-panel .useTypography .upfront-field-multiple-selected {
+	margin-bottom: 5px;
+}
+div.preset-manager-panel .useColors .upfront-field-multiple-selected {
+	margin-bottom: 8px;
+}
+div.preset-manager-panel .border-with-fields {
+	padding-top: 10px !important;
+}
+div.preset-manager-panel .border_selectElement {
+	width: 145px;
+	z-index: 9;
+	position: relative;
+	margin-bottom: -34px;
+	margin-left: 80px;
+	margin-top: 10px;
+}
+
+div.preset-manager-panel .upfront-settings-css {
+	padding-bottom: 15px;
+}
+div.preset-manager-panel .upfront-settings-item-title {
+	line-height: 16px;
+}
+
+/* Default overlay */
+
+div.preset-manager-panel .default-overlay-wrapper {
+	position: relative;
+	min-height: 300px;
+}
+div.preset-manager-panel .default-overlay {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background-image: linear-gradient(-180deg, #FFFFFF 0%, rgba(255,255,255,0.85) 100%);
+	z-index: 999;
+	padding: 30px 15px;
+	font-family:Open Sans, Helvetica Neueu, Helvetica, Arial, sans-serif;
+}
+
+div.preset-manager-panel .overlay-title:before {
+	content: '';
+	width: 20px;
+	height: 19px;
+	background-image: url('../img/uf-ui-sprite.svg');
+	background-position: -193px -247px;
+	left: 17px;
+	top: 32px;
+	opacity: .8;
+	position: absolute;
+	display: block;
+}
+
+div.preset-manager-panel .overlay-title {
+	padding-left: 30px;
+	color:rgba(47,71,95,.8);
+	font-size:14px;
+	font-weight:600;
+}
+
+div.preset-manager-panel .overlay-text p {
+	font-size: 12px;
+	display: inline-block;
+	color: #596c7f;
+	position: relative;
+	font-weight: normal;
+	line-height: 1.4;
+	padding-top: 12px;
+}
+div.preset-manager-panel .overlay-text p strong {
+	font-weight:600;
+}
+
+div.preset-manager-panel .overlay-button-input {
+	width: 85%;
+	margin: 20px auto 0;
+	display: block;
+	border: 1px solid rgba(151,163,174, 0.5);
+	padding:6px;
+	font-size:14px;
+	color: rgba(47,71,95, .85);
+}
+
+div.preset-manager-panel .overlay-button-input:hover {
+	border: 1px solid rgba(151,163,174, 1);
+	color: rgba(47,71,95, 1);
+}
+
+div.preset-manager-panel .checkbox-module,
+div.preset-manager-panel .tooltip-icon {
+	display: inline-block;
+}
+
+div.preset-manager-panel .checkbox-tooltip {
+	position: relative;
+	top: 4px;
+	left: 8px;
+	opacity: .8;
+	width: 16px;
+	height: 14px;
+	background: url(../img/uf-core-el-sprite.svg) no-repeat -484px -300px;
 }

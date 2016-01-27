@@ -1,8 +1,9 @@
 (function ($) {
 define([
 	'text!elements/upfront-posts/tpl/views.html',
-	'elements/upfront-posts/js/post-list-settings-parts'
-], function(tpl, Parts) {
+	'elements/upfront-posts/js/post-list-settings-parts',
+	'scripts/upfront/element-settings/root-settings-panel'
+], function(tpl, Parts, RootSettingsPanel) {
 
 var l10n = Upfront.Settings.l10n.posts_element;
 var $template = $(tpl);
@@ -18,8 +19,13 @@ var Panels = {
 	_initial: {}
 };
 
-Panels.General = Upfront.Views.Editor.Settings.Panel.extend({
+RootSettingsPanel = RootSettingsPanel.extend({
+	is_active: function () {
+		return this.$el.find(".uf-settings-panel__body").is(":visible");
+	}
+});
 
+Panels.General = RootSettingsPanel.extend({	
 	initialize: function (opts) {
 		this.options = opts;
 		var me = this,
@@ -73,14 +79,8 @@ Panels.General = Upfront.Views.Editor.Settings.Panel.extend({
 			query
 		]);
 	},
-
-	get_label: function () {
-		return l10n.general;
-	},
-
-	get_title: function () {
-		return l10n.general;
-	}
+	
+	title: l10n.general_settings
 });
 
 var CustomSelectorField =  Upfront.Views.Editor.Field.Hidden.extend({
@@ -129,7 +129,7 @@ var CustomSelectorField =  Upfront.Views.Editor.Field.Hidden.extend({
 				if (is_single) {
 					values = [{id: id, permalink: link}];
 				} else {
-					values.push({id: id, permalink: link}); 
+					values.push({id: id, permalink: link});
 					me.select_posts(e);
 				}
 				me.model.set_property(me.options.property, me.encode_values(values));
@@ -388,8 +388,9 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 
 
 
-Panels.PostParts = Upfront.Views.Editor.Settings.Panel.extend({
-
+Panels.PostParts = RootSettingsPanel.extend({
+	title: l10n.post_part_settings,
+	
 	initialize: function (opts) {
 		this.options = opts;
 		var me = this,
@@ -421,14 +422,6 @@ Panels.PostParts = Upfront.Views.Editor.Settings.Panel.extend({
 			sorter
 		]);
 	},
-
-	get_label: function () {
-		return l10n.post_parts;
-	},
-
-	get_title: function () {
-		return l10n.post_parts;
-	}
 });
 
 var PostPartsPickerSettings = Upfront.Views.Editor.Settings.Item.extend({

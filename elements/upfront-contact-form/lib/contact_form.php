@@ -9,7 +9,7 @@ class Upfront_UcontactView extends Upfront_Object {
 	public function get_markup () {
 
 		$element_id = $this->_get_property('element_id');
-		
+
 		$template = self::_get_l10n('template');
 		if (is_array($template)) $template = array_map('esc_attr', $template);
 
@@ -21,13 +21,13 @@ class Upfront_UcontactView extends Upfront_Object {
 			'message' => isset($this->msg) ? $this->msg : false,
 			'message_class' => isset($this->msg_class) ? $this->msg_class : 'error',
 			'entity_id' => $this->get_entity_ids_value(),
-			'form_button_text' => $this->_get_property('form_button_text'),
+			'form_button_text' => $this->_get_property_t('form_button_text'),
 			'placeholders' => array(
-				'name' => $this->get_placeholder($this->_get_property('form_name_label')),
-				'email' => $this->get_placeholder($this->_get_property('form_email_label')),
-				'subject' => $this->get_placeholder($this->_get_property('form_subject_label')),
-				'captcha' => $this->get_placeholder($this->_get_property('form_captcha_label')),
-				'message' => $this->get_placeholder($this->_get_property('form_message_label'))
+				'name' => $this->get_placeholder($this->_get_property_t('form_name_label')),
+				'email' => $this->get_placeholder($this->_get_property_t('form_email_label')),
+				'subject' => $this->get_placeholder($this->_get_property_t('form_subject_label')),
+				'captcha' => $this->get_placeholder($this->_get_property_t('form_captcha_label')),
+				'message' => $this->get_placeholder($this->_get_property_t('form_message_label'))
 			),
 			'values' => array(
 				'name' => esc_attr($this->get_post('sendername')),
@@ -44,6 +44,10 @@ class Upfront_UcontactView extends Upfront_Object {
 			),
 			'l10n' => $template,
 		));
+
+		if (!isset($args['preset'])) {
+			$args['preset'] = 'default';
+		}
 
 		$args['show_subject'] = $args['show_subject'] && sizeof($args['show_subject']);
 		$args['show_captcha'] = $args['show_captcha'] && sizeof($args['show_captcha']);
@@ -108,6 +112,10 @@ class Upfront_UcontactView extends Upfront_Object {
 
 		upfront_add_element_style('ucontact-style', array('css/ucontact.css', dirname(__FILE__)));
 		upfront_add_element_script('ucontact-front', array('js/ucontact-front.js', dirname(__FILE__)));
+
+		if (is_user_logged_in()) {
+			upfront_add_element_style('ucontact-style-editor', array('css/ucontact-editor.css', dirname(__FILE__)));
+		}
 	}
 
 	public static function ajax_send () {
@@ -144,7 +152,7 @@ class Upfront_UcontactView extends Upfront_Object {
 		foreach ($data as $prop) {
 			$contact_form[$prop['name']] = $prop['value'];
 		}
-		
+
 		if (!$contact_form['element_id']) {
 			return array(
 				'error' => true,
@@ -230,23 +238,24 @@ class Upfront_UcontactView extends Upfront_Object {
 			if (empty($emailto)) $emailto = get_option('admin_email');
 			if (!is_email($emailto)) $emailto = false;
 
-			$headers = array('From: ' . "{$name} <{$email}>", 'Reply-To: ' . $email);
-
+			$headers[] = 'From: ' . $name . ' <' . $email . ">\r\n";
 			$this->msg = $this->check_fields($name, $email, $subject, $message);
-
+			
 			if ($this->msg) {
 				$this->msg_class = 'error';
 			} else if (!empty($emailto)) {
-				// Let's first force mail callbacks	
+				
+				// Let's first force mail callbacks
 				if (!empty($name)) {
 					$email_callback = create_function('$email', "return '{$email}';");
 					$name_callback = create_function('$name', "return '{$name}';");
 					add_filter('wp_mail_from', $email_callback, 99);
 					add_filter('wp_mail_from_name', $name_callback, 99);
 				}
-				
+
 				// ... then send email
 				if (!wp_mail($emailto, $subject, $message, $headers)) {
+					
 					$this->msg = self::_get_l10n('error_sending');
 					$this->msg_class = 'error';
 				} else $this->msg = self::_get_l10n('mail_sent');
@@ -256,7 +265,7 @@ class Upfront_UcontactView extends Upfront_Object {
 					remove_filter('wp_mail_from_name', $name_callback, 99);
 					remove_filter('wp_mail_from', $email_callback, 99);
 				}
-			
+
 			} else {
 				$this->msg = self::_get_l10n('mail_sent');
 			}
@@ -366,6 +375,7 @@ class Upfront_UcontactView extends Upfront_Object {
 		$l10n = array(
 			'element_name' => __('Contact', 'upfront'),
 			'contact_form' => __('Contact form', 'upfront'),
+			'contact_details' => __('Contact Details', 'upfront'),
 			'name_label' => __('Name:', 'upfront'),
 			'email_label' => __('Email:', 'upfront'),
 			'subject_label' => __('Subject:', 'upfront'),
@@ -397,16 +407,16 @@ class Upfront_UcontactView extends Upfront_Object {
 				'send_info' => __('Form\'s submit button', 'upfront'),
 			),
 			'general' => array(
-				'label' => __('General', 'upfront'),
-				'send_to' => __('Send results to:', 'upfront'),
+				'label' => __('General Settings', 'upfront'),
+				'send_to' => __('Send form content to:', 'upfront'),
 				'button_text' => __('Contact form submit button text:', 'upfront'),
 				'use_title' => __('Use form title', 'upfront'),
 				'form_title' => __('Contact form title:', 'upfront'),
 			),
 			'validation' => array(
 				'label' => __('Form validation', 'upfront'),
-				'on_field' => __('Inline validation', 'upfront'),
-				'on_submit' => __('On button click', 'upfront'),
+				'on_field' => __('Inline', 'upfront'),
+				'on_submit' => __('On Submit', 'upfront'),
 			),
 			'fields' => array(
 				'label' => __('Form Fields', 'upfront'),
@@ -418,6 +428,7 @@ class Upfront_UcontactView extends Upfront_Object {
 				'show_captcha' => __('Show CAPTCHA field', 'upfront'),
 				'subject' => __('Subject Field text:', 'upfront'),
 				'default_subject' => __('Default subject:', 'upfront'),
+				'label_localtion' => __('Field Label Location:', 'upfront')
 			),
 			'apr' => array(
 				'label' => __('Appearance', 'upfront'),
@@ -426,6 +437,15 @@ class Upfront_UcontactView extends Upfront_Object {
 				'inline' => __('Inline with field', 'upfront'),
 			),
 			'settings' => __('Contact form settings', 'upfront'),
+			'colors_label' => __('Colors', 'upfront'),
+			'field_bg_label' => __('Field BG', 'upfront'),
+			'button_bg_label' => __('Button BG', 'upfront'),
+			'typography_label' => __('Typography', 'upfront'),
+			'field_labels_label' => __('Field Labels', 'upfront'),
+			'field_values_label' => __('Field Values', 'upfront'),
+			'button_label' => __('Button', 'upfront'),
+			'field_button_label' => __('Field & Button', 'upfront'),
+			'field_label' => __('Field', 'upfront'),
 			'template' => array(
 				'missing_name' => __('You must write your name.', 'upfront'),
 				'invalid_email' => __('The email address is not valid.', 'upfront'),

@@ -133,23 +133,23 @@ a.ueditor-action-pickercancel{
   content: "";
 }
 i.upfront-icon.upfront-icon-region-style:before{
-  background-position: -700px -902px;
+  background-position: -700px -906px;
 }
 i.upfront-icon.upfront-icon-region-style:hover:before{
-  background-position:-808px -902px;
+  background-position:-808px -906px;
 }
 i.upfront-icon.upfront-icon-region-remove:before{
-//  background-position:-807px -900px;
+/* //  background-position:-807px -900px;
   content:"x";
-  color:red;
+  color:red;*/
 }
 
 .upfront-inline-panel-item i.upfront-icon.upfront-icon-region-caption:before{
-  background-position: -809px -71px;
+  background-position: -810px -74px;
 }
 
 .upfront-inline-panel-item.active i.upfront-icon.upfront-icon-region-caption:before{
-  background-position: -808px -454px;
+  background-position: -809px -457px;
 }
 
 .ueditor-insert .upfront-icon-region-alignleft,
@@ -171,18 +171,18 @@ i.upfront-icon.upfront-icon-region-remove:before{
 }
 
 .ueditor-insert .upfront-icon-region-link:before {
-	background-position: -700px -421px;
+	background-position: -700px -425px;
 }
 
 .ueditor-insert .upfront-icon-region-link:hover:before {
-  background-position: -808px -421px;
+  background-position: -808px -425px;
 }
 
 .upfront-inline-panel-item i.upfront-icon.upfront-icon-region-change_image:before{
-  background-position: -699px -743px;
+  background-position: -699px -745px;
 }
 .upfront-inline-panel-item i.upfront-icon.upfront-icon-region-change_image:hover:before{
-  background-position: -807px -743px;
+  background-position: -807px -745px;
 }
 
 .ueditor-insert .upfront-icon-region-embed {
@@ -322,6 +322,9 @@ div.uinsert-selector a:hover {
 .post-images-shortcode-wp{
   display: none;
 }
+.redactor-editor{
+  width: 100%;
+}
 .upfront-content-marker.redactor-editor .wp-caption{
   margin: 0;
   padding: 0;
@@ -422,4 +425,8 @@ div.uinsert-selector a:hover {
 }
 .inline-panel-control-dialog-style .upfront-field-select-options label{
   color: #3d5266;
+}
+.wp-caption-text p:last-child{
+  margin-bottom: 0;
+  padding-bottom: 0;
 }

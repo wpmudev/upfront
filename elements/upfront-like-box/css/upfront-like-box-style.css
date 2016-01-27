@@ -2,10 +2,20 @@
 	width: 100%;
 }
 
+.upfront-settings-item .show-friends {
+	margin-top: 15px;
+}
+
+.upfront-like-box, .upfront-output-Like-box-object {
+	min-height: 200px;
+}
+
+.upfront-likebox-overlay {
+	border: 1px #dddddd solid;
+}
+
 .upfront-like-box_placeholder {
-  background-color:#eeeff0;
   padding: 15px;
-  border: 1px #dddddd solid;
 }
 
 .upfront-like-box_url_wrapper {
@@ -42,6 +52,11 @@ input.upfront-like-box_url:-ms-input-placeholder {
    color: #99;  
 }
 
+.facebook-url {
+	width: 225px;
+	margin-top: 10px;
+}
+
 .upfront-like-box_button {
   width: 100%;
   padding: 10px 0;
@@ -64,4 +79,9 @@ div.upfront-like-box_placeholder_guide {
   width: 95%;
   background-color:transparent;
   top: 4%;
+  z-index: 1;
+}
+
+.upfront-output-Like-box-object iframe {
+	max-width: 100%;	
 }

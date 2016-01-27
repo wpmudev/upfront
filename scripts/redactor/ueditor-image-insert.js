@@ -157,6 +157,7 @@ var ImageInsert = base.ImageInsertBase.extend({
     //Import from any image tag
     importFromImage: function(image){
         //var imageData = Upfront.Util.clone(this.defaultData),
+        image = image instanceof jQuery ? image : $(image);
         var imageData = _.extend({}, this.defaultData),
             imageSpecs = {
                 src: image.attr('src'),
@@ -241,10 +242,10 @@ var ImageInsert = base.ImageInsertBase.extend({
             };
             imageData.variant_id = $group.data("variant");
             if( imageData.variant_id  ){
-                imageData.alignment = BasicImageVariants.findWhere( { "vid": $group.data("variant") } );
+                imageData.alignment = utils.BasicImageVariants.findWhere( { "vid": $group.data("variant") } );
             }
         }else{
-            imageData.alignment = BasicImageVariants.first();
+            imageData.alignment = utils.BasicImageVariants.first();
             imageData.variant_id = imageData.alignment.vid;
         }
 
@@ -253,7 +254,8 @@ var ImageInsert = base.ImageInsertBase.extend({
 
 
         insert.render();
-        image.replaceWith(insert.$el);
+        var replacee = image.hasClass(".upfront-inserted_image-basic-wrapper") ? image : image.closest(".upfront-inserted_image-basic-wrapper");
+        replacee.replaceWith( insert.$el );
         return insert;
     },
     getStyleView: function(){

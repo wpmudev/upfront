@@ -8,57 +8,75 @@ class Upfront_PlainTxtView extends Upfront_Object {
 		$element_id = $element_id ? "id='{$element_id}'" : '';
 
 		$content = $this->_get_property('content');
+		
+		$preset = $this->_get_property('preset');
 
-		$matches = array();	
-        
-        if (preg_match('/<div class="plaintxt_padding([^>]*)>/s', $content)) {
-            $doc = new DOMDocument();
-            $clean_doc = new DOMDocument();
-            // So this is just wrong on so many levels, but apparently necessary... 
-            // Force the content type header, so that DOMDocument encoding doesn't default to latin-1 -.-
-            // As per: http://stackoverflow.com/questions/3523409/domdocument-encoding-problems-characters-transformed
-            $raw = "<head><meta http-equiv='Content-type' content='text/html; charset=UTF-8' /></head><body>{$content}</body>";
-            $doc->loadHTML($raw);
-            $divs = $doc->getElementsByTagName('div');
-            $plaintxt_wrap = false;
-            foreach ($divs as $div) {
-                if (!$div->hasAttributes()) continue;
-
-                $class = $div->attributes->getNamedItem('class');
-                if (!is_null($class) && !empty($class->nodeValue) && strpos($class->nodeValue, 'plaintxt_padding') !== false) {
-                    $plaintxt_wrap = $div;
-                    break;
-                }
-            }
-            
-            if (false !== $plaintxt_wrap && $plaintxt_wrap->hasChildNodes()) {
-                foreach ($plaintxt_wrap->childNodes as $node) {
-                    $import_node = $clean_doc->importNode($node, true);
-                    $clean_doc->appendChild($import_node);
-                }
-            }
-            $content = $clean_doc->saveHTML();
-        }
-
-		$style = array();
-		if ($this->_get_property('background_color') && '' != $this->_get_property('background_color')) {
-			$style[] = 'background-color: '. Upfront_UFC::init()->process_colors($this->_get_property('background_color'));
+		if (!isset($preset)) {
+			$preset = 'default';
 		}
+		
+		$preset_props = Upfront_Text_Presets_Server::get_instance()->get_preset_properties($preset);
 
-		if ($this->_get_property('border') && '' != $this->_get_property('border')) {
-			$style[] = 'border: '.Upfront_UFC::init()->process_colors($this->_get_property('border'));
+		$matches = array();
+
+		if ( preg_match('/<div class="plaintxt_padding([^>]*)>/s', $content) ){
+			$doc = new DOMDocument();
+			$clean_doc = new DOMDocument();
+			$content = "<head><meta http-equiv='Content-type' content='text/html; charset=UTF-8' /></head><body>{$content}</body>";
+			$doc->loadHTML($content);
+			$divs = $doc->getElementsByTagName('div');
+			$plaintxt_wrap = false;
+			foreach ( $divs as $div ){
+				if ( !$div->hasAttributes() )
+					continue;
+				$class = $div->attributes->getNamedItem('class');
+				if ( !is_null($class) && !empty($class->nodeValue) && strpos($class->nodeValue, 'plaintxt_padding') !== false ) {
+					$plaintxt_wrap = $div;
+					break;
+				}
+			}
+			if ( $plaintxt_wrap !== false && $plaintxt_wrap->hasChildNodes() ) {
+				foreach ( $plaintxt_wrap->childNodes as $node ){
+					$import_node = $clean_doc->importNode($node, true);
+					$clean_doc->appendChild($import_node);
+				}
+			}
+			$content = $clean_doc->saveHTML();
 		}
 
 		$content = $this->_decorate_content($content);
 
-		return (sizeof($style)>0 ? "<div class='plaintxt_padding' style='".implode(';', $style)."'>": ''). $content .(sizeof($style)>0 ? "</div>": '');
+		// Render old appearance
+		if ($this->_get_property('usingNewAppearance') === false) {
+			$style = array();
+			if ($this->_get_property('background_color') && '' != $this->_get_property('background_color')) {
+				$style[] = 'background-color: '. Upfront_UFC::init()->process_colors($this->_get_property('background_color'));
+			}
+
+			if ($this->_get_property('border') && '' != $this->_get_property('border')) {
+				$style[] = 'border: '.Upfront_UFC::init()->process_colors($this->_get_property('border'));
+			}
+
+			return (sizeof($style)>0 ? "<div class='plaintxt_padding' style='".implode(';', $style)."'>": ''). $content .(sizeof($style)>0 ? "</div>": '');
+		}
+
+		// Render new appearance
+		$return_content = "<div class='plain-text-container'>";
+		if(isset($preset_props['additional_padding']) && $preset_props['additional_padding'] == "yes") {
+			$return_content .= "<div class='plaintxt_padding'>" . $content . "</div>";
+		} else {
+			$return_content .= $content;
+		}
+		$return_content .= "</div>";
+		
+		return $return_content;
 	}
 
 	protected function _decorate_content ($content) {
 
 		if (defined('DOING_AJAX') && DOING_AJAX) return $content;
 		$do_processing = apply_filters(
-			'upfront-shortcode-enable_in_layout', 
+			'upfront-shortcode-enable_in_layout',
 			(defined('UPFRONT_DISABLE_LAYOUT_TEXT_SHORTCODES') && UPFRONT_DISABLE_LAYOUT_TEXT_SHORTCODES ? false : true)
 		);
 
@@ -69,7 +87,10 @@ class Upfront_PlainTxtView extends Upfront_Object {
 			$content = wptexturize($content);
 			$content = convert_smilies($content);
 			$content = convert_chars($content);
-			$content = wpautop($content);
+			/**
+			 * removing it for now to prevent it from adding excessive p tags since the markup and content is already made and confirmed in the text el via ueditor
+			 */
+//			$content = wpautop($content);
 			$content = shortcode_unautop($content);
 		}
 
@@ -103,11 +124,31 @@ class Upfront_PlainTxtView extends Upfront_Object {
 			'color' => __('Color', 'upfront'),
 			'bg_color' => __('Background Color', 'upfront'),
 			'edit_text' => __('Edit Text', 'upfront'),
+			'h1' => __('Main Heading (H1)', 'upfront'),
+			'h2' => __('Sub Heading (H2)', 'upfront'),
+			'h3' => __('Sub Heading (H3)', 'upfront'),
+			'h4' => __('Sub Heading (H4)', 'upfront'),
+			'h5' => __('Sub Heading (H5)', 'upfront'),
+			'h6' => __('Sub Heading (H6)', 'upfront'),
+			'p' => __('Paragraph (P)', 'upfront'),
+			'a' => __('Anchor Link (A)', 'upfront'),
+			'ahover' => __('Anchor Link Hover (A:HOVER)', 'upfront'),
+			'ul' => __('Unordered List (UL)', 'upfront'),
+			'ol' => __('Ordered List (OL)', 'upfront'),
+			'bq' => __('Blockquote (BLOCKQUOTE)', 'upfront'),
+			'bqalt' => __('Blockquote Alternative (BLOCKQUOTE)', 'upfront'),
+			'settings' => array(
+				'colors_label' => __('Colors', 'upfront'),
+				'content_area_bg' => __('Content Area BG', 'upfront'),
+				'typography_label' => __('Typography', 'upfront'),
+				'padding_label' => __('Additional Padding', 'upfront'),
+				'tooltip_label' => __('Additional padding is handy when you have a border or BG Color set.', 'upfront')
+			)
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)
 			: $l10n
-		;
+			;
 	}
 
 	public static function export_content ($export, $object) {

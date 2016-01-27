@@ -15,7 +15,7 @@ define([
 				if (group_anchor && group_anchor.length) {
 					anchors.push({id: '#' + group_anchor, label: group_anchor});
 				}
-				if (module.get("objects")) {
+				if (module.get("objects") && (module.get("objects") || {}).each) {
 					module.get("objects").each(function (object) {
 						var anchor = object.get_property_value_by_name("anchor");
 						if (anchor && anchor.length) {
@@ -49,7 +49,8 @@ define([
 
 	var getLightBoxes = function() {
 		var lightboxes = [],
-			regions = Upfront.Application.layout.get('regions');
+			regions = (Upfront.Application.layout || {}).get ? Upfront.Application.layout.get('regions') : []
+		;
 
 		_.each(regions.models, function(model) {
 			if(model.attributes.sub == 'lightbox') {
@@ -80,11 +81,42 @@ define([
 			'keydown .js-ulinkpanel-lightbox-input': 'onLightboxNameInputChange',
 			'blur .js-ulinkpanel-input-external': 'onUrlInputBlur',
 			//'click .js-ulinkpanel-ok': 'onOkClick',
-			'click .upfront-save_settings': 'onOkClick'
+			'click .upfront-save_settings': 'onOkClick',
+			'keydown .js-ulinkpanel-input-url.js-ulinkpanel-input-external': 'onExternalUrlKeydown',
+			'click .link-panel-lightbox-trigger': 'visit_lightbox'
 		},
 
 		className: 'ulinkpanel-dark',
 
+		visit_lightbox: function(e) {
+			e.preventDefault();
+			var url = $(e.target).attr('href');
+			
+			// if there is no url defined, no point going forward
+			if(!url || url==='')
+				return;
+
+			var regions = Upfront.Application.layout.get('regions');
+			region = regions ? regions.get_by_name(this.getUrlanchor(url)) : false;
+			if(region){
+				//hide other lightboxes
+				_.each(regions.models, function(model) {
+					if(model.attributes.sub == 'lightbox')
+						Upfront.data.region_views[model.cid].hide();
+				});
+				var regionview = Upfront.data.region_views[region.cid];
+				regionview.show();
+			}
+			
+		},
+		getUrlanchor: function(url) {
+			if(typeof(url) == 'undefined') var url = $(location).attr('href');
+
+			if(url.indexOf('#') >=0) {
+				var tempurl = url.split('#');
+				return tempurl[1];
+			} else return false;
+		},
 		initialize: function(options) {
 			// Make sure we have large image url if 'image' is one of link types
 			if (options.linkTypes && options.linkTypes.image && options.linkTypes.image === true && _.isUndefined(options.imageUrl)) {
@@ -119,9 +151,29 @@ define([
 				this.createLightBox();
 			} else {
 				this.close();
+				this.model.trigger("change")
 			}
-			this.trigger('change', this.model);
-			this.model.trigger("change");
+			//this.trigger('change', this.model);
+		},
+
+		/**
+		 * Let's make sure we're handling the Enter key the same as OK click
+		 * in external URL field edits
+		 *
+		 * @param {Object} e Event
+		 *
+		 * @return {Boolean}
+		 */
+		onExternalUrlKeydown: function (e) {
+			if (13 !== e.which) return true;
+
+			if (e.preventDefault) e.preventDefault();
+			if (e.stopPropagation) e.stopPropagation();
+
+			this.onOkClick(e); // Take care of the regular flow
+			this.trigger("url:changed"); // Take care of inline dialog
+
+			return false;
 		},
 
 		close: function() {
@@ -211,8 +263,16 @@ define([
 			}
 
 			this.model.set({
-				url: '#' + Upfront.Application.LayoutEditor.createLightboxRegion(name)
+				url: '#' + Upfront.Application.LayoutEditor.getLightboxSafeName(name)
 			});
+
+			Upfront.Application.LayoutEditor.createLightboxRegion(name);
+			// this is required to send a 'dontflag' to the editor, 
+			// because the lightbox is created
+			// after the link is saved in the text.
+			// triggering the change again will refresh the editor's state 
+			// and get rid of missing link flag
+			this.model.trigger("change", true); 
 			this.render();
 		},
 
@@ -353,6 +413,7 @@ define([
 				default_value: lightboxValue,
 				change: function () {
 					model.set({'url': this.get_value()});
+					$('.link-panel-lightbox-trigger').attr('href', this.get_value());
 				}
 			});
 			this.lightboxSelect.render();

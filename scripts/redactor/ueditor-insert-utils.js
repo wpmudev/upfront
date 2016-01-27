@@ -170,7 +170,8 @@ return {
     LinkView: LinkView,
     ImageStylesView: ImageStylesView,
     PostImageStylesView: PostImageStylesView,
-    WP_PostImageStylesView: WP_PostImageStylesView
+    WP_PostImageStylesView: WP_PostImageStylesView,
+    BasicImageVariants: BasicImageVariants
 };
 
 //End Define

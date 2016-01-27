@@ -1,24 +1,112 @@
-.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-active .accordion-panel-title {
-	color: <?php echo $properties['active-font-color'] ?>;
-	font-family: <?php echo $properties['active-font-family'] ?>;
-	font-size: <?php echo $properties['active-font-size'] ?>px;
-	background: <?php echo $properties['active-header-bg-color'] ?>;
+.upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title,
+.upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title p {
+	<?php if(!empty($properties['static-header-bg-color'])) { ?>background: <?php echo $properties['static-header-bg-color'] ?>; <?php } ?>
+	<?php if(!empty($properties['static-font-color'])) { ?>color: <?php echo $properties['static-font-color']  ?>; <?php } ?>
+	<?php if(!empty($properties['static-font-family'])) { ?>font-family: <?php echo $properties['static-font-family']  ?>; <?php } ?>
+	<?php if(!empty($properties['static-font-size'])) { ?>font-size: <?php echo $properties['static-font-size']  ?>px; <?php } ?>
+	<?php if(!empty($properties['static-weight'])) { ?>font-weight: <?php echo $properties['static-weight']  ?>;<?php } ?>
+	<?php if(!empty($properties['static-style'])) { ?>font-style: <?php echo $properties['static-style']  ?>;<?php } ?>
+	<?php if(!empty($properties['static-line-height'])) { ?>line-height: <?php echo $properties['static-line-height']  ?>;<?php } ?>
+	<?php if(!empty($properties['static-useborder'])) { ?>
+        <?php if(!empty($properties['static-borderwidth']) && !empty($properties['static-bordertype']) && !empty($properties['static-bordercolor'])) { ?>border: <?php echo $properties['static-borderwidth'] ?>px <?php echo $properties['static-bordertype'] ?> <?php echo $properties['static-bordercolor'] ?>;<?php } ?>
+    <?php } else { ?>
+        border: none;
+    <?php } ?>
+	<?php if(!empty($properties['hover-use-animation'])) { ?>
+		transition: all <?php echo $properties['hover-transition-duration']  ?>s <?php echo $properties['hover-transition-easing']  ?>;
+	<?php } else { ?>
+		transition: none;
+	<?php } ?>
+}
+
+.upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title:hover,
+.upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title:hover p,
+.upfront-accordion.<?php echo $properties['id']  ?>.live-preview-hover .upfront-accordion-container .accordion-panel-title {
+	<?php if(!empty($properties['hover-use-colors'])) { ?>
+		<?php if(!empty($properties['hover-header-bg-color'])) { ?>background: <?php echo $properties['hover-header-bg-color'] ?>; <?php } ?>
+	<?php } else { ?>
+		<?php if(!empty($properties['static-header-bg-color'])) { ?>background: <?php echo $properties['static-header-bg-color'] ?>; <?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['hover-use-typography'])) { ?>
+		<?php if(!empty($properties['hover-font-color'])) { ?>color: <?php echo $properties['hover-font-color']  ?>; <?php } ?>
+		<?php if(!empty($properties['hover-font-family'])) { ?>font-family: <?php echo $properties['hover-font-family']  ?>; <?php } ?>
+		<?php if(!empty($properties['hover-font-size'])) { ?>font-size: <?php echo $properties['hover-font-size']  ?>px; <?php } ?>
+		<?php if(!empty($properties['hover-weight'])) { ?>font-weight: <?php echo $properties['hover-weight']  ?>;<?php } ?>
+		<?php if(!empty($properties['hover-style'])) { ?>font-style: <?php echo $properties['hover-style']  ?>;<?php } ?>
+		<?php if(!empty($properties['hover-line-height'])) { ?>line-height: <?php echo $properties['hover-line-height']  ?>;<?php } ?>
+	<?php } else { ?>
+		<?php if(!empty($properties['static-font-color'])) { ?>color: <?php echo $properties['static-font-color']  ?>; <?php } ?>
+		<?php if(!empty($properties['static-font-family'])) { ?>font-family: <?php echo $properties['static-font-family']  ?>; <?php } ?>
+		<?php if(!empty($properties['static-font-size'])) { ?>font-size: <?php echo $properties['static-font-size']  ?>px; <?php } ?>
+		<?php if(!empty($properties['static-weight'])) { ?>font-weight: <?php echo $properties['static-weight']  ?>;<?php } ?>
+		<?php if(!empty($properties['static-style'])) { ?>font-style: <?php echo $properties['static-style']  ?>;<?php } ?>
+		<?php if(!empty($properties['static-line-height'])) { ?>line-height: <?php echo $properties['static-line-height']  ?>;<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['hover-useborder'])) { ?>
+        <?php if(!empty($properties['hover-borderwidth']) && !empty($properties['hover-bordertype']) && !empty($properties['hover-bordercolor'])) { ?>border: <?php echo $properties['hover-borderwidth'] ?>px <?php echo $properties['hover-bordertype'] ?> <?php echo $properties['hover-bordercolor'] ?>;<?php } ?>
+    <?php } else { ?>
+        border: none;
+    <?php } ?>
+}
+
+.upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-active .accordion-panel-title,
+.upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-active .accordion-panel-title p,
+.upfront-accordion.<?php echo $properties['id']  ?>.live-preview-active .upfront-accordion-container .accordion-panel-title {
+	<?php if(!empty($properties['active-use-color'])) { ?>
+		<?php if(!empty($properties['active-header-bg-color'])) { ?>background: <?php echo $properties['active-header-bg-color'] ?>; <?php } ?>
+	<?php } else { ?>
+		<?php if(!empty($properties['static-header-bg-color'])) { ?>background: <?php echo $properties['static-header-bg-color'] ?>; <?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['active-use-typography'])) { ?>
+		<?php if(!empty($properties['active-font-color'])) { ?>color: <?php echo $properties['active-font-color']  ?>; <?php } ?>
+		<?php if(!empty($properties['active-font-family'])) { ?>font-family: <?php echo $properties['active-font-family']  ?>; <?php } ?>
+		<?php if(!empty($properties['active-font-size'])) { ?>font-size: <?php echo $properties['active-font-size']  ?>px; <?php } ?>
+		<?php if(!empty($properties['active-weight'])) { ?>font-weight: <?php echo $properties['active-weight']  ?>;<?php } ?>
+		<?php if(!empty($properties['active-style'])) { ?>font-style: <?php echo $properties['active-style']  ?>;<?php } ?>
+		<?php if(!empty($properties['active-line-height'])) { ?>line-height: <?php echo $properties['active-line-height']  ?>;<?php } ?>
+	<?php } else { ?>
+		<?php if(!empty($properties['static-font-color'])) { ?>color: <?php echo $properties['static-font-color']  ?>; <?php } ?>
+		<?php if(!empty($properties['static-font-family'])) { ?>font-family: <?php echo $properties['static-font-family']  ?>; <?php } ?>
+		<?php if(!empty($properties['static-font-size'])) { ?>font-size: <?php echo $properties['static-font-size']  ?>px; <?php } ?>
+		<?php if(!empty($properties['static-weight'])) { ?>font-weight: <?php echo $properties['static-weight']  ?>;<?php } ?>
+		<?php if(!empty($properties['static-style'])) { ?>font-style: <?php echo $properties['static-style']  ?>;<?php } ?>
+		<?php if(!empty($properties['static-line-height'])) { ?>line-height: <?php echo $properties['static-line-height']  ?>;<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['active-useborder'])) { ?>
+        <?php if(!empty($properties['active-borderwidth']) && !empty($properties['active-bordertype']) && !empty($properties['active-bordercolor'])) { ?>border: <?php echo $properties['active-borderwidth'] ?>px <?php echo $properties['active-bordertype'] ?> <?php echo $properties['active-bordercolor'] ?>;<?php } ?>
+    <?php } else { ?>
+        border: none;
+    <?php } ?>
 	transition: none;
 }
-.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-content {
-	background: <?php echo $properties['active-content-bg-color'] ?>;
+#page .upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-content,
+#page .upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-content p {
+	<?php if (!empty($properties['active-content-bg-color'])) { ?>
+		background: <?php echo $properties['active-content-bg-color'] ?>;
+	<?php } ?>
+	<?php if(!empty($properties['global-useborder'])) { ?>
+        <?php if(!empty($properties['global-borderwidth']) && !empty($properties['global-bordertype']) && !empty($properties['global-bordercolor'])) { ?>border: <?php echo $properties['global-borderwidth'] ?>px <?php echo $properties['global-bordertype'] ?> <?php echo $properties['global-bordercolor'] ?>;<?php } ?>
+	<?php } ?>
 }
-.upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title:after {
+#page .upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title:after {
 	border-top-color: <?php echo $properties['static-triangle-icon-color'] ?>;
 	border-left-color: transparent;
 }
-.upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-active .accordion-panel-title:after {
+#page .upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title:hover:after {
+	<?php if(!empty($properties['hover-use-colors'])) { ?>
+	border-top-color: <?php echo $properties['hover-triangle-icon-color'] ?>;
+	<?php } else { ?>
+	border-top-color: <?php echo $properties['static-triangle-icon-color'] ?>;
+	<?php } ?>
+	border-left-color: transparent;
+}
+#page .upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-active .accordion-panel-title:after {
 	border-top-color: transparent;
-	border-left-color: <?php echo $properties['active-triangle-icon-color'] ?>;
+	<?php if(!empty($properties['active-use-color'])) { ?>
+		border-left-color: <?php echo $properties['active-triangle-icon-color'] ?>;
+	<?php } else { ?>
+		border-left-color: <?php echo $properties['static-triangle-icon-color'] ?>;
+	<?php } ?>
 }
-.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title {
-	color: <?php echo $properties['static-font-color'] ?>;
-	font-family: <?php echo $properties['static-font-family'] ?>;
-	font-size: <?php echo $properties['static-font-size'] ?>px;
-	background: <?php echo $properties['static-header-bg-color'] ?>;
-}
+
+<?php if(!empty($properties['preset_style'])) { ?><?php echo $properties['preset_style'] ?><?php } ?>

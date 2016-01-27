@@ -140,6 +140,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		this.listenTo(Upfront.Events, "entity:module:after_render", Upfront.Behaviors.GridEditor.create_draggable);
 		this.listenTo(Upfront.Events, "entity:module_group:after_render", Upfront.Behaviors.GridEditor.create_resizable);
 		this.listenTo(Upfront.Events, "entity:module_group:after_render", Upfront.Behaviors.GridEditor.create_draggable);
+		this.listenTo(Upfront.Events, "entity:wrapper:after_render", Upfront.Behaviors.GridEditor.create_wrapper_resizable);
 		// Enable resizables and draggables
 		//Upfront.Behaviors.GridEditor.toggle_resizables(true);
 		//Upfront.Behaviors.GridEditor.toggle_draggables(true);
@@ -150,13 +151,16 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		this.listenTo(Upfront.Events, "entity:region_container:after_render", Upfront.Behaviors.GridEditor.create_region_container_resizable);
 		this.listenTo(Upfront.Events, "entity:region_sub_container:after_render", Upfront.Behaviors.GridEditor.create_region_container_resizable);
 
+		if ( !Upfront.Behaviors.GridEditor.grid ) {
+			Upfront.Behaviors.GridEditor.init();
+		}
 		this.listenTo(Upfront.Events, "layout:after_render", Upfront.Behaviors.GridEditor.init);
 	},
 
 	set_up_event_plumbing_after_render: function () {
 		// Set up properties
-		this.listenTo(Upfront.Events, "entity:activated", this.create_properties);
-		this.listenTo(Upfront.Events, "entity:deactivated", this.destroy_properties);
+		//this.listenTo(Upfront.Events, "entity:activated", this.create_properties);
+		//this.listenTo(Upfront.Events, "entity:deactivated", this.destroy_properties);
 
 		// Layout manipulation
 		this.listenTo(Upfront.Events, "command:exit", this.destroy_editor);
@@ -199,18 +203,25 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		var loading = false,
 			start = function () {
 				loading = new Upfront.Views.Editor.Loading({
-					loading: "Saving...",
-					done: "All done!",
+					loading: Upfront.Settings.l10n.global.application.saving,
+					done: Upfront.Settings.l10n.global.application.saving_success,
 					fixed: true
 				});
 				loading.render();
 				$('body').append(loading.$el);
 			},
 			stop = function (success) {
+				if (!success) {
+					loading.update_loading_text(Upfront.Settings.l10n.global.application.saving_error);
+				}
 				loading.on_finish(function(){
 					Upfront.Events.trigger("command:layout:save_done", success);
 				});
-				loading.done();
+				if (!success) {
+					loading.done(false, Upfront.Settings.l10n.global.application.saving_error);
+				} else {
+					loading.done();
+				}
 			}
 		;
 		this.listenTo(Upfront.Events, "command:layout:save_start", start);
@@ -266,25 +277,28 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		//context_menu_view.trigger('closed');
 	},
 	create_settings: function (view, settings_obj_view) {
+		var current_object, settings_view;
+
 		if (this.settings_view) return this.destroy_settings();
+
 		if (!parseInt(view.model.get_property_value_by_name("has_settings"), 10)) return false;
+
 		if ( !settings_obj_view ) {
-			var current_object = _(this.Objects).reduce(function (obj, current) {
-					if(view instanceof current.View){
-						console.log(obj + ' ' + current);
-						return current;
-					}
-					return obj;
-				}, false),
-				current_object = (current_object && current_object.Settings ? current_object : Upfront.Views.Editor.Settings),
-				settings_obj_view = current_object.Settings;
-			;
+			current_object = _(this.Objects).reduce(function (obj, current) {
+				if(view instanceof current.View){
+					return current;
+				}
+				return obj;
+			}, false);
+			current_object = (current_object && current_object.Settings ? current_object : Upfront.Views.Editor.Settings);
+			settings_obj_view = current_object.Settings;
 		}
-		var settings_view = new settings_obj_view({
-				model: view.model,
-				anchor: ( current_object ? current_object.anchor : false ),
-				el: $(Upfront.Settings.LayoutEditor.Selectors.settings)
-			})
+
+		settings_view = new settings_obj_view({
+			model: view.model,
+			anchor: ( current_object ? current_object.anchor : false ),
+			el: $(Upfront.Settings.LayoutEditor.Selectors.settings)
+		});
 		settings_view.for_view = view;
 		settings_view.render();
 		this.settings_view = settings_view;
@@ -324,9 +338,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 
 		Upfront.data.region_views[region.cid].show();
 	},
-
-	createLightboxRegion: function(regionName){
-
+	getLightboxSafeName: function(regionName) {
 		var regions = (this.layout && this.layout.get ? this.layout.get('regions') : Upfront.Application.current_subapplication.layout.get('regions')),
 			region = regions ? regions.get_by_name('lightbox') : false;
 
@@ -339,7 +351,23 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			region.add_to(regions, regions.length-1);
 		}
 
-		var	safeName = 'ltb-' + regionName.toLowerCase().replace(/\s/g, '-') + (regions.length+1),
+		return 'ltb-' + regionName.toLowerCase().replace(/\s/g, '-') + (regions.length+1);
+	},
+	createLightboxRegion: function(regionName){
+
+		var regions = (this.layout && this.layout.get ? this.layout.get('regions') : Upfront.Application.current_subapplication.layout.get('regions'));
+		//	region = regions ? regions.get_by_name('lightbox') : false;
+
+		/*if ( ! region ){
+			region = new Upfront.Models.Region({
+				"name": "lightbox",
+				"container": "lightbox",
+				"title": "lightbox Region"
+			});
+			region.add_to(regions, regions.length-1);
+		}*/
+
+		var	safeName = this.getLightboxSafeName(regionName),
 			lightbox = new Upfront.Models.Region(_.extend({}, Upfront.data.region_default_args, {
 				name: safeName,
 				container: 'lightbox',
@@ -577,8 +605,9 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 			options = this.postView.property('partOptions')
 		;
 
-		if(!layout)
+		if (!layout) {
 			return region;
+		}
 
 		_.each(layout, function(w){
 			var wrapperId =	Upfront.Util.get_unique_id("wrapper"),
@@ -648,7 +677,6 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 	},
 
 	prepareViews: function(){
-		console.log('Updating layout');
 		var me = this,
 			postView = this.postView,
 			region = this.importPostLayout(postView.postLayout),
@@ -796,7 +824,7 @@ var PostLayoutEditor = new (LayoutEditorSubapplication.extend({
 		this.regionContainerView.max_col = max_col;
 		this.regionContainerView.$layout.addClass(grid.class + max_col);
 		this.regionView.update();
-		
+
 		if(!this.postRegionClass) {
 			this.postRegionClass = this.regionContainer.attr('class');
 		}
@@ -1103,7 +1131,7 @@ var Application = new (Backbone.Router.extend({
 	ThemeEditor: ThemeEditor,
 	PostLayoutEditor: PostLayoutEditor,
 	PostContentEditor: PostContentEditor,
-    ResponsiveEditor: ResponsiveEditor,
+	ResponsiveEditor: ResponsiveEditor,
 
 	actions: {
 		"save": "upfront_save_layout",
@@ -1123,57 +1151,45 @@ var Application = new (Backbone.Router.extend({
 		THEME: "theme",
 		POST: 'post layout',
 		POSTCONTENT: "post content",
-        RESPONSIVE: "responsive"
-    },
+		RESPONSIVE: "responsive"
+	},
 
 	mode: {
 		last: false,
 		current: false
 	},
-    set_post_content_style: function(mode){
-        var mode = typeof mode === "undefined" ? true : mode;
-        this.MODE.POSTCONTENT_STYLE = mode;
-        return true;
-    },
-    is_post_content_style: function(){
-      return this.MODE.POSTCONTENT_STYLE;
-    },
-    is_builder: function(){
-        return this.mode.current === this.MODE.THEME || this.mode.last === this.MODE.THEME;
-    },
-    is_editor: function(){
-        return !this.is_builder();
-    },
+	set_post_content_style: function(mode){
+		mode = typeof mode === "undefined" ? true : mode;
+		this.MODE.POSTCONTENT_STYLE = mode;
+		return true;
+	},
+	is_post_content_style: function(){
+		return this.MODE.POSTCONTENT_STYLE === this.mode.current;
+	},
+	is_builder: function(){
+		return this.mode.current === this.MODE.THEME || this.mode.last === this.MODE.THEME;
+	},
+	is_editor: function(){
+		return !this.is_builder();
+	},
 	urlCache: {},
 
 	current_subapplication: false,
 	sidebar: false,
 	layout: false,
 
+	layout_ready: false,
+
 	responsiveMode: false,
 
 	boot: function () {
 		this.MODE = Upfront.Settings.Application.MODE;
 		var me = this;
+		$("body .upfront-edit_layout a").addClass('active');
 		$("body").off("click", ".upfront-edit_layout").on("click", ".upfront-edit_layout", function () {
 			//$(".upfront-editable_trigger").hide();
 			//app.go("layout");
 
-			// Main stylesheet needs to be loaded without element styles
-			// which will be edited in upfront.
-			Upfront.Util.post({
-				action: 'upfront_load_styles',
-				layout: {
-					item: 'archive-home',
-					type: 'archive'
-				},
-				base_only: true // flag for w/o element styles
-			})
-				.success(function(response) {
-					// Switch styles
-					$('#upfront-main-css').after('<style id="upfront-main-base-css">' + response.data.styles + '</style>');
-					$('#upfront-main-css').remove();
-				});
 			me.start();
 			return false;
 		});
@@ -1181,6 +1197,22 @@ var Application = new (Backbone.Router.extend({
 	},
 
 	start: function (mode) {
+		// Main stylesheet needs to be loaded without element styles
+		// which will be edited in upfront.
+		Upfront.Util.post({
+			action: 'upfront_load_styles',
+			layout: {
+				item: 'archive-home',
+				type: 'archive'
+			},
+			base_only: true // flag for w/o element styles
+		})
+			.success(function(response) {
+				// Switch styles
+				$('#upfront-main-css').after('<style id="upfront-main-base-css">' + response.data.styles + '</style>');
+				$('#upfront-main-css').remove();
+			});
+
 		if (!mode) mode = this.MODE.DEFAULT;
 		if (this.mode.current == mode) return false;
 
@@ -1226,7 +1258,38 @@ var Application = new (Backbone.Router.extend({
 		app.create_sidebar();
 
 		require(
-			["objects", 'media', 'content', 'bg-settings', 'spectrum', 'responsive', "uaccordion", 'redactor', 'ueditor', 'utext', "ucomment", "ucontact", "ugallery", "uimage", "upfront-like-box", "upfront_login", "upfront_maps", "unewnavigation", "ubutton", "uposts", "usearch", "upfront_slider", "upfront-social_media", "utabs", "this_post", "this_page", "uwidget", "uyoutube", "upfront_code"],
+			[
+				"objects",
+				'media',
+				'content',
+				'bg-settings',
+				'spectrum',
+				'responsive',
+				"uaccordion",
+				'redactor',
+				'ueditor',
+				'utext',
+				"ucomment",
+				"ucontact",
+				"ugallery",
+				"uimage",
+				"upfront-like-box",
+				"upfront_login",
+				"upfront_maps",
+				"unewnavigation",
+				"ubutton",
+				"uposts",
+				"usearch",
+				"upfront_slider",
+				"upfront-social_media",
+				"utabs",
+				"this_post",
+				"this_page",
+				"uwidget",
+				"uyoutube",
+				"upfront_code",
+				"uspacer"
+			],
 			function (objects) {
 				app.currentUrl = window.location.pathname + window.location.search;
 				app.saveCache = true;
@@ -1366,20 +1429,22 @@ var Application = new (Backbone.Router.extend({
 
 		window._upfront_post_data.layout = layoutData.data.cascade;
 
+		Upfront.Events.trigger("upfront:layout:loaded");
+		if (me.current_subapplication && me.current_subapplication.start)
+			me.current_subapplication.start();
+
+		else Upfront.Util.log("No current subapplication");
+
+		//if (!me.layout_view) {
+		me.layout_view = new Upfront.Views.Layout({
+			"model": me.layout,
+			"el": $(Upfront.Settings.LayoutEditor.Selectors.main)
+		});
+		Upfront.Events.trigger("layout:render", me.current_subapplication);
+		me.layout_ready = true;
+		//}
+
 		Upfront.Application.loading.done(function () {
-			Upfront.Events.trigger("upfront:layout:loaded");
-			if (me.current_subapplication && me.current_subapplication.start)
-				me.current_subapplication.start();
-
-			else Upfront.Util.log("No current subapplication");
-
-			//if (!me.layout_view) {
-			me.layout_view = new Upfront.Views.Layout({
-				"model": me.layout,
-				"el": $(Upfront.Settings.LayoutEditor.Selectors.main)
-			});
-			Upfront.Events.trigger("layout:render", me.current_subapplication);
-			//}
 
 			Upfront.PreviewUpdate.run(me.layout);
 
@@ -1419,6 +1484,7 @@ var Application = new (Backbone.Router.extend({
 			//Destroy
 			this.layout_view.remove();
 			this.layout_view = false;
+			this.layout_ready = false;
 
 			//Restore tag attributes
 			newElement.attr({
@@ -1564,6 +1630,59 @@ var Application = new (Backbone.Router.extend({
 		}
 		//this.sidebar.render(); <-- Subapplications do this
 	},
+	
+	recursiveExistenceMigration: function(selector, clean_selector) {
+		var splitted = clean_selector.split(' ');
+		var me = this;
+		while(splitted.length > 0) {
+			try{
+				if(!!$(selector + splitted.join(' ')).closest('#' + me.element_id).length)
+					return true;
+			}
+			catch (err) {
+
+			}
+			splitted.pop();
+		}
+
+		return false;
+	},
+
+	stylesAddSelectorMigration: function(contents, selector) {
+		if (this.is_global_stylesheet && empty(selector)) return contents;
+
+		var me = this,
+			rules = contents.split('}'),
+			processed = ''
+		;
+
+		_.each(rules, function (rl) {
+			var src = $.trim(rl).split('{');
+
+			if (src.length != 2) return true; // wtf
+
+			var individual_selectors = src[0].split(','),
+				processed_selectors = []
+			;
+			_.each(individual_selectors, function (sel) {
+				sel = $.trim(sel);
+				var clean_selector = sel.replace(/:[^\s]+/, ''); // Clean up states states such as :hover, so as to not mess up the matching
+				var	is_container = clean_selector[0] === '@' || me.recursiveExistenceMigration(selector, clean_selector),
+					spacer = is_container
+						? '' // This is not a descentent selector - used for containers
+						: ' ' // This is a descentent selector
+				;
+
+				processed_selectors.push('' +
+					selector + spacer + sel +
+				'');
+			});
+			processed += processed_selectors.join(', ') + ' {' +
+				src[1] + // Actual rule
+			'\n}\n';
+		});
+		return processed;
+	},
 
 	create_cssEditor: function(){
 		var me = this,
@@ -1580,12 +1699,14 @@ var Application = new (Backbone.Router.extend({
 					style = Upfront.Util.colors.convert_string_ufc_to_color(style);
 					Upfront.data.styles[elementType].push(name);
 					var styleNode = $('#'+name);
+					// Increase element style priority over preset styles
+					var styleOutput = style.replace(/#page/g, 'div#page.upfront-layout-view .upfront-editable_entity.upfront-module');
 					if(!styleNode.length){
-						styleNode = $('<style id="' + name + '">' + style + '</style>');
+						styleNode = $('<style id="' + name + '">' + styleOutput + '</style>');
 						$('body').append(styleNode);
 					}
 					else {
-						styleNode.html(style);
+						styleNode.html(styleOutput);
 					}
 				});
 			});
@@ -1632,6 +1753,7 @@ var Application = new (Backbone.Router.extend({
 			});
 
 			if (_upfront_post_data.layout) me.apply_region_css();
+			Upfront.Events.trigger("upfront:csseditor:ready");
 		});
 
 		cssEditor.createSelectors(Upfront.Application.LayoutEditor.Objects);
@@ -1654,6 +1776,8 @@ var Application = new (Backbone.Router.extend({
 
 		if (Upfront.Application.current_subapplication.layout && !$('style#layout-style').length) {
 			style = Upfront.Application.current_subapplication.layout.get('properties').findWhere({name: 'layout_style'}) ?  Upfront.Application.current_subapplication.layout.get('properties').findWhere({name: 'layout_style'}).get('value') : "";
+			// Make sure we also properly pre-process the layout styles:
+			if (style && style.length) style = Upfront.Util.colors.convert_string_ufc_to_color(style);
 			$('body').append('<style id="layout-style">' + style + '</style>');
 		}
 	},
@@ -1677,7 +1801,7 @@ var Application = new (Backbone.Router.extend({
 			});
 		});
 	},
-	
+
 	adjust_grid_padding_settings: function(region) {
 		//Handle region top/bottom padding and move grid rulers
 		$region = $(region).parent(),
@@ -1687,7 +1811,7 @@ var Application = new (Backbone.Router.extend({
 		if(padding_top > 0) {
 			$region.find('.upfront-overlay-grid').css("top", padding_top * -1);
 		}
-		
+
 		if(padding_bottom > 0) {
 			$region.find('.upfront-overlay-grid').css("bottom", padding_bottom * -1);
 		}
@@ -1795,8 +1919,9 @@ return {
 $(function () {
 	$("body").on("click", ".upfront-edit_layout", function (e) {
 		e.preventDefault();
-		alert(_upfront_please_hold_on);
+		// alert(_upfront_please_hold_on);
 	});
-})
+});
 
 })(jQuery);
+//@ sourceURL=upfront-application.js

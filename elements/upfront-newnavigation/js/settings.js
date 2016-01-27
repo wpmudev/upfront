@@ -1,394 +1,218 @@
-define([], function() {
+define([
+	'scripts/upfront/element-settings/settings',
+	'scripts/upfront/element-settings/root-settings-panel',
+	'elements/upfront-newnavigation/js/settings/appearance-panel',
+	'elements/upfront-newnavigation/js/menu-util'
+], function(ElementSettings, RootSettingsPanel, AppearancePanel, MenuUtil) {
 	var l10n = Upfront.Settings.l10n.newnavigation_element;
 
-	var Menu_Panel = Upfront.Views.Editor.Settings.Panel.extend({
+	var getSelectMenuOptions = function() {
+		return _.union([{label: l10n.create_new, value: -1}], MenuUtil.getSelectMenuOptions());
+	};
+
+	var Menu_Panel = RootSettingsPanel.extend({
 		className: 'upfront-settings_panel_wrap menu-settings',
+		title: l10n.mnu.title,
+		initialize: function(options) {
+			var me = this;
+			this.constructor.__super__.initialize.call(this, options);
+			Upfront.Events.on('menu_element:menu_created', function(menuData) {
+				var selectMenuField = me.getSelectMenuField();
+				selectMenuField.options.values = getSelectMenuOptions();
+				selectMenuField.render();
+				selectMenuField.set_value(menuData.term_id);
+			});
+			this.listenTo(this.model.get('properties'), 'change', function(property) {
+				if (!property) return;
+				if (property.get('name') !== 'menu_slug' && property.get('name') !== 'menu_id') {
+					return;
+				}
+				var selectMenuField = me.getSelectMenuField();
+				selectMenuField.set_value(me.model.get('properties').findWhere({'name': 'menu_id'}).get('value'));
+			});
+		},
+
+		getSelectMenuField: function() {
+			var selectMenuModule = this.settings.findWhere({identifier: 'selectMenuModule'});
+			return selectMenuModule.fields.findWhere({identifier: 'selectMenuField'});
+		},
+
+		settings: [
+			{
+				type: 'SettingsItem',
+				identifier: 'selectMenuModule',
+				className: 'select-menu-box select-presets',
+				fields: [
+					{
+						type: 'Select',
+						property: 'menu_id',
+						label: l10n.mnu.load,
+						className: 'select-menu-field',
+						identifier: 'selectMenuField',
+						values: getSelectMenuOptions,
+						change: function(value, me) {
+							if (value == -1) {
+								me.model.set_property('menu_slug', false, true);
+								me.model.set_property('menu_id', false);
+								me.$el.find('.select-menu-box').addClass('create-new');
+								return;
+							}
+							me.$el.find('.select-menu-box').removeClass('create-new');
+							// Menu slug is dependent on menu id, update it here
+							var slug = MenuUtil.getMenuSlugById(value);
+							me.model.set_property('menu_id', value, true);
+							me.model.set_property('menu_slug', slug);
+						}
+					},
+					{
+						type: 'Button',
+						label: l10n.mnu.delete_menu,
+						className: 'delete-menu-button delete_preset',
+						on_click: function() {
+							if (confirm(l10n.are_you_sure_nag)) {
+								//Remove navigation
+								var menu_id = this.model.get_property_value_by_name('menu_id');
+								Upfront.Events.trigger("menu_element:delete", menu_id);
+
+								//Re-render select field
+								var selectMenuField = this.panel.getSelectMenuField();
+								selectMenuField.options.values = getSelectMenuOptions();
+								selectMenuField.render();
+								selectMenuField.set_value('-1');
+							}
+						}
+					}
+				]
+			},
+			{
+				type: 'MenuStructure',
+				identifier: 'menuStructureModule'
+			}
+		],
+
 		save_settings: function(){
+			Upfront.Events.trigger("menu_element:settings:saving");
 			Menu_Panel.__super__.save_settings.apply(this, arguments);
 			this.model.set_property('menu_items', false, true);
-		},
-		on_save: function() {
-			var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
-			var current_set_value = this.settings._wrapped[0].fields._wrapped[1].$el.find('input:checked').val();
-			var current_set_alignment = this.settings._wrapped[1].fields._wrapped[0].$el.find('input:checked').val();
-			var current_set_over = this.settings._wrapped[1].fields._wrapped[1].$el.find('input:checked').val();
-			var current_set_style = this.settings._wrapped[2].fields._wrapped[0].$el.find('input:checked').val();
-			var current_set_menu_alignment = this.settings._wrapped[3].fields._wrapped[0].$el.find('input:checked').val();
-			var current_set_is_floating = this.settings._wrapped[4].fields._wrapped[1].$el.find('input:checked').val();
-			if(typeof(current_set_is_floating) == 'undefined')
-				current_set_is_floating = 'no';
-			
-			model_breakpoint = Upfront.Util.clone(this.model.get_property_value_by_name('breakpoint') || {});
-
-			if ( breakpoint && !breakpoint.default ){
-				if ( !_.isObject(model_breakpoint[breakpoint.id]) ) model_breakpoint[breakpoint.id] = {};
-				breakpoint_data = model_breakpoint[breakpoint.id];
-				breakpoint_data.burger_menu = current_set_value || '';
-				breakpoint_data.burger_alignment = current_set_alignment;
-				breakpoint_data.burger_over = current_set_over;
-				breakpoint_data.menu_style = current_set_style;
-				breakpoint_data.menu_alignment = current_set_menu_alignment;
-				breakpoint_data.is_floating = current_set_is_floating;
-
-				if(this.model.get_property_value_by_name('burger_menu') == 'yes') {
-					this.settings._wrapped[0].fields._wrapped[1].$el.find('input').attr("checked", 'checked');
-				} else {
-					this.settings._wrapped[0].fields._wrapped[1].$el.find('input').removeAttr("checked");
-				}
-
-				this.settings._wrapped[1].fields._wrapped[0].$el.find('input').removeAttr("checked");
-				this.settings._wrapped[1].fields._wrapped[0].$el.find('input[value="'+this.model.get_property_value_by_name('burger_alignment')+'"]').attr("checked", 'checked');
-
-				this.settings._wrapped[2].fields._wrapped[0].$el.find('input').removeAttr("checked");
-				this.settings._wrapped[2].fields._wrapped[0].$el.find('input[value="'+this.model.get_property_value_by_name('menu_style')+'"]').attr("checked", 'checked');
-
-				this.settings._wrapped[3].fields._wrapped[0].$el.find('input').removeAttr("checked");
-				this.settings._wrapped[3].fields._wrapped[0].$el.find('input[value="'+this.model.get_property_value_by_name('menu_alignment')+'"]').attr("checked", 'checked');
-
-				this.settings._wrapped[4].fields._wrapped[1].$el.find('input').removeAttr("checked");
-				this.settings._wrapped[4].fields._wrapped[1].$el.find('input[value="'+this.model.get_property_value_by_name('is_floating')+'"]').attr("checked", 'checked');
-
-				this.settings._wrapped[1].fields._wrapped[1].$el.find('input').removeAttr("checked");
-				this.settings._wrapped[1].fields._wrapped[1].$el.find('input[value="'+this.model.get_property_value_by_name('burger_over')+'"]').attr("checked", 'checked');
-
-			}
-
-			//force breakpoints lower in hierarchy to use burger menu if the level above is using it
-			if(typeof(breakpoint) == 'undefined') {
-				breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_default();
-			}
-
-			if(current_set_value == 'yes') {
-				var enabled_breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled();
-				//re-order enabled_breakpoints according to the width, widest first
-
-
-
-				enabled_breakpoints.sort(function (a, b) {
-				    if (a.attributes.width < b.attributes.width) return 1;
-				    if (b.attributes.width < a.attributes.width) return -1;
-				    return 0;
-				});
-
-
-				var check = false;
-				_.each(enabled_breakpoints, function(bpoint) {
-					if(check) {
-						if ( !_.isObject(model_breakpoint[bpoint.attributes.id]) ) model_breakpoint[bpoint.attributes.id] = {};
-						breakpoint_data = model_breakpoint[bpoint.attributes.id];
-						breakpoint_data.burger_menu = current_set_value;
-						if(!breakpoint_data.burger_alignment)
-							breakpoint_data.burger_alignment = current_set_alignment;
-
-						if(!breakpoint_data.menu_style)
-							breakpoint_data.menu_style = current_set_style;
-
-						if(!breakpoint_data.menu_alignment)
-							breakpoint_data.menu_alignment = current_set_menu_alignment;
-
-						if(!breakpoint_data.is_floating)
-							breakpoint_data.is_floating = current_set_is_floating;
-
-						if(!breakpoint_data.burger_over)
-							breakpoint_data.burger_over = current_set_over;
-					}
-					if(breakpoint.id == bpoint.attributes.id) check = true;
-				});
-			}
-			this.model.set_property('breakpoint', model_breakpoint);
-
-			return this.constructor.__super__.on_save.call(this);
-		},
+		}
 	});
 
+	var NavigationSettings = ElementSettings.extend({
+		initialize: function(opts) {
+			this.constructor.__super__.initialize.call(this, opts);
+			var me = this;
 
-	var NavigationSettings = Upfront.Views.Editor.Settings.Settings.extend({
-		/**
-		 * Bootstrap the object - populate the internal
-		 * panels array with the panel instances we'll be showing.
-		 */
-		render: function() {
-			this.constructor.__super__.render.call(this);
-			var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
-				item // this is used to cache stuff
-			;
-			if ( breakpoint && !breakpoint.default ){
-				model_breakpoint = Upfront.Util.clone(this.model.get_property_value_by_name('breakpoint') || {});
-				breakpoint_data = model_breakpoint[breakpoint.id];
-				if(typeof(breakpoint_data) != 'undefined' && breakpoint_data.burger_menu == 'yes') {
-					this.panels._wrapped[0].settings._wrapped[0].fields._wrapped[1].$el.find('input').attr("checked", 'checked');
-				} else {
-					this.panels._wrapped[0].settings._wrapped[0].fields._wrapped[1].$el.find('input').removeAttr("checked");
+			/** before the appearance pannel settings for the menu are being rendered
+				for a particular breakpoint, check, if a preset already exists for that
+				particular breakpoint. If not, copy one from the preset for the next
+				higher breakpoint.
+			**/
+
+			this.listenTo(this.appearancePanel, 'upfront:presets:setup-items', function() {
+				var panel = me.appearancePanel;
+				var preset = panel.property('preset') ? panel.clear_preset_name(panel.property('preset')) : 'default',
+					presetModel = panel.presets.findWhere({id: preset}),
+					allBreakpoints = Upfront.Views.breakpoints_storage.get_breakpoints(),
+					currentBreakpoint = allBreakpoints.get_active(),
+					breakpointsData = presetModel.get('breakpoint') || {},
+					changed = false
+				;
+
+				if (!breakpointsData[currentBreakpoint.id] || !breakpointsData[currentBreakpoint.id].menu_style) {
+
+					var higherBPs = _.filter(allBreakpoints.models, function(breakpoint) {
+						return breakpoint.get('width') > currentBreakpoint.get('width');
+					});
+
+					higherBPs = _.sortBy(higherBPs, function(item) {
+						return item.get('width');
+					});
+
+					for (var i = 0; i < higherBPs.length; i++) {
+						breakpointsData[currentBreakpoint.id] = _.clone(breakpointsData[higherBPs[i].id]);
+						if(breakpointsData[currentBreakpoint.id]) {
+							console.log("from "+higherBPs[i].id+" to "+currentBreakpoint.id);
+							break;
+						}
+					}
+
+					// if really did acquire settings from the upper bp
+					if (breakpointsData[currentBreakpoint.id]) {
+						changed = true;
+					}
+
+
 				}
 
-				if (typeof(breakpoint_data) != 'undefined') {
-					if (breakpoint_data.burger_alignment) {
-						item = this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[0];
-						if (item && item.$el && item.$el.length) {
-							item.$el.find('input').removeAttr("checked");
-							item.$el.find('input[value="'+breakpoint_data.burger_alignment+'"]').attr("checked", 'checked');
-						}
-					}
 
-					if (breakpoint_data.menu_style) {
-						item = this.panels._wrapped[0].settings._wrapped[2].fields._wrapped[0];
-						if (item && item.$el && item.$el.length) {
-							item.$el.find('input').removeAttr("checked");
-							item.$el.find('input[value="'+breakpoint_data.menu_style+'"]').attr("checked", 'checked');
-						}
-					}
+				/** when a preset is being saved with menu_style set to burger,
+					make sure that it saves burger_alignment as well
+				**/
 
-					if(breakpoint_data.menu_alignment) {
-						item = this.panels._wrapped[0].settings._wrapped[3].fields._wrapped[0];
-						if (item && item.$el && item.$el.length) {
-							item.$el.find('input').removeAttr("checked");
-							item.$el.find('input[value="'+breakpoint_data.menu_alignment+'"]').attr("checked", 'checked');
-						}
-					}
-
-					if(breakpoint_data.is_floating) {
-						item = this.panels._wrapped[0].settings._wrapped[4].fields._wrapped[1];
-						if (item && item.$el && item.$el.length) {
-							item.$el.find('input').removeAttr("checked");
-							item.$el.find('input[value="'+breakpoint_data.is_floating+'"]').attr("checked", 'checked');
-						}
-					}
-
-					if(breakpoint_data.burger_over) {
-						item = this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[1];
-						if (item && item.$el && item.$el.length) {
-							item.$el.find('input').removeAttr("checked");
-							item.$el.find('input[value="'+breakpoint_data.burger_over+'"]').attr("checked", 'checked');
-						}
-					}
+				if (breakpointsData[currentBreakpoint.id] && breakpointsData[currentBreakpoint.id].menu_style === 'burger' && !breakpointsData[currentBreakpoint.id].burger_alignment ) {
+					breakpointsData[currentBreakpoint.id].burger_alignment = 'left';
+					changed = true;
 				}
-			}
 
-			// if any of items higher in hierarchy has burger menu on, then hide the option to select/deselect burger menu
-			if(typeof(breakpoint) == 'undefined') breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_default();
+				if (changed) {
+					presetModel.set('breakpoint', breakpointsData);
+				}
 
-			var enabled_breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled();
-			var check = false;
-
-			//sort breakpoints (widest to narrowest)
-
-			enabled_breakpoints.sort(function (a, b) {
-			    if (a.attributes.width < b.attributes.width) return 1;
-			    if (b.attributes.width < a.attributes.width) return -1;
-			    return 0;
 			});
 
-			for(var i = enabled_breakpoints.length-1; i >= 0; i--) {
-				if(check) {
 
-					breakpoint_data = model_breakpoint[enabled_breakpoints[i].id];
 
-					if((enabled_breakpoints[i].id == 'desktop' && this.model.get_property_value_by_name('burger_menu') == 'yes') || (breakpoint_data && breakpoint_data.burger_menu == 'yes')) {
-
-						this.panels._wrapped[0].settings._wrapped[0].fields._wrapped[1].$el.css('display', 'none');
-
-						// extra care to ensure that the newly enabled items obey the hierarchy
-
-						if ( !_.isObject(model_breakpoint[breakpoint.id]) )
-							model_breakpoint[breakpoint.id] = {};
-
-						breakpoint_data = model_breakpoint[breakpoint.id];
-
-						if(!breakpoint_data.burger_menu || breakpoint_data.burger_menu != 'yes') {
-							breakpoint_data.burger_menu = 'yes';
-							this.panels._wrapped[0].settings._wrapped[0].fields._wrapped[1].$el.find('input').attr("checked", 'checked');
-							this.model.set_property('breakpoint', model_breakpoint, true);
-						}
-					}
-				}
-				if(breakpoint.id == enabled_breakpoints[i].id)
-					check = true;
-			}
-
-			// this is to turn on the display for revealed menu alignment settings in case the option is selected
-			if(this.panels._wrapped[0].settings._wrapped[0].fields._wrapped[1].$el.find('input:checked').length > 0) {
-				this.panels._wrapped[0].settings._wrapped[1].$el.css('display', 'block');
-				this.panels._wrapped[0].settings._wrapped[2].$el.css('display', 'none');
-
-				if(this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[0].get_value() == "left" || this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[0].get_value() == "right" || this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[0].get_value() == "whole")
-					this.panels._wrapped[0].settings._wrapped[1].fields._wrapped[1].$el.hide();
-			}
-			else {
-				this.panels._wrapped[0].settings._wrapped[1].$el.css('display', 'none');
-				this.panels._wrapped[0].settings._wrapped[2].$el.css('display', 'block');
-			}
 		},
-		initialize: function (opts) {
-			var me = this,
-				menuList = Upfront.data.unewnavigation.currentMenuItemData.get('menuList')
-			;
-			this.has_tabs = false;
-			this.options= opts;
-			menuList.push({label: l10n.create_new, value: -1});
-			this.panels = _([
-				// Menu
-				new Menu_Panel({
-					model: this.model,
-					label: l10n.mnu.label,
-					title: l10n.mnu.title,
-					settings: [
-						new Upfront.Views.Editor.Settings.Item({
-							model: this.model,
-							title: l10n.mnu.load,
-							fields: [
-								new Upfront.Views.Editor.Field.Select({
-									model: this.model,
-									property: 'menu_id',
-									label: "",
-									values: menuList,
-									change: function(value) {
-										if(value == -1) {
-											delete menuList[menuList.length-1];
-											Upfront.data.unewnavigation.currentMenuItemData.set({menu_id: false, menu_slug: false});
-											me.model.set_property('menu_slug', false);
-											me.model.set_property('menu_id', false);
-											me.for_view.property('menu_slug', false, true);
-											me.for_view.property('menu_id', false);
-											me.close_panel();
-										}
-									}
-								}),
-								new Upfront.Views.Editor.Field.Checkboxes({
-									model: this.model,
-									property: 'burger_menu',
-									label: "",
-									values: [
-										{ label: l10n.mnu.use + " <i class='upfront-field-icon upfront-field-icon-burger-trigger'></i> " + l10n.mnu.btn, value: 'yes' }
-									],
-									change: function() {
-										var value = this.get_value();
-										if(value[0] == 'yes') {
-											me.panels._wrapped[0].settings._wrapped[1].$el.css('display', 'block');
-											me.panels._wrapped[0].settings._wrapped[2].$el.css('display', 'none');
-										}
-										else {
-											me.panels._wrapped[0].settings._wrapped[1].$el.css('display', 'none');
-											me.panels._wrapped[0].settings._wrapped[2].$el.css('display', 'block');
-										}
-									}
-								})
-							]
-						}),
-						new Upfront.Views.Editor.Settings.Item({
-							model: this.model,
-							title: l10n.mnu.appearance,
-							fields: [
-								new Upfront.Views.Editor.Field.Radios({
-									model: this.model,
-									property: 'burger_alignment',
-									default_value: 'left',
-									label: "",
-									layout: "vertical",
-									values: [
-										{ label: l10n.mnu.left, value: 'left', icon: 'burger-left'},
-										{ label: l10n.mnu.right, value: 'right', icon: 'burger-right'},
-										{ label: l10n.mnu.top, value: 'top', icon: 'burger-top'},
-										{ label: l10n.mnu.whole, value: 'whole', icon: 'burger-whole'}
-									],
-									change: function() {
-										var value = this.get_value();
-										if(value == 'left' || value == 'right' || value == 'whole') {
-											me.panels._wrapped[0].settings._wrapped[1].fields._wrapped[1].$el.hide();
-											me.panels._wrapped[0].settings._wrapped[1].fields._wrapped[1].set_value("over");
-										}
-										else {
-											me.panels._wrapped[0].settings._wrapped[1].fields._wrapped[1].$el.show();	
-										}
-									}
-								}),
-								new Upfront.Views.Editor.Field.Radios({
-									model: this.model,
-									property: 'burger_over',
-									default_value: 'over',
-									label: "",
-									layout: "vertical",
-									values: [
-										{ label: l10n.mnu.over, value: 'over' },
-										{ label: l10n.mnu.push, value: 'pushes' }
-									]
-								})
-							]
-						}),
-						new Upfront.Views.Editor.Settings.Item({
-							model: this.model,
-							title: l10n.mnu.style,
-							fields: [
-								new Upfront.Views.Editor.Field.Radios({
-									model: this.model,
-									className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios menu_style',
-									property: 'menu_style',
-									default_value: 'horizontal',
-									label: "",
-									values: [
-										{ label: l10n.mnu.horiz, value: 'horizontal' },
-										{ label: l10n.mnu.vert, value: 'vertical' }
-									]
-								})
-							]
-						}),
-						new Upfront.Views.Editor.Settings.Item({
-							model: this.model,
-							title: l10n.mnu.aligh,
-							fields: [
-								new Upfront.Views.Editor.Field.Radios({
-									model: this.model,
-									property: 'menu_alignment',
-									default_value: 'left',
-									label: "",
-									layout: "vertical",
-									values: [
-										{ label: l10n.mnu.left, value: 'left', icon: 'navigation-left' },
-										{ label: l10n.mnu.center, value: 'center', icon: 'navigation-center' },
-										{ label: l10n.mnu.right, value: 'right', icon: 'navigation-right' }
-									]
-								})
-							]
-						}),
-						new Upfront.Views.Editor.Settings.Item({
-							model: this.model,
-							title: l10n.mnu.behavior,
-							fields: [
-								new Upfront.Views.Editor.Field.Checkboxes({
-										model: this.model,
-										property: 'allow_new_pages',
-										label: "",
-										values: [
-												{ label: l10n.mnu.auto_add, value: 'yes' }
-										]
-								}),
-								new Upfront.Views.Editor.Field.Checkboxes({
-										model: this.model,
-										property: 'is_floating',
-										label: "",
-										values: [
-												{ label: l10n.mnu.float, value: 'yes' }
-										]
-								})
-							]
-						})
-					]
-				}).on('upfront:settings:panel:saved', this.onSaveSettings, this)
-			]);
+		hasBreakpointSettings: true,
+		breakpointSpecificPresetSettings: [
+			{
+				name: 'menu_alignment'
+			},
+			{
+				name: 'burger_alignment'
+			},
+			{
+				name: 'is_floating'
+			},
+			{
+				name: 'burger_over'
+			},
+			{
+				name: 'menu_style'
+			},
+			{
+				name: 'width'
+			}
+		],
+		panels: {
+			General: Menu_Panel,
+			Appearance: AppearancePanel
 		},
 		onSaveSettings: function() {
-			
 			// Update slug because it's depending on id and has to be updated properly
 			var themenu = _.findWhere(this.for_view.existingMenus, {term_id: this.model.get_property_value_by_name('menu_id')});
-			if(themenu)
+			if (themenu) {
 				this.model.set_property('menu_slug', themenu.slug, true);
+			}
+		},
+		render: function () {
+			this.constructor.__super__.render.call(this);
+
+			var me = this;
+
+			this.currentState = '';
+			this.listenTo(this.appearancePanel, 'upfront:presets:state_show', function (state) {
+				me.currentState = state;
+			});
+			this.listenTo(this.for_view, 'rendered', function () {
+				if ( me.currentState ) me.stateShow(me.currentState);
+			});
 		},
 		/**
 		 * Get the title (goes into settings title area)
 		 * @return {string} Title
 		 */
-		get_title: function () {
-				return l10n.settings;
-		}
+		title: l10n.settings
 	});
 
 

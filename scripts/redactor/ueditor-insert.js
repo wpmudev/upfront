@@ -57,7 +57,7 @@ var UeditorInsert = Backbone.View.extend({
 
 	importInserts: function(contentElement){
 		var me = this,
-			regExp = new RegExp('(\[' + this.shortcodeName + '[^\]]*?\])', 'ig'),
+			regExp = new RegExp('(\[' + this.shortcodeName.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + '[^\]]*?\])', 'ig'),
 			content = contentElement.html(),
 			container = $('<div></div>')
 		;

@@ -27,7 +27,7 @@
                 </div>
             </li>
             <li id="ueditor-box-cats-tags" class="ueditor-box-section">
-                <div class="ueditor-box-title">{{Upfront.Settings.l10n.global.content.tags_cats_url}}</div>
+                <div class="ueditor-box-title">{{post_type_conditional_box_title}}</div>
                 <div class="ueditor-box-content-wrap">
                     <div class="ueditor-box-content">
                         <div class="misc-pub-section misc-pub-post-category"></div>
@@ -41,7 +41,7 @@
 </script>
 
 <script id="post-url-editor" type="text/template">
-    <label id="post-url-display-label">{{Upfront.Settings.l10n.global.content.post_url}}:</label>
+    <label id="post-url-display-label">{{url_label}}:</label>
     <a href="#" class="ueditor-edit-post-url ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
     <p id="post-url-display" class="ueditor-previous-data ueditor-previous-data-toggle ueditor-previous-data-small">{{rootUrl}}{{slug}}</p>
 

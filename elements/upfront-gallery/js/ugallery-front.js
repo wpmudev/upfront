@@ -11,40 +11,52 @@ jQuery(function($){
 			itemWidth = items.outerWidth(),
 			row = 0,
 			columns,
-			even_padding,
 			thumbPaddingData,
 			thumbPadding,
+			thumbSidePadding,
+			thumbBottomPadding,
+			lockPadding,
 			itemsTotalWidth;
 
-		even_padding = gallery.data('even-padding');
+		thumbSidePadding = gallery.data('thumb-side-padding') ? gallery.data('thumb-side-padding') : 0;
+		thumbBottomPadding = gallery.data('thumb-bottom-padding') ? gallery.data('thumb-bottom-padding') : 0;
 		thumbPaddingData = gallery.data('thumb-padding');
-		thumbPadding = typeof thumbPaddingData === 'undefined' ? 15 : thumbPaddingData;
-		columns = Math.floor(container / (itemWidth + thumbPadding));
+		lockPadding = gallery.data('thumb-lock-padding');
+		
+		if(typeof lockPadding === 'undefined' || lockPadding === "") {
+			sidePadding = thumbSidePadding;
+			bottomPadding = thumbBottomPadding;
+		} else {
+			sidePadding = typeof thumbPaddingData === 'undefined' ? 15 : thumbPaddingData;
+			bottomPadding = sidePadding;
+		}
+
+		columns = Math.floor(container / (itemWidth + sidePadding));
 		columns++;// Increase for 1 besause upper calculation will always give one less
-		itemsTotalWidth = columns * itemWidth + (columns - 1) * thumbPadding;
+		itemsTotalWidth = columns * itemWidth + (columns - 1) * sidePadding;
 		if (itemsTotalWidth > container) {// But check if got too much
 			columns--;
 		}
-
+		
 		items.each(function(item_index) {
 			var $this = $(this);
-
+			
 			if (absolute) {
 				// Set top margin for all thumbs that are not in first row
-				if (item_index + 1 > columns && even_padding) {
-					$this.css('top', parseInt($this.css('top'), 10) + thumbPadding * row);
+				if (item_index + 1 > columns && bottomPadding) {
+					$this.css('top', parseInt($this.css('top'), 10) + bottomPadding * row);
 				}
 
 				if (item_index > 0 && (item_index + 1) % columns === 0) {
 					row++;
-					if (even_padding && !gallery.data('height-adjusted')) {
-						gallery.css('height', parseInt(gallery.css('height'), 10) + thumbPadding);
+					if (bottomPadding && !gallery.data('height-adjusted')) {
+						gallery.css('height', parseInt(gallery.css('height'), 10) + bottomPadding);
 					}
 				}
 			} else {
 				// Set top margin for all thumbs that are not in first row
-				if (item_index + 1 > columns && even_padding) {
-					$this.css('margin-top', thumbPadding);
+				if (item_index + 1 > columns && bottomPadding) {
+					$this.css('margin-top', bottomPadding);
 				}
 			}
 		});
@@ -70,9 +82,17 @@ jQuery(function($){
 		var $grids = $ugallery_grid || $('.ugallery_grid');
 
 		$grids.each(function(){
-			var grid = $(this),
-				thumbPaddingData = grid.parent().data('thumb-padding'),
-				thumbPadding = typeof thumbPaddingData === 'undefined' ? 15 : thumbPaddingData;
+			var grid = $(this);
+			var sidePadding;
+			var thumbSidePadding = grid.parent().data('thumb-side-padding') ? grid.parent().data('thumb-side-padding') : 0;
+			var thumbPaddingData = grid.parent().data('thumb-padding');
+			var lockPadding = grid.parent().data('thumb-lock-padding');
+
+			if(typeof lockPadding === 'undefined' || lockPadding === "") {
+				sidePadding = thumbSidePadding;
+			} else {
+				sidePadding = typeof thumbPaddingData === 'undefined' ? 15 : thumbPaddingData;
+			}
 
 			grid.parent().data('height-adjusted', false);
 
@@ -84,7 +104,7 @@ jQuery(function($){
 
 			grid.shuffle({
 				itemSelector: '#' + $(this).attr('rel') + ' .ugallery_item',
-				gutterWidth: thumbPadding,
+				gutterWidth: sidePadding,
 				supported: false
 			});
 
@@ -102,6 +122,18 @@ jQuery(function($){
 	$(document).on('upfront-load', function() {
 		Upfront.frontFunctions = Upfront.frontFunctions || {};
 		Upfront.frontFunctions.galleryBindShuffle = bindShuffle;
+	});
+
+	/** 
+		The following is being done so that the gallery 
+		items inside a lightbox can shuffle after 
+		the lightbox shows up, in order to expand 
+		around in the available space
+	**/
+	$(document).on('upfront-lightbox-open', function() {
+		setTimeout(function(){
+			$(window).trigger('resize');
+		}, 300);
 	});
 
 	if (typeof ugalleries !== 'undefined') {
@@ -166,9 +198,12 @@ jQuery(function($){
 
 		var markup, gallery, magOptions;
 		markup = '<div class="mfp-close">&times;</div><div class="glb-content-container"><figure class="glb-image-container"><div class="mfp-img"></div></figure><div class="glb-caption-container"><div class="mfp-title"></div><div class="mfp-counter"></div></div></div>';
+
 		for (var galleryId in ugalleries) {
-			gallery = false;
-			magOptions = ugalleries[galleryId].magnific;
+			var data = $('#' + galleryId).find('.ugallery').data(),
+				gallery = false,
+				magOptions = ugalleries[galleryId].magnific
+				;
 			if (magOptions){
 				gallery = $('#' + galleryId).find('.ugallery_item_image');
 				$.each(gallery, function() {
@@ -190,10 +225,12 @@ jQuery(function($){
 						resizeMFP();
 					}
 				};
+				magOptions.closeOnBgClick = data.lightboxClickOutClose;
 				gallery.magnificPopup(magOptions);
 			} else {
-				gallery = $('#' + galleryId).find('.ugallery_lightbox_link');
+				var gallery = $('#' + galleryId).find('.ugallery_lightbox_link'),
 				magOptions = {
+					closeOnBgClick: data.lightboxClickOutClose,
 					type: 'image',
 					gallery: {
 						enabled: 'true',
@@ -239,4 +276,17 @@ jQuery(function($){
 	}, 100);
 
 	$(window).on('resize', lazyBindShuffle);
+
+	// Properly bind caption hover events, as they don't even work otherwise
+	$(document)
+		.on("mouseenter", ".ugallery_item a", function (e) {
+			var $title = $(this).find(".ugallery-thumb-title.ugallery-caption-over");
+			if ($title.length && $title.is(".ugallery-caption-on-hover-1")) $title.show();
+		})
+		.on("mouseleave", ".ugallery_item a", function (e) {
+			var $title = $(this).find(".ugallery-thumb-title.ugallery-caption-over");
+			if ($title.length && $title.is(".ugallery-caption-on-hover-1") && $title.closest('.redactor-box').length === 0) $title.hide();
+		})
+	;
+
 });

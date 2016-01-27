@@ -1,22 +1,14 @@
+.upfront-output-ugallery {
+	min-height: 240px;
+}
+
+.ugallery-starting-container {
+	height: 50px;
+}
+
 .ugallery-starting-wrapper {
-	min-height: 200px;
-	width: 100%;
-	height: 100%;
-	position: relative;
-	box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
-	color: #273A4C;
-	font-family: 'Source Sans Pro';
-	font-size: 18px;
-	width: 100%;
-	background: #eeeff0;
-	text-align: center;
-	padding: 0;
-	position: relative;
 	overflow: hidden;
 	border: 1px solid #ddd;
-	display: table;
 }
 
 .ugallery-starting-wrapper .upfront-image-starting-select {
@@ -27,7 +19,6 @@
 .ugallery_item {
 	float: left;
 	vertical-align: top;
-	margin: 0 0 35px 0;
 	overflow: visible;
 }
 
@@ -314,8 +305,12 @@ div.ugallery-label-selector {
 	word-wrap: break-word;
 	color: #fff;
 }
-.upfront-object-content .ugallery-thumb-title p {
+/*.upfront-object-content .ugallery-thumb-title p {
 	color: #fff;
+}*/
+.upfront-output-object .ugallery-thumb-title p {
+    margin-bottom: 0;
+    line-height: inherit;
 }
 .ugallery-controls,
 .ui-resizable-autohide .ugallery_item:hover .ugallery-controls {
@@ -412,6 +407,10 @@ div.ugallery-controls i.upfront-icon:before {
 	background-position: -807px -486px;
 }
 
+.upfront-field-icon-none:before {
+	background-position: -700px -455px!important;
+}
+
 .upfront-ui .upfront-field-icon-below:before {
 	background-position: -699px -646px;
 }
@@ -429,15 +428,12 @@ div.ugallery-controls i.upfront-icon:before {
 	background-position: -808px -775px;
 }
 
-.upfront-inline-panel div.upfront-inline-panel-item i.upfront-icon.upfront-icon-region-remove:before {
+/*.upfront-inline-panel div.upfront-inline-panel-item i.upfront-icon.upfront-icon-region-remove:before {
 	background-image: url(../../../img/uf-ui-sprite.svg);
-}
+}*/
 
 .upfront-ui .upfront-icon-region-remove:before {
-	background-position: -1229px -154px;
-}
-.upfront-ui .upfront-icon-region-remove:hover:before {
-	background-position: -731px -231px;
+	background-position: -261px -282px;
 }
 .upfront-ui .upfront-icon-region-remove-active:before {
 	background-position: -1229px -154px;
@@ -453,7 +449,40 @@ div.ugallery-controls i.upfront-icon:before {
 	background-position: -479px -201px;
 }
 
+.upfront-icon-region-toggle-sorting:before {
+	background-position: -261px -311px;
+}
+.upfront-icon-region-toggle-sorting.upfront-icon-region-sorting-active:before {
+	background-position: -291px -311px;
+}
 
+div.preset-manager-panel .field-caption-height {
+	border-left: 2px solid #dae6f2;
+	padding: 5px 0px 5px 10px;
+	position: relative;
+	top: -5px;
+}
+div.preset-manager-panel .field-caption-height label {
+	font-weight: normal;
+	top: 0px;
+	position: relative;
+	margin-bottom: 5px;
+}
+div.preset-manager-panel .field-caption-height span label {
+	top: 5px;
+}
+div.preset-manager-panel .field-caption-height {
+	margin-top: 0px;
+	padding-top: 10px;
+}
+div.preset-manager-panel .caption-height-number {
+	position: relative;
+	margin-top: -43px;
+	left: 130px;
+}
+div.preset-manager-panel .caption-height-number input {
+	width: 60px;
+}
 .ugallery-onclick {
 	background: rgba(57,82,105,0.9);
 	position: absolute;
@@ -461,8 +490,9 @@ div.ugallery-controls i.upfront-icon:before {
 	height: 100%;
 	top:0;
 	left:0;
+	bottom: 0;
 	text-align: center;
-	z-index: 60;
+	z-index: 10;
 }
 
 .ugallery-onclick a,
@@ -505,14 +535,17 @@ a.ugallery-linked_page:hover:before {
 .upfront-ui .ugallery-onclick-dialog {
 	background: rgb(242, 249, 255);
 	width: 300px;
-	margin: 10px auto;
+	margin: auto;
 	padding: 20px;
+	bottom:0;
 	top:0;
 	left:0;
 	right: 0;
+	height: 180px;
 	color: #4F6477;
 	box-shadow: 0 0 20px #000;
 	border-radius: 10px;
+	position: absolute;
 }
 
 .upfront-gallery:hover .upfront-quick-swap {
@@ -528,7 +561,9 @@ a.ugallery-linked_page:hover:before {
 .mfp-figure figure {
 	position: relative;
 }
-
+.mfp-bg{
+	opacity: 1;
+}
 div.ugallery-magnific-labels {
 	color: #A1C5E6;
 	font-size: 13px;
@@ -579,6 +614,9 @@ div.ugallery-magnific-labels {
 	text-align: center;
 }
 
+.mfp-title{
+	color: #343434;
+}
 .upfront-ui .ugallery-magnific-toggle:hover {
 	opacity: 1;
 }
@@ -765,6 +803,7 @@ figure.gallery-labels-figure img.mfp-img {
 }
 
 .ugallery-caption-over,
+.ugallery-caption-below,
 .ugallery-padded-caption {
 	padding:5px;
 }
@@ -992,7 +1031,9 @@ figure.gallery-labels-figure img.mfp-img {
 }
 [class*=gallery-ugallery-object] .mfp-image-holder .mfp-counter {
 	white-space: nowrap;
+	color: #343434;
 }
+
 [class*=gallery-ugallery-object] figure {
 	margin: 0;
 }
@@ -1005,4 +1046,31 @@ figure.gallery-labels-figure img.mfp-img {
 .glb-caption-container {
 	margin-top: 10px;
 	min-height: 1em;
+}
+
+.image-sorting-active .ugallery_item img {
+	-webkit-animation: webkitrumble .20s infinite;
+	animation: rumble .20s infinite;
+}
+
+@-webkit-keyframes webkitrumble {
+  0% {
+    transform: rotate(-1deg);
+    animation-timing-function: ease-in;
+  }
+  50% {
+    transform: rotate(1.5deg);
+    animation-timing-function: ease-out;
+  }
+}
+
+@keyframes rumble {
+  0% {
+    transform: rotate(-1deg);
+    animation-timing-function: ease-in;
+  }
+  50% {
+    transform: rotate(1.5deg);
+    animation-timing-function: ease-out;
+  }
 }

@@ -18,6 +18,7 @@ require_once(dirname(__FILE__) . '/library/class_upfront_endpoint.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_media.php');
 require_once(dirname(__FILE__) . '/library/class_ufront_ufc.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_codec.php');
+require_once(dirname(__FILE__) . '/library/class_upfront_compat.php');
 
 
 Upfront_Behavior::debug()->set_baseline();
@@ -52,6 +53,7 @@ class Upfront {
 		$me = new self;
 		$me->_add_hooks();
 		$me->_add_supports();
+
 	}
 
 	private function _add_hooks () {
@@ -66,14 +68,16 @@ class Upfront {
 			require_once(dirname(__FILE__) . '/library/servers/class_upfront_admin.php');
 			if (class_exists('Upfront_Server_Admin')) Upfront_Server_Admin::serve();
 		}
-		
-		$this->_load_textdomain();
+
+
+
 	}
-	
-	private function _load_textdomain () {
+
+	public static function load_textdomain () {
 		$path = untrailingslashit(self::get_root_dir()) . '/languages';
+
 		load_theme_textdomain('upfront', $path);
-		
+
 		// Now let's try the child theme...
 		$current = wp_get_theme();
 		$parent = $current->parent();
@@ -83,6 +87,7 @@ class Upfront {
 		if (!empty($child_domain) && 'upfront' !== $child_domain) {
 			load_child_theme_textdomain($child_domain, get_stylesheet_directory() . '/languages');
 		}
+
 	}
 
 	private function _add_supports () {
@@ -113,20 +118,19 @@ class Upfront {
 		return get_template_directory();
 	}
 
-
 	public function add_edit_menu ($wp_admin_bar) {
 		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) return false;
 
 		$item = array(
 			'id' => 'upfront-edit_layout',
-			'title' => __('Upfront', 'upfront'),
-			'href' => (is_admin() ? home_url('/?editmode=true') : '#'),
+            'title' => '<span class="ab-icon"></span><span class="ab-label">' . __('Upfront', 'upfront') . '</span>',
+			'href' => (is_admin() ? home_url('/?editmode=true', is_ssl() ? "https" : null) : '#'),
 			'meta' => array(
 				'class' => 'upfront-edit_layout upfront-editable_trigger'
 			),
 		);
 		$permalinks_on = get_option('permalink_structure');
-		
+
 		if (!$permalinks_on) {
 			// We're checking WP priv directly because we need an admin for this
 			if (current_user_can('manage_options')) {
@@ -136,7 +140,7 @@ class Upfront {
 				$item = array(); // No such thing for non-admins
 			}
 		}
-		
+
 		if (!empty($item)) {
 			$wp_admin_bar->add_menu($item);
 		}
@@ -209,14 +213,14 @@ class Upfront {
 	function inject_global_dependencies () {
 		$deps = Upfront_CoreDependencies_Registry::get_instance();
 		wp_enqueue_script('jquery');
-		
+
 		//Basic styles for upfront to work are always loaded.
 		$global_style = Upfront_Behavior::compression()->has_experiments()
 			? '/styles/global.min.css'
 			: '/styles/global.css'
 		;
 		wp_enqueue_style('upfront-global', self::get_root_url() . $global_style, array(), Upfront_ChildTheme::get_version());
-        
+
         if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
             // Don't queue the front grid if has permission to boot Upfront, queue editor grid instead
     		wp_enqueue_style('upfront-front-grid', admin_url('admin-ajax.php?action=upfront_load_grid'), array(), Upfront_ChildTheme::get_version());
@@ -226,7 +230,7 @@ class Upfront {
 			do_action('upfront-core-wp_dependencies');
 
 			wp_enqueue_style('upfront-editor-interface', self::get_root_url() . '/styles/editor-interface.css', array(), Upfront_ChildTheme::get_version());
-			
+
 			$link_urls =  array(
 				admin_url('admin-ajax.php?action=upfront_load_editor_grid'),
 				self::get_root_url() . '/scripts/chosen/chosen.min.css',
@@ -249,12 +253,12 @@ class Upfront {
 	}
 
 	function inject_upfront_dependencies () {
-		
+
 		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
 			do_action('upfront-core-inject_dependencies'); // Also trigger the dependencies injection hook
 			return false; // Do not inject for users that can't use this
 		}
-		
+
 		$url = self::get_root_url();
 		//Boot Edit Mode if the querystring contains the editmode param
 		if (isset($_GET['editmode']))
@@ -304,6 +308,7 @@ EOAdditivemarkup;
 
 }
 add_action('init', array('Upfront', 'serve'), 0);
+add_action('after_setup_theme', array('Upfront', "load_textdomain"));
 
 /**
  * filters wp caption atts to hide the caption in case show_caption is equal  to "0"
@@ -366,3 +371,11 @@ function uf_image_caption_shortcode( $out, $attr, $content ){
 	 return Upfront_ThisPostView::get_post_image_markup($data);
 
 }
+
+/**
+ * Loads iconfont in admin to display toolbar icon.
+ */
+function uf_admin_bar_styles() {
+    wp_enqueue_style( 'uf-font-icons', get_template_directory_uri() . '/styles/font-icons.css');
+}
+add_action( 'admin_enqueue_scripts', 'uf_admin_bar_styles' );

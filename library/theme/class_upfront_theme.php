@@ -96,9 +96,13 @@ class Upfront_Theme {
 			include(get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'global-regions' . DIRECTORY_SEPARATOR . 'footer.php');
 		}
 
-		$layout = $regions->create_layout();
+		$version = isset($layout_version) ? $layout_version : false;
+		$regions_data = $regions->create_layout();
 
-		return $layout;
+		return array(
+			'version' => $version,
+			'regions' => $regions_data
+		);
 	}
 
 	protected function find_default_layout($cascade, $layout_slug = "") {

@@ -1,4 +1,4 @@
-<div class="upfront-editable_entity upfront-module {{parent_group_class}} {{properties.class}}" id="{{properties.element_id}}" {[ if (height > 0){ ]}style="min-height: {{height}}px;"{[ } ]} data-row="{{properties.row}}">
+<div class="upfront-editable_entity upfront-module {{parent_group_class}} {{properties.class}}" id="{{properties.element_id}}" style="{[ if (height > 0){ ]}min-height: {{height}}px;{[ } ]} {[ if (hide == 1) { ]}display: none;{[ } ]}" data-row="{{properties.row}}">
 	<b class="upfront-entity_meta upfront-ui">
 		{{name}} 
 		{[ if (parseInt(properties.has_settings, 10)) { ]} <a href="#" class="upfront-icon-button upfront-icon-button-setting upfront-entity-settings_trigger"></a> {[ } ]}

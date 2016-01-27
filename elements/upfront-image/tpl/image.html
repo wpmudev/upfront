@@ -1,26 +1,45 @@
-<div class="uimage uimage-<?php echo $caption_position ?> uimage-status-<?php echo $image_status ?> uimage-caption-<?php echo $caption_position ?>-<?php echo $caption_alignment ?><?php echo $gifImage ?> <?php echo $placeholder_class ?>" style="text-align: <?php echo $align ?>;">
-	<div class="upfront-image-caption-container" style="margin-top:<?php echo $marginTop ?>px">
-		<?php if($url && !$in_editor) { ?>
-		<a href="<?php echo $url ?>" target="<?php echo $link_target ?>">
-		<?php } ?>
-			<?php if($src){ ?>
-			<div class="upfront-image-container">
+<div <?php if($usingNewAppearance === true) { ?>class="<?php echo $preset ?>"<?php } ?>>
+	<?php if($usingNewAppearance === false) { ?>
+	<div class="uimage uimage-<?php echo $caption_position ?> uimage-status-<?php echo $image_status ?> uimage-caption-<?php echo $caption_position ?>-<?php echo $caption_alignment ?><?php echo $gifImage ?><?php echo $stretchClass ?> <?php echo $placeholder_class ?>" style="text-align: <?php echo $align ?>;">
+	<?php } else { ?>
+	<div class="upfront-image-wrapper uimage uimage-<?php echo $properties['caption-position'] ?> uimage-status-<?php echo $image_status ?> uimage-caption-<?php echo $properties['caption-position'] ?>-<?php echo $properties['caption-alignment'] ?><?php echo $gifImage ?><?php echo $stretchClass ?> <?php echo $placeholder_class ?>" style="text-align: <?php echo $align ?>;">
+	<?php } ?>
+		<div class="upfront-image-caption-container" style="margin-top:<?php echo $marginTop ?>px">
+			<?php if($url && !$in_editor) { ?>
+			<a href="<?php echo $url ?>" target="<?php echo $link_target ?>">
+				<?php } ?>
+				<?php if($src){ ?>
+				<div class="upfront-image-container" <?php if ($containerWidth) { ?>style="width:<?php echo $containerWidth ?>px;"<?php } ?>>
 				<img src="<?php echo $src ?>" alt="<?php echo $alternative_text ?>" title="<?php echo $image_title ?>" <?php if($imgWidth) { ?>style="width:<?php echo $imgWidth ?>;"<?php } ?>/>
-			</div>
-			<?php } else { ?>
-				<div class="upfront-image-starting_placeholder"><p>Image placeholder</p></div>
-			<?php } ?>
+		</div>
+		<?php } else { ?>
+		<div class="upfront-image-starting_placeholder"><p>Image placeholder</p></div>
+		<?php } ?>
 
-		<?php if($include_image_caption){// && $caption_position != 'below_image'){ ?>
-		<div class="wp-caption uimage-<?php echo $caption_alignment ?> uimage-<?php echo $caption_trigger ?> uimage-padded-caption" style="background:<?php echo $captionBackground == '1' ? $background : 'rgba(255, 255, 255, 0)' ?>; ">
-			<?php if($cover_caption) { ?>
-				<div class="uimage-caption-cover">
-			<?php } ?>
-					<?php echo $image_caption ?>
-			<?php if($cover_caption) { ?>
+		<?php if($usingNewAppearance !== true) { ?>
+			<?php if($include_image_caption) { ?>
+				<div class="wp-caption uimage-<?php echo $caption_alignment ?> uimage-<?php echo $caption_trigger ?> uimage-padded-caption" style="background:<?php echo $captionBackground == '1' ? $background : 'rgba(255, 255, 255, 0)' ?>; ">
+					<?php if($cover_caption) { ?>
+					<div class="uimage-caption-cover">
+						<?php } ?>
+						<?php echo $image_caption ?>
+						<?php if($cover_caption) { ?>
+					</div>
+					<?php } ?>
 				</div>
 			<?php } ?>
+		<?php } else { ?>
+		<?php if( !empty($properties['use_captions']) && $display_caption === 'showCaption' )  { ?>
+		<div class="wp-caption uimage-<?php echo $properties['caption-alignment'] ?> uimage-<?php echo $properties['caption-trigger'] ?> uimage-padded-caption">
+			<?php if($cover_caption) { ?>
+			<div class="uimage-caption-cover">
+				<?php } ?>
+				<?php echo $image_caption ?>
+				<?php if($cover_caption) { ?>
+			</div>
+			<?php } ?>
 		</div>
+		<?php } ?>
 		<?php } ?>
 
 		<?php if($url && !$in_editor) { ?>
@@ -28,19 +47,20 @@
 		<?php } ?>
 	</div>
 </div>
+</div>
 
 <?php if($gifImage){ ?>
 <style>
-	#<?php echo $element_id ?>.uimage-gif .upfront-image-container {
+	#<?php echo $element_id ?> .uimage-gif .upfront-image-container {
 		height: <?php echo $element_size['height'] ?>px;
 		width: <?php echo $element_size['width'] ?>px;
 	}
 
-	#<?php echo $element_id ?>.uimage-gif img {
-		height: <?php echo $size['height'] ?>px;
-		width: <?php echo $size['width'] ?>px !important;
-		margin-top: <?php echo $gifTop ?>;
-		margin-left: -<?php echo $gifLeft ?>;
-	}
+	#<?php echo $element_id ?> .uimage-gif img {
+		   height: <?php echo $size['height'] ?>px;
+		   width: <?php echo $size['width'] ?>px !important;
+		   margin-top: <?php echo $gifTop ?>;
+		   margin-left: <?php echo $gifLeft ?>;
+	   }
 </style>
 <?php } ?>

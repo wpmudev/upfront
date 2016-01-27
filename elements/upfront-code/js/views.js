@@ -75,12 +75,12 @@ define([
 			},
 
 			on_render: function () {
-				this.$el.find(".upfront-entity_meta").append('<a href="#" class="upfront-icon-button re-edit">...</a>');
+				// this.$el.find(".upfront-entity_meta").append('<a href="#" class="upfront-icon-button re-edit">...</a>');
 				var me = this;
-				this.$el.find(".upfront-entity_meta .re-edit").on("click", function (e) {
-					e.preventDefault();
-					me.start_markup_editor();
-				});
+				// this.$el.find(".upfront-entity_meta .re-edit").on("click", function (e) {
+				// 	e.preventDefault();
+				// 	me.start_markup_editor();
+				// });
 				if (
 					!this.property('markup') &&
 					!this.property('style') &&
@@ -307,6 +307,12 @@ define([
 				var editorTop = $editor.find('.upfront-css-top'),
 					editorBody = $editor.find('.upfront-css-body')
 				;
+				
+				//Enable only height resize
+				editorTop
+					.removeClass("ui-resizable-handle").addClass("ui-resizable-handle")
+					.removeClass("ui-resizable-n").addClass("ui-resizable-n")
+				;
 
 				//Start resizable
 				editorBody.height(this.MIN_HEIGHT - editorTop.outerHeight());
@@ -435,9 +441,9 @@ define([
 
 					//url = url.replace(document.location.origin, ''); // Let's not do this
 
-					if(currentSyntax == 'style')
+					if('style' === currentSyntax) {
 						me.currentEditor.insert('url("' + url + '")');
-					else {
+					} else if ('markup' === currentSyntax) {
 						//Add the selected size
 						var urlParts = url.split('.'),
 							ext = urlParts[urlParts.length - 1],
@@ -447,7 +453,7 @@ define([
 							url = url.replace(new RegExp('.' + ext + '$'), '-' + size + '.' + ext);
 						}
 
-						me.currentEditor.insert('<img src="' + url + '" >');
+						me.currentEditor.insert('<img src="' + url + '">');
 					}
 
 					me.currentEditor.focus();
@@ -503,6 +509,13 @@ define([
 					return this.model.set_property(name, value, silent);
 				}
 				return this.model.get_property_value_by_name(name);
+			},
+
+			getControlItems: function(){
+				return _([
+					this.createPaddingControl(),
+					this.createControl('edit', l10n.edit, 'start_markup_editor')
+				]);
 			}
 		}),
 
@@ -527,12 +540,12 @@ define([
 			},
 
 			on_render: function () {
-				this.$el.find(".upfront-entity_meta").append('<a href="#" class="upfront-icon-button re-edit">...</a>');
+				// this.$el.find(".upfront-entity_meta").append('<a href="#" class="upfront-icon-button re-edit">...</a>');
 				var me = this;
-				this.$el.find(".upfront-entity_meta .re-edit").on("click", function (e) {
-					e.preventDefault();
-					me.on_edit();
-				});
+				// this.$el.find(".upfront-entity_meta .re-edit").on("click", function (e) {
+				// 	e.preventDefault();
+				// 	me.on_edit();
+				// });
 				if (!this.model.get_property_value_by_name('markup')) {
 					setTimeout(function () {
 						me.on_edit();
@@ -580,6 +593,13 @@ define([
 			fallback: function(attribute){
 				return this.model.get_property_value_by_name(attribute) || Upfront.data.upfront_code.defaults.fallbacks[attribute];
 			},
+
+			getControlItems: function(){
+				return _([
+					this.createPaddingControl(),
+					this.createControl('edit', l10n.edit, 'on_edit')
+				]);
+			}
 		})
 	};
 

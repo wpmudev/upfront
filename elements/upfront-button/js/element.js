@@ -4,7 +4,7 @@ define([
 	var l10n = Upfront.Settings.l10n.button_element;
 	
 	var ButtonElement = Upfront.Views.Editor.Sidebar.Element.extend({
-		priority: 260,
+		priority: 150,
 		render: function () {
 			this.$el.addClass('upfront-icon-element upfront-icon-element-button');
 			this.$el.html(l10n.element_name);
@@ -19,7 +19,7 @@ define([
 						{"name": "align", "value": "center"},
 						{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
 						{"name": "class", "value": "c4 button-style"},
-						{"name": "row", "value": Upfront.Util.height_to_row(75)},
+						{"name": "row", "value": Upfront.Util.height_to_row(55)},
 						{"name": "has_settings", "value": 0}
 					],
 					"objects": [

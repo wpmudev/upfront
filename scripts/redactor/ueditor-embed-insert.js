@@ -176,8 +176,22 @@ var EmbedInsert = Insert.UeditorInsert.extend({
 			manager.remove();
 			deferred.resolve();
 		});
+
+		this.get_manager = function () {
+			return manager;
+		}
+
 		return deferred;
 	},
+
+	/**
+	 * Gets internal manager object.
+	 *
+	 * See `start()` method for how this gets monkeypatched
+	 *
+	 * @return {Object} Internal EmbedManager object
+	 */
+	get_manager: function () { return {}; }, // Default to passthrough
 
 	render: function () {
 		var me = this,
@@ -257,15 +271,22 @@ var EmbedManager = Backbone.View.extend({
 
 		$("body").append(this.$el);
 		main.boot_editor();
-
+		
+		//Set correct width without sidebar
+		this.$el.width($(window).width() - $('#sidebar-ui').width() -1);
 		bar.on("insert", function (stuff) {
 			main.insert(stuff);
 		});
-		ok.on("done", function () {
-			var value = main.get_value();
-			me.trigger("done", value);
-		});
+
+		this._main = main;
+
+		ok.on("done", this.done, this);
 		this.trigger("render", main, bar, ok);
+	},
+	done: function () {
+		if (!(this._main && this._main.get_value)) return false;
+		var value = this._main.get_value();
+		this.trigger("done", value);		
 	}
 });
 

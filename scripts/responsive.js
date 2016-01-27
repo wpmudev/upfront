@@ -3,6 +3,8 @@
 		return this.each(function(){
 			var r_id = 'responsive-'+(Math.floor(Math.random()*100000)),
 				bind = $(this).attr('data-bind'),
+				editor = ( $(this).attr('data-editor') == 1 ),
+				on_editor = false,
 				min_width = normalize_size($(this).attr('data-min-width')),
 				max_width = normalize_size($(this).attr('data-max-width')),
 				min_height = normalize_size($(this).attr('data-min-height')),
@@ -22,20 +24,27 @@
 			$(window).on('resize', lazyApplyBinding);
 			$(document).on('upfront-load', function(){
 				if ( typeof Upfront.Events != 'undefined' ){
-					Upfront.Events.on("layout:after_render", function(){
+					// Attach events after render complete to improve load time
+					Upfront.Events.once("layout:render", function(){
+						on_editor = true;
+						// Run once on startup
 						apply_binding_all();
-					});
-					Upfront.Events.on("entity:modules:render_module", apply_binding_view);
-					Upfront.Events.on("entity:regions:render_region", apply_binding_view);
-					Upfront.Events.on("entity:regions:render_container", apply_binding_view);
-					Upfront.Events.on("entity:resize_stop", apply_binding_view_region);
-					Upfront.Events.on("entity:drag_stop", apply_binding_view_region);
-					Upfront.Events.on("entity:region_container:resize_stop", apply_binding_view);
-					Upfront.Events.on("upfront:editor:image_on", function(sel){
-						apply_binding_all();
-					});
-					Upfront.Events.on("upfront:editor:image_align", function(sel, align){
-						apply_binding_all();
+						Upfront.Events.on("layout:after_render", function(){
+							apply_binding_all();
+						});
+						Upfront.Events.on("entity:modules:render_module", apply_binding_view);
+						Upfront.Events.on("entity:regions:render_region", apply_binding_view);
+						Upfront.Events.on("entity:regions:render_container", apply_binding_view);
+						//Upfront.Events.on("entity:resize_stop", apply_binding_view_region);
+						//Upfront.Events.on("entity:drag_stop", apply_binding_view_region);
+						Upfront.Events.on("upfront:wrappers:after_fix_height", apply_binding_view);
+						Upfront.Events.on("entity:region_container:resize_stop", apply_binding_view);
+						Upfront.Events.on("upfront:editor:image_on", function(sel){
+							apply_binding_all();
+						});
+						Upfront.Events.on("upfront:editor:image_align", function(sel, align){
+							apply_binding_all();
+						});
 					});
 				}
 			});
@@ -59,7 +68,8 @@
 				var $style = $('#'+r_id),
 					changed = false
 				;
-				$sel.find(bind).each(function(){
+				if ( editor && !on_editor ) return;
+				$sel.find(bind+':visible').each(function(){
 					var $el = single ? $(this).closest('.upfront-module') : $(this)
 						id = $(this).attr('id') || 'bind-'+(Math.floor(Math.random()*100000)),
 						width = parseFloat($el.css('width')),
@@ -90,7 +100,9 @@
 						}
 					}
 				});
-				if ( !changed ) return;
+				if ( !changed ) {
+					return;
+				}
 				var styles_all = $.map(applied_styles, function(style, id){
 					return style;
 				});
