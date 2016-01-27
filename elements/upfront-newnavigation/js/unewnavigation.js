@@ -994,11 +994,12 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		else {
 			region_container.removeClass('upfront-region-container-has-nav');
 		}
+		
+		var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+			usingNewAppearance = this.property('usingNewAppearance');
+	
+		presetProperties.breakpoint = usingNewAppearance ? this.get_preset_properties().breakpoint : this.fallbackBreakpointData();
 
-
-		var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
-
-		presetProperties.breakpoint = presetProperties.breakpoint || this.fallbackBreakpointData();
 		if (!breakpoint || breakpoint.default) {
 			if (
 				presetProperties.breakpoint.desktop.menu_style === 'burger'&&

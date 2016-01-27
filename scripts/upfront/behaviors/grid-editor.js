@@ -1927,10 +1927,10 @@ var GridEditor = {
 			if ( !wrapper ) return;
 			if ( breakpoint_id != 'desktop' ) {
 				hide = ( "hide" in breakpoint_data ) ? breakpoint_data.hide : default_hide;
-				module_col = ( "col" in breakpoint_data ) ? breakpoint_data.col : module_col;
-				order = ( "order" in breakpoint_data ) ? breakpoint_data.order * 10000 + order : order;
-				wrapper_col = ( "col" in wrapper_breakpoint_data ) ? wrapper_breakpoint_data.col : wrapper_col;
-				wrapper_order = ( "order" in wrapper_breakpoint_data ) ? wrapper_breakpoint_data.order * 10000 + wrapper_order : wrapper_order;
+				module_col = ( "col" in breakpoint_data ) ? parseInt(breakpoint_data.col, 10) : module_col;
+				order = ( "order" in breakpoint_data ) ? parseInt(breakpoint_data.order, 10) * 10000 + order : order;
+				wrapper_col = ( "col" in wrapper_breakpoint_data ) ? parseInt(wrapper_breakpoint_data.col, 10) : wrapper_col;
+				wrapper_order = ( "order" in wrapper_breakpoint_data ) ? parseInt(wrapper_breakpoint_data.order, 10) * 10000 + wrapper_order : wrapper_order;
 				is_clear = ( "clear" in wrapper_breakpoint_data ) ? wrapper_breakpoint_data.clear : is_clear;
 			}
 			if ( hide === false ) hide = default_hide;

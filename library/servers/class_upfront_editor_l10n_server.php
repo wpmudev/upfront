@@ -161,6 +161,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'untrash' => __('Untrash', 'upfront'),
 				'trash' => __('Trash', 'upfront'),
 				'post_url' => __('Post URL', 'upfront'),
+				'page_url' => __('Page URL', 'upfront'),
 				'edit_post_url' => __('Edit the <b>URL</b> for this post', 'upfront'),
 				'post_url_info' => __('By default, your URL is determined by a post\'s or page\'s title. You can change it here.<br/>It is a good idea to keep them short and memorable.', 'upfront'),
 				'parent_category' => __('Parent Category', 'upfront'),
