@@ -168,11 +168,13 @@ var PostImageInsert_Manager = base.ImageInsertBase.extend({
     get_shortcode_caption_text: function( parsed_content ){
         var html = "";
         _.each(parsed_content, function( el, i ){
-            if( el.innerHtml )
-                html += el.innerHtml;
-
-            if( el.textContent )
-                html += el.textContent;
+            if( !$(el).is("img") )
+                html += $("<div>").html(el).html();
+            //if( el.innerHtml )
+                //html += el.innerHtml;
+            //
+            //if( el.textContent )
+            //    html += el.textContent;
         });
 
         return html;

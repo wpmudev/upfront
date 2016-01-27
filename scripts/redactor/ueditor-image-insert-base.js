@@ -175,6 +175,8 @@
                     this.caption_ueditor.redactor.events.on("ueditor:change", function(e){
                         self.data.set('caption', self.caption_ueditor.$el.html(), {silent: true});
                         self.data.trigger('update');
+                        if( self.render_shortcode )
+                            self.render_shortcode( self.get_data_json() );
                     });
 
                     this.caption_ueditor.redactor.events.on('ueditor:focus', function(redactor){
@@ -567,7 +569,7 @@
                     return imageData;
                 },
                 render_shortcode: function(data){
-                    if( this.caption_ueditor && !this.caption_ueditor.options.inserts.length ) return; // if "inserts" array is empty or not defined there is no need to render shortcode!
+                    if( this.$editor.data("ueditor") && !this.$editor.data("ueditor").options.inserts.length ) return; // if "inserts" array is empty or not defined there is no need to render shortcode!
                     data = data instanceof Backbone.Model ? data.toJSON() : data;
 
                     var html = this.shortcode_tpl(data);
