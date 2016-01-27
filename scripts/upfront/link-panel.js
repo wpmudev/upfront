@@ -82,6 +82,7 @@ define([
 			'blur .js-ulinkpanel-input-external': 'onUrlInputBlur',
 			//'click .js-ulinkpanel-ok': 'onOkClick',
 			'click .upfront-save_settings': 'onOkClick',
+			'keydown .js-ulinkpanel-input-url.js-ulinkpanel-input-external': 'onExternalUrlKeydown',
 			'click .link-panel-lightbox-trigger': 'visit_lightbox'
 		},
 
@@ -153,6 +154,26 @@ define([
 				this.model.trigger("change")
 			}
 			//this.trigger('change', this.model);
+		},
+
+		/**
+		 * Let's make sure we're handling the Enter key the same as OK click
+		 * in external URL field edits
+		 *
+		 * @param {Object} e Event
+		 *
+		 * @return {Boolean}
+		 */
+		onExternalUrlKeydown: function (e) {
+			if (13 !== e.which) return true;
+
+			if (e.preventDefault) e.preventDefault();
+			if (e.stopPropagation) e.stopPropagation();
+
+			this.onOkClick(e); // Take care of the regular flow
+			this.trigger("url:changed"); // Take care of inline dialog
+
+			return false;
 		},
 
 		close: function() {
