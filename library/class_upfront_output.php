@@ -586,8 +586,8 @@ abstract class Upfront_Container extends Upfront_Entity {
 						$classes = $this->_get_property('class');
 						$column = upfront_get_class_num('c', $classes);
 						$class = $slug === "uposts" ? "c" . $column . " uposts-object" : upfront_get_property_value('class', $child);
-						
-						if(!empty(upfront_get_property_value('usingNewAppearance', $child))) {
+						$usingNew = upfront_get_property_value('usingNewAppearance', $child);
+						if(!empty( $usingNew )) {
 						// Augment the output with preset map, in addition to other stuff going on in there
 							$html .= '<div data-preset_map="' . esc_attr(!empty($preset_map) ? json_encode($preset_map) : '') . '" class="upfront-output-object ' . $theme_style . ' ' . $preset . ' upfront-output-' . $slug . ' ' . $class . '" id="' . upfront_get_property_value('element_id', $child) . '"' . $theme_styles_attr . '>' . $child_view->get_markup() . '</div>';
 						} else {
