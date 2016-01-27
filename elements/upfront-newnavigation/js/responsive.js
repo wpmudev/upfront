@@ -155,7 +155,7 @@ jQuery(document).ready(function($) {
 	});
 
 	$('body').on('touchstart click', '.burger_nav_close, .burger_overlay', null, function() {
-		$('div.responsive_nav_toggler').trigger('click');
+		$(this).closest('.upfront-navigation').find('div.responsive_nav_toggler').trigger('click');
 	});
 
 	$('body').on('touchstart click', '.upfront-navigation .upfront-navigation div.responsive_nav_toggler', null, function(e) {
