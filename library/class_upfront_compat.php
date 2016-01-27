@@ -38,6 +38,8 @@ class Upfront_Compat implements IUpfront_Server {
 			$this->_check_v1_transition();
 			$this->_check_v1_backup();
 		}
+
+		add_action('wp_ajax_upfront-notices-dismiss', array($this, 'json_dismiss_notices'));
 	}
 
 	/**
@@ -48,10 +50,13 @@ class Upfront_Compat implements IUpfront_Server {
 		if (function_exists('upfront_exporter_is_running') && upfront_exporter_is_running()) return false; // Not in exporter
 		if (version_compare(self::get_upfront_child_version(), '1.0-alpha-1', 'ge')) return false; // Child is at or above v1 - good
 
-		Upfront_CoreDependencies_Registry::get_instance()->add_script(
-			trailingslashit(Upfront::get_root_url()) . 'scripts/upfront/compat/v1.js'
-		);
-		add_filter('upfront_data', array($this, 'add_v1_transition_data'));
+		if (empty($this->_v1_script_added)) {
+			Upfront_CoreDependencies_Registry::get_instance()->add_script(
+				trailingslashit(Upfront::get_root_url()) . 'scripts/upfront/compat/v1.js'
+			);
+			$this->_v1_script_added = true;
+			add_filter('upfront_data', array($this, 'add_v1_transition_data'));
+		}
 	}
 
 	/**
@@ -64,10 +69,13 @@ class Upfront_Compat implements IUpfront_Server {
 
 		$this->_has_backup_notice = true;
 
-		Upfront_CoreDependencies_Registry::get_instance()->add_script(
-			trailingslashit(Upfront::get_root_url()) . 'scripts/upfront/compat/v1.js'
-		);
-		add_filter('upfront_data', array($this, 'add_v1_transition_data'));
+		if (empty($this->_v1_script_added)) {
+			Upfront_CoreDependencies_Registry::get_instance()->add_script(
+				trailingslashit(Upfront::get_root_url()) . 'scripts/upfront/compat/v1.js'
+			);
+			$this->_v1_script_added = true;
+			add_filter('upfront_data', array($this, 'add_v1_transition_data'));
+		}
 	}
 
 	/**
@@ -126,10 +134,20 @@ class Upfront_Compat implements IUpfront_Server {
 		if (!empty($this->_has_backup_notice)) {
 			$data['Compat']['notice'] = __('Even though we have spent ages trying to make sure that Upfront Upgrade won’t alter the appearance of your existing site, we still highly recommend that you run a full back-up using our <b>Snapshot</b> plugin.', 'upfront');
 			$data['Compat']['snapshot_url'] = esc_url('https://premium.wpmudev.org/project/snapshot/');
-			$this->_dismiss_update_notice();
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Notices dismissal AJAX handler
+	 */
+	public function json_dismiss_notices () {
+		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) die; // We don't care, not editable
+		if ($this->_is_update_notice_dismissed()) return false; // We have notices dismissed for this version and below
+
+		$this->_dismiss_update_notice();
+		die;
 	}
 
 

@@ -7,6 +7,11 @@
 var _start;
 
 /**
+ * This holds a reference to pre-start processing
+ */
+var _callback = function () {}
+
+/**
  * Return backup notice popup string
  *
  * @return {String} Backup notice markup
@@ -15,6 +20,10 @@ function get_backup_notice () {
 	var notice = ((Upfront.data || {}).Compat || {}).notice,
 		url = ((Upfront.data || {}).Compat || {}).snapshot_url
 	;
+	_callback = function () {
+		return $.post(Upfront.Settings.ajax_url, {action: "upfront-notices-dismiss"});
+	};
+
 	return '' + 
 		'<div class="upfront-version_compatibility-nag">' +
 			'<p>' + notice + '</p>' +
@@ -85,6 +94,9 @@ function application_override () {
 
 				// Don't forget to actually boot :)
 				_start.apply(Upfront.Application);
+
+				// Apply pre-boot callback
+				if (_callback && 'function' === typeof _callback) _callback.apply(this);
 				
 				return false;
 			})
