@@ -132,7 +132,16 @@ class Upfront_Compat implements IUpfront_Server {
 		);
 
 		if (!empty($this->_has_backup_notice)) {
-			$data['Compat']['notice'] = __('Even though we have spent ages trying to make sure that Upfront Upgrade won’t alter the appearance of your existing site, we still highly recommend that you run a full back-up using our <b>Snapshot</b> plugin.', 'upfront');
+			$user = wp_get_current_user();
+			$name = !empty($user->display_name)
+				? $user->display_name
+				: __('User', 'upfront')
+			;
+			$data['Compat']['notice'] = '' .
+				sprintf(__('Dear <b>%s</b>', 'upfront'), esc_html($name)) .
+				'<br />' .
+				__('We have dedicated a long time finessing the migration process, however given the variety of layouts that can be achieved with Upfront and the amazing improvements we have in v 1.0, we strongly advise you to make a full backup of your site before proceeding to edit using our Snapshot plugin. ', 'upfront') .
+			'';
 			$data['Compat']['snapshot_url'] = esc_url('https://premium.wpmudev.org/project/snapshot/');
 		}
 
