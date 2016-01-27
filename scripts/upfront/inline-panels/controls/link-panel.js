@@ -2,7 +2,7 @@ define([
 	'scripts/upfront/inline-panels/dialog-control'
 ], function (DialogControl) {
 	var LinkPanelControl = DialogControl.extend({
-		initialize: function(options) {
+		initialize: function (options) {
 			this.options = options || {};
 			this.constructor.__super__.initialize.call(this, options);
 
@@ -14,12 +14,17 @@ define([
 				model: this.model,
 				button: false
 			});
+
+			this.listenTo(this.view, "url:changed", this.onClickOk);
 		},
 
-		onClickOk: function(event){
-			event.preventDefault();
-			if (this.view.model.get('type') === 'lightbox' && this.view.$el.find('.js-ulinkpanel-lightbox-input').val() !== '')
+		onClickOk: function (event) {
+			if ((event || {}).preventDefault) event.preventDefault();
+			
+			if (this.view.model.get('type') === 'lightbox' && this.view.$el.find('.js-ulinkpanel-lightbox-input').val() !== '') {
 				this.view.createLightBox();
+			}
+
 			this.close();
 		}
 	});
