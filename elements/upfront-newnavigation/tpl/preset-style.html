@@ -80,14 +80,14 @@
 }
 
 <?php if(!empty($properties['tablet'])) { ?>
-.tablet-breakpoint div.<?php echo $properties['id'] ?> ul.menu {
+#page.tablet-breakpoint div.<?php echo $properties['id'] ?> ul.menu {
 	<?php if(!empty($properties['tablet']['menu_alignment'])) { ?>text-align: <?php echo $properties['tablet']['menu_alignment'] ?>;<?php } ?>
 }
 <?php if(!empty($properties['tablet']['preset_style'])) { ?><?php echo $properties['tablet']['preset_style'] ?><?php } ?>
 <?php } ?>
 
 <?php if(!empty($properties['mobile'])) { ?>
-.mobile-breakpoint div.<?php echo $properties['id'] ?> ul.menu {
+#page.mobile-breakpoint div.<?php echo $properties['id'] ?> ul.menu {
 	<?php if(!empty($properties['mobile']['menu_alignment'])) { ?>text-align: <?php echo $properties['mobile']['menu_alignment'] ?>;<?php } ?>
 }
 <?php if(!empty($properties['mobile']['preset_style'])) { ?><?php echo $properties['mobile']['preset_style'] ?><?php } ?>
