@@ -214,7 +214,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	}
 
 	protected function up_update_nav_menu_item($menu_id, $db_id, $args = array(), $menu_items, $parent_id = 0) {
-
+		if (is_wp_error($menu_id)) return false; // Prevent notice if we received an error instead of an ID
 		$id = wp_update_nav_menu_item($menu_id, $db_id, array(
 						'menu-item-parent-id' => $parent_id,
 						'menu-item-url' => $args['url'],
