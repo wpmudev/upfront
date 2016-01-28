@@ -2,6 +2,12 @@ Change Log
 ============
 
 
+1.0.1 - 2016-01-28
+-------------------------------------------------------------------------------
+- Fix: compatibility with old PHP versions.
+- Fix: color picker appearance near right border.
+- Fix: minor style issues.
+
 1.0 - 2016-01-27
 -------------------------------------------------------------------------------
 - Entirely new way of working with elements size and position:
