@@ -1,5 +1,5 @@
 /* Contact presets Typography Normal state */
-.<?php echo $properties['id'] ?> .upfront-field-container label {
+#page .<?php echo $properties['id'] ?> .upfront-field-container label {
 	<?php if(!empty($properties['field-labels-static-font-family'])) { ?>font-family: <?php echo $properties['field-labels-static-font-family']  ?>; <?php } ?>
     <?php if(!empty($properties['field-labels-static-font-size'])) { ?>font-size: <?php echo $properties['field-labels-static-font-size']  ?>px; <?php } ?>
     <?php if(!empty($properties['field-labels-static-weight'])) { ?>font-weight: <?php echo $properties['field-labels-static-weight']  ?>;<?php } ?>
@@ -11,8 +11,8 @@
 	<?php } ?>
 }
 
-.<?php echo $properties['id'] ?> .upfront-field-container input,
-.<?php echo $properties['id'] ?> .upfront-field-container textarea {
+#page .<?php echo $properties['id'] ?> .upfront-field-container input,
+#page .<?php echo $properties['id'] ?> .upfront-field-container textarea {
 	<?php if(!empty($properties['field-values-static-font-family'])) { ?>font-family: <?php echo $properties['field-values-static-font-family']  ?>; <?php } ?>
     <?php if(!empty($properties['field-values-static-font-size'])) { ?>font-size: <?php echo $properties['field-values-static-font-size']  ?>px; <?php } ?>
     <?php if(!empty($properties['field-values-static-weight'])) { ?>font-weight: <?php echo $properties['field-values-static-weight']  ?>;<?php } ?>
@@ -24,7 +24,7 @@
 	<?php } ?>
 }
 
-.<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button{
+#page .<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button{
 	<?php if(!empty($properties['button-static-font-family'])) { ?>font-family: <?php echo $properties['button-static-font-family']  ?>; <?php } ?>
     <?php if(!empty($properties['button-static-font-size'])) { ?>font-size: <?php echo $properties['button-static-font-size']  ?>px; <?php } ?>
     <?php if(!empty($properties['button-static-weight'])) { ?>font-weight: <?php echo $properties['button-static-weight']  ?>;<?php } ?>
@@ -40,7 +40,7 @@
 
 <?php if(!empty($properties['hover-use-typography']) && $properties['hover-use-typography'] == 'yes') { ?>
 
-.<?php echo $properties['id'] ?> .upfront-field-container label:hover {
+#page .<?php echo $properties['id'] ?> .upfront-field-container label:hover {
 	<?php if(!empty($properties['field-labels-hover-font-family'])) { ?>font-family: <?php echo $properties['field-labels-hover-font-family']  ?>; <?php } ?>
     <?php if(!empty($properties['field-labels-hover-font-size'])) { ?>font-size: <?php echo $properties['field-labels-hover-font-size']  ?>px; <?php } ?>
     <?php if(!empty($properties['field-labels-hover-weight'])) { ?>font-weight: <?php echo $properties['field-labels-hover-weight']  ?>;<?php } ?>
@@ -49,8 +49,8 @@
 	<?php if(!empty($properties['field-labels-hover-font-color'])) { ?>color: <?php echo $properties['field-labels-hover-font-color']  ?>; <?php } ?>
 }
 
-.<?php echo $properties['id'] ?> .upfront-field-container input:hover,
-.<?php echo $properties['id'] ?> .upfront-field-container textarea:hover {
+#page .<?php echo $properties['id'] ?> .upfront-field-container input:hover,
+#page .<?php echo $properties['id'] ?> .upfront-field-container textarea:hover {
 	<?php if(!empty($properties['field-values-hover-font-family'])) { ?>font-family: <?php echo $properties['field-values-hover-font-family']  ?>; <?php } ?>
     <?php if(!empty($properties['field-values-hover-font-size'])) { ?>font-size: <?php echo $properties['field-values-hover-font-size']  ?>px; <?php } ?>
     <?php if(!empty($properties['field-values-hover-weight'])) { ?>font-weight: <?php echo $properties['field-values-hover-weight']  ?>;<?php } ?>
@@ -59,7 +59,7 @@
 	<?php if(!empty($properties['field-values-hover-font-color'])) { ?>color: <?php echo $properties['field-values-hover-font-color']  ?>; <?php } ?>
 }
 
-.<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button:hover {
+#page .<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button:hover {
 	<?php if(!empty($properties['button-hover-font-family'])) { ?>font-family: <?php echo $properties['button-hover-font-family']  ?>; <?php } ?>
     <?php if(!empty($properties['button-hover-font-size'])) { ?>font-size: <?php echo $properties['button-hover-font-size']  ?>px; <?php } ?>
     <?php if(!empty($properties['button-hover-weight'])) { ?>font-weight: <?php echo $properties['button-hover-weight']  ?>;<?php } ?>
@@ -71,7 +71,7 @@
 <?php } else { ?>
 
 /* If typography checkbox is unchecked use normal state settings on hover */
-.<?php echo $properties['id'] ?> .upfront-field-container label:hover {
+#page .<?php echo $properties['id'] ?> .upfront-field-container label:hover {
 	<?php if(!empty($properties['field-labels-static-font-family'])) { ?>font-family: <?php echo $properties['field-labels-static-font-family']  ?>; <?php } ?>
     <?php if(!empty($properties['field-labels-static-font-size'])) { ?>font-size: <?php echo $properties['field-labels-static-font-size']  ?>px; <?php } ?>
     <?php if(!empty($properties['field-labels-static-weight'])) { ?>font-weight: <?php echo $properties['field-labels-static-weight']  ?>;<?php } ?>
@@ -79,8 +79,8 @@
     <?php if(!empty($properties['field-labels-static-line-height'])) { ?>line-height: <?php echo $properties['field-labels-static-line-height']  ?>;<?php } ?>
 	<?php if(!empty($properties['field-labels-static-font-color'])) { ?>color: <?php echo $properties['field-labels-static-font-color']  ?>; <?php } ?>
 }
-.<?php echo $properties['id'] ?> .upfront-field-container input:hover,
-.<?php echo $properties['id'] ?> .upfront-field-container textarea:hover {
+#page .<?php echo $properties['id'] ?> .upfront-field-container input:hover,
+#page .<?php echo $properties['id'] ?> .upfront-field-container textarea:hover {
 	<?php if(!empty($properties['field-values-static-font-family'])) { ?>font-family: <?php echo $properties['field-values-static-font-family']  ?>; <?php } ?>
     <?php if(!empty($properties['field-values-static-font-size'])) { ?>font-size: <?php echo $properties['field-values-static-font-size']  ?>px; <?php } ?>
     <?php if(!empty($properties['field-values-static-weight'])) { ?>font-weight: <?php echo $properties['field-values-static-weight']  ?>;<?php } ?>
@@ -88,7 +88,7 @@
     <?php if(!empty($properties['field-values-static-line-height'])) { ?>line-height: <?php echo $properties['field-values-static-line-height']  ?>;<?php } ?>
 	<?php if(!empty($properties['field-values-static-font-color'])) { ?>color: <?php echo $properties['field-values-static-font-color']  ?>; <?php } ?>
 }
-.<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button:hover {
+#page .<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button:hover {
 	<?php if(!empty($properties['button-static-font-family'])) { ?>font-family: <?php echo $properties['button-static-font-family']  ?>; <?php } ?>
     <?php if(!empty($properties['button-static-font-size'])) { ?>font-size: <?php echo $properties['button-static-font-size']  ?>px; <?php } ?>
     <?php if(!empty($properties['button-static-weight'])) { ?>font-weight: <?php echo $properties['button-static-weight']  ?>;<?php } ?>
@@ -103,8 +103,8 @@
 
 <?php if(!empty($properties['focus-use-typography']) && $properties['focus-use-typography'] == 'yes') { ?>
 
-.<?php echo $properties['id'] ?> .upfront-field-container input:focus,
-.<?php echo $properties['id'] ?> .upfront-field-container textarea:focus {
+#page .<?php echo $properties['id'] ?> .upfront-field-container input:focus,
+#page .<?php echo $properties['id'] ?> .upfront-field-container textarea:focus {
 	<?php if(!empty($properties['field-values-focus-font-family'])) { ?>font-family: <?php echo $properties['field-values-focus-font-family']  ?>; <?php } ?>
     <?php if(!empty($properties['field-values-focus-font-size'])) { ?>font-size: <?php echo $properties['field-values-focus-font-size']  ?>px; <?php } ?>
     <?php if(!empty($properties['field-values-focus-weight'])) { ?>font-weight: <?php echo $properties['field-values-focus-weight']  ?>;<?php } ?>
@@ -113,7 +113,7 @@
 	<?php if(!empty($properties['field-values-focus-font-color'])) { ?>color: <?php echo $properties['field-values-focus-font-color']  ?>; <?php } ?>
 }
 
-.<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button:focus {
+#page .<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button:focus {
 	<?php if(!empty($properties['button-focus-font-family'])) { ?>font-family: <?php echo $properties['button-focus-font-family']  ?>; <?php } ?>
     <?php if(!empty($properties['button-focus-font-size'])) { ?>font-size: <?php echo $properties['button-focus-font-size']  ?>px; <?php } ?>
     <?php if(!empty($properties['button-focus-weight'])) { ?>font-weight: <?php echo $properties['button-focus-weight']  ?>;<?php } ?>
@@ -125,8 +125,8 @@
 <?php } else { ?>
 
 /* If typography checkbox is unchecked use normal state settings on focus */
-.<?php echo $properties['id'] ?> .upfront-field-container input:focus,
-.<?php echo $properties['id'] ?> .upfront-field-container textarea:focus {
+#page .<?php echo $properties['id'] ?> .upfront-field-container input:focus,
+#page .<?php echo $properties['id'] ?> .upfront-field-container textarea:focus {
 	<?php if(!empty($properties['field-values-static-font-family'])) { ?>font-family: <?php echo $properties['field-values-static-font-family']  ?>; <?php } ?>
     <?php if(!empty($properties['field-values-static-font-size'])) { ?>font-size: <?php echo $properties['field-values-static-font-size']  ?>px; <?php } ?>
     <?php if(!empty($properties['field-values-static-weight'])) { ?>font-weight: <?php echo $properties['field-values-static-weight']  ?>;<?php } ?>
@@ -134,7 +134,7 @@
     <?php if(!empty($properties['field-values-static-line-height'])) { ?>line-height: <?php echo $properties['field-values-static-line-height']  ?>;<?php } ?>
 	<?php if(!empty($properties['field-values-static-font-color'])) { ?>color: <?php echo $properties['field-values-static-font-color']  ?>; <?php } ?>
 }
-.<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button:focus {
+#page .<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button:focus {
 	<?php if(!empty($properties['button-static-font-family'])) { ?>font-family: <?php echo $properties['button-static-font-family']  ?>; <?php } ?>
     <?php if(!empty($properties['button-static-font-size'])) { ?>font-size: <?php echo $properties['button-static-font-size']  ?>px; <?php } ?>
     <?php if(!empty($properties['button-static-weight'])) { ?>font-weight: <?php echo $properties['button-static-weight']  ?>;<?php } ?>
@@ -146,16 +146,16 @@
 <?php } ?>
 
 /* Colors module */
-.<?php echo $properties['id'] ?> .upfront-field-container input,
-.<?php echo $properties['id'] ?> .upfront-field-container textarea {
+#page .<?php echo $properties['id'] ?> .upfront-field-container input,
+#page .<?php echo $properties['id'] ?> .upfront-field-container textarea {
 	<?php if(!empty($properties['static-field-bg'])) { ?>background: <?php echo $properties['static-field-bg']  ?>;<?php } ?>
 	<?php if(!empty($properties['hover-use-transition']) && !empty($properties['hover-transition-duration']) && !empty($properties['hover-transition-easing'] )) { ?>
 		transition: all <?php echo $properties['hover-transition-duration'] ?>s <?php echo $properties['hover-transition-easing']  ?>;
 	<?php } ?>
 }
 
-.<?php echo $properties['id'] ?> .upfront-field-container input:hover,
-.<?php echo $properties['id'] ?> .upfront-field-container textarea:hover {
+#page .<?php echo $properties['id'] ?> .upfront-field-container input:hover,
+#page .<?php echo $properties['id'] ?> .upfront-field-container textarea:hover {
 	<?php if(!empty($properties['hover-use-color']) && $properties['hover-use-color'] == 'yes') { ?>
 		<?php if(!empty($properties['hover-field-bg'])) { ?>background: <?php echo $properties['hover-field-bg']  ?>;<?php } ?>
 	<?php } else { ?>
@@ -163,8 +163,8 @@
 	<?php } ?>
 }
 
-.<?php echo $properties['id'] ?> .upfront-field-container input:focus,
-.<?php echo $properties['id'] ?> .upfront-field-container textarea:focus {
+#page .<?php echo $properties['id'] ?> .upfront-field-container input:focus,
+#page .<?php echo $properties['id'] ?> .upfront-field-container textarea:focus {
 	<?php if(!empty($properties['focus-use-color']) && $properties['focus-use-color'] == 'yes') { ?>
 		<?php if(!empty($properties['focus-field-bg'])) { ?>background: <?php echo $properties['focus-field-bg']  ?>;<?php } ?>
 	<?php } else { ?>
@@ -172,14 +172,14 @@
 	<?php } ?>
 }
 
-.upfront-contact-form.<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button {
+#page .upfront-contact-form.<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button {
 	<?php if(!empty($properties['static-button-bg'])) { ?> background: <?php echo $properties['static-button-bg']  ?>;<?php } ?>
 	<?php if(!empty($properties['hover-use-transition']) && !empty($properties['hover-transition-duration']) && !empty($properties['hover-transition-easing'] )) { ?>
 		transition: all <?php echo $properties['hover-transition-duration'] ?>s <?php echo $properties['hover-transition-easing']  ?>;
 	<?php } ?>
 }
 
-.upfront-contact-form.<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button:hover {
+#page .upfront-contact-form.<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button:hover {
 	<?php if(!empty($properties['hover-use-color']) && $properties['hover-use-color'] == 'yes') { ?>
 		<?php if(!empty($properties['hover-button-bg'])) { ?>background: <?php echo $properties['hover-button-bg']  ?>;<?php } ?>
 	<?php } else { ?>
@@ -187,7 +187,7 @@
 	<?php } ?>
 }
 
-.upfront-contact-form.<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button:focus {
+#page .upfront-contact-form.<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button:focus {
 	<?php if(!empty($properties['focus-use-color']) && $properties['focus-use-color'] == 'yes') { ?>
 		<?php if(!empty($properties['focus-button-bg'])) { ?>background: <?php echo $properties['focus-button-bg']  ?>;<?php } ?>
 	<?php } else { ?>
@@ -198,8 +198,8 @@
 /* Borders Module */
 
 /* Fields */
-.<?php echo $properties['id'] ?> .upfront-field-container input,
-.<?php echo $properties['id'] ?> .upfront-field-container textarea {
+#page .<?php echo $properties['id'] ?> .upfront-field-container input,
+#page .<?php echo $properties['id'] ?> .upfront-field-container textarea {
 <?php if(!empty($properties['static-fields-useborder']) && $properties['static-fields-useborder'] == 'yes') { ?>
 	<?php if(!empty($properties['static-fields-borderwidth']) && !empty($properties['static-fields-bordertype']) && !empty($properties['static-fields-bordercolor'])) { ?>
 		border: <?php echo $properties['static-fields-borderwidth'] ?>px <?php echo $properties['static-fields-bordertype'] ?> <?php echo $properties['static-fields-bordercolor'] ?>;
@@ -209,8 +209,8 @@
 <?php } ?>
 }
 
-.<?php echo $properties['id'] ?> .upfront-field-container input:hover,
-.<?php echo $properties['id'] ?> .upfront-field-container textarea:hover {
+#page .<?php echo $properties['id'] ?> .upfront-field-container input:hover,
+#page .<?php echo $properties['id'] ?> .upfront-field-container textarea:hover {
 <?php if(!empty($properties['hover-fields-useborder']) && $properties['hover-fields-useborder'] == 'yes') { ?>
 	<?php if(!empty($properties['hover-fields-borderwidth']) && !empty($properties['hover-fields-bordertype']) && !empty($properties['hover-fields-bordercolor'])) { ?>
 		border: <?php echo $properties['hover-fields-borderwidth'] ?>px <?php echo $properties['hover-fields-bordertype'] ?> <?php echo $properties['hover-fields-bordercolor'] ?>;
@@ -226,8 +226,8 @@
 <?php } ?>
 }
 
-.<?php echo $properties['id'] ?> .upfront-field-container input:focus,
-.<?php echo $properties['id'] ?> .upfront-field-container textarea:focus {
+#page .<?php echo $properties['id'] ?> .upfront-field-container input:focus,
+#page .<?php echo $properties['id'] ?> .upfront-field-container textarea:focus {
 <?php if(!empty($properties['focus-fields-useborder']) && $properties['focus-fields-useborder'] == 'yes') { ?>
 	<?php if(!empty($properties['focus-fields-borderwidth']) && !empty($properties['focus-fields-bordertype']) && !empty($properties['focus-fields-bordercolor'])) { ?>
 		border: <?php echo $properties['focus-fields-borderwidth'] ?>px <?php echo $properties['focus-fields-bordertype'] ?> <?php echo $properties['focus-fields-bordercolor'] ?>;
@@ -245,7 +245,7 @@
 
 /* Button */
 
-.<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button {
+#page .<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button {
 <?php if(!empty($properties['static-button-useborder']) && $properties['static-button-useborder'] == 'yes') { ?>
 	<?php if(!empty($properties['static-button-borderwidth']) && !empty($properties['static-button-bordertype']) && !empty($properties['static-button-bordercolor'])) { ?>
 		border: <?php echo $properties['static-button-borderwidth'] ?>px <?php echo $properties['static-button-bordertype'] ?> <?php echo $properties['static-button-bordercolor'] ?>;
@@ -255,7 +255,7 @@
 <?php } ?>
 }
 
-.<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button:hover {
+#page .<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button:hover {
 <?php if(!empty($properties['hover-button-useborder']) && $properties['hover-button-useborder'] == 'yes') { ?>
 	<?php if(!empty($properties['hover-button-borderwidth']) && !empty($properties['hover-button-bordertype']) && !empty($properties['hover-button-bordercolor'])) { ?>
 		border: <?php echo $properties['hover-button-borderwidth'] ?>px <?php echo $properties['hover-button-bordertype'] ?> <?php echo $properties['hover-button-bordercolor'] ?>;
@@ -271,7 +271,7 @@
 <?php } ?>
 }
 
-.<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button:focus {
+#page .<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button:focus {
 <?php if(!empty($properties['focus-button-useborder']) && $properties['focus-button-useborder'] == 'yes') { ?>
 	<?php if(!empty($properties['focus-button-borderwidth']) && !empty($properties['focus-button-bordertype']) && !empty($properties['focus-button-bordercolor'])) { ?>
 		border: <?php echo $properties['focus-button-borderwidth'] ?>px <?php echo $properties['focus-button-bordertype'] ?> <?php echo $properties['focus-button-bordercolor'] ?>;
