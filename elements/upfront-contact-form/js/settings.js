@@ -648,6 +648,7 @@ define([
 			/*if(this.model.get_property_value_by_name('smtp_enable') === 'yes') {
 				panel.settings.push(smtp_configuration);
 
+
 			}
 			
 			this.panels = _.extend({SMTPPanel: panel}, this.panels);
@@ -665,14 +666,31 @@ define([
 			console.log(this.panels.SMTP.prototype.settings);
 			*/
 			
-		migrateDefaultStyle: function(styles) {
-					//replace image wrapper class
-					styles = styles.replace(/(div)?\.upfront-contact-form\s/g, '');
-					styles = styles.replace(/(div)?\.upfront-object\s/g, '');
+			
+			this.panels = _.extend({SMTPPanel: panel}, this.panels);
+			
+			//smtp_enable
 
-					return styles;
-				},
+			/*this.panels.SMTP.prototype.settings = [smtp_enable];
+
+			if(this.model.get_property_value_by_name('smtp_enable') === 'yes') {
+				this.panels.SMTP.prototype.settings.push(smtp_configuration);
+				this.panels.SMTP.prototype.settings.push(smtp_secure);
+				this.panels.SMTP.prototype.settings.push(smtp_authentication);
 			}
+
+			console.log(this.panels.SMTP.prototype.settings);
+			*/
+			
+		},
+		migrateDefaultStyle: function(styles) {
+				//replace image wrapper class
+				styles = styles.replace(/(div)?\.upfront-contact-form\s/g, '');
+				styles = styles.replace(/(div)?\.upfront-object\s/g, '');
+
+				return styles;
+			},
+
 		},
 		title: 'Contact Element'
 	});
