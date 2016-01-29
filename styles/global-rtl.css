@@ -559,3 +559,33 @@ div.upfront-output-upfront-login_element form#loginform p{
     margin: 0 7px 15px 7px;
 }
 
+/*Theme font manager*/
+#text-fonts-manager .panel {
+    float: right;
+}
+#text-fonts-manager .add-font-button{
+    left: auto;
+    right: 424px;
+}
+#text-fonts-manager .theme-font-list-item{
+    padding-left: auto;
+    padding-right: 20px;
+}
+#text-fonts-manager .choose-font{
+    margin: 20px 15px 10px 0px;
+}
+.preview-size-p{
+    margin-right: auto;
+    margin-left: 21px;
+}
+.font-variant-preview{
+    padding: 0 10px 10px 0;
+}
+.font-variant-selected:after{
+    right: auto;
+    left: 10px;
+}
+#text-fonts-manager .theme-font-list-item .delete{
+    left: 10px;
+    right: auto;
+}
