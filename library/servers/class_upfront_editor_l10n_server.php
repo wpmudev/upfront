@@ -99,7 +99,8 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'close' => __('Close', 'upfront'),
 				'global_regions' => __('Global Regions', 'upfront'),
 				'lightboxes' => __('Lightboxes', 'upfront'),
-				'trash' => __('Trash', 'upfront')
+				'trash' => __('Trash', 'upfront'),
+				'preview_size' => __('Preview Size', 'upfront')
 			),
 			'content' => array(
 				'loading' => __('Loading', 'upfront'),
@@ -248,7 +249,8 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'menu_item_label' => __('Menu Item Label:', 'upfront'),
 				'target' => __('Target:', 'upfront'),
 				'blank' => __('Blank', 'upfront'),
-				'self' => __('Self', 'upfront')
+				'self' => __('Self', 'upfront'),
+				'add' => __('Add &raquo;', 'upfront')
 			),
 			'ueditor' => array(
 				'text_align' => __('Text alignment', 'upfront'),

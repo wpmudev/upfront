@@ -7055,7 +7055,7 @@ var Text_Fonts_Manager = Backbone.View.extend({
 		this.$el.find('.add-font-panel').after(this.theme_fonts_panel.render().el);
 		if (!Upfront.mainData.userDoneFontsIntro) this.$el.addClass('no-styles');
 
-		this.$el.find('.choose-font').after('<div class="preview-type"><span class="preview-type-title">Preview Size</span><span class="preview-size-p selected-preview-size">P</span><span class="preview-size-h1">H1</span></div>');
+		this.$el.find('.choose-font').after('<div class="preview-type"><span class="preview-type-title">' + Upfront.Settings.l10n.global.behaviors.preview_size + '</span><span class="preview-size-p selected-preview-size">P</span><span class="preview-size-h1">H1</span></div>');
 
 		return this;
 	},
