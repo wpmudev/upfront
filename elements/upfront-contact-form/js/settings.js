@@ -665,6 +665,14 @@ define([
 			console.log(this.panels.SMTP.prototype.settings);
 			*/
 			
+		migrateDefaultStyle: function(styles) {
+					//replace image wrapper class
+					styles = styles.replace(/(div)?\.upfront-contact-form\s/g, '');
+					styles = styles.replace(/(div)?\.upfront-object\s/g, '');
+
+					return styles;
+				},
+			}
 		},
 		title: 'Contact Element'
 	});
