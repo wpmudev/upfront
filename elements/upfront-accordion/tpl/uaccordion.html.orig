@@ -1,0 +1,21 @@
+<div class="upfront-accordion-container accordion-preset-<?php echo $preset ?>">
+	<div class="upfront-accordion-wrap">
+        <!-- <b class="upfront-entity_meta upfront-ui">
+            <a href="#" class="upfront-icon-button upfront-icon-button-accordion-add-panel accordion-add-panel"></a>
+        </b> -->
+        <?php for ($i = 0; $i < $accordion_count; $i++) { ?>
+        <div class="accordion-panel <?php if($i === 0) { ?>accordion-panel-active<?php } ?>">
+<<<<<<< 5e7ce2edd356a8e92b73c5f614d37f041d30f1d5
+            <div class="accordion-panel-title" id="title_<?php echo $element_id ?>-<?php echo $i ?>"><?php if($accordion[$i]['title']) { ?><?php echo $accordion[$i]['title'] ?><?php } else { ?>&nbsp;<?php } ?></div>
+            <div id="<?php echo $element_id ?>-<?php echo $i ?>" class="accordion-panel-content">
+                <?php echo $accordion[$i]['content'] ?>
+            </div>
+=======
+            <div class="accordion-panel-title" id="title_<?php echo $element_id ?>-<?php echo $i ?>"><?php echo $accordion[$i]['title'] ?></div>
+            <div id="<?php echo $element_id ?>-<?php echo $i ?>" class="accordion-panel-content"><?php echo $accordion[$i]['content'] ?></div>
+>>>>>>> make accordion el rtl ready
+            <i>x</i>
+        </div>
+        <?php } ?>
+    </div>
+</div>
