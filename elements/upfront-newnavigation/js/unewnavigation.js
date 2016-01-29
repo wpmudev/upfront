@@ -195,7 +195,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				air: false,
 				allowedTags: ['h5'],
 				placeholder: 'Link Name',
-
+				autoexit: true
 			}).on('start', function(e) {
 				ueditor_target.attr('tabIndex', 1); // Necessary for IE before triggering focus event
 				ueditor_target.focus();

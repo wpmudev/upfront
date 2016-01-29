@@ -543,6 +543,7 @@ var Ueditor = function($el, options) {
     this.options = $.extend({
 			// Ueditor options
 			autostart: true, //If false ueditor start on dblclick and stops on blur
+            autoexit: false,
 			stateButtons: {},
             toolbarExternal: "#" + unique_id,
             // toolbarFixedTopOffset: 100,
@@ -802,7 +803,7 @@ Ueditor.prototype = {
 		}
 
 		//Listen for outer clicks to stop the editor if necessary
-		if(!this.options.autostart)
+		if(!this.options.autostart || this.options.autoexit)
 			this.listenToOuterClick();
 
 		$(document).on("keyup", $.proxy(this.stopOnEscape, this));
@@ -1110,6 +1111,7 @@ Ueditor.prototype = {
 
 	listenToOuterClick: function(){
 		var me = this;
+
 		if(!this.checkInnerClick){
 			this.checkInnerClick = function(e){
 				//Check we are not selecting text
@@ -1141,7 +1143,12 @@ Ueditor.prototype = {
 				|| $(e.target).parents().hasClass("redactor-dropdown"))
 			&& $(e.target).parents("#upfront-popup.upfront-postselector-popup").length === 0)
 		{
-			e.data.ueditor.stop();
+            if(e.data.ueditor.$el.closest('a.menu_item').length > 0) { // blur on the menu item, dont stop the editor yet 
+                e.data.ueditor.$el.trigger('blur');
+            }
+            else {
+    			e.data.ueditor.stop();
+            }
 		}
 	},
 	callMethod: function(method){
