@@ -565,7 +565,7 @@ div.upfront-output-upfront-login_element form#loginform p{
 }
 #text-fonts-manager .add-font-button{
     left: auto;
-    right: 424px;
+    right: 410px;
 }
 #text-fonts-manager .theme-font-list-item{
     padding-left: auto;
@@ -588,4 +588,7 @@ div.upfront-output-upfront-login_element form#loginform p{
 #text-fonts-manager .theme-font-list-item .delete{
     left: 10px;
     right: auto;
+}
+.theme-fonts-ok-button, .breakpoint-edit-ok-button{
+    float: left;
 }
