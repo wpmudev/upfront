@@ -109,7 +109,7 @@ class Upfront_Cache_Key {
 	public function get_hash () {
 		if (!empty($this->_hash)) return $this->_hash;
 		$this->_hash = $this->get_serialized_identifier();
-		return $this->_hash();
+		return $this->_hash;
 	}
 
 	public function set_hash ($hash) {
