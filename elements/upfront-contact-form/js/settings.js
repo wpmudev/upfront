@@ -559,7 +559,7 @@ define([
 			
 			setTimeout(function() {
 				smtp_configuration.update_fields(show_smtp === 'yes'?'yes':'no');
-				smtp_authentication.update_fields(show_authentication === 'yes'?'yes':'no');
+				smtp_authentication.update_fields((show_smtp === 'yes' && show_authentication === 'yes')?'yes':'no');
 			}, 200);
 			
 
