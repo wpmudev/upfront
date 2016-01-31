@@ -515,13 +515,14 @@ body .upfront-edit_layout a {
 }
 
 /* This one ensures that the an anchor inside a heading does not vary too much if a specific font style is applied on an anchor */
-h1 > a,
-h2 > a,
-h3 > a,
-h4 > a,
-h5 > a,
-h6 > a {
+h1 a,
+h2 a,
+h3 a,
+h4 a,
+h5 a,
+h6 a {
   font-family: inherit !important;
   font-size: inherit !important;
-  line-height: inherit !important
+  line-height: inherit !important;
+  font-weight: inherit !important;
 }

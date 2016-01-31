@@ -149,15 +149,16 @@ div.upfront-button:hover .redactor_air {
 	width: 100%;
 }
 
-div.upfront-output-ubutton.editing {
+.upfront-button div.upfront-object-content.editing {
    display: table;
+   width: 100%;
 }
 
-div.upfront-output-ubutton.editing > div.redactor-box {
+.upfront-button div.upfront-object-content.editing > div.redactor-box {
 	display: table-row;
 }
 
-div.upfront-output-ubutton.editing > div.redactor-box > a.upfront_cta {
+.upfront-button div.upfront-object-content.editing > div.redactor-box > a.upfront_cta {
 	display: table-cell;
 }
 /*
