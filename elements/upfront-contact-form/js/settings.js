@@ -103,68 +103,6 @@ define([
 		]
 	});
 
-	
-
-	var smtp_secure = {
-		type: 'SettingsItem',
-		title: l10n.smtp.secure,
-		className: 'general_settings_item',
-		fields: [
-			{
-				type: 'Radios',
-				className: 'inline-radios plaintext-settings',
-				property: 'smtp_secure',
-				values: [
-					{
-						label: l10n.smtp.none,
-						value: 'none'
-					},
-					{
-						label: l10n.smtp.ssl,
-						value: 'ssl'
-					},
-					{
-						label: l10n.smtp.tls,
-						value: 'tls'
-					}
-				]
-			}
-		]
-	};
-
-	var smtp_authentication = {
-		type: 'SettingsItem',
-		title: l10n.smtp.authentication,
-		className: 'general_settings_item',
-		fields: [
-			{
-				type: 'Radios',
-				className: 'inline-radios plaintext-settings',
-				property: 'smtp_authentication',
-				values: [
-					{
-						label: l10n.smtp.no,
-						value: 'no'
-					},
-					{
-						label: l10n.smtp.yes,
-						value: 'yes'
-					}
-				]
-			},
-			{
-				type: 'Text',
-				property: 'smtp_username',
-				label: l10n.smtp.username
-			},
-			{
-				type: 'Text',
-				property: 'smtp_password',
-				label: l10n.smtp.password
-			}
-		]
-	};
-
 	var AppearancePanel = {
 		mainDataCollection: 'contactPresets',
 		styleElementPrefix: 'contact-preset',
@@ -430,16 +368,17 @@ define([
 	};
 
 	var SMTPAuthenticationSettings = Upfront.Views.Editor.Settings.Item.extend({
+		className: 'no-title',
 		initialize: function(opts) {
-			
+			//var showsettings = this.model.get_property_value_by_name('smtp_authentication');
 			this.update_fields();
+			//this.update_fields(showsettings === 'yes'?'yes':'no');
 			//this.constructor.__super__.initialize.call(this, opts);
 		},
 		get_title: function() {
 			return '';
 		},
 		update_fields: function(show) {
-			
 			var me = this;
 			this.fields=_([]);
 			
@@ -471,12 +410,15 @@ define([
 
 
 	var SMTPSpecificSettings = Upfront.Views.Editor.Settings.Item.extend({
-
+		className: 'no-title',
 		initialize: function(opts) {
 			console.log('initializing');
 			this.authentication = opts.authentication;
-			this.update_fields();
 
+			//var showsettings = this.model.get_property_value_by_name('smtp_enable');
+
+			//this.update_fields(showsettings === 'yes'?'yes':'no');
+			this.update_fields();
 			//this.constructor.__super__.initialize.call(this, opts);
 		},
 		get_title: function() {
@@ -578,40 +520,9 @@ define([
 				label: 'Empty label',
 				title: l10n.smtp.label,
 			});
-
-			/*var smtp_configuration = new SMTPSpecificSettings({
-				model: this.model,
-				title: l10n.smtp.configuration,
-				className: 'general_settings_item',
-				fields: [
-					new Upfront.Views.Editor.Field.Email({
-						model: this.model,
-						property: 'smtp_from_email',
-						label: l10n.smtp.from_email
-					}),
-					new Upfront.Views.Editor.Field.Text({
-						model: this.model,
-						property: 'smtp_from_name',
-						label: l10n.smtp.from_name
-					}),
-					new Upfront.Views.Editor.Field.Text({
-						model: this.model,
-						property: 'smtp_host',
-						label: l10n.smtp.host
-					}),
-					new Upfront.Views.Editor.Field.Text({
-						model: this.model,
-						property: 'smtp_port',
-						label: l10n.smtp.port
-					})
-				]
-			});
-			*/
-			
 			
 			var smtp_authentication = new SMTPAuthenticationSettings({model: this.model});
 			var smtp_configuration = new SMTPSpecificSettings({model: this.model, authentication: smtp_authentication});
-
 
 			var smtp_enable = new Upfront.Views.Editor.Settings.Item({
 				model: this.model,
@@ -634,54 +545,29 @@ define([
 						],
 						change: function(value) {
 							smtp_configuration.update_fields(value);
+							
+							var show_authentication = this.model.get_property_value_by_name('smtp_authentication');
+							smtp_authentication.update_fields((show_authentication === 'yes' && value ==='yes') ?'yes':'no');
 						}
 
 					}),
 				]
 			});
 
+			var show_smtp = this.model.get_property_value_by_name('smtp_enable');
+			var show_authentication = this.model.get_property_value_by_name('smtp_authentication');
+			
+			setTimeout(function() {
+				smtp_configuration.update_fields(show_smtp === 'yes'?'yes':'no');
+				smtp_authentication.update_fields(show_authentication === 'yes'?'yes':'no');
+			}, 200);
+			
+
 			panel.settings = _([smtp_enable, smtp_configuration, smtp_authentication]);
 
-			console.log('adding to the panels');
+
 			this.panels = _.extend({SMTPPanel: panel}, this.panels);
 
-			/*if(this.model.get_property_value_by_name('smtp_enable') === 'yes') {
-				panel.settings.push(smtp_configuration);
-
-
-			}
-			
-			this.panels = _.extend({SMTPPanel: panel}, this.panels);
-			*/
-			//smtp_enable
-
-			/*this.panels.SMTP.prototype.settings = [smtp_enable];
-
-			if(this.model.get_property_value_by_name('smtp_enable') === 'yes') {
-				this.panels.SMTP.prototype.settings.push(smtp_configuration);
-				this.panels.SMTP.prototype.settings.push(smtp_secure);
-				this.panels.SMTP.prototype.settings.push(smtp_authentication);
-			}
-
-			console.log(this.panels.SMTP.prototype.settings);
-			*/
-			
-			
-			this.panels = _.extend({SMTPPanel: panel}, this.panels);
-			
-			//smtp_enable
-
-			/*this.panels.SMTP.prototype.settings = [smtp_enable];
-
-			if(this.model.get_property_value_by_name('smtp_enable') === 'yes') {
-				this.panels.SMTP.prototype.settings.push(smtp_configuration);
-				this.panels.SMTP.prototype.settings.push(smtp_secure);
-				this.panels.SMTP.prototype.settings.push(smtp_authentication);
-			}
-
-			console.log(this.panels.SMTP.prototype.settings);
-			*/
-			
 		},
 		migrateDefaultStyle: function(styles) {
 				//replace image wrapper class
@@ -689,8 +575,6 @@ define([
 				styles = styles.replace(/(div)?\.upfront-object\s/g, '');
 
 				return styles;
-			},
-
 		},
 		title: 'Contact Element'
 	});

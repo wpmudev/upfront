@@ -14,3 +14,7 @@
 .inline-radios {
 	margin: 5px 0 0;
 }
+
+div.no-title div.upfront-settings-item-title {
+  display: none;
+}
