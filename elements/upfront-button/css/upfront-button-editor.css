@@ -148,6 +148,18 @@ div.upfront-button:hover .redactor_air {
 	height: 100%;
 	width: 100%;
 }
+
+div.upfront-output-ubutton.editing {
+   display: table;
+}
+
+div.upfront-output-ubutton.editing > div.redactor-box {
+	display: table-row;
+}
+
+div.upfront-output-ubutton.editing > div.redactor-box > a.upfront_cta {
+	display: table-cell;
+}
 /*
 //this css is conflicting with the visitlink icons in the link panel
 i.upfront-icon-region-visit-link-entry:before {

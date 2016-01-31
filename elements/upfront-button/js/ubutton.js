@@ -250,9 +250,11 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 				autostart: false
 			})
 			.on('start', function(){
+				$target.closest('.upfront-output-ubutton').addClass('editing');
 				Upfront.Events.trigger('upfront:element:edit:start', 'text');
 			})
 			.on('stop', function(){
+				$target.closest('.upfront-output-ubutton').removeClass('editing');
 				me.property('align', $target.css('text-align'), true);
 				Upfront.Events.trigger('upfront:element:edit:stop');
 				me.render();
