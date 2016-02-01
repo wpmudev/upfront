@@ -18,7 +18,8 @@ var _callback = function () {}
  */
 function get_backup_notice () {
 	var notice = ((Upfront.data || {}).Compat || {}).notice,
-		url = ((Upfront.data || {}).Compat || {}).snapshot_url
+		url = ((Upfront.data || {}).Compat || {}).snapshot_url,
+		msg = url.match(/premium\.wpmudev\.org/) ? 'Install Snapshot' : 'Backup with Snapshot';
 	;
 	_callback = function () {
 		return $.post(Upfront.Settings.ajax_url, {action: "upfront-notices-dismiss"});
@@ -29,7 +30,7 @@ function get_backup_notice () {
 			'<p>' + notice + '</p>' +
 			'<div>' +
 				'<a class="boot" href="#boot">Proceed to edit</a>' +
-				(url ? '<a class="update" href="' + url + '">Install Snapshot</a>' : '') +
+				(url ? '<a class="update" href="' + url + '">' + msg + '</a>' : '') +
 			'</div>' +
 		'</div>' +
 	'';

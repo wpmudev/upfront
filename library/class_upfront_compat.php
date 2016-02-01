@@ -171,7 +171,11 @@ class Upfront_Compat implements IUpfront_Server {
 			$data['Compat']['notice'] = '' .
 				__('We’ve put a lot of time into getting the migration process right, however given the variety of layouts that can be achieved with Upfront and the amazing improvements we’ve added in version 1.0, we strongly advise that you to make a full backup of your site with <b>Snapshot</b> before proceeding to edit your site. ', 'upfront') .
 			'';
-			$data['Compat']['snapshot_url'] = esc_url('https://premium.wpmudev.org/project/snapshot/');
+			$url = 'https://premium.wpmudev.org/project/snapshot/';
+			if (class_exists('WPMUDEVSnapshot') && is_callable(array('WPMUDEVSnapshot', 'instance')) && Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
+				$url = admin_url('admin.php?page=snapshots_new_panel');
+			}
+			$data['Compat']['snapshot_url'] = esc_url($url);
 		}
 
 		return $data;
