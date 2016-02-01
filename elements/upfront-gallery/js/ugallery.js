@@ -334,8 +334,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 	selectItem: function(e) {
 		var item = $(e.target).hasClass('gallery_item') ? $(e.target) : $(e.target).closest('.ugallery_item');
+		if (!item.length) return;
+
 		item.siblings().removeClass('ugallery_selected');
-		if (!$(e.target).closest('.ugallery-controls').length) {
+		if (!($(e.target).closest('.ugallery-controls') || {}).length) {
 			item.toggleClass('ugallery_selected');
 		}
 		e.gallerySelected = true;
