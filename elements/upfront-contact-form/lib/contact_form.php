@@ -56,7 +56,7 @@ class Upfront_UcontactView extends Upfront_Object {
 		$markup =  $this->get_template('ucontact', $args);
 
 		return $markup . '
-			<script type="text/javascript">
+			<script data-cfasync="false">
 				if(! window.ajax_url)
 					ajax_url = "' . admin_url( 'admin-ajax.php' ) . '";
 			</script>';

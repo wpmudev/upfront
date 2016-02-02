@@ -135,7 +135,7 @@ class Upfront_Form extends Upfront_FormElement {
 				"message" => $element->get_validation_message(),
 			);
 		}
-		echo '<script type="text/javascript">' .
+		echo '<script data-cfasync="false">' .
 			'var _upfront_form_data = _upfront_form_data || {};' .
 			'_upfront_form_data["' . esc_js($this->get_name()) . '"] = ' . json_encode($form_data) . '; ' .
 		'</script>';

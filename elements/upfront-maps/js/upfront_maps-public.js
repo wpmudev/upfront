@@ -89,7 +89,8 @@ function load_google_maps () {
 		script = document.createElement("script")
 	;
 	try { protocol = document.location.protocol; } catch (e) { protocol = 'http:'; }
-	script.type = "text/javascript";
+	//script.type = "text/javascript";
+	script.setAttribute('data-cfasync', 'false');
 	script.src = protocol + "//maps.google.com/maps/api/js?v=3&libraries=places&sensor=false&callback=upfront_maps_loaded";
 	document.body.appendChild(script);
 }

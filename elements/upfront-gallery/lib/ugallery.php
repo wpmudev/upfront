@@ -80,7 +80,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 		$markup = upfront_get_template('ugallery', $data, dirname(dirname(__FILE__)) . '/tpl/ugallery.html');
 
 		$markup .= '
-			<script type="text/javascript">
+			<script data-cfasync="false">
 				if(typeof ugalleries == "undefined")
 					ugalleries = {};
 
@@ -109,7 +109,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 				)
 			);
 			$markup .= '
-				<script type="text/javascript">
+				<script data-cfasync="false">
 					ugalleries["' . $data['element_id'] . '"].magnific = ' . json_encode($magnific_options) . ';
 				</script>
 			';
@@ -117,7 +117,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 		else {
 			$tplObject = array('markup' => $lbTpl);
 			$markup .= '
-				<script type="text/javascript">
+				<script data-cfasync="false">
 					ugalleries["' . $data['element_id'] . '"].template = ' . json_encode($tplObject) . ';
 				</script>
 			';

@@ -282,7 +282,7 @@ class Upfront {
 			$deps->add_script($url);
 		}
 
-		echo '<script type="text/javascript">
+		echo '<script data-cfasync="fasle">
 			var _upfront_post_data=' . json_encode(array(
 				'layout' => Upfront_EntityResolver::get_entity_ids(),
 				'post_id' => (is_singular() ? apply_filters('upfront-data-post_id', get_the_ID()) : false)

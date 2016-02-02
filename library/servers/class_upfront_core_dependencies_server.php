@@ -94,7 +94,7 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 		}
 
 		$scripts = $deps->get_scripts();
-		$script_tpl = '<script data-cfasync="false" type="text/javascript" src="%url%"></script>';
+		$script_tpl = '<script data-cfasync="false" src="%url%"></script>';
 		foreach ($scripts as $script) {
 			echo preg_replace('/%url%/', $script, $script_tpl);	
 		}
@@ -122,7 +122,7 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 
 		$script_urls = json_encode(apply_filters('upfront-experiments-scripts-debounce_dependency_load', $deps->get_scripts()));
 		$debug = $this->_debugger->is_active(Upfront_Debug::JS_TRANSIENTS) ? 'class="upfront-debounced"' : '';
-		$script_tpl = json_encode('<script type="text/javascript" src="%url%" ' . $debug . '></script>');
+		$script_tpl = json_encode('<script data-cfasync = "false" src="%url%" ' . $debug . '></script>');
 
 		$comp = Upfront_Behavior::compression();
 
@@ -139,7 +139,7 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 		}
 		
 		$injection_root = esc_js($injection_root);
-		echo "<script type='text/javascript'>
+		echo "<script data-cfasync='false'>
 			(function ($) {
 			{$callback_wrap_start}
 				var script_urls = {$script_urls},
@@ -193,7 +193,7 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 			$debug .= ',inactive: function () { console.log("Web fonts loading failed."); }';
 		}
 
-		echo "<script type='text/javascript'>
+		echo "<script data-cfasync = 'false' >
 			WebFontConfig = {
 				google: {
 					families: {$request}

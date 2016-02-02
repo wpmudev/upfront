@@ -104,7 +104,7 @@ class Upfront_UimageView extends Upfront_Object {
 				'delegate' => 'a'
 			);
 			$markup .= '
-				<script type="text/javascript">
+				<script data-cfasync="false">
 					if(typeof ugallery == "undefined")
 						uimages = [];
 					uimages["' . $data['element_id'] . '"] = ' . json_encode($magnific_options) . ';
