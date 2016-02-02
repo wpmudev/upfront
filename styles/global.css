@@ -105,6 +105,11 @@ h2, h3 { page-break-after: avoid; }
   pointer-events: auto;
 }
 
+.upfront-output-region {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
 .upfront-output-region, .upfront-region-wrapper {
   width: 100%;
 }
