@@ -191,6 +191,25 @@ define([
 		previewPreset: function(value) {
 			this.trigger('upfront:presets:preview', value);
 		},
+
+		/**
+		 * Gets *all* preset names - legacy or otherwise
+		 *
+		 * @return {Array} Array of preset names as strings
+		 */
+		get_all_preset_names: function () {
+			var presets = [];
+			
+			_.each(this.options.presets.models, function(model) {
+				var name = 'undefined' === typeof model.get('name')
+					? model.get('id')
+					: model.get('name')
+				;
+				presets.push(name);
+			});
+
+			return presets;
+		},
 		
 		get_presets: function () {
 			var presets = [];
