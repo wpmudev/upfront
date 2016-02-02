@@ -23,6 +23,10 @@ define([
 
 		initialize: function(options) {
 			this.options = options || {};
+
+			if (this.options.max_value && this.options.max_value < 200) this.options.max_value = 200;
+			if (!this.options.max_value) this.options.max_value = 200;
+
 			var me = this,
 				state = this.options.state;
 
@@ -72,10 +76,10 @@ define([
 				s = me.fields._wrapped[2];
 				s.$el.find('#'+s.get_field_id()).slider('value', value);
 				s.get_field().val(value);
-				
+
 				// Now, once we updated the slider value, let that handler take care of it
 				sliderOnChange.apply(s);
-				
+
 				//Lower opacity if value is bigger than the slider MAX_VALUE
 				if(value > me.options.max_value) {
 					me.$el.closest('.state_modules').find('.'+ state +'-radius-slider').css('opacity', 0.6);
@@ -170,8 +174,9 @@ define([
 					model: this.model,
 					name: me.options.fields.radius,
 					suffix: l10n.px,
-					min: 1,
+					min: 0,
 					max: me.options.max_value,
+					step: 10,
 					change: throttledSliderOnChange,
 					show: function() {
 						var value = me.model.get(me.options.fields.radius_number);
@@ -189,7 +194,7 @@ define([
 					name: me.options.fields.radius_number,
 					label: '',
 					min: 0,
-					max: me.options.max_value,
+					max: 1000,
 					default_value: 0,
 					values: [
 						{ label: "", value: '0' }
@@ -203,7 +208,7 @@ define([
 					name: me.options.fields.radius1,
 					label: '',
 					min: 0,
-					max: me.options.max_value,
+					max: 1000,
 					default_value: 0,
 					values: [
 						{ label: "", value: '0' }
@@ -219,7 +224,7 @@ define([
 					name: me.options.fields.radius2,
 					label: '',
 					min: 0,
-					max: me.options.max_value,
+					max: 1000,
 					default_value: 0,
 					values: [
 						{ label: "", value: '0' }
@@ -235,7 +240,7 @@ define([
 					name: me.options.fields.radius4,
 					label: '',
 					min: 0,
-					max: me.options.max_value,
+					max: 1000,
 					default_value: 0,
 					values: [
 						{ label: "", value: '0' }
@@ -251,7 +256,7 @@ define([
 					name: me.options.fields.radius3,
 					label: '',
 					min: 0,
-					max: me.options.max_value,
+					max: 1000,
 					default_value: 0,
 					values: [
 						{ label: "", value: '0' }
