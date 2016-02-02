@@ -381,7 +381,7 @@ class Upfront_SocialMedia_Setting extends Upfront_Server {
 			</div>',
 
 			'google-likes' => '<div data-id="upfront-icon-google" class="upfront-social-icon social-frame usocial-google {{style}} like">
-				<script type="text/javascript" src="//apis.google.com/js/plusone.js"></script>
+				<script data-cfasync="false" src="//apis.google.com/js/plusone.js"></script>
 				<div class="g-plusone" data-size="{{size}}"></div>
 			</div>'
 		);
