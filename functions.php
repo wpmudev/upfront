@@ -311,6 +311,27 @@ add_action('init', array('Upfront', 'serve'), 0);
 add_action('after_setup_theme', array('Upfront', "load_textdomain"));
 
 /**
+ * cloudflare rocketloader. Ignore all upfront scripts. We already have an optimization routine in place
+ */
+function rocket_loader_attributes_start() {
+    ob_start();
+}
+
+function rocket_loader_attributes_end() {
+    $script_out = ob_get_clean();
+    $script_out = str_replace(
+      "type='text/javascript' src='", 
+      'data-cfasync="false"'." src='", 
+      $script_out);  
+    print $script_out;
+}
+
+if (!is_admin()) {
+  add_action( 'wp_print_scripts', 'rocket_loader_attributes_start');
+  add_action( 'print_head_scripts', 'rocket_loader_attributes_end');
+}
+
+/**
  * filters wp caption atts to hide the caption in case show_caption is equal  to "0"
  */
 add_filter("shortcode_atts_caption", 'uf_shortcode_atts_caption', 10, 3);

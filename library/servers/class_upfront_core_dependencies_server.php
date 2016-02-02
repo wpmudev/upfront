@@ -94,7 +94,7 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 		}
 
 		$scripts = $deps->get_scripts();
-		$script_tpl = '<script type="text/javascript" src="%url%"></script>';
+		$script_tpl = '<script data-cfasync="false" type="text/javascript" src="%url%"></script>';
 		foreach ($scripts as $script) {
 			echo preg_replace('/%url%/', $script, $script_tpl);	
 		}
