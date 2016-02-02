@@ -100,6 +100,10 @@ DragDrop.prototype = {
 		if ( this.app.mode.current !== this.app.MODE.THEME && this.model.get_property_value_by_name('disable_drag') ) {
 			return false;
 		}
+		// No draggable for spacer
+		if ( this.$me.hasClass('upfront-module-spacer') ) {
+			return false;
+		}
 		if ( this.$me.data('ui-draggable') ){
 			if ( this.is_group || !this.is_disabled ) {
 				this.$me.draggable('option', 'disabled', false);
