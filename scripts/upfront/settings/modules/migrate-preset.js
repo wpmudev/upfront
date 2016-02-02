@@ -157,11 +157,26 @@ define([
 			this.fields =_(fields);
 		},
 		
+		/**
+		 * Suggests an unique preset name, based on the preset argument
+		 *
+		 * @param {String} presetName Preset name prefix
+		 *
+		 * @return {String} Unique preset name
+		 */
 		suggestPresetName: function(presetName) {
 			var preset = this.capitalisePreset(presetName.replace(/-preset/, '')),
-				name = preset + l10n.preset;
-			
-			return name
+				raw_name = preset + l10n.preset,
+				name = raw_name,
+				counter = 1,
+				all_names = this.get_all_preset_names()
+			;
+			// Increment counter next to preset name until we get an unique one
+			while (0 < all_names.indexOf(name)) {
+				name = raw_name + counter;
+				counter++;
+			}
+			return name;
 		},
 		
 		capitalisePreset: function(preset) {
