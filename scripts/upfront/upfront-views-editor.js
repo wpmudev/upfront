@@ -8711,7 +8711,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 
 			if (this.options.fixed) this.$el.addClass('upfront-loading-fixed');
 			if (this.options.loading_type) this.$el.addClass(this.options.loading_type);
-			if (this.options.loading)this.$el.append('<p class="upfront-loading-text">' + this.options.loading + '</p>');
+			if (this.options.loading) this.$el.append('<p class="upfront-loading-text">' + this.options.loading + '</p>');
+			if (this.options.loading_notice) this.$el.append('<p class="upfront-loading-notice">' + this.options.loading_notice + '</p>');
 
 			this.$el.find('.upfront-loading-ani').on('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function(){
 				var state = me.$el.hasClass('upfront-loading-repeat') ? 'repeat' : (me.$el.hasClass('upfront-loading-done') ? 'done' : 'start');
