@@ -131,7 +131,7 @@ DragDrop.prototype = {
 		this.ed.time_start('drag start');
 		this.event = e;
 		this.ui = ui;
-		this.breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
+		this.breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON();
 		this.is_parent_group = ( typeof this.view.group_view != 'undefined' );
 		
 		this.prepare_drag();
@@ -230,7 +230,8 @@ DragDrop.prototype = {
 			col = me.col,
 			min_col = me.$el.hasClass('upfront-image_module') ? 1 : (col > ed.min_col ? ed.min_col : col),
 			row = me.row > ed.max_row ? ed.max_row : me.row,
-			is_spacer = me.$el.hasClass('upfront-module-spacer')
+			is_spacer = me.$el.hasClass('upfront-module-spacer'),
+			regions = this.app.layout.get("regions")
 		;
 
 		var $sibling_els = Upfront.Util.find_sorted(me.$el.closest('.upfront-wrapper')),
@@ -246,125 +247,137 @@ DragDrop.prototype = {
 			var $area = area.$el.find(".upfront-editable_entities_container:first"),
 				$region = is_region ? area.$el : area.$el.closest('.upfront-region'),
 				region_name = $region.data('name'),
-				region = is_region ? area : ed.get_region($region);
-				$wraps = Upfront.Util.find_sorted($area, '> .upfront-wrapper:visible').filter(function(){
+				region = is_region ? area : ed.get_region($region),
+				region_model = regions.get_by_name(region_name),
+				area_model = is_region ? region_model : region_model.get('modules').get_by_element_id(area.$el.attr('id')),
+				lines = ed.parse_modules_to_lines(area_model.get('modules'), area_model.get('wrappers'), breakpoint.id, area.col),
+				/*$wraps = Upfront.Util.find_sorted($area, '> .upfront-wrapper:visible').filter(function(){
 					return ( $(this).height() > 0 )
-				}),
+				}),*/
 				expand_lock = $region.hasClass('upfront-region-expand-lock'),
 				current_full_top = area.grid.top,
 				can_drop = function (top, bottom) {
 					return ( !expand_lock || ( expand_lock && bottom-top+1 >= me.row ) );
 				},
-				first_cb = function ($w, $ws) {
-					var w = ed.get_wrap($w);
-					return ( w.outer_grid.left == area.grid.left );
+				map_wrappers = function (rw) {
+					var rw_view = Upfront.data.wrapper_views[rw.model.cid];
+					if ( !rw_view ) return false;
+					return ed.get_wrap(rw_view.$el);
 				}
 			;
 
-			$wraps.each(function(index){
-				var $wrap = $(this),
-					wrap = ed.get_wrap($wrap),
-					is_wrap_spacer = ( $wrap.find('> .upfront-module-view > .upfront-module-spacer').length > 0 ),
-					wrap_clr = ( wrap.grid.left == area.grid.left ),
-					is_wrap_me = ( me_wrap && wrap._id == me_wrap._id ),
-					wrap_only = ( $wrap.find(that.module_selector).size() == 1 ),
-					wrap_me_only = ( is_wrap_me && wrap_only ),
-					$prev_wrap = $wraps[index-1] ? $wraps.eq(index-1) : false,
-					prev_wrap = $prev_wrap ? ed.get_wrap($prev_wrap) : false,
-					prev_wrap_clr = ( prev_wrap && prev_wrap.grid.left == area.grid.left ),
-					is_prev_me = ( prev_wrap && me_wrap && prev_wrap._id == me_wrap._id ),
-					is_prev_wrap_spacer = $prev_wrap ? ( $prev_wrap.find('> .upfront-module-view > .upfront-module-spacer').length > 0 ) : false,
-					prev_me_only = ( is_prev_me && $prev_wrap.find(that.module_selector).size() == 1 ),
-					$next_wrap = $wraps[index+1] ? $wraps.eq(index+1) : false,
-					next_wrap = $next_wrap ? ed.get_wrap($next_wrap) : false,
-					next_wrap_clr = ( next_wrap && next_wrap.grid.left == area.grid.left ),
-					is_next_me = ( next_wrap && me_wrap && next_wrap._id == me_wrap._id ),
-					is_next_wrap_spacer = $next_wrap ? ( $next_wrap.find('> .upfront-module-view > .upfront-module-spacer').length > 0 ) : false,
-					next_me_only = ( is_next_me && $next_wrap.find(that.module_selector).size() == 1 ),
-					$next_clr = Upfront.Util.find_from_elements($wraps, $wrap, first_cb, false),
-					next_clr = $next_clr.size() > 0 ? ed.get_wrap($next_clr) : false,
-					wrap_el_left = ed.get_wrap_el_min(wrap),
-					wrap_el_top = ed.get_wrap_el_min(wrap, false, true),
-					prev_wrap_el_left = prev_wrap ? ed.get_wrap_el_min(prev_wrap) : false,
-					next_wrap_el_top = next_wrap ? ed.get_wrap_el_min(next_wrap, false, true) : false,
-					next_wrap_el_left = next_wrap ? ed.get_wrap_el_min(next_wrap) : false,
-					next_clr_el_top = next_clr ? ed.get_wrap_el_min(next_clr, false, true) : false,
-					$row_wrap_first = !wrap_clr ? Upfront.Util.find_from_elements($wraps, $wrap, first_cb, true) : $wrap,
-					$row_wraps_next = Upfront.Util.find_from_elements($wraps, $row_wrap_first, '.upfront-wrapper', false, first_cb),
-					row_wraps = _.union( [ ed.get_wrap($row_wrap_first) ], $row_wraps_next.map(function(){ return ed.get_wrap($(this)); }).get() ),
-					max_row_wrap = _.max(row_wraps, function(row_wrap){ return ( me_wrap && me_wrap._id == row_wrap._id ) ? -1 : row_wrap.grid.bottom; }),
-					min_row_wrap = _.min(row_wraps, function(row_wrap){ return ed.get_wrap_el_min(row_wrap, false, true).grid.top; }),
-					min_row_el = ed.get_wrap_el_min(min_row_wrap, false, true),
-					wrap_me_in_row = _.find(row_wraps, function(row_wrap){ return me_wrap && me_wrap._id == row_wrap._id })
-				;
-				if ( wrap_me_in_row && that.current_row_wraps === false ) {
-					that.current_row_wraps = row_wraps;
-				}
-				
-				if (
-					!is_spacer
-					&&
-					!is_wrap_spacer
-					&&
-					(
-						( 
-							( !breakpoint || breakpoint.default ) && wrap.col >= min_col && 
+			_.each(lines, function (line, li) {
+				_.each(line.wrappers, function (w, wi) {
+					var wrap_view = Upfront.data.wrapper_views[w.model.cid];
+					if ( !wrap_view ) return;
+					var $wrap = wrap_view.$el,
+						wrap = ed.get_wrap($wrap),
+						is_wrap_spacer = w.spacer,
+						wrap_clr = ( wi == 0 ),
+						is_wrap_me = ( me_wrap && wrap._id == me_wrap._id ),
+						wrap_only = ( w.modules.length == 1 ),
+						wrap_me_only = ( is_wrap_me && wrap_only ),
+						prev_w = wi > 0 ? line.wrappers[wi-1] : false,
+						prev_wrap_view = prev_w ? Upfront.data.wrapper_views[prev_w.model.cid] : false,
+						$prev_wrap = prev_wrap_view ? prev_wrap_view.$el : false,
+						prev_wrap = $prev_wrap ? ed.get_wrap($prev_wrap) : false,
+						prev_wrap_clr = ( wi == 1 ),
+						is_prev_me = ( prev_wrap && me_wrap && prev_wrap._id == me_wrap._id ),
+						is_prev_wrap_spacer = prev_w ? prev_w.spacer : false,
+						prev_me_only = ( is_prev_me && prev_w.modules.length == 1 ),
+						next_w = wi+1 < line.wrappers.length ? line.wrappers[wi+1] : false,
+						next_wrap_view = next_w ? Upfront.data.wrapper_views[next_w.model.cid] : false,
+						$next_wrap = next_wrap_view ? next_wrap_view.$el : false,
+						next_wrap = $next_wrap ? ed.get_wrap($next_wrap) : false,
+						next_wrap_clr = ( wi+1 == line.wrappers.length ),
+						is_next_me = ( next_wrap && me_wrap && next_wrap._id == me_wrap._id ),
+						is_next_wrap_spacer = next_w ? next_w.spacer : false,
+						next_me_only = ( is_next_me && next_w.modules.length == 1 ),
+						next_clr_w = li+1 < lines.length ? lines[li+1].wrappers[0] : false,
+						next_clr_wrap_view = next_clr_w ? Upfront.data.wrapper_views[next_clr_w.model.cid] : false,
+						$next_clr = next_clr_wrap_view ? next_clr_wrap_view.$el : false,
+						next_clr = $next_clr ? ed.get_wrap($next_clr) : false,
+						wrap_el_left = ed.get_wrap_el_min(wrap),
+						wrap_el_top = ed.get_wrap_el_min(wrap, false, true),
+						prev_wrap_el_left = prev_wrap ? ed.get_wrap_el_min(prev_wrap) : false,
+						next_wrap_el_top = next_wrap ? ed.get_wrap_el_min(next_wrap, false, true) : false,
+						next_wrap_el_left = next_wrap ? ed.get_wrap_el_min(next_wrap) : false,
+						next_clr_el_top = next_clr ? ed.get_wrap_el_min(next_clr, false, true) : false,
+						row_wraps = _.map(line.wrappers, map_wrappers),
+						max_row_wrap = _.max(row_wraps, function(row_wrap){ return ( me_wrap && me_wrap._id == row_wrap._id ) ? -1 : row_wrap.grid.bottom; }),
+						min_row_wrap = _.min(row_wraps, function(row_wrap){ return ed.get_wrap_el_min(row_wrap, false, true).grid.top; }),
+						min_row_el = ed.get_wrap_el_min(min_row_wrap, false, true),
+						wrap_me_in_row = _.find(row_wraps, function(row_wrap){ return me_wrap && me_wrap._id == row_wrap._id })
+					;
+
+					if ( wrap_me_in_row && that.current_row_wraps === false ) {
+						that.current_row_wraps = row_wraps;
+					}
+
+					if (
+						!is_spacer
+						&&
+						!is_wrap_spacer
+						&&
+						(
 							(
-								( next_wrap && !next_wrap_clr && !wrap_me_only && ( $next_wrap.find(that.module_selector).size() > 1 || !is_next_me ) ) ||
-								( prev_wrap && !wrap_clr && !wrap_me_only && ( $prev_wrap.find(that.module_selector).size() > 1 || !is_prev_me ) ) ||
-								( next_wrap && prev_wrap && !next_wrap_clr && !wrap_clr ) ||
-								( !prev_wrap && !next_wrap && is_wrap_me && $wrap.find(that.module_selector).size() > 1 )
+								( !breakpoint || breakpoint.default ) && wrap.col >= min_col &&
+								(
+									( next_wrap && !next_wrap_clr && !wrap_me_only && ( $next_wrap.find(that.module_selector).size() > 1 || !is_next_me ) ) ||
+									( prev_wrap && !wrap_clr && !wrap_me_only && ( $prev_wrap.find(that.module_selector).size() > 1 || !is_prev_me ) ) ||
+									( next_wrap && prev_wrap && !next_wrap_clr && !wrap_clr ) ||
+									( !prev_wrap && !next_wrap && is_wrap_me && $wrap.find(that.module_selector).size() > 1 )
+								)
 							)
+							||
+							( breakpoint && !breakpoint.default && is_wrap_me && $wrap.find(that.module_selector).size() > 1 )
 						)
-						||
-						( breakpoint && !breakpoint.default && is_wrap_me && $wrap.find(that.module_selector).size() > 1 )
-					)
-				){
-					var current_el_top = wrap.grid.top,
-						wrap_right = ( next_wrap && !next_wrap_clr && next_wrap_el_left ) ? next_wrap_el_left.grid.left-1 : area.grid.right;
-					$els = Upfront.Util.find_sorted($wrap, that.module_selector);
-					$els.each(function(i){
-						if ( $(this).get(0) == me.$el.get(0) ) return;
-						var $el = $(this),
-							el = ed.get_el($el),
-							top = ( el.outer_grid.top == wrap.grid.top ) ? wrap.grid.top : current_el_top,
-							bottom = Math.ceil(el.grid_center.y),
-							$prev = $els[i-1] ? $els.eq(i-1) : false,
-							prev = $prev ? ed.get_el($prev) : false,
-							prev_me = ( prev && prev._id == me._id );
-						that.drops.push({
-							_id: ed._new_id(),
-							top: top,
-							bottom: bottom,
-							left: wrap.grid.left,
-							right: wrap_right,
-							priority: {
-								top: ( prev_me ? prev.outer_grid.top : el.outer_grid.top-1 ),
-								bottom: el.grid.top-1,
+					){
+						var current_el_top = wrap.grid.top,
+							wrap_right = ( next_wrap && !next_wrap_clr && next_wrap_el_left ) ? next_wrap_el_left.grid.left-1 : area.grid.right;
+						$els = Upfront.Util.find_sorted($wrap, that.module_selector);
+						$els.each(function(i){
+							if ( $(this).get(0) == me.$el.get(0) ) return;
+							var $el = $(this),
+								el = ed.get_el($el),
+								top = ( el.outer_grid.top == wrap.grid.top ) ? wrap.grid.top : current_el_top,
+								bottom = Math.ceil(el.grid_center.y),
+								$prev = $els[i-1] ? $els.eq(i-1) : false,
+								prev = $prev ? ed.get_el($prev) : false,
+								prev_me = ( prev && prev._id == me._id );
+							that.drops.push({
+								_id: ed._new_id(),
+								top: top,
+								bottom: bottom,
 								left: wrap.grid.left,
 								right: wrap_right,
-								index: ( prev_me ? 3 : 5 )
-							},
-							priority_index: 5,
-							type: 'inside',
-							insert: ['before', $el],
-							region: region,
-							is_me: prev_me,
-							is_clear: false,
-							is_use: false,
-							is_switch: false,
-							switch_dir: false,
-							row_wraps: false,
-							me_in_row: false
+								priority: {
+									top: ( prev_me ? prev.outer_grid.top : el.outer_grid.top-1 ),
+									bottom: el.grid.top-1,
+									left: wrap.grid.left,
+									right: wrap_right,
+									index: ( prev_me ? 3 : 5 )
+								},
+								priority_index: 5,
+								type: 'inside',
+								insert: ['before', $el],
+								region: region,
+								is_me: prev_me,
+								is_clear: false,
+								is_use: false,
+								is_switch: false,
+								switch_dir: false,
+								row_wraps: false,
+								me_in_row: false
+							});
+							current_el_top = bottom+1;
 						});
-						current_el_top = bottom+1;
-					});
-					var $last = $els.last(),
-						last = $last.size() > 0 ? ed.get_el($last) : false,
-						last_me = ( last && last._id == me._id ),
-						wrap_bottom = ( breakpoint && !breakpoint.default && next_clr_el_top ) ? Math.ceil(next_clr_el_top.grid_center.y) : max_row_wrap.grid.bottom;
-					// Don't add dropping below the most bottom wrap in a row
-					//if ( last_me || !max_row_wrap || max_row_wrap != wrap || ( breakpoint && !breakpoint.default ) ){
+						var $last = $els.last(),
+							last = $last.size() > 0 ? ed.get_el($last) : false,
+							last_me = ( last && last._id == me._id ),
+							wrap_bottom = ( breakpoint && !breakpoint.default && next_clr_el_top ) ? Math.ceil(next_clr_el_top.grid_center.y) : max_row_wrap.grid.bottom;
+						// Don't add dropping below the most bottom wrap in a row
+						//if ( last_me || !max_row_wrap || max_row_wrap != wrap || ( breakpoint && !breakpoint.default ) ){
 						that.drops.push({
 							_id: ed._new_id(),
 							top: current_el_top,
@@ -390,199 +403,200 @@ DragDrop.prototype = {
 							row_wraps: false,
 							me_in_row: false
 						});
-					//}
-				}
-				// Don't add another droppable if this is not the first el from wrapper, only on responsive
-				if ( breakpoint && !breakpoint.default && has_siblings && sibling_index > 0 )
-					return;
-				// Add droppable before each wrapper that start in new line
-				if ( !is_spacer && wrap_clr && !( is_wrap_me && ( !next_wrap || next_wrap_clr ) ) ){
-					var top = ( wrap.grid.top == area.grid.top ) ? area.grid.top - 5 : current_full_top,
-						el_top = ed.get_wrap_el_min(wrap, false, true),
-						bottom = Math.ceil(el_top.grid_center.y),
-						is_drop_me = ( prev_wrap_clr && is_prev_me && !has_siblings ),
-						me_top = ( is_drop_me ? prev_wrap.grid.top : wrap.grid.top );
-					if ( can_drop(me_top, el_top.grid.top-1) ){
-						that.drops.push({
-							_id: ed._new_id(),
-							top: top,
-							bottom: bottom,
-							left: area.grid.left,
-							right: area.grid.right,
-							priority: {
-								top: me_top,
-								bottom: min_row_el.grid.top-1,
+						//}
+					}
+					// Don't add another droppable if this is not the first el from wrapper, only on responsive
+					if ( breakpoint && !breakpoint.default && has_siblings && sibling_index > 0 )
+						return;
+					// Add droppable before each wrapper that start in new line
+					if ( !is_spacer && wrap_clr && !( is_wrap_me && ( !next_wrap || next_wrap_clr ) ) ){
+						var top = ( wrap.grid.top == area.grid.top ) ? area.grid.top - 5 : current_full_top,
+							el_top = ed.get_wrap_el_min(wrap, false, true),
+							bottom = Math.ceil(el_top.grid_center.y),
+							is_drop_me = ( prev_wrap_clr && is_prev_me && !has_siblings ),
+							me_top = ( is_drop_me ? prev_wrap.grid.top : wrap.grid.top );
+						if ( can_drop(me_top, el_top.grid.top-1) ){
+							that.drops.push({
+								_id: ed._new_id(),
+								top: top,
+								bottom: bottom,
 								left: area.grid.left,
 								right: area.grid.right,
-								index: ( is_drop_me ? 2 : 3 )
-							},
-							priority_index: 8,
-							type: 'full',
-							insert: ['before', wrap.$el],
-							region: region,
-							is_me: is_drop_me,
-							is_clear: true,
-							is_use: false,
-							is_switch: false,
-							switch_dir: false,
-							row_wraps: false,
-							me_in_row: false
-						});
-						current_full_top = bottom+1;
+								priority: {
+									top: me_top,
+									bottom: min_row_el.grid.top-1,
+									left: area.grid.left,
+									right: area.grid.right,
+									index: ( is_drop_me ? 2 : 3 )
+								},
+								priority_index: 8,
+								type: 'full',
+								insert: ['before', wrap.$el],
+								region: region,
+								is_me: is_drop_me,
+								is_clear: true,
+								is_use: false,
+								is_switch: false,
+								switch_dir: false,
+								row_wraps: false,
+								me_in_row: false
+							});
+							current_full_top = bottom+1;
+						}
 					}
-				}
-				// Check to see if the right side on wrapper has enough column to add droppable
-				if ( 
-					( // Check if it's spacer, if it is, only allow drop if between 2 non-spacer elements
-						!is_spacer
-						||
-						(
-							( is_spacer && wrap_me_in_row )
-							&&
+					// Check to see if the right side on wrapper has enough column to add droppable
+					if (
+						( // Check if it's spacer, if it is, only allow drop if between 2 non-spacer elements
+							!is_spacer
+							||
 							(
-								wrap_me_only
-								||
-								( !is_wrap_spacer && ( !next_wrap || next_wrap_clr || !is_next_wrap_spacer ) )
+								( is_spacer && wrap_me_in_row )
+								&&
+								(
+									wrap_me_only
+									||
+									( !is_wrap_spacer && ( !next_wrap || next_wrap_clr || !is_next_wrap_spacer ) )
+								)
 							)
 						)
-					)
-					&&
-					( !next_wrap || next_wrap_clr )
-					&&
-					( !wrap_me_only || !wrap_clr )
+						&&
+						( !next_wrap || next_wrap_clr )
+						&&
+						( !wrap_me_only || !wrap_clr )
 					/*&&
-					( 
-						( !is_wrap_me && area.grid.right-wrap.grid.right >= min_col ) 
-						|| 
-						( wrap_me_only && !wrap_clr ) 
-						|| 
-						( prev_me_only && !wrap_clr && wrap_only ) 
-					)*/
-				){ // @TODO Experiment: always allow right side drop
-					var is_switch = false,
-						left = Math.ceil(wrap.grid_center.x)+1,
-						right = ( !next_wrap || next_wrap_clr ) ? area.grid.right : wrap.grid.right,
-						bottom = ( is_wrap_me && wrap.grid.bottom > max_row_wrap.grid.bottom ? wrap.grid.bottom : max_row_wrap.grid.bottom );
-					if ( can_drop(wrap.grid.top, bottom) ){
-						that.drops.push({
-							_id: ed._new_id(),
-							top:  wrap.grid.top,
-							bottom: bottom,
-							left: ( wrap_me_only ? wrap.grid.left : left ),
-							right: right,
-							priority: {
-								top: wrap.grid.top,
+					 (
+					 ( !is_wrap_me && area.grid.right-wrap.grid.right >= min_col )
+					 ||
+					 ( wrap_me_only && !wrap_clr )
+					 ||
+					 ( prev_me_only && !wrap_clr && wrap_only )
+					 )*/
+					){ // @TODO Experiment: always allow right side drop
+						var is_switch = false,
+							left = Math.ceil(wrap.grid_center.x)+1,
+							right = ( !next_wrap || next_wrap_clr ) ? area.grid.right : wrap.grid.right,
+							bottom = ( is_wrap_me && wrap.grid.bottom > max_row_wrap.grid.bottom ? wrap.grid.bottom : max_row_wrap.grid.bottom );
+						if ( can_drop(wrap.grid.top, bottom) ){
+							that.drops.push({
+								_id: ed._new_id(),
+								top:  wrap.grid.top,
 								bottom: bottom,
-								left: ( wrap_me_only ? wrap.grid.left : left+Math.ceil((right-left)/2) ),
+								left: ( wrap_me_only ? wrap.grid.left : left ),
 								right: right,
-								index: ( wrap_me_only ? 1 : 4 )
-							},
-							priority_index: 10,
-							type: 'side-after',
-							insert: ['after', wrap.$el],
-							region: region,
-							is_me: wrap_me_only,
-							is_clear: false,
-							is_use: false,
-							is_switch: is_switch,
-							switch_dir: is_switch ? 'left' : false,
-							row_wraps: row_wraps,
-							me_in_row: ( wrap_me_in_row ? true : false )
-						});
+								priority: {
+									top: wrap.grid.top,
+									bottom: bottom,
+									left: ( wrap_me_only ? wrap.grid.left : left+Math.ceil((right-left)/2) ),
+									right: right,
+									index: ( wrap_me_only ? 1 : 4 )
+								},
+								priority_index: 10,
+								type: 'side-after',
+								insert: ['after', wrap.$el],
+								region: region,
+								is_me: wrap_me_only,
+								is_clear: false,
+								is_use: false,
+								is_switch: is_switch,
+								switch_dir: is_switch ? 'left' : false,
+								row_wraps: row_wraps,
+								me_in_row: ( wrap_me_in_row ? true : false )
+							});
+						}
 					}
-				}
-				// Now check the left side, finding spaces between wrapper and inner modules
-				if ( 
-					( // Check if it's spacer, if it is, only allow drop if between 2 non-spacer elements
-						!is_spacer
-						||
-						(
-							( is_spacer && wrap_me_in_row )
-							&&
+					// Now check the left side, finding spaces between wrapper and inner modules
+					if (
+						( // Check if it's spacer, if it is, only allow drop if between 2 non-spacer elements
+							!is_spacer
+							||
 							(
-								wrap_me_only
-								||
-								( !is_wrap_spacer && ( wrap_clr || !is_prev_wrap_spacer ) )
+								( is_spacer && wrap_me_in_row )
+								&&
+								(
+									wrap_me_only
+									||
+									( !is_wrap_spacer && ( wrap_clr || !is_prev_wrap_spacer ) )
+								)
 							)
 						)
-					)
-					&&
-					( !wrap_me_only || ( next_wrap && !next_wrap_clr ) )
-					&&
-					( wrap_clr || !prev_me_only )
+						&&
+						( !wrap_me_only || ( next_wrap && !next_wrap_clr ) )
+						&&
+						( wrap_clr || !prev_me_only )
 					/*&&
-					(
-						( 
-							//wrap_el_left.grid.left-wrap.grid.left >= min_col 
-							//&&
-							(!is_prev_me || wrap_clr) 
-							&& 
-							!is_wrap_me 
-						) 
-						|| 
-						( is_wrap_me && next_wrap && !next_wrap_clr ) 
-						|| 
-						( is_prev_me && !wrap_clr && next_wrap && !next_wrap_clr ) 
-						|| 
-						( is_next_me && !next_wrap_clr ) 
-					)*/
-				){ // @TODO Experiment: always allow left side drop
-					var is_switch_left = false,
-						is_switch_right = false,
-						left = ( prev_wrap && !wrap_clr ? Math.ceil(prev_wrap.grid_center.x)+1 : wrap.grid.left ),
-						right = Math.ceil(wrap.grid_center.x),
-						bottom = ( is_wrap_me && wrap.grid.bottom > max_row_wrap.grid.bottom ? wrap.grid.bottom : max_row_wrap.grid.bottom );
-					if ( can_drop(wrap.grid.top, bottom) ){
-						that.drops.push({
-							_id: ed._new_id(),
-							top: wrap.grid.top,
-							bottom: bottom,
-							left: left,
-							right: ( wrap_me_only && next_wrap_el_left ? next_wrap_el_left.grid.left-1 : right ), 
-							priority: {
+					 (
+					 (
+					 //wrap_el_left.grid.left-wrap.grid.left >= min_col
+					 //&&
+					 (!is_prev_me || wrap_clr)
+					 &&
+					 !is_wrap_me
+					 )
+					 ||
+					 ( is_wrap_me && next_wrap && !next_wrap_clr )
+					 ||
+					 ( is_prev_me && !wrap_clr && next_wrap && !next_wrap_clr )
+					 ||
+					 ( is_next_me && !next_wrap_clr )
+					 )*/
+					){ // @TODO Experiment: always allow left side drop
+						var is_switch_left = false,
+							is_switch_right = false,
+							left = ( prev_wrap && !wrap_clr ? Math.ceil(prev_wrap.grid_center.x)+1 : wrap.grid.left ),
+							right = Math.ceil(wrap.grid_center.x),
+							bottom = ( is_wrap_me && wrap.grid.bottom > max_row_wrap.grid.bottom ? wrap.grid.bottom : max_row_wrap.grid.bottom );
+						if ( can_drop(wrap.grid.top, bottom) ){
+							that.drops.push({
+								_id: ed._new_id(),
 								top: wrap.grid.top,
 								bottom: bottom,
-								left: ( prev_wrap && !wrap_clr ? left+Math.ceil((prev_wrap.grid.right-left)/2) : left ),
-								right: ( wrap_me_only && next_wrap_el_left ? next_wrap_el_left.grid.left-1 : wrap.grid.left+Math.ceil((right-wrap.grid.left)/2)-1 ),
-								index: ( wrap_me_only ? 1 : 4 )
-							},
-							priority_index: 10,
-							type: 'side-before',
-							insert: [( is_switch_left ? 'after' : 'before' ), wrap.$el],
-							region: region,
-							is_me: wrap_me_only,
-							is_clear: wrap_clr,
-							is_use: false,
-							is_switch: ( is_switch_left || is_switch_right ),
-							switch_dir: ( is_switch_left ? 'left' : ( is_switch_right ? 'right' : false ) ),
-							row_wraps: row_wraps,
-							me_in_row: ( wrap_me_in_row ? true : false )
-						});
+								left: left,
+								right: ( wrap_me_only && next_wrap_el_left ? next_wrap_el_left.grid.left-1 : right ),
+								priority: {
+									top: wrap.grid.top,
+									bottom: bottom,
+									left: ( prev_wrap && !wrap_clr ? left+Math.ceil((prev_wrap.grid.right-left)/2) : left ),
+									right: ( wrap_me_only && next_wrap_el_left ? next_wrap_el_left.grid.left-1 : wrap.grid.left+Math.ceil((right-wrap.grid.left)/2)-1 ),
+									index: ( wrap_me_only ? 1 : 4 )
+								},
+								priority_index: 10,
+								type: 'side-before',
+								insert: [( is_switch_left ? 'after' : 'before' ), wrap.$el],
+								region: region,
+								is_me: wrap_me_only,
+								is_clear: wrap_clr,
+								is_use: false,
+								is_switch: ( is_switch_left || is_switch_right ),
+								switch_dir: ( is_switch_left ? 'left' : ( is_switch_right ? 'right' : false ) ),
+								row_wraps: row_wraps,
+								me_in_row: ( wrap_me_in_row ? true : false )
+							});
+						}
 					}
-				}
+				});
 			});
 
 			// Don't add another droppable if this is not the first el from wrapper, only on responsive
 			if ( breakpoint && !breakpoint.default && has_siblings && sibling_index > 0 ){
 				return;
 			}
-			
+
 			// If spacer, don't add further
 			if ( is_spacer ) {
 				return;
 			}
 
-			if ( $wraps.size() > 0 ) {
-				var last_wrap = ed.get_wrap($wraps.last()),
-					last_wrap_clr = ( last_wrap && last_wrap.grid.left == area.grid.left ),
+			if ( lines.length > 0 ) {
+				var last_line = lines[lines.length-1],
+					last_w = _.last(last_line.wrappers),
+					last_wrap_view = Upfront.data.wrapper_views[last_w.model.cid],
+					last_wrap = ed.get_wrap(last_wrap_view.$el),
+					last_wrap_clr = ( last_wrap && last_line.wrappers.length == 1 ),
 					is_drop_me = ( me_wrap && last_wrap_clr && last_wrap._id == me_wrap._id && !has_siblings ),
 					bottom = ( expand_lock ? area.grid.bottom : ( area.grid.bottom-current_full_top > row ? area.grid.bottom + 5 : current_full_top + row ) ),
-					bottom_wrap = _.max(ed.wraps, function(each){
-						if ( each.region != region_name )
-							return 0;
+					last_wrappers = _.map(last_line.wrappers, map_wrappers),
+					bottom_wrap = _.max(last_wrappers, function(each){
 						if ( me_wrap && me_wrap._id == each._id )
-							return 0;
-						if ( !_.contains($wraps.get(), each.$el.get(0)) )
 							return 0;
 						return each.grid.bottom;
 					}),
@@ -1085,22 +1099,36 @@ DragDrop.prototype = {
 	get_area_compared: function (compare) {
 		var compare_area = this.compare_area,
 			top, bottom, left, right, area;
-		if ( compare_area.left >= compare.left && compare_area.left <= compare.right )
+		if ( compare_area.left >= compare.left && compare_area.left <= compare.right ){
 			left = compare_area.left;
-		else if ( compare_area.left < compare.left )
+		}
+		else if ( compare_area.left < compare.left ) {
 			left = compare.left;
-		if ( compare_area.right >= compare.left && compare_area.right <= compare.right )
+		}
+		else if ( compare_area.left > compare.right && compare_area.left - compare.right <= 1 ) {
+			left = compare.right;
+		}
+		if ( compare_area.right >= compare.left && compare_area.right <= compare.right ) {
 			right = compare_area.right;
-		else if ( compare_area.right > compare.right )
+		}
+		else if ( compare_area.right > compare.right ) {
 			right = compare.right;
-		if ( compare_area.top >= compare.top && compare_area.top <= compare.bottom )
+		}
+		else if ( compare_area.right < compare.left && compare.left - compare_area.right <= 1 ) {
+			right = compare.left;
+		}
+		if ( compare_area.top >= compare.top && compare_area.top <= compare.bottom ) {
 			top = compare_area.top;
-		else if ( compare_area.top < compare.top )
+		}
+		else if ( compare_area.top < compare.top ) {
 			top = compare.top;
-		if ( compare_area.bottom >= compare.top && compare_area.bottom <= compare.bottom )
+		}
+		if ( compare_area.bottom >= compare.top && compare_area.bottom <= compare.bottom ) {
 			bottom = compare_area.bottom;
-		else if ( compare_area.bottom > compare.bottom )
+		}
+		else if ( compare_area.bottom > compare.bottom ) {
 			bottom = compare.bottom;
+		}
 		if ( top && bottom && left && right )
 			area = (right-left+1) * (bottom-top+1);
 		else
