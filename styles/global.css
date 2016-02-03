@@ -531,3 +531,99 @@ h6 a {
   line-height: inherit !important;
   font-weight: inherit !important;
 }
+
+/* Firefox checkboxes and radios are styled to match the rest of the browsers */
+@-moz-document url-prefix() { 
+  input[type=checkbox] {
+    /* original check box are push outside the viexport */
+    position: absolute ;
+    left: -1000em !important;
+  }
+
+  input[type=checkbox] + label:before {
+    content: "";
+    display: inline-block;
+    width  : 12px;
+    height : 12px;
+    margin : 0 -1em 0 0;
+    background: url("../img/checkbox_firefox.png") no-repeat 0 0;
+
+  /* The following is used to adjust the position of 
+     the check boxes on the text baseline */
+
+    vertical-align: bottom;
+    position: relative;
+    bottom: 0;
+    right: 18px;
+    cursor: pointer;
+  }
+
+  input[type=checkbox]:checked + label:before {
+    background-position: -24px 0;
+  }
+
+  input[type=checkbox]:disabled + label:before {
+    background-position: -12px 0;
+  }
+
+  input[type=checkbox]:checked:disabled + label:before {
+    background-position: 0 0;
+  }
+
+  #element-settings-sidebar .padding-lock input[type=checkbox] + label:before,
+  #element-settings-sidebar .border_radius_lock input[type=checkbox] + label:before,
+  #element-settings-sidebar .gallery-padding-lock input[type=checkbox] + label:before {
+    height: 15px;
+    width: 15px;
+    background-image: url("../img/uf-core-el-sprite.png");
+    background-image: url("../img/uf-core-el-sprite.svg"), none;
+    background-position: -661px -172px;
+    background-color: #f7fbff;
+    left: 38px;
+    top: -6px;
+    position: relative;
+  }
+  #element-settings-sidebar .padding-lock input[type=checkbox]:checked + label:before,
+  #element-settings-sidebar .border_radius_lock input[type=checkbox]:checked + label:before,
+  #element-settings-sidebar .gallery-padding-lock input[type=checkbox]:checked + label:before {
+    background-position: -661px -140px
+  }
+
+
+  input[type=radio] {
+    /* original check box are push outside the viexport */
+    position: absolute ;
+    left: -1000em !important;
+  }
+
+  input[type=radio] + label:before {
+    content: "";
+    display: inline-block;
+    width  : 12px;
+    height : 12px;
+    margin : 0 -1em 0 0;
+    background: url("../img/radio_firefox.png") no-repeat 0 0;
+
+  /* The following is used to adjust the position of 
+     the check boxes on the text baseline */
+
+    vertical-align: bottom;
+    position: relative;
+    bottom: 0;
+    right: 18px;
+    cursor: pointer;
+  }
+
+  input[type=radio]:checked + label:before {
+    background-position: -24px 0;
+  }
+
+  input[type=radio]:disabled + label:before {
+    background-position: -12px 0;
+  }
+
+  input[type=radio]:checked:disabled + label:before {
+    background-position: 0 0;
+  }
+
+}
