@@ -167,15 +167,14 @@ class Upfront_Compat implements IUpfront_Server {
 			'theme_url' => admin_url('themes.php'),
 		);
 
-		if (!empty($this->_has_backup_notice)) {
+		if (!empty($this->_has_backup_notice) && Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
+			if (!class_exists('Upfront_Compat_Backup_Info')) require_once('compat/class_upfront_compat_backup_info.php');
+			$info = new Upfront_Compat_Backup_Info;
 			$data['Compat']['notice'] = '' .
 				__('We’ve put a lot of time into getting the migration process right, however given the variety of layouts that can be achieved with Upfront and the amazing improvements we’ve added in version 1.0, we strongly advise that you to make a full backup of your site with <b>Snapshot</b> before proceeding to edit your site. ', 'upfront') .
 			'';
-			$url = 'https://premium.wpmudev.org/project/snapshot/';
-			if (class_exists('WPMUDEVSnapshot') && is_callable(array('WPMUDEVSnapshot', 'instance')) && Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
-				$url = admin_url('admin.php?page=snapshots_new_panel');
-			}
-			$data['Compat']['snapshot_url'] = esc_url($url);
+			$data['Compat']['snapshot_url'] = esc_url($info->get_plugin_link());
+			$data['Compat']['snapshot_msg'] = esc_html($info->get_plugin_action());
 		}
 
 		return $data;
