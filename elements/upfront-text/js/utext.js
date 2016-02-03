@@ -97,7 +97,7 @@
 						//airButtons : ["upfrontFormatting"],
 						autostart: false,
 						paragraphize: false,
-						focus: false,
+						focus: true,
 						placeholder: l10n.default_content
 					})
 					.on('start', function(){
