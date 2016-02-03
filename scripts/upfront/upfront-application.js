@@ -1244,7 +1244,6 @@ var Application = new (Backbone.Router.extend({
 		// Start loading animation
 		app.loading = new Upfront.Views.Editor.Loading({
 			loading: Upfront.Settings.l10n.global.application.loading,
-			loading_notice: Upfront.Settings.l10n.global.application.first_time_notice,
 			loading_type: 'upfront-boot',
 			done: Upfront.Settings.l10n.global.application.thank_you_for_waiting,
 			fixed: true
@@ -1255,6 +1254,10 @@ var Application = new (Backbone.Router.extend({
 		});
 		app.loading.render();
 		$('body').append(app.loading.$el);
+
+		setTimeout(function(){
+			app.loading.update_loading_notice(Upfront.Settings.l10n.global.application.long_loading_notice);
+		}, 10000);
 
 		app.create_sidebar();
 
