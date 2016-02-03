@@ -569,7 +569,7 @@
                     return imageData;
                 },
                 render_shortcode: function(data){
-                    if( this.$editor.data("ueditor") && !this.$editor.data("ueditor").options.inserts.length ) return; // if "inserts" array is empty or not defined there is no need to render shortcode!
+                    if( _.isUndefined( this.$editor.data("ueditor")  ) || !this.$editor.data("ueditor").options.inserts.length ) return; // if "inserts" array is empty or not defined there is no need to render shortcode!
                     data = data instanceof Backbone.Model ? data.toJSON() : data;
 
                     var html = this.shortcode_tpl(data);
