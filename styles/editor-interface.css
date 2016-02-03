@@ -8359,6 +8359,12 @@ a.upfront-post-layout-trigger:before {
     background-position: -72px -865px;
     /* fixed the 1px jump on one frame */ } }
 
+@-webkit-keyframes upfront-loading-notice {
+  0% {
+    opacity: 0; }
+  100% {
+    opacity: 0.6; } }
+
 @keyframes upfront-loading-start {
   0% {
     background-position: 0 0; }
@@ -8378,6 +8384,12 @@ a.upfront-post-layout-trigger:before {
     /*background-position: -72px -864px;*/
     background-position: -72px -865px;
     /* fixed the 1px jump on one frame */ } }
+
+@keyframes upfront-loading-notice {
+  0% {
+    opacity: 0; }
+  100% {
+    opacity: 0.6; } }
 
 .upfront-loading {
   background: rgba(19, 42, 64, 0.8);
@@ -8441,7 +8453,9 @@ a.upfront-post-layout-trigger:before {
 .upfront-loading .upfront-loading-notice {
   width: 800px;
   font-size: 14px;
-  opacity: 0.6; }
+  opacity: 0.6;
+  -webkit-animation: upfront-loading-notice 0.4s 1;
+  animation: upfront-loading-notice 0.4s 1; }
 
 .upfront-loading .upfront-loading-notice:before {
   margin-bottom: 120px; }
