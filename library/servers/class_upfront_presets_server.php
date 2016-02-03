@@ -221,7 +221,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 				$preset['preset_style'] = str_replace("\'", "'", $preset['preset_style']);
 				$preset['preset_style'] = str_replace("\'", "'", $preset['preset_style']);
 				$preset['preset_style'] = str_replace("\'", "'", $preset['preset_style']);
-				
+
 				$preset['preset_style'] = str_replace('#page', 'div#page .upfront-output-region-container .upfront-output-module', $preset['preset_style']);
 			}
 
@@ -349,7 +349,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		$strings['preset_manager'] = self::_get_l10n();
 		return $strings;
 	}
-	
+
 	public static function get_preset_defaults () {
 		return array();
 	}
@@ -403,6 +403,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			'convert_style_to_preset' => __('Save as Preset', 'upfront'),
 			'convert_preset_info' => __('Upfront 1.0 introduces presets, which allow you to save and re-use styling for any element across your website. Before you can edit this element, choose one of the following options:', 'upfront'),
 			'select_preset_info' => __('Select existing preset (<strong>recommended</strong>):', 'upfront'),
+			'save_as_preset_button_info' => __('Or save current style as a new preset:', 'upfront'),
 			'preset_changed' => __('Preset changed to %s', 'upfront'),
 			'preset_already_exist' => __('Preset %s already exist, use another name!', 'upfront'),
 			'preset_created' => __('Preset %s created succesfully!', 'upfront'),

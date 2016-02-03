@@ -75,16 +75,6 @@ define([
 						className: 'migrate-preset-info migrate-info-icon',
 					}),
 
-					new Upfront.Views.Editor.Field.Button({
-						model: this.model,
-						label: l10n.convert_style_to_preset,
-						className: 'migrate-preset-button',
-						compact: true,
-						on_click: function() {
-							me.show_new_preset_fields();
-						}
-					}),
-
 					//New preset fields
 
 					new Upfront.Views.Editor.Field.Button({
@@ -124,13 +114,6 @@ define([
 							me.trigger('upfront:presets:new', preset_name.trim());
 						}
 					}),
-				]
-				//End new preset fields
-			}),
-			new Upfront.Views.Editor.Settings.Item({
-				model: this.model,
-				className: 'existing-preset-module migrate-separator',
-				fields: [
 					new SimpleTextField({
 						model: this.model,
 						label: l10n.select_preset_info,
@@ -148,9 +131,31 @@ define([
 							me.trigger('upfront:presets:change', me.selectPresetField.get_value());
 						}
 					}),
+					new SimpleTextField({
+						model: this.model,
+						label: l10n.save_as_preset_button_info,
+						className: 'migrate-preset-info save-as-preset-info',
+					}),
+					new Upfront.Views.Editor.Field.Button({
+						model: this.model,
+						label: l10n.convert_style_to_preset,
+						className: 'migrate-preset-button',
+						compact: true,
+						on_click: function() {
+							me.show_new_preset_fields();
+						}
+					})
+
 				]
-			})
-			]
+				//End new preset fields
+			}),
+			// new Upfront.Views.Editor.Settings.Item({
+				// model: this.model,
+				// className: 'existing-preset-module migrate-separator',
+				// fields: [
+				// ]
+			// })
+			];
 
 			setTimeout(function(){
 				me.hide_new_preset_fields();
