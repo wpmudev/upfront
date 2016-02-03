@@ -1256,6 +1256,7 @@ var Application = new (Backbone.Router.extend({
 		$('body').append(app.loading.$el);
 
 		setTimeout(function(){
+			if ( app.loading.is_done ) return;
 			app.loading.update_loading_notice(Upfront.Settings.l10n.global.application.long_loading_notice);
 		}, 10000);
 

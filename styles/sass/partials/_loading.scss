@@ -145,6 +145,11 @@
 	-webkit-animation: upfront-loading-notice 0.4s 1;
 	animation: upfront-loading-notice 0.4s 1;
 }
+.upfront-loading-done .upfront-loading-notice {
+	opacity: 0;
+	-webkit-transition: opacity 0.4s;
+	transition: opacity 0.4s;
+}
 .upfront-loading .upfront-loading-notice:before {
 	margin-bottom: 120px;
 }
