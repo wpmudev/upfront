@@ -513,6 +513,9 @@ define([
 			// Add items
 			this.stopListening();
 
+			// Remove theme style just in case
+			this.model.set_property('theme_style', '');
+
 			// Make sure we don't lose our current preset
 			this.model.encode_preset(preset);
 
@@ -528,7 +531,16 @@ define([
 		previewPreset: function(preset) {
 			var element_id = this.property('element_id'),
 				elementType = this.styleElementPrefix.replace(/-preset/, ''),
+				themeStyle = this.model.get_property_value_by_name('theme_style'),
 			  $selector;
+
+			// Handle custom css class
+			if (preset === '' && themeStyle) {
+				$('#' + element_id).addClass(themeStyle);
+			} else if (themeStyle) {
+				$('#' + element_id).removeClass(themeStyle);
+				$('#' + element_id).find('.' + themeStyle).removeClass(themeStyle);
+			}
 
 			// Address text element putting style inline
 			if (elementType === 'text') {

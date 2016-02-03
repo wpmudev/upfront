@@ -35,6 +35,9 @@ define([
 				get_value_html: function (value, index) {
 					var selected = '';
 					var currentPreset = this.get_saved_value() ? this.get_saved_value() : 'default';
+					if (this.model.get_property_value_by_name('theme_style')) {
+						currentPreset = '';
+					}
 					if (value.value === this.clear_preset_name(currentPreset)) selected = ' selected="selected"';
 					return ['<option value="', value.value, '"', selected, '>', value.label, '</option>'].join('');
 				},
@@ -53,7 +56,6 @@ define([
 			this.selectPresetField = new SelectPresetField({
 					model: this.model,
 					label: '',
-					property: 'preset',
 					values: this.get_presets(),
 					change: function(value) {
 						//me.model.set_property('preset', this.get_value());
