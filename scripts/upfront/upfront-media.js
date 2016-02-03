@@ -891,7 +891,7 @@ define([
 			render: function () {
 				var me = this,
 					tpl = _.template("<li style='display:none'><a href='#' data-idx='{{idx}}'>{{name}}</a></li>"),
-					values = [{label: '&nbsp;', value: false}]
+					values = [{label: l10n.select_filter, value: 'false'}]
 				;
 				this.controls.each(function (ctl, idx) {
 					values.push({label: ctl.get_name(), value: idx});
