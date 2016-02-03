@@ -5576,11 +5576,11 @@ a.upfront-region-name-edit-trigger:before {
 #element-settings-sidebar #settings #sidebar-scroll-wrapper {
   overflow-x: hidden;
   overflow-y: auto;
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 65px;
-  top: 44px;
+  /*position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 65px;
+	top: 44px;*/
   background: #f7fbff; }
 
 #element-settings-sidebar #settings .upfront-settings_panel_scroll {
@@ -5603,9 +5603,10 @@ a.upfront-region-name-edit-trigger:before {
   text-align: right;
   padding-right: 15px;
   z-index: 0;
-  position: absolute;
-  bottom: 0;
-  right: auto;
+  /*position: absolute;
+	bottom: 0;
+	right: auto;*/
+  position: static;
   width: 260px;
   height: 50px; }
 

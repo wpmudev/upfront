@@ -70,6 +70,8 @@ define([
 			this.on('open', function(){
 				me.model.trigger('settings:open', me);
 			});
+
+			this.listenTo(Upfront.Events, 'element:settings:render', this.setScrollMaxHeight);
 		},
 
 		saveSettings: function() {
@@ -166,6 +168,14 @@ define([
 					"<button type='button' class='upfront-save_settings'><i class='icon-ok'></i> " + l10n.save_element + "</button>" +
 				'</div>'
 			);
+		},
+
+		setScrollMaxHeight: function(){
+			var height = this.$el.height(),
+				titleHeight = this.$el.find('>.upfront-settings-title').outerHeight(true),
+				buttonHeight = this.$el.find('>.upfront-settings-button_panel').outerHeight(true)
+			;
+			this.$el.find('#sidebar-scroll-wrapper').css('max-height', (height-titleHeight-buttonHeight) + 'px')
 		},
 
 		cleanUp: function(){

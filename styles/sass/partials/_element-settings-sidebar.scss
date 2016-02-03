@@ -51,11 +51,11 @@
 #element-settings-sidebar #settings #sidebar-scroll-wrapper {
 	overflow-x: hidden;
 	overflow-y : auto;
-	position: absolute;
+	/*position: absolute;
 	left: 0;
 	right: 0;
 	bottom: 65px;
-	top: 44px;
+	top: 44px;*/
 	background: #f7fbff;
 }
 
@@ -83,9 +83,10 @@
 	text-align: right;
 	padding-right: 15px;
 	z-index: 0;
-	position: absolute;
+	/*position: absolute;
 	bottom: 0;
-	right: auto;
+	right: auto;*/
+	position: static;
 	width: 260px;
 	height: 50px;
 }
