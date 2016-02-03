@@ -40,9 +40,15 @@
 	padding: 15px 30px;
 
 }
+.upfront-version_compatibility-nag a.update.has-snapshot {
+	padding: 10px 25px;
+}
 .upfront-version_compatibility-nag a.boot {
 	color: #777D82;
 	background: #F0F0F0;
+}
+.upfront-version_compatibility-nag a.boot.has-snapshot {
+	background: #D0D0D0;
 }
 
 .upfront-version_compatibility-nag a.update:hover, 
