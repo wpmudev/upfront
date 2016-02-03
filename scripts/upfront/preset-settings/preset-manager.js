@@ -533,7 +533,13 @@ define([
 			// Address text element putting style inline
 			if (elementType === 'text') {
 				$selector = $('#' + element_id).find(".plaintxt_padding");
+				if (typeof this.cachedTextStyle === 'undefined') {
+					this.cachedTextStyle = $selector.attr('style');
+				}
 				$selector.attr('style', '');
+				if (preset === '') {
+					$selector.attr('style', this.cachedTextStyle);
+				}
 			}
 
 			//We need to manage Tabs, Accordions & Buttons are they are using another classes for presets
@@ -541,27 +547,35 @@ define([
 				$selector = $('#' + element_id).find(".upfront-accordion-container");
 
 				$selector.removeClass(this.getPresetClasses(elementType));
-				$selector.addClass(elementType + '-preset-' + preset);
+				if (preset !== '') {
+					$selector.addClass(elementType + '-preset-' + preset);
+				}
 
 			} else if(elementType === "tab") {
 				//Remove original preset classes
 				$selector = $('#' + element_id).find(".upfront-tabs-container");
 
 				$selector.removeClass(this.getPresetClasses(elementType));
-				$selector.addClass(elementType + '-preset-' + preset);
+				if (preset !== '') {
+					$selector.addClass(elementType + '-preset-' + preset);
+				}
 
 			} else if(elementType === "button") {
 				$selector = $('#' + element_id).find(".upfront_cta");
 
 				$selector.removeClass(this.getPresetClasses(elementType));
-				$selector.addClass(elementType + '-preset-' + preset);
+				if (preset !== '') {
+					$selector.addClass(elementType + '-preset-' + preset);
+				}
 
 			} else {
 				//Remove original preset classes
 				$('#' + element_id).removeClass(this.getPresetClasses());
 
 				//Add preset class to element
-				$('#' + element_id).addClass(preset);
+				if (preset !== '') {
+					$('#' + element_id).addClass(preset);
+				}
 			}
 
 		},

@@ -8,15 +8,15 @@ define([
 
 		initialize: function(options) {
 			this.options = options || {};
-			
+
 			var me = this;
-			
+
 			var SimpleTextField = Upfront.Views.Editor.Field.Text.extend({
 				get_field_html: function () {
 					return '';
 				}
 			});
-			
+
 			var SelectPresetField = Upfront.Views.Editor.Field.Chosen_Select.extend({
 				className: 'preset select-preset-field-overlay',
 				render: function() {
@@ -44,12 +44,12 @@ define([
 					preset = preset.replace(/[^-a-zA-Z0-9]/, '');
 					return preset;
 				},
-				
+
 				on_change: function(e) {
 					this.trigger('change', this.get_value());
 				}
 			});
-			
+
 			this.selectPresetField = new SelectPresetField({
 					model: this.model,
 					label: '',
@@ -59,7 +59,7 @@ define([
 						//me.model.set_property('preset', this.get_value());
 					}
 				}),
-			
+
 			this.listenTo(this.selectPresetField, 'change', this.previewPreset);
 
 			var fields = [
@@ -72,7 +72,7 @@ define([
 						label: l10n.convert_preset_info,
 						className: 'migrate-preset-info migrate-info-icon',
 					}),
-					
+
 					new Upfront.Views.Editor.Field.Button({
 						model: this.model,
 						label: l10n.convert_style_to_preset,
@@ -82,9 +82,9 @@ define([
 							me.show_new_preset_fields();
 						}
 					}),
-					
+
 					//New preset fields
-					
+
 					new Upfront.Views.Editor.Field.Button({
 						model: this.model,
 						label: l10n.cancel_label,
@@ -94,14 +94,14 @@ define([
 							me.hide_new_preset_fields();
 						}
 					}),
-					
+
 					new Upfront.Views.Editor.Field.Text({
 						model: this.model,
 						label: '',
 						default_value: me.suggestPresetName(this.options.elementPreset),
 						className: 'new-preset-button-input',
 					}),
-					
+
 					new Upfront.Views.Editor.Field.Button({
 						model: this.model,
 						label: l10n.ok_label,
@@ -136,7 +136,7 @@ define([
 					}),
 
 					this.selectPresetField,
-					
+
 					new Upfront.Views.Editor.Field.Button({
 						model: this.model,
 						label: l10n.apply_label,
@@ -149,14 +149,14 @@ define([
 				]
 			})
 			]
-			
+
 			setTimeout(function(){
 				me.hide_new_preset_fields();
 			}, 20);
 
 			this.fields =_(fields);
 		},
-		
+
 		/**
 		 * Suggests an unique preset name, based on the preset argument
 		 *
@@ -178,31 +178,31 @@ define([
 			}
 			return name;
 		},
-		
+
 		capitalisePreset: function(preset) {
 			return preset.charAt(0).toUpperCase() + preset.slice(1).toLowerCase();
 		},
-		
+
 		hide_new_preset_fields: function () {
 			var me = this;
 			me.$el.find('.new-preset-button-cancel').hide();
 			me.$el.find('.new-preset-button-input').hide();
 			me.$el.find('.new-preset-button-submit').hide();
 			me.$el.find('.migrate-preset-button').show();
-			
+
 			me.$el.find('.existing-preset-overlay-layout').remove();
 		},
-		
+
 		show_new_preset_fields: function () {
 			var me = this;
 			me.$el.find('.new-preset-button-cancel').show();
 			me.$el.find('.new-preset-button-input').show();
 			me.$el.find('.new-preset-button-submit').show();
 			me.$el.find('.migrate-preset-button').hide();
-			
+
 			me.$el.find('.existing-preset-module').append('<div class="existing-preset-overlay-layout">&nbsp;</div>');
 		},
-		
+
 		previewPreset: function(value) {
 			this.trigger('upfront:presets:preview', value);
 		},
@@ -214,7 +214,7 @@ define([
 		 */
 		get_all_preset_names: function () {
 			var presets = [];
-			
+
 			_.each(this.options.presets.models, function(model) {
 				var name = 'undefined' === typeof model.get('name')
 					? model.get('id')
@@ -225,10 +225,10 @@ define([
 
 			return presets;
 		},
-		
+
 		get_presets: function () {
-			var presets = [];
-			
+			var presets = [{ label: 'No preset', value: ''}];
+
 			_.each(this.options.presets.models, function(model) {
 				if(typeof model.get('legacy') !== "undefined") {
 					return;
