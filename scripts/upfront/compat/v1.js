@@ -19,7 +19,8 @@ var _callback = function () {}
 function get_backup_notice () {
 	var notice = ((Upfront.data || {}).Compat || {}).notice,
 		url = ((Upfront.data || {}).Compat || {}).snapshot_url,
-		msg = url.match(/premium\.wpmudev\.org/) ? 'Install Snapshot' : 'Backup with Snapshot';
+		msg = ((Upfront.data || {}).Compat || {}).snapshot_msg || 'Install Snapshot',
+		has_snapshot_class = url.match(/snapshots_new_panel/) ? 'has-snapshot' : ''
 	;
 	_callback = function () {
 		return $.post(Upfront.Settings.ajax_url, {action: "upfront-notices-dismiss"});
@@ -29,8 +30,8 @@ function get_backup_notice () {
 		'<div class="upfront-version_compatibility-nag">' +
 			'<p>' + notice + '</p>' +
 			'<div>' +
-				'<a class="boot" href="#boot">Proceed to edit</a>' +
-				(url ? '<a class="update" href="' + url + '">' + msg + '</a>' : '') +
+				'<a class="boot ' + has_snapshot_class + '" href="#boot">Proceed to edit</a>' +
+				(url ? '<a class="update ' + has_snapshot_class + '" href="' + url + '">' + msg + '</a>' : '') +
 			'</div>' +
 		'</div>' +
 	'';
