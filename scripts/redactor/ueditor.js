@@ -777,7 +777,7 @@ Ueditor.prototype = {
             // Expand known text patterns
             if (32 === e.keyCode) self.expand_known_text_patterns();
 
-			if(e.keyCode != 37 && e.keyCode != 39) {
+			if( ( e.keyCode != 37 && e.keyCode != 39 ) && self.redactor ) {
 				var current = $(self.redactor.selection.getCurrent());
 				if(current.hasClass('uf_font_icon')) {
 					self.redactor.caret.setAfter(current);
