@@ -561,7 +561,9 @@ define([
 				$selector.removeClass(this.getPresetClasses(elementType));
 				if (preset !== '') {
 					$selector.addClass(elementType + '-preset-' + preset);
-				}
+				} else {
+					$selector.addClass(elementType + '-preset-' + this.model.get_property_value_by_name('preset'));
+        }
 
 			} else if(elementType === "tab") {
 				//Remove original preset classes
@@ -570,7 +572,9 @@ define([
 				$selector.removeClass(this.getPresetClasses(elementType));
 				if (preset !== '') {
 					$selector.addClass(elementType + '-preset-' + preset);
-				}
+				} else {
+					$selector.addClass(elementType + '-preset-' + this.model.get_property_value_by_name('preset'));
+        }
 
 			} else if(elementType === "button") {
 				$selector = $('#' + element_id).find(".upfront_cta");
@@ -578,7 +582,9 @@ define([
 				$selector.removeClass(this.getPresetClasses(elementType));
 				if (preset !== '') {
 					$selector.addClass(elementType + '-preset-' + preset);
-				}
+				} else {
+					$selector.addClass(elementType + '-preset-' + this.model.get_property_value_by_name('preset'));
+        }
 
 			} else {
 				//Remove original preset classes
