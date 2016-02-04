@@ -520,6 +520,7 @@ body .upfront-edit_layout a {
 }
 
 /* This one ensures that the an anchor inside a heading does not vary too much if a specific font style is applied on an anchor */
+/*
 h1 a,
 h2 a,
 h3 a,
@@ -531,7 +532,7 @@ h6 a {
   line-height: inherit !important;
   font-weight: inherit !important;
 }
-
+*/
 /* Firefox checkboxes and radios are styled to match the rest of the browsers */
 @-moz-document url-prefix() { 
   input[type=checkbox] {
