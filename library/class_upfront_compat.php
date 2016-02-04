@@ -74,7 +74,7 @@ class Upfront_Compat implements IUpfront_Server {
 	private function _check_v1_backup () {
 		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) return false; // We don't care, not editable
 		if (function_exists('upfront_exporter_is_running') && upfront_exporter_is_running()) return false; // Not in exporter
-		if ($this->_is_update_notice_dismissed()) return false; // We have notices dismissed for this version and below
+		if ($this->_is_update_notice_dismissed_for('1.0')) return false; // We have notices dismissed for v1.0 version and below
 
 		// This check is potentially costly, so don't do it unless we have to
 		if (!(defined('DOING_AJAX') && DOING_AJAX)) {
