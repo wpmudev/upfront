@@ -2,6 +2,12 @@ Change Log
 ============
 
 
+1.0.2 - 2016-02-04
+-------------------------------------------------------------------------------
+- Fix: rounded corner module improvements.
+- Fix: preset name suggestion will offer an unique preset name.
+- Fix: backup link in the upgrade popup recognizes the plugin.
+
 1.0.1 - 2016-01-28
 -------------------------------------------------------------------------------
 - Fix: compatibility with old PHP versions.
