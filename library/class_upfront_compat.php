@@ -101,13 +101,22 @@ class Upfront_Compat implements IUpfront_Server {
 		$cache = Upfront_Cache::get_instance(Upfront_Cache::TYPE_LONG_TERM);
 		$updated = $cache->get('upfront-updated', 'upfront-core');
 		
-		if (false === $updated) {
-			global $wpdb;
-			$global_key = $wpdb->esc_like('upfront_') . '%';
-			$result = (int)$wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE %s", $global_key));
-			$updated = !empty($result) ? 'yes' : 'no';
+		if ($updated === false) {
+			$updated_flag = get_option('upfront_is_updated_install');
+			if (empty($updated_flag)) {
+				global $wpdb;
+				$theme_key = $wpdb->esc_like('_transient_' . Upfront_Model::get_storage_key()) . '%ver1.0.0'; // Check transition caches
+				$global_key = $wpdb->esc_like('upfront_') . '%'; // Check global keys
+				$result = (int)$wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s", $global_key, $theme_key));
 
-			if (!empty($result)) $cache->set('upfront-updated', 'upfront-core', $updated);
+				$updated = !empty($result) ? 'yes' : 'no';
+
+				if (empty($result)) {
+					update_option('upfront_is_updated_install', 'no');
+				}
+
+				$cache->set('upfront-updated', 'upfront-core', $updated);
+			}
 		}
 
 		return !empty($updated) && 'yes' === $updated;
