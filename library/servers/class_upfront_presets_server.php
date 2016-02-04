@@ -370,6 +370,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			'apply_label' => __('Apply', 'upfront'),
 			'not_empty_label' => __('Preset name can not be empty.', 'upfront'),
 			'special_character_label' => __('Preset name can contain only numbers, letters and spaces.', 'upfront'),
+			'invalid_preset_label' => __('Invalid preset name. Preset name should start with a letter.', 'upfront'),
 			'default_preset' => __('Default', 'upfront'),
 			'add_preset_label' => __('Add Preset', 'upfront'),
 			'border' => __('Border', 'upfront'),
