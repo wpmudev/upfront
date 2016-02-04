@@ -35,7 +35,7 @@ define([
 				get_value_html: function (value, index) {
 					var selected = '';
 					var currentPreset = this.get_saved_value() ? this.get_saved_value() : 'default';
-					if (this.model.get_property_value_by_name('theme_style')) {
+					if (!this.model.get_property_value_by_name('usingNewAppearanche')) {
 						currentPreset = '';
 					}
 					if (value.value === this.clear_preset_name(currentPreset)) selected = ' selected="selected"';
