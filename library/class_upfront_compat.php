@@ -101,17 +101,16 @@ class Upfront_Compat implements IUpfront_Server {
 		$cache = Upfront_Cache::get_instance(Upfront_Cache::TYPE_LONG_TERM);
 		$updated = $cache->get('upfront-updated', 'upfront-core');
 		
-		if ($updated === false) {
+		if (false === $updated) {
 			global $wpdb;
-			$theme_key = $wpdb->esc_like(Upfront_Model::get_storage_key()) . '%';
 			$global_key = $wpdb->esc_like('upfront_') . '%';
-			$result = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s", $global_key, $theme_key));
+			$result = (int)$wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE %s", $global_key));
 			$updated = !empty($result) ? 'yes' : 'no';
 
-			$cache->set('upfront-updated', 'upfront-core', $updated);
+			if (!empty($result)) $cache->set('upfront-updated', 'upfront-core', $updated);
 		}
-		
-		return 'yes' === $updated;
+
+		return !empty($updated) && 'yes' === $updated;
 	}
 
 	/**
