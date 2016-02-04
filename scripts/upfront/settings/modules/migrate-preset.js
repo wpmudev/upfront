@@ -75,8 +75,38 @@ define([
 						className: 'migrate-preset-info migrate-info-icon',
 					}),
 
-					//New preset fields
+					new SimpleTextField({
+						model: this.model,
+						label: l10n.select_preset_info,
+						className: 'migrate-preset-info',
+					}),
 
+					this.selectPresetField,
+
+					new Upfront.Views.Editor.Field.Button({
+						model: this.model,
+						label: l10n.apply_label,
+						className: 'migrate-preset-apply',
+						compact: true,
+						on_click: function() {
+							me.trigger('upfront:presets:change', me.selectPresetField.get_value());
+						}
+					}),
+					new SimpleTextField({
+						model: this.model,
+						label: l10n.save_as_preset_button_info,
+						className: 'migrate-preset-info save-as-preset-info',
+					}),
+					new Upfront.Views.Editor.Field.Button({
+						model: this.model,
+						label: l10n.convert_style_to_preset,
+						className: 'migrate-preset-button',
+						compact: true,
+						on_click: function() {
+							me.show_new_preset_fields();
+						}
+					}),
+					//New preset fields
 					new Upfront.Views.Editor.Field.Button({
 						model: this.model,
 						label: l10n.cancel_label,
@@ -114,38 +144,6 @@ define([
 							me.trigger('upfront:presets:new', preset_name.trim());
 						}
 					}),
-					new SimpleTextField({
-						model: this.model,
-						label: l10n.select_preset_info,
-						className: 'migrate-preset-info',
-					}),
-
-					this.selectPresetField,
-
-					new Upfront.Views.Editor.Field.Button({
-						model: this.model,
-						label: l10n.apply_label,
-						className: 'migrate-preset-apply',
-						compact: true,
-						on_click: function() {
-							me.trigger('upfront:presets:change', me.selectPresetField.get_value());
-						}
-					}),
-					new SimpleTextField({
-						model: this.model,
-						label: l10n.save_as_preset_button_info,
-						className: 'migrate-preset-info save-as-preset-info',
-					}),
-					new Upfront.Views.Editor.Field.Button({
-						model: this.model,
-						label: l10n.convert_style_to_preset,
-						className: 'migrate-preset-button',
-						compact: true,
-						on_click: function() {
-							me.show_new_preset_fields();
-						}
-					})
-
 				]
 				//End new preset fields
 			}),
