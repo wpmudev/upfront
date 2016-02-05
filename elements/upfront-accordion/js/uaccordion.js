@@ -248,8 +248,10 @@ define([
 				$me
 					.ueditor({
 						linebreaks: false,
-						inserts: {},
-						autostart: false
+						autostart: false,
+						paragraphize: false,
+						focus: false,
+						placeholder: false
 					})
 					.on('start', function(){
 						Upfront.Events.trigger('upfront:element:edit:start');
