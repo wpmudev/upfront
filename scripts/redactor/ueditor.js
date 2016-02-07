@@ -222,6 +222,20 @@ var hackRedactor = function(){
      * @type {{inline: {format: Overriden_Methods.inline.format}}}
      */
     var Overriden_Methods = {
+        utils: {
+            isEndOfElement: function(element){
+                if (typeof element == 'undefined')
+                {
+                    var element = this.$element;
+                    if (!element) return false;
+                }
+
+                var offset = this.caret.getOffsetOfElement(element);
+                var text = $.trim($(element).text()).replace(/\n\r\n/g, '');
+
+                return (offset == text.length) ? true : false;
+            }
+        },
         inline: {
             format: function(tag, type, value)
             {
@@ -777,7 +791,7 @@ Ueditor.prototype = {
             // Expand known text patterns
             if (32 === e.keyCode) self.expand_known_text_patterns();
 
-			if(e.keyCode != 37 && e.keyCode != 39) {
+			if( ( e.keyCode != 37 && e.keyCode != 39 ) && self.redactor ) {
 				var current = $(self.redactor.selection.getCurrent());
 				if(current.hasClass('uf_font_icon')) {
 					self.redactor.caret.setAfter(current);
@@ -814,7 +828,7 @@ Ueditor.prototype = {
             /**
              * Make sure return doesn't delete the last charactor
              */
-            if (13 === e.keyCode ) {
+            if (13 === e.keyCode && !e.shiftKey ) {
                 self.redactor.utils.removeEmpty();
                 $(self.redactor.selection.getCurrent()).append("&nbsp;")
             }
