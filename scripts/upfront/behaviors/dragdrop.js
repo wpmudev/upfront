@@ -277,15 +277,15 @@ DragDrop.prototype = {
 						is_wrap_me = ( me_wrap && wrap._id == me_wrap._id ),
 						wrap_only = ( w.modules.length == 1 ),
 						wrap_me_only = ( is_wrap_me && wrap_only ),
-						prev_w = wi > 0 ? line.wrappers[wi-1] : false,
+						prev_w = wi > 0 ? line.wrappers[wi-1] : ( li > 0 ? _.last(lines[li-1].wrappers) : false ),
 						prev_wrap_view = prev_w ? Upfront.data.wrapper_views[prev_w.model.cid] : false,
 						$prev_wrap = prev_wrap_view ? prev_wrap_view.$el : false,
 						prev_wrap = $prev_wrap ? ed.get_wrap($prev_wrap) : false,
-						prev_wrap_clr = ( wi == 1 ),
+						prev_wrap_clr = ( wi == 1 || ( wi == 0 && li > 0 && lines[li-1].wrappers.length == 1 ) ),
 						is_prev_me = ( prev_wrap && me_wrap && prev_wrap._id == me_wrap._id ),
 						is_prev_wrap_spacer = prev_w ? prev_w.spacer : false,
 						prev_me_only = ( is_prev_me && prev_w.modules.length == 1 ),
-						next_w = wi+1 < line.wrappers.length ? line.wrappers[wi+1] : false,
+						next_w = wi+1 < line.wrappers.length ? line.wrappers[wi+1] : ( li+1 < lines.length ? lines[li+1].wrappers[0] : false ),
 						next_wrap_view = next_w ? Upfront.data.wrapper_views[next_w.model.cid] : false,
 						$next_wrap = next_wrap_view ? next_wrap_view.$el : false,
 						next_wrap = $next_wrap ? ed.get_wrap($next_wrap) : false,
@@ -1445,6 +1445,7 @@ DragDrop.prototype = {
 			view.region = this.current_region_model;
 			view.region_view = Upfront.data.region_views[view.region.cid];
 			view.parent_view = view.region_view._modules_view;
+			this.new_wrap_view.parent_view = view.parent_view;
 			if ( !_.isUndefined(view._modules_view) ) { // this is grouped modules, also fix the child views
 				view._modules_view.region_view = view.region_view;
 				if ( !_.isUndefined(model.get('modules')) ){

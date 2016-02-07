@@ -4776,10 +4776,12 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-wrapper[data-last-in-row="1"] > .upfront-wrapper-meta-right > .upfront-icon-button {
   display: none; }
 
-.upfront-wrapper.upfront-wrapper-spacer[data-first-in-row="1"] > .upfront-wrapper-meta-left {
+.upfront-wrapper.upfront-wrapper-spacer[data-first-in-row="1"] > .upfront-wrapper-meta-left,
+.upfront-wrapper.upfront-wrapper-spacer[data-first-in-row="1"]:hover > .upfront-wrapper-meta-left {
   display: none !important; }
 
-.upfront-wrapper.upfront-wrapper-spacer[data-last-in-row="1"] > .upfront-wrapper-meta-right {
+.upfront-wrapper.upfront-wrapper-spacer[data-last-in-row="1"] > .upfront-wrapper-meta-right,
+.upfront-wrapper.upfront-wrapper-spacer[data-last-in-row="1"]:hover > .upfront-wrapper-meta-right {
   display: none !important; }
 
 .upfront-entity-size-hint {

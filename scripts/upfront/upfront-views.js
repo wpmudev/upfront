@@ -5673,11 +5673,14 @@ define([
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
 				if ( ! breakpoint )
 					return;
-				var grid = Upfront.Settings.LayoutEditor.Grid,
+				var ed = Upfront.Behaviors.GridEditor,
+					grid = Upfront.Settings.LayoutEditor.Grid,
 					data = this.model.get_property_value_by_name('breakpoint'),
 					breakpoint_data = data[breakpoint.id],
-					parent_width = this.$el.parent().width(),
-					parent_col = Math.round(parent_width/grid.column_width)
+					is_group = !_.isUndefined(this.parent_view.group_view),
+					parent_view = is_group ? this.parent_view.group_view : this.parent_view.region_view,
+					parent_pos = is_group ? ed.get_position(parent_view.$el) : ed.get_region_position(parent_view.$el),
+					parent_col = parent_pos.col
 				;
 				this.$el.css({
 					minHeight: '',
@@ -5802,6 +5805,7 @@ define([
 					wrapper.set_breakpoint_property('edited', true, true);
 					wrapper.set_breakpoint_property('clear', ( is_clr && position == 'left' ), true);
 					wrapper.set_breakpoint_property('order', this.model.get_breakpoint_property_value('order'));
+					wrapper.set_breakpoint_property('col', spacer_col);
 					module.set_breakpoint_property('edited', true, true);
 					module.set_breakpoint_property('hide', 0, true);
 					module.set_breakpoint_property('left', 0, true);
