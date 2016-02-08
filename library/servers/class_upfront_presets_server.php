@@ -151,12 +151,6 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			$presets = array();
 		}
 		
-		/*foreach($presets as $key => $preset) {
-			if(isset($preset[$key]['preset_style'])) {
-				$presets[$key]['preset_style'] = Upfront_UFC::init()->process_colors($presets[$key]['preset_style']);
-			}
-		}*/
-
 		return $presets;
 	}
 
@@ -170,25 +164,11 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		}
 
 		$properties = $_POST['data'];
-		
-		//ob_start();
 
-		//print_r($properties);
-
-		//file_put_contents("debugg.txt", ob_get_clean());
-
+		/* Here any ufc(s) commented and converted to colors in the front end are cleaned up in order to store them as simply a ufc */
 		$pattern = '/\/\*#ufc([^\*]*)\*\/([^\s;]*)/i';
-
 		$properties['preset_style'] = preg_replace($pattern, '#ufc$1 ', $properties['preset_style']);
 		
-		ob_start();
-			
-			echo $properties['preset_style'];
-
-		file_put_contents("debugg.txt", $properties['preset_style']);
-
-
-
 		do_action('upfront_save_' . $this->elementName . '_preset', $properties, $this->elementName);
 
 		if (!has_action('upfront_save_' . $this->elementName . '_preset')) {
