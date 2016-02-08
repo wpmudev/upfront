@@ -449,6 +449,11 @@ define([
 
 			props.usingNewAppearance = props.usingNewAppearance || false;
 
+			// Clean up hardcoded caption color
+			if (props.usingNewAppearance) {
+				props.image_caption = props.image_caption.replace(/^<span style=".+?"/, '<span ');
+			}
+
 			rendered = this.imageTpl(props);
 
 			if (this.property('quick_swap')) {
@@ -905,7 +910,7 @@ define([
 				};
 				this.property('element_size', this.elementSize);
 				return;
-				
+
 			//} else if (this.property('quick_swap')) {
 			} else if (this.isThemeImage()) {
 				return;
