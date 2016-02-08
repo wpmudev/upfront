@@ -1993,7 +1993,7 @@ define([
 				if ('blockquote' === element) {
 					selector = '.upfront-object-content blockquote, .upfront-object-content blockquote p';
 				} else if ('a' === element) {
-					selector = '.upfront-object-content:not(.upfront-output-button):not(.upfront-output-ubutton):not(.upfront-output-unewnavigation) a, .upfront-object-content:not(.upfront-output-button):not(.upfront-output-ubutton):not(.upfront-output-unewnavigation) a:link, .upfront-object-content:not(.upfront-output-button):not(.upfront-output-ubutton):not(.upfront-output-unewnavigation) a:visited';
+					selector = '.upfront-object-content a, .upfront-object-content a:link, .upfront-object-content a:visited';
 				} else if (
 						'h1' === element ||
 						'h2' === element ||
