@@ -150,6 +150,12 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		if (is_array($presets) === false) {
 			$presets = array();
 		}
+		
+		/*foreach($presets as $key => $preset) {
+			if(isset($preset[$key]['preset_style'])) {
+				$presets[$key]['preset_style'] = Upfront_UFC::init()->process_colors($presets[$key]['preset_style']);
+			}
+		}*/
 
 		return $presets;
 	}
@@ -164,6 +170,24 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		}
 
 		$properties = $_POST['data'];
+		
+		//ob_start();
+
+		//print_r($properties);
+
+		//file_put_contents("debugg.txt", ob_get_clean());
+
+		$pattern = '/\/\*#ufc([^\*]*)\*\/([^\s;]*)/i';
+
+		$properties['preset_style'] = preg_replace($pattern, '#ufc$1 ', $properties['preset_style']);
+		
+		ob_start();
+			
+			echo $properties['preset_style'];
+
+		file_put_contents("debugg.txt", $properties['preset_style']);
+
+
 
 		do_action('upfront_save_' . $this->elementName . '_preset', $properties, $this->elementName);
 
@@ -171,15 +195,19 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			$presets = $this->get_presets();
 
 			$result = array();
-
+			
 			foreach ($presets as $preset) {
 				if ($preset['id'] === $properties['id']) {
 					continue;
 				}
+
 				$result[] = $preset;
 			}
 
+			
 			$result[] = $properties;
+
+
 
 			$this->update_presets($result);
 		}

@@ -151,9 +151,16 @@ class Upfront_UFC {
 
 	public function process_colors( $string ){
 		$theme_colors = !empty(self::$_theme_colors->colors) ? self::$_theme_colors->colors : array();
+		
 		for( $i = 0; $i < self::$_theme_color_count ; $i++ ){
+			
+			$pattern = '/\/\*#ufc'.$i.'\*\/([^\s;]*)/i';
+
+			$string = preg_replace($pattern, $theme_colors[$i]->color." ", $string);
+
 			$string = str_replace("#ufc" . $i, $theme_colors[$i]->color  , $string );
 		}
+		
 
 		return $string;
 	}
