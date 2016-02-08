@@ -542,18 +542,6 @@ define([
 				$('#' + element_id).find('.' + themeStyle).removeClass(themeStyle);
 			}
 
-			// Address text element putting style inline
-			if (elementType === 'text') {
-				$selector = $('#' + element_id).find(".plaintxt_padding");
-				if (typeof this.cachedTextStyle === 'undefined') {
-					this.cachedTextStyle = $selector.attr('style');
-				}
-				$selector.attr('style', '');
-				if (preset === '') {
-					$selector.attr('style', this.cachedTextStyle);
-				}
-			}
-
 			//We need to manage Tabs, Accordions & Buttons are they are using another classes for presets
 			if(elementType === "accordion") {
 				$selector = $('#' + element_id).find(".upfront-accordion-container");
@@ -586,6 +574,23 @@ define([
 					$selector.addClass(elementType + '-preset-' + this.model.get_property_value_by_name('preset'));
         }
 
+			} else if(_.contains(["image", 'text', 'gallery', 'slider', 'contact'], elementType)) {
+				// Temporary setup element model so that is uses preset for rendering
+				if (typeof this.actualModelData === 'undefined') {
+					this.actualModelData = Upfront.Util.model_to_json(this.model);
+				}
+				if (preset !== '') {
+					this.model.set_property('usingNewAppearance', true, true);
+					this.model.set_property('theme_style', '', true);
+					this.model.set_property('preset', preset, true);
+					this.model.trigger('change');
+					this.previousPresetClass = preset;
+				} else {
+					actualProperties = new Upfront.Collections.Properties(this.actualModelData.properties);
+					actualProperties._events = this.model.get('properties')._events;
+					this.model.set('properties', actualProperties);
+					$('.upfront-active_entity').removeClass(this.previousPresetClass);
+				}
 			} else {
 				//Remove original preset classes
 				$('#' + element_id).removeClass(this.getPresetClasses());
