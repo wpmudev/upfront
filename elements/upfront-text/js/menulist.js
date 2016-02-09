@@ -1,3 +1,4 @@
+;(function ($, undefined) {
 define([], function() {
 	var l10n = Upfront.Settings.l10n.text_element;
 
@@ -31,3 +32,4 @@ define([], function() {
 
 	return TextMenuList;
 });
+})(jQuery);

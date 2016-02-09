@@ -36,6 +36,10 @@ define(function() {
 					alert(l10n.special_character_label);
 					return;
 				}
+				if (!preset_name.match(/^[A-Za-z][A-Za-z0-9 ]*$/)) {
+					alert(l10n.invalid_preset_label);
+					return;
+				}
 
 				me.trigger('upfront:presets:new', preset_name.trim());
 			});

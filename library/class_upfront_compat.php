@@ -6,6 +6,15 @@ require_once('compat/class_upfront_compat_parser.php');
 class Upfront_Compat implements IUpfront_Server {
 
 	/**
+	 * Front-end update notice key
+	 *
+	 * @return string
+	 */
+	public static function get_upgrade_notice_key () {
+		return 'upfront-admin-update_notices-done';
+	}
+
+	/**
 	 * Fetch currently installed upfront core version
 	 *
 	 * @return mixed (string)Theme version number, or (bool)false on failure
@@ -65,7 +74,12 @@ class Upfront_Compat implements IUpfront_Server {
 	private function _check_v1_backup () {
 		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) return false; // We don't care, not editable
 		if (function_exists('upfront_exporter_is_running') && upfront_exporter_is_running()) return false; // Not in exporter
-		if ($this->_is_update_notice_dismissed()) return false; // We have notices dismissed for this version and below
+		if ($this->_is_update_notice_dismissed_for('1.0')) return false; // We have notices dismissed for v1.0 version and below
+
+		// This check is potentially costly, so don't do it unless we have to
+		if (!(defined('DOING_AJAX') && DOING_AJAX)) {
+			if (!$this->_is_updated_install()) return false; // Only on updated installs
+		}
 
 		$this->_has_backup_notice = true;
 
@@ -76,6 +90,36 @@ class Upfront_Compat implements IUpfront_Server {
 			$this->_v1_script_added = true;
 			add_filter('upfront_data', array($this, 'add_v1_transition_data'));
 		}
+	}
+
+	/**
+	 * Check if this is an updated install, or a new one
+	 *
+	 * @return bool
+	 */
+	private function _is_updated_install () {
+		$cache = Upfront_Cache::get_instance(Upfront_Cache::TYPE_LONG_TERM);
+		$updated = $cache->get('upfront-updated', 'upfront-core');
+		
+		if ($updated === false) {
+			$updated_flag = get_option('upfront_is_updated_install');
+			if (empty($updated_flag)) {
+				global $wpdb;
+				$theme_key = $wpdb->esc_like('_transient_' . Upfront_Model::get_storage_key()) . '%ver1.0.0'; // Check transition caches
+				$global_key = $wpdb->esc_like('upfront_') . '%'; // Check global keys
+				$result = (int)$wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s", $global_key, $theme_key));
+
+				$updated = !empty($result) ? 'yes' : 'no';
+
+				if (empty($result)) {
+					update_option('upfront_is_updated_install', 'no');
+				}
+
+				$cache->set('upfront-updated', 'upfront-core', $updated);
+			}
+		}
+
+		return !empty($updated) && 'yes' === $updated;
 	}
 
 	/**
@@ -95,7 +139,7 @@ class Upfront_Compat implements IUpfront_Server {
 	 * @return bool
 	 */
 	private function _is_update_notice_dismissed_for ($version) {
-		$done = get_option('upfront-admin-update_notices-done', '0');
+		$done = get_option(self::get_upgrade_notice_key(), '0');
 		return version_compare($version, $done, 'le');
 	}
 
@@ -116,7 +160,7 @@ class Upfront_Compat implements IUpfront_Server {
 	 * @return bool
 	 */
 	private function _dismiss_update_notice_for ($version) {
-		return update_option('upfront-admin-update_notices-done', $version);
+		return update_option(self::get_upgrade_notice_key(), $version);
 	}
 
 	/**
@@ -131,18 +175,14 @@ class Upfront_Compat implements IUpfront_Server {
 			'theme_url' => admin_url('themes.php'),
 		);
 
-		if (!empty($this->_has_backup_notice)) {
-			$user = wp_get_current_user();
-			$name = !empty($user->display_name)
-				? $user->display_name
-				: __('User', 'upfront')
-			;
+		if (!empty($this->_has_backup_notice) && Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
+			if (!class_exists('Upfront_Compat_Backup_Info')) require_once('compat/class_upfront_compat_backup_info.php');
+			$info = new Upfront_Compat_Backup_Info;
 			$data['Compat']['notice'] = '' .
-				sprintf(__('Dear <b>%s</b>', 'upfront'), esc_html($name)) .
-				'<br />' .
-				__('We have dedicated a long time finessing the migration process, however given the variety of layouts that can be achieved with Upfront and the amazing improvements we have in v 1.0, we strongly advise you to make a full backup of your site before proceeding to edit using our Snapshot plugin. ', 'upfront') .
+				__('We’ve put a lot of time into getting the migration process right, however given the variety of layouts that can be achieved with Upfront and the amazing improvements we’ve added in version 1.0, we strongly advise that you to make a full backup of your site with <b>Snapshot</b> before proceeding to edit your site. ', 'upfront') .
 			'';
-			$data['Compat']['snapshot_url'] = esc_url('https://premium.wpmudev.org/project/snapshot/');
+			$data['Compat']['snapshot_url'] = esc_url($info->get_plugin_link());
+			$data['Compat']['snapshot_msg'] = esc_html($info->get_plugin_action());
 		}
 
 		return $data;

@@ -136,6 +136,7 @@ class Upfront_UFC {
 		if ( $color[0] == '#' ) {
 			$color = substr( $color, 1 );
 		}
+
 		if ( strlen( $color ) == 6 ) {
 			list( $r, $g, $b ) = array( $color[0] . $color[1], $color[2] . $color[3], $color[4] . $color[5] );
 		} elseif ( strlen( $color ) == 3 ) {
@@ -143,19 +144,31 @@ class Upfront_UFC {
 		} else {
 			return false;
 		}
+
 		$r = hexdec( $r );
 		$g = hexdec( $g );
 		$b = hexdec( $b );
+
 		return "(" . $r . "," . $g . "," . $b . ")";
 	}
 
 	public function process_colors( $string ){
+
 		$theme_colors = !empty(self::$_theme_colors->colors) ? self::$_theme_colors->colors : array();
+		
 		for( $i = 0; $i < self::$_theme_color_count ; $i++ ){
+			
+			// This just ensures that the css integrity is not compromised if any colors are stored as commented out ufc with color code already.
+			// helps with unclean css saved from previous versions of the code */
+			$pattern = '/\/\*#ufc'.$i.'\*\/([^\s;]*)/i';
+			$string = preg_replace($pattern, $theme_colors[$i]->color." ", $string);
+
 			$string = str_replace("#ufc" . $i, $theme_colors[$i]->color  , $string );
 		}
+		
 
 		return $string;
 	}
+
 }
 

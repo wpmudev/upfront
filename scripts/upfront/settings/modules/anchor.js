@@ -5,7 +5,7 @@ define([
 
 	var Field_Complex_Toggleable_Text_Field = Upfront.Views.Editor.Field.Field.extend({
 		className: "upfront-field-complex_field-boolean_toggleable_text upfront-field-multiple",
-		tpl: '<input type="checkbox" class = "upfront-field-checkbox" /> <label><span class="upfront-field-label-text">{{element_label}}</span></label> <div class="upfront-embedded_toggleable" style="display:none">{{field}}<div class="upfront-embedded_toggleable-notice">' + Upfront.Settings.l10n.global.views.anchor_nag + '</div></div>',
+		tpl: '<input id="upfront-anchor-element-checkbox" type="checkbox" class = "upfront-field-checkbox" /> <label for="upfront-anchor-element-checkbox"><span class="upfront-field-label-text">{{element_label}}</span></label> <div class="upfront-embedded_toggleable" style="display:none">{{field}}<div class="upfront-embedded_toggleable-notice">' + Upfront.Settings.l10n.global.views.anchor_nag + '</div></div>',
 		initialize: function (opts) {
 			Upfront.Views.Editor.Field.Field.prototype.initialize.call(this, opts);
 			this.options.field = new Upfront.Views.Editor.Field.Text(this.options);

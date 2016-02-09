@@ -29,6 +29,7 @@
 				this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
 				this.listenTo(Upfront.Events, 'upfront:lightbox:show', this.on_lightbox_show);
 				this.listenTo(this.model, "preset:updated", this.preset_updated);
+				this.listenTo(this.model, 'change', this.render);
 			},
 			preset_updated: function() {
 				this.render();

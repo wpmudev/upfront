@@ -68,6 +68,11 @@ class Upfront_UimageView extends Upfront_Object {
 			$data['preset'] = 'default';
 		}
 
+		if ($data['usingNewAppearance'] === true) {
+			// Clean up hardcoded image caption color
+			$data['image_caption'] = preg_replace('#^<span style=".+?"#', '<span ', $data['image_caption']);
+		}
+
 		$data['properties'] = Upfront_Image_Presets_Server::get_instance()->get_preset_properties($data['preset']);
 
 		$data['cover_caption'] = $data['caption_position'] != 'below_image'; // array_search($data['caption_alignment'], array('fill', 'fill_bottom', 'fill_middle')) !== FALSE;

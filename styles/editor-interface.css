@@ -4776,10 +4776,12 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-wrapper[data-last-in-row="1"] > .upfront-wrapper-meta-right > .upfront-icon-button {
   display: none; }
 
-.upfront-wrapper.upfront-wrapper-spacer[data-first-in-row="1"] > .upfront-wrapper-meta-left {
+.upfront-wrapper.upfront-wrapper-spacer[data-first-in-row="1"] > .upfront-wrapper-meta-left,
+.upfront-wrapper.upfront-wrapper-spacer[data-first-in-row="1"]:hover > .upfront-wrapper-meta-left {
   display: none !important; }
 
-.upfront-wrapper.upfront-wrapper-spacer[data-last-in-row="1"] > .upfront-wrapper-meta-right {
+.upfront-wrapper.upfront-wrapper-spacer[data-last-in-row="1"] > .upfront-wrapper-meta-right,
+.upfront-wrapper.upfront-wrapper-spacer[data-last-in-row="1"]:hover > .upfront-wrapper-meta-right {
   display: none !important; }
 
 .upfront-entity-size-hint {
@@ -5576,11 +5578,11 @@ a.upfront-region-name-edit-trigger:before {
 #element-settings-sidebar #settings #sidebar-scroll-wrapper {
   overflow-x: hidden;
   overflow-y: auto;
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 65px;
-  top: 44px;
+  /*position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 65px;
+	top: 44px;*/
   background: #f7fbff; }
 
 #element-settings-sidebar #settings .upfront-settings_panel_scroll {
@@ -5603,9 +5605,10 @@ a.upfront-region-name-edit-trigger:before {
   text-align: right;
   padding-right: 15px;
   z-index: 0;
-  position: absolute;
-  bottom: 0;
-  right: auto;
+  /*position: absolute;
+	bottom: 0;
+	right: auto;*/
+  position: static;
   width: 260px;
   height: 50px; }
 
@@ -5919,14 +5922,10 @@ a.upfront-region-name-edit-trigger:before {
 
 /* Plain texts */
 #element-settings-sidebar .migrate-preset-overlay .migrate-preset-info label {
-  font-size: 12px;
+  font: normal 12px/1.5 Open Sans, Helvetica Neueu, Helvetica, Arial, sans-serif;
   display: inline-block;
-  font-family: verdana, sans-serif;
-  text-align: center;
-  color: #596c7f;
+  color: #2F475F;
   position: relative;
-  font-weight: normal;
-  line-height: 1.4;
   margin: 0px; }
 
 #element-settings-sidebar .migrate-preset-overlay .migrate-preset-info label strong {
@@ -5940,21 +5939,8 @@ a.upfront-region-name-edit-trigger:before {
   margin-right: -15px; }
 
 /* New preset migration button */
-#element-settings-sidebar .migrate-preset-overlay .migrate-preset-button {
-  margin: 0px auto;
-  text-align: center; }
-
-#element-settings-sidebar .migrate-preset-overlay .migrate-preset-button input {
-  width: 198px;
-  height: 32px;
-  line-height: 32px;
-  background: #3d5266;
-  color: #fff;
-  text-align: center;
-  display: inline; }
-
-#element-settings-sidebar .migrate-preset-overlay .migrate-preset-button input:hover {
-  background: #5e758b; }
+#element-settings-sidebar .migrate-preset-overlay .save-as-preset-info {
+  margin-top: 20px; }
 
 #element-settings-sidebar .migrate-preset-overlay .select-preset-field-overlay,
 #element-settings-sidebar .migrate-preset-overlay .migrate-preset-apply {
@@ -5964,22 +5950,23 @@ a.upfront-region-name-edit-trigger:before {
 #element-settings-sidebar .migrate-preset-overlay .migrate-preset-apply {
   margin-left: 5px; }
 
-#element-settings-sidebar .migrate-preset-overlay .migrate-preset-apply input {
+#element-settings-sidebar .migrate-preset-overlay .migrate-preset-apply input,
+#element-settings-sidebar .migrate-preset-overlay .migrate-preset-button input {
   margin: 0;
   text-decoration: none;
-  color: #4e4770;
-  font-size: 11px;
+  color: #6486A6;
+  font: 600 11px/2 Open Sans, Helvetica Neueu, Helvetica, Arial, sans-serif;
   box-shadow: inset 0 2px 0 #f2f9ff;
-  font-family: Verdana, sans-serif;
-  line-height: 22px;
   background: #f2f9ff;
   border: 1px solid #b7c9d9;
   border-radius: 3px;
   height: 24px;
   max-height: 24px;
-  padding: 0px 7px; }
+  padding: 0px 7px;
+  text-shadow: 0px 1px 0px #FFFFFF; }
 
-#element-settings-sidebar .migrate-preset-overlay .migrate-preset-apply input:hover {
+#element-settings-sidebar .migrate-preset-overlay .migrate-preset-apply input:hover,
+#element-settings-sidebar .migrate-preset-overlay .migrate-preset-button input:hover {
   border-color: #607f99; }
 
 /* Make sure new preset fields are hidden to prevent flickering */
@@ -8359,6 +8346,12 @@ a.upfront-post-layout-trigger:before {
     background-position: -72px -865px;
     /* fixed the 1px jump on one frame */ } }
 
+@-webkit-keyframes upfront-loading-notice {
+  0% {
+    opacity: 0; }
+  100% {
+    opacity: 0.6; } }
+
 @keyframes upfront-loading-start {
   0% {
     background-position: 0 0; }
@@ -8378,6 +8371,12 @@ a.upfront-post-layout-trigger:before {
     /*background-position: -72px -864px;*/
     background-position: -72px -865px;
     /* fixed the 1px jump on one frame */ } }
+
+@keyframes upfront-loading-notice {
+  0% {
+    opacity: 0; }
+  100% {
+    opacity: 0.6; } }
 
 .upfront-loading {
   background: rgba(19, 42, 64, 0.8);
@@ -8417,7 +8416,8 @@ a.upfront-post-layout-trigger:before {
   -webkit-animation: upfront-loading-done 1.2s steps(12) 1;
   animation: upfront-loading-done 1.2s steps(12) 1; }
 
-.upfront-loading .upfront-loading-text {
+.upfront-loading .upfront-loading-text,
+.upfront-loading .upfront-loading-notice {
   position: absolute;
   width: 200px;
   height: 72px;
@@ -8430,11 +8430,27 @@ a.upfront-post-layout-trigger:before {
   font-size: 15px;
   text-align: center; }
 
-.upfront-loading .upfront-loading-text:before {
+.upfront-loading .upfront-loading-text:before,
+.upfront-loading .upfront-loading-notice:before {
   content: " ";
   display: block;
   height: 100%;
   margin: 0 0 30px; }
+
+.upfront-loading .upfront-loading-notice {
+  width: 800px;
+  font-size: 14px;
+  opacity: 0.6;
+  -webkit-animation: upfront-loading-notice 0.4s 1;
+  animation: upfront-loading-notice 0.4s 1; }
+
+.upfront-loading-done .upfront-loading-notice {
+  opacity: 0;
+  -webkit-transition: opacity 0.4s;
+  transition: opacity 0.4s; }
+
+.upfront-loading .upfront-loading-notice:before {
+  margin-bottom: 120px; }
 
 /* Blur effect */
 .upfront-image-upload-open .upfront-layout,
@@ -14389,6 +14405,12 @@ html {
 .ueditor-display-block {
   display: block !important; }
 
+.redactor-dropdown.on-right-border {
+  left: -50px !important; }
+
+.redactor-toolbar .redactor-dropdown.on-right-border .tablist li {
+  float: right; }
+
 /* --- New embed inserts --- */
 .upfront-inserts-markup-editor {
   background: #3c5267;
@@ -15684,9 +15706,18 @@ div.preset-manager-panel .checkbox-tooltip {
   background: #1FCD8F;
   padding: 15px 30px; }
 
+.upfront-version_compatibility-nag a.update.has-snapshot {
+  padding: 10px 25px; }
+
 .upfront-version_compatibility-nag a.boot {
   color: #777D82;
   background: #F0F0F0; }
+
+.upfront-version_compatibility-nag a.boot.has-snapshot {
+  background: #4E4949;
+  box-shadow: 0px 1px 0px 0px #E6E6E6;
+  border-radius: 6px;
+  color: #fff; }
 
 .upfront-version_compatibility-nag a.update:hover,
 .upfront-version_compatibility-nag a.boot:hover {

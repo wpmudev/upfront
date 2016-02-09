@@ -318,8 +318,6 @@ abstract class Upfront_Entity {
 		$default_type = $this->get_background_type();
 		$css = array();
 		$background_color = $this->_get_breakpoint_property('background_color', $breakpoint_id);
-		$top_bg_padding = $this->_get_breakpoint_property('top_bg_padding_num', $breakpoint_id);
-		$bottom_bg_padding = $this->_get_breakpoint_property('bottom_bg_padding_num', $breakpoint_id);
 		if ( !$type || in_array($type, array('image', 'color', 'featured')) ){
 			if ($background_color) {
 				$css[] = 'background-color: ' . $background_color;
@@ -341,8 +339,6 @@ abstract class Upfront_Entity {
 				$css[] = 'background-color: ' . $background_color;
 			}
 		}
-		if ( $top_bg_padding ) { $css[] = 'padding-top: ' . $top_bg_padding . 'px'; }
-		if ( $bottom_bg_padding ) { $css[] = 'padding-bottom: ' . $bottom_bg_padding . 'px'; }
 		if (!empty($breakpoint_id) && ($default_type == 'image' || $default_type == 'featured')) {
 			$css[] = 'background-image: none';
 		}
@@ -586,8 +582,8 @@ abstract class Upfront_Container extends Upfront_Entity {
 						$classes = $this->_get_property('class');
 						$column = upfront_get_class_num('c', $classes);
 						$class = $slug === "uposts" ? "c" . $column . " uposts-object" : upfront_get_property_value('class', $child);
-						
-						if(!empty(upfront_get_property_value('usingNewAppearance', $child))) {
+						$usingNew = upfront_get_property_value('usingNewAppearance', $child);
+						if(!empty( $usingNew )) {
 						// Augment the output with preset map, in addition to other stuff going on in there
 							$html .= '<div data-preset_map="' . esc_attr(!empty($preset_map) ? json_encode($preset_map) : '') . '" class="upfront-output-object ' . $theme_style . ' ' . $preset . ' upfront-output-' . $slug . ' ' . $class . '" id="' . upfront_get_property_value('element_id', $child) . '"' . $theme_styles_attr . '>' . $child_view->get_markup() . '</div>';
 						} else {

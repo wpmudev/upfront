@@ -1,5 +1,5 @@
-.upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title,
-.upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title p {
+#page .upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title,
+#page .upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title p {
 	<?php if(!empty($properties['static-header-bg-color'])) { ?>background: <?php echo $properties['static-header-bg-color'] ?>; <?php } ?>
 	<?php if(!empty($properties['static-font-color'])) { ?>color: <?php echo $properties['static-font-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['static-font-family'])) { ?>font-family: <?php echo $properties['static-font-family']  ?>; <?php } ?>
@@ -19,9 +19,9 @@
 	<?php } ?>
 }
 
-.upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title:hover,
-.upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title:hover p,
-.upfront-accordion.<?php echo $properties['id']  ?>.live-preview-hover .upfront-accordion-container .accordion-panel-title {
+#page .upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title:hover,
+#page .upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title:hover p,
+#page .upfront-accordion.<?php echo $properties['id']  ?>.live-preview-hover .upfront-accordion-container .accordion-panel-title {
 	<?php if(!empty($properties['hover-use-colors'])) { ?>
 		<?php if(!empty($properties['hover-header-bg-color'])) { ?>background: <?php echo $properties['hover-header-bg-color'] ?>; <?php } ?>
 	<?php } else { ?>
@@ -49,9 +49,9 @@
     <?php } ?>
 }
 
-.upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-active .accordion-panel-title,
-.upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-active .accordion-panel-title p,
-.upfront-accordion.<?php echo $properties['id']  ?>.live-preview-active .upfront-accordion-container .accordion-panel-title {
+#page .upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-active .accordion-panel-title,
+#page .upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-active .accordion-panel-title p,
+#page .upfront-accordion.<?php echo $properties['id']  ?>.live-preview-active .upfront-accordion-container .accordion-panel-title {
 	<?php if(!empty($properties['active-use-color'])) { ?>
 		<?php if(!empty($properties['active-header-bg-color'])) { ?>background: <?php echo $properties['active-header-bg-color'] ?>; <?php } ?>
 	<?php } else { ?>
