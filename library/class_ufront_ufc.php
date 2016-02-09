@@ -160,12 +160,12 @@ class Upfront_UFC {
 			
 			// This just ensures that the css integrity is not compromised if any colors are stored as commented out ufc with color code already.
 			// helps with unclean css saved from previous versions of the code */
-			$pattern = '/\/\*#ufc'.$i.'\*\/([^\s;]*)/i';
-			$string = preg_replace($pattern, $theme_colors[$i]->color." ", $string);
+//			$pattern = '/\/\*#ufc'.$i.'\*\/([^\s;]*)/i';
+//			$string = preg_replace($pattern, $theme_colors[$i]->color." ", $string);
 
 			$string = str_replace("#ufc" . $i, $theme_colors[$i]->color  , $string );
 		}
-		
+
 
 		return $string;
 	}
