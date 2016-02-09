@@ -1423,6 +1423,9 @@ var GridEditor = {
 			$region,
 			breakpoint,
 			lines,
+			is_group,
+			container_view,
+			container,
 			has_group,
 			also_has_group,
 			$resize,
@@ -1465,14 +1468,15 @@ var GridEditor = {
 				// Prevents quick scroll when resizing
 				ed.resizing = window.scrollY;
 				breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON();
+				is_group = !_.isUndefined(view.parent_view.group_view),
+				container_view = is_group ? view.parent_view.group_view : view.parent_view.region_view,
+				container = is_group ? ed.get_position(container_view.$el) : ed.get_region(container_view.$el)
+
 				var me = ed.get_wrap($me),
 					//margin = $me.data('margin'),
 					data = $(this).data('ui-resizable'),
 					$wrappers = Upfront.Util.find_sorted($me.parent(), '> .upfront-wrapper'),
 					aff_els = ed.get_affected_els(me, ed.wraps, [], true),
-					is_group = !_.isUndefined(view.parent_view.group_view),
-					container_view = is_group ? view.parent_view.group_view : view.parent_view.region_view,
-					container = is_group ? ed.get_position(container_view.$el) : ed.get_region(container_view.$el),
 					wrappers = container_view.model.get('wrappers'),
 					modules = container_view.model.get('modules'),
 					lines = ed.parse_modules_to_lines(modules, wrappers, breakpoint.id, container.col),
@@ -1841,6 +1845,14 @@ var GridEditor = {
 					}
 				}
 
+				// Make sure everything has breakpoint property edited true in this region now that element is resized
+				container_view.model.get('modules').each(function (each) {
+					each.set_breakpoint_property('edited', true, true);
+				});
+				container_view.model.get('wrappers').each(function (each) {
+					each.set_breakpoint_property('edited', true, true);
+				});
+
 				// Let's normalize
 				ed.update_position_data(ed.containment.$el);
 				ed.normalize(ed.els, ed.wraps);
@@ -2174,19 +2186,28 @@ var GridEditor = {
 			modules_data = [],
 			set_wrappers_col = {}, // keep track of set wrappers col
 			silent = ( silent === true ) ? true : false,
-			wrapper_index = 0
+			wrapper_index = 0,
+			wrapper_edited = 0
 		;
 		modules.each(function(module){
-			var data = module.get_property_value_by_name('breakpoint'),
+			var data = module.get_property_value_by_name('breakpoint') || {},
 				module_class = module.get_property_value_by_name('class'),
 				module_default_hide = module.get_property_value_by_name('default_hide'),
 				module_hide = ( data[breakpoint_id] && "hide" in data[breakpoint_id] ) ? data[breakpoint_id].hide : module_default_hide,
 				module_col = ed.get_class_num(module_class, ed.grid.class),
 				wrapper = wrappers.get_by_wrapper_id(module.get_wrapper_id()),
-				wrapper_data = wrapper && wrapper.get_property_value_by_name('breakpoint'),
+				wrapper_data = wrapper && wrapper.get_property_value_by_name('breakpoint') || {},
 				wrapper_class = wrapper && wrapper.get_property_value_by_name('class'),
 				is_clear = wrapper && ( !!wrapper_class.match(/clr/) || line_col === 0 );
 			if ( !wrapper )	return;
+			if (
+				( wrapper_data && wrapper_data[breakpoint_id] && wrapper_data[breakpoint_id].edited )
+				||
+				( data && data[breakpoint_id] && data[breakpoint_id].edited )
+			) {
+				wrapper_edited++;
+				return;
+			}
 			if ( module_hide ) return;
 			line_col += module_col; // Elements in a line have to fit the whole region now
 			if ( line_col > parent_col ){
@@ -2205,8 +2226,8 @@ var GridEditor = {
 				col: module_col,
 				left: 0, // Elements in a line have to fit the whole region now
 				wrapper: wrapper,
-				breakpoint: Upfront.Util.clone( data || {} ),
-				wrapper_breakpoint: Upfront.Util.clone( wrapper_data || {} )
+				breakpoint: Upfront.Util.clone(data),
+				wrapper_breakpoint: Upfront.Util.clone(wrapper_data)
 			});
 		});
 		_.each(lines, function(line_modules){
@@ -2233,6 +2254,9 @@ var GridEditor = {
 				if ( !data.breakpoint[breakpoint_id].edited ){
 					// Elements in a line have to fit evenly the whole region now
 					new_col = (line_col === parent_col) ? data.col : parent_col / line_modules.length;
+					if ( data.wrapper_breakpoint[breakpoint_id].edited && _.isNumber(data.wrapper_breakpoint[breakpoint_id].col) ) {
+						new_col = new_col > data.wrapper_breakpoint[breakpoint_id].col ? data.wrapper_breakpoint[breakpoint_id].col : new_col;
+					}
 					data.breakpoint[breakpoint_id].left = 0; 
 					data.breakpoint[breakpoint_id].col = new_col;
 					data.breakpoint[breakpoint_id].order = index;
@@ -2252,7 +2276,7 @@ var GridEditor = {
 					data.wrapper_breakpoint[breakpoint_id].col = wrapper_col;
 					set_wrappers_col[data.wrapper.get_wrapper_id()] = wrapper_col;
 					if ( !data.wrapper_breakpoint[breakpoint_id].edited ) {
-						data.wrapper_breakpoint[breakpoint_id].order = wrapper_index-1;
+						data.wrapper_breakpoint[breakpoint_id].order = wrapper_edited + wrapper_index;
 						data.wrapper_breakpoint[breakpoint_id].clear = ( index === 0 );
 					}
 					data.wrapper.set_property('breakpoint', data.wrapper_breakpoint, silent);
