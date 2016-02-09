@@ -29,8 +29,6 @@ function() {
 		if(typeof properties.preset_style !== "undefined") {
 			properties.preset_style = properties.preset_style
 			.replace(/#page/g, '#page.upfront-layout-view .upfront-editable_entity.upfront-module');
-
-			properties.preset_style = Upfront.Util.colors.convert_string_ufc_to_color( properties.preset_style, true );
 		}
 		
 		return tpl({properties: expandBreakpoints(properties)})
@@ -80,19 +78,14 @@ function() {
 			// Do we have come colors here? Yes? Expand them then
 			_.each(props, function (prop, idx) {
 				if (Upfront.Util.colors.is_theme_color(prop)) {
-					/* This is being changed so that whenever the theme color is changed, it gets applied to preset style in editor mode live */
-					//props[idx] = Upfront.Util.colors.get_color(prop);
-					props[idx] = prop;
+					props[idx] = Upfront.Util.colors.get_color(prop);
 				}
 			});
 
 			if ($('style#' + styleId).length === 0) {
-				$('body').append('<style class="preset-style" id="' + styleId + '"></style>');
+				$('body').append('<style id="' + styleId + '"></style>');
 			}
-
-			/* This is being changed so that whenever the theme color is changed, it gets applied to preset style in editor mode live */
-			//$('style#' + styleId).text(generateCss(props, styleTpl));
-			$('style#' + styleId).text(Upfront.Util.colors.convert_string_ufc_to_color(generateCss(props, styleTpl), true));
+			$('style#' + styleId).text(generateCss(props, styleTpl));
 		}
 	};
 

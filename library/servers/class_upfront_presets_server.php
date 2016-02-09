@@ -165,29 +165,21 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 		$properties = $_POST['data'];
 
-		/* Here any ufc(s) commented and converted to colors in the front end are cleaned up in order to store them as simply a ufc */
-		$pattern = '/\/\*#ufc([^\*]*)\*\/([^\s;]*)/i';
-		$properties['preset_style'] = preg_replace($pattern, '#ufc$1 ', $properties['preset_style']);
-		
 		do_action('upfront_save_' . $this->elementName . '_preset', $properties, $this->elementName);
 
 		if (!has_action('upfront_save_' . $this->elementName . '_preset')) {
 			$presets = $this->get_presets();
 
 			$result = array();
-			
+
 			foreach ($presets as $preset) {
 				if ($preset['id'] === $properties['id']) {
 					continue;
 				}
-
 				$result[] = $preset;
 			}
 
-			
 			$result[] = $properties;
-
-
 
 			$this->update_presets($result);
 		}
