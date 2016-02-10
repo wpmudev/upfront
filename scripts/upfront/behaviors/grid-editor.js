@@ -3117,7 +3117,7 @@ var GridEditor = {
 			},
 			// Dealing with responsive settings which, apparently, trump the grid entirely
 			current_bp_id = Upfront.Settings.LayoutEditor.CurrentBreakpoint || Upfront.Settings.LayoutEditor.Grid.size_name,
-			breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().findWhere({id: current_bp_id}),
+			breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().findWhere({id: ( _.isObject(current_bp_id) ? current_bp_id.id : current_bp_id )}),
 			flag_update_breakpoint = false
 		;
 
