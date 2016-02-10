@@ -2760,6 +2760,9 @@ define([
 				Upfront.Events.trigger("command:module_group:finish_edit"); // close other reorder first
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 				$main.addClass('upfront-module-group-editing');
+				if ( this.wrapper_view ) {
+					this.wrapper_view.$el.addClass('upfront-wrapper-module-group-on-edit');
+				}
 				this.$el.addClass('upfront-module-group-on-edit');
 				this.trigger('deactivated');
 				this.editing = true;
@@ -2773,6 +2776,9 @@ define([
 				}
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 				$main.removeClass('upfront-module-group-editing');
+				if ( this.wrapper_view ) {
+					this.wrapper_view.$el.removeClass('upfront-wrapper-module-group-on-edit');
+				}
 				this.$el.removeClass('upfront-module-group-on-edit');
 				this.editing = false;
 				this.enable_interaction();

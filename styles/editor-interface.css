@@ -4750,7 +4750,8 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-wrapper.ui-resizable-resizing > .upfront-wrapper-meta {
   display: block !important; }
 
-.upfront-module-group-editing .upfront-wrapper.upfront-wrapper-active > .upfront-wrapper-meta {
+.upfront-module-group-editing .upfront-wrapper.upfront-wrapper-module-group-on-edit > .upfront-wrapper-meta,
+.upfront-module-group-editing .upfront-wrapper:hover > .upfront-wrapper-meta {
   display: none !important; }
 
 .upfront-module-group-editing .upfront-module-group-on-edit .upfront-wrapper:hover > .upfront-wrapper-meta {
