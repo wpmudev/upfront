@@ -503,6 +503,10 @@ div.preset-manager-panel .caption-height-number input {
 	margin: 10px;
 	font-size: 14px;
 	line-height: 1.2em;
+	text-decoration: none;
+	font-family: Source Sans Pro, sans-serif;
+	font-weight: normal;
+	font-style: normal;
 }
 .upfront-object-content .ugallery-onclick a:hover{
 	color: #1fcd8f !important;
