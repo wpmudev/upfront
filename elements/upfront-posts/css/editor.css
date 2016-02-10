@@ -50,15 +50,18 @@
     padding: 8px 0 0;
     margin: 0 0 15px;
 }
-.upfront_posts-initial-content a.continue,
-.upfront_posts-initial-content a.continue:link,
-.upfront_posts-initial-content a.continue:visited {
+.upfront-object-content .upfront_posts-initial-content a.continue,
+.upfront-object-content .upfront_posts-initial-content a.continue:link,
+.upfront-object-content .upfront_posts-initial-content a.continue:visited {
     display: inline-block;
     border: 2px solid #99c3e9;
     padding: 8px 25px;
     color: #284662;
     font-size: 11px;
     text-decoration: none;
+	font-family: Source Sans Pro, sans-serif;
+	font-weight: 300;
+	font-style: normal;
 }
 
 /* --- Custom posts list --- */
