@@ -279,6 +279,34 @@ var hackRedactor = function(){
                     this.selection.selectElement( $(this.selection.getInlines()).find("strong") );
                 }
             }
+        },
+        keydown: {
+            /**
+             * Overridden method from redactor core (@line 4849)
+             *
+             * We're overriding this method because of buggy logic in current redactor core.
+             * The `this.selection.getBlock()` method can just as easily return a (bool)false,
+             * and the original implementation doesn't account for that.
+             *
+             * @return {Boolean} Doesn't really matter, side-effects method
+             */
+            replaceDivToBreakLine: function()
+            {
+                var blockElem = this.selection.getBlock();
+                if (!(blockElem || {}).innerHTML) return false; // so yeah, selection.getBlock() got us nowhere, bail out
+                var blockHtml = blockElem.innerHTML.replace(/<br\s?\/?>/gi, '');
+                if ((blockElem.tagName === 'DIV' || blockElem.tagName === 'P') && blockHtml === '' && !$(blockElem).hasClass('redactor-editor'))
+                {
+                    var br = document.createElement('br');
+
+                    $(blockElem).replaceWith(br);
+                    this.caret.setBefore(br);
+
+                    this.code.sync();
+
+                    return false;
+                }
+            }
         }
     };
 
