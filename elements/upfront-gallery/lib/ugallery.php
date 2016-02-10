@@ -257,7 +257,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'has_settings' => 1,
 			'class' => 'c24 upfront-gallery',
 			'id_slug' => 'ugallery',
-
+			'preset' => 'default',
 			'status' => 'starting',
 			'images' => array(), // Convert to new UgalleryImages() for using
 			'elementSize' => array( 'width' => 0, 'height' => 0),
