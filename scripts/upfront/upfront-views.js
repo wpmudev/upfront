@@ -5268,15 +5268,12 @@ define([
 			update_region_position: function () {
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
 					grid = Upfront.Settings.LayoutEditor.Grid,
-					col = this.model.get_property_value_by_name('col'),
-					height = this.model.get_property_value_by_name('height');
+					col = this.model.get_breakpoint_property_value('col', true),
+					height = this.model.get_property_value_by_name('height')
+				;
 
-
-
-				if ( !col )
-					this.model.set_property('col', 10, true);
-				if ( !height )
-					this.model.set_property('height', 225, true);
+				if ( !col ) this.model.set_property('col', 10, true);
+				if ( !height ) this.model.set_property('height', 225, true);
 
 				width =  col*grid.column_width
 
@@ -5293,7 +5290,6 @@ define([
 					'minHeight': css.minHeight
 				});
 				this.$el.css(css);
-
 			},
 			/*update_position_hint: function (pos, $helper) {
 				var hint = '';
@@ -5335,7 +5331,8 @@ define([
 				}
 			},
 			on_change_breakpoint: function (breakpoint) {
-					this.hide();
+				this.update_region_position();
+				this.hide();
 			}
 		}),
 
