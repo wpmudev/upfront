@@ -828,7 +828,7 @@ Ueditor.prototype = {
             /**
              * Make sure return doesn't delete the last charactor
              */
-            if (13 === e.keyCode && !e.shiftKey ) {
+            if (13 === e.keyCode && !e.shiftKey && (self || {}).redactor) {
                 self.redactor.utils.removeEmpty();
                 $(self.redactor.selection.getCurrent()).append("&nbsp;")
             }
