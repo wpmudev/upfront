@@ -33,7 +33,7 @@
 							apply_binding_all();
 						});
 						Upfront.Events.on("entity:modules:render_module", apply_binding_view);
-						Upfront.Events.on("entity:regions:render_region", apply_binding_view);
+						Upfront.Events.on("entity:regions:render_region", apply_binding_view_region);
 						Upfront.Events.on("entity:regions:render_container", apply_binding_view);
 						//Upfront.Events.on("entity:resize_stop", apply_binding_view_region);
 						//Upfront.Events.on("entity:drag_stop", apply_binding_view_region);
@@ -60,7 +60,7 @@
 					apply_binding_all();
 				}
 				else {
-					var $region = view.$el.closest('.upfront-region');
+					var $region = view.$el.hasClass('.upfront-region') ? view.$el : view.$el.closest('.upfront-region');
 					apply_binding( bind.match(/\.upfront-region/) ? $region.parent() : $region );
 				}
 			}

@@ -28,7 +28,9 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 		if ($this->_get_property('usingNewAppearance') == true) {
 			$breakpoint_data['preset'] = isset($preset_props['breakpoint'])?$preset_props['breakpoint']:false;
 		} else {
-			foreach($this->_get_property('breakpoint') as $key=>$properties){
+			$breakpoint_property = $this->_get_property('breakpoint');
+			$breakpoint_property = is_array($breakpoint_property) ? $breakpoint_property : array();
+			foreach ($breakpoint_property as $key=>$properties) {
 				$breakpoint_data['preset'][$key] = $properties;
 
 				if(isset( $properties['burger_menu'] ) && isset( $properties['burger_menu'][0] )) {

@@ -1244,6 +1244,7 @@ var Application = new (Backbone.Router.extend({
 		// Start loading animation
 		app.loading = new Upfront.Views.Editor.Loading({
 			loading: Upfront.Settings.l10n.global.application.loading,
+			loading_notice: Upfront.Settings.l10n.global.application.long_loading_notice,
 			loading_type: 'upfront-boot',
 			done: Upfront.Settings.l10n.global.application.thank_you_for_waiting,
 			fixed: true
@@ -1254,6 +1255,11 @@ var Application = new (Backbone.Router.extend({
 		});
 		app.loading.render();
 		$('body').append(app.loading.$el);
+
+		/*setTimeout(function(){
+			if ( app.loading.is_done ) return;
+			app.loading.update_loading_notice(Upfront.Settings.l10n.global.application.long_loading_notice);
+		}, 10000);*/
 
 		app.create_sidebar();
 
@@ -1541,6 +1547,7 @@ var Application = new (Backbone.Router.extend({
 
 		//Load the new layout
 		this.load_layout(layoutOps, {new_post: post_type}).done(function(response){
+
 			Upfront.Settings.LayoutEditor.newpostType = post_type;
 			postData = response.data.post;
             Upfront.data.posts[postData.ID].is_new = true;
@@ -1552,12 +1559,13 @@ var Application = new (Backbone.Router.extend({
 	},
 
 	post_set_up: function(postData){
+		
 		//Create the post with meta
 		postData.meta = [];
 		var post = new Upfront.Models.Post(postData);
-
-		post.is_new = postData.post_status == 'auto-draft' && postData.post_content === '';
-
+				
+		post.is_new = postData.post_status === 'draft' && postData.post_content.indexOf('<p') < 0 ;//postData.post_status == 'auto-draft' && postData.post_content === '';
+		
 		//Set global variables
 		Upfront.data.posts[post.id] = post;
 		_upfront_post_data.post_id = post.id;
@@ -1571,6 +1579,9 @@ var Application = new (Backbone.Router.extend({
 			bodyClasses += ' page page-id-' + post.id + ' page-template-default';
 		else
 			bodyClasses += ' single single-' + postData.post_type + ' postid-' + post.id;
+
+		if(post.is_new)
+			bodyClasses += ' is_new';
 
 		$('body')
 			.removeClass()

@@ -384,6 +384,10 @@ define("content", deps, function(postTpl, ContentTools) {
 			else
 				this.post.set('post_status', status);
 
+			/* If this is a new post, take out the default post_name so that the system assigns a new one based on the edited title */
+			if($('body').hasClass('is_new'))
+				this.post.set('post_name', '');
+
 			this.post.save().done(function(result){
                 if( me.post.is_new && post_name.length){
                     me.post.set("post_name", post_name).save();

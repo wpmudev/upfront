@@ -101,7 +101,7 @@
                  * Checks if current insert is simple image insert
                  */
                 is_image_insert: function(){
-                    return this.$editor.find(".plain-text-container").length;
+                    return this.className.indexOf("basic-wrapper") !== -1;
                 },
                 /**
                  * Returns type of current image insert
@@ -180,7 +180,7 @@
                     });
 
                     this.caption_ueditor.redactor.events.on('ueditor:focus', function(redactor){
-                        if( redactor != self.caption_ueditor.redactor || self.caption_active === true)
+                        if( redactor != self.caption_ueditor.redactor )
                             return;
 
 
@@ -210,7 +210,7 @@
                     });
 
                     this.caption_ueditor.redactor.events.on('ueditor:blur', function(redactor){
-                        if( redactor != self.caption_ueditor.redactor ||  self.caption_active === false)
+                        if( redactor != self.caption_ueditor.redactor )
                             return;
 
                         var $parent = self.$el.closest('.redactor-editor'),
@@ -569,7 +569,10 @@
                     return imageData;
                 },
                 render_shortcode: function(data){
-                    if( this.$editor.data("ueditor") && !this.$editor.data("ueditor").options.inserts.length ) return; // if "inserts" array is empty or not defined there is no need to render shortcode!
+                    //if( _.isUndefined( this.$editor.data("ueditor")  ) || !this.$editor.data("ueditor").options.inserts.length ) return; // if "inserts" array is empty or not defined there is no need to render shortcode!
+
+                    if( this.is_image_insert() ) return;
+
                     data = data instanceof Backbone.Model ? data.toJSON() : data;
 
                     var html = this.shortcode_tpl(data);

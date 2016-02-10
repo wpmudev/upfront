@@ -70,6 +70,8 @@ define([
 			this.on('open', function(){
 				me.model.trigger('settings:open', me);
 			});
+
+			this.listenTo(Upfront.Events, 'element:settings:render', this.setScrollMaxHeight);
 		},
 
 		saveSettings: function() {
@@ -98,10 +100,15 @@ define([
 			this.model.get("properties").trigger('change');
 			Upfront.Events.trigger("element:settings:saved");
 			Upfront.Events.trigger("element:settings:deactivate");
-			// if ( _upfront_post_data.layout.specificity && _upfront_post_data.layout.item && !_upfront_post_data.layout.item.match(/-page/) )
-				// Upfront.Events.trigger("command:layout:save_as");
-			// else
-				// Upfront.Events.trigger("command:layout:save");
+			if(Upfront.Application.is_builder()) {
+				Upfront.Events.trigger("command:layout:export_theme");
+			}
+			else {
+				if ( _upfront_post_data.layout.specificity && _upfront_post_data.layout.item && !_upfront_post_data.layout.item.match(/-page/) )
+					Upfront.Events.trigger("command:layout:save_as");
+				else
+					Upfront.Events.trigger("command:layout:save");
+			}
 
 			if (this.onSaveSettings) this.onSaveSettings();
 		},
@@ -161,6 +168,14 @@ define([
 					"<button type='button' class='upfront-save_settings'><i class='icon-ok'></i> " + l10n.save_element + "</button>" +
 				'</div>'
 			);
+		},
+
+		setScrollMaxHeight: function(){
+			var height = this.$el.height(),
+				titleHeight = this.$el.find('>.upfront-settings-title').outerHeight(true),
+				buttonHeight = this.$el.find('>.upfront-settings-button_panel').outerHeight(true)
+			;
+			this.$el.find('#sidebar-scroll-wrapper').css('max-height', (height-titleHeight-buttonHeight) + 'px')
 		},
 
 		cleanUp: function(){
