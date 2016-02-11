@@ -2481,11 +2481,10 @@ define([
 				if( typeof e !== "undefined" ){
 					e.preventDefault();
 				}
-				var BgSettings = Upfront.Views.Editor.BgSettings.Settings.extend({
+				var GroupSettings = Upfront.Views.Editor.BgSettings.GroupSettings.extend({
 					bg_title: l10n.group_settings,
-					enable_types: ['color', 'image'/*, 'slider', 'video', 'map'*/]
 				});
-				Upfront.Events.trigger("entity:settings:activate", this, BgSettings);
+				Upfront.Events.trigger("element:settings:activate", this, GroupSettings);
 			},
 			on_ungroup: function () {
 				var me = this,

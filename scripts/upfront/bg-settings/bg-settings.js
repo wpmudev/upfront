@@ -10,8 +10,11 @@ define([
 	'scripts/upfront/bg-settings/image-item',
 	'scripts/upfront/bg-settings/map-item',
 	'scripts/upfront/bg-settings/slider-item',
-	'scripts/upfront/bg-settings/video-item'
-], function(ColorItem, ImageItem, MapItem, SliderItem, VideoItem) {
+	'scripts/upfront/bg-settings/video-item',
+	'scripts/upfront/element-settings/settings',
+	'scripts/upfront/element-settings/root-settings-panel',
+	'scripts/upfront/element-settings/advanced-settings'
+], function(ColorItem, ImageItem, MapItem, SliderItem, VideoItem, ElementSettings, RootSettingsPanel, AdvancedSettings) {
 	
 	var BgItem = Upfront.Views.Editor.Settings.Item.extend({
 		initialize: function (options) {
@@ -138,9 +141,40 @@ define([
 		}
 		
 	});
+	
+	var GroupLayout = RootSettingsPanel.extend({
+		className: 'upfront-settings_panel_wrap ugroup-settings',
+		initialize: function (opts) {
+			this.options = opts;
+			this.has_tabs = false;
+			var me = this;
+
+			var ColorSettings = new ColorItem({ model: this.model });
+			var ImageSettings = new ImageItem({ model: this.model });
+
+			this.settings = _([
+				ColorSettings,
+				ImageSettings
+			]);
+		},
+	});
+	
+	var GroupSettings = ElementSettings.extend({
+		initialize: function (opts) {
+			this.has_tabs = false;
+			this.options = opts;
+			var panel = new GroupLayout(opts);
+			this.panels = [
+				panel,
+				new AdvancedSettings({model: this.model})
+			];
+		},
+		title: l10n.group_settings
+	});
 
 	Upfront.Views.Editor.BgSettings = {
 		Settings: BgSettings,
+		GroupSettings: GroupSettings,
 		BgItem: BgItem,
 		ColorItem: ColorItem,
 		ImageItem: ImageItem,

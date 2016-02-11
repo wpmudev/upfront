@@ -25,7 +25,7 @@ define([], function () {
 		destroySettings();
 	};
 
-	var showSettings = function(view) {
+	var showSettings = function(view, settings_view) {
 		var current_object_proto, settings_obj_view;
 
 		if (the_settings_view) {
@@ -44,7 +44,12 @@ define([], function () {
 		}, false);
 
 		current_object_proto = (current_object_proto && current_object_proto.Settings ? current_object_proto : Upfront.Views.Editor.Settings);
-		settings_obj_view = current_object_proto.Settings;
+		
+		if(typeof settings_view !== "undefined") {
+			settings_obj_view = settings_view;
+		} else {
+			settings_obj_view = current_object_proto.Settings;
+		}
 
 		the_settings_view = new settings_obj_view({
 			model: view.model,
