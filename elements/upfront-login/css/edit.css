@@ -67,12 +67,12 @@ div.upfront_login-item-display_trigger div.upfront-settings-item {
 
 div.upfront-login_element-module,
 div.upfront-login_element-module.upfront-module-active {
-	z-index: 80;
+  z-index: 80;
 }
 
 div.upfront-login_element-module .upfront_login.upfront_login-hover,
 div.upfront-login_element-module.upfront-module-active .upfront_login.upfront_login-hover,
 div.upfront-login_element-module .upfront_login.upfront_login-click,
 div.upfront-login_element-module.upfront-module-active .upfront_login.upfront_login-click {
-	z-index: 15;
+  z-index: 15;
 }
