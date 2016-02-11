@@ -612,6 +612,7 @@ define(function() {
 			 * */
 			convert_string_ufc_to_color: function( string, include_ufc_as_comment ){
 				if(_.isEmpty(string)) return string;
+
 				include_ufc_as_comment = typeof include_ufc_as_comment === "undefined" ? true : include_ufc_as_comment;
                 var theme_colors = Upfront.Views.Theme_Colors.colors.pluck("color"),
                     theme_alphas = Upfront.Views.Theme_Colors.colors.pluck("alpha");
@@ -619,11 +620,11 @@ define(function() {
 					// if already a commented ufc, replace the color value with the updated colors
                     var pattern_existing = new RegExp( "/\\*#ufc" + _i + "\\*/([^\\s;]*)","g");
 					string = string.replace(pattern_existing, "/*" + "#oufc" + _i + "*/" + theme_colors[_i]+" "  );
-				
-					var pattern = new RegExp("([^\\*])#ufc" + _i,"g"),
-						theme_color;
-                    theme_color = theme_colors[_i] === '#000000' && theme_alphas[_i] === 0 ? 'inherit' : theme_colors[_i];
-                    theme_color = include_ufc_as_comment ? "$1/*" + "#ufc" + _i + "*/" + theme_color : "$1"+theme_color;
+
+					var pattern = new RegExp("#ufc" + _i,"g"),
+                    	theme_color = theme_colors[_i] === '#000000' && theme_alphas[_i] === 0 ? 'inherit' : theme_colors[_i];
+
+                    theme_color = include_ufc_as_comment ? "/*" + "#ufc" + _i + "*/" + theme_color : theme_color;
 
 					string = string.replace(pattern, theme_color );
 
