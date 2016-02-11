@@ -61,14 +61,14 @@ define([
 					values: types,
 					change: function () {
 						var value = this.get_value();
-						me.panel.parent_view.toggle_setting(value);
+						me.panel.parent_view.panels[0].toggle_setting(value);
 						this.model.set_breakpoint_property(this.property_name, value);
 					}
 				})
 			];
 			this.$el.addClass('uf-bgsettings-item');
 			this.constructor.__super__.initialize.call(this, options);
-		}
+		},
 	});
 	
 	var BgSettings = Upfront.Views.Editor.Settings.Settings.extend({
@@ -144,19 +144,60 @@ define([
 	
 	var GroupLayout = RootSettingsPanel.extend({
 		className: 'upfront-settings_panel_wrap ugroup-settings',
+		title: l10n.group_bg,
 		initialize: function (opts) {
 			this.options = opts;
 			this.has_tabs = false;
 			var me = this;
+			
+			this.listenTo(Upfront.Events, 'element:settings:render', this.settings_opened);
 
 			var ColorSettings = new ColorItem({ model: this.model });
 			var ImageSettings = new ImageItem({ model: this.model });
+			
+			var bg_item_options = {
+					model: this.model,
+					enable_types: ['color', 'image']
+				};
+			if ( this.bg_title )
+				bg_item_options.title = this.bg_title;
+			else
+				bg_item_options.group = false;
+			
+			var	BgItemSettings = new BgItem(bg_item_options);
 
-			this.settings = _([
-				ColorSettings,
-				ImageSettings
-			]);
+			this.settings = _({
+				bgitem: BgItemSettings,
+				color: ColorSettings,
+				image: ImageSettings
+			});
 		},
+		
+		settings_opened: function() {
+			var bg_type = this.model.get_breakpoint_property_value('background_type', true),
+				bg_image = this.model.get_breakpoint_property_value('background_image', true);
+			if ( bg_type )
+				this.toggle_setting(bg_type);
+			else
+				this.toggle_setting( bg_image ? 'image' : 'color' );
+		},
+		
+		toggle_setting: function (active) {
+			_.each(this.settings._wrapped, function(setting, type){
+				if ( type == active )
+					setting.trigger('show');
+				else
+					setting.trigger('hide');
+			});
+		},
+		
+		get_label: function () {
+			return l10n.group_bg;
+		},
+		
+		get_title: function () {
+			return l10n.group_bg;
+		}
 	});
 	
 	var GroupSettings = ElementSettings.extend({
