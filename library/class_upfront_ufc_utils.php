@@ -71,6 +71,21 @@ class Upfront_UFC_Utils
     }
 
     /**
+     * Removes unused whitespace from style string
+     * @param  string $css_string
+     * @return string|Null
+     */
+    function remove_unused_space( $css_string ) {
+        if(trim($css_string) === "") return $css_string;
+        return preg_replace(
+            '#("(?:[^"\\\]++|\\\.)*+"|\'(?:[^\'\\\\]++|\\\.)*+\'|\/\*(?>.*?\*\/))|\s*+;\s*+(})\s*+|\s*+([*$~^|]?+=|[{};,>~+]|\s*+-(?![0-9\.])|!important\b)\s*+|([[(:])\s++|\s++([])])|\s++(:)\s*+(?!(?>[^{}"\']++|"(?:[^"\\\]++|\\\.)*+"|\'(?:[^\'\\\\]++|\\\.)*+\')*+{)|^\s++|\s++\z|(\s)\s+#si',
+            '$1$2$3$4$5$6$7',
+            $css_string
+        );
+    }
+
+
+    /**
      * Replaces commented form of ufc styles with simple ufc variable
      *
      * @param string $style
@@ -78,7 +93,9 @@ class Upfront_UFC_Utils
      */
     public function replace_commented_style_with_variable($style)
     {
-        $pattern = '/\/\*#ufc([^\*]*)\*\/([^\t;]*)/i';
-        return preg_replace($pattern, '#' . Upfront_UFC::VAR_PREFIX .'$1 ', $style);
+        $style = $this->remove_unused_space( $style );
+        $pattern = '/\/\*#ufc([^\*]*)\*\/([^\s;]*)/i';
+        $result =  preg_replace($pattern, '#' . Upfront_UFC::VAR_PREFIX .'$1 ', $style);
+        return str_replace( "/*#ufc", "#ufc", $result );
     }
 }
