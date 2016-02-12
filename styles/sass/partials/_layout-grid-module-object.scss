@@ -151,7 +151,7 @@
 	z-index: 30;
 }
 .upfront-wrapper.upfront-inline-panel-item-open {
-	z-index: 70;
+  z-index: 2999999;
 }
 
 .upfront-wrapper-content {
@@ -295,7 +295,7 @@
 }
 .upfront-module-has-nav:hover,
 .upfront-module-active.upfront-module-has-nav {
-	z-index: 50;
+	z-index: 80;
 }
 .upfront-module-has-nav.upfront-module-nav-open {
 	z-index: 90;
