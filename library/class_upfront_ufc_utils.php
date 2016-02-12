@@ -86,6 +86,22 @@ class Upfront_UFC_Utils
 
 
     /**
+     * Removes white space from rgba and rgb values
+     * i.e. rgba(1, 5, 10, 20) => rgba(1,5,10,20)
+     *
+     * @param $css_string
+     * @return mixed
+     */
+    function remove_whitespace_from_rgb_values($css_string){
+
+        return preg_replace_callback('/rgb([^\)]*)\)/i', 	function($matches) {
+            return str_replace(' ', '', $matches[0]);
+        },
+            $css_string);
+
+        return str_replace(", ", ",", $css_string);
+    }
+    /**
      * Replaces commented form of ufc styles with simple ufc variable
      *
      * @param string $style
@@ -93,7 +109,7 @@ class Upfront_UFC_Utils
      */
     public function replace_commented_style_with_variable($style)
     {
-        $style = $this->remove_unused_space( $style );
+        $style = $this->remove_whitespace_from_rgb_values( $style );
         $pattern = '/\/\*#ufc([^\*]*)\*\/([^\s;]*)/i';
         $result =  preg_replace($pattern, '#' . Upfront_UFC::VAR_PREFIX .'$1 ', $style);
         return str_replace( "/*#ufc", "#ufc", $result );
