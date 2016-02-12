@@ -127,7 +127,7 @@ class Upfront_UpostsView extends Upfront_Object {
 			'has_settings' => 1,
 			'class' => 'c24 uposts-object',
 			'id_slug' => 'uposts',
-
+			'preset' => 'default',
 			'post_type' => 'post',
 			'taxonomy' => '',
 			'term' => '',
