@@ -84,20 +84,27 @@ class Upfront_UFC_Utils
         );
     }
 
+    /**
+     * Callback to clean spaces inside matches found by preg_replace_callback in self::remove_whitespace_from_rgb_values
+     *
+     * @param $matches
+     * @return mixed
+     */
+    protected function clean_spaces($matches) {
+        return str_replace(' ', '', $matches[0]);
+    }
 
     /**
      * Removes white space from rgba and rgb values
      * i.e. rgba(1, 5, 10, 20) => rgba(1,5,10,20)
      *
+     * @uses clean_spaces
      * @param $css_string
      * @return mixed
      */
     function remove_whitespace_from_rgb_values($css_string){
 
-        return preg_replace_callback('/rgb([^\)]*)\)/i', 	function($matches) {
-            return str_replace(' ', '', $matches[0]);
-        },
-            $css_string);
+        return preg_replace_callback('/rgb([^\)]*)\)/i', array($this, 'clean_spaces'), $css_string);
 
         return str_replace(", ", ",", $css_string);
     }
