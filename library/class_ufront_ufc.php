@@ -108,24 +108,31 @@ class Upfront_UFC {
 
 	/**
 	 * Replaces ufc variables with actual color code
+	 * First makes sure we don't have commented ufc colors in the given string and instead we only have ufc vars
+	 * then converts the variables to actual colors
 	 *
+	 * @uses Upfront_UFC_Utils::replace_commented_style_with_variable
+	 * @uses convert_variables_to_color
 	 * @param $string
 	 * @return mixed
 	 */
 	public function process_colors( $string ){
+		$string = self::utils()->replace_commented_style_with_variable( $string );
+		return $this->convert_variables_to_color( $string );
+	}
 
+	/**
+	 * Finds and converts ufc variables to actual colors
+	 *
+	 * @param string $string
+	 * @return mixed
+	 */
+	public function convert_variables_to_color( $string ){
 		$theme_colors = !empty(self::$_theme_colors->colors) ? self::$_theme_colors->colors : array();
-		
-		for( $i = 0; $i < self::$_theme_color_count ; $i++ ){
-			
-			// This just ensures that the css integrity is not compromised if any colors are stored as commented out ufc with color code already.
-			// helps with unclean css saved from previous versions of the code */
-//			$pattern = '/\/\*#ufc'.$i.'\*\/([^\s;]*)/i';
-//			$string = preg_replace($pattern, $theme_colors[$i]->color." ", $string);
 
+		for( $i = 0; $i < self::$_theme_color_count ; $i++ ){
 			$string = str_replace("#" . self::VAR_PREFIX . $i, $theme_colors[$i]->color  , $string );
 		}
-
 
 		return $string;
 	}
