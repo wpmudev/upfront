@@ -216,7 +216,11 @@ class Upfront_Grid {
 		$modules = $data['modules'];
 		if ( !$breakpoint->is_default() ) {
 			foreach ($wrappers as $w => $wrapper) {
-				$wrappers[$w]['_order'] = $w;
+				$wrapper_id = upfront_get_property_value('wrapper_id', $wrapper);
+				foreach ( $modules as $m => $module ) {
+					if ( upfront_get_property_value('wrapper_id', $module) != $wrapper_id ) continue;
+					$wrappers[$w]['_order'] = $m;
+				}
 			}
 			usort($wrappers, array($this, '_sort_cb'));
 		}
