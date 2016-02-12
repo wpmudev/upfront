@@ -124,7 +124,7 @@ class Upfront_UFC {
 	/**
 	 * Finds and converts ufc variables to actual colors
 	 *
-	 * @param string $string
+	 * @param string $string css styles
 	 * @return mixed
 	 */
 	public function convert_variables_to_color( $string ){
