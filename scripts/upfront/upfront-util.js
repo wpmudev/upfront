@@ -93,6 +93,20 @@ define(function() {
 		clone: function (obj) {
 			return jQuery.extend(true, {}, obj);
 		},
+		
+		/**
+		 * Escape RegEx string
+		 * https://github.com/sindresorhus/escape-string-regexp/blob/master/index.js
+		 */
+		preg_quote: function (str) {
+			var matchOperatorsRe = /[|\\{}()[\]^$+*?.]/g;
+
+			if (typeof str !== 'string') {
+				throw new TypeError('Expected a string');
+			}
+
+			return str.replace(matchOperatorsRe, '\\$&');
+		},
 
 		/**
 		 * Check CSS support
