@@ -90,7 +90,7 @@ class Upfront_UFC_Utils
      * @param $matches
      * @return mixed
      */
-    protected function clean_spaces($matches) {
+    private function _clean_spaces($matches) {
         return str_replace(' ', '', $matches[0]);
     }
 
@@ -104,10 +104,11 @@ class Upfront_UFC_Utils
      */
     function remove_whitespace_from_rgb_values($css_string){
 
-        return preg_replace_callback('/rgb([^\)]*)\)/i', array($this, 'clean_spaces'), $css_string);
+        return preg_replace_callback('/rgb([^\)]*)\)/i', array($this, '_clean_spaces'), $css_string);
 
         return str_replace(", ", ",", $css_string);
     }
+
     /**
      * Replaces commented form of ufc styles with simple ufc variable
      *
@@ -116,9 +117,12 @@ class Upfront_UFC_Utils
      */
     public function replace_commented_style_with_variable($style)
     {
-        $style = $this->remove_whitespace_from_rgb_values( $style );
-        $pattern = '/\/\*#ufc([^\*]*)\*\/([^\s;]*)/i';
-        $result =  preg_replace($pattern, '#' . Upfront_UFC::VAR_PREFIX .'$1 ', $style);
-        return str_replace( "/*#ufc", "#ufc", $result );
+        return preg_replace_callback("/(\\/\\*){1,}(\\#ufc\\d+)(\\S|,)+/i",
+            array($this, '_replace_commented_style_with_variable_replacement'),
+            $this->remove_whitespace_from_rgb_values( $style ));
+    }
+
+    private function _replace_commented_style_with_variable_replacement( $matches ){
+        return trim( $matches[3] ) === "," ? $matches[2] . $matches[3] : $matches[2];
     }
 }
