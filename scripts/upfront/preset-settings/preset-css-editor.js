@@ -152,7 +152,7 @@ define([
 			return styles_with_selector;
 		},
 		cleanUpStyles: function(styles) {
-			if(typeof this.get_css_selector() === "undefined") return '';
+			if(!this.get_css_selector()) return '';
 
 			var scope = new RegExp(Upfront.Util.preg_quote(this.get_css_selector()) + '\\s*', 'g');
 			styles = styles.replace(new RegExp('#page ' + Upfront.Util.preg_quote(this.get_css_selector()) + '\\s*', 'g'), '');
@@ -390,6 +390,9 @@ define([
 		},
 		get_css_selector: function() {
 			if (this.is_global_stylesheet) return '';
+
+			//Make sure preset id is defined and not empty
+			if (typeof this.options.preset.get('id') === "undefined" || !this.options.preset.get('id')) return '';
 
 			var preset_class = '.' + this.options.preset.get('id');
 
