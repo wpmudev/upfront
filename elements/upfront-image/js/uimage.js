@@ -90,6 +90,8 @@ define([
 
 			this.listenTo(Upfront.Events, 'command:layout:save', this.saveResizing);
 			this.listenTo(Upfront.Events, 'command:layout:save_as', this.saveResizing);
+			
+			this.listenTo(Upfront.Events, "preset:image:updated", this.caption_updated, this);
 
 			this.listenTo(Upfront.Events, 'upfront:layout_size:change_breakpoint', function(newMode){
 				if(newMode.id !== 'desktop') {
@@ -131,8 +133,16 @@ define([
 
 			return props[prop_name];
 		},
-		preset_updated: function() {
+		preset_updated: function(preset) {
 			this.render();
+			Upfront.Events.trigger('preset:image:updated', preset);
+		},
+		
+		caption_updated: function(preset) {
+			var currentPreset = this.model.get_property_value_by_name("preset");
+
+			//If element use updated preset re-render
+			if(currentPreset === preset) this.render();
 		},
 
 		update_colors: function () {
