@@ -131,6 +131,16 @@ div.upfront-navigation.upfront-editable_entity ul.time_being_display {
 div.upfront-navigation.upfront-editable_entity a.menu_item.menu_item_placeholder {
 	min-width: 92px;
 }
+
+/* This is being done to keep the placeholder on a new nav item, or an existing nav item, in position */
+span.menu_item-ueditor.redactor-placeholder,
+span.menu_item-ueditor.ueditor-placeholder {
+  position: inherit !important;
+  top: inherit !important;
+  left: inherit !important;
+  right: inherit !important;
+}
+
 div.upfront-navigation.upfront-editable_entity  div.existing_menu_list ul li:before, div.upfront-navigation.upfront-editable_entity  div.existing_menu_list li label:before {
 	display: none !important;
 }
@@ -371,9 +381,11 @@ li.menu-item .uimage-controls.image-element-controls .upfront-inline-panel .upfr
 }
 li.menu-item .uimage-controls.image-element-controls .upfront-inline-panel .upfront-inline-panel-item.labeled i {
 	display: inline-block;
+	vertical-align: middle;
 }
 li.menu-item .uimage-controls.image-element-controls .upfront-inline-panel .upfront-inline-panel-item.labeled span {
 	display: inline-block;
+	vertical-align: middle;
 	width: auto!important;
 }
 li.menu-item .uimage-controls.image-element-controls {
@@ -381,12 +393,16 @@ li.menu-item .uimage-controls.image-element-controls {
 	visibility: hidden;
 	bottom: -30px;
 	left: 0;
+	max-width: 100%;
+	overflow-x: hidden;
 }
 li.menu-item .uimage-controls.image-element-controls .upfront-inline-panel {
 	visibility: hidden;
 }
 li.menu-item.controls-visible > .uimage-controls.image-element-controls {
 	visibility: visible;
+	max-width: none;
+	overflow-x: visible;
 }
 li.menu-item.controls-visible > .uimage-controls.image-element-controls .upfront-inline-panel {
 	visibility: visible;

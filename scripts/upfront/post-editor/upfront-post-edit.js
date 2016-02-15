@@ -73,7 +73,7 @@ var Box = Backbone.View.extend({
             ? Upfront.Settings.l10n.global.content.tags_cats_url
             : Upfront.Settings.l10n.global.content.no_tax_url
         ;
-
+        extraData.url_label = "post" === me.post.get("post_type") ? Upfront.Settings.l10n.global.content.post_url : Upfront.Settings.l10n.global.content.page_url;
         this.$el.html(this.tpl(_.extend({}, postData, extraData) ));
         this.populateSections();
         return this;
@@ -520,8 +520,9 @@ var PostUrlEditor = PostSectionView.extend({
         base = base ? base.replace(/\?.*$/, '') : window.location.origin + '/';
         this.$el.html(this.tpl({
             rootUrl: base,
-            slug: self.post.get('post_name')
-        }));
+            slug: self.post.get('post_name'),
+            url_label : "post" === self.post.get("post_type") ? Upfront.Settings.l10n.global.content.post_url : Upfront.Settings.l10n.global.content.page_url
+    }));
     },
     update: function(e){
         e.preventDefault();

@@ -150,7 +150,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		if (is_array($presets) === false) {
 			$presets = array();
 		}
-
+		
 		return $presets;
 	}
 
@@ -165,21 +165,27 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 		$properties = $_POST['data'];
 
+		$properties['preset_style'] = Upfront_UFC::utils()->replace_commented_style_with_variable( $properties['preset_style'] );
+		
 		do_action('upfront_save_' . $this->elementName . '_preset', $properties, $this->elementName);
 
 		if (!has_action('upfront_save_' . $this->elementName . '_preset')) {
 			$presets = $this->get_presets();
 
 			$result = array();
-
+			
 			foreach ($presets as $preset) {
 				if ($preset['id'] === $properties['id']) {
 					continue;
 				}
+
 				$result[] = $preset;
 			}
 
+			
 			$result[] = $properties;
+
+
 
 			$this->update_presets($result);
 		}
@@ -223,6 +229,8 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 				$preset['preset_style'] = str_replace("\'", "'", $preset['preset_style']);
 				$preset['preset_style'] = str_replace("\'", "'", $preset['preset_style']);
 				$preset['preset_style'] = str_replace("\'", "'", $preset['preset_style']);
+
+				$preset['preset_style'] = str_replace('#page', 'div#page .upfront-output-region-container .upfront-output-module', $preset['preset_style']);
 			}
 
 			$args = array('properties' => $preset);
@@ -323,7 +331,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		}
 
 		//Check if preset is distributed with the theme
-		foreach($presets as $preset) {
+		if (is_array($presets)) foreach($presets as $preset) {
 			if(in_array($preset['id'], $theme_presets)) {
 				$preset['theme_preset'] = true;
 			} else {
@@ -349,7 +357,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		$strings['preset_manager'] = self::_get_l10n();
 		return $strings;
 	}
-	
+
 	public static function get_preset_defaults () {
 		return array();
 	}
@@ -361,11 +369,16 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 	private static function _get_l10n ($key=false) {
 		$l10n = array(
 			'select_preset' => __('Select Preset', 'upfront'),
+			'preset' => __('Preset', 'upfront'),
 			'select_preset_label' => __('Choose or Create Preset:', 'upfront'),
 			'delete_label' => __('Delete', 'upfront'),
 			'add_label' => __('Add', 'upfront'),
+			'ok_label' => __('OK', 'upfront'),
+			'cancel_label' => __('Cancel', 'upfront'),
+			'apply_label' => __('Apply', 'upfront'),
 			'not_empty_label' => __('Preset name can not be empty.', 'upfront'),
 			'special_character_label' => __('Preset name can contain only numbers, letters and spaces.', 'upfront'),
+			'invalid_preset_label' => __('Invalid preset name. Preset name should start with a letter.', 'upfront'),
 			'default_preset' => __('Default', 'upfront'),
 			'add_preset_label' => __('Add Preset', 'upfront'),
 			'border' => __('Border', 'upfront'),
@@ -395,7 +408,18 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			'ease_out' => __('ease-out', 'upfront'),
 			'ease_in_out' => __('ease-in-out', 'upfront'),
 			'edit_preset_css' => __('Edit Preset CSS', 'upfront'),
-			'edit_preset_label' => __('Custom CSS', 'upfront')
+			'edit_preset_label' => __('Custom CSS', 'upfront'),
+			'convert_style_to_preset' => __('Save as Preset', 'upfront'),
+			'convert_preset_info' => __('Upfront 1.0 introduces presets, which allow you to save and re-use styling for any element across your website. Before you can edit this element, choose one of the following options:', 'upfront'),
+			'select_preset_info' => __('Select existing preset (<strong>recommended</strong>):', 'upfront'),
+			'save_as_preset_button_info' => __('Or save current style as a new preset:', 'upfront'),
+			'preset_changed' => __('Preset changed to %s', 'upfront'),
+			'preset_already_exist' => __('Preset %s already exist, use another name!', 'upfront'),
+			'preset_created' => __('Preset %s created succesfully!', 'upfront'),
+			'preset_reset' => __('Preset %s was reset!', 'upfront'),
+			'default_overlay_title' => __('Editing Default Preset', 'upfront'),
+			'default_overlay_text' => __('<p>Please beware, this element is using <strong>Default Preset</strong>, Modifying Presets will affect every layout where that Preset is used.</p><p>To modify just this instance of Element, please create a New Preset.</p>', 'upfront'),
+			'default_overlay_button' => __('Edit Default Preset', 'upfront')
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)

@@ -51,11 +51,11 @@
 #element-settings-sidebar #settings #sidebar-scroll-wrapper {
 	overflow-x: hidden;
 	overflow-y : auto;
-	position: absolute;
+	/*position: absolute;
 	left: 0;
 	right: 0;
 	bottom: 65px;
-	top: 44px;
+	top: 44px;*/
 	background: #f7fbff;
 }
 
@@ -83,9 +83,10 @@
 	text-align: right;
 	padding-right: 15px;
 	z-index: 0;
-	position: absolute;
+	/*position: absolute;
 	bottom: 0;
-	right: auto;
+	right: auto;*/
+	position: static;
 	width: 260px;
 	height: 50px;
 }
@@ -165,6 +166,26 @@
 .menu-structure-item-depth-5 {
 	margin-left: 90px;
 }
+.menu-structure-item-depth-6 {
+	margin-left: 105px;
+}
+.menu-structure-item-depth-7 {
+	margin-left: 120px;
+}
+.menu-structure-item-depth-8 {
+	margin-left: 135px;
+}
+.menu-structure-item-depth-9 {
+	margin-left: 150px;
+}
+.menu-structure-item-depth-10,
+.menu-structure-item-depth-11,
+.menu-structure-item-depth-12,
+.menu-structure-item-depth-13,
+.menu-structure-item-depth-14,
+.menu-structure-item-depth-15 {
+	margin-left: 165px;
+}
 .menu-item-editor {
 	background: #f5f9ff;
 	line-height: 16px;
@@ -187,11 +208,26 @@
 	line-height: 24px;
 	background: #e6f2ff;
 	border: 1px solid #b8cfe6;
-	padding: 0 28px 0 8px;
+	padding: 0 98px 0 8px;
 	color: #2f475f;
 	border-radius: 2px;
 	position: relative;
 	cursor: pointer;
+}
+.menu-structure-item-depth-5 .menu-item-header,
+.menu-structure-item-depth-6 .menu-item-header,
+.menu-structure-item-depth-7 .menu-item-header {
+	padding-right: 65px;
+}
+.menu-structure-item-depth-8 .menu-item-header,
+.menu-structure-item-depth-9 .menu-item-header,
+.menu-structure-item-depth-10 .menu-item-header,
+.menu-structure-item-depth-11 .menu-item-header,
+.menu-structure-item-depth-12 .menu-item-header,
+.menu-structure-item-depth-13 .menu-item-header,
+.menu-structure-item-depth-14 .menu-item-header,
+.menu-structure-item-depth-15 .menu-item-header {
+	padding-right: 28px;
 }
 .menu-item-header .menu-item-delete {
 	display: none;
@@ -229,6 +265,13 @@
 	border-top: 4px solid #6a8db4;
 	border-bottom: 0 none;
 }
+.flexbox-support .menu-item-header {
+	display: -webkit-flex;
+	display: flex;
+	-webkit-justify-content: space-between;
+	justify-content: space-between;
+	padding-right: 28px;
+}
 
 .menu-item-expanded .menu-item-header:before {
 	top: 10px;
@@ -240,10 +283,44 @@
 }
 .menu-item-header .menu-item-title {
 	font-weight: bold;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	max-width: 100%;
+	margin-right: 5px;
+	display: block;
+}
+.flexbox-support .menu-item-header .menu-item-title {
+	flex: 1 1 0;
 }
 .menu-item-header .menu-item-type {
 	float: right;
 	color: #667a8f;
+	margin-right: -70px;
+	margin-top: -24px;
+}
+.flexbox-support .menu-item-header .menu-item-type {
+	margin: 0;
+	flex: none;
+}
+.menu-structure-item-depth-5 .menu-item-type,
+.menu-structure-item-depth-6 .menu-item-type,
+.menu-structure-item-depth-7 .menu-item-type {
+	margin-right: -37px;
+	max-width: 37px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.menu-structure-item-depth-8 .menu-item-type,
+.menu-structure-item-depth-9 .menu-item-type,
+.menu-structure-item-depth-10 .menu-item-type,
+.menu-structure-item-depth-11 .menu-item-type,
+.menu-structure-item-depth-12 .menu-item-type,
+.menu-structure-item-depth-13 .menu-item-type,
+.menu-structure-item-depth-14 .menu-item-type,
+.menu-structure-item-depth-15 .menu-item-type {
+	display: none;
 }
 .menu-item-editor label {
 	color: #7d99b3;

@@ -1,4 +1,10 @@
-;(function($){define(['upfront/post-editor/upfront-post-content', 'text!upfront/templates/popup.html', 'text!elements/upfront-image/tpl/image_editor.html'], function(ContentTools, tpls, editorTpl){
+;(function($){define([
+	'upfront/post-editor/upfront-post-content', 
+	'text!upfront/templates/popup.html', 
+	'text!elements/upfront-image/tpl/image_editor.html',
+	'scripts/upfront/element-settings/settings',
+	'scripts/upfront/element-settings/root-settings-panel'
+], function(ContentTools, tpls, editorTpl, ElementSettings, RootSettingsPanel){
 
 var PostPartView = Upfront.Views.ObjectView.extend({
 	initialize: function(opts){
@@ -27,6 +33,10 @@ var PostPartView = Upfront.Views.ObjectView.extend({
 
 
 		this.listenTo(this.postView.model, 'template:' + postPart, this.refreshTemplate);
+
+		this.listenTo(Upfront.Events, "entity:modules:render_module", function () {
+			$(".upfront-wrapper:not(:visible)").filter('[class*="part-"]').show(); // Undo the wreckage caused by the views
+		});
 
 		if(_upfront_post_data)
 			this.post = Upfront.data.posts[_upfront_post_data.post_id];
@@ -120,8 +130,9 @@ var PostPartView = Upfront.Views.ObjectView.extend({
 		if(part == 'contents' && this.postView.property('content_type') == 'excerpt')
 			part = 'excerpt';
 
-		if(templates && templates[part])
+		if(templates && templates[part]) {
 			return templates[part];
+		}
 
 		return Upfront.data.thisPost.templates[part];
 	},
@@ -152,7 +163,7 @@ var PostPartElement = Upfront.Views.Editor.Sidebar.Element.extend({
 		this.slug = this.title.toLowerCase().replace(' ', '_');
 		this.Model = PostPartModel;
 		this.View = partViews[this.slug] ? partViews[this.slug] : PostPartView;
-        this.Settings = partSettings[this.slug] ? partSettings[this.slug] : PostPartSettings;
+        this.Settings = PostPartSettings;
 	},
 	add_element: function(){
 		var object = new this.Model({properties:{
@@ -177,184 +188,113 @@ var PostPartElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	}
 });
 
-var Settings = Upfront.Views.Editor.Settings,
-	Fields = Upfront.Views.Editor.Field
-;
 
-var PostPartSettings = Settings.Settings.extend({
-  has_tabs: false,
-	initialize: function(opts){
-		this.options = opts;
-		this.cssEditor = false;
-		this.postPart = this.model.get_property_value_by_name('postPart');
 
-		if(typeof this.init == 'function')
-			this.init(opts);
-
-		this.updatePanels();
+var _markup_edit = {
+	type: 'Button',
+	compact: true,
+	on_click: function () {
+		Upfront.Events.trigger('post:edit:templatepart', this.model.tpl, this.model.get_property_value_by_name('postPart'));
 	},
-	updatePanels: function(){
-		var templateSetting = new Upfront.Views.Editor.Settings.Item({
-			title: Upfront.Settings.l10n.global.content.general_setup,
-			model: this.model,
-			fields: [
-				new TemplateEditorField({
-					model: this.model
-				})
-			]
-		});
-
-		if(this.panels)
-			this.panels.first().settings.push(templateSetting);
-		else
-			this.panels = _([
-				new Settings.Panel({
-					label: Upfront.Settings.l10n.global.content.general,
-					model: this.model,
-					settings: [templateSetting]
-				})
-			])
-		;
-	}
-});
-
-var DateSettings = PostPartSettings.extend({
-	init: function(opts){
-		this.panels = _([
-			new Settings.Panel({
-        hide_common_fields: true,
-				title: Upfront.Settings.l10n.global.content.date_format,
-				model: this.model,
-				settings: [new Upfront.Views.Editor.Settings.Item({
-					title: Upfront.Settings.l10n.global.content.date_setup,
-					model: this.model,
-					fields: [
-						new Fields.Text({
-							label: Upfront.Settings.l10n.global.content.php_date_fmt,
-							property: 'format',
-							model: this.model
-						})
-					]
-				})]
-			})
-		]);
-	}
-});
-
-var UpdateSettings =  DateSettings.extend();
-
-var TagSettings = PostPartSettings.extend({
-    init: function(opts){
-        this.panels = _([
-            new Settings.Panel({
-                hide_common_fields: true,
-                title: Upfront.Settings.l10n.global.content.tags,
-                model: this.model,
-                settings: [new Upfront.Views.Editor.Settings.Item({
-                    title: Upfront.Settings.l10n.global.content.tags_settings,
-                    model: this.model,
-                    fields: [
-                        new Fields.Text({
-                            label: Upfront.Settings.l10n.global.content.tag_separator,
-                            property: 'tag_separator',
-                            model: this.model
-                        })
-                    ]
-                })]
-            })
-        ]);
-    }
-});
-
-var ContentSettings = PostPartSettings.extend({
-	events: {
-		'keyup .upfront-field-number': 'offsetChanged',
-		'change .upfront-field-number': 'updatePadding'
-	},
-	init: function(opts){
-	  this.panels = _([
-	      new Settings.Panel({
-            hide_common_fields: true,
-	          title: Upfront.Settings.l10n.global.content.tags,
-	          model: this.model,
-	          settings: [new Upfront.Views.Editor.Settings.Item({
-	              title: Upfront.Settings.l10n.global.content.content_padding,
-	              className: 'content-overflow-setting',
-	              model: this.model,
-						fields: [
-							new Fields.Number({
-								label: Upfront.Settings.l10n.global.content.left,
-								property: 'padding_left',
-								//max : 3,
-								min: 0,
-								step : 1,
-								model: this.model
-							}),
-							new Fields.Number({
-								label: Upfront.Settings.l10n.global.content.right,
-								property: 'padding_right',
-								//max : 3,
-								min: 0,
-								step : 1,
-								model: this.model
-							})
-	              ]
-	          })]
-	      })
-	  ]);
-	},
-	offsetChanged: function(e){
-		var input = e.target;
-		//if(isNaN(parseInt(input.value)) || input.value < 0 || input.value > 3){
-		//	Upfront.Views.Editor.notify('Content padding needs to be an number between 0 and 3.', 'error');
-		//	input.value = 0;
-		//}
-		this.updatePadding(e);
-	},
-
-	updatePadding: function(e){
-		var input = e.target,
-			col_size = Upfront.Behaviors.GridEditor.col_size,
-			left = this.$('input[name=padding_left]').val() || 0,
-			right = this.$('input[name=padding_right]').val() || 0,
-			_left = left * col_size,
-			_right = right * col_size,
-			$el = $(".upfront-region-postlayouteditor .Postpart_contents"),
-			current_width = _.isUndefined( $el.data("width") ) ?  $el.width() : $el.data("width"),
-			avail_col = 0,
-			changed = false
-			;
-
-		$el.data("width", current_width);
-
-		/**
-		 * Prevent width to be less than 10 cols
-		 */
-		if( ( current_width - _left - _right ) < ( 10 * col_size ) ){
-			if( input.name === "padding_left" ){
-				avail_col = Math.max(0, Math.floor((current_width - _right) / col_size) - 10);
-				input.value = left > avail_col ? avail_col : left;
-				if ( input.value != left) {
-					left = input.value;
-					changed = true;
-				}
-			}
-			if( input.name === "padding_right" ){
-				avail_col = Math.max(0, Math.floor((current_width - _left) / col_size) - 10);
-				input.value = right > avail_col ? avail_col : right;
-				if ( input.value != right ) {
-					right = input.value;
-					changed = true;
-				}
-			}
-			if ( !changed ) return false;
+	label: "Edit markup"
+};
+var Settings_GenericPart = RootSettingsPanel.extend({
+	settings: [
+		{
+			type: 'SettingsItem',
+			fields:[_markup_edit]
 		}
+	]
+});
+var Settings_DatePart = Settings_GenericPart.extend({
+	label: "date",
+	settings: [
+		{
+			type: 'SettingsItem',
+			title: "Date",
+			fields:[
+				{
+					type: 'Text',
+					label: Upfront.Settings.l10n.global.content.php_date_fmt,
+					property: 'format'
+				},
+				_markup_edit
+			]
+		}
+	],
+	title: "Date"
+});
+var Settings_TagPart = Settings_GenericPart.extend({
+	label: "tag",
+	settings: [
+		{
+			type: 'SettingsItem',
+			title: "Tag",
+			fields:[
+				{
+					type: 'Text',
+					label: Upfront.Settings.l10n.global.content.tag_separator,
+					property: 'tag_separator',
+				},
+				_markup_edit
+			]
+		}
+	],
+	title: "Tag"
+});
+var Settings_ContentPart = Settings_GenericPart.extend({
+	label: "content",
+	settings: [
+		{
+			type: 'SettingsItem',
+			title: "Content",
+			fields:[
+				{
+					type: 'Number',
+					label: Upfront.Settings.l10n.global.content.left,
+					property: 'padding_left',
+					min: 0,
+					step : 1,
+				},
+				{
+					type: 'Number',
+					label: Upfront.Settings.l10n.global.content.right,
+					property: 'padding_right',
+					min: 0,
+					step : 1,
+				},
+				_markup_edit
+			]
+		}
+	],
+	title: "Content"
+});
+var PostPartSettings = ElementSettings.extend({
+	initialize: function () {
+		var pt = this.model.get_property_value_by_name('postPart');
 
-		if(this.for_view)
-			Upfront.Events.trigger('post:padding:update', left, right);
-			//this.for_view.trigger('post:padding:update', left, right);
+		this.panels = (pt && this.raw_panels[pt])
+			? {General: this.raw_panels[pt]}
+			: this.raw_panels
+		;
+		
+		ElementSettings.prototype.initialize.apply(this, arguments);
+	},
+	raw_panels: {
+		date: Settings_DatePart,
+		tags: Settings_TagPart,
+		contents: Settings_ContentPart,
+		title: Settings_GenericPart.extend({ label: "title", title: "Title" }),
+		featured_image: Settings_GenericPart.extend({ label: "featured_image", title: "Featured Image" }),
+		author: Settings_GenericPart.extend({ label: "author", title: "Author" }),
+		author_gravatar: Settings_GenericPart.extend({ label: "gravatar", title: "Gravatar" }),
+		comments_count: Settings_GenericPart.extend({ label: "comments_count", title: "Count" }),
+		categories: Settings_GenericPart.extend({ label: "categories", title: "Categories" }),
 	}
 });
+
+
+
 
 var ContentView = PostPartView.extend({
 	updateOptions: function(){
@@ -528,13 +468,14 @@ var DateView = PostPartView.extend({
         }
     }
 });
+/*
 var partSettings = {
 	date: DateSettings,
 	update: UpdateSettings,
     tags : TagSettings,
     contents : ContentSettings
 };
-
+*/
 var partViews = {
 	contents: ContentView,
 	featured_image: FeaturedImageView,
@@ -805,8 +746,7 @@ _.extend(Upfront.Content, {
 	PostElement: PostPartElement,
 	TemplateEditor: TemplateEditor,
 	PostPart: PostPartModel,
-    ImageVariants : ImageVariants,
-	ContentSettings: ContentSettings
+    ImageVariants : ImageVariants
 });
 
 return {};

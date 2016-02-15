@@ -354,6 +354,8 @@ class Upfront_ThisPostView extends Upfront_Object {
 			$layout['wrappers'][$i]['objectsLength'] = sizeof($w['objects']);
 
 			foreach($w['objects'] as $k => $o){
+				$o['slug'] = isset($o['slug']) ? $o['slug'] : 'spacer';
+				$layout['wrappers'][$i]['objects'][$k]['slug'] = $o['slug'];
 
 				$opts = !empty($options[$o['slug']]) ? $options[$o['slug']] : array(); // This is for the layout
 				$opts['excerpt'] = $excerpt;
@@ -482,11 +484,11 @@ class Upfront_ThisPostView extends Upfront_Object {
 		$i = 0;
 
 		while(!$found && $i < sizeof($cascade)){
-			if(file_exists($cascade[$i]))
+			if(file_exists($cascade[$i])) {
 				$found = require $cascade[$i];
+			}
 			$i++;
 		}
-
 		return $found;
 	}
 
@@ -575,9 +577,8 @@ class Upfront_ThisPostView extends Upfront_Object {
 			'has_settings' => 1,
 			'id_slug' => 'this_post',
 			'row' => 10,
-
+			'preset' => 'default',
 			'post_data' => array('author', 'date', 'comments_count', 'featured_image') // also: categories,  tags
-
 		);
 	}
 

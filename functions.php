@@ -119,13 +119,12 @@ class Upfront {
 		return get_template_directory();
 	}
 
-
 	public function add_edit_menu ($wp_admin_bar) {
 		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) return false;
 
 		$item = array(
 			'id' => 'upfront-edit_layout',
-			'title' => __('Upfront', 'upfront'),
+            'title' => '<span class="ab-icon"></span><span class="ab-label">' . __('Upfront', 'upfront') . '</span>',
 			'href' => (is_admin() ? home_url('/?editmode=true', is_ssl() ? "https" : null) : '#'),
 			'meta' => array(
 				'class' => 'upfront-edit_layout upfront-editable_trigger'
@@ -231,7 +230,7 @@ class Upfront {
 		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
 			do_action('upfront-core-wp_dependencies');
 
-			wp_enqueue_style('upfront-editor-interface', self::get_root_url() . '/styles/editor-interface.min.css', array(), Upfront_ChildTheme::get_version());
+			wp_enqueue_style('upfront-editor-interface', self::get_root_url() . '/styles/editor-interface.css', array(), Upfront_ChildTheme::get_version());
 
 			$link_urls =  array(
 				admin_url('admin-ajax.php?action=upfront_load_editor_grid'),
@@ -373,3 +372,11 @@ function uf_image_caption_shortcode( $out, $attr, $content ){
 	 return Upfront_ThisPostView::get_post_image_markup($data);
 
 }
+
+/**
+ * Loads iconfont in admin to display toolbar icon.
+ */
+function uf_admin_bar_styles() {
+    wp_enqueue_style( 'uf-font-icons', get_template_directory_uri() . '/styles/font-icons.css');
+}
+add_action( 'admin_enqueue_scripts', 'uf_admin_bar_styles' );

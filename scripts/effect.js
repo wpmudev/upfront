@@ -122,6 +122,7 @@
 		var scrollTop = window.pageYOffset;
 		Upfront_Parallax.cache.scrollTop = scrollTop;
 	}
+	$(window).one('load.upfront_paralax', Upfront_Parallax.updateScroll);
 	$(window).on('load.upfront_paralax', Upfront_Parallax.draw);
 	$(window).on('scroll.upfront_paralax', Upfront_Parallax.updateScroll);
 	

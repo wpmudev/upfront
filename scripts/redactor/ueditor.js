@@ -113,12 +113,39 @@ var hackRedactor = function(){
     	}
 
 
+        //var sel = Upfront.Util.clone(this.sel);
+        //var range = Upfront.Util.clone( this.range );
         $('.redactor_air').hide();
         this.selection.createMarkers();
+
+
+
         var width = this.$air.width(),
-            m1 = this.$editor.find('#selection-marker-1').offset(),
-            m2 = this.$editor.find('#selection-marker-2').offset()
+            node1 = this.$editor.find('span#selection-marker-1'),
+            node2 = this.$editor.find('span#selection-marker-2'),
+            m1 = node1.offset(),
+            m2 = node2.offset()
         ;
+
+        /**
+         * Restore selections in safari
+         */
+        if( this.utils.browser("safari")){
+            if (node1.length !== 0 && node2.length !== 0)
+            {
+                this.caret.set(node1, 0, node2, 0);
+            }
+            else if (node1.length !== 0)
+            {
+                this.caret.set(node1, 0, node1, 0);
+            }
+            else
+            {
+                this.$editor.focus();
+            }
+        }
+
+
         // Make sure we have both dimentions before proceeding
         if (!m1 || !m2) {
             return false;
@@ -181,7 +208,7 @@ var hackRedactor = function(){
         this.$air.trigger('show');
         this.dropdown.hideAll();
         UeditorEvents.trigger("ueditor:air:show", this);
-        this.selection.restore();
+        this.selection.removeMarkers();
     };
 
 
@@ -195,6 +222,20 @@ var hackRedactor = function(){
      * @type {{inline: {format: Overriden_Methods.inline.format}}}
      */
     var Overriden_Methods = {
+        utils: {
+            isEndOfElement: function(element){
+                if (typeof element == 'undefined')
+                {
+                    var element = this.$element;
+                    if (!element) return false;
+                }
+
+                var offset = this.caret.getOffsetOfElement(element);
+                var text = $.trim($(element).text()).replace(/\n\r\n/g, '');
+
+                return (offset == text.length) ? true : false;
+            }
+        },
         inline: {
             format: function(tag, type, value)
             {
@@ -236,6 +277,34 @@ var hackRedactor = function(){
 
                 if( tag &&  -1 !== _.indexOf( ["strong", "bold"], tag.toLowerCase() )  ){ //  add fix for strong to make it work with list tags
                     this.selection.selectElement( $(this.selection.getInlines()).find("strong") );
+                }
+            }
+        },
+        keydown: {
+            /**
+             * Overridden method from redactor core (@line 4849)
+             *
+             * We're overriding this method because of buggy logic in current redactor core.
+             * The `this.selection.getBlock()` method can just as easily return a (bool)false,
+             * and the original implementation doesn't account for that.
+             *
+             * @return {Boolean} Doesn't really matter, side-effects method
+             */
+            replaceDivToBreakLine: function()
+            {
+                var blockElem = this.selection.getBlock();
+                if (!(blockElem || {}).innerHTML) return false; // so yeah, selection.getBlock() got us nowhere, bail out
+                var blockHtml = blockElem.innerHTML.replace(/<br\s?\/?>/gi, '');
+                if ((blockElem.tagName === 'DIV' || blockElem.tagName === 'P') && blockHtml === '' && !$(blockElem).hasClass('redactor-editor'))
+                {
+                    var br = document.createElement('br');
+
+                    $(blockElem).replaceWith(br);
+                    this.caret.setBefore(br);
+
+                    this.code.sync();
+
+                    return false;
                 }
             }
         }
@@ -516,6 +585,7 @@ var Ueditor = function($el, options) {
     this.options = $.extend({
 			// Ueditor options
 			autostart: true, //If false ueditor start on dblclick and stops on blur
+            autoexit: false,
 			stateButtons: {},
             toolbarExternal: "#" + unique_id,
             // toolbarFixedTopOffset: 100,
@@ -587,7 +657,7 @@ var Ueditor = function($el, options) {
 	//this.startPlaceholder();
 	this.options.pasteCallback = function (html) {
 
-        /** 
+        /**
          * When pasting unformatted text with line breaks, the lines get wrapped
          * in DIV tags. This is due to browser's handling of pasted content inside
          * div having contenteditable=true. For our requirement, we have to replace
@@ -614,7 +684,7 @@ var Ueditor = function($el, options) {
         html = html.replace(/<\/p>([<br>])*<p>/g, "</p><p></p><p>");
         html = html.replace(/<\/p>([<br>])*<p ([^>]*)>/g, "</p><p></p><p $1>");
 
-    
+
 
 		/**
 		 * If a font icon is copied to clipboard, paste it
@@ -749,7 +819,7 @@ Ueditor.prototype = {
             // Expand known text patterns
             if (32 === e.keyCode) self.expand_known_text_patterns();
 
-			if(e.keyCode != 37 && e.keyCode != 39) {
+			if( ( e.keyCode != 37 && e.keyCode != 39 ) && self.redactor ) {
 				var current = $(self.redactor.selection.getCurrent());
 				if(current.hasClass('uf_font_icon')) {
 					self.redactor.caret.setAfter(current);
@@ -775,7 +845,7 @@ Ueditor.prototype = {
 		}
 
 		//Listen for outer clicks to stop the editor if necessary
-		if(!this.options.autostart)
+		if(!this.options.autostart || this.options.autoexit)
 			this.listenToOuterClick();
 
 		$(document).on("keyup", $.proxy(this.stopOnEscape, this));
@@ -786,7 +856,7 @@ Ueditor.prototype = {
             /**
              * Make sure return doesn't delete the last charactor
              */
-            if (13 === e.keyCode ) {
+            if (13 === e.keyCode && !e.shiftKey && (self || {}).redactor) {
                 self.redactor.utils.removeEmpty();
                 $(self.redactor.selection.getCurrent()).append("&nbsp;")
             }
@@ -886,7 +956,8 @@ Ueditor.prototype = {
 			UeditorEvents.trigger('ueditor:stop', this.redactor);
 			this.$el.trigger('stop');
 			this.restoreDraggable();
-			this.redactor.core.destroy();
+            if( this.redactor.$toolbar )
+			    this.redactor.core.destroy();
             this.$air.remove();
             this.$el.removeClass('ueditable');
             this.redactor = false;
@@ -1082,6 +1153,7 @@ Ueditor.prototype = {
 
 	listenToOuterClick: function(){
 		var me = this;
+
 		if(!this.checkInnerClick){
 			this.checkInnerClick = function(e){
 				//Check we are not selecting text
@@ -1113,7 +1185,12 @@ Ueditor.prototype = {
 				|| $(e.target).parents().hasClass("redactor-dropdown"))
 			&& $(e.target).parents("#upfront-popup.upfront-postselector-popup").length === 0)
 		{
-			e.data.ueditor.stop();
+            if(e.data.ueditor.$el.closest('a.menu_item').length > 0) { // blur on the menu item, dont stop the editor yet 
+                e.data.ueditor.$el.trigger('blur');
+            }
+            else {
+    			e.data.ueditor.stop();
+            }
 		}
 	},
 	callMethod: function(method){
@@ -1242,7 +1319,7 @@ Ueditor.prototype = {
          */
         return $.trim(
             // Conditionally nuke the wrapper - only if we actually have it
-            $(html).find(".plain-text-container").length
+            $html.find(".plain-text-container").length
                 ? $html.find(".plain-text-container").last().html()
                 : $html.html()
         );

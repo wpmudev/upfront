@@ -1,6 +1,10 @@
 (function ($) {
 
-define(function() {
+define([
+	'scripts/upfront/element-settings/settings',
+	'scripts/upfront/preset-settings/util',
+	'text!elements/upfront-comment/templates/preset-style.html'
+], function(ElementSettings, Util, styleTpl) {
 
 var l10n = Upfront.Settings.l10n.comments_element;
 
@@ -534,34 +538,18 @@ var PagedCommentsField = BooleanSubfieldField.extend({
 	}
 });
 
-
-var Settings_MainPanel = Upfront.Views.Editor.Settings.Panel.extend({
-	label: l10n.element_name,
-	initialize: function (opts) {
-		this.options = opts;
-		this.settings = _([]);
+var Settings = ElementSettings.extend({
+	panels: {
+		Appearance: {
+			mainDataCollection: 'ucommentPresets',
+			styleElementPrefix: 'ucomment-preset',
+			ajaxActionSlug: 'ucomment',
+			panelTitle: l10n.settings,
+			presetDefaults: Upfront.mainData.presetDefaults.ucomment,
+			styleTpl: styleTpl,
+		},
 	},
-
-	get_label: function () {
-		return this.label;
-	},
-
-	get_title: function () {
-		return l10n.main_panel;
-	}
-});
-
-var Settings = Upfront.Views.Editor.Settings.Settings.extend({
-	initialize: function (opts) {
-		this.options = opts;
-		this.panels = _([
-			new Settings_MainPanel({model: this.model})
-		]);
-	},
-
-	get_title: function () {
-		return l10n.settings;
-	}
+	title: l10n.settings
 });
 
 var UcommentElement = Upfront.Views.Editor.Sidebar.Element.extend({
@@ -604,6 +592,8 @@ function add_comment () {
 			"Settings": Settings
 		});
 	}
+	// Generate presets styles to page
+	Util.generatePresetsToPage('ucomment', styleTpl);
 }
 Upfront.Events.on("application:mode:after_switch", function () {
 	if (Upfront.Application.get_current() !== Upfront.Application.MODE.THEME) return false;

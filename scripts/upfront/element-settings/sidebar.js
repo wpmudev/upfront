@@ -2,7 +2,7 @@
 define([], function () {
 	// Setup basics
 	$('body').append('<div id="element-settings-sidebar" />');
-	$('#element-settings-sidebar').width(0);
+	$('#element-settings-sidebar').width(0).css('opacity', 0);
 	var the_settings_view;
 	var model;
 	var oldData;
@@ -12,7 +12,7 @@ define([], function () {
 		if (the_settings_view) {
 			the_settings_view.cleanUp();
 			the_settings_view = false;
-			$('#element-settings-sidebar').width(0).html('');
+			$('#element-settings-sidebar').width(10).css('opacity', 0).html('');
 			Upfront.Events.off('element:settings:saved', destroySettings);
 			Upfront.Events.off('element:settings:cancel', resetModel);
 		}
@@ -53,7 +53,7 @@ define([], function () {
 		the_settings_view.for_view = view;
 		the_settings_view.render();
 		$('#element-settings-sidebar').html(the_settings_view.el);
-		$('#element-settings-sidebar').width(260);
+		$('#element-settings-sidebar').width(260).css('opacity', '');
 		$('.uf-settings-panel--expanded:not(:first)').toggleClass('uf-settings-panel--expanded').find('.uf-settings-panel__body').toggle();
 
 		Upfront.Events.on('element:settings:saved', destroySettings);
@@ -64,6 +64,7 @@ define([], function () {
 		setTimeout(function() { // Remove collapsed class, but allow a bit time for some animation handled elsewhere that does not work always
 			$('#element-settings-sidebar').removeClass('collapsed');
 		}, 500);
+		Upfront.Events.trigger('element:settings:render');
 	};
 
 	Upfront.Events.on('element:settings:activate', showSettings);

@@ -78,7 +78,91 @@ define([
 								],
 							}
 						},
+						
+						{
+							moduleType: 'Checkbox',
+							options: {
+								state: 'static',
+								label: l10n.settings.padding_label,
+								tooltip: true,
+								tooltip_label: l10n.settings.tooltip_label,
+								fields: {
+									checkbox: 'additional_padding'
+								}
+							}
+						},
 					]
+				},
+				
+				migrateElementStyle: function(styles, selector) {
+					//replace container class
+					styles = styles.replace(/\.upfront-plain_txt/g, ' .plain-text-container');
+					
+					return styles;
+				},
+				
+				migratePresetProperties: function(newPreset) {
+					var props = {},
+						useBorder = '',
+						usePadding = '';
+
+					this.model.get('properties').each( function(prop) {
+						props[prop.get('name')] = prop.get('value');
+					});
+
+/*
+// Too complex, and can fail in edge cases - check the comment below for the new approach explanation and details
+					if((typeof props.border_color !== "undefined" && props.border_color !== "rgba(0, 0, 0, 0)") && 
+					   (typeof props.border_style !== "undefined" && props.border_style !== "none") && 
+					   (typeof props.border_width !== "undefined" && props.border_width !== 1)) {
+							useBorder = 'yes';
+					}
+*/
+					// Simplify the border usage migration logic: no border _style_ === no border.
+					// Other border-related props might have some defaults crept in or something,
+					// and there's plenty of options there (e.g. for colors). So, keep it real and
+					// check only what _actually_ dictates the border usage in properties.
+					useBorder = typeof props.border_style !== typeof undefined && "none" !== props.border_style
+						? 'yes'
+						: ''
+					;
+
+					if((typeof props.background_color !== "undefined" && props.background_color) || useBorder === 'yes') {
+						usePadding = 'yes';
+					}
+
+					newPreset.set({
+						'useborder': useBorder,
+						'bg_color': props.background_color,
+						'border_width': props.border_width,
+						'border_style': props.border_style,
+						'border_color': props.border_color,
+						'additional_padding': usePadding
+					});
+				},
+				
+				getModifiedProperties: function() {
+					var props = {};
+
+					this.model.get('properties').each( function(prop) {
+						props[prop.get('name')] = prop.get('value');
+					});
+
+					if(typeof props.theme_style !== "undefined" && (props.theme_style !== "_default" && props.theme_style !== "" && props.theme_style !== " ")) {
+						return true;
+					}
+					
+					if((typeof props.border_color !== "undefined" && props.border_color !== "rgba(0, 0, 0, 0)") || 
+					   (typeof props.border_style !== "undefined" && props.border_style !== "none") || 
+					   (typeof props.border_width !== "undefined" && props.border_width !== 1)) {
+						return true;
+					}
+					
+					if(typeof props.bg_color !== "undefined" && props.bg_color !== "rgba(0, 0, 0, 0)") {
+						return true;
+					}
+
+					return false;
 				}
 			}
 		},

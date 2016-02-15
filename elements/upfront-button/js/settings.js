@@ -236,7 +236,37 @@ define([
 							}
 						}
 					]
-				}
+				},
+				
+				migrateDefaultStyle: function(styles) {
+					//replace image wrapper class
+					styles = styles.replace(/(div)?\.upfront-button\s/g, '');
+					styles = styles.replace(/(div)?\.upfront-object\s/g, '');
+					styles = styles.replace(/\a.upfront_cta/, '.upfront_cta');
+
+					return styles;
+				},
+
+				migratePresetProperties: function(newPreset) {
+					
+					var preset = this.property('preset') ? this.clear_preset_name(this.property('preset')) : 'default',
+						props = this.presets.findWhere({id: preset}),
+						obj = {};
+
+					if(typeof props !== "undefined") {
+						_.each(props.attributes, function(preset_value, index) {
+							
+							if(index === 'id' || index === 'name' || index === 'preset_style' || index === 'legacy') {
+								return;
+							}
+							
+							obj[index] = preset_value;
+						});
+					}
+					
+					//Migrate properties from existing preset
+					newPreset.set(obj);
+				},
 			}
 		},
 		title: l10n.settings.label

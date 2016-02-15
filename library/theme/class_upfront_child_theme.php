@@ -72,6 +72,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		add_filter('upfront_get_widget_presets', array($this, 'getWidgetPresets'), 10, 2);
 		add_filter('upfront_get_posts_presets', array($this, 'getPostsPresets'), 10, 2);
 		add_filter('upfront_get_thispost_presets', array($this, 'getPostPresets'), 10, 2);
+		add_filter('upfront_get_ucomment_presets', array($this, 'getCommentPresets'), 10, 2);
 		add_filter('upfront_get_theme_styles', array($this, 'getThemeStyles'));
 		add_filter('upfront_get_global_regions', array($this, 'getGlobalRegions'));
 		add_filter('upfront_get_responsive_settings', array($this, 'getResponsiveSettings'));
@@ -213,7 +214,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	}
 
 	protected function up_update_nav_menu_item($menu_id, $db_id, $args = array(), $menu_items, $parent_id = 0) {
-
+		if (is_wp_error($menu_id)) return false; // Prevent notice if we received an error instead of an ID
 		$id = wp_update_nav_menu_item($menu_id, $db_id, array(
 						'menu-item-parent-id' => $parent_id,
 						'menu-item-url' => $args['url'],
@@ -317,7 +318,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 				"	font-style: normal;" .
 				"}" .
 				".upfront-output-layout .uf_font_icon, .upfront-output-layout .uf_font_icon * {" .
-				"	font-family: '" . $font['family'] . "'" .
+				"	font-family: '" . $font['family'] . "'!important" .
 				"}";
 			$out .= $this->_expand_passive_relative_url($icon_font_style) . "\n";
 		} else {
@@ -325,11 +326,11 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			$out .= "/* icomoon fonts */
 				@font-face {
 					font-family: 'icomoon';
-					src: url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.eot?-7vfzzg');
-					src: url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.eot?#iefix-7vfzzg') format('embedded-opentype'),
-					url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.woff?-7vfzzg') format('woff'),
-					url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.ttf?-7vfzzg') format('truetype'),
-					url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.svg?-7vfzzg#icomoon') format('svg');
+					src: url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.eot?taxgy5');
+					src: url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.eot?taxgy5#iefix') format('embedded-opentype'),
+					url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.woff?taxgy5') format('woff'),
+					url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.ttf?taxgy5') format('truetype'),
+					url('" . get_theme_root_uri() ."/upfront/fonts/icomoon.svg?taxgy5#icomoon') format('svg');
 					font-weight: normal;
 					font-style: normal;
 				}
@@ -649,7 +650,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		return json_decode($presets, $as_array);
 	}
-	
+
 	public function getPostsPresets($presets, $args) {
 		if (empty($presets) === false) return $presets;
 
@@ -663,11 +664,25 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		return json_decode($presets, $as_array);
 	}
-	
+
 	public function getPostPresets($presets, $args) {
 		if (empty($presets) === false) return $presets;
 
 		$presets = $this->get_theme_settings()->get('thispost_presets');
+		if (isset($args['json']) && $args['json']) return $presets;
+
+		$as_array = false;
+		if (isset($args['as_array']) && $args['as_array']) {
+			$as_array = true;
+		}
+
+		return json_decode($presets, $as_array);
+	}
+
+	public function getCommentPresets($presets, $args) {
+		if (empty($presets) === false) return $presets;
+
+		$presets = $this->get_theme_settings()->get('ucomment_presets');
 		if (isset($args['json']) && $args['json']) return $presets;
 
 		$as_array = false;

@@ -8,12 +8,21 @@ class Upfront_PlainTxtView extends Upfront_Object {
 		$element_id = $element_id ? "id='{$element_id}'" : '';
 
 		$content = $this->_get_property('content');
+		
+		$preset = $this->_get_property('preset');
+
+		if (!isset($preset)) {
+			$preset = 'default';
+		}
+		
+		$preset_props = Upfront_Text_Presets_Server::get_instance()->get_preset_properties($preset);
 
 		$matches = array();
 
 		if ( preg_match('/<div class="plaintxt_padding([^>]*)>/s', $content) ){
 			$doc = new DOMDocument();
 			$clean_doc = new DOMDocument();
+			$content = "<head><meta http-equiv='Content-type' content='text/html; charset=UTF-8' /></head><body>{$content}</body>";
 			$doc->loadHTML($content);
 			$divs = $doc->getElementsByTagName('div');
 			$plaintxt_wrap = false;
@@ -37,7 +46,30 @@ class Upfront_PlainTxtView extends Upfront_Object {
 
 		$content = $this->_decorate_content($content);
 
-		return "<div class='plain-text-container'>". $content ."</div>";
+		// Render old appearance
+		if ($this->_get_property('usingNewAppearance') === false) {
+			$style = array();
+			if ($this->_get_property('background_color') && '' != $this->_get_property('background_color')) {
+				$style[] = 'background-color: '. Upfront_UFC::init()->process_colors($this->_get_property('background_color'));
+			}
+
+			if ($this->_get_property('border') && '' != $this->_get_property('border')) {
+				$style[] = 'border: '.Upfront_UFC::init()->process_colors($this->_get_property('border'));
+			}
+
+			return (sizeof($style)>0 ? "<div class='plaintxt_padding' style='".implode(';', $style)."'>": ''). $content .(sizeof($style)>0 ? "</div>": '');
+		}
+
+		// Render new appearance
+		$return_content = "<div class='plain-text-container'>";
+		if(isset($preset_props['additional_padding']) && $preset_props['additional_padding'] == "yes") {
+			$return_content .= "<div class='plaintxt_padding'>" . $content . "</div>";
+		} else {
+			$return_content .= $content;
+		}
+		$return_content .= "</div>";
+		
+		return $return_content;
 	}
 
 	protected function _decorate_content ($content) {
@@ -109,6 +141,8 @@ class Upfront_PlainTxtView extends Upfront_Object {
 				'colors_label' => __('Colors', 'upfront'),
 				'content_area_bg' => __('Content Area BG', 'upfront'),
 				'typography_label' => __('Typography', 'upfront'),
+				'padding_label' => __('Additional Padding', 'upfront'),
+				'tooltip_label' => __('Additional padding is handy when you have a border or BG Color set.', 'upfront')
 			)
 		);
 		return !empty($key)

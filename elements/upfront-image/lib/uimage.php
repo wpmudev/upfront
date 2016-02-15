@@ -7,6 +7,10 @@ class Upfront_UimageView extends Upfront_Object {
 	public function get_markup () {
 		$data = $this->properties_to_array();
 
+		if (isset($data['usingNewAppearance']) === false) {
+			$data['usingNewAppearance'] = false;
+		}
+
 		$data['in_editor'] = false;
 		if (!isset($data['link']) || $data['link'] === false) {
 			$link = array(
@@ -33,10 +37,14 @@ class Upfront_UimageView extends Upfront_Object {
 
 		$data['wrapper_id'] = 'hello_up';
 
-		if($data['stretch'])
+		if($data['stretch']) {
 			$data['imgWidth'] = '100%';
-		else
+			$data['stretchClass'] = ' uimage-stretch';
+		}
+		else {
 			$data['imgWidth'] = '';
+			$data['stretchClass'] = '';
+		}
 
 		$data['containerWidth'] = min($data['size']['width'], $data['element_size']['width']);
 
@@ -60,6 +68,11 @@ class Upfront_UimageView extends Upfront_Object {
 			$data['preset'] = 'default';
 		}
 
+		if ($data['usingNewAppearance'] === true) {
+			// Clean up hardcoded image caption color
+			$data['image_caption'] = preg_replace('#^<span style=".+?"#', '<span ', $data['image_caption']);
+		}
+
 		$data['properties'] = Upfront_Image_Presets_Server::get_instance()->get_preset_properties($data['preset']);
 
 		$data['cover_caption'] = $data['caption_position'] != 'below_image'; // array_search($data['caption_alignment'], array('fill', 'fill_bottom', 'fill_middle')) !== FALSE;
@@ -78,6 +91,7 @@ class Upfront_UimageView extends Upfront_Object {
 		if (!empty($data['src'])) $data['src'] = preg_replace('/^https?:/', '', trim($data['src']));
 
 
+		// print_r($data);die;
 		$markup = '<div>' . upfront_get_template('uimage', $data, dirname(dirname(__FILE__)) . '/tpl/image.html') . '</div>';
 
 		if($link['type'] == 'image'){

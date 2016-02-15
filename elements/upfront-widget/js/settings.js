@@ -68,7 +68,7 @@ define([
 		udpate_fields: function() {
 			var self = this;
 			this.fields=_([]);
-			var specific_fields = this.model.get_property_value_by_name('current_widget_specific_fields');
+			var specific_fields = this.model.get_property_value_by_name('current_widget_specific_fields') || this.model.get_property_value_by_name('widget_specific_fields');
 
 			for( key in specific_fields) {
 				if(specific_fields[key]['type'] == 'select') {
@@ -151,6 +151,14 @@ define([
 					'name': l10n.default_preset,
 				},
 				styleTpl: styleTpl,
+				
+				migrateDefaultStyle: function(styles) {
+					//replace image wrapper class
+					styles = styles.replace(/(div)?\.upfront-widget\s/g, '');
+					styles = styles.replace(/(div)?\.upfront-object\s/g, '');
+
+					return styles;
+				},
 			}
 		},
 

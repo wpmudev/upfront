@@ -28,6 +28,11 @@
 				//}, this);
 				this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
 				this.listenTo(Upfront.Events, 'upfront:lightbox:show', this.on_lightbox_show);
+				this.listenTo(this.model, "preset:updated", this.preset_updated);
+				this.listenTo(this.model, 'change', this.render);
+			},
+			preset_updated: function() {
+				this.render();
 			},
 			on_lightbox_show: function() {
 				// Turn off the editor, hide the redactor bars, clean up the view
@@ -45,7 +50,8 @@
 			},
 			get_content_markup: function () {
 				var content = this.model.get_content(),
-					$content;
+					$content,
+					data;
 
 				// Fix tagless content causes WSOD
 				try {
@@ -58,12 +64,24 @@
 					content = $content.html();
 				}
 
-				var data = {
-					"content" : content
-				};
+				if (this.model.get_property_value_by_name('usingNewAppearance') !== true && this.model.get_property_value_by_name('usingNewAppearance') !== 'true') {
+					data = {
+						"content" : content,
+						"background_color" : Upfront.Util.colors.convert_string_ufc_to_color(this.model.get_property_value_by_name("background_color")),
+						"border" : Upfront.Util.colors.convert_string_ufc_to_color(this.model.get_property_value_by_name("border")),
+						"usingNewAppearance": false
+					};
+				} else {
+					data = {
+						"content" : content,
+						usingNewAppearance: true,
+						"additional_padding" : this.get_preset_property('additional_padding'),
+					};
+				}
 				var rendered = '';
+
 				rendered = _.template(textTpl, data);
-				return rendered + ( !this.is_edited() || $.trim(content) == '' ? '<div class="upfront-quick-swap"><p>' + l10n.dbl_click + '</p></div>' : '');
+				return rendered;
 			},
 			is_edited: function () {
 				var is_edited = this.model.get_property_value_by_name('is_edited');
@@ -136,6 +154,18 @@
 				;
 
 				me.update_colors();
+
+				if (this.model.get_property_value_by_name('preset')) {
+          // for some unknown reason there are two versions of text rendering, so cover both just in case
+					this.$el.find('.upfront-output-plaintxt').addClass(this.model.get_property_value_by_name('preset'));
+					this.$el.find('.upfront-output-plain_text').addClass(this.model.get_property_value_by_name('preset'));
+				}
+			},
+			get_preset_property: function(prop_name) {
+				var preset = this.model.get_property_value_by_name("preset"),
+					props = PresetUtil.getPresetProperties('text', preset) || {};
+
+				return props[prop_name];
 			},
 			update_colors: function () {
 				var me = this;
@@ -143,7 +173,6 @@
 				var bg = me.model.get_property_value_by_name("background_color");
 				if (bg && Upfront.Util.colors.is_theme_color(bg)) {
 					bg = Upfront.Util.colors.get_color(bg);
-					me.$el.find(".plaintxt_padding").css("backgroundColor", bg);
 
 					me.model.set_property("bg_color", bg);
 				}
@@ -154,7 +183,6 @@
 				if (border && matches && matches.length) {
 					var color = Upfront.Util.colors.get_color(matches[0]);
 					border = border.replace(new RegExp(matches[0]), color);
-					me.$el.find(".plaintxt_padding").css("border", border);
 
 					me.model.set_property("border_color", color);
 				}

@@ -79,6 +79,13 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		this.processFloatStatus();
 	},
 
+	on_after_layout_render: function () {
+		var me = this;
+		setTimeout(function(){
+			me.processFloatStatus();
+		}, 2000);
+	},
+
 	get_preset_properties: function() {
 		var preset = this.model.get_property_value_by_name("preset"),
 			props = PresetUtil.getPresetProperties('nav', preset) || {};
@@ -106,10 +113,12 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	processFloatStatus: function() {
 		if (this.floating_cache) this.floating_cache.destroy();
 		$upfrontObjectContent = this.$el.find('.upfront-object-content');
-		var isFloating = $upfrontObjectContent.data('isfloating');
+		var isFloating = $upfrontObjectContent.attr('data-isfloating'),
+			usingNewAppearance = this.property('usingNewAppearance')
+		;
 
 		if(isFloating && isFloating == 'yes') {
-			if (this.property('preset') && this.property('preset') !== 'default') {
+			if (usingNewAppearance) {
 				if (this.get_preset_properties().breakpoint[Upfront.Views.breakpoints_storage.get_breakpoints().get_active().id].menu_style === 'burger') {
 					this.floating_cache = new  NavigationFloating($upfrontObjectContent.children('.responsive_nav_toggler'));
 				} else {
@@ -129,11 +138,11 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		if(!$(e.target).hasClass('ueditable')) {
 			var editablefound = false;
-			this.$el.find('a.ueditable').each(function() {
+			this.$el.find('li.edit_mode').each(function() {
 				try {
-					$(this).data('ueditor').stop();
-					$(this).closest('li').removeClass('edit_mode');
-					$(this).closest('li').data('backboneview').model['being-edited'] = false;
+					$(this).children('a.menu_item').find('.menu_item-ueditor').data('ueditor').stop();
+					$(this).removeClass('edit_mode');
+					$(this).data('backboneview').model['being-edited'] = false;
 				} catch (err) { }
 				editablefound = true;
 			});
@@ -150,9 +159,14 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		this.editModeOn(e);
 		var me = this;
-		var target;
+		var target, ueditor_target;
 		if(typeof e.target == 'undefined' || e.target.trim == '') target = $(e);
 		else target = $(e.target);
+
+		if (!target.hasClass('menu_item')) {
+			target = target.closest('a.menu_item');
+		}
+		if (target.length < 1) return;
 
 		if(target.closest('li').hasClass('edit_mode')) {
 			return;
@@ -166,12 +180,14 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		target.closest('li').addClass('edit_mode');
 
-		var ueditor = target.data('ueditor');
-		ueditor = null;
-		target.data('ueditor', '');
+		ueditor_target = target.children('.menu_item-ueditor');
 
-		if(!target.data('ueditor')) {
-			target.ueditor({
+		var ueditor = ueditor_target.data('ueditor');
+		ueditor = null;
+		ueditor_target.data('ueditor', '');
+
+		if(!ueditor_target.data('ueditor')) {
+			ueditor_target.ueditor({
 				linebreaks: true,
 				disableLineBreak: true,
 				focus: true,
@@ -179,18 +195,18 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				air: false,
 				allowedTags: ['h5'],
 				placeholder: 'Link Name',
-
+				autoexit: true
 			}).on('start', function(e) {
-				target.attr('tabIndex', 1); // Necessary for IE before triggering focus event 
-				target.focus();
+				ueditor_target.attr('tabIndex', 1); // Necessary for IE before triggering focus event
+				ueditor_target.focus();
 			}).on('keydown', function(e){
 				if (e.which == 8) {
 					setTimeout(function() {
 
-						if(target.text() == '' && !target.hasClass('menu_item_placeholder')) {
+						if(ueditor_target.text() == '' && !target.hasClass('menu_item_placeholder')) {
 							var e = jQuery.Event("keydown");
 							e.which = 8;
-							target.trigger(e);
+							ueditor_target.trigger(e);
 						}
 					}, 100);
 				}
@@ -202,16 +218,17 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				else if (e.which == 9) {
 					e.preventDefault();
 					if(!target.hasClass('new_menu_item')) {
-					target.blur();
-					target.closest('ul').children('li:last').children('i.navigation-add-item').trigger('click');}
+						ueditor_target.blur();
+						target.closest('ul').children('li:last').children('i.navigation-add-item').trigger('click');
+					}
 				}
 				else if(e.which == 13) {
 
 					target.closest('li').data('backboneview').model['being-edited'] = false;
-					setTimeout(function() {target.blur();}, 100);
+					setTimeout(function() {ueditor_target.blur();}, 100);
 
 				}
-				if(target.text().trim() != '') target.removeClass('menu_item_placeholder');
+				if(ueditor_target.text().trim() != '') target.removeClass('menu_item_placeholder');
 				else target.addClass('menu_item_placeholder');
 			}).on('blur', function(e) {
 
@@ -226,7 +243,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 						return;
 					}
 
-					target.data('ueditor').stop();
+					ueditor_target.data('ueditor').stop();
 
 					target.closest('li').removeClass('edit_mode');
 					if(!target.hasClass('new_menu_item')) {
@@ -239,11 +256,11 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				me.editModeOff();
 			});
 
-			target.data('ueditor').start();
-			target.focus();
+			ueditor_target.data('ueditor').start();
+			ueditor_target.focus();
 		} else {
-			target.data('ueditor').start();
-			target.focus();
+			ueditor_target.data('ueditor').start();
+			ueditor_target.focus();
 		}
 
 		var currentcontext = target.closest('ul');
@@ -275,7 +292,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		if(this.$el.find('li.edit_mode').data('backboneview'))
 			this.$el.find('li.edit_mode').data('backboneview').model['being-edited']= false;
-		this.$el.find('li.edit_mode a.menu_item').blur();
+		this.$el.find('li.edit_mode a.menu_item .menu_item-ueditor').blur();
 		this.editModeOff();
 		if(!$('#upfront-popup').hasClass('upfront-postselector-popup') || !$('#upfront-popup').css('display')== 'block')
 			this.$el.find('.time_being_display').removeClass('time_being_display');
@@ -569,13 +586,15 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		}, 200);
 
-		this.$el.off('click', '.responsive_nav_toggler');
-		this.$el.on('click', '.responsive_nav_toggler', function(event) {
+		this.$el.off('click', '.responsive_nav_toggler, .burger_overlay');
+		this.$el.on('click', '.responsive_nav_toggler, .burger_overlay', function(event) {
 			me.toggle_responsive_nav(event);
 			event.stopPropagation();
 		});
 
 		this.$el.find('.upfront-output-unewnavigation').addClass('upfront-navigation');
+
+		this.trigger('rendered');
 	},
 
 	renderResponsiveNavigation: function(selector) {
@@ -586,10 +605,11 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			sidebar_width = $('div#sidebar-ui').outerWidth(),
 			topbar_height = ( $('div#upfront-ui-topbar').length > 0 ? $('div#upfront-ui-topbar').outerHeight() : 0 ),
 			ruler_height = ( $('.upfront-ruler-container').length > 0 ? $('.upfront-ruler-container').outerHeight() : 0 ),
+			usingNewAppearance = this.property('usingNewAppearance'),
 			allBreakpoints = Upfront.Views.breakpoints_storage.get_breakpoints(),
 			currentBreakpoint = allBreakpoints.get_active(),
-			breakpoints = this.get_preset_properties().breakpoint || this.fallbackBreakpointData(),
-			breakpoint = breakpoints[currentBreakpoint.id],
+			breakpoints = usingNewAppearance ? this.get_preset_properties().breakpoint : this.fallbackBreakpointData(),
+			breakpoint = (breakpoints || {})[currentBreakpoint.id] || {},
 			breakpointWidth = currentBreakpoint.get_property_value_by_name('width'),
 			currentwidth = typeof breakpointWidth !== 'undefined' && !currentBreakpoint.get('default') ? parseInt(breakpointWidth, 10) : $(window).width()
 		;
@@ -647,7 +667,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 			if (selector.hasClass('upfront-output-unewnavigation')) {
 				$('head').find('style#responsive_nav_sidebar_offset').remove();
-				
+
 				var responsive_css = 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"] ul.menu, div.upfront-navigation div[data-style="burger"][data-burger_alignment="whole"] ul.menu {left:'+parseInt(regions_off.left, 10)+'px;} ';
 				responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="top"] ul.menu, div.upfront-navigation div[data-style="burger"][ data-burger_alignment="whole"] ul.menu {right: inherit; width:'+((parseInt(currentwidth) < parseInt(win_width-sidebar_width))?parseInt(currentwidth):parseInt(win_width-sidebar_width)) +'px !important; } ';
 				responsive_css = responsive_css + 'div.upfront-navigation div[data-style="burger"][ data-burger_alignment="left"] ul.menu {left:'+parseInt(regions_off.left)+'px !important; right:inherit !important; width:'+(parseInt(30/100*regions_width)+40)+'px !important;} ';
@@ -700,6 +720,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		var breakpoints = this.property('breakpoint');
 		if ( breakpoints !== false && _.isObject(breakpoints) && "desktop" in breakpoints ) {
 			for ( key in breakpoints ) {
+				if ( !_.isObject(breakpoints[key]) ) continue;
 				if ( "burger_menu" in breakpoints[key] && breakpoints[key].burger_menu === 'yes' ) {
 					breakpoints[key].menu_style = 'burger';
 					delete breakpoints[key].burger_menu;
@@ -717,7 +738,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	activate_responsive_nav: function(selector, bpwidth) {
 
 		// If there is preset setup use new rendering
-		
+
 		/**
 		 * Even the new Responsive Nav comes with 'default' presets
 		 * so, it should be allowed to use the new rendering technique
@@ -727,7 +748,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			this.renderResponsiveNavigation(selector);
 			return;
 		}
-		
+
 		this.fallbackToOldResponsiveNav(selector, bpwidth);
 	},
 
@@ -885,6 +906,9 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					$('section.upfront-layout').css('margin-top', 0);
 				}
 			});
+
+			$nav.attr('data-burger_open', "1");
+
 			region_container.addClass('upfront-region-container-has-nav');
 			region_container.addClass('upfront-region-container-nav-open');
 			if ( group.length > 0 ) {
@@ -905,6 +929,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		} else {
 			this.hideMenu($menu);
 			this.$el.find('i.burger_nav_close').parent('li.wrap_burger_nav_close').remove();
+
+			$nav.removeAttr('data-burger_open');
 
 			this.$el.find('ul.sub-menu').css('display', '');
 			if(this.$el.find('ul.sub-menu').length < 1 ) {
@@ -954,7 +980,9 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		setTimeout(function() {
 			me.clearPresetClass(me.$el);
 			me.$el.addClass(me.property('theme_style'));
-			me.$el.addClass(preset);
+			if (me.property('usingNewAppearance')) {
+				me.$el.addClass(preset);
+			}
 		}, 50);
 
 		//Work around for having the region container have a higher z-index if it contains the nav, so that the dropdowns, if overlapping to the following regions should not loose "hover" when the mouse travels down to the next region.
@@ -966,20 +994,21 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		else {
 			region_container.removeClass('upfront-region-container-has-nav');
 		}
+		
+		var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+			usingNewAppearance = this.property('usingNewAppearance');
+	
+		presetProperties.breakpoint = usingNewAppearance ? this.get_preset_properties().breakpoint : this.fallbackBreakpointData();
 
-
-		var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
-
-		presetProperties.breakpoint = presetProperties.breakpoint || this.fallbackBreakpointData();
 		if (!breakpoint || breakpoint.default) {
 			if (
-				presetProperties.breakpoint.desktop.menu_style === 'burger'&&
-				presetProperties.breakpoint.desktop.burger_over !== 'pushes' &&
-				presetProperties.breakpoint.desktop.burger_alignment !== 'whole'
+				((presetProperties.breakpoint || {}).desktop || {}).menu_style === 'burger'&&
+				((presetProperties.breakpoint || {}).desktop || {}).burger_over !== 'pushes' &&
+				((presetProperties.breakpoint || {}).desktop || {}).burger_alignment !== 'whole'
 			) {
 				this.$el.find('.upfront-object-content').append($('<div class="burger_overlay"></div>'));
 			}
-			if (presetProperties.breakpoint.desktop.menu_style === 'burger') {
+			if (((presetProperties.breakpoint || {}).desktop || {}).menu_style === 'burger') {
 				container.prepend($('<div>').addClass("responsive_nav_toggler").data('view', me).append('<div></div><div></div><div></div>'));
 				me.hideMenu(this.$el.find('ul.menu'));
 			}
@@ -1193,9 +1222,9 @@ Upfront.Application.LayoutEditor.add_object("Unewnavigation", {
 
 
 		"[data-style='burger'] ul.menu": {label: l10n.css.responsive_bar_label, info: l10n.css.bar_info},
-		".upfront-output-unewnavigation .responsive_nav_toggler": {label: l10n.css.responsive_trigger, info: l10n.css.hover_info},
-		".upfront-output-unewnavigation div.responsive_nav_toggler > div": {label: l10n.css.responsive_trigger_bars, info: l10n.css.hover_info},
-		".upfront-output-unewnavigation i.burger_nav_close": {label: l10n.css.responsive_nav_close, info: l10n.css.close_info},
+		"[data-style='burger'] .responsive_nav_toggler": {label: l10n.css.responsive_trigger, info: l10n.css.hover_info},
+		"[data-style='burger'] div.responsive_nav_toggler > div": {label: l10n.css.responsive_trigger_bars, info: l10n.css.hover_info},
+		"[data-style='burger'] i.burger_nav_close": {label: l10n.css.responsive_nav_close, info: l10n.css.close_info},
 		"[data-style='burger'] ul.menu > li.menu-item > a": {label: l10n.css.responsive_item_label, info: l10n.css.item_info},
 		"[data-style='burger'] ul.menu > li.menu-item:hover > a": {label: l10n.css.responsive_hover_label, info: l10n.css.hover_info},
 		"[data-style='burger'] ul.sub-menu > li.menu-item > a": {label: l10n.css.responsive_subitem_label, info: l10n.css.subitem_info},

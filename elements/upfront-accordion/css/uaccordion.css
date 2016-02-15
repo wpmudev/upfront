@@ -1,18 +1,21 @@
 #page .upfront-accordion-wrap {
-	overflow-x: hidden;
+	/*overflow-x: hidden;*/
+	/*overflow-y: hidden;*/
 }
 #page .upfront-accordion-container .accordion-panel {
 	position: relative;
 }
 #page .upfront-accordion-container .accordion-panel-title {
 	position: relative;
+}
+.upfront-accordion-container .accordion-panel-title {
 	padding: 7px 15px;
 }
-#page .upfront-accordion-container .accordion-panel-title:after,
-#page .upfront-accordion-container .accordion-panel-active .accordion-panel-title:after {
+.upfront-accordion-container .accordion-panel-title:after,
+.upfront-accordion-container .accordion-panel-active .accordion-panel-title:after {
   border:5px solid transparent;
 }
-#page .upfront-accordion-container .accordion-panel-title:after {
+.upfront-accordion-container .accordion-panel-title:after {
 	content: '';
 	width: 0;
 	height: 0;
@@ -22,7 +25,7 @@
 	right: 22px;
 }
 
-#page .upfront-accordion-container .accordion-panel-active .accordion-panel-title:after {
+.upfront-accordion-container .accordion-panel-active .accordion-panel-title:after {
 	content: '';
 	width: 0;
 	height: 0;

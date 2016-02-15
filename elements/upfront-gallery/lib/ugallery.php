@@ -16,6 +16,10 @@ class Upfront_UgalleryView extends Upfront_Object {
 		$data = $this->properties_to_array();
 		$images = array();
 
+		if (isset($data['usingNewAppearance']) === false) {
+			$data['usingNewAppearance'] = false;
+		}
+
 		// Flag for excluding stuff that is only for editor
 		$data['in_editor'] = false;
 		$data['even_padding'] = isset($data['even_padding']) ? $data['even_padding'] : array('false');
@@ -68,6 +72,10 @@ class Upfront_UgalleryView extends Upfront_Object {
 
 		$data['properties'] = Upfront_Gallery_Presets_Server::get_instance()->get_preset_properties($data['preset']);
 
+		if (is_array($data['labelFilters']) && $data['labelFilters'][0] === 'true') {
+			$data['labelFilters'] = 'true';
+		}
+
 		$lbTpl = upfront_get_template('ugallery', $data, dirname(dirname(__FILE__)) . '/tpl/lightbox.html');
 		$markup = upfront_get_template('ugallery', $data, dirname(dirname(__FILE__)) . '/tpl/ugallery.html');
 
@@ -80,8 +88,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 					labels: ' . json_encode($data['labels']) . ',
 					labels_length: ' . json_encode($data['labels_length']) . ',
 					image_labels: ' . json_encode($data['image_labels']) . ',
-					grid: ' . ($data['labelFilters']['length'] ? $data['labelFilters']['length'] : 0) . ',
-//                    grid: ' . $data['labelFilters']['length'] . ',
+					grid: ' . ($data['labelFilters'] === 'true' ? 1 : 0) . ',
 					useLightbox: '. ($data['linkTo'] == 'image' ? '1' : '0') . '
 				};
 			</script>
@@ -124,7 +131,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 		$all_labels = array();
 		foreach($images as $image){
 			$image_labels = '"label_0"';
-			$terms = get_the_terms($image['id'], 'media_label');
+			$terms = wp_get_object_terms(array($image['id']), array('media_label'));
 			// Add tags from uploaded images
 			if(is_array($terms)){
 				foreach($terms as $label){
@@ -250,7 +257,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'has_settings' => 1,
 			'class' => 'c24 upfront-gallery',
 			'id_slug' => 'ugallery',
-
+			'preset' => 'default',
 			'status' => 'starting',
 			'images' => array(), // Convert to new UgalleryImages() for using
 			'elementSize' => array( 'width' => 0, 'height' => 0),
@@ -275,7 +282,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'thumbPaddingNumber' => 15,
 			'thumbSidePaddingNumber' => 15,
 			'thumbBottomPaddingNumber' => 15,
-			'lockPadding' => 1,
+			'lockPadding' => 'yes',
 			'lightbox_show_close' => array('true'),
 			'lightbox_show_image_count' => array('true'),
 			'lightbox_click_out_close' => array('true'),

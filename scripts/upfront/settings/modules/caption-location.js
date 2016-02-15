@@ -56,6 +56,18 @@ define([
 					],
 					change: function(value) {
 						me.model.set('caption-trigger', value);
+					},
+					init: function(){
+						me.listenTo(this.model, "change", me.render);
+					},
+					rendered: function(){
+						_.delay(this.options.disable_hover_show, 200);
+					},
+					disable_hover_show: function(){
+						me.$el.find("[value='hover_show']").attr("disabled", false);
+						if( 'below_image' ===  me.model.get("caption-position") )
+							me.$el.find("[value='hover_show']").attr("disabled", true);
+
 					}
 				}),
 
@@ -99,6 +111,7 @@ define([
 							case 'below':
 								me.model.set('caption-position', 'below_image');
 								me.model.set('caption-alignment', false);
+								me.model.set('caption-trigger', "always_show");
 						}
 					}
 				})

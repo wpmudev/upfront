@@ -190,6 +190,7 @@ class Upfront_Grid {
 				$this->_exceptions = array();
 				$point_css .= $this->_apply_modules($region, $region_col, false);
 				$point_css .= $point->apply_col($region_col, $region, $this->get_grid_scope(), '#upfront-region-'.$name);
+				$point_css .= $point->apply_bg_paddings($region, $this->get_grid_scope(), '#upfront-region-'.$name);
 				if ( $region_row && !in_array('row', $this->_exceptions) ) {
 						$point_css .= $point->apply_row($region_row, $region, $this->get_grid_scope(), '#upfront-region-'.$name);
 				}
@@ -215,7 +216,11 @@ class Upfront_Grid {
 		$modules = $data['modules'];
 		if ( !$breakpoint->is_default() ) {
 			foreach ($wrappers as $w => $wrapper) {
-				$wrappers[$w]['_order'] = $w;
+				$wrapper_id = upfront_get_property_value('wrapper_id', $wrapper);
+				foreach ( $modules as $m => $module ) {
+					if ( upfront_get_property_value('wrapper_id', $module) != $wrapper_id ) continue;
+					$wrappers[$w]['_order'] = $m;
+				}
 			}
 			usort($wrappers, array($this, '_sort_cb'));
 		}
@@ -959,7 +964,9 @@ class Upfront_GridBreakpoint {
 	}
 
 	public function apply_paddings ($entity, $scope=false, $property='element_id', $selector = '', $exception=array()) {
-		$selector = $selector . ' #' . $this->_get_property($property, $entity);
+		if ( !empty($property) ) {
+			$selector = $selector . ' #' . $this->_get_property($property, $entity);
+		}
 		$breakpoint = $this->_get_property('breakpoint', $entity);
 		$breakpoint_data = $breakpoint && !empty($breakpoint[$this->get_id()]) ? $breakpoint[$this->get_id()] : false;
 
@@ -980,14 +987,30 @@ class Upfront_GridBreakpoint {
 			$left_padding_use = $this->_get_property('left_padding_use', $entity);
 		}
 		else if ($breakpoint_data){
-			if (!empty($breakpoint_data['top_padding_num'])) $top_padding = $breakpoint_data['top_padding_num'];
-			if (!empty($breakpoint_data['top_padding_use'])) $top_padding_use = $breakpoint_data['top_padding_use'];
-			if (!empty($breakpoint_data['right_padding_num'])) $right_padding = $breakpoint_data['right_padding_num'];
-			if (!empty($breakpoint_data['right_padding_use'])) $right_padding_use = $breakpoint_data['right_padding_use'];
-			if (!empty($breakpoint_data['bottom_padding_num'])) $bottom_padding = $breakpoint_data['bottom_padding_num'];
-			if (!empty($breakpoint_data['bottom_padding_use'])) $bottom_padding_use = $breakpoint_data['bottom_padding_use'];
-			if (!empty($breakpoint_data['left_padding_num'])) $left_padding = $breakpoint_data['left_padding_num'];
-			if (!empty($breakpoint_data['left_padding_use'])) $left_padding = $breakpoint_data['left_padding_use'];
+			if (isset($breakpoint_data['top_padding_num']) && is_numeric($breakpoint_data['top_padding_num'])) {
+				$top_padding = $breakpoint_data['top_padding_num'];
+			}
+			if (!empty($breakpoint_data['top_padding_use'])) {
+				$top_padding_use = $breakpoint_data['top_padding_use'];
+			}
+			if (isset($breakpoint_data['right_padding_num']) && is_numeric($breakpoint_data['right_padding_num'])) {
+				$right_padding = $breakpoint_data['right_padding_num'];
+			}
+			if (!empty($breakpoint_data['right_padding_use'])) {
+				$right_padding_use = $breakpoint_data['right_padding_use'];
+			}
+			if (isset($breakpoint_data['bottom_padding_num']) && is_numeric($breakpoint_data['bottom_padding_num'])) {
+				$bottom_padding = $breakpoint_data['bottom_padding_num'];
+			}
+			if (!empty($breakpoint_data['bottom_padding_use'])) {
+				$bottom_padding_use = $breakpoint_data['bottom_padding_use'];
+			}
+			if (isset($breakpoint_data['left_padding_num']) && is_numeric($breakpoint_data['left_padding_num'])) {
+				$left_padding = $breakpoint_data['left_padding_num'];
+			}
+			if (!empty($breakpoint_data['left_padding_use'])) {
+				$left_padding_use = $breakpoint_data['left_padding_use'];
+			}
 		}
 
 		if ( !in_array('top_padding', $exception) && $top_padding_use && isset($top_padding) && is_numeric($top_padding) ){
@@ -1010,6 +1033,48 @@ class Upfront_GridBreakpoint {
 
 		if ( !in_array('left_padding', $exception) && $left_padding_use && isset($left_padding) && is_numeric($left_padding) ){
 			$style = $this->_left_padding_to_style($left_padding);
+			$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
+			$raw_styles[$selector][] = rtrim($style, ';') . ';';
+		}
+
+		$all_styles = '';
+		foreach ($raw_styles as $selector => $rules) {
+			$all_styles .= sprintf('%s %s {%s}',
+					'.' . ltrim($scope, '. '),
+					$selector,
+					join(' ', $rules)
+				) . "\n";
+		}
+		return $all_styles;
+	}
+
+	public function apply_bg_paddings ($entity, $scope=false, $selector = '') {
+		$breakpoint = $this->_get_property('breakpoint', $entity);
+		$breakpoint_data = $breakpoint && !empty($breakpoint[$this->get_id()]) ? $breakpoint[$this->get_id()] : false;
+
+		$raw_styles = array();
+
+		if ( $this->is_default() ){
+			$top_padding = $this->_get_property('top_bg_padding_num', $entity);
+			$bottom_padding = $this->_get_property('bottom_bg_padding_num', $entity);
+		}
+		else if ($breakpoint_data){
+			if (isset($breakpoint_data['top_bg_padding_num']) && is_numeric($breakpoint_data['top_bg_padding_num'])) {
+				$top_padding = $breakpoint_data['top_bg_padding_num'];
+			}
+			if (isset($breakpoint_data['bottom_bg_padding_num']) && is_numeric($breakpoint_data['bottom_bg_padding_num'])) {
+				$bottom_padding = $breakpoint_data['bottom_bg_padding_num'];
+			}
+		}
+
+		if ( isset($top_padding) && is_numeric($top_padding) ){
+			$style = $this->_top_padding_to_style($top_padding);
+			$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
+			$raw_styles[$selector][] = rtrim($style, ';') . ';';
+		}
+
+		if ( isset($bottom_padding) && is_numeric($bottom_padding) ){
+			$style = $this->_bottom_padding_to_style($bottom_padding);
 			$raw_styles[$selector] = !empty($raw_styles[$selector]) ? $raw_styles[$selector] : array();
 			$raw_styles[$selector][] = rtrim($style, ';') . ';';
 		}

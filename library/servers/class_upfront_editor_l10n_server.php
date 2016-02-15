@@ -41,6 +41,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'here_we_are' => __('Here we are!', 'upfront'),
 				'loading_path' => __('Loading %s...', 'upfront'),
 				'navigation_confirm' => __('You have unsaved changes you\'re about to lose by navigating off this page. Do you really want to leave this page?', 'upfront'),
+				'long_loading_notice' => __('When you load Upfront Editor, it may take a while. Be patient! It\'s worth it, promise!', 'upfront'),
 				//'please_hold_on' => __('Please, hold on for just a little bit more', 'upfront'),
 			),
 			'behaviors' => array(
@@ -161,6 +162,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'untrash' => __('Untrash', 'upfront'),
 				'trash' => __('Trash', 'upfront'),
 				'post_url' => __('Post URL', 'upfront'),
+				'page_url' => __('Page URL', 'upfront'),
 				'edit_post_url' => __('Edit the <b>URL</b> for this post', 'upfront'),
 				'post_url_info' => __('By default, your URL is determined by a post\'s or page\'s title. You can change it here.<br/>It is a good idea to keep them short and memorable.', 'upfront'),
 				'parent_category' => __('Parent Category', 'upfront'),
@@ -308,6 +310,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'ltbox_close_icon_info' => __('Lightbox Close Icon.', 'upfront'),
 				'edit_ltbox' => __('Edit Lightbox', 'upfront'),
 				'show_element' => __('show element', 'upfront'),
+				'show_group' => __('show group', 'upfront'),
 				'show_region' => __('show region', 'upfront'),
 				'exiting_upfront' => __('Exiting upfront...', 'upfront'),
 				'exit_done' => __('Wow, those are cool!', 'upfront'),

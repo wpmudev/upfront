@@ -191,6 +191,29 @@
 .upfront-module-group:hover {
 
 }
+.upfront-module-group-hidden {
+	height: auto !important;
+	min-height: 0 !important;
+	width: 100% !important;
+	padding: 0 !important;
+	margin: 0 !important;
+	border: none !important;
+	float: none;
+}
+.upfront-layout-view .upfront-module-group-hidden:after {
+	content: none;
+}
+.upfront-module-group-hidden .upfront-entity_meta,
+.upfront-module-group-hidden .upfront-selected-border,
+.upfront-module-group-hidden .upfront-module-group-toggle-container,
+.upfront-module-group-hidden .upfront-module-group-bg,
+.upfront-module-group-hidden .open-item-controls,
+.upfront-module-group-hidden .upfront-module-group-controls,
+.upfront-module-group-hidden .upfront-entity-size-hint,
+.upfront-module-group-hidden .upfront-modules_container,
+#page .upfront-module-group-hidden .ui-resizable-handle {
+	display: none !important;
+}
 .upfront-module-group-toggle-container {
 	position: absolute;
 	top: 0;
@@ -251,7 +274,8 @@
 	bottom: 0;
 	z-index: 1999;
 }
-.ui-resizable-disabled > .ui-resizable-handle {
+.ui-resizable-disabled > .ui-resizable-handle,
+.ui-resizable-disabled:hover > .ui-resizable-handle {
 	display: none !important;
 }
 .show-debug .upfront-module {
@@ -269,7 +293,7 @@
 	box-shadow: inset 0px 0px 0px 2px rgba(111, 188, 248, 1);
 	z-index: 4;
 }
-.upfront-module-has-nav,
+.upfront-module-has-nav:hover,
 .upfront-module-active.upfront-module-has-nav {
 	z-index: 50;
 }
@@ -482,6 +506,10 @@
 .upfront-module-spacer > .upfront-entity_meta {
   display: none;
 }
+.upfront-force-module-delete .upfront-module > .upfront-entity_meta,
+.upfront-force-module-delete .upfront-module > .upfront-entity_meta > .upfront-entity-delete_trigger{
+	display: block !important;
+}
 .upfront-object > .upfront-entity_meta {
 	top: 28px;
 	right: 5px;
@@ -590,7 +618,8 @@
 .upfront-wrapper.ui-resizable-resizing > .upfront-wrapper-meta {
   display: block !important;
 }
-.upfront-module-group-editing .upfront-wrapper.upfront-wrapper-active > .upfront-wrapper-meta {
+.upfront-module-group-editing .upfront-wrapper.upfront-wrapper-module-group-on-edit > .upfront-wrapper-meta,
+.upfront-module-group-editing .upfront-wrapper:hover > .upfront-wrapper-meta {
   display: none !important;
 }
 .upfront-module-group-editing .upfront-module-group-on-edit .upfront-wrapper:hover > .upfront-wrapper-meta {
@@ -616,10 +645,12 @@
 .upfront-wrapper[data-last-in-row="1"] > .upfront-wrapper-meta-right > .upfront-icon-button {
   display: none;
 }
-.upfront-wrapper.upfront-wrapper-spacer[data-first-in-row="1"] > .upfront-wrapper-meta-left, {
+.upfront-wrapper.upfront-wrapper-spacer[data-first-in-row="1"] > .upfront-wrapper-meta-left,
+.upfront-wrapper.upfront-wrapper-spacer[data-first-in-row="1"]:hover > .upfront-wrapper-meta-left {
   display: none !important;
 }
-.upfront-wrapper.upfront-wrapper-spacer[data-last-in-row="1"] > .upfront-wrapper-meta-right {
+.upfront-wrapper.upfront-wrapper-spacer[data-last-in-row="1"] > .upfront-wrapper-meta-right,
+.upfront-wrapper.upfront-wrapper-spacer[data-last-in-row="1"]:hover > .upfront-wrapper-meta-right {
   display: none !important;
 }
 

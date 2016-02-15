@@ -31,6 +31,7 @@ var UeditorPanel = Backbone.View.extend({
         if( typeof this.init === "function" ){
             this.init();
         }
+
         this.render();
     },
 
@@ -822,6 +823,10 @@ RedactorPlugins.upfrontLink = function() {
 			},
 
 			render: function () {
+                // this function is better called in 'this.open()', no point having it executed without a linkModel.
+                if(typeof(this.linkModel) === 'undefined')
+                    return;
+                
 				var linkTypes = {},
 					me = this;
 
@@ -1075,6 +1080,16 @@ RedactorPlugins.upfrontColor = function() {
 
                 background_picker.render();
                 this.$("#tabbackground-content").html(background_picker.el);
+
+                /**
+                 * Position the color pickers so that they are always inside the page
+                 *
+                 */
+                var $dropdown = this.$el.closest(".redactor-dropdown");
+                $dropdown.removeClass( "on-right-border" );
+                if( $(window).width() <= (  this.$("#tabforeground-content").offset().left + this.$("#tabforeground-content").width() ) )
+                    $dropdown.addClass( "on-right-border" );
+
 
                 if (this.current_color) {
                     var color = tinycolor(self.current_color);

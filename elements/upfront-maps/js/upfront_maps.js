@@ -276,20 +276,35 @@ define([
 						$(this).focus();
 					})
 				.end()
-				.find("#upfront_map-location_overlay-use_current").off("click").on("click", function () {
-					if (!(navigator && navigator.geolocation)) return false;
-					var markers = me.model.get_property_value_by_name("markers") || [];
-					navigator.geolocation.getCurrentPosition(function(position) {
-						markers.push({lat:position.coords.latitude, lng:position.coords.longitude});
-						me.model.set_property("markers", markers, true);
-						me.model.set_property("map_center", [position.coords.latitude, position.coords.longitude], false);
-					});
-				}).end()
 				.off("dblclick").on("dblclick", function (e) {
 					e.preventDefault();
 					e.stopPropagation();
 				})
 			;
+
+			var $current = $location.find("#upfront_map-location_overlay-use_current");
+			if (navigator && navigator.geolocation) {
+				$current.off("click").on("click", function () {
+					if (!(navigator && navigator.geolocation)) return false;
+					var markers = me.model.get_property_value_by_name("markers") || [];
+					navigator.geolocation.getCurrentPosition(
+						// Success!
+						function (position) {
+							markers.push({lat:position.coords.latitude, lng:position.coords.longitude});
+							me.model.set_property("markers", markers, true);
+							me.model.set_property("map_center", [position.coords.latitude, position.coords.longitude], false);
+						},
+						// Error, boo!
+						function () {
+							$current.closest(".uf-current-location").text(l10n.unable_to_geolocate);
+						}
+					);
+				});
+			} else {
+				// No geolocation, no link
+				$current.remove();
+			}
+
 			this.$el.find(".upfront-entity_meta").hide();
 		},
 

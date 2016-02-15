@@ -5,7 +5,7 @@
         </b> -->
         <?php for ($i = 0; $i < $accordion_count; $i++) { ?>
         <div class="accordion-panel <?php if($i === 0) { ?>accordion-panel-active<?php } ?>">
-            <div class="accordion-panel-title" id="title_<?php echo $element_id ?>-<?php echo $i ?>"><?php echo $accordion[$i]['title'] ?></div>
+            <div class="accordion-panel-title" id="title_<?php echo $element_id ?>-<?php echo $i ?>"><?php if($accordion[$i]['title']) { ?><?php echo $accordion[$i]['title'] ?><?php } else { ?>&nbsp;<?php } ?></div>
             <div id="<?php echo $element_id ?>-<?php echo $i ?>" class="accordion-panel-content">
                 <?php echo $accordion[$i]['content'] ?>
             </div>

@@ -81,25 +81,12 @@ class Upfront_Button_Presets_Server extends Upfront_Presets_Server {
 			}
 
 			//Enable all checkboxes for button preset
-			if(!isset($preset_options['lineheight'])) {
-				$preset_options['useborder'] = 'yes';
-				$preset_options['useradius'] = 'yes';
-				$preset_options['hov_usetypography'] = 'yes';
-				$preset_options['hov_useborder'] = 'yes';
-				$preset_options['hov_useradius'] = 'yes';
-				$preset_options['hov_usebgcolor'] = 'yes';
+			if(!isset($preset_options['migrated'])) {
 				$preset_options['hov_use_animation'] = 'yes';
-				$preset_options['lineheight'] = 1;
+				$preset_options['migrated'] = 1;
 				$count++;
 			}
 			
-			//Enable Use Animation
-			if(!isset($preset_options['focus_borderradiuslock'])) {
-				$preset_options['hov_use_animation'] = 'yes';
-				$preset_options['focus_borderradiuslock'] = 'yes';
-				$count++;
-			}
-
 			$update_settings[] = $preset_options;
 		}
 

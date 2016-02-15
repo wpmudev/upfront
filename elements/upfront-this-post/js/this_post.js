@@ -3,7 +3,7 @@ define([
 	'scripts/upfront/element-settings/settings',
 	'scripts/upfront/element-settings/root-settings-panel',
 	'scripts/upfront/preset-settings/util',
-	'text!elements/upfront-widget/tpl/preset-style.html'
+	'text!elements/upfront-this-post/tpl/preset-style.html'
 ], function(ElementSettings, RootSettingsPanel, Util, styleTpl) {
 
 var l10n = Upfront.Settings.l10n.this_post_element;
@@ -88,6 +88,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 
                 });
             }
+
 		});
 
 		Upfront.Events.trigger('post:initialized', this);
@@ -158,8 +159,10 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			contents = this.$('.upfront-object-content').children()
 		;
 
-		if(contents[0] != this.editor.el){
+		// Make sure we have an element to swap with, first up
+		if(contents[0] && contents[0] != this.editor.el){
 			this.editor.setElement( contents[0] );
+			this.editor.render(); // ... and don't forget to re-render when swapping els
 		}
 
 		// Let's not render min-height (remove it)
@@ -444,7 +447,7 @@ var Settings = ElementSettings.extend({
 	
 	initialize: function (opts) {
 		//If editor show only general preset
-		if( Upfront.Application.get_current() !== Upfront.Application.MODE.THEME ) {
+		if (location.pathname.indexOf('create_new') === -1) {// you are in exporter
 			this.panels = { General: Settings_PostPanel };
 		}
 		

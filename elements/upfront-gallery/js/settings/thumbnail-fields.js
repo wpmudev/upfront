@@ -114,7 +114,7 @@ define([
 						className: 'gallery-padding-lock',
 						property: 'lockPadding',
 						label: "",
-						default_value: 1,
+						default_value: 'yes',
 						multiple: false,
 						values: [
 							{ label: '', value: 'yes' }
@@ -263,6 +263,25 @@ define([
 							}
 							// me.model.set_property('thumbBottomPaddingNumber', value);
 							debouncedUpdateFromSlider(me.model, 'bottomPadding', value, 'change:thumbPadding');
+						}
+					}
+				]
+			},
+      {
+				type: 'SettingsItem',
+				className: 'general_settings_item',
+				title: 'Label filters',
+				fields: [
+					{
+						type: 'Checkboxes',
+						property: 'labelFilters',
+						default_value: 0,
+						multiple: false,
+						values: [
+							{ label: 'Enable image filtering', value: ['true'] }
+						],
+						change: function(value, me) {
+							me.model.set_property('labelFilters', value);
 						}
 					}
 				]

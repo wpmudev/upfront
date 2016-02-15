@@ -105,6 +105,11 @@ h2, h3 { page-break-after: avoid; }
   pointer-events: auto;
 }
 
+.upfront-output-region {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
 .upfront-output-region, .upfront-region-wrapper {
   width: 100%;
 }
@@ -325,6 +330,9 @@ h2, h3 { page-break-after: avoid; }
 .uf-responsive .upfront-output-image .upfront-image-container {
     max-width: 100%;
 }
+.uf-responsive .upfront-output-image .upfront-image-container img {
+	max-width: 100%;
+}
 
 .uf-responsive #page .post_content > * {
     padding-left: 0;
@@ -349,8 +357,11 @@ h2, h3 { page-break-after: avoid; }
     width: auto;
     float: none;
 }
-.uf-responsive .upfront-image-caption-container {
-    width: 100%;
+.uf-responsive .uimage-stretch .upfront-image-caption-container {
+	width: 100%;
+}
+.uf-responsive .uimage-stretch .upfront-image-container {
+    width: 100% !important;
 }
 
 /* Flexbox experiments *//* */
@@ -507,4 +518,129 @@ body .upfront-edit_layout:hover a:not(.active) {
 body .upfront-edit_layout a {
   opacity: 1;
   cursor: pointer;
+}
+
+/* This one ensures that the an anchor inside a heading does not vary too much if a specific font style is applied on an anchor */
+
+.upfront-object h1 a, .upfront-output-object h1 a,
+.upfront-object h2 a, .upfront-output-object h2 a,
+.upfront-object h3 a, .upfront-output-object h3 a,
+.upfront-object h4 a, .upfront-output-object h4 a,
+.upfront-object h5 a, .upfront-output-object h5 a,
+.upfront-object h6 a, .upfront-output-object h6 a,
+.upfront-object p a, .upfront-output-object p a,
+.upfront-object h1 a:link, .upfront-output-object h1 a:link,
+.upfront-object h2 a:link, .upfront-output-object h2 a:link,
+.upfront-object h3 a:link, .upfront-output-object h3 a:link,
+.upfront-object h4 a:link, .upfront-output-object h4 a:link,
+.upfront-object h5 a:link, .upfront-output-object h5 a:link,
+.upfront-object h6 a:link, .upfront-output-object h6 a:link,
+.upfront-object p a:link, .upfront-output-object p a:link,
+.upfront-object h1 a:hover, .upfront-output-object h1 a:hover,
+.upfront-object h2 a:hover, .upfront-output-object h2 a:hover,
+.upfront-object h3 a:hover, .upfront-output-object h3 a:hover,
+.upfront-object h4 a:hover, .upfront-output-object h4 a:hover,
+.upfront-object h5 a:hover, .upfront-output-object h5 a:hover,
+.upfront-object h6 a:hover, .upfront-output-object h6 a:hover,
+.upfront-object p a:hover, .upfront-output-object p a:hover  {
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+}
+
+/* Firefox checkboxes and radios are styled to match the rest of the browsers */
+@-moz-document url-prefix() { 
+  input[type=checkbox] {
+    /* original check box are push outside the viexport */
+    position: absolute ;
+    left: -1000em !important;
+  }
+
+  input[type=checkbox] + label:before {
+    content: "";
+    display: inline-block;
+    width  : 12px;
+    height : 12px;
+    margin : 0 -1em 0 0;
+    background: url("../img/checkbox_firefox.png") no-repeat 0 0;
+
+  /* The following is used to adjust the position of 
+     the check boxes on the text baseline */
+
+    vertical-align: bottom;
+    position: relative;
+    bottom: 0;
+    right: 17px;
+    cursor: pointer;
+  }
+
+  input[type=checkbox]:checked + label:before {
+    background-position: -24px 0;
+  }
+
+  input[type=checkbox]:disabled + label:before {
+    background-position: -12px 0;
+  }
+
+  input[type=checkbox]:checked:disabled + label:before {
+    background-position: 0 0;
+  }
+
+  #element-settings-sidebar .padding-lock input[type=checkbox] + label:before,
+  #element-settings-sidebar .border_radius_lock input[type=checkbox] + label:before,
+  #element-settings-sidebar .gallery-padding-lock input[type=checkbox] + label:before {
+    height: 15px;
+    width: 15px;
+    background-image: url("../img/uf-core-el-sprite.png");
+    background-image: url("../img/uf-core-el-sprite.svg"), none;
+    background-position: -661px -172px;
+    background-color: #f7fbff;
+    left: 38px;
+    top: -6px;
+    position: relative;
+  }
+  #element-settings-sidebar .padding-lock input[type=checkbox]:checked + label:before,
+  #element-settings-sidebar .border_radius_lock input[type=checkbox]:checked + label:before,
+  #element-settings-sidebar .gallery-padding-lock input[type=checkbox]:checked + label:before {
+    background-position: -661px -140px
+  }
+
+
+  input[type=radio] {
+    /* original check box are push outside the viexport */
+    position: absolute ;
+    left: -1000em !important;
+  }
+
+  input[type=radio] + label:before {
+    content: "";
+    display: inline-block;
+    width  : 12px;
+    height : 12px;
+    margin : 0 -1em 0 0;
+    background: url("../img/radio_firefox.png") no-repeat 0 0;
+
+  /* The following is used to adjust the position of 
+     the check boxes on the text baseline */
+
+    vertical-align: bottom;
+    position: relative;
+    bottom: 0;
+    right: 17px;
+    cursor: pointer;
+  }
+
+  input[type=radio]:checked + label:before {
+    background-position: -24px 0;
+  }
+
+  input[type=radio]:disabled + label:before {
+    background-position: -12px 0;
+  }
+
+  input[type=radio]:checked:disabled + label:before {
+    background-position: 0 0;
+  }
+
 }

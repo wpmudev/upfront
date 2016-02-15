@@ -9,7 +9,10 @@ div.upfront-navigation ul.sub-menu {
   z-index:2;
 }
 ul.menu {
-  background-color:#333;
+  background-color:transparent;
+}
+.triggered-menu ul.menu {
+  background: #333;
 }
 ul.sub-menu {
   background-color:#262626;
@@ -146,7 +149,7 @@ div.upfront-navigation div[data-style="vertical"] ul.sub-menu > li > ul > li a {
 div.upfront-navigation div[data-style="burger"] ul.menu {
   position:fixed;
   top:0;
-  z-index:2001;
+  z-index:2020;
   max-height: 100%;
   overflow-y: auto !important;
   box-sizing: border-box;
@@ -190,7 +193,7 @@ div.upfront-newnavigation_module:hover  div[data-style="burger"] div.responsive_
 .responsive_nav_toggler {
   float:right;
   position:relative;
-  z-index: 2000!important;
+  z-index: 2000;
   width:40px;
   height:40px;
   border:1px solid #d8d8d8;
@@ -204,6 +207,9 @@ div.upfront-newnavigation_module:hover  div[data-style="burger"] div.responsive_
   -ms-transition: border .25s;
   -o-transition: border .25s;
   transition: border .25s;
+}
+.upfront-module-disabled-edit .responsive_nav_toggler {
+  z-index: 2000 !important;
 }
 
 .responsive_nav_toggler:hover {
@@ -222,7 +228,7 @@ div.upfront-newnavigation_module:hover  div[data-style="burger"] div.responsive_
   margin-bottom:4px;
   -webkit-transition: background .25s;
   -moz-transition: background .25s;
-  -ms-transition: background .25s;background
+  -ms-transition: background .25s;
   -o-transition: background .25s;
   transition: background .25s;
 }
@@ -316,6 +322,7 @@ div.burger_overlay {
   height:100%;
   top:0;
   left:0;
+  z-index: 2010;
 }
 
 

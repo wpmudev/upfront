@@ -24,7 +24,25 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 
 		$preset_props = Upfront_Nav_Presets_Server::get_instance()->get_preset_properties($preset);
 		$breakpoint_data = $this->_get_property('breakpoint');
-		$breakpoint_data['preset'] = isset($preset_props['breakpoint'])?$preset_props['breakpoint']:false;
+		
+		if ($this->_get_property('usingNewAppearance') == true) {
+			$breakpoint_data['preset'] = isset($preset_props['breakpoint'])?$preset_props['breakpoint']:false;
+		} else {
+			$breakpoint_property = $this->_get_property('breakpoint');
+			$breakpoint_property = is_array($breakpoint_property) ? $breakpoint_property : array();
+			foreach ($breakpoint_property as $key=>$properties) {
+				$breakpoint_data['preset'][$key] = $properties;
+
+				if(isset( $properties['burger_menu'] ) && isset( $properties['burger_menu'][0] )) {
+					$breakpoint_data['preset'][$key]['burger_menu'] = $properties['burger_menu'][0];
+					$breakpoint_data['preset'][$key]['menu_style'] = "burger";
+					$breakpoint_data['preset'][$key]['menu_alignment'] = $properties['menu_alignment'];
+					$breakpoint_data['preset'][$key]['burger_alignment'] = $properties['burger_alignment'];
+					$breakpoint_data['preset'][$key]['burger_over'] = $properties['burger_over'];
+				}
+			}
+			
+		}
 
 		// if a breakpoint does not have info to render menu style, copy it from one higher
 		if(is_array($breakpoint_data['preset'])) {
@@ -49,11 +67,25 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 		$menu_alignment = $this->_get_property('menu_alignment');
 
 		$desktopPreset = (is_array($breakpoint_data['preset']) && isset($breakpoint_data['preset']['desktop']))?$breakpoint_data['preset']['desktop']:false;
-
-		$menu_style = isset($desktopPreset['menu_style']) && is_array($desktopPreset['menu_style']) ? $desktopPreset['menu_style'] :  $menu_style;
-		$menu_alignment = isset($desktopPreset['menu_alignment']) ? $desktopPreset['menu_alignment'] : $menu_alignment;
+		
 		$sub_navigation = $this->_get_property('allow_sub_nav');
 		$is_floating = $this->_get_property('is_floating');
+		
+		$breakpoint_data['preset']['desktop']['is_floating'] = $is_floating ? $is_floating : '';
+
+		if ($this->_get_property('usingNewAppearance') == true) {
+			$menu_style = isset($desktopPreset['menu_style']) && is_array($desktopPreset['menu_style']) ? $desktopPreset['menu_style'] :  $menu_style;
+			$menu_alignment = isset($desktopPreset['menu_alignment']) ? $desktopPreset['menu_alignment'] : $menu_alignment;
+		} else {
+			$burgermenu_desktop =  $this->_get_property('burger_menu');
+			if(is_array( $burgermenu_desktop ) && isset( $burgermenu_desktop[0] )) {
+				$breakpoint_data['preset']['desktop']['burger_menu'] = $burgermenu_desktop[0];
+				$breakpoint_data['preset']['desktop']['menu_style'] = "burger";
+				$breakpoint_data['preset']['desktop']['menu_alignment'] = $menu_alignment;
+				$breakpoint_data['preset']['desktop']['burger_alignment'] = $this->_get_property('burger_alignment');
+				$breakpoint_data['preset']['desktop']['burger_over'] = $this->_get_property('burger_over');
+			}
+		}
 
 		$menu_style = $menu_style === 'burger' ? 'burger' : $menu_style;
 
@@ -66,10 +98,18 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 		$breakpoint_data = preg_replace('#\\\\"#', '"', $breakpoint_data);
 		$menu_alignment = $menu_alignment ? "data-alignment='{$menu_alignment}' data-alignment='{$menu_alignment}'" : "";
 		$sub_navigation = $sub_navigation ? "data-allow-sub-nav='yes'" : "data-allow-sub-nav='no'";
+		
+		$new_appearance = $this->_get_property('usingNewAppearance') ? 'true' : 'false';
+		$using_appearance = "data-new-appearance='{$new_appearance}'";
 
 		$float_class = $is_floating ? 'upfront-navigation-float' : '';
 
 		upfront_add_element_script('unewnavigation_responsive', array('js/responsive.js', dirname(__FILE__)));
+		
+		if ($is_floating) {
+			//wp_enqueue_script('unewnavigation', upfront_element_url('js/public.js', dirname(__FILE__)));
+			upfront_add_element_script('unewnavigation', array('js/public.js', dirname(__FILE__)));
+		}
 
 		if($menu_slug) {
 			$menu = wp_get_nav_menu_object($menu_slug);
@@ -85,10 +125,18 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 				'walker' => new upfront_nav_walker(),
 			));
 		} else {
-			return "<div class='{$preset} {$float_class} upfront-navigation' {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . self::_get_l10n('select_menu') . "</div>";
+			if($new_appearance == 'true') {
+				return "<div class='{$preset} {$float_class} upfront-output-unewnavigation upfront-navigation' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . self::_get_l10n('select_menu') . "</div>";
+			} else {
+				return "<div class='{$float_class} upfront-output-unewnavigation upfront-navigation' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . self::_get_l10n('select_menu') . "</div>";
+			}
 		}
-
-		return "<div class='nav-preset-{$preset} {$float_class} upfront-navigation' {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . $menu . "</div>";
+		
+		if($new_appearance == 'true') {
+			return "<div class='nav-preset-{$preset} {$float_class} upfront-output-unewnavigation upfront-navigation' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . $menu . "</div>";
+		} else {
+			return "<div class='{$float_class} upfront-output-unewnavigation upfront-navigation' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . $menu . "</div>";
+		}
 	}
 
 	public static function add_js_defaults($data){
@@ -211,6 +259,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 				'typography_label' => __('Typography', 'upfront'),
 				'colors_label' => __('Colors', 'upfront'),
 				'background_label' => __('Background', 'upfront'),
+				'item_background_label' => __('Item Background', 'upfront'),
 			),
 			'settings' => __('Navigation settings', 'upfront'),
 			'add_item' => __('Add a menu item', 'upfront'),
@@ -650,5 +699,9 @@ class upfront_nav_walker extends Walker_Nav_Menu
 		 * @param array  $args        An array of wp_nav_menu() arguments.
 		 */
 		$output .= apply_filters( 'walker_nav_menu_start_el', $item_output, $item, $depth, $args );
+	}
+
+	public function end_el( &$output, $item, $depth = 0, $args = array() ) {
+		$output .= "</li>";
 	}
 }

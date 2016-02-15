@@ -1,4 +1,5 @@
-#page .upfront-object.upfront-plain_txt.<?php echo $properties['id'] ?>, #page .upfront-output-object.upfront-plain_txt.<?php echo $properties['id'] ?> {
+#page .upfront-output-plaintxt.<?php echo $properties['id'] ?> .plain-text-container, #page .upfront-output-object.upfront-output-plaintxt.<?php echo $properties['id'] ?> .plain-text-container,
+#page .upfront-plain_txt.<?php echo $properties['id'] ?> .plain-text-container, #page .upfront-output-object.upfront-output-plain_text.<?php echo $properties['id'] ?> .plain-text-container {
 	<?php if(!empty($properties['bg_color'])) { ?>
 	background: <?php echo $properties['bg_color']  ?>;
 	<?php } ?>
@@ -12,7 +13,8 @@
 
 <?php if(!empty($properties['usetypography'])) { ?>
 
-#page .upfront-object.<?php echo $properties['id'] ?> h1, #page .upfront-output-object.<?php echo $properties['id'] ?> h1 {
+#page .upfront-object.<?php echo $properties['id'] ?> h1, #page .upfront-output-object.<?php echo $properties['id'] ?> h1,
+#page .upfront-object.<?php echo $properties['id'] ?> h1 a, #page .upfront-output-object.<?php echo $properties['id'] ?> h1 a {
 	<?php if(!empty($properties['h1-color'])) { ?>color: <?php echo $properties['h1-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['h1-fontface'])) { ?>font-family: <?php echo $properties['h1-fontface']  ?>; <?php } ?>
 	<?php if(!empty($properties['h1-fontsize'])) { ?>font-size: <?php echo $properties['h1-fontsize']  ?>px; <?php } ?>
@@ -21,7 +23,8 @@
 	<?php if(!empty($properties['h1-lineheight'])) { ?>line-height: <?php echo $properties['h1-lineheight']  ?>;<?php } ?>
 }
 
-#page .upfront-object.<?php echo $properties['id'] ?> h2, #page .upfront-output-object.<?php echo $properties['id'] ?> h2 {
+#page .upfront-object.<?php echo $properties['id'] ?> h2, #page .upfront-output-object.<?php echo $properties['id'] ?> h2,
+#page .upfront-object.<?php echo $properties['id'] ?> h2 a, #page .upfront-output-object.<?php echo $properties['id'] ?> h2 a {
 	<?php if(!empty($properties['h2-color'])) { ?>color: <?php echo $properties['h2-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['h2-fontface'])) { ?>font-family: <?php echo $properties['h2-fontface']  ?>; <?php } ?>
 	<?php if(!empty($properties['h2-fontsize'])) { ?>font-size: <?php echo $properties['h2-fontsize']  ?>px; <?php } ?>
@@ -30,7 +33,8 @@
 	<?php if(!empty($properties['h2-lineheight'])) { ?>line-height: <?php echo $properties['h2-lineheight']  ?>;<?php } ?>
 }
 
-#page .upfront-object.<?php echo $properties['id'] ?> h3, #page .upfront-output-object.<?php echo $properties['id'] ?> h3 {
+#page .upfront-object.<?php echo $properties['id'] ?> h3, #page .upfront-output-object.<?php echo $properties['id'] ?> h3,
+#page .upfront-object.<?php echo $properties['id'] ?> h3 a, #page .upfront-output-object.<?php echo $properties['id'] ?> h3 a {
 	<?php if(!empty($properties['h3-color'])) { ?>color: <?php echo $properties['h3-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['h3-fontface'])) { ?>font-family: <?php echo $properties['h3-fontface']  ?>; <?php } ?>
 	<?php if(!empty($properties['h3-fontsize'])) { ?>font-size: <?php echo $properties['h3-fontsize']  ?>px; <?php } ?>
@@ -39,7 +43,8 @@
 	<?php if(!empty($properties['h3-lineheight'])) { ?>line-height: <?php echo $properties['h3-lineheight']  ?>;<?php } ?>
 }
 
-#page .upfront-object.<?php echo $properties['id'] ?> h4, #page .upfront-output-object.<?php echo $properties['id'] ?> h4 {
+#page .upfront-object.<?php echo $properties['id'] ?> h4, #page .upfront-output-object.<?php echo $properties['id'] ?> h4,
+#page .upfront-object.<?php echo $properties['id'] ?> h4 a, #page .upfront-output-object.<?php echo $properties['id'] ?> h4 a {
 	<?php if(!empty($properties['h4-color'])) { ?>color: <?php echo $properties['h4-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['h4-fontface'])) { ?>font-family: <?php echo $properties['h4-fontface']  ?>; <?php } ?>
 	<?php if(!empty($properties['h4-fontsize'])) { ?>font-size: <?php echo $properties['h4-fontsize']  ?>px; <?php } ?>
@@ -48,7 +53,8 @@
 	<?php if(!empty($properties['h4-lineheight'])) { ?>line-height: <?php echo $properties['h4-lineheight']  ?>;<?php } ?>
 }
 
-#page .upfront-object.<?php echo $properties['id'] ?> h5, #page .upfront-output-object.<?php echo $properties['id'] ?> h5 {
+#page .upfront-object.<?php echo $properties['id'] ?> h5, #page .upfront-output-object.<?php echo $properties['id'] ?> h5,
+#page .upfront-object.<?php echo $properties['id'] ?> h5 a, #page .upfront-output-object.<?php echo $properties['id'] ?> h5 a {
 	<?php if(!empty($properties['h5-color'])) { ?>color: <?php echo $properties['h5-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['h5-fontface'])) { ?>font-family: <?php echo $properties['h5-fontface']  ?>; <?php } ?>
 	<?php if(!empty($properties['h5-fontsize'])) { ?>font-size: <?php echo $properties['h5-fontsize']  ?>px; <?php } ?>
@@ -57,7 +63,8 @@
 	<?php if(!empty($properties['h5-lineheight'])) { ?>line-height: <?php echo $properties['h5-lineheight']  ?>;<?php } ?>
 }
 
-#page .upfront-object.<?php echo $properties['id'] ?> h6, #page .upfront-output-object.<?php echo $properties['id'] ?> h6 {
+#page .upfront-object.<?php echo $properties['id'] ?> h6, #page .upfront-output-object.<?php echo $properties['id'] ?> h6,
+#page .upfront-object.<?php echo $properties['id'] ?> h6 a, #page .upfront-output-object.<?php echo $properties['id'] ?> h6 a {
 	<?php if(!empty($properties['h6-color'])) { ?>color: <?php echo $properties['h6-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['h6-fontface'])) { ?>font-family: <?php echo $properties['h6-fontface']  ?>; <?php } ?>
 	<?php if(!empty($properties['h6-fontsize'])) { ?>font-size: <?php echo $properties['h6-fontsize']  ?>px; <?php } ?>
@@ -66,7 +73,8 @@
 	<?php if(!empty($properties['h6-lineheight'])) { ?>line-height: <?php echo $properties['h6-lineheight']  ?>;<?php } ?>
 }
 
-#page .upfront-object.<?php echo $properties['id'] ?> p, #page .upfront-output-object.<?php echo $properties['id'] ?> p {
+#page .upfront-object.<?php echo $properties['id'] ?> p, #page .upfront-output-object.<?php echo $properties['id'] ?> p,
+#page .upfront-object.<?php echo $properties['id'] ?> p a, #page .upfront-output-object.<?php echo $properties['id'] ?> p a {
 	<?php if(!empty($properties['p-color'])) { ?>color: <?php echo $properties['p-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['p-fontface'])) { ?>font-family: <?php echo $properties['p-fontface']  ?>; <?php } ?>
 	<?php if(!empty($properties['p-fontsize'])) { ?>font-size: <?php echo $properties['p-fontsize']  ?>px; <?php } ?>
@@ -111,7 +119,8 @@
 	<?php if(!empty($properties['ol-lineheight'])) { ?>line-height: <?php echo $properties['ol-lineheight']  ?>;<?php } ?>
 }
 
-#page .upfront-object.<?php echo $properties['id'] ?> blockquote, #page .upfront-output-object.<?php echo $properties['id'] ?> blockquote {
+#page .upfront-object.<?php echo $properties['id'] ?> blockquote, #page .upfront-output-object.<?php echo $properties['id'] ?> blockquote,
+#page .upfront-object.<?php echo $properties['id'] ?> blockquote a, #page .upfront-output-object.<?php echo $properties['id'] ?> blockquote a {
 	<?php if(!empty($properties['blockquote-color'])) { ?>color: <?php echo $properties['blockquote-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['blockquote-fontface'])) { ?>font-family: <?php echo $properties['blockquote-fontface']  ?>; <?php } ?>
 	<?php if(!empty($properties['blockquote-fontsize'])) { ?>font-size: <?php echo $properties['blockquote-fontsize']  ?>px; <?php } ?>
@@ -120,7 +129,8 @@
 	<?php if(!empty($properties['blockquote-lineheight'])) { ?>line-height: <?php echo $properties['blockquote-lineheight']  ?>;<?php } ?>
 }
 
-#page .upfront-object.<?php echo $properties['id'] ?> blockquote.upfront-quote-alternative, #page.upfront-output-object .<?php echo $properties['id'] ?> blockquote.upfront-quote-alternative {
+#page .upfront-object.<?php echo $properties['id'] ?> blockquote.upfront-quote-alternative, #page.upfront-output-object .<?php echo $properties['id'] ?> blockquote.upfront-quote-alternative,
+#page .upfront-object.<?php echo $properties['id'] ?> blockquote.upfront-quote-alternative a, #page.upfront-output-object .<?php echo $properties['id'] ?> blockquote.upfront-quote-alternative a {
 	<?php if(!empty($properties['blockquote-alternative-color'])) { ?>color: <?php echo $properties['blockquote-alternative-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['blockquote-alternative-fontface'])) { ?>font-family: <?php echo $properties['blockquote-alternative-fontface']  ?>; <?php } ?>
 	<?php if(!empty($properties['blockquote-alternative-fontsize'])) { ?>font-size: <?php echo $properties['blockquote-alternative-fontsize']  ?>px; <?php } ?>

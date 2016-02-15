@@ -123,11 +123,13 @@ define([
 				change: function () {
 					var value = this.get_value();
 
+					this.model.set_breakpoint_property('use_padding', 'yes', true);
 					this.model.set_breakpoint_property('lock_padding', '', true);
-					this.model.set_breakpoint_property('top_padding_use', 'yes');
-					this.model.set_breakpoint_property('top_padding_num', value);
+					this.model.set_breakpoint_property('top_padding_use', 'yes', true);
 					this.model.set_breakpoint_property('top_padding_slider', value, true); // silent, don't need to trigger update again
+					this.model.set_breakpoint_property('top_padding_num', value);
 					Upfront.Events.trigger("upfront:paddings:updated", this.model, Upfront.data.currentEntity);
+					Upfront.Events.trigger("upfront:paddings:top:updated", this.model, Upfront.data.currentEntity);
 				}
 			});
 
@@ -147,11 +149,13 @@ define([
 				change: function () {
 					var value = this.get_value();
 
+					this.model.set_breakpoint_property('use_padding', 'yes', true);
 					this.model.set_breakpoint_property('lock_padding', '', true);
-					this.model.set_breakpoint_property('bottom_padding_use', 'yes');
-					this.model.set_breakpoint_property('bottom_padding_num', value);
+					this.model.set_breakpoint_property('bottom_padding_use', 'yes', true);
 					this.model.set_breakpoint_property('bottom_padding_slider', value, true); // silent, don't need to trigger update again
+					this.model.set_breakpoint_property('bottom_padding_num', value);
 					Upfront.Events.trigger("upfront:paddings:updated", this.model, Upfront.data.currentEntity);
+					Upfront.Events.trigger("upfront:paddings:bottom:updated", this.model, Upfront.data.currentEntity);
 				}
 			});
 

@@ -246,7 +246,6 @@ abstract class Upfront_Container extends Upfront_Entity {
 							}
 						}
 
-
 						$breakpoint = upfront_get_property_value('breakpoint', $child);
 						$theme_styles = array('default' => $theme_style);
 						$theme_styles_attr = '';
@@ -264,9 +263,13 @@ abstract class Upfront_Container extends Upfront_Entity {
 						$classes = $this->_get_property('class');
 						$column = upfront_get_class_num('c', $classes);
 						$class = $slug === "uposts" ? "c" . $column . " uposts-object" : upfront_get_property_value('class', $child);
-
+						$usingNew = upfront_get_property_value('usingNewAppearance', $child);
+						if(!empty( $usingNew )) {
 						// Augment the output with preset map, in addition to other stuff going on in there
-						$html .= '<div data-preset_map="' . esc_attr(!empty($preset_map) ? json_encode($preset_map) : '') . '" class="upfront-output-object ' . $theme_style . ' ' . $preset . ' upfront-output-' . $slug . ' ' . $class . '" id="' . upfront_get_property_value('element_id', $child) . '"' . $theme_styles_attr . '>' . $child_view->get_markup() . '</div>';
+							$html .= '<div data-preset_map="' . esc_attr(!empty($preset_map) ? json_encode($preset_map) : '') . '" class="upfront-output-object ' . $theme_style . ' ' . $preset . ' upfront-output-' . $slug . ' ' . $class . '" id="' . upfront_get_property_value('element_id', $child) . '"' . $theme_styles_attr . '>' . $child_view->get_markup() . '</div>';
+						} else {
+							$html .= '<div data-preset_map="' . esc_attr(!empty($preset_map) ? json_encode($preset_map) : '') . '" class="upfront-output-object ' . $theme_style . ' upfront-output-' . $slug . ' ' . $class . '" id="' . upfront_get_property_value('element_id', $child) . '"' . $theme_styles_attr . '>' . $child_view->get_markup() . '</div>';
+						}
 					} else {
 						$html .= $child_view->get_markup();
 					}
@@ -857,11 +860,7 @@ class Upfront_Module extends Upfront_Container {
 
 	public function get_markup () {
 		if ($this->is_spacer()) {
-			return '<!-- Spacer data '. "\n" .
-				'class: ' . upfront_get_property_value('class', $this->_data) . "\n" .
-				'default: ' . upfront_get_property_value('hide', $this->_data) . "\n" .
-				'breakpoint: ' . json_encode(upfront_get_property_value('breakpoint', $this->_data)) . "\n" .
-			' -->';
+			return '';
 		}
 		$children = !empty($this->_data[$this->_children]) ? $this->_data[$this->_children] : array();
 		$pre = '';

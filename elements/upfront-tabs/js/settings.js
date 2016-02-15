@@ -219,7 +219,55 @@ define([
 							}
 						}
 					]
-				}
+				},
+				
+				migrateElementStyle: function(styles, selector) {
+					//replace tab container which is one line with preset
+					styles = styles.replace(/\.upfront-tabs-container/g, '.tabs-wrapper');
+					
+					return styles;
+				},
+				
+				migrateDefaultStyle: function(styles) {
+					//replace image wrapper class
+					styles = styles.replace(/(div)?\.upfront-tabs\s/g, '');
+					styles = styles.replace(/(div)?\.upfront-object\s/g, '');
+
+					return styles;
+				},
+				
+				migratePresetProperties: function(newPreset) {
+					
+					var preset = this.property('preset') ? this.clear_preset_name(this.property('preset')) : 'default',
+						props = this.presets.findWhere({id: preset}),
+						obj = {};
+					
+					if(typeof props !== "undefined") {
+						_.each(props.attributes, function(preset_value, index) {
+							
+							if(index === 'id' || index === 'name' || index === 'preset_style' || index === 'legacy') {
+								return;
+							}
+							
+							obj[index] = preset_value;
+						});
+					}
+
+					//Migrate properties from existing preset
+					newPreset.set(obj);
+					
+					
+					newPreset.set({
+						'active-tab-bg': 'rgba(255,255,255, 0)',
+						'static-tab-bg': 'rgba(255,255,255, 0)',
+						'hover-tab-bg': 'rgba(255,255,255, 0)',
+						'static-useborder': '',
+						'hover-useborder': '',
+						'active-useborder': '',
+						'global-content-bg': 'rgba(255,255,255, 0)',
+						'global-useborder': '',
+					});
+				},
 			}
 		},
 		title: l10n.settings

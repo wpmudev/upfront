@@ -1,0 +1,189 @@
+/* Layout container */
+
+#element-settings-sidebar .migrate-preset-overlay {
+	padding: 30px 0px;
+}
+
+/* Info icon */
+
+#element-settings-sidebar .migrate-preset-overlay .migrate-info-icon {
+	position: relative;
+	padding-top: 40px;
+	margin-bottom: 23px;
+}
+
+#element-settings-sidebar .migrate-preset-overlay .migrate-info-icon:before {
+	content: '';
+	width: 20px;
+	height: 20px;
+	background-image: url('../img/uf-ui-sprite.svg');
+	background-position: -342px -111px;
+	left: 105px;
+	top: 0px;
+	opacity: .5;
+	position: absolute;
+	display: block;
+}
+
+/* Plain texts */
+
+#element-settings-sidebar .migrate-preset-overlay .migrate-preset-info label {
+	font:normal 12px/1.5 Open Sans, Helvetica Neueu, Helvetica, Arial, sans-serif;
+	display: inline-block;
+	color: #2F475F;
+	position: relative;
+	margin: 0px;
+}
+
+#element-settings-sidebar .migrate-preset-overlay .migrate-preset-info label strong {
+	font-weight: bold;
+}
+
+/* Migrate separator */
+
+#element-settings-sidebar .migrate-preset-overlay .migrate-separator {
+	border-top: 1px solid #e2eaf2;
+	position: relative;
+	margin-left: -15px;
+	margin-right: -15px;
+}
+
+/* New preset migration button */
+
+#element-settings-sidebar .migrate-preset-overlay .save-as-preset-info {
+	margin-top: 20px;
+}
+
+
+#element-settings-sidebar .migrate-preset-overlay .select-preset-field-overlay,
+#element-settings-sidebar .migrate-preset-overlay .migrate-preset-apply {
+	display: inline-block;
+}
+
+/* Existing preset apply button */
+
+#element-settings-sidebar .migrate-preset-overlay .migrate-preset-apply {
+	margin-left: 5px;
+}
+
+#element-settings-sidebar .migrate-preset-overlay .migrate-preset-apply input,
+#element-settings-sidebar .migrate-preset-overlay .migrate-preset-button input {
+	margin: 0;
+	text-decoration: none;
+	color: #6486A6;
+	font:600 11px/2 Open Sans, Helvetica Neueu, Helvetica, Arial, sans-serif;
+	box-shadow: inset 0 2px 0 #f2f9ff;
+	background: rgb(242, 249, 255);
+	border: 1px solid rgb(183, 201, 217);
+	border-radius: 3px;
+	height: 24px;
+	max-height: 24px;
+	padding: 0px 7px;
+	text-shadow: 0px 1px 0px #FFFFFF;
+}
+
+#element-settings-sidebar .migrate-preset-overlay .migrate-preset-apply input:hover,
+#element-settings-sidebar .migrate-preset-overlay .migrate-preset-button input:hover {
+	border-color: rgb(96, 127, 153);
+}
+
+/* Make sure new preset fields are hidden to prevent flickering */
+
+#element-settings-sidebar .migrate-preset-overlay .new-preset-button-cancel,
+#element-settings-sidebar .migrate-preset-overlay .new-preset-button-input,
+#element-settings-sidebar .migrate-preset-overlay .new-preset-button-submit {
+	display: none;
+}
+
+/* New preset cancel button */
+
+#element-settings-sidebar .migrate-preset-overlay .new-preset-button-cancel {
+	display: inline-block;
+	margin-right: 8px;
+	position: relative;
+	top: 1px;
+}
+
+#element-settings-sidebar .migrate-preset-overlay .new-preset-button-cancel input {
+	margin: 0;
+	text-decoration: none;
+	color: #4e4770;
+	font-size: 11px;
+	box-shadow: inset 0 2px 0 #f2f9ff;
+	font-family: Verdana, sans-serif;
+	line-height: 22px;
+	background: rgb(255, 255, 255);
+	border: 1px solid rgb(206, 216, 225);
+	border-radius: 3px;
+	height: 24px;
+	max-height: 24px;
+	padding: 0px 7px;
+}
+
+#element-settings-sidebar .migrate-preset-overlay .new-preset-button-cancel input:hover {
+	border-color: #a2bfda;
+}
+
+/* New preset input field */
+
+#element-settings-sidebar .migrate-preset-overlay .new-preset-button-input {
+	display: inline-block;
+}
+
+#element-settings-sidebar .migrate-preset-overlay .new-preset-button-input input {
+	width: 117px;
+	height: 30px;
+	border: 1px solid #a2bfda;
+	line-height: 30px;
+	color: #708191;
+}
+
+/* New preset submit button */
+
+#element-settings-sidebar .migrate-preset-overlay .new-preset-button-submit {
+	display: inline-block;
+	top: 3px;
+	position: relative;
+}
+
+#element-settings-sidebar .migrate-preset-overlay .new-preset-button-submit input {
+	width: 44px;
+	height: 30px;
+	border: 1px solid #1fcd8f;
+	line-height: 30px;
+	color: #fff;
+	background: #1fcd8f;
+}
+
+#element-settings-sidebar .migrate-preset-overlay .new-preset-button-submit input:hover {
+	border-color: #1bb37d
+}
+
+#element-settings-sidebar .migrate-preset-overlay .new-preset-module,
+#element-settings-sidebar .migrate-preset-overlay .existing-preset-module {
+	margin-left: -15px;
+	margin-right: -15px;
+	position: relative;
+	padding: 20px 0px;
+}
+
+#element-settings-sidebar .migrate-preset-overlay .new-preset-module .upfront-settings-item-title,
+#element-settings-sidebar .migrate-preset-overlay .existing-preset-module .upfront-settings-item-title {
+	display: none !important;
+}
+
+
+#element-settings-sidebar .migrate-preset-overlay .existing-preset-overlay-layout {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	background: rgba(226, 234, 242, 0.75);
+}
+
+#element-settings-sidebar .migrate-preset-overlay .new-preset-button-submit,
+#element-settings-sidebar .migrate-preset-overlay .new-preset-button-cancel,
+#element-settings-sidebar .migrate-preset-overlay .new-preset-button-input {
+	margin-top: -6px;
+}

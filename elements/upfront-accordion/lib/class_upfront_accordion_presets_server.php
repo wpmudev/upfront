@@ -6,6 +6,12 @@ if (!class_exists('Upfront_Presets_Server')) {
 
 class Upfront_Accordion_Presets_Server extends Upfront_Presets_Server {
 	private static $instance;
+	
+	protected function __construct() {
+		parent::__construct();
+
+		$this->update_preset_values();
+	}
 
 	public function get_element_name() {
 		return 'accordion';
@@ -26,20 +32,37 @@ class Upfront_Accordion_Presets_Server extends Upfront_Presets_Server {
 		return $style;
 	}
 
+	public function update_preset_values() {
+		$presets = $this->get_presets();
 
-	protected function migrate_presets($presets) {
-		if ( !is_array($presets) ) return $presets;
-		// Fix migration style issue
-		foreach($presets as $index=>$preset) {
-			if (isset($preset['active-use-color']) === false) {
-				$presets[$index]['active-use-color'] = 1;
+		$update_settings = array();
+		$result = array();
+
+		$count = 0;
+		//Check if old preset data and enable preset options
+		foreach($presets as $preset_options) {
+			//If empty preset continue
+			if(empty($preset_options['id'])) {
+				continue;
 			}
-			if (isset($preset['active-use-typography']) === false) {
-				$presets[$index]['active-use-typography'] = 1;
+
+			//Enable all checkboxes for tabs preset
+			if(!isset($preset_options['migrated'])) {
+				$preset_options['active-use-color'] = 'yes';
+				$preset_options['active-use-typography'] = 'yes';
+				$preset_options['hover-use-color'] = 'yes';
+				$preset_options['hover-use-typography'] = 'yes';
+				$preset_options['migrated'] = 1;
+				$count++;
 			}
+
+			$update_settings[] = $preset_options;
 		}
 
-		return $presets;
+		//If changed presets update database
+		if($count > 0 && !empty($update_settings)) {
+			$this->update_presets($update_settings);
+		}
 	}
 
 	/**

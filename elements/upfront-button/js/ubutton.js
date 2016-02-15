@@ -64,7 +64,6 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		});
 
 	},
-
 	placeholderClick: function(e) {
 		e.preventDefault();
 	},
@@ -250,9 +249,13 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 				autostart: false
 			})
 			.on('start', function(){
+				var outputobject = $target.closest('.upfront-object-content');
+				//var padding = parseInt(outputobject.parent().css('padding-top')) + parseInt(outputobject.parent().css('padding-bottom'));
+				outputobject.addClass('editing').css('minHeight', outputobject.parent().height());
 				Upfront.Events.trigger('upfront:element:edit:start', 'text');
 			})
 			.on('stop', function(){
+				$target.closest('.upfront-object-content').removeClass('editing').css('minHeight', '');
 				me.property('align', $target.css('text-align'), true);
 				Upfront.Events.trigger('upfront:element:edit:stop');
 				me.render();
@@ -263,7 +266,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 
 		// this.createInlineControlPanel();
 		this.clearPresetClass(this.$el);
-		this.$el.addClass(this.property('preset'));
+		this.$el.find('.upfront-button').addClass(this.property('preset'));
 	},
 	stopEdit: function() {
 		var $target = this.$el.find('.upfront-object-content a.upfront_cta');

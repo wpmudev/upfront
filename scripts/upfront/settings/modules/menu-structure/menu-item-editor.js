@@ -206,6 +206,9 @@ define([
 			if (this.type === 'entry') {
 				this.showPagePostSelector();
 			}
+			else if (this.type === 'unlink') {
+				this.saveItem();
+			}
 			this.$el.parent().find('.menu-item-type').first().text(this.getLinkTypeLabel(value));
 		},
 
@@ -256,7 +259,7 @@ define([
 				values: lightboxValues,
 				default_value: lightboxValue,
 				change: function () {
-					me.model.set({'url': this.get_value()});
+					me.model.set({'menu-item-url': this.get_value()});
 					me.saveItem();
 				}
 			});

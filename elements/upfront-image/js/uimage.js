@@ -23,10 +23,10 @@ define([
 		imageTpl: Upfront.Util.template(imageTpl),
 		sizehintTpl: _.template($(editorTpl).find('#sizehint-tpl').html()),
 		cropTimeAfterResize: 1,// making this longer makes image resize not save
-		
+
 		// Disable size hint as image element already has it's own
 		display_size_hint: false,
-		
+
 		// Property used to speed resizing up;
 		resizingData: {},
 
@@ -369,7 +369,10 @@ define([
 		},
 
 		hasCaptionPosition: function() {
-			return this.get_preset_property("caption-position") !== false || this.property('caption_alignment') !== false;
+			if (this.property('usingNewAppearance') === true) {
+				return this.get_preset_property("caption-position") !== false || this.property('caption_alignment') !== false;
+			}
+			return this.property('include_image_caption');
 		},
 
 		setupBySize: function() {
@@ -404,7 +407,7 @@ define([
 				};
 			}
 
-			var props = this.extract_properties();
+			props = this.extract_properties();
 
 			props.properties = this.get_preset_properties();
 
@@ -421,8 +424,10 @@ define([
 
 			if(props.stretch) {
 				props.imgWidth = '100%';
+				props.stretchClass = ' uimage-stretch';
 			} else {
 				props.imgWidth = props.size.width + 'px';
+				props.stretchClass = '';
 			}
 
 			props.containerWidth = Math.min(props.size.width, elementSize.width);
@@ -441,6 +446,13 @@ define([
 			*/
 
 			props.l10n = l10n.template;
+
+			props.usingNewAppearance = props.usingNewAppearance || false;
+
+			// Clean up hardcoded caption color
+			if (props.usingNewAppearance) {
+				props.image_caption = props.image_caption.replace(/^<span style=".+?"/, '<span ');
+			}
 
 			rendered = this.imageTpl(props);
 
@@ -581,7 +593,7 @@ define([
 				var resizeHint = $('<div>').addClass('upfront-ui uimage-resize-hint' + onTop);
 				this.$el.append(resizeHint);
 				// this.applyElementSize(elementSize.width, elementSize.height)
-				setTimeout( function () { 
+				setTimeout( function () {
 					me.applyElementSize();
 				}, 300 );
 			}
@@ -737,6 +749,7 @@ define([
 		},
 
 		setMobileMode: function(){
+			var props = this.extract_properties();
 			this.mobileMode = true;
 			this.$el
 				.find('.uimage-resize-hint').hide().end()
@@ -747,6 +760,7 @@ define([
 					.css({
 						position: 'static',
 						maxWidth: '100%',
+						width: ( props.stretch ? '100%' : props.size.width ),
 						height: 'auto'
 					})
 					.attr('src', this.property('src'))
@@ -759,7 +773,7 @@ define([
 				this.render();
 			}
 		},
-		
+
 		updateBreakpointPadding: function(breakpointColumnPadding) {
 			var image_el = this.$el.find('.upfront-image');
 
@@ -773,7 +787,7 @@ define([
 		/***************************************************************************/
 		/*           Handling element resize events (jQuery resizeable)            */
 		/***************************************************************************/
-		
+
 		on_element_resize_start: function(attr) {
 			if(this.mobileMode) {
 				return;
@@ -896,7 +910,9 @@ define([
 				};
 				this.property('element_size', this.elementSize);
 				return;
-			} else if (this.property('quick_swap')) {
+
+			//} else if (this.property('quick_swap')) {
+			} else if (this.isThemeImage()) {
 				return;
 			}
 
@@ -924,7 +940,7 @@ define([
 
 		on_uimage_update: function (view) {
 			if ( !this.parent_module_view || this.parent_module_view != view ) return;
-			
+
 			this.applyElementSize();
 		},
 
@@ -1202,7 +1218,7 @@ define([
 				resizer = parent,
 				captionHeight = this.get_preset_property("caption-position") === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
 				// padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding),
-				borderWidth = parseInt(this.$el.find('.upfront-image-caption-container').css('borderWidth'), 10),
+				borderWidth = parseInt(this.$el.find('.upfront-image-caption-container').css('borderWidth') || 0, 10), // || 0 part is needed because parseInt empty sting returns NaN and breaks element height
 				column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
 				hPadding = parseInt( this.model.get_breakpoint_property_value('left_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('right_padding_num') || column_padding ),
 				vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),

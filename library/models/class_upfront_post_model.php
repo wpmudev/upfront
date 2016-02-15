@@ -5,13 +5,15 @@
 abstract class  Upfront_PostModel {
 
 	public static function create ($post_type, $title='', $content='') {
+		$title = (!empty($title) ? $title : 'Write a title...');
 		$post_data = apply_filters(
 			'upfront-post_model-create-defaults',
 			array(
 				'post_type' => $post_type,
 				'post_status' => 'auto-draft',
-				'post_title' => (!empty($title) ? $title : 'Write a title...'),
+				'post_title' => $title,
 				'post_content' => (!empty($content) ? $content : 'Your content goes here :)'),
+				'post_name' => sanitize_title( $title )
 			),
 			$post_type
 		);

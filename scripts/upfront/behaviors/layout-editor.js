@@ -11,7 +11,7 @@ var LayoutEditor = {
 		view.$el.selectable({
 			distance: 10, // Prevents global click hijack
 			filter: ".upfront-module",
-			cancel: ".upfront-module, .upfront-module-group, .upfront-region-side-fixed, .upfront-entity_meta, .upfront-region-edit-trigger, .upfront-region-edit-fixed-trigger, .upfront-region-finish-edit, .upfront-icon-control-region-resize, .upfront-inline-modal, .upfront-inline-panels",
+			cancel: ".upfront-module:not(.upfront-module-spacer), .upfront-module-group, .upfront-region-side-fixed, .upfront-entity_meta, .upfront-region-edit-trigger, .upfront-region-edit-fixed-trigger, .upfront-region-finish-edit, .upfront-icon-control-region-resize, .upfront-inline-modal, .upfront-inline-panels",
 			selecting: function (e, ui) {
 				var $el = $(ui.selecting),
 					$region, $selected, $affected, group, do_select;
@@ -743,8 +743,11 @@ var LayoutEditor = {
 		var me = {};
 		var textFontsManager = new Upfront.Views.Editor.Fonts.Text_Fonts_Manager({ collection: Upfront.Views.Editor.Fonts.theme_fonts_collection });
 		textFontsManager.render();
-		var iconFontsManager = new Upfront.Views.Editor.Fonts.Icon_Fonts_Manager({ collection: Upfront.Views.Editor.Fonts.icon_fonts_collection });
-		iconFontsManager.render();
+		// Only enable font icon manager on builder for now
+		if (Upfront.Application.mode.current === Upfront.Application.MODE.THEME) {
+			var iconFontsManager = new Upfront.Views.Editor.Fonts.Icon_Fonts_Manager({collection: Upfront.Views.Editor.Fonts.icon_fonts_collection});
+			iconFontsManager.render();
+		}
 
 		var popup = Upfront.Popup.open(
 			function (data, $top, $bottom) {
@@ -767,7 +770,7 @@ var LayoutEditor = {
 		me.$popup.top.html(
 			'<ul class="upfront-tabs">' +
 				'<li id="theme-text-fonts-tab" class="active">' + Upfront.Settings.l10n.global.behaviors.theme_text_fonts + '</li>' +
-				'<li id="theme-icon-fonts-tab">' + Upfront.Settings.l10n.global.behaviors.theme_icon_fonts + '</li>' +
+				(Upfront.Application.mode.current === Upfront.Application.MODE.THEME ? '<li id="theme-icon-fonts-tab">' + Upfront.Settings.l10n.global.behaviors.theme_icon_fonts + '</li>' : '') +
 			'</ul>' +
 			me.$popup.top.html()
 		);
