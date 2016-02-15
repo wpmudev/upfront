@@ -144,8 +144,6 @@ abstract class Upfront_Entity {
 		$default_type = $this->get_background_type();
 		$css = array();
 		$background_color = $this->_get_breakpoint_property('background_color', $breakpoint_id);
-		$top_bg_padding = $this->_get_breakpoint_property('top_bg_padding_num', $breakpoint_id);
-		$bottom_bg_padding = $this->_get_breakpoint_property('bottom_bg_padding_num', $breakpoint_id);
 		if ( !$type || in_array($type, array('image', 'color', 'featured')) ){
 			if ($background_color) {
 				$css[] = 'background-color: ' . $background_color;
@@ -167,8 +165,6 @@ abstract class Upfront_Entity {
 				$css[] = 'background-color: ' . $background_color;
 			}
 		}
-		if ( $top_bg_padding ) { $css[] = 'padding-top: ' . $top_bg_padding . 'px'; }
-		if ( $bottom_bg_padding ) { $css[] = 'padding-bottom: ' . $bottom_bg_padding . 'px'; }
 		if (!empty($breakpoint_id) && ($default_type == 'image' || $default_type == 'featured')) {
 			$css[] = 'background-image: none';
 		}
