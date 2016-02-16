@@ -4198,7 +4198,7 @@ a.upfront-region-name-edit-trigger:before {
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 1;
+  z-index: -1;
   visibility: hidden;
   opacity: 0;
   background: -webkit-linear-gradient(bottom, rgba(100, 255, 255, 0.3) 1px, transparent 1px, transparent);
