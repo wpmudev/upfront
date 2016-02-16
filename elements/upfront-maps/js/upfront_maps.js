@@ -118,7 +118,8 @@ define([
 			;
 			if (!location || location === old_location) return false;
 			if (location === old_address) return false; // Do not re-geocode the same location
-			if (this._geocoding_in_progress) return false;
+			// has a bug if wrong location so commented this condition
+			// if (this._geocoding_in_progress) return false;
 			this._geocoding_in_progress = true;
 			geocoder.geocode({address: location}, function (results, status) {
 				if (status != google.maps.GeocoderStatus.OK) return false;
