@@ -482,6 +482,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	},
 
 	setImageResizable: function(){
+		if(!this.model.slideCollection.length) return;
+
 		var me = this,
 			current = this.$('.upfront-default-slider-item-current'),
 			$slide = current.find('.uslide-image'),
