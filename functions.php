@@ -379,3 +379,31 @@ function uf_admin_bar_styles() {
     wp_enqueue_style( 'uf-font-icons', get_template_directory_uri() . '/styles/font-icons.css');
 }
 add_action( 'admin_enqueue_scripts', 'uf_admin_bar_styles' );
+
+
+function run_test($method_name =  'replace_commented_style_with_variable_ve'){
+	$style_file = dirname( __FILE__ ) . "/test/style-test.css";
+	$style = fopen($style_file, 'r');
+	$iterations = 9000;
+
+
+	$before = microtime(true);
+
+	for ($i=0 ; $i < $iterations ; $i++) {
+		Upfront_UFC::utils()->{$method_name}( $style );
+	}
+
+	$after = microtime(true);
+
+	echo "<p>";
+	echo ( $after - $before)  . " microseconds {$method_name} " . filesize( $style_file ) ." bytes of styles and {$iterations} iterations";
+	echo "</p>";
+
+
+	unset( $style );
+}
+
+run_test( 'replace_commented_style_with_variable_ve'  );
+run_test( 'replace_commented_style_with_variable_gagan'  );
+
+die;

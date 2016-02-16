@@ -119,7 +119,7 @@ class Upfront_UFC_Utils
 	 * @param string $style
 	 * @return string
 	 */
-	public function replace_commented_style_with_variable ($style) {
+	public function replace_commented_style_with_variable_ve ($style) {
 		$this->_recursion_limit = 0;
 		return $this->_replace_commented_style_with_variables($style);
 	}
@@ -160,6 +160,10 @@ class Upfront_UFC_Utils
 		;
 	}
 
+    function replace_commented_style_with_variable_gagan( $style ){
+        $pattern = '/\/\*[^,;\n]*#'.preg_quote(Upfront_UFC::VAR_PREFIX, '/').'(\d*)\*\/[^,;\n]*([\*\/]*((#[A-Fa-f0-9]+)+|(rgb[a]?[^\)]*\))))+/i';
+        return preg_replace($pattern, '#'.Upfront_UFC::VAR_PREFIX.'$1', $style);
+    }
 	private function _replace_commented_style_with_variable_replacement( $matches ){
 		return trim( $matches[3] ) === "," || trim( $matches[3] ) === ")" ? $matches[2] . $matches[3] : $matches[2];
 	}
