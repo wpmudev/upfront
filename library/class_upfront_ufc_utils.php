@@ -117,9 +117,14 @@ class Upfront_UFC_Utils
      */
     public function replace_commented_style_with_variable($style)
     {
+        $pattern = "/\/\*[^,]*#".preg_quote(Upfront_UFC::VAR_PREFIX, '/')."(\d*)\*\/([^,]*rgb[^\)]*\)|[^,]*#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3}))/i";
+        return preg_replace($pattern, '#'.Upfront_UFC::VAR_PREFIX.'$1', $style);
+        
+        /*
         return preg_replace_callback("/(\\/\\*){1,}(\\#ufc\\d+)(\\S|,)+/i",
             array($this, '_replace_commented_style_with_variable_replacement'),
             $this->remove_whitespace_from_rgb_values( $style ));
+        */
     }
 
     private function _replace_commented_style_with_variable_replacement( $matches ){
