@@ -4097,6 +4097,10 @@ msgstr ""
 msgid "WP Default"
 msgstr ""
 
+#: library/media/class_upfront_media_server.php:136
+msgid "Are you sure you want to delete selected items?"
+msgstr ""
+
 #: library/models/class_upfront_entity_resolver.php:175
 msgid "404 Page"
 msgstr ""

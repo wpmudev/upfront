@@ -133,6 +133,7 @@ class Upfront_MediaServer extends Upfront_Server {
 			'insert_options' => __('Insert Options', 'upfront'),
 			'image_inserts' => __('Image Inserts', 'upfront'),
 			'wp_default' => __('WP Default', 'upfront'),
+			'confirm_delete_items' => __("Are you sure you want to delete selected items?", 'upfront'),
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)
