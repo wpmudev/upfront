@@ -3367,7 +3367,6 @@ define([
 						lines = ed.parse_modules_to_lines(modules, wrappers, breakpoint.id, container_col),
 						index = 1 // Start from 1, so we can still have order 0 free
 					;
-					console.log(lines)
 					_.each(lines, function (line) {
 						_.each(line.wrappers, function (w) {
 							var w_breakpoint = w.model.get_property_value_by_name('breakpoint'),

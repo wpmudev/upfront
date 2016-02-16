@@ -147,14 +147,17 @@ define([
 			var preset_class = this.get_css_selector();
 			styles_with_selector = this.stylesAddSelector($.trim(rawCss), '#page ' + preset_class);
 			// Solve case of button loosing its styles
-			styles_with_selector = Upfront.Util.colors.convert_string_ufc_to_color(styles_with_selector.replace(new RegExp(this.get_css_selector() + ' .upfront-button', 'g'), this.get_css_selector() + '.upfront-button'));
+			styles_with_selector = Upfront.Util.colors.convert_string_ufc_to_color(styles_with_selector.replace(new RegExp(Upfront.Util.preg_quote(this.get_css_selector()) + ' .upfront-button', 'g'), this.get_css_selector() + '.upfront-button'));
 
 			return styles_with_selector;
 		},
 		cleanUpStyles: function(styles) {
-			var scope = new RegExp(this.get_css_selector() + '\\s*', 'g');
-			styles = styles.replace(new RegExp('#page ' + this.get_css_selector() + '\\s*', 'g'), '');
+			if(!this.get_css_selector()) return '';
+
+			var scope = new RegExp(Upfront.Util.preg_quote(this.get_css_selector()) + '\\s*', 'g');
+			styles = styles.replace(new RegExp('#page ' + Upfront.Util.preg_quote(this.get_css_selector()) + '\\s*', 'g'), '');
 			styles = styles.replace(scope, '');
+
 			// Unescape quotes a few times
 			styles = styles.replace(/\\'/g, "'");
 			styles = styles.replace(/\\'/g, "'");
@@ -220,7 +223,14 @@ define([
 							//spectrum = $('.sp-container:visible');
 						},
 						choose: function(color) {
-							var colorString = color.alpha < 1 ? color.toRgbString() : color.toHexString();
+							var colorString;
+
+							if( color.get_is_theme_color() !== false ){
+								colorString = color.theme_color;
+							}else{
+								colorString = color.alpha < 1 ? color.toRgbString() : color.toHexString();
+							}
+
 							me.editor.insert(colorString);
 							me.editor.focus();
 						}
@@ -380,6 +390,9 @@ define([
 		},
 		get_css_selector: function() {
 			if (this.is_global_stylesheet) return '';
+
+			//Make sure preset id is defined and not empty
+			if (typeof this.options.preset.get('id') === "undefined" || !this.options.preset.get('id')) return '';
 
 			var preset_class = '.' + this.options.preset.get('id');
 
