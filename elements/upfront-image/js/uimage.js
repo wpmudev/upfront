@@ -871,7 +871,12 @@ define([
 
 			//Wonderful stuff from here down
 			this.$('.uimage').css('height', data.elementSize.height);
-
+			
+			/*
+			 * Disable image resize on element resize, use Image Edit mode instead
+			 */
+			
+			/*
 			//Resizing the stretching dimension has priority, the other dimension just alter position
 			if(data.stretch && !data.vstretch){
 				this.resizingH(img, data, true);
@@ -893,6 +898,7 @@ define([
 					this.resizingV(img, data);
 				}
 			}
+			*/
 
 			this.updateControls();
 			this.setupBySize();
