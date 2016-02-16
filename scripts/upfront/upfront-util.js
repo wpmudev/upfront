@@ -630,7 +630,11 @@ define(function() {
 				include_ufc_as_comment = typeof include_ufc_as_comment === "undefined" ? true : include_ufc_as_comment;
 				var theme_colors = Upfront.Views.Theme_Colors.colors.pluck("color"),
 					theme_alphas = Upfront.Views.Theme_Colors.colors.pluck("alpha");
+
 				for(var _i in theme_colors){
+
+					var theme_color = theme_colors[_i] === '#000000' && theme_alphas[_i] === 0 ? 'inherit' : theme_colors[_i];
+
 					// if already a commented ufc, replace the color value with the updated colors
 					// first of all lets take out unused spaces inside an rgb or rgba expression.
 					var pattern_rgb = new RegExp('rgb([^\\)]*)\\)', 'g');
@@ -641,11 +645,10 @@ define(function() {
 					string = string.replace(pattern_rgb, rgb_clean_spaces);
 
 					// now update existing commented #ufc expressions
-					var pattern_existing = new RegExp( "/\\*(.*)#ufc" + _i + "\\*/([^\\s;]*)","g");
-					string = string.replace(pattern_existing, "/*" + "#oufc" + _i + "*/" + theme_colors[_i]+" "  );
+					var pattern_existing = new RegExp( "/\\*([^,]*)#ufc" + _i + "\\*/([^,]*rgb[^\\)]*\\)|[^,]*#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3}))","g");
+					string = string.replace(pattern_existing, "/*" + "#oufc" + _i + "*/" + theme_color );
 
-					var pattern = new RegExp("#ufc" + _i,"g"),
-						theme_color = theme_colors[_i] === '#000000' && theme_alphas[_i] === 0 ? 'inherit' : theme_colors[_i];
+					var pattern = new RegExp("#ufc" + _i,"g");
 
 					theme_color = include_ufc_as_comment ? "/*" + "#ufc" + _i + "*/" + theme_color : theme_color;
 
