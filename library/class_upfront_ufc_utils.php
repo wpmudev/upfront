@@ -4,6 +4,10 @@
 class Upfront_UFC_Utils
 {
 
+	const MAX_RECURSION = 3;
+
+	private $_recursion_limit = 0;
+
 	/**
 	 * Checks if given color is hex
 	 *
@@ -116,6 +120,13 @@ class Upfront_UFC_Utils
 	 * @return string
 	 */
 	public function replace_commented_style_with_variable ($style) {
+		$this->_recursion_limit = 0;
+		return $this->_replace_commented_style_with_variables($style);
+	}
+
+	private function _replace_commented_style_with_variables ($style) {
+		$this->_recursion_limit++;
+
 		// Cache function call results
 		$open_comment = preg_quote('/*', '/');
 		$close_comment = preg_quote('*/', '/');
@@ -143,8 +154,8 @@ class Upfront_UFC_Utils
 			')' . // Done grouping
 		'/';
 		$style = preg_replace($pattern, '$1 ', $style);
-		return preg_match('/' . $open_comment . '\s*' . $pfx . '/', $style) // Do we still have commented vars? Can happen with nested comments
-			? $this->replace_commented_style_with_variable($style) // We do? Clean up again
+		return preg_match('/' . $open_comment . '\s*' . $pfx . '/', $style) && $this->_recursion_limit < self::MAX_RECURSION // Do we still have commented vars? Can happen with nested comments
+			? $this->_replace_commented_style_with_variables($style) // We do? Clean up again
 			: $style // Yay, we're done here
 		;
 	}
