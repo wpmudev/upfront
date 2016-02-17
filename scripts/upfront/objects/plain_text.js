@@ -45,7 +45,7 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 		}
 		var rendered = '';
 		rendered = _.template(template, data);
-		return rendered + ( !this.is_edited() || $.trim(content) == '' ? '<div class="upfront-quick-swap"><p>Double click to edit text</p></div>' : '');
+		return rendered;
 
 	},
 	is_edited: function () {

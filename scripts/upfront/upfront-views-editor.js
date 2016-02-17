@@ -2190,7 +2190,7 @@ define([
 				if ('blockquote' === element) {
 					selector = '.upfront-object-content blockquote, .upfront-object-content blockquote p';
 				} else if ('a' === element) {
-					selector = '.upfront-object-content:not(.upfront-output-button):not(.upfront-output-ubutton):not(.upfront-output-unewnavigation) a, .upfront-object-content:not(.upfront-output-button):not(.upfront-output-ubutton):not(.upfront-output-unewnavigation) a:link, .upfront-object-content:not(.upfront-output-button):not(.upfront-output-ubutton):not(.upfront-output-unewnavigation) a:visited';
+					selector = '.upfront-object-content a, .upfront-object-content a:link, .upfront-object-content a:visited';
 				} else if (
 						'h1' === element ||
 						'h2' === element ||
@@ -4884,7 +4884,6 @@ var Field_ToggleableText = Field_Text.extend({
 						select = select_dropdown.parent(),
 						dropDownTop = select.offset().top - $('#element-settings-sidebar').offset().top;
 						dropDownTop = dropDownTop + settingsTitleHeight;
-
 
 					select_dropdown.css("width", select.width() + 3);
 					select_dropdown.css('top', dropDownTop + "px");
@@ -7641,7 +7640,11 @@ var CSSEditor = Backbone.View.extend({
 						//spectrum = $('.sp-container:visible');
 					},
 					choose: function(color) {
+						if( color.get_is_theme_color() !== false ){
+							colorString = color.theme_color;
+						}else{
 						var colorString = color.alpha < 1 ? color.toRgbString() : color.toHexString();
+						}
 						me.editor.insert(colorString);
 						me.editor.focus();
 					}
@@ -8919,7 +8922,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 
 			if (this.options.fixed) this.$el.addClass('upfront-loading-fixed');
 			if (this.options.loading_type) this.$el.addClass(this.options.loading_type);
-			if (this.options.loading)this.$el.append('<p class="upfront-loading-text">' + this.options.loading + '</p>');
+			if (this.options.loading) this.$el.append('<p class="upfront-loading-text">' + this.options.loading + '</p>');
+			if (this.options.loading_notice) this.$el.append('<p class="upfront-loading-notice">' + this.options.loading_notice + '</p>');
 
 			this.$el.find('.upfront-loading-ani').on('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function(){
 				var state = me.$el.hasClass('upfront-loading-repeat') ? 'repeat' : (me.$el.hasClass('upfront-loading-done') ? 'done' : 'start');
@@ -9526,6 +9530,9 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						multiple: false
 					});
 			}
+			
+			//Render padding settings only for regions
+			if ( is_region ) {
 
 			// Padding Settings
 			var bg_padding_type = new Field_Radios({
@@ -9674,7 +9681,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					}
 				})
 			;
-
+			}
 			// Preserve background settings element event binding by detaching them before resetting html
 			$content.find('.upfront-region-bg-setting-tab-primary, .upfront-region-bg-setting-tab-secondary').children().detach();
 
@@ -9857,6 +9864,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 				$content.find('.upfront-region-bg-setting-auto-resize').hide();
 			}
 
+			//Render padding settings only for regions
+			if ( is_region ){
 			// Padding Settings
 			bg_padding_type.render();
 			$region_padding_type.append(bg_padding_type.$el);
@@ -9872,6 +9881,12 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			$region_equal_padding.append(bg_padding_slider.$el);
 			bg_padding_num.render();
 			$region_equal_padding.append(bg_padding_num.$el);
+			}
+
+			//Make sure we hide the padding markup from template
+			if ( is_layout && !is_region ) {				
+				$content.find('.upfront-region-bg-setting-padding').hide();
+			}
 
 			bg_type.trigger('changed');
 		},

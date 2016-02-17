@@ -173,8 +173,8 @@
 	display: table-cell;
 }
 
-a.upfront-image-select,
-a.upfront-image-select:visited {
+.upfront-object-content a.upfront-image-select,
+.upfront-object-content a.upfront-image-select:visited {
 	border: 2px solid #B5BBC1;
 	color: #B5BBC1;
 	display: block;
@@ -186,9 +186,13 @@ a.upfront-image-select:visited {
 	font-size: 31px;
 	line-height: 110%;
 	padding: 0;
+	text-decoration: none;
+	font-family: Source Sans Pro, sans-serif;
+	font-weight: 300;
+	font-style: normal;
 }
 
-a.upfront-image-select:hover {
+.upfront-object-content a.upfront-image-select:hover {
 	border: 2px solid #3ea;
 	color: #3ea;
 	background: none;

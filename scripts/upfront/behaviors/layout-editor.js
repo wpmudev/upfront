@@ -11,7 +11,7 @@ var LayoutEditor = {
 		view.$el.selectable({
 			distance: 10, // Prevents global click hijack
 			filter: ".upfront-module",
-			cancel: ".upfront-module, .upfront-module-group, .upfront-region-side-fixed, .upfront-entity_meta, .upfront-region-edit-trigger, .upfront-region-edit-fixed-trigger, .upfront-region-finish-edit, .upfront-icon-control-region-resize, .upfront-inline-modal, .upfront-inline-panels",
+			cancel: ".upfront-module:not(.upfront-module-spacer), .upfront-module-group, .upfront-region-side-fixed, .upfront-entity_meta, .upfront-region-edit-trigger, .upfront-region-edit-fixed-trigger, .upfront-region-finish-edit, .upfront-icon-control-region-resize, .upfront-inline-modal, .upfront-inline-panels",
 			selecting: function (e, ui) {
 				var $el = $(ui.selecting),
 					$region, $selected, $affected, group, do_select;

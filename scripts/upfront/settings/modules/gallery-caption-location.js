@@ -56,7 +56,7 @@ define([
 					],
 					change: function(value) {
 						me.model.set('captionType', value);
-						
+
 						//If caption below image, we should set captionOnHover to false
 						if(value == "below") {
 							me.model.set('showCaptionOnHover', '0');
@@ -114,9 +114,9 @@ define([
 					},
 					show: function(value, $el) {
 						var stateSettings = $el.closest('.state_modules');
-						
+
 						var use_captions = me.model.get('use_captions');
-						if(use_captions === "yes") {	
+						if(use_captions === "yes") {
 							//Toggle color fields
 							if(value === "fixed") {
 								stateSettings.find('.'+ state +'-caption-height-number').show();
@@ -142,7 +142,27 @@ define([
 					}
 				})
 			]);
-		},
+
+			this.listenToOnce(this, 'rendered', function() {
+				setTimeout( function() {
+					if(me.model.get('use_captions') === 'yes') {
+						me.$el.find('.'+ state +'-caption-select').show();
+						me.$el.find('.'+ state +'-caption-trigger').show();
+						me.$el.find('.'+ state +'-caption-height').show();
+						var height_type = me.model.get('caption-height');
+						if(height_type === "fixed") {
+							me.$el.find('.'+ state +'-caption-height-number').show();
+						}
+					} else {
+						me.$el.find('.'+ state +'-caption-select').hide();
+						me.$el.find('.'+ state +'-caption-trigger').hide();
+						me.$el.find('.'+ state +'-caption-height').hide();
+						me.$el.find('.'+ state +'-caption-height-number').hide();
+					}
+
+				}, 500);
+			});
+		}
 	});
 
 	return CaptionLocation;

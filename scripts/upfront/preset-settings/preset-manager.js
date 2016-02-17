@@ -64,7 +64,7 @@ define([
 					action: 'upfront_save_' + this.ajaxActionSlug + '_preset',
 					data: properties
 				}).done( function() {
-					me.model.trigger("preset:updated");
+					me.model.trigger("preset:updated", properties.id);
 				});
 			};
 
@@ -165,7 +165,7 @@ define([
 		migrateElementStyle: function(styles, selector) {
 			return styles;
 		},
-		
+
 		/**
 		 Migrate _default classes
 		 */
@@ -262,7 +262,7 @@ define([
 
 		getPresetDefaultsMigration: function(presetName) {
 			var element = this.styleElementPrefix.replace(/-preset/, '');
-			
+
 			if(element === "tab" || element === "accordion" || element === "contact" || element === "button") {
 				return _.extend({}, {
 					id: presetName.toLowerCase().replace(/ /g, '-'),
@@ -275,7 +275,7 @@ define([
 				});
 			}
 		},
-		
+
 		getPresetDefaults: function(presetName) {
 			return _.extend(this.presetDefaults, {
 				id: presetName.toLowerCase().replace(/ /g, '-'),
@@ -342,16 +342,16 @@ define([
 					stylename: '_default',
 					no_render: true
 				});
-				
+
 				//Get _default styles
 				default_style = $.trim(Upfront.Application.cssEditor.get_style_element().html().replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
-				
+
 				//Make sure we remove #page from default classes
 				default_style = default_style.replace(/#page/g, '');
-				
+
 				//Normalize styles
 				default_style = this.migrateDefaultStyle(default_style);
-				
+
 				//Prepend styles with preset
 				default_style = Upfront.Application.stylesAddSelectorMigration($.trim(default_style), '#page .' + presetName.toLowerCase().replace(/ /g, '-'));
 			}
@@ -364,10 +364,10 @@ define([
 			});
 
 			var style = $.trim(Upfront.Application.cssEditor.get_style_element().html().replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
-			
+
 			//Apply style only for the current preset
 			style = style.replace(new RegExp(elementStyleName, 'g'), presetName.toLowerCase().replace(/ /g, '-'));
-			
+
 			if(elementStyleName !== '_default') {
 				style = default_style + style;
 			} else {
@@ -375,10 +375,10 @@ define([
 				style = this.migrateDefaultStyle(style);
 				style = Upfront.Application.stylesAddSelectorMigration($.trim(style), '#page .' + presetName.toLowerCase().replace(/ /g, '-'));
 			}
-			
+
 			//Migrate element styles
 			style = this.migrateElementStyle(style, '#page .' + presetName.toLowerCase().replace(/ /g, '-'));
-			
+
 			newPreset = new Backbone.Model(this.getPresetDefaultsMigration(presetName));
 
 			//Migrate element styles to preset
@@ -513,6 +513,9 @@ define([
 			// Add items
 			this.stopListening();
 
+			// Remove theme style just in case
+			this.model.set_property('theme_style', '');
+
 			// Make sure we don't lose our current preset
 			this.model.encode_preset(preset);
 
@@ -527,34 +530,75 @@ define([
 
 		previewPreset: function(preset) {
 			var element_id = this.property('element_id'),
-				elementType = this.styleElementPrefix.replace(/-preset/, '');
+				elementType = this.styleElementPrefix.replace(/-preset/, ''),
+				themeStyle = this.model.get_property_value_by_name('theme_style'),
+			  $selector;
+
+			// Handle custom css class
+			if (preset === '' && themeStyle) {
+				$('#' + element_id).addClass(themeStyle);
+			} else if (themeStyle) {
+				$('#' + element_id).removeClass(themeStyle);
+				$('#' + element_id).find('.' + themeStyle).removeClass(themeStyle);
+			}
 
 			//We need to manage Tabs, Accordions & Buttons are they are using another classes for presets
 			if(elementType === "accordion") {
-				var $selector = $('#' + element_id).find(".upfront-accordion-container");
+				$selector = $('#' + element_id).find(".upfront-accordion-container");
 
 				$selector.removeClass(this.getPresetClasses(elementType));
-				$selector.addClass(elementType + '-preset-' + preset);
+				if (preset !== '') {
+					$selector.addClass(elementType + '-preset-' + preset);
+				} else {
+					$selector.addClass(elementType + '-preset-' + this.model.get_property_value_by_name('preset'));
+        }
 
 			} else if(elementType === "tab") {
 				//Remove original preset classes
-				var $selector = $('#' + element_id).find(".upfront-tabs-container");
+				$selector = $('#' + element_id).find(".upfront-tabs-container");
 
 				$selector.removeClass(this.getPresetClasses(elementType));
-				$selector.addClass(elementType + '-preset-' + preset);
+				if (preset !== '') {
+					$selector.addClass(elementType + '-preset-' + preset);
+				} else {
+					$selector.addClass(elementType + '-preset-' + this.model.get_property_value_by_name('preset'));
+        }
 
 			} else if(elementType === "button") {
-				var $selector = $('#' + element_id).find(".upfront_cta");
+				$selector = $('#' + element_id).find(".upfront_cta");
 
 				$selector.removeClass(this.getPresetClasses(elementType));
-				$selector.addClass(elementType + '-preset-' + preset);
+				if (preset !== '') {
+					$selector.addClass(elementType + '-preset-' + preset);
+				} else {
+					$selector.addClass(elementType + '-preset-' + this.model.get_property_value_by_name('preset'));
+        }
 
+			} else if(_.contains(["image", 'text', 'gallery', 'slider', 'contact'], elementType)) {
+				// Temporary setup element model so that is uses preset for rendering
+				if (typeof this.actualModelData === 'undefined') {
+					this.actualModelData = Upfront.Util.model_to_json(this.model);
+				}
+				if (preset !== '') {
+					this.model.set_property('usingNewAppearance', true, true);
+					this.model.set_property('theme_style', '', true);
+					this.model.set_property('preset', preset, true);
+					this.model.trigger('change');
+					this.previousPresetClass = preset;
+				} else {
+					actualProperties = new Upfront.Collections.Properties(this.actualModelData.properties);
+					actualProperties._events = this.model.get('properties')._events;
+					this.model.set('properties', actualProperties);
+					$('.upfront-active_entity').removeClass(this.previousPresetClass);
+				}
 			} else {
 				//Remove original preset classes
 				$('#' + element_id).removeClass(this.getPresetClasses());
 
 				//Add preset class to element
-				$('#' + element_id).addClass(preset);
+				if (preset !== '') {
+					$('#' + element_id).addClass(preset);
+				}
 			}
 
 		},
@@ -576,7 +620,7 @@ define([
 		stateShow: function(state) {
 			this.trigger('upfront:presets:state_show', state);
 		},
-		
+
 		/**
 		 * Allow element appearance panels to migrate properties from old type of settings
 		 * to new preset based settings.
@@ -584,11 +628,11 @@ define([
 		getModifiedProperties: function() {
 			return true;
 		},
-		
+
 		migrateToDefault: function() {
 			var needMigration = this.getModifiedProperties(),
 				alreadyMigrated = this.property('usingNewAppearance');
-			
+
 			if(!needMigration && !alreadyMigrated) {
 				//Set element as already migrated
 				this.property('usingNewAppearance', true);
@@ -598,7 +642,7 @@ define([
 
 				this.defaultOverlay();
 			}
-			
+
 			return false;
 		},
 
@@ -606,7 +650,7 @@ define([
 			this.setupItems();
 			var $body = $('<div />'),
 				me = this;
-			
+
 			/**
 			 *	Automatically migrate Text & Accordion elements to Default if no options are not modified.
 			 */

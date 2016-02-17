@@ -2,6 +2,26 @@ Change Log
 ============
 
 
+1.0.3 - 2016-02-09
+-------------------------------------------------------------------------------
+- Drag and drop fixes and performance improvements
+- Fix for an issue with pressing Tab key during menu item inline text editing
+- Fix issue when using shift-enter double break at the end of an element
+- Fix issues with inserts in tab and accordion elements
+- Fix preset colors live update in editor
+- Fix browser cache upgrade artifacts
+- Fix image caption using hardcoded caption color
+- Fix image border not properly applied
+- Fix gallery caption module shows position options though unchecked
+- Fix text element issues with preset creation on migration
+- Fix issue with text element contextual menu editing
+
+1.0.2 - 2016-02-04
+-------------------------------------------------------------------------------
+- Fix: rounded corner module improvements.
+- Fix: preset name suggestion will offer an unique preset name.
+- Fix: backup link in the upgrade popup recognizes the plugin.
+
 1.0.1 - 2016-01-28
 -------------------------------------------------------------------------------
 - Fix: compatibility with old PHP versions.

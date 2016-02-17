@@ -32,7 +32,7 @@ define([
 			this.model.get('properties').bind('add', this.render, this);
 			this.model.get('properties').bind('remove', this.render, this);
 
-			Upfront.Events.on('entity:deactivated', this.stopEdit, this);
+			//Upfront.Events.on('entity:deactivated', this.stopEdit, this);
 
 			this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
 		},
@@ -51,7 +51,7 @@ define([
 		/**
 		 * Stops content editing for the active panel
 		 */
-		stopEdit: function() {
+		/*stopEdit: function() {
 			var $panelcontent = this.$el.find('.accordion-panel-active .accordion-panel-content');
 			$panelcontent.each(function () {
 				var $me = $(this),
@@ -74,7 +74,7 @@ define([
 
 			Upfront.Events.trigger('upfront:element:edit:stop');
 
-		},
+		},*/
 		addPanel: function(event) {
 			event.preventDefault();
 			this.property('accordion').push({
@@ -248,8 +248,10 @@ define([
 				$me
 					.ueditor({
 						linebreaks: false,
-						inserts: {},
-						autostart: false
+						autostart: false,
+						paragraphize: false,
+						focus: false,
+						placeholder: false
 					})
 					.on('start', function(){
 						Upfront.Events.trigger('upfront:element:edit:start');

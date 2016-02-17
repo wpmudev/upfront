@@ -81,6 +81,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		});
 
 		this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
+		this.listenTo(Upfront.Events, "preset:slider:updated", this.caption_updated, this);
 
 		this.listenTo(this.model, "preset:updated", this.preset_updated);
 
@@ -114,8 +115,16 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		return preset_props[key] ? preset_props[key] : false;
 	},
 
-	preset_updated: function() {
+	preset_updated: function(preset) {
 		this.render();
+		Upfront.Events.trigger('preset:slider:updated', preset);
+	},
+	
+	caption_updated: function(preset) {
+		var currentPreset = this.model.get_property_value_by_name("preset");
+
+		//If element use updated preset re-render
+		if(currentPreset === preset) this.render();
 	},
 
 	update_colors: function () {
@@ -191,8 +200,21 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		rendered = this.tpl(props);
 
 		var $rendered = $('<div></div>').append(rendered);
+		
+		var primary = props.primaryStyle,
+			defaults = {
+				below: 'below',
+				over: 'bottomOver',
+				side: 'right'
+			}
+		;
 
 		this.model.slideCollection.each(function(slide){
+			var style = slide.get('style');
+			if(style !== defaults[primary]) {
+				slide.set('style', defaults[primary]);
+			}
+
 			if(!me.imageProps[slide.id]){
 				me.imageProps[slide.id] = {
 					size: slide.get('size'),
@@ -442,17 +464,14 @@ var USliderView = Upfront.Views.ObjectView.extend({
 					primary == 'side' && _.indexOf(['right', 'left'], style) == -1)
 						slide.set('style', defaults[primary]);
 
-				if(primary == 'side' || me.lastStyle == 'side'){
 					var wrap = me.$('.uslide[rel=' + slide.id + ']').find('.uslide-image');
 					me.imageProps[slide.id] = me.calculateImageResize({width: wrap.width(), height:wrap.height()}, slide);
-				}
 			});
-			if(primary == 'side' || this.lastStyle == 'side')
-				this.setTimer();
+
+			this.setTimer();
 			this.lastStyle = primary;
 			this.onSlidesCollectionChange();
 		}
-
 	},
 	checkStartingInputClick: function(e){
 		//Hack to make the radio buttons work in the starting layout
@@ -476,6 +495,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	},
 
 	setImageResizable: function(){
+		if(!this.model.slideCollection.length) return;
+
 		var me = this,
 			current = this.$('.upfront-default-slider-item-current'),
 			$slide = current.find('.uslide-image'),
@@ -589,8 +610,9 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				me.setCurrentSlide(index);
 				me.updateSlideControls();
 				me.$('.uimage-controls').attr('rel', slide.attr('rel'));
-				if(me.get_preset_properties().primaryStyle == 'side')
+				if(me.get_preset_properties().primaryStyle == 'side') {
 					me.setImageResizable();
+				}
 
 				if(me.get_preset_properties().primaryStyle == 'below'){
 					//Adapt the height to take care of the caption

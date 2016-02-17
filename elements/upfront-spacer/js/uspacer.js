@@ -94,6 +94,16 @@ define([
 			if (!this.$el.is(':visible')) return;
 			var $wrap = this.$el.closest('.upfront-wrapper');
 			this.$el.find('>.upfront-object').css('min-height', $wrap.height());
+		},
+		activate: function () {
+			// Deactivate previous ObjectView
+			if(typeof(Upfront.data.prevEntity) !== 'undefined' && Upfront.data.prevEntity !== false) {
+				Upfront.data.prevEntity.deactivate();
+			}
+			$('.upfront-region-module-activated').removeClass('.upfront-region-module-activated');
+		},
+		deactivate: function () {
+			return false;
 		}
 	});
 

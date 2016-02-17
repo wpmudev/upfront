@@ -89,8 +89,16 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			'shim' => $shim,
 			'waitSeconds' => 60, // allow longer wait period to prevent timeout
 		);
+
+		// Deal with caches
+		if (class_exists('Upfront_Compat') && is_callable(array('Upfront_Compat', 'get_upfront_core_version'))) {
+			$core_version = Upfront_Compat::get_upfront_core_version();
+			if (!empty($core_version)) $require_config['urlArgs'] = 'ufver=' . urlencode($core_version);
+		}
+
+		// Absolute cache breaker
 		if ($this->_debugger->is_active(Upfront_Debug::CACHED_RESPONSE)) {
-			$require_config['urlArgs'] = "nocache=" + microtime(true);
+			$require_config['urlArgs'] = 'nocache=' . urlencode(microtime(true));
 		}
 
 		$require_config = json_encode(apply_filters('upfront-settings-require_js_config', $require_config));

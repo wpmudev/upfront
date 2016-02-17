@@ -117,7 +117,7 @@ class Upfront_UtabsView extends Upfront_Object {
 	private static function _get_l10n ($key=false) {
 		$l10n = array(
 			'element_name' => __('Tabs', 'upfront'),
-			'default_tab_content' => __('Click on active tab title to edit title. Confirm with Enter key.<br>Click on plus button [+] to add new tab.', 'upfront'),
+			'default_tab_content' => __('<p>Click on active tab title to edit title. Confirm with Enter key.</p><p>Click on plus button [+] to add new tab.</p>', 'upfront'),
 			'second_tab_content' => __('Have fun with tabs.', 'upfront'),
 			'tab_label'	=> __('Tab', 'upfront'),
 			'content_label'	=> __('Content', 'upfront'),

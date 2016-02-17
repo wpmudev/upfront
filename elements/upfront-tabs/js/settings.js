@@ -223,7 +223,7 @@ define([
 				
 				migrateElementStyle: function(styles, selector) {
 					//replace tab container which is one line with preset
-					styles = styles.replace(/\.upfront-tabs-container/, '.tabs-wrapper');
+					styles = styles.replace(/\.upfront-tabs-container/g, '.tabs-wrapper');
 					
 					return styles;
 				},
