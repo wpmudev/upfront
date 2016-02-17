@@ -7433,7 +7433,11 @@ var CSSEditor = Backbone.View.extend({
 						//spectrum = $('.sp-container:visible');
 					},
 					choose: function(color) {
-						var colorString = color.alpha < 1 ? color.toRgbString() : color.toHexString();
+						if( color.get_is_theme_color() !== false ){
+							colorString = color.theme_color;
+						}else{
+							var colorString = color.alpha < 1 ? color.toRgbString() : color.toHexString();
+						}
 						me.editor.insert(colorString);
 						me.editor.focus();
 					}

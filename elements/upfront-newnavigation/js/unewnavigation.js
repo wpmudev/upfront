@@ -628,7 +628,9 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			});
 
 			for(var i = 0; i < higherBPs.length; i++) {
-				breakpoint = breakpoints[higherBPs[i].id];
+				if(typeof breakpoints !== "undefined") {
+					breakpoint = breakpoints[higherBPs[i].id];
+				}
 
 				if(breakpoint) {
 					break;
@@ -1013,7 +1015,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				me.hideMenu(this.$el.find('ul.menu'));
 			}
 		} else {
-			breakpoint_data = presetProperties.breakpoint[breakpoint.id] || {};
+			breakpoint_data = typeof presetProperties.breakpoint !== "undefined" ? presetProperties.breakpoint[breakpoint.id] : {};
 
 			var menu_style = typeof breakpoint_data.menu_style === 'undefined' ? (this.model.get_breakpoint_property_value('burger_menu') === 'yes' ? 'burger' : '') : breakpoint_data.menu_style;
 			var burger_over = typeof breakpoint_data.burger_over === 'undefined' ? this.model.get_breakpoint_property_value('burger_over') : breakpoint_data.burger_over;

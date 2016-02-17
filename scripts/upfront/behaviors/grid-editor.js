@@ -2293,16 +2293,26 @@ var GridEditor = {
 			ed = Upfront.Behaviors.GridEditor,
 			default_breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_default().toJSON();
 			line_col = 0,
-			silent = ( silent === true ) ? true : false;
+			silent = ( silent === true ) ? true : false
+		;
 		regions.each(function(region){
 			var data = Upfront.Util.clone( region.get_property_value_by_name('breakpoint') || {} ),
-				sub = region.get('sub');
-			if ( !_.isObject(data[breakpoint_id]) )
+				region_col = region.get_property_value_by_name('col'),
+				sub = region.get('sub')
+			;
+			if ( !_.isObject(data[breakpoint_id]) ) {
 				data[breakpoint_id] = { edited: false };
+			}
 			if ( !data[breakpoint_id].edited ){
 				if ( region.is_main() || ( !sub || sub.match(/^(left|right)$/) )  ){ 
 					// Sidebar/main region, let's make the column to full width on responsive
 					data[breakpoint_id].col = default_breakpoint.columns;
+				}
+				else if ( sub.match(/^lightbox$/) ) {
+					// Lightbox, resize if bigger than current breakpoint
+					if ( region_col > col ) {
+						data[breakpoint_id].col = col;
+					}
 				}
 			}
 			region.set_property('breakpoint', data, silent);
@@ -3107,7 +3117,7 @@ var GridEditor = {
 			},
 			// Dealing with responsive settings which, apparently, trump the grid entirely
 			current_bp_id = Upfront.Settings.LayoutEditor.CurrentBreakpoint || Upfront.Settings.LayoutEditor.Grid.size_name,
-			breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().findWhere({id: current_bp_id}),
+			breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().findWhere({id: ( _.isObject(current_bp_id) ? current_bp_id.id : current_bp_id )}),
 			flag_update_breakpoint = false
 		;
 

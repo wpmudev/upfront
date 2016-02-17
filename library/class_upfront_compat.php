@@ -76,6 +76,10 @@ class Upfront_Compat implements IUpfront_Server {
 		if (function_exists('upfront_exporter_is_running') && upfront_exporter_is_running()) return false; // Not in exporter
 		if ($this->_is_update_notice_dismissed_for('1.0')) return false; // We have notices dismissed for v1.0 version and below
 
+		if (!class_exists('Upfront_Compat_Backup_Info')) require_once('compat/class_upfront_compat_backup_info.php');
+		$info = new Upfront_Compat_Backup_Info;
+		if (!$info->is_actionable()) return false;
+
 		// This check is potentially costly, so don't do it unless we have to
 		if (!(defined('DOING_AJAX') && DOING_AJAX)) {
 			if (!$this->_is_updated_install()) return false; // Only on updated installs

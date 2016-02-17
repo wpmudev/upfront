@@ -2760,6 +2760,9 @@ define([
 				Upfront.Events.trigger("command:module_group:finish_edit"); // close other reorder first
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 				$main.addClass('upfront-module-group-editing');
+				if ( this.wrapper_view ) {
+					this.wrapper_view.$el.addClass('upfront-wrapper-module-group-on-edit');
+				}
 				this.$el.addClass('upfront-module-group-on-edit');
 				this.trigger('deactivated');
 				this.editing = true;
@@ -2773,6 +2776,9 @@ define([
 				}
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 				$main.removeClass('upfront-module-group-editing');
+				if ( this.wrapper_view ) {
+					this.wrapper_view.$el.removeClass('upfront-wrapper-module-group-on-edit');
+				}
 				this.$el.removeClass('upfront-module-group-on-edit');
 				this.editing = false;
 				this.enable_interaction();
@@ -3361,7 +3367,6 @@ define([
 						lines = ed.parse_modules_to_lines(modules, wrappers, breakpoint.id, container_col),
 						index = 1 // Start from 1, so we can still have order 0 free
 					;
-					console.log(lines)
 					_.each(lines, function (line) {
 						_.each(line.wrappers, function (w) {
 							var w_breakpoint = w.model.get_property_value_by_name('breakpoint'),
@@ -5268,15 +5273,12 @@ define([
 			update_region_position: function () {
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
 					grid = Upfront.Settings.LayoutEditor.Grid,
-					col = this.model.get_property_value_by_name('col'),
-					height = this.model.get_property_value_by_name('height');
+					col = this.model.get_breakpoint_property_value('col', true),
+					height = this.model.get_property_value_by_name('height')
+				;
 
-
-
-				if ( !col )
-					this.model.set_property('col', 10, true);
-				if ( !height )
-					this.model.set_property('height', 225, true);
+				if ( !col ) this.model.set_property('col', 10, true);
+				if ( !height ) this.model.set_property('height', 225, true);
 
 				width =  col*grid.column_width
 
@@ -5293,7 +5295,6 @@ define([
 					'minHeight': css.minHeight
 				});
 				this.$el.css(css);
-
 			},
 			/*update_position_hint: function (pos, $helper) {
 				var hint = '';
@@ -5335,7 +5336,8 @@ define([
 				}
 			},
 			on_change_breakpoint: function (breakpoint) {
-					this.hide();
+				this.update_region_position();
+				this.hide();
 			}
 		}),
 

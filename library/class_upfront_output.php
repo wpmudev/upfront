@@ -1179,11 +1179,7 @@ class Upfront_Module extends Upfront_Container {
 
 	public function get_markup () {
 		if ($this->is_spacer()) {
-			return '<!-- Spacer data '. "\n" .
-				'class: ' . upfront_get_property_value('class', $this->_data) . "\n" .
-				'default: ' . upfront_get_property_value('hide', $this->_data) . "\n" .
-				'breakpoint: ' . json_encode(upfront_get_property_value('breakpoint', $this->_data)) . "\n" .
-			' -->';
+			return '';
 		}
 		$children = !empty($this->_data[$this->_children]) ? $this->_data[$this->_children] : array();
 		$pre = '';

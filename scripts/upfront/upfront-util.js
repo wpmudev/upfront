@@ -93,6 +93,20 @@ define(function() {
 		clone: function (obj) {
 			return jQuery.extend(true, {}, obj);
 		},
+		
+		/**
+		 * Escape RegEx string
+		 * https://github.com/sindresorhus/escape-string-regexp/blob/master/index.js
+		 */
+		preg_quote: function (str) {
+			var matchOperatorsRe = /[|\\{}()[\]^$+*?.]/g;
+
+			if (typeof str !== 'string') {
+				throw new TypeError('Expected a string');
+			}
+
+			return str.replace(matchOperatorsRe, '\\$&');
+		},
 
 		/**
 		 * Check CSS support
@@ -612,22 +626,24 @@ define(function() {
 			 * */
 			convert_string_ufc_to_color: function( string, include_ufc_as_comment ){
 				if(_.isEmpty(string)) return string;
+
 				include_ufc_as_comment = typeof include_ufc_as_comment === "undefined" ? true : include_ufc_as_comment;
-                var theme_colors = Upfront.Views.Theme_Colors.colors.pluck("color"),
-                    theme_alphas = Upfront.Views.Theme_Colors.colors.pluck("alpha");
-				for(var _i in theme_colors){
-					// if already a commented ufc, replace the color value with the updated colors
-                    var pattern_existing = new RegExp( "/\\*#ufc" + _i + "\\*/([^\\s;]*)","g");
-					string = string.replace(pattern_existing, "/*" + "#oufc" + _i + "*/" + theme_colors[_i]+" "  );
+				var theme_colors = Upfront.Views.Theme_Colors.colors.pluck("color"),
+					theme_alphas = Upfront.Views.Theme_Colors.colors.pluck("alpha");
+
+				// lets clean up any existing commented out ufcs with their color specs
+				var pattern_existing = new RegExp('/\\*[^,;\\n]*#ufc(\\d*)\\*/[^,;\\n]*([\\*/]*((#[A-Fa-f0-9]+)+|(rgb[a]?[^\\)]*\\))))+', 'g');
+				string = string.replace(pattern_existing, "#ufc"+'$1');
 				
-					var pattern = new RegExp("([^\\*])#ufc" + _i,"g"),
-						theme_color;
-                    theme_color = theme_colors[_i] === '#000000' && theme_alphas[_i] === 0 ? 'inherit' : theme_colors[_i];
-                    theme_color = include_ufc_as_comment ? "$1/*" + "#ufc" + _i + "*/" + theme_color : "$1"+theme_color;
+				for(var _i in theme_colors){
+
+					var theme_color = theme_colors[_i] === '#000000' && theme_alphas[_i] === 0 ? 'inherit' : theme_colors[_i];
+
+					var pattern = new RegExp("#ufc" + _i,"g");
+
+					theme_color = include_ufc_as_comment ? "/*" + "#ufc" + _i + "*/" + theme_color : theme_color;
 
 					string = string.replace(pattern, theme_color );
-
-					string = string.replace(new RegExp('#oufc', 'g'), '#ufc');
 				}
 				return string;
 			},

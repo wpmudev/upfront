@@ -115,6 +115,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
 
 		this.listenTo(this.model, "preset:updated", this.preset_updated);
+		this.listenTo(Upfront.Events, "preset:gallery:updated", this.caption_updated, this);
 
 		this.lastThumbnailSize = {width: this.property('thumbWidth'), height: this.property('thumbHeight')};
 
@@ -248,8 +249,16 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		return props;
 	},
 
-	preset_updated: function() {
+	preset_updated: function(preset) {
 		this.debouncedRender();
+		Upfront.Events.trigger('preset:gallery:updated', preset);
+	},
+	
+	caption_updated: function(preset) {
+		var currentPreset = this.model.get_property_value_by_name("preset");
+
+		//If element use updated preset re-render
+		if(currentPreset === preset) this.debouncedRender();
 	},
 
 	update_colors: function () {
@@ -1270,6 +1279,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		images.each(function(image){
 			var size = image.get('size'),
 				offset = image.get('cropOffset'),
+				offsetTop = Math.round((me.property('thumbHeight') / me.lastThumbnailSize.height) * offset.top),
+				offsetLeft = Math.round((me.property('thumbWidth') / me.lastThumbnailSize.width) * offset.left),
 				editorOpts = {
 					id: image.id,
 					rotate:image.get('rotation'),
@@ -1283,6 +1294,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 					element_id: element_id
 				}
 			;
+			
+			//Scale cropOffset for new image size
+			image.set('cropOffset', { left: offsetLeft, top: offsetTop });
+
 			imageData.push(editorOpts);
 		});
 
