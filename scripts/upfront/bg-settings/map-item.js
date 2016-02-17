@@ -177,9 +177,7 @@ define([
 			$('[name="background_use_custom_map_code"]', this.$el).trigger('change');
 		},
 		geocode_location: function () {
-			// has a bug if wrong location so commented this condition
-			/* if ( this._geocoding == true || !this._location_changed )
-				return; */
+			if ( this._geocoding == true || !this._location_changed ) return;
 			var me = this,
 				location = this._location,
 				geocoder = new google.maps.Geocoder()
@@ -187,7 +185,11 @@ define([
 			if (!location) return;
 			this._geocoding = true;
 			geocoder.geocode({address: location}, function (results, status) {
-				if (status != google.maps.GeocoderStatus.OK) return false;
+				if (status != google.maps.GeocoderStatus.OK) {
+					me._geocoding = false;
+					me._location_changed = false;
+					return false;
+				}
 				var pos = results[0].geometry.location;
 
 				me.model.set_breakpoint_property("background_map_center", [pos.lat(), pos.lng()]);
