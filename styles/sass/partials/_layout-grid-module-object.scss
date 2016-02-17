@@ -44,7 +44,7 @@
 	left: 0;
 	right: 0;
 	bottom: 0;
-	z-index: 1;
+	z-index: -1;
 	visibility: hidden;
 	opacity: 0;
 	background: -webkit-linear-gradient(bottom, rgba(100,255,255,.3) 1px, transparent 1px, transparent);
@@ -151,7 +151,7 @@
 	z-index: 30;
 }
 .upfront-wrapper.upfront-inline-panel-item-open {
-	z-index: 70;
+  z-index: 2999999;
 }
 
 .upfront-wrapper-content {
@@ -295,7 +295,7 @@
 }
 .upfront-module-has-nav:hover,
 .upfront-module-active.upfront-module-has-nav {
-	z-index: 50;
+	z-index: 80;
 }
 .upfront-module-has-nav.upfront-module-nav-open {
 	z-index: 90;

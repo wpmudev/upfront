@@ -71,45 +71,6 @@ class Upfront_UFC_Utils
     }
 
     /**
-     * Removes unused whitespace from style string
-     * @param  string $css_string
-     * @return string|Null
-     */
-    function remove_unused_space( $css_string ) {
-        if(trim($css_string) === "") return $css_string;
-        return preg_replace(
-            '#("(?:[^"\\\]++|\\\.)*+"|\'(?:[^\'\\\\]++|\\\.)*+\'|\/\*(?>.*?\*\/))|\s*+;\s*+(})\s*+|\s*+([*$~^|]?+=|[{};,>~+]|\s*+-(?![0-9\.])|!important\b)\s*+|([[(:])\s++|\s++([])])|\s++(:)\s*+(?!(?>[^{}"\']++|"(?:[^"\\\]++|\\\.)*+"|\'(?:[^\'\\\\]++|\\\.)*+\')*+{)|^\s++|\s++\z|(\s)\s+#si',
-            '$1$2$3$4$5$6$7',
-            $css_string
-        );
-    }
-
-    /**
-     * Callback to clean spaces inside matches found by preg_replace_callback in self::remove_whitespace_from_rgb_values
-     *
-     * @param $matches
-     * @return mixed
-     */
-    private function _clean_spaces($matches) {
-        return str_replace(' ', '', $matches[0]);
-    }
-
-    /**
-     * Removes white space from rgba and rgb values
-     * i.e. rgba(1, 5, 10, 20) => rgba(1,5,10,20)
-     *
-     * @uses clean_spaces
-     * @param $css_string
-     * @return mixed
-     */
-    function remove_whitespace_from_rgb_values($css_string){
-
-        return preg_replace_callback('/rgb([^\)]*)\)/i', array($this, '_clean_spaces'), $css_string);
-
-        return str_replace(", ", ",", $css_string);
-    }
-
-    /**
      * Replaces commented form of ufc styles with simple ufc variable
      *
      * @param string $style
@@ -117,17 +78,7 @@ class Upfront_UFC_Utils
      */
     public function replace_commented_style_with_variable($style)
     {
-        $pattern = "/\/\*[^,]*#".preg_quote(Upfront_UFC::VAR_PREFIX, '/')."(\d*)\*\/([^,]*rgb[^\)]*\)|[^,]*#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3}))/i";
+        $pattern = '/\/\*[^,;\n]*#'.preg_quote(Upfront_UFC::VAR_PREFIX, '/').'(\d*)\*\/[^,;\n]*([\*\/]*((#[A-Fa-f0-9]+)+|(rgb[a]?[^\)]*\))))+/i';
         return preg_replace($pattern, '#'.Upfront_UFC::VAR_PREFIX.'$1', $style);
-        
-        /*
-        return preg_replace_callback("/(\\/\\*){1,}(\\#ufc\\d+)(\\S|,)+/i",
-            array($this, '_replace_commented_style_with_variable_replacement'),
-            $this->remove_whitespace_from_rgb_values( $style ));
-        */
-    }
-
-    private function _replace_commented_style_with_variable_replacement( $matches ){
-        return trim( $matches[3] ) === "," ? $matches[2] . $matches[3] : $matches[2];
     }
 }
