@@ -282,20 +282,25 @@ class Upfront_newMenuSetting extends Upfront_Server {
 	}
 
 	private function _add_hooks () {
-		upfront_add_ajax('upfront_new_load_menu_list', array($this, "load_menu_list"));
-		upfront_add_ajax('upfront_new_load_menu_array', array($this, "load_menu_array"));
-		upfront_add_ajax('upfront_new_load_menu_items', array($this, "load_menu_items"));
-		upfront_add_ajax('upfront_new_menu_from_slug', array($this, "menu_from_slug"));
-		upfront_add_ajax('upfront_new_delete_menu_item', array($this, "delete_menu_item"));
-		upfront_add_ajax('upfront_new_update_menu_order', array($this, "update_menu_order"));
-		upfront_add_ajax('upfront_new_create_menu', array($this, "create_menu"));
-		upfront_add_ajax('upfront_new_rename_menu', array($this, "rename_menu"));
-		upfront_add_ajax('upfront_new_delete_menu', array($this, "delete_menu"));
+		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
+			upfront_add_ajax('upfront_new_load_menu_list', array($this, "load_menu_list"));
+			upfront_add_ajax('upfront_new_load_menu_array', array($this, "load_menu_array"));
+			upfront_add_ajax('upfront_new_load_menu_items', array($this, "load_menu_items"));
+			upfront_add_ajax('upfront_new_menu_from_slug', array($this, "menu_from_slug"));
+		}
+		
+		if (Upfront_Permissions::current(Upfront_Permissions::SAVE)) {
+			upfront_add_ajax('upfront_new_delete_menu_item', array($this, "delete_menu_item"));
+			upfront_add_ajax('upfront_new_update_menu_order', array($this, "update_menu_order"));
+			upfront_add_ajax('upfront_new_create_menu', array($this, "create_menu"));
+			upfront_add_ajax('upfront_new_rename_menu', array($this, "rename_menu"));
+			upfront_add_ajax('upfront_new_delete_menu', array($this, "delete_menu"));
 
-		upfront_add_ajax('upfront_new_update_menu_item', array($this, "update_menu_item"));
-		upfront_add_ajax('upfront_new_update_auto_add_pages', array($this, "update_auto_add_pages"));
-		upfront_add_ajax('upfront_update_menu_items', array($this, "update_menu_items"));
-		upfront_add_ajax('upfront_update_single_menu_item', array($this, "update_single_menu_item"));
+			upfront_add_ajax('upfront_new_update_menu_item', array($this, "update_menu_item"));
+			upfront_add_ajax('upfront_new_update_auto_add_pages', array($this, "update_auto_add_pages"));
+			upfront_add_ajax('upfront_update_menu_items', array($this, "update_menu_items"));
+			upfront_add_ajax('upfront_update_single_menu_item', array($this, "update_single_menu_item"));
+		}
 	}
 
 	public function load_menu_list () {
