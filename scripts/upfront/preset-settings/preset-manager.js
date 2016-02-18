@@ -60,12 +60,8 @@ define([
 			this.presets = new Backbone.Collection(Upfront.mainData[this.mainDataCollection] || []);
 
 			var savePreset = function(properties) {
-				Upfront.Util.post({
-					action: 'upfront_save_' + this.ajaxActionSlug + '_preset',
-					data: properties
-				}).done( function() {
-					me.model.trigger("preset:updated", properties.id);
-				});
+				me.model.trigger("preset:updated", properties.id);
+				Upfront.Application.presetSaver.queuePresetSave(properties, me.ajaxActionSlug);
 			};
 
 			// Let's not flood server on some nuber property firing changes like crazy

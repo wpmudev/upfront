@@ -47,6 +47,7 @@ text!scripts/upfront/inline-panels/templates/panel-control-template.html
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/element-settings/sidebar.js
 text!scripts/upfront/templates/link-panel.html
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/link-panel.js
+/home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/preset-settings/preset-saver.js
 text!upfront/templates/property.html
 text!upfront/templates/properties.html
 text!upfront/templates/property_edit.html
