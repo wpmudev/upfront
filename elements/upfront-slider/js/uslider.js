@@ -200,8 +200,21 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		rendered = this.tpl(props);
 
 		var $rendered = $('<div></div>').append(rendered);
+		
+		var primary = props.primaryStyle,
+			defaults = {
+				below: 'below',
+				over: 'bottomOver',
+				side: 'right'
+			}
+		;
 
 		this.model.slideCollection.each(function(slide){
+			var style = slide.get('style');
+			if(style !== defaults[primary]) {
+				slide.set('style', defaults[primary]);
+			}
+
 			if(!me.imageProps[slide.id]){
 				me.imageProps[slide.id] = {
 					size: slide.get('size'),
@@ -597,8 +610,9 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				me.setCurrentSlide(index);
 				me.updateSlideControls();
 				me.$('.uimage-controls').attr('rel', slide.attr('rel'));
-				if(me.get_preset_properties().primaryStyle == 'side')
+				if(me.get_preset_properties().primaryStyle == 'side') {
 					me.setImageResizable();
+				}
 
 				if(me.get_preset_properties().primaryStyle == 'below'){
 					//Adapt the height to take care of the caption

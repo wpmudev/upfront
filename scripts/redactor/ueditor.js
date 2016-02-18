@@ -856,9 +856,9 @@ Ueditor.prototype = {
             /**
              * Make sure return doesn't delete the last charactor
              */
-            if (13 === e.keyCode && !e.shiftKey && (self || {}).redactor && !self.redactor.keydown.pre) {
+            if (13 === e.keyCode && !e.shiftKey && (self || {}).redactor && !self.redactor.keydown.pre && !self.redactor.$air.is(":visible") ) {
                 self.redactor.utils.removeEmpty();
-                $(self.redactor.selection.getCurrent()).append("&nbsp;")
+                $(self.redactor.selection.getCurrent()).append("&#x200b;");
             }
         });
 
