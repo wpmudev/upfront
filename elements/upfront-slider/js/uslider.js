@@ -278,16 +278,6 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		if(!me.parent_module_view)
 			return;
 
-		//Bind resizing events
-		if(!me.parent_module_view.$el.data('resizeHandling')){
-			me.parent_module_view.$el
-				.on('resizestart', $.proxy(me.onElementResizeStart, me))
-				.on('resize', $.proxy(me.onElementResizing, me))
-				.on('resizestop', $.proxy(me.onElementResize, me))
-				.data('resizeHandling', true)
-			;
-		}
-
 		if(!this.model.slideCollection.length)
 			return;
 
@@ -296,7 +286,6 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				me.on_render();
 			}, 100);
 		}
-
 
 		this.update_caption_controls();
 	},
@@ -872,26 +861,6 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		}
 		else
 			this.model.slideCollection.add(slides);
-	},
-
-	onElementResizeStart: function(e, ui){
-		if(ui.element.hasClass('uslide-image') || this.$('.upfront-image-starting-select').length)
-			return;
-
-		var style = this.property('style'),
-			me = this
-		;
-
-		this.calculateColumnWidth();
-
-		if(_.indexOf(['nocaption', 'below', 'above', 'right', 'left'], style) == -1)
-			this.$('.uslider-caption').fadeOut('fast');
-		else if(style == 'right' || style == 'left'){
-			ui.element.resizable('option', {
-				minWidth: me.colWidth * 6
-			});
-			this.$('.uslide').css({height: '100%'});
-		}
 	},
 
 	calculateColumnWidth: function(){
