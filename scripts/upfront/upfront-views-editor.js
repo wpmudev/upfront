@@ -38,7 +38,8 @@ define([
 	"scripts/upfront/global-event-handlers",
 	"scripts/upfront/inline-panels/inline-panels",
 	"scripts/upfront/element-settings/sidebar",
-	"scripts/upfront/link-panel", // If adding more arguments adjust _.rest in line 72
+	"scripts/upfront/link-panel",
+	"scripts/upfront/preset-settings/preset-saver", // If adding more arguments adjust _.rest in line 73
 	"text!upfront/templates/property.html",
 	"text!upfront/templates/properties.html",
 	"text!upfront/templates/property_edit.html",
@@ -52,7 +53,7 @@ define([
 	"text!upfront/templates/sidebar_settings_theme_colors.html",
 	"text!upfront/templates/color_picker.html",
     'spectrum'
-], function (chosen, globalEventHandlers, InlinePanelsLoader, ElementSettingsSidebar, LinkPanel) {
+], function (chosen, globalEventHandlers, InlinePanelsLoader, ElementSettingsSidebar, LinkPanel, PresetSaver) {
 	var _template_files = [
 		"text!upfront/templates/property.html",
 		"text!upfront/templates/properties.html",
@@ -69,7 +70,7 @@ define([
 	];
 
 	// Auto-assign the template contents to internal variable
-	var _template_args = _.rest(arguments, 5),
+	var _template_args = _.rest(arguments, 6),
 		_Upfront_Templates = {}
 	;
 	_(_template_files).each(function (file, idx) {
@@ -11667,7 +11668,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		},
 		Theme_Colors : Theme_Colors,
 		breakpoints_storage: breakpoints_storage,
-		Font_Model: Font_Model
+		Font_Model: Font_Model,
+		PresetSaver: PresetSaver
 	};
 });
 })(jQuery);
