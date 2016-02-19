@@ -4,6 +4,7 @@ var l10n = Upfront.Settings && Upfront.Settings.l10n
 	? Upfront.Settings.l10n.global.views
 	: Upfront.mainData.l10n.global.views
 ;
+var moduleRenderCounter = 1;
 
 define([
 	"text!upfront/templates/object.html",
@@ -1785,11 +1786,12 @@ define([
 				var $el = this.$el,
 					me = this
 				;
+				var counter = 1;
 				$el.html('');
 				if ( typeof Upfront.data.object_views == 'undefined' ) {
 					Upfront.data.object_views = {};
 				}
-				this.model.each(function (obj) {
+				this.model.each(function (obj, index) {
 					var view_class_prop = obj.get("properties").where({"name": "view_class"}),
 						view_class = view_class_prop.length ? view_class_prop[0].get("value") : "ObjectView",
 						local_view = Upfront.Views[view_class] ? Upfront.data.object_views[obj.cid] || new Upfront.Views[view_class]({model: obj}) : false
@@ -2978,7 +2980,10 @@ define([
 				if ( typeof Upfront.data.wrapper_views == 'undefined' )
 					Upfront.data.wrapper_views = {};
 				this.model.each(function (module) {
+					setTimeout(function() {
+					console.log('render module', moduleRenderCounter);
 					me.render_module(module);
+					}, moduleRenderCounter++ * 10);
 				});
 				this.apply_flexbox_clear();
 				this.apply_wrapper_height();
@@ -5371,7 +5376,10 @@ define([
 					me.render_container(region);
 				});
 				this.model.each(function (region, index) {
-					me.render_region(region);
+					setTimeout(function() {
+						me.render_region(region);
+						console.log('rendering region', moduleRenderCounter);
+					}, moduleRenderCounter++ * 100);
 				});
 				this.apply_adapt_region_to_breakpoints();
 			},
