@@ -94,8 +94,7 @@ class Upfront_UcontactView extends Upfront_Object {
 			'form_button_text' => self::_get_l10n('button_text'),
 			'form_validate_when' => 'submit',
 			'form_label_position' => 'above',
-
-
+			'preset' => 'default',
 			'type' => "UcontactModel",
 			'view_class' => "UcontactView",
 			"class" => "c24 upfront-contact-form",

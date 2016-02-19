@@ -7,6 +7,7 @@ define(function() {
 			this.init_property("class", "c24 upfront-plain_txt");
 			this.init_property("has_settings", 1);
 			this.init_property("id_slug", "plain_text");
+			this.init_property("preset", "default");
 		}
 	});
 

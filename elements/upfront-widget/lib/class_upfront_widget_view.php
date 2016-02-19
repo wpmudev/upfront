@@ -49,7 +49,7 @@ class Upfront_UwidgetView extends Upfront_Object {
 			'view_class' => "UwidgetView",
 			"class" => "c24 upfront-widget",
 			'has_settings' => 1,
-
+			'preset' => 'default',
 			'widget' => false
 		);
 	}

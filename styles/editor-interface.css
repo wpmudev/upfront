@@ -2484,6 +2484,10 @@ div.uinsert-selector a:hover {
   margin: 0 auto;
   width: 100%; }
 
+/* Fix bug where if opacity is set on upfront-region-container-bg, controls become unaccessible */
+.upfront-region-container-active .upfront-region-container-bg {
+  z-index: 10000; }
+
 .upfront-region-container-has-posts .upfront-region,
 .upfront-region-container-has-this_post .upfront-region {
   min-height: 0 !important; }
@@ -4198,7 +4202,7 @@ a.upfront-region-name-edit-trigger:before {
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 1;
+  z-index: -1;
   visibility: hidden;
   opacity: 0;
   background: -webkit-linear-gradient(bottom, rgba(100, 255, 255, 0.3) 1px, transparent 1px, transparent);
@@ -4298,7 +4302,7 @@ a.upfront-region-name-edit-trigger:before {
   z-index: 30; }
 
 .upfront-wrapper.upfront-inline-panel-item-open {
-  z-index: 70; }
+  z-index: 2999999; }
 
 .upfront-wrapper-content {
   width: 100%; }
@@ -4436,7 +4440,7 @@ a.upfront-region-name-edit-trigger:before {
 
 .upfront-module-has-nav:hover,
 .upfront-module-active.upfront-module-has-nav {
-  z-index: 50; }
+  z-index: 80; }
 
 .upfront-module-has-nav.upfront-module-nav-open {
   z-index: 90; }
@@ -4750,7 +4754,8 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-wrapper.ui-resizable-resizing > .upfront-wrapper-meta {
   display: block !important; }
 
-.upfront-module-group-editing .upfront-wrapper.upfront-wrapper-active > .upfront-wrapper-meta {
+.upfront-module-group-editing .upfront-wrapper.upfront-wrapper-module-group-on-edit > .upfront-wrapper-meta,
+.upfront-module-group-editing .upfront-wrapper:hover > .upfront-wrapper-meta {
   display: none !important; }
 
 .upfront-module-group-editing .upfront-module-group-on-edit .upfront-wrapper:hover > .upfront-wrapper-meta {

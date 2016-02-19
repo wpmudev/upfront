@@ -60,6 +60,7 @@ class Upfront_Posts_PostsData {
 			'gravatar_size' => 200,
 
 			// Parts markup goes here
+			'preset' => 'default'
 		);
 
 		foreach ($default_parts as $part) {

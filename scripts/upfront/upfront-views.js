@@ -2760,6 +2760,9 @@ define([
 				Upfront.Events.trigger("command:module_group:finish_edit"); // close other reorder first
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 				$main.addClass('upfront-module-group-editing');
+				if ( this.wrapper_view ) {
+					this.wrapper_view.$el.addClass('upfront-wrapper-module-group-on-edit');
+				}
 				this.$el.addClass('upfront-module-group-on-edit');
 				this.trigger('deactivated');
 				this.editing = true;
@@ -2773,6 +2776,9 @@ define([
 				}
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 				$main.removeClass('upfront-module-group-editing');
+				if ( this.wrapper_view ) {
+					this.wrapper_view.$el.removeClass('upfront-wrapper-module-group-on-edit');
+				}
 				this.$el.removeClass('upfront-module-group-on-edit');
 				this.editing = false;
 				this.enable_interaction();
@@ -3193,7 +3199,7 @@ define([
 				_.each(breakpoints, function(each) {
 					var breakpoint = each.toJSON(),
 						container_breakpoint = ( is_group ? me.group_view : me.region_view ).model.get_property_value_by_name('breakpoint'),
-						container_breakpoint_data = ( container_breakpoint && breakpoint.id in container_breakpoint ) ? container_breakpoint[breakpoint.id] : {}
+						container_breakpoint_data = ( container_breakpoint && breakpoint.id in container_breakpoint ) ? container_breakpoint[breakpoint.id] : {},
 						_container_col = breakpoint.default
 							? ed.get_class_num(( is_group ? me.group_view : me.region_view ).$el, ed.grid.class)
 							: ( _.isNumber(container_breakpoint_data.col) ? container_breakpoint_data.col : breakpoint.columns ),
@@ -3337,6 +3343,40 @@ define([
 						modules.remove(m.model);
 					});
 					wrappers.remove(w.model);
+				});
+			},
+			preserve_wrappers_breakpoint_order: function () {
+				if ( !this.region_view || this.region_view.model.get('name') == 'shadow' ) return;
+				var me = this,
+					ed = Upfront.Behaviors.GridEditor,
+					breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled(),
+					is_group = !_.isUndefined(this.group_view),
+					modules = this.model,
+					wrappers = ( is_group ? this.group_view.model.get('wrappers') : this.region_view.model.get('wrappers') )
+				;
+
+				_.each(breakpoints, function(each) {
+					var breakpoint = each.toJSON();
+					if ( breakpoint.default ) return;
+					var container_breakpoint = ( is_group ? me.group_view : me.region_view ).model.get_property_value_by_name('breakpoint'),
+						container_breakpoint_data = ( container_breakpoint && breakpoint.id in container_breakpoint ) ? container_breakpoint[breakpoint.id] : {},
+						_container_col = breakpoint.default
+							? ed.get_class_num(( is_group ? me.group_view : me.region_view ).$el, ed.grid.class)
+							: ( _.isNumber(container_breakpoint_data.col) ? container_breakpoint_data.col : breakpoint.columns ),
+						container_col = _container_col > breakpoint.columns ? breakpoint.columns : _container_col,
+						lines = ed.parse_modules_to_lines(modules, wrappers, breakpoint.id, container_col),
+						index = 1 // Start from 1, so we can still have order 0 free
+					;
+					_.each(lines, function (line) {
+						_.each(line.wrappers, function (w) {
+							var w_breakpoint = w.model.get_property_value_by_name('breakpoint'),
+								w_breakpoint_data = ( w_breakpoint && breakpoint.id in w_breakpoint ) ? w_breakpoint[breakpoint.id] : {}
+							;
+							w_breakpoint_data.order = index;
+							w.model.set_property('breakpoint', Upfront.Util.clone(w_breakpoint));
+							index++;
+						})
+					});
 				});
 			},
 			apply_flexbox_clear: function () {
@@ -5233,15 +5273,12 @@ define([
 			update_region_position: function () {
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
 					grid = Upfront.Settings.LayoutEditor.Grid,
-					col = this.model.get_property_value_by_name('col'),
-					height = this.model.get_property_value_by_name('height');
+					col = this.model.get_breakpoint_property_value('col', true),
+					height = this.model.get_property_value_by_name('height')
+				;
 
-
-
-				if ( !col )
-					this.model.set_property('col', 10, true);
-				if ( !height )
-					this.model.set_property('height', 225, true);
+				if ( !col ) this.model.set_property('col', 10, true);
+				if ( !height ) this.model.set_property('height', 225, true);
 
 				width =  col*grid.column_width
 
@@ -5258,7 +5295,6 @@ define([
 					'minHeight': css.minHeight
 				});
 				this.$el.css(css);
-
 			},
 			/*update_position_hint: function (pos, $helper) {
 				var hint = '';
@@ -5300,7 +5336,8 @@ define([
 				}
 			},
 			on_change_breakpoint: function (breakpoint) {
-					this.hide();
+				this.update_region_position();
+				this.hide();
 			}
 		}),
 

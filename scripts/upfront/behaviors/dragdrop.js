@@ -1168,6 +1168,13 @@ DragDrop.prototype = {
 				$drop.before(wrap_view.$el);
 				this.new_wrap_view = wrap_view;
 				Upfront.data.wrapper_views[wrap_model.cid] = wrap_view;
+				if ( !this.move_region ) {
+					// Keep breakpoint data if not moving region
+					var prev_wrap_model = this.current_wrappers.get_by_wrapper_id(this.$wrap.attr('id'));
+					if ( prev_wrap_model ) {
+						wrap_model.set_property('breakpoint', Upfront.Util.clone(prev_wrap_model.get_property_value_by_name('breakpoint')), true);
+					}
+				}
 			}
 			else {
 				var $drop_wrap = $drop.closest('.upfront-wrapper'),
@@ -1193,7 +1200,8 @@ DragDrop.prototype = {
 			breakpoint = this.breakpoint,
 			wrappers = this.current_wrappers,
 			$me = this.$me,
-			$wrap = this.$wrap
+			$wrap = this.$wrap,
+			region_view = Upfront.data.region_views[this.current_region_model.cid]
 		;
 		// normalize clear
 		_.each(ed.wraps, function(each){
@@ -1212,6 +1220,15 @@ DragDrop.prototype = {
 		}
 		
 		ed.update_model_margin_classes( $me, [ed.grid.class + this.drop_col] );
+
+		// Remove breakpoint value if dropped to inside/move to other region
+		if ( this.drop.type == 'inside' || this.move_region ) {
+			var wrap_model = this.current_wrappers.get_by_wrapper_id($wrap.attr('id'));
+			if ( wrap_model ) {
+				wrap_model.remove_property('breakpoint', true);
+			}
+			this.model.remove_property('breakpoint', true);
+		}
 		
 		// If the drop is to side, also update the elements on the same row
 		if ( 
@@ -1325,17 +1342,27 @@ DragDrop.prototype = {
 
 		if ( !breakpoint || breakpoint.default ){
 			if ( !this.move_region ){
+				// Preserve breakpoint order to prevent element shifting due to changing position in collection
+				this.view.parent_view.preserve_wrappers_breakpoint_order();
 				this.view.resort_bound_collection();
+				// Normalize child spacers
+				this.view.parent_view.normalize_child_spacing();
 			}
 			else {
 				var modules = this.current_region_model.get('modules'),
 					models = []
 				;
+				// Preserve breakpoint order to prevent element shifting due to changing position in collection
+				this.view.region_view._modules_view.preserve_wrappers_breakpoint_order();
 				this.model.collection.remove(this.model, {silent: true});
 				if ( this.model.get('shadow') ){
 					this.view.trigger('on_layout');
 					this.model.unset('shadow', {silent: true});
 				}
+				// Normalize child spacers
+				this.view.region_view._modules_view.normalize_child_spacing();
+
+				region_view._modules_view.preserve_wrappers_breakpoint_order();
 				$me.removeAttr('data-shadow');
 				this.$current_container.find('.upfront-wrapper').find(this.module_selector).each(function(){
 					var element_id = $(this).attr('id'),

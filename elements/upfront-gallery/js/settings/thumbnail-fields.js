@@ -114,7 +114,7 @@ define([
 						className: 'gallery-padding-lock',
 						property: 'lockPadding',
 						label: "",
-						default_value: 1,
+						default_value: 'yes',
 						multiple: false,
 						values: [
 							{ label: '', value: 'yes' }

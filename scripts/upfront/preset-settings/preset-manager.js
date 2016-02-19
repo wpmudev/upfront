@@ -64,7 +64,7 @@ define([
 					action: 'upfront_save_' + this.ajaxActionSlug + '_preset',
 					data: properties
 				}).done( function() {
-					me.model.trigger("preset:updated");
+					me.model.trigger("preset:updated", properties.id);
 				});
 			};
 

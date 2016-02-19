@@ -145,11 +145,11 @@ define([
 
 			this.listenToOnce(this, 'rendered', function() {
 				setTimeout( function() {
-					if(me.model.get('use_captions') == 1) {
+					if(me.model.get('use_captions') === 'yes') {
 						me.$el.find('.'+ state +'-caption-select').show();
 						me.$el.find('.'+ state +'-caption-trigger').show();
 						me.$el.find('.'+ state +'-caption-height').show();
-						var height_type = me.model.get('caption-height', value);
+						var height_type = me.model.get('caption-height');
 						if(height_type === "fixed") {
 							me.$el.find('.'+ state +'-caption-height-number').show();
 						}

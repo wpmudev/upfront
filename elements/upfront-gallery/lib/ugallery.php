@@ -257,7 +257,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'has_settings' => 1,
 			'class' => 'c24 upfront-gallery',
 			'id_slug' => 'ugallery',
-
+			'preset' => 'default',
 			'status' => 'starting',
 			'images' => array(), // Convert to new UgalleryImages() for using
 			'elementSize' => array( 'width' => 0, 'height' => 0),
@@ -282,7 +282,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'thumbPaddingNumber' => 15,
 			'thumbSidePaddingNumber' => 15,
 			'thumbBottomPaddingNumber' => 15,
-			'lockPadding' => 1,
+			'lockPadding' => 'yes',
 			'lightbox_show_close' => array('true'),
 			'lightbox_show_image_count' => array('true'),
 			'lightbox_click_out_close' => array('true'),

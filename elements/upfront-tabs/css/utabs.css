@@ -15,6 +15,12 @@
 	line-height: 30px;
 }
 
+/* Reset theme typography values for P too */
+.tabs-tab .inner-box p {
+	margin: 0;
+	line-height: 30px;
+}
+
 .tabs-tab[contenteditable=true] {
 	background: #ddd;
 }
