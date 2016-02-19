@@ -155,7 +155,12 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 	}
 
 	protected function update_presets($presets = array()) {
-		update_option($this->db_key, json_encode($presets));
+		// Do not need to update this in the db, if it is coming from exporter
+		$isbuilder = stripslashes($_POST['isbuilder']);
+		if($isbuilder != 'true') {
+			
+			update_option($this->db_key, json_encode($presets));
+		}
 	}
 
 	public function save() {

@@ -9,8 +9,14 @@ class Upfront_Tab_Presets_Server extends Upfront_Presets_Server {
 
 	protected function __construct() {
 		parent::__construct();
+		
+		//Include update preset values only for old layouts
+		$properties = Upfront_Layout::get_layout_properties();
+		$key = array_search('version', array_column($properties, 'name'));
 
-		$this->update_preset_values();
+		if($key === false || ($key !== false && $properties[$key]['value'] < '1.0.0')) {
+			$this->update_preset_values();
+		}
 	}
 
 	public function get_element_name() {
