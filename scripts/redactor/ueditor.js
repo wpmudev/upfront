@@ -51,14 +51,16 @@ $.fn.ueditor = function(options){
 
 var hackRedactor = function(){
     
-    // These lines override the Redactor's prefFormatting
+    /*
+    // Deprecated, moved to override methods
     var clean = $.Redactor.prototype.clean();
     
     clean.savePreFormatting = function(html) {
         return html;
     };
 
-    $.Redactor.prototype.clean = function () { return clean };
+   $.Redactor.prototype.clean = function () { return clean };
+   */
     
 	// Make click consistent
 	$.Redactor.prototype.airBindHide = function () {
@@ -306,6 +308,12 @@ var hackRedactor = function(){
 
                     return false;
                 }
+            }
+        },
+        clean: {
+            // These lines override the Redactor's prefFormatting
+            savePreFormatting: function(html) {
+                return html;
             }
         }
     };

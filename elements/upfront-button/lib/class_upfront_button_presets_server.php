@@ -48,7 +48,7 @@ class Upfront_Button_Presets_Server extends Upfront_Presets_Server {
 				'as_array' => true
 			)
 		);
-		
+
 		$presets = $this->replace_new_lines($presets);
 
 		// Fail-safe
@@ -86,7 +86,7 @@ class Upfront_Button_Presets_Server extends Upfront_Presets_Server {
 				$preset_options['migrated'] = 1;
 				$count++;
 			}
-			
+
 			$update_settings[] = $preset_options;
 		}
 
@@ -119,14 +119,14 @@ class Upfront_Button_Presets_Server extends Upfront_Presets_Server {
 		return array(
 			'useborder' => 'yes',
 			'bordertype' => 'solid',
-			'borderwidth' => 4,
-			'bordercolor' => 'rgb(66, 127, 237)',
-			'useradius' => 'yes',
+			'borderwidth' => 1,
+			'bordercolor' => 'rgb(0, 0, 0)',
+			'useradius' => false,
 			'borderradiuslock' => 'yes',
-			'borderradius1' => 100,
-			'borderradius2' => 100,
-			'borderradius3' => 100,
-			'borderradius4' => 100,
+			'borderradius1' => 0,
+			'borderradius2' => 0,
+			'borderradius3' => 0,
+			'borderradius4' => 0,
 			'bgcolor' => 'rgb(255, 255, 255)',
 			'fontsize' => 16,
 			'fontface' => 'Arial',
@@ -134,15 +134,15 @@ class Upfront_Button_Presets_Server extends Upfront_Presets_Server {
 			'fontstyle_weight' => '600',
 			'fontstyle_style' => 'normal',
 			'lineheight' => 3,
-			'color' => 'rgb(66, 127, 237)',
+			'color' => 'rgb(0, 0, 0)',
 			'hov_bordertype' => 'solid',
-			'hov_borderwidth' => 4,
+			'hov_borderwidth' => 1,
 			'hov_bordercolor' => 'rgb(66, 127, 237)',
 			'hov_borderradiuslock' => 'yes',
-			'hov_borderradius1' => 100,
-			'hov_borderradius2' => 100,
-			'hov_borderradius3' => 100,
-			'hov_borderradius4' => 100,
+			'hov_borderradius1' => 0,
+			'hov_borderradius2' => 0,
+			'hov_borderradius3' => 0,
+			'hov_borderradius4' => 0,
 			'hov_bgcolor' => 'rgb(66, 127, 237)',
 			'hov_fontsize' => 16,
 			'hov_fontface' => 'Arial',
@@ -156,13 +156,13 @@ class Upfront_Button_Presets_Server extends Upfront_Presets_Server {
 			'hov_duration' => 0.3,
 			'hov_easing' => 'ease-in-out',
 			'focus_bordertype' => 'solid',
-			'focus_borderwidth' => 4,
+			'focus_borderwidth' => 1,
 			'focus_bordercolor' => 'rgb(66, 127, 237)',
 			'focus_borderradiuslock' => 'yes',
-			'focus_borderradius1' => 100,
-			'focus_borderradius2' => 100,
-			'focus_borderradius3' => 100,
-			'focus_borderradius4' => 100,
+			'focus_borderradius1' => 0,
+			'focus_borderradius2' => 0,
+			'focus_borderradius3' => 0,
+			'focus_borderradius4' => 0,
 			'focus_bgcolor' => 'rgb(66, 127, 237)',
 			'focus_fontsize' => 16,
 			'focus_fontface' => 'Arial',

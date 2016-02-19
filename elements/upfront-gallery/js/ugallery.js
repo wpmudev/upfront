@@ -253,7 +253,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		this.debouncedRender();
 		Upfront.Events.trigger('preset:gallery:updated', preset);
 	},
-	
+
 	caption_updated: function(preset) {
 		var currentPreset = this.model.get_property_value_by_name("preset");
 
@@ -934,6 +934,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			})
 			.on('start', function() {
 				me.$el.addClass('upfront-editing');
+				title.parents('.ugallery_item').addClass('upfront-editing');
 			})
 			.on('stop', function() {
 				setTimeout(function() {
@@ -942,6 +943,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 				}, 10);
 
 				me.$el.removeClass('upfront-editing');
+				title.parents('.ugallery_item').removeClass('upfront-editing');
 			})
 			.on('syncAfter', function() {
 				image.set('title', title.html());
@@ -1294,7 +1296,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 					element_id: element_id
 				}
 			;
-			
+
 			//Scale cropOffset for new image size
 			image.set('cropOffset', { left: offsetLeft, top: offsetTop });
 
