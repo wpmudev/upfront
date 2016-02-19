@@ -4,7 +4,18 @@ var l10n = Upfront.Settings && Upfront.Settings.l10n
 	? Upfront.Settings.l10n.global.views
 	: Upfront.mainData.l10n.global.views
 ;
-var moduleRenderCounter = 1;
+
+
+// Simple naive implementation of non-blocking rendering event loop
+var renderCounter = 1;
+var renderingQueue = [];
+// Needs to be a function to get renderCounter right because variables are determined on function declaration
+var getNextRendering = function() {
+	if (renderingQueue[renderCounter]) {
+		return renderingQueue[renderCounter++];
+	}
+};
+// end experiment
 
 define([
 	"text!upfront/templates/object.html",
@@ -2980,10 +2991,13 @@ define([
 				if ( typeof Upfront.data.wrapper_views == 'undefined' )
 					Upfront.data.wrapper_views = {};
 				this.model.each(function (module) {
-					setTimeout(function() {
-					console.log('render module', moduleRenderCounter);
-					me.render_module(module);
-					}, moduleRenderCounter++ * 10);
+					renderingQueue.push(function(next) {
+						console.log('render module', renderCounter);
+						me.render_module(module);
+						setTimeout(function() {
+							if (next) next(getNextRendering());
+						}, 0);// 0 is intentional, it will queue function on browser event loop
+					});
 				});
 				this.apply_flexbox_clear();
 				this.apply_wrapper_height();
@@ -5376,11 +5390,19 @@ define([
 					me.render_container(region);
 				});
 				this.model.each(function (region, index) {
-					setTimeout(function() {
+					renderingQueue.push(function(next) {
 						me.render_region(region);
-						console.log('rendering region', moduleRenderCounter);
-					}, moduleRenderCounter++ * 100);
+						console.log('rendering region', renderCounter);
+						setTimeout(function() {
+							if (next) next(getNextRendering());
+						}, 0);// 0 is intentional, it will queue function on browser event loop
+					});
 				});
+				// Queue up render start
+				setTimeout( function() {
+					renderingQueue[0](getNextRendering());
+				}, 0); // 0 is intentional, it will queue function on browser event loop
+
 				this.apply_adapt_region_to_breakpoints();
 			},
 			render_container: function (region, index) {
