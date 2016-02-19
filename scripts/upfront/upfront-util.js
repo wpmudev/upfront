@@ -138,6 +138,9 @@ define(function() {
 
 			// Was request made from dev mode
 			request.dev = location.search.indexOf('dev=true') > -1;
+			
+			// Was request made from the builder
+			request.isbuilder = Upfront.Application.is_builder();
 
 			return $.post(Upfront.Settings.ajax_url, request, function () {}, data_type ? data_type : "json");
 		},
