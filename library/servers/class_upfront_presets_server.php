@@ -310,6 +310,16 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 	protected function migrate_presets($presets) {
 		return $presets;
 	}
+	
+	public function properties_columns($array, $column) {
+        $result = array();
+        foreach ($array as $item) {
+            if (array_key_exists($column, $item)) {
+                $result[] = $item[$column];
+			}
+		}
+        return $result;
+	}
 
 	public function get_presets_javascript_server() {
 		$presets = get_option('upfront_' . get_stylesheet() . '_' . $this->elementName . '_presets');
