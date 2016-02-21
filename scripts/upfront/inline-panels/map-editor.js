@@ -107,7 +107,46 @@ define([
 				;
 			});
 		},
+		startResizable: function(editor){
+			// Save the fetching inside the resize
+			var me = this,
+				$cssbody = editor.find('.upfront-css-body'),
+				topHeight = 0,
+				
+				$rsz = editor.find('.upfront_map-editor-complex-wrapper'),
+				onResize = function(e, ui){
+					var height = ui ? ui.size.height : editor.find('.upfront_map-editor-complex-wrapper').height(),
+						bodyHeight = height  - topHeight;
+					$cssbody.height(bodyHeight);
+					
+					_.each(me.editors, function(editor){
+						editor.resize();
+					});
 
+					// Clean unneeded CSS
+					$rsz.css({
+						width: "",
+						height: "",
+						left: "",
+						top: ""
+					});
+					
+				}
+			;
+			// Add appropriate handle classes
+			$rsz.find(".upfront-css-top")
+				.removeClass("ui-resizable-handle").addClass("ui-resizable-handle")
+				.removeClass("ui-resizable-n").addClass("ui-resizable-n")
+			;
+			topHeight = editor.find('.upfront-css-top').outerHeight();
+			onResize();
+			$rsz.resizable({
+				handles: {n: '.upfront-css-top'},
+				resize: onResize,
+				minHeight: 200,
+				delay: 100
+			});
+		},
 		createEditor: function($editor){
 			var me = this;
 			$editor.html(this.editorTpl({
@@ -125,7 +164,7 @@ define([
 			};
 			$(window).on('resize', this.resizeHandler);
 			this.resizeHandler();
-
+			
 			//Start the editors
 			this.editors = {};
 			this.timers = {};
@@ -178,20 +217,8 @@ define([
 
 			//Start resizable
 			editorBody.height(this.MIN_HEIGHT - editorTop.outerHeight());
-			$editor.find(".upfront_map-editor-complex-wrapper").resizable({
-				handles: {
-					n: ".upfront-css-top"
-				},
-				resize: function(e, ui){
-					editorBody.height(ui.size.height - editorTop.outerHeight());
-					_.each(me.editors, function(editor){
-						editor.resize();
-					});
-				},
-				minHeight: me.MIN_HEIGHT,
-				delay:  100
-			});
-
+			this.startResizable($editor);
+			
 			//save edition
 			$editor.find('button').on('click', function(e){
 				_.each(me.editors, function(editor, type){
