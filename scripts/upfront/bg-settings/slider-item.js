@@ -124,6 +124,7 @@ define([
 			Upfront.Views.Editor.ImageSelector.open({multiple: true}).done(function(images){
 				var image_ids = [];
 				_.each(images, function(image, id){
+					id = parseInt(id, 10);
 					image_ids.push(id);
 				});
 				me.model.set_breakpoint_property('background_slider_images', image_ids);
@@ -144,6 +145,7 @@ define([
 				Upfront.Views.Editor.ImageSelector.open({multiple: true}).done(function(images){
 					var slide_images = _.clone(me.model.get_breakpoint_property_value('background_slider_images', true) || []);
 					_.each(images, function(image, id){
+						id = parseInt(id, 10);
 						slide_images.push(id);
 					});
 					me.model.set_breakpoint_property('background_slider_images', slide_images);
@@ -214,8 +216,10 @@ define([
 								var slide_images = [];
 								$wrap.find('.upfront-region-bg-slider-image').each(function(){
 									var id = $(this).data('image-id');
-									if ( id )
+									if ( id ) {
+										id = parseInt(id, 10);
 										slide_images.push(id);
+									}
 								});
 								me.model.set_breakpoint_property('background_slider_images', slide_images);
 							}
