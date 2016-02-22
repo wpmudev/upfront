@@ -12,7 +12,7 @@ class Upfront_Tab_Presets_Server extends Upfront_Presets_Server {
 		
 		//Include update preset values only for old layouts
 		$properties = Upfront_Layout::get_layout_properties();
-		$key = array_search('version', array_column($properties, 'name'));
+		$key = array_search('version', $this->properties_columns($properties, 'name'));
 
 		if($key === false || ($key !== false && $properties[$key]['value'] < '1.0.0')) {
 			$this->update_preset_values();
