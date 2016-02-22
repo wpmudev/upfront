@@ -5,17 +5,90 @@ var l10n = Upfront.Settings && Upfront.Settings.l10n
 	: Upfront.mainData.l10n.global.views
 ;
 
+/**
+ * Provide rendering of regions and modules that will not block browsers
+ * event loop.
+ */
+var RenderQueue = function() {
+	var renderingQueue = [];
+	var renderingStack = [];
+	var me = this;
 
-// Simple naive implementation of non-blocking rendering event loop
-var renderCounter = 1;
-var renderingQueue = [];
-// Needs to be a function to get renderCounter right because variables are determined on function declaration
-var getNextRendering = function() {
-	if (renderingQueue[renderCounter]) {
-		return renderingQueue[renderCounter++];
-	}
+	/**
+	 * Add callback for non-blocking rendering, callbacks are simple
+	 * to handle since we don't have to do lots of context management.
+	 */
+	this.add = function(callback) {
+		Upfront.Events.trigger('upfront:renderingqueue:add');
+		renderingQueue.push(function(next) {
+			callback();
+			Upfront.Events.trigger('upfront:renderingqueue:progress');
+			setTimeout(function() {
+				if (next) {
+					if (renderingQueue.length > 0) {
+						next(renderingQueue.shift());
+					} else {
+						next();
+					}
+				} else {
+					Upfront.Events.trigger('upfront:renderingqueue:finished');
+				}
+			}, 0);// 0 is intentional, it will queue function on browser event loop
+		});
+	};
+
+	/**
+	 * Some functions need to be executed after all modules or regions are done
+	 * rendering, do there in the reverse order than they are queued (stacked) so
+	 * that it is possible to get correct order of events firing, just as before
+	 * render queue was implemented.
+	 */
+	this.addToEnd = function(callback) {
+		Upfront.Events.trigger('upfront:renderingqueue:add');
+		renderingStack.push(function(next) {
+			callback();
+			Upfront.Events.trigger('upfront:renderingqueue:progress');
+			setTimeout(function() {
+				if (next) {
+					if (renderingStack.length > 0) {
+						next(renderingStack.pop());
+					} else {
+						next();
+						Upfront.Events.trigger('upfront:renderingqueue:done');
+					}
+				}
+			}, 0);// 0 is intentional, it will queue function on browser event loop
+		});
+
+		/**
+		 * Do stack rendering in reverse order after queue has finished rendering,
+		 * see addToEnd comment for more explanation.
+		 */
+		Upfront.Events.on('upfront:renderingqueue:finished', function() {
+			if (renderingStack.length > 1) {
+				renderingStack.pop()(renderingStack.pop());
+			} else if (renderingStack.length > 0) {
+				renderingStack.pop()();
+			}
+		});
+	};
+
+	this.start = function() {
+		// Do delayed start since if callbacks are still added to renderingQueue
+		// before rendering is started it can cause multiple triggering of
+		// 'upfront:renderingqueue:finished' event
+		setTimeout(function() {
+			Upfront.Events.trigger('upfront:renderingqueue:start');
+			if (renderingQueue.length > 1) {
+				renderingQueue.shift()(renderingQueue.shift());
+			} else if (renderingQueue.length > 0) {
+				renderingQueue.shift()();
+			}
+		}, 500);
+	};
 };
-// end experiment
+
+var renderQueue = new RenderQueue();
 
 define([
 	"text!upfront/templates/object.html",
@@ -43,6 +116,29 @@ define([
 	_(_template_files).each(function (file, idx) {
 		_Upfront_Templates[file.replace(/text!upfront\/templates\//, '').replace(/\.html/, '')] = _template_args[idx];
 	});
+
+	// Render reporting, just a event API at which we can plug in anything in UI to show progress
+
+	var totalOfStuffToRender = 0;
+	var getTotalStuff = function() {
+		return totalOfStuffToRender;
+	};
+	var doneStuffToRender = 0;
+	Upfront.Events.on('upfront:renderingqueue:start', function() {
+		console.log('Rendering 0 of ' + totalOfStuffToRender);
+	});
+	Upfront.Events.on('upfront:renderingqueue:add', function() {
+		totalOfStuffToRender++;
+	});
+	Upfront.Events.on('upfront:renderingqueue:progress', function() {
+		doneStuffToRender++;
+		console.log('Rendering ' + doneStuffToRender + ' of ' + totalOfStuffToRender);
+	});
+	Upfront.Events.on('upfront:renderingqueue:done', function() {
+		console.log('Rendering done ');
+	});
+	//////
+
 
 	var
 		_dispatcher = _.clone(Backbone.Events),
@@ -75,6 +171,7 @@ define([
 				is_trigger: false
 			}
 		},
+
 
 	/* ----- Core views ----- */
 
@@ -2990,18 +3087,18 @@ define([
 					Upfront.data.module_views = {};
 				if ( typeof Upfront.data.wrapper_views == 'undefined' )
 					Upfront.data.wrapper_views = {};
+
 				this.model.each(function (module) {
-					renderingQueue.push(function(next) {
-						console.log('render module', renderCounter);
-						me.render_module(module);
-						setTimeout(function() {
-							if (next) next(getNextRendering());
-						}, 0);// 0 is intentional, it will queue function on browser event loop
+					renderQueue.add(function () {
+						me.render_module(module); // surrounding with function to keep context juggling to the minimum
 					});
 				});
-				this.apply_flexbox_clear();
-				this.apply_wrapper_height();
-				Upfront.Events.trigger("entity:modules:after_render", this, this.model);
+
+				renderQueue.addToEnd(function() {
+					me.apply_flexbox_clear();
+					me.apply_wrapper_height();
+					Upfront.Events.trigger("entity:modules:after_render", me, me.model);
+				});
 			},
 			render_module: function (module, options) {
 				var $el = this.$el,
@@ -5390,20 +5487,14 @@ define([
 					me.render_container(region);
 				});
 				this.model.each(function (region, index) {
-					renderingQueue.push(function(next) {
+					renderQueue.add(function () {
 						me.render_region(region);
-						console.log('rendering region', renderCounter);
-						setTimeout(function() {
-							if (next) next(getNextRendering());
-						}, 0);// 0 is intentional, it will queue function on browser event loop
 					});
 				});
-				// Queue up render start
-				setTimeout( function() {
-					renderingQueue[0](getNextRendering());
-				}, 0); // 0 is intentional, it will queue function on browser event loop
 
-				this.apply_adapt_region_to_breakpoints();
+				renderQueue.addToEnd(function() {
+					me.apply_adapt_region_to_breakpoints();
+				});
 			},
 			render_container: function (region, index) {
 				var container = region.get("container"),
@@ -5974,6 +6065,8 @@ define([
 				this.update_background();
 			},
 			render: function () {
+				var me = this;
+
 				this.$el.addClass('upfront-layout-view');
 				this.$el.html(this.tpl(this.model.toJSON()));
 				this.$layout = this.$(".upfront-layout");
@@ -5990,19 +6083,23 @@ define([
 					this.local_view.delegateEvents();
 				}
 
-				this.update();
+				renderQueue.addToEnd(function() {
+					me.update();
 
-				this.bg_setting = new Upfront.Views.Editor.ModalBgSetting({model: this.model, to: this.$el, width: 420});
-				this.bg_setting.render();
-				this.$el.append(this.bg_setting.el);
+					me.bg_setting = new Upfront.Views.Editor.ModalBgSetting({model: me.model, to: me.$el, width: 420});
+					me.bg_setting.render();
+					me.$el.append(me.bg_setting.el);
 
-				this.fix_height();
+					me.fix_height();
 
-				// Use flexbox when we can
-				if ( Upfront.Util.css_support('flex') )
-					$('html').addClass('flexbox-support');
+					// Use flexbox when we can
+					if ( Upfront.Util.css_support('flex') )
+						$('html').addClass('flexbox-support');
 
-				Upfront.Events.trigger("layout:after_render");
+					Upfront.Events.trigger("layout:after_render");
+				});
+
+				renderQueue.start();
 			},
 			on_click: function (e) {
 				//Check we are not selecting text
