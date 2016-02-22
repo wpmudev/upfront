@@ -1268,7 +1268,7 @@ var LayoutEditor = {
 		var typography,
 			properties,
 			layout_style,
-			deferred new $.Deferred(),
+			deferred = new $.Deferred(),
 			data = {}
 		;
 
