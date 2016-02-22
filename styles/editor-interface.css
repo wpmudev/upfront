@@ -1132,6 +1132,9 @@ span.draggable-post-element.element-dragging {
 .upfront_map-editor-complex-wrapper .ace_scrollbar {
   width: 5px !important; }
 
+#upfront-csseditor .ace_scrollbar {
+  z-index: 9; }
+
 #sidebar-ui .sidebar-panel-content::-webkit-scrollbar-thumb,
 .upfront-scroll-panel::-webkit-scrollbar-thumb,
 .upfront-settings_panel_scroll::-webkit-scrollbar-thumb,
