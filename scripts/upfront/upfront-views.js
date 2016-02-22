@@ -1611,7 +1611,7 @@ define([
 				}
 			},
 			on_element_resize_start: function (attr) {
-
+				
 			},
 			on_element_resizing: function (attr) {
 				if ( this.display_size_hint ) {
@@ -1619,7 +1619,7 @@ define([
 				}
 			},
 			on_element_resize: function (attr) {
-
+				this.render(); 
 			},
 			on_element_drop: function (attr) {
 
