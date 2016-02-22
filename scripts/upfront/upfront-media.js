@@ -392,7 +392,7 @@ define([
 				"click a.all": "select_all"
 			},
 			render: function () {
-				this.$el.empty().append(l10n.select + ' <a href="#all" class="all">' + l10n.all + '</a>&nbsp;|&nbsp;<a href="#none" class="none">' + l10n.none + '</a>');
+				this.$el.empty().append(l10n.select + ' <a href="#all" class="all">' + l10n.all + '</a>&nbsp;|&nbsp;<a href="#none" class="none">' + l10n.none + '</a> ' + l10n.on_this_page);
 			},
 			select_none: function (e) {
 				e.preventDefault();
