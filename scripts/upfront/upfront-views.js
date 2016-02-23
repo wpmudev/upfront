@@ -1516,6 +1516,7 @@ define([
 				}
 				Upfront.Events.trigger('entity:object:update', this, this.model);
 
+				this.update_padding();
 			},
 			handle_visual_padding_hint: function (prop) {
 				if (typeof prop === 'undefined') return;
@@ -4687,6 +4688,7 @@ define([
 			on_layout_render: function () {
 				this.update_size_hint(parseInt(this.$el.css('width'), 10), parseInt(this.$el.css('height'), 10));
 				this.refresh_background();
+				this.update_padding();
 			},
 			normalize_child_modules: function (prev_col) {
 				if ( !this._modules_view ) return;
