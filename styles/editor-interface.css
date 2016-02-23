@@ -1132,6 +1132,9 @@ span.draggable-post-element.element-dragging {
 .upfront_map-editor-complex-wrapper .ace_scrollbar {
   width: 5px !important; }
 
+#upfront-csseditor .ace_scrollbar {
+  z-index: 9; }
+
 #sidebar-ui .sidebar-panel-content::-webkit-scrollbar-thumb,
 .upfront-scroll-panel::-webkit-scrollbar-thumb,
 .upfront-settings_panel_scroll::-webkit-scrollbar-thumb,
@@ -1347,10 +1350,10 @@ textarea.upfront-field-text.upfront-field-textarea {
   color: #263a4d;
   height: 26px;
   width: 100%;
-  padding: 7px 10px;
+  padding: 0px 10px;
   font-size: 11px;
   font-family: verdana, sans-serif;
-  line-height: 16px; }
+  line-height: 26px; }
 
 input.upfront-field-text.upfront-has_inline_label {
   width: auto; }
@@ -1677,6 +1680,9 @@ input.upfront-field-text:hover,
   display: inline-block;
   vertical-align: baseline;
   margin: 0 15px 0 0; }
+
+.upfront-field-multiple-horizontal-inline:last-child {
+  margin: 0; }
 
 .upfront-field-multiple:hover,
 .upfront-field-multiple-selected {
@@ -2484,9 +2490,10 @@ div.uinsert-selector a:hover {
   margin: 0 auto;
   width: 100%; }
 
-/* Fix bug where if opacity is set on upfront-region-container-bg, controls become unaccessible */
-.upfront-region-container-active .upfront-region-container-bg {
-  z-index: 10000; }
+/* Fix bug where if opacity is set on upfront-region-container-bg, controls become unaccessible (or even invisible) */
+.upfront-region-container-active .upfront-region-container-bg,
+.upfront-region-container-active .upfront-region {
+  opacity: 1 !important; }
 
 .upfront-region-container-has-posts .upfront-region,
 .upfront-region-container-has-this_post .upfront-region {
