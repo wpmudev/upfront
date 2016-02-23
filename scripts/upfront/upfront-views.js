@@ -4389,6 +4389,7 @@ define([
 				this.listenTo(Upfront.Events, "entity:navigation:responsive_open", this.refresh_background);
 				this.listenTo(Upfront.Events, "entity:navigation:responsive_close", this.refresh_background);
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
+				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.update_padding);
 				this.listenTo(Upfront.Events, "entity:region:hide_toggle", this.update_hide_toggle);
 				this.listenTo(Upfront.Events, "command:region:edit_toggle", this.update_buttons);
 				this.listenTo(Upfront.Events, "entity:region:removed", this.update_buttons);
@@ -4590,6 +4591,50 @@ define([
 					$container.css('min-height', '');
 				}
 				this.trigger("region_changed", this);
+			},
+			update_padding: function () {
+				var props = {},
+					$region = this.$el.closest('.upfront-region')
+				;
+
+				// Padding settings
+				this.model.get("properties").each(function (prop) {
+					props[prop.get("name")] = prop.get("value");
+				});
+
+				var breakpoints = typeof Upfront.Settings.LayoutEditor.Theme.breakpoints !== 'undefined' ? Upfront.Settings.LayoutEditor.Theme.breakpoints : [],
+					current_breakpoint = typeof Upfront.Settings.LayoutEditor.CurrentBreakpoint !== 'undefined' ? Upfront.Settings.LayoutEditor.CurrentBreakpoint : 'desktop',
+					current_breakpoint_id = current_breakpoint === 'default' ? current_breakpoint : current_breakpoint.id,
+					top_padding,
+					bottom_padding
+				;
+
+				var breakpoint_obj = (
+							typeof props.breakpoint !== 'undefined'
+							&& typeof props.breakpoint[current_breakpoint_id] !== 'undefined'
+						)
+						? props.breakpoint[current_breakpoint_id]
+						: false
+				;
+
+				top_padding = (typeof breakpoint_obj.top_bg_padding_num !== 'undefined')
+					? breakpoint_obj.top_bg_padding_num
+					: (typeof props.top_bg_padding_num !== 'undefined')
+						? props.top_bg_padding_num
+						: false
+				;
+
+				bottom_padding = (typeof breakpoint_obj.bottom_bg_padding_num !== 'undefined')
+					? breakpoint_obj.bottom_bg_padding_num
+					: (typeof props.bottom_bg_padding_num !== 'undefined')
+						? props.bottom_bg_padding_num
+						: false
+				;
+
+				$region.css({
+					'padding-top': ( false === top_padding ? '' : top_padding + 'px' ),
+					'padding-bottom': ( false === bottom_padding ? '' : bottom_padding + 'px' )
+				});
 			},
 			update_buttons: function () {
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
