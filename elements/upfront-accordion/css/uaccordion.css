@@ -1,6 +1,6 @@
 #page .upfront-accordion-wrap {
-	overflow-x: hidden;
-	overflow-y: hidden;
+	/*overflow-x: hidden;*/
+	/*overflow-y: hidden;*/
 }
 #page .upfront-accordion-container .accordion-panel {
 	position: relative;

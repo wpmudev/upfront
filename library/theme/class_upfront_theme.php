@@ -28,7 +28,11 @@ class Upfront_Theme {
 	}
 
 	public function __construct () {
-
+		// Add version to $region_default_args properties
+		$this->region_default_args['properties'][] = array(
+			'name' => 'version',
+			'value' => Upfront_Layout::$version
+		);
 	}
 
 	// @TODO deprecate this

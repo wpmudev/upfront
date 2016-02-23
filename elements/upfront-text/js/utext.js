@@ -29,6 +29,7 @@
 				this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
 				this.listenTo(Upfront.Events, 'upfront:lightbox:show', this.on_lightbox_show);
 				this.listenTo(this.model, "preset:updated", this.preset_updated);
+				this.listenTo(this.model, 'change', this.render);
 			},
 			preset_updated: function() {
 				this.render();
@@ -80,7 +81,7 @@
 				var rendered = '';
 
 				rendered = _.template(textTpl, data);
-				return rendered + ( !this.is_edited() || $.trim(content) == '' ? '<div class="upfront-quick-swap"><p>' + l10n.dbl_click + '</p></div>' : '');
+				return rendered;
 			},
 			is_edited: function () {
 				var is_edited = this.model.get_property_value_by_name('is_edited');

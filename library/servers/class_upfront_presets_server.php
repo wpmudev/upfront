@@ -150,12 +150,17 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		if (is_array($presets) === false) {
 			$presets = array();
 		}
-
+		
 		return $presets;
 	}
 
 	protected function update_presets($presets = array()) {
-		update_option($this->db_key, json_encode($presets));
+		// Do not need to update this in the db, if it is coming from exporter
+		$isbuilder = isset($_POST['isbuilder']) ? stripslashes($_POST['isbuilder']) : false;
+		
+		if($isbuilder != 'true') {
+			update_option($this->db_key, json_encode($presets));
+		}
 	}
 
 	public function save() {
@@ -164,22 +169,31 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		}
 
 		$properties = $_POST['data'];
-
+		
+		//Check if preset_style is defined
+		if(isset($properties['preset_style'])) {
+			$properties['preset_style'] = Upfront_UFC::utils()->replace_commented_style_with_variable( $properties['preset_style'] );
+		}
+		
 		do_action('upfront_save_' . $this->elementName . '_preset', $properties, $this->elementName);
 
 		if (!has_action('upfront_save_' . $this->elementName . '_preset')) {
 			$presets = $this->get_presets();
 
 			$result = array();
-
+			
 			foreach ($presets as $preset) {
 				if ($preset['id'] === $properties['id']) {
 					continue;
 				}
+
 				$result[] = $preset;
 			}
 
+			
 			$result[] = $properties;
+
+
 
 			$this->update_presets($result);
 		}
@@ -221,7 +235,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 				$preset['preset_style'] = str_replace("\'", "'", $preset['preset_style']);
 				$preset['preset_style'] = str_replace("\'", "'", $preset['preset_style']);
 				$preset['preset_style'] = str_replace("\'", "'", $preset['preset_style']);
-				
+
 				$preset['preset_style'] = str_replace('#page', 'div#page .upfront-output-region-container .upfront-output-module', $preset['preset_style']);
 			}
 
@@ -296,6 +310,16 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 	protected function migrate_presets($presets) {
 		return $presets;
 	}
+	
+	public function properties_columns($array, $column) {
+        $result = array();
+        foreach ($array as $item) {
+            if (array_key_exists($column, $item)) {
+                $result[] = $item[$column];
+			}
+		}
+        return $result;
+	}
 
 	public function get_presets_javascript_server() {
 		$presets = get_option('upfront_' . get_stylesheet() . '_' . $this->elementName . '_presets');
@@ -349,7 +373,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		$strings['preset_manager'] = self::_get_l10n();
 		return $strings;
 	}
-	
+
 	public static function get_preset_defaults () {
 		return array();
 	}
@@ -370,6 +394,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			'apply_label' => __('Apply', 'upfront'),
 			'not_empty_label' => __('Preset name can not be empty.', 'upfront'),
 			'special_character_label' => __('Preset name can contain only numbers, letters and spaces.', 'upfront'),
+			'invalid_preset_label' => __('Invalid preset name. Preset name should start with a letter.', 'upfront'),
 			'default_preset' => __('Default', 'upfront'),
 			'add_preset_label' => __('Add Preset', 'upfront'),
 			'border' => __('Border', 'upfront'),
@@ -400,9 +425,10 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			'ease_in_out' => __('ease-in-out', 'upfront'),
 			'edit_preset_css' => __('Edit Preset CSS', 'upfront'),
 			'edit_preset_label' => __('Custom CSS', 'upfront'),
-			'convert_style_to_preset' => __('Convert Style to Preset', 'upfront'),
-			'convert_preset_info' => __('In order to edit the Appearance of this Element, you need to convert it to a <strong>Preset</strong>. Presets allow you to save and re-use styling across any element.', 'upfront'),
-			'select_preset_info' => __('Alternatively, pick from one of the existing presets below:', 'upfront'),
+			'convert_style_to_preset' => __('Save as Preset', 'upfront'),
+			'convert_preset_info' => __('Upfront 1.0 introduces presets, which allow you to save and re-use styling for any element across your website. Before you can edit this element, choose one of the following options:', 'upfront'),
+			'select_preset_info' => __('Select existing preset (<strong>recommended</strong>):', 'upfront'),
+			'save_as_preset_button_info' => __('Or save current style as a new preset:', 'upfront'),
 			'preset_changed' => __('Preset changed to %s', 'upfront'),
 			'preset_already_exist' => __('Preset %s already exist, use another name!', 'upfront'),
 			'preset_created' => __('Preset %s created succesfully!', 'upfront'),

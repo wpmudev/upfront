@@ -577,9 +577,8 @@ class Upfront_ThisPostView extends Upfront_Object {
 			'has_settings' => 1,
 			'id_slug' => 'this_post',
 			'row' => 10,
-
+			'preset' => 'default',
 			'post_data' => array('author', 'date', 'comments_count', 'featured_image') // also: categories,  tags
-
 		);
 	}
 

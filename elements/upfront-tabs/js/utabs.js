@@ -204,13 +204,19 @@ define([
 				count++;
 
 				$content.ueditor({
-					linebreaks: true,
-					disableLineBreak: true,
-					airButtons: false,
+					//linebreaks: true,
+					//disableLineBreak: true,
+					//airButtons: false,
+					//autostart: false,
+					//allowedTags: ['h5'],
+					//placeholder: false
+					//airButtons : ["upfrontFormatting"],
+					linebreaks: false,
 					autostart: false,
-					allowedTags: ['h5'],
+					paragraphize: false,
+					focus: false,
 					placeholder: false
-			 }).on('start', function() {
+				}).on('start', function() {
 				 Upfront.Events.trigger('upfront:element:edit:start', 'text');
 				 $(this).focus();
 			 }).on('stop', function () {
@@ -257,7 +263,8 @@ define([
 			$content.ueditor({
 				linebreaks: false,
 				autostart: false,
-				inserts:["image", "embed"],
+				paragraphize: false,
+				focus: false,
 				placeholder: false
 			})
 				.on('start', function () {

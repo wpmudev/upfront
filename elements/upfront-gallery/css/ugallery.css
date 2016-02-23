@@ -315,7 +315,7 @@ div.ugallery-label-selector {
 .ugallery-controls,
 .ui-resizable-autohide .ugallery_item:hover .ugallery-controls {
 	display: none;
-	z-index: 2;
+	z-index: 1000;
 }
 
 .upfront-control-visible .ugallery-controls,
@@ -324,7 +324,7 @@ div.ugallery-label-selector {
 }
 
 .ugallery_selected {
-	z-index:20;
+	z-index: auto;
 }
 
 .ugallery_item:hover .ugallery-controls {
@@ -495,16 +495,20 @@ div.preset-manager-panel .caption-height-number input {
 	z-index: 10;
 }
 
-.ugallery-onclick a,
-.ugallery-onclick a:link{
+.upfront-object-content .ugallery-onclick a,
+.upfront-object-content .ugallery-onclick a:link{
 	color: #4F6477 !important;
 	display: inline-block;
 	width: 80px;
 	margin: 10px;
 	font-size: 14px;
 	line-height: 1.2em;
+	text-decoration: none;
+	font-family: Source Sans Pro, sans-serif;
+	font-weight: normal;
+	font-style: normal;
 }
-.ugallery-onclick a:hover{
+.upfront-object-content .ugallery-onclick a:hover{
 	color: #1fcd8f !important;
 }
 .ugallery-onclick a:before {

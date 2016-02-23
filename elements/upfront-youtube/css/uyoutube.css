@@ -218,12 +218,17 @@ input.upfront-youtube-url:-moz-placeholder { /* Firefox 18- */
 	color: #999;
 }
 
+input.upfront-youtube-url:-ms-input-placeholder {
+	color: #999;
+}
+
+
 input.upfront-like-box_url::-moz-placeholder {  /* Firefox 19+ */
 	color: #999;
 }
 
 input.upfront-like-box_url:-ms-input-placeholder {
-	color: #99;
+	color: #999;
 }
 
 .upfront-youtube-button-wrapper {

@@ -11,7 +11,7 @@ var LayoutEditor = {
 		view.$el.selectable({
 			distance: 10, // Prevents global click hijack
 			filter: ".upfront-module",
-			cancel: ".upfront-module, .upfront-module-group, .upfront-region-side-fixed, .upfront-entity_meta, .upfront-region-edit-trigger, .upfront-region-edit-fixed-trigger, .upfront-region-finish-edit, .upfront-icon-control-region-resize, .upfront-inline-modal, .upfront-inline-panels",
+			cancel: ".upfront-module:not(.upfront-module-spacer), .upfront-module-group, .upfront-region-side-fixed, .upfront-entity_meta, .upfront-region-edit-trigger, .upfront-region-edit-fixed-trigger, .upfront-region-finish-edit, .upfront-icon-control-region-resize, .upfront-inline-modal, .upfront-inline-panels",
 			selecting: function (e, ui) {
 				var $el = $(ui.selecting),
 					$region, $selected, $affected, group, do_select;
@@ -1185,49 +1185,66 @@ var LayoutEditor = {
 	 */
 	_get_saved_layout: function (){
 		var me = this,
-			deferred = new $.Deferred();
-		Upfront.Util.post({
-			action: 'upfront_list_theme_layouts'
-		}).success(function(response){
-			me.saved_layouts = response.data;
-			deferred.resolve(response.data);
-		}).error(function(){
-			deferred.reject();
-		});
+			deferred = new $.Deferred()
+		;
+		
+		// The request should only ever be sent in builder mode
+		if (Upfront.Application.is_builder()) {
+			Upfront.Util.post({
+				action: 'upfront_list_theme_layouts'
+			}).success(function(response){
+				me.saved_layouts = response.data;
+				deferred.resolve(response.data);
+			}).error(function(){
+				deferred.reject();
+			});
+		} else setTimeout(deferred.reject);
+
 		return deferred.promise();
 	},
 
 	_get_themes: function () {
 		var me = this,
-			deferred = new $.Deferred();
-		Upfront.Util.post({
-			action: 'upfront_thx-get-themes'
-		}).success(function(response){
-			me.themes = response;
-			deferred.resolve(response);
-		}).error(function(){
-			deferred.reject();
-		});
+			deferred = new $.Deferred()
+		;
+		// The request should only ever be sent in builder mode
+		if (Upfront.Application.is_builder()) {
+			Upfront.Util.post({
+				action: 'upfront_thx-get-themes'
+			}).success(function(response){
+				me.themes = response;
+				deferred.resolve(response);
+			}).error(function(){
+				deferred.reject();
+			});
+		} else setTimeout(deferred.reject);
 		return deferred.promise();
 	},
 
 	_create_theme: function (data) {
 		var deferred = new $.Deferred();
-		Upfront.Util.post({
-			action: 'upfront_thx-create-theme',
-			form: this._build_query(data)
-		}).success(function(response){
-			if ( response && response.error )
-				deferred.reject(response.error);
-			else
-				deferred.resolve();
-		}).error(function(){
-			deferred.reject();
-		});
+
+		// The request should only ever be sent in builder mode
+		if (Upfront.Application.is_builder()) {
+			Upfront.Util.post({
+				action: 'upfront_thx-create-theme',
+				form: this._build_query(data)
+			}).success(function(response){
+				if ( response && response.error )
+					deferred.reject(response.error);
+				else
+					deferred.resolve();
+			}).error(function(){
+				deferred.reject();
+			});
+		} else setTimeout(deferred.reject);
 		return deferred.promise();
 	},
 
 	export_element_styles: function(data) {
+		// The request should only ever be sent in builder mode
+		if (!Upfront.Application.is_builder()) return false;
+
 		Upfront.Util.post({
 			action: 'upfront_thx-export-element-styles',
 			data: data
@@ -1251,8 +1268,15 @@ var LayoutEditor = {
 		var typography,
 			properties,
 			layout_style,
-			deferred,
-			data = {};
+			deferred = new $.Deferred(),
+			data = {}
+		;
+
+		// The request should only ever be sent in builder mode
+		if (!Upfront.Application.is_builder()) {
+			setTimeout(deferred.reject);
+			return deferred.promise();
+		}
 
 		typography = _.findWhere(
 			Upfront.Application.current_subapplication.get_layout_data().properties,
@@ -1295,7 +1319,6 @@ var LayoutEditor = {
 
 		if (custom_data) data = _.extend(data, custom_data);
 
-		deferred = new $.Deferred();
 		Upfront.Util.post({
 			action: 'upfront_thx-export-layout',
 			data: data

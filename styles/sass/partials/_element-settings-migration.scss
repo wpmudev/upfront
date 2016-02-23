@@ -28,14 +28,10 @@
 /* Plain texts */
 
 #element-settings-sidebar .migrate-preset-overlay .migrate-preset-info label {
-	font-size: 12px;
+	font:normal 12px/1.5 Open Sans, Helvetica Neueu, Helvetica, Arial, sans-serif;
 	display: inline-block;
-	font-family: verdana, sans-serif;
-	text-align: center;
-	color: #596c7f;
+	color: #2F475F;
 	position: relative;
-	font-weight: normal;
-	line-height: 1.4;
 	margin: 0px;
 }
 
@@ -54,24 +50,10 @@
 
 /* New preset migration button */
 
-#element-settings-sidebar .migrate-preset-overlay .migrate-preset-button {
-	margin: 0px auto;
-	text-align: center;
+#element-settings-sidebar .migrate-preset-overlay .save-as-preset-info {
+	margin-top: 20px;
 }
 
-#element-settings-sidebar .migrate-preset-overlay .migrate-preset-button input {
-	width: 198px;
-	height: 32px;
-	line-height: 32px;
-	background: #3d5266;
-	color: #fff;
-	text-align: center;
-	display: inline;
-}
-
-#element-settings-sidebar .migrate-preset-overlay .migrate-preset-button input:hover {
-	background: #5e758b;
-}
 
 #element-settings-sidebar .migrate-preset-overlay .select-preset-field-overlay,
 #element-settings-sidebar .migrate-preset-overlay .migrate-preset-apply {
@@ -84,23 +66,24 @@
 	margin-left: 5px;
 }
 
-#element-settings-sidebar .migrate-preset-overlay .migrate-preset-apply input {
+#element-settings-sidebar .migrate-preset-overlay .migrate-preset-apply input,
+#element-settings-sidebar .migrate-preset-overlay .migrate-preset-button input {
 	margin: 0;
 	text-decoration: none;
-	color: #4e4770;
-	font-size: 11px;
+	color: #6486A6;
+	font:600 11px/2 Open Sans, Helvetica Neueu, Helvetica, Arial, sans-serif;
 	box-shadow: inset 0 2px 0 #f2f9ff;
-	font-family: Verdana, sans-serif;
-	line-height: 22px;
 	background: rgb(242, 249, 255);
 	border: 1px solid rgb(183, 201, 217);
 	border-radius: 3px;
 	height: 24px;
 	max-height: 24px;
 	padding: 0px 7px;
+	text-shadow: 0px 1px 0px #FFFFFF;
 }
 
-#element-settings-sidebar .migrate-preset-overlay .migrate-preset-apply input:hover {
+#element-settings-sidebar .migrate-preset-overlay .migrate-preset-apply input:hover,
+#element-settings-sidebar .migrate-preset-overlay .migrate-preset-button input:hover {
 	border-color: rgb(96, 127, 153);
 }
 

@@ -51,14 +51,16 @@ $.fn.ueditor = function(options){
 
 var hackRedactor = function(){
     
-    // These lines override the Redactor's prefFormatting
+    /*
+    // Deprecated, moved to override methods
     var clean = $.Redactor.prototype.clean();
     
     clean.savePreFormatting = function(html) {
         return html;
     };
 
-    $.Redactor.prototype.clean = function () { return clean };
+   $.Redactor.prototype.clean = function () { return clean };
+   */
     
 	// Make click consistent
 	$.Redactor.prototype.airBindHide = function () {
@@ -222,6 +224,20 @@ var hackRedactor = function(){
      * @type {{inline: {format: Overriden_Methods.inline.format}}}
      */
     var Overriden_Methods = {
+        utils: {
+            isEndOfElement: function(element){
+                if (typeof element == 'undefined')
+                {
+                    var element = this.$element;
+                    if (!element) return false;
+                }
+
+                var offset = this.caret.getOffsetOfElement(element);
+                var text = $.trim($(element).text()).replace(/\n\r\n/g, '');
+
+                return (offset == text.length) ? true : false;
+            }
+        },
         inline: {
             format: function(tag, type, value)
             {
@@ -264,6 +280,40 @@ var hackRedactor = function(){
                 if( tag &&  -1 !== _.indexOf( ["strong", "bold"], tag.toLowerCase() )  ){ //  add fix for strong to make it work with list tags
                     this.selection.selectElement( $(this.selection.getInlines()).find("strong") );
                 }
+            }
+        },
+        keydown: {
+            /**
+             * Overridden method from redactor core (@line 4849)
+             *
+             * We're overriding this method because of buggy logic in current redactor core.
+             * The `this.selection.getBlock()` method can just as easily return a (bool)false,
+             * and the original implementation doesn't account for that.
+             *
+             * @return {Boolean} Doesn't really matter, side-effects method
+             */
+            replaceDivToBreakLine: function()
+            {
+                var blockElem = this.selection.getBlock();
+                if (!(blockElem || {}).innerHTML) return false; // so yeah, selection.getBlock() got us nowhere, bail out
+                var blockHtml = blockElem.innerHTML.replace(/<br\s?\/?>/gi, '');
+                if ((blockElem.tagName === 'DIV' || blockElem.tagName === 'P') && blockHtml === '' && !$(blockElem).hasClass('redactor-editor'))
+                {
+                    var br = document.createElement('br');
+
+                    $(blockElem).replaceWith(br);
+                    this.caret.setBefore(br);
+
+                    this.code.sync();
+
+                    return false;
+                }
+            }
+        },
+        clean: {
+            // These lines override the Redactor's prefFormatting
+            savePreFormatting: function(html) {
+                return html;
             }
         }
     };
@@ -777,7 +827,7 @@ Ueditor.prototype = {
             // Expand known text patterns
             if (32 === e.keyCode) self.expand_known_text_patterns();
 
-			if(e.keyCode != 37 && e.keyCode != 39) {
+			if( ( e.keyCode != 37 && e.keyCode != 39 ) && self.redactor ) {
 				var current = $(self.redactor.selection.getCurrent());
 				if(current.hasClass('uf_font_icon')) {
 					self.redactor.caret.setAfter(current);
@@ -814,9 +864,9 @@ Ueditor.prototype = {
             /**
              * Make sure return doesn't delete the last charactor
              */
-            if (13 === e.keyCode ) {
+            if (13 === e.keyCode && !e.shiftKey && (self || {}).redactor && !self.redactor.keydown.pre && !self.redactor.$air.is(":visible") ) {
                 self.redactor.utils.removeEmpty();
-                $(self.redactor.selection.getCurrent()).append("&nbsp;")
+                $(self.redactor.selection.getCurrent()).append("&#x200b;");
             }
         });
 

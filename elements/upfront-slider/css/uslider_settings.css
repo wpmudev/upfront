@@ -175,7 +175,7 @@ background-position: -699px -646px;
 	margin-bottom: 15px;
 }
 
-.uslider-starting-centered .upfront-image-select{
+.upfront-object-content .uslider-starting-centered .upfront-image-select{
 	font-size: 16px;
 	border-radius: 0;
 	width: 150px;
@@ -183,6 +183,10 @@ background-position: -699px -646px;
 	line-height: 30px;
 	display: inline-block;
 	margin-top: 10px;
+	text-decoration: none;
+	font-family: Source Sans Pro, sans-serif;
+	font-weight: 300;
+	font-style: normal;
 }
 .upfront-ui .uslider-starting-centered a.upfront-image-select {
 	color: #666;

@@ -2,6 +2,48 @@ Change Log
 ============
 
 
+1.0.5 - 2016-02-19
+-------------------------------------------------------------------------------
+- Fix: remove text element edit content overlay
+- Fix: show background padding settings only for regions
+- Fix: redactor inline mode edit issue
+- Fix: new region controls issue
+- Fix: tab label styles not applied in paragraphs
+- Fix: prevent lightbox region columns from exceeding breakpoint columns
+- Fix: prevent group resizing when entering edit element
+- Fix: gallery images black areas on thumbnails resize edge cases
+- Fix: gallery initial overlay styles, font styles and default preset value
+- Fix: login element z-index issue in editor
+- Fix: theme colors being inserted with expanded values
+- Fix: preset CSS style cleanup
+- Fix: re-render slider elements on Preset settings updated
+- Fix: region editing corner trigger not accessible in responsive
+- Fix: z-index issue with small-sized groups
+
+1.0.4 - 2016-02-09
+-------------------------------------------------------------------------------
+- Fix: styling issue
+
+1.0.3 - 2016-02-09
+-------------------------------------------------------------------------------
+- Drag and drop fixes and performance improvements
+- Fix for an issue with pressing Tab key during menu item inline text editing
+- Fix issue when using shift-enter double break at the end of an element
+- Fix issues with inserts in tab and accordion elements
+- Fix preset colors live update in editor
+- Fix browser cache upgrade artifacts
+- Fix image caption using hardcoded caption color
+- Fix image border not properly applied
+- Fix gallery caption module shows position options though unchecked
+- Fix text element issues with preset creation on migration
+- Fix issue with text element contextual menu editing
+
+1.0.2 - 2016-02-04
+-------------------------------------------------------------------------------
+- Fix: rounded corner module improvements.
+- Fix: preset name suggestion will offer an unique preset name.
+- Fix: backup link in the upgrade popup recognizes the plugin.
+
 1.0.1 - 2016-01-28
 -------------------------------------------------------------------------------
 - Fix: compatibility with old PHP versions.

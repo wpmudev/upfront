@@ -64,6 +64,7 @@ define([], function () {
 		setTimeout(function() { // Remove collapsed class, but allow a bit time for some animation handled elsewhere that does not work always
 			$('#element-settings-sidebar').removeClass('collapsed');
 		}, 500);
+		Upfront.Events.trigger('element:settings:render');
 	};
 
 	Upfront.Events.on('element:settings:activate', showSettings);
