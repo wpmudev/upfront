@@ -1515,8 +1515,6 @@ define([
 					this.render();
 				}
 				Upfront.Events.trigger('entity:object:update', this, this.model);
-
-				this.update_padding();
 			},
 			handle_visual_padding_hint: function (prop) {
 				if (typeof prop === 'undefined') return;
