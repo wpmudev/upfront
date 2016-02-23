@@ -5,92 +5,11 @@ var l10n = Upfront.Settings && Upfront.Settings.l10n
 	: Upfront.mainData.l10n.global.views
 ;
 
-/**
- * Provide rendering of regions and modules that will not block browsers
- * event loop.
- */
-var RenderQueue = function() {
-	var renderingQueue = [];
-	var renderingStack = [];
-	var me = this;
-
-	/**
-	 * Add callback for non-blocking rendering, callbacks are simple
-	 * to handle since we don't have to do lots of context management.
-	 */
-	this.add = function(callback) {
-		Upfront.Events.trigger('upfront:renderingqueue:add');
-		renderingQueue.push(function(next) {
-			callback();
-			Upfront.Events.trigger('upfront:renderingqueue:progress');
-			setTimeout(function() {
-				if (next) {
-					if (renderingQueue.length > 0) {
-						next(renderingQueue.shift());
-					} else {
-						next();
-					}
-				} else {
-					Upfront.Events.trigger('upfront:renderingqueue:finished');
-				}
-			}, 0);// 0 is intentional, it will queue function on browser event loop
-		});
-	};
-
-	/**
-	 * Some functions need to be executed after all modules or regions are done
-	 * rendering, do there in the reverse order than they are queued (stacked) so
-	 * that it is possible to get correct order of events firing, just as before
-	 * render queue was implemented.
-	 */
-	this.addToEnd = function(callback) {
-		Upfront.Events.trigger('upfront:renderingqueue:add');
-		renderingStack.push(function(next) {
-			callback();
-			Upfront.Events.trigger('upfront:renderingqueue:progress');
-			setTimeout(function() {
-				if (next) {
-					if (renderingStack.length > 0) {
-						next(renderingStack.pop());
-					} else {
-						next();
-						Upfront.Events.trigger('upfront:renderingqueue:done');
-					}
-				}
-			}, 0);// 0 is intentional, it will queue function on browser event loop
-		});
-
-		/**
-		 * Do stack rendering in reverse order after queue has finished rendering,
-		 * see addToEnd comment for more explanation.
-		 */
-		Upfront.Events.on('upfront:renderingqueue:finished', function() {
-			if (renderingStack.length > 1) {
-				renderingStack.pop()(renderingStack.pop());
-			} else if (renderingStack.length > 0) {
-				renderingStack.pop()();
-			}
-		});
-	};
-
-	this.start = function() {
-		// Do delayed start since if callbacks are still added to renderingQueue
-		// before rendering is started it can cause multiple triggering of
-		// 'upfront:renderingqueue:finished' event
-		setTimeout(function() {
-			Upfront.Events.trigger('upfront:renderingqueue:start');
-			if (renderingQueue.length > 1) {
-				renderingQueue.shift()(renderingQueue.shift());
-			} else if (renderingQueue.length > 0) {
-				renderingQueue.shift()();
-			}
-		}, 500);
-	};
-};
-
-var renderQueue = new RenderQueue();
 
 define([
+	"scripts/upfront/render-queue",
+	"scripts/upfront/render-queue-reporter",
+	// Template files
 	"text!upfront/templates/object.html",
 	"text!upfront/templates/module.html",
 	"text!upfront/templates/module_group.html",
@@ -98,7 +17,7 @@ define([
 	"text!upfront/templates/region.html",
 	"text!upfront/templates/wrapper.html",
 	"text!upfront/templates/layout.html"
-], function () {
+], function (RenderQueue, RenderQueueReporter) {
   var _template_files = [
     "text!upfront/templates/object.html",
     "text!upfront/templates/module.html",
@@ -110,35 +29,26 @@ define([
 ];
 
 	// Auto-assign the template contents to internal variable
-	var _template_args = arguments,
+	var _template_args = _.rest(arguments, 2),
 		_Upfront_Templates = {}
 	;
 	_(_template_files).each(function (file, idx) {
 		_Upfront_Templates[file.replace(/text!upfront\/templates\//, '').replace(/\.html/, '')] = _template_args[idx];
 	});
 
-	// Render reporting, just a event API at which we can plug in anything in UI to show progress
 
-	var totalOfStuffToRender = 0;
-	var getTotalStuff = function() {
-		return totalOfStuffToRender;
-	};
-	var doneStuffToRender = 0;
-	Upfront.Events.on('upfront:renderingqueue:start', function() {
-		console.log('Rendering 0 of ' + totalOfStuffToRender);
-	});
-	Upfront.Events.on('upfront:renderingqueue:add', function() {
-		totalOfStuffToRender++;
-	});
-	Upfront.Events.on('upfront:renderingqueue:progress', function() {
-		doneStuffToRender++;
-		console.log('Rendering ' + doneStuffToRender + ' of ' + totalOfStuffToRender);
-	});
-	Upfront.Events.on('upfront:renderingqueue:done', function() {
-		console.log('Rendering done ');
-	});
-	//////
-
+	// Hook reporting into console (we might use something more user friendly :D
+	var renderReporter = new RenderQueueReporter(
+		function() {
+			console.log('Rendering starting...');
+		},
+		function(done, total) {
+			console.log('Rendering ' + done + ' of ' + total);
+		},
+		function() {
+			console.log('Rendering done ');
+		}
+	);
 
 	var
 		_dispatcher = _.clone(Backbone.Events),
@@ -3089,12 +2999,12 @@ define([
 					Upfront.data.wrapper_views = {};
 
 				this.model.each(function (module) {
-					renderQueue.add(function () {
+					RenderQueue.add(function () {
 						me.render_module(module); // surrounding with function to keep context juggling to the minimum
 					});
 				});
 
-				renderQueue.addToEnd(function() {
+				RenderQueue.addToEnd(function() {
 					me.apply_flexbox_clear();
 					me.apply_wrapper_height();
 					Upfront.Events.trigger("entity:modules:after_render", me, me.model);
@@ -5487,12 +5397,12 @@ define([
 					me.render_container(region);
 				});
 				this.model.each(function (region, index) {
-					renderQueue.add(function () {
+					RenderQueue.add(function () {
 						me.render_region(region);
 					});
 				});
 
-				renderQueue.addToEnd(function() {
+				RenderQueue.addToEnd(function() {
 					me.apply_adapt_region_to_breakpoints();
 				});
 			},
@@ -6083,7 +5993,7 @@ define([
 					this.local_view.delegateEvents();
 				}
 
-				renderQueue.addToEnd(function() {
+				RenderQueue.addToEnd(function() {
 					me.update();
 
 					me.bg_setting = new Upfront.Views.Editor.ModalBgSetting({model: me.model, to: me.$el, width: 420});
@@ -6099,7 +6009,7 @@ define([
 					Upfront.Events.trigger("layout:after_render");
 				});
 
-				renderQueue.start();
+				RenderQueue.start();
 			},
 			on_click: function (e) {
 				//Check we are not selecting text

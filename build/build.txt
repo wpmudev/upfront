@@ -16,6 +16,8 @@ main.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-includes/js/underscore.min.js
 /home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-includes/js/backbone.min.js
 upfront/upfront-models.js
+/home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/render-queue.js
+/home/spoygg/IncsubProjects/vvv-incsub/www/wordpress-default/wp-content/themes/upfront/scripts/upfront/render-queue-reporter.js
 text.js
 text!upfront/templates/object.html
 text!upfront/templates/module.html
