@@ -4,8 +4,10 @@ define([], function() {
 	 * event loop.
 	 */
 	var RenderQueue = function() {
+		// Holds regions and modules to be rendered
 		var renderingQueue = [];
-		var renderingStack = [];
+		// Holds actions to be called after regions and modules have rendered
+		var actionsQueue = [];
 		var me = this;
 
 		/**
@@ -39,13 +41,13 @@ define([], function() {
 		 */
 		this.addToEnd = function(callback) {
 			Upfront.Events.trigger('upfront:renderingqueue:add');
-			renderingStack.push(function(next) {
+			actionsQueue.push(function(next) {
 				callback();
 				Upfront.Events.trigger('upfront:renderingqueue:progress');
 				setTimeout(function() {
 					if (next) {
-						if (renderingStack.length > 0) {
-							next(renderingStack.pop());
+						if (actionsQueue.length > 0) {
+							next(actionsQueue.shift());
 						} else {
 							next();
 							Upfront.Events.trigger('upfront:renderingqueue:done');
@@ -74,10 +76,10 @@ define([], function() {
 		 * see addToEnd comment for more explanation.
 		 */
 		Upfront.Events.on('upfront:renderingqueue:finished', function() {
-			if (renderingStack.length > 1) {
-				renderingStack.pop()(renderingStack.pop());
-			} else if (renderingStack.length > 0) {
-				renderingStack.pop()();
+			if (actionsQueue.length > 1) {
+				actionsQueue.shift()(actionsQueue.shift());
+			} else if (actionsQueue.length > 0) {
+				actionsQueue.shift()();
 			}
 		});
 	};
