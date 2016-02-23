@@ -31,6 +31,7 @@ var UeditorPanel = Backbone.View.extend({
         if( typeof this.init === "function" ){
             this.init();
         }
+
         this.render();
     },
 
@@ -227,7 +228,11 @@ RedactorPlugins.stateAlignment = function() {
                             return $parent.length && $parent.css('text-align') == 'left';
                         },
                         callback: function(name, el , button){
-                            self.alignment.left();
+                            if( !self.utils.isCurrentOrParent("li") ){
+                                self.alignment.set('left');
+                            }else{
+                                $(self.selection.getCurrent()).css('text-align', "left");
+                            }
                         }
                     },
                     center: {
@@ -239,7 +244,11 @@ RedactorPlugins.stateAlignment = function() {
                             return $parent.length && $parent.css('text-align') == 'center';
                         },
                         callback: function(name, el , button){
-                            self.alignment.center();
+                            if( !self.utils.isCurrentOrParent("li") ){
+                                self.alignment.center();
+                            }else{
+                                $(self.selection.getCurrent()).css('text-align', "center");
+                            }
                         }
                     },
                     right: {
@@ -251,7 +260,11 @@ RedactorPlugins.stateAlignment = function() {
                             return $parent.length && $parent.css('text-align') == 'right';
                         },
                         callback: function(name, el , button){
-                            self.alignment.right();
+                            if( !self.utils.isCurrentOrParent("li") ){
+                                self.alignment.right();
+                            }else{
+                                $(self.selection.getCurrent()).css('text-align', "right");
+                            }
                         }
                     },
                     justify: {
@@ -263,7 +276,13 @@ RedactorPlugins.stateAlignment = function() {
                             return $parent.length && $parent.css('text-align') == 'justify';
                         },
                         callback: function(name, el , button){
-                            self.alignment.justify();
+                            if( !self.utils.isCurrentOrParent("li") ){
+                                self.alignment.justify();
+                            }else{
+                                $(self.selection.getCurrent()).css('text-align', "justify");
+                            }
+
+
                         }
                     }
                 }
@@ -680,16 +699,20 @@ RedactorPlugins.upfrontIcons = function() {
                     "font-size": fontSize + "px",
                     "top": top + "px"
                 });
-                var inserted = this.redactor.insert.html($icon[0].outerHTML, false); //inserted false instead of true to retain the selected content
+                var html = $icon[0].outerHTML;
+                //var inserted = this.redactor.insert.html($icon[0].outerHTML); //inserted false instead of true to retain the selected content
+                /**
+                 * insert.html may use document's insertHtml command which may result in the $icon to lose the uf_font_icon
+                 * and that's why we're using insert.execHtml from now on
+                 */
+                 this.redactor.insert.execHtml(html);
+
                 this.redactor.code.sync();
 
-                //var offset = this.redactor.caret.getOffset(); //existing caret position
 
                 this.redactor.selection.restore();
 
                 this.closeToolbar();
-                this.redactor.caret.setAfter($(inserted));
-                //this.redactor.caret.setOffset(100);
             },
             input_change: function(e){
                 var $sel = this.$sel;
@@ -768,7 +791,7 @@ RedactorPlugins.upfrontLink = function() {
 					href = $(this.selectedLink).attr('href');
 					target = $(this.selectedLink).attr('target');
 
-					if ($(this.selectedLink).attr('data-upfront-link-type').length) {
+					if (!_.isUndefined($(this.selectedLink).attr('data-upfront-link-type'))) {
 						// New linking is used, there is exact value
 						type = $(this.selectedLink).attr('data-upfront-link-type');
 					} else {
@@ -783,11 +806,13 @@ RedactorPlugins.upfrontLink = function() {
 					target: target
 				});
 
-				this.listenTo(this.linkModel, 'change', function () {
+				this.listenTo(this.linkModel, 'change', function (dontflag) {
+                    me.redactor.buffer.set();
+                    me.redactor.selection.save();
 					if (me.linkModel.get('type') === 'unlink') {
 						me.unlink();
 					} else {
-						me.link();
+						me.link(dontflag);
 					}
 
 					// me.closeToolbar(); // should we do this?
@@ -798,6 +823,10 @@ RedactorPlugins.upfrontLink = function() {
 			},
 
 			render: function () {
+                // this function is better called in 'this.open()', no point having it executed without a linkModel.
+                if(typeof(this.linkModel) === 'undefined')
+                    return;
+                
 				var linkTypes = {},
 					me = this;
 
@@ -848,8 +877,8 @@ RedactorPlugins.upfrontLink = function() {
 				this.updateMissingLightboxFlag();
 			},
 
-			link: function () {
-				var selectedText;;
+			link: function (dontflag) {
+				var selectedText;
 
 				if (typeof this.linkModel.get('url') === 'undefined') {
 					return;
@@ -862,19 +891,68 @@ RedactorPlugins.upfrontLink = function() {
 					$(this.selectedLink).attr('href', this.linkModel.get('url'))
 						.attr('target', this.linkModel.get('target'));
 				} else {
-					// Create new link
-					selectedText = this.redactor.selection.getHtml();
+// Origin story, Episode #0 - In The Beginning
+// This does not work because redactor will try to destroy HTML tags in link text
+// - see redactor.js:5418 for more info
+/*
+                    // Create new link
+                    selectedText = this.redactor.selection.getHtml();
+*/
+
+// Fix approach, Episode #1 - Nuclear Wasteland (drop all HTML)
+/*
+                    // ^ instead of the HTML approach above, go with getText()
+					selectedText = this.redactor.selection.getText();
+                    this.redactor.selection.replaceWithHtml(selectedText); // Also reset the selection to the text-only representation
+*/
+
+// Fix approach, Episode #2 - Lizard Spooks Spock (camouflage the HTML)
+                    // Somewhere along the line, the non-printable chars, spaces and stuff get all normalized,
+                    // hence the printable default/fallback string
+                    // Downside: if something goes wrong, it won't be a pretty sight at all :/
+                    var rx_special = /[-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, // This will be used to encode regex special chars
+                        rx_replacement = '\\$&', // Second part of regex special chars encoding (result)
+                        otm = ((Upfront.Settings || {}).Editor || {}).OPEN_TAG_RPL_MARK || '{{UPFRONT_OPEN_TAG_MARK}}', // Open Tag Mark - either from settings or fallback
+                        ctm = ((Upfront.Settings || {}).Editor || {}).CLOSE_TAG_RPL_MARK || '{{UPFRONT_CLOSE_TAG_MARK}}', // Close Tag Mark - either from settings or fallback
+                        rx_otm = new RegExp(otm.replace(rx_special, rx_replacement), 'g'), // OTM regex representation - note the "g" parameter
+                        rx_ctm = new RegExp(ctm.replace(rx_special, rx_replacement), 'g') // CTM regex representation - note the "g" parameter
+                    ;
+                    selectedText = this.redactor.selection.getHtml(); // Get HTML, yeah
+                    // Now, let's nerf the HTML stuff
+                    selectedText = selectedText
+                        // Clever, ain't it?
+                        .replace(/</g, otm)
+                        .replace(/>/g, ctm)
+                    ;
+                    this.redactor.selection.replaceWithHtml(selectedText);
+                    
 					this.redactor.link.set(selectedText, this.linkModel.get('url'), this.linkModel.get('target'));
 					// Now select created link
 					this.selectedLink = this.redactor.utils.isCurrentOrParent('A');
+
+// Episode #2a, The Sad Saga of Spock's Debilitating Phobia Continues (de-camo the HTML)
+                    selectedText = this.redactor.selection.getHtml(); // Get the HTML once more, it's now fake HTML
+                    // Now, let's de-camouflage it
+                    selectedText = selectedText
+                        .replace(rx_otm, '<')
+                        .replace(rx_ctm, '>')
+                    ;
+                    this.redactor.selection.replaceWithHtml(selectedText);
+// Episode #2 concludes, Spock dies in the end :(
+
+					// Update selection, new link is created it messes up selection
+					this.redactor.selection.save();
 				}
 
 				$(this.selectedLink).attr('data-upfront-link-type', this.linkModel.get('type'));
 
 				// Do redactor stuff
 				this.redactor.$element.focus();
-				this.updateMissingLightboxFlag();
+                // dontflag is sent while creation of lightbox from link-panel.js
+                if(typeof(dontflag) === 'undefined')
+				    this.updateMissingLightboxFlag();
 				this.redactor.code.sync();
+
 			},
 			bindEvents: function () {
 			},
@@ -1002,6 +1080,16 @@ RedactorPlugins.upfrontColor = function() {
 
                 background_picker.render();
                 this.$("#tabbackground-content").html(background_picker.el);
+
+                /**
+                 * Position the color pickers so that they are always inside the page
+                 *
+                 */
+                var $dropdown = this.$el.closest(".redactor-dropdown");
+                $dropdown.removeClass( "on-right-border" );
+                if( $(window).width() <= (  this.$("#tabforeground-content").offset().left + this.$("#tabforeground-content").width() ) )
+                    $dropdown.addClass( "on-right-border" );
+
 
                 if (this.current_color) {
                     var color = tinycolor(self.current_color);
@@ -1367,7 +1455,7 @@ RedactorPlugins.upfrontColor = function() {
                     html = this.redactor.selection.getHtml();
 
                 //if( html.replace(/(\r\n|\n|\r)/gm,"").trim() === $(current).html().replace(/(\r\n|\n|\r)/gm,"").trim() && !_.isEmpty( current.style.color ) ){
-                    this.redactor.inline.removeFormat("color");
+                this.redactor.inline.removeFormat("color");
                 //}else{
                 //}
                 $(this.redactor.selection.getCurrent()).find("font").each(function(){
@@ -1394,7 +1482,7 @@ RedactorPlugins.upfrontFormatting = function() {
         init: function () {
 
             this.opts.buttonsCustom.upfrontFormatting = {
-                title: l10n.formatting,
+                title: l10n.formatting.title,
                 panel: this.upfrontFormatting.panel,
                 first: true
             };
@@ -1416,6 +1504,7 @@ RedactorPlugins.upfrontFormatting = function() {
                     custom_classes: this.custom_classes,
                     selected_class: this.selected_class
                 }, l10n.formatting) ));
+                return this;
             },
             open: function (e, redactor) {
                 this.redactor = redactor;
@@ -1432,7 +1521,7 @@ RedactorPlugins.upfrontFormatting = function() {
                 var tag = $(this.redactor.selection.getBlock()).length ? $(this.redactor.selection.getBlock())[0].tagName : false;
                 if (tag) {
                     tag = tag.toLowerCase();
-                    this.$(".tags-list li *").removeClass("dropact");
+                    this.$("[data-tag]").removeClass("dropact");
                     this.$("[data-tag='" + tag + "']").addClass("dropact");
                 }
                 this.redactor.selection.save();
@@ -1462,7 +1551,6 @@ RedactorPlugins.upfrontFormatting = function() {
                 e.preventDefault();
                 this.redactor.buffer.set();
                 this.redactor.$editor.focus();
-                this.redactor.selection.restore();
                 var tag = $(e.target).data("tag");
 
                 if (!this.redactor.utils.browser('msie')) this.redactor.$editor.focus();
@@ -1483,6 +1571,8 @@ RedactorPlugins.upfrontFormatting = function() {
 
                 if (tag == 'p' || this.redactor.block.headTag) $formatted.find('p').contents().unwrap();
 
+                this.redactor.code.sync();
+                this.close();
                 this.redactor.dropdown.hideAll();
             },
             change_custom_class: function(e){

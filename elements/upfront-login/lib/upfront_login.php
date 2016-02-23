@@ -143,6 +143,7 @@ class Upfront_LoginView extends Upfront_Object {
 			),
 			'hold_on' => __('Please, hold on', 'upfront'),
 			'settings' => __("Login settings", 'upfront'),
+			'general_settings' => __('General Settings', 'upfront'),
 			'display' => __("Display", 'upfront'),
 			'show_on_hover' => __("Show on hover", 'upfront'),
 			'show_on_click' => __("Show on click", 'upfront'),

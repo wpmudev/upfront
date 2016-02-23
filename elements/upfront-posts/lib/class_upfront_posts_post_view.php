@@ -155,6 +155,7 @@ class Upfront_Posts_PostView {
         	? (int)$this->_data['resize_featured']
         	: (int)Upfront_Posts_PostsData::get_default('resize_featured')
         ;
+        $resize_featured = $resize_featured ? 0 : 1; // Reverse the logic, as per: https://app.asana.com/0/11140166463836/75256787123017
 
 		$out = $this->_get_template('featured_image');
 
@@ -185,10 +186,12 @@ class Upfront_Posts_PostView {
         	: (int)Upfront_Posts_PostsData::get_default('content_length')
         ;
 		$content = $this->_get_content_value($length);
+		$content_type = $this->_get_content_type();
 
 		$out = $this->_get_template('content');
 
 		$out = Upfront_Codec::get()->expand($out, "content", $content);
+		$out = Upfront_Codec::get()->expand($out, "content_type", $content_type);
 
 		return $out;
 	}
@@ -265,6 +268,19 @@ class Upfront_Posts_PostView {
 		if (empty($out)) return $out;
 
 		return Upfront_Codec::get('postmeta')->expand_all($out, $this->_post);
+	}
+
+	/**
+	 * Return content type (full, user-set excerpt or auto-generated excerpt)
+	 *
+	 * @return string Content type
+	 */
+	private function _get_content_type () {
+		if (!empty($this->_data['content']) && 'content' === $this->_data['content']) return 'full';
+		return !empty($this->_post->post_excerpt)
+			? 'excerpt'
+			: 'generated-excerpt'
+		;
 	}
 
 	/**

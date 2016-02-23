@@ -35,6 +35,11 @@ abstract class Upfront_Server implements IUpfront_Server {
 	 * @param bool $cacheable Whether this request can be cached
 	 */
 	protected function _out (Upfront_HttpResponse $out, $cacheable=false) {
+		// If we're running phpunit tests, make sure we don't leak out
+		if (defined('IS_UPFRONT_TESTING_ENVIRONMENT') && IS_UPFRONT_TESTING_ENVIRONMENT) {
+			return $out->get_output();
+		}
+
 		if (!Upfront_Behavior::debug()->is_active(Upfront_Behavior::debug()->constant('RESPONSE')) && extension_loaded('zlib') && Upfront_Behavior::compression()->has_compression()) {
 			ob_start('ob_gzhandler');
 		}

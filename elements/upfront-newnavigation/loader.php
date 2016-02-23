@@ -32,6 +32,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 function unewnavigation_initialize () {
 	// Include the backend support stuff
 	require_once (dirname(__FILE__) . '/lib/unewnavigation.php');
+	require_once (dirname(__FILE__) . '/lib/class_upfront_nav_presets_server.php');
 
     // Include the backend support stuff
     require_once( ABSPATH . 'wp-admin/includes/nav-menu.php' );

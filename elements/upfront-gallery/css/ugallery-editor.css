@@ -1,0 +1,80 @@
+.gallery-padding-lock input[type=checkbox] {
+	position: relative;
+	left: 36px;
+	top: 6px;
+}
+.gallery-padding-lock input[type=checkbox]:checked {
+	float:none !important;
+	left: 38px;
+	top: 7px;
+}
+.gallery-padding-lock input[type=checkbox]:after {
+	content: '';
+	display: block;
+	height: 15px;
+	width: 15px;
+	background-image: url('../../../img/uf-core-el-sprite.png');
+	background-image: url('../../../img/uf-core-el-sprite.svg'), none;
+	background-position: -661px -172px;
+	background-color: rgb(247, 251, 255);
+	left: -3px;
+	top: -3px;
+	position: relative;
+}
+.gallery-padding-lock input[type=checkbox]:checked:after {
+	background-position: -661px -140px;
+}
+.gallery-padding-lock {
+	position: relative;
+	margin-top: -19px;
+	left: 100px;
+}
+
+.thumb-size-slider,
+.thumb-padding-slider,
+.thumb-bottom-padding-slider,
+.thumb-side-padding-slider  {
+	width: 150px;
+	float: left;
+	margin-top: 10px;
+}
+
+.thumb-size-number,
+.thumb-padding-number,
+.thumb-bottom-padding-number,
+.thumb-side-padding-number  {
+	margin-top: 15px;
+	width: 50px;
+	float: left;
+	position: relative;
+	margin-left: 25px;
+}
+
+.thumb-size-number input,
+.thumb-padding-number input,
+.thumb-bottom-padding-number input,
+.thumb-side-padding-number  input {
+	width: 50px !important;
+}
+
+.thumb-size-slider label,
+.thumb-padding-slider label,
+.thumb-bottom-padding-slider label,
+.thumb-side-padding-slider label {
+	margin-bottom: 15px;
+}
+
+.thumb-size-slider .upfront-field-slider-value,
+.thumb-padding-slider .upfront-field-slider-value, 
+.thumb-bottom-padding-slider .upfront-field-slider-value, 
+.thumb-side-padding-slider .upfront-field-slider-value {
+	display: none;
+}
+
+.thumb-propostions {
+	margin-top: 10px;
+}
+.upfront-object-content .ugallery-thumb-title p {
+	margin-bottom: 0;
+	line-height: inherit;
+}

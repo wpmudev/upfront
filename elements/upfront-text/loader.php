@@ -4,6 +4,7 @@
 function utext_init () {
 	// Include the backend support stuff
 	require_once (dirname(__FILE__) . '/lib/upfront_text.php');
+	require_once (dirname(__FILE__) . '/lib/class_upfront_text_presets_server.php');
 
 	add_filter('upfront_l10n', array('Upfront_PlainTxtView', 'add_l10n_strings'));
 	add_filter('upfront-export-plaintxt-object_content', array('Upfront_PlainTxtView', 'export_content'));

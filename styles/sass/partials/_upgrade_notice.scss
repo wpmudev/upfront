@@ -1,0 +1,60 @@
+/**
+ * Compatibility issue nag popup, v1 check
+ */
+
+.mfp-bg.uf-upgrade-notice {
+	background:#fff;
+	background:rgba(255,255,255,.75);
+}
+.uf-upgrade-notice .mfp-close {
+	display:none;
+}
+.upfront-version_compatibility-nag {
+	margin: 0 auto;
+	width: 90%;
+	max-width: 600px;
+	background: #fff;
+	text-align: center;
+	padding: 40px;
+	box-shadow: 0 0 20px 0px rgba(0,0,0,.15);
+	box-sizing: border-box;
+}
+.upfront-version_compatibility-nag p {
+	font:normal 100 22px/1.7 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif; 
+	margin-bottom: 2em;
+	color:#777D82;
+}
+.upfront-version_compatibility-nag a {
+	font:normal 100 18px 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif; 
+	border-radius: 5px;
+	margin: 10px 20px;
+	text-decoration: none;
+	display: inline-block;
+	padding: 10px 25px;
+	background-image: linear-gradient(-180deg, rgba(0,0,0,0.00) 0%, rgba(0,0,0,0.05) 100%);
+	box-shadow: 0px 1px 0px 0px rgba(0,0,0,0.10);
+}
+.upfront-version_compatibility-nag a.update {
+	color: #fff;
+	background: #1FCD8F;
+	padding: 15px 30px;
+
+}
+.upfront-version_compatibility-nag a.update.has-snapshot {
+	padding: 10px 25px;
+}
+.upfront-version_compatibility-nag a.boot {
+	color: #777D82;
+	background: #F0F0F0;
+}
+.upfront-version_compatibility-nag a.boot.has-snapshot {
+	background: #4E4949;
+	box-shadow: 0px 1px 0px 0px #E6E6E6;
+	border-radius: 6px;
+	color: #fff;
+}
+
+.upfront-version_compatibility-nag a.update:hover, 
+.upfront-version_compatibility-nag a.boot:hover {
+	background-image: linear-gradient(-180deg, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.00) 100%);
+}

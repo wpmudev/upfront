@@ -1,10 +1,14 @@
 <?php
 
 class Upfront_Layout extends Upfront_JsonModel {
+	
+	public static $version = '1.0.0';
 
 	protected static $cascade;
 	protected static $layout_slug;
 	protected static $scope_data = array();
+
+	protected static $_layout_default_version = false;
 
 	public static function from_entity_ids ($cascade, $storage_key = '', $dev_first = false) {
 		$layout = array();
@@ -70,7 +74,11 @@ class Upfront_Layout extends Upfront_JsonModel {
 	public static function from_php ($data, $storage_key = '') {
 		if ( isset($data['layout']) ) self::$cascade = $data['layout'];
 		self::set_storage_key($storage_key);
-		return new self($data);
+		$layout = new self($data);
+		if ( !$layout->is_empty() ){
+			$layout->convert_layout();
+		}
+		return $layout;
 	}
 
 	public static function from_json ($json, $storage_key = '') {
@@ -83,6 +91,9 @@ class Upfront_Layout extends Upfront_JsonModel {
 		$data = json_decode( get_option($id, json_encode(array())), true );
 
 		if ( ! empty($data) ) {
+			// Make sure default theme version is cleared if we load from db
+			self::$_layout_default_version = false;
+
 			$regions = array();
 			$regions_added = array();
 			foreach ( $data['regions'] as $i => $region ) {
@@ -109,7 +120,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 				$regions[] = $region;
 			}
 			$data['regions'] = $regions;
-			$data['properties'] = self::get_layout_properties();
+			$data['properties'] = self::get_layout_properties($data);
 			$data['layout'] = self::$cascade;
 		}
 		return self::from_php($data, $storage_key);
@@ -142,7 +153,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 			}
 			$data['regions'] = $regions;
 		}
-		$data['properties'] = self::get_layout_properties();
+		$data['properties'] = self::get_layout_properties($data);
 		$data['layout'] = self::$cascade;
 
 		// Do not do this is in builder mode since it will duplicate slider images. Alternative
@@ -187,7 +198,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 			$regions[] = $region;
 		}
 		$data['regions'] = $regions;
-		$data['properties'] = self::get_layout_properties();
+		$data['properties'] = self::get_layout_properties($data);
 		$data['layout'] = self::$cascade;
 
 		// Do not do this is in builder mode since it will duplicate slider images. Alternative
@@ -227,11 +238,30 @@ class Upfront_Layout extends Upfront_JsonModel {
 		return $regions;
 	}
 
-	public static function get_layout_properties () {
+	public static function get_layout_properties ($data = array()) {
 		$properties = json_decode( get_option(self::_get_layout_properties_id(), json_encode(array())), true );
 		$properties = apply_filters('upfront_get_layout_properties', $properties);
 
-		return $properties;
+		// Simulate layout data to use get/set_property_value function
+		$new_data = array(
+			'properties' => $properties
+		);
+
+		// Make sure version is from layout, instead of global
+		if ( false !== self::$_layout_default_version ) {
+			upfront_set_property_value('version', self::$_layout_default_version, $new_data);
+		}
+		else if ( !empty($data) ) {
+			$version = upfront_get_property_value('version', $data);
+			if ( false === $version ) { // No version, remove version from properties
+				upfront_set_property_value('version', '', $new_data);
+			}
+			else {
+				upfront_set_property_value('version', $version, $new_data);
+			}
+		}
+
+		return $new_data['properties'];
 	}
 
 	protected static function _apply_scoped_region ($region) {
@@ -269,10 +299,16 @@ class Upfront_Layout extends Upfront_JsonModel {
 
 		$data = array(
 			"name" => "Default Layout",
-			"properties" => self::get_layout_properties(),
-			"regions" => self::get_regions_data(true),
 			"layout_slug" => self::$layout_slug
 		);
+
+		$data["regions"] = self::get_regions_data();
+		$data["properties"] = self::get_layout_properties();
+
+		if (!empty($data)) {
+			$codec = new Upfront_MacroCodec_LayoutData();
+			$data = $codec->expand_all($data);
+		}
 
 		return self::from_php(apply_filters('upfront_create_default_layout', $data, $layout_ids, self::$cascade));
 	}
@@ -358,15 +394,76 @@ class Upfront_Layout extends Upfront_JsonModel {
 		$storage_key = self::get_storage_key();
 		$region_scope_data = json_decode( get_option(self::_get_scope_id($scope), json_encode(array())), true );
 		$region_scope_data = apply_filters('upfront_get_global_regions', $region_scope_data, $scope);
-		$return = array();
-		foreach ( $region_scope_data as $region){
-			if ( isset($region['trashed']) && $region['trashed'] == 1 )
-				continue;
-			if ( $region['name'] != $name && $region['container'] != $name )
-				continue;
-			$return[] = $region;
+		$total = count($region_scope_data);
+
+		$regions = array();
+		foreach ( $region_scope_data as $r => $region){
+			if ( isset($region['trashed']) && $region['trashed'] == 1 ) continue;
+			if ( $region['name'] != $name ) continue;
+			// Check if this is main region and we should also return sub region
+			if ( $region['container'] == $name ) {
+				// Sub region should be rendered consecutively
+				$top = false;
+				$left = false;
+				$right = false;
+				$bottom = false;
+				if ( $r > 0 ) {
+					for ( $i = $r-1; $i >= 0; $i-- ) {
+						$reg = $region_scope_data[$i];
+						if ( $reg['container'] != $name ) break;
+						if ( $reg['sub'] == 'left' && !$left ) {
+							$regions[] = $reg;
+							$left = true;
+						}
+						if ( $reg['sub'] == 'top' && !$top ) {
+							$regions[] = $reg;
+							$top = true;
+						}
+					}
+				}
+				$regions[] = $region;
+				if ( $r < $total-1 ) {
+					for ( $i = $r+1; $i < $total-1; $i++ ) {
+						$reg = $region_scope_data[$i];
+						if ( $reg['container'] != $name ) break;
+						if ( $reg['sub'] == 'right' && !$right ) {
+							$regions[] = $reg;
+							$right = true;
+						}
+						if ( $reg['sub'] == 'bottom' && !$bottom ) {
+							$regions[] = $reg;
+							$bottom = true;
+						}
+						if ( $reg['sub'] == 'fixed' ) {
+							$regions[] = $reg;
+						}
+					}
+				}
+			}
+			else { // Otherwise, just return this region
+				$regions[] = $region;
+			}
+			break;
 		}
-		return $return;
+
+		// Simulate layout so we can use it for conversion
+		$data = array(
+			'regions' => $regions,
+			'layout' => array(
+				'type' => 'global_regions',
+				'item' => 'global_regions-' . $name
+			)
+		);
+
+		// Expand macro
+		if (!empty($data)) {
+			$codec = new Upfront_MacroCodec_LayoutData();
+			$data = $codec->expand_all($data);
+		}
+
+		$instance = self::from_php($data, $storage_key);
+
+		return $instance->get('regions');
 	}
 
 	public static function delete_scoped_regions ($name, $scope, $storage_key = '') {
@@ -392,8 +489,9 @@ class Upfront_Layout extends Upfront_JsonModel {
 	protected static function _get_regions ($add_global_regions = false) {
 		$regions = array();
 		do_action('upfront_get_regions', self::$cascade);
-		$regions = upfront_get_default_layout(self::$cascade, self::$layout_slug, $add_global_regions);
-		return apply_filters('upfront_regions', $regions, self::$cascade);
+		$layout = upfront_get_default_layout(self::$cascade, self::$layout_slug, $add_global_regions);
+		self::$_layout_default_version = $layout['version'];
+		return apply_filters('upfront_regions', $layout['regions'], self::$cascade);
 	}
 
 	protected static function _get_scope_id ($scope) {
@@ -594,5 +692,34 @@ class Upfront_Layout extends Upfront_JsonModel {
 			$i++;
 		}
 		return $value;
+	}
+	
+	/**
+	 * Backward compatibility conversion
+	 */
+	protected function convert_layout () {
+		$layout_version = $this->get_property_value('version');
+		if (!$layout_version) $layout_version = '0.0.0';
+		// @TODO quick query var to check original version, remove these code after stable
+		if (isset($_GET['original']) && $_GET['original'] == 0) {
+			setcookie('original', '', time()-3600, COOKIEPATH, COOKIE_DOMAIN);
+		}
+		else if ((isset($_GET['original']) && $_GET['original'] == 1) || (isset($_COOKIE['original']) && $_COOKIE['original'] == 1)) {
+			setcookie('original', 1, time()+3600, COOKIEPATH, COOKIE_DOMAIN);
+			return;
+		}
+		if (version_compare($layout_version, self::$version) === -1) {
+			$transient_key = $this->get_id() . '_ver' . self::$version;
+			$cache = get_transient($transient_key);
+			if ( !empty($cache) ) {
+				$this->_data = json_decode($cache, true);
+			}
+			else {
+				$converter = new Upfront_Compat_LayoutConverter($this, $layout_version, self::$version);
+				$converter->convert();
+				set_transient($transient_key, $this->to_json(), 120); // set to 120 second for now
+			}
+		}
+		
 	}
 }

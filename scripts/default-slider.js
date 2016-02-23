@@ -83,6 +83,8 @@
 		this.update_auto_slide();
 
 		this.bind_events();
+
+		this.$slider.trigger('rendered');
 	};
 
 	JQueryUslider.prototype = {
@@ -267,7 +269,8 @@
 				$slider = this.$slider,
 				$n = $nav.find('.'+data.classname.nav_item).eq(index),
 				$item = this.items.eq(index),
-				current = $slider.find('.'+data.classname.item+'-current')
+				current = $slider.find('.'+data.classname.item+'-current'),
+				event_end = 'animationend.slider webkitAnimationEnd.slider MSAnimationEnd.slider oAnimationEnd.slider webkitTransitionEnd.slider otransitionend.slider oTransitionEnd.slider msTransitionEnd.slider transitionend.slider'
 			;
 			if(!effect)
 				effect = data.effect;
@@ -282,10 +285,11 @@
 				this.index = index;
 				// Animation effect
 				$item.addClass(data.classname.item+'-effect-'+effect);
-				$item.one('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', function () {
+				$item.one(event_end, function () {
 					$(this).removeClass(data.classname.item+'-effect-'+effect);
 					if($item.hasClass(data.classname.item+'-current'))
 						$slider.trigger('slidein', [$item, index]);
+					$item.off(event_end);
 				});
 				
 				$slider.find('.upfront-default-slider-nav-item').removeClass('uslider-dotnav-current');

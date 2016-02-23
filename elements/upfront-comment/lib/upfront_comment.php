@@ -6,7 +6,7 @@ class Upfront_UcommentView extends Upfront_Object {
 		$element_id = $this->_get_property('element_id');
 		$element_id = $element_id ? "id='{$element_id}'" : '';
 
-		return "<div class=' upfront-comment' {$element_id}>" .
+		return "<div class=' upfront-comment-wrapper'>" .
 			self::get_comment_markup(get_the_ID()) .
 		"</div>";
 	}
@@ -138,24 +138,32 @@ class Upfront_UcommentView extends Upfront_Object {
 			}
 			else return '';
 		}
-		if (empty($post) || !is_object($post)) return '';
 
+		if (empty($post) || !is_object($post)) return '';
 		if (post_password_required($post->ID)) return '';
+
+		// ... aaand start with comments fields rearrangement for WP4.4
+		add_filter('comment_form_fields', array('Upfront_UcommentView', 'rearrange_comment_form_fields'));
+
 		ob_start();
 
-        if( $prepend_form ){
+        if ($prepend_form) { 
             comment_form($form_args, $post->ID);
         }
 		// Load comments
-		if($comments && sizeof($comments)){
+		if ($comments && sizeof($comments)) {
 			echo '<ol class="upfront-comments">';
 			wp_list_comments(array('callback' => array('Upfront_UcommentView', 'list_comment'), 'style' => 'ol'), $comments);
 			echo '</ol>';
 		}
 		// Load comment form
-        if( !$prepend_form ){
+        if (!$prepend_form) {
             comment_form($form_args, $post->ID);
         }
+
+        // Clean up after ourselves
+        remove_filter('comment_form_fields', array('Upfront_UcommentView', 'rearrange_comment_form_fields'));
+
 		return ob_get_clean();
 	}
 
@@ -172,6 +180,29 @@ class Upfront_UcommentView extends Upfront_Object {
 			' ' .
 			'<textarea placeholder="' . esc_attr(__('Leave a Reply')) . '" id="comment" name="comment" cols="45" rows="8" aria-describedby="form-allowed-tags" aria-required="true" required="required"></textarea>' .
 		'</p>';
+	}
+
+	/**
+	 * Re-arrange comment form fields.
+	 *
+	 * At the moment just to revert the WP 4.4 fields order change,
+	 * but can be used to apply custom order down the line
+	 *
+	 * @param array $fields Comment form fields
+	 *
+	 * @return array
+	 */
+	public static function rearrange_comment_form_fields ($fields) {
+		if (!is_array($fields) || empty($fields['comment'])) return $fields;
+		
+		$result = array();
+		foreach ($fields as $key => $field) {
+			if ('comment' === $key) continue;
+			$result[$key] = $field;
+		}
+		$result['comment'] = $fields['comment'];
+
+		return $result;
 	}
 
 	public static function list_comment ( $comment, $args, $depth ) {

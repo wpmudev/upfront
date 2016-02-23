@@ -1,9 +1,10 @@
 (function ($) {
 define([
-	'elements/upfront-image/js/settings/color-picker-field'
-], function(ColorPickerField) {
+	'elements/upfront-image/js/settings/color-picker-field',
+	'scripts/upfront/element-settings/root-settings-panel'
+], function(ColorPickerField, RootSettingsPanel) {
 	var l10n = Upfront.Settings.l10n.image_element;
-	var DescriptionPanel = Upfront.Views.Editor.Settings.Panel.extend({
+	var DescriptionPanel = RootSettingsPanel.extend({
 		className: 'upfront-settings_panel_wrap uimage-settings',
 		initialize: function (opts) {
 			this.options = opts;
@@ -13,7 +14,6 @@ define([
 
 			this.settings = _([
 				new SettingsItem({
-
 					title: l10n.settings.alt,
 					fields: [
 						new Fields.Text({
@@ -71,7 +71,7 @@ define([
 			if(this.model.get_property_value_by_name('include_image_caption')) {
 				this.addCaptionBackgroundPicker();
 			}
-			
+
 			this._init_no_padding = ( this.model.get_property_value_by_name('no_padding') == 1 );
 			this.on('upfront:settings:panel:saved', this.onThisPanelSaved)
 		},

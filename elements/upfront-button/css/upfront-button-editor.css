@@ -130,3 +130,40 @@ div.upfront-button:hover .redactor_air {
   font-size: 13px;
   margin-bottom: 2px;
 }
+
+.upfront_cta {
+	display: table-cell;
+	padding: 4px 5px;
+	text-decoration: none;
+	height: 100%;
+	vertical-align: middle;
+}
+
+.upfront-output-object.upfront-button {
+	display: table;	
+}
+
+.upfront-object-content.upfront-output-ubutton {
+	display: table-row;	
+	height: 100%;
+	width: 100%;
+}
+
+.upfront-button div.upfront-object-content.editing {
+   display: table;
+   width: 100%;
+}
+
+.upfront-button div.upfront-object-content.editing > div.redactor-box {
+	display: table-row;
+}
+
+.upfront-button div.upfront-object-content.editing > div.redactor-box > a.upfront_cta {
+	display: table-cell;
+}
+/*
+//this css is conflicting with the visitlink icons in the link panel
+i.upfront-icon-region-visit-link-entry:before {
+	background-image: url(../../../img/uf-core-el-sprite.svg)!important;
+	background-position: -703px -169px!important;	
+}*/

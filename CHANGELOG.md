@@ -1,6 +1,151 @@
 Change Log
 ============
 
+
+1.0.5 - 2016-02-19
+-------------------------------------------------------------------------------
+- Fix: remove text element edit content overlay
+- Fix: show background padding settings only for regions
+- Fix: redactor inline mode edit issue
+- Fix: new region controls issue
+- Fix: tab label styles not applied in paragraphs
+- Fix: prevent lightbox region columns from exceeding breakpoint columns
+- Fix: prevent group resizing when entering edit element
+- Fix: gallery images black areas on thumbnails resize edge cases
+- Fix: gallery initial overlay styles, font styles and default preset value
+- Fix: login element z-index issue in editor
+- Fix: theme colors being inserted with expanded values
+- Fix: preset CSS style cleanup
+- Fix: re-render slider elements on Preset settings updated
+- Fix: region editing corner trigger not accessible in responsive
+- Fix: z-index issue with small-sized groups
+
+1.0.4 - 2016-02-09
+-------------------------------------------------------------------------------
+- Fix: styling issue
+
+1.0.3 - 2016-02-09
+-------------------------------------------------------------------------------
+- Drag and drop fixes and performance improvements
+- Fix for an issue with pressing Tab key during menu item inline text editing
+- Fix issue when using shift-enter double break at the end of an element
+- Fix issues with inserts in tab and accordion elements
+- Fix preset colors live update in editor
+- Fix browser cache upgrade artifacts
+- Fix image caption using hardcoded caption color
+- Fix image border not properly applied
+- Fix gallery caption module shows position options though unchecked
+- Fix text element issues with preset creation on migration
+- Fix issue with text element contextual menu editing
+
+1.0.2 - 2016-02-04
+-------------------------------------------------------------------------------
+- Fix: rounded corner module improvements.
+- Fix: preset name suggestion will offer an unique preset name.
+- Fix: backup link in the upgrade popup recognizes the plugin.
+
+1.0.1 - 2016-01-28
+-------------------------------------------------------------------------------
+- Fix: compatibility with old PHP versions.
+- Fix: color picker appearance near right border.
+- Fix: minor style issues.
+
+1.0 - 2016-01-27
+-------------------------------------------------------------------------------
+- Entirely new way of working with elements size and position:
+	+ New drag and drop will make the elements snap-align to other elements on your page.
+	+ New concept of "spacer" elements that can be resized and snapped to.
+	+ New, more obvious appearance of resizeable elements.
+	+ New, more intuitive way in which the element resizing behaves.
+- Entirely new element settings:
+	+ Whole new design for settings and a brand new use for the sidebar area screen realestate.
+	+ Better options organization.
+	+ Zero-code advanced appearance editing (colors, borders, corners, typography...), with custom CSS still available for advanced users.
+	+ Reusable element configurations:
+		* The new presets (available in element settings) allow for having easily available reusable element styles.
+		* Presets also store entire element configurations with all their settings included.
+		* Live preview of all changes.
+- Less error-prone element interaction:
+	+ Instead of interacting with elements by hovering over them, you now click to select them. This makes for way less interference with other elements, or other things that can happen on mouse hovering (hover styles/events).
+	+ Element settings are now much farther apart from the element removal button, and styled differently.
+	+ Quick, no-code access to element padding.
+- Improvements:
+	+ Added the ability to change typography of text element without custom CSS.
+	+ Various fixes in redactor, improved reliability in text editing
+	+ Added the ability to create rounded corner for image element without custom CSS.
+	+ Improved slider controls.
+	+ Added the ability to style tab title.
+	+ Improved compatibility with https.
+	+ Added Upfront logo in top Upfront button.
+	+ No more warning popup when Upfront button is clicked before the system is fully loaded.
+- Bug fixes.
+
+- Fixed the bug related to assigning hyperlink to text containing icons.
+- Fixed caption bug in image element.
+- Fixed caption bug in gallery element.
+- Fixed refresh bug in gallery element.
+- Fixed resize bug in slider element.
+- Fixed resize bug in map element.
+- Fixed responsive bug in menu element.
+- Fixed initial state of tabs element.
+- Fixed styling bug related to tab content.
+- Fixed initial state of accordion element.
+- Fixed styling bug related to accordion content.
+- Fixed some occurrences of wrong z-index value.
+- Fixed few typos in editor interface.
+- Fixed menu item bug when using Upfront in IE 11.
+- Fixed the appearance of featured images.
+- Fixed some issues with post meta.
+- Fixed display bug when Upfront is used with Spanish language.
+- 100+ other minor fixes and improvements.
+
+0.4.1.5 - 2016-01-15
+-------------------------------------------------------------------------------
+- Fix: PHP 5.2 compatibility issues.
+
+0.4.1.4 - 2016-01-13
+-------------------------------------------------------------------------------
+- Fix: over-zealous filtering in text element.
+
+0.4.1.3 - 2015-12-11
+-------------------------------------------------------------------------------
+- Fix: YouTube element protocol issue.
+- Fix: WP 4.4 screen class issue with post element.
+
+0.4.1.2 - 2015-11-16
+-------------------------------------------------------------------------------
+- Fix: like box  height snapping and centralized content.
+- Fix: like box iframe going out of bounds width-wise.
+- Fix: namespacing the cross-browser animation event.
+
+0.4.1.1 - 2015-11-09
+-------------------------------------------------------------------------------
+- Fix: image links issues.
+- Fix: button in group is opening url instead of edit text.
+- Fix: syntax checks in code elements.
+- Fix: parallax refresh error when rapidly change background style.
+- Fix: parallax affects full width background.
+- Fix: module group output z-index.
+- Fix: enable region resizing after adding region.
+- Add: content type macro to content expansion in posts element.
+
+0.4.1 - 2015-10-26
+-------------------------------------------------------------------------------
+- Fix: redactor issue with icons in editor vs live.
+- Fix: YouTube element issues.
+- Fix: paralax mode issues with responsive and image selection.
+- Fix: redactor text selection issues.
+- Fix: like box trailing slash issue.
+- Fix: responsive mode selection clearing and active break point issues.
+- Fix: hadcoded gravatar protocol in sidebar.
+- Fix: contact form name and l10n.
+- Fix: text encoding issues in code and text element sanitization.
+- Add: custom cursor for editing areas.
+- Add: formatting via inline text expansion.
+- Add: choice between theme layout and WP image inserts.
+- Add: button element improvements.
+- Add: new linking API.
+
 0.4 - 2015-08-28
 -------------------------------------------------------------------------------
 - Fix: shortcodes in tabs/accordion elements.

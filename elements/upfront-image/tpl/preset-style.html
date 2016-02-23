@@ -1,0 +1,32 @@
+#page .<?php echo $properties['id'] ?> .upfront-image-caption-container .wp-caption p,
+#page .<?php echo $properties['id'] ?> .upfront-image-caption-container .wp-caption {
+	<?php if(!empty($properties['caption-text'])) { ?>
+	color: <?php echo $properties['caption-text']  ?>;
+	<?php } ?>
+}
+
+#page .<?php echo $properties['id'] ?> .upfront-image-caption-container .wp-caption {
+	<?php if(!empty($properties['caption-bg'])) { ?>
+	background: <?php echo $properties['caption-bg'] ?>;
+	<?php } ?>
+}
+
+#page .<?php echo $properties['id'] ?> .upfront-image-caption-container {
+	 <?php if(!empty($properties['useborder'])) { ?>
+        <?php if(!empty($properties['borderwidth']) && !empty($properties['bordertype']) && !empty($properties['bordercolor'])) { ?>border: <?php echo $properties['borderwidth'] ?>px <?php echo $properties['bordertype'] ?> <?php echo $properties['bordercolor'] ?>;<?php } ?>
+    <?php } else { ?>
+        border: none;
+    <?php } ?>
+}
+
+#page .<?php echo $properties['id'] ?> .upfront-image-caption-container {
+	<?php if(!empty($properties['useradius'])) { ?>
+        border-radius: <?php echo $properties['borderradius1'] ? $properties['borderradius1'] : 0 ?>px <?php echo $properties['borderradius2'] ? $properties['borderradius2'] : 0 ?>px <?php echo $properties['borderradius4'] ? $properties['borderradius4'] : 0 ?>px <?php echo $properties['borderradius3'] ? $properties['borderradius3'] : 0 ?>px;
+    <?php } else { ?>
+        border-radius: 0px;
+    <?php } ?>
+	overflow: hidden;
+}
+
+/* Custom CSS */
+<?php if(!empty($properties['preset_style'])) { ?><?php echo $properties['preset_style'] ?><?php } ?>

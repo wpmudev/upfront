@@ -1,5 +1,8 @@
 (function ($) {
-  define(function() {
+  define([
+		'scripts/upfront/element-settings/settings',
+		'scripts/upfront/element-settings/root-settings-panel'
+	], function(ElementSettings, RootSettingsPanel) {
 
 	var l10n = Upfront.Settings.l10n.like_box_element;
 
@@ -38,7 +41,14 @@
 
 			this.listenTo(Upfront.Events, 'entity:resize_start', this.hideFrame);
 			this.listenTo(Upfront.Events, 'entity:resize_stop', this.onElementResize);
-
+		},
+		
+		on_element_resize_start: function (attr) {
+			this.hideFrame(this, this.model);
+		},
+		
+		on_element_resize: function (attr) {
+			this.onElementResize(this, this.model);
 		},
 
 		setUrl: function(){
@@ -54,8 +64,8 @@
 			if (!$frame.is(":visible")) $frame.show();
 		},
 		onElementResize: function(view, model){
-			if (this.parent_module_view == view) this.setElementSize();
-			else this.showFrame();
+			this.setElementSize();
+			this.showFrame();
 		},
 		setElementSize: function(){
 			var me = this,
@@ -65,6 +75,9 @@
 				this.elementSize.height = parent.height();
 				//setTimeout(function(){
 					var size = me.get_element_size_px(false);
+					if(size.row === 0) {
+						size.row = parent.height();
+					}
 
 					if(size.col != 0){
 						me.property('element_size', {
@@ -72,6 +85,7 @@
 							height: size.row,
 						});
 					}
+
 				//}, 1000);
 			}
 		},
@@ -117,25 +131,48 @@
 			//	fbUrl = this.getGlobalFBUrl();
 
 			if(fbUrl){
-				var pageName = _.last(fbUrl.split('/'));
-				var wide = 	this.model.get_property_value_by_name('element_size').width-22;
-				if(wide%53 > 0)
+				var splitted = fbUrl.split('/');
+				var pageName = _.last(splitted);
+
+				if(_.isEmpty(pageName)) {
+					splitted.splice(splitted.length-1, 1);
+					pageName = _.last(splitted);
+				}
+
+				var wide = 	this.model.get_property_value_by_name('element_size').width-30;
+
+				if(wide>500)
+					wide=500;
+
+				/*if(wide%53 > 0)
 					wide = parseInt(wide/53)*53+22;
 				else
 					wide = this.model.get_property_value_by_name('element_size').width;
+				*/
+				//return '<iframe src="//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2F'+ (pageName ? pageName : 'wpmudev' )+'&amp;width='+wide+'&amp;height='+this.model.get_property_value_by_name('element_size').height+'&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;show_border=true&amp;header=false" scrolling="no" frameborder="0" style="border:none; overflow:hidden; float:left; width:'+wide+'px; height:'+this.model.get_property_value_by_name('element_size').height+'px;"" allowTransparency="true"></iframe><div class="upfront-like-box_overlay"></div>'+ (!pageName ? '<span class="alert-url">!</span>' : '' );
 
-				return '<iframe src="//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2F'+ (pageName ? pageName : 'wpmudev' )+'&amp;width='+wide+'&amp;height='+this.model.get_property_value_by_name('element_size').height+'&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;show_border=true&amp;header=false" scrolling="no" frameborder="0" style="border:none; overflow:hidden; float:left; width:'+wide+'px; height:'+this.model.get_property_value_by_name('element_size').height+'px;"" allowTransparency="true"></iframe><div class="upfront-like-box_overlay"></div>'+ (!pageName ? '<span class="alert-url">!</span>' : '' );
+
+				var hide_cover = this.model.get_property_value_by_name('hide_cover')=='yes'?'true':'false';
+				var show_friends = this.model.get_property_value_by_name('show_friends')=='yes'?'true':'false';
+				var small_header = this.model.get_property_value_by_name('small_header')=='yes'?'true':'false';
+				var show_posts = this.model.get_property_value_by_name('show_posts')=='yes'?'true':'false';
+
+				return '<iframe src="//www.facebook.com/v2.5/plugins/page.php?adapt_container_width=true&amp;container_width='+wide+'&amp;width='+wide+'&amp;height='+(this.model.get_property_value_by_name('element_size').height-30)+'&amp;hide_cover='+hide_cover+'&amp;href=https%3A%2F%2Fwww.facebook.com%2F'+ (pageName ? pageName : 'wpmudev' )+'&amp;show_facepile='+show_friends+'&amp;show_posts='+show_posts+'&amp;small_header='+small_header+'" scrolling="no" frameborder="0" style="border:none; display:block; overflow:hidden; margin:auto; width:'+wide+'px; height:'+(this.model.get_property_value_by_name('element_size').height-30)+'px;"" allowTransparency="true"></iframe><div class="upfront-like-box_overlay"></div>'+ (!pageName ? '<span class="alert-url">!</span>' : '' );
+
 			}else{
 				this.model.set_property('facebook_url', '', true);
-				return '<div class="upfront-like-box_placeholder">' +
+				return '<div class="upfront-likebox-overlay upfront-initial-overlay-wrapper" style="min-height: 200px;">' +
+						'<div class="upfront-like-box_placeholder upfront-initial-overlay-wrapper" style="height: 150px;">' +
 						'<div class="upfront-like-box_placeholder_guide">'+l10n.placeholder_guide+'</div>' +
 						'<div class="upfront-like-box_url_wrapper"><input type="text" class="upfront-like-box_url" placeholder="' + l10n.placeholder + '" /></div>' +
-						'<button type="button" class="upfront-like-box_button">'+l10n.ok+'</button></div>';
+						'<button type="button" class="upfront-like-box_button">'+l10n.ok+'</button></div></div>';
 			}
 		},
 
 		on_render: function(){
 			var parent = this.parent_module_view, me = this;
+			
+			this.setElementSize();
 
 			//Prevent iframe hijacking of events when dragging
 			if(!parent.$el.data('dragHandler')){
@@ -152,6 +189,10 @@
 					Upfront.Events.trigger("upfront:element:edit:stop");
 				}
 			});
+		},
+
+		on_after_layout_render: function () {
+			this.setElementSize();
 		},
 
 		//Prevent iframe hijacking of events when dragging
@@ -180,7 +221,7 @@
 						{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
 						{"name": "class", "value": "c7 upfront-like-box_module"},
 						{"name": "has_settings", "value": 0},
-						{"name": "row", "value": Upfront.Util.height_to_row(90)}
+						{"name": "row", "value": Upfront.Util.height_to_row(200)}
 					],
 					"objects": [
 						object // The anonymous module will contain our search object model
@@ -202,84 +243,106 @@
 	 * @type {Upfront.Views.Editor.Settings.Item}
 	 */
 
-	var Field_Text = Upfront.Views.Editor.Field.Text.extend({});
-
-	var Field_Button = Upfront.Views.Editor.Field.Field.extend({
-		events: {
-			'click a': 'buttonClicked'
-		},
-		render: function() {
-			this.$el.html(this.get_field_html());
-		},
-		get_field_html: function() {
-			return '<i class="upfront-field-icon upfront-field-icon-social-back"></i><span class="upfront-back-global-settings-info">' + this.options.info + ' <a href="#">' + this.options.label + '</a></span>';
-		},
-		buttonClicked: function(e) {
-			if(this.options.on_click)
-				this.options.on_click(e);
-		},
-		isProperty: false
-	});
-
-// --- Tie the settings together ---
-
 	/**
 	 * Social Media settings hub, populated with the panels we'll be showing.
 	 * @type {Upfront.Views.Editor.Settings.Settings}
 	 */
-	var LikeBoxSettings = Upfront.Views.Editor.Settings.Settings.extend({
-		/**
-		 * Bootstrap the object - populate the internal
-		 * panels array with the panel instances we'll be showing.
-		 */
-		 getGlobalFBUrl: function(){
-			if(!Upfront.data.usocial.globals)
-				return false;
-			var services = Upfront.data.usocial.globals.services,
-				url = false;
-
-			_(services).each( function( s ) {
-				if(s.id == 'facebook')
-					url = s.url;
-			});
-
-			return url;
-		},
-
+	var GeneralPanel = RootSettingsPanel.extend({
+		className: 'uyoutube-settings',
+		tabbed: false,
+		title: l10n.general_settings,
 		initialize: function (opts) {
 			this.options = opts;
-			this.has_tabs = false;
-			this.panel = new Upfront.Views.Editor.Settings.Panel({
+			
+			me = this,
+			SettingsItem =  Upfront.Views.Editor.Settings.Item,
+			Fields = Upfront.Views.Editor.Field
+			;
 
-					model: this.model,
-					label: l10n.opts.style_label,
-					title: l10n.opts.style_title,
-					settings: [
-						new Upfront.Views.Editor.Settings.Item({
-							className: 'upfront-social-services-item',
+			this.settings = _([
+				new SettingsItem({
+					className: 'upfront-social-services-item general_settings_item',
+					title: l10n.facebook_account,
+					label: l10n.opts.page_url,
+					fields: [
+						new Fields.Text({
 							model: this.model,
-							title: l10n.opts.page_url,
-							fields: [
-								new Field_Text({
-									model: this.model,
-									property: 'facebook_url',
-									label: l10n.opts.url_sample,
-									compact: true
-								})
-							]
-						})
+							className: 'facebook-url',
+							property: 'facebook_url',
+							label: l10n.opts.url_sample,
+							compact: true,
+							change: function(value) {
+								this.model.set_property('facebook_url', value);
+							}
+						}),
 
+						new Fields.Checkboxes({
+							model: this.model,
+							className: 'show-friends',
+							property: 'show_friends',
+							label: "",
+							values: [
+								{ label: l10n.opts.show_friends, value: 'yes' }
+							],
+							change: function(value) {
+								this.model.set_property('show_friends', value);
+							}
+						}),
+
+						new Fields.Checkboxes({
+							model: this.model,
+							className: 'small-header',
+							property: 'small_header',
+							label: "",
+							values: [
+								{ label: l10n.opts.small_header, value: 'yes' }
+							],
+							change: function(value) {
+								this.model.set_property('small_header', value);
+							}
+						}),
+
+						new Fields.Checkboxes({
+							model: this.model,
+							className: 'hide-cover',
+							property: 'hide_cover',
+							label: "",
+							values: [
+								{ label: l10n.opts.hide_cover, value: 'yes' }
+							],
+							change: function(value) {
+								this.model.set_property('hide_cover', value);
+							}
+						}),
+
+						new Fields.Checkboxes({
+							model: this.model,
+							className: 'show-posts',
+							property: 'show_posts',
+							label: "",
+							values: [
+								{ label: l10n.opts.show_posts, value: 'yes' }
+							],
+							change: function(value) {
+								this.model.set_property('show_posts', value);
+							}
+						}),
+
+						new Upfront.Views.Editor.Settings.Settings_CSS({model: this.model }),
 					]
-				});
-			this.panels = _([this.panel]);
+				})
+			]);
 		},
-		/**
-		 * Get the title (goes into settings title area)
-		 * @return {string} Title
-		 */
+
 		get_title: function () {
-			return l10n.settings;
-		}
+			return l10n.general_settings;
+		},
+	});
+	var LikeBoxSettings = ElementSettings.extend({
+		panels: {
+			'General': GeneralPanel
+		},
+		title: l10n.settings
 	});
 
 

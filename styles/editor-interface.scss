@@ -3,7 +3,7 @@
 @import "sass/partials/layout";
 @import 'sass/partials/upfront-ui';
 @import 'sass/partials/general-stuff';
-@import 'sass/partials/button';
+/* @import 'sass/partials/button'; */
 @import 'sass/partials/sidebar-ui';
 @import 'sass/partials/fields';
 @import 'sass/partials/ueditor-inserts';
@@ -15,6 +15,8 @@
 @import 'sass/partials/modal';
 @import 'sass/partials/drag-n-drop';
 @import 'sass/partials/settings';
+@import 'sass/partials/element-settings-sidebar';
+@import 'sass/partials/element-settings-migration';
 @import 'sass/partials/save-as-dialog';
 @import 'sass/partials/icon';
 @import 'sass/partials/tooltips';
@@ -29,6 +31,7 @@
 @import 'sass/partials/popup_media-manager';
 @import 'sass/partials/color-picker';
 @import 'sass/partials/image-details-dialog';
+@import 'sass/partials/inline-controls-panel';
 
 #upfront-inline-slider-nav {
 	position: absolute;
@@ -55,7 +58,7 @@
 	margin-top: 3px;
 	font:11px/13px Verdana, sans-serif;
 	color:#26394d;
-	padding:5px;
+	padding:5px 0px;
 }
 #settings .upfront-embedded_toggleable.error .upfront-embedded_toggleable-notice {
 	background-color: #edafaf;
@@ -352,6 +355,7 @@
   font-weight: normal;
 }
 @import 'sass/partials/styles-and-anchor-settings';
+@import 'sass/partials/padding-settings';
 @import 'sass/partials/post-settings';
 @import 'sass/partials/responsive-ui';
 @import 'sass/partials/icon-fonts';
@@ -427,3 +431,4 @@
 @import 'sass/partials/fix-theme-style-messes-ui';
 @import 'sass/partials/_preset-manager.scss';
 @import 'sass/partials/_inline-panels.scss';
+@import 'sass/partials/_upgrade_notice.scss';

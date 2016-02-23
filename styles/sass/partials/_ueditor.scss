@@ -146,3 +146,10 @@
 .ueditor-display-block{
   display: block !important;
 }
+
+.redactor-dropdown.on-right-border{
+    left: -50px !important;
+}
+.redactor-toolbar .redactor-dropdown.on-right-border  .tablist li{
+    float: right;
+}

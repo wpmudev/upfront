@@ -28,7 +28,11 @@ class Upfront_Theme {
 	}
 
 	public function __construct () {
-
+		// Add version to $region_default_args properties
+		$this->region_default_args['properties'][] = array(
+			'name' => 'version',
+			'value' => Upfront_Layout::$version
+		);
 	}
 
 	// @TODO deprecate this
@@ -96,10 +100,14 @@ class Upfront_Theme {
 		if ($add_global_regions && $current_theme && $current_theme->has_global_region('footer')) {
 			include(get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'global-regions' . DIRECTORY_SEPARATOR . 'footer.php');
 		}
-				
-		$layout = $regions->create_layout();
 
-		return $layout;
+		$version = isset($layout_version) ? $layout_version : false;
+		$regions_data = $regions->create_layout();
+
+		return array(
+			'version' => $version,
+			'regions' => $regions_data
+		);
 	}
 
 	protected function find_default_layout($cascade, $layout_slug = "") {

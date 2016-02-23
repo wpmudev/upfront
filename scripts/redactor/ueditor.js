@@ -50,7 +50,18 @@ $.fn.ueditor = function(options){
 };
 
 var hackRedactor = function(){
+    
+    /*
+    // Deprecated, moved to override methods
+    var clean = $.Redactor.prototype.clean();
+    
+    clean.savePreFormatting = function(html) {
+        return html;
+    };
 
+   $.Redactor.prototype.clean = function () { return clean };
+   */
+    
 	// Make click consistent
 	$.Redactor.prototype.airBindHide = function () {
 		if (!this.opts.air || !this.$toolbar) return;
@@ -104,12 +115,39 @@ var hackRedactor = function(){
     	}
 
 
+        //var sel = Upfront.Util.clone(this.sel);
+        //var range = Upfront.Util.clone( this.range );
         $('.redactor_air').hide();
         this.selection.createMarkers();
+
+
+
         var width = this.$air.width(),
-            m1 = this.$editor.find('#selection-marker-1').offset(),
-            m2 = this.$editor.find('#selection-marker-2').offset()
+            node1 = this.$editor.find('span#selection-marker-1'),
+            node2 = this.$editor.find('span#selection-marker-2'),
+            m1 = node1.offset(),
+            m2 = node2.offset()
         ;
+
+        /**
+         * Restore selections in safari
+         */
+        if( this.utils.browser("safari")){
+            if (node1.length !== 0 && node2.length !== 0)
+            {
+                this.caret.set(node1, 0, node2, 0);
+            }
+            else if (node1.length !== 0)
+            {
+                this.caret.set(node1, 0, node1, 0);
+            }
+            else
+            {
+                this.$editor.focus();
+            }
+        }
+
+
         // Make sure we have both dimentions before proceeding
         if (!m1 || !m2) {
             return false;
@@ -172,11 +210,113 @@ var hackRedactor = function(){
         this.$air.trigger('show');
         this.dropdown.hideAll();
         UeditorEvents.trigger("ueditor:air:show", this);
-        this.selection.restore();
+        this.selection.removeMarkers();
     };
 
 
 	hackedRedactor = true;
+
+    /**
+     * Overrides Redactor internal methods
+     *
+     * Override redactor methods by adding them in here and then change the body of method
+     *
+     * @type {{inline: {format: Overriden_Methods.inline.format}}}
+     */
+    var Overriden_Methods = {
+        utils: {
+            isEndOfElement: function(element){
+                if (typeof element == 'undefined')
+                {
+                    var element = this.$element;
+                    if (!element) return false;
+                }
+
+                var offset = this.caret.getOffsetOfElement(element);
+                var text = $.trim($(element).text()).replace(/\n\r\n/g, '');
+
+                return (offset == text.length) ? true : false;
+            }
+        },
+        inline: {
+            format: function(tag, type, value)
+            {
+                // Stop formatting pre and headers
+                //if (this.utils.isCurrentOrParent('PRE') || this.utils.isCurrentOrParentHeader()) return;
+
+                var tags = ['b', 'bold', 'i', 'italic', 'underline', 'strikethrough', 'deleted', 'superscript', 'subscript'];
+                var replaced = ['strong', 'strong', 'em', 'em', 'u', 'del', 'del', 'sup', 'sub'];
+
+                for (var i = 0; i < tags.length; i++)
+                {
+                    if (tag == tags[i]) tag = replaced[i];
+                }
+
+                this.inline.type = type || false;
+                this.inline.value = value || false;
+
+                this.buffer.set();
+
+                if (!this.utils.browser('msie'))
+                {
+                    this.$editor.focus();
+                }
+
+                 this.selection.get();
+
+                if (this.range.collapsed)
+                {
+                    this.inline.formatCollapsed(tag);
+                }
+                else
+                {
+                    this.inline.formatMultiple(tag);
+                }
+
+                if( tag && -1 !== _.indexOf( ["em", "italic"],tag.toLowerCase() ) ){ // add fix for em to make it work with list tags
+                        this.selection.selectElement( $(this.selection.getInlines()).find("em") );
+                }
+
+                if( tag &&  -1 !== _.indexOf( ["strong", "bold"], tag.toLowerCase() )  ){ //  add fix for strong to make it work with list tags
+                    this.selection.selectElement( $(this.selection.getInlines()).find("strong") );
+                }
+            }
+        },
+        keydown: {
+            /**
+             * Overridden method from redactor core (@line 4849)
+             *
+             * We're overriding this method because of buggy logic in current redactor core.
+             * The `this.selection.getBlock()` method can just as easily return a (bool)false,
+             * and the original implementation doesn't account for that.
+             *
+             * @return {Boolean} Doesn't really matter, side-effects method
+             */
+            replaceDivToBreakLine: function()
+            {
+                var blockElem = this.selection.getBlock();
+                if (!(blockElem || {}).innerHTML) return false; // so yeah, selection.getBlock() got us nowhere, bail out
+                var blockHtml = blockElem.innerHTML.replace(/<br\s?\/?>/gi, '');
+                if ((blockElem.tagName === 'DIV' || blockElem.tagName === 'P') && blockHtml === '' && !$(blockElem).hasClass('redactor-editor'))
+                {
+                    var br = document.createElement('br');
+
+                    $(blockElem).replaceWith(br);
+                    this.caret.setBefore(br);
+
+                    this.code.sync();
+
+                    return false;
+                }
+            }
+        },
+        clean: {
+            // These lines override the Redactor's prefFormatting
+            savePreFormatting: function(html) {
+                return html;
+            }
+        }
+    };
 
 	$.Redactor.prototype.events = UeditorEvents;
 
@@ -190,6 +330,7 @@ var hackRedactor = function(){
 	$.Redactor.prototype.placeholderStart = function (html) {
 		console.log('do nothing');
 	};
+
 	$.Redactor.prototype.button = function() {
 		return {
             build: function(btnName, btnObject)
@@ -394,7 +535,30 @@ var hackRedactor = function(){
                 this.button.get(key).remove();
             }
         };
-	}
+	};
+
+
+    $.Redactor.prototype.bindModuleMethods =  function(module)
+    {
+
+        if (typeof this[module] == 'undefined') return;
+
+        // init module
+        this[module] = this[module]();
+
+        var methods = this.getModuleMethods(this[module]);
+        var len = methods.length;
+
+        // bind methods
+        for (var z = 0; z < len; z++)
+        {
+            var method = this[module][methods[z]];
+            if( Overriden_Methods[module] && Overriden_Methods[module][methods[z]] )
+                method =  Overriden_Methods[module][methods[z]];
+
+            this[module][methods[z]] = method.bind(this);
+        }
+    };
 
     var l10n = Upfront.Settings && Upfront.Settings.l10n
         ? Upfront.Settings.l10n.global.ueditor
@@ -408,8 +572,9 @@ var hackRedactor = function(){
      */
     $.Redactor.opts.langs['upfront'] = $.extend({}, $.Redactor.opts.langs['en'], {
         bold: l10n.bold,
-        italic: l10n.italic,
+        italic: l10n.italic
     });
+
 
 };
 
@@ -428,6 +593,7 @@ var Ueditor = function($el, options) {
     this.options = $.extend({
 			// Ueditor options
 			autostart: true, //If false ueditor start on dblclick and stops on blur
+            autoexit: false,
 			stateButtons: {},
             toolbarExternal: "#" + unique_id,
             // toolbarFixedTopOffset: 100,
@@ -456,6 +622,7 @@ var Ueditor = function($el, options) {
             //cleanStyleOnEnter: false,
             //removeDataAttr: false,
             removeEmpty: false,
+            imageResizable: false,
             lang: 'upfront' // <-- This is IMPORTANT. See the l10n proxying bit in `hackRedactor`
 		}, options)
 	;
@@ -497,6 +664,36 @@ var Ueditor = function($el, options) {
 
 	//this.startPlaceholder();
 	this.options.pasteCallback = function (html) {
+
+        /**
+         * When pasting unformatted text with line breaks, the lines get wrapped
+         * in DIV tags. This is due to browser's handling of pasted content inside
+         * div having contenteditable=true. For our requirement, we have to replace
+         * it with P tags instead, in addition we have to make custom replacements
+         * for different use cases.
+         */
+        html = html.replace(/<div>/g, "<p>").replace(/<\/div>/g,"</p>");
+
+        // release br caught within empty p tags
+        html = html.replace(/<p><br><\/p>/g, "<br>");
+        html = html.replace(/<p ([^>]*)><br><\/p>/g, "<br>");
+
+        // if two consecutive paragraphs without a line break inbetween
+        // merge the paragraphs and sepearate text with a br
+        html = html.replace(/<\/p><p>/g, "<br>");
+        html = html.replace(/<\/p><p ([^>]*)>/g, "<br>");
+
+        // if a single line break between two paragraph
+        // take out the line break
+        html = html.replace(/<\/p><br><p>/g, "</p><p>");
+        html = html.replace(/<\/p><br><p ([^>]*)>/g, "</p><p $1>");
+
+        // if multile breaks between 2 paragraphs, replace with blank paragraph
+        html = html.replace(/<\/p>([<br>])*<p>/g, "</p><p></p><p>");
+        html = html.replace(/<\/p>([<br>])*<p ([^>]*)>/g, "</p><p></p><p $1>");
+
+
+
 		/**
 		 * If a font icon is copied to clipboard, paste it
 		 */
@@ -505,6 +702,8 @@ var Ueditor = function($el, options) {
 		}
 		return html;
 	};
+
+
 
     // Enter callback inside lists 
     this.options.enterCallback = function (e) { 
@@ -596,10 +795,20 @@ Ueditor.prototype = {
 		this.mouseupListener = $.proxy(this.listenForMouseUp, this);
 		this.$el.on('mousedown', this.mouseupListener);
 
+
 		this.$el.on('keydown', function(e){
 			self.cmdKeyA = false;
 			self.cmdKey = false;
 
+            /**
+             * Clean unverified spans and remove their style attr
+             */
+            _.delay(function() {
+                if (e.keyCode === 8) {
+                    self.redactor.clean.clearUnverified();
+                    self.redactor.$editor.find('span').not('[data-verified="redactor"]').removeAttr('style');
+                }
+            }, 2);
 
 			setTimeout(function(){
 				if(e.keyCode === 65 && e.metaKey ){
@@ -618,7 +827,7 @@ Ueditor.prototype = {
             // Expand known text patterns
             if (32 === e.keyCode) self.expand_known_text_patterns();
 
-			if(e.keyCode != 37 && e.keyCode != 39) {
+			if( ( e.keyCode != 37 && e.keyCode != 39 ) && self.redactor ) {
 				var current = $(self.redactor.selection.getCurrent());
 				if(current.hasClass('uf_font_icon')) {
 					self.redactor.caret.setAfter(current);
@@ -644,12 +853,22 @@ Ueditor.prototype = {
 		}
 
 		//Listen for outer clicks to stop the editor if necessary
-		if(!this.options.autostart)
+		if(!this.options.autostart || this.options.autoexit)
 			this.listenToOuterClick();
 
 		$(document).on("keyup", $.proxy(this.stopOnEscape, this));
 
 		this.active = true;
+
+        this.$el.on('keyup', function(e) {
+            /**
+             * Make sure return doesn't delete the last charactor
+             */
+            if (13 === e.keyCode && !e.shiftKey && (self || {}).redactor && !self.redactor.keydown.pre && !self.redactor.$air.is(":visible") ) {
+                self.redactor.utils.removeEmpty();
+                $(self.redactor.selection.getCurrent()).append("&#x200b;");
+            }
+        });
 
 	},
 	stopOnEscape: function(e) {
@@ -661,7 +880,7 @@ Ueditor.prototype = {
     /**
      * Expand the known text patterns in current block element
      */
-    expand_known_text_patterns: function () {
+    expand_known_text_patterns: function (e) {
         var redactor = this.redactor,
             rpl = {
                 '##': {tag: 'h2'},
@@ -709,25 +928,32 @@ Ueditor.prototype = {
             // Replace the selection tag with the one from the replacement map
             if ("nest" in target && target.nest) {
                 $node.html(
-                    '<div><' + target.tag + '><' + target.nest + '>' + 
+                    '<' + target.tag + '><' + target.nest + '>' +
                         text + 
-                    '</' + target.nest + '></' + target.tag + '></div>'
+                    '</' + target.nest + '></' + target.tag + '>'
                 );
             } else {
-                $node.html(
-                    '<div><' + target.tag + '>' + 
-                        text + 
-                    '</' + target.tag + '></div>'
-                );
+                var _node = document.createElement(target.tag);
+                _node.innerHTML = text;
+                $node.replaceWith( _node );
+
             }
 
             // Set caret position to end of the target
             redactor.caret.setEnd(
                 "nest" in target && target.nest
                     ? $node.find(target.nest).last().get()
-                    : $node.find(target.tag).get()
+                    : _node
             );
+
             redactor.code.sync();
+            /**
+             * Make sure the created node doesn't contain the space created by the spacebar!
+             */
+            _.delay( function(){
+               $(redactor.selection.getBlock()).html(text);
+            }, 3 );
+
 
             return false;
         });
@@ -738,7 +964,8 @@ Ueditor.prototype = {
 			UeditorEvents.trigger('ueditor:stop', this.redactor);
 			this.$el.trigger('stop');
 			this.restoreDraggable();
-			this.redactor.core.destroy();
+            if( this.redactor.$toolbar )
+			    this.redactor.core.destroy();
             this.$air.remove();
             this.$el.removeClass('ueditable');
             this.redactor = false;
@@ -755,6 +982,7 @@ Ueditor.prototype = {
 
 		me.$el.addClass('ueditable-inactive')
 			.attr('title', 'Double click to edit the text')
+            .addClass('uf-click-to-edit-text')
 			.one('dblclick', function(e){
 				e.preventDefault();
 				e.stopPropagation();
@@ -795,7 +1023,7 @@ Ueditor.prototype = {
 			if($(this).find('i.visit_link').length > 0 || !$(this).attr('href') || $(this).text().trim() == '')
 				return;
 			$(this).css('position', 'relative');
-			$(this).append('<i class="visit_link visit_link_'+me.guessLinkType($(this).attr('href'))+'" data-href="'+$(this).attr('href')+'"></i>');
+			$(this).append('<i class="visit_link visit_link_'+me.guessLinkTypeTag($(this))+'" data-href="'+$(this).attr('href')+'"></i>');
 			$(this).removeAttr('href');
 			//$(this).attr('onclick', 'return false;');
 		});
@@ -833,12 +1061,30 @@ Ueditor.prototype = {
 		else
 			window.open(url);
 	},
+    /*validateEmail: function (email) {
+        var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+    },*/
+    guessLinkTypeTag: function(item){
+        return item.data('upfront-link-type');
+    },
 	guessLinkType: function(url){
-
+        var anchor = false;
 		if(!$.trim(url) || $.trim(url) == '#')
 			return 'unlink';
-		if(url.length && url[0] == '#')
-			return url.indexOf('#ltb-') > -1 ? 'lightbox' : 'anchor';
+
+        if(url.indexOf('#') > -1) {
+            anchor =this.getUrlanchor(url);
+        }
+
+		if(anchor) {
+			return url.indexOf('ltb-') > -1 ? 'lightbox' : 'anchor';
+        }
+        // is it an email.
+        if(url.indexOf('mailto:') === 0) {
+            return 'email';
+        }
+
 		if(url.substring(0, location.origin.length) == location.origin)
 			return 'entry';
 
@@ -850,10 +1096,12 @@ Ueditor.prototype = {
 		;
 		regions.each(function (r) {
 			r.get("modules").each(function (module) {
-				module.get("objects").each(function (object) {
-					var anchor = object.get_property_value_by_name("anchor");
-					if (anchor && anchor.length) anchors[anchor] = object;
-				});
+				if(module.get("objects")) {
+                    module.get("objects").each(function (object) {
+    					var anchor = object.get_property_value_by_name("anchor");
+    					if (anchor && anchor.length) anchors[anchor] = object;
+    				});
+                }
 			});
 		});
 		return anchors;
@@ -913,6 +1161,7 @@ Ueditor.prototype = {
 
 	listenToOuterClick: function(){
 		var me = this;
+
 		if(!this.checkInnerClick){
 			this.checkInnerClick = function(e){
 				//Check we are not selecting text
@@ -944,7 +1193,12 @@ Ueditor.prototype = {
 				|| $(e.target).parents().hasClass("redactor-dropdown"))
 			&& $(e.target).parents("#upfront-popup.upfront-postselector-popup").length === 0)
 		{
-			e.data.ueditor.stop();
+            if(e.data.ueditor.$el.closest('a.menu_item').length > 0) { // blur on the menu item, dont stop the editor yet 
+                e.data.ueditor.$el.trigger('blur');
+            }
+            else {
+    			e.data.ueditor.stop();
+            }
 		}
 	},
 	callMethod: function(method){
@@ -1043,6 +1297,7 @@ Ueditor.prototype = {
                 return;
 			//var is_selection = ((Math.abs(e.pageX-me.lastmousedown.x) + Math.abs(e.pageY-me.lastmousedown.y)) > 2);
             var is_selection = !!me.redactor.selection.getText();
+
 			if((is_selection || me.clickcount > 1) && me.redactor && me.redactor.waitForMouseUp && me.redactor.selection.getText()){
 				me.redactor.airShow(e);
 				me.redactor.$element.trigger('mouseup.redactor');
@@ -1063,9 +1318,19 @@ Ueditor.prototype = {
 	getValue: function(is_simple_element){
 		var html = this.redactor.$element.html();
 		if(this.insertManager)
-			html = this.insertManager.insertExport(html, is_simple_element);
+			html = this.insertManager.insertExport(html, is_simple_element),
+            $html =  $("<div>").html( html );
 
-		return html;
+        $html.find(".redactor-selection-marker").remove();
+        /**
+         * Make sure the wrapping .plain-text-container is not being returned as html
+         */
+        return $.trim(
+            // Conditionally nuke the wrapper - only if we actually have it
+            $html.find(".plain-text-container").length
+                ? $html.find(".plain-text-container").last().html()
+                : $html.html()
+        );
 	},
 	getInsertsData: function(){
 		var insertsData = {};
@@ -1145,12 +1410,30 @@ var InsertManagerInserts = Backbone.View.extend({
             self = this
             ;
 
-        insert.start( this.$el )
-            .done(function(popup, results){
+        /**
+         * Todo Sam: remove __insert and try to find why sometimes insert doesn't get found inside the done event
+         */
+        this.__insert = insert;
+        insert.start( this.$el, this.redactor.$editor )
+            .done(function(args, resolved_insert){
 
-                if(!results) //Had to uncomment this because if we let it through with blank result, it inserts an empty wrapper which blocks the "inert/embed" button to appear again: Gagan
-                	return;
+                /**
+                 * Allows to get resolved insert from inserts with insert managers
+                 */
+                if(_.isArray(args) ){
+                    var popup = args[0],
+                        results = args[0],
+                        insert = resolved_insert;
+                }else{
+                    var popup = args,
+                        results = resolved_insert,
+                        insert = insert || self.__insert
+                    ;
 
+                }
+
+                // if(!results) Let's allow promises without result for now!
+                //	return;
                 self.inserts[insert.cid] = insert;
                 //Allow to undo
                 //this.trigger('insert:prechange'); // "this" is the embedded image object

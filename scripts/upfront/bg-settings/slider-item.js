@@ -124,7 +124,10 @@ define([
 			Upfront.Views.Editor.ImageSelector.open({multiple: true}).done(function(images){
 				var image_ids = [];
 				_.each(images, function(image, id){
-					image_ids.push(id);
+					id = parseInt(id, 10);
+					if ( id ) {
+						image_ids.push(id);
+					}
 				});
 				me.model.set_breakpoint_property('background_slider_images', image_ids);
 				//me.update_slider_slides($slides_content);
@@ -144,7 +147,10 @@ define([
 				Upfront.Views.Editor.ImageSelector.open({multiple: true}).done(function(images){
 					var slide_images = _.clone(me.model.get_breakpoint_property_value('background_slider_images', true) || []);
 					_.each(images, function(image, id){
-						slide_images.push(id);
+						id = parseInt(id, 10);
+						if ( id ) {
+							slide_images.push(id);
+						}
 					});
 					me.model.set_breakpoint_property('background_slider_images', slide_images);
 					Upfront.Views.Editor.ImageSelector.close();
@@ -158,16 +164,14 @@ define([
 					image_id = $image.data('image-id'),
 					slide_images = me.model.get_breakpoint_property_value('background_slider_images', true);
 
-				slide_images = _.map(slide_images, function(id){
-					return parseInt( id, 10 );
-				});
-
 				if (_.isString(image_id) && image_id.match(/^[0-9]+$/))
 					image_id = parseInt(image_id, 10);
 
 				slide_images = _.without(slide_images, image_id);
 				me.model.set_breakpoint_property('background_slider_images', slide_images);
 				$image.remove();
+				
+				me.update_slider_slides();
 			});
 			
 			this.on('show', function(){
@@ -216,8 +220,10 @@ define([
 								var slide_images = [];
 								$wrap.find('.upfront-region-bg-slider-image').each(function(){
 									var id = $(this).data('image-id');
-									if ( id )
+									id = parseInt(id, 10);
+									if ( id ) {
 										slide_images.push(id);
+									}
 								});
 								me.model.set_breakpoint_property('background_slider_images', slide_images);
 							}

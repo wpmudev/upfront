@@ -33,7 +33,7 @@ define([
 			this.property('tabs', tabs);
 
 			this.events = _.extend({}, this.events, {
-				'click .add-item': 'addTab',
+				// 'click .add-item': 'addTab',
 				'click .tabs-tab': 'onTabClick',
 				'keydown .tabs-tab[contenteditable=true]': 'onTabKeydown',
 				'click .utab-content-active': 'onContentClick',
@@ -43,10 +43,9 @@ define([
 			this.delegateEvents();
 
 			this.model.get('properties').bind('change', this.render, this);
+			this.model.get('properties').bind('change', this.handle_visual_padding_hint, this);
 			this.model.get('properties').bind('add', this.render, this);
 			this.model.get('properties').bind('remove', this.render, this);
-
-			Upfront.Events.on('entity:resize_stop', this.onResizeStop, this);
 
 			this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
 		},
@@ -205,13 +204,19 @@ define([
 				count++;
 
 				$content.ueditor({
-					linebreaks: true,
-					disableLineBreak: true,
-					airButtons: false,
+					//linebreaks: true,
+					//disableLineBreak: true,
+					//airButtons: false,
+					//autostart: false,
+					//allowedTags: ['h5'],
+					//placeholder: false
+					//airButtons : ["upfrontFormatting"],
+					linebreaks: false,
 					autostart: false,
-					allowedTags: ['h5'],
+					paragraphize: false,
+					focus: false,
 					placeholder: false
-			 }).on('start', function() {
+				}).on('start', function() {
 				 Upfront.Events.trigger('upfront:element:edit:start', 'text');
 				 $(this).focus();
 			 }).on('stop', function () {
@@ -238,9 +243,9 @@ define([
 			});
 
 			var $upfrontObjectContent = this.$el.find('.upfront-object-content');
-			if(this.$el.find('a.add-item').length < 1) {
-				$('<b class="upfront-entity_meta upfront-ui add_item"><a href="" class="upfront-icon-button add-item"></a></b>').insertBefore($upfrontObjectContent);
-			}
+			// if(this.$el.find('a.add-item').length < 1) {
+			// 	$('<b class="upfront-entity_meta upfront-ui add_item"><a href="" class="upfront-icon-button add-item"></a></b>').insertBefore($upfrontObjectContent);
+			// }
 
 			this.$el.find('div#'+ this.currentTabId).addClass('utab-content-active').siblings().removeClass('utab-content-active');
 
@@ -258,7 +263,8 @@ define([
 			$content.ueditor({
 				linebreaks: false,
 				autostart: false,
-				inserts:["image", "embed"],
+				paragraphize: false,
+				focus: false,
 				placeholder: false
 			})
 				.on('start', function () {
@@ -294,6 +300,14 @@ define([
 				return this.model.set_property(name, value, silent);
 			}
 			return this.model.get_property_value_by_name(name);
+		},
+
+		getControlItems: function(){
+			return _([
+				this.createControl('add', l10n.add_tab, 'addTab'),
+				this.createPaddingControl(),
+				this.createControl('settings', l10n.settings, 'on_settings_click')
+			]);
 		}
 	});
 

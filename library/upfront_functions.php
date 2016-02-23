@@ -17,12 +17,29 @@ function upfront_get_property_value ($prop, $data) {
 	return $value;
 }
 
-function upfront_set_property_value ($prop, $value, $data) {
+function upfront_set_property_value ($prop, $value, &$data) {
 	$properties = !empty($data['properties']) ? $data['properties'] : array();
-	$properties[] = array(
-		'name' => $prop,
-		'value' => $value,
-	);
+	$updated = false;
+
+	// Try to update if property already exists
+	foreach ($properties as $index=>$property) {
+		if ($property['name'] === $prop) {
+			$properties[$index] = array(
+				'name' => $prop,
+				'value' => $value
+			);
+			$updated = true;
+			break;
+		}
+	}
+
+	// Add new one
+	if ($updated !== true) {
+		$properties[] = array(
+			'name' => $prop,
+			'value' => $value,
+		);
+	}
 	$data['properties'] = $properties;
 	return $data;
 }
@@ -55,21 +72,36 @@ function upfront_array_to_properties ($the_array, $map=null) {
 function upfront_get_breakpoint_property_value ($prop, $data, $breakpoint, $return_default = false) {
 	$model_breakpoint = upfront_get_property_value('breakpoint', $data);
 	$breakpoint_data = $model_breakpoint && !empty($model_breakpoint[$breakpoint->get_id()]) ? $model_breakpoint[$breakpoint->get_id()] : false;
-	if ( $breakpoint_data && isset($breakpoint_data[$prop]) )
+	if ( $breakpoint_data && isset($breakpoint_data[$prop]) ){
 		return $breakpoint_data[$prop];
-	if ( $return_default )
+	}
+	if ( $return_default ) {
 		return upfront_get_property_value($prop, $data);
+	}
 	return false;
+}
+
+function upfront_set_breakpoint_property_value ($prop, $value, &$data, $breakpoint) {
+	$model_breakpoint = upfront_get_property_value('breakpoint', $data);
+	$breakpoint_data = $model_breakpoint && !empty($model_breakpoint[$breakpoint->get_id()]) ? $model_breakpoint[$breakpoint->get_id()] : array();
+	$breakpoint_data[$prop] = $value;
+	$model_breakpoint[$breakpoint->get_id()] = $breakpoint_data;
+	upfront_set_property_value('breakpoint', $model_breakpoint, $data);
+	return $data;
 }
 
 function upfront_get_class_num ($classname, $classes) {
 	$classes = array_map('trim', explode(' ', $classes));
 	$rx = '^' . preg_quote($classname, '/') . '(\d+)$';
 	foreach ($classes as $class) {
-		if (preg_match("/{$rx}/", $class, $matches))
-			return intval($matches[1]);
+		if (preg_match("/{$rx}/", $class, $matches)) return intval($matches[1]);
 	}
 	return false;
+}
+
+function upfront_replace_class_num ($classname, $val, $classes) {
+	$rx = preg_quote($classname, '/') . '\d+';
+	return preg_replace("/{$rx}/", $classname . $val, $classes);
 }
 
 function upfront_element_relative_path ($relpath, $filepath) {
@@ -284,16 +316,14 @@ function upfront_get_attachment_image_lazy ($attachment_id, $ref_size = 'full') 
 	if ( empty($alt) )
 		$alt = trim(strip_tags( $attachment->post_title )); // Finally, use the title
 	$out = '<img class="upfront-image-lazy" src="' . get_template_directory_uri() . '/img/blank.gif" width="' . $ref_src[1] . '" height="' . $ref_src[2]. '" alt="' . $alt . '" ';
-
 	if( isset( $imagedata['sizes'] ) ){
 		foreach ( $imagedata['sizes'] as $size => $data ){
 			$src = wp_get_attachment_image_src($attachment_id, $size);
 			$srcset[] = array($src[0], $src[1], $src[2]);
 		}
 	}
-
 	$srcset[] = array($full_src[0], $full_src[1], $full_src[2]);
-	$out .= "data-sources='" . json_encode($srcset) . "'";
+	$out .= 'data-sources="' . esc_html(json_encode($srcset)) . '"';
 	$out .= '/>';
 	return $out;
 }
@@ -324,28 +354,45 @@ function upfront_get_edited_post_thumbnail ($post_id = null, $return_src = false
 	return $html;
 }
 
-function upfront_realperson_hash($value) { 
-	$hash = 5381; 
-	$value = strtoupper($value); 
-	for($i = 0; $i < strlen($value); $i++) { 
-		$hash = (PHP_INT_SIZE === 8) ? (upfront_left_shift32($hash, 5) + $hash) + ord(substr($value, $i)) : (($hash << 5) + $hash) + ord(substr($value, $i)); 
-	} 
-	return $hash; 
+function upfront_realperson_hash($value) {
+	$hash = 5381;
+	$value = strtoupper($value);
+	for($i = 0; $i < strlen($value); $i++) {
+		$hash = (PHP_INT_SIZE === 8) ? (upfront_left_shift32($hash, 5) + $hash) + ord(substr($value, $i)) : (($hash << 5) + $hash) + ord(substr($value, $i));
+	}
+	return $hash;
 }
- 
-// Perform a 32bit left shift 
-function upfront_left_shift32($number, $steps) { 
-	// convert to binary (string) 
-	$binary = decbin($number); 
-	// left-pad with 0's if necessary 
-	$binary = str_pad($binary, 32, "0", STR_PAD_LEFT); 
-	// left shift manually 
-	$binary = $binary.str_repeat("0", $steps); 
-	// get the last 32 bits 
-	$binary = substr($binary, strlen($binary) - 32); 
-	// if it's a positive number return it 
-	// otherwise return the 2's complement 
-	return ($binary{0} == "0" ? bindec($binary) : 
-		-(pow(2, 31) - bindec(substr($binary, 1)))); 
-} 
 
+// Perform a 32bit left shift
+function upfront_left_shift32($number, $steps) {
+	// convert to binary (string)
+	$binary = decbin($number);
+	// left-pad with 0's if necessary
+	$binary = str_pad($binary, 32, "0", STR_PAD_LEFT);
+	// left shift manually
+	$binary = $binary.str_repeat("0", $steps);
+	// get the last 32 bits
+	$binary = substr($binary, strlen($binary) - 32);
+	// if it's a positive number return it
+	// otherwise return the 2's complement
+	return ($binary{0} == "0" ? bindec($binary) :
+		-(pow(2, 31) - bindec(substr($binary, 1))));
+}
+
+/**
+ * Return the maximum allowed upload size, in bytes
+ *
+ * @return int
+ */
+function upfront_max_upload_size () {
+	return wp_max_upload_size();
+}
+
+/**
+ * Returns the human-friendly version of maximum upload size.
+ *
+ * @return string
+ */
+function upfront_max_upload_size_human () {
+	return size_format(upfront_max_upload_size());
+}

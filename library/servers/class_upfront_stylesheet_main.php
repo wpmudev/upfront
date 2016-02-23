@@ -74,12 +74,14 @@ class Upfront_StylesheetMain extends Upfront_Server {
 			return;
 		}
 
-		//Add theme styles
-		$style .= $this->prepare_theme_styles();
 		// Add theme colors styles
 		$style .= $this->_get_theme_colors_styles();
 		// Add elements presets styles
 		$style = apply_filters('get_element_preset_styles', $style);
+		
+		//Add theme styles
+		$style .= $this->prepare_theme_styles();
+		
 		$style = Upfront_UFC::init()->process_colors($style);
 
 		if (!empty($cache) && !empty($ckey)) { // make use of cache, if possible
@@ -193,6 +195,8 @@ class Upfront_StylesheetMain extends Upfront_Server {
 			  $style_rx = '/^(' . preg_quote("{$layout_id}", '/') . '|' . preg_quote("{$type}", '/') . ')/';
 			  if ( preg_match('/^region(-container|)$/', $type) && !preg_match($style_rx, $name) )
 				continue;
+			
+			  $content = str_replace('#page', 'div#page .upfront-output-region-container .upfront-output-module', $content);
 			  $out .= $content;
 			  if ( $type == 'layout' && $name == 'layout-style' )
 			  	$layout_style_loaded = true;
@@ -231,7 +235,11 @@ class Upfront_StylesheetMain extends Upfront_Server {
 			);
 			if (!empty($face) && false !== strpos($face, ' '))  $face = '"' . $face . '"';
 			$font = $properties['font_face'] ? "{$face}, {$properties['font_family']}" : "inherit";
-			$out .= ".upfront-output-object $element {\n" .
+
+			$selector = $this->_typography_element_to_output_selector($element);
+			if (empty($selector)) continue;
+
+			$out .= "{$selector} {\n" .
 					"font-family: {$font};\n" .
 					( $properties['weight'] ? "font-weight: {$properties['weight']};\n" : "" ) .
 					( $properties['style'] ? "font-style: {$properties['style']};\n" : "" ) .
@@ -282,6 +290,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 				}
 			}
 			foreach ( $typography as $element=>$properties ){
+
 				$properties = wp_parse_args($properties, array(
 					'font_face' => 'Arial',
 					'weight' => '400',
@@ -296,7 +305,11 @@ class Upfront_StylesheetMain extends Upfront_Server {
 					'weight' => $properties['weight']
 				);
 				$font = $properties['font_face'] ? "{$properties['font_face']}, {$properties['font_family']}" : "inherit";
-				$breakpoint_css .= ".upfront-output-object $element {\n" .
+
+				$selector = $this->_typography_element_to_output_selector($element);
+				if (empty($selector)) continue;
+
+				$breakpoint_css .= "{$selector} {\n" .
 						"font-family: {$font};\n" .
 						( $properties['weight'] ? "font-weight: {$properties['weight']};\n" : "" ) .
 						( $properties['style'] ? "font-style: {$properties['style']};\n" : "" ) .
@@ -311,20 +324,10 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		// Include Google fonts
 		$faces = array_values(array_filter(array_unique($faces, SORT_REGULAR)));
 		$google_fonts = new Upfront_Model_GoogleFonts;
-		//$imports = ''; // Skip this, we're not doing imports
 
 		$deps = Upfront_CoreDependencies_Registry::get_instance();
 
 		foreach ($faces as $face) {
-			// Yeah, let's not do the imports directly
-			// and fall back to just adding the fonts like we normally would
-			/*
-			if (!$google_fonts->is_from_google($face['face'])) continue;
-			$imports .= "@import \"https://fonts.googleapis.com/css?family=" .
-				preg_replace('/\s/', '+', $face['face']);
-			if (400 !== (int)$face['weight'] && 'inherit' !== $face['weight']) $imports .= ':' . $face['weight'];
-			$imports .= "\";\n";
-			*/
 			if (!$google_fonts->is_from_google($face['face'])) continue;
 			$variant = 400 !== (int)$face['weight'] && 'inherit' !== $face['weight']
 				? $face['weight']
@@ -332,11 +335,30 @@ class Upfront_StylesheetMain extends Upfront_Server {
 			;
 			$deps->add_font($face['face'], $variant);
 		}
-		//if (!empty($imports)) $out = "{$imports}\n\n{$out}"; // Skip this, we're not doing imports
 
 		$out = apply_filters('upfront_prepare_typography_styles', $out);
 
 		return $out;
+	}
+
+	/**
+	 * Convert typography element to CSS selector
+	 *
+	 * @param string $element Typography element (h1,p, blockquote)
+	 *
+	 * @return string Final selector
+	 */
+	private function _typography_element_to_output_selector ($element) {
+		if (empty($element)) return false;
+
+		$selector = '.upfront-output-object ' . $element;
+		
+		// Explicitly support blockquote typo settings for child paragraphs
+		if (preg_match('/^blockquote\b/', $element)) {
+			$selector = "{$selector}, {$selector} p";
+		}
+		
+		return $selector;
 	}
 
     /**

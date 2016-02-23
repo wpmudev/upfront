@@ -88,7 +88,6 @@ var Parts = {
 				tpl_name = 'post-part-' + this.options.part,
 				template = this.model.get_property_value_by_name(tpl_name),
 				embed_object = ('meta' === this.options.part ? Meta.Embed : Inserts.inserts.embed),
-				//editor = new Inserts.inserts.embed({data: {code: template}})
 				editor = new embed_object({data: {code: template}, model: this.model})
 			;
 			editor
@@ -97,6 +96,16 @@ var Parts = {
 					me.model.set_property(tpl_name, code);
 				})
 			;
+
+			// Zero timeout, just shift off the queue
+			setTimeout(function () {
+				var manager = editor.get_manager ? editor.get_manager() : {};
+				if (!manager.done) return false;
+				// Listen to event
+				return me.listenTo(Upfront.Events, 'element:settings:saved', function () {
+					return manager.done();
+				});
+			});
 		}
 	})
 };

@@ -9,7 +9,7 @@
 		<div class="upfront-list_item-component upfront-date upfront-header {{ orderby == 'post_date' ? 'active ordered-' + order : '' }}" data-sortby="post_date">Date <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
 		<div class="upfront-list_item-component upfront-title upfront-header {{ orderby == 'post_title' ? 'active ordered-' + order : '' }}"  data-sortby="post_title">Post Title <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
 		<div class="upfront-list_item-component upfront-author upfront-header {{ orderby == 'post_author' ? 'active ordered-' + order : '' }}" data-sortby="post_author">Author <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
-		<div class="upfront-list_item-component upfront-comments upfront-header {{ orderby == 'post_comments' ? 'active ordered-' + order : '' }}" data-sortby="post_comments"><i class="icon-post-comments"></i> <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
+		<div class="upfront-list_item-component upfront-comments-count upfront-header {{ orderby == 'post_comments' ? 'active ordered-' + order : '' }}" data-sortby="post_comments"><i class="icon-post-comments"></i> <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
 	</div>
 	<div class="upfront-list-items upfront-scroll-panel">
 	{[ if(!posts.length){ ]}
@@ -21,7 +21,7 @@
 			{{ Upfront.Util.format_date(post.get("post_date")) }}</div>
 			<div class="upfront-list_item-component upfront-title upfront-list_item-main">{{ post.get("post_title") }}</div>
 			<div class="upfront-list_item-component upfront-author">{[ if(post.author.get('data')){ ]} {{ post.author.get('data').display_name }} {[ } ]}</div>
-			<div class="upfront-list_item-component upfront-comments">{{ post.get("comment_count") }}</div>
+			<div class="upfront-list_item-component upfront-comments-count">{{ post.get("comment_count") }}</div>
 			<div class="upfront-list_item-component upfront-editactions"><a href="{{ post.get("permalink") }}" class="editaction edit">Edit</a><a href="{{ post.get("permalink") }}" class="editaction view">View</a><a href="#" class="editaction trash">Trash</a></div>
 		</div>
 	{[ }); } ]}
@@ -95,7 +95,7 @@
 		<div class="upfront-list_item-component upfront-date upfront-header {{ orderby == 'post_date' ? 'active ordered-' + order : '' }}" data-sortby="post_date">Date <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
 		<div class="upfront-list_item-component upfront-title upfront-header {{ orderby == 'post_title' ? 'active ordered-' + order : '' }}"  data-sortby="post_title">Page Title <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
 		<div class="upfront-list_item-component upfront-author upfront-header {{ orderby == 'post_author' ? 'active ordered-' + order : '' }}" data-sortby="post_author">Author <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
-		<div class="upfront-list_item-component upfront-comments upfront-header {{ orderby == 'post_comments' ? 'active ordered-' + order : '' }}" data-sortby="post_comments"><i class="icon-post-comments"></i> <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
+		<div class="upfront-list_item-component upfront-comments-count upfront-header {{ orderby == 'post_comments' ? 'active ordered-' + order : '' }}" data-sortby="post_comments"><i class="icon-post-comments"></i> <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
 	</div>
 	<div class="upfront-list-items upfront-scroll-panel">
 	{[ if(!pages.length){ ]}
@@ -107,7 +107,7 @@
 			{{ Upfront.Util.format_date(post.get("post_date")) }}</div>
 			<div class="upfront-list_item-component upfront-title upfront-list_item-main">{{ post.get("post_title") }}</div>
 			<div class="upfront-list_item-component upfront-author">{[ if(post.author.get('data')){ ]} {{ post.author.get('data').display_name }} {[ } ]}</div>
-			<div class="upfront-list_item-component upfront-comments">{{ post.get("comment_count") }}</div>
+			<div class="upfront-list_item-component upfront-comments-count">{{ post.get("comment_count") }}</div>
 			<div class="upfront-list_item-component upfront-editactions"><a href="{{ post.get("permalink") }}" class="editaction edit">Edit</a><a href="{{ post.get("permalink") }}" class="editaction view">View</a><a href="#" class="editaction trash">Trash</a></div>
 		</div>
 	{[ }); } ]}
@@ -346,12 +346,14 @@
       {[ if (elementType) { ]}
 			<span class="upfront-css-type">{{ elementType }} Element</span>
       {[ } ]}
+			{[ if (showToolbar) { ]}
 			<div id="insert-font-widget" class="upfront-icon">
 				<a class="upfront-css-font" href="#">{{Upfront.Settings.l10n.global.content.insert_font}}</a>
 			</div>
 			<a class="upfront-css-theme_image upfront-css-image" href="#">{{Upfront.Settings.l10n.global.content.insert_theme_image}}</a>
 			<a class="upfront-css-media_image upfront-css-image" href="#">{{Upfront.Settings.l10n.global.content.insert_image}}</a>
 			<span class="upfront-css-color"></span>
+      {[ } ]}
 			<a class="upfront-css-close" href="#">close</a>
 		</div>
 		<div class="upfront-css-body">

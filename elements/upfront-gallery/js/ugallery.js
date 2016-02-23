@@ -9,8 +9,10 @@ define([
 	'elements/upfront-gallery/js/model',
 	'elements/upfront-gallery/js/label-editor',
 	'elements/upfront-gallery/js/element',
+	'text!elements/upfront-gallery/tpl/preset-style.html',
+	'scripts/upfront/preset-settings/util',
 	"scripts/upfront/link-model"
-], function(galleryTpl, sortingStyleTpl, editorTpl, lightboxTpl, UgallerySettings, UgalleryModel, LabelEditor, UgalleryElement, LinkModel) {
+], function(galleryTpl, sortingStyleTpl, editorTpl, lightboxTpl, UgallerySettings, UgalleryModel, LabelEditor, UgalleryElement, settingsStyleTpl, PresetUtil, LinkModel) {
 
 var l10n = Upfront.Settings.l10n.gallery_element;
 var globalL10n = Upfront.Settings && Upfront.Settings.l10n
@@ -40,13 +42,25 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	imageLabels: {},
 
 	reopenSettings: false,
-
 	initialize: function(options){
 		var me = this,
 			elementId = this.property('element_id'),
 			raw_labels,
 			images;
 
+		if (this.property('thumbPadding') !== this.property('thumbPaddingNumber')) {
+			this.property('thumbPaddingNumber', this.property('thumbPadding'), true);
+			this.property('thumbSidePaddingNumber', this.property('thumbPadding'), true);
+			this.property('sidePadding', this.property('thumbPadding'), true);
+			this.property('bottomPadding', this.property('thumbPadding'), true);
+			this.property('thumbSidePadding', this.property('thumbPadding'), true);
+			this.property('thumbBottomPaddingNumber', this.property('thumbPadding'), true);
+		}
+
+
+		if (_.isArray(this.property('labelFilters')) && this.property('labelFilters')[0] === 'true') {
+			this.property('labelFilters', 'true', true);
+		}
 		if(! (this.model instanceof UgalleryModel)){
 			this.model = new UgalleryModel({properties: this.model.get('properties')});
 		}
@@ -98,6 +112,11 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		this.listenTo(Upfront.Events, 'entity:region:activated', this.closeTooltip);
 		this.listenTo(Upfront.Events, 'upfront:layout_size:change_breakpoint', this.rebindShuffle);
 
+		this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
+
+		this.listenTo(this.model, "preset:updated", this.preset_updated);
+		this.listenTo(Upfront.Events, "preset:gallery:updated", this.caption_updated, this);
+
 		this.lastThumbnailSize = {width: this.property('thumbWidth'), height: this.property('thumbHeight')};
 
 		if (typeof ugalleries !== 'undefined' && ugalleries[elementId]) {
@@ -140,16 +159,22 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			ugalleries[elementId].imageLabels = this.imageLabels;
 		}
 
-
 		this.on('deactivated', this.sortCancel, this);
 
 		this.listenTo(this.model, 'settings:closed', function(e){
 			me.checkRegenerateThumbs(e);
-			if (this.property('labelFilters').length) {
+			if (this.property('labelFilters') === 'true') {
 				Upfront.frontFunctions.galleryBindShuffle();
 			}
 		});
 
+		this.listenTo(this.model, 'change:thumbProportions', function() {
+			me.onThumbChangeProportions();
+		});
+		this.listenTo(this.model, 'change:thumbWidth', function() {
+			me.onThumbChangeSize();
+			me.render();
+		});
 		this.listenTo(this.model, 'change:thumbPadding', function() {
 			me.updateThumbPadding();
 		});
@@ -187,6 +212,62 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			}, 100);
 		});
 		this. debouncedRender = _.debounce(this.render, 300);
+		this.debouncedRebindShuffle = _.debounce(this.rebindShuffleForDebouncing, 500);
+	},
+
+	onThumbChangeProportions: function(e) {
+		var factor = this.property('thumbProportions'),
+			width = this.property('thumbWidth');
+
+		if(factor === 'theme') {
+			factor = 1;
+		}
+
+		this.property('thumbProportions', factor);
+		this.onThumbChangeSize();
+
+		this.render();
+	},
+	onThumbChangeSize: function(){
+		var factor = this.property('thumbProportions'),
+			width = this.property('thumbWidth'),
+			height = Math.round(width / factor);
+
+		if(factor === 'theme') {
+			factor = 1;
+		}
+
+		this.property('thumbWidth', width, false);
+		this.property('thumbHeight', height);
+		this.checkRegenerateThumbs();
+	},
+
+	get_preset_properties: function() {
+		var preset = this.model.get_property_value_by_name("preset") || 'default',
+			props = PresetUtil.getPresetProperties('gallery', preset) || {};
+
+		return props;
+	},
+
+	preset_updated: function(preset) {
+		this.debouncedRender();
+		Upfront.Events.trigger('preset:gallery:updated', preset);
+	},
+
+	caption_updated: function(preset) {
+		var currentPreset = this.model.get_property_value_by_name("preset");
+
+		//If element use updated preset re-render
+		if(currentPreset === preset) this.debouncedRender();
+	},
+
+	update_colors: function () {
+
+		var props = this.get_preset_properties();
+
+		if (_.size(props) <= 0) return false; // No properties, carry on
+
+		PresetUtil.updatePresetStyle('gallery', props, settingsStyleTpl);
 	},
 
 	preventClose: function(event) {
@@ -201,6 +282,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	/****************************************************/
 	updateThumbPadding: function() {
 		this.$el.find('.ugallery').data('thumb-padding', this.property('thumbPadding'));
+		this.$el.find('.ugallery').data('thumb-bottom-padding', this.property('bottomPadding'));
+		this.$el.find('.ugallery').data('thumb-side-padding', this.property('sidePadding'));
 		this.debouncedRender();
 	},
 	updateCaptionType: function() {
@@ -244,7 +327,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	},
 
 	updateShowFilters: function() {
-		if (this.property('labelFilters')[0] === 'true') {
+		if (this.property('labelFilters') === 'true') {
 			this.$el.find('.ugallery_labels').show();
 			this.$el.find('.ugallery-magnific-labels').parents('.upfront-inline-panel-item').show();
 			Upfront.frontFunctions.galleryBindShuffle();
@@ -260,14 +343,16 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 	selectItem: function(e) {
 		var item = $(e.target).hasClass('gallery_item') ? $(e.target) : $(e.target).closest('.ugallery_item');
+		if (!item.length) return;
+
 		item.siblings().removeClass('ugallery_selected');
-		if (!$(e.target).closest('.ugallery-controls').length) {
+		if (!($(e.target).closest('.ugallery-controls') || {}).length) {
 			item.toggleClass('ugallery_selected');
 		}
 		e.gallerySelected = true;
 	},
 
-	createControls: function(image) {
+	createControlsEach: function(image) {
 		var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel();
 
 		panel.items = _([
@@ -275,9 +360,11 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			this.createLinkControl(image)
 		]);
 
-		panel.items.push(this.createLabelControl(image));
+    if (this.property('labelFilters') === 'true') {
+			panel.items.push(this.createLabelControl(image));
+		}
 
-		if (image.get('imageLink').type === 'image' || image.get('imageLink').type === 'lightbox') {
+		if (image.get('imageLink').type === 'image' || image.get('imageLink').type === 'lightbox' || -1 !== ['image', 'lightbox'].indexOf( this.property( "linkTo" ) ) ) {
 			panel.items.push(this.createControl('fullscreen', l10n.ctrl.show_image, 'openImageLightbox'));
 		}
 
@@ -319,6 +406,11 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		control.id = 'edit_labels';
 
 		me.listenTo(control, 'panel:open', function(){
+			me.lastOpenedControl = control;
+			setTimeout(function() {
+				// this is fine because gallery will re-render once panel is closed
+				me.$el.find('.ugallery_item').css('overflow', 'visible');
+			}, 10);
 			control.$el
 				.closest('.ugallery-controls')
 					.addClass('upfront-control-visible');
@@ -328,6 +420,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			control.$el
 				.closest('.ugallery-controls')
 					.removeClass('upfront-control-visible');
+			if (control === me.lastOpenedControl) {
+				me.render();
+			}
 		});
 
 
@@ -343,6 +438,21 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			model: imageLink,
 			linkTypes: { image: true },
 			imageUrl: image.get('srcFull')
+		});
+
+
+
+
+		this.listenTo(linkPanel.model, "change", function( model ){
+			/**
+			 * Response properly when selected link type is a post or page ( entry )
+			 */
+			if( 'entry' ===  model.get("type") ){
+				setTimeout(function() {
+					var $item = linkControl.$el.closest(".ugallery_item");
+					me.add_controls_to_item( image, $item );
+				}, 50);
+			}
 		});
 
 		this.listenTo(imageLink, 'change', function(){
@@ -364,7 +474,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			me.$el.closest('.ui-draggable').draggable('disable');
 		});
 
-		me.listenTo(linkControl, 'panel:close', function(){
+		me.listenTo(linkControl, 'panel:ok', function(){
 			linkControl.$el
 				.parents('.ugallery_item')
 					.removeClass('upfront-control-visible');
@@ -374,6 +484,13 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 					.attr('href', imageLink.get('url'))
 					.attr('target', imageLink.get('target'))
 					.attr('class', 'ugallery_link ugallery_link' + imageLink.get('type'));
+
+					var $item = linkControl.$el.closest(".ugallery_item");
+
+				/**
+				 * Refresh the controlls when Ok is clicked
+				 */
+					me.add_controls_to_item( image, $item );
 			}, 50);
 
 			me.$el.closest('.ui-draggable').draggable('enable');
@@ -418,8 +535,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		}
 
 		$.magnificPopup.open({
+			closeOnBgClick: _.isTrue( this.model.get_property_value_by_name('lightbox_click_out_close')[0] ),
 			items: {
-				src: item.find('.ugallery_link').attr('href') || item.find('.ugallery-image').attr('src')
+				src: image.get("srcFull")
 			},
 			type: 'image',
 			image: {
@@ -497,8 +615,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			'background': this.property('lightbox_active_area_bg')
 		});
 		$('.mfp-bg').css('background', this.property('lightbox_overlay_bg'));
-		$('.mfp-container').append('<button title="Previous (Left arrow key)" type="button" class="mfp-arrow mfp-arrow-left mfp-prevent-close"></button>');
-		$('.mfp-container').append('<button title="Next (Right arrow key)" type="button" class="mfp-arrow mfp-arrow-right mfp-prevent-close"></button>');
+		if( $('.mfp-container').find('.mfp-arrow.mfp-arrow-left.mfp-prevent-close').length === 0 )
+			$('.mfp-container').append('<button title="Previous (Left arrow key)" type="button" class="mfp-arrow mfp-arrow-left mfp-prevent-close"></button>');
+		if( $('.mfp-container').find('.mfp-arrow.mfp-arrow-right.mfp-prevent-close').length === 0 )
+			$('.mfp-container').append('<button title="Next (Right arrow key)" type="button" class="mfp-arrow mfp-arrow-right mfp-prevent-close"></button>');
 
 		if ($('style#' + containerClass).length === 0) {
 			$('body').append('<style id="' + containerClass + '"></style>');
@@ -531,6 +651,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 				],
 				change: function(value) {
 					me.property('lightbox_click_out_close', value);
+					this.model.set('lightbox_click_out_close', value, true);
 					me.setupLightbox();
 				}
 			}),
@@ -602,14 +723,15 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 				change: function(color) {
 					me.property('lightbox_overlay_bg', color.toRgbString());
 					me.setupLightbox();
-				},
+				}
 			}
 		});
 
 		_.each(fields, function(field){
 			field.render();
 			field.delegateEvents();
-			$lightbox.append(field.$el);
+			if( $lightbox.find( field.$el).length === 0 )
+				$lightbox.append(field.$el);
 		});
 
 		$('#gallery-lb-settings-button').toggle(
@@ -639,6 +761,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 				type: "GalleryLightbox",
 				sidebar: true,
 				global: false,
+				toolbar: true,
 				cssSelectors: {
 					'.mfp-close': {label: l10n.css.lightbox_close, info: l10n.css.lightbox_close},
 					'.glb-content-container': {label: l10n.css.lightbox_content_wrapper, info: l10n.css.lightbox_content_wrapper_info},
@@ -660,7 +783,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 					});
 				}
 			});
-			$('#upfront-general-csseditor').css('width', '100%');
 			$('.mfp-content').css({
 				'margin-bottom': 250,
 				'margin-top': 50
@@ -685,6 +807,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	getPropertiesForTemplate: function() {
 		var props = this.extract_properties();
 
+		props.properties = this.get_preset_properties();
+
 		props.imagesLength = props.images.length;
 		props.editing = true;
 
@@ -692,16 +816,24 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		props.labels_length = this.labels.length;
 		props.image_labels = this.imageLabels;
 
+		// In case the image doesn't have the `imageLink` populated, use the element-wide fallback as default
+		var fallback_type = this.property('linkTo');
 		_.each(props.images, function(image, index) {
-			props.images[index]['imageLinkType'] = image.imageLink.type;
+			props.images[index]['imageLinkType'] = image.imageLink.type || fallback_type;
 			props.images[index]['imageLinkUrl'] = image.imageLink.url;
 			props.images[index]['imageLinkTarget'] = image.imageLink.target;
 		});
+
+		props.usingNewAppearance = props.usingNewAppearance || false;
 
 		props.l10n = l10n.template;
 		props.in_editor = true;
 		if (!props.even_padding) {
 			props.even_padding = ['false'];
+		}
+
+		if (_.isArray(props.labelFilters) && props.labelFilters[0] === 'true') {
+			props.labelFilters = 'true';
 		}
 
 		return props;
@@ -725,26 +857,38 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			;
 		}
 
+		/**
+			The following is being done so that the gallery
+			items inside a lightbox can shuffle after
+			the lightbox shows up, in order to expand
+			around in the available space
+		**/
+		Upfront.Events.on('upfront:lightbox:show', function(e) {
+			setTimeout(function(){
+				$(window).trigger('resize');
+			}, 300);
+		});
+
 		this.images.each(function(image) {
-			if(image.get('loading')){
+			if(image.get('loading') && 0 === me.$('.ugallery_item[rel="' + image.id  + '"]').find( '.ugallery-image-loading').length ){
 				me.$('.ugallery_item[rel="' + image.id  + '"]')
 					.append('<p class="ugallery-image-loading">' + l10n.loading + '</p>');
 			}
 		});
 
-		if(_.indexOf(['ok', 'starting'], me.property('status')) === -1) {
+		if(_.indexOf(['ok', 'starting'], me.property('status')) === -1 && 0 === me.$('.upfront-gallery').find( '.upfront-quick-swap').length ) {
 			me.$('.upfront-gallery').append('<div class="upfront-quick-swap"><p>' + l10n.personalize + '</p></div>');
 		}
 
-		if (this.images && this.images.length) {
-			var $upfrontObjectContent = this.$el.find('.upfront-object-content');
-			if (this.$el.find('a.toggle-sorting').length < 1) {
-				$('<b class="upfront-entity_meta upfront-ui toggle_sorting" title="Toggle drag\'n\'drop sorting of images"><a href="" class="upfront-icon-button toggle-sorting"></a></b>').insertBefore($upfrontObjectContent);
-			}
-			if (this.$el.find('a.add-item').length < 1) {
-				$('<b class="upfront-entity_meta upfront-ui add_item"><a href="" class="upfront-icon-button add-item"></a></b>').insertBefore($upfrontObjectContent);
-			}
-		}
+		// if (this.images && this.images.length) {
+		// 	var $upfrontObjectContent = this.$el.find('.upfront-object-content');
+		// 	if (this.$el.find('a.toggle-sorting').length < 1) {
+		// 		$('<b class="upfront-entity_meta upfront-ui toggle_sorting" title="Toggle drag\'n\'drop sorting of images"><a href="" class="upfront-icon-button toggle-sorting"></a></b>').insertBefore($upfrontObjectContent);
+		// 	}
+		// 	if (this.$el.find('a.add-item').length < 1) {
+		// 		$('<b class="upfront-entity_meta upfront-ui add_item"><a href="" class="upfront-icon-button add-item"></a></b>').insertBefore($upfrontObjectContent);
+		// 	}
+		// }
 
 		setTimeout(function() {
 			me.rebindShuffle();
@@ -752,12 +896,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			_.each(items, function(item) {
 				var $item = $(item),
 					image = me.images.get($item.attr('rel')),
-					controls = me.createControls(image),
-					title = $item.find('.ugallery-thumb-title');
-
-				controls.setWidth($item.width());
-				controls.render();
-				$item.append($('<div class="ugallery-controls upfront-ui"></div>').append(controls.$el));
+					title = $item.find('.ugallery-thumb-title'),
+					controls = me.add_controls_to_item( image, $item)
+						.setWidth( $item.width() );
 
 				me.ensureCaptionEditorExists(title, image);
 
@@ -766,11 +907,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 				}
 				image.controls = controls;
 			});
-			if (me.property('labelFilters')[0] === 'true') {
-				me.$el.find('.ugallery-magnific-labels').parents('.upfront-inline-panel-item').show();
-			} else {
-				me.$el.find('.ugallery-magnific-labels').parents('.upfront-inline-panel-item').hide();
-			}
+
 
 		}, 300);
 
@@ -797,6 +934,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			})
 			.on('start', function() {
 				me.$el.addClass('upfront-editing');
+				title.parents('.ugallery_item').addClass('upfront-editing');
 			})
 			.on('stop', function() {
 				setTimeout(function() {
@@ -805,6 +943,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 				}, 10);
 
 				me.$el.removeClass('upfront-editing');
+				title.parents('.ugallery_item').removeClass('upfront-editing');
 			})
 			.on('syncAfter', function() {
 				image.set('title', title.html());
@@ -831,15 +970,26 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		this.isSortingActive = !this.isSortingActive;
 		this.itemsInRow = this.$el.find('.ugallery_item').filter(function(){ return $(this).css('top') === '0px'; }).length;
 		this.render();
+		if(this.isSortingActive) {
+			this.controls.$el.find('.upfront-icon-region-toggle-sorting').addClass('upfront-icon-region-sorting-active');
+		}
+		else {
+			this.controls.$el.find('.upfront-icon-region-toggle-sorting').removeClass('upfront-icon-region-sorting-active');
+		}
 	},
 
-	rebindShuffle: function() {
+	rebindShuffleForDebouncing: function() {
 		if (!this.isSortingActive) {
 			Upfront.frontFunctions.galleryBindShuffle(this.$el.find('.ugallery_grid'), true);
 		}
 	},
 
+	rebindShuffle: function() {
+		this.debouncedRebindShuffle();
+	},
+
 	preventNavigation: function(e){
+		this.constructor.__super__.constructor.__super__.on_click.call(this, e);
 		if(e.target.tagName.toUpperCase() === 'INPUT') {
 			return;
 		}
@@ -902,22 +1052,27 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		this.getNewLabels(_.keys(images));
 
 		_.each(images, function(image, id) {
-			models.push(
-				new UgalleryImage({
-					id: id,
-					srcFull: image.full[0],
-					sizes: image,
-					size: image.custom.editdata.resize,
-					cropSize: image.custom.crop,
-					cropOffset: image.custom.editdata.crop,
-					src: image.custom.url,
-					loading: false,
-					status: 'ok',
-					element_id: element_id,
-					urlType: me.property('linkTo'),
-					url: image.full[0]
-				})
-			);
+			var model = new UgalleryImage({
+				id: id,
+				srcFull: image.full[0],
+				sizes: image,
+				size: image.custom.editdata.resize,
+				cropSize: image.custom.crop,
+				cropOffset: image.custom.editdata.crop,
+				src: image.custom.url,
+				loading: false,
+				status: 'ok',
+				element_id: element_id,
+				urlType: me.property('linkTo'),
+				url: image.full[0],
+			});
+			// Also initialize image link defaults here
+			model.set('imageLink', {
+				type: me.property('linkTo'),
+				url: model.get("url"),
+				target: model.get("linkTarget")
+			});
+			models.push(model);
 		});
 
 		if (me.property('status') !== 'ok') {
@@ -961,7 +1116,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			}, 100);
 		});
 
-		this.$('.ugallery').append(selector.hide());
+		if( 0 === this.$( '.ugallery').find( ".upfront-ui.ugallery-onclick").length )
+			this.$('.ugallery').append(selector.hide());
+
 		selector.fadeIn();
 	},
 
@@ -1049,49 +1206,57 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 	checkRegenerateThumbs: function(e, imageIds){
 		var me = this;
-		if(imageIds || this.lastThumbnailSize.width !== this.property('thumbWidth') || this.lastThumbnailSize.height !== this.property('thumbHeight')){
+		if (!(
+			imageIds
+			||
+			this.lastThumbnailSize.width !== this.property('thumbWidth')
+			||
+			this.lastThumbnailSize.height !== this.property('thumbHeight')
+		)) return false;
 
-			var editOptions = {
-					images: this.getRegenerateData(imageIds),
-					action: 'upfront-media-image-create-size'
-				},
-				loading = new Upfront.Views.Editor.Loading({
-					loading: l10n.regenerating,
-					done: l10n.regenerating_done,
-					fixed: false
-				})
-			;
-			loading.render();
+		var editOptions = {
+				images: this.getRegenerateData(imageIds),
+				action: 'upfront-media-image-create-size'
+			},
+			loading = new Upfront.Views.Editor.Loading({
+				loading: l10n.regenerating,
+				done: l10n.regenerating_done,
+				fixed: false
+			})
+		;
+
+		loading.render();
+		if (!this.parent_module_view.$el.find( loading.$el).length) {
 			this.parent_module_view.$el.append(loading.$el);
+		}
 
-			Upfront.Util.post(editOptions).done(function(response) {
-				loading.done();
-				var images = response.data.images,
-					models = []
+		Upfront.Util.post(editOptions).done(function(response) {
+			loading.done();
+			var images = response.data.images,
+				models = []
+			;
+
+			_.each(editOptions.images, function(image){
+				var model = me.images.get(image.id),
+					changes = images[image.id]
 				;
 
-				_.each(editOptions.images, function(image){
-					var model = me.images.get(image.id),
-						changes = images[image.id]
-					;
-
-					if(!changes.error){
-						model.set({
-							src: changes.url,
-							srcFull: changes.urlOriginal,
-							size: image.resize,
-							cropPosition: {top: image.crop.top, left: image.crop.left}
-						}, {silent: true});
-					}
-					models.push(model);
-				});
-
-				me.images.set(models, {remove: false});
-				me.imagesChanged();
-				me.render();
-				me.lastThumbnailSize = {width: me.property('thumbWidth'), height: me.property('thumbHeight')};
+				if(!changes.error){
+					model.set({
+						src: changes.url,
+						srcFull: changes.urlOriginal,
+						size: image.resize,
+						cropPosition: {top: image.crop.top, left: image.crop.left}
+					}, {silent: true});
+				}
+				models.push(model);
 			});
-		}
+
+			me.images.set(models, {remove: false});
+			me.imagesChanged();
+			me.render();
+			me.lastThumbnailSize = {width: me.property('thumbWidth'), height: me.property('thumbHeight')};
+		});
 	},
 
 	getRegenerateData: function(imageIds){
@@ -1116,6 +1281,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		images.each(function(image){
 			var size = image.get('size'),
 				offset = image.get('cropOffset'),
+				offsetTop = Math.round((me.property('thumbHeight') / me.lastThumbnailSize.height) * offset.top),
+				offsetLeft = Math.round((me.property('thumbWidth') / me.lastThumbnailSize.width) * offset.left),
 				editorOpts = {
 					id: image.id,
 					rotate:image.get('rotation'),
@@ -1129,6 +1296,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 					element_id: element_id
 				}
 			;
+
+			//Scale cropOffset for new image size
+			image.set('cropOffset', { left: offsetLeft, top: offsetTop });
+
 			imageData.push(editorOpts);
 		});
 
@@ -1219,17 +1390,20 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	deleteLabel: function(labelId, imageId) {
 		var me = this,
 			deleteLabel = true;
+		var labelString = '"label_' + labelId + '"';
 
-		me.images.each(function(image){
+		this.imageLabels[imageId] = this.imageLabels[imageId].replace(new RegExp(labelString + ',*', 'g'), '');
+
+		this.images.each(function(image){
 			if(image.id !== imageId && me.imageLabels[image.id].indexOf('"label_' + labelId + '"') !== -1){
 				deleteLabel = false;
 			}
 		});
 
 		if(deleteLabel){
-			for(var idx in me.labels){
-				if(me.labels[idx] && me.labels[idx].id === labelId) {
-					me.labels.splice(idx, 1);
+			for(var idx in this.labels){
+				if(this.labels[idx] && this.labels[idx].id === labelId) {
+					this.labels.splice(idx, 1);
 				}
 			}
 		}
@@ -1253,15 +1427,18 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	},
 
 	associateLabelWithImage: function(imageId, labelId, label) {
-		var data;
+		var data,
+			added = false;
 
 		if (!this.imageLabels[imageId]) {
 			this.imageLabels[imageId] = labelId;
+			added = true;
+		} else if (this.imageLabels[imageId].indexOf(labelId) === -1) {
+			this.imageLabels[imageId] += ', ' + labelId;
+			added = true;
 		}
 
-		if (this.imageLabels[imageId].indexOf(labelId) === -1) {
-			this.imageLabels[imageId] += ', ' + labelId;
-		}
+		if (!added) return;
 
 		data = {
 			'action': 'upfront-media-associate_label',
@@ -1273,16 +1450,17 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 	addToGalleryLabels: function(label) {
 		var labelInGallery = false,
-			i = 0;
+			i = 0,
+		  labelIdAsInt = parseInt(label.id, 10); // if not done labels will be duplicated
 
 		while (i < this.labels.length && !labelInGallery) {
-			labelInGallery = this.labels[i].id === label.id;
+			labelInGallery = this.labels[i].id === labelIdAsInt;
 			i++;
 		}
 
 		if (!labelInGallery) {
 			this.labels.push({
-				id: label.id,
+				id: labelIdAsInt,
 				text: label.text
 			});
 		}
@@ -1504,6 +1682,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		this.model.get('properties').each(function(prop){
 			props[prop.get('name')] = prop.get('value');
 		});
+		props.preset = props.preset || 'default';
 		return props;
 	},
 
@@ -1519,6 +1698,30 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			return;
 		}
 		return this.model.get_property_value_by_name(name);
+	},
+
+	getControlItems: function(){
+		return _([
+			this.createControl('add', l10n.template.add_img, 'openImageSelector'),
+			this.createControl('toggle-sorting', l10n.toggle_dnd, 'toggleSorting'),
+			this.createPaddingControl(),
+			this.createControl('settings', l10n.settings, 'on_settings_click')
+		]);
+	},
+	/**
+	 * Adds proper controll panel to the image
+	 *
+	 * @param image BB-model, one single image
+	 * @param $item jQuery object of a single image
+	 * @returns controls of of the single image
+	 */
+	add_controls_to_item: function(image, $item){
+		var controls = this.createControlsEach(image);
+		controls.render();
+		$item.find('.ugallery-controls').remove();
+		$item.append($('<div class="ugallery-controls upfront-ui"></div>').append(controls.$el));
+
+		return controls;
 	}
 });
 
@@ -1530,11 +1733,11 @@ Upfront.Application.LayoutEditor.add_object('Ugallery', {
 	'Settings': UgallerySettings,
 	cssSelectors: {
 		'.ugallery': {label: l10n.css.container_label, info: l10n.css.container_info},
-		'.ugallery_item': {label: l10n.css.elements_label, info: l10n.css.elements_info},
-		'img.ugallery-image': {label: l10n.css.images_label, info: l10n.css.images_info},
-		'.ugallery-thumb-title': {label: l10n.css.captions_label, info: l10n.css.captions_info},
-		'.ugallery_labels': {label: l10n.css.lblcnt_label, info: l10n.css.lblcnt_info},
-		'.ugallery_label_filter': {label: l10n.css.labels_label, info: l10n.css.labels_info}
+		'.ugallery .ugallery_item': {label: l10n.css.elements_label, info: l10n.css.elements_info},
+		'.ugallery img.ugallery-image': {label: l10n.css.images_label, info: l10n.css.images_info},
+		'.ugallery .ugallery-thumb-title': {label: l10n.css.captions_label, info: l10n.css.captions_info},
+		'.ugallery .ugallery_labels': {label: l10n.css.lblcnt_label, info: l10n.css.lblcnt_info},
+		'.ugallery .ugallery_label_filter': {label: l10n.css.labels_label, info: l10n.css.labels_info}
 	},
 	cssSelectorsId: Upfront.data.ugallery.defaults.type
 });

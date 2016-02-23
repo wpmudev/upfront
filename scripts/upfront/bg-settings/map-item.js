@@ -24,7 +24,7 @@ define([
 				};
 				
 			if ( ! map_center ){
-				this.model.init_property('background_map_center', [10.722250, 106.730762]);
+				this.model.init_property('background_map_center', [-37.8180, 144.9760]);
 				this.model.init_property('background_map_zoom', 10);
 				this.model.init_property('background_map_style', "ROADMAP");
 				this.model.init_property('background_map_controls', "");

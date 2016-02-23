@@ -122,6 +122,7 @@
 		var scrollTop = window.pageYOffset;
 		Upfront_Parallax.cache.scrollTop = scrollTop;
 	}
+	$(window).one('load.upfront_paralax', Upfront_Parallax.updateScroll);
 	$(window).on('load.upfront_paralax', Upfront_Parallax.draw);
 	$(window).on('scroll.upfront_paralax', Upfront_Parallax.updateScroll);
 	
@@ -225,7 +226,9 @@
 		reset: function () {
 			this.$moveElement.css({
 				transform: '',
-				opacity: ''
+				opacity: '',
+				top: '',
+				bottom: ''
 			});
 		},
 		destroy: function () {
@@ -274,7 +277,8 @@
 			this.canvas.height = $(window).height();
 		},
 		removeCanvas: function () {
-			this.canvas.remove();
+			// this.canvas.remove(); // This does not work on IE11 and crash the UF editor
+			$(this.canvas).remove();
 		},
 		prepareImage: function () {
 			if (this.cache.img) {
@@ -381,6 +385,7 @@
 			requestAnimationFrame($.proxy(this.draw, this));
 		},
 		draw: function (time) {
+			if ( !(this.id in Upfront_Parallax.instances) ) return;
 			var offsetTop = this.cache.offsetTop,
 				offsetBottom = this.cache.offsetBottom,
 				height = this.cache.height,

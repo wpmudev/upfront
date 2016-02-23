@@ -1,24 +1,28 @@
 /* Chosen */
 #insert-font-widget .chosen-container-single .chosen-single,
 #sidebar-ui .chosen-container-single .chosen-single,
+#upfront-popup .chosen-container-single .chosen-single,
 #settings .chosen-container-single .chosen-single,
-#upfront-popup .chosen-container-single .chosen-single
+.preset-manager-panel .chosen-container-single .chosen-single
 {
 	margin: 0;
 	text-decoration: none;
-	background: #e6f3fe;
-	color: rgb(96, 127, 153);
+	color: #4e4770;
 	font-size: 11px;
 	box-shadow: inset 0 2px 0 #f2f9ff;
 	font-family: Verdana, sans-serif;
 	line-height: 22px;
+	background: rgb(242, 249, 255);
+	border: 1px solid rgb(183, 201, 217);
 	border-radius: 3px;
-	border:1px solid rgb(163, 191, 217);
+	height: 24px;
+	max-height: 24px;
 }
 #insert-font-widget .chosen-container-single .chosen-single:hover,
 #sidebar-ui .chosen-container-single .chosen-single:hover,
+#upfront-popup .chosen-container-single .chosen-single:hover,
 #settings .chosen-container-single .chosen-single:hover,
-#upfront-popup .chosen-container-single .chosen-single:hover
+.preset-manager-panel .chosen-container-single .chosen-single:hover
 {
 	border-color: rgb(96, 127, 153);
 }
@@ -29,7 +33,9 @@
 #settings .chosen-with-drop .chosen-single,
 #settings .chosen-with-drop .chosen-single:hover,
 #upfront-popup .chosen-with-drop .chosen-single,
-#upfront-popup .chosen-with-drop .chosen-single:hover
+#upfront-popup .chosen-with-drop .chosen-single:hover,
+.preset-manager-panel .chosen-with-drop .chosen-single,
+.preset-manager-panel .chosen-with-drop .chosen-single:hover
 {
 	border-color: rgb(163, 191, 217);
 	border-bottom-left-radius: 0;
@@ -41,23 +47,29 @@
 #insert-font-widget .chosen-container .chosen-results li,
 #sidebar-ui .chosen-container .chosen-results li,
 #settings .chosen-container .chosen-results li,
-#upfront-popup .chosen-container .chosen-results li
+#upfront-popup .chosen-container .chosen-results li,
+.preset-manager-panel .chosen-container .chosen-results li
 {
 	margin: 0 0 0 5px;
+}
+.chosen-with-drop .chosen-single {
+	background: #fafdff !important;
 }
 #insert-font-widget .chosen-container-single .chosen-drop,
 #sidebar-ui .chosen-container-single .chosen-drop,
 #settings .chosen-container-single .chosen-drop,
 #upfront-popup .chosen-container-single .chosen-drop,
+.preset-manager-panel .chosen-container-single .chosen-drop,
 
 #insert-font-widget .chosen-container-multi .chosen-drop,
 #sidebar-ui .chosen-container-multi .chosen-drop,
 #settings .chosen-container-multi .chosen-drop,
-#upfront-popup .chosen-container-multi .chosen-drop
+#upfront-popup .chosen-container-multi .chosen-drop,
+.preset-manager-panel .chosen-container-multi .chosen-drop
 {
-	background: #e6f3fe;
-	color: rgb(96, 127, 153);
-	border-color: rgb(163, 191, 217);
+	background: #fafdff;
+	box-shadow: 0 0 3px rgba(96, 127, 153, 0.5);
+	border-color: #7d99b3;
 	font-size: 11px;
 	font-family: Verdana, sans-serif;
 	box-shadow: none;
@@ -65,34 +77,39 @@
 #insert-font-widget .chosen-container .chosen-results,
 #sidebar-ui .chosen-container .chosen-results,
 #settings .chosen-container .chosen-results,
-#upfront-popup .chosen-container .chosen-results
+#upfront-popup .chosen-container .chosen-results,
+.preset-manager-panel .chosen-container .chosen-results
 {
 	max-height: 150px;
 	margin-right: 5px;
 }
 #sidebar-ui .chosen-container .chosen-results,
 #settings .chosen-container .chosen-results,
-#upfront-popup .chosen-container .chosen-results
+#upfront-popup .chosen-container .chosen-results,
+.preset-manager-panel .chosen-container .chosen-results
 {
 	max-height: 120px;
 }
 #insert-font-widget .chosen-container .chosen-results li.highlighted,
 #sidebar-ui .chosen-container .chosen-results li.highlighted,
 #settings .chosen-container .chosen-results li.highlighted,
-#upfront-popup .chosen-container .chosen-results li.highlighted
+#upfront-popup .chosen-container .chosen-results li.highlighted,
+.preset-manager-panel .chosen-container .chosen-results li.highlighted
 {
-	background: #5f7f9a;
-	color: #fff;
+	background: #d4dee8;
+	color: #2f475f;
 }
 #insert-font-widget .chosen-container-single .chosen-search,
 #sidebar-ui .chosen-container-single .chosen-search,
 #settings .chosen-container-single .chosen-search,
 #upfront-popup .chosen-container-single .chosen-search,
+.preset-manager-panel .chosen-container-single .chosen-search,
 
 #insert-font-widget .chosen-container-multi .chosen-search,
 #sidebar-ui .chosen-container-multi .chosen-search,
 #settings .chosen-container-multi .chosen-search,
-#upfront-popup .chosen-container-multi .chosen-search
+#upfront-popup .chosen-container-multi .chosen-search,
+.preset-manager-panel .chosen-container-multi .chosen-search
 {
 	padding: 3px 5px;
 }
@@ -100,31 +117,35 @@
 #sidebar-ui .chosen-container-single .chosen-search input[type=text],
 #settings .chosen-container-single .chosen-search input[type=text],
 #upfront-popup .chosen-container-single .chosen-search input[type=text],
+.preset-manager-panel .chosen-container-single .chosen-search input[type=text],
 
 #insert-font-widget .chosen-container-multi .chosen-choices input[type=text],
 #sidebar-ui .chosen-container-multi .chosen-choices input[type=text],
 #settings .chosen-container-multi .chosen-choices input[type=text],
-#upfront-popup .chosen-container-multi .chosen-choices input[type=text]
+#upfront-popup .chosen-container-multi .chosen-choices input[type=text],
+.preset-manager-panel .chosen-container-multi .chosen-choices input[type=text]
 {
-	background: #f7fbff;
-	border-color: #a4bfd8;
+	background: rgb(255,255,255);
+	border-color: rgb(162, 191, 218);
 	font-weight: normal;
 	font-size: 11px;
 	font-family: Verdana, sans-serif;
-	color: rgb(96, 127, 153);
+	color: #4e475f;
 	padding:5px;
 	/* Prevents chosen sprite image from displaying */
-	background-image:none!important; 
+	background-image:none!important;
 }
 #insert-font-widget .chosen-container-single .chosen-results::-webkit-scrollbar,
 #sidebar-ui .chosen-container-single .chosen-results::-webkit-scrollbar,
 #settings .chosen-container-single .chosen-results::-webkit-scrollbar,
 #upfront-popup .chosen-container-single .chosen-results::-webkit-scrollbar,
+.preset-manager-panel .chosen-container-single .chosen-results::-webkit-scrollbar,
 
 #insert-font-widget .chosen-container-multi .chosen-results::-webkit-scrollbar,
 #sidebar-ui .chosen-container-multi .chosen-results::-webkit-scrollbar,
 #settings .chosen-container-multi .chosen-results::-webkit-scrollbar,
-#upfront-popup .chosen-container-multi .chosen-results::-webkit-scrollbar
+#upfront-popup .chosen-container-multi .chosen-results::-webkit-scrollbar,
+.preset-manager-panel .chosen-container-multi .chosen-results::-webkit-scrollbar
 {
 	background: #d4dee8;
   width: 5px;
@@ -133,18 +154,21 @@
 #sidebar-ui .chosen-container-single .chosen-results::-webkit-scrollbar-thumb,
 #settings .chosen-container-single .chosen-results::-webkit-scrollbar-thumb,
 #upfront-popup .chosen-container-single .chosen-results::-webkit-scrollbar-thumb,
+.preset-manager-panel .chosen-container-single .chosen-results::-webkit-scrollbar-thumb,
 
 #insert-font-widget .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb,
 #sidebar-ui .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb,
 #settings .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb,
-#upfront-popup .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb
+#upfront-popup .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb,
+.preset-manager-panel .chosen-container-multi .chosen-results::-webkit-scrollbar-thumb
 {
 	background-color: #1fcd8f;
 }
 #insert-font-widget .chosen-container-single .chosen-single div b,
 #sidebar-ui .chosen-container-single .chosen-single div b,
 #settings .chosen-container-single .chosen-single div b,
-#upfront-popup .chosen-container-single .chosen-single div b
+#upfront-popup .chosen-container-single .chosen-single div b,
+.preset-manager-panel .chosen-container-single .chosen-single div b
 {
 	display: block;
 	width: 0;
@@ -158,12 +182,15 @@
 #insert-font-widget .chosen-with-drop .chosen-single div b,
 #sidebar-ui .chosen-with-drop .chosen-single div b,
 #settings .chosen-with-drop .chosen-single div b,
-#upfront-popup .chosen-with-drop .chosen-single div b
+#upfront-popup .chosen-with-drop .chosen-single div b,
+.preset-manager-panel .chosen-with-drop .chosen-single div b
 {
 	border-top: 0 none transparent;
 	border-bottom: 4px solid rgb(96, 127, 153);
 }
-
+.upfront-select-font .chosen-container-single .chosen-single {
+	font-size: 13px;
+}
 .chosen-container .chosen-results li em {
 	background-color: #00CE8D;
 	color:#fff;
@@ -171,4 +198,59 @@
 	box-shadow: 0 1px 0 #00B47C;
 	padding:2px 0;
 	text-decoration: none!important;
+}
+.chosen-container-multi {
+	margin: 0;
+	text-decoration: none;
+	color: #2f475f;
+	font-size: 11px;
+	font-family: Verdana, sans-serif;
+	line-height: 22px;
+	background: rgb(255, 255, 255) !important;
+	border-color: rgb(162, 191, 218) !important;
+	position: relative;
+}
+.chosen-container-multi .chosen-choices {
+	background-image: none !important;
+	border-color: rgb(162, 191, 218) !important;
+}
+.chosen-container-active .chosen-choices, .chosen-container .chosen-drop {
+	border-color: rgb(162, 191, 218) !important;
+}
+.chosen-container-multi:after {
+	content: " ";
+	display: block;
+	position: absolute;
+	top: 11px;
+	right: 11px;
+	border-top: 4px solid rgb(96, 127, 153);
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+}
+.chosen-container-multi .chosen-choices li.search-choice {
+	background-image: linear-gradient(-179deg, #F2F9FF 0%, #DAE7F2 100%) !important;
+	border: 1px solid rgba(125,152,179,0.30) !important;
+	border-radius: 1px !important;
+	z-index: 19;
+}
+.chosen-container .chosen-results li.highlighted {
+	background: #d8e0e8 !important;
+	color: #2F475F !important;
+}
+.chosen-container-multi .chosen-choices li.search-choice .search-choice-close {
+	background-image: url('../img/uf-ui-sprite.svg') !important;
+	background-position: -46px -318px !important;
+	opacity: 0.8;
+}
+.chosen-container-multi .chosen-choices li.search-choice .search-choice-close:hover {
+	opacity: 1;
+}
+#sidebar-ui .chosen-with-drop .chosen-drop,
+#element-settings-sidebar .chosen-with-drop .chosen-drop {
+	position: fixed;
+	display: none;
+}
+
+.chosen-container:not(.chosen-with-drop) .chosen-drop {
+	display: none !important;
 }

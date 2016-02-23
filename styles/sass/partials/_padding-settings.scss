@@ -1,0 +1,122 @@
+.upfront-settings-padding_panel {
+  background: #dae7f2;
+  height: 35px;
+  overflow: hidden;
+}
+.upfront-settings-padding_panel.open {
+	overflow: visible;
+  height: auto;
+}
+.upfront-settings-padding_panel .upfront-settings-item {
+  padding: 0;
+}
+.upfront-settings-padding_panel.open .upfront-settings-item-title {
+  font-weight: bold;
+  padding-bottom: 9px;
+}
+.upfront-settings-padding_panel .upfront-settings-item-title {
+  cursor: pointer;
+  text-transform: none;
+  padding: 0 5px 12px;
+  font-weight: normal;
+  line-height: 28px;
+}
+
+.upfront-settings-padding_panel .upfront-settings-item-title span {
+  background: none;
+  margin-left: 0;
+}
+
+
+/* Padding settings */
+.upfront-settings-padding {
+  padding: 0 5px;
+}
+.upfront-settings-padding .upfront-field-select-single {
+  width: 215px;
+  display:inline-block;
+}
+.upfront-settings-padding .upfront-settings-item-title span {
+  margin-top: 3px;
+  display: inline-block;
+}
+.upfront-settings-padding .upfront-field-wrap-multiple:first-child {
+  margin-top: 0;
+}
+.upfront-settings-padding .upfront-settings-item-title:after {
+  content: "";
+  border: 0 none;
+  width: 15px;
+  height: 15px;
+  background-color: #c3d7e6;
+  display: inline-block;
+  position: absolute;
+  right: 11px;
+  top: 10px;
+  border-radius: 50%;
+}
+.upfront-settings-padding_panel.open .upfront-settings-padding .upfront-settings-item-title:before {
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid #273a4c;
+  border-bottom: 0 none;
+  top: 17px;
+  right: 15px;
+}
+.upfront-settings-padding .upfront-field-wrap-slider {
+  display: inline-block;
+  width: 63%;
+  margin: 0 5% 0 2%;
+  border-left: 3px solid #C2D5E6;
+  padding-left: 5%;
+  padding-top: 6px;
+  height: 30px;
+}
+.upfront-settings-padding .upfront-field-wrap-number {
+  width: 30%;
+  display: inline-block;
+  padding-left: 5px;
+  margin: 0;
+  position: relative;
+  top: -10px;
+}
+.upfront-settings-padding .upfront-field-wrap-number label {
+  margin: 0;
+}
+.upfront-settings-padding .upfront-field-wrap-number .upfront-field-number {
+  width: 45px;
+  clear: both;
+}
+.upfront-settings-padding .upfront-settings-item-title:before {
+  content: '';
+  width: 0;
+  height: 0;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-left: 4px solid #273a4c;
+  display: block;
+  top: 14px;
+  right: 16px;
+  position: absolute;
+  z-index: 1;
+}
+
+/* Padding Hint */
+.upfront-entity-padding-hint {
+  display: block;
+  position: absolute;
+  top: auto;
+  bottom: auto;
+  left: 0;
+  right: 0;
+  transition: opacity 200ms ease-out;
+  z-index: -1;
+}
+.upfront-entity-top-padding-hint {
+  top: 2px;
+  background: transparent url(../img/top-padding-hint.png) center bottom scroll repeat;
+}
+.upfront-entity-bottom-padding-hint {
+  bottom: 2px;
+  background: transparent url(../img/bottom-padding-hint.png) center bottom scroll repeat;
+}

@@ -6,10 +6,15 @@
 	bottom: 0;
 	right: 0;
 	width: 100%;
-	z-index: 90;
+	z-index: 10001001;
 	display: none;
 }
-
+.upfront-css-top{
+  height: 30px;
+}
+#upfront-general-csseditor{
+  //left: 260px;
+}
 .upfront-css-resizable {
 	background: #3d5266;
 	position: absolute;
@@ -19,16 +24,17 @@
 	min-height: 200px;
 }
 
-.upfront-css-top{
+.upfront-css-top.ui-resizable-handle.ui-resizable-n {
 	border-bottom: 1px solid #26333F;
 	border-top: 1px solid #26333F;
 	color: #dae6f2;
 	font-size: 14px;
-	height:34px;
+	height: 34px;
 	position: static;
+	background-color: #4E677F;
 }
 
-.upfront-css-ace{
+.upfront-css-ace {
 	height: 100%;
 	width: 75%;
 	float: left;
@@ -93,28 +99,22 @@ span.upfront-css-color .upfront-field-wrap{
 }
 
 .upfront-css-top .sp-replacer {
-	margin: 4px;
+	margin: 6px;
 	margin-left: 20px;
-	height: 24px;
-	width:24px;
 	overflow: hidden;
-	padding:2px;
 }
 
 .upfront-css-top .sp-preview {
+	display: inline-block;
 	width:18px;
 	height:18px;
-	border-radius: 0px;
-	margin: 0;
-  -webkit-background-clip: padding-box;
-  -moz-background-clip:    padding;
-  background-clip:         padding-box;
-}
-.upfront-css-top div.sp-replacer:before {
-	top:1px;
-	left:1px;
-	width:20px;
-	height:20px;
+	vertical-align: bottom;
+  	margin: 0;
+	border-radius:50%;
+	top: 0px;
+	position: absolute;
+	border:1px solid #A2BFDA;
+	box-shadow: inset 0 0 0 1px #fff;
 }
 
 a.upfront-css-image:hover,

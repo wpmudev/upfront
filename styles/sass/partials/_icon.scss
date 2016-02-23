@@ -20,7 +20,6 @@
 .panel-setting-dialog-region:before, .panel-setting-dialog-info:before,
 .position-select-wrap .position-select:checked,
 .upfront-field-checkbox:checked,
-.upfront-field-select-single .upfront-field-select-option-selected label:before,
 .upfront-ui .upfront-region-field-icon:before,
 #upfront-popup-top.upfront-popup-meta .upload:before,
 .upfront-icon-button-hide:before,
@@ -447,12 +446,6 @@
 .upfront-field-checkbox:checked {
 	background-position: -46px -353px;
 }
-.upfront-field-select-single .upfront-field-select-option-selected label:before {
-	width: 11px;
-	height: 8px;
-	margin: 7px 12px 0 -5px;
-	background-position: -46px -354px;
-}
 .region-lock-switch:before {
 	width: 22px;
 	height: 30px;
@@ -547,6 +540,9 @@
 }
 .upfront-icon-button-move:before {
 	background-position: -261px -280px;
+}
+.upfront-icon-button-add-spacer:before {
+  background-position: -262px -133px;
 }
 
 .upfront-module-small .upfront-icon-button-delete:before {
@@ -918,7 +914,9 @@ i.upfront-field-icon-burger-trigger {
 	margin: 0 0 4px;
 }
 .upfront-editable_entity:hover > .upfront-entity_meta .upfront-icon-button,
-.upfront-editable_entity:hover > .upfront-objects_container .upfront-entity_meta .upfront-entity-settings_trigger{
+.upfront-editable_entity:hover > .upfront-objects_container .upfront-entity_meta .upfront-entity-settings_trigger,
+.upfront-module-active > .upfront-entity_meta .upfront-icon-button,
+.upfront-active_entity > .upfront-editable_entity > .upfront-entity_meta .upfront-entity-settings_trigger {
     opacity: 1;
 	visibility: visible;
 }
@@ -928,6 +926,13 @@ i.upfront-field-icon-burger-trigger {
 .upfront-region-lightbox-editing .upfront-region-side-lightbox:hover > .upfront-entity_meta .upfront-icon-button {
 	opacity: 1;
 	visibility: visible;
+}
+.close_lightbox > .upfront-icon-popup-close:before {
+    content:"\00d7";
+    font-size:40px;
+    font-weight:normal;
+    color:#fff;
+    text-shadow:0 1px 1px rgba(0,0,0,.1);
 }
 .upfront-icon-button-delete {
 	box-shadow: inset 0 0 0 1px #cc423d;
@@ -974,5 +979,12 @@ i.upfront-field-icon-burger-trigger {
 	background: #f2b530 -o-linear-gradient(-45deg, rgba(255,190,51,1) 0%,rgba(255,190,51,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* Opera 11.10+ */
 	background: #f2b530 -ms-linear-gradient(-45deg, rgba(255,190,51,1) 0%,rgba(255,190,51,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* IE10+ */
 	background: #f2b530 linear-gradient(135deg, rgba(255,190,51,1) 0%,rgba(255,190,51,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* W3C */
+}
+.upfront-icon-button-add-spacer,
+.upfront-ui .upfront-icon-button-add-spacer:hover {
+  background: #1fcd8f;
+  border:1px solid #fff;
+  box-shadow: 0px 0px 3px 0px rgba(36,57,77,0.4);
+  border-radius: 9px;
 }
 

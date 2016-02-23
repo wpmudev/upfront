@@ -49,8 +49,10 @@ class Upfront_UyoutubeView extends Upfront_Object {
 			if(!isset($data['properties']))
 					return $flat;
 
-			foreach($data['properties'] as $prop)
-					$flat[$prop['name']] = $prop['value'];
+			foreach($data['properties'] as $prop) {
+				if (isset($prop['value']) === false) continue;
+				$flat[$prop['name']] = $prop['value'];
+			}
 
 			$flat = array_merge(self::default_properties(), $flat);
 
@@ -104,22 +106,23 @@ class Upfront_UyoutubeView extends Upfront_Object {
 			'submit_button' => __('Go', 'upfront'),
 			'element_settings' => __('YouTube settings', 'upfront'),
 			'apperance_title' => __('APPEARANCE', 'upfront'),
-			'title_limit' => __('Video Title limit to', 'upfront'),
-			'characters_label' => __('characters', 'upfront'),
+			'title_limit' => __('Limit Video Title to', 'upfront'),
+			'characters_label' => __('char.', 'upfront'),
 			'display_style' => __('Display style:', 'upfront'),
 			'gallery_label' => __('Gallery', 'upfront'),
 			'list_label' => __('List', 'upfront'),
 			'first_to_thumbnails' => __('Add 1st Video to Thumbnails', 'upfront'),
 			'thumbnail_size' => __('Thumbnail Size', 'upfront'),
 			'thumbnail_size_info' => __('Slide to resize the thumbnails.', 'upfront'),
-			'videos_title' => __('VIDEO(S)', 'upfront'),
+			'videos_title' => __('VIDEO', 'upfront'),
 			'default_video' => __('Video 1 URL', 'upfront'),
 			'video_placeholder' => __('YouTube Video URL', 'upfront'),
 			'add_video' => __('Add Another Video', 'upfront'),
 			'settings' => __('Settings', 'upfront'),
+			'general_settings' => __('General Settings', 'upfront'),
 			'validMessage' => __('Please enter valid YouTube video URL', 'upfront'),
 			'template' => array(
-				'video_label' => __('Video', 'upfront'),
+				'video_label' => __('Videos', 'upfront'),
 				'url_label' => __('URL', 'upfront'),
 				'url_placeholder' => __('YouTube Video URL', 'upfront'),
 			),

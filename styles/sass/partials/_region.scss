@@ -14,6 +14,12 @@
 	width: 100%;
 }
 
+/* Fix bug where if opacity is set on upfront-region-container-bg, controls become unaccessible (or even invisible) */
+.upfront-region-container-active .upfront-region-container-bg,
+.upfront-region-container-active .upfront-region {
+	opacity: 1 !important;
+}
+
 .upfront-region-container-has-posts .upfront-region,
 .upfront-region-container-has-this_post .upfront-region {
   min-height: 0 !important;
@@ -43,7 +49,7 @@
 }
 
 .upfront-region-container-sticky {
-	z-index: 2999999;
+	z-index: 99;
 }
 
 .upfront-region-hidden {
@@ -157,13 +163,20 @@
 	visibility: visible;
 	opacity: 1;
 }
+.upfront-region-container.upfront-region-module-activated .upfront-region-edit-trigger,
+.upfront-region-container.upfront-region-module-activated:hover .upfront-region-edit-trigger,
+.upfront-region-container.upfront-region-module-activated .upfront-region:hover .upfront-region-edit-trigger,
 .upfront-region-editing .upfront-region-container .upfront-region-edit-trigger,
 .upfront-region-editing .upfront-region-container:hover .upfront-region-edit-trigger,
 .upfront-region-fixed-editing .upfront-region-container .upfront-region-edit-trigger,
 .upfront-region-fixed-editing .upfront-region-container:hover .upfront-region-edit-trigger,
 .upfront-edit-responsive .upfront-region-hidden > .upfront-region-edit-trigger,
 .upfront-edit-responsive .upfront-region-editing.responsive-breakpoint .upfront-region:hover > .upfront-region-edit-trigger-small,
-.upfront-edit-responsive .responsive-breakpoint .upfront-region-hidden:hover > .upfront-region-edit-trigger-small {
+.upfront-edit-responsive .responsive-breakpoint .upfront-region-hidden:hover > .upfront-region-edit-trigger-small,
+.upfront-region-container.upfront-region-container-nav-open .upfront-region-edit-trigger,
+.upfront-region-container.upfront-region-container-nav-open:hover .upfront-region-edit-trigger,
+.upfront-edit-responsive .upfront-region-container.upfront-region-container-nav-open .upfront-region-edit-trigger,
+.upfront-edit-responsive .upfront-region-container.upfront-region-container-nav-open:hover .upfront-region-edit-trigger {
 	visibility: hidden;
 	opacity: 0;
 }
@@ -202,6 +215,9 @@
 .upfront-module-group-on-edit .upfront-module-group-finish-edit,
 .upfront-region-lightbox-editing .upfront-region-side-lightbox .upfront-region-finish-edit-lightbox {
 	display: block;
+}
+.upfront-module-group-nav-open.upfront-module-group-on-edit .upfront-module-group-finish-edit {
+	display: none;
 }
 .upfront-region-title {
 	position: absolute;
@@ -300,14 +316,14 @@
 	width: auto;
 	height: auto;
 	z-index: 9997;
-	cursor: s-resize;
+	cursor: ns-resize;
 	display: block;
 	visibility: hidden;
 }
 .upfront-region-resize-handle-n {
   top: -14px;
   bottom: auto;
-  cursor: n-resize;
+  cursor: ns-resize;
 }
 .upfront-region-resize-handle-e {
 	top: 0;
@@ -315,7 +331,7 @@
 	left: auto;
 	right: -13px;
 	width: 24px;
-	cursor: e-resize;
+	cursor: ew-resize;
 }
 .upfront-region-resize-handle-w {
 	top: 0;
@@ -323,7 +339,7 @@
 	left: -13px;
 	right: auto;
 	width: 24px;
-	cursor: w-resize;
+	cursor: ew-resize;
 }
 .upfront-region-editing .upfront-region-container-active > .upfront-region-resize-handle,
 .upfront-region-editing .upfront-region-container-active .upfront-region-side-left > .upfront-region-resize-handle-e,
@@ -332,9 +348,10 @@
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region > .upfront-region-resize-handle-s,
 .upfront-region-fixed-editing .upfront-region-side-fixed .upfront-region-resize-handle {
 	visibility: visible;
-	z-index: 9997;
+	/*z-index: 9997;*/
+	z-index: 2000000;
 }
-.responsive-breakpoint.upfront-region-editing .upfront-region-container-active > .upfront-region-resize-handle,
+/*.responsive-breakpoint.upfront-region-editing .upfront-region-container-active > .upfront-region-resize-handle,*/
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region-side-left > .upfront-region-resize-handle-e,
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region-side-right > .upfront-region-resize-handle-w,
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region-hidden > .upfront-region-resize-handle-s,
@@ -377,9 +394,15 @@
 .upfront-region-editing .upfront-region-container-active .upfront-region-sub-container-active {
     z-index: 9999;
 }
+
 .upfront-region-editing-modal {
 	z-index: 999999999;
 }
+
+.upfront-region-sub-container-top {
+	z-index:13;
+}
+
 .upfront-region-editing-modal .upfront-entity_meta{
 	display: none !important;
 }
@@ -900,7 +923,7 @@
 }
 .upfront-inline-panel-item .upfront-icon {
 	display: block;
-	padding: 4px 4px 0 4px;
+	padding: 6px 6px 0 6px;
 }
 .upfront-inline-panel-item.labeled{
     line-height: 40px !important;
@@ -1369,4 +1392,7 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-region-editing .upfront-region-bg-setting-open .upfront-icon-control-region-resize-e:before,
 .upfront-region-editing .upfront-region-bg-setting-open .upfront-icon-control-region-resize-w:before {
 	display:none;
+}
+.upfront-ui .upfront-region-panel-item-add-region .upfront-icon-region-add:before {
+	background-position: -260px -130px;
 }

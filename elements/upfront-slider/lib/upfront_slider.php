@@ -13,6 +13,15 @@ class Upfront_UsliderView extends Upfront_Object {
 			$slides[] = array_merge(self::slide_defaults(), $slide);
 		}
 
+		if (isset($data['usingNewAppearance']) === false) {
+			$data['usingNewAppearance'] = false;
+		}
+
+		if (!isset($data['preset'])) {
+			$data['preset'] = 'default';
+		}
+		$data['properties'] = Upfront_Slider_Presets_Server::get_instance()->get_preset_properties($data['preset']);
+
 		$data['slides'] = $slides;
 		$data['rotate'] = $data['rotate'] ? true : false;
 
@@ -21,7 +30,7 @@ class Upfront_UsliderView extends Upfront_Object {
 
 		$data['slidesLength'] = sizeof($slides);
 
-		$side_style = $data['primaryStyle'] == 'side';
+		$side_style = $data['properties']['primaryStyle'] === 'side';
 
 		$data['imageWidth'] = $side_style ? floor($data['rightImageWidth'] / $data['rightWidth'] * 100) . '%': '100%';
 		$data['textWidth'] =  $side_style ? floor(($data['rightWidth'] - $data['rightImageWidth']) / $data['rightWidth'] * 100) . '%' : '100%';
@@ -31,7 +40,18 @@ class Upfront_UsliderView extends Upfront_Object {
 		$data['production'] = true;
 		$data['startingSlide'] = 0;
 
-		$markup = upfront_get_template('uslider', $data, dirname(dirname(__FILE__)) . '/tpls/uslider.html');
+		// Overwrite properties with preset properties
+		if ($data['usingNewAppearance'] !== false) {
+			if (isset($data['properties']['primaryStyle'])) {
+				$data['primaryStyle'] = $data['properties']['primaryStyle'];
+			}
+			if (isset($data['properties']['captionBackground'])) {
+				$data['captionBackground'] = $data['properties']['captionBackground'];
+			}
+		}
+
+
+		$markup = upfront_get_template('uslider', $data, dirname(dirname(__FILE__)) . '/tpl/uslider.html');
 
 		return $markup;
 	}
@@ -41,7 +61,7 @@ class Upfront_UsliderView extends Upfront_Object {
 		upfront_add_element_style('uslider_settings_css', array('css/uslider_settings.css', dirname(__FILE__)));
 		//wp_enqueue_style( 'uslider_css', upfront_element_url('css/uslider.css', dirname(__FILE__)), array(), "0.1" );
 		//wp_enqueue_style( 'uslider_settings_css', upfront_element_url('css/uslider_settings.css', dirname(__FILE__)), array(), "0.1" );
-		
+
 		//wp_enqueue_script('uslider-front', upfront_element_url('js/uslider-front.js', dirname(__FILE__)), array('jquery'));
 		upfront_add_element_script('uslider-front', array('js/uslider-front.js', dirname(__FILE__)));
 	}
@@ -50,7 +70,7 @@ class Upfront_UsliderView extends Upfront_Object {
 		$data['uslider'] = array(
 			'defaults' => self::default_properties(),
 			'slideDefaults' => self::slide_defaults(),
-			'template' => upfront_get_template_url('uslider', upfront_element_url('tpls/uslider.html', dirname(__FILE__)))
+			'template' => upfront_get_template_url('uslider', upfront_element_url('tpl/uslider.html', dirname(__FILE__)))
 		);
 		return $data;
 	}
@@ -70,6 +90,7 @@ class Upfront_UsliderView extends Upfront_Object {
 			'view_class' => "USliderView",
 			"class" => "c24 upfront-uslider",
 			'has_settings' => 1,
+			'preset' => 'default',
 
 			'primaryStyle' => 'notext', // notext, below, over, side, onlytext
 
@@ -148,10 +169,13 @@ class Upfront_UsliderView extends Upfront_Object {
 				'next_label' => __('Navigation next', 'upfront'),
 				'next_info' => __('Navigation\'s next button', 'upfront'),
 			),
-			'settings' => __('Settings', 'upfront'),
-			'general' => __('General', 'upfront'),
+			'settings' => __('Slider Settings', 'upfront'),
+			'general' => __('General Settings', 'upfront'),
 			'above_img' => __('Above the image', 'upfront'),
 			'below_img' => __('Below the image', 'upfront'),
+			'slider_behaviour' => __('Slider Behaviour', 'upfront'),
+			'image_caption_position' => __('Image &amp; Caption Position:', 'upfront'),
+			'slider_transition' => __('Slider Transition:', 'upfront'),
 			'no_text' => __('No text', 'upfront'),
 			'over_top' => __('Over image, top', 'upfront'),
 			'over_bottom' => __('Over image, bottom', 'upfront'),
@@ -174,15 +198,16 @@ class Upfront_UsliderView extends Upfront_Object {
 			'caption_bg' => __('Caption Background', 'upfront'),
 			'none' => __('None', 'upfront'),
 			'pick_color' => __('Pick color', 'upfront'),
-			'rotate_every' => __('Rotate every ', 'upfront'),
+			'rotate_every' => __('Auto-rotate every ', 'upfront'),
 			'slide_down' => __('Slide Down', 'upfront'),
 			'slide_up' => __('Slide Up', 'upfront'),
 			'slide_right' => __('Slide Right', 'upfront'),
 			'slide_left' => __('Slide Left', 'upfront'),
 			'crossfade' => __('Crossfade', 'upfront'),
 			'slider_controls' => __('Slider Controls', 'upfront'),
-			'on_hover' => __('show on hover', 'upfront'),
-			'always' => __('always show', 'upfront'),
+			'slider_controls_style' => __('Slider Controls Style', 'upfront'),
+			'on_hover' => __('Show on hover', 'upfront'),
+			'always' => __('Always show', 'upfront'),
 			'dots' => __('Dots', 'upfront'),
 			'arrows' => __('Arrows', 'upfront'),
 			'both' => __('Both', 'upfront'),
@@ -199,6 +224,7 @@ class Upfront_UsliderView extends Upfront_Object {
 			'txt_only' => __('txt / widget only', 'upfront'),
 			'choose_img' => __('Choose Images', 'upfront'),
 			'slide_desc' => __('Slide description', 'upfront'),
+			'delete_slide_confirm' => __('Are you sure to delete this slide?', 'upfront'),
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)

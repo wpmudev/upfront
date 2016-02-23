@@ -391,6 +391,10 @@ define("content", deps, function(postTpl, ContentTools) {
 			else
 				this.post.set('post_status', status);
 
+			/* If this is a new post, take out the default post_name so that the system assigns a new one based on the edited title */
+			if($('body').hasClass('is_new'))
+				this.post.set('post_name', '');
+
 			this.post.save().done(function(result){
                 if( me.post.is_new && post_name.length){
                     me.post.set("post_name", post_name).save();
@@ -403,10 +407,10 @@ define("content", deps, function(postTpl, ContentTools) {
                         Upfront.Views.Editor.notify(successMsg);
                     }
 					me.fetchPostLayout().then(function(){
-                        if (!is_auto_draft && 'draft' !== status) {
+                        //if (!is_auto_draft && 'draft' !== status) { // let it stop editor to make image shortcodes look better
                             me.stopEditContents();
                             me.render();
-                        }
+                        //}
 					});
 				}
 
@@ -421,10 +425,10 @@ define("content", deps, function(postTpl, ContentTools) {
                             Upfront.Views.Editor.notify(successMsg);
                         }
 						me.fetchPostLayout().then(function(){
-                            if( !is_auto_draft ) {
+                            //if( !is_auto_draft ) { let it stop editor to make image shortcodes look better
                                 me.stopEditContents();
                                 me.render();
-                            }
+                            //}
 						});
 					}
 					metaUpdated = true;

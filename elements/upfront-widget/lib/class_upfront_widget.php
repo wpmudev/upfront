@@ -92,13 +92,12 @@ class Upfront_Uwidget {
 		ob_start();
 		call_user_func_array($callback, array($params));
 		$markup = ob_get_clean();
-
 		return $this->_get_fields_from_markup($markup);
 	}
 
 	private function _get_fields_from_markup ($markup) {
 		$form = new DOMDocument();
-		@$form->loadHTML($markup);
+		@$form->loadHTML('<?xml encoding="utf-8" ?>' .$markup);
 
 		$xpath = new DOMXPath($form);
 		$nodes = $xpath->query('/html/body//label | /html/body//input | /html/body//select | /html/body//textarea');
@@ -107,25 +106,44 @@ class Upfront_Uwidget {
 
 		foreach($nodes as $node) {
 			if ('label' === strtolower($node->nodeName)) {
-				if (isset($fields[$node->getAttribute('for')])) $fields[$node->getAttribute('for')]['label'] = $node->nodeValue;
-				else $fields[$node->getAttribute('for')] = array('label' => $node->nodeValue);
+				$for = $node->getAttribute('for');
+				// Try to fix at least semi-sane tag soup - if the elements are actually within the label, try using that
+				if (empty($for)) for ($i=0; $i < $node->childNodes->length; $i++) {
+					$child = $node->childNodes->item($i);
+					if (!is_callable(array($child, 'getAttribute'))) continue;
+
+					$base = $child->getAttribute('name');
+					if ('radio' === $child->getAttribute('type')) $base .= $child->getAttribute('value');
+					$for = md5($base);
+				}
+
+				if (isset($fields[$for])) $fields[$for]['label'] = $node->nodeValue;
+				else $fields[$for] = array('label' => $node->nodeValue);
 			} else {
 				$exp_name = explode('[', $node->getAttribute('name'));
 				$fieldname = str_replace(']', '', array_pop($exp_name));
-				if (isset($fields[$node->getAttribute('id')])) $fields[$node->getAttribute('id')]['name'] = $fieldname;
-				else $fields[$node->getAttribute('id')] = array('name' =>$fieldname);
+				
+				$id = $node->getAttribute('id');
+				if (empty($id)) {
+					$base = $node->getAttribute('name');
+					if ('radio' === $node->getAttribute('type')) $base .= $node->getAttribute('value');
+					$id = md5($base);
+				}
+				
+				if (isset($fields[$id])) $fields[$id]['name'] = $fieldname;
+				else $fields[$id] = array('name' =>$fieldname);
 				if (strtolower($node->nodeName) == 'select') {
-					$fields[$node->getAttribute('id')]['type'] = $node->nodeName;
-					$fields[$node->getAttribute('id')]['options'] = array();
+					$fields[$id]['type'] = $node->nodeName;
+					$fields[$id]['options'] = array();
 					foreach($xpath->query('./option', $node) as $option) {
-						$fields[$node->getAttribute('id')]['options'][$option->getAttribute('value')] = $option->nodeValue;
+						$fields[$id]['options'][$option->getAttribute('value')] = $option->nodeValue;
 					}
 				} elseif('textarea' === strtolower($node->nodeName)) {
-					$fields[$node->getAttribute('id')]['type'] = $node->nodeName;
-					$fields[$node->getAttribute('id')]['value'] = $node->nodeValue;
+					$fields[$id]['type'] = $node->nodeName;
+					$fields[$id]['value'] = $node->nodeValue;
 				} elseif('input' === strtolower($node->nodeName)) {
-					$fields[$node->getAttribute('id')]['type'] = $node->getAttribute('type');
-					$fields[$node->getAttribute('id')]['value'] = $node->getAttribute('value');
+					$fields[$id]['type'] = $node->getAttribute('type');
+					$fields[$id]['value'] = $node->getAttribute('value');
 
 				}
 			}

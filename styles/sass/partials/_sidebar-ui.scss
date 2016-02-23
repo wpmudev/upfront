@@ -65,7 +65,7 @@
 	-moz-user-select: none;
 	-o-user-select: none;
 	user-select: none;
-	z-index:1040;
+	z-index:2040;
 	background: rgb(51,68,84); /* Old browsers */
 	background: -moz-linear-gradient(top,  rgba(51,68,84,1) 0%, rgba(61,82,102,1) 20%); /* FF3.6+ */
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(51,68,84,1)), color-stop(20%,rgba(61,82,102,1))); /* Chrome,Safari4+ */
@@ -203,7 +203,7 @@
 	height: 34px;
 	opacity:.8;
 	background: #54708C;
-	box-shadow: 0px 1px 0px 0px #2F3E4D, 
+	box-shadow: 0px 1px 0px 0px #2F3E4D,
 				inset 0px 2px 0px 0px rgba(255,255,255,0.10);
 }
 #sidebar-ui .sidebar-commands-primary .command-new-layout{
@@ -404,9 +404,11 @@
 	font-size: 13px;
     max-width: 122px;
     line-height: 27px;
+    padding: 5px 0 0 ;
 }
 #sidebar-ui .sidebar-commands-control .command-save:hover {
-	border-color: #1fcd8f;
+	border-color: #3ea;
+	background: #3ea;
 }
 #sidebar-ui .sidebar-commands-control .command-edit-background-area {
 	margin-bottom: 15px;
@@ -925,6 +927,8 @@ span.draggable-post-element.element-dragging
 .upfront-filter-control::-webkit-scrollbar,
 #upfront-csseditor .ace_scrollbar-inner::-webkit-scrollbar,
 #upfront-csseditor .ace_scrollbar::-webkit-scrollbar,
+.upfront-inserts-markup .ace_scrollbar-inner::-webkit-scrollbar,
+.upfront-inserts-markup .ace_scrollbar::-webkit-scrollbar,
 #upfront-general-csseditor .ace_scrollbar-inner::-webkit-scrollbar,
 #upfront-general-csseditor .ace_scrollbar::-webkit-scrollbar,
 .upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar,
@@ -932,7 +936,8 @@ span.draggable-post-element.element-dragging
 .redactor-dropdown-box-upfrontIcons div.icons::-webkit-scrollbar,
 .redactor-dropdown-box-upfrontFormatting::-webkit-scrollbar,
 .upfront_map-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar,
-.upfront_map-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar
+.upfront_map-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar,
+#element-settings-sidebar #settings #sidebar-scroll-wrapper::-webkit-scrollbar
 {
 	background: none;
 	width: 5px;
@@ -944,6 +949,9 @@ span.draggable-post-element.element-dragging
 .upfront_map-editor-complex-wrapper .ace_scrollbar
 {
 	width: 5px! important;
+}
+#upfront-csseditor .ace_scrollbar {
+	z-index: 9;
 }
 #sidebar-ui .sidebar-panel-content::-webkit-scrollbar-track,
 .upfront-scroll-panel::-webkit-scrollbar-track,
@@ -961,7 +969,8 @@ span.draggable-post-element.element-dragging
 .upfront_code-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar-track,
 .upfront_code-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar-track
 .upfront_map-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar-track,
-.upfront_map-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar-track
+.upfront_map-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar-track,
+#element-settings-sidebar #settings #sidebar-scroll-wrapper::-webkit-scrollbar-track
 {
 }
 
@@ -984,7 +993,8 @@ span.draggable-post-element.element-dragging
 .redactor-dropdown-box-upfrontFormatting::-webkit-scrollbar-thumb,
 .upfront_map-editor-complex-wrapper .ace_scrollbar-inner::-webkit-scrollbar-thumb,
 .upfront_map-editor-complex-wrapper .ace_scrollbar::-webkit-scrollbar-thumb,
-.redactor-dropdown-box-upfrontIcons div.icons::-webkit-scrollbar-thumb
+.redactor-dropdown-box-upfrontIcons div.icons::-webkit-scrollbar-thumb,
+#element-settings-sidebar #settings #sidebar-scroll-wrapper::-webkit-scrollbar-thumb
 {
 	border-right: 5px solid #1fcd8f;
 }

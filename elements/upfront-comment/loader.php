@@ -32,6 +32,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 function ucomment_initialize () {
 	// Include the backend support stuff
 	require_once (dirname(__FILE__) . '/lib/upfront_comment.php');
+	require_once (dirname(__FILE__) . '/lib/class_upfront_ucomment_presets_server.php');
 
 	// Expose our JavaScript definitions to the Upfront API
 	upfront_add_layout_editor_entity('ucomment', upfront_relative_element_url('js/ucomment', __FILE__));

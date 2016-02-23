@@ -1,6 +1,21 @@
 (function($) {
 define(
 function() {
+	var expandBreakpoints = function(properties) {
+		if (properties['breakpoint'] && properties['breakpoint']['tablet']) {
+			properties['tablet'] = [];
+			_.each(properties['breakpoint']['tablet'], function(property, name) {
+				properties['tablet'][name] = property;
+			});
+		}
+		if (properties['breakpoint'] && properties['breakpoint']['mobile']) {
+			properties['mobile'] = [];
+			_.each(properties['breakpoint']['mobile'], function(property, name) {
+				properties['mobile'][name] = property;
+			});
+		}
+		return properties;
+	};
 	/**
 	 * Generates CSS rules for placing into page styles.
 	 *
@@ -9,7 +24,25 @@ function() {
 	 */
 	var generateCss = function(properties, styleTpl) {
 		var tpl = Upfront.Util.template(styleTpl);
-		return tpl({properties: properties});
+		
+		//Increase preset_style css specificity
+		if(typeof properties.preset_style !== "undefined") {
+			properties.preset_style = properties.preset_style
+			.replace(/#page/g, '#page.upfront-layout-view .upfront-editable_entity.upfront-module');
+
+			properties.preset_style = Upfront.Util.colors.convert_string_ufc_to_color( properties.preset_style, true );
+		}
+		
+		return tpl({properties: expandBreakpoints(properties)})
+			.replace(/#page/g, 'div#page.upfront-layout-view')
+			// Solve case of button loosing its styles
+			.replace(new RegExp(properties.id + ' .upfront-button', 'g'), properties.id + '.upfront-button')
+			.replace(/\\'/g, "'")
+			.replace(/\\'/g, "'")
+			.replace(/\\'/g, "'")
+			.replace(/\\"/g, '"')
+			.replace(/\\"/g, '"')
+			.replace(/\\"/g, '"');
 	};
 
 	var Util = {
@@ -23,7 +56,7 @@ function() {
 		 */
 		generatePresetsToPage: function(element, styleTpl) {
 			_.each(Upfront.mainData[element + 'Presets'], function(properties) {
-				Util.updatePresetStyle(element, properties, styleTpl);
+				Util.updatePresetStyle(element, expandBreakpoints(properties), styleTpl);
 			});
 		},
 
@@ -31,10 +64,11 @@ function() {
 			var presets = Upfront.mainData[element + 'Presets'] || [],
 				props = {}
 			;
+			
 			$.each(presets, function (idx, preset) {
 				if (!(preset && preset.id && preset_id === preset.id)) return true;
 				props = _.extend({}, preset);
-			})
+			});
 			return props;
 		},
 
@@ -46,14 +80,19 @@ function() {
 			// Do we have come colors here? Yes? Expand them then
 			_.each(props, function (prop, idx) {
 				if (Upfront.Util.colors.is_theme_color(prop)) {
-					props[idx] = Upfront.Util.colors.get_color(prop);
+					/* This is being changed so that whenever the theme color is changed, it gets applied to preset style in editor mode live */
+					//props[idx] = Upfront.Util.colors.get_color(prop);
+					props[idx] = prop;
 				}
 			});
 
 			if ($('style#' + styleId).length === 0) {
-				$('body').append('<style id="' + styleId + '"></style>');
+				$('body').append('<style class="preset-style" id="' + styleId + '"></style>');
 			}
-			$('style#' + styleId).text(generateCss(props, styleTpl));
+
+			/* This is being changed so that whenever the theme color is changed, it gets applied to preset style in editor mode live */
+			//$('style#' + styleId).text(generateCss(props, styleTpl));
+			$('style#' + styleId).text(Upfront.Util.colors.convert_string_ufc_to_color(generateCss(props, styleTpl), true));
 		}
 	};
 

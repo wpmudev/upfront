@@ -28,7 +28,7 @@ class Upfront_UwidgetView extends Upfront_Object {
 			$instance[$name] = $this->_get_property($name);
 		}
 
-		return "<div class=' upfront-widget' {$element_id}>" .
+		return "<div class=' upfront-widget'>" .
 			$widget->get_widget_markup($instance) .
 		"</div>";
 	}
@@ -49,7 +49,7 @@ class Upfront_UwidgetView extends Upfront_Object {
 			'view_class' => "UwidgetView",
 			"class" => "c24 upfront-widget",
 			'has_settings' => 1,
-
+			'preset' => 'default',
 			'widget' => false
 		);
 	}
@@ -81,6 +81,7 @@ class Upfront_UwidgetView extends Upfront_Object {
 			'done' => __('Done!', 'upfront'),
 			'widget' => __('Widget', 'upfront'),
 			'settings' => __('Widget settings', 'upfront'),
+			'general_settings' => __('General Settings', 'upfront'),
 			'widget_select' => __('Select Widget', 'upfront'),
 			'select_widget' => __('Please select widget in settings', 'upfront'),
 			'select_one' => __('Please select widget', 'upfront'),

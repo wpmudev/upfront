@@ -60,7 +60,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			"objects" => "scripts/upfront/upfront-objects",
 			"media" => "scripts/upfront/upfront-media",
 			"content" => "scripts/upfront/upfront-content",
-            "bg-settings" => "scripts/upfront/bg-settings/bg-settings",
+			"bg-settings" => "scripts/upfront/bg-settings/bg-settings",
 			"spectrum" => "scripts/spectrum/spectrum",
 			"responsive" => "scripts/responsive",
 			"redactor_plugins" => 'scripts/redactor/plugins',
@@ -73,15 +73,15 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		);
 		$paths = apply_filters('upfront-settings-requirement_paths', $paths + $registered);
 
-	    $shim = array(
-	      'underscore' => array('exports' => '_'),
-	      'redactor' => array('redactor_plugins'),
-	      'jquery-df' => array('jquery'),
-		   'chosen' => array(
+		$shim = array(
+			'underscore' => array('exports' => '_'),
+			'redactor' => array('redactor_plugins'),
+			'jquery-df' => array('jquery'),
+			'chosen' => array(
 				'deps' => array('jquery'),
 				'exports' => 'jQuery.fn.chosen'
-		   ),
-	    );
+			),
+		);
 
 		$require_config = array(
 			'baseUrl' => "{$root}",
@@ -89,8 +89,16 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			'shim' => $shim,
 			'waitSeconds' => 60, // allow longer wait period to prevent timeout
 		);
+
+		// Deal with caches
+		if (class_exists('Upfront_Compat') && is_callable(array('Upfront_Compat', 'get_upfront_core_version'))) {
+			$core_version = Upfront_Compat::get_upfront_core_version();
+			if (!empty($core_version)) $require_config['urlArgs'] = 'ufver=' . urlencode($core_version);
+		}
+
+		// Absolute cache breaker
 		if ($this->_debugger->is_active(Upfront_Debug::CACHED_RESPONSE)) {
-			$require_config['urlArgs'] = "nocache=" + microtime(true);
+			$require_config['urlArgs'] = 'nocache=' . urlencode(microtime(true));
 		}
 
 		$require_config = json_encode(apply_filters('upfront-settings-require_js_config', $require_config));
@@ -221,38 +229,27 @@ class Upfront_JavascriptMain extends Upfront_Server {
 
 		if (empty($post_image_variants)) $post_image_variants = json_encode(array());
 
-		$button_presets = get_option('upfront_' . get_stylesheet() . '_button_presets');
-		$button_presets = apply_filters(
-			'upfront_get_button_presets',
-			$button_presets,
-			array(
-				'json' => true
-			)
-		);
+		$registry = Upfront_PresetServer_Registry::get_instance();
+		$preset_servers = $registry->get_all();
+			
+		$preset_defaults = array();
+		$presets = '';
+		foreach ($preset_servers as $key => $server) {
+			$src = is_object($server) ? get_class($server) : $server;
+			
+			//$element_server = $server::get_instance(); // not PHP 5.2 safe
+			$callable = array($src, 'get_instance');
+			if (!is_callable($callable)) continue; // We have no business continuing			
+			$element_server = call_user_func($callable);
 
-		if (empty($button_presets)) $button_presets = json_encode(array());
+			$element_presets = $element_server->get_presets_javascript_server();
+			$presets .= "{$key}Presets: {$element_presets}, \n";
 
-		$tab_presets = get_option('upfront_' . get_stylesheet() . '_tab_presets');
-		$tab_presets = apply_filters(
-			'upfront_get_tab_presets',
-			$tab_presets,
-			array(
-				'json' => true
-			)
-		);
-
-		if (empty($tab_presets)) $tab_presets = json_encode(array());
-
-		$accordion_presets = get_option('upfront_' . get_stylesheet() . '_accordion_presets');
-		$accordion_presets = apply_filters(
-			'upfront_get_accordion_presets',
-			$accordion_presets,
-			array(
-				'json' => true
-			)
-		);
-
-		if (empty($accordion_presets)) $accordion_presets = json_encode(array());
+			//Get preset defaults
+			$preset_defaults[$key] = $element_server->get_preset_defaults();
+		}
+		
+		$preset_defaults = json_encode($preset_defaults);
 
 		$debug = array(
 			"transients" => $this->_debugger->is_active(Upfront_Debug::JS_TRANSIENTS),
@@ -330,23 +327,24 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		}
 		$content_settings = json_encode($content_settings);
 
-        /**
-         * Redactor font icons
-         *
-         *
-         */
+		/**
+		 * Redactor font icons
+		 *
+		 *
+		 */
 
-        // get default font
-        $redactor_font_icons = $this->_get_default_font_icons();
+		// get default font
+		$redactor_font_icons = $this->_get_default_font_icons();
 
-        $redactor_font_icons = apply_filters(
-            'upfront_get_editor_font_icons',
-            $redactor_font_icons,
-            array(
-                'json' => true
-            )
-        );
+		$redactor_font_icons = apply_filters(
+			'upfront_get_editor_font_icons',
+			$redactor_font_icons,
+			array(
+				'json' => true
+			)
+		);
 
+		$menus = json_encode(wp_get_nav_menus());
 
 		$main = <<<EOMainJs
 // Set up the global namespace
@@ -373,15 +371,15 @@ Upfront.mainData = {
 	iconFonts: {$icon_fonts},
 	additionalFonts: {$additional_fonts},
 	userDoneFontsIntro: {$user_done_font_intro},
-	buttonPresets: {$button_presets},
-	tabPresets: {$tab_presets},
-	accordionPresets: {$accordion_presets},
+	{$presets}
+	presetDefaults: {$preset_defaults},
 	themeColors: {$theme_colors},
 	postImageVariants: {$post_image_variants},
 	content: {$content},
 	content_settings: {$content_settings},
 	l10n: {$l10n},
-	font_icons: {$redactor_font_icons}
+	font_icons: {$redactor_font_icons},
+	menus: {$menus}
 };
 EOMainJs;
 		$this->_out(new Upfront_JavascriptResponse_Success($main));

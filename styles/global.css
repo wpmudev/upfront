@@ -105,6 +105,11 @@ h2, h3 { page-break-after: avoid; }
   pointer-events: auto;
 }
 
+.upfront-output-region {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
 .upfront-output-region, .upfront-region-wrapper {
   width: 100%;
 }
@@ -154,7 +159,7 @@ h2, h3 { page-break-after: avoid; }
 }
 .upfront-output-module-group {
     position: relative;
-    z-index: 0;
+    z-index: 1;
 }
 .upfront-output-module-group > .upfront-module-group-bg {
     position: absolute;
@@ -193,10 +198,15 @@ h2, h3 { page-break-after: avoid; }
   -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
 }
 
-.upfront-output-object>*:first-child{
+.upfront-output-object>*:first-child,
+.plain-text-container>*:first-child{
   margin-top: 0;
 }
-.upfront-output-object>*:last-child{
+.upfront-output-object>*:last-child,
+.plain-text-container>*:last-child,
+.upfront-image-caption-container .wp-caption div>*:last-child,
+.upfront-output-object .wp-caption div>*:last-child,
+.upfront-default-slider .uslide-caption div>*:last-child{
   margin-bottom: 0;
 }
 
@@ -220,7 +230,7 @@ h2, h3 { page-break-after: avoid; }
 
 .ueditor-insert {
   margin-bottom: 15px;
-  max-width: 100%;
+  /*max-width: 100%;*/
   padding-left: 0px !important;
   padding-right: 0px !important;
 }
@@ -241,8 +251,8 @@ h2, h3 { page-break-after: avoid; }
 .alignleft,
 .alignright,
 .alignfull {
-  padding-left: 0 !important;
-  padding-right: 0 !important;
+  /*padding-left: 0 !important;*/
+  /*padding-right: 0 !important;*/
 }
 
 .alignfull{
@@ -313,7 +323,14 @@ h2, h3 { page-break-after: avoid; }
 }
 
 .upfront-output-image .upfront-image-container img {
+    /*max-width: 100%;*/
+    max-width: none;
+}
+.uf-responsive .upfront-output-image .upfront-image-container {
     max-width: 100%;
+}
+.uf-responsive .upfront-output-image .upfront-image-container img {
+	max-width: 100%;
 }
 
 .uf-responsive #page .post_content > * {
@@ -339,8 +356,11 @@ h2, h3 { page-break-after: avoid; }
     width: auto;
     float: none;
 }
-.uf-responsive .upfront-image-caption-container {
-    width: 100%;
+.uf-responsive .uimage-stretch .upfront-image-caption-container {
+	width: 100%;
+}
+.uf-responsive .uimage-stretch .upfront-image-container {
+    width: 100% !important;
 }
 
 /* Flexbox experiments *//* */
@@ -466,3 +486,160 @@ div.upfront-region-lightbox .upfront-icon-popup-close, div.upfront-region-side-l
 
 .upfront-navigation li { display: inline-block;  list-style:none; }
 
+.close_lightbox > .upfront-icon-popup-close {
+    
+    font: 100 30px/16px Helvetica Neue, Helvetica, sans-serif; */
+    color: #FFF;
+}
+.close_lightbox > .upfront-icon-popup-close:before {
+    content:"\00d7";
+    font-size:40px;
+    font-weight:normal;
+    color:#fff;
+    text-shadow:0 1px 1px rgba(0,0,0,.1);
+}
+
+/* Edior button faded out before editor is loaded */
+body .upfront-edit_layout a {
+  -webkit-transition: opacity 300ms ease-in !important;
+  transition: opacity 300ms ease-in !important;
+}
+body .upfront-edit_layout a:not(.active) {
+  opacity: 0.5;
+  cursor: default;
+}
+body .upfront-edit_layout:hover a:not(.active) {
+  color: inherit !important;
+  background-color: inherit !important;
+}
+
+/* Edior button faded in after editor is loaded */
+body .upfront-edit_layout a {
+  opacity: 1;
+  cursor: pointer;
+}
+
+/* This one ensures that the an anchor inside a heading does not vary too much if a specific font style is applied on an anchor */
+
+.upfront-object h1 a, .upfront-output-object h1 a,
+.upfront-object h2 a, .upfront-output-object h2 a,
+.upfront-object h3 a, .upfront-output-object h3 a,
+.upfront-object h4 a, .upfront-output-object h4 a,
+.upfront-object h5 a, .upfront-output-object h5 a,
+.upfront-object h6 a, .upfront-output-object h6 a,
+.upfront-object p a, .upfront-output-object p a,
+.upfront-object h1 a:link, .upfront-output-object h1 a:link,
+.upfront-object h2 a:link, .upfront-output-object h2 a:link,
+.upfront-object h3 a:link, .upfront-output-object h3 a:link,
+.upfront-object h4 a:link, .upfront-output-object h4 a:link,
+.upfront-object h5 a:link, .upfront-output-object h5 a:link,
+.upfront-object h6 a:link, .upfront-output-object h6 a:link,
+.upfront-object p a:link, .upfront-output-object p a:link,
+.upfront-object h1 a:hover, .upfront-output-object h1 a:hover,
+.upfront-object h2 a:hover, .upfront-output-object h2 a:hover,
+.upfront-object h3 a:hover, .upfront-output-object h3 a:hover,
+.upfront-object h4 a:hover, .upfront-output-object h4 a:hover,
+.upfront-object h5 a:hover, .upfront-output-object h5 a:hover,
+.upfront-object h6 a:hover, .upfront-output-object h6 a:hover,
+.upfront-object p a:hover, .upfront-output-object p a:hover  {
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+}
+
+/* Firefox checkboxes and radios are styled to match the rest of the browsers */
+@-moz-document url-prefix() { 
+  input[type=checkbox] {
+    /* original check box are push outside the viexport */
+    position: absolute ;
+    left: -1000em !important;
+  }
+
+  input[type=checkbox] + label:before {
+    content: "";
+    display: inline-block;
+    width  : 12px;
+    height : 12px;
+    margin : 0 -1em 0 0;
+    background: url("../img/checkbox_firefox.png") no-repeat 0 0;
+
+  /* The following is used to adjust the position of 
+     the check boxes on the text baseline */
+
+    vertical-align: bottom;
+    position: relative;
+    bottom: 0;
+    right: 17px;
+    cursor: pointer;
+  }
+
+  input[type=checkbox]:checked + label:before {
+    background-position: -24px 0;
+  }
+
+  input[type=checkbox]:disabled + label:before {
+    background-position: -12px 0;
+  }
+
+  input[type=checkbox]:checked:disabled + label:before {
+    background-position: 0 0;
+  }
+
+  #element-settings-sidebar .padding-lock input[type=checkbox] + label:before,
+  #element-settings-sidebar .border_radius_lock input[type=checkbox] + label:before,
+  #element-settings-sidebar .gallery-padding-lock input[type=checkbox] + label:before {
+    height: 15px;
+    width: 15px;
+    background-image: url("../img/uf-core-el-sprite.png");
+    background-image: url("../img/uf-core-el-sprite.svg"), none;
+    background-position: -661px -172px;
+    background-color: #f7fbff;
+    left: 38px;
+    top: -6px;
+    position: relative;
+  }
+  #element-settings-sidebar .padding-lock input[type=checkbox]:checked + label:before,
+  #element-settings-sidebar .border_radius_lock input[type=checkbox]:checked + label:before,
+  #element-settings-sidebar .gallery-padding-lock input[type=checkbox]:checked + label:before {
+    background-position: -661px -140px
+  }
+
+
+  input[type=radio] {
+    /* original check box are push outside the viexport */
+    position: absolute ;
+    left: -1000em !important;
+  }
+
+  input[type=radio] + label:before {
+    content: "";
+    display: inline-block;
+    width  : 12px;
+    height : 12px;
+    margin : 0 -1em 0 0;
+    background: url("../img/radio_firefox.png") no-repeat 0 0;
+
+  /* The following is used to adjust the position of 
+     the check boxes on the text baseline */
+
+    vertical-align: bottom;
+    position: relative;
+    bottom: 0;
+    right: 17px;
+    cursor: pointer;
+  }
+
+  input[type=radio]:checked + label:before {
+    background-position: -24px 0;
+  }
+
+  input[type=radio]:disabled + label:before {
+    background-position: -12px 0;
+  }
+
+  input[type=radio]:checked:disabled + label:before {
+    background-position: 0 0;
+  }
+
+}

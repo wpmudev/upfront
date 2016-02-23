@@ -22,6 +22,9 @@ class Upfront_ThisPostView extends Upfront_Object {
 	public function __construct($data){
 		parent::__construct($data);
 		$parts = array_values(apply_filters('upfront_post_parts', self::$PARTNAMES));
+
+		// adds features to wp caption shortcode to support UF post image variants
+//		add_filter("img_caption_shortcode", array( $this, "image_caption_shortcode"), 10, 30);
 	}
 
 	public static function get_post_part($type, $options = array(), $tpl = false, $properties = array()){
@@ -193,7 +196,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 		return $date;
 	}
-	
+
 	protected static  function excerpt( $limit ) {
         $excerpt = explode(' ', get_the_excerpt(), $limit);
         if (count($excerpt)>=$limit) {
@@ -248,8 +251,8 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 		if(isset($options['contents'])){
 			$col_size = isset($properties['colSize']) ? $properties['colSize'] : 45;
-			$paddingLeft = $options['contents']['padding_left'] * $col_size;
-			$paddingRight = $options['contents']['padding_right'] * $col_size;
+			$paddingLeft = isset($options['contents']['padding_left']) ? $options['contents']['padding_left'] * $col_size : 0;
+			$paddingRight = isset($options['contents']['padding_right']) ? $options['contents']['padding_right'] * $col_size : 0;
 			$rules = '#' . $properties['element_id'] . ' .post_content>* { padding-left: ' . $paddingLeft . 'px; padding-right: ' . $paddingRight . 'px; }';
 		}
 
@@ -351,6 +354,8 @@ class Upfront_ThisPostView extends Upfront_Object {
 			$layout['wrappers'][$i]['objectsLength'] = sizeof($w['objects']);
 
 			foreach($w['objects'] as $k => $o){
+				$o['slug'] = isset($o['slug']) ? $o['slug'] : 'spacer';
+				$layout['wrappers'][$i]['objects'][$k]['slug'] = $o['slug'];
 
 				$opts = !empty($options[$o['slug']]) ? $options[$o['slug']] : array(); // This is for the layout
 				$opts['excerpt'] = $excerpt;
@@ -365,14 +370,14 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 				if (empty($markups['classes'])) $markups['classes'] = array();
 				$layout['extraClasses'][$o['slug']] .= ' ' . join(' ', $markups['classes']);
-				
+
 				if (empty($layout['wrappers'][$i]['classes'])) $layout['wrappers'][$i]['classes'] = '';
 				$layout['wrappers'][$i]['classes'] .= ' ' . join(' ', $markups['classes']);
-				
+
 				if (strpos($layout['wrappers'][$i]['objects'][$k]['classes'], 'part-module-' . $o['slug']) === false) {
 					$layout['wrappers'][$i]['objects'][$k]['classes'] .= ' part-module-' . $o['slug'];
 				}
-				
+
 				$attributes = '';
 				if(isset($opts['attributes'])){
 					foreach($opts['attributes'] as $key => $value)
@@ -479,11 +484,11 @@ class Upfront_ThisPostView extends Upfront_Object {
 		$i = 0;
 
 		while(!$found && $i < sizeof($cascade)){
-			if(file_exists($cascade[$i]))
+			if(file_exists($cascade[$i])) {
 				$found = require $cascade[$i];
+			}
 			$i++;
 		}
-
 		return $found;
 	}
 
@@ -532,8 +537,13 @@ class Upfront_ThisPostView extends Upfront_Object {
 		//We need to cheat telling WP we are not in admin area
 		// to get the same output than in the frontend
 		global $current_screen;
-		require_once(ABSPATH . '/wp-admin/includes/screen.php');
-		$current_screen = WP_Screen::get('front');
+		if (!class_exists('WP_Screen')) {
+			if (file_exists(ABSPATH . '/wp-admin/includes/class-wp-screen.php')) {
+				require_once(ABSPATH . '/wp-admin/includes/class-wp-screen.php');
+				if (!function_exists('get_current_screen')) require_once(ABSPATH . '/wp-admin/includes/screen.php');
+			} else if (file_exists(ABSPATH . '/wp-admin/includes/screen.php')) require_once(ABSPATH . '/wp-admin/includes/screen.php');
+		}
+		if (class_exists('WP_Screen')) $current_screen = WP_Screen::get('front');
 
 		global $post;
 		$post = $this_post;
@@ -567,9 +577,8 @@ class Upfront_ThisPostView extends Upfront_Object {
 			'has_settings' => 1,
 			'id_slug' => 'this_post',
 			'row' => 10,
-
+			'preset' => 'default',
 			'post_data' => array('author', 'date', 'comments_count', 'featured_image') // also: categories,  tags
-
 		);
 	}
 
@@ -671,6 +680,88 @@ class Upfront_ThisPostView extends Upfront_Object {
 			: $l10n
 		;
 	}
+
+	public static function get_post_image_markup($data) {
+		global $post;
+		if( !is_object( $post ) ) return;
+		$style_variant =  Upfront_ChildTheme::get_image_variant_by_id( $data->uf_variant );
+        // if no variant is found, default to the first variant
+        $style_variant =  (object) ( $style_variant === array() ? reset( $style_variant )  : $style_variant );
+		$style_variant->label_id = !empty( $style_variant->label ) ? "ueditor-image-style-" . str_replace(" ", "-", trim(strtolower( $style_variant->label )))  : $style_variant->vid;
+
+		$layout_data = Upfront_ThisPostView::find_postlayout("single", $post->post_type, $post->ID);
+		$options = !empty($layout_data['partOptions']) ? $layout_data['partOptions'] : array();
+
+		$padding_left = $padding_right = 0;
+		$col_size = isset($layout_data['colSize']) ? $layout_data['colSize'] : 45;
+		if(isset($options['contents'])){
+			$padding_left = $options['contents']['padding_left'];
+			$padding_right = $options['contents']['padding_right'];
+		}
+
+		if ($style_variant && isset( $style_variant->group ) && isset( $style_variant->group->float )) {
+			$style_variant->group->marginLeft = $style_variant->group->marginRight = 0;
+			if ( $style_variant->group->float == 'left' && $padding_left > 0 ){
+				$style_variant->group->marginLeft = ( $padding_left - abs($style_variant->group->margin_left) ) * $col_size;
+				$style_variant->group->marginRight = 0;
+			}
+			else if ( $style_variant->group->float == 'right' && $padding_right > 0 ){
+				$style_variant->group->marginRight = ( $padding_right - abs($style_variant->group->margin_right) ) * $col_size;
+				$style_variant->group->marginLeft = 0;
+			}
+			else if ( $style_variant->group->float == 'none' && $padding_left > 0 ){
+				$style_variant->group->marginLeft = ( $padding_left - abs($style_variant->group->margin_left) + abs($style_variant->group->left) ) * $col_size;
+				$style_variant->group->marginRight = 0;
+			}
+		}
+		$data->caption = trim( $data->caption );
+
+		$markup = upfront_get_template(
+			'this-post',
+			array(
+				"style" => $style_variant,
+				"data" => $data,
+			),
+			dirname(dirname(__FILE__)) . '/tpl/post-image-insert.php'
+		);
+		return $markup;
+	}
+
+	/**
+	 * Uses img_caption_shortcode to add support for UF image variants
+	 *
+	 * @param $out
+	 * @param $attr
+	 * @param $content
+	 *
+	 * @return string|void
+	 */
+	function image_caption_shortcode( $out, $attr, $content ){
+
+		$is_wp_cation = strpos($attr["id"], "uinsert-" ) === false;
+
+		if( $is_wp_cation ) return; // returning null let's wp do it's own logic and rendering for caption shortcode
+
+//		$html = '<img class="" src="http://images.dressale.hk/images/320x480/201301/B/petite-girl-s-favorite-a-line-graduation-dress-with-empire-waist_1358440282519.jpg" alt="" width="320" height="480" /> Petite Girl';
+		$image_reg = preg_match('/src="([^"]+)"/', $content, $image_arr);
+		$href_reg = preg_match('/href="([^"]+)"/', $content, $anchor_arr);
+
+		$data = (object) shortcode_atts( array(
+			'id'	  => '',
+			'caption' => '',
+			'class'   => '',
+			'uf_variant' => '',
+			'uf_isLocal' => true,
+			'uf_show_caption' => true,
+			'image' => $image_reg ? $image_arr[1] : "",
+			'linkUrl' => $href_reg ? $anchor_arr[1] : "",
+
+		), $attr, 'caption' );
+
+		return self::get_post_image_markup($data);
+
+	}
+
 }
 
 /**
@@ -698,7 +789,10 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 		//add_action('wp_ajax_upfront_get_postlayout', array($this, "get_postlayout"));
 		upfront_add_ajax('upfront_get_postlayout', array($this, "get_postlayout"));
 
-		add_action('update_postmeta', array($this, 'update_image_thumbs'), 10, 4);
+		/**
+		 * No need to save image inserts separately anymore
+		 */
+//		add_action('update_postmeta', array($this, 'update_image_thumbs'), 10, 4);
 	}
 	public function get_thumbnail() {
 		$post_id = stripslashes($_POST['post_id']);
@@ -906,7 +1000,7 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 
 		if(!$post_type || !$type || !$id || !$post_id)
 			$this->_out(new Upfront_JsonResponse_Error('No post_type, type or id sent.'));
-			
+
 		if (!empty($post_id)) {
 			$post_type = get_post_type($post_id);
 		}
@@ -923,6 +1017,7 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 			return;
 
 		$inserts = maybe_unserialize($value);
+
 
 		if(!is_array($inserts))
 			return;

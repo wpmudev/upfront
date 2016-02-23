@@ -117,16 +117,20 @@
 }
 
 #sidebar-ui .sidebar-commands-responsive-control .exit-responsive {
-  position: absolute;
-  top: 613px;
-  left: 15px;
-  margin: 0;
-  border: 3px solid #263a4d;
+  margin-top: 10px;
   padding: 2px 5px;
-  height: 33px;
-  max-width: 121px;
+  width:100%;
+  max-width: 120px;
   overflow: hidden;
   white-space: nowrap;
+
+  line-height: 34px;
+  font-size: 15px;
+  height: 36px;
+  opacity: .8;
+  background: #54708C;
+  box-shadow: 0px 1px 0px 0px #2F3E4D, inset 0px 2px 0px 0px rgba(255, 255, 255, 0.1);
+  text-align:center;
 }
 
 #sidebar-ui .command-browse-layout-responsive {

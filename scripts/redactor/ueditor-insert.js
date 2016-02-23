@@ -13,29 +13,30 @@ Insert purpose is let upfront handle this kind of parts of a post content with e
 
 */
 var UeditorInsert = Backbone.View.extend({
-	shortcodeName: 'ueditor-insert',
-	attributes: {contenteditable: 'false'},
-   defaultData : {},
-   resizable: false,
+    shortcodeName: 'ueditor-insert',
+    attributes: {contenteditable: 'false'},
+    defaultData : {},
+    resizable: false,
 	initialize: function(opts){
 		opts = opts || {};
 		var data = opts.data || {};
-		data = _.extend({}, this.defaultData, data);
+		//data = _.extend({}, this.defaultData, data); // lets merge data in the child classes
 		if(!data.id){
-			data.id = 'uinsert-' + (++Upfront.data.ueditor.insertCount);
+			data.id = this.generate_new_id();
 			//Trigger the insertcount change for updating the server
 			Upfront.Events.trigger('content:insertcount:updated');
 		}
 		this.el.id = data.id;
 		this.data = new Backbone.Model(data);
 		this.listenTo(this.data, 'change add remove reset', this.render);
-
 		this.createControls();
 
-
 		if(typeof this.init == 'function')
-			this.init();
+			this.init( opts );
 	},
+    generate_new_id: function(){
+       return 'uinsert-' + (++Upfront.data.ueditor.insertCount);
+    },
 	start: function(){
 		//Dumb start method returning a resolved promise. Override it if async start needed.
 		var deferred = $.Deferred();
@@ -56,7 +57,7 @@ var UeditorInsert = Backbone.View.extend({
 
 	importInserts: function(contentElement){
 		var me = this,
-			regExp = new RegExp('(\[' + this.shortcodeName + '[^\]]*?\])', 'ig'),
+			regExp = new RegExp('(\[' + this.shortcodeName.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + '[^\]]*?\])', 'ig'),
 			content = contentElement.html(),
 			container = $('<div></div>')
 		;
@@ -188,11 +189,7 @@ var UeditorInsert = Backbone.View.extend({
 			}
 
 			if(control){
-				control.icon = controlData.icon;
-				control.tooltip = controlData.tooltip;
-				control.id = controlData.id;
-				control.label = controlData.label;
-				control.active = controlData.active;
+                _.extend(control, controlData);
 				items.push(control);
 			}
 		});

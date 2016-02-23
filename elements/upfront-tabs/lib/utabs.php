@@ -36,8 +36,10 @@ class Upfront_UtabsView extends Upfront_Object {
 		if(!isset($data['properties']))
 				return $flat;
 
-		foreach($data['properties'] as $prop)
-				$flat[$prop['name']] = $prop['value'];
+		foreach($data['properties'] as $prop) {
+			if (isset($prop['value']) === false) continue;
+			$flat[$prop['name']] = $prop['value'];
+		}
 
 		$flat = array_merge(self::default_properties(), $flat);
 
@@ -115,7 +117,7 @@ class Upfront_UtabsView extends Upfront_Object {
 	private static function _get_l10n ($key=false) {
 		$l10n = array(
 			'element_name' => __('Tabs', 'upfront'),
-			'default_tab_content' => __('Click on active tab title to edit title. Confirm with Enter key.<br>Click on plus button [+] to add new tab.', 'upfront'),
+			'default_tab_content' => __('<p>Click on active tab title to edit title. Confirm with Enter key.</p><p>Click on plus button [+] to add new tab.</p>', 'upfront'),
 			'second_tab_content' => __('Have fun with tabs.', 'upfront'),
 			'tab_label'	=> __('Tab', 'upfront'),
 			'content_label'	=> __('Content', 'upfront'),
@@ -139,6 +141,13 @@ class Upfront_UtabsView extends Upfront_Object {
 				'active_p_info' => __('The paragraph that contains active tab content', 'upfront'),
 			),
 			'settings' => __('Tabs settings', 'upfront'),
+			'add_tab' => __('Add a Tab', 'upfront'),
+			'default_preset' => __('Default', 'upfront'),
+			'content_area_colors_label' => __('Content Area Colors', 'upfront'),
+			'content_area_bg_label' => __('Content Area BG', 'upfront'),
+			'colors_label' => __('Colors', 'upfront'),
+			'tab_typography_label' => __('Tab Label Typography', 'upfront'),
+			'tab_bg_label' => __('Tab Background', 'upfront'),
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)

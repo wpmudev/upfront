@@ -1,0 +1,16 @@
+.multiple_radio_no_padding .upfront-field-wrap-optional span {
+	margin: 0px;
+}
+
+.contact_label_position {
+	margin-top: 20px;
+}
+
+.contact_label_position label {
+	font-weight: normal;
+	margin-bottom: 3px;
+}
+
+.inline-radios {
+	margin: 5px 0 0;
+}
