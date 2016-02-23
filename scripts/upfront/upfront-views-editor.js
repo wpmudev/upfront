@@ -10742,8 +10742,6 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			this.listenTo(this.model.get("properties"), 'change', this.render);
 			this.listenTo(this.model.get("properties"), 'add', this.render);
 			this.listenTo(this.model.get("properties"), 'remove', this.render);
-			this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.update_padding);
-			this.listenTo(Upfront.Events, "layout:after_render", this.update_padding);
 			this.listenTo(Upfront.Events, "entity:region:activated", this.on_region_active);
 			this.listenTo(Upfront.Events, "entity:region:deactivated", this.on_region_deactive);
 			//this.listenTo(Upfront.Events, "command:region:edit_toggle", this.update_pos);
@@ -10896,55 +10894,6 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						right: ''
 					});
 				}
-			});
-
-			setTimeout(
-				function () { me.update_padding() }
-				, 300
-			);
-		},
-		update_padding: function () {
-			var props = {},
-				$region = this.$el.closest('.upfront-region')
-			;
-
-			// Padding settings
-			this.model.get("properties").each(function (prop) {
-				props[prop.get("name")] = prop.get("value");
-			});
-
-			var breakpoints = typeof Upfront.Settings.LayoutEditor.Theme.breakpoints !== 'undefined' ? Upfront.Settings.LayoutEditor.Theme.breakpoints : [],
-				current_breakpoint = typeof Upfront.Settings.LayoutEditor.CurrentBreakpoint !== 'undefined' ? Upfront.Settings.LayoutEditor.CurrentBreakpoint : 'desktop',
-				current_breakpoint_id = current_breakpoint === 'default' ? current_breakpoint : current_breakpoint.id,
-				top_padding,
-				bottom_padding
-			;
-
-			var breakpoint_obj = (
-						typeof props.breakpoint !== 'undefined'
-						&& typeof props.breakpoint[current_breakpoint_id] !== 'undefined'
-					)
-					? props.breakpoint[current_breakpoint_id]
-					: false
-			;
-
-			top_padding = (typeof breakpoint_obj.top_bg_padding_num !== 'undefined')
-				? breakpoint_obj.top_bg_padding_num
-				: (typeof props.top_bg_padding_num !== 'undefined')
-					? props.top_bg_padding_num
-					: false
-			;
-
-			bottom_padding = (typeof breakpoint_obj.bottom_bg_padding_num !== 'undefined')
-				? breakpoint_obj.bottom_bg_padding_num
-				: (typeof props.bottom_bg_padding_num !== 'undefined')
-					? props.bottom_bg_padding_num
-					: false
-			;
-
-			$region.css({
-				'padding-top': ( false === top_padding ? '' : top_padding + 'px' ),
-				'padding-bottom': ( false === bottom_padding ? '' : bottom_padding + 'px' )
 			});
 		},
 		add_responsive_items: function() {
