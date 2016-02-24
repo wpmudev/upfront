@@ -175,7 +175,6 @@ define([
 				
 				me.model.set_breakpoint_property('background_slider_images', slide_images);
 				$image.remove();
-				me.update_slider_slides();
 				
 			});
 			
