@@ -64,16 +64,16 @@ class Upfront_Permissions {
 
 	private function __construct () {
 		$this->_levels_map = apply_filters('upfront-access-permissions_map', array(
-			self::BOOT => 'edit_posts',
-			self::EDIT => 'edit_posts',
-			self::RESIZE => 'edit_posts',
-			self::EMBED => 'edit_posts',
+			self::BOOT => 'edit_theme_options',// 'edit_posts',
+			self::EDIT =>  'edit_theme_options',// 'edit_posts',
+			self::RESIZE => 'edit_theme_options',// 'edit_posts',
+			self::EMBED => 'edit_theme_options',// 'edit_posts',
 			self::UPLOAD => 'upload_files',
 			self::SAVE => 'edit_theme_options',
 			self::OPTIONS => 'manage_options',
 
 			self::LAYOUT_MODE => 'edit_theme_options',
-			self::CONTENT_MODE => 'edit_posts',
+			self::CONTENT_MODE => 'edit_theme_options',// 'edit_posts',
 			self::THEME_MODE => 'edit_theme_options',
 			self::POSTLAYOUT_MODE => 'edit_theme_options',
 			self::RESPONSIVE_MODE => 'edit_theme_options',
