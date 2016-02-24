@@ -262,10 +262,6 @@ class Upfront_UcontactView extends Upfront_Object {
 					add_action('phpmailer_init', array($this, 'kick_in_smtp'));					
 
 
-
-					
-
-
 				// ... then send email
 				if (!wp_mail($emailto, $subject, $message, $headers)) {
 					
@@ -290,6 +286,7 @@ class Upfront_UcontactView extends Upfront_Object {
 		if( !is_email($this->_get_property_t('smtp_from_email')) || empty($this->_get_property_t('smtp_host')) ){
 			return;
 		}
+
 		$phpmailer->Mailer = "smtp";
 		$phpmailer->From = $this->_get_property_t('smtp_from_email');
 		$phpmailer->FromName = $this->_get_property_t('smtp_from_name');
@@ -299,7 +296,8 @@ class Upfront_UcontactView extends Upfront_Object {
 		$phpmailer->SMTPSecure = $this->_get_property_t('smtp_secure');
 		$phpmailer->Port = $this->_get_property_t('smtp_port');
 		$phpmailer->SMTPAuth = ($this->_get_property_t('smtp_authentication') =="yes") ? TRUE : FALSE;
-		if($phpmailer->SMTPAuth){
+		
+		if($phpmailer->SMTPAuth) {
 			$phpmailer->Username = $this->_get_property_t('smtp_username');
 			$phpmailer->Password = $this->_get_property_t('smtp_password');
 		}
@@ -489,9 +487,9 @@ class Upfront_UcontactView extends Upfront_Object {
 			),
 			'smtp' => array(
 				'enable' => __('Enable SMTP'),
-				'label' => __('SMTP settings'),
-				'from_email' => __('From'),
-				'from_name' => __('From Name'),
+				'label' => __('SMTP Settings'),
+				'from_email' => __('From (Email)'),
+				'from_name' => __('From (Name)'),
 				'host' => __('SMTP Host'),
 				'none' => __('None'),
 				'ssl' => __('SSL'),
@@ -503,7 +501,7 @@ class Upfront_UcontactView extends Upfront_Object {
 				'password' => __('Password'),
 				'configuration' => __('Configuration'),
 				'secure' => __('SMTP Secure'),
-				'authentication' => __('SMTP Authentication')
+				'authentication' => __('Enable SMTP Authentication')
 			)
 		);
 		return !empty($key)

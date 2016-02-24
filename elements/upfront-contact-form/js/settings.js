@@ -368,12 +368,12 @@ define([
 	};
 
 	var SMTPAuthenticationSettings = Upfront.Views.Editor.Settings.Item.extend({
-		className: 'no-title',
+		className: 'no-title general_settings_item smtp-authentication',
 		initialize: function(opts) {
 			//var showsettings = this.model.get_property_value_by_name('smtp_authentication');
 			this.update_fields();
 			//this.update_fields(showsettings === 'yes'?'yes':'no');
-			//this.constructor.__super__.initialize.call(this, opts);
+			this.constructor.__super__.initialize.call(this, opts);
 		},
 		get_title: function() {
 			return '';
@@ -382,7 +382,7 @@ define([
 			var me = this;
 			this.fields=_([]);
 			
-			if(typeof(show) !== 'undefined' && show === 'yes') {
+			if(typeof(show) !== 'undefined' && ((show.length > 0 && show[0] === 'yes') || show === 'yes')) {
 				
 
 				this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Text({
@@ -410,26 +410,26 @@ define([
 
 
 	var SMTPSpecificSettings = Upfront.Views.Editor.Settings.Item.extend({
-		className: 'no-title',
+		className: 'no-title smtp-configuration',
 		initialize: function(opts) {
-			console.log('initializing');
+			
 			this.authentication = opts.authentication;
 
 			//var showsettings = this.model.get_property_value_by_name('smtp_enable');
 
 			//this.update_fields(showsettings === 'yes'?'yes':'no');
 			this.update_fields();
-			//this.constructor.__super__.initialize.call(this, opts);
+			this.constructor.__super__.initialize.call(this, opts);
 		},
 		get_title: function() {
-			return '';
+			return l10n.smtp.configuration;
 		},
 		update_fields: function(show) {
-			console.log('update fields');
 			var me = this;
 			this.fields=_([]);
-			
+			this.$el.addClass('no-title');
 			if(typeof(show) !== 'undefined' && show === 'yes') {
+				this.$el.removeClass('no-title');
 				this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Email({
 					model: this.model,
 					property: 'smtp_from_email',
@@ -456,9 +456,10 @@ define([
 
 				this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Radios({
 					model: this.model,
-					className: 'inline-radios plaintext-settings',
+					className: 'inline-radios smtp-secure plaintext-settings upfront-field-wrap',
 					property: 'smtp_secure',
 					label: l10n.smtp.secure,
+					default_value: 'none',
 					values: [
 						{
 							label: l10n.smtp.none,
@@ -475,23 +476,19 @@ define([
 					]
 				});
 
-				this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Radios({
+				this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Checkboxes({
 					model: this.model,
-					className: 'inline-radios plaintext-settings',
+					className: 'inline-checkbox plaintext-settings upfront-field-wrap enable-authentication',
 					property: 'smtp_authentication',
-					label: l10n.smtp.authentication,
+					default_value: 'no',
 					values: [
 						{
-							label: l10n.smtp.no,
-							value: 'no'
-						},
-						{
-							label: l10n.smtp.yes,
+							label: l10n.smtp.authentication,
 							value: 'yes'
 						}
 					],
 					change: function(value) {
-						me.authentication.update_fields(value);
+						me.authentication.update_fields(value === 'yes' || (value.length > 0 && value[0] === 'yes')?'yes':'no');
 					}
 				});
 	
@@ -517,22 +514,23 @@ define([
 
 			var panel = new RootSettingsPanel({
 				model: this.model,
-				label: 'Empty label',
-				title: l10n.smtp.label,
+				title: l10n.smtp.label
 			});
 			
 			var smtp_authentication = new SMTPAuthenticationSettings({model: this.model});
+			
 			var smtp_configuration = new SMTPSpecificSettings({model: this.model, authentication: smtp_authentication});
 
 			var smtp_enable = new Upfront.Views.Editor.Settings.Item({
 				model: this.model,
 				title: l10n.smtp.enable,
-				className: 'general_settings_item',
+				//className: 'general_settings_item',
 				fields: [
 					new Upfront.Views.Editor.Field.Radios({
 						model: this.model,
 						property: 'smtp_enable',
 						className: 'inline-radios plaintext-settings',
+						default_value: 'no',
 						values: [
 							{
 								label: l10n.smtp.no,
@@ -544,29 +542,36 @@ define([
 							}
 						],
 						change: function(value) {
+							if(value === 'yes')
+								smtp_enable.$el.addClass('general_settings_item');
+							else
+								smtp_enable.$el.removeClass('general_settings_item');
+
 							smtp_configuration.update_fields(value);
 							
 							var show_authentication = this.model.get_property_value_by_name('smtp_authentication');
-							smtp_authentication.update_fields((show_authentication === 'yes' && value ==='yes') ?'yes':'no');
+							smtp_authentication.update_fields((show_authentication.length > 0 && show_authentication[0] === 'yes' && value ==='yes') ?'yes':'no');
 						}
 
 					}),
 				]
 			});
 
+
+
 			var show_smtp = this.model.get_property_value_by_name('smtp_enable');
 			var show_authentication = this.model.get_property_value_by_name('smtp_authentication');
 			
 			setTimeout(function() {
 				smtp_configuration.update_fields(show_smtp === 'yes'?'yes':'no');
-				smtp_authentication.update_fields((show_smtp === 'yes' && show_authentication === 'yes')?'yes':'no');
+				smtp_authentication.update_fields((show_smtp === 'yes' && (show_authentication === 'yes' || (show_authentication.length > 0 && show_authentication[0] === 'yes')))?'yes':'no');
 			}, 200);
 			
 
 			panel.settings = _([smtp_enable, smtp_configuration, smtp_authentication]);
 
-
-			this.panels = _.extend({SMTPPanel: panel}, this.panels);
+			this.panels = {General: this.panels.General, SMTPPanel: panel , Appearance: this.panels.Appearance, Advanced: this.panels.Advanced};
+			//this.panels = _.extend({SMTPPanel: panel}, this.panels);
 
 		},
 		migrateDefaultStyle: function(styles) {

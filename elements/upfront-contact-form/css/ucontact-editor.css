@@ -18,3 +18,37 @@
 div.no-title div.upfront-settings-item-title {
   display: none;
 }
+
+.smtp-secure.plaintext-settings.upfront-field-wrap.inline-radios {
+	margin: 13px 0;
+    width: 120%;
+    border-bottom: 1px solid #e5ecf4;
+    padding-bottom: 15px;
+    margin-left: -15px;
+    padding-left: 15px;
+}
+
+.smtp-secure.plaintext-settings.upfront-field-wrap.inline-radios > label {
+	margin-bottom: 10px;
+}
+
+.smtp-secure.plaintext-settings.upfront-field-wrap.inline-radios > span.upfront-field-multiple {
+	margin-right: 30px;
+}
+.smtp-secure.plaintext-settings.upfront-field-wrap.inline-radios > span.upfront-field-multiple:last-child {
+	margin-right: 0;
+}
+
+.enable-authentication label span.upfront-field-label-text {
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.smtp-configuration .upfront-field-wrap-text label.upfront-field-label-block {
+  font-weight:normal;
+}
+
+.smtp-authentication .upfront-settings-item-content {
+    margin-left: 15px;
+    border-left: 2px solid #e5ecf4;
+}
