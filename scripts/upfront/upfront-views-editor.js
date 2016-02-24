@@ -2388,22 +2388,21 @@ define([
            });
         },
         add_new_color : function( color, index ){
-            var percentage = parseInt( Theme_Colors.range, 10) / 100 || 0,
-            	last_index = this.theme_colors.colors.length;
+            var percentage = parseInt( Theme_Colors.range, 10) / 100 || 0;
             /**
             * If slots before the 'index' are empty, fill them up with rgba(0,0,0, 0)
             * This will make sure the 'color' remains at the 'index'
             **/
-            while( last_index < index   ){
-				this.theme_colors.colors.push({
+            for ( var __next_index = this.theme_colors.colors.length; __next_index < index; __next_index++ ) { 
+			    this.theme_colors.colors.push({
                     color : "#000000",
                     prev : "#000000",
                     highlight : "#000000",
                     shade : "#000000",
                     alpha: 0
                 });
-            	last_index ++;
-            }
+			}
+           
             var self = this,
                 model = this.theme_colors.colors.add({
                     color : color.toHexString(),
