@@ -2985,7 +2985,6 @@ define([
 				if ( typeof Upfront.data.wrapper_views == 'undefined' )
 					Upfront.data.wrapper_views = {};
 
-				console.log('this.model', this.model.length);
 				this.model.each(function (module) {
 					RenderQueue.add(function () {
 						me.render_module(module); // surrounding with function to keep context juggling to the minimum
