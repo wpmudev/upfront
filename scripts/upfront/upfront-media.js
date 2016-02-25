@@ -1597,10 +1597,15 @@ define([
 				}
 
 				ActiveFilters.to_defaults();
+				ActiveFilters.current_keys = [];
+				ActiveFilters.current_models = [];
 				ActiveFilters.set("search", new MediaFilter_Collection([search]));
 				Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
 				Upfront.Events.trigger("media:search:requested", search);
 				this.render();
+				
+				var selected_model = new MediaCollection_Selection(ActiveFilters.current_models);
+				Upfront.Events.trigger("media:item:selection_changed", selected_model);
 			},
 			clear_search: function (e) {
 				e.preventDefault();
