@@ -89,7 +89,8 @@ define([
 				});
 
 				var me = this;
-				this.listenTo(pnl, "part:hide:toggle", function () {
+				this.listenTo(pnl, "part:hide:toggle", function (part_type, enable) {
+					this.update_object(part_type, (enable ? 1 : 0));
 					this.updatePreset(preset_model.toJSON());
 				}, this);
 
@@ -98,6 +99,57 @@ define([
 		},
 		getTitle: function() {
 			return 'Presets';
+		},
+
+		has_object: function (type) {
+			return ( this.find_object(type) ? true : false );
+		},
+		find_object: function (type) {
+			var objects = this.model.get('objects');
+			if ( !objects ) return false;
+			return objects.find(function(object){
+				var part_type = object.get_property_value_by_name('part_type');
+				if ( type == part_type ) return true;
+				return false;
+			});
+		},
+		find_wrapper: function (object) {
+			var wrappers = this.model.get('wrappers'),
+				wrapper_id = object.get_wrapper_id()
+			;
+			return wrappers.get_by_wrapper_id(wrapper_id);
+		},
+		update_object: function (type, enable) {
+			var enable = ( enable == 1 ),
+				objects = this.model.get('objects'),
+				wrappers = this.model.get('wrappers'),
+				object = this.find_object(type)
+			;
+			if ( !object && enable ) {
+				var wrapper_id = Upfront.Util.get_unique_id("wrapper"),
+					wrapper = new Upfront.Models.Wrapper({
+						properties: [
+							{ name: 'wrapper_id', value: wrapper_id },
+							{ name: 'class', value: 'c24 clr' }
+						]
+					}),
+					object = new Upfront.Models.PostDataPartModel({
+						properties: [
+							{ name: 'view_class', value: 'PostDataPartView' },
+							{ name: 'part_type', value: type },
+							{ name: 'has_settings', value: 0 },
+							{ name: 'class', value: 'c24 upfront-post-data-part' },
+							{ name: 'wrapper_id', value: wrapper_id }
+						]
+					})
+				;
+				wrappers.add(wrapper, {silent: true});
+				objects.add(object);
+			}
+			else if ( object ) {
+				var object_view = Upfront.data.object_views[object.cid];
+				object_view.parent_view.on_entity_remove(null, object_view);
+			}
 		}
 	});
 

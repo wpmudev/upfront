@@ -93,6 +93,7 @@ var Views = {
 				if ( only_objects.length > 0 && ! _.contains(only_objects, type) ) return;
 				if ( !view || !type || !data[type] ) return;
 				view.render_view(data[type]);
+				Upfront.Events.trigger('entity:object:refresh', view);
 			});
 		},
 		

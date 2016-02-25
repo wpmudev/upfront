@@ -44,6 +44,12 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 	on_render: function () {
 		//console.log(this.el, this)
 	},
+
+	update: function (prop, options) {
+		// Ignore preset changes since post part will have no preset
+		if ( prop && prop.id == 'preset' ) return;
+		this.constructor.__super__.update.call(this, prop, options);
+	},
 	
 	render_view: function (markup) {
 		this.$el.find('.upfront-object-content').empty().append(markup);
@@ -89,16 +95,25 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		this.listenTo(this.model.get('objects'), 'add', this.on_render);
 		this.listenTo(this.model.get('objects'), 'remove', this.on_render);
 		
-		_.extend(this.events, {
+		/*_.extend(this.events, {
 			'click .upfront-post-part-trigger': 'on_edit_click'
-		});
+		});*/
 		this.delegateEvents();
 
 		this.prepare_editor();
 	},
 	
 	get_extra_buttons: function(){
-		return '<a href="#" title="' + l10n.edit_post_parts + '" class="upfront-icon-button upfront-icon-button-nav upfront-post-part-trigger"></a>';
+		//return '<a href="#" title="' + l10n.edit_post_parts + '" class="upfront-icon-button upfront-icon-button-nav upfront-post-part-trigger"></a>';
+		return '';
+	},
+
+	getControlItems: function(){
+		return _([
+			this.createPaddingControl(),
+			this.createControl('reorder', l10n.settings, 'on_edit_click'),
+			this.createControl('settings', l10n.settings, 'on_settings_click')
+		]);
 	},
 	
 	on_edit_click: function (e) {

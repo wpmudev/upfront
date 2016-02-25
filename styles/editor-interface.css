@@ -4368,6 +4368,9 @@ a.upfront-region-name-edit-trigger:before {
 #page.upfront-layout-view .upfront-module.upfront-module-disabled-all {
   opacity: 0.5; }
 
+#page.upfront-layout-view .upfront-module-object-group-on-edit .upfront-module.upfront-module-disabled-all {
+  opacity: 1; }
+
 .upfront-module-disabled-edit .upfront-object:after {
   content: " ";
   position: absolute;
@@ -4385,7 +4388,8 @@ a.upfront-region-name-edit-trigger:before {
   /*border: 1px solid #b3da11;*/
   background: rgba(44, 62, 80, 0.3); }
 
-.upfront-module:hover {
+.upfront-module:hover,
+.upfront-object-group-on-edit .upfront-object:hover {
   background-color: rgba(255, 255, 255, 0.3);
   box-shadow: inset 0px 0px 3px 0px rgba(60, 82, 103, 0.15);
   /*z-index: 40;*/ }
@@ -4411,7 +4415,11 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-module-editing .upfront-entity_meta {
   display: none; }
 
-.upfront-dragging .upfront-module {
+.upfront-object-group-on-edit .upfront-object-group .upfront-entity_meta {
+  display: block; }
+
+.upfront-dragging .upfront-module,
+.upfront-dragging .upfront-object-group-on-edit .upfront-object {
   outline: 1px dotted #7f7f7f;
   overflow: hidden; }
 
@@ -4419,10 +4427,15 @@ a.upfront-region-name-edit-trigger:before {
   outline: 1px dotted #7f7f7f;
   /*z-index: 40;*/ }
 
+.upfront-module-object-group-on-edit .upfront-module.upfront-module-disabled-edit {
+  outline: 1px dotted #7f7f7f;
+  z-index: 10; }
+
 .upfront-objects_container {
   width: 100%;
   position: relative; }
 
+.upfront-object-hidden-toggle,
 .upfront-module-hidden-toggle,
 .upfront-region-hidden-toggle {
   text-align: center;
@@ -4450,6 +4463,7 @@ a.upfront-region-name-edit-trigger:before {
   display: block;
   margin-top: 0; }
 
+.upfront-object-hidden-toggle .upfront-entity-hide_trigger,
 .upfront-module-hidden-toggle .upfront-entity-hide_trigger,
 .upfront-region-hidden-toggle .upfront-entity-hide_trigger {
   display: inline-block;
@@ -4472,6 +4486,10 @@ a.upfront-region-name-edit-trigger:before {
   background-color: #dafed9;
   box-shadow: 1px 1px 1px #e6ebe6;
   width: 100px; }
+
+.upfront-object-group {
+  position: relative;
+  float: left; }
 
 .upfront-object {
   position: relative;
@@ -4566,20 +4584,27 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-module-group.upfront-module-group-on-edit > .upfront-selected-border {
   display: block; }
 
-.upfront-module-group .upfront-editable_entities_container .ui-resizable-handle {
-  visibility: hidden; }
+.upfront-module-group .upfront-editable_entities_container .ui-resizable-handle,
+.upfront-object-group .upfront-editable_entities_container .ui-resizable-handle {
+  visibility: hidden;
+  z-index: 2999; }
 
 .upfront-module-group .upfront-editable_entities_container .uslider .ui-resizable-handle {
   visibility: visible; }
 
 .upfront-module-group-on-edit > .ui-resizable-handle,
 .upfront-module-group-on-edit > .upfront-entity_meta > .upfront-icon-button,
-.upfront-module-group.controls-visible > .upfront-entity_meta > .upfront-icon-button {
+.upfront-module-group.controls-visible > .upfront-entity_meta > .upfront-icon-button,
+.upfront-object-group-on-edit > .upfront-object-group > .ui-resizable-handle,
+.upfront-object-group-on-edit > .upfront-object-group > .upfront-entity_meta > .upfront-icon-button {
   visibility: hidden !important; }
 
 .upfront-module-group-on-edit .upfront-editable_entities_container .upfront-wrapper > .ui-resizable-handle,
-.upfront-module-group-on-edit .upfront-editable_entities_container .upfront-editable_entity:hover > .ui-resizable-handle {
-  visibility: visible; }
+.upfront-module-group-on-edit .upfront-editable_entities_container .upfront-editable_entity:hover > .ui-resizable-handle,
+.upfront-object-group-on-edit .upfront-editable_entities_container .upfront-wrapper > .ui-resizable-handle,
+.upfront-object-group-on-edit .upfront-editable_entities_container .upfront-editable_entity:hover > .ui-resizable-handle {
+  visibility: visible;
+  z-index: 2999; }
 
 .upfront-module-group-on-edit > .upfront-editable_entities_container {
   z-index: 2999999;
@@ -4607,15 +4632,22 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-force-module-delete .upfront-module > .upfront-entity_meta > .upfront-entity-delete_trigger {
   display: block !important; }
 
-.upfront-object > .upfront-entity_meta {
+.upfront-object > .upfront-entity_meta,
+.upfront-object-group > .upfront-entity_meta {
   top: 28px;
   right: 5px; }
 
+.upfront-object-group-on-edit .upfront-object-group .upfront-object > .upfront-entity_meta {
+  top: 5px; }
+
 .offset-ui-from-right-top .upfront-module > .upfront-entity_meta,
-.offset-ui-from-right-top .upfront-object > .upfront-entity_meta {
+.offset-ui-from-right-top .upfront-module-group > .upfront-entity_meta,
+.offset-ui-from-right-top .upfront-object > .upfront-entity_meta,
+.offset-ui-from-right-top .upfront-object-group > .upfront-entity_meta {
   right: 50px; }
 
-.upfront-object > .upfront-entity_meta_extra {
+.upfront-object > .upfront-entity_meta_extra,
+.upfront-object-group > .upfront-entity_meta_extra {
   top: 50px;
   right: 5px; }
 
@@ -4713,10 +4745,13 @@ a.upfront-region-name-edit-trigger:before {
   display: block !important; }
 
 .upfront-module-group-editing .upfront-wrapper.upfront-wrapper-module-group-on-edit > .upfront-wrapper-meta,
-.upfront-module-group-editing .upfront-wrapper:hover > .upfront-wrapper-meta {
+.upfront-module-group-editing .upfront-wrapper:hover > .upfront-wrapper-meta,
+.upfront-object-group-editing .upfront-wrapper.upfront-wrapper-object-group-on-edit > .upfront-wrapper-meta,
+.upfront-object-group-editing .upfront-wrapper:hover > .upfront-wrapper-meta {
   display: none !important; }
 
-.upfront-module-group-editing .upfront-module-group-on-edit .upfront-wrapper:hover > .upfront-wrapper-meta {
+.upfront-module-group-editing .upfront-module-group-on-edit .upfront-wrapper:hover > .upfront-wrapper-meta,
+.upfront-object-group-editing .upfront-object-group-on-edit .upfront-wrapper:hover > .upfront-wrapper-meta {
   display: block !important; }
 
 .upfront-wrapper-meta-left {
@@ -4772,8 +4807,14 @@ a.upfront-region-name-edit-trigger:before {
   display: block; }
 
 .upfront-module-group-on-edit > .upfront-entity-size-hint,
-.upfront-module-group-on-edit:hover > .upfront-entity-size-hint {
+.upfront-module-group-on-edit:hover > .upfront-entity-size-hint,
+.upfront-module:hover .upfront-object-group .upfront-object-view .upfront-entity-size-hint {
   display: none; }
+
+.upfront-object-group-on-edit .upfront-object-group .upfront-object-view:hover > .upfront-entity-size-hint,
+.upfront-object-group-on-edit .upfront-object-group .upfront-object.ui-resizable-resizing ~ .upfront-entity-size-hint,
+.upfront-object-group-on-edit .upfront-object-group .upfront-wrapper.ui-resizable-resizing > .upfront-object-view > .upfront-entity-size-hint {
+  display: block; }
 
 /* Group Element Link Panel Style */
 .upfront-module-group > .upfront-module-group-controls .upfront-inline-panel .upfront-inline-panel-item {
@@ -9664,6 +9705,9 @@ div.sp-replacer:before {
 .upfront-object-group-view > .upfront-element-controls {
   display: none; }
 
+.upfront-object-group-on-edit > .upfront-element-controls {
+  display: none !important; }
+
 .upfront-element-controls .upfront-inline-panel {
   z-index: 2000;
   box-shadow: 0 0 3px 0 rgba(36, 57, 77, 0.3); }
@@ -13077,13 +13121,16 @@ div.upfront-region-container:hover > a.feature_image_selector {
 
 /* Flexbox */
 .flexbox-support .upfront-modules_container > .upfront-editable_entities_container,
+.flexbox-support .upfront-objects_container > .upfront-editable_entities_container,
 .flexbox-support .upfront-editable_entities_container > .upfront-wrapper,
 .flexbox-support .upfront-wrapper > .upfront-module-view,
 .flexbox-support .upfront-grid-layout,
 .flexbox-support .upfront-region,
 .flexbox-support .upfront-region > .upfront-region-wrapper,
 .flexbox-support .upfront-module-group,
-.flexbox-support .upfront-modules_container {
+.flexbox-support .upfront-module,
+.flexbox-support .upfront-modules_container,
+.flexbox-support .upfront-objects_container {
   display: -webkit-flex;
   display: flex;
   -webkit-flex-direction: row;
@@ -13096,13 +13143,15 @@ div.upfront-region-container:hover > a.feature_image_selector {
   align-content: flex-start; }
 
 .flexbox-support .upfront-grid-layout,
-.flexbox-support .upfront-module-group {
+.flexbox-support .upfront-module-group,
+.flexbox-support .upfront-module {
   -webkit-align-items: stretch;
   align-items: stretch; }
 
 .flexbox-support .upfront-region,
 .flexbox-support .upfront-region > .upfront-region-wrapper,
-.flexbox-support .upfront-modules_container {
+.flexbox-support .upfront-modules_container,
+.flexbox-support .upfront-objects_container {
   -webkit-flex-wrap: nowrap;
   flex-wrap: nowrap;
   -webkit-align-items: stretch;
@@ -13119,14 +13168,22 @@ div.upfront-region-container:hover > a.feature_image_selector {
   content: none; }
 
 .flexbox-support .upfront-modules_container > .upfront-editable_entities_container > .upfront-wrapper,
-.flexbox-support .upfront-editable_entities_container > .upfront-wrapper > .upfront-module-view {
+.flexbox-support .upfront-objects_container > .upfront-editable_entities_container > .upfront-wrapper,
+.flexbox-support .upfront-editable_entities_container > .upfront-wrapper > .upfront-module-view,
+.flexbox-support .upfront-editable_entities_container > .upfront-wrapper > .upfront-object-view {
   -webkit-order: 0;
   order: 0; }
 
 .flexbox-support .upfront-editable_entities_container,
 .flexbox-support .upfront-editable_entities_container > .upfront-wrapper > .upfront-module-view,
-.flexbox-support .upfront-editable_entities_container > .upfront-module-view {
+.flexbox-support .upfront-editable_entities_container > .upfront-module-view,
+.flexbox-support .upfront-editable_entities_container > .upfront-wrapper > .upfront-object-view,
+.flexbox-support .upfront-editable_entities_container > .upfront-object-view,
+.flexbox-support .upfront-editable_entities_container > .upfront-object-group-view {
   width: 100%; }
+
+.flexbox-support .upfront-wrapper {
+  float: none; }
 
 /* Firefox specific hack (lighter usage of Flexbox) */
 @media screen and (min--moz-device-pixel-ratio: 0) {

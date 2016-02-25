@@ -368,6 +368,7 @@ h2, h3 { page-break-after: avoid; }
 .flexbox-support .upfront-output-region,
 .flexbox-support .upfront-output-region > .upfront-region-wrapper,
 .flexbox-support .upfront-output-module-group,
+.flexbox-support .upfront-output-object-group,
 .flexbox-support .upfront-output-wrapper,
 .flexbox-support .upfront-output-region-container > .upfront-region-container-bg > .upfront-grid-layout {
 	display: -webkit-flex;
@@ -397,7 +398,10 @@ h2, h3 { page-break-after: avoid; }
 }
 .flexbox-support .upfront-output-region > .upfront-region-wrapper > .upfront-output-wrapper,
 .flexbox-support .upfront-output-module-group > .upfront-output-wrapper,
-.flexbox-support .upfront-output-wrapper > .upfront-output-module {
+.flexbox-support .upfront-output-object-group > .upfront-output-wrapper,
+.flexbox-support .upfront-output-wrapper > .upfront-output-module,
+.flexbox-support .upfront-output-wrapper > .upfront-output-module-group,
+.flexbox-support .upfront-output-wrapper > .upfront-output-object {
 	-webkit-order: 0; 
 	order: 0;
 }

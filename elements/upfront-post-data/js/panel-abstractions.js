@@ -181,7 +181,7 @@ define([
 					}
 
 					// Do other stuff
-					me.trigger("part:hide:toggle", me.data_part);
+					me.trigger("part:hide:toggle", me.data_part, (value && value.length && pos >= 0));
 				}
 			});
 			check.render();
