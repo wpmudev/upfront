@@ -1619,7 +1619,7 @@ define([
 				}
 			},
 			on_element_resize: function (attr) {
-				this.render(); 
+				
 			},
 			on_element_drop: function (attr) {
 
