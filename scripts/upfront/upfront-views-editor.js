@@ -9323,7 +9323,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						multiple: false
 					});
 			}
-			
+
 			//Render padding settings only for regions
 			if ( is_region ) {
 
@@ -9656,7 +9656,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			else {
 				$content.find('.upfront-region-bg-setting-auto-resize').hide();
 			}
-			
+
 			//Render padding settings only for regions
 			if ( is_region ){
 				// Padding Settings
@@ -9677,7 +9677,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			}
 
 			//Make sure we hide the padding markup from template
-			if ( is_layout && !is_region ) {				
+			if ( is_layout && !is_region ) {
 				$content.find('.upfront-region-bg-setting-padding').hide();
 			}
 

@@ -36,6 +36,8 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'loading' => __('Loading...', 'upfront'),
 				'saving' => __('Saving...', 'upfront'),
 				'saving_success' => __('All done!', 'upfront'),
+				'rendering' => __('Rendering %s%', 'upfront'),
+				'rendering_success' => __('All done!', 'upfront'),
 				'saving_error' => __('There has been an error saving your changes', 'upfront'),
 				'preparing_new_post_type' => __('Preparing new %s...', 'upfront'),
 				'here_we_are' => __('Here we are!', 'upfront'),

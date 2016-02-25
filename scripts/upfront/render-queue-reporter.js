@@ -14,8 +14,15 @@ define([], function() {
 			return totalOfStuffToRender;
 		};
 		var doneStuffToRender = 0;
+		var percentDone = 0;
 
 		// Update total
+		// I have tried to calculate the exact number of items in layout but that
+		// didn't work, It should amount to number of regions * 2 plus number of
+		// modules in each regions plus some fixed number of actions that are always
+		// called but for some reason the actual number of stuff to render is about
+		// 25% greater, after looking into it for some time I decided to ditch it to
+		// not waste time. This solutions works fine also.
 		Upfront.Events.on('upfront:renderingqueue:add', function() {
 			totalOfStuffToRender++;
 		});
@@ -26,15 +33,21 @@ define([], function() {
 		}
 
 		Upfront.Events.on('upfront:renderingqueue:progress', function() {
+			var newPercent;
 			doneStuffToRender++;
+			// Since we don't know th actual number of items we do a bit trickery here
+			// do not allow percent to become less than it was already shown.
+			newPercent = Math.floor(doneStuffToRender / totalOfStuffToRender * 100);
+			percentDone = newPercent > percentDone ? newPercent : percentDone;
 			if (onRenderProgress && typeof onRenderProgress === 'function') {
-				onRenderProgress(doneStuffToRender, totalOfStuffToRender);
+				onRenderProgress(percentDone);
 			}
 		});
 
 		Upfront.Events.on('upfront:renderingqueue:done', function() {
 			totalOfStuffToRender = 0;
 			doneStuffToRender = 0;
+			percentDone = 0;
 			if (onRenderFinished && typeof onRenderFinished === 'function') {
 				onRenderFinished();
 			}

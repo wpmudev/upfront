@@ -37,19 +37,6 @@ define([
 	});
 
 
-	// Hook reporting into console (we might use something more user friendly :D
-	var renderReporter = new RenderQueueReporter(
-		function() {
-			console.log('Rendering starting...');
-		},
-		function(done, total) {
-			console.log('Rendering ' + done + ' of ' + total);
-		},
-		function() {
-			console.log('Rendering done ');
-		}
-	);
-
 	var
 		_dispatcher = _.clone(Backbone.Events),
 
@@ -2998,6 +2985,7 @@ define([
 				if ( typeof Upfront.data.wrapper_views == 'undefined' )
 					Upfront.data.wrapper_views = {};
 
+				console.log('this.model', this.model.length);
 				this.model.each(function (module) {
 					RenderQueue.add(function () {
 						me.render_module(module); // surrounding with function to keep context juggling to the minimum
@@ -6220,6 +6208,33 @@ define([
 			}
 		})
 	;
+
+	var renderingProgress;
+	var renderingTotal;
+	// Hook rendering reporting into console
+	var renderReporter = new RenderQueueReporter(
+		function() {
+			renderingProgress = new Upfront.Views.Editor.Loading({
+				loading: Upfront.Settings.l10n.global.application.rendering.replace(/%s/, '0'),
+				done: Upfront.Settings.l10n.global.application.rendering_success,
+				fixed: true
+			});
+			renderingProgress.render();
+			$('body').append(renderingProgress.$el);
+			$('body').append('<div id="render-queue-loading-bar" style="position: fixed; left: 0; top: 0; height: 6px; background-color: #3ea;width: 0%; z-index: 100000;"></div>');
+		},
+		function(done) {
+			renderingProgress.update_loading_text(Upfront.Settings.l10n.global.application.rendering.replace(/%s/, done));
+			$('#render-queue-loading-bar').width(done + '%');
+		},
+		function() {
+			$('#render-queue-loading-bar').remove();
+			renderingProgress.done();
+			renderingProgress = false;
+			renderingTotal = false;
+		}
+	);
+
 
 	return {
 		"Views": {
