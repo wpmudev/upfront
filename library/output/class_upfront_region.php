@@ -38,9 +38,9 @@ class Upfront_Region extends Upfront_Container {
 			$more_classes[] = 'upfront-region-side';
 			$more_classes[] = 'upfront-region-side-' . $this->get_sub();
 		}
-        if ( $this->_is_background() ) {
-            $more_classes[] = 'upfront-image-lazy upfront-image-lazy-bg';
-        }
+		if ( $this->_is_background() ) {
+			$more_classes[] = 'upfront-image-lazy upfront-image-lazy-bg';
+		}
 		return $classes . ' ' . join(' ', $more_classes);
 	}
 
@@ -93,7 +93,7 @@ class Upfront_Region extends Upfront_Container {
 		}
 		return $attr;
 	}
-	
+
 	public function get_id () {
 		return 'upfront-region-' . strtolower(str_replace(" ", "-", $this->get_name()));
 	}
@@ -106,31 +106,31 @@ class Upfront_Region extends Upfront_Container {
 		if ( ! $this->_is_background() )
 			return '';
 		$css = '';
-		$type = $this->get_background_type($point->get_id());
-		$default_type = $this->get_background_type();
+		$is_overlay = $this->_is_background_overlay($point->get_id());
+		$is_default_overlay = $this->_is_background_overlay();
 		$bg_css = $this->_get_background_css(false, true, $point->get_id());
 		if ( ! empty($bg_css) ) {
 			$css .= sprintf('%s #%s {%s}',
-						'.' . ltrim($scope, '. '),
-						$this->get_id(),
-						$bg_css
-					) . "\n";
+					'.' . ltrim($scope, '. '),
+					$this->get_id(),
+					$bg_css
+				) . "\n";
 		}
-		if ( !$point->is_default() && $default_type && !in_array($default_type, array('image', 'color', 'featured')) ){
+		if ( !$point->is_default() && $is_default_overlay ){
 			$css .= sprintf('%s #%s > %s {%s}',
-						'.' . ltrim($scope, '. '),
-						$this->get_id(),
-						'.upfront-output-bg-overlay',
-						'display: none;'
-					) . "\n";
+					'.' . ltrim($scope, '. '),
+					$this->get_id(),
+					'.upfront-output-bg-overlay',
+					'display: none;'
+				) . "\n";
 		}
-		if ( $type && !in_array($type, array('image', 'color', 'featured')) ) {
+		if ( $is_overlay ) {
 			$css .= sprintf('%s #%s > %s {%s}',
-						'.' . ltrim($scope, '. '),
-						$this->get_id(),
-						'.upfront-output-bg-' . $point->get_id(),
-						'display: block;'
-					) . "\n";
+					'.' . ltrim($scope, '. '),
+					$this->get_id(),
+					'.upfront-output-bg-' . $point->get_id(),
+					'display: block;'
+				) . "\n";
 		}
 		return $css;
 	}

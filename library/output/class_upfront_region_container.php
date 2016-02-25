@@ -12,7 +12,7 @@ class Upfront_Region_Container extends Upfront_Container {
 		}
 
 		$additional_classes = array();
-        // Additional test for background type - only if we're dealing with the featured image regions
+		// Additional test for background type - only if we're dealing with the featured image regions
 		if ('featured' === $this->get_background_type() && !has_post_thumbnail(Upfront_Output::get_post_id())) {
 			$additional_classes[] = 'no-featured_image'; // We don't seem to have a featured image here
 		}
@@ -45,39 +45,39 @@ class Upfront_Region_Container extends Upfront_Container {
 		}
 		return $attr;
 	}
-	
+
 	public function get_id () {
 		return 'upfront-region-container-' . strtolower(str_replace(" ", "-", $this->get_name()));
 	}
 
 	public function get_style_for ($point, $scope) {
 		$css = '';
-		$type = $this->get_background_type($point->get_id());
-		$default_type = $this->get_background_type();
+		$is_overlay = $this->_is_background_overlay($point->get_id());
+		$is_default_overlay = $this->_is_background_overlay();
 		$bg_css = $this->_get_background_css(false, true, $point->get_id());
 		if ( !empty($bg_css) ) {
 			$css .= sprintf('%s #%s > %s {%s}',
-						'.' . ltrim($scope, '. '),
-						$this->get_id(),
-						'.upfront-region-container-bg',
-						$bg_css
-					) . "\n";
+					'.' . ltrim($scope, '. '),
+					$this->get_id(),
+					'.upfront-region-container-bg',
+					$bg_css
+				) . "\n";
 		}
-		if ( !$point->is_default() && $default_type && !in_array($default_type, array('image', 'color', 'featured')) ) {
+		if ( !$point->is_default() && $is_default_overlay ) {
 			$css .= sprintf('%s #%s > %s {%s}',
-						'.' . ltrim($scope, '. '),
-						$this->get_id(),
-						'.upfront-region-container-bg > .upfront-output-bg-overlay',
-						'display: none;'
-					) . "\n";
+					'.' . ltrim($scope, '. '),
+					$this->get_id(),
+					'.upfront-region-container-bg > .upfront-output-bg-overlay',
+					'display: none;'
+				) . "\n";
 		}
-		if ( $type && !in_array($type, array('image', 'color', 'featured')) ) {
+		if ( $is_overlay ) {
 			$css .= sprintf('%s #%s > %s {%s}',
-						'.' . ltrim($scope, '. '),
-						$this->get_id(),
-						'.upfront-region-container-bg > .upfront-output-bg-' . $point->get_id(),
-						'display: block;'
-					) . "\n";
+					'.' . ltrim($scope, '. '),
+					$this->get_id(),
+					'.upfront-region-container-bg > .upfront-output-bg-' . $point->get_id(),
+					'display: block;'
+				) . "\n";
 		}
 		return $css;
 	}
