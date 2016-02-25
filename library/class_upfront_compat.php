@@ -49,6 +49,30 @@ class Upfront_Compat implements IUpfront_Server {
 		}
 
 		add_action('wp_ajax_upfront-notices-dismiss', array($this, 'json_dismiss_notices'));
+
+		// Hummingbird compat layer
+		add_filter('wphb_minification_display_enqueued_file', array($this, 'is_upfront_resource_skippable_with_hummingbird'), 10, 3);
+		add_filter('wphb_combine_resource', array($this, 'is_upfront_resource_skippable_with_hummingbird'), 10, 3);
+		add_filter('wphb_minify_resource', array($this, 'is_upfront_resource_skippable_with_hummingbird'), 10, 3);
+	}
+
+	/**
+	 * Hooks up to Hummingbird's native filters
+	 *
+	 * Fixes the necessary resources needed for Upfront to boot properly
+	 *
+	 * @param bool $action Context-dependent action to take (false means "skip")
+	 * @param mixed $item Content-dependent item to process - array for display, string for combine/minify actions
+	 * @param string $type Item type
+	 *
+	 * @return bool
+	 */
+	public function is_upfront_resource_skippable_with_hummingbird ($action, $item, $type) {
+		$handle = is_string($item) ? $item : (!empty($item['handle']) ? $item['handle'] : 'unknown');
+		return in_array($handle, array('upfront-main', 'upfront-element-styles', 'upfront-element-scripts'))
+			? false
+			: $action
+		;
 	}
 
 	/**
