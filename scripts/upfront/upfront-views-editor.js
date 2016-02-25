@@ -8738,6 +8738,8 @@ var Field_Compact_Label_Select = Field_Select.extend({
 					if ( me.done_callback ) _(me.done_callback).each(function(cbk) { if (cbk && cbk.call) cbk.call(me); });
 				}
 			});
+
+			if (Upfront.loadingOverlayBgColor) this.$el.css('background-color', Upfront.loadingOverlayBgColor);
 		},
 		update_loading_text: function (loading) {
 			this.$el.find('.upfront-loading-text').text(loading);
