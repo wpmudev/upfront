@@ -952,6 +952,9 @@ span.draggable-post-element.element-dragging
 {
 	width: 5px! important;
 }
+#upfront-csseditor .ace_scrollbar {
+	z-index: 9;
+}
 #sidebar-ui .sidebar-panel-content::-webkit-scrollbar-track,
 .upfront-scroll-panel::-webkit-scrollbar-track,
 .upfront-settings_panel_scroll::-webkit-scrollbar-track,

@@ -332,7 +332,10 @@ class Upfront_SmushServer implements IUpfront_Server {
 
 	private function _add_hooks () {
 		if (!class_exists('WpSmush')) return false; // Do we have Smush plugin?
-		if (!defined('WpSmush::API_SERVER')) return false; // Is it ours?
+		global $WpSmush;
+		if ( ! defined( 'WpSmush::API_SERVER' ) && ( is_object( $WpSmush ) && ! $WpSmush->api_server ) ) {
+			return false;
+		} // Is it ours?
 
 		add_action('upfront-media-images-image_changed', array($this, 'pass_over_to_smush'), 10, 2);
 	}

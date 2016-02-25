@@ -156,9 +156,9 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 	protected function update_presets($presets = array()) {
 		// Do not need to update this in the db, if it is coming from exporter
-		$isbuilder = stripslashes($_POST['isbuilder']);
+		$isbuilder = isset($_POST['isbuilder']) ? stripslashes($_POST['isbuilder']) : false;
+		
 		if($isbuilder != 'true') {
-			
 			update_option($this->db_key, json_encode($presets));
 		}
 	}
@@ -311,6 +311,16 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 	 */
 	protected function migrate_presets($presets) {
 		return $presets;
+	}
+	
+	public function properties_columns($array, $column) {
+        $result = array();
+        foreach ($array as $item) {
+            if (array_key_exists($column, $item)) {
+                $result[] = $item[$column];
+			}
+		}
+        return $result;
 	}
 
 	public function get_presets_javascript_server() {

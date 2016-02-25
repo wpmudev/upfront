@@ -7,11 +7,11 @@ class Upfront_Button_Presets_Server extends Upfront_Presets_Server {
 
 	protected function __construct() {
 		parent::__construct();
-		
+
 		//Include update preset values only for old layouts
 		$properties = Upfront_Layout::get_layout_properties();
-		$key = array_search('version', array_column($properties, 'name'));
-		
+		$key = array_search('version', $this->properties_columns($properties, 'name'));
+
 		if($key === false || ($key !== false && $properties[$key]['value'] < '1.0.0')) {
 			$this->update_preset_values();
 		}
@@ -140,7 +140,7 @@ class Upfront_Button_Presets_Server extends Upfront_Presets_Server {
 			'fontstyle' => '600 normal',
 			'fontstyle_weight' => '600',
 			'fontstyle_style' => 'normal',
-			'lineheight' => 3,
+			'lineheight' => 1,
 			'color' => 'rgb(0, 0, 0)',
 			'hov_bordertype' => 'solid',
 			'hov_borderwidth' => 1,
@@ -156,7 +156,7 @@ class Upfront_Button_Presets_Server extends Upfront_Presets_Server {
 			'hov_fontstyle' => '600 normal',
 			'hov_fontstyle_weight' => '600',
 			'hov_fontstyle_style' => 'normal',
-			'hov_lineheight' => 3,
+			'hov_lineheight' => 1,
 			'hov_color' => 'rgb(255, 255, 255)',
 			'hov_duration' => 0.25,
 			'hov_transition' => 'linear',
@@ -176,7 +176,7 @@ class Upfront_Button_Presets_Server extends Upfront_Presets_Server {
 			'focus_fontstyle' => '600 normal',
 			'focus_fontstyle_weight' => '600',
 			'focus_fontstyle_style' => 'normal',
-			'focus_lineheight' => 3,
+			'focus_lineheight' => 1,
 			'focus_color' => 'rgb(255, 255, 255)',
 			'id' => 'default',
 			'name' => self::$instance->get_l10n('default_preset')

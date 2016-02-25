@@ -14,9 +14,10 @@
 	width: 100%;
 }
 
-/* Fix bug where if opacity is set on upfront-region-container-bg, controls become unaccessible */
-.upfront-region-container-active .upfront-region-container-bg {
-	z-index: 10000;
+/* Fix bug where if opacity is set on upfront-region-container-bg, controls become unaccessible (or even invisible) */
+.upfront-region-container-active .upfront-region-container-bg,
+.upfront-region-container-active .upfront-region {
+	opacity: 1 !important;
 }
 
 .upfront-region-container-has-posts .upfront-region,
