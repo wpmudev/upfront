@@ -385,8 +385,7 @@ class Upfront_MediaServer extends Upfront_Server {
 		$data = stripslashes_deep($_POST);
 		$data['type'] = !empty($data['type']) ? $data['type'] : array('images');
 		$query = Upfront_MediaCollection::apply_filters($data);
-		if (!$query->is_empty()) $this->_out(new Upfront_JsonResponse_Success($query->to_php()));
-		else $this->_out(new Upfront_JsonResponse_Error("No items"));
+		$this->_out(new Upfront_JsonResponse_Success($query->to_php()));
 	}
 
 	public function list_theme_images () {
