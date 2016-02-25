@@ -214,7 +214,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		this. debouncedRender = _.debounce(this.render, 300);
 		this.debouncedRebindShuffle = _.debounce(this.rebindShuffleForDebouncing, 500);
 	},
-
 	onThumbChangeProportions: function(e) {
 		var factor = this.property('thumbProportions'),
 			width = this.property('thumbWidth');
@@ -848,13 +847,19 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			resizingFunction;
 
 		//Bind resizing events
-		if (me.parent_module_view && !me.parent_module_view.$el.data('resizeHandling')) {
-			resizingFunction = $.proxy(me.onElementResizing, me);
-			me.parent_module_view.$el
-				.on('resize', resizingFunction)
-				.on('resizestop', $.proxy(me.onElementResizeStop, me))
-				.data('resizeHandling', true)
-			;
+		if ( me.parent_module_view ) {
+			// overwrite parent resize stop event to fix gallery issue
+			me.stopListening((me._previous_parent_module_view || me.parent_module_view), 'entity:resize_stop');
+			me.listenTo(me.parent_module_view, 'entity:resize_stop', me.render);
+			
+			if ( !me.parent_module_view.$el.data('resizeHandling') ) {
+				resizingFunction = $.proxy(me.onElementResizing, me);
+				me.parent_module_view.$el
+					.on('resize', resizingFunction)
+					.on('resizestop', $.proxy(me.onElementResizeStop, me))
+					.data('resizeHandling', true)
+				;
+			}
 		}
 
 		/**
