@@ -538,6 +538,10 @@ div.upfront-output-upfront-login_element form#loginform p{
     left: 20px;
 }
 /*Regions*/
+.upfront-region-finish-edit, .upfront-region-finish-edit-fixed, .upfront-region-finish-edit-lightbox, .upfront-module-group-finish-edit{
+    left: 0;
+    right:auto;
+}
 .upfront-add-region-choice .upfront-field-multiple .upfront-field-radio {
     right: 20px;
     left: auto;
@@ -591,4 +595,72 @@ div.upfront-output-upfront-login_element form#loginform p{
 }
 .theme-fonts-ok-button, .breakpoint-edit-ok-button{
     float: left;
+}
+
+/*Inserts*/
+.upfront-image-attachment-bits{
+    right: -60px;
+    left: auto;
+}
+.uinsert-selector{
+    margin-right: 15px;
+}
+.uinsert-selector:before{
+    right: -8px;
+    left: auto;
+    border-left-color: rgba(31, 48, 63, 0.95);
+    border-right-color: transparent;
+}
+.upfront-inserts-markup-editor{
+    right: auto;
+    left: 0;
+}
+.upfront-inserts-markup-apply{
+    right: auto;
+    left: 20px;
+}
+
+/*Media gallery*/
+.upfront-media_manager .upfront-media-controls{
+    right: auto;
+    left: 0;
+}
+.upfront-media-aux_controls .select_control_container{
+    float: right;
+}
+.upfront-media_manager .upfront-media_collection{
+    right: 0;
+    left: auto;
+}
+.upfront-media-controls a.all_filters, .upfront-media-controls a.clear_search{
+    margin-left: 100px;
+    margin-right: auto;
+}
+#upfront-popup .upfront-popup-meta .search_container input{
+    left: auto;
+    right: 100%;
+    transition: right .3s;
+}
+#upfront-popup .upfront-popup-meta .search_container:hover input,
+#upfront-popup .upfront-popup-meta .search_container.has_search input,
+#upfront-popup .upfront-popup-meta .search_container input:focus{
+    left: auto;
+    right: 0;
+}
+
+/*Text element*/
+.upfront-inline-panel-item i.upfront-icon.upfront-icon-region-caption:before{
+    background-position: -804px -74px;
+}
+.upfront-ui .upfront-icon-region-link:before{
+    background-position: -254px -249px;
+}
+.upfront-ui .upfront-icon-region-crop:before{
+    background-position: -256px -221px;
+}
+.upfront-ui .upfront-icon-region-nocaption:before{
+    background-position: -697px -458px!important;
+}
+.upfront-ui .upfront-icon-region-nocaption:hover:before{
+    background-position: -804px -458px!important;
 }
