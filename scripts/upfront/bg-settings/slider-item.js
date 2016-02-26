@@ -162,16 +162,20 @@ define([
 				e.stopPropagation();
 				var $image = $(this).closest('.upfront-region-bg-slider-image'),
 					image_id = $image.data('image-id'),
-					slide_images = me.model.get_breakpoint_property_value('background_slider_images', true);
-
-				if (_.isString(image_id) && image_id.match(/^[0-9]+$/))
+					image_index = $image.index(),
+					slide_images = _.clone(me.model.get_breakpoint_property_value('background_slider_images', true) || []);
+				
+				if (_.isString(image_id) && image_id.match(/^[0-9]+$/)) {
 					image_id = parseInt(image_id, 10);
-
-				slide_images = _.without(slide_images, image_id);
+				}
+				
+				if ( image_index != -1 && slide_images.length > 0 ) {
+					slide_images.splice(image_index, 1);
+				}
+				
 				me.model.set_breakpoint_property('background_slider_images', slide_images);
 				$image.remove();
 				
-				me.update_slider_slides();
 			});
 			
 			this.on('show', function(){
@@ -189,7 +193,7 @@ define([
 				$add = $('<div class="upfront-region-bg-slider-add-image upfront-icon upfront-icon-region-add-slide">' + l10n.add_slide + '</div>'),
 				$wrap = this.$el.find('.upfront-settings-item-content');
 			$wrap.html('');
-
+			
 			if ( slide_images.length > 0 ) {
 				Upfront.Views.Editor.ImageEditor.getImageData(slide_images).done(function(response){
 					var images = response.data.images;

@@ -827,6 +827,11 @@ figure.gallery-labels-figure img.mfp-img {
 	display: block;
 }
 
+/* Always show caption in editor */
+.upfront-editing .ugallery-caption-on-hover-1 {
+	display: block!important;/* yeah, we need important here */
+}
+
 .ugallery-caption-on-hover-1 {
 	display: none;
 }

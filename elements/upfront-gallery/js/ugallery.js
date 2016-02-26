@@ -214,7 +214,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		this. debouncedRender = _.debounce(this.render, 300);
 		this.debouncedRebindShuffle = _.debounce(this.rebindShuffleForDebouncing, 500);
 	},
-
 	onThumbChangeProportions: function(e) {
 		var factor = this.property('thumbProportions'),
 			width = this.property('thumbWidth');
@@ -848,7 +847,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			resizingFunction;
 
 		//Bind resizing events
-		if (me.parent_module_view && !me.parent_module_view.$el.data('resizeHandling')) {
+		if ( me.parent_module_view && !me.parent_module_view.$el.data('resizeHandling') ) {
 			resizingFunction = $.proxy(me.onElementResizing, me);
 			me.parent_module_view.$el
 				.on('resize', resizingFunction)
@@ -934,7 +933,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			})
 			.on('start', function() {
 				me.$el.addClass('upfront-editing');
-				title.parents('.ugallery_item').addClass('upfront-editing');
 			})
 			.on('stop', function() {
 				setTimeout(function() {
@@ -943,7 +941,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 				}, 10);
 
 				me.$el.removeClass('upfront-editing');
-				title.parents('.ugallery_item').removeClass('upfront-editing');
 			})
 			.on('syncAfter', function() {
 				image.set('title', title.html());
@@ -961,6 +958,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		// Not gonna do this because render will be triggered by parent class model changing
 		// 'row' property on resize.
 		// this.render(); <-- this is redundant and creates misscalculation of padding
+	},
+	
+	on_element_resize: function (attr) {
+		this.render();
 	},
 
 	toggleSorting: function(event) {
