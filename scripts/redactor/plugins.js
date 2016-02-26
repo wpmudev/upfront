@@ -872,7 +872,6 @@ RedactorPlugins.upfrontLink = function() {
 					return;
 				}
 
-				this.redactor.selection.restore();
 
 				if (this.selectedLink) {
 					// Update selected link
