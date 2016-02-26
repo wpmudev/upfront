@@ -707,16 +707,20 @@ define([
 				setTimeout(function(){ me.update_size_hint(); }, 500);
 			},
 			update_size_hint: function (width, height) {
-				if ( !this.$size_hint ) return;
 
-				var $el = this.$size_hint.parent(),
-					column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
+				if ( !this.$size_hint ) {
+					return;
+				};
+
+				var	column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
 					hPadding = parseInt( this.model.get_breakpoint_property_value('left_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('right_padding_num') || column_padding ),
 					vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
-					width = width ? width - hPadding : $el.width() - hPadding,
-					height = height ? height - vPadding : $el.height() - vPadding,
+					width = width ? width - hPadding : this.$el.width() - hPadding,
+					height = height ? height : this.$el.outerHeight(),
 					hint = '<b>w:</b>' + width + 'px <b>h:</b>' + height + 'px';
-				this.$size_hint.html(hint);
+				
+				this.$el.find('.upfront-entity-size-hint').html(hint);
+
 			},
 			apply_breakpoint_position: function ($el, $toggle, exceptions) {
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
@@ -1607,7 +1611,7 @@ define([
 				}
 			},
 			on_element_resize_start: function (attr) {
-
+				
 			},
 			on_element_resizing: function (attr) {
 				if ( this.display_size_hint ) {
@@ -1615,7 +1619,7 @@ define([
 				}
 			},
 			on_element_resize: function (attr) {
-
+				
 			},
 			on_element_drop: function (attr) {
 
@@ -1624,9 +1628,14 @@ define([
 
 			},
 			on_module_update: function (view) {
+
 				if ( !this.parent_module_view || this.parent_module_view != view ) return;
+				
 				if ( this.display_size_hint ) {
-					this.update_size_hint();
+					var me = this;
+					setTimeout(function(){
+						me.update_size_hint();
+					}, 500);
 				}
 			},
 			on_change_breakpoint: function (breakpoint) {
@@ -2792,6 +2801,7 @@ define([
 						return;
 					view.update_position();
 				});
+
 				this.update_size_hint();
 			},
 			on_dblclick: function (e) {
@@ -3101,6 +3111,7 @@ define([
 				this.apply_adapt_to_breakpoints();
 			},
 			on_resize: function (view, model) {
+				
 				if ( view.parent_view && view.parent_view != this ) return;
 				//this.apply_flexbox_clear();
 				this.apply_wrapper_height();

@@ -51,14 +51,16 @@ $.fn.ueditor = function(options){
 
 var hackRedactor = function(){
     
-    // These lines override the Redactor's prefFormatting
+    /*
+    // Deprecated, moved to override methods
     var clean = $.Redactor.prototype.clean();
     
     clean.savePreFormatting = function(html) {
         return html;
     };
 
-    $.Redactor.prototype.clean = function () { return clean };
+   $.Redactor.prototype.clean = function () { return clean };
+   */
     
 	// Make click consistent
 	$.Redactor.prototype.airBindHide = function () {
@@ -222,6 +224,222 @@ var hackRedactor = function(){
      * @type {{inline: {format: Overriden_Methods.inline.format}}}
      */
     var Overriden_Methods = {
+        selection: function() // porting from Redactor 10.2.5
+        {
+            return {
+                getPrev: function()
+                {
+                    return  window.getSelection().anchorNode.previousSibling;
+                },
+                getNext: function()
+                {
+                    return window.getSelection().anchorNode.nextSibling;
+                },
+                getBlocks: function(nodes)
+                {
+                    this.selection.get();
+
+                    if (this.range && this.range.collapsed)
+                    {
+                        return [this.selection.getBlock()];
+                    }
+
+                    var blocks = [];
+                    nodes = (typeof nodes == 'undefined') ? this.selection.getNodes() : nodes;
+
+                    $.each(nodes, $.proxy(function(i,node)
+                    {
+                        if (this.utils.isBlock(node))
+                        {
+                            blocks.push(node);
+                        }
+
+                    }, this));
+
+                    return (blocks.length === 0) ? [this.selection.getBlock()] : blocks;
+                },
+                getNodes: function()
+                {
+                    this.selection.get();
+
+                    var startNode = this.selection.getNodesMarker(1);
+                    var endNode = this.selection.getNodesMarker(2);
+
+                    if (this.range.collapsed === false)
+                    {
+                        if (window.getSelection) {
+                            var sel = window.getSelection();
+                            if (sel.rangeCount > 0) {
+
+                                var range = sel.getRangeAt(0);
+                                var startPointNode = range.startContainer, startOffset = range.startOffset;
+
+                                var boundaryRange = range.cloneRange();
+                                boundaryRange.collapse(false);
+                                boundaryRange.insertNode(endNode);
+                                boundaryRange.setStart(startPointNode, startOffset);
+                                boundaryRange.collapse(true);
+                                boundaryRange.insertNode(startNode);
+
+                                // Reselect the original text
+                                range.setStartAfter(startNode);
+                                range.setEndBefore(endNode);
+                                sel.removeAllRanges();
+                                sel.addRange(range);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        this.selection.setNodesMarker(this.range, startNode, true);
+                        endNode = startNode;
+                    }
+
+                    var nodes = [];
+                    var counter = 0;
+
+                    var self = this;
+                    this.$editor.find('*').each(function()
+                    {
+                        if (this == startNode)
+                        {
+                            var parent = $(this).parent();
+                            if (parent.length !== 0 && parent[0].tagName != 'BODY' && self.utils.isRedactorParent(parent[0]))
+                            {
+                                nodes.push(parent[0]);
+                            }
+
+                            nodes.push(this);
+                            counter = 1;
+                        }
+                        else
+                        {
+                            if (counter > 0)
+                            {
+                                nodes.push(this);
+                                counter = counter + 1;
+                            }
+                        }
+
+                        if (this == endNode)
+                        {
+                            return false;
+                        }
+
+                    });
+
+                    var finalNodes = [];
+                    var len = nodes.length;
+                    for (var i = 0; i < len; i++)
+                    {
+                        if (nodes[i].id != 'nodes-marker-1' && nodes[i].id != 'nodes-marker-2')
+                        {
+                            finalNodes.push(nodes[i]);
+                        }
+                    }
+
+                    this.selection.removeNodesMarkers();
+
+                    return finalNodes;
+
+                },
+                setNodesMarker: function(range, node, type)
+                {
+                    var range = range.cloneRange();
+
+                    try {
+                        range.collapse(type);
+                        range.insertNode(node);
+                    }
+                    catch (e) {}
+                },
+                fromPoint: function(start, end)
+                {
+                    this.caret.setOffset(start, end);
+                },
+                selectElement: function(node)
+                {
+                    if (this.utils.browser('mozilla'))
+                    {
+                        node = node[0] || node;
+
+                        var range = document.createRange();
+                        range.selectNodeContents(node);
+                    }
+                    else
+                    {
+                        this.caret.set(node, 0, node, 1);
+                    }
+                },
+                restore: function()
+                {
+                    var node1 = this.$editor.find('span#selection-marker-1');
+                    var node2 = this.$editor.find('span#selection-marker-2');
+
+                    if (this.utils.browser('mozilla'))
+                    {
+                        this.$editor.focus();
+                    }
+
+                    if (node1.length !== 0 && node2.length !== 0)
+                    {
+                        this.caret.set(node1, 0, node2, 0);
+                    }
+                    else if (node1.length !== 0)
+                    {
+                        this.caret.set(node1, 0, node1, 0);
+                    }
+                    else
+                    {
+                        this.$editor.focus();
+                    }
+
+                    this.selection.removeMarkers();
+                    this.savedSel = false;
+
+                },
+                removeMarkers: function()
+                {
+                    this.$editor.find('span.redactor-selection-marker').each(function(i,s)
+                    {
+                        var text = $(s).text().replace(/\u200B/g, '');
+                        if (text === '') $(s).remove();
+                        else $(s).replaceWith(function() { return $(this).contents(); });
+                    });
+                },
+                replaceSelection: function(html)
+                {
+                    this.selection.get();
+                    this.range.deleteContents();
+                    var div = document.createElement("div");
+                    div.innerHTML = html;
+                    var frag = document.createDocumentFragment(), child;
+                    while ((child = div.firstChild)) {
+                        frag.appendChild(child);
+                    }
+
+                    this.range.insertNode(frag);
+                },
+                replaceWithHtml: function(html)
+                {
+                    html = this.selection.getMarkerAsHtml(1) + html + this.selection.getMarkerAsHtml(2);
+
+                    this.selection.get();
+
+                    if (window.getSelection && window.getSelection().getRangeAt)
+                    {
+                        this.selection.replaceSelection(html);
+                    }
+                    else if (document.selection && document.selection.createRange)
+                    {
+                        this.range.pasteHTML(html);
+                    }
+
+                    this.selection.restore();
+                    this.code.sync();
+                }
+            };
+        },
         utils: {
             isEndOfElement: function(element){
                 if (typeof element == 'undefined')
@@ -306,6 +524,12 @@ var hackRedactor = function(){
 
                     return false;
                 }
+            }
+        },
+        clean: {
+            // These lines override the Redactor's prefFormatting
+            savePreFormatting: function(html) {
+                return html;
             }
         }
     };

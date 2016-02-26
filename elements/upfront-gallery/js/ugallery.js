@@ -214,7 +214,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		this. debouncedRender = _.debounce(this.render, 300);
 		this.debouncedRebindShuffle = _.debounce(this.rebindShuffleForDebouncing, 500);
 	},
-
 	onThumbChangeProportions: function(e) {
 		var factor = this.property('thumbProportions'),
 			width = this.property('thumbWidth');
@@ -253,7 +252,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		this.debouncedRender();
 		Upfront.Events.trigger('preset:gallery:updated', preset);
 	},
-	
+
 	caption_updated: function(preset) {
 		var currentPreset = this.model.get_property_value_by_name("preset");
 
@@ -848,7 +847,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			resizingFunction;
 
 		//Bind resizing events
-		if (me.parent_module_view && !me.parent_module_view.$el.data('resizeHandling')) {
+		if ( me.parent_module_view && !me.parent_module_view.$el.data('resizeHandling') ) {
 			resizingFunction = $.proxy(me.onElementResizing, me);
 			me.parent_module_view.$el
 				.on('resize', resizingFunction)
@@ -959,6 +958,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		// Not gonna do this because render will be triggered by parent class model changing
 		// 'row' property on resize.
 		// this.render(); <-- this is redundant and creates misscalculation of padding
+	},
+	
+	on_element_resize: function (attr) {
+		this.render();
 	},
 
 	toggleSorting: function(event) {
@@ -1294,7 +1297,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 					element_id: element_id
 				}
 			;
-			
+
 			//Scale cropOffset for new image size
 			image.set('cropOffset', { left: offsetLeft, top: offsetTop });
 

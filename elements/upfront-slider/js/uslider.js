@@ -64,6 +64,9 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			'click .upfront-icon-prev': 'prevSlide',
 			'click .uslider-starting-options': 'checkStartingInputClick'
 		});
+		
+		//Update slide defaults to match preset settings
+		this.updateSlideDefaults();
 
 		this.model.slideCollection = new Uslider_Slides(this.property('slides'));
 
@@ -96,6 +99,18 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		//Current Slide index
 		this.setCurrentSlide(0);
+	},
+	
+	updateSlideDefaults: function() {
+		primary = this.get_preset_properties().primaryStyle,
+			defaults = {
+				below: 'below',
+				over: 'bottomOver',
+				side: 'right'
+			}
+		;
+
+		Upfront.data.uslider.slideDefaults.style = defaults[primary];
 	},
 
 	get_preset_properties: function() {
@@ -200,21 +215,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		rendered = this.tpl(props);
 
 		var $rendered = $('<div></div>').append(rendered);
-		
-		var primary = props.primaryStyle,
-			defaults = {
-				below: 'below',
-				over: 'bottomOver',
-				side: 'right'
-			}
-		;
 
 		this.model.slideCollection.each(function(slide){
-			var style = slide.get('style');
-			if(style !== defaults[primary]) {
-				slide.set('style', defaults[primary]);
-			}
-
 			if(!me.imageProps[slide.id]){
 				me.imageProps[slide.id] = {
 					size: slide.get('size'),
@@ -610,9 +612,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				me.setCurrentSlide(index);
 				me.updateSlideControls();
 				me.$('.uimage-controls').attr('rel', slide.attr('rel'));
-				if(me.get_preset_properties().primaryStyle == 'side') {
+				if(me.get_preset_properties().primaryStyle == 'side')
 					me.setImageResizable();
-				}
 
 				if(me.get_preset_properties().primaryStyle == 'below'){
 					//Adapt the height to take care of the caption

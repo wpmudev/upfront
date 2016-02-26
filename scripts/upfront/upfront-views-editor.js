@@ -2463,22 +2463,23 @@ define([
         on_render : function(){
             var self = this,
                 unset_color_index;
-            this.theme_colors = Theme_Colors,
+            this.theme_colors = Theme_Colors;
             this.theme_color_range = Theme_Colors.range;
             this.$el.html( this.template({
                 colors :  this.theme_colors.colors.toJSON(),
                 range  :  Theme_Colors.range
             } ) );
 
-            if( this.theme_colors.colors.length < 10 ){
-                this.add_empty_picker(this.theme_colors.colors.length);
-            }
-            unset_color_index = this.theme_colors.colors.length + 1;
+            //if( this.theme_colors.colors.length < 10 ){
+            //    this.add_empty_picker(this.theme_colors.colors.length);
+            //}
+			this.add_previous_pickers();
+            unset_color_index = this.theme_colors.colors.length;
             while( unset_color_index < 10 ){
                 this.add_unset_color(unset_color_index);
                 unset_color_index++;
             }
-            this.add_previous_pickers();
+
             this.add_slider();
         },
         add_empty_picker : function(index){
@@ -2495,7 +2496,7 @@ define([
                         if (value && "undefined" !== typeof tinycolor) {
                         	color = tinycolor(value);
                         }
-                        self.add_new_color(color);
+                        self.add_new_color(color, index);
                     },
                     change: function (color) {
                     	if (!_.isObject(color)) return false;
@@ -2508,12 +2509,35 @@ define([
                 .prepend('<span class="theme-colors-color-name">ufc' + index + '</span>');
         },
         add_unset_color : function(index){
-            this.$('#theme-colors-swatches').append(
-                '<span class="theme_colors_unset_color">' +
-                    '<span class="theme-colors-color-name">ufc' + index + '</span>' +
-                    '<span class="theme-colors-color-no-color"><span></span></span>' +
-                '</span>'
-            );
+			var self = this,
+				empty_picker = new Field_Color({
+					className : 'upfront-field-wrap upfront-field-wrap-color sp-cf theme_color_swatch',
+					hide_label : true,
+					default_value: 'rgba(0, 0, 0, 0)',
+					blank_alpha: 0,
+					spectrum: {
+						choose: function (color) {
+							if (!_.isObject(color)) return false;
+							var value = empty_picker.get_value();
+							if (value && "undefined" !== typeof tinycolor) {
+								color = tinycolor(value);
+							}
+							self.add_new_color(color, index);
+						},
+						change: function (color) {
+							if (!_.isObject(color)) return false;
+							empty_picker.update_input_val(color.toHexString())
+						}
+					}
+				});
+			empty_picker.render();
+
+			empty_picker.$(".sp-preview").addClass("uf-unset-color");
+
+			this.$('#theme-colors-swatches').append( empty_picker.$el );
+			empty_picker.$el.wrap( '<span class="theme-colors-color-picker color-index">'.replace( "index", index) );
+			empty_picker.$el.closest('.theme-colors-color-picker').prepend( '<span class="theme-colors-color-name">ufcindex</span>'.replace( "index", index) );
+
         },
         add_previous_pickers : function(){
             var self = this;
@@ -2560,9 +2584,22 @@ define([
                 $this.prepend('<span class="theme-colors-color-name">ufc' + index + '</span>')
            });
         },
-        add_new_color : function( color ){
+        add_new_color : function( color, index ){
             var percentage = parseInt( Theme_Colors.range, 10) / 100 || 0;
-
+            /**
+            * If slots before the 'index' are empty, fill them up with rgba(0,0,0, 0)
+            * This will make sure the 'color' remains at the 'index'
+            **/
+            for ( var __next_index = this.theme_colors.colors.length; __next_index < index; __next_index++ ) { 
+			    this.theme_colors.colors.push({
+                    color : "#000000",
+                    prev : "#000000",
+                    highlight : "#000000",
+                    shade : "#000000",
+                    alpha: 0
+                });
+			}
+           
             var self = this,
                 model = this.theme_colors.colors.add({
                     color : color.toHexString(),
@@ -2610,18 +2647,18 @@ define([
             }
             $wrapper.append(new_color_picker.$el);
 
-            this.$(".theme_colors_empty_picker").before($wrapper);
-            this.$(".theme_colors_empty_picker").next().remove();
-
-            this.$(".theme_colors_empty_picker").find('.theme-colors-color-name').html( 'ufc' + ( colorIndex + 1 ) );
-
-            this.$(".theme_colors_empty_picker").find('.sp-preview').css({
-                backgroundColor: 'inherit'
-            });
-
-            if ( Theme_Colors.colors.length === 10 ) {
-                this.$(".theme_colors_empty_picker").remove();
-            }
+            //this.$(".theme_colors_empty_picker").before($wrapper);
+            //this.$(".theme_colors_empty_picker").next().remove();
+            //
+            //this.$(".theme_colors_empty_picker").find('.theme-colors-color-name').html( 'ufc' + ( colorIndex + 1 ) );
+            //
+            //this.$(".theme_colors_empty_picker").find('.sp-preview').css({
+            //    backgroundColor: 'inherit'
+            //});
+            //
+            //if ( Theme_Colors.colors.length === 10 ) {
+            //    this.$(".theme_colors_empty_picker").remove();
+            //}
             this.$("#theme-colors-no-color-notice").hide();
             this.render_bottom();
 			this.on_save();
