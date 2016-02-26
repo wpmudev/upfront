@@ -150,7 +150,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		if (is_array($presets) === false) {
 			$presets = array();
 		}
-		
+
 		return $presets;
 	}
 
@@ -164,19 +164,19 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		}
 
 		$properties = $_POST['data'];
-		
+
 		//Check if preset_style is defined
 		if(isset($properties['preset_style'])) {
 			$properties['preset_style'] = Upfront_UFC::utils()->replace_commented_style_with_variable( $properties['preset_style'] );
 		}
-		
+
 		do_action('upfront_save_' . $this->elementName . '_preset', $properties, $this->elementName);
 
 		if (!has_action('upfront_save_' . $this->elementName . '_preset')) {
 			$presets = $this->get_presets();
 
 			$result = array();
-			
+
 			foreach ($presets as $preset) {
 				if ($preset['id'] === $properties['id']) {
 					continue;
@@ -185,7 +185,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 				$result[] = $preset;
 			}
 
-			
+
 			$result[] = $properties;
 
 
