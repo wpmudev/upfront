@@ -2,7 +2,7 @@
 <form>
 {[if(type == 'external') { ]}
 <div class="upfront-field-wrap ulinkpanel-external-wrap">
-	<input type="text" value="{{link.url}}" placeholder="{{Upfront.Settings.l10n.global.ueditor.type_link_url}}" class="upfront-field-text js-ulinkpanel-input-url js-ulinkpanel-input-external">
+	<input type="text" value="{{link.url}}" placeholder="Type link URL" class="upfront-field-text js-ulinkpanel-input-url js-ulinkpanel-input-external">
 </div>
 {[ } ]}
 {[if(type == 'email') { ]}
@@ -24,7 +24,7 @@
 	{[ if(lightboxes.length) { ]}
 		<div class="lightbox-selector">
 		</div>
-		<a href="{{link.url}}" class="link-panel-lightbox-trigger">{{Upfront.Settings.l10n.global.ueditor.open_lightbox}}</a>
+		<a href="{{link.url}}" class="link-panel-lightbox-trigger">Open lightbox</a>
 	{[ } else { ]}
 
 	{[ } ]}
