@@ -693,6 +693,7 @@ var LayoutEditor = {
 			.width($(window).width())
 			.height($(document).height())
 		;
+
 		html += '<p>' + Upfront.Settings.l10n.global.behaviors.this_post_only + '</p>';
 		$.each(_upfront_post_data.layout, function (idx, el) {
 			//var checked = el == current ? "checked='checked'" : '';
@@ -704,22 +705,29 @@ var LayoutEditor = {
 		});
 		//html += '<button type="button" id="upfront-save_as">Save</button>';
 		//html += '<button type="button" id="upfront-cancel_save">Cancel</button>';
-		$dialog
-			.html(html)
-		;
-		$("#upfront-save-dialog").on("click", ".upfront-save-button", function () {
-			/*var $check = $dialog.find(":radio:checked"),
-				selected = $check.length ? $check.val() : false
-			;*/
-			var selected = $(this).attr('data-save-as');
+
+		if(location.pathname.indexOf('create_new') > -1) {
 			$bg.remove(); $dialog.remove();
-			on_complete.apply(context, [selected]);
-			return false;
-		});
-		$("#upfront-save-dialog-background").on("click", function () {
-			$bg.remove(); $dialog.remove();
-			return false;
-		});
+			//We are in builder do not show popup
+			on_complete.apply(context, ['single-post']);
+		} else {
+			$dialog
+				.html(html)
+			;
+			$("#upfront-save-dialog").on("click", ".upfront-save-button", function () {
+				/*var $check = $dialog.find(":radio:checked"),
+					selected = $check.length ? $check.val() : false
+				;*/
+				var selected = $(this).attr('data-save-as');
+				$bg.remove(); $dialog.remove();
+				on_complete.apply(context, [selected]);
+				return false;
+			});
+			$("#upfront-save-dialog-background").on("click", function () {
+				$bg.remove(); $dialog.remove();
+				return false;
+			});
+		}
 	},
 
 	/**
