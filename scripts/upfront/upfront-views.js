@@ -1679,8 +1679,13 @@ define([
 					this.subview.setElement(this.$('.upfront-object-content')).render();
 				}
 
-				col = Upfront.Behaviors.GridEditor.get_class_num(props.class, grid.class);
-				col = col > module_col ? module_col : col;
+				if ( 'class' in props ) {
+					col = Upfront.Behaviors.GridEditor.get_class_num(props.class, grid.class);
+					col = col > module_col ? module_col : col;
+				}
+				else {
+					col = module_col;
+				}
 
 				$object = this.$el.find('.upfront-editable_entity:first');
 				$object.data('default_col', col);

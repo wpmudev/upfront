@@ -1303,7 +1303,7 @@ define([
 			this.$el.html('<h3 class="sidebar-panel-title">' + this.get_title() + '</h3>');
 			this.$el.append('<div class="sidebar-panel-content" />');
 			this.stop_scroll_propagation(this.$el.find('.sidebar-panel-content'));
-			
+
 			if( this.sections){
 				me.$el.find('.sidebar-panel-title').after("<ul class='sidebar-panel-tabspane'></ul>");
 				this.sections.each(function (section) {
@@ -1313,7 +1313,7 @@ define([
 					me.$el.find(".sidebar-panel-content").find(".sidebar-tab-content").last().html(section.el);
 				});
 			}
-			
+
 			if ( this.on_render ) this.on_render();
 			// Make first tab active
 			this.$el.find(".sidebar-panel-tab").first().addClass("active");
@@ -1407,7 +1407,7 @@ define([
 				new SidebarPanel_Settings_Section_DataElements({"model": this.model}),
 				new SidebarPanel_Settings_Section_PluginsElements({"model": this.model})
 			]);
-			
+
 			this.elements = _([]);
 			Upfront.Events.on("command:layout:save", this.on_save, this);
 			Upfront.Events.on("command:layout:save_as", this.on_save, this);
@@ -1505,7 +1505,7 @@ define([
 			}
 		}
 	});
-	
+
 	var SidebarPanel_Settings_Section_LayoutElements = SidebarPanel_Settings_Section.extend({
 		initialize: function () {
 			this.settings = _([]);
@@ -1519,7 +1519,7 @@ define([
 		},
 		on_render: function () {
 			this.elements.each(this.render_element, this)
-		},		
+		},
 		render_element: function (element) {
 			if(! element.draggable)
 				return;
@@ -1594,8 +1594,8 @@ define([
 			});
 		}
 	});
-	
-	
+
+
 	var SidebarPanel_Settings_Section_DataElements = SidebarPanel_Settings_Section_LayoutElements.extend({
 		get_name: function () {
 			return 'data';
@@ -1604,7 +1604,7 @@ define([
 			return "Data";
 		}
 	});
-	
+
 	var SidebarPanel_Settings_Section_PluginsElements = SidebarPanel_Settings_Section_LayoutElements.extend({
 		get_name: function () {
 			return 'plugins';
@@ -2714,16 +2714,6 @@ define([
 			return l10n.theme_settings;
 		},
 		on_render: function () {
-			var me = this;
-			if( this.sections){
-					me.$el.find('.sidebar-panel-title').after("<ul class='sidebar-panel-tabspane'></ul>");
-			}
-			this.sections.each(function (section) {
-					section.render();
-					me.$el.find('.sidebar-panel-tabspane').append( "<li data-target='" + section.cid +  "' class='sidebar-panel-tab'>" +  section.get_title() +  "</li>");
-					me.$el.find('.sidebar-panel-content').append("<div class='sidebar-tab-content' id='" + section.cid +"'></div>");
-					me.$el.find(".sidebar-panel-content").find(".sidebar-tab-content").last().html(section.el);
-			});
 			if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.THEME )
 				this.$el.find('.sidebar-panel-title').trigger('click');
 		}
