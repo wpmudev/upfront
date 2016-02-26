@@ -11,13 +11,7 @@ define([
 			Upfront.Util.post({
 				action: 'upfront_save_' + slug + '_preset',
 				data: presetProperties
-			})
-				.done( function() {
-					Upfront.Events("command:layout:save_error", {id: slug + presetProperties.id});
-				})
-				.fail( function() {
-					Upfront.Events.trigger("command:layout:save_success", { id: slug + presetProperties.id});
-				});
+			});
 		};
 
 		/**
@@ -27,14 +21,6 @@ define([
 		var onLayoutSave = function() {
 			_.each(pendingSavePresets, function(data, slug) {
 				_.each(data,  function(presetProperties, presetId) {
-						Upfront.Events.trigger(
-							"command:layout:save:loading:queue",
-							{
-								id: slug + presetId,
-								message: 'Saved ' + presetProperties.name + ' preset.',
-								errorMessage: 'There was an error while saving ' + presetProperties.name + ' preset.'
-							}
-						);
 						savePreset(slug, presetProperties);
 					});
 			});
@@ -50,7 +36,9 @@ define([
 		};
 
 		// Subscribe to events
-		Upfront.Events.on("command:layout:save_start", onLayoutSave);
+		Upfront.Events.on("command:layout:save", onLayoutSave);
+		Upfront.Events.on("command:layout:save_as", onLayoutSave);
+		Upfront.Events.on("command:layout:publish", onLayoutSave);
 	};
 
 	// Make single instance

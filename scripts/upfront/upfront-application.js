@@ -201,7 +201,6 @@ var LayoutEditorSubapplication = Subapplication.extend({
 
 		// Showing the "busy" overlay on saving.
 		var loading = false,
-			loadingQueue = [],
 			start = function () {
 				loading = new Upfront.Views.Editor.Loading({
 					loading: Upfront.Settings.l10n.global.application.saving,
@@ -211,48 +210,23 @@ var LayoutEditorSubapplication = Subapplication.extend({
 				loading.render();
 				$('body').append(loading.$el);
 			},
-			stop = function (success, id) {
-				var queuedItem;
-
-				if (id) {
-					queuedItem = _.findWhere(loadingQueue, {id: id.id});
-					loadingQueue = _.reject(loadingQueue, function(item) {
-						return item.id === id.id;
-					});
-				}
-
-				if (success && id) {
-					// wait for another save_success or save_error event
-					loading.update_loading_text(queuedItem.message);
-					return;
-				}
-
-				if (!success && id) {
-					loading.update_loading_text(queuedItem.errorMessage);
-				} else if (!success) {
+			stop = function (success) {
+				if (!success) {
 					loading.update_loading_text(Upfront.Settings.l10n.global.application.saving_error);
 				}
 				loading.on_finish(function(){
 					Upfront.Events.trigger("command:layout:save_done", success);
 				});
-
 				if (!success) {
 					loading.done(false, Upfront.Settings.l10n.global.application.saving_error);
 				} else {
 					loading.done();
 				}
-			},
-			// Allows items to be queued up for loading overlay to stay up while all saving is not done.
-			// Also allows custom error/success messages for each item.
-			// @param item - must be an object that has 'id', 'message' and 'errorMessage' properties set up
-			queueUp = function(item) {
-				loadingQueue.push(item);
 			}
 		;
-		this.listenTo(Upfront.Events, "command:layout:save:loading:queue", queueUp);
 		this.listenTo(Upfront.Events, "command:layout:save_start", start);
-		this.listenTo(Upfront.Events, "command:layout:save_success", function(id){ stop(true, id); });
-		this.listenTo(Upfront.Events, "command:layout:save_error", function(id){ stop(false, id); });
+		this.listenTo(Upfront.Events, "command:layout:save_success", function(){ stop(true); });
+		this.listenTo(Upfront.Events, "command:layout:save_error", function(){ stop(false); });
 		this.listenTo(Upfront.Events, "command:themefontsmanager:open", Upfront.Behaviors.LayoutEditor.open_theme_fonts_manager);
 		this.listenTo(Upfront.Events, "command:layout:edit_global_regions", Upfront.Behaviors.LayoutEditor.open_global_region_manager);
 
