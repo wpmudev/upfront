@@ -72,7 +72,7 @@ div.preset-manager-panel .color-module.two{
 }
 .upfront-field-select-option-selected label{
     padding-left: 4px;
-    padding-right: 10px;
+    padding-right: 20px;
 }
 .js-ulinkpanel-input-url,
 .upfront-like-box_url{
@@ -293,6 +293,20 @@ a.upfront-region-name-edit-trigger{
     margin-left: auto;
     float: left;
 }
+#sidebar-ui #theme-colors-swatches span.theme-colors-color-picker, #sidebar-ui #theme-colors-swatches span.theme_colors_empty_picker, #sidebar-ui #theme-colors-swatches span.theme_colors_unset_color{
+    float: right;
+}
+.global-region-manager-list .region-list-control{
+    left: 20px;
+    right: auto;
+}
+.upfront-inline-modal-save, .upfront-inline-modal-save:hover{
+    right: auto;
+    left: 0;
+}
+.upfront-field-select-option{
+    margin: 0 0 0 10px !important;
+}
 /*-------------- End of Sidebar --------------*/
 
 /*-------------- Element Settings --------------*/
@@ -397,10 +411,6 @@ li.activate-breakpoints-dropdown{
     margin-right: auto;
 }
 /*Element Setting*/
-#element-settings-sidebar .padding-settings .padding-right{
-    right:112px;
-    left: auto;
-}
 #element-settings-sidebar .padding-settings .padding-top,
 #element-settings-sidebar .padding-settings .padding-bottom{
     padding-left: inherit;
@@ -461,10 +471,25 @@ li.activate-breakpoints-dropdown{
 /*uGallery*/
 #element-settings-sidebar .padding-settings .padding-top,
 #element-settings-sidebar .padding-settings .padding-bottom,
-#element-settings-sidebar .padding-settings .padding-left
+#element-settings-sidebar .padding-settings .padding-right
 {
     border-right:2px solid #dae6f2 ;
     border-left: none;
+    left: auto;
+}
+#element-settings-sidebar .padding-settings .padding-right{
+    right: 10px;
+    padding-right: 10px;
+    margin-right: -10px;
+    left: auto;
+    padding-top: 5px;
+    top: -2px;
+    width: 55px;
+}
+#element-settings-sidebar .padding-settings .padding-left{
+    right: 102px;
+    left: auto;
+    top: 2px;
 }
 
 /*uImage El*/
@@ -536,6 +561,10 @@ div.upfront-output-upfront-login_element form#loginform p{
 #page .upfront-accordion-container .accordion-panel>i { /* Direct descendents only */
     right:auto;
     left: 20px;
+}
+div#page.upfront-layout-view .upfront-editable_entity.upfront-module .upfront-accordion .upfront-accordion-container .accordion-panel .accordion-panel-title:after{
+    left: 15px;
+    right: auto;
 }
 /*Regions*/
 .upfront-region-finish-edit, .upfront-region-finish-edit-fixed, .upfront-region-finish-edit-lightbox, .upfront-module-group-finish-edit{
