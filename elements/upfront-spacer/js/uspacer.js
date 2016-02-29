@@ -17,7 +17,7 @@ define([
 	});
 
 	var UspacerView = Upfront.Views.ObjectView.extend({
-		className: 'upfront-spacer',
+		className: 'upfront-object-view upfront-spacer',
 		display_size_hint: false,
 		get_content_markup: function () {
 			return "";

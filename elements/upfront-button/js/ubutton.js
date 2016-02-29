@@ -15,7 +15,7 @@ var singleclickcount = 0;
 var elementClasses = '';
 var ButtonView = Upfront.Views.ObjectView.extend({
 	model: ButtonModel,
-	className: 'upfront-button',
+	className: 'upfront-object-view upfront-button',
 	buttonTpl: Upfront.Util.template(buttonTpl),
 	initialize: function() {
 		var me = this;
