@@ -9,6 +9,45 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 		3 => 'comment_form'
 	);
 
+	/**
+	 * Converts the comment count part into markup.
+	 *
+	 * Supported macros:
+	 *    {{comment_count}} - Number of comments for current post
+	 *
+	 * Part template: post-data-comment_count
+	 *
+	 * @return string
+	 */
+	public function expand_comment_count_template () {
+		$is_fake_data = $this->_is_fake_data();
+		$hide_empty = isset($this->_data['comment_count_hide'])
+			? (int)$this->_data['comment_count_hide']
+			: (int)Upfront_Posts_PostsData::get_default('comment_count_hide')
+		;
+		$skip = !empty($this->_data['disable_showing'])
+			? $this->_data['disable_showing']
+			: Upfront_Posts_PostsData::get_default('disable_showing')
+		;
+		if (!$is_fake_data) {
+			$comment_count = $this->_post->comment_count;
+		}
+		else {
+			$post = $this->_get_random_post();
+			if (false !== $post) {
+				$comments = self::spawn_random_comments($post, $skip);
+				$comment_count = count($comments);
+			}
+		}
+
+		if ($hide_empty && empty($comment_count)) return '';
+
+		$out = $this->_get_template('comment_count');
+
+		$out = Upfront_Codec::get()->expand($out, "comment_count", (int)($comment_count));
+
+		return $out;
+	}
 
 	/**
 	 * Converts the comment form part into markup.
@@ -23,7 +62,8 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 	 * @return string
 	 */
 	public function expand_comment_form_template () {
-		if (empty($this->_post->ID)) return '';
+		$is_fake_data = $this->_is_fake_data();
+		if (!$is_fake_data && empty($this->_post->ID)) return '';
 
 		$tpl = $this->_get_external_comments_template();
 		if (!empty($tpl)) return ''; // We already have a form included with the comments
@@ -39,8 +79,15 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
          */
         $form_args = apply_filters('upfront_comment_form_args', array_filter($form_args));
 
+		if (!$is_fake_data) {
+			$post = $this->_post;
+		}
+		else {
+			$post = $this->_get_random_post();
+		}
+
         ob_start();
-        comment_form($form_args, $this->_post->ID);
+        comment_form($form_args, $post->ID);
         $comment_form = ob_get_clean();
 
         $out = $this->_get_template('comment_form');
@@ -94,8 +141,9 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 	 * @return string
 	 */
 	public function expand_comments_template () {
-		if (empty($this->_post->ID)) return '';
-		if (empty($this->_post->comment_count)) return '';
+		$is_fake_data = $this->_is_fake_data();
+		if (!$is_fake_data && empty($this->_post->ID)) return '';
+		if (!$is_fake_data && empty($this->_post->comment_count)) return '';
 
 		// If we have plugin-overridden template, then yeah... go with that
 		$tpl = $this->_get_external_comments_template();
@@ -103,7 +151,11 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 
         $comments = array();
         $post = false;
-		if (is_numeric($this->_post->ID)) {
+		$skip = !empty($this->_data['disable_showing'])
+			? $this->_data['disable_showing']
+			: Upfront_Posts_PostsData::get_default('disable_showing')
+		;
+		if (is_numeric($this->_post->ID) && !$is_fake_data) {
 			$post = $this->_post;
 			$comment_args = array(
 				'post_id' => $this->_post->ID,
@@ -118,10 +170,6 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 			if (!empty($user_id)) $comment_args['include_unapproved'] = array($user_id);
 			else if (!empty($commenter['comment_author_email'])) $comment_args['include_unapproved'] = array($commenter['comment_author_email']);
 
-			$skip = !empty($this->_data['disable_showing'])
-				? $this->_data['disable_showing']
-				: Upfront_Posts_PostsData::get_default('disable_showing')
-			;
 			if (!empty($skip)) {
 				if (in_array('comments', $skip)) $comment_args['type__not_in'][] = 'comment';
 				if (in_array('trackbacks', $skip)) $comment_args['type__not_in'][] = 'pings';
@@ -129,12 +177,9 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 
 			$comments = get_comments($comment_args);
 		} else {
-			// @TODO: fix/refactor this to work properly in the builder too
-			$posts = get_posts(array('orderby' => 'rand', 'posts_per_page' => 1));
-			if (!empty($posts[0])) {
-				$post = $posts[0];
-				$comments = self::spawn_random_comments($post);
-				add_filter('comments_open', '__return_true');
+			$post = $this->_get_random_post();
+			if (false !== $post) {
+				$comments = self::spawn_random_comments($post, $skip);
 			}
 			else return '';
 		}
@@ -173,6 +218,89 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 	public static function list_comment ($comment, $args, $depth) {
 		$GLOBALS['comment'] = $comment;
 		echo upfront_get_template('upfront-comment-list', array( 'comment' => $comment, 'args' => $args, 'depth' => $depth ), upfront_element_dir('tpl/upfront-comment-list.php', dirname(__DIR__)));
+	}
+
+	/**
+	 * Generate random comments for use with builder
+	 *
+	 * @param $post object WP_Post object
+	 * @param $skip array Array of comment type to skip
+	 * @return array
+	 */
+	public static function spawn_random_comments ($post, $skip = array()) {
+		$fake_comment = array(
+			'user_id' => get_current_user_id(),
+			'comment_author' => 'Author',
+			'comment_author_IP' => '',
+			'comment_author_url' => '',
+			'comment_author_email' => '',
+			'comment_post_ID' => $post->ID,
+			'comment_type' => '',
+			'comment_date' => current_time('mysql'),
+			'comment_date_gmt' => current_time('mysql', 1),
+			'comment_approved' => 1,
+			'comment_content' => 'test stuff author comment',
+			'comment_parent' => 0,
+		);
+		$comments = array();
+		if (!in_array('comments', $skip)) {
+			$comments[] = array_merge($fake_comment, array(
+				'user_id' => get_current_user_id(),
+				'comment_author' => 'Author',
+				'comment_content' => 'test stuff author comment',
+			));
+			$comments[] = array_merge($fake_comment, array(
+				'user_id' => 0,
+				'comment_author' => 'Visitor',
+				'comment_content' => 'test stuff visitor comment',
+			));
+		}
+		if (!in_array('trackbacks', $skip)) {
+			$comments[] = array_merge($fake_comment, array(
+				'user_id' => 0,
+				'comment_author' => 'Trackback',
+				'comment_type' => 'trackback',
+				'comment_content' => 'test stuff visitor trackback',
+			));
+			$comments[] = array_merge($fake_comment, array(
+				'user_id' => 0,
+				'comment_author' => 'Pingback',
+				'comment_type' => 'pingback',
+				'comment_content' => 'test stuff visitor pingkback',
+			));
+		}
+		foreach ($comments as $cid => $comment) {
+			$comment['comment_ID'] = $cid;
+			$comments[$cid] = (object)wp_filter_comment($comment);
+		}
+		return $comments;
+	}
+
+	/**
+	 * Check if we are on builder and need dummy comments
+	 */
+	private function _is_fake_data () {
+		return (
+			$this->_editor
+			&&
+			!is_numeric($this->_data['post_id'])
+			&&
+			in_array($this->_data['post_id'], array('fake_post', 'fake_styled_post'))
+		);
+	}
+
+	/**
+	 * Get random post to use for dummy comments
+	 */
+	private function _get_random_post () {
+		if ( isset($this->_rand_post) ) return $this->_rand_post;
+		$posts = get_posts(array('orderby' => 'rand', 'posts_per_page' => 1));
+		if (!empty($posts[0])) {
+			$this->_rand_post = $posts[0];
+			add_filter('comments_open', '__return_true');
+			return $this->_rand_post;
+		}
+		return false;
 	}
 
 	/**

@@ -59,6 +59,7 @@ define([
 			return this.model;
 		},
 		update_object: function (value, property) {
+			if (_.isUndefined(value) ) value = '';
 			this.model.set(property, value);
 			this.trigger("part:property:change", property, value);
 		},

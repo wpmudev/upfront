@@ -15,6 +15,7 @@ define([
 				{
 					type: "Checkboxes",
 					property: "resize_featured",
+					multiple: false,
 					default_value: 0,
 					values: [{ label: 'Re-size to fit Container', value: '1' }]
 				},

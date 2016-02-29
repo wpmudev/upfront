@@ -124,7 +124,7 @@
 	background-position: -43px -145px;
 }
 
-[data-fallback="color"] {
+[data-fallback="color"], [data-fallback="hide"] {
 	position: absolute;
 	top: 0;
 	left: 0;

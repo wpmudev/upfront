@@ -277,7 +277,10 @@ var PostDataElement = Upfront.Views.Editor.Sidebar.Element.extend({
 		type: '',
 		columns: 24,
 		rows: Upfront.Util.height_to_row(200),
-		name: ''
+		name: '',
+		parts: {
+
+		}
 	},
 	
 	_post_parts: [],
@@ -294,7 +297,8 @@ var PostDataElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	create_part_objects: function (types) {
 		var me = this,
 			objects = [],
-			wrappers = [];
+			wrappers = []
+		;
 		_.each(types, function(type){
 			var object = me.create_part_object(type);
 			objects.push( object.object );
@@ -311,7 +315,8 @@ var PostDataElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	 * @param {String} type
 	 */
 	create_part_object: function (type) {
-		var wrapper_id = Upfront.Util.get_unique_id("wrapper"),
+		var default_data = _.isObject(this._default_data.parts) && _.isObject(this._default_data.parts[type]) ? this._default_data.parts[type] : {},
+			wrapper_id = Upfront.Util.get_unique_id("wrapper"),
 			wrapper = new Upfront.Models.Wrapper({
 				properties: [
 					{ name: 'wrapper_id', value: wrapper_id },
@@ -324,9 +329,13 @@ var PostDataElement = Upfront.Views.Editor.Sidebar.Element.extend({
 					{ name: 'part_type', value: type },
 					{ name: 'has_settings', value: 0 },
 					{ name: 'class', value: 'c24 upfront-post-data-part' },
-					{ name: 'wrapper_id', value: wrapper_id }
+					{ name: 'wrapper_id', value: wrapper_id },
 				]
-			});
+			})
+		;
+		if ( !_.isUndefined(default_data.rows) ) {
+			object.set_property('row', default_data.rows, true);
+		}
 		return {
 			object: object,
 			wrapper: wrapper
@@ -338,7 +347,8 @@ var PostDataElement = Upfront.Views.Editor.Sidebar.Element.extend({
 		var part_objects = this.create_part_objects(this._post_parts),
 			object = new PostDataModel({
 				properties: [
-					{"name": "data_type", "value": this._default_data.type}
+					{"name": "data_type", "value": this._default_data.type},
+					{"name": "row", "value": this._default_data.rows}
 				],
 				objects: part_objects.objects,
 				wrappers: part_objects.wrappers
@@ -406,7 +416,12 @@ var PostDataElement_FeaturedImage = PostDataElement.extend({
 		type: 'featured_image',
 		columns: 18,
 		rows: Upfront.Util.height_to_row(200),
-		name: 'Featured Image'
+		name: 'Featured Image',
+		parts: {
+			featured_image: {
+				rows: Upfront.Util.height_to_row(200)
+			}
+		}
 	},
 	_post_parts: [
 		'featured_image'

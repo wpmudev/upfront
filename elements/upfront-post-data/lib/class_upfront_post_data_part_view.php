@@ -11,6 +11,7 @@ abstract class Upfront_Post_Data_PartView extends Upfront_PostPart_View {
 	
 	protected $_data = array();
 	protected $_post;
+	protected $_editor = false;
 
 	protected static $_parts = array();
 
@@ -23,11 +24,13 @@ abstract class Upfront_Post_Data_PartView extends Upfront_PostPart_View {
 	 * Expands each part of the post parts and constructs markup string,
 	 * then wraps it in post wrapper.
 	 * @param object WP_Post object instance
+	 * @param bool Is editor or not
 	 * @return string Rendered post markup
 	 */
-	public function get_markup ($post) {
+	public function get_markup ($post, $editor = false) {
 		if (empty($post)) return false;
 		$this->_post = $post;
+		$this->_editor = $editor;
 
 		$post_parts = self::get_default_parts($this->_data);
 		//$disabled_post_parts = !empty($this->_data['hidden_parts']) ? $this->_data['hidden_parts'] : array();

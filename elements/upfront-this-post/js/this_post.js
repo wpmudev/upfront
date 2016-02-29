@@ -80,14 +80,14 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			});
 
 
-            if( Upfront.Application.is_builder() ){
+            /*if( Upfront.Application.is_builder() ){
                 me.editor.loadingLayout.done(function() {
                     setTimeout(function() {
                         Upfront.Events.trigger('post:layout:edit', me, 'single');
                     }, 200);
 
                 });
-            }
+            }*/
 
 		});
 
@@ -158,6 +158,14 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		var me = this,
 			contents = this.$('.upfront-object-content').children()
 		;
+
+		// Always allow this_post to be deleted
+		// Since we have new single post data element already
+		if ( this.parent_module_view.model.get_property_value_by_name('sticky') ) {
+			this.parent_module_view.model.set_property('sticky', false);
+			// Add the button manually
+			this.parent_module_view.$el.find('> .upfront-module > .upfront-entity_meta').prepend('<a href="#" class="upfront-icon-button upfront-icon-button-delete upfront-entity-delete_trigger"></a>');
+		}
 
 		// Make sure we have an element to swap with, first up
 		if(contents[0] && contents[0] != this.editor.el){

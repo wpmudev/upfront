@@ -87,6 +87,7 @@ var _partView = Backbone.View.extend({
 	},
 	triggerEditor: function () {
 		if ( this.parent._editing ) return;
+		if( Upfront.Application.is_builder() ) return;
 		this.parent.triggerEditors();
 		this.focus();
 	},

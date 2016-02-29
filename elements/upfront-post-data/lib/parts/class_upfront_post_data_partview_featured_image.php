@@ -38,7 +38,8 @@ class Upfront_Post_Data_PartView_Featured_Image extends Upfront_Post_Data_PartVi
 
 			// Hide fallback
 			if (empty($fallback_option) || 'hide' === $fallback_option) {
-				return ''; // Naive approach
+				if ( !$this->_editor ) return '';
+				$fallback = 'data-fallback="hide"';
 			}
 
 			// Solid color fallback

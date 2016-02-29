@@ -92,7 +92,7 @@ class Upfront_Post_Data extends Upfront_Server {
 		$view = new $view_class($data);
 
 		$this->_out(new Upfront_JsonResponse_Success(array(
-			'post_data' => $view->get_markup($post),
+			'post_data' => $view->get_markup($post, true),
 		)));
 	}
 
