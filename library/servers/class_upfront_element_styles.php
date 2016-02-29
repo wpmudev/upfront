@@ -9,47 +9,52 @@ class Upfront_ElementStyles extends Upfront_Server {
 	const TYPE_SCRIPT = 'js';
 	const TYPE_STYLE = 'css';
 
-	public static function serve () {
+	public static function serve() {
 		$me = new self;
 		$me->_add_hooks();
 	}
 
-	private function _add_hooks () {
-		$this->_cache = Upfront_Cache::get_instance(Upfront_Cache::TYPE_LONG_TERM);
+	private function _add_hooks() {
+		$this->_cache = Upfront_Cache::get_instance( Upfront_Cache::TYPE_LONG_TERM );
 
-		if (Upfront_Behavior::compression()->has_experiments()) {
-			add_filter('upfront-experiments-styles-debounce_dependency_load', array($this, 'add_style_load_url'));
-			add_filter('upfront-experiments-scripts-debounce_dependency_load', array($this, 'add_script_load_url'));
+		if ( Upfront_Behavior::compression()->has_experiments() ) {
+			add_filter( 'upfront-experiments-styles-debounce_dependency_load', array( $this, 'add_style_load_url' ) );
+			add_filter( 'upfront-experiments-scripts-debounce_dependency_load', array( $this, 'add_script_load_url' ) );
 		} else {
-			add_action('upfront-layout-applied', array($this, 'load_styles'));
-			add_action('upfront-layout-applied', array($this, 'load_scripts'));
+			add_action( 'upfront-layout-applied', array( $this, 'load_styles' ) );
+			add_action( 'upfront-layout-applied', array( $this, 'load_scripts' ) );
 		}
 
-		upfront_add_ajax('upfront-element-styles', array($this, 'serve_styles'));
-		upfront_add_ajax_nopriv('upfront-element-styles', array($this, 'serve_styles'));
+		upfront_add_ajax( 'upfront-element-styles', array( $this, 'serve_styles' ) );
+		upfront_add_ajax_nopriv( 'upfront-element-styles', array( $this, 'serve_styles' ) );
 
-		upfront_add_ajax('upfront-element-scripts', array($this, 'serve_scripts'));
-		upfront_add_ajax_nopriv('upfront-element-scripts', array($this, 'serve_scripts'));
+		upfront_add_ajax( 'upfront-element-scripts', array( $this, 'serve_scripts' ) );
+		upfront_add_ajax_nopriv( 'upfront-element-scripts', array( $this, 'serve_scripts' ) );
 	}
 
 	/**
 	 * Loads element style dependencies in normal execution mode.
 	 * @uses wp_enqueue_style
 	 */
-	public function load_styles () {
+	public function load_styles() {
 		$raw_cache_key = $this->_get_cached_styles();
-		if (!empty($raw_cache_key)) wp_enqueue_style('upfront-element-styles', $this->_get_enqueueing_url(self::TYPE_STYLE, $raw_cache_key), array(), $this->_get_enqueue_version()); // But let's do pretty instead
+		if ( ! empty( $raw_cache_key ) ) {
+			wp_enqueue_style( 'upfront-element-styles', $this->_get_enqueueing_url( self::TYPE_STYLE, $raw_cache_key ), array(), $this->_get_enqueue_version() );
+		} // But let's do pretty instead
 	}
 
 	/**
 	 * Queue up element style dependencies for deferred loading in experiments mode.
 	 */
-	public function add_style_load_url ($urls) {
+	public function add_style_load_url( $urls ) {
 		$raw_cache_key = $this->_get_cached_styles();
-		if (empty($raw_cache_key)) return $urls;
+		if ( empty( $raw_cache_key ) ) {
+			return $urls;
+		}
 
-		$url = $this->_get_enqueueing_url(self::TYPE_STYLE, $raw_cache_key);
+		$url    = $this->_get_enqueueing_url( self::TYPE_STYLE, $raw_cache_key );
 		$urls[] = $url;
+
 		return $urls;
 	}
 
@@ -58,24 +63,30 @@ class Upfront_ElementStyles extends Upfront_Server {
 	 *
 	 * @return string Raw cache key to be used in URL construction.
 	 */
-	private function _get_cached_styles () {
-		$hub = Upfront_PublicStylesheets_Registry::get_instance();
+	private function _get_cached_styles() {
+		$hub    = Upfront_PublicStylesheets_Registry::get_instance();
 		$styles = $hub->get_all();
-		if (empty($styles)) return false;
+		if ( empty( $styles ) ) {
+			return false;
+		}
 
-		$ckey = $this->_cache->key(self::TYPE_STYLE, $styles);
+		$ckey = $this->_cache->key( self::TYPE_STYLE, $styles );
 
 		$raw_cache_key = $ckey->get_hash();
-		$cache = $this->_debugger->is_active() ? false : $this->_cache->get($ckey);
+		$cache         = $this->_debugger->is_active() ? false : $this->_cache->get( $ckey );
 
-		if (empty($cache)) {
-			foreach ($styles as $key => $frags) {
-				if (empty($frags)) continue;
-				$style = $this->_get_style_contents($frags);
-				if (!empty($style))  $cache .= "/* ~~~~~ [STYLE DEBUG]: {$key} ~~~~~ */\n{$style}\n";
+		if ( empty( $cache ) ) {
+			foreach ( $styles as $key => $frags ) {
+				if ( empty( $frags ) ) {
+					continue;
+				}
+				$style = $this->_get_style_contents( $frags );
+				if ( ! empty( $style ) ) {
+					$cache .= "/* ~~~~~ [STYLE DEBUG]: {$key} ~~~~~ */\n{$style}\n";
+				}
 			}
-			if (!$this->_debugger->is_active(Upfront_Debug::STYLE)) {
-				$cache = Upfront_StylePreprocessor::compress($cache);
+			if ( ! $this->_debugger->is_active( Upfront_Debug::STYLE ) ) {
+				$cache = Upfront_StylePreprocessor::compress( $cache );
 			}
 
 			/**
@@ -84,9 +95,9 @@ class Upfront_ElementStyles extends Upfront_Server {
 			 * @param string $cache Gathered and pre-processed cache to deal with
 			 * @param string $raw_cache_key Cache key used for storage
 			 */
-			$cache = apply_filters('upfront-dependencies-cache-styles', $cache, $raw_cache_key);
+			$cache = apply_filters( 'upfront-dependencies-cache-styles', $cache, $raw_cache_key );
 
-			$this->_cache->set($ckey, $cache);
+			$this->_cache->set( $ckey, $cache );
 		}
 
 		return $raw_cache_key;
@@ -95,45 +106,53 @@ class Upfront_ElementStyles extends Upfront_Server {
 	/**
 	 * Fetching and pre-processing the relative/absolute paths in styles.
 	 */
-	private function _get_style_contents ($frags) {
-		$path = upfront_element_dir($frags[0], $frags[1]);
-		$url = upfront_element_url($frags[0], $frags[1]);
-		if (!file_exists($path)) return false;
+	private function _get_style_contents( $frags ) {
+		$path = upfront_element_dir( $frags[0], $frags[1] );
+		$url  = upfront_element_url( $frags[0], $frags[1] );
+		if ( ! file_exists( $path ) ) {
+			return false;
+		}
 
-		$style = file_get_contents($path);
+		$style = file_get_contents( $path );
 
 		// Obtain the first "../" level
-		$base_url = trailingslashit(dirname(dirname($url)));
+		$base_url = trailingslashit( dirname( dirname( $url ) ) );
 
 		// First up, let's build up allowed directories list
-		$dirs = explode('/', $base_url);
-		$relatives = array();
-		$upfront_root = preg_quote(Upfront::get_root_url(), '/');
-		while (array_pop($dirs) !== NULL) {
-			$rel = join('/', $dirs);
+		$dirs         = explode( '/', $base_url );
+		$relatives    = array();
+		$upfront_root = preg_quote( Upfront::get_root_url(), '/' );
+		while ( array_pop( $dirs ) !== null ) {
+			$rel         = join( '/', $dirs );
 			$relatives[] = $rel;
-			if (preg_match('/^' . $upfront_root . '$/', $rel)) break; // Let's not allow relative paths inclusion higher than the Upfront root
+			if ( preg_match( '/^' . $upfront_root . '$/', $rel ) ) {
+				break;
+			} // Let's not allow relative paths inclusion higher than the Upfront root
 		}
-		if (empty($relatives)) return $style;
+		if ( empty( $relatives ) ) {
+			return $style;
+		}
 
 		// Next, let's build the matching patterns list
 		$matchers = array();
-		foreach ($relatives as $idx => $relpath) {
-			$count = $idx+1;
-			$matchers[$count] = array(
-				'url' => $relpath,
-				'pattern' => str_repeat('../', $count)
+		foreach ( $relatives as $idx => $relpath ) {
+			$count              = $idx + 1;
+			$matchers[ $count ] = array(
+				'url'     => $relpath,
+				'pattern' => str_repeat( '../', $count )
 			);
 		}
-		$matchers = array_reverse($matchers); // Start with longest match first
+		$matchers = array_reverse( $matchers ); // Start with longest match first
 
 		// Lastly, let's actually replace the relative paths
-		$slash = preg_quote('/', '/');
-		foreach ($matchers as $match) {
-			if (empty($match['pattern']) || empty($match['url'])) continue;
-			$rx = "/([^{$slash}])" . preg_quote($match['pattern'], '/') . '([^.]{2})/'; // Let's start small
-			$rpl = '$1' . trailingslashit($match['url']) . '$2';
-			$style = preg_replace($rx, $rpl, $style);
+		$slash = preg_quote( '/', '/' );
+		foreach ( $matchers as $match ) {
+			if ( empty( $match['pattern'] ) || empty( $match['url'] ) ) {
+				continue;
+			}
+			$rx    = "/([^{$slash}])" . preg_quote( $match['pattern'], '/' ) . '([^.]{2})/'; // Let's start small
+			$rpl   = '$1' . trailingslashit( $match['url'] ) . '$2';
+			$style = preg_replace( $rx, $rpl, $style );
 		}
 
 		return $style;
@@ -143,20 +162,25 @@ class Upfront_ElementStyles extends Upfront_Server {
 	 * Loads element script dependencies in normal execution mode.
 	 * @uses wp_enqueue_script
 	 */
-	public function load_scripts () {
+	public function load_scripts() {
 		$raw_cache_key = $this->_get_cached_scripts();
-		if (!empty($raw_cache_key)) wp_enqueue_script('upfront-element-scripts', $this->_get_enqueueing_url(self::TYPE_SCRIPT, $raw_cache_key), array('jquery'), $this->_get_enqueue_version(), true); // Scripts go into footer
+		if ( ! empty( $raw_cache_key ) ) {
+			wp_enqueue_script( 'upfront-element-scripts', $this->_get_enqueueing_url( self::TYPE_SCRIPT, $raw_cache_key ), array( 'jquery' ), $this->_get_enqueue_version(), true );
+		} // Scripts go into footer
 	}
 
 	/**
 	 * Queue up element script dependencies for deferred loading in experiments mode.
 	 */
-	public function add_script_load_url ($urls) {
+	public function add_script_load_url( $urls ) {
 		$raw_cache_key = $this->_get_cached_scripts();
-		if (empty($raw_cache_key)) return $urls;
-		
-		$url = $this->_get_enqueueing_url(self::TYPE_SCRIPT, $raw_cache_key);
+		if ( empty( $raw_cache_key ) ) {
+			return $urls;
+		}
+
+		$url    = $this->_get_enqueueing_url( self::TYPE_SCRIPT, $raw_cache_key );
 		$urls[] = $url;
+
 		return $urls;
 	}
 
@@ -165,20 +189,24 @@ class Upfront_ElementStyles extends Upfront_Server {
 	 *
 	 * @return string Raw cache key to be used in URL construction.
 	 */
-	private function _get_cached_scripts () {
-		$hub = Upfront_PublicScripts_Registry::get_instance();
+	private function _get_cached_scripts() {
+		$hub     = Upfront_PublicScripts_Registry::get_instance();
 		$scripts = $hub->get_all();
-		if (empty($scripts)) return false;
+		if ( empty( $scripts ) ) {
+			return false;
+		}
 
-		$ckey = $this->_cache->key(self::TYPE_SCRIPT, $scripts);
+		$ckey = $this->_cache->key( self::TYPE_SCRIPT, $scripts );
 
 		$raw_cache_key = $ckey->get_hash();
-		$cache = $this->_debugger->is_active() ? false : $this->_cache->get($ckey);
+		$cache         = $this->_debugger->is_active() ? false : $this->_cache->get( $ckey );
 
-		if (empty($cache)) {
-			foreach ($scripts as $key => $frags) {
-				$path = upfront_element_dir($frags[0], $frags[1]);
-				if (file_exists($path)) $cache .= "/* {$key} */\n" . file_get_contents($path) . "\n";
+		if ( empty( $cache ) ) {
+			foreach ( $scripts as $key => $frags ) {
+				$path = upfront_element_dir( $frags[0], $frags[1] );
+				if ( file_exists( $path ) ) {
+					$cache .= "/* {$key} */\n" . file_get_contents( $path ) . "\n";
+				}
 			}
 
 			/**
@@ -187,9 +215,9 @@ class Upfront_ElementStyles extends Upfront_Server {
 			 * @param string $cache Gathered and pre-processed cache to deal with
 			 * @param string $raw_cache_key Cache key used for storage
 			 */
-			$cache = apply_filters('upfront-dependencies-cache-scripts', $cache, $raw_cache_key);
+			$cache = apply_filters( 'upfront-dependencies-cache-scripts', $cache, $raw_cache_key );
 
-			$this->_cache->set($ckey, $cache);
+			$this->_cache->set( $ckey, $cache );
 		}
 
 		return $raw_cache_key;
@@ -198,33 +226,31 @@ class Upfront_ElementStyles extends Upfront_Server {
 	/**
 	 * Serve layout element styles according to the requested key.
 	 */
-	public function serve_styles () {
-		$key = $this->_cache->key(self::TYPE_STYLE);
-		$key->set_hash(stripslashes($_REQUEST['key']));
+	public function serve_styles() {
+		$key = $this->_cache->key( self::TYPE_STYLE );
+		$key->set_hash( stripslashes( $_REQUEST['key'] ) );
 
-		$cache = $this->_cache->get($key);
-		$response = empty($cache)
-			? new Upfront_CssResponse_Error('')
-			: new Upfront_CssResponse_Success($cache)
-		;
+		$cache    = $this->_cache->get( $key );
+		$response = empty( $cache )
+			? new Upfront_CssResponse_Error( '' )
+			: new Upfront_CssResponse_Success( $cache );
 
-		$this->_out($response, true);
+		$this->_out( $response, true );
 	}
 
 	/**
 	 * Serve layout element scripts according to the requested key.
 	 */
-	function serve_scripts () {
-		$key = $this->_cache->key(self::TYPE_SCRIPT);
-		$key->set_hash(stripslashes($_REQUEST['key']));
+	function serve_scripts() {
+		$key = $this->_cache->key( self::TYPE_SCRIPT );
+		$key->set_hash( stripslashes( $_REQUEST['key'] ) );
 
-		$cache = $this->_cache->get($key);
-		$response = empty($cache)
-			? new Upfront_JavascriptResponse_Error('')
-			: new Upfront_JavascriptResponse_Success($cache)
-		;
+		$cache    = $this->_cache->get( $key );
+		$response = empty( $cache )
+			? new Upfront_JavascriptResponse_Error( '' )
+			: new Upfront_JavascriptResponse_Success( $cache );
 
-		$this->_out($response, true);
+		$this->_out( $response, true );
 	}
 
 	/**
@@ -232,7 +258,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 	 *
 	 * @return string Child theme version info
 	 */
-	private function _get_enqueue_version () {
+	private function _get_enqueue_version() {
 		return Upfront_ChildTheme::get_version();
 	}
 
@@ -244,21 +270,21 @@ class Upfront_ElementStyles extends Upfront_Server {
 	 *
 	 * @return string Final dependency URL
 	 */
-	private function _get_enqueueing_url ($type, $key) {
-		$url = false;
+	private function _get_enqueueing_url( $type, $key ) {
+		$url      = false;
 		$endpoint = self::TYPE_SCRIPT === $type
 			? 'scripts'
-			: 'styles'
-		;
-		if (Upfront_Behavior::debug()->is_active(Upfront_Debug::DEPENDENCIES)) {
-			$url = admin_url("admin-ajax.php?action=upfront-element-{$endpoint}&key={$key}");
+			: 'styles';
+		if ( Upfront_Behavior::debug()->is_active( Upfront_Debug::DEPENDENCIES ) ) {
+			$url = admin_url( "admin-ajax.php?action=upfront-element-{$endpoint}&key={$key}" );
 		} else {
-			$url = Upfront_VirtualPage::get_url(join('/', array(
+			$url = Upfront_VirtualPage::get_url( join( '/', array(
 				'upfront-dependencies',
 				$endpoint,
 				$key
-			)));
+			) ) );
 		}
+
 		return $url;
 	}
 
@@ -271,13 +297,15 @@ class Upfront_ElementStyles extends Upfront_Server {
  */
 class Upfront_MinificationServer implements IUpfront_Server {
 
-	public static function serve () {
+	public static function serve() {
 		$me = new self;
 		$me->_add_hooks();
 	}
 
-	private function _add_hooks () {
-		if (version_compare(PHP_VERSION, '5.3.1') < 0) return false; // We require PHPv5.3 for this
+	private function _add_hooks() {
+		if ( version_compare( PHP_VERSION, '5.3.1' ) < 0 ) {
+			return false;
+		} // We require PHPv5.3 for this
 
 		/*
 		// Currently not in use, because the performance overhead trumps the gains in request size
@@ -285,7 +313,7 @@ class Upfront_MinificationServer implements IUpfront_Server {
 		add_filter('upfront-dependencies-main-styles', array($this, 'minify_css'));
 		add_filter('upfront-dependencies-grid-styles', array($this, 'minify_css'));
 		*/
-		add_filter('upfront-dependencies-cache-scripts', array($this, 'minify_js'));
+		add_filter( 'upfront-dependencies-cache-scripts', array( $this, 'minify_js' ) );
 	}
 
 	/**
@@ -297,7 +325,7 @@ class Upfront_MinificationServer implements IUpfront_Server {
 	 *
 	 * @return string Minified CSS
 	 */
-	public function minify_css ($what) {
+	public function minify_css( $what ) {
 		return $what;
 	}
 
@@ -309,13 +337,17 @@ class Upfront_MinificationServer implements IUpfront_Server {
 	 *
 	 * @return string Minified javascript
 	 */
-	public function minify_js ($what) {
-		if (!Upfront_Behavior::compression()->has_experiments()) return $what; // Only do this within the compression mode ON
+	public function minify_js( $what ) {
+		if ( ! Upfront_Behavior::compression()->has_experiments() ) {
+			return $what;
+		} // Only do this within the compression mode ON
 
-		require_once dirname(dirname(__FILE__)) . '/external/jshrink/src/JShrink/Minifier.php';
-		return JShrink_Minifier::minify($what);
+		require_once dirname( dirname( __FILE__ ) ) . '/external/jshrink/src/JShrink/Minifier.php';
+
+		return JShrink_Minifier::minify( $what );
 	}
 }
+
 Upfront_MinificationServer::serve();
 
 
@@ -325,31 +357,55 @@ Upfront_MinificationServer::serve();
  */
 class Upfront_SmushServer implements IUpfront_Server {
 
-	public static function serve () {
+	public static function serve() {
 		$me = new self;
 		$me->_add_hooks();
 	}
 
-	private function _add_hooks () {
-		if (!class_exists('WpSmush')) return false; // Do we have Smush plugin?
+	private function _add_hooks() {
+		if ( ! class_exists( 'WpSmush' ) ) {
+			return false;
+		} // Do we have Smush plugin?
 		global $WpSmush;
 		if ( ! defined( 'WpSmush::API_SERVER' ) && ( is_object( $WpSmush ) && ! $WpSmush->api_server ) ) {
 			return false;
 		} // Is it ours?
 
-		add_action('upfront-media-images-image_changed', array($this, 'pass_over_to_smush'), 10, 2);
+		add_action( 'upfront-media-images-image_changed', array( $this, 'pass_over_to_smush' ), 10, 2 );
 	}
 
-	public function pass_over_to_smush ($path, $url) {
-		if (empty($path) || empty($url)) return false;
-		if (!is_readable($path)) return false;
+	public function pass_over_to_smush( $path, $url ) {
+		if ( empty( $path ) || empty( $url ) ) {
+			return false;
+		}
+		if ( ! is_readable( $path ) ) {
+			return false;
+		}
 
 		global $WpSmush;
-		if (!is_callable(array($WpSmush, 'do_smushit'))) return false;
+		if ( ! is_callable( array( $WpSmush, 'do_smushit' ) ) ) {
+			return false;
+		}
 
-		$res = $WpSmush->do_smushit($path, $url);
+		//Smush Image and Get the response
+		$res = $WpSmush->do_smushit( $path, $url );
+
+		//If the smushing was succesful, store a flag in meta
+		if ( ! is_wp_error( $res ) && ! empty( $res['data'] ) ) {
+
+			//Get the post id and element id
+			$id         = ! empty( $imageData['id'] ) ? $imageData['id'] : '';
+			$element_id = ! empty( $imageData['element_id'] ) ? $imageData['element_id'] : '';
+
+			//If we have all the params and meta is set for element
+			if ( ! empty( $id ) && ! empty( $element_id ) && isset( $meta[ $element_id ] ) ) {
+				$meta[ $element_id ]['is_smushed'] = 1;
+				update_post_meta( $id, 'upfront_used_image_sizes', $meta );
+			}
+		}
 
 		return $res;
 	}
 }
+
 Upfront_SmushServer::serve();
