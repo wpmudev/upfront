@@ -1,10 +1,17 @@
 .upfront-wrapper:not(.ui-resizable-resizing) .upfront-module.upfront-module-active:not(.ui-resizable-resizing):not(.upfront-module-editing) > .upfront-element-controls,
-.upfront-wrapper:not(.ui-resizable-resizing) .upfront-module-group.upfront-module-group-active:not(.ui-resizable-resizing):not(.upfront-module-group-on-edit) > .upfront-element-controls {
+.upfront-wrapper:not(.ui-resizable-resizing) .upfront-module-group.upfront-module-group-active:not(.ui-resizable-resizing):not(.upfront-module-group-on-edit) > .upfront-element-controls,
+.upfront-wrapper:not(.ui-resizable-resizing) .upfront-module.upfront-module-active:not(.ui-resizable-resizing):not(.upfront-module-editing) .upfront-object-group-view > .upfront-element-controls
+{
     display: block;
 }
 .upfront-module > .upfront-element-controls,
-.upfront-module-group > .upfront-element-controls {
+.upfront-module-group > .upfront-element-controls,
+.upfront-object-group-view > .upfront-element-controls
+{
     display: none;
+}
+.upfront-object-group-on-edit > .upfront-element-controls {
+    display: none !important;
 }
 .upfront-element-controls .upfront-inline-panel {
 	z-index: 2000;

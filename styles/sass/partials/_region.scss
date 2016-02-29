@@ -183,7 +183,8 @@
 .upfront-region-finish-edit,
 .upfront-region-finish-edit-fixed,
 .upfront-region-finish-edit-lightbox,
-.upfront-module-group-finish-edit {
+.upfront-module-group-finish-edit,
+.upfront-object-group-finish-edit {
 	position: absolute;
 	bottom: -51px;
 	right: 0;
@@ -213,6 +214,7 @@
 .upfront-region-fixed-editing .upfront-region-side-fixed .upfront-region-finish-edit-fixed/*,
 .upfront-region-fixed-editing .upfront-region-container-active .upfront-region-finish-edit*/,
 .upfront-module-group-on-edit .upfront-module-group-finish-edit,
+.upfront-object-group-on-edit .upfront-object-group-finish-edit,
 .upfront-region-lightbox-editing .upfront-region-side-lightbox .upfront-region-finish-edit-lightbox {
 	display: block;
 }

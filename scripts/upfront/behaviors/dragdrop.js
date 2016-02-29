@@ -8,6 +8,8 @@ var DragDrop = function (view, model) {
 
 DragDrop.prototype = {
 	module_selector: '> .upfront-module-view > .upfront-module, > .upfront-module-group',
+	object_selector: '> .upfront-object-view > .upfront-object',
+	el_selector: '',
 	
 	view: false,
 	model: false,
@@ -28,6 +30,7 @@ DragDrop.prototype = {
 	current_wrappers: false,
 	
 	is_group: false,
+	is_object: false,
 	is_parent_group: false,
 	is_disabled: false,
 	
@@ -91,17 +94,23 @@ DragDrop.prototype = {
 	
 	setup: function () {
 		this.is_group = this.view.$el.hasClass('upfront-module-group');
+		this.is_object = this.view.$el.hasClass('upfront-object-view');
 		this.is_parent_group = ( typeof this.view.group_view != 'undefined' );
-		this.is_disabled = ( this.is_parent_group && !this.view.group_view.$el.hasClass('upfront-module-group-on-edit') );
+		this.is_disabled = ( ( this.is_parent_group && !this.view.group_view.$el.hasClass('upfront-module-group-on-edit') ) || ( this.is_object && this.view.object_group_view && !this.view.object_group_view.$el.hasClass('upfront-object-group-on-edit') ) );
 		this.$me = this.is_group ? this.view.$el : this.view.$el.find('.upfront-editable_entity:first');
 		this.$main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 		this.$layout = this.$main.find('.upfront-layout');
+		this.el_selector = this.is_object ? this.object_selector : this.module_selector;
 
 		if ( this.app.mode.current !== this.app.MODE.THEME && this.model.get_property_value_by_name('disable_drag') ) {
 			return false;
 		}
 		// No draggable for spacer
-		if ( this.$me.hasClass('upfront-module-spacer') ) {
+		if ( this.$me.hasClass('upfront-module-spacer') || this.$me.hasClass('upfront-object-spacer') ) {
+			return false;
+		}
+		// If it's object, only allow draggable if it's from ObjectGroup, not from Module
+		if ( this.is_object && typeof this.view.object_group_view == 'undefined' ) {
 			return false;
 		}
 		if ( this.$me.data('ui-draggable') ){
@@ -230,7 +239,7 @@ DragDrop.prototype = {
 			col = me.col,
 			min_col = me.$el.hasClass('upfront-image_module') ? 1 : (col > ed.min_col ? ed.min_col : col),
 			row = me.row > ed.max_row ? ed.max_row : me.row,
-			is_spacer = me.$el.hasClass('upfront-module-spacer'),
+			is_spacer = ( me.$el.hasClass('upfront-module-spacer') || me.$el.hasClass('upfront-object-spacer') ),
 			regions = this.app.layout.get("regions")
 		;
 
@@ -249,8 +258,10 @@ DragDrop.prototype = {
 				region_name = $region.data('name'),
 				region = is_region ? area : ed.get_region($region),
 				region_model = regions.get_by_name(region_name),
-				area_model = is_region ? region_model : region_model.get('modules').get_by_element_id(area.$el.attr('id')),
-				lines = ed.parse_modules_to_lines(area_model.get('modules'), area_model.get('wrappers'), breakpoint.id, area.col),
+				area_model = is_region ? region_model : ( area.view ? area.view.model : region_model.get('modules').get_by_element_id(area.$el.attr('id')) ),
+				modules = area_model.get('modules') || area_model.get('objects'),
+				wrappers = area_model.get('wrappers'),
+				lines = ed.parse_modules_to_lines(modules, wrappers, breakpoint.id, area.col),
 				/*$wraps = Upfront.Util.find_sorted($area, '> .upfront-wrapper:visible').filter(function(){
 					return ( $(this).height() > 0 )
 				}),*/
@@ -323,19 +334,19 @@ DragDrop.prototype = {
 							(
 								( !breakpoint || breakpoint.default ) && wrap.col >= min_col &&
 								(
-									( next_wrap && !next_wrap_clr && !wrap_me_only && ( $next_wrap.find(that.module_selector).size() > 1 || !is_next_me ) ) ||
-									( prev_wrap && !wrap_clr && !wrap_me_only && ( $prev_wrap.find(that.module_selector).size() > 1 || !is_prev_me ) ) ||
+									( next_wrap && !next_wrap_clr && !wrap_me_only && ( $next_wrap.find(that.el_selector).size() > 1 || !is_next_me ) ) ||
+									( prev_wrap && !wrap_clr && !wrap_me_only && ( $prev_wrap.find(that.el_selector).size() > 1 || !is_prev_me ) ) ||
 									( next_wrap && prev_wrap && !next_wrap_clr && !wrap_clr ) ||
-									( !prev_wrap && !next_wrap && is_wrap_me && $wrap.find(that.module_selector).size() > 1 )
+									( !prev_wrap && !next_wrap && is_wrap_me && $wrap.find(that.el_selector).size() > 1 )
 								)
 							)
 							||
-							( breakpoint && !breakpoint.default && is_wrap_me && $wrap.find(that.module_selector).size() > 1 )
+							( breakpoint && !breakpoint.default && is_wrap_me && $wrap.find(that.el_selector).size() > 1 )
 						)
 					){
 						var current_el_top = wrap.grid.top,
 							wrap_right = ( next_wrap && !next_wrap_clr && next_wrap_el_left ) ? next_wrap_el_left.grid.left-1 : area.grid.right;
-						$els = Upfront.Util.find_sorted($wrap, that.module_selector);
+						$els = Upfront.Util.find_sorted($wrap, that.el_selector);
 						$els.each(function(i){
 							if ( $(this).get(0) == me.$el.get(0) ) return;
 							var $el = $(this),
@@ -757,7 +768,9 @@ DragDrop.prototype = {
 			max_height = ed.max_row*ed.baseline,
 			draggable = $me.data('ui-draggable'),
 			cursor_top = this.event.pageY - me_offset.top,
-			area = ( this.is_parent_group ? ed.get_position(this.view.group_view.$el) : ed.get_region(this.$region) ),
+			area = this.is_parent_group
+				? ed.get_position(this.view.group_view.$el)
+				: ( this.is_object ? ed.get_position(this.view.object_group_view.$el) : ed.get_region(this.$region) ),
 			drop_areas = false
 		;
 
@@ -777,9 +790,10 @@ DragDrop.prototype = {
 		$helper.css('margin-left', $me.css('margin-left')); // fix error with the percentage margin applied
 
 		this.area_col = area.col;
-		if ( this.is_parent_group ) {
+		if ( this.is_parent_group || this.is_object ) {
 			area.region = this.$region.data('name');
-			area.group = this.view.group_view.$el.attr('id');
+			area.group = this.is_parent_group ? this.view.group_view.$el.attr('id') : '';
+			area.view = this.is_parent_group ? this.view.group_view : this.view.object_group_view;
 			this.drop_areas = [ area ];
 			this.current_area_col = area.col;
 		}
@@ -979,8 +993,8 @@ DragDrop.prototype = {
 		var ed = this.ed,
 			drop = this.drop,
 			col = this.current_region ? this.current_region.col : this.me.col,
-			is_spacer = this.$me.hasClass('upfront-module-spacer'),
-			wrap_only = this.$wrap.find(this.module_selector).length == 1,
+			is_spacer = ( this.$me.hasClass('upfront-module-spacer') || this.$me.hasClass('upfront-object-spacer') ),
+			wrap_only = this.$wrap.find(this.el_selector).length == 1,
 			drop_priority_top = drop.priority ? drop.priority.top-drop.top : 0,
 			drop_priority_left = drop.priority ? drop.priority.left-drop.left : 0,
 			expand_lock = drop.region.$el.hasClass('upfront-region-expand-lock'),
@@ -1084,11 +1098,17 @@ DragDrop.prototype = {
 		this.current_region_model = regions.get_by_name(this.current_region.region);
 		this.current_wrappers = this.is_parent_group 
 			? this.view.group_view.model.get('wrappers') 
-			: this.current_region_model.get('wrappers')
+			: ( this.is_object
+				? this.view.object_group_view.model.get('wrappers')
+				: this.current_region_model.get('wrappers')
+			)
 		;
 		this.$current_container = this.is_parent_group 
 			? this.view.group_view.$el.find('.upfront-editable_entities_container:first') 
-			: this.current_region.$el.find('.upfront-modules_container > .upfront-editable_entities_container:first')
+			: ( this.is_object
+				? this.view.object_group_view.$el.find('.upfront-editable_entities_container:first')
+				: this.current_region.$el.find('.upfront-modules_container > .upfront-editable_entities_container:first')
+			)
 		;
 		this.move_region = ( this.region._id != this.current_region._id );
 		if ( !this.is_parent_group ) {
@@ -1184,7 +1204,7 @@ DragDrop.prototype = {
 			this.wrapper_id = wrapper_id;
 			this.model.set_property('wrapper_id', this.wrapper_id, true);
 
-			if ( this.$wrap.find(this.module_selector).length == 0 ){
+			if ( this.$wrap.find(this.el_selector).length == 0 ){
 				if ( this.wrap && this.wrap.grid.left == this.current_region.grid.left ) {
 					this.$wrap.nextAll('.upfront-wrapper').eq(0).addClass('clr');
 				}
@@ -1245,8 +1265,8 @@ DragDrop.prototype = {
 				me_clear = false
 			;
 			_.each(this.drop.row_wraps, function (row_wrap) {
-				row_wrap.$el.find(that.module_selector).each(function () {
-					if ( $(this).hasClass('upfront-module-spacer') ) {
+				row_wrap.$el.find(that.el_selector).each(function () {
+					if ( $(this).hasClass('upfront-module-spacer') || $(this).hasClass('upfront-object-spacer') ) {
 						var wrap_model = wrappers.get_by_wrapper_id(row_wrap.$el.attr('id')),
 							this_model = ed.get_el_model($(this));
 						wrappers.remove(wrap_model);
@@ -1300,8 +1320,8 @@ DragDrop.prototype = {
 				if ( distribute.total > 0 ) {
 					_.each(this.current_row_wraps, function (row_wrap) {
 						if ( that.wrap.$el.get(0) == row_wrap.$el.get(0) ) return;
-						row_wrap.$el.find(that.module_selector).each(function () {
-							if ( $(this).hasClass('upfront-module-spacer') ) return;
+						row_wrap.$el.find(that.el_selector).each(function () {
+							if ( $(this).hasClass('upfront-module-spacer') || $(this).hasClass('upfront-object-spacer') ) return;
 							var apply_col = distribute.apply_col;
 							// Distribute remaining_col
 							if ( remaining_col > 0 ) {
@@ -1316,8 +1336,8 @@ DragDrop.prototype = {
 					// Nothing to distribute, means all spacer, so we'll remove them
 					_.each(this.current_row_wraps, function (row_wrap) {
 						if ( that.wrap.$el.get(0) == row_wrap.$el.get(0) ) return;
-						row_wrap.$el.find(that.module_selector).each(function () {
-							if ( !$(this).hasClass('upfront-module-spacer') ) return;
+						row_wrap.$el.find(that.el_selector).each(function () {
+							if ( !$(this).hasClass('upfront-module-spacer') && !$(this).hasClass('upfront-object-spacer') ) return;
 							var wrap_model = wrappers.get_by_wrapper_id(row_wrap.$el.attr('id')),
 								this_model = ed.get_el_model($(this));
 							wrappers.remove(wrap_model);
@@ -1331,12 +1351,15 @@ DragDrop.prototype = {
 		if ( this.is_parent_group ) {
 			ed.update_wrappers(this.view.group_view.model, this.view.group_view.$el);
 		}
+		else if ( this.is_object ) {
+			ed.update_wrappers(this.view.object_group_view.model, this.view.object_group_view.$el);
+		}
 		else {
 			ed.update_wrappers(this.current_region_model, this.current_region.$el);
 		}
 
 		if ( this.move_region ) {
-			ed.update_model_margin_classes( this.$container.find('.upfront-wrapper').find(this.module_selector) );
+			ed.update_model_margin_classes( this.$container.find('.upfront-wrapper').find(this.el_selector) );
 			ed.update_wrappers(this.region_model, this.region.$el);
 		}
 
@@ -1364,7 +1387,7 @@ DragDrop.prototype = {
 
 				region_view._modules_view.preserve_wrappers_breakpoint_order();
 				$me.removeAttr('data-shadow');
-				this.$current_container.find('.upfront-wrapper').find(this.module_selector).each(function(){
+				this.$current_container.find('.upfront-wrapper').find(this.el_selector).each(function(){
 					var element_id = $(this).attr('id'),
 						each_model = modules.get_by_element_id(element_id);
 					if ( !each_model && element_id == $me.attr('id') ) {
@@ -1383,9 +1406,9 @@ DragDrop.prototype = {
 				is_drop_wrapper = ( this.drop.type != 'inside' ),
 				$els = is_drop_wrapper
 					? Upfront.Util.find_sorted(this.$current_container, '> .upfront-wrapper')
-					: Upfront.Util.find_sorted($me.closest('.upfront-wrapper'), this.module_selector)
+					: Upfront.Util.find_sorted($me.closest('.upfront-wrapper'), this.el_selector)
 				,
-				inside_length = !is_drop_wrapper ? $me.closest('.upfront-wrapper').find(this.module_selector).length : 0,
+				inside_length = !is_drop_wrapper ? $me.closest('.upfront-wrapper').find(this.el_selector).length : 0,
 				insert_index = false
 			;
 			if ( !this.drop.is_me && this.drop.insert[0] == 'append' && is_drop_wrapper ) {
@@ -1502,7 +1525,7 @@ DragDrop.prototype = {
 		});
 		
 		this.$wrap.css('min-height', '');
-		this.$current_container.find('.upfront-wrapper').find(this.module_selector).css('max-height', '');
+		this.$current_container.find('.upfront-wrapper').find(this.el_selector).css('max-height', '');
 		$('.upfront-region-drag-active').removeClass('upfront-region-drag-active');
 		this.$main.removeClass('upfront-dragging');
 	},
@@ -1516,7 +1539,7 @@ DragDrop.prototype = {
 	find_column_distribution: function (row_wraps, me_in_row, add, area_col, count_spacer) {
 		var add = ( add !== false ),
 			spacers = _.filter(row_wraps, function (row_wrap) {
-				return ( row_wrap.$el.find('> .upfront-module-view > .upfront-module-spacer').length > 0 );
+				return ( row_wrap.$el.find('> .upfront-module-view > .upfront-module-spacer, > .upfront-object-view > .upfront-object-spacer').length > 0 );
 			}),
 			spacers_col = _.reduce(spacers, function (sum, spacer) {
 				return sum + spacer.col;

@@ -268,7 +268,7 @@ class Upfront_Virtual_Region {
 		$this->current_group = null;
 	}
 
-	public function add_object ($id = 'object', $properties = array(), $other_data = array(), $group = '') {
+	public function add_object ($id = 'object', $properties = array(), $other_data = array(), $objects = array(), $group = '') {
 		$object_id = !empty($properties['element_id']) ? $properties['element_id'] : upfront_get_unique_id($id);
 		$object_data = array_merge(array('name' => '', 'properties' => array()), $other_data);
 		$breakpoint = $this->grid->get_default_breakpoint();
@@ -280,10 +280,115 @@ class Upfront_Virtual_Region {
 			$this->_set_property($prop, $value, $object_data);
 		}
 		$this->_set_property('element_id', $object_id, $object_data);
+		
+		$object_data = array_merge($object_data, $this->_handle_objects($objects));
+		
 		if ( $group && $this->modules[$group] )
 			$this->modules[$group]['modules'][$this->current_module]['objects'][] = $object_data;
 		else
 			$this->modules[$this->current_module]['objects'][] = $object_data;
+	}
+
+	protected function _handle_objects ($objs) {
+		if ( !is_array($objs) || count($objs) == 0 ) return array();
+		
+		$objects = array();
+		$wrappers = array();
+		$breakpoints = $this->grid->get_breakpoints(true);
+		$current_wrapper_col = array();
+		
+		foreach ( $objs as $obj ) {
+			$obj_data = array('name' => '', 'properties' => array());
+			$position = $obj['position'];
+			$properties = $obj['properties'];
+			$close_wrapper = isset($obj['close_wrapper']) ? $obj['close_wrapper'] : true;
+			$pos_class = '';
+			
+			// Handle wrappers
+			$wrapper_id = $properties['wrapper_id'] ? $properties['wrapper_id'] : upfront_get_unique_id('wrapper');
+			$wrapper_properties = isset($obj['wrapper_breakpoint']) ? array('breakpoint' => $obj['wrapper_breakpoint']) : array();
+			if ( !isset($wrappers[$wrapper_id]) ){
+				// Start a new wrapper, reset some variables
+				$wrappers[$wrapper_id] = array('name' => '', 'properties' => array());
+				if ( $obj['new_line'] )
+					$this->_set_property('class', 'clr', $wrappers[$wrapper_id]);
+				$this->_set_property('wrapper_id', $wrapper_id, $wrappers[$wrapper_id]);
+				foreach ( $wrapper_properties as $prop => $value ) {
+					$this->_set_property($prop, $value, $wrappers[$wrapper_id]);
+				}
+				foreach ( $breakpoints as $breakpoint ){
+					$current_wrapper_col[$breakpoint->get_id()] = 0;
+				}
+			}
+
+			foreach ( $breakpoints as $breakpoint ){
+				$total_col = 0;
+				$breakpoint_col = $breakpoint->get_columns();
+				if ( !$breakpoint->is_default() ) {
+					$data = !empty($properties['breakpoint'][$breakpoint->get_id()]) && is_array($properties['breakpoint'][$breakpoint->get_id()]) ? $properties['breakpoint'][$breakpoint->get_id()] : array();
+					if ( isset($data['col']) ) {
+						$position['width'] = $data['col'];
+					}
+					if ( isset($data['left']) ) {
+						$position['margin-left'] = $data['left'];
+					}
+				}
+				$position = array_merge(array(
+					'width' => 1,
+					'margin-left' => 0,
+					'margin-right' => 0,
+					'margin-top' => 0,
+					'margin-bottom' => 0
+				), $position);
+				foreach ( $position as $pfx => $value ) {
+					if ( $breakpoint->is_default() ) {
+						$pos_class .= $breakpoint->get_prefix($pfx) . $value . ' ';
+					}
+					if ( in_array($pfx, array('width', 'margin-left', 'margin-right')) ) {
+						$total_col += $value;
+					}
+				}
+				$total_col = $total_col <= $breakpoint_col ? $total_col : $breakpoint_col;
+				$wrapper_col = $current_wrapper_col[$breakpoint->get_id()];
+				$current_wrapper_col[$breakpoint->get_id()] = ( $total_col > $wrapper_col ) ? $total_col : $wrapper_col;
+			}
+			$properties['class'] = rtrim($pos_class) . ( isset($properties['class']) ? ' ' . $properties['class'] : '' );
+			foreach ( $properties as $prop => $value ) {
+				$this->_set_property($prop, $value, $obj_data);
+			}
+			$objects[] = $obj_data;
+			
+			if ( $close_wrapper ) {
+				// Save wrapper data
+				foreach ( $breakpoints as $breakpoint ){
+					$wrapper_col = $current_wrapper_col[$breakpoint->get_id()];
+					if ( $breakpoint->is_default() ) {
+						$default_wrapper_class = $breakpoint->get_prefix('width') . $wrapper_col;
+					}
+					else {
+						$breakpoint_data[$breakpoint->get_id()] = array();
+						$breakpoint_data[$breakpoint->get_id()]['col'] = $wrapper_col;
+					}
+				}
+				$wrapper_class = $this->get_property('class', $wrappers[$wrapper_id]);
+				$this->_set_property('class', $wrapper_class . ' ' . $default_wrapper_class, $wrappers[$wrapper_id]);
+				$current_breakpoint_data = $this->get_property('breakpoint', $wrappers[$wrapper_id]);
+				if ( !empty($current_breakpoint_data) ){
+					foreach ( $current_breakpoint_data as $id => $data ){
+						if ( !empty($breakpoint_data[$id]) )
+							$breakpoint_data[$id] = array_merge($data, $breakpoint_data[$id]);
+						else
+							$breakpoint_data[$id] = $data;
+					}
+				}
+				$this->_set_property('breakpoint', $breakpoint_data, $wrappers[$wrapper_id]);
+			}
+		}
+
+		return array(
+			'objects' => array_values($objects),
+			'wrappers' => array_values($wrappers)
+		);;
 	}
 
 	/**
@@ -303,30 +408,32 @@ class Upfront_Virtual_Region {
 	 *           wrapper_breakpoint: Array with breakpoint options for wrapper
 	 *           options: 		Array with the object options.
 	 */
-	public function add_element($type = false, $options = array()){
-
-		if(!$type){
+	public function add_element ($type = false, $options = array()) {
+		if (!$type) {
 			echo 'Bad configuration';
 			return;
 		}
 		$options['type'] = $type;
 
-		if(!isset($options['close_wrapper']))
+		if (!isset($options['close_wrapper'])) {
 			$options['close_wrapper'] = true;
+		}
 
-		if(!isset($options['group']))
+		if (!isset($options['group'])) {
 			$options['group'] = $this->current_group ? $this->current_group : '';
-		else if (!$this->modules[$options['group']])
+		}
+		else if (!$this->modules[$options['group']]) {
 			$options['group'] = '';
+		}
 
 		$opts = $this->parse_options($options);
 
-		if(!is_array($opts)){
+		if (!is_array($opts)) {
 			echo $opts;
 			return;
 		}
 
-		if((!$this->current_wrapper && !$options['group']) || (!$this->current_group_wrapper && $options['group'])) {
+		if ((!$this->current_wrapper && !$options['group']) || (!$this->current_group_wrapper && $options['group'])) {
 			$wrapper_props = array();
 			if (isset($options['wrapper_breakpoint']) && !empty($options['wrapper_breakpoint']))
 				$wrapper_props['breakpoint'] = $options['wrapper_breakpoint'];
@@ -334,23 +441,33 @@ class Upfront_Virtual_Region {
 		}
 
 		$this->start_module($opts['position'], $opts['module'], array(), $options['group']);
-		$this->add_object($opts['object_id'], $opts['object'], array(), $options['group']);
+		$this->add_object($opts['object_id'], $opts['object'], array(), isset($opts['objects']) ? $opts['objects'] : array(), $options['group']);
 		$this->end_module();
 
-		if($options['close_wrapper'])
+		if ($options['close_wrapper']) {
 			$this->end_wrapper($options['group']);
+		}
 	}
 
-	public function add_group($options){
+	/**
+	 * Add group to the region
+	 * 
+	 * @param array $options
+	 */
+	public function add_group ($options) {
 		$properties = array();
-		if(isset($options['id']) && !empty($options['id']))
+		if (isset($options['id']) && !empty($options['id'])) {
 			$properties['element_id'] = $options['id'];
-		if(!isset($options['close_wrapper']))
+		}
+		if (!isset($options['close_wrapper'])) {
 			$options['close_wrapper'] = true;
-		if(!isset($options['new_line']))
+		}
+		if (!isset($options['new_line'])) {
 			$options['new_line'] = false;
-		if(!isset($options['wrapper_id']))
+		}
+		if (!isset($options['wrapper_id'])) {
 			$options['wrapper_id'] = false;
+		}
 		$pos = array_merge(array(
 			'columns' => 24,
 			'margin_left' => 0,
@@ -367,17 +484,19 @@ class Upfront_Virtual_Region {
 				$wrapper_props['breakpoint'] = $options['wrapper_breakpoint'];
 			$this->start_wrapper($options['wrapper_id'], $options['new_line'], $wrapper_props);
 		}
-        foreach ($options as $option => $value) {
-            if ( !in_array($option, array('id', 'close_wrapper', 'new_line', 'columns', 'margin_left', 'margin_top', 'margin_right', 'margin_bottom', 'wrapper_breakpoint')) )
-               $properties[$option] = $value;
-        }
+		foreach ($options as $option => $value) {
+			if ( !in_array($option, array('id', 'close_wrapper', 'new_line', 'columns', 'margin_left', 'margin_top', 'margin_right', 'margin_bottom', 'wrapper_breakpoint')) ) {
+				$properties[$option] = $value;
+			}
+		}
 
 		$this->start_module_group($position, $properties);
 		$group_id = $this->current_group;
 		$this->end_module_group();
 
-		if($options['close_wrapper'])
+		if ($options['close_wrapper']) {
 			$this->end_wrapper();
+		}
 		return $group_id;
 	}
 
@@ -396,10 +515,12 @@ class Upfront_Virtual_Region {
 		$view_class = 'Upfront_' . $type . 'View';
 		$object_defaults = array();
 
-		if($type == 'PlainTxt')
+		if ($type == 'PlainTxt') {
 			$object_defaults = array('view_class' => 'PlainTxtView', 'id_slug' => 'plaintxt');
-		else if(class_exists($view_class))
+		}
+		else if (class_exists($view_class)) {
 			$object_defaults =  call_user_func($view_class . '::default_properties');
+		}
 		else {
 			$object_defaults = apply_filters('upfront-virtual_region-object_defaults-fallback', $object_defaults, $type);
 			if (empty($object_defaults)) return 'Unknown element type: ' . $type;
@@ -424,7 +545,6 @@ class Upfront_Virtual_Region {
 			'margin-left' => $position['margin_left']
 		);
 
-
 		$module = array(
 			'rows' => 6,
 			'module_class' => $slug,
@@ -444,21 +564,54 @@ class Upfront_Virtual_Region {
 			'hide' => $module['hide'],
 			'toggle_hide' => $module['toggle_hide']
 		);
-        if ( isset($module['disable_resize']) )
-            $opts['module']['disable_resize'] = $module['disable_resize'];
-        if ( isset($module['disable_drag']) )
-            $opts['module']['disable_drag'] = $module['disable_drag'];
+		if (isset($module['disable_resize'])) {
+			$opts['module']['disable_resize'] = $module['disable_resize'];
+		}
+		if (isset($module['disable_drag'])) {
+			$opts['module']['disable_drag'] = $module['disable_drag'];
+		}
 		$breakpoint = !empty($options['breakpoint']) ? $options['breakpoint'] : false;
-		if (!empty($breakpoint)) $opts['module']['breakpoint'] = $breakpoint;
+		if (!empty($breakpoint)) {
+			$opts['module']['breakpoint'] = $breakpoint;
+		}
+
+		if (isset($options['objects'])) {
+			$opts['objects'] = array();
+			foreach ($options['objects'] as $obj) {
+				$obj_data = array();
+				$obj_position = array(
+					'columns' => 24,
+					'margin_top' => 0,
+					'margin_left' => 0
+				);
+				$obj_position = array_merge($obj_position, $obj);
+				$obj_data['position'] = array(
+					'width' => $obj_position['columns'],
+					'margin-top' => $obj_position['margin_top'],
+					'margin-left' => $obj_position['margin_left']
+				);
+				$obj_data['new_line'] = isset($obj['new_line']) ? $obj['new_line'] : false;
+				if (isset($obj['close_wrapper'])) {
+					$obj_data['close_wrapper'] = $obj['close_wrapper'];
+				}
+				foreach ( array('columns', 'margin_top', 'margin_left', 'new_line', 'close_wrapper') as $p ) {
+					unset($obj[$p]);
+				}
+				$obj_data['properties'] = $obj;
+				$opts['objects'][] = $obj_data;
+			}
+		}
 
 		$opts['object_id'] = isset($options['object_id']) ? $options['object_id'] : $slug . '-object';
 
-		if(!isset($options['options']))
+		if (!isset($options['options'])) {
 			$options['options'] = array();
+		}
 
 		$opts['object'] = array_merge($object_defaults, $options['options']);
-		if(!isset($opts['object']['element_id']))
+		if (!isset($opts['object']['element_id'])) {
 			$opts['object']['element_id'] = $opts['object_id'];
+		}
 
 		return $opts;
 	}

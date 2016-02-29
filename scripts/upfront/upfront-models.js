@@ -263,6 +263,43 @@ var _alpha = "alpha",
 		}
 	}),
 
+	ObjectGroup = ObjectModel.extend({
+		"defaults": function(){
+			return {
+				"name": "",
+				"objects": new Objects(),
+				"wrappers": new Wrappers(),
+				"properties": new Properties()
+			};
+		},
+		initialize: function () {
+			var args = arguments;
+			if (args && args[0] && args[0]["objects"]) {
+				args[0]["objects"] = args[0]["objects"] instanceof Objects
+					? args[0]["objects"]
+					: new Objects(args[0]["objects"])
+				;
+				this.set("objects", args[0]["objects"]);
+			} else this.set("objects", new Objects([]));
+			if (args && args[0] && args[0]["wrappers"]) {
+				args[0]["wrappers"] = args[0]["wrappers"] instanceof Wrappers
+					? args[0]["wrappers"]
+					: new Wrappers(args[0]["wrappers"])
+				;
+				this.set("wrappers", args[0].wrappers)
+			} else this.set("wrappers", new Wrappers([]));
+			if (args && args[0] && args[0]["properties"]) {
+				args[0]["properties"] = args[0]["properties"] instanceof Properties
+					? args[0]["properties"]
+					: new Properties(args[0]["properties"])
+				;
+				this.set("properties", args[0]["properties"]);
+			} else this.set("properties", new Properties([]));
+			
+			if (this.init) this.init();
+		}
+	}),
+
 		// Basic interface dataset
 	Objects = Backbone.Collection.extend({
 		/*"model": ObjectModel,
@@ -271,7 +308,8 @@ var _alpha = "alpha",
 			if (!raw_models || !raw_models.length) return false;
 			_(raw_models).each(function (model) {
 				var type_prop = model["properties"] ? _(model["properties"]).where({"name": "type"}) : model.get("properties").where({"name": "type"}),
-					type = type_prop.length ? type_prop[0].value : "ObjectModel",
+					default_type = model["objects"] ? "ObjectGroup" : "ObjectModel",
+					type = type_prop.length ? type_prop[0].value : default_type,
 					instance = Upfront.Models[type] ? new Upfront.Models[type](model) : false
 				;
 				if (Upfront.Models[type] && instance) models.push(instance);
@@ -352,7 +390,7 @@ var _alpha = "alpha",
 				;
 				this.set("properties", args[0]["properties"]);
 			} else this.set("properties", new Properties([]));
-
+			
 			this.init_property('has_settings', 1);
 			this.init_property('type', 'ModuleGroup');
 			if (this.init) this.init();
@@ -532,7 +570,7 @@ var _alpha = "alpha",
 				});
 			return collection.length;
 		},
-
+		
 		get_new_title: function (prefix, start) {
 			var title = (prefix + start).replace(/[^A-Za-z0-9\s_-]/g, ''),
 				name = title.toLowerCase().replace(/\s/g, '-');
@@ -1647,77 +1685,78 @@ var _alpha = "alpha",
 		}
 	}),
 
-		ImageVariant = Backbone.Model.extend({
-			defaults : function () {
-				return {
-					vid   : "",
-					label : "Variant Label",
-					group : {
-						margin_left: 0,
-						margin_right: 0,
-						col: 24,
-						row: 50,
-						left: 0,
-						float: "none"
-					},
-					image : {
-						order: 0,
-						col: 24,
-						top: 0,
-						left: 0,
-						row: 40,
-						clear: true
-					},
-					caption : {
-						show: 1,
-						order: 1,
-						col: 24,
-						top: 0,
-						left: 0,
-						row: 10,
-						clear: true
-					}
-				};
-			}
-		}),
-		ImageVariants = Backbone.Collection.extend({
-			model : ImageVariant
-		}),
-	_omega = 'omega';
+    ImageVariant = Backbone.Model.extend({
+        defaults : function () {
+        	return {
+	            vid   : "",
+	            label : "Variant Label",
+	            group : {
+					margin_left: 0,
+					margin_right: 0,
+	                col: 24,
+	                row: 50,
+	                left: 0,
+	                float: "none"
+	            },
+	            image : {
+	            	order: 0,
+	            	col: 24,
+	            	top: 0,
+	            	left: 0,
+	            	row: 40,
+	            	clear: true
+	            },
+	            caption : {
+	                show: 1,
+	                order: 1,
+	                col: 24,
+	                top: 0,
+	                left: 0,
+	                row: 10,
+	                clear: true
+	            }
+        	};
+        }
+    }),
+    ImageVariants = Backbone.Collection.extend({
+        model : ImageVariant
+    }),
+_omega = 'omega';
 
-	return {
-		"Models": {
-			"Property": Property,
-			"ObjectModel": ObjectModel,
-			"Module": Module,
-			"ModuleGroup": ModuleGroup,
-			"Region": Region,
-			"Wrapper": Wrapper,
-			"Layout": Layout,
-			"Taxonomy": Taxonomy,
-			"Post": Post,
-			"Posts": Posts,
-			"Pages": Pages,
-			"Comment": Comment,
-			"Comments": Comments,
-			"Meta": Meta,
-			"Term": Term,
-			"User": User,
-			"ImageVariant" : ImageVariant
-		},
-		"Collections": {
-			"Properties": Properties,
-			"Objects": Objects,
-			"Modules": Modules,
-			"Regions": Regions,
-			"Wrappers": Wrappers,
-			"CommentList": CommentList,
-			"MetaList": MetaList,
-			"PostList": PostList,
-			"TermList": TermList,
-			"ImageVariants" : ImageVariants
-		}
-	};
+return {
+    "Models": {
+      "Property": Property,
+      "ObjectModel": ObjectModel,
+      "ObjectGroup": ObjectGroup,
+      "Module": Module,
+      "ModuleGroup": ModuleGroup,
+      "Region": Region,
+      "Wrapper": Wrapper,
+      "Layout": Layout,
+      "Taxonomy": Taxonomy,
+      "Post": Post,
+      "Posts": Posts,
+      "Pages": Pages,
+      "Comment": Comment,
+      "Comments": Comments,
+      "Meta": Meta,
+      "Term": Term,
+      "User": User,
+      "ImageVariant" : ImageVariant
+    },
+    "Collections": {
+      "Properties": Properties,
+      "Objects": Objects,
+      "Modules": Modules,
+      "Regions": Regions,
+      "Wrappers": Wrappers,
+      "CommentList": CommentList,
+      "MetaList": MetaList,
+      "PostList": PostList,
+      "TermList": TermList,
+      "ImageVariants" : ImageVariants
+    }
+  };
 });
 
 })(jQuery);

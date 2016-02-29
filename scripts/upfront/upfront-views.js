@@ -7,6 +7,7 @@ var l10n = Upfront.Settings && Upfront.Settings.l10n
 
 define([
 	"text!upfront/templates/object.html",
+	"text!upfront/templates/object_group.html",
 	"text!upfront/templates/module.html",
 	"text!upfront/templates/module_group.html",
 	"text!upfront/templates/region_container.html",
@@ -16,6 +17,7 @@ define([
 ], function () {
   var _template_files = [
     "text!upfront/templates/object.html",
+    "text!upfront/templates/object_group.html",
     "text!upfront/templates/module.html",
     "text!upfront/templates/module_group.html",
     "text!upfront/templates/region_container.html",
@@ -1081,6 +1083,214 @@ define([
 					if ( next_is_spacer ) $wrap.attr('data-next-spacer', '1');
 					$wrap.css('min-height', height);
 				});
+			},
+
+			normalize_child_modules: function (col, prev_col, wrappers) {
+				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
+					me = this,
+					ed = Upfront.Behaviors.GridEditor,
+					modules = this.model,
+					use_col = _.isNumber(prev_col) ? prev_col : col,
+					lines = ed.parse_modules_to_lines(modules, wrappers, ( breakpoint ? breakpoint.id : 'desktop' ), use_col)
+				;
+				_.each(lines, function (line) {
+					me._normalize_child_modules_line(line, col, use_col, breakpoint, wrappers);
+				});
+			},
+
+			normalize_child_spacing: function () {
+				if ( this.region_view && this.region_view.model.get('name') == 'shadow' ) return;
+				if ( !this.object_group_view && !this.region_view ) return;
+				//console.time('normalize_child_spacing')
+				var me = this,
+					ed = Upfront.Behaviors.GridEditor,
+					breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled(),
+					is_group = !_.isUndefined(this.group_view),
+					is_object = !_.isUndefined(this.object_group_view),
+					modules = this.model,
+					wrappers = is_group
+						? this.group_view.model.get('wrappers')
+						: ( is_object ? this.object_group_view.model.get('wrappers') : this.region_view.model.get('wrappers') )
+				;
+
+				_.each(breakpoints, function(each) {
+					var breakpoint = each.toJSON(),
+						container_col = ed.get_container_col(me, breakpoint),
+						lines = ed.parse_modules_to_lines(modules, wrappers, breakpoint.id, container_col),
+						changed = false
+					;
+					//console.log(lines, container_col)
+					// Let's try checking spacer first and attempt to remove/combine them
+					_.each(lines, function (line) {
+						var all_wrappers = [],
+							spacer_wrappers = [],
+							el_wrappers = []
+						;
+						_.each(line.wrappers, function (w) {
+							all_wrappers.push(w);
+							if ( w.spacer ) spacer_wrappers.push(w);
+							else el_wrappers.push(w);
+						});
+						if ( all_wrappers.length == spacer_wrappers.length ) {
+							// everything is spacer, remove it
+							me._remove_spacers(spacer_wrappers, wrappers);
+							changed = true;
+							return;
+						}
+						// check if there is adjacent spacers and combine them
+						_.each(all_wrappers, function (w, wi) {
+							if ( wi == 0 ) return;
+							if ( !w.spacer || !all_wrappers[wi-1].spacer ) return;
+							var prev_w = all_wrappers[wi-1],
+								total_col = prev_w.col + w.col,
+								prev_w_breakpoint = prev_w.model.get_property_value_by_name('breakpoint'),
+								prev_w_breakpoint_data = ( prev_w_breakpoint && breakpoint.id in prev_w_breakpoint ) ? prev_w_breakpoint[breakpoint.id] : {}
+								;
+							me._remove_spacers([w], wrappers);
+							if ( !breakpoint || breakpoint.default ) {
+								prev_w.model.replace_class(ed.grid.class + total_col);
+								_.each(prev_w.modules, function (m) {
+									m.model.replace_class(ed.grid.class + total_col);
+								});
+							}
+							else {
+								prev_w_breakpoint_data.col = total_col;
+								prev_w.model.set_property('breakpoint', Upfront.Util.clone(prev_w_breakpoint));
+								_.each(prev_w.modules, function (m) {
+									var m_breakpoint = m.model.get_property_value_by_name('breakpoint'),
+										m_breakpoint_data = ( m_breakpoint && breakpoint.id in m_breakpoint ) ? m_breakpoint[breakpoint.id] : {}
+										;
+									m_breakpoint_data.col = total_col;
+									m.model.set_property('breakpoint', Upfront.Util.clone(m_breakpoint));
+								});
+							}
+							changed = true;
+						});
+					});
+					// If spacers changed, re-parse
+					if ( changed ) {
+						lines = ed.parse_modules_to_lines(modules, wrappers, breakpoint.id, container_col);
+					}
+					// Let's attempt to normalize the modules next as required
+					_.each(lines, function (line) {
+						if ( line.col == container_col ) return;
+						// line.col isn't the same with container_col, we have some problem
+						// let's do normalization
+						me._normalize_child_modules_line(line, container_col, line.col, breakpoint, wrappers);
+					});
+				});
+				//console.timeEnd('normalize_child_spacing')
+			},
+
+			_normalize_child_modules_line: function (line, col, use_col, breakpoint, wrappers) {
+				var me = this,
+					ed = Upfront.Behaviors.GridEditor,
+					modules = this.model,
+					diff_col = col - line.col,
+					total_diff = 0,
+					outstanding_diff = 0,
+					prev_outstanding_diff = 0,
+					outstanding_col = 0,
+					all_wrappers = [],
+					spacer_wrappers = [],
+					el_wrappers = []
+				;
+				if ( diff_col == 0 ) return;
+				_.each(line.wrappers, function (w) {
+					w.ratio = w.col/use_col;
+					w.apply_diff = Math.round(w.ratio * diff_col);
+					if ( w.col + w.apply_diff <= 0 ) w.apply_diff = 0;
+					total_diff += w.apply_diff;
+					all_wrappers.push(w);
+					if ( w.spacer ) spacer_wrappers.push(w);
+					else el_wrappers.push(w);
+				});
+				if ( all_wrappers.length == spacer_wrappers.length ) {
+					// everything is spacer, remove it
+					this._remove_spacers(spacer_wrappers, wrappers);
+					return;
+				}
+				outstanding_diff = total_diff - diff_col;
+				if ( outstanding_diff != 0 ) {
+					outstanding_col = outstanding_diff > 0 ? -1 : 1;
+					while ( outstanding_diff != 0 ) {
+						prev_outstanding_diff = outstanding_diff;
+						_.each(diff_col > 0 ? _.union(el_wrappers, spacer_wrappers) : _.union(spacer_wrappers, el_wrappers), function (w) {
+							if ( outstanding_diff == 0 ) return;
+							if ( w.col + w.apply_diff + outstanding_col <= 0 ) return;
+							w.apply_diff += outstanding_col;
+							outstanding_diff += outstanding_col;
+						});
+						// No changes? Somethings wrong, let's break
+						if ( prev_outstanding_diff == outstanding_diff ) break;
+					}
+				}
+				_.each(all_wrappers, function (w) {
+					var apply_col = w.col + w.apply_diff,
+						w_breakpoint = w.model.get_property_value_by_name('breakpoint'),
+						w_breakpoint_data = ( w_breakpoint && breakpoint.id in w_breakpoint ) ? w_breakpoint[breakpoint.id] : {}
+					;
+					if ( !breakpoint || breakpoint.default ) {
+						w.model.replace_class(ed.grid.class + apply_col);
+						_.each(w.modules, function (m) {
+							m.model.replace_class(ed.grid.class + apply_col);
+						});
+					}
+					else {
+						w_breakpoint_data.col = apply_col;
+						w.model.set_property('breakpoint', Upfront.Util.clone(w_breakpoint));
+						_.each(w.modules, function (m) {
+							var m_breakpoint = m.model.get_property_value_by_name('breakpoint'),
+								m_breakpoint_data = ( m_breakpoint && breakpoint.id in m_breakpoint ) ? m_breakpoint[breakpoint.id] : {}
+							;
+							m_breakpoint_data.col = apply_col;
+							m.model.set_property('breakpoint', Upfront.Util.clone(m_breakpoint));
+						});
+					}
+				});
+			},
+
+			_remove_spacers: function (spacer_wrappers, wrappers) {
+				var modules = this.model;
+				_.each(spacer_wrappers, function (w) {
+					_.each(w.modules, function (m) {
+						modules.remove(m.model);
+					});
+					wrappers.remove(w.model);
+				});
+			},
+
+			preserve_wrappers_breakpoint_order: function () {
+				if ( !this.region_view || this.region_view.model.get('name') == 'shadow' ) return;
+				var me = this,
+					ed = Upfront.Behaviors.GridEditor,
+					breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled(),
+					is_group = !_.isUndefined(this.group_view),
+					is_object = !_.isUndefined(this.object_group_view),
+					modules = this.model,
+					wrappers = is_group
+						? this.group_view.model.get('wrappers')
+						: ( is_object ? this.object_group_view.model.get('wrappers') : this.region_view.model.get('wrappers') )
+				;
+
+				_.each(breakpoints, function(each) {
+					var breakpoint = each.toJSON();
+					if ( breakpoint.default ) return;
+					var container_col = ed.get_container_col(me, breakpoint),
+						lines = ed.parse_modules_to_lines(modules, wrappers, breakpoint.id, container_col),
+						index = 1 // Start from 1, so we can still have order 0 free
+					;
+					_.each(lines, function (line) {
+						_.each(line.wrappers, function (w) {
+							var w_breakpoint = w.model.get_property_value_by_name('breakpoint'),
+								w_breakpoint_data = ( w_breakpoint && breakpoint.id in w_breakpoint ) ? w_breakpoint[breakpoint.id] : {}
+							;
+							w_breakpoint_data.order = index;
+							w.model.set_property('breakpoint', Upfront.Util.clone(w_breakpoint));
+							index++;
+						})
+					});
+				});
 			}
 		}),
 
@@ -1251,6 +1461,20 @@ define([
 
 					}
 				}));
+
+				menuitems.push(new Upfront.Views.ContextMenuItem({
+					get_label: function() {
+						return 'Edit Object';
+					},
+					in_context: function() {
+						// Only show this menu on ObjectGroup instance
+						return this.for_view instanceof Upfront.Views.ObjectGroup;
+					},
+					action: function(for_view, e) {
+						this.for_view.enable_object_edit();
+					}
+				}));
+				
 				this.menuitems = _(menuitems);
 			}
 
@@ -1317,7 +1541,9 @@ define([
 			display_size_hint: true,
 			events: {
 				// "click .upfront-object > .upfront-entity_meta > a.upfront-entity-settings_trigger": "on_settings_click",
-                "click .upfront-object > .upfront-entity_meta > a.upfront-entity-delete_trigger": "on_delete_click",
+				"click .upfront-object > .upfront-entity_meta > a.upfront-entity-delete_trigger": "on_delete_click",
+				"click .upfront-object > .upfront-entity_meta > a.upfront-entity-hide_trigger": "on_hide_click",
+				"click .upfront-object-hidden-toggle > a.upfront-entity-hide_trigger": "on_hide_click",
 				"click .upfront-object > .upfront-entity_meta": "on_meta_click",
 				"click": "on_click",
 				//"dblclick": "on_edit",
@@ -1337,7 +1563,12 @@ define([
 				this.listenTo(Upfront.Events, 'layout:after_render', this.on_after_layout_render);
 				this.listenTo(Upfront.Events, 'layout:after_render', this.checkUiOffset);
 
+				this.on('entity:resize_start', this.on_resize_start);
+				this.on('entity:resizing', this.on_resizing);
+				this.on('entity:resize_stop', this.on_resize);
+
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
+				this.listenTo(Upfront.Events, "entity:wrapper:update_position", this.on_wrapper_update);
 
 				if (this.init) this.init();
 			},
@@ -1352,13 +1583,14 @@ define([
 				Upfront.Events.trigger("entity:settings:deactivate");
 			},
 			render: function () {
-				var props = {},
+				var grid = Upfront.Settings.LayoutEditor.Grid,
+					props = {},
 					me = this,
 					buttons = (this.get_buttons ? this.get_buttons() : ''),
 					extra_buttons = (this.get_extra_buttons ? this.get_extra_buttons() : ''),
 					content = (this.get_content_markup ? this.get_content_markup() : ''),
-					column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
-					height, model, template
+					column_padding = grid.column_padding,
+					height, model, template, module_col, col, hide, default_hide
 				;
 				// Force add upfront-object-view class as element object can override the view and left without this class
 				this.$el.addClass('upfront-object-view');
@@ -1395,6 +1627,9 @@ define([
 				var row = this.model.get_breakpoint_property_value('row', true);
 				height = ( row ) ? row * Upfront.Settings.LayoutEditor.Grid.baseline : 0;
 
+				default_hide = "default_hide" in props ? props.default_hide : 0;
+				hide = "hide" in props ? props.hide : default_hide;
+
 				var theme_style = this.model.get_breakpoint_property_value('theme_style', true);
 				if (theme_style) {
 					props.class += ' ' + theme_style.toLowerCase();
@@ -1402,7 +1637,14 @@ define([
 				}
 				props.preset = props.preset || '';
 
-				model = _.extend(this.model.toJSON(), {"properties": props, "buttons": buttons, "content": content, "height": height, "extra_buttons": extra_buttons});
+				model = _.extend(this.model.toJSON(), {
+					"properties": props,
+					"buttons": buttons,
+					"content": content,
+					"height": height,
+					"hide": hide,
+					"extra_buttons": extra_buttons
+				});
 
         if (typeof model.properties.usingNewAppearance === 'undefined') model.properties.preset = '';
 
@@ -1421,6 +1663,13 @@ define([
 					this.stopListening((this._previous_parent_module_view || this.parent_module_view), 'entity:drop');
 					this.listenTo(this.parent_module_view, 'entity:drop', this.on_element_drop);
 					this.listenTo(this.parent_module_view, 'entity:drop', this.adjust_top_settings_panel_position);
+
+					module_col = Upfront.Behaviors.GridEditor.get_class_num(this.parent_module_view.model.get_property_value_by_name('class'), grid.class);
+				}
+				// Listen to object edit toggle if in ObjectGroup
+				if ( this.object_group_view ) {
+					this.stopListening(this.object_group_view, 'toggle_object_edit');
+					this.listenTo(this.object_group_view, 'toggle_object_edit', this.on_toggle_object_edit);
 				}
 
 				this.$el.html(template);
@@ -1429,6 +1678,18 @@ define([
 				if (typeof this.subview != 'undefined') {
 					this.subview.setElement(this.$('.upfront-object-content')).render();
 				}
+
+				if ( 'class' in props ) {
+					col = Upfront.Behaviors.GridEditor.get_class_num(props.class, grid.class);
+					col = col > module_col ? module_col : col;
+				}
+				else {
+					col = module_col;
+				}
+
+				$object = this.$el.find('.upfront-editable_entity:first');
+				$object.data('default_col', col);
+				$object.data('current_col', col);
 
 				this.apply_paddings(this.$el.find('> .upfront-editable_entity:first'));
 
@@ -1619,9 +1880,20 @@ define([
 				}
 			},
 			on_element_resize: function (attr) {
-				
+
 			},
 			on_element_drop: function (attr) {
+
+			},
+			on_resize_start: function (attr) {
+
+			},
+			on_resizing: function (attr) {
+				if ( this.display_size_hint ) {
+					this.update_size_hint(attr.width, attr.height);
+				}
+			},
+			on_resize: function (attr) {
 
 			},
 			on_after_layout_render: function () {
@@ -1638,6 +1910,25 @@ define([
 					}, 500);
 				}
 			},
+			on_wrapper_update: function (wrapper, wrapper_model) {
+				if ( this.wrapper_view && wrapper != this.wrapper_view ) return;
+				this.update_position();
+			},
+			on_toggle_object_edit: function (enable) {
+				var $object = this.$el.find('>.upfront-editable_entity:first'),
+					$hide = $object.find('> .upfront-entity_meta > a.upfront-entity-hide_trigger'),
+					breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint
+				;
+				if ( $object.data('ui-draggable') ) {
+					$object.draggable('option', 'disabled', !enable);
+				}
+				if ( breakpoint && !breakpoint.default ) {
+					$hide.toggle(enable);
+				}
+				else {
+					$hide.hide();
+				}
+			},
 			on_change_breakpoint: function (breakpoint) {
 				var theme_style = this.model.get_breakpoint_property_value('theme_style', true),
 					$obj = this.$el.find('.upfront-object');
@@ -1652,7 +1943,7 @@ define([
 				// Deal with the preset classes change on breakpoint change
 				this.model.decode_preset(breakpoint.id);
 
-				this.update_position();
+				//this.update_position();
 				this.checkUiOffset();
 			},
 
@@ -1680,6 +1971,27 @@ define([
 				this.parent_module_view.$el.find('>.upfront-module').removeClass('upfront-module-active');
 				if ( !this.parent_module_view.wrapper_view ) return;
 				this.parent_module_view.wrapper_view.$el.removeClass('upfront-wrapper-active upfront-inline-panel-item-open');
+			},
+			
+			on_hide_click: function (e) {
+				e.preventDefault();
+				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+					data = Upfront.Util.clone(this.model.get_property_value_by_name('breakpoint') || {});
+				if ( !_.isObject(data[breakpoint.id]) )
+					data[breakpoint.id] = {};
+				if ( data[breakpoint.id].hide == 1 )
+					data[breakpoint.id].hide = 0;
+				else
+					data[breakpoint.id].hide = 1;
+				this.model.set_property('breakpoint', data);
+			},
+			
+			
+			on_context_menu: function(e) {
+				// Don't run context menu if this view is under ObjectGroup
+				if ( this.object_group_view )
+					return;
+				_Upfront_EditableEntity.prototype.on_context_menu.call(this, e);
 			},
 
 			toggle_region_class: function (classname, add, container) {
@@ -1775,6 +2087,7 @@ define([
 				$(window).off('resize', this.lazyCheckUiOffset);
 				this.parent_view = false;
 				this.parent_module_view = false;
+				this.object_group_view = false;
 				Backbone.View.prototype.remove.call(this);
 			},
 			on_settings_click: function(event) {
@@ -1785,45 +2098,554 @@ define([
 			}
 		}),
 
+		ObjectGroup = ObjectView.extend({
+			className: "upfront-object-group-view",
+			events: {
+				"click .upfront-object-group > .upfront-entity_meta > a.upfront-entity-settings_trigger": "on_settings_click",
+                "click .upfront-object-group > .upfront-entity_meta > a.upfront-entity-delete_trigger": "on_delete_click",
+				"click .upfront-object-group > .upfront-entity_meta": "on_meta_click",
+				"click > .upfront-object-group-finish-edit": "on_finish",
+				"click": "on_click",
+				//"dblclick": "on_edit",
+				"contextmenu": "on_context_menu"
+			},
+			
+			initialize: function () {
+				ObjectView.prototype.initialize.call(this);
+				this.listenTo(Upfront.Events, "command:object_group:finish_edit", this.on_finish);
+				this._module_col = {};
+			},
+			
+			render: function () {
+				var grid = Upfront.Settings.LayoutEditor.Grid,
+					objects_view = this._objects_view || new Objects({"model": this.model.get("objects")}),
+					props = {},
+					buttons = (this.get_buttons ? this.get_buttons() : ''),
+					extra_buttons = (this.get_extra_buttons ? this.get_extra_buttons() : ''),
+					height, model, template, module_col, col
+				;
+				
+				// Id the element by anchor, if anchor is defined
+				var the_anchor = this.model.get_property_value_by_name("anchor");
+				if (the_anchor && the_anchor.length)
+					this.el.id = the_anchor;
+
+				this.model.get("properties").each(function (prop) {
+					props[prop.get("name")] = prop.get("value");
+				});
+
+				var row = this.model.get_breakpoint_property_value('row', true);
+				height = ( row ) ? row * Upfront.Settings.LayoutEditor.Grid.baseline : 0;
+
+				var theme_style = this.model.get_breakpoint_property_value('theme_style', true);
+				if(theme_style){
+					props.class += ' ' + theme_style.toLowerCase();
+					this._theme_style = theme_style;
+				}
+
+				model = _.extend(this.model.toJSON(), {"properties": props, "buttons": buttons, "height": height, "extra_buttons": extra_buttons});
+				template = _.template(_Upfront_Templates["object_group"], model);
+				
+				Upfront.Events.trigger("entity:object_group:before_render", this, this.model);
+				// Listen to module resize and drop event
+				if ( this.parent_module_view ){
+					this.stopListening((this._previous_parent_module_view || this.parent_module_view), 'entity:resize_start');
+					this.listenTo(this.parent_module_view, 'entity:resize_start', this.on_element_resize_start);
+					this.stopListening((this._previous_parent_module_view || this.parent_module_view), 'entity:resizing');
+					this.listenTo(this.parent_module_view, 'entity:resizing', this.on_element_resizing);
+					this.stopListening((this._previous_parent_module_view || this.parent_module_view), 'entity:resize');
+					this.listenTo(this.parent_module_view, 'entity:resize', this.on_element_resize);
+					this.stopListening((this._previous_parent_module_view || this.parent_module_view), 'entity:drop');
+					this.listenTo(this.parent_module_view, 'entity:drop', this.on_element_drop);
+
+					module_col = Upfront.Behaviors.GridEditor.get_class_num(this.parent_module_view.model.get_property_value_by_name('class'), grid.class);
+				}
+
+				// Detach to preserve DOM
+				objects_view.$el.detach();
+				
+				this.$el.html(template);
+
+				objects_view.object_group_view = this;
+				this.$(".upfront-objects_container").append(objects_view.el);
+				objects_view.render();
+
+				col = Upfront.Behaviors.GridEditor.get_class_num(props.class, grid.class);
+				col = col > module_col ? module_col : col;
+
+				$object = this.$el.find('.upfront-editable_entity:first');
+				$object.data('default_col', col);
+				$object.data('current_col', col);
+
+				Upfront.Events.trigger("entity:object_group:after_render", this, this.model);
+
+				if ( this.display_size_hint ) {
+					this.create_size_hint(this.$el);
+				}
+
+				if ( this.on_render ) this.on_render();
+				
+				if ( ! this._objects_view )
+					this._objects_view = objects_view;
+				else
+					this._objects_view.delegateEvents();
+					
+				this.ensure_breakpoint_change_is_listened();
+				this.ensureUiOffsetCalls();
+
+				// Cache module cols for later use
+				this._module_cols = this.get_module_cols();
+			},
+
+			update: function (prop, options) {
+				if (typeof prop === 'undefined') return;
+
+				// var prev_value = prop._previousAttributes.value,
+				var value = prop.get('value'),
+					$me = this.$el.find('.upfront-editable_entity:first'),
+					grid = Upfront.Settings.LayoutEditor.Grid
+				;
+				if ( prop.id == 'row' ){
+					// row change
+					var height = value * grid.baseline;
+					$me.css('min-height', height).attr('data-row', value);
+				}
+				else if ( prop.id == 'class' ){
+					// column and margin changes
+					var classes = $me.attr('class');
+					_.each([grid.class, grid.left_margin_class, grid.top_margin_class, grid.bottom_margin_class, grid.right_margin_class], function(class_name){
+						var rx = new RegExp('\\b' + class_name + '(\\d+)'),
+							val = value.match(rx);
+						if ( val && val[1] )
+							Upfront.Behaviors.GridEditor.update_class($me, class_name, val[1]);
+					});
+				}
+				else if ( prop.id == 'breakpoint' ){
+					this.update_position();
+
+					var current_property = value.current_property,
+						breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+						val = value[breakpoint.id] && value[breakpoint.id][current_property] ? value[breakpoint.id][current_property] : false;
+					;
+
+					if( current_property && val ) {
+						if( current_property === 'top_padding_num' ) this.show_top_padding_hint(val);
+						if( current_property === 'bottom_padding_num' ) this.show_bottom_padding_hint(val);
+					}
+
+				}
+				else if ( prop.id.match(/(top|bottom|left|right)_padding_(use|num|slider)/) ) {
+					this.apply_paddings($me);
+					this.handle_visual_padding_hint(prop);
+				}
+				else if ( prop.id.match(/padding_slider/) ) {
+					//this.render();
+					this.handle_visual_padding_hint(prop);
+				}
+				Upfront.Events.trigger('entity:object_group:update', this, this.model);
+			},
+
+			get_module_cols: function () {
+				var me = this,
+					module = this.parent_module_view.model,
+					module_class = module.get_property_value_by_name('class'),
+					grid = Upfront.Settings.LayoutEditor.Grid,
+					ed = Upfront.Behaviors.GridEditor,
+					breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled(),
+					cols = {}
+				;
+				cols.default = ed.get_class_num(module_class, grid.class);
+				_.each(breakpoints, function(each){
+					var breakpoint = each.toJSON(),
+						container_col = ed.get_container_col(me._objects_view, breakpoint)
+					;
+					cols[breakpoint.id] = container_col;
+				});
+				return cols;
+			},
+
+			on_module_update: function (view, model) {
+				if ( !this.parent_module_view || this.parent_module_view != view ) return;
+				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+					module_cols = this.get_module_cols()
+				;
+				if ( Upfront.Application.layout_ready ) {
+					prev_col = ( !breakpoint || breakpoint.default ) ? this._module_cols.default : this._module_cols[breakpoint.id];
+					col = ( !breakpoint || breakpoint.default ) ? module_cols.default : module_cols[breakpoint.id];
+					// Check if width is changed, if it did, let's normalize child modules
+					if ( prev_col != col ) {
+						this.normalize_child_modules(prev_col);
+					}
+				}
+				this._module_cols = module_cols;
+			},
+
+			normalize_child_modules: function (prev_col) {
+				if ( !this._objects_view ) return;
+				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
+					ed = Upfront.Behaviors.GridEditor,
+					$module = this.parent_module_view.$el.find('> .upfront-module'),
+					col = ( !breakpoint || breakpoint.default ) ? ed.get_class_num($module, ed.grid.class) : $module.data('breakpoint_col')
+				;
+				this._objects_view.normalize_child_modules(col, prev_col, this.model.get('wrappers'));
+			},
+			
+			enable_object_edit: function () {
+				Upfront.Events.trigger("command:module_group:finish_edit"); // close module group edit if opened
+				Upfront.Events.trigger("command:object_group:finish_edit"); // close other edit first
+				this.toggle_object_edit(true);
+			},
+			
+			disable_object_edit: function () {
+				this.toggle_object_edit(false);
+			},
+			
+			toggle_object_edit: function (enable) {
+				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
+				if ( enable ){
+					$main.addClass('upfront-object-group-editing');
+					this.$el.addClass('upfront-object-group-on-edit');
+					this.parent_module_view.disable_interaction(true, true, false, false, true);
+					this.parent_module_view.$el.addClass('upfront-module-object-group-on-edit');
+					if ( this.parent_module_view.wrapper_view ) {
+						this.parent_module_view.wrapper_view.$el.addClass('upfront-wrapper-object-group-on-edit');
+					}
+				}
+				else {
+					$main.removeClass('upfront-object-group-editing');
+					this.$el.removeClass('upfront-object-group-on-edit');
+					this.parent_module_view.enable_interaction(true);
+					this.parent_module_view.$el.removeClass('upfront-module-object-group-on-edit');
+					if ( this.parent_module_view.wrapper_view ) {
+						this.parent_module_view.wrapper_view.$el.removeClass('upfront-wrapper-object-group-on-edit');
+					}
+				}
+				this.trigger('toggle_object_edit', enable);
+			},
+			
+			on_finish: function (e) {
+				if( typeof e !== "undefined" ){
+					e.preventDefault();
+				}
+				this.disable_object_edit();
+			},
+			
+			remove: function () {
+				if(this._objects_view)
+					this._objects_view.remove();
+				Backbone.View.prototype.remove.call(this);
+			}
+		}),
+
 		Objects = _Upfront_EditableEntities.extend({
 			"attributes": {
 				"class": "upfront-editable_entities_container"
+			},
+			
+			init: function () {
+				this.stopListening(this.model, 'add', this.render);
+				this.listenTo(this.model, 'add', this.on_add);
+				this.stopListening(this.model, 'remove', this.render);
+				this.listenTo(this.model, 'remove', this.on_remove);
+				this.stopListening(this.model, 'change', this.render);
+				this.listenTo(this.model, 'change', this.rerender_objects);
+				this.listenTo(this.model, 'reset', this.on_reset);
+
+				//this.listenTo(Upfront.Events, "entity:drag_stop", this.apply_flexbox_clear);
+				this.listenTo(Upfront.Events, "entity:drag_stop", this.apply_wrapper_height);
+				this.listenTo(Upfront.Events, "entity:drag_stop", this.apply_adapt_to_breakpoints);
+				//this.listenTo(Upfront.Events, "entity:resized", this.apply_flexbox_clear);
+				this.listenTo(Upfront.Events, "entity:resized", this.apply_wrapper_height);
+				this.listenTo(Upfront.Events, "entity:resized", this.apply_adapt_to_breakpoints);
+				this.listenTo(Upfront.Events, "entity:wrapper:resized", this.on_wrapper_resize);
+				this.listenTo(Upfront.Events, "entity:wrappers:update", this.on_wrappers_update);
+				this.listenTo(Upfront.Events, "entity:object:refresh", this.on_object_refresh);
+				this.listenTo(Upfront.Events, "layout:render", this.on_after_layout_render);
+				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
+			},
+
+			on_entity_remove: function(e, view) {
+				Upfront.Events.trigger("entity:object:removed:before");
+				var wrapper_id = view.model.get_wrapper_id(),
+					me = this
+				;
+				if ( wrapper_id && this.object_group_view ){
+					var wrappers = this.object_group_view.model.get('wrappers'),
+						wrapper = wrappers.get_by_wrapper_id(wrapper_id),
+						wrapper_module = 0
+					;
+					if ( wrapper ){
+						// check if this wrapper has another module
+						this.model.each(function(module){
+							if ( module.get_wrapper_id() == wrapper_id )
+								wrapper_module++;
+						});
+						if ( wrapper_module == 1 ){
+							Upfront.Behaviors.GridEditor.normalize_module_remove(view, view.model, this.model, wrapper, wrappers);
+							wrappers.remove(wrapper);
+						}
+					}
+				}
+				view.remove();
+				this.model.remove(view.model);
+				this.normalize_child_spacing();
+				Upfront.Events.trigger("entity:object:removed:after");
 			},
 
 			render: function () {
 				var $el = this.$el,
 					me = this
 				;
-				$el.html('');
-				if ( typeof Upfront.data.object_views == 'undefined' ) {
+				//$el.html('');
+				$el.find('>.upfront-wrapper').detach();
+
+				if ( typeof Upfront.data.object_views == 'undefined' ){
 					Upfront.data.object_views = {};
 				}
+				if ( typeof Upfront.data.wrapper_views == 'undefined' ) {
+					Upfront.data.wrapper_views = {};
+				}
+				this.current_wrapper_view = null;
+				this.current_wrapper_id = null;
+				this.current_wrapper_el = null;
 				this.model.each(function (obj) {
-					var view_class_prop = obj.get("properties").where({"name": "view_class"}),
-						view_class = view_class_prop.length ? view_class_prop[0].get("value") : "ObjectView",
-						local_view = Upfront.Views[view_class] ? Upfront.data.object_views[obj.cid] || new Upfront.Views[view_class]({model: obj}) : false
-					;
-					if (local_view) {
-						local_view.parent_view = me;
+					me.render_object(obj);
+				});
+				this.apply_flexbox_clear();
+			},
+			render_object: function (obj, options) {
+				var $el = this.$el,
+					index = options && typeof options.index != 'undefined' ? options.index-1 : -2,
+					$el_index = index >= 0 ? $el.find('> .upfront-wrapper > .upfront-object-view, > .upfront-wrapper > .upfront-object-group').eq(index) : false,
+					wrappers = this.object_group_view && this.object_group_view.model ? this.object_group_view.model.get('wrappers') : false,
+					view_class_prop = obj.get("properties").where({"name": "view_class"}),
+					is_obj_group = obj.get("objects") ? true : false,
+					default_view_class = is_obj_group ? "ObjectGroup" : "ObjectView",
+					view_class = view_class_prop.length ? view_class_prop[0].get("value") : default_view_class,
+					local_view = Upfront.Views[view_class] ? Upfront.data.object_views[obj.cid] || new Upfront.Views[view_class]({model: obj}) : false,
+					wrapper_id = obj.get_wrapper_id(),
+					wrapper = wrappers && wrapper_id ? wrappers.get_by_wrapper_id(wrapper_id) : false,
+					wrapper_view, wrapper_el
+				;
+				if(local_view) {
+					local_view.parent_view = this;
+					if ( local_view.parent_module_view )
 						local_view._previous_parent_module_view = local_view.parent_module_view;
-						local_view.parent_module_view = me.parent_view;
-						local_view.render();
-						$el.append(local_view.el);
-						if ( ! Upfront.data.object_views[obj.cid] ) {
-							me.listenTo(local_view, 'upfront:entity:activate', me.on_activate);
-							me.listenTo(local_view.model, 'remove', me.deactivate);
-							//local_view.bind("upfront:entity:activate", me.on_activate, me);
-							//local_view.model.bind("remove", me.deactivate, me);
-							//local_view.listenTo(local_view.model, "remove", me.deactivate);
-							Upfront.data.object_views[obj.cid] = local_view;
-						} else {
-							local_view.delegateEvents();
-						}
+					if ( this.object_group_view ) {
+						local_view.object_group_view = this.object_group_view;
+						local_view.parent_module_view = this.object_group_view.parent_module_view;
 					}
+					else {
+						local_view.parent_module_view = this.parent_view;
+					}
+
+					if ( !wrapper ){
+						if ( index === -2 ) {
+							$el.append(local_view.el);
+						}
+						else if ( index === -1 ) {
+							$el.prepend(local_view.el);
+						}
+						else {
+							$el_index.parent().after(local_view.el);
+						}
+						local_view.render();
+					}
+					else {
+						if ( this.current_wrapper_id == wrapper_id ){
+							wrapper_el = this.current_wrapper_el;
+						}
+						else {
+							wrapper_view = Upfront.data.wrapper_views[wrapper.cid];
+							if ( !wrapper_view ) {
+								wrapper_view = new Upfront.Views.Wrapper({model: wrapper})
+								wrapper_view.parent_view = this;
+								wrapper_view.render();
+							}
+							else {
+								wrapper_view.parent_view = this;
+							}
+							wrapper_el = wrapper_view.el;
+							this.current_wrapper_view = wrapper_view;
+						}
+						this.current_wrapper_id = wrapper_id;
+						this.current_wrapper_el = wrapper_el;
+						if ( this.current_wrapper_view ) {
+							local_view.wrapper_view = this.current_wrapper_view;
+						}
+						if ( wrapper_view ){
+							if ( index === -2 ) {
+								$el.append(wrapper_el);
+							}
+							else if ( index === -1 ) {
+								$el.prepend(wrapper_el);
+							}
+							else {
+								$el_index.closest('.upfront-wrapper').after(wrapper_el);
+							}
+							if ( ! Upfront.data.wrapper_views[wrapper.cid] ) {
+								Upfront.data.wrapper_views[wrapper.cid] = wrapper_view;
+							}
+						}
+						if ( $el_index !== false ){
+							if ( $el_index.closest('.upfront-wrapper').get(0) == wrapper_el ) {
+								$el_index.after(local_view.el);
+							}
+							else {
+								$(wrapper_el).prepend(local_view.el);
+							}
+						}
+						else if ( index === -1 ) {
+							$(wrapper_el).prepend(local_view.el);
+						}
+						else {
+							$(wrapper_el).append(local_view.el);
+						}
+						local_view.render();
+					}
+					if ( ! Upfront.data.object_views[obj.cid] ){
+						this.listenTo(local_view, 'upfront:entity:activate', this.on_activate);
+						this.listenTo(local_view.model, 'remove', this.deactivate);
+						//local_view.bind("upfront:entity:activate", this.on_activate, this);
+						//local_view.model.bind("remove", this.deactivate, this);
+						//local_view.listenTo(local_view.model, "remove", this.deactivate);
+						Upfront.data.object_views[obj.cid] = local_view;
+					}
+					else {
+						local_view.delegateEvents();
+					}
+				}
+				Upfront.Events.trigger('entity:objects:render_object', local_view, local_view.model, this, this.model);
+			},
+			rerender_objects: function () {
+				this.model.each(function (obj) {
+					var local_view = Upfront.data.object_views[obj.cid];
+					if ( !local_view ) return;
+					local_view.render();
 				});
 			},
+			apply_flexbox_clear: function () {
+				this.fix_flexbox_clear(this.$el);
+			},
+			apply_wrapper_height: function () {
+				if ( !Upfront.Application.layout_ready ) return;
+				// Only do it if it was from ObjectGroup
+				if ( !this.object_group_view ) return;
+				// Don't do anything on shadow region
+				var module_view = this.object_group_view.parent_module_view;
+				if ( module_view.region_view && module_view.region_view.model.get('name') == 'shadow' ) return;
+				var ed = Upfront.Behaviors.GridEditor,
+					breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
+					wrappers = this.object_group_view.model.get('wrappers'),
+					col = breakpoint.default
+						? ed.get_class_num(module_view.$el.find('>.upfront-module'), ed.grid.class)
+						: module_view.model.get_breakpoint_property_value('col')
+				;
+				this.fix_wrapper_height(this.model, wrappers, col);
+			},
+			apply_adapt_to_breakpoints: function () {
+				var current_breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
+				if ( current_breakpoint && !current_breakpoint.default ) return;
+				// Only do it if it was from ObjectGroup
+				if ( !this.object_group_view ) return;
+				// Don't do anything on shadow region
+				var module_view = this.object_group_view.parent_module_view;
+				if ( module_view.region_view && module_view.region_view.model.get('name') == 'shadow' ) return;
+				var me = this,
+					ed = Upfront.Behaviors.GridEditor,
+					wrappers = this.object_group_view.model.get('wrappers'),
+					breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled()
+				;
+				_.each(breakpoints, function(each){
+					var breakpoint = each.toJSON();
+					if ( breakpoint.default ) return;
+					var col = ed.get_class_num(module_view.$el, ed.grid.class),
+						breakpoint_data = module_view.model.get_property_value_by_name('breakpoint')
+					;
+					if ( _.isObject(breakpoint_data) && _.isObject(breakpoint_data[breakpoint.id]) && !_.isUndefined(breakpoint_data[breakpoint.id].col) ) {
+						col = breakpoint_data[breakpoint.id].col;
+					}
+					ed.adapt_to_breakpoint(me.model, wrappers, breakpoint.id, col, true);
+				});
+			},
+			on_after_layout_render: function () {
+				//this.apply_flexbox_clear();
+				this.apply_wrapper_height();
+				this.apply_adapt_to_breakpoints();
+				//this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.apply_flexbox_clear);
+				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.apply_wrapper_height);
+			},
+			on_wrappers_update: function (parent_model) {
+				if ( _.isObject(parent_model) && parent_model.get('objects') != this.model )
+					return;
+				this.model.each(function(object){
+					var local_view = Upfront.data.object_views[object.cid];
+					if ( ! local_view )
+						return;
+					local_view.update_position();
+				});
+				//this.apply_flexbox_clear();
+				this.apply_wrapper_height();
+			},
+			on_wrapper_resize: function (view, model) {
+				if ( view.parent_view && view.parent_view != this ) return;
+				//this.apply_flexbox_clear();
+				this.apply_wrapper_height();
+				this.apply_adapt_to_breakpoints();
+			},
+			on_object_refresh: function (view) {
+				if ( !this.object_group_view ) return;
+				if ( view.parent_view && view.parent_view != this ) return;
+				this.apply_wrapper_height();
+			},
+			on_add: function (model, collection, options) {
+				var update = typeof options.update != 'undefined' ? options.update : true;
+				this.current_wrapper_id = this.current_wrapper_el = null;
+				this.render_object(model, options);
+				if ( update ) {
+					//this.apply_flexbox_clear();
+					this.apply_wrapper_height();
+					this.apply_adapt_to_breakpoints();
+				}
+				Upfront.Events.trigger("entity:added:after");
+			},
+			on_remove: function (model, collection, options) {
+				var update = typeof options.update != 'undefined' ? options.update : true;
+				this.remove_model(model);
+				if ( update ) {
+					this.apply_wrapper_height();
+					this.apply_adapt_to_breakpoints();
+				}
+			},
+			remove_model: function (model) {
+				var view = Upfront.data.object_views[model.cid];
+				if ( !view ) return;
+				view.unbind();
+				view.remove();
+				delete Upfront.data.object_views[model.cid];
+			},
+			on_reset: function (collection, options) {
+				var me = this;
+				if ( options && options.call_render ){
+					_.each(options.call_render, function(object){
+						var index = collection.indexOf(object);
+						me.render_object(object, {index: index});
+					});
+					//this.apply_flexbox_clear();
+					this.apply_wrapper_height();
+					this.apply_adapt_to_breakpoints();
+				}
+			},
+			on_change_breakpoint: function (breakpoint) {
+				var me = this;
+				// Make sure clearing flexbox is applied, set a timeout to let other positioning finish
+				setTimeout(function(){
+					//me.apply_flexbox_clear();
+					me.apply_wrapper_height();
+				}, 1000);
+			},
 			remove: function() {
-				if (this.model) {
+				if(this.model)
 					this.model.each(function(model){
 						var view = Upfront.data.object_views[model.cid];
 						if(	view ){
@@ -1831,10 +2653,9 @@ define([
 							delete Upfront.data.object_views[model.cid];
 						}
 					});
-				}
 				this.parent_view = false;
 				Backbone.View.prototype.remove.call(this);
-				if (this.model) {
+				if(this.model){
 					this.model.reset([], {silent:true});
 					this.model = false;
 				}
@@ -1855,9 +2676,6 @@ define([
 			},
 			initialize: function () {
 				var callback = this.update || this.render;
-				// this.model.get("properties").bind("change", callback, this);
-				// this.model.get("properties").bind("add", callback, this);
-				// this.model.get("properties").bind("remove", callback, this);
 				this.listenTo(this.model.get("properties"), 'change', callback);
 				this.listenTo(this.model.get("properties"), 'add', callback);
 				this.listenTo(this.model.get("properties"), 'remove', callback);
@@ -1887,7 +2705,12 @@ define([
 					col = Upfront.Behaviors.GridEditor.get_class_num(props.class, grid.class),
 					default_hide = "default_hide" in props ? props.default_hide : 0,
 					hide = "hide" in props ? props.hide : default_hide,
-					model = _.extend(this.model.toJSON(), {"properties": props, "height": height, "hide": hide, "parent_group_class": is_parent_group ? 'upfront-module-parent-group' : ''}),
+					model = _.extend(this.model.toJSON(), {
+						"properties": props,
+						"height": height,
+						"hide": hide,
+						"parent_group_class": is_parent_group ? 'upfront-module-parent-group' : ''
+					}),
 					template = _.template(_Upfront_Templates["module"], model),
 					$module
 				;
@@ -1956,8 +2779,8 @@ define([
 			render_object: function () {
 				var objects_view = this._objects_view || new Objects({"model": this.model.get("objects")});
 				objects_view.parent_view = this;
-				objects_view.render();
 				this.$(".upfront-objects_container").append(objects_view.el);
+				objects_view.render();
 				if ( ! this._objects_view ) {
 					this._objects_view = objects_view;
 				} else {
@@ -2097,7 +2920,7 @@ define([
 				}
 			},
 			on_wrapper_update: function (wrapper, wrapper_model) {
-				if ( wrapper != this.wrapper_view ) return;
+				if ( this.wrapper_view && wrapper != this.wrapper_view ) return;
 				this.update_position();
 			},
 			on_change_breakpoint: function (breakpoint) {
@@ -2757,6 +3580,7 @@ define([
 			},
 			on_reorder: function () {
 				Upfront.Events.trigger("command:module_group:finish_edit"); // close other reorder first
+				Upfront.Events.trigger("command:object_group:finish_edit"); // close object group edit if opened
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 				$main.addClass('upfront-module-group-editing');
 				this.$el.addClass('upfront-module-group-on-edit');
@@ -2767,6 +3591,7 @@ define([
 			},
 			on_edit: function () {
 				Upfront.Events.trigger("command:module_group:finish_edit"); // close other reorder first
+				Upfront.Events.trigger("command:object_group:finish_edit"); // close object group edit if opened
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 				$main.addClass('upfront-module-group-editing');
 				if ( this.wrapper_view ) {
@@ -2927,11 +3752,6 @@ define([
 		Modules = _Upfront_EditableEntities.extend({
 			className: "upfront-editable_entities_container",
 			init: function () {
-				// this.model.unbind('add', this.render, this);
-				// this.model.bind('add', this.on_add, this);
-				// this.model.unbind('remove', this.render, this);
-				// this.model.bind('remove', this.on_remove, this);
-				// this.model.bind('reset', this.on_reset, this);
 				this.stopListening(this.model, 'add', this.render);
 				this.listenTo(this.model, 'add', this.on_add);
 				this.stopListening(this.model, 'remove', this.render);
@@ -2954,11 +3774,14 @@ define([
 			on_entity_remove: function(e, view) {
 				Upfront.Events.trigger("entity:removed:before");
 				var wrapper_id = view.model.get_wrapper_id(),
-					me = this;
+					me = this
+				;
 				if ( wrapper_id ){
-					var wrappers = this.region_view.model.get('wrappers'),
+					var is_group = !_.isUndefined(this.group_view),
+						wrappers = is_group ? this.group_view.model.get('wrappers') : this.region_view.model.get('wrappers'),
 						wrapper = wrappers.get_by_wrapper_id(wrapper_id),
-						wrapper_module = 0;
+						wrapper_module = 0
+					;
 					if ( wrapper ){
 						// check if this wrapper has another module
 						this.model.each(function(module){
@@ -2973,6 +3796,7 @@ define([
 				}
 				view.remove();
 				this.model.remove(view.model);
+				this.normalize_child_spacing();
 				Upfront.Events.trigger("entity:removed:after");
 			},
 			render: function () {
@@ -3183,212 +4007,6 @@ define([
 			},
 			on_csseditor_ready: function () {
 				//this.apply_wrapper_height();
-			},
-			normalize_child_modules: function (col, prev_col, wrappers) {
-				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
-					me = this,
-					ed = Upfront.Behaviors.GridEditor,
-					modules = this.model,
-					use_col = _.isNumber(prev_col) ? prev_col : col,
-					lines = ed.parse_modules_to_lines(modules, wrappers, ( breakpoint ? breakpoint.id : 'desktop' ), use_col)
-				;
-				_.each(lines, function (line) {
-					me._normalize_child_modules_line(line, col, use_col, breakpoint, wrappers);
-				});
-			},
-			normalize_child_spacing: function () {
-				if ( !this.region_view || this.region_view.model.get('name') == 'shadow' ) return;
-				//console.time('normalize_child_spacing')
-				var me = this,
-					ed = Upfront.Behaviors.GridEditor,
-					breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled(),
-					is_group = !_.isUndefined(this.group_view),
-					modules = this.model,
-					wrappers = ( is_group ? this.group_view.model.get('wrappers') : this.region_view.model.get('wrappers') )
-				;
-
-				_.each(breakpoints, function(each) {
-					var breakpoint = each.toJSON(),
-						container_breakpoint = ( is_group ? me.group_view : me.region_view ).model.get_property_value_by_name('breakpoint'),
-						container_breakpoint_data = ( container_breakpoint && breakpoint.id in container_breakpoint ) ? container_breakpoint[breakpoint.id] : {},
-						_container_col = breakpoint.default
-							? ed.get_class_num(( is_group ? me.group_view : me.region_view ).$el, ed.grid.class)
-							: ( _.isNumber(container_breakpoint_data.col) ? container_breakpoint_data.col : breakpoint.columns ),
-						container_col = _container_col > breakpoint.columns ? breakpoint.columns : _container_col,
-						lines = ed.parse_modules_to_lines(modules, wrappers, breakpoint.id, container_col),
-						changed = false
-					;
-					//console.log(lines, container_col)
-					// Let's try checking spacer first and attempt to remove/combine them
-					_.each(lines, function (line) {
-						var all_wrappers = [],
-							spacer_wrappers = [],
-							el_wrappers = []
-						;
-						_.each(line.wrappers, function (w) {
-							all_wrappers.push(w);
-							if ( w.spacer ) spacer_wrappers.push(w);
-							else el_wrappers.push(w);
-						});
-						if ( all_wrappers.length == spacer_wrappers.length ) {
-							// everything is spacer, remove it
-							me._remove_spacers(spacer_wrappers, wrappers);
-							changed = true;
-							return;
-						}
-						// check if there is adjacent spacers and combine them
-						_.each(all_wrappers, function (w, wi) {
-							if ( wi == 0 ) return;
-							if ( !w.spacer || !all_wrappers[wi-1].spacer ) return;
-							var prev_w = all_wrappers[wi-1],
-								total_col = prev_w.col + w.col,
-								prev_w_breakpoint = prev_w.model.get_property_value_by_name('breakpoint'),
-								prev_w_breakpoint_data = ( prev_w_breakpoint && breakpoint.id in prev_w_breakpoint ) ? prev_w_breakpoint[breakpoint.id] : {}
-							;
-							me._remove_spacers([w], wrappers);
-							if ( !breakpoint || breakpoint.default ) {
-								prev_w.model.replace_class(ed.grid.class + total_col);
-								_.each(prev_w.modules, function (m) {
-									m.model.replace_class(ed.grid.class + total_col);
-								});
-							}
-							else {
-								prev_w_breakpoint_data.col = total_col;
-								prev_w.model.set_property('breakpoint', Upfront.Util.clone(prev_w_breakpoint));
-								_.each(prev_w.modules, function (m) {
-									var m_breakpoint = m.model.get_property_value_by_name('breakpoint'),
-										m_breakpoint_data = ( m_breakpoint && breakpoint.id in m_breakpoint ) ? m_breakpoint[breakpoint.id] : {}
-									;
-									m_breakpoint_data.col = total_col;
-									m.model.set_property('breakpoint', Upfront.Util.clone(m_breakpoint));
-								});
-							}
-							changed = true;
-						});
-					});
-					// If spacers changed, re-parse
-					if ( changed ) {
-						lines = ed.parse_modules_to_lines(modules, wrappers, breakpoint.id, container_col);
-					}
-					// Let's attempt to normalize the modules next as required
-					_.each(lines, function (line) {
-						if ( line.col == container_col ) return;
-						// line.col isn't the same with container_col, we have some problem
-						// let's do normalization
-						me._normalize_child_modules_line(line, container_col, line.col, breakpoint, wrappers);
-					});
-				});
-				//console.timeEnd('normalize_child_spacing')
-			},
-			_normalize_child_modules_line: function (line, col, use_col, breakpoint, wrappers) {
-				var me = this,
-					ed = Upfront.Behaviors.GridEditor,
-					modules = this.model,
-					diff_col = col - line.col,
-					total_diff = 0,
-					outstanding_diff = 0,
-					prev_outstanding_diff = 0,
-					outstanding_col = 0,
-					all_wrappers = [],
-					spacer_wrappers = [],
-					el_wrappers = []
-				;
-				if ( diff_col == 0 ) return;
-				_.each(line.wrappers, function (w) {
-					w.ratio = w.col/use_col;
-					w.apply_diff = Math.round(w.ratio * diff_col);
-					if ( w.col + w.apply_diff <= 0 ) w.apply_diff = 0;
-					total_diff += w.apply_diff;
-					all_wrappers.push(w);
-					if ( w.spacer ) spacer_wrappers.push(w);
-					else el_wrappers.push(w);
-				});
-				if ( all_wrappers.length == spacer_wrappers.length ) {
-					// everything is spacer, remove it
-					this._remove_spacers(spacer_wrappers, wrappers);
-					return;
-				}
-				outstanding_diff = total_diff - diff_col;
-				if ( outstanding_diff != 0 ) {
-					outstanding_col = outstanding_diff > 0 ? -1 : 1;
-					while ( outstanding_diff != 0 ) {
-						prev_outstanding_diff = outstanding_diff;
-						_.each(diff_col > 0 ? _.union(el_wrappers, spacer_wrappers) : _.union(spacer_wrappers, el_wrappers), function (w) {
-							if ( outstanding_diff == 0 ) return;
-							if ( w.col + w.apply_diff + outstanding_col <= 0 ) return;
-							w.apply_diff += outstanding_col;
-							outstanding_diff += outstanding_col;
-						});
-						// No changes? Somethings wrong, let's break
-						if ( prev_outstanding_diff == outstanding_diff ) break;
-					}
-				}
-				_.each(all_wrappers, function (w) {
-					var apply_col = w.col + w.apply_diff,
-						w_breakpoint = w.model.get_property_value_by_name('breakpoint'),
-						w_breakpoint_data = ( w_breakpoint && breakpoint.id in w_breakpoint ) ? w_breakpoint[breakpoint.id] : {}
-					;
-					if ( !breakpoint || breakpoint.default ) {
-						w.model.replace_class(ed.grid.class + apply_col);
-						_.each(w.modules, function (m) {
-							m.model.replace_class(ed.grid.class + apply_col);
-						});
-					}
-					else {
-						w_breakpoint_data.col = apply_col;
-						w.model.set_property('breakpoint', Upfront.Util.clone(w_breakpoint));
-						_.each(w.modules, function (m) {
-							var m_breakpoint = m.model.get_property_value_by_name('breakpoint'),
-								m_breakpoint_data = ( m_breakpoint && breakpoint.id in m_breakpoint ) ? m_breakpoint[breakpoint.id] : {}
-							;
-							m_breakpoint_data.col = apply_col;
-							m.model.set_property('breakpoint', Upfront.Util.clone(m_breakpoint));
-						});
-					}
-				});
-			},
-			_remove_spacers: function (spacer_wrappers, wrappers) {
-				var modules = this.model;
-				_.each(spacer_wrappers, function (w) {
-					_.each(w.modules, function (m) {
-						modules.remove(m.model);
-					});
-					wrappers.remove(w.model);
-				});
-			},
-			preserve_wrappers_breakpoint_order: function () {
-				if ( !this.region_view || this.region_view.model.get('name') == 'shadow' ) return;
-				var me = this,
-					ed = Upfront.Behaviors.GridEditor,
-					breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled(),
-					is_group = !_.isUndefined(this.group_view),
-					modules = this.model,
-					wrappers = ( is_group ? this.group_view.model.get('wrappers') : this.region_view.model.get('wrappers') )
-				;
-
-				_.each(breakpoints, function(each) {
-					var breakpoint = each.toJSON();
-					if ( breakpoint.default ) return;
-					var container_breakpoint = ( is_group ? me.group_view : me.region_view ).model.get_property_value_by_name('breakpoint'),
-						container_breakpoint_data = ( container_breakpoint && breakpoint.id in container_breakpoint ) ? container_breakpoint[breakpoint.id] : {},
-						_container_col = breakpoint.default
-							? ed.get_class_num(( is_group ? me.group_view : me.region_view ).$el, ed.grid.class)
-							: ( _.isNumber(container_breakpoint_data.col) ? container_breakpoint_data.col : breakpoint.columns ),
-						container_col = _container_col > breakpoint.columns ? breakpoint.columns : _container_col,
-						lines = ed.parse_modules_to_lines(modules, wrappers, breakpoint.id, container_col),
-						index = 1 // Start from 1, so we can still have order 0 free
-					;
-					_.each(lines, function (line) {
-						_.each(line.wrappers, function (w) {
-							var w_breakpoint = w.model.get_property_value_by_name('breakpoint'),
-								w_breakpoint_data = ( w_breakpoint && breakpoint.id in w_breakpoint ) ? w_breakpoint[breakpoint.id] : {}
-							;
-							w_breakpoint_data.order = index;
-							w.model.set_property('breakpoint', Upfront.Util.clone(w_breakpoint));
-							index++;
-						})
-					});
-				});
 			},
 			apply_flexbox_clear: function () {
 				this.fix_flexbox_clear(this.$el);
@@ -5682,6 +6300,8 @@ define([
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 				this.listenTo(Upfront.Events, 'entity:module:update_position', this.on_module_update);
 				this.listenTo(Upfront.Events, 'entity:modules:render_module', this.on_module_update);
+				this.listenTo(Upfront.Events, 'entity:object:update_position', this.on_object_update);
+				this.listenTo(Upfront.Events, 'entity:objects:render_object', this.on_object_update);
 				this.listenTo(Upfront.Events, 'layout:after_render', this.on_layout_after_render);
 
 				// this one to do fix the wrapper visibility for elements inside a lightbox
@@ -5726,8 +6346,13 @@ define([
 					data = this.model.get_property_value_by_name('breakpoint'),
 					breakpoint_data = data[breakpoint.id],
 					is_group = !_.isUndefined(this.parent_view.group_view),
-					parent_view = is_group ? this.parent_view.group_view : this.parent_view.region_view,
-					parent_pos = is_group ? ed.get_position(parent_view.$el) : ed.get_region_position(parent_view.$el),
+					is_object = !_.isUndefined(this.parent_view.object_group_view),
+					parent_view = is_group
+						? this.parent_view.group_view
+						: ( is_object ? this.parent_view.object_group_view : this.parent_view.region_view ),
+					parent_pos = is_group
+						? ed.get_position(parent_view.$el)
+						: ( is_object ? ed.get_position(parent_view.parent_module_view.$el.find('> .upfront-module')) : ed.get_region_position(parent_view.$el) ),
 					parent_col = parent_pos.col
 				;
 				this.$el.css({
@@ -5761,15 +6386,19 @@ define([
 				Upfront.Events.trigger('entity:wrapper:update_position', this, this.model);
 			},
 			on_add_spacer: function (e) {
-				var $target = $(e.target),
-					position = $target.attr('data-position');
+				var ed = Upfront.Behaviors.GridEditor,
+					$target = $(e.target),
+					position = $target.attr('data-position')
+				;
 				e.preventDefault();
-				this.add_spacer(position);
+				ed.start(this, this.model);
+				this.add_spacer(position, 1, null, ($target.closest('.upfront-objects_container').length !== 0));
 			},
-			add_spacer: function (position, spacer_col, current_col) {
+			add_spacer: function (position, spacer_col, current_col, is_object) {
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
 					ed = Upfront.Behaviors.GridEditor,
 					col_class = Upfront.Settings.LayoutEditor.Grid.class,
+					is_object = !_.isUndefined(is_object) ? is_object : false,
 					spacer_col = spacer_col > 0 ? spacer_col : 1,
 					current_col = _.isNumber(current_col) && current_col > spacer_col
 						? current_col
@@ -5786,22 +6415,28 @@ define([
 				var rsz_model = this.model.collection.get_by_wrapper_id($rsz_wrapper.attr('id')),
 					model_cls = this.model.get_property_value_by_name('class'),
 					is_clr = ( breakpoint && !breakpoint.default ? this.model.get_breakpoint_property_value('clear') : model_cls.match(/clr/) ),
+					wrapper_id = Upfront.Util.get_unique_id("wrapper"),
+					props = [
+						{"name": "wrapper_id", "value": wrapper_id},
+						{"name": "default_hide", "value": 1},
+						{"name": "toggle_hide", "value": 0},
+						{"name": "hide", "value": ( breakpoint && !breakpoint.default ? 1 : 0 )}
+					],
 					object = new Upfront.Models.UspacerModel({
 						"name": "",
-						"properties": []
+						"properties": is_object
+							? _.union([
+								{"name": "class", "value": col_class+spacer_col + " upfront-object-spacer"},
+							], props)
+							: []
 					}),
-					wrapper_id = Upfront.Util.get_unique_id("wrapper"),
 					module = new Upfront.Models.Module({
 						"name": "",
-						"properties": [
+						"properties": _.union([
 							{"name": "element_id", "value": Upfront.Util.get_unique_id("module")},
-							{"name": "wrapper_id", "value": wrapper_id},
 							{"name": "class", "value": col_class+spacer_col + " upfront-module-spacer"},
 							{"name": "has_settings", "value": 0},
-							{"name": "default_hide", "value": 1},
-							{"name": "toggle_hide", "value": 0},
-							{"name": "hide", "value": ( breakpoint && !breakpoint.default ? 1 : 0 )}
-						],
+						], props),
 						"objects": [
 							object
 						]
@@ -5813,16 +6448,15 @@ define([
 							{"name": "class", "value": col_class+spacer_col + ( is_clr && position == 'left' ? ' clr' : '' )}
 						]
 					}),
-					$child = this.$el.find("> .upfront-module-view > .upfront-module, > .upfront-module-group"),
+					$child = this.$el.find(ed.el_selector_direct),
 					$target_child = ( position == 'right' ? $child.last() : $child.first() ),
 					target_model = ed.get_el_model($target_child),
 					index = target_model.collection.indexOf(target_model)
 				;
-
 				if ( !rsz_model ) return;
 
 				// Change the columns of current/closest wrapper and the containing models
-				$rsz_wrapper.find("> .upfront-module-view > .upfront-module, > .upfront-module-group").each(function () {
+				$rsz_wrapper.find(ed.el_selector_direct).each(function () {
 					var child = ed.get_el_model($(this));
 					if ( breakpoint && !breakpoint.default ) {
 						child.set_breakpoint_property('edited', true, true);
@@ -5854,13 +6488,26 @@ define([
 					wrapper.set_breakpoint_property('clear', ( is_clr && position == 'left' ), true);
 					wrapper.set_breakpoint_property('order', this.model.get_breakpoint_property_value('order'));
 					wrapper.set_breakpoint_property('col', spacer_col);
-					module.set_breakpoint_property('edited', true, true);
-					module.set_breakpoint_property('hide', 0, true);
-					module.set_breakpoint_property('left', 0, true);
-					module.set_breakpoint_property('col', spacer_col);
+					if ( is_object ) {
+						object.set_breakpoint_property('edited', true, true);
+						object.set_breakpoint_property('hide', 0, true);
+						object.set_breakpoint_property('left', 0, true);
+						object.set_breakpoint_property('col', spacer_col);
+					}
+					else {
+						module.set_breakpoint_property('edited', true, true);
+						module.set_breakpoint_property('hide', 0, true);
+						module.set_breakpoint_property('left', 0, true);
+						module.set_breakpoint_property('col', spacer_col);
+					}
 				}
 				this.model.collection.add(wrapper);
-				module.add_to(target_model.collection, ( position == 'right' ? index+1 : index ));
+				if ( is_object ) {
+					object.add_to(target_model.collection, ( position == 'right' ? index+1 : index ));
+				}
+				else {
+					module.add_to(target_model.collection, ( position == 'right' ? index+1 : index ));
+				}
 			},
 			_find_closest_wrapper: function (reverse, min_col) {
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
@@ -5917,6 +6564,10 @@ define([
 			on_module_update: function (from_view) {
 				if ( !from_view.wrapper_view || from_view.wrapper_view != this ) return;
 				if ( from_view instanceof Upfront.Views.ModuleGroup ) return;
+				this.toggle_wrapper_visibility();
+			},
+			on_object_update: function (from_view) {
+				if ( !from_view.wrapper_view || from_view.wrapper_view != this ) return;
 				this.toggle_wrapper_visibility();
 			},
 			on_layout_after_render: function () {
@@ -6016,12 +6667,11 @@ define([
 				}
 				this.remove_selections();
 				// Deactiving group reorder on clicking anywhere
-				if ( !$(e.target).closest('.upfront-module-group-on-edit').length ){
+				if ( !$(e.target).closest('.upfront-module-group-on-edit').length ) {
 					Upfront.Events.trigger("command:module_group:finish_edit");
 				}
-				// Close group inline panel on clicking anywhere
-				if ( !$(e.target).closest('.upfront-module-group.controls-visible').length ){
-					Upfront.Events.trigger("command:module_group:close_panel");
+				if ( !$(e.target).closest('.upfront-object-group-on-edit').length ) {
+					Upfront.Events.trigger("command:object_group:finish_edit");
 				}
 			},
 			on_keydown: function (e) {
@@ -6198,6 +6848,7 @@ define([
 	return {
 		"Views": {
 			"ObjectView": ObjectView,
+			"ObjectGroup": ObjectGroup,
 			"Module": Module,
 			"ModuleGroup": ModuleGroup,
 			"Wrapper": Wrapper,
