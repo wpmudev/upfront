@@ -675,7 +675,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 			 * @param array $used Image Metadata
 			 * @param array $imageData
 			 */
-			do_actiondo_action('upfront-media-images-image_changed', $imagepath, $url, $saved, $used, $imageData );
+			do_action('upfront-media-images-image_changed', $imagepath, $url, $saved, $used, $imageData );
 		}
 
 		return array(

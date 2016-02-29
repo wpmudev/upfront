@@ -371,14 +371,11 @@ class Upfront_SmushServer implements IUpfront_Server {
 			return false;
 		} // Is it ours?
 
-		add_action( 'upfront-media-images-image_changed', array( $this, 'pass_over_to_smush' ), 10, 2 );
+		add_action('upfront-media-images-image_changed', array($this, 'pass_over_to_smush'), 10, 5);
 	}
 
-	public function pass_over_to_smush( $path, $url ) {
-		if ( empty( $path ) || empty( $url ) ) {
-			return false;
-		}
-		if ( ! is_readable( $path ) ) {
+	public function pass_over_to_smush ($path, $url, $saved, $meta, $imageData ) {
+		if ( empty( $path ) || empty( $url ) || ! is_readable( $path ) ) {
 			return false;
 		}
 
