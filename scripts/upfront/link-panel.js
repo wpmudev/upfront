@@ -279,7 +279,7 @@ define([
 		/* Handle manually entered urls: external and email */
 		onUrlInputBlur: function(event) {
 			var userInput = $(event.currentTarget).val().trim();
-			if (this.model.get('type') === 'external' && !userInput.match(/https?:\/\//)) {
+			if (this.model.get('type') === 'external' && !userInput.match(/https?:\/\//) && !_.isEmpty( userInput ) ) {
 				userInput = 'http://' + userInput;
 			}
 			if (this.model.get('type') === 'email' && !userInput.match(/^mailto:/)) {
