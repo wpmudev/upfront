@@ -117,6 +117,19 @@ define([
 				left: - (imageSize.width - maskSize.width) / 2
 			};
 		},
+		
+		createImageControl: function(){
+			var control = new Upfront.Views.Editor.InlinePanels.ImageControl(),
+				me = this;
+
+			control.hideOkButton = true;
+			control.hideOnClick = false;
+
+			control.tooltip = l10n.ctrl.edit_labels;
+			control.id = 'image_ctrls';
+
+			return control;
+		},
 
 		open: function(options){
 			// When image element is bigger than image it contains mask will be smaller than element.
@@ -213,7 +226,11 @@ define([
 				this.response = $.Deferred();
 				$('body').append(this.$el);
 			}
+			
+			imageControl = this.createImageControl();
 
+			this.$el.find('#image-edit-buttons').prepend($('<div class="uimage-edit-controls upfront-ui"></div>').append(imageControl.$el));
+			
 			this.addGridLines(maskOffset.top, maskSize.height);
 
 			this.$el.css({

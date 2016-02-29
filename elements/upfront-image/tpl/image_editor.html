@@ -47,8 +47,8 @@
 		<div class="image-edit-resize image-edit-control"><i class="ui-resizable-handle ui-resizable-handle-se"></i></div>
 		<!-- <div class="image-edit-rotate image-edit-control"><i class=""></i></div> -->
 	</div>
-
-	<div id="image-edit-buttons" style="position: absolute; top:{{maskOffset.top}}px; left: {{maskOffset.left + maskSize.width + 5}}px;">
+	
+	<div id="image-edit-buttons" style="position: absolute; top:{{maskOffset.top - 30}}px; left: {{maskOffset.left}}px;">
 		{[ for (var i = 0; i < buttons.length; i++) { ]}
 		<a class="image-edit-button" id="{{buttons[i].id}}" title="{{buttons[i].tooltip}}">{{buttons[i].text}}</a>
 		{[ } ]}
