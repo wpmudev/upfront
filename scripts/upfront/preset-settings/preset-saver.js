@@ -41,6 +41,10 @@ define([
 		 */
 		this.queuePresetSave = function(presetProperties, ajaxSlug) {
 			pendingSavePresets[ajaxSlug] = pendingSavePresets[ajaxSlug] || [];
+			// First remove preset if already added
+			pendingSavePresets[ajaxSlug] = _.reject(pendingSavePresets[ajaxSlug], function(preset) {
+				return preset.id === presetProperties.id;
+			});
 			pendingSavePresets[ajaxSlug].push(presetProperties);
 		};
 
