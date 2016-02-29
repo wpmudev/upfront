@@ -192,7 +192,8 @@ h2, h3 { page-break-after: avoid; }
 
 /* Object */
 .upfront-object,
-.upfront-output-object {
+.upfront-output-object,
+.upfront-output-object-group {
   float:left;
   width:100%;
   -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
@@ -313,10 +314,10 @@ h2, h3 { page-break-after: avoid; }
   max-height: none !important;
 }
 
-.upfront-postpart-featured_image {
+.upfront-postpart-featured_image, .upostdata-part.thumbnail {
   overflow: hidden;
 }
-.upfront-postpart-featured_image img {
+.upfront-postpart-featured_image img, .upostdata-part.thumbnail img {
   max-width: 100%;
   min-width: 100%;
   height: auto;
@@ -367,6 +368,7 @@ h2, h3 { page-break-after: avoid; }
 .flexbox-support .upfront-output-region,
 .flexbox-support .upfront-output-region > .upfront-region-wrapper,
 .flexbox-support .upfront-output-module-group,
+.flexbox-support .upfront-output-object-group,
 .flexbox-support .upfront-output-wrapper,
 .flexbox-support .upfront-output-region-container > .upfront-region-container-bg > .upfront-grid-layout {
 	display: -webkit-flex;
@@ -396,7 +398,10 @@ h2, h3 { page-break-after: avoid; }
 }
 .flexbox-support .upfront-output-region > .upfront-region-wrapper > .upfront-output-wrapper,
 .flexbox-support .upfront-output-module-group > .upfront-output-wrapper,
-.flexbox-support .upfront-output-wrapper > .upfront-output-module {
+.flexbox-support .upfront-output-object-group > .upfront-output-wrapper,
+.flexbox-support .upfront-output-wrapper > .upfront-output-module,
+.flexbox-support .upfront-output-wrapper > .upfront-output-module-group,
+.flexbox-support .upfront-output-wrapper > .upfront-output-object {
 	-webkit-order: 0; 
 	order: 0;
 }
