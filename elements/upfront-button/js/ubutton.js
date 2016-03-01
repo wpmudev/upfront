@@ -23,6 +23,11 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		//Get all element classes without preset
 		this.elementClasses = this.$el.attr('class');
 
+		// For unknown reason some buttons have id_slug button and some
+		// ubutton. Normalizing id_slug here for rendering and other stuff
+		// to work properly
+		this.model.set_property('id_slug', 'ubutton');
+
 		if(! (this.model instanceof ButtonModel)){
 			this.model = new ButtonModel({properties: this.model.get('properties')});
 		}
@@ -72,7 +77,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		this.clearPresetClass(this.$el);
 		this.$el.addClass(this.property('preset'));
 	},
-	
+
 	clearPresetClass: function($el) {
 		$el.removeClass();
 		$el.addClass(this.elementClasses);
@@ -303,7 +308,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 
 		return linkPanelControl;
 	},
-	
+
 	/* Hide LinkTo button */
 	/*
 	createVisitLinkControl: function() {
