@@ -93,6 +93,15 @@ class Upfront_Post_Data_PartView_Post_data extends Upfront_Post_Data_PartView {
 			? (int)$this->_data['content_part']
 			: false
 		;
+		$trigger_splitters = !empty($this->_data['trigger_splitters'])
+			? (int)$this->_data['trigger_splitters']
+			: false
+		;
+
+		// First, let's auto-convert all the sequences to splitter marks
+		if ($trigger_splitters) {
+			$content = preg_replace('/<p[^>]+>(<br\s?\/?>|\s+)*?<\/p>/', $this->_get_content_part_separator(), $content);
+		}
 
 		if (!empty($allow_splitting) || !empty($part)) {
 			if (!empty($part)) {
@@ -184,6 +193,6 @@ class Upfront_Post_Data_PartView_Post_data extends Upfront_Post_Data_PartView {
 	 * @return string
 	 */
 	private function _get_content_part_separator () {
-		return '<hr />';
+		return '<hr class="content-splitter" />';
 	}
 }
