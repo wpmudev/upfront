@@ -152,7 +152,7 @@ define([
 				check = false
 			;
 
-			if (hidden_parts.indexOf(me.data_part) <= 0) {
+			if (hidden_parts.indexOf(me.data_part) < 0) {
 				value["checked"] = "checked"
 			}
 
