@@ -7,8 +7,10 @@ define([
 
 	var ImageEditControl = Control.extend({
 		multiControl: true,
-		hideOnClick: true,
+		hideOnClick: false,
 		hideOkButton: true,
+		width: 26,
+		height: 18,
 
 		events: {
 			'click': 'onClickControl',
@@ -34,8 +36,8 @@ define([
 			var me = this,
 				panel;
 
-			if(!this.$el.hasClass('uimage-control-panel-item')) {
-				this.$el.addClass('uimage-control-panel-item');
+			if(!this.$el.hasClass('image-edit-control-panel-item')) {
+				this.$el.addClass('image-edit-control-panel-item');
 			}
 			
 			if(this.view){

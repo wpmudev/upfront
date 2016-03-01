@@ -269,6 +269,7 @@ class Upfront_UimageView extends Upfront_Object {
 				'natural_size' => __('Natural Size', 'upfront'),
 				'fit' => __('Fit', 'upfront'),
 				'fill' => __('Fill', 'upfront'),
+				'image_tooltip' => __('Image Controls', 'upfront'),
 			),
 			'image_expanded' => __('The image is completely expanded', 'upfront'),
 			'cant_expand' => __('Can\'t expand the image', 'upfront'),

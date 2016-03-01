@@ -60,12 +60,9 @@ define([
 
 		events: {
 			'click #image-edit-button-ok': 'imageOk',
-			'click #image-edit-button-reset': 'image100', //'resetImage',
-			'click #image-edit-button-fit': 'fitImage',
 			'click #image-edit-button-align': 'selectAlign',
 			// 'click .image-edit-rotate': 'rotate',
 			'click .image-fit-element-button': 'fitMask',
-			'click #image-edit-button-swap': 'changeImage'
 		},
 
 		initialize: function(){
@@ -121,11 +118,18 @@ define([
 			var control = new Upfront.Views.Editor.InlinePanels.ImageControl(),
 				me = this;
 
-			control.view = new CropControls({
+			var cropControls = new CropControls({
 				model: this.model
 			});
 			
-			control.tooltip = l10n.ctrl.edit_labels;
+			this.listenTo(cropControls, 'crop:swap:image', this.changeImage);
+			this.listenTo(cropControls, 'crop:reset:image', this.image100);
+			this.listenTo(cropControls, 'crop:fit:image', this.fitImage);
+			this.listenTo(cropControls, 'crop:fill:image', this.fitMask);	
+			
+			control.view = cropControls;
+			
+			control.tooltip = l10n.btn.image_tooltip;
 
 			control.render();
 
@@ -231,7 +235,7 @@ define([
 			imageControl = this.createImageControl();
 
 			this.$el.find('#image-edit-buttons').prepend($('<div class="uimage-edit-controls upfront-ui"></div>').append(imageControl.$el));
-			
+
 			this.addGridLines(maskOffset.top, maskSize.height);
 
 			this.$el.css({
@@ -427,8 +431,7 @@ define([
 			this.close(reason);
 		},
 
-		changeImage: function(e){
-			e.preventDefault();
+		changeImage: function(){
 			this.close('changeImage');
 		},
 
@@ -851,10 +854,7 @@ define([
 			this.open(options);
 		},
 
-		fitImage: function(e){
-			e.preventDefault();
-			e.stopPropagation();
-
+		fitImage: function(){
 			if(!this.fitImageButton){
 				var button = $('#image-edit-button-fit');
 				button.text(l10n.btn.fit_element);
