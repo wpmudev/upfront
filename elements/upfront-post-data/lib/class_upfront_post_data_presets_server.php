@@ -178,3 +178,21 @@ class Upfront_Comments_Presets_Server extends Upfront_DataElement_Preset_Server 
 	}
 
 }
+
+class Upfront_Meta_Presets_Server extends Upfront_DataElement_Preset_Server {
+
+	private static $_instance;
+
+	public function get_data_type () { return 'meta';	}
+
+	public static function serve () {
+		self::$_instance = new self;
+		self::$_instance->_add_hooks();
+		return self::$_instance;
+	}
+
+	public static function get_instance () {
+		return self::$_instance;
+	}
+
+}

@@ -6,7 +6,8 @@ define([
 	'elements/upfront-post-data/js/modules-author',
 	'elements/upfront-post-data/js/modules-featured_image',
 	'elements/upfront-post-data/js/modules-taxonomies',
-	'elements/upfront-post-data/js/modules-comments'
+	'elements/upfront-post-data/js/modules-comments',
+	'elements/upfront-post-data/js/modules-meta'
 ], function (
 	PresetManager,
 	Util,
@@ -15,7 +16,8 @@ define([
 	Modules_Author,
 	Modules_FeaturedImage,
 	Modules_Taxonomies,
-	Modules_Comments
+	Modules_Comments,
+	Modules_Meta
 ) {
 
 	var Templates = {
@@ -24,6 +26,7 @@ define([
 		featured_image: Modules_FeaturedImage.template,
 		taxonomy: Modules_Taxonomies.template,
 		comments: Modules_Comments.template,
+		meta: Modules_Meta.template,
 	};
 
 
@@ -33,7 +36,8 @@ define([
 		_.omit(Modules_Author, 'template'),
 		_.omit(Modules_FeaturedImage, 'template'),
 		_.omit(Modules_Taxonomies, 'template'),
-		_.omit(Modules_Comments, 'template')
+		_.omit(Modules_Comments, 'template'),
+		_.omit(Modules_Meta, 'template')
 	);
 
 
