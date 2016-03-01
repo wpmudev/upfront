@@ -121,7 +121,10 @@ define([
 			if (this._geocoding_in_progress) return false;
 			this._geocoding_in_progress = true;
 			geocoder.geocode({address: location}, function (results, status) {
-				if (status != google.maps.GeocoderStatus.OK) return false;
+				if (status != google.maps.GeocoderStatus.OK) {
+					me._geocoding_in_progress = false;
+					return false;
+				}
 				var pos = results[0].geometry.location;
 				var markers = me.model.get_property_value_by_name("markers") || [];
 				markers.push({lat:pos.lat(), lng:pos.lng()});
