@@ -4944,6 +4944,8 @@ define([
 			events: {
 				"mouseup": "on_mouse_up", // Bound on mouseup because "click" prevents bubbling (for module/object activation)
 				"mouseover": "on_mouse_over",
+				"mouseenter": "on_mouse_enter",
+				"mouseleave > .upfront-region-edit-trigger-small": "on_mouse_leave",
 				"click": "on_click",
 				"click > .upfront-entity_meta > a.upfront-entity-settings_trigger": "on_settings_click",
 				"click > .upfront-entity_meta > a.upfront-entity-delete_trigger": "on_delete_click",
@@ -5032,6 +5034,22 @@ define([
 				if ( container && container.$el.hasClass('upfront-region-container-active') && !container.$el.hasClass('upfront-region-bg-setting-open') )
 					this.trigger("activate_region", this);
 			},
+			on_mouse_enter: function (e) {
+				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
+				if ( breakpoint !== undefined ) {
+					// popup Edit region only on Responsive Tablet and below
+					if ( breakpoint.name != "Default Desktop" ) {
+						var $small_edit_region = $(e.target).parents('.upfront-region-container').find('.upfront-region-edit-trigger-small');
+						if ($small_edit_region.length > 0) {
+							$('.upfront-region-edit-trigger-small').removeClass('visible');
+							$small_edit_region.addClass('visible');
+						}
+					}
+				}
+			},
+			on_mouse_leave: function (e) {
+				$(e.target).removeClass('visible');
+			},
 			_is_clipped: function () {
 				var type = this.model.get('type'),
 					sub = this.model.get('sub');
@@ -5041,7 +5059,7 @@ define([
 				var container = this.model.get("container"),
 					name = this.model.get("name"),
 					template = _.template(_Upfront_Templates["region"], this.model.toJSON()),
-					$edit = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-small upfront-ui" title="Edit region"><i class="upfront-icon upfront-icon-region-edit"></i></div>'),
+					$edit = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-small upfront-ui" title="' + l10n.edit_region + '"><i class="upfront-icon upfront-icon-region-edit"></i>' + l10n.edit_region + '</div>'),
 					$size = $('<div class="upfront-region-size-hint upfront-ui"></div>')
 				;
 				Upfront.Events.trigger("entity:region:before_render", this, this.model);
