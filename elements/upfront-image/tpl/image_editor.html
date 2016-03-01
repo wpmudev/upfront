@@ -48,9 +48,29 @@
 		<!-- <div class="image-edit-rotate image-edit-control"><i class=""></i></div> -->
 	</div>
 	
-	<div id="image-edit-buttons" style="position: absolute; top:{{maskOffset.top - 30}}px; left: {{maskOffset.left}}px;">
+	<div id="image-edit-buttons" style="position: absolute; top:{{maskOffset.top - 30}}px; left: {{maskOffset.left}}px;">		
+		&nbsp;
+	</div>
+	<div class="image-align-points" style="position: absolute; top:{{maskOffset.top - 50}}px; left: {{(maskOffset.left - 50) + (maskSize.width / 2)}}px; z-index: 22;">
+		<div class="align-points-row">
+			<a id="align-top-left" class="image-align-point top-left-point" data-alignment="top-left">&nbsp;</a>
+			<a id="align-top-center" class="image-align-point top-center-point" data-alignment="top-center">&nbsp;</a>
+			<a id="align-top-right" class="image-align-point top-right-point" data-alignment="top-right">&nbsp;</a>
+		</div>
+		<div class="align-points-row">
+			<a id="align-center-left" class="image-align-point center-left-point" data-alignment="center-left">&nbsp;</a>
+			<a id="align-center-center" class="image-align-point center-center-point" data-alignment="center-center">&nbsp;</a>
+			<a id="align-center-right" class="image-align-point center-right-point" data-alignment="center-right">&nbsp;</a>
+		</div>
+		<div class="align-points-row">
+			<a id="align-bottom-left" class="image-align-point bottom-left-point" data-alignment="bottom-left">&nbsp;</a>
+			<a id="align-bottom-center" class="image-align-point bottom-center-point" data-alignment="bottom-center">&nbsp;</a>
+			<a id="align-bottom-right" class="image-align-point bottom-right-point" data-alignment="bottom-right">&nbsp;</a>
+		</div>
+	</div>
+	<div class="image-ok-button" style="position: absolute; top:{{maskOffset.top - 30}}px; left: {{maskOffset.left + (maskSize.width - 50)}}px; z-index: 23;">
 		{[ for (var i = 0; i < buttons.length; i++) { ]}
-		<a class="image-edit-button" id="{{buttons[i].id}}" title="{{buttons[i].tooltip}}">{{buttons[i].text}}</a>
+			<a class="image-edit-button" id="{{buttons[i].id}}" title="{{buttons[i].tooltip}}">{{buttons[i].text}}</a>
 		{[ } ]}
 	</div>
 	<div id="image-edit-buttons-bottom" style="z-index: 11; position: absolute; top:{{maskSize.width < 200 ? maskOffset.top : maskOffset.top + maskSize.height + 5}}px; left:{{maskSize.width < 200 ? maskOffset.left - 205 : maskOffset.left}}px; width: 200px" class="{{maskSize.width < 200 ? 'image-edit-buttons-toleft' : '' }}">

@@ -60,6 +60,7 @@ define([
 
 		events: {
 			'click #image-edit-button-ok': 'imageOk',
+			'click .image-align-point': 'pointAlignment',
 			'click #image-edit-button-align': 'selectAlign',
 			// 'click .image-edit-rotate': 'rotate',
 			'click .image-fit-element-button': 'fitMask',
@@ -134,6 +135,18 @@ define([
 			control.render();
 
 			return control;
+		},
+		
+		pointAlignment: function(e) {
+			var element = $(e.target),
+				position = element.data('alignment');
+			
+			this.$el.find('.image-align-point').removeClass('active-alignment-point');
+			element.addClass('active-alignment-point');
+			
+			var pos_array = position.split('-');
+
+			this.setAlign(pos_array[1], pos_array[0]);
 		},
 
 		open: function(options){
@@ -1090,26 +1103,41 @@ define([
 			}
 		},
 
-		setAlign: function(direction){
+		setAlign: function(direction_h, direction_v){
 			var mask = this.$('#uimage-mask'),
 				canvas = this.$('#uimage-canvas'),
 				handle = this.$('#uimage-drag-handle'),
 				position = canvas.position()
 			;
 
-			this.$('#image-edit-button-align').removeClass('align-left align-right align-center').addClass('align-' + direction);
+			this.$('#image-edit-button-align').removeClass('align-left align-right align-center').addClass('align-' + direction_h);
 
-			if(direction !== 'left' && direction !== 'center' && direction !== 'right') {
+			if(direction_h !== 'left' && direction_h !== 'center' && direction_h !== 'right') {
 				return false;
 			}
-			this.align = direction;
-
+			
+			if(direction_v !== 'top' && direction_v !== 'center' && direction_v !== 'bottom') {
+				return false;
+			}
+			
+			this.align = direction_h;
+			
 			if(this.align === 'center') {
 				position.left = mask.offset().left - ((canvas.width() -  mask.width()) / 2);
 			} else if(this.align === 'left') {
 				position.left = mask.offset().left;
 			} else {
 				position.left = mask.offset().left + mask.width() - canvas.width();
+			}
+			
+			if(typeof direction_v !== "undefined") {
+				if(direction_v === 'center') {
+					position.top = mask.offset().top - ((canvas.height() -  mask.height()) / 2);
+				} else if(direction_v === 'top') {
+					position.top = mask.offset().top;
+				} else {
+					position.top = mask.offset().top + mask.height() - canvas.height();
+				}
 			}
 
 			position.left += this.bordersWidth / 2;
