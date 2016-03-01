@@ -845,7 +845,7 @@ DragDrop.prototype = {
 		this.update_compare_area();
 		this.update_focus_state();
 		
-		if ( !breakpoint || breakpoint.default ) {
+		if ( ( !breakpoint || breakpoint.default ) && !this.is_parent_group && !this.is_object ) {
 			this.update_current_region();
 		}
 		else {
@@ -1111,7 +1111,7 @@ DragDrop.prototype = {
 			)
 		;
 		this.move_region = ( this.region._id != this.current_region._id );
-		if ( !this.is_parent_group ) {
+		if ( !this.is_parent_group && !this.is_object ) {
 			this.current_area_col = this.current_region.col;
 		}
 	},
