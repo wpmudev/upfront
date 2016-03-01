@@ -1746,8 +1746,13 @@ define([
 					_.each([grid.class, grid.left_margin_class, grid.top_margin_class, grid.bottom_margin_class, grid.right_margin_class], function(class_name){
 						var rx = new RegExp('\\b' + class_name + '(\\d+)'),
 							val = value.match(rx);
-						if ( val && val[1] )
+						if ( val && val[1] ){
 							Upfront.Behaviors.GridEditor.update_class($me, class_name, val[1]);
+							if ( class_name == grid.class ) {
+								$me.data('default_col', parseInt(val[1], 10));
+								$me.data('current_col', parseInt(val[1], 10));
+							}
+						}
 					});
 				}
 				else if ( prop.id == 'breakpoint' ){
