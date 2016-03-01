@@ -18,7 +18,7 @@
 					model: this.model,
 					label: l10n.btn.swap_image,
 					id: 'image-edit-button-swap',
-					className: "image-edit-button image-edit-col-full",
+					className: "image-crop-edit-button image-edit-col-full",
 					compact: true,
 					on_click: function() {
 						me.trigger('crop:swap:image');
@@ -28,7 +28,7 @@
 					model: this.model,
 					label: l10n.btn.natural_size,
 					id: 'image-edit-button-reset',
-					className: "image-edit-button image-edit-col-full",
+					className: "image-crop-edit-button image-edit-col-full",
 					compact: true,
 					on_click: function() {
 						me.trigger('crop:reset:image');
@@ -38,7 +38,7 @@
 					model: this.model,
 					label: l10n.btn.fit,
 					id: 'image-edit-button-fit',
-					className: "image-edit-button image-edit-col-half",
+					className: "image-crop-edit-button image-edit-col-half",
 					compact: true,
 					on_click: function() {
 						me.trigger('crop:fit:image');
@@ -48,7 +48,7 @@
 					model: this.model,
 					label: l10n.btn.fill,
 					id: 'image-edit-button-fill',
-					className: "image-edit-button image-edit-col-half",
+					className: "image-crop-edit-button image-edit-col-half image-edit-col-half-last",
 					compact: true,
 					on_click: function() {
 						me.trigger('crop:fill:image');

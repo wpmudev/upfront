@@ -1081,14 +1081,17 @@ div.uimage-controls i.upfront-icon:before,
 }
 .image-control-button {
 	visibility: hidden;
-	min-width: 140px;
+	min-width: 122px;
     width: 100%;
+	height: 118px;
     font-size: 0.8em;
-    padding: 5px 20px 10px 10px;
-    margin-top: 25px;
-    background: #F5F5F5;
-    box-shadow: 0px 1px 2px #ADADAD;
+    padding: 10px 20px 10px 10px;
+    margin-top: 16px;
+    background-color: rgba(242,249,255,1);
     color: #ADADAD;
+	box-shadow: 0px 2px 10px 0px rgba(34,50,64,1);
+	border: none;
+	z-index: -1;
 }
 .upfront-control-dialog-open .image-control-button {
 	visibility: visible;
@@ -1377,4 +1380,104 @@ div.uimage-controls i.upfront-icon:before,
 
 .upfront-editable_entity .uimage-below_image .upfront-image-caption-container {
 	overflow: visible !important;
+}
+.crop-contols-wrapper {
+	width: 102px;
+}
+.image-edit-control-panel-item {
+	border-radius: 3px;
+	background-image: url(../../../img/uf-core-el-sprite.svg);
+	background-position: -287px -491px;
+	background-color: rgba(242,249,255,1);
+	z-index: initial;
+}
+.image-edit-control-panel-item.upfront-control-dialog-open {
+	border-radius: 3px;
+	background-image: url(../../../img/uf-core-el-sprite.svg);
+	background-position: -287px -522px;
+	background-color: rgba(242,249,255,1);
+	z-index: initial;
+}
+.image-crop-edit-button {
+	margin-bottom: 10px;
+}
+.image-crop-edit-button input {
+	background-image: linear-gradient(-180deg, #FAFDFF 0%, #F@F9FF 100%);
+	border: 1px solid #A2BFDA;
+	border-radius: 3px;
+	font: 600 12px/16px OpenSans, Helvetica Neueu, Helvetica, Arial, sans-serif;
+	color: #6486A6;
+	text-shadow: 0px 1px 0px #FFFFFF;
+}
+.image-crop-edit-button input:hover {
+	background-image: linear-gradient(-180deg, #FAFDFF 0%, #F@F9FF 100%);
+	border: 1px solid #A2BFDA;
+	border-radius: 3px;
+	font: 600 12px/16px OpenSans, Helvetica Neueu, Helvetica, Arial, sans-serif;
+	color: #6486A6;
+	text-shadow: 0px 1px 0px #FFFFFF;
+}
+.image-edit-col-full input {
+	width: 102px;
+	height: 26px;
+	line-height: 26px;
+}
+.image-edit-col-half {
+	display: inline-block;
+	margin-left: 0px;
+	width: 46px;
+}
+.image-edit-col-half input {
+	width: 46px;
+	height: 26px;
+	line-height: 26px;
+}
+.image-edit-col-half-last {
+	margin-left: 10px;
+}
+
+/* Icons */
+
+.image-crop-edit-button {
+	position: relative;
+}
+
+.image-crop-edit-button input {
+	text-align: left;
+	padding-left: 24px;
+}
+
+.image-crop-edit-button:before {
+	content: '';
+	display: inline-block;
+	vertical-align: middle;
+	position: absolute;
+	top: 4px;
+	left: 3px;
+	background: url(../../../img/uf-core-el-sprite.png);
+	background: url(../../../img/uf-core-el-sprite.svg), none;
+}
+
+#image-edit-button-swap:before{
+	background-position: -291px -342px;
+	width: 18px;
+	height: 16px;
+}
+
+#image-edit-button-reset:before{
+	background-position: -291px -368px;
+	width: 18px;
+	height: 20px;
+}
+
+#image-edit-button-fit:before{
+	background-position: -291px -398px;
+	width: 18px;
+	height: 18px;
+}
+
+#image-edit-button-fill:before{
+	background-position: -291px -431px;
+	width: 18px;
+	height: 18px;
 }
