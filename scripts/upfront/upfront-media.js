@@ -158,6 +158,8 @@ define([
 		allowed_media_types: [],
 		image_sizes: true,
 		showing_titles: true,
+		current_keys: new Array(),
+		current_models: new Array(),
 		current_page: 1,
 		max_pages: 1,
 		max_items: 1,
@@ -390,16 +392,24 @@ define([
 				"click a.all": "select_all"
 			},
 			render: function () {
-				this.$el.empty().append(l10n.select + ' <a href="#all" class="all">' + l10n.all + '</a>&nbsp;|&nbsp;<a href="#none" class="none">' + l10n.none + '</a>');
+				this.$el.empty().append(l10n.select + ' <a href="#all" class="all">' + l10n.all + '</a>&nbsp;|&nbsp;<a href="#none" class="none">' + l10n.none + '</a> ' + l10n.on_this_page);
 			},
 			select_none: function (e) {
 				e.preventDefault();
 				e.stopPropagation();
-				this.model.each(function (item) {
-					item.set({selected: false}, {silent: true});
-				});
-				this.model.trigger("change");
-				Upfront.Events.trigger("media:item:selection_changed", this.model);
+				
+				var positive = this.model.where({selected: true});
+				if ( positive.length ) {
+					this.model.each(function (item) {
+						item.set({selected: false}, {silent: true});
+					});
+					this.model.trigger("change");
+					Upfront.Events.trigger("media:item:selection_changed", this.model);
+					
+					// run again to apply the new list
+					var selected_model = new MediaCollection_Selection(ActiveFilters.current_models);
+					Upfront.Events.trigger("media:item:selection_changed", selected_model);
+				}
 			},
 			select_all: function (e) {
 				e.preventDefault();
@@ -411,6 +421,10 @@ define([
 				});
 				this.model.trigger("change");
 				Upfront.Events.trigger("media:item:selection_changed", this.model);
+				
+				// run again to apply the new list
+				var selected_model = new MediaCollection_Selection(ActiveFilters.current_models);
+				Upfront.Events.trigger("media:item:selection_changed", selected_model);
 			}
 		});
 		var MediaManager_DeleteControl = Backbone.View.extend({
@@ -424,12 +438,17 @@ define([
 			delete_selection: function (e) {
 				e.preventDefault();
 				e.stopPropagation();
-				var show_nag = false;
-				this.model.each(function (item) {
-					if (item.get("parent")) show_nag = true;
-				});
-				if (!show_nag || (show_nag && confirm(l10n.item_in_use_nag))) {
-					this.model.delete_media_items();
+				
+				if ( confirm(l10n.confirm_delete_items) ) {
+					var show_nag = false;
+					this.model.each(function (item) {
+						if (item.get("parent")) show_nag = true;
+					});
+					if (!show_nag || (show_nag && confirm(l10n.item_in_use_nag))) {
+						ActiveFilters.current_keys = [];
+						ActiveFilters.current_models = [];
+						this.model.delete_media_items();
+					}
 				}
 			}
 		});
@@ -1395,7 +1414,7 @@ define([
 					done +=1;
 					if(ActiveFilters.themeImages){
 						new_media[count].set(data.result.data, {silent: true});
-						return new_media[count].trigger("upload:finish");
+						return new_media[count].trigger("upload:finish", me);
 					}
 
 					var result = data.result.data || [],
@@ -1408,7 +1427,7 @@ define([
 						item_id: uploaded_id
 					}).done(function (response) {
 						new_media[count].set(response.data, {silent:true});
-						new_media[count].trigger("upload:finish");
+						new_media[count].trigger("upload:finish", me);
 					}).fail(function () {
 						Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
 					});
@@ -1578,10 +1597,15 @@ define([
 				}
 
 				ActiveFilters.to_defaults();
+				ActiveFilters.current_keys = [];
+				ActiveFilters.current_models = [];
 				ActiveFilters.set("search", new MediaFilter_Collection([search]));
 				Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
 				Upfront.Events.trigger("media:search:requested", search);
 				this.render();
+				
+				var selected_model = new MediaCollection_Selection(ActiveFilters.current_models);
+				Upfront.Events.trigger("media:item:selection_changed", selected_model);
 			},
 			clear_search: function (e) {
 				e.preventDefault();
@@ -1612,13 +1636,32 @@ define([
 				this.$el.empty().append('<a href="#use" class="use">' + button_text + '</a>');
 			},
 			update_model: function (selected) {
-				var positive = selected.where({selected: true});
-				this.model = new MediaCollection_Selection(positive);
+				// checking on all models on current page
+				for ( key in selected.models ) {
+					var model = selected.models[key];
+					var index = ActiveFilters.current_keys.indexOf(model.attributes.ID);
+					if( index == -1 ) {
+						// inserting selected media models on the list
+						if( model.attributes.selected ) {
+							ActiveFilters.current_keys.push(model.attributes.ID);
+							ActiveFilters.current_models.push(model);
+						}
+					} else {
+						// removing media models on the list
+						if( !model.attributes.selected || model.attributes.selected == undefined ) {
+							ActiveFilters.current_keys.splice(index, 1);
+							ActiveFilters.current_models.splice(index, 1);
+						}
+					}
+				}
 			},
 			use_selection: function (e) {
 				e.preventDefault();
 				e.stopPropagation();
-				Upfront.Popup.close(this.model);
+				
+				// using the persistent list instead of current page media collection
+				var model = new MediaCollection_Selection(ActiveFilters.current_models);
+				Upfront.Popup.close(model);
 			}
 		});
 
@@ -1892,7 +1935,20 @@ define([
 					view.parent_view = me;
 					view.render();
 					me.$el.append(view.$el);
+					
+					// preserving selected media
+					if( ActiveFilters.current_keys.length ) {
+						var target_index = ActiveFilters.current_keys.indexOf(model.attributes.ID);
+						if( target_index != -1 ) {
+							model.set({selected: true}, {silent: true});
+							model.trigger("appearance:update");
+						}
+					}
 				});
+				
+				// running change event to apply persistent list
+				var selected_model = new MediaCollection_Selection(ActiveFilters.current_models);
+				Upfront.Events.trigger("media:item:selection_changed", selected_model);
 			}
 		},
 		update: function () {
@@ -1913,7 +1969,6 @@ define([
 		end_loading: function (callback) {
 			if (this.loading && this.loading.done) this.loading.done(callback);
 			else callback();
-			Upfront.Events.trigger("media:item:selection_changed", this.model);
 		},
 		propagate_selection: function (model) {
 			if (!this.multiple_selection) {
@@ -1928,6 +1983,10 @@ define([
 				model.trigger("appearance:update");
 			}
 			Upfront.Events.trigger("media:item:selection_changed", this.model);
+			
+			// running again change event to apply persistent list
+			var selected_model = new MediaCollection_Selection(ActiveFilters.current_models);
+			Upfront.Events.trigger("media:item:selection_changed", selected_model);
 		},
 		remove: function() {
 			_.each(this.subviews, function(subview) {
@@ -1997,11 +2056,16 @@ define([
 				//Upfront.Util.log(_.template("{{post.post_title}} progress changed to {{progress}}", {post:this.model.toJSON(), progress:progress}));
 				this.$el.find('.upfront-media-progress-bar').css('width', progress+'%');
 			},
-			upload_finish: function () {
+			upload_finish: function (manager) {
 				this.$el.find(".thumbnail .upfront-image-upload-placeholder").replaceWith(this.model.get("thumbnail"));
 				this.$el.find('.upfront-media-progress-bar').remove();
-				this.model.set({selected: true});
-				Upfront.Events.trigger("media:item:selection_changed", this.model.collection);
+				
+				// adding it on persistent list
+				ActiveFilters.current_keys.push(this.model.attributes.ID);
+				ActiveFilters.current_models.push(this.model);
+				// redraw media gallery
+				manager.render_library();
+				
 			},
 			remove: function() {
 				Upfront.Events.off("media_manager:media:toggle_titles", this.toggle_title);
@@ -2303,6 +2367,8 @@ define([
 		},
 		cleanup_active_filters: function () {
 			ActiveFilters.allowed_media_types = [];
+			ActiveFilters.current_keys = [];
+			ActiveFilters.current_models = [];
 			this.cleanup_manager_view();
 		},
 		cleanup_manager_view: function () {
