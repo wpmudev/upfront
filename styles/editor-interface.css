@@ -2035,6 +2035,23 @@ div.upfront-date_picker td a {
   margin-right: 5px;
   margin-bottom: -4px; }
 
+.upfront-filter_display_control {
+  display: inline-block;
+  margin-top: 0;
+  vertical-align: top;
+  margin-left: 20px; }
+
+.upfront-filter_display_control label.upfront-field-label {
+  display: inline-block;
+  vertical-align: top;
+  margin-top: 6px;
+  margin-right: 5px;
+  font-weight: normal;
+  color: #000; }
+
+.upfront-filter_display_control .upfront-field-select {
+  display: inline-block; }
+
 .ueditor-datepicker-buttons {
   border-top: 1px solid #accae6;
   padding: 5px 10px;
@@ -8617,7 +8634,7 @@ a.upfront-post-layout-trigger:before {
 .upfront-media_manager .upfront-media_collection {
   width: 70%;
   position: absolute;
-  top: 40px;
+  top: 50px;
   bottom: 0;
   left: 0;
   margin: 0;
@@ -8753,7 +8770,7 @@ a.upfront-post-layout-trigger:before {
   font-family: Verdana, sans-serif;
   padding: 12px 30px;
   width: 70%;
-  overflow: hidden; }
+  overflow: visible; }
 
 .upfront-media-aux_controls .select_control_container a {
   color: #1fcd8f;
