@@ -781,3 +781,21 @@ div.upfront-date_picker td a{
 	margin-right: 5px;
 	margin-bottom: -4px;
 }
+
+.upfront-filter_display_control {
+	display: inline-block;
+	margin-top: 0;
+	vertical-align: top;
+	margin-left: 20px;
+}
+.upfront-filter_display_control label.upfront-field-label {
+	display: inline-block;
+	vertical-align: top;
+	margin-top: 6px;
+	margin-right: 5px;
+	font-weight: normal;
+	color: #000;
+}
+.upfront-filter_display_control .upfront-field-select {
+	display: inline-block;
+}

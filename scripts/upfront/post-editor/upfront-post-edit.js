@@ -166,7 +166,7 @@ var Box = Backbone.View.extend({
     },
 
     setPosition: function(){
-        var $container = $(".upfront-output-this_post").length ? $(".upfront-output-this_post") : this.$el.closest(".upfront-postcontent-editor"),
+        var $container = $(".upost-data-object-post_data, .upfront-output-this_post").length ? $(".upost-data-object-post_data, .upfront-output-this_post") : this.$el.closest(".upfront-postcontent-editor"),
             right_space = $("body").width() - ( $container.width() + ( _.isUndefined( $container.offset() ) ? 0 : $container.offset().left ) ),
             right = right_space > this.$el.width() ? right_space - this.$el.width() :  10
             ;
@@ -182,11 +182,7 @@ var Box = Backbone.View.extend({
     },
 
     destroy: function(){
-        //$(window)
-        //    .off('scroll', this.onScrollFunction)
-        //    .off('resize', this.onScrollFunction)
-        //;
-        //this.onScrollFunction = false;
+    	Upfront.Events.off("upfront:element:edit:stop", this.element_stop_prop);
     },
 
     _stop_overlay: function () {
@@ -204,8 +200,8 @@ var Box = Backbone.View.extend({
             this.post.trigger('editor:cancel');
             this.trigger('cancel');
             Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
-            Upfront.Application.sidebar.toggleSidebar();
             this.fadein_other_elements();
+            this.remove();
         }
     },
     fadein_other_elements: function(){
@@ -221,7 +217,7 @@ var Box = Backbone.View.extend({
          */
 
         e.preventDefault();
-        //this.destroy();
+        this.destroy();
 
         this.post.trigger('editor:publish');
 
@@ -234,8 +230,8 @@ var Box = Backbone.View.extend({
         this._stop_overlay();
         //$(".editing-overlay").remove();
 
-        Upfront.Application.sidebar.toggleSidebar();
         this.toggleRegionClass(false);
+        this.remove();
 
 
     },
@@ -248,6 +244,7 @@ var Box = Backbone.View.extend({
         this.post.trigger('editor:draft');
         this.trigger('draft');
         Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post, true);// last true means 'saving draft'
+        this.remove();
     },
 
     trash: function(e){
@@ -256,6 +253,7 @@ var Box = Backbone.View.extend({
             this.destroy();
             this.trigger('trash');
             Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
+            this.remove();
         }
     },
 
