@@ -1,7 +1,8 @@
 (function ($) {
 define([
-	'text!elements/upfront-image/tpl/image_editor.html'
-], function(editorTpl) {
+	'text!elements/upfront-image/tpl/image_editor.html',
+	'elements/upfront-image/js/crop-controls',
+], function(editorTpl, CropControls) {
 	var l10n = Upfront.Settings.l10n.image_element;
 	var breakpointColumnPadding = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().get('column_padding');
 	breakpointColumnPadding = parseInt(breakpointColumnPadding, 10);
@@ -99,8 +100,6 @@ define([
 			this.fullSize = {width: 0, height:0};
 			this.setImageInitialSize = false;
 			this.buttons = [
-				{id: 'image-edit-button-fit', text: l10n.btn.fit_label, tooltip: l10n.btn.fit_info},
-				{id: 'image-edit-button-reset', text: l10n.btn.exp_label, tooltip: l10n.btn.exp_info},
 				{id: 'image-edit-button-ok', text: l10n.btn.save_label, tooltip: l10n.btn.save_info}
 			];
 			this.sizes = false;
@@ -122,11 +121,13 @@ define([
 			var control = new Upfront.Views.Editor.InlinePanels.ImageControl(),
 				me = this;
 
-			control.hideOkButton = true;
-			control.hideOnClick = false;
-
+			control.view = new CropControls({
+				model: this.model
+			});
+			
 			control.tooltip = l10n.ctrl.edit_labels;
-			control.id = 'image_ctrls';
+
+			control.render();
 
 			return control;
 		},

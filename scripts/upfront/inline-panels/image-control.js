@@ -27,26 +27,27 @@ define([
 
 				me.close();
 			});
-			
-			this.render();
 		},
 
 		render: function(){
 			Control.prototype.render.call(this, arguments);
 			var me = this,
 				panel;
-				
-				console.log(this);
 
 			if(!this.$el.hasClass('uimage-control-panel-item')) {
 				this.$el.addClass('uimage-control-panel-item');
+			}
+			
+			if(this.view){
+				this.view.render();
+				this.view.delegateEvents();
 			}
 
 			if(!this.panel){
 				//this is like initialize
 				//image-control-dialog-buttons
 				this.$el.append('<div class="uimage-control-panel image-control-button"></div>');
-				this.$el.find('.image-control-button').append('Buttons');
+				this.$el.find('.image-control-button').append(this.view.$el);
 			}
 
 			return this;
