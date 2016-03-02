@@ -208,7 +208,6 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		//this.layout_views.listenTo(Upfront.Events, "upfront:posts:post:post_updated", this.layout_view.render);
 
 		// Showing the "busy" overlay on saving.
-		var noOfPresetsToSave = 0;
 		var loading = false,
 			start = function () {
 				loading = new Upfront.Views.Editor.Loading({
