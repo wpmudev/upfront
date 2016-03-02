@@ -13038,11 +13038,13 @@ li#new-custom-breakpoint {
 
 /* Edit region responsive */
 .upfront-region-edit-trigger-small {
-  background: #79838f;
+  background: #2D3D4D;
   color: #fff;
   padding: 5px 10px;
   border-radius: 2px;
-  line-height: 14px; }
+  line-height: 14px;
+  font-size: 12px;
+  height: 25px; }
 
 .upfront-region-edit-trigger-small .upfront-icon-region-edit:before {
   background-position: -346px -351px;
@@ -13051,9 +13053,15 @@ li#new-custom-breakpoint {
   margin-right: 5px; }
 
 .upfront-region-edit-trigger-small.visible {
-  right: -140px !important;
+  right: -120px !important;
   visibility: visible;
+  opacity: .85; }
+
+.upfront-region-edit-trigger-small.visible:hover {
   opacity: 1; }
+
+.mobile-breakpoint .upfront-region-edit-trigger-small.visible {
+  right: -105px !important; }
 
 /*------------ Font Icons --------------*/
 .redactor-dropdown-box-upfrontIcons div.icons {
