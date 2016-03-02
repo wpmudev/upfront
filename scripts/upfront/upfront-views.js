@@ -2136,7 +2136,8 @@ define([
 			},
 			
 			render: function () {
-				var grid = Upfront.Settings.LayoutEditor.Grid,
+				var me = this,
+					grid = Upfront.Settings.LayoutEditor.Grid,
 					objects_view = this._objects_view || new Objects({"model": this.model.get("objects")}),
 					props = {},
 					buttons = (this.get_buttons ? this.get_buttons() : ''),
@@ -2196,6 +2197,8 @@ define([
 				$object.data('default_col', col);
 				$object.data('current_col', col);
 
+				this.apply_paddings(this.$el.find('> .upfront-editable_entity:first'));
+
 				Upfront.Events.trigger("entity:object_group:after_render", this, this.model);
 
 				if ( this.display_size_hint ) {
@@ -2211,6 +2214,14 @@ define([
 					
 				this.ensure_breakpoint_change_is_listened();
 				this.ensureUiOffsetCalls();
+
+				if ( this.parent_module_view ) {
+					this.$control_el = this.parent_module_view.$('.upfront-module');
+					this.updateControls();
+					setTimeout(function() {
+						if(me.paddingControl && typeof me.paddingControl.isOpen !== 'undefined' && !me.paddingControl.isOpen)	me.paddingControl.refresh();
+					}, 300);
+				}
 
 				// Cache module cols for later use
 				this._module_cols = this.get_module_cols();
