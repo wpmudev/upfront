@@ -1487,8 +1487,8 @@ div.uimage-controls i.upfront-icon:before,
 }
 
 .image-align-point {
-	width: 5px;
-	height: 5px;
+	width: 4px;
+	height: 4px;
 	border-radius: 50%;
 	background: rgba(123,147,167,1);
 	box-shadow: 0px 0px 2px 0px #24394E;
@@ -1497,9 +1497,7 @@ div.uimage-controls i.upfront-icon:before,
 }
 
 .active-alignment-point {
-	width: 7px;
-	height: 7px;
-	margin: 2px;
+	transform: scale(1.5); 
 	background: rgba(84,178,255,1);
 	box-shadow: 0px 0px 2px 0px #24394E;
 }
