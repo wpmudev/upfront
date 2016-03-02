@@ -1866,14 +1866,27 @@ define([
 			},
 			on_element_edit_start: function (edit, post) {
 				if ( ( edit == 'text' || edit == 'write' ) && this.parent_module_view ){
-					this.parent_module_view.$el.find('>.upfront-module').addClass('upfront-module-editing')
-					this.parent_module_view.disable_interaction(false);
+					this.parent_module_view.$el.find('>.upfront-module').addClass('upfront-module-editing');
+					if ( edit == 'write' ) {
+						this.parent_module_view.disable_interaction(true, true, false, false, true);
+					}
+					else {
+						this.parent_module_view.disable_interaction(false);
+					}
 				}
 			},
 			on_element_edit_stop: function (edit, post, saving_draft) {
+				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
+				// When editing post content, other event triggered this will be ignored (except write)
+				if ( $main.hasClass('upfront-editing-post-content') && edit != 'write' ) return;
 				if (this.parent_module_view && this.parent_module_view.enable_interaction && saving_draft !== true){
-					this.parent_module_view.$el.find('>.upfront-module').removeClass('upfront-module-editing')
-					this.parent_module_view.enable_interaction(false);
+					this.parent_module_view.$el.find('>.upfront-module').removeClass('upfront-module-editing');
+					if ( edit == 'write' ) {
+						this.parent_module_view.enable_interaction(true);
+					}
+					else {
+						this.parent_module_view.enable_interaction(false);
+					}
 				}
 			},
 			on_element_resize_start: function (attr) {
@@ -2119,10 +2132,12 @@ define([
 				ObjectView.prototype.initialize.call(this);
 				this.listenTo(Upfront.Events, "command:object_group:finish_edit", this.on_finish);
 				this._module_col = {};
+				this.editing = false;
 			},
 			
 			render: function () {
-				var grid = Upfront.Settings.LayoutEditor.Grid,
+				var me = this,
+					grid = Upfront.Settings.LayoutEditor.Grid,
 					objects_view = this._objects_view || new Objects({"model": this.model.get("objects")}),
 					props = {},
 					buttons = (this.get_buttons ? this.get_buttons() : ''),
@@ -2182,6 +2197,8 @@ define([
 				$object.data('default_col', col);
 				$object.data('current_col', col);
 
+				this.apply_paddings(this.$el.find('> .upfront-editable_entity:first'));
+
 				Upfront.Events.trigger("entity:object_group:after_render", this, this.model);
 
 				if ( this.display_size_hint ) {
@@ -2197,6 +2214,14 @@ define([
 					
 				this.ensure_breakpoint_change_is_listened();
 				this.ensureUiOffsetCalls();
+
+				if ( this.parent_module_view ) {
+					this.$control_el = this.parent_module_view.$('.upfront-module');
+					this.updateControls();
+					setTimeout(function() {
+						if(me.paddingControl && typeof me.paddingControl.isOpen !== 'undefined' && !me.paddingControl.isOpen)	me.paddingControl.refresh();
+					}, 300);
+				}
 
 				// Cache module cols for later use
 				this._module_cols = this.get_module_cols();
@@ -2302,6 +2327,7 @@ define([
 			},
 			
 			disable_object_edit: function () {
+				if ( !this.editing ) return;
 				this.toggle_object_edit(false);
 			},
 			
@@ -2315,8 +2341,9 @@ define([
 					if ( this.parent_module_view.wrapper_view ) {
 						this.parent_module_view.wrapper_view.$el.addClass('upfront-wrapper-object-group-on-edit');
 					}
+					this.editing = true;
 				}
-				else {
+				else if ( this.editing ) {
 					$main.removeClass('upfront-object-group-editing');
 					this.$el.removeClass('upfront-object-group-on-edit');
 					this.parent_module_view.enable_interaction(true);
@@ -2324,6 +2351,7 @@ define([
 					if ( this.parent_module_view.wrapper_view ) {
 						this.parent_module_view.wrapper_view.$el.removeClass('upfront-wrapper-object-group-on-edit');
 					}
+					this.editing = false;
 				}
 				this.trigger('toggle_object_edit', enable);
 			},

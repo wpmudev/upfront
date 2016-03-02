@@ -305,7 +305,9 @@
 	z-index: 90;
 }
 .upfront-module-disabled-all:hover,
+.upfront-module-editing,
 .upfront-module-editing:hover {
+	box-shadow: none;
 	outline: none;
 }
 .upfront-module-disabled-all .upfront-entity_meta,
@@ -650,6 +652,7 @@
 .upfront-wrapper.ui-resizable-resizing > .upfront-wrapper-meta {
   display: block !important;
 }
+.upfront-editing-post-content .upfront-wrapper:hover > .upfront-wrapper-meta,
 .upfront-module-group-editing .upfront-wrapper.upfront-wrapper-module-group-on-edit > .upfront-wrapper-meta,
 .upfront-module-group-editing .upfront-wrapper:hover > .upfront-wrapper-meta,
 .upfront-object-group-editing .upfront-wrapper.upfront-wrapper-object-group-on-edit > .upfront-wrapper-meta,

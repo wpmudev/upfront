@@ -86,6 +86,14 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 	trigger_edit: function () {
 		if ( !PostDataEditor.contentEditor || !PostDataEditor.contentEditor._editing ) return;
 		this.editor_view.editContent();
+	},
+
+	on_element_edit_start: function () {
+		return;
+	},
+
+	on_element_edit_stop: function () {
+		return;
 	}
 });
 
@@ -265,6 +273,27 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		// Render again if it's post data element
 		if ( 'post_data' == type ) {
 			this.child_view.render(['date_posted']); // Only render the date_posted part
+		}
+	},
+
+
+	on_element_edit_start: function (edit, post) {
+		if ( edit == 'write' && this.parent_module_view ){
+			this.parent_module_view.$el.find('>.upfront-module').addClass('upfront-module-editing');
+			this.parent_module_view.disable_interaction(false, true, false, false, true);
+		}
+		else {
+			this.constructor.__super__.on_element_edit_start.call(this, edit, post);
+		}
+	},
+
+	on_element_edit_stop: function (edit, post, saving_draft) {
+		if ( edit == 'write' && this.parent_module_view && this.parent_module_view.enable_interaction && saving_draft !== true ){
+			this.parent_module_view.$el.find('>.upfront-module').removeClass('upfront-module-editing');
+			this.parent_module_view.enable_interaction(true);
+		}
+		else {
+			this.constructor.__super__.on_element_edit_stop.call(this, edit, post, saving_draft);
 		}
 	},
 
