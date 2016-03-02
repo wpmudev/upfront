@@ -76,6 +76,7 @@ var _partView = Backbone.View.extend({
 		'dblclick': 'triggerEditor'
 	},
 	type: '',
+	canTriggerEdit: false,
 	initialize: function (opts) {
 		this.parent = opts.parent;
 		this.parentModel = opts.parentModel;
@@ -87,7 +88,8 @@ var _partView = Backbone.View.extend({
 	},
 	triggerEditor: function () {
 		if ( this.parent._editing ) return;
-		if( Upfront.Application.is_builder() ) return;
+		if ( Upfront.Application.is_builder() ) return;
+		if ( !this.canTriggerEdit ) return;
 		this.parent.triggerEditors();
 		this.focus();
 	},
@@ -114,6 +116,7 @@ PostContentEditor.prototype = {
 		 */
 		title: _partView.extend({
 			type: 'title',
+			canTriggerEdit: true,
 			init: function () {
 				this.listenTo(this.parent, 'change:title', this.titleChanged);
 			},
@@ -192,6 +195,7 @@ PostContentEditor.prototype = {
 		 */
 		content: _partView.extend({
 			type: 'content',
+			canTriggerEdit: true,
 			init: function () {
 				this.listenTo(this.parent, 'change:content', this.contentChanged);
 			},

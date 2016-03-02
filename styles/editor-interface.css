@@ -4430,7 +4430,9 @@ a.upfront-region-name-edit-trigger:before {
   z-index: 90; }
 
 .upfront-module-disabled-all:hover,
+.upfront-module-editing,
 .upfront-module-editing:hover {
+  box-shadow: none;
   outline: none; }
 
 .upfront-module-disabled-all .upfront-entity_meta,
@@ -4766,6 +4768,7 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-wrapper.ui-resizable-resizing > .upfront-wrapper-meta {
   display: block !important; }
 
+.upfront-editing-post-content .upfront-wrapper:hover > .upfront-wrapper-meta,
 .upfront-module-group-editing .upfront-wrapper.upfront-wrapper-module-group-on-edit > .upfront-wrapper-meta,
 .upfront-module-group-editing .upfront-wrapper:hover > .upfront-wrapper-meta,
 .upfront-object-group-editing .upfront-wrapper.upfront-wrapper-object-group-on-edit > .upfront-wrapper-meta,
@@ -5118,9 +5121,9 @@ a.upfront-region-name-edit-trigger:before {
   border-radius: 3px;
   box-shadow: 0px 0px 3px 0px rgba(36, 57, 77, 0.2); }
 
-.upfront-editable_entity:hover > .upfront-resize-handle-s:not(.active-menu-item),
+.upfront-editable_entity:not(.ui-resizable-disabled):hover > .upfront-resize-handle-s:not(.active-menu-item),
 .upfront-editable_entity.ui-resizable-resizing > .upfront-resize-handle-s,
-.upfront-module-active > .upfront-resize-handle-s:not(.active-menu-item) {
+.upfront-module-active:not(.upfront-module-editing) > .upfront-resize-handle-s:not(.active-menu-item) {
   display: block !important; }
 
 .upfront-module-spacer > .upfront-resize-handle-s {
