@@ -55,7 +55,15 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		Upfront.Util.post({"action": Upfront.Application.actions.save, "data": data, "storage_key": storage_key})
 			.success(function () {
 				Upfront.Util.log("layout saved");
-				Upfront.Events.trigger("command:layout:save_success");
+				// Save presets
+				var presetSaving = Upfront.Application.presetSaver.savePresets();
+				presetSaving.done( function() {
+					Upfront.Util.log("presets saved");
+					Upfront.Events.trigger("command:layout:save_success");
+				}).fail( function() {
+					Upfront.Util.log("error saving presets");
+					Upfront.Events.trigger("command:layout:save_error");
+				});
 			})
 			.error(function () {
 				Upfront.Util.log("error saving layout");
@@ -200,6 +208,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		//this.layout_views.listenTo(Upfront.Events, "upfront:posts:post:post_updated", this.layout_view.render);
 
 		// Showing the "busy" overlay on saving.
+		var noOfPresetsToSave = 0;
 		var loading = false,
 			start = function () {
 				loading = new Upfront.Views.Editor.Loading({

@@ -5,18 +5,22 @@ define([
 		var pendingSavePresets = {};
 
 		/**
-		 * Saves preset to server
+		 * Saves type presets to server one by one, when done typeResult will
+		 * be resolved with either fail or success depending on result.
 		 */
-		var savePreset = function(slug, typePresets) {
+		var saveTypePresets = function(slug, typePresets, typeResult) {
 			var currentPreset = typePresets.pop();
 			Upfront.Util.post({
 				action: 'upfront_save_' + slug + '_preset',
 				data: currentPreset
 			}).done(function() {
 				if (typePresets.length > 0) {
-					savePreset(slug, typePresets);
+					saveTypePresets(slug, typePresets, typeResult);
+				} else {
+					typeResult.resolve();
 				}
 			}).fail( function() {
+				typeResult.reject();
 				Upfront.Views.Editor.notify('Preset ' + currentPreset.name + ' save failed.');
 			});
 		};
@@ -25,15 +29,31 @@ define([
 		 * Loops through queued presets and requests saving of each one.
 		 * Clears queued presets after all is done.
 		 */
-		var onLayoutSaveStart = function() {
+		this.savePresets = function() {
+			var typesResults = [];
+			result = $.Deferred();
 			// Iterate through all preset types (text, image, gallery...)
 			_.each(pendingSavePresets, function(typePresets, slug) {
 				// Save presets from type sequentially, if done in parallel some
 				// won't be saved since server will read/write to db in parallel
 				if (typePresets.length > 0) {
-					savePreset(slug, typePresets);
+					var typeResult = $.Deferred();
+					typesResults.push(typeResult);
+					saveTypePresets(slug, typePresets, typeResult);
 				}
 			});
+
+			if (typesResults.length > 0) {
+				$.when.apply($, typesResults).done( function() {
+					result.resolve();
+				}).fail( function() {
+					result.reject();
+				});
+				return result;
+			}
+
+			// Nothing to do, resolve immediately
+			return result.resolve();
 		};
 
 		/**
@@ -47,9 +67,6 @@ define([
 			});
 			pendingSavePresets[ajaxSlug].push(presetProperties);
 		};
-
-		// Subscribe to events
-		Upfront.Events.on("command:layout:save_start", onLayoutSaveStart);
 	};
 
 	// Make single instance
