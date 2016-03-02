@@ -224,3 +224,12 @@ div.preset-manager-panel .upfront-post_data-part.part-module-panel .edit_preset_
 		color: rgb(0, 206, 141);
 		font-size: 13px;
 	}
+
+	/* Post Data - Contents */
+	div.preset-manager-panel .upfront-post_data-part.part-module-panel .content-indent {
+		width: 40%;
+		display: inline-block;
+	}
+	div.preset-manager-panel .upfront-post_data-part.part-module-panel .content-indent input {
+		max-width: 4em;
+	}

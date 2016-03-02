@@ -164,7 +164,7 @@
 .upfront-media_manager .upfront-media_collection {
 	width: 70%;
 	position: absolute;
-	top: 40px;
+	top: 50px;
 	bottom: 0;
 	left: 0;
 	margin: 0;
@@ -302,7 +302,7 @@
 	font-family: Verdana, sans-serif;
 	padding: 12px 30px;
 	width: 70%;
-	overflow: hidden;
+	overflow: visible;
 }
 .upfront-media-aux_controls .select_control_container a {
 	color: rgb(31, 205, 143);
