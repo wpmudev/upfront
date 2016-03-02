@@ -77,7 +77,8 @@ define([
 			});
 			this.state.render();
 
-			this.$el.append(this.state.$el)
+			this.$el.append(this.state.$el);
+			this.$el.addClass("preset_specific");
 		},
 		get_modules: function () {
 			var me = this,
@@ -149,11 +150,13 @@ define([
 			var me = this,
 				value = { label: this.title, value: '1' },
 				hidden_parts = this.model.get("hidden_parts") || [],
+				is_hidden = true,
 				check = false
 			;
 
 			if (hidden_parts.indexOf(me.data_part) < 0) {
-				value["checked"] = "checked"
+				value["checked"] = "checked";
+				is_hidden = false;
 			}
 
 			check = new Upfront.Views.Editor.Field.Checkboxes({
@@ -196,12 +199,17 @@ define([
 				.append('<a href="#toggle" class="toggle">&times;</a>')
 			;
 
+			// Hide the stuff that's meant to be hidden
+			if (is_hidden) {
+				this.hide_content();
+			}
+
 			// temporary style hack
 			this.$el.find(".upfront-settings-item-title .toggle").css('background-image', 'url(' + Upfront.Settings.root_url.replace(/\/$/, '') + '/img/uf-ui-sprite.svg)')
 		},
 		toggle_box: function (e) {
-			if (e.preventDefault) e.preventDefault();
-			if (e.stopPropagation) e.stopPropagation();
+			if (e && e.preventDefault) e.preventDefault();
+			if (e && e.stopPropagation) e.stopPropagation();
 
 			var $content = this.$el.find('.upfront-settings-item-content:first, .state_modules');
 			if ($content.is(":visible")) this.hide_content();

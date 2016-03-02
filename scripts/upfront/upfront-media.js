@@ -163,6 +163,7 @@ define([
 		current_page: 1,
 		max_pages: 1,
 		max_items: 1,
+		media_limit: 20,
 		initialize: function () {
 			this.to_defaults();
 			Upfront.Events.on("media_manager:media:filters_updated", this.update_active_filters, this);
@@ -391,8 +392,37 @@ define([
 				"click a.none": "select_none",
 				"click a.all": "select_all"
 			},
+			initialize: function () {
+				this.display_values = [
+					{label: '20', value: 20},
+					{label: '40', value: 40},
+					{label: '60', value: 60},
+					{label: '80', value: 80},
+					{label: '100', value: 100}
+				];
+			},
 			render: function () {
-				this.$el.empty().append(l10n.select + ' <a href="#all" class="all">' + l10n.all + '</a>&nbsp;|&nbsp;<a href="#none" class="none">' + l10n.none + '</a> ' + l10n.on_this_page);
+				var me = this;
+				me.$el.empty().append(l10n.select + ' <a href="#all" class="all">' + l10n.all + '</a>&nbsp;|&nbsp;<a href="#none" class="none">' + l10n.none + '</a>');
+				
+				me.select_display_field = new Upfront.Views.Editor.Field.Select({
+					label: l10n.display+":",
+					className: "upfront-field-wrap upfront-field-wrap-select upfront-filter_display_control",
+					name: "display-selection",
+					width: '70px',
+					values: me.display_values,
+					multiple: false,
+					default_value: ActiveFilters.media_limit,
+					change: function(){
+						me.select_display(this.get_value());
+					}
+				});
+				me.select_display_field.render();
+				me.$el.append(me.select_display_field.$el);
+			},
+			select_display: function (limit) {
+				ActiveFilters.media_limit = limit;
+				Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
 			},
 			select_none: function (e) {
 				e.preventDefault();
@@ -1448,6 +1478,7 @@ define([
 		load: function (data) {
 			this._request_in_progress = true;
 			data = data && data.type ? data : ActiveFilters.to_request_json();
+			data.media_limit = ActiveFilters.media_limit;
 			data.action = ActiveFilters.themeImages ? 'upfront-media-list_theme_images' : "upfront-media-list_media";
 			var me = this;
 			if (this.library_view.media_view && this.library_view.media_view.start_loading) this.library_view.media_view.start_loading();
@@ -2369,6 +2400,7 @@ define([
 			ActiveFilters.allowed_media_types = [];
 			ActiveFilters.current_keys = [];
 			ActiveFilters.current_models = [];
+			ActiveFilters.media_limit = 20;
 			this.cleanup_manager_view();
 		},
 		cleanup_manager_view: function () {
