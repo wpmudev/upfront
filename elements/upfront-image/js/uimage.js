@@ -1481,41 +1481,24 @@ define([
 		getControlItems: function(){
 			var me = this,
 				panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
-				captionControl = new Upfront.Views.Editor.InlinePanels.TooltipControl()
+				moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl()
 			;
+			
+			moreOptions.icon = 'more';
+			moreOptions.tooltip = l10n.ctrl.caption_position;
 
-			captionControl.sub_items = {
-				nocaption: this.createControl('nocaption', l10n.ctrl.no_caption),
-				showCaption: this.createControl('showCaption', l10n.ctrl.show_caption)
+			moreOptions.sub_items = {
+				swap: this.createControl('swap', l10n.ctrl.swap_image, 'changeImage'),
+				crop: this.createControl('crop', l10n.ctrl.edit_image, 'editRequest'),
+				link: this.createLinkControl(),
+				lock: this.createControl('lock', l10n.ctrl.lock_image, 'lockImage'),
 			};
 
-
-			captionControl.icon = 'caption';
-			captionControl.tooltip = l10n.ctrl.caption_position;
-			captionControl.selected = this.property("display_caption");
-
-			this.listenTo(captionControl, 'select', function(item){
-				switch(item){
-					case 'showCaption':
-						me.property('display_caption', 'showCaption');
-						break;
-					default:
-						me.property('display_caption', "nocaption");
-						break;
-				}
-				me.render();
-			});
-
 			var controlls =  _([
-				this.createControl('crop', l10n.ctrl.edit_image, 'editRequest'),
-				this.createLinkControl(),
-				captionControl,
+				moreOptions,
 				this.createPaddingControl(),
 				this.createControl('settings', Upfront.Settings.l10n.global.views.settings, 'on_settings_click')
 			]);
-
-		if( "yes" !== this.get_preset_property("use_captions") )
-			controlls = _( controlls.without( captionControl ) );
 
 		return controlls;
 		}
