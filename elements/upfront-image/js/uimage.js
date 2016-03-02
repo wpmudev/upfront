@@ -356,6 +356,8 @@ define([
 				rotation: this.property('rotation'),
 				fullSize: this.property('fullSize'),
 				align: this.property('align'),
+				valign: this.property('valign'),
+				isDotAlign: this.property('isDotAlign'),
 				maskSize: maskSize,
 				maskOffset: maskOffset
 			};
@@ -1302,6 +1304,8 @@ define([
 			this.property('element_size', result.maskSize, true);
 
 			this.property('align', result.align, true);
+			this.property('valign', result.valign, true);
+			this.property('isDotAlign', result.isDotAlign, true)
 			this.property('stretch', result.stretch, true);
 			this.property('vstretch', result.vstretch, true);
 			this.property('quick_swap', false, true);

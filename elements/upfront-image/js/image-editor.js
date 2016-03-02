@@ -103,6 +103,7 @@ define([
 			this.sizes = false;
 			//this.promise = false;
 			this.align = 'left';
+			this.valign = 'top';
 			this.saveOnClose = false;
 			this.elementSize = false;
 			this.fitImageButton = true;
@@ -140,13 +141,33 @@ define([
 		pointAlignment: function(e) {
 			var element = $(e.target),
 				position = element.data('alignment');
-			
+
 			this.$el.find('.image-align-point').removeClass('active-alignment-point');
 			element.addClass('active-alignment-point');
 			
 			var pos_array = position.split('-');
 
 			this.setAlign(pos_array[1], pos_array[0]);
+			
+			this.isDotAlign = true;
+		},
+		
+		setDotAlignment: function() {
+			this.higlighActiveDot();
+		},
+		
+		higlighActiveDot: function() {
+			//First remove all highlights
+			this.$el.find('.image-align-point').removeClass('active-alignment-point');
+			
+			//Highlight the active dot if isDotAlign true
+			if(typeof this.isDotAlign !== "undefined" && this.isDotAlign === true) {
+				var activeDot = this.$el.find('.'+ this.valign +'-'+ this.align +'-point');
+
+				if(activeDot.length) {
+					activeDot.addClass('active-alignment-point');
+				}
+			}
 		},
 
 		open: function(options){
@@ -217,7 +238,14 @@ define([
 			if(options.align) {
 				this.align = options.align;
 			}
-
+			
+			if(options.valign) {
+				this.valign = options.valign;
+			}
+			
+			if(options.isDotAlign) {
+				this.isDotAlign = options.isDotAlign;
+			}
 
 			if(this.setImageInitialSize){
 				var fullImageProps = this.getFullWidthImage();
@@ -261,6 +289,8 @@ define([
 			this.selectMode(canvasSize, true);
 
 			this.setImageSize(canvasSize);
+			
+			this.setDotAlignment();
 
 			//this.setAlign(this.align);
 			this.$('#image-edit-button-align').addClass('align-' + this.align);
@@ -471,6 +501,8 @@ define([
 				fullSize: this.fullSize,
 				srcOriginal: src,
 				align: this.align,
+				valign: this.valign,
+				isDotAlign: this.isDotAlign,
 				stretch : this.mode === 'big' || this.mode === 'horizontal',
 				vstretch: this.mode === 'big' || this.mode === 'vertical',
 				mode: this.mode
@@ -610,6 +642,11 @@ define([
 					start: function(){
 						//Prevent editor closing during cropping. It is set to false by the initialize method.
 						me.isDragged = true;
+
+						//Update dots when we drag the image
+						me.isDotAlign = false;
+						
+						me.higlighActiveDot();
 					},
 					drag: function(e, ui){
 						canvas.css({
@@ -1129,6 +1166,8 @@ define([
 			} else {
 				position.left = mask.offset().left + mask.width() - canvas.width();
 			}
+			
+			this.valign = direction_v;
 			
 			if(typeof direction_v !== "undefined") {
 				if(direction_v === 'center') {
