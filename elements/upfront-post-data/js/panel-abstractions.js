@@ -77,7 +77,8 @@ define([
 			});
 			this.state.render();
 
-			this.$el.append(this.state.$el)
+			this.$el.append(this.state.$el);
+			this.$el.addClass("preset_specific");
 		},
 		get_modules: function () {
 			var me = this,
