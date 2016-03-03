@@ -1488,7 +1488,7 @@ define([
 			moreOptions.tooltip = l10n.ctrl.caption_position;
 
 			moreOptions.sub_items = {
-				swap: this.createControl('swap', l10n.ctrl.swap_image, 'changeImage'),
+				swap: this.createControl('swap', l10n.ctrl.swap_image, 'openImageSelector'),
 				crop: this.createControl('crop', l10n.ctrl.edit_image, 'editRequest'),
 				link: this.createLinkControl(),
 				lock: this.createControl('lock', l10n.ctrl.lock_image, 'lockImage'),
