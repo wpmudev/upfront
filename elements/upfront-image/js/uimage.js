@@ -1339,6 +1339,26 @@ define([
 
 			Upfront.Views.Editor.notify(l10n.external_nag, 'error');
 		},
+		
+		lockImage: function () {
+			var is_locked = this.property('is_locked');
+
+			if(typeof is_locked !== "undefined" && is_locked === true) {
+				//Update icon
+				this.controls.$el.find('.upfront-icon-region-lock-locked')
+					.addClass('upfront-icon-region-lock-unlocked')
+					.removeClass('upfront-icon-region-lock-locked');
+					
+				this.property('is_locked', false);
+			} else {
+				//Update icon
+				this.controls.$el.find('.upfront-icon-region-lock-unlocked')
+					.addClass('upfront-icon-region-lock-locked')
+					.removeClass('upfront-icon-region-lock-unlocked');
+					
+				this.property('is_locked', true);
+			}
+		},
 
 		getElementColumns: function(){
 			var module = this.$el.closest('.upfront-module'),
@@ -1481,8 +1501,15 @@ define([
 		getControlItems: function(){
 			var me = this,
 				panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
-				moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl()
+				moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl(),
+				is_locked = this.property('is_locked')
 			;
+			
+			if(typeof is_locked !== "undefined" && is_locked === true) {
+				var lock_icon = 'lock-locked';
+			} else {
+				var lock_icon = 'lock-unlocked';
+			}
 			
 			moreOptions.icon = 'more';
 			moreOptions.tooltip = l10n.ctrl.caption_position;
@@ -1491,7 +1518,7 @@ define([
 				swap: this.createControl('swap', l10n.ctrl.swap_image, 'openImageSelector'),
 				crop: this.createControl('crop', l10n.ctrl.edit_image, 'editRequest'),
 				link: this.createLinkControl(),
-				lock: this.createControl('lock', l10n.ctrl.lock_image, 'lockImage'),
+				lock: this.createControl(lock_icon, l10n.ctrl.lock_image, 'lockImage'),
 			};
 
 			var controlls =  _([

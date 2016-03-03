@@ -155,6 +155,7 @@ class Upfront_UimageView extends Upfront_Object {
 			'stretch' => false,
 			'vstretch' => false,
 			'quick_swap' => false,
+			'is_locked' => true,
 			'gifImage' => 0,
 			'placeholder_class' => '',
 			'preset' => 'default',
