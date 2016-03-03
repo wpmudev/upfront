@@ -78,7 +78,7 @@ define([
 
 			//Set width depending of items
 			this.$el
-				.find('.image-sub-control').css('width', 30 * item_count);
+				.find('.image-sub-control').css('width', 38 * item_count);
 		},
 
 		get_selected_item: function () {
