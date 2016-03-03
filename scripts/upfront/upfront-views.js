@@ -5346,6 +5346,14 @@ define([
 
 
 				if ( confirm(l10n.section_delete_nag) ){
+					// Destroy parallax first if exists
+					var $overlay = this.$el.closest('.upfront-region-container-bg').children('.upfront-region-bg-overlay');
+					if ( $overlay.length > 0 ) {
+						if ( $overlay.data('uparallax') ) {
+							$overlay.uparallax('destroy');
+						}
+					}
+					
 					var parent_view = this.parent_view; // reserve parent_view before removal as we use it later
 					// if ( this.model.get('container') ){
 						// main = this.model.collection.get_by_name(this.model.get('container'));
