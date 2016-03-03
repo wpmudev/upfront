@@ -524,7 +524,7 @@ define([
 			var smtp_enable = new Upfront.Views.Editor.Settings.Item({
 				model: this.model,
 				title: l10n.smtp.enable,
-				//className: 'general_settings_item',
+				className: 'general_smtp_settings',
 				fields: [
 					new Upfront.Views.Editor.Field.Radios({
 						model: this.model,
