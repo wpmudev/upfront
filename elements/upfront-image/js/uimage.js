@@ -874,31 +874,31 @@ define([
 			//Wonderful stuff from here down
 			this.$('.uimage').css('height', data.elementSize.height);
 			
-			/*
-			 * Disable image resize on element resize, use Image Edit mode instead
-			 */
+			var is_locked = this.property('is_locked');
 			
-			//Resizing the stretching dimension has priority, the other dimension just alter position
-			//if(data.stretch && !data.vstretch){
-			//	this.resizingH(img, data, true);
-			//	this.resizingV(img, data);
-			//} else if(!data.stretch && data.vstretch){
-			//	this.resizingV(img, data, true);
-			//	this.resizingH(img, data);
-			//} else {
-				//Both stretching or not stretching, calculate ratio difference
-			//	ratio = data.size.width / data.size.height - data.elementSize.width / data.elementSize.height;
+			if(is_locked === false) {
+				//Resizing the stretching dimension has priority, the other dimension just alter position
+				if(data.stretch && !data.vstretch){
+					this.resizingH(img, data, true);
+					this.resizingV(img, data);
+				} else if(!data.stretch && data.vstretch){
+					this.resizingV(img, data, true);
+					this.resizingH(img, data);
+				} else {
+					//Both stretching or not stretching, calculate ratio difference
+					ratio = data.size.width / data.size.height - data.elementSize.width / data.elementSize.height;
 
-				//Depending on the difference of ratio, the resizing is made horizontally or vertically
-			//	if(ratio > 0 && data.stretch || ratio < 0 && ! data.stretch){
-			//		this.resizingV(img, data, true);
-			//		this.resizingH(img, data);
-			//	}
-			//	else {
-			//		this.resizingH(img, data, true);
-			//		this.resizingV(img, data);
-			//	}
-			//}
+					//Depending on the difference of ratio, the resizing is made horizontally or vertically
+					if(ratio > 0 && data.stretch || ratio < 0 && ! data.stretch){
+						this.resizingV(img, data, true);
+						this.resizingH(img, data);
+					}
+					else {
+						this.resizingH(img, data, true);
+						this.resizingV(img, data);
+					}
+				}
+			}
 
 			this.updateControls();
 			this.setupBySize();
@@ -919,7 +919,7 @@ define([
 				imgPosition = img.position(),
 				padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding);
 
-			if(starting.length){
+			if(starting.length) {
 				this.elementSize = {
 					height: attr.height - (2 * padding),
 					width: attr.width - (2 * padding)
