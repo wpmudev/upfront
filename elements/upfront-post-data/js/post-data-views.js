@@ -40,12 +40,17 @@ var Views = {
 				model = Upfront.Util.model_to_json(this.model),
 				props = model.properties || {},
 				objects = model.objects || {},
+				data_type = this.model.get_property_value_by_name("data_type"),
+				current_preset = this.model.get_property_value_by_name("preset"),
+				preset_data = Util.get_preset_data(data_type, current_preset),
 				data = {
 					props: props,
 					objects: objects,
+					preset_data: preset_data,
 					post_id: this.element.postId
 				}
 			;
+
 			if ( this.element.authorId ) {
 				data.author_id = this.element.authorId;
 			}
