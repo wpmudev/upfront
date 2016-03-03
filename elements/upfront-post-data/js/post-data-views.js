@@ -6,6 +6,28 @@ define([
 var l10n = Upfront.Settings.l10n.post_data_element;
 var $template = $(tpl);
 
+var Util = {
+	/**
+	 * Gets the current preset data from in-memory collection
+	 *
+	 * Used instead of the stored preset on server
+	 *
+	 * @param {String} element Element type
+	 * @param {String} preset_id Preset ID
+	 *
+	 * @return {Object} Local preset data
+	 */
+	get_preset_data: function (element, preset_id) {
+		var data = {};
+		if (!element || !preset_id) return data;
+
+		var prefix = element + '_elementPresets',
+			all = (Upfront.mainData || {})[prefix] || []
+		;
+		return _.findWhere(all, {id: preset_id}) || data;
+	}
+};
+
 var Views = {
 	
 	DEFAULT: 'post_data',
