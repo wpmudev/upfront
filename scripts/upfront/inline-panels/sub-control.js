@@ -73,48 +73,16 @@ define([
 
 				item.render();
 				captionControl.append(item.$el);
-				me.listenTo(item, 'click', me.selectItem);
 				item_count++;
 			});
-			
+
 			//Set width depending of items
 			this.$el
 				.find('.image-sub-control').css('width', 30 * item_count);
-
-			selectedItem = this.sub_items[this.selected];
-					if(selectedItem){
-							if( typeof selectedItem.icon !== 'undefined' ){
-									this.$el.children('i').addClass('upfront-icon-region-' + selectedItem.icon);
-							}else if( typeof selectedItem.label !== 'undefined' ){
-									this.$el.find('.tooltip-content').append( ': ' +  selectedItem.label );
-							}
-					}
 		},
 
 		get_selected_item: function () {
 			return this.selected;
-		},
-
-		selectItem: function(e){
-			var found = false,
-				target = $(e.target).is('i') ? $(e.target) : $(e.target).find('i');
-
-			_.each(this.sub_items, function(item, key){
-				if(target.hasClass('upfront-icon-region-' + item.icon)) {
-					found = key;
-				}
-
-				if( !found && $(e.target).closest('.upfront-inline-panel-item').attr('id') === item.id ){
-					found = key;
-				}
-
-			});
-
-			if(found){
-				this.selected = found;
-				this.render();
-				this.trigger('select', found);
-			}
 		},
 
 		setDisabled: function(isDisabled) {
