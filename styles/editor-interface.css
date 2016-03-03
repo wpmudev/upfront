@@ -1425,9 +1425,12 @@ input.upfront-field-text:hover,
 
 .ulinkpanel-dark .upfront-field-multiple label,
 .ulinkpanel .upfront-field-multiple label {
-  color: #607f99;
+  color: #53616d;
   font-size: 11px;
   font-family: verdana, sans-serif; }
+
+.ulinkpanel input.upfront-field-text[type], .ulinkpanel textarea.upfront-field-text.upfront-field-textarea {
+  border-color: #c3d3e0; }
 
 .ulinkpanel .upfront-field-wrap-radios > label,
 .ulinkpanel-dark .upfront-field-wrap-radios > label {
@@ -1439,7 +1442,7 @@ input.upfront-field-text:hover,
 .ulinkpanel .upfront-field-wrap-radios > label,
 .ulinkpanel .upfront-field-wrap-radios > .upfront-field-multiple {
   vertical-align: top;
-  color: #97B8DA;
+  color: #53616d;
   font-weight: normal; }
 
 .upfront-field-select-disabled {
@@ -9945,7 +9948,7 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap {
   background: #00db8f; }
 
 .ulinkpanel-dark .ulinkpanel-title {
-  color: #97B8DA;
+  color: #53616d;
   margin-bottom: 3px;
   background: initial !important;
   padding: initial !important;
@@ -9980,7 +9983,7 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap {
 .ulinkpanel-dark .upfront-field-select:hover,
 .ulinkpanel-dark .upfront-field-select-options,
 .ulinkpanel-dark #ulinkpanel-link-url {
-  border-color: #263A4D; }
+  border-color: #c3d3e0; }
 
 .ulinkpanel-dark .no-lightboxes-msg {
   font: normal 11px/13px verdana, sans-serif;

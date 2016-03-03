@@ -134,9 +134,12 @@ input.upfront-field-text:hover,
 }
 .ulinkpanel-dark .upfront-field-multiple label,
 .ulinkpanel .upfront-field-multiple label {
-	color: rgb(96, 127, 153);
+	color: rgb(83, 97, 109);
 	font-size: 11px;
 	font-family: verdana, sans-serif;
+}
+.ulinkpanel input.upfront-field-text[type], .ulinkpanel textarea.upfront-field-text.upfront-field-textarea {
+	border-color: rgb(195, 211, 224);
 }
 .ulinkpanel .upfront-field-wrap-radios > label,
 .ulinkpanel-dark .upfront-field-wrap-radios > label {
@@ -148,7 +151,7 @@ input.upfront-field-text:hover,
 .ulinkpanel .upfront-field-wrap-radios > label,
 .ulinkpanel .upfront-field-wrap-radios > .upfront-field-multiple {
 	vertical-align: top;
-	color:#97B8DA;
+	color: rgb(83, 97, 109);
 	font-weight:normal;
 }
 
