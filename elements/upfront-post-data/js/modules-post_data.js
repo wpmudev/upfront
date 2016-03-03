@@ -85,12 +85,14 @@ define([
 		data_part: 'content',
 		get_fields: function () {
 			return [
+/*
 				{
 					type: "Number",
 					label: "Limit words",
 					label_style: 'inline',
 					property: "content_length"
 				},
+*/
 				{
 					type: "Number",
 					label: "Left indent",
@@ -132,8 +134,8 @@ define([
 			// Let's start stuff up on first render if we're not already there
 			if (!this._allow_splitting_field || !this._content_part_field) {
 				var fields = this.fields.toArray();
-				this._allow_splitting_field = fields[4];
-				this._content_part_field = fields[5];
+				this._allow_splitting_field = fields[3];
+				this._content_part_field = fields[4];
 				
 				if (this._allow_splitting_field) this.listenTo(this._allow_splitting_field, "changed", this.update_fields);
 			}

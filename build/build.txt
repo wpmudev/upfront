@@ -35,6 +35,7 @@ C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/control.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/multi-control.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/tooltip-control.js
+C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/sub-control.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/padding-control.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/collapsed-multi-control.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/control-panel.js
