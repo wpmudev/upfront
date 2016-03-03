@@ -33,7 +33,7 @@ define([
 
 			this.clicked(e);
 
-			this.$el.siblings('.upfront-control-dialog-open').removeClass('upfront-control-dialog-open');
+			this.$el.siblings('.upfront-sub-control-dialog-open').removeClass('upfront-sub-control-dialog-open');
 
 			if (this.isOpen) {
 				this.close();
@@ -44,23 +44,24 @@ define([
 
 		open: function() {
 			this.isOpen = true;
-			this.$el.addClass('upfront-control-dialog-open');
+			this.$el.addClass('upfront-sub-control-dialog-open');
 		},
 
 		close: function() {
 			this.isOpen = false;
-			this.$el.removeClass('upfront-control-dialog-open');
+			this.$el.removeClass('upfront-sub-control-dialog-open');
 		},
 
 		render: function() {
 			Item.prototype.render.call(this, arguments);
 			var captionControl = this.$('.image-sub-control'),
 				me = this,
-				selectedItem
+				selectedItem,
+				item_count = 0
 			;
 
 			if(!captionControl.length){
-				captionControl = $('<div class="image-sub-control inline-panel-control-dialog"></div>');
+				captionControl = $('<div class="image-sub-control inline-panel-sub-control-dialog"></div>');
 				this.$el.append(captionControl);
 			}
 			_.each(this.sub_items, function(item, key){
@@ -73,7 +74,12 @@ define([
 				item.render();
 				captionControl.append(item.$el);
 				me.listenTo(item, 'click', me.selectItem);
+				item_count++;
 			});
+			
+			//Set width depending of items
+			this.$el
+				.find('.image-sub-control').css('width', 30 * item_count);
 
 			selectedItem = this.sub_items[this.selected];
 					if(selectedItem){
