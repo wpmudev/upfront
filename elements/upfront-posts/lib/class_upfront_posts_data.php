@@ -55,7 +55,7 @@ class Upfront_Posts_PostsData {
 			'categories_limit' => 3,
 			'tags_limit' => 3,
 			'comment_count_hide' => 0,
-			'content_length' => 120,
+			'content_length' => 0,
 			'resize_featured' => '1',
 			'gravatar_size' => 200,
 

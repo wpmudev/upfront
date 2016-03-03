@@ -268,6 +268,8 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 					"preformatted" => __("Preformatted", 'upfront'),
 					"standard_formatting" => __("Standard Formatting:", 'upfront'),
 				),
+				'open_lightbox' => __('Open lightbox', Upfront::TextDomain),
+				'type_link_url' => __('Type link URL', Upfront::TextDomain)
 			),
 			'views' => array(
 				'unsaved_changes_nag' => __('You have unsaved changes you\'re about to lose by navigating off this page.', 'upfront'),
@@ -676,6 +678,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'label_bold' => __('Bold', 'upfront'),
 				'label_extra_bold' => __('Extra Bold', 'upfront'),
 				'label_ultra_bold' => __('Ultra Bold', 'upfront'),
+				'edit_region' => __('Edit Region', 'upfront'),
 				'create' => array(
 					'change' => __('Click to change', 'upfront'),
 					'js_error' => __('JS error:', 'upfront'),

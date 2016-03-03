@@ -133,6 +133,9 @@ class Upfront_MediaServer extends Upfront_Server {
 			'insert_options' => __('Insert Options', 'upfront'),
 			'image_inserts' => __('Image Inserts', 'upfront'),
 			'wp_default' => __('WP Default', 'upfront'),
+			'confirm_delete_items' => __("Are you sure you want to delete selected items?", 'upfront'),
+			'on_this_page' => __("on this page", 'upfront'),
+			'display' => __('Display', 'upfront'),
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)
@@ -300,6 +303,11 @@ class Upfront_MediaServer extends Upfront_Server {
 		while (file_exists("{$pfx}{$filename}")) {
 			$filename = rand() . $filename;
 		}
+
+		// Clean up the file name
+		$raw_filename = $filename;
+		$filename = Upfront_UploadHandler::to_clean_file_name($filename);
+
 		file_put_contents("{$pfx}{$filename}", $image);
 		$data = getimagesize("{$pfx}{$filename}");
 		if (empty($data['mime']) || !preg_match('/^image\//i', $data['mime'])) {
@@ -312,7 +320,7 @@ class Upfront_MediaServer extends Upfront_Server {
 		$attachment = array(
 			'guid' => $wp_upload_dir['url'] . '/' . basename($filename),
 			'post_mime_type' => $wp_filetype['type'],
-			'post_title' => preg_replace('/\.[^.]+$/', '', basename($filename)),
+			'post_title' => preg_replace('/\.[^.]+$/', '', basename($raw_filename)),
 			'post_content' => '',
 			'post_status' => 'inherit'
 		);
@@ -380,8 +388,7 @@ class Upfront_MediaServer extends Upfront_Server {
 		$data = stripslashes_deep($_POST);
 		$data['type'] = !empty($data['type']) ? $data['type'] : array('images');
 		$query = Upfront_MediaCollection::apply_filters($data);
-		if (!$query->is_empty()) $this->_out(new Upfront_JsonResponse_Success($query->to_php()));
-		else $this->_out(new Upfront_JsonResponse_Error("No items"));
+		$this->_out(new Upfront_JsonResponse_Success($query->to_php()));
 	}
 
 	public function list_theme_images () {
@@ -443,6 +450,10 @@ class Upfront_MediaServer extends Upfront_Server {
 		$dirPath = trailingslashit(trailingslashit(get_stylesheet_directory()) . $relpath);
 		$dirUrl = trailingslashit(get_stylesheet_directory_uri()) . trailingslashit($relpath);
 
+		// Clean up the file name
+		$raw_filename = $filename;
+		$filename = Upfront_UploadHandler::to_clean_file_name($filename);
+
 		$destination = $dirPath . $filename;
 		move_uploaded_file($file["tmp_name"], $destination);
 		if (!preg_match('/\.svg$/i', $filename)) {
@@ -457,7 +468,7 @@ class Upfront_MediaServer extends Upfront_Server {
 			'ID' => rand(1111,9999), //Whatever high number is ok
 			'original_url' => $dirUrl . $filename,
 			'thumbnail' => '<img style="max-height: 75px; max-width: 75px" src="' . $dirUrl . $filename . '">',
-			'post_title' => $filename,
+			'post_title' => $raw_filename,
 			'labels' => array()
 		)));
 	}
@@ -536,11 +547,16 @@ class Upfront_MediaServer extends Upfront_Server {
 						$this->_out(new Upfront_JsonResponse_Error("Error uploading the media item: {$media->error}"));
 				}
 				$filename = $media->name;
+
+				// Clean up the file name
+				$raw_filename = $filename;
+				$filename = Upfront_UploadHandler::to_clean_file_name($filename);
+
 				$wp_filetype = wp_check_filetype(basename($filename), null);
 				$attachment = array(
 						'guid' => $wp_upload_dir['url'] . '/' . basename($filename),
 						'post_mime_type' => $wp_filetype['type'],
-						'post_title' => preg_replace('/\.[^.]+$/', '', basename($filename)),
+						'post_title' => preg_replace('/\.[^.]+$/', '', basename($raw_filename)),
 						'post_content' => '',
 						'post_status' => 'inherit'
 				);

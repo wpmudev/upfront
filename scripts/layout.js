@@ -477,7 +477,7 @@ jQuery(document).ready(function($){
 				}
 			}
 		});
-		$('.upfront-output-object .uf-post .thumbnail').each(function(){
+		$('.upfront-output-object .uf-post .thumbnail, .uf-post-data .upostdata-part.thumbnail').each(function(){
 			var height = $(this).height(),
 				width = $(this).width(),
 				$img = $(this).find('img'),

@@ -1295,6 +1295,7 @@ define([
 			return '';
 		},
 		render: function () {
+			var me = this;
 			if(this.active)
 				this.$el.addClass('active');
 			else
@@ -1302,11 +1303,27 @@ define([
 			this.$el.html('<h3 class="sidebar-panel-title">' + this.get_title() + '</h3>');
 			this.$el.append('<div class="sidebar-panel-content" />');
 			this.stop_scroll_propagation(this.$el.find('.sidebar-panel-content'));
+
+			if( this.sections){
+				me.$el.find('.sidebar-panel-title').after("<ul class='sidebar-panel-tabspane'></ul>");
+				this.sections.each(function (section) {
+					section.render();
+					me.$el.find('.sidebar-panel-tabspane').append( "<li data-target='" + section.cid +  "' class='sidebar-panel-tab'>" +  section.get_title() +  "</li>");
+					me.$el.find('.sidebar-panel-content').append("<div class='sidebar-tab-content' id='" + section.cid +"'></div>");
+					me.$el.find(".sidebar-panel-content").find(".sidebar-tab-content").last().html(section.el);
+				});
+			}
+
 			if ( this.on_render ) this.on_render();
 			// Make first tab active
 			this.$el.find(".sidebar-panel-tab").first().addClass("active");
 			// show first tab content
 			this.$el.find(".sidebar-tab-content").first().show();
+		},
+		get_section: function (name) {
+			if ( !this.sections )
+				return false;
+			return this.sections.find(function(section){ return section.get_name() == name; });
 		},
 		on_click: function () {
 			$('.sidebar-panel').not(this.$el).removeClass('expanded');
@@ -1314,7 +1331,7 @@ define([
 
 			// take care of tabs if any
 			$('.sidebar-panel').not(this.$el).find(".sidebar-panel-tabspane").hide();
-			this.$el.find(".sidebar-panel-tabspane").show();
+			this.$el.find(".sidebar-panel-tabspane").not(".sidebar-panel-tabspane-hidden").show();
 		},
 		show_tab : function( e ){
 			var tab = "#" + $(e.target).data("target");
@@ -1326,6 +1343,35 @@ define([
 			this.$el.find(tab).show();
 		}
 	}));
+
+	var SidebarPanel_Settings_Item = Backbone.View.extend({
+		"tagName": "div",
+		"className": "panel-setting upfront-no-select",
+		render: function () {
+			if ( this.on_render ) this.on_render();
+		}
+	});
+
+	var SidebarPanel_Settings_Section = Backbone.View.extend({
+		"tagName": "div",
+		"className": "panel-section",
+		initialize: function () {
+			this.settings = _([]);
+		},
+		get_title: function () {},
+		render: function () {
+			var me = this;
+//			this.$el.html('<h4 class="panel-section-title">' + this.get_title() + '</h4>');
+            this.$el.html("");
+			this.$el.append('<div class="panel-section-content" />');
+			this.settings.each(function (setting) {
+				setting.render();
+				setting.delegateEvents();
+				me.$el.find('.panel-section-content').append(setting.el);
+			});
+			if ( this.on_render ) this.on_render();
+		}
+	});
 
 	var DraggableElement = Backbone.View.extend({
 		"tagName": "span",
@@ -1356,6 +1402,12 @@ define([
 		"className": "sidebar-panel sidebar-panel-elements",
 		initialize: function () {
 			this.active = true;
+			this.sections = _([
+				new SidebarPanel_Settings_Section_LayoutElements({"model": this.model}),
+				new SidebarPanel_Settings_Section_DataElements({"model": this.model}),
+				new SidebarPanel_Settings_Section_PluginsElements({"model": this.model})
+			]);
+
 			this.elements = _([]);
 			Upfront.Events.on("command:layout:save", this.on_save, this);
 			Upfront.Events.on("command:layout:save_as", this.on_save, this);
@@ -1380,7 +1432,6 @@ define([
 			Upfront.Events.on("command:redo", this.reset_modules, this);
 		},
 		on_render: function () {
-			this.elements.each(this.render_element, this);
 			this.reset_modules();
 			if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.THEME )
 				this.$el.find('.sidebar-panel-title').trigger('click');
@@ -1392,10 +1443,43 @@ define([
 			else
 				this.reset_modules();
 		},
+		get_elements: function () {
+			var elements = [];
+			if ( this.sections ){
+				this.sections.each(function(section){
+					if ( section.elements )
+						elements.push(section.elements.value());
+				});
+			}
+			return _( _.flatten(elements) );
+		},
+		update_sections: function () {
+			if ( ! this.sections )
+				return;
+			var me = this,
+				section_have_els = 0;
+			this.sections.each(function(section){
+				if ( section.elements && section.elements.size() > 0 ){
+					section_have_els++;
+				}
+				else {
+					me.$el.find('.sidebar-panel-tabspane [data-target='+section.cid+']').hide();
+					me.$el.find('.sidebar-panel-content #'+section.cid).hide();
+				}
+			});
+			if ( section_have_els <= 1 ){
+				this.$el.find('.sidebar-panel-tabspane').addClass('sidebar-panel-tabspane-hidden');
+			}
+			else {
+				this.$el.find('.sidebar-panel-tabspane').removeClass('sidebar-panel-tabspane-hidden');
+			}
+		},
 		reset_modules: function () {
 			var regions = this.model.get("regions"),
-				region = regions ? regions.get_by_name('shadow') : false
+				region = regions ? regions.get_by_name('shadow') : false,
+				elements = this.get_elements()
 			;
+			this.update_sections();
 			if (!regions) return false;
 			if ( ! region ){
 				region = new Upfront.Models.Region({
@@ -1405,9 +1489,10 @@ define([
 				});
 				this.model.get('regions').add( region );
 			}
-			if ( region.get("modules").length != this.elements.size() ) {
+			//console.log(elements.value())
+			if ( region.get("modules").length != elements.size() ) {
 				var modules = region.get("modules");
-				this.elements.each(function (element) {
+				elements.each(function (element) {
 					var found = false;
 					modules.forEach(function(module){
 						if ( module.get('shadow') == element.shadow_id )
@@ -1418,6 +1503,22 @@ define([
 					}
 				}, this);
 			}
+		}
+	});
+
+	var SidebarPanel_Settings_Section_LayoutElements = SidebarPanel_Settings_Section.extend({
+		initialize: function () {
+			this.settings = _([]);
+			this.elements = _([]);
+		},
+		get_name: function () {
+			return 'layout';
+		},
+		get_title: function () {
+			return "Layout";
+		},
+		on_render: function () {
+			this.elements.each(this.render_element, this)
 		},
 		render_element: function (element) {
 			if(! element.draggable)
@@ -1427,7 +1528,7 @@ define([
 				me = this;
 			element.remove();
 			element.render();
-			this.$el.find('.sidebar-panel-content').append(element.el);
+			this.$el.find('.panel-section-content').append(element.el);
 			element.$el.on('mousedown', function (e) {
 				// Trigger shadow element drag
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
@@ -1491,6 +1592,25 @@ define([
 					$element_drag_wrapper.remove();
 				});
 			});
+		}
+	});
+
+
+	var SidebarPanel_Settings_Section_DataElements = SidebarPanel_Settings_Section_LayoutElements.extend({
+		get_name: function () {
+			return 'data';
+		},
+		get_title: function () {
+			return "Data";
+		}
+	});
+
+	var SidebarPanel_Settings_Section_PluginsElements = SidebarPanel_Settings_Section_LayoutElements.extend({
+		get_name: function () {
+			return 'plugins';
+		},
+		get_title: function () {
+			return "Plugins";
 		}
 	});
 
@@ -2266,22 +2386,23 @@ define([
         on_render : function(){
             var self = this,
                 unset_color_index;
-            this.theme_colors = Theme_Colors,
+            this.theme_colors = Theme_Colors;
             this.theme_color_range = Theme_Colors.range;
             this.$el.html( this.template({
                 colors :  this.theme_colors.colors.toJSON(),
                 range  :  Theme_Colors.range
             } ) );
 
-            if( this.theme_colors.colors.length < 10 ){
-                this.add_empty_picker(this.theme_colors.colors.length);
-            }
-            unset_color_index = this.theme_colors.colors.length + 1;
+            //if( this.theme_colors.colors.length < 10 ){
+            //    this.add_empty_picker(this.theme_colors.colors.length);
+            //}
+			this.add_previous_pickers();
+            unset_color_index = this.theme_colors.colors.length;
             while( unset_color_index < 10 ){
                 this.add_unset_color(unset_color_index);
                 unset_color_index++;
             }
-            this.add_previous_pickers();
+
             this.add_slider();
         },
         add_empty_picker : function(index){
@@ -2298,7 +2419,7 @@ define([
                         if (value && "undefined" !== typeof tinycolor) {
                         	color = tinycolor(value);
                         }
-                        self.add_new_color(color);
+                        self.add_new_color(color, index);
                     },
                     change: function (color) {
                     	if (!_.isObject(color)) return false;
@@ -2311,12 +2432,35 @@ define([
                 .prepend('<span class="theme-colors-color-name">ufc' + index + '</span>');
         },
         add_unset_color : function(index){
-            this.$('#theme-colors-swatches').append(
-                '<span class="theme_colors_unset_color">' +
-                    '<span class="theme-colors-color-name">ufc' + index + '</span>' +
-                    '<span class="theme-colors-color-no-color"><span></span></span>' +
-                '</span>'
-            );
+			var self = this,
+				empty_picker = new Field_Color({
+					className : 'upfront-field-wrap upfront-field-wrap-color sp-cf theme_color_swatch',
+					hide_label : true,
+					default_value: 'rgba(0, 0, 0, 0)',
+					blank_alpha: 0,
+					spectrum: {
+						choose: function (color) {
+							if (!_.isObject(color)) return false;
+							var value = empty_picker.get_value();
+							if (value && "undefined" !== typeof tinycolor) {
+								color = tinycolor(value);
+							}
+							self.add_new_color(color, index);
+						},
+						change: function (color) {
+							if (!_.isObject(color)) return false;
+							empty_picker.update_input_val(color.toHexString())
+						}
+					}
+				});
+			empty_picker.render();
+
+			empty_picker.$(".sp-preview").addClass("uf-unset-color");
+
+			this.$('#theme-colors-swatches').append( empty_picker.$el );
+			empty_picker.$el.wrap( '<span class="theme-colors-color-picker color-index">'.replace( "index", index) );
+			empty_picker.$el.closest('.theme-colors-color-picker').prepend( '<span class="theme-colors-color-name">ufcindex</span>'.replace( "index", index) );
+
         },
         add_previous_pickers : function(){
             var self = this;
@@ -2363,9 +2507,22 @@ define([
                 $this.prepend('<span class="theme-colors-color-name">ufc' + index + '</span>')
            });
         },
-        add_new_color : function( color ){
+        add_new_color : function( color, index ){
             var percentage = parseInt( Theme_Colors.range, 10) / 100 || 0;
-
+            /**
+            * If slots before the 'index' are empty, fill them up with rgba(0,0,0, 0)
+            * This will make sure the 'color' remains at the 'index'
+            **/
+            for ( var __next_index = this.theme_colors.colors.length; __next_index < index; __next_index++ ) { 
+			    this.theme_colors.colors.push({
+                    color : "#000000",
+                    prev : "#000000",
+                    highlight : "#000000",
+                    shade : "#000000",
+                    alpha: 0
+                });
+			}
+           
             var self = this,
                 model = this.theme_colors.colors.add({
                     color : color.toHexString(),
@@ -2413,18 +2570,18 @@ define([
             }
             $wrapper.append(new_color_picker.$el);
 
-            this.$(".theme_colors_empty_picker").before($wrapper);
-            this.$(".theme_colors_empty_picker").next().remove();
-
-            this.$(".theme_colors_empty_picker").find('.theme-colors-color-name').html( 'ufc' + ( colorIndex + 1 ) );
-
-            this.$(".theme_colors_empty_picker").find('.sp-preview').css({
-                backgroundColor: 'inherit'
-            });
-
-            if ( Theme_Colors.colors.length === 10 ) {
-                this.$(".theme_colors_empty_picker").remove();
-            }
+            //this.$(".theme_colors_empty_picker").before($wrapper);
+            //this.$(".theme_colors_empty_picker").next().remove();
+            //
+            //this.$(".theme_colors_empty_picker").find('.theme-colors-color-name').html( 'ufc' + ( colorIndex + 1 ) );
+            //
+            //this.$(".theme_colors_empty_picker").find('.sp-preview').css({
+            //    backgroundColor: 'inherit'
+            //});
+            //
+            //if ( Theme_Colors.colors.length === 10 ) {
+            //    this.$(".theme_colors_empty_picker").remove();
+            //}
             this.$("#theme-colors-no-color-notice").hide();
             this.render_bottom();
 			this.on_save();
@@ -2557,16 +2714,6 @@ define([
 			return l10n.theme_settings;
 		},
 		on_render: function () {
-			var me = this;
-			if( this.sections){
-					me.$el.find('.sidebar-panel-title').after("<ul class='sidebar-panel-tabspane'></ul>");
-			}
-			this.sections.each(function (section) {
-					section.render();
-					me.$el.find('.sidebar-panel-tabspane').append( "<li data-target='" + section.cid +  "' class='sidebar-panel-tab'>" +  section.get_title() +  "</li>");
-					me.$el.find('.sidebar-panel-content').append("<div class='sidebar-tab-content' id='" + section.cid +"'></div>");
-					me.$el.find(".sidebar-panel-content").find(".sidebar-tab-content").last().html(section.el);
-			});
 			if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.THEME )
 				this.$el.find('.sidebar-panel-title').trigger('click');
 		}

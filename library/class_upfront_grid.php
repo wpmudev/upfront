@@ -188,7 +188,7 @@ class Upfront_Grid {
 				$point_css .= $region_view->get_style_for($point, $this->get_grid_scope());
 
 				$this->_exceptions = array();
-				$point_css .= $this->_apply_modules($region, $region_col, false);
+				$point_css .= $this->_apply_modules($region['modules'], $region['wrappers'], $region_col, false);
 				$point_css .= $point->apply_col($region_col, $region, $this->get_grid_scope(), '#upfront-region-'.$name);
 				$point_css .= $point->apply_bg_paddings($region, $this->get_grid_scope(), '#upfront-region-'.$name);
 				if ( $region_row && !in_array('row', $this->_exceptions) ) {
@@ -209,11 +209,9 @@ class Upfront_Grid {
 		return $css;
 	}
 
-	protected function _apply_modules ($data, $col, $breakpoint = false) {
+	protected function _apply_modules ($modules, $wrappers, $col, $breakpoint = false) {
 		$breakpoint = $breakpoint !== false ? $breakpoint : $this->_current_breakpoint;
 		$point_css = '';
-		$wrappers = $data['wrappers'];
-		$modules = $data['modules'];
 		if ( !$breakpoint->is_default() ) {
 			foreach ($wrappers as $w => $wrapper) {
 				$wrapper_id = upfront_get_property_value('wrapper_id', $wrapper);
@@ -250,33 +248,38 @@ class Upfront_Grid {
 			if ( isset($module['modules']) && is_array($module['modules']) ){ // rendering module group
 				$module_view = new Upfront_Module_Group($module);
 				$point_css .= $module_view->get_style_for($breakpoint, $this->get_grid_scope());
-				$point_css .= $this->_apply_modules($module, $module_col, false);
+				$point_css .= $this->_apply_modules($module['modules'], $module['wrappers'], $module_col, false);
 				$point_css .= $breakpoint->apply_paddings($module, $this->get_grid_scope(), 'element_id');
 			}
 			else {
-				foreach ($module['objects'] as $object) {
-					// See if this is posts/this post element, then add 'row' to exceptions list and disable height rendering
-					$type = upfront_get_property_value('type', $object);
-					if ( preg_match("/(PostsModel|ThisPostModel|PostDataPartModel)/", $type) ) {
-						if ( 'PostDataPartModel' == $type ) {
-							$part_type = upfront_get_property_value('part_type', $object);
-							if ( 'content' == $part_type ) {
+				if ( isset($module['objects']) && is_array($module['objects']) ) {
+					foreach ($module['objects'] as $object) {
+						// See if this is posts/this post element, then add 'row' to exceptions list and disable height rendering
+						$type = upfront_get_property_value('type', $object);
+						if ( preg_match("/(PostsModel|ThisPostModel|PostDataPartModel)/", $type) ) {
+							if ( 'PostDataPartModel' == $type ) {
+								$part_type = upfront_get_property_value('part_type', $object);
+								if ( 'content' == $part_type ) {
+									$is_post_object = true;
+								}
+							}
+							else {
 								$is_post_object = true;
 							}
+							if ( $is_post_object && !in_array('row', $this->_exceptions) ) {
+								$this->_exceptions[] = 'row';
+							}
 						}
-						else {
-							$is_post_object = true;
+						else if ( 'UspacerModel' == $type ) {
+							$is_spacer = true;
 						}
-						if ( $is_post_object && !in_array('row', $this->_exceptions) ) {
-							$this->_exceptions[] = 'row';
+						if ( !$is_spacer ) {
+							if ( isset($object['objects']) && is_array($object['objects']) ){ // rendering object group
+								$point_css .= $this->_apply_modules($object['objects'], $object['wrappers'], $module_col, false);
+							}
+							$point_css .= $breakpoint->apply($object, $this->get_grid_scope(), 'element_id', $module_col, false, ($is_post_object ? $this->_exceptions : array()));
+							$point_css .= $breakpoint->apply_paddings($object, $this->get_grid_scope(), 'element_id', '#' . $module_id);
 						}
-					}
-					else if ( 'UspacerModel' == $type ) {
-						$is_spacer = true;
-					}
-					if ( !$is_spacer ) {
-						$point_css .= $breakpoint->apply($object, $this->get_grid_scope(), 'element_id', $module_col, false, ($is_post_object ? $this->_exceptions : array()));
-						$point_css .= $breakpoint->apply_paddings($object, $this->get_grid_scope(), 'element_id', '#' . $module_id);
 					}
 				}
 			}
@@ -364,14 +367,7 @@ class Upfront_Grid {
 						$prev_wrapper_id = upfront_get_property_value('wrapper_id', $prev_wrapper_data);
 						$prev_wrapper_modules = $this->_find_modules_with_wrapper($prev_wrapper_id, $modules);
 						foreach ( $prev_wrapper_modules as $nwm => $mod ) {
-							if( ! empty( $mod['objects'] ) ) {
-								foreach ($mod['objects'] as $obj) {
-									$type = upfront_get_property_value('type', $obj);
-									if ( 'UspacerModel' == $type ) {
-										$prev_is_spacer = true;
-									}
-								}
-							}
+							$prev_is_spacer = $this->_is_module_spacer($mod);
 							if ( $prev_is_spacer && !$is_clear ) {
 								$prev_spacer_id = upfront_get_property_value('element_id', $mod);
 								if ( !in_array($prev_spacer_id, $rendered_spacers) ) {
@@ -384,14 +380,7 @@ class Upfront_Grid {
 						$next_wrapper_id = upfront_get_property_value('wrapper_id', $next_wrapper_data);
 						$next_wrapper_modules = $this->_find_modules_with_wrapper($next_wrapper_id, $modules);
 						foreach ( $next_wrapper_modules as $nwm => $mod ) {
-							if( ! empty( $mod['objects'] ) ) {								
-								foreach ($mod['objects'] as $obj) {
-									$type = upfront_get_property_value('type', $obj);
-									if ( 'UspacerModel' == $type ) {
-										$next_is_spacer = true;
-									}
-								}
-							}
+							$next_is_spacer = $this->_is_module_spacer($mod);
 							if ( $next_is_spacer ) {
 								$next_spacer_id = upfront_get_property_value('element_id', $mod);
 							}
@@ -472,6 +461,20 @@ class Upfront_Grid {
 		$module_hide = ( $breakpoint->is_default() ) ? upfront_get_property_value('hide', $module) : $this->_get_breakpoint_data($module, 'hide');
 		$module_hide = $module_hide === false ? $module_default_hide : $module_hide;
 		return $module_hide;
+	}
+
+	protected function _is_module_spacer ($module) {
+		if( ! empty( $module['objects'] ) ) {
+			foreach ($module['objects'] as $obj) {
+				$type = upfront_get_property_value('type', $obj);
+				if ( 'UspacerModel' == $type ) return true;
+			}
+		}
+		else {
+			$type = upfront_get_property_value('type', $module);
+			if ( 'UspacerModel' == $type ) return true;
+		}
+		return false;
 	}
 
 	protected function _get_available_container_col ($container, $regions, $breakpoint = false) {

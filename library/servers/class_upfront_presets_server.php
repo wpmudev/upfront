@@ -211,6 +211,8 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 		$styles = '';
 		foreach ($presets as $preset) {
+			if (!file_exists($this->get_style_template_path())) continue; // Don't bother if we don't have the styles
+
 			if (isset($preset['breakpoint']) && isset($preset['breakpoint']['tablet'])) {
 				$preset['tablet'] = array();
 				foreach($preset['breakpoint']['tablet'] as $name=>$property) {

@@ -1,0 +1,68 @@
+<?php if (!empty($properties['static-categories-use-typography'])) { ?>
+
+.preset-<?php echo $properties['id'] ?> .upfront-post-data-part .upostdata-part.post_categories, .preset-<?php echo $properties['id'] ?> .upfront-post-data-part .upostdata-part.post_categories a {
+
+	<?php if (!empty($properties['static-categories-font-family'])) { ?>
+		font-family: <?php echo $properties['static-categories-font-family'] ?>;
+	<?php } ?>
+	
+	<?php if (!empty($properties['static-categories-style'])) { ?>
+		font-style: <?php echo $properties['static-categories-style'] ?>;
+	<?php } ?>	
+	
+	<?php if (!empty($properties['static-categories-weight'])) { ?>
+		font-weight: <?php echo $properties['static-categories-weight'] ?>;
+	<?php } ?>	
+
+	<?php if (!empty($properties['static-categories-font-size'])) { ?>
+		font-size: <?php echo $properties['static-categories-font-size'] ?>px;
+	<?php } ?>
+
+	<?php if (!empty($properties['static-categories-font-color'])) { ?>
+		color: <?php echo $properties['static-categories-font-color'] ?>;
+	<?php } ?>
+
+	<?php if (!empty($properties['static-categories-line-height'])) { ?>
+		line-height: <?php echo $properties['static-categories-line-height'] ?>;
+	<?php } ?>
+
+}
+
+<?php } ?>
+
+
+
+<?php if (!empty($properties['static-tags-use-typography'])) { ?>
+
+.preset-<?php echo $properties['id'] ?> .upfront-post-data-part .upostdata-part.post_tags, .preset-<?php echo $properties['id'] ?> .upfront-post-data-part .upostdata-part.post_tags a {
+
+	<?php if (!empty($properties['static-tags-font-family'])) { ?>
+		font-family: <?php echo $properties['static-tags-font-family'] ?>;
+	<?php } ?>
+	
+	<?php if (!empty($properties['static-tags-style'])) { ?>
+		font-style: <?php echo $properties['static-tags-style'] ?>;
+	<?php } ?>	
+	
+	<?php if (!empty($properties['static-tags-weight'])) { ?>
+		font-weight: <?php echo $properties['static-tags-weight'] ?>;
+	<?php } ?>	
+
+	<?php if (!empty($properties['static-tags-font-size'])) { ?>
+		font-size: <?php echo $properties['static-tags-font-size'] ?>px;
+	<?php } ?>
+
+	<?php if (!empty($properties['static-tags-font-color'])) { ?>
+		color: <?php echo $properties['static-tags-font-color'] ?>;
+	<?php } ?>
+
+	<?php if (!empty($properties['static-tags-line-height'])) { ?>
+		line-height: <?php echo $properties['static-tags-line-height'] ?>;
+	<?php } ?>
+
+}
+
+<?php } ?>
+
+
+<?php if(!empty($properties['preset_style'])) { ?><?php echo $properties['preset_style'] ?><?php } ?>
