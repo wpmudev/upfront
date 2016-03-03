@@ -87,6 +87,26 @@ define([
 			
 			PresetManager.prototype.setupItems.apply(this, arguments);
 
+			// Make sure we update hidden objects on preset change
+			this.listenTo(this.selectPresetModule, 'upfront:presets:change', function () {
+				this.model.get("objects").trigger("change");
+				var me = this,
+					preset = this.property("preset"),
+					preset_model = this.presets.findWhere({id: preset})
+				;
+				setTimeout(function () {
+					var
+						hidden_parts = preset_model.get("hidden_parts") || [],
+						parts = me.model.get_property_value_by_name("type_parts") || []
+					;
+					_.each(parts, function (part) {
+						me.update_object(part, hidden_parts.indexOf(part) < 0);
+					});
+					me.model.get("objects").trigger("change");
+				});
+			}, this);
+			// Yeah, so that's done
+
 			_.each(this.part_panels, function (panel, idx) {
 				var pnl = new panel({
 					model: preset_model
@@ -95,7 +115,7 @@ define([
 				var me = this;
 				this.listenTo(pnl, "part:hide:toggle", function (part_type, enable) {
 					this.update_object(part_type, (enable ? 1 : 0));
-					this.updatePreset(preset_model.toJSON());
+					//this.updatePreset(preset_model.toJSON()); // Not needed, since we're sending (current local) preset data with request
 				}, this);
 
 				this.settings.push(pnl);
