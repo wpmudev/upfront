@@ -796,6 +796,18 @@ div.uimage-controls i.upfront-icon:before,
 	background-position: -260px -249px;
 }
 
+.upfront-ui .upfront-icon-region-swap:before {
+	background-position: -291px -342px;
+}
+
+.upfront-ui .upfront-icon-region-lock-unlocked:before {
+	background-position: -261px -430px;
+}
+
+.upfront-ui .upfront-icon-region-lock-locked:before {
+	background-position: -261px -460px;
+}
+
 .upfront-ui .upfront-icon-region-nocaption:before {
 	background-position: -701px -458px!important;
 }

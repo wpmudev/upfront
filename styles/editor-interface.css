@@ -9791,6 +9791,18 @@ div.sp-replacer:before {
   height: 24px;
   background-image: url("../img/uf-ui-sprite.svg") !important; }
 
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-more:before {
+  background-position: -290px -460px;
+  width: 24px;
+  height: 24px;
+  opacity: 0.75; }
+
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .upfront-icon-region-more:before {
+  background-position: -290px -521px;
+  width: 24px;
+  height: 24px;
+  opacity: 0.75; }
+
 #upfront-inline-slider-nav {
   position: absolute;
   right: auto;
