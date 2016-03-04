@@ -88,6 +88,7 @@ define([
 				$paddingControl = me.$('.upfront-padding-control'),
 				$paddingTopContainer = $('<div class="upfront-padding-container">' + l10n.top_padding_short + '<span class="upfront-padding-value"></span></div>'),
 				$paddingBottomContainer = $('<div class="upfront-padding-container">' + l10n.bottom_padding_short + '<span class="upfront-padding-value"></span></div>'),
+				$advancedPaddingContainer = $('<div class="upfront-padding-container"></div>'),
 				column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding
 			;
 
@@ -166,6 +167,21 @@ define([
 			me.paddingBottom.render();
 			$paddingBottomContainer.append(me.paddingBottom.$el);
 			$paddingControl.append($paddingBottomContainer);
+
+			if ( me.model.attributes.modules === undefined ) {
+			
+				me.advancedPadding = new Upfront.Views.Editor.Field.Button({
+					className: 'upfront-field-wrap upfront-field-wrap-button upfront-field-advanced-padding',
+					compact: true,
+					label: l10n.advanced_padding,
+					name: 'advanced-padding'
+				});
+				
+				me.advancedPadding.render();
+				$advancedPaddingContainer.append(me.advancedPadding.$el);
+				$paddingControl.append($advancedPaddingContainer);
+				
+			} 
 
 			$paddingTopContainer.on('mousedown', function() {
 				Upfront.data.currentEntity.padding_hint_locked = true;

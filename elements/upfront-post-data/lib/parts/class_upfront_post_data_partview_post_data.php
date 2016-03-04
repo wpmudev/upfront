@@ -77,11 +77,18 @@ class Upfront_Post_Data_PartView_Post_data extends Upfront_Post_Data_PartView {
 	 * @return string
 	 */
 	public function expand_content_template () {
+/*
+// @NOTE: Commented this portion out on 2016-03-03
 		$length = isset($this->_data['content_length'])
         	? (int)$this->_data['content_length']
         	: (int)Upfront_Posts_PostsData::get_default('content_length')
         ;
-		//$this->_data['content'] = !empty($this->_data['content']) ? $this->_data['content'] : 'content'; // Make sure it's the content we're dealing with
+// @NOTE: We don't need content vs excerpt in here, that's the premise
+*/
+        // @NOTE: no more length detection
+        $length = false;
+        // @NOTE: also see the JS part in js/modules-post_data.js
+        
 		$this->_data['content'] = !empty($length) ? 'excerpt' : 'content';
 		$content = $this->_get_content_value($length);
 
