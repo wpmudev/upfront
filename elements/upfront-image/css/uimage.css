@@ -366,10 +366,14 @@ a.image-edit-button:link {
 	margin-bottom: 5px;
 	cursor: pointer;
 	color:#304050;
-	padding:0 10px;
+	height: 30px;
+	width: 90px;
+	color: #fff;
 	font-size: 14px;
+	line-height: 32px;
 	clear: both;
 	float: left;
+	text-align: center;
 }
 
 #image-edit-buttons-bottom a {

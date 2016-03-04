@@ -116,14 +116,15 @@ define([
 			};
 		},
 		
-		createImageControl: function(){
+		createImageControl: function(options) {
 			var control = new Upfront.Views.Editor.InlinePanels.ImageControl(),
-				me = this;
+				me = this,
+				cols = options.element_cols;
 
 			var cropControls = new CropControls({
 				model: this.model
 			});
-			
+
 			this.listenTo(cropControls, 'crop:swap:image', this.changeImage);
 			this.listenTo(cropControls, 'crop:reset:image', this.image100);
 			this.listenTo(cropControls, 'crop:fit:image', this.fitImage);
@@ -134,10 +135,55 @@ define([
 			control.tooltip = l10n.btn.image_tooltip;
 
 			control.render();
+			
+			setTimeout(function() {
+
+				if(cols < 5) {
+					me.$el.find('.image-edit-button').css({
+						width: 50,
+					});
+					
+					me.$el.find('.image-ok-button').css({
+						left: options.maskOffset.left + (options.maskSize.width - 50)
+					});
+				}
+
+				// If element size cols are 3 and 4
+				if(cols < 5 && cols > 2) {
+					me.$el.find('#image-edit-buttons').css({
+						top: options.maskOffset.top,
+						left: options.maskOffset.left - 36
+					});
+
+					me.$el.find('.image-align-points').css({
+						left: options.maskOffset.left
+					});
+				}
+
+				// If element size cols are less than 3
+				if(cols < 3) {
+					me.$el.find('#image-edit-buttons').css({
+						top: options.maskOffset.top,
+						left: options.maskOffset.left - 36
+					});
+
+					var dots = me.$el.find('.image-align-points');
+					
+					dots.css({
+						left: (options.maskOffset.left - (dots.width() / 2)) + (options.maskSize.width / 2)
+					});
+
+					me.$el.find('.image-ok-button').css({
+						top: options.maskOffset.top,
+						left: options.maskOffset.left + (options.maskSize.width + 10)
+					});
+				}
+			
+			}, 100);
 
 			return control;
 		},
-		
+
 		pointAlignment: function(e) {
 			var element = $(e.target),
 				position = element.data('alignment');
@@ -272,8 +318,8 @@ define([
 				this.response = $.Deferred();
 				$('body').append(this.$el);
 			}
-			
-			imageControl = this.createImageControl();
+
+			imageControl = this.createImageControl(options);
 
 			this.$el.find('#image-edit-buttons').prepend($('<div class="uimage-edit-controls upfront-ui"></div>').append(imageControl.$el));
 

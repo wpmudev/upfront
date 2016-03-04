@@ -48,7 +48,7 @@
 		<!-- <div class="image-edit-rotate image-edit-control"><i class=""></i></div> -->
 	</div>
 	
-	<div id="image-edit-buttons" style="position: absolute; top:{{maskOffset.top - 30}}px; left: {{maskOffset.left}}px;">		
+	<div id="image-edit-buttons" style="position: absolute; top:{{maskOffset.top - 28}}px; left: {{maskOffset.left}}px;">		
 		&nbsp;
 	</div>
 	<div class="image-align-points" style="position: absolute; top:{{maskOffset.top - 50}}px; left: {{(maskOffset.left - 50) + (maskSize.width / 2)}}px; z-index: 50;">
@@ -68,7 +68,7 @@
 			<a id="align-bottom-right" class="image-align-point bottom-right-point" data-alignment="bottom-right">&nbsp;</a>
 		</div>
 	</div>
-	<div class="image-ok-button" style="position: absolute; top:{{maskOffset.top - 30}}px; left: {{maskOffset.left + (maskSize.width - 50)}}px; z-index: 51;">
+	<div class="image-ok-button" style="position: absolute; top:{{maskOffset.top - 40}}px; left: {{maskOffset.left + (maskSize.width - 90)}}px; z-index: 51;">
 		{[ for (var i = 0; i < buttons.length; i++) { ]}
 			<a class="image-edit-button" id="{{buttons[i].id}}" title="{{buttons[i].tooltip}}">{{buttons[i].text}}</a>
 		{[ } ]}

@@ -1409,6 +1409,8 @@ define([
 			}
 
 			options.element_id = me.model.get_property_value_by_name('element_id');
+			
+			options.element_cols = me.get_element_columns();
 
 			Upfront.Views.Editor.ImageEditor.open(options)
 				.done(function(result){
