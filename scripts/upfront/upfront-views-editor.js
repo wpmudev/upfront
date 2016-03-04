@@ -3370,9 +3370,14 @@
 
 			toggleSidebar: function(instant){
 				var me = this,
+					margined_css = {marginLeft: "260px"};
+					unmargined_css = {marginLeft: "0px"};
 					_margin = Upfront.Util.isRTL() ? "marginRight" : "marginLeft";
 
 				if(!this.visible){
+					if( Upfront.Util.isRTL())
+						margined_css = { marginRight: "260px" };
+
 					$('#sidebar-ui').removeClass('collapsed').stop().animate({width: '260px'}, 300);
 					//Remove collapsed class always after region editor is closed
 					$('#element-settings-sidebar').removeClass('collapsed');
@@ -3382,7 +3387,7 @@
 						$('#element-settings-sidebar').removeClass('collapsed').stop().animate({width: '260px'}, 300);
 					}
 
-					$('#page').stop().animate({_margin: '260px'}, 300, function(){ Upfront.Events.trigger('sidebar:toggle:done', me.visible); });
+					$('#page').stop().animate(margined_css, 300, function(){ Upfront.Events.trigger('sidebar:toggle:done', me.visible); });
 
 					this.$('#sidebar-ui-toggler-handle').removeClass().addClass('sidebar-ui-hide');
 					this.visible = 1;
@@ -3391,7 +3396,10 @@
 					$('#sidebar-ui, #element-settings-sidebar').stop().animate({width: '0px'}, 300, function(){
 						$('#sidebar-ui, #element-settings-sidebar').addClass('collapsed');
 					});
-					$('#page').stop().animate({_margin: "0px"}, 300, function(){ Upfront.Events.trigger('sidebar:toggle:done', me.visible); });
+					if( Upfront.Util.isRTL())
+						unmargined_css = { marginRight: "0px" };
+
+					$('#page').stop().animate(unmargined_css, 300, function(){ Upfront.Events.trigger('sidebar:toggle:done', me.visible); });
 
 					this.$('#sidebar-ui-toggler-handle').removeClass().addClass('sidebar-ui-show');
 					this.visible = 0;
