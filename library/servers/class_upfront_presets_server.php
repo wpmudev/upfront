@@ -253,6 +253,13 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		return $styles;
 	}
 
+	/**
+	 * Get all theme presets presets data
+	 *
+	 * Theme presets are distributed with the theme
+	 *
+	 * @return mixed Array of preset hashes, or (bool)false on failure
+	 */
 	public function get_theme_presets() {
 		$settings = Upfront_ChildTheme::get_settings();
 		//Get presets distributed with the theme
@@ -264,6 +271,11 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		return $theme_presets;
 	}
 
+	/**
+	 * Gets a list of theme preset IDs
+	 *
+	 * @return mixed Array of preset IDs or (bool)false on failure
+	 */
 	public function get_theme_presets_names() {
 
 		//Get presets distributed with the theme
@@ -280,10 +292,17 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		return $theme_preset_names;
 	}
 
+	/**
+	 * Gets individual theme preset data by its ID
+	 *
+	 * @param string $preset Preset ID to use
+	 *
+	 * @return mixed A preset data map, or (bool)false on failure
+	 */
 	public function get_theme_preset_by_id($preset) {
 		$theme_presets = $this->get_theme_presets();
 
-		if(empty($theme_preset)) {
+		if(empty($theme_presets)) {
 			return false;
 		}
 
@@ -296,6 +315,13 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		return false;
 	}
 
+	/**
+	 * Returns individual preset data by its ID
+	 *
+	 * @param string $preset Preset ID to use
+	 *
+	 * @return mixed A preset data map, or (bool)false on failure
+	 */
 	public function get_preset_by_id($preset_id) {
 		$presets = $this->get_presets();
 

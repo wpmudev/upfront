@@ -40,7 +40,7 @@ var PostDataEditor = null; // Store editor instance
 var PostDataPartView = Upfront.Views.ObjectView.extend({
 	init: function () {
 	},
-	
+
 	on_render: function () {
 		//console.log(this.el, this)
 	},
@@ -50,12 +50,12 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 		if ( prop && prop.id == 'preset' ) return;
 		this.constructor.__super__.update.call(this, prop, options);
 	},
-	
+
 	render_view: function (markup) {
 		this.$el.find('.upfront-object-content').empty().append(markup);
 		this.prepare_editor();
 	},
-	
+
 	prepare_editor: function () {
 		var me = this,
 			type = this.model.get_property_value_by_name('part_type'),
@@ -79,7 +79,7 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 	getControlItems: function () {
 		return _([]);
 	},
-	
+
 	/**
 	 * Trigger edit if it's in the middle of editing (re-rendering whie editing)
 	 */
@@ -102,7 +102,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		this.listenTo(this.model.get('objects'), 'change', this.on_render);
 		this.listenTo(this.model.get('objects'), 'add', this.on_render);
 		this.listenTo(this.model.get('objects'), 'remove', this.on_render);
-		
+
 		/*_.extend(this.events, {
 			'click .upfront-post-part-trigger': 'on_edit_click'
 		});*/
@@ -110,7 +110,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 
 		this.prepare_editor();
 	},
-	
+
 	get_extra_buttons: function(){
 		//return '<a href="#" title="' + l10n.edit_post_parts + '" class="upfront-icon-button upfront-icon-button-nav upfront-post-part-trigger"></a>';
 		return '';
@@ -123,7 +123,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			this.createControl('settings', l10n.settings, 'on_settings_click')
 		]);
 	},
-	
+
 	on_edit_click: function (e) {
 		if( typeof e !== "undefined" ){
 			e.preventDefault();
@@ -147,38 +147,33 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 
 	render_view: function (type) {
 		var preset = this.model.get_property_value_by_name('preset'),
-			classes = this.$el.attr('class'),
-			existing_preset_class = classes.match(/preset-[^ ]+/g),
 			me = this
 		;
-		if (preset) {
-			if (existing_preset_class && existing_preset_class.length) {
-				_.each(existing_preset_class, function (cls) {
-					me.$el.removeClass($.trim(cls));
-				});
-			}
-			this.$el.addClass('preset-' + preset);
+
+		if (this.presetClass) {
+			me.$el.removeClass(this.presetClass);
 		}
-		
+		this.$el.addClass(preset);
+		this.presetClass = preset;
+
 		if ( this.child_view ) {
 			this.child_view.render();
 			return;
 		}
 		type = type || Views.DEFAULT;
-		var me = this,
-			view = Views[type]
+		var view = Views[type]
 			? new Views[type]({model: this.model})
 			: new Views[Views.DEFAULT]({model: this.model})
 		;
 		view.element = this;
 		view.render();
-		
+
 		this.child_view = view;
 
 		this.$el.find(".upfront-object-group-default").append(view.$el);
 
 	},
-	
+
 	prepare_editor: function () {
 		this.postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
 		if ( !this.postId && "themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.THEME ) {
@@ -206,7 +201,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		this.listenTo(PostDataEditor, 'editor:change:author', this.on_author_change);
 		this.listenTo(PostDataEditor, 'editor:change:date', this.on_date_change);
 	},
-	
+
 	/**
 	 * On cancel handler, do rerender with cached data
 	 */
@@ -214,7 +209,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		if ( ! this.child_view ) return;
 		this.child_view.rerender();
 	},
-	
+
 	/**
 	 * On edit start handler, don't cache data on requested rendering
 	 */
@@ -222,7 +217,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		if ( ! this.child_view ) return;
 		this.child_view._do_cache = false;
 	},
-	
+
 	/**
 	 * On edit stop handler, do enable caching back
 	 */
@@ -230,24 +225,24 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		if ( ! this.child_view ) return;
 		this.child_view._do_cache = true;
 	},
-	
+
 	/**
 	 * On title change handler, do nothing for now, just for handy reference in case we need it
 	 * @param {String} title
 	 */
 	on_title_change: function (title) {
-		
+
 	},
-	
+
 	/**
 	 * On content change handler, do nothing for now, just for handy reference in case we need it
 	 * @param {String} content
 	 * @param {Bool} isExcerpt
 	 */
 	on_content_change: function (content, isExcerpt) {
-		
+
 	},
-	
+
 	/**
 	 * On author change handler, rerender if this is author element
 	 * @param {Object} authorId
@@ -261,7 +256,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			this.child_view.render();
 		}
 	},
-	
+
 	/**
 	 * On date change handler, rerender if this is post data element
 	 * @param {Object} date
@@ -301,7 +296,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 
 
 var PostDataElement = Upfront.Views.Editor.Sidebar.Element.extend({
-	
+
 	_default_data: {
 		type: '',
 		columns: 24,
@@ -311,14 +306,14 @@ var PostDataElement = Upfront.Views.Editor.Sidebar.Element.extend({
 
 		}
 	},
-	
+
 	_post_parts: [],
 
 	render: function () {
 		//this.$el.addClass('upfront-icon-element upfront-icon-element-post-data');
 		this.$el.html(this._default_data.name);
 	},
-	
+
 	/**
 	 * Create default part objects
 	 * @param {Array} types
@@ -338,7 +333,7 @@ var PostDataElement = Upfront.Views.Editor.Sidebar.Element.extend({
 			wrappers: wrappers
 		};
 	},
-	
+
 	/**
 	 * Create default part object
 	 * @param {String} type
@@ -498,7 +493,7 @@ function add_elements () {
 			},
 			cssSelectorsId: 'PostDataModel'
 		});
-		
+
 		Upfront.Application.LayoutEditor.add_object("Upostdata-author", {
 			"Model": PostDataModel,
 			"View": PostDataView,
@@ -508,7 +503,7 @@ function add_elements () {
 			},
 			cssSelectorsId: 'PostDataModel'
 		});
-		
+
 		Upfront.Application.LayoutEditor.add_object("Upostdata-taxonomy", {
 			"Model": PostDataModel,
 			"View": PostDataView,
@@ -518,7 +513,7 @@ function add_elements () {
 			},
 			cssSelectorsId: 'PostDataModel'
 		});
-		
+
 		Upfront.Application.LayoutEditor.add_object("Upostdata-featured_image", {
 			"Model": PostDataModel,
 			"View": PostDataView,
@@ -528,7 +523,7 @@ function add_elements () {
 			},
 			cssSelectorsId: 'PostDataModel'
 		});
-		
+
 		Upfront.Application.LayoutEditor.add_object("Upostdata-comments", {
 			"Model": PostDataModel,
 			"View": PostDataView,
