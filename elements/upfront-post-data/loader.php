@@ -86,6 +86,12 @@ class Upfront_Post_Data extends Upfront_Server {
 		if (!empty($request['objects'])) $data['objects'] = $request['objects'];
 
 		$data = Upfront_Post_Data_Data::apply_preset($data);
+		if (!empty($request['preset_data'])) {
+			foreach ($request['preset_data'] as $idx => $value) {
+				if ("name" === $idx || "id" === $idx) continue;
+				$data[$idx] = $value;
+			}
+		}
 
 		$post = Upfront_Post_Data_Model::spawn_post($data);
 		$view_class = Upfront_Post_Data_PartView::_get_view_class($data);
