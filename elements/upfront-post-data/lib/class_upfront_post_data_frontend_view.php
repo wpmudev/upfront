@@ -121,8 +121,17 @@ class Upfront_PostDataPartView extends Upfront_Object {
 	}
 
 	public function get_propagated_classes () {
+		$part_type = $this->get_part_type();
+
 		$cls = $this->_part_view->get_propagated_classes();
-		$cls[] = $this->get_part_type();
+		$cls[] = $part_type;
+		// Add `upost-data-object-{part type}` class to allow applying custom css per post part type
+		if (in_array($part_type, ['title', 'date_posted', 'content'])) {
+			// Post data does not work with `else` part properly so manual override here
+			$cls[] = 'upost-data-object-' . 'post_data';
+		} else {
+			$cls[] = 'upost-data-object-' . $part_type;
+		}
 		if (!empty($this->_preset_id)) $cls[] = esc_attr($this->_preset_id);
 
 		return $cls;

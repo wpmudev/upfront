@@ -151,9 +151,9 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		;
 
 		if (this.presetClass) {
-			me.$el.removeClass(this.presetClass);
+			me.$el.find('.upost-data-object').removeClass(this.presetClass);
 		}
-		this.$el.addClass(preset);
+		this.$el.find('.upost-data-object').addClass(preset);
 		this.presetClass = preset;
 
 		if ( this.child_view ) {

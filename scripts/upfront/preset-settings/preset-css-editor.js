@@ -395,12 +395,12 @@ define([
 
 			var preset_class = '.' + this.options.preset.get('id');
 
-			if(typeof this.elementType.preset_container === "undefined") {
-				preset_class = preset_class + ' ';
+			if (this.dataPartType) {
+				preset_class = preset_class + '.upost-data-object-' + this.dataPartType;
 			}
 
-			if (this.dataPartType) {
-				preset_class = preset_class + ' .upost-data-object-' + this.dataPartType;
+			if(typeof this.elementType.preset_container === "undefined") {
+				preset_class = preset_class + ' ';
 			}
 
 			return preset_class;
