@@ -733,4 +733,5 @@ div#page.upfront-layout-view .upfront-editable_entity.upfront-module .upfront-ac
     float: left;
     direction: ltr;
     text-align: left;
+    margin-top: 5px;
 }
