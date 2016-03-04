@@ -86,9 +86,15 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 			$post = $this->_get_random_post();
 		}
 
+		// ... aaand start with comments fields rearrangement for WP4.4
+		add_filter('comment_form_fields', array('Upfront_Post_Data_PartView_Comments', 'rearrange_comment_form_fields'));
+
         ob_start();
         comment_form($form_args, $post->ID);
         $comment_form = ob_get_clean();
+
+        // Clean up after ourselves
+        remove_filter('comment_form_fields', array('Upfront_Post_Data_PartView_Comments', 'rearrange_comment_form_fields'));
 
         $out = $this->_get_template('comment_form');
 
@@ -183,9 +189,10 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 			}
 			else return '';
 		}
-		if (empty($post) || !is_object($post)) return '';
 
+		if (empty($post) || !is_object($post)) return '';
 		if (post_password_required($post->ID)) return '';
+		
 		ob_start();
 
 		// Load comments
@@ -218,6 +225,29 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 	public static function list_comment ($comment, $args, $depth) {
 		$GLOBALS['comment'] = $comment;
 		echo upfront_get_template('upfront-comment-list', array( 'comment' => $comment, 'args' => $args, 'depth' => $depth ), upfront_element_dir('tpl/upfront-comment-list.php', dirname(__DIR__)));
+	}
+
+	/**
+	 * Re-arrange comment form fields.
+	 *
+	 * At the moment just to revert the WP 4.4 fields order change,
+	 * but can be used to apply custom order down the line
+	 *
+	 * @param array $fields Comment form fields
+	 *
+	 * @return array
+	 */
+	public static function rearrange_comment_form_fields ($fields) {
+		if (!is_array($fields) || empty($fields['comment'])) return $fields;
+		
+		$result = array();
+		foreach ($fields as $key => $field) {
+			if ('comment' === $key) continue;
+			$result[$key] = $field;
+		}
+		$result['comment'] = $fields['comment'];
+
+		return $result;
 	}
 
 	/**
