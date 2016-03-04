@@ -279,6 +279,17 @@ a.upfront-region-name-edit-trigger{
 #upfront-list .upfront-list_item .upfront-list_item-component{
     float: right;
 }
+#upfront-list .upfront-list_item .upfront-list_item-component.upfront-editactions{
+    float: left;
+}
+.upfront-list_item-component.upfront-editactions a.editaction{
+    float: left;
+}
+.upfront-list_item-post.upfront-list_item:hover .upfront-list_item-component.upfront-editactions{
+    padding-right: auto !important;
+    padding-left: 0 !important;
+}
+
 #upfront-entity_list-search{
     float: left;
 }
@@ -692,4 +703,34 @@ div#page.upfront-layout-view .upfront-editable_entity.upfront-module .upfront-ac
 }
 .upfront-ui .upfront-icon-region-nocaption:hover:before{
     background-position: -804px -458px!important;
+}
+/*Single post*/
+.ueditor-box-wrapper label{
+    float: right;
+}
+.ueditor-box-wrapper .ueditor-button-cancel-edit{
+    float: left;
+    clear: both;
+    display: block;
+    width: 120px;
+    text-align: center;
+}
+.ueditor-box-wrapper .ueditor-action-publish{
+    float: left;
+}
+.ueditor-action-trash.ueditor-box-icon.ueditor-box-icon-text{
+    float: right;
+}
+.ueditor-box-wrapper label{
+    margin-right: 3px;
+}
+.ueditor-post-url-root{
+    float: left;
+    direction: ltr;
+    text-align: left;
+}
+.upfront-field-text.ueditor-post-url-text{
+    float: left;
+    direction: ltr;
+    text-align: left;
 }

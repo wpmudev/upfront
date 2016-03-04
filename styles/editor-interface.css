@@ -10391,7 +10391,7 @@ a.ueditor-select-option:hover {
   margin: 0 0 -10px 0; }
 
 .ueditor-box-wrapper label#post-status-display-label:before {
-  background-position: -564px -385px; }
+  background-position: -562px -385px; }
 
 .ueditor-box-wrapper label#post-visibility-display:before {
   background-position: -604px -385px; }
@@ -10483,7 +10483,7 @@ a.ueditor-action-trash:hover {
   margin-right: 5px;
   display: block;
   height: 36px;
-  width: 30px;
+  min-width: 30px;
   font-size: 13px; }
 
 .ueditor-box-icon-text {
@@ -10510,6 +10510,9 @@ a.ueditor-action-trash:hover {
 
 .ueditor-togglable-post-schedule-date {
   font-size: 14px; }
+
+.ueditor-togglable-post-url {
+  clear: both; }
 
 .upost_thumbnail_changer {
   color: #3f5870;
