@@ -71,7 +71,7 @@
         </div>
         <a href="#" id="add-new-taxonomies-btn">+ {{Upfront.Settings.l10n.global.content.add_new}} {{ labels.singular_name }}</a>
         <div id="upfront-taxonomy-add" class="ueditor-togglable-child">
-            <input type="text" class="upfront-tax-new_term" placeholder="Enter {{ labels.singular_name}}" />
+            <input type="text" class="upfront-tax-new_term" placeholder="{{Upfront.Settings.l10n.global.content.enter}} {{ labels.singular_name}}" />
             <select id="upfront-taxonomy-parents">
                 <option value="0">-- {{Upfront.Settings.l10n.global.content.parent_category}} --</option>
                 {[ _(allTerms).each(function(term, idx) { ]}
@@ -113,13 +113,13 @@
             {[ }); ]}
         </div>
         <div id="upfront-taxonomy-add">
-            <input type="text" class="upfront-flat-tax-new_term" id="upfront-flat-tax-new_term-{{labels.singular_name}}" placeholder="Enter {{ labels.singular_name}}" />
+            <input type="text" class="upfront-flat-tax-new_term" id="upfront-flat-tax-new_term-{{labels.singular_name}}" placeholder="{{Upfront.Settings.l10n.global.content.enter}} {{ labels.singular_name}}" />
             <button id="upfront-flat-tax-add_term-{{ labels.singular_name }}" class="ueditor-button-small ueditor-button-small-flat-tax-add">{{Upfront.Settings.l10n.global.content.add}}</button>
         </div>
         <div id="upfront-taxonomy-list" class="clearfix">
 
             <div class="upfront-taxonomy-list-panel upfront-taxonomy-list-panel-previously-used" id="upfront-taxonomy-list-all">
-                <a class="upfront-taxonomy-list-choose-from-prev" href="#">Choose from the previously used {{ labels.name }}</a>
+                <a class="upfront-taxonomy-list-choose-from-prev" href="#">{{Upfront.Settings.l10n.global.content.choose_from_prev.replace("%s", labels.name)}} {{labels.name}}</a>
                 <div class="upfront-scroll-panel upfront-inner-scroll-panel ueditor-togglable-child">
                     {[ otherTerms.each(function(term, idx){ ]}
                         {{ termTemplate({ term: term }) }}

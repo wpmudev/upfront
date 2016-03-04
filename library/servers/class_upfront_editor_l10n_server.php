@@ -167,7 +167,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'edit_post_url' => __('Edit the <b>URL</b> for this post', 'upfront'),
 				'post_url_info' => __('By default, your URL is determined by a post\'s or page\'s title. You can change it here.<br/>It is a good idea to keep them short and memorable.', 'upfront'),
 				'parent_category' => __('Parent Category', 'upfront'),
-				'add_new' => __('Add new', 'upfront'),
+				'add_new' => __('Add new %s', 'upfront'),
 				'add' => __('Add', 'upfront'),
 				'insert_font' => __('Insert Font', 'upfront'),
 				'insert_theme_image' => __('Link theme image', 'upfront'),
@@ -253,7 +253,9 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'target' => __('Target:', 'upfront'),
 				'blank' => __('Blank', 'upfront'),
 				'self' => __('Self', 'upfront'),
-				'add' => __('Add &raquo;', 'upfront')
+				'add' => __('Add &raquo;', 'upfront'),
+				'choose_from_prev' => __('Choose from the previously used %s', 'upfront'),
+				'enter' => __('Enter %s', 'upfront')
 			),
 			'ueditor' => array(
 				'text_align' => __('Text alignment', 'upfront'),
