@@ -14,7 +14,7 @@ class Upfront_PostDataView extends Upfront_Object_Group {
 		
 		$this->get_post();
 		
-		$classes .= is_sticky( $this->_post->ID ) ? " uf-post-data uf-post-data-sticky" : " uf-post-data";
+		$classes .= !empty($this->_post->ID) && is_sticky( $this->_post->ID ) ? " uf-post-data uf-post-data-sticky" : " uf-post-data";
 
 		return $classes;
 	}
