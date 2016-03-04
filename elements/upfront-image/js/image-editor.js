@@ -175,8 +175,10 @@ define([
 
 					me.$el.find('.image-ok-button').css({
 						top: options.maskOffset.top,
-						left: options.maskOffset.left + (options.maskSize.width + 10)
+						left: options.maskOffset.left + (options.maskSize.width + 35)
 					});
+					
+					me.$el.find('.image-ok-button').prepend('<div class="image-edit-size-buttons"><span class="image-increase-size">+</span><span class="image-decrease-size">-</span></div>');
 				}
 			
 			}, 100);

@@ -441,7 +441,7 @@ a.image-edit-button.deactivated:hover {
 
 #image-edit-button-ok {
 	background: #1FCD8F;
-	color: #11A56C;
+	color: #FFFFFF;
 }
 #image-edit-button-ok:hover {
 	background: #3ea;
@@ -1406,6 +1406,7 @@ div.uimage-controls i.upfront-icon:before,
 	background-position: -287px -491px;
 	background-color: rgba(242,249,255,1);
 	z-index: initial;
+	border: none;
 }
 .image-edit-control-panel-item.upfront-control-dialog-open {
 	border-radius: 3px;
@@ -1413,9 +1414,32 @@ div.uimage-controls i.upfront-icon:before,
 	background-position: -287px -522px;
 	background-color: rgba(242,249,255,1);
 	z-index: initial;
+	border: none;
+}
+.image-ok-button {
+	position: relative;
+}
+.image-edit-size-buttons {
+	left: -25px;
+	position: absolute;
+	top: 0px;
 }
 .image-crop-edit-button {
 	margin-bottom: 10px;
+}
+.image-increase-size,
+.image-decrease-size {
+	border-radius: 3px;
+	background-color: rgba(242,249,255,1);
+	z-index: initial;
+	color: #24394e;
+	display: block;
+	width: 14px;
+	height: 14px;
+	line-height: 14px;
+	text-align: center;
+	font-weight: bold;
+	margin-bottom: 1px;
 }
 .image-crop-edit-button input {
 	background-image: linear-gradient(-180deg, #FAFDFF 0%, #F@F9FF 100%);
