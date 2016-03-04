@@ -116,8 +116,10 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 	 * @return string
 	 */
 	public function expand_comments_pagination_template () {
-		if (empty($this->_post->ID)) return '';
-		if (empty($this->_post->comment_count)) return '';
+		if (!$this->_is_fake_data()) {
+			if (empty($this->_post->ID)) return '';
+			if (empty($this->_post->comment_count)) return '';
+		}
 
 		// If we have plugin-overridden template, then assume it'll take care of itself
 		$tpl = $this->_get_external_comments_template();
@@ -305,6 +307,7 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 			$comment['comment_ID'] = $cid;
 			$comments[$cid] = (object)wp_filter_comment($comment);
 		}
+
 		return $comments;
 	}
 
@@ -415,19 +418,31 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 	 * @return string Comment pagination links.
 	 */
 	private function _get_pagination () {
-		if (empty($this->_post->ID)) return '';
-		if (empty($this->_post->comment_count)) return '';
+		if (!$this->_is_fake_data()) {
+			if (empty($this->_post->ID)) return '';
+			if (empty($this->_post->comment_count)) return '';
+		}
 
 		// No pagination
 		if (!$this->_is_paginated()) return '';
 
-		$total = (int)$this->_post->comment_count / $this->_get_limit();
-		if ((int)$this->_post->comment_count % $this->_get_limit()) $total++; // Fix trailing comment offset
+		$post = $this->_post;
+		$comment_count = $this->_post->comment_count;
+		if ($this->_is_fake_data()) {
+			$post = $this->_get_random_post();
+			$comments = self::spawn_random_comments($post);
+			$post->comment_count = count($comments);
+			$comment_count = $post->comment_count;
+		}
+
+		$total = (int)$comment_count / $this->_get_limit();
+		if ((int)$comment_count % $this->_get_limit()) $total++; // Fix trailing comment offset
 
 		if (defined('DOING_AJAX') && DOING_AJAX) {
 			// Admin area override when doing AJAX preview (editor/builder)
 			global $wp_query;
 			$wp_query->is_singular = true;
+			if ($this->_is_fake_data()) $wp_query->max_num_comment_pages = $total;
 		}
 		
 		$out = paginate_comments_links(array(
