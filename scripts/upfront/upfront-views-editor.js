@@ -3370,7 +3370,7 @@
 
 			toggleSidebar: function(instant){
 				var me = this,
-					_margin = Upfront.Util.isRTL() ? "margin-right" : "margin-left";
+					_margin = Upfront.Util.isRTL() ? "marginRight" : "marginLeft";
 
 				if(!this.visible){
 					$('#sidebar-ui').removeClass('collapsed').stop().animate({width: '260px'}, 300);
@@ -3382,7 +3382,8 @@
 						$('#element-settings-sidebar').removeClass('collapsed').stop().animate({width: '260px'}, 300);
 					}
 
-					$('#page').animate({_margin: '260px'}, 300, function(){ Upfront.Events.trigger('sidebar:toggle:done', me.visible); });
+					$('#page').stop().animate({_margin: '260px'}, 300, function(){ Upfront.Events.trigger('sidebar:toggle:done', me.visible); });
+
 					this.$('#sidebar-ui-toggler-handle').removeClass().addClass('sidebar-ui-hide');
 					this.visible = 1;
 				}
@@ -3390,7 +3391,7 @@
 					$('#sidebar-ui, #element-settings-sidebar').stop().animate({width: '0px'}, 300, function(){
 						$('#sidebar-ui, #element-settings-sidebar').addClass('collapsed');
 					});
-					$('#page').animate({_margin: 0}, 300, function(){ Upfront.Events.trigger('sidebar:toggle:done', me.visible); $('#page').css(_margin, 0); });
+					$('#page').stop().animate({_margin: "0px"}, 300, function(){ Upfront.Events.trigger('sidebar:toggle:done', me.visible); });
 
 					this.$('#sidebar-ui-toggler-handle').removeClass().addClass('sidebar-ui-show');
 					this.visible = 0;
