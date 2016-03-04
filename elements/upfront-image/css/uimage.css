@@ -1541,3 +1541,7 @@ div.uimage-controls i.upfront-icon:before,
 	background: rgba(84,178,255,1);
 	box-shadow: 0px 0px 2px 0px #24394E;
 }
+
+.image-reset-disabled {
+	opacity: 0.5;
+}

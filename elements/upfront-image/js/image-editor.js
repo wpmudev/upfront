@@ -432,12 +432,13 @@ define([
 		check100ButtonActivation: function(){
 			var full = this.getFullWidthImage(this.options.fullSize).size,
 				fullColsRows = this.getCurrentImageRowsCols(full.width, full.height),
-				button = this.$('#image-edit-button-reset')
+				button = this.$('#image-edit-button-reset'),
+				canvas = this.$('#uimage-canvas')
 			;
-			if(this.elementSize.columns === fullColsRows.columns && this.elementSize.rows === fullColsRows.rows) {
-				button.addClass('deactivated expanded').attr('title', l10n.image_expanded);
-			} else if(this.elementSize.columns === this.elementSize.maxColumns && this.elementSize.columns < fullColsRows.columns && this.elementSize.rows === fullColsRows.rows) {
-				button.addClass('deactivated').attr('title', l10n.cant_expand);
+
+			if(full.width === canvas.width() && full.height === canvas.height()) {
+				button.find('input').prop('disabled', true);
+				button.addClass('image-reset-disabled');
 			}
 		},
 
@@ -692,8 +693,9 @@ define([
 					aspectRatio: true, //(me.fullSize.width + me.bordersWidth) / (me.fullSize.height + me.bordersWidth),
 					start: function() {
 						me.$('#image-edit-button-reset')
-							.attr('class', 'image-edit-button')
+							.attr('class', 'image-crop-edit-button image-edit-col-full')
 							.attr('title', l10n.btn.exp_info)
+							.find('input').prop('disabled', false)
 						;
 						//Prevent editor closing after resizing. It is set to false by the initialize method.
 						me.isResizing = true;
@@ -950,6 +952,8 @@ define([
 			if(maskSize.columns !== 22 && current.columns > maskSize.columns) {
 				this.showExpandAlert();
 			}
+			
+			this.check100ButtonActivation();
 		},
 
 		getCurrentImageRowsCols: function(width, height){
@@ -1042,8 +1046,9 @@ define([
 				.text(l10n.btn.restore_info)
 			;
 			$('#image-edit-button-reset')
-				.attr('class', 'image-edit-button')
+				.attr('class', 'image-crop-edit-button image-edit-col-full')
 				.attr('title', l10n.btn.exp_info)
+				.find('input').prop('disabled', false)
 			;
 			this.fitImageButton = false;
 
@@ -1073,7 +1078,6 @@ define([
 			optionsNew.elementColumns = elementColumns;
 
 			this.open(optionsNew);
-
 		},
 
 		setImageFullSize: function(e) {
