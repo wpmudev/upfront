@@ -50,8 +50,7 @@ define([
 		},
 		initialize: function(options) {
 			var me = this,
-				deferred = $.Deferred(),
-				style_selector;
+				deferred = $.Deferred();
 
 			this.options = options || {};
 			this.model = options.model;
@@ -73,11 +72,11 @@ define([
 
 			$(window).on('resize', this.resizeHandler);
 
+			this.dataPartType = this.model.get_property_value_by_name('data_type');
 			this.modelType = this.options.model.get_property_value_by_name('type');
 			this.elementType = this.elementTypes[this.modelType] || {label: 'Unknown', id: 'unknown'};
 
-			style_selector = this.options.preset.get('id');
-			// DO NOT DO THIS!!! DELEGATE STYLE RENDERING TO PRESET (look at preset-css module
+			// DO NOT DO THIS!!! DELEGATE STYLE RENDERING TO PRESET (look at preset-css module scripts/upfront/settings/modules/preset-css.js
 			// $style = $('#' + style_selector);
 			// if ($style.length === 0) {
 				// this.$style = $('<style id="' + style_selector + '"></style>');
@@ -353,7 +352,7 @@ define([
 		},
 		hiliteElement: function(e){
 			var preset_selector = this.get_css_selector();
-			
+
 			//Do not add empty space for posts element
 			if(this.elementType.id !== "posts") {
 				preset_selector = preset_selector + ' ';
@@ -375,7 +374,7 @@ define([
 			if(this.elementType.id !== "posts") {
 				preset_selector = preset_selector + ' ';
 			}
-			
+
 			var selector = preset_selector + $(e.target).data('selector');
 
 			if(!selector.length)
@@ -398,6 +397,10 @@ define([
 
 			if(typeof this.elementType.preset_container === "undefined") {
 				preset_class = preset_class + ' ';
+			}
+
+			if (this.dataPartType) {
+				preset_class = preset_class + ' .upost-data-object-' + this.dataPartType;
 			}
 
 			return preset_class;
