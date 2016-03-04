@@ -179,11 +179,60 @@ define([
 					});
 					
 					me.$el.find('.image-ok-button').prepend('<div class="image-edit-size-buttons"><span class="image-increase-size">+</span><span class="image-decrease-size">-</span></div>');
+				
+					var sizeButtons = me.$el.find('.image-edit-size-buttons');
+
+					if(sizeButtons.length) {
+						sizeButtons.find('.image-increase-size').click(function() {
+							me.buttonIncreaseSize();
+						});
+						
+						sizeButtons.find('.image-decrease-size').click(function() {
+							me.buttonDecreaseSize();
+						});
+					}
 				}
 			
 			}, 100);
 
 			return control;
+		},
+		
+		buttonIncreaseSize: function() {
+			var me = this,
+				canvas = this.$('#uimage-canvas')
+			;
+			
+			var size = this.options.size;
+			
+			canvasSize = {
+				width: (this.invert ? size.height + 1 : size.width + 1),
+				height: (this.invert ? size.width + 1 : size.height + 1)
+			};
+
+			
+			this.options.size = canvasSize;
+			canvas.css(canvasSize);
+			this.selectMode(canvasSize, true);
+			this.setImageSize(canvasSize);
+		},
+		
+		buttonDecreaseSize: function() {
+			var me = this,
+				canvas = this.$('#uimage-canvas')
+			;
+			
+			var size = this.options.size;
+
+			canvasSize = {
+				width: (this.invert ? size.height - 1 : size.width - 1),
+				height: (this.invert ? size.width - 1 : size.height - 1)
+			};
+			
+			this.options.size = canvasSize;
+			canvas.css(canvasSize);
+			this.selectMode(canvasSize, true);
+			this.setImageSize(canvasSize);
 		},
 
 		pointAlignment: function(e) {
