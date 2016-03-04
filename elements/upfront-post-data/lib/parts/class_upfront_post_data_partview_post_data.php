@@ -121,10 +121,14 @@ class Upfront_Post_Data_PartView_Post_data extends Upfront_Post_Data_PartView {
 			? (int)$this->_data['left_indent']
 			: 0
 		;
+		if ($left_indent < 0) $left_indent = 0;
+
 		$right_indent = !empty($this->_data['right_indent']) && is_numeric($this->_data['right_indent'])
 			? (int)$this->_data['right_indent']
 			: 0
 		;
+		if ($right_indent < 0) $right_indent = 0;
+		
 		$full = 24;
 		$classes = array();
 

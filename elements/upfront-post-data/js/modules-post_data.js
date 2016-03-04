@@ -97,6 +97,8 @@ define([
 					type: "Number",
 					label: "Left indent",
 					label_style: 'inline',
+					min: 0,
+					max: Upfront.Settings.LayoutEditor.Grid.size,
 					className: 'content-indent indent-left',
 					property: "left_indent"
 				},
@@ -104,6 +106,8 @@ define([
 					type: "Number",
 					label: "Right indent",
 					label_style: 'inline',
+					min: 0,
+					max: Upfront.Settings.LayoutEditor.Grid.size,
 					className: 'content-indent indent-right',
 					property: "right_indent"
 				},
@@ -123,6 +127,7 @@ define([
 					type: "Number",
 					label: "Content part",
 					default_value: 0,
+					min: 0,
 					label_style: 'inline',
 					property: "content_part"
 				}
