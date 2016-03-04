@@ -60,6 +60,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		add_filter('upfront_get_theme_colors', array($this, 'getThemeColors'), 10, 2);
 		add_filter('upfront_get_theme_colors_styles', array($this, 'getThemeColorsStyles'), 10, 1);
 		add_filter('upfront_get_post_image_variants', array($this, 'getPostImageVariants'), 10, 2);
+		
 		add_filter('upfront_get_button_presets', array($this, 'getButtonPresets'), 10, 2);
 		add_filter('upfront_get_tab_presets', array($this, 'getTabPresets'), 10, 2);
 		add_filter('upfront_get_accordion_presets', array($this, 'getAccordionPresets'), 10, 2);
@@ -73,6 +74,14 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		add_filter('upfront_get_posts_presets', array($this, 'getPostsPresets'), 10, 2);
 		add_filter('upfront_get_thispost_presets', array($this, 'getPostPresets'), 10, 2);
 		add_filter('upfront_get_ucomment_presets', array($this, 'getCommentPresets'), 10, 2);
+
+		add_filter('upfront_get_post_data_element_presets', array($this, 'get_post_data_presets'), 10, 2);
+		add_filter('upfront_get_author_element_presets', array($this, 'get_author_presets'), 10, 2);
+		add_filter('upfront_get_featured_image_element_presets', array($this, 'get_featured_image_presets'), 10, 2);
+		add_filter('upfront_get_taxonomy_element_presets', array($this, 'get_taxonomy_presets'), 10, 2);
+		add_filter('upfront_get_comments_element_presets', array($this, 'get_comments_presets'), 10, 2);
+		add_filter('upfront_get_meta_element_presets', array($this, 'get_meta_presets'), 10, 2);
+
 		add_filter('upfront_get_theme_styles', array($this, 'getThemeStyles'));
 		add_filter('upfront_get_global_regions', array($this, 'getGlobalRegions'));
 		add_filter('upfront_get_responsive_settings', array($this, 'getResponsiveSettings'));
@@ -683,6 +692,90 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		if (empty($presets) === false) return $presets;
 
 		$presets = $this->get_theme_settings()->get('ucomment_presets');
+		if (isset($args['json']) && $args['json']) return $presets;
+
+		$as_array = false;
+		if (isset($args['as_array']) && $args['as_array']) {
+			$as_array = true;
+		}
+
+		return json_decode($presets, $as_array);
+	}
+
+	public function get_post_data_presets ($presets, $args) {
+		if (empty($presets) === false) return $presets;
+
+		$presets = $this->get_theme_settings()->get('post_data_element_presets');
+		if (isset($args['json']) && $args['json']) return $presets;
+
+		$as_array = false;
+		if (isset($args['as_array']) && $args['as_array']) {
+			$as_array = true;
+		}
+
+		return json_decode($presets, $as_array);
+	}
+
+	public function get_author_presets ($presets, $args) {
+		if (empty($presets) === false) return $presets;
+
+		$presets = $this->get_theme_settings()->get('author_element_presets');
+		if (isset($args['json']) && $args['json']) return $presets;
+
+		$as_array = false;
+		if (isset($args['as_array']) && $args['as_array']) {
+			$as_array = true;
+		}
+
+		return json_decode($presets, $as_array);
+	}
+
+	public function get_featured_image_presets ($presets, $args) {
+		if (empty($presets) === false) return $presets;
+
+		$presets = $this->get_theme_settings()->get('featured_image_element_presets');
+		if (isset($args['json']) && $args['json']) return $presets;
+
+		$as_array = false;
+		if (isset($args['as_array']) && $args['as_array']) {
+			$as_array = true;
+		}
+
+		return json_decode($presets, $as_array);
+	}
+	
+	public function get_taxonomy_presets ($presets, $args) {
+		if (empty($presets) === false) return $presets;
+
+		$presets = $this->get_theme_settings()->get('taxonomy_element_presets');
+		if (isset($args['json']) && $args['json']) return $presets;
+
+		$as_array = false;
+		if (isset($args['as_array']) && $args['as_array']) {
+			$as_array = true;
+		}
+
+		return json_decode($presets, $as_array);
+	}
+
+	public function get_comments_presets ($presets, $args) {
+		if (empty($presets) === false) return $presets;
+
+		$presets = $this->get_theme_settings()->get('comments_element_presets');
+		if (isset($args['json']) && $args['json']) return $presets;
+
+		$as_array = false;
+		if (isset($args['as_array']) && $args['as_array']) {
+			$as_array = true;
+		}
+
+		return json_decode($presets, $as_array);
+	}
+
+	public function get_meta_presets ($presets, $args) {
+		if (empty($presets) === false) return $presets;
+
+		$presets = $this->get_theme_settings()->get('meta_element_presets');
 		if (isset($args['json']) && $args['json']) return $presets;
 
 		$as_array = false;
