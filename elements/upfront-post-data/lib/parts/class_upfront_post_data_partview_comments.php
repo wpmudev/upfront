@@ -274,16 +274,18 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 		);
 		$comments = array();
 		if (!in_array('comments', $skip)) {
-			$comments[] = array_merge($fake_comment, array(
-				'user_id' => get_current_user_id(),
-				'comment_author' => 'Author',
-				'comment_content' => 'test stuff author comment',
-			));
-			$comments[] = array_merge($fake_comment, array(
-				'user_id' => 0,
-				'comment_author' => 'Visitor',
-				'comment_content' => 'test stuff visitor comment',
-			));
+			for ($i=0; $i<5; $i++) {
+				$comments[] = array_merge($fake_comment, array(
+					'user_id' => get_current_user_id(),
+					'comment_author' => 'Author',
+					'comment_content' => 'test stuff author comment',
+				));
+				$comments[] = array_merge($fake_comment, array(
+					'user_id' => 0,
+					'comment_author' => 'Visitor',
+					'comment_content' => 'test stuff visitor comment',
+				));
+			}
 		}
 		if (!in_array('trackbacks', $skip)) {
 			$comments[] = array_merge($fake_comment, array(
