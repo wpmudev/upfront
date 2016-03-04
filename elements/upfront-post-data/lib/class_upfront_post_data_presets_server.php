@@ -54,6 +54,7 @@ class Upfront_PostData_Elements_Server implements IUpfront_Server {
 
 
 abstract class Upfront_DataElement_Preset_Server extends Upfront_Presets_Server {
+	protected $isPostPartServer = true;
 
 	abstract public function get_data_type ();
 
@@ -61,11 +62,11 @@ abstract class Upfront_DataElement_Preset_Server extends Upfront_Presets_Server 
 		parent::_add_hooks();
 		add_filter('get_element_preset_styles', array($this, 'get_preset_styles_filter'));
 	}
-	
+
 	public function get_element_name () {
 		return $this->get_data_type() . '_element';
 	}
-	
+
 // Change these!
 	public function get_preset_styles_filter ($style) {
 		$style .= $this->get_presets_styles();
