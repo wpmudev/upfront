@@ -735,3 +735,26 @@ div#page.upfront-layout-view .upfront-editable_entity.upfront-module .upfront-ac
     text-align: left;
     margin-top: 5px;
 }
+.ueditor-box-title{
+    padding: 0 10px 0 0;
+    text-align: right;
+}
+.ueditor-box-section .ueditor-box-title:after{
+    border-left: none;
+    border-right: 4px solid #85aacc;
+    left: 14px;
+    right: auto;
+}
+.ueditor-box-section.show .ueditor-box-title:after{
+    left: 14px;
+    right: auto;
+}
+.ueditor-box-wrapper label#post-status-display-label:before{
+    background-position: -556px -385px;
+}
+.ueditor-box-wrapper label#post-visibility-display:before{
+    background-position: -600px -385px;
+}
+.ueditor-box-wrapper label#publication-time:before{
+    background-position: -640px -385px;
+}

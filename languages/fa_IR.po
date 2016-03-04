@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Upfront\n"
 "POT-Creation-Date: 2016-03-04 11:38+0330\n"
-"PO-Revision-Date: 2016-03-04 11:40+0330\n"
+"PO-Revision-Date: 2016-03-04 12:03+0330\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fa\n"
@@ -4727,7 +4727,7 @@ msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:137
 msgid "Update"
-msgstr ""
+msgstr "به روز رسانی"
 
 #: library/servers/class_upfront_editor_l10n_server.php:138
 #, php-format

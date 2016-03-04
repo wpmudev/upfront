@@ -171,9 +171,16 @@ var Box = Backbone.View.extend({
             right = right_space > this.$el.width() ? right_space - this.$el.width() :  10
             ;
 
-        this.$el.css({
-            right: right + 10
-        });
+        if( Upfront.Util.isRTL() ){
+            this.$el.css({
+                left: right + 10,
+                right: "auto"
+            });
+        }else{
+            this.$el.css({
+                right: right + 10
+            });
+        }
 
     },
 
