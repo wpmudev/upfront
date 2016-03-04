@@ -704,78 +704,44 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 	public function get_post_data_presets ($presets, $args) {
 		if (empty($presets) === false) return $presets;
-
-		$presets = $this->get_theme_settings()->get('post_data_element_presets');
-		if (isset($args['json']) && $args['json']) return $presets;
-
-		$as_array = false;
-		if (isset($args['as_array']) && $args['as_array']) {
-			$as_array = true;
-		}
-
-		return json_decode($presets, $as_array);
+		return $this->_get_prepared_presets('post_data_element_presets', $args);
 	}
 
 	public function get_author_presets ($presets, $args) {
 		if (empty($presets) === false) return $presets;
-
-		$presets = $this->get_theme_settings()->get('author_element_presets');
-		if (isset($args['json']) && $args['json']) return $presets;
-
-		$as_array = false;
-		if (isset($args['as_array']) && $args['as_array']) {
-			$as_array = true;
-		}
-
-		return json_decode($presets, $as_array);
+		return $this->_get_prepared_presets('author_element_presets', $args);
 	}
 
 	public function get_featured_image_presets ($presets, $args) {
 		if (empty($presets) === false) return $presets;
-
-		$presets = $this->get_theme_settings()->get('featured_image_element_presets');
-		if (isset($args['json']) && $args['json']) return $presets;
-
-		$as_array = false;
-		if (isset($args['as_array']) && $args['as_array']) {
-			$as_array = true;
-		}
-
-		return json_decode($presets, $as_array);
+		return $this->_get_prepared_presets('featured_image_element_presets', $args);
 	}
 	
 	public function get_taxonomy_presets ($presets, $args) {
 		if (empty($presets) === false) return $presets;
-
-		$presets = $this->get_theme_settings()->get('taxonomy_element_presets');
-		if (isset($args['json']) && $args['json']) return $presets;
-
-		$as_array = false;
-		if (isset($args['as_array']) && $args['as_array']) {
-			$as_array = true;
-		}
-
-		return json_decode($presets, $as_array);
+		return $this->_get_prepared_presets('taxonomy_element_presets', $args);
 	}
 
 	public function get_comments_presets ($presets, $args) {
 		if (empty($presets) === false) return $presets;
-
-		$presets = $this->get_theme_settings()->get('comments_element_presets');
-		if (isset($args['json']) && $args['json']) return $presets;
-
-		$as_array = false;
-		if (isset($args['as_array']) && $args['as_array']) {
-			$as_array = true;
-		}
-
-		return json_decode($presets, $as_array);
+		return $this->_get_prepared_presets('comments_element_presets', $args);
 	}
 
 	public function get_meta_presets ($presets, $args) {
 		if (empty($presets) === false) return $presets;
+		return $this->_get_prepared_presets('meta_element_presets', $args);
+	}
 
-		$presets = $this->get_theme_settings()->get('meta_element_presets');
+	/**
+	 * Attempt to remove at least _some_ of the code duplication :/
+	 *
+	 * @param string $key Theme settings key to use
+	 * @param array $args Arguments...
+	 *
+	 * @return mixed
+	 */
+	private function _get_prepared_presets ($key, $args) {
+		$presets = $this->get_theme_settings()->get($key);
 		if (isset($args['json']) && $args['json']) return $presets;
 
 		$as_array = false;
@@ -783,7 +749,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			$as_array = true;
 		}
 
-		return json_decode($presets, $as_array);
+		return json_decode($presets, $as_array);	
 	}
 
 	public function getAccordionPresets($presets, $args) {
