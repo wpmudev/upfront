@@ -146,7 +146,6 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	},
 
 	render_view: function (type) {
-		console.log('rendering view', type);
 		var preset = this.model.get_property_value_by_name('preset'),
 			me = this
 		;
