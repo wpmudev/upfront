@@ -1,229 +1,229 @@
 <div>
 
-<script id="ueditor-box-main" type="text/template">
-    <div class="ueditor-box ueditable" id="{{cid}}">
-        <ul>
-            <li id="ueditor-box-publish" class="ueditor-box-section active show">
-                <div class="ueditor-box-title">{{Upfront.Settings.l10n.global.content.publish}}</div>
-                <div class="ueditor-box-content-wrap">
-                    <div class="ueditor-bix-top-buttons">
-                        {[ if(draftButton){ ]}
-                        <a class="ueditor-action ueditor-action-draft" href="#">{{Upfront.Settings.l10n.global.content.save_draft}}</a>
-                        {[ } ]}
-                        <a class="ueditor-action ueditor-action-preview" target="_blank" href="{{previewLink}}">{{Upfront.Settings.l10n.global.content.preview}}</a>
+    <script id="ueditor-box-main" type="text/template">
+        <div class="ueditor-box ueditable" id="{{cid}}">
+            <ul>
+                <li id="ueditor-box-publish" class="ueditor-box-section active show">
+                    <div class="ueditor-box-title">{{Upfront.Settings.l10n.global.content.publish}}</div>
+                    <div class="ueditor-box-content-wrap">
+                        <div class="ueditor-bix-top-buttons">
+                            {[ if(draftButton){ ]}
+                            <a class="ueditor-action ueditor-action-draft" href="#">{{Upfront.Settings.l10n.global.content.save_draft}}</a>
+                            {[ } ]}
+                            <a class="ueditor-action ueditor-action-preview" target="_blank" href="{{previewLink}}">{{Upfront.Settings.l10n.global.content.preview}}</a>
+                        </div>
+                        <div class="ueditor-box-content">
+                            <div class="misc-pub-section misc-pub-post-status"></div>
+                            <div class="misc-pub-section misc-pub-visibility"></div>
+                            <div class="misc-pub-section  misc-pub-schedule"></div>
+                        </div>
+                        <div class="ueditor-box-bottom-buttons">
+                            <a href="#" class="ueditor-action-trash ueditor-box-icon ueditor-box-icon-text" title="{{Upfront.Settings.l10n.global.content.trash}}">{{Upfront.Settings.l10n.global.content.trash}}</a>
+                            <a class="ueditor-action-publish" href="#">{{buttonText}}</a>
+                            {[ if(cancelButton){ ]}
+                            <a class="ueditor-button-cancel-edit" href="#">{{Upfront.Settings.l10n.global.content.cancel}}</a>
+                            {[ } ]}
+                        </div>
                     </div>
-                    <div class="ueditor-box-content">
-                        <div class="misc-pub-section misc-pub-post-status"></div>
-                        <div class="misc-pub-section misc-pub-visibility"></div>
-                        <div class="misc-pub-section  misc-pub-schedule"></div>
+                </li>
+                <li id="ueditor-box-cats-tags" class="ueditor-box-section">
+                    <div class="ueditor-box-title">{{post_type_conditional_box_title}}</div>
+                    <div class="ueditor-box-content-wrap">
+                        <div class="ueditor-box-content">
+                            <div class="misc-pub-section misc-pub-post-category"></div>
+                            <div class="misc-pub-section misc-pub-post-tags"></div>
+                            <div class="misc-pub-section misc-pub-post-url"></div>
+                        </div>
                     </div>
-                    <div class="ueditor-box-bottom-buttons">
-                        <a href="#" class="ueditor-action-trash ueditor-box-icon ueditor-box-icon-text" title="{{Upfront.Settings.l10n.global.content.trash}}">{{Upfront.Settings.l10n.global.content.trash}}</a>
-                        <a class="ueditor-action-publish" href="#">{{buttonText}}</a>
-                        {[ if(cancelButton){ ]}
-                        <a class="ueditor-button-cancel-edit" href="#">{{Upfront.Settings.l10n.global.content.cancel}}</a>
-                        {[ } ]}
-                    </div>
-                </div>
-            </li>
-            <li id="ueditor-box-cats-tags" class="ueditor-box-section">
-                <div class="ueditor-box-title">{{post_type_conditional_box_title}}</div>
-                <div class="ueditor-box-content-wrap">
-                    <div class="ueditor-box-content">
-                        <div class="misc-pub-section misc-pub-post-category"></div>
-                        <div class="misc-pub-section misc-pub-post-tags"></div>
-                        <div class="misc-pub-section misc-pub-post-url"></div>
-                    </div>
-                </div>
-            </li>
-        </ul>
-    </div>
-</script>
-
-<script id="post-url-editor" type="text/template">
-    <label id="post-url-display-label">{{url_label}}:</label>
-    <a href="#" class="ueditor-edit-post-url ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
-    <p id="post-url-display" class="ueditor-previous-data ueditor-previous-data-toggle ueditor-previous-data-small">{{rootUrl}}{{slug}}</p>
-
-    <div class="ueditor-togglable ueditor-togglable-post-url">
-        <p>
-            <span class="ueditor-post-url-root">{{rootUrl}}</span>
-            <input type="text" class="upfront-field-text ueditor-post-url-text" value="{{slug}}">
-        </p>
-        <p>
-            <a href="#" class="ueditor-save-post-data  ueditor-button-save ueditor-button-small-ok">{{Upfront.Settings.l10n.global.content.ok}}</a>
-            <a href="#" class="cancel-post-url  ueditor-button-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</a>
-        </p>
-    </div>
-</script>
-
-<script type="text/template" id="upfront-term-list-tpl">
-    <label id="post-categories-display-label">{{labels.name}}:</label>
-    <a href="#" class="ueditor-edit-categories ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
-    <p id="post-category-display" class="ueditor-previous-data ueditor-previous-data-toggle ueditor-previous-data-small">
-        {{postTerms.pluck("name").join(", ").trim()}}
-    </p>
-    <div class="ueditor-togglable">
-        <div id="upfront-taxonomy-list" class="upfront-scroll-panel">
-            {[ _.each( allTerms, function(term, idx){ ]}
-            {{ termTemplate({term: term, termTemplate: termTemplate, termId: term.get('term_id'), postTerms: postTerms}) }}
-            {[ }); ]}
+                </li>
+            </ul>
         </div>
-        <a href="#" id="add-new-taxonomies-btn">+ {{Upfront.Settings.l10n.global.content.add_new}} {{ labels.singular_name }}</a>
-        <div id="upfront-taxonomy-add" class="ueditor-togglable-child">
-            <input type="text" class="upfront-tax-new_term" placeholder="{{Upfront.Settings.l10n.global.content.enter}} {{ labels.singular_name}}" />
-            <select id="upfront-taxonomy-parents">
-                <option value="0">-- {{Upfront.Settings.l10n.global.content.parent_category}} --</option>
-                {[ _(allTerms).each(function(term, idx) { ]}
-                <option value="{{ term.get('term_id') }}">{{ term.get('name') }}</option>
-                {[ }) ]}
-            </select>
-            <button id="upfront-tax-add_term" class="ueditor-button-small"> {{Upfront.Settings.l10n.global.content.add_new}} {{ labels.singular_name }}</button>
-        </div>
-        <p>
-            <a href="#" class="ueditor-save-post-hie-tax  ueditor-button-small-ok">{{Upfront.Settings.l10n.global.content.ok}}</a>
-            <a href="#" class="ueditor-cancel-hie-tax  ueditor-button-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</a>
-        </p>
-    </div>
-</script>
+    </script>
 
-<script type="text/template" id="upfront-term-single-tpl">
-    <div class="upfront-taxonomy_item" id="upfront-term_item-{{ termId }}">
-        <label for="upfront-taxonomy-{{ term.taxonomy }}-{{ termId }}">
-            <input type="checkbox" id="upfront-taxonomy-{{ term.taxonomy }}-{{ termId }}" value="{{ termId }}" {{ postTerms.get(termId) || typeof selected !== "undefined" ? 'checked="checked"' : '' }} /> {{ term.get('name') }}
-        </label>
-        {[ if( term.children ) { ]}
-            {[ term.children.each(function(child, idx){ ]}
-                {{ termTemplate({term: child, termTemplate: termTemplate, termId: child.get('term_id'), postTerms: postTerms}) }}
-            {[ }) ]}
-        {[ } ]}
-    </div>
-</script>
+    <script id="post-url-editor" type="text/template">
+        <label id="post-url-display-label">{{url_label}}:</label>
+        <a href="#" class="ueditor-edit-post-url ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
+        <p id="post-url-display" class="ueditor-previous-data ueditor-previous-data-toggle ueditor-previous-data-small">{{rootUrl}}{{slug}}</p>
 
-<script type="text/template" id="upfront-flat-term-list-tpl">
-    <label id="post-tags-display-label">{{ labels.name }}:</label>
-    <a href="#" class="ueditor-edit-tags ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
-    <p id="post-tags-display" class="ueditor-previous-data ueditor-previous-data-toggle ueditor-previous-data-small">
-         {{currentTerms.pluck("name").join(", ").trim()}}
-    </p>
-    <div class="ueditor-togglable">
-        <div class="upfront-taxonomy-list-panel upfront-scroll-panel" id="upfront-taxonomy-list-current">
-            {[ currentTerms.each(function(term, idx){ ]}
-                {{ termTemplate({ term: term }) }}
-            {[ }); ]}
-        </div>
-        <div id="upfront-taxonomy-add">
-            <input type="text" class="upfront-flat-tax-new_term" id="upfront-flat-tax-new_term-{{labels.singular_name}}" placeholder="{{Upfront.Settings.l10n.global.content.enter}} {{ labels.singular_name}}" />
-            <button id="upfront-flat-tax-add_term-{{ labels.singular_name }}" class="ueditor-button-small ueditor-button-small-flat-tax-add">{{Upfront.Settings.l10n.global.content.add}}</button>
-        </div>
-        <div id="upfront-taxonomy-list" class="clearfix">
-
-            <div class="upfront-taxonomy-list-panel upfront-taxonomy-list-panel-previously-used" id="upfront-taxonomy-list-all">
-                <a class="upfront-taxonomy-list-choose-from-prev" href="#">{{Upfront.Settings.l10n.global.content.choose_from_prev.replace("%s", labels.name)}} {{labels.name}}</a>
-                <div class="upfront-scroll-panel upfront-inner-scroll-panel ueditor-togglable-child">
-                    {[ otherTerms.each(function(term, idx){ ]}
-                        {{ termTemplate({ term: term }) }}
-                    {[ }); ]}
-                </div>
+        <div class="ueditor-togglable ueditor-togglable-post-url">
+            <div class="ueditor-row">
+                <span class="ueditor-post-url-root">{{rootUrl}}</span>
+                <input type="text" class="upfront-field-text ueditor-post-url-text" value="{{slug}}">
+            </div>
+            <div class="ueditor-row">
+                <a href="#" class="ueditor-save-post-data  ueditor-button-save ueditor-button-small-ok">{{Upfront.Settings.l10n.global.content.ok}}</a>
+                <a href="#" class="cancel-post-url  ueditor-button-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</a>
             </div>
         </div>
-        <p>
-            <a href="" class="save-post-flat-tax  ueditor-button-small-ok">{{Upfront.Settings.l10n.global.content.ok}}</a>
-            <a href="" class="cancel-post-flat-tax  ueditor-button-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</a>
+    </script>
+
+    <script type="text/template" id="upfront-term-list-tpl">
+        <label id="post-categories-display-label">{{labels.name}}:</label>
+        <a href="#" class="ueditor-edit-categories ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
+        <p id="post-category-display" class="ueditor-previous-data ueditor-previous-data-toggle ueditor-previous-data-small">
+            {{postTerms.pluck("name").join(", ").trim()}}
         </p>
-    </div>
-</script>
+        <div class="ueditor-togglable">
+            <div id="upfront-taxonomy-list" class="upfront-scroll-panel">
+                {[ _.each( allTerms, function(term, idx){ ]}
+                {{ termTemplate({term: term, termTemplate: termTemplate, termId: term.get('term_id'), postTerms: postTerms}) }}
+                {[ }); ]}
+            </div>
+            <a href="#" id="add-new-taxonomies-btn">+ {{Upfront.Settings.l10n.global.content.add_new.replace("%s", labels.singular_name)}}</a>
+            <div id="upfront-taxonomy-add" class="ueditor-togglable-child">
+                <input type="text" class="upfront-tax-new_term" placeholder="{{Upfront.Settings.l10n.global.content.enter.replace('%s', labels.singular_name)}}" />
+                <select id="upfront-taxonomy-parents">
+                    <option value="0">-- {{Upfront.Settings.l10n.global.content.parent_category}} --</option>
+                    {[ _(allTerms).each(function(term, idx) { ]}
+                    <option value="{{ term.get('term_id') }}">{{ term.get('name') }}</option>
+                    {[ }) ]}
+                </select>
+                <button id="upfront-tax-add_term" class="ueditor-button-small"> {{Upfront.Settings.l10n.global.content.add_new}} {{ labels.singular_name }}</button>
+            </div>
+            <p>
+                <a href="#" class="ueditor-save-post-hie-tax  ueditor-button-small-ok">{{Upfront.Settings.l10n.global.content.ok}}</a>
+                <a href="#" class="ueditor-cancel-hie-tax  ueditor-button-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</a>
+            </p>
+        </div>
+    </script>
 
-<script type="text/template" id="upfront-term-flat-single-tpl">
-    <div class="upfront-taxonomy_item upfront-taxonomy_item-flat" id="upfront-term_item-{{ term.get('term_id') }}" data-term_id="{{ term.get('term_id') }}">
-        <i class="icon-plus"></i>
-        <i class="icon-remove-circle"></i>
-        {{ term.get('name') }}
-    </div>
-</script>
+    <script type="text/template" id="upfront-term-single-tpl">
+        <div class="upfront-taxonomy_item" id="upfront-term_item-{{ termId }}">
+            <label for="upfront-taxonomy-{{ term.taxonomy }}-{{ termId }}">
+                <input type="checkbox" id="upfront-taxonomy-{{ term.taxonomy }}-{{ termId }}" value="{{ termId }}" {{ postTerms.get(termId) || typeof selected !== "undefined" ? 'checked="checked"' : '' }} /> {{ term.get('name') }}
+            </label>
+            {[ if( term.children ) { ]}
+            {[ term.children.each(function(child, idx){ ]}
+            {{ termTemplate({term: child, termTemplate: termTemplate, termId: child.get('term_id'), postTerms: postTerms}) }}
+            {[ }) ]}
+            {[ } ]}
+        </div>
+    </script>
 
-<script type="text/template" id="post-status-tpl">
-    <label id="post-status-display-label" class="ueditor-icon-label">{{Upfront.Settings.l10n.global.content.status}}</label>
-    <span id="post-status-display" class="ueditor-previous-data">{{status.name}}</span>
-    <a href="#" class="edit-post-status ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
+    <script type="text/template" id="upfront-flat-term-list-tpl">
+        <label id="post-tags-display-label">{{ labels.name }}:</label>
+        <a href="#" class="ueditor-edit-tags ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
+        <p id="post-tags-display" class="ueditor-previous-data ueditor-previous-data-toggle ueditor-previous-data-small">
+            {{currentTerms.pluck("name").join(", ").trim()}}
+        </p>
+        <div class="ueditor-togglable">
+            <div class="upfront-taxonomy-list-panel upfront-scroll-panel" id="upfront-taxonomy-list-current">
+                {[ currentTerms.each(function(term, idx){ ]}
+                {{ termTemplate({ term: term }) }}
+                {[ }); ]}
+            </div>
+            <div id="upfront-taxonomy-add">
+                <input type="text" class="upfront-flat-tax-new_term" id="upfront-flat-tax-new_term-{{labels.singular_name}}" placeholder="{{Upfront.Settings.l10n.global.content.enter.replace('%s', labels.singular_name)}}" />
+                <button id="upfront-flat-tax-add_term-{{ labels.singular_name }}" class="ueditor-button-small ueditor-button-small-flat-tax-add">{{Upfront.Settings.l10n.global.content.add}}</button>
+            </div>
+            <div id="upfront-taxonomy-list" class="clearfix">
 
-    <div id="post-status-select" class="ueditor-togglable">
-        <div class="ueditor-select-status"></div>
-        <select class="ueditor-select-options">
-            {[ _.each(options, function(option){ ]}
-            <option class="ueditor-select-option ueditor-action-status" value="{{option.value}}" {[ if( status.value == option.value ) { ]} selected="selected"  {[ } ]} >{{option.name}}</option>
-            {[ }); ]}
-        </select>
-        <br/>
-        <a href="" class="save-post-status  ueditor-button-small-ok">{{Upfront.Settings.l10n.global.content.ok}}</a>
-        <a href="" class="cancel-post-status  ueditor-button-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</a>
-    </div>
-</script>
+                <div class="upfront-taxonomy-list-panel upfront-taxonomy-list-panel-previously-used" id="upfront-taxonomy-list-all">
+                    <a class="upfront-taxonomy-list-choose-from-prev" href="#">{{Upfront.Settings.l10n.global.content.choose_from_prev.replace("%s", labels.name)}}</a>
+                    <div class="upfront-scroll-panel upfront-inner-scroll-panel ueditor-togglable-child">
+                        {[ otherTerms.each(function(term, idx){ ]}
+                        {{ termTemplate({ term: term }) }}
+                        {[ }); ]}
+                    </div>
+                </div>
+            </div>
+            <p>
+                <a href="" class="save-post-flat-tax  ueditor-button-small-ok">{{Upfront.Settings.l10n.global.content.ok}}</a>
+                <a href="" class="cancel-post-flat-tax  ueditor-button-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</a>
+            </p>
+        </div>
+    </script>
 
-<script type="text/template" id="post-visibility-tpl">
-    <label id="post-visibility-display" class="ueditor-icon-label">{{Upfront.Settings.l10n.global.content.visibility}}</label>
-    <span class="ueditor-previous-data">{{status.name}}</span>
-    <a href="#" class="edit-visibility ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</span>
-    </a>
+    <script type="text/template" id="upfront-term-flat-single-tpl">
+        <div class="upfront-taxonomy_item upfront-taxonomy_item-flat" id="upfront-term_item-{{ term.get('term_id') }}" data-term_id="{{ term.get('term_id') }}">
+            <i class="icon-plus"></i>
+            <i class="icon-remove-circle"></i>
+            {{ term.get('name') }}
+        </div>
+    </script>
 
-    <div id="post-visibility-select" class="ueditor-togglable">
-        <input type="checkbox" style="display:none" name="hidden_post_sticky" id="hidden-post-sticky" value="sticky">
-        <input type="radio" name="visibility" id="visibility-radio-public" value="public" {[ if( status.value == "public" ) { ]} checked="checked" {[ } ]} >
-        <label for="visibility-radio-public">{{Upfront.Settings.l10n.global.content.public_post}}</label>
-        <br>
-        <span id="sticky-span" class="ueditor-togglable-child ueditor-togglable-child-public" {[ if( status.value == "public" ) { ]} style="display:block" {[ } ]}>
+    <script type="text/template" id="post-status-tpl">
+        <label id="post-status-display-label" class="ueditor-icon-label">{{Upfront.Settings.l10n.global.content.status}}</label>
+        <span id="post-status-display" class="ueditor-previous-data">{{status.name}}</span>
+        <a href="#" class="edit-post-status ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
+
+        <div id="post-status-select" class="ueditor-togglable">
+            <div class="ueditor-select-status"></div>
+            <select class="ueditor-select-options">
+                {[ _.each(options, function(option){ ]}
+                <option class="ueditor-select-option ueditor-action-status" value="{{option.value}}" {[ if( status.value == option.value ) { ]} selected="selected"  {[ } ]} >{{option.name}}</option>
+                {[ }); ]}
+            </select>
+            <br/>
+            <a href="" class="save-post-status  ueditor-button-small-ok">{{Upfront.Settings.l10n.global.content.ok}}</a>
+            <a href="" class="cancel-post-status  ueditor-button-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</a>
+        </div>
+    </script>
+
+    <script type="text/template" id="post-visibility-tpl">
+        <label id="post-visibility-display" class="ueditor-icon-label">{{Upfront.Settings.l10n.global.content.visibility}}</label>
+        <span class="ueditor-previous-data">{{status.name}}</span>
+        <a href="#" class="edit-visibility ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</span>
+        </a>
+
+        <div id="post-visibility-select" class="ueditor-togglable">
+            <input type="checkbox" style="display:none" name="hidden_post_sticky" id="hidden-post-sticky" value="sticky">
+            <input type="radio" name="visibility" id="visibility-radio-public" value="public" {[ if( status.value == "public" ) { ]} checked="checked" {[ } ]} >
+            <label for="visibility-radio-public">{{Upfront.Settings.l10n.global.content.public_post}}</label>
+            <br>
+            <span id="sticky-span" class="ueditor-togglable-child ueditor-togglable-child-public" {[ if( status.value == "public" ) { ]} style="display:block" {[ } ]}>
             <input name="sticky" type="checkbox" value="sticky">
             <label>{{Upfront.Settings.l10n.global.content.sticky_post_label}}</label>
             <br>
-        </span>
-        <input type="radio" name="visibility" id="visibility-radio-password" value="password" {[ if( status.value == "password" ) { ]} checked="checked" {[ } ]}>
-        <label for="visibility-radio-password">{{Upfront.Settings.l10n.global.content.password_protected}}</label>
-        <br>
-        <span id="password-span" class="ueditor-togglable-child ueditor-togglable-child-password" {[ if( status.value == "password" ) { ]} style="display:block" {[ } ]}>
+            </span>
+            <input type="radio" name="visibility" id="visibility-radio-password" value="password" {[ if( status.value == "password" ) { ]} checked="checked" {[ } ]}>
+            <label for="visibility-radio-password">{{Upfront.Settings.l10n.global.content.password_protected}}</label>
+            <br>
+            <span id="password-span" class="ueditor-togglable-child ueditor-togglable-child-password" {[ if( status.value == "password" ) { ]} style="display:block" {[ } ]}>
             <label>{{Upfront.Settings.l10n.global.content.password}}:</label>
             <input type="password" class="upfront-field-text ueditor-post-pass" value="{{post_password}}">
             <br>
-        </span>
-        <input type="radio" name="visibility" id="visibility-radio-private" value="private" {[ if( status.value == "private" ) { ]} checked="checked" {[ } ]}>
-        <label for="visibility-radio-private">{{Upfront.Settings.l10n.global.content.is_private}}</label>
-        <br>
-        <p>
-            <a href="#visibility" class="save-post-visibility ueditor-small-button  ueditor-button-small-ok">{{Upfront.Settings.l10n.global.content.ok}}</a>
-            <a href="#visibility" class="cancel-post-visibility  ueditor-button-cancel ueditor-small-button">{{Upfront.Settings.l10n.global.content.cancel}}</a>
-        </p>
-    </div>
-</script>
+            </span>
+            <input type="radio" name="visibility" id="visibility-radio-private" value="private" {[ if( status.value == "private" ) { ]} checked="checked" {[ } ]}>
+            <label for="visibility-radio-private">{{Upfront.Settings.l10n.global.content.is_private}}</label>
+            <br>
+            <p>
+                <a href="#visibility" class="save-post-visibility ueditor-small-button  ueditor-button-small-ok">{{Upfront.Settings.l10n.global.content.ok}}</a>
+                <a href="#visibility" class="cancel-post-visibility  ueditor-button-cancel ueditor-small-button">{{Upfront.Settings.l10n.global.content.cancel}}</a>
+            </p>
+        </div>
+    </script>
 
-<script type="text/template" id="post-schedule-tpl">
-    <span>
+    <script type="text/template" id="post-schedule-tpl">
+        <span>
         <label id="publication-time" class="ueditor-icon-label">{{schedule.key}}:</label>
         <b class="ueditor-previous-data">{{schedule.text}}</b>
     </span>
-    <a href="#" class="edit-timestamp ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
-    <div class="ueditor-togglable ueditor-togglable-post-schedule-date">
-        <div class="timestamp-wrap">
-            <label class="screen-reader-text">{{Upfront.Settings.l10n.global.content.month}}</label>
-            <select name="mm">
-                {[ _.each(_.sortBy(Upfront.Settings.l10n.global.views.month_names), function(month, idx){ ]}
-                <option value="{{idx}}" {[ if( idx == currentMonth ) { ]} selected="selected" {[ } ]}>{{month}}</option>
-                {[ }); ]}
-            </select>
-            <label class="screen-reader-text">{{Upfront.Settings.l10n.global.content.day}}</label>
-            <input type="text" name="jj" value="{{currentDay}}" size="2" maxlength="2" autocomplete="off">,
-            <label class="screen-reader-text">{{Upfront.Settings.l10n.global.content.year}}</label>
-            <input type="text" name="yy" value="{{currentYear}}" size="4" maxlength="4" autocomplete="off">
-            @
-            <label class="screen-reader-text">{{Upfront.Settings.l10n.global.content.hour}}</label>
-            <input type="text"  name="hh" value="{{currentHour}}" size="2" maxlength="2" autocomplete="off">
-            : <label class="screen-reader-text">{{Upfront.Settings.l10n.global.content.minute}}</label>
-            <input type="text"  name="mn" value="{{currentMinute}}" size="2" maxlength="2" autocomplete="off">
-        </div>
+        <a href="#" class="edit-timestamp ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
+        <div class="ueditor-togglable ueditor-togglable-post-schedule-date">
+            <div class="timestamp-wrap">
+                <label class="screen-reader-text">{{Upfront.Settings.l10n.global.content.month}}</label>
+                <select name="mm">
+                    {[ _.each(_.sortBy(Upfront.Settings.l10n.global.views.month_names), function(month, idx){ ]}
+                    <option value="{{idx}}" {[ if( idx == currentMonth ) { ]} selected="selected" {[ } ]}>{{month}}</option>
+                    {[ }); ]}
+                </select>
+                <label class="screen-reader-text">{{Upfront.Settings.l10n.global.content.day}}</label>
+                <input type="text" name="jj" value="{{currentDay}}" size="2" maxlength="2" autocomplete="off">,
+                <label class="screen-reader-text">{{Upfront.Settings.l10n.global.content.year}}</label>
+                <input type="text" name="yy" value="{{currentYear}}" size="4" maxlength="4" autocomplete="off">
+                @
+                <label class="screen-reader-text">{{Upfront.Settings.l10n.global.content.hour}}</label>
+                <input type="text"  name="hh" value="{{currentHour}}" size="2" maxlength="2" autocomplete="off">
+                : <label class="screen-reader-text">{{Upfront.Settings.l10n.global.content.minute}}</label>
+                <input type="text"  name="mn" value="{{currentMinute}}" size="2" maxlength="2" autocomplete="off">
+            </div>
 
-        <p>
-            <a href="#" class="ueditor-save-post-date  ueditor-button-small-ok">{{Upfront.Settings.l10n.global.content.ok}}</a>
-            <a href="#" class="ueditor-cancel-timestamp  ueditor-button-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</a>
-        </p>
-    </div>
-</script>
+            <p>
+                <a href="#" class="ueditor-save-post-date  ueditor-button-small-ok">{{Upfront.Settings.l10n.global.content.ok}}</a>
+                <a href="#" class="ueditor-cancel-timestamp  ueditor-button-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</a>
+            </p>
+        </div>
+    </script>
 
 </div>
