@@ -1008,8 +1008,6 @@ define([
 
 		fitImage: function(){
 			if(!this.fitImageButton){
-				var button = $('#image-edit-button-fit');
-				button.text(l10n.btn.fit_element);
 				this.fitImageButton = true;
 
 				return this.resetImage();
@@ -1041,10 +1039,6 @@ define([
 			this.setResizingLimits();
 			$('#uimage-drag-handle').draggable('option', 'containment', this.getContainment());
 
-			$('#image-edit-button-fit')
-				.attr('title', l10n.btn.restore_label)
-				.text(l10n.btn.restore_info)
-			;
 			$('#image-edit-button-reset')
 				.attr('class', 'image-crop-edit-button image-edit-col-full')
 				.attr('title', l10n.btn.exp_info)
