@@ -953,6 +953,9 @@ define([
 				this.showExpandAlert();
 			}
 			
+			//Set image centered on Natural
+			this.setAlign('center', 'center');
+			
 			this.check100ButtonActivation();
 		},
 
