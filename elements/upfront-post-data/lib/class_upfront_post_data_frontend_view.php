@@ -11,10 +11,10 @@ class Upfront_PostDataView extends Upfront_Object_Group {
 
 	public function get_css_class () {
 		$classes = parent::get_css_class();
-		
+
 		$this->get_post();
-		
-		$classes .= is_sticky( $this->_post->ID ) ? " uf-post-data uf-post-data-sticky" : " uf-post-data";
+
+		$classes .= !empty($this->_post->ID) && is_sticky( $this->_post->ID ) ? " uf-post-data uf-post-data-sticky" : " uf-post-data";
 
 		return $classes;
 	}
@@ -27,7 +27,7 @@ class Upfront_PostDataView extends Upfront_Object_Group {
 		}
 		return $this->_post;
 	}
-	
+
 	public function instantiate_child ($child_data, $idx) {
 		$key = md5(serialize($child_data));
 		if (!empty($this->_child_instances[$key])) return $this->_child_instances[$key];
@@ -74,13 +74,13 @@ class Upfront_PostDataView extends Upfront_Object_Group {
 class Upfront_PostDataPartView extends Upfront_Object {
 
 	private $_parent;
-	
+
 	private $_part_type;
 	private $_part_view;
 	private $_preset_id;
-	
+
 	private $_markup = array();
-	
+
 	public function __construct ($data, $parent_data = '', $parent_obj = false) {
 		parent::__construct($data, $parent_data);
 		if ($parent_obj !== false) {
@@ -121,9 +121,18 @@ class Upfront_PostDataPartView extends Upfront_Object {
 	}
 
 	public function get_propagated_classes () {
+		$part_type = $this->get_part_type();
+
 		$cls = $this->_part_view->get_propagated_classes();
-		$cls[] = $this->get_part_type();
-		if (!empty($this->_preset_id)) $cls[] = 'preset-' . esc_attr($this->_preset_id);
+		$cls[] = $part_type;
+		// Add `upost-data-object-{part type}` class to allow applying custom css per post part type
+		if (in_array($part_type, array('title', 'date_posted', 'content') )) {
+			// Post data does not work with `else` part properly so manual override here
+			$cls[] = 'upost-data-object-' . 'post_data';
+		} else {
+			$cls[] = 'upost-data-object-' . $part_type;
+		}
+		if (!empty($this->_preset_id)) $cls[] = esc_attr($this->_preset_id);
 
 		return $cls;
 	}
@@ -139,5 +148,5 @@ class Upfront_PostDataPartView extends Upfront_Object {
 			: ''
 		;
 	}
-	
+
 }
