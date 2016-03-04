@@ -722,7 +722,7 @@ div#page.upfront-layout-view .upfront-editable_entity.upfront-module .upfront-ac
     float: right;
 }
 .ueditor-box-wrapper label{
-    margin-right: 3px;
+    margin-left: 3px;
 }
 .ueditor-post-url-root{
     float: left;

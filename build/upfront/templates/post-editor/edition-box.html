@@ -46,8 +46,10 @@
     <p id="post-url-display" class="ueditor-previous-data ueditor-previous-data-toggle ueditor-previous-data-small">{{rootUrl}}{{slug}}</p>
 
     <div class="ueditor-togglable ueditor-togglable-post-url">
-        <span class="ueditor-post-url-root">{{rootUrl}}</span>
-        <input type="text" class="upfront-field-text ueditor-post-url-text" value="{{slug}}">
+        <p>
+            <span class="ueditor-post-url-root">{{rootUrl}}</span>
+            <input type="text" class="upfront-field-text ueditor-post-url-text" value="{{slug}}">
+        </p>
         <p>
             <a href="#" class="ueditor-save-post-data  ueditor-button-save ueditor-button-small-ok">{{Upfront.Settings.l10n.global.content.ok}}</a>
             <a href="#" class="cancel-post-url  ueditor-button-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</a>
@@ -67,7 +69,7 @@
             {{ termTemplate({term: term, termTemplate: termTemplate, termId: term.get('term_id'), postTerms: postTerms}) }}
             {[ }); ]}
         </div>
-        <a href="#" id="add-new-taxonomies-btn">+ Add new {{ labels.singular_name }}</a>
+        <a href="#" id="add-new-taxonomies-btn">+ {{Upfront.Settings.l10n.global.content.add_new}} {{ labels.singular_name }}</a>
         <div id="upfront-taxonomy-add" class="ueditor-togglable-child">
             <input type="text" class="upfront-tax-new_term" placeholder="Enter {{ labels.singular_name}}" />
             <select id="upfront-taxonomy-parents">
@@ -76,7 +78,7 @@
                 <option value="{{ term.get('term_id') }}">{{ term.get('name') }}</option>
                 {[ }) ]}
             </select>
-            <button id="upfront-tax-add_term" class="ueditor-button-small"> Add new {{ labels.singular_name }}</button>
+            <button id="upfront-tax-add_term" class="ueditor-button-small"> {{Upfront.Settings.l10n.global.content.add_new}} {{ labels.singular_name }}</button>
         </div>
         <p>
             <a href="#" class="ueditor-save-post-hie-tax  ueditor-button-small-ok">{{Upfront.Settings.l10n.global.content.ok}}</a>
@@ -112,7 +114,7 @@
         </div>
         <div id="upfront-taxonomy-add">
             <input type="text" class="upfront-flat-tax-new_term" id="upfront-flat-tax-new_term-{{labels.singular_name}}" placeholder="Enter {{ labels.singular_name}}" />
-            <button id="upfront-flat-tax-add_term-{{ labels.singular_name }}" class="ueditor-button-small ueditor-button-small-flat-tax-add">Add</button>
+            <button id="upfront-flat-tax-add_term-{{ labels.singular_name }}" class="ueditor-button-small ueditor-button-small-flat-tax-add">{{Upfront.Settings.l10n.global.content.add}}</button>
         </div>
         <div id="upfront-taxonomy-list" class="clearfix">
 
