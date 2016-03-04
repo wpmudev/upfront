@@ -916,13 +916,6 @@ define([
 		},
 
 		image100: function(e){
-			if($(e.target).hasClass('deactivated')){
-				if($(e.target).hasClass('expanded')) {
-					return;
-				}
-				return this.showExpandAlert();
-			}
-
 			var fullGrid = this.getFullWidthImage().size,
 				current = this.getCurrentImageRowsCols(fullGrid.width, fullGrid.height),
 				maskSize = current
@@ -935,16 +928,24 @@ define([
 
 			// Don't allow changing width mask size anymore
 			maskSize.columns = this.elementSize.maxColumns;
+			
+			//Prevent resize mask dimensions
+			//
+			//if(maskSize.columns !== this.elementSize.columns || maskSize.rows !== this.elementSize.rows) {
+			//	this.resizeMask(maskSize.columns, maskSize.rows);
+			//} else{
+			//	var maskOffset = this.$('#uimage-mask').offset();
+			//	fullGrid.top = maskOffset.top;
+			//	fullGrid.left = maskOffset.left;
+			//	this.$('#uimage-canvas').css(fullGrid);
+			//	this.$('#uimage-drag-handle').css(fullGrid);
+			//}
 
-			if(maskSize.columns !== this.elementSize.columns || maskSize.rows !== this.elementSize.rows) {
-				this.resizeMask(maskSize.columns, maskSize.rows);
-			} else{
-				var maskOffset = this.$('#uimage-mask').offset();
-				fullGrid.top = maskOffset.top;
-				fullGrid.left = maskOffset.left;
-				this.$('#uimage-canvas').css(fullGrid);
-				this.$('#uimage-drag-handle').css(fullGrid);
-			}
+			var maskOffset = this.$('#uimage-mask').offset();
+			fullGrid.top = maskOffset.top;
+			fullGrid.left = maskOffset.left;
+			this.$('#uimage-canvas').css(fullGrid);
+			this.$('#uimage-drag-handle').css(fullGrid);
 
 			if(maskSize.columns !== 22 && current.columns > maskSize.columns) {
 				this.showExpandAlert();
