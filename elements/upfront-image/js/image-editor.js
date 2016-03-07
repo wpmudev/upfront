@@ -183,14 +183,28 @@ define([
 					var sizeButtons = me.$el.find('.image-edit-size-buttons');
 
 					if(sizeButtons.length) {
-						sizeButtons.find('.image-increase-size').click(function() {
-							me.buttonIncreaseSize();
+						sizeButtons.find('.image-increase-size').click(function(e) {
+							var step = 1;
+							
+							if(typeof e.shiftKey !== "undefined" && e.shiftKey === true) {
+								step = 5;
+							}
+							
+							me.buttonIncreaseSize(step);
 						});
 						
-						sizeButtons.find('.image-decrease-size').click(function() {
-							me.buttonDecreaseSize();
+						sizeButtons.find('.image-decrease-size').click(function(e) {
+							var step = 1;
+							
+							if(typeof e.shiftKey !== "undefined" && e.shiftKey === true) {
+								step = 5;
+							}
+							
+							me.buttonDecreaseSize(step);
 						});
 					}
+					
+					me.$el.find('.image-edit-resize').hide();
 				}
 			
 			}, 100);
@@ -198,26 +212,25 @@ define([
 			return control;
 		},
 		
-		buttonIncreaseSize: function() {
+		buttonIncreaseSize: function(step) {
 			var me = this,
 				canvas = this.$('#uimage-canvas')
 			;
 			
 			var size = this.options.size;
-			
+
 			canvasSize = {
-				width: (this.invert ? size.height + 1 : size.width + 1),
-				height: (this.invert ? size.width + 1 : size.height + 1)
+				width: (this.invert ? size.height + step : size.width + step),
+				height: (this.invert ? size.width + step : size.height + step)
 			};
 
-			
 			this.options.size = canvasSize;
 			canvas.css(canvasSize);
 			this.selectMode(canvasSize, true);
 			this.setImageSize(canvasSize);
 		},
 		
-		buttonDecreaseSize: function() {
+		buttonDecreaseSize: function(step) {
 			var me = this,
 				canvas = this.$('#uimage-canvas')
 			;
@@ -225,8 +238,8 @@ define([
 			var size = this.options.size;
 
 			canvasSize = {
-				width: (this.invert ? size.height - 1 : size.width - 1),
-				height: (this.invert ? size.width - 1 : size.height - 1)
+				width: (this.invert ? size.height - step : size.width - step),
+				height: (this.invert ? size.width - step : size.height - step)
 			};
 			
 			this.options.size = canvasSize;
