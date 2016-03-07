@@ -2189,6 +2189,9 @@ i.upfront-icon.upfront-icon-region-remove:before {
   content:"x";
   color:red;*/ }
 
+.upfront-icon-region-caption {
+  height: 38px; }
+
 .upfront-inline-panel-item i.upfront-icon.upfront-icon-region-caption:before {
   background-position: -810px -74px; }
 
@@ -3300,7 +3303,7 @@ div.uinsert-selector a:hover {
 
 .upfront-inline-panel-item .upfront-icon {
   display: block;
-  padding: 10px 6px 0 10px; }
+  padding: 10px 6px 10px 10px; }
 
 .upfront-inline-panel-item.labeled {
   line-height: 40px !important;
@@ -9761,7 +9764,7 @@ div.sp-replacer:before {
   font-size: 11px;
   font-family: 'Open Sans';
   padding: 5px 20px 10px 10px;
-  margin-top: 10px;
+  margin-top: 0px;
   background: #E6ECF2;
   box-shadow: 0px 1px 2px #ADADAD;
   color: #253A4E; }
