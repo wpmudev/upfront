@@ -1453,7 +1453,7 @@ div.uimage-controls i.upfront-icon:before,
 	border: 1px solid #A2BFDA;
 	border-radius: 3px;
 	font: 600 12px/16px Open Sans, Helvetica Neueu, Helvetica, Arial, sans-serif;
-	color: #6486A6;
+	color: #456889;
 	text-shadow: 0px 1px 0px #FFFFFF;
 	height: 26px;
 	line-height: 26px;
@@ -1503,24 +1503,49 @@ div.uimage-controls i.upfront-icon:before,
 	background-position: -291px -342px;
 	width: 18px;
 	height: 16px;
+	opacity: 0.7;
 }
-
+#image-edit-button-swap:hover:before{
+	background-position: -291px -342px;
+	width: 18px;
+	height: 16px;
+	opacity: 1;
+}
 #image-edit-button-reset:before{
 	background-position: -291px -368px;
 	width: 18px;
 	height: 20px;
+	opacity: 0.7;
 }
-
+#image-edit-button-reset:hover:before{
+	background-position: -291px -368px;
+	width: 18px;
+	height: 20px;
+	opacity: 1;
+}
 #image-edit-button-fit:before{
 	background-position: -291px -398px;
 	width: 18px;
 	height: 18px;
+	opacity: 0.7;
 }
-
+#image-edit-button-fit:hover:before{
+	background-position: -291px -398px;
+	width: 18px;
+	height: 18px;
+	opacity: 1;
+}
 #image-edit-button-fill:before{
 	background-position: -291px -431px;
 	width: 18px;
 	height: 18px;
+	opacity: 0.7;
+}
+#image-edit-button-fill:hover:before{
+	background-position: -291px -431px;
+	width: 18px;
+	height: 18px;
+	opacity: 1;
 }
 
 .align-points-row {
