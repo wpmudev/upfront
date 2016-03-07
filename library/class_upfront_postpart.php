@@ -321,7 +321,14 @@ abstract class Upfront_PostPart_View {
 	 * @return string Final post full content.
 	 */
 	protected function _get_content () {
-		return apply_filters('the_content', $this->_post->post_content);
+		global $post;
+		$post = $this->_post;
+		setup_postdata($post);
+		ob_start();
+		the_content();
+		$content = ob_get_clean();
+		wp_reset_postdata();
+		return $content;
 	}
 
 	/**

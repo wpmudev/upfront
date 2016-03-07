@@ -198,6 +198,7 @@ PostContentEditor.prototype = {
 			canTriggerEdit: true,
 			init: function () {
 				this.listenTo(this.parent, 'change:content', this.contentChanged);
+				this.on('publish draft auto-draft', this.updateContent);
 			},
 			editContent: function () {
 				_partView.prototype.editContent.call(this);
@@ -213,23 +214,37 @@ PostContentEditor.prototype = {
 					
 					this.$content
 							.off('blur')
-							.on('blur', _.bind(this.blur, this));
+							.on('blur', _.bind(this.blur, this))
+					;
 				}
 				
 			},
 			stopEditContent: function () {
-				console.log(this.editor.getInsertsData())
 				this.editor.stop();
 				if ( this.$content.length ){
 					this.$content.off('blur');
 				}
 			},
 			blur: function () {
+				var html = this.$content.html();
+				this.parent.trigger('change:content', html, this);
+			},
+			updateContent: function () {
 				var isExcerpt = ( this.model.get_property_value_by_name('content') == 'excerpt' ),
-					content;
+					content
+				;
 				// Clean inserts markup
 				this.$content.find(".upfront-inline-panel").remove();
 				this.$content.find(".ueditor-insert-remove").remove();
+				// replace image inserts with their shortcodes
+				this.$content.find(".upfront-inserted_image-wrapper").each(function () {
+					var $this = $(this),
+						$shortcode = $this.find(".post-images-shortcode").length ? $this.find(".post-images-shortcode") : $this.find(".post-images-shortcode-wp"),
+						shortcode = $.trim( $shortcode.html().replace(/(\r\n|\n|\r)/gm,"") )
+					;
+					$this.replaceWith( shortcode );
+				});
+
 				content = $.trim( this.editor.getValue() );
 				content = content.replace(/(\n)*?<br\s*\/?>\n*/g, "<br/>");
 				if ( isExcerpt ) {
@@ -238,7 +253,7 @@ PostContentEditor.prototype = {
 				else {
 					this.parent.currentData.content = content;
 				}
-				this.parent.trigger('change:content', content, isExcerpt, this);
+				this.parent.currentData.inserts = this.editor.getInsertsData();
 			},
 			focus: function () {
 				var node = this.$content.get(0);
@@ -247,14 +262,9 @@ PostContentEditor.prototype = {
 					this.parent.setSelection(node, true);
 				}
 			},
-			contentChanged: function (content, isExcerpt, callFrom) {
+			contentChanged: function (content, callFrom) {
 				if ( callFrom == this ) return;
-				if ( isExcerpt ) {
-					this.$content.redactor('code.set', content);
-				}
-				else {
-					this.$content.redactor('code.set', content);
-				}
+				this.$content.redactor('code.set', content);
 			},
 		}),
 		/**
@@ -748,6 +758,9 @@ PostContentEditor.prototype = {
 		;
 		_.each(events, function(e){
 			me.listenTo(me.box, e, function(){
+				_.each(me._viewInstances, function (view) {
+					view.trigger(e);
+				});
 				var results = {};
 				if(e=='publish' || e=='draft' || e=='auto-draft'){
 					results.title = me.currentData.title;
@@ -755,6 +768,7 @@ PostContentEditor.prototype = {
 					results.excerpt = me.currentData.excerpt;
 					results.author = me.currentData.author;
 					results.date = me.currentData.date;
+					results.inserts = me.currentData.inserts;
 					// if(me.currentContent){
 						// var editor = $(me.currentContent).data('ueditor');
 // 
