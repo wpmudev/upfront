@@ -473,9 +473,6 @@ a.image-edit-button.deactivated:hover {
 #image-edit-button-reset:hover:before{
 	/*background-position: -801px -130px;	*/
 }
-#image-edit-button-swap:hover:before{
-	background-position: -693px -194px;
-}
 #image-edit-button-ok:hover:before{
 	background-position: -801px -192px;
 }
@@ -1445,17 +1442,21 @@ div.uimage-controls i.upfront-icon:before,
 	background-image: linear-gradient(-180deg, #FAFDFF 0%, #F@F9FF 100%);
 	border: 1px solid #A2BFDA;
 	border-radius: 3px;
-	font: 600 12px/16px OpenSans, Helvetica Neueu, Helvetica, Arial, sans-serif;
+	font: 600 12px/16px Open Sans, Helvetica Neueu, Helvetica, Arial, sans-serif;
 	color: #6486A6;
 	text-shadow: 0px 1px 0px #FFFFFF;
+	height: 26px;
+	line-height: 26px;
 }
 .image-crop-edit-button input:hover {
 	background-image: linear-gradient(-180deg, #FAFDFF 0%, #F@F9FF 100%);
 	border: 1px solid #A2BFDA;
 	border-radius: 3px;
-	font: 600 12px/16px OpenSans, Helvetica Neueu, Helvetica, Arial, sans-serif;
+	font: 600 12px/16px Open Sans, Helvetica Neueu, Helvetica, Arial, sans-serif;
 	color: #6486A6;
 	text-shadow: 0px 1px 0px #FFFFFF;
+	height: 26px;
+	line-height: 26px;
 }
 .image-edit-col-full input {
 	width: 102px;
