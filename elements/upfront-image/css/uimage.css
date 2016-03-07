@@ -1572,7 +1572,7 @@ div.uimage-controls i.upfront-icon:before,
 	opacity: 0.5;
 }
 
-.image-edit-control-panel-item:after {
+.image-edit-control-panel-item.upfront-control-dialog-open:after {
     content: '';
     width: 100%;
     height: 6px;
