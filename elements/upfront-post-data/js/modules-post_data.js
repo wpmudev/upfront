@@ -84,6 +84,9 @@ define([
 		title: "Contents",
 		data_part: 'content',
 		get_fields: function () {
+			var grid_size = Upfront.Settings.LayoutEditor.Grid.size || 24,
+				half_grid = parseInt((grid_size-1)/2)
+			;
 			return [
 /*
 				{
@@ -98,7 +101,7 @@ define([
 					label: "Left indent",
 					label_style: 'inline',
 					min: 0,
-					max: Upfront.Settings.LayoutEditor.Grid.size,
+					max: half_grid,
 					className: 'content-indent indent-left',
 					property: "left_indent"
 				},
@@ -107,7 +110,7 @@ define([
 					label: "Right indent",
 					label_style: 'inline',
 					min: 0,
-					max: Upfront.Settings.LayoutEditor.Grid.size,
+					max: half_grid,
 					className: 'content-indent indent-right',
 					property: "right_indent"
 				},

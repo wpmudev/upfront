@@ -151,9 +151,9 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		;
 
 		if (this.presetClass) {
-			me.$el.removeClass(this.presetClass);
+			me.$el.find('.upost-data-object').removeClass(this.presetClass);
 		}
-		this.$el.addClass(preset);
+		this.$el.find('.upost-data-object').addClass(preset);
 		this.presetClass = preset;
 
 		if ( this.child_view ) {
@@ -352,7 +352,7 @@ var PostDataElement = Upfront.Views.Editor.Sidebar.Element.extend({
 					{ name: 'view_class', value: 'PostDataPartView' },
 					{ name: 'part_type', value: type },
 					{ name: 'has_settings', value: 0 },
-					{ name: 'class', value: 'c24 upfront-post-data-part' },
+					{ name: 'class', value: 'c24 upfront-post-data-part part-'+type },
 					{ name: 'wrapper_id', value: wrapper_id },
 				]
 			})
