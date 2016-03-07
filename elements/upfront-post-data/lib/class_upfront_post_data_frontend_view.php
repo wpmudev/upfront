@@ -125,11 +125,23 @@ class Upfront_PostDataPartView extends Upfront_Object {
 
 		$cls = $this->_part_view->get_propagated_classes();
 		$cls[] = $part_type;
+
 		// Add `upost-data-object-{part type}` class to allow applying custom css per post part type
+		// For each type there are part parts that need to be translated to element type class
+		// Post data
 		if (in_array($part_type, array('title', 'date_posted', 'content') )) {
-			// Post data does not work with `else` part properly so manual override here
-			$cls[] = 'upost-data-object-' . 'post_data';
+			$cls[] = 'upost-data-object-post_data';
+		// Post taxonomy
+		} else if (in_array($part_type, array('categories', 'tags') )) {
+			$cls[] = 'upost-data-object-taxonomy';
+		// Post author
+		} else if (in_array($part_type, array('author', 'author-email', 'author-url', 'author-bio', 'gravatar') )) {
+			$cls[] = 'upost-data-object-author';
+		// Post comments
+		} else if (in_array($part_type, array('comment_count', 'comments', 'comment_form', 'comment_pagination') )) {
+			$cls[] = 'upost-data-object-comments';
 		} else {
+			// Meta and featured image have single class that matches type
 			$cls[] = 'upost-data-object-' . $part_type;
 		}
 		if (!empty($this->_preset_id)) $cls[] = esc_attr($this->_preset_id);
