@@ -1023,12 +1023,6 @@ define([
 		},
 
 		fitImage: function(){
-			if(!this.fitImageButton){
-				this.fitImageButton = true;
-
-				return this.resetImage();
-			}
-
 			var canvas = this.$('#uimage-canvas'),
 				mask = this.$('#uimage-mask'),
 				handler = this.$('#uimage-drag-handle'),
@@ -1053,6 +1047,7 @@ define([
 			this.centerImage(true);
 
 			this.setResizingLimits();
+
 			$('#uimage-drag-handle').draggable('option', 'containment', this.getContainment());
 
 			$('#image-edit-button-reset')
@@ -1060,8 +1055,6 @@ define([
 				.attr('title', l10n.btn.exp_info)
 				.find('input').prop('disabled', false)
 			;
-			this.fitImageButton = false;
-
 		},
 
 		//TODO: remove this. This method is deprecated, since the fit mask button is not used anymore
@@ -1091,12 +1084,6 @@ define([
 		},
 
 		fillImage: function(){
-			if(!this.fitImageButton){
-				this.fitImageButton = true;
-
-				return this.resetImage();
-			}
-
 			var canvas = this.$('#uimage-canvas'),
 				mask = this.$('#uimage-mask'),
 				handler = this.$('#uimage-drag-handle'),
@@ -1121,6 +1108,7 @@ define([
 			this.centerImage(true);
 
 			this.setResizingLimits();
+
 			$('#uimage-drag-handle').draggable('option', 'containment', this.getContainment());
 
 			$('#image-edit-button-reset')
@@ -1128,7 +1116,6 @@ define([
 				.attr('title', l10n.btn.exp_info)
 				.find('input').prop('disabled', false)
 			;
-			this.fitImageButton = false;
 		},
 
 		setImageFullSize: function(e) {
