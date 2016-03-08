@@ -8167,7 +8167,7 @@ var GeneralCSSEditor = Backbone.View.extend({
 			rules = _.map(rules, function(rule){return $.trim(rule);});
 			rules.pop();
 
-			styles_with_selector = separator + rules.join('\n}' + separator) + '\n}';
+			styles_with_selector = rules.length ?  separator + rules.join('\n}' + separator) + '\n}' : "";
 
 			me.$style.html(styles_with_selector);
 			me.trigger('change', styles_with_selector);
@@ -8181,7 +8181,7 @@ var GeneralCSSEditor = Backbone.View.extend({
 		if (this.options.type === 'GalleryLightbox') {
 			styles = this.model.get('properties').get('styles').get('value').replace(scope, '');
 		} else {
-			styles = this.model.get('styles').replace(scope, '');
+			styles = this.model.get('styles') ?  this.model.get('styles').replace(scope, '') : "";
 		}
 		editor.setValue($.trim(styles), -1);
 
