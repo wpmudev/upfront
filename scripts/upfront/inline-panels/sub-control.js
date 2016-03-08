@@ -46,12 +46,14 @@ define([
 			this.isOpen = true;
 			this.$el.addClass('upfront-sub-control-dialog-open');
 			this.$el.siblings().find('i').css("opacity", 0.4);
+			this.$el.siblings().prepend('<div class="control-panel-overlay"></div>');
 		},
 
 		close: function() {
 			this.isOpen = false;
 			this.$el.removeClass('upfront-sub-control-dialog-open');
 			this.$el.siblings().find('i').css("opacity", 0.7);
+			this.$el.siblings().find('.control-panel-overlay').remove();
 		},
 
 		render: function() {

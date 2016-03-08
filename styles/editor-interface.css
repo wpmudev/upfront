@@ -9834,6 +9834,13 @@ div.sp-replacer:before {
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open {
   background: #E6ECF2; }
 
+.upfront-element-controls .control-panel-overlay {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  z-index: 99;
+  opacity: 0; }
+
 #upfront-inline-slider-nav {
   position: absolute;
   right: auto;
