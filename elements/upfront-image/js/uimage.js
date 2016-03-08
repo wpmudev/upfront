@@ -521,7 +521,8 @@ define([
 			panel.items = this.getControlItems();
 			panel.render();
 			_.delay( function(){
-				me.controls.$el.html( panel.$el )
+				me.controls.$el.html( panel.$el );
+				me.updateControls();
 			}, 400);
 		},
 		getElementShapeSize: function (elementSize) {
@@ -690,6 +691,7 @@ define([
 				// this.$control_el.find('>.upfront-element-controls').html('').append(this.controls.$el);
 			}
 			this.$control_el.find('>.upfront-element-controls').html('').append(this.controls.$el); // we need to refresh controls because caption item has to be activated or deactivate depending on the `show caption`
+			this.updateAdvancedPadding();
 			this.controls.delegateEvents();
 		},
 
