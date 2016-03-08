@@ -670,7 +670,7 @@ a.image-edit-button.deactivated:hover {
 	background: #2a465f;
 	padding: 5px;
 	left: 0px;
-	top: 30px;
+	top: 38px;
 	text-align: left;
 }
 .upfront-ui.uimage-control-panel .upfront-save_settings {
@@ -1075,7 +1075,7 @@ div.uimage-controls i.upfront-icon:before,
 }
 .upfront-ui .uimage-caption-control {
 	display: none;
-	min-width: 60px;
+	min-width: 76px;
 	line-height: 0px;
 	margin-top:0;
 }
