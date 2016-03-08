@@ -2,6 +2,8 @@
 
 abstract class Upfront_Presets_Server extends Upfront_Server {
 
+	protected $isPostPartServer = false;
+
 	protected function __construct() {
 		parent::__construct();
 
@@ -155,7 +157,12 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 	}
 
 	protected function update_presets($presets = array()) {
-		update_option($this->db_key, json_encode($presets));
+		// Do not need to update this in the db, if it is coming from exporter
+		$isbuilder = isset($_POST['isbuilder']) ? stripslashes($_POST['isbuilder']) : false;
+
+		if($isbuilder != 'true') {
+			update_option($this->db_key, json_encode($presets));
+		}
 	}
 
 	public function save() {
@@ -206,6 +213,8 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 		$styles = '';
 		foreach ($presets as $preset) {
+			if (!file_exists($this->get_style_template_path())) continue; // Don't bother if we don't have the styles
+
 			if (isset($preset['breakpoint']) && isset($preset['breakpoint']['tablet'])) {
 				$preset['tablet'] = array();
 				foreach($preset['breakpoint']['tablet'] as $name=>$property) {
@@ -231,7 +240,11 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 				$preset['preset_style'] = str_replace("\'", "'", $preset['preset_style']);
 				$preset['preset_style'] = str_replace("\'", "'", $preset['preset_style']);
 
-				$preset['preset_style'] = str_replace('#page', 'div#page .upfront-output-region-container .upfront-output-module', $preset['preset_style']);
+				if ($this->isPostPartServer) {
+					$preset['preset_style'] = str_replace('#page', 'div#page .upfront-output-region-container', $preset['preset_style']);
+				} else {
+					$preset['preset_style'] = str_replace('#page', 'div#page .upfront-output-region-container .upfront-output-module', $preset['preset_style']);
+				}
 			}
 
 			$args = array('properties' => $preset);
@@ -246,6 +259,13 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		return $styles;
 	}
 
+	/**
+	 * Get all theme presets presets data
+	 *
+	 * Theme presets are distributed with the theme
+	 *
+	 * @return mixed Array of preset hashes, or (bool)false on failure
+	 */
 	public function get_theme_presets() {
 		$settings = Upfront_ChildTheme::get_settings();
 		//Get presets distributed with the theme
@@ -257,6 +277,11 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		return $theme_presets;
 	}
 
+	/**
+	 * Gets a list of theme preset IDs
+	 *
+	 * @return mixed Array of preset IDs or (bool)false on failure
+	 */
 	public function get_theme_presets_names() {
 
 		//Get presets distributed with the theme
@@ -273,10 +298,17 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		return $theme_preset_names;
 	}
 
+	/**
+	 * Gets individual theme preset data by its ID
+	 *
+	 * @param string $preset Preset ID to use
+	 *
+	 * @return mixed A preset data map, or (bool)false on failure
+	 */
 	public function get_theme_preset_by_id($preset) {
 		$theme_presets = $this->get_theme_presets();
 
-		if(empty($theme_preset)) {
+		if(empty($theme_presets)) {
 			return false;
 		}
 
@@ -289,6 +321,13 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		return false;
 	}
 
+	/**
+	 * Returns individual preset data by its ID
+	 *
+	 * @param string $preset Preset ID to use
+	 *
+	 * @return mixed A preset data map, or (bool)false on failure
+	 */
 	public function get_preset_by_id($preset_id) {
 		$presets = $this->get_presets();
 
@@ -304,6 +343,16 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 	 */
 	protected function migrate_presets($presets) {
 		return $presets;
+	}
+
+	public function properties_columns($array, $column) {
+        $result = array();
+        foreach ($array as $item) {
+            if (array_key_exists($column, $item)) {
+                $result[] = $item[$column];
+			}
+		}
+        return $result;
 	}
 
 	public function get_presets_javascript_server() {

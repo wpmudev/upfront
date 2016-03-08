@@ -360,13 +360,17 @@ class Upfront_Uimage_Server extends Upfront_Server {
 				while (file_exists("{$pfx}{$filename}")) {
 					$filename = rand() . $filename;
 				}
+
+				$raw_filename = $filename;
+				$filename = Upfront_UploadHandler::to_clean_file_name($filename);
+
 				if (!copy($filepath, "{$pfx}{$filename}")) continue;
 
 				$wp_filetype = wp_check_filetype(basename($filename), null);
 				$attachment = array(
 					'guid' => $wp_upload_dir['url'] . '/' . basename($filename),
 					'post_mime_type' => $wp_filetype['type'],
-					'post_title' => preg_replace('/\.[^.]+$/', '', basename($filename)),
+					'post_title' => preg_replace('/\.[^.]+$/', '', basename($raw_filename)),
 					'post_content' => '',
 					'post_status' => 'inherit'
 				);
@@ -668,8 +672,10 @@ class Upfront_Uimage_Server extends Upfront_Server {
 			 * @param string $imagepath Path to the newly created image
 			 * @param string $url Newly changed image URL
 			 * @param array $saved Processing data
+			 * @param array $used Image Metadata
+			 * @param array $imageData
 			 */
-			do_action('upfront-media-images-image_changed', $imagepath, $url, $saved);
+			do_action('upfront-media-images-image_changed', $imagepath, $url, $saved, $used, $imageData );
 		}
 
 		return array(

@@ -477,7 +477,7 @@ jQuery(document).ready(function($){
 				}
 			}
 		});
-		$('.upfront-output-object .uf-post .thumbnail').each(function(){
+		$('.upfront-output-object .uf-post .thumbnail, .uf-post-data .upostdata-part.thumbnail').each(function(){
 			var height = $(this).height(),
 				width = $(this).width(),
 				$img = $(this).find('img'),
@@ -1014,6 +1014,10 @@ jQuery(document).ready(function($){
 				height = $img.height(),
 				width = $img.width()
 			;
+			
+			//Remove blank.gif to calculate width correctly
+			$img.attr('src', '');
+
 			if ($img.is(".upfront-image-lazy-loaded")) return true; // already loaded
 			if (!source && !src && !point_src) return true; // we don't know how to load
 			if (height <= 0 && width <= 0) return true; // Don't lazy load backgrounds for hidden regions.

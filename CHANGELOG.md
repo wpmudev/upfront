@@ -2,6 +2,28 @@ Change Log
 ============
 
 
+1.0.5 - 2016-02-19
+-------------------------------------------------------------------------------
+- Fix: remove text element edit content overlay
+- Fix: show background padding settings only for regions
+- Fix: redactor inline mode edit issue
+- Fix: new region controls issue
+- Fix: tab label styles not applied in paragraphs
+- Fix: prevent lightbox region columns from exceeding breakpoint columns
+- Fix: prevent group resizing when entering edit element
+- Fix: gallery images black areas on thumbnails resize edge cases
+- Fix: gallery initial overlay styles, font styles and default preset value
+- Fix: login element z-index issue in editor
+- Fix: theme colors being inserted with expanded values
+- Fix: preset CSS style cleanup
+- Fix: re-render slider elements on Preset settings updated
+- Fix: region editing corner trigger not accessible in responsive
+- Fix: z-index issue with small-sized groups
+
+1.0.4 - 2016-02-09
+-------------------------------------------------------------------------------
+- Fix: styling issue
+
 1.0.3 - 2016-02-09
 -------------------------------------------------------------------------------
 - Drag and drop fixes and performance improvements

@@ -876,29 +876,27 @@ define([
 			 * Disable image resize on element resize, use Image Edit mode instead
 			 */
 			
-			/*
 			//Resizing the stretching dimension has priority, the other dimension just alter position
-			if(data.stretch && !data.vstretch){
-				this.resizingH(img, data, true);
-				this.resizingV(img, data);
-			} else if(!data.stretch && data.vstretch){
-				this.resizingV(img, data, true);
-				this.resizingH(img, data);
-			} else {
+			//if(data.stretch && !data.vstretch){
+			//	this.resizingH(img, data, true);
+			//	this.resizingV(img, data);
+			//} else if(!data.stretch && data.vstretch){
+			//	this.resizingV(img, data, true);
+			//	this.resizingH(img, data);
+			//} else {
 				//Both stretching or not stretching, calculate ratio difference
-				ratio = data.size.width / data.size.height - data.elementSize.width / data.elementSize.height;
+			//	ratio = data.size.width / data.size.height - data.elementSize.width / data.elementSize.height;
 
 				//Depending on the difference of ratio, the resizing is made horizontally or vertically
-				if(ratio > 0 && data.stretch || ratio < 0 && ! data.stretch){
-					this.resizingV(img, data, true);
-					this.resizingH(img, data);
-				}
-				else {
-					this.resizingH(img, data, true);
-					this.resizingV(img, data);
-				}
-			}
-			*/
+			//	if(ratio > 0 && data.stretch || ratio < 0 && ! data.stretch){
+			//		this.resizingV(img, data, true);
+			//		this.resizingH(img, data);
+			//	}
+			//	else {
+			//		this.resizingH(img, data, true);
+			//		this.resizingV(img, data);
+			//	}
+			//}
 
 			this.updateControls();
 			this.setupBySize();
