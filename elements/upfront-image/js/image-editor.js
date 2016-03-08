@@ -63,7 +63,7 @@ define([
 			'click .image-align-point': 'pointAlignment',
 			'click #image-edit-button-align': 'selectAlign',
 			// 'click .image-edit-rotate': 'rotate',
-			'click .image-fit-element-button': 'fitMask',
+			'click .image-fit-element-button': 'fillImage',
 		},
 
 		initialize: function(){
@@ -128,7 +128,7 @@ define([
 			this.listenTo(cropControls, 'crop:swap:image', this.changeImage);
 			this.listenTo(cropControls, 'crop:reset:image', this.image100);
 			this.listenTo(cropControls, 'crop:fit:image', this.fitImage);
-			this.listenTo(cropControls, 'crop:fill:image', this.fitMask);	
+			this.listenTo(cropControls, 'crop:fill:image', this.fillImage);	
 			
 			control.view = cropControls;
 			
@@ -1088,6 +1088,47 @@ define([
 			optionsNew.elementColumns = elementColumns;
 
 			this.open(optionsNew);
+		},
+
+		fillImage: function(){
+			if(!this.fitImageButton){
+				this.fitImageButton = true;
+
+				return this.resetImage();
+			}
+
+			var canvas = this.$('#uimage-canvas'),
+				mask = this.$('#uimage-mask'),
+				handler = this.$('#uimage-drag-handle'),
+				size = this.initialImageSize(0, false, {width: mask.width(), height: mask.height()})
+			;
+
+			if(this.invert){
+				size = {
+					width: size.height,
+					height: size.width
+				};
+			}
+
+			canvas.css(size);
+			handler.css(size);
+
+			this.setImageSize(size);
+			this.centerImage(true);
+
+			this.selectMode(size, true);
+
+			this.centerImage(true);
+
+			this.setResizingLimits();
+			$('#uimage-drag-handle').draggable('option', 'containment', this.getContainment());
+
+			$('#image-edit-button-reset')
+				.attr('class', 'image-crop-edit-button image-edit-col-full')
+				.attr('title', l10n.btn.exp_info)
+				.find('input').prop('disabled', false)
+			;
+			this.fitImageButton = false;
 		},
 
 		setImageFullSize: function(e) {
