@@ -2481,6 +2481,7 @@ define([
 					wrapper = wrappers && wrapper_id ? wrappers.get_by_wrapper_id(wrapper_id) : false,
 					wrapper_view, wrapper_el
 				;
+				if ( wrappers && !wrapper ) return; // If wrappers exists, don't render object without wrapper
 				if(local_view) {
 					local_view.parent_view = this;
 					if ( local_view.parent_module_view )
