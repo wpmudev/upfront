@@ -1549,20 +1549,35 @@ div.uimage-controls i.upfront-icon:before,
 }
 
 .align-points-row {
-	height: 15px;
+	height: 12px;
 }
 
 .image-align-point {
+	width: 12px;
+	height: 12px;
+	padding: 0px;
+	text-align: center;
+	line-height: 12px;
+	display: block;
+	position: relative;
+	float: left;
+}
+
+.image-align-point:before {
 	width: 4px;
 	height: 4px;
 	border-radius: 50%;
 	background: rgba(123,147,167,1);
 	box-shadow: 0px 0px 2px 0px #24394E;
-	margin: 3px;
+	content: '';
 	display: inline-block;
+	vertical-align: top;
+	position: relative;
+	left: 2px;
+	top: 4px;
 }
 
-.active-alignment-point {
+.active-alignment-point:before {
 	transform: scale(1.5); 
 	background: rgba(84,178,255,1);
 	box-shadow: 0px 0px 2px 0px #24394E;
