@@ -1970,7 +1970,8 @@ define([
 			},
 			on_change_breakpoint: function (breakpoint) {
 				var theme_style = this.model.get_breakpoint_property_value('theme_style', true),
-					$obj = this.$el.find('.upfront-object');
+					$obj = this.$el.find('> .upfront-editable_entity:first')
+				;
 				if ( this._theme_style ) {
 					$obj.removeClass(this._theme_style.toLowerCase());
 				}
@@ -2183,6 +2184,8 @@ define([
 					props.class += ' ' + theme_style.toLowerCase();
 					this._theme_style = theme_style;
 				}
+				props.preset = props.preset || '';
+				this._preset = props.preset;
 
 				model = _.extend(this.model.toJSON(), {"properties": props, "buttons": buttons, "height": height, "extra_buttons": extra_buttons});
 				template = _.template(_Upfront_Templates["object_group"], model);
@@ -2292,6 +2295,12 @@ define([
 				else if ( prop.id.match(/padding_slider/) ) {
 					//this.render();
 					this.handle_visual_padding_hint(prop);
+				}
+				else if ( prop.id == 'preset' ) {
+					if ( this._preset ) $me.removeClass(this._preset);
+					$me.addClass(value);
+					this._preset = value;
+					
 				}
 				Upfront.Events.trigger('entity:object_group:update', this, this.model);
 			},
