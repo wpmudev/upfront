@@ -1325,6 +1325,7 @@ define([
 
 		editRequest: function () {
 			var me = this;
+
 			if(this.property('image_status') === 'ok' && this.property('image_id')) {
 				if (this.isThemeImage() && 'themeExporter' in Upfront) {
 					this.importImage().always(function(){
@@ -1411,11 +1412,19 @@ define([
 			options.element_id = me.model.get_property_value_by_name('element_id');
 			
 			options.element_cols = me.get_element_columns();
+			
+			//Remove controls when open image editor
+			if(typeof this.controls !== "undefined") {
+				this.controls.remove();
+			}
 
 			Upfront.Views.Editor.ImageEditor.open(options)
 				.done(function(result){
 					me.handleEditorResult(result);
 					this.stoppedTimer = false;
+					
+					// Update controls after image editor
+					me.updateControls();
 				})
 				.fail(function(data){
 					if(data && data.reason === 'changeImage') {
@@ -1424,6 +1433,9 @@ define([
 						me.saveTemporaryResizing();
 						me.stoppedTimer = false;
 					}
+					
+					// Update controls after image editor
+					me.updateControls();
 				})
 			;
 		},
