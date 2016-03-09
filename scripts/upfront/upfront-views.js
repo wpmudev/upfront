@@ -5211,6 +5211,7 @@ define([
 				this.update_position();
 				this.update_buttons();
 				this.update_size_hint(this.col * grid.column_width, parseInt(this.$el.css('height'), 10));
+				this.update_padding();
 				this.trigger("region_update", this);
 			},
 			update_position: function () {
@@ -5635,6 +5636,7 @@ define([
 				$edit.appendTo(this.$el);
 				$edit_full.appendTo(this.$el);
 				$ok.appendTo(this.$el);
+				this.update_padding();
 				//this.render_edit_position();
 			},
 			render_bg_setting: function () {
@@ -5649,6 +5651,7 @@ define([
 				this.constructor.__super__.update.call(this);
 				this.check_modules();
 				this.update_region_position();
+				this.update_padding();
 			},
 			update_region_position: function () {
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
