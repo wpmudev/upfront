@@ -35,12 +35,12 @@ class Upfront_Module extends Upfront_Container {
         $classes = parent::get_css_class();
         $more_classes = array();
 
-        foreach ($this->_child_instances as $view) {
+        /*foreach ($this->_child_instances as $view) {
         	$cls = $view->get_propagated_classes();
         	if (empty($cls)) continue;
 
         	$more_classes = array_merge($more_classes, $cls);
-        }
+        }*/
 
         $prop_class = $this->_get_property('class');
         $column = upfront_get_class_num('c', $prop_class);
