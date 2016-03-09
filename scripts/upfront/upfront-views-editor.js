@@ -1747,7 +1747,7 @@ define([
 					Upfront.Application.current_subapplication.get_layout_data().properties,
 					{ 'name': 'typography' }
 				),
-				default_typography = $.parseJSON('{}'); //$.parseJSON('{\"h1\":{\"weight\":\"100\",\"style\":\"normal\",\"size\":\"72\",\"line_height\":\"1\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\",\"color\":\"rgba(0,0,0,1)\"},\"h2\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"50\",\"line_height\":\"1\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h3\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"36\",\"line_height\":\"1.3\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h4\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"30\",\"line_height\":\"1.2\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\"},\"h5\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"25\",\"line_height\":\"1.2\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h6\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"22\",\"line_height\":\"1.3\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"p\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"18\",\"line_height\":\"1.4\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"a\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":false,\"line_height\":false,\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(0,206,141,1)\"},\"a:hover\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":false,\"line_height\":false,\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(0,165,113,1)\"},\"ul\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"16\",\"line_height\":\"1.5\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\",\"color\":\"rgba(0,0,0,1)\"},\"ol\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"16\",\"line_height\":\"1.5\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\"},\"blockquote\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"20\",\"line_height\":\"1.5\",\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(103,103,103,1)\"},\"blockquote.upfront-quote-alternative\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"20\",\"line_height\":\"1.5\",\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(103,103,103,1)\"}}');
+				default_typography = {}; //$.parseJSON('{\"h1\":{\"weight\":\"100\",\"style\":\"normal\",\"size\":\"72\",\"line_height\":\"1\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\",\"color\":\"rgba(0,0,0,1)\"},\"h2\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"50\",\"line_height\":\"1\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h3\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"36\",\"line_height\":\"1.3\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h4\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"30\",\"line_height\":\"1.2\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\"},\"h5\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"25\",\"line_height\":\"1.2\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h6\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"22\",\"line_height\":\"1.3\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"p\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"18\",\"line_height\":\"1.4\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"a\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":false,\"line_height\":false,\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(0,206,141,1)\"},\"a:hover\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":false,\"line_height\":false,\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(0,165,113,1)\"},\"ul\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"16\",\"line_height\":\"1.5\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\",\"color\":\"rgba(0,0,0,1)\"},\"ol\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"16\",\"line_height\":\"1.5\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\"},\"blockquote\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"20\",\"line_height\":\"1.5\",\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(103,103,103,1)\"},\"blockquote.upfront-quote-alternative\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"20\",\"line_height\":\"1.5\",\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(103,103,103,1)\"}}');
 
 			layout_typography = layout_typography ? layout_typography.value : default_typography;
 			var big_tablet_breakpoint,
@@ -1760,14 +1760,14 @@ define([
 			//   typography
 			// - in case of widest (usually tablet for now, big-tablet in some themes) it should
 			//   inherit from default typography
-			if (_.isEmpty(typography) || _.isUndefined(typography.h2)) {
+			if (_.isEmpty(typography)) {
 				if (_.contains(['tablet', 'mobile'], this.model.get('id')) || this.model.get('name') === 'big-tablet') {
 					switcheroo = this.model.get('name') === 'big-tablet' ? 'big-tablet' : this.model.get('id');
 
 					switch (switcheroo) {
 						case 'big-tablet':
 							// We look into the default typography and get those
-							typography = layout_typography;
+							typography = _.clone(layout_typography);
 							break;
 						case 'tablet':
 							// We look to big-tablet typography, if it's undefined we take default typography
@@ -1775,16 +1775,16 @@ define([
 							if (_.isUndefined(big_tablet_breakpoint) || _.isUndefined(big_tablet_breakpoint.get('typography')) || _.isUndefined(big_tablet_breakpoint.get('typography').h2)) {
 								typography = layout_typography;
 							} else {
-								typography = big_tablet_breakpoint.get('typography');
+								typography = _.clone(big_tablet_breakpoint.get('typography'));
 							}
 							break;
 						case 'mobile':
 							// We look to tablet typography, if it's undefined we take default typography
 							tablet_breakpoint = breakpoints_storage.get_breakpoints().findWhere({id:'tablet'});
 							if (_.isUndefined(tablet_breakpoint) || _.isUndefined(tablet_breakpoint.get('typography')) || _.isUndefined(tablet_breakpoint.get('typography').h2)) {
-								typography = layout_typography;
+								typography = _.clone(layout_typography);
 							} else {
-								typography = tablet_breakpoint.get('typography');
+								typography = _.clone(tablet_breakpoint.get('typography'));
 							}
 					}
 				} else {
@@ -2129,7 +2129,7 @@ define([
 				css.push(selector + '{ ' + rules.join("; ") + '; }');
 
 				if (_.contains(['tablet', 'mobile'], me.model.get('id'))) {
-					breakpointCss.push('.' + me.model.get('id') + '-breakpoint ' + selector + '{ ' + rules.join("; ") + '; }');
+					breakpointCss.push(  selector.replace(/\.upfront-object-content/g, '.' + me.model.get('id') + '-breakpoint .upfront-object-content')  + ' { ' + rules.join("; ") + '; }');
 				}
 
 				options[element] = {
@@ -2513,7 +2513,7 @@ define([
             * If slots before the 'index' are empty, fill them up with rgba(0,0,0, 0)
             * This will make sure the 'color' remains at the 'index'
             **/
-            for ( var __next_index = this.theme_colors.colors.length; __next_index < index; __next_index++ ) { 
+            for ( var __next_index = this.theme_colors.colors.length; __next_index < index; __next_index++ ) {
 			    this.theme_colors.colors.push({
                     color : "#000000",
                     prev : "#000000",
@@ -2522,7 +2522,7 @@ define([
                     alpha: 0
                 });
 			}
-           
+
             var self = this,
                 model = this.theme_colors.colors.add({
                     color : color.toHexString(),
@@ -9470,7 +9470,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						multiple: false
 					});
 			}
-			
+
 			//Render padding settings only for regions
 			if ( is_region ) {
 
@@ -9803,7 +9803,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			else {
 				$content.find('.upfront-region-bg-setting-auto-resize').hide();
 			}
-			
+
 			//Render padding settings only for regions
 			if ( is_region ){
 				// Padding Settings
@@ -9824,7 +9824,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 			}
 
 			//Make sure we hide the padding markup from template
-			if ( is_layout && !is_region ) {				
+			if ( is_layout && !is_region ) {
 				$content.find('.upfront-region-bg-setting-padding').hide();
 			}
 
