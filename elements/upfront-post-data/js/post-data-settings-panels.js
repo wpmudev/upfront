@@ -145,34 +145,44 @@ define([
 		},
 		update_object: function (type, enable) {
 			var enable = ( enable == 1 ),
+				breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 				objects = this.model.get('objects'),
 				wrappers = this.model.get('wrappers'),
 				object = this.find_object(type)
 			;
-			if ( !object && enable ) {
-				var wrapper_id = Upfront.Util.get_unique_id("wrapper"),
-					wrapper = new Upfront.Models.Wrapper({
-						properties: [
-							{ name: 'wrapper_id', value: wrapper_id },
-							{ name: 'class', value: 'c24 clr' }
-						]
-					}),
-					object = new Upfront.Models.PostDataPartModel({
-						properties: [
-							{ name: 'view_class', value: 'PostDataPartView' },
-							{ name: 'part_type', value: type },
-							{ name: 'has_settings', value: 0 },
-							{ name: 'class', value: 'c24 upfront-post-data-part' },
-							{ name: 'wrapper_id', value: wrapper_id }
-						]
-					})
-				;
-				wrappers.add(wrapper, {silent: true});
-				objects.add(object);
+			if ( breakpoint.default ) {
+				// Default breakpoint, actually add/remove objects
+				if ( !object && enable ) {
+					var wrapper_id = Upfront.Util.get_unique_id("wrapper"),
+						wrapper = new Upfront.Models.Wrapper({
+							properties: [
+								{ name: 'wrapper_id', value: wrapper_id },
+								{ name: 'class', value: 'c24 clr' }
+							]
+						}),
+						object = new Upfront.Models.PostDataPartModel({
+							properties: [
+								{ name: 'view_class', value: 'PostDataPartView' },
+								{ name: 'part_type', value: type },
+								{ name: 'has_settings', value: 0 },
+								{ name: 'class', value: 'c24 upfront-post-data-part' },
+								{ name: 'wrapper_id', value: wrapper_id }
+							]
+						})
+					;
+					wrappers.add(wrapper, {silent: true});
+					objects.add(object);
+				}
+				else if ( object ) {
+					var object_view = Upfront.data.object_views[object.cid];
+					object_view.parent_view.on_entity_remove(null, object_view);
+				}
 			}
-			else if ( object ) {
-				var object_view = Upfront.data.object_views[object.cid];
-				object_view.parent_view.on_entity_remove(null, object_view);
+			else {
+				// On responsive, just hide/show available object
+				if ( object ) {
+					object.set_breakpoint_property('hide', (enable ? 0 : 1));
+				}
 			}
 		}
 	});

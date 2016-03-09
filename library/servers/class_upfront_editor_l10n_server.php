@@ -691,6 +691,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 					'close' => __('close', 'upfront'),
 					'save' => __('Save', 'upfront'),
 				),
+				'advanced_padding' => __('Advanced Padding', 'upfront'),
 			),
 		);
 		return !empty($key)

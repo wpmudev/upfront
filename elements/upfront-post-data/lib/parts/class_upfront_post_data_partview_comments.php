@@ -86,9 +86,15 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 			$post = $this->_get_random_post();
 		}
 
+		// ... aaand start with comments fields rearrangement for WP4.4
+		add_filter('comment_form_fields', array('Upfront_Post_Data_PartView_Comments', 'rearrange_comment_form_fields'));
+
         ob_start();
         comment_form($form_args, $post->ID);
         $comment_form = ob_get_clean();
+
+        // Clean up after ourselves
+        remove_filter('comment_form_fields', array('Upfront_Post_Data_PartView_Comments', 'rearrange_comment_form_fields'));
 
         $out = $this->_get_template('comment_form');
 
@@ -110,8 +116,10 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 	 * @return string
 	 */
 	public function expand_comments_pagination_template () {
-		if (empty($this->_post->ID)) return '';
-		if (empty($this->_post->comment_count)) return '';
+		if (!$this->_is_fake_data()) {
+			if (empty($this->_post->ID)) return '';
+			if (empty($this->_post->comment_count)) return '';
+		}
 
 		// If we have plugin-overridden template, then assume it'll take care of itself
 		$tpl = $this->_get_external_comments_template();
@@ -183,9 +191,10 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 			}
 			else return '';
 		}
-		if (empty($post) || !is_object($post)) return '';
 
+		if (empty($post) || !is_object($post)) return '';
 		if (post_password_required($post->ID)) return '';
+		
 		ob_start();
 
 		// Load comments
@@ -221,6 +230,29 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 	}
 
 	/**
+	 * Re-arrange comment form fields.
+	 *
+	 * At the moment just to revert the WP 4.4 fields order change,
+	 * but can be used to apply custom order down the line
+	 *
+	 * @param array $fields Comment form fields
+	 *
+	 * @return array
+	 */
+	public static function rearrange_comment_form_fields ($fields) {
+		if (!is_array($fields) || empty($fields['comment'])) return $fields;
+		
+		$result = array();
+		foreach ($fields as $key => $field) {
+			if ('comment' === $key) continue;
+			$result[$key] = $field;
+		}
+		$result['comment'] = $fields['comment'];
+
+		return $result;
+	}
+
+	/**
 	 * Generate random comments for use with builder
 	 *
 	 * @param $post object WP_Post object
@@ -244,16 +276,18 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 		);
 		$comments = array();
 		if (!in_array('comments', $skip)) {
-			$comments[] = array_merge($fake_comment, array(
-				'user_id' => get_current_user_id(),
-				'comment_author' => 'Author',
-				'comment_content' => 'test stuff author comment',
-			));
-			$comments[] = array_merge($fake_comment, array(
-				'user_id' => 0,
-				'comment_author' => 'Visitor',
-				'comment_content' => 'test stuff visitor comment',
-			));
+			for ($i=0; $i<5; $i++) {
+				$comments[] = array_merge($fake_comment, array(
+					'user_id' => get_current_user_id(),
+					'comment_author' => 'Author',
+					'comment_content' => 'test stuff author comment',
+				));
+				$comments[] = array_merge($fake_comment, array(
+					'user_id' => 0,
+					'comment_author' => 'Visitor',
+					'comment_content' => 'test stuff visitor comment',
+				));
+			}
 		}
 		if (!in_array('trackbacks', $skip)) {
 			$comments[] = array_merge($fake_comment, array(
@@ -273,6 +307,7 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 			$comment['comment_ID'] = $cid;
 			$comments[$cid] = (object)wp_filter_comment($comment);
 		}
+
 		return $comments;
 	}
 
@@ -383,19 +418,31 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 	 * @return string Comment pagination links.
 	 */
 	private function _get_pagination () {
-		if (empty($this->_post->ID)) return '';
-		if (empty($this->_post->comment_count)) return '';
+		if (!$this->_is_fake_data()) {
+			if (empty($this->_post->ID)) return '';
+			if (empty($this->_post->comment_count)) return '';
+		}
 
 		// No pagination
 		if (!$this->_is_paginated()) return '';
 
-		$total = (int)$this->_post->comment_count / $this->_get_limit();
-		if ((int)$this->_post->comment_count % $this->_get_limit()) $total++; // Fix trailing comment offset
+		$post = $this->_post;
+		$comment_count = $this->_post->comment_count;
+		if ($this->_is_fake_data()) {
+			$post = $this->_get_random_post();
+			$comments = self::spawn_random_comments($post);
+			$post->comment_count = count($comments);
+			$comment_count = $post->comment_count;
+		}
+
+		$total = (int)$comment_count / $this->_get_limit();
+		if ((int)$comment_count % $this->_get_limit()) $total++; // Fix trailing comment offset
 
 		if (defined('DOING_AJAX') && DOING_AJAX) {
 			// Admin area override when doing AJAX preview (editor/builder)
 			global $wp_query;
 			$wp_query->is_singular = true;
+			if ($this->_is_fake_data()) $wp_query->max_num_comment_pages = $total;
 		}
 		
 		$out = paginate_comments_links(array(

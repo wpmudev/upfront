@@ -359,7 +359,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			this.createLinkControl(image)
 		]);
 
-    if (this.property('labelFilters') === 'true') {
+		if (this.property('labelFilters') === 'true') {
 			panel.items.push(this.createLabelControl(image));
 		}
 
@@ -376,6 +376,11 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 		item.icon = icon;
 		item.tooltip = tooltip;
+		
+		//Set icon width & height
+		item.width = 30;
+		item.height = 30;
+
 		if(click_callback) {
 			this.listenTo(item, 'click', function(e){
 				me[click_callback](e);
@@ -498,15 +503,19 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		linkControl.icon = 'link';
 		linkControl.tooltip = l10n.ctrl.image_link;
 		linkControl.id = 'link';
+		
+		//Set icon width & height
+		linkControl.width = 30;
+		linkControl.height = 30;
 
 		return linkControl;
 	},
 
-  openLightbox: function(event) {
+	openLightbox: function(event) {
 		var gallery, magOptions;
 			gallery = false;
 			magOptions = ugalleries[galleryId].magnific;
-  },
+	},
 
 	openImageLightbox: function(e) {
 		var me = this,

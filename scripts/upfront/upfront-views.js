@@ -720,7 +720,7 @@ define([
 					width = width ? width - hPadding : this.$el.width() - hPadding,
 					height = height ? height : this.$el.outerHeight(),
 					hint = '<b>w:</b>' + width + 'px <b>h:</b>' + height + 'px';
-				
+
 				this.$el.find('.upfront-entity-size-hint').html(hint);
 
 			},
@@ -902,6 +902,27 @@ define([
 					this.$control_el.append(elementControlsTpl);
 					this.$control_el.find('>.upfront-element-controls').html('').append(this.controls.$el);
 				}
+
+				var advancedPaddingControl = this.$control_el.find('>.upfront-element-controls .upfront-field-advanced-padding');
+				if ( advancedPaddingControl.length > 0 ) {
+					var me = this;
+					advancedPaddingControl.on('click', function(){
+						// better to close first padding control modal-content
+						me.paddingControl.close();
+						// activate sidebar settings
+						me.model.set_breakpoint_property('use_padding', 'yes', true);
+						me.on_settings_click();
+						// wait for half a second to load everything
+						setTimeout(function () {
+							// sidebar advanced settings
+							var $elementAdvancedSettings = $('#element-settings-sidebar .advanced-settings');
+							if ( $elementAdvancedSettings.length > 0) {
+								$elementAdvancedSettings.find('.uf-settings-panel__body').toggle();
+							}
+						}, 500);
+					});
+				}
+
 				this.controls.delegateEvents();
 
 			},
@@ -1474,7 +1495,7 @@ define([
 						this.for_view.enable_object_edit();
 					}
 				}));
-				
+
 				this.menuitems = _(menuitems);
 			}
 
@@ -1889,7 +1910,7 @@ define([
 				}
 			},
 			on_element_resize_start: function (attr) {
-				
+
 			},
 			on_element_resizing: function (attr) {
 				if ( this.display_size_hint ) {
@@ -1919,7 +1940,7 @@ define([
 			on_module_update: function (view) {
 
 				if ( !this.parent_module_view || this.parent_module_view != view ) return;
-				
+
 				if ( this.display_size_hint ) {
 					var me = this;
 					setTimeout(function(){
@@ -1948,7 +1969,8 @@ define([
 			},
 			on_change_breakpoint: function (breakpoint) {
 				var theme_style = this.model.get_breakpoint_property_value('theme_style', true),
-					$obj = this.$el.find('.upfront-object');
+					$obj = this.$el.find('> .upfront-editable_entity:first')
+				;
 				if ( this._theme_style ) {
 					$obj.removeClass(this._theme_style.toLowerCase());
 				}
@@ -1989,7 +2011,7 @@ define([
 				if ( !this.parent_module_view.wrapper_view ) return;
 				this.parent_module_view.wrapper_view.$el.removeClass('upfront-wrapper-active upfront-inline-panel-item-open');
 			},
-			
+
 			on_hide_click: function (e) {
 				e.preventDefault();
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
@@ -2002,8 +2024,8 @@ define([
 					data[breakpoint.id].hide = 1;
 				this.model.set_property('breakpoint', data);
 			},
-			
-			
+
+
 			on_context_menu: function(e) {
 				// Don't run context menu if this view is under ObjectGroup
 				if ( this.object_group_view )
@@ -2126,14 +2148,14 @@ define([
 				//"dblclick": "on_edit",
 				"contextmenu": "on_context_menu"
 			},
-			
+
 			initialize: function () {
 				ObjectView.prototype.initialize.call(this);
 				this.listenTo(Upfront.Events, "command:object_group:finish_edit", this.on_finish);
 				this._module_col = {};
 				this.editing = false;
 			},
-			
+
 			render: function () {
 				var me = this,
 					grid = Upfront.Settings.LayoutEditor.Grid,
@@ -2143,7 +2165,7 @@ define([
 					extra_buttons = (this.get_extra_buttons ? this.get_extra_buttons() : ''),
 					height, model, template, module_col, col
 				;
-				
+
 				// Id the element by anchor, if anchor is defined
 				var the_anchor = this.model.get_property_value_by_name("anchor");
 				if (the_anchor && the_anchor.length)
@@ -2161,10 +2183,12 @@ define([
 					props.class += ' ' + theme_style.toLowerCase();
 					this._theme_style = theme_style;
 				}
+				props.preset = props.preset || '';
+				this._preset = props.preset;
 
 				model = _.extend(this.model.toJSON(), {"properties": props, "buttons": buttons, "height": height, "extra_buttons": extra_buttons});
 				template = _.template(_Upfront_Templates["object_group"], model);
-				
+
 				Upfront.Events.trigger("entity:object_group:before_render", this, this.model);
 				// Listen to module resize and drop event
 				if ( this.parent_module_view ){
@@ -2182,7 +2206,7 @@ define([
 
 				// Detach to preserve DOM
 				objects_view.$el.detach();
-				
+
 				this.$el.html(template);
 
 				objects_view.object_group_view = this;
@@ -2205,12 +2229,12 @@ define([
 				}
 
 				if ( this.on_render ) this.on_render();
-				
+
 				if ( ! this._objects_view )
 					this._objects_view = objects_view;
 				else
 					this._objects_view.delegateEvents();
-					
+
 				this.ensure_breakpoint_change_is_listened();
 				this.ensureUiOffsetCalls();
 
@@ -2271,6 +2295,12 @@ define([
 					//this.render();
 					this.handle_visual_padding_hint(prop);
 				}
+				else if ( prop.id == 'preset' ) {
+					if ( this._preset ) $me.removeClass(this._preset);
+					$me.addClass(value);
+					this._preset = value;
+					
+				}
 				Upfront.Events.trigger('entity:object_group:update', this, this.model);
 			},
 
@@ -2318,18 +2348,18 @@ define([
 				;
 				this._objects_view.normalize_child_modules(col, prev_col, this.model.get('wrappers'));
 			},
-			
+
 			enable_object_edit: function () {
 				Upfront.Events.trigger("command:module_group:finish_edit"); // close module group edit if opened
 				Upfront.Events.trigger("command:object_group:finish_edit"); // close other edit first
 				this.toggle_object_edit(true);
 			},
-			
+
 			disable_object_edit: function () {
 				if ( !this.editing ) return;
 				this.toggle_object_edit(false);
 			},
-			
+
 			toggle_object_edit: function (enable) {
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 				if ( enable ){
@@ -2354,14 +2384,14 @@ define([
 				}
 				this.trigger('toggle_object_edit', enable);
 			},
-			
+
 			on_finish: function (e) {
 				if( typeof e !== "undefined" ){
 					e.preventDefault();
 				}
 				this.disable_object_edit();
 			},
-			
+
 			remove: function () {
 				if(this._objects_view)
 					this._objects_view.remove();
@@ -2373,7 +2403,7 @@ define([
 			"attributes": {
 				"class": "upfront-editable_entities_container"
 			},
-			
+
 			init: function () {
 				this.stopListening(this.model, 'add', this.render);
 				this.listenTo(this.model, 'add', this.on_add);
@@ -2459,6 +2489,7 @@ define([
 					wrapper = wrappers && wrapper_id ? wrappers.get_by_wrapper_id(wrapper_id) : false,
 					wrapper_view, wrapper_el
 				;
+				if ( wrappers && !wrapper ) return; // If wrappers exists, don't render object without wrapper
 				if(local_view) {
 					local_view.parent_view = this;
 					if ( local_view.parent_module_view )
@@ -3967,7 +3998,7 @@ define([
 				this.apply_adapt_to_breakpoints();
 			},
 			on_resize: function (view, model) {
-				
+
 				if ( view.parent_view && view.parent_view != this ) return;
 				//this.apply_flexbox_clear();
 				this.apply_wrapper_height();
@@ -5411,6 +5442,7 @@ define([
 								thecollection.remove(sub_model);
 						});
 					}
+					var floating = this.model.get('type') === 'fixed';
 					this.model.collection.remove(this.model);
 
 					var total_container = thecollection.total_container(['shadow', 'lightbox']); // don't include shadow and lightbox region
@@ -5441,6 +5473,8 @@ define([
 						}
 
 					}
+					// For single post if floating region is removed, parent region will not re-render and will appear as if everything was removed
+					if (floating) parent_view.render();
 
 					// if ( main_view ){
 						// Upfront.Events.trigger('command:region:edit_toggle', true);

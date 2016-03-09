@@ -1,18 +1,18 @@
 <?php if (!empty($properties['static-date_posted-use-typography'])) { ?>
 
-.preset-<?php echo $properties['id'] ?> .upfront-post-data-part .date_posted {
+.<?php echo $properties['id'] ?> .upfront-post-data-part .date_posted {
 
 	<?php if (!empty($properties['static-date_posted-font-family'])) { ?>
 		font-family: <?php echo $properties['static-date_posted-font-family'] ?>;
 	<?php } ?>
-	
+
 	<?php if (!empty($properties['static-date_posted-style'])) { ?>
 		font-style: <?php echo $properties['static-date_posted-style'] ?>;
-	<?php } ?>	
-	
+	<?php } ?>
+
 	<?php if (!empty($properties['static-date_posted-weight'])) { ?>
 		font-weight: <?php echo $properties['static-date_posted-weight'] ?>;
-	<?php } ?>	
+	<?php } ?>
 
 	<?php if (!empty($properties['static-date_posted-font-size'])) { ?>
 		font-size: <?php echo $properties['static-date_posted-font-size'] ?>px;
@@ -32,19 +32,19 @@
 
 <?php if (!empty($properties['static-title-use-typography'])) { ?>
 
-.preset-<?php echo $properties['id'] ?> .upfront-post-data-part .title h3 {
+.<?php echo $properties['id'] ?> .upfront-post-data-part .title * {
 
 	<?php if (!empty($properties['static-title-font-family'])) { ?>
 		font-family: <?php echo $properties['static-title-font-family'] ?>;
 	<?php } ?>
-	
+
 	<?php if (!empty($properties['static-title-style'])) { ?>
 		font-style: <?php echo $properties['static-title-style'] ?>;
-	<?php } ?>	
-	
+	<?php } ?>
+
 	<?php if (!empty($properties['static-title-weight'])) { ?>
 		font-weight: <?php echo $properties['static-title-weight'] ?>;
-	<?php } ?>	
+	<?php } ?>
 
 	<?php if (!empty($properties['static-title-font-size'])) { ?>
 		font-size: <?php echo $properties['static-title-font-size'] ?>px;

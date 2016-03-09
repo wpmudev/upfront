@@ -63,28 +63,11 @@ abstract class Upfront_Container extends Upfront_Entity {
 			}
 
 			// So let's map out the breakpoints/presets map
-			$preset_map = array();
-			$raw_preset_map = upfront_get_property_value('breakpoint_presets', $data);
-			if (!empty($raw_preset_map)) foreach ($raw_preset_map as $bp => $pst) {
-				if (empty($pst['preset'])) continue;
-				$preset_map[$bp] = esc_js($pst['preset']);
-			}
+			$preset_map = $this->_get_preset_map($data);
 			// Now we have a map of breakpoint/presets we can encode as the attribute
 			// This will be used for the breakpoint preset toggling
+			$preset = $this->_get_preset($data, $preset_map);
 
-			// We also preserve the current preset class, so it all
-			// just works without JS requirement on client
-			$preset = upfront_get_property_value('preset', $data);
-
-			// Also, if we have a preset map and a default grid breakpoint
-			// mapped, let's try to use this as default preset
-			if (!empty($preset_map)) {
-				$default_bp = Upfront_Output::$grid->get_default_breakpoint();
-				if ($default_bp && is_callable(array($default_bp, 'get_id'))) {
-					$bp = $default_bp->get_id();
-					if (!empty($preset_map[$bp])) $preset = $preset_map[$bp];
-				}
-			}
 
 			$breakpoint = upfront_get_property_value('breakpoint', $data);
 			$theme_styles = array('default' => $theme_style);
@@ -113,6 +96,33 @@ abstract class Upfront_Container extends Upfront_Entity {
 		} else {
 			return $view->get_markup();
 		}
+	}
+
+	protected function _get_preset_map ($data) {
+		$preset_map = array();
+		$raw_preset_map = upfront_get_property_value('breakpoint_presets', $data);
+		if (!empty($raw_preset_map)) foreach ($raw_preset_map as $bp => $pst) {
+			if (empty($pst['preset'])) continue;
+			$preset_map[$bp] = esc_js($pst['preset']);
+		}
+		return $preset_map;
+	}
+
+	protected function _get_preset ($data, $preset_map) {
+		// We also preserve the current preset class, so it all
+		// just works without JS requirement on client
+		$preset = upfront_get_property_value('preset', $data);
+
+		// Also, if we have a preset map and a default grid breakpoint
+		// mapped, let's try to use this as default preset
+		if (!empty($preset_map)) {
+			$default_bp = Upfront_Output::$grid->get_default_breakpoint();
+			if ($default_bp && is_callable(array($default_bp, 'get_id'))) {
+				$bp = $default_bp->get_id();
+				if (!empty($preset_map[$bp])) $preset = $preset_map[$bp];
+			}
+		}
+		return $preset;
 	}
 
 	// Overriden from Upfront_Entity
