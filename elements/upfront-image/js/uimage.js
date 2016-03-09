@@ -496,7 +496,7 @@ define([
 					width: Math.min(elementSize.width, size.width),
 					height: Math.min(elementSize.height, size.height)
 				});
-
+				
 				img.attr('src', me.property('srcFull'))
 					.css({
 						width: size.width,
@@ -839,6 +839,12 @@ define([
 				height: '100%',
 				marginTop: 0
 			});
+			
+			this.$('.upfront-image-container img').css({
+				top: -this.resizingData.data.position.top || 0,
+				left: -this.resizingData.data.position.left || 0
+			});
+
 			this.$('.uimage').css('min-height', 'auto');
 		},
 
@@ -899,7 +905,7 @@ define([
 					}
 				}
 			}
-
+			
 			this.updateControls();
 			this.setupBySize();
 		},
