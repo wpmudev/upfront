@@ -5071,8 +5071,7 @@ define([
 				this.listenTo(Upfront.Events, "entity:drag:drop_change", this.refresh_background);
 				this.listenTo(Upfront.Events, "entity:navigation:responsive_open", this.refresh_background);
 				this.listenTo(Upfront.Events, "entity:navigation:responsive_close", this.refresh_background);
-				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
-				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.update_padding);
+				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);;
 				this.listenTo(Upfront.Events, "entity:region:hide_toggle", this.update_hide_toggle);
 				this.listenTo(Upfront.Events, "command:region:edit_toggle", this.update_buttons);
 				this.listenTo(Upfront.Events, "entity:region:removed", this.update_buttons);
@@ -5598,6 +5597,7 @@ define([
 					$hide.hide();
 				}
 				this.update_position();
+				this.update_padding();
 				this.update_size_hint(parseInt(this.$el.css('width'), 10), parseInt(this.$el.css('height'), 10));
 				if ( this._is_clipped() )
 					this.update_background();
@@ -5891,6 +5891,8 @@ define([
 				this.constructor.__super__.remove.call(this);
 			},
 			on_change_breakpoint: function (breakpoint) {
+				this.update_padding();
+
 				if ( !breakpoint.default )
 					this.$el.hide();
 				else
@@ -5983,6 +5985,7 @@ define([
 				this.constructor.__super__.update.call(this);
 				this.check_modules();
 				this.update_region_position();
+				this.update_padding();
 
 				if(this.model.get_property_value_by_name('show_close') == 'yes' || this.model.get_property_value_by_name('add_close_text') == 'yes') {
 
@@ -6098,6 +6101,7 @@ define([
 				}
 			},
 			on_change_breakpoint: function (breakpoint) {
+				this.update_padding();
 				this.update_region_position();
 				this.hide();
 			}
