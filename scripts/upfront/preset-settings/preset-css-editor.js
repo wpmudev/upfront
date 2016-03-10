@@ -84,11 +84,6 @@ define([
 			this.modelType = this.options.model.get_property_value_by_name('type');
 			this.elementType = this.elementTypes[this.modelType] || {label: 'Unknown', id: 'unknown'};
 
-			if(this.modelType === "PostDataModel") {
-				
-				this.elementType = this.postElementTypes[this.dataPartType] || {label: l10n.post_data, id: 'post_data'};
-			}
-
 			// DO NOT DO THIS!!! DELEGATE STYLE RENDERING TO PRESET (look at preset-css module scripts/upfront/settings/modules/preset-css.js
 			// $style = $('#' + style_selector);
 			// if ($style.length === 0) {
@@ -101,7 +96,12 @@ define([
 			this.createSelectors(Upfront.Application.LayoutEditor.Objects);
 
 			this.selectors = this.elementSelectors[this.modelType] || {};
-
+			
+			if(this.modelType === "PostDataModel") {
+				this.elementType = this.postElementTypes[this.dataPartType] || {label: l10n.post_data, id: 'post_data'};
+				this.selectors = this.elementSelectors['post_' + this.dataPartType] || {};
+			}
+			
 			this.element_id = options.element_id ? options.element_id : this.model.get_property_value_by_name('element_id');
 
 			if ( typeof options.change == 'function' ) this.listenTo(this, 'change', options.change);
