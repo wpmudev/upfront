@@ -118,8 +118,8 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 
 	getControlItems: function(){
 		return _([
-			this.createPaddingControl(),
 			this.createControl('reorder', l10n.settings, 'on_edit_click'),
+			this.createPaddingControl(),
 			this.createControl('settings', l10n.settings, 'on_settings_click')
 		]);
 	},
