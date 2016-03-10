@@ -2319,7 +2319,7 @@ define([
 					if ( this._preset ) $me.removeClass(this._preset);
 					$me.addClass(value);
 					this._preset = value;
-					
+
 				}
 				Upfront.Events.trigger('entity:object_group:update', this, this.model);
 			},
