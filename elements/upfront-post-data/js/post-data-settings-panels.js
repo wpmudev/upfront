@@ -1,7 +1,7 @@
 define([
 	'scripts/upfront/preset-settings/preset-manager',
 	'scripts/upfront/preset-settings/util',
-	
+
 	'elements/upfront-post-data/js/modules-post_data',
 	'elements/upfront-post-data/js/modules-author',
 	'elements/upfront-post-data/js/modules-featured_image',
@@ -31,7 +31,7 @@ define([
 
 
 	var Modules = _.extend(
-		{}, 
+		{},
 		_.omit(Modules_PostData, 'template'),
 		_.omit(Modules_Author, 'template'),
 		_.omit(Modules_FeaturedImage, 'template'),
@@ -55,7 +55,7 @@ define([
 
 			_.extend(this, {
 				mainDataCollection: this.data_type + '_elementPresets',
-				styleElementPrefix: this.data_type,
+				styleElementPrefix: this.data_type + '_element',
 				ajaxActionSlug: this.data_type + '_element',
 				styleTpl: Templates[this.data_type],
 				presetDefaults: _.extend(data_type_defaults, {
@@ -84,7 +84,7 @@ define([
 				this.property('preset', preset);
 				preset_model = this.presets.findWhere({id: preset});
 			}
-			
+
 			PresetManager.prototype.setupItems.apply(this, arguments);
 
 			// Make sure we update hidden objects on preset change

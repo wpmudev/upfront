@@ -484,8 +484,11 @@ function add_elements () {
 			"DataElement": PostDataElement_PostData,
 			"Settings": PostDataSettings,
 			cssSelectors: {
+				'.date_posted': {label: l10n.css.post_data_date_label, info: l10n.css.post_data_date_info},
+				'.title': {label: l10n.css.post_data_title_label, info: l10n.css.post_data_title_info},
+				'.content': {label: l10n.css.post_data_content_label, info: l10n.css.post_data_content_info}
 			},
-			cssSelectorsId: 'PostDataModel'
+			cssSelectorsId: 'post_post_data'
 		});
 
 		Upfront.Application.LayoutEditor.add_object("Upostdata-author", {
@@ -494,8 +497,15 @@ function add_elements () {
 			"DataElement": PostDataElement_Author,
 			"Settings": PostDataSettings,
 			cssSelectors: {
+				'.author': {label: l10n.css.author_author_label, info: l10n.css.author_author_info},
+				'.gravatar': {label: l10n.css.author_gravatar_label, info: l10n.css.author_gravatar_info},
+				'.author-email': {label: l10n.css.author_email_label, info: l10n.css.author_email_info},
+				'.author-email a': {label: l10n.css.author_email_link_label, info: l10n.css.author_email_link_info},
+				'.author-url': {label: l10n.css.author_url_label, info: l10n.css.author_url_info},
+				'.author-url a': {label: l10n.css.author_url_link_label, info: l10n.css.author_url_link_info},
+				'.author-bio': {label: l10n.css.author_bio_label, info: l10n.css.author_bio_info},
 			},
-			cssSelectorsId: 'PostDataModel'
+			cssSelectorsId: 'post_author'
 		});
 
 		Upfront.Application.LayoutEditor.add_object("Upostdata-taxonomy", {
@@ -504,8 +514,12 @@ function add_elements () {
 			"DataElement": PostDataElement_Taxonomy,
 			"Settings": PostDataSettings,
 			cssSelectors: {
+				'.post_tags': {label: l10n.css.taxonomy_tags_label, info: l10n.css.taxonomy_tags_info},
+				'.post_tags a': {label: l10n.css.taxonomy_tags_link_label, info: l10n.css.taxonomy_tags_link_info},
+				'.post_categories': {label: l10n.css.taxonomy_category_label, info: l10n.css.taxonomy_category_info},
+				'.post_categories a': {label: l10n.css.taxonomy_category_link_label, info: l10n.css.taxonomy_category_link_info},
 			},
-			cssSelectorsId: 'PostDataModel'
+			cssSelectorsId: 'post_taxonomy'
 		});
 
 		Upfront.Application.LayoutEditor.add_object("Upostdata-featured_image", {
@@ -514,8 +528,10 @@ function add_elements () {
 			"DataElement": PostDataElement_FeaturedImage,
 			"Settings": PostDataSettings,
 			cssSelectors: {
+				'.thumbnail': {label: l10n.css.featured_thumbnail_label, info: l10n.css.featured_thumbnail_info},
+				'.thumbnail img': {label: l10n.css.featured_thumbnail_img_label, info: l10n.css.featured_thumbnail_img_info},
 			},
-			cssSelectorsId: 'PostDataModel'
+			cssSelectorsId: 'post_featured_image'
 		});
 
 		Upfront.Application.LayoutEditor.add_object("Upostdata-comments", {
@@ -524,8 +540,12 @@ function add_elements () {
 			"DataElement": PostDataElement_Comments,
 			"Settings": PostDataSettings,
 			cssSelectors: {
+				'.comment_count': {label: l10n.css.comment_count_label, info: l10n.css.comment_count_info},
+				'.comments': {label: l10n.css.comments_label, info: l10n.css.comments_info},
+				'.comments_pagination': {label: l10n.css.comments_pagination_label, info: l10n.css.comments_pagination_info},
+				'.comment_form': {label: l10n.css.comment_form_label, info: l10n.css.comment_form_info},
 			},
-			cssSelectorsId: 'PostDataModel'
+			cssSelectorsId: 'post_comments'
 		});
 
 		Upfront.Application.LayoutEditor.add_object("Upostdata-meta", {
@@ -534,8 +554,9 @@ function add_elements () {
 			"DataElement": PostDataElement_Meta,
 			"Settings": PostDataSettings,
 			cssSelectors: {
+				'.meta': {label: l10n.css.post_meta_label, info: l10n.css.post_meta_info},
 			},
-			cssSelectorsId: 'PostDataModel'
+			cssSelectorsId: 'post_meta'
 		});
 	}
 	else {

@@ -48,6 +48,14 @@ define([
 			UyoutubeModel: {label: l10n.youtube, id: 'youtube'},
 			PlainTxtModel: {label: l10n.text, id:'text', preset_container: 'inline'},
 		},
+		postElementTypes: {
+			post_data: {label: l10n.post_data, id: 'post_data'},
+			author: {label: l10n.author, id: 'author'},
+			featured_image: {label: l10n.featured_image, id: 'featured_image'},
+			taxonomy: {label: l10n.taxonomy, id: 'taxonomy'},
+			comments: {label: l10n.comments, id: 'comments'},
+			meta: {label: l10n.meta, id: 'meta'}
+		},
 		initialize: function(options) {
 			var me = this,
 				deferred = $.Deferred();
@@ -88,7 +96,12 @@ define([
 			this.createSelectors(Upfront.Application.LayoutEditor.Objects);
 
 			this.selectors = this.elementSelectors[this.modelType] || {};
-
+			
+			if(this.modelType === "PostDataModel") {
+				this.elementType = this.postElementTypes[this.dataPartType] || {label: l10n.post_data, id: 'post_data'};
+				this.selectors = this.elementSelectors['post_' + this.dataPartType] || {};
+			}
+			
 			this.element_id = options.element_id ? options.element_id : this.model.get_property_value_by_name('element_id');
 
 			if ( typeof options.change == 'function' ) this.listenTo(this, 'change', options.change);
