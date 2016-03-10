@@ -658,6 +658,16 @@ define([
 			on_meta_click: function () {},
 			on_delete_click: function () {
 				this.$el.trigger("upfront:entity:remove", [this]);
+				
+				// check if on group
+				if ( this.group_view ) {
+					// check if still have sibling
+					var $siblings = this.group_view.$el.find('.upfront-editable_entities_container .upfront-module-view');
+					if ( $siblings.length == 0 ) {
+						// ungroup
+						this.group_view.on_ungroup();
+					}
+				} 
 				return false; // Stop propagation in order not to cause error with missing sortables etc
 			},
 			on_context_menu: function(e) {
