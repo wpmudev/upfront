@@ -36,10 +36,10 @@ class Upfront_Layout_View extends Upfront_Container {
 		$is_overlay = $this->_is_background_overlay($point->get_id());
 		$is_default_overlay = $this->_is_background_overlay();
 		$bg_css = $this->_get_background_css(true, true, $point->get_id());
+
 		if ( !empty($bg_css) ) {
-			$css .= sprintf('%s %s {%s}',
-					'.' . ltrim($scope, '. '),
-					'.upfront-output-layout',
+			$css .= sprintf('%s {%s}',
+					'body', // apply background css to body instead of .upfront-output-layout
 					$bg_css
 				) . "\n";
 		}

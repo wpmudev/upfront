@@ -1944,7 +1944,7 @@
 						Upfront.Application.current_subapplication.get_layout_data().properties,
 						{ 'name': 'typography' }
 					),
-					default_typography = $.parseJSON('{}'); //$.parseJSON('{\"h1\":{\"weight\":\"100\",\"style\":\"normal\",\"size\":\"72\",\"line_height\":\"1\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\",\"color\":\"rgba(0,0,0,1)\"},\"h2\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"50\",\"line_height\":\"1\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h3\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"36\",\"line_height\":\"1.3\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h4\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"30\",\"line_height\":\"1.2\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\"},\"h5\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"25\",\"line_height\":\"1.2\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h6\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"22\",\"line_height\":\"1.3\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"p\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"18\",\"line_height\":\"1.4\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"a\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":false,\"line_height\":false,\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(0,206,141,1)\"},\"a:hover\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":false,\"line_height\":false,\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(0,165,113,1)\"},\"ul\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"16\",\"line_height\":\"1.5\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\",\"color\":\"rgba(0,0,0,1)\"},\"ol\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"16\",\"line_height\":\"1.5\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\"},\"blockquote\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"20\",\"line_height\":\"1.5\",\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(103,103,103,1)\"},\"blockquote.upfront-quote-alternative\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"20\",\"line_height\":\"1.5\",\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(103,103,103,1)\"}}');
+				default_typography = {}; //$.parseJSON('{\"h1\":{\"weight\":\"100\",\"style\":\"normal\",\"size\":\"72\",\"line_height\":\"1\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\",\"color\":\"rgba(0,0,0,1)\"},\"h2\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"50\",\"line_height\":\"1\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h3\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"36\",\"line_height\":\"1.3\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h4\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"30\",\"line_height\":\"1.2\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\"},\"h5\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"25\",\"line_height\":\"1.2\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h6\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"22\",\"line_height\":\"1.3\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"p\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"18\",\"line_height\":\"1.4\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"a\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":false,\"line_height\":false,\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(0,206,141,1)\"},\"a:hover\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":false,\"line_height\":false,\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(0,165,113,1)\"},\"ul\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"16\",\"line_height\":\"1.5\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\",\"color\":\"rgba(0,0,0,1)\"},\"ol\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"16\",\"line_height\":\"1.5\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\"},\"blockquote\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"20\",\"line_height\":\"1.5\",\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(103,103,103,1)\"},\"blockquote.upfront-quote-alternative\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"20\",\"line_height\":\"1.5\",\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(103,103,103,1)\"}}');
 
 				layout_typography = layout_typography ? layout_typography.value : default_typography;
 				var big_tablet_breakpoint,
@@ -1957,14 +1957,14 @@
 				//   typography
 				// - in case of widest (usually tablet for now, big-tablet in some themes) it should
 				//   inherit from default typography
-				if (_.isEmpty(typography) || _.isUndefined(typography.h2)) {
+			if (_.isEmpty(typography)) {
 					if (_.contains(['tablet', 'mobile'], this.model.get('id')) || this.model.get('name') === 'big-tablet') {
 						switcheroo = this.model.get('name') === 'big-tablet' ? 'big-tablet' : this.model.get('id');
 
 						switch (switcheroo) {
 							case 'big-tablet':
 								// We look into the default typography and get those
-								typography = layout_typography;
+							typography = _.clone(layout_typography);
 								break;
 							case 'tablet':
 								// We look to big-tablet typography, if it's undefined we take default typography
@@ -1972,16 +1972,16 @@
 								if (_.isUndefined(big_tablet_breakpoint) || _.isUndefined(big_tablet_breakpoint.get('typography')) || _.isUndefined(big_tablet_breakpoint.get('typography').h2)) {
 									typography = layout_typography;
 								} else {
-									typography = big_tablet_breakpoint.get('typography');
+								typography = _.clone(big_tablet_breakpoint.get('typography'));
 								}
 								break;
 							case 'mobile':
 								// We look to tablet typography, if it's undefined we take default typography
 								tablet_breakpoint = breakpoints_storage.get_breakpoints().findWhere({id:'tablet'});
 								if (_.isUndefined(tablet_breakpoint) || _.isUndefined(tablet_breakpoint.get('typography')) || _.isUndefined(tablet_breakpoint.get('typography').h2)) {
-									typography = layout_typography;
+								typography = _.clone(layout_typography);
 								} else {
-									typography = tablet_breakpoint.get('typography');
+								typography = _.clone(tablet_breakpoint.get('typography'));
 								}
 						}
 					} else {
@@ -2326,7 +2326,7 @@
 					css.push(selector + '{ ' + rules.join("; ") + '; }');
 
 					if (_.contains(['tablet', 'mobile'], me.model.get('id'))) {
-						breakpointCss.push('.' + me.model.get('id') + '-breakpoint ' + selector + '{ ' + rules.join("; ") + '; }');
+					breakpointCss.push(  selector.replace(/\.upfront-object-content/g, '.' + me.model.get('id') + '-breakpoint .upfront-object-content')  + ' { ' + rules.join("; ") + '; }');
 					}
 
 					options[element] = {
@@ -3522,6 +3522,7 @@
 				}
 				else if(panel == 'pages'){
 					collection = new Upfront.Collections.PostList([], {postType: 'page'});
+				collection.orderby = 'post_date';
 					fetchOptions = {limit: 15}
 				}
 				else{
@@ -3851,10 +3852,12 @@
 
 		var ContentEditorPages = Backbone.View.extend({
 			events: {
+			"click #upfront-list-meta .upfront-list_item-component": "handle_sort_request",
 				"click .upfront-list-page_item": "handle_page_activate",
 				"click .upfront-page-path-item": "handle_page_activate",
 				"change #upfront-page_template-select": "template_change",
 				"click .editaction.trash": "trash_page",
+			"click .editaction.edit": "handle_post_edit",
 				"click .editaction.view": "handle_post_view",
 			},
 			currentPage: false,
@@ -3892,6 +3895,21 @@
 					Upfront.Application.navigate(path, {trigger: true});
 				});
 			},
+		handle_sort_request: function (e) {
+			var $option = $(e.target),
+				sortby = $option.attr('data-sortby'),
+				order = this.collection.order;
+			if(sortby){
+				if(sortby == this.collection.orderby)
+					order = order == 'desc' ? 'asc' : 'desc';
+				this.collection.reSort(sortby, order);
+			}
+		},
+		handle_post_edit: function (e) {
+			e.preventDefault();
+			var postId = $(e.currentTarget).closest('.upfront-list_item-post').attr('data-post_id');
+			Upfront.Application.navigate('/edit/page/' + postId, {trigger: true});
+		},
 			handle_post_view: function (e) {
 				e.preventDefault();
 				var postId = $(e.currentTarget).closest('.upfront-list_item-post').attr('data-post_id');
@@ -8384,7 +8402,7 @@
 					rules = _.map(rules, function(rule){return $.trim(rule);});
 					rules.pop();
 
-					styles_with_selector = separator + rules.join('\n}' + separator) + '\n}';
+			styles_with_selector = rules.length ?  separator + rules.join('\n}' + separator) + '\n}' : "";
 
 					me.$style.html(styles_with_selector);
 					me.trigger('change', styles_with_selector);
@@ -8398,7 +8416,7 @@
 				if (this.options.type === 'GalleryLightbox') {
 					styles = this.model.get('properties').get('styles').get('value').replace(scope, '');
 				} else {
-					styles = this.model.get('styles').replace(scope, '');
+			styles = this.model.get('styles') ?  this.model.get('styles').replace(scope, '') : "";
 				}
 				editor.setValue($.trim(styles), -1);
 
@@ -9111,6 +9129,7 @@
 			},
 			done: function (callback, done) {
 				var me = this;
+			var timeout = me.options.timeout || 6000;
 				this.is_done = true;
 				this.done_timeout = setTimeout(function(){
 					if ( me ){
@@ -9119,7 +9138,7 @@
 							if (cbk && cbk.call) cbk.call(me);
 						});
 					}
-				}, 6000);
+			}, timeout);
 				if (callback) callback.call(me);
 				this.done_text = done;
 			},

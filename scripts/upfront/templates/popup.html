@@ -146,9 +146,9 @@
 			<p class="upfront-no-results">{{Upfront.Settings.l10n.global.content.no_comments}}</p>
 			{[ } else { ]}
 			<div id="upfront-list-meta" class="upfront-list_item">
-				<div class="upfront-list_item-component upfront-comment_author upfront-header {{ orderby == 'comment_author' ? 'active ordered-' + order : '' }}" data-sortby="comment_author">{{Upfront.Settings.l10n.global.content.author}} <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
-				<div class="upfront-list_item-component upfront-date upfront-header {{ orderby == 'comment_date' ? 'active ordered-' + order : '' }}" data-sortby="comment_date">{{Upfront.Settings.l10n.global.content.date}} <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
-				<div class="upfront-list_item-component upfront-comment_content upfront-header {{ orderby == 'comment_content' ? 'active ordered-' + order : '' }}" data-sortby="comment_content">{{Upfront.Settings.l10n.global.content.comment}} <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
+		<div class="upfront-list_item-component upfront-comment_author upfront-header {{ orderby == 'comment_author' ? 'active ordered-' + order : '' }}" data-sortby="comment_author">{{Upfront.Settings.l10n.global.content.author}} <i class="icon-caret-down">&#9660;</i><i class="icon-caret-up">&#9650;</i></div>
+		<div class="upfront-list_item-component upfront-date upfront-header {{ orderby == 'comment_date' ? 'active ordered-' + order : '' }}" data-sortby="comment_date">{{Upfront.Settings.l10n.global.content.date}} <i class="icon-caret-down">&#9660;</i><i class="icon-caret-up">&#9650;</i></div>
+		<div class="upfront-list_item-component upfront-comment_content upfront-header {{ orderby == 'comment_content' ? 'active ordered-' + order : '' }}" data-sortby="comment_content">{{Upfront.Settings.l10n.global.content.comment}} <i class="icon-caret-down">&#9660;</i><i class="icon-caret-up">&#9650;</i></div>
 			</div>
 			<div class="upfront-list-items upfront-list-comment-items upfront-scroll-panel">
 

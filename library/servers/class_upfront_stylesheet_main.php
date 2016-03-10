@@ -35,7 +35,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$style = '';
 		$bootable = Upfront_Permissions::current(Upfront_Permissions::BOOT);
 		$cache = $ckey = false;
-		
+
 		/*
 		// Let's try to go with cached response first, if we can
 		if (!Upfront_Behavior::debug()->is_active(Upfront_Behavior::debug()->constant('STYLE'))) {
@@ -52,7 +52,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		if (false === $base_only) {
 			$grid = Upfront_Grid::get_grid();
 			$preprocessor = new Upfront_StylePreprocessor($grid, $layout);
-			
+
 			$style = $this->prepare_typography_styles($layout, $grid);
 			$style .= $preprocessor->process();
 		}
@@ -78,10 +78,10 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$style .= $this->_get_theme_colors_styles();
 		// Add elements presets styles
 		$style = apply_filters('get_element_preset_styles', $style);
-		
+
 		//Add theme styles
 		$style .= $this->prepare_theme_styles();
-		
+
 		$style = Upfront_UFC::init()->process_colors($style);
 
 		if (!empty($cache) && !empty($ckey)) { // make use of cache, if possible
@@ -195,7 +195,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 			  $style_rx = '/^(' . preg_quote("{$layout_id}", '/') . '|' . preg_quote("{$type}", '/') . ')/';
 			  if ( preg_match('/^region(-container|)$/', $type) && !preg_match($style_rx, $name) )
 				continue;
-			
+
 			  $content = str_replace('#page', 'div#page .upfront-output-region-container .upfront-output-module', $content);
 			  $out .= $content;
 			  if ( $type == 'layout' && $name == 'layout-style' )
@@ -212,41 +212,46 @@ class Upfront_StylesheetMain extends Upfront_Server {
 
 	function prepare_typography_styles ($layout, $grid) {
 		$typography = $layout->get_property_value('typography');
-		if (!$typography)
-			return '';
 		$out = '';
 		$faces = array();
-		foreach ( $typography as $element=>$properties ) {
-			$properties = wp_parse_args($properties, array(
-				'font_face' => false,
-				'weight' => false,
-				'style' => false,
-				'size' => false,
-				'line_height' => false,
-				'color' => false,
-			));
-			$face = !empty($properties['font_face'])
-				? $properties['font_face']
-				: false
-			;
-			$faces[] = array(
-				'face' => $face,
-				'weight' => $properties['weight']
-			);
-			if (!empty($face) && false !== strpos($face, ' '))  $face = '"' . $face . '"';
-			$font = $properties['font_face'] ? "{$face}, {$properties['font_family']}" : "inherit";
 
-			$selector = $this->_typography_element_to_output_selector($element);
-			if (empty($selector)) continue;
+		if (is_array($typography)) {
+			foreach ( $typography as $element=>$properties ) {
+				$properties = wp_parse_args($properties, array(
+					'font_face' => false,
+					'weight' => false,
+					'style' => false,
+					'size' => false,
+					'line_height' => false,
+					'color' => false,
+				));
+				$face = !empty($properties['font_face'])
+					? $properties['font_face']
+					: false
+				;
+				$faces[] = array(
+					'face' => $face,
+					'weight' => $properties['weight']
+				);
+				if (!empty($face) && false !== strpos($face, ' '))  $face = '"' . $face . '"';
+				if (isset($properties['font_family'])) {
+					$font = $properties['font_face'] ? "{$face}, {$properties['font_family']}" : "inherit";
+				} else {
+					$font = $properties['font_face'] ? "{$face}" : "inherit";
+				}
 
-			$out .= "{$selector} {\n" .
-					"font-family: {$font};\n" .
-					( $properties['weight'] ? "font-weight: {$properties['weight']};\n" : "" ) .
-					( $properties['style'] ? "font-style: {$properties['style']};\n" : "" ) .
-					( $properties['size'] ? "font-size: {$properties['size']}px;\n" : "" ) .
-					( $properties['line_height'] ? "line-height: {$properties['line_height']}em;\n" : "" ) .
-					"color: {$properties['color']};\n" .
-					"}\n";
+				$selector = $this->_typography_element_to_output_selector($element);
+				if (empty($selector)) continue;
+
+				$out .= "{$selector} {\n" .
+						"font-family: {$font};\n" .
+						( $properties['weight'] ? "font-weight: {$properties['weight']};\n" : "" ) .
+						( $properties['style'] ? "font-style: {$properties['style']};\n" : "" ) .
+						( $properties['size'] ? "font-size: {$properties['size']}px;\n" : "" ) .
+						( $properties['line_height'] ? "line-height: {$properties['line_height']}em;\n" : "" ) .
+						"color: {$properties['color']};\n" .
+						"}\n";
+			}
 		}
 
 		// Responsive/breakpoint typography
@@ -271,7 +276,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 				$tablet_typography = $typography;// needed for mobile
 			}
 
-			if (empty($typography) || false === isset($typography['h2'])) {
+			if (empty($typography)) {
 				switch ($breakpoint_id) {
 				case 'tablet':
 					$layout_properties = Upfront_ChildTheme::get_instance()->getLayoutProperties();
@@ -352,12 +357,12 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		if (empty($element)) return false;
 
 		$selector = '.upfront-output-object ' . $element;
-		
+
 		// Explicitly support blockquote typo settings for child paragraphs
 		if (preg_match('/^blockquote\b/', $element)) {
 			$selector = "{$selector}, {$selector} p";
 		}
-		
+
 		return $selector;
 	}
 

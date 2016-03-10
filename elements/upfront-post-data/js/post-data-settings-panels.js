@@ -1,7 +1,7 @@
 define([
 	'scripts/upfront/preset-settings/preset-manager',
 	'scripts/upfront/preset-settings/util',
-	
+
 	'elements/upfront-post-data/js/modules-post_data',
 	'elements/upfront-post-data/js/modules-author',
 	'elements/upfront-post-data/js/modules-featured_image',
@@ -31,7 +31,7 @@ define([
 
 
 	var Modules = _.extend(
-		{}, 
+		{},
 		_.omit(Modules_PostData, 'template'),
 		_.omit(Modules_Author, 'template'),
 		_.omit(Modules_FeaturedImage, 'template'),
@@ -55,7 +55,7 @@ define([
 
 			_.extend(this, {
 				mainDataCollection: this.data_type + '_elementPresets',
-				styleElementPrefix: this.data_type,
+				styleElementPrefix: this.data_type + '_element',
 				ajaxActionSlug: this.data_type + '_element',
 				styleTpl: Templates[this.data_type],
 				presetDefaults: _.extend(data_type_defaults, {
@@ -84,7 +84,7 @@ define([
 				this.property('preset', preset);
 				preset_model = this.presets.findWhere({id: preset});
 			}
-			
+
 			PresetManager.prototype.setupItems.apply(this, arguments);
 
 			// Make sure we update hidden objects on preset change
@@ -145,34 +145,44 @@ define([
 		},
 		update_object: function (type, enable) {
 			var enable = ( enable == 1 ),
+				breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 				objects = this.model.get('objects'),
 				wrappers = this.model.get('wrappers'),
 				object = this.find_object(type)
 			;
-			if ( !object && enable ) {
-				var wrapper_id = Upfront.Util.get_unique_id("wrapper"),
-					wrapper = new Upfront.Models.Wrapper({
-						properties: [
-							{ name: 'wrapper_id', value: wrapper_id },
-							{ name: 'class', value: 'c24 clr' }
-						]
-					}),
-					object = new Upfront.Models.PostDataPartModel({
-						properties: [
-							{ name: 'view_class', value: 'PostDataPartView' },
-							{ name: 'part_type', value: type },
-							{ name: 'has_settings', value: 0 },
-							{ name: 'class', value: 'c24 upfront-post-data-part' },
-							{ name: 'wrapper_id', value: wrapper_id }
-						]
-					})
-				;
-				wrappers.add(wrapper, {silent: true});
-				objects.add(object);
+			if ( breakpoint.default ) {
+				// Default breakpoint, actually add/remove objects
+				if ( !object && enable ) {
+					var wrapper_id = Upfront.Util.get_unique_id("wrapper"),
+						wrapper = new Upfront.Models.Wrapper({
+							properties: [
+								{ name: 'wrapper_id', value: wrapper_id },
+								{ name: 'class', value: 'c24 clr' }
+							]
+						}),
+						object = new Upfront.Models.PostDataPartModel({
+							properties: [
+								{ name: 'view_class', value: 'PostDataPartView' },
+								{ name: 'part_type', value: type },
+								{ name: 'has_settings', value: 0 },
+								{ name: 'class', value: 'c24 upfront-post-data-part' },
+								{ name: 'wrapper_id', value: wrapper_id }
+							]
+						})
+					;
+					wrappers.add(wrapper, {silent: true});
+					objects.add(object);
+				}
+				else if ( object && !enable ) {
+					var object_view = Upfront.data.object_views[object.cid];
+					object_view.parent_view.on_entity_remove(null, object_view);
+				}
 			}
-			else if ( object ) {
-				var object_view = Upfront.data.object_views[object.cid];
-				object_view.parent_view.on_entity_remove(null, object_view);
+			else {
+				// On responsive, just hide/show available object
+				if ( object ) {
+					object.set_breakpoint_property('hide', (enable ? 0 : 1));
+				}
 			}
 		}
 	});

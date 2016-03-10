@@ -38,7 +38,7 @@
     font-size: 11px;
     font-family: 'Open Sans';
     padding: 5px 20px 10px 10px;
-    margin-top: 10px;
+    margin-top: 0px;
     background: #E6ECF2;
     box-shadow: 0px 1px 2px #ADADAD;
     color: #253A4E;
@@ -80,6 +80,11 @@
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-padding:before {
     background-position: -261px -341px;
+    width: 18px;
+    height: 18px;
+}
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-reorder:before {
+    background-position: -261px -461px;
     width: 18px;
     height: 18px;
 }

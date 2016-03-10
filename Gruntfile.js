@@ -4,6 +4,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-cssmin');
 	grunt.loadNpmTasks('grunt-wp-i18n');
+	//grunt.loadNpmTasks('grunt-contrib-uglify');
 
 	grunt.initConfig({
 		sass: {
@@ -19,11 +20,31 @@ module.exports = function(grunt) {
 			}
 		},
 		cssmin: {
-			minify: {
-				src: 'styles/global.css',
-				dest: 'styles/global.min.css'
+			//minify: {
+			//	src: 'styles/global.css',
+			//	dest: 'styles/global.min.css'
+			//}
+			options: {
+				sourceMap: true
+			},
+			target: {
+				files: {
+					'styles/global.min.css': ['styles/global.css'],
+					'styles/editor-interface.min.css': ['styles/editor-interface.css']
+				}
 			}
 		},
+		//uglify: { We don't need this since main.js is already optimized by requirejs optimizer
+		//	options: {
+		//		mangle: false,
+		//		sourceMap: true
+		//	},
+		//	targets: {
+		//		files: {
+		//			'build/main.min.js': ['build/main.js']
+		//		}
+		//	}
+		//},
 		watch: {
 			sass: {
 				files: ['**/*.scss'],

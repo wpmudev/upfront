@@ -7,7 +7,7 @@ class Upfront_PostDataView extends Upfront_Object_Group {
 
 
 	private $_post;
-	private $_child_instances = array();
+	protected $_child_instances = array();
 
 	public function get_css_class () {
 		$classes = parent::get_css_class();
@@ -32,7 +32,14 @@ class Upfront_PostDataView extends Upfront_Object_Group {
 		$key = md5(serialize($child_data));
 		if (!empty($this->_child_instances[$key])) return $this->_child_instances[$key];
 
-		$this->_child_instances[$key] = new Upfront_PostDataPartView($child_data, $this->_data, $this);
+		$view_class = upfront_get_property_value("view_class", $child_data);
+		$view = $view_class
+			? "Upfront_{$view_class}"
+			: $this->_child_view_class
+		;
+		if (!class_exists($view)) $view = $this->_child_view_class;
+
+		$this->_child_instances[$key] = new $view($child_data, $this->_data, $this);
 		return $this->_child_instances[$key];
 	}
 
@@ -51,15 +58,17 @@ class Upfront_PostDataView extends Upfront_Object_Group {
 	public function get_propagated_classes () {
 		$classes = array();
 		foreach ($this->_child_instances as $part_view) {
+			if (!is_callable(array($part_view, 'get_propagated_classes'))) continue;
 			$classes = array_merge($classes, $part_view->get_propagated_classes());
 		}
-		return $classes;
+		return array_unique($classes);
 	}
 
 	public function get_attr () {
 		$attr = parent::get_attr();
 		$propagated = array($attr);
 		foreach ($this->_child_instances as $part_view) {
+			if (!is_callable(array($part_view, 'get_propagated_attr'))) continue;
 			$propagated[] = $part_view->get_propagated_attr();
 		}
 		$propagated = array_values(array_unique(array_filter($propagated)));
@@ -125,14 +134,27 @@ class Upfront_PostDataPartView extends Upfront_Object {
 
 		$cls = $this->_part_view->get_propagated_classes();
 		$cls[] = $part_type;
+
 		// Add `upost-data-object-{part type}` class to allow applying custom css per post part type
+		// For each type there are part parts that need to be translated to element type class
+		// Post data
 		if (in_array($part_type, array('title', 'date_posted', 'content') )) {
-			// Post data does not work with `else` part properly so manual override here
-			$cls[] = 'upost-data-object-' . 'post_data';
+			$cls[] = 'upost-data-object-post_data';
+		// Post taxonomy
+		} else if (in_array($part_type, array('categories', 'tags') )) {
+			$cls[] = 'upost-data-object-taxonomy';
+		// Post author
+		} else if (in_array($part_type, array('author', 'author-email', 'author-url', 'author-bio', 'gravatar') )) {
+			$cls[] = 'upost-data-object-author';
+		// Post comments
+		} else if (in_array($part_type, array('comment_count', 'comments', 'comment_form', 'comment_pagination') )) {
+			$cls[] = 'upost-data-object-comments';
 		} else {
+			// Meta and featured image have single class that matches type
 			$cls[] = 'upost-data-object-' . $part_type;
 		}
-		if (!empty($this->_preset_id)) $cls[] = esc_attr($this->_preset_id);
+		// We apply preset class on ObjectGroup, commented this so we are not adding double class
+		//if (!empty($this->_preset_id)) $cls[] = esc_attr($this->_preset_id);
 
 		return $cls;
 	}
