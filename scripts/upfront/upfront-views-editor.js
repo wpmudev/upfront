@@ -3648,6 +3648,7 @@ define([
 			"click .upfront-page-path-item": "handle_page_activate",
 			"change #upfront-page_template-select": "template_change",
 			"click .editaction.trash": "trash_page",
+			"click .editaction.edit": "handle_post_edit",
 			"click .editaction.view": "handle_post_view",
 		},
 		currentPage: false,
@@ -3694,6 +3695,11 @@ define([
 					order = order == 'desc' ? 'asc' : 'desc';
 				this.collection.reSort(sortby, order);
 			}
+		},
+		handle_post_edit: function (e) {
+			e.preventDefault();
+			var postId = $(e.currentTarget).closest('.upfront-list_item-post').attr('data-post_id');
+			Upfront.Application.navigate('/edit/page/' + postId, {trigger: true});
 		},
 		handle_post_view: function (e) {
 			e.preventDefault();
