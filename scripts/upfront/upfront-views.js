@@ -906,29 +906,34 @@ define([
 					this.$control_el.append(elementControlsTpl);
 					this.$control_el.find('>.upfront-element-controls').html('').append(this.controls.$el);
 				}
-
-				var advancedPaddingControl = this.$control_el.find('>.upfront-element-controls .upfront-field-advanced-padding');
-				if ( advancedPaddingControl.length > 0 ) {
-					var me = this;
-					advancedPaddingControl.on('click', function(){
-						// better to close first padding control modal-content
-						me.paddingControl.close();
-						// activate sidebar settings
-						me.model.set_breakpoint_property('use_padding', 'yes', true);
-						me.on_settings_click();
-						// wait for half a second to load everything
-						setTimeout(function () {
-							// sidebar advanced settings
-							var $elementAdvancedSettings = $('#element-settings-sidebar .advanced-settings');
-							if ( $elementAdvancedSettings.length > 0) {
-								$elementAdvancedSettings.find('.uf-settings-panel__body').toggle();
-							}
-						}, 500);
-					});
-				}
-
+				this.updateAdvancedPadding();
 				this.controls.delegateEvents();
 
+			},
+			updateAdvancedPadding: function() {
+				if ( this.$control_el ) {
+					var advancedPaddingControl = this.$control_el.find('.upfront-element-controls .upfront-field-advanced-padding');
+					if ( advancedPaddingControl.length > 0 ) {
+						var me = this;
+						if ( !me.$el.hasClass('upfront-module-group') ) {
+							advancedPaddingControl.on('click', function(){
+								// better to close first padding control modal-content
+								me.paddingControl.close();
+								// activate sidebar settings
+								me.model.set_breakpoint_property('use_padding', 'yes', true);
+								me.on_settings_click();
+								// wait for half a second to load everything
+								setTimeout(function () {
+									// sidebar advanced settings
+									var $elementAdvancedSettings = $('#element-settings-sidebar .advanced-settings');
+									if ( $elementAdvancedSettings.length > 0) {
+										$elementAdvancedSettings.find('.uf-settings-panel__body').toggle();
+									}
+								}, 500);
+							});
+						}
+					}
+				}
 			},
 			createControls: function() {
 				var me = this,
@@ -1744,7 +1749,7 @@ define([
 					}, 300);
 				}
 
-				///**
+				//**
 				// * Make sure it's rendered and then adjust top panel position
 				// */
 				//setTimeout(function() {
