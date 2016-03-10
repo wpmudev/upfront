@@ -273,7 +273,7 @@ class Upfront {
 			$save_storage_key .= '_dev';
 		}
 
-		$main_source = $this->_debugger->is_active( Upfront_Debug::DEV ) ? "scripts/main.js" : "build/main.js";
+		$main_source = $this->_debugger->is_dev() ? "scripts/main.js" : "build/main.js";
 		$script_urls = array(
 			"{$url}/scripts/require.js",
 			admin_url('admin-ajax.php?action=upfront_load_main' . $is_ssl),
