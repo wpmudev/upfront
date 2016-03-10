@@ -230,7 +230,7 @@ class Upfront {
 		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
 			do_action('upfront-core-wp_dependencies');
 
-			wp_enqueue_style('upfront-editor-interface', self::get_root_url() . '/styles/editor-interface.css', array(), Upfront_ChildTheme::get_version());
+			wp_enqueue_style('upfront-editor-interface', self::get_root_url() . ( $this->_debugger->is_active( Upfront_Debug::DEV )  ?  '/styles/editor-interface.css' : '/styles/editor-interface.min.css' ) , array(), Upfront_ChildTheme::get_version());
 
 			$link_urls =  array(
 				admin_url('admin-ajax.php?action=upfront_load_editor_grid'),
@@ -273,10 +273,11 @@ class Upfront {
 			$save_storage_key .= '_dev';
 		}
 
+		$main_source = $this->_debugger->is_active( Upfront_Debug::DEV ) ? "script/main.js" : "build/main.js";
 		$script_urls = array(
 			"{$url}/scripts/require.js",
 			admin_url('admin-ajax.php?action=upfront_load_main' . $is_ssl),
-			"{$url}/scripts/main.js",
+			"{$url}/{$main_source}",
 		);
 		$deps = Upfront_CoreDependencies_Registry::get_instance();
 		foreach ($script_urls as $url) {

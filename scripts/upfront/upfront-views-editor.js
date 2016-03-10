@@ -3313,6 +3313,7 @@ define([
 			}
 			else if(panel == 'pages'){
 				collection = new Upfront.Collections.PostList([], {postType: 'page'});
+				collection.orderby = 'post_date';
 				fetchOptions = {limit: 15}
 			}
 			else{
@@ -3642,10 +3643,12 @@ define([
 
 	var ContentEditorPages = Backbone.View.extend({
 		events: {
+			"click #upfront-list-meta .upfront-list_item-component": "handle_sort_request",
 			"click .upfront-list-page_item": "handle_page_activate",
 			"click .upfront-page-path-item": "handle_page_activate",
 			"change #upfront-page_template-select": "template_change",
 			"click .editaction.trash": "trash_page",
+			"click .editaction.edit": "handle_post_edit",
 			"click .editaction.view": "handle_post_view",
 		},
 		currentPage: false,
@@ -3682,6 +3685,21 @@ define([
 				Upfront.Popup.close();
 				Upfront.Application.navigate(path, {trigger: true});
 			});
+		},
+		handle_sort_request: function (e) {
+			var $option = $(e.target),
+				sortby = $option.attr('data-sortby'),
+				order = this.collection.order;
+			if(sortby){
+				if(sortby == this.collection.orderby)
+					order = order == 'desc' ? 'asc' : 'desc';
+				this.collection.reSort(sortby, order);
+			}
+		},
+		handle_post_edit: function (e) {
+			e.preventDefault();
+			var postId = $(e.currentTarget).closest('.upfront-list_item-post').attr('data-post_id');
+			Upfront.Application.navigate('/edit/page/' + postId, {trigger: true});
 		},
 		handle_post_view: function (e) {
 			e.preventDefault();
@@ -8167,7 +8185,7 @@ var GeneralCSSEditor = Backbone.View.extend({
 			rules = _.map(rules, function(rule){return $.trim(rule);});
 			rules.pop();
 
-			styles_with_selector = separator + rules.join('\n}' + separator) + '\n}';
+			styles_with_selector = rules.length ?  separator + rules.join('\n}' + separator) + '\n}' : "";
 
 			me.$style.html(styles_with_selector);
 			me.trigger('change', styles_with_selector);
@@ -8181,7 +8199,7 @@ var GeneralCSSEditor = Backbone.View.extend({
 		if (this.options.type === 'GalleryLightbox') {
 			styles = this.model.get('properties').get('styles').get('value').replace(scope, '');
 		} else {
-			styles = this.model.get('styles').replace(scope, '');
+			styles = this.model.get('styles') ?  this.model.get('styles').replace(scope, '') : "";
 		}
 		editor.setValue($.trim(styles), -1);
 
@@ -8894,6 +8912,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		},
 		done: function (callback, done) {
 			var me = this;
+			var timeout = me.options.timeout || 6000;
 			this.is_done = true;
 			this.done_timeout = setTimeout(function(){
 				if ( me ){
@@ -8902,7 +8921,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						if (cbk && cbk.call) cbk.call(me);
 					});
 				}
-			}, 6000);
+			}, timeout);
 			if (callback) callback.call(me);
 			this.done_text = done;
 		},

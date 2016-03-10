@@ -290,7 +290,7 @@ define([
 				options.maskSize.width = options.editElement.elementSize.width + 2;
 				options.maskSize.height = options.editElement.elementSize.height;
 			}
-
+			
 			this.resetDefaults();
 			this.options = options;
 			this.src = options.src;
@@ -465,7 +465,7 @@ define([
 			if(!options.editElement) {
 				return false;
 			}
-
+			
 			var elementView = options.editElement,
 				elementSize = {
 					maxColumns: elementView.get_element_max_columns(),
@@ -473,7 +473,7 @@ define([
 					rowHeight: breakpointColumnPadding
 				}
 			;
-
+			
 			if(!elementSize.maxRows) {
 				elementSize.maxRows = elementView.get_element_rows();
 			}
@@ -484,7 +484,7 @@ define([
 			elementSize.columns = Math.ceil(options.maskSize.width / elementSize.columnWidth);
 
 			this.elementSize = elementSize;
-
+			
 			// If the image is not new we are done
 			if(!options.setImageSize) {
 				return false;
@@ -497,7 +497,7 @@ define([
 					height: (current.rows - 2) * this.elementSize.rowHeight
 				}
 			;
-
+			
 			if(current.columns > elementSize.columns || current.rows > elementSize.rows) {
 				return false;
 			}
@@ -596,7 +596,7 @@ define([
 				src = img.attr('src'),
 				halfBorder = this.bordersWidth / 2
 			;
-
+			
 			return {
 				imageSize: {width: Math.round(this.invert ? img.height() : img.width()), height: Math.round(this.invert ? img.width() : img.height())},
 				imageOffset: {
@@ -935,7 +935,7 @@ define([
 				current = this.getCurrentImageRowsCols(fullGrid.width, fullGrid.height),
 				maskSize = current
 			;
-
+			
 			if(this.elementSize.maxColumns < current.columns){
 				var maskHeight = fullGrid.height;
 				maskSize = {columns: this.elementSize.maxColumns, rows: Math.ceil(maskHeight / this.elementSize.rowHeight) + 2};
@@ -1176,7 +1176,14 @@ define([
 				gridWidth = grid.width() - (2 * breakpointColumnPadding),
 				size = fullSize || this.fullSize
 			;
-
+			
+			// to avoid using upfront-grid-layout with no content
+			if ( this.options ) {
+				var objectView = this.options.editElement.$el;
+				grid = objectView.parents('.upfront-grid-layout');
+				gridWidth = grid.width() - (2 * breakpointColumnPadding);
+			}
+			
 			if(size.width > gridWidth) {
 				size = {width: gridWidth, height: Math.round(size.height / (size.width / gridWidth))};
 			}

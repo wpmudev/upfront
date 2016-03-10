@@ -809,7 +809,7 @@ define([
 			render: function () {
 				var search = ActiveFilters.get("search").first(),
 					obj = search.toJSON();
-				obj.total = ActiveFilters.get("search").length;
+				obj.total = ActiveFilters.max_items;
 				this.$el.empty().append(
 					_.template(l10n.showing_total_results + ' <b class="search-text">{{value}}</b> <a href="#clear" class="clear_search">' + l10n.clear_search + '</a>', obj)
 				);
@@ -1992,10 +1992,11 @@ define([
 		start_loading: function () {
 			this.loading = new Upfront.Views.Editor.Loading({
 				loading: l10n.loading_media_files,
+				timeout: 500,
 				done: 'Loaded'
 			});
 			this.loading.render();
-			this.$el.append(this.loading.$el);
+			this.loading.$el.insertAfter(this.$el);
 		},
 		end_loading: function (callback) {
 			if (this.loading && this.loading.done) this.loading.done(callback);

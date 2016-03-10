@@ -657,7 +657,21 @@ define([
 			// Stub handlers
 			on_meta_click: function () {},
 			on_delete_click: function () {
+				
+				// clear module activation class first
+				this.$el.closest('.upfront-region-container').removeClass('upfront-region-module-activated');
+				
 				this.$el.trigger("upfront:entity:remove", [this]);
+				
+				// check if on group
+				if ( this.group_view ) {
+					// check if still have sibling
+					var $siblings = this.group_view.$el.find('.upfront-editable_entities_container .upfront-module-view');
+					if ( $siblings.length == 0 ) {
+						// ungroup
+						this.group_view.on_ungroup();
+					}
+				} 
 				return false; // Stop propagation in order not to cause error with missing sortables etc
 			},
 			on_context_menu: function(e) {
@@ -902,29 +916,34 @@ define([
 					this.$control_el.append(elementControlsTpl);
 					this.$control_el.find('>.upfront-element-controls').html('').append(this.controls.$el);
 				}
-
-				var advancedPaddingControl = this.$control_el.find('>.upfront-element-controls .upfront-field-advanced-padding');
-				if ( advancedPaddingControl.length > 0 ) {
-					var me = this;
-					advancedPaddingControl.on('click', function(){
-						// better to close first padding control modal-content
-						me.paddingControl.close();
-						// activate sidebar settings
-						me.model.set_breakpoint_property('use_padding', 'yes', true);
-						me.on_settings_click();
-						// wait for half a second to load everything
-						setTimeout(function () {
-							// sidebar advanced settings
-							var $elementAdvancedSettings = $('#element-settings-sidebar .advanced-settings');
-							if ( $elementAdvancedSettings.length > 0) {
-								$elementAdvancedSettings.find('.uf-settings-panel__body').toggle();
-							}
-						}, 500);
-					});
-				}
-
+				this.updateAdvancedPadding();
 				this.controls.delegateEvents();
 
+			},
+			updateAdvancedPadding: function() {
+				if ( this.$control_el ) {
+					var advancedPaddingControl = this.$control_el.find('.upfront-element-controls .upfront-field-advanced-padding');
+					if ( advancedPaddingControl.length > 0 ) {
+						var me = this;
+						if ( !me.$el.hasClass('upfront-module-group') ) {
+							advancedPaddingControl.on('click', function(){
+								// better to close first padding control modal-content
+								me.paddingControl.close();
+								// activate sidebar settings
+								me.model.set_breakpoint_property('use_padding', 'yes', true);
+								me.on_settings_click();
+								// wait for half a second to load everything
+								setTimeout(function () {
+									// sidebar advanced settings
+									var $elementAdvancedSettings = $('#element-settings-sidebar .advanced-settings');
+									if ( $elementAdvancedSettings.length > 0) {
+										$elementAdvancedSettings.find('.uf-settings-panel__body').toggle();
+									}
+								}, 500);
+							});
+						}
+					}
+				}
 			},
 			createControls: function() {
 				var me = this,
@@ -1740,7 +1759,7 @@ define([
 					}, 300);
 				}
 
-				///**
+				//**
 				// * Make sure it's rendered and then adjust top panel position
 				// */
 				//setTimeout(function() {
@@ -5377,6 +5396,14 @@ define([
 
 
 				if ( confirm(l10n.section_delete_nag) ){
+					// Destroy parallax first if exists
+					var $overlay = this.$el.closest('.upfront-region-container-bg').children('.upfront-region-bg-overlay');
+					if ( $overlay.length > 0 ) {
+						if ( $overlay.data('uparallax') ) {
+							$overlay.uparallax('destroy');
+						}
+					}
+					
 					var parent_view = this.parent_view; // reserve parent_view before removal as we use it later
 					// if ( this.model.get('container') ){
 						// main = this.model.collection.get_by_name(this.model.get('container'));

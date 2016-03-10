@@ -463,12 +463,12 @@ PostContentEditor.prototype = {
 			type: 'featured_image',
 			events: function () {
 				return _.extend({}, _partView.prototype.events, {
-					'click .upostdata-part': 'editThumb'
+					'click .upost_thumbnail_changer': 'editThumb'
 				})
 			},
 			editContent: function () {
 				_partView.prototype.editContent.call(this);
-				this.$featured = this.$('.upostdata-part');
+				this.$featured = this.$el;
 				if ( this.$featured.length ){
 					var thumbId = this.parent.post.meta.getValue('_thumbnail_id'),
 						row = this.parentModel.get_breakpoint_property_value('row', true),
@@ -604,7 +604,7 @@ PostContentEditor.prototype = {
 			},
 			openImageEditor: function(newImage, imageInfo, postId){
 				var me = this,
-					mask = this.$featured,
+					mask = this.$el,
 					row = this.parentModel.get_breakpoint_property_value('row', true),
 					height = row * Upfront.Settings.LayoutEditor.Grid.baseline,
 					editorOptions = _.extend({}, imageInfo, {
@@ -624,8 +624,8 @@ PostContentEditor.prototype = {
 						]
 					})
 				;
-				console.log(this, mask, row, editorOptions)
-		
+				//console.log(this, mask, row, editorOptions);
+
 				Upfront.Views.Editor.ImageEditor.open(editorOptions).done(function(imageData){
 					var post = me.post,
 					img = mask.find('img'),
