@@ -971,11 +971,13 @@ define([
 			
 			// to avoid using upfront-grid-layout with no content
 			if ( this.options ) {
-				var objectView = this.options.editElement.$el;
-				grid = objectView.parents('.upfront-grid-layout');
-				gridWidth = grid.width() - (2 * breakpointColumnPadding);
-			}
-			
+                if ( this.options.editElement ) {
+                    var objectView = this.options.editElement.$el;
+                    grid = objectView.parents('.upfront-grid-layout');
+                    gridWidth = grid.width() - (2 * breakpointColumnPadding);
+                }
+            } 
+
 			if(size.width > gridWidth) {
 				size = {width: gridWidth, height: Math.round(size.height / (size.width / gridWidth))};
 			}
