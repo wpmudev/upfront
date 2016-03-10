@@ -157,16 +157,14 @@ jQuery(document).ready(function($){
 				setTimeout(function () { // Zero timeout to shift it out
 					var $container = $overlay.closest('.upfront-output-region-container');
 					if ( $container.length ) {
-						var $next = $container
-										.next('.upfront-output-region-container')
-										.find('.upfront-region-container-bg'),
-							$prev = $container
-										.prev('.upfront-output-region-container')
-										.find('.upfront-region-container-bg'),
-							next_bg_color = $next.css('background-color'),
-							next_type = $next.attr('data-bg-type-' + breakpoint),
-							prev_bg_color = $prev.css('background-color'),
-							prev_type = $prev.attr('data-bg-type-' + breakpoint),
+						var $next = $container.next('.upfront-output-region-container'),
+							$next_bg = $next.find('.upfront-region-container-bg'),
+							$prev = $container.prev('.upfront-output-region-container'),
+							$prev_bg = $prev.find('.upfront-region-container-bg'),
+							next_bg_color = $next_bg.css('background-color'),
+							next_type = $next_bg.attr('data-bg-type-' + breakpoint),
+							prev_bg_color = $prev_bg.css('background-color'),
+							prev_type = $prev_bg.attr('data-bg-type-' + breakpoint),
 							has_alpha = function (color) {
 								if (!color) return false;
 								var matches = color.match(/(rgba|hsla)\(.*?,.*?,.*?,.*?([\d.]+).*?\)/);
@@ -176,6 +174,9 @@ jQuery(document).ready(function($){
 							overflow_top = ( $prev.length > 0 && prev_type == 'color' && prev_bg_color && has_alpha(prev_bg_color) ? 0 : false ),
 							overflow_bottom = ( $next.length > 0 && next_type == 'color' && next_bg_color && has_alpha(next_bg_color) ? 0 : false )
 						;
+						// No overlow if the next/prev container is contained
+						if ( $prev.length > 0 && $prev.hasClass('upfront-region-container-clip') ) overflow_top = 0;
+						if ( $next.length > 0 && $next.hasClass('upfront-region-container-clip') ) overflow_bottom = 0;
 						$overlay.uparallax({
 							element: $overlay.attr('data-bg-parallax')
 						});
