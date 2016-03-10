@@ -163,7 +163,7 @@ define([
 				Upfront.Events.trigger("entity:background:update", this, this.model);
 			},
 			update_background_color: function () {
-				var $bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el,
+				var $bg = $("body"),
 					color = this.model.get_breakpoint_property_value('background_color', true)
 				;
 				if ( color ) {
