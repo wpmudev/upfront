@@ -48,6 +48,14 @@ define([
 			UyoutubeModel: {label: l10n.youtube, id: 'youtube'},
 			PlainTxtModel: {label: l10n.text, id:'text', preset_container: 'inline'},
 		},
+		postElementTypes: {
+			post_data: {label: l10n.post_data, id: 'post_data'},
+			author: {label: l10n.author, id: 'author'},
+			featured_image: {label: l10n.featured_image, id: 'featured_image'},
+			taxonomy: {label: l10n.taxonomy, id: 'taxonomy'},
+			comments: {label: l10n.comments, id: 'comments'},
+			meta: {label: l10n.meta, id: 'meta'}
+		},
 		initialize: function(options) {
 			var me = this,
 				deferred = $.Deferred();
@@ -75,6 +83,11 @@ define([
 			this.dataPartType = this.model.get_property_value_by_name('data_type');
 			this.modelType = this.options.model.get_property_value_by_name('type');
 			this.elementType = this.elementTypes[this.modelType] || {label: 'Unknown', id: 'unknown'};
+
+			if(this.modelType === "PostDataModel") {
+				
+				this.elementType = this.postElementTypes[this.dataPartType] || {label: l10n.post_data, id: 'post_data'};
+			}
 
 			// DO NOT DO THIS!!! DELEGATE STYLE RENDERING TO PRESET (look at preset-css module scripts/upfront/settings/modules/preset-css.js
 			// $style = $('#' + style_selector);
