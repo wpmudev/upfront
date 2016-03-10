@@ -144,7 +144,11 @@ class Upfront_Post_Data_PartView_Post_data extends Upfront_Post_Data_PartView {
 			$paddings['right'] = 'padding-right:' . (int)(($right_indent * 100) / $full) . '%';
 		}
 
-		$out = '<div class="upfront-indented_content" style="' . esc_attr(join(";", $paddings)) . '">' . $this->_get_template('content') . '</div>';
+		$out = $this->_get_template('content');
+		$content = empty($paddings)
+			? $content
+			: '<div class="upfront-indented_content" style="' . esc_attr(join(";", $paddings)) . '">' . $content . '</div>'
+		;
 
 		$out = Upfront_Codec::get()->expand($out, "content", $content);
 
