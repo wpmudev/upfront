@@ -6,10 +6,10 @@
 	<script type="text/template" id="upfront-post-list-tpl">
 		<div id="upfront-list">
 			<div id="upfront-list-meta" class="upfront-list_item clearfix">
-				<div class="upfront-list_item-component upfront-date upfront-header {{ orderby == 'post_date' ? 'active ordered-' + order : '' }}" data-sortby="post_date">{{Upfront.Settings.l10n.global.content.date}} <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
-				<div class="upfront-list_item-component upfront-title upfront-header {{ orderby == 'post_title' ? 'active ordered-' + order : '' }}"  data-sortby="post_title">{{Upfront.Settings.l10n.global.content.post_title}} <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
-				<div class="upfront-list_item-component upfront-author upfront-header {{ orderby == 'post_author' ? 'active ordered-' + order : '' }}" data-sortby="post_author">{{Upfront.Settings.l10n.global.content.author}} <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
-				<div class="upfront-list_item-component upfront-comments-count upfront-header {{ orderby == 'post_comments' ? 'active ordered-' + order : '' }}" data-sortby="post_comments"><i class="icon-post-comments"></i> <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
+				<div class="upfront-list_item-component upfront-date upfront-header {{ orderby == 'post_date' ? 'active ordered-' + order : '' }}" data-sortby="post_date">{{Upfront.Settings.l10n.global.content.date}} <i class="icon-caret-down">&#9660;</i><i class="icon-caret-up">&#9650;</i></div>
+				<div class="upfront-list_item-component upfront-title upfront-header {{ orderby == 'post_title' ? 'active ordered-' + order : '' }}"  data-sortby="post_title">Post Title <i class="icon-caret-down">&#9660;</i><i class="icon-caret-up">&#9650;</i></div>
+				<div class="upfront-list_item-component upfront-author upfront-header {{ orderby == 'post_author' ? 'active ordered-' + order : '' }}" data-sortby="post_author">Author <i class="icon-caret-down">&#9660;</i><i class="icon-caret-up">&#9650;</i></div>
+				<div class="upfront-list_item-component upfront-comments-count upfront-header {{ orderby == 'post_comments' ? 'active ordered-' + order : '' }}" data-sortby="post_comments"><i class="icon-post-comments"></i> <i class="icon-caret-down">&#9660;</i><i class="icon-caret-up">&#9650;</i></div>
 			</div>
 			<div class="upfront-list-items upfront-scroll-panel">
 				{[ if(!posts.length){ ]}
@@ -17,12 +17,12 @@
 				{[ } else { ]}
 				{[ _.each(posts, function (post, idx){ ]}
 				<div class="upfront-list_item-post upfront-list_item clearfix status-{{ post.get("post_status") }}" data-post_id="{{ post.get("ID") }}">
-				<div class="upfront-list_item-component upfront-date post-status-{{ post.get("post_status") }}" title="{[ if(post.get("post_status") == "publish") { ]}{{Upfront.Settings.l10n.global.content.published}}{[ } else if(post.get("post_status") == "future") { ]}Scheduled{[ } else { ]}{{Upfront.Settings.l10n.global.content.draft}}{[ } ]}">{[ if(post.get("post_status") == "future") { ]}sched. for{[ } ]}
+				<div class="upfront-list_item-component upfront-date post-status-{{ post.get("post_status") }}" title="{[ if(post.get("post_status") == "publish") { ]}Published{[ } else if(post.get("post_status") == "future") { ]}Scheduled{[ } else { ]}Draft{[ } ]}">{[ if(post.get("post_status") == "future") { ]}sched. for{[ } ]}
 				{{ Upfront.Util.format_date(post.get("post_date")) }}</div>
 			<div class="upfront-list_item-component upfront-title upfront-list_item-main">{{ post.get("post_title") }}</div>
 			<div class="upfront-list_item-component upfront-author">{[ if(post.author.get('data')){ ]} {{ post.author.get('data').display_name }} {[ } ]}</div>
 			<div class="upfront-list_item-component upfront-comments-count">{{ post.get("comment_count") }}</div>
-			<div class="upfront-list_item-component upfront-editactions"><a href="{{ post.get("permalink") }}" class="editaction edit">{{Upfront.Settings.l10n.global.content.edit}}</a><a href="{{ post.get("permalink") }}" class="editaction view">{{Upfront.Settings.l10n.global.content.view}}</a><a href="#" class="editaction trash">Trash</a></div>
+			<div class="upfront-list_item-component upfront-editactions"><a href="/edit/post/{{ post.get("ID") }}" class="editaction edit">{{Upfront.Settings.l10n.global.content.edit}}</a><a href="{{ post.get("permalink") }}" class="editaction view">{{Upfront.Settings.l10n.global.content.view}}</a><a href="#" class="editaction trash">{{Upfront.Settings.l10n.global.content.trash}}</a></div>
 		</div>
 		{[ }); } ]}
 		</div>
@@ -38,7 +38,7 @@
 			<div id="upfront-list-page-preview">
 				<div id="upfront-page_preview-wrapper">
 					<div id="upfront-page_preview-featured_image" class="upfront-page_preview-item">
-						<h4>{{Upfront.Settings.l10n.global.content.featured_image}}: </h4>
+						<h4>Featured Image: </h4>
 						<div class="upfront-thumbnailinfo">{{Upfront.Settings.l10n.global.content.loading}}</div>
 						<img src="{{post.featuredImage }}" style="{{post.featuredImage ? '' : 'display:none'}}" />
 						<div class="upfront-page_preview-edit_feature"><a href="#">{{Upfront.Settings.l10n.global.content.edit}} <i class="icon-pencil"></i></a></div>
@@ -92,10 +92,10 @@
 	<script type="text/template" id="upfront-page-list-tpl">
 		<div id="upfront-list">
 			<div id="upfront-list-meta" class="upfront-list_item clearfix">
-				<div class="upfront-list_item-component upfront-date upfront-header {{ orderby == 'post_date' ? 'active ordered-' + order : '' }}" data-sortby="post_date">{{Upfront.Settings.l10n.global.content.date}} <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
-				<div class="upfront-list_item-component upfront-title upfront-header {{ orderby == 'post_title' ? 'active ordered-' + order : '' }}"  data-sortby="post_title">{{Upfront.Settings.l10n.global.content.post_title}} <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
-				<div class="upfront-list_item-component upfront-author upfront-header {{ orderby == 'post_author' ? 'active ordered-' + order : '' }}" data-sortby="post_author">{{Upfront.Settings.l10n.global.content.author}} <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
-				<div class="upfront-list_item-component upfront-comments-count upfront-header {{ orderby == 'post_comments' ? 'active ordered-' + order : '' }}" data-sortby="post_comments"><i class="icon-post-comments"></i> <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
+				<div class="upfront-list_item-component upfront-date upfront-header {{ orderby == 'post_date' ? 'active ordered-' + order : '' }}" data-sortby="post_date">{{Upfront.Settings.l10n.global.content.date}} <i class="icon-caret-down">&#9660;</i><i class="icon-caret-up">&#9650;</i></div>
+				<div class="upfront-list_item-component upfront-title upfront-header {{ orderby == 'post_title' ? 'active ordered-' + order : '' }}"  data-sortby="post_title">Page Title <i class="icon-caret-down">&#9660;</i><i class="icon-caret-up">&#9650;</i></div>
+				<div class="upfront-list_item-component upfront-author upfront-header {{ orderby == 'post_author' ? 'active ordered-' + order : '' }}" data-sortby="post_author">Author <i class="icon-caret-down">&#9660;</i><i class="icon-caret-up">&#9650;</i></div>
+				<div class="upfront-list_item-component upfront-comments-count upfront-header {{ orderby == 'post_comments' ? 'active ordered-' + order : '' }}" data-sortby="post_comments"><i class="icon-post-comments"></i> <i class="icon-caret-down">&#9660;</i><i class="icon-caret-up">&#9650;</i></div>
 			</div>
 			<div class="upfront-list-items upfront-scroll-panel">
 				{[ if(!pages.length){ ]}
@@ -103,12 +103,12 @@
 				{[ } else { ]}
 				{[ _.each(pages, function (post){ ]}
 				<div class="upfront-list_item-post upfront-list_item clearfix status-{{ post.get("post_status") }}" data-post_id="{{ post.get("ID") }}">
-				<div class="upfront-list_item-component upfront-date post-status-{{ post.get("post_status") }}" title="{[ if(post.get("post_status") == "publish") { ]}{{Upfront.Settings.l10n.global.content.published}}{[ } else if(post.get("post_status") == "future") { ]}Scheduled{[ } else { ]}{{Upfront.Settings.l10n.global.content.draft}}{[ } ]}">{[ if(post.get("post_status") == "future") { ]}sched. for{[ } ]}
+				<div class="upfront-list_item-component upfront-date post-status-{{ post.get("post_status") }}" title="{[ if(post.get("post_status") == "publish") { ]}Published{[ } else if(post.get("post_status") == "future") { ]}Scheduled{[ } else { ]}Draft{[ } ]}">{[ if(post.get("post_status") == "future") { ]}sched. for{[ } ]}
 				{{ Upfront.Util.format_date(post.get("post_date")) }}</div>
 			<div class="upfront-list_item-component upfront-title upfront-list_item-main">{{ post.get("post_title") }}</div>
 			<div class="upfront-list_item-component upfront-author">{[ if(post.author.get('data')){ ]} {{ post.author.get('data').display_name }} {[ } ]}</div>
 			<div class="upfront-list_item-component upfront-comments-count">{{ post.get("comment_count") }}</div>
-			<div class="upfront-list_item-component upfront-editactions"><a href="{{ post.get("permalink") }}" class="editaction edit">{{Upfront.Settings.l10n.global.content.edit}}</a><a href="{{ post.get("permalink") }}" class="editaction view">{{Upfront.Settings.l10n.global.content.view}}</a><a href="#" class="editaction trash">Trash</a></div>
+			<div class="upfront-list_item-component upfront-editactions"><a href="/edit/page/{{ post.get("ID") }}" class="editaction edit">{{Upfront.Settings.l10n.global.content.edit}}</a><a href="{{ post.get("permalink") }}" class="editaction view">{{Upfront.Settings.l10n.global.content.view}}</a><a href="#" class="editaction trash">{{Upfront.Settings.l10n.global.content.trash}}</a></div>
 		</div>
 		{[ }); } ]}
 		</div>
@@ -146,9 +146,9 @@
 			<p class="upfront-no-results">{{Upfront.Settings.l10n.global.content.no_comments}}</p>
 			{[ } else { ]}
 			<div id="upfront-list-meta" class="upfront-list_item">
-				<div class="upfront-list_item-component upfront-comment_author upfront-header {{ orderby == 'comment_author' ? 'active ordered-' + order : '' }}" data-sortby="comment_author">{{Upfront.Settings.l10n.global.content.author}} <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
-				<div class="upfront-list_item-component upfront-date upfront-header {{ orderby == 'comment_date' ? 'active ordered-' + order : '' }}" data-sortby="comment_date">{{Upfront.Settings.l10n.global.content.date}} <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
-				<div class="upfront-list_item-component upfront-comment_content upfront-header {{ orderby == 'comment_content' ? 'active ordered-' + order : '' }}" data-sortby="comment_content">{{Upfront.Settings.l10n.global.content.comment}} <i class="icon-caret-down"></i><i class="icon-caret-up"></i></div>
+				<div class="upfront-list_item-component upfront-comment_author upfront-header {{ orderby == 'comment_author' ? 'active ordered-' + order : '' }}" data-sortby="comment_author">{{Upfront.Settings.l10n.global.content.author}} <i class="icon-caret-down">&#9660;</i><i class="icon-caret-up">&#9650;</i></div>
+				<div class="upfront-list_item-component upfront-date upfront-header {{ orderby == 'comment_date' ? 'active ordered-' + order : '' }}" data-sortby="comment_date">{{Upfront.Settings.l10n.global.content.date}} <i class="icon-caret-down">&#9660;</i><i class="icon-caret-up">&#9650;</i></div>
+				<div class="upfront-list_item-component upfront-comment_content upfront-header {{ orderby == 'comment_content' ? 'active ordered-' + order : '' }}" data-sortby="comment_content">{{Upfront.Settings.l10n.global.content.comment}} <i class="icon-caret-down">&#9660;</i><i class="icon-caret-up">&#9650;</i></div>
 			</div>
 			<div class="upfront-list-items upfront-list-comment-items upfront-scroll-panel">
 

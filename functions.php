@@ -234,7 +234,7 @@ class Upfront {
 		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
 			do_action('upfront-core-wp_dependencies');
 
-			wp_enqueue_style('upfront-editor-interface', self::get_root_url() . ( $this->_debugger->is_active( Upfront_Debug::DEV )  ?  '/styles/editor-interface.css' : '/styles/editor-interface.min.css' ) , array(), Upfront_ChildTheme::get_version());
+			wp_enqueue_style('upfront-editor-interface', self::get_root_url() . ( $this->_debugger->is_dev()  ?  '/styles/editor-interface.css' : '/styles/editor-interface.min.css' ) , array(), Upfront_ChildTheme::get_version());
 
 
 
@@ -320,7 +320,7 @@ EOAdditivemarkup;
 	 */
 	function inject_rtl_dependencies(){
 
-		wp_enqueue_style('upfront-global-rtl', self::get_root_url() . "/styles/global-rtl.css", array(), Upfront_ChildTheme::get_version());
+		wp_enqueue_style('upfront-global-rtl', self::get_root_url() . ( $this->_debugger->is_dev() ? "/styles/global-rtl.css" : "/styles/global-rtl.min.css" ), array(), Upfront_ChildTheme::get_version());
 	}
 }
 add_action('init', array('Upfront', 'serve'), 0);

@@ -30,6 +30,7 @@ module.exports = function(grunt) {
 			target: {
 				files: {
 					'styles/global.min.css': ['styles/global.css'],
+					'styles/global-rtl.min.css': ['styles/global-rtl.css'],
 					'styles/editor-interface.min.css': ['styles/editor-interface.css']
 				}
 			}
