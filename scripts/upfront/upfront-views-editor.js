@@ -3313,6 +3313,7 @@ define([
 			}
 			else if(panel == 'pages'){
 				collection = new Upfront.Collections.PostList([], {postType: 'page'});
+				collection.orderby = 'post_date';
 				fetchOptions = {limit: 15}
 			}
 			else{
@@ -3642,6 +3643,7 @@ define([
 
 	var ContentEditorPages = Backbone.View.extend({
 		events: {
+			"click #upfront-list-meta .upfront-list_item-component": "handle_sort_request",
 			"click .upfront-list-page_item": "handle_page_activate",
 			"click .upfront-page-path-item": "handle_page_activate",
 			"change #upfront-page_template-select": "template_change",
@@ -3682,6 +3684,16 @@ define([
 				Upfront.Popup.close();
 				Upfront.Application.navigate(path, {trigger: true});
 			});
+		},
+		handle_sort_request: function (e) {
+			var $option = $(e.target),
+				sortby = $option.attr('data-sortby'),
+				order = this.collection.order;
+			if(sortby){
+				if(sortby == this.collection.orderby)
+					order = order == 'desc' ? 'asc' : 'desc';
+				this.collection.reSort(sortby, order);
+			}
 		},
 		handle_post_view: function (e) {
 			e.preventDefault();
