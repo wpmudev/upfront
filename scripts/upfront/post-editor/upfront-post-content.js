@@ -475,7 +475,7 @@ PostContentEditor.prototype = {
 						height = row * Upfront.Settings.LayoutEditor.Grid.baseline
 					;
 					this.$featured.addClass('ueditor_thumb ueditable')
-						.css({position:'relative', 'min-height': height + 'px', width: '100%'})
+						.css({position:'relative', 'min-height': height + 'px', 'max-height': height + 'px', 'overflow-y': 'hidden', width: '100%'})
 						.append('<div class="upost_thumbnail_changer" ><div>' + Upfront.Settings.l10n.global.content.trigger_edit_featured_image + '</div></div>')
 						.find('img').css({'z-index': '2', position: 'relative'})
 					;
@@ -1122,7 +1122,7 @@ var PostContentEditorLegacy = Backbone.View.extend(_.extend({}, PostContentEdito
 			;
 
 			this.parts.featured.addClass('ueditor_thumb ueditable')
-				.css({position:'relative', 'min-height': height + 'px', width: '100%'})
+				.css({position:'relative', 'min-height': height + 'px', 'max-height': height + 'px', 'overflow-y': 'hidden', width: '100%'})
 				.append('<div class="upost_thumbnail_changer" ><div>' + Upfront.Settings.l10n.global.content.trigger_edit_featured_image + '</div></div>')
 				.find('img').css({'z-index': '2', position: 'relative'})
 			;
