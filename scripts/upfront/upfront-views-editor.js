@@ -8912,6 +8912,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 		},
 		done: function (callback, done) {
 			var me = this;
+			var timeout = me.options.timeout || 6000;
 			this.is_done = true;
 			this.done_timeout = setTimeout(function(){
 				if ( me ){
@@ -8920,7 +8921,7 @@ var Field_Compact_Label_Select = Field_Select.extend({
 						if (cbk && cbk.call) cbk.call(me);
 					});
 				}
-			}, 6000);
+			}, timeout);
 			if (callback) callback.call(me);
 			this.done_text = done;
 		},
