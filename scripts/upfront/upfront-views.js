@@ -657,6 +657,10 @@ define([
 			// Stub handlers
 			on_meta_click: function () {},
 			on_delete_click: function () {
+				
+				// clear module activation class first
+				this.$el.closest('.upfront-region-container').removeClass('upfront-region-module-activated');
+				
 				this.$el.trigger("upfront:entity:remove", [this]);
 				return false; // Stop propagation in order not to cause error with missing sortables etc
 			},
