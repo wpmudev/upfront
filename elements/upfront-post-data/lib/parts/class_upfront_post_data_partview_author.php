@@ -133,10 +133,13 @@ class Upfront_Post_Data_PartView_Author extends Upfront_Post_Data_PartView {
 		$url = get_the_author_meta('url', $author);
 		if (empty($url)) $url = $author_url;
 
+		$url_string = __('Website', 'upfront');
+
 		$out = $this->_get_template('author_url');
 
 		$out = Upfront_Codec::get()->expand($out, "name", esc_html($name));
 		$out = Upfront_Codec::get()->expand($out, "url", esc_url($url));
+		$out = Upfront_Codec::get()->expand($out, "url_string", esc_html($url_string));
 
 		return $out;
 	}
