@@ -2319,7 +2319,7 @@ define([
 					if ( this._preset ) $me.removeClass(this._preset);
 					$me.addClass(value);
 					this._preset = value;
-					
+
 				}
 				Upfront.Events.trigger('entity:object_group:update', this, this.model);
 			},
@@ -6716,6 +6716,16 @@ define([
 			},
 			update: function () {
 				this.update_background();
+			},
+			update_background_color: function () {
+				var $bg = $("body"),
+					color = this.model.get_breakpoint_property_value('background_color', true)
+					;
+				if ( color ) {
+					$bg.css('background-color', color);
+				} else {
+					$bg.css('background-color', '');
+				}
 			},
 			render: function () {
 				this.$el.addClass('upfront-layout-view');

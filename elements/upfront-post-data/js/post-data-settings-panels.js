@@ -173,7 +173,7 @@ define([
 					wrappers.add(wrapper, {silent: true});
 					objects.add(object);
 				}
-				else if ( object ) {
+				else if ( object && !enable ) {
 					var object_view = Upfront.data.object_views[object.cid];
 					object_view.parent_view.on_entity_remove(null, object_view);
 				}

@@ -71,6 +71,8 @@ class Upfront {
 		}
 
 
+		if( is_rtl() )
+			add_action('wp_head', array($this, "inject_rtl_dependencies"), 99);
 
 	}
 
@@ -222,6 +224,8 @@ class Upfront {
 		;
 		wp_enqueue_style('upfront-global', self::get_root_url() . $global_style, array(), Upfront_ChildTheme::get_version());
 
+
+
         if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
             // Don't queue the front grid if has permission to boot Upfront, queue editor grid instead
     		wp_enqueue_style('upfront-front-grid', admin_url('admin-ajax.php?action=upfront_load_grid'), array(), Upfront_ChildTheme::get_version());
@@ -230,7 +234,9 @@ class Upfront {
 		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
 			do_action('upfront-core-wp_dependencies');
 
-			wp_enqueue_style('upfront-editor-interface', self::get_root_url() . ( $this->_debugger->is_active( Upfront_Debug::DEV )  ?  '/styles/editor-interface.css' : '/styles/editor-interface.min.css' ) , array(), Upfront_ChildTheme::get_version());
+			wp_enqueue_style('upfront-editor-interface', self::get_root_url() . ( $this->_debugger->is_dev()  ?  '/styles/editor-interface.css' : '/styles/editor-interface.min.css' ) , array(), Upfront_ChildTheme::get_version());
+
+
 
 			$link_urls =  array(
 				admin_url('admin-ajax.php?action=upfront_load_editor_grid'),
@@ -248,6 +254,7 @@ class Upfront {
 				'600italic',
 				'700italic',
 			));
+
 
 			add_action('wp_footer', array($this, 'add_responsive_css'));
 		}
@@ -308,6 +315,13 @@ EOAdditivemarkup;
 		include(self::get_root_dir().'/styles/editor-interface-responsive.html');
 	}
 
+	/**
+	 * Injects dependencies for rtl languages
+	 */
+	function inject_rtl_dependencies(){
+
+		wp_enqueue_style('upfront-global-rtl', self::get_root_url() . ( $this->_debugger->is_dev() ? "/styles/global-rtl.css" : "/styles/global-rtl.min.css" ), array(), Upfront_ChildTheme::get_version());
+	}
 }
 add_action('init', array('Upfront', 'serve'), 0);
 add_action('after_setup_theme', array('Upfront', "load_textdomain"));

@@ -1,3 +1,10 @@
+.ueditor-row{
+    display: block;
+    clear: both;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
 .upfront_edit_content_style,
 .upfront_edit_image_insert{
     position: absolute;

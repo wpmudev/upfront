@@ -839,7 +839,8 @@ var Ueditor = function($el, options) {
             //removeDataAttr: false,
             removeEmpty: false,
             imageResizable: false,
-            lang: 'upfront' // <-- This is IMPORTANT. See the l10n proxying bit in `hackRedactor`
+            lang: 'upfront', // <-- This is IMPORTANT. See the l10n proxying bit in `hackRedactor`,
+            direction: Upfront.Util.isRTL() ? 'rtl' : 'ltr'
 		}, options)
 	;
 	/* --- Redactor allows for single callbacks - let's dispatch events instead --- */
