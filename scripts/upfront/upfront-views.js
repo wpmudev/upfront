@@ -163,7 +163,7 @@ define([
 				Upfront.Events.trigger("entity:background:update", this, this.model);
 			},
 			update_background_color: function () {
-				var $bg = $("body"),
+				var $bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el,
 					color = this.model.get_breakpoint_property_value('background_color', true)
 				;
 				if ( color ) {
@@ -6716,6 +6716,16 @@ define([
 			},
 			update: function () {
 				this.update_background();
+			},
+			update_background_color: function () {
+				var $bg = $("body"),
+					color = this.model.get_breakpoint_property_value('background_color', true)
+					;
+				if ( color ) {
+					$bg.css('background-color', color);
+				} else {
+					$bg.css('background-color', '');
+				}
 			},
 			render: function () {
 				this.$el.addClass('upfront-layout-view');
