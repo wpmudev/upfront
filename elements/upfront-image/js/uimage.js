@@ -905,6 +905,29 @@ define([
 						this.resizingV(img, data);
 					}
 				}
+			} else {
+				var sizeCheck = this.checkSize(),
+					vertical_align = this.property('valign'),
+					current_position = this.property('position'),
+					isDotAlign = this.property('isDotAlign');
+
+				if(sizeCheck === "small" && isDotAlign === true) {
+					if(vertical_align === "center") {
+						var margin = (data.size.height - data.elementSize.height) / 2;
+						this.$('.upfront-image-caption-container').css({
+							'marginTop': -margin,
+						});
+					}
+					
+					if(vertical_align === "bottom") {
+						var margin = (data.size.height - data.elementSize.height);
+						this.$('.upfront-image-caption-container').css({
+							'marginTop': -margin,
+						})
+					}
+					
+					this.property('position', {top: margin, left: current_position.left});
+				}
 			}
 			
 			this.updateControls();

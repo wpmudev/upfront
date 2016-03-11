@@ -264,6 +264,10 @@ define([
 		
 		setDotAlignment: function() {
 			this.higlighActiveDot();
+			
+			if(this.isDotAlign === true) {
+				this.setAlign(this.align, this.valign);
+			}
 		},
 		
 		higlighActiveDot: function() {
