@@ -627,7 +627,7 @@ PostContentEditor.prototype = {
 				//console.log(this, mask, row, editorOptions);
 				setTimeout(function() {
 					$('#image-edit-button-align').hide();
-				}, 150);
+				}, 100);
 
 				Upfront.Views.Editor.ImageEditor.open(editorOptions).done(function(imageData){
 					var post = me.post,
@@ -1286,6 +1286,10 @@ var PostContentEditorLegacy = Backbone.View.extend(_.extend({}, PostContentEdito
 			]
 		})
 		;
+		
+		setTimeout(function() {
+			$('#image-edit-button-align').hide();
+		}, 100);
 
 		Upfront.Views.Editor.ImageEditor.open(editorOptions).done(function(imageData){
 			var post = me.post,
@@ -1304,6 +1308,8 @@ var PostContentEditorLegacy = Backbone.View.extend(_.extend({}, PostContentEdito
 				img.replaceWith(newimg);
 				img = newimg;
 			}
+			
+			$('#image-edit-button-align').show();
 
 			img.attr('src', imageData.src);
 		});
