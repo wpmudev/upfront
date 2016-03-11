@@ -926,6 +926,7 @@ define([
 						})
 					}
 					
+					this.property('marginTop', -margin);
 					this.property('position', {top: margin, left: current_position.left});
 				}
 			}
@@ -948,6 +949,12 @@ define([
 				imgSize = {width: img.width(), height: img.height()},
 				imgPosition = img.position(),
 				padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding);
+				sizeCheck = this.checkSize(),
+				isDotAlign = this.property('isDotAlign');
+
+			if(sizeCheck === "small" && isDotAlign === true) {	
+				imgPosition = {top: 0, left: 0};
+			}
 
 			if(starting.length) {
 				this.elementSize = {
