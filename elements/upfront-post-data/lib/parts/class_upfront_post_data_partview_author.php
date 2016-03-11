@@ -98,11 +98,13 @@ class Upfront_Post_Data_PartView_Author extends Upfront_Post_Data_PartView {
 		$email = sanitize_email(get_the_author_meta('user_email', $author));
 
 		if (!is_email($email)) $email = '';
+		$email_string = __('Email', 'upfront');
 
 		$out = $this->_get_template('author_email');
 
 		$out = Upfront_Codec::get()->expand($out, "name", esc_html($name));
 		$out = Upfront_Codec::get()->expand($out, "email", esc_attr($email));
+		$out = Upfront_Codec::get()->expand($out, "email_string", esc_html($email_string));
 
 		return $out;
 	}	
