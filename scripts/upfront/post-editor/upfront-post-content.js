@@ -625,13 +625,16 @@ PostContentEditor.prototype = {
 					})
 				;
 				//console.log(this, mask, row, editorOptions);
+				setTimeout(function() {
+					$('#image-edit-button-align').hide();
+				}, 150);
 
 				Upfront.Views.Editor.ImageEditor.open(editorOptions).done(function(imageData){
 					var post = me.post,
 					img = mask.find('img'),
 					newimg = $('<img style="z-index:2;position:relative">')
 					;
-		
+
 					me.parent.post.meta.add([
 						{meta_key: '_thumbnail_id', meta_value: imageData.imageId},
 						{meta_key: '_thumbnail_data', meta_value: imageData}
@@ -643,7 +646,9 @@ PostContentEditor.prototype = {
 						img.replaceWith(newimg);
 						img = newimg;
 					}
-		
+
+					$('#image-edit-button-align').show();
+
 					img.attr('src', imageData.src);
 				});
 			}
