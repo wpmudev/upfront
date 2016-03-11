@@ -1372,7 +1372,8 @@ define([
 		},
 		
 		lockImage: function () {
-			var is_locked = this.property('is_locked'),
+			var me = this,
+				is_locked = this.property('is_locked'),
 				sizeCheck = this.checkSize();
 
 			if(typeof is_locked !== "undefined" && is_locked === true) {
@@ -1391,6 +1392,10 @@ define([
 					});
 					
 					this.fitImage();
+					
+					this.cropTimer = setTimeout(function(){
+						me.saveTemporaryResizing();
+					}, this.cropTimeAfterResize);
 				}
 			} else {
 				//Update icon
@@ -1404,11 +1409,18 @@ define([
 		
 		fitImage: function() {
 			var maskSize = this.property('element_size'),
+				position = this.property('position'),
 				size = this.property('size');
 				
 			var newSize = Upfront.Views.Editor.ImageEditor.getResizeImageDimensions(size, {width: maskSize.width, height: maskSize.height}, 'outer', 0);
 			
 			this.property('size', {width: newSize.width, height: newSize.height});
+			
+			this.temporaryProps = {
+				size: {width: newSize.width, height: newSize.height},
+				position: position
+			};
+			
 			this.property('vstretch', true);
 
 			this.$('.upfront-image-container img').css({
