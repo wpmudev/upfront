@@ -636,7 +636,7 @@ class Upfront_PostData_Stub_Comments extends Upfront_PostData_Stub {
 		return (object)wp_filter_comment($comment_data);
 	}
 
-	public function generate_multiple ($limit) {
+	public function generate_multiple ($limit=0) {
 		$comments = parent::generate_multiple($limit);
 		$total = count($comments);
 		$part = (int)($total / 12);
