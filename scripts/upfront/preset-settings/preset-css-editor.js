@@ -396,17 +396,9 @@ define([
 			element.removeClass('upfront-css-hilite');
 		},
 		addSelector: function(e) {
-			//If this.editor undefined re-initialize
-			if(typeof this.editor === "undefined") {
-				this.render();
-			}
-			
-			//Check if this.editor exist to prevent errors
-			if(typeof this.editor !== "undefined") {
-				var selector = $(e.target).data('selector');
-				this.editor.insert(selector);
-				this.editor.focus();
-			}
+			var selector = $(e.target).data('selector');
+			this.editor.insert(selector);
+			this.editor.focus();
 		},
 		get_css_selector: function() {
 			if (this.is_global_stylesheet) return '';
