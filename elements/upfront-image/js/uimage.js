@@ -834,18 +834,17 @@ define([
 			if(starting.length) {
 				return;
 			}
-
-			//let's get rid of the image-caption-container to proper resizing
-			this.$('.upfront-image-caption-container, .upfront-image-container').css({
-				width: '100%',
-				height: '100%',
-				marginTop: 0
-			});
 			
-			this.$('.upfront-image-container img').css({
-				top: -this.resizingData.data.position.top || 0,
-				left: -this.resizingData.data.position.left || 0
-			});
+			var checkSize = this.checkSize();
+			
+			if(checkSize !== "small") {
+				//let's get rid of the image-caption-container to proper resizing
+				this.$('.upfront-image-caption-container, .upfront-image-container').css({
+					width: '100%',
+					height: '100%',
+					marginTop: 0
+				});
+			}
 
 			this.$('.uimage').css('min-height', 'auto');
 		},
@@ -883,7 +882,7 @@ define([
 			this.$('.uimage').css('height', data.elementSize.height);
 			
 			var is_locked = this.property('is_locked');
-			
+
 			if(is_locked === false) {
 				//Resizing the stretching dimension has priority, the other dimension just alter position
 				if(data.stretch && !data.vstretch){
@@ -1350,7 +1349,8 @@ define([
 		},
 		
 		lockImage: function () {
-			var is_locked = this.property('is_locked');
+			var is_locked = this.property('is_locked'),
+				sizeCheck = this.checkSize();
 
 			if(typeof is_locked !== "undefined" && is_locked === true) {
 				//Update icon
@@ -1359,6 +1359,16 @@ define([
 					.removeClass('upfront-icon-region-lock-locked');
 					
 				this.property('is_locked', false);
+
+				if(sizeCheck === "small") {
+					this.$('.upfront-image-caption-container, .upfront-image-container').css({
+						width: '100%',
+						height: '100%',
+						marginTop: 0
+					});
+					
+					this.fitImage();
+				}
 			} else {
 				//Update icon
 				this.controls.$el.find('.upfront-icon-region-lock-unlocked')
@@ -1367,6 +1377,38 @@ define([
 					
 				this.property('is_locked', true);
 			}
+		},
+		
+		fitImage: function() {
+			var maskSize = this.property('element_size'),
+				size = this.property('size');
+				
+			var newSize = Upfront.Views.Editor.ImageEditor.getResizeImageDimensions(size, {width: maskSize.width, height: maskSize.height}, 'outer', 0);
+			
+			this.property('size', {width: newSize.width, height: newSize.height});
+			this.property('vstretch', true);
+
+			this.$('.upfront-image-container img').css({
+				width: newSize.width,
+				height: newSize.height,
+				left: '0px',
+				top: '0px'
+			});
+			
+			this.$('.upfront-image-wrapper').css({
+				height: maskSize.height
+			})
+		},
+		
+		checkSize: function() {
+			var maskSize = this.property('element_size'),
+				size = this.property('size');
+
+			if(size.width >= maskSize.width && size.height >= maskSize.height) {
+				return 'big';
+			}
+			
+			return 'small';
 		},
 
 		getElementColumns: function(){
