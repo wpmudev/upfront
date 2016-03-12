@@ -116,6 +116,7 @@ define([
 				this.listenTo(pnl, "part:hide:toggle", function (part_type, enable) {
 					this.update_object(part_type, (enable ? 1 : 0));
 					//this.updatePreset(preset_model.toJSON()); // Not needed, since we're sending (current local) preset data with request
+					this.updatePreset(preset_model.toJSON()); // Update: actually *still* needed, because presets aren't necessarily being saved on preset save...
 				}, this);
 
 				this.settings.push(pnl);
