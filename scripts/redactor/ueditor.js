@@ -1134,7 +1134,7 @@ Ueditor.prototype = {
 
             var $node = $(node),
                 rx = new RegExp('^' + src.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1") + ' ?'),
-                text = $node.text().replace(rx, '')
+                text = $node.html().replace(rx, '')
             ;
 
             // Let's not do nested lists
