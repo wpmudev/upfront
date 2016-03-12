@@ -22,6 +22,11 @@ class Upfront_Permissions {
 	const ANONYMOUS = '::anonymous::';
 
 	private $_levels_map = array();
+
+	/**
+	 * Instance of Upfront_Permissions class
+	 * @var Upfront_Permissions
+	 */
 	private static $_me;
 
 
