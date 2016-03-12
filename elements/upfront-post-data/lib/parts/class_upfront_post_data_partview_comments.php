@@ -261,7 +261,6 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 	 */
 	public function spawn_random_comments ($post, $skip = array()) {
 		$per_page = $this->_get_limit();
-localhost_flog($per_page);
 		$pages = rand(3, 7);
 		$stub = new Upfront_PostData_Stub_Comments(array(
 			'comment_post_ID' => $post->ID,
