@@ -37,7 +37,7 @@
     border: 1px solid rgb(239, 239, 239);
     border-top: none;
     border-left: none;
-    padding: 0 30px;
+    padding: 0;
     text-align: center;
     min-width: 7%;
 }
@@ -66,6 +66,7 @@
     width: 20%;
     text-align: left;
     font-weight: bold;
+    padding: 0 0 0 30px;
 }
 
 .upfront_restrictions_functionality_name .description{

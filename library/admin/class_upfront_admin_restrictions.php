@@ -72,6 +72,8 @@ class Upfront_Admin_Restrictions
     private function _save_form(){
         if( !isset( $_POST['upront_restrictions_submit'] ) || !wp_verify_nonce( $_POST[self::FORM_NONCE_KEY], self::FORM_NONCE_ACTION ) ) return;
 
-        return isset( $_POST['restrictions'] ) ?  Upfront_Permissions::boot()->update_restrictions( $_POST['restrictions'] ) : false;
+        $restrictions = (array) filter_input( INPUT_POST, "restrictions", FILTER_VALIDATE_BOOLEAN , FILTER_FORCE_ARRAY );
+
+        return Upfront_Permissions::boot()->update_restrictions(  $restrictions  );
     }
 }
