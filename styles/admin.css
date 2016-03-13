@@ -1,3 +1,4 @@
+/*---------- General ---------*/
 .upfront-logo{
     background-image: url(../img/uf-ui-sprite.svg?v=20131127);
     background-repeat: no-repeat;
@@ -12,3 +13,220 @@
 .upfront_admin h1{
     text-transform: uppercase;
 }
+/*------------- User Restrictions ----------*/
+#upfront_user_restrictions_listing{
+    display: table;
+    width: 100%;
+    height: 100%;
+    background: white;
+    -mox-border-radius: 5px;
+    -o-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    margin-top: 50px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid rgb(228, 228, 228);
+}
+#upfront_user_restrictions_listing ul{
+    margin: 0;
+    display: table-row;
+}
+#upfront_user_restrictions_listing li{
+    display: table-cell;
+    height: 50px;
+    border: 1px solid rgb(239, 239, 239);
+    border-top: none;
+    border-left: none;
+    padding: 0 30px;
+    text-align: center;
+    min-width: 7%;
+}
+\#upfront_user_restrictions_listing li.upfront_restrictions_functionality_role{
+    padding: 0;
+}
+#upfront_user_restrictions_listing li:last-child{
+    border-right: none;
+}
+#upfront_user_restrictions_listing ul.upfront_user_restrictions_head{
+    height: 60px;
+    line-height: 60px;
+    margin: 0;
+    font-weight: bold;
+}
+#upfront_user_restrictions_listing ul.upfront_restrictions_functionality_row{
+    min-height: 50px;
+}
+.upfront_restrictions_functionality_row li{
+    background: rgb(249, 249, 249);
+    line-height: 50px;
+    margin: 0;
+    padding: 14px 30px 16px 30px;
+}
+#upfront_user_restrictions_listing ul li.upfront_restrictions_functionality_name{
+    width: 20%;
+    text-align: left;
+    font-weight: bold;
+}
+
+.upfront_restrictions_functionality_name .description{
+    font-weight: normal;
+}
+#upfront_user_restrictions_listing ul.upfront_restrictions_functionality_row li.upfront_restrictions_functionality_name{
+    line-height: 15px;
+    padding-top: 18px;
+    height: 32px;
+}
+
+#upfront_user_restrictions_listing ul.upfront_user_restrictions_head li{
+    margin: 0;
+    height: 60px;
+    min-width:7%;
+}
+.upfront_restrictions_functionality_row li:first-child{
+    background: #fff;
+    text-align: left;
+}
+
+/*Toggle Buttons*/
+.upfront-toggle {
+    position: relative;
+    width: 26px;
+    display: inline-table;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select: none;
+    vertical-align: middle;
+}
+
+.upfront-toggle-checkbox {
+    display: none !important;
+}
+
+.upfront-toggle-label {
+    display: block;
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px solid #CCC;
+    border-radius: 50px;
+}
+
+.upfront-toggle-inner {
+    display: block;
+    width: 200%;
+    margin-left: -100%;
+    -moz-transition: margin 0.3s ease-in 0s;
+    -webkit-transition: margin 0.3s ease-in 0s;
+    -o-transition: margin 0.3s ease-in 0s;
+    transition: margin 0.3s ease-in 0s;
+}
+.upfront-toggle-inner:before,
+.upfront-toggle-inner:after {
+    display: block;
+    float: left;
+    width: 50%;
+    height: 5px;
+    padding: 0;
+    line-height: 5px;
+    font-size: 10px;
+    color: white;
+    font-family: Trebuchet, Arial, sans-serif;
+    font-weight: bold;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.2) inset;
+}
+
+.upfront-toggle-inner:before {
+    content: "";
+    padding-left: 5px;
+    background-color: #0074A2;
+}
+
+.upfront-toggle-inner:after {
+    content: "";
+    padding-right: 5px;
+    background-color: #EEEEEE;
+    text-align: right;
+}
+
+.upfront-toggle-switch {
+    display: block;
+    width: 14px;
+    margin: -3.5px;
+    background: #F8F8F8;
+    border: 1px solid #CCC;
+    border-radius: 15px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 20px;
+    -moz-transition: all 0.3s ease-in 0s;
+    -webkit-transition: all 0.3s ease-in 0s;
+    -o-transition: all 0.3s ease-in 0s;
+    transition: all 0.3s ease-in 0s;
+
+    box-shadow: -1px 1px 2px rgba(0,0,0,0.1);
+
+}
+
+.upfront-toggle-checkbox:checked + .upfront-toggle-label .upfront-toggle-inner {
+    margin-left: 0;
+}
+
+.upfront-toggle-checkbox:checked + .upfront-toggle-label .upfront-toggle-switch {
+    right: 0px;
+}
+
+.upfront-toggle {
+    width: 40px;
+}
+
+.upfront-toggle-label {
+    border: 0;
+    height: 20px;
+    background: #CCC;
+}
+
+.upfront-toggle-inner {
+    display: none;
+}
+
+.upfront-toggle-switch {
+    margin: 1px;
+    width: 18px;
+    height: 18px;
+    right: 20px;
+    border: 0;
+    box-shadow: 0px 1px 5px #888888;
+    transition: right .2s;
+}
+
+.upfront-toggle-checkbox:checked + .upfront-toggle-label {
+    background: rgb(42, 185, 154);
+}
+
+.upfront-toggle-checkbox:checked + .upfront-toggle-label .upfront-toggle-switch {
+    right: 0;
+}
+/*End of Toggle*/
+
+#upront_restrictions_submit{
+    display: block;
+    width:187px;
+    height: 40px;
+    background: rgb(40, 207, 141);
+    color:#fff;
+    margin: 30px auto;
+    border: none;
+    text-align: center;
+    -mox-border-radius: 5px;
+    -o-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    border-bottom: 3px solid rgb(41, 179, 122);
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+/*----------- End Of User Restrictions --------------*/

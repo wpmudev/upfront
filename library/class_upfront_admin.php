@@ -10,7 +10,8 @@ include_once "admin/class_upfront_admin_experimental.php";
  */
 class Upfront_Admin
 {
-    private $_menu_slugs = array(
+
+    public static $menu_slugs = array(
         "main" => "upfront",
         "restrictions" => "upfront_restrictions",
         "experimental" => "upfront_experimental"
@@ -33,7 +34,7 @@ class Upfront_Admin
      *
      */
     function enqueue_scripts( $hook ){
-        if( in_array( str_replace("upfront_page_", "", $hook), $this->_menu_slugs ) );
+        if( in_array( str_replace("upfront_page_", "", $hook), self::$menu_slugs ) );
             wp_enqueue_style( 'upfront_admin', Upfront::get_root_url() . "/styles/admin.css", array(), Upfront_ChildTheme::get_version() );// todo Sam: add proper version
     }
 
@@ -43,9 +44,9 @@ class Upfront_Admin
      *
      */
     function add_menus(){
-        add_menu_page( __("Upfront", Upfront::TextDomain), __("Upfront", Upfront::TextDomain), "edit_theme_options",  $this->_menu_slugs['main'] , array($this, "render_main_menu"), "", "3.013" );
-        add_submenu_page( "upfront", __("User Restrictions", Upfront::TextDomain),  __("User Restrictions", Upfront::TextDomain), 'promote_users', $this->_menu_slugs['restrictions'], array("Upfront_Admin_Restrictions", "render_page") );
-        add_submenu_page( "upfront", __("Experimental Features", Upfront::TextDomain),  __("Experimental", Upfront::TextDomain), 'promote_users', $this->_menu_slugs['experimental'], array("Upfront_Admin_Experimental", "render_page") );
+        add_menu_page( __("Upfront", Upfront::TextDomain), __("Upfront", Upfront::TextDomain), "edit_theme_options",  self::$menu_slugs['main'] , array($this, "render_main_menu"), "", "3.013" );
+        new Upfront_Admin_Restrictions();
+        new Upfront_Admin_Experimental();
     }
 
     /**
