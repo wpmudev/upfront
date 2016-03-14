@@ -144,14 +144,14 @@ class Upfront_Permissions {
 			self::LAYOUT_MODE => __('Can Modify Upfront Layouts', Upfront::TextDomain ),
 			self::POSTLAYOUT_MODE => __('Can Modify Single Post Layout', Upfront::TextDomain ),
 			self::UPLOAD => __('Can Upload Media', Upfront::TextDomain ),
-			self::RESIZE => __('Can Resize Media', Upfront::TextDomain ),
+			self::RESIZE => __('Can Resize Media (in Layouts)', Upfront::TextDomain ),
 			self::OPTIONS => __('Can Modify / Save Global Options <p class="description">(Theme Colors, Comments etc.)</p>', Upfront::TextDomain ),
 			self::CREATE_POST_PAGE => __('Can Create Posts & Pages From Upfront', Upfront::TextDomain ),
 			self::EDIT => __('Can Edit Existing Posts & Pages', Upfront::TextDomain ),
 			self::EMBED => __('Can Use Embeds (Code El, Media Embeds)', Upfront::TextDomain ),
 			self::RESPONSIVE_MODE => __('Can Enter & Modify Layouts in Responsive Mode', Upfront::TextDomain ),
 			self::MODIFY_RESTRICTIONS => __('Can Modify User Restrictions', Upfront::TextDomain ),
-			self::SEE_USE_DEBUG => __('Can Access Upfront Editor Mode', Upfront::TextDomain )
+			self::SEE_USE_DEBUG => __('Can See / Use Debug Controls', Upfront::TextDomain )
 
 		));
 	}
