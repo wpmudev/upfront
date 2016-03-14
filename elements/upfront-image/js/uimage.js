@@ -819,6 +819,7 @@ define([
 				data: {
 					position: this.property('position'),
 					size: this.property('size'),
+					checkSize: this.checkSize(),
 					stretch: this.property('stretch'),
 					vstretch: this.property('vstretch')
 				},
@@ -834,10 +835,8 @@ define([
 			if(starting.length) {
 				return;
 			}
-			
-			var checkSize = this.checkSize();
-			
-			if(checkSize !== "small") {
+
+			if(this.resizingData.data.checkSize !== "small") {
 				//let's get rid of the image-caption-container to proper resizing
 				this.$('.upfront-image-caption-container, .upfront-image-container').css({
 					width: '100%',
@@ -906,28 +905,36 @@ define([
 					}
 				}
 			} else {
-				var sizeCheck = this.checkSize(),
-					vertical_align = this.property('valign'),
+				var vertical_align = this.property('valign'),
 					current_position = this.property('position'),
-					isDotAlign = this.property('isDotAlign');
+					isDotAlign = this.property('isDotAlign'),
+					containerHeight = this.$('.upfront-image-container').height(),
+					margin;
 
-				if(sizeCheck === "small" && isDotAlign === true) {
+				if(this.resizingData.data.checkSize === "small" && isDotAlign === true) {
 					if(vertical_align === "center") {
-						var margin = (data.size.height - data.elementSize.height) / 2;
-						this.$('.upfront-image-caption-container').css({
-							'marginTop': -margin,
-						});
+						if(data.size.height < data.elementSize.height) {
+							margin = (data.size.height - data.elementSize.height) / 2;
+						} else {
+							margin = -(data.elementSize.height - containerHeight) / 2;
+						}
 					}
 					
 					if(vertical_align === "bottom") {
-						var margin = (data.size.height - data.elementSize.height);
-						this.$('.upfront-image-caption-container').css({
-							'marginTop': -margin,
-						})
+						if(data.size.height < data.elementSize.height) {
+							margin = (data.size.height - data.elementSize.height);
+						} else {
+							margin = -(data.elementSize.height - containerHeight)
+						}
 					}
+					
+					this.$('.upfront-image-caption-container').css({
+						'marginTop': -margin,
+					});
 					
 					this.property('marginTop', -margin);
 					this.property('position', {top: margin, left: current_position.left});
+
 				}
 			}
 			
