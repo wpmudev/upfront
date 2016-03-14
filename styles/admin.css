@@ -12,6 +12,7 @@
 }
 .upfront_admin h1{
     text-transform: uppercase;
+		color: #777;
 }
 /*------------- User Restrictions ----------*/
 #upfront_user_restrictions_listing{
@@ -40,9 +41,10 @@
     padding: 0;
     text-align: center;
     min-width: 7%;
+		color: #525252;
 }
-\#upfront_user_restrictions_listing li.upfront_restrictions_functionality_role{
-    padding: 0;
+#upfront_user_restrictions_listing li.upfront_restrictions_functionality_role{
+    width: 10%;
 }
 #upfront_user_restrictions_listing li:last-child{
     border-right: none;
@@ -63,7 +65,7 @@
     padding: 14px 30px 16px 30px;
 }
 #upfront_user_restrictions_listing ul li.upfront_restrictions_functionality_name{
-    width: 20%;
+    width: 35%;
     text-align: left;
     font-weight: bold;
     padding: 0 0 0 30px;
@@ -82,6 +84,11 @@
     margin: 0;
     height: 60px;
     min-width:7%;
+}
+#upfront_user_restrictions_listing ul.upfront_user_restrictions_head li.upfront_restrictions_functionality_name{
+    text-transform: uppercase;
+		font-size: 16px;
+		color: #777;
 }
 .upfront_restrictions_functionality_row li:first-child{
     background: #fff;
