@@ -1,20 +1,27 @@
 /*---------- General ---------*/
 .upfront-logo{
-    background-image: url(../img/uf-ui-sprite.svg?v=20131127);
+    background-image: url(../img/uf-admin-sprite.svg);
     background-repeat: no-repeat;
     float: right;
     display: block;
-    background-position: -190px -407px;
-    width: 120px;
-    height: 32px;
+    background-position: -10px -10px;
+    width: 122px;
+    height: 25px;
     overflow: hidden;
     display: block;
 }
 .upfront_admin h1{
     text-transform: uppercase;
 		color: #777;
+		font-family: 'Roboto Condensed';
+		font-size: 30px;
+    letter-spacing: -0.2px;
+		padding: 20px 10px 0 10px;
 }
 /*------------- User Restrictions ----------*/
+#upfront_restrictions_form {
+	padding: 0 10px;
+}
 #upfront_user_restrictions_listing{
     display: table;
     width: 100%;
@@ -24,7 +31,7 @@
     -o-border-radius: 5px;
     -webkit-border-radius: 5px;
     border-radius: 5px;
-    margin-top: 50px;
+    margin-top: 40px;
     padding-bottom: 5px;
     border-bottom: 2px solid rgb(228, 228, 228);
 }
@@ -41,7 +48,10 @@
     padding: 0;
     text-align: center;
     min-width: 7%;
-		color: #525252;
+		font-family: 'Roboto';
+		font-size: 14px;
+		font-weight: normal;
+		color: #333;
 }
 #upfront_user_restrictions_listing li.upfront_restrictions_functionality_role{
     width: 10%;
@@ -67,12 +77,16 @@
 #upfront_user_restrictions_listing ul li.upfront_restrictions_functionality_name{
     width: 35%;
     text-align: left;
-    font-weight: bold;
     padding: 0 0 0 30px;
 }
 
 .upfront_restrictions_functionality_name .description{
-    font-weight: normal;
+    font-family: 'Roboto';
+		font-weight: normal;
+		font-size: 12px;
+		font-style: normal;
+		line-height: 1.7;
+		color: #777;
 }
 #upfront_user_restrictions_listing ul.upfront_restrictions_functionality_row li.upfront_restrictions_functionality_name{
     line-height: 15px;
@@ -84,10 +98,16 @@
     margin: 0;
     height: 60px;
     min-width:7%;
+		font-family: 'Roboto';
+		font-size: 13px;
+		font-weight: 500;
+		color: #333;
 }
 #upfront_user_restrictions_listing ul.upfront_user_restrictions_head li.upfront_restrictions_functionality_name{
     text-transform: uppercase;
-		font-size: 16px;
+		font-family: 'Roboto Condensed';
+		font-size: 18px;
+		font-weight: bold;
 		color: #777;
 }
 .upfront_restrictions_functionality_row li:first-child{
@@ -114,7 +134,7 @@
     display: block;
     overflow: hidden;
     cursor: pointer;
-    border: 1px solid #CCC;
+    border: 1px solid #ddd;
     border-radius: 50px;
 }
 
@@ -163,7 +183,7 @@
     width: 14px;
     margin: -3.5px;
     background: #F8F8F8;
-    border: 1px solid #CCC;
+    border: 1px solid #ddd;
     border-radius: 15px;
     position: absolute;
     top: 0;
@@ -193,7 +213,7 @@
 .upfront-toggle-label {
     border: 0;
     height: 20px;
-    background: #CCC;
+    background: #ddd;
 }
 
 .upfront-toggle-inner {
@@ -201,17 +221,18 @@
 }
 
 .upfront-toggle-switch {
-    margin: 1px;
+    margin: 0 1px;
     width: 18px;
     height: 18px;
     right: 20px;
-    border: 0;
-    box-shadow: 0px 1px 5px #888888;
-    transition: right .2s;
+    background-color: #fff;
+		box-shadow: 0 5px 2px 0 rgba(0, 0, 0, 0.1), 0 0 15px 0 rgba(0, 0, 0, 0.1);
+		border: solid 1px rgba(0, 0, 0, 0.1);
+		transition: right .2s;
 }
 
 .upfront-toggle-checkbox:checked + .upfront-toggle-label {
-    background: rgb(42, 185, 154);
+		background: #1abc9c;
 }
 
 .upfront-toggle-checkbox:checked + .upfront-toggle-label .upfront-toggle-switch {
@@ -223,16 +244,18 @@
     display: block;
     width:187px;
     height: 40px;
-    background: rgb(40, 207, 141);
+		background-color: #00cf8d;
+		box-shadow: 0 3px 0 0 #00b37a;
+		font-family: 'Roboto';
+		font-size: 15px;
     color:#fff;
     margin: 30px auto;
     border: none;
     text-align: center;
-    -mox-border-radius: 5px;
-    -o-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-    border-bottom: 3px solid rgb(41, 179, 122);
+    -mox-border-radius: 4px;
+    -o-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
     text-transform: uppercase;
     cursor: pointer;
 }

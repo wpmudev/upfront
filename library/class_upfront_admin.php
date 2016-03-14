@@ -36,6 +36,10 @@ class Upfront_Admin
     function enqueue_scripts( $hook ){
         if( in_array( str_replace("upfront_page_", "", $hook), self::$menu_slugs ) );
             wp_enqueue_style( 'upfront_admin', Upfront::get_root_url() . "/styles/admin.css", array(), Upfront_ChildTheme::get_version() );// todo Sam: add proper version
+            
+						// todo Diobeth: proper injection of google fonts
+						wp_enqueue_style( 'roboto-condensed', "https://fonts.googleapis.com/css?family=Roboto+Condensed:400,300,300italic,400italic,700,700italic" );
+						wp_enqueue_style( 'roboto', "https://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900,900italic" );
     }
 
     /**
