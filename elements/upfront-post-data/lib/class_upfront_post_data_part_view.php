@@ -72,6 +72,26 @@ abstract class Upfront_Post_Data_PartView extends Upfront_PostPart_View {
 	}
 
 	/**
+	 * Gets fallback markup for a part block
+	 *
+	 * @param string $msg Fallback message to render
+	 * @param string $part Optional part for fallback designation
+	 *
+	 * @return string Fallback markup
+	 */
+	protected function _get_fallback_block ($msg, $part=false) {
+		$markup = '';
+		if (defined('DOING_AJAX') && DOING_AJAX && Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
+			$part_class = !empty($part)
+				? sanitize_html_class($part)
+				: ''
+			;
+			$markup = '<div class="upfront-part-fallback ' . $part_class . '"><em>' . esc_html($msg) . '</em></div>';
+		}
+		return $markup;
+	}
+
+	/**
 	 * Get view class responsible for rendering
 	 * @param array $data Data array
 	 * @return string The class name
