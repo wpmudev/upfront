@@ -212,7 +212,7 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 
 		// No comments and in editor mode
 		if (empty($comments) && defined('DOING_AJAX') && DOING_AJAX) {
-			$comments_markup = __('This is where the comments go. Please add comments to see their layout.', 'upfront');
+			$comments_markup = $this->_get_fallback_block(__('This is where the comments go. Please add comments to see their layout.', 'upfront'), 'comments');
 		}
 
 		$pagination = $this->_get_pagination();
