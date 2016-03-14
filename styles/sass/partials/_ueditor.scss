@@ -5,6 +5,9 @@
     overflow: hidden;
     position: relative;
 }
+.upostdata-part.edit-content {
+    position: relative;
+}
 .upfront_edit_content_style,
 .upfront_edit_image_insert{
     position: absolute;
@@ -19,12 +22,13 @@
     line-height: 46px;
     text-align: center;
     color: #263a4d;
-    box-shadow: 0px 5px 10px 2px #ccc;
     display: none;
     cursor: pointer;
     padding: 0 !important;
+    z-index: 10;
 }
-.Postpart_contents:hover .upfront_edit_content_style{
+.Postpart_contents:hover .upfront_edit_content_style,
+.upostdata-part.edit-content:hover .upfront_edit_content_style{
     display: block;
     height: 46px;
     overflow: hidden;
@@ -48,8 +52,10 @@
     clear: both;
     max-width: none;
 }
-#upfront-image-variants .ueditor-insert-variant-group:hover{
-   outline:1px dotted #7f7f7f;
+#upfront-image-variants .ueditor-insert-variant-group:hover,
+#upfront-image-variants .ueditor-insert-variant-group.editing {
+    background-color: rgba(255, 255, 255, 0.3);
+    box-shadow: inset 0px 0px 3px 0px rgba(60, 82, 103, 0.15);
 }
 .upfront-image-variant-delete_trigger{
     position: absolute;
@@ -65,11 +71,91 @@
     width:100%;
     height: 100%;
     min-height:50px;
-    overflow: hidden;
+    position: relative;
 }
 .ueditor-insert-variant-image{
     display:block;
     padding:15px;
+}
+.edit-content .ueditor-insert-variant-group:after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+}
+.edit-content .ueditor-insert-variant-group:hover:after {
+    background: rgba(0,0,0,0.2);
+}
+.edit-content .ueditor-insert-variant-group.editing:after {
+    content: none;
+}
+
+.ueditor-insert.ueditor-insert-variant .upfront-resize-handle-w,
+.ueditor-insert.ueditor-insert-variant .upfront-resize-handle-e {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    height: auto;
+    width: 14px;
+    padding-top: 15px;
+    background: none;
+    cursor: ew-resize;
+    display: none !important;
+}
+.ueditor-insert.ueditor-insert-variant .upfront-resize-handle-w {
+    left: -7px;
+    right: auto;
+}
+.ueditor-insert.ueditor-insert-variant .upfront-resize-handle-e {
+    right: -7px;
+    left: auto;
+}
+.ueditor-insert.ueditor-insert-variant .upfront-resize-handle-w:before,
+.ueditor-insert.ueditor-insert-variant .upfront-resize-handle-e:before {
+    content: "";
+    position: absolute;
+    top: 5px;
+    bottom: 5px;
+    left: 5px;
+    right: 5px;
+    background: #fff;
+    border-radius:3px;
+    box-shadow: 0px 0px 3px 0px rgba(36,57,77,0.2);
+    z-index: -1;
+}
+.ueditor-insert.ueditor-insert-variant .upfront-resize-handle-s:before {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 45px;
+    height: 4px;
+    background: #fff;
+    border-radius: 3px;
+    box-shadow: 0px 0px 3px 0px rgba(36, 57, 77, 0.2);
+}
+.ueditor-insert-variant-wrap .upfront-wrapper:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    box-shadow: inset 0px 0px 3px 0px rgba(60, 82, 103, 0.15);
+}
+.ueditor-insert-variant-image:hover > .ui-resizable-handle,
+.ueditor-insert-variant-caption:hover > .ui-resizable-handle,
+.ueditor-insert-variant-group:hover > .ui-resizable-handle {
+    display: block !important;
+    visibility: visible;
+}
+.ueditor-insert.ueditor-insert-variant .upfront-wrapper.clr .upfront-resize-handle-w,
+.ueditor-insert.ueditor-insert-variant .upfront-wrapper.is-full .upfront-resize-handle-w,
+.ueditor-insert.ueditor-insert-variant .upfront-wrapper.is-full .upfront-resize-handle-e,
+.ueditor-insert.ueditor-insert-variant .upfront-wrapper.order-1 .upfront-resize-handle-e,
+.ueditor-insert-variant-group.editing > .ui-resizable-handle {
+    display: none !important;
 }
 
 .ueditor-insert-variant.editing .ueditor-insert-variant-image{
@@ -81,14 +167,28 @@
 }
 .image-variant-label{
     position: absolute;
-    height: 38px;
-    background: #e5f3ff;
+    height: 84px;
+    background: #e5eef6;
     color: #263a4d;
-    text-align: center;
-    top: -38px;
-    line-height: 38px;
-    width: 100%;
+    top: -85px;
+    left: -1px;
+    line-height: 24px;
+    padding: 12px 20px 12px 20px;
     display: none;
+}
+.image-variant-label span {
+    display: block;
+    line-height: 24px;
+    width: 250px;
+}
+.image-variant-label input {
+    border: 1px solid #a2bfda;
+    background: #fff;
+    color: #607f99;
+    display: block;
+    height: 36px;
+    padding: 0 10px;
+    width: 250px;
 }
 .ueditor-insert-variant.editing .ueditor-insert-variant-caption{
     outline:1px dotted #7f7f7f;

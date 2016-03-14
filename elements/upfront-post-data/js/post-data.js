@@ -2,8 +2,9 @@
 define([
 	'text!elements/upfront-post-data/tpl/views.html',
 	'elements/upfront-post-data/js/post-data-views',
-	'elements/upfront-post-data/js/post-data-settings'
-], function(tpl, Views, PostDataSettings) {
+	'elements/upfront-post-data/js/post-data-settings',
+	'scripts/upfront/preset-settings/util'
+], function(tpl, Views, PostDataSettings, PresetUtil) {
 
 var l10n = Upfront.Settings.l10n.post_data_element;
 var $template = $(tpl);
@@ -54,6 +55,7 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 	render_view: function (markup) {
 		this.$el.find('.upfront-object-content').empty().append(markup);
 		this.prepare_editor();
+		Upfront.Events.trigger('post-data:part:rendered', this, markup);
 	},
 
 	prepare_editor: function () {
@@ -122,6 +124,20 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			this.createPaddingControl(),
 			this.createControl('settings', l10n.settings, 'on_settings_click')
 		]);
+	},
+
+	get_preset_properties: function() {
+		var preset = this.model.get_property_value_by_name("preset"),
+			type = this.model.get_property_value_by_name("data_type"),
+			props = PresetUtil.getPresetProperties(type + '_element', preset) || {}
+		;
+
+		return props;
+	},
+
+	get_preset_property: function(prop_name) {
+		var props = this.get_preset_properties();
+		return props[prop_name];
 	},
 
 	on_edit_click: function (e) {
@@ -194,6 +210,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		this.listenTo(PostDataEditor, 'editor:change:content', this.on_content_change);
 		this.listenTo(PostDataEditor, 'editor:change:author', this.on_author_change);
 		this.listenTo(PostDataEditor, 'editor:change:date', this.on_date_change);
+		this.editor = PostDataEditor;
 	},
 
 	/**
