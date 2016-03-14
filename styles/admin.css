@@ -227,7 +227,7 @@
     right: 20px;
     background-color: #fff;
 		box-shadow: 0 5px 2px 0 rgba(0, 0, 0, 0.1), 0 0 15px 0 rgba(0, 0, 0, 0.1);
-		border: solid 1px rgba(0, 0, 0, 0.1);
+		border: solid 1px rgba(0, 0, 0, 0.2);
 		transition: right .2s;
 }
 
@@ -237,6 +237,7 @@
 
 .upfront-toggle-checkbox:checked + .upfront-toggle-label .upfront-toggle-switch {
     right: 0;
+		border: 1px solid #1abc9c;
 }
 /*End of Toggle*/
 

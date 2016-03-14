@@ -5,10 +5,11 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 		$me = new self;
 		$me->_add_hooks();
 	}
-
+	
 	private function _add_hooks () {
 		add_action('upfront-core-inject_dependencies', array($this, 'dispatch_dependencies_output'));
 		add_action('wp_head', array($this, 'dispatch_fonts_loading'));
+		add_action('admin_head', array($this, 'dispatch_fonts_loading'));
 
 		upfront_add_ajax('wp_scripts', array($this, 'wp_scripts_load'));
 
