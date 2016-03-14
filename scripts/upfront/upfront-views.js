@@ -1599,6 +1599,8 @@ define([
 				this.listenTo(Upfront.Events, 'entity:drag_start', this.close_settings);
 				this.listenTo(Upfront.Events, 'upfront:element:edit:start', this.on_element_edit_start);
 				this.listenTo(Upfront.Events, 'upfront:element:edit:stop', this.on_element_edit_stop);
+				this.listenTo(Upfront.Events, 'upfront:edit_content_style:start', this.on_content_style_edit_start);
+				this.listenTo(Upfront.Events, 'upfront:edit_content_style:stop', this.on_content_style_edit_stop);
 				this.listenTo(Upfront.Events, 'entity:module:update', this.on_module_update);
 				this.listenTo(Upfront.Events, 'layout:after_render', this.on_after_layout_render);
 				this.listenTo(Upfront.Events, 'layout:after_render', this.checkUiOffset);
@@ -1927,6 +1929,18 @@ define([
 					else {
 						this.parent_module_view.enable_interaction(false);
 					}
+				}
+			},
+			on_content_style_edit_start: function () {
+				if ( this.parent_module_view ){
+					this.parent_module_view.$el.find('>.upfront-module').addClass('upfront-module-editing');
+					this.parent_module_view.disable_interaction(false);
+				}
+			},
+			on_content_style_edit_stop: function () {
+				if (this.parent_module_view && this.parent_module_view.enable_interaction){
+					this.parent_module_view.$el.find('>.upfront-module').removeClass('upfront-module-editing');
+					this.parent_module_view.enable_interaction(false);
 				}
 			},
 			on_element_resize_start: function (attr) {

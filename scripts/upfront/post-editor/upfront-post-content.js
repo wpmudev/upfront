@@ -203,6 +203,12 @@ PostContentEditor.prototype = {
 			editContent: function () {
 				_partView.prototype.editContent.call(this);
 				this.$content = this.$('.upostdata-part');
+
+				// This takes care of indented content wrapper
+				if (this.$content.find(".upfront-indented_content").length) {
+					this.$content = this.$content.find(".upfront-indented_content");
+				}
+
 				if ( this.$content.length ){
 					var isExcerpt = ( this.model.get_property_value_by_name('content') == 'excerpt' ),
 						content = isExcerpt ? this.parent.post.get('post_excerpt'): this.parent.post.get('post_content'),

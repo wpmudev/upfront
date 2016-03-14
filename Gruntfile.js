@@ -31,7 +31,8 @@ module.exports = function(grunt) {
 				files: {
 					'styles/global.min.css': ['styles/global.css'],
 					'styles/global-rtl.min.css': ['styles/global-rtl.css'],
-					'styles/editor-interface.min.css': ['styles/editor-interface.css']
+					'styles/editor-interface.min.css': ['styles/editor-interface.css'],
+					'elements/upfront-newnavigation/css/unewnavigation-style.min.css': ['elements/upfront-newnavigation/css/unewnavigation-style.css']
 				}
 			}
 		},

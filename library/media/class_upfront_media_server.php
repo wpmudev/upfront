@@ -583,8 +583,15 @@ function upfront_media_file_upload () {
 	$base_url = Upfront::get_root_url();
 
 	$deps = Upfront_CoreDependencies_Registry::get_instance();
-	$deps->add_script("{$base_url}/scripts/file_upload/jquery.fileupload.js");
-	$deps->add_script("{$base_url}/scripts/file_upload/jquery.iframe-transport.js");
+
+	if( Upfront_Debug::get_debugger()->is_dev() ){
+		$deps->add_script("{$base_url}/scripts/file_upload/jquery.fileupload.js");
+		$deps->add_script("{$base_url}/scripts/file_upload/jquery.iframe-transport.js");
+	}else{
+		$deps->add_script("{$base_url}/build/file_upload/jquery.fileupload.js");
+		$deps->add_script("{$base_url}/build/file_upload/jquery.iframe-transport.js");
+	}
+
 	
 	echo '<script>var _upfront_media_upload=' . json_encode(array(
 		'normal' => Upfront_UploadHandler::get_action_url('upfront-media-upload'),

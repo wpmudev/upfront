@@ -151,7 +151,7 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 	public function expand_comments_template () {
 		$is_fake_data = $this->_is_fake_data();
 		if (!$is_fake_data && empty($this->_post->ID)) return '';
-		if (!$is_fake_data && empty($this->_post->comment_count)) return '';
+		if (!$is_fake_data && !(defined('DOING_AJAX') && DOING_AJAX) && empty($this->_post->comment_count)) return '';
 
 		// If we have plugin-overridden template, then yeah... go with that
 		$tpl = $this->_get_external_comments_template();
@@ -194,9 +194,9 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 
 		if (empty($post) || !is_object($post)) return '';
 		if (post_password_required($post->ID)) return '';
-		
-		ob_start();
 
+		$comments_markup = '';
+		ob_start();
 		// Load comments
 		if ($comments && sizeof($comments)) {
 			echo '<ol class="upfront-comments">';
@@ -208,14 +208,18 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 			$comments);
 			echo '</ol>';
 		}
+		$comments_markup = ob_get_clean();
 
-		$comments = ob_get_clean();
+		// No comments and in editor mode
+		if (empty($comments) && defined('DOING_AJAX') && DOING_AJAX) {
+			$comments_markup = $this->_get_fallback_block(__('This is where the comments go. Please add comments to see their layout.', 'upfront'), 'comments');
+		}
 
 		$pagination = $this->_get_pagination();
 
 		$out = $this->_get_template('comments');
 
-		$out = Upfront_Codec::get()->expand($out, "comments", $comments);
+		$out = Upfront_Codec::get()->expand($out, "comments", $comments_markup);
 		$out = Upfront_Codec::get()->expand($out, "pagination", $pagination);
 
 		return $out;
@@ -363,7 +367,11 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 	 * @return bool
 	 */
 	private function _is_paginated () {
-		return (bool)get_option('page_comments');
+		$actual = (bool)get_option('page_comments');
+		return $this->_is_fake_data()
+			? true
+			: $actual
+		;
 	}
 
 	/**
