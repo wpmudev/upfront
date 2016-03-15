@@ -1,5 +1,5 @@
 /*---------- General ---------*/
-.upfront-logo{
+.upfront_logo{
     background-image: url(../img/uf-admin-sprite.svg);
     background-repeat: no-repeat;
     float: right;
@@ -18,6 +18,220 @@
     letter-spacing: -0.2px;
 		padding: 20px 10px 0 10px;
 }
+.upfront_admin .float_left {
+	float: left;
+}
+.upfront_admin .float_right {
+	float: right;
+}
+.upfront_admin .clear_before:before {
+	clear: both;
+	display: table;
+  content: " ";
+}
+.upfront_admin .clear_after:after {
+	clear: both;
+	display: table;
+  content: " ";
+}
+/*---------- End of General ---------*/
+
+/*---------- Toggle Buttons ---------*/
+.upfront_toggle {
+    position: relative;
+    width: 26px;
+    display: inline-table;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select: none;
+    vertical-align: middle;
+}
+
+input.upfront_toggle_checkbox {
+    display: none;
+}
+
+.upfront_toggle_label {
+    display: block;
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    border-radius: 50px;
+}
+
+.upfront_toggle_inner {
+    display: block;
+    width: 200%;
+    margin-left: -100%;
+    -moz-transition: margin 0.3s ease-in 0s;
+    -webkit-transition: margin 0.3s ease-in 0s;
+    -o-transition: margin 0.3s ease-in 0s;
+    transition: margin 0.3s ease-in 0s;
+}
+.upfront_toggle_inner:before,
+.upfront_toggle_inner:after {
+    display: block;
+    float: left;
+    width: 50%;
+    height: 5px;
+    padding: 0;
+    line-height: 5px;
+    font-size: 10px;
+    color: white;
+    font-family: Trebuchet, Arial, sans-serif;
+    font-weight: bold;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.2) inset;
+}
+
+.upfront_toggle_inner:before {
+    content: "";
+    padding-left: 5px;
+    background-color: #0074A2;
+}
+
+.upfront_toggle_inner:after {
+    content: "";
+    padding-right: 5px;
+    background-color: #EEEEEE;
+    text-align: right;
+}
+
+.upfront_toggle_switch {
+    display: block;
+    width: 14px;
+    margin: -3.5px;
+    background: #F8F8F8;
+    border: 1px solid #ddd;
+    border-radius: 15px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 20px;
+    -moz-transition: all 0.3s ease-in 0s;
+    -webkit-transition: all 0.3s ease-in 0s;
+    -o-transition: all 0.3s ease-in 0s;
+    transition: all 0.3s ease-in 0s;
+
+    box-shadow: -1px 1px 2px rgba(0,0,0,0.1);
+
+}
+
+.upfront_toggle_checkbox:checked + .upfront_toggle_label .upfront_toggle_inner {
+    margin-left: 0;
+}
+
+.upfront_toggle_checkbox:checked + .upfront_toggle_label .upfront_toggle_switch {
+    right: 0px;
+}
+
+.upfront_toggle {
+    width: 40px;
+}
+
+.upfront_toggle_label {
+    border: 0;
+    height: 20px;
+    background: #ddd;
+}
+
+.upfront_toggle_inner {
+    display: none;
+}
+
+.upfront_toggle_switch {
+    margin: 0 1px;
+    width: 18px;
+    height: 18px;
+    right: 20px;
+    background-color: #fff;
+		box-shadow: 0 5px 2px 0 rgba(0, 0, 0, 0.1), 0 0 15px 0 rgba(0, 0, 0, 0.1);
+		border: solid 1px rgba(0, 0, 0, 0.2);
+		transition: right .2s;
+}
+
+.upfront_toggle_checkbox:checked + .upfront_toggle_label {
+		background: #1abc9c;
+}
+
+.upfront_toggle_checkbox:checked + .upfront_toggle_label .upfront_toggle_switch {
+    right: 0;
+		border: 1px solid #1abc9c;
+}
+
+.upfront_toggle_description {
+		display: inline-block;
+    width: 80%;
+    vertical-align: middle;
+		margin-left: 30px;
+}
+
+.upfront_toggle_description span.upfront_toggle_checkbox_main_label {
+		font-family: 'Roboto';
+		font-size: 14px;
+		color: #333;
+}
+
+.upfront_toggle_description span.upfront_toggle_checkbox_sub_label {
+		font-family: 'Roboto';
+		font-size: 12px;
+		color: #777;
+		display: block;
+}
+
+.upfront_toggle_radio input {
+		display: none;
+}
+.upfront_toggle_radio span {
+		display: inline-block;
+		vertical-align: top;
+}
+.upfront_toggle_radio span.upfront_toggle_radio_button {
+		width: 16px;
+    height: 16px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    box-shadow: inset 0 2px 2px 0 rgba(186, 190, 195, 0.5);
+    border: solid 1px #babec3;
+		position: relative;
+}
+.upfront_toggle_radio span.upfront_toggle_radio_button:before {
+		content: " ";
+		width: 6px;
+		height: 6px;
+		background-color: #118bc0;
+		position: absolute;
+		top: 5px;
+		left: 5px;
+		border-radius: 50%;
+		display: none;
+}
+.float_left .upfront_toggle_radio label.upfront_toggle_radio_label {
+		display: inline-block;
+		padding-right: 30px;
+}
+.upfront_toggle_radio input:checked + label.upfront_toggle_radio_label span.upfront_toggle_radio_button:before {
+		display: block;
+}
+.upfront_toggle_radio span.upfront_toggle_radio_main_label {
+		font-family: 'Roboto';
+		font-size: 14px;
+		color: #333;
+		padding-left: 8px;
+}
+.upfront_toggle_radio span.upfront_toggle_radio_sub_label {
+		font-family: 'Roboto';
+		font-size: 12px;
+		color: #777;
+		padding-left: 30px;
+		padding-right: 50px;
+		display: block;
+}
+
+/*---------- End of Toggle Buttons ---------*/
+
 /*------------- User Restrictions ----------*/
 #upfront_restrictions_form {
 	padding: 0 10px;
@@ -115,132 +329,6 @@
     text-align: left;
 }
 
-/*Toggle Buttons*/
-.upfront-toggle {
-    position: relative;
-    width: 26px;
-    display: inline-table;
-    -webkit-user-select:none;
-    -moz-user-select:none;
-    -ms-user-select: none;
-    vertical-align: middle;
-}
-
-.upfront-toggle-checkbox {
-    display: none !important;
-}
-
-.upfront-toggle-label {
-    display: block;
-    overflow: hidden;
-    cursor: pointer;
-    border: 1px solid #ddd;
-    border-radius: 50px;
-}
-
-.upfront-toggle-inner {
-    display: block;
-    width: 200%;
-    margin-left: -100%;
-    -moz-transition: margin 0.3s ease-in 0s;
-    -webkit-transition: margin 0.3s ease-in 0s;
-    -o-transition: margin 0.3s ease-in 0s;
-    transition: margin 0.3s ease-in 0s;
-}
-.upfront-toggle-inner:before,
-.upfront-toggle-inner:after {
-    display: block;
-    float: left;
-    width: 50%;
-    height: 5px;
-    padding: 0;
-    line-height: 5px;
-    font-size: 10px;
-    color: white;
-    font-family: Trebuchet, Arial, sans-serif;
-    font-weight: bold;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    box-shadow: 0 1px 0 rgba(0,0,0,0.2) inset;
-}
-
-.upfront-toggle-inner:before {
-    content: "";
-    padding-left: 5px;
-    background-color: #0074A2;
-}
-
-.upfront-toggle-inner:after {
-    content: "";
-    padding-right: 5px;
-    background-color: #EEEEEE;
-    text-align: right;
-}
-
-.upfront-toggle-switch {
-    display: block;
-    width: 14px;
-    margin: -3.5px;
-    background: #F8F8F8;
-    border: 1px solid #ddd;
-    border-radius: 15px;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 20px;
-    -moz-transition: all 0.3s ease-in 0s;
-    -webkit-transition: all 0.3s ease-in 0s;
-    -o-transition: all 0.3s ease-in 0s;
-    transition: all 0.3s ease-in 0s;
-
-    box-shadow: -1px 1px 2px rgba(0,0,0,0.1);
-
-}
-
-.upfront-toggle-checkbox:checked + .upfront-toggle-label .upfront-toggle-inner {
-    margin-left: 0;
-}
-
-.upfront-toggle-checkbox:checked + .upfront-toggle-label .upfront-toggle-switch {
-    right: 0px;
-}
-
-.upfront-toggle {
-    width: 40px;
-}
-
-.upfront-toggle-label {
-    border: 0;
-    height: 20px;
-    background: #ddd;
-}
-
-.upfront-toggle-inner {
-    display: none;
-}
-
-.upfront-toggle-switch {
-    margin: 0 1px;
-    width: 18px;
-    height: 18px;
-    right: 20px;
-    background-color: #fff;
-		box-shadow: 0 5px 2px 0 rgba(0, 0, 0, 0.1), 0 0 15px 0 rgba(0, 0, 0, 0.1);
-		border: solid 1px rgba(0, 0, 0, 0.2);
-		transition: right .2s;
-}
-
-.upfront-toggle-checkbox:checked + .upfront-toggle-label {
-		background: #1abc9c;
-}
-
-.upfront-toggle-checkbox:checked + .upfront-toggle-label .upfront-toggle-switch {
-    right: 0;
-		border: 1px solid #1abc9c;
-}
-/*End of Toggle*/
-
 #upront_restrictions_submit{
     display: block;
     width:187px;
@@ -260,5 +348,62 @@
     text-transform: uppercase;
     cursor: pointer;
 }
-
 /*----------- End Of User Restrictions --------------*/
+
+/*------------- Experimental Features ----------*/
+.upfront_admin_experimental .upfront_admin_experimental_contents {
+	padding-left: 10px;
+	padding-right: 10px;
+}
+.upfront_admin_experimental p.disclaimer {
+		font-family: 'Roboto';
+		font-size: 15px;
+		color: #8e8e8e;
+		margin-top: 30px;
+		margin-bottom: 30px;
+}
+.upfront_admin_experimental .form_content {
+		display: inline-block;
+		border-radius: 6px;
+		background-color: #ffffff;
+		box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.1);
+		width: 558px;
+}
+.upfront_admin_experimental .form_content .form_title {
+		padding-top: 20px;
+		padding-bottom: 20px;
+		font-family: 'Roboto Condensed';
+		font-size: 18px;
+		font-weight: bold;
+		color: #777;
+		text-transform: uppercase;
+}
+.upfront_admin_experimental .form_content .form_title span {
+		padding-left: 30px;
+}
+.upfront_admin_experimental .form_content .form_content_group {
+		padding-left: 30px;
+		padding-right: 30px;
+}
+.upfront_admin_experimental .form_content .form_content_group_title {
+		font-family: 'Roboto';
+		font-weight: 500;
+		font-size: 14px;
+		color: #333;
+		padding-top: 20px;
+		padding-bottom: 20px;
+}
+.upfront_admin_experimental .form_content .form_content_input {
+		padding-bottom: 20px;
+}
+.upfront_admin_experimental .form_content .form_content_input.compress_response {
+		padding-top: 20px;
+		padding-bottom: 30px;
+}
+.upfront_admin_experimental #upront_restrictions_submit {
+		margin-left: 0;
+}
+.upfront_admin_experimental .form_content .bottom_separator {
+		border-bottom: 1px solid #eee;
+}
+/*------------- End of Experimental Features ----------*/

@@ -26,7 +26,7 @@ class Upfront_Admin_Restrictions
         $this->_save_form();
         ?>
         <div class="wrap upfront_admin upfront_admin_restrictions">
-            <h1><?php _e("User Restrictions", Upfront::TextDomain); ?><span class="upfront-logo"></span></h1>
+            <h1><?php _e("User Restrictions", Upfront::TextDomain); ?><span class="upfront_logo"></span></h1>
             <form action="<?php echo esc_url( add_query_arg( array("page" => "upfront_restrictions") ) ) ?>" method="post" id="upfront_restrictions_form">
                 <div id="upfront_user_restrictions_listing">
 
@@ -41,11 +41,11 @@ class Upfront_Admin_Restrictions
                                 <li class="upfront_restrictions_functionality_name"><?php echo $functionality ?></li>
                                 <?php foreach( $roles as $role_id => $role ): ?>
                                     <li class="upfront_restrictions_functionality_role">
-                                        <div class="upfront-toggle">
-                                            <input  value='1' type="checkbox" name="restrictions[<?php echo $role_id ?>][<?php echo $functionality_id ?>]" class="upfront-toggle-checkbox" id="restrictions[<?php echo $role_id ?>][<?php echo $functionality_id ?>]" <?php checked(true, Upfront_Permissions::boot()->get_restriction( $role_id, $functionality_id )); ?> />
-                                            <label class="upfront-toggle-label" for="restrictions[<?php echo $role_id ?>][<?php echo $functionality_id ?>]">
-                                                <span class="upfront-toggle-inner"></span>
-                                                <span class="upfront-toggle-switch"></span>
+                                        <div class="upfront_toggle">
+                                            <input  value='1' type="checkbox" name="restrictions[<?php echo $role_id ?>][<?php echo $functionality_id ?>]" class="upfront_toggle_checkbox" id="restrictions[<?php echo $role_id ?>][<?php echo $functionality_id ?>]" <?php checked(true, Upfront_Permissions::boot()->get_restriction( $role_id, $functionality_id )); ?> />
+                                            <label class="upfront_toggle_label" for="restrictions[<?php echo $role_id ?>][<?php echo $functionality_id ?>]">
+                                                <span class="upfront_toggle_inner"></span>
+                                                <span class="upfront_toggle_switch"></span>
                                             </label>
                                         </div>
                                     </li>
