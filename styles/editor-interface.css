@@ -8703,7 +8703,8 @@ a.upfront-post-layout-trigger:before {
   padding: 10px;
   width: 50%;
   display: inline-block;
-  font-weight: bold; }
+  font-weight: bold;
+  margin-bottom: 5px; }
 
 .upfront-size-hints .upfront-size-hint-width {
   padding-right: 0px; }
