@@ -54,6 +54,7 @@ define([
 					type: 'Text',
 					label: 'Email Text Label',
 					label_style: 'inline',
+					default_value: 'Email',
 					property: 'email_link_text'
 				}
 			];
@@ -69,6 +70,7 @@ define([
 					type: 'Text',
 					label: 'Link Text',
 					label_style: 'inline',
+					default_value: 'Website',
 					property: 'link_text'
 				},
 				{

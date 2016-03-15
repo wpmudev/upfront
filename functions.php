@@ -368,7 +368,6 @@ function uf_image_caption_shortcode( $out, $attr, $content ){
 
 	if( $is_wp_cation ) return; // returning null let's wp do it's own logic and rendering for caption shortcode
 
-//		$html = '<img class="" src="http://images.dressale.hk/images/320x480/201301/B/petite-girl-s-favorite-a-line-graduation-dress-with-empire-waist_1358440282519.jpg" alt="" width="320" height="480" /> Petite Girl';
 	$image_reg = preg_match('/src="([^"]+)"/', $content, $image_arr);
 	$href_reg = preg_match('/href="([^"]+)"/', $content, $anchor_arr);
 
@@ -384,7 +383,7 @@ function uf_image_caption_shortcode( $out, $attr, $content ){
 
 	), $attr, 'caption' );
 
-	 return Upfront_ThisPostView::get_post_image_markup($data);
+	 return Upfront_Post_Data_PartView::get_post_image_markup($data);
 
 }
 

@@ -150,6 +150,19 @@ define([
 
 			// Safe to proceed as normal now
 			this.update_fields();
+
+			if (!(this._padding_fields || {}).left || !!(this._padding_fields || {}).right) {
+				var fields = this.fields.toArray(),
+					padding = {}
+				;
+				padding.left = fields[0];
+				padding.right = fields[1];
+
+				this._padding_fields = padding;
+
+				if ((this._padding_fields || {}).left) this.listenTo(this._padding_fields.left, "changed", this.normalize_left_padding);
+				if ((this._padding_fields || {}).right) this.listenTo(this._padding_fields.right, "changed", this.normalize_right_padding);
+			}
 		},
 		update_fields: function () {
 			if (!this._allow_splitting_field) return false;
@@ -162,6 +175,44 @@ define([
 			} else {
 				this._content_part_field.$el.hide();
 			}
+		},
+		/**
+		 * Normalizes both content padding values
+		 *
+		 * Used because numeric input has zero validation on its own.
+		 * Updates corresponding preset properties as a side-effect
+		 *
+		 * @param {String} type Padding type (left or right)
+		 * @param {Integer} value New value to validate
+		 *
+		 * @return {Boolean}
+		 */
+		_normalize_padding: function (type, value) {
+			if (!(this._padding_fields || {})[type]) return false;
+			value = parseInt(value, 10) || -1;
+			var field = this._padding_fields[type] || {},
+				grid_size = Upfront.Settings.LayoutEditor.Grid.size || 24,
+				half_grid = parseInt((grid_size-1)/2),
+				options = field.options || {},
+				min = parseInt(options.min, 10) || 0,
+				max = parseInt(options.max, 10) || half_grid
+			;
+			if (value < min) {
+				field.set_value(min);
+				this.update_object(min, options.property)
+			}
+			if (value > max) {
+				field.set_value(max);
+				this.update_object(max, options.property)
+			}
+
+			return true;
+		},
+		normalize_left_padding: function (value) {
+			return this._normalize_padding('left', value);
+		},
+		normalize_right_padding: function (value) {
+			return this._normalize_padding('right', value);
 		},
 		get_modules: function () { return []; } // No extra modules for content
 	});

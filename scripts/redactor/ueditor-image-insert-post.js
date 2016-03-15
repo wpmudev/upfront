@@ -87,10 +87,19 @@ var PostImageInsert = base.ImageInsertBase.extend({
             $parent = $('.upfront-content-marker-contents'),
             padding_left = parseFloat( $(".upfront-content-marker-contents>*").css("padding-left")) / ge.col_size ,
             padding_right = parseFloat( $(".upfront-content-marker-contents>*").css("padding-right")) / ge.col_size,
-            parent_col = Upfront.Util.grid.width_to_col( $parent.width(), true ) ,
+            parent_col = Upfront.Util.grid.width_to_col( $parent.width(), true ),
             max_col =   parent_col  - padding_left - padding_right,
             col_size = $(".upfront-content-marker-contents>*").width()/max_col
-            ;
+        ;
+        if ( this.$editor.hasClass('upfront-indented_content') ) {
+            $parent = this.$editor;
+            padding_left = parseFloat( $parent.css("padding-left")) / ge.col_size;
+            padding_right = parseFloat( $parent.css("padding-right")) / ge.col_size;
+            parent_col = Upfront.Util.grid.width_to_col( $parent.width(), true );
+            max_col =   parent_col  - padding_left - padding_right;
+            col_size = $parent.width()/max_col;
+            this.$el.attr('style', 'margin-left: ' + ( padding_left * col_size * -1 ) + 'px; margin-right: ' + ( padding_right * col_size * -1 ) + 'px;');
+        }
 
 
         padding_left = padding_left ? parseInt(padding_left) : 0;
