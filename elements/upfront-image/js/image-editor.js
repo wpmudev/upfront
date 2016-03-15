@@ -449,11 +449,17 @@ define([
 		check100ButtonActivation: function(){
 			var full = this.getFullWidthImage(this.options.fullSize).size,
 				fullColsRows = this.getCurrentImageRowsCols(full.width, full.height),
+				fullWidth = this.options.fullSize,
 				button = this.$('#image-edit-button-reset'),
 				canvas = this.$('#uimage-canvas')
 			;
 
-			if(full.width === canvas.width() && full.height === canvas.height()) {
+			if(typeof this.options.fullSize === "undefined" || !this.options.fullSize) {
+				//Make sure we have size for natural size
+				fullWidth = full;
+			}
+			
+			if(fullWidth.width === canvas.width() && fullWidth.height === canvas.height()) {
 				button.find('input').prop('disabled', true);
 				button.addClass('image-reset-disabled');
 			}
@@ -935,19 +941,25 @@ define([
 		},
 
 		image100: function(e){
-			var fullGrid = this.getFullWidthImage().size,
+			var fullGrid = this.getFullWidthImage(this.options.fullSize).size,
 				current = this.getCurrentImageRowsCols(fullGrid.width, fullGrid.height),
+				fullWidth = this.options.fullSize,
 				maskSize = current
 			;
 			
-			if(this.elementSize.maxColumns < current.columns){
+			//if(this.elementSize.maxColumns < current.columns){
 				var maskHeight = fullGrid.height;
 				maskSize = {columns: this.elementSize.maxColumns, rows: Math.ceil(maskHeight / this.elementSize.rowHeight) + 2};
-			}
+			//}
 
 			// Don't allow changing width mask size anymore
 			maskSize.columns = this.elementSize.maxColumns;
 			
+			if(typeof this.options.fullSize === "undefined" || !this.options.fullSize) {
+				//Make sure we have size for natural size
+				fullWidth = fullGrid;
+			}
+
 			//Prevent resize mask dimensions
 			//
 			//if(maskSize.columns !== this.elementSize.columns || maskSize.rows !== this.elementSize.rows) {
@@ -963,8 +975,8 @@ define([
 			var maskOffset = this.$('#uimage-mask').offset();
 			fullGrid.top = maskOffset.top;
 			fullGrid.left = maskOffset.left;
-			this.$('#uimage-canvas').css(fullGrid);
-			this.$('#uimage-drag-handle').css(fullGrid);
+			this.$('#uimage-canvas').css(fullWidth);
+			this.$('#uimage-drag-handle').css(fullWidth);
 
 			if(maskSize.columns !== 22 && current.columns > maskSize.columns) {
 				this.showExpandAlert();
