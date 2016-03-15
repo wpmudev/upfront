@@ -199,6 +199,7 @@
 	color: #335b80;
 }
 .upfront-media-controls .change_title .upfront-field-label,
+.upfront-media-controls .size_hints .upfront-field-label,
 .upfront-media-controls .add_labels .upfront-field-label,
 .upfront-media-controls .upfront-filter_selection-control .upfront-field-label,
 .upfront-media-controls .upfront-filter_selected-control .upfront-field-label {
@@ -210,6 +211,24 @@
 	font-family: Verdana, sans-serif;
 	font-size: 11px;
 	padding: 0 10px;
+}
+.upfront-size-hints .upfront-size-hint-width,
+.upfront-size-hints .upfront-size-hint-height {
+	background: rgb(186, 207, 227);
+	padding: 10px;
+	width: 50%;
+	display: inline-block;
+	font-weight: bold;
+}
+.upfront-size-hints .upfront-size-hint-width {
+	padding-right: 0px;
+}
+.upfront-size-hints .upfront-size-hint-height {
+	padding-left: 0px;
+}
+.upfront-size-hints .upfront-size-hint-width span,
+.upfront-size-hints .upfront-size-hint-height span {
+	font-weight: normal;
 }
 .upfront-media-controls .upfront-search_filter-control {
 	background: #c2dbf2;
