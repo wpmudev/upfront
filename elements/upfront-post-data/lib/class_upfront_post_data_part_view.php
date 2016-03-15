@@ -207,7 +207,7 @@ abstract class Upfront_Post_Data_PartView extends Upfront_PostPart_View {
 			$col = upfront_get_class_num($width_pfx, $class);
 			break;
 		}
-		return is_numeric($col) ? $col : $breakpoint->get_columns();
+		return isset($col) && is_numeric($col) ? $col : $breakpoint->get_columns();
 	}
 }
 
