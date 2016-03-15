@@ -982,6 +982,10 @@ define([
 				this.showExpandAlert();
 			}
 			
+			//We should set dots to center
+			this.align = this.valign = 'center';
+			this.higlighActiveDot();
+
 			//Set image centered on Natural
 			this.setAlign('center', 'center');
 			
