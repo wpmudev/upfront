@@ -1106,6 +1106,7 @@ div.uimage-controls i.upfront-icon:before,
 	border: none;
 	z-index: -1;
 	right: 96px;
+	position: relative;
 }
 .upfront-control-dialog-open .image-control-button {
 	visibility: visible;
