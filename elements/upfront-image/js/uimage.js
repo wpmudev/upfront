@@ -910,7 +910,9 @@ define([
 					isDotAlign = this.property('isDotAlign'),
 					containerHeight = this.$('.upfront-image-container').height(),
 					sizeCheck = this.checkSize(),
+					imgPosition = img.position(),
 					maskSize = this.getMaskSize(),
+					imageView = this.getImageViewport(),
 					margin;
 
 				if(sizeCheck === "small") {
@@ -920,6 +922,18 @@ define([
 						position: 'relative',
 						overflow: 'hidden'
 					});	
+				}
+				
+				if(typeof imageView.width !== "undefined") {
+					if(data.elementSize.width > imageView.width) {
+						img.css({left: imgPosition.left + (maskSize.width - imageView.width)});
+					}
+				}
+				
+				if(typeof imageView.height !== "undefined") {
+					if(data.elementSize.height > imageView.height) {
+						img.css({top: imgPosition.top + (maskSize.height - imageView.height)});
+					}
 				}
 
 				if(sizeCheck === "small" && isDotAlign === true) {
@@ -1021,6 +1035,28 @@ define([
 			newSize = { width: minWidth, height: minHeight};	
 			
 			return newSize;
+		},
+		
+		getImageViewport: function() {
+			var me = this,
+				img = this.resizingData.img,
+				imgPosition = img.position(),
+				viewPort,
+				viewWidth,
+				viewHeight;
+
+			if(imgPosition.left < 0) {
+				viewWidth = img.width() - Math.abs(imgPosition.left);
+			}
+			
+			if(imgPosition.top < 0) {
+				viewHeight = img.height() - Math.abs(imgPosition.top);
+			}
+
+			viewPort = {width: viewWidth, height: viewHeight};
+			
+			return viewPort;
+
 		},
 
 		on_uimage_update: function (view) {
