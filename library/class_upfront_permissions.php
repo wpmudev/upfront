@@ -37,6 +37,12 @@ class Upfront_Permissions {
 	private static $_me;
 
 
+	/**
+	 * Checks if current user is able to do $level
+	 *
+	 * @param $level
+	 * @return bool
+	 */
 	public static function current ($level) {
 		self::boot();
 		return self::$_me->_current_user_can($level);
@@ -65,6 +71,13 @@ class Upfront_Permissions {
 		;
 	}
 
+	/**
+	 * Checkes if value is an upfront permission nonce
+	 *
+	 * @param $level
+	 * @param $value
+	 * @return bool
+	 */
 	public static function is_nonce ($level, $value) {
 		$keys = self::_get_nonce_keys();
 		if (!in_array($level, $keys)) return false;
@@ -75,8 +88,9 @@ class Upfront_Permissions {
 
 
 	private function __construct () {
-		add_filter("upfront-access-permissions-map", array( $this, "user_restrictions_map" ));
-		$this->_set_levels_map();
+		add_filter("upfront-access-permissions-map", array( $this, "filter_permissions_map" ));
+		$this->_levels_map = $this->_get_default_levels_map();
+
 	}
 
 	/**
@@ -84,8 +98,8 @@ class Upfront_Permissions {
 	 *
 	 *
 	 */
-	private function _set_levels_map(){
-		$this->_levels_map = apply_filters('upfront-access-permissions-map', array(
+	private function _get_default_levels_map(){
+		return apply_filters('upfront-access-permissions-map', array(
 			self::BOOT => 'edit_theme_options',// 'edit_posts',
 			self::EDIT =>  'edit_theme_options',// 'edit_posts',
 			self::RESIZE => 'edit_theme_options',// 'edit_posts',
@@ -105,13 +119,12 @@ class Upfront_Permissions {
 	}
 
 	/**
-	 * Returns user restrictions
+	 * Returns upfront capability map
 	 *
-	 * @param $permissions_map
 	 * @return array
 	 */
-	function user_restrictions_map( $permissions_map ){
-		return shortcode_atts( $permissions_map, array(
+	function get_upfront_capability_map(){
+		return array(
 			self::BOOT => "upfront_boot",
 			self::LAYOUT_MODE => "upfront_layout_mode",
 			self::POSTLAYOUT_MODE => "upfront_postlayout_mode",
@@ -124,15 +137,37 @@ class Upfront_Permissions {
 			self::RESPONSIVE_MODE => "upfront_responsive_mode",
 			self::MODIFY_RESTRICTIONS => "upfront_modify_restrictions",
 			self::SEE_USE_DEBUG => "upfront_see_use_debug"
-		) )	;
+		);
 	}
 
+	/**
+	 * Filters upfront-access-permissions-map map to place upfront specific capabilities into the permissions map
+	 *
+	 * @param $default_permissions
+	 * @return array
+	 */
+	function filter_permissions_map( $default_permissions ){
+		return shortcode_atts( $default_permissions, $this->get_upfront_capability_map() );
+	}
+
+	/**
+	 * Initiates class and returns an instance
+	 *
+	 * @return Upfront_Permissions
+	 */
 	public static function boot () {
 		if (!empty(self::$_me)) return self::$_me;
 		self::$_me = new self;
 		return self::$_me;
 	}
 
+	/**
+	 * Checks if current user is able to perform $level
+	 *
+	 * @param $level
+	 * @param bool $arg
+	 * @return bool
+	 */
 	private function _current_user_can ($level, $arg=false) {
 		$level = in_array($level, array_keys($this->_levels_map)) && !empty($this->_levels_map[$level])
 			? $this->_levels_map[$level]
@@ -153,6 +188,11 @@ class Upfront_Permissions {
 		;
 	}
 
+	/**
+	 * Returns nonce keys
+	 *
+	 * @return array
+	 */
 	private static function _get_nonce_keys () {
 		return array(
 			self::BOOT,
@@ -166,11 +206,22 @@ class Upfront_Permissions {
 		);
 	}
 
+	/**
+	 * Converts $key to upfront permission nonce
+	 *
+	 * @param $key
+	 * @return string
+	 */
 	private static function _to_nonce_key ($key) {
 		return "upfront-{$key}";
 	}
 
-	public function get_restriction_labels(){
+	/**
+	 * Returns upfront capability labels
+	 *
+	 * @return mixed|void
+	 */
+	public function get_capability_labels(){
 	
 		return apply_filters('upfront-access-permissions-labels', array(
 
@@ -189,86 +240,42 @@ class Upfront_Permissions {
 
 		));
 	}
-	
+
+	/**
+	 * Returns levels map
+	 *
+	 * @return array
+	 */
 	public function get_level_map() {
 		return $this->_levels_map;
 	}
 	
 	/**
 	 * Add or remove role capability
-	 * @param object $role WP_Role Object
+	 * @param WP_Role $role  WordPress role object
 	 * @param string $capability of the role
 	 * @param bool $add  whether to add or remove
 	 */
 	public function toggle_capability ($role, $capability, $add ) {
-		if ( $role !== null ) {
+		if ( is_a( $role,  'WP_Role')) {
 			if ( $add ) {
-					$role->add_cap($capability);
+				$role->add_cap($capability);
 			} else {
-					$role->remove_cap($capability);
+				$role->remove_cap($capability);
 			}
 		}
 	}
 
 	/**
-	 * Returns all restrictions
+	 * Checks if $role_id is capable of the $capability
 	 *
-	 * @return mixed
-	 */
-	function get_restrictions(){
-		
-		// Todo: set _cached_restrictions to default WP_Role at first load (not yet on DB)
-		
-		self::boot();
-		if( isset( $this->_cached_restrictions ) && array() !==  $this->_cached_restrictions  )
-			return $this->_cached_restrictions;
-		else
-			$this->_cached_restrictions = get_site_option( self::RESTRICTIONS_KEY, array_keys( $this->_levels_map ) );
-		return $this->_cached_restrictions ;
-	}
-
-	function update_restrictions( $value_array ){
-	
-		return update_site_option( self::RESTRICTIONS_KEY, $value_array );
-	}
-	
-	
-	/**
-	 * Updates restriction for a given role and functionality
-	 *
-	 * @param string $role_id
-	 * @param string $functionality_id functionality to update restrictions for
-	 * @param bool $restriction  whether it's restricted or allowed
+	 * @param string $role_id role name
+	 * @param string $capability capability name
 	 * @return bool
 	 */
-	function update_restriction( $role_id, $functionality_id , $restriction ){
-		$restrictions = $this->get_restrictions();
-		$restrictions[$role_id][$functionality_id] = (bool) $restriction;
-		return update_site_option( self::RESTRICTIONS_KEY, $restrictions );
+	function is_capable($role_id, $capability  ){
+		$role = get_role( $role_id );
+		return $role->has_cap( $capability );
 	}
 
-	/**
-	 * Returns restriction for specific role and functionality
-	 *
-	 * @param $role_id
-	 * @param $functionality_id
-	 * @return bool
-	 */
-	function get_restriction( $role_id, $functionality_id  ){
-		$restrictions = $this->get_restrictions();
-		return  isset( $restrictions[$role_id] ) && isset( $restrictions[$role_id][$functionality_id] ) ? $restrictions[$role_id][$functionality_id] : false;
-	}
-
-	/**
-	 * Checks to see if $functionality_id is allowed for the current user ( based on the settings in User Restrictions page )
-	 *
-	 * @param $functionality_id
-	 * @return bool
-	 */
-	function is_current_user_allowed( $functionality_id ){
-		global $current_user;
-		foreach( $current_user->roles as $role ){
-			if( $this->get_restriction( $role, $functionality_id  ) ) return true;
-		}
-	}
 }
