@@ -503,7 +503,9 @@ function add_elements () {
 			cssSelectors: {
 				'.date_posted': {label: l10n.css.post_data_date_label, info: l10n.css.post_data_date_info},
 				'.title': {label: l10n.css.post_data_title_label, info: l10n.css.post_data_title_info},
-				'.content': {label: l10n.css.post_data_content_label, info: l10n.css.post_data_content_info}
+				'.title h1': {label: l10n.css.post_data_title_h1_label, info: l10n.css.post_data_title_h1_info},
+				'.content': {label: l10n.css.post_data_content_label, info: l10n.css.post_data_content_info},
+				'.content p': {label: l10n.css.post_data_content_p_label, info: l10n.css.post_data_content_p_info}
 			},
 			cssSelectorsId: 'post_post_data'
 		});
@@ -515,6 +517,7 @@ function add_elements () {
 			"Settings": PostDataSettings,
 			cssSelectors: {
 				'.author': {label: l10n.css.author_author_label, info: l10n.css.author_author_info},
+				'.author a': {label: l10n.css.author_author_link_label, info: l10n.css.author_author_link_info},
 				'.gravatar': {label: l10n.css.author_gravatar_label, info: l10n.css.author_gravatar_info},
 				'.author-email': {label: l10n.css.author_email_label, info: l10n.css.author_email_info},
 				'.author-email a': {label: l10n.css.author_email_link_label, info: l10n.css.author_email_link_info},
@@ -560,7 +563,29 @@ function add_elements () {
 				'.comment_count': {label: l10n.css.comment_count_label, info: l10n.css.comment_count_info},
 				'.comments': {label: l10n.css.comments_label, info: l10n.css.comments_info},
 				'.comments_pagination': {label: l10n.css.comments_pagination_label, info: l10n.css.comments_pagination_info},
-				'.comment_form': {label: l10n.css.comment_form_label, info: l10n.css.comment_form_info},
+				
+				'.upfront-post_data-comments': {label: l10n.css.comments_label, info: l10n.css.comments_info},
+				'.upfront-post_data-comments .comment': {label: l10n.css.comment_label, info: l10n.css.comment_info},
+				'.upfront-post_data-comments .comment-wrapper': {label: l10n.css.comment_wrapper_label, info: l10n.css.comment_wrapper_info},
+				'.upfront-post_data-comments .comment-avatar': {label: l10n.css.comment_avatar_label, info: l10n.css.comment_avatar_info},
+				'.upfront-post_data-comments .comment-avatar img': {label: l10n.css.comment_avatar_image_label, info: l10n.css.comment_avatar_image_info},
+				'.upfront-post_data-comments .comment-meta': {label: l10n.css.comment_meta_label, info: l10n.css.comment_meta_info},
+				'.upfront-post_data-comments .comment-meta .comment-author a': {label: l10n.css.comment_athor_label, info: l10n.css.comment_author_info},
+				'.upfront-post_data-comments .comment-meta .comment-time': {label: l10n.css.comment_time_label, info: l10n.css.comment_time_info},
+				'.upfront-post_data-comments .comment-content': {label: l10n.css.comment_content_label, info: l10n.css.comment_content_info},
+				'.upfront-post_data-comments .comment-content p': {label: l10n.css.comment_content_p_label, info: l10n.css.comment_content_p_info},
+				'.upfront-post_data-comments .edit-link a': {label: l10n.css.edit_link_label, info: l10n.css.edint_link_info},
+				'.upfront-post_data-comments .comment-meta-actions': {label: l10n.css.meta_actions_label, info: l10n.css.meta_actions_info},
+				'.upfront-post_data-comments .comment-reply a': {label: l10n.css.comment_reply_label, info: l10n.css.comment_reply_info},
+
+				'.comment-respond': {label: l10n.css.comment_form_label, info: l10n.css.comment_form_info},
+				'.comment-respond .comment-reply-title': {label: l10n.css.reply_title_label, info: l10n.css.reply_title_info},
+				'.comment-respond .logged-in-as': {label: l10n.css.logged_in_label, info: l10n.css.logged_in_info},
+				'.comment-respond .logged-in-as a': {label: l10n.css.logged_in_link_label, info: l10n.css.logged_in_link_info},
+				'.comment-respond .comment-form-comment': {label: l10n.css.respond_label, info: l10n.css.respond_info},
+				'.comment-respond .comment-form-comment input[type="text"]': {label: l10n.css.comment_input_label, info: l10n.css.comment_input_info},
+				'.comment-respond .comment-form-comment textarea': {label: l10n.css.comment_textarea_label, info: l10n.css.comment_textarea_info},
+				'.comment-respond .form-submit .submit': {label: l10n.css.submit_button, info: l10n.css.submit_button},
 			},
 			cssSelectorsId: 'post_comments'
 		});
