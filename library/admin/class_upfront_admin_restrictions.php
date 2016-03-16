@@ -62,11 +62,11 @@ class Upfront_Admin_Restrictions
 
 
     private function _get_roles(){
-        return array_merge( true ? array("super_admin" => array( "name" => __("Super Admin", Upfront::TextDomain) ) ) : array() ,  wp_roles()->roles ) ;
+        return array_merge( is_multisite() ? array("super_admin" => array( "name" => __("Super Admin", Upfront::TextDomain) ) ) : array() ,  wp_roles()->roles ) ;
     }
 
     private function _get_functionalities(){
-        return Upfront_Permissions::boot()->get_labels();
+        return Upfront_Permissions::boot()->get_restriction_labels();
     }
 
     private function _save_form(){
@@ -90,13 +90,13 @@ class Upfront_Admin_Restrictions
 						foreach( $this->_get_functionalities() as $functionality_id => $functionality ) {
 								if ( isset($restrictions[$role_id]) ) {
 										if ( isset($restrictions[$role_id][$functionality_id]) ) {
-												Upfront_Permissions::boot()->add_capability($user_role,Upfront_Permissions::boot()->get_level_map()[$functionality_id],true);
+												Upfront_Permissions::boot()->toggle_capability($user_role,Upfront_Permissions::boot()->get_level_map()[$functionality_id],true);
 										} else {
-												Upfront_Permissions::boot()->add_capability($user_role,Upfront_Permissions::boot()->get_level_map()[$functionality_id],false);
+												Upfront_Permissions::boot()->toggle_capability($user_role,Upfront_Permissions::boot()->get_level_map()[$functionality_id],false);
 										}
 								} else {
 										// remove all capabilities for this role if no single one functionality checked
-										Upfront_Permissions::boot()->add_capability($user_role,Upfront_Permissions::boot()->get_level_map()[$functionality_id],false);
+										Upfront_Permissions::boot()->toggle_capability($user_role,Upfront_Permissions::boot()->get_level_map()[$functionality_id],false);
 								}
 						}
 				}

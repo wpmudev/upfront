@@ -75,7 +75,17 @@ class Upfront_Permissions {
 
 
 	private function __construct () {
-		$this->_levels_map = apply_filters('upfront-access-permissions_map', array(
+		add_filter("upfront-access-permissions-map", array( $this, "user_restrictions_map" ));
+		$this->_set_levels_map();
+	}
+
+	/**
+	 * Sets default access levels
+	 *
+	 *
+	 */
+	private function _set_levels_map(){
+		$this->_levels_map = apply_filters('upfront-access-permissions-map', array(
 			self::BOOT => 'edit_theme_options',// 'edit_posts',
 			self::EDIT =>  'edit_theme_options',// 'edit_posts',
 			self::RESIZE => 'edit_theme_options',// 'edit_posts',
@@ -83,15 +93,38 @@ class Upfront_Permissions {
 			self::UPLOAD => 'upload_files',
 			self::SAVE => 'edit_theme_options',
 			self::OPTIONS => 'manage_options',
-			self::SEE_USE_DEBUG => 'edit_theme_options',
+			self::SEE_USE_DEBUG => "edit_themes",
 			self::LAYOUT_MODE => 'edit_theme_options',
 			self::CONTENT_MODE => 'edit_theme_options',// 'edit_posts',
 			self::THEME_MODE => 'edit_theme_options',
 			self::POSTLAYOUT_MODE => 'edit_theme_options',
 			self::RESPONSIVE_MODE => 'edit_theme_options',
-			self::MODIFY_RESTRICTIONS => 'promote_users',
-			self::DEFAULT_LEVEL => 'edit_theme_options'
+
+			self::DEFAULT_LEVEL => 'edit_theme_options',
 		));
+	}
+
+	/**
+	 * Returns user restrictions
+	 *
+	 * @param $permissions_map
+	 * @return array
+	 */
+	function user_restrictions_map( $permissions_map ){
+		return shortcode_atts( $permissions_map, array(
+			self::BOOT => "upfront_boot",
+			self::LAYOUT_MODE => "upfront_layout_mode",
+			self::POSTLAYOUT_MODE => "upfront_postlayout_mode",
+			self::UPLOAD => "upfront_upload_stuff",
+			self::RESIZE => "upfront_resize_media",
+			self::OPTIONS => "upfront_change_options",
+			self::CREATE_POST_PAGE => "upfront_create_post_page",
+			self::EDIT => "upfront_edit_posts",
+			self::EMBED => "upfront_embed_stuff",
+			self::RESPONSIVE_MODE => "upfront_responsive_mode",
+			self::MODIFY_RESTRICTIONS => "upfront_modify_restrictions",
+			self::SEE_USE_DEBUG => "upfront_see_use_debug"
+		) )	;
 	}
 
 	public static function boot () {
@@ -137,7 +170,7 @@ class Upfront_Permissions {
 		return "upfront-{$key}";
 	}
 
-	public function get_labels(){
+	public function get_restriction_labels(){
 	
 		return apply_filters('upfront-access-permissions-labels', array(
 
@@ -167,14 +200,14 @@ class Upfront_Permissions {
 	 * @param string $capability of the role
 	 * @param bool $add  whether to add or remove
 	 */
-	public function add_capability ( $role, $capability, $add ) {
-			if ( $role !== null ) {
-					if ( $add ) {
-							$role->add_cap($capability);
-					} else {
-							$role->remove_cap($capability);
-					}
+	public function toggle_capability ($role, $capability, $add ) {
+		if ( $role !== null ) {
+			if ( $add ) {
+					$role->add_cap($capability);
+			} else {
+					$role->remove_cap($capability);
 			}
+		}
 	}
 
 	/**
@@ -224,5 +257,18 @@ class Upfront_Permissions {
 	function get_restriction( $role_id, $functionality_id  ){
 		$restrictions = $this->get_restrictions();
 		return  isset( $restrictions[$role_id] ) && isset( $restrictions[$role_id][$functionality_id] ) ? $restrictions[$role_id][$functionality_id] : false;
+	}
+
+	/**
+	 * Checks to see if $functionality_id is allowed for the current user ( based on the settings in User Restrictions page )
+	 *
+	 * @param $functionality_id
+	 * @return bool
+	 */
+	function is_current_user_allowed( $functionality_id ){
+		global $current_user;
+		foreach( $current_user->roles as $role ){
+			if( $this->get_restriction( $role, $functionality_id  ) ) return true;
+		}
 	}
 }
