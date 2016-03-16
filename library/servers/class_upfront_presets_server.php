@@ -3,6 +3,7 @@
 abstract class Upfront_Presets_Server extends Upfront_Server {
 
 	protected $isPostPartServer = false;
+	protected $isThisPostServer = false;
 
 	protected function __construct() {
 		parent::__construct();
@@ -244,6 +245,10 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 					$preset['preset_style'] = str_replace('#page', 'div#page .upfront-output-region-container', $preset['preset_style']);
 				} else {
 					$preset['preset_style'] = str_replace('#page', 'div#page .upfront-output-region-container .upfront-output-module', $preset['preset_style']);
+				}
+				
+				if($this->isThisPostServer) {
+					$preset['preset_style'] = str_replace('.default', '.default.upfront-this_post', $preset['preset_style']);
 				}
 			}
 
