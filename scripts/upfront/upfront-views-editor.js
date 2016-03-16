@@ -9365,10 +9365,10 @@
 						values: region_types,
 						change: function () {
 							var value = this.get_value();
+							this.model.set_breakpoint_property(this.property_name, value);
 							$content.find('.upfront-region-bg-setting-tab').not('.upfront-region-bg-setting-tab-'+value).hide();
 							$content.find('.upfront-region-bg-setting-tab-'+value).show();
 							me.render_modal_tab(value, $content.find('.upfront-region-bg-setting-tab-'+value), $content);
-							this.model.set_breakpoint_property(this.property_name, value);
 						}
 					}),
 					bg_item = new Upfront.Views.Editor.BgSettings.BgItem({

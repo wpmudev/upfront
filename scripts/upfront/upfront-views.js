@@ -230,10 +230,24 @@ define([
 			},
 			update_background_featured: function ($type, $overlay) {
 				var me = this;
-				var $bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el;
+				var $bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el,
+					bg_default = this.model.get_breakpoint_property_value('background_default', true),
+					_update_default = function () {
+						if ( bg_default == 'image' ) {
+							me.update_background_image($type, $overlay);
+						}
+						else {
+							me._update_background_image_from_data({
+								image: false,
+								ratio: 0
+							}, $type, $overlay);
+						}
+					}
+				;
+				$bg.addClass('no-featured_image');
 				this.update_background_color();
 
-				if(me.$el.children('.feature_image_selector').length < 1) {
+				if(me.$el.children('.feature_image_selector').length < 1 && !Upfront.Application.is_builder()) {
 					var feature_selector = $('<a href="#" class="feature_image_selector"></a>');
 					feature_selector.bind('click', function() {
 							Upfront.Views.Editor.ImageSelector.open().done(function(images){
@@ -287,6 +301,7 @@ define([
 							temp_image.load(function(){
 								ratio = parseFloat(Math.round(this.height/this.width*100)/100);
 								$bg.data('bg-featured-image-ratio', ratio);
+								$bg.removeClass('no-featured_image');
 
 								me._update_background_image_from_data({
 									image: image,
@@ -295,12 +310,10 @@ define([
 
 							});
 						} else {
-							me._update_background_image_from_data({
-								image: false,
-								ratio: 0
-							}, $type, $overlay);
+							_update_default();
 						}
 					})
+					.fail(_update_default())
 				;
 			},
 			postpone_map_init: function ($type, $overlay) {

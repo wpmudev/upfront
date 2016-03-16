@@ -590,6 +590,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'parallax' => __('Parallax', 'upfront'),
 				'tile_vertically' => __('Tile Vertically', 'upfront'),
 				'tile_horizontally' => __('Tile Horizontally', 'upfront'),
+				'featured_default' => __('If Post Has No Feat. Image', 'upfront'),
 				'autorotate_each' => __('Rotate automatically every', 'upfront'),
 				'always_show_ctrl' => __('Always show slider controls', 'upfront'),
 				'show_ctrl_hover' => __('Show controls on hover', 'upfront'),
