@@ -138,12 +138,13 @@ class Upfront_Permissions {
 	}
 
 	public function get_labels(){
+	
 		return apply_filters('upfront-access-permissions-labels', array(
 
 			self::BOOT => __('Can Access Upfront Editor Mode', Upfront::TextDomain ),
 			self::LAYOUT_MODE => __('Can Modify Upfront Layouts', Upfront::TextDomain ),
 			self::POSTLAYOUT_MODE => __('Can Modify Single Post Layout', Upfront::TextDomain ),
-			self::UPLOAD => __('Can Upload Media', Upfront::TextDomain ),
+			$this->_levels_map[self::UPLOAD] => __('Can Upload Media', Upfront::TextDomain ),
 			self::RESIZE => __('Can Resize Media (in Layouts)', Upfront::TextDomain ),
 			self::OPTIONS => __('Can Modify / Save Global Options <p class="description">(Theme Colors, Comments etc.)</p>', Upfront::TextDomain ),
 			self::CREATE_POST_PAGE => __('Can Create Posts & Pages From Upfront', Upfront::TextDomain ),
@@ -171,8 +172,11 @@ class Upfront_Permissions {
 	}
 
 	function update_restrictions( $value_array ){
+	
 		return update_site_option( self::RESTRICTIONS_KEY, $value_array );
 	}
+	
+	
 	/**
 	 * Updates restriction for a given role and functionality
 	 *

@@ -61,7 +61,11 @@ class Upfront_Admin
         <?php
     }
 
-
+		function RemoveAddMediaButtonsForNonAdmins(){
+				remove_action( 'media_buttons', 'media_buttons' );
+		}
+		
+		
 }
 
 new Upfront_Admin;
