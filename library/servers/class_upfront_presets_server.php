@@ -248,8 +248,12 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 					$preset['preset_style'] = str_replace('#page', 'div#page .upfront-output-region-container .upfront-output-module', $preset['preset_style']);
 				}
 				
-				if($this->isThisPostServer || $this->isCommentServer) {
+				if($this->isThisPostServer) {
 					$preset['preset_style'] = str_replace('.default', '.default.upfront-this_post', $preset['preset_style']);
+				}
+				
+				if($this->isCommentServer) {
+					$preset['preset_style'] = str_replace('.default', '.default.upfront-comment', $preset['preset_style']);
 				}
 			}
 
