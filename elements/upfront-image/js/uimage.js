@@ -909,9 +909,20 @@ define([
 					current_position = this.property('position'),
 					isDotAlign = this.property('isDotAlign'),
 					containerHeight = this.$('.upfront-image-container').height(),
+					sizeCheck = this.checkSize(),
+					maskSize = this.getMaskSize(),
 					margin;
 
-				if(this.resizingData.data.checkSize === "small" && isDotAlign === true) {
+				if(sizeCheck === "small") {
+					this.$('.upfront-image-caption-container, .upfront-image-container').css({
+						width: maskSize.width,
+						height: maskSize.height,
+						position: 'relative',
+						overflow: 'hidden'
+					});	
+				}
+
+				if(sizeCheck === "small" && isDotAlign === true) {
 					if(vertical_align === "center") {
 						if(data.size.height < data.elementSize.height) {
 							margin = (data.size.height - data.elementSize.height) / 2;
@@ -996,6 +1007,20 @@ define([
 
 			this.resizingData = {};
 			this.showCaption();
+		},
+		
+		getMaskSize: function() {
+			var me = this,
+				size = this.property('size'),
+				checkSize = this.checkSize(),
+				elementSize = this.property('element_size'),
+				minWidth = Math.min(size.width, elementSize.width),
+				minHeight = Math.min(size.height, elementSize.height),
+				newSize;
+
+			newSize = { width: minWidth, height: minHeight};	
+			
+			return newSize;
 		},
 
 		on_uimage_update: function (view) {
