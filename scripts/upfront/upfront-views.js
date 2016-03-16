@@ -2370,6 +2370,14 @@ define([
 				return cols;
 			},
 
+			on_click: function (e) {
+				_Upfront_EditableEntity.prototype.on_click.call(this, e);
+				if ( this.parent_module_view && this.parent_module_view.group_view ) {
+					// On group, do not propagate
+					e.stopPropagation();
+				}
+			},
+
 			on_module_update: function (view, model) {
 				if ( !this.parent_module_view || this.parent_module_view != view ) return;
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
@@ -2397,7 +2405,10 @@ define([
 			},
 
 			enable_object_edit: function () {
-				Upfront.Events.trigger("command:module_group:finish_edit"); // close module group edit if opened
+				if ( this.parent_module_view && !this.parent_module_view.group_view ) {
+					// close module group edit if opened, only if this isn't contained inside group
+					Upfront.Events.trigger("command:module_group:finish_edit");
+				}
 				Upfront.Events.trigger("command:object_group:finish_edit"); // close other edit first
 				this.toggle_object_edit(true);
 			},
