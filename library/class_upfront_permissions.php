@@ -11,8 +11,8 @@ class Upfront_Permissions {
 	const SAVE_REVISION = 'save_changes';
 	const OPTIONS = 'change_options';
 	const CREATE_POST_PAGE = 'create_post_page';
-	const SEE_USE_DEBUG = "see_use_debug";
-	const MODIFY_RESTRICTIONS = "modify_restrictions";
+	const SEE_USE_DEBUG = 'see_use_debug';
+	const MODIFY_RESTRICTIONS = 'modify_restrictions';
 
 	const DEFAULT_LEVEL = 'save_changes';
 
@@ -83,14 +83,14 @@ class Upfront_Permissions {
 			self::UPLOAD => 'upload_files',
 			self::SAVE => 'edit_theme_options',
 			self::OPTIONS => 'manage_options',
-			self::SEE_USE_DEBUG => "edit_themes",
+			self::SEE_USE_DEBUG => 'edit_theme_options',
 			self::LAYOUT_MODE => 'edit_theme_options',
 			self::CONTENT_MODE => 'edit_theme_options',// 'edit_posts',
 			self::THEME_MODE => 'edit_theme_options',
 			self::POSTLAYOUT_MODE => 'edit_theme_options',
 			self::RESPONSIVE_MODE => 'edit_theme_options',
-
-			self::DEFAULT_LEVEL => 'edit_theme_options',
+			self::MODIFY_RESTRICTIONS => 'promote_users',
+			self::DEFAULT_LEVEL => 'edit_theme_options'
 		));
 	}
 
@@ -144,7 +144,7 @@ class Upfront_Permissions {
 			self::BOOT => __('Can Access Upfront Editor Mode', Upfront::TextDomain ),
 			self::LAYOUT_MODE => __('Can Modify Upfront Layouts', Upfront::TextDomain ),
 			self::POSTLAYOUT_MODE => __('Can Modify Single Post Layout', Upfront::TextDomain ),
-			$this->_levels_map[self::UPLOAD] => __('Can Upload Media', Upfront::TextDomain ),
+			self::UPLOAD => __('Can Upload Media', Upfront::TextDomain ),
 			self::RESIZE => __('Can Resize Media (in Layouts)', Upfront::TextDomain ),
 			self::OPTIONS => __('Can Modify / Save Global Options <p class="description">(Theme Colors, Comments etc.)</p>', Upfront::TextDomain ),
 			self::CREATE_POST_PAGE => __('Can Create Posts & Pages From Upfront', Upfront::TextDomain ),
@@ -156,6 +156,26 @@ class Upfront_Permissions {
 
 		));
 	}
+	
+	public function get_level_map() {
+		return $this->_levels_map;
+	}
+	
+	/**
+	 * Add or remove role capability
+	 * @param object $role WP_Role Object
+	 * @param string $capability of the role
+	 * @param bool $add  whether to add or remove
+	 */
+	public function add_capability ( $role, $capability, $add ) {
+			if ( $role !== null ) {
+					if ( $add ) {
+							$role->add_cap($capability);
+					} else {
+							$role->remove_cap($capability);
+					}
+			}
+	}
 
 	/**
 	 * Returns all restrictions
@@ -163,6 +183,9 @@ class Upfront_Permissions {
 	 * @return mixed
 	 */
 	function get_restrictions(){
+		
+		// Todo: set _cached_restrictions to default WP_Role at first load (not yet on DB)
+		
 		self::boot();
 		if( isset( $this->_cached_restrictions ) && array() !==  $this->_cached_restrictions  )
 			return $this->_cached_restrictions;

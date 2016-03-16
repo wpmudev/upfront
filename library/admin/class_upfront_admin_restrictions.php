@@ -89,39 +89,16 @@ class Upfront_Admin_Restrictions
 						$user_role = get_role($role_id);
 						foreach( $this->_get_functionalities() as $functionality_id => $functionality ) {
 								if ( isset($restrictions[$role_id]) ) {
-										// Todo: apply to all
-										// for now apply only to upload
-										if ( $functionality_id == 'upload_files' ) {
-												if ( isset($restrictions[$role_id][$functionality_id]) ) {
-														$this->_add_capability($user_role,$functionality_id,true);
-												} else {
-														$this->_add_capability($user_role,$functionality_id,false);
-												}
+										if ( isset($restrictions[$role_id][$functionality_id]) ) {
+												Upfront_Permissions::boot()->add_capability($user_role,Upfront_Permissions::boot()->get_level_map()[$functionality_id],true);
+										} else {
+												Upfront_Permissions::boot()->add_capability($user_role,Upfront_Permissions::boot()->get_level_map()[$functionality_id],false);
 										}
-										
 								} else {
-										// Todo: remove all capabilities for this role
-										// $this->_add_capability($user_role,$functionality_id,false);
+										// remove all capabilities for this role if no single one functionality checked
+										Upfront_Permissions::boot()->add_capability($user_role,Upfront_Permissions::boot()->get_level_map()[$functionality_id],false);
 								}
 						}
 				}
 		}
-		
-		/**
-     * Add or remove role capability
-		 * @param object $role WP_Role Object
-		 * @param string $capability of the role
-		 * @param bool $add  whether to add or remove
-     */
-		private function _add_capability ( $role, $capability, $add ) {
-				if ( $role !== null ) {
-						if ( $add ) {
-								$role->add_cap($capability);
-						} else {
-								$role->remove_cap($capability);
-						}
-				}
-		}
-		
-		
 }
