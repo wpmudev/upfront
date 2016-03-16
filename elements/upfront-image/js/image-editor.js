@@ -1107,7 +1107,8 @@ define([
 			var canvas = this.$('#uimage-canvas'),
 				mask = this.$('#uimage-mask'),
 				handler = this.$('#uimage-drag-handle'),
-				size = this.initialImageSize(0, false, {width: mask.width(), height: mask.height()})
+				size = this.getResizeImageDimensions(this.fullSize, {width: mask.width(), height: mask.height()}, 'outer', 0)
+				//size = this.initialImageSize(0, false, {width: mask.width(), height: mask.height()})
 			;
 
 			if(this.invert){
