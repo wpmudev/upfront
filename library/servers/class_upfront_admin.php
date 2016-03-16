@@ -10,6 +10,10 @@ class Upfront_Server_Admin implements IUpfront_Server {
 	}
 
 	private function _add_hooks () {
+		
+		// Adding fonts
+		$this->_inject_admin_fonts();
+		
 		// Dispatch all notices
 		add_action('admin_notices', array($this, 'dispatch_notices'));
 		
@@ -128,6 +132,35 @@ class Upfront_Server_Admin implements IUpfront_Server {
 		// We are here, so the user is deleting Upfront core with Upfront child theme active.
 		wp_safe_redirect(admin_url('themes.php?upfront-delete=refused'));
 		die;
+	}
+	
+	/**
+	 * Adding fonts for admin side
+	 */
+	private function _inject_admin_fonts () {
+		$deps = Upfront_CoreDependencies_Registry::get_instance();
+		$deps->add_font('Roboto', array(
+			'100',
+			'100italic',
+			'300',
+			'300italic',
+			'400',
+			'400italic',
+			'500',
+			'500italic',
+			'700',
+			'700italic',
+			'900',
+			'900italic'
+		));
+		$deps->add_font('Roboto Condensed', array(
+			'300',
+			'300italic',
+			'400',
+			'400italic',
+			'700',
+			'700italic'
+		));
 	}
 
 	private function _get_editable_theme_url () {

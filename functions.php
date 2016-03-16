@@ -68,8 +68,6 @@ class Upfront {
 
 		if (is_admin()) {
 		
-			$this->inject_admin_fonts();
-			
 			require_once(dirname(__FILE__) . '/library/servers/class_upfront_admin.php');
 			if (class_exists('Upfront_Server_Admin')) Upfront_Server_Admin::serve();
 		}
@@ -173,32 +171,6 @@ class Upfront {
 		$grid = Upfront_Grid::get_grid();
 		$cls[] = $grid->get_grid_scope();
 		return $cls;
-	}
-
-	public function inject_admin_fonts () {
-		$deps = Upfront_CoreDependencies_Registry::get_instance();
-		$deps->add_font('Roboto', array(
-			'100',
-			'100italic',
-			'300',
-			'300italic',
-			'400',
-			'400italic',
-			'500',
-			'500italic',
-			'700',
-			'700italic',
-			'900',
-			'900italic'
-		));
-		$deps->add_font('Roboto Condensed', array(
-			'300',
-			'300italic',
-			'400',
-			'400italic',
-			'700',
-			'700italic'
-		));
 	}
 	
 	public function inject_core_wp_dependencies () {
