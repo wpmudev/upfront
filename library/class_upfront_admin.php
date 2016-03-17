@@ -1,5 +1,5 @@
 <?php
-
+include_once "admin/class_upfront_admin_general.php";
 include_once "admin/class_upfront_admin_restrictions.php";
 include_once "admin/class_upfront_admin_experimental.php";
 
@@ -45,7 +45,8 @@ class Upfront_Admin
      *
      */
     function add_menus(){
-        add_menu_page( __("Upfront", Upfront::TextDomain), __("Upfront", Upfront::TextDomain), "edit_theme_options",  self::$menu_slugs['main'] , array($this, "render_main_menu"), "", "3.013" );
+        add_menu_page( __("General Settings", Upfront::TextDomain), __("Upfront", Upfront::TextDomain), "edit_theme_options",  self::$menu_slugs['main'], null, "", "3.013");
+        new Upfront_Admin_General();
         new Upfront_Admin_Restrictions();
         new Upfront_Admin_Experimental();
     }
