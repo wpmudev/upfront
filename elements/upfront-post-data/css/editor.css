@@ -246,3 +246,10 @@ div.preset-manager-panel .upfront-post_data-part.part-module-panel .edit_preset_
 	div.preset-manager-panel .upfront-post_data-part.part-module-panel .content-indent input {
 		max-width: 4em;
 	}
+	
+	div.preset-manager-panel .comments-pagination_warning {
+		padding-top: 10px;
+	}
+	div.preset-manager-panel .comments-pagination_warning input {
+		display: none;
+	}
