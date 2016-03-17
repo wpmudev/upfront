@@ -8225,11 +8225,11 @@ a.upfront-post-layout-trigger:before {
   visibility: visible; }
 
 #upfront-notice.out {
-  -webkit-transition: opacity 0.7s ease-in-out, top 0.7s;
-  -moz-transition: opacity 0.7s ease-in-out, top 0.7s;
-  -ms-transition: opacity 0.7s ease-in-out, top 0.7s;
-  -o-transition: opacity 0.7s ease-in-out, top 0.7s;
-  transition: opacity 0.7s ease-in-out, top 0.7s;
+  -webkit-transition: visibility 0.7s ease-in-out, opacity 0.7s ease-in-out, top 0.7s;
+  -moz-transition: visibility 0.7s ease-in-out, opacity 0.7s ease-in-out, top 0.7s;
+  -ms-transition: visibility 0.7s ease-in-out, opacity 0.7s ease-in-out, top 0.7s;
+  -o-transition: visibility 0.7s ease-in-out, opacity 0.7s ease-in-out, top 0.7s;
+  transition: visibility 0.7s ease-in-out, opacity 0.7s ease-in-out, top 0.7s;
   /* Safari 4+ */ }
 
 @keyframes "shake" {
