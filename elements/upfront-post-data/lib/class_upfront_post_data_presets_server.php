@@ -123,6 +123,15 @@ class Upfront_Author_Presets_Server extends Upfront_DataElement_Preset_Server {
 	public static function get_instance () {
 		return self::$_instance;
 	}
+	
+	public static function get_preset_defaults() {
+		return array(
+			'static-gravatar-use-border' => '',
+			'static-gravatar-border-width' => 1,
+			'static-gravatar-border-type' => 'solid',
+			'static-gravatar-border-color' => 'rgb(0, 0, 0)',
+		);
+	}
 
 }
 
@@ -140,6 +149,15 @@ class Upfront_FeaturedImage_Presets_Server extends Upfront_DataElement_Preset_Se
 
 	public static function get_instance () {
 		return self::$_instance;
+	}
+	
+	public static function get_preset_defaults() {
+		return array(
+			'static-featured_image-use-border' => '',
+			'static-featured_image-border-width' => 1,
+			'static-featured_image-border-type' => 'solid',
+			'static-featured_image-border-color' => 'rgb(0, 0, 0)',
+		);
 	}
 
 }
