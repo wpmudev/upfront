@@ -556,15 +556,16 @@ define([
 					sizeHeight;
 					
 				$hub.empty();
-
+				
 				if(this.model.length === 1) {
 					var image = this.model.at(0).get('image'),
 						$container = $('<div class="upfront-size-hints upfront-field-wrap upfront-field-wrap-text"><label class="upfront-field-label upfront-field-label-block">'+ l10n.natural_size +'</label></div>');
+					if ( image !== undefined ) {
+						$container.append('<span class="upfront-size-hint-width">'+ l10n.width_label +': <span>'+ image.width + l10n.px_label +'</span></span>');
+						$container.append('<span class="upfront-size-hint-height">'+ l10n.height_label +': <span>'+ image.height + l10n.px_label +'</span></span>');
 
-					$container.append('<span class="upfront-size-hint-width">'+ l10n.width_label +': <span>'+ image.width + l10n.px_label +'</span></span>');
-					$container.append('<span class="upfront-size-hint-height">'+ l10n.height_label +': <span>'+ image.height + l10n.px_label +'</span></span>');
-
-					$hub.append($container);
+						$hub.append($container);
+					}
 				}
 			},
 			render_title: function () {

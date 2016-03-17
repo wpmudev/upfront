@@ -414,14 +414,26 @@ class Upfront_MediaServer extends Upfront_Server {
 				if(is_dir($dirPath . '/' . $file))
 					continue;
 
-				if(preg_match('/\.(jpg|jpeg|gif|svg|png|bmp)$/i', $file))
+				if(preg_match('/\.(jpg|jpeg|gif|svg|png|bmp)$/i', $file)) {
+					$imageWidth = 0;
+					$imageHeight = 0;
+					$imageSize = getimagesize($dirUrl .$file);
+					if ( $imageSize ) {
+						$imageWidth = isset($imageSize[0]) ? $imageSize[0] : $imageWidth;
+						$imageHeight = isset($imageSize[1]) ? $imageSize[1] : $imageHeight;
+					}
 					$images[] = array(
 						'ID' => $i++,
 						'thumbnail' => '<img style="max-height: 75px; max-width: 75px" src="' . $dirUrl . $file . '">',
 						'post_title' => $file,
 						'labels' => array(),
-						'original_url' => $dirUrl . $file
+						'original_url' => $dirUrl . $file,
+						'image' => array(
+							'width' => $imageWidth,
+							'height' => $imageHeight
+						)
 					);
+				}
 			}
 		}
 		$meta = array('max_pages' => 1);
