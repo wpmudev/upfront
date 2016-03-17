@@ -429,8 +429,10 @@ class Upfront_MediaServer extends Upfront_Server {
 						'labels' => array(),
 						'original_url' => $dirUrl . $file,
 						'image' => array(
+							'src' => $dirUrl . $file,
 							'width' => $imageWidth,
-							'height' => $imageHeight
+							'height' => $imageHeight,
+							'resized' => false
 						)
 					);
 				}
