@@ -362,7 +362,7 @@ class Upfront_Ajax extends Upfront_Server {
 		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
 
 		$data = !empty($_POST) ? stripslashes_deep($_POST) : false;
-		$stylesheet = $data['stylesheet'] ? $data['stylesheet'] : get_stylesheet();
+		$stylesheet = isset( $data['stylesheet'] ) ? $data['stylesheet'] : get_stylesheet();
 
 		global $wpdb;
 		$theme_key = $wpdb->esc_like(Upfront_Model::get_storage_key()) . '%';

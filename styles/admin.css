@@ -470,7 +470,8 @@ div.upfront-general-settings h4 {
     text-transform: uppercase;
 }
 
-div.upfront-general-settings .upfront-debug-block button {
+div.upfront-general-settings .upfront-debug-block button,
+div.upfront-general-settings .upfront-debug-block a.upfront_button{
   background-color: #AFAFAF;
   border: none;
   color: #fff;
@@ -478,7 +479,6 @@ div.upfront-general-settings .upfront-debug-block button {
   font-size: 12px;
   padding: 6px 16px;
   border-radius: 3px;
-  min-width: 170px
 }
 
 div.upfront-general-settings button.warning {
@@ -491,15 +491,16 @@ div.upfront-general-settings .warning-text {
 }
 
 div.upfront-general-settings .upfront-debug-block p.left {
-  padding-right:190px;
+    padding-right:190px;
 }
 
 
-div.upfront-general-settings div.inside.debug-options button {
-  position: absolute;
-  right: 0;
-  top:50%;
-  margin-top: -12px;
+div.upfront-general-settings div.inside.debug-options button,
+div.upfront-general-settings div.inside.debug-options a.upfront_button{
+    position: absolute;
+    right: 0;
+    top:50%;
+    margin-top: -12px;
 }
 
 div.upfront-general-settings .lightgrey {
@@ -553,4 +554,10 @@ div.upfront-general-settings a.documentation:before {
 div.upfront-general-settings .upfront-debug-block button.visit-forum {
     margin-right: 6%;
     margin-bottom: 10px;
+}
+.upfront_admin button{
+    cursor: pointer;
+}
+.upfront_admin button.loading{
+
 }

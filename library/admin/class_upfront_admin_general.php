@@ -29,40 +29,7 @@ class Upfront_Admin_General
 						</div>
 					</div>
 				</div>
-				<div class="postbox-container">
-					<div class='postbox'>
-						<h2 class="title">Debug Options</h2>
-						<div class="inside debug-options">
-							<div class="upfront-debug-block lightgrey">
-								<p>Here you will find various Debug helpers that you might want to try if something goes wrong. Prior to trying any of the below, please make sure you have performed an <a href="#"><strong>Empty Cache &amp; Hard Reload</strong></a>, that usually resolves most issue.</p>
-							</div>
-							<div class="upfront-debug-block">
-								<p class="left">Can be helpful after core upgrades</p> <button>Reset Upfront Cache</button>
-							</div>
-							<div class="upfront-debug-block">
-								<p class="left">This will run Upfront in DEV mode. Useful for reporting Console errors to our team.</p> <button>Run in dev mode</button>
-							</div>
-							<div class="upfront-debug-block lightgrey">
-								<p class="left">
-									<small>Resets layout to default look, be careful</small>
-								</p>
-								<p class="left">
-									<select>
-										<option>Hello World</option>
-										<option>Hello World</option>
-										<option>Hello World</option>
-									</select>
-								</p>
-								<button>Reset Layout</button>
-							</div>
-							<div class="upfront-debug-block">
-								<p class="left">Reset Theme to Default State</p>
-								<p class="left"><small><strong class="warning-text">WARNING:</strong> This will return your active theme to the same state it was when you first installed it. This can not be undone, so please back-up before proceeding</small></p>
-								<button class="warning">Reset Theme</button>
-							</div>
-						</div>
-					</div>
-				</div>
+				<?php $this->_render_debug_options() ?>
 			</div>
 			<div class="upfront-col-right">
 				<div class="postbox-container">
@@ -90,5 +57,48 @@ class Upfront_Admin_General
 		</div>
 		<?php
 		
+	}
+
+	private function _render_debug_options(){
+		if( !Upfront_Permissions::current( Upfront_Permissions::SEE_USE_DEBUG ) ) return;
+		?>
+		<div class="postbox-container">
+			<div class='postbox'>
+				<h2 class="title">Debug Options</h2>
+				<div class="inside debug-options">
+					<div class="upfront-debug-block lightgrey">
+						<p>Here you will find various Debug helpers that you might want to try if something goes wrong. Prior to trying any of the below, please make sure you have performed an <a href="#"><strong>Empty Cache &amp; Hard Reload</strong></a>, that usually resolves most issue.</p>
+					</div>
+					<div class="upfront-debug-block">
+						<p class="left">Can be helpful after core upgrades</p>
+						<button id="upfront_reset_cache">Reset Upfront Cache</button>
+					</div>
+					<div class="upfront-debug-block">
+						<p class="left">This will run Upfront in DEV mode. Useful for reporting Console errors to our team.</p>
+						<a target="_blank" class="upfront_button" href="<?php echo home_url("?editmode=true&dev=true") ?>">Run in dev mode</a>
+					</div>
+					<div class="upfront-debug-block lightgrey">
+						<p class="left">
+							<small>Resets layout to default look, be careful</small>
+						</p>
+						<p class="left">
+							
+							<select class="upfront-layouts-list">
+								<?php ; foreach( Upfront_Layout::get_available_layouts() as $key => $layout ): ?>
+									<option value="<?php echo $key ?>"><?php echo $layout['label']; ?></option>
+								<?php endforeach; ?>
+							</select>
+						</p>
+						<button id="upfront_reset_layout">Reset Layout</button>
+					</div>
+					<div class="upfront-debug-block">
+						<p class="left">Reset Theme to Default State</p>
+						<p class="left"><small><strong class="warning-text">WARNING:</strong> This will return your active theme to the same state it was when you first installed it. This can not be undone, so please back-up before proceeding</small></p>
+						<button class="warning" id="upfront_reset_theme">Reset Theme</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<?php
 	}
 }
