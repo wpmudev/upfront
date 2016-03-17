@@ -121,6 +121,10 @@ class Upfront_Post_Data_Data {
 		}
 
 		$defaults = self::apply_preset($defaults);
+		if ('comments' === $data_type) {
+			// Preset has nothing to do with this
+			$defaults['paginated'] = (int)get_option('page_comments');
+		}
 
 		return $defaults;
 	}
