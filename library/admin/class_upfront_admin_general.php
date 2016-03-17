@@ -11,7 +11,7 @@ class Upfront_Admin_General
 	function render_page() {
 		?>
 		<div class="wrap upfront_admin upfront-general-settings">
-            <h1><?php _e("Experimental Features", Upfront::TextDomain); ?><span class="upfront_logo"></span></h1>
+            <h1><?php _e("General Settings", Upfront::TextDomain); ?><span class="upfront_logo"></span></h1>
 			<div class="upfront-col-left">
 				<div class="postbox-container">
 					<div class='postbox'>
