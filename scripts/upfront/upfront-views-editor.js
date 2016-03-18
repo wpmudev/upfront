@@ -3761,7 +3761,7 @@
 			},
 
 			handle_sort_request: function (e) {
-				var $option = $(e.target),
+				var $option = $(e.target).closest('.upfront-list_item-component'),
 					sortby = $option.attr('data-sortby'),
 					order = this.collection.order;
 				if(sortby){
@@ -3896,7 +3896,7 @@
 				});
 			},
 		handle_sort_request: function (e) {
-			var $option = $(e.target),
+			var $option = $(e.target).closest('.upfront-list_item-component'),
 				sortby = $option.attr('data-sortby'),
 				order = this.collection.order;
 			if(sortby){
@@ -4081,7 +4081,7 @@
 			},
 
 			handle_sort_request: function (e) {
-				var $option = $(e.target),
+				var $option = $(e.target).closest('.upfront-list_item-component'),
 					sortby = $option.attr('data-sortby'),
 					order = this.collection.order;
 				if(sortby){
