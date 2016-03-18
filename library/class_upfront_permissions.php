@@ -128,14 +128,14 @@ class Upfront_Permissions {
 			self::BOOT => "upfront_boot",
 			self::LAYOUT_MODE => "upfront_layout_mode",
 			self::POSTLAYOUT_MODE => "upfront_postlayout_mode",
-			self::UPLOAD => "upfront_upload_stuff",
+			self::UPLOAD => "upload_files",
 			self::RESIZE => "upfront_resize_media",
 			self::OPTIONS => "upfront_change_options",
 			self::CREATE_POST_PAGE => "upfront_create_post_page",
 			self::EDIT => "upfront_edit_posts",
 			self::EMBED => "upfront_embed_stuff",
 			self::RESPONSIVE_MODE => "upfront_responsive_mode",
-			self::MODIFY_RESTRICTIONS => "upfront_modify_restrictions",
+			self::MODIFY_RESTRICTIONS => "promote_users",
 			self::SEE_USE_DEBUG => "upfront_see_use_debug"
 		);
 	}
