@@ -8247,6 +8247,7 @@
 				Upfront.Media.Manager.open(options).done(function(popup, result){
 					Upfront.Events.trigger('upfront:element:edit:stop');
 					if (!result) return;
+					if ( result.length == 0 ) return;
 
 					var imageModel = result.models[0],
 						img = imageModel.get('image') ? imageModel.get('image') : result.models[0],
