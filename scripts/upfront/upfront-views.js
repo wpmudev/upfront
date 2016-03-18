@@ -934,23 +934,30 @@ define([
 
 			},
 			updateAdvancedPadding: function() {
-				if ( this.$control_el ) {
-					var advancedPaddingControl = this.$control_el.find('.upfront-element-controls .upfront-field-advanced-padding');
+				var me = this;
+				me.model.set_breakpoint_property('use_padding', 'yes', true);
+				if ( me.$control_el ) {
+					var advancedPaddingControl = me.$control_el.find('.upfront-element-controls .upfront-field-advanced-padding');
 					if ( advancedPaddingControl.length > 0 ) {
-						var me = this;
 						if ( !me.$el.hasClass('upfront-module-group') ) {
 							advancedPaddingControl.on('click', function(){
+								
 								// better to close first padding control modal-content
-								me.paddingControl.close();
-								// activate sidebar settings
-								me.model.set_breakpoint_property('use_padding', 'yes', true);
-								me.on_settings_click();
+								if ( me.paddingControl !== undefined ) {
+									me.paddingControl.close();
+								}
+								
+								// activate sidebar settings only if not yet opened
+								if ( $('#element-settings-sidebar #settings').length == 0 ) {
+									me.on_settings_click();
+								}
+								
 								// wait for half a second to load everything
 								setTimeout(function () {
 									// sidebar advanced settings
 									var $elementAdvancedSettings = $('#element-settings-sidebar .advanced-settings');
-									if ( $elementAdvancedSettings.length > 0) {
-										$elementAdvancedSettings.find('.uf-settings-panel__body').toggle();
+									if ( $elementAdvancedSettings.length > 0 && !$elementAdvancedSettings.hasClass('uf-settings-panel--expanded') ) {
+										$elementAdvancedSettings.toggleClass('uf-settings-panel--expanded').find('.uf-settings-panel__body').toggle();
 									}
 								}, 500);
 							});
