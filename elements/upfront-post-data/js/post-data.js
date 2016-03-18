@@ -50,10 +50,12 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 		// Ignore preset changes since post part will have no preset
 		if ( prop && prop.id == 'preset' ) return;
 		this.constructor.__super__.update.call(this, prop, options);
+		this.adjust_featured_image();
 	},
 
 	render_view: function (markup) {
 		this.$el.find('.upfront-object-content').empty().append(markup);
+		this.adjust_featured_image();
 		this.prepare_editor();
 		Upfront.Events.trigger('post-data:part:rendered', this, markup);
 	},
@@ -96,7 +98,51 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 
 	on_element_edit_stop: function () {
 		return;
-	}
+	},
+
+	adjust_featured_image: function () {
+		var $temp_img = this.$el.find('.thumbnail img').attr('src')
+		var me = this,
+			$me = this.$el.find('> .upfront-editable_entity'),
+			type = this.model.get_property_value_by_name('part_type'),
+			baseline = Upfront.Settings.LayoutEditor.Grid.baseline,
+			row = this.model.get_breakpoint_property_value('row', true),
+			height = row * baseline,
+			padding_top = parseInt($me.css('padding-top'), 10),
+			padding_bottom = parseInt($me.css('padding-bottom'), 10)
+		;
+		if ( type != 'featured_image' ) return;
+		height -= padding_top + padding_bottom;
+		this.$el.find('.thumbnail').each(function(){
+			var width = $(this).width(),
+				$img = $(this).find('img'),
+				img = new Image,
+				img_h, img_w
+			;
+			$(this).css('height', height);
+			// Make sure image is loaded first
+			$('<img>').attr('src', $img.attr('src')).load(function(){
+				if ( $(this).attr('data-resize') == "1" ) {
+					img.src = $img.attr('src');
+					img_h = img.height;
+					img_w = img.width;
+					if ( height/width > img_h/img_w ) {
+						$img.css({ height: '100%', width: 'auto', marginLeft: (width-Math.round(height/img_h*img_w))/2, marginTop: "" });
+					}
+					else {
+						$img.css({ height: 'auto', width: '100%', marginLeft: "", marginTop: (height-Math.round(width/img_w*img_h))/2 });
+					}
+				}
+				else {
+					img_h = $img.height();
+					if ( height != img_h ) {
+						$img.css('margin-top', (height-img_h)/2);
+					}
+				}
+			});
+		});
+	},
+
 });
 
 var PostDataView = Upfront.Views.ObjectGroup.extend({
@@ -111,6 +157,8 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		this.delegateEvents();
 
 		this.prepare_editor();
+
+		this._multiple = false;
 	},
 
 	get_extra_buttons: function(){
@@ -119,11 +167,19 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	},
 
 	getControlItems: function(){
-		return _([
-			this.createControl('reorder', l10n.settings, 'on_edit_click'),
-			this.createPaddingControl(),
-			this.createControl('settings', l10n.settings, 'on_settings_click')
-		]);
+		var objects = this.get_child_objects(false),
+			controls = []
+		;
+		if ( objects.length > 1 ) {
+			controls.push(this.createControl('reorder', l10n.settings, 'on_edit_click'));
+			this._multiple = true;
+		}
+		else {
+			this._multiple = false;
+		}
+		controls.push(this.createPaddingControl());
+		controls.push(this.createControl('settings', l10n.settings, 'on_settings_click'));
+		return _(controls);
 	},
 
 	get_preset_properties: function() {
@@ -140,6 +196,14 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		return props[prop_name];
 	},
 
+	get_child_objects: function (include_spacer) {
+		return this.model.get('objects').filter(function(object){
+			var view_class = object.get_property_value_by_name('view_class');
+			if ( 'PostDataPartView' == view_class ) return true;
+			else return ( include_spacer === true );
+		});
+	},
+
 	on_edit_click: function (e) {
 		if( typeof e !== "undefined" ){
 			e.preventDefault();
@@ -148,11 +212,17 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	},
 
 	on_render: function () {
-		var type = this.model.get_property_value_by_name("data_type");
+		var type = this.model.get_property_value_by_name("data_type"),
+			objects = this.get_child_objects(false)
+		;
 		this.render_view(type);
 
 		if ( this.parent_module_view ) {
 			this.$control_el = this.$el;
+			if ( this.controls && ( ( objects.length > 1 && !this._multiple ) || ( objects.length == 1 && this._multiple ) ) ) {
+				this.controls.remove();
+				this.controls = false;
+			}
 			this.updateControls();
 			var me = this;
 			setTimeout(function() {
@@ -302,6 +372,29 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			this.constructor.__super__.on_element_edit_stop.call(this, edit, post, saving_draft);
 		}
 	},
+
+	on_element_resize: function (attr) {
+		var objects = this.get_child_objects(false),
+			breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON()
+		;
+		// Also resize child objects if it's only one object
+		if ( objects.length != 1 ) return;
+		if ( breakpoint.default ) {
+			_.each(objects, function(object){
+				object.set_property('row', attr.row);
+			});
+		}
+		else {
+			_.each(objects, function(object){
+				var obj_breakpoint = Upfront.Util.clone(object.get_property_value_by_name('breakpoint') || {});
+				if ( !_.isObject(obj_breakpoint[breakpoint.id]) ){
+					obj_breakpoint[breakpoint.id] = {};
+				}
+				obj_breakpoint[breakpoint.id].row = attr.row;
+				object.set_property('breakpoint', obj_breakpoint);
+			});
+		}
+	}
 
 });
 

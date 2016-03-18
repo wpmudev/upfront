@@ -2250,8 +2250,8 @@ define([
 					this.listenTo(this.parent_module_view, 'entity:resize_start', this.on_element_resize_start);
 					this.stopListening((this._previous_parent_module_view || this.parent_module_view), 'entity:resizing');
 					this.listenTo(this.parent_module_view, 'entity:resizing', this.on_element_resizing);
-					this.stopListening((this._previous_parent_module_view || this.parent_module_view), 'entity:resize');
-					this.listenTo(this.parent_module_view, 'entity:resize', this.on_element_resize);
+					this.stopListening((this._previous_parent_module_view || this.parent_module_view), 'entity:resize_stop');
+					this.listenTo(this.parent_module_view, 'entity:resize_stop', this.on_element_resize);
 					this.stopListening((this._previous_parent_module_view || this.parent_module_view), 'entity:drop');
 					this.listenTo(this.parent_module_view, 'entity:drop', this.on_element_drop);
 

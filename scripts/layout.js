@@ -479,24 +479,36 @@ jQuery(document).ready(function($){
 			}
 		});
 		$('.upfront-output-object .uf-post .thumbnail, .uf-post-data .upostdata-part.thumbnail').each(function(){
-			var height = $(this).height(),
+			var is_upostdata = $(this).hasClass('upostdata-part'),
+				$object = $(this).closest('.upfront-output-object'),
+				height = is_upostdata ? parseInt($object.css('min-height'), 10) : $(this).height(),
 				width = $(this).width(),
+				padding_top = parseInt($object.css('padding-top'), 10),
+				padding_bottom = parseInt($object.css('padding-bottom'), 10),
 				$img = $(this).find('img'),
 				img = new Image,
-				img_h, img_w;
+				img_h, img_w
+			;
+			if ( is_upostdata ) {
+				height -= padding_top + padding_bottom;
+				$(this).css('height', height);
+			}
 			if ( $(this).attr('data-resize') == "1" ) {
 				img.src = $img.attr('src');
 				img_h = img.height;
 				img_w = img.width;
-				if ( height/width > img_h/img_w )
+				if ( height/width > img_h/img_w ) {
 					$img.css({ height: '100%', width: 'auto', marginLeft: (width-Math.round(height/img_h*img_w))/2, marginTop: "" });
-				else
+				}
+				else {
 					$img.css({ height: 'auto', width: '100%', marginLeft: "", marginTop: (height-Math.round(width/img_w*img_h))/2 });
+				}
 			}
 			else {
 				img_h = $img.height();
-				if ( height != img_h )
+				if ( height != img_h ) {
 					$img.css('margin-top', (height-img_h)/2);
+				}
 			}
 		});
 	}
