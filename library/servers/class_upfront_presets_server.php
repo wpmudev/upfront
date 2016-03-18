@@ -450,7 +450,11 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			}
 		} else {
 			//Child theme typography
-			$tag_typography = $theme_typography_array[$tag] || $tag_typography['p'];
+			if(isset($theme_typography_array[$tag]) && !empty($theme_typography_array[$tag])) {
+				$tag_typography = $theme_typography_array[$tag];
+			} else {
+				$tag_typography = $tag_typography['p'];
+			}
 		}
 
 		return $tag_typography;
@@ -459,7 +463,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 	public function get_typography_defaults_array($defaults, $part) {
 		//Make sure we use array
 		if(is_object($defaults)) {
-			$defaults = $defaults;
+			$defaults = get_object_vars($defaults);
 		}
 
 		$typography = array(
