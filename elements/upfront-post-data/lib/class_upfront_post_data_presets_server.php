@@ -113,6 +113,17 @@ class Upfront_Author_Presets_Server extends Upfront_DataElement_Preset_Server {
 	private static $_instance;
 
 	public function get_data_type () { return 'author';	}
+	
+	public static function get_typography_parts() {
+		$parts = array(
+			'p' => 'author',
+			'a' => 'author_email',
+			'a' => 'author_url',
+			'p' => 'author_bio',
+		);
+		
+		return $parts;
+	}
 
 	public static function serve () {
 		self::$_instance = new self;
@@ -125,12 +136,23 @@ class Upfront_Author_Presets_Server extends Upfront_DataElement_Preset_Server {
 	}
 	
 	public static function get_preset_defaults() {
-		return array(
+		$parts = self::get_typography_parts();
+		$typography = array();
+		
+		foreach($parts as $tag => $part) {
+			$typography_defaults = self::$_instance->get_typography_values_by_tag($tag);
+			$typography[] = self::$_instance->get_typography_defaults_array($typography_defaults, $part);
+		}
+
+		$defaults = array(
 			'static-gravatar-use-border' => '',
 			'static-gravatar-border-width' => 1,
 			'static-gravatar-border-type' => 'solid',
 			'static-gravatar-border-color' => 'rgb(0, 0, 0)',
 		);
+		
+		$defaults = array_merge($defaults, $typography);
+		return $defaults;
 	}
 
 }
