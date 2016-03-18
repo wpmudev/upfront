@@ -95,6 +95,21 @@ class Upfront_PostData_Presets_Server extends Upfront_DataElement_Preset_Server 
 	private static $_instance;
 
 	public function get_data_type () { return 'post_data';	}
+	
+	public static function get_typography_parts() {
+		$parts = array(
+			0 => array(
+				'tag' =>'p',
+				'part' => 'date_posted'
+			),
+			1 => array(
+				'tag' =>'h1',
+				'part' => 'title'
+			)
+		);
+		
+		return $parts;
+	}
 
 	public static function serve () {
 		self::$_instance = new self;
@@ -104,6 +119,21 @@ class Upfront_PostData_Presets_Server extends Upfront_DataElement_Preset_Server 
 
 	public static function get_instance () {
 		return self::$_instance;
+	}
+	
+	public static function get_preset_defaults() {
+		$parts = self::get_typography_parts();
+		$typography = array();
+		
+		foreach($parts as $part) {
+			$typography_defaults = self::$_instance->get_typography_values_by_tag($part['tag']);
+			$settings_array = self::$_instance->get_typography_defaults_array($typography_defaults, $part['part']);
+
+			$typography = array_merge($typography, $settings_array);
+		}
+
+		$defaults = $typography;
+		return $defaults;
 	}
 
 }
@@ -203,6 +233,21 @@ class Upfront_Taxonomy_Presets_Server extends Upfront_DataElement_Preset_Server 
 	private static $_instance;
 
 	public function get_data_type () { return 'taxonomy';	}
+	
+	public static function get_typography_parts() {
+		$parts = array(
+			0 => array(
+				'tag' =>'a',
+				'part' => 'tags'
+			),
+			1 => array(
+				'tag' =>'a',
+				'part' => 'categories'
+			)
+		);
+		
+		return $parts;
+	}
 
 	public static function serve () {
 		self::$_instance = new self;
@@ -212,6 +257,21 @@ class Upfront_Taxonomy_Presets_Server extends Upfront_DataElement_Preset_Server 
 
 	public static function get_instance () {
 		return self::$_instance;
+	}
+	
+	public static function get_preset_defaults() {
+		$parts = self::get_typography_parts();
+		$typography = array();
+		
+		foreach($parts as $part) {
+			$typography_defaults = self::$_instance->get_typography_values_by_tag($part['tag']);
+			$settings_array = self::$_instance->get_typography_defaults_array($typography_defaults, $part['part']);
+
+			$typography = array_merge($typography, $settings_array);
+		}
+
+		$defaults = $typography;
+		return $defaults;
 	}
 
 }
@@ -221,6 +281,29 @@ class Upfront_Comments_Presets_Server extends Upfront_DataElement_Preset_Server 
 	private static $_instance;
 
 	public function get_data_type () { return 'comments';	}
+	
+	public static function get_typography_parts() {
+		$parts = array(
+			0 => array(
+				'tag' =>'p',
+				'part' => 'comment_count'
+			),
+			1 => array(
+				'tag' =>'p',
+				'part' => 'comments'
+			),
+			2 => array(
+				'tag' =>'a',
+				'part' => 'comments_pagination'
+			),
+			3 => array(
+				'tag' =>'p',
+				'part' => 'comment_form'
+			)
+		);
+		
+		return $parts;
+	}
 
 	public static function serve () {
 		self::$_instance = new self;
@@ -230,6 +313,21 @@ class Upfront_Comments_Presets_Server extends Upfront_DataElement_Preset_Server 
 
 	public static function get_instance () {
 		return self::$_instance;
+	}
+	
+	public static function get_preset_defaults() {
+		$parts = self::get_typography_parts();
+		$typography = array();
+		
+		foreach($parts as $part) {
+			$typography_defaults = self::$_instance->get_typography_values_by_tag($part['tag']);
+			$settings_array = self::$_instance->get_typography_defaults_array($typography_defaults, $part['part']);
+
+			$typography = array_merge($typography, $settings_array);
+		}
+
+		$defaults = $typography;
+		return $defaults;
 	}
 
 }
