@@ -61,6 +61,7 @@ class Upfront_Admin_General
 
 	private function _render_debug_options(){
 		if( !Upfront_Permissions::current( Upfront_Permissions::SEE_USE_DEBUG ) ) return;
+		Upfront_Layout::get_db_layouts();
 		?>
 		<div class="postbox-container">
 			<div class='postbox'>
@@ -84,8 +85,8 @@ class Upfront_Admin_General
 						<p class="left">
 							
 							<select class="upfront-layouts-list">
-								<?php ; foreach( Upfront_Layout::get_available_layouts() as $key => $layout ): ?>
-									<option value="<?php echo $key ?>"><?php echo $layout['label']; ?></option>
+								<?php ; foreach( Upfront_Layout::get_db_layouts() as $key => $item ): ?>
+									<option value="<?php echo $key ?>"><?php echo Upfront_EntityResolver::db_layout_to_name( $item ); ?></option>
 								<?php endforeach; ?>
 							</select>
 						</p>
