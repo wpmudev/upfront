@@ -130,7 +130,7 @@ class Upfront_Permissions {
 			self::POSTLAYOUT_MODE => "upfront_postlayout_mode",
 			self::UPLOAD => "upload_files",
 			self::RESIZE => "upfront_resize_media",
-			self::OPTIONS => "upfront_change_options",
+			self::OPTIONS => "manage_options",
 			self::CREATE_POST_PAGE => "upfront_create_post_page",
 			self::EDIT => "upfront_edit_posts",
 			self::EMBED => "upfront_embed_stuff",
