@@ -116,10 +116,22 @@ class Upfront_Author_Presets_Server extends Upfront_DataElement_Preset_Server {
 	
 	public static function get_typography_parts() {
 		$parts = array(
-			'p' => 'author',
-			'a' => 'author_email',
-			'a' => 'author_url',
-			'p' => 'author_bio',
+			0 => array(
+				'tag' =>'p',
+				'part' => 'author'
+			),
+			1 => array(
+				'tag' =>'a',
+				'part' => 'author_email'
+			),
+			2 => array(
+				'tag' =>'a',
+				'part' => 'author_url'
+			),
+			3 => array(
+				'tag' =>'p',
+				'part' => 'author_bio'
+			)
 		);
 		
 		return $parts;
@@ -139,9 +151,11 @@ class Upfront_Author_Presets_Server extends Upfront_DataElement_Preset_Server {
 		$parts = self::get_typography_parts();
 		$typography = array();
 		
-		foreach($parts as $tag => $part) {
-			$typography_defaults = self::$_instance->get_typography_values_by_tag($tag);
-			$typography[] = self::$_instance->get_typography_defaults_array($typography_defaults, $part);
+		foreach($parts as $part) {
+			$typography_defaults = self::$_instance->get_typography_values_by_tag($part['tag']);
+			$settings_array = self::$_instance->get_typography_defaults_array($typography_defaults, $part['part']);
+
+			$typography = array_merge($typography, $settings_array);
 		}
 
 		$defaults = array(
