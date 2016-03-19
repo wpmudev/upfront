@@ -4446,7 +4446,8 @@ a.upfront-region-name-edit-trigger:before {
 
 .upfront-module-disabled-all:hover,
 .upfront-module-editing,
-.upfront-module-editing:hover {
+.upfront-module-editing:hover,
+.upfront-editing-post-content .upfront-module:hover {
   box-shadow: none;
   outline: none; }
 
