@@ -43,7 +43,7 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 	},
 
 	on_render: function () {
-		//console.log(this.el, this)
+		this.update_height();
 	},
 
 	update: function (prop, options) {
@@ -51,6 +51,10 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 		if ( prop && prop.id == 'preset' ) return;
 		this.constructor.__super__.update.call(this, prop, options);
 		this.adjust_featured_image();
+	},
+
+	on_element_drop: function () {
+		this.update_height();
 	},
 
 	render_view: function (markup) {
@@ -63,7 +67,8 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 	prepare_editor: function () {
 		var me = this,
 			type = this.model.get_property_value_by_name('part_type'),
-			node = this.$el.find('.upfront-object-content');
+			node = this.$el.find('.upfront-object-content')
+		;
 		if ( this._editor_prepared && this.editor_view ){
 			this.editor_view.setElement(node);
 			this.trigger_edit();
@@ -98,6 +103,17 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 
 	on_element_edit_stop: function () {
 		return;
+	},
+
+	update_height: function () {
+		var type = this.model.get_property_value_by_name('part_type');
+		if ( type == 'content' || type == 'comments' ) {
+			// If type is content or comments, disable min-height to prevent excessive spaces
+			this.$el.find('> .upfront-object').css('min-height', '');
+			this.object_group_view.$el.find('> .upfront-object-group').css('min-height', '');
+			this.object_group_view.parent_module_view.$el.find('> .upfront-module').css('min-height', '');
+			this.add_region_class('upfront-region-container-has-' + type, true);
+		}
 	},
 
 	adjust_featured_image: function () {
@@ -142,6 +158,11 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 			});
 		});
 	},
+
+	cleanup: function () {
+		var type = this.model.get_property_value_by_name('part_type');
+		this.remove_region_class('upfront-region-container-has-' + type, true);
+	}
 
 });
 
@@ -222,6 +243,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			if ( this.controls && ( ( objects.length > 1 && !this._multiple ) || ( objects.length == 1 && this._multiple ) ) ) {
 				this.controls.remove();
 				this.controls = false;
+				this.$control_el.find('>.upfront-element-controls').remove();
 			}
 			this.updateControls();
 			var me = this;
