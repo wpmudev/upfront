@@ -462,9 +462,19 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 	
 	public function get_typography_defaults_array($defaults, $part) {
 		//Make sure we use array
-		if(is_object($defaults)) {
+		if (is_object($defaults)) {
 			$defaults = get_object_vars($defaults);
 		}
+		
+		if (!is_array($defaults)) $defaults = array();
+		$defaults = wp_parse_args($defaults, array(
+			'font_face' => '',
+			'weight' => '',
+			'style' => '',
+			'size' => '',
+			'line_height' => '',
+			'color' => '',
+		));
 
 		$typography = array(
 			'static-'.$part.'-use-typography' => '',
