@@ -17,7 +17,7 @@ class Upfront_PostDataView extends Upfront_Object_Group {
 		$classes .= !empty($this->_post->ID) && is_sticky( $this->_post->ID ) ? " uf-post-data uf-post-data-sticky" : " uf-post-data";
 
 		// if the post does not have a theme image, assign a class to denote that
-		if(!has_post_thumbnail($this->_post->ID)) {
+		if(!empty($this->_post->ID) && !has_post_thumbnail($this->_post->ID)) {
 			$classes .= ' no-feature-image';
 		}
 
