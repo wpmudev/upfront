@@ -449,7 +449,18 @@ var PostDataElement = Upfront.Views.Editor.Sidebar.Element.extend({
 			objects = [],
 			wrappers = []
 		;
+		
+		// Find hidden data element parts in default preset
+		// Just default, because that's what we use when the element is first added
+		var data_type = this._default_data.type,
+			presets = (Upfront.mainData || {})[data_type + "_elementPresets"] || [],
+			hidden = (_.findWhere(presets, {id: "default"}) || {}).hidden_parts || []
+		;
+		
 		_.each(types, function(type){
+			// If this type is hidden in default preset, *don't* add the object/wrapper
+			if (hidden.indexOf(type) >= 0) return;
+
 			var object = me.create_part_object(type);
 			objects.push( object.object );
 			wrappers.push( object.wrapper );
