@@ -102,6 +102,7 @@ define([
 					label_style: 'inline',
 					min: 0,
 					max: half_grid,
+					default_value: 0,
 					className: 'content-indent indent-left',
 					property: "left_indent"
 				},
@@ -111,6 +112,7 @@ define([
 					label_style: 'inline',
 					min: 0,
 					max: half_grid,
+					default_value: 0,
 					className: 'content-indent indent-right',
 					property: "right_indent"
 				},
