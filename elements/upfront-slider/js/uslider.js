@@ -874,12 +874,14 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	/***************************************************************************/
 
 	on_element_resize_start: function(attr) {
-		if( this.$('.upfront-default-slider-item-current').find('.uslide-image').length ) return;
-
-		var style = this.property('style'),
+		
+		var properties = this.get_preset_properties(),
+			style = this.property('style'),
 			me = this
 		;
-
+		
+		if(typeof properties !== "undefined" && properties.primaryStyle === "side") return;
+		
 		if(_.indexOf(['nocaption', 'below', 'above', 'right', 'left'], style) == -1)
 			this.$('.uslider-caption').fadeOut('fast');
 		else if(style == 'right' || style == 'left'){
@@ -890,8 +892,9 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	on_element_resizing: function(attr) {
 		if( !this.model.slideCollection.length ) return;
 		
-		if( this.$('.upfront-default-slider-item-current').find('.uslide-image').length ) return;
-
+		var properties = this.get_preset_properties();
+		if(typeof properties !== "undefined" && properties.primaryStyle === "side") return;
+		
 		var me = this,
 			resizer = this.$('.uslide'),
 			current = this.$('.upfront-default-slider-item-current'),
@@ -923,7 +926,9 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 	on_element_resize: function(attr) {
 		if( !this.model.slideCollection.length ) return;
-		if( this.$('.upfront-default-slider-item-current').find('.uslide-image').length ) return;
+
+		var properties = this.get_preset_properties();
+		if(typeof properties !== "undefined" && properties.primaryStyle === "side") return;
 		
 		var me = this,
 			mask = this.$('.upfront-default-slider-item-current').find('.uslide-image'),
