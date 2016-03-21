@@ -874,6 +874,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	/***************************************************************************/
 
 	on_element_resize_start: function(attr) {
+		if( this.$('.upfront-default-slider-item-current').find('.uslide-image').length ) return;
+
 		var style = this.property('style'),
 			me = this
 		;
@@ -887,6 +889,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	
 	on_element_resizing: function(attr) {
 		if( !this.model.slideCollection.length ) return;
+		
+		if( this.$('.upfront-default-slider-item-current').find('.uslide-image').length ) return;
 
 		var me = this,
 			resizer = this.$('.uslide'),
@@ -899,7 +903,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			wrapperSize = {width: style == 'side' ? imageWrapper.width() : newElementSize.width, height: newElementSize.height},
 			wrapperCss = {height: wrapperSize.height}
 		;
-		
+
 		if(style == 'side') {
 			current.find('.uslide-caption').height(newElementSize.height);
 		} else {
@@ -919,6 +923,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 	on_element_resize: function(attr) {
 		if( !this.model.slideCollection.length ) return;
+		if( this.$('.upfront-default-slider-item-current').find('.uslide-image').length ) return;
+		
 		var me = this,
 			mask = this.$('.upfront-default-slider-item-current').find('.uslide-image'),
 			style = this.get_preset_properties().primaryStyle,
