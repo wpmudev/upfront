@@ -453,7 +453,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			if(isset($theme_typography_array[$tag]) && !empty($theme_typography_array[$tag])) {
 				$tag_typography = $theme_typography_array[$tag];
 			} else {
-				$tag_typography = $tag_typography['p'];
+				$tag_typography = !empty($tag_typography['p']) ? $tag_typography['p'] : false;
 			}
 		}
 
