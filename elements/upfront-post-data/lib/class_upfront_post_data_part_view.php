@@ -149,6 +149,7 @@ abstract class Upfront_Post_Data_PartView extends Upfront_PostPart_View {
 			$grid = Upfront_Grid::get_grid();
 			$breakpoint = $grid->get_default_breakpoint();
 			$col_size = $breakpoint->get_column_width();
+			$col_padding = $breakpoint->get_column_padding();
 
 			$col = self::$_current->_get_object_col('content');
 			$padding_left = isset(self::$_current->_data['left_indent']) ? self::$_current->_data['left_indent'] : 0;
@@ -156,10 +157,10 @@ abstract class Upfront_Post_Data_PartView extends Upfront_PostPart_View {
 
 			$half = (int)(($col - 1) / 2);
 			if ( $padding_left > 0 && $padding_left <= $half ) {
-				$style_variant->marginLeft = ( $padding_left * $col_size * -1 ) . 'px';
+				$style_variant->marginLeft = (( $padding_left * $col_size * -1 ) - $col_padding) . 'px';
 			}
 			if ( $padding_right > 0 ) {
-				$style_variant->marginRight = ( $padding_right * $col_size * -1 ) . 'px';
+				$style_variant->marginRight = (( $padding_right * $col_size * -1 ) - $col_padding) . 'px';
 			}
 		}
 
