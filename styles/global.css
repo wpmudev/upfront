@@ -192,7 +192,8 @@ h2, h3 { page-break-after: avoid; }
 
 /* Object */
 .upfront-object,
-.upfront-output-object {
+.upfront-output-object,
+.upfront-output-object-group {
   float:left;
   width:100%;
   -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
@@ -313,10 +314,10 @@ h2, h3 { page-break-after: avoid; }
   max-height: none !important;
 }
 
-.upfront-postpart-featured_image {
+.upfront-postpart-featured_image, .upostdata-part.thumbnail {
   overflow: hidden;
 }
-.upfront-postpart-featured_image img {
+.upfront-postpart-featured_image img, .upostdata-part.thumbnail img {
   max-width: 100%;
   min-width: 100%;
   height: auto;
@@ -367,27 +368,36 @@ h2, h3 { page-break-after: avoid; }
 .flexbox-support .upfront-output-region,
 .flexbox-support .upfront-output-region > .upfront-region-wrapper,
 .flexbox-support .upfront-output-module-group,
+.flexbox-support .upfront-output-object-group,
 .flexbox-support .upfront-output-wrapper,
 .flexbox-support .upfront-output-region-container > .upfront-region-container-bg > .upfront-grid-layout {
 	display: -webkit-flex;
+	display: -ms-flexbox;
 	display: flex;
 	-webkit-flex-direction: row;
+	-ms-flex-direction: row;
 	flex-direction: row;
 	-webkit-flex-wrap: wrap;
+	-ms-flex-wrap: wrap;
 	flex-wrap: wrap;
 	-webkit-align-items: flex-start;
+	-ms-flex-align: start;
 	align-items: flex-start;
 	-webkit-align-content: flex-start;
+	-ms-flex-line-pack: start;
 	align-content: flex-start;
 }
 .flexbox-support .upfront-output-region-container > .upfront-region-container-bg > .upfront-grid-layout {
 	-webkit-align-items: stretch;
+	-ms-flex-align: stretch;
 	align-items: stretch;
 }
 .flexbox-support .upfront-output-region {
 	-webkit-flex-wrap: nowrap;
+	-ms-flex-wrap: none;
 	flex-wrap: nowrap;
 	-webkit-align-items: stretch;
+	-ms-flex-align: stretch;
 	align-items: stretch;
 }
 .flexbox-support .upfront-output-region:before,
@@ -396,8 +406,12 @@ h2, h3 { page-break-after: avoid; }
 }
 .flexbox-support .upfront-output-region > .upfront-region-wrapper > .upfront-output-wrapper,
 .flexbox-support .upfront-output-module-group > .upfront-output-wrapper,
-.flexbox-support .upfront-output-wrapper > .upfront-output-module {
+.flexbox-support .upfront-output-object-group > .upfront-output-wrapper,
+.flexbox-support .upfront-output-wrapper > .upfront-output-module,
+.flexbox-support .upfront-output-wrapper > .upfront-output-module-group,
+.flexbox-support .upfront-output-wrapper > .upfront-output-object {
 	-webkit-order: 0; 
+	-ms-flex-order: 0; 
 	order: 0;
 }
 /* End flexbox */

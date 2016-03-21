@@ -214,7 +214,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		this. debouncedRender = _.debounce(this.render, 300);
 		this.debouncedRebindShuffle = _.debounce(this.rebindShuffleForDebouncing, 500);
 	},
-
 	onThumbChangeProportions: function(e) {
 		var factor = this.property('thumbProportions'),
 			width = this.property('thumbWidth');
@@ -253,7 +252,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		this.debouncedRender();
 		Upfront.Events.trigger('preset:gallery:updated', preset);
 	},
-	
+
 	caption_updated: function(preset) {
 		var currentPreset = this.model.get_property_value_by_name("preset");
 
@@ -360,7 +359,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			this.createLinkControl(image)
 		]);
 
-    if (this.property('labelFilters') === 'true') {
+		if (this.property('labelFilters') === 'true') {
 			panel.items.push(this.createLabelControl(image));
 		}
 
@@ -377,6 +376,11 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 		item.icon = icon;
 		item.tooltip = tooltip;
+		
+		//Set icon width & height
+		item.width = 30;
+		item.height = 30;
+
 		if(click_callback) {
 			this.listenTo(item, 'click', function(e){
 				me[click_callback](e);
@@ -499,15 +503,19 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		linkControl.icon = 'link';
 		linkControl.tooltip = l10n.ctrl.image_link;
 		linkControl.id = 'link';
+		
+		//Set icon width & height
+		linkControl.width = 30;
+		linkControl.height = 30;
 
 		return linkControl;
 	},
 
-  openLightbox: function(event) {
+	openLightbox: function(event) {
 		var gallery, magOptions;
 			gallery = false;
 			magOptions = ugalleries[galleryId].magnific;
-  },
+	},
 
 	openImageLightbox: function(e) {
 		var me = this,
@@ -848,7 +856,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			resizingFunction;
 
 		//Bind resizing events
-		if (me.parent_module_view && !me.parent_module_view.$el.data('resizeHandling')) {
+		if ( me.parent_module_view && !me.parent_module_view.$el.data('resizeHandling') ) {
 			resizingFunction = $.proxy(me.onElementResizing, me);
 			me.parent_module_view.$el
 				.on('resize', resizingFunction)
@@ -959,6 +967,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		// Not gonna do this because render will be triggered by parent class model changing
 		// 'row' property on resize.
 		// this.render(); <-- this is redundant and creates misscalculation of padding
+	},
+	
+	on_module_update: function (attr) {
+		this.render();
 	},
 
 	toggleSorting: function(event) {
@@ -1294,7 +1306,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 					element_id: element_id
 				}
 			;
-			
+
 			//Scale cropOffset for new image size
 			image.set('cropOffset', { left: offsetLeft, top: offsetTop });
 

@@ -58,6 +58,16 @@
 .uf-bgsettings-imageitem .upfront-field-slider-value {
   display: none;
 }
+.uf-bgsettings-imageitem .uf-bgsettings-image-default {
+  float: left;
+}
+.uf-bgsettings-imageitem .uf-bgsettings-image-default-color ~ .uf-bgsettings-image-color {
+  clear: none;
+  width: 50%;
+}
+.uf-bgsettings-imageitem .uf-bgsettings-image-default-image ~ .uf-bgsettings-image-pos-y {
+  clear: both;
+}
 .uf-bgsettings-image-color {
   float: right;
   width: 62%;

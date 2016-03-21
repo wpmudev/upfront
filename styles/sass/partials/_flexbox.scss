@@ -1,12 +1,16 @@
 /* Flexbox */
 .flexbox-support .upfront-modules_container > .upfront-editable_entities_container,
+.flexbox-support .upfront-objects_container > .upfront-editable_entities_container,
 .flexbox-support .upfront-editable_entities_container > .upfront-wrapper,
 .flexbox-support .upfront-wrapper > .upfront-module-view,
 .flexbox-support .upfront-grid-layout,
 .flexbox-support .upfront-region,
 .flexbox-support .upfront-region > .upfront-region-wrapper,
 .flexbox-support .upfront-module-group,
-.flexbox-support .upfront-modules_container
+.flexbox-support .upfront-module,
+.flexbox-support .upfront-modules_container,
+.flexbox-support .upfront-objects_container,
+.flexbox-support .ueditor-insert-variant-wrap
  {
  	display: -webkit-flex;
 	display: flex;
@@ -20,13 +24,15 @@
 	align-content: flex-start;
 }
 .flexbox-support .upfront-grid-layout,
-.flexbox-support .upfront-module-group {
+.flexbox-support .upfront-module-group,
+.flexbox-support .upfront-module {
 	-webkit-align-items: stretch;
 	align-items: stretch;
 }
 .flexbox-support .upfront-region,
 .flexbox-support .upfront-region > .upfront-region-wrapper,
-.flexbox-support .upfront-modules_container {
+.flexbox-support .upfront-modules_container,
+.flexbox-support .upfront-objects_container {
 	-webkit-flex-wrap: nowrap;
 	flex-wrap: nowrap;
 	-webkit-align-items: stretch;
@@ -43,15 +49,24 @@
 	content: none;
 }
 .flexbox-support .upfront-modules_container > .upfront-editable_entities_container > .upfront-wrapper,
-.flexbox-support .upfront-editable_entities_container > .upfront-wrapper > .upfront-module-view {
+.flexbox-support .upfront-objects_container > .upfront-editable_entities_container > .upfront-wrapper,
+.flexbox-support .upfront-editable_entities_container > .upfront-wrapper > .upfront-module-view,
+.flexbox-support .upfront-editable_entities_container > .upfront-wrapper > .upfront-object-view {
 	-webkit-order: 0;
 	order: 0;
+	float: none;
 }
 .flexbox-support .upfront-editable_entities_container,
 .flexbox-support .upfront-editable_entities_container > .upfront-wrapper > .upfront-module-view,
-.flexbox-support .upfront-editable_entities_container > .upfront-module-view {
+.flexbox-support .upfront-editable_entities_container > .upfront-module-view,
+.flexbox-support .upfront-editable_entities_container > .upfront-wrapper > .upfront-object-view,
+.flexbox-support .upfront-editable_entities_container > .upfront-object-view,
+.flexbox-support .upfront-editable_entities_container > .upfront-object-group-view  {
 	width: 100%;
 }
+/*.flexbox-support .upfront-wrapper {
+	float: none;
+}*/
 
 /* Firefox specific hack (lighter usage of Flexbox) */
 @media screen and (min--moz-device-pixel-ratio:0) {

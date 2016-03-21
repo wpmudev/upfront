@@ -60,6 +60,47 @@ define([
 							this.$el.addClass('uf-bgsettings-image-style');
 						}
 					}),
+					bg_default: new Upfront.Views.Editor.Field.Select({
+						model: this.model,
+						label: l10n.featured_default,
+						className: 'upfront-field-wrap upfront-field-wrap-select background-image-field',
+						property: 'background_default',
+						use_breakpoint_property: true,
+						default_value: 'color',
+						icon_class: 'upfront-region-field-icon',
+						values: [
+							{ label: l10n.color, value: 'color' },
+							{ label: l10n.image, value: 'image' },
+						],
+						change: function () {
+							var value = this.get_value(),
+								bg_image = me.model.get_breakpoint_property_value('background_image', true)
+								;
+							if ( value == 'image' ){
+								fields.pick_image.$el.show();
+								fields.bg_color.$el.hide();
+								this.$el.addClass('uf-bgsettings-image-default-image');
+								if ( !bg_image ) me.upload_image();
+							}
+							else {
+								fields.pick_image.$el.hide();
+								fields.bg_color.$el.show();
+								this.$el.addClass('uf-bgsettings-image-default-color');
+							}
+							this.model.set_breakpoint_property(this.property_name, value);
+							me.update_image();
+						},
+						rendered: function (){
+							var value = this.get_saved_value();
+							this.$el.addClass('uf-bgsettings-image-default');
+							if ( value == 'image' ) {
+								this.$el.addClass('uf-bgsettings-image-default-image');
+							}
+							else {
+								this.$el.addClass('uf-bgsettings-image-default-color');
+							}
+						}
+					}),
 					bg_tile: new Upfront.Views.Editor.Field.Checkboxes({
 						model: this.model,
 						layout: 'horizontal-inline',
@@ -170,14 +211,9 @@ define([
 			
 			this.on('show', function(){
 				var bg_type = me.model.get_breakpoint_property_value('background_type', true),
-					bg_image = me.model.get_breakpoint_property_value('background_image', true);
-				if ( bg_type == 'featured' ) {
-					fields.pick_image.$el.hide();
-				}
-				else {
-					if ( !bg_image )
-						me.upload_image();
-				}
+					bg_image = me.model.get_breakpoint_property_value('background_image', true),
+					bg_default = me.model.get_breakpoint_property_value('background_default', true)
+				;
 				me._bg_style = fields.bg_style.get_value();
 				me._bg_tile = fields.bg_tile.get_value();
 				me._bg_position_y = fields.bg_position_y.get_value();
@@ -186,6 +222,14 @@ define([
 				fields.bg_position_x.trigger('changed');
 				//me._default_color = fields.bg_color.get_value();
 				fields.bg_style.trigger('changed');
+				if ( bg_type == 'featured' ) {
+					fields.bg_default.$el.show();
+					fields.bg_default.trigger('changed');
+				}
+				else {
+					fields.bg_default.$el.hide();
+					if ( !bg_image ) me.upload_image();
+				}
 			});
 			
 			this.bind_toggles();
@@ -197,21 +241,26 @@ define([
 				is_repeat_y = _.contains(tile, 'y'),
 				is_repeat_x = _.contains(tile, 'x'),
 				pos_y = this._bg_position_y,
-				pos_x = this._bg_position_x;
+				pos_x = this._bg_position_x
+			;
 			if ( style == 'full' ) {
 				this.model.set_breakpoint_property('background_style', 'full');
 			}
 			else {
 				if ( style == 'tile' ){
 					this.model.set_breakpoint_property('background_style', 'tile');
-					if ( is_repeat_x && is_repeat_y )
+					if ( is_repeat_x && is_repeat_y ) {
 						this.model.set_breakpoint_property('background_repeat', 'repeat');
-					else if ( is_repeat_y )
+					}
+					else if ( is_repeat_y ) {
 						this.model.set_breakpoint_property('background_repeat', 'repeat-y');
-					else if ( is_repeat_x )
+					}
+					else if ( is_repeat_x ) {
 						this.model.set_breakpoint_property('background_repeat', 'repeat-x');
-					else
+					}
+					else {
 						this.model.set_breakpoint_property('background_repeat', 'no-repeat');
+					}
 				}
 				else if ( style == 'fixed' ){
 					this.model.set_breakpoint_property('background_style', 'fixed');

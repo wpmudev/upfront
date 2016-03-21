@@ -1,0 +1,255 @@
+/* Loading/error */
+.upfront_post-data-loading {
+	background: rgba(255,255,255,0.5);
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 1;
+}
+.upfront_post-data-loading .loading {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin: auto;
+	height: 1em;
+	text-align: center;
+}
+
+/* Editing */
+.upfront-editing-post-content .upostdata-part.date_posted,
+.upfront-editing-post-content .upostdata-part.author,
+.upfront-editing-post-content .upostdata-part.gravatar {
+	cursor: pointer;
+}
+
+/* --- Post parts list --- */
+.upfront-settings-item-content .postdata_parts {
+	margin-top: 1em;
+}
+.upfront-settings-item-content .postdata_parts li {
+	border: 1px solid #9bbfde;
+	margin: 2px;
+	border-radius: 4px;
+	cursor: move;
+	position: relative;
+}
+.upfront-settings-item-content .postdata_parts li:hover {
+    border-color: #5984ab;
+}
+.upfront-settings-item-content .postdata_parts li .name_action_wrapper {
+	clear: both; 
+	height: 22px;
+    height: 20px;
+    overflow: hidden;
+}
+.upfront-settings-item-content .postdata_parts li .name_action_wrapper > span {
+	display: block;
+	float: left;
+	margin-left: 8px;
+}
+.upfront-settings-item-content .postdata_parts li .part_label .upfront-field-wrap-checkboxes {
+	margin: 4px 0;
+}
+
+.upfront-settings-item-content .postdata_parts li .options { 
+	min-height: 24px;
+	padding: 1px;
+	background: rgb(218, 231, 244);
+}
+.upfront-settings-item-content .postdata_parts li .options .option {
+	width: 65%; 
+	padding-top: 5px;
+}
+.upfront-settings-item-content .postdata_parts li .options .edit_part { 
+	display: block;
+	position: absolute;
+	right: 12px;
+	bottom: 6px;
+	background: #00a167;
+	border-radius: 4px;
+	padding: 0 3px;
+    max-width: 62px;
+    overflow: hidden;
+    height: 16px;
+    white-space: nowrap;
+}
+.upfront-settings-item-content .postdata_parts li .options .edit_part a { 
+	color: white;
+}
+.upfront-settings-item-content .postdata_parts li .options  .upfront-field-wrap {
+	margin: 0 0 0 8px;
+}
+.upfront-settings-item-content .postdata_parts li .options  .upfront-field-label-inline {
+	padding-right: 4px; 
+}
+.upfront-settings-item-content .postdata_parts li .options input { max-width: 50%; }
+.upfront-settings-item-content .postdata_parts li .options.categories-options input { max-width: 25%; }
+.upfront-settings-item-content .postdata_parts li .options.tags-options input { max-width: 25%; }
+.upfront-settings-item-content .postdata_parts li .options.content-options input { max-width: 40%; }
+.upfront-settings-item-content .postdata_parts li .options.gravatar-options input { max-width: 40%; }
+.upfront-settings-item-content .postdata_parts li .options.date_posted-options input { max-width: 60%; }
+
+.upfront-settings-item-content .postdata_parts li .part_action {
+	position: absolute;
+	right: 24px;
+}
+.upfront-settings-item-content .postdata_parts li .part_action a {
+	margin-right: 3px;
+	display: none;
+}
+.upfront-settings-item-content .postdata_parts li:hover .part_action a {
+	display: inline;
+}
+
+
+/* --- Icons --- */
+
+.upfront-settings-item-content .postdata_parts li .part_action:after {
+	display: inline-block;
+	background-image: url(../../../img/uf-ui-sprite.png);
+	background-repeat: no-repeat;
+	background-position: -43px -112px;
+	top: 1px;
+	position: absolute;
+	width: 18px;
+	height: 18px;
+	border-radius: 7px;
+	content: "";
+}
+.upfront-settings-item-content .postdata_parts li.active .part_action:after {
+	background-position: -43px -145px;
+}
+
+[data-fallback="color"], [data-fallback="hide"] {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+
+
+
+/* --- New Stuff, this should be refactored! --- */
+
+
+/* Make the object group rightmost handler a bit padded so it can be grabbed */
+/*.upfront-object-group .upfront-objects_container.upfront-output-post-data .upfront-wrapper-meta.upfront-wrapper-meta-right {
+	margin-right: 7px;
+}*/
+
+
+
+
+.upfront-post_data-part.part-module-panel {
+	border: 1px solid rgb(162, 191, 218);
+	margin: 10px 0 10px 4px;
+}
+.upfront-post_data-part.part-module-panel.preset_specific {
+	background: rgb(247, 251, 255);
+}
+.upfront-post_data-part.part-module-panel.preset_specific:before {
+	display: none;
+}
+.upfront-post_data-part.part-module-panel .upfront-settings-item-title {
+	text-transform: none;
+	background: rgb(230, 242, 255);
+}
+.upfront-post_data-part.part-module-panel.preset_specific .upfront-settings-item-title {
+	display: block;
+	padding-left: 10px;
+}
+.upfront-post_data-part.part-module-panel .upfront-settings-item-title.inactive {
+	background: transparent;
+}
+.upfront-post_data-part.part-module-panel .upfront-settings-item-title .toggle {
+	position: absolute;
+	top: 0;
+	right: 0;
+	background: rgb(247, 251, 255);
+	display: block;
+	height: 24px;
+	width: 24px;
+	text-align: center;
+	line-height: 24px;
+	z-index: 2;
+	color: transparent;
+	/* background-image: set via JS hack in panel-abstractions.js; */
+	background-position: -818px -38px;
+}
+.upfront-post_data-part.part-module-panel .upfront-settings-item-title .toggle:hover {
+	background-position: -818px -70px;
+}
+.upfront-post_data-part.part-module-panel .upfront-settings-item-title .upfront-field-wrap-checkboxes {
+	margin-top: 0;
+	margin-right: 0;
+	padding: 7px 5px 5px 5px;
+}
+.upfront-post_data-part.part-module-panel .upfront-settings-item-title .upfront-field-wrap-checkboxes label {
+	margin-left: 10px;
+}
+
+.upfront-post_data-part.part-module-panel .upfront-settings-item-title .upfront-field-wrap-checkboxes .upfront-field-multiple {
+	background: transparent;
+	margin-bottom: 0;
+}
+.upfront-post_data-part.part-module-panel .upfront-settings-item-title .upfront-field-wrap-checkboxes label span {
+	background: transparent;
+}
+.upfront-post_data-part.part-module-panel.preset_specific .upfront-settings-item-title .upfront-field-wrap-checkboxes label span {
+	padding: 0 5px 0 10px;
+}
+#settings .upfront-post_data-part.part-module-panel .upfront-settings-item-content .upfront-settings-item-content {
+	padding: 2px 0;
+}
+div.preset-manager-panel .upfront-post_data-part.part-module-panel .typography_settings_item .chosen-container {
+	width: 200px !important;
+}
+
+div.preset-manager-panel .upfront-post_data-part.part-module-panel .typography_settings_item .lineHeight.element-toggled {
+	width: 100px;
+}
+div.preset-manager-panel .upfront-post_data-part.part-module-panel .typography_settings_item .fontColor.element-toggled {
+	margin-left: 10px;
+}
+
+div.preset-manager-panel .upfront-post_data-part.part-module-panel .edit_preset_label .upfront-field-button {
+	visibility: hidden;
+}
+
+/* Parts styles! */
+
+	/* Post Data - Date */
+	div.preset-manager-panel .upfront-post_data-part.part-module-panel .php_date_format {
+		float: left;
+		width: 50%;
+	}
+	div.preset-manager-panel .upfront-post_data-part.part-module-panel .php_date_reference {
+		float: left;
+		width: 50%;
+		padding-top: 30px;
+		padding-left: 10px;
+		text-decoration: underline;
+		color: rgb(0, 206, 141);
+		font-size: 13px;
+	}
+
+	/* Post Data - Contents */
+	div.preset-manager-panel .upfront-post_data-part.part-module-panel .content-indent {
+		width: 40%;
+		display: inline-block;
+	}
+	div.preset-manager-panel .upfront-post_data-part.part-module-panel .content-indent input {
+		max-width: 4em;
+	}
+	
+	div.preset-manager-panel .comments-pagination_warning {
+		padding-top: 10px;
+	}
+	div.preset-manager-panel .comments-pagination_warning input {
+		display: none;
+	}

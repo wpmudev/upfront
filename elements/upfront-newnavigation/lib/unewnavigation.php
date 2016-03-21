@@ -165,7 +165,8 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 
 	public static  function add_styles_scripts() {
 		//upfront_add_element_style('upfront_navigation', array('css/unewnavigation-style.css', dirname(__FILE__)));
-		wp_enqueue_style('upfront_navigation', upfront_element_url('css/unewnavigation-style.css', dirname(__FILE__)));
+		wp_enqueue_style('upfront_navigation', upfront_element_url( Upfront_Debug::get_debugger()->is_dev() ? 'css/unewnavigation-style.css' : 'css/unewnavigation-style.min.css', dirname(__FILE__)));
+
 
 		if (is_user_logged_in()) {
 			upfront_add_element_style('upfront_navigation_editor', array('css/unewnavigation-editor.css', dirname(__FILE__)));

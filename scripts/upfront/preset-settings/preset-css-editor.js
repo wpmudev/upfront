@@ -48,10 +48,17 @@ define([
 			UyoutubeModel: {label: l10n.youtube, id: 'youtube'},
 			PlainTxtModel: {label: l10n.text, id:'text', preset_container: 'inline'},
 		},
+		postElementTypes: {
+			post_data: {label: l10n.post_data, id: 'post_data'},
+			author: {label: l10n.author, id: 'author'},
+			featured_image: {label: l10n.featured_image, id: 'featured_image'},
+			taxonomy: {label: l10n.taxonomy, id: 'taxonomy'},
+			comments: {label: l10n.comments, id: 'comments'},
+			meta: {label: l10n.meta, id: 'meta'}
+		},
 		initialize: function(options) {
 			var me = this,
-				deferred = $.Deferred(),
-				style_selector;
+				deferred = $.Deferred();
 
 			this.options = options || {};
 			this.model = options.model;
@@ -73,11 +80,11 @@ define([
 
 			$(window).on('resize', this.resizeHandler);
 
+			this.dataPartType = this.model.get_property_value_by_name('data_type');
 			this.modelType = this.options.model.get_property_value_by_name('type');
 			this.elementType = this.elementTypes[this.modelType] || {label: 'Unknown', id: 'unknown'};
 
-			style_selector = this.options.preset.get('id');
-			// DO NOT DO THIS!!! DELEGATE STYLE RENDERING TO PRESET (look at preset-css module
+			// DO NOT DO THIS!!! DELEGATE STYLE RENDERING TO PRESET (look at preset-css module scripts/upfront/settings/modules/preset-css.js
 			// $style = $('#' + style_selector);
 			// if ($style.length === 0) {
 				// this.$style = $('<style id="' + style_selector + '"></style>');
@@ -89,7 +96,12 @@ define([
 			this.createSelectors(Upfront.Application.LayoutEditor.Objects);
 
 			this.selectors = this.elementSelectors[this.modelType] || {};
-
+			
+			if(this.modelType === "PostDataModel") {
+				this.elementType = this.postElementTypes[this.dataPartType] || {label: l10n.post_data, id: 'post_data'};
+				this.selectors = this.elementSelectors['post_' + this.dataPartType] || {};
+			}
+			
 			this.element_id = options.element_id ? options.element_id : this.model.get_property_value_by_name('element_id');
 
 			if ( typeof options.change == 'function' ) this.listenTo(this, 'change', options.change);
@@ -323,6 +335,7 @@ define([
 			Upfront.Media.Manager.open(options).done(function(popup, result){
 				Upfront.Events.trigger('upfront:element:edit:stop');
 				if (!result) return;
+				if ( result.length == 0 ) return;
 
 				var imageModel = result.models[0],
 					img = imageModel.get('image') ? imageModel.get('image') : result.models[0],
@@ -353,7 +366,7 @@ define([
 		},
 		hiliteElement: function(e){
 			var preset_selector = this.get_css_selector();
-			
+
 			//Do not add empty space for posts element
 			if(this.elementType.id !== "posts") {
 				preset_selector = preset_selector + ' ';
@@ -375,7 +388,7 @@ define([
 			if(this.elementType.id !== "posts") {
 				preset_selector = preset_selector + ' ';
 			}
-			
+
 			var selector = preset_selector + $(e.target).data('selector');
 
 			if(!selector.length)
@@ -395,6 +408,10 @@ define([
 			if (typeof this.options.preset.get('id') === "undefined" || !this.options.preset.get('id')) return '';
 
 			var preset_class = '.' + this.options.preset.get('id');
+
+			if (this.dataPartType) {
+				preset_class = preset_class + '.upost-data-object-' + this.dataPartType;
+			}
 
 			if(typeof this.elementType.preset_container === "undefined") {
 				preset_class = preset_class + ' ';

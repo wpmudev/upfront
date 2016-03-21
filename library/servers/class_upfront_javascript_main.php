@@ -345,7 +345,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		);
 
 		$menus = json_encode(wp_get_nav_menus());
-
+		$is_rtl = (int) is_rtl();
 		$main = <<<EOMainJs
 // Set up the global namespace
 var Upfront = window.Upfront || {};
@@ -379,7 +379,8 @@ Upfront.mainData = {
 	content_settings: {$content_settings},
 	l10n: {$l10n},
 	font_icons: {$redactor_font_icons},
-	menus: {$menus}
+	menus: {$menus},
+	isRTL: {$is_rtl}
 };
 EOMainJs;
 		$this->_out(new Upfront_JavascriptResponse_Success($main));
