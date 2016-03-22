@@ -167,9 +167,16 @@ var Box = Backbone.View.extend({
 
     setPosition: function(){
         var $container = $(".upost-data-object-post_data, .upfront-output-this_post").length ? $(".upost-data-object-post_data, .upfront-output-this_post") : this.$el.closest(".upfront-postcontent-editor"),
-            right_space = $("body").width() - ( $container.width() + ( _.isUndefined( $container.offset() ) ? 0 : $container.offset().left ) ),
+            container_pos = $container.map(function(){
+               return {
+                   right: $(this).width() + $(this).offset().left,
+                   $el: $(this)
+               };
+            }),
+            right_container = _.max(container_pos, function(container){ return container.right; }),
+            right_space = $("body").width() - right_container.right,
             right = right_space > this.$el.width() ? right_space - this.$el.width() :  10
-            ;
+        ;
 
         if( Upfront.Util.isRTL() ){
             this.$el.css({

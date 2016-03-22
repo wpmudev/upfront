@@ -4395,7 +4395,7 @@ msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:49
 #: library/servers/class_upfront_editor_l10n_server.php:223
-msgid "Do you wish to save layout just for this post or apply it to all posts?"
+msgid "This Post has some Layout Changes. Would you like to apply those changes to All Posts or just This Post?"
 msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:50
