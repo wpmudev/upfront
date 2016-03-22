@@ -127,7 +127,11 @@ abstract class Upfront_Post_Data_PartView extends Upfront_PostPart_View {
 		if( !is_object( $post ) ) return;
 		$style_variant =  Upfront_ChildTheme::get_image_variant_by_id( $data->uf_variant );
 		// if no variant is found, default to the first variant
-		$style_variant =  (object) ( $style_variant === array() ? reset( $style_variant )  : $style_variant );
+		if ( $style_variant === array() ) {
+			$current_variants = Upfront_ChildTheme::getPostImageVariants();
+			$style_variant = $current_variants[0];
+		}
+		$style_variant =  (object) $style_variant;
 		$style_variant->label_id = !empty( $style_variant->label ) ? "ueditor-image-style-" . str_replace(" ", "-", trim(strtolower( $style_variant->label )))  : $style_variant->vid;
 
 		// Old compatibility with this_post
