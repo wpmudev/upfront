@@ -83,7 +83,25 @@ input.upfront-field-text:hover,
 	position:relative;
 	border-left:1px solid #A1C3E5;
 	cursor: pointer;
+	background-image: url('../img/uf-ui-sprite.svg');
+	background-position: -345px -242px;
 }
+.typography-panel .upfront-field-number[type=number]::-webkit-inner-spin-button {
+	-webkit-appearance:none;
+	width:14px;
+	padding:0;
+	margin:0;
+	height:100%;
+	background-color:#D8EDFF;
+	display:inline-block;
+	position:relative;
+	border-left:1px solid #A1C3E5;
+	cursor: pointer;
+	background-image: url('../img/uf-ui-sprite.svg');
+	background-position: -345px -244px;
+}
+/* Google chrome dont support :before & :after for inner-spin anymore */
+/*
 .upfront-field-number[type=number]::-webkit-inner-spin-button:before {
 	content: ' ';
 	position:absolute;
@@ -106,6 +124,7 @@ input.upfront-field-text:hover,
 	top:4px;
 	left:3px;
 }
+*/
 /* end chrome input[type=number] styling */
 .upfront-field-select, .upfront-field-select-options {
 	background: rgb(242, 249, 255);
