@@ -689,10 +689,6 @@ var LayoutEditor = {
 			current = Upfront.Application.layout.get("current_layout"),
 			html = ''
 		;
-		$bg
-			.width($(window).width())
-			.height($(document).height())
-		;
 
 		html += '<p>' + Upfront.Settings.l10n.global.behaviors.this_post_only + '</p>';
 		$.each(_upfront_post_data.layout, function (idx, el) {
