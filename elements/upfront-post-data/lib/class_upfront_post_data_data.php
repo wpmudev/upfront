@@ -365,6 +365,8 @@ class Upfront_Post_Data_Data {
 
 			'edit' => __('Edit', 'upfront'),
 			'edit_html' => __('Edit HTML', 'upfront'),
+			'edit_template' => __('Edit Template', 'upfront'),
+			'custom_markup' => __('Custom Markup', 'upfront'),
 			'format' => __('Format', 'upfront'),
 			'max_categories' => __('max. categories', 'upfront'),
 			'max_tags' => __('max. tags', 'upfront'),
