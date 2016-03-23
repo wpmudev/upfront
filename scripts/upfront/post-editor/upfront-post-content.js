@@ -203,6 +203,12 @@ PostContentEditor.prototype = {
 			editContent: function () {
 				_partView.prototype.editContent.call(this);
 				this.$content = this.$('.upostdata-part');
+
+				// This takes care of indented content wrapper
+				if (this.$content.find(".upfront-indented_content").length) {
+					this.$content = this.$content.find(".upfront-indented_content");
+				}
+
 				if ( this.$content.length ){
 					var isExcerpt = ( this.model.get_property_value_by_name('content') == 'excerpt' ),
 						content = isExcerpt ? this.parent.post.get('post_excerpt'): this.parent.post.get('post_content'),
@@ -475,7 +481,7 @@ PostContentEditor.prototype = {
 						height = row * Upfront.Settings.LayoutEditor.Grid.baseline
 					;
 					this.$featured.addClass('ueditor_thumb ueditable')
-						.css({position:'relative', 'min-height': height + 'px', width: '100%'})
+						.css({position:'relative', 'min-height': height + 'px', 'max-height': height + 'px', 'overflow-y': 'hidden', width: '100%'})
 						.append('<div class="upost_thumbnail_changer" ><div>' + Upfront.Settings.l10n.global.content.trigger_edit_featured_image + '</div></div>')
 						.find('img').css({'z-index': '2', position: 'relative'})
 					;
@@ -625,13 +631,16 @@ PostContentEditor.prototype = {
 					})
 				;
 				//console.log(this, mask, row, editorOptions);
+				setTimeout(function() {
+					$('#image-edit-button-align').hide();
+				}, 100);
 
 				Upfront.Views.Editor.ImageEditor.open(editorOptions).done(function(imageData){
 					var post = me.post,
 					img = mask.find('img'),
 					newimg = $('<img style="z-index:2;position:relative">')
 					;
-		
+
 					me.parent.post.meta.add([
 						{meta_key: '_thumbnail_id', meta_value: imageData.imageId},
 						{meta_key: '_thumbnail_data', meta_value: imageData}
@@ -643,7 +652,9 @@ PostContentEditor.prototype = {
 						img.replaceWith(newimg);
 						img = newimg;
 					}
-		
+
+					$('#image-edit-button-align').show();
+
 					img.attr('src', imageData.src);
 				});
 			}
@@ -1122,7 +1133,7 @@ var PostContentEditorLegacy = Backbone.View.extend(_.extend({}, PostContentEdito
 			;
 
 			this.parts.featured.addClass('ueditor_thumb ueditable')
-				.css({position:'relative', 'min-height': height + 'px', width: '100%'})
+				.css({position:'relative', 'min-height': height + 'px', 'max-height': height + 'px', 'overflow-y': 'hidden', width: '100%'})
 				.append('<div class="upost_thumbnail_changer" ><div>' + Upfront.Settings.l10n.global.content.trigger_edit_featured_image + '</div></div>')
 				.find('img').css({'z-index': '2', position: 'relative'})
 			;
@@ -1281,6 +1292,10 @@ var PostContentEditorLegacy = Backbone.View.extend(_.extend({}, PostContentEdito
 			]
 		})
 		;
+		
+		setTimeout(function() {
+			$('#image-edit-button-align').hide();
+		}, 100);
 
 		Upfront.Views.Editor.ImageEditor.open(editorOptions).done(function(imageData){
 			var post = me.post,
@@ -1299,6 +1314,8 @@ var PostContentEditorLegacy = Backbone.View.extend(_.extend({}, PostContentEdito
 				img.replaceWith(newimg);
 				img = newimg;
 			}
+			
+			$('#image-edit-button-align').show();
 
 			img.attr('src', imageData.src);
 		});

@@ -1,7 +1,7 @@
 define([
 	'scripts/upfront/preset-settings/preset-manager',
 	'scripts/upfront/preset-settings/util',
-	
+
 	'elements/upfront-post-data/js/modules-post_data',
 	'elements/upfront-post-data/js/modules-author',
 	'elements/upfront-post-data/js/modules-featured_image',
@@ -31,7 +31,7 @@ define([
 
 
 	var Modules = _.extend(
-		{}, 
+		{},
 		_.omit(Modules_PostData, 'template'),
 		_.omit(Modules_Author, 'template'),
 		_.omit(Modules_FeaturedImage, 'template'),
@@ -45,20 +45,28 @@ define([
 	var Main = PresetManager.extend({
 		initialize: function () {
 			var data_type_idx = 'upfront_post_data_' + this.data_type,
-				data_type_defaults = {}
+				data_type_defaults = {},
+				elementDefaults
 			;
 
 			// Set up data type specific defaults, to use as default preset
 			_(_.omit(Upfront.data[data_type_idx], ['class', 'data_type', 'has_settings', 'id_slug', 'type', 'type_parts', 'view_class'])).each(function (property, key) {
 				data_type_defaults[key] = property;
 			});
+			
+			// Include default settings from Upfront.mainData
+			if(typeof Upfront.mainData.presetDefaults[this.data_type + '_element'] !== "undefined") {
+				elementDefaults = _.extend(data_type_defaults, Upfront.mainData.presetDefaults[this.data_type + '_element']);
+			} else {
+				elementDefaults = data_type_defaults;
+			}
 
 			_.extend(this, {
 				mainDataCollection: this.data_type + '_elementPresets',
-				styleElementPrefix: this.data_type,
+				styleElementPrefix: this.data_type + '_element',
 				ajaxActionSlug: this.data_type + '_element',
 				styleTpl: Templates[this.data_type],
-				presetDefaults: _.extend(data_type_defaults, {
+				presetDefaults: _.extend(elementDefaults, {
 					id: "default",
 					name: "Default"
 				})
@@ -84,7 +92,7 @@ define([
 				this.property('preset', preset);
 				preset_model = this.presets.findWhere({id: preset});
 			}
-			
+
 			PresetManager.prototype.setupItems.apply(this, arguments);
 
 			// Make sure we update hidden objects on preset change
@@ -116,6 +124,7 @@ define([
 				this.listenTo(pnl, "part:hide:toggle", function (part_type, enable) {
 					this.update_object(part_type, (enable ? 1 : 0));
 					//this.updatePreset(preset_model.toJSON()); // Not needed, since we're sending (current local) preset data with request
+					this.updatePreset(preset_model.toJSON()); // Update: actually *still* needed, because presets aren't necessarily being saved on preset save...
 				}, this);
 
 				this.settings.push(pnl);
@@ -173,7 +182,7 @@ define([
 					wrappers.add(wrapper, {silent: true});
 					objects.add(object);
 				}
-				else if ( object ) {
+				else if ( object && !enable ) {
 					var object_view = Upfront.data.object_views[object.cid];
 					object_view.parent_view.on_entity_remove(null, object_view);
 				}

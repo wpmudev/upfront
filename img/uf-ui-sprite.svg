@@ -1789,33 +1789,49 @@
 			c0.3,0,0.5-0.2,0.5-0.5V277l-4-4L915,277z"/>
 		<polygon fill="#FFFFFF" points="919,270 913,276 914,277 919,272 924,277 925,276 		"/>
 	</g>
+	<g>
+		<defs>
+			<rect id="SVGID_51_" x="168" y="-121" width="1226" height="1272"/>
+		</defs>
+		<clipPath id="SVGID_52_">
+			<use xlink:href="#SVGID_51_"  overflow="visible"/>
+		</clipPath>
+	</g>
+	<g>
+		<defs>
+			<rect id="SVGID_53_" x="171.2" y="-133.5" width="1226" height="1272"/>
+		</defs>
+		<clipPath id="SVGID_54_">
+			<use xlink:href="#SVGID_53_"  overflow="visible"/>
+		</clipPath>
+	</g>
+	<g>
+		<defs>
+			<rect id="SVGID_55_" x="165" y="-93" width="1226" height="1272"/>
+		</defs>
+		<clipPath id="SVGID_56_">
+			<use xlink:href="#SVGID_55_"  overflow="visible"/>
+		</clipPath>
+	</g>
+	<g>
+		<defs>
+			<rect id="SVGID_57_" x="173" y="-192" width="1226" height="1272"/>
+		</defs>
+		<clipPath id="SVGID_58_">
+			<use xlink:href="#SVGID_57_"  overflow="visible"/>
+		</clipPath>
+	</g>
+	<g>
+		<defs>
+			<rect id="SVGID_59_" x="160" y="-90" width="1226" height="1272"/>
+		</defs>
+		<clipPath id="SVGID_60_">
+			<use xlink:href="#SVGID_59_"  overflow="visible"/>
+		</clipPath>
+	</g>
+	<polygon fill="#A2BEDA" points="352,248 349,252 355,252 	"/>
+	<polygon fill="#A2BEDA" points="352,264 355,260 349,260 	"/>
 </g>
 <g id="area-markers">
-	<rect x="40" fill="#263A4D" width="450" height="16"/>
-	<rect x="47" y="3" fill="none" width="144" height="11"/>
-	<text transform="matrix(1 0 0 1 47.0005 10.96)" fill="#BDCCD4" font-family="'Unibody8Pro-Regular'" font-size="8">Left Sidebar UI</text>
-	<rect x="40" y="468" fill="#263A4D" width="450" height="16"/>
-	<rect x="47" y="471" fill="none" width="144" height="11"/>
-	<text transform="matrix(1 0 0 1 47.0005 478.96)" fill="#BDCCD4" font-family="'Unibody8Pro-Regular'" font-size="8">Regions</text>
-	<rect x="510" fill="#263A4D" width="200" height="16"/>
-	<rect x="517" y="3" fill="none" width="193" height="11"/>
-	<text transform="matrix(1 0 0 1 517.0005 10.96)" fill="#BDCCD4" font-family="'Unibody8Pro-Regular'" font-size="8">upfront text editor</text>
-	<rect x="730" fill="#263A4D" width="220" height="16"/>
-	<rect x="737" y="3" fill="none" width="193" height="11"/>
-	<text transform="matrix(1 0 0 1 737.0005 10.96)" fill="#BDCCD4" font-family="'Unibody8Pro-Regular'" font-size="8">miscellaneous</text>
-	<rect x="970" fill="#263A4D" width="512" height="16"/>
-	<rect x="977" y="3" fill="none" width="193" height="11"/>
-	<text transform="matrix(1 0 0 1 977.0005 10.96)" fill="#BDCCD4" font-family="'Unibody8Pro-Regular'" font-size="8">Modal Popups UI</text>
-	<rect x="970" y="40" opacity="0.8" fill="#263A4D" width="236" height="16"/>
-	<rect x="977" y="43" fill="none" width="193" height="11"/>
-	<text transform="matrix(1 0 0 1 977.0005 50.96)" fill="#BDCCD4" font-family="'Unibody8Pro-Regular'" font-size="8">Media Manager</text>
-	<rect x="1226" y="40" opacity="0.8" fill="#263A4D" width="236" height="16"/>
-	<rect x="1233" y="43" fill="none" width="229" height="11"/>
-	<text transform="matrix(1 0 0 1 1233 50.96)"><tspan x="0" y="0" fill="#BDCCD4" font-family="'Unibody8Pro-Regular'" font-size="8">Posts / </tspan><tspan x="45" y="0" fill="#BDCCD4" font-family="'Unibody8Pro-Regular'" font-size="8" letter-spacing="-1">P</tspan><tspan x="51" y="0" fill="#BDCCD4" font-family="'Unibody8Pro-Regular'" font-size="8">ages / Comments / </tspan><tspan x="162" y="0" fill="#BDCCD4" font-family="'Unibody8Pro-Regular'" font-size="8" letter-spacing="-1">T</tspan><tspan x="166" y="0" fill="#BDCCD4" font-family="'Unibody8Pro-Regular'" font-size="8">ags / </tspan><tspan x="199" y="0" fill="#BDCCD4" font-family="'Unibody8Pro-Regular'" font-size="8" letter-spacing="-1">C</tspan><tspan x="205" y="0" fill="#BDCCD4" font-family="'Unibody8Pro-Regular'" font-size="8">ats</tspan></text>
-	<rect x="1226" y="373" opacity="0.8" fill="#263A4D" width="236" height="16"/>
-	<rect x="1233" y="376" fill="none" width="229" height="11"/>
-	<text transform="matrix(1 0 0 1 1233 383.96)" fill="#BDCCD4" font-family="'Unibody8Pro-Regular'" font-size="8">Responsive Experience</text>
-	<rect opacity="5.000000e-02" fill="#BDCCD4" width="1" height="1"/>
-	<rect x="1481" y="829" opacity="5.000000e-02" fill="#BDCCD4" width="1" height="1"/>
 </g>
 </svg>

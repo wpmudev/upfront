@@ -35,7 +35,7 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 		else {
 			$post = $this->_get_random_post();
 			if (false !== $post) {
-				$comments = self::spawn_random_comments($post, $skip);
+				$comments = $this->spawn_random_comments($post, $skip);
 				$comment_count = count($comments);
 			}
 		}
@@ -151,7 +151,7 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 	public function expand_comments_template () {
 		$is_fake_data = $this->_is_fake_data();
 		if (!$is_fake_data && empty($this->_post->ID)) return '';
-		if (!$is_fake_data && empty($this->_post->comment_count)) return '';
+		if (!$is_fake_data && !(defined('DOING_AJAX') && DOING_AJAX) && empty($this->_post->comment_count)) return '';
 
 		// If we have plugin-overridden template, then yeah... go with that
 		$tpl = $this->_get_external_comments_template();
@@ -187,19 +187,19 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 		} else {
 			$post = $this->_get_random_post();
 			if (false !== $post) {
-				$comments = self::spawn_random_comments($post, $skip);
+				$comments = $this->spawn_random_comments($post, $skip);
 			}
 			else return '';
 		}
 
 		if (empty($post) || !is_object($post)) return '';
 		if (post_password_required($post->ID)) return '';
-		
-		ob_start();
 
+		$comments_markup = '';
+		ob_start();
 		// Load comments
 		if ($comments && sizeof($comments)) {
-			echo '<ol class="upfront-comments">';
+			echo '<ol class="upfront-post_data-comments">';
 			wp_list_comments(array(
 				'callback' => array('Upfront_Post_Data_PartView_Comments', 'list_comment'), 
 				'per_page' => $this->_get_limit(),
@@ -208,14 +208,18 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 			$comments);
 			echo '</ol>';
 		}
+		$comments_markup = ob_get_clean();
 
-		$comments = ob_get_clean();
+		// No comments and in editor mode
+		if (empty($comments) && defined('DOING_AJAX') && DOING_AJAX) {
+			$comments_markup = $this->_get_fallback_block(__('This is where the comments go. Please add comments to see their layout.', 'upfront'), 'comments');
+		}
 
 		$pagination = $this->_get_pagination();
 
 		$out = $this->_get_template('comments');
 
-		$out = Upfront_Codec::get()->expand($out, "comments", $comments);
+		$out = Upfront_Codec::get()->expand($out, "comments", $comments_markup);
 		$out = Upfront_Codec::get()->expand($out, "pagination", $pagination);
 
 		return $out;
@@ -259,56 +263,13 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 	 * @param $skip array Array of comment type to skip
 	 * @return array
 	 */
-	public static function spawn_random_comments ($post, $skip = array()) {
-		$fake_comment = array(
-			'user_id' => get_current_user_id(),
-			'comment_author' => 'Author',
-			'comment_author_IP' => '',
-			'comment_author_url' => '',
-			'comment_author_email' => '',
+	public function spawn_random_comments ($post, $skip = array()) {
+		$per_page = $this->_get_limit();
+		$pages = rand(3, 7);
+		$stub = new Upfront_PostData_Stub_Comments(array(
 			'comment_post_ID' => $post->ID,
-			'comment_type' => '',
-			'comment_date' => current_time('mysql'),
-			'comment_date_gmt' => current_time('mysql', 1),
-			'comment_approved' => 1,
-			'comment_content' => 'test stuff author comment',
-			'comment_parent' => 0,
-		);
-		$comments = array();
-		if (!in_array('comments', $skip)) {
-			for ($i=0; $i<5; $i++) {
-				$comments[] = array_merge($fake_comment, array(
-					'user_id' => get_current_user_id(),
-					'comment_author' => 'Author',
-					'comment_content' => 'test stuff author comment',
-				));
-				$comments[] = array_merge($fake_comment, array(
-					'user_id' => 0,
-					'comment_author' => 'Visitor',
-					'comment_content' => 'test stuff visitor comment',
-				));
-			}
-		}
-		if (!in_array('trackbacks', $skip)) {
-			$comments[] = array_merge($fake_comment, array(
-				'user_id' => 0,
-				'comment_author' => 'Trackback',
-				'comment_type' => 'trackback',
-				'comment_content' => 'test stuff visitor trackback',
-			));
-			$comments[] = array_merge($fake_comment, array(
-				'user_id' => 0,
-				'comment_author' => 'Pingback',
-				'comment_type' => 'pingback',
-				'comment_content' => 'test stuff visitor pingkback',
-			));
-		}
-		foreach ($comments as $cid => $comment) {
-			$comment['comment_ID'] = $cid;
-			$comments[$cid] = (object)wp_filter_comment($comment);
-		}
-
-		return $comments;
+		));
+		return $stub->generate_multiple($per_page * $pages);
 	}
 
 	/**
@@ -406,7 +367,11 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 	 * @return bool
 	 */
 	private function _is_paginated () {
-		return (bool)get_option('page_comments');
+		$actual = (bool)get_option('page_comments');
+		return $this->_is_fake_data()
+			? true
+			: $actual
+		;
 	}
 
 	/**
@@ -430,7 +395,7 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 		$comment_count = $this->_post->comment_count;
 		if ($this->_is_fake_data()) {
 			$post = $this->_get_random_post();
-			$comments = self::spawn_random_comments($post);
+			$comments = $this->spawn_random_comments($post);
 			$post->comment_count = count($comments);
 			$comment_count = $post->comment_count;
 		}
@@ -520,5 +485,192 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 		;
 
 		return $order;
+	}
+}
+
+
+// ------------------------------- //
+// @TODO: Refactor this elsewhere  //
+// ------------------------------- //
+
+
+abstract class Upfront_PostData_Stub {
+
+	abstract public function generate ();
+
+	private $_params;
+
+	public function __construct ($params=array()) {
+		$this->_params = wp_parse_args(
+			$params,
+			$this->get_defaults()
+		);
+	}
+
+	/**
+	 * Spawns multiple instances by repeatedly calling generate
+	 *
+	 * @param int $limit A number of instances to spawn
+	 *
+	 * @return array
+	 */
+	public function generate_multiple ($limit=0) {
+		$result = array();
+		if (!(int)$limit) return $result;
+		for ($i=0; $i<(int)$limit; $i++) {
+			$result[] = $this->generate();
+		}
+		return $result;
+	}
+	
+	/**
+	 * Gets defaults
+	 *
+	 * @return array
+	 */
+	public function get_defaults () {
+		return array();
+	}
+
+	/**
+	 * Gets parameters
+	 *
+	 * @return array
+	 */
+	public function get_params () {
+		return is_array($this->_params)
+			? $this->_params
+			: array()
+		;
+	}
+
+	/**
+	 * Sets parameters
+	 *
+	 * @param array $params
+	 */
+	public function set_params ($params=array()) {
+		return $this->_params = $params;
+	}
+
+	/**
+	 * Spawns a variadic timestamp in the past
+	 *
+	 * @return int UNIX timestamp
+	 */
+	public function get_stub_time () {
+		$periods = array(
+			'months',
+			'days',
+			'hours',
+			'years',
+		);
+		$interval = rand(0,3);
+		$amount = rand(0, 6);
+
+		return strtotime(
+			sprintf('+%d %s', $amount, $periods[$interval])
+		);
+	}
+
+	/**
+	 * Spawns a block of text, varying in size
+	 *
+	 * @param bool $long Long text
+	 *
+	 * @return string
+	 */
+	public function get_stub_content ($long=false) {
+		$result = array();
+		$limit = $long ? rand(2, 32) : rand(1,3);
+		for ($i=0; $i<$limit; $i++) {
+			$result[] = $this->get_stub_sentence();
+		}
+		return join(' ', $result);
+	}
+
+	/**
+	 * Stubs a sentence of plain text, with punctuation.
+	 *
+	 * @return string
+	 */
+	public function get_stub_sentence () {
+		$copy = 'lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum';
+		$raw = explode(' ', $copy);
+		$half = count($raw)/2;
+		$min = rand(0, $half);
+		$max = rand($half, count($raw));
+		$result = array();
+
+		for ($i=$min; $i<$max; $i++) {
+			$part = $raw[$i];
+			if ($i + 1 < $max && 5 == rand(0,5)) $part .= ',';
+			$result[] = $part;
+		}
+
+		return ucfirst(join(' ', $result)) . '.';
+	}
+}
+
+class Upfront_PostData_Stub_Comments extends Upfront_PostData_Stub {
+	
+	public function generate () {
+		$types = array(
+			'',
+			'trackback',
+			'',
+			'pingback',
+			'',
+		);
+		$type = rand(0,4);
+
+		$user = 3 == rand(0,3)
+			? get_current_user_id()
+			: false
+		;
+		$user_name = $user ? 'Author' : 'Visitor';
+		$cid = rand();
+		$comment_data = array_merge(
+			$this->get_params(),
+			array(
+				'comment_ID' => $cid,
+				'user_id' => $user,
+				'comment_type' => $types[$type],
+				'comment_author' => $user_name,
+				'comment_date' => date('Y-m-d H:i:s', $this->get_stub_time()),
+				'comment_content' => $this->get_stub_content(),
+			)
+		);
+		return (object)wp_filter_comment($comment_data);
+	}
+
+	public function generate_multiple ($limit=0) {
+		$comments = parent::generate_multiple($limit);
+		$total = count($comments);
+		$part = (int)($total / 12);
+		foreach ($comments as $idx => $comment) {
+			if ($idx < 1) continue;
+			if ($part < rand(1,$total)) continue;
+			$cid = $comments[$idx-1]->comment_ID;
+			$comments[$idx]->comment_parent = $cid;
+		}
+		return $comments;
+	}
+
+	public function get_defaults () {
+		return array(
+			'user_id' => get_current_user_id(),
+			'comment_author' => 'Author',
+			'comment_author_IP' => '',
+			'comment_author_url' => '',
+			'comment_author_email' => '',
+			'comment_post_ID' => false,
+			'comment_type' => '',
+			'comment_date' => current_time('mysql'),
+			'comment_date_gmt' => current_time('mysql', 1),
+			'comment_approved' => 1,
+			'comment_content' => 'test stuff author comment',
+			'comment_parent' => 0,
+		);
 	}
 }

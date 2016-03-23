@@ -839,7 +839,8 @@ var Ueditor = function($el, options) {
             //removeDataAttr: false,
             removeEmpty: false,
             imageResizable: false,
-            lang: 'upfront' // <-- This is IMPORTANT. See the l10n proxying bit in `hackRedactor`
+            lang: 'upfront', // <-- This is IMPORTANT. See the l10n proxying bit in `hackRedactor`,
+            direction: Upfront.Util.isRTL() ? 'rtl' : 'ltr'
 		}, options)
 	;
 	/* --- Redactor allows for single callbacks - let's dispatch events instead --- */
@@ -1133,7 +1134,7 @@ Ueditor.prototype = {
 
             var $node = $(node),
                 rx = new RegExp('^' + src.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1") + ' ?'),
-                text = $node.text().replace(rx, '')
+                text = $node.html().replace(rx, '')
             ;
 
             // Let's not do nested lists

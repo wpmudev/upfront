@@ -60,6 +60,8 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		add_filter('upfront_get_theme_colors', array($this, 'getThemeColors'), 10, 2);
 		add_filter('upfront_get_theme_colors_styles', array($this, 'getThemeColorsStyles'), 10, 1);
 		add_filter('upfront_get_post_image_variants', array($this, 'getPostImageVariants'), 10, 2);
+		add_filter('upfront_get_prev_post_image_variants', array($this, 'get_prev_post_image_variants'), 10, 2);
+		add_filter('upfront_get_other_post_image_variants', array($this, 'get_all_other_theme_variants'), 10, 2);
 		
 		add_filter('upfront_get_button_presets', array($this, 'getButtonPresets'), 10, 2);
 		add_filter('upfront_get_tab_presets', array($this, 'getTabPresets'), 10, 2);
@@ -1264,12 +1266,14 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
         if( $prev_variant ){
             /**
              * Find a variant with matching image left and top
+			 *
+			 * Commented as it won't work well with new variant
              */
-            foreach( $current_variants as $variant ){
+            /*foreach( $current_variants as $variant ){
                 if( trim( $variant->image->left ) == trim( $prev_variant->image->left ) && trim( $variant->image->top ) == trim( $prev_variant->image->top ) ){
                     return $variant;
                 }
-            }
+            }*/
 
             /**
              * Find a variant with matching image order
@@ -1287,12 +1291,14 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
         if( $old_theme_variant ){
             /**
              * Find a variant with matching image left and top
+			 *
+			 * Commented as it won't work well with new variant
              */
-            foreach( $current_variants as $variant ){
+            /*foreach( $current_variants as $variant ){
                 if( trim( $variant->image->left ) == trim( $old_theme_variant->image->left ) && trim( $variant->image->top ) == trim( $prev_variant->image->top ) ){
                     return $variant;
                 }
-            }
+            }*/
 
             /**
              * Find a variant with matching image order
@@ -1388,10 +1394,14 @@ VRT;
        update_option(self::_get_post_image_variant_key(), self::get_post_image_variants_from_settings() );
     }
 
-    public static function get_prev_post_image_variants(){
+    public static function get_prev_post_image_variants($args = null){
         $prev_theme = self::get_prev_stylesheet();
+		if ( !$prev_theme ) return false;
+		$image_variants = self::get_post_image_variants_from_db( $prev_theme );
 
-        return $prev_theme ?  json_decode( self::get_post_image_variants_from_db( $prev_theme ) ) : false;
+		if (isset($args['json']) && $args['json']) return $image_variants;
+
+        return json_decode( $image_variants );
     }
 
     /**
@@ -1414,17 +1424,25 @@ VRT;
      *
      * @return array
      */
-    public static function get_all_other_theme_variants(){
+    public static function get_all_other_theme_variants($args = null){
         $variants = array();
+		$theme = wp_get_theme();
+		$current_theme = $theme->get_stylesheet();
+		$prev_theme = self::get_prev_stylesheet();
 
         foreach( self::get_all_uf_theme_names()  as $theme_name ){
+			if ( $theme_name == $current_theme ) continue;
+			if ( $prev_theme && $theme_name == $prev_theme ) continue;
             $theme_variants = self::get_post_image_variants_from_db( $theme_name );
-            $theme_variants = is_array($theme_variants) ? $theme_variants : array();
-            if( $theme_variants  )
+            $theme_variants = $theme_variants !== false ? json_decode($theme_variants) : array();
+            if( $theme_variants  ) {
                 $variants = array_merge( $variants, $theme_variants );
+			}
         }
 
-        return $variants;
+		if (isset($args['json']) && $args['json']) return json_encode($variants);
+
+		return $variants;
 
     }
 

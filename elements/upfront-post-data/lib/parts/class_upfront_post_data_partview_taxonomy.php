@@ -35,10 +35,12 @@ class Upfront_Post_Data_PartView_Taxonomy extends Upfront_Post_Data_PartView {
         	: ' | '
         ;
 
-        if ($length) {
-			$list = array_map('trim', explode(',', $categories));
-			$categories = join($separator, array_slice($list, 0, $length));
-		}
+		$list = array_map('trim', explode(',', $categories));
+        $length = (int)$length > 0
+        	? (int)$length
+        	: count($list)
+        ;
+		$categories = join($separator, array_slice($list, 0, $length));
 
 		$out = $this->_get_template('categories');
 
@@ -103,10 +105,12 @@ class Upfront_Post_Data_PartView_Taxonomy extends Upfront_Post_Data_PartView {
         	: ', '
         ;
 
-        if ($length) {
-			$list = array_map('trim', explode(',', $tags));
-			$tags = join($separator, array_slice($list, 0, $length));
-		}
+		$list = array_map('trim', explode(',', $tags));
+        $length = (int)$length > 0
+        	? (int)$length
+        	: count($list)
+        ;
+		$tags = join($separator, array_slice($list, 0, $length));
 
 
 		$out = $this->_get_template('tags');

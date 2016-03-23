@@ -969,7 +969,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		// this.render(); <-- this is redundant and creates misscalculation of padding
 	},
 	
-	on_element_resize: function (attr) {
+	on_module_update: function (attr) {
 		this.render();
 	},
 

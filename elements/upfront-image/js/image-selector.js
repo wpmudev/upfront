@@ -191,7 +191,10 @@ define([
 				},
 				ptop = (style.height / 2 - 220)
 			;
-
+			if( Upfront.Util.isRTL() ){
+				delete style.left;
+				style.right = left;
+			}
 			if(ptop > 0){
 				overlay.removeClass('small_placeholder');
 				ptop += 'px';

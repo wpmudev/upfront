@@ -8,6 +8,8 @@ abstract class Upfront_PostPart_View {
 	protected $_data;
 	protected $_post;
 
+	protected static $_current;
+
 	/**
 	 * Main public method.
 	 * Expands each part of the post parts and constructs markup string,

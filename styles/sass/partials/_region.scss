@@ -21,7 +21,9 @@
 }
 
 .upfront-region-container-has-posts .upfront-region,
-.upfront-region-container-has-this_post .upfront-region {
+.upfront-region-container-has-this_post .upfront-region,
+.upfront-region-container-has-content .upfront-region,
+.upfront-region-container-has-comments .upfront-region {
   min-height: 0 !important;
 }
 

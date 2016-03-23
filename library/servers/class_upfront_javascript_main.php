@@ -229,6 +229,21 @@ class Upfront_JavascriptMain extends Upfront_Server {
 
 		if (empty($post_image_variants)) $post_image_variants = json_encode(array());
 
+		$prev_post_image_variants = apply_filters(
+			'upfront_get_prev_post_image_variants',
+			array(
+				'json' => true
+			)
+		);
+		if (empty($prev_post_image_variants)) $prev_post_image_variants = json_encode(array());
+		$other_post_image_variants = apply_filters(
+			'upfront_get_other_post_image_variants',
+			array(
+				'json' => true
+			)
+		);
+		if (empty($other_post_image_variants)) $other_post_image_variants = json_encode(array());
+
 		$registry = Upfront_PresetServer_Registry::get_instance();
 		$preset_servers = $registry->get_all();
 			
@@ -345,7 +360,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		);
 
 		$menus = json_encode(wp_get_nav_menus());
-
+		$is_rtl = (int) is_rtl();
 		$main = <<<EOMainJs
 // Set up the global namespace
 var Upfront = window.Upfront || {};
@@ -375,11 +390,14 @@ Upfront.mainData = {
 	presetDefaults: {$preset_defaults},
 	themeColors: {$theme_colors},
 	postImageVariants: {$post_image_variants},
+	prevPostImageVariants: {$prev_post_image_variants},
+	otherPostImageVariants: {$other_post_image_variants},
 	content: {$content},
 	content_settings: {$content_settings},
 	l10n: {$l10n},
 	font_icons: {$redactor_font_icons},
-	menus: {$menus}
+	menus: {$menus},
+	isRTL: {$is_rtl}
 };
 EOMainJs;
 		$this->_out(new Upfront_JavascriptResponse_Success($main));

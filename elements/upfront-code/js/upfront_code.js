@@ -64,6 +64,7 @@ var CodeView = Upfront.Views.ObjectView.extend({
 
 		view.on("code:model:updated", this.propagate_model_update, this);
 		this.$el.empty().append(view.$el);
+		this.updateControls();
 
 		// Dynamically bind settings click to view editing action
 		if (view.on_edit) {
