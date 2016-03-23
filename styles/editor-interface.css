@@ -13234,38 +13234,29 @@ li#new-custom-breakpoint {
 
 /*------------ End of Font Icons --------------*/
 /* Featured Image selection in the Regions */
-a.feature_image_selector {
-  background: transparent url(../img/uf-ui-sprite.svg);
+.feature_image_selector {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  background-position: -509px -612px;
-  width: 56px;
-  height: 36px;
-  margin-left: -28px;
-  margin-top: -36px;
-  background-color: transparent;
-  z-index: 30; }
+  top: 20px;
+  right: 50px;
+  z-index: 30;
+  background-image: linear-gradient(-180deg, #FAFDFF 0%, #F2F9FF 100%);
+  border: 1px solid #A2BFDA;
+  border-radius: 3px;
+  font: 700 12px/16px "Open Sans", Helvetica Neueu, Helvetica, sans-serif;
+  color: #6486A6;
+  text-shadow: 0px 1px 0px #FFFFFF;
+  padding: 5px 10px 5px 10px;
+  display: none; }
 
-a.feature_image_selector.change_feature_image {
+.feature_image_selector.change_feature_image {
   display: none;
   z-index: 30; }
 
-a.feature_image_selector:after {
-  content: 'Add feature image';
-  color: #95a0ab;
-  font-size: 24px;
-  display: block;
-  width: 300px;
-  text-align: center;
-  margin-left: -122px;
-  margin-top: 36px; }
-
-a.feature_image_selector.change_feature_image:after {
-  content: 'Change feature image'; }
-
-div.upfront-region-container:hover > a.feature_image_selector {
+.upfront-region-container-feat-image:hover .feature_image_selector {
   display: block; }
+
+.upfront-region-editing .upfront-region-container-feat-image .feature_image_selector {
+  display: none; }
 
 /* Flexbox */
 .flexbox-support .upfront-modules_container > .upfront-editable_entities_container,
