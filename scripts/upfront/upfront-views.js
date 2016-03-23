@@ -248,7 +248,7 @@ define([
 				this.update_background_color();
 
 				if(me.$el.children('.feature_image_selector').length < 1 && !Upfront.Application.is_builder()) {
-					var feature_selector = $('<a href="#" class="feature_image_selector"></a>');
+					var feature_selector = $('<a href="#" class="feature_image_selector">Add Feature Image</a>');
 					feature_selector.bind('click', function() {
 							Upfront.Views.Editor.ImageSelector.open().done(function(images){
 								var sizes = {},

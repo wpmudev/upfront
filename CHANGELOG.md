@@ -2,6 +2,28 @@ Change Log
 ============
 
 
+1.1 - 2016-03-23
+-------------------------------------------------------------------------------
+- Add: new single post layout editing experience.
+- Add: right-to-left compatibility.
+- Add: media manager page size.
+- Add: new responsive region editing trigger location.
+- Add: posts dialog sorting.
+- Add: ability to select items across pages in media manager.
+- Fix: gallery element linking issue.
+- Fix: button element default preset.
+- Fix: list creation alignment issue in content editing.
+- Fix: slider preset captions issue.
+- Fix: disallow spaces in uploaded images.
+- Fix: slider initial image isze issue.
+- Fix: map element and region address refresh issue.
+- Fix: content editing link insertion in certain scenarios issue.
+- Fix: button element resizing and padding issue.
+- Fix: IE11 page/post layout edit link issue.
+- Fix: better asset optimization.
+- Fix: global background with parallax issue.
+- Fix: map element code editor resize issue.
+
 1.0.5 - 2016-02-19
 -------------------------------------------------------------------------------
 - Fix: remove text element edit content overlay
