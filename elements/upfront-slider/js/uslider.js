@@ -894,13 +894,15 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		
 		var properties = this.get_preset_properties();
 		if(typeof properties !== "undefined" && properties.primaryStyle === "side") return;
-		
+
 		var me = this,
 			resizer = this.$('.uslide'),
 			current = this.$('.upfront-default-slider-item-current'),
 			text = this.get_preset_properties().primaryStyle == 'below' ? current.find('.uslide-caption') : [],
 			textHeight = text.length ? text.outerHeight() : 0,
-			newElementSize = {width: resizer.width(), height: resizer.height()},
+			column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
+			vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
+			newElementSize = {width: resizer.width(), height: this.$el.parent().height() - (vPadding * 2)},
 			imageWrapper= current.find('.uslide-image'),
 			style = this.get_preset_properties().primaryStyle,
 			wrapperSize = {width: style == 'side' ? imageWrapper.width() : newElementSize.width, height: newElementSize.height},
@@ -922,6 +924,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		this.model.slideCollection.each(function (slide) {
 			me.calculateImageResize(wrapperSize, slide);
 		});
+		
 	},
 
 	on_element_resize: function(attr) {
