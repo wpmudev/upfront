@@ -7026,7 +7026,7 @@
 				}
 				return className;
 			},
-			template: _.template('<span class="font-family">{{family}} â€” {{name}}</span>{[ if(already_added) { ]} <span class="already-added">' + l10n.already_added + '</span>{[ } ]}' +
+			template: _.template('<span class="font-family">{{family}} — {{name}}</span>{[ if(already_added) { ]} <span class="already-added">' + l10n.already_added + '</span>{[ } ]}' +
 				'{[ if(heading_preview) { ]}<h1 style="font-family: {{family}}; font-weight: {{weight}}; font-style: {{style}};" class="heading-font-preview font-preview">' + l10n.header_preview_quote + '</h1>{[ } else { ]}' +
 				'<p style="font-family: {{family}}; font-weight: {{weight}}; font-style: {{style}};" class="paragraph-font-preview font-preview">' + l10n.body_preview_quote + '</p>{[ } ]}'),
 			events: {
