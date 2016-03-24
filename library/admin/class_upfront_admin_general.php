@@ -83,14 +83,21 @@ class Upfront_Admin_General
 							<small>Resets layout to default look, be careful</small>
 						</p>
 						<p class="left">
-							
-							<select class="upfront-layouts-list">
-								<?php ; foreach( Upfront_Layout::get_db_layouts() as $key => $item ): ?>
-									<option value="<?php echo $key ?>"><?php echo Upfront_EntityResolver::db_layout_to_name( $item ); ?></option>
-								<?php endforeach; ?>
-							</select>
+							<?php
+							$db_layouts = Upfront_Layout::get_db_layouts();
+							if( $db_layouts ): ?>
+								<select class="upfront-layouts-list">
+									<option value="0"><?php _e("Please select layout to reset", Upfront::TextDomain); ?></option>
+									<?php ; foreach( $db_layouts as $key => $item ): ?>
+										<option value="<?php echo $item ?>"><?php echo Upfront_EntityResolver::db_layout_to_name( $item ); ?></option>
+									<?php endforeach; ?>
+								</select>
+							<?php else: ?>
+								<h4><?php _e("You have no saved layout to reset", Upfront::TextDomain); ?></h4>
+							<?php endif; ?>
+
 						</p>
-						<button id="upfront_reset_layout">Reset Layout</button>
+						<button id="upfront_reset_layout" disabled="disabled" ><?php _e("Reset Layout", Upfront::TextDomain) ?></button>
 					</div>
 					<div class="upfront-debug-block">
 						<p class="left">Reset Theme to Default State</p>

@@ -472,13 +472,23 @@ div.upfront-general-settings h4 {
 
 div.upfront-general-settings .upfront-debug-block button,
 div.upfront-general-settings .upfront-debug-block a.upfront_button{
-  background-color: #AFAFAF;
-  border: none;
-  color: #fff;
-  text-transform: uppercase;
-  font-size: 12px;
-  padding: 6px 16px;
-  border-radius: 3px;
+    background-color: #AFAFAF;
+    border: none;
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 12px;
+    padding: 6px 16px;
+    border-radius: 3px;
+    -o-transition: padding 0.3s;
+    -moz-transition: padding 0.3s;
+    -webkit-transition: padding 0.3s;
+    transition: padding 0.3s;
+    outline: none;
+}
+
+div.upfront-general-settings .upfront-debug-block button:disabled,
+div.upfront-general-settings .upfront-debug-block a.upfront_button:disabled{
+    background-color: #ccc;
 }
 
 div.upfront-general-settings button.warning {
@@ -555,9 +565,17 @@ div.upfront-general-settings .upfront-debug-block button.visit-forum {
     margin-right: 6%;
     margin-bottom: 10px;
 }
-.upfront_admin button{
+
+.upfront_admin button:not([disabled]){
     cursor: pointer;
 }
-.upfront_admin button.loading{
 
+.upfront_admin button.loading,
+div.upfront-general-settings .upfront-debug-block button.loading,
+div.upfront-general-settings .upfront-debug-block a.upfront_button.loading{
+    background-image: url("../img/loader-admin.gif");
+    background-position: center right;
+    background-size: 24px;
+    padding-right: 28px;
+    background-repeat: no-repeat;
 }

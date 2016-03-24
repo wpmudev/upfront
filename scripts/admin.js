@@ -30,17 +30,32 @@
     /**
      * Reset layout
      */
+    $(document).on("change", ".upfront-layouts-list", function(e){
+        $button = $("#upfront_reset_layout");
+        if( $(this).val() === "0"  )
+            $button.attr("disabled", true);
+        else
+            $button.attr("disabled", false);
+    });
+
     $(document).on("click", "#upfront_reset_layout", function(e){
         e.preventDefault();
 
-        $this = $(this);
+        var $this = $(this),
+            $dropdown = $(".upfront-layouts-list"),
+            layout = $dropdown.val();
         $this.addClass("loading");
 
         Upfront.post(  {
             action: "upfront_reset_layout",
-            layout: $(".upfront-layouts-list").val()
+            layout: layout
         }).done(function(res){
             $this.removeClass("loading");
+            if( $dropdown.find("option").length === 2 ){
+                $dropdown.find("option[value="+ layout + "]").remove();
+                $dropdown.val( 0 );
+                $this.attr("disabled", true);
+            }
         }).fail( function(res){
             $this.removeClass("loading");
         } );
