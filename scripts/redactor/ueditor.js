@@ -964,11 +964,28 @@ var Ueditor = function($el, options) {
             else {
                 UeditorEvents.trigger("ueditor:enter", this, e);
             }
+
+
+            /**
+             * Allow user to exit lists on double enter
+             */
+            if( this.utils.isEmpty( this.keydown.block.innerText ) ){
+                $(this.selection.getBlock()).remove();
+                var node;
+                if( $list.next().is("p") && this.utils.isEmpty( $list.next().text() ) ){
+                    node = $list.next("p");
+                }else{
+                    node = $(this.opts.emptyHtml);
+                    $list.after(node);
+                }
+                this.caret.setStart(node);
+            }
         }
         // Default
         else {        
             UeditorEvents.trigger("ueditor:enter", this, e);
         }
+
     };
 
 };
