@@ -251,7 +251,12 @@ define([
 					}
 				;
 				$bg.addClass('no-featured_image');
-				this.update_background_color();
+				if ( bg_default == 'hide' ) {
+					$bg.css('background-color', '');
+				}
+				else {
+					this.update_background_color();
+				}
 
 				if(me.$el.children('.feature_image_selector').length < 1 && !Upfront.Application.is_builder()) {
 					var feature_selector = $('<a href="#" class="feature_image_selector">Add Feature Image</a>');
