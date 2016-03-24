@@ -901,7 +901,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			textHeight = text.length ? text.height() : 0,
 			column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
 			vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
-			newElementSize = {width: attr.width, height: attr.height - (vPadding * 2) - textHeight},
+			newElementSize = {width: parseInt( attr.width ), height: parseInt( attr.height ) - ( vPadding * 2 ) - textHeight},
 			imageWrapper = current.find('.uslide-image'),
 			style = this.get_preset_properties().primaryStyle,
 			wrapperSize = {width: style == 'side' ? imageWrapper.width() : newElementSize.width, height: newElementSize.height},
@@ -938,7 +938,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			textHeight = text.length ? text.height() : 0,
 			column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
 			vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
-			newElementSize = {width: attr.width, height: attr.height - (vPadding * 2) - textHeight},
+			newElementSize = {width: parseInt( attr.width ), height: parseInt( attr.height ) - ( vPadding * 2 ) - textHeight},
 			elementColumns = attr.col,
 			imageColumns = Math.max(3, Math.round(this.property('rightImageWidth') * elementColumns / this.property('rightWidth'))),
 			sideImageWidth = imageColumns * this.calculateColumnWidth()
