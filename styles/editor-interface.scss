@@ -403,11 +403,13 @@
 .uimage-control-panel .upfront-field-wrap{
   text-align: left;
 }
-.inline-panel-control-dialog {
+.inline-panel-control-dialog,
+.inline-panel-sub-control-dialog {
 	display: none;
 }
 .upfront-control-dialog-open .inline-panel-control-dialog,
-.upfront-ui .upfront-control-dialog-open .inline-panel-control-dialog {
+.upfront-ui .upfront-control-dialog-open .inline-panel-control-dialog,
+.upfront-sub-control-dialog-open .inline-panel-sub-control-dialog, {
 	display: block;
 }
 .inline-panel-item-selected.labeled{
