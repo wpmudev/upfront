@@ -306,7 +306,8 @@
 }
 .upfront-module-disabled-all:hover,
 .upfront-module-editing,
-.upfront-module-editing:hover {
+.upfront-module-editing:hover,
+.upfront-editing-post-content .upfront-module:hover {
 	box-shadow: none;
 	outline: none;
 }
@@ -503,10 +504,10 @@
 .upfront-object-group-on-edit > .upfront-object-group > .upfront-entity_meta > .upfront-icon-button {
   visibility: hidden !important;
 }
-.upfront-module-group-on-edit .upfront-editable_entities_container .upfront-wrapper > .ui-resizable-handle,
-.upfront-module-group-on-edit .upfront-editable_entities_container .upfront-editable_entity:hover > .ui-resizable-handle,
-.upfront-object-group-on-edit .upfront-editable_entities_container .upfront-wrapper > .ui-resizable-handle,
-.upfront-object-group-on-edit .upfront-editable_entities_container .upfront-editable_entity:hover > .ui-resizable-handle {
+.upfront-module-group-on-edit .upfront-modules_container > .upfront-editable_entities_container > .upfront-wrapper > .ui-resizable-handle,
+.upfront-module-group-on-edit .upfront-modules_container > .upfront-editable_entities_container > .upfront-wrapper > .upfront-module-view > .upfront-editable_entity:hover > .ui-resizable-handle,
+.upfront-object-group-on-edit .upfront-objects_container > .upfront-editable_entities_container > .upfront-wrapper > .ui-resizable-handle,
+.upfront-object-group-on-edit .upfront-objects_container > .upfront-editable_entities_container > .upfront-wrapper > .upfront-object-view > .upfront-editable_entity:hover > .ui-resizable-handle {
   visibility: visible;
   z-index: 2999;
 }

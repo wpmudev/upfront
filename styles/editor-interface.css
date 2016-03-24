@@ -1373,30 +1373,49 @@ input.upfront-field-text:hover,
   display: inline-block;
   position: relative;
   border-left: 1px solid #A1C3E5;
-  cursor: pointer; }
+  cursor: pointer;
+  background-image: url("../img/uf-ui-sprite.svg");
+  background-position: -345px -242px; }
 
+.typography-panel .upfront-field-number[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  width: 14px;
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  background-color: #D8EDFF;
+  display: inline-block;
+  position: relative;
+  border-left: 1px solid #A1C3E5;
+  cursor: pointer;
+  background-image: url("../img/uf-ui-sprite.svg");
+  background-position: -345px -244px; }
+
+/* Google chrome dont support :before & :after for inner-spin anymore */
+/*
 .upfront-field-number[type=number]::-webkit-inner-spin-button:before {
-  content: ' ';
-  position: absolute;
-  width: 0;
-  height: 0;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 4px solid #6B8EB2;
-  bottom: 2px;
-  left: 3px; }
-
+	content: ' ';
+	position:absolute;
+	width:0;
+	height: 0;
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-top: 4px solid #6B8EB2;
+	bottom:2px;
+	left:3px;
+}
 .upfront-field-number[type=number]::-webkit-inner-spin-button:after {
-  content: ' ';
-  position: absolute;
-  width: 0;
-  height: 0;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-bottom: 4px solid #6B8EB2;
-  top: 4px;
-  left: 3px; }
-
+	content: ' ';
+	position:absolute;
+	width:0;
+	height: 0;
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-bottom: 4px solid #6B8EB2;
+	top:4px;
+	left:3px;
+}
+*/
 /* end chrome input[type=number] styling */
 .upfront-field-select, .upfront-field-select-options {
   background: #f2f9ff;
@@ -2479,7 +2498,9 @@ div.uinsert-selector a:hover {
   opacity: 1 !important; }
 
 .upfront-region-container-has-posts .upfront-region,
-.upfront-region-container-has-this_post .upfront-region {
+.upfront-region-container-has-this_post .upfront-region,
+.upfront-region-container-has-content .upfront-region,
+.upfront-region-container-has-comments .upfront-region {
   min-height: 0 !important; }
 
 .upfront-region-current {
@@ -3963,6 +3984,16 @@ a.upfront-region-name-edit-trigger:before {
 .uf-bgsettings-imageitem .upfront-field-slider-value {
   display: none; }
 
+.uf-bgsettings-imageitem .uf-bgsettings-image-default {
+  float: left; }
+
+.uf-bgsettings-imageitem .uf-bgsettings-image-default-color ~ .uf-bgsettings-image-color {
+  clear: none;
+  width: 50%; }
+
+.uf-bgsettings-imageitem .uf-bgsettings-image-default-image ~ .uf-bgsettings-image-pos-y {
+  clear: both; }
+
 .uf-bgsettings-image-color {
   float: right;
   width: 62%; }
@@ -4437,7 +4468,8 @@ a.upfront-region-name-edit-trigger:before {
 
 .upfront-module-disabled-all:hover,
 .upfront-module-editing,
-.upfront-module-editing:hover {
+.upfront-module-editing:hover,
+.upfront-editing-post-content .upfront-module:hover {
   box-shadow: none;
   outline: none; }
 
@@ -4629,10 +4661,10 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-object-group-on-edit > .upfront-object-group > .upfront-entity_meta > .upfront-icon-button {
   visibility: hidden !important; }
 
-.upfront-module-group-on-edit .upfront-editable_entities_container .upfront-wrapper > .ui-resizable-handle,
-.upfront-module-group-on-edit .upfront-editable_entities_container .upfront-editable_entity:hover > .ui-resizable-handle,
-.upfront-object-group-on-edit .upfront-editable_entities_container .upfront-wrapper > .ui-resizable-handle,
-.upfront-object-group-on-edit .upfront-editable_entities_container .upfront-editable_entity:hover > .ui-resizable-handle {
+.upfront-module-group-on-edit .upfront-modules_container > .upfront-editable_entities_container > .upfront-wrapper > .ui-resizable-handle,
+.upfront-module-group-on-edit .upfront-modules_container > .upfront-editable_entities_container > .upfront-wrapper > .upfront-module-view > .upfront-editable_entity:hover > .ui-resizable-handle,
+.upfront-object-group-on-edit .upfront-objects_container > .upfront-editable_entities_container > .upfront-wrapper > .ui-resizable-handle,
+.upfront-object-group-on-edit .upfront-objects_container > .upfront-editable_entities_container > .upfront-wrapper > .upfront-object-view > .upfront-editable_entity:hover > .ui-resizable-handle {
   visibility: visible;
   z-index: 2999; }
 
@@ -6097,32 +6129,38 @@ a.upfront-region-name-edit-trigger:before {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 999998; }
+  z-index: 999998;
+  width: 100%;
+  height: 100%; }
 
 #upfront-save-dialog {
-  border: 1px solid #fff;
   background: #e5f3ff;
-  -moz-box-shadow: 0 0 20px rgba(39, 58, 76, 0.8);
-  -webkit-box-shadow: 0 0 20px rgba(39, 58, 76, 0.8);
   box-shadow: 0 0 20px rgba(39, 58, 76, 0.8);
   position: fixed;
-  top: 20%;
+  top: 100px;
   left: 50%;
-  width: 400px;
+  width: 500px;
   margin-left: -200px;
   z-index: 999999;
-  padding: 20px;
+  padding: 40px;
   text-align: center; }
+
+#upfront-save-dialog p {
+  font: 100 20px/32px Open Sans, Helvetica Neueu, Helvetica, sans-serif;
+  color: #1C2D3D;
+  margin-bottom: 30px; }
 
 .upfront-save-button {
   display: inline-block;
-  font-size: 14px;
-  font-family: 'Source Sans Pro';
-  border: 1px solid #a3bfd9;
-  color: #395269;
-  margin: 0 10px 10px;
-  padding: 0 20px;
-  cursor: pointer; }
+  font: 400 14px/26px Open Sans, Helvetica Neueu, Helvetica, sans-serif;
+  color: #6486A6;
+  margin: 0 20px 0;
+  padding: 5px 20px;
+  cursor: pointer;
+  background-image: linear-gradient(-180deg, #FAFDFF 0%, #F2F9FF 100%);
+  border: 1px solid #A2BFDA;
+  border-radius: 3px;
+  text-shadow: 0px 1px 0px #FFFFFF; }
 
 .upfront-save-button:hover {
   border-color: #537ea6; }
@@ -8218,11 +8256,11 @@ a.upfront-post-layout-trigger:before {
   visibility: visible; }
 
 #upfront-notice.out {
-  -webkit-transition: opacity 0.7s ease-in-out, top 0.7s;
-  -moz-transition: opacity 0.7s ease-in-out, top 0.7s;
-  -ms-transition: opacity 0.7s ease-in-out, top 0.7s;
-  -o-transition: opacity 0.7s ease-in-out, top 0.7s;
-  transition: opacity 0.7s ease-in-out, top 0.7s;
+  -webkit-transition: visibility 0.7s ease-in-out, opacity 0.7s ease-in-out, top 0.7s;
+  -moz-transition: visibility 0.7s ease-in-out, opacity 0.7s ease-in-out, top 0.7s;
+  -ms-transition: visibility 0.7s ease-in-out, opacity 0.7s ease-in-out, top 0.7s;
+  -o-transition: visibility 0.7s ease-in-out, opacity 0.7s ease-in-out, top 0.7s;
+  transition: visibility 0.7s ease-in-out, opacity 0.7s ease-in-out, top 0.7s;
   /* Safari 4+ */ }
 
 @keyframes "shake" {
@@ -13225,38 +13263,29 @@ li#new-custom-breakpoint {
 
 /*------------ End of Font Icons --------------*/
 /* Featured Image selection in the Regions */
-a.feature_image_selector {
-  background: transparent url(../img/uf-ui-sprite.svg);
+.feature_image_selector {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  background-position: -509px -612px;
-  width: 56px;
-  height: 36px;
-  margin-left: -28px;
-  margin-top: -36px;
-  background-color: transparent;
-  z-index: 30; }
+  top: 20px;
+  right: 50px;
+  z-index: 30;
+  background-image: linear-gradient(-180deg, #FAFDFF 0%, #F2F9FF 100%);
+  border: 1px solid #A2BFDA;
+  border-radius: 3px;
+  font: 700 12px/16px "Open Sans", Helvetica Neueu, Helvetica, sans-serif;
+  color: #6486A6;
+  text-shadow: 0px 1px 0px #FFFFFF;
+  padding: 5px 10px 5px 10px;
+  display: none; }
 
-a.feature_image_selector.change_feature_image {
+.feature_image_selector.change_feature_image {
   display: none;
   z-index: 30; }
 
-a.feature_image_selector:after {
-  content: 'Add feature image';
-  color: #95a0ab;
-  font-size: 24px;
-  display: block;
-  width: 300px;
-  text-align: center;
-  margin-left: -122px;
-  margin-top: 36px; }
-
-a.feature_image_selector.change_feature_image:after {
-  content: 'Change feature image'; }
-
-div.upfront-region-container:hover > a.feature_image_selector {
+.upfront-region-container-feat-image:hover .feature_image_selector {
   display: block; }
+
+.upfront-region-editing .upfront-region-container-feat-image .feature_image_selector {
+  display: none; }
 
 /* Flexbox */
 .flexbox-support .upfront-modules_container > .upfront-editable_entities_container,

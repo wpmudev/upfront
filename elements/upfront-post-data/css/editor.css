@@ -130,6 +130,8 @@
 	left: 0;
 	right: 0;
 	bottom: 0;
+	margin: 0;
+	height: auto !important;
 }
 
 
@@ -217,8 +219,13 @@ div.preset-manager-panel .upfront-post_data-part.part-module-panel .typography_s
 	margin-left: 10px;
 }
 
-div.preset-manager-panel .upfront-post_data-part.part-module-panel .edit_preset_label .upfront-field-button {
-	visibility: hidden;
+div.preset-manager-panel .upfront-post_data-part.part-module-panel .edit_preset_label {
+	display: none;
+}
+
+div.preset-manager-panel .upfront-post_data-part.part-module-panel .edit_preset_css {
+	margin-top: 10px;
+	left: 110px;
 }
 
 /* Parts styles! */
@@ -245,4 +252,11 @@ div.preset-manager-panel .upfront-post_data-part.part-module-panel .edit_preset_
 	}
 	div.preset-manager-panel .upfront-post_data-part.part-module-panel .content-indent input {
 		max-width: 4em;
+	}
+	
+	div.preset-manager-panel .comments-pagination_warning {
+		padding-top: 10px;
+	}
+	div.preset-manager-panel .comments-pagination_warning input {
+		display: none;
 	}

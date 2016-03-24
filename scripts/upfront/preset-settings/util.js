@@ -22,13 +22,21 @@ function() {
 	 * @param properties - preset properties
 	 * @return String - CSS for preset
 	 */
-	var generateCss = function(properties, styleTpl) {
+	var generateCss = function(properties, styleTpl, elementType) {
 		var tpl = Upfront.Util.template(styleTpl);
 		
 		//Increase preset_style css specificity
 		if(typeof properties.preset_style !== "undefined") {
 			properties.preset_style = properties.preset_style
 			.replace(/#page/g, '#page.upfront-layout-view .upfront-editable_entity.upfront-module');
+			
+			if(elementType === "thispost") {
+				properties.preset_style = properties.preset_style.replace(/.default/g, '.default.upfront-this_post');
+			}
+
+			if(elementType === "ucomment") {
+				properties.preset_style = properties.preset_style.replace(/.default/g, '.default.upfront-comment');
+			}
 
 			properties.preset_style = Upfront.Util.colors.convert_string_ufc_to_color( properties.preset_style, true );
 		}
@@ -92,7 +100,7 @@ function() {
 
 			/* This is being changed so that whenever the theme color is changed, it gets applied to preset style in editor mode live */
 			//$('style#' + styleId).text(generateCss(props, styleTpl));
-			$('style#' + styleId).text(Upfront.Util.colors.convert_string_ufc_to_color(generateCss(props, styleTpl), true));
+			$('style#' + styleId).text(Upfront.Util.colors.convert_string_ufc_to_color(generateCss(props, styleTpl, element), true));
 		}
 	};
 

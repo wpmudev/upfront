@@ -199,7 +199,7 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 		ob_start();
 		// Load comments
 		if ($comments && sizeof($comments)) {
-			echo '<ol class="upfront-comments">';
+			echo '<ol class="upfront-post_data-comments">';
 			wp_list_comments(array(
 				'callback' => array('Upfront_Post_Data_PartView_Comments', 'list_comment'), 
 				'per_page' => $this->_get_limit(),

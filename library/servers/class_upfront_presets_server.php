@@ -3,6 +3,8 @@
 abstract class Upfront_Presets_Server extends Upfront_Server {
 
 	protected $isPostPartServer = false;
+	protected $isThisPostServer = false;
+	protected $isCommentServer = false;
 
 	protected function __construct() {
 		parent::__construct();
@@ -245,6 +247,14 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 				} else {
 					$preset['preset_style'] = str_replace('#page', 'div#page .upfront-output-region-container .upfront-output-module', $preset['preset_style']);
 				}
+				
+				if($this->isThisPostServer) {
+					$preset['preset_style'] = str_replace('.default', '.default.upfront-this_post', $preset['preset_style']);
+				}
+				
+				if($this->isCommentServer) {
+					$preset['preset_style'] = str_replace('.default', '.default.upfront-comment', $preset['preset_style']);
+				}
 			}
 
 			$args = array('properties' => $preset);
@@ -400,6 +410,84 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		if(empty($updatedPresets)) $updatedPresets = json_encode(array());
 
 		return $updatedPresets;
+	}
+	
+	public function get_typography_values_by_tag($tag) {
+		$tag_typography = array();
+		
+		//Get breakpoints typography
+		$grid = Upfront_Grid::get_grid();
+		$breakpoint = $grid->get_default_breakpoint();
+		$typography = $breakpoint->get_typography();
+		
+		//We load this in case typography is empty or specific tag is empty
+		$layout_properties = Upfront_ChildTheme::get_instance()->getLayoutProperties();
+		$theme_typography = upfront_get_property_value('typography', array('properties'=>$layout_properties));
+		$theme_typography_array = array();
+		
+		//Make sure we use array not an object recursively
+		foreach($theme_typography as $key => $object) {
+			$theme_typography_array[$key] = get_object_vars($object);
+		}
+
+		//Set child theme typography if breakpoint typography is empty
+		if(empty($typography)) {
+			$typography = $theme_typography_array;
+		}
+		
+		if(isset($typography[$tag]) && !empty($typography[$tag])) {
+			//Breakpoint typography exist
+			$tag_typography = $typography[$tag];
+			
+			//If tag is A we should inherit size and line-height from P
+			if($tag == "a") {
+				if(isset($typography['p']['size'])) {
+					$tag_typography['size'] = $typography['p']['size'];
+				}
+				if(isset($typography['p']['line_height'])) {
+					$tag_typography['line_height'] = $typography['p']['line_height'];
+				}
+			}
+		} else {
+			//Child theme typography
+			if(isset($theme_typography_array[$tag]) && !empty($theme_typography_array[$tag])) {
+				$tag_typography = $theme_typography_array[$tag];
+			} else {
+				$tag_typography = !empty($tag_typography['p']) ? $tag_typography['p'] : false;
+			}
+		}
+
+		return $tag_typography;
+	}
+	
+	public function get_typography_defaults_array($defaults, $part) {
+		//Make sure we use array
+		if (is_object($defaults)) {
+			$defaults = get_object_vars($defaults);
+		}
+		
+		if (!is_array($defaults)) $defaults = array();
+		$defaults = wp_parse_args($defaults, array(
+			'font_face' => '',
+			'weight' => '',
+			'style' => '',
+			'size' => '',
+			'line_height' => '',
+			'color' => '',
+		));
+
+		$typography = array(
+			'static-'.$part.'-use-typography' => '',
+			'static-'.$part.'-font-family' => $defaults['font_face'],
+			'static-'.$part.'-weight' => $defaults['weight'],
+			'static-'.$part.'-fontstyle' => $defaults['weight'].' '.$defaults['style'],
+			'static-'.$part.'-style' => $defaults['style'],
+			'static-'.$part.'-font-size' => $defaults['size'],
+			'static-'.$part.'-line-height' => $defaults['line_height'],
+ 			'static-'.$part.'-font-color' => $defaults['color'],
+		);
+
+		return $typography;
 	}
 
 	public static function add_l10n_strings ($strings) {

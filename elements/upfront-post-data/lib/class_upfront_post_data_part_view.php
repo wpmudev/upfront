@@ -127,7 +127,11 @@ abstract class Upfront_Post_Data_PartView extends Upfront_PostPart_View {
 		if( !is_object( $post ) ) return;
 		$style_variant =  Upfront_ChildTheme::get_image_variant_by_id( $data->uf_variant );
 		// if no variant is found, default to the first variant
-		$style_variant =  (object) ( $style_variant === array() ? reset( $style_variant )  : $style_variant );
+		if ( $style_variant === array() ) {
+			$current_variants = Upfront_ChildTheme::getPostImageVariants();
+			$style_variant = $current_variants[0];
+		}
+		$style_variant =  (object) $style_variant;
 		$style_variant->label_id = !empty( $style_variant->label ) ? "ueditor-image-style-" . str_replace(" ", "-", trim(strtolower( $style_variant->label )))  : $style_variant->vid;
 
 		// Old compatibility with this_post
@@ -149,6 +153,7 @@ abstract class Upfront_Post_Data_PartView extends Upfront_PostPart_View {
 			$grid = Upfront_Grid::get_grid();
 			$breakpoint = $grid->get_default_breakpoint();
 			$col_size = $breakpoint->get_column_width();
+			$col_padding = $breakpoint->get_column_padding();
 
 			$col = self::$_current->_get_object_col('content');
 			$padding_left = isset(self::$_current->_data['left_indent']) ? self::$_current->_data['left_indent'] : 0;
@@ -156,10 +161,10 @@ abstract class Upfront_Post_Data_PartView extends Upfront_PostPart_View {
 
 			$half = (int)(($col - 1) / 2);
 			if ( $padding_left > 0 && $padding_left <= $half ) {
-				$style_variant->marginLeft = ( $padding_left * $col_size * -1 ) . 'px';
+				$style_variant->marginLeft = (( $padding_left * $col_size * -1 ) - $col_padding) . 'px';
 			}
 			if ( $padding_right > 0 ) {
-				$style_variant->marginRight = ( $padding_right * $col_size * -1 ) . 'px';
+				$style_variant->marginRight = (( $padding_right * $col_size * -1 ) - $col_padding) . 'px';
 			}
 		}
 

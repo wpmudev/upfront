@@ -121,6 +121,10 @@ class Upfront_Post_Data_Data {
 		}
 
 		$defaults = self::apply_preset($defaults);
+		if ('comments' === $data_type) {
+			// Preset has nothing to do with this
+			$defaults['paginated'] = (int)get_option('page_comments');
+		}
 
 		return $defaults;
 	}
@@ -244,12 +248,18 @@ class Upfront_Post_Data_Data {
 				'title_info' => __('Post title part', 'upfront'),
 				'post_data_date_label' => __('Date', 'upfront'),
 				'post_data_date_info' => __('The layer that contains publish date', 'upfront'),
-				'post_data_title_label' => __('Title', 'upfront'),
+				'post_data_title_label' => __('Title Wrapper', 'upfront'),
 				'post_data_title_info' => __('The layer that contains post title', 'upfront'),
+				'post_data_title_h1_label' => __('Title Wrapper', 'upfront'),
+				'post_data_title_h1_info' => __('The layer that contains post title', 'upfront'),
 				'post_data_content_label' => __('Content', 'upfront'),
 				'post_data_content_info' => __('The layer that contains post content', 'upfront'),
-				'author_author_label' => __('Author', 'upfront'),
+				'post_data_content_p_label' => __('Content Paragraph', 'upfront'),
+				'post_data_content_p_info' => __('The layer that contains post content', 'upfront'),
+				'author_author_label' => __('Author Wrapper', 'upfront'),
 				'author_author_info' => __('The layer that contains post author username', 'upfront'),
+				'author_author_link_label' => __('Author Links', 'upfront'),
+				'author_author_link_info' => __('Author Links', 'upfront'),
 				'author_gravatar_label' => __('Gravatar', 'upfront'),
 				'author_gravatar_info' => __('The layer that contains gravatar image', 'upfront'),
 				'author_email_label' => __('Author Email Wrapper', 'upfront'),
@@ -284,6 +294,47 @@ class Upfront_Post_Data_Data {
 				'comments_pagination_info' => __('The layer that contains pagination links', 'upfront'),
 				'comment_form_label' => __('Form', 'upfront'),
 				'comment_form_info' => __('The layer that contains comments form', 'upfront'),
+				'comments_label' => __('Comments Wrapper', 'upfront'),
+				'comments_info' => __('The layer that contains all comments', 'upfront'),
+				'comment_label' => __('Comment LI', 'upfront'),
+				'comment_info' => __('The LI that contains comment data', 'upfront'),
+				'comment_wrapper_label' => __('Comment', 'upfront'),
+				'comment_wrapper_info' => __('The layer that contains comment data', 'upfront'),
+				'comment_avatar_label' => __('Avatar', 'upfront'),
+				'comment_avatar_info' => __('The layer that contains comment avatar', 'upfront'),
+				'comment_avatar_image_label' => __('Avatar Image', 'upfront'),
+				'comment_avatar_image_info' => __('Avatar Image', 'upfront'),
+				'comment_meta_label' => __('Meta', 'upfront'),
+				'comment_meta_info' => __('The layer that contains comment meta', 'upfront'),
+				'comment_athor_label' => __('Meta Author', 'upfront'),
+				'comment_author_info' => __('Comment author link', 'upfront'),
+				'comment_time_label' => __('Meta Time', 'upfront'),
+				'comment_time_info' => __('The layer that contains publis time', 'upfront'),
+				'comment_content_label' => __('Content', 'upfront'),
+				'comment_content_info' => __('The layer that contains comment content', 'upfront'),
+				'comment_content_p_label' => __('Content Paragraph', 'upfront'),
+				'comment_content_p_info' => __('The layer that contains comment text', 'upfront'),
+				'edit_link_label' => __('Edit Link', 'upfront'),
+				'edint_link_info' => __('Edit link', 'upfront'),
+				'meta_actions_label' => __('Actions Wrapper', 'upfront'),
+				'meta_actions_info' => __('The layer that contains all action buttons', 'upfront'),
+				'comment_reply_label' => __('Reply', 'upfront'),
+				'comment_reply_info' => __('Reply button', 'upfront'),
+
+				'reply_title_label' => __('Respond Title', 'upfront'),
+				'reply_title_info' => __('Respond Title Heading', 'upfront'),
+				'logged_in_label' => __('Logged In Wrapper', 'upfront'),
+				'logged_in_info' => __('The layer that contains logged in info', 'upfront'),
+				'logged_in_link_label' => __('Logged In Wrapper', 'upfront'),
+				'logged_in_link_info' => __('The layer that contains logged in info', 'upfront'),
+				'respond_label' => __('Fields Wrapper', 'upfront'),
+				'respond_info' => __('The layer that contains all fields to publish comment', 'upfront'),
+				'comment_input_label' => __('Input', 'upfront'),
+				'comment_input_info' => __('Comment publish inputs', 'upfront'),
+				'comment_textarea_label' => __('Textarea', 'upfront'),
+				'comment_textarea_info' => __('Comment publish text box', 'upfront'),
+				'submit_button' => __('Comment Button', 'upfront'),
+				'submit_button' => __('Button to ', 'upfront'),
 			),
 
 			'elements' => array(
@@ -314,6 +365,8 @@ class Upfront_Post_Data_Data {
 
 			'edit' => __('Edit', 'upfront'),
 			'edit_html' => __('Edit HTML', 'upfront'),
+			'edit_template' => __('Edit Template', 'upfront'),
+			'custom_markup' => __('Custom Markup', 'upfront'),
 			'format' => __('Format', 'upfront'),
 			'max_categories' => __('max. categories', 'upfront'),
 			'max_tags' => __('max. tags', 'upfront'),

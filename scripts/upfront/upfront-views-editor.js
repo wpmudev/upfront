@@ -3761,7 +3761,7 @@
 			},
 
 			handle_sort_request: function (e) {
-				var $option = $(e.target),
+				var $option = $(e.target).closest('.upfront-list_item-component'),
 					sortby = $option.attr('data-sortby'),
 					order = this.collection.order;
 				if(sortby){
@@ -3896,7 +3896,7 @@
 				});
 			},
 		handle_sort_request: function (e) {
-			var $option = $(e.target),
+			var $option = $(e.target).closest('.upfront-list_item-component'),
 				sortby = $option.attr('data-sortby'),
 				order = this.collection.order;
 			if(sortby){
@@ -4081,7 +4081,7 @@
 			},
 
 			handle_sort_request: function (e) {
-				var $option = $(e.target),
+				var $option = $(e.target).closest('.upfront-list_item-component'),
 					sortby = $option.attr('data-sortby'),
 					order = this.collection.order;
 				if(sortby){
@@ -7026,7 +7026,7 @@
 				}
 				return className;
 			},
-			template: _.template('<span class="font-family">{{family}} â€” {{name}}</span>{[ if(already_added) { ]} <span class="already-added">' + l10n.already_added + '</span>{[ } ]}' +
+			template: _.template('<span class="font-family">{{family}} — {{name}}</span>{[ if(already_added) { ]} <span class="already-added">' + l10n.already_added + '</span>{[ } ]}' +
 				'{[ if(heading_preview) { ]}<h1 style="font-family: {{family}}; font-weight: {{weight}}; font-style: {{style}};" class="heading-font-preview font-preview">' + l10n.header_preview_quote + '</h1>{[ } else { ]}' +
 				'<p style="font-family: {{family}}; font-weight: {{weight}}; font-style: {{style}};" class="paragraph-font-preview font-preview">' + l10n.body_preview_quote + '</p>{[ } ]}'),
 			events: {
@@ -8247,6 +8247,7 @@
 				Upfront.Media.Manager.open(options).done(function(popup, result){
 					Upfront.Events.trigger('upfront:element:edit:stop');
 					if (!result) return;
+					if ( result.length == 0 ) return;
 
 					var imageModel = result.models[0],
 						img = imageModel.get('image') ? imageModel.get('image') : result.models[0],
@@ -9365,10 +9366,10 @@
 						values: region_types,
 						change: function () {
 							var value = this.get_value();
+							this.model.set_breakpoint_property(this.property_name, value);
 							$content.find('.upfront-region-bg-setting-tab').not('.upfront-region-bg-setting-tab-'+value).hide();
 							$content.find('.upfront-region-bg-setting-tab-'+value).show();
 							me.render_modal_tab(value, $content.find('.upfront-region-bg-setting-tab-'+value), $content);
-							this.model.set_breakpoint_property(this.property_name, value);
 						}
 					}),
 					bg_item = new Upfront.Views.Editor.BgSettings.BgItem({

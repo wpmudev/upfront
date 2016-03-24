@@ -10,6 +10,8 @@ define([
 	'elements/upfront-posts/js/post-list-meta-views',
 ], function (BaseModule, FieldFactory, StateSettings, Inserts, Meta) {
 
+	var l10n = Upfront.Settings.l10n.post_data_element;
+
 	var OptionsModule = BaseModule.extend({
 		className: function () {
 			var cls = (typeof this.initialize === typeof BaseModule.prototype.className
@@ -28,14 +30,15 @@ define([
 
 			fields.push({
 				type: "Button",
-				label: "Custom Markup",
+				label: l10n.custom_markup,
 				className: 'edit_preset_label',
 				compact: true
 			});
+
 			fields.push({
 				type: "Button",
-				label: "Edit Markup",
-				className: 'edit_preset_css',
+				label: l10n.edit_template,
+				className: 'edit_post_markup edit_preset_css',
 				compact: true,
 				on_click: function () {
 					me.spawn_editor();
@@ -78,6 +81,9 @@ define([
 			this.state.render();
 
 			this.$el.append(this.state.$el);
+			
+			//Move Edit Preset to bottom
+			this.$el.find('.state_modules').append(this.$el.find('.edit_preset_css'));
 			this.$el.addClass("preset_specific");
 		},
 		get_modules: function () {

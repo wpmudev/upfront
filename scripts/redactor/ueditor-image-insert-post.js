@@ -89,7 +89,10 @@ var PostImageInsert = base.ImageInsertBase.extend({
             padding_right = parseFloat( $(".upfront-content-marker-contents>*").css("padding-right")) / ge.col_size,
             parent_col = Upfront.Util.grid.width_to_col( $parent.width(), true ),
             max_col =   parent_col  - padding_left - padding_right,
-            col_size = $(".upfront-content-marker-contents>*").width()/max_col
+            col_size = $(".upfront-content-marker-contents>*").width()/max_col,
+            $object = this.$editor.closest('.upfront-object'),
+            object_padding_left = parseInt($object.css('padding-left'), 10),
+            object_padding_right = parseInt($object.css('padding-right'), 10)
         ;
         if ( this.$editor.hasClass('upfront-indented_content') ) {
             $parent = this.$editor;
@@ -97,13 +100,13 @@ var PostImageInsert = base.ImageInsertBase.extend({
             padding_right = parseFloat( $parent.css("padding-right")) / ge.col_size;
             parent_col = Upfront.Util.grid.width_to_col( $parent.width(), true );
             max_col =   parent_col  - padding_left - padding_right;
-            col_size = $parent.width()/max_col;
-            this.$el.attr('style', 'margin-left: ' + ( padding_left * col_size * -1 ) + 'px; margin-right: ' + ( padding_right * col_size * -1 ) + 'px;');
+            col_size = ge.col_size;
+            this.$el.attr('style', 'margin-left: ' + (( padding_left * col_size * -1 ) - object_padding_left) + 'px; margin-right: ' + (( padding_right * col_size * -1 ) - object_padding_right) + 'px;');
         }
 
 
-        padding_left = padding_left ? parseInt(padding_left) : 0;
-        padding_right = padding_right ? parseInt(padding_right) : 0;
+        padding_left = padding_left ? parseInt(padding_left, 10) : 0;
+        padding_right = padding_right ? parseInt(padding_right, 10) : 0;
 
         if (style_variant && style_variant.group && style_variant.group.float) {
             if ( style_variant.group.float == 'left' && padding_left > 0 ){

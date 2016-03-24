@@ -45,20 +45,28 @@ define([
 	var Main = PresetManager.extend({
 		initialize: function () {
 			var data_type_idx = 'upfront_post_data_' + this.data_type,
-				data_type_defaults = {}
+				data_type_defaults = {},
+				elementDefaults
 			;
 
 			// Set up data type specific defaults, to use as default preset
 			_(_.omit(Upfront.data[data_type_idx], ['class', 'data_type', 'has_settings', 'id_slug', 'type', 'type_parts', 'view_class'])).each(function (property, key) {
 				data_type_defaults[key] = property;
 			});
+			
+			// Include default settings from Upfront.mainData
+			if(typeof Upfront.mainData.presetDefaults[this.data_type + '_element'] !== "undefined") {
+				elementDefaults = _.extend(data_type_defaults, Upfront.mainData.presetDefaults[this.data_type + '_element']);
+			} else {
+				elementDefaults = data_type_defaults;
+			}
 
 			_.extend(this, {
 				mainDataCollection: this.data_type + '_elementPresets',
 				styleElementPrefix: this.data_type + '_element',
 				ajaxActionSlug: this.data_type + '_element',
 				styleTpl: Templates[this.data_type],
-				presetDefaults: _.extend(data_type_defaults, {
+				presetDefaults: _.extend(elementDefaults, {
 					id: "default",
 					name: "Default"
 				})

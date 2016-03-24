@@ -41,6 +41,10 @@ class Upfront_Region extends Upfront_Container {
 		if ( $this->_is_background() ) {
 			$more_classes[] = 'upfront-image-lazy upfront-image-lazy-bg';
 		}
+		// Additional test for background type - only if we're dealing with the featured image regions
+		if ('featured' === $this->get_background_type() && !has_post_thumbnail(Upfront_Output::get_post_id())) {
+			$more_classes[] = 'no-featured_image'; // We don't seem to have a featured image here
+		}
 		return $classes . ' ' . join(' ', $more_classes);
 	}
 
