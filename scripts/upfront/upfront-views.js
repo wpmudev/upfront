@@ -3952,16 +3952,16 @@ define([
 					Upfront.data.wrapper_views = {};
 
 				this.model.each(function (module) {
-					RenderQueue.add(function () {
+					// RenderQueue.add(function () {
 						me.render_module(module); // surrounding with function to keep context juggling to the minimum
-					});
+					// });
 				});
 
-				RenderQueue.addToEnd(function() {
+				// RenderQueue.addToEnd(function() {
 					me.apply_flexbox_clear();
 					me.apply_wrapper_height();
 					Upfront.Events.trigger("entity:modules:after_render", me, me.model);
-				});
+				// });
 			},
 			render_module: function (module, options) {
 				var $el = this.$el,
