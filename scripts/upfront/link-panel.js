@@ -279,7 +279,7 @@ define([
 		/* Handle manually entered urls: external and email */
 		onUrlInputBlur: function(event) {
 			var userInput = $(event.currentTarget).val().trim();
-			if (this.model.get('type') === 'external' && !userInput.match(/https?:\/\//)) {
+			if (this.model.get('type') === 'external' && !userInput.match(/https?:\/\//) && !_.isEmpty( userInput ) ) {
 				userInput = 'http://' + userInput;
 			}
 			if (this.model.get('type') === 'email' && !userInput.match(/^mailto:/)) {
@@ -355,12 +355,12 @@ define([
 			var me = this;
 
 			this.targetRadio = new Upfront.Views.Editor.Field.Radios({
-				label: 'Target:',
+				label: Upfront.Settings.l10n.global.content.target,
 				default_value: this.model.get('target') || '_self',
 				layout: 'horizontal-inline',
 				values: [
-					{ label: 'blank', value: '_blank' },
-					{ label: 'self', value: '_self' }
+					{ label: Upfront.Settings.l10n.global.content.blank, value: '_blank' },
+					{ label: Upfront.Settings.l10n.global.content.self, value: '_self' }
 				],
 				change: function () {
 					me.model.set({'target': this.get_value()});

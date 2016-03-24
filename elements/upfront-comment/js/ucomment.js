@@ -554,6 +554,8 @@ var Settings = ElementSettings.extend({
 
 var UcommentElement = Upfront.Views.Editor.Sidebar.Element.extend({
 
+	draggable: false,
+
 	render: function () {
 		this.$el.addClass('upfront-icon-element upfront-icon-element-comment');
 		this.$el.html(l10n.element_name);

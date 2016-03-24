@@ -1,0 +1,30 @@
+.<?php echo $properties['id'] ?> .upfront-post-data-part .thumbnail {
+
+	<?php if (!empty($properties['static-featured_image-use-border'])) { ?>
+
+		<?php if (!empty($properties['static-featured_image-border-width'])) { ?>
+			border-width: <?php echo $properties['static-featured_image-border-width'] ?>px;
+		<?php } ?>
+
+		<?php if (!empty($properties['static-featured_image-border-type'])) { ?>
+			border-style: <?php echo $properties['static-featured_image-border-type'] ?>;
+		<?php } ?>
+
+		<?php if (!empty($properties['static-featured_image-border-color'])) { ?>
+			border-color: <?php echo $properties['static-featured_image-border-color'] ?>;
+		<?php } ?>
+
+	<?php } ?>
+
+	<?php if (!empty($properties['static-featured_image-use-radius'])) { ?>
+
+		border-radius: <?php echo $properties['static-featured_image-radius1'] ? $properties['static-featured_image-radius1'] : 0 ?>px
+			<?php echo $properties['static-featured_image-radius2'] ? $properties['static-featured_image-radius2'] : 0 ?>px
+			<?php echo $properties['static-featured_image-radius3'] ? $properties['static-featured_image-radius3'] : 0 ?>px
+			<?php echo $properties['static-featured_image-radius4'] ? $properties['static-featured_image-radius4'] : 0 ?>px
+		;
+
+	<?php } ?>
+}
+
+<?php if(!empty($properties['preset_style'])) { ?><?php echo $properties['preset_style'] ?><?php } ?>

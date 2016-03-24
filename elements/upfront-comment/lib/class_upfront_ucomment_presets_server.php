@@ -5,6 +5,7 @@ if (!class_exists('Upfront_Presets_Server')) {
 }
 
 class Upfront_Ucomment_Presets_Server extends Upfront_Presets_Server {
+	protected $isCommentServer = true;
 	private static $instance;
 
 	public function get_element_name () {

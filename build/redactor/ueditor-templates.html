@@ -39,13 +39,13 @@
 </script>
 
 <script type="text/template" id="post-image-insert-tpl">
-    <div data-variant="{{variant_id}}" class="ueditor-insert ueditor-insert-variant-group {{style.label_id}} ueditor-insert-float-{{style.group.float}} {{style.group.width_cls}} {{style.group.left_cls}}" style="min-height: {{style.group.height}}px;float:{{style.group.float}}; {[if( style.group.marginRight > 0 ){]}margin-right:{{style.group.marginRight}}px;{[ } ]} {[if( style.group.marginLeft > 0 ) {]}margin-left:{{style.group.marginLeft}}px;{[ } ]}" >
+    <div data-variant="{{variant_id}}" class="ueditor-insert ueditor-insert-variant-group {{style.label_id}} ueditor-insert-float-{{style.group.float}} {{style.group.width_cls}}" style="min-height: {{style.group.height}}px;float:{{style.group.float}}; {[if( style.group.marginRight > 0 ){]}margin-right:{{style.group.marginRight}}px;{[ } ]} {[if( style.group.marginLeft > 0 ) {]}margin-left:{{style.group.marginLeft}}px;{[ } ]}" >
         {[if( style.caption.order == 0 && show_caption) {]}
-            <div class="upfront-wrapper wp-caption-text {{style.caption.width_cls}} {{style.caption.left_cls}} {{style.caption.top_cls}}" style="min-height:{{style.caption.height}}px">{{ caption }}</div>
+            <div class="upfront-wrapper wp-caption-text {{style.caption.width_cls}}" style="min-height:{{style.caption.height}}px">{{ caption }}</div>
         {[ } ]}
-        <div class="upfront-wrapper uinsert-image-wrapper {{style.image.width_cls}} {{style.image.left_cls}} {{style.image.top_cls}} {[ if(!isLocal){ ]}uinsert-image-external{[ } ]}" style="min-height: {{style.image.height}}px;">{[if(linkType != "do_nothing"){ ]}<a href="{{linkUrl}}">{[ } ]}<img class="" data-url="{imageFull.src}"  src="{{image.src}}" {[if(!isLocal){ ]}style="top: {{ externalImage.top }}px; left: {{ externalImage.left }}px; width: {{ externalImage.width }}px; height: {{ externalImage.height }}px"{[ } ]}/>{[if(linkType != "do_nothing"){ ]}</a>{[ } ]}</div>
+        <div class="upfront-wrapper uinsert-image-wrapper {{style.image.width_cls}} {[ if(!isLocal){ ]}uinsert-image-external{[ } ]}" style="min-height: {{style.image.height}}px;">{[if(linkType != "do_nothing"){ ]}<a href="{{linkUrl}}">{[ } ]}<img class="" data-url="{imageFull.src}"  src="{{image.src}}" {[if(!isLocal){ ]}style="top: {{ externalImage.top }}px; left: {{ externalImage.left }}px; width: {{ externalImage.width }}px; height: {{ externalImage.height }}px"{[ } ]}/>{[if(linkType != "do_nothing"){ ]}</a>{[ } ]}</div>
             {[if( style.caption.order == 1 && show_caption) {]}
-                <div class="upfront-wrapper wp-caption-text {{style.caption.width_cls}} {{style.caption.left_cls}} {{style.caption.top_cls}}" style="min-height:{{style.caption.height}}px">{{ caption }}</div>
+                <div class="upfront-wrapper wp-caption-text {{style.caption.width_cls}}" style="min-height:{{style.caption.height}}px">{{ caption }}</div>
             {[ } ]}
         <div style="clear:both;"></div>
 
@@ -55,16 +55,11 @@
 
 <script type="text/template" id="post-image-insert-shortcode-tpl">
     [caption id="{{id}}"  uf_variant="{{variant_id}}" uf_show_caption="{{show_caption}}" ]
-        {[if( style.caption.order == 0 ) {]}
-            {{ caption }}
-        {[ } ]}
         {[if(linkType != "do_nothing"){ ]}<a href="{{linkUrl}}">{[ } ]}
         <img width="{{image.width}}"   src="{{image.src}}"/>
         {[if(linkType != "do_nothing"){ ]}</a>{[ } ]}
 
-        {[if( style.caption.order == 1 ) {]}
-            {{ caption }}
-        {[ } ]}
+		{{ caption }}
     [/caption]
 </script>
 <script type="text/template" id="post-image-insert-wp-tpl">

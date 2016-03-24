@@ -48,6 +48,22 @@ class Upfront_UploadHandler extends UploadHandler {
 		return $content;
 	}
 
+	protected function get_file_name($name, $type = null, $index = null, $content_range = null) {
+		$filename = parent::get_file_name($name, $type, $index, $content_range);
+		return self::to_clean_file_name($filename);
+	}
+
+	/**
+	 * Cleans up the file name to prevent spaces
+	 *
+	 * @param string $raw Raw file name
+	 *
+	 * @return string Fixed file name
+	 */
+	public static function to_clean_file_name ($raw) {
+		return preg_replace('/\s+/', '-', $raw);
+	}
+
 	/**
 	 * Override the image orientation and try to set memory limit high for this first.
 	 *

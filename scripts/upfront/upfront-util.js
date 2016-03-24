@@ -60,6 +60,9 @@ define(function() {
 	};
 
 	var Util = {
+		isRTL: function(){
+			return !!Upfront.mainData.isRTL;
+		},
 		model_to_json: function (model) {
 			if (!model) return {};
 			var raw = (model && model.toJSON ? model.toJSON() : model),
@@ -138,6 +141,9 @@ define(function() {
 
 			// Was request made from dev mode
 			request.dev = location.search.indexOf('dev=true') > -1;
+			
+			// Was request made from the builder
+			request.isbuilder = Upfront.Application.is_builder();
 
 			return $.post(Upfront.Settings.ajax_url, request, function () {}, data_type ? data_type : "json");
 		},

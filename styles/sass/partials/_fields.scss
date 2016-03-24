@@ -19,10 +19,10 @@ textarea.upfront-field-text.upfront-field-textarea {
 	color: rgb(38, 58, 77);
 	height: 26px;
 	width: 100%;
-	padding: 7px 10px;
+	padding: 0px 10px;
 	font-size: 11px;
 	font-family: verdana, sans-serif;
-	line-height: 16px;
+	line-height: 1;
 }
 input.upfront-field-text.upfront-has_inline_label {
 	width: auto;
@@ -83,7 +83,25 @@ input.upfront-field-text:hover,
 	position:relative;
 	border-left:1px solid #A1C3E5;
 	cursor: pointer;
+	background-image: url('../img/uf-ui-sprite.svg');
+	background-position: -345px -242px;
 }
+.typography-panel .upfront-field-number[type=number]::-webkit-inner-spin-button {
+	-webkit-appearance:none;
+	width:14px;
+	padding:0;
+	margin:0;
+	height:100%;
+	background-color:#D8EDFF;
+	display:inline-block;
+	position:relative;
+	border-left:1px solid #A1C3E5;
+	cursor: pointer;
+	background-image: url('../img/uf-ui-sprite.svg');
+	background-position: -345px -244px;
+}
+/* Google chrome dont support :before & :after for inner-spin anymore */
+/*
 .upfront-field-number[type=number]::-webkit-inner-spin-button:before {
 	content: ' ';
 	position:absolute;
@@ -106,6 +124,7 @@ input.upfront-field-text:hover,
 	top:4px;
 	left:3px;
 }
+*/
 /* end chrome input[type=number] styling */
 .upfront-field-select, .upfront-field-select-options {
 	background: rgb(242, 249, 255);
@@ -355,6 +374,9 @@ input.upfront-field-text:hover,
 	display: inline-block;
 	vertical-align: baseline;
 	margin: 0 15px 0 0;
+}
+.upfront-field-multiple-horizontal-inline:last-child {
+	margin: 0;
 }
 .upfront-field-multiple:hover,
 .upfront-field-multiple-selected {
@@ -777,4 +799,22 @@ div.upfront-date_picker td a{
 	margin-left: 5px;
 	margin-right: 5px;
 	margin-bottom: -4px;
+}
+
+.upfront-filter_display_control {
+	display: inline-block;
+	margin-top: 0;
+	vertical-align: top;
+	margin-left: 20px;
+}
+.upfront-filter_display_control label.upfront-field-label {
+	display: inline-block;
+	vertical-align: top;
+	margin-top: 6px;
+	margin-right: 5px;
+	font-weight: normal;
+	color: #000;
+}
+.upfront-filter_display_control .upfront-field-select {
+	display: inline-block;
 }

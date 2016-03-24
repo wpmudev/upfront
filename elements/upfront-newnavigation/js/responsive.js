@@ -371,6 +371,14 @@ jQuery(document).ready(function($) {
 					if(typeof usingNewAppearance !== "undefined" && usingNewAppearance) {
 						$(this).attr('data-style', ( preset.menu_style ? preset.menu_style : $(this).data('stylebk') ));
 						$(this).attr('data-alignment', ( preset.menu_alignment ? preset.menu_alignment : $(this).data('alignmentbk') ));
+					} else {
+						//We should reset the data-style and data-alignment if element is not migrated
+						if(typeof breakpoints[currentKey] !== "undefined" && typeof breakpoints[currentKey].menu_style !== "undefined") {
+							$(this).attr('data-style', ( breakpoints[currentKey].menu_style ));
+						}
+						if(typeof breakpoints[currentKey] !== "undefined" && typeof breakpoints[currentKey].menu_alignment !== "undefined") {
+							$(this).attr('data-alignment', ( breakpoints[currentKey].menu_alignment ));
+						}
 					}
 
 					$(this).removeAttr('data-burger_alignment','');

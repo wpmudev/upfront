@@ -64,6 +64,9 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			'click .upfront-icon-prev': 'prevSlide',
 			'click .uslider-starting-options': 'checkStartingInputClick'
 		});
+		
+		//Update slide defaults to match preset settings
+		this.updateSlideDefaults();
 
 		this.model.slideCollection = new Uslider_Slides(this.property('slides'));
 
@@ -96,6 +99,18 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		//Current Slide index
 		this.setCurrentSlide(0);
+	},
+	
+	updateSlideDefaults: function() {
+		primary = this.get_preset_properties().primaryStyle,
+			defaults = {
+				below: 'below',
+				over: 'bottomOver',
+				side: 'right'
+			}
+		;
+
+		Upfront.data.uslider.slideDefaults.style = defaults[primary];
 	},
 
 	get_preset_properties: function() {
@@ -298,6 +313,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		_.delay( function(){
 			me.controls.$el.html( panel.$el );
 			me.controls.$el.css("width", "auto");
+			me.updateSlideControls();
 		}, 400);
 	},
 	hideSliderNavigation: function(){
@@ -419,7 +435,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		if(typeof(this.controls) !== 'undefined') {
 			this.controls = undefined;
 		}
-
+		
 		this.updateControls();
 	},
 
