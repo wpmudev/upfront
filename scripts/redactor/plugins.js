@@ -70,7 +70,7 @@ var UeditorPanel = Backbone.View.extend({
     appendOkButton: function(text){
         var me = this;
         if(!me.$el.siblings('.ueditor-ok').length){
-            text = text || 'Ok';
+            text = text || Upfront.Settings.l10n.global.content.ok;
             var button = $('<a class="ueditor-ok">' + text + '</a>').on('click', function(e){
                 me.$el.trigger('ok');
             });
@@ -212,6 +212,12 @@ RedactorPlugins.stateButtons = function() {
  --------------------- */
 RedactorPlugins.stateAlignment = function() {
     return {
+        align: function( alignment ){
+            $(this.selection.getBlock()).css('text-align', alignment );
+            $(this.selection.getBlocks()).css('text-align', alignment );
+            this.selection.restore();
+            this.code.sync();
+        },
         init: function(){
             if( !this.$toolbar  ) return;
             var self = this;
@@ -228,11 +234,7 @@ RedactorPlugins.stateAlignment = function() {
                             return $parent.length && $parent.css('text-align') == 'left';
                         },
                         callback: function(name, el , button){
-                            if( !self.utils.isCurrentOrParent("li") ){
-                                self.alignment.set('left');
-                            }else{
-                                $(self.selection.getCurrent()).css('text-align', "left");
-                            }
+                            self.stateAlignment.align( "left" );
                         }
                     },
                     center: {
@@ -244,11 +246,7 @@ RedactorPlugins.stateAlignment = function() {
                             return $parent.length && $parent.css('text-align') == 'center';
                         },
                         callback: function(name, el , button){
-                            if( !self.utils.isCurrentOrParent("li") ){
-                                self.alignment.center();
-                            }else{
-                                $(self.selection.getCurrent()).css('text-align', "center");
-                            }
+                            self.stateAlignment.align("center");
                         }
                     },
                     right: {
@@ -260,11 +258,7 @@ RedactorPlugins.stateAlignment = function() {
                             return $parent.length && $parent.css('text-align') == 'right';
                         },
                         callback: function(name, el , button){
-                            if( !self.utils.isCurrentOrParent("li") ){
-                                self.alignment.right();
-                            }else{
-                                $(self.selection.getCurrent()).css('text-align', "right");
-                            }
+                            self.stateAlignment.align("right");
                         }
                     },
                     justify: {
@@ -276,13 +270,7 @@ RedactorPlugins.stateAlignment = function() {
                             return $parent.length && $parent.css('text-align') == 'justify';
                         },
                         callback: function(name, el , button){
-                            if( !self.utils.isCurrentOrParent("li") ){
-                                self.alignment.justify();
-                            }else{
-                                $(self.selection.getCurrent()).css('text-align', "justify");
-                            }
-
-
+                            self.stateAlignment.align("justify");
                         }
                     }
                 }
@@ -884,7 +872,6 @@ RedactorPlugins.upfrontLink = function() {
 					return;
 				}
 
-				this.redactor.selection.restore();
 
 				if (this.selectedLink) {
 					// Update selected link
@@ -1041,7 +1028,7 @@ RedactorPlugins.upfrontColor = function() {
                             palette: theme_colors,
                             maxSelectionSize: 10,
                             preferredFormat: "hex",
-                            chooseText: "Ok",
+                            chooseText: Upfront.Settings.l10n.global.content.ok,
                             showInput: true,
                             allowEmpty: true,
                             change: function (color) {
@@ -1063,7 +1050,7 @@ RedactorPlugins.upfrontColor = function() {
                             localStorageKey: "spectrum.recent_bgs",
                             maxSelectionSize: 10,
                             preferredFormat: "hex",
-                            chooseText: "Ok",
+                            chooseText: Upfront.Settings.l10n.global.content.ok,
                             showInput: true,
                             allowEmpty: true,
                             change: function (color) {

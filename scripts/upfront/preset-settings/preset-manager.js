@@ -279,7 +279,9 @@ define([
 		getPresetDefaults: function(presetName) {
 			return _.extend(this.presetDefaults, {
 				id: presetName.toLowerCase().replace(/ /g, '-'),
-				name: presetName
+				name: presetName,
+				// should always be empty
+				preset_style: ''
 			});
 		},
 

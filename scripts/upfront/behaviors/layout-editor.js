@@ -689,10 +689,7 @@ var LayoutEditor = {
 			current = Upfront.Application.layout.get("current_layout"),
 			html = ''
 		;
-		$bg
-			.width($(window).width())
-			.height($(document).height())
-		;
+
 		html += '<p>' + Upfront.Settings.l10n.global.behaviors.this_post_only + '</p>';
 		$.each(_upfront_post_data.layout, function (idx, el) {
 			//var checked = el == current ? "checked='checked'" : '';
@@ -704,22 +701,29 @@ var LayoutEditor = {
 		});
 		//html += '<button type="button" id="upfront-save_as">Save</button>';
 		//html += '<button type="button" id="upfront-cancel_save">Cancel</button>';
-		$dialog
-			.html(html)
-		;
-		$("#upfront-save-dialog").on("click", ".upfront-save-button", function () {
-			/*var $check = $dialog.find(":radio:checked"),
-				selected = $check.length ? $check.val() : false
-			;*/
-			var selected = $(this).attr('data-save-as');
+
+		if(location.pathname.indexOf('create_new') > -1) {
 			$bg.remove(); $dialog.remove();
-			on_complete.apply(context, [selected]);
-			return false;
-		});
-		$("#upfront-save-dialog-background").on("click", function () {
-			$bg.remove(); $dialog.remove();
-			return false;
-		});
+			//We are in builder do not show popup
+			on_complete.apply(context, ['single-post']);
+		} else {
+			$dialog
+				.html(html)
+			;
+			$("#upfront-save-dialog").on("click", ".upfront-save-button", function () {
+				/*var $check = $dialog.find(":radio:checked"),
+					selected = $check.length ? $check.val() : false
+				;*/
+				var selected = $(this).attr('data-save-as');
+				$bg.remove(); $dialog.remove();
+				on_complete.apply(context, [selected]);
+				return false;
+			});
+			$("#upfront-save-dialog-background").on("click", function () {
+				$bg.remove(); $dialog.remove();
+				return false;
+			});
+		}
 	},
 
 	/**
@@ -1185,49 +1189,66 @@ var LayoutEditor = {
 	 */
 	_get_saved_layout: function (){
 		var me = this,
-			deferred = new $.Deferred();
-		Upfront.Util.post({
-			action: 'upfront_list_theme_layouts'
-		}).success(function(response){
-			me.saved_layouts = response.data;
-			deferred.resolve(response.data);
-		}).error(function(){
-			deferred.reject();
-		});
+			deferred = new $.Deferred()
+		;
+		
+		// The request should only ever be sent in builder mode
+		if (Upfront.Application.is_builder()) {
+			Upfront.Util.post({
+				action: 'upfront_list_theme_layouts'
+			}).success(function(response){
+				me.saved_layouts = response.data;
+				deferred.resolve(response.data);
+			}).error(function(){
+				deferred.reject();
+			});
+		} else setTimeout(deferred.reject);
+
 		return deferred.promise();
 	},
 
 	_get_themes: function () {
 		var me = this,
-			deferred = new $.Deferred();
-		Upfront.Util.post({
-			action: 'upfront_thx-get-themes'
-		}).success(function(response){
-			me.themes = response;
-			deferred.resolve(response);
-		}).error(function(){
-			deferred.reject();
-		});
+			deferred = new $.Deferred()
+		;
+		// The request should only ever be sent in builder mode
+		if (Upfront.Application.is_builder()) {
+			Upfront.Util.post({
+				action: 'upfront_thx-get-themes'
+			}).success(function(response){
+				me.themes = response;
+				deferred.resolve(response);
+			}).error(function(){
+				deferred.reject();
+			});
+		} else setTimeout(deferred.reject);
 		return deferred.promise();
 	},
 
 	_create_theme: function (data) {
 		var deferred = new $.Deferred();
-		Upfront.Util.post({
-			action: 'upfront_thx-create-theme',
-			form: this._build_query(data)
-		}).success(function(response){
-			if ( response && response.error )
-				deferred.reject(response.error);
-			else
-				deferred.resolve();
-		}).error(function(){
-			deferred.reject();
-		});
+
+		// The request should only ever be sent in builder mode
+		if (Upfront.Application.is_builder()) {
+			Upfront.Util.post({
+				action: 'upfront_thx-create-theme',
+				form: this._build_query(data)
+			}).success(function(response){
+				if ( response && response.error )
+					deferred.reject(response.error);
+				else
+					deferred.resolve();
+			}).error(function(){
+				deferred.reject();
+			});
+		} else setTimeout(deferred.reject);
 		return deferred.promise();
 	},
 
 	export_element_styles: function(data) {
+		// The request should only ever be sent in builder mode
+		if (!Upfront.Application.is_builder()) return false;
+
 		Upfront.Util.post({
 			action: 'upfront_thx-export-element-styles',
 			data: data
@@ -1251,8 +1272,15 @@ var LayoutEditor = {
 		var typography,
 			properties,
 			layout_style,
-			deferred,
-			data = {};
+			deferred = new $.Deferred(),
+			data = {}
+		;
+
+		// The request should only ever be sent in builder mode
+		if (!Upfront.Application.is_builder()) {
+			setTimeout(deferred.reject);
+			return deferred.promise();
+		}
 
 		typography = _.findWhere(
 			Upfront.Application.current_subapplication.get_layout_data().properties,
@@ -1295,7 +1323,6 @@ var LayoutEditor = {
 
 		if (custom_data) data = _.extend(data, custom_data);
 
-		deferred = new $.Deferred();
 		Upfront.Util.post({
 			action: 'upfront_thx-export-layout',
 			data: data

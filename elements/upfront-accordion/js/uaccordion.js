@@ -79,7 +79,7 @@ define([
 			event.preventDefault();
 			this.property('accordion').push({
 				title: l10n.panel_label + ' ' + (1 + this.property('accordion_count')),
-				content: l10n.content_label.replace("</p>",   ' ' + (1 + this.property('accordion_count') + "</p>" ) ) // inject the number into p tag
+				content: $.trim(  l10n.content_label.replace("</p>",   ' ' + (1 + this.property('accordion_count') + "</p>" ) ) ) // inject the number into p tag
 			});
 			this.property('accordion_count', this.property('accordion').length, false);
 		},

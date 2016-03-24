@@ -356,6 +356,8 @@ define([
 				rotation: this.property('rotation'),
 				fullSize: this.property('fullSize'),
 				align: this.property('align'),
+				valign: this.property('valign'),
+				isDotAlign: this.property('isDotAlign'),
 				maskSize: maskSize,
 				maskOffset: maskOffset
 			};
@@ -494,7 +496,7 @@ define([
 					width: Math.min(elementSize.width, size.width),
 					height: Math.min(elementSize.height, size.height)
 				});
-
+				
 				img.attr('src', me.property('srcFull'))
 					.css({
 						width: size.width,
@@ -521,7 +523,8 @@ define([
 			panel.items = this.getControlItems();
 			panel.render();
 			_.delay( function(){
-				me.controls.$el.html( panel.$el )
+				me.controls.$el.html( panel.$el );
+				me.updateControls();
 			}, 400);
 		},
 		getElementShapeSize: function (elementSize) {
@@ -690,6 +693,7 @@ define([
 				// this.$control_el.find('>.upfront-element-controls').html('').append(this.controls.$el);
 			}
 			this.$control_el.find('>.upfront-element-controls').html('').append(this.controls.$el); // we need to refresh controls because caption item has to be activated or deactivate depending on the `show caption`
+			this.updateAdvancedPadding();
 			this.controls.delegateEvents();
 		},
 
@@ -815,6 +819,7 @@ define([
 				data: {
 					position: this.property('position'),
 					size: this.property('size'),
+					checkSize: this.checkSize(),
 					stretch: this.property('stretch'),
 					vstretch: this.property('vstretch')
 				},
@@ -831,12 +836,15 @@ define([
 				return;
 			}
 
-			//let's get rid of the image-caption-container to proper resizing
-			this.$('.upfront-image-caption-container, .upfront-image-container').css({
-				width: '100%',
-				height: '100%',
-				marginTop: 0
-			});
+			if(this.resizingData.data.checkSize !== "small") {
+				//let's get rid of the image-caption-container to proper resizing
+				this.$('.upfront-image-caption-container, .upfront-image-container').css({
+					width: '100%',
+					height: '100%',
+					marginTop: 0
+				});
+			}
+
 			this.$('.uimage').css('min-height', 'auto');
 		},
 
@@ -872,32 +880,89 @@ define([
 			//Wonderful stuff from here down
 			this.$('.uimage').css('height', data.elementSize.height);
 			
-			/*
-			 * Disable image resize on element resize, use Image Edit mode instead
-			 */
+			var is_locked = this.property('is_locked');
+
+			if(is_locked === false) {
+				//Resizing the stretching dimension has priority, the other dimension just alter position
+				if(data.stretch && !data.vstretch){
+					this.resizingH(img, data, true);
+					this.resizingV(img, data);
+				} else if(!data.stretch && data.vstretch){
+					this.resizingV(img, data, true);
+					this.resizingH(img, data);
+				} else {
+					//Both stretching or not stretching, calculate ratio difference
+					ratio = data.size.width / data.size.height - data.elementSize.width / data.elementSize.height;
+
+					//Depending on the difference of ratio, the resizing is made horizontally or vertically
+					if(ratio > 0 && data.stretch || ratio < 0 && ! data.stretch){
+						this.resizingV(img, data, true);
+						this.resizingH(img, data);
+					}
+					else {
+						this.resizingH(img, data, true);
+						this.resizingV(img, data);
+					}
+				}
+			} else {
+				var vertical_align = this.property('valign'),
+					current_position = this.property('position'),
+					isDotAlign = this.property('isDotAlign'),
+					containerHeight = this.$('.upfront-image-container').height(),
+					sizeCheck = this.checkSize(),
+					imgPosition = img.position(),
+					maskSize = this.getMaskSize(),
+					imageView = this.getImageViewport(),
+					margin;
+
+				if(sizeCheck === "small") {
+					this.$('.upfront-image-caption-container, .upfront-image-container').css({
+						width: maskSize.width,
+						height: maskSize.height,
+						position: 'relative',
+						overflow: 'hidden'
+					});	
+				}
+				
+				if(typeof imageView.width !== "undefined") {
+					if(data.elementSize.width > imageView.width) {
+						img.css({left: imgPosition.left + (maskSize.width - imageView.width)});
+					}
+				}
+				
+				if(typeof imageView.height !== "undefined") {
+					if(data.elementSize.height > imageView.height) {
+						img.css({top: imgPosition.top + (maskSize.height - imageView.height)});
+					}
+				}
+
+				if(sizeCheck === "small" && isDotAlign === true) {
+					if(vertical_align === "center") {
+						if(data.size.height < data.elementSize.height) {
+							margin = (data.size.height - data.elementSize.height) / 2;
+						} else {
+							margin = -(data.elementSize.height - containerHeight) / 2;
+						}
+					}
+					
+					if(vertical_align === "bottom") {
+						if(data.size.height < data.elementSize.height) {
+							margin = (data.size.height - data.elementSize.height);
+						} else {
+							margin = -(data.elementSize.height - containerHeight)
+						}
+					}
+					
+					this.$('.upfront-image-caption-container').css({
+						'marginTop': -margin,
+					});
+					
+					this.property('marginTop', -margin);
+					this.property('position', {top: margin, left: current_position.left});
+
+				}
+			}
 			
-			//Resizing the stretching dimension has priority, the other dimension just alter position
-			//if(data.stretch && !data.vstretch){
-			//	this.resizingH(img, data, true);
-			//	this.resizingV(img, data);
-			//} else if(!data.stretch && data.vstretch){
-			//	this.resizingV(img, data, true);
-			//	this.resizingH(img, data);
-			//} else {
-				//Both stretching or not stretching, calculate ratio difference
-			//	ratio = data.size.width / data.size.height - data.elementSize.width / data.elementSize.height;
-
-				//Depending on the difference of ratio, the resizing is made horizontally or vertically
-			//	if(ratio > 0 && data.stretch || ratio < 0 && ! data.stretch){
-			//		this.resizingV(img, data, true);
-			//		this.resizingH(img, data);
-			//	}
-			//	else {
-			//		this.resizingH(img, data, true);
-			//		this.resizingV(img, data);
-			//	}
-			//}
-
 			this.updateControls();
 			this.setupBySize();
 		},
@@ -916,8 +981,14 @@ define([
 				imgSize = {width: img.width(), height: img.height()},
 				imgPosition = img.position(),
 				padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding);
+				sizeCheck = this.checkSize(),
+				isDotAlign = this.property('isDotAlign');
 
-			if(starting.length){
+			if(sizeCheck === "small" && isDotAlign === true) {	
+				imgPosition = {top: 0, left: 0};
+			}
+
+			if(starting.length) {
 				this.elementSize = {
 					height: attr.height - (2 * padding),
 					width: attr.width - (2 * padding)
@@ -950,6 +1021,42 @@ define([
 
 			this.resizingData = {};
 			this.showCaption();
+		},
+		
+		getMaskSize: function() {
+			var me = this,
+				size = this.property('size'),
+				checkSize = this.checkSize(),
+				elementSize = this.property('element_size'),
+				minWidth = Math.min(size.width, elementSize.width),
+				minHeight = Math.min(size.height, elementSize.height),
+				newSize;
+
+			newSize = { width: minWidth, height: minHeight};	
+			
+			return newSize;
+		},
+		
+		getImageViewport: function() {
+			var me = this,
+				img = this.resizingData.img,
+				imgPosition = img.position(),
+				viewPort,
+				viewWidth,
+				viewHeight;
+
+			if(imgPosition.left < 0) {
+				viewWidth = img.width() - Math.abs(imgPosition.left);
+			}
+			
+			if(imgPosition.top < 0) {
+				viewHeight = img.height() - Math.abs(imgPosition.top);
+			}
+
+			viewPort = {width: viewWidth, height: viewHeight};
+			
+			return viewPort;
+
 		},
 
 		on_uimage_update: function (view) {
@@ -1302,6 +1409,8 @@ define([
 			this.property('element_size', result.maskSize, true);
 
 			this.property('align', result.align, true);
+			this.property('valign', result.valign, true);
+			this.property('isDotAlign', result.isDotAlign, true)
 			this.property('stretch', result.stretch, true);
 			this.property('vstretch', result.vstretch, true);
 			this.property('quick_swap', false, true);
@@ -1321,6 +1430,7 @@ define([
 
 		editRequest: function () {
 			var me = this;
+
 			if(this.property('image_status') === 'ok' && this.property('image_id')) {
 				if (this.isThemeImage() && 'themeExporter' in Upfront) {
 					this.importImage().always(function(){
@@ -1334,6 +1444,81 @@ define([
 			}
 
 			Upfront.Views.Editor.notify(l10n.external_nag, 'error');
+		},
+		
+		lockImage: function () {
+			var me = this,
+				is_locked = this.property('is_locked'),
+				sizeCheck = this.checkSize();
+
+			if(typeof is_locked !== "undefined" && is_locked === true) {
+				//Update icon
+				this.controls.$el.find('.upfront-icon-region-lock-locked')
+					.addClass('upfront-icon-region-lock-unlocked')
+					.removeClass('upfront-icon-region-lock-locked');
+					
+				this.property('is_locked', false);
+
+				if(sizeCheck === "small") {
+					this.$('.upfront-image-caption-container, .upfront-image-container').css({
+						width: '100%',
+						height: '100%',
+						marginTop: 0
+					});
+					
+					this.fitImage();
+					
+					this.cropTimer = setTimeout(function(){
+						me.saveTemporaryResizing();
+					}, this.cropTimeAfterResize);
+				}
+			} else {
+				//Update icon
+				this.controls.$el.find('.upfront-icon-region-lock-unlocked')
+					.addClass('upfront-icon-region-lock-locked')
+					.removeClass('upfront-icon-region-lock-unlocked');
+					
+				this.property('is_locked', true);
+			}
+		},
+		
+		fitImage: function() {
+			var maskSize = this.property('element_size'),
+				position = this.property('position'),
+				size = this.property('size');
+				
+			var newSize = Upfront.Views.Editor.ImageEditor.getResizeImageDimensions(size, {width: maskSize.width, height: maskSize.height}, 'outer', 0);
+			
+			this.property('size', {width: newSize.width, height: newSize.height});
+			
+			this.temporaryProps = {
+				size: {width: newSize.width, height: newSize.height},
+				position: position
+			};
+			
+			this.property('vstretch', true);
+
+			this.$('.upfront-image-container img').css({
+				width: newSize.width,
+				height: newSize.height,
+				left: '0px',
+				top: '0px'
+			});
+			
+			this.$('.upfront-image-wrapper').css({
+				height: maskSize.height
+			})
+		},
+		
+		checkSize: function() {
+			var maskSize = this.property('element_size'),
+				size = this.property('size');
+
+			if(size.width >= maskSize.width && size.height >= maskSize.height) {
+				return 'big';
+			}
+			
+			return 'small';
 		},
 
 		getElementColumns: function(){
@@ -1385,11 +1570,21 @@ define([
 			}
 
 			options.element_id = me.model.get_property_value_by_name('element_id');
+			
+			options.element_cols = me.get_element_columns();
+			
+			//Remove controls when open image editor
+			if(typeof this.controls !== "undefined") {
+				this.controls.remove();
+			}
 
 			Upfront.Views.Editor.ImageEditor.open(options)
 				.done(function(result){
 					me.handleEditorResult(result);
 					this.stoppedTimer = false;
+					
+					// Update controls after image editor
+					me.updateControls();
 				})
 				.fail(function(data){
 					if(data && data.reason === 'changeImage') {
@@ -1398,6 +1593,9 @@ define([
 						me.saveTemporaryResizing();
 						me.stoppedTimer = false;
 					}
+					
+					// Update controls after image editor
+					me.updateControls();
 				})
 			;
 		},
@@ -1477,41 +1675,31 @@ define([
 		getControlItems: function(){
 			var me = this,
 				panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
-				captionControl = new Upfront.Views.Editor.InlinePanels.TooltipControl()
+				moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl(),
+				is_locked = this.property('is_locked')
 			;
+			
+			if(typeof is_locked !== "undefined" && is_locked === true) {
+				var lock_icon = 'lock-locked';
+			} else {
+				var lock_icon = 'lock-unlocked';
+			}
+			
+			moreOptions.icon = 'more';
+			moreOptions.tooltip = l10n.ctrl.caption_position;
 
-			captionControl.sub_items = {
-				nocaption: this.createControl('nocaption', l10n.ctrl.no_caption),
-				showCaption: this.createControl('showCaption', l10n.ctrl.show_caption)
+			moreOptions.sub_items = {
+				swap: this.createControl('swap', l10n.btn.swap_image, 'openImageSelector'),
+				crop: this.createControl('crop', l10n.ctrl.edit_image, 'editRequest'),
+				link: this.createLinkControl(),
+				lock: this.createControl(lock_icon, l10n.ctrl.lock_image, 'lockImage'),
 			};
 
-
-			captionControl.icon = 'caption';
-			captionControl.tooltip = l10n.ctrl.caption_position;
-			captionControl.selected = this.property("display_caption");
-
-			this.listenTo(captionControl, 'select', function(item){
-				switch(item){
-					case 'showCaption':
-						me.property('display_caption', 'showCaption');
-						break;
-					default:
-						me.property('display_caption', "nocaption");
-						break;
-				}
-				me.render();
-			});
-
 			var controlls =  _([
-				this.createControl('crop', l10n.ctrl.edit_image, 'editRequest'),
-				this.createLinkControl(),
-				captionControl,
+				moreOptions,
 				this.createPaddingControl(),
 				this.createControl('settings', Upfront.Settings.l10n.global.views.settings, 'on_settings_click')
 			]);
-
-		if( "yes" !== this.get_preset_property("use_captions") )
-			controlls = _( controlls.without( captionControl ) );
 
 		return controlls;
 		}

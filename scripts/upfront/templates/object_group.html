@@ -1,0 +1,13 @@
+<div class="upfront-editable_entity upfront-object-group {{properties.class}} {{properties.preset}}" id="{{properties.element_id}}" {[ if (height > 0){ ]}style="min-height: {{height}}px;"{[ } ]}>
+	<b class="upfront-entity_meta upfront-ui">
+		<!-- {[ if (parseInt(properties.has_settings, 10)) { ]} <a href="#" class="upfront-icon-button upfront-icon-button-setting upfront-entity-settings_trigger"></a> {[ } ]} -->
+        {{extra_buttons}}
+		<!--<a href="#" class="upfront-icon-button upfront-icon-button-delete upfront-entity-delete_trigger"></a>-->
+	</b>
+	{[ if (buttons){ ]}
+	<b class="upfront-entity_meta upfront-ui upfront-entity_meta_extra">{{buttons}}</b>
+	{[ } ]}
+	<div class="upfront-object-group-default"></div>
+	<div class="upfront-objects_container upfront-output-{{properties.id_slug}}"></div>
+</div>
+<div class="upfront-object-group-finish-edit upfront-ui"><i class="upfront-field-icon upfront-field-icon-tick"></i> {{Upfront.Settings.l10n.global.views.done}}</div>

@@ -274,6 +274,11 @@ border-width: 11px;
 	border-left: 2px solid #dae6f2;
 }
 
+/* this is required for the code panel button when map is used for a region's background */
+.uf-bgsettings-mapitem .open-map-code-panel-button {
+	float:left;
+}
+
 .upfront_map-fields-simple_location .upfront-field-wrap-refresh button {
 	background-image: linear-gradient(-179deg, #fafdff 0%, #f3faff 100%) !important;
     border: 1px solid #a2bfda;

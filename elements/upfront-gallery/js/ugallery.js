@@ -214,7 +214,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		this. debouncedRender = _.debounce(this.render, 300);
 		this.debouncedRebindShuffle = _.debounce(this.rebindShuffleForDebouncing, 500);
 	},
-
 	onThumbChangeProportions: function(e) {
 		var factor = this.property('thumbProportions'),
 			width = this.property('thumbWidth');
@@ -360,7 +359,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			this.createLinkControl(image)
 		]);
 
-    if (this.property('labelFilters') === 'true') {
+		if (this.property('labelFilters') === 'true') {
 			panel.items.push(this.createLabelControl(image));
 		}
 
@@ -377,6 +376,11 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 		item.icon = icon;
 		item.tooltip = tooltip;
+		
+		//Set icon width & height
+		item.width = 30;
+		item.height = 30;
+
 		if(click_callback) {
 			this.listenTo(item, 'click', function(e){
 				me[click_callback](e);
@@ -499,15 +503,19 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		linkControl.icon = 'link';
 		linkControl.tooltip = l10n.ctrl.image_link;
 		linkControl.id = 'link';
+		
+		//Set icon width & height
+		linkControl.width = 30;
+		linkControl.height = 30;
 
 		return linkControl;
 	},
 
-  openLightbox: function(event) {
+	openLightbox: function(event) {
 		var gallery, magOptions;
 			gallery = false;
 			magOptions = ugalleries[galleryId].magnific;
-  },
+	},
 
 	openImageLightbox: function(e) {
 		var me = this,
@@ -848,7 +856,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			resizingFunction;
 
 		//Bind resizing events
-		if (me.parent_module_view && !me.parent_module_view.$el.data('resizeHandling')) {
+		if ( me.parent_module_view && !me.parent_module_view.$el.data('resizeHandling') ) {
 			resizingFunction = $.proxy(me.onElementResizing, me);
 			me.parent_module_view.$el
 				.on('resize', resizingFunction)
@@ -934,7 +942,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			})
 			.on('start', function() {
 				me.$el.addClass('upfront-editing');
-				title.parents('.ugallery_item').addClass('upfront-editing');
 			})
 			.on('stop', function() {
 				setTimeout(function() {
@@ -943,7 +950,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 				}, 10);
 
 				me.$el.removeClass('upfront-editing');
-				title.parents('.ugallery_item').removeClass('upfront-editing');
 			})
 			.on('syncAfter', function() {
 				image.set('title', title.html());
@@ -961,6 +967,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		// Not gonna do this because render will be triggered by parent class model changing
 		// 'row' property on resize.
 		// this.render(); <-- this is redundant and creates misscalculation of padding
+	},
+	
+	on_module_update: function (attr) {
+		this.render();
 	},
 
 	toggleSorting: function(event) {
