@@ -43,7 +43,12 @@
 
         var $this = $(this),
             $dropdown = $(".upfront-layouts-list"),
-            layout = $dropdown.val();
+            layout = $dropdown.val(),
+            label = $(".upfront-layouts-list option[value='"+  layout +"']").html(),
+            confirm = window.confirm( Upfront_Data.l10n.sure_to_reset_layout.replace("{layout}", label) );
+
+        if( confirm !== true ) return;
+
         $this.addClass("loading");
 
         Upfront.post(  {
@@ -68,10 +73,12 @@
     $(document).on("click", "#upfront_reset_theme", function(e){
         e.preventDefault();
 
-        $this = $(this);
-        $this.addClass("loading");
+        var $this = $(this),
+            confirm = window.confirm( Upfront_Data.l10n.sure_to_reset_theme );
 
-        if(!confirm("Hi there")) return;
+        if( confirm !== true ) return;
+
+        $this.addClass("loading");
 
         Upfront.post(  {
             action: "upfront_reset_all_from_db"
