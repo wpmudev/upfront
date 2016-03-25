@@ -66,26 +66,33 @@ define([
 						className: 'upfront-field-wrap upfront-field-wrap-select background-image-field',
 						property: 'background_default',
 						use_breakpoint_property: true,
-						default_value: 'color',
+						default_value: 'hide',
 						icon_class: 'upfront-region-field-icon',
 						values: [
-							{ label: l10n.color, value: 'color' },
-							{ label: l10n.image, value: 'image' },
+							{ label: l10n.featured_default_hide, value: 'hide' },
+							{ label: l10n.featured_default_color, value: 'color' },
+							{ label: l10n.featured_default_image, value: 'image' },
 						],
 						change: function () {
 							var value = this.get_value(),
 								bg_image = me.model.get_breakpoint_property_value('background_image', true)
-								;
+							;
+							this.$el.removeClass('uf-bgsettings-image-default-image uf-bgsettings-image-default-color uf-bgsettings-image-default-hide');
 							if ( value == 'image' ){
 								fields.pick_image.$el.show();
 								fields.bg_color.$el.hide();
 								this.$el.addClass('uf-bgsettings-image-default-image');
 								if ( !bg_image ) me.upload_image();
 							}
-							else {
+							else if ( value == 'color' ) {
 								fields.pick_image.$el.hide();
 								fields.bg_color.$el.show();
 								this.$el.addClass('uf-bgsettings-image-default-color');
+							}
+							else {
+								fields.pick_image.$el.hide();
+								fields.bg_color.$el.hide();
+								this.$el.addClass('uf-bgsettings-image-default-hide');
 							}
 							this.model.set_breakpoint_property(this.property_name, value);
 							me.update_image();
@@ -96,8 +103,11 @@ define([
 							if ( value == 'image' ) {
 								this.$el.addClass('uf-bgsettings-image-default-image');
 							}
-							else {
+							else if ( value == 'color' ) {
 								this.$el.addClass('uf-bgsettings-image-default-color');
+							}
+							else {
+								this.$el.addClass('uf-bgsettings-image-default-hide');
 							}
 						}
 					}),

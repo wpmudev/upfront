@@ -1,7 +1,8 @@
 (function ($) {
 define([
-	'text!elements/upfront-image/tpl/image_editor.html'
-], function(editorTpl) {
+	'text!elements/upfront-image/tpl/image_editor.html',
+	'elements/upfront-image/js/crop-controls',
+], function(editorTpl, CropControls) {
 	var l10n = Upfront.Settings.l10n.image_element;
 	var breakpointColumnPadding = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().get('column_padding');
 	breakpointColumnPadding = parseInt(breakpointColumnPadding, 10);
@@ -59,12 +60,10 @@ define([
 
 		events: {
 			'click #image-edit-button-ok': 'imageOk',
-			'click #image-edit-button-reset': 'image100', //'resetImage',
-			'click #image-edit-button-fit': 'fitImage',
+			'click .image-align-point': 'pointAlignment',
 			'click #image-edit-button-align': 'selectAlign',
 			// 'click .image-edit-rotate': 'rotate',
-			'click .image-fit-element-button': 'fitMask',
-			'click #image-edit-button-swap': 'changeImage'
+			'click .image-fit-element-button': 'fillImage',
 		},
 
 		initialize: function(){
@@ -99,13 +98,12 @@ define([
 			this.fullSize = {width: 0, height:0};
 			this.setImageInitialSize = false;
 			this.buttons = [
-				{id: 'image-edit-button-fit', text: l10n.btn.fit_label, tooltip: l10n.btn.fit_info},
-				{id: 'image-edit-button-reset', text: l10n.btn.exp_label, tooltip: l10n.btn.exp_info},
 				{id: 'image-edit-button-ok', text: l10n.btn.save_label, tooltip: l10n.btn.save_info}
 			];
 			this.sizes = false;
 			//this.promise = false;
 			this.align = 'left';
+			this.valign = 'top';
 			this.saveOnClose = false;
 			this.elementSize = false;
 			this.fitImageButton = true;
@@ -116,6 +114,174 @@ define([
 				top: - (imageSize.height - maskSize.height) / 2,
 				left: - (imageSize.width - maskSize.width) / 2
 			};
+		},
+		
+		createImageControl: function(options) {
+			var control = new Upfront.Views.Editor.InlinePanels.ImageControl(),
+				me = this,
+				cols = options.element_cols;
+
+			var cropControls = new CropControls({
+				model: this.model
+			});
+
+			this.listenTo(cropControls, 'crop:swap:image', this.changeImage);
+			this.listenTo(cropControls, 'crop:reset:image', this.image100);
+			this.listenTo(cropControls, 'crop:fit:image', this.fitImage);
+			this.listenTo(cropControls, 'crop:fill:image', this.fillImage);	
+			
+			control.view = cropControls;
+			
+			control.tooltip = l10n.btn.image_tooltip;
+
+			control.render();
+			
+			setTimeout(function() {
+
+				if(cols < 5) {
+					me.$el.find('.image-edit-button').css({
+						width: 50,
+					});
+					
+					me.$el.find('.image-ok-button').css({
+						left: options.maskOffset.left + (options.maskSize.width - 50)
+					});
+				}
+
+				// If element size cols are 3 and 4
+				if(cols < 5 && cols > 2) {
+					me.$el.find('#image-edit-buttons').css({
+						top: options.maskOffset.top,
+						left: options.maskOffset.left - 36
+					});
+
+					me.$el.find('.image-align-points').css({
+						left: options.maskOffset.left
+					});
+				}
+
+				// If element size cols are less than 3
+				if(cols < 3) {
+					me.$el.find('#image-edit-buttons').css({
+						top: options.maskOffset.top,
+						left: options.maskOffset.left - 36
+					});
+
+					var dots = me.$el.find('.image-align-points');
+					
+					dots.css({
+						left: (options.maskOffset.left - (dots.width() / 2)) + (options.maskSize.width / 2)
+					});
+
+					me.$el.find('.image-ok-button').css({
+						top: options.maskOffset.top,
+						left: options.maskOffset.left + (options.maskSize.width + 35)
+					});
+					
+					me.$el.find('.image-ok-button').prepend('<div class="image-edit-size-buttons"><span class="image-increase-size">+</span><span class="image-decrease-size">-</span></div>');
+				
+					var sizeButtons = me.$el.find('.image-edit-size-buttons');
+
+					if(sizeButtons.length) {
+						sizeButtons.find('.image-increase-size').click(function(e) {
+							var step = 1;
+							
+							if(typeof e.shiftKey !== "undefined" && e.shiftKey === true) {
+								step = 5;
+							}
+							
+							me.buttonIncreaseSize(step);
+						});
+						
+						sizeButtons.find('.image-decrease-size').click(function(e) {
+							var step = 1;
+							
+							if(typeof e.shiftKey !== "undefined" && e.shiftKey === true) {
+								step = 5;
+							}
+							
+							me.buttonDecreaseSize(step);
+						});
+					}
+					
+					me.$el.find('.image-edit-resize').hide();
+				}
+			
+			}, 100);
+
+			return control;
+		},
+		
+		buttonIncreaseSize: function(step) {
+			var me = this,
+				canvas = this.$('#uimage-canvas')
+			;
+			
+			var size = this.options.size;
+
+			canvasSize = {
+				width: (this.invert ? size.height + step : size.width + step),
+				height: (this.invert ? size.width + step : size.height + step)
+			};
+
+			this.options.size = canvasSize;
+			canvas.css(canvasSize);
+			this.selectMode(canvasSize, true);
+			this.setImageSize(canvasSize);
+		},
+		
+		buttonDecreaseSize: function(step) {
+			var me = this,
+				canvas = this.$('#uimage-canvas')
+			;
+			
+			var size = this.options.size;
+
+			canvasSize = {
+				width: (this.invert ? size.height - step : size.width - step),
+				height: (this.invert ? size.width - step : size.height - step)
+			};
+			
+			this.options.size = canvasSize;
+			canvas.css(canvasSize);
+			this.selectMode(canvasSize, true);
+			this.setImageSize(canvasSize);
+		},
+
+		pointAlignment: function(e) {
+			var element = $(e.target),
+				position = element.data('alignment');
+
+			this.$el.find('.image-align-point').removeClass('active-alignment-point');
+			element.addClass('active-alignment-point');
+			
+			var pos_array = position.split('-');
+
+			this.setAlign(pos_array[1], pos_array[0]);
+			
+			this.isDotAlign = true;
+		},
+		
+		setDotAlignment: function() {
+			this.higlighActiveDot();
+			
+			if(this.isDotAlign === true) {
+				this.setAlign(this.align, this.valign);
+			}
+		},
+		
+		higlighActiveDot: function() {
+			//First remove all highlights
+			this.$el.find('.image-align-point').removeClass('active-alignment-point');
+			
+			//Highlight the active dot if isDotAlign true
+			if(typeof this.isDotAlign !== "undefined" && this.isDotAlign === true) {
+				var activeDot = this.$el.find('.'+ this.valign +'-'+ this.align +'-point');
+
+				if(activeDot.length) {
+					activeDot.addClass('active-alignment-point');
+				}
+			}
 		},
 
 		open: function(options){
@@ -186,7 +352,14 @@ define([
 			if(options.align) {
 				this.align = options.align;
 			}
-
+			
+			if(options.valign) {
+				this.valign = options.valign;
+			}
+			
+			if(options.isDotAlign) {
+				this.isDotAlign = options.isDotAlign;
+			}
 
 			if(this.setImageInitialSize){
 				var fullImageProps = this.getFullWidthImage();
@@ -214,6 +387,10 @@ define([
 				$('body').append(this.$el);
 			}
 
+			imageControl = this.createImageControl(options);
+
+			this.$el.find('#image-edit-buttons').prepend($('<div class="uimage-edit-controls upfront-ui"></div>').append(imageControl.$el));
+
 			this.addGridLines(maskOffset.top, maskSize.height);
 
 			this.$el.css({
@@ -226,6 +403,8 @@ define([
 			this.selectMode(canvasSize, true);
 
 			this.setImageSize(canvasSize);
+			
+			this.setDotAlignment();
 
 			//this.setAlign(this.align);
 			this.$('#image-edit-button-align').addClass('align-' + this.align);
@@ -270,12 +449,19 @@ define([
 		check100ButtonActivation: function(){
 			var full = this.getFullWidthImage(this.options.fullSize).size,
 				fullColsRows = this.getCurrentImageRowsCols(full.width, full.height),
-				button = this.$('#image-edit-button-reset')
+				fullWidth = this.options.fullSize,
+				button = this.$('#image-edit-button-reset'),
+				canvas = this.$('#uimage-canvas')
 			;
-			if(this.elementSize.columns === fullColsRows.columns && this.elementSize.rows === fullColsRows.rows) {
-				button.addClass('deactivated expanded').attr('title', l10n.image_expanded);
-			} else if(this.elementSize.columns === this.elementSize.maxColumns && this.elementSize.columns < fullColsRows.columns && this.elementSize.rows === fullColsRows.rows) {
-				button.addClass('deactivated').attr('title', l10n.cant_expand);
+
+			if(typeof this.options.fullSize === "undefined" || !this.options.fullSize) {
+				//Make sure we have size for natural size
+				fullWidth = full;
+			}
+			
+			if(fullWidth.width === canvas.width() && fullWidth.height === canvas.height()) {
+				button.find('input').prop('disabled', true);
+				button.addClass('image-reset-disabled');
 			}
 		},
 
@@ -409,8 +595,7 @@ define([
 			this.close(reason);
 		},
 
-		changeImage: function(e){
-			e.preventDefault();
+		changeImage: function(){
 			this.close('changeImage');
 		},
 
@@ -437,6 +622,8 @@ define([
 				fullSize: this.fullSize,
 				srcOriginal: src,
 				align: this.align,
+				valign: this.valign,
+				isDotAlign: this.isDotAlign,
 				stretch : this.mode === 'big' || this.mode === 'horizontal',
 				vstretch: this.mode === 'big' || this.mode === 'vertical',
 				mode: this.mode
@@ -529,8 +716,9 @@ define([
 					aspectRatio: true, //(me.fullSize.width + me.bordersWidth) / (me.fullSize.height + me.bordersWidth),
 					start: function() {
 						me.$('#image-edit-button-reset')
-							.attr('class', 'image-edit-button')
+							.attr('class', 'image-crop-edit-button image-edit-col-full')
 							.attr('title', l10n.btn.exp_info)
+							.find('input').prop('disabled', false)
 						;
 						//Prevent editor closing after resizing. It is set to false by the initialize method.
 						me.isResizing = true;
@@ -576,6 +764,11 @@ define([
 					start: function(){
 						//Prevent editor closing during cropping. It is set to false by the initialize method.
 						me.isDragged = true;
+
+						//Update dots when we drag the image
+						me.isDotAlign = false;
+						
+						me.higlighActiveDot();
 					},
 					drag: function(e, ui){
 						canvas.css({
@@ -748,39 +941,55 @@ define([
 		},
 
 		image100: function(e){
-			if($(e.target).hasClass('deactivated')){
-				if($(e.target).hasClass('expanded')) {
-					return;
-				}
-				return this.showExpandAlert();
-			}
-			
-			var fullGrid = this.getFullWidthImage().size,
+			var fullGrid = this.getFullWidthImage(this.options.fullSize).size,
 				current = this.getCurrentImageRowsCols(fullGrid.width, fullGrid.height),
+				fullWidth = this.options.fullSize,
 				maskSize = current
 			;
 			
-			if(this.elementSize.maxColumns < current.columns){
+			//if(this.elementSize.maxColumns < current.columns){
 				var maskHeight = fullGrid.height;
 				maskSize = {columns: this.elementSize.maxColumns, rows: Math.ceil(maskHeight / this.elementSize.rowHeight) + 2};
-			}
+			//}
 
 			// Don't allow changing width mask size anymore
 			maskSize.columns = this.elementSize.maxColumns;
-
-			if(maskSize.columns !== this.elementSize.columns || maskSize.rows !== this.elementSize.rows) {
-				this.resizeMask(maskSize.columns, maskSize.rows);
-			} else{
-				var maskOffset = this.$('#uimage-mask').offset();
-				fullGrid.top = maskOffset.top;
-				fullGrid.left = maskOffset.left;
-				this.$('#uimage-canvas').css(fullGrid);
-				this.$('#uimage-drag-handle').css(fullGrid);
+			
+			if(typeof this.options.fullSize === "undefined" || !this.options.fullSize) {
+				//Make sure we have size for natural size
+				fullWidth = fullGrid;
 			}
+
+			//Prevent resize mask dimensions
+			//
+			//if(maskSize.columns !== this.elementSize.columns || maskSize.rows !== this.elementSize.rows) {
+			//	this.resizeMask(maskSize.columns, maskSize.rows);
+			//} else{
+			//	var maskOffset = this.$('#uimage-mask').offset();
+			//	fullGrid.top = maskOffset.top;
+			//	fullGrid.left = maskOffset.left;
+			//	this.$('#uimage-canvas').css(fullGrid);
+			//	this.$('#uimage-drag-handle').css(fullGrid);
+			//}
+
+			var maskOffset = this.$('#uimage-mask').offset();
+			fullGrid.top = maskOffset.top;
+			fullGrid.left = maskOffset.left;
+			this.$('#uimage-canvas').css(fullWidth);
+			this.$('#uimage-drag-handle').css(fullWidth);
 
 			if(maskSize.columns !== 22 && current.columns > maskSize.columns) {
 				this.showExpandAlert();
 			}
+			
+			//We should set dots to center
+			this.align = this.valign = 'center';
+			this.higlighActiveDot();
+
+			//Set image centered on Natural
+			this.setAlign('center', 'center');
+			
+			this.check100ButtonActivation();
 		},
 
 		getCurrentImageRowsCols: function(width, height){
@@ -833,18 +1042,7 @@ define([
 			this.open(options);
 		},
 
-		fitImage: function(e){
-			e.preventDefault();
-			e.stopPropagation();
-
-			if(!this.fitImageButton){
-				var button = $('#image-edit-button-fit');
-				button.text(l10n.btn.fit_element);
-				this.fitImageButton = true;
-
-				return this.resetImage();
-			}
-
+		fitImage: function(){
 			var canvas = this.$('#uimage-canvas'),
 				mask = this.$('#uimage-mask'),
 				handler = this.$('#uimage-drag-handle'),
@@ -869,18 +1067,14 @@ define([
 			this.centerImage(true);
 
 			this.setResizingLimits();
+
 			$('#uimage-drag-handle').draggable('option', 'containment', this.getContainment());
 
-			$('#image-edit-button-fit')
-				.attr('title', l10n.btn.restore_label)
-				.text(l10n.btn.restore_info)
-			;
 			$('#image-edit-button-reset')
-				.attr('class', 'image-edit-button')
+				.attr('class', 'image-crop-edit-button image-edit-col-full')
 				.attr('title', l10n.btn.exp_info)
+				.find('input').prop('disabled', false)
 			;
-			this.fitImageButton = false;
-
 		},
 
 		//TODO: remove this. This method is deprecated, since the fit mask button is not used anymore
@@ -907,7 +1101,42 @@ define([
 			optionsNew.elementColumns = elementColumns;
 
 			this.open(optionsNew);
+		},
 
+		fillImage: function(){
+			var canvas = this.$('#uimage-canvas'),
+				mask = this.$('#uimage-mask'),
+				handler = this.$('#uimage-drag-handle'),
+				size = this.getResizeImageDimensions(this.fullSize, {width: mask.width(), height: mask.height()}, 'outer', 0)
+				//size = this.initialImageSize(0, false, {width: mask.width(), height: mask.height()})
+			;
+
+			if(this.invert){
+				size = {
+					width: size.height,
+					height: size.width
+				};
+			}
+
+			canvas.css(size);
+			handler.css(size);
+
+			this.setImageSize(size);
+			this.centerImage(true);
+
+			this.selectMode(size, true);
+
+			this.centerImage(true);
+
+			this.setResizingLimits();
+
+			$('#uimage-drag-handle').draggable('option', 'containment', this.getContainment());
+
+			$('#image-edit-button-reset')
+				.attr('class', 'image-crop-edit-button image-edit-col-full')
+				.attr('title', l10n.btn.exp_info)
+				.find('input').prop('disabled', false)
+			;
 		},
 
 		setImageFullSize: function(e) {
@@ -1081,26 +1310,43 @@ define([
 			}
 		},
 
-		setAlign: function(direction){
+		setAlign: function(direction_h, direction_v){
 			var mask = this.$('#uimage-mask'),
 				canvas = this.$('#uimage-canvas'),
 				handle = this.$('#uimage-drag-handle'),
 				position = canvas.position()
 			;
 
-			this.$('#image-edit-button-align').removeClass('align-left align-right align-center').addClass('align-' + direction);
+			this.$('#image-edit-button-align').removeClass('align-left align-right align-center').addClass('align-' + direction_h);
 
-			if(direction !== 'left' && direction !== 'center' && direction !== 'right') {
+			if(direction_h !== 'left' && direction_h !== 'center' && direction_h !== 'right') {
 				return false;
 			}
-			this.align = direction;
-
+			
+			if(direction_v !== 'top' && direction_v !== 'center' && direction_v !== 'bottom') {
+				return false;
+			}
+			
+			this.align = direction_h;
+			
 			if(this.align === 'center') {
 				position.left = mask.offset().left - ((canvas.width() -  mask.width()) / 2);
 			} else if(this.align === 'left') {
 				position.left = mask.offset().left;
 			} else {
 				position.left = mask.offset().left + mask.width() - canvas.width();
+			}
+			
+			this.valign = direction_v;
+			
+			if(typeof direction_v !== "undefined") {
+				if(direction_v === 'center') {
+					position.top = mask.offset().top - ((canvas.height() -  mask.height()) / 2);
+				} else if(direction_v === 'top') {
+					position.top = mask.offset().top;
+				} else {
+					position.top = mask.offset().top + mask.height() - canvas.height();
+				}
 			}
 
 			position.left += this.bordersWidth / 2;

@@ -1444,9 +1444,12 @@ input.upfront-field-text:hover,
 
 .ulinkpanel-dark .upfront-field-multiple label,
 .ulinkpanel .upfront-field-multiple label {
-  color: #607f99;
+  color: #53616d;
   font-size: 11px;
   font-family: verdana, sans-serif; }
+
+.ulinkpanel input.upfront-field-text[type], .ulinkpanel textarea.upfront-field-text.upfront-field-textarea {
+  border-color: #c3d3e0; }
 
 .ulinkpanel .upfront-field-wrap-radios > label,
 .ulinkpanel-dark .upfront-field-wrap-radios > label {
@@ -1458,7 +1461,7 @@ input.upfront-field-text:hover,
 .ulinkpanel .upfront-field-wrap-radios > label,
 .ulinkpanel .upfront-field-wrap-radios > .upfront-field-multiple {
   vertical-align: top;
-  color: #97B8DA;
+  color: #53616d;
   font-weight: normal; }
 
 .upfront-field-select-disabled {
@@ -4796,7 +4799,7 @@ a.upfront-region-name-edit-trigger:before {
   right: 5px;
   background: #fff;
   border-radius: 3px;
-  box-shadow: 0px 0px 3px 0px rgba(36, 57, 77, 0.2);
+  box-shadow: 0 0 5px 0 rgba(36, 57, 77, 0.5);
   z-index: -1; }
 
 .upfront-wrapper:not(.upfront-inline-panel-item-open):hover > .upfront-wrapper-meta,
@@ -5155,7 +5158,7 @@ a.upfront-region-name-edit-trigger:before {
   height: 4px;
   background: #fff;
   border-radius: 3px;
-  box-shadow: 0px 0px 3px 0px rgba(36, 57, 77, 0.2); }
+  box-shadow: 0 0 5px 0 rgba(36, 57, 77, 0.5); }
 
 .upfront-editable_entity:not(.ui-resizable-disabled):hover > .upfront-resize-handle-s:not(.active-menu-item),
 .upfront-editable_entity.ui-resizable-resizing > .upfront-resize-handle-s,
@@ -9808,7 +9811,7 @@ div.sp-replacer:before {
   box-shadow: 0 0 3px 0 rgba(36, 57, 77, 0.3); }
 
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item {
-  background: #FFFFFF;
+  background: #F5F5F5;
   border-bottom: 0;
   cursor: default; }
 
@@ -9856,7 +9859,7 @@ div.sp-replacer:before {
   background: #fff; }
 
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon {
-  opacity: 0.75; }
+  opacity: 0.70; }
 
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-control-dialog-open .upfront-icon,
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon:hover {
@@ -9883,6 +9886,32 @@ div.sp-replacer:before {
   width: 24px;
   height: 24px;
   background-image: url("../img/uf-ui-sprite.svg") !important; }
+
+.upfront-icon-region-more {
+  height: 38px; }
+
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-more:before {
+  background-position: -291px -460px;
+  width: 24px;
+  height: 24px;
+  opacity: 0.75; }
+
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .upfront-icon-region-more:before {
+  background-position: -291px -521px;
+  width: 24px;
+  height: 24px;
+  opacity: 1; }
+
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .upfront-inline-panel-item,
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open {
+  background: #E6ECF2; }
+
+.upfront-element-controls .control-panel-overlay {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  z-index: 99;
+  opacity: 0; }
 
 #upfront-inline-slider-nav {
   position: absolute;
@@ -10041,7 +10070,7 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap {
   background: #00db8f; }
 
 .ulinkpanel-dark .ulinkpanel-title {
-  color: #97B8DA;
+  color: #53616d;
   margin-bottom: 3px;
   background: initial !important;
   padding: initial !important;
@@ -10076,7 +10105,7 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap {
 .ulinkpanel-dark .upfront-field-select:hover,
 .ulinkpanel-dark .upfront-field-select-options,
 .ulinkpanel-dark #ulinkpanel-link-url {
-  border-color: #263A4D; }
+  border-color: #c3d3e0; }
 
 .ulinkpanel-dark .no-lightboxes-msg {
   font: normal 11px/13px verdana, sans-serif;
@@ -14954,11 +14983,13 @@ a.upfront-css-font {
 .uimage-control-panel .upfront-field-wrap {
   text-align: left; }
 
-.inline-panel-control-dialog {
+.inline-panel-control-dialog,
+.inline-panel-sub-control-dialog {
   display: none; }
 
 .upfront-control-dialog-open .inline-panel-control-dialog,
-.upfront-ui .upfront-control-dialog-open .inline-panel-control-dialog {
+.upfront-ui .upfront-control-dialog-open .inline-panel-control-dialog,
+.upfront-sub-control-dialog-open .inline-panel-sub-control-dialog {
   display: block; }
 
 .inline-panel-item-selected.labeled {
@@ -15939,6 +15970,13 @@ div.preset-manager-panel .checkbox-tooltip {
   -webkit-transition-duration: 0;
   transition-delay: 0;
   transition-duration: 0; }
+
+.image-sub-control .upfront-inline-panel-item {
+  display: inline-block; }
+
+.image-sub-control .uimage-control-panel-item {
+  position: static;
+  top: 0px; }
 
 /**
  * Compatibility issue nag popup, v1 check

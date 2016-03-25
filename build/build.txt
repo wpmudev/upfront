@@ -16,6 +16,8 @@ main.js
 C:/xampp/htdocs/upfront/wp-includes/js/underscore.min.js
 C:/xampp/htdocs/upfront/wp-includes/js/backbone.min.js
 upfront/upfront-models.js
+C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/render-queue.js
+C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/render-queue-reporter.js
 text.js
 text!upfront/templates/object.html
 text!upfront/templates/object_group.html
@@ -35,11 +37,13 @@ C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/control.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/multi-control.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/tooltip-control.js
+C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/sub-control.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/padding-control.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/collapsed-multi-control.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/control-panel.js
 text!scripts/upfront/inline-panels/templates/panel-control-template.html
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/dialog-control.js
+C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/image-control.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/controls/visit-link.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/controls/link-panel.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/link-model.js
@@ -180,6 +184,7 @@ C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-image/js/imag
 text!elements/upfront-image/tpl/preset-style.html
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-image/js/image-settings.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-image/js/image-selector.js
+C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-image/js/crop-controls.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-image/js/image-editor.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-image/js/model.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-image/js/image-element.js
