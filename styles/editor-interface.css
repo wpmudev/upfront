@@ -2184,6 +2184,12 @@ a.ueditor-action-pickercancel {
 .upfront-wp-inserted_image-wrapper {
   max-width: 100%; }
 
+.upfront-wp-inserted_image-wrapper .wp-caption {
+  position: relative; }
+
+.upfront-wp-inserted_image-wrapper .wp-caption .upfront-inline-panel {
+  top: 15px !important; }
+
 /*.upfront-inserted_image-wrapper .wp-caption-text,
 .uinsert-image-wrapper{
 	padding: 15px;
