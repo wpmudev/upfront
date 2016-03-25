@@ -1,12 +1,9 @@
-#upfront-image-overlay * {
-	box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;
-}
 #upfront-image-overlay {
 	position:fixed;
 	width: 100%;
-	background: rgba(57,82,105,0.9);
+	background: rgba(37, 58, 78, 0.8);
 	top:0;
-	z-index: 10001001;
+	z-index: 10;
 	font-family: 'Lato';
 	font-size: 24px;
 	font-weight: 200;
@@ -331,9 +328,6 @@
 	font-size: 16px;
 }
 
-.image-edit-control>i:hover {
-}
-
 .image-edit-rotate {
 	top: 5px;
 	left: 5px;
@@ -348,9 +342,7 @@
 	border-collapse: separate;
 	z-index:10;
 	position:absolute;
-		 -moz-box-shadow: 0 0 0 20000px rgba(34, 49, 64, 0.6);
-	-webkit-box-shadow: 0 0 0 20000px rgba(34, 49, 64, 0.6);
-					box-shadow: 0 0 0 20000px rgba(34, 49, 64, 0.6);
+	box-shadow: 0 0 0 9999px rgba(37, 58, 78, 0.8);
 }
 
 #image-edit-buttons {
@@ -611,12 +603,9 @@ a.image-edit-button.deactivated:hover {
 
 .uimage-controls .upfront-inline-panel {
 	visibility: visible;
-	background-image: -o-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
-	background-image: -moz-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
-	background-image: -ms-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
 	background-image: linear-gradient(-179deg, #2F445D 0%, #152841 100%);
-	-moz-box-shadow:    inset 0px -1px 0px 0px #43607A, inset 0px 1px 0px 0px #26394A;
-	box-shadow:         inset 0px -1px 0px 0px #43607A, inset 0px 1px 0px 0px #26394A;
+	box-shadow: inset 0px -1px 0px 0px #43607A, 
+				inset 0px 1px 0px 0px #26394A;
 	border-top-right-radius: 3px;
 }
 .uimage-controls .upfront-inline-panel-item {
@@ -1570,8 +1559,8 @@ div.uimage-controls i.upfront-icon:before,
 	width: 4px;
 	height: 4px;
 	border-radius: 50%;
-	background: rgba(123,147,167,1);
-	box-shadow: 0px 0px 2px 0px #24394E;
+	background: rgb(179, 193, 204);
+	box-shadow: 0px 0px 2px 1px #24394E;
 	content: '';
 	display: inline-block;
 	vertical-align: top;
