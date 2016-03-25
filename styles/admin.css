@@ -484,11 +484,13 @@ div.upfront-general-settings .upfront-debug-block a.upfront_button{
     -webkit-transition: padding 0.3s;
     transition: padding 0.3s;
     outline: none;
+    line-height: normal;
 }
 
 div.upfront-general-settings .upfront-debug-block button:disabled,
 div.upfront-general-settings .upfront-debug-block a.upfront_button:disabled{
-    background-color: #ccc;
+    -moz-opacity: 0.5;
+    opacity: 0.5;
 }
 
 div.upfront-general-settings button.warning {
