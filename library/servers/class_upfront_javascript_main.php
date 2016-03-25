@@ -322,6 +322,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			'OPTIONS' => (bool)Upfront_Permissions::current(Upfront_Permissions::OPTIONS),
 			'EMBED' => (bool)Upfront_Permissions::current(Upfront_Permissions::EMBED),
 			'UPLOAD' => (bool)Upfront_Permissions::current(Upfront_Permissions::UPLOAD),
+			'DEBUG' => (bool)Upfront_Permissions::current(Upfront_Permissions::SEE_USE_DEBUG)
 		));
 
 		$l10n = json_encode($this->_get_l10n_strings());
