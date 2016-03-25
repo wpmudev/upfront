@@ -210,6 +210,67 @@ class Upfront_ElementStyles extends Upfront_Server {
 
 		$this->_out($response, true);
 	}
+	
+	public function get_closeset_breakpoints($width, $breakpoints) {
+		foreach ( $breakpoints as $name => $point ){
+			$point_width = $point->get_width();
+			if ( $point_width > $width && ( $point_width < $next_width || $next_width == 0) ){
+				$next = $point;
+				$next_width = $point_width;
+			}
+			else if ( $point_width < $width && ( $point_width > $prev_width || $prev_width == 0 ) ){
+				$prev = $point;
+				$prev_width = $point_width;
+			}
+		}
+
+		return array(
+			'prev' => $prev_width,
+			'next' => $next_width
+		);
+	}
+	
+	/**
+	 * Serve breakpoint widths array.
+	 */
+	public function serve_breakpoints_array () {
+		$js_return = '';
+		$breakpoints_array = array();
+		$breakpoints = Upfront_Grid::get_grid()->get_breakpoints();
+		foreach ( $breakpoints as $name => $point ){
+			$min_width = $max_width = 0;
+			$width = $point->get_width();
+			$closest = $this->get_closeset_breakpoints($width, $breakpoints);
+			
+			if ( $closest['prev'] ){
+				$min_width = $width;
+			}
+			if ( $closest['next'] ){
+				$max_width = $closest['next'] - 1;
+			}
+			
+			$breakpoints_array[$point->get_id()] = array(
+				'min_width' => $min_width,
+				'max_width' => $max_width
+			);
+		}
+		
+		$js_return .= "jQuery(function($){\n";
+		$js_return .= "window.get_breakpoint_ie8 = function(width) {\n";
+		foreach($breakpoints_array as $id => $breakpoint) {
+			if($breakpoint['max_width'] > 0) {
+				$js_return .= "if(width >= ".$breakpoint['min_width']." && width <= ".$breakpoint['max_width'].") {\n";
+			} else {
+				$js_return .= "if(width >= ".$breakpoint['min_width'].") {\n";
+			}
+			$js_return .= "return '".$id."';\n";
+			$js_return .= "}\n";
+		}
+		$js_return .= "}\n";
+		$js_return .= "});\n";
+		
+		return $js_return;
+	}
 
 	/**
 	 * Serve layout element scripts according to the requested key.
@@ -219,6 +280,14 @@ class Upfront_ElementStyles extends Upfront_Server {
 		$key->set_hash(stripslashes($_REQUEST['key']));
 
 		$cache = $this->_cache->get($key);
+		
+		$breakpoints = $this->serve_breakpoints_array();
+		
+
+		if(!empty($breakpoints)) {
+			$cache = $breakpoints . $cache;
+		}
+
 		$response = empty($cache)
 			? new Upfront_JavascriptResponse_Error('')
 			: new Upfront_JavascriptResponse_Success($cache)
