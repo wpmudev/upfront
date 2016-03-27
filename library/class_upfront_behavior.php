@@ -7,6 +7,8 @@ class Upfront_CompressionBehavior {
 	const LEVEL_DEFAULT = 'default';
 	const LEVEL_LOW = 'low';
 
+	const OPTIONS_KEY = 'upfront-options-experiments';
+
 	private $_compression;
 	private $_experiments;
 
@@ -37,6 +39,78 @@ class Upfront_CompressionBehavior {
 			if (in_array($level, array(1, '1', true), true)) $this->_experiments = self::LEVEL_DEFAULT;
 			else $this->_experiments = $level;
 		}
+	}
+
+	/**
+	 * Return known compression levels with associated labels
+	 *
+	 * @return array Compression level => level label map
+	 */
+	public function get_known_compression_levels () {
+		return array(
+			self::LEVEL_LOW => __('Low', Upfront::TextDomain),
+			self::LEVEL_DEFAULT => __('Default', Upfront::TextDomain),
+			self::LEVEL_AGGRESSIVE => __('Aggressive', Upfront::TextDomain),
+			self::LEVEL_HARDCORE => __('Hardcore', Upfront::TextDomain),
+		);
+	}
+
+	/**
+	 * Gets a list of options from storage
+	 *
+	 * @return array
+	 */
+	public function get_options () {
+		$options = get_option(self::OPTIONS_KEY, array());
+		return !empty($options) && is_array($options)
+			? $options
+			: array()
+		;
+	}
+
+	/**
+	 * Sets the options
+	 * Also checks user permission level
+	 *
+	 * @param array $data Options map to save
+	 *
+	 * @return bool
+	 */
+	public function set_options ($data) {
+		if (!current_user_can('manage_options')) return false;
+		$options = $this->get_options();
+		$options = wp_parse_args($data, $options);
+
+		return !!update_option(self::OPTIONS_KEY, $options, false);
+	}
+
+	/**
+	 * Individual options getter
+	 *
+	 * @uses Upfront_CompressionBehavior::get_options
+	 *
+	 * @param string $key Option key to get
+	 * @param mixed $fallback Fallback value to return (defaults to (bool)false)
+	 *
+	 * @return mixed Fallback value
+	 */
+	public function get_option ($key, $fallback=false) {
+		$options = $this->get_options();
+		return isset($options[$key])
+			? $options[$key]
+			: $fallback
+		;
+	}
+
+	/**
+	 * (Re)Loads and (re)parses options
+	 *
+	 * @return bool
+	 */
+	public function reload () {
+		$this->_parse_compression();
+		$this->_parse_experiments();
+		return true;
 	}
 
 	/**
