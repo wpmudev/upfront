@@ -15,8 +15,7 @@ class Upfront_CompressionBehavior {
 	private static $_instance;
 	
 	private function __construct () {
-		$this->_parse_compression();
-		$this->_parse_experiments();
+		$this->reload();
 	}
 	private function __clone () {}
 
@@ -27,17 +26,38 @@ class Upfront_CompressionBehavior {
 		return self::$_instance;
 	}
 
+	/**
+	 * (Re)Initialize compression options
+	 *
+	 * Uses defined option as first choice, falls back to saved option
+	 *
+	 * @return bool
+	 */
 	private function _parse_compression () {
-		if (empty($this->_compression)) {
-			if (defined('UPFRONT_COMPRESS_RESPONSE') && UPFRONT_COMPRESS_RESPONSE) $this->_compression = true;
-		}
+		if (defined('UPFRONT_COMPRESS_RESPONSE') && UPFRONT_COMPRESS_RESPONSE) return $this->_compression = true;
+		else return $this->_compression = $this->get_option('compression');
 	}
 
+	/**
+	 * (Re)Initialize experiments options
+	 *
+	 * Uses defined option as first choice, falls back to saved option
+	 *
+	 * @return mixed Experiments level on success, (bool)false otherwise
+	 */
 	private function _parse_experiments () {
-		if (empty($this->_experiments) && defined('UPFRONT_EXPERIMENTS_ON') && UPFRONT_EXPERIMENTS_ON) {
+		if (defined('UPFRONT_EXPERIMENTS_ON') && UPFRONT_EXPERIMENTS_ON) {
 			$level = UPFRONT_EXPERIMENTS_ON;
-			if (in_array($level, array(1, '1', true), true)) $this->_experiments = self::LEVEL_DEFAULT;
-			else $this->_experiments = $level;
+			return $this->_experiments = in_array($level, array(1, '1', true), true)
+				? self::LEVEL_DEFAULT
+				: $level
+			;
+		} else {
+			$level = $this->get_option('level');
+			return $this->_experiments = in_array($level, array_keys($this->get_known_compression_levels()))
+				? $level
+				: false
+			;
 		}
 	}
 
