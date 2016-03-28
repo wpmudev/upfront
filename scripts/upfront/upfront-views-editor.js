@@ -9352,7 +9352,7 @@
 				if (
 					_upfront_post_data.post_id
 					||
-					(Upfront.Application.get_current() === Upfront.Application.MODE.THEME && 'type' in _upfront_post_data.layout && 'single' === _upfront_post_data.layout.type)
+					(Upfront.Application.is_builder() && 'type' in _upfront_post_data.layout && 'single' === _upfront_post_data.layout.type)
 				) {
 					if (!('item' in _upfront_post_data.layout && _upfront_post_data.layout.item.match(/single-404/))) region_types.push({ label: l10n.featured_image, value: 'featured', icon: 'feat' });
 				}
