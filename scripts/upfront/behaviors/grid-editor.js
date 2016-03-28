@@ -1257,18 +1257,33 @@ var GridEditor = {
 					prev_col = Math.ceil(ui.originalSize.width/ed.col_size),
 					prev_row = Math.ceil(ui.originalSize.height/ed.baseline),
 					$post_data_object =  $me.find(".upost-data-object").length ? $me.find(".upost-data-object") : false,
-					padding_top_row = $post_data_object ?  parseFloat( $post_data_object.css("padding-top") ) / ed.baseline : 0,
-					padding_bottom_row = $post_data_object ? parseFloat( $post_data_object.css("padding-bottom") ) / ed.baseline : 0,
+					//padding_top_row = $post_data_object ?  parseFloat( $post_data_object.css("padding-top") ) / ed.baseline : 0,
+					//padding_bottom_row = $post_data_object ? parseFloat( $post_data_object.css("padding-bottom") ) / ed.baseline : 0,
 					rsz_col = $me.data('resize-col'),
-					rsz_row = parseFloat( $me.data('resize-row') ) - padding_top_row - padding_bottom_row,
+					rsz_row = parseFloat( $me.data('resize-row') ),
 
 					regions = app.layout.get('regions'),
 					region = regions.get_by_name($region.data('name')),
 					$container = is_object ? ed.containment.$el : ( is_parent_group ? view.group_view.$el.find('.upfront-editable_entities_container:first') : $region.find('.upfront-modules_container > .upfront-editable_entities_container:first') ),
 					module_selector = is_object ? ".upfront-wrapper > .upfront-object-view > .upfront-object" : ".upfront-wrapper > .upfront-module-view > .upfront-module, .upfront-wrapper > .upfront-module-group",
-					model_breakpoint, breakpoint_data
+					model_breakpoint, breakpoint_data, padding_top_row, padding_bottom_row
 				;
 
+				/**
+				 * Calculate paddings in different cases
+				 */
+				if( !is_object && !is_group  ){
+					var objects = model.get('objects'),
+						obj_model = objects.first();
+
+					padding_top_row = obj_model.get_breakpoint_property_value('top_padding_use') ?  obj_model.get_breakpoint_property_value('top_padding_num') / ed.baseline : 0;
+					padding_bottom_row = obj_model.get_breakpoint_property_value('bottom_padding_use') ? obj_model.get_breakpoint_property_value('bottom_padding_num') / ed.baseline : 0;
+				}else{
+					padding_top_row = model.get_breakpoint_property_value("top_padding_use") ?  model.get_breakpoint_property_value('top_padding_num') / ed.baseline : 0 ;
+					padding_bottom_row = model.get_breakpoint_property_value("bottom_padding_use") ? model.get_breakpoint_property_value('bottom_padding_num') / ed.baseline : 0;
+				}
+
+				rsz_row = rsz_row - padding_top_row - padding_bottom_row;
 				// Prevents quick scroll when resizing
 				ed.resizing = false;
 
@@ -1307,7 +1322,7 @@ var GridEditor = {
 					var objects = model.get('objects');
 					if ( objects && objects.length == 1 ){
 						objects.each(function(object){
-							object.set_property('row', rsz_row);
+							object.set_property('row', rsz_row );
 						});
 					}
 
