@@ -24,7 +24,7 @@ class Upfront_Permissions {
 	
 	const ANONYMOUS = '::anonymous::';
 
-	const RESTRICTIONS_KEY = "upfront_user_restrictions";
+	const RESTRICTIONS_KEY = "upfront-options-user_restrictions";
 
 	private $_levels_map = array();
 
@@ -43,9 +43,35 @@ class Upfront_Permissions {
 	 * @param $level
 	 * @return bool
 	 */
-	public static function current ($level) {
+	public static function current ($level, $arg=false) {
 		self::boot();
-		return self::$_me->_current_user_can($level);
+		return self::$_me->_current_user_can($level, $arg);
+	}
+
+	/**
+	 * User ability check public access point
+	 *
+	 * @param int $user_id WP user ID
+	 * @param string $level Upfront access level to check
+	 *
+	 * @return bool
+	 */
+	public static function user ($user_id, $level) {
+		self::boot();
+		return self::$_me->_user_can($user_id, $level);
+	}
+
+	/**
+	 * Role ability check public access point
+	 *
+	 * @param string $role_id WP role ID
+	 * @param string $level Upfront access level to check
+	 *
+	 * @return bool
+	 */
+	public static function role ($role_id, $level) {
+		self::boot();
+		return self::$_me->_role_can($role_id, $level);
 	}
 
 	public static function nonces () {
@@ -88,8 +114,10 @@ class Upfront_Permissions {
 
 
 	private function __construct () {
-		add_filter("upfront-access-permissions-map", array( $this, "filter_permissions_map" ));
-		$this->_levels_map = $this->_get_default_levels_map();
+		$this->_levels_map = wp_parse_args(
+			$this->get_restrictions(),
+			$this->_get_default_levels_map()
+		);
 
 	}
 
@@ -124,30 +152,11 @@ class Upfront_Permissions {
 	 * @return array
 	 */
 	function get_upfront_capability_map(){
-		return array(
-			self::BOOT => "upfront_boot",
-			self::LAYOUT_MODE => "upfront_layout_mode",
-			self::POSTLAYOUT_MODE => "upfront_postlayout_mode",
-			self::UPLOAD => "upload_files",
-			self::RESIZE => "upfront_resize_media",
-			self::OPTIONS => "manage_options",
-			self::CREATE_POST_PAGE => "upfront_create_post_page",
-			self::EDIT => "upfront_edit_posts",
-			self::EMBED => "upfront_embed_stuff",
-			self::RESPONSIVE_MODE => "upfront_responsive_mode",
-			self::MODIFY_RESTRICTIONS => "promote_users",
-			self::SEE_USE_DEBUG => "upfront_see_use_debug"
-		);
-	}
-
-	/**
-	 * Filters upfront-access-permissions-map map to place upfront specific capabilities into the permissions map
-	 *
-	 * @param $default_permissions
-	 * @return array
-	 */
-	function filter_permissions_map( $default_permissions ){
-		return shortcode_atts( $default_permissions, $this->get_upfront_capability_map() );
+		$levels = $this->_get_default_levels_map();
+		if (isset($levels[self::DEFAULT_LEVEL])) unset($levels[self::DEFAULT_LEVEL]);
+		if (isset($levels[self::CONTENT_MODE])) unset($levels[self::CONTENT_MODE]);
+		if (isset($levels[self::THEME_MODE])) unset($levels[self::THEME_MODE]);
+		return $levels;
 	}
 
 	/**
@@ -162,6 +171,50 @@ class Upfront_Permissions {
 	}
 
 	/**
+	 * Sets stored userland restrictions
+	 *
+	 * @param array $restrictions Access levels map to store
+	 *
+	 * @return bool
+	 */
+	public function set_restrictions ($restrictions) {
+		if (!current_user_can('manage_options')) return false;
+
+		return !!update_option(self::RESTRICTIONS_KEY, $restrictions, false);
+	}
+
+	/**
+	 * Gets stored userland restrictions
+	 *
+	 * @return array Upfront access levels map
+	 */
+	public function get_restrictions () {
+		$map = get_option(self::RESTRICTIONS_KEY, array());
+		return !empty($map)
+			? $map
+			: $this->_get_default_levels_map()
+		;
+	}
+
+	/**
+	 * Resolves Upfront access level to an actual WordPress capability
+	 *
+	 * @param string $level Access level to resolve
+	 *
+	 * @return array WP capabilities/roles array
+	 */
+	private function _resolve_level_to_capability ($level) {
+		$level = in_array($level, array_keys($this->_levels_map)) && !empty($this->_levels_map[$level])
+			? $this->_levels_map[$level]
+			: $this->_levels_map[self::DEFAULT_LEVEL]
+		;
+		return is_array($level)
+			? $level
+			: array($level)
+		;
+	}
+
+	/**
 	 * Checks if current user is able to perform $level
 	 *
 	 * @param $level
@@ -169,10 +222,7 @@ class Upfront_Permissions {
 	 * @return bool
 	 */
 	private function _current_user_can ($level, $arg=false) {
-		$level = in_array($level, array_keys($this->_levels_map)) && !empty($this->_levels_map[$level])
-			? $this->_levels_map[$level]
-			: $this->_levels_map[self::DEFAULT_LEVEL]
-		;
+		$level = $this->_resolve_level_to_capability($level);
 		if (empty($level)) return false;
 		if (
 			!is_user_logged_in() &&
@@ -180,12 +230,70 @@ class Upfront_Permissions {
 		) return false;
 
 		// Allow anonymous boot
-		if (defined('UPFRONT_ALLOW_ANONYMOUS_BOOT') && UPFRONT_ALLOW_ANONYMOUS_BOOT && self::ANONYMOUS === $level) return true;
+		if (defined('UPFRONT_ALLOW_ANONYMOUS_BOOT') && UPFRONT_ALLOW_ANONYMOUS_BOOT && array(self::ANONYMOUS) === $level) return true;
 
-		return !empty($arg)
-			? current_user_can($level, $arg)
-			: current_user_can($level)
-		;
+		$allowed = false;
+		foreach ($level as $lev) {
+			$allowed = !empty($arg)
+				? current_user_can($lev, $arg)
+				: current_user_can($lev)
+			;
+			if ($allowed) break;
+		}
+
+		return (bool)$allowed;
+	}
+
+	/**
+	 * Checks if an user is able to perform a certain Upfront action
+	 *
+	 * @param int $user_id User ID
+	 * @param string $level Upfront action level to check
+	 *
+	 * @return bool
+	 */
+	private function _user_can ($user_id, $level) {
+		$level = $this->_resolve_level_to_capability($level);
+		if (empty($level)) return false;
+
+		if (empty($user_id)) return defined('UPFRONT_ALLOW_ANONYMOUS_BOOT') && 'UPFRONT_ALLOW_ANONYMOUS_BOOT' && array(self::ANONYMOUS) === $level;
+
+		$allowed = false;
+		foreach ($level as $lev) {
+			$allowed = (bool)user_can($user_id, $lev);
+			if ($allowed) break;
+		}
+
+		return (bool)$allowed;
+	}
+
+	/**
+	 * Checks if a certain user role is able to perform a certain Upfront action
+	 *
+	 * @param string $role_id WordPress role ID
+	 * @param string $level Upfront action level to check
+	 *
+	 * @return bool
+	 */
+	private function _role_can ($role_id, $level) {
+		if (empty($role_id)) return false;
+
+		$level = $this->_resolve_level_to_capability($level);
+		if (empty($level)) return false;
+
+		$role = get_role( $role_id );
+		if (!is_object($role)) return false;
+
+		$allowed = false;
+		foreach ($level as $lev) {
+			$allowed = $role->name === $lev
+				? true
+				: (bool)$role->has_cap($lev)
+			;
+			if ($allowed) break;
+		}
+
+		return (bool)$allowed;
 	}
 
 	/**
@@ -257,6 +365,7 @@ class Upfront_Permissions {
 	 * @param bool $add  whether to add or remove
 	 */
 	public function toggle_capability ($role, $capability, $add ) {
+		/*
 		if ( is_a( $role,  'WP_Role')) {
 			if ( $add ) {
 				$role->add_cap($capability);
@@ -264,6 +373,7 @@ class Upfront_Permissions {
 				$role->remove_cap($capability);
 			}
 		}
+		*/
 	}
 
 	/**
@@ -274,8 +384,10 @@ class Upfront_Permissions {
 	 * @return bool
 	 */
 	function is_capable($role_id, $capability  ){
+		/*
 		$role = get_role( $role_id );
 		return $role->has_cap( $capability );
+		*/
 	}
 
 }
