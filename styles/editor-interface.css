@@ -150,6 +150,9 @@
   -o-transition: color,background-color,border,opacity .25s;
   transition: color,background-color,border,opacity .25s; }
 
+.upfront-ui input.ace_search_field {
+  color: #30475e; }
+
 .upfront-ui a:hover,
 .upfront-ui button:hover,
 .upfront-ui input:hover {
