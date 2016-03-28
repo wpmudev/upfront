@@ -150,6 +150,9 @@
   -o-transition: color,background-color,border,opacity .25s;
   transition: color,background-color,border,opacity .25s; }
 
+.upfront-ui input.ace_search_field {
+  color: #30475e; }
+
 .upfront-ui a:hover,
 .upfront-ui button:hover,
 .upfront-ui input:hover {
@@ -2184,6 +2187,15 @@ a.ueditor-action-pickercancel {
 .upfront-wp-inserted_image-wrapper {
   max-width: 100%; }
 
+<<<<<<< HEAD
+=======
+.upfront-wp-inserted_image-wrapper .wp-caption {
+  position: relative; }
+
+.upfront-wp-inserted_image-wrapper .wp-caption .upfront-inline-panel {
+  top: 15px !important; }
+
+>>>>>>> master
 /*.upfront-inserted_image-wrapper .wp-caption-text,
 .uinsert-image-wrapper{
 	padding: 15px;
