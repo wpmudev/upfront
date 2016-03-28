@@ -243,6 +243,7 @@ class Upfront_Grid {
 			$next_wrapper_id = false;
 			$next_wrapper_data = false;
 			$is_post_object = false;
+			$is_featured_image = false;
 			$is_spacer = false;
 
 			if ( isset($module['modules']) && is_array($module['modules']) ){ // rendering module group
@@ -273,6 +274,9 @@ class Upfront_Grid {
 											break;
 										}
 									}
+								}
+								if ( 'featured_image' == $data_type ) {
+									$is_featured_image = true;
 								}
 							}
 							else {
@@ -444,10 +448,26 @@ class Upfront_Grid {
 					$spacer_col = 0;
 					$spacer_id = false;
 				}
-				$point_css .= $breakpoint->apply($module, $this->get_grid_scope(), 'element_id', $wrapper_col, false, ($is_post_object ? $this->_exceptions : array()));
+				if ( $is_post_object ) {
+					$point_css .= $breakpoint->apply($module, $this->get_grid_scope(), 'element_id', $wrapper_col, false, $this->_exceptions);
+				}
+				else if ( $is_featured_image ) {
+					$point_css .= $breakpoint->apply($module, $this->get_grid_scope(), 'element_id', $wrapper_col, false, array('row'));
+				}
+				else {
+					$point_css .= $breakpoint->apply($module, $this->get_grid_scope(), 'element_id', $wrapper_col, false, array());
+				}
 			}
 			else {
-				$point_css .= $breakpoint->apply($module, $this->get_grid_scope(), 'element_id', $col, false, ($is_post_object ? $this->_exceptions : array()));
+				if ( $is_post_object ) {
+					$point_css .= $breakpoint->apply($module, $this->get_grid_scope(), 'element_id', $col, false, $this->_exceptions);
+				}
+				else if ( $is_featured_image ) {
+					$point_css .= $breakpoint->apply($module, $this->get_grid_scope(), 'element_id', $col, false, array('row'));
+				}
+				else {
+					$point_css .= $breakpoint->apply($module, $this->get_grid_scope(), 'element_id', $col, false, array());
+				}
 			}
 		}
 		return $point_css;
