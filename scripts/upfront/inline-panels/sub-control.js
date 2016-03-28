@@ -47,6 +47,7 @@ define([
 			this.$el.addClass('upfront-sub-control-dialog-open');
 			this.$el.siblings().find('i').css("opacity", 0.4);
 			this.$el.siblings().prepend('<div class="control-panel-overlay"></div>');
+			Upfront.Events.trigger('upfront:hide:paddingPanel');
 		},
 
 		close: function() {
