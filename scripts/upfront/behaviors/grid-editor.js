@@ -1256,8 +1256,11 @@ var GridEditor = {
 					move_limit = ed.get_move_limit(aff_els, ed.containment),
 					prev_col = Math.ceil(ui.originalSize.width/ed.col_size),
 					prev_row = Math.ceil(ui.originalSize.height/ed.baseline),
+					$post_data_object =  $me.find(".upost-data-object").length ? $me.find(".upost-data-object") : false,
+					padding_top_row = $post_data_object ?  parseFloat( $post_data_object.css("padding-top") ) / ed.baseline : 0,
+					padding_bottom_row = $post_data_object ? parseFloat( $post_data_object.css("padding-bottom") ) / ed.baseline : 0,
 					rsz_col = $me.data('resize-col'),
-					rsz_row = $me.data('resize-row'),
+					rsz_row = parseFloat( $me.data('resize-row') ) - padding_top_row - padding_bottom_row,
 
 					regions = app.layout.get('regions'),
 					region = regions.get_by_name($region.data('name')),
