@@ -2922,9 +2922,11 @@
 			initialize: function () {
 				this.panels = {
 					posts: new SidebarPanel_Posts({"model": this.model}),
-					elements: new SidebarPanel_DraggableElements({"model": this.model}),
-					settings: new SidebarPanel_Settings({"model": this.model})
+					elements: new SidebarPanel_DraggableElements({"model": this.model})
 				};
+				if ( Upfront.Settings.Application.PERMS.OPTIONS ) {
+					this.panels.settings = new SidebarPanel_Settings({"model": this.model});
+				}
 				// Dev feature only
 				//if ( Upfront.Settings.Debug.dev )
 				//	this.panels.settings = new SidebarPanel_Settings({"model": this.model});
@@ -3084,7 +3086,9 @@
 				 this.views.push(new ResponsiveCommand_BrowseLayout());
 				 }
 				 */
-				this.views.push(new SidebarPanel_ResponsiveSettings({"model": this.model}));
+				if ( Upfront.Settings.Application.PERMS.OPTIONS ) {
+					this.views.push(new SidebarPanel_ResponsiveSettings({"model": this.model}));
+				}
 			},
 			render: function() {
 				_.each(this.views, function(view) {
