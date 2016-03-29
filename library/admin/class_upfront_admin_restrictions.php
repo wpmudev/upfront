@@ -83,10 +83,10 @@ class Upfront_Admin_Restrictions
         <?php
     }
 		
-		/**
+    /**
      * Saves the User Restrictions set
      */
-		function save_user_restriction(){
+    function save_user_restriction(){
         if( !isset( $_POST['upront_restrictions_submit'] ) || !wp_verify_nonce( $_POST[self::FORM_NONCE_KEY], self::FORM_NONCE_ACTION ) ) return;
         if (!current_user_can('manage_options')) return false;
 
