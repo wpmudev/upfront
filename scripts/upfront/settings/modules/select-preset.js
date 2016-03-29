@@ -12,28 +12,30 @@ define([
 			var me = this;
 
 			this.selectPresetField = new SelectPresetField({
-					model: this.model,
-					label: l10n.select_preset_label,
-					property: 'preset',
-					values: this.get_presets(),
-					change: function(value) {
-						me.model.set_property('preset', this.get_value());
-					}
-				});
+				model: this.model,
+				label: l10n.select_preset_label,
+				property: 'preset',
+				values: this.get_presets(),
+				change: function(value) {
+					me.model.set_property('preset', this.get_value());
+				}
+			});
 
 			this.fields = _([
 				this.selectPresetField
 			]);
 
-			this.listenTo(this.selectPresetField, 'upfront:presets:new', this.createPreset);
-			this.listenTo(this.selectPresetField, 'changed', this.changePreset);
+			if (Upfront.Application.user_can("CREATE_PRESET")) this.listenTo(this.selectPresetField, 'upfront:presets:new', this.createPreset);
+			if (Upfront.Application.user_can("SWITCH_PRESET")) this.listenTo(this.selectPresetField, 'changed', this.changePreset);
 		},
 
 		changePreset: function() {
+			if (!Upfront.Application.user_can("SWITCH_PRESET")) return false;
 			this.trigger('upfront:presets:change', this.selectPresetField.get_value());
 		},
 
 		createPreset: function(preset) {
+			if (!Upfront.Application.user_can("CREATE_PRESET")) return false;
 			this.trigger('upfront:presets:new', preset);
 		},
 

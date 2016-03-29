@@ -17,8 +17,11 @@ define([
 				firstStateButton = false,
 				firstStateSettings = false;
 
-			if((Upfront.Application.get_current() === Upfront.Application.MODE.THEME || this.options.model.get('theme_preset') !== true)
-					&& this.options.model.get('id') !== 'default') {
+			if(
+				(Upfront.Application.get_current() === Upfront.Application.MODE.THEME || this.options.model.get('theme_preset') !== true)
+				&& this.options.model.get('id') !== 'default'
+				&& Upfront.Application.user_can("MODIFY_PRESET")
+			) {
 				var fields = [
 					new Upfront.Views.Editor.Field.Button({
 						model: this.model,
@@ -32,8 +35,11 @@ define([
 						}
 					})
 				];
-			} else if(Upfront.Application.get_current() !== Upfront.Application.MODE.THEME
-						&& (this.options.model.get('id') === 'default' || this.options.model.get('theme_preset') === true)) {
+			} else if (
+				Upfront.Application.get_current() !== Upfront.Application.MODE.THEME
+				&& (this.options.model.get('id') === 'default' || this.options.model.get('theme_preset') === true)
+				&& Upfront.Application.user_can("MODIFY_PRESET")
+			) {
 				var fields = [
 					new Upfront.Views.Editor.Field.Button({
 						model: this.model,
@@ -110,14 +116,17 @@ define([
 		},
 
 		onPresetUpdate: function() {
+			if (!Upfront.Application.user_can("MODIFY_PRESET")) return false;
 			this.trigger('upfront:presets:update', this.model.toJSON());
 		},
 
 		deletePreset: function() {
+			if (!Upfront.Application.user_can("MODIFY_PRESET")) return false;
 			this.trigger('upfront:presets:delete', this.model);
 		},
 
 		resetPreset: function() {
+			if (!Upfront.Application.user_can("MODIFY_PRESET")) return false;
 			this.trigger('upfront:presets:reset', this.model);
 		},
 
