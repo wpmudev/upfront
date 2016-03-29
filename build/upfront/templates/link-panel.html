@@ -2,7 +2,12 @@
 <form>
 {[if(type == 'external') { ]}
 <div class="upfront-field-wrap ulinkpanel-external-wrap">
-	<input type="text" value="{{link.url}}" placeholder="Type link URL" class="upfront-field-text js-ulinkpanel-input-url js-ulinkpanel-input-external">
+	<input type="text" value="{{link.url}}" placeholder="{{Upfront.Settings.l10n.global.ueditor.type_link_url}}" class="upfront-field-text js-ulinkpanel-input-url js-ulinkpanel-input-external">
+</div>
+{[ } ]}
+{[if(type == 'phone') { ]}
+<div class="upfront-field-wrap ulinkpanel-external-wrap">
+	<input type="text" value="{{link.url}}" placeholder="{{Upfront.Settings.l10n.global.ueditor.type_link_phone}}" class="upfront-field-text js-ulinkpanel-input-url js-ulinkpanel-input-external">
 </div>
 {[ } ]}
 {[if(type == 'email') { ]}
