@@ -193,6 +193,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'open_ext_link' => __('Open Ext. Link', 'upfront'),
 				'send_email' => __('Send Email', 'upfront'),
 				'url' => __('URL', 'upfront'),
+				'phone' => __('Phone Number', 'upfront'),
 				'post_or_page' => __('Post or Page', 'upfront'),
 				'anchor' => __('Anchor', 'upfront'),
 				'change_link' => __('Change link', 'upfront'),
@@ -299,7 +300,8 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 					"standard_formatting" => __("Standard Formatting:", 'upfront'),
 				),
 				'open_lightbox' => __('Open lightbox', Upfront::TextDomain),
-				'type_link_url' => __('Type link URL', Upfront::TextDomain)
+				'type_link_url' => __('Type link URL', Upfront::TextDomain),
+				'type_link_phone' => __('Type Phone Number', Upfront::TextDomain)
 			),
 			'views' => array(
 				'unsaved_changes_nag' => __('You have unsaved changes you\'re about to lose by navigating off this page.', 'upfront'),
