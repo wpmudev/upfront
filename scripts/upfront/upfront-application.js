@@ -1936,6 +1936,18 @@ var Application = new (Backbone.Router.extend({
 		});
 	},
 
+	/**
+	 * Determine user ability to perform something
+	 *
+	 * @param {String} what Ability to check
+	 *
+	 * @return {Boolean}
+	 */
+	user_can: function (what) {
+		what = (_.isString(what) ? what : "").toUpperCase();
+		return !!((Upfront.Settings.Application || {}).PERMS || {})[what];
+	}
+
 }))();
 
 return {
