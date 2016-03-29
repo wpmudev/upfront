@@ -122,8 +122,8 @@ define([
 		
 		updateSelector: function() {
 			var me = this,
-					$imagePlaceholder = $('#upront-image-placeholder'),
-					$imageSelectorContainer = $imagePlaceholder.find('.upfront-image-selector-container');
+				$imagePlaceholder = $('#upront-image-placeholder'),
+				$imageSelectorContainer = $imagePlaceholder.find('.upfront-image-selector-container');
 					
 			if ( !Upfront.Settings.Application.PERMS.UPLOAD ) {
 				var $mediaGallery = $imagePlaceholder.find('a.open-media-gallery').parent();
