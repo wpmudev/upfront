@@ -81,6 +81,10 @@ class Upfront_MediaServer extends Upfront_Server {
 			'item_in_use_nag' => __("The selected media file is already in use. Are you sure?", 'upfront'),
 			'files_selected' => __('%d files selected', 'upfront'),
 			'media_title' => __("Media Title", 'upfront'),
+			'natural_size' => __("Natural Size", 'upfront'),
+			'px_label' => __("px", 'upfront'),
+			'width_label' => __("W", 'upfront'),
+			'height_label' => __("H", 'upfront'),
 			'add_labels' => __("Add Label(s)", 'upfront'),
 			'current_labels' => __("Current Label(s)", 'upfront'),
 			'additional_sizes' => __("Additional sizes", 'upfront'),
@@ -410,14 +414,28 @@ class Upfront_MediaServer extends Upfront_Server {
 				if(is_dir($dirPath . '/' . $file))
 					continue;
 
-				if(preg_match('/\.(jpg|jpeg|gif|svg|png|bmp)$/i', $file))
+				if(preg_match('/\.(jpg|jpeg|gif|svg|png|bmp)$/i', $file)) {
+					$imageWidth = 0;
+					$imageHeight = 0;
+					$imageSize = getimagesize($dirUrl .$file);
+					if ( $imageSize ) {
+						$imageWidth = isset($imageSize[0]) ? $imageSize[0] : $imageWidth;
+						$imageHeight = isset($imageSize[1]) ? $imageSize[1] : $imageHeight;
+					}
 					$images[] = array(
 						'ID' => $i++,
 						'thumbnail' => '<img style="max-height: 75px; max-width: 75px" src="' . $dirUrl . $file . '">',
 						'post_title' => $file,
 						'labels' => array(),
-						'original_url' => $dirUrl . $file
+						'original_url' => $dirUrl . $file,
+						'image' => array(
+							'src' => $dirUrl . $file,
+							'width' => $imageWidth,
+							'height' => $imageHeight,
+							'resized' => false
+						)
 					);
+				}
 			}
 		}
 		$meta = array('max_pages' => 1);
@@ -583,8 +601,15 @@ function upfront_media_file_upload () {
 	$base_url = Upfront::get_root_url();
 
 	$deps = Upfront_CoreDependencies_Registry::get_instance();
-	$deps->add_script("{$base_url}/scripts/file_upload/jquery.fileupload.js");
-	$deps->add_script("{$base_url}/scripts/file_upload/jquery.iframe-transport.js");
+
+	if( Upfront_Debug::get_debugger()->is_dev() ){
+		$deps->add_script("{$base_url}/scripts/file_upload/jquery.fileupload.js");
+		$deps->add_script("{$base_url}/scripts/file_upload/jquery.iframe-transport.js");
+	}else{
+		$deps->add_script("{$base_url}/build/file_upload/jquery.fileupload.js");
+		$deps->add_script("{$base_url}/build/file_upload/jquery.iframe-transport.js");
+	}
+
 	
 	echo '<script>var _upfront_media_upload=' . json_encode(array(
 		'normal' => Upfront_UploadHandler::get_action_url('upfront-media-upload'),

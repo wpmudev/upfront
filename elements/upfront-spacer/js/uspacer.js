@@ -123,7 +123,20 @@ define([
 		},
 		deactivate: function () {
 			return false;
-		}
+		},
+
+		on_element_edit_start: function (edit, post) {
+			return;
+		},
+		on_element_edit_stop: function (edit, post, saving_draft) {
+			return;
+		},
+		on_content_style_edit_start: function () {
+			return;
+		},
+		on_content_style_edit_stop: function () {
+			return;
+		},
 	});
 
 	Upfront.Models.UspacerModel = UspacerModel;

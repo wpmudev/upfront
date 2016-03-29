@@ -6,33 +6,39 @@
   top: 0;
   left: 0;
   z-index: 999998;
+  width:100%;
+  height:100%;
 }
 
 #upfront-save-dialog {
-  border: 1px solid #fff;
   background: #e5f3ff;
-  -moz-box-shadow: 0 0 20px rgba(39,58,76,.8);
-  -webkit-box-shadow: 0 0 20px rgba(39,58,76,.8);
   box-shadow: 0 0 20px rgba(39,58,76,.8);
   position: fixed;
-  top: 20%;
+  top: 100px;
   left: 50%;
-  width: 400px;
+  width: 500px;
   margin-left: -200px;
   z-index: 999999;
-  padding: 20px;
+  padding: 40px;
   text-align: center;
+}
+#upfront-save-dialog p {
+  font:100 20px/32px Open Sans, Helvetica Neueu, Helvetica, sans-serif;
+  color:#1C2D3D;
+  margin-bottom:30px;
 }
 
 .upfront-save-button {
 	display: inline-block;
-	font-size: 14px;
-	font-family: 'Source Sans Pro';
-	border: 1px solid #a3bfd9;
-	color: #395269;
-	margin: 0 10px 10px;
-	padding: 0 20px;
+	font:400 14px/26px Open Sans, Helvetica Neueu, Helvetica, sans-serif;
+	color: #6486A6;
+	margin: 0 20px 0;
+	padding: 5px 20px;
 	cursor: pointer;
+  background-image: linear-gradient(-180deg, #FAFDFF 0%, #F2F9FF 100%);
+  border: 1px solid #A2BFDA;
+  border-radius: 3px;
+  text-shadow: 0px 1px 0px #FFFFFF;
 }
 .upfront-save-button:hover {
 	border-color: #537ea6;

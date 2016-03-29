@@ -157,16 +157,14 @@ jQuery(document).ready(function($){
 				setTimeout(function () { // Zero timeout to shift it out
 					var $container = $overlay.closest('.upfront-output-region-container');
 					if ( $container.length ) {
-						var $next = $container
-										.next('.upfront-output-region-container')
-										.find('.upfront-region-container-bg'),
-							$prev = $container
-										.prev('.upfront-output-region-container')
-										.find('.upfront-region-container-bg'),
-							next_bg_color = $next.css('background-color'),
-							next_type = $next.attr('data-bg-type-' + breakpoint),
-							prev_bg_color = $prev.css('background-color'),
-							prev_type = $prev.attr('data-bg-type-' + breakpoint),
+						var $next = $container.next('.upfront-output-region-container'),
+							$next_bg = $next.find('.upfront-region-container-bg'),
+							$prev = $container.prev('.upfront-output-region-container'),
+							$prev_bg = $prev.find('.upfront-region-container-bg'),
+							next_bg_color = $next_bg.css('background-color'),
+							next_type = $next_bg.attr('data-bg-type-' + breakpoint),
+							prev_bg_color = $prev_bg.css('background-color'),
+							prev_type = $prev_bg.attr('data-bg-type-' + breakpoint),
 							has_alpha = function (color) {
 								if (!color) return false;
 								var matches = color.match(/(rgba|hsla)\(.*?,.*?,.*?,.*?([\d.]+).*?\)/);
@@ -176,6 +174,9 @@ jQuery(document).ready(function($){
 							overflow_top = ( $prev.length > 0 && prev_type == 'color' && prev_bg_color && has_alpha(prev_bg_color) ? 0 : false ),
 							overflow_bottom = ( $next.length > 0 && next_type == 'color' && next_bg_color && has_alpha(next_bg_color) ? 0 : false )
 						;
+						// No overlow if the next/prev container is contained
+						if ( $prev.length > 0 && $prev.hasClass('upfront-region-container-clip') ) overflow_top = 0;
+						if ( $next.length > 0 && $next.hasClass('upfront-region-container-clip') ) overflow_bottom = 0;
 						$overlay.uparallax({
 							element: $overlay.attr('data-bg-parallax')
 						});
@@ -478,24 +479,36 @@ jQuery(document).ready(function($){
 			}
 		});
 		$('.upfront-output-object .uf-post .thumbnail, .uf-post-data .upostdata-part.thumbnail').each(function(){
-			var height = $(this).height(),
+			var is_upostdata = $(this).hasClass('upostdata-part'),
+				$object = $(this).closest('.upfront-output-object'),
+				height = is_upostdata ? parseInt($object.css('min-height'), 10) : $(this).height(),
 				width = $(this).width(),
+				padding_top = parseInt($object.css('padding-top'), 10),
+				padding_bottom = parseInt($object.css('padding-bottom'), 10),
 				$img = $(this).find('img'),
 				img = new Image,
-				img_h, img_w;
+				img_h, img_w
+			;
+			if ( is_upostdata ) {
+				height -= padding_top + padding_bottom;
+				$(this).css('height', height);
+			}
 			if ( $(this).attr('data-resize') == "1" ) {
 				img.src = $img.attr('src');
 				img_h = img.height;
 				img_w = img.width;
-				if ( height/width > img_h/img_w )
+				if ( height/width > img_h/img_w ) {
 					$img.css({ height: '100%', width: 'auto', marginLeft: (width-Math.round(height/img_h*img_w))/2, marginTop: "" });
-				else
+				}
+				else {
 					$img.css({ height: 'auto', width: '100%', marginLeft: "", marginTop: (height-Math.round(width/img_w*img_h))/2 });
+				}
 			}
 			else {
 				img_h = $img.height();
-				if ( height != img_h )
+				if ( height != img_h ) {
 					$img.css('margin-top', (height-img_h)/2);
+				}
 			}
 		});
 	}

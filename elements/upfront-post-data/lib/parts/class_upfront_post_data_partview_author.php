@@ -82,6 +82,7 @@ class Upfront_Post_Data_PartView_Author extends Upfront_Post_Data_PartView {
 	 * Supported macros:
 	 *    {{name}} - Author display_name
 	 *    {{email}} - Author email
+	 *    {{email_string}} - Email link text
 	 *
 	 * Part template: post-data-author_email
 	 *
@@ -91,9 +92,10 @@ class Upfront_Post_Data_PartView_Author extends Upfront_Post_Data_PartView {
 		if (empty($this->_post->post_author)) return '';
 
 		$author = $this->_post->post_author;
-		$name = !empty($this->_data['email_link_text'])
+		$name = get_the_author_meta('display_name', $author);
+		$email_string = !empty($this->_data['email_link_text'])
 			? esc_html(sanitize_text_field($this->_data['email_link_text']))
-			: get_the_author_meta('display_name', $author)
+			: __('Email', 'upfront')
 		;
 		$email = sanitize_email(get_the_author_meta('user_email', $author));
 
@@ -103,6 +105,7 @@ class Upfront_Post_Data_PartView_Author extends Upfront_Post_Data_PartView {
 
 		$out = Upfront_Codec::get()->expand($out, "name", esc_html($name));
 		$out = Upfront_Codec::get()->expand($out, "email", esc_attr($email));
+		$out = Upfront_Codec::get()->expand($out, "email_string", esc_html($email_string));
 
 		return $out;
 	}	
@@ -113,6 +116,7 @@ class Upfront_Post_Data_PartView_Author extends Upfront_Post_Data_PartView {
 	 * Supported macros:
 	 *    {{name}} - Author display_name
 	 *    {{url}} - Author's website URL (WP profile field value). Falls back to author's local posts URL
+	 *    {{url_string}} - URL link text
 	 *
 	 * Part template: post-data-author_url
 	 *
@@ -122,9 +126,10 @@ class Upfront_Post_Data_PartView_Author extends Upfront_Post_Data_PartView {
 		if (empty($this->_post->post_author)) return '';
 
 		$author = $this->_post->post_author;
-		$name = !empty($this->_data['link_text'])
+		$name = get_the_author_meta('display_name', $author);
+		$url_string = !empty($this->_data['link_text'])
 			? esc_html(sanitize_text_field($this->_data['link_text']))
-			: get_the_author_meta('display_name', $author)
+			: __('Website', 'upfront')
 		;
 		
 		$author_url = get_author_posts_url($author);
@@ -135,6 +140,7 @@ class Upfront_Post_Data_PartView_Author extends Upfront_Post_Data_PartView {
 
 		$out = Upfront_Codec::get()->expand($out, "name", esc_html($name));
 		$out = Upfront_Codec::get()->expand($out, "url", esc_url($url));
+		$out = Upfront_Codec::get()->expand($out, "url_string", esc_html($url_string));
 
 		return $out;
 	}

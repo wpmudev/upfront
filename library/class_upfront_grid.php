@@ -243,6 +243,7 @@ class Upfront_Grid {
 			$next_wrapper_id = false;
 			$next_wrapper_data = false;
 			$is_post_object = false;
+			$is_featured_image = false;
 			$is_spacer = false;
 
 			if ( isset($module['modules']) && is_array($module['modules']) ){ // rendering module group
@@ -256,11 +257,26 @@ class Upfront_Grid {
 					foreach ($module['objects'] as $object) {
 						// See if this is posts/this post element, then add 'row' to exceptions list and disable height rendering
 						$type = upfront_get_property_value('type', $object);
-						if ( preg_match("/(PostsModel|ThisPostModel|PostDataPartModel)/", $type) ) {
+						if ( preg_match("/(PostsModel|ThisPostModel|PostDataPartModel|PostDataModel)/", $type) ) {
 							if ( 'PostDataPartModel' == $type ) {
 								$part_type = upfront_get_property_value('part_type', $object);
-								if ( 'content' == $part_type ) {
+								if ( 'content' == $part_type || 'comments' == $part_type ) {
 									$is_post_object = true;
+								}
+							}
+							else if ( 'PostDataModel' == $type ) {
+								$data_type = upfront_get_property_value('data_type', $object);
+								if ( 'post_data' == $data_type || 'comments' == $data_type ) {
+									foreach ( $object['objects'] as $child_obj ) {
+										$part_type = upfront_get_property_value('part_type', $child_obj);
+										if ( 'content' == $part_type || 'comments' == $part_type ) {
+											$is_post_object = true;
+											break;
+										}
+									}
+								}
+								if ( 'featured_image' == $data_type ) {
+									$is_featured_image = true;
 								}
 							}
 							else {
@@ -279,6 +295,15 @@ class Upfront_Grid {
 							}
 							$point_css .= $breakpoint->apply($object, $this->get_grid_scope(), 'element_id', $module_col, false, ($is_post_object ? $this->_exceptions : array()));
 							$point_css .= $breakpoint->apply_paddings($object, $this->get_grid_scope(), 'element_id', '#' . $module_id);
+						}
+					}
+				}
+				else {
+					$type = upfront_get_property_value('type', $module);
+					if ( 'PostDataPartModel' == $type ) {
+						$part_type = upfront_get_property_value('part_type', $module);
+						if ( 'content' == $part_type || 'comments' == $part_type ) {
+							$is_post_object = true;
 						}
 					}
 				}
@@ -423,10 +448,26 @@ class Upfront_Grid {
 					$spacer_col = 0;
 					$spacer_id = false;
 				}
-				$point_css .= $breakpoint->apply($module, $this->get_grid_scope(), 'element_id', $wrapper_col, false, ($is_post_object ? $this->_exceptions : array()));
+				if ( $is_post_object ) {
+					$point_css .= $breakpoint->apply($module, $this->get_grid_scope(), 'element_id', $wrapper_col, false, $this->_exceptions);
+				}
+				else if ( $is_featured_image ) {
+					$point_css .= $breakpoint->apply($module, $this->get_grid_scope(), 'element_id', $wrapper_col, false, array('row'));
+				}
+				else {
+					$point_css .= $breakpoint->apply($module, $this->get_grid_scope(), 'element_id', $wrapper_col, false, array());
+				}
 			}
 			else {
-				$point_css .= $breakpoint->apply($module, $this->get_grid_scope(), 'element_id', $col, false, ($is_post_object ? $this->_exceptions : array()));
+				if ( $is_post_object ) {
+					$point_css .= $breakpoint->apply($module, $this->get_grid_scope(), 'element_id', $col, false, $this->_exceptions);
+				}
+				else if ( $is_featured_image ) {
+					$point_css .= $breakpoint->apply($module, $this->get_grid_scope(), 'element_id', $col, false, array('row'));
+				}
+				else {
+					$point_css .= $breakpoint->apply($module, $this->get_grid_scope(), 'element_id', $col, false, array());
+				}
 			}
 		}
 		return $point_css;
@@ -910,7 +951,11 @@ class Upfront_GridBreakpoint {
 		// Fill margin left or right
 		if ( is_array($fill_margin) ){
 			foreach ( $fill_margin as $dir => $val ) {
-				$prefix = ( 'left' == $dir ) ? $this->_prefixes[self::PREFIX_MARGIN_LEFT] : $this->_prefixes[self::PREFIX_MARGIN_RIGHT];
+				if( is_rtl() )
+					$prefix = ( 'left' == $dir ) ?  $this->_prefixes[self::PREFIX_MARGIN_RIGHT] : $this->_prefixes[self::PREFIX_MARGIN_LEFT] ;
+				else
+					$prefix = ( 'left' == $dir ) ? $this->_prefixes[self::PREFIX_MARGIN_LEFT] : $this->_prefixes[self::PREFIX_MARGIN_RIGHT];
+
 				if ( $this->is_default() ){
 					$style = $this->_map_class_to_style($prefix . $val, $max_columns);
 				}

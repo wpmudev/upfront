@@ -839,7 +839,8 @@ var Ueditor = function($el, options) {
             //removeDataAttr: false,
             removeEmpty: false,
             imageResizable: false,
-            lang: 'upfront' // <-- This is IMPORTANT. See the l10n proxying bit in `hackRedactor`
+            lang: 'upfront', // <-- This is IMPORTANT. See the l10n proxying bit in `hackRedactor`,
+            direction: Upfront.Util.isRTL() ? 'rtl' : 'ltr'
 		}, options)
 	;
 	/* --- Redactor allows for single callbacks - let's dispatch events instead --- */
@@ -963,11 +964,28 @@ var Ueditor = function($el, options) {
             else {
                 UeditorEvents.trigger("ueditor:enter", this, e);
             }
+
+
+            /**
+             * Allow user to exit lists on double enter
+             */
+            if( this.utils.isEmpty( this.keydown.block.innerText ) ){
+                $(this.selection.getBlock()).remove();
+                var node;
+                if( $list.next().is("p") && this.utils.isEmpty( $list.next().text() ) ){
+                    node = $list.next("p");
+                }else{
+                    node = $(this.opts.emptyHtml);
+                    $list.after(node);
+                }
+                this.caret.setStart(node);
+            }
         }
         // Default
         else {        
             UeditorEvents.trigger("ueditor:enter", this, e);
         }
+
     };
 
 };
@@ -1133,7 +1151,7 @@ Ueditor.prototype = {
 
             var $node = $(node),
                 rx = new RegExp('^' + src.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1") + ' ?'),
-                text = $node.text().replace(rx, '')
+                text = $node.html().replace(rx, '')
             ;
 
             // Let's not do nested lists

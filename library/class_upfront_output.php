@@ -118,10 +118,16 @@ class Upfront_Output {
 				$region_markups_after[$container] .= $markup;
 			}
 			else if ( $region_sub == 'left' ){
-				$region_markups[$container] = $markup . $region_markups[$container];
+				if( is_rtl() )
+					$region_markups[$container] .= $markup;
+				else
+					$region_markups[$container] =  $markup . $region_markups[$container];
 			}
 			else{
-				$region_markups[$container] .= $markup;
+				if( is_rtl() )
+					$region_markups[$container] =  $markup . $region_markups[$container];
+				else
+					$region_markups[$container] .= $markup;
 			}
 		}
 		foreach ($container_views as $container => $container_view) {

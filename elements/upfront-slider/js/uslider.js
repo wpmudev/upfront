@@ -280,16 +280,6 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		if(!me.parent_module_view)
 			return;
 
-		//Bind resizing events
-		if(!me.parent_module_view.$el.data('resizeHandling')){
-			me.parent_module_view.$el
-				.on('resizestart', $.proxy(me.onElementResizeStart, me))
-				.on('resize', $.proxy(me.onElementResizing, me))
-				.on('resizestop', $.proxy(me.onElementResize, me))
-				.data('resizeHandling', true)
-			;
-		}
-
 		if(!this.model.slideCollection.length)
 			return;
 
@@ -298,7 +288,6 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				me.on_render();
 			}, 100);
 		}
-
 
 		this.update_caption_controls();
 	},
@@ -313,6 +302,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		_.delay( function(){
 			me.controls.$el.html( panel.$el );
 			me.controls.$el.css("width", "auto");
+			me.updateSlideControls();
 		}, 400);
 	},
 	hideSliderNavigation: function(){
@@ -434,7 +424,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		if(typeof(this.controls) !== 'undefined') {
 			this.controls = undefined;
 		}
-
+		
 		this.updateControls();
 	},
 
@@ -875,102 +865,96 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			this.model.slideCollection.add(slides);
 	},
 
-	onElementResizeStart: function(e, ui){
-		if(ui.element.hasClass('uslide-image') || this.$('.upfront-image-starting-select').length)
-			return;
-
-		var style = this.property('style'),
-			me = this
-		;
-
-		this.calculateColumnWidth();
-
-		if(_.indexOf(['nocaption', 'below', 'above', 'right', 'left'], style) == -1)
-			this.$('.uslider-caption').fadeOut('fast');
-		else if(style == 'right' || style == 'left'){
-			ui.element.resizable('option', {
-				minWidth: me.colWidth * 6
-			});
-			this.$('.uslide').css({height: '100%'});
-		}
-	},
-
 	calculateColumnWidth: function(){
 		return (this.colWidth = Upfront.Behaviors.GridEditor.col_size);
 	},
 
-	onElementResize: function(e, ui){
-		if (ui.element.hasClass('uslide-image')) return;
+	/***************************************************************************/
+	/*           Handling element resize events (jQuery resizeable)            */
+	/***************************************************************************/
 
-		var starting = this.$('.upfront-image-starting-select');
-		if (starting.length) {
-			this.startingHeight = $('.upfront-resize').height() - 30;
-			return;
+	on_element_resize_start: function(attr) {
+		
+		var properties = this.get_preset_properties(),
+			style = this.property('style'),
+			me = this
+		;
+		
+		if(typeof properties !== "undefined" && properties.primaryStyle === "side") return;
+		
+		if(_.indexOf(['nocaption', 'below', 'above', 'right', 'left'], style) == -1)
+			this.$('.uslider-caption').fadeOut('fast');
+		else if(style == 'right' || style == 'left'){
+			this.$('.uslide').css({height: '100%'});
 		}
+	},
+	
+	on_element_resizing: function(attr) {
+		if( !this.model.slideCollection.length ) return;
+		
+		var properties = this.get_preset_properties();
+		if(typeof properties !== "undefined" && properties.primaryStyle === "side") return;
+
+		var me = this,
+			current = this.$('.upfront-default-slider-item-current'),
+			text = this.get_preset_properties().primaryStyle == 'below' ? current.find('.uslide-caption') : [],
+			textHeight = text.length ? text.height() : 0,
+			column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
+			vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
+			newElementSize = {width: parseInt( attr.width ), height: parseInt( attr.height ) - ( vPadding * 2 ) - textHeight},
+			imageWrapper = current.find('.uslide-image'),
+			style = this.get_preset_properties().primaryStyle,
+			wrapperSize = {width: style == 'side' ? imageWrapper.width() : newElementSize.width, height: newElementSize.height},
+			wrapperCss = {height: wrapperSize.height}
+		;
+
+		if(style == 'side') {
+			current.find('.uslide-caption').height(newElementSize.height);
+		} else {
+			wrapperCss.width = wrapperSize.width;
+		}
+
+		imageWrapper.css(wrapperCss)
+			.closest('.uslide').height(newElementSize.height)
+			.closest('.uslides').css({'padding-top' : newElementSize.height})
+		;
+		
+		//We should resize all slides
+		this.model.slideCollection.each(function (slide) {
+			me.calculateImageResize(wrapperSize, slide);
+		});
+		
+	},
+
+	on_element_resize: function(attr) {
+		if( !this.model.slideCollection.length ) return;
+
+		var properties = this.get_preset_properties();
+		if(typeof properties !== "undefined" && properties.primaryStyle === "side") return;
 
 		var me = this,
 			mask = this.$('.upfront-default-slider-item-current').find('.uslide-image'),
-			currentSlide = this.model.slideCollection.at(this.getCurrentSlide()),
-			style = this.get_preset_properties().primaryStyle,
-			resizer = $('.upfront-resize'),
-			text = style == 'below' ? this.$('.uslide-caption') : [],
-			textHeight = text.length ? text.outerHeight() : 0,
-			newElementSize = {width: resizer.outerWidth() - 30, height: resizer.outerHeight() - 30 - textHeight},
-			elementColumns = Upfront.Util.width_to_col(resizer.outerWidth()),
+			text = this.get_preset_properties().primaryStyle == 'below' ? current.find('.uslide-caption') : [],
+			textHeight = text.length ? text.height() : 0,
+			column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
+			vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
+			newElementSize = {width: parseInt( attr.width ), height: parseInt( attr.height ) - ( vPadding * 2 ) - textHeight},
+			elementColumns = attr.col,
 			imageColumns = Math.max(3, Math.round(this.property('rightImageWidth') * elementColumns / this.property('rightWidth'))),
 			sideImageWidth = imageColumns * this.calculateColumnWidth()
 		;
 
 		this.model.slideCollection.each(function (slide) {
 			var imageSize = {height: newElementSize.height};
-			imageSize.width = style == 'side' && slide.get('style') != 'nocaption' ? sideImageWidth : newElementSize.width;
+			imageSize.width = me.get_preset_properties().primaryStyle == 'side' && slide.get('style') != 'nocaption' ? sideImageWidth : newElementSize.width;
 			me.imageProps[slide.id] = me.calculateImageResize(imageSize, slide);
 		});
 
 		me.cropHeight = newElementSize.height;
 
-		if (style == 'side') {
-			this.property('rightImageWidth', imageColumns);
-		}
-		this.property('rightWidth', elementColumns);
-
 		me.setTimer();
 	},
-
-	onElementResizing: function(e, ui){
-		if (ui.element.hasClass('uslide-image')) return;
-
-		var starting = this.$('.upfront-image-starting-select');
-		if (starting.length) return starting.outerHeight($('.upfront-resize').height() - 30);
-
-		var resizer = $('.upfront-resize'),
-			current = this.$('.upfront-default-slider-item-current'),
-			text = this.get_preset_properties().primaryStyle == 'below' ? current.find('.uslide-caption') : [],
-			textHeight = text.length ? text.outerHeight() : 0,
-			newElementSize = {width: resizer.outerWidth() - 30, height: resizer.outerHeight() - 30 - textHeight},
-			id = current.attr('rel'),
-			slide = this.model.slideCollection.get(id),
-			imageWrapper= current.find('.uslide-image'),
-			style = this.get_preset_properties().primaryStyle,
-			wrapperSize = {width: style == 'side' ? imageWrapper.width() : newElementSize.width, height: newElementSize.height},
-			wrapperCss = {height: wrapperSize.height}
-		;
-
-		if (style == 'side') {
-			current.find('.uslide-caption').height(newElementSize.height);
-		} else {
-			wrapperCss.width = wrapperSize.width;
-		}
-
-		//newElementSize.width = current.width();
-		imageWrapper.css(wrapperCss)
-			.closest('.uslide').height(newElementSize.height)
-			.closest('.uslides').css({'padding-top' : newElementSize.height})
-		;
-
-		this.calculateImageResize(wrapperSize, slide);
-	},
-
+	
 	calculateImageResize: function(wrapperSize, slide){
 		var img = this.$('.uslide[rel=' + slide.id + ']').find('img'),
 			currentPosition = img.position(),
@@ -994,12 +978,22 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			var final_height = wrapperSize.width / imgSize.width * imgSize.height;
 			img.css({width: wrapperSize.width,	height: final_height,	left: 0, top: Math.min(0, Math.max(imgPosition.top, wrapperSize.height - imgSize.height))});
 		} else {
+			if (pivot == 'height') {
+				var final_width = wrapperSize.height / imgSize.height * imgSize.width;
+				img.css({width: final_width, height: wrapperSize.height, top: 0, left: Math.min(0, Math.max(imgPosition.left, wrapperSize.width - imgSize.width))});
+			} else {
+				var final_height = wrapperSize.width / imgSize.width * imgSize.height;
+				img.css({width: wrapperSize.width,	height: final_height,	left: 0, top: Math.min(0, Math.max(imgPosition.top, wrapperSize.height - imgSize.height))});
+			}
+
+			/*
 			img.css({
 				height: imgSize.height,
 				width: imgSize.width,
 				top: Math.max(imgPosition.top, wrapperSize.height - imgSize.height),
 				left: Math.max(imgPosition.left, wrapperSize.width - imgSize.width)
 			});
+			*/
 		}
 
 		// Re-adjust wrappers! They're only being adjusted for the currently active slide
@@ -1173,6 +1167,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		return {
 			id: image.id,
 			element_id: element_id,
+			element_cols: Upfront.Util.grid.width_to_col(mask.width(), true),
 			maskSize: {width: mask.width(), height: mask.height()},
 			maskOffset: mask.offset(),
 			position: position,

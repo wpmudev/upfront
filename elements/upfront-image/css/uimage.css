@@ -1,12 +1,9 @@
-#upfront-image-overlay * {
-	box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;
-}
 #upfront-image-overlay {
 	position:fixed;
 	width: 100%;
-	background: rgba(57,82,105,0.9);
+	background: rgba(37, 58, 78, 0.8);
 	top:0;
-	z-index: 10001001;
+	z-index: 10;
 	font-family: 'Lato';
 	font-size: 24px;
 	font-weight: 200;
@@ -254,7 +251,7 @@
 	top: 0;
 	left: 0;
 	z-index:10001002;
-	cursor: pointer;
+	cursor: normal;
 }
 
 #upfront-image-edit *,
@@ -331,9 +328,6 @@
 	font-size: 16px;
 }
 
-.image-edit-control>i:hover {
-}
-
 .image-edit-rotate {
 	top: 5px;
 	left: 5px;
@@ -348,9 +342,7 @@
 	border-collapse: separate;
 	z-index:10;
 	position:absolute;
-		 -moz-box-shadow: 0 0 0 20000px rgba(34, 49, 64, 0.6);
-	-webkit-box-shadow: 0 0 0 20000px rgba(34, 49, 64, 0.6);
-					box-shadow: 0 0 0 20000px rgba(34, 49, 64, 0.6);
+	box-shadow: 0 0 0 9999px rgba(37, 58, 78, 0.8);
 }
 
 #image-edit-buttons {
@@ -366,10 +358,14 @@ a.image-edit-button:link {
 	margin-bottom: 5px;
 	cursor: pointer;
 	color:#304050;
-	padding:0 10px;
+	height: 30px;
+	width: 90px;
+	color: #fff;
 	font-size: 14px;
+	line-height: 32px;
 	clear: both;
 	float: left;
+	text-align: center;
 }
 
 #image-edit-buttons-bottom a {
@@ -437,7 +433,7 @@ a.image-edit-button.deactivated:hover {
 
 #image-edit-button-ok {
 	background: #1FCD8F;
-	color: #11A56C;
+	color: #FFFFFF;
 }
 #image-edit-button-ok:hover {
 	background: #3ea;
@@ -468,9 +464,6 @@ a.image-edit-button.deactivated:hover {
 }
 #image-edit-button-reset:hover:before{
 	/*background-position: -801px -130px;	*/
-}
-#image-edit-button-swap:hover:before{
-	background-position: -693px -194px;
 }
 #image-edit-button-ok:hover:before{
 	background-position: -801px -192px;
@@ -610,12 +603,9 @@ a.image-edit-button.deactivated:hover {
 
 .uimage-controls .upfront-inline-panel {
 	visibility: visible;
-	background-image: -o-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
-	background-image: -moz-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
-	background-image: -ms-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
 	background-image: linear-gradient(-179deg, #2F445D 0%, #152841 100%);
-	-moz-box-shadow:    inset 0px -1px 0px 0px #43607A, inset 0px 1px 0px 0px #26394A;
-	box-shadow:         inset 0px -1px 0px 0px #43607A, inset 0px 1px 0px 0px #26394A;
+	box-shadow: inset 0px -1px 0px 0px #43607A, 
+				inset 0px 1px 0px 0px #26394A;
 	border-top-right-radius: 3px;
 }
 .uimage-controls .upfront-inline-panel-item {
@@ -667,7 +657,7 @@ a.image-edit-button.deactivated:hover {
 	position: absolute;
 	min-width: 150px;
 	z-index: 2001;
-	background: #2a465f;
+	background: rgba(230,236,242,1);
 	padding: 5px;
 	left: 0px;
 	top: 38px;
@@ -794,6 +784,18 @@ div.uimage-controls i.upfront-icon:before,
 
 .upfront-ui .upfront-icon-region-link:before {
 	background-position: -260px -249px;
+}
+
+.upfront-ui .upfront-icon-region-swap:before {
+	background-position: -291px -342px;
+}
+
+.upfront-ui .upfront-icon-region-lock-unlocked:before {
+	background-position: -261px -430px;
+}
+
+.upfront-ui .upfront-icon-region-lock-locked:before {
+	background-position: -261px -460px;
 }
 
 .upfront-ui .upfront-icon-region-nocaption:before {
@@ -1079,6 +1081,25 @@ div.uimage-controls i.upfront-icon:before,
 	line-height: 0px;
 	margin-top:0;
 }
+.image-control-button {
+	visibility: hidden;
+	min-width: 122px;
+    width: 100%;
+	height: 118px;
+    font-size: 0.8em;
+    padding: 10px 20px 10px 10px;
+    margin-top: 16px;
+    background-color: rgba(242,249,255,1);
+    color: #ADADAD;
+	box-shadow: 0px 2px 10px 0px rgba(34,50,64,1);
+	border: none;
+	z-index: -1;
+	right: 96px;
+	position: relative;
+}
+.upfront-control-dialog-open .image-control-button {
+	visibility: visible;
+}
 .uimage-caption-control {
 	display: none;
 }
@@ -1363,4 +1384,208 @@ div.uimage-controls i.upfront-icon:before,
 
 .upfront-editable_entity .uimage-below_image .upfront-image-caption-container {
 	overflow: visible !important;
+}
+.crop-contols-wrapper {
+	width: 102px;
+}
+.image-edit-control-panel-item {
+	border-radius: 3px;
+	background-image: url(../../../img/uf-core-el-sprite.svg);
+	background-position: -287px -491px;
+	background-color: rgba(242,249,255,1);
+	z-index: initial;
+	border: none;
+}
+.image-edit-control-panel-item.upfront-control-dialog-open {
+	border-radius: 3px;
+	background-image: url(../../../img/uf-core-el-sprite.svg);
+	background-position: -287px -522px;
+	background-color: rgba(242,249,255,1);
+	z-index: initial;
+	border: none;
+}
+.image-ok-button {
+	position: relative;
+}
+.image-edit-size-buttons {
+	left: -25px;
+	position: absolute;
+	top: 0px;
+}
+.image-crop-edit-button {
+	margin-bottom: 10px;
+}
+.image-increase-size,
+.image-decrease-size {
+	border-radius: 3px;
+	background-color: rgba(242,249,255,1);
+	z-index: initial;
+	color: #24394e;
+	display: block;
+	width: 14px;
+	height: 14px;
+	line-height: 14px;
+	text-align: center;
+	font-weight: bold;
+	margin-bottom: 1px;
+}
+.image-crop-edit-button input {
+	background-image: linear-gradient(-180deg, #FAFDFF 0%, #F@F9FF 100%);
+	border: 1px solid #A2BFDA;
+	border-radius: 3px;
+	font: 600 12px/16px Open Sans, Helvetica Neueu, Helvetica, Arial, sans-serif;
+	color: #6486A6;
+	text-shadow: 0px 1px 0px #FFFFFF;
+	height: 26px;
+	line-height: 26px;
+}
+.image-crop-edit-button input:hover {
+	background-image: linear-gradient(-180deg, #FAFDFF 0%, #F@F9FF 100%);
+	border: 1px solid #A2BFDA;
+	border-radius: 3px;
+	font: 600 12px/16px Open Sans, Helvetica Neueu, Helvetica, Arial, sans-serif;
+	color: #456889;
+	text-shadow: 0px 1px 0px #FFFFFF;
+	height: 26px;
+	line-height: 26px;
+}
+.image-edit-col-full input {
+	width: 102px;
+	height: 26px;
+	line-height: 26px;
+}
+.image-edit-col-half {
+	display: inline-block;
+	margin-left: 0px;
+	width: 46px;
+}
+.image-edit-col-half input {
+	width: 46px;
+	height: 26px;
+	line-height: 26px;
+}
+.image-edit-col-half-last {
+	margin-left: 10px;
+}
+
+/* Icons */
+
+.image-crop-edit-button {
+	position: relative;
+}
+
+.image-crop-edit-button input {
+	text-align: left;
+	padding-left: 24px;
+}
+
+.image-crop-edit-button:before {
+	content: '';
+	display: inline-block;
+	vertical-align: middle;
+	position: absolute;
+	top: 4px;
+	left: 3px;
+	background: url(../../../img/uf-core-el-sprite.png);
+	background: url(../../../img/uf-core-el-sprite.svg), none;
+}
+
+#image-edit-button-swap:before{
+	background-position: -291px -342px;
+	width: 18px;
+	height: 16px;
+	opacity: 0.7;
+}
+#image-edit-button-swap:hover:before{
+	background-position: -291px -342px;
+	width: 18px;
+	height: 16px;
+	opacity: 1;
+}
+#image-edit-button-reset:before{
+	background-position: -291px -368px;
+	width: 18px;
+	height: 20px;
+	opacity: 0.7;
+}
+#image-edit-button-reset:hover:before{
+	background-position: -291px -368px;
+	width: 18px;
+	height: 20px;
+	opacity: 1;
+}
+#image-edit-button-fit:before{
+	background-position: -291px -398px;
+	width: 18px;
+	height: 18px;
+	opacity: 0.7;
+}
+#image-edit-button-fit:hover:before{
+	background-position: -291px -398px;
+	width: 18px;
+	height: 18px;
+	opacity: 1;
+}
+#image-edit-button-fill:before{
+	background-position: -291px -431px;
+	width: 18px;
+	height: 18px;
+	opacity: 0.7;
+}
+#image-edit-button-fill:hover:before{
+	background-position: -291px -431px;
+	width: 18px;
+	height: 18px;
+	opacity: 1;
+}
+
+.align-points-row {
+	height: 12px;
+}
+
+.image-align-point {
+	width: 12px;
+	height: 12px;
+	padding: 0px;
+	text-align: center;
+	line-height: 12px;
+	display: block;
+	position: relative;
+	float: left;
+	cursor: pointer;
+}
+
+.image-align-point:before {
+	width: 4px;
+	height: 4px;
+	border-radius: 50%;
+	background: rgb(179, 193, 204);
+	box-shadow: 0px 0px 2px 1px #24394E;
+	content: '';
+	display: inline-block;
+	vertical-align: top;
+	position: relative;
+	left: 2px;
+	top: 4px;
+}
+
+.active-alignment-point:before {
+	transform: scale(1.5); 
+	background: rgba(84,178,255,1);
+	box-shadow: 0px 0px 2px 0px #24394E;
+}
+
+.image-reset-disabled {
+	opacity: 0.5;
+}
+
+.image-edit-control-panel-item.upfront-control-dialog-open:after {
+    content: '';
+    width: 100%;
+    height: 6px;
+    display: block;
+    position: absolute;
+    bottom: 0;
+    background: #F2F9FF;
+    left: 0;
 }

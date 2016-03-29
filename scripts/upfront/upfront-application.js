@@ -1455,11 +1455,13 @@ var Application = new (Backbone.Router.extend({
 
 		else Upfront.Util.log("No current subapplication");
 
+
 		//if (!me.layout_view) {
 		me.layout_view = new Upfront.Views.Layout({
 			"model": me.layout,
 			"el": $(Upfront.Settings.LayoutEditor.Selectors.main)
 		});
+		Upfront.Events.trigger('upfront:renderingqueue:settotal', me.layout_view);
 		Upfront.Events.trigger("layout:render", me.current_subapplication);
 		me.layout_ready = true;
 		//}
@@ -1573,13 +1575,13 @@ var Application = new (Backbone.Router.extend({
 	},
 
 	post_set_up: function(postData){
-		
+
 		//Create the post with meta
 		postData.meta = [];
 		var post = new Upfront.Models.Post(postData);
-				
+
 		post.is_new = postData.post_status === 'draft' && postData.post_content.indexOf('<p') < 0 ;//postData.post_status == 'auto-draft' && postData.post_content === '';
-		
+
 		//Set global variables
 		Upfront.data.posts[post.id] = post;
 		_upfront_post_data.post_id = post.id;
@@ -1655,7 +1657,7 @@ var Application = new (Backbone.Router.extend({
 		}
 		//this.sidebar.render(); <-- Subapplications do this
 	},
-	
+
 	recursiveExistenceMigration: function(selector, clean_selector) {
 		var splitted = clean_selector.split(' ');
 		var me = this;
