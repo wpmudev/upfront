@@ -196,10 +196,13 @@ define([
 				this.selectPresetModule.stopListening();
 				this.stopListening(this.selectPresetModule);
 			}
-			this.selectPresetModule = new SelectPresetModule({
-				model: this.model,
-				presets: this.presets
-			});
+
+			if (Upfront.Application.user_can("SWITCH_PRESET")) { // Don't build the control if we can't do this
+				this.selectPresetModule = new SelectPresetModule({
+					model: this.model,
+					presets: this.presets
+				});
+			}
 
 			// Setup preset model so that it uses breakpoint values
 			if (this.options.hasBreakpointSettings === true) {
@@ -219,6 +222,7 @@ define([
 				this.editPresetModule.stopListening();
 				this.stopListening(this.editPresetModule);
 			}
+
 			this.editPresetModule = new EditPresetModule({
 				model: presetModel,
 				stateModules: this.stateModules
@@ -228,10 +232,13 @@ define([
 				this.presetCssModule.stopListening();
 				this.stopListening(this.presetCssModule);
 			}
-			this.presetCssModule = new PresetCssModule({
-				model: this.model,
-				preset: presetModel
-			});
+
+			if (Upfront.Application.user_can("MODIFY_PRESET")) { // Don't build the control if we can't do this
+				this.presetCssModule = new PresetCssModule({
+					model: this.model,
+					preset: presetModel
+				});
+			}
 
 			//When element is not migrated yet
 			this.migratePresetModule = new MigratePresetModule({
@@ -240,14 +247,16 @@ define([
 				elementPreset: this.styleElementPrefix
 			});
 
-			this.listenTo(this.selectPresetModule, 'upfront:presets:new', this.createPreset);
-			this.listenTo(this.selectPresetModule, 'upfront:presets:change', this.changePreset);
-			this.listenTo(this.editPresetModule, 'upfront:presets:delete', this.deletePreset);
-			this.listenTo(this.editPresetModule, 'upfront:presets:reset', this.resetPreset);
-			this.listenTo(this.editPresetModule, 'upfront:presets:update', this.updatePreset);
-			this.listenTo(this.editPresetModule, 'upfront:presets:state_show', this.stateShow);
-			this.listenTo(this.presetCssModule, 'upfront:presets:update', this.updatePreset);
-			this.listenTo(this.selectPresetModule, 'upfront:presets:migrate', this.migratePreset);
+			if (Upfront.Application.user_can("SWITCH_PRESET")) { // Don't listen to evens on preset selector changing if the user can't switch
+				this.listenTo(this.selectPresetModule, 'upfront:presets:change', this.changePreset);
+				this.listenTo(this.editPresetModule, 'upfront:presets:state_show', this.stateShow);
+				if (Upfront.Application.user_can("MODIFY_PRESET")) this.listenTo(this.editPresetModule, 'upfront:presets:delete', this.deletePreset);
+				if (Upfront.Application.user_can("MODIFY_PRESET")) this.listenTo(this.editPresetModule, 'upfront:presets:reset', this.resetPreset);
+				if (Upfront.Application.user_can("MODIFY_PRESET")) this.listenTo(this.editPresetModule, 'upfront:presets:update', this.updatePreset);
+				if (Upfront.Application.user_can("MODIFY_PRESET")) this.listenTo(this.presetCssModule, 'upfront:presets:update', this.updatePreset);
+				this.listenTo(this.selectPresetModule, 'upfront:presets:new', this.createPreset);
+				this.listenTo(this.selectPresetModule, 'upfront:presets:migrate', this.migratePreset);
+			}
 
 			//Migration listeners
 			this.listenTo(this.migratePresetModule, 'upfront:presets:preview', this.previewPreset);
