@@ -19,7 +19,7 @@ class Upfront_Admin_Restrictions
                 "upfront",
                 __("User Restrictions", Upfront::TextDomain),
                 __("User Restrictions", Upfront::TextDomain),
-                'promote_users',
+                'read',
                 Upfront_Admin::$menu_slugs['restrictions'],
                 array($this, "render_page")
             );
@@ -88,7 +88,8 @@ class Upfront_Admin_Restrictions
      */
     function save_user_restriction(){
         if( !isset( $_POST['upront_restrictions_submit'] ) || !wp_verify_nonce( $_POST[self::FORM_NONCE_KEY], self::FORM_NONCE_ACTION ) ) return;
-        if (!current_user_can('manage_options')) return false;
+        // if (!current_user_can('manage_options')) return false;
+        if (!Upfront_Permissions::current(Upfront_Permissions::MODIFY_RESTRICTIONS)) return false;
 
         $restrictions = (array) filter_input( INPUT_POST, "restrictions", FILTER_VALIDATE_BOOLEAN , FILTER_FORCE_ARRAY );
         $this->_update_capabilities($restrictions);

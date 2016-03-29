@@ -186,7 +186,8 @@ class Upfront_Permissions {
 	 * @return bool
 	 */
 	public function set_restrictions ($restrictions) {
-		if (!current_user_can('manage_options')) return false;
+		// if (!current_user_can('manage_options')) return false;
+		if (!$this->_current_user_can(self::MODIFY_RESTRICTIONS)) return false;
 
 		return !!update_option(self::RESTRICTIONS_KEY, $restrictions, false);
 	}
