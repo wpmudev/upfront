@@ -1688,12 +1688,15 @@ define([
 			moreOptions.icon = 'more';
 			moreOptions.tooltip = l10n.ctrl.caption_position;
 
-			moreOptions.sub_items = {
-				swap: this.createControl('swap', l10n.btn.swap_image, 'openImageSelector'),
-				crop: this.createControl('crop', l10n.ctrl.edit_image, 'editRequest'),
-				link: this.createLinkControl(),
-				lock: this.createControl(lock_icon, l10n.ctrl.lock_image, 'lockImage'),
-			};
+			moreOptions.sub_items = {}
+			moreOptions.sub_items['swap'] = this.createControl('swap', l10n.btn.swap_image, 'openImageSelector');
+
+			if (Upfront.Application.user_can("RESIZE")) {
+				moreOptions.sub_items['crop'] = this.createControl('crop', l10n.ctrl.edit_image, 'editRequest');
+			}
+
+			moreOptions.sub_items['link'] = this.createLinkControl();
+			moreOptions.sub_items['lock'] = this.createControl(lock_icon, l10n.ctrl.lock_image, 'lockImage');
 
 			var controlls =  _([
 				moreOptions,

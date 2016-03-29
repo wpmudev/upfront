@@ -355,9 +355,12 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel();
 
 		panel.items = _([
-			this.createControl('crop', l10n.ctrl.edit_image, 'imageEditMask'),
 			this.createLinkControl(image)
 		]);
+		
+		if (Upfront.Application.user_can("RESIZE")) {
+			panel.items.unshif(this.createControl('crop', l10n.ctrl.edit_image, 'imageEditMask'));
+		}
 
 		if (this.property('labelFilters') === 'true') {
 			panel.items.push(this.createLabelControl(image));
