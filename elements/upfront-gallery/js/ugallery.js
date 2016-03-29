@@ -1382,7 +1382,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			src: image.get('src'),
 			srcOriginal: full[0],
 			rotation: image.get('rotation'),
-			element_id: this.model.get_property_value_by_name('element_id')
+			element_id: this.model.get_property_value_by_name('element_id'),
+			element_cols: Upfront.Util.grid.width_to_col($img.width(), true)
 		};
 	},
 

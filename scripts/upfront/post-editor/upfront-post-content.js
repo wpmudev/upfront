@@ -615,6 +615,7 @@ PostContentEditor.prototype = {
 					height = row * Upfront.Settings.LayoutEditor.Grid.baseline,
 					editorOptions = _.extend({}, imageInfo, {
 						element_id: this.model.get_element_id() +'_post_' + postId,
+						element_cols: Upfront.Util.grid.width_to_col(mask.width(), true),
 						maskOffset: mask.offset(),
 						maskSize: {width: mask.width(), height: height},
 						setImageSize: newImage,
@@ -1277,6 +1278,7 @@ var PostContentEditorLegacy = Backbone.View.extend(_.extend({}, PostContentEdito
 		height = this.partOptions.featured_image && this.partOptions.featured_image.height ? this.partOptions.featured_image.height : 60
 		editorOptions = _.extend({}, imageInfo, {
 			element_id: 'post_' + postId,
+			element_cols: Upfront.Util.grid.width_to_col(mask.width(), true),
 			maskOffset: mask.offset(),
 			maskSize: {width: mask.width(), height: height},
 			setImageSize: newImage,

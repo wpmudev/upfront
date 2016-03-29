@@ -1167,6 +1167,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		return {
 			id: image.id,
 			element_id: element_id,
+			element_cols: Upfront.Util.grid.width_to_col(mask.width(), true),
 			maskSize: {width: mask.width(), height: mask.height()},
 			maskOffset: mask.offset(),
 			position: position,
