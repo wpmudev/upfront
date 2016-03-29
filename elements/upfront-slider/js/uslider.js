@@ -1113,6 +1113,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			slide = this.model.slideCollection.get(currentSlide.id),
 			editorOpts = this.getEditorOptions(slide)
 		;
+		
+		if (!Upfront.Application.user_can("RESIZE")) return false;	
 
 		if(slide.get('status') != 'ok'){
 			var selectorOptions = {

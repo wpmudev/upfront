@@ -1324,6 +1324,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			item = $(e.target).closest('.ugallery_item'),
 			image = this.images.get(item.attr('rel')),
 			editorOpts;
+			
+		if (!Upfront.Application.user_can("RESIZE")) return false;	
 
 		if(image.get('status') !== 'ok'){
 			var selectorOptions = {

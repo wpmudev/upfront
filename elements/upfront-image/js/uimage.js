@@ -1553,6 +1553,8 @@ define([
 			if(Upfront.Application.responsiveMode !== 'desktop') {
 				return Upfront.Views.Editor.notify(l10n.desktop_nag, 'error');
 			}
+			
+			if (!Upfront.Application.user_can("RESIZE")) return false;	
 
 			var me = this,
 				options = {
