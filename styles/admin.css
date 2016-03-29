@@ -37,6 +37,16 @@
 /*---------- End of General ---------*/
 
 /*---------- Toggle Buttons ---------*/
+span.role_check_mark:before {
+    content: "\f109";
+    color: #1abc9c;
+    content: "\f147";
+    font: dashicons;
+    font-family: dashicons;
+    font-size: 40px;
+    display: inline-block;
+    vertical-align: top;
+}
 .upfront_toggle {
     position: relative;
     width: 26px;
