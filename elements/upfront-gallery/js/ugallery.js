@@ -359,7 +359,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		]);
 		
 		if (Upfront.Application.user_can("RESIZE")) {
-			panel.items.unshif(this.createControl('crop', l10n.ctrl.edit_image, 'imageEditMask'));
+			panel.items.unshift(this.createControl('crop', l10n.ctrl.edit_image, 'imageEditMask'));
 		}
 
 		if (this.property('labelFilters') === 'true') {
