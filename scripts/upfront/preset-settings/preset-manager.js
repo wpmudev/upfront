@@ -665,6 +665,7 @@ define([
 			}
 
 			this.settings.each(function (setting) {
+				if (!(setting || {}).render) return true;
 				if ( ! setting.panel ) setting.panel = me;
 				setting.render();
 				$body.append(setting.el)
