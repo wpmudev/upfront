@@ -1382,7 +1382,10 @@ define([
 				$('<img>')
 					.load(function(){
 						Upfront.Views.Editor.ImageSelector.close();
-						me.openEditor(true, imageInfo);
+						
+						if (Upfront.Application.user_can("RESIZE")) {
+							me.openEditor(true, imageInfo);
+						}
 					})
 					.on("error", function () {
 						Upfront.Views.Editor.ImageSelector.close();
@@ -1430,6 +1433,11 @@ define([
 
 		editRequest: function () {
 			var me = this;
+			
+			if (!Upfront.Application.user_can("RESIZE")) {
+				Upfront.Views.Editor.notify(l10n.external_nag, 'error');
+				return false;
+			}
 
 			if(this.property('image_status') === 'ok' && this.property('image_id')) {
 				if (this.isThemeImage() && 'themeExporter' in Upfront) {
