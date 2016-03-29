@@ -355,7 +355,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel();
 
 		panel.items = _([
-			this.createControl('crop', l10n.ctrl.edit_image, 'imageEditMask'),
+			this.createControl('crop', l10n.ctrl.edit_image, 'imageEditMask', 30, 30),
 			this.createLinkControl(image)
 		]);
 
@@ -364,22 +364,22 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		}
 
 		if (image.get('imageLink').type === 'image' || image.get('imageLink').type === 'lightbox' || -1 !== ['image', 'lightbox'].indexOf( this.property( "linkTo" ) ) ) {
-			panel.items.push(this.createControl('fullscreen', l10n.ctrl.show_image, 'openImageLightbox'));
+			panel.items.push(this.createControl('fullscreen', l10n.ctrl.show_image, 'openImageLightbox', 30, 30));
 		}
 
 		return panel;
 	},
 
-	createControl: function(icon, tooltip, click_callback) {
+	createControl: function(icon, tooltip, click_callback, width, height) {
 		var me = this,
 			item = new Upfront.Views.Editor.InlinePanels.Control();
 
 		item.icon = icon;
 		item.tooltip = tooltip;
-		
+
 		//Set icon width & height
-		item.width = 30;
-		item.height = 30;
+		item.width = width;
+		item.height = height;
 
 		if(click_callback) {
 			this.listenTo(item, 'click', function(e){
@@ -1712,10 +1712,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 	getControlItems: function(){
 		return _([
-			this.createControl('add', l10n.template.add_img, 'openImageSelector'),
-			this.createControl('toggle-sorting', l10n.toggle_dnd, 'toggleSorting'),
+			this.createControl('add', l10n.template.add_img, 'openImageSelector', 38, 38),
+			this.createControl('toggle-sorting', l10n.toggle_dnd, 'toggleSorting', 38, 38),
 			this.createPaddingControl(),
-			this.createControl('settings', l10n.settings, 'on_settings_click')
+			this.createControl('settings', l10n.settings, 'on_settings_click', 38, 38)
 		]);
 	},
 	/**
