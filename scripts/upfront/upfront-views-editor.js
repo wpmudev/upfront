@@ -11195,7 +11195,6 @@
 				background = this.model.get_property_value_by_name("background_color")
 			;
 			if (!background || !background.match(/ufc/)) return false;
-
 			 $region = this.$el.closest('.upfront-region-container-bg');
 			 if (!$region.length) return false;
 
@@ -11277,29 +11276,76 @@
 							left: '',
 							right: ''
 						});
-				}
-				else {
-					panel.$el.css({
-						position: '',
-						top: '',
-						bottom: '',
-						left: '',
-						right: ''
+					}
+				});
+
+				setTimeout(
+					function () { me.update_padding() }
+					, 300
+				);
+			},
+			update_padding: function () {
+				var props = {},
+					$region = this.$el.closest('.upfront-region')
+					;
+
+				// Padding settings
+				this.model.get("properties").each(function (prop) {
+					props[prop.get("name")] = prop.get("value");
+				});
+
+				var breakpoints = typeof Upfront.Settings.LayoutEditor.Theme.breakpoints !== 'undefined' ? Upfront.Settings.LayoutEditor.Theme.breakpoints : [],
+					current_breakpoint = typeof Upfront.Settings.LayoutEditor.CurrentBreakpoint !== 'undefined' ? Upfront.Settings.LayoutEditor.CurrentBreakpoint : 'desktop',
+					current_breakpoint_id = current_breakpoint === 'default' ? current_breakpoint : current_breakpoint.id,
+					top_padding,
+					bottom_padding
+					;
+
+				var breakpoint_obj = (
+						typeof props.breakpoint !== 'undefined'
+						&& typeof props.breakpoint[current_breakpoint_id] !== 'undefined'
+					)
+						? props.breakpoint[current_breakpoint_id]
+						: false
+					;
+
+				top_padding = (typeof breakpoint_obj.top_bg_padding_num !== 'undefined')
+					? breakpoint_obj.top_bg_padding_num
+					: (typeof props.top_bg_padding_num !== 'undefined')
+					? props.top_bg_padding_num
+					: false
+				;
+
+				bottom_padding = (typeof breakpoint_obj.bottom_bg_padding_num !== 'undefined')
+					? breakpoint_obj.bottom_bg_padding_num
+					: (typeof props.bottom_bg_padding_num !== 'undefined')
+					? props.bottom_bg_padding_num
+					: false
+				;
+
+				$region.css({
+					'padding-top': ( false === top_padding ? '' : top_padding + 'px' ),
+					'padding-bottom': ( false === bottom_padding ? '' : bottom_padding + 'px' )
+				});
+			},
+			add_responsive_items: function() {
+				var me = this,
+					$regionEl = me.$el.parents('.upfront-region'),
+					sub_models = me.model.get_sub_regions(),
+					openItemControls = $('<span class="open-responsive-item-controls"></span>'),
+					itemControls = $('<div class="responsive-item-controls">' + l10n.add_region + '</div>'),
+					responsiveAddRegionTop = $('<div class="responsive-item-control responsive-add-region-top">' + l10n.above + '</div>'),
+					responsiveAddRegionBottom = $('<div class="responsive-item-control responsive-add-region-bottom">' + l10n.below + '</div>'),
+					responsiveAddRegionLeft = $('<div class="responsive-item-control responsive-add-region-left">' + l10n.left_sidebar + '</div>'),
+					responsiveAddRegionRight = $('<div class="responsive-item-control responsive-add-region-right">' + l10n.right_sidebar + '</div>')
+					;
+
+				if($regionEl.find('.open-responsive-item-controls').length === 0) {
+					openItemControls.click(function() {
+						$regionEl.toggleClass('controls-visible');
 					});
+					$regionEl.append(openItemControls);
 				}
-			});
-		},
-		add_responsive_items: function() {
-			var me = this,
-				$regionEl = me.$el.parents('.upfront-region'),
-				sub_models = me.model.get_sub_regions(),
-				openItemControls = $('<span class="open-responsive-item-controls"></span>'),
-				itemControls = $('<div class="responsive-item-controls">' + l10n.add_region + '</div>'),
-				responsiveAddRegionTop = $('<div class="responsive-item-control responsive-add-region-top">' + l10n.above + '</div>'),
-				responsiveAddRegionBottom = $('<div class="responsive-item-control responsive-add-region-bottom">' + l10n.below + '</div>'),
-				responsiveAddRegionLeft = $('<div class="responsive-item-control responsive-add-region-left">' + l10n.left_sidebar + '</div>'),
-				responsiveAddRegionRight = $('<div class="responsive-item-control responsive-add-region-right">' + l10n.right_sidebar + '</div>')
-			;
 
 				responsiveAddRegionTop.click(function() {
 					me.add_panel_top.$el.find('.upfront-icon').trigger('click');
