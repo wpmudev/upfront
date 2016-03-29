@@ -60,6 +60,11 @@ define([
 			this.presets = new Backbone.Collection(Upfront.mainData[this.mainDataCollection] || []);
 
 			var savePreset = function(properties) {
+				if (!Upfront.Application.user_can("MODIFY_PRESET")) {
+					me.model.trigger("preset:updated", properties.id);
+					return false;
+				}
+				
 				Upfront.Util.post({
 					action: 'upfront_save_' + this.ajaxActionSlug + '_preset',
 					data: properties
