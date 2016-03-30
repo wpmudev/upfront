@@ -212,6 +212,8 @@ class Upfront_ElementStyles extends Upfront_Server {
 	}
 	
 	public function get_closeset_breakpoints($width, $breakpoints) {
+		$prev = $next = false;
+		$prev_width = $next_width = 0;
 		foreach ( $breakpoints as $name => $point ){
 			$point_width = $point->get_width();
 			if ( $point_width > $width && ( $point_width < $next_width || $next_width == 0) ){
