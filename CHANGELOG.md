@@ -2,6 +2,14 @@ Change Log
 ============
 
 
+1.1.1 - 2016-03-30
+-------------------------------------------------------------------------------
+- Fix: code element with pre-existing content editables action.
+- Fix: double enter on list editing should end list behavior.
+- Fix: native WP aligned images style conflict.
+- Fix: breakpoints check for IE8.
+- Fix: media queries support for IE8.
+
 1.1 - 2016-03-23
 -------------------------------------------------------------------------------
 - Add: new single post layout editing experience.
