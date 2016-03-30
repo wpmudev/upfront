@@ -77,6 +77,7 @@ define([
 			this.isOpen = true;
 			this.refresh();
 			this.$el.addClass('upfront-control-dialog-open');
+			Upfront.Events.trigger('upfront:hide:subControl');
 		},
 
 		close: function() {
