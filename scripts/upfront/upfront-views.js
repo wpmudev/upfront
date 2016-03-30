@@ -922,6 +922,15 @@ define([
 					});
 				}
 			},
+			toggleControls: function() {
+				if (!Upfront.Application.user_can("LAYOUT_MODE")) {
+					if (!this.$control_el || this.$control_el.length === 0) {
+						this.$control_el = this.$el;
+					}
+					
+					this.$control_el.find('.upfront-element-controls').remove();
+				}
+			},
 			updateControls: function() {
 				var elementControlsTpl = '<div class="upfront-element-controls upfront-ui"></div>';
 				if(this.paddingControl && typeof this.paddingControl.isOpen !== 'undefined' && this.paddingControl.isOpen)	return;
@@ -1787,6 +1796,7 @@ define([
 				if ( this.parent_module_view ) {
 					this.$control_el = this.parent_module_view.$('.upfront-module');
 					this.updateControls();
+					this.toggleControls();
 					setTimeout(function() {
 						if(me.paddingControl && typeof me.paddingControl.isOpen !== 'undefined' && !me.paddingControl.isOpen)	me.paddingControl.refresh();
 					}, 300);
@@ -2306,6 +2316,7 @@ define([
 				if ( this.parent_module_view ) {
 					this.$control_el = this.parent_module_view.$('.upfront-module');
 					this.updateControls();
+					this.toggleControls();
 					setTimeout(function() {
 						if(me.paddingControl && typeof me.paddingControl.isOpen !== 'undefined' && !me.paddingControl.isOpen)	me.paddingControl.refresh();
 					}, 300);
@@ -3354,7 +3365,8 @@ define([
 				this.create_size_hint(this.$el);
 				this.$control_el = this.$el;
 				this.updateControls();
-
+				this.toggleControls();
+				
 				setTimeout(function() {
 					if(me.paddingControl && typeof me.paddingControl.isOpen !== 'undefined' && !me.paddingControl.isOpen)	me.paddingControl.refresh();
 				}, 300);
