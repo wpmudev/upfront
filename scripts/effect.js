@@ -1,6 +1,7 @@
 (function( $ ) {
 	var rAFPollyfill = function(callback){
 		var currTime = new Date().getTime(),
+			lastTime,
 			timeToCall = Math.max(0, 16 - (currTime - lastTime)),
 			id = setTimeout(function() { callback(currTime + timeToCall); }, timeToCall)
 		;
