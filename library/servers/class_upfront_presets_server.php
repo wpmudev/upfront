@@ -40,7 +40,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			return;
 		}
 
-		if (!Upfront_Permissions::current(Upfront_Permissions::MODIFY_PRESET)) {
+		if (!Upfront_Permissions::current(Upfront_Permissions::DELETE_ELEMENT_PRESETS)) {
 			$this->_reject();
 		}
 
@@ -70,7 +70,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			return;
 		}
 
-		if (!Upfront_Permissions::current(Upfront_Permissions::MODIFY_PRESET)) {
+		if (!Upfront_Permissions::current(Upfront_Permissions::DELETE_ELEMENT_PRESETS)) {
 			$this->_reject();
 		}
 
@@ -180,7 +180,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			return;
 		}
 
-		if (!Upfront_Permissions::current(Upfront_Permissions::MODIFY_PRESET)) {
+		if (!Upfront_Permissions::current(Upfront_Permissions::MODIFY_ELEMENT_PRESETS)) {
 			$this->_reject();
 		}
 
