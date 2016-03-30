@@ -326,7 +326,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			'DEBUG' => (bool)Upfront_Permissions::current(Upfront_Permissions::SEE_USE_DEBUG),
 			'SWITCH_PRESET' => (bool)Upfront_Permissions::current(Upfront_Permissions::SWITCH_ELEMENT_PRESETS),
 			'MODIFY_PRESET' => (bool)Upfront_Permissions::current(Upfront_Permissions::MODIFY_ELEMENT_PRESETS),
-			'CREATE_PRESET' => (bool)Upfront_Permissions::current(Upfront_Permissions::CREATE_ELEMENT_PRESETS),
+			'DELETE_PRESET' => (bool)Upfront_Permissions::current(Upfront_Permissions::DELETE_ELEMENT_PRESETS),
 		));
 
 		$l10n = json_encode($this->_get_l10n_strings());

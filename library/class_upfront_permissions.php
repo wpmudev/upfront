@@ -8,7 +8,7 @@ class Upfront_Permissions {
 	const UPLOAD = 'upload_stuff';
 	const RESIZE = 'resize_media';
 	const MODIFY_ELEMENT_PRESETS = 'modify_element_presets';
-	const CREATE_ELEMENT_PRESETS = 'create_element_presets';
+	const DELETE_ELEMENT_PRESETS = 'delete_element_presets';
 	const SWITCH_ELEMENT_PRESETS = 'switch_element_presets';
 	const SAVE = 'save_changes';
 	const SAVE_REVISION = 'save_changes';
@@ -137,7 +137,7 @@ class Upfront_Permissions {
 			self::UPLOAD => 'upload_files',
 			self::RESIZE => 'edit_theme_options',// 'edit_posts',
 			self::MODIFY_ELEMENT_PRESETS => 'edit_theme_options',
-			self::CREATE_ELEMENT_PRESETS => 'edit_theme_options',
+			self::DELETE_ELEMENT_PRESETS => 'edit_theme_options',
 			self::SWITCH_ELEMENT_PRESETS => 'edit_theme_options',
 			self::OPTIONS => 'manage_options',
 			self::CREATE_POST_PAGE => 'edit_posts',
@@ -347,8 +347,8 @@ class Upfront_Permissions {
 			self::POSTLAYOUT_MODE => __('Can Modify Single Post Layout', Upfront::TextDomain ),
 			self::UPLOAD => __('Can Upload Media', Upfront::TextDomain ),
 			self::RESIZE => __('Can Resize Media (in Layouts)', Upfront::TextDomain ),
-			self::MODIFY_ELEMENT_PRESETS => __('Can Modify Element Presets', Upfront::TextDomain ),
-			self::CREATE_ELEMENT_PRESETS => __('Can Create Element Presets', Upfront::TextDomain ),
+			self::MODIFY_ELEMENT_PRESETS => __('Can Create / Modify Element Presets', Upfront::TextDomain ),
+			self::DELETE_ELEMENT_PRESETS => __('Can Delete Element Presets', Upfront::TextDomain ),
 			self::SWITCH_ELEMENT_PRESETS => __('Can Switch Between Element Presets', Upfront::TextDomain ),
 			self::OPTIONS => __('Can Modify / Save Global Options <p class="description">(Theme Colors, Comments etc.)</p>', Upfront::TextDomain ),
 			self::CREATE_POST_PAGE => __('Can Create Posts & Pages From Upfront', Upfront::TextDomain ),
