@@ -2187,15 +2187,12 @@ a.ueditor-action-pickercancel {
 .upfront-wp-inserted_image-wrapper {
   max-width: 100%; }
 
-<<<<<<< HEAD
-=======
 .upfront-wp-inserted_image-wrapper .wp-caption {
   position: relative; }
 
 .upfront-wp-inserted_image-wrapper .wp-caption .upfront-inline-panel {
   top: 15px !important; }
 
->>>>>>> master
 /*.upfront-inserted_image-wrapper .wp-caption-text,
 .uinsert-image-wrapper{
 	padding: 15px;
@@ -10410,7 +10407,7 @@ a.ueditor-select-option:hover {
   position: fixed;
   top: 40px;
   display: block;
-  width: 280px;
+  width: 250px;
   background: #f2f9ff;
   border: 1px solid #b8d0e6;
   z-index: 9999;
@@ -10467,8 +10464,7 @@ a.ueditor-select-option:hover {
   display: block; }
 
 .ueditor-box-content {
-  min-height: 160px;
-  padding: 15px 0; }
+  padding: 10px 0; }
 
 .screen-reader-text {
   position: absolute;
@@ -10485,10 +10481,10 @@ a.ueditor-select-option:hover {
   display: none; }
 
 .misc-pub-section {
-  line-height: 40px;
-  padding: 0 15px;
+  padding: 2px 15px;
   overflow: hidden;
-  clear: both; }
+  clear: both;
+  font: normal 12px/20px Open Sans, Hevletica Neueu, Helvetica, sans-serif; }
 
 #ueditor-box-cats-tags .misc-pub-section {
   border-bottom: 1px solid #d5e4f3; }
@@ -10498,8 +10494,7 @@ a.ueditor-select-option:hover {
 
 .ueditor-previous-data {
   color: #3d5266;
-  font-size: 15px;
-  font-weight: bold; }
+  font-weight: 600; }
 
 .ueditor-previous-data-small {
   font-size: 13px;
@@ -10509,9 +10504,7 @@ a.ueditor-select-option:hover {
   clear: both; }
 
 .ueditor-box-wrapper label {
-  color: #3d5276;
-  font-size: 15px;
-  font-weight: normal; }
+  color: #3d5276; }
 
 #ueditor-box-cats-tags .ueditor-box-wrapper label {
   font-weight: bold; }
@@ -10522,7 +10515,8 @@ a.ueditor-select-option:hover {
   width: 25px;
   height: 25px;
   content: "";
-  margin: 0 0 -10px 0; }
+  margin: 0 0 -10px 0;
+  opacity: 0.5; }
 
 .ueditor-box-wrapper label#post-status-display-label:before {
   background-position: -562px -385px; }
@@ -10534,16 +10528,13 @@ a.ueditor-select-option:hover {
   background-position: -644px -385px; }
 
 a.ueditor-btn-edit {
-  color: #00ce97;
-  text-decoration: underline;
-  font-size: 14px;
+  color: #00B37A;
   display: inline;
-  cursor: pointer; }
+  cursor: pointer;
+  border-bottom: 1px solid rgba(0, 166, 113, 0.3); }
 
 .ueditor-bix-top-buttons {
-  height: 60px;
-  padding: 9px 11px;
-  border-bottom: 1px solid #b8d0e6; }
+  padding: 10px 15px 0; }
 
 .ueditor-box-bottom-buttons {
   min-height: 54px;
@@ -10575,44 +10566,46 @@ a.ueditor-action-publish:hover {
   text-decoration: none;
   background: #3ea; }
 
-a.ueditor-action,
-a.ueditor-action:visited,
-a.ueditor-action:link {
-  line-height: 34px;
-  padding: 0;
-  border: 2px solid #8fafcc;
-  font-size: 15px;
-  height: 36px;
+a.ueditor-action-draft,
+a.ueditor-action-preview {
   display: inline-block;
-  width: 98px;
-  text-align: center;
-  color: #3d527d; }
-
-a.ueditor-action {
-  float: right; }
-
-a.ueditor-action-draft {
-  float: left; }
-
-a.ueditor-action:hover {
-  border: 2px solid #25394d;
-  color: #25394d; }
+  font: 600 12px/24px Open Sans, Helvetica Neueu, Helvetica, sans-serif;
+  color: #6486A6;
+  padding: 0 15px;
+  cursor: pointer;
+  background-image: linear-gradient(-180deg, #FAFDFF 0%, #F2F9FF 100%);
+  border: 1px solid #A2BFDA;
+  border-radius: 3px;
+  text-shadow: 0px 1px 0px #FFFFFF; }
 
 a.ueditor-action-preview {
   float: right; }
 
+a.ueditor-action-draft:hover,
+a.ueditor-action-preview:hover {
+  border: 1px solid #537ea6; }
+
 a.ueditor-action-trash {
   float: left;
-  background-position: -605px -422px;
   color: #e75757;
-  padding-top: 5px; }
+  padding-top: 5px;
+  position: relative; }
 
 a.ueditor-action-trash:hover {
   color: #E5575A;
   text-decoration: none; }
 
+a.ueditor-action-trash:before {
+  content: '';
+  background: transparent url(../img/uf-core-el-sprite.svg);
+  background-position: -665px -78px;
+  width: 10px;
+  height: 14px;
+  left: 0;
+  top: 10px;
+  position: absolute; }
+
 .ueditor-box-icon {
-  background: transparent url(../img/uf-ui-sprite.svg);
   padding: 3px 12px;
   margin-right: 5px;
   display: block;
@@ -10621,7 +10614,7 @@ a.ueditor-action-trash:hover {
   font-size: 13px; }
 
 .ueditor-box-icon-text {
-  padding-left: 20px; }
+  padding-left: 14px; }
 
 .ueditor-post-url-root {
   display: inline;
@@ -10647,6 +10640,19 @@ a.ueditor-action-trash:hover {
 
 .ueditor-togglable-post-url {
   clear: both; }
+
+/* FIXES */
+#ueditor-box-publish select,
+#ueditor-box-publish input[type="text"] {
+  background: #F2F9FF;
+  border: 1px solid #A2BFDA;
+  padding: 12px;
+  margin: 10px 0;
+  height: 26px;
+  color: #607F99; }
+
+.ueditor-select-options {
+  width: 100%; }
 
 .upost_thumbnail_changer {
   color: #3f5870;
