@@ -15,11 +15,13 @@ define([
 
 			var me = this,
 				firstStateButton = false,
-				firstStateSettings = false;
+				firstStateSettings = false
+			;
 
 			if(
 				(Upfront.Application.get_current() === Upfront.Application.MODE.THEME || this.options.model.get('theme_preset') !== true)
 				&& this.options.model.get('id') !== 'default'
+				&& Upfront.Application.user_can("DELETE_PRESET")
 				&& Upfront.Application.user_can("MODIFY_PRESET")
 			) {
 				var fields = [
@@ -38,6 +40,7 @@ define([
 			} else if (
 				Upfront.Application.get_current() !== Upfront.Application.MODE.THEME
 				&& (this.options.model.get('id') === 'default' || this.options.model.get('theme_preset') === true)
+				&& Upfront.Application.user_can("DELETE_PRESET")
 				&& Upfront.Application.user_can("MODIFY_PRESET")
 			) {
 				var fields = [
@@ -121,12 +124,12 @@ define([
 		},
 
 		deletePreset: function() {
-			if (!Upfront.Application.user_can("MODIFY_PRESET")) return false;
+			if (!Upfront.Application.user_can("DELETE_PRESET")) return false;
 			this.trigger('upfront:presets:delete', this.model);
 		},
 
 		resetPreset: function() {
-			if (!Upfront.Application.user_can("MODIFY_PRESET")) return false;
+			if (!Upfront.Application.user_can("DELETE_PRESET")) return false;
 			this.trigger('upfront:presets:reset', this.model);
 		},
 

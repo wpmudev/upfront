@@ -25,7 +25,7 @@ define([
 				this.selectPresetField
 			]);
 
-			if (Upfront.Application.user_can("CREATE_PRESET")) this.listenTo(this.selectPresetField, 'upfront:presets:new', this.createPreset);
+			if (Upfront.Application.user_can("MODIFY_PRESET")) this.listenTo(this.selectPresetField, 'upfront:presets:new', this.createPreset);
 			if (Upfront.Application.user_can("SWITCH_PRESET")) this.listenTo(this.selectPresetField, 'changed', this.changePreset);
 		},
 
@@ -35,7 +35,7 @@ define([
 		},
 
 		createPreset: function(preset) {
-			if (!Upfront.Application.user_can("CREATE_PRESET")) return false;
+			if (!Upfront.Application.user_can("MODIFY_PRESET")) return false;
 			this.trigger('upfront:presets:new', preset);
 		},
 

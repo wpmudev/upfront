@@ -223,17 +223,19 @@ define([
 				this.stopListening(this.editPresetModule);
 			}
 
-			this.editPresetModule = new EditPresetModule({
-				model: presetModel,
-				stateModules: this.stateModules
-			});
+			if (Upfront.Application.user_can("SWITCH_PRESET") && Upfront.Application.user_can("MODIFY_PRESET")) { // Don't build the control if we can't do this
+				this.editPresetModule = new EditPresetModule({
+					model: presetModel,
+					stateModules: this.stateModules
+				});
+			}
 
 			if (this.presetCssModule && this.presetCssModule.stopListening) {
 				this.presetCssModule.stopListening();
 				this.stopListening(this.presetCssModule);
 			}
 
-			if (Upfront.Application.user_can("MODIFY_PRESET")) { // Don't build the control if we can't do this
+			if (Upfront.Application.user_can("SWITCH_PRESET") && Upfront.Application.user_can("MODIFY_PRESET")) { // Don't build the control if we can't do this
 				this.presetCssModule = new PresetCssModule({
 					model: this.model,
 					preset: presetModel
@@ -248,14 +250,14 @@ define([
 			});
 
 			if (Upfront.Application.user_can("SWITCH_PRESET")) { // Don't listen to evens on preset selector changing if the user can't switch
-				this.listenTo(this.selectPresetModule, 'upfront:presets:change', this.changePreset);
-				this.listenTo(this.editPresetModule, 'upfront:presets:state_show', this.stateShow);
-				if (Upfront.Application.user_can("MODIFY_PRESET")) this.listenTo(this.editPresetModule, 'upfront:presets:delete', this.deletePreset);
-				if (Upfront.Application.user_can("MODIFY_PRESET")) this.listenTo(this.editPresetModule, 'upfront:presets:reset', this.resetPreset);
-				if (Upfront.Application.user_can("MODIFY_PRESET")) this.listenTo(this.editPresetModule, 'upfront:presets:update', this.updatePreset);
-				if (Upfront.Application.user_can("MODIFY_PRESET")) this.listenTo(this.presetCssModule, 'upfront:presets:update', this.updatePreset);
-				this.listenTo(this.selectPresetModule, 'upfront:presets:new', this.createPreset);
-				this.listenTo(this.selectPresetModule, 'upfront:presets:migrate', this.migratePreset);
+				if (this.selectPresetModule) this.listenTo(this.selectPresetModule, 'upfront:presets:change', this.changePreset);
+				if (this.editPresetModule && Upfront.Application.user_can("DELETE_PRESET")) this.listenTo(this.editPresetModule, 'upfront:presets:delete', this.deletePreset);
+				if (this.editPresetModule && Upfront.Application.user_can("DELETE_PRESET")) this.listenTo(this.editPresetModule, 'upfront:presets:reset', this.resetPreset);
+				if (this.editPresetModule && Upfront.Application.user_can("MODIFY_PRESET")) this.listenTo(this.editPresetModule, 'upfront:presets:state_show', this.stateShow);
+				if (this.editPresetModule && Upfront.Application.user_can("MODIFY_PRESET")) this.listenTo(this.editPresetModule, 'upfront:presets:update', this.updatePreset);
+				if (this.presetCssModule && Upfront.Application.user_can("MODIFY_PRESET")) this.listenTo(this.presetCssModule, 'upfront:presets:update', this.updatePreset);
+				if (this.selectPresetModule && Upfront.Application.user_can("MODIFY_PRESET")) this.listenTo(this.selectPresetModule, 'upfront:presets:new', this.createPreset);
+				if (this.selectPresetModule) this.listenTo(this.selectPresetModule, 'upfront:presets:migrate', this.migratePreset);
 			}
 
 			//Migration listeners
