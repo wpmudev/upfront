@@ -4,11 +4,13 @@ Change Log
 
 1.1.1 - 2016-03-30
 -------------------------------------------------------------------------------
-- Fix: code element with pre-existing content editables action.
 - Fix: double enter on list editing should end list behavior.
 - Fix: native WP aligned images style conflict.
+- Fix: code element with pre-existing content editables action.
 - Fix: breakpoints check for IE8.
 - Fix: media queries support for IE8.
+- Fix: featured image wrapper takes space with hide fallback.
+- Fix: element with user set padding resize calculus.
 
 1.1 - 2016-03-23
 -------------------------------------------------------------------------------
@@ -23,7 +25,7 @@ Change Log
 - Fix: list creation alignment issue in content editing.
 - Fix: slider preset captions issue.
 - Fix: disallow spaces in uploaded images.
-- Fix: slider initial image isze issue.
+- Fix: slider initial image size issue.
 - Fix: map element and region address refresh issue.
 - Fix: content editing link insertion in certain scenarios issue.
 - Fix: button element resizing and padding issue.
