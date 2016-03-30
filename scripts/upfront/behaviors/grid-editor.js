@@ -1106,6 +1106,14 @@ var GridEditor = {
 			$me.resizable('option', 'disabled', false);
 			return false;
 		}
+		//Prevent object resize if RESIZE is disabled
+		if (!Upfront.Application.user_can("RESIZE")) {
+			if ( $me.data('ui-resizable') ){
+				$me.resizable('option', 'disabled', false);
+			}
+			
+			return false;
+		}
 		//$me.append('<span class="upfront-icon-control upfront-icon-control-resize-nw upfront-resize-handle-nw ui-resizable-handle ui-resizable-nw"></span>');
 		//$me.append('<span class="upfront-icon-control upfront-icon-control-resize-se upfront-resize-handle-se ui-resizable-handle ui-resizable-se"></span>');
 		$me.append('<span class="upfront-icon-control upfront-icon-control-resize-s upfront-resize-handle-s ui-resizable-handle ui-resizable-s"></span>');
@@ -1510,6 +1518,18 @@ var GridEditor = {
 			return false;
 		if ( $me.data('ui-resizable') ){
 			$me.resizable('option', 'disabled', false);
+			return false;
+		}
+		
+		//Prevent object resize if RESIZE is disabled
+		if (!Upfront.Application.user_can("RESIZE")) {
+			if ( $me.data('ui-resizable') ){
+				$me.resizable('option', 'disabled', false);
+			}
+			
+			//Remove the handlers
+			$me.find('.upfront-resize-handle-wrapper').remove();
+			
 			return false;
 		}
 		//$me.append('<span class="upfront-resize-handle-wrapper upfront-resize-handle-w ui-resizable-handle ui-resizable-w">');
