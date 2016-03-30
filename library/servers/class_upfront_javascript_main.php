@@ -309,8 +309,10 @@ class Upfront_JavascriptMain extends Upfront_Server {
      		"RESPONSIVE" => "responsive",
 			"POSTCONTENT_STYLE" => false,
 			//"DEFAULT" => (current_user_can("manage_options") ? "layout" : "content"),
-		// These need some finer control over
-			"DEFAULT" => (Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE) ? "layout" : "content"),
+		    // These need some finer control over
+			// We have to set DEFAULT to layout, because user should be able to load the editor 
+			//"DEFAULT" => (Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE) ? "layout" : "content"),
+			"DEFAULT" => "layout",
 			"ALLOW" => (Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE) ? join(',', $allowed_modes) : "content")
 		));
 
