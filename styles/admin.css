@@ -47,6 +47,15 @@ span.role_check_mark:before {
     display: inline-block;
     vertical-align: top;
 }
+span.role_ex_mark:before {
+    color: #cc423d;
+    content: "\f158";
+    font: dashicons;
+    font-family: dashicons;
+    font-size: 40px;
+    display: inline-block;
+    vertical-align: top;
+}
 .upfront_toggle {
     position: relative;
     width: 26px;

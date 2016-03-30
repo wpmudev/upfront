@@ -369,37 +369,5 @@ class Upfront_Permissions {
 	public function get_level_map() {
 		return $this->_levels_map;
 	}
-	
-	/**
-	 * Add or remove role capability
-	 * @param WP_Role $role  WordPress role object
-	 * @param string $capability of the role
-	 * @param bool $add  whether to add or remove
-	 */
-	public function toggle_capability ($role, $capability, $add ) {
-		/*
-		if ( is_a( $role,  'WP_Role')) {
-			if ( $add ) {
-				$role->add_cap($capability);
-			} else {
-				$role->remove_cap($capability);
-			}
-		}
-		*/
-	}
-
-	/**
-	 * Checks if $role_id is capable of the $capability
-	 *
-	 * @param string $role_id role name
-	 * @param string $capability capability name
-	 * @return bool
-	 */
-	function is_capable($role_id, $capability  ){
-		/*
-		$role = get_role( $role_id );
-		return $role->has_cap( $capability );
-		*/
-	}
 
 }
