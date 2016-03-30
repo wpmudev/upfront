@@ -329,6 +329,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			'DELETE_PRESET' => (bool)Upfront_Permissions::current(Upfront_Permissions::DELETE_ELEMENT_PRESETS),
 			'CREATE_POST_PAGE' => (bool)Upfront_Permissions::current(Upfront_Permissions::CREATE_POST_PAGE),
 			'EDIT' => (bool)Upfront_Permissions::current(Upfront_Permissions::EDIT),
+			'LAYOUT_MODE' => (bool)Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE),
 		));
 
 		$l10n = json_encode($this->_get_l10n_strings());
