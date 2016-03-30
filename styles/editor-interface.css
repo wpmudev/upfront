@@ -5733,7 +5733,7 @@ a.upfront-region-name-edit-trigger:before {
 #element-settings-sidebar .uslider-slides .upfront-settings-item-title {
   display: none; }
 
-.menu-structure-body {
+.menu_structure_module, .menu-structure-body {
   overflow: auto; }
 
 .menu-structure-module-item {
