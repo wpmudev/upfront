@@ -2945,7 +2945,7 @@
 			"className": "sidebar-commands sidebar-commands-primary clearfix",
 			initialize: function () {
 				this.commands = _([]);
-				if (Upfront.Settings.Application.MODE.ALLOW.match(Upfront.Settings.Application.MODE.CONTENT)) {
+				if (Upfront.Application.user_can("CREATE_POST_PAGE")) {
 					this.commands.push(new Command_NewPost({"model": this.model}));
 					this.commands.push(new Command_NewPage({"model": this.model}));
 				}

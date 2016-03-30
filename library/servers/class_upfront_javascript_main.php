@@ -246,15 +246,15 @@ class Upfront_JavascriptMain extends Upfront_Server {
 
 		$registry = Upfront_PresetServer_Registry::get_instance();
 		$preset_servers = $registry->get_all();
-			
+
 		$preset_defaults = array();
 		$presets = '';
 		foreach ($preset_servers as $key => $server) {
 			$src = is_object($server) ? get_class($server) : $server;
-			
+
 			//$element_server = $server::get_instance(); // not PHP 5.2 safe
 			$callable = array($src, 'get_instance');
-			if (!is_callable($callable)) continue; // We have no business continuing			
+			if (!is_callable($callable)) continue; // We have no business continuing
 			$element_server = call_user_func($callable);
 
 			$element_presets = $element_server->get_presets_javascript_server();
@@ -263,7 +263,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			//Get preset defaults
 			$preset_defaults[$key] = $element_server->get_preset_defaults();
 		}
-		
+
 		$preset_defaults = json_encode($preset_defaults);
 
 		$debug = array(
@@ -327,6 +327,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			'SWITCH_PRESET' => (bool)Upfront_Permissions::current(Upfront_Permissions::SWITCH_ELEMENT_PRESETS),
 			'MODIFY_PRESET' => (bool)Upfront_Permissions::current(Upfront_Permissions::MODIFY_ELEMENT_PRESETS),
 			'DELETE_PRESET' => (bool)Upfront_Permissions::current(Upfront_Permissions::DELETE_ELEMENT_PRESETS),
+			'CREATE_POST_PAGE' => (bool)Upfront_Permissions::current(Upfront_Permissions::CREATE_POST_PAGE),
 		));
 
 		$l10n = json_encode($this->_get_l10n_strings());
