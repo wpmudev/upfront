@@ -10546,10 +10546,7 @@ a.ueditor-btn-edit {
   overflow: hidden; }
 
 a.ueditor-button-cancel-edit {
-  float: right;
-  clear: right;
-  margin-right: 38px;
-  margin-top: 10px; }
+  margin-top: 5px; }
 
 a.ueditor-action-publish {
   text-align: center;
@@ -10567,7 +10564,9 @@ a.ueditor-action-publish:hover {
   background: #3ea; }
 
 a.ueditor-action-draft,
-a.ueditor-action-preview {
+a.ueditor-action-preview,
+a.ueditor-button-cancel-edit,
+#add-new-taxonomies-btn {
   display: inline-block;
   font: 600 12px/24px Open Sans, Helvetica Neueu, Helvetica, sans-serif;
   color: #6486A6;
@@ -10582,18 +10581,25 @@ a.ueditor-action-preview {
   float: right; }
 
 a.ueditor-action-draft:hover,
-a.ueditor-action-preview:hover {
+a.ueditor-action-preview:hover,
+a.ueditor-button-cancel-edit:hover,
+#add-new-taxonomies-btn:hover {
   border: 1px solid #537ea6; }
 
 a.ueditor-action-trash {
   float: left;
   color: #e75757;
-  padding-top: 5px;
-  position: relative; }
+  padding: 1px 10px 1px 20px;
+  border: 1px solid #E5575A;
+  border-radius: 3px;
+  height: auto;
+  position: relative;
+  margin-top: 15px;
+  opacity: .6; }
 
 a.ueditor-action-trash:hover {
-  color: #E5575A;
-  text-decoration: none; }
+  border: 1px solid #E5575A;
+  opacity: 1; }
 
 a.ueditor-action-trash:before {
   content: '';
@@ -10601,8 +10607,8 @@ a.ueditor-action-trash:before {
   background-position: -665px -78px;
   width: 10px;
   height: 14px;
-  left: 0;
-  top: 10px;
+  left: 8px;
+  top: 7px;
   position: absolute; }
 
 .ueditor-box-icon {
@@ -10619,10 +10625,6 @@ a.ueditor-action-trash:before {
 .ueditor-post-url-root {
   display: inline;
   font-size: 11px; }
-
-.ueditor-post-url-text {
-  width: 110px !important;
-  display: inline; }
 
 .ueditor-button-small-ok,
 .ueditor-button-small {
@@ -10643,7 +10645,10 @@ a.ueditor-action-trash:before {
 
 /* FIXES */
 #ueditor-box-publish select,
-#ueditor-box-publish input[type="text"] {
+#ueditor-box-publish input[type="text"],
+#ueditor-box-cats-tags select,
+#ueditor-box-cats-tags .upfront-tax-new_term,
+#ueditor-box-cats-tags .upfront-flat-tax-new_term {
   background: #F2F9FF;
   border: 1px solid #A2BFDA;
   padding: 12px;
@@ -10653,6 +10658,39 @@ a.ueditor-action-trash:before {
 
 .ueditor-select-options {
   width: 100%; }
+
+#ueditor-box-publish .ueditor-row {
+  margin: 10px 0; }
+
+/* Taxonomies */
+#ueditor-box-cats-tags a.upfront-taxonomy-list-choose-from-prev {
+  width: 100%;
+  font: normal 13px/20px Open Sans, Hevletica Neueu, Helvetica, sans-serif;
+  color: #3d5266; }
+
+#ueditor-box-cats-tags #upfront-taxonomy-list {
+  overflow-y: scroll;
+  margin: 10px 0;
+  padding: 0;
+  border: 1px solid #A2BFDA;
+  border-radius: 3px;
+  max-height: 202px; }
+
+#ueditor-box-cats-tags #upfront-taxonomy-list-all {
+  background: #fff; }
+
+.upfront-taxonomy_item {
+  border: 1px solid #A2BFDA;
+  height: auto;
+  padding: 0 2px;
+  font-size: 11px;
+  margin: 2px 0; }
+
+#ueditor-box-cats-tags .upfront-taxonomy_item .icon-plus {
+  margin: 0; }
+
+#ueditor-box-cats-tags .upfront-taxonomy-list-panel-previously-used {
+  max-height: none; }
 
 .upost_thumbnail_changer {
   color: #3f5870;
