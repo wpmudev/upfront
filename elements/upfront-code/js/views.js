@@ -99,7 +99,7 @@ define([
 
 					// Compensate for dead element double-click event
 					this.$el.off("dblclick").on("dblclick", function () {
-						me.on_edit();
+						me.on_edit_content();
 					});
 				}
 			},
@@ -119,7 +119,23 @@ define([
 
 			},
 
-			on_edit: function(){
+			/**
+			 * Propagated edit event - implicit settings click
+			 * 
+			 * This is what happens on settings click.
+			 * Could have some custom logic but let's go with the default
+			 * The default being: double-click content for content edit, settings click for code edit
+			 */
+			on_edit: function () {
+				return this.on_edit_settings();
+			},
+
+			/**
+			 * Explicit content double-click
+			 * 
+			 * We want to edit *contents*, not the code in this scenario
+			 */
+			on_edit_content: function (){
 				if (this.is_editing) return false;
 
 				// Since we're doing double duty here, let's first check if content editing mode is to boot
@@ -128,7 +144,17 @@ define([
 					// Yes? go for it
 					return this.bootContentEditors($contenteditables);
 				}
-				// Oh well, let's just go ahead and boot code editing mode.
+			},
+
+			/**
+			 * Explicit settings click
+			 *
+			 * We want to be editing the *code*, not the contents in this scenario
+			 */
+			on_edit_settings: function () {
+				if (this.is_editing) return false;
+
+				// Let's just go ahead and boot code editing mode.
 				this.is_editing = true;
 				var $editor = $('#upfront_code-editor');
 
@@ -597,7 +623,7 @@ define([
 			getControlItems: function(){
 				return _([
 					this.createPaddingControl(),
-					this.createControl('edit', l10n.edit, 'on_edit')
+					this.createControl('edit', l10n.edit, 'on_edit_settings')
 				]);
 			}
 		})

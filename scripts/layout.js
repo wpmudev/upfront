@@ -32,6 +32,12 @@ jQuery(document).ready(function($){
 			}
 		}
 		var breakpoint = window.getComputedStyle(document.body,':after').getPropertyValue('content');
+
+		if(breakpoint === null && $('html').hasClass('ie8')) {
+			breakpoint = window.get_breakpoint_ie8($( window ).width());
+			$(window).trigger('resize');
+		}
+
 		if(breakpoint) {
 			breakpoint = breakpoint.replace(/['"]/g, '')
 			if (current_breakpoint != breakpoint) {
