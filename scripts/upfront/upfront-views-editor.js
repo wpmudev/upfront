@@ -3758,7 +3758,8 @@
 					this.postListTpl({
 						posts: this.collection.getPage(this.collection.pagination.currentPage),
 						orderby: this.collection.orderby,
-						order: this.collection.order
+						order: this.collection.order,
+						canEdit: Upfront.Application.user_can("EDIT")
 					})
 				);
 				//this.mark_sort_order();
@@ -3877,7 +3878,8 @@
 						pages: pages,
 						pageItemTemplate: this.pageListItemTpl,
 						orderby: this.collection.orderby,
-						order: this.collection.order
+						order: this.collection.order,
+						canEdit: Upfront.Application.user_can("EDIT")
 					})
 				);
 			},

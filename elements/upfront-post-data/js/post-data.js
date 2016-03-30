@@ -93,6 +93,7 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 	 * Trigger edit if it's in the middle of editing (re-rendering whie editing)
 	 */
 	trigger_edit: function () {
+		if (!Upfront.Application.user_can("EDIT")) return;
 		if ( !PostDataEditor.contentEditor || !PostDataEditor.contentEditor._editing ) return;
 		this.editor_view.editContent();
 	},
@@ -449,14 +450,14 @@ var PostDataElement = Upfront.Views.Editor.Sidebar.Element.extend({
 			objects = [],
 			wrappers = []
 		;
-		
+
 		// Find hidden data element parts in default preset
 		// Just default, because that's what we use when the element is first added
 		var data_type = this._default_data.type,
 			presets = (Upfront.mainData || {})[data_type + "_elementPresets"] || [],
 			hidden = (_.findWhere(presets, {id: "default"}) || {}).hidden_parts || []
 		;
-		
+
 		_.each(types, function(type){
 			// If this type is hidden in default preset, *don't* add the object/wrapper
 			if (hidden.indexOf(type) >= 0) return;
@@ -689,7 +690,7 @@ function add_elements () {
 				'.comment_count': {label: l10n.css.comment_count_label, info: l10n.css.comment_count_info},
 				'.comments': {label: l10n.css.comments_label, info: l10n.css.comments_info},
 				'.comments_pagination': {label: l10n.css.comments_pagination_label, info: l10n.css.comments_pagination_info},
-				
+
 				'.upfront-post_data-comments': {label: l10n.css.comments_label, info: l10n.css.comments_info},
 				'.upfront-post_data-comments .comment': {label: l10n.css.comment_label, info: l10n.css.comment_info},
 				'.upfront-post_data-comments .comment-wrapper': {label: l10n.css.comment_wrapper_label, info: l10n.css.comment_wrapper_info},

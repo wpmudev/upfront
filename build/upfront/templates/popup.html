@@ -22,7 +22,17 @@
 			<div class="upfront-list_item-component upfront-title upfront-list_item-main">{{ post.get("post_title") }}</div>
 			<div class="upfront-list_item-component upfront-author">{[ if(post.author.get('data')){ ]} {{ post.author.get('data').display_name }} {[ } ]}</div>
 			<div class="upfront-list_item-component upfront-comments-count">{{ post.get("comment_count") }}</div>
-			<div class="upfront-list_item-component upfront-editactions"><a href="/edit/post/{{ post.get("ID") }}" class="editaction edit">{{Upfront.Settings.l10n.global.content.edit}}</a><a href="{{ post.get("permalink") }}" class="editaction view">{{Upfront.Settings.l10n.global.content.view}}</a><a href="#" class="editaction trash">{{Upfront.Settings.l10n.global.content.trash}}</a></div>
+			<div class="upfront-list_item-component upfront-editactions">
+				{[ if (canEdit) { ]}
+				<a href="/edit/post/{{ post.get("ID") }}" class="editaction edit">
+					{{Upfront.Settings.l10n.global.content.edit}}
+				</a>{[ } ]}<a href="{{ post.get("permalink") }}" class="editaction view">
+					{{Upfront.Settings.l10n.global.content.view}}
+				</a>{[ if (canEdit) { ]}<a href="#" class="editaction trash">
+					{{Upfront.Settings.l10n.global.content.trash}}
+				</a>
+				{[ } ]}
+			</div>
 		</div>
 		{[ }); } ]}
 		</div>
@@ -108,7 +118,17 @@
 			<div class="upfront-list_item-component upfront-title upfront-list_item-main">{{ post.get("post_title") }}</div>
 			<div class="upfront-list_item-component upfront-author">{[ if(post.author.get('data')){ ]} {{ post.author.get('data').display_name }} {[ } ]}</div>
 			<div class="upfront-list_item-component upfront-comments-count">{{ post.get("comment_count") }}</div>
-			<div class="upfront-list_item-component upfront-editactions"><a href="/edit/page/{{ post.get("ID") }}" class="editaction edit">{{Upfront.Settings.l10n.global.content.edit}}</a><a href="{{ post.get("permalink") }}" class="editaction view">{{Upfront.Settings.l10n.global.content.view}}</a><a href="#" class="editaction trash">{{Upfront.Settings.l10n.global.content.trash}}</a></div>
+			<div class="upfront-list_item-component upfront-editactions">
+				{[ if (canEdit) { ]}
+				<a href="/edit/page/{{ post.get("ID") }}" class="editaction edit">
+					{{Upfront.Settings.l10n.global.content.edit}}
+				</a>{[ } ]}<a href="{{ post.get("permalink") }}" class="editaction view">
+					{{Upfront.Settings.l10n.global.content.view}}
+				</a>{[ if (canEdit) { ]}<a href="#" class="editaction trash">
+					{{Upfront.Settings.l10n.global.content.trash}}
+				</a>
+				{[ } ]}
+			</div>
 		</div>
 		{[ }); } ]}
 		</div>

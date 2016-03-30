@@ -52,7 +52,7 @@ var Box = Backbone.View.extend({
 
     render: function(){
         this.destroy();
-        if (!Upfront.Settings.Application.MODE.ALLOW.match(Upfront.Settings.Application.MODE.CONTENT)) return false; // Drop the entire bar rendering if we're unable to deal with it
+				if (!Upfront.Application.user_can("EDIT")) return false; // Drop the entire bar rendering if we're unable to deal with it
         var me = this,
             postData = this.post.toJSON(),
             extraData = {},
