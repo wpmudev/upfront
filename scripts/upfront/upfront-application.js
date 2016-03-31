@@ -1355,7 +1355,7 @@ var Application = new (Backbone.Router.extend({
 			$page.find('.upfront-region-edit-trigger').remove();
 			
 			//Remove sidebar controls
-			$('.sidebar-panels, .sidebar-commands .command-undo, .sidebar-commands .command-redo, .sidebar-commands .command-grid, .sidebar-commands .command-open-media-gallery').remove();
+			$('.sidebar-panels, .sidebar-commands .command-undo, .sidebar-commands .command-redo, .sidebar-commands .command-grid, .sidebar-commands .command-open-media-gallery, a.upfront-entity-delete_trigger').remove();
 		});
 	},
 
