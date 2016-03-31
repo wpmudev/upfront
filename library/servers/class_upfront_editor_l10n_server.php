@@ -192,6 +192,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'go_to_post' => __('Go To Post / Page', 'upfront'),
 				'open_ext_link' => __('Open Ext. Link', 'upfront'),
 				'send_email' => __('Send Email', 'upfront'),
+				'call_number' => __('Call Number', 'upfront'),
 				'url' => __('URL', 'upfront'),
 				'phone' => __('Phone Number', 'upfront'),
 				'post_or_page' => __('Post or Page', 'upfront'),

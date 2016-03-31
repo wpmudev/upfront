@@ -17,7 +17,8 @@ define([
 				anchor: l10n.scroll_to_anchor,
 				entry: l10n.go_to_post,
 				external: l10n.open_ext_link,
-				email: l10n.send_email
+				email: l10n.send_email,
+				phone: l10n.call_number
 			}, (options.linkLabel || {}));
 			this.setOptions(this.options.url, this.options.type);
 			this.hideIfUnlink = ( options.hideIfUnlink === true );

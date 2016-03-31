@@ -378,7 +378,7 @@ class Upfront_newMenuSetting extends Upfront_Server {
 			'menu-item-url' => $e->url,
 			'menu-item-object' => $e->object,
 			'menu-item-object-id' => $e->object_id,
-			'menu-item-target' => ($e->type === 'anchor' || $e->type === 'email') ? '_self' : $e->target,
+			'menu-item-target' => ($e->type === 'anchor' || $e->type === 'email' || $e->type === 'phone') ? '_self' : $e->target,
 			'menu-item-position' => $e->menu_order
 			);
 

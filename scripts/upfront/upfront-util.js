@@ -56,6 +56,10 @@ define(function() {
 			return 'email';
 		}
 
+		if (url.match(/^tel/)) {
+			return 'phone';
+		}
+
 		return 'external';
 	};
 
