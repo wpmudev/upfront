@@ -179,6 +179,30 @@ define([
 				this._content_part_field.$el.hide();
 			}
 		},
+
+		/**
+		 * Utility method for padding recalculation
+		 *
+		 * This gets triggered on every content indent change
+		 * and updates the calculated left/right padding values
+		 * in preset.
+		 *
+		 * It will also rebuild the preset styles on page to
+		 * ensure the values are up to date.
+		 */
+		_recalculate_indents: function () {
+			var left = parseInt(this.model.get("left_indent"), 10),
+				right = parseInt(this.model.get("right_indent"), 10),
+				base = parseInt(Upfront.Settings.LayoutEditor.Grid.column_width, 10)
+			;
+			this.model.set("calculated_left_indent", left * base);
+			this.model.set("calculated_right_indent", right * base);
+
+			// Also re-build presets for post data element
+			// This is so the preset content paddings propagate properly on pad change
+			Util.generatePresetsToPage('post_data_element', template);
+		},
+		
 		/**
 		 * Normalizes both content padding values
 		 *
