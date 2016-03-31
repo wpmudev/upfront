@@ -233,6 +233,9 @@ define([
 				this.update_object(max, options.property)
 			}
 
+			// AND NOW! Recalculate indents and rebuild presets
+			this._recalculate_indents();
+
 			return true;
 		},
 		normalize_left_padding: function (value) {
