@@ -141,8 +141,8 @@ abstract class Upfront_Post_Data_PartView extends Upfront_PostPart_View {
 		$padding_left = $padding_right = 0;
 		$col_size = isset($layout_data['colSize']) ? $layout_data['colSize'] : 45;
 		if(isset($options['contents'])){
-			$padding_left = $options['contents']['padding_left'];
-			$padding_right = $options['contents']['padding_right'];
+			$padding_left = isset( $options['contents']['padding_left'] ) ? $options['contents']['padding_left'] : 0;
+			$padding_right = isset( $options['contents']['padding_right'] ) ? $options['contents']['padding_right'] : 0;
 		}
 
 
