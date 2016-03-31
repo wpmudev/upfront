@@ -2,7 +2,7 @@ Change Log
 ============
 
 
-1.1.1 - 2016-03-30
+1.1.1 - 2016-03-31
 -------------------------------------------------------------------------------
 - Fix: double enter on list editing should end list behavior.
 - Fix: native WP aligned images style conflict.
