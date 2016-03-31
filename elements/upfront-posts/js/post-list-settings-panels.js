@@ -465,12 +465,15 @@ var SortSettings_Sorter = Upfront.Views.Editor.Field.Hidden.extend({
 			$sortable.append(pt.$el);
 		});
 		$sortable.sortable({
+			start: function (e, ui) {
+				$sortable.disableSelection();
+			},
 			stop: function (e, ui) {
 				var parts = $sortable.sortable('toArray', {attribute: 'data-part'});
 				me.model.set_property(me.options.property, parts, false);
+				$sortable.enableSelection();
 			}
 		});
-		$sortable.disableSelection();
 	},
 	get_value: function () {
 		return this.model.get_property_value_by_name(this.options.property);
