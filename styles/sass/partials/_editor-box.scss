@@ -11,14 +11,12 @@
 }
 
 .ueditor-box-title{
-  height: 40px;
+  height: 30px;
   text-align: left;
   color: #3d5266;
   padding-left: 10px;
-  border-bottom: 1px solid #b8d0e6;
-  line-height: 40px;
-  font-size: 17px;
-  font-weight: bold;
+  // border-bottom: 1px solid #b8d0e6;
+  font:normal 600 12px/30px Open Sans, Hevletica Neueu, Helvetica, sans-serif;
   background: #e5f3ff;
   position: relative;
   cursor: pointer;
@@ -32,9 +30,9 @@
 .ueditor-box-section .ueditor-box-title:after{
   border-right: none;
   border-left: 4px solid #85aacc;
-  border-top: 5px solid transparent;
-  border-bottom: 5px solid transparent;
-  top: 17px;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  top: 12px;
   right: 14px;
   content: " ";
   display: block;
@@ -47,10 +45,10 @@
 .ueditor-box-section.show .ueditor-box-title:after{
   border-right: none;
   border-top: 4px solid #85aacc;
-  border-right: 5px solid transparent;
-  border-left: 5px solid transparent;
-  top: 17px;
-  right: 14px;
+  border-right: 4px solid transparent;
+  border-left: 4px solid transparent;
+  top: 12px;
+  right: 15px;
   content: " ";
   display: block;
   width: 0;
@@ -293,9 +291,10 @@ a.ueditor-action-trash:before {
   overflow-y: scroll;
   margin: 10px 0;
   padding: 0;
-  border: 1px solid #A2BFDA;
+  // border: 1px solid #A2BFDA;
   border-radius: 3px;
-  max-height: 202px;   
+  max-height: 202px;  
+  position: relative; 
 }
 #ueditor-box-cats-tags #upfront-taxonomy-list-all {
   background: #fff;
@@ -314,3 +313,4 @@ a.ueditor-action-trash:before {
 #ueditor-box-cats-tags .upfront-taxonomy-list-panel-previously-used {
   max-height: none;
 }
+
