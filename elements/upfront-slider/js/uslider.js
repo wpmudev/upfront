@@ -304,6 +304,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	},
 
 	update_caption_controls: function(){
+		if (!Upfront.Application.user_can("LAYOUT_MODE")) return false;
+		
 		var me = this,
 			panel = new Upfront.Views.Editor.InlinePanels.Panel()
 			;

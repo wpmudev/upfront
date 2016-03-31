@@ -986,6 +986,8 @@ define([
 				}
 			},
 			createControls: function() {
+				if (!Upfront.Application.user_can("LAYOUT_MODE")) return false;
+
 				var me = this,
 					panel = new Upfront.Views.Editor.InlinePanels.Panel()
 					;
