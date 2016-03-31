@@ -1,7 +1,8 @@
 define([
 	'elements/upfront-post-data/js/panel-abstractions',
 	'text!elements/upfront-post-data/tpl/preset-styles/post_data.html',
-], function (Panel, template) {
+	'scripts/upfront/preset-settings/util',
+], function (Panel, template, Util) {
 
 	var Modules = {};
 	Modules.template = template;
