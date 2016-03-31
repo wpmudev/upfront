@@ -186,7 +186,7 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 }
 
 .ulinkpanel-dark .ulinkpanel-title {
-	color: #cbe5ff;
+	color: rgb(83,97,109);
 	margin-bottom:3px;
 	background: initial !important;
 	padding: initial !important;
@@ -194,7 +194,9 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 	margin: initial !important;
 	font: normal 13px/16px Verdana, sans-serif !important;
 }
-
+.redactor-dropdown .ulinkpanel-dark .ulinkpanel-title{
+	color: #cbe5ff;
+}
 .upfront-ui.uimage-control-panel label {
 	background: initial !important;
 	text-transform: initial !important;

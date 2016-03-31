@@ -10082,13 +10082,16 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap {
   background: #00db8f; }
 
 .ulinkpanel-dark .ulinkpanel-title {
-  color: #cbe5ff;
+  color: #53616d;
   margin-bottom: 3px;
   background: initial !important;
   padding: initial !important;
   text-transform: initial !important;
   margin: initial !important;
   font: normal 13px/16px Verdana, sans-serif !important; }
+
+.redactor-dropdown .ulinkpanel-dark .ulinkpanel-title {
+  color: #cbe5ff; }
 
 .upfront-ui.uimage-control-panel label {
   background: initial !important;
@@ -14768,6 +14771,14 @@ html {
 
 .redactor-toolbar .redactor-dropdown.on-right-border .tablist li {
   float: right; }
+
+.redactor-dropdown .ulinkpanel-dark .upfront-field-multiple label,
+.redactor-dropdown .ulinkpanel .upfront-field-multiple label,
+.redactor-dropdown .ulinkpanel-dark .upfront-field-wrap-radios > label,
+.redactor-dropdown .ulinkpanel-dark .upfront-field-wrap-radios > .upfront-field-multiple,
+.redactor-dropdown .ulinkpanel .upfront-field-wrap-radios > label,
+.redactor-dropdown .ulinkpanel .upfront-field-wrap-radios > .upfront-field-multiple {
+  color: #cbe5ff; }
 
 /* --- New embed inserts --- */
 .upfront-inserts-markup-editor {
