@@ -4831,23 +4831,24 @@ define([
 					}
 				}
 
-
-				if ( scroll_top > top-rel_top && scroll_top < bottom-rel_top ) {
-					if ( $trig.css('position') != 'fixed' )
+				if($trig.length > 0) {
+					if ( scroll_top > top-rel_top && scroll_top < bottom-rel_top ) {
+						if ( $trig.css('position') != 'fixed' )
+							$trig.css({
+								position: 'fixed',
+								top: rel_top,
+								left: trig_offset.left,
+								right: 'auto'
+							});
+					}
+					else {
 						$trig.css({
-							position: 'fixed',
-							top: rel_top,
-							left: trig_offset.left,
-							right: 'auto'
+							position: '',
+							top: '',
+							left: '',
+							right: ''
 						});
-				}
-				else {
-					$trig.css({
-						position: '',
-						top: '',
-						left: '',
-						right: ''
-					});
+					}
 				}
 				if ( $main.hasClass('upfront-region-editing') && this.$el.hasClass('upfront-region-container-active') ){
 					var $fin = this.$el.find('.upfront-region-finish-edit'),

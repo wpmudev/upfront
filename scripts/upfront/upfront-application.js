@@ -1265,6 +1265,11 @@ var Application = new (Backbone.Router.extend({
 		app.loading.on_finish(function(){
 			$(Upfront.Settings.LayoutEditor.Selectors.sidebar).show();
 			$(".upfront-editable_trigger").hide();
+			
+			// Disable settings if LAYOUT_MODE permission is disabled
+			if (!Upfront.Application.user_can("LAYOUT_MODE")) {
+				app.set_up_edit_layout();
+			}
 		});
 		app.loading.render();
 		$('body').append(app.loading.$el);
@@ -1333,6 +1338,27 @@ var Application = new (Backbone.Router.extend({
 		var last = this.mode.last || this.MODE.DEFAULT;
 		this.start(last);
 	},
+	
+	set_up_edit_layout: function() {
+		var app = this;
+
+		app.loading.on_finish(function(){
+			var $page = $('#page');
+			$page.find('.upfront-module').each(function(){
+				if ( $(this).is('.ui-draggable') )
+					$(this).draggable('enable');
+				if ( $(this).is('.ui-resizable') )
+					$(this).resizable('enable');
+			});
+			
+			//Remove region edit button
+			$page.find('.upfront-region-edit-trigger').remove();
+			
+			//Remove sidebar controls
+			$('.sidebar-panels, .sidebar-commands .command-undo, .sidebar-commands .command-redo, .sidebar-commands .command-grid, .sidebar-commands .command-open-media-gallery').remove();
+		});
+	},
+
 
 	load_layout: function (layout_ids, additional) {
 		var app = this,
