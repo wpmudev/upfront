@@ -15092,6 +15092,7 @@ i.visit_link:before {
 
 i.upfront-icon-region-visit-link-homepage:before,
 i.upfront-icon-region-visit-link-email:before,
+i.upfront-icon-region-visit-link-phone:before,
 i.upfront-icon-region-visit-link-unlink:before,
 i.upfront-icon-region-visit-link-external:before,
 i.upfront-icon-region-visit-link-anchor:before,
@@ -15169,7 +15170,9 @@ i.visit_link.visit_link_unlink:after {
   content: 'Not Linked'; }
 
 i.upfront-icon-region-visit-link-unlink:before,
-i.visit_link.visit_link_unlink:before {
+i.visit_link.visit_link_unlink:before,
+i.upfront-icon-region-visit-link-phone:before,
+i.visit_link.visit_link_phone:before {
   background-position: -910px -203px; }
 
 i.visit_link:after {
