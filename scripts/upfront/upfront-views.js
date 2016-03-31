@@ -1567,7 +1567,8 @@ define([
 				this.for_view = this.options.for_view;
 				this.menulists = _([]);
 			},
-			render: function () {
+			render: function () {				
+				if (!Upfront.Application.user_can("LAYOUT_MODE")) return false;
 
 				var me = this;
 
