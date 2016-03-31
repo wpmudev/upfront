@@ -1046,6 +1046,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		$el.addClass(this.elementClasses);
 	},
 	makeSortable: function() {
+		if (!Upfront.Application.user_can("LAYOUT_MODE")) return false;
+
 		var me = this;
 		this.$el.find('.upfront-object-content ul').each(function() {
 			if ($(this).hasClass('redactor-toolbar') || $(this).hasClass('upfront-field-select-options')) {
