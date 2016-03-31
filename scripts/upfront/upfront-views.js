@@ -3344,8 +3344,13 @@ define([
 					this.$el.addClass( theme_style.toLowerCase() );
 					this._theme_style = theme_style;
 				}
-
-				this.$el.html(template + '<span class="open-item-controls"></span>');
+				
+				if (Upfront.Application.user_can("LAYOUT_MODE")) {
+					this.$el.html(template + '<span class="open-item-controls"></span>');
+				} else {
+					this.$el.html(template);
+				}
+				
 				this.$bg = this.$el.find('.upfront-module-group-bg');
 				this.update();
 				var local_view = this._modules_view || new Modules({"model": this.model.get("modules")});
@@ -3744,6 +3749,8 @@ define([
 				Upfront.Events.trigger('entity:module_group:edit', this, this.model);
 			},
 			on_edit: function () {
+				if(!Upfront.Application.user_can("LAYOUT_MODE")) return false;
+
 				Upfront.Events.trigger("command:module_group:finish_edit"); // close other reorder first
 				Upfront.Events.trigger("command:object_group:finish_edit"); // close object group edit if opened
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
@@ -3859,6 +3866,10 @@ define([
 				var me= this,
 					currentEntity = Upfront.data.currentEntity
 				;
+				
+				// Disable UnGrouping
+				if (!Upfront.Application.user_can("LAYOUT_MODE")) return false;
+				
 				if (this.hidden) return false;
 				// Deactivate previous ObjectView
 				if(typeof(Upfront.data.prevEntity) !== 'undefined' && Upfront.data.prevEntity !== false) {
