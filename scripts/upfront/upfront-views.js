@@ -5129,6 +5129,7 @@ define([
 			init: function () {
 				var container = this.model.get("container"),
 					name = this.model.get("name");
+				this.collection = this.model.collection;
 				this.listenTo(this.dispatcher, 'plural:propagate_activation', this.on_mouse_up);
 				//this.dispatcher.on("plural:propagate_activation", this.on_mouse_up, this);
 				// this.model.get("properties").bind("change", this.update, this);
@@ -5521,7 +5522,7 @@ define([
 					if(this.model.get('type') == 'lightbox')
 						this.hide();
 
-					var thecollection = this.model.collection;
+					var thecollection = this.model.collection || this.collection;
 
 					// Make sure sub-regions is also removed if it's main region
 					if ( this.model.is_main() ) {
@@ -5533,8 +5534,15 @@ define([
 								thecollection.remove(sub_model);
 						});
 					}
-					var floating = this.model.get('type') === 'fixed';
-					this.model.collection.remove(this.model);
+
+
+					if( 'fixed' === this.model.get('type')  ){ //  If it's a floating region!
+						this.parent_view.get_container_view(this.model).close_edit();
+						this.collection.remove(this.model, {silent:true});
+						this.remove();
+					}else{
+						this.collection.remove(this.model);
+					}
 
 					var total_container = thecollection.total_container(['shadow', 'lightbox']); // don't include shadow and lightbox region
 					if ( total_container == 0 ) {
@@ -5564,8 +5572,11 @@ define([
 						}
 
 					}
+
+
+
 					// For single post if floating region is removed, parent region will not re-render and will appear as if everything was removed
-					if (floating) parent_view.render();
+					//if (floating) parent_view.render();
 
 					// if ( main_view ){
 						// Upfront.Events.trigger('command:region:edit_toggle', true);
