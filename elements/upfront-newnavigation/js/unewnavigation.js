@@ -156,7 +156,9 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 	},
 	editMenuItem: function(e) {
-
+		
+		if (!Upfront.Application.user_can("LAYOUT_MODE")) return false;
+		
 		this.editModeOn(e);
 		var me = this;
 		var target, ueditor_target;
