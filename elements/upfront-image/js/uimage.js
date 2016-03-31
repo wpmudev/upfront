@@ -516,6 +516,8 @@ define([
 			return rendered;
 		},
 		toggle_caption_controls: function(){
+			if (!Upfront.Application.user_can("LAYOUT_MODE")) return false;
+
 			var me = this,
 				panel = new Upfront.Views.Editor.InlinePanels.Panel()
 				;
@@ -600,8 +602,10 @@ define([
 			}
 
 			if (this.isThemeImage() && !Upfront.themeExporter) {
-				this.$el.addClass('image-from-theme');
-				this.$el.find('b.upfront-entity_meta').after('<div class="swap-image-overlay"><p class="upfront-icon upfront-icon-swap-image"><span>Click to </span>Swap Image</p></div>');
+				if (Upfront.Application.user_can("LAYOUT_MODE")) {
+					this.$el.addClass('image-from-theme');
+					this.$el.find('b.upfront-entity_meta').after('<div class="swap-image-overlay"><p class="upfront-icon upfront-icon-swap-image"><span>Click to </span>Swap Image</p></div>');
+				}
 			} else {
 				var resizeHint = $('<div>').addClass('upfront-ui uimage-resize-hint' + onTop);
 				this.$el.append(resizeHint);
