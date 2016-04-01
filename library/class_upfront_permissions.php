@@ -53,6 +53,19 @@ class Upfront_Permissions {
 	}
 
 	/**
+	 * Checks if current user able to modify layout
+	 *
+	 * @return bool
+	 */
+	public static function can_modify_layout ($arg=false) {
+		if ( self::current(self::LAYOUT_MODE, $arg) ) return true;
+		$layout = Upfront_Layout::get_parsed_cascade();
+		$is_single_post = ('single' === $layout['type'] && !empty($layout['item']) && 'single-post' === $layout['item']);
+		if ( $is_single_post && self::current(self::SINGLEPOST_LAYOUT_MODE, $arg) ) return true;
+		return false;
+	}
+
+	/**
 	 * User ability check public access point
 	 *
 	 * @param int $user_id WP user ID
