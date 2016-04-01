@@ -2932,6 +2932,8 @@
 				//	this.panels.settings = new SidebarPanel_Settings({"model": this.model});
 			},
 			render: function () {
+				if (!Upfront.Application.user_can_modify_layout()) return false;
+
 				var me = this;
 				_.each(this.panels, function(panel){
 					panel.render();
@@ -2950,7 +2952,10 @@
 					this.commands.push(new Command_NewPage({"model": this.model}));
 				}
 				this.commands.push(new Command_PopupList({"model": this.model}));
-				this.commands.push(new Command_OpenMediaGallery());
+				
+				if (Upfront.Application.user_can_modify_layout()) {
+					this.commands.push(new Command_OpenMediaGallery());
+				}
 			}
 		});
 
@@ -2992,17 +2997,21 @@
 			initialize: function () {
 				var MODE = Upfront.Settings.Application.MODE;
 				var current_app = Upfront.Application.get_current();
-
-				if ( current_app !== MODE.THEME ) {
-					this.commands = _([
-						new Command_Undo({"model": this.model}),
-						new Command_Redo({"model": this.model}),
-						new Command_ToggleGrid({"model": this.model}),
-					]);
+				
+				if (Upfront.Application.user_can_modify_layout()) {
+					if ( current_app !== MODE.THEME ) {
+						this.commands = _([
+							new Command_Undo({"model": this.model}),
+							new Command_Redo({"model": this.model}),
+							new Command_ToggleGrid({"model": this.model}),
+						]);
+					} else {
+						this.commands = _([
+							new Command_ToggleGrid({"model": this.model}),
+						]);
+					}
 				} else {
-					this.commands = _([
-						new Command_ToggleGrid({"model": this.model}),
-					]);
+					this.commands = _([]);
 				}
 
 				if (Upfront.Application.user_can("RESPONSIVE_MODE") && current_app === MODE.THEME) {
@@ -3013,7 +3022,7 @@
 				if ( current_app == MODE.THEME ) {
 					this.commands.push(new Command_ExportLayout({"model": this.model}));
 				}
-				if (!Upfront.Settings.Application.NO_SAVE && current_app !== MODE.THEME) {
+				if (!Upfront.Settings.Application.NO_SAVE && current_app !== MODE.THEME && Upfront.Application.user_can_modify_layout()) {
 					this.commands.push(new Command_SaveLayout({"model": this.model}));
 				} else if (current_app !== MODE.THEME && Upfront.Settings.Application.PERMS.REVISIONS) {
 					this.commands.push(new Command_PreviewLayout({"model": this.model}));
@@ -3091,6 +3100,8 @@
 				}
 			},
 			render: function() {
+				if (!Upfront.Application.user_can_modify_layout()) return false;
+
 				_.each(this.views, function(view) {
 					view.render();
 					this.$el.append(view.el);
@@ -3109,13 +3120,19 @@
 		var SidebarCommands_ResponsiveControl = Commands.extend({
 			"className": "sidebar-commands sidebar-commands-responsive-control sidebar-commands-control",
 			initialize: function () {
-				this.commands = _([
-					new Command_ResponsiveUndo({"model": this.model}),
-					new Command_ResponsiveRedo({"model": this.model}),
-					new Command_ToggleGrid({"model": this.model}),
-					new Command_SaveLayout(),
-					new Command_StopResponsiveMode()
-				]);
+				if (Upfront.Application.user_can_modify_layout()) {
+					this.commands = _([
+						new Command_ResponsiveUndo({"model": this.model}),
+						new Command_ResponsiveRedo({"model": this.model}),
+						new Command_ToggleGrid({"model": this.model}),
+						new Command_SaveLayout(),
+						new Command_StopResponsiveMode()
+					]);
+				} else {
+					this.commands = _([
+						new Command_StopResponsiveMode()
+					]);
+				}
 			},
 			render: function () {
 				this.$el.find("li").remove();
