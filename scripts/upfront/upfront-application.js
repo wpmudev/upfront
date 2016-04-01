@@ -1481,6 +1481,9 @@ var Application = new (Backbone.Router.extend({
 
 		else Upfront.Util.log("No current subapplication");
 
+		Upfront.Events.once("layout:after_render", function(){
+			me.layout_ready = true;
+		});
 
 		//if (!me.layout_view) {
 		me.layout_view = new Upfront.Views.Layout({
@@ -1489,7 +1492,6 @@ var Application = new (Backbone.Router.extend({
 		});
 		Upfront.Events.trigger('upfront:renderingqueue:settotal', me.layout_view);
 		Upfront.Events.trigger("layout:render", me.current_subapplication);
-		me.layout_ready = true;
 		//}
 
 		Upfront.Application.loading.done(function () {

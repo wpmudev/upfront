@@ -3977,17 +3977,30 @@ define([
 				if ( typeof Upfront.data.wrapper_views == 'undefined' )
 					Upfront.data.wrapper_views = {};
 
-				this.model.each(function (module) {
-					RenderQueue.add(function () {
-						me.render_module(module); // surrounding with function to keep context juggling to the minimum
-					});
-				});
-
-				RenderQueue.addToEnd(function() {
+				// Check if layout is already loaded
+				// If it had, that means this is on demand call
+				// Render immediately in that case
+				// Otherwise add to RenderQueue
+				if ( Upfront.Application.layout_ready ) {
+					this.model.each(function (module) {
+						me.render_module(module);
+					})
 					me.apply_flexbox_clear();
 					me.apply_wrapper_height();
-					Upfront.Events.trigger("entity:modules:after_render", me, me.model);
-				});
+				}
+				else {
+					this.model.each(function (module) {
+						RenderQueue.add(function () {
+							me.render_module(module); // surrounding with function to keep context juggling to the minimum
+						});
+					});
+
+					RenderQueue.addToEnd(function() {
+						me.apply_flexbox_clear();
+						me.apply_wrapper_height();
+						Upfront.Events.trigger("entity:modules:after_render", me, me.model);
+					});
+				}
 			},
 			render_module: function (module, options) {
 				var $el = this.$el,
