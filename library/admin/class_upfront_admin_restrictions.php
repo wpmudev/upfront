@@ -34,7 +34,9 @@ class Upfront_Admin_Restrictions
         if (!Upfront_Permissions::current(Upfront_Permissions::MODIFY_RESTRICTIONS)) wp_die("Nope.");
         
         $roles = $this->_get_roles();
-        $content_restrictions = $this->_get_content_restrictions();
+        $content_restrictions = Upfront_Permissions::boot()->get_content_restrictions();
+        $admin_restrictions = Upfront_Permissions::boot()->get_admin_restrictions();
+        $upload_restrictions = Upfront_Permissions::boot()->get_upload_restrictions();
         ?>
         <div class="wrap upfront_admin upfront_admin_restrictions">
             <h1><?php esc_html_e("User Restrictions", Upfront::TextDomain); ?><span class="upfront_logo"></span></h1>
@@ -65,6 +67,8 @@ class Upfront_Admin_Restrictions
                                         <input  value='1' type="checkbox" name="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]" class="upfront_toggle_checkbox" id="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]" checked="checked" />
                                     <?php } else if (in_array($cap_id, $content_restrictions) && !$this->_wp_role_can($role_id, 'edit_posts')) { ?>
                                         <!--<span class="role_ex_mark"></span>-->
+                                    <?php } else if (in_array($cap_id, $upload_restrictions) && !$this->_wp_role_can($role_id, 'upload_files')) { ?>
+                                    <?php } else if (in_array($cap_id, $admin_restrictions) && !$this->_wp_role_can($role_id, 'manage_options')) { ?>
                                     <?php } else { ?>
                                         <div class="upfront_toggle">
                                             <input  value='1' type="checkbox" name="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]" class="upfront_toggle_checkbox" id="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]" <?php checked(true, Upfront_Permissions::role( $role_id, $cap_id )); ?> />
@@ -101,22 +105,6 @@ class Upfront_Admin_Restrictions
         die;
     }
 
-
-    /**
-     * Returns an array of content-specific restrictions
-     *
-     * These Upfront restrictions need to be additionally checked
-     * against WP capabilities model (particularly, `edit_posts`)
-     *
-     * @return array
-     */
-    private function _get_content_restrictions () {
-        return array(
-            Upfront_Permissions::EDIT,
-            Upfront_Permissions::CREATE_POST_PAGE,
-            Upfront_Permissions::CONTENT_MODE,
-        );
-    }
 
     /**
      * Utility wrapper for WP role capability check
