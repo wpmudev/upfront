@@ -20,6 +20,7 @@ class Upfront_Permissions {
 	const DEFAULT_LEVEL = 'save_changes';
 
 	const LAYOUT_MODE = 'layout_mode';
+	const SINGLEPOST_LAYOUT_MODE = 'singlepost_layout_mode';
 	const CONTENT_MODE = 'content_mode';
 	const THEME_MODE = 'theme_mode';
 	const POSTLAYOUT_MODE = 'postlayout_mode';
@@ -133,7 +134,8 @@ class Upfront_Permissions {
 		return apply_filters('upfront-access-permissions-map', array(
 			self::BOOT => 'edit_theme_options',// 'edit_posts',
 			self::LAYOUT_MODE => 'edit_theme_options',
-			self::POSTLAYOUT_MODE => 'edit_theme_options',
+			self::SINGLEPOST_LAYOUT_MODE => 'edit_theme_options',
+			//self::POSTLAYOUT_MODE => 'edit_theme_options', // This one is for old postlayout mode from this_post element
 			self::UPLOAD => 'upload_files',
 			self::RESIZE => 'edit_theme_options',// 'edit_posts',
 			self::MODIFY_ELEMENT_PRESETS => 'edit_theme_options',
@@ -344,7 +346,7 @@ class Upfront_Permissions {
 
 			self::BOOT => __('Can Access Upfront Editor Mode', Upfront::TextDomain ),
 			self::LAYOUT_MODE => __('Can Modify Upfront Layouts', Upfront::TextDomain ),
-			self::POSTLAYOUT_MODE => __('Can Modify Single Post Layout', Upfront::TextDomain ),
+			self::SINGLEPOST_LAYOUT_MODE => __('Can Modify Single Post Layout', Upfront::TextDomain ),
 			self::UPLOAD => __('Can Upload Media', Upfront::TextDomain ),
 			self::RESIZE => __('Can Resize Media (in Layouts)', Upfront::TextDomain ),
 			self::MODIFY_ELEMENT_PRESETS => __('Can Create / Modify Element Presets', Upfront::TextDomain ),

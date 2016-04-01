@@ -228,7 +228,7 @@ return (function ($) {
 
 			if(me.newitem) content = content + ' new_menu_item menu_item_placeholder';
 			
-			if (Upfront.Application.user_can("LAYOUT_MODE")) {
+			if (Upfront.Application.user_can_modify_layout()) {
 				content = content+'" ><span class="menu_item-ueditor">'+this.model['menu-item-title']+'</span></a><i class="delete_menu_item">x</i><span class="open-item-controls"></span>';
 			} else {
 				content = content+'" ><span class="menu_item-ueditor">'+this.model['menu-item-title']+'</span></a>';

@@ -516,7 +516,7 @@ define([
 			return rendered;
 		},
 		toggle_caption_controls: function(){
-			if (!Upfront.Application.user_can("LAYOUT_MODE")) return false;
+			if (!Upfront.Application.user_can_modify_layout()) return false;
 
 			var me = this,
 				panel = new Upfront.Views.Editor.InlinePanels.Panel()
@@ -602,7 +602,7 @@ define([
 			}
 
 			if (this.isThemeImage() && !Upfront.themeExporter) {
-				if (Upfront.Application.user_can("LAYOUT_MODE")) {
+				if (Upfront.Application.user_can_modify_layout()) {
 					this.$el.addClass('image-from-theme');
 					this.$el.find('b.upfront-entity_meta').after('<div class="swap-image-overlay"><p class="upfront-icon upfront-icon-swap-image"><span>Click to </span>Swap Image</p></div>');
 				}

@@ -923,7 +923,7 @@ define([
 				}
 			},
 			toggleControls: function() {
-				if (!Upfront.Application.user_can("LAYOUT_MODE")) {
+				if (!Upfront.Application.user_can_modify_layout()) {
 					if (!this.$control_el || this.$control_el.length === 0) {
 						this.$control_el = this.$el;
 					}
@@ -986,7 +986,7 @@ define([
 				}
 			},
 			createControls: function() {
-				if (!Upfront.Application.user_can("LAYOUT_MODE")) return false;
+				if (!Upfront.Application.user_can_modify_layout()) return false;
 
 				var me = this,
 					panel = new Upfront.Views.Editor.InlinePanels.Panel()
@@ -1568,7 +1568,7 @@ define([
 				this.menulists = _([]);
 			},
 			render: function () {				
-				if (!Upfront.Application.user_can("LAYOUT_MODE")) return false;
+				if (!Upfront.Application.user_can_modify_layout()) return false;
 
 				var me = this;
 
@@ -3345,7 +3345,7 @@ define([
 					this._theme_style = theme_style;
 				}
 				
-				if (Upfront.Application.user_can("LAYOUT_MODE")) {
+				if (Upfront.Application.user_can_modify_layout()) {
 					this.$el.html(template + '<span class="open-item-controls"></span>');
 				} else {
 					this.$el.html(template);
@@ -3749,7 +3749,7 @@ define([
 				Upfront.Events.trigger('entity:module_group:edit', this, this.model);
 			},
 			on_edit: function () {
-				if(!Upfront.Application.user_can("LAYOUT_MODE")) return false;
+				if(!Upfront.Application.user_can_modify_layout()) return false;
 
 				Upfront.Events.trigger("command:module_group:finish_edit"); // close other reorder first
 				Upfront.Events.trigger("command:object_group:finish_edit"); // close object group edit if opened
@@ -3868,7 +3868,7 @@ define([
 				;
 				
 				// Disable UnGrouping
-				if (!Upfront.Application.user_can("LAYOUT_MODE")) return false;
+				if (!Upfront.Application.user_can_modify_layout()) return false;
 				
 				if (this.hidden) return false;
 				// Deactivate previous ObjectView
@@ -3978,7 +3978,7 @@ define([
 					Upfront.data.wrapper_views = {};
 
 				// Check if layout is already loaded
-				// If it had, that means this is on demand call
+				// If it had, that means this is on demand call (i.e from grouping)
 				// Render immediately in that case
 				// Otherwise add to RenderQueue
 				if ( Upfront.Application.layout_ready ) {

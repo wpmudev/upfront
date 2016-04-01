@@ -1107,7 +1107,7 @@ var GridEditor = {
 			return false;
 		}
 		//Prevent object resize if RESIZE is disabled
-		if (!Upfront.Application.user_can("RESIZE") || !Upfront.Application.user_can("LAYOUT_MODE")) {
+		if (!Upfront.Application.user_can("RESIZE") || !Upfront.Application.user_can_modify_layout()) {
 			if ( $me.data('ui-resizable') ){
 				$me.resizable('option', 'disabled', false);
 			}
@@ -1522,7 +1522,7 @@ var GridEditor = {
 		}
 		
 		//Prevent object resize if RESIZE is disabled
-		if (!Upfront.Application.user_can("RESIZE") || !Upfront.Application.user_can("LAYOUT_MODE")) {
+		if (!Upfront.Application.user_can("RESIZE") || !Upfront.Application.user_can_modify_layout()) {
 			if ( $me.data('ui-resizable') ){
 				$me.resizable('option', 'disabled', false);
 			}

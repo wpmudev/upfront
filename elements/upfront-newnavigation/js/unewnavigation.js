@@ -157,7 +157,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	},
 	editMenuItem: function(e) {
 		
-		if (!Upfront.Application.user_can("LAYOUT_MODE")) return false;
+		if (!Upfront.Application.user_can_modify_layout()) return false;
 		
 		this.editModeOn(e);
 		var me = this;
@@ -1046,7 +1046,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		$el.addClass(this.elementClasses);
 	},
 	makeSortable: function() {
-		if (!Upfront.Application.user_can("LAYOUT_MODE")) return false;
+		if (!Upfront.Application.user_can_modify_layout()) return false;
 
 		var me = this;
 		this.$el.find('.upfront-object-content ul').each(function() {

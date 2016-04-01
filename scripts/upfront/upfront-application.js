@@ -1067,12 +1067,16 @@ var ContentEditor = new (Subapplication.extend({
 
 	start: function () {
 		Upfront.Util.log("Starting the content edit mode");
+		if ( !Upfront.Behaviors.GridEditor.grid ) {
+			Upfront.Behaviors.GridEditor.init();
+		}
 
 		$("html").removeClass("upfront-edit-layout upfront-edit-theme upfront-edit-postlayout upfront-edit-responsive").addClass("upfront-edit-content");
 	},
 
 	stop: function () {
 		Upfront.Util.log("Stopping the content edit mode");
+		this.stopListening(Upfront.Events);
 	}
 }))();
 
@@ -1185,6 +1189,12 @@ var Application = new (Backbone.Router.extend({
 	is_editor: function(){
 		return !this.is_builder();
 	},
+	is_single: function(post_type){
+		if ( !('type' in _upfront_post_data.layout && 'single' === _upfront_post_data.layout.type) ) return false;
+		if ( typeof post_type === "undefined" ) return true;
+		if ( 'item' in _upfront_post_data.layout && 'single-'+post_type === _upfront_post_data.layout.item ) return true;
+		return false;
+	},
 	urlCache: {},
 
 	current_subapplication: false,
@@ -1267,7 +1277,7 @@ var Application = new (Backbone.Router.extend({
 			$(".upfront-editable_trigger").hide();
 			
 			// Disable settings if LAYOUT_MODE permission is disabled
-			if (!Upfront.Application.user_can("LAYOUT_MODE")) {
+			if (!Upfront.Application.user_can_modify_layout()) {
 				app.set_up_edit_layout();
 			}
 		});
@@ -1974,6 +1984,17 @@ var Application = new (Backbone.Router.extend({
 	user_can: function (what) {
 		what = (_.isString(what) ? what : "").toUpperCase();
 		return !!((Upfront.Settings.Application || {}).PERMS || {})[what];
+	},
+
+	/**
+	 * Check if user can modify layout
+	 *
+	 * @return {Boolean}
+	 */
+	user_can_modify_layout: function () {
+		if ( Upfront.Application.user_can("LAYOUT_MODE") ) return true;
+		if ( Upfront.Application.is_single('post') && Upfront.Application.user_can("SINGLEPOST_LAYOUT_MODE") ) return true;
+		return false;
 	}
 
 }))();

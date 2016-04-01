@@ -91,7 +91,7 @@
 				var me = this,
 				blurTimeout = false;
 				
-				if (Upfront.Application.user_can("LAYOUT_MODE")) {
+				if (Upfront.Application.user_can_modify_layout()) {
 					this.$el.find('.upfront-object-content')
 						// .addClass('upfront-plain_txt') // WHY DO THIS, IT MESSES UP THE CSS LOGIC SINCE THAN WE HAVE DUPLICATED CLASS
 						.ueditor({

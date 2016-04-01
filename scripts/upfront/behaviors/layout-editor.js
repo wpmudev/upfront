@@ -105,7 +105,7 @@ var LayoutEditor = {
 			return false;
 		
 		// Disable Grouping
-		if (!Upfront.Application.user_can("LAYOUT_MODE")) return false;
+		if (!Upfront.Application.user_can_modify_layout()) return false;
 
 		var ed = this,
 			regions = Upfront.Application.layout.get('regions'),
