@@ -11,7 +11,6 @@ $("head").append('<style>' + style + '</style>');
 var l10n = Upfront.Settings.l10n.code_element;
 
 var CodeView = Upfront.Views.ObjectView.extend({
-	display_size_hint: true,
 	on_render: function () {
 		var type = this.model.get_property_value_by_name("code_selection_type"),
 			me = this,
