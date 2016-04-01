@@ -11,7 +11,7 @@ $("head").append('<style>' + style + '</style>');
 var l10n = Upfront.Settings.l10n.code_element;
 
 var CodeView = Upfront.Views.ObjectView.extend({
-
+	display_size_hint: true,
 	on_render: function () {
 		var type = this.model.get_property_value_by_name("code_selection_type"),
 			me = this,
@@ -44,12 +44,14 @@ var CodeView = Upfront.Views.ObjectView.extend({
 		view.parent_module_view = this.parent_module_view;
 
 		view.on("code:selection:selected", this.render_code_view, this);
-		this.$el.empty().append(view.$el);
+		this.$el.empty().append( view.$el.html() );
+		this.create_size_hint( this.$el.find(".upfront_code-element") );
 		return view;
 	},
 
 	render_code_view: function () {
 		var type = this.model.get_property_value_by_name("code_selection_type");
+		this.create_size_hint( this.$el.find(".upfront_code-element") );
 		if (!type) {
 			Upfront.Util.log("Missing type");
 			return this.render_initial_view();
@@ -63,7 +65,7 @@ var CodeView = Upfront.Views.ObjectView.extend({
 		view.render();
 
 		view.on("code:model:updated", this.propagate_model_update, this);
-		this.$el.empty().append(view.$el);
+		this.$el.empty().append( view.$el.html() );
 		this.updateControls();
 
 		// Dynamically bind settings click to view editing action
@@ -72,6 +74,7 @@ var CodeView = Upfront.Views.ObjectView.extend({
 				return view.on_edit();
 			}
 		}
+
 
 		return view;
 	},
