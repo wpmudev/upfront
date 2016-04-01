@@ -54,13 +54,13 @@ class Upfront_Admin_Restrictions
                     </ul>
 
                     <?php foreach( Upfront_Permissions::boot()->get_upfront_capability_map() as $cap_id => $capability ) { ?>
-                        <ul class="upfront_restrictions_functionality_row">
+                        <ul class="upfront_restrictions_functionality_row" data-capability_id="<?php echo esc_attr($cap_id); ?>">
                             <li class="upfront_restrictions_functionality_name"><?php echo _e($this->_get_cap_label( $cap_id )) ?></li>
                             <?php if ( is_multisite() ) { ?>
                                 <li class="upfront_restrictions_functionality_role"><span class="role_check_mark"></span></li>
                             <?php } ?>
                             <?php foreach( $roles as $role_id => $role ) { ?>
-                                <li class="upfront_restrictions_functionality_role">
+                                <li class="upfront_restrictions_functionality_role" data-role_id="<?php echo esc_attr($role_id); ?>">
                                     <?php if ( !is_multisite() && $role_id == "administrator" ) { ?>
                                         <span class="role_check_mark"></span>
                                         <!-- hidden input for admin and set to always true for single site -->
