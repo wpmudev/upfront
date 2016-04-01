@@ -120,6 +120,8 @@ define([
 
 			on_edit: function(){
 				if (this.is_editing) return false;
+				
+				if (!Upfront.Application.user_can_modify_layout()) return false;
 
 				// Since we're doing double duty here, let's first check if content editing mode is to boot
 				var $contenteditables = this.$el.find('.upfront_code-element ' + this.content_editable_selector);
@@ -555,6 +557,8 @@ define([
 			on_edit: function () {
 				if (this.is_editing)
 					return false;
+				
+				if (!Upfront.Application.user_can_modify_layout()) return false;
 
 				this.is_editing = true;
 
