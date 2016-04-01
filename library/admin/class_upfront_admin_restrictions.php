@@ -64,7 +64,7 @@ class Upfront_Admin_Restrictions
                                         <!-- hidden input for admin and set to always true for single site -->
                                         <input  value='1' type="checkbox" name="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]" class="upfront_toggle_checkbox" id="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]" checked="checked" />
                                     <?php } else if (in_array($cap_id, $content_restrictions) && !$this->_wp_role_can($role_id, 'edit_posts')) { ?>
-                                        <span class="role_ex_mark"></span>
+                                        <!--<span class="role_ex_mark"></span>-->
                                     <?php } else { ?>
                                         <div class="upfront_toggle">
                                             <input  value='1' type="checkbox" name="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]" class="upfront_toggle_checkbox" id="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]" <?php checked(true, Upfront_Permissions::role( $role_id, $cap_id )); ?> />
