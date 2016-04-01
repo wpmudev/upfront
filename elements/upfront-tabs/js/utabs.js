@@ -77,6 +77,8 @@ define([
 		},
 
 		deleteTab: function(event) {
+			if (!Upfront.Application.user_can_modify_layout()) return false;
+
 			var element = $(event.currentTarget);
 			var tab = element.parents('.tabs-tab');
 			var id = $(tab).data('content-id').split('-').pop();
@@ -87,32 +89,34 @@ define([
 		onTabClick: function(event) {
 			var $tab = $(event.currentTarget);
 			var contentId;
+			
+			if (Upfront.Application.user_can_modify_layout()) {
+				// Stop tab content editor on switching tabs, always
+				this.$el.find('.utab-content').each(function () {
+					var ed = $(this).data('ueditor');
+					if(ed && ed.active) {
+						ed.stop();
+					}
+				});
 
-			// Stop tab content editor on switching tabs, always
-			this.$el.find('.utab-content').each(function () {
-				var ed = $(this).data('ueditor');
-				if(ed && ed.active) {
-					ed.stop();
+				// If tab is already active start editor if not started already
+				if ($tab.hasClass('tabs-tab-active')) {
+					var ed = $tab.find('.inner-box').data('ueditor');
+					if(ed && !ed.active) {
+						ed.start();
+					}
+
+					return;
 				}
-			});
 
-			// If tab is already active start editor if not started already
-			if ($tab.hasClass('tabs-tab-active')) {
-				var ed = $tab.find('.inner-box').data('ueditor');
-				if(ed && !ed.active) {
-					ed.start();
-				}
-
-				return;
+				// Otherwise stop all tab editors just in case
+				this.$el.find('.tabs-tab .inner-box').each(function() {
+					var ed = $(this).data('ueditor');
+					if(ed && ed.active) {
+						$(this).trigger('blur');
+					}
+				});
 			}
-
-			// Otherwise stop all tab editors just in case
-			this.$el.find('.tabs-tab .inner-box').each(function() {
-				var ed = $(this).data('ueditor');
-				if(ed && ed.active) {
-					$(this).trigger('blur');
-				}
-			});
 
 			// And make tab active
 			$tab
@@ -124,6 +128,8 @@ define([
 		},
 
 		saveTabContent: function($content) {
+			if (!Upfront.Application.user_can_modify_layout()) return false;
+
 			var
 				tabId = $content.attr('id').split('-').pop(),
 				ed = $content.data('ueditor'),
@@ -198,49 +204,54 @@ define([
 				$tabtitles = this.$el.find('.tabs-tab .inner-box'),
 				count = 0,
 				$tabs;
+				
+			if (Upfront.Application.user_can_modify_layout()) {	
 
-			$tabtitles.each(function () {
-				var $content = $(this);
-				count++;
+				$tabtitles.each(function () {
+					var $content = $(this);
+					count++;
 
-				$content.ueditor({
-					//linebreaks: true,
-					//disableLineBreak: true,
-					//airButtons: false,
-					//autostart: false,
-					//allowedTags: ['h5'],
-					//placeholder: false
-					//airButtons : ["upfrontFormatting"],
-					linebreaks: false,
-					autostart: false,
-					paragraphize: false,
-					focus: false,
-					placeholder: false
-				}).on('start', function() {
-				 Upfront.Events.trigger('upfront:element:edit:start', 'text');
-				 $(this).focus();
-			 }).on('stop', function () {
-				 var id = $content.parent().parent().data('content-id').split('-').pop();
-				 var editor = $content.data('ueditor');
-				 if (editor.getValue(true).trim() === '') {
-					 me.property('tabs')[id].title =  l10n.tab_label + ' ' + count;
-					 setTimeout( function() {
-						 $content.text(l10n.tab_label + ' ' + count);
-					 }, 50);
-				 } else {
-					 me.property('tabs')[id].title =  editor.getValue(true).trim();
-				 }
-				 Upfront.Events.trigger('upfront:element:edit:stop');
-			 });
+					$content.ueditor({
+						//linebreaks: true,
+						//disableLineBreak: true,
+						//airButtons: false,
+						//autostart: false,
+						//allowedTags: ['h5'],
+						//placeholder: false
+						//airButtons : ["upfrontFormatting"],
+						linebreaks: false,
+						autostart: false,
+						paragraphize: false,
+						focus: false,
+						placeholder: false
+					}).on('start', function() {
+						Upfront.Events.trigger('upfront:element:edit:start', 'text');
+						$(this).focus();
+					}).on('stop', function () {
+						var id = $content.parent().parent().data('content-id').split('-').pop();
+						var editor = $content.data('ueditor');
+						if (editor.getValue(true).trim() === '') {
+						 me.property('tabs')[id].title =  l10n.tab_label + ' ' + count;
+						 setTimeout( function() {
+							 $content.text(l10n.tab_label + ' ' + count);
+						 }, 50);
+						} else {
+						 me.property('tabs')[id].title =  editor.getValue(true).trim();
+						}
+						Upfront.Events.trigger('upfront:element:edit:stop');
+					});
+				});
+			} else {
+				this.$el.find('.tabs-tab i').remove();
+			}
 
+			if (Upfront.Application.user_can_modify_layout()) {
+				$tabs = this.$el.find('.utab-content');
 
-			});
-
-			$tabs = this.$el.find('.utab-content');
-
-			$tabs.each(function () {
-				me.initializeContentEditor($(this));
-			});
+				$tabs.each(function () {
+					me.initializeContentEditor($(this));
+				});
+			}
 
 			var $upfrontObjectContent = this.$el.find('.upfront-object-content');
 			// if(this.$el.find('a.add-item').length < 1) {
@@ -254,10 +265,12 @@ define([
 		},
 
 		startContentEditor: function(event) {
+			if (!Upfront.Application.user_can_modify_layout()) return false;
 			$(event.currentTarget).data('ueditor').start();
 		},
 
 		initializeContentEditor: function($content) {
+			if (!Upfront.Application.user_can_modify_layout()) return false;
 			var me = this;
 
 			$content.ueditor({
@@ -267,15 +280,17 @@ define([
 				focus: false,
 				placeholder: false
 			})
-				.on('start', function () {
-					Upfront.Events.trigger('upfront:element:edit:start', 'text');
-				})
-				.on('stop', function () {
-					me.stopContentEdit($content);
-				});
+			.on('start', function () {
+				Upfront.Events.trigger('upfront:element:edit:start', 'text');
+			})
+			.on('stop', function () {
+				me.stopContentEdit($content);
+			});
 		},
 
 		stopContentEdit: function($content) {
+			if (!Upfront.Application.user_can_modify_layout()) return false;
+
 			if($content.text().trim() === '') {
 				$content.html(l10n.tab_placeholder);
 			}

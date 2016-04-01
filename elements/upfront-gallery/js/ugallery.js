@@ -353,21 +353,27 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 	createControlsEach: function(image) {
 		var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel();
-
-		panel.items = _([
-			this.createLinkControl(image)
-		]);
+		
+		if (Upfront.Application.user_can_modify_layout()) {
+			panel.items = _([
+				this.createLinkControl(image)
+			]);
+		} else {
+			panel.items = _([]);
+		}
 		
 		if (Upfront.Application.user_can("RESIZE")) {
 			panel.items.unshift(this.createControl('crop', l10n.ctrl.edit_image, 'imageEditMask'));
 		}
+		
+		if (Upfront.Application.user_can_modify_layout()) {
+			if (this.property('labelFilters') === 'true') {
+				panel.items.push(this.createLabelControl(image));
+			}
 
-		if (this.property('labelFilters') === 'true') {
-			panel.items.push(this.createLabelControl(image));
-		}
-
-		if (image.get('imageLink').type === 'image' || image.get('imageLink').type === 'lightbox' || -1 !== ['image', 'lightbox'].indexOf( this.property( "linkTo" ) ) ) {
-			panel.items.push(this.createControl('fullscreen', l10n.ctrl.show_image, 'openImageLightbox'));
+			if (image.get('imageLink').type === 'image' || image.get('imageLink').type === 'lightbox' || -1 !== ['image', 'lightbox'].indexOf( this.property( "linkTo" ) ) ) {
+				panel.items.push(this.createControl('fullscreen', l10n.ctrl.show_image, 'openImageLightbox'));
+			}
 		}
 
 		return panel;
@@ -857,6 +863,11 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	on_render: function() {
 		var me = this,
 			resizingFunction;
+		
+		// Hide delete icon
+		if (!Upfront.Application.user_can_modify_layout()) {		
+			this.$el.find('.remove-image').remove();
+		}
 
 		//Bind resizing events
 		if ( me.parent_module_view && !me.parent_module_view.$el.data('resizeHandling') ) {
@@ -1564,8 +1575,11 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	},
 
 	removeImage: function(e){
+		if (!Upfront.Application.user_can_modify_layout()) return false;
+
 		var me = this,
 			item = this.getItemElement(e);
+
 		e.preventDefault();
 		item.fadeOut('fast', function() {
 			var imageId = item.attr('rel');
