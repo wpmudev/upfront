@@ -420,14 +420,17 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		$breakpoint = $grid->get_default_breakpoint();
 		$typography = $breakpoint->get_typography();
 		
-		//We load this in case typography is empty or specific tag is empty
-		$layout_properties = Upfront_ChildTheme::get_instance()->getLayoutProperties();
-		$theme_typography = upfront_get_property_value('typography', array('properties'=>$layout_properties));
 		$theme_typography_array = array();
 		
-		//Make sure we use array not an object recursively
-		foreach($theme_typography as $key => $object) {
-			$theme_typography_array[$key] = get_object_vars($object);
+		if(!is_null(Upfront_ChildTheme::get_instance())) {
+			//We load this in case typography is empty or specific tag is empty
+			$layout_properties = Upfront_ChildTheme::get_instance()->getLayoutProperties();
+			$theme_typography = upfront_get_property_value('typography', array('properties'=>$layout_properties));
+
+			//Make sure we use array not an object recursively
+			foreach($theme_typography as $key => $object) {
+				$theme_typography_array[$key] = get_object_vars($object);
+			}
 		}
 
 		//Set child theme typography if breakpoint typography is empty
