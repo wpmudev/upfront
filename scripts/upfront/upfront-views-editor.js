@@ -11772,6 +11772,9 @@
 			},
 			on_click: function() {
 				this.model.set({ 'active': true });
+				// hide all Edit Region for responsive
+				// Edit Region will show on mouseenter
+				$('.upfront-region-edit-trigger-small').removeClass('visible'); 
 			}
 		});
 
