@@ -65,6 +65,9 @@ span.role_ex_mark:before {
     -ms-user-select: none;
     vertical-align: middle;
 }
+.upfront_toggle.hide {
+    display: none;
+}
 
 input.upfront_toggle_checkbox {
     display: none;

@@ -66,7 +66,7 @@ class Upfront_Admin_Restrictions
                                     <?php } else if (in_array($cap_id, $content_restrictions) && !$this->_wp_role_can($role_id, 'edit_posts')) { ?>
                                         <!--<span class="role_ex_mark"></span>-->
                                     <?php } else { ?>
-                                        <div class="upfront_toggle">
+                                        <div class="<?php echo $this->_toggle_class($role_id,$cap_id); ?>">
                                             <input  value='1' type="checkbox" name="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]" class="upfront_toggle_checkbox" id="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]" <?php checked(true, Upfront_Permissions::role( $role_id, $cap_id )); ?> />
                                             <label class="upfront_toggle_label" for="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]">
                                                 <span class="upfront_toggle_inner"></span>
@@ -131,6 +131,22 @@ class Upfront_Admin_Restrictions
         if (!is_object($role) || !is_callable(array($role, 'has_cap'))) return false;
 
         return !!$role->has_cap($capability);
+    }
+		
+		/**
+     * Utility for setting default toggle class
+     *
+     * @return string css classname
+     */
+    private function _toggle_class ($role_id, $cap_id) {
+        $toggle_class = 'upfront_toggle';
+        if ( !Upfront_Permissions::role($role_id, $cap_id) ) {
+            $toggle_class = ( !$this->_wp_role_can($role_id, 'manage_options') && $cap_id != Upfront_Permissions::BOOT )
+                ? 'upfront_toggle hide'
+                : 'upfront_toggle'
+            ;
+        }
+        return $toggle_class;
     }
 
     private function _get_roles(){
