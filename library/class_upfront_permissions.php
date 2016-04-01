@@ -27,7 +27,7 @@ class Upfront_Permissions {
 	const RESPONSIVE_MODE = 'responsive_mode';
 	
 	const ANONYMOUS = '::anonymous::';
-
+	const NOT_LOAD_WP_ROLES = 'not_load_wp_default_roles'; // only load wp default roles on fresh setup
 	const RESTRICTIONS_KEY = "upfront-options-user_restrictions";
 
 	private $_levels_map = array();
@@ -118,10 +118,13 @@ class Upfront_Permissions {
 
 
 	private function __construct () {
-		$this->_levels_map = wp_parse_args(
-			$this->get_restrictions(),
-			$this->_get_default_levels_map()
-		);
+		// $this->_levels_map = wp_parse_args(
+			// $this->get_restrictions(),
+			// $this->_get_default_levels_map()
+		// );
+		// no need to append the default WP roles as will cause saved restrictions to not reflect
+		
+		$this->_levels_map = $this->get_restrictions();
 		
 	}
 
@@ -188,9 +191,15 @@ class Upfront_Permissions {
 	 * @return bool
 	 */
 	public function set_restrictions ($restrictions) {
-		// if (!current_user_can('manage_options')) return false;
 		if (!$this->_current_user_can(self::MODIFY_RESTRICTIONS)) return false;
-
+		
+		// putting flag to avoid loading default WP roles and to avoid empty return from DB
+		// loading default WP roles only happens on first load at fresh setup
+		$restrictions = wp_parse_args(
+			$restrictions,
+			array(self::NOT_LOAD_WP_ROLES => 'not_load')
+		);
+		
 		return !!update_option(self::RESTRICTIONS_KEY, $restrictions, false);
 	}
 
