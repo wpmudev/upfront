@@ -236,6 +236,8 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			)
 		);
 		if (empty($prev_post_image_variants)) $prev_post_image_variants = json_encode(array());
+		if (is_array($prev_post_image_variants)) $prev_post_image_variants = json_encode($prev_post_image_variants);
+		
 		$other_post_image_variants = apply_filters(
 			'upfront_get_other_post_image_variants',
 			array(
@@ -243,6 +245,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			)
 		);
 		if (empty($other_post_image_variants)) $other_post_image_variants = json_encode(array());
+		if (is_array($other_post_image_variants)) $other_post_image_variants = json_encode($other_post_image_variants);
 
 		$registry = Upfront_PresetServer_Registry::get_instance();
 		$preset_servers = $registry->get_all();
