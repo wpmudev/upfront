@@ -211,7 +211,7 @@ class Upfront_Permissions {
 	public function get_restrictions () {
 		$map = get_option(self::RESTRICTIONS_KEY, array());
 		return !empty($map)
-			? $map
+			? wp_parse_args($map, $this->_get_default_levels_map())
 			: $this->_get_default_levels_map()
 		;
 	}
