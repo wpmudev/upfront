@@ -118,13 +118,10 @@ class Upfront_Permissions {
 
 
 	private function __construct () {
-		// $this->_levels_map = wp_parse_args(
-			// $this->get_restrictions(),
-			// $this->_get_default_levels_map()
-		// );
-		// no need to append the default WP roles as will cause saved restrictions to not reflect
-		
-		$this->_levels_map = $this->get_restrictions();
+		$this->_levels_map = wp_parse_args(
+			$this->get_restrictions(),
+			$this->_get_default_levels_map()
+		);
 		
 	}
 
@@ -211,7 +208,7 @@ class Upfront_Permissions {
 	public function get_restrictions () {
 		$map = get_option(self::RESTRICTIONS_KEY, array());
 		return !empty($map)
-			? wp_parse_args($map, $this->_get_default_levels_map())
+			? $map
 			: $this->_get_default_levels_map()
 		;
 	}
@@ -306,10 +303,12 @@ class Upfront_Permissions {
 
 		$allowed = false;
 		foreach ($level as $lev) {
-			$allowed = $role->name === $lev
-				? true
-				: (bool)$role->has_cap($lev)
-			;
+			if ( $role->name === $lev ) {
+				$allowed = true;
+			} elseif ( !isset($this->_levels_map[self::NOT_LOAD_WP_ROLES]) ) {
+				$allowed = (bool)$role->has_cap($lev);
+			}
+			
 			if ($allowed) break;
 		}
 

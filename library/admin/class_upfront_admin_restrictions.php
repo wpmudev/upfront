@@ -14,7 +14,7 @@ class Upfront_Admin_Restrictions
     const FORM_NONCE_ACTION = "upfront_restriction_save";
 
     function __construct () {
-        if (Upfront_Permissions::current(Upfront_Permissions::MODIFY_RESTRICTIONS)) {
+        if ($this->_can_modify_restrictions()) {
             $save_restriction = add_submenu_page(
                 "upfront",
                 __("User Restrictions", Upfront::TextDomain),
@@ -31,7 +31,7 @@ class Upfront_Admin_Restrictions
      * Renders the page
      */
     function render_page () {
-        if (!Upfront_Permissions::current(Upfront_Permissions::MODIFY_RESTRICTIONS)) wp_die("Nope.");
+        if (!$this->_can_modify_restrictions()) wp_die("Nope.");
         
         $roles = $this->_get_roles();
         $content_restrictions = $this->_get_content_restrictions();
@@ -91,8 +91,8 @@ class Upfront_Admin_Restrictions
      */
     function save_user_restriction(){
         if( !isset( $_POST['upront_restrictions_submit'] ) || !wp_verify_nonce( $_POST[self::FORM_NONCE_KEY], self::FORM_NONCE_ACTION ) ) return;
-        // if (!current_user_can('manage_options')) return false;
-        if (!Upfront_Permissions::current(Upfront_Permissions::MODIFY_RESTRICTIONS)) return false;
+        
+        if (!$this->_can_modify_restrictions()) return false;
 
         $restrictions = (array) filter_input( INPUT_POST, "restrictions", FILTER_VALIDATE_BOOLEAN , FILTER_FORCE_ARRAY );
         $this->_update_capabilities($restrictions);
@@ -131,6 +131,24 @@ class Upfront_Admin_Restrictions
         if (!is_object($role) || !is_callable(array($role, 'has_cap'))) return false;
 
         return !!$role->has_cap($capability);
+    }
+		
+		/**
+     * Utility for checking capability on modifying restrictions
+     *
+     * @return bool
+     */
+    private function _can_modify_restrictions () {
+		
+        if ( is_super_admin() ) {
+            return true;
+        }
+        $current_user = wp_get_current_user();
+        if ( isset($current_user->roles[0]) ) {
+            return Upfront_Permissions::role( $current_user->roles[0], Upfront_Permissions::MODIFY_RESTRICTIONS );
+        } else {
+            return false;
+        }
     }
 
     private function _get_roles(){
