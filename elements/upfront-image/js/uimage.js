@@ -1703,9 +1703,8 @@ define([
 			moreOptions.tooltip = l10n.ctrl.caption_position;
 
 			moreOptions.sub_items = {}
-			moreOptions.sub_items['swap'] = this.createControl('swap', l10n.btn.swap_image, 'openImageSelector');
-
 			if (Upfront.Application.user_can("RESIZE")) {
+				moreOptions.sub_items['swap'] = this.createControl('swap', l10n.btn.swap_image, 'openImageSelector');
 				moreOptions.sub_items['crop'] = this.createControl('crop', l10n.ctrl.edit_image, 'editRequest');
 			}
 

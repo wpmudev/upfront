@@ -1298,16 +1298,17 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		var controls = _([
 			//this.createControl('next', l10n.css.next_label, 'nextSlide'),
 			//this.createControl('prev', l10n.css.prev_label, 'prevSlide'),
-			this.createControl('add', l10n.add_slide, 'openImageSelector'),
 			this.createLinkControl(),
-			this.createControl('remove', l10n.remove_slide, 'onRemoveSlide'),
+			
 			captionControl,
 			this.createPaddingControl(),
 			this.createControl('settings', l10n.settings, 'on_settings_click')
 		]);
 		
 		if (Upfront.Application.user_can("RESIZE")) {
+			controls.splice(0, 0, this.createControl('add', l10n.add_slide, 'openImageSelector'));
 			controls.splice(1, 0, this.createControl('crop', l10n.edit_img, 'imageEditMask'));
+			controls.splice(3, 0, this.createControl('remove', l10n.remove_slide, 'onRemoveSlide'));
 		}
 
 		if( !multiControls ){
