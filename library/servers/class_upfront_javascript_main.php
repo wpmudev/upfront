@@ -332,6 +332,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			'CREATE_POST_PAGE' => (bool)Upfront_Permissions::current(Upfront_Permissions::CREATE_POST_PAGE),
 			'EDIT' => (bool)Upfront_Permissions::current(Upfront_Permissions::EDIT),
 			'LAYOUT_MODE' => (bool)Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE),
+			'RESPONSIVE_MODE' => (bool)Upfront_Permissions::current(Upfront_Permissions::RESPONSIVE_MODE),
 		));
 
 		$l10n = json_encode($this->_get_l10n_strings());

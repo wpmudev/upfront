@@ -3005,7 +3005,7 @@
 					]);
 				}
 
-				if (MODE.ALLOW.match(MODE.RESPONSIVE) && current_app === MODE.THEME) {
+				if (Upfront.Application.user_can("RESPONSIVE_MODE") && current_app === MODE.THEME) {
 					this.commands.push(
 						new Command_CreateResponsiveLayouts({model: this.model})
 					);
@@ -3018,7 +3018,7 @@
 				} else if (current_app !== MODE.THEME && Upfront.Settings.Application.PERMS.REVISIONS) {
 					this.commands.push(new Command_PreviewLayout({"model": this.model}));
 				}
-				if (MODE.ALLOW.match(MODE.RESPONSIVE) && current_app !== MODE.THEME) {
+				if (Upfront.Application.user_can("RESPONSIVE_MODE") && current_app !== MODE.THEME) {
 					this.commands.push(
 						new Command_StartResponsiveMode({model: this.model})
 					);
