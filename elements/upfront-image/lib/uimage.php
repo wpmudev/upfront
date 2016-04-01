@@ -317,7 +317,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 			upfront_add_ajax('upfront-media-image-create-size', array($this, "create_image_size"));
 			upfront_add_ajax('upfront-media-image-import', array($this, "import_image"));
 		}
-		if (Upfront_Permissions::current(Upfront_Permissions::SAVE)) {
+		if (Upfront_Permissions::current(Upfront_Permissions::SAVE) && Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE)) {
 			upfront_add_ajax('upfront-media-save-images', array($this, "save_resizing"));
 		}
 	}
