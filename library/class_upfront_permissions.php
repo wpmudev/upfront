@@ -319,10 +319,12 @@ class Upfront_Permissions {
 
 		$allowed = false;
 		foreach ($level as $lev) {
-			$allowed = $role->name === $lev
-				? true
-				: (bool)$role->has_cap($lev)
-			;
+			if ( $role->name === $lev ) {
+				$allowed = true;
+			} elseif ( !isset($this->_levels_map[self::NOT_LOAD_WP_ROLES]) ) {
+				$allowed = (bool)$role->has_cap('manage_options');
+			}
+			
 			if ($allowed) break;
 		}
 
