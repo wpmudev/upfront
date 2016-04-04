@@ -703,7 +703,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
                     11 => __("11-Nov"),
                     12 => __("12-Dec")
 				),
-				'toggle_grid' => __("Toggle grid", 'upfront'),
+				'toggle_grid' => __("Toggle grid (Alt + G)", 'upfront'),
 				'theme_settings' => __("Theme Settings", 'upfront'),
 				'colors_section' => __("Colors", 'upfront'),
 				'style_name' => __('Style name', 'upfront'),
