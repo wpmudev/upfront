@@ -2932,12 +2932,15 @@
 				//	this.panels.settings = new SidebarPanel_Settings({"model": this.model});
 			},
 			render: function () {
-				if (!Upfront.Application.user_can_modify_layout()) return false;
-
 				var me = this;
 				_.each(this.panels, function(panel){
 					panel.render();
-					me.$el.append(panel.el);
+
+					//Render panels to init styles, but do not append to $el
+					if (Upfront.Application.user_can_modify_layout()) {
+						me.$el.append(panel.el);
+					}
+					
 					panel.delegateEvents();
 				});
 			}
@@ -3776,8 +3779,7 @@
 						posts: this.collection.getPage(this.collection.pagination.currentPage),
 						orderby: this.collection.orderby,
 						order: this.collection.order,
-						canEdit: Upfront.Application.user_can("EDIT"),
-						canEditOwn: Upfront.Application.user_can("EDIT_OWN")
+						canEdit: Upfront.Application.user_can("EDIT")
 					})
 				);
 				//this.mark_sort_order();
@@ -3897,8 +3899,7 @@
 						pageItemTemplate: this.pageListItemTpl,
 						orderby: this.collection.orderby,
 						order: this.collection.order,
-						canEdit: Upfront.Application.user_can("EDIT"),
-						canEditOwn: Upfront.Application.user_can("EDIT_OWN")
+						canEdit: Upfront.Application.user_can("EDIT")
 					})
 				);
 			},
