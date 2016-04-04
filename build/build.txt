@@ -70,6 +70,7 @@ upfront/upfront-views-editor.js
 /private/var/www/upfront.dev/wp-content/themes/upfront/scripts/upfront/behaviors/dragdrop.js
 /private/var/www/upfront.dev/wp-content/themes/upfront/scripts/upfront/behaviors/resize.js
 /private/var/www/upfront.dev/wp-content/themes/upfront/scripts/upfront/behaviors/grid-editor.js
+/private/var/www/upfront.dev/wp-content/themes/upfront/scripts/upfront/behaviors/shortcuts.js
 upfront/upfront-behaviors.js
 jquery/jquery-dateFormat.min.js
 jquery/jquery.simulate.js
