@@ -147,7 +147,7 @@ class Upfront_Admin_Restrictions
         if ( isset($current_user->roles[0]) ) {
             return Upfront_Permissions::role( $current_user->roles[0], Upfront_Permissions::MODIFY_RESTRICTIONS );
         } else {
-            return false;
+            return Upfront_Permissions::current( Upfront_Permissions::MODIFY_RESTRICTIONS );
         }
     }
 
