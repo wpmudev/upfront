@@ -3,7 +3,8 @@
 class Upfront_Permissions {
 
 	const BOOT = 'boot_upfront';
-	const EDIT = 'edit_posts';
+	const EDIT = 'edit_others_posts';
+	const EDIT_OWN = 'edit_posts';
 	const EMBED = 'embed_stuff';
 	const UPLOAD = 'upload_stuff';
 	const RESIZE = 'resize_media';
@@ -25,7 +26,7 @@ class Upfront_Permissions {
 	const THEME_MODE = 'theme_mode';
 	const POSTLAYOUT_MODE = 'postlayout_mode';
 	const RESPONSIVE_MODE = 'responsive_mode';
-	
+
 	const ANONYMOUS = '::anonymous::';
 	const NOT_LOAD_WP_ROLES = 'not_load_wp_default_roles'; // only load wp default roles on fresh setup
 	const RESTRICTIONS_KEY = "upfront-options-user_restrictions";
@@ -105,9 +106,9 @@ class Upfront_Permissions {
 	public static function nonce ($level) {
 		$nonces = self::nonces();
 		if (!self::current($level) && !empty($nonces[self::ANONYMOUS])) return $nonces[self::ANONYMOUS];
-		
+
 		if (!empty($nonces[$level])) return $nonces[$level];
-		
+
 		return !empty($nonces[self::ANONYMOUS])
 			? $nonces[self::ANONYMOUS]
 			: false
@@ -136,9 +137,9 @@ class Upfront_Permissions {
 			// $this->_get_default_levels_map()
 		// );
 		// no need to append the default WP roles as will cause saved restrictions to not reflect
-		
+
 		$this->_levels_map = $this->get_restrictions();
-		
+
 	}
 
 	/**
@@ -159,12 +160,13 @@ class Upfront_Permissions {
 			self::SWITCH_ELEMENT_PRESETS => 'edit_theme_options',
 			self::OPTIONS => 'manage_options',
 			self::CREATE_POST_PAGE => 'edit_posts',
-			self::EDIT =>  'edit_theme_options',// 'edit_posts',
+			self::EDIT =>  'edit_theme_options',// 'edit_others_posts',
+			self::EDIT_OWN =>  'edit_theme_options',// 'edit_posts',
 			self::EMBED => 'edit_theme_options',// 'edit_posts',
 			self::RESPONSIVE_MODE => 'edit_theme_options',
 			self::MODIFY_RESTRICTIONS => 'promote_users',
 			self::SEE_USE_DEBUG => "edit_themes",
-			
+
 			self::SAVE => 'edit_theme_options',
 			self::CONTENT_MODE => 'edit_theme_options',// 'edit_posts',
 			self::THEME_MODE => 'edit_theme_options',
@@ -205,14 +207,14 @@ class Upfront_Permissions {
 	 */
 	public function set_restrictions ($restrictions) {
 		if (!$this->_current_user_can(self::MODIFY_RESTRICTIONS)) return false;
-		
+
 		// putting flag to avoid loading default WP roles and to avoid empty return from DB
 		// loading default WP roles only happens on first load at fresh setup
 		$restrictions = wp_parse_args(
 			$restrictions,
 			array(self::NOT_LOAD_WP_ROLES => 'not_load')
 		);
-		
+
 		return !!update_option(self::RESTRICTIONS_KEY, $restrictions, false);
 	}
 
@@ -365,7 +367,7 @@ class Upfront_Permissions {
 	 * @return mixed|void
 	 */
 	public function get_capability_labels(){
-	
+
 		return apply_filters('upfront-access-permissions-labels', array(
 
 			self::BOOT => __('Can Access Upfront Editor Mode', Upfront::TextDomain ),
@@ -378,7 +380,8 @@ class Upfront_Permissions {
 			self::SWITCH_ELEMENT_PRESETS => __('Can Switch Between Element Presets', Upfront::TextDomain ),
 			self::OPTIONS => __('Can Modify / Save Global Options <p class="description">(Theme Colors, Comments etc.)</p>', Upfront::TextDomain ),
 			self::CREATE_POST_PAGE => __('Can Create Posts & Pages From Upfront', Upfront::TextDomain ),
-			self::EDIT => __('Can Edit Existing Posts & Pages', Upfront::TextDomain ),
+			self::EDIT => __('Can Edit Anyone\'s Existing Posts & Pages', Upfront::TextDomain ),
+			self::EDIT_OWN => __('Can Edit Own Existing Posts & Pages', Upfront::TextDomain ),
 			self::EMBED => __('Can Use Embeds (Code El, Media Embeds)', Upfront::TextDomain ),
 			self::RESPONSIVE_MODE => __('Can Enter & Modify Layouts in Responsive Mode', Upfront::TextDomain ),
 			self::MODIFY_RESTRICTIONS => __('Can Modify User Restrictions', Upfront::TextDomain ),

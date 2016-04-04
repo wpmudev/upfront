@@ -87,7 +87,14 @@ var _partView = Backbone.View.extend({
 		}
 	},
 	triggerEditor: function () {
-		if (!Upfront.Application.user_can("EDIT")) return;
+		if (Upfront.Application.user_can("EDIT") === false) {
+			if (parseInt(this.parent.post.get('post_author'), 10) === Upfront.data.currentUser.id && Upfront.Application.user_can("EDIT_OWN") === true) {
+				// Pass through
+			} else {
+				return;
+			}
+		}
+
 		if ( this.parent._editing ) return;
 		if ( Upfront.Application.is_builder() ) return;
 		if ( !this.canTriggerEdit ) return;
@@ -700,7 +707,14 @@ PostContentEditor.prototype = {
 	},
 
 	triggerEditors: function () {
-		if (!Upfront.Application.user_can("EDIT")) return;
+		if (Upfront.Application.user_can("EDIT") === false) {
+			if (parseInt(this.post.get('post_author'), 10) === Upfront.data.currentUser.id && Upfront.Application.user_can("EDIT_OWN") === true) {
+				// Pass through
+			} else {
+				return;
+			}
+		}
+
 		var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 		if ( this._editing ) return;
 		this.prepareBox();

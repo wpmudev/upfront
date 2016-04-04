@@ -93,7 +93,14 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 	 * Trigger edit if it's in the middle of editing (re-rendering whie editing)
 	 */
 	trigger_edit: function () {
-		if (!Upfront.Application.user_can("EDIT")) return;
+		if (Upfront.Application.user_can("EDIT") === false) {
+			if (parseInt(PostDataEditor.post.get('post_author'), 10) === Upfront.data.currentUser.id && Upfront.Application.user_can("EDIT_OWN") === true) {
+				// Pass through
+			} else {
+				return;
+			}
+		}
+
 		if ( !PostDataEditor.contentEditor || !PostDataEditor.contentEditor._editing ) return;
 		this.editor_view.editContent();
 	},

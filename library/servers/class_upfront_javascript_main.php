@@ -310,7 +310,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			"POSTCONTENT_STYLE" => false,
 			//"DEFAULT" => (current_user_can("manage_options") ? "layout" : "content"),
 		    // These need some finer control over
-			// We have to set DEFAULT to layout, because user should be able to load the editor 
+			// We have to set DEFAULT to layout, because user should be able to load the editor
 			//"DEFAULT" => (Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE) ? "layout" : "content"),
 			"DEFAULT" => "layout",
 			"ALLOW" => (Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE) ? join(',', $allowed_modes) : "content")
@@ -331,6 +331,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			'DELETE_PRESET' => (bool)Upfront_Permissions::current(Upfront_Permissions::DELETE_ELEMENT_PRESETS),
 			'CREATE_POST_PAGE' => (bool)Upfront_Permissions::current(Upfront_Permissions::CREATE_POST_PAGE),
 			'EDIT' => (bool)Upfront_Permissions::current(Upfront_Permissions::EDIT),
+			'EDIT_OWN' => (bool)Upfront_Permissions::current(Upfront_Permissions::EDIT_OWN),
 			'LAYOUT_MODE' => (bool)Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE),
 			'SINGLEPOST_LAYOUT_MODE' => (bool)Upfront_Permissions::current(Upfront_Permissions::SINGLEPOST_LAYOUT_MODE),
 			'RESPONSIVE_MODE' => (bool)Upfront_Permissions::current(Upfront_Permissions::RESPONSIVE_MODE),
