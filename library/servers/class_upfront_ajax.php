@@ -256,6 +256,7 @@ class Upfront_Ajax extends Upfront_Server {
 
 	function save_layout () {
 		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
+		if (!Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE)) $this->_reject();
 
 		$data = !empty($_POST['data']) ? json_decode(stripslashes_deep($_POST['data']), true) : false;
 		if (!$data) $this->_out(new Upfront_JsonResponse_Error("Unknown layout"));
