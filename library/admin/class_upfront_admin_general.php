@@ -9,6 +9,13 @@ class Upfront_Admin_General
     }
 
 	function render_page() {
+		$core_version = $child_version = '0';
+		$current = wp_get_theme();
+		// Deal with caches
+		if (class_exists('Upfront_Compat') && is_callable(array('Upfront_Compat', 'get_upfront_core_version')) && is_callable(array('Upfront_Compat', 'get_upfront_child_version'))) {
+			$core_version = Upfront_Compat::get_upfront_core_version();
+			$child_version = Upfront_Compat::get_upfront_child_version();
+		}
 		?>
 		<div class="wrap upfront_admin upfront-general-settings">
             <h1><?php _e("General Settings", Upfront::TextDomain); ?><span class="upfront_logo"></span></h1>
@@ -18,14 +25,16 @@ class Upfront_Admin_General
 						<h2 class="title">Version Info</h2>
 						<div class="inside version-info">
 							<div class="upfront-debug-block">
-								Upfront <span>V 1.1</span>
+								Upfront <span>V <?php echo $core_version; ?></span>
 							</div>
 							<div class="upfront-debug-block">
-								Parrot (Active Theme)<span>V 1.1</span>
+								<?php echo $current->Name; ?> (Active Theme)<span>V <?php echo $child_version; ?></span>
 							</div>
+							<?php if (class_exists('UpfrontThemeExporter') && is_callable(array('UpfrontThemeExporter', 'upfront_exporter_version'))) { ?>
 							<div class="upfront-debug-block">
-								Builder<span>V 1.1</span>
+								Builder<span>V <?php echo UpfrontThemeExporter::upfront_exporter_version(); ?></span>
 							</div>
+							<?php } ?>
 						</div>
 					</div>
 				</div>
@@ -36,14 +45,24 @@ class Upfront_Admin_General
 					<div class='postbox'>
 						<h2 class="title">Helpful Resources</h2>
 						<div class="inside">
+							<!--
+							* Hide until we have documentation
 							<div class="upfront-debug-block">
 								<a href="#" class="documentation">Upfront Documentation</a> <a href="#" class="documentation">Building Upfront Themes</a>
 							</div>
+							-->
 							<div class="upfront-debug-block">
 								<h4>Online Articles</h4>
 								<ul>
-									<li><a href='#'>Upfront 1.0</a></li>
-									<li><a href='#'>Upfront 1.0: The Basics, Theme Colors and Typography</a></li>
+								
+									<li><a href='https://premium.wpmudev.org/blog/upfront-1-0/' target="_blank">Upfront 1.0</a></li>
+									<li><a href='https://premium.wpmudev.org/blog/upfront-basics/' target="_blank">Upfront Part 1: The Basics, Theme Colors and Typography</a></li>
+									<li><a href='https://premium.wpmudev.org/blog/upfront-regions/' target="_blank">Upfront Part 2: Structuring Your Site with Regions</a></li>
+									<li><a href='https://premium.wpmudev.org/blog/upfront-elements/' target="_blank">Upfront Part 3: Laying Out Your Site with Elements</a></li>
+									<li><a href='https://premium.wpmudev.org/blog/upfront-custom-css/' target="_blank">Upfront Part 4: Tweaking Elements with Custom Code</a></li>
+									<li><a href='https://premium.wpmudev.org/blog/upfront-plugins/' target="_blank">Upfront Part 5: Adding Plugins and Styling Gravity Forms</a></li>
+									<li><a href='https://premium.wpmudev.org/blog/upfront-responsive/' target="_blank">Upfront Part 6: Creating Responsive Websites</a></li>
+									<li><a href='https://premium.wpmudev.org/blog/upfront-pages-posts/' target="_blank">Upfront Part 7: Working With Pages and Posts</a></li>
 								</ul>
 							</div>
 							<div class="upfront-debug-block">
