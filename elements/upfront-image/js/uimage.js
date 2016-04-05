@@ -470,12 +470,18 @@ define([
 
 			if (this.property('quick_swap')) {
 				smallSwap = props.element_size.width < 150 || props.element_size.height < 90 ? 'uimage-quick-swap-small' : '';
-
-				rendered += '<div class="upfront-quick-swap ' + smallSwap + '"><p>Change this image</p></div>';
+				
+				if(Upfront.Application.user_can_modify_layout()) {
+					rendered += '<div class="upfront-quick-swap ' + smallSwap + '"><p>Change this image</p></div>';
+				}
 			} else if (this.property('image_status') === 'starting') {
-				rendered = '<div class="upfront-image-starting-select upfront-ui" style="height:' + props.element_size.height + 'px"><div class="uimage-centered">' +
-						'<span class="upfront-image-resizethiselement">' + l10n.ctrl.add_image + '</span><div class=""><a class="upfront-image-select" href="#" title="' + l10n.ctrl.add_image + '">+</a></div>'+
-				'</div></div>';
+				if(Upfront.Application.user_can_modify_layout()) {
+					rendered = '<div class="upfront-image-starting-select upfront-ui" style="height:' + props.element_size.height + 'px"><div class="uimage-centered">' +
+							'<span class="upfront-image-resizethiselement">' + l10n.ctrl.add_image + '</span><div class=""><a class="upfront-image-select" href="#" title="' + l10n.ctrl.add_image + '">+</a></div>'+
+					'</div></div>';
+				} else {
+					rendered = '';
+				}
 			} else {
 				render = $('<div></div>').append(rendered);
 				size = props.size;

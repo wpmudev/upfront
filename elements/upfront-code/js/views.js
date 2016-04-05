@@ -17,10 +17,12 @@ define([
 			render: function () {
 				this.$el.empty();
 				this.$el.append('<p class="code-element-choose"></p>');
-				if ( Upfront.Settings.Application.PERMS.EMBED ) {
-					this.$el.find('p.code-element-choose').append('<button type="button" class="embed">' + l10n.intro.embed + '</button>' + '&nbsp;or&nbsp;');
+				if (Upfront.Application.user_can_modify_layout()) {
+					if ( Upfront.Settings.Application.PERMS.EMBED ) {
+						this.$el.find('p.code-element-choose').append('<button type="button" class="embed">' + l10n.intro.embed + '</button>' + '&nbsp;or&nbsp;');
+					}
+					this.$el.find('p.code-element-choose').append('<button type="button" class="create">' + l10n.intro.code + '</button>');
 				}
-				this.$el.find('p.code-element-choose').append('<button type="button" class="create">' + l10n.intro.code + '</button>');
 			},
 			embed_code: function () {
 				this.model.set_property("code_selection_type", "Embed", true);

@@ -164,10 +164,14 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		this.checkStyles();
 
 		props = this.extract_properties();
-
-		if(!this.model.slideCollection.length){
-			this.startingHeight = this.startingHeight || 225;
-			return this.startingTpl({startingHeight: this.startingHeight, l10n: l10n});
+		
+		if (Upfront.Application.user_can_modify_layout()) {
+			if(!this.model.slideCollection.length){
+				this.startingHeight = this.startingHeight || 225;
+				return this.startingTpl({startingHeight: this.startingHeight, l10n: l10n});
+			}
+		} else {
+			return '';
 		}
 
 		props.properties = this.get_preset_properties();

@@ -828,6 +828,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 		props.imagesLength = props.images.length;
 		props.editing = true;
+		props.cap = Upfront.Application.user_can_modify_layout();
 
 		props.labels = this.labels;
 		props.labels_length = this.labels.length;
@@ -1117,6 +1118,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	},
 
 	showSelectType: function() {
+		if (!Upfront.Application.user_can_modify_layout()) return false;
+
 		var me = this,
 			selector = $('<div class="upfront-ui ugallery-onclick"><div class="ugallery-onclick-dialog"><span>' + l10n.thumbnail_clicked +
 				'</span><div class="ugallery-onclick-options"><a href="#" class="ugallery-lager_image" rel="image">' + l10n.show_larger +
