@@ -1353,16 +1353,8 @@ var Application = new (Backbone.Router.extend({
 		var app = this;
 
 		app.loading.on_finish(function(){
-			var $page = $('#page'),
-				$me = $(this);
-			
-			$page.find('.upfront-module').each(function(){
-				if ($me.is('.ui-draggable') )
-					$me.draggable('enable');
-				if ( $me.is('.ui-resizable') )
-					$me.resizable('enable');
-			});
-			
+			var $page = $('#page');
+
 			//Remove region edit button
 			$page.find('.upfront-region-edit-trigger').remove();
 			
