@@ -34,7 +34,9 @@ class Upfront_Admin_Restrictions
         if (!Upfront_Permissions::current(Upfront_Permissions::MODIFY_RESTRICTIONS)) wp_die("Nope.");
         
         $roles = $this->_get_roles();
-        $content_restrictions = $this->_get_content_restrictions();
+        $content_restrictions = Upfront_Permissions::boot()->get_content_restrictions();
+        $admin_restrictions = Upfront_Permissions::boot()->get_admin_restrictions();
+        $upload_restrictions = Upfront_Permissions::boot()->get_upload_restrictions();
         ?>
         <div class="wrap upfront_admin upfront_admin_restrictions">
             <h1><?php esc_html_e("User Restrictions", Upfront::TextDomain); ?><span class="upfront_logo"></span></h1>
@@ -52,19 +54,21 @@ class Upfront_Admin_Restrictions
                     </ul>
 
                     <?php foreach( Upfront_Permissions::boot()->get_upfront_capability_map() as $cap_id => $capability ) { ?>
-                        <ul class="upfront_restrictions_functionality_row">
+                        <ul class="upfront_restrictions_functionality_row" data-capability_id="<?php echo esc_attr($cap_id); ?>">
                             <li class="upfront_restrictions_functionality_name"><?php echo _e($this->_get_cap_label( $cap_id )) ?></li>
                             <?php if ( is_multisite() ) { ?>
                                 <li class="upfront_restrictions_functionality_role"><span class="role_check_mark"></span></li>
                             <?php } ?>
                             <?php foreach( $roles as $role_id => $role ) { ?>
-                                <li class="upfront_restrictions_functionality_role">
+                                <li class="upfront_restrictions_functionality_role" data-role_id="<?php echo esc_attr($role_id); ?>">
                                     <?php if ( !is_multisite() && $role_id == "administrator" ) { ?>
                                         <span class="role_check_mark"></span>
                                         <!-- hidden input for admin and set to always true for single site -->
                                         <input  value='1' type="checkbox" name="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]" class="upfront_toggle_checkbox" id="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]" checked="checked" />
                                     <?php } else if (in_array($cap_id, $content_restrictions) && !$this->_wp_role_can($role_id, 'edit_posts')) { ?>
                                         <!--<span class="role_ex_mark"></span>-->
+                                    <?php } else if (in_array($cap_id, $upload_restrictions) && !$this->_wp_role_can($role_id, 'upload_files')) { ?>
+                                    <?php } else if (in_array($cap_id, $admin_restrictions) && !$this->_wp_role_can($role_id, 'manage_options')) { ?>
                                     <?php } else { ?>
                                         <div class="<?php echo $this->_toggle_class($role_id,$cap_id); ?>">
                                             <input  value='1' type="checkbox" name="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]" class="upfront_toggle_checkbox" id="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]" <?php checked(true, Upfront_Permissions::role( $role_id, $cap_id )); ?> />
@@ -101,22 +105,6 @@ class Upfront_Admin_Restrictions
         die;
     }
 
-
-    /**
-     * Returns an array of content-specific restrictions
-     *
-     * These Upfront restrictions need to be additionally checked
-     * against WP capabilities model (particularly, `edit_posts`)
-     *
-     * @return array
-     */
-    private function _get_content_restrictions () {
-        return array(
-            Upfront_Permissions::EDIT,
-            Upfront_Permissions::CREATE_POST_PAGE,
-            Upfront_Permissions::CONTENT_MODE,
-        );
-    }
 
     /**
      * Utility wrapper for WP role capability check

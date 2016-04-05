@@ -232,6 +232,53 @@ class Upfront_Permissions {
 	}
 
 	/**
+	 * Returns an array of content-specific restrictions
+	 *
+	 * These Upfront restrictions need to be additionally checked
+	 * against WP capabilities model (particularly, `edit_posts`)
+	 *
+	 * @return array
+	 */
+	public function get_content_restrictions () {
+		return array(
+		    self::EDIT,
+		    self::CREATE_POST_PAGE,
+		    self::CONTENT_MODE,
+		);
+	}
+
+	/**
+	 * Returns an array of admin-specific restrictions
+	 *
+	 * These Upfront restrictions need to be additionally checked
+	 * against WP capabilities model (particularly, `manage_options`)
+	 *
+	 * @return array
+	 */
+	public function get_admin_restrictions () {
+		return array(
+			self::OPTIONS,
+			self::SEE_USE_DEBUG,
+			self::MODIFY_RESTRICTIONS,
+		);
+	}
+
+	/**
+	 * Returns an array of upload-specific restrictions
+	 *
+	 * These Upfront restrictions need to be additionally checked
+	 * against WP capabilities model (particularly, `upload_files`)
+	 *
+	 * @return array
+	 */
+	public function get_upload_restrictions () {
+		return array(
+			self::UPLOAD,
+			self::EMBED,
+		);
+	}
+
+	/**
 	 * Resolves Upfront access level to an actual WordPress capability
 	 *
 	 * @param string $level Access level to resolve
