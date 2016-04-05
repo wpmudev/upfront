@@ -3779,7 +3779,8 @@
 						posts: this.collection.getPage(this.collection.pagination.currentPage),
 						orderby: this.collection.orderby,
 						order: this.collection.order,
-						canEdit: Upfront.Application.user_can("EDIT")
+						canEdit: Upfront.Application.user_can("EDIT"),
+						canEditOwn: Upfront.Application.user_can("EDIT_OWN")
 					})
 				);
 				//this.mark_sort_order();
@@ -3899,7 +3900,8 @@
 						pageItemTemplate: this.pageListItemTpl,
 						orderby: this.collection.orderby,
 						order: this.collection.order,
-						canEdit: Upfront.Application.user_can("EDIT")
+						canEdit: Upfront.Application.user_can("EDIT"),
+						canEditOwn: Upfront.Application.user_can("EDIT_OWN")
 					})
 				);
 			},
