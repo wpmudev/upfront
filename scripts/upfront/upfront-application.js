@@ -1278,7 +1278,7 @@ var Application = new (Backbone.Router.extend({
 			
 			// Disable settings if LAYOUT_MODE permission is disabled
 			if (!Upfront.Application.user_can_modify_layout()) {
-				app.set_up_edit_layout();
+				app.setup_edit_layout();
 			}
 		});
 		app.loading.render();
@@ -1349,16 +1349,18 @@ var Application = new (Backbone.Router.extend({
 		this.start(last);
 	},
 	
-	set_up_edit_layout: function() {
+	setup_edit_layout: function() {
 		var app = this;
 
 		app.loading.on_finish(function(){
-			var $page = $('#page');
+			var $page = $('#page'),
+				$me = $(this);
+			
 			$page.find('.upfront-module').each(function(){
-				if ( $(this).is('.ui-draggable') )
-					$(this).draggable('enable');
-				if ( $(this).is('.ui-resizable') )
-					$(this).resizable('enable');
+				if ($me.is('.ui-draggable') )
+					$me.draggable('enable');
+				if ( $me.is('.ui-resizable') )
+					$me.resizable('enable');
 			});
 			
 			//Remove region edit button
