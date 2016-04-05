@@ -136,7 +136,7 @@
 				if (($me.attr("name") || "").match(/\[boot_upfront\]/)) return true; // This one we want to keep visible
 				$me
 					.attr("checked", false)
-					.closest(".upfront_toggle").hide()
+					.closest(".upfront_toggle").addClass("hide")
 				;
 			});
 		});
@@ -159,7 +159,7 @@
 				var $me = $(this);
 				$me
 					.attr("checked", false)
-					.closest(".upfront_toggle").hide()
+					.closest(".upfront_toggle").addClass("hide")
 				;
 			});
 		});
@@ -182,8 +182,8 @@
 		$target.each(function () {
 			var $me = $(this);
 			if ($me.find('[name*="boot_upfront"]').length) return true;
-			if (checked) $me.show();
-			else $me.hide();
+			if (checked) $me.removeClass("hide");
+			else $me.addClass("hide");
 		});
 		// Re-process bootable roles
 		process_toggles_state();
@@ -196,9 +196,9 @@
 		;
 		$del.find(":checkbox").attr("checked", false);
 		if ($check.is(":checked")) {
-			$del.find(".upfront_toggle").show();
+			$del.find(".upfront_toggle").removeClass("hide");
 		} else {
-			$del.find(".upfront_toggle").hide();
+			$del.find(".upfront_toggle").addClass("hide");
 		}
 	}
 
