@@ -121,7 +121,7 @@ class Upfront_Admin_Restrictions
         return !!$role->has_cap($capability);
     }
 		
-		/**
+	/**
      * Utility for setting default toggle class
      *
      * @return string css classname
@@ -129,7 +129,7 @@ class Upfront_Admin_Restrictions
     private function _toggle_class ($role_id, $cap_id) {
         $toggle_class = 'upfront_toggle';
         if ( !Upfront_Permissions::role($role_id, $cap_id) ) {
-            $toggle_class = ( !$this->_wp_role_can($role_id, 'manage_options') && $cap_id != Upfront_Permissions::BOOT )
+            $toggle_class = ( !$this->_wp_role_can($role_id, 'manage_options') && $cap_id != Upfront_Permissions::BOOT && !Upfront_Permissions::role($role_id, Upfront_Permissions::BOOT) )
                 ? 'upfront_toggle hide'
                 : 'upfront_toggle'
             ;
