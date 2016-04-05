@@ -67,7 +67,7 @@ class Upfront_Admin_General
 							</div>
 							<div class="upfront-debug-block">
 								<h4>WPMUDEV Help</h4>
-								<button class="visit-forum">Visit Forums</button> <button>Ask a Question</button>
+								<a class="upfront_button visit-forum" href="http://premium.wpmudev.org/support/" target="_blank">Visit Forums</a> <a class="upfront_button" href="http://premium.wpmudev.org/forums/forum/support#question" target="_blank">Ask a Question</a>
 							</div>
 						</div>
 					</div>

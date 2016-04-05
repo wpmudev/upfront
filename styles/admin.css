@@ -585,7 +585,7 @@ div.upfront-general-settings a.documentation:before {
     vertical-align: top;
 }
 
-div.upfront-general-settings .upfront-debug-block button.visit-forum {
+div.upfront-general-settings .upfront-debug-block a.visit-forum {
     margin-right: 6%;
     margin-bottom: 10px;
 }
