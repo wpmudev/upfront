@@ -14,7 +14,7 @@ class Upfront_Admin_Restrictions
     const FORM_NONCE_ACTION = "upfront_restriction_save";
 
     function __construct () {
-        if (Upfront_Permissions::current(Upfront_Permissions::MODIFY_RESTRICTIONS)) {
+        if ($this->_can_modify_restrictions()) {
             $save_restriction = add_submenu_page(
                 "upfront",
                 __("User Restrictions", Upfront::TextDomain),
@@ -31,7 +31,7 @@ class Upfront_Admin_Restrictions
      * Renders the page
      */
     function render_page () {
-        if (!Upfront_Permissions::current(Upfront_Permissions::MODIFY_RESTRICTIONS)) wp_die("Nope.");
+        if (!$this->_can_modify_restrictions()) wp_die("Nope.");
         
         $roles = $this->_get_roles();
         $content_restrictions = Upfront_Permissions::boot()->get_content_restrictions();
@@ -93,16 +93,32 @@ class Upfront_Admin_Restrictions
     /**
      * Saves the User Restrictions set
      */
-    function save_user_restriction(){
+    function save_user_restriction () {
         if( !isset( $_POST['upront_restrictions_submit'] ) || !wp_verify_nonce( $_POST[self::FORM_NONCE_KEY], self::FORM_NONCE_ACTION ) ) return;
-        // if (!current_user_can('manage_options')) return false;
-        if (!Upfront_Permissions::current(Upfront_Permissions::MODIFY_RESTRICTIONS)) return false;
+        if (!$this->_can_modify_restrictions()) return false;
 
         $restrictions = (array) filter_input( INPUT_POST, "restrictions", FILTER_VALIDATE_BOOLEAN , FILTER_FORCE_ARRAY );
         $this->_update_capabilities($restrictions);
         
         wp_safe_redirect(add_query_arg('saved', true));
         die;
+    }
+
+    /**
+     * Utility for checking capability on modifying restrictions
+     *
+     * @return bool
+     */
+    private function _can_modify_restrictions () {
+        if ( is_super_admin() ) {
+            return true;
+        }
+        
+        $current_user = wp_get_current_user();
+        return isset($current_user->roles[0])
+            ? Upfront_Permissions::role( $current_user->roles[0], Upfront_Permissions::MODIFY_RESTRICTIONS )
+            : Upfront_Permissions::current( Upfront_Permissions::MODIFY_RESTRICTIONS )
+        ;
     }
 
 
