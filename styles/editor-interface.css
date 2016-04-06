@@ -7607,7 +7607,9 @@ i.upfront-field-icon-burger-trigger {
   width: 100%;
   border-top: 1px solid transparent;
   border-bottom: 1px solid transparent;
-  line-height: 18px; }
+  line-height: 18px;
+  overflow: hidden;
+  max-height: 28px; }
 
 .upfront-list-items .upfront-list_item {
   opacity: 0.8; }
@@ -7697,10 +7699,16 @@ i.upfront-field-icon-burger-trigger {
   vertical-align: middle; }
 
 .upfront-list_item-component.upfront-title {
-  width: 45%; }
+  width: 45%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; }
 
 .upfront-list_item-component.upfront-author {
-  width: 15%; }
+  width: 15%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; }
 
 .upfront-list_item-component.upfront-comments-count {
   width: 10%; }
