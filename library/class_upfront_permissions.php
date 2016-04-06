@@ -279,6 +279,26 @@ class Upfront_Permissions {
 	}
 
 	/**
+	 * Returns an array of restrictions that require `SAVE` to be allowed
+	 *
+	 * @return array
+	 */
+	public function get_saveable_restrictions () {
+		return array(
+			self::LAYOUT_MODE,
+			self::SINGLEPOST_LAYOUT_MODE,
+			self::MODIFY_ELEMENT_PRESETS,
+			self::DELETE_ELEMENT_PRESETS,
+			self::SWITCH_ELEMENT_PRESETS,
+			self::CREATE_POST_PAGE,
+			self::EDIT,
+			self::EDIT_OWN,
+			self::EMBED,
+			self::RESPONSIVE_MODE,
+		);
+	}
+
+	/**
 	 * Resolves Upfront access level to an actual WordPress capability
 	 *
 	 * @param string $level Access level to resolve
