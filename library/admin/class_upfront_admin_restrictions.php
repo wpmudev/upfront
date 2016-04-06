@@ -152,13 +152,24 @@ class Upfront_Admin_Restrictions
      */
     private function _update_capabilities ( $restrictions ) {
         $output = array();
+        $saveables = Upfront_Permissions::boot()->get_saveable_restrictions();
+
         foreach ($restrictions as $role => $caps) {
             foreach ($caps as $cap => $allowed) {
                 if (!$allowed) continue;
                 if (!isset($output[$cap])) $output[$cap] = array();
+                
                 $output[$cap][] = $role;
+
+                // If this role needs saving then let's grant the `Upfront_Permissions::SAVE`
+                if (in_array($cap, $saveables)) {
+                    if (!isset($output[Upfront_Permissions::SAVE])) $output[Upfront_Permissions::SAVE] = array();
+                    if (!in_array($role, $output[Upfront_Permissions::SAVE])) $output[Upfront_Permissions::SAVE][] = $role;
+                }
+                // All done
             }
         }
+
         Upfront_Permissions::boot()->set_restrictions($output);
     }
 }
