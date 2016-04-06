@@ -4,7 +4,7 @@ define([
 	var l10n = Upfront.Settings.l10n.code_element;
 	var Element = Upfront.Views.Editor.Sidebar.Element.extend({
 		priority: 120,
-
+		draggable: !!Upfront.Settings.Application.PERMS.EMBED,
 		render: function () {
 			this.$el.addClass('upfront-icon-element upfront-icon-element-code');
 			this.$el.html(l10n.element_name);

@@ -11,7 +11,7 @@ $("head").append('<style>' + style + '</style>');
 var l10n = Upfront.Settings.l10n.code_element;
 
 var CodeView = Upfront.Views.ObjectView.extend({
-
+	
 	on_render: function () {
 		var type = this.model.get_property_value_by_name("code_selection_type"),
 			me = this,
@@ -108,14 +108,12 @@ var CodeView = Upfront.Views.ObjectView.extend({
 	}
 });
 
-if ( Upfront.Settings.Application.PERMS.EMBED ) {
-	Upfront.Application.LayoutEditor.add_object("Code", {
-		"Model": CodeModel,
-		"View": CodeView,
-		"Element": CodeElement,
-		//"Settings": CodeSettings
-	});
-}
+Upfront.Application.LayoutEditor.add_object("Code", {
+	"Model": CodeModel,
+	"View": CodeView,
+	"Element": CodeElement,
+	//"Settings": CodeSettings
+});
 
 Upfront.Models.CodeModel = CodeModel;
 Upfront.Views.CodeView = CodeView;
