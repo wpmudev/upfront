@@ -2902,6 +2902,7 @@
 			"className": "sidebar-panel sidebar-panel-settings",
 			initialize: function () {
 				this.active = true;
+				this.global_option = true;
 				this.sections = _([
 					new SidebarPanel_Settings_Section_Typography({"model": this.model}),
 					new SidebarPanel_Settings_Section_Colors({"model": this.model})
@@ -2922,11 +2923,10 @@
 			initialize: function () {
 				this.panels = {
 					posts: new SidebarPanel_Posts({"model": this.model}),
-					elements: new SidebarPanel_DraggableElements({"model": this.model})
+					elements: new SidebarPanel_DraggableElements({"model": this.model}),
+					settings: new SidebarPanel_Settings({"model": this.model})
 				};
-				if ( Upfront.Settings.Application.PERMS.OPTIONS ) {
-					this.panels.settings = new SidebarPanel_Settings({"model": this.model});
-				}
+				
 				// Dev feature only
 				//if ( Upfront.Settings.Debug.dev )
 				//	this.panels.settings = new SidebarPanel_Settings({"model": this.model});
@@ -2935,10 +2935,16 @@
 				var me = this;
 				_.each(this.panels, function(panel){
 					panel.render();
-
+					
 					//Render panels to init styles, but do not append to $el
-					if (Upfront.Application.user_can_modify_layout()) {
-						me.$el.append(panel.el);
+					if ( typeof panel.global_option !== "undefined" && panel.global_option ) {
+						if (Upfront.Settings.Application.PERMS.OPTIONS) {
+							me.$el.append(panel.el);
+						}
+					} else {
+						if (Upfront.Application.user_can_modify_layout()) {
+							me.$el.append(panel.el);
+						}
 					}
 					
 					panel.delegateEvents();
@@ -3067,6 +3073,7 @@
 			initialize: function() {
 				this.collection = breakpoints_storage.get_breakpoints();
 				this.listenTo(this.collection, 'change:active', this.render);
+				this.global_option = true;
 			},
 			render: function() {
 				var breakpoint_model = breakpoints_storage.get_breakpoints().get_active();
@@ -3098,16 +3105,22 @@
 				 this.views.push(new ResponsiveCommand_BrowseLayout());
 				 }
 				 */
-				if ( Upfront.Settings.Application.PERMS.OPTIONS ) {
-					this.views.push(new SidebarPanel_ResponsiveSettings({"model": this.model}));
-				}
+				
+				this.views.push(new SidebarPanel_ResponsiveSettings({"model": this.model}));
+				
 			},
 			render: function() {
 				if (!Upfront.Application.user_can_modify_layout()) return false;
 
 				_.each(this.views, function(view) {
 					view.render();
-					this.$el.append(view.el);
+					if ( typeof view.global_option !== "undefined" && view.global_option ) {
+						if (Upfront.Settings.Application.PERMS.OPTIONS) {
+							this.$el.append(view.el);
+						}
+					} else {
+						this.$el.append(view.el);
+					}
 				}, this);
 
 				return this;
