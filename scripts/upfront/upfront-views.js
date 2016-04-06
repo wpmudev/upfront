@@ -1643,7 +1643,7 @@ define([
 				this.on('entity:resize_stop', this.on_resize);
 
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
-				this.listenTo(Upfront.Events, "entity:wrapper:update_position", this.on_wrapper_update);
+				//this.listenTo(Upfront.Events, "entity:wrapper:update_position", this.on_wrapper_update);
 
 				if (this.init) this.init();
 			},
@@ -1745,6 +1745,11 @@ define([
 				if ( this.object_group_view ) {
 					this.stopListening(this.object_group_view, 'toggle_object_edit');
 					this.listenTo(this.object_group_view, 'toggle_object_edit', this.on_toggle_object_edit);
+				}
+				// Listen to wrapper update position
+				if ( this.wrapper_view ) {
+					this.stopListening(this.wrapper_view, 'update_position');
+					this.listenTo(this.wrapper_view, 'update_position', this.on_wrapper_update);
 				}
 
 				this.$el.html(template);
@@ -2829,7 +2834,7 @@ define([
 				this.on('region:updated', this.on_region_update, this);
 
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
-				this.listenTo(Upfront.Events, "entity:wrapper:update_position", this.on_wrapper_update);
+				//this.listenTo(Upfront.Events, "entity:wrapper:update_position", this.on_wrapper_update);
 
 				this.listenTo(Upfront.Events, "layout:render", this.on_after_layout_render);
 			},
@@ -2855,6 +2860,12 @@ define([
 					$module
 				;
 				Upfront.Events.trigger("entity:module:before_render", this, this.model);
+
+				// Listen to wrapper update position
+				if ( this.wrapper_view ) {
+					this.stopListening(this.wrapper_view, 'update_position');
+					this.listenTo(this.wrapper_view, 'update_position', this.on_wrapper_update);
+				}
 
 				this.$el.html(template);
 
@@ -3120,6 +3131,7 @@ define([
 				this.listenTo(Upfront.Events, 'layout:after_render', this.update_size_hint);
 
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
+				//this.listenTo(Upfront.Events, "entity:wrapper:update_position", this.on_wrapper_update);
 				this.listenTo(Upfront.Events, "command:module_group:finish_edit", this.on_finish);
 				this.listenTo(Upfront.Events, "command:module_group:close_panel", this.closeControlPanel);
 
@@ -3330,6 +3342,12 @@ define([
 				if(theme_style){
 					this.$el.addClass( theme_style.toLowerCase() );
 					this._theme_style = theme_style;
+				}
+
+				// Listen to wrapper update position
+				if ( this.wrapper_view ) {
+					this.stopListening(this.wrapper_view, 'update_position');
+					this.listenTo(this.wrapper_view, 'update_position', this.on_wrapper_update);
 				}
 
 				this.$el.html(template + '<span class="open-item-controls"></span>');
@@ -3819,6 +3837,10 @@ define([
 					}
 				});
 			},
+			on_wrapper_update: function (wrapper, wrapper_model) {
+				if ( this.wrapper_view && wrapper != this.wrapper_view ) return;
+				this.update_position();
+			},
 			on_change_breakpoint: function (breakpoint) {
 				var $hide = this.$el.find('> .upfront-entity_meta > a.upfront-entity-hide_trigger');
 				if ( !breakpoint.default ){
@@ -3830,7 +3852,7 @@ define([
 					$hide.hide();
 				}
 				this.on_finish(); // make sure to close editing
-				this.update_position();
+				//this.update_position();
 				this.update_background();
 			},
 			deactivate: function () {
@@ -4531,8 +4553,10 @@ define([
 				this.$layout.removeClass(grid.class + this.max_col);
 				this.max_col = breakpoint.columns;
 				this.$layout.addClass(grid.class + this.max_col);
-				this.update_background();
-				setTimeout(function(){ me.fix_height(); }, 500);
+				setTimeout(function(){
+					me.update_background();
+					me.fix_height();
+				}, 500);
 			},
 			on_contained_width_change: function (width) {
 				var type = this._get_region_type();
@@ -6585,8 +6609,7 @@ define([
 			},
 			update_position: function () {
 				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
-				if ( ! breakpoint )
-					return;
+				if ( ! breakpoint ) return;
 				var ed = Upfront.Behaviors.GridEditor,
 					grid = Upfront.Settings.LayoutEditor.Grid,
 					data = this.model.get_property_value_by_name('breakpoint'),
@@ -6629,6 +6652,7 @@ define([
 				else {
 					this.$el.removeData('breakpoint_clear');
 				}
+				this.trigger('update_position', this, this.model);
 				Upfront.Events.trigger('entity:wrapper:update_position', this, this.model);
 			},
 			on_add_spacer: function (e) {
