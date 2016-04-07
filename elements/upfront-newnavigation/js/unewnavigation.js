@@ -156,7 +156,9 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 	},
 	editMenuItem: function(e) {
-
+		
+		if (!Upfront.Application.user_can_modify_layout()) return false;
+		
 		this.editModeOn(e);
 		var me = this;
 		var target, ueditor_target;
@@ -370,8 +372,9 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			clubbedvalues = menuItemsValues.concat(menuList);
 		}
 
-
 		me.$el.find('div.upfront-object-content').html('');
+		
+		if (!Upfront.Application.user_can_modify_layout()) return false;
 
 		var menuItems = new Upfront.Views.Editor.Field.Select({
 			model: me.model,
@@ -1044,6 +1047,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		$el.addClass(this.elementClasses);
 	},
 	makeSortable: function() {
+		if (!Upfront.Application.user_can_modify_layout()) return false;
+
 		var me = this;
 		this.$el.find('.upfront-object-content ul').each(function() {
 			if ($(this).hasClass('redactor-toolbar') || $(this).hasClass('upfront-field-select-options')) {

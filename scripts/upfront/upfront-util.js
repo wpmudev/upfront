@@ -151,8 +151,14 @@ define(function() {
 
 			return $.post(Upfront.Settings.ajax_url, request, function () {}, data_type ? data_type : "json");
 		},
+		is_able_to_debug: function(){
+			if( Upfront.Settings.Application.PERMS.DEBUG ) return true;
 
+			Upfront.Util.log( "This user doesn't have enough permissions to debug or reset" );
+			return false;
+		},
 		reset_layout: function () {
+			if( !this.is_able_to_debug() ) return false;
 			var request = {
 				action: "upfront_reset_layout"
 			};
@@ -160,6 +166,7 @@ define(function() {
 		},
 
 		reset_cache: function () {
+			if( !this.is_able_to_debug() ) return false;
 			var request = {
 				action: "upfront_reset_cache"
 			};
@@ -167,6 +174,8 @@ define(function() {
 		},
 
 		reset_all: function () {
+			if( !this.is_able_to_debug() ) return false;
+
 			var request = {
 				action: "upfront_reset_all_from_db"
 			};

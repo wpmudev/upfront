@@ -2902,6 +2902,7 @@
 			"className": "sidebar-panel sidebar-panel-settings",
 			initialize: function () {
 				this.active = true;
+				this.global_option = true;
 				this.sections = _([
 					new SidebarPanel_Settings_Section_Typography({"model": this.model}),
 					new SidebarPanel_Settings_Section_Colors({"model": this.model})
@@ -2925,6 +2926,7 @@
 					elements: new SidebarPanel_DraggableElements({"model": this.model}),
 					settings: new SidebarPanel_Settings({"model": this.model})
 				};
+				
 				// Dev feature only
 				//if ( Upfront.Settings.Debug.dev )
 				//	this.panels.settings = new SidebarPanel_Settings({"model": this.model});
@@ -2933,7 +2935,18 @@
 				var me = this;
 				_.each(this.panels, function(panel){
 					panel.render();
-					me.$el.append(panel.el);
+					
+					//Render panels to init styles, but do not append to $el
+					if ( typeof panel.global_option !== "undefined" && panel.global_option ) {
+						if (Upfront.Settings.Application.PERMS.OPTIONS) {
+							me.$el.append(panel.el);
+						}
+					} else {
+						if (Upfront.Application.user_can_modify_layout()) {
+							me.$el.append(panel.el);
+						}
+					}
+					
 					panel.delegateEvents();
 				});
 			}
@@ -2943,12 +2956,15 @@
 			"className": "sidebar-commands sidebar-commands-primary clearfix",
 			initialize: function () {
 				this.commands = _([]);
-				if (Upfront.Settings.Application.MODE.ALLOW.match(Upfront.Settings.Application.MODE.CONTENT)) {
+				if (Upfront.Application.user_can("CREATE_POST_PAGE")) {
 					this.commands.push(new Command_NewPost({"model": this.model}));
 					this.commands.push(new Command_NewPage({"model": this.model}));
 				}
 				this.commands.push(new Command_PopupList({"model": this.model}));
-				this.commands.push(new Command_OpenMediaGallery());
+				
+				if (Upfront.Application.user_can_modify_layout()) {
+					this.commands.push(new Command_OpenMediaGallery());
+				}
 			}
 		});
 
@@ -2990,20 +3006,24 @@
 			initialize: function () {
 				var MODE = Upfront.Settings.Application.MODE;
 				var current_app = Upfront.Application.get_current();
-
-				if ( current_app !== MODE.THEME ) {
-					this.commands = _([
-						new Command_Undo({"model": this.model}),
-						new Command_Redo({"model": this.model}),
-						new Command_ToggleGrid({"model": this.model}),
-					]);
+				
+				if (Upfront.Application.user_can_modify_layout()) {
+					if ( current_app !== MODE.THEME ) {
+						this.commands = _([
+							new Command_Undo({"model": this.model}),
+							new Command_Redo({"model": this.model}),
+							new Command_ToggleGrid({"model": this.model}),
+						]);
+					} else {
+						this.commands = _([
+							new Command_ToggleGrid({"model": this.model}),
+						]);
+					}
 				} else {
-					this.commands = _([
-						new Command_ToggleGrid({"model": this.model}),
-					]);
+					this.commands = _([]);
 				}
 
-				if (MODE.ALLOW.match(MODE.RESPONSIVE) && current_app === MODE.THEME) {
+				if (Upfront.Application.user_can("RESPONSIVE_MODE") && current_app === MODE.THEME) {
 					this.commands.push(
 						new Command_CreateResponsiveLayouts({model: this.model})
 					);
@@ -3011,12 +3031,12 @@
 				if ( current_app == MODE.THEME ) {
 					this.commands.push(new Command_ExportLayout({"model": this.model}));
 				}
-				if (!Upfront.Settings.Application.NO_SAVE && current_app !== MODE.THEME) {
+				if (!Upfront.Settings.Application.NO_SAVE && current_app !== MODE.THEME && Upfront.Application.user_can_modify_layout()) {
 					this.commands.push(new Command_SaveLayout({"model": this.model}));
 				} else if (current_app !== MODE.THEME && Upfront.Settings.Application.PERMS.REVISIONS) {
 					this.commands.push(new Command_PreviewLayout({"model": this.model}));
 				}
-				if (MODE.ALLOW.match(MODE.RESPONSIVE) && current_app !== MODE.THEME) {
+				if (Upfront.Application.user_can("RESPONSIVE_MODE") && current_app !== MODE.THEME) {
 					this.commands.push(
 						new Command_StartResponsiveMode({model: this.model})
 					);
@@ -3053,6 +3073,7 @@
 			initialize: function() {
 				this.collection = breakpoints_storage.get_breakpoints();
 				this.listenTo(this.collection, 'change:active', this.render);
+				this.global_option = true;
 			},
 			render: function() {
 				var breakpoint_model = breakpoints_storage.get_breakpoints().get_active();
@@ -3084,12 +3105,22 @@
 				 this.views.push(new ResponsiveCommand_BrowseLayout());
 				 }
 				 */
+				
 				this.views.push(new SidebarPanel_ResponsiveSettings({"model": this.model}));
+				
 			},
 			render: function() {
+				if (!Upfront.Application.user_can_modify_layout()) return false;
+
 				_.each(this.views, function(view) {
 					view.render();
-					this.$el.append(view.el);
+					if ( typeof view.global_option !== "undefined" && view.global_option ) {
+						if (Upfront.Settings.Application.PERMS.OPTIONS) {
+							this.$el.append(view.el);
+						}
+					} else {
+						this.$el.append(view.el);
+					}
 				}, this);
 
 				return this;
@@ -3105,13 +3136,19 @@
 		var SidebarCommands_ResponsiveControl = Commands.extend({
 			"className": "sidebar-commands sidebar-commands-responsive-control sidebar-commands-control",
 			initialize: function () {
-				this.commands = _([
-					new Command_ResponsiveUndo({"model": this.model}),
-					new Command_ResponsiveRedo({"model": this.model}),
-					new Command_ToggleGrid({"model": this.model}),
-					new Command_SaveLayout(),
-					new Command_StopResponsiveMode()
-				]);
+				if (Upfront.Application.user_can_modify_layout()) {
+					this.commands = _([
+						new Command_ResponsiveUndo({"model": this.model}),
+						new Command_ResponsiveRedo({"model": this.model}),
+						new Command_ToggleGrid({"model": this.model}),
+						new Command_SaveLayout(),
+						new Command_StopResponsiveMode()
+					]);
+				} else {
+					this.commands = _([
+						new Command_StopResponsiveMode()
+					]);
+				}
 			},
 			render: function () {
 				this.$el.find("li").remove();
@@ -3754,7 +3791,9 @@
 					this.postListTpl({
 						posts: this.collection.getPage(this.collection.pagination.currentPage),
 						orderby: this.collection.orderby,
-						order: this.collection.order
+						order: this.collection.order,
+						canEdit: Upfront.Application.user_can("EDIT"),
+						canEditOwn: Upfront.Application.user_can("EDIT_OWN")
 					})
 				);
 				//this.mark_sort_order();
@@ -3873,7 +3912,9 @@
 						pages: pages,
 						pageItemTemplate: this.pageListItemTpl,
 						orderby: this.collection.orderby,
-						order: this.collection.order
+						order: this.collection.order,
+						canEdit: Upfront.Application.user_can("EDIT"),
+						canEditOwn: Upfront.Application.user_can("EDIT_OWN")
 					})
 				);
 			},

@@ -373,6 +373,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
      */
     function save_theme_colors_styles(){
         if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
+		if (!Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE)) $this->_reject();
 
         $styles = trim(stripslashes($_POST['styles']));
         $styles = apply_filters('upfront-save_theme_colors_styles', $styles);

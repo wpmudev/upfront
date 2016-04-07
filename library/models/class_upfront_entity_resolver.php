@@ -239,4 +239,18 @@ abstract class Upfront_EntityResolver {
 		);
 	}
 
+	/**
+	 * Returns name of the layout from the layouts saved in db
+	 *
+	 * @param strin $item name of layout in db
+	 * @return string|void
+	 */
+	public static function db_layout_to_name( $item ){
+		$type = substr( $item, 0, strpos( $item, "-" ) );
+		$args = array(
+			'item' => $item,
+			'type' => $type
+		);
+		return self::layout_to_name( $args );
+	}
 }

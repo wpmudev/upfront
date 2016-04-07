@@ -1,0 +1,605 @@
+/*---------- General ---------*/
+.upfront_logo{
+    background-image: url(../img/uf-admin-sprite.svg);
+    background-repeat: no-repeat;
+    float: right;
+    display: block;
+    background-position: -10px -10px;
+    width: 122px;
+    height: 25px;
+    overflow: hidden;
+    display: block;
+}
+.upfront_admin h1{
+    text-transform: uppercase;
+		color: #777;
+		font-family: 'Roboto Condensed';
+		font-size: 30px;
+    letter-spacing: -0.2px;
+		padding: 20px 10px 0 10px;
+}
+.upfront_admin .float_left {
+	float: left;
+}
+.upfront_admin .float_right {
+	float: right;
+}
+.upfront_admin .clear_before:before {
+	clear: both;
+	display: table;
+  content: " ";
+}
+.upfront_admin .clear_after:after {
+	clear: both;
+	display: table;
+  content: " ";
+}
+/*---------- End of General ---------*/
+
+/*---------- Toggle Buttons ---------*/
+span.role_check_mark:before {
+    content: "\f109";
+    color: #1abc9c;
+    content: "\f147";
+    font: dashicons;
+    font-family: dashicons;
+    font-size: 40px;
+    display: inline-block;
+    vertical-align: top;
+}
+span.role_ex_mark:before {
+    color: #cc423d;
+    content: "\f158";
+    font: dashicons;
+    font-family: dashicons;
+    font-size: 40px;
+    display: inline-block;
+    vertical-align: top;
+}
+.upfront_toggle {
+    position: relative;
+    width: 26px;
+    display: inline-table;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select: none;
+    vertical-align: middle;
+}
+.upfront_toggle.hide {
+    display: none;
+}
+
+input.upfront_toggle_checkbox {
+    display: none;
+}
+
+.upfront_toggle_label {
+    display: block;
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    border-radius: 50px;
+}
+
+.upfront_toggle_inner {
+    display: block;
+    width: 200%;
+    margin-left: -100%;
+    -moz-transition: margin 0.3s ease-in 0s;
+    -webkit-transition: margin 0.3s ease-in 0s;
+    -o-transition: margin 0.3s ease-in 0s;
+    transition: margin 0.3s ease-in 0s;
+}
+.upfront_toggle_inner:before,
+.upfront_toggle_inner:after {
+    display: block;
+    float: left;
+    width: 50%;
+    height: 5px;
+    padding: 0;
+    line-height: 5px;
+    font-size: 10px;
+    color: white;
+    font-family: Trebuchet, Arial, sans-serif;
+    font-weight: bold;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.2) inset;
+}
+
+.upfront_toggle_inner:before {
+    content: "";
+    padding-left: 5px;
+    background-color: #0074A2;
+}
+
+.upfront_toggle_inner:after {
+    content: "";
+    padding-right: 5px;
+    background-color: #EEEEEE;
+    text-align: right;
+}
+
+.upfront_toggle_switch {
+    display: block;
+    width: 14px;
+    margin: -3.5px;
+    background: #F8F8F8;
+    border: 1px solid #ddd;
+    border-radius: 15px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 20px;
+    -moz-transition: all 0.3s ease-in 0s;
+    -webkit-transition: all 0.3s ease-in 0s;
+    -o-transition: all 0.3s ease-in 0s;
+    transition: all 0.3s ease-in 0s;
+
+    box-shadow: -1px 1px 2px rgba(0,0,0,0.1);
+
+}
+
+.upfront_toggle_checkbox:checked + .upfront_toggle_label .upfront_toggle_inner {
+    margin-left: 0;
+}
+
+.upfront_toggle_checkbox:checked + .upfront_toggle_label .upfront_toggle_switch {
+    right: 0px;
+}
+
+.upfront_toggle {
+    width: 40px;
+}
+
+.upfront_toggle_label {
+    border: 0;
+    height: 20px;
+    background: #ddd;
+}
+
+.upfront_toggle_inner {
+    display: none;
+}
+
+.upfront_toggle_switch {
+    margin: 0 1px;
+    width: 18px;
+    height: 18px;
+    right: 20px;
+    background-color: #fff;
+		box-shadow: 0 5px 2px 0 rgba(0, 0, 0, 0.1), 0 0 15px 0 rgba(0, 0, 0, 0.1);
+		border: solid 1px rgba(0, 0, 0, 0.2);
+		transition: right .2s;
+}
+
+.upfront_toggle_checkbox:checked + .upfront_toggle_label {
+		background: #1abc9c;
+}
+
+.upfront_toggle_checkbox:checked + .upfront_toggle_label .upfront_toggle_switch {
+    right: 0;
+		border: 1px solid #1abc9c;
+}
+
+.upfront_toggle_description {
+		display: inline-block;
+    width: 80%;
+    vertical-align: middle;
+		margin-left: 30px;
+}
+
+.upfront_toggle_description span.upfront_toggle_checkbox_main_label {
+		font-family: 'Roboto';
+		font-size: 14px;
+		color: #333;
+}
+
+.upfront_toggle_description span.upfront_toggle_checkbox_sub_label {
+		font-family: 'Roboto';
+		font-size: 12px;
+		color: #777;
+		display: block;
+}
+
+.upfront_toggle_radio input {
+		display: none;
+}
+.upfront_toggle_radio span {
+		display: inline-block;
+		vertical-align: top;
+}
+.upfront_toggle_radio span.upfront_toggle_radio_button {
+		width: 16px;
+    height: 16px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    box-shadow: inset 0 2px 2px 0 rgba(186, 190, 195, 0.5);
+    border: solid 1px #babec3;
+		position: relative;
+}
+.upfront_toggle_radio span.upfront_toggle_radio_button:before {
+		content: " ";
+		width: 6px;
+		height: 6px;
+		background-color: #118bc0;
+		position: absolute;
+		top: 5px;
+		left: 5px;
+		border-radius: 50%;
+		display: none;
+}
+.float_left .upfront_toggle_radio label.upfront_toggle_radio_label {
+		display: inline-block;
+		padding-right: 30px;
+}
+.upfront_toggle_radio input:checked + label.upfront_toggle_radio_label span.upfront_toggle_radio_button:before {
+		display: block;
+}
+.upfront_toggle_radio span.upfront_toggle_radio_main_label {
+		font-family: 'Roboto';
+		font-size: 14px;
+		color: #333;
+		padding-left: 8px;
+}
+.upfront_toggle_radio span.upfront_toggle_radio_sub_label {
+		font-family: 'Roboto';
+		font-size: 12px;
+		color: #777;
+		padding-left: 30px;
+		padding-right: 50px;
+		display: block;
+}
+
+/*---------- End of Toggle Buttons ---------*/
+
+/*------------- User Restrictions ----------*/
+#upfront_restrictions_form {
+	padding: 0 10px;
+}
+#upfront_user_restrictions_listing{
+    display: table;
+    width: 100%;
+    height: 100%;
+    background: white;
+    -mox-border-radius: 5px;
+    -o-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    margin-top: 40px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid rgb(228, 228, 228);
+}
+#upfront_user_restrictions_listing ul{
+    margin: 0;
+    display: table-row;
+}
+#upfront_user_restrictions_listing li{
+    display: table-cell;
+    height: 50px;
+    border: 1px solid rgb(239, 239, 239);
+    border-top: none;
+    border-left: none;
+    padding: 0;
+    text-align: center;
+    min-width: 7%;
+		font-family: 'Roboto';
+		font-size: 14px;
+		font-weight: normal;
+		color: #333;
+}
+#upfront_user_restrictions_listing li.upfront_restrictions_functionality_role{
+    width: 10%;
+}
+#upfront_user_restrictions_listing li:last-child{
+    border-right: none;
+}
+#upfront_user_restrictions_listing ul.upfront_user_restrictions_head{
+    height: 60px;
+    line-height: 60px;
+    margin: 0;
+    font-weight: bold;
+}
+#upfront_user_restrictions_listing ul.upfront_restrictions_functionality_row{
+    min-height: 50px;
+}
+.upfront_restrictions_functionality_row li{
+    background: rgb(249, 249, 249);
+    line-height: 50px;
+    margin: 0;
+    padding: 14px 30px 16px 30px;
+}
+#upfront_user_restrictions_listing ul li.upfront_restrictions_functionality_name{
+    width: 35%;
+    text-align: left;
+    padding: 0 0 0 30px;
+}
+
+.upfront_restrictions_functionality_name .description{
+    font-family: 'Roboto';
+		font-weight: normal;
+		font-size: 12px;
+		font-style: normal;
+		line-height: 1.7;
+		color: #777;
+}
+#upfront_user_restrictions_listing ul.upfront_restrictions_functionality_row li.upfront_restrictions_functionality_name{
+    line-height: 15px;
+    padding-top: 18px;
+    height: 32px;
+}
+
+#upfront_user_restrictions_listing ul.upfront_user_restrictions_head li{
+    margin: 0;
+    height: 60px;
+    min-width:7%;
+		font-family: 'Roboto';
+		font-size: 13px;
+		font-weight: 500;
+		color: #333;
+}
+#upfront_user_restrictions_listing ul.upfront_user_restrictions_head li.upfront_restrictions_functionality_name{
+    text-transform: uppercase;
+		font-family: 'Roboto Condensed';
+		font-size: 18px;
+		font-weight: bold;
+		color: #777;
+}
+.upfront_restrictions_functionality_row li:first-child{
+    background: #fff;
+    text-align: left;
+}
+
+#upront_restrictions_submit{
+    display: block;
+    width:187px;
+    height: 40px;
+		background-color: #00cf8d;
+		box-shadow: 0 3px 0 0 #00b37a;
+		font-family: 'Roboto';
+		font-size: 15px;
+    color:#fff;
+    margin: 30px auto;
+    border: none;
+    text-align: center;
+    -mox-border-radius: 4px;
+    -o-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+/*----------- End Of User Restrictions --------------*/
+
+/*------------- Experimental Features ----------*/
+.upfront_admin_experimental .upfront_admin_experimental_contents {
+	padding-left: 10px;
+	padding-right: 10px;
+}
+.upfront_admin_experimental p.disclaimer {
+		font-family: 'Roboto';
+		font-size: 15px;
+		color: #8e8e8e;
+		margin-top: 30px;
+		margin-bottom: 30px;
+}
+.upfront_admin_experimental .form_content {
+		display: inline-block;
+		border-radius: 6px;
+		background-color: #ffffff;
+		box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.1);
+		width: 558px;
+}
+.upfront_admin_experimental .form_content .form_title {
+		padding-top: 20px;
+		padding-bottom: 20px;
+		font-family: 'Roboto Condensed';
+		font-size: 18px;
+		font-weight: bold;
+		color: #777;
+		text-transform: uppercase;
+}
+.upfront_admin_experimental .form_content .form_title span {
+		padding-left: 30px;
+}
+.upfront_admin_experimental .form_content .form_content_group {
+		padding-left: 30px;
+		padding-right: 30px;
+}
+.upfront_admin_experimental .form_content .form_content_group_title {
+		font-family: 'Roboto';
+		font-weight: 500;
+		font-size: 14px;
+		color: #333;
+		padding-top: 20px;
+		padding-bottom: 20px;
+}
+.upfront_admin_experimental .form_content .form_content_input {
+		padding-bottom: 20px;
+}
+.upfront_admin_experimental .form_content .form_content_input.compress_response {
+		padding-top: 20px;
+		padding-bottom: 30px;
+}
+.upfront_admin_experimental #upront_restrictions_submit {
+		margin-left: 0;
+}
+.upfront_admin_experimental .form_content .bottom_separator {
+		border-bottom: 1px solid #eee;
+}
+/*------------- End of Experimental Features ----------*/
+
+
+/*------------- General Settings Page ----------------*/
+div.upfront-general-settings {
+    font-family: 'Roboto';
+}
+
+div.upfront-general-settings div.upfront-debug-block {
+    border-bottom: 1px solid #eee;
+    padding: 14px 0 10px;
+    position: relative;
+}
+
+div.upfront-general-settings .upfront-debug-block:after {
+  content: '';
+  clear:both;
+  display:block;
+}
+
+div.upfront-general-settings .postbox .inside {
+    padding: 0 30px 12px;
+    margin: 0;
+}
+
+div.upfront-general-settings div.upfront-debug-block:last-child {
+    border-bottom: none;
+}
+
+div.upfront-general-settings div.postbox-container {
+    width: 100%;
+}
+
+div.upfront-general-settings div.postbox > h2.title {
+    border-bottom: 1px solid #eee;
+    padding: 26px 30px 25px;
+    margin-bottom: 0;
+    color: #777;
+    font-weight: bold;
+}
+
+div.upfront-general-settings div.upfront-col-left, div.upfront-col-right {
+    margin-top: 30px;
+}
+@media screen and (min-width: 920px) {
+    div.upfront-general-settings div.upfront-col-left {
+        width:48%;
+        float:left;
+        margin-right: 2%;
+    }
+
+    div.upfront-general-settings div.upfront-col-right {
+        width:48%;
+        float:left;
+    }
+}
+
+div.upfront-general-settings h1,
+div.upfront-general-settings h2,
+div.upfront-general-settings h3,
+div.upfront-general-settings h4 {
+    text-transform: uppercase;
+}
+
+div.upfront-general-settings .upfront-debug-block button,
+div.upfront-general-settings .upfront-debug-block a.upfront_button{
+    background-color: #AFAFAF;
+    border: none;
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 12px;
+    padding: 6px 16px;
+    border-radius: 3px;
+    -o-transition: padding 0.3s;
+    -moz-transition: padding 0.3s;
+    -webkit-transition: padding 0.3s;
+    transition: padding 0.3s;
+    outline: none;
+    line-height: normal;
+}
+
+div.upfront-general-settings .upfront-debug-block button:disabled,
+div.upfront-general-settings .upfront-debug-block a.upfront_button:disabled{
+    -moz-opacity: 0.5;
+    opacity: 0.5;
+}
+
+div.upfront-general-settings button.warning {
+  background-color: #BE1E2E;
+  border-bottom: 2px #991724 solid;
+}
+
+div.upfront-general-settings .warning-text {
+    color: #BE1E2E;
+}
+
+div.upfront-general-settings .upfront-debug-block p.left {
+    padding-right:190px;
+}
+
+
+div.upfront-general-settings div.inside.debug-options button,
+div.upfront-general-settings div.inside.debug-options a.upfront_button{
+    position: absolute;
+    right: 0;
+    top:50%;
+    margin-top: -12px;
+}
+
+div.upfront-general-settings .lightgrey {
+    color: #777;
+}
+
+div.upfront-general-settings a {
+    color: #18A7E0;
+    text-decoration: none;
+}
+
+div.upfront-general-settings .postbox {
+    border: none;
+    border-radius: 6px;
+    border-bottom: 2px #E4E4E4 solid;
+    box-shadow: none;
+}
+
+div.upfront-general-settings .postbox .inside.version-info {
+    font-size: 14px;
+    font-weight: bold;
+}
+div.upfront-general-settings .version-info span{
+    float: right;
+}
+
+div.upfront-general-settings a.documentation:first-child {
+    margin-right: 10%;
+    margin-bottom: 10px;
+}
+
+div.upfront-general-settings a.documentation {
+    display: inline-block;
+}
+
+div.upfront-general-settings a.documentation:before {
+    content: "\f331";
+    color: #82878c;
+    font: 400 20px/1 dashicons;
+    speak: none;
+    display: inline-block;
+    padding: 0 10px 0 0;
+    top: -1px;
+    position: relative;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-decoration: none!important;
+    vertical-align: top;
+}
+
+div.upfront-general-settings .upfront-debug-block a.visit-forum {
+    margin-right: 6%;
+    margin-bottom: 10px;
+}
+
+.upfront_admin button:not([disabled]){
+    cursor: pointer;
+}
+
+.upfront_admin button.loading,
+div.upfront-general-settings .upfront-debug-block button.loading,
+div.upfront-general-settings .upfront-debug-block a.upfront_button.loading{
+    background-image: url("../img/loader-admin.gif");
+    background-position: center right;
+    background-size: 24px;
+    padding-right: 28px;
+    background-repeat: no-repeat;
+}

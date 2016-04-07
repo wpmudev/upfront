@@ -90,68 +90,70 @@
 			on_render: function() {
 				var me = this,
 				blurTimeout = false;
-
-				this.$el.find('.upfront-object-content')
-					// .addClass('upfront-plain_txt') // WHY DO THIS, IT MESSES UP THE CSS LOGIC SINCE THAN WE HAVE DUPLICATED CLASS
-					.ueditor({
-						linebreaks: false,
-						//airButtons : ["upfrontFormatting"],
-						autostart: false,
-						paragraphize: false,
-						focus: false,
-						placeholder: l10n.default_content
-					})
-					.on('start', function(){
-						var $swap = $(this).find('.upfront-quick-swap');
-						if ( $swap.length ){
-							$swap.remove();
-						}
-						me.model.set_property('is_edited', true, true);
-						Upfront.Events.trigger('upfront:element:edit:start', 'text');
-					})
-					.on('stop', function(){
-						var ed = me.$el.find('.upfront-object-content').data("ueditor"),
-							tag = ed.redactor.$element[0].firstChild.tagName,
-							text = '';
-
-						if(tag === "PRE") {
-							//Remove markers markup leaking in PRE element
-							ed.redactor.selection.removeMarkers();
-						}
-
-						text = ed.getValue(true);
-
-						if (text === '' && arguments[0] && arguments[0].currentTarget) text = arguments[0].currentTarget.innerHTML;
-						me.model.set_content(text);
-
-						Upfront.Events.trigger('upfront:element:edit:stop');
-						ed.redactor.events.trigger('cleanUpListeners');
-						me.render();
-					})
-					.on('syncAfter', function(){
-						var ed = me.$el.find('.upfront-object-content').data("ueditor"),
-							text = ed.getValue(true)
-						;
-						if (text === '' && typeof arguments[1] === 'string' && arguments[1] !== '') text = arguments[1];
-						if (!text.match(/[<>]/)) {
-							text = ed.redactor.paragraphize.load(text);
-							ed.redactor.code.set(text);
-
-							// Now, set the caret at the end
-							ed.redactor.selection.selectAll();
-							var blocks = ed.redactor.selection.getBlocks(),
-								block = blocks.pop()
-							;
-							ed.redactor.selection.remove();
-							if (block) {
-								ed.redactor.caret.setAfter(block);
+				
+				if (Upfront.Application.user_can_modify_layout()) {
+					this.$el.find('.upfront-object-content')
+						// .addClass('upfront-plain_txt') // WHY DO THIS, IT MESSES UP THE CSS LOGIC SINCE THAN WE HAVE DUPLICATED CLASS
+						.ueditor({
+							linebreaks: false,
+							//airButtons : ["upfrontFormatting"],
+							autostart: false,
+							paragraphize: false,
+							focus: false,
+							placeholder: l10n.default_content
+						})
+						.on('start', function(){
+							var $swap = $(this).find('.upfront-quick-swap');
+							if ( $swap.length ){
+								$swap.remove();
 							}
-							// done
-						}
+							me.model.set_property('is_edited', true, true);
+							Upfront.Events.trigger('upfront:element:edit:start', 'text');
+						})
+						.on('stop', function(){
+							var ed = me.$el.find('.upfront-object-content').data("ueditor"),
+								tag = ed.redactor.$element[0].firstChild.tagName,
+								text = '';
 
-						me.model.set_content(ed.getValue(true) || text, {silent: true});
-					})
-				;
+							if(tag === "PRE") {
+								//Remove markers markup leaking in PRE element
+								ed.redactor.selection.removeMarkers();
+							}
+
+							text = ed.getValue(true);
+
+							if (text === '' && arguments[0] && arguments[0].currentTarget) text = arguments[0].currentTarget.innerHTML;
+							me.model.set_content(text);
+
+							Upfront.Events.trigger('upfront:element:edit:stop');
+							ed.redactor.events.trigger('cleanUpListeners');
+							me.render();
+						})
+						.on('syncAfter', function(){
+							var ed = me.$el.find('.upfront-object-content').data("ueditor"),
+								text = ed.getValue(true)
+							;
+							if (text === '' && typeof arguments[1] === 'string' && arguments[1] !== '') text = arguments[1];
+							if (!text.match(/[<>]/)) {
+								text = ed.redactor.paragraphize.load(text);
+								ed.redactor.code.set(text);
+
+								// Now, set the caret at the end
+								ed.redactor.selection.selectAll();
+								var blocks = ed.redactor.selection.getBlocks(),
+									block = blocks.pop()
+								;
+								ed.redactor.selection.remove();
+								if (block) {
+									ed.redactor.caret.setAfter(block);
+								}
+								// done
+							}
+
+							me.model.set_content(ed.getValue(true) || text, {silent: true});
+						})
+					;
+				}
 
 				me.update_colors();
 

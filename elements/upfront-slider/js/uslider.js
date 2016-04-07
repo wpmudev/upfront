@@ -164,10 +164,14 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		this.checkStyles();
 
 		props = this.extract_properties();
-
-		if(!this.model.slideCollection.length){
-			this.startingHeight = this.startingHeight || 225;
-			return this.startingTpl({startingHeight: this.startingHeight, l10n: l10n});
+		
+		if (Upfront.Application.user_can_modify_layout()) {
+			if(!this.model.slideCollection.length){
+				this.startingHeight = this.startingHeight || 225;
+				return this.startingTpl({startingHeight: this.startingHeight, l10n: l10n});
+			}
+		} else {
+			return '';
 		}
 
 		props.properties = this.get_preset_properties();
@@ -293,6 +297,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	},
 
 	update_caption_controls: function(){
+		if (!Upfront.Application.user_can_modify_layout()) return false;
+		
 		var me = this,
 			panel = new Upfront.Views.Editor.InlinePanels.Panel()
 			;
@@ -1106,6 +1112,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			slide = this.model.slideCollection.get(currentSlide.id),
 			editorOpts = this.getEditorOptions(slide)
 		;
+		
+		if (!Upfront.Application.user_can("RESIZE")) return false;	
 
 		if(slide.get('status') != 'ok'){
 			var selectorOptions = {
@@ -1288,14 +1296,18 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		var controls = _([
 			//this.createControl('next', l10n.css.next_label, 'nextSlide'),
 			//this.createControl('prev', l10n.css.prev_label, 'prevSlide'),
-			this.createControl('add', l10n.add_slide, 'openImageSelector'),
-			this.createControl('crop', l10n.edit_img, 'imageEditMask'),
 			this.createLinkControl(),
-			this.createControl('remove', l10n.remove_slide, 'onRemoveSlide'),
+			
 			captionControl,
 			this.createPaddingControl(),
 			this.createControl('settings', l10n.settings, 'on_settings_click')
 		]);
+		
+		if (Upfront.Application.user_can("RESIZE")) {
+			controls.splice(0, 0, this.createControl('add', l10n.add_slide, 'openImageSelector'));
+			controls.splice(1, 0, this.createControl('crop', l10n.edit_img, 'imageEditMask'));
+			controls.splice(3, 0, this.createControl('remove', l10n.remove_slide, 'onRemoveSlide'));
+		}
 
 		if( !multiControls ){
 			controls = _( controls.without( captionControl ) );

@@ -87,11 +87,28 @@ var CodeView = Upfront.Views.ObjectView.extend({
 		// noop
 	},
 
+	/**
+	 * Override and intercept inline control items to apply Embed permission.
+	 *
+	 */
+	getControlItems: function () {
+		
+		if ( !Upfront.Settings.Application.PERMS.EMBED ) {
+			return _([
+					this.createPaddingControl()
+				]);
+		} else {
+			return _([
+					this.createPaddingControl(),
+					this.createControl('settings', l10n.settings, 'on_settings_click')
+				]);
+		}
+	},
+
 	propagate_model_update: function () {
 		Upfront.Events.trigger("upfront:element:edit:stop");
 	}
 });
-
 
 Upfront.Application.LayoutEditor.add_object("Code", {
 	"Model": CodeModel,
@@ -99,6 +116,7 @@ Upfront.Application.LayoutEditor.add_object("Code", {
 	"Element": CodeElement,
 	//"Settings": CodeSettings
 });
+
 Upfront.Models.CodeModel = CodeModel;
 Upfront.Views.CodeView = CodeView;
 

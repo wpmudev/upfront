@@ -1067,12 +1067,16 @@ var ContentEditor = new (Subapplication.extend({
 
 	start: function () {
 		Upfront.Util.log("Starting the content edit mode");
+		if ( !Upfront.Behaviors.GridEditor.grid ) {
+			Upfront.Behaviors.GridEditor.init();
+		}
 
 		$("html").removeClass("upfront-edit-layout upfront-edit-theme upfront-edit-postlayout upfront-edit-responsive").addClass("upfront-edit-content");
 	},
 
 	stop: function () {
 		Upfront.Util.log("Stopping the content edit mode");
+		this.stopListening(Upfront.Events);
 	}
 }))();
 
@@ -1185,6 +1189,12 @@ var Application = new (Backbone.Router.extend({
 	is_editor: function(){
 		return !this.is_builder();
 	},
+	is_single: function(post_type){
+		if ( !('type' in _upfront_post_data.layout && 'single' === _upfront_post_data.layout.type) ) return false;
+		if ( typeof post_type === "undefined" ) return true;
+		if ( 'item' in _upfront_post_data.layout && 'single-'+post_type === _upfront_post_data.layout.item ) return true;
+		return false;
+	},
 	urlCache: {},
 
 	current_subapplication: false,
@@ -1265,6 +1275,11 @@ var Application = new (Backbone.Router.extend({
 		app.loading.on_finish(function(){
 			$(Upfront.Settings.LayoutEditor.Selectors.sidebar).show();
 			$(".upfront-editable_trigger").hide();
+			
+			// Disable settings if LAYOUT_MODE permission is disabled
+			if (!Upfront.Application.user_can_modify_layout()) {
+				app.setup_edit_layout();
+			}
 		});
 		app.loading.render();
 		$('body').append(app.loading.$el);
@@ -1333,6 +1348,21 @@ var Application = new (Backbone.Router.extend({
 		var last = this.mode.last || this.MODE.DEFAULT;
 		this.start(last);
 	},
+	
+	setup_edit_layout: function() {
+		var app = this;
+
+		app.loading.on_finish(function(){
+			var $page = $('#page');
+
+			//Remove region edit button
+			$page.find('.upfront-region-edit-trigger').remove();
+			
+			//Remove delete buttons
+			$('a.upfront-entity-delete_trigger').remove();
+		});
+	},
+
 
 	load_layout: function (layout_ids, additional) {
 		var app = this,
@@ -1455,6 +1485,9 @@ var Application = new (Backbone.Router.extend({
 
 		else Upfront.Util.log("No current subapplication");
 
+		Upfront.Events.once("layout:after_render", function(){
+			me.layout_ready = true;
+		});
 
 		//if (!me.layout_view) {
 		me.layout_view = new Upfront.Views.Layout({
@@ -1463,7 +1496,6 @@ var Application = new (Backbone.Router.extend({
 		});
 		Upfront.Events.trigger('upfront:renderingqueue:settotal', me.layout_view);
 		Upfront.Events.trigger("layout:render", me.current_subapplication);
-		me.layout_ready = true;
 		//}
 
 		Upfront.Application.loading.done(function () {
@@ -1935,6 +1967,29 @@ var Application = new (Backbone.Router.extend({
 			me.responsiveMode = newMode.id;
 		});
 	},
+
+	/**
+	 * Determine user ability to perform something
+	 *
+	 * @param {String} what Ability to check
+	 *
+	 * @return {Boolean}
+	 */
+	user_can: function (what) {
+		what = (_.isString(what) ? what : "").toUpperCase();
+		return !!((Upfront.Settings.Application || {}).PERMS || {})[what];
+	},
+
+	/**
+	 * Check if user can modify layout
+	 *
+	 * @return {Boolean}
+	 */
+	user_can_modify_layout: function () {
+		if ( Upfront.Application.user_can("LAYOUT_MODE") ) return true;
+		if ( Upfront.Application.is_single('post') && Upfront.Application.user_can("SINGLEPOST_LAYOUT_MODE") ) return true;
+		return false;
+	}
 
 }))();
 

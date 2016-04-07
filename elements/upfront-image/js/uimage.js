@@ -470,12 +470,18 @@ define([
 
 			if (this.property('quick_swap')) {
 				smallSwap = props.element_size.width < 150 || props.element_size.height < 90 ? 'uimage-quick-swap-small' : '';
-
-				rendered += '<div class="upfront-quick-swap ' + smallSwap + '"><p>Change this image</p></div>';
+				
+				if(Upfront.Application.user_can_modify_layout()) {
+					rendered += '<div class="upfront-quick-swap ' + smallSwap + '"><p>Change this image</p></div>';
+				}
 			} else if (this.property('image_status') === 'starting') {
-				rendered = '<div class="upfront-image-starting-select upfront-ui" style="height:' + props.element_size.height + 'px"><div class="uimage-centered">' +
-						'<span class="upfront-image-resizethiselement">' + l10n.ctrl.add_image + '</span><div class=""><a class="upfront-image-select" href="#" title="' + l10n.ctrl.add_image + '">+</a></div>'+
-				'</div></div>';
+				if(Upfront.Application.user_can_modify_layout()) {
+					rendered = '<div class="upfront-image-starting-select upfront-ui" style="height:' + props.element_size.height + 'px"><div class="uimage-centered">' +
+							'<span class="upfront-image-resizethiselement">' + l10n.ctrl.add_image + '</span><div class=""><a class="upfront-image-select" href="#" title="' + l10n.ctrl.add_image + '">+</a></div>'+
+					'</div></div>';
+				} else {
+					rendered = '';
+				}
 			} else {
 				render = $('<div></div>').append(rendered);
 				size = props.size;
@@ -516,6 +522,8 @@ define([
 			return rendered;
 		},
 		toggle_caption_controls: function(){
+			if (!Upfront.Application.user_can_modify_layout()) return false;
+
 			var me = this,
 				panel = new Upfront.Views.Editor.InlinePanels.Panel()
 				;
@@ -600,8 +608,10 @@ define([
 			}
 
 			if (this.isThemeImage() && !Upfront.themeExporter) {
-				this.$el.addClass('image-from-theme');
-				this.$el.find('b.upfront-entity_meta').after('<div class="swap-image-overlay"><p class="upfront-icon upfront-icon-swap-image"><span>Click to </span>Swap Image</p></div>');
+				if (Upfront.Application.user_can_modify_layout()) {
+					this.$el.addClass('image-from-theme');
+					this.$el.find('b.upfront-entity_meta').after('<div class="swap-image-overlay"><p class="upfront-icon upfront-icon-swap-image"><span>Click to </span>Swap Image</p></div>');
+				}
 			} else {
 				var resizeHint = $('<div>').addClass('upfront-ui uimage-resize-hint' + onTop);
 				this.$el.append(resizeHint);
@@ -1382,7 +1392,10 @@ define([
 				$('<img>')
 					.load(function(){
 						Upfront.Views.Editor.ImageSelector.close();
-						me.openEditor(true, imageInfo);
+						
+						if (Upfront.Application.user_can("RESIZE")) {
+							me.openEditor(true, imageInfo);
+						}
 					})
 					.on("error", function () {
 						Upfront.Views.Editor.ImageSelector.close();
@@ -1430,6 +1443,11 @@ define([
 
 		editRequest: function () {
 			var me = this;
+			
+			if (!Upfront.Application.user_can("RESIZE")) {
+				Upfront.Views.Editor.notify(l10n.external_nag, 'error');
+				return false;
+			}
 
 			if(this.property('image_status') === 'ok' && this.property('image_id')) {
 				if (this.isThemeImage() && 'themeExporter' in Upfront) {
@@ -1545,6 +1563,8 @@ define([
 			if(Upfront.Application.responsiveMode !== 'desktop') {
 				return Upfront.Views.Editor.notify(l10n.desktop_nag, 'error');
 			}
+			
+			if (!Upfront.Application.user_can("RESIZE")) return false;	
 
 			var me = this,
 				options = {
@@ -1688,12 +1708,14 @@ define([
 			moreOptions.icon = 'more';
 			moreOptions.tooltip = l10n.ctrl.caption_position;
 
-			moreOptions.sub_items = {
-				swap: this.createControl('swap', l10n.btn.swap_image, 'openImageSelector'),
-				crop: this.createControl('crop', l10n.ctrl.edit_image, 'editRequest'),
-				link: this.createLinkControl(),
-				lock: this.createControl(lock_icon, l10n.ctrl.lock_image, 'lockImage'),
-			};
+			moreOptions.sub_items = {}
+			if (Upfront.Application.user_can("RESIZE")) {
+				moreOptions.sub_items['swap'] = this.createControl('swap', l10n.btn.swap_image, 'openImageSelector');
+				moreOptions.sub_items['crop'] = this.createControl('crop', l10n.ctrl.edit_image, 'editRequest');
+			}
+
+			moreOptions.sub_items['link'] = this.createLinkControl();
+			moreOptions.sub_items['lock'] = this.createControl(lock_icon, l10n.ctrl.lock_image, 'lockImage');
 
 			var controlls =  _([
 				moreOptions,

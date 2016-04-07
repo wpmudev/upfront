@@ -40,6 +40,10 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			return;
 		}
 
+		if (!Upfront_Permissions::current(Upfront_Permissions::DELETE_ELEMENT_PRESETS)) {
+			$this->_reject();
+		}
+
 		$properties = stripslashes_deep($_POST['data']);
 		do_action('upfront_delete_' . $this->elementName . '_preset', $properties, $this->elementName);
 
@@ -64,6 +68,10 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 	public function reset() {
 		if (!isset($_POST['data'])) {
 			return;
+		}
+
+		if (!Upfront_Permissions::current(Upfront_Permissions::DELETE_ELEMENT_PRESETS)) {
+			$this->_reject();
 		}
 
 		$properties = stripslashes_deep($_POST['data']);
@@ -170,6 +178,10 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 	public function save() {
 		if (!isset($_POST['data'])) {
 			return;
+		}
+
+		if (!Upfront_Permissions::current(Upfront_Permissions::MODIFY_ELEMENT_PRESETS)) {
+			$this->_reject();
 		}
 
 		$properties = $_POST['data'];

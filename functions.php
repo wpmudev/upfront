@@ -20,6 +20,7 @@ require_once(dirname(__FILE__) . '/library/class_ufront_ufc.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_codec.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_compat.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_postpart.php');
+require_once(dirname(__FILE__) . '/library/class_upfront_admin.php');
 
 
 Upfront_Behavior::debug()->set_baseline();
@@ -66,6 +67,7 @@ class Upfront {
 		add_action('admin_bar_menu', array($this, 'add_edit_menu'), 85);
 
 		if (is_admin()) {
+		
 			require_once(dirname(__FILE__) . '/library/servers/class_upfront_admin.php');
 			if (class_exists('Upfront_Server_Admin')) Upfront_Server_Admin::serve();
 		}
@@ -172,7 +174,7 @@ class Upfront {
 		$cls[] = $grid->get_grid_scope();
 		return $cls;
 	}
-
+	
 	public function inject_core_wp_dependencies () {
 		$deps = Upfront_CoreDependencies_Registry::get_instance();
 

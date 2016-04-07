@@ -227,9 +227,12 @@ return (function ($) {
 			var content = '<a class="menu_item uf-click-to-edit-text';
 
 			if(me.newitem) content = content + ' new_menu_item menu_item_placeholder';
-
-			content = content+'" ><span class="menu_item-ueditor">'+this.model['menu-item-title']+'</span></a><i class="delete_menu_item">x</i><span class="open-item-controls"></span>';
-
+			
+			if (Upfront.Application.user_can_modify_layout()) {
+				content = content+'" ><span class="menu_item-ueditor">'+this.model['menu-item-title']+'</span></a><i class="delete_menu_item">x</i><span class="open-item-controls"></span>';
+			} else {
+				content = content+'" ><span class="menu_item-ueditor">'+this.model['menu-item-title']+'</span></a>';
+			}
 			if(this.model.link['url'].indexOf('#ltb-') > -1 && !Upfront.Util.checkLightbox(this.model.link['url']))
 					content = content + '<span class="missing-lightbox-warning"></span>';
 

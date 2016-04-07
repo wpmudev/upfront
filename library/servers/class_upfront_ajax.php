@@ -256,6 +256,7 @@ class Upfront_Ajax extends Upfront_Server {
 
 	function save_layout () {
 		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
+		if (!Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE)) $this->_reject();
 
 		$data = !empty($_POST['data']) ? json_decode(stripslashes_deep($_POST['data']), true) : false;
 		if (!$data) $this->_out(new Upfront_JsonResponse_Error("Unknown layout"));
@@ -314,26 +315,35 @@ class Upfront_Ajax extends Upfront_Server {
 		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
 
 		$data = !empty($_POST) ? stripslashes_deep($_POST) : false;
-		$layout = !empty($data['layout']) ? $data['layout'] : array();
-		$storage_key = $data['storage_key'];
-		$stylesheet = $data['stylesheet'] ? $data['stylesheet'] : get_stylesheet();
+		$layout = !empty($data['layout']) && $data['layout'] !== "0" ? $data['layout'] : array();
+		$stylesheet = isset( $data['stylesheet'] ) ? $data['stylesheet'] : get_stylesheet();
 		$stylesheet_dev = false;
 		if (!empty($data['dev'])) {
 			$stylesheet_dev = "{$stylesheet}_dev"; // Handle dev-mode names
 		}
 
-		upfront_switch_stylesheet($stylesheet);
+		if( $layout === array() )
+			$this->_out(new Upfront_JsonResponse_Error("Please specify layout to reset"));
 
-		//$layout = Upfront_Layout::from_php($data, $storage_key);
-		$layout = Upfront_Layout::from_entity_ids($layout, null, !empty($stylesheet_dev));
-		$layout->delete(true);
-		delete_option('upfront_' . $stylesheet . '_styles');
-		delete_option('upfront_' . $stylesheet . '_theme_colors');
-		delete_option('upfront_' . $stylesheet . '_button_presets');
-		if (!empty($stylesheet_dev)) delete_option('upfront_' . $stylesheet_dev . '_styles');
-		if (!empty($stylesheet_dev)) delete_option('upfront_' . $stylesheet_dev . '_theme_colors');
-		if (!empty($stylesheet_dev)) delete_option('upfront_' . $stylesheet_dev . '_button_presets');
-		$this->_out(new Upfront_JsonResponse_Success("Layout reset"));
+		$layout_key = $stylesheet . "-" . $layout;
+		delete_option( $layout_key );
+
+		if( $stylesheet_dev ){
+			$layout_key = $stylesheet_dev . "-" . $layout;
+			delete_option( $layout_key );
+		}
+//		upfront_switch_stylesheet($stylesheet); Soft delete for now
+//		$layout = Upfront_Layout::from_php($data, $storage_key);
+//		$layout = Upfront_Layout::from_entity_ids($layout, null, !empty($stylesheet_dev));
+//		$layout->delete(true);
+//		delete_option('upfront_' . $stylesheet . '_styles');
+//		delete_option('upfront_' . $stylesheet . '_theme_colors');
+//		delete_option('upfront_' . $stylesheet . '_button_presets');
+//		if (!empty($stylesheet_dev)) delete_option('upfront_' . $stylesheet_dev . '_styles');
+//		if (!empty($stylesheet_dev)) delete_option('upfront_' . $stylesheet_dev . '_theme_colors');
+//		if (!empty($stylesheet_dev)) delete_option('upfront_' . $stylesheet_dev . '_button_presets');
+
+		$this->_out(new Upfront_JsonResponse_Success("Layout {$layout} reset"));
 	}
 
 	function reset_cache () {
@@ -362,7 +372,7 @@ class Upfront_Ajax extends Upfront_Server {
 		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
 
 		$data = !empty($_POST) ? stripslashes_deep($_POST) : false;
-		$stylesheet = $data['stylesheet'] ? $data['stylesheet'] : get_stylesheet();
+		$stylesheet = isset( $data['stylesheet'] ) ? $data['stylesheet'] : get_stylesheet();
 
 		global $wpdb;
 		$theme_key = $wpdb->esc_like(Upfront_Model::get_storage_key()) . '%';

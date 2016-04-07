@@ -719,4 +719,5 @@ class Upfront_Layout extends Upfront_JsonModel {
 		}
 		
 	}
+
 }

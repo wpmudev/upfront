@@ -5,10 +5,11 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 		$me = new self;
 		$me->_add_hooks();
 	}
-
+	
 	private function _add_hooks () {
 		add_action('upfront-core-inject_dependencies', array($this, 'dispatch_dependencies_output'));
 		add_action('wp_head', array($this, 'dispatch_fonts_loading'));
+		add_action('admin_head', array($this, 'dispatch_fonts_loading'));
 
 		upfront_add_ajax('wp_scripts', array($this, 'wp_scripts_load'));
 
@@ -34,6 +35,9 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 	public function dispatch_fonts_loading () {
 		$deps = Upfront_CoreDependencies_Registry::get_instance();
 		$fonts = $deps->get_fonts();
+
+		if ('admin_head' === current_filter()) return $this->_output_normal_fonts($fonts);
+
 		if (Upfront_Behavior::compression()->has_experiments()) {
 			if (!empty($fonts)) $deps->add_script('//ajax.googleapis.com/ajax/libs/webfont/1.5.10/webfont.js');
 			return false;

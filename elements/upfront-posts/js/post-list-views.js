@@ -35,10 +35,15 @@ var Views = {
 				this.model.set_property(this.options.property, value, true);
 			}, opts);
 			opts.render();
-
-			this.$el.empty().append(this.tpl({l10n: l10n}));
-			this.$el.css('min-height', ( height > 150 ? height : 150 ));
-			this.$el.find(".options").empty().append(opts.$el);
+			
+			if (Upfront.Application.user_can_modify_layout()) {
+				this.$el.empty().append(this.tpl({l10n: l10n}));
+				this.$el.css('min-height', ( height > 150 ? height : 150 ));
+				this.$el.find(".options").empty().append(opts.$el);
+			} else {
+				this.$el.empty();
+				this.$el.removeClass('upfront-initial-overlay-wrapper');
+			}
 		},
 		dispatch: function (e) {
 			e.preventDefault();

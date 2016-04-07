@@ -297,8 +297,12 @@ define([
 			return data;
 		},
 		has_upload: function () {
-			if (!this.themeImages) return true; // Allow when not looking into theme images
-			return Upfront.Application.is_builder(); // Otherwise, allow if in builder
+			if ( Upfront.Settings.Application.PERMS.UPLOAD ) {
+				if (!this.themeImages) return true; // Allow when not looking into theme images
+				return Upfront.Application.is_builder(); // Otherwise, allow if in builder
+			} else {
+				return false; // disabling upload when user role has no permission
+			}
 		}
 	});
 
