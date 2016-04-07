@@ -797,6 +797,12 @@ define([
 
 			return breakpointColumnPadding;
 		},
+		
+		after_breakpoint_change: function(){
+			if(this.parent_module_view){
+				this.render();
+			}
+		},
 
 		/***************************************************************************/
 		/*           Handling element resize events (jQuery resizeable)            */
