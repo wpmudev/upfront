@@ -104,6 +104,7 @@ define([
 			//this.promise = false;
 			this.align = 'left';
 			this.valign = 'top';
+			this.isDotAlign = false;
 			this.saveOnClose = false;
 			this.elementSize = false;
 			this.fitImageButton = true;
