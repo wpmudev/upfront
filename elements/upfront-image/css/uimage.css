@@ -1167,6 +1167,10 @@ div.uimage-controls i.upfront-icon:before,
 	padding: 0;
 }
 
+.upfront-output-image {
+	overflow: hidden;
+}
+
 /* front-end placeholder */
 .upfront-output-image.uimage-no-padding {
 	padding: 0;
