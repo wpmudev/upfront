@@ -180,7 +180,9 @@ define([
 					
 					me.$el.find('.image-ok-button').prepend('<div class="image-edit-size-buttons"><span class="image-increase-size">+</span><span class="image-decrease-size">-</span></div>');
 				
-					var sizeButtons = me.$el.find('.image-edit-size-buttons');
+					var sizeButtons = me.$el.find('.image-edit-size-buttons'),
+						size = me.options.size,
+						ratio = size.width / size.height;
 
 					if(sizeButtons.length) {
 						sizeButtons.find('.image-increase-size').click(function(e) {
@@ -191,7 +193,7 @@ define([
 								step = 5;
 							}
 							
-							me.buttonIncreaseSize(step);
+							me.buttonIncreaseSize(step, ratio);
 						});
 						
 						sizeButtons.find('.image-decrease-size').click(function(e) {
@@ -202,7 +204,7 @@ define([
 								step = 5;
 							}
 							
-							me.buttonDecreaseSize(step);
+							me.buttonDecreaseSize(step, ratio);
 						});
 					}
 					
@@ -214,38 +216,46 @@ define([
 			return control;
 		},
 		
-		buttonIncreaseSize: function(step) {
+		buttonIncreaseSize: function(step, ratio) {
 			var me = this,
-				canvas = this.$('#uimage-canvas')
+				canvas = this.$('#uimage-canvas'),
+				handler = this.$('#uimage-drag-handle')
 			;
 			
-			var size = this.options.size;
-
+			var size = this.options.size,
+				newWidth = this.invert ? size.height + step : size.width + step,
+				newHeight = this.invert ? size.width + step : size.height + step;
+ 
 			canvasSize = {
-				width: (this.invert ? size.height + step : size.width + step),
-				height: (this.invert ? size.width + step : size.height + step)
+				width: (newWidth),
+				height: (newWidth / ratio)
 			};
 
 			this.options.size = canvasSize;
 			canvas.css(canvasSize);
+			handler.css(canvasSize);
 			this.selectMode(canvasSize, true);
 			this.setImageSize(canvasSize);
 		},
 		
-		buttonDecreaseSize: function(step) {
+		buttonDecreaseSize: function(step, ratio) {
 			var me = this,
-				canvas = this.$('#uimage-canvas')
+				canvas = this.$('#uimage-canvas'),
+				handler = this.$('#uimage-drag-handle')
 			;
 			
-			var size = this.options.size;
-
+			var size = this.options.size,
+				newWidth = this.invert ? size.height - step : size.width - step,
+				newHeight = this.invert ? size.width - step : size.height - step;
+ 
 			canvasSize = {
-				width: (this.invert ? size.height - step : size.width - step),
-				height: (this.invert ? size.width - step : size.height - step)
+				width: (newWidth),
+				height: (newWidth / ratio)
 			};
 			
 			this.options.size = canvasSize;
 			canvas.css(canvasSize);
+			handler.css(canvasSize);
 			this.selectMode(canvasSize, true);
 			this.setImageSize(canvasSize);
 		},
